@@ -10,6 +10,19 @@
   import PrinceApartment from '$lib/assets/maps/local/prince-apartment.svelte';
   import Room3101 from '$lib/assets/maps/local/room-3101.svelte';
   import HeillyProcessing from '$lib/assets/maps/local/heilly-processing.svelte';
+  import CentralCourthouse from '$lib/assets/maps/local/central-courthouse.svelte';
+  import CentralPoliceStation from '$lib/assets/maps/local/central-police-station.svelte';
+  import GeneralCabins from '$lib/assets/maps/local/general-cabins.svelte';
+  import RoyalArmyOffice from '$lib/assets/maps/local/royal-army-office.svelte';
+  import ObservationDeck from '$lib/assets/maps/local/observation-deck.svelte';
+  import Cineplex from '$lib/assets/maps/local/cineplex.svelte';
+  import CentralDiningHall from '$lib/assets/maps/local/central-dining-hall.svelte';
+  import PrincesBurialChamber from '$lib/assets/maps/local/princes-burial-chamber.svelte';
+  import VvipLivingQuarters from '$lib/assets/maps/local/vvip-living-quarters.svelte';
+  import QueensLivingQuarters from '$lib/assets/maps/local/queens-living-quarters.svelte';
+  import SoldiersLivingQuarters from '$lib/assets/maps/local/soldiers-living-quarters.svelte';
+  import Casino from '$lib/assets/maps/local/casino.svelte';
+  import Room37564 from '$lib/assets/maps/local/room-37564.svelte';
   import MapOverlay from './MapOverlay.svelte';
 
   let containerEl: HTMLElement | undefined = $state();
@@ -56,6 +69,28 @@
         <Room3101 />
       {:else if mapState.selectedLocationId === 't3-heilly' || mapState.selectedLocationId === 'heilly-processing'}
         <HeillyProcessing />
+      {:else if mapState.selectedLocationId === 'general-cabins'}
+        <GeneralCabins />
+      {:else if mapState.selectedLocationId === 'royal-army-office'}
+        <RoyalArmyOffice />
+      {:else if mapState.selectedLocationId === 'observation-deck'}
+        <ObservationDeck />
+      {:else if mapState.selectedLocationId === 'cineplex'}
+        <Cineplex />
+      {:else if mapState.selectedLocationId === 'central-dining-hall'}
+        <CentralDiningHall />
+      {:else if mapState.selectedLocationId === 'princes-burial-chamber'}
+        <PrincesBurialChamber />
+      {:else if mapState.selectedLocationId === 'vvip-living-quarters'}
+        <VvipLivingQuarters />
+      {:else if mapState.selectedLocationId === 'queens-living-quarters'}
+        <QueensLivingQuarters />
+      {:else if mapState.selectedLocationId === 'soldiers-living-quarters'}
+        <SoldiersLivingQuarters />
+      {:else if mapState.selectedLocationId === 'casino'}
+        <Casino />
+      {:else if mapState.selectedLocationId === 'room-37564'}
+        <Room37564 />
       {:else}
         <div class="flex items-center justify-center w-full h-full text-[#FFFFF0]">
           <h2>Carte détaillée pour {mapState.selectedLocationId} non disponible en V1</h2>

@@ -72,6 +72,9 @@ importers:
 
   apps/api:
     dependencies:
+      '@black-whale/ability-modules':
+        specifier: workspace:*
+        version: link:../../packages/ability-modules
       '@black-whale/contracts':
         specifier: workspace:*
         version: link:../../packages/contracts
@@ -361,6 +364,9 @@ importers:
 
   packages/identity-engine:
     dependencies:
+      '@black-whale/database':
+        specifier: workspace:*
+        version: link:../database
       '@black-whale/domain':
         specifier: workspace:*
         version: link:../domain
@@ -377,6 +383,9 @@ importers:
 
   packages/knowledge-engine:
     dependencies:
+      '@black-whale/database':
+        specifier: workspace:*
+        version: link:../database
       '@black-whale/domain':
         specifier: workspace:*
         version: link:../domain
@@ -425,9 +434,18 @@ importers:
 
   packages/perspective-engine:
     dependencies:
+      '@black-whale/database':
+        specifier: workspace:*
+        version: link:../database
       '@black-whale/domain':
         specifier: workspace:*
         version: link:../domain
+      '@black-whale/identity-engine':
+        specifier: workspace:*
+        version: link:../identity-engine
+      '@black-whale/knowledge-engine':
+        specifier: workspace:*
+        version: link:../knowledge-engine
       '@black-whale/timeline-engine':
         specifier: workspace:*
         version: link:../timeline-engine

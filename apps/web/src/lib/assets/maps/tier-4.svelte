@@ -71,39 +71,42 @@
       <rect class="zone" class:selected={mapState.selectedLocationId === 't4-dist-west'} x="160" y="80" width="140" height="150" />
       <rect class="zone" class:selected={mapState.selectedLocationId === 't4-dist-west'} x="160" y="270" width="140" height="60" />
       <rect class="zone" class:selected={mapState.selectedLocationId === 't4-dist-west'} x="160" y="370" width="140" height="110" />
-      <text x="230" y="160" class="label">District Ouest</text>
+      <text x="230" y="160" class="label">General Passenger Area (West)</text>
+      <text x="230" y="175" class="sublabel text-red-400">&gt; 300 civilians per guard</text>
     </g>
 
     <!-- Center block -->
     <g onclick={() => handleZoneClick('t4-dist-center')}>
       <rect class="zone" class:selected={mapState.selectedLocationId === 't4-dist-center'} x="320" y="80" width="160" height="150" />
       <rect class="zone" class:selected={mapState.selectedLocationId === 't4-dist-center'} x="320" y="370" width="160" height="110" />
-      <text x="400" y="160" class="label">District Central</text>
-      <text x="400" y="175" class="sublabel">Commerce & Résidence</text>
+      <text x="400" y="160" class="label">General Passenger Area (Center)</text>
+      <text x="400" y="175" class="sublabel text-red-400">&gt; 300 civilians per guard</text>
     </g>
 
     <!-- Xi-Yu Office -->
     <g id="t4-xiyu" onclick={() => handleZoneClick('t4-xiyu')}>
       <rect class="zone" class:selected={mapState.selectedLocationId === 't4-xiyu'} x="320" y="270" width="160" height="60" />
-      <text x="400" y="305" class="label">Bureau Xi-Yu</text>
+      <text x="400" y="300" class="label text-yellow-500">Xi-Yu Family HQ</text>
+      <text x="400" y="315" class="sublabel text-yellow-600">(Public Order & Human Trafficking)</text>
     </g>
 
     <!-- Medical (Limited) & Military -->
-    <g id="t4-military-conf" onclick={() => handleZoneClick('t4-military-conf')}>
-      <rect class="zone" class:selected={mapState.selectedLocationId === 't4-military-conf'} x="500" y="80" width="150" height="150" />
-      <text x="575" y="150" class="label">Conférence</text>
-      <text x="575" y="165" class="sublabel">Militaire</text>
+    <g id="t4-military-conf" onclick={() => handleZoneClick('royal-army-office')}>
+      <rect class="zone" class:selected={mapState.selectedLocationId === 'royal-army-office'} x="500" y="80" width="150" height="150" />
+      <text x="575" y="150" class="label text-green-500 text-[11px]">Kakin Royal Army Conf. Room</text>
+      <text x="575" y="165" class="sublabel">(Headed by Mizaistom)</text>
     </g>
     <g id="t4-medical-limited" onclick={() => handleZoneClick('t4-medical-limited')}>
       <rect class="zone" class:selected={mapState.selectedLocationId === 't4-medical-limited'} x="500" y="370" width="150" height="110" />
-      <text x="575" y="425" class="label">Service Médical</text>
-      <text x="575" y="440" class="sublabel">(Capacité Limitée)</text>
+      <text x="575" y="425" class="label text-blue-400">One Medical Clinic</text>
+      <text x="575" y="440" class="sublabel">(Only clinic on this tier)</text>
     </g>
 
     <!-- Right block -->
     <g onclick={() => handleZoneClick('t4-dist-east')}>
       <rect class="zone" class:selected={mapState.selectedLocationId === 't4-dist-east'} x="670" y="80" width="140" height="400" />
-      <text x="740" y="280" class="label">District Est</text>
+      <text x="740" y="280" class="label">General Passenger Area (East)</text>
+      <text x="740" y="295" class="sublabel text-red-400">&gt; 300 civilians per guard</text>
     </g>
 
     <!-- Frontière de Recyclage (Sud) -->

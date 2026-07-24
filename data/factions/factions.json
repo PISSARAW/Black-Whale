@@ -1,0 +1,112 @@
+[
+  {
+    "id": "kakin-royal-family",
+    "name": "Kakin Royal Family",
+    "description": "La famille royale souveraine de l'Empire de Kakin, menée par le Roi Nasubi Hui Guo Rou."
+  },
+  {
+    "id": "hunter-association",
+    "name": "Hunter Association",
+    "description": "Organisation mondiale des Hunters, en charge de l'expédition sur le Continent des Ténèbres et de la sécurité civile du Black Whale."
+  },
+  {
+    "id": "zodiacs",
+    "name": "The Zodiacs",
+    "description": "Les douze plus hauts dirigeants de l'Association des Hunters."
+  },
+  {
+    "id": "kakin-royal-army",
+    "name": "Kakin Royal Army",
+    "description": "Force militaire de l'Empire (2 000 soldats à bord), responsable de la loi martiale et de la sécurité des Tiers 1 et 2."
+  },
+  {
+    "id": "phantom-troupe",
+    "name": "Phantom Troupe",
+    "description": "Aussi connue sous le nom de la Brigade Fantôme (Araignée). Organisation criminelle infiltrée sur le Tier 5 pour traquer Hisoka."
+  },
+  {
+    "id": "mafia-xiyu",
+    "name": "Xi-Yu Family",
+    "description": "Famille mafieuse secrètement soutenue par le 3ème Prince Zhang Lei. Maintient l'ordre économique. Sous-chef : Hinrigh."
+  },
+  {
+    "id": "mafia-char",
+    "name": "Cha-R Family",
+    "description": "Famille mafieuse sous la protection du 7ème Prince Luzurus. Contrôle les entrepôts du Tier 4."
+  },
+  {
+    "id": "mafia-heilly",
+    "name": "Heil-Ly Family",
+    "description": "Famille mafieuse instrumentalisée par le 4ème Prince Tserriednich. Dirigée par Morena Prudo, vise à détruire l'équilibre par le chaos."
+  },
+  {
+    "id": "prince-benjamin",
+    "name": "Faction Benjamin",
+    "description": "Forces militaires privées (Garde Royale de Kakin) loyales au 1er Prince Benjamin."
+  },
+  {
+    "id": "prince-camilla",
+    "name": "Faction Camilla",
+    "description": "Intimes et partisans de la 2ème Princesse Camilla."
+  },
+  {
+    "id": "prince-zhanglei",
+    "name": "Faction Zhang Lei",
+    "description": "Forces loyales au 3ème Prince Zhang Lei, liées à la mafia Xi-Yu."
+  },
+  {
+    "id": "prince-tserriednich",
+    "name": "Faction Tserriednich",
+    "description": "Partisans du 4ème Prince Tserriednich, en lien avec la mafia Heil-Ly."
+  },
+  {
+    "id": "prince-tubeppa",
+    "name": "Faction Tubeppa",
+    "description": "Partisans et gardes de la 5ème Princesse Tubeppa."
+  },
+  {
+    "id": "prince-tyson",
+    "name": "Faction Tyson",
+    "description": "Gardes de la 6ème Princesse Tyson, dévoués aux tabous romantiques."
+  },
+  {
+    "id": "prince-luzurus",
+    "name": "Faction Luzurus",
+    "description": "Forces liées au 7ème Prince Luzurus et à la mafia Cha-R."
+  },
+  {
+    "id": "prince-salesale",
+    "name": "Faction Salé-salé",
+    "description": "Garde manipulée par la Bête de Nen du 8ème Prince Salé-salé."
+  },
+  {
+    "id": "prince-halkenburg",
+    "name": "Faction Halkenburg",
+    "description": "Partisans du 9ème Prince Halkenburg, partageant une aura collective."
+  },
+  {
+    "id": "prince-kacho",
+    "name": "Faction Kacho",
+    "description": "Entourage de la 10ème Princesse Kacho."
+  },
+  {
+    "id": "prince-fugetsu",
+    "name": "Faction Fugetsu",
+    "description": "Entourage de la 11ème Princesse Fugetsu."
+  },
+  {
+    "id": "prince-momoze",
+    "name": "Faction Momoze",
+    "description": "Gardes de la 12ème Princesse Momoze (assassinée)."
+  },
+  {
+    "id": "prince-marayam",
+    "name": "Faction Marayam",
+    "description": "Défenseurs du 13ème Prince Marayam (Hunters et gardes)."
+  },
+  {
+    "id": "prince-woble",
+    "name": "Faction Woble",
+    "description": "Hunters (menés par Kurapika) et gardes protégeant la 14ème Princesse Woble et la Reine Oito."
+  }
+]

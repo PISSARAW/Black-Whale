@@ -84,8 +84,15 @@
     <!-- Zone Résidentielle (Logistique & Populaire) -->
     <g onclick={() => handleZoneClick('t5-residential')}>
       <rect class="zone" class:selected={mapState.selectedLocationId === 't5-residential'} x="180" y="170" width="180" height="250" />
-      <text x="270" y="290" class="label">Districts Résidentiels</text>
-      <text x="270" y="310" class="sublabel">Haute Densité</text>
+      <text x="270" y="270" class="label">Standard Cabins</text>
+      <text x="270" y="290" class="sublabel">(General Passenger Area)</text>
+      <text x="270" y="310" class="warnlabel">&gt; 300 civilians per guard</text>
+      
+      <!-- Assembly Point 37564 -->
+      <g onclick={(e) => { e.stopPropagation(); handleZoneClick('room-37564'); }}>
+        <rect class="zone" class:selected={mapState.selectedLocationId === 'room-37564'} x="230" y="340" width="80" height="30" fill="#4a5568" />
+        <text x="270" y="360" class="label text-[10px]">Area 37564</text>
+      </g>
     </g>
 
     <!-- Entrepôts & Stockage -->
@@ -98,21 +105,23 @@
     <!-- Bureau Cha-R -->
     <g id="t5-char" onclick={() => handleZoneClick('t5-char')}>
       <rect class="zone" class:selected={mapState.selectedLocationId === 't5-char'} x="400" y="330" width="120" height="90" />
-      <text x="460" y="375" class="label">Bureau Cha-R</text>
+      <text x="460" y="365" class="label text-yellow-500">Cha-R Family HQ</text>
+      <text x="460" y="380" class="sublabel text-[9px]">(Commodities Control)</text>
     </g>
 
     <!-- Cafétéria -->
-    <g id="t5-cafeteria" onclick={() => handleZoneClick('t5-cafeteria')}>
-      <rect class="zone" class:selected={mapState.selectedLocationId === 't5-cafeteria'} x="540" y="330" width="90" height="90" />
-      <text x="585" y="380" class="label">Cafétéria</text>
+    <g id="t5-cafeteria" onclick={() => handleZoneClick('central-dining-hall')}>
+      <rect class="zone" class:selected={mapState.selectedLocationId === 'central-dining-hall'} x="540" y="330" width="90" height="90" />
+      <text x="585" y="370" class="label text-[11px] text-green-400">Central Dining</text>
+      <text x="585" y="385" class="sublabel text-[9px] text-red-400">Buor Toll</text>
     </g>
 
     <!-- Service Médical Limité -->
     <g id="t5-medical-none" onclick={() => handleZoneClick('t5-medical-none')}>
       <rect class="zone" class:selected={mapState.selectedLocationId === 't5-medical-none'} x="650" y="330" width="70" height="90" />
-      <text x="685" y="365" class="label">Médical</text>
-      <text x="685" y="380" class="warnlabel">AUCUN MÉDECIN</text>
-      <text x="685" y="395" class="warnlabel">PERMANENT</text>
+      <text x="685" y="355" class="label text-blue-400 text-[10px]">One Clinic</text>
+      <text x="685" y="375" class="warnlabel">NO DEDICATED</text>
+      <text x="685" y="390" class="warnlabel">DOCTORS</text>
     </g>
 
   </g>

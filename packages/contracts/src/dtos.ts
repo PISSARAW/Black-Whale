@@ -6,7 +6,7 @@ import type {
   NenAbility,
   AbilityActivation,
   Fact,
-  FactKnowledge,
+  KnowledgeState,
   Presence,
 } from '@black-whale/domain'
 
@@ -54,7 +54,7 @@ export interface PerspectiveDto {
   suspectedThreats: string[]
   falseInformation: Fact[]
   knownDeaths: string[]
-  knowledgeItems: FactKnowledge[]
+  knowledgeItems: KnowledgeState[]
 }
 
 // ──────────────────────────────────────────────

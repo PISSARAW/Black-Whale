@@ -77,37 +77,43 @@
       <text x="270" y="360" class="label">Cabines Ordinaires</text>
     </g>
 
-    <!-- Secteur Médical -->
+    <!-- Secteur Médical (Ikagaku Tokku) -->
     <g id="t3-hospital" onclick={() => handleZoneClick('t3-hospital')}>
       <rect class="zone medical" class:selected={mapState.selectedLocationId === 't3-hospital'} x="400" y="100" width="200" height="180" />
-      <text x="500" y="185" class="label" fill="#FFFFF0">Hôpital Principal</text>
-      <text x="500" y="205" class="sublabel" fill="#ebf8ff">Secteur Médical</text>
+      <text x="500" y="160" class="label text-blue-300">Medical Ward (Ikagaku Tokku)</text>
+      <text x="500" y="185" class="label" fill="#FFFFF0">Central Hospital & Research Inst.</text>
+      <text x="500" y="205" class="sublabel" fill="#ebf8ff">3 Clinics (Central Medical Clinic)</text>
     </g>
 
-    <!-- Secteur Administratif & Judiciaire -->
-    <g id="t3-police" onclick={() => handleZoneClick('t3-police')}>
-      <rect class="zone" class:selected={mapState.selectedLocationId === 't3-police'} x="400" y="300" width="100" height="170" />
-      <text x="450" y="380" class="label">Police</text>
-    </g>
-    <g id="t3-army-office" onclick={() => handleZoneClick('t3-army-office')}>
-      <rect class="zone" class:selected={mapState.selectedLocationId === 't3-army-office'} x="500" y="300" width="100" height="85" />
-      <text x="550" y="345" class="label">Armée</text>
-    </g>
-    <g id="t3-justice" onclick={() => handleZoneClick('t3-justice')}>
-      <rect class="zone" class:selected={mapState.selectedLocationId === 't3-justice'} x="500" y="385" width="100" height="85" />
-      <text x="550" y="425" class="label">Justice</text>
-      <text x="550" y="440" class="sublabel">Détention</text>
+    <!-- Secteur Administratif & Judiciaire (Political Ward) -->
+    <g id="t3-political-ward">
+      <rect x="390" y="290" width="220" height="190" fill="none" stroke="#e2e8f0" stroke-width="2" stroke-dasharray="4,4" />
+      <text x="500" y="280" class="label text-gray-300">Political Ward (Seiji Tokku)</text>
+      
+      <g onclick={() => handleZoneClick('t3-police')}>
+        <rect class="zone" class:selected={mapState.selectedLocationId === 't3-police'} x="400" y="300" width="100" height="170" />
+        <text x="450" y="380" class="label">Central Police</text>
+      </g>
+      <g onclick={() => handleZoneClick('t3-army-office')}>
+        <rect class="zone" class:selected={mapState.selectedLocationId === 't3-army-office'} x="500" y="300" width="100" height="85" />
+        <text x="550" y="345" class="label text-xs">Royal Army Office</text>
+      </g>
+      <g onclick={() => handleZoneClick('t3-justice')}>
+        <rect class="zone" class:selected={mapState.selectedLocationId === 't3-justice'} x="500" y="385" width="100" height="85" />
+        <text x="550" y="425" class="label text-xs">Central Courthouse</text>
+      </g>
     </g>
 
     <!-- Loisirs & Heil-Ly -->
     <g id="t3-cinema" onclick={() => handleZoneClick('t3-cinema')}>
       <rect class="zone" class:selected={mapState.selectedLocationId === 't3-cinema'} x="640" y="100" width="150" height="120" />
-      <text x="715" y="165" class="label">Cinéma</text>
+      <text x="715" y="160" class="label">Movie Theatre</text>
+      <text x="715" y="175" class="sublabel text-[9px]">(Cineplex - 8 Screens)</text>
     </g>
     <g id="t3-obs-deck" onclick={() => handleZoneClick('t3-obs-deck')}>
       <path class="zone" class:selected={mapState.selectedLocationId === 't3-obs-deck'} d="M 640 240 L 790 240 L 830 350 L 640 350 Z" />
-      <text x="715" y="300" class="label">Pont</text>
-      <text x="715" y="315" class="sublabel">d'Observation</text>
+      <text x="715" y="300" class="label">Observation Deck</text>
+      <text x="715" y="315" class="sublabel">(Front of the Ship)</text>
     </g>
     <g id="t3-heilly" onclick={() => handleZoneClick('t3-heilly')}>
       <rect class="zone" class:selected={mapState.selectedLocationId === 't3-heilly'} x="640" y="370" width="150" height="100" />

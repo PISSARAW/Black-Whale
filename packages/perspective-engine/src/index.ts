@@ -61,7 +61,7 @@ export class PerspectiveEngine implements IPerspectiveEngine {
         currentConsciousnessId = consciousness.id
       }
     } catch (e) {
-      console.warn(`Could not resolve observer body: ${e}`)
+      // Silently fail if body resolution fails
     }
 
     // 2. Fetch objective true facts

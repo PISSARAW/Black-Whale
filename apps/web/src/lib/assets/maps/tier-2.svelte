@@ -70,8 +70,14 @@
 
     <!-- Espaces de Réception & Services -->
     <g id="t2-reception" onclick={() => handleZoneClick('t2-reception')}>
-      <rect class="zone" class:selected={mapState.selectedLocationId === 't2-reception'} x="250" y="350" width="550" height="100" />
-      <text x="525" y="395" class="label">Espaces de Réception & Services Privilégiés</text>
+      <rect class="zone" class:selected={mapState.selectedLocationId === 't2-reception'} x="250" y="320" width="250" height="130" />
+      <text x="375" y="380" class="label text-sm">Espaces de Réception</text>
+    </g>
+
+    <!-- Ministry of Justice HQ -->
+    <g id="t2-justice" onclick={() => handleZoneClick('t2-justice')}>
+      <rect class="zone" class:selected={mapState.selectedLocationId === 't2-justice'} x="520" y="320" width="280" height="130" />
+      <text x="660" y="380" class="label text-blue-400">Ministry of Justice HQ</text>
     </g>
 
     <!-- Accès Tier 1 -->
@@ -83,7 +89,7 @@
     <!-- Secteur de Sécurité & Accès Tier 3 -->
     <g id="t2-security" onclick={() => handleZoneClick('t2-security')}>
       <path class="zone" class:selected={mapState.selectedLocationId === 't2-security'} d="M 150 480 L 850 480 L 850 515 C 750 520, 250 520, 150 515 Z" />
-      <text x="500" y="505" class="label text-xs">Secteur de Sécurité & Contrôle</text>
+      <text x="500" y="505" class="label text-xs">Secteur de Sécurité (600 Guards Stationed)</text>
     </g>
 
     <!-- CLOISON BLINDÉE TIER 2 - TIER 3 -->

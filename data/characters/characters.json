@@ -2,8 +2,10 @@
   {
     "id": "kurapika",
     "canonicalName": "Kurapika",
-    "aliases": ["Rat"],
-    "description": "Last survivor of the Kurta Clan. Bodyguard to Prince Woble. Seeks the scarlet eyes of his clan.",
+    "aliases": [
+      "Rat"
+    ],
+    "description": "Dernier survivant du clan Kurta. Hunter Zodiac. Dirige la faction de la Reine Oito et du Prince Woble. Maintient un statu quo par l'enseignement du Nen.",
     "factionId": "prince-woble",
     "firstAppearanceChapterId": "ch-340",
     "canonStatus": "canon"
@@ -11,8 +13,11 @@
   {
     "id": "hisoka",
     "canonicalName": "Hisoka Morrow",
-    "aliases": ["The Magician", "Grim Reaper"],
-    "description": "A powerful Hunter and magician. Seeks powerful opponents to fight.",
+    "aliases": [
+      "Le Magicien",
+      "Grim Reaper"
+    ],
+    "description": "Puissant assassin. Traqué par la Brigade Fantôme sur le Tier 5 après avoir assassiné deux de ses membres. Négocie avec la mafia Xi-Yu.",
     "factionId": null,
     "firstAppearanceChapterId": "ch-340",
     "canonStatus": "canon"
@@ -20,28 +25,839 @@
   {
     "id": "illumi",
     "canonicalName": "Illumi Zoldyck",
-    "aliases": ["Gittarackur"],
-    "description": "Eldest son of the Zoldyck family. Hisoka's accomplice on the ship.",
-    "factionId": "zoldyck",
+    "aliases": [
+      "Gittarackur"
+    ],
+    "description": "Fils aîné de la famille Zoldyck. Complice de Hisoka, infiltré dans la Brigade Fantôme à la demande de ce dernier.",
+    "factionId": "phantom-troupe",
     "firstAppearanceChapterId": "ch-340",
+    "canonStatus": "canon"
+  },
+  {
+    "id": "nasubi-hui-guo-rou",
+    "canonicalName": "Nasubi Hui Guo Rou",
+    "aliases": [
+      "Le Roi"
+    ],
+    "description": "Roi de l'Empire de Kakin. A orchestré la Guerre de Succession via l'Urne de la Graine.",
+    "factionId": "kakin-royal-family",
+    "firstAppearanceChapterId": "ch-340",
+    "canonStatus": "canon"
+  },
+  {
+    "id": "prince-benjamin",
+    "canonicalName": "Benjamin Hui Guo Rou",
+    "aliases": [
+      "1er Prince"
+    ],
+    "description": "Fils aîné d'Unma. Chef paramilitaire qui gère l'application de la Loi Martiale depuis la chambre 1001.",
+    "factionId": "prince-benjamin",
+    "firstAppearanceChapterId": "ch-349",
+    "canonStatus": "canon"
+  },
+  {
+    "id": "prince-camilla",
+    "canonicalName": "Camilla Hui Guo Rou",
+    "aliases": [
+      "2ème Princesse"
+    ],
+    "description": "Fille aînée de Duazul. A tenté d'assassiner Benjamin, jugée et incarcérée dans la VIP Jail de la Cour Suprême.",
+    "factionId": "prince-camilla",
+    "firstAppearanceChapterId": "ch-349",
+    "canonStatus": "canon"
+  },
+  {
+    "id": "prince-zhanglei",
+    "canonicalName": "Zhang Lei Hui Guo Rou",
+    "aliases": [
+      "3ème Prince"
+    ],
+    "description": "Fils de Tang Zhao Li. Maintient des liens étroits avec la mafia Xi-Yu pour accumuler des informations.",
+    "factionId": "prince-zhanglei",
+    "firstAppearanceChapterId": "ch-349",
     "canonStatus": "canon"
   },
   {
     "id": "prince-tserriednich",
     "canonicalName": "Tserriednich Hui Guo Rou",
-    "aliases": [],
-    "description": "4th Prince of Kakin. Serial killer. Exceptionally dangerous Nen user.",
+    "aliases": [
+      "4ème Prince"
+    ],
+    "description": "Fils d'Unma. Sociopathe, génie du Nen. Utilise la mafia Heil-Ly pour semer le chaos sur le navire.",
     "factionId": "prince-tserriednich",
+    "firstAppearanceChapterId": "ch-349",
+    "canonStatus": "canon"
+  },
+  {
+    "id": "prince-tubeppa",
+    "canonicalName": "Tubeppa Hui Guo Rou",
+    "aliases": [
+      "5ème Princesse"
+    ],
+    "description": "Fille de Duazul. Transforme sa chambre 1005 en laboratoire de recherche.",
+    "factionId": "prince-tubeppa",
+    "firstAppearanceChapterId": "ch-349",
+    "canonStatus": "canon"
+  },
+  {
+    "id": "prince-tyson",
+    "canonicalName": "Tyson Hui Guo Rou",
+    "aliases": [
+      "6ème Princesse"
+    ],
+    "description": "Fille de Katrono. Obsédée par l'amour, impose ses idéaux à ses gardes via sa Bête de Nen.",
+    "factionId": "prince-tyson",
+    "firstAppearanceChapterId": "ch-349",
+    "canonStatus": "canon"
+  },
+  {
+    "id": "prince-luzurus",
+    "canonicalName": "Luzurus Hui Guo Rou",
+    "aliases": [
+      "7ème Prince"
+    ],
+    "description": "Fils de Duazul. Parrain de la famille mafieuse Cha-R.",
+    "factionId": "prince-luzurus",
+    "firstAppearanceChapterId": "ch-349",
+    "canonStatus": "canon"
+  },
+  {
+    "id": "prince-salesale",
+    "canonicalName": "Salé-salé Hui Guo Rou",
+    "aliases": [
+      "8ème Prince"
+    ],
+    "description": "Fils de Swinko-Swinko. Manipule son entourage avec la fumée de sa Bête de Nen (jusqu'à sa neutralisation par Rihan).",
+    "factionId": "prince-salesale",
+    "firstAppearanceChapterId": "ch-349",
+    "canonStatus": "canon"
+  },
+  {
+    "id": "prince-halkenburg",
+    "canonicalName": "Halkenburg Hui Guo Rou",
+    "aliases": [
+      "9ème Prince"
+    ],
+    "description": "Fils de Duazul. Pacifiste devenu belligérant ; sa faction partage une puissante aura collective.",
+    "factionId": "prince-halkenburg",
+    "firstAppearanceChapterId": "ch-349",
+    "canonStatus": "canon"
+  },
+  {
+    "id": "prince-kacho",
+    "canonicalName": "Kacho Hui Guo Rou",
+    "aliases": [
+      "10ème Princesse"
+    ],
+    "description": "Fille de Seiko. A tenté de fuir avec Fugetsu lors du banquet dominical grâce à Melody.",
+    "factionId": "prince-kacho",
+    "firstAppearanceChapterId": "ch-349",
+    "canonStatus": "canon"
+  },
+  {
+    "id": "prince-fugetsu",
+    "canonicalName": "Fugetsu Hui Guo Rou",
+    "aliases": [
+      "11ème Princesse"
+    ],
+    "description": "Fille de Seiko. Possède une Bête de Nen capable de créer des portes dimensionnelles de téléportation.",
+    "factionId": "prince-fugetsu",
+    "firstAppearanceChapterId": "ch-349",
+    "canonStatus": "canon"
+  },
+  {
+    "id": "prince-momoze",
+    "canonicalName": "Momoze Hui Guo Rou",
+    "aliases": [
+      "12ème Princesse"
+    ],
+    "description": "Fille de Sevanti. L'une des premières victimes de la guerre, étranglée dans la chambre 1012.",
+    "factionId": "prince-momoze",
+    "firstAppearanceChapterId": "ch-349",
+    "canonStatus": "canon"
+  },
+  {
+    "id": "prince-marayam",
+    "canonicalName": "Marayam Hui Guo Rou",
+    "aliases": [
+      "13ème Prince"
+    ],
+    "description": "Fils de Sevanti. Enfant dont la Bête de Nen a isolé la chambre 1013 dans une dimension parallèle protectrice.",
+    "factionId": "prince-marayam",
     "firstAppearanceChapterId": "ch-349",
     "canonStatus": "canon"
   },
   {
     "id": "prince-woble",
     "canonicalName": "Woble Hui Guo Rou",
-    "aliases": [],
-    "description": "14th (youngest) Prince of Kakin. Infant under Kurapika's protection.",
+    "aliases": [
+      "14ème Princesse"
+    ],
+    "description": "Fille d'Oito, nourrisson. Son survie repose entièrement sur Kurapika.",
     "factionId": "prince-woble",
     "firstAppearanceChapterId": "ch-349",
+    "canonStatus": "canon"
+  },
+  {
+    "id": "queen-oito",
+    "canonicalName": "Oito Hui Guo Rou",
+    "aliases": [
+      "8ème Reine"
+    ],
+    "description": "Mère de Woble. S'allie à Kurapika, apprend le Nen, utilise 'Little Eye' (cafards) pour espionner.",
+    "factionId": "prince-woble",
+    "firstAppearanceChapterId": "ch-349",
+    "canonStatus": "canon"
+  },
+  {
+    "id": "beyond-netero",
+    "canonicalName": "Beyond Netero",
+    "aliases": [],
+    "description": "Leader secret de l'expédition. Auto-détenu dans une prison VVIP sur le Tier 1, surveillé par les Zodiaques.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-340",
+    "canonStatus": "canon"
+  },
+  {
+    "id": "mizaistom-nana",
+    "canonicalName": "Mizaistom Nana",
+    "aliases": [
+      "Ox"
+    ],
+    "description": "Zodiaque. Supervise le Commissariat Central du Tier 3. Mène l'enquête criminelle de grande ampleur.",
+    "factionId": "zodiacs",
+    "firstAppearanceChapterId": "ch-318",
+    "canonStatus": "canon"
+  },
+  {
+    "id": "botobai-gigante",
+    "canonicalName": "Botobai Gigante",
+    "aliases": [
+      "Dragon"
+    ],
+    "description": "Zodiaque. Siège en tant que juge au Tribunal Central (Tier 3).",
+    "factionId": "zodiacs",
+    "firstAppearanceChapterId": "ch-318",
+    "canonStatus": "canon"
+  },
+  {
+    "id": "gel",
+    "canonicalName": "Gel",
+    "aliases": [
+      "Snake"
+    ],
+    "description": "Zodiaque. A tenu des réunions clandestines avec l'équipe scientifique dans les cabines du Tier 3.",
+    "factionId": "zodiacs",
+    "firstAppearanceChapterId": "ch-318",
+    "canonStatus": "canon"
+  },
+  {
+    "id": "melody",
+    "canonicalName": "Melody",
+    "aliases": [
+      "Senritsu"
+    ],
+    "description": "Hunter de soutien affiliée à Kacho. A paralysé le Banquet du Tier 1 avec sa flûte magique.",
+    "factionId": "prince-kacho",
+    "firstAppearanceChapterId": "ch-71",
+    "canonStatus": "canon"
+  },
+  {
+    "id": "biscuit-krueger",
+    "canonicalName": "Biscuit Krueger",
+    "aliases": [
+      "Bisky"
+    ],
+    "description": "Hunter vétéran, garde engagée pour protéger le 13ème Prince Marayam.",
+    "factionId": "prince-marayam",
+    "firstAppearanceChapterId": "ch-137",
+    "canonStatus": "canon"
+  },
+  {
+    "id": "hanzo",
+    "canonicalName": "Hanzo",
+    "aliases": [],
+    "description": "Hunter et ninja engagé comme garde pour le 12ème Prince Momoze puis le 13ème Prince Marayam. Utilise la projection astrale.",
+    "factionId": "prince-marayam",
+    "firstAppearanceChapterId": "ch-5",
+    "canonStatus": "canon"
+  },
+  {
+    "id": "balsamilco-might",
+    "canonicalName": "Balsamilco Might",
+    "aliases": [],
+    "description": "Officier tacticien du 1er Prince Benjamin. Gère l'application de la Loi Martiale.",
+    "factionId": "prince-benjamin",
+    "firstAppearanceChapterId": "ch-363",
+    "canonStatus": "canon"
+  },
+  {
+    "id": "musse",
+    "canonicalName": "Musse",
+    "aliases": [],
+    "description": "Garde de Benjamin (assassiné). Sa compétence 'Secret Window' continue d'espionner Camilla.",
+    "factionId": "prince-benjamin",
+    "firstAppearanceChapterId": "ch-363",
+    "canonStatus": "canon"
+  },
+  {
+    "id": "rihan",
+    "canonicalName": "Rihan",
+    "aliases": [],
+    "description": "Soldat de Benjamin utilisant 'Predator'. Transféré auprès de Salé-salé puis de Tubeppa.",
+    "factionId": "prince-benjamin",
+    "firstAppearanceChapterId": "ch-363",
+    "canonStatus": "canon"
+  },
+  {
+    "id": "theta",
+    "canonicalName": "Theta",
+    "aliases": [],
+    "description": "Garde personnelle de Tserriednich. Tente désespérément de l'éliminer tout en lui apprenant le Nen.",
+    "factionId": "prince-tserriednich",
+    "firstAppearanceChapterId": "ch-349",
+    "canonStatus": "canon"
+  },
+  {
+    "id": "hinrigh-biganduffno",
+    "canonicalName": "Hinrigh Biganduffno",
+    "aliases": [],
+    "description": "Sous-chef de la famille Xi-Yu. Opère sur les Tiers inférieurs.",
+    "factionId": "mafia-xiyu",
+    "firstAppearanceChapterId": "ch-377",
+    "canonStatus": "canon"
+  },
+  {
+    "id": "keni-wang",
+    "canonicalName": "Ken'i Wang",
+    "aliases": [],
+    "description": "Dirigeant des opérations de la famille Cha-R. S'allie tactiquement avec la Brigade Fantôme.",
+    "factionId": "mafia-char",
+    "firstAppearanceChapterId": "ch-377",
+    "canonStatus": "canon"
+  },
+  {
+    "id": "morena-prudo",
+    "canonicalName": "Morena Prudo",
+    "aliases": [],
+    "description": "Boss de la famille Heil-Ly. Possède la capacité d'infection Nen 'Et tu, Juliet' récompensant le meurtre.",
+    "factionId": "mafia-heilly",
+    "firstAppearanceChapterId": "ch-378",
+    "canonStatus": "canon"
+  },
+  {
+    "id": "luini",
+    "canonicalName": "Luini",
+    "aliases": [],
+    "description": "Assassin Heil-Ly. Utilise une capacité dimensionnelle pour traverser murs et plafonds blindés.",
+    "factionId": "mafia-heilly",
+    "firstAppearanceChapterId": "ch-378",
+    "canonStatus": "canon"
+  },
+  {
+    "id": "chrollo-lucilfer",
+    "canonicalName": "Chrollo Lucilfer",
+    "aliases": [
+      "Danchou"
+    ],
+    "description": "Chef de la Brigade Fantôme. Organise la traque d'Hisoka depuis le réfectoire du Tier 5.",
+    "factionId": "phantom-troupe",
+    "firstAppearanceChapterId": "ch-71",
+    "canonStatus": "canon"
+  },
+  {
+    "id": "nobunaga-hazama",
+    "canonicalName": "Nobunaga Hazama",
+    "aliases": [],
+    "description": "Membre de la Brigade Fantôme. En première ligne contre les Heil-Ly aux côtés des Cha-R.",
+    "factionId": "phantom-troupe",
+    "firstAppearanceChapterId": "ch-71",
+    "canonStatus": "canon"
+  },
+  {
+    "id": "gantai",
+    "canonicalName": "Gantai",
+    "aliases": [],
+    "description": "Personnel du Black Whale.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-unknown",
+    "canonStatus": "canon"
+  },
+  {
+    "id": "tamazo",
+    "canonicalName": "Tamazo",
+    "aliases": [],
+    "description": "Personnel du Black Whale.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-unknown",
+    "canonStatus": "canon"
+  },
+  {
+    "id": "theater-venue-announcer",
+    "canonicalName": "Theater Venue Announcer",
+    "aliases": [],
+    "description": "Annonceur du Theater Venue.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-unknown",
+    "canonStatus": "canon"
+  },
+  {
+    "id": "cheadle-yorkshire",
+    "canonicalName": "Cheadle Yorkshire",
+    "aliases": [],
+    "description": "Zodiaque. Médecin en chef de la clinique du Tier 3.",
+    "factionId": "zodiacs",
+    "firstAppearanceChapterId": "ch-unknown",
+    "canonStatus": "canon"
+  },
+  {
+    "id": "cluck",
+    "canonicalName": "Cluck",
+    "aliases": [],
+    "description": "Zodiaque.",
+    "factionId": "zodiacs",
+    "firstAppearanceChapterId": "ch-unknown",
+    "canonStatus": "canon"
+  },
+  {
+    "id": "ginta",
+    "canonicalName": "Ginta",
+    "aliases": [],
+    "description": "Zodiaque.",
+    "factionId": "zodiacs",
+    "firstAppearanceChapterId": "ch-unknown",
+    "canonStatus": "canon"
+  },
+  {
+    "id": "kanzai",
+    "canonicalName": "Kanzai",
+    "aliases": [],
+    "description": "Zodiaque.",
+    "factionId": "zodiacs",
+    "firstAppearanceChapterId": "ch-unknown",
+    "canonStatus": "canon"
+  },
+  {
+    "id": "leorio-paradinight",
+    "canonicalName": "Leorio Paradinight",
+    "aliases": [],
+    "description": "Zodiaque. Médecin affilié à Cheadle.",
+    "factionId": "zodiacs",
+    "firstAppearanceChapterId": "ch-unknown",
+    "canonStatus": "canon"
+  },
+  {
+    "id": "pyon",
+    "canonicalName": "Pyon",
+    "aliases": [],
+    "description": "Zodiaque.",
+    "factionId": "zodiacs",
+    "firstAppearanceChapterId": "ch-unknown",
+    "canonStatus": "canon"
+  },
+  {
+    "id": "saccho-kobayakawa",
+    "canonicalName": "Saccho Kobayakawa",
+    "aliases": [],
+    "description": "Zodiaque.",
+    "factionId": "zodiacs",
+    "firstAppearanceChapterId": "ch-unknown",
+    "canonStatus": "canon"
+  },
+  {
+    "id": "saiyu",
+    "canonicalName": "Saiyu",
+    "aliases": [],
+    "description": "Zodiaque. Suspecté d'être la taupe de Beyond.",
+    "factionId": "zodiacs",
+    "firstAppearanceChapterId": "ch-unknown",
+    "canonStatus": "canon"
+  },
+  {
+    "id": "basho",
+    "canonicalName": "Basho",
+    "aliases": [],
+    "description": "Hunter. Engagé par Luzurus.",
+    "factionId": "prince-luzurus",
+    "firstAppearanceChapterId": "ch-unknown",
+    "canonStatus": "canon"
+  },
+  {
+    "id": "belerainte",
+    "canonicalName": "Belerainte",
+    "aliases": [],
+    "description": "Hunter.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-unknown",
+    "canonStatus": "canon"
+  },
+  {
+    "id": "bill",
+    "canonicalName": "Bill",
+    "aliases": [],
+    "description": "Hunter. Garde de la Reine Oito et du Prince Woble.",
+    "factionId": "prince-woble",
+    "firstAppearanceChapterId": "ch-unknown",
+    "canonStatus": "canon"
+  },
+  {
+    "id": "giuliano",
+    "canonicalName": "Giuliano",
+    "aliases": [],
+    "description": "Hunter.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-unknown",
+    "canonStatus": "canon"
+  },
+  {
+    "id": "izunavi",
+    "canonicalName": "Izunavi",
+    "aliases": [],
+    "description": "Hunter. Maître de Kurapika, engagé par Tyson.",
+    "factionId": "prince-tyson",
+    "firstAppearanceChapterId": "ch-unknown",
+    "canonStatus": "canon"
+  },
+  {
+    "id": "keeney",
+    "canonicalName": "Keeney",
+    "aliases": [],
+    "description": "Hunter.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-unknown",
+    "canonStatus": "canon"
+  },
+  {
+    "id": "kurton",
+    "canonicalName": "Kurton",
+    "aliases": [],
+    "description": "Hunter.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-unknown",
+    "canonStatus": "canon"
+  },
+  {
+    "id": "ridge",
+    "canonicalName": "Ridge",
+    "aliases": [],
+    "description": "Hunter.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-unknown",
+    "canonStatus": "canon"
+  },
+  {
+    "id": "sanbica-norton",
+    "canonicalName": "Sanbica Norton",
+    "aliases": [],
+    "description": "Hunter.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-unknown",
+    "canonStatus": "canon"
+  },
+  {
+    "id": "sayird",
+    "canonicalName": "Sayird",
+    "aliases": [],
+    "description": "Hunter. Ancien garde contrôlé par Momoze puis détenu.",
+    "factionId": "prince-woble",
+    "firstAppearanceChapterId": "ch-unknown",
+    "canonStatus": "canon"
+  },
+  {
+    "id": "scairt",
+    "canonicalName": "Scairt",
+    "aliases": [],
+    "description": "Hunter.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-unknown",
+    "canonStatus": "canon"
+  },
+  {
+    "id": "tokarine",
+    "canonicalName": "Tokarine",
+    "aliases": [],
+    "description": "Hunter.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-unknown",
+    "canonStatus": "canon"
+  },
+  {
+    "id": "borksen",
+    "canonicalName": "Borksen",
+    "aliases": [],
+    "description": "Provisional Hunter (PH).",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-unknown",
+    "canonStatus": "canon"
+  },
+  {
+    "id": "danjin",
+    "canonicalName": "Danjin",
+    "aliases": [],
+    "description": "Provisional Hunter (PH).",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-unknown",
+    "canonStatus": "canon"
+  },
+  {
+    "id": "erikkusu",
+    "canonicalName": "Erikkusu",
+    "aliases": [],
+    "description": "Provisional Hunter (PH).",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-unknown",
+    "canonStatus": "canon"
+  },
+  {
+    "id": "gidal",
+    "canonicalName": "Gidal",
+    "aliases": [],
+    "description": "Provisional Hunter (PH).",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-unknown",
+    "canonStatus": "canon"
+  },
+  {
+    "id": "lisamsetta",
+    "canonicalName": "Lisamsetta",
+    "aliases": [],
+    "description": "Provisional Hunter (PH).",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-unknown",
+    "canonStatus": "canon"
+  },
+  {
+    "id": "meshush",
+    "canonicalName": "Meshush",
+    "aliases": [],
+    "description": "Provisional Hunter (PH).",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-unknown",
+    "canonStatus": "canon"
+  },
+  {
+    "id": "mozbe",
+    "canonicalName": "Mozbe",
+    "aliases": [],
+    "description": "Provisional Hunter (PH).",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-unknown",
+    "canonStatus": "canon"
+  },
+  {
+    "id": "muhahahasare",
+    "canonicalName": "Muhahahasare",
+    "aliases": [],
+    "description": "Provisional Hunter (PH).",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-unknown",
+    "canonStatus": "canon"
+  },
+  {
+    "id": "myuhan",
+    "canonicalName": "Myuhan",
+    "aliases": [],
+    "description": "Provisional Hunter (PH).",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-unknown",
+    "canonStatus": "canon"
+  },
+  {
+    "id": "salkov",
+    "canonicalName": "Salkov",
+    "aliases": [],
+    "description": "Provisional Hunter (PH).",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-unknown",
+    "canonStatus": "canon"
+  },
+  {
+    "id": "zomeesa",
+    "canonicalName": "Zomeesa",
+    "aliases": [],
+    "description": "Provisional Hunter (PH).",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-unknown",
+    "canonStatus": "canon"
+  },
+  {
+    "id": "unma-hui-guo-rou",
+    "canonicalName": "Unma Hui Guo Rou",
+    "aliases": [],
+    "description": "Reine de l'Empire de Kakin.",
+    "factionId": "kakin-royal-family",
+    "firstAppearanceChapterId": "ch-unknown",
+    "canonStatus": "canon"
+  },
+  {
+    "id": "duazul-hui-guo-rou",
+    "canonicalName": "Duazul Hui Guo Rou",
+    "aliases": [],
+    "description": "Reine de l'Empire de Kakin.",
+    "factionId": "kakin-royal-family",
+    "firstAppearanceChapterId": "ch-unknown",
+    "canonStatus": "canon"
+  },
+  {
+    "id": "tang-zhao-li-hui-guo-rou",
+    "canonicalName": "Tang Zhao Li Hui Guo Rou",
+    "aliases": [],
+    "description": "Reine de l'Empire de Kakin.",
+    "factionId": "kakin-royal-family",
+    "firstAppearanceChapterId": "ch-unknown",
+    "canonStatus": "canon"
+  },
+  {
+    "id": "katrono-hui-guo-rou",
+    "canonicalName": "Katrono Hui Guo Rou",
+    "aliases": [],
+    "description": "Reine de l'Empire de Kakin.",
+    "factionId": "kakin-royal-family",
+    "firstAppearanceChapterId": "ch-unknown",
+    "canonStatus": "canon"
+  },
+  {
+    "id": "swinko-swinko-hui-guo-rou",
+    "canonicalName": "Swinko-swinko Hui Guo Rou",
+    "aliases": [],
+    "description": "Reine de l'Empire de Kakin.",
+    "factionId": "kakin-royal-family",
+    "firstAppearanceChapterId": "ch-unknown",
+    "canonStatus": "canon"
+  },
+  {
+    "id": "seiko-hui-guo-rou",
+    "canonicalName": "Seiko Hui Guo Rou",
+    "aliases": [],
+    "description": "Reine de l'Empire de Kakin.",
+    "factionId": "kakin-royal-family",
+    "firstAppearanceChapterId": "ch-unknown",
+    "canonStatus": "canon"
+  },
+  {
+    "id": "sevanti-hui-guo-rou",
+    "canonicalName": "Sevanti Hui Guo Rou",
+    "aliases": [],
+    "description": "Reine de l'Empire de Kakin.",
+    "factionId": "kakin-royal-family",
+    "firstAppearanceChapterId": "ch-unknown",
+    "canonStatus": "canon"
+  },
+  {
+    "id": "gipper",
+    "canonicalName": "Gipper",
+    "aliases": [],
+    "description": "Membre de l'Armée Royale de Kakin.",
+    "factionId": "kakin-royal-army",
+    "firstAppearanceChapterId": "ch-unknown",
+    "canonStatus": "canon"
+  },
+  {
+    "id": "maizan",
+    "canonicalName": "Maizan",
+    "aliases": [],
+    "description": "Membre de l'Armée Royale de Kakin.",
+    "factionId": "kakin-royal-army",
+    "firstAppearanceChapterId": "ch-unknown",
+    "canonStatus": "canon"
+  },
+  {
+    "id": "mizuri",
+    "canonicalName": "Mizuri",
+    "aliases": [],
+    "description": "Membre de l'Armée Royale de Kakin.",
+    "factionId": "kakin-royal-army",
+    "firstAppearanceChapterId": "ch-unknown",
+    "canonStatus": "canon"
+  },
+  {
+    "id": "momolly",
+    "canonicalName": "Momolly",
+    "aliases": [],
+    "description": "Membre de l'Armée Royale de Kakin.",
+    "factionId": "kakin-royal-army",
+    "firstAppearanceChapterId": "ch-unknown",
+    "canonStatus": "canon"
+  },
+  {
+    "id": "otocin",
+    "canonicalName": "Otocin",
+    "aliases": [],
+    "description": "Membre de l'Armée Royale de Kakin.",
+    "factionId": "kakin-royal-army",
+    "firstAppearanceChapterId": "ch-unknown",
+    "canonStatus": "canon"
+  },
+  {
+    "id": "cleapatro",
+    "canonicalName": "Cleapatro",
+    "aliases": [],
+    "description": "Membre du Bureau de la Justice.",
+    "factionId": "justice-bureau",
+    "firstAppearanceChapterId": "ch-unknown",
+    "canonStatus": "canon"
+  },
+  {
+    "id": "kaiser",
+    "canonicalName": "Kaiser",
+    "aliases": [],
+    "description": "Membre du Bureau de la Justice.",
+    "factionId": "justice-bureau",
+    "firstAppearanceChapterId": "ch-unknown",
+    "canonStatus": "canon"
+  },
+  {
+    "id": "peuckert",
+    "canonicalName": "Peuckert",
+    "aliases": [],
+    "description": "Membre du Bureau de la Justice.",
+    "factionId": "justice-bureau",
+    "firstAppearanceChapterId": "ch-unknown",
+    "canonStatus": "canon"
+  },
+  {
+    "id": "steiner",
+    "canonicalName": "Steiner",
+    "aliases": [],
+    "description": "Membre du Bureau de la Justice.",
+    "factionId": "justice-bureau",
+    "firstAppearanceChapterId": "ch-unknown",
+    "canonStatus": "canon"
+  },
+  {
+    "id": "worio-bay",
+    "canonicalName": "Worio Bay",
+    "aliases": [],
+    "description": "Membre du Bureau de la Justice.",
+    "factionId": "justice-bureau",
+    "firstAppearanceChapterId": "ch-unknown",
+    "canonStatus": "canon"
+  },
+  {
+    "id": "nugui",
+    "canonicalName": "Nugui",
+    "aliases": [],
+    "description": "Passager / Autre affiliation.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-unknown",
+    "canonStatus": "canon"
+  },
+  {
+    "id": "mandam",
+    "canonicalName": "Mandam",
+    "aliases": [],
+    "description": "Passager / Autre affiliation.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-unknown",
+    "canonStatus": "canon"
+  },
+  {
+    "id": "morrissey",
+    "canonicalName": "Morrissey",
+    "aliases": [],
+    "description": "Passager / Autre affiliation.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-unknown",
     "canonStatus": "canon"
   }
 ]

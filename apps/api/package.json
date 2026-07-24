@@ -13,6 +13,7 @@
     "clean": "rimraf dist *.tsbuildinfo"
   },
   "dependencies": {
+    "@black-whale/ability-modules": "workspace:*",
     "@black-whale/contracts": "workspace:*",
     "@black-whale/database": "workspace:*",
     "@black-whale/domain": "workspace:*",

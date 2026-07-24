@@ -278,13 +278,13 @@ export interface INenEngine {
 // ──────────────────────────────────────────────
 
 /** The six base Nen actions always considered for the wheel */
-export const BASE_NEN_ACTIONS: Omit<NenActionWheelEntry, 'visibility'>[] = [
-  { id: 'observe-aura', label: 'Observer l\'aura', abilityId: null },
-  { id: 'activate-en', label: 'Activer En', abilityId: null },
-  { id: 'use-ability', label: 'Utiliser capacité', abilityId: null },
-  { id: 'maintain-effect', label: 'Maintenir effet', abilityId: null },
-  { id: 'release-aura', label: 'Libérer aura', abilityId: null },
-  { id: 'cancel', label: 'Annuler', abilityId: null },
+export const BASE_NEN_ACTIONS: NenActionWheelEntry[] = [
+  { id: 'observe-aura', label: 'Observer l\'aura', abilityId: null, visibility: 'available' },
+  { id: 'activate-en', label: 'Activer En', abilityId: null, visibility: 'available' },
+  { id: 'use-ability', label: 'Utiliser capacité', abilityId: null, visibility: 'available' },
+  { id: 'maintain-effect', label: 'Maintenir effet', abilityId: null, visibility: 'available' },
+  { id: 'release-aura', label: 'Libérer aura', abilityId: null, visibility: 'available' },
+  { id: 'cancel', label: 'Annuler', abilityId: null, visibility: 'available' },
 ]
 
 // ──────────────────────────────────────────────
@@ -299,22 +299,51 @@ export class NenEngine implements INenEngine {
   }
 
   async validate(context: AbilityContext): Promise<ValidationResult> {
-    throw new Error(`NenEngine.validate not implemented — abilityId: ${context.abilityId}`)
+    const module = this.modules.get(context.abilityId)
+    if (!module) {
+      return { allowed: false, reason: `Ability module not found: ${context.abilityId}` }
+    }
+    return module.validateActivation(context)
   }
 
   async execute(context: AbilityContext): Promise<AbilityResult> {
-    throw new Error(`NenEngine.execute not implemented — abilityId: ${context.abilityId}`)
+    const module = this.modules.get(context.abilityId)
+    if (!module) {
+      return { allowed: false, reason: `Ability module not found: ${context.abilityId}` }
+    }
+    const validation = module.validateActivation(context)
+    if (!validation.allowed) {
+      return { allowed: false, reason: validation.reason }
+    }
+    return module.execute(context)
   }
 
   async getActiveAbilities(eventId: string): Promise<AbilityActivation[]> {
-    throw new Error(`NenEngine.getActiveAbilities not implemented — eventId: ${eventId}`)
+    // Return empty array for now since AbilityActivation is not stored in DB
+    return []
   }
 
   async buildActionWheel(context: AbilityContext): Promise<NenActionWheelEntry[]> {
-    throw new Error(`NenEngine.buildActionWheel not implemented — abilityId: ${context.abilityId}`)
+    let moduleActions: NenActionWheelEntry[] = []
+    if (context.abilityId) {
+      const module = this.modules.get(context.abilityId)
+      if (module) {
+        moduleActions = module.getActionWheel(context)
+      }
+    }
+    return [...BASE_NEN_ACTIONS, ...moduleActions]
   }
 
   async explainAction(actionId: string, context: AbilityContext): Promise<ActionAvailability> {
-    throw new Error(`NenEngine.explainAction not implemented — actionId: ${actionId}, abilityId: ${context.abilityId}`)
+    const module = this.modules.get(context.abilityId)
+    if (module) {
+      return module.explainAction(actionId, context)
+    }
+    // Fallback for base actions
+    return {
+      actionId,
+      available: BASE_NEN_ACTIONS.some(a => a.id === actionId),
+      conditions: [{ label: 'Action de base du Nen', status: 'met' }]
+    }
   }
 }

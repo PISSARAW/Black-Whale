@@ -114,11 +114,11 @@ export class TimelineEngine implements ITimelineEngine {
       consciousnesses: [],
       locations: [],
       activeAbilities: [],
-      bodyStates: activeStates.reduce((acc, state) => {
+      bodyStates: activeStates.reduce((acc: Record<string, string>, state: any) => {
         // En V2, l'état est lié au bodyId
         acc[state.bodyId] = state.state
         return acc
-      }, {} as Record<string, string>),
+      }, {}),
       presences: activePresences as any,
       knownFacts: []
     }

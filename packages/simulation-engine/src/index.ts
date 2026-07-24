@@ -1,5 +1,19 @@
-import type { SimulationBranch, SimulationEvent } from '@black-whale/domain'
 import type { WorldSnapshot } from '@black-whale/timeline-engine'
+
+export interface SimulationBranch {
+  id: string
+  name: string
+  parentEventId: string
+  createdAt: Date
+}
+
+export interface SimulationEvent {
+  id: string
+  branchId: string
+  sequence: number
+  type: string
+  payload: any
+}
 
 // ──────────────────────────────────────────────
 // Types

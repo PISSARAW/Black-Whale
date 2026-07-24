@@ -6,7 +6,7 @@ export const load: PageServerLoad = async ({ cookies }) => {
 	const spoilerLimit = spoilerLimitCookie ? parseInt(spoilerLimitCookie) : null;
 
 	const whereClause = spoilerLimit ? {
-		firstVisibleChapter: { lte: spoilerLimit }
+		chapter: { number: { lte: spoilerLimit } }
 	} : {};
 
 	const events = await prisma.narrativeEvent.findMany({
@@ -14,10 +14,10 @@ export const load: PageServerLoad = async ({ cookies }) => {
 		include: {
 			chapter: true,
 			presencesFrom: {
-				include: { character: true, location: true }
+				include: { body: { include: { character: true } }, location: true }
 			},
 			presencesUntil: {
-				include: { character: true, location: true }
+				include: { body: { include: { character: true } }, location: true }
 			}
 		},
 		orderBy: [

@@ -17,13 +17,7 @@
   <header class="bg-[#111] border border-[#333] rounded-lg p-6 mb-8">
     <h1 class="text-4xl font-bold text-white mb-2">{character.canonicalName}</h1>
     <div class="flex flex-wrap gap-3">
-      {#if character.faction}
-        <span class="px-3 py-1 bg-[#222] text-gray-300 rounded-full text-sm border border-[#444]">{character.faction}</span>
-      {/if}
-      {#if character.role}
-        <span class="px-3 py-1 bg-[#222] text-gray-300 rounded-full text-sm border border-[#444]">{character.role}</span>
-      {/if}
-      <span class="px-3 py-1 bg-bw-gold/10 text-bw-gold rounded-full text-sm border border-bw-gold/30">Apparu Ch. {character.firstVisibleChapter}</span>
+      <span class="px-3 py-1 bg-bw-gold/10 text-bw-gold rounded-full text-sm border border-bw-gold/30">Apparu Ch. {character.firstVisibleEvent.chapter.number}</span>
     </div>
   </header>
 
@@ -42,15 +36,15 @@
               
               <div class="bg-[#111] border border-[#222] p-4 rounded-lg">
                 <div class="text-xs text-gray-400 mb-1">
-                  Ch. {presence.fromEvent.chapterId} — Séquence {presence.fromEvent.sequence}
+                  Ch. {presence.fromEvent.chapter.number} — Séquence {presence.fromEvent.sequence}
                 </div>
                 <h3 class="font-bold text-white mb-1">Position: {presence.location.name}</h3>
                 <p class="text-sm text-gray-400">
                   Certitude: <span class="text-gray-300">{presence.certainty}</span>
                 </p>
-                {#if presence.untilEventId}
+                {#if presence.untilEvent}
                   <div class="mt-2 text-xs text-gray-500 border-t border-[#333] pt-2">
-                    Jusqu'au Ch. {presence.untilEvent?.chapterId}
+                    Jusqu'au Ch. {presence.untilEvent.chapter.number}
                   </div>
                 {/if}
               </div>
@@ -74,7 +68,7 @@
               
               <div class="bg-[#111] border border-red-900/30 p-4 rounded-lg">
                 <div class="text-xs text-gray-400 mb-1">
-                  Ch. {state.fromEvent.chapterId}
+                  Ch. {state.fromEvent.chapter.number}
                 </div>
                 <h3 class="font-bold text-white mb-1">{state.condition}</h3>
                 <p class="text-sm text-gray-400">{state.details || ''}</p>

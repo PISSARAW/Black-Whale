@@ -7,7 +7,8 @@ export const load: PageServerLoad = async ({ cookies }) => {
 	const spoilerProfile = spoilerLimitCookie ? { maxChapter: parseInt(spoilerLimitCookie) } : undefined;
 
 	let characters = await prisma.character.findMany({
-		orderBy: { canonicalName: 'asc' }
+		orderBy: { canonicalName: 'asc' },
+		include: { firstVisibleEvent: { include: { chapter: true } } }
 	});
 
 	if (spoilerProfile) {

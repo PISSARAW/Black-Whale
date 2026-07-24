@@ -14,10 +14,7 @@
       <a href="/characters/{character.slug}" class="block bg-[#111] border border-[#333] rounded-lg p-4 hover:border-bw-gold hover:bg-[#1a1a1a] transition-all">
         <h2 class="text-xl font-bold text-gray-100 mb-2">{character.canonicalName}</h2>
         <div class="flex gap-2">
-          {#if character.faction}
-            <span class="text-xs bg-[#222] text-gray-400 px-2 py-1 rounded">{character.faction}</span>
-          {/if}
-          <span class="text-xs border border-[#333] text-gray-500 px-2 py-1 rounded">Ch. {character.firstVisibleChapter}</span>
+          <span class="text-xs border border-[#333] text-gray-500 px-2 py-1 rounded">Ch. {character.firstVisibleEvent.chapter.number}</span>
         </div>
       </a>
     {:else}

@@ -9,9 +9,9 @@
   let locations = $derived($page.data.worldState?.locations || []);
 
   let dynamicCharacters = $derived(
-    presences.map(p => {
-      const char = characters.find(c => c.id === p.entityId);
-      const loc = locations.find(l => l.id === p.locationId);
+    presences.map((p: any) => {
+      const char = characters.find((c: any) => c.id === p.entityId);
+      const loc = locations.find((l: any) => l.id === p.locationId);
       
       // Try to determine the Tier from location hierarchy
       let tierId = null;
@@ -43,7 +43,7 @@
   );
 
   let visibleCharacters = $derived(
-    dynamicCharacters.filter(c => {
+    dynamicCharacters.filter((c: any) => {
       if (mapState.currentZoomLevel === 'OVERVIEW') return false;
       if (mapState.selectedTier && c.tierId !== mapState.selectedTier) return false;
       return true;

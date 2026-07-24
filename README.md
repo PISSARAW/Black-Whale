@@ -4,6 +4,8 @@
 
 Track bodies, consciousnesses, Nen abilities, and character knowledge across every chapter of the Black Whale arc.
 
+🚀 **Status:** [v1.0.0 Released] - Timeline, Ship Map, and Spoiler Engine are fully functional!
+
 ---
 
 ## Architecture
@@ -19,10 +21,12 @@ black-whale/
 ├── packages/
 │   ├── domain/              # Shared TypeScript models & domain events
 │   ├── contracts/           # API DTOs shared between frontend & backend
+│   ├── database/            # Prisma schema and PostgreSQL client
 │   ├── timeline-engine/     # Reconstructs world state at any event
 │   ├── identity-engine/     # Separates body / consciousness / aura
 │   ├── perspective-engine/  # Filters world through a character's POV
 │   ├── knowledge-engine/    # What each character knows or believes
+│   ├── spoiler-engine/      # Protects users from future chapter spoilers
 │   ├── nen-engine/          # Validates and executes Nen abilities
 │   ├── simulation-engine/   # Non-canonical branch timelines
 │   ├── map-engine/          # Ship map layers and entity positions
@@ -53,7 +57,7 @@ black-whale/
 | Backend | NestJS 10, Fastify |
 | Database | PostgreSQL 16 |
 | Cache | Redis 7 |
-| ORM | Prisma / Drizzle (to add) |
+| ORM | Prisma |
 | Search | Meilisearch (to add) |
 | Storage | Cloudflare R2 / S3 (to add) |
 | Monorepo | pnpm workspaces + Turborepo |
@@ -66,7 +70,7 @@ black-whale/
 
 - Node ≥ 20
 - pnpm ≥ 9
-- Docker (for local database)
+- PostgreSQL database running locally
 
 ### Install
 
@@ -74,10 +78,20 @@ black-whale/
 pnpm install
 ```
 
-### Start local services
+### Configuration & Database Initialization
+
+Make sure to create `.env` files in your applications with a valid database connection string:
 
 ```bash
-docker compose -f infrastructure/docker/docker-compose.yml up postgres redis
+# Set your DATABASE_URL in the .env file (apps/api, apps/web, apps/admin, packages/database)
+DATABASE_URL="postgresql://<user>@localhost:5432/blackwhale?schema=public"
+```
+
+Create the database and push the Prisma schema:
+
+```bash
+createdb blackwhale
+pnpm --filter "@black-whale/database" db:push
 ```
 
 ### Run in development
@@ -120,13 +134,13 @@ At any point in the story, the system can answer:
 
 ## MVP roadmap
 
-| Version | Scope |
-|---|---|
-| v1 | Ship map, characters, positions, timeline, spoiler filter |
-| v2 | Body/consciousness split, knowledge engine, perspective comparison |
-| v3 | Nen rule engine (declarative YAML), conditions, post-mortem Nen |
-| v4 | Ability modules (Bungee Gum, Emperor Time, consciousness transfer…) |
-| v5 | Simulations, community theories, canonical vs non-canonical branches |
+| Version | Scope | Status |
+|---|---|---|
+| **v1** | Ship map, characters, positions, timeline, spoiler filter | ✅ Released |
+| **v2** | Body/consciousness split, knowledge engine, perspective comparison | 🏗️ Next |
+| **v3** | Nen rule engine (declarative YAML), conditions, post-mortem Nen | 📅 Planned |
+| **v4** | Ability modules (Bungee Gum, Emperor Time, consciousness transfer…) | 📅 Planned |
+| **v5** | Simulations, community theories, canonical vs non-canonical branches | 📅 Planned |
 
 ---
 

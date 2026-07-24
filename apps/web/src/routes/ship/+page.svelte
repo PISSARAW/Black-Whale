@@ -1,8 +1,11 @@
 <script lang="ts">
+  import type { PageData } from './$types';
   import MapContainer from '$lib/components/map/MapContainer.svelte';
   import LocationDetails from '$lib/components/map/LocationDetails.svelte';
   import UnknownPositions from '$lib/components/map/UnknownPositions.svelte';
   import { mapState } from '$lib/state/mapState.svelte';
+
+  let { data }: { data: PageData } = $props();
 
   // Toolbar & Factions setup (mocked for V1 UI)
   const factions = [
@@ -12,6 +15,23 @@
     { id: 'spider', label: 'Brigade' },
     { id: 'mafia', label: 'Mafias' }
   ];
+
+  // Initialize MapState from server data
+  $effect(() => {
+    // Basic setup - the state management would need to store this properly
+    // For now we pass it implicitly to components or log it
+    console.log('World State loaded:', data.worldState);
+  });
+
+  // Timeline slider change
+  function handleTimelineChange(e: Event) {
+    const input = e.target as HTMLInputElement;
+    const newSeq = parseInt(input.value);
+    
+    // Instead of doing full page reload, we could fetch via API.
+    // For the MVP, a reload with param works
+    window.location.href = `/ship?sequence=${newSeq}`;
+  }
 </script>
 
 <svelte:head>
@@ -26,9 +46,16 @@
       <h1 class="text-xl font-bold tracking-widest text-[#FFD700]">BLACK WHALE</h1>
       
       <div class="flex items-center gap-2 border-l border-gray-700 pl-6">
-        <span class="text-xs text-gray-500 uppercase tracking-widest">Chapitre 390</span>
-        <span class="text-gray-400">·</span>
-        <span class="text-sm font-semibold">Événement 14</span>
+        {#if data.sequence}
+          {@const currentEvt = data.events.find(e => e.sequence === data.sequence) || data.events[data.events.length - 1]}
+          <span class="text-xs text-gray-500 uppercase tracking-widest">
+             Séquence {data.sequence}
+          </span>
+          <span class="text-gray-400">·</span>
+          <span class="text-sm font-semibold">{currentEvt?.title || 'Unknown'}</span>
+        {:else}
+          <span class="text-sm text-gray-500">Timeline Error</span>
+        {/if}
       </div>
     </div>
     
@@ -102,10 +129,22 @@
     </main>
   </div>
   
-  <!-- Bottom Timeline (mock) -->
-  <footer class="flex-none h-16 bg-[#111] border-t border-[#333] flex items-center px-6 z-10">
-    <span class="text-xs text-gray-500 mr-4">TIMELINE</span>
-    <input type="range" min="0" max="100" value="14" class="w-full accent-[#FFD700]" />
+  <!-- Bottom Timeline -->
+  <footer class="flex-none h-16 bg-[#111] border-t border-[#333] flex items-center px-6 z-10 gap-4">
+    <span class="text-xs text-gray-500 mr-4 font-bold">TIMELINE</span>
+    
+    {#if data.events.length > 0}
+      <input 
+        type="range" 
+        min={data.events[0].sequence} 
+        max={data.events[data.events.length - 1].sequence} 
+        value={data.sequence} 
+        onchange={handleTimelineChange}
+        class="w-full accent-[#FFD700]" 
+      />
+    {:else}
+      <span class="text-sm text-gray-400">Aucun événement disponible.</span>
+    {/if}
   </footer>
 
 </div>

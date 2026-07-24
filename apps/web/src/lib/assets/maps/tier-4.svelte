@@ -6,55 +6,111 @@
   }
 </script>
 
-<svg viewBox="0 0 1000 800" class="w-full h-full text-gray-300">
+<svg viewBox="0 0 1000 600" class="w-full h-full text-[#FFFFF0]">
   <defs>
     <style>
-      .room {
-        fill: #1a1a1a;
-        stroke: #FFFFF0;
-        stroke-width: 2;
+      .hull {
+        fill: #2d2013; /* amber/brown */
+        stroke: #a0aec0; /* metallic */
+        stroke-width: 4;
+      }
+      .zone {
+        fill: #1c140c;
+        stroke: #718096;
+        stroke-width: 1;
         transition: fill 0.2s;
         cursor: pointer;
       }
-      .room:hover {
-        fill: #333;
+      .zone:hover {
+        fill: #362617;
       }
-      .room.selected {
+      .zone.selected {
         stroke: #FFD700;
-        fill: #2a2a2a;
+        fill: #5c4125;
       }
-      .corridor {
-        fill: #111;
-        stroke: #FFFFF0;
-        stroke-width: 2;
-        stroke-dasharray: 5,5;
+      .transport {
+        fill: none;
+        stroke: #4a5568;
+        stroke-width: 8;
+        stroke-dasharray: 10,10;
+      }
+      .recycling {
+        fill: url(#stripes);
       }
       .label {
-        fill: #FFFFF0;
+        fill: #e2e8f0;
         font-family: sans-serif;
-        font-size: 14px;
+        font-size: 12px;
+        font-weight: bold;
+        pointer-events: none;
+        text-anchor: middle;
+      }
+      .sublabel {
+        fill: #a0aec0;
+        font-size: 9px;
         pointer-events: none;
         text-anchor: middle;
       }
     </style>
+    <pattern id="stripes" patternUnits="userSpaceOnUse" width="10" height="10" patternTransform="rotate(45)">
+      <line x1="0" y1="0" x2="0" y2="10" stroke="#718096" stroke-width="5" />
+    </pattern>
   </defs>
 
-  <g id="tier-4-sectors">
-    <path class="corridor" d="M 200 400 L 800 400 L 800 450 L 200 450 Z" />
+  <!-- Outer Hull Tier 4 -->
+  <path class="hull" d="M 120 50 C 20 50, 20 550, 120 550 L 850 550 C 970 550, 970 50, 850 50 Z" />
 
-    <g id="t4-dorms" on:click={() => handleZoneClick('t4-dorms')}>
-      <rect class="room" class:selected={mapState.selectedLocationId === 't4-dorms'} x="250" y="150" width="500" height="200" />
-      <text x="500" y="250" class="label text-xl">Dortoirs Civils (Classe moyenne)</text>
+  <g id="tier-4-zones">
+    
+    <!-- Routes de Transport -->
+    <path class="transport" d="M 150 250 L 820 250 M 150 350 L 820 350" />
+    
+    <!-- Districts Commerciaux & Résidentiels (Dense) -->
+    <!-- Left block -->
+    <g on:click={() => handleZoneClick('t4-dist-west')}>
+      <rect class="zone" class:selected={mapState.selectedLocationId === 't4-dist-west'} x="160" y="80" width="140" height="150" />
+      <rect class="zone" class:selected={mapState.selectedLocationId === 't4-dist-west'} x="160" y="270" width="140" height="60" />
+      <rect class="zone" class:selected={mapState.selectedLocationId === 't4-dist-west'} x="160" y="370" width="140" height="110" />
+      <text x="230" y="160" class="label">District Ouest</text>
     </g>
 
-    <g id="t4-market" on:click={() => handleZoneClick('t4-market')}>
-      <rect class="room" class:selected={mapState.selectedLocationId === 't4-market'} x="250" y="500" width="200" height="200" />
-      <text x="350" y="600" class="label">Marché / Commerces</text>
+    <!-- Center block -->
+    <g on:click={() => handleZoneClick('t4-dist-center')}>
+      <rect class="zone" class:selected={mapState.selectedLocationId === 't4-dist-center'} x="320" y="80" width="160" height="150" />
+      <rect class="zone" class:selected={mapState.selectedLocationId === 't4-dist-center'} x="320" y="370" width="160" height="110" />
+      <text x="400" y="160" class="label">District Central</text>
+      <text x="400" y="175" class="sublabel">Commerce & Résidence</text>
     </g>
 
-    <g id="t4-control" on:click={() => handleZoneClick('t4-control')}>
-      <rect class="room" class:selected={mapState.selectedLocationId === 't4-control'} x="550" y="500" width="200" height="200" />
-      <text x="650" y="600" class="label">Contrôle de sécurité</text>
+    <!-- Xi-Yu Office -->
+    <g id="t4-xiyu" on:click={() => handleZoneClick('t4-xiyu')}>
+      <rect class="zone" class:selected={mapState.selectedLocationId === 't4-xiyu'} x="320" y="270" width="160" height="60" />
+      <text x="400" y="305" class="label">Bureau Xi-Yu</text>
     </g>
+
+    <!-- Medical (Limited) & Military -->
+    <g id="t4-military-conf" on:click={() => handleZoneClick('t4-military-conf')}>
+      <rect class="zone" class:selected={mapState.selectedLocationId === 't4-military-conf'} x="500" y="80" width="150" height="150" />
+      <text x="575" y="150" class="label">Conférence</text>
+      <text x="575" y="165" class="sublabel">Militaire</text>
+    </g>
+    <g id="t4-medical-limited" on:click={() => handleZoneClick('t4-medical-limited')}>
+      <rect class="zone" class:selected={mapState.selectedLocationId === 't4-medical-limited'} x="500" y="370" width="150" height="110" />
+      <text x="575" y="425" class="label">Service Médical</text>
+      <text x="575" y="440" class="sublabel">(Capacité Limitée)</text>
+    </g>
+
+    <!-- Right block -->
+    <g on:click={() => handleZoneClick('t4-dist-east')}>
+      <rect class="zone" class:selected={mapState.selectedLocationId === 't4-dist-east'} x="670" y="80" width="140" height="400" />
+      <text x="740" y="280" class="label">District Est</text>
+    </g>
+
+    <!-- Frontière de Recyclage (Sud) -->
+    <g id="t4-recycling" on:click={() => handleZoneClick('t4-recycling')}>
+      <path class="zone recycling" class:selected={mapState.selectedLocationId === 't4-recycling'} d="M 120 500 L 850 500 L 850 540 C 750 550, 250 550, 120 540 Z" />
+      <text x="500" y="525" class="label" fill="#1a202c">INSTALLATIONS TECHNIQUES & RECYCLAGE (VERS TIER 5)</text>
+    </g>
+
   </g>
 </svg>

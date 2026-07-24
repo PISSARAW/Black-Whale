@@ -6,59 +6,88 @@
   }
 </script>
 
-<svg viewBox="0 0 1000 800" class="w-full h-full text-gray-300">
+<svg viewBox="0 0 1000 600" class="w-full h-full text-[#FFFFF0]">
   <defs>
     <style>
-      .room {
-        fill: #1a1a1a;
-        stroke: #FFFFF0;
+      .hull {
+        fill: #0a192f;
+        stroke: #c0c0c0;
+        stroke-width: 4;
+      }
+      .zone {
+        fill: #112240;
+        stroke: #c0c0c0;
         stroke-width: 2;
         transition: fill 0.2s;
         cursor: pointer;
       }
-      .room:hover {
-        fill: #333;
+      .zone:hover {
+        fill: #1a365d;
       }
-      .room.selected {
+      .zone.selected {
         stroke: #FFD700;
-        fill: #2a2a2a;
+        fill: #234e8c;
       }
-      .corridor {
-        fill: #111;
-        stroke: #FFFFF0;
-        stroke-width: 2;
-        stroke-dasharray: 5,5;
+      .barrier {
+        fill: #020c1b;
+        stroke: #FF4500;
+        stroke-width: 3;
+        stroke-dasharray: 10,5;
       }
       .label {
         fill: #FFFFF0;
         font-family: sans-serif;
         font-size: 14px;
+        font-weight: bold;
+        pointer-events: none;
+        text-anchor: middle;
+      }
+      .sublabel {
+        fill: #8892b0;
+        font-size: 11px;
         pointer-events: none;
         text-anchor: middle;
       }
     </style>
   </defs>
 
-  <g id="tier-2-sectors">
-    <!-- Main corridor connecting them -->
-    <path class="corridor" d="M 150 400 L 850 400 L 850 450 L 150 450 Z" />
+  <!-- Outer Hull Tier 2 -->
+  <path class="hull" d="M 200 80 C 50 80, 50 520, 200 520 L 750 520 C 950 520, 950 80, 750 80 Z" />
 
-    <!-- Quartier VIP -->
+  <g id="tier-2-zones">
+    <!-- Quartiers VIP & Célébrités -->
     <g id="t2-vip" on:click={() => handleZoneClick('t2-vip')}>
-      <rect class="room" class:selected={mapState.selectedLocationId === 't2-vip'} x="200" y="150" width="600" height="200" />
-      <text x="500" y="250" class="label text-xl">Quartier VIP</text>
+      <rect class="zone" class:selected={mapState.selectedLocationId === 't2-vip'} x="250" y="150" width="300" height="150" />
+      <text x="400" y="215" class="label">Quartiers VIP</text>
+      <text x="400" y="235" class="sublabel">Célébrités & Fortunes</text>
     </g>
 
-    <!-- Zone de services / Restauration VIP -->
-    <g id="t2-services" on:click={() => handleZoneClick('t2-services')}>
-      <rect class="room" class:selected={mapState.selectedLocationId === 't2-services'} x="200" y="500" width="250" height="200" />
-      <text x="325" y="600" class="label">Services & Restauration</text>
+    <!-- Théâtre & Divertissements -->
+    <g id="t2-theater" on:click={() => handleZoneClick('t2-theater')}>
+      <rect class="zone" class:selected={mapState.selectedLocationId === 't2-theater'} x="600" y="150" width="200" height="150" />
+      <text x="700" y="225" class="label">Le Théâtre</text>
     </g>
 
-    <!-- Zone Militaire -->
-    <g id="t2-military" on:click={() => handleZoneClick('t2-military')}>
-      <rect class="room" class:selected={mapState.selectedLocationId === 't2-military'} x="550" y="500" width="250" height="200" />
-      <text x="675" y="600" class="label">Zone Militaire</text>
+    <!-- Espaces de Réception & Services -->
+    <g id="t2-reception" on:click={() => handleZoneClick('t2-reception')}>
+      <rect class="zone" class:selected={mapState.selectedLocationId === 't2-reception'} x="250" y="350" width="550" height="100" />
+      <text x="525" y="395" class="label">Espaces de Réception & Services Privilégiés</text>
     </g>
+
+    <!-- Accès Tier 1 -->
+    <g id="t2-access-t1" on:click={() => handleZoneClick('t2-access-t1')}>
+      <circle class="zone" class:selected={mapState.selectedLocationId === 't2-access-t1'} cx="525" cy="115" r="25" />
+      <text x="525" y="119" class="label text-[10px]">T1</text>
+    </g>
+
+    <!-- Secteur de Sécurité & Accès Tier 3 -->
+    <g id="t2-security" on:click={() => handleZoneClick('t2-security')}>
+      <path class="zone" class:selected={mapState.selectedLocationId === 't2-security'} d="M 150 480 L 850 480 L 850 515 C 750 520, 250 520, 150 515 Z" />
+      <text x="500" y="505" class="label text-xs">Secteur de Sécurité & Contrôle</text>
+    </g>
+
+    <!-- CLOISON BLINDÉE TIER 2 - TIER 3 -->
+    <path class="barrier" d="M 150 520 L 850 520" />
+    <text x="500" y="535" class="label text-[10px]" fill="#FF4500">CLOISON BLINDÉE (VERS TIER 3)</text>
   </g>
 </svg>

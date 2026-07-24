@@ -6,78 +6,89 @@
   }
 </script>
 
-<svg viewBox="0 0 1000 800" class="w-full h-full text-gray-300">
+<svg viewBox="0 0 1000 600" class="w-full h-full text-[#FFFFF0]">
   <defs>
     <style>
-      .room {
-        fill: #1a1a1a;
+      .hull {
+        fill: #1a0f0f;
+        stroke: #FFD700;
+        stroke-width: 4;
+      }
+      .zone {
+        fill: #2a1515;
         stroke: #FFFFF0;
         stroke-width: 2;
         transition: fill 0.2s;
         cursor: pointer;
       }
-      .room:hover {
-        fill: #333;
+      .zone:hover {
+        fill: #3d1c1c;
       }
-      .room.selected {
+      .zone.selected {
         stroke: #FFD700;
-        fill: #2a2a2a;
+        fill: #4d2020;
       }
       .corridor {
-        fill: #111;
-        stroke: #FFFFF0;
-        stroke-width: 2;
-        stroke-dasharray: 5,5;
+        fill: #110808;
+        stroke: #FFD700;
+        stroke-width: 1;
+        stroke-dasharray: 4,4;
       }
       .label {
         fill: #FFFFF0;
         font-family: sans-serif;
         font-size: 14px;
+        font-weight: bold;
         pointer-events: none;
         text-anchor: middle;
       }
-      .fog-of-war {
-        fill: url(#fog);
+      .sublabel {
+        fill: #FFD700;
+        font-size: 11px;
+        pointer-events: none;
+        text-anchor: middle;
       }
     </style>
-    <pattern id="fog" patternUnits="userSpaceOnUse" width="10" height="10">
-      <path d="M-1,1 l2,-2 M0,10 l10,-10 M9,11 l2,-2" stroke="#555" stroke-width="1" />
-    </pattern>
   </defs>
 
-  <g id="tier-1-sector-royal">
-    <!-- Corridors -->
-    <path class="corridor" d="M 200 300 L 800 300 L 800 350 L 200 350 Z" />
-    <text x="500" y="330" class="label">Couloir 1000</text>
+  <!-- Outer Hull Tier 1 (Smaller deck) -->
+  <path class="hull" d="M 250 100 C 100 100, 100 500, 250 500 L 700 500 C 900 500, 900 100, 700 100 Z" />
 
-    <!-- Room 1014 -->
-    <g id="room-1014" on:click={() => handleZoneClick('room-1014')}>
-      <rect class="room" class:selected={mapState.selectedLocationId === 'room-1014'} x="250" y="150" width="150" height="150" />
-      <text x="325" y="225" class="label">Chambre 1014</text>
+  <!-- Main Royal Corridor -->
+  <path class="corridor" d="M 200 280 L 800 280 L 800 320 L 200 320 Z" />
+
+  <g id="tier-1-zones">
+    <!-- Quartiers Princiers -->
+    <g id="t1-princes" on:click={() => handleZoneClick('t1-princes')}>
+      <rect class="zone" class:selected={mapState.selectedLocationId === 't1-princes'} x="300" y="150" width="300" height="100" />
+      <text x="450" y="195" class="label">Quartier Royal</text>
+      <text x="450" y="215" class="sublabel">Chambres 1001-1014</text>
     </g>
 
-    <!-- Room 1013 -->
-    <g id="room-1013" on:click={() => handleZoneClick('room-1013')}>
-      <rect class="room" class:selected={mapState.selectedLocationId === 'room-1013'} x="450" y="150" width="150" height="150" />
-      <text x="525" y="225" class="label">Chambre 1013</text>
-    </g>
-    
-    <!-- Room 1004 (Tserriednich) -->
-    <g id="room-1004" on:click={() => handleZoneClick('room-1004')}>
-      <rect class="room" class:selected={mapState.selectedLocationId === 'room-1004'} x="650" y="150" width="150" height="150" />
-      <text x="725" y="225" class="label">Chambre 1004</text>
+    <!-- Résidence du Roi & Reines -->
+    <g id="t1-king-queens" on:click={() => handleZoneClick('t1-king-queens')}>
+      <path class="zone" class:selected={mapState.selectedLocationId === 't1-king-queens'} d="M 150 200 L 250 200 L 250 400 L 150 400 C 120 300, 120 250, 150 200 Z" />
+      <text x="210" y="295" class="label">Roi & Reines</text>
     </g>
 
-    <!-- Medical Zone -->
-    <g id="zone-medical" on:click={() => handleZoneClick('zone-medical')}>
-      <rect class="room" class:selected={mapState.selectedLocationId === 'zone-medical'} x="250" y="400" width="200" height="200" />
-      <text x="350" y="500" class="label">Zone Médicale</text>
+    <!-- Zone cérémonielle & Banquet -->
+    <g id="t1-ceremony" on:click={() => handleZoneClick('t1-ceremony')}>
+      <rect class="zone" class:selected={mapState.selectedLocationId === 't1-ceremony'} x="300" y="350" width="200" height="100" />
+      <text x="400" y="405" class="label">Cérémonies & Banquet</text>
     </g>
 
-    <!-- Unknown Zone (Fog of war) -->
-    <g id="zone-unknown">
-      <rect class="room fog-of-war" x="550" y="400" width="250" height="200" />
-      <text x="675" y="500" class="label">Localisation non révélée</text>
+    <!-- Secteur Militaire & Judiciaire -->
+    <g id="t1-military" on:click={() => handleZoneClick('t1-military')}>
+      <rect class="zone" class:selected={mapState.selectedLocationId === 't1-military'} x="550" y="350" width="150" height="100" />
+      <text x="625" y="395" class="label">Secteur Militaire</text>
+      <text x="625" y="415" class="sublabel">& Judiciaire</text>
+    </g>
+
+    <!-- Logements Gardes & Hunters -->
+    <g id="t1-guards" on:click={() => handleZoneClick('t1-guards')}>
+      <path class="zone" class:selected={mapState.selectedLocationId === 't1-guards'} d="M 650 150 L 750 150 C 800 200, 800 250, 800 300 C 800 330, 780 370, 750 400 L 730 400 L 730 250 L 650 250 Z" />
+      <text x="730" y="220" class="label text-xs">Logements</text>
+      <text x="730" y="240" class="sublabel text-[9px]">Gardes & Hunters</text>
     </g>
   </g>
 </svg>

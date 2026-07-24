@@ -106,7 +106,7 @@ export class IdentityEngine implements IIdentityEngine {
       originalCharacterId: body.originalCharacterId ?? undefined,
       label: body.label,
       bodyType: body.bodyType as any,
-      firstVisibleChapter: body.firstVisibleChapter
+      firstVisibleEventId: body.firstVisibleEventId
     }
     
     const domainConsciousness: Consciousness | null = consciousness ? {
@@ -114,7 +114,7 @@ export class IdentityEngine implements IIdentityEngine {
       originCharacterId: consciousness.originCharacterId ?? undefined,
       label: consciousness.label,
       consciousnessType: consciousness.consciousnessType as any,
-      firstVisibleChapter: consciousness.firstVisibleChapter
+      firstVisibleEventId: consciousness.firstVisibleEventId
     } : null
 
     return {
@@ -163,7 +163,7 @@ export class IdentityEngine implements IIdentityEngine {
       originalCharacterId: body.originalCharacterId ?? undefined,
       label: body.label,
       bodyType: body.bodyType as any,
-      firstVisibleChapter: body.firstVisibleChapter
+      firstVisibleEventId: body.firstVisibleEventId
     }
   }
 

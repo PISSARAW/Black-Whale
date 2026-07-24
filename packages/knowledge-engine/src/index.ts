@@ -148,7 +148,7 @@ export class KnowledgeEngine implements IKnowledgeEngine {
       validFromEventId: f.validFromEventId,
       validUntilEventId: f.validUntilEventId ?? undefined,
       truthStatus: f.truthStatus as any,
-      firstVisibleChapter: f.firstVisibleChapter
+      firstVisibleEventId: f.firstVisibleEventId
     }))
   }
 }

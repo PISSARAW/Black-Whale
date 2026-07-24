@@ -3,6 +3,10 @@
   import { mapState } from '$lib/state/mapState.svelte';
   import BlackWhaleOverview from '$lib/assets/maps/black-whale-overview.svelte';
   import Tier1 from '$lib/assets/maps/tier-1.svelte';
+  import Tier2 from '$lib/assets/maps/tier-2.svelte';
+  import Tier3 from '$lib/assets/maps/tier-3.svelte';
+  import Tier4 from '$lib/assets/maps/tier-4.svelte';
+  import Tier5 from '$lib/assets/maps/tier-5.svelte';
   import MapOverlay from './MapOverlay.svelte';
 
   let containerEl: HTMLElement | undefined = $state();
@@ -41,10 +45,18 @@
       <BlackWhaleOverview />
     {:else if mapState.selectedTier === 'tier-1'}
       <Tier1 />
+    {:else if mapState.selectedTier === 'tier-2'}
+      <Tier2 />
+    {:else if mapState.selectedTier === 'tier-3'}
+      <Tier3 />
+    {:else if mapState.selectedTier === 'tier-4'}
+      <Tier4 />
+    {:else if mapState.selectedTier === 'tier-5'}
+      <Tier5 />
     {:else}
       <!-- Fallback for other tiers -->
       <div class="flex items-center justify-center w-full h-full text-[#FFFFF0]">
-        <h2>Map pour {mapState.selectedTier} en construction</h2>
+        <h2>Map pour {mapState.selectedTier} introuvable</h2>
       </div>
     {/if}
 

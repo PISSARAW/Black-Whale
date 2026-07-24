@@ -1,15 +1,17 @@
 <script lang="ts">
   import { mapState } from '$lib/state/mapState.svelte';
 
-  export let character: {
-    id: string;
-    name: string;
-    tierId: string;
-    locationId: string;
-    x: number;
-    y: number;
-    status: string; // 'EXACT' | 'ZONE' | 'LAST_KNOWN'
-  };
+  let { character }: {
+    character: {
+      id: string;
+      name: string;
+      tierId: string;
+      locationId: string;
+      x: number;
+      y: number;
+      status: string; // 'EXACT' | 'ZONE' | 'LAST_KNOWN'
+    }
+  } = $props();
 
   // Status-based styling
   let markerClass = $derived(() => {

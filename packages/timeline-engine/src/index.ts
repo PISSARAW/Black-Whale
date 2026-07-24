@@ -26,7 +26,7 @@ export interface WorldSnapshot {
   consciousnesses: Consciousness[]
   locations: Location[]
   activeAbilities: AbilityActivation[]
-  biologicalStates: Record<string, string>
+  bodyStates: Record<string, string>
   presences: Presence[]
   knownFacts: Fact[]
 }
@@ -66,10 +66,12 @@ export class TimelineEngine implements ITimelineEngine {
 
     // Récupérer les événements actifs (statuts et présences)
     const characters = await this.prisma.character.findMany()
+    const bodies = await this.prisma.body.findMany()
     
     // We only need the presence that is active at this sequence
     const activePresences = await this.prisma.presence.findMany({
       where: {
+        entityType: 'BODY',
         fromEvent: {
           sequence: { lte: sequence }
         },
@@ -88,7 +90,7 @@ export class TimelineEngine implements ITimelineEngine {
       }
     })
 
-    const activeStates = await this.prisma.biologicalState.findMany({
+    const activeStates = await this.prisma.bodyState.findMany({
       where: {
         fromEvent: {
           sequence: { lte: sequence }
@@ -108,12 +110,13 @@ export class TimelineEngine implements ITimelineEngine {
     return {
       atEventId: point.eventId || 'unknown',
       characters: characters as any,
-      bodies: [],
+      bodies: bodies as any,
       consciousnesses: [],
       locations: [],
       activeAbilities: [],
-      biologicalStates: activeStates.reduce((acc, state) => {
-        acc[state.characterId] = state.state
+      bodyStates: activeStates.reduce((acc, state) => {
+        // En V2, l'état est lié au bodyId
+        acc[state.bodyId] = state.state
         return acc
       }, {} as Record<string, string>),
       presences: activePresences as any,

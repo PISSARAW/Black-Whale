@@ -11,7 +11,7 @@ export const load: PageServerLoad = async ({ params, cookies }) => {
 		where: { slug: params.slug },
 		include: {
 			firstVisibleEvent: { include: { chapter: true } },
-			bodies: {
+			originalBody: {
 				include: {
 					presences: {
 						include: { fromEvent: { include: { chapter: true } }, untilEvent: { include: { chapter: true } }, location: true },
@@ -36,8 +36,8 @@ export const load: PageServerLoad = async ({ params, cookies }) => {
 	}
 
 	// Filter and mask future presences and states
-	let visiblePresences = character.bodies.flatMap(b => b.presences);
-	let visibleStates = character.bodies.flatMap(b => b.states);
+	let visiblePresences = character.originalBody ? character.originalBody.presences : [];
+	let visibleStates = character.originalBody ? character.originalBody.states : [];
 
 	if (spoilerProfile) {
 		visiblePresences = filterTemporalRecords(visiblePresences as any, spoilerProfile) as any;

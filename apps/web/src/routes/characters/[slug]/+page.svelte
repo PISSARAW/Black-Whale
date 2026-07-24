@@ -2,7 +2,7 @@
   import type { PageData } from './$types';
   
   let { data }: { data: PageData } = $props();
-  let character = $derived(data.character);
+  let character = $derived(data.character as any);
   let presences = $derived(data.presences);
   let states = $derived(data.states);
 </script>
@@ -38,7 +38,7 @@
                 <div class="text-xs text-gray-400 mb-1">
                   Ch. {presence.fromEvent.chapter.number} — Séquence {presence.fromEvent.sequence}
                 </div>
-                <h3 class="font-bold text-white mb-1">Position: {presence.location.name}</h3>
+                <h3 class="font-bold text-white mb-1">Position: {presence.location?.name || 'Inconnue'}</h3>
                 <p class="text-sm text-gray-400">
                   Certitude: <span class="text-gray-300">{presence.certainty}</span>
                 </p>
@@ -70,8 +70,7 @@
                 <div class="text-xs text-gray-400 mb-1">
                   Ch. {state.fromEvent.chapter.number}
                 </div>
-                <h3 class="font-bold text-white mb-1">{state.condition}</h3>
-                <p class="text-sm text-gray-400">{state.details || ''}</p>
+                <h3 class="font-bold text-white mb-1">{state.state}</h3>
               </div>
             </div>
           {/each}

@@ -12,7 +12,7 @@ export const load: PageServerLoad = async ({ cookies }) => {
 	});
 
 	if (spoilerProfile) {
-		characters = filterVisible(characters, spoilerProfile);
+		characters = filterVisible(characters as any, spoilerProfile) as any;
 	}
 
 	return { characters };

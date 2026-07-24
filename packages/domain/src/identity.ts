@@ -2,6 +2,8 @@ export type BiologicalState = 'ALIVE' | 'INJURED' | 'UNCONSCIOUS' | 'DEAD' | 'DE
 export type MentalState = 'ACTIVE' | 'UNCONSCIOUS' | 'TRANSFERRED' | 'SUPPRESSED' | 'DORMANT' | 'DISCONNECTED' | 'DESTROYED' | 'UNKNOWN';
 
 export type BodyType = 'ORIGINAL' | 'CLONE' | 'COPY' | 'CONSTRUCT' | 'UNKNOWN';
+export type CanonStatus = 'canon' | 'non_canon' | 'theory' | 'simulation';
+export type NenCategory = 'enhancer' | 'emitter' | 'transmuter' | 'conjurer' | 'manipulator' | 'specialist' | 'unknown';
 
 export interface Body {
   id: string;

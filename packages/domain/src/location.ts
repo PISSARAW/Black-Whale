@@ -26,3 +26,15 @@ export interface Presence {
   certainty: PresenceCertainty;
   sourceIds?: string[];
 }
+
+export interface MapAnchor {
+  locationId: string;
+  tierId: string;
+  x: number;
+  y: number;
+}
+
+export interface MapRegion {
+  locationId: string;
+  polygon: Array<[number, number]>;
+}

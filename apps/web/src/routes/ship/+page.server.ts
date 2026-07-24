@@ -18,7 +18,7 @@ export const load: PageServerLoad = async ({ url, cookies }) => {
 	});
 	
 	if (spoilerProfile) {
-		events = filterVisible(events, spoilerProfile);
+		events = filterVisible(events as any, spoilerProfile) as any;
 	}
 
 	// If no sequence provided, use the last visible event's sequence
@@ -33,7 +33,7 @@ export const load: PageServerLoad = async ({ url, cookies }) => {
 
 	// Filter world state characters by spoiler
 	const visibleCharacters = spoilerProfile 
-		? filterVisible(rawWorldState.characters as any, spoilerProfile)
+		? filterVisible(rawWorldState.characters as any, spoilerProfile) as any
 		: rawWorldState.characters;
 		
 	// Filter presences by spoiler profile and also ensure they belong to visible characters
@@ -45,7 +45,7 @@ export const load: PageServerLoad = async ({ url, cookies }) => {
 	// Load locations to match presences to actual SVGs
 	const locations = await prisma.location.findMany();
 	const visibleLocations = spoilerProfile 
-		? filterVisible(locations, spoilerProfile) 
+		? filterVisible(locations as any, spoilerProfile) as any
 		: locations;
 
 	return {
@@ -54,7 +54,7 @@ export const load: PageServerLoad = async ({ url, cookies }) => {
 		worldState: {
 			characters: visibleCharacters,
 			presences: visiblePresences,
-			biologicalStates: rawWorldState.biologicalStates,
+			bodyStates: rawWorldState.bodyStates,
 			locations: visibleLocations
 		},
 		spoilerLimit: spoilerProfile?.maxChapter

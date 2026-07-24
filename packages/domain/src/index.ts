@@ -7,3 +7,4 @@ export * from './perspective.js';
 export * from './source.js';
 export * from './affiliation.js';
 export * from './events.js';
+export * from './ability.js';

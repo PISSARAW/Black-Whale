@@ -61,9 +61,15 @@
 
   <g id="tier-3-zones">
     <!-- Zone Résidentielle -->
-    <g id="t3-residential-1st" on:click={() => handleZoneClick('t3-residential-1st')}>
-      <rect class="zone" class:selected={mapState.selectedLocationId === 't3-residential-1st'} x="180" y="100" width="180" height="150" />
-      <text x="270" y="170" class="label">Cabines 1ère Classe</text>
+    <g id="t3-residential-1st">
+      <rect class="zone" class:selected={mapState.selectedLocationId === 't3-residential-1st'} x="180" y="100" width="180" height="150" on:click={() => handleZoneClick('t3-residential-1st')} />
+      <text x="270" y="160" class="label">Cabines 1ère Classe</text>
+      
+      <!-- Chambre 3101 -->
+      <g on:click={(e) => { e.stopPropagation(); handleZoneClick('room-3101'); }}>
+        <rect class="zone" class:selected={mapState.selectedLocationId === 'room-3101'} x="200" y="180" width="40" height="30" fill="#4a5568" />
+        <text x="220" y="200" class="label text-[10px]">3101</text>
+      </g>
     </g>
     
     <g id="t3-residential-ord" on:click={() => handleZoneClick('t3-residential-ord')}>

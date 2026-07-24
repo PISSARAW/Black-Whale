@@ -59,10 +59,27 @@
 
   <g id="tier-1-zones">
     <!-- Quartiers Princiers -->
-    <g id="t1-princes" on:click={() => handleZoneClick('t1-princes')}>
-      <rect class="zone" class:selected={mapState.selectedLocationId === 't1-princes'} x="300" y="150" width="300" height="100" />
-      <text x="450" y="195" class="label">Quartier Royal</text>
-      <text x="450" y="215" class="sublabel">Chambres 1001-1014</text>
+    <g id="t1-princes">
+      <!-- Murs extérieurs du bloc princier -->
+      <rect x="300" y="150" width="300" height="100" fill="none" stroke="#FFFFF0" stroke-width="2" />
+      
+      <!-- Ligne du haut (1001 à 1007) -->
+      {#each [1, 2, 3, 4, 5, 6, 7] as i}
+        <g on:click={() => handleZoneClick(`room-100${i}`)}>
+          <rect class="zone" class:selected={mapState.selectedLocationId === `room-100${i}`} x={300 + (i-1)*42.85} y="150" width="42.85" height="50" />
+          <text x={300 + (i-1)*42.85 + 21} y="180" class="label text-[9px]">100{i}</text>
+        </g>
+      {/each}
+      
+      <!-- Ligne du bas (1008 à 1014) -->
+      {#each [8, 9, 10, 11, 12, 13, 14] as i}
+        <g on:click={() => handleZoneClick(`room-10${i < 10 ? '0'+i : i}`)}>
+          <rect class="zone" class:selected={mapState.selectedLocationId === `room-10${i < 10 ? '0'+i : i}`} x={300 + (i-8)*42.85} y="200" width="42.85" height="50" />
+          <text x={300 + (i-8)*42.85 + 21} y="230" class="label text-[9px]">10{i < 10 ? '0'+i : i}</text>
+        </g>
+      {/each}
+      
+      <text x="450" y="145" class="label text-xs">Quartier Royal (Appartements)</text>
     </g>
 
     <!-- Résidence du Roi & Reines -->

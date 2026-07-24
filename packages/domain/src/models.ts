@@ -337,3 +337,26 @@ export interface MapRegion {
   locationId: string
   polygon: Array<[number, number]>
 }
+
+export interface KnownRoom {
+  id: string;
+  tier: number | "BETWEEN_2_AND_3";
+  name: string;
+
+  existenceStatus:
+    | "CONFIRMED"
+    | "IMPLIED"
+    | "THEORY";
+
+  mapPrecision:
+    | "EXACT_RELATIVE_POSITION"
+    | "SECTOR_ONLY"
+    | "TIER_ONLY"
+    | "UNKNOWN";
+
+  interiorKnowledge:
+    | "FULL_PLAN"
+    | "PARTIAL_PLAN"
+    | "FUNCTION_ONLY"
+    | "NAME_ONLY";
+}

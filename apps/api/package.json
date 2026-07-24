@@ -20,6 +20,7 @@
     "@black-whale/knowledge-engine": "workspace:*",
     "@black-whale/map-engine": "workspace:*",
     "@black-whale/nen-engine": "workspace:*",
+    "@black-whale/spoiler-engine": "workspace:*",
     "@black-whale/perspective-engine": "workspace:*",
     "@black-whale/simulation-engine": "workspace:*",
     "@black-whale/timeline-engine": "workspace:*",

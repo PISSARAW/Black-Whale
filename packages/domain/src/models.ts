@@ -321,3 +321,19 @@ export interface SimulationBranch {
   mode: SimulationMode
   events: SimulationEvent[]
 }
+
+// ──────────────────────────────────────────────
+// Map & Coordinates
+// ──────────────────────────────────────────────
+
+export interface MapAnchor {
+  locationId: string
+  tierId: string
+  x: number // de 0 à 1
+  y: number // de 0 à 1
+}
+
+export interface MapRegion {
+  locationId: string
+  polygon: Array<[number, number]>
+}

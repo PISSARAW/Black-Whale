@@ -65,7 +65,7 @@
       
       <!-- Ligne du haut (1001 à 1007) -->
       {#each [1, 2, 3, 4, 5, 6, 7] as i}
-        <g on:click={() => handleZoneClick(`room-100${i}`)}>
+        <g onclick={() => handleZoneClick(`room-100${i}`)}>
           <rect class="zone" class:selected={mapState.selectedLocationId === `room-100${i}`} x={300 + (i-1)*42.85} y="150" width="42.85" height="50" />
           <text x={300 + (i-1)*42.85 + 21} y="180" class="label text-[9px]">100{i}</text>
         </g>
@@ -73,7 +73,7 @@
       
       <!-- Ligne du bas (1008 à 1014) -->
       {#each [8, 9, 10, 11, 12, 13, 14] as i}
-        <g on:click={() => handleZoneClick(`room-10${i < 10 ? '0'+i : i}`)}>
+        <g onclick={() => handleZoneClick(`room-10${i < 10 ? '0'+i : i}`)}>
           <rect class="zone" class:selected={mapState.selectedLocationId === `room-10${i < 10 ? '0'+i : i}`} x={300 + (i-8)*42.85} y="200" width="42.85" height="50" />
           <text x={300 + (i-8)*42.85 + 21} y="230" class="label text-[9px]">10{i < 10 ? '0'+i : i}</text>
         </g>
@@ -83,26 +83,26 @@
     </g>
 
     <!-- Résidence du Roi & Reines -->
-    <g id="t1-king-queens" on:click={() => handleZoneClick('t1-king-queens')}>
+    <g id="t1-king-queens" onclick={() => handleZoneClick('t1-king-queens')}>
       <path class="zone" class:selected={mapState.selectedLocationId === 't1-king-queens'} d="M 150 200 L 250 200 L 250 400 L 150 400 C 120 300, 120 250, 150 200 Z" />
       <text x="210" y="295" class="label">Roi & Reines</text>
     </g>
 
     <!-- Zone cérémonielle & Banquet -->
-    <g id="t1-ceremony" on:click={() => handleZoneClick('t1-ceremony')}>
+    <g id="t1-ceremony" onclick={() => handleZoneClick('t1-ceremony')}>
       <rect class="zone" class:selected={mapState.selectedLocationId === 't1-ceremony'} x="300" y="350" width="200" height="100" />
       <text x="400" y="405" class="label">Cérémonies & Banquet</text>
     </g>
 
     <!-- Secteur Militaire & Judiciaire -->
-    <g id="t1-military" on:click={() => handleZoneClick('t1-military')}>
+    <g id="t1-military" onclick={() => handleZoneClick('t1-military')}>
       <rect class="zone" class:selected={mapState.selectedLocationId === 't1-military'} x="550" y="350" width="150" height="100" />
       <text x="625" y="395" class="label">Secteur Militaire</text>
       <text x="625" y="415" class="sublabel">& Judiciaire</text>
     </g>
 
     <!-- Logements Gardes & Hunters -->
-    <g id="t1-guards" on:click={() => handleZoneClick('t1-guards')}>
+    <g id="t1-guards" onclick={() => handleZoneClick('t1-guards')}>
       <path class="zone" class:selected={mapState.selectedLocationId === 't1-guards'} d="M 650 150 L 750 150 C 800 200, 800 250, 800 300 C 800 330, 780 370, 750 400 L 730 400 L 730 250 L 650 250 Z" />
       <text x="730" y="220" class="label text-xs">Logements</text>
       <text x="730" y="240" class="sublabel text-[9px]">Gardes & Hunters</text>

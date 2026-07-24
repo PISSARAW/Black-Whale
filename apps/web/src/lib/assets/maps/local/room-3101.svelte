@@ -27,8 +27,8 @@
   <text x="400" y="220" class="label text-xs text-gray-400">Leurre visuel</text>
   
   <!-- Porte d'entrée (Piège) -->
-  <rect class="trap" x="380" y="490" width="40" height="20" fill="#2d3748" on:click={handleTrapClick} />
-  <text x="400" y="535" class="label text-xs text-[#ff4444] cursor-pointer" on:click={handleTrapClick}>Porte principale (Piège de téléportation)</text>
+  <rect class="trap" x="380" y="490" width="40" height="20" fill="#2d3748" onclick={handleTrapClick} />
+  <text x="400" y="535" class="label text-xs text-[#ff4444] cursor-pointer" onclick={handleTrapClick}>Porte principale (Piège de téléportation)</text>
   
   <!-- Faux Mur de plomberie -->
   <rect x="400" y="350" width="200" height="150" fill="#2d3748" stroke="#718096" stroke-width="2" />

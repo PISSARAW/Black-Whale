@@ -67,7 +67,7 @@
     
     <!-- Districts Commerciaux & Résidentiels (Dense) -->
     <!-- Left block -->
-    <g on:click={() => handleZoneClick('t4-dist-west')}>
+    <g onclick={() => handleZoneClick('t4-dist-west')}>
       <rect class="zone" class:selected={mapState.selectedLocationId === 't4-dist-west'} x="160" y="80" width="140" height="150" />
       <rect class="zone" class:selected={mapState.selectedLocationId === 't4-dist-west'} x="160" y="270" width="140" height="60" />
       <rect class="zone" class:selected={mapState.selectedLocationId === 't4-dist-west'} x="160" y="370" width="140" height="110" />
@@ -75,7 +75,7 @@
     </g>
 
     <!-- Center block -->
-    <g on:click={() => handleZoneClick('t4-dist-center')}>
+    <g onclick={() => handleZoneClick('t4-dist-center')}>
       <rect class="zone" class:selected={mapState.selectedLocationId === 't4-dist-center'} x="320" y="80" width="160" height="150" />
       <rect class="zone" class:selected={mapState.selectedLocationId === 't4-dist-center'} x="320" y="370" width="160" height="110" />
       <text x="400" y="160" class="label">District Central</text>
@@ -83,31 +83,31 @@
     </g>
 
     <!-- Xi-Yu Office -->
-    <g id="t4-xiyu" on:click={() => handleZoneClick('t4-xiyu')}>
+    <g id="t4-xiyu" onclick={() => handleZoneClick('t4-xiyu')}>
       <rect class="zone" class:selected={mapState.selectedLocationId === 't4-xiyu'} x="320" y="270" width="160" height="60" />
       <text x="400" y="305" class="label">Bureau Xi-Yu</text>
     </g>
 
     <!-- Medical (Limited) & Military -->
-    <g id="t4-military-conf" on:click={() => handleZoneClick('t4-military-conf')}>
+    <g id="t4-military-conf" onclick={() => handleZoneClick('t4-military-conf')}>
       <rect class="zone" class:selected={mapState.selectedLocationId === 't4-military-conf'} x="500" y="80" width="150" height="150" />
       <text x="575" y="150" class="label">Conférence</text>
       <text x="575" y="165" class="sublabel">Militaire</text>
     </g>
-    <g id="t4-medical-limited" on:click={() => handleZoneClick('t4-medical-limited')}>
+    <g id="t4-medical-limited" onclick={() => handleZoneClick('t4-medical-limited')}>
       <rect class="zone" class:selected={mapState.selectedLocationId === 't4-medical-limited'} x="500" y="370" width="150" height="110" />
       <text x="575" y="425" class="label">Service Médical</text>
       <text x="575" y="440" class="sublabel">(Capacité Limitée)</text>
     </g>
 
     <!-- Right block -->
-    <g on:click={() => handleZoneClick('t4-dist-east')}>
+    <g onclick={() => handleZoneClick('t4-dist-east')}>
       <rect class="zone" class:selected={mapState.selectedLocationId === 't4-dist-east'} x="670" y="80" width="140" height="400" />
       <text x="740" y="280" class="label">District Est</text>
     </g>
 
     <!-- Frontière de Recyclage (Sud) -->
-    <g id="t4-recycling" on:click={() => handleZoneClick('t4-recycling')}>
+    <g id="t4-recycling" onclick={() => handleZoneClick('t4-recycling')}>
       <path class="zone recycling" class:selected={mapState.selectedLocationId === 't4-recycling'} d="M 120 500 L 850 500 L 850 540 C 750 550, 250 550, 120 540 Z" />
       <text x="500" y="525" class="label" fill="#1a202c">INSTALLATIONS TECHNIQUES & RECYCLAGE (VERS TIER 5)</text>
     </g>

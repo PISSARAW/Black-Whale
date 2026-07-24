@@ -1,6 +1,6 @@
 import type { PageLoad } from './$types'
 
-export const load: PageLoad = async ({ fetch }) => {
+export const load: PageLoad = async ({ fetch, data }) => {
   // TODO: load map state for current chapter
-  return { mapState: null }
+  return { ...data, mapState: null }
 }

@@ -32,7 +32,7 @@
       <span class="text-bw-gold font-semibold text-xs tracking-widest">POURQUOI ?</span>
       <button
         class="text-gray-500 hover:text-white text-xs leading-none"
-        on:click={() => dispatch('close')}
+        onclick={() => dispatch('close')}
         aria-label="Fermer"
       >✕</button>
     </div>

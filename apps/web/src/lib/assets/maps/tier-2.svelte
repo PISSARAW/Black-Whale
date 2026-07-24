@@ -56,32 +56,32 @@
 
   <g id="tier-2-zones">
     <!-- Quartiers VIP & Célébrités -->
-    <g id="t2-vip" on:click={() => handleZoneClick('t2-vip')}>
+    <g id="t2-vip" onclick={() => handleZoneClick('t2-vip')}>
       <rect class="zone" class:selected={mapState.selectedLocationId === 't2-vip'} x="250" y="150" width="300" height="150" />
       <text x="400" y="215" class="label">Quartiers VIP</text>
       <text x="400" y="235" class="sublabel">Célébrités & Fortunes</text>
     </g>
 
     <!-- Théâtre & Divertissements -->
-    <g id="t2-theater" on:click={() => handleZoneClick('t2-theater')}>
+    <g id="t2-theater" onclick={() => handleZoneClick('t2-theater')}>
       <rect class="zone" class:selected={mapState.selectedLocationId === 't2-theater'} x="600" y="150" width="200" height="150" />
       <text x="700" y="225" class="label">Le Théâtre</text>
     </g>
 
     <!-- Espaces de Réception & Services -->
-    <g id="t2-reception" on:click={() => handleZoneClick('t2-reception')}>
+    <g id="t2-reception" onclick={() => handleZoneClick('t2-reception')}>
       <rect class="zone" class:selected={mapState.selectedLocationId === 't2-reception'} x="250" y="350" width="550" height="100" />
       <text x="525" y="395" class="label">Espaces de Réception & Services Privilégiés</text>
     </g>
 
     <!-- Accès Tier 1 -->
-    <g id="t2-access-t1" on:click={() => handleZoneClick('t2-access-t1')}>
+    <g id="t2-access-t1" onclick={() => handleZoneClick('t2-access-t1')}>
       <circle class="zone" class:selected={mapState.selectedLocationId === 't2-access-t1'} cx="525" cy="115" r="25" />
       <text x="525" y="119" class="label text-[10px]">T1</text>
     </g>
 
     <!-- Secteur de Sécurité & Accès Tier 3 -->
-    <g id="t2-security" on:click={() => handleZoneClick('t2-security')}>
+    <g id="t2-security" onclick={() => handleZoneClick('t2-security')}>
       <path class="zone" class:selected={mapState.selectedLocationId === 't2-security'} d="M 150 480 L 850 480 L 850 515 C 750 520, 250 520, 150 515 Z" />
       <text x="500" y="505" class="label text-xs">Secteur de Sécurité & Contrôle</text>
     </g>

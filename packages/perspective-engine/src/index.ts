@@ -67,7 +67,10 @@ export class PerspectiveEngine implements IPerspectiveEngine {
     throw new Error(`PerspectiveEngine.buildPerspective not implemented — observerId: ${input.observerId}`)
   }
 
-  async comparePerspectives(left: PerspectiveResult, right: PerspectiveResult) {
+  async comparePerspectives(left: PerspectiveResult, right: PerspectiveResult): Promise<{
+    divergingFacts: Fact[]
+    divergingPositions: Record<string, { left?: string; right?: string }>
+  }> {
     throw new Error(`PerspectiveEngine.comparePerspectives not implemented — ${left.observerId} vs ${right.observerId}`)
   }
 }

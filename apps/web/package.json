@@ -19,7 +19,9 @@
     "@black-whale/domain": "workspace:*",
     "@black-whale/nen-engine": "workspace:*",
     "@black-whale/timeline-engine": "workspace:*",
+    "@black-whale/spoiler-engine": "workspace:*",
     "@black-whale/ui": "workspace:*",
+    "@prisma/client": "^5.0.0",
     "@tanstack/svelte-query": "^5.0.0",
     "panzoom": "^9.4.4",
     "svelte": "^5.0.0"

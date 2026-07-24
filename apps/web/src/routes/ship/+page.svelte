@@ -63,13 +63,13 @@
       <button 
         class="text-sm text-gray-400 hover:text-white transition-colors"
         class:text-white={mapState.filters.showUnknownPositions}
-        on:click={() => mapState.filters.showUnknownPositions = !mapState.filters.showUnknownPositions}
+        onclick={() => mapState.filters.showUnknownPositions = !mapState.filters.showUnknownPositions}
       >
         Positions inconnues
       </button>
       <button 
         class="text-sm border border-red-900 bg-red-950/30 text-red-400 px-3 py-1 rounded hover:bg-red-900/50 transition-colors"
-        on:click={() => mapState.filters.spoilersEnabled = !mapState.filters.spoilersEnabled}
+        onclick={() => mapState.filters.spoilersEnabled = !mapState.filters.spoilersEnabled}
       >
         {mapState.filters.spoilersEnabled ? 'Spoilers On' : 'Spoilers Off'}
       </button>
@@ -83,7 +83,7 @@
       <button 
         class="text-left px-4 py-3 text-sm font-bold border-b border-gray-800 hover:bg-[#1a1a1a] transition-colors"
         class:text-[#FFD700]={mapState.currentZoomLevel === 'OVERVIEW'}
-        on:click={() => mapState.selectTier(null)}
+        onclick={() => mapState.selectTier(null)}
       >
         <span class="hidden md:inline">VUE GLOBALE</span>
         <span class="md:hidden text-center block">ALL</span>
@@ -94,7 +94,7 @@
           class="text-left px-4 py-3 text-sm border-b border-gray-800 hover:bg-[#1a1a1a] transition-colors"
           class:text-[#FFD700]={mapState.selectedTier === `tier-${tierNum}`}
           class:bg-[#151515]={mapState.selectedTier === `tier-${tierNum}`}
-          on:click={() => mapState.selectTier(`tier-${tierNum}`)}
+          onclick={() => mapState.selectTier(`tier-${tierNum}`)}
         >
           <span class="hidden md:inline">TIER {tierNum}</span>
           <span class="md:hidden text-center block">T{tierNum}</span>
@@ -109,7 +109,7 @@
               <input type="checkbox" 
                 class="accent-[#FFD700] bg-transparent border-gray-600"
                 checked={mapState.filters.factions.includes(faction.id)}
-                on:change={() => mapState.toggleFactionFilter(faction.id)}
+                onchange={() => mapState.toggleFactionFilter(faction.id)}
               />
               {faction.label}
             </label>

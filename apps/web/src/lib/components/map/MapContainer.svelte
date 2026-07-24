@@ -81,7 +81,7 @@
     {#if isLocalZoom}
       <button 
         class="absolute top-4 left-4 px-3 py-1 bg-[#1a202c] text-[#e2e8f0] border border-[#4a5568] rounded shadow hover:bg-[#2d3748] z-10 font-bold pointer-events-auto"
-        on:click={() => mapState.selectLocation(null)}
+        onclick={() => mapState.selectLocation(null)}
       >
         ← Retour au Tier
       </button>

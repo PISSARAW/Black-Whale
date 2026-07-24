@@ -62,61 +62,61 @@
   <g id="tier-3-zones">
     <!-- Zone Résidentielle -->
     <g id="t3-residential-1st">
-      <rect class="zone" class:selected={mapState.selectedLocationId === 't3-residential-1st'} x="180" y="100" width="180" height="150" on:click={() => handleZoneClick('t3-residential-1st')} />
+      <rect class="zone" class:selected={mapState.selectedLocationId === 't3-residential-1st'} x="180" y="100" width="180" height="150" onclick={() => handleZoneClick('t3-residential-1st')} />
       <text x="270" y="160" class="label">Cabines 1ère Classe</text>
       
       <!-- Chambre 3101 -->
-      <g on:click={(e) => { e.stopPropagation(); handleZoneClick('room-3101'); }}>
+      <g onclick={(e) => { e.stopPropagation(); handleZoneClick('room-3101'); }}>
         <rect class="zone" class:selected={mapState.selectedLocationId === 'room-3101'} x="200" y="180" width="40" height="30" fill="#4a5568" />
         <text x="220" y="200" class="label text-[10px]">3101</text>
       </g>
     </g>
     
-    <g id="t3-residential-ord" on:click={() => handleZoneClick('t3-residential-ord')}>
+    <g id="t3-residential-ord" onclick={() => handleZoneClick('t3-residential-ord')}>
       <rect class="zone" class:selected={mapState.selectedLocationId === 't3-residential-ord'} x="180" y="270" width="180" height="200" />
       <text x="270" y="360" class="label">Cabines Ordinaires</text>
     </g>
 
     <!-- Secteur Médical -->
-    <g id="t3-hospital" on:click={() => handleZoneClick('t3-hospital')}>
+    <g id="t3-hospital" onclick={() => handleZoneClick('t3-hospital')}>
       <rect class="zone medical" class:selected={mapState.selectedLocationId === 't3-hospital'} x="400" y="100" width="200" height="180" />
       <text x="500" y="185" class="label" fill="#FFFFF0">Hôpital Principal</text>
       <text x="500" y="205" class="sublabel" fill="#ebf8ff">Secteur Médical</text>
     </g>
 
     <!-- Secteur Administratif & Judiciaire -->
-    <g id="t3-police" on:click={() => handleZoneClick('t3-police')}>
+    <g id="t3-police" onclick={() => handleZoneClick('t3-police')}>
       <rect class="zone" class:selected={mapState.selectedLocationId === 't3-police'} x="400" y="300" width="100" height="170" />
       <text x="450" y="380" class="label">Police</text>
     </g>
-    <g id="t3-army-office" on:click={() => handleZoneClick('t3-army-office')}>
+    <g id="t3-army-office" onclick={() => handleZoneClick('t3-army-office')}>
       <rect class="zone" class:selected={mapState.selectedLocationId === 't3-army-office'} x="500" y="300" width="100" height="85" />
       <text x="550" y="345" class="label">Armée</text>
     </g>
-    <g id="t3-justice" on:click={() => handleZoneClick('t3-justice')}>
+    <g id="t3-justice" onclick={() => handleZoneClick('t3-justice')}>
       <rect class="zone" class:selected={mapState.selectedLocationId === 't3-justice'} x="500" y="385" width="100" height="85" />
       <text x="550" y="425" class="label">Justice</text>
       <text x="550" y="440" class="sublabel">Détention</text>
     </g>
 
     <!-- Loisirs & Heil-Ly -->
-    <g id="t3-cinema" on:click={() => handleZoneClick('t3-cinema')}>
+    <g id="t3-cinema" onclick={() => handleZoneClick('t3-cinema')}>
       <rect class="zone" class:selected={mapState.selectedLocationId === 't3-cinema'} x="640" y="100" width="150" height="120" />
       <text x="715" y="165" class="label">Cinéma</text>
     </g>
-    <g id="t3-obs-deck" on:click={() => handleZoneClick('t3-obs-deck')}>
+    <g id="t3-obs-deck" onclick={() => handleZoneClick('t3-obs-deck')}>
       <path class="zone" class:selected={mapState.selectedLocationId === 't3-obs-deck'} d="M 640 240 L 790 240 L 830 350 L 640 350 Z" />
       <text x="715" y="300" class="label">Pont</text>
       <text x="715" y="315" class="sublabel">d'Observation</text>
     </g>
-    <g id="t3-heilly" on:click={() => handleZoneClick('t3-heilly')}>
+    <g id="t3-heilly" onclick={() => handleZoneClick('t3-heilly')}>
       <rect class="zone" class:selected={mapState.selectedLocationId === 't3-heilly'} x="640" y="370" width="150" height="100" />
       <text x="715" y="420" class="label">Bureau Heil-Ly</text>
       <text x="715" y="440" class="sublabel text-purple-400">Zone Officielle</text>
     </g>
 
     <!-- Sas de sécurité vers le haut -->
-    <g id="t3-access-t2" on:click={() => handleZoneClick('t3-access-t2')}>
+    <g id="t3-access-t2" onclick={() => handleZoneClick('t3-access-t2')}>
       <rect class="zone" class:selected={mapState.selectedLocationId === 't3-access-t2'} x="450" y="60" width="100" height="30" />
       <text x="500" y="80" class="label text-[10px]">Accès T2 (Bloqué)</text>
     </g>

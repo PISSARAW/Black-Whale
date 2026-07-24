@@ -76,39 +76,39 @@
   <g id="tier-5-zones">
     
     <!-- Frontière de Recyclage (Nord) -->
-    <g id="t5-recycling" on:click={() => handleZoneClick('t5-recycling')}>
+    <g id="t5-recycling" onclick={() => handleZoneClick('t5-recycling')}>
       <path class="zone recycling" class:selected={mapState.selectedLocationId === 't5-recycling'} d="M 150 100 L 750 100 L 750 140 C 450 160, 450 160, 150 140 Z" />
       <text x="450" y="125" class="label" fill="#1a1a1a">INSTALLATIONS TECHNIQUES & RECYCLAGE (VERS TIER 4)</text>
     </g>
 
     <!-- Zone Résidentielle (Logistique & Populaire) -->
-    <g on:click={() => handleZoneClick('t5-residential')}>
+    <g onclick={() => handleZoneClick('t5-residential')}>
       <rect class="zone" class:selected={mapState.selectedLocationId === 't5-residential'} x="180" y="170" width="180" height="250" />
       <text x="270" y="290" class="label">Districts Résidentiels</text>
       <text x="270" y="310" class="sublabel">Haute Densité</text>
     </g>
 
     <!-- Entrepôts & Stockage -->
-    <g id="t5-warehouses" on:click={() => handleZoneClick('t5-warehouses')}>
+    <g id="t5-warehouses" onclick={() => handleZoneClick('t5-warehouses')}>
       <rect class="zone warehouse" class:selected={mapState.selectedLocationId === 't5-warehouses'} x="400" y="170" width="320" height="140" />
       <text x="560" y="235" class="label">Entrepôts Principaux</text>
       <text x="560" y="255" class="sublabel">Zones de Stockage</text>
     </g>
 
     <!-- Bureau Cha-R -->
-    <g id="t5-char" on:click={() => handleZoneClick('t5-char')}>
+    <g id="t5-char" onclick={() => handleZoneClick('t5-char')}>
       <rect class="zone" class:selected={mapState.selectedLocationId === 't5-char'} x="400" y="330" width="120" height="90" />
       <text x="460" y="375" class="label">Bureau Cha-R</text>
     </g>
 
     <!-- Cafétéria -->
-    <g id="t5-cafeteria" on:click={() => handleZoneClick('t5-cafeteria')}>
+    <g id="t5-cafeteria" onclick={() => handleZoneClick('t5-cafeteria')}>
       <rect class="zone" class:selected={mapState.selectedLocationId === 't5-cafeteria'} x="540" y="330" width="90" height="90" />
       <text x="585" y="380" class="label">Cafétéria</text>
     </g>
 
     <!-- Service Médical Limité -->
-    <g id="t5-medical-none" on:click={() => handleZoneClick('t5-medical-none')}>
+    <g id="t5-medical-none" onclick={() => handleZoneClick('t5-medical-none')}>
       <rect class="zone" class:selected={mapState.selectedLocationId === 't5-medical-none'} x="650" y="330" width="70" height="90" />
       <text x="685" y="365" class="label">Médical</text>
       <text x="685" y="380" class="warnlabel">AUCUN MÉDECIN</text>

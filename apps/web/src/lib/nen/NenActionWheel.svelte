@@ -55,7 +55,7 @@
         <li
           class="flex items-center justify-between gap-2 px-3 py-1.5 rounded border text-sm transition-colors {visibilityClass[entry.visibility]}"
           title={entry.hint ?? entry.label}
-          on:click={() => handleClick(entry)}
+          onclick={() => handleClick(entry)}
         >
           <span class="truncate">
             {#if entry.visibility === 'unknown'}?{:else}{entry.label}{/if}

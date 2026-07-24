@@ -28,7 +28,7 @@
 
 {#if mapState.selectedLocationId && locationDetails}
   <div class="absolute top-0 right-0 h-full w-80 bg-[#1a1a1a] border-l border-[#FFD700] text-[#FFFFF0] p-6 shadow-2xl flex flex-col z-40 transition-transform">
-    <button on:click={closePanel} class="absolute top-4 right-4 text-gray-400 hover:text-white">
+    <button onclick={closePanel} class="absolute top-4 right-4 text-gray-400 hover:text-white">
       ✕
     </button>
     

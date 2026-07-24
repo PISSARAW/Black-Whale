@@ -1,0 +1,24 @@
+FROM node:20-alpine AS base
+RUN npm install -g pnpm
+WORKDIR /app
+
+FROM base AS deps
+COPY pnpm-workspace.yaml package.json pnpm-lock.yaml* ./
+COPY packages/domain/package.json ./packages/domain/
+COPY packages/contracts/package.json ./packages/contracts/
+COPY packages/ui/package.json ./packages/ui/
+COPY apps/admin/package.json ./apps/admin/
+RUN pnpm install --frozen-lockfile
+
+FROM deps AS builder
+COPY packages ./packages
+COPY apps/admin ./apps/admin
+RUN pnpm --filter "@black-whale/admin" build
+
+FROM node:20-alpine AS runner
+WORKDIR /app
+COPY --from=builder /app/apps/admin/build ./build
+COPY --from=builder /app/apps/admin/package.json ./
+ENV PORT=3002
+EXPOSE 3002
+CMD ["node", "build"]

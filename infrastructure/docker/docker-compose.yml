@@ -1,0 +1,83 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: black_whale
+      POSTGRES_USER: bw_user
+      POSTGRES_PASSWORD: bw_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/migrations:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U bw_user -d black_whale"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build:
+      context: ..
+      dockerfile: infrastructure/docker/Dockerfile.api
+    ports:
+      - "3001:3001"
+    environment:
+      NODE_ENV: development
+      DATABASE_URL: ******postgres:5432/black_whale
+      REDIS_URL: redis://redis:6379
+      PORT: "3001"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  web:
+    build:
+      context: ..
+      dockerfile: infrastructure/docker/Dockerfile.web
+    ports:
+      - "3000:3000"
+    environment:
+      VITE_API_URL: http://api:3001
+    depends_on:
+      - api
+
+  admin:
+    build:
+      context: ..
+      dockerfile: infrastructure/docker/Dockerfile.admin
+    ports:
+      - "3002:3002"
+    depends_on:
+      - api
+
+  worker:
+    build:
+      context: ..
+      dockerfile: infrastructure/docker/Dockerfile.worker
+    environment:
+      DATABASE_URL: ******postgres:5432/black_whale
+      REDIS_URL: redis://redis:6379
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
+  redis_data:

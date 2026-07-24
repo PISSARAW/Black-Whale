@@ -1,0 +1,38 @@
+[
+  {
+    "id": "black-whale",
+    "name": "Black Whale 1",
+    "parentLocationId": null,
+    "deck": null,
+    "zoneType": "unknown",
+    "entrances": [],
+    "exits": []
+  },
+  {
+    "id": "deck-1",
+    "name": "Deck 1",
+    "parentLocationId": "black-whale",
+    "deck": 1,
+    "zoneType": "unknown",
+    "entrances": ["gangway-1"],
+    "exits": ["gangway-1"]
+  },
+  {
+    "id": "royal-quarters-deck1",
+    "name": "Royal Quarters — Deck 1",
+    "parentLocationId": "deck-1",
+    "deck": 1,
+    "zoneType": "quarters",
+    "entrances": ["corridor-deck1-north"],
+    "exits": ["corridor-deck1-north"]
+  },
+  {
+    "id": "military-zone-deck1",
+    "name": "Military Zone — Deck 1",
+    "parentLocationId": "deck-1",
+    "deck": 1,
+    "zoneType": "military",
+    "entrances": ["corridor-deck1-south"],
+    "exits": ["corridor-deck1-south"]
+  }
+]

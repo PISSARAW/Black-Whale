@@ -10,6 +10,7 @@
     <a href="/timeline">Timeline</a>
     <a href="/characters">Characters</a>
     <a href="/abilities">Abilities</a>
+    <a href="/nen" class="text-bw-gold font-semibold">Nen</a>
     <a href="/relationships">Relationships</a>
     <a href="/simulations">Simulations</a>
     <a href="/theories">Theories</a>

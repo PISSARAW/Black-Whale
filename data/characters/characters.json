@@ -1,0 +1,47 @@
+[
+  {
+    "id": "kurapika",
+    "canonicalName": "Kurapika",
+    "aliases": ["Rat"],
+    "description": "Last survivor of the Kurta Clan. Bodyguard to Prince Woble. Seeks the scarlet eyes of his clan.",
+    "factionId": "prince-woble",
+    "firstAppearanceChapterId": "ch-340",
+    "canonStatus": "canon"
+  },
+  {
+    "id": "hisoka",
+    "canonicalName": "Hisoka Morrow",
+    "aliases": ["The Magician", "Grim Reaper"],
+    "description": "A powerful Hunter and magician. Seeks powerful opponents to fight.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-340",
+    "canonStatus": "canon"
+  },
+  {
+    "id": "illumi",
+    "canonicalName": "Illumi Zoldyck",
+    "aliases": ["Gittarackur"],
+    "description": "Eldest son of the Zoldyck family. Hisoka's accomplice on the ship.",
+    "factionId": "zoldyck",
+    "firstAppearanceChapterId": "ch-340",
+    "canonStatus": "canon"
+  },
+  {
+    "id": "prince-tserriednich",
+    "canonicalName": "Tserriednich Hui Guo Rou",
+    "aliases": [],
+    "description": "4th Prince of Kakin. Serial killer. Exceptionally dangerous Nen user.",
+    "factionId": "prince-tserriednich",
+    "firstAppearanceChapterId": "ch-349",
+    "canonStatus": "canon"
+  },
+  {
+    "id": "prince-woble",
+    "canonicalName": "Woble Hui Guo Rou",
+    "aliases": [],
+    "description": "14th (youngest) Prince of Kakin. Infant under Kurapika's protection.",
+    "factionId": "prince-woble",
+    "firstAppearanceChapterId": "ch-349",
+    "canonStatus": "canon"
+  }
+]

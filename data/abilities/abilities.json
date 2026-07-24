@@ -1,0 +1,29 @@
+[
+  {
+    "id": "bungee-gum",
+    "ownerId": "hisoka",
+    "name": "Bungee Gum",
+    "category": "transmuter",
+    "description": "Hisoka's Nen has properties of both rubber and gum. Can be stretched, retracted, and attached to targets.",
+    "canonStatus": "canon",
+    "moduleKey": "bungee-gum"
+  },
+  {
+    "id": "emperor-time",
+    "ownerId": "kurapika",
+    "name": "Emperor Time",
+    "category": "specialist",
+    "description": "When Kurapika's eyes turn scarlet, he gains 100% proficiency in all Nen categories at the cost of one hour of his lifespan per second.",
+    "canonStatus": "canon",
+    "moduleKey": "emperor-time"
+  },
+  {
+    "id": "steal-chain",
+    "ownerId": "kurapika",
+    "name": "Steal Chain (Judgment Chain)",
+    "category": "conjurer",
+    "description": "Kurapika's chain with conditions on targets. Violating them causes death.",
+    "canonStatus": "canon",
+    "moduleKey": null
+  }
+]

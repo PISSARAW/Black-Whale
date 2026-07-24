@@ -14,6 +14,7 @@
   "dependencies": {
     "@black-whale/contracts": "workspace:*",
     "@black-whale/domain": "workspace:*",
+    "@black-whale/database": "workspace:*",
     "@black-whale/ui": "workspace:*",
     "svelte": "^5.0.0"
   },

@@ -36,7 +36,7 @@ services:
       - "3001:3001"
     environment:
       NODE_ENV: development
-      DATABASE_URL: ******postgres:5432/black_whale
+      DATABASE_URL: "postgresql://${POSTGRES_USER:-bw_user}:${POSTGRES_PASSWORD:-bw_password}@postgres:5432/${POSTGRES_DB:-black_whale}"
       REDIS_URL: redis://redis:6379
       PORT: "3001"
     depends_on:
@@ -70,7 +70,7 @@ services:
       context: ..
       dockerfile: infrastructure/docker/Dockerfile.worker
     environment:
-      DATABASE_URL: ******postgres:5432/black_whale
+      DATABASE_URL: "postgresql://${POSTGRES_USER:-bw_user}:${POSTGRES_PASSWORD:-bw_password}@postgres:5432/${POSTGRES_DB:-black_whale}"
       REDIS_URL: redis://redis:6379
     depends_on:
       postgres:

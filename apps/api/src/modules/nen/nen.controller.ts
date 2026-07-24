@@ -11,7 +11,6 @@ export class NenController {
   @Get('abilities')
   @Version('1')
   @ApiOperation({ summary: 'List all Nen abilities' })
-  @Get()
   listAbilities() {
     return this.nenService.listAbilities()
   }

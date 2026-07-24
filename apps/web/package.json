@@ -13,8 +13,10 @@
     "clean": "rimraf .svelte-kit build"
   },
   "dependencies": {
+    "@black-whale/ability-modules": "workspace:*",
     "@black-whale/contracts": "workspace:*",
     "@black-whale/domain": "workspace:*",
+    "@black-whale/nen-engine": "workspace:*",
     "@black-whale/ui": "workspace:*",
     "@tanstack/svelte-query": "^5.0.0",
     "svelte": "^5.0.0"

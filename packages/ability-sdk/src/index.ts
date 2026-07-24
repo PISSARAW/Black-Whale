@@ -1,4 +1,21 @@
-import type { NenAbilityModule, AbilityManifest, AbilityContext, ValidationResult, AbilityResult, AbilityInteraction, PerspectiveModifier, AbilityUIComponent } from '@black-whale/nen-engine'
+import type {
+  NenAbilityModule,
+  AbilityManifest,
+  AbilityContext,
+  ValidationResult,
+  AbilityResult,
+  AbilityInteraction,
+  PerspectiveModifier,
+  AbilityUIComponent,
+  AbilityInteractionManifest,
+  NenInteractionMode,
+  NenAllowedTarget,
+  NenOverlayType,
+  NenPerspectiveTransition,
+  NenActionWheelEntry,
+  ActionAvailability,
+  ActionVisibility,
+} from '@black-whale/nen-engine'
 
 // ──────────────────────────────────────────────
 // Condition builders
@@ -59,6 +76,60 @@ export const teleport = (): EffectBuilder => () => ({ type: 'teleport' })
 export const detectAura = (): EffectBuilder => () => ({ type: 'aura_detection' })
 
 // ──────────────────────────────────────────────
+// Interaction manifest builders (section 18)
+// ──────────────────────────────────────────────
+
+export interface ManifestOptions {
+  inputMode: NenInteractionMode
+  allowedTargets: NenAllowedTarget[]
+  overlays?: NenOverlayType[]
+  entryActions?: string[]
+  requiredState?: string[]
+  perspectiveTransition?: NenPerspectiveTransition
+  customComponent?: string
+}
+
+/**
+ * Build a fully-typed AbilityInteractionManifest for a given ability.
+ */
+export function buildManifest(abilityId: string, opts: ManifestOptions): AbilityInteractionManifest {
+  return {
+    abilityId,
+    entryPoints: {
+      actions: opts.entryActions ?? [],
+      requiredState: opts.requiredState ?? [],
+    },
+    inputMode: opts.inputMode,
+    allowedTargets: opts.allowedTargets,
+    overlays: opts.overlays ?? [],
+    perspectiveTransition: opts.perspectiveTransition,
+    customComponent: opts.customComponent,
+  }
+}
+
+// ──────────────────────────────────────────────
+// Action wheel helpers
+// ──────────────────────────────────────────────
+
+export interface WheelEntryOptions {
+  id: string
+  label: string
+  abilityId: string
+  visibility?: ActionVisibility
+  hint?: string
+}
+
+export function wheelEntry(opts: WheelEntryOptions): NenActionWheelEntry {
+  return {
+    id: opts.id,
+    label: opts.label,
+    abilityId: opts.abilityId,
+    visibility: opts.visibility ?? 'available',
+    hint: opts.hint,
+  }
+}
+
+// ──────────────────────────────────────────────
 // defineAbility — main SDK entry point
 // ──────────────────────────────────────────────
 
@@ -70,6 +141,10 @@ export interface AbilityDefinition {
   interactions?: AbilityInteraction[]
   effects?: EffectBuilder[]
   ui?: AbilityUIComponent
+  /** Full interaction contract (section 18) */
+  interactionManifest?: AbilityInteractionManifest
+  /** Static action wheel entries for this ability */
+  actionWheel?: NenActionWheelEntry[]
 }
 
 export function defineAbility(def: AbilityDefinition): NenAbilityModule {
@@ -118,6 +193,25 @@ export function defineAbility(def: AbilityDefinition): NenAbilityModule {
 
     getUIComponent(): AbilityUIComponent {
       return def.ui ?? { componentKey: `${def.id}-ui` }
+    },
+
+    getInteractionManifest(): AbilityInteractionManifest | null {
+      return def.interactionManifest ?? null
+    },
+
+    getActionWheel(_ctx: AbilityContext): NenActionWheelEntry[] {
+      return def.actionWheel ?? []
+    },
+
+    explainAction(actionId: string, ctx: AbilityContext): ActionAvailability {
+      const available = def.interactions?.some((i) => i.id === actionId) ?? false
+      return {
+        actionId,
+        available,
+        conditions: available
+          ? [{ label: 'Action reconnue par la capacité', status: 'met' }]
+          : [{ label: 'Action non disponible pour cette capacité', status: 'unmet' }],
+      }
     },
   }
 }

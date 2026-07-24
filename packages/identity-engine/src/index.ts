@@ -1,19 +1,17 @@
-import type { Character, Body, Consciousness, AuraIdentity } from '@black-whale/domain'
+import type { PrismaClient } from '@black-whale/database'
+import type { Character, Body, Consciousness } from '@black-whale/domain'
 
 // ──────────────────────────────────────────────
 // Types
 // ──────────────────────────────────────────────
 
-/** All possible "tracking" modes for following an entity */
-export type TrackingMode = 'consciousness' | 'body' | 'aura' | 'apparent'
+export type TrackingMode = 'consciousness' | 'body' | 'apparent'
 
 export interface IdentityResolutionResult {
-  characterId: string
   body: Body
-  consciousness: Consciousness
-  aura: AuraIdentity
+  consciousness: Consciousness | null
   /** Which character witnesses believe this to be */
-  perceivedAs: string
+  perceivedAs: string | null
   isDissonant: boolean
 }
 
@@ -22,37 +20,206 @@ export interface IdentityResolutionResult {
 // ──────────────────────────────────────────────
 
 export interface IIdentityEngine {
-  /**
-   * Given a body ID at a specific event, resolve the full identity stack:
-   * who is in this body, what aura is emitted, what witnesses believe.
-   */
   resolveIdentity(bodyId: string, eventId: string): Promise<IdentityResolutionResult>
-
-  /**
-   * Find the body currently occupied by a consciousness at a given event.
-   */
   findBodyOf(consciousnessId: string, eventId: string): Promise<Body | null>
-
-  /**
-   * Track an entity by different modes (follow the consciousness vs the body).
-   */
   track(entityId: string, mode: TrackingMode, eventId: string): Promise<IdentityResolutionResult>
 }
 
 // ──────────────────────────────────────────────
-// Stub implementation
+// Implementation
 // ──────────────────────────────────────────────
 
 export class IdentityEngine implements IIdentityEngine {
+  constructor(private readonly prisma: PrismaClient) {}
+
   async resolveIdentity(bodyId: string, eventId: string): Promise<IdentityResolutionResult> {
-    throw new Error(`IdentityEngine.resolveIdentity not implemented — bodyId: ${bodyId}, eventId: ${eventId}`)
+    const targetEvent = await this.prisma.narrativeEvent.findUnique({
+      where: { id: eventId }
+    })
+    
+    if (!targetEvent) throw new Error(`Event ${eventId} not found`)
+
+    // Fetch the body
+    const body = await this.prisma.body.findUnique({
+      where: { id: bodyId }
+    })
+    
+    if (!body) throw new Error(`Body ${bodyId} not found`)
+
+    // 1. Find active consciousness inside this body
+    const occupancy = await this.prisma.bodyOccupancy.findFirst({
+      where: {
+        bodyId,
+        fromEvent: {
+          sequence: { lte: targetEvent.sequence }
+        },
+        OR: [
+          { untilEventId: null },
+          {
+            untilEvent: {
+              sequence: { gt: targetEvent.sequence }
+            }
+          }
+        ]
+      },
+      include: {
+        consciousness: true
+      },
+      orderBy: {
+        fromEvent: { sequence: 'desc' }
+      }
+    })
+
+    const consciousness = occupancy?.consciousness ?? null
+
+    // 2. Find appearance / perceived identity
+    const appearance = await this.prisma.appearanceState.findFirst({
+      where: {
+        entityId: bodyId,
+        entityType: 'BODY',
+        fromEvent: {
+          sequence: { lte: targetEvent.sequence }
+        },
+        OR: [
+          { untilEventId: null },
+          {
+            untilEvent: {
+              sequence: { gt: targetEvent.sequence }
+            }
+          }
+        ]
+      },
+      orderBy: {
+        fromEvent: { sequence: 'desc' }
+      }
+    })
+
+    const perceivedAs = appearance?.appearanceCharacterId ?? body.originalCharacterId ?? null
+    
+    // Check if the original character is different from the current consciousness
+    // Meaning it's a transferred consciousness
+    const isDissonant = consciousness && body.originalCharacterId !== consciousness.originCharacterId
+
+    // Map Prisma models to Domain models
+    const domainBody: Body = {
+      id: body.id,
+      originalCharacterId: body.originalCharacterId ?? undefined,
+      label: body.label,
+      bodyType: body.bodyType as any,
+      firstVisibleChapter: body.firstVisibleChapter
+    }
+    
+    const domainConsciousness: Consciousness | null = consciousness ? {
+      id: consciousness.id,
+      originCharacterId: consciousness.originCharacterId ?? undefined,
+      label: consciousness.label,
+      consciousnessType: consciousness.consciousnessType as any,
+      firstVisibleChapter: consciousness.firstVisibleChapter
+    } : null
+
+    return {
+      body: domainBody,
+      consciousness: domainConsciousness,
+      perceivedAs,
+      isDissonant: !!isDissonant
+    }
   }
 
   async findBodyOf(consciousnessId: string, eventId: string): Promise<Body | null> {
-    throw new Error(`IdentityEngine.findBodyOf not implemented — consciousnessId: ${consciousnessId}, eventId: ${eventId}`)
+    const targetEvent = await this.prisma.narrativeEvent.findUnique({
+      where: { id: eventId }
+    })
+    
+    if (!targetEvent) return null
+
+    const occupancy = await this.prisma.bodyOccupancy.findFirst({
+      where: {
+        consciousnessId,
+        fromEvent: {
+          sequence: { lte: targetEvent.sequence }
+        },
+        OR: [
+          { untilEventId: null },
+          {
+            untilEvent: {
+              sequence: { gt: targetEvent.sequence }
+            }
+          }
+        ]
+      },
+      include: {
+        body: true
+      },
+      orderBy: {
+        fromEvent: { sequence: 'desc' }
+      }
+    })
+
+    if (!occupancy?.body) return null
+
+    const body = occupancy.body
+    return {
+      id: body.id,
+      originalCharacterId: body.originalCharacterId ?? undefined,
+      label: body.label,
+      bodyType: body.bodyType as any,
+      firstVisibleChapter: body.firstVisibleChapter
+    }
   }
 
   async track(entityId: string, mode: TrackingMode, eventId: string): Promise<IdentityResolutionResult> {
-    throw new Error(`IdentityEngine.track not implemented — entityId: ${entityId}, mode: ${mode}, eventId: ${eventId}`)
+    if (mode === 'body') {
+      return this.resolveIdentity(entityId, eventId)
+    }
+    
+    if (mode === 'consciousness') {
+      const body = await this.findBodyOf(entityId, eventId)
+      if (!body) throw new Error(`Consciousness ${entityId} is not in any body at event ${eventId}`)
+      return this.resolveIdentity(body.id, eventId)
+    }
+    
+    // For 'apparent', we'd need to find bodies that look like `entityId`.
+    // We'll leave that stubbed for now or find the body where originalCharacterId == entityId if no disguise.
+    if (mode === 'apparent') {
+      // Find appearance states active at eventId with appearanceCharacterId = entityId
+      const targetEvent = await this.prisma.narrativeEvent.findUnique({
+        where: { id: eventId }
+      })
+      
+      if (!targetEvent) throw new Error(`Event ${eventId} not found`)
+        
+      const appearance = await this.prisma.appearanceState.findFirst({
+        where: {
+          appearanceCharacterId: entityId,
+          fromEvent: {
+            sequence: { lte: targetEvent.sequence }
+          },
+          OR: [
+            { untilEventId: null },
+            { untilEvent: { sequence: { gt: targetEvent.sequence } } }
+          ]
+        }
+      })
+      
+      let targetBodyId = appearance?.entityId
+      
+      if (!targetBodyId) {
+        // Fallback: look for original body
+        const body = await this.prisma.body.findUnique({
+          where: { originalCharacterId: entityId }
+        })
+        if (body) {
+          targetBodyId = body.id
+        }
+      }
+      
+      if (targetBodyId) {
+        return this.resolveIdentity(targetBodyId, eventId)
+      }
+      
+      throw new Error(`Could not track apparent identity ${entityId} at event ${eventId}`)
+    }
+    
+    throw new Error(`Unknown tracking mode ${mode}`)
   }
 }

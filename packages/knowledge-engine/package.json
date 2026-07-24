@@ -21,7 +21,8 @@
     "clean": "rimraf dist *.tsbuildinfo"
   },
   "dependencies": {
-    "@black-whale/domain": "workspace:*"
+    "@black-whale/domain": "workspace:*",
+    "@black-whale/database": "workspace:*"
   },
   "devDependencies": {
     "typescript": "^5.5.0",

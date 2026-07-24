@@ -22,7 +22,10 @@
   },
   "dependencies": {
     "@black-whale/domain": "workspace:*",
-    "@black-whale/timeline-engine": "workspace:*"
+    "@black-whale/timeline-engine": "workspace:*",
+    "@black-whale/database": "workspace:*",
+    "@black-whale/identity-engine": "workspace:*",
+    "@black-whale/knowledge-engine": "workspace:*"
   },
   "devDependencies": {
     "typescript": "^5.5.0",

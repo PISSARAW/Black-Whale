@@ -1,0 +1,166 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Character {
+  id                  String  @id @default(uuid())
+  slug                String  @unique
+  canonicalName       String
+  description         String?
+  firstVisibleChapter Int
+  portraitAssetId     String?
+
+  affiliations CharacterAffiliation[]
+  presences    Presence[]
+  states       BiologicalState[]
+}
+
+enum AffiliationType {
+  PRINCE_CAMP
+  ROYAL_ARMY
+  MAFIA
+  HUNTER_ASSOCIATION
+  PHANTOM_TROUPE
+  OTHER
+}
+
+model Affiliation {
+  id   String          @id @default(uuid())
+  name String
+  type AffiliationType
+
+  members CharacterAffiliation[]
+}
+
+model CharacterAffiliation {
+  id            String  @id @default(uuid())
+  characterId   String
+  affiliationId String
+  fromEventId   String
+  untilEventId  String?
+  role          String?
+
+  character   Character      @relation(fields: [characterId], references: [id], onDelete: Cascade)
+  affiliation Affiliation    @relation(fields: [affiliationId], references: [id], onDelete: Cascade)
+  fromEvent   NarrativeEvent @relation("AffiliationFromEvent", fields: [fromEventId], references: [id])
+  untilEvent  NarrativeEvent? @relation("AffiliationUntilEvent", fields: [untilEventId], references: [id])
+}
+
+enum LocationType {
+  SHIP
+  TIER
+  ZONE
+  ROOM
+  CORRIDOR
+  UNKNOWN
+}
+
+model Location {
+  id                  String       @id @default(uuid())
+  slug                String       @unique
+  name                String
+  parentLocationId    String?
+  type                LocationType
+  mapElementId        String?
+  firstVisibleChapter Int
+
+  parentLocation Location?  @relation("LocationHierarchy", fields: [parentLocationId], references: [id])
+  childLocations Location[] @relation("LocationHierarchy")
+  presences      Presence[]
+}
+
+model Chapter {
+  id     String  @id @default(uuid())
+  number Int     @unique
+  title  String?
+
+  events NarrativeEvent[]
+}
+
+model NarrativeEvent {
+  id                  String  @id @default(uuid())
+  chapterId           String
+  sequence            Int
+  title               String
+  summary             String
+  locationId          String?
+  firstVisibleChapter Int
+
+  chapter Chapter @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+
+  presencesFrom      Presence[]             @relation("PresenceFromEvent")
+  presencesUntil     Presence[]             @relation("PresenceUntilEvent")
+  statesFrom         BiologicalState[]      @relation("StateFromEvent")
+  statesUntil        BiologicalState[]      @relation("StateUntilEvent")
+  affiliationsFrom   CharacterAffiliation[] @relation("AffiliationFromEvent")
+  affiliationsUntil  CharacterAffiliation[] @relation("AffiliationUntilEvent")
+}
+
+enum PresencePrecision {
+  EXACT_ROOM
+  ZONE
+  TIER
+  UNKNOWN
+}
+
+enum PresenceCertainty {
+  CONFIRMED
+  PROBABLE
+  LAST_KNOWN
+}
+
+model Presence {
+  id           String            @id @default(uuid())
+  entityId     String // Initially corresponds to characterId, later could be body/nen beast
+  locationId   String?
+  fromEventId  String
+  untilEventId String?
+  precision    PresencePrecision
+  certainty    PresenceCertainty
+
+  character Character       @relation(fields: [entityId], references: [id], onDelete: Cascade)
+  location  Location?       @relation(fields: [locationId], references: [id], onDelete: SetNull)
+  fromEvent NarrativeEvent  @relation("PresenceFromEvent", fields: [fromEventId], references: [id])
+  untilEvent NarrativeEvent? @relation("PresenceUntilEvent", fields: [untilEventId], references: [id])
+  sources   Source[]
+}
+
+enum BiologicalStateType {
+  ALIVE
+  INJURED
+  UNCONSCIOUS
+  DEAD
+  MISSING
+  UNKNOWN
+}
+
+model BiologicalState {
+  id           String              @id @default(uuid())
+  characterId  String
+  state        BiologicalStateType
+  fromEventId  String
+  untilEventId String?
+
+  character Character       @relation(fields: [characterId], references: [id], onDelete: Cascade)
+  fromEvent NarrativeEvent  @relation("StateFromEvent", fields: [fromEventId], references: [id])
+  untilEvent NarrativeEvent? @relation("StateUntilEvent", fields: [untilEventId], references: [id])
+  sources   Source[]
+}
+
+model Source {
+  id            String  @id @default(uuid())
+  chapterNumber Int
+  page          Int?
+  description   String?
+
+  presenceId        String?
+  biologicalStateId String?
+
+  presence        Presence?        @relation(fields: [presenceId], references: [id], onDelete: Cascade)
+  biologicalState BiologicalState? @relation(fields: [biologicalStateId], references: [id], onDelete: Cascade)
+}

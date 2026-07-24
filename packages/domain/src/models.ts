@@ -157,6 +157,100 @@ export interface NenEffect {
 }
 
 // ──────────────────────────────────────────────
+// Canonical Nen Interaction Types
+// ──────────────────────────────────────────────
+
+export type CanonStatusDetailed = 'CONFIRMED' | 'PARTIAL' | 'UNKNOWN'
+
+export interface CanonRule {
+  type: 'activation' | 'target' | 'maintenance' | 'termination' | 'restriction'
+  description: string
+  expression?: string
+  isCritical: boolean
+}
+
+export interface InteractionInput {
+  name: string
+  type: 'boolean' | 'number' | 'string' | 'entity_id' | 'duration' | 'selection'
+  description: string
+  required: boolean
+  constraints?: Record<string, unknown>
+}
+
+export interface CanonEffect {
+  type: 'immediate' | 'persistent' | 'conditional'
+  description: string
+  targetType: 'self' | 'target' | 'environment' | 'group'
+  duration?: string
+  magnitude?: string | number
+  conditions?: string[]
+}
+
+export interface CanonCost {
+  type: 'aura' | 'lifespan' | 'stamina' | 'nen_restriction' | 'post_mortem' | 'resource'
+  description: string
+  amount?: string | number
+  duration?: string
+}
+
+export interface PerspectiveModifier {
+  type: 'visual' | 'auditory' | 'memory' | 'perception' | 'identity'
+  description: string
+  affects: 'user' | 'target' | 'observers' | 'all'
+  effect: string
+}
+
+export interface BodyModifier {
+  type: 'transformation' | 'control' | 'restriction' | 'enhancement'
+  description: string
+  target: 'self' | 'other' | 'object'
+  effect: string
+}
+
+export interface ConsciousnessModifier {
+  type: 'transfer' | 'split' | 'control' | 'memory' | 'perception'
+  description: string
+  source: string
+  target: string
+  effect: string
+}
+
+export interface TimelineModifier {
+  type: 'vision' | 'rewind' | 'fast_forward' | 'branch'
+  description: string
+  duration: string
+  effect: string
+}
+
+export interface CanonicalNenInteraction {
+  abilityId: string
+  name: string
+  ownerId: string
+  canonStatus: CanonStatusDetailed
+  category?: NenCategory
+  
+  activationConditions: CanonRule[]
+  validTargets: CanonRule[]
+  requiredInputs: InteractionInput[]
+  
+  immediateEffects: CanonEffect[]
+  persistentEffects: CanonEffect[]
+  costs: CanonCost[]
+  terminationConditions: CanonRule[]
+  
+  perspectiveChanges?: PerspectiveModifier[]
+  bodyChanges?: BodyModifier[]
+  consciousnessChanges?: ConsciousnessModifier[]
+  timelineChanges?: TimelineModifier[]
+  
+  unknownProperties: string[]
+  forbiddenInferences: string[]
+  
+  chapterSources: number[]
+  notes?: string
+}
+
+// ──────────────────────────────────────────────
 // Knowledge & Facts
 // ──────────────────────────────────────────────
 

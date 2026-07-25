@@ -1,0 +1,590 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum NarrativeImportance {
+  PRIMARY
+  SECONDARY
+  MINOR
+  BACKGROUND
+}
+
+model Character {
+  id                  String   @id @default(uuid())
+  slug                String   @unique
+  canonicalName       String
+  aliases             String[]
+  description         String?
+  narrativeImportance NarrativeImportance @default(MINOR)
+  modelingLevel       Int      @default(3) // 1, 2, 3, or 4
+  firstVisibleEventId String
+  portraitAssetId     String?
+
+  firstVisibleEvent   NarrativeEvent @relation("CharacterFirstVisible", fields: [firstVisibleEventId], references: [id])
+
+  affiliations        AffiliationMembership[]
+  roles               CharacterRole[]
+  assignments         CharacterAssignment[]
+  
+  originalBody          Body? @relation("OriginalBody")
+  originalConsciousness Consciousness? @relation("OriginalConsciousness")
+
+  knowledgeStates     KnowledgeState[] @relation("ObserverKnowledge")
+  knowledgeSourced    KnowledgeState[] @relation("SourceKnowledge")
+  beliefs             Belief[]
+}
+
+enum AffiliationType {
+  ROYAL_FAMILY
+  PRINCE_CAMP
+  KAKIN_ROYAL_ARMY
+  BENJAMIN_PRIVATE_ARMY
+  HUNTER_ASSOCIATION
+  MAFIA_FAMILY
+  PHANTOM_TROUPE
+  EXPEDITION_TEAM
+  JUSTICE_POLICE
+  CIVILIAN
+  UNKNOWN
+}
+
+model Faction {
+  id       String          @id @default(uuid())
+  name     String
+  type     AffiliationType
+  leaderId String?
+
+  members  AffiliationMembership[]
+  
+  trueAllegianceAssignments  CharacterAssignment[] @relation("TrueAllegiance")
+  knownAllegianceAssignments CharacterAssignment[] @relation("KnownAllegiance")
+}
+
+enum MembershipRole {
+  LEADER
+  EXECUTIVE
+  MEMBER
+  ASSOCIATE
+  PRISONER
+  UNKNOWN
+}
+
+enum MembershipStatus {
+  ACTIVE
+  INACTIVE
+  EXILED
+  DECEASED
+  UNKNOWN
+}
+
+model AffiliationMembership {
+  id            String  @id @default(uuid())
+  characterId   String
+  factionId     String
+  role          MembershipRole
+  status        MembershipStatus
+  fromEventId   String
+  untilEventId  String?
+
+  character   Character      @relation(fields: [characterId], references: [id], onDelete: Cascade)
+  faction     Faction        @relation(fields: [factionId], references: [id], onDelete: Cascade)
+  fromEvent   NarrativeEvent @relation("AffiliationFromEvent", fields: [fromEventId], references: [id])
+  untilEvent  NarrativeEvent? @relation("AffiliationUntilEvent", fields: [untilEventId], references: [id])
+}
+
+model CharacterRole {
+  id            String  @id @default(uuid())
+  characterId   String
+  roleName      String
+  fromEventId   String
+  untilEventId  String?
+
+  character   Character      @relation(fields: [characterId], references: [id], onDelete: Cascade)
+  fromEvent   NarrativeEvent @relation("RoleFromEvent", fields: [fromEventId], references: [id])
+  untilEvent  NarrativeEvent? @relation("RoleUntilEvent", fields: [untilEventId], references: [id])
+}
+
+model CharacterAssignment {
+  id                  String  @id @default(uuid())
+  characterId         String
+  assignedPrinceId    String
+  officialRole        String
+  trueAllegianceId    String?
+  knownAllegianceId   String?
+  fromEventId         String
+  untilEventId        String?
+
+  character         Character      @relation(fields: [characterId], references: [id], onDelete: Cascade)
+  trueAllegiance    Faction?       @relation("TrueAllegiance", fields: [trueAllegianceId], references: [id])
+  knownAllegiance   Faction?       @relation("KnownAllegiance", fields: [knownAllegianceId], references: [id])
+  fromEvent         NarrativeEvent @relation("AssignmentFromEvent", fields: [fromEventId], references: [id])
+  untilEvent        NarrativeEvent? @relation("AssignmentUntilEvent", fields: [untilEventId], references: [id])
+}
+
+enum CohortProfile {
+  PASSENGERS
+  MEDICAL_STAFF
+  WORKERS
+  MILITARY
+  VIP_GUESTS
+  MAFIA_ASSOCIATES
+}
+
+model PopulationCohort {
+  id             String        @id @default(uuid())
+  label          String
+  locationId     String
+  estimatedCount Int?
+  profile        CohortProfile
+  fromEventId    String
+  untilEventId   String?
+
+  location       Location      @relation(fields: [locationId], references: [id])
+  fromEvent      NarrativeEvent @relation("CohortFromEvent", fields: [fromEventId], references: [id])
+  untilEvent     NarrativeEvent? @relation("CohortUntilEvent", fields: [untilEventId], references: [id])
+}
+
+enum ParticipationType {
+  ACTIVE
+  PASSIVE
+  OBSERVER
+  VICTIM
+  UNKNOWN
+}
+
+model EventParticipation {
+  id                String  @id @default(uuid())
+  eventId           String
+  participantId     String
+  participantType   String  // CHARACTER, BODY, COHORT
+  participationType ParticipationType
+
+  event             NarrativeEvent @relation(fields: [eventId], references: [id], onDelete: Cascade)
+}
+
+// -----------------------------------------------------
+// V2 Models
+// -----------------------------------------------------
+
+enum BodyType {
+  ORIGINAL
+  CLONE
+  COPY
+  CONSTRUCT
+  UNKNOWN
+}
+
+model Body {
+  id                  String   @id @default(uuid())
+  originalCharacterId String?  @unique
+  label               String
+  bodyType            BodyType
+  firstVisibleEventId String
+
+  firstVisibleEvent   NarrativeEvent @relation("BodyFirstVisible", fields: [firstVisibleEventId], references: [id])
+  character           Character? @relation("OriginalBody", fields: [originalCharacterId], references: [id])
+  
+  presences           Presence[]
+  states              BodyState[]
+  occupancies         BodyOccupancy[]
+  appearances         AppearanceState[]
+}
+
+enum ConsciousnessType {
+  ORIGINAL
+  COPIED
+  ARTIFICIAL
+  NEN_ENTITY
+  UNKNOWN
+}
+
+model Consciousness {
+  id                  String   @id @default(uuid())
+  originCharacterId   String?  @unique
+  label               String
+  consciousnessType   ConsciousnessType
+  firstVisibleEventId String
+
+  firstVisibleEvent   NarrativeEvent @relation("ConsciousnessFirstVisible", fields: [firstVisibleEventId], references: [id])
+  character           Character? @relation("OriginalConsciousness", fields: [originCharacterId], references: [id])
+  
+  states              ConsciousnessState[]
+  occupancies         BodyOccupancy[]
+}
+
+enum OccupancyType {
+  ORIGINAL
+  TRANSFERRED
+  POSSESSED
+  CONTROLLED
+  EMPTY
+  UNKNOWN
+}
+
+enum Certainty {
+  CONFIRMED
+  PROBABLE
+  UNKNOWN
+}
+
+model BodyOccupancy {
+  id              String  @id @default(uuid())
+  bodyId          String
+  consciousnessId String?
+  fromEventId     String
+  untilEventId    String?
+
+  occupancyType   OccupancyType
+  certainty       Certainty
+
+  body            Body           @relation(fields: [bodyId], references: [id], onDelete: Cascade)
+  consciousness   Consciousness? @relation(fields: [consciousnessId], references: [id], onDelete: SetNull)
+  fromEvent       NarrativeEvent @relation("OccupancyFromEvent", fields: [fromEventId], references: [id])
+  untilEvent      NarrativeEvent? @relation("OccupancyUntilEvent", fields: [untilEventId], references: [id])
+  
+  sources         Source[]       @relation("BodyOccupancySources")
+}
+
+enum LocationType {
+  SHIP
+  TIER
+  ZONE
+  ROOM
+  CORRIDOR
+  UNKNOWN
+}
+
+model Location {
+  id                  String       @id @default(uuid())
+  slug                String       @unique
+  name                String
+  parentLocationId    String?
+  type                LocationType
+  mapElementId        String?
+  firstVisibleEventId String
+
+  firstVisibleEvent   NarrativeEvent @relation("LocationFirstVisible", fields: [firstVisibleEventId], references: [id])
+
+  parentLocation Location?  @relation("LocationHierarchy", fields: [parentLocationId], references: [id])
+  childLocations Location[] @relation("LocationHierarchy")
+  presences      Presence[]
+  cohorts        PopulationCohort[]
+}
+
+model Chapter {
+  id     String  @id @default(uuid())
+  number Int     @unique
+  title  String?
+
+  events NarrativeEvent[]
+}
+
+model NarrativeEvent {
+  id                  String  @id @default(uuid())
+  chapterId           String
+  sequence            Int
+  title               String
+  summary             String
+  locationId          String?
+
+  chapter Chapter @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+
+  // Entities becoming visible
+  charactersFirstVisible Character[] @relation("CharacterFirstVisible")
+  bodiesFirstVisible     Body[]      @relation("BodyFirstVisible")
+  consciousnessesFirstVisible Consciousness[] @relation("ConsciousnessFirstVisible")
+  locationsFirstVisible  Location[]  @relation("LocationFirstVisible")
+  factsFirstVisible      Fact[]      @relation("FactFirstVisible")
+
+  // Temporal Relations
+  presencesFrom      Presence[]             @relation("PresenceFromEvent")
+  presencesUntil     Presence[]             @relation("PresenceUntilEvent")
+  bodyStatesFrom     BodyState[]            @relation("BodyStateFromEvent")
+  bodyStatesUntil    BodyState[]            @relation("BodyStateUntilEvent")
+  consciousStatesFrom ConsciousnessState[]  @relation("ConsciousStateFromEvent")
+  consciousStatesUntil ConsciousnessState[] @relation("ConsciousStateUntilEvent")
+  
+  affiliationsFrom   AffiliationMembership[] @relation("AffiliationFromEvent")
+  affiliationsUntil  AffiliationMembership[] @relation("AffiliationUntilEvent")
+  rolesFrom          CharacterRole[]         @relation("RoleFromEvent")
+  rolesUntil         CharacterRole[]         @relation("RoleUntilEvent")
+  assignmentsFrom    CharacterAssignment[]   @relation("AssignmentFromEvent")
+  assignmentsUntil   CharacterAssignment[]   @relation("AssignmentUntilEvent")
+  cohortsFrom        PopulationCohort[]      @relation("CohortFromEvent")
+  cohortsUntil       PopulationCohort[]      @relation("CohortUntilEvent")
+  
+  occupanciesFrom    BodyOccupancy[]        @relation("OccupancyFromEvent")
+  occupanciesUntil   BodyOccupancy[]        @relation("OccupancyUntilEvent")
+  appearancesFrom    AppearanceState[]      @relation("AppearanceFromEvent")
+  appearancesUntil   AppearanceState[]      @relation("AppearanceUntilEvent")
+  
+  factsFrom          Fact[]                 @relation("FactFromEvent")
+  factsUntil         Fact[]                 @relation("FactUntilEvent")
+  knowledgeFrom      KnowledgeState[]       @relation("KnowledgeFromEvent")
+  knowledgeUntil     KnowledgeState[]       @relation("KnowledgeUntilEvent")
+  knowledgeAcquired  KnowledgeState[]       @relation("KnowledgeAcquisitionEvent")
+  beliefsFrom        Belief[]               @relation("BeliefFromEvent")
+  beliefsUntil       Belief[]               @relation("BeliefUntilEvent")
+  beliefsSource      Belief[]               @relation("BeliefSourceEvent")
+  
+  participations     EventParticipation[]
+}
+
+enum SpatialEntityType {
+  BODY
+  NEN_BEAST
+  CLONE
+  OBJECT
+  AURA_ENTITY
+  COHORT
+}
+
+enum PresencePrecision {
+  EXACT_ROOM
+  ZONE
+  TIER
+  UNKNOWN
+}
+
+enum PresenceCertainty {
+  CONFIRMED
+  PROBABLE
+  LAST_KNOWN
+}
+
+model Presence {
+  id           String            @id @default(uuid())
+  entityType   SpatialEntityType
+  entityId     String 
+  locationId   String?
+  fromEventId  String
+  untilEventId String?
+  precision    PresencePrecision
+  certainty    PresenceCertainty
+
+  body         Body?           @relation(fields: [entityId], references: [id], map: "Presence_bodyId_fkey")
+  
+  location  Location?       @relation(fields: [locationId], references: [id], onDelete: SetNull)
+  fromEvent NarrativeEvent  @relation("PresenceFromEvent", fields: [fromEventId], references: [id])
+  untilEvent NarrativeEvent? @relation("PresenceUntilEvent", fields: [untilEventId], references: [id])
+  sources   Source[]
+}
+
+enum BodyStateType {
+  ALIVE
+  INJURED
+  UNCONSCIOUS
+  DEAD
+  DESTROYED
+  PRESERVED
+  UNKNOWN
+}
+
+model BodyState {
+  id           String              @id @default(uuid())
+  bodyId       String
+  state        BodyStateType
+  fromEventId  String
+  untilEventId String?
+
+  body        Body            @relation(fields: [bodyId], references: [id], onDelete: Cascade)
+  fromEvent   NarrativeEvent  @relation("BodyStateFromEvent", fields: [fromEventId], references: [id])
+  untilEvent  NarrativeEvent? @relation("BodyStateUntilEvent", fields: [untilEventId], references: [id])
+  sources     Source[]
+}
+
+enum ConsciousnessStateType {
+  ACTIVE
+  UNCONSCIOUS
+  TRANSFERRED
+  SUPPRESSED
+  DORMANT
+  DISCONNECTED
+  DESTROYED
+  UNKNOWN
+}
+
+model ConsciousnessState {
+  id              String  @id @default(uuid())
+  consciousnessId String
+  state           ConsciousnessStateType
+  fromEventId     String
+  untilEventId    String?
+
+  consciousness Consciousness   @relation(fields: [consciousnessId], references: [id], onDelete: Cascade)
+  fromEvent     NarrativeEvent  @relation("ConsciousStateFromEvent", fields: [fromEventId], references: [id])
+  untilEvent    NarrativeEvent? @relation("ConsciousStateUntilEvent", fields: [untilEventId], references: [id])
+  sources       Source[]
+}
+
+enum AppearanceCause {
+  NATURAL
+  TRANSFORMATION
+  DISGUISE
+  NEN_ABILITY
+  UNKNOWN
+}
+
+model AppearanceState {
+  id                    String  @id @default(uuid())
+  entityId              String
+  entityType            String  // "BODY" | "NEN_ENTITY"
+  appearanceCharacterId String?
+  appearanceAssetId     String?
+  fromEventId           String
+  untilEventId          String?
+  cause                 AppearanceCause
+
+  body        Body?           @relation(fields: [entityId], references: [id], map: "Appearance_bodyId_fkey")
+  fromEvent   NarrativeEvent  @relation("AppearanceFromEvent", fields: [fromEventId], references: [id])
+  untilEvent  NarrativeEvent? @relation("AppearanceUntilEvent", fields: [untilEventId], references: [id])
+}
+
+// -----------------------------------------------------
+// KNOWLEDGE ENGINE
+// -----------------------------------------------------
+
+enum FactSubjectType {
+  CHARACTER
+  BODY
+  CONSCIOUSNESS
+  LOCATION
+  EVENT
+  ABILITY
+  AFFILIATION
+  COHORT
+}
+
+enum TruthStatus {
+  CONFIRMED
+  STRONGLY_IMPLIED
+  DEDUCTION
+  CONTESTED
+}
+
+model Fact {
+  id                  String  @id @default(uuid())
+  subjectType         FactSubjectType
+  subjectId           String
+  predicate           String
+  value               Json
+  validFromEventId    String
+  validUntilEventId   String?
+  truthStatus         TruthStatus
+  firstVisibleEventId String
+
+  firstVisibleEvent   NarrativeEvent  @relation("FactFirstVisible", fields: [firstVisibleEventId], references: [id])
+  fromEvent           NarrativeEvent  @relation("FactFromEvent", fields: [validFromEventId], references: [id])
+  untilEvent          NarrativeEvent? @relation("FactUntilEvent", fields: [validUntilEventId], references: [id])
+  sources             Source[]        @relation("FactSources")
+  knowledgeStates     KnowledgeState[]
+}
+
+enum EpistemicState {
+  KNOWN
+  BELIEVED
+  SUSPECTED
+  DOUBTED
+  REJECTED
+  UNKNOWN
+}
+
+enum AcquisitionMethod {
+  DIRECT_OBSERVATION
+  TOLD_BY_OTHER
+  DEDUCTION
+  NEN_ABILITY
+  DOCUMENT
+  RUMOR
+  UNKNOWN
+}
+
+model KnowledgeState {
+  id                  String  @id @default(uuid())
+  observerCharacterId String
+  factId              String
+  fromEventId         String
+  untilEventId        String?
+  epistemicState      EpistemicState
+  confidence          Float?
+  acquisitionMethod   AcquisitionMethod
+  sourceCharacterId   String?
+  acquisitionEventId  String
+
+  observerCharacter   Character       @relation("ObserverKnowledge", fields: [observerCharacterId], references: [id])
+  sourceCharacter     Character?      @relation("SourceKnowledge", fields: [sourceCharacterId], references: [id])
+
+  fact                Fact            @relation(fields: [factId], references: [id], onDelete: Cascade)
+  fromEvent           NarrativeEvent  @relation("KnowledgeFromEvent", fields: [fromEventId], references: [id])
+  untilEvent          NarrativeEvent? @relation("KnowledgeUntilEvent", fields: [untilEventId], references: [id])
+  acquisitionEvent    NarrativeEvent  @relation("KnowledgeAcquisitionEvent", fields: [acquisitionEventId], references: [id])
+}
+
+model Belief {
+  id                  String  @id @default(uuid())
+  observerCharacterId String
+  subjectType         String
+  subjectId           String
+  predicate           String
+  believedValue       Json
+  fromEventId         String
+  untilEventId        String?
+  confidence          Float
+  sourceEventId       String
+
+  observerCharacter   Character       @relation(fields: [observerCharacterId], references: [id])
+  fromEvent           NarrativeEvent  @relation("BeliefFromEvent", fields: [fromEventId], references: [id])
+  untilEvent          NarrativeEvent? @relation("BeliefUntilEvent", fields: [untilEventId], references: [id])
+  sourceEvent         NarrativeEvent  @relation("BeliefSourceEvent", fields: [sourceEventId], references: [id])
+}
+
+enum TransmissionType {
+  DIRECT_SPEECH
+  PHONE
+  MESSAGE
+  REPORT
+  BROADCAST
+  NEN_LINK
+}
+
+enum Reliability {
+  TRUSTED
+  UNVERIFIED
+  DECEPTIVE
+  UNKNOWN
+}
+
+model InformationTransferEvent {
+  id                  String  @id @default(uuid())
+  senderId            String
+  transmissionType    TransmissionType
+  reliability         Reliability
+  
+  receiverIds         String[]
+  factIds             String[]
+}
+
+// -----------------------------------------------------
+
+model Source {
+  id            String  @id @default(uuid())
+  chapterNumber Int
+  page          Int?
+  description   String?
+
+  presenceId            String?
+  bodyStateId           String?
+  consciousnessStateId  String?
+
+  presence           Presence?           @relation(fields: [presenceId], references: [id], onDelete: Cascade)
+  bodyState          BodyState?          @relation(fields: [bodyStateId], references: [id], onDelete: Cascade)
+  consciousnessState ConsciousnessState? @relation(fields: [consciousnessStateId], references: [id], onDelete: Cascade)
+  
+  occupancies        BodyOccupancy[]     @relation("BodyOccupancySources")
+  facts              Fact[]              @relation("FactSources")
+}

@@ -14,6 +14,7 @@ export const load: PageServerLoad = async () => {
 export const actions: Actions = {
 	default: async ({ request }) => {
 		const data = await request.formData();
+		const prisma = await getPrisma();
 		
 		const chapterId = data.get('chapterId')?.toString();
 		const sequence = parseInt(data.get('sequence')?.toString() || '0');

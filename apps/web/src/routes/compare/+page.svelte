@@ -16,6 +16,8 @@
   let tier = $state(data.sync.tier || 'tier-1');
   let zone = $state(data.sync.zone || '');
   let selectedSubject = $state(data.sync.subject || '');
+  let snapKey = $state(0);
+  let lastSnapSubject = $state('');
 
   const tiers = ['tier-1', 'tier-2', 'tier-3', 'tier-4', 'tier-5'];
   const filters = ['Tous', 'Identites', 'Positions', 'Statuts', 'Capacites', 'Affiliations', 'Evenements'];
@@ -183,6 +185,37 @@
     baseMarkers.filter((marker: any) => marker.tier === tier && (!zone || marker.zone === zone))
   );
 
+  function codeWeight(code: '=' | '←' | '→' | '≠' | '~' | '⏱') {
+    if (code === '≠') return 5;
+    if (code === '⏱') return 4;
+    if (code === '←' || code === '→') return 3;
+    if (code === '~') return 2;
+    return 1;
+  }
+
+  function differenceCode(diff: any): '=' | '←' | '→' | '≠' | '~' | '⏱' {
+    if (diff.dimension === 'EVENT') return '⏱';
+    return pickCode(diff);
+  }
+
+  let subjectCodeMap = $derived.by(() => {
+    const map = new Map<string, '=' | '←' | '→' | '≠' | '~' | '⏱'>();
+
+    for (const diff of differences as any[]) {
+      const subjectId = diff.subjectId;
+      if (!subjectId) continue;
+
+      const code = differenceCode(diff);
+      const existing = map.get(subjectId) || '=';
+
+      if (codeWeight(code) > codeWeight(existing)) {
+        map.set(subjectId, code);
+      }
+    }
+
+    return map;
+  });
+
   function markerLabel(marker: any, perspective: any, mode: 'left' | 'right' | 'reader') {
     if (mode === 'reader') return marker.name;
     if (!perspective) return marker.name;
@@ -205,18 +238,21 @@
   let leftMapMarkers = $derived(scopedMarkers.map((marker: any) => ({
     ...marker,
     label: markerLabel(marker, data.leftPerspective, 'left'),
+    code: subjectCodeMap.get(marker.subjectId) || '=',
     selected: marker.subjectId === selectedSubject
   })));
 
   let rightMapMarkers = $derived(scopedMarkers.map((marker: any) => ({
     ...marker,
     label: markerLabel(marker, data.rightPerspective, 'right'),
+    code: subjectCodeMap.get(marker.subjectId) || '=',
     selected: marker.subjectId === selectedSubject
   })));
 
   let readerMapMarkers = $derived(scopedMarkers.map((marker: any) => ({
     ...marker,
     label: markerLabel(marker, null, 'reader'),
+    code: subjectCodeMap.get(marker.subjectId) || '=',
     selected: marker.subjectId === selectedSubject
   })));
 
@@ -249,6 +285,12 @@
     if (!selectedSubject && entitiesInView.length > 0) {
       selectedSubject = entitiesInView[0].subjectId;
     }
+  });
+
+  $effect(() => {
+    if (!selectedSubject || selectedSubject === lastSnapSubject) return;
+    lastSnapSubject = selectedSubject;
+    snapKey += 1;
   });
 
   function getCharacterName(id: string) {
@@ -471,6 +513,7 @@
           zoom={zoom}
           focusX={focusMarker.x}
           focusY={focusMarker.y}
+          {snapKey}
           markers={leftMapMarkers}
           onSelect={selectEntity}
         />
@@ -511,6 +554,7 @@
           zoom={zoom}
           focusX={focusMarker.x}
           focusY={focusMarker.y}
+          {snapKey}
           markers={rightMapMarkers}
           onSelect={selectEntity}
         />
@@ -536,6 +580,7 @@
             zoom={zoom}
             focusX={focusMarker.x}
             focusY={focusMarker.y}
+            {snapKey}
             markers={readerMapMarkers}
             onSelect={selectEntity}
           />

@@ -4,8 +4,8 @@ import type { FollowMode, PerspectiveKind } from '$lib/components/perspective/ty
 export type ZoomLevel = 'OVERVIEW' | 'TIER' | 'LOCAL';
 
 export const mapState = $state({
-  currentZoomLevel: 'TIER' as ZoomLevel,
-  selectedTier: 'tier-1' as string | null,
+  currentZoomLevel: 'OVERVIEW' as ZoomLevel,
+  selectedTier: null as string | null,
   selectedLocationId: null as string | null,
   selectedPerspectiveId: 'reader' as string,
   selectedPerspectiveKind: 'reader' as PerspectiveKind,

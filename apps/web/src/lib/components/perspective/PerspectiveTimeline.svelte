@@ -21,12 +21,12 @@
     currentIndex: number;
   } = $props();
 
-  const lines = [
+  let lines = $derived([
     { label: 'Realite', points: reality },
     { label: 'Corps', points: body },
     { label: 'Conscience', points: consciousness },
     { label: 'Connaissance', points: knowledge }
-  ];
+  ]);
 </script>
 
 <section class="timeline-v2" aria-label="Chronologie multi flux">
@@ -51,6 +51,7 @@
 <style>
   .timeline-v2 {
     display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 0.5rem;
     padding: 0.65rem 0.8rem;
     border: 1px solid var(--line);
@@ -60,7 +61,6 @@
 
   .line {
     display: grid;
-    grid-template-columns: 6.5rem 1fr;
     gap: 0.64rem;
     align-items: start;
   }
@@ -78,13 +78,14 @@
     list-style: none;
     margin: 0;
     padding: 0;
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 0.5rem;
     overflow-x: auto;
   }
 
   li {
-    min-width: 10rem;
+    min-width: 0;
     border: 1px solid color-mix(in srgb, var(--line) 74%, #f5f1df 10%);
     border-radius: 0.45rem;
     padding: 0.36rem 0.45rem;
@@ -118,6 +119,10 @@
   }
 
   @media (max-width: 780px) {
+    .timeline-v2 {
+      grid-template-columns: 1fr;
+    }
+
     .line {
       grid-template-columns: 1fr;
       gap: 0.3rem;

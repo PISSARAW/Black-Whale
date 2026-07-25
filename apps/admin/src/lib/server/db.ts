@@ -1,14 +1,25 @@
 // Prisma database client
-// Uses dynamic import to handle CommonJS @prisma/client module
+// Uses a CommonJS wrapper to handle @prisma/client
+
+// Declare the CommonJS module
+declare module './db.cjs' {
+  export const prisma: any;
+  export const PrismaClient: any;
+  export const getPrismaInstance: () => any;
+}
 
 let prismaPromise: Promise<any> | null = null;
 
-export async function getPrisma() {
+async function getPrismaClient(): Promise<any> {
   if (!prismaPromise) {
-    const { PrismaClient } = await import('@prisma/client');
-    const databaseUrl = process.env.DATABASE_URL || 'postgresql://henripissa@localhost:5432/blackwhale?schema=public';
-    
-    prismaPromise = Promise.resolve(new PrismaClient({ datasourceUrl: databaseUrl }));
+    // Import the CommonJS wrapper using dynamic import
+    // Vite will handle this as an external module in SSR
+    const module = await import('./db.cjs');
+    prismaPromise = Promise.resolve(module.prisma);
   }
-  return await prismaPromise;
+  return prismaPromise;
+}
+
+export async function getPrisma() {
+  return await getPrismaClient();
 }

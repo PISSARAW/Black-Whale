@@ -112,10 +112,10 @@
   function handleTimelineChange(e: Event) {
     const input = e.target as HTMLInputElement;
     const newSeq = parseInt(input.value);
-    
-    // Instead of doing full page reload, we could fetch via API.
-    // For the MVP, a reload with param works
-    window.location.href = `/ship?sequence=${newSeq}`;
+
+    const url = new URL($page.url);
+    url.searchParams.set('sequence', String(newSeq));
+    goto(url.toString(), { keepFocus: true, replaceState: true });
   }
 
   function handlePerspectiveSelect(id: string) {
@@ -144,7 +144,7 @@
   <title>Black Whale Map - Hunter x Hunter</title>
 </svelte:head>
 
-<div class="v2-shell flex flex-col h-screen w-full text-[#FFFFF0] overflow-hidden px-3 py-3 gap-3">
+<div class="v2-shell flex flex-col min-h-[calc(100vh-3.25rem)] lg:h-[calc(100vh-3.25rem)] w-full text-[#FFFFF0] overflow-visible lg:overflow-hidden px-3 py-3 gap-3">
   
   <section class="flex-none grid grid-cols-1 gap-3">
     <div class="flex items-center justify-between px-1">
@@ -171,7 +171,7 @@
       />
     {/if}
 
-    <div class="grid grid-cols-1 lg:grid-cols-[20rem_1fr] gap-3">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-3">
       <PerspectiveSelector
         options={perspectiveOptions}
         selectedPerspective={mapState.selectedPerspectiveId}
@@ -200,10 +200,10 @@
     </div>
   </section>
 
-  <div class="flex flex-1 overflow-hidden">
+  <div class="flex flex-1 min-h-96 lg:min-h-0 overflow-hidden">
     
     <!-- Left Sidebar: Tiers Navigation -->
-    <aside class="w-16 md:w-48 bg-[#0a0a0a] border-r border-[#222] flex flex-col pt-4 shrink-0 z-20 rounded-l-lg">
+    <aside class="w-16 md:w-48 bg-[#0a0a0a] border-r border-[#222] flex flex-col pt-4 shrink-0 z-20 rounded-l-lg overflow-y-auto">
       <button 
         class="text-left px-4 py-3 text-sm font-bold border-b border-gray-800 hover:bg-[#1a1a1a] transition-colors"
         class:text-[#FFD700]={mapState.currentZoomLevel === 'OVERVIEW'}
@@ -276,7 +276,7 @@
           min={data.events[0].sequence}
           max={data.events[data.events.length - 1].sequence}
           value={data.sequence}
-          onchange={handleTimelineChange}
+          oninput={handleTimelineChange}
           class="w-full accent-[#FFD700]"
         />
       {:else}

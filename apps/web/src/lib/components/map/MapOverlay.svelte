@@ -243,6 +243,9 @@
       const bodyName = ownerCharacter?.canonicalName || body?.label || 'Corps inconnu';
       const perspectiveIsReader = mapState.selectedPerspectiveKind === 'reader';
       const observerCharacter = characters.find((char: any) => char.id === observer?.characterId);
+      const apparentCharacter = characters.find((char: any) => char.id === observer?.apparentCharacterId);
+      const knownCharacterIds = new Set<string>(perspective?.knownCharacters || []);
+      const isObserverBody = Boolean(observer?.currentBodyId && observer.currentBodyId === p.entityId);
 
       const relatedFacts = facts.filter((fact: any) =>
         fact.subjectId === p.entityId || fact.subjectId === body?.originalCharacterId
@@ -251,17 +254,29 @@
         belief.subjectId === p.entityId || belief.subjectId === body?.originalCharacterId
       );
 
-      const hasConfirmedKnowledge = relatedFacts.length > 0;
+      const hasConfirmedKnowledge = isObserverBody
+        || knownCharacterIds.has(body?.originalCharacterId)
+        || relatedFacts.length > 0;
       const hasBeliefOnly = !hasConfirmedKnowledge && relatedBeliefs.length > 0;
 
       const shouldMaskIdentity = !perspectiveIsReader && !hasConfirmedKnowledge;
-      const consciousness = observer?.currentBodyId === p.entityId
+      const consciousness = isObserverBody
         ? (observerCharacter?.canonicalName || observer?.consciousnessId || bodyName)
         : bodyName;
-
-      const perceivedIdentity = shouldMaskIdentity
-        ? (hasBeliefOnly ? 'Identite supposee' : 'Individu inconnu')
+      const appearance = isObserverBody
+        ? (apparentCharacter?.canonicalName || bodyName)
         : bodyName;
+      const followedIdentity = mapState.followMode === 'body'
+        ? bodyName
+        : mapState.followMode === 'appearance'
+          ? appearance
+          : consciousness;
+
+      const perceivedIdentity = isObserverBody
+        ? followedIdentity
+        : shouldMaskIdentity
+          ? (hasBeliefOnly ? 'Identite supposee' : 'Individu inconnu')
+          : bodyName;
 
       const suspicionLabel = !perspectiveIsReader && hasBeliefOnly
         ? 'Soupcon actif'
@@ -282,7 +297,7 @@
                   ? 'outdated'
                   : 'unknown';
 
-      const transferFlag = observer?.currentBodyId === p.entityId && observer?.consciousnessId !== observer?.currentBodyId;
+      const transferFlag = isObserverBody && Boolean(observer?.isDissonant);
 
       const sourceFromFact = relatedFacts[0]?.predicate || relatedBeliefs[0]?.predicate;
       const sourceLabel = hasConfirmedKnowledge
@@ -308,7 +323,7 @@
         y: y / 6,
         body: bodyName,
         consciousness,
-        appearance: bodyName,
+        appearance,
         perceivedIdentity,
         transferFlag,
         suspicionLabel,
@@ -320,7 +335,8 @@
         locationLabel: loc?.name || 'Position inconnue',
         temporalLabel: temporalVisual.label,
         temporalDetail: temporalVisual.detail,
-        factionTags: ownerCharacter?.factionTags || []
+        factionTags: ownerCharacter?.factionTags || [],
+        isFollowTarget: isObserverBody
       };
 
       return mapped;
@@ -332,6 +348,11 @@
 
     return dynamicCharacters
       .filter((character: any) => {
+        if (mapState.selectedPerspectiveKind !== 'reader' && Array.isArray(perspective?.visibleBodies)) {
+          const visibleBodyIds = new Set<string>(perspective.visibleBodies);
+          if (!visibleBodyIds.has(character.id)) return false;
+        }
+
         let matchesMapScope = true;
         if (mapState.currentZoomLevel !== 'OVERVIEW') {
           if (mapState.selectedTier && character.tierId !== mapState.selectedTier) matchesMapScope = false;

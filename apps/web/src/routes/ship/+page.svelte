@@ -50,7 +50,7 @@
     const observer = data.perspective?.observer;
     const observerCharacter = data.worldState?.characters?.find((char: any) => char.id === observer?.characterId);
     const occupiedBody = data.worldState?.bodies?.find((body: any) => body.id === observer?.currentBodyId);
-    const anomaly = Boolean(observer?.currentBodyId && observer?.consciousnessId && observer.currentBodyId !== observer.consciousnessId);
+    const anomaly = Boolean(observer?.isDissonant);
 
     const canonicalPerspective = observerCharacter?.canonicalName || perspectiveName;
     const occupiedBodyLabel = occupiedBody?.label || occupiedBody?.id || canonicalPerspective;
@@ -60,9 +60,9 @@
       eventLabel: `${currentEvt?.sequence ?? 0}`,
       spoilerLimit: data.spoilerLimit ?? null,
       perspectiveName: canonicalPerspective,
-      followedConsciousness: observer?.consciousnessId || canonicalPerspective,
+      followedConsciousness: canonicalPerspective,
       occupiedBody: occupiedBodyLabel,
-      apparentIdentity: occupiedBodyLabel,
+      apparentIdentity: data.worldState?.characters?.find((char: any) => char.id === observer?.apparentCharacterId)?.canonicalName || occupiedBodyLabel,
       followMode: mapState.followMode,
       hasAnomaly: anomaly
     };

@@ -44,6 +44,7 @@ export interface MarkerIdentityState {
   temporalLabel?: string;
   temporalDetail?: string;
   factionTags?: string[];
+  isFollowTarget?: boolean;
 }
 
 export interface PerspectiveOption {

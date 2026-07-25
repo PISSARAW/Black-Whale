@@ -76,8 +76,24 @@ export class TimelineEngine implements ITimelineEngine {
     }
 
     // Récupérer les événements actifs (statuts et présences)
-    const characters = await this.prisma.character.findMany()
-    const bodies = await this.prisma.body.findMany()
+    const allCharacters = await this.prisma.character.findMany({
+      include: { firstVisibleEvent: { include: { chapter: true } } }
+    })
+    const characters = allCharacters.filter((character: any) =>
+      compareEventOrder(character.firstVisibleEvent as OrderedEvent, targetEvent) <= 0
+    )
+    const allBodies = await this.prisma.body.findMany({
+      include: { firstVisibleEvent: { include: { chapter: true } } }
+    })
+    const bodies = allBodies.filter((body: any) =>
+      compareEventOrder(body.firstVisibleEvent as OrderedEvent, targetEvent) <= 0
+    )
+    const allConsciousnesses = await this.prisma.consciousness.findMany({
+      include: { firstVisibleEvent: { include: { chapter: true } } }
+    })
+    const consciousnesses = allConsciousnesses.filter((consciousness: any) =>
+      compareEventOrder(consciousness.firstVisibleEvent as OrderedEvent, targetEvent) <= 0
+    )
     
     const presences = await this.prisma.presence.findMany({
       where: {
@@ -113,7 +129,7 @@ export class TimelineEngine implements ITimelineEngine {
       atEventId: targetEvent.id,
       characters: characters as any,
       bodies: bodies as any,
-      consciousnesses: [],
+      consciousnesses: consciousnesses as any,
       locations: [],
       activeAbilities: [],
       bodyStates: activeStates.reduce((acc: Record<string, string>, state: any) => {

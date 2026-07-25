@@ -3,6 +3,16 @@ import type { PrismaClient } from '@black-whale/database'
 import type { IIdentityEngine } from '@black-whale/identity-engine'
 import type { IKnowledgeEngine, KnowledgeQuery } from '@black-whale/knowledge-engine'
 
+type OrderedEvent = {
+  id: string
+  sequence: number
+  chapter: { number: number }
+}
+
+function compareEventOrder(left: OrderedEvent, right: OrderedEvent) {
+  return left.chapter.number - right.chapter.number || left.sequence - right.sequence
+}
+
 // ──────────────────────────────────────────────
 // Interface
 // ──────────────────────────────────────────────
@@ -50,9 +60,11 @@ export class PerspectiveEngine implements IPerspectiveEngine {
     
     let currentBody: Body | null = null
     let currentConsciousnessId: string | undefined = undefined
+    let currentBodyOwnerCharacterId: string | undefined = undefined
+    let apparentCharacterId: string | undefined = undefined
+    let isDissonant = false
 
     try {
-      // Assuming observerId maps to a consciousness, let's find the body
       const consciousness = await this.prisma.consciousness.findUnique({
         where: { originCharacterId: request.observerCharacterId }
       })
@@ -60,8 +72,34 @@ export class PerspectiveEngine implements IPerspectiveEngine {
         currentBody = await this.identityEngine.findBodyOf(consciousness.id, request.eventId)
         currentConsciousnessId = consciousness.id
       }
+
+      // Legacy and partially seeded datasets may contain original bodies without
+      // Consciousness/BodyOccupancy rows. The observer still inhabits their own
+      // original body in that case.
+      if (!currentBody) {
+        const originalBody = await this.prisma.body.findUnique({
+          where: { originalCharacterId: request.observerCharacterId }
+        })
+        if (originalBody) {
+          currentBody = {
+            id: originalBody.id,
+            originalCharacterId: originalBody.originalCharacterId ?? undefined,
+            label: originalBody.label,
+            bodyType: originalBody.bodyType as any,
+            firstVisibleEventId: originalBody.firstVisibleEventId
+          }
+        }
+      }
+
+      if (currentBody) {
+        currentBodyOwnerCharacterId = currentBody.originalCharacterId
+        const resolvedIdentity = await this.identityEngine.resolveIdentity(currentBody.id, request.eventId)
+        currentConsciousnessId = resolvedIdentity.consciousness?.id ?? currentConsciousnessId
+        apparentCharacterId = resolvedIdentity.perceivedAs ?? currentBody.originalCharacterId
+        isDissonant = resolvedIdentity.isDissonant
+      }
     } catch (e) {
-      // Silently fail if body resolution fails
+      // Perspective construction must remain usable for incomplete legacy data.
     }
 
     // 2. Fetch objective true facts
@@ -99,15 +137,48 @@ export class PerspectiveEngine implements IPerspectiveEngine {
       return null
     }).filter(f => f !== null)
 
+    // Direct perception is spatial, not epistemic: an observer sees bodies in
+    // the same active location even when no Fact/KnowledgeState rows are seeded.
+    const allBodyPresences = await this.prisma.presence.findMany({
+      where: { entityType: 'BODY' },
+      include: {
+        fromEvent: { include: { chapter: true } },
+        untilEvent: { include: { chapter: true } }
+      }
+    })
+    const activeBodyPresences = allBodyPresences.filter((presence: any) => {
+      const started = compareEventOrder(presence.fromEvent as OrderedEvent, targetEvent as OrderedEvent) <= 0
+      const notEnded = !presence.untilEvent || compareEventOrder(targetEvent as OrderedEvent, presence.untilEvent as OrderedEvent) < 0
+      return started && notEnded
+    })
+    const observerPresence = currentBody
+      ? activeBodyPresences.find((presence: any) => presence.entityId === currentBody?.id)
+      : undefined
+    const visibleBodies = observerPresence?.locationId
+      ? activeBodyPresences
+          .filter((presence: any) => presence.locationId === observerPresence.locationId)
+          .map((presence: any) => presence.entityId)
+      : currentBody
+        ? [currentBody.id]
+        : []
+
+    const explicitlyKnownCharacterIds = subjectiveFacts
+      .filter((fact: any) => fact.subjectType === 'CHARACTER')
+      .map((fact: any) => fact.subjectId)
+    const knownCharacters = [...new Set([request.observerCharacterId, ...explicitlyKnownCharacterIds])]
+
     return {
       observer: {
         characterId: request.observerCharacterId,
         consciousnessId: currentConsciousnessId ?? '',
-        currentBodyId: currentBody?.id ?? ''
+        currentBodyId: currentBody?.id ?? '',
+        currentBodyOwnerCharacterId,
+        apparentCharacterId,
+        isDissonant
       },
-      visibleBodies: [], // Would map physical proximity using Presence
-      knownCharacters: [], // Filtered by knowledge
-      knownLocations: [],
+      visibleBodies,
+      knownCharacters,
+      knownLocations: observerPresence?.locationId ? [observerPresence.locationId] : [],
       knownEvents: [],
       knownFacts: subjectiveFacts,
       beliefs: beliefs,

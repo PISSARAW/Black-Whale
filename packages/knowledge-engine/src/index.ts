@@ -1,6 +1,23 @@
 import type { PrismaClient } from '@black-whale/database'
 import type { Fact, Belief, KnowledgeState } from '@black-whale/domain'
 
+type OrderedEvent = {
+  sequence: number
+  chapter: { number: number }
+}
+
+function compareEventOrder(left: OrderedEvent, right: OrderedEvent) {
+  return left.chapter.number - right.chapter.number || left.sequence - right.sequence
+}
+
+function isActiveAt(
+  record: { fromEvent: OrderedEvent; untilEvent?: OrderedEvent | null },
+  targetEvent: OrderedEvent
+) {
+  return compareEventOrder(record.fromEvent, targetEvent) <= 0
+    && (!record.untilEvent || compareEventOrder(targetEvent, record.untilEvent) < 0)
+}
+
 // ──────────────────────────────────────────────
 // Types
 // ──────────────────────────────────────────────
@@ -42,7 +59,8 @@ export class KnowledgeEngine implements IKnowledgeEngine {
 
   async getKnowledgeOf(query: KnowledgeQuery): Promise<KnowledgeState[]> {
     const targetEvent = await this.prisma.narrativeEvent.findUnique({
-      where: { id: query.eventId }
+      where: { id: query.eventId },
+      include: { chapter: true }
     })
     
     if (!targetEvent) throw new Error(`Event ${query.eventId} not found`)
@@ -52,21 +70,16 @@ export class KnowledgeEngine implements IKnowledgeEngine {
     const states = await this.prisma.knowledgeState.findMany({
       where: {
         observerCharacterId: query.observerId,
-        fromEvent: {
-          sequence: { lte: targetEvent.sequence }
-        },
-        OR: [
-          { untilEventId: null },
-          { untilEvent: { sequence: { gt: targetEvent.sequence } } }
-        ],
         ...subjectFilter
       },
       include: {
-        fact: true
+        fact: true,
+        fromEvent: { include: { chapter: true } },
+        untilEvent: { include: { chapter: true } }
       }
     })
 
-    return states.map((k: any) => ({
+    return states.filter((state: any) => isActiveAt(state, targetEvent as any)).map((k: any) => ({
       id: k.id,
       observerCharacterId: k.observerCharacterId,
       factId: k.factId,
@@ -82,7 +95,8 @@ export class KnowledgeEngine implements IKnowledgeEngine {
 
   async getBeliefsOf(query: KnowledgeQuery): Promise<Belief[]> {
     const targetEvent = await this.prisma.narrativeEvent.findUnique({
-      where: { id: query.eventId }
+      where: { id: query.eventId },
+      include: { chapter: true }
     })
     
     if (!targetEvent) throw new Error(`Event ${query.eventId} not found`)
@@ -92,18 +106,15 @@ export class KnowledgeEngine implements IKnowledgeEngine {
     const beliefs = await this.prisma.belief.findMany({
       where: {
         observerCharacterId: query.observerId,
-        fromEvent: {
-          sequence: { lte: targetEvent.sequence }
-        },
-        OR: [
-          { untilEventId: null },
-          { untilEvent: { sequence: { gt: targetEvent.sequence } } }
-        ],
         ...subjectFilter
+      },
+      include: {
+        fromEvent: { include: { chapter: true } },
+        untilEvent: { include: { chapter: true } }
       }
     })
 
-    return beliefs.map((b: any) => ({
+    return beliefs.filter((belief: any) => isActiveAt(belief, targetEvent as any)).map((b: any) => ({
       id: b.id,
       observerCharacterId: b.observerCharacterId,
       subjectType: b.subjectType,
@@ -119,7 +130,8 @@ export class KnowledgeEngine implements IKnowledgeEngine {
 
   async getTrueFacts(eventId: string, subjectId?: string): Promise<Fact[]> {
     const targetEvent = await this.prisma.narrativeEvent.findUnique({
-      where: { id: eventId }
+      where: { id: eventId },
+      include: { chapter: true }
     })
     
     if (!targetEvent) throw new Error(`Event ${eventId} not found`)
@@ -128,18 +140,15 @@ export class KnowledgeEngine implements IKnowledgeEngine {
 
     const facts = await this.prisma.fact.findMany({
       where: {
-        fromEvent: {
-          sequence: { lte: targetEvent.sequence }
-        },
-        OR: [
-          { validUntilEventId: null },
-          { untilEvent: { sequence: { gt: targetEvent.sequence } } }
-        ],
         ...subjectFilter
+      },
+      include: {
+        fromEvent: { include: { chapter: true } },
+        untilEvent: { include: { chapter: true } }
       }
     })
 
-    return facts.map((f: any) => ({
+    return facts.filter((fact: any) => isActiveAt(fact, targetEvent as any)).map((f: any) => ({
       id: f.id,
       subjectType: f.subjectType as any,
       subjectId: f.subjectId,

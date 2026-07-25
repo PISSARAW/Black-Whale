@@ -24,6 +24,9 @@ export interface PerspectiveObserver {
   characterId: string;
   consciousnessId: string;
   currentBodyId: string;
+  currentBodyOwnerCharacterId?: string;
+  apparentCharacterId?: string;
+  isDissonant?: boolean;
 }
 
 export interface PerspectiveState {

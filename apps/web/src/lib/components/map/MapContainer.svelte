@@ -1,5 +1,6 @@
 <script lang="ts">
   import panzoom from 'panzoom';
+  import { tick } from 'svelte';
   import { mapState } from '$lib/state/mapState.svelte';
   import BlackWhaleOverview from '$lib/assets/maps/black-whale-overview.svelte';
   import Tier1 from '$lib/assets/maps/tier-1.svelte';
@@ -49,6 +50,38 @@
       pz.moveTo(0, 0);
       pz.zoomAbs(0, 0, 1);
     }
+  });
+
+  // Follow the selected observer after the perspective overlay has rendered.
+  // The physical target stays the same across modes; the marker label switches
+  // between consciousness, body and public appearance.
+  $effect(() => {
+    const perspectiveId = mapState.selectedPerspectiveId;
+    const perspectiveKind = mapState.selectedPerspectiveKind;
+    const followMode = mapState.followMode;
+    const zoomLevel = mapState.currentZoomLevel;
+
+    if (!pz || !containerEl) return;
+
+    if (perspectiveKind === 'reader') {
+      pz.moveTo(0, 0);
+      pz.zoomAbs(0, 0, 1);
+      return;
+    }
+
+    void tick().then(() => {
+      if (!containerEl || mapState.selectedPerspectiveId !== perspectiveId || mapState.followMode !== followMode) return;
+      const marker = containerEl.querySelector<HTMLElement>('[data-follow-target="true"]');
+      if (!marker) return;
+
+      const transform = pz.getTransform();
+      const scale = Math.max(transform.scale, zoomLevel === 'OVERVIEW' ? 1.2 : 1);
+      pz.zoomAbs(0, 0, scale);
+      pz.moveTo(
+        containerEl.clientWidth / 2 - marker.offsetLeft * scale,
+        containerEl.clientHeight / 2 - marker.offsetTop * scale
+      );
+    });
   });
 
   let isLocalZoom = $derived(mapState.currentZoomLevel === 'LOCAL' && mapState.selectedLocationId);

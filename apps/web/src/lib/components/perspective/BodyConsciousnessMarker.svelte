@@ -20,6 +20,8 @@
   class="subjective-marker"
   class:compact
   class:anomaly={hasAnomaly}
+  class:follow-target={marker.isFollowTarget}
+  data-follow-target={marker.isFollowTarget ? 'true' : undefined}
   style={styleString}
   style:transform="translate(-50%, -50%)"
   aria-label={`${marker.perceivedIdentity}, ${marker.locationLabel || 'position inconnue'}, ${marker.temporalLabel || 'statut inconnu'}`}
@@ -79,6 +81,8 @@
   .subjective-marker:hover { z-index: 20; }
   .subjective-marker:hover .pulse, .subjective-marker:focus-visible .pulse { animation: presence-pulse 1.5s ease-out infinite; }
   .subjective-marker.anomaly .pulse { border-style: dashed; border-color: var(--state-transferred); }
+  .subjective-marker.follow-target .core { box-shadow: 0 0 0 2px #f5e7b6, 0 0 0 5px color-mix(in srgb, var(--marker-color) 35%, transparent); }
+  .subjective-marker.follow-target .pulse { inset: -7px; opacity: .78; }
   .subjective-marker:focus-visible { outline: 2px solid #f5e7b6; outline-offset: 4px; }
 
   .tooltip {

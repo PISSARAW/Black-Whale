@@ -2,6 +2,7 @@ import { prisma } from '$lib/server/db';
 import { TimelineEngine } from '@black-whale/timeline-engine';
 import characterCatalog from '../../../../../data/characters/characters.json';
 import type { PageServerLoad } from './$types';
+import { redirect } from '@sveltejs/kit';
 
 type FactionFilterId = 'princes' | 'guards' | 'hunters' | 'spider' | 'mafia';
 
@@ -60,7 +61,7 @@ function compareEvents(a: { chapter: { number: number }; sequence: number }, b: 
 
 export const load: PageServerLoad = async ({ url, cookies }) => {
 	const timelineEngine = new TimelineEngine(prisma);
-	const selectedPerspectiveId = url.searchParams.get('perspective') || 'reader';
+	const requestedPerspectiveId = url.searchParams.get('perspective') || 'reader';
 	const followMode = url.searchParams.get('follow') || 'consciousness';
 	const requestedEventId = url.searchParams.get('eventId');
 	const legacySequence = url.searchParams.get('sequence') ? parseInt(url.searchParams.get('sequence') as string) : undefined;
@@ -124,6 +125,15 @@ export const load: PageServerLoad = async ({ url, cookies }) => {
 		...character,
 		factionTags: resolveFactionTags(character, activeFactionTypesByCharacter.get(character.id) || [])
 	}));
+
+	const perspectiveIsAvailable = requestedPerspectiveId === 'reader'
+		|| visibleCharacters.some((character: any) => character.id === requestedPerspectiveId);
+	if (!perspectiveIsAvailable) {
+		const canonicalUrl = new URL(url);
+		canonicalUrl.searchParams.set('perspective', 'reader');
+		throw redirect(307, `${canonicalUrl.pathname}${canonicalUrl.search}`);
+	}
+	const selectedPerspectiveId = requestedPerspectiveId;
 		
 	// Presences reference bodies, not characters. Resolve the body owner before
 	// applying the spoiler filter so valid character positions are not discarded.

@@ -303,6 +303,33 @@ async function main() {
   const vincentBody = await createBody(vincent.id, 'Vincent Body', evt3.id)
   const leorioBody = await createBody(leorio.id, 'Leorio Body', evt0.id)
 
+  const createOriginalIdentity = async (character: { id: string; canonicalName: string }, bodyId: string, eventId: string) => {
+    const consciousness = await prisma.consciousness.create({
+      data: {
+        originCharacterId: character.id,
+        label: `${character.canonicalName} Consciousness`,
+        consciousnessType: 'ORIGINAL',
+        firstVisibleEventId: eventId
+      }
+    })
+    await prisma.bodyOccupancy.create({
+      data: {
+        bodyId,
+        consciousnessId: consciousness.id,
+        fromEventId: eventId,
+        occupancyType: 'ORIGINAL',
+        certainty: 'CONFIRMED'
+      }
+    })
+  }
+
+  await createOriginalIdentity(kurapika, kuraBody.id, evt1.id)
+  await createOriginalIdentity(oito, oitoBody.id, evt1.id)
+  await createOriginalIdentity(woble, wobleBody.id, evt1.id)
+  await createOriginalIdentity(benjamin, benBody.id, evt1.id)
+  await createOriginalIdentity(vincent, vincentBody.id, evt3.id)
+  await createOriginalIdentity(leorio, leorioBody.id, evt0.id)
+
   // Get actual location IDs
   const locRoom1014 = room1014 ? getLocationId(room1014.id) : null
   const locRoom1001 = room1001 ? getLocationId(room1001.id) : null

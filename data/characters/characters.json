@@ -8,7 +8,13 @@
     "description": "Dernier survivant du clan Kurta. Hunter Zodiac. Dirige la faction de la Reine Oito et du Prince Woble. Maintient un statu quo par l'enseignement du Nen.",
     "factionId": "prince-woble",
     "firstAppearanceChapterId": "ch-340",
-    "canonStatus": "canon"
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": 2,
+      "room": "1014",
+      "status": "actif",
+      "role": "enseignant Nen / protecteur"
+    }
   },
   {
     "id": "hisoka",
@@ -20,7 +26,13 @@
     "description": "Puissant assassin. Traqué par la Brigade Fantôme sur le Tier 5 après avoir assassiné deux de ses membres. Négocie avec la mafia Xi-Yu.",
     "factionId": null,
     "firstAppearanceChapterId": "ch-340",
-    "canonStatus": "canon"
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": 5,
+      "room": null,
+      "status": "actif",
+      "role": "chasseur / traque"
+    }
   },
   {
     "id": "illumi",
@@ -31,7 +43,13 @@
     "description": "Fils aîné de la famille Zoldyck. Complice de Hisoka, infiltré dans la Brigade Fantôme à la demande de ce dernier.",
     "factionId": "phantom-troupe",
     "firstAppearanceChapterId": "ch-340",
-    "canonStatus": "canon"
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": 5,
+      "room": null,
+      "status": "infiltre",
+      "role": "espion / complice d'Hisoka"
+    }
   },
   {
     "id": "nasubi-hui-guo-rou",
@@ -42,7 +60,13 @@
     "description": "Roi de l'Empire de Kakin. A orchestré la Guerre de Succession via l'Urne de la Graine.",
     "factionId": "kakin-royal-family",
     "firstAppearanceChapterId": "ch-340",
-    "canonStatus": "canon"
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": 1,
+      "room": "1000",
+      "status": "actif",
+      "role": "organisateur"
+    }
   },
   {
     "id": "prince-benjamin",
@@ -53,7 +77,13 @@
     "description": "Fils aîné d'Unma. Chef paramilitaire qui gère l'application de la Loi Martiale depuis la chambre 1001.",
     "factionId": "prince-benjamin",
     "firstAppearanceChapterId": "ch-349",
-    "canonStatus": "canon"
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": 1,
+      "room": "1001",
+      "status": "actif",
+      "role": "chef militaire / loi martiale"
+    }
   },
   {
     "id": "prince-camilla",
@@ -64,7 +94,13 @@
     "description": "Fille aînée de Duazul. A tenté d'assassiner Benjamin, jugée et incarcérée dans la VIP Jail de la Cour Suprême.",
     "factionId": "prince-camilla",
     "firstAppearanceChapterId": "ch-349",
-    "canonStatus": "canon"
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": 1,
+      "room": "VIP Jail",
+      "status": "emprisonnee",
+      "role": "prisonniere"
+    }
   },
   {
     "id": "prince-zhanglei",
@@ -75,7 +111,13 @@
     "description": "Fils de Tang Zhao Li. Maintient des liens étroits avec la mafia Xi-Yu pour accumuler des informations.",
     "factionId": "prince-zhanglei",
     "firstAppearanceChapterId": "ch-349",
-    "canonStatus": "canon"
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": 2,
+      "room": "1003",
+      "status": "actif",
+      "role": "strategie / renseignement"
+    }
   },
   {
     "id": "prince-tserriednich",
@@ -86,7 +128,13 @@
     "description": "Fils d'Unma. Sociopathe, génie du Nen. Utilise la mafia Heil-Ly pour semer le chaos sur le navire.",
     "factionId": "prince-tserriednich",
     "firstAppearanceChapterId": "ch-349",
-    "canonStatus": "canon"
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": 2,
+      "room": "1004",
+      "status": "actif",
+      "role": "manipulateur / chaos"
+    }
   },
   {
     "id": "prince-tubeppa",
@@ -97,7 +145,13 @@
     "description": "Fille de Duazul. Transforme sa chambre 1005 en laboratoire de recherche.",
     "factionId": "prince-tubeppa",
     "firstAppearanceChapterId": "ch-349",
-    "canonStatus": "canon"
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": 2,
+      "room": "1005",
+      "status": "actif",
+      "role": "recherche / laboratoire"
+    }
   },
   {
     "id": "prince-tyson",
@@ -108,7 +162,13 @@
     "description": "Fille de Katrono. Obsédée par l'amour, impose ses idéaux à ses gardes via sa Bête de Nen.",
     "factionId": "prince-tyson",
     "firstAppearanceChapterId": "ch-349",
-    "canonStatus": "canon"
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": 2,
+      "room": "1006",
+      "status": "actif",
+      "role": "manipulation / controle Nen"
+    }
   },
   {
     "id": "prince-luzurus",
@@ -119,7 +179,13 @@
     "description": "Fils de Duazul. Parrain de la famille mafieuse Cha-R.",
     "factionId": "prince-luzurus",
     "firstAppearanceChapterId": "ch-349",
-    "canonStatus": "canon"
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": 2,
+      "room": "1007",
+      "status": "actif",
+      "role": "parrain mafia / alliance"
+    }
   },
   {
     "id": "prince-salesale",
@@ -130,7 +196,13 @@
     "description": "Fils de Swinko-Swinko. Manipule son entourage avec la fumée de sa Bête de Nen (jusqu'à sa neutralisation par Rihan).",
     "factionId": "prince-salesale",
     "firstAppearanceChapterId": "ch-349",
-    "canonStatus": "canon"
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": 2,
+      "room": "1008",
+      "status": "actif",
+      "role": "manipulation / fumee Nen"
+    }
   },
   {
     "id": "prince-halkenburg",
@@ -141,7 +213,13 @@
     "description": "Fils de Duazul. Pacifiste devenu belligérant ; sa faction partage une puissante aura collective.",
     "factionId": "prince-halkenburg",
     "firstAppearanceChapterId": "ch-349",
-    "canonStatus": "canon"
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": 2,
+      "room": "1009",
+      "status": "actif",
+      "role": "aura collective"
+    }
   },
   {
     "id": "prince-kacho",
@@ -152,7 +230,13 @@
     "description": "Fille de Seiko. A tenté de fuir avec Fugetsu lors du banquet dominical grâce à Melody.",
     "factionId": "prince-kacho",
     "firstAppearanceChapterId": "ch-349",
-    "canonStatus": "canon"
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": 1,
+      "room": "1010",
+      "status": "actif",
+      "role": "fuite / evasion"
+    }
   },
   {
     "id": "prince-fugetsu",
@@ -163,7 +247,13 @@
     "description": "Fille de Seiko. Possède une Bête de Nen capable de créer des portes dimensionnelles de téléportation.",
     "factionId": "prince-fugetsu",
     "firstAppearanceChapterId": "ch-349",
-    "canonStatus": "canon"
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": 1,
+      "room": "1011",
+      "status": "actif",
+      "role": "teleportation"
+    }
   },
   {
     "id": "prince-momoze",
@@ -174,7 +264,13 @@
     "description": "Fille de Sevanti. L'une des premières victimes de la guerre, étranglée dans la chambre 1012.",
     "factionId": "prince-momoze",
     "firstAppearanceChapterId": "ch-349",
-    "canonStatus": "canon"
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": 2,
+      "room": "1012",
+      "status": "mort",
+      "role": "victime"
+    }
   },
   {
     "id": "prince-marayam",
@@ -185,7 +281,13 @@
     "description": "Fils de Sevanti. Enfant dont la Bête de Nen a isolé la chambre 1013 dans une dimension parallèle protectrice.",
     "factionId": "prince-marayam",
     "firstAppearanceChapterId": "ch-349",
-    "canonStatus": "canon"
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": 2,
+      "room": "1013",
+      "status": "isole",
+      "role": "protection dimensionnelle"
+    }
   },
   {
     "id": "prince-woble",
@@ -196,7 +298,13 @@
     "description": "Fille d'Oito, nourrisson. Son survie repose entièrement sur Kurapika.",
     "factionId": "prince-woble",
     "firstAppearanceChapterId": "ch-349",
-    "canonStatus": "canon"
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": 2,
+      "room": "1014",
+      "status": "protégé",
+      "role": "nourrisson"
+    }
   },
   {
     "id": "queen-oito",
@@ -207,7 +315,13 @@
     "description": "Mère de Woble. S'allie à Kurapika, apprend le Nen, utilise 'Little Eye' (cafards) pour espionner.",
     "factionId": "prince-woble",
     "firstAppearanceChapterId": "ch-349",
-    "canonStatus": "canon"
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": 2,
+      "room": "1014",
+      "status": "actif",
+      "role": "alliee / espionne"
+    }
   },
   {
     "id": "beyond-netero",
@@ -216,7 +330,13 @@
     "description": "Leader secret de l'expédition. Auto-détenu dans une prison VVIP sur le Tier 1, surveillé par les Zodiaques.",
     "factionId": null,
     "firstAppearanceChapterId": "ch-340",
-    "canonStatus": "canon"
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": 1,
+      "room": "VVIP Prison",
+      "status": "emprisonne",
+      "role": "leader secret"
+    }
   },
   {
     "id": "mizaistom-nana",
@@ -227,7 +347,13 @@
     "description": "Zodiaque. Supervise le Commissariat Central du Tier 3. Mène l'enquête criminelle de grande ampleur.",
     "factionId": "zodiacs",
     "firstAppearanceChapterId": "ch-318",
-    "canonStatus": "canon"
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": 3,
+      "room": "Commissariat Central",
+      "status": "actif",
+      "role": "enqueteur / superviser"
+    }
   },
   {
     "id": "botobai-gigante",
@@ -238,7 +364,13 @@
     "description": "Zodiaque. Siège en tant que juge au Tribunal Central (Tier 3).",
     "factionId": "zodiacs",
     "firstAppearanceChapterId": "ch-318",
-    "canonStatus": "canon"
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": 3,
+      "room": "Tribunal Central",
+      "status": "actif",
+      "role": "juge"
+    }
   },
   {
     "id": "gel",
@@ -249,7 +381,13 @@
     "description": "Zodiaque. A tenu des réunions clandestines avec l'équipe scientifique dans les cabines du Tier 3.",
     "factionId": "zodiacs",
     "firstAppearanceChapterId": "ch-318",
-    "canonStatus": "canon"
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": 3,
+      "room": "Cabine scientifique",
+      "status": "actif",
+      "role": "coordination scientifique"
+    }
   },
   {
     "id": "melody",
@@ -260,7 +398,13 @@
     "description": "Hunter de soutien affiliée à Kacho. A paralysé le Banquet du Tier 1 avec sa flûte magique.",
     "factionId": "prince-kacho",
     "firstAppearanceChapterId": "ch-71",
-    "canonStatus": "canon"
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": 1,
+      "room": "1010",
+      "status": "actif",
+      "role": "soutien / musique Nen"
+    }
   },
   {
     "id": "biscuit-krueger",
@@ -271,7 +415,13 @@
     "description": "Hunter vétéran, garde engagée pour protéger le 13ème Prince Marayam.",
     "factionId": "prince-marayam",
     "firstAppearanceChapterId": "ch-137",
-    "canonStatus": "canon"
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": 2,
+      "room": "1013",
+      "status": "actif",
+      "role": "garde / protectrice"
+    }
   },
   {
     "id": "hanzo",
@@ -280,7 +430,13 @@
     "description": "Hunter et ninja engagé comme garde pour le 12ème Prince Momoze puis le 13ème Prince Marayam. Utilise la projection astrale.",
     "factionId": "prince-marayam",
     "firstAppearanceChapterId": "ch-5",
-    "canonStatus": "canon"
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": 2,
+      "room": "1013",
+      "status": "actif",
+      "role": "garde / ninja"
+    }
   },
   {
     "id": "balsamilco-might",
@@ -289,7 +445,13 @@
     "description": "Officier tacticien du 1er Prince Benjamin. Gère l'application de la Loi Martiale.",
     "factionId": "prince-benjamin",
     "firstAppearanceChapterId": "ch-363",
-    "canonStatus": "canon"
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": 1,
+      "room": "1001",
+      "status": "actif",
+      "role": "officier tactique"
+    }
   },
   {
     "id": "musse",
@@ -298,7 +460,13 @@
     "description": "Garde de Benjamin (assassiné). Sa compétence 'Secret Window' continue d'espionner Camilla.",
     "factionId": "prince-benjamin",
     "firstAppearanceChapterId": "ch-363",
-    "canonStatus": "canon"
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": 1,
+      "room": "1001",
+      "status": "mort",
+      "role": "garde / espion post-mortem"
+    }
   },
   {
     "id": "rihan",
@@ -307,7 +475,13 @@
     "description": "Soldat de Benjamin utilisant 'Predator'. Transféré auprès de Salé-salé puis de Tubeppa.",
     "factionId": "prince-benjamin",
     "firstAppearanceChapterId": "ch-363",
-    "canonStatus": "canon"
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": 2,
+      "room": "1005",
+      "status": "actif",
+      "role": "soldat / transfere"
+    }
   },
   {
     "id": "theta",
@@ -316,7 +490,13 @@
     "description": "Garde personnelle de Tserriednich. Tente désespérément de l'éliminer tout en lui apprenant le Nen.",
     "factionId": "prince-tserriednich",
     "firstAppearanceChapterId": "ch-349",
-    "canonStatus": "canon"
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": 2,
+      "room": "1004",
+      "status": "actif",
+      "role": "garde / instructeur Nen"
+    }
   },
   {
     "id": "hinrigh-biganduffno",
@@ -325,7 +505,13 @@
     "description": "Sous-chef de la famille Xi-Yu. Opère sur les Tiers inférieurs.",
     "factionId": "mafia-xiyu",
     "firstAppearanceChapterId": "ch-377",
-    "canonStatus": "canon"
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": 4,
+      "room": null,
+      "status": "actif",
+      "role": "sous-chef mafia"
+    }
   },
   {
     "id": "keni-wang",
@@ -334,7 +520,13 @@
     "description": "Dirigeant des opérations de la famille Cha-R. S'allie tactiquement avec la Brigade Fantôme.",
     "factionId": "mafia-char",
     "firstAppearanceChapterId": "ch-377",
-    "canonStatus": "canon"
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": 5,
+      "room": null,
+      "status": "actif",
+      "role": "chef operations / allie Brigade"
+    }
   },
   {
     "id": "morena-prudo",
@@ -343,7 +535,13 @@
     "description": "Boss de la famille Heil-Ly. Possède la capacité d'infection Nen 'Et tu, Juliet' récompensant le meurtre.",
     "factionId": "mafia-heilly",
     "firstAppearanceChapterId": "ch-378",
-    "canonStatus": "canon"
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": 3,
+      "room": null,
+      "status": "actif",
+      "role": "chef mafia / infection Nen"
+    }
   },
   {
     "id": "luini",
@@ -352,7 +550,13 @@
     "description": "Assassin Heil-Ly. Utilise une capacité dimensionnelle pour traverser murs et plafonds blindés.",
     "factionId": "mafia-heilly",
     "firstAppearanceChapterId": "ch-378",
-    "canonStatus": "canon"
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": 4,
+      "room": null,
+      "status": "actif",
+      "role": "assassin / infiltration"
+    }
   },
   {
     "id": "chrollo-lucilfer",
@@ -363,7 +567,13 @@
     "description": "Chef de la Brigade Fantôme. Organise la traque d'Hisoka depuis le réfectoire du Tier 5.",
     "factionId": "phantom-troupe",
     "firstAppearanceChapterId": "ch-71",
-    "canonStatus": "canon"
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": 5,
+      "room": null,
+      "status": "actif",
+      "role": "chef / organisateur traque"
+    }
   },
   {
     "id": "nobunaga-hazama",
@@ -372,7 +582,13 @@
     "description": "Membre de la Brigade Fantôme. En première ligne contre les Heil-Ly aux côtés des Cha-R.",
     "factionId": "phantom-troupe",
     "firstAppearanceChapterId": "ch-71",
-    "canonStatus": "canon"
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": 5,
+      "room": null,
+      "status": "actif",
+      "role": "combattant / premiere ligne"
+    }
   },
   {
     "id": "gantai",
@@ -381,7 +597,13 @@
     "description": "Personnel du Black Whale.",
     "factionId": null,
     "firstAppearanceChapterId": "ch-unknown",
-    "canonStatus": "canon"
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "personnel"
+    }
   },
   {
     "id": "tamazo",
@@ -390,7 +612,13 @@
     "description": "Personnel du Black Whale.",
     "factionId": null,
     "firstAppearanceChapterId": "ch-unknown",
-    "canonStatus": "canon"
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "personnel"
+    }
   },
   {
     "id": "theater-venue-announcer",
@@ -399,7 +627,13 @@
     "description": "Annonceur du Theater Venue.",
     "factionId": null,
     "firstAppearanceChapterId": "ch-unknown",
-    "canonStatus": "canon"
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "annonceur"
+    }
   },
   {
     "id": "cheadle-yorkshire",
@@ -408,7 +642,13 @@
     "description": "Zodiaque. Médecin en chef de la clinique du Tier 3.",
     "factionId": "zodiacs",
     "firstAppearanceChapterId": "ch-unknown",
-    "canonStatus": "canon"
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": 3,
+      "room": "Clinique",
+      "status": "actif",
+      "role": "medecin en chef"
+    }
   },
   {
     "id": "cluck",
@@ -417,7 +657,13 @@
     "description": "Zodiaque.",
     "factionId": "zodiacs",
     "firstAppearanceChapterId": "ch-unknown",
-    "canonStatus": "canon"
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": 3,
+      "room": null,
+      "status": "actif",
+      "role": "zodiaque"
+    }
   },
   {
     "id": "ginta",
@@ -426,7 +672,13 @@
     "description": "Zodiaque.",
     "factionId": "zodiacs",
     "firstAppearanceChapterId": "ch-unknown",
-    "canonStatus": "canon"
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": 3,
+      "room": null,
+      "status": "actif",
+      "role": "zodiaque"
+    }
   },
   {
     "id": "kanzai",
@@ -435,7 +687,13 @@
     "description": "Zodiaque.",
     "factionId": "zodiacs",
     "firstAppearanceChapterId": "ch-unknown",
-    "canonStatus": "canon"
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": 3,
+      "room": null,
+      "status": "actif",
+      "role": "zodiaque"
+    }
   },
   {
     "id": "leorio-paradinight",
@@ -444,7 +702,13 @@
     "description": "Zodiaque. Médecin affilié à Cheadle.\n\n**Arc du Concours de Succession**\nLeorio est contacté par Cheadle qui lui demande de rejoindre les Zodiaques et de les accompagner lors de leur voyage vers le Continent des Ténèbres. Elle explique à un Leorio confus qu'en raison de ses actions lors de l'élection, il est très estimé dans l'Association des Hunters. Sa présence aiderait sûrement les Zodiaques à gagner l'influence nécessaire pour la réussite de leur mission. Leorio, prêt à refuser, dit qu'il doit se consacrer à ses études. Cheadle l'informe alors qu'il a été autorisé à étudier à l'étranger avec elle comme professeur. Réalisant que c'est une offre unique, il accepte d'être le successeur de Ging mais demande ensuite s'il y a de la place pour un autre Zodiaque, proposant Kurapika. Alors que Kurapika est conduit au quartier général de l'Association des Hunters, il parle à Leorio au téléphone. Leorio lui demande de lui donner son adresse e-mail mais Kurapika refuse. Kurapika dit avoir entendu parler de la situation de Gon par Mizaistom et demande s'il peut faire quelque chose, mais Leorio répond que leur ami va bien et qu'il est plus utile dans les Zodiaques.\n\nLeorio accueille Kurapika à son arrivée au quartier général, déclarant que la mission semble plus compliquée que prévu et se demandant s'ils s'en sortiront. La seule préoccupation de Kurapika, cependant, est de savoir pourquoi on leur a donné si peu d'informations. Cheadle prend ensuite les devants et les présente aux autres Zodiaques. Elle commence à expliquer le V6, les Cinq Fléaux, et la difficulté de la mission qui est de rang A, alors que les Fourmis Chimères étaient de rang B. Leorio devient inquiet, déduisant que la mission dans laquelle il s'embarque est encore plus dangereuse que celle dans laquelle Netero a perdu la vie. Cheadle demande ensuite si quelqu'un a des questions. Kurapika lève la main, disant qu'il en a beaucoup. La première est de savoir combien d'infiltrés du côté de Beyond Netero les Zodiaques ont réussi à identifier, au grand choc de tous. Lorsque Kurapika et Mizaistom reviennent dans la pièce, Cheadle poursuit son discours. Leorio affirme qu'il soutiendra son équipe médicale dans le Continent des Ténèbres et se réjouit d'être autorisé à rejoindre l'expédition, promettant de faire de son mieux. Il est affecté à l'Équipe Scientifique.\n\nLorsque le Black Whale lève enfin l'ancre, Leorio est vu en train de travailler au centre de soins médicaux sur le Pont 3 sous les ordres de Cheadle, transportant des médicaments et écoutant ses ordres. Leorio est montré dans le service médical au Pont 3 avec Cheadle et Gel.\n\nLe onzième jour du voyage, Leorio fait partie d'une équipe médicale dirigée par Cheadle, chargée de s'occuper du 9ème Prince Halkenburg, qui (à leur insu, portant à ce moment-là l'ego de Balsamilco) leur est amené d'urgence à l'hôpital du Pont 3 après s'être effondré (également à leur insu, car on lui a administré du TSK-17). Ils sont par la suite expulsés après que l'équipe médicale royale et militaire envoyée par le 1er Prince Benjamin vienne prendre en charge Halkenburg et son état.\n\n**Relations**\n- **Cheadle Yorkshire** : Mentor et supérieure de Leorio, elle l'a recruté chez les Zodiaques et supervise ses études de médecine et son intégration dans l'équipe scientifique.\n- **Kurapika** : Proche ami qu'il a recommandé pour rejoindre les Zodiaques.\n- **Ging Freecss** : Leorio lui succède officiellement en tant que Zodiaque.\n\n**Nen**\nLeorio est de l'Émission avec un penchant pour le Renforcement. Ayant reporté son entraînement en raison de sa candidature à l'université, au moment où il a retrouvé Gon et Killua à York Shin City, il ne pouvait utiliser que le Ten et ignorait l'existence d'autres techniques.",
     "factionId": "zodiacs",
     "firstAppearanceChapterId": "ch-unknown",
-    "canonStatus": "canon"
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": 3,
+      "room": "Hopital",
+      "status": "actif",
+      "role": "medecin / etudiant"
+    }
   },
   {
     "id": "pyon",
@@ -453,7 +717,13 @@
     "description": "Zodiaque.",
     "factionId": "zodiacs",
     "firstAppearanceChapterId": "ch-unknown",
-    "canonStatus": "canon"
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": 3,
+      "room": null,
+      "status": "actif",
+      "role": "zodiaque"
+    }
   },
   {
     "id": "saccho-kobayakawa",
@@ -462,7 +732,13 @@
     "description": "Zodiaque.",
     "factionId": "zodiacs",
     "firstAppearanceChapterId": "ch-unknown",
-    "canonStatus": "canon"
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": 3,
+      "room": null,
+      "status": "actif",
+      "role": "zodiaque"
+    }
   },
   {
     "id": "saiyu",
@@ -471,7 +747,13 @@
     "description": "Zodiaque. Suspecté d'être la taupe de Beyond.",
     "factionId": "zodiacs",
     "firstAppearanceChapterId": "ch-unknown",
-    "canonStatus": "canon"
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": 3,
+      "room": null,
+      "status": "suspect",
+      "role": "zodiaque / taupe potentiel"
+    }
   },
   {
     "id": "basho",
@@ -480,7 +762,13 @@
     "description": "Hunter. Engagé par Luzurus.",
     "factionId": "prince-luzurus",
     "firstAppearanceChapterId": "ch-unknown",
-    "canonStatus": "canon"
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": 2,
+      "room": "1007",
+      "status": "actif",
+      "role": "garde"
+    }
   },
   {
     "id": "belerainte",
@@ -489,7 +777,13 @@
     "description": "Hunter.",
     "factionId": null,
     "firstAppearanceChapterId": "ch-unknown",
-    "canonStatus": "canon"
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "hunter"
+    }
   },
   {
     "id": "bill",
@@ -498,7 +792,13 @@
     "description": "Hunter. Garde de la Reine Oito et du Prince Woble.",
     "factionId": "prince-woble",
     "firstAppearanceChapterId": "ch-unknown",
-    "canonStatus": "canon"
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": 2,
+      "room": "1014",
+      "status": "actif",
+      "role": "garde"
+    }
   },
   {
     "id": "giuliano",
@@ -507,7 +807,13 @@
     "description": "Hunter.",
     "factionId": null,
     "firstAppearanceChapterId": "ch-unknown",
-    "canonStatus": "canon"
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "divers"
+    }
   },
   {
     "id": "izunavi",
@@ -516,7 +822,13 @@
     "description": "Hunter. Maître de Kurapika, engagé par Tyson.",
     "factionId": "prince-tyson",
     "firstAppearanceChapterId": "ch-unknown",
-    "canonStatus": "canon"
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": 2,
+      "room": null,
+      "status": "inconnu",
+      "role": "prince tyson"
+    }
   },
   {
     "id": "keeney",
@@ -525,7 +837,13 @@
     "description": "Hunter.",
     "factionId": null,
     "firstAppearanceChapterId": "ch-unknown",
-    "canonStatus": "canon"
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "divers"
+    }
   },
   {
     "id": "kurton",
@@ -534,7 +852,13 @@
     "description": "Hunter.",
     "factionId": null,
     "firstAppearanceChapterId": "ch-unknown",
-    "canonStatus": "canon"
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "divers"
+    }
   },
   {
     "id": "ridge",
@@ -543,7 +867,13 @@
     "description": "Hunter.",
     "factionId": null,
     "firstAppearanceChapterId": "ch-unknown",
-    "canonStatus": "canon"
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "divers"
+    }
   },
   {
     "id": "sanbica-norton",
@@ -552,7 +882,13 @@
     "description": "Hunter.",
     "factionId": null,
     "firstAppearanceChapterId": "ch-unknown",
-    "canonStatus": "canon"
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "divers"
+    }
   },
   {
     "id": "sayird",
@@ -561,7 +897,13 @@
     "description": "Hunter. Ancien garde contrôlé par Momoze puis détenu.",
     "factionId": "prince-woble",
     "firstAppearanceChapterId": "ch-unknown",
-    "canonStatus": "canon"
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": 2,
+      "room": null,
+      "status": "inconnu",
+      "role": "prince woble"
+    }
   },
   {
     "id": "scairt",
@@ -570,7 +912,13 @@
     "description": "Hunter.",
     "factionId": null,
     "firstAppearanceChapterId": "ch-unknown",
-    "canonStatus": "canon"
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "divers"
+    }
   },
   {
     "id": "tokarine",
@@ -579,7 +927,13 @@
     "description": "Hunter.",
     "factionId": null,
     "firstAppearanceChapterId": "ch-unknown",
-    "canonStatus": "canon"
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "divers"
+    }
   },
   {
     "id": "borksen",
@@ -588,7 +942,13 @@
     "description": "Provisional Hunter (PH).",
     "factionId": null,
     "firstAppearanceChapterId": "ch-unknown",
-    "canonStatus": "canon"
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "divers"
+    }
   },
   {
     "id": "danjin",
@@ -597,7 +957,13 @@
     "description": "Provisional Hunter (PH).",
     "factionId": null,
     "firstAppearanceChapterId": "ch-unknown",
-    "canonStatus": "canon"
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "divers"
+    }
   },
   {
     "id": "erikkusu",
@@ -606,7 +972,13 @@
     "description": "Provisional Hunter (PH).",
     "factionId": null,
     "firstAppearanceChapterId": "ch-unknown",
-    "canonStatus": "canon"
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "divers"
+    }
   },
   {
     "id": "gidal",
@@ -615,7 +987,13 @@
     "description": "Provisional Hunter (PH).",
     "factionId": null,
     "firstAppearanceChapterId": "ch-unknown",
-    "canonStatus": "canon"
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "divers"
+    }
   },
   {
     "id": "lisamsetta",
@@ -624,7 +1002,13 @@
     "description": "Provisional Hunter (PH).",
     "factionId": null,
     "firstAppearanceChapterId": "ch-unknown",
-    "canonStatus": "canon"
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "divers"
+    }
   },
   {
     "id": "meshush",
@@ -633,7 +1017,13 @@
     "description": "Provisional Hunter (PH).",
     "factionId": null,
     "firstAppearanceChapterId": "ch-unknown",
-    "canonStatus": "canon"
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "divers"
+    }
   },
   {
     "id": "mozbe",
@@ -642,7 +1032,13 @@
     "description": "Provisional Hunter (PH).",
     "factionId": null,
     "firstAppearanceChapterId": "ch-unknown",
-    "canonStatus": "canon"
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "divers"
+    }
   },
   {
     "id": "muhahahasare",
@@ -651,7 +1047,13 @@
     "description": "Provisional Hunter (PH).",
     "factionId": null,
     "firstAppearanceChapterId": "ch-unknown",
-    "canonStatus": "canon"
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "divers"
+    }
   },
   {
     "id": "myuhan",
@@ -660,7 +1062,13 @@
     "description": "Provisional Hunter (PH).",
     "factionId": null,
     "firstAppearanceChapterId": "ch-unknown",
-    "canonStatus": "canon"
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "divers"
+    }
   },
   {
     "id": "salkov",
@@ -669,7 +1077,13 @@
     "description": "Provisional Hunter (PH).",
     "factionId": null,
     "firstAppearanceChapterId": "ch-unknown",
-    "canonStatus": "canon"
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "divers"
+    }
   },
   {
     "id": "zomeesa",
@@ -678,7 +1092,13 @@
     "description": "Provisional Hunter (PH).",
     "factionId": null,
     "firstAppearanceChapterId": "ch-unknown",
-    "canonStatus": "canon"
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "divers"
+    }
   },
   {
     "id": "unma-hui-guo-rou",
@@ -687,7 +1107,13 @@
     "description": "Reine de l'Empire de Kakin.",
     "factionId": "kakin-royal-family",
     "firstAppearanceChapterId": "ch-unknown",
-    "canonStatus": "canon"
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": 1,
+      "room": null,
+      "status": "inconnu",
+      "role": "kakin royal family"
+    }
   },
   {
     "id": "duazul-hui-guo-rou",
@@ -696,7 +1122,13 @@
     "description": "Reine de l'Empire de Kakin.",
     "factionId": "kakin-royal-family",
     "firstAppearanceChapterId": "ch-unknown",
-    "canonStatus": "canon"
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": 1,
+      "room": null,
+      "status": "inconnu",
+      "role": "kakin royal family"
+    }
   },
   {
     "id": "tang-zhao-li-hui-guo-rou",
@@ -705,7 +1137,13 @@
     "description": "Reine de l'Empire de Kakin.",
     "factionId": "kakin-royal-family",
     "firstAppearanceChapterId": "ch-unknown",
-    "canonStatus": "canon"
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": 1,
+      "room": null,
+      "status": "inconnu",
+      "role": "kakin royal family"
+    }
   },
   {
     "id": "katrono-hui-guo-rou",
@@ -714,7 +1152,13 @@
     "description": "Reine de l'Empire de Kakin.",
     "factionId": "kakin-royal-family",
     "firstAppearanceChapterId": "ch-unknown",
-    "canonStatus": "canon"
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": 1,
+      "room": null,
+      "status": "inconnu",
+      "role": "kakin royal family"
+    }
   },
   {
     "id": "swinko-swinko-hui-guo-rou",
@@ -723,7 +1167,13 @@
     "description": "Reine de l'Empire de Kakin.",
     "factionId": "kakin-royal-family",
     "firstAppearanceChapterId": "ch-unknown",
-    "canonStatus": "canon"
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": 1,
+      "room": null,
+      "status": "inconnu",
+      "role": "kakin royal family"
+    }
   },
   {
     "id": "seiko-hui-guo-rou",
@@ -732,7 +1182,13 @@
     "description": "Reine de l'Empire de Kakin.",
     "factionId": "kakin-royal-family",
     "firstAppearanceChapterId": "ch-unknown",
-    "canonStatus": "canon"
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": 1,
+      "room": null,
+      "status": "inconnu",
+      "role": "kakin royal family"
+    }
   },
   {
     "id": "sevanti-hui-guo-rou",
@@ -741,7 +1197,13 @@
     "description": "Reine de l'Empire de Kakin.",
     "factionId": "kakin-royal-family",
     "firstAppearanceChapterId": "ch-unknown",
-    "canonStatus": "canon"
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": 1,
+      "room": null,
+      "status": "inconnu",
+      "role": "kakin royal family"
+    }
   },
   {
     "id": "gipper",
@@ -750,7 +1212,13 @@
     "description": "Membre de l'Armée Royale de Kakin.",
     "factionId": "kakin-royal-army",
     "firstAppearanceChapterId": "ch-unknown",
-    "canonStatus": "canon"
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": 1,
+      "room": null,
+      "status": "inconnu",
+      "role": "kakin royal army"
+    }
   },
   {
     "id": "maizan",
@@ -759,7 +1227,13 @@
     "description": "Membre de l'Armée Royale de Kakin.",
     "factionId": "kakin-royal-army",
     "firstAppearanceChapterId": "ch-unknown",
-    "canonStatus": "canon"
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": 1,
+      "room": null,
+      "status": "inconnu",
+      "role": "kakin royal army"
+    }
   },
   {
     "id": "mizuri",
@@ -768,7 +1242,13 @@
     "description": "Membre de l'Armée Royale de Kakin.",
     "factionId": "kakin-royal-army",
     "firstAppearanceChapterId": "ch-unknown",
-    "canonStatus": "canon"
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": 1,
+      "room": null,
+      "status": "inconnu",
+      "role": "kakin royal army"
+    }
   },
   {
     "id": "momolly",
@@ -777,7 +1257,13 @@
     "description": "Membre de l'Armée Royale de Kakin.",
     "factionId": "kakin-royal-army",
     "firstAppearanceChapterId": "ch-unknown",
-    "canonStatus": "canon"
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": 1,
+      "room": null,
+      "status": "inconnu",
+      "role": "kakin royal army"
+    }
   },
   {
     "id": "otocin",
@@ -786,7 +1272,13 @@
     "description": "Membre de l'Armée Royale de Kakin.",
     "factionId": "kakin-royal-army",
     "firstAppearanceChapterId": "ch-unknown",
-    "canonStatus": "canon"
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": 1,
+      "room": null,
+      "status": "inconnu",
+      "role": "kakin royal army"
+    }
   },
   {
     "id": "cleapatro",
@@ -795,7 +1287,13 @@
     "description": "Membre du Bureau de la Justice.",
     "factionId": "justice-bureau",
     "firstAppearanceChapterId": "ch-unknown",
-    "canonStatus": "canon"
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": 3,
+      "room": null,
+      "status": "inconnu",
+      "role": "justice bureau"
+    }
   },
   {
     "id": "kaiser",
@@ -804,7 +1302,13 @@
     "description": "Membre du Bureau de la Justice.",
     "factionId": "justice-bureau",
     "firstAppearanceChapterId": "ch-unknown",
-    "canonStatus": "canon"
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": 3,
+      "room": null,
+      "status": "inconnu",
+      "role": "justice bureau"
+    }
   },
   {
     "id": "peuckert",
@@ -813,7 +1317,13 @@
     "description": "Membre du Bureau de la Justice.",
     "factionId": "justice-bureau",
     "firstAppearanceChapterId": "ch-unknown",
-    "canonStatus": "canon"
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": 3,
+      "room": null,
+      "status": "inconnu",
+      "role": "justice bureau"
+    }
   },
   {
     "id": "steiner",
@@ -822,7 +1332,13 @@
     "description": "Membre du Bureau de la Justice.",
     "factionId": "justice-bureau",
     "firstAppearanceChapterId": "ch-unknown",
-    "canonStatus": "canon"
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": 3,
+      "room": null,
+      "status": "inconnu",
+      "role": "justice bureau"
+    }
   },
   {
     "id": "worio-bay",
@@ -831,7 +1347,13 @@
     "description": "Membre du Bureau de la Justice.",
     "factionId": "justice-bureau",
     "firstAppearanceChapterId": "ch-unknown",
-    "canonStatus": "canon"
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": 3,
+      "room": null,
+      "status": "inconnu",
+      "role": "justice bureau"
+    }
   },
   {
     "id": "nugui",
@@ -840,7 +1362,13 @@
     "description": "Passager / Autre affiliation.",
     "factionId": null,
     "firstAppearanceChapterId": "ch-unknown",
-    "canonStatus": "canon"
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "divers"
+    }
   },
   {
     "id": "mandam",
@@ -849,7 +1377,13 @@
     "description": "Passager / Autre affiliation.",
     "factionId": null,
     "firstAppearanceChapterId": "ch-unknown",
-    "canonStatus": "canon"
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "divers"
+    }
   },
   {
     "id": "morrissey",
@@ -858,6 +1392,12 @@
     "description": "Passager / Autre affiliation.",
     "factionId": null,
     "firstAppearanceChapterId": "ch-unknown",
-    "canonStatus": "canon"
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "divers"
+    }
   }
 ]

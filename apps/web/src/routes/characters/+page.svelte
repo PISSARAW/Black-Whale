@@ -24,7 +24,7 @@
         <h2 class="text-2xl font-semibold text-gray-200 border-b border-gray-800 pb-2 mb-6 capitalize">{faction.replace('prince-', 'Faction ')}</h2>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {#each chars as character (character.id)}
-            <a href="/characters/{character.slug || character.id}" class="group block bg-[#0a0a0a] border border-[#222] rounded-xl p-5 hover:border-[#FFD700] hover:bg-[#111] transition-all relative overflow-hidden">
+            <a href="/characters/{character.id}" class="group block bg-[#0a0a0a] border border-[#222] rounded-xl p-5 hover:border-[#FFD700] hover:bg-[#111] transition-all relative overflow-hidden">
               <div class="absolute inset-0 bg-gradient-to-b from-[#FFD700]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
               
               <h3 class="text-lg font-bold text-gray-100 group-hover:text-[#FFD700] transition-colors">{character.canonicalName}</h3>

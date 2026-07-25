@@ -86,35 +86,89 @@ async function main() {
 
   console.log('Seeding Locations...')
   const zodiacHQ = await prisma.location.create({
-    data: { slug: 'zodiac-hq', name: 'Zodiac HQ', type: LocationType.UNKNOWN, firstVisibleEventId: evt0.id }
+    data: { 
+      slug: 'zodiac-hq', 
+      name: 'Zodiac HQ', 
+      type: LocationType.UNKNOWN, 
+      firstVisibleEventId: evt0.id,
+      mapElementId: 'zodiac-hq-svg'
+    }
   })
 
   const blackWhale = await prisma.location.create({
-    data: { slug: 'black-whale', name: 'Black Whale', type: LocationType.SHIP, firstVisibleEventId: evt1.id }
+    data: { 
+      slug: 'black-whale', 
+      name: 'Black Whale', 
+      type: LocationType.SHIP, 
+      firstVisibleEventId: evt1.id,
+      mapElementId: 'black-whale-overview'
+    }
   })
   
   const tier1 = await prisma.location.create({
-    data: { slug: 'tier-1', name: 'Tier 1', type: LocationType.TIER, firstVisibleEventId: evt1.id, parentLocationId: blackWhale.id }
+    data: { 
+      slug: 'tier-1', 
+      name: 'Tier 1', 
+      type: LocationType.TIER, 
+      firstVisibleEventId: evt1.id, 
+      parentLocationId: blackWhale.id,
+      mapElementId: 'tier-1-svg'
+    }
   })
 
   const vvip = await prisma.location.create({
-    data: { slug: 'tier-1-vvip', name: 'VVIP Area', type: LocationType.ZONE, firstVisibleEventId: evt1.id, parentLocationId: tier1.id }
+    data: { 
+      slug: 'tier-1-vvip', 
+      name: 'VVIP Area', 
+      type: LocationType.ZONE, 
+      firstVisibleEventId: evt1.id, 
+      parentLocationId: tier1.id,
+      mapElementId: 'tier-1-vvip-zone'
+    }
   })
 
   const room1014 = await prisma.location.create({
-    data: { slug: 'tier-1-vvip-room-1014', name: 'Room 1014', type: LocationType.ROOM, firstVisibleEventId: evt1.id, parentLocationId: vvip.id }
+    data: { 
+      slug: 'tier-1-vvip-room-1014', 
+      name: 'Room 1014', 
+      type: LocationType.ROOM, 
+      firstVisibleEventId: evt1.id, 
+      parentLocationId: vvip.id,
+      mapElementId: 'room-1014-svg'
+    }
   })
 
   const room1001 = await prisma.location.create({
-    data: { slug: 'tier-1-vvip-room-1001', name: 'Room 1001', type: LocationType.ROOM, firstVisibleEventId: evt1.id, parentLocationId: vvip.id }
+    data: { 
+      slug: 'tier-1-vvip-room-1001', 
+      name: 'Room 1001', 
+      type: LocationType.ROOM, 
+      firstVisibleEventId: evt1.id, 
+      parentLocationId: vvip.id,
+      mapElementId: 'room-1001-svg'
+    }
   })
 
   const tier3 = await prisma.location.create({
-    data: { slug: 'tier-3', name: 'Tier 3', type: LocationType.TIER, firstVisibleEventId: evt1.id, parentLocationId: blackWhale.id }
+    data: { 
+      slug: 'tier-3', 
+      name: 'Tier 3', 
+      type: LocationType.TIER, 
+      firstVisibleEventId: evt1.id, 
+      parentLocationId: blackWhale.id,
+      mapElementId: 'tier-3-svg'
+    }
   })
 
   const medicalDistrict = await prisma.location.create({
-    data: { slug: 'tier-3-medical-district', name: 'Medical District', type: LocationType.ZONE, firstVisibleEventId: evt1.id, parentLocationId: tier3.id }
+    data: { 
+      slug: 'tier-3-medical-district', 
+      name: 'Medical District', 
+      type: LocationType.ZONE, 
+      firstVisibleEventId: evt1.id, 
+      parentLocationId: tier3.id,
+      mapElementId: 'tier-3-medical-svg'
+    }
   })
 
   console.log('Seeding Characters...')
@@ -293,6 +347,166 @@ async function main() {
       bodyId: leorioBody.id,
       state: BodyStateType.ALIVE,
       fromEventId: evt0.id
+    }
+  })
+
+  console.log('Seeding Abilities...')
+  // Kurapika's abilities
+  const kurapikaAbility1 = await prisma.nenAbility.create({
+    data: {
+      id: 'kurapika-ability-judgement-chain',
+      ownerId: kurapika.id,
+      name: 'Judgment Chain',
+      category: 'CONJURATION' as any,
+      description: 'Chains that can be thrown to capture targets. Each finger has a specific condition.',
+      canonStatus: 'CANON' as any,
+      moduleKey: 'judgement-chain'
+    }
+  })
+
+  const kurapikaAbility2 = await prisma.nenAbility.create({
+    data: {
+      id: 'kurapika-ability-holy-chain',
+      ownerId: kurapika.id,
+      name: 'Holy Chain',
+      category: 'CONJURATION' as any,
+      description: 'Chains used for binding and defense. Can be used to restrain or protect.',
+      canonStatus: 'CANON' as any,
+      moduleKey: 'holy-chain'
+    }
+  })
+
+  // Benjamin's abilities
+  const benjaminAbility = await prisma.nenAbility.create({
+    data: {
+      id: 'benjamin-ability-dragon-diver',
+      ownerId: benjamin.id,
+      name: 'Dragon Diver',
+      category: 'MANIPULATION' as any,
+      description: 'Can manipulate dragon-like creatures.',
+      canonStatus: 'CANON' as any,
+      moduleKey: 'dragon-diver'
+    }
+  })
+
+  console.log('Seeding Ability Activations...')
+  await prisma.abilityActivation.create({
+    data: {
+      id: 'activation-kurapika-judgement-chain-evt1',
+      abilityId: kurapikaAbility1.id,
+      actorId: kurapika.id,
+      startedAtEventId: evt1.id,
+      state: 'ACTIVE' as any
+    }
+  })
+
+  console.log('Seeding Facts...')
+  // Fact about Kurapika being a Hunter
+  const fact1 = await prisma.fact.create({
+    data: {
+      id: 'fact-kurapika-is-hunter',
+      subjectType: 'CHARACTER' as any,
+      subjectId: kurapika.id,
+      predicate: 'is',
+      value: { role: 'Hunter', specialization: 'Blacklist Hunter' },
+      validFromEventId: evt0.id,
+      validUntilEventId: null,
+      truthStatus: 'CONFIRMED' as any,
+      firstVisibleEventId: evt0.id
+    }
+  })
+
+  // Fact about Benjamin being the 1st Prince
+  const fact2 = await prisma.fact.create({
+    data: {
+      id: 'fact-benjamin-is-first-prince',
+      subjectType: 'CHARACTER' as any,
+      subjectId: benjamin.id,
+      predicate: 'is',
+      value: { title: '1st Prince', family: 'Hui Guo Rou' },
+      validFromEventId: evt1.id,
+      validUntilEventId: null,
+      truthStatus: 'CONFIRMED' as any,
+      firstVisibleEventId: evt1.id
+    }
+  })
+
+  // Fact about Room 1014 location
+  const fact3 = await prisma.fact.create({
+    data: {
+      id: 'fact-room-1014-is-vvip',
+      subjectType: 'LOCATION' as any,
+      subjectId: room1014.id,
+      predicate: 'isLocatedIn',
+      value: { area: 'VVIP', tier: 1 },
+      validFromEventId: evt1.id,
+      validUntilEventId: null,
+      truthStatus: 'CONFIRMED' as any,
+      firstVisibleEventId: evt1.id
+    }
+  })
+
+  // Fact about Halkenburg collapse
+  const fact4 = await prisma.fact.create({
+    data: {
+      id: 'fact-halkenburg-collapsed',
+      subjectType: 'CHARACTER' as any,
+      subjectId: 'halkenburg',
+      predicate: 'status',
+      value: { state: 'COLLAPSED', location: medicalDistrict.id },
+      validFromEventId: evt4.id,
+      validUntilEventId: null,
+      truthStatus: 'CONFIRMED' as any,
+      firstVisibleEventId: evt4.id
+    }
+  })
+
+  console.log('Seeding KnowledgeStates...')
+  // Kurapika knows about Benjamin being the 1st Prince
+  await prisma.knowledgeState.create({
+    data: {
+      id: 'ks-kurapika-knows-benjamin-first-prince',
+      observerCharacterId: kurapika.id,
+      factId: fact2.id,
+      fromEventId: evt1.id,
+      untilEventId: null,
+      epistemicState: 'KNOWN' as any,
+      confidence: 1.0,
+      acquisitionMethod: 'DIRECT_OBSERVATION' as any,
+      sourceCharacterId: null,
+      acquisitionEventId: evt1.id
+    }
+  })
+
+  // Leorio knows about Kurapika being a Hunter
+  await prisma.knowledgeState.create({
+    data: {
+      id: 'ks-leorio-knows-kurapika-hunter',
+      observerCharacterId: leorio.id,
+      factId: fact1.id,
+      fromEventId: evt0.id,
+      untilEventId: null,
+      epistemicState: 'KNOWN' as any,
+      confidence: 1.0,
+      acquisitionMethod: 'DIRECT_OBSERVATION' as any,
+      sourceCharacterId: null,
+      acquisitionEventId: evt0.id
+    }
+  })
+
+  // Oito knows about Room 1014 being VVIP (by being there)
+  await prisma.knowledgeState.create({
+    data: {
+      id: 'ks-oito-knows-room-1014-vvip',
+      observerCharacterId: oito.id,
+      factId: fact3.id,
+      fromEventId: evt1.id,
+      untilEventId: null,
+      epistemicState: 'KNOWN' as any,
+      confidence: 1.0,
+      acquisitionMethod: 'DIRECT_OBSERVATION' as any,
+      sourceCharacterId: null,
+      acquisitionEventId: evt1.id
     }
   })
 

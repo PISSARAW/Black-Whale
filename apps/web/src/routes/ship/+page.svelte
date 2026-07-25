@@ -9,7 +9,6 @@
   import PerspectiveSelector from '$lib/components/perspective/PerspectiveSelector.svelte';
   import PerspectiveTimeline from '$lib/components/perspective/PerspectiveTimeline.svelte';
   import WhyPanel from '$lib/components/perspective/WhyPanel.svelte';
-  import KnowledgeStatus from '$lib/components/perspective/KnowledgeStatus.svelte';
   import ConsciousnessTransferTransition from '$lib/components/perspective/ConsciousnessTransferTransition.svelte';
   import type { FollowMode, PerspectiveContext, PerspectiveOption } from '$lib/components/perspective/types';
 
@@ -296,11 +295,19 @@
     </div>
 
     <div class="legend-panel">
-      <div class="panel-heading compact"><div><span>Lecture de la carte</span><h2>Légende & affichage</h2></div></div>
-      <div class="legend-items">
-        <KnowledgeStatus state="confirmed" label="Confirmée" details="Observation directe" />
-        <KnowledgeStatus state="suspected" label="Supposée" details="Rapport non vérifié" />
-        <KnowledgeStatus state="outdated" label="Ancienne" details="Position obsolète" />
+      <div class="panel-heading compact"><div><span>Lecture de la carte</span><h2>Certitude temporelle</h2></div></div>
+      <div class="position-legend" aria-label="Couleurs selon la certitude temporelle">
+        {#each [
+          { label: 'Événement courant', color: '#55d1e2' },
+          { label: 'Période confirmée', color: '#ad8bea' },
+          { label: 'Chapitre courant', color: '#6ac890' },
+          { label: 'Confirmée', color: '#5bb9ad' },
+          { label: 'Supposée', color: '#f0b75e' },
+          { label: 'Dernière position', color: '#e47f61' },
+          { label: 'Inconnue', color: '#8a9798' }
+        ] as status}
+          <span style={`--status-color: ${status.color}`}><i></i>{status.label}</span>
+        {/each}
       </div>
       <div class="display-toggles">
         <button class:active={mapState.filters.showUnknownPositions} onclick={() => mapState.filters.showUnknownPositions = !mapState.filters.showUnknownPositions}>
@@ -415,7 +422,9 @@
   .intel-panel { max-width: 1600px; margin: .75rem auto 0; display: grid; grid-template-columns: 1.35fr 1fr; gap: .75rem; }
   .perspective-panel, .legend-panel { min-width: 0; padding: .9rem 1rem; border: 1px solid rgba(98,122,132,.25); border-radius: .8rem; background: var(--surface); }
   .mode-pill { padding: .3rem .55rem; border: 1px solid rgba(98,139,132,.28); border-radius: 999px; color: #9bb4ae !important; background: rgba(25,56,52,.24); letter-spacing: .04em !important; }
-  .legend-items { display: flex; flex-wrap: wrap; gap: .4rem; }
+  .position-legend { display: flex; flex-wrap: wrap; gap: .35rem .7rem; margin-top: .7rem; padding-top: .65rem; border-top: 1px solid rgba(98,122,132,.16); }
+  .position-legend span { display: inline-flex; align-items: center; gap: .35rem; color: #7e8e8b; font-size: .6rem; }
+  .position-legend i { width: .48rem; height: .48rem; border: 2px solid #091117; border-radius: 50%; background: var(--status-color); box-shadow: 0 0 0 1px var(--status-color), 0 0 7px color-mix(in srgb, var(--status-color) 45%, transparent); }
   .display-toggles { display: flex; gap: .4rem; margin-top: .65rem; }
   .display-toggles button { display: inline-flex; align-items: center; gap: .4rem; padding: .38rem .55rem; border: 1px solid #304149; border-radius: .45rem; color: #849492; background: #0b141b; font-size: .68rem; cursor: pointer; }
   .display-toggles button span { display: grid; width: 1rem; height: 1rem; place-items: center; border-radius: .2rem; background: #17242c; font-size: .62rem; }
@@ -455,7 +464,6 @@
     .map-tools { display: none; }
     .map-toolbar { padding: 0 .75rem; }
     .intel-panel { grid-template-columns: 1fr; }
-    .legend-items { align-items: stretch; }
     .timeline-shell { padding: .8rem; }
   }
 </style>

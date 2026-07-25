@@ -38,6 +38,11 @@ export interface MarkerIdentityState {
   suspicionLabel?: string;
   sourceLabel?: string;
   sinceLabel?: string;
+  positionColor?: string;
+  tierLabel?: string;
+  locationLabel?: string;
+  temporalLabel?: string;
+  temporalDetail?: string;
 }
 
 export interface PerspectiveOption {

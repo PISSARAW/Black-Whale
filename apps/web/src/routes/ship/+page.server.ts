@@ -38,10 +38,16 @@ export const load: PageServerLoad = async ({ url, cookies }) => {
 		? filterVisible(rawWorldState.characters as any, spoilerProfile) as any
 		: rawWorldState.characters;
 		
-	// Filter presences by spoiler profile and also ensure they belong to visible characters
-	const visibleCharacterIds = new Set(visibleCharacters.map((c: any) => c.id));
-	const visiblePresences = (rawWorldState.presences as any[]).filter(p => 
-		visibleCharacterIds.has(p.entityId)
+	// Presences reference bodies, not characters. Resolve the body owner before
+	// applying the spoiler filter so valid character positions are not discarded.
+	const visibleCharacterIds = new Set(visibleCharacters.map((character: any) => character.id));
+	const visibleBodyIds = new Set(
+		(rawWorldState.bodies as any[])
+			.filter((body) => visibleCharacterIds.has(body.originalCharacterId))
+			.map((body) => body.id)
+	);
+	const visiblePresences = (rawWorldState.presences as any[]).filter((presence) =>
+		visibleBodyIds.has(presence.entityId)
 	);
 
 	// Load locations to match presences to actual SVGs

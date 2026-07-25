@@ -65,12 +65,23 @@
     }
   };
 
+  const tierVisuals: Record<string, { label: string; overviewY: number }> = {
+    'tier-1': { label: 'Tier 1', overviewY: 21 },
+    'tier-2': { label: 'Tier 2', overviewY: 31 },
+    'tier-3': { label: 'Tier 3', overviewY: 46 },
+    'tier-4': { label: 'Tier 4', overviewY: 63 },
+    'tier-5': { label: 'Tier 5', overviewY: 78 }
+  };
+
   // Calculate marker positions from presences
   let presences = $derived($page.data.worldState?.presences || []);
   let characters = $derived($page.data.worldState?.characters || []);
   let bodies = $derived($page.data.worldState?.bodies || []);
   let locations = $derived($page.data.worldState?.locations || []);
   let perspective = $derived($page.data.perspective || null);
+  let events = $derived($page.data.events || []);
+  let currentSequence = $derived($page.data.sequence || 0);
+  let currentEvent = $derived(events.find((event: any) => event.sequence === currentSequence));
 
   function hashToUnit(input: string) {
     let hash = 0;
@@ -96,6 +107,71 @@
     return null;
   }
 
+  function belongsToLocation(location: any, targetSlug: string, byId: Map<string, any>) {
+    let current = location;
+    let depth = 0;
+    while (current && depth < 8) {
+      if (current.slug === targetSlug) return true;
+      current = current.parentLocationId ? byId.get(current.parentLocationId) : null;
+      depth += 1;
+    }
+    return false;
+  }
+
+  function getExactTierCoordinates(tierId: string, locationSlug: string) {
+    const tierCoordinates = locationCoordinates[tierId] || {};
+    const coordinateKey = Object.keys(tierCoordinates)
+      .sort((left, right) => right.length - left.length)
+      .find((key) => locationSlug === key || locationSlug.endsWith(`-${key}`));
+    const directCoordinates = coordinateKey ? tierCoordinates[coordinateKey] : undefined;
+    if (directCoordinates) return { ...directCoordinates, isSmallRoom: false };
+
+    // Tier 1 rooms 1001–1014 are drawn as two vertical columns in tier-1.svelte.
+    // Odd rooms are on the right, even rooms on the left.
+    const princeRoomMatch = tierId === 'tier-1' ? locationSlug.match(/room-10(0[1-9]|1[0-4])$/) : null;
+    if (princeRoomMatch) {
+      const roomNumber = Number(princeRoomMatch[1]);
+      const row = Math.floor((roomNumber - 1) / 2);
+      return {
+        x: roomNumber % 2 === 0 ? 477.5 : 582.5,
+        y: 320.7 + row * 21.4,
+        isSmallRoom: true
+      };
+    }
+
+    return null;
+  }
+
+  function getTemporalVisual(presence: any) {
+    if (presence.certainty === 'PROBABLE') {
+      return { color: '#f0b75e', label: 'Position supposée', detail: 'Présence probable, non confirmée' };
+    }
+    if (presence.certainty === 'LAST_KNOWN') {
+      return { color: '#e47f61', label: 'Dernière position connue', detail: 'Information potentiellement obsolète' };
+    }
+    if (presence.certainty !== 'CONFIRMED') {
+      return { color: '#8a9798', label: 'Statut inconnu', detail: 'Niveau de certitude non renseigné' };
+    }
+
+    const fromSequence = presence.fromEvent?.sequence;
+    const untilSequence = presence.untilEvent?.sequence;
+
+    if (untilSequence !== undefined && untilSequence !== null) {
+      return {
+        color: '#ad8bea',
+        label: 'Confirmé sur une période',
+        detail: `Événements ${fromSequence ?? '?'} à ${untilSequence}`
+      };
+    }
+    if (fromSequence === currentSequence) {
+      return { color: '#55d1e2', label: 'Confirmé à cet événement', detail: `Événement ${currentSequence}` };
+    }
+    if (presence.fromEvent?.chapterId && presence.fromEvent.chapterId === currentEvent?.chapterId) {
+      return { color: '#6ac890', label: 'Confirmé durant ce chapitre', detail: `Depuis l’événement ${fromSequence ?? '?'}` };
+    }
+    return { color: '#5bb9ad', label: 'Présence confirmée', detail: `Depuis l’événement ${fromSequence ?? '?'}` };
+  }
+
   let dynamicCharacters = $derived(
     presences.map((p: any) => {
       const locationsById = new Map<string, any>((locations as any[]).map((location: any) => [location.id, location] as [string, any]));
@@ -108,19 +184,41 @@
       const loc = locations.find((l: any) => l.id === p.locationId);
       const tierId = loc ? resolveTierSlug(loc, locationsById) : null;
       
+      if (!body || !ownerCharacter) return null;
+
       // Get coordinates based on location slug
       let x = 500;
       let y = 300;
       
       if (loc && tierId && locationCoordinates[tierId]) {
-        const coords = locationCoordinates[tierId][loc.slug];
+        const coords = getExactTierCoordinates(tierId, loc.slug);
         if (coords) {
-          x = coords.x;
-          y = coords.y;
+          const colocatedEntityIds = (presences as any[])
+            .filter((candidate) => candidate.locationId === p.locationId)
+            .map((candidate) => candidate.entityId)
+            .sort();
+          const colocatedIndex = Math.max(0, colocatedEntityIds.indexOf(p.entityId));
+          const colocatedCount = colocatedEntityIds.length;
+
+          if (colocatedCount > 1 && coords.isSmallRoom) {
+            const columns = Math.min(2, colocatedCount);
+            const rows = Math.ceil(colocatedCount / columns);
+            const column = colocatedIndex % columns;
+            const row = Math.floor(colocatedIndex / columns);
+            x = coords.x + (column - (columns - 1) / 2) * 12;
+            y = coords.y + (row - (rows - 1) / 2) * 8;
+          } else if (colocatedCount > 1) {
+            const angle = (colocatedIndex / colocatedCount) * Math.PI * 2;
+            x = coords.x + Math.cos(angle) * 15;
+            y = coords.y + Math.sin(angle) * 10;
+          } else {
+            x = coords.x;
+            y = coords.y;
+          }
         } else {
           if (loc.parentLocationId) {
             const parent: any = locationsById.get(loc.parentLocationId);
-            const parentCoords = parent ? locationCoordinates[tierId][parent.slug] : undefined;
+            const parentCoords = parent ? getExactTierCoordinates(tierId, parent.slug) : undefined;
             if (parentCoords) {
               const base = hashToUnit(p.entityId);
               x = parentCoords.x + (base * 80 - 40);
@@ -176,9 +274,13 @@
           ? 'confirmed'
           : hasBeliefOnly
             ? 'believed'
-            : p.certainty === 'LAST_KNOWN'
-              ? 'outdated'
-              : 'unknown';
+            : p.certainty === 'CONFIRMED'
+              ? 'confirmed'
+              : p.certainty === 'PROBABLE'
+                ? 'suspected'
+                : p.certainty === 'LAST_KNOWN'
+                  ? 'outdated'
+                  : 'unknown';
 
       const transferFlag = observer?.currentBodyId === p.entityId && observer?.consciousnessId !== observer?.currentBodyId;
 
@@ -189,12 +291,21 @@
           ? `Croyance: ${sourceFromFact}`
           : 'Presence structurelle';
 
-      const mapped: MarkerIdentityState & { tierId: string | null; locationId?: string } = {
+      const visual = tierId ? tierVisuals[tierId] : undefined;
+      const temporalVisual = getTemporalVisual(p);
+      const offsetSeed = hashToUnit(`${p.entityId}-offset`);
+      const overviewX = 39 + offsetSeed * 22;
+      const overviewY = (visual?.overviewY ?? 46) + (hashToUnit(`${p.entityId}-row`) * 4 - 2);
+
+      const mapped: MarkerIdentityState & { tierId: string | null; locationId?: string; location?: any; overviewX: number; overviewY: number } = {
         id: p.entityId,
         tierId,
         locationId: loc?.slug,
-        x,
-        y,
+        location: loc,
+        overviewX,
+        overviewY,
+        x: x / 10,
+        y: y / 6,
         body: bodyName,
         consciousness,
         appearance: bodyName,
@@ -203,24 +314,49 @@
         suspicionLabel,
         knowledgeState,
         sourceLabel,
-        sinceLabel: p.fromEventId ? `depuis ${p.fromEventId}` : 'evenement inconnu'
+        sinceLabel: p.fromEventId ? `depuis ${p.fromEventId}` : 'evenement inconnu',
+        positionColor: temporalVisual.color,
+        tierLabel: visual?.label || 'Hors tier',
+        locationLabel: loc?.name || 'Position inconnue',
+        temporalLabel: temporalVisual.label,
+        temporalDetail: temporalVisual.detail
       };
 
       return mapped;
-    })
+    }).filter(Boolean)
   );
 
-  let visibleCharacters = $derived(
-    dynamicCharacters.filter((c: any) => {
-      if (mapState.currentZoomLevel === 'OVERVIEW') return false;
-      if (mapState.selectedTier && c.tierId !== mapState.selectedTier) return false;
-      return true;
-    })
-  );
+  let visibleCharacters = $derived.by(() => {
+    const locationsById = new Map<string, any>((locations as any[]).map((location: any) => [location.id, location] as [string, any]));
+
+    return dynamicCharacters
+      .filter((character: any) => {
+        if (mapState.currentZoomLevel === 'OVERVIEW') return true;
+        if (mapState.selectedTier && character.tierId !== mapState.selectedTier) return false;
+        if (mapState.currentZoomLevel === 'LOCAL' && mapState.selectedLocationId) {
+          return belongsToLocation(character.location, mapState.selectedLocationId, locationsById);
+        }
+        return true;
+      })
+      .map((character: any) => {
+        if (mapState.currentZoomLevel === 'OVERVIEW') {
+          return { ...character, x: character.overviewX, y: character.overviewY };
+        }
+        if (mapState.currentZoomLevel === 'LOCAL') {
+          const localSeed = hashToUnit(`${character.id}-local`);
+          return { ...character, x: 38 + localSeed * 24, y: 38 + hashToUnit(`${character.id}-local-y`) * 24 };
+        }
+        return character;
+      });
+  });
 </script>
 
-<div class="absolute inset-0 pointer-events-none">
+<div class="presence-layer absolute inset-0 pointer-events-none" aria-label={`${visibleCharacters.length} personnages visibles`}>
   {#each visibleCharacters as char (char.id)}
     <CharacterMarker character={char} />
   {/each}
 </div>
+
+<style>
+  .presence-layer { z-index: 5; }
+</style>

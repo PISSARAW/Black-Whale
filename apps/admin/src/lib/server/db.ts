@@ -1,14 +1,23 @@
-import { PrismaClient } from '@black-whale/database';
+// Prisma client instance
+// Uses a CommonJS wrapper to handle @prisma/client which is a CommonJS module
 
-const globalForPrisma = globalThis as unknown as {
-  prisma: PrismaClient | undefined;
-};
+import type { PrismaClient } from '@prisma/client';
 
-const databaseUrl = process.env.DATABASE_URL || 'postgresql://henripissa@localhost:5432/blackwhale?schema=public';
+let prismaPromise: Promise<any> | null = null;
 
-export const prisma = globalForPrisma.prisma ?? new PrismaClient({
-  datasourceUrl: databaseUrl,
-});
+async function getPrismaClient(): Promise<any> {
+  if (!prismaPromise) {
+    // Import the CommonJS wrapper
+    // Note: This uses dynamic import to load the CommonJS module
+    const module = await import('./prisma-wrapper.cjs');
+    prismaPromise = Promise.resolve(module.prisma);
+  }
+  return prismaPromise;
+}
 
-if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
+export async function getPrisma() {
+  return await getPrismaClient();
+}
 
+// Export types
+export type { PrismaClient };

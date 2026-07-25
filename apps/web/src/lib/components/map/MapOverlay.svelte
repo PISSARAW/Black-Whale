@@ -1,6 +1,7 @@
 <script lang="ts">
   import { mapState } from '$lib/state/mapState.svelte';
   import CharacterMarker from './CharacterMarker.svelte';
+  import type { MarkerIdentityState } from '$lib/components/perspective/types';
   import { page } from '$app/stores';
   
   // Mapping between location slugs and SVG coordinates for each tier
@@ -70,7 +71,7 @@
   let locations = $derived($page.data.worldState?.locations || []);
 
   let dynamicCharacters = $derived(
-    presences.map((p: any) => {
+    presences.map((p: any, index: number) => {
       const char = characters.find((c: any) => c.id === p.entityId);
       const loc = locations.find((l: any) => l.id === p.locationId);
       
@@ -112,15 +113,48 @@
         y = 300 + (Math.random() * 200);
       }
 
-      return {
+      const bodyName = char?.canonicalName || 'Inconnu';
+      const perspectiveIsReader = mapState.selectedPerspectiveKind === 'reader';
+      const shouldMaskIdentity = !perspectiveIsReader && p.certainty !== 'CONFIRMED' && char?.id !== mapState.selectedPerspectiveId;
+      const hasTransferHint = Boolean(char?.canonicalName?.toLowerCase().includes('sumidori') && index % 2 === 0);
+      const consciousness = hasTransferHint ? 'Sumidori' : bodyName;
+
+      const perceivedIdentity = shouldMaskIdentity
+        ? p.certainty === 'LAST_KNOWN'
+          ? 'Derniere observation'
+          : 'Soldat inconnu'
+        : bodyName;
+
+      const suspicionLabel = !perspectiveIsReader && p.certainty === 'PROBABLE'
+        ? 'Comportement inhabituel'
+        : undefined;
+
+      const knowledgeState = p.certainty === 'CONFIRMED'
+        ? 'confirmed'
+        : p.certainty === 'PROBABLE'
+          ? 'suspected'
+          : p.certainty === 'LAST_KNOWN'
+            ? 'outdated'
+            : 'unknown';
+
+      const mapped: MarkerIdentityState & { tierId: string | null; locationId?: string } = {
         id: p.entityId,
-        name: char?.canonicalName || 'Unknown',
-        tierId: tierId,
+        tierId,
         locationId: loc?.slug,
         x,
         y,
-        status: p.certainty
+        body: bodyName,
+        consciousness,
+        appearance: bodyName,
+        perceivedIdentity,
+        transferFlag: hasTransferHint,
+        suspicionLabel,
+        knowledgeState,
+        sourceLabel: p.certainty === 'CONFIRMED' ? 'Observation directe' : 'Rapport deplacement',
+        sinceLabel: p.fromEventId ? `depuis ${p.fromEventId}` : 'evenement inconnu'
       };
+
+      return mapped;
     })
   );
 

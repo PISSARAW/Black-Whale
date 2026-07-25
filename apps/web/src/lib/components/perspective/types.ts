@@ -1,0 +1,47 @@
+export type PerspectiveKind = 'reader' | 'character';
+export type FollowMode = 'consciousness' | 'body' | 'appearance';
+
+export type KnowledgeVisualState =
+  | 'known'
+  | 'confirmed'
+  | 'reported'
+  | 'believed'
+  | 'suspected'
+  | 'rumor'
+  | 'rejected'
+  | 'outdated'
+  | 'contradicted'
+  | 'unknown';
+
+export interface PerspectiveContext {
+  chapter: number;
+  eventLabel: string;
+  spoilerLimit: number | null;
+  perspectiveName: string;
+  followedConsciousness: string;
+  occupiedBody: string;
+  apparentIdentity: string;
+  followMode: FollowMode;
+  hasAnomaly: boolean;
+}
+
+export interface MarkerIdentityState {
+  id: string;
+  x: number;
+  y: number;
+  body: string;
+  consciousness: string;
+  appearance: string;
+  perceivedIdentity: string;
+  knowledgeState: KnowledgeVisualState;
+  transferFlag?: boolean;
+  suspicionLabel?: string;
+  sourceLabel?: string;
+  sinceLabel?: string;
+}
+
+export interface PerspectiveOption {
+  id: string;
+  label: string;
+  kind: PerspectiveKind;
+}

@@ -1,7 +1,9 @@
-import { prisma } from '$lib/server/db';
 import type { PageServerLoad } from './$types';
+import { getPrisma } from '$lib/server/db';
 
 export const load: PageServerLoad = async () => {
+  const prisma = await getPrisma();
+  
   const chaptersCount = await prisma.chapter.count();
   const abilitiesCount = await prisma.nenAbility.count();
   const charactersCount = await prisma.character.count();

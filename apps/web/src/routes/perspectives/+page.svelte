@@ -52,6 +52,13 @@
   <header class="mb-10">
     <h1 class="text-3xl font-bold text-bw-gold mb-2">Perspectives & Comparaison</h1>
     <p class="text-gray-400">Explorez le monde subjectif d'un personnage à un instant précis, ou comparez les croyances de deux protagonistes.</p>
+    <div class="mt-4 flex flex-wrap gap-2 text-xs">
+      {#if selectedLeft}
+        <a href={`/perspectives/${selectedLeft}`} class="border border-gray-700 rounded px-3 py-1 hover:border-bw-gold">Ouvrir la carte subjective</a>
+        <a href={`/knowledge/${selectedLeft}`} class="border border-gray-700 rounded px-3 py-1 hover:border-bw-gold">Ouvrir la knowledge map</a>
+      {/if}
+      <a href="/compare" class="border border-gray-700 rounded px-3 py-1 hover:border-bw-gold">Perspective Comparison</a>
+    </div>
   </header>
 
   <!-- Formulaire de configuration -->

@@ -3,10 +3,7 @@ import type { NenValidateRequestDto } from '@black-whale/contracts'
 import { NenEngine } from '@black-whale/nen-engine'
 import { bungeeGum } from '@black-whale/ability-modules'
 import { readFile } from 'node:fs/promises'
-import { join, dirname } from 'node:path'
-import { fileURLToPath } from 'node:url'
-
-const __dirname = dirname(fileURLToPath(import.meta.url))
+import { join } from 'node:path'
 
 @Injectable()
 export class NenService implements OnModuleInit {
@@ -24,7 +21,8 @@ export class NenService implements OnModuleInit {
 
   private async loadAbilities() {
     try {
-      const dataPath = join(__dirname, '..', '..', '..', '..', '..', 'data', 'abilities', 'abilities.json')
+      // __dirname is available at runtime in CommonJS
+      const dataPath = join(__dirname, '../../../../../../../data/abilities/abilities.json')
       const file = await readFile(dataPath, 'utf-8')
       this.abilitiesCache = JSON.parse(file)
     } catch (e) {

@@ -15,10 +15,22 @@ async function main() {
   await prisma.character.deleteMany()
 
   console.log('Seeding Chapters...')
+  const ch340 = await prisma.chapter.create({ data: { number: 340, title: 'Special Mission' } })
   const ch358 = await prisma.chapter.create({ data: { number: 358, title: 'Eve' } })
   const ch359 = await prisma.chapter.create({ data: { number: 359, title: 'Departure' } })
+  const ch382 = await prisma.chapter.create({ data: { number: 382, title: 'Awakening' } })
 
   console.log('Seeding Initial Events...')
+  // Event 0: Zodiacs Meeting
+  const evt0 = await prisma.narrativeEvent.create({
+    data: {
+      chapterId: ch340.id,
+      sequence: 1,
+      title: 'Zodiacs Assemble',
+      summary: 'Kurapika and Leorio join the Zodiacs.',
+    }
+  })
+
   // Event 1: Boarding
   const evt1 = await prisma.narrativeEvent.create({
     data: {
@@ -49,7 +61,21 @@ async function main() {
     }
   })
 
+  // Event 4: Halkenburg Collapse
+  const evt4 = await prisma.narrativeEvent.create({
+    data: {
+      chapterId: ch382.id,
+      sequence: 1,
+      title: 'Halkenburg Collapse',
+      summary: 'Halkenburg collapses and is taken to the medical facility.',
+    }
+  })
+
   console.log('Seeding Locations...')
+  const zodiacHQ = await prisma.location.create({
+    data: { slug: 'zodiac-hq', name: 'Zodiac HQ', type: LocationType.UNKNOWN, firstVisibleEventId: evt0.id }
+  })
+
   const blackWhale = await prisma.location.create({
     data: { slug: 'black-whale', name: 'Black Whale', type: LocationType.SHIP, firstVisibleEventId: evt1.id }
   })
@@ -70,7 +96,25 @@ async function main() {
     data: { slug: 'tier-1-vvip-room-1001', name: 'Room 1001', type: LocationType.ROOM, firstVisibleEventId: evt1.id, parentLocationId: vvip.id }
   })
 
+  const tier3 = await prisma.location.create({
+    data: { slug: 'tier-3', name: 'Tier 3', type: LocationType.TIER, firstVisibleEventId: evt1.id, parentLocationId: blackWhale.id }
+  })
+
+  const medicalDistrict = await prisma.location.create({
+    data: { slug: 'tier-3-medical-district', name: 'Medical District', type: LocationType.ZONE, firstVisibleEventId: evt1.id, parentLocationId: tier3.id }
+  })
+
   console.log('Seeding Characters...')
+  const leorio = await prisma.character.create({
+    data: { 
+      slug: 'leorio-paradinight', 
+      canonicalName: 'Leorio Paradinight', 
+      firstVisibleEventId: evt0.id, 
+      description: 'Zodiac, Doctor',
+      narrativeImportance: NarrativeImportance.PRIMARY,
+      modelingLevel: 1
+    }
+  })
   const kurapika = await prisma.character.create({
     data: { 
       slug: 'kurapika', 
@@ -148,6 +192,7 @@ async function main() {
   const wobleBody = await createBody(woble.id, 'Woble Body', evt1.id)
   const benBody = await createBody(benjamin.id, 'Benjamin Body', evt1.id)
   const vincentBody = await createBody(vincent.id, 'Vincent Body', evt3.id)
+  const leorioBody = await createBody(leorio.id, 'Leorio Body', evt0.id)
 
   for (const body of [kuraBody, oitoBody, wobleBody]) {
     await prisma.presence.create({
@@ -203,6 +248,38 @@ async function main() {
       bodyId: vincentBody.id,
       state: BodyStateType.ALIVE,
       fromEventId: evt3.id
+    }
+  })
+
+  // Leorio
+  await prisma.presence.create({
+    data: {
+      entityType: 'BODY',
+      entityId: leorioBody.id,
+      locationId: zodiacHQ.id,
+      fromEventId: evt0.id,
+      precision: PresencePrecision.EXACT_ROOM,
+      certainty: PresenceCertainty.CONFIRMED,
+      untilEventId: evt1.id
+    }
+  })
+  await prisma.presence.create({
+    data: {
+      entityType: 'BODY',
+      entityId: leorioBody.id,
+      locationId: medicalDistrict.id,
+      fromEventId: evt1.id,
+      precision: PresencePrecision.EXACT_ROOM,
+      certainty: PresenceCertainty.CONFIRMED
+    }
+  })
+  // Event 4 (Halkenburg collapse) Leorio is still in Medical District, so presence remains the same.
+  
+  await prisma.bodyState.create({
+    data: {
+      bodyId: leorioBody.id,
+      state: BodyStateType.ALIVE,
+      fromEventId: evt0.id
     }
   })
 

@@ -62,6 +62,16 @@ function getOwnerName(ownerId: string): string {
   const character = characters.find(c => c.id === ownerId);
   return character ? character.canonicalName : 'Unknown';
 }
+
+function handleModalClick(e: any) {
+  e.stopPropagation();
+}
+
+function handleOverlayClick(e: any) {
+  if (e.target === e.currentTarget) {
+    closeCreateModal();
+  }
+}
 </script>
 
 <svelte:head><title>Abilities — BW Admin</title></svelte:head>
@@ -139,8 +149,8 @@ function getOwnerName(ownerId: string): string {
 </div>
 
 {#if showCreateModal}
-  <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4" on:click={closeCreateModal}>
-    <div class="bg-white rounded-lg shadow-xl p-6 max-w-lg w-full" on:click|stopPropagation>
+  <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4" onclick={handleOverlayClick}>
+    <div class="bg-white rounded-lg shadow-xl p-6 max-w-lg w-full">
       <h2 class="text-xl font-bold text-bw-gold mb-4">Create New Ability</h2>
       
       <form method="POST" use:enhance class="space-y-4" onsubmit={closeCreateModal}>

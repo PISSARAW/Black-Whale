@@ -6,12 +6,15 @@ let { data }: { data: PageData } = $props();
 
 let searchQuery = $state('');
 let showCreateModal = $state(false);
+let jsonPlaceholder = '{"key": "value"}';
+
 let newFact = $state({
   id: '',
   subjectType: 'CHARACTER' as const,
   subjectId: '',
   predicate: '',
   value: {} as Record<string, any>,
+  valueJson: '{}',
   validFromEventId: '',
   validUntilEventId: null as string | null,
   truthStatus: 'CONFIRMED' as const,
@@ -86,6 +89,16 @@ function getSubjectName(subjectType: string, subjectId: string): string {
 function getSubjectTypeLabel(subjectType: string): string {
   const option = subjectTypeOptions.find(o => o.value === subjectType);
   return option ? option.label : subjectType;
+}
+
+function handleModalClick(e: any) {
+  e.stopPropagation();
+}
+
+function handleOverlayClick(e: any) {
+  if (e.target === e.currentTarget) {
+    closeCreateModal();
+  }
 }
 </script>
 
@@ -165,8 +178,8 @@ function getSubjectTypeLabel(subjectType: string): string {
 </div>
 
 {#if showCreateModal}
-  <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4" onclick={closeCreateModal}>
-    <div class="bg-white rounded-lg shadow-xl p-6 max-w-lg w-full" onclick={(e) => e.stopPropagation()}
+  <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4" onclick={handleOverlayClick}>
+    <div class="bg-white rounded-lg shadow-xl p-6 max-w-lg w-full">
       <h2 class="text-xl font-bold text-bw-gold mb-4">Create New Fact</h2>
       
       <form method="POST" use:enhance class="space-y-4" onsubmit={closeCreateModal}>
@@ -236,18 +249,18 @@ function getSubjectTypeLabel(subjectType: string): string {
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-1">Value (JSON)</label>
           <textarea
-            bind:value={JSON.stringify(newFact.value, null, 2)}
-            on:input={(e) => {
+            bind:value={newFact.valueJson}
+            oninput={(e: any) => {
               try {
                 newFact.value = JSON.parse((e.target as HTMLTextAreaElement).value);
+                newFact.valueJson = (e.target as HTMLTextAreaElement).value;
               } catch {
                 // Keep previous value if invalid JSON
               }
-              newFact = newFact;
             }}
             name="value"
             rows="4"
-            placeholder='{"key": "value"}'
+            placeholder={jsonPlaceholder}
             class="w-full border border-gray-300 rounded-md px-3 py-2 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-bw-gold focus:border-transparent"
           ></textarea>
         </div>

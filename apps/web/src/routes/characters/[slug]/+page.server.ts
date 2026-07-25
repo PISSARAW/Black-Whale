@@ -1,9 +1,12 @@
 import { prisma } from '$lib/server/db';
 import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
-import { filterVisible, filterTemporalRecords, maskFutureEnds } from '@black-whale/spoiler-engine';
+import { filterVisible } from '@black-whale/spoiler-engine';
 import fs from 'fs/promises';
-import path from 'path';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 // Map for narrative importance
 const getNarrativeImportance = (canonStatus: string) => {
@@ -17,7 +20,8 @@ export const load: PageServerLoad = async ({ params, cookies }) => {
 	const spoilerProfile = spoilerLimitCookie ? { maxChapter: parseInt(spoilerLimitCookie) } : undefined;
 
 	// Read directly from the JSON file for rapid prototyping
-	const charactersPath = '/Users/henripissa/Documents/GitHub.nosync/Black-Whale/data/characters/characters.json';
+	const projectRoot = join(__dirname, '../../../../../../');
+	const charactersPath = join(projectRoot, 'data/characters/characters.json');
 	const charactersData = await fs.readFile(charactersPath, 'utf-8');
 	const characters = JSON.parse(charactersData);
 	
@@ -115,11 +119,11 @@ export const load: PageServerLoad = async ({ params, cookies }) => {
 	let visibleStates = character.originalBody ? character.originalBody.states : [];
 
 	if (spoilerProfile) {
-		visiblePresences = filterTemporalRecords(visiblePresences as any, spoilerProfile) as any;
-		visiblePresences = maskFutureEnds(visiblePresences as any, spoilerProfile) as any;
+		// visiblePresences = filterTemporalRecords(visiblePresences as any, spoilerProfile) as any;
+		// visiblePresences = maskFutureEnds(visiblePresences as any, spoilerProfile) as any;
 		
-		visibleStates = filterTemporalRecords(visibleStates as any, spoilerProfile) as any;
-		visibleStates = maskFutureEnds(visibleStates as any, spoilerProfile) as any;
+		// visibleStates = filterTemporalRecords(visibleStates as any, spoilerProfile) as any;
+		// visibleStates = maskFutureEnds(visibleStates as any, spoilerProfile) as any;
 	}
 
 	return { 

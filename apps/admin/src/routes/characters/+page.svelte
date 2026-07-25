@@ -64,6 +64,16 @@ function updateAlias(index: number, value: string) {
 }
 
 let events = $derived(data.events || []);
+
+function handleModalClick(e: any) {
+  e.stopPropagation();
+}
+
+function handleOverlayClick(e: any) {
+  if (e.target === e.currentTarget) {
+    closeCreateModal();
+  }
+}
 </script>
 
 <svelte:head><title>Characters — BW Admin</title></svelte:head>
@@ -144,8 +154,8 @@ let events = $derived(data.events || []);
 </div>
 
 {#if showCreateModal}
-  <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4" onclick={closeCreateModal}>
-    <div class="bg-white rounded-lg shadow-xl p-6 max-w-lg w-full" onclick={(e) => e.stopPropagation()}
+  <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4" onclick={handleOverlayClick}>
+    <div class="bg-white rounded-lg shadow-xl p-6 max-w-lg w-full">
       <h2 class="text-xl font-bold text-bw-gold mb-4">Create New Character</h2>
       
       <form method="POST" use:enhance class="space-y-4" onsubmit={closeCreateModal}>
@@ -228,7 +238,7 @@ let events = $derived(data.events || []);
                 <input
                   type="text"
                   value={alias}
-                  on:input={(e) => updateAlias(index, (e.target as HTMLInputElement).value)}
+                  oninput={(e: any) => updateAlias(index, (e.target as HTMLInputElement).value)}
                   placeholder="Alias..."
                   class="flex-1 border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-bw-gold focus:border-transparent"
                 />

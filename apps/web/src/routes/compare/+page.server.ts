@@ -83,7 +83,7 @@ export const load: PageServerLoad = async ({ cookies, url, fetch }) => {
       if (compareCanonical) {
         const objectiveFacts = await prisma.fact.findMany({
           where: {
-            validFromEvent: {
+            fromEvent: {
               sequence: { lte: selectedEventSequence }
             },
             OR: [

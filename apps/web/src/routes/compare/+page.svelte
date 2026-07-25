@@ -390,10 +390,7 @@
     <div class="mt-3 flex flex-wrap gap-2 items-center">
       <button
         type="button"
-        class="text-xs border rounded px-3 py-2"
-        class:border-amber-300={compareCanonical}
-        class:bg-amber-300/10={compareCanonical}
-        class:border-slate-700={!compareCanonical}
+        class={`text-xs border rounded px-3 py-2 ${compareCanonical ? 'border-amber-300 bg-amber-300/10' : 'border-slate-700'}`}
         onclick={() => {
           if (canonicalBlockedBySpoiler) return;
           compareCanonical = !compareCanonical;
@@ -495,10 +492,7 @@
             <li>
               <button
                 type="button"
-                class="w-full text-left text-sm rounded border px-2 py-1"
-                class:border-emerald-300={selectedSubject === entity.subjectId}
-                class:bg-emerald-300/10={selectedSubject === entity.subjectId}
-                class:border-slate-700={selectedSubject !== entity.subjectId}
+                class={`w-full text-left text-sm rounded border px-2 py-1 ${selectedSubject === entity.subjectId ? 'border-emerald-300 bg-emerald-300/10' : 'border-slate-700'}`}
                 onclick={() => selectEntity(entity.subjectId)}
               >
                 {entity.name} · {entity.locationName}
@@ -536,10 +530,7 @@
             <li>
               <button
                 type="button"
-                class="w-full text-left text-sm rounded border px-2 py-1"
-                class:border-emerald-300={selectedSubject === entity.subjectId}
-                class:bg-emerald-300/10={selectedSubject === entity.subjectId}
-                class:border-slate-700={selectedSubject !== entity.subjectId}
+                class={`w-full text-left text-sm rounded border px-2 py-1 ${selectedSubject === entity.subjectId ? 'border-emerald-300 bg-emerald-300/10' : 'border-slate-700'}`}
                 onclick={() => selectEntity(entity.subjectId)}
               >
                 {entity.name} · {entity.locationName}

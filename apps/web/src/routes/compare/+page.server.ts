@@ -27,6 +27,7 @@ export const load: PageServerLoad = async ({ cookies, url, fetch }) => {
   const selectedEventId = url.searchParams.get('eventId') || defaultEvent?.id || '';
   const selectedLeft = url.searchParams.get('left') || characters[0]?.id || '';
   const selectedRight = url.searchParams.get('right') || characters[1]?.id || '';
+  const compareCanonical = url.searchParams.get('canonical') === '1';
 
   const sync = {
     zoom: Number(url.searchParams.get('zoom') || '1'),
@@ -58,10 +59,18 @@ export const load: PageServerLoad = async ({ cookies, url, fetch }) => {
   const timelineEngine = new TimelineEngine(prisma as any);
   let worldState: any = null;
   let selectedEventSequence = defaultEvent?.sequence;
+  let selectedEventChapter = defaultEvent?.chapter?.number;
+  let canonicalTruth: any = {
+    facts: [],
+    positions: {},
+    chapter: selectedEventChapter || null,
+    restrictedBySpoiler: spoilerProfile?.maxChapter ?? null
+  };
 
   if (selectedEventId) {
     const selectedEvent = events.find((event) => event.id === selectedEventId);
     selectedEventSequence = selectedEvent?.sequence ?? selectedEventSequence;
+    selectedEventChapter = selectedEvent?.chapter?.number ?? selectedEventChapter;
 
     if (selectedEventSequence !== undefined) {
       const rawWorld = await timelineEngine.getWorldState({ sequence: selectedEventSequence });
@@ -70,6 +79,43 @@ export const load: PageServerLoad = async ({ cookies, url, fetch }) => {
         ...rawWorld,
         locations: spoilerProfile ? filterVisible(locations as any, spoilerProfile) as any : locations
       };
+
+      if (compareCanonical) {
+        const objectiveFacts = await prisma.fact.findMany({
+          where: {
+            validFromEvent: {
+              sequence: { lte: selectedEventSequence }
+            },
+            OR: [
+              { validUntilEventId: null },
+              {
+                untilEvent: {
+                  sequence: { gt: selectedEventSequence }
+                }
+              }
+            ]
+          }
+        });
+
+        const bodyById = new Map((rawWorld.bodies || []).map((body: any) => [body.id, body]));
+        const positions: Record<string, { locationId: string | null; certainty: string }> = {};
+
+        for (const presence of rawWorld.presences || []) {
+          const body = bodyById.get(presence.entityId);
+          const subjectId = body?.originalCharacterId || presence.entityId;
+          positions[subjectId] = {
+            locationId: presence.locationId || null,
+            certainty: presence.certainty || 'CONFIRMED'
+          };
+        }
+
+        canonicalTruth = {
+          facts: objectiveFacts,
+          positions,
+          chapter: selectedEventChapter || null,
+          restrictedBySpoiler: spoilerProfile?.maxChapter ?? null
+        };
+      }
     }
   }
 
@@ -82,6 +128,8 @@ export const load: PageServerLoad = async ({ cookies, url, fetch }) => {
     leftPerspective,
     rightPerspective,
     comparison,
+    compareCanonical,
+    canonicalTruth,
     worldState,
     sync,
     spoilerLimit: spoilerProfile?.maxChapter ?? null

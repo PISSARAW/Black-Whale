@@ -68,24 +68,46 @@
   // Calculate marker positions from presences
   let presences = $derived($page.data.worldState?.presences || []);
   let characters = $derived($page.data.worldState?.characters || []);
+  let bodies = $derived($page.data.worldState?.bodies || []);
   let locations = $derived($page.data.worldState?.locations || []);
+  let perspective = $derived($page.data.perspective || null);
+
+  function hashToUnit(input: string) {
+    let hash = 0;
+    for (let i = 0; i < input.length; i += 1) {
+      hash = (hash << 5) - hash + input.charCodeAt(i);
+      hash |= 0;
+    }
+    return Math.abs(hash % 1000) / 1000;
+  }
+
+  function resolveTierSlug(location: any, byId: Map<string, any>) {
+    let current = location;
+    let depth = 0;
+
+    while (current && depth < 8) {
+      if (current.type === 'TIER') {
+        return current.slug;
+      }
+      current = current.parentLocationId ? byId.get(current.parentLocationId) : null;
+      depth += 1;
+    }
+
+    return null;
+  }
 
   let dynamicCharacters = $derived(
-    presences.map((p: any, index: number) => {
-      const char = characters.find((c: any) => c.id === p.entityId);
-      const loc = locations.find((l: any) => l.id === p.locationId);
-      
-      // Try to determine the Tier from location hierarchy
-      let tierId = null;
-      if (loc) {
-        if (loc.type === 'TIER') tierId = loc.slug;
-        else if (loc.slug.startsWith('tier-1') || (loc.parentLocationId && loc.parentLocationId.startsWith('tier-1'))) tierId = 'tier-1';
-        else if (loc.slug.startsWith('tier-2') || (loc.parentLocationId && loc.parentLocationId.startsWith('tier-2'))) tierId = 'tier-2';
-        else if (loc.slug.startsWith('tier-3') || (loc.parentLocationId && loc.parentLocationId.startsWith('tier-3'))) tierId = 'tier-3';
-        else if (loc.slug.startsWith('tier-4') || (loc.parentLocationId && loc.parentLocationId.startsWith('tier-4'))) tierId = 'tier-4';
-        else if (loc.slug.startsWith('tier-5') || (loc.parentLocationId && loc.parentLocationId.startsWith('tier-5'))) tierId = 'tier-5';
-      }
+    presences.map((p: any) => {
+      const locationsById = new Map<string, any>((locations as any[]).map((location: any) => [location.id, location] as [string, any]));
+      const facts = perspective?.knownFacts || [];
+      const beliefs = perspective?.beliefs || [];
+      const observer = perspective?.observer;
 
+      const body = bodies.find((candidate: any) => candidate.id === p.entityId);
+      const ownerCharacter = body ? characters.find((candidate: any) => candidate.id === body.originalCharacterId) : null;
+      const loc = locations.find((l: any) => l.id === p.locationId);
+      const tierId = loc ? resolveTierSlug(loc, locationsById) : null;
+      
       // Get coordinates based on location slug
       let x = 500;
       let y = 300;
@@ -96,46 +118,76 @@
           x = coords.x;
           y = coords.y;
         } else {
-          // Fallback: use parent location coordinates if available
-          if (loc.parentLocationId && locationCoordinates[tierId][loc.parentLocationId]) {
-            const parentCoords = locationCoordinates[tierId][loc.parentLocationId];
-            x = parentCoords.x + (Math.random() * 100 - 50);
-            y = parentCoords.y + (Math.random() * 100 - 50);
+          if (loc.parentLocationId) {
+            const parent: any = locationsById.get(loc.parentLocationId);
+            const parentCoords = parent ? locationCoordinates[tierId][parent.slug] : undefined;
+            if (parentCoords) {
+              const base = hashToUnit(p.entityId);
+              x = parentCoords.x + (base * 80 - 40);
+              y = parentCoords.y + ((1 - base) * 80 - 40);
+            } else {
+              const base = hashToUnit(p.entityId);
+              x = 250 + base * 520;
+              y = 170 + base * 250;
+            }
           } else {
-            // Random offset within tier
-            x = 300 + (Math.random() * 400);
-            y = 200 + (Math.random() * 200);
+            const base = hashToUnit(p.entityId);
+            x = 250 + base * 520;
+            y = 170 + base * 250;
           }
         }
       } else {
-        // Fallback to random position
-        x = 300 + (Math.random() * 200);
-        y = 300 + (Math.random() * 200);
+        const base = hashToUnit(p.entityId);
+        x = 300 + base * 320;
+        y = 220 + base * 180;
       }
 
-      const bodyName = char?.canonicalName || 'Inconnu';
+      const bodyName = ownerCharacter?.canonicalName || body?.label || 'Corps inconnu';
       const perspectiveIsReader = mapState.selectedPerspectiveKind === 'reader';
-      const shouldMaskIdentity = !perspectiveIsReader && p.certainty !== 'CONFIRMED' && char?.id !== mapState.selectedPerspectiveId;
-      const hasTransferHint = Boolean(char?.canonicalName?.toLowerCase().includes('sumidori') && index % 2 === 0);
-      const consciousness = hasTransferHint ? 'Sumidori' : bodyName;
+      const observerCharacter = characters.find((char: any) => char.id === observer?.characterId);
 
-      const perceivedIdentity = shouldMaskIdentity
-        ? p.certainty === 'LAST_KNOWN'
-          ? 'Derniere observation'
-          : 'Soldat inconnu'
+      const relatedFacts = facts.filter((fact: any) =>
+        fact.subjectId === p.entityId || fact.subjectId === body?.originalCharacterId
+      );
+      const relatedBeliefs = beliefs.filter((belief: any) =>
+        belief.subjectId === p.entityId || belief.subjectId === body?.originalCharacterId
+      );
+
+      const hasConfirmedKnowledge = relatedFacts.length > 0;
+      const hasBeliefOnly = !hasConfirmedKnowledge && relatedBeliefs.length > 0;
+
+      const shouldMaskIdentity = !perspectiveIsReader && !hasConfirmedKnowledge;
+      const consciousness = observer?.currentBodyId === p.entityId
+        ? (observerCharacter?.canonicalName || observer?.consciousnessId || bodyName)
         : bodyName;
 
-      const suspicionLabel = !perspectiveIsReader && p.certainty === 'PROBABLE'
-        ? 'Comportement inhabituel'
+      const perceivedIdentity = shouldMaskIdentity
+        ? (hasBeliefOnly ? 'Identite supposee' : 'Individu inconnu')
+        : bodyName;
+
+      const suspicionLabel = !perspectiveIsReader && hasBeliefOnly
+        ? 'Soupcon actif'
         : undefined;
 
-      const knowledgeState = p.certainty === 'CONFIRMED'
-        ? 'confirmed'
-        : p.certainty === 'PROBABLE'
-          ? 'suspected'
-          : p.certainty === 'LAST_KNOWN'
-            ? 'outdated'
-            : 'unknown';
+      const contested = relatedFacts.some((fact: any) => fact.truthStatus === 'CONTESTED');
+      const knowledgeState = contested
+        ? 'contradicted'
+        : hasConfirmedKnowledge
+          ? 'confirmed'
+          : hasBeliefOnly
+            ? 'believed'
+            : p.certainty === 'LAST_KNOWN'
+              ? 'outdated'
+              : 'unknown';
+
+      const transferFlag = observer?.currentBodyId === p.entityId && observer?.consciousnessId !== observer?.currentBodyId;
+
+      const sourceFromFact = relatedFacts[0]?.predicate || relatedBeliefs[0]?.predicate;
+      const sourceLabel = hasConfirmedKnowledge
+        ? `Fait: ${sourceFromFact}`
+        : hasBeliefOnly
+          ? `Croyance: ${sourceFromFact}`
+          : 'Presence structurelle';
 
       const mapped: MarkerIdentityState & { tierId: string | null; locationId?: string } = {
         id: p.entityId,
@@ -147,10 +199,10 @@
         consciousness,
         appearance: bodyName,
         perceivedIdentity,
-        transferFlag: hasTransferHint,
+        transferFlag,
         suspicionLabel,
         knowledgeState,
-        sourceLabel: p.certainty === 'CONFIRMED' ? 'Observation directe' : 'Rapport deplacement',
+        sourceLabel,
         sinceLabel: p.fromEventId ? `depuis ${p.fromEventId}` : 'evenement inconnu'
       };
 

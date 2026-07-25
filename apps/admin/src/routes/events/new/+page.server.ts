@@ -1,8 +1,9 @@
-import { prisma } from '$lib/server/db';
+import { getPrisma } from '$lib/server/db';
 import { fail, redirect } from '@sveltejs/kit';
 import type { PageServerLoad, Actions } from './$types';
 
 export const load: PageServerLoad = async () => {
+	const prisma = await getPrisma();
 	const chapters = await prisma.chapter.findMany({ orderBy: { number: 'asc' } });
 	const characters = await prisma.character.findMany({ orderBy: { canonicalName: 'asc' } });
 	const locations = await prisma.location.findMany({ orderBy: { name: 'asc' } });

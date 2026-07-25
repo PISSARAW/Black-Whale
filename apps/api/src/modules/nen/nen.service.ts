@@ -22,7 +22,8 @@ export class NenService implements OnModuleInit {
   private async loadAbilities() {
     try {
       // __dirname is available at runtime in CommonJS
-      const dataPath = join(__dirname, '../../../../../../../data/abilities/abilities.json')
+      // From dist/modules/nen, go up to project root: ../../../../../
+      const dataPath = join(__dirname, '../../../../../data/abilities/abilities.json')
       const file = await readFile(dataPath, 'utf-8')
       this.abilitiesCache = JSON.parse(file)
     } catch (e) {

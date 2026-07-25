@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { page } from '$app/stores';
+  import { goto } from '$app/navigation';
   import type { PageData } from './$types';
   import MapContainer from '$lib/components/map/MapContainer.svelte';
   import LocationDetails from '$lib/components/map/LocationDetails.svelte';
@@ -47,16 +49,22 @@
 
   let contextState = $derived.by((): PerspectiveContext => {
     const perspectiveName = selectedPerspective?.label || 'Vue du lecteur';
-    const anomaly = perspectiveName.toLowerCase().includes('sumidori');
+    const observer = data.perspective?.observer;
+    const observerCharacter = data.worldState?.characters?.find((char: any) => char.id === observer?.characterId);
+    const occupiedBody = data.worldState?.bodies?.find((body: any) => body.id === observer?.currentBodyId);
+    const anomaly = Boolean(observer?.currentBodyId && observer?.consciousnessId && observer.currentBodyId !== observer.consciousnessId);
+
+    const canonicalPerspective = observerCharacter?.canonicalName || perspectiveName;
+    const occupiedBodyLabel = occupiedBody?.label || occupiedBody?.id || canonicalPerspective;
 
     return {
       chapter: data.spoilerLimit || currentEvt?.sequence || 0,
       eventLabel: `${data.sequence ?? 0}`,
       spoilerLimit: data.spoilerLimit ?? null,
-      perspectiveName,
-      followedConsciousness: anomaly ? 'Sumidori' : perspectiveName,
-      occupiedBody: anomaly ? 'Shikaku' : perspectiveName,
-      apparentIdentity: anomaly ? 'Shikaku' : perspectiveName,
+      perspectiveName: canonicalPerspective,
+      followedConsciousness: observer?.consciousnessId || canonicalPerspective,
+      occupiedBody: occupiedBodyLabel,
+      apparentIdentity: occupiedBodyLabel,
       followMode: mapState.followMode,
       hasAnomaly: anomaly
     };
@@ -86,6 +94,13 @@
   });
 
   $effect(() => {
+    mapState.setFollowMode((data.followMode as FollowMode) || 'consciousness');
+
+    const selectedByUrl = perspectiveOptions.find((option) => option.id === data.selectedPerspectiveId);
+    if (selectedByUrl) {
+      mapState.setPerspective(selectedByUrl.id, selectedByUrl.label, selectedByUrl.kind);
+    }
+
     if (!selectedPerspective) {
       return;
     }
@@ -106,11 +121,22 @@
   function handlePerspectiveSelect(id: string) {
     const found = perspectiveOptions.find((option) => option.id === id);
     if (!found) return;
+
     mapState.setPerspective(found.id, found.label, found.kind);
+
+    const url = new URL($page.url);
+    url.searchParams.set('perspective', found.id);
+    url.searchParams.set('follow', mapState.followMode);
+    goto(url.toString(), { keepFocus: true });
   }
 
   function handleFollowModeSelect(mode: FollowMode) {
     mapState.setFollowMode(mode);
+
+    const url = new URL($page.url);
+    url.searchParams.set('perspective', mapState.selectedPerspectiveId);
+    url.searchParams.set('follow', mode);
+    goto(url.toString(), { keepFocus: true, replaceState: true });
   }
 </script>
 

@@ -1,7 +1,8 @@
-import { prisma } from '$lib/server/db';
+import { getPrisma } from '$lib/server/db';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ cookies }) => {
+	const prisma = await getPrisma();
 	const spoilerLimitCookie = cookies.get('adminSpoilerLimit');
 	const spoilerLimit = spoilerLimitCookie ? parseInt(spoilerLimitCookie) : null;
 

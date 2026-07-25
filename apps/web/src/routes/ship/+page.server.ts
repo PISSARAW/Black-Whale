@@ -5,6 +5,8 @@ import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ url, cookies }) => {
 	const timelineEngine = new TimelineEngine(prisma);
+	const selectedPerspectiveId = url.searchParams.get('perspective') || 'reader';
+	const followMode = url.searchParams.get('follow') || 'consciousness';
 	
 	// Read sequence from URL param, defaulting to the latest event
 	let sequence = url.searchParams.get('sequence') ? parseInt(url.searchParams.get('sequence') as string) : undefined;
@@ -48,11 +50,32 @@ export const load: PageServerLoad = async ({ url, cookies }) => {
 		? filterVisible(locations as any, spoilerProfile) as any
 		: locations;
 
+	const selectedEvent = events.find((event) => event.sequence === sequence);
+	let perspective: any = null;
+
+	if (selectedEvent?.id && selectedPerspectiveId !== 'reader') {
+		try {
+			const spoilerQuery = spoilerProfile?.maxChapter ? `&spoilerLimit=${spoilerProfile.maxChapter}` : '';
+			const perspectiveResponse = await fetch(`http://localhost:3001/v1/perspectives/${selectedPerspectiveId}?eventId=${selectedEvent.id}${spoilerQuery}`);
+			if (perspectiveResponse.ok) {
+				perspective = await perspectiveResponse.json();
+			}
+		} catch (error) {
+			console.error('Failed to fetch perspective for ship page', error);
+		}
+	}
+
 	return {
 		sequence,
 		events,
+		selectedPerspectiveId,
+		followMode,
+		selectedEventId: selectedEvent?.id || null,
+		perspective,
 		worldState: {
 			characters: visibleCharacters,
+			bodies: rawWorldState.bodies,
+			consciousnesses: rawWorldState.consciousnesses,
 			presences: visiblePresences,
 			bodyStates: rawWorldState.bodyStates,
 			locations: visibleLocations

@@ -15,8 +15,13 @@
 
   // 'TIER_ONLY', 'EXISTENCE_ONLY', 'UNKNOWN' should ideally not be rendered as specific map points
   // But if they are, they are hidden
+  // Map PresenceCertainty values (CONFIRMED, PROBABLE, LAST_KNOWN) to visible statuses
   let isVisible = $derived(
-    character.status === 'EXACT' || character.status === 'SECTOR_CONFIRMED'
+    character.status === 'EXACT' || 
+    character.status === 'SECTOR_CONFIRMED' ||
+    character.status === 'CONFIRMED' ||
+    character.status === 'PROBABLE' ||
+    character.status === 'LAST_KNOWN'
   );
 
   // Status-based styling

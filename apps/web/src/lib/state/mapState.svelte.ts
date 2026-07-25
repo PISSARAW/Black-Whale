@@ -3,8 +3,8 @@ import type { MapAnchor, MapRegion } from '@black-whale/domain';
 export type ZoomLevel = 'OVERVIEW' | 'TIER' | 'LOCAL';
 
 export const mapState = $state({
-  currentZoomLevel: 'OVERVIEW' as ZoomLevel,
-  selectedTier: null as string | null,
+  currentZoomLevel: 'TIER' as ZoomLevel,
+  selectedTier: 'tier-1' as string | null,
   selectedLocationId: null as string | null,
   currentEventIndex: 0,
   filters: {

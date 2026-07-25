@@ -1,6 +1,62 @@
 import { prisma } from '$lib/server/db';
 import { TimelineEngine } from '@black-whale/timeline-engine';
+import characterCatalog from '../../../../../data/characters/characters.json';
 import type { PageServerLoad } from './$types';
+
+type FactionFilterId = 'princes' | 'guards' | 'hunters' | 'spider' | 'mafia';
+
+type CatalogCharacter = {
+	id: string;
+	canonicalName: string;
+	description?: string;
+	factionId?: string | null;
+	shipLocation?: { role?: string | null } | null;
+};
+
+const catalogByName = new Map(
+	(characterCatalog as CatalogCharacter[]).map((character) => [character.canonicalName, character])
+);
+
+function addFactionType(tags: Set<FactionFilterId>, type: string) {
+	if (type === 'KAKIN_ROYAL_ARMY' || type === 'BENJAMIN_PRIVATE_ARMY') tags.add('guards');
+	if (type === 'HUNTER_ASSOCIATION') tags.add('hunters');
+	if (type === 'PHANTOM_TROUPE') tags.add('spider');
+	if (type === 'MAFIA_FAMILY') tags.add('mafia');
+}
+
+function resolveFactionTags(character: any, activeFactionTypes: string[]): FactionFilterId[] {
+	const tags = new Set<FactionFilterId>();
+	activeFactionTypes.forEach((type) => addFactionType(tags, type));
+
+	// The imported canon catalogue remains a fallback while the temporal
+	// AffiliationMembership table is progressively populated.
+	const catalogCharacter = catalogByName.get(character.canonicalName);
+	const factionId = catalogCharacter?.factionId || '';
+	const searchableRole = [
+		character.slug,
+		character.description,
+		catalogCharacter?.description,
+		catalogCharacter?.shipLocation?.role
+	]
+		.filter(Boolean)
+		.join(' ')
+		.normalize('NFD')
+		.replace(/[\u0300-\u036f]/g, '')
+		.toLowerCase();
+
+	// "Princes" désigne les héritiers eux-mêmes, pas tous les membres de leur camp.
+	if (catalogCharacter?.id.startsWith('prince-')) tags.add('princes');
+	if (factionId === 'phantom-troupe') tags.add('spider');
+	if (factionId.startsWith('mafia-')) tags.add('mafia');
+	if (factionId === 'zodiacs' || /\b(hunter|zodiaque)\b/.test(searchableRole)) tags.add('hunters');
+	if (/\b(garde|guard|protecteur|soldat|soldier|securite)\b/.test(searchableRole)) tags.add('guards');
+
+	return [...tags];
+}
+
+function compareEvents(a: { chapter: { number: number }; sequence: number }, b: { chapter: { number: number }; sequence: number }) {
+	return a.chapter.number - b.chapter.number || a.sequence - b.sequence;
+}
 
 export const load: PageServerLoad = async ({ url, cookies }) => {
 	const timelineEngine = new TimelineEngine(prisma);
@@ -41,6 +97,33 @@ export const load: PageServerLoad = async ({ url, cookies }) => {
 		const allowedCharacterIds = new Set(allowedCharacters.map((character) => character.id));
 		visibleCharacters = rawWorldState.characters.filter((character: any) => allowedCharacterIds.has(character.id));
 	}
+
+	const visibleCharacterIdsForAffiliations = visibleCharacters.map((character: any) => character.id);
+	const memberships = selectedEvent && visibleCharacterIdsForAffiliations.length
+		? await prisma.affiliationMembership.findMany({
+			where: {
+				characterId: { in: visibleCharacterIdsForAffiliations },
+				status: 'ACTIVE'
+			},
+			include: {
+				faction: true,
+				fromEvent: { include: { chapter: true } },
+				untilEvent: { include: { chapter: true } }
+			}
+		})
+		: [];
+	const activeFactionTypesByCharacter = new Map<string, string[]>();
+	for (const membership of memberships) {
+		if (!selectedEvent || compareEvents(membership.fromEvent, selectedEvent) > 0) continue;
+		if (membership.untilEvent && compareEvents(selectedEvent, membership.untilEvent) >= 0) continue;
+		const types = activeFactionTypesByCharacter.get(membership.characterId) || [];
+		types.push(membership.faction.type);
+		activeFactionTypesByCharacter.set(membership.characterId, types);
+	}
+	visibleCharacters = visibleCharacters.map((character: any) => ({
+		...character,
+		factionTags: resolveFactionTags(character, activeFactionTypesByCharacter.get(character.id) || [])
+	}));
 		
 	// Presences reference bodies, not characters. Resolve the body owner before
 	// applying the spoiler filter so valid character positions are not discarded.

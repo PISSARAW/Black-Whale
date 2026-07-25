@@ -43,6 +43,7 @@ export interface MarkerIdentityState {
   locationLabel?: string;
   temporalLabel?: string;
   temporalDetail?: string;
+  factionTags?: string[];
 }
 
 export interface PerspectiveOption {

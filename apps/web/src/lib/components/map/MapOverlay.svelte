@@ -319,7 +319,8 @@
         tierLabel: visual?.label || 'Hors tier',
         locationLabel: loc?.name || 'Position inconnue',
         temporalLabel: temporalVisual.label,
-        temporalDetail: temporalVisual.detail
+        temporalDetail: temporalVisual.detail,
+        factionTags: ownerCharacter?.factionTags || []
       };
 
       return mapped;
@@ -331,12 +332,18 @@
 
     return dynamicCharacters
       .filter((character: any) => {
-        if (mapState.currentZoomLevel === 'OVERVIEW') return true;
-        if (mapState.selectedTier && character.tierId !== mapState.selectedTier) return false;
-        if (mapState.currentZoomLevel === 'LOCAL' && mapState.selectedLocationId) {
-          return belongsToLocation(character.location, mapState.selectedLocationId, locationsById);
+        let matchesMapScope = true;
+        if (mapState.currentZoomLevel !== 'OVERVIEW') {
+          if (mapState.selectedTier && character.tierId !== mapState.selectedTier) matchesMapScope = false;
+          if (matchesMapScope && mapState.currentZoomLevel === 'LOCAL' && mapState.selectedLocationId) {
+            matchesMapScope = belongsToLocation(character.location, mapState.selectedLocationId, locationsById);
+          }
         }
-        return true;
+
+        if (!matchesMapScope) return false;
+        const selectedFactions = mapState.filters.factions;
+        return selectedFactions.length === 0
+          || selectedFactions.some((faction) => character.factionTags?.includes(faction));
       })
       .map((character: any) => {
         if (mapState.currentZoomLevel === 'OVERVIEW') {

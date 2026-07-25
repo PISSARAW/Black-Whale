@@ -9,6 +9,15 @@
     "moduleKey": "bungee-gum"
   },
   {
+    "id": "texture-surprise",
+    "ownerId": "hisoka",
+    "name": "Texture Surprise",
+    "category": "transmuter",
+    "description": "Hisoka can change the texture of his aura to mimic any surface, including Netero's Buddha statue.",
+    "canonStatus": "canon",
+    "moduleKey": null
+  },
+  {
     "id": "emperor-time",
     "ownerId": "kurapika",
     "name": "Emperor Time",
@@ -23,6 +32,51 @@
     "name": "Steal Chain (Judgment Chain)",
     "category": "conjurer",
     "description": "Kurapika's chain with conditions on targets. Violating them causes death.",
+    "canonStatus": "canon",
+    "moduleKey": null
+  },
+  {
+    "id": "chain-jail",
+    "ownerId": "kurapika",
+    "name": "Chain Jail",
+    "category": "conjurer",
+    "description": "Chains that can bind and immobilize a target. Strength varies based on conditions.",
+    "canonStatus": "canon",
+    "moduleKey": null
+  },
+  {
+    "id": "dowsing-chain",
+    "ownerId": "kurapika",
+    "name": "Dowsing Chain",
+    "category": "conjurer",
+    "description": "Chain that can locate a specific target with precision.",
+    "canonStatus": "canon",
+    "moduleKey": null
+  },
+  {
+    "id": "benjamin-aura",
+    "ownerId": "benjamin-hui-guo-rou",
+    "name": "Aura Manipulation",
+    "category": "enhancer",
+    "description": "Benjamin's powerful aura manipulation allows him to enhance his physical abilities significantly.",
+    "canonStatus": "canon",
+    "moduleKey": null
+  },
+  {
+    "id": "oito-hatsu",
+    "ownerId": "oito-hui-guo-rou",
+    "name": "Royal Guard Hatsu",
+    "category": "manipulator",
+    "description": "Oito's ability to control and manipulate her royal guards with precision.",
+    "canonStatus": "canon",
+    "moduleKey": null
+  },
+  {
+    "id": "woble-hatsu",
+    "ownerId": "woble-hui-guo-rou",
+    "name": "Prince's Agility",
+    "category": "transmuter",
+    "description": "Woble's Nen enhances his speed and reflexes, making him extremely agile in combat.",
     "canonStatus": "canon",
     "moduleKey": null
   }

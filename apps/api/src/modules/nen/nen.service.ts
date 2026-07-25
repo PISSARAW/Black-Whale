@@ -2,23 +2,48 @@ import { Injectable, OnModuleInit } from '@nestjs/common'
 import type { NenValidateRequestDto } from '@black-whale/contracts'
 import { NenEngine } from '@black-whale/nen-engine'
 import { bungeeGum } from '@black-whale/ability-modules'
+import { readFile } from 'node:fs/promises'
+import { join, dirname } from 'node:path'
+import { fileURLToPath } from 'node:url'
+
+const __dirname = dirname(fileURLToPath(import.meta.url))
 
 @Injectable()
 export class NenService implements OnModuleInit {
   private readonly engine: NenEngine
+  private abilitiesCache: any[] = []
 
   constructor() {
     this.engine = new NenEngine()
   }
 
-  onModuleInit() {
+  async onModuleInit() {
     this.engine.registerModule(bungeeGum)
+    await this.loadAbilities()
+  }
+
+  private async loadAbilities() {
+    try {
+      const dataPath = join(__dirname, '..', '..', '..', '..', '..', 'data', 'abilities', 'abilities.json')
+      const file = await readFile(dataPath, 'utf-8')
+      this.abilitiesCache = JSON.parse(file)
+    } catch (e) {
+      console.error('Could not load abilities.json, using fallback:', e)
+      this.abilitiesCache = [
+        { id: 'bungee-gum', name: 'Bungee Gum', ownerId: 'hisoka', category: 'transmuter', description: "Hisoka's Nen has properties of both rubber and gum.", canonStatus: 'canon', moduleKey: 'bungee-gum' }
+      ]
+    }
   }
 
   async listAbilities() {
-    return [
-      { id: 'bungee-gum', name: 'Bungee Gum', owner: 'hisoka' }
-    ]
+    return this.abilitiesCache.map(a => ({
+      id: a.id,
+      name: a.name,
+      owner: a.ownerId,
+      category: a.category,
+      description: a.description,
+      canonStatus: a.canonStatus
+    }))
   }
 
   async getActiveState(abilityId: string, eventId: string) {

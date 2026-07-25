@@ -24,10 +24,12 @@
               <h2 class="text-xl font-bold text-white group-hover:text-bw-gold transition-colors">{ability.name}</h2>
               <p class="text-gray-500 text-sm mt-1 uppercase tracking-wider">{ability.owner}</p>
             </div>
-            <div class="h-8 w-8 rounded-full bg-bw-dark border border-bw-gold/30 flex items-center justify-center">
-              <span class="text-bw-gold text-xs">Nen</span>
-            </div>
+            <span class="px-2 py-1 text-xs rounded-full bg-bw-gold/10 text-bw-gold border border-bw-gold/30">
+              {ability.category || 'Unknown'}
+            </span>
           </div>
+          
+          <p class="text-gray-400 text-sm mt-2 line-clamp-2">{ability.description || 'No description available.'}</p>
           
           <div class="mt-6 flex items-center text-bw-gold/80 text-sm font-semibold">
             <span>Voir l'interaction dynamique</span>

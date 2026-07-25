@@ -38,7 +38,7 @@
 
             <div class="space-y-4">
               {#each chapter.events as event (event.id)}
-                <a href="/ship?sequence={event.sequence}" class="group block">
+                <a href="/ship?eventId={event.id}" class="group block">
                   <div class="relative overflow-hidden rounded-xl border border-gray-800/80 bg-gray-900/40 p-5 backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-bw-gold/40 hover:bg-gray-800/60 hover:shadow-xl hover:shadow-bw-gold/5">
                     <div class="absolute left-0 top-0 bottom-0 w-1 bg-gray-800 transition-colors group-hover:bg-bw-gold"></div>
                     <div class="flex flex-col sm:flex-row sm:items-baseline justify-between mb-3 gap-2">

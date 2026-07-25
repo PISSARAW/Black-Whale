@@ -39,7 +39,7 @@
     return [{ id: 'reader', label: 'Vue du lecteur', kind: 'reader' as const }, ...fromCharacters];
   });
 
-  let currentEvt = $derived(data.events.find((event: any) => event.sequence === data.sequence) || data.events[data.events.length - 1]);
+  let currentEvt = $derived(data.events.find((event: any) => event.id === data.selectedEventId) || data.events[data.events.length - 1]);
 
   let selectedPerspective = $derived(
     perspectiveOptions.find((opt) => opt.id === mapState.selectedPerspectiveId) || perspectiveOptions[0]
@@ -56,8 +56,8 @@
     const occupiedBodyLabel = occupiedBody?.label || occupiedBody?.id || canonicalPerspective;
 
     return {
-      chapter: data.spoilerLimit || currentEvt?.sequence || 0,
-      eventLabel: `${data.sequence ?? 0}`,
+      chapter: currentEvt?.chapter?.number || 0,
+      eventLabel: `${currentEvt?.sequence ?? 0}`,
       spoilerLimit: data.spoilerLimit ?? null,
       perspectiveName: canonicalPerspective,
       followedConsciousness: observer?.consciousnessId || canonicalPerspective,
@@ -69,7 +69,7 @@
   });
 
   let timelinePoints = $derived.by(() => {
-    const baseSequence = data.sequence || 0;
+    const baseSequence = data.selectedEventIndex || 0;
 
     return {
       reality: [
@@ -101,9 +101,7 @@
 
   let eventProgress = $derived.by(() => {
     if (data.events.length < 2) return 100;
-    const first = data.events[0].sequence;
-    const last = data.events[data.events.length - 1].sequence;
-    return Math.max(0, Math.min(100, ((data.sequence - first) / (last - first)) * 100));
+    return Math.max(0, Math.min(100, (data.selectedEventIndex / (data.events.length - 1)) * 100));
   });
 
   $effect(() => {
@@ -124,10 +122,13 @@
   // Timeline slider change
   function handleTimelineChange(e: Event) {
     const input = e.target as HTMLInputElement;
-    const newSeq = parseInt(input.value);
+    const eventIndex = parseInt(input.value);
+    const selectedEvent = data.events[eventIndex];
+    if (!selectedEvent) return;
 
     const url = new URL($page.url);
-    url.searchParams.set('sequence', String(newSeq));
+    url.searchParams.set('eventId', selectedEvent.id);
+    url.searchParams.delete('sequence');
     goto(url.toString(), { keepFocus: true, replaceState: true });
   }
 
@@ -167,7 +168,7 @@
     </div>
 
     <div class="hero-status" aria-label="Statut de la carte">
-      <div><span>Événement</span><strong>{String(data.sequence ?? 0).padStart(3, '0')}</strong></div>
+      <div><span>Événement</span><strong>Ch. {currentEvt?.chapter?.number ?? '—'} · Ev. {currentEvt?.sequence ?? '—'}</strong></div>
       <div><span>Zone active</span><strong class="capitalize">{currentDeckLabel}</strong></div>
       <div><span>Perspective</span><strong>{contextState.perspectiveName}</strong></div>
     </div>
@@ -326,20 +327,20 @@
         <span>Chronologie</span>
         <strong>{currentEvt?.title || 'État courant'}</strong>
       </div>
-      <div class="sequence-badge">SEQ <strong>{String(data.sequence ?? 0).padStart(4, '0')}</strong></div>
+      <div class="sequence-badge">CH <strong>{currentEvt?.chapter?.number ?? '—'}</strong> · EV <strong>{currentEvt?.sequence ?? '—'}</strong></div>
     </div>
 
     {#if data.events.length > 0}
       <div class="range-wrap" style={`--progress: ${eventProgress}%`}>
-        <span>{data.events[0].sequence}</span>
-        <input aria-label="Séquence temporelle" type="range" min={data.events[0].sequence} max={data.events[data.events.length - 1].sequence} value={data.sequence} oninput={handleTimelineChange} />
-        <span>{data.events[data.events.length - 1].sequence}</span>
+        <span>Ch.{data.events[0].chapter.number}</span>
+        <input aria-label="Événement de la chronologie" type="range" min="0" max={data.events.length - 1} value={data.selectedEventIndex} oninput={handleTimelineChange} />
+        <span>Ch.{data.events[data.events.length - 1].chapter.number}</span>
       </div>
     {:else}
       <p class="empty-state">Aucun événement disponible.</p>
     {/if}
 
-    <PerspectiveTimeline reality={timelinePoints.reality} body={timelinePoints.body} consciousness={timelinePoints.consciousness} knowledge={timelinePoints.knowledge} currentIndex={data.sequence || 0} />
+    <PerspectiveTimeline reality={timelinePoints.reality} body={timelinePoints.body} consciousness={timelinePoints.consciousness} knowledge={timelinePoints.knowledge} currentIndex={data.selectedEventIndex || 0} />
   </footer>
 </div>
 

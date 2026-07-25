@@ -1,42 +1,46 @@
 import { prisma } from '$lib/server/db';
 import { TimelineEngine } from '@black-whale/timeline-engine';
-import { filterVisible } from '@black-whale/spoiler-engine';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ url, cookies }) => {
 	const timelineEngine = new TimelineEngine(prisma);
 	const selectedPerspectiveId = url.searchParams.get('perspective') || 'reader';
 	const followMode = url.searchParams.get('follow') || 'consciousness';
-	
-	// Read sequence from URL param, defaulting to the latest event
-	let sequence = url.searchParams.get('sequence') ? parseInt(url.searchParams.get('sequence') as string) : undefined;
+	const requestedEventId = url.searchParams.get('eventId');
+	const legacySequence = url.searchParams.get('sequence') ? parseInt(url.searchParams.get('sequence') as string) : undefined;
 	
 	const spoilerLimitCookie = cookies.get('userSpoilerLimit');
 	const spoilerProfile = spoilerLimitCookie ? { maxChapter: parseInt(spoilerLimitCookie) } : undefined;
 
-	// Fetch all events for the timeline slider (filtered by spoilers)
-	let events = await prisma.narrativeEvent.findMany({
-		orderBy: { sequence: 'asc' }
+	// Sequence is local to a chapter. Always order and select through the unique
+	// event id, using chapter number as the primary chronological key.
+	const events = await prisma.narrativeEvent.findMany({
+		where: spoilerProfile ? { chapter: { number: { lte: spoilerProfile.maxChapter } } } : undefined,
+		orderBy: [{ chapter: { number: 'asc' } }, { sequence: 'asc' }],
+		include: { chapter: true }
 	});
-	
-	if (spoilerProfile) {
-		events = filterVisible(events as any, spoilerProfile) as any;
-	}
 
-	// If no sequence provided, use the last visible event's sequence
-	if (sequence === undefined && events.length > 0) {
-		sequence = events[events.length - 1].sequence;
-	} else if (sequence === undefined) {
-		sequence = 0;
-	}
+	const selectedEvent =
+		events.find((event) => event.id === requestedEventId) ||
+		(legacySequence !== undefined ? [...events].reverse().find((event) => event.sequence === legacySequence) : undefined) ||
+		events[events.length - 1];
+	const selectedEventIndex = selectedEvent ? events.findIndex((event) => event.id === selectedEvent.id) : 0;
+	const sequence = selectedEvent?.sequence ?? 0;
 
-	// Load the world state at the requested sequence
-	const rawWorldState = await timelineEngine.getWorldState({ sequence });
+	const rawWorldState = selectedEvent
+		? await timelineEngine.getWorldState({ eventId: selectedEvent.id })
+		: { characters: [], bodies: [], consciousnesses: [], presences: [], bodyStates: {} };
 
 	// Filter world state characters by spoiler
-	const visibleCharacters = spoilerProfile 
-		? filterVisible(rawWorldState.characters as any, spoilerProfile) as any
-		: rawWorldState.characters;
+	let visibleCharacters = rawWorldState.characters;
+	if (spoilerProfile) {
+		const allowedCharacters = await prisma.character.findMany({
+			where: { firstVisibleEvent: { chapter: { number: { lte: spoilerProfile.maxChapter } } } },
+			select: { id: true }
+		});
+		const allowedCharacterIds = new Set(allowedCharacters.map((character) => character.id));
+		visibleCharacters = rawWorldState.characters.filter((character: any) => allowedCharacterIds.has(character.id));
+	}
 		
 	// Presences reference bodies, not characters. Resolve the body owner before
 	// applying the spoiler filter so valid character positions are not discarded.
@@ -51,12 +55,9 @@ export const load: PageServerLoad = async ({ url, cookies }) => {
 	);
 
 	// Load locations to match presences to actual SVGs
-	const locations = await prisma.location.findMany();
-	const visibleLocations = spoilerProfile 
-		? filterVisible(locations as any, spoilerProfile) as any
-		: locations;
-
-	const selectedEvent = events.find((event) => event.sequence === sequence);
+	const visibleLocations = await prisma.location.findMany({
+		where: spoilerProfile ? { firstVisibleEvent: { chapter: { number: { lte: spoilerProfile.maxChapter } } } } : undefined
+	});
 	let perspective: any = null;
 
 	if (selectedEvent?.id && selectedPerspectiveId !== 'reader') {
@@ -73,6 +74,7 @@ export const load: PageServerLoad = async ({ url, cookies }) => {
 
 	return {
 		sequence,
+		selectedEventIndex,
 		events,
 		selectedPerspectiveId,
 		followMode,

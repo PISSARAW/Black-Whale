@@ -80,8 +80,8 @@
   let locations = $derived($page.data.worldState?.locations || []);
   let perspective = $derived($page.data.perspective || null);
   let events = $derived($page.data.events || []);
-  let currentSequence = $derived($page.data.sequence || 0);
-  let currentEvent = $derived(events.find((event: any) => event.sequence === currentSequence));
+  let currentEvent = $derived(events.find((event: any) => event.id === $page.data.selectedEventId));
+  let currentSequence = $derived(currentEvent?.sequence || 0);
 
   function hashToUnit(input: string) {
     let hash = 0;
@@ -163,7 +163,7 @@
         detail: `Événements ${fromSequence ?? '?'} à ${untilSequence}`
       };
     }
-    if (fromSequence === currentSequence) {
+    if (presence.fromEventId === currentEvent?.id) {
       return { color: '#55d1e2', label: 'Confirmé à cet événement', detail: `Événement ${currentSequence}` };
     }
     if (presence.fromEvent?.chapterId && presence.fromEvent.chapterId === currentEvent?.chapterId) {

@@ -73,7 +73,7 @@ export const load: PageServerLoad = async ({ cookies, url, fetch }) => {
     selectedEventChapter = selectedEvent?.chapter?.number ?? selectedEventChapter;
 
     if (selectedEventSequence !== undefined) {
-      const rawWorld = await timelineEngine.getWorldState({ sequence: selectedEventSequence });
+      const rawWorld = await timelineEngine.getWorldState({ eventId: selectedEventId });
       const locations = await prisma.location.findMany();
       worldState = {
         ...rawWorld,

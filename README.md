@@ -4,7 +4,9 @@
 
 Track bodies, consciousnesses, Nen abilities, and character knowledge across every chapter of the Black Whale arc.
 
-🚀 **Status:** [v1.0.0 Released] - Timeline, Ship Map, and Spoiler Engine are fully functional!
+🚀 **Status:** Production-ready — the application, API, administration panel,
+database migrations, HTTPS proxy, healthchecks, and backups are ready for a
+Docker deployment on Hetzner.
 
 ---
 
@@ -44,8 +46,9 @@ black-whale/
 │   └── seeds/
 │
 └── infrastructure/
-    ├── docker/              # Dockerfiles + docker-compose
-    └── database/migrations/ # PostgreSQL schema
+    ├── docker/              # Development and production Docker stacks
+    ├── hetzner/             # Deploy, backup, restore, and operations runbook
+    └── database/            # Legacy migration references
 ```
 
 ---
@@ -59,6 +62,8 @@ black-whale/
 | Database | PostgreSQL 16 |
 | Cache | Redis 7 |
 | ORM | Prisma |
+| Reverse proxy | Caddy with automatic HTTPS |
+| Deployment | Docker Compose on Hetzner Cloud |
 | Search | Meilisearch (to add) |
 | Storage | Cloudflare R2 / S3 (to add) |
 | Monorepo | pnpm workspaces + Turborepo |
@@ -72,6 +77,7 @@ black-whale/
 - Node ≥ 20
 - pnpm ≥ 9
 - PostgreSQL database running locally
+- Redis 7 when running the complete stack
 
 ### Install
 
@@ -79,7 +85,7 @@ black-whale/
 pnpm install
 ```
 
-### Configuration & Database Initialization
+### Configuration and database initialization
 
 Make sure to create `.env` files in your applications with a valid database connection string:
 
@@ -95,10 +101,15 @@ createdb blackwhale
 pnpm --filter "@black-whale/database" db:push
 ```
 
-For an existing database, review and apply the additive world-kernel migration
-in `packages/database/prisma/migrations/20260726143000_world_kernel/migration.sql`
-through your normal deployment pipeline. Docker Compose provisions fresh local
-databases directly from the canonical Prisma schema.
+Development uses `prisma db push`. Production uses the versioned baseline in
+`packages/database/prisma/migrations` through `prisma migrate deploy`; do not
+use `db push` against production.
+
+Alternatively, start the complete development stack:
+
+```bash
+docker compose -f infrastructure/docker/docker-compose.yml up --build
+```
 
 ### Run in development
 
@@ -124,11 +135,48 @@ pnpm build
 pnpm typecheck
 ```
 
-### Production on Hetzner
+### Tests
 
-The hardened production stack, TLS proxy, database migrations, healthchecks,
-and backup/restore runbook are documented in
-[`infrastructure/hetzner/README.md`](infrastructure/hetzner/README.md).
+```bash
+pnpm test
+```
+
+## Production on Hetzner
+
+The production topology exposes only ports 80 and 443 through Caddy. The web,
+API, admin, PostgreSQL, and Redis services remain on a private Docker network.
+The admin panel requires an authenticated, signed, HTTP-only session.
+
+Prepare the configuration and generate a different secret for every variable:
+
+```bash
+cp .env.production.example .env.production
+chmod 600 .env.production
+# Use `openssl rand -hex 32` for PostgreSQL and Redis passwords.
+```
+
+After configuring the domain and its `api` and `admin` DNS records, deploy with:
+
+```bash
+./infrastructure/hetzner/deploy.sh
+```
+
+The command validates the Compose configuration, builds the images, applies
+Prisma migrations, and starts the services with healthchecks. Caddy then obtains
+and renews the TLS certificates automatically.
+
+| Service | Production URL |
+|---|---|
+| Public application | `https://<domain>` |
+| REST API | `https://api.<domain>` |
+| Administration | `https://admin.<domain>` |
+| Health endpoints | `/health` on each application service |
+
+PostgreSQL is dumped every 24 hours with 14-day retention by default. Immediate
+backup and guarded restoration commands are included in `infrastructure/hetzner`.
+
+See the complete [Hetzner operations runbook](infrastructure/hetzner/README.md)
+for server sizing, firewall rules, DNS, upgrades, logs, backup, and restoration.
 
 ---
 
@@ -173,8 +221,11 @@ GET  /v1/simulations/:branchId/map-scene     project the branch on the map
 
 ## API docs
 
-Once the API is running, Swagger docs are available at:
+In development, Swagger documentation is available at:
 
 ```
 http://localhost:3001/docs
 ```
+
+Swagger is disabled in production by default. Set `ENABLE_API_DOCS=true` only
+when public API documentation is intentionally required.

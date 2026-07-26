@@ -1,4 +1,10 @@
 import type { NenAbility, AbilityActivation, NenEffect } from '@black-whale/domain'
+import type {
+  EntityRef,
+  ProposedWorldEvent,
+  StoryCursor,
+  WorldState,
+} from '@black-whale/world-engine'
 
 // ──────────────────────────────────────────────
 // Types
@@ -9,13 +15,33 @@ export interface AbilityContext {
   actorId: string
   targets: string[]
   eventId: string
-  worldState?: Record<string, unknown>
+  actionId?: string
+  actor?: EntityRef
+  targetRefs?: EntityRef[]
+  anchors?: Array<{
+    entity?: EntityRef
+    locationId?: string
+    point?: { x: number; y: number; coordinateSpace: string }
+  }>
+  cursor?: StoryCursor
+  worldState?: WorldState
+  parameters?: Record<string, unknown>
+}
+
+export type AbilityConditionStatus = 'MET' | 'UNMET' | 'UNKNOWN'
+
+export interface AbilityConditionResult {
+  id: string
+  label: string
+  status: AbilityConditionStatus
+  reason?: string
 }
 
 export interface ValidationResult {
   allowed: boolean
   reason?: string
   violatedRules?: string[]
+  conditions?: AbilityConditionResult[]
 }
 
 export interface AbilityResult {
@@ -30,6 +56,23 @@ export interface AbilityResult {
     toBodyId: string
   }
   reason?: string
+  /** Authoritative world transitions. They are persisted only by a branch/canon application service. */
+  events?: ProposedWorldEvent[]
+}
+
+export interface AbilityActionPlan {
+  abilityId: string
+  actionId: string
+  status: 'AVAILABLE' | 'LOCKED' | 'UNKNOWN' | 'FORBIDDEN'
+  conditions: AbilityConditionResult[]
+  targetSchema: {
+    allowedTargets: NenAllowedTarget[]
+    minimum: number
+    maximum?: number
+  }
+  interaction?: AbilityInteractionManifest
+  projectedEffects: string[]
+  cost?: { label: string; amount?: number; unit?: string }
 }
 
 export interface AbilityInteraction {
@@ -221,6 +264,7 @@ export interface AbilityUIComponent {
 
 export interface NenAbilityModule {
   manifest: AbilityManifest
+  plan(context: AbilityContext): AbilityActionPlan
   validateActivation(context: AbilityContext): ValidationResult
   execute(context: AbilityContext): AbilityResult
   getAvailableInteractions(context: AbilityContext): AbilityInteraction[]
@@ -249,6 +293,9 @@ export interface NenAbilityModule {
 // ──────────────────────────────────────────────
 
 export interface INenEngine {
+  /** Build the authoritative interaction plan used by both UI and execution. */
+  plan(context: AbilityContext): Promise<AbilityActionPlan>
+
   /** Validate whether an ability can be executed without actually running it */
   validate(context: AbilityContext): Promise<ValidationResult>
 
@@ -298,12 +345,29 @@ export class NenEngine implements INenEngine {
     this.modules.set(module.manifest.id, module)
   }
 
-  async validate(context: AbilityContext): Promise<ValidationResult> {
+  async plan(context: AbilityContext): Promise<AbilityActionPlan> {
     const module = this.modules.get(context.abilityId)
     if (!module) {
-      return { allowed: false, reason: `Ability module not found: ${context.abilityId}` }
+      return {
+        abilityId: context.abilityId,
+        actionId: context.actionId ?? 'activate',
+        status: 'FORBIDDEN',
+        conditions: [{ id: 'module', label: 'Ability module registered', status: 'UNMET' }],
+        targetSchema: { allowedTargets: [], minimum: 0 },
+        projectedEffects: [],
+      }
     }
-    return module.validateActivation(context)
+    return module.plan(context)
+  }
+
+  async validate(context: AbilityContext): Promise<ValidationResult> {
+    const plan = await this.plan(context)
+    return {
+      allowed: plan.status === 'AVAILABLE',
+      reason: plan.status === 'AVAILABLE' ? undefined : `Ability action is ${plan.status.toLowerCase()}`,
+      violatedRules: plan.conditions.filter((condition) => condition.status === 'UNMET').map((condition) => condition.id),
+      conditions: plan.conditions,
+    }
   }
 
   async execute(context: AbilityContext): Promise<AbilityResult> {

@@ -8,6 +8,13 @@ import type {
   Fact,
   Character,
 } from '@black-whale/domain'
+import {
+  buildCanonicalCursors,
+  createEmptyWorld,
+  type StoryCursor,
+  type WorldEntityKind,
+  type WorldState,
+} from '@black-whale/world-engine'
 
 // ──────────────────────────────────────────────
 // Types
@@ -47,6 +54,9 @@ export interface ITimelineEngine {
 
   /** Return the nearest persisted snapshot at or before the given point. */
   getNearestSnapshot(point: TimelinePoint): Promise<WorldSnapshot | null>
+
+  /** Adapt legacy interval tables into the deterministic world-kernel state. */
+  getKernelState(point: TimelinePoint): Promise<WorldState>
 }
 
 // ──────────────────────────────────────────────
@@ -157,6 +167,109 @@ export class TimelineEngine implements ITimelineEngine {
 
   async getNearestSnapshot(point: TimelinePoint): Promise<WorldSnapshot | null> {
     return null // Pas de snapshot implémenté en V1
+  }
+
+  async getKernelState(point: TimelinePoint): Promise<WorldState> {
+    const targetEvent = await this.resolveEvent(point)
+    if (!targetEvent) throw new Error('Unable to resolve timeline point')
+
+    const [snapshot, orderedEvents, locations, occupancies, consciousnessStates] = await Promise.all([
+      this.getWorldState({ eventId: targetEvent.id }),
+      this.prisma.narrativeEvent.findMany({ include: { chapter: true } }),
+      this.prisma.location.findMany({ include: { firstVisibleEvent: { include: { chapter: true } } } }),
+      this.prisma.bodyOccupancy.findMany({
+        include: {
+          fromEvent: { include: { chapter: true } },
+          untilEvent: { include: { chapter: true } },
+        },
+      }),
+      this.prisma.consciousnessState.findMany({
+        include: {
+          fromEvent: { include: { chapter: true } },
+          untilEvent: { include: { chapter: true } },
+        },
+      }),
+    ])
+
+    const cursors = buildCanonicalCursors(orderedEvents as any[])
+    const cursor = cursors.find((candidate) => candidate.eventId === targetEvent.id) ?? {
+      branchId: 'canon',
+      ordinal: 0,
+      eventId: targetEvent.id,
+      chapterNumber: targetEvent.chapter.number,
+      localSequence: targetEvent.sequence,
+    } satisfies StoryCursor
+    const state = createEmptyWorld(cursor)
+
+    const activeConsciousnessState = new Map<string, string>()
+    for (const consciousnessState of consciousnessStates as any[]) {
+      const active = compareEventOrder(consciousnessState.fromEvent, targetEvent) <= 0
+        && (!consciousnessState.untilEvent || compareEventOrder(targetEvent, consciousnessState.untilEvent) < 0)
+      if (active) activeConsciousnessState.set(consciousnessState.consciousnessId, consciousnessState.state)
+    }
+
+    const register = (entity: { id: string; label: string; kind: WorldEntityKind; originalCharacterId?: string; metadata?: Record<string, unknown> }) => {
+      state.entities[entity.id] = entity
+    }
+    for (const character of snapshot.characters) {
+      const consciousness = snapshot.consciousnesses.find((candidate) => candidate.originCharacterId === character.id)
+      const originalBody = snapshot.bodies.find((candidate) => candidate.originalCharacterId === character.id)
+      const biologicalState = originalBody ? snapshot.bodyStates[originalBody.id] : undefined
+      const legacyMentalState = biologicalState === 'UNCONSCIOUS'
+        ? 'UNCONSCIOUS'
+        : biologicalState === 'DEAD' || biologicalState === 'DESTROYED'
+          ? 'DESTROYED'
+          : 'ACTIVE'
+      register({
+        id: character.id,
+        label: character.canonicalName,
+        kind: 'CHARACTER',
+        originalCharacterId: character.id,
+        metadata: {
+          mentalState: consciousness
+            ? activeConsciousnessState.get(consciousness.id) ?? legacyMentalState
+            : legacyMentalState,
+        },
+      })
+    }
+    for (const body of snapshot.bodies) {
+      register({ id: body.id, label: body.label, kind: 'BODY', originalCharacterId: body.originalCharacterId })
+    }
+    for (const consciousness of snapshot.consciousnesses) {
+      register({
+        id: consciousness.id,
+        label: consciousness.label,
+        kind: 'CONSCIOUSNESS',
+        originalCharacterId: consciousness.originCharacterId,
+        metadata: { mentalState: activeConsciousnessState.get(consciousness.id) ?? 'ACTIVE' },
+      })
+    }
+    for (const location of locations.filter((candidate: any) => compareEventOrder(candidate.firstVisibleEvent, targetEvent) <= 0)) {
+      register({ id: location.id, label: location.name, kind: 'LOCATION' })
+    }
+
+    for (const [bodyId, bodyState] of Object.entries(snapshot.bodyStates)) state.bodyStates[bodyId] = bodyState
+    for (const presence of snapshot.presences) {
+      const kind = presence.entityType as WorldEntityKind
+      if (!state.entities[presence.entityId]) {
+        register({ id: presence.entityId, label: presence.entityId, kind })
+      }
+      state.presences[presence.entityId] = {
+        entity: { id: presence.entityId, kind },
+        locationId: presence.locationId,
+        precision: presence.precision,
+        certainty: presence.certainty,
+        observedAtEventId: presence.fromEventId,
+      }
+    }
+
+    for (const occupancy of occupancies as any[]) {
+      const active = compareEventOrder(occupancy.fromEvent, targetEvent) <= 0
+        && (!occupancy.untilEvent || compareEventOrder(targetEvent, occupancy.untilEvent) < 0)
+      if (active) state.consciousnessByBody[occupancy.bodyId] = occupancy.consciousnessId ?? null
+    }
+
+    return state
   }
 
   private async resolveEvent(point: TimelinePoint): Promise<OrderedEvent | null> {

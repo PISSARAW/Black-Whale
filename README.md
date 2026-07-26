@@ -22,6 +22,7 @@ black-whale/
 │   ├── domain/              # Shared TypeScript models & domain events
 │   ├── contracts/           # API DTOs shared between frontend & backend
 │   ├── database/            # Prisma schema and PostgreSQL client
+│   ├── world-engine/        # Pure event reducer, invariants, cursors & projections
 │   ├── timeline-engine/     # Reconstructs world state at any event
 │   ├── identity-engine/     # Separates body / consciousness / aura
 │   ├── perspective-engine/  # Filters world through a character's POV
@@ -87,12 +88,17 @@ Make sure to create `.env` files in your applications with a valid database conn
 DATABASE_URL="postgresql://<user>@localhost:5432/blackwhale?schema=public"
 ```
 
-Create the database and push the Prisma schema:
+Create the database and push the canonical Prisma schema:
 
 ```bash
 createdb blackwhale
 pnpm --filter "@black-whale/database" db:push
 ```
+
+For an existing database, review and apply the additive world-kernel migration
+in `packages/database/prisma/migrations/20260726143000_world_kernel/migration.sql`
+through your normal deployment pipeline. Docker Compose provisions fresh local
+databases directly from the canonical Prisma schema.
 
 ### Run in development
 
@@ -128,7 +134,22 @@ At any point in the story, the system can answer:
 2. **Where is each body?** → `GET /v1/map/entities/:id/presence?eventId=…`
 3. **Which consciousness is in which body?** → identity engine
 4. **What does each character know or believe?** → `GET /v1/perspectives/:character?eventId=…`
-5. **How does a Nen ability modify reality or perception?** → `POST /v1/nen/abilities/:id/validate`
+5. **How does a Nen ability modify reality or perception?** → `POST /v1/nen/abilities/:id/plan`
+
+The answer to all five questions now comes from the same temporal model. A
+canonical event or simulation branch identifies a `StoryCursor`; the pure
+`world-engine` replays typed events into a `WorldState`; Nen abilities emit
+those same events; and the map consumes a `MapScene` projection instead of
+reimplementing domain rules in Svelte.
+
+### Simulation branch API
+
+```text
+POST /v1/simulations                         create a fork at a canonical event
+GET  /v1/simulations/:branchId               read its projected world state
+POST /v1/simulations/:branchId/actions       execute a typed action/Hatsu
+GET  /v1/simulations/:branchId/map-scene     project the branch on the map
+```
 
 ---
 
@@ -137,10 +158,10 @@ At any point in the story, the system can answer:
 | Version | Scope | Status |
 |---|---|---|
 | **v1** | Ship map, characters, positions, timeline, spoiler filter | ✅ Released |
-| **v2** | Body/consciousness split, knowledge engine, perspective comparison | 🏗️ Next |
-| **v3** | Nen rule engine (declarative YAML), conditions, post-mortem Nen | 📅 Planned |
-| **v4** | Ability modules (Bungee Gum, Emperor Time, consciousness transfer…) | 📅 Planned |
-| **v5** | Simulations, community theories, canonical vs non-canonical branches | 📅 Planned |
+| **v2** | Body/consciousness split, knowledge engine, perspective comparison | ✅ Foundation shipped |
+| **v3** | Nen action plans, explainable conditions, typed effects | 🏗️ Bungee Gum vertical shipped |
+| **v4** | Ability modules migrated to the shared runtime | 🏗️ In progress |
+| **v5** | Persistent branches and map projections | 🏗️ First vertical shipped |
 
 ---
 

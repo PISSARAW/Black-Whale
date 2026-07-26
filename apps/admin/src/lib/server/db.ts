@@ -1,25 +1,10 @@
-// Prisma database client
-// Uses a CommonJS wrapper to handle @prisma/client
+import { PrismaClient } from '@black-whale/database';
 
-// Declare the CommonJS module
-declare module './db.cjs' {
-  export const prisma: any;
-  export const PrismaClient: any;
-  export const getPrismaInstance: () => any;
-}
+const globalPrisma = globalThis as unknown as { blackWhaleAdminPrisma?: PrismaClient };
+const prisma = globalPrisma.blackWhaleAdminPrisma ?? new PrismaClient();
 
-let prismaPromise: Promise<any> | null = null;
+if (process.env.NODE_ENV !== 'production') globalPrisma.blackWhaleAdminPrisma = prisma;
 
-async function getPrismaClient(): Promise<any> {
-  if (!prismaPromise) {
-    // Import the CommonJS wrapper using dynamic import
-    // Vite will handle this as an external module in SSR
-    const module = await import('./db.cjs');
-    prismaPromise = Promise.resolve(module.prisma);
-  }
-  return prismaPromise;
-}
-
-export async function getPrisma() {
-  return await getPrismaClient();
+export async function getPrisma(): Promise<PrismaClient> {
+  return prisma;
 }

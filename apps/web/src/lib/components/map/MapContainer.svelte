@@ -2,28 +2,7 @@
   import panzoom from 'panzoom';
   import { tick } from 'svelte';
   import { mapState } from '$lib/state/mapState.svelte';
-  import BlackWhaleOverview from '$lib/assets/maps/black-whale-overview.svelte';
-  import Tier1 from '$lib/assets/maps/tier-1.svelte';
-  import Tier2 from '$lib/assets/maps/tier-2.svelte';
-  import Tier3 from '$lib/assets/maps/tier-3.svelte';
-  import Tier4 from '$lib/assets/maps/tier-4.svelte';
-  import Tier5 from '$lib/assets/maps/tier-5.svelte';
-  import PrinceApartment from '$lib/assets/maps/local/prince-apartment.svelte';
-  import Room3101 from '$lib/assets/maps/local/room-3101.svelte';
-  import HeillyProcessing from '$lib/assets/maps/local/heilly-processing.svelte';
-  import CentralCourthouse from '$lib/assets/maps/local/central-courthouse.svelte';
-  import CentralPoliceStation from '$lib/assets/maps/local/central-police-station.svelte';
-  import GeneralCabins from '$lib/assets/maps/local/general-cabins.svelte';
-  import RoyalArmyOffice from '$lib/assets/maps/local/royal-army-office.svelte';
-  import ObservationDeck from '$lib/assets/maps/local/observation-deck.svelte';
-  import Cineplex from '$lib/assets/maps/local/cineplex.svelte';
-  import CentralDiningHall from '$lib/assets/maps/local/central-dining-hall.svelte';
-  import PrincesBurialChamber from '$lib/assets/maps/local/princes-burial-chamber.svelte';
-  import VvipLivingQuarters from '$lib/assets/maps/local/vvip-living-quarters.svelte';
-  import QueensLivingQuarters from '$lib/assets/maps/local/queens-living-quarters.svelte';
-  import SoldiersLivingQuarters from '$lib/assets/maps/local/soldiers-living-quarters.svelte';
-  import Casino from '$lib/assets/maps/local/casino.svelte';
-  import Room37564 from '$lib/assets/maps/local/room-37564.svelte';
+  import { getMapAsset, resolveMapAssetKey } from '$lib/map/mapAssetRegistry';
   import MapOverlay from './MapOverlay.svelte';
 
   let containerEl: HTMLElement | undefined = $state();
@@ -118,15 +97,9 @@
   });
 
   let isLocalZoom = $derived(mapState.currentZoomLevel === 'LOCAL' && mapState.selectedLocationId);
-  let isPrinceRoom = $derived(mapState.selectedLocationId?.startsWith('room-10'));
-  const detailedLocationIds = new Set([
-    'room-3101', 't3-heilly', 'heilly-processing', 'central-courthouse',
-    'central-police-station', 'general-cabins', 'royal-army-office',
-    'observation-deck', 'cineplex', 'central-dining-hall',
-    'princes-burial-chamber', 'vvip-living-quarters', 'queens-living-quarters',
-    'soldiers-living-quarters', 'casino', 'room-37564'
-  ]);
-  let hasDetailedMap = $derived(Boolean(isPrinceRoom || (mapState.selectedLocationId && detailedLocationIds.has(mapState.selectedLocationId))));
+  let mapAssetKey = $derived(resolveMapAssetKey(mapState.currentZoomLevel, mapState.selectedTier, mapState.selectedLocationId));
+  let MapAsset = $derived(getMapAsset(mapAssetKey));
+  let hasDetailedMap = $derived(Boolean(isLocalZoom && MapAsset));
   let selectedLocationLabel = $derived((mapState.selectedLocationId || 'Unmapped area').replaceAll('-', ' '));
 </script>
 
@@ -135,42 +108,9 @@
   <div bind:this={containerEl} class="relative w-full h-full transform-origin-top-left">
     
     <!-- SVG Map Render -->
-    {#if mapState.currentZoomLevel === 'OVERVIEW'}
-      <BlackWhaleOverview />
+    {#if MapAsset}
+      <MapAsset />
     {:else if isLocalZoom}
-      {#if isPrinceRoom}
-        <PrinceApartment />
-      {:else if mapState.selectedLocationId === 'room-3101'}
-        <Room3101 />
-      {:else if mapState.selectedLocationId === 't3-heilly' || mapState.selectedLocationId === 'heilly-processing'}
-        <HeillyProcessing />
-      {:else if mapState.selectedLocationId === 'central-courthouse'}
-        <CentralCourthouse />
-      {:else if mapState.selectedLocationId === 'central-police-station'}
-        <CentralPoliceStation />
-      {:else if mapState.selectedLocationId === 'general-cabins'}
-        <GeneralCabins />
-      {:else if mapState.selectedLocationId === 'royal-army-office'}
-        <RoyalArmyOffice />
-      {:else if mapState.selectedLocationId === 'observation-deck'}
-        <ObservationDeck />
-      {:else if mapState.selectedLocationId === 'cineplex'}
-        <Cineplex />
-      {:else if mapState.selectedLocationId === 'central-dining-hall'}
-        <CentralDiningHall />
-      {:else if mapState.selectedLocationId === 'princes-burial-chamber'}
-        <PrincesBurialChamber />
-      {:else if mapState.selectedLocationId === 'vvip-living-quarters'}
-        <VvipLivingQuarters />
-      {:else if mapState.selectedLocationId === 'queens-living-quarters'}
-        <QueensLivingQuarters />
-      {:else if mapState.selectedLocationId === 'soldiers-living-quarters'}
-        <SoldiersLivingQuarters />
-      {:else if mapState.selectedLocationId === 'casino'}
-        <Casino />
-      {:else if mapState.selectedLocationId === 'room-37564'}
-        <Room37564 />
-      {:else}
         <section class="cartographic-gap" aria-live="polite">
           <div class="gap-mark" aria-hidden="true"><span></span><i></i></div>
           <p>Cartographic gap · local scan unavailable</p>
@@ -178,17 +118,6 @@
           <span>This zone is indexed in the archive, but no verified local floor plan has been recovered.</span>
           <button type="button" onclick={() => mapState.selectLocation(null)}>Return to tier map</button>
         </section>
-      {/if}
-    {:else if mapState.selectedTier === 'tier-1'}
-      <Tier1 />
-    {:else if mapState.selectedTier === 'tier-2'}
-      <Tier2 />
-    {:else if mapState.selectedTier === 'tier-3'}
-      <Tier3 />
-    {:else if mapState.selectedTier === 'tier-4'}
-      <Tier4 />
-    {:else if mapState.selectedTier === 'tier-5'}
-      <Tier5 />
     {:else}
       <!-- Fallback for other tiers -->
       <div class="flex items-center justify-center w-full h-full text-[#FFFFF0]">

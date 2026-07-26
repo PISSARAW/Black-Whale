@@ -5,5 +5,6 @@ import { NenService } from './nen.service.js'
 @Module({
   controllers: [NenController],
   providers: [NenService],
+  exports: [NenService],
 })
 export class NenModule {}

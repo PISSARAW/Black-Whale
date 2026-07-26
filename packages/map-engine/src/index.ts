@@ -146,39 +146,35 @@ function buildLayers(locations: any[]): ShipLayer[] {
 export class MapEngine implements IMapEngine {
   constructor(private readonly prisma: PrismaClient) {}
 
-  private async resolveSequence(eventId: string): Promise<number | undefined> {
+  private async resolveEvent(eventId: string): Promise<any | null> {
     const event = await this.prisma.narrativeEvent.findUnique({
       where: { id: eventId },
-      select: { sequence: true }
+      include: { chapter: true }
     })
-    return event?.sequence
+    return event
   }
 
-  private async getActivePresencesAtSequence(sequence: number): Promise<Presence[]> {
+  private compareEventOrder(left: any, right: any): number {
+    return left.chapter.number - right.chapter.number || left.sequence - right.sequence
+  }
+
+  private async getActivePresencesAtEvent(targetEvent: any): Promise<Presence[]> {
     const presences = await this.prisma.presence.findMany({
-      where: {
-        fromEvent: {
-          sequence: { lte: sequence }
-        },
-        OR: [
-          { untilEventId: null },
-          {
-            untilEvent: {
-              sequence: { gt: sequence }
-            }
-          }
-        ]
-      },
       include: {
-        location: true
+        location: true,
+        fromEvent: { include: { chapter: true } },
+        untilEvent: { include: { chapter: true } }
       }
     })
-    return presences as any
+    return presences.filter((presence: any) =>
+      this.compareEventOrder(presence.fromEvent, targetEvent) <= 0
+      && (!presence.untilEvent || this.compareEventOrder(targetEvent, presence.untilEvent) < 0)
+    ) as any
   }
 
   async getMapState(eventId: string): Promise<MapState> {
-    const sequence = await this.resolveSequence(eventId)
-    if (sequence === undefined) {
+    const targetEvent = await this.resolveEvent(eventId)
+    if (!targetEvent) {
       throw new Error(`Event not found: ${eventId}`)
     }
 
@@ -186,7 +182,7 @@ export class MapEngine implements IMapEngine {
       orderBy: { name: 'asc' }
     })
 
-    const activePresences = await this.getActivePresencesAtSequence(sequence)
+    const activePresences = await this.getActivePresencesAtEvent(targetEvent)
 
     const entityPositions: Record<string, string> = {}
     for (const presence of activePresences) {
@@ -205,30 +201,13 @@ export class MapEngine implements IMapEngine {
   }
 
   async getEntityLocation(entityId: string, eventId: string): Promise<LocationNode | null> {
-    const sequence = await this.resolveSequence(eventId)
-    if (sequence === undefined) {
+    const targetEvent = await this.resolveEvent(eventId)
+    if (!targetEvent) {
       return null
     }
 
-    const presence = await this.prisma.presence.findFirst({
-      where: {
-        entityId,
-        fromEvent: {
-          sequence: { lte: sequence }
-        },
-        OR: [
-          { untilEventId: null },
-          {
-            untilEvent: {
-              sequence: { gt: sequence }
-            }
-          }
-        ]
-      },
-      include: {
-        location: true
-      }
-    })
+    const presence = (await this.getActivePresencesAtEvent(targetEvent))
+      .find((candidate) => candidate.entityId === entityId) as any
 
     if (!presence || !presence.locationId) {
       return null
@@ -240,27 +219,13 @@ export class MapEngine implements IMapEngine {
   }
 
   async getEntitiesAt(locationId: string, eventId: string): Promise<string[]> {
-    const sequence = await this.resolveSequence(eventId)
-    if (sequence === undefined) {
+    const targetEvent = await this.resolveEvent(eventId)
+    if (!targetEvent) {
       return []
     }
 
-    const presences = await this.prisma.presence.findMany({
-      where: {
-        locationId,
-        fromEvent: {
-          sequence: { lte: sequence }
-        },
-        OR: [
-          { untilEventId: null },
-          {
-            untilEvent: {
-              sequence: { gt: sequence }
-            }
-          }
-        ]
-      }
-    })
+    const presences = (await this.getActivePresencesAtEvent(targetEvent))
+      .filter((presence) => presence.locationId === locationId)
 
     return presences.map((p: { entityId: string }) => p.entityId)
   }

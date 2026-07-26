@@ -20,7 +20,7 @@ let filteredCharacters = $derived(
   data.characters.filter(char => 
     char.canonicalName.toLowerCase().includes(searchQuery.toLowerCase()) ||
     char.slug.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    (char.aliases && char.aliases.some(a => a.toLowerCase().includes(searchQuery.toLowerCase())))
+    (char.aliases && char.aliases.some((alias: string) => alias.toLowerCase().includes(searchQuery.toLowerCase())))
   )
 );
 

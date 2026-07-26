@@ -8,7 +8,7 @@
     "start": "node dist/main.js",
     "lint": "eslint src --ext .ts",
     "typecheck": "tsc --noEmit",
-    "test": "jest",
+    "test": "jest --passWithNoTests",
     "test:e2e": "jest --config jest-e2e.json",
     "clean": "rimraf dist *.tsbuildinfo"
   },
@@ -25,6 +25,7 @@
     "@black-whale/simulation-engine": "workspace:*",
     "@black-whale/spoiler-engine": "workspace:*",
     "@black-whale/timeline-engine": "workspace:*",
+    "@black-whale/world-engine": "workspace:*",
     "@fastify/static": "^7.0.4",
     "@nestjs/common": "^10.0.0",
     "@nestjs/config": "^3.0.0",

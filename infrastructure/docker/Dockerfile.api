@@ -1,39 +1,14 @@
-FROM node:20-alpine AS base
-RUN npm install -g pnpm
+FROM node:20-alpine AS builder
+RUN corepack enable
 WORKDIR /app
-
-FROM base AS deps
-COPY pnpm-workspace.yaml package.json pnpm-lock.yaml* ./
-COPY packages/domain/package.json ./packages/domain/
-COPY packages/contracts/package.json ./packages/contracts/
-COPY packages/timeline-engine/package.json ./packages/timeline-engine/
-COPY packages/identity-engine/package.json ./packages/identity-engine/
-COPY packages/perspective-engine/package.json ./packages/perspective-engine/
-COPY packages/knowledge-engine/package.json ./packages/knowledge-engine/
-COPY packages/nen-engine/package.json ./packages/nen-engine/
-COPY packages/simulation-engine/package.json ./packages/simulation-engine/
-COPY packages/map-engine/package.json ./packages/map-engine/
-COPY apps/api/package.json ./apps/api/
+COPY . .
 RUN pnpm install --frozen-lockfile
-
-FROM deps AS builder
-COPY packages ./packages
-COPY apps/api ./apps/api
-RUN pnpm --filter "@black-whale/domain" build
-RUN pnpm --filter "@black-whale/contracts" build
-RUN pnpm --filter "@black-whale/timeline-engine" build
-RUN pnpm --filter "@black-whale/identity-engine" build
-RUN pnpm --filter "@black-whale/perspective-engine" build
-RUN pnpm --filter "@black-whale/knowledge-engine" build
-RUN pnpm --filter "@black-whale/nen-engine" build
-RUN pnpm --filter "@black-whale/simulation-engine" build
-RUN pnpm --filter "@black-whale/map-engine" build
-RUN pnpm --filter "@black-whale/api" build
+RUN pnpm turbo build --filter=@black-whale/api
 
 FROM node:20-alpine AS runner
+RUN corepack enable
 WORKDIR /app
-COPY --from=builder /app/apps/api/dist ./dist
-COPY --from=builder /app/apps/api/package.json ./
-COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app /app
+ENV NODE_ENV=production
 EXPOSE 3001
-CMD ["node", "dist/main.js"]
+CMD ["node", "apps/api/dist/main.js"]

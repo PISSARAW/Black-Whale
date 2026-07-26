@@ -33,7 +33,7 @@ export const actions: Actions = {
 
 		try {
 			// Run everything in a transaction
-			await prisma.$transaction(async (tx) => {
+            await prisma.$transaction(async (tx: any) => {
 				// 1. Create the event
 				const event = await tx.narrativeEvent.create({
 					data: {

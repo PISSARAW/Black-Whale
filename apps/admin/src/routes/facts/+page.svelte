@@ -59,6 +59,7 @@ function closeCreateModal() {
     subjectId: '',
     predicate: '',
     value: {},
+    valueJson: '{}',
     validFromEventId: '',
     validUntilEventId: null,
     truthStatus: 'CONFIRMED',

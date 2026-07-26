@@ -12,7 +12,6 @@ import {
   detach,
   release,
   elasticConnection,
-  adhesiveConnection,
   buildManifest,
   wheelEntry,
 } from '@black-whale/ability-sdk'
@@ -56,7 +55,6 @@ export const bungeeGum = defineAbility({
 
   effects: [
     elasticConnection(),
-    adhesiveConnection(),
   ],
 
   ui: { componentKey: 'BungeeGumInteraction' },

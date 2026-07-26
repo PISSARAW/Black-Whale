@@ -4,11 +4,15 @@
   let {
     marker,
     compact = false,
-    onExplain
+    onExplain,
+    future = false,
+    futureMode = false
   }: {
     marker: MarkerIdentityState;
     compact?: boolean;
     onExplain?: (marker: MarkerIdentityState) => void;
+    future?: boolean;
+    futureMode?: boolean;
   } = $props();
 
   let styleString = $derived(`left: ${marker.x}%; top: ${marker.y}%; --marker-color: ${marker.positionColor || '#8b9a98'};`);
@@ -21,7 +25,15 @@
   class:compact
   class:anomaly={hasAnomaly}
   class:follow-target={marker.isFollowTarget}
+  class:future
+  class:future-current={futureMode && !future}
   data-follow-target={marker.isFollowTarget ? 'true' : undefined}
+  data-hatsu-character={future ? undefined : marker.id}
+  data-hatsu-future-character={future ? marker.id : undefined}
+  data-hatsu-character-name={marker.perceivedIdentity}
+  data-hatsu-perspective-id={marker.originalCharacterId}
+  data-hatsu-next-change={marker.futureChange}
+  data-hatsu-list={marker.hatsuNames?.join('|')}
   style={styleString}
   style:transform="translate(-50%, -50%)"
   aria-label={`${marker.perceivedIdentity}, ${marker.locationLabel || 'unknown position'}, ${marker.temporalLabel || 'unknown status'}`}
@@ -83,6 +95,11 @@
   .subjective-marker.anomaly .pulse { border-style: dashed; border-color: var(--state-transferred); }
   .subjective-marker.follow-target .core { box-shadow: 0 0 0 2px #f5e7b6, 0 0 0 5px color-mix(in srgb, var(--marker-color) 35%, transparent); }
   .subjective-marker.follow-target .pulse { inset: -7px; opacity: .78; }
+  .subjective-marker.future { z-index: 18; filter: drop-shadow(0 0 8px #b36bff); opacity: .82; }
+  .subjective-marker.future .core { border-color: #30154c; background: #d598ff; box-shadow: 0 0 0 2px #854db5, 0 0 16px #bd74ff; }
+  .subjective-marker.future .pulse { inset: -7px; border: 2px dashed #d598ff; opacity: .8; animation: presence-pulse 1.5s ease-out infinite; }
+  .subjective-marker.future-current .core { background: #58e1ee; box-shadow: 0 0 0 2px #126f79, 0 0 13px #58e1ee; }
+  .subjective-marker.future-current .pulse { border-color: #58e1ee; }
   .subjective-marker:focus-visible { outline: 2px solid #f5e7b6; outline-offset: 4px; }
 
   .tooltip {

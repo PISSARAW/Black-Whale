@@ -3,8 +3,10 @@
   import type { MarkerIdentityState } from '$lib/components/perspective/types';
   import { mapState } from '$lib/state/mapState.svelte';
 
-  let { character }: {
+  let { character, future = false, futureMode = false }: {
     character: MarkerIdentityState;
+    future?: boolean;
+    futureMode?: boolean;
   } = $props();
 
   function explainMarker(marker: MarkerIdentityState) {
@@ -20,4 +22,4 @@
   }
 </script>
 
-<BodyConsciousnessMarker marker={character} compact={mapState.currentZoomLevel === 'OVERVIEW'} onExplain={explainMarker} />
+<BodyConsciousnessMarker marker={character} compact={mapState.currentZoomLevel === 'OVERVIEW'} onExplain={explainMarker} {future} {futureMode} />

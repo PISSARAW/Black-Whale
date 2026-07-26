@@ -1,17 +1,39 @@
 <script lang="ts">
   import { onMount } from 'svelte'
-  import { activeHatsu, activateHatsu, deactivateHatsu, hatsuPanelOpen } from './hatsuState.js'
+  import {
+    activeHatsu,
+    activateHatsu,
+    deactivateHatsu,
+    forcedZetsuUntil,
+    hatsuPanelOpen,
+    hydrateHatsuSession,
+    refreshForcedZetsu
+  } from './hatsuState.js'
   import { HATSU_PROFILES, hatsuById } from './hatsuRegistry.js'
 
   let query = ''
+  let now = Date.now()
 
   $: filtered = HATSU_PROFILES.filter((profile) =>
     `${profile.name} ${profile.owner}`.toLowerCase().includes(query.trim().toLowerCase())
   )
+  $: zetsuRemaining = Math.max(0, $forcedZetsuUntil - now)
+
+  function formatRemaining(milliseconds: number) {
+    const totalSeconds = Math.ceil(milliseconds / 1000)
+    const minutes = Math.floor(totalSeconds / 60)
+    return `${String(minutes).padStart(2, '0')}:${String(totalSeconds % 60).padStart(2, '0')}`
+  }
 
   onMount(() => {
+    hydrateHatsuSession()
     const remembered = hatsuById(localStorage.getItem('black-whale:hatsu'))
-    if (remembered) activeHatsu.set(remembered)
+    if (remembered) activateHatsu(remembered)
+
+    const clock = window.setInterval(() => {
+      now = Date.now()
+      refreshForcedZetsu()
+    }, 1000)
 
     const handleActivate = (event: Event) => {
       const id = (event as CustomEvent<string>).detail
@@ -19,12 +41,24 @@
       if (profile) activateHatsu(profile)
     }
     window.addEventListener('black-whale:activate-hatsu', handleActivate)
-    return () => window.removeEventListener('black-whale:activate-hatsu', handleActivate)
+    return () => {
+      clearInterval(clock)
+      window.removeEventListener('black-whale:activate-hatsu', handleActivate)
+    }
   })
 </script>
 
 <div class="hatsu-dock" data-hatsu-ui>
-  {#if $activeHatsu}
+  {#if zetsuRemaining > 0}
+    <section class="zetsu-card" aria-live="polite">
+      <span class="zetsu-mark">絶</span>
+      <div>
+        <span class="eyebrow">FORCED ZETSU</span>
+        <strong>Nen sealed · {formatRemaining(zetsuRemaining)}</strong>
+        <small>Emperor Time exhausted one year of life.</small>
+      </div>
+    </section>
+  {:else if $activeHatsu}
     <section class="active-card" style:--hatsu={$activeHatsu.color} aria-live="polite">
       <button class="sigil active" onclick={() => hatsuPanelOpen.update((open) => !open)} aria-label="Change Hatsu">
         <span class="aura-dot"></span>
@@ -76,6 +110,12 @@
   .sigil:hover { transform: translateY(-2px); box-shadow: 0 12px 40px #000b, 0 0 24px color-mix(in srgb, var(--hatsu, #d8b85e) 25%, transparent); }
   .aura-dot { position: absolute; top: -.1rem; right: .1rem; width: .65rem; height: .65rem; border: 2px solid #071019; border-radius: 50%; background: var(--hatsu, #d8b85e); box-shadow: 0 0 12px var(--hatsu, #d8b85e); }
   .active-card { display: flex; width: min(37rem, calc(100vw - 2rem)); align-items: center; gap: .8rem; padding: .6rem .7rem; border: 1px solid color-mix(in srgb, var(--hatsu) 45%, #263747); border-radius: 1rem; background: linear-gradient(110deg, #0b1722f5, #101a26f2); box-shadow: 0 18px 55px #000b, 0 0 28px color-mix(in srgb, var(--hatsu) 11%, transparent); backdrop-filter: blur(16px); }
+  .zetsu-card { display: flex; width: min(25rem, calc(100vw - 2rem)); align-items: center; gap: .8rem; padding: .7rem .9rem; border: 1px solid #52606b; border-radius: 1rem; background: #080d12f5; box-shadow: 0 18px 55px #000c; }
+  .zetsu-card > div { display: flex; min-width: 0; flex-direction: column; }
+  .zetsu-card .eyebrow { color: #a8b0b5; }
+  .zetsu-card strong { margin-top: .15rem; color: #eef0eb; font-size: .8rem; }
+  .zetsu-card small { margin-top: .15rem; color: #758087; font-size: .6rem; }
+  .zetsu-mark { display: grid; width: 2.8rem; height: 2.8rem; flex: none; place-items: center; border: 1px solid #52606b; border-radius: 50%; color: #a8b0b5; font-size: 1rem; }
   .active-card .sigil { flex: none; width: 3rem; height: 3rem; color: var(--hatsu); }
   .active-copy { display: flex; min-width: 0; flex: 1; flex-direction: column; }
   .active-copy strong { overflow: hidden; color: #f4f3eb; font-size: .86rem; text-overflow: ellipsis; white-space: nowrap; }

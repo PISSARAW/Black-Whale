@@ -1,6 +1,7 @@
 import { prisma } from '$lib/server/db';
 import { TimelineEngine } from '@black-whale/timeline-engine';
 import characterCatalog from '../../../../../data/characters/characters.json';
+import abilityCatalog from '../../../../../data/abilities/abilities.json';
 import type { PageServerLoad } from './$types';
 import { redirect } from '@sveltejs/kit';
 
@@ -17,6 +18,13 @@ type CatalogCharacter = {
 const catalogByName = new Map(
 	(characterCatalog as CatalogCharacter[]).map((character) => [character.canonicalName, character])
 );
+const hatsuNamesByOwnerId = new Map<string, string[]>();
+for (const ability of abilityCatalog as Array<{ ownerId?: string | null; name: string }>) {
+	if (!ability.ownerId) continue;
+	const names = hatsuNamesByOwnerId.get(ability.ownerId) || [];
+	names.push(ability.name);
+	hatsuNamesByOwnerId.set(ability.ownerId, names);
+}
 
 function addFactionType(tags: Set<FactionFilterId>, type: string) {
 	if (type === 'KAKIN_ROYAL_ARMY' || type === 'BENJAMIN_PRIVATE_ARMY') tags.add('guards');
@@ -87,6 +95,16 @@ export const load: PageServerLoad = async ({ url, cookies }) => {
 	const rawWorldState = selectedEvent
 		? await timelineEngine.getWorldState({ eventId: selectedEvent.id })
 		: { characters: [], bodies: [], consciousnesses: [], presences: [], bodyStates: {} };
+	const nextChapterNumber = events
+		.map((event) => event.chapter.number)
+		.filter((chapterNumber) => chapterNumber > (selectedEvent?.chapter.number ?? Number.MAX_SAFE_INTEGER))
+		.sort((left, right) => left - right)[0];
+	const nextChapterEvent = nextChapterNumber === undefined
+		? null
+		: [...events].reverse().find((event) => event.chapter.number === nextChapterNumber) || null;
+	const nextChapterWorldState = nextChapterEvent
+		? await timelineEngine.getWorldState({ eventId: nextChapterEvent.id })
+		: null;
 
 	// Filter world state characters by spoiler
 	let visibleCharacters = rawWorldState.characters;
@@ -123,7 +141,10 @@ export const load: PageServerLoad = async ({ url, cookies }) => {
 	}
 	visibleCharacters = visibleCharacters.map((character: any) => ({
 		...character,
-		factionTags: resolveFactionTags(character, activeFactionTypesByCharacter.get(character.id) || [])
+		factionTags: resolveFactionTags(character, activeFactionTypesByCharacter.get(character.id) || []),
+		hatsuNames: hatsuNamesByOwnerId.get(
+			(characterCatalog as CatalogCharacter[]).find((entry) => entry.canonicalName === character.canonicalName)?.id || character.slug
+		) || []
 	}));
 
 	const perspectiveIsAvailable = requestedPerspectiveId === 'reader'
@@ -181,6 +202,19 @@ export const load: PageServerLoad = async ({ url, cookies }) => {
 			bodyStates: rawWorldState.bodyStates,
 			locations: visibleLocations
 		},
+		nextChapterState: nextChapterWorldState ? {
+			chapterNumber: nextChapterNumber,
+			characters: nextChapterWorldState.characters.map((character: any) => ({
+				...character,
+				hatsuNames: hatsuNamesByOwnerId.get(
+					(characterCatalog as CatalogCharacter[]).find((entry) => entry.canonicalName === character.canonicalName)?.id || character.slug
+				) || []
+			})),
+			bodies: nextChapterWorldState.bodies,
+			presences: nextChapterWorldState.presences,
+			bodyStates: nextChapterWorldState.bodyStates,
+			locations: visibleLocations
+		} : null,
 		spoilerLimit: spoilerProfile?.maxChapter
 	};
 };

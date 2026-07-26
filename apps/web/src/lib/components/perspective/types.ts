@@ -45,6 +45,9 @@ export interface MarkerIdentityState {
   temporalDetail?: string;
   factionTags?: string[];
   isFollowTarget?: boolean;
+  originalCharacterId?: string;
+  hatsuNames?: string[];
+  futureChange?: 'stable' | 'moved' | 'dead';
 }
 
 export interface PerspectiveOption {

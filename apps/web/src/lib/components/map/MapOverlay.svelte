@@ -4,6 +4,7 @@
   import type { MarkerIdentityState } from '$lib/components/perspective/types';
   import { page } from '$app/stores';
   import { toEnglishDisplayName } from '$lib/utils/displayNames';
+  import { activeHatsu, parallelFutureVisible } from '$lib/nen/hatsuState.js';
   
   // Mapping between location slugs and SVG coordinates for each tier
   // These coordinates are based on the SVG viewBox (0 0 1000 600)
@@ -93,6 +94,8 @@
   let events = $derived($page.data.events || []);
   let currentEvent = $derived(events.find((event: any) => event.id === $page.data.selectedEventId));
   let currentSequence = $derived(currentEvent?.sequence || 0);
+  let nextChapterState = $derived($page.data.nextChapterState || null);
+  let futureMode = $derived($activeHatsu?.id === 'parallel-future' && $parallelFutureVisible);
 
   function hashToUnit(input: string) {
     let hash = 0;
@@ -183,6 +186,64 @@
     return { color: '#5bb9ad', label: 'Confirmed presence', detail: `Since event ${fromSequence ?? '?'}` };
   }
 
+  function calculatePresencePosition(p: any, sourcePresences: any[], sourceLocations: any[]) {
+    const locationsById = new Map<string, any>(sourceLocations.map((location: any) => [location.id, location]));
+    const loc = sourceLocations.find((location: any) => location.id === p.locationId);
+    const tierId = loc ? resolveTierSlug(loc, locationsById) : null;
+    let x = 500;
+    let y = 300;
+
+    if (loc && tierId && locationCoordinates[tierId]) {
+      const coords = getExactTierCoordinates(tierId, loc.slug);
+      if (coords) {
+        const colocatedEntityIds = sourcePresences
+          .filter((candidate: any) => candidate.locationId === p.locationId)
+          .map((candidate: any) => candidate.entityId)
+          .sort();
+        const colocatedIndex = Math.max(0, colocatedEntityIds.indexOf(p.entityId));
+        const colocatedCount = colocatedEntityIds.length;
+
+        if (colocatedCount > 1 && coords.isSmallRoom) {
+          const columns = Math.min(2, colocatedCount);
+          const rows = Math.ceil(colocatedCount / columns);
+          const column = colocatedIndex % columns;
+          const row = Math.floor(colocatedIndex / columns);
+          x = coords.x + (column - (columns - 1) / 2) * 12;
+          y = coords.y + (row - (rows - 1) / 2) * 8;
+        } else if (colocatedCount > 1) {
+          const angle = (colocatedIndex / colocatedCount) * Math.PI * 2;
+          x = coords.x + Math.cos(angle) * 15;
+          y = coords.y + Math.sin(angle) * 10;
+        } else {
+          x = coords.x;
+          y = coords.y;
+        }
+      } else if (loc.parentLocationId) {
+        const parent: any = locationsById.get(loc.parentLocationId);
+        const parentCoords = parent ? getExactTierCoordinates(tierId, parent.slug) : undefined;
+        if (parentCoords) {
+          const base = hashToUnit(p.entityId);
+          x = parentCoords.x + (base * 80 - 40);
+          y = parentCoords.y + ((1 - base) * 80 - 40);
+        } else {
+          const base = hashToUnit(p.entityId);
+          x = 250 + base * 520;
+          y = 170 + base * 250;
+        }
+      } else {
+        const base = hashToUnit(p.entityId);
+        x = 250 + base * 520;
+        y = 170 + base * 250;
+      }
+    } else {
+      const base = hashToUnit(p.entityId);
+      x = 300 + base * 320;
+      y = 220 + base * 180;
+    }
+
+    return { x, y, loc, tierId };
+  }
+
   let dynamicCharacters = $derived(
     presences.map((p: any) => {
       const locationsById = new Map<string, any>((locations as any[]).map((location: any) => [location.id, location] as [string, any]));
@@ -192,64 +253,9 @@
 
       const body = bodies.find((candidate: any) => candidate.id === p.entityId);
       const ownerCharacter = body ? characters.find((candidate: any) => candidate.id === body.originalCharacterId) : null;
-      const loc = locations.find((l: any) => l.id === p.locationId);
-      const tierId = loc ? resolveTierSlug(loc, locationsById) : null;
+      const { x, y, loc, tierId } = calculatePresencePosition(p, presences as any[], locations as any[]);
       
       if (!body || !ownerCharacter) return null;
-
-      // Get coordinates based on location slug
-      let x = 500;
-      let y = 300;
-      
-      if (loc && tierId && locationCoordinates[tierId]) {
-        const coords = getExactTierCoordinates(tierId, loc.slug);
-        if (coords) {
-          const colocatedEntityIds = (presences as any[])
-            .filter((candidate) => candidate.locationId === p.locationId)
-            .map((candidate) => candidate.entityId)
-            .sort();
-          const colocatedIndex = Math.max(0, colocatedEntityIds.indexOf(p.entityId));
-          const colocatedCount = colocatedEntityIds.length;
-
-          if (colocatedCount > 1 && coords.isSmallRoom) {
-            const columns = Math.min(2, colocatedCount);
-            const rows = Math.ceil(colocatedCount / columns);
-            const column = colocatedIndex % columns;
-            const row = Math.floor(colocatedIndex / columns);
-            x = coords.x + (column - (columns - 1) / 2) * 12;
-            y = coords.y + (row - (rows - 1) / 2) * 8;
-          } else if (colocatedCount > 1) {
-            const angle = (colocatedIndex / colocatedCount) * Math.PI * 2;
-            x = coords.x + Math.cos(angle) * 15;
-            y = coords.y + Math.sin(angle) * 10;
-          } else {
-            x = coords.x;
-            y = coords.y;
-          }
-        } else {
-          if (loc.parentLocationId) {
-            const parent: any = locationsById.get(loc.parentLocationId);
-            const parentCoords = parent ? getExactTierCoordinates(tierId, parent.slug) : undefined;
-            if (parentCoords) {
-              const base = hashToUnit(p.entityId);
-              x = parentCoords.x + (base * 80 - 40);
-              y = parentCoords.y + ((1 - base) * 80 - 40);
-            } else {
-              const base = hashToUnit(p.entityId);
-              x = 250 + base * 520;
-              y = 170 + base * 250;
-            }
-          } else {
-            const base = hashToUnit(p.entityId);
-            x = 250 + base * 520;
-            y = 170 + base * 250;
-          }
-        }
-      } else {
-        const base = hashToUnit(p.entityId);
-        x = 300 + base * 320;
-        y = 220 + base * 180;
-      }
 
       const bodyName = toEnglishDisplayName(ownerCharacter?.canonicalName || body?.label) || 'Unknown body';
       const perspectiveIsReader = mapState.selectedPerspectiveKind === 'reader';
@@ -350,9 +356,77 @@
         isFollowTarget: isObserverBody
       };
 
+      const nextPresence = nextChapterState?.presences?.find((candidate: any) => candidate.entityId === p.entityId);
+      const nextBiologicalState = nextChapterState?.bodyStates?.[p.entityId];
+      mapped.originalCharacterId = ownerCharacter.id;
+      mapped.hatsuNames = ownerCharacter.hatsuNames || [];
+      mapped.futureChange = nextBiologicalState === 'DEAD' || nextBiologicalState === 'DESTROYED'
+        ? 'dead'
+        : nextPresence && nextPresence.locationId !== p.locationId
+          ? 'moved'
+          : 'stable';
+
       return mapped;
     }).filter(Boolean)
   );
+
+  let futureCharacters = $derived.by(() => {
+    if (!futureMode || !nextChapterState) return [];
+    const nextPresences = nextChapterState.presences || [];
+    const nextLocations = nextChapterState.locations || locations;
+    const nextBodies = nextChapterState.bodies || [];
+    const nextCharacters = nextChapterState.characters || [];
+
+    return nextPresences.map((presence: any) => {
+      const body = nextBodies.find((candidate: any) => candidate.id === presence.entityId);
+      const character = body ? nextCharacters.find((candidate: any) => candidate.id === body.originalCharacterId) : null;
+      const biologicalState = nextChapterState.bodyStates?.[presence.entityId];
+      if (!body || !character || biologicalState === 'DEAD' || biologicalState === 'DESTROYED') return null;
+
+      const { x, y, loc, tierId } = calculatePresencePosition(presence, nextPresences, nextLocations);
+      const visual = tierId ? tierVisuals[tierId] : undefined;
+      const overviewX = 39 + hashToUnit(`${presence.entityId}-offset`) * 22;
+      const overviewY = (visual?.overviewY ?? 46) + (hashToUnit(`${presence.entityId}-row`) * 4 - 2);
+      const localSeed = hashToUnit(`${presence.entityId}-local`);
+      const displayX = mapState.currentZoomLevel === 'OVERVIEW'
+        ? overviewX
+        : mapState.currentZoomLevel === 'LOCAL'
+          ? 38 + localSeed * 24
+          : x / 10;
+      const displayY = mapState.currentZoomLevel === 'OVERVIEW'
+        ? overviewY
+        : mapState.currentZoomLevel === 'LOCAL'
+          ? 38 + hashToUnit(`${presence.entityId}-local-y`) * 24
+          : y / 6;
+      return {
+        id: presence.entityId,
+        x: displayX,
+        y: displayY,
+        body: toEnglishDisplayName(character.canonicalName),
+        consciousness: toEnglishDisplayName(character.canonicalName),
+        appearance: toEnglishDisplayName(character.canonicalName),
+        perceivedIdentity: `${toEnglishDisplayName(character.canonicalName)} · Ch. ${nextChapterState.chapterNumber}`,
+        knowledgeState: 'confirmed' as const,
+        positionColor: '#d598ff',
+        tierLabel: visual?.label || 'Outside tier',
+        locationLabel: loc?.name || 'Unknown future position',
+        temporalLabel: 'Parallel future',
+        temporalDetail: `Position in chapter ${nextChapterState.chapterNumber}`,
+        tierId,
+        location: loc,
+        overviewX,
+        overviewY,
+        hatsuNames: character.hatsuNames || []
+      };
+    }).filter(Boolean).filter((character: any) => {
+      if (mapState.currentZoomLevel !== 'OVERVIEW' && mapState.selectedTier && character.tierId !== mapState.selectedTier) return false;
+      if (mapState.currentZoomLevel === 'LOCAL' && mapState.selectedLocationId) {
+        const byId = new Map<string, any>(nextLocations.map((location: any) => [location.id, location]));
+        return belongsToLocation(character.location, mapState.selectedLocationId, byId);
+      }
+      return true;
+    });
+  });
 
   let visibleCharacters = $derived.by(() => {
     const locationsById = new Map<string, any>((locations as any[]).map((location: any) => [location.id, location] as [string, any]));
@@ -391,8 +465,11 @@
 </script>
 
 <div class="presence-layer absolute inset-0 pointer-events-none" aria-label={`${visibleCharacters.length} visible characters`}>
+  {#each futureCharacters as char (char.id)}
+    <CharacterMarker character={char} future={true} />
+  {/each}
   {#each visibleCharacters as char (char.id)}
-    <CharacterMarker character={char} />
+    <CharacterMarker character={char} {futureMode} />
   {/each}
 </div>
 

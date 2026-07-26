@@ -69,7 +69,7 @@
         <strong>{$activeHatsu.name}</strong>
         <span class="instruction">{$activeHatsu.instruction}</span>
       </div>
-      <button class="release" onclick={deactivateHatsu}>Zetsu · release</button>
+      <button type="button" class="release" data-hatsu-release onclick={deactivateHatsu}>Zetsu · release</button>
     </section>
   {:else}
     <button class="sigil launcher" onclick={() => hatsuPanelOpen.set(true)} aria-label="Activate a Hatsu">

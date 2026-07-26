@@ -15,6 +15,30 @@
   type FloatingCard = { id: number; x: number; y: number; label: string; kind: 'clone' | 'projection'; href?: string | null }
   type BirdDispatch = { id: number; label: string; href: string | null }
   type GuideItem = { id: number; label: string; element: HTMLElement; href: string | null }
+  type MediaSnapshot = { element: HTMLMediaElement; paused: boolean; currentTime: number; controls: boolean }
+  type SiteSnapshot = {
+    url: string
+    scrollX: number
+    scrollY: number
+    activeElement: HTMLElement | null
+    media: MediaSnapshot[]
+    map: {
+      currentZoomLevel: typeof mapState.currentZoomLevel
+      selectedTier: typeof mapState.selectedTier
+      selectedLocationId: typeof mapState.selectedLocationId
+      selectedPerspectiveId: typeof mapState.selectedPerspectiveId
+      selectedPerspectiveKind: typeof mapState.selectedPerspectiveKind
+      selectedPerspectiveName: typeof mapState.selectedPerspectiveName
+      followMode: typeof mapState.followMode
+      compareWithReader: boolean
+      explainPanelOpen: boolean
+      explainTarget: typeof mapState.explainTarget
+      currentEventIndex: number
+      factions: string[]
+      spoilersEnabled: boolean
+      showUnknownPositions: boolean
+    }
+  }
   let points: Point[] = []
   let cursor = { x: -100, y: -100 }
   let sequence = 0
@@ -55,6 +79,7 @@
   let guideTitle = ''
   let guideItems: GuideItem[] = []
   let dialBest: { score: number; item: GuideItem } | null = null
+  let siteSnapshot: SiteSnapshot | null = null
   const snapshots = new Map<HTMLElement, ElementSnapshot>()
   const observers: MutationObserver[] = []
   const effectTimers = new Set<ReturnType<typeof setTimeout>>()
@@ -65,7 +90,10 @@
   $: profile = $activeHatsu
   $: visualSignature = profile ? visualSignatureFor(profile) : null
   $: if (profile?.id !== previousId) {
-    cleanupTechniqueState()
+    const hadActiveHatsu = previousId !== null
+    const releasingHatsu = hadActiveHatsu && !profile
+    cleanupTechniqueState(releasingHatsu)
+    if (profile && !hadActiveHatsu) siteSnapshot = captureSiteState()
     previousId = profile?.id ?? null
     points = []
     seconds = 0
@@ -81,7 +109,85 @@
     }
   }
 
-  function cleanupTechniqueState() {
+  function captureSiteState(): SiteSnapshot | null {
+    if (typeof window === 'undefined' || typeof document === 'undefined') return null
+    return {
+      url: `${window.location.pathname}${window.location.search}${window.location.hash}`,
+      scrollX: window.scrollX,
+      scrollY: window.scrollY,
+      activeElement: document.activeElement instanceof HTMLElement ? document.activeElement : null,
+      media: Array.from(document.querySelectorAll<HTMLMediaElement>('audio, video')).map((element) => ({
+        element,
+        paused: element.paused,
+        currentTime: element.currentTime,
+        controls: element.controls
+      })),
+      map: {
+        currentZoomLevel: mapState.currentZoomLevel,
+        selectedTier: mapState.selectedTier,
+        selectedLocationId: mapState.selectedLocationId,
+        selectedPerspectiveId: mapState.selectedPerspectiveId,
+        selectedPerspectiveKind: mapState.selectedPerspectiveKind,
+        selectedPerspectiveName: mapState.selectedPerspectiveName,
+        followMode: mapState.followMode,
+        compareWithReader: mapState.compareWithReader,
+        explainPanelOpen: mapState.explainPanelOpen,
+        explainTarget: mapState.explainTarget ? { ...mapState.explainTarget } : null,
+        currentEventIndex: mapState.currentEventIndex,
+        factions: [...mapState.filters.factions],
+        spoilersEnabled: mapState.filters.spoilersEnabled,
+        showUnknownPositions: mapState.filters.showUnknownPositions
+      }
+    }
+  }
+
+  function applyMapSnapshot(snapshot: SiteSnapshot['map']) {
+    mapState.currentZoomLevel = snapshot.currentZoomLevel
+    mapState.selectedTier = snapshot.selectedTier
+    mapState.selectedLocationId = snapshot.selectedLocationId
+    mapState.selectedPerspectiveId = snapshot.selectedPerspectiveId
+    mapState.selectedPerspectiveKind = snapshot.selectedPerspectiveKind
+    mapState.selectedPerspectiveName = snapshot.selectedPerspectiveName
+    mapState.followMode = snapshot.followMode
+    mapState.compareWithReader = snapshot.compareWithReader
+    mapState.explainPanelOpen = snapshot.explainPanelOpen
+    mapState.explainTarget = snapshot.explainTarget ? { ...snapshot.explainTarget } : null
+    mapState.currentEventIndex = snapshot.currentEventIndex
+    mapState.filters.factions = [...snapshot.factions]
+    mapState.filters.spoilersEnabled = snapshot.spoilersEnabled
+    mapState.filters.showUnknownPositions = snapshot.showUnknownPositions
+  }
+
+  function restoreSiteState() {
+    const snapshot = siteSnapshot
+    siteSnapshot = null
+    if (!snapshot || typeof window === 'undefined' || typeof document === 'undefined') return
+
+    const finishRestoration = () => {
+      applyMapSnapshot(snapshot.map)
+      for (const media of snapshot.media) {
+        if (!media.element.isConnected) continue
+        media.element.controls = media.controls
+        if (Number.isFinite(media.currentTime)) media.element.currentTime = media.currentTime
+        if (media.paused) media.element.pause()
+        else void media.element.play().catch(() => undefined)
+      }
+      window.requestAnimationFrame(() => {
+        window.scrollTo({ left: snapshot.scrollX, top: snapshot.scrollY, behavior: 'auto' })
+        if (snapshot.activeElement?.isConnected) snapshot.activeElement.focus({ preventScroll: true })
+      })
+    }
+
+    applyMapSnapshot(snapshot.map)
+    const currentUrl = `${window.location.pathname}${window.location.search}${window.location.hash}`
+    if (currentUrl !== snapshot.url) {
+      void goto(snapshot.url, { replaceState: true, keepFocus: true, noScroll: true })
+        .then(finishRestoration)
+        .catch(finishRestoration)
+    } else finishRestoration()
+  }
+
+  function cleanupTechniqueState(restoreSite = false) {
     cleanupBungeeSelection()
     if (futureTimer) clearTimeout(futureTimer)
     if (captureTimer) clearTimeout(captureTimer)
@@ -142,6 +248,7 @@
         'hatsu-no-sight', 'hatsu-no-hearing', 'hatsu-no-speech', 'hatsu-portal-exhausted'
       )
     }
+    if (restoreSite) restoreSiteState()
   }
 
   function schedule(callback: () => void, delay: number) {
@@ -207,7 +314,10 @@
       return
     }
     const details = element.closest('details') || element.querySelector('details')
-    if (details instanceof HTMLDetailsElement) details.open = !details.open
+    if (details instanceof HTMLDetailsElement) {
+      remember(details)
+      details.open = !details.open
+    }
     element.scrollIntoView({ behavior: 'smooth', block: 'center' })
   }
 
@@ -1519,6 +1629,7 @@
     return () => {
       clearInterval(timer)
       cleanupTechniqueState()
+      siteSnapshot = null
       window.removeEventListener('pointermove', move)
       window.removeEventListener('click', click, true)
       window.removeEventListener('contextmenu', placePortal, true)

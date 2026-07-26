@@ -1,4 +1,7 @@
 <script lang="ts">
+  import BlackWhaleVoyage from '$lib/components/home/BlackWhaleVoyage.svelte';
+  import VoyageProgress from '$lib/components/VoyageProgress.svelte';
+
   const dossiers = [
     { index: '01', title: 'Spatial intelligence', copy: 'Navigate five tiers and inspect who is where at any point in the voyage.', href: '/ship', tag: 'LIVE MAP' },
     { index: '02', title: 'Canonical sequence', copy: 'Trace each confrontation, alliance, and transfer in narrative order.', href: '/timeline', tag: 'EVENT LOG' },
@@ -29,34 +32,7 @@
       </div>
     </div>
 
-    <div class="ship-visual" aria-label="Black Whale schematic with five navigable tiers">
-      <div class="coordinate top">N 47° 18′ 09″</div>
-      <div class="coordinate side">BW / SECTIONAL</div>
-      <svg viewBox="0 0 760 560" role="img" aria-labelledby="ship-title ship-desc">
-        <title id="ship-title">Black Whale sectional schematic</title>
-        <desc id="ship-desc">Five ship tiers shown as navigable horizontal sections.</desc>
-        <defs>
-          <linearGradient id="hull" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stop-color="#17262d"/><stop offset="1" stop-color="#0b1217"/>
-          </linearGradient>
-          <filter id="glow"><feGaussianBlur stdDeviation="5" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-        </defs>
-        <path class="hull-shadow" d="M380 47c47 0 74 42 84 77 118 13 199 74 221 172 18 82-10 166-90 203-79 37-351 37-430 0-80-37-108-121-90-203 22-98 103-159 221-172 10-35 37-77 84-77Z"/>
-        <path class="hull" d="M380 47c47 0 74 42 84 77 118 13 199 74 221 172 18 82-10 166-90 203-79 37-351 37-430 0-80-37-108-121-90-203 22-98 103-159 221-172 10-35 37-77 84-77Z"/>
-        <path class="whale-mark" d="M147 273c39-19 86-26 130-17-42 8-71 27-92 58-22-3-43-14-58-31l20-10Zm466 0c-39-19-86-26-130-17 42 8 71 27 92 58 22-3 43-14 58-31l-20-10Z"/>
-        <g class="tiers">
-          <a href="/ship?tier=tier-1" aria-label="Open Tier 1"><path d="M297 125h166l68 49H229l68-49Z"/><text x="380" y="157">TIER 01</text></a>
-          <a href="/ship?tier=tier-2" aria-label="Open Tier 2"><path d="M211 181h338c29 16 54 37 73 62H138c19-25 44-46 73-62Z"/><text x="380" y="219">TIER 02</text></a>
-          <a href="/ship?tier=tier-3" aria-label="Open Tier 3"><path d="M130 251h500c14 21 22 45 25 71H105c3-26 11-50 25-71Z"/><text x="380" y="293">TIER 03</text></a>
-          <a href="/ship?tier=tier-4" aria-label="Open Tier 4"><path d="M104 330h552c0 29-7 55-20 78H124c-13-23-20-49-20-78Z"/><text x="380" y="376">TIER 04</text></a>
-          <a href="/ship?tier=tier-5" aria-label="Open Tier 5"><path d="M130 416h500c-17 34-48 59-92 72H222c-44-13-75-38-92-72Z"/><text x="380" y="458">TIER 05</text></a>
-        </g>
-        <circle class="scanner" cx="380" cy="293" r="177"/>
-        <path class="scanner-line" d="M380 293 500 174"/>
-        <circle class="core" cx="380" cy="293" r="4"/>
-      </svg>
-      <div class="visual-legend"><span><i></i> Select a tier</span><span>Scale 1:2800</span></div>
-    </div>
+    <div class="ship-visual"><BlackWhaleVoyage /><VoyageProgress /></div>
 
     <div class="hero-index" aria-hidden="true">001</div>
   </section>
@@ -116,24 +92,7 @@
   .signal { display: flex; height: 1.1rem; align-items: end; gap: 2px; }
   .signal i { display: block; width: 2px; background: var(--state-known); animation: signal 1.3s ease-in-out infinite alternate; }
   .signal i:nth-child(1) { height: 35%; }.signal i:nth-child(2) { height: 70%; animation-delay: -.4s; }.signal i:nth-child(3) { height: 100%; animation-delay: -.8s; }.signal i:nth-child(4) { height: 55%; animation-delay: -.2s; }
-  .ship-visual { position: relative; max-width: 47rem; justify-self: center; }
-  .ship-visual svg { display: block; width: 100%; overflow: visible; filter: drop-shadow(0 35px 55px rgba(0,0,0,.45)); }
-  .hull-shadow { fill: rgba(0,0,0,.45); transform: translateY(18px); }
-  .hull { fill: url(#hull); stroke: rgba(216,191,118,.35); stroke-width: 1; }
-  .whale-mark { fill: rgba(112,189,193,.1); stroke: rgba(112,189,193,.35); stroke-width: 1; }
-  .tiers a { color: inherit; }
-  .tiers path { fill: rgba(15,29,36,.92); stroke: rgba(173,188,190,.2); stroke-width: 1; transition: fill .28s, stroke .28s, transform .28s; transform-origin: center; }
-  .tiers text { fill: #819094; font: 600 10px var(--font-mono); letter-spacing: 3px; text-anchor: middle; pointer-events: none; transition: fill .28s; }
-  .tiers a:hover path, .tiers a:focus path { fill: rgba(200,169,86,.16); stroke: var(--accent-gold); transform: scale(1.015); }
-  .tiers a:hover text, .tiers a:focus text { fill: var(--accent-gold-bright); }
-  .scanner { fill: none; stroke: rgba(112,189,193,.16); stroke-dasharray: 3 9; transform-origin: center; animation: rotate 36s linear infinite; }
-  .scanner-line { stroke: rgba(112,189,193,.18); stroke-width: 1; transform-origin: 380px 293px; animation: rotate 9s linear infinite; }
-  .core { fill: var(--accent-gold); filter: url(#glow); }
-  .coordinate, .visual-legend { color: var(--text-faint); font: .5rem/1 var(--font-mono); letter-spacing: .12em; text-transform: uppercase; }
-  .coordinate { position: absolute; }
-  .coordinate.top { top: 4%; right: 3%; }.coordinate.side { top: 43%; left: -2rem; writing-mode: vertical-rl; }
-  .visual-legend { display: flex; justify-content: space-between; padding: .7rem 1rem 0; border-top: 1px solid var(--line-subtle); }
-  .visual-legend i { display: inline-block; width: .4rem; height: .4rem; margin-right: .3rem; border-radius: 50%; background: var(--accent-gold); }
+  .ship-visual { position: relative; display: grid; width: min(51rem,100%); justify-self: center; gap: .8rem; }
   .hero-index { position: absolute; right: 1.5rem; bottom: 1rem; color: rgba(240,238,230,.035); font: 500 clamp(8rem, 20vw, 18rem)/.75 var(--font-display); pointer-events: none; }
   .metrics { display: grid; max-width: var(--container-wide); margin: 0 auto; grid-template-columns: repeat(4,1fr); padding: 0 var(--page-gutter); }
   .metrics div { display: flex; align-items: baseline; gap: .7rem; padding: 1.5rem; border-top: 1px solid var(--line-default); border-right: 1px solid var(--line-subtle); }
@@ -149,8 +108,8 @@
   .dossier-card h3 { max-width: 16rem; margin: 7.5rem 0 1rem; font-size: 2.2rem; line-height: .95; }.dossier-card p { max-width: 19rem; color: var(--text-muted); font-size: .8rem; line-height: 1.65; }.dossier-card > i { position: absolute; bottom: 1.5rem; color: var(--text-secondary); font: normal .58rem/1 var(--font-mono); letter-spacing: .08em; text-transform: uppercase; }
   .closing { position: relative; padding: clamp(7rem, 14vw, 13rem) var(--page-gutter); border-top: 1px solid var(--line-subtle); text-align: center; background: radial-gradient(circle at 50% 60%, rgba(37,83,89,.18),transparent 42%); }
   .closing h2 { margin-inline: auto; }.closing a { display: inline-flex; align-items: center; gap: 1rem; margin-top: 2.5rem; padding-bottom: .55rem; border-bottom: 1px solid var(--accent-gold); color: var(--accent-gold-bright); font-size: .72rem; text-decoration: none; text-transform: uppercase; }.closing a span { transition: transform .2s; }.closing a:hover span { transform: translateX(.4rem); }
-  @keyframes rotate { to { transform: rotate(360deg); } } @keyframes signal { to { opacity: .35; transform: scaleY(.45); } }
+  @keyframes signal { to { opacity: .35; transform: scaleY(.45); } }
   @media (max-width: 900px) { .hero { min-height: auto; grid-template-columns: 1fr; padding-top: 5rem; }.hero::before { display: none; }.ship-visual { width: min(100%,38rem); }.manifest > header { grid-template-columns: 1fr; }.dossier-grid { grid-template-columns: 1fr; }.dossier-card { min-height: 18rem; border-right: 0; border-bottom: 1px solid var(--line-default); }.dossier-card h3 { margin-top: 4.5rem; } }
-  @media (max-width: 600px) { .hero { padding-inline: 1rem; }.hero h1 { font-size: clamp(4rem,22vw,6rem); }.metrics { grid-template-columns: repeat(2,1fr); padding-inline: 1rem; }.metrics div:nth-child(2) { border-right: 0; }.manifest { padding-inline: 1rem; }.visual-legend { padding-inline: 0; }.coordinate.side { display: none; } }
-  @media (prefers-reduced-motion: reduce) { .scanner,.scanner-line,.signal i { animation: none; } }
+  @media (max-width: 600px) { .hero { padding-inline: 1rem; }.hero h1 { font-size: clamp(4rem,22vw,6rem); }.ship-visual{width:125%;margin-left:-12.5%;overflow:hidden}.metrics { grid-template-columns: repeat(2,1fr); padding-inline: 1rem; }.metrics div:nth-child(2) { border-right: 0; }.manifest { padding-inline: 1rem; } }
+  @media (prefers-reduced-motion: reduce) { .signal i { animation: none; } }
 </style>

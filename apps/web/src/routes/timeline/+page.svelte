@@ -1,5 +1,7 @@
 <script lang="ts">
   import type { PageData } from './$types';
+  import VoyageProgress from '$lib/components/VoyageProgress.svelte';
+  import { formatVoyageTime, voyageTimeForEvent } from '$lib/voyageTime';
 
   let { data }: { data: PageData } = $props();
   let query = $state('');
@@ -78,6 +80,8 @@
     </dl>
   </header>
 
+  <div class="voyage-overview"><VoyageProgress compact /></div>
+
   <div class="toolbar">
     <label class="search-field">
       <span class="sr-only">Search the timeline</span>
@@ -134,10 +138,12 @@
 
             <ol class="events">
               {#each chapter.events as event, eventIndex (event.id)}
+                {@const voyageTime = voyageTimeForEvent(chapter.number, event.title)}
                 <li>
                   <a href="/ship?eventId={event.id}" aria-label="{event.title} — open on the map">
                     <span class="event-index">{String(eventIndex + 1).padStart(2, '0')}</span>
                     <span class="event-copy">
+                      {#if voyageTime}<span class:approximate={voyageTime.precision === 'approximate'} class="event-time">{formatVoyageTime(voyageTime)}</span>{/if}
                       <span class="event-title">{event.title}</span>
                       <span class="event-summary">{event.summary}</span>
                     </span>
@@ -208,6 +214,7 @@
   }
 
   .intro { max-width: 620px; margin: 1.25rem 0 0; color: #9ba8aa; font-size: clamp(.95rem, 1.4vw, 1.08rem); line-height: 1.65; }
+  .voyage-overview { max-width: 1180px; margin: 0 auto 1rem; }
 
   .stats { display: flex; flex: none; margin: 0; gap: 1px; overflow: hidden; border: 1px solid rgba(134,156,162,.22); border-radius: .7rem; background: rgba(134,156,162,.18); }
   .stats div { min-width: 105px; padding: .85rem 1rem; background: rgba(9,16,23,.88); }
@@ -251,6 +258,8 @@
   .events a:hover::before { opacity: 1; }
   .event-index { color: #536366; font: 500 .7rem/1 'IBM Plex Sans Condensed', sans-serif; letter-spacing: .08em; }
   .event-copy { display: grid; gap: .32rem; min-width: 0; }
+  .event-time { width: fit-content; padding: .18rem .36rem; border: 1px solid rgba(112,189,193,.24); border-radius: .25rem; background: rgba(112,189,193,.07); color: #8fc9ca; font: 600 .49rem/1 var(--font-mono); letter-spacing: .08em; text-transform: uppercase; }
+  .event-time.approximate { border-color: rgba(201,164,74,.22); background: rgba(201,164,74,.06); color: #c9ad66; }
   .event-title { color: #e7e8e1; font: 600 1.02rem/1.25 'IBM Plex Sans Condensed', sans-serif; }
   .event-summary { color: #8d9a9d; font-size: .78rem; line-height: 1.5; }
   .event-action { display: flex; align-items: center; gap: .8rem; color: #667779; font-size: .58rem; letter-spacing: .1em; text-transform: uppercase; }

@@ -13,7 +13,6 @@
       .label { fill: #FFFFF0; font-family: sans-serif; font-size: 16px; font-weight: bold; pointer-events: none; text-anchor: middle; }
       .sublabel { fill: #FFD700; font-size: 12px; pointer-events: none; text-anchor: middle; }
       .furniture { fill: #222; stroke: #666; stroke-width: 3; }
-      .botobai { fill: #800; stroke: #a00; stroke-width: 2; }
     </style>
   </defs>
   
@@ -27,14 +26,8 @@
     <rect role="button" tabindex="0" aria-label="Inspect map area" onkeydown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.currentTarget.dispatchEvent(new MouseEvent('click', { bubbles: true })); } }} class="zone" x="200" y="0" width="300" height="200" onclick={() => handleElementClick('judges-bench')} />
     <rect x="220" y="120" width="260" height="60" class="furniture" /> <!-- Bench -->
     
-    <!-- Botobai Gigante -->
-    <rect x="310" y="20" width="80" height="100" class="botobai" /> <!-- Giant Chair -->
-    <circle cx="350" cy="50" r="15" fill="#fcc" /> <!-- Botobai's head -->
-    <path d="M 335 40 Q 350 20 365 40" fill="none" stroke="#f00" stroke-width="3" /> <!-- Horns/Hair -->
-    <rect x="320" y="70" width="60" height="50" class="botobai" /> <!-- Body -->
-    
-    <text x="350" y="160" class="label text-white">Botobai Gigante</text>
-    <text x="350" y="175" class="sublabel">Zodiac (Dragon)</text>
+    <rect x="310" y="20" width="80" height="100" class="furniture" />
+    <text x="350" y="160" class="label text-white">Magistrate's Seat</text>
     
     <!-- Clerk's Desk (Right) -->
     <rect x="550" y="180" width="100" height="60" class="furniture" />

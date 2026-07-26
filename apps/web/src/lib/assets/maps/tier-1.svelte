@@ -98,14 +98,14 @@
       <text x="652" y="380" class="label text-green-400">Soldiers</text>
     </g>
     
-    <!-- Jail Block (Beyond & VIP Detention) -->
+    <!-- Jail Block and VIP Detention -->
     <g id="t1-jail">
       <rect x="730" y="220" width="120" height="130" fill="none" stroke="#f00" stroke-width="2" stroke-dasharray="4,4" />
       <text x="790" y="240" class="label text-red-500">Jail Block</text>
       
-      <g role="button" tabindex="0" aria-label="Open Beyond's Cell" onclick={() => handleZoneClick('beyond-cell')} onkeydown={(event) => handleZoneKeydown(event, 'beyond-cell')}>
+      <g role="button" tabindex="0" aria-label="Open High-security Cell" onclick={() => handleZoneClick('beyond-cell')} onkeydown={(event) => handleZoneKeydown(event, 'beyond-cell')}>
         <rect class="zone" class:selected={mapState.selectedLocationId === 'beyond-cell'} x="740" y="250" width="100" height="40" />
-        <text x="790" y="275" class="sublabel text-xs">Beyond's Cell</text>
+        <text x="790" y="275" class="sublabel text-xs">High-security Cell</text>
       </g>
       
       <g role="button" tabindex="0" aria-label="Open VIP Detention" onclick={() => handleZoneClick('vip-detention')} onkeydown={(event) => handleZoneKeydown(event, 'vip-detention')}>
@@ -117,7 +117,7 @@
     <g id="t1-supreme-court" role="button" tabindex="0" aria-label="Open Supreme Court" onclick={() => handleZoneClick('supreme-court')} onkeydown={(event) => handleZoneKeydown(event, 'supreme-court')}>
       <rect class="zone" class:selected={mapState.selectedLocationId === 'supreme-court'} x="730" y="370" width="120" height="80" />
       <text x="790" y="405" class="label text-blue-400 text-[10px]">Supreme Court</text>
-      <text x="790" y="422" class="sublabel text-[9px]">Cleapatro</text>
+      <text x="790" y="422" class="sublabel text-[9px]">Judicial chamber</text>
     </g>
 
     <!-- Lifeboats (Edges of the ship) -->

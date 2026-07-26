@@ -21,10 +21,9 @@
   <text x="450" y="38" class="label" font-size="28" fill="#ffd700">Supreme Court · Tier 1</text>
   <g transform="translate(75 75)">
     <rect width="750" height="500" class="wall" />
-    <rect role="button" tabindex="0" aria-label="Inspect Cleapatro's bench" class="zone" x="180" y="25" width="390" height="150" onclick={() => inspect('magistrate-bench')} onkeydown={(event) => inspectWithKeyboard(event, 'magistrate-bench')} />
+    <rect role="button" tabindex="0" aria-label="Inspect the magistrate's bench" class="zone" x="180" y="25" width="390" height="150" onclick={() => inspect('magistrate-bench')} onkeydown={(event) => inspectWithKeyboard(event, 'magistrate-bench')} />
     <rect x="225" y="105" width="300" height="55" class="desk" />
-    <circle cx="375" cy="72" r="25" fill="#d8c7b7" />
-    <text x="375" y="145" class="label">Supreme Magistrate Cleapatro</text>
+    <text x="375" y="145" class="label">Supreme Magistrate's Bench</text>
     <rect x="70" y="245" width="220" height="90" class="desk" />
     <rect x="460" y="245" width="220" height="90" class="desk" />
     <text x="180" y="295" class="label">Prosecution</text>

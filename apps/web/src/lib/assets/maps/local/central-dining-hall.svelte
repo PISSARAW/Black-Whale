@@ -14,7 +14,6 @@
       .label { fill: #FFFFF0; font-family: sans-serif; font-size: 16px; font-weight: bold; pointer-events: none; text-anchor: middle; }
       .sublabel { fill: #FFD700; font-size: 12px; pointer-events: none; text-anchor: middle; }
       .passenger { fill: #555; stroke: #222; }
-      .phantom { fill: #111; stroke: #800; stroke-width: 2; }
       .thug { fill: #2b6cb0; stroke: #1a365d; stroke-width: 2; }
       .wall { stroke: #666; stroke-width: 6; }
     </style>
@@ -73,15 +72,14 @@
     <!-- People at Main Table -->
     <!-- Top Bench (Facing us) -->
     <circle cx="380" cy="245" r="15" class="passenger" />
-    <circle cx="500" cy="245" r="15" class="phantom" /> <!-- Phinks/Feitan/Nobunaga -->
-    <circle cx="600" cy="245" r="15" class="phantom" /> 
+    <circle cx="500" cy="245" r="15" class="passenger" />
+    <circle cx="600" cy="245" r="15" class="passenger" />
     
     <!-- Bottom Bench (Backs to us) -->
     <circle cx="430" cy="385" r="15" class="passenger" />
     <circle cx="500" cy="385" r="15" class="passenger" />
     <circle cx="570" cy="385" r="15" class="passenger" />
-    <circle cx="640" cy="385" r="20" class="phantom" /> <!-- Franklin -->
-    <text x="640" y="420" class="sublabel text-[10px] text-red-500">Troupe Member</text>
+    <circle cx="640" cy="385" r="20" class="passenger" />
     
     <!-- Huge crowd milling about in the negative space -->
     {#each Array(30) as _, i}

@@ -35,6 +35,6 @@
     {#each [[315,465],[555,465],[315,430],[555,430]] as point}
       <circle class="guard" cx={point[0]} cy={point[1]} r="14" />
     {/each}
-    <text x="435" y="448" class="sub">Four guard posts before Luini's attack</text>
+    <text x="435" y="448" class="sub">Four perimeter guard posts</text>
   </g>
 </svg>

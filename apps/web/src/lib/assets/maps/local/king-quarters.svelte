@@ -22,7 +22,7 @@
       .painting { fill: #181818; stroke: #c8a956; stroke-width: 3; }
     </style>
   </defs>
-  <text x="450" y="38" class="label" font-size="28" fill="#ffd700">King Nasubi's Living Quarters</text>
+  <text x="450" y="38" class="label" font-size="28" fill="#ffd700">Royal Living Quarters</text>
   <g transform="translate(75 75)">
     <rect width="750" height="520" fill="url(#royal-floor)" class="wall" />
     <rect role="button" tabindex="0" aria-label="Inspect the royal living room" class="zone" x="40" y="55" width="670" height="390" onclick={() => inspect('living-room')} onkeydown={(event) => inspectWithKeyboard(event, 'living-room')} />

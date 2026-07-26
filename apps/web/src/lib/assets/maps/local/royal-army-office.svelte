@@ -14,7 +14,6 @@
       .sublabel { fill: #FFD700; font-size: 12px; pointer-events: none; text-anchor: middle; }
       .furniture { fill: #333; stroke: #666; stroke-width: 2; }
       .person { fill: #5a6578; stroke: #2d3748; stroke-width: 2; }
-      .mizaistom { fill: #000; stroke: #fff; stroke-width: 2; } /* Cow patterns */
       .screen { fill: #fff; stroke: #000; stroke-width: 4; }
     </style>
   </defs>
@@ -38,13 +37,6 @@
     <!-- Podium -->
     <rect x="350" y="150" width="40" height="40" fill="#555" stroke="#222" stroke-width="2" />
     
-    <!-- Instructor (Mizaistom) -->
-    <circle cx="410" cy="160" r="15" class="mizaistom" />
-    <!-- White spots for cow -->
-    <circle cx="405" cy="155" r="3" fill="#fff" />
-    <circle cx="415" cy="165" r="4" fill="#fff" />
-    <text x="410" y="190" class="sublabel text-xs">Mizaistom</text>
-
     <!-- U-Shaped Meeting Table -->
     <path d="M 250 250 L 550 250 L 550 450 L 450 450 L 450 300 L 350 300 L 350 450 L 250 450 Z" class="furniture" />
     

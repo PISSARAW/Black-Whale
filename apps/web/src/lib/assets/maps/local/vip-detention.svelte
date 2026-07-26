@@ -33,12 +33,11 @@
     <text x="50" y="295" class="sublabel text-xs">Guard Desk</text>
     <text x="80" y="240" class="sublabel text-xs">zZz</text>
 
-    <!-- Top Cells (VIP - Camilla) -->
-    <!-- Camilla's Cell -->
-    <rect role="button" tabindex="0" aria-label="Inspect map area" onkeydown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.currentTarget.dispatchEvent(new MouseEvent('click', { bubbles: true })); } }} class="zone" x="150" y="0" width="250" height="200" onclick={() => handleElementClick('camilla-cell')} />
+    <!-- Top VIP Cells -->
+    <rect role="button" tabindex="0" aria-label="Inspect map area" onkeydown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.currentTarget.dispatchEvent(new MouseEvent('click', { bubbles: true })); } }} class="zone" x="150" y="0" width="250" height="200" onclick={() => handleElementClick('first-class-cell')} />
     <line class="wall" x1="400" y1="0" x2="400" y2="200" />
     <line class="bars" x1="150" y1="200" x2="400" y2="200" /> <!-- Bars facing corridor -->
-    <text x="275" y="40" class="label text-purple-400">Camilla's Cell (First Class)</text>
+    <text x="275" y="40" class="label text-purple-400">First-Class Cell</text>
     <!-- Bed -->
     <rect x="170" y="50" width="100" height="140" class="furniture" />
     <!-- Sink/Toilet -->
@@ -51,12 +50,11 @@
     <line class="bars" x1="400" y1="200" x2="650" y2="200" />
     <text x="525" y="40" class="label text-gray-500">Empty VIP Cell</text>
 
-    <!-- Bottom Cells (Standard / Bodyguards - Tuffdy) -->
-    <!-- Tuffdy's Cell -->
-    <rect role="button" tabindex="0" aria-label="Inspect map area" onkeydown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.currentTarget.dispatchEvent(new MouseEvent('click', { bubbles: true })); } }} class="zone" x="250" y="300" width="150" height="200" onclick={() => handleElementClick('tuffdy-cell')} />
+    <!-- Bottom Standard Cells -->
+    <rect role="button" tabindex="0" aria-label="Inspect map area" onkeydown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.currentTarget.dispatchEvent(new MouseEvent('click', { bubbles: true })); } }} class="zone" x="250" y="300" width="150" height="200" onclick={() => handleElementClick('standard-cell-1')} />
     <line class="wall" x1="400" y1="300" x2="400" y2="500" />
     <line class="bars" x1="250" y1="300" x2="400" y2="300" /> <!-- Bars facing corridor -->
-    <text x="325" y="480" class="label text-blue-400">Tuffdy's Cell</text>
+    <text x="325" y="480" class="label text-blue-400">Standard Cell</text>
     <!-- Bed -->
     <rect x="270" y="320" width="70" height="130" class="furniture" />
     <!-- Sink/Toilet -->

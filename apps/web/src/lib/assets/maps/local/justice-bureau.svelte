@@ -25,8 +25,8 @@
     <rect width="880" height="550" class="wall" />
     <rect role="button" tabindex="0" aria-label="Inspect the lobby" class="zone" x="25" y="25" width="250" height="190" onclick={() => inspect('lobby')} onkeydown={(event) => inspectWithKeyboard(event, 'lobby')} />
     <text x="150" y="115" class="label">Lobby</text>
-    <rect role="button" tabindex="0" aria-label="Inspect Kaiser's office" class="zone" x="305" y="25" width="250" height="190" onclick={() => inspect('kaiser-office')} onkeydown={(event) => inspectWithKeyboard(event, 'kaiser-office')} />
-    <text x="430" y="100" class="label">Kaiser's Office</text>
+    <rect role="button" tabindex="0" aria-label="Inspect the deputy minister's office" class="zone" x="305" y="25" width="250" height="190" onclick={() => inspect('deputy-minister-office')} onkeydown={(event) => inspectWithKeyboard(event, 'deputy-minister-office')} />
+    <text x="430" y="100" class="label">Deputy Minister's Office</text>
     <text x="430" y="125" class="sub">Bookcases · work desk</text>
     <rect role="button" tabindex="0" aria-label="Inspect interrogation rooms" class="zone" x="585" y="25" width="270" height="190" onclick={() => inspect('interrogation')} onkeydown={(event) => inspectWithKeyboard(event, 'interrogation')} />
     <text x="720" y="105" class="label">Interrogation Rooms</text>

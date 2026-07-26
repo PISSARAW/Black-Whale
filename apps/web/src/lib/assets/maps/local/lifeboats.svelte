@@ -82,13 +82,5 @@
     <line x1="530" y1="250" x2="635" y2="250" stroke="#444" stroke-width="2" />
     <line x1="715" y1="250" x2="820" y2="250" stroke="#444" stroke-width="2" />
 
-    <!-- Passenger (Kacho) lying on floor -->
-    <circle cx="730" cy="300" r="15" fill="#ffe0bd" /> <!-- Head -->
-    <path d="M 730 315 L 750 360 L 710 360 Z" fill="#fff" stroke="#333" /> <!-- Dress -->
-    <line x1="730" y1="315" x2="710" y2="330" stroke="#ffe0bd" stroke-width="4" /> <!-- Arm -->
-    <line x1="730" y1="315" x2="760" y2="330" stroke="#ffe0bd" stroke-width="4" /> <!-- Arm -->
-    <line x1="720" y1="360" x2="710" y2="390" stroke="#ffe0bd" stroke-width="4" /> <!-- Leg -->
-    <line x1="740" y1="360" x2="750" y2="390" stroke="#ffe0bd" stroke-width="4" /> <!-- Leg -->
-    
   </g>
 </svg>

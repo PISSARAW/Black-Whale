@@ -27,8 +27,8 @@
     <text x="350" y="200" class="sub">Registered Heil-Ly premises searched by Kakin soldiers</text>
     <line x1="275" y1="480" x2="425" y2="480" class="sealed" />
     <text x="350" y="450" class="sub">Sealed public entrance</text>
-    <rect role="button" tabindex="0" aria-label="Inspect the passage toward Morena's quarters" class="zone" x="520" y="350" width="145" height="95" onclick={() => inspect('tier-1-passage')} onkeydown={(event) => inspectWithKeyboard(event, 'tier-1-passage')} />
+    <rect role="button" tabindex="0" aria-label="Inspect the passage toward the Tier 1 quarters" class="zone" x="520" y="350" width="145" height="95" onclick={() => inspect('tier-1-passage')} onkeydown={(event) => inspectWithKeyboard(event, 'tier-1-passage')} />
     <path d="M555 395 H630 M610 375 L630 395 L610 415" fill="none" stroke="#ffd700" stroke-width="4" />
-    <text x="592" y="438" class="sub">Passage to Morena's Tier 1 quarters</text>
+    <text x="592" y="438" class="sub">Passage to private Tier 1 quarters</text>
   </g>
 </svg>

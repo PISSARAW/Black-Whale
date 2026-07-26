@@ -56,19 +56,16 @@
       <circle cx="140" cy="100" r="15" class="character" />
     </g>
 
-    <!-- Table 2 (Hisoka vs Bonolenov potential area) -->
+    <!-- Table 2 -->
     <g transform="translate(700, 300)">
       <ellipse cx="100" cy="50" rx="80" ry="40" class="table" />
       <text x="100" y="55" class="label text-xs">Table 2</text>
       <!-- Dealer -->
       <circle cx="100" cy="0" r="12" class="character" fill="#111" />
       
-      <!-- Notable Players -->
-      <circle cx="20" cy="50" r="15" fill="#ff99cc" stroke="#333" /> <!-- Hisoka stand-in -->
-      <text x="20" y="25" class="label text-[10px] text-pink-500">Hisoka?</text>
-      
-      <circle cx="140" cy="100" r="15" fill="#cc9966" stroke="#333" /> <!-- Bonolenov stand-in -->
-      <text x="140" y="130" class="label text-[10px] text-yellow-600">Bonolenov?</text>
+      <!-- Players -->
+      <circle cx="20" cy="50" r="15" class="character" />
+      <circle cx="140" cy="100" r="15" class="character" />
     </g>
 
     <!-- Bunny Girls serving drinks -->

@@ -1,6 +1,6 @@
 <script lang="ts">
   function handleElementClick(elementId: string) {
-    console.log(`Clicked on ${elementId} in Beyond's Cell area`);
+    console.log(`Clicked on ${elementId} in the high-security cell area`);
   }
 </script>
 
@@ -17,7 +17,7 @@
     </style>
   </defs>
   
-  <text x="400" y="40" class="label" font-size="28" fill="#FFD700">Beyond Netero's Holding Cell</text>
+  <text x="400" y="40" class="label" font-size="28" fill="#FFD700">High-Security Holding Cell</text>
 
   <g transform="translate(100, 100)">
     <!-- Outer Walls -->
@@ -30,10 +30,6 @@
     <!-- Bed -->
     <rect x="30" y="100" width="120" height="250" fill="#111" stroke="#333" stroke-width="2" />
     <text x="90" y="225" class="sublabel text-gray-500 text-xs">Bed</text>
-    
-    <!-- Beyond -->
-    <circle cx="90" cy="140" r="25" fill="none" stroke="#666" stroke-width="2" />
-    <text x="90" y="145" class="sublabel text-[10px]">Beyond</text>
     
     <!-- Manacle bolting right arm to wall -->
     <path class="manacle" d="M 0 160 Q 50 180 110 160" /> <!-- Chain -->
@@ -51,17 +47,13 @@
     <rect role="button" tabindex="0" aria-label="Inspect map area" onkeydown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.currentTarget.dispatchEvent(new MouseEvent('click', { bubbles: true })); } }} class="zone" x="250" y="0" width="350" height="400" onclick={() => handleElementClick('guard-area')} />
     <text x="425" y="40" class="label text-blue-400">Zodiac 24-Hour Watch</text>
     
-    <!-- Zodiac 1 (Kanzai) -->
+    <!-- Guard workstations -->
     <rect x="300" y="80" width="80" height="60" fill="#222" stroke="#444" />
-    <text x="340" y="115" class="sublabel text-xs">Kanzai</text>
-    
-    <!-- Zodiac 2 (Saccho) -->
+    <text x="340" y="115" class="sublabel text-xs">Station 1</text>
     <rect x="420" y="160" width="80" height="60" fill="#222" stroke="#444" />
-    <text x="460" y="195" class="sublabel text-xs">Saccho</text>
-    
-    <!-- Zodiac 3 (Saiyu) -->
+    <text x="460" y="195" class="sublabel text-xs">Station 2</text>
     <rect x="300" y="260" width="80" height="60" fill="#222" stroke="#444" />
-    <text x="340" y="295" class="sublabel text-xs">Saiyu</text>
+    <text x="340" y="295" class="sublabel text-xs">Station 3</text>
 
     <!-- Security Camera -->
     <circle cx="550" cy="50" r="15" fill="#111" stroke="#FFD700" />

@@ -41,8 +41,8 @@
     <rect x="485" y="500" width="160" height="60" rx="5" fill="#302f34" stroke="#777" />
     <rect x="435" y="500" width="35" height="85" fill="#302f34" stroke="#777" />
 
-    <rect role="button" tabindex="0" aria-label="Inspect Morena's office" class="room" x="805" y="370" width="180" height="230" onclick={() => inspect('morena-office')} onkeydown={(event) => inspectWithKeyboard(event, 'morena-office')} />
-    <text x="895" y="430" class="label">Morena's Office</text>
+    <rect role="button" tabindex="0" aria-label="Inspect the syndicate leader's office" class="room" x="805" y="370" width="180" height="230" onclick={() => inspect('leader-office')} onkeydown={(event) => inspectWithKeyboard(event, 'leader-office')} />
+    <text x="895" y="430" class="label">Leader's Office</text>
     <text x="895" y="455" class="sub">Desk · facing couch</text>
     <text x="895" y="475" class="sub">TV · consoles · games</text>
     <rect x="840" y="500" width="110" height="42" fill="#302f34" stroke="#777" />

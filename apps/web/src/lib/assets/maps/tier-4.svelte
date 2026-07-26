@@ -97,7 +97,7 @@
     <g id="t4-military-conf" role="button" tabindex="0" aria-label="Open Royal Army Conference Room" onclick={() => handleZoneClick('royal-army-office')} onkeydown={(event) => handleZoneKeydown(event, 'royal-army-office')}>
       <rect class="zone" class:selected={mapState.selectedLocationId === 'royal-army-office'} x="500" y="80" width="150" height="150" />
       <text x="575" y="150" class="label text-green-500 text-[11px]">Kakin Royal Army Conf. Room</text>
-      <text x="575" y="165" class="sublabel">(Headed by Mizaistom)</text>
+      <text x="575" y="165" class="sublabel">Security coordination</text>
     </g>
     <g id="t4-medical-limited" role="button" tabindex="0" aria-label="Open Medical Clinic" onclick={() => handleZoneClick('t4-medical-limited')} onkeydown={(event) => handleZoneKeydown(event, 't4-medical-limited')}>
       <rect class="zone" class:selected={mapState.selectedLocationId === 't4-medical-limited'} x="500" y="370" width="150" height="110" />

@@ -19,7 +19,7 @@
     </style>
   </defs>
   <text x="500" y="38" class="label" font-size="28" fill="#ffd700">Central Hospital · Medical Ward · Tier 3</text>
-  <text x="500" y="60" class="sub">The tier has three clinics; the Central Medical Clinic is supervised by Cheadle</text>
+  <text x="500" y="60" class="sub">The tier has three clinics, including the Central Medical Clinic</text>
   <g transform="translate(60 90)">
     <rect width="880" height="520" class="wall" />
     <rect role="button" tabindex="0" aria-label="Inspect the Central Medical Clinic" class="zone" x="25" y="25" width="500" height="300" onclick={() => inspect('central-medical-clinic')} onkeydown={(event) => inspectWithKeyboard(event, 'central-medical-clinic')} />
@@ -32,7 +32,7 @@
     <text x="705" y="115" class="sub">Medicines and voyage provisions</text>
     <rect role="button" tabindex="0" aria-label="Inspect staff work area" class="zone" x="555" y="195" width="300" height="130" onclick={() => inspect('staff-area')} onkeydown={(event) => inspectWithKeyboard(event, 'staff-area')} />
     <text x="705" y="255" class="label">Medical Staff Area</text>
-    <text x="705" y="278" class="sub">Cheadle · Leorio · Gel</text>
+    <text x="705" y="278" class="sub">Clinical offices and staff station</text>
     <rect role="button" tabindex="0" aria-label="Inspect the research institute connection" class="zone" x="25" y="355" width="830" height="130" onclick={() => inspect('research-institute')} onkeydown={(event) => inspectWithKeyboard(event, 'research-institute')} />
     <text x="440" y="410" class="label">Medical Ward / Research Institute Connection</text>
     <text x="440" y="438" class="sub">The Central Hospital and Research Institute occupy the Medical Ward; exact internal boundaries are unpublished</text>

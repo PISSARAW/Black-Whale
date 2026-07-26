@@ -62,16 +62,5 @@
       </g>
     {/each}
 
-    <!-- Example of an occupied casket (e.g. Momoze / Kacho / Halkenburg) -->
-    <g transform="translate(300, 300) rotate(102.8) translate(0, -220)"> <!-- Roughly position 5 -->
-      <rect x="-15" y="-30" width="30" height="60" class="casket-occupied" />
-      <circle cx="0" cy="45" r="5" class="light-on" />
-    </g>
-    
-    <g transform="translate(300, 300) rotate(231.4) translate(0, -220)"> <!-- Roughly position 10 -->
-      <rect x="-15" y="-30" width="30" height="60" class="casket-occupied" />
-      <circle cx="0" cy="45" r="5" class="light-on" />
-    </g>
-
   </g>
 </svg>

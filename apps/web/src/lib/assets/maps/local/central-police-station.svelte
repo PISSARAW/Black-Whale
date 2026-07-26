@@ -18,7 +18,7 @@
     </style>
   </defs>
   
-  <text x="500" y="40" class="label" font-size="28" fill="#FFD700">Commissariat Central (Mizaistom)</text>
+  <text x="500" y="40" class="label" font-size="28" fill="#FFD700">Central Police Station</text>
 
   <g transform="translate(50, 80)">
     
@@ -55,15 +55,8 @@
     <rect x="600" y="0" width="300" height="300" class="wall" />
     <text x="750" y="30" class="label text-green-400">Community Safety Section</text>
     
-    <!-- Mizaistom's Desk -->
+    <!-- Staff Desk -->
     <rect x="650" y="120" width="200" height="50" class="furniture" />
-    
-    <!-- Mizaistom (Cow Zodiac) -->
-    <circle cx="750" cy="80" r="25" fill="#f5f5f5" stroke="#333" stroke-width="2" />
-    <circle cx="730" cy="60" r="10" fill="#333" /> <!-- Ear/Horn -->
-    <circle cx="770" cy="60" r="10" fill="#333" /> <!-- Ear/Horn -->
-    <rect x="730" y="80" width="40" height="30" fill="#333" /> <!-- Suit -->
-    <text x="750" y="70" font-size="10" fill="#111" text-anchor="middle">Mizaistom</text>
     
     <!-- Civilian / Visitor -->
     <circle cx="750" cy="200" r="15" fill="#ccc" />

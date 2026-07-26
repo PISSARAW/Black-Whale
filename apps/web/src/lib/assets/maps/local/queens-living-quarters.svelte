@@ -37,7 +37,7 @@
         
         {#if i === 0}
           <text x="67.5" y="75" class="label text-yellow-500">Room 01</text>
-          <text x="67.5" y="95" class="sublabel text-yellow-200">1st Queen Unma</text>
+          <text x="67.5" y="95" class="sublabel text-yellow-200">Royal suite</text>
           <rect x="40" y="20" width="55" height="30" class="furniture" /> <!-- Bed -->
         {:else}
           <text x="67.5" y="75" class="label text-gray-400">Queen's Room</text>

@@ -39,12 +39,10 @@
         
         {#if i === 0}
           <text x="100" y="75" class="label text-red-500">Room 1001</text>
-          <text x="100" y="95" class="sublabel text-red-400">Prince Benjamin</text>
-          <text x="100" y="110" class="sublabel text-xs text-red-700">(Confined)</text>
+          <text x="100" y="100" class="sublabel text-red-400">Restricted royal suite</text>
         {:else if i === 1}
           <text x="100" y="75" class="label text-purple-500">Room 1002</text>
-          <text x="100" y="95" class="sublabel text-purple-400">Prince Camilla</text>
-          <text x="100" y="110" class="sublabel text-xs text-purple-700">(Confined)</text>
+          <text x="100" y="100" class="sublabel text-purple-400">Restricted royal suite</text>
         {:else}
           <text x="100" y="75" class="label text-gray-500">VVIP Suite</text>
         {/if}
@@ -62,8 +60,7 @@
         <line class="door" x1="80" y1="0" x2="120" y2="0" />
         
         {#if i === 2}
-          <text x="100" y="75" class="label text-yellow-600">Xi-Yu Boss</text>
-          <text x="100" y="95" class="sublabel text-yellow-700">Onior</text>
+          <text x="100" y="75" class="label text-yellow-600">Mafia VVIP Suite</text>
           <!-- Cross-bridge to Tier 2 -->
           <line x1="100" y1="150" x2="100" y2="200" stroke="#ff0" stroke-width="4" stroke-dasharray="5 5" />
           <text x="100" y="180" class="sublabel text-xs text-yellow-500" transform="rotate(-90 100 180)">To Tier 2</text>

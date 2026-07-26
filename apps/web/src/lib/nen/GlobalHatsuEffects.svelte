@@ -4,7 +4,7 @@
   import { page } from '$app/stores'
   import { mapState, type ZoomLevel } from '$lib/state/mapState.svelte'
   import { activeHatsu, activateHatsu, consumeEmperorTimeHour, deactivateHatsu, emperorTimeLifeHours, parallelFutureVisible } from './hatsuState.js'
-  import { HATSU_PROFILES, siteImpactFor, type HatsuProfile } from './hatsuRegistry.js'
+  import { HATSU_PROFILES, siteImpactFor, visualSignatureFor, type HatsuProfile } from './hatsuRegistry.js'
 
   type Point = { x: number; y: number; label: string; id: number; alert?: boolean; details?: string[] }
   type CaptureZone = { left: number; top: number; width: number; height: number }
@@ -63,6 +63,7 @@
   const tribunalCards = ['BLEU · ADMISSION', 'JAUNE · AVERTISSEMENT', 'JAUNE · RESTRAINT', 'ROUGE · EXPULSION']
 
   $: profile = $activeHatsu
+  $: visualSignature = profile ? visualSignatureFor(profile) : null
   $: if (profile?.id !== previousId) {
     cleanupTechniqueState()
     previousId = profile?.id ?? null
@@ -1531,6 +1532,30 @@
 {#if profile}
   <div class="world-effect kind-{profile.kind}" style:--hatsu={profile.color} data-hatsu-ui data-hatsu-impact={siteImpactFor(profile)} aria-hidden={['guardian', 'portal', 'theft', 'pocket', 'spatial', 'vacuum', 'flock', 'chain-rule', 'capture', 'inherit', 'poetry', 'rhythm', 'melody', 'divination', 'prophecy', 'projection', 'relay', 'ability-loan', 'truth-punch', 'blood-search', 'door-network', 'aura-levy', 'diffusive-smoke'].includes(profile.kind) ? undefined : 'true'}>
     <div class="atmosphere"></div>
+    {#if visualSignature}
+      <div class="visual-signature form-{visualSignature.form} motion-{visualSignature.motion}">
+        <div class="signature-manifestation">
+          {#if profile.kind === 'arrow'}
+            <svg class="signature-arrow" viewBox="0 0 160 72" aria-hidden="true">
+              <path class="bow" d="M36 8 Q72 36 36 64 M36 8 L36 64"></path>
+              <path class="shaft" d="M27 36 H139 M139 36 L126 28 M139 36 L126 44"></path>
+              <path class="fletching" d="M46 36 L33 28 M46 36 L33 44"></path>
+            </svg>
+          {:else if profile.kind === 'ability-loan'}
+            <svg class="signature-dolphin" viewBox="0 0 160 72" aria-hidden="true">
+              <path d="M23 43 C39 16 82 10 113 27 C126 20 139 20 148 25 C139 31 136 38 144 46 C133 47 123 43 116 38 C96 57 59 62 30 49 C24 54 17 56 10 54 C17 49 20 46 23 43 Z"></path>
+              <path d="M71 20 C76 9 87 6 98 8 C91 14 87 20 86 25 Z"></path>
+              <path d="M72 55 C80 65 91 68 101 64 C94 57 91 53 90 48 Z"></path>
+              <circle cx="111" cy="28" r="2.5"></circle>
+            </svg>
+          {:else}
+            <b>{visualSignature.glyph}</b>
+          {/if}
+        </div>
+        <span>{visualSignature.manifestation}</span>
+        <i>{visualSignature.form}</i>
+      </div>
+    {/if}
     {#if profile.kind === 'future'}
       <div class="future-frame"><span>PARALLEL FUTURE</span><strong>{$parallelFutureVisible ? `${Math.max(0, 10 - seconds)} s` : 'ENDED'}</strong></div>
     {/if}
@@ -1558,23 +1583,7 @@
     {/if}
     {#each points as point, i (point.id)}
       <div class="impact" class:paired={i % 2 === 1} class:alert={point.alert} style:left={`${point.x}px`} style:top={`${point.y}px`}>
-        <span>
-          {#if profile.kind === 'growth'}✦
-          {:else if profile.kind === 'surveillance'}◉
-          {:else if profile.kind === 'portal'}{i % 2 ? 'RETURN' : 'DOOR'}
-          {:else if profile.kind === 'inherit'}★
-          {:else if profile.kind === 'curse'}⌁
-          {:else if profile.kind === 'capture'}▣
-          {:else if profile.kind === 'tribunal'}{cardIndex === 3 ? '■' : cardIndex === 0 ? '●' : '◆'}
-          {:else if profile.kind === 'vehicle'}{i + 1}
-          {:else if profile.kind === 'poetry'}句
-          {:else if profile.kind === 'polarity'}{i % 2 ? '☾' : '☀'}
-          {:else if profile.kind === 'melody'}♫
-          {:else if profile.kind === 'infection'}{point.label}
-          {:else if profile.kind === 'snakes'}{i + 1}
-          {:else if profile.kind === 'training-shot'}◎
-          {:else}×{/if}
-        </span>
+        <span>{visualSignature?.glyph || '×'}</span>
         <small>{point.label}</small>
       </div>
     {/each}
@@ -1630,6 +1639,14 @@
 <style>
   .world-effect { position: fixed; z-index: 80; inset: 0; overflow: hidden; pointer-events: none; }
   .atmosphere { position: absolute; inset: 0; border: 1px solid color-mix(in srgb, var(--hatsu) 38%, transparent); background: radial-gradient(500px circle at var(--mx, 50%) var(--my, 50%), color-mix(in srgb, var(--hatsu) 5%, transparent), transparent 70%); box-shadow: inset 0 0 80px color-mix(in srgb, var(--hatsu) 4%, transparent); }
+  .visual-signature{position:absolute;bottom:1rem;left:1rem;display:grid;width:11rem;grid-template-columns:3.5rem 1fr;grid-template-rows:auto auto;align-items:center;border:1px solid color-mix(in srgb,var(--hatsu) 42%,transparent);border-radius:.45rem;background:linear-gradient(115deg,color-mix(in srgb,var(--hatsu) 11%,#071019e8),#071019a8);padding:.55rem .7rem;color:var(--hatsu);box-shadow:0 12px 32px #0008,inset 0 0 22px color-mix(in srgb,var(--hatsu) 7%,transparent);transform-origin:1.75rem 50%;backdrop-filter:blur(8px)}
+  .signature-manifestation{position:relative;display:grid;width:3rem;height:3rem;grid-row:1/3;place-items:center;border:1px solid color-mix(in srgb,var(--hatsu) 58%,transparent);border-radius:50%;background:radial-gradient(circle,color-mix(in srgb,var(--hatsu) 18%,#071019),#071019 70%);box-shadow:0 0 18px color-mix(in srgb,var(--hatsu) 24%,transparent)}
+  .signature-manifestation::before,.signature-manifestation::after{content:'';position:absolute;inset:-.28rem;border:1px dashed color-mix(in srgb,var(--hatsu) 35%,transparent);border-radius:inherit}.signature-manifestation::after{inset:.25rem;border-style:solid;opacity:.35}
+  .signature-manifestation b{position:relative;z-index:1;font:700 1.15rem/1 var(--font-mono,monospace);text-shadow:0 0 12px var(--hatsu)}
+  .visual-signature>span{overflow:hidden;color:#eef3ef;font:600 .58rem/1.2 'IBM Plex Sans Condensed',sans-serif;letter-spacing:.04em;text-overflow:ellipsis;white-space:nowrap}.visual-signature>i{margin-top:.25rem;color:color-mix(in srgb,var(--hatsu) 75%,#849096);font:normal 700 .42rem/1 monospace;letter-spacing:.14em;text-transform:uppercase}
+  .form-chain .signature-manifestation{border-radius:45% 45% 50% 50%;box-shadow:inset 0 0 0 4px #071019,0 0 18px var(--hatsu)}.form-beast .signature-manifestation{border-radius:55% 45% 62% 38%}.form-weapon .signature-manifestation{border-radius:.2rem;transform:rotate(-4deg)}.form-field .signature-manifestation{border-style:double;border-radius:.15rem}.form-mark .signature-manifestation{border-width:2px;background:transparent}.form-construct .signature-manifestation{border-radius:.25rem}.form-organic .signature-manifestation{border-radius:60% 30% 55% 40%}
+  .signature-arrow,.signature-dolphin{position:relative;z-index:1;width:4.8rem;overflow:visible;filter:drop-shadow(0 0 5px var(--hatsu))}.signature-arrow path{fill:none;stroke:var(--hatsu);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}.signature-arrow .shaft{animation:signature-arrow-flight 1.25s ease-in-out infinite}.signature-arrow .fletching{animation:signature-arrow-flight 1.25s ease-in-out infinite}.signature-dolphin path{fill:color-mix(in srgb,var(--hatsu) 18%,#071019);stroke:var(--hatsu);stroke-width:1.6;stroke-linejoin:round}.signature-dolphin circle{fill:#f3ffff;filter:drop-shadow(0 0 4px #fff)}
+  .motion-pulse{animation:signature-pulse 1.6s ease-in-out infinite}.motion-orbit .signature-manifestation::before{animation:signature-orbit 4s linear infinite}.motion-strike{animation:signature-strike 1.5s ease-in-out infinite}.motion-drift{animation:signature-drift 3s ease-in-out infinite}.motion-coil .signature-manifestation::before{animation:signature-coil 1.8s ease-in-out infinite}.motion-bloom .signature-manifestation{animation:signature-bloom 2.2s ease-in-out infinite}.motion-scan .signature-manifestation::after{animation:signature-scan 1.7s ease-out infinite}.motion-flicker{animation:signature-flicker 2.4s steps(1,end) infinite}
   .kind-scarlet .atmosphere { background: radial-gradient(circle at 50% 10%, #e6193030, transparent 45%); box-shadow: inset 0 0 120px #e6193020; animation: scarlet 2.2s ease-in-out infinite; }
   .kind-disguise .atmosphere { backdrop-filter: contrast(.88) sepia(.12); background: repeating-linear-gradient(115deg, transparent 0 9px, color-mix(in srgb, var(--hatsu) 2%, transparent) 10px 11px); }
   .kind-enhance .atmosphere, .kind-blast .atmosphere { animation: power 1.1s ease-in-out infinite; }
@@ -1742,5 +1759,15 @@
   @keyframes sacrifice-death{to{filter:grayscale(1);opacity:.08;transform:scale(.8)}}
   @keyframes curse-trigger{50%{box-shadow:0 0 0 5rem #9d65d000;filter:brightness(2)}to{filter:grayscale(1) brightness(.2);opacity:.15}}
   @keyframes cat-crush{50%{transform:scale(.55);filter:brightness(3)}to{opacity:.06;transform:scale(.1)}}
+  @keyframes signature-pulse{50%{box-shadow:0 12px 32px #0008,0 0 22px color-mix(in srgb,var(--hatsu) 28%,transparent);transform:scale(1.025)}}
+  @keyframes signature-orbit{to{transform:rotate(360deg)}}
+  @keyframes signature-strike{0%,72%,100%{transform:translateX(0)}78%{transform:translateX(7px)}84%{transform:translateX(-2px)}}
+  @keyframes signature-drift{50%{transform:translateY(-5px)}}
+  @keyframes signature-coil{50%{inset:-.65rem;transform:rotate(18deg)}}
+  @keyframes signature-bloom{50%{border-radius:35% 65% 42% 58%;transform:scale(1.08)}}
+  @keyframes signature-scan{0%{clip-path:inset(0 100% 0 0)}60%,100%{clip-path:inset(0)}}
+  @keyframes signature-flicker{0%,91%,100%{opacity:1}92%{opacity:.25}94%{opacity:.8}96%{opacity:.35}}
+  @keyframes signature-arrow-flight{0%,25%{transform:translateX(-12px);opacity:.2}55%,100%{transform:translateX(5px);opacity:1}}
+  @media (max-width:700px){.visual-signature{bottom:5.8rem;width:min(11rem,calc(100vw - 2rem))}.visual-signature>span{white-space:normal}.readout{top:4rem}}
   @media (prefers-reduced-motion: reduce) { .world-effect * { animation: none !important; } }
 </style>

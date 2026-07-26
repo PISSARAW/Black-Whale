@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import abilityCatalog from '../../../../../data/abilities/abilities.json'
-import { HATSU_PROFILES, HATSU_SITE_IMPACT_BY_KIND, hatsuById, siteImpactFor } from './hatsuRegistry.js'
+import { HATSU_PROFILES, HATSU_SITE_IMPACT_BY_KIND, HATSU_VISUAL_SIGNATURE_BY_KIND, hatsuById, siteImpactFor, visualSignatureFor } from './hatsuRegistry.js'
 
 describe('global Hatsu interaction registry', () => {
   const auditedMissingHatsu = [
@@ -52,5 +52,14 @@ describe('global Hatsu interaction registry', () => {
   it('keeps every Hatsu found by the extended Black Whale audit', () => {
     expect(HATSU_PROFILES).toHaveLength(81)
     expect(auditedMissingHatsu.filter((id) => !hatsuById(id))).toEqual([])
+  })
+
+  it('gives every Hatsu a distinct lore-facing visual signature', () => {
+    const signatures = HATSU_PROFILES.map(visualSignatureFor)
+
+    expect(Object.keys(HATSU_VISUAL_SIGNATURE_BY_KIND)).toHaveLength(HATSU_PROFILES.length)
+    expect(signatures.every((signature) => signature.glyph.length > 0)).toBe(true)
+    expect(signatures.every((signature) => signature.manifestation.length > 8)).toBe(true)
+    expect(new Set(signatures.map((signature) => signature.manifestation)).size).toBe(HATSU_PROFILES.length)
   })
 })

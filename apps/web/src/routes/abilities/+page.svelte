@@ -39,7 +39,7 @@
   <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
     {#each abilities as ability}
       {@const profile = hatsuById(ability.id)}
-      <article class="block group relative bg-bw-navy/50 border border-bw-gold/20 rounded-xl p-6 overflow-hidden hover:border-bw-gold/60 transition-colors">
+      <article data-hatsu-id={ability.id} class="block group relative bg-bw-navy/50 border border-bw-gold/20 rounded-xl p-6 overflow-hidden hover:border-bw-gold/60 transition-colors">
         <div class="absolute inset-0 bg-gradient-to-br from-bw-gold/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
         <div class="relative">
           <div class="flex items-start justify-between mb-4">
@@ -59,6 +59,7 @@
             class="mt-6 flex w-full items-center text-left text-bw-gold/80 text-sm font-semibold hover:text-bw-gold"
             onclick={() => activate(ability.id)}
             data-hatsu-pass
+            aria-label={`Activate ${ability.name} across the site`}
           >
             <span>Activate across the site</span>
             <svg class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">

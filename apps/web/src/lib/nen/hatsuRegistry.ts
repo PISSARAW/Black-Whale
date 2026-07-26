@@ -61,6 +61,25 @@ export type HatsuInteractionKind =
   | 'flock'
   | 'relay'
   | 'postmortem-curse'
+  | 'healing'
+  | 'heart-vow'
+  | 'ability-loan'
+  | 'contract'
+  | 'truth-punch'
+  | 'blood-search'
+  | 'legal-defense'
+  | 'damage-transfer'
+  | 'door-network'
+  | 'weapon-body'
+  | 'coercive-beast'
+  | 'coin-growth'
+  | 'lie-marks'
+  | 'drug-synthesis'
+  | 'aura-levy'
+  | 'desire-trap'
+  | 'diffusive-smoke'
+  | 'solicitation'
+  | 'room-isolation'
 
 export interface HatsuProfile {
   id: string
@@ -105,7 +124,12 @@ export const HATSU_SITE_IMPACT_BY_KIND = {
   stitch: 'control', melody: 'navigation', infection: 'control', windup: 'content-access',
   predator: 'content-access', staff: 'control', senses: 'control', vacuum: 'storage',
   snakes: 'control', 'training-shot': 'control', serpent: 'control', flock: 'navigation',
-  relay: 'storage', 'postmortem-curse': 'control'
+  relay: 'storage', 'postmortem-curse': 'control', healing: 'content-access', 'heart-vow': 'control',
+  'ability-loan': 'control', contract: 'control', 'truth-punch': 'data-revelation', 'blood-search': 'navigation',
+  'legal-defense': 'control', 'damage-transfer': 'simulation-state', 'door-network': 'navigation', 'weapon-body': 'control',
+  'coercive-beast': 'control', 'coin-growth': 'simulation-state', 'lie-marks': 'control', 'drug-synthesis': 'content-access',
+  'aura-levy': 'control', 'desire-trap': 'control', 'diffusive-smoke': 'control', solicitation: 'control',
+  'room-isolation': 'content-access'
 } satisfies Record<HatsuInteractionKind, HatsuSiteImpact>
 
 export const siteImpactFor = (profile: HatsuProfile) => HATSU_SITE_IMPACT_BY_KIND[profile.kind]
@@ -178,6 +202,25 @@ export const HATSU_PROFILES: HatsuProfile[] = [
   { id: 'bird-manipulation', name: 'Bird Manipulation', owner: 'Cluck', kind: 'flock', instruction: 'Assign birds to page elements; each pigeon carries a readable dispatch into the flock’s delivery panel.', rule: 'Hundreds of controlled birds can deliver documents accurately over a vast area.', cost: 'One controlled bird per dispatch', color: '#b9d8e8', action: 'Give a dispatch to the flock' },
   { id: 'transport-portals', name: 'Transport Portals', owner: 'Tokarine', kind: 'relay', instruction: 'Load sections and advance each through three visible relay stages into recoverable transport storage without teleporting.', rule: 'The ability transports limited cargo between expedition relays but explicitly cannot teleport it.', cost: 'Low capacity · staged transport', color: '#e2b86e', action: 'Load cargo at relay one' },
   { id: 'yomotsu-hegui', name: 'Yomotsu Hegui', owner: "Camilla's Have-Nots", kind: 'postmortem-curse', instruction: 'Perform five preparation rites on the same target; the final click simulates the user’s sacrifice and releases the aura-draining curse.', rule: 'Years of fixation, a connected object, ashes, proximity and suicide empower a post-mortem curse against one target.', cost: 'Long preparation · connected object · user’s life', color: '#a04f68', action: 'Choose the lifelong target' },
+  { id: 'holy-chain', name: 'Holy Chain', owner: 'Kurapika', kind: 'healing', instruction: 'Click damaged, hidden or disabled content to restore its original state and reopen its controls.', rule: 'The cross-tipped thumb chain accelerates natural healing and reaches full restorative efficiency during Emperor Time.', cost: 'Enhancement aura · strongest under Emperor Time', color: '#d9f1df', action: 'Choose something wounded' },
+  { id: 'judgment-chain', name: 'Judgment Chain', owner: 'Kurapika', kind: 'heart-vow', instruction: 'Choose a subject, choose a forbidden site action, then touch that forbidden action again to enforce the lethal heart condition.', rule: 'The implanted chain pierces the heart only when the declared rule is knowingly violated.', cost: 'Emperor Time · explicit rule · lethal enforcement', color: '#d7dce2', action: 'Choose the contract subject' },
+  { id: 'stealth-dolphin', name: 'Stealth Dolphin', owner: 'Kurapika', kind: 'ability-loan', instruction: 'Select a Nen user to analyze their registered Hatsu, then select a recipient and activate the single-use loan from the dolphin panel.', rule: 'The dolphin exists during Emperor Time, explains the captured ability and opens a non-user’s aura nodes when the loan is consumed.', cost: 'Emperor Time remains active until the loaded ability is used', color: '#63d5e6', action: 'Analyze a stolen ability' },
+  { id: 'moonlight-act', name: 'Moonlight Act', owner: 'Longhi', kind: 'contract', instruction: 'Choose two consenting parties, then choose a clause; touching that clause again records a breach and applies the agreed penalty.', rule: 'Only a voluntary agreement with explicit terms can be rewarded or punished by the Manipulation contract.', cost: 'Mutual consent · declared duration and penalty', color: '#c6ddff', action: 'Choose the first signatory' },
+  { id: 'body-and-soul', name: 'Body and Soul', owner: 'Lynch', kind: 'truth-punch', instruction: 'Punch a section after questioning it to extract its real destinations, hidden controls and factual DOM state into a truth report.', rule: 'The body’s emitted voice answers the question truthfully even when the conscious target lies or stays silent.', cost: 'A direct punch after a clear question', color: '#f1a06d', action: 'Question and punch a target' },
+  { id: 'bloody-mary', name: 'Bloody Mary', owner: 'Zakuro', kind: 'blood-search', instruction: 'Release searching blood drops onto a section; they find its routes and characters and return them as a navigable search trail.', rule: 'Only Zakuro’s own blood can be manipulated; autonomous eyed droplets expire after roughly thirty to forty minutes.', cost: 'Open wound · carried blood supply · limited search time', color: '#b51f3c', action: 'Release the first blood drop' },
+  { id: 'lsdf', name: 'A Battle of Wits: LSDF', owner: 'Yokotani', kind: 'legal-defense', instruction: 'Designate the Heil-Ly hideout, identify an intruder and click them again to sentence and expel them from that site section.', rule: 'The invincible guards work only in Morena’s hideout after Yokotani identifies unlawful intruders; they expel but cannot injure.', cost: 'Morena present · hideout only · declared offense', color: '#d4c58b', action: 'Establish hideout jurisdiction' },
+  { id: 'damage-sweet-home', name: 'Damage: Sweet Home', owner: 'Terebellum', kind: 'damage-transfer', instruction: 'Touch a protected element and a recipient; hitting the protected element again transfers its collapse to the recipient.', rule: 'Damage is redirected between touched targets rather than erased, with stricter limits when living bodies are involved.', cost: 'Prior contact with both source and recipient', color: '#db8b78', action: 'Touch the protected target' },
+  { id: 'voconte-hideout-doors', name: 'Hideout Doors', owner: 'Voconte', kind: 'door-network', instruction: 'Mark sections as rooms; the generated door network becomes a panel for moving focus directly between them.', rule: 'The doors connect prepared rooms throughout the Heil-Ly base instead of opening unrestricted portals anywhere.', cost: 'Prepared hideout walls and connected rooms', color: '#7ec8b6', action: 'Install the first door' },
+  { id: 'padaille-weapon-transformation', name: 'Weapon Transformation', owner: 'Padaille', kind: 'weapon-body', instruction: 'Transform a button, link or disclosure into a body weapon, then strike with it to execute the control as an attack.', rule: 'Padaille changes his own body into familiar weapons and tools rather than conjuring independent equipment.', cost: 'Known weapon shape · transformed body part', color: '#c6925e', action: 'Choose a weapon function' },
+  { id: 'camilla-guardian-coercion', name: "Camilla's Guardian Coercion", owner: 'Camilla Guardian Beast', kind: 'coercive-beast', instruction: 'Fulfil three unknown-condition contacts on one target; the third contact captures its control for remote command.', rule: 'The Beast’s total Manipulation is confirmed, but its actual activation conditions remain deliberately unknown.', cost: 'Unknown conditions · represented as three unresolved contacts', color: '#d98cae', action: 'Probe the first unknown condition' },
+  { id: 'zhanglei-guardian-coins', name: 'Guardian Coins', owner: 'Zhang Lei Guardian Beast', kind: 'coin-growth', instruction: 'Give a target a coin and revisit it to accumulate value; threshold growth progressively opens concealed content and controls.', rule: 'One coin is produced daily, accumulates Nen over time and resets to value one whenever ownership changes.', cost: 'Long accumulation · transfer resets value', color: '#d7b34f', action: 'Mint a value-one coin' },
+  { id: 'tserriednich-guardian-lie-marks', name: 'Three-Lie Transformation', owner: 'Tserriednich Guardian Beast', kind: 'lie-marks', instruction: 'Mark the same suspect for three detected lies: cut, infected warning, then irreversible removal of their site autonomy.', rule: 'Each lie escalates the curse and the third transforms the liar into something no longer human.', cost: 'Three lies told in Tserriednich’s presence', color: '#9e6d89', action: 'Detect the first lie' },
+  { id: 'tubeppa-guardian-synthesis', name: 'Collaborative Drug Synthesis', owner: 'Tubeppa Guardian Beast', kind: 'drug-synthesis', instruction: 'Choose two collaborating page components; the Beast synthesizes a treatment that restores and enables both.', rule: 'The chemical-producing Beast requires a collaborative partner and can create many effects whose limits remain unknown.', cost: 'Active alliance · two cooperating components', color: '#91bd72', action: 'Choose the research partner' },
+  { id: 'tyson-guardian-eye-wogs', name: 'Eye-wogs', owner: 'Tyson Guardian Beast', kind: 'aura-levy', instruction: 'Attach Eye-wogs to selected readers; each reading drains a control while adding its destination to a shared happiness path.', rule: 'Depth of engagement with Tyson’s Book determines returned happiness, while violating its single taboo brings punishment.', cost: 'Book exposure · continuous aura levy', color: '#ef91c4', action: 'Attach an Eye-wog to a reader' },
+  { id: 'luzurus-guardian-desire-trap', name: 'Desire Trap', owner: 'Luzurus Guardian Beast', kind: 'desire-trap', instruction: 'Choose a desired destination, then a bait control; touching the bait again springs the trap and forces navigation to the desire.', rule: 'The Beast materializes what its victim wants and applies pseudo-coercive Manipulation only after the bait is accepted.', cost: 'Known desire · voluntarily satisfied bait', color: '#98b65c', action: 'Read the target’s desire' },
+  { id: 'salesale-guardian-smoke', name: 'Diffusive Aura Smoke', owner: 'Salé-salé Guardian Beast', kind: 'diffusive-smoke', instruction: 'Expose neighboring sections repeatedly; converted controls join a spreading panel that routes visitors toward Salé-salé.', rule: 'Low-level coercive smoke builds goodwill over hours, creates secondary emitters and fails against targets holding their breath.', cost: 'Sustained exposure · breathable aura smoke', color: '#b7aac8', action: 'Release the first smoke cloud' },
+  { id: 'momoze-guardian-solicitation', name: 'Are You Free?', owner: 'Momoze Guardian Beast', kind: 'solicitation', instruction: 'Ask one target twice: choosing another target represents refusal and continued harassment; clicking the same target accepts possession.', rule: 'Only an affirmative answer lets the spider enter the ear and manipulate the victim using their own aura.', cost: 'Repeated solicitation · explicit yes · heavy host fatigue', color: '#e8a9a1', action: 'Ask “Are you free?”' },
+  { id: 'marayam-guardian-isolation', name: 'Room 1013 Isolation', owner: 'Marayam Guardian Beast', kind: 'room-isolation', instruction: 'Choose a room section to isolate it; surrounding content loses access while the protected room remains fully interactive inside.', rule: 'Occupants may leave the real room but outsiders and former occupants can reach only an empty spatial duplicate.', cost: 'Protected room · one-way perceptual boundary', color: '#7095d6', action: 'Isolate the protected room' },
 ]
 
 export const hatsuById = (id: string | null | undefined) =>

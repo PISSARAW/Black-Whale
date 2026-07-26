@@ -1132,6 +1132,253 @@
       if (stage === 3) storeElement(element, label, 'relay')
       status = `Cargo ${label} · relay stage ${stage}/3${stage === 3 ? ' · delivered into relay storage without teleportation' : ''}`
       addPoint(x, y, `RELAY ${stage}`)
+    } else if (profile.kind === 'healing') {
+      const wounded = remember(target)
+      wounded.hidden = false
+      wounded.style.opacity = '1'
+      wounded.style.filter = 'none'
+      wounded.style.maxHeight = 'none'
+      wounded.style.pointerEvents = 'auto'
+      wounded.removeAttribute('aria-disabled')
+      wounded.removeAttribute('aria-hidden')
+      if ('disabled' in wounded) (wounded as HTMLButtonElement).disabled = false
+      const details = wounded.closest('details') || wounded.querySelector('details')
+      if (details instanceof HTMLDetailsElement) { remember(details); details.open = true }
+      wounded.classList.add('hatsu-holy-healed')
+      status = `Holy Chain restored ${label}'s content and controls`
+      addPoint(x, y, `HEALED · ${label}`)
+    } else if (profile.kind === 'heart-vow') {
+      if (!selectedElements.length) {
+        selectedElements = [target]
+        remember(target).classList.add('hatsu-vow-subject')
+        status = `${label} bears the heart chain · choose the forbidden action`
+      } else if (selectedElements.length === 1 && target !== selectedElements[0]) {
+        selectedElements = [...selectedElements, target]
+        remember(target).classList.add('hatsu-vow-clause')
+        status = `${targetLabel(target)} declared forbidden · touch it again to violate the rule`
+      } else if (selectedElements[1] === target) {
+        const subject = remember(selectedElements[0])
+        subject.style.pointerEvents = 'none'
+        subject.setAttribute('aria-disabled', 'true')
+        subject.classList.add('hatsu-vow-enforced')
+        status = `Rule violated · Judgment Chain pierced ${targetLabel(subject)}'s heart and sealed its site action`
+      }
+      addPoint(x, y, label)
+    } else if (profile.kind === 'ability-loan') {
+      if (!selectedElements.length) {
+        const techniques = profilesFromTarget(target).filter((technique) => technique.id !== profile.id)
+        selectedElements = [target]
+        capturedTechniques = techniques.slice(0, 1)
+        remember(target).classList.add('hatsu-dolphin-analyzed')
+        status = techniques.length ? `${techniques[0].name} analyzed · choose a recipient` : `${label} has no registered ability to load`
+      } else if (target !== selectedElements[0]) {
+        selectedElements = [selectedElements[0], target]
+        remember(target).classList.add('hatsu-dolphin-recipient')
+        status = capturedTechniques.length
+          ? `${capturedTechniques[0].name} loaned once to ${label} · activate it from Stealth Dolphin`
+          : `${label} received no ability because the dolphin was empty`
+      }
+      addPoint(x, y, label)
+    } else if (profile.kind === 'contract') {
+      if (selectedElements.length < 2 && !selectedElements.includes(target)) {
+        selectedElements = [...selectedElements, target]
+        remember(target).classList.add('hatsu-contract-signatory')
+        status = `${selectedElements.length}/2 voluntary signatures recorded`
+      } else if (selectedElements.length === 2 && !selectedElements.includes(target)) {
+        selectedElements = [...selectedElements, target]
+        remember(target).classList.add('hatsu-contract-clause')
+        status = `${label} written as the binding clause · touch it again to record a breach`
+      } else if (selectedElements[2] === target) {
+        const breacher = remember(selectedElements[1])
+        breacher.style.pointerEvents = 'none'
+        breacher.setAttribute('aria-disabled', 'true')
+        status = `Moonlight Act enforced the accepted penalty on ${targetLabel(breacher)}`
+      }
+      addPoint(x, y, label)
+    } else if (profile.kind === 'truth-punch') {
+      const controls = Array.from(target.querySelectorAll<HTMLElement>('a,button,input,select,textarea,[hidden],[aria-hidden="true"]')).slice(0, 8)
+      guideTitle = 'Body and Soul · truthful answer'
+      guideItems = controls.map((control) => guideItemFor(control, targetLabel(control)))
+      remember(target).classList.add('hatsu-truth-punched')
+      addPoint(x, y, label, { details: [`${target.querySelectorAll('a').length} routes`, `${controls.length} controls`, `hidden=${target.hidden}`] })
+      status = `${label}'s body answered: ${guideItems.length} real controls and routes found`
+    } else if (profile.kind === 'blood-search') {
+      const found = Array.from(target.querySelectorAll<HTMLElement>('a,[data-hatsu-character],button')).slice(0, 12)
+      guideTitle = 'Bloody Mary · autonomous search drops'
+      guideItems = found.map((element) => guideItemFor(element, targetLabel(element)))
+      remember(target).classList.add('hatsu-blood-searched')
+      status = `${guideItems.length} blood drops found navigable traces inside ${label}`
+      addPoint(x, y, `${guideItems.length} DROPS`)
+    } else if (profile.kind === 'legal-defense') {
+      if (!selectedElements.length) {
+        selectedElements = [target]
+        remember(target).classList.add('hatsu-lsdf-hideout')
+        status = `${label} established as Morena's hideout jurisdiction · identify an intruder`
+      } else if (selectedElements.length === 1 && target !== selectedElements[0]) {
+        selectedElements = [...selectedElements, target]
+        remember(target).classList.add('hatsu-lsdf-defendant')
+        status = `${label} charged with trespass · click again to confirm expulsion`
+      } else if (selectedElements[1] === target) {
+        const intruder = remember(target)
+        intruder.style.transition = 'transform .7s ease, opacity .5s'
+        intruder.style.transform = 'translateX(110vw)'
+        intruder.style.pointerEvents = 'none'
+        intruder.setAttribute('aria-disabled', 'true')
+        status = `LSDF guards expelled ${label} without inflicting damage`
+      }
+      addPoint(x, y, label)
+    } else if (profile.kind === 'damage-transfer') {
+      if (!selectedElements.length) {
+        selectedElements = [target]
+        remember(target).classList.add('hatsu-damage-source')
+        status = `${label} protected by touch · choose the damage recipient`
+      } else if (selectedElements.length === 1 && target !== selectedElements[0]) {
+        selectedElements = [...selectedElements, target]
+        remember(target).classList.add('hatsu-damage-recipient')
+        status = `${label} designated as recipient · strike ${targetLabel(selectedElements[0])} again`
+      } else if (selectedElements[0] === target && selectedElements[1]) {
+        const recipient = remember(selectedElements[1])
+        recipient.style.maxHeight = '0'
+        recipient.style.opacity = '.08'
+        recipient.style.overflow = 'hidden'
+        recipient.style.pointerEvents = 'none'
+        status = `Damage to ${label} transferred intact into ${targetLabel(recipient)}`
+      }
+      addPoint(x, y, label)
+    } else if (profile.kind === 'door-network') {
+      if (!guideItems.some((item) => item.element === target)) guideItems = [...guideItems, guideItemFor(target, label)].slice(-8)
+      guideTitle = 'Voconte · prepared hideout doors'
+      remember(target).classList.add('hatsu-hideout-door')
+      status = `${guideItems.length} connected rooms · use the door panel to reroute site focus`
+      addPoint(x, y, `DOOR ${guideItems.length}`)
+    } else if (profile.kind === 'weapon-body') {
+      const control = target.closest<HTMLElement>('a,button,[role="button"],summary')
+      if (!control) { status = 'Padaille can only transform a body part into a known site weapon or tool'; return true }
+      if (selectedElements[0] === control) {
+        executeSiteTarget(control)
+        status = `${targetLabel(control)} struck with its transformed body function`
+      } else {
+        selectedElements = [control]
+        remember(control).classList.add('hatsu-body-weapon')
+        status = `${targetLabel(control)} transformed into a body weapon · click it again to strike`
+      }
+      addPoint(x, y, targetLabel(control))
+    } else if (profile.kind === 'coercive-beast') {
+      if (puppetTarget && target !== puppetTarget) {
+        executeSiteTarget(puppetTarget)
+        status = `${targetLabel(puppetTarget)} obeyed the Beast's remote command`
+      } else {
+        const controlled = remember(target)
+        const level = Math.min(3, Number(controlled.dataset.hatsuLevel || 0) + 1)
+        controlled.dataset.hatsuLevel = String(level)
+        controlled.classList.add('hatsu-coercion-probe')
+        if (level === 3) puppetTarget = controlled
+        status = level === 3 ? `Unknown conditions fulfilled · ${label} is under total control` : `Unknown condition contact ${level}/3 · canon trigger remains unrevealed`
+      }
+      addPoint(x, y, label)
+    } else if (profile.kind === 'coin-growth') {
+      const holder = remember(target)
+      const age = Number(holder.dataset.hatsuLevel || 0) + 1
+      holder.dataset.hatsuLevel = String(age)
+      const value = 10 ** Math.min(3, age - 1)
+      holder.classList.add('hatsu-guardian-coin')
+      if (age >= 3) {
+        const locked = holder.matches('[disabled],[hidden],[aria-hidden="true"]') ? holder : holder.querySelector<HTMLElement>('[disabled],[hidden],[aria-hidden="true"]')
+        if (locked) {
+          remember(locked); locked.hidden = false; locked.removeAttribute('aria-hidden'); locked.removeAttribute('aria-disabled')
+          if ('disabled' in locked) (locked as HTMLButtonElement).disabled = false
+          locked.style.pointerEvents = 'auto'
+        }
+      }
+      status = `Guardian coin value ${value} · ${age >= 3 ? 'accumulated Nen opened a dormant site capability' : 'continue long-term accumulation'}`
+      addPoint(x, y, `₵ ${value}`)
+    } else if (profile.kind === 'lie-marks') {
+      const liar = remember(target)
+      const lies = Math.min(3, Number(liar.dataset.hatsuLevel || 0) + 1)
+      liar.dataset.hatsuLevel = String(lies)
+      liar.classList.add('hatsu-lie-mark')
+      if (lies === 3) { liar.style.pointerEvents = 'none'; liar.setAttribute('aria-disabled', 'true'); liar.style.filter = 'grayscale(1) blur(2px)' }
+      status = ['First lie cut into the target', 'Second lie infected the mark · final warning issued', `Third lie · ${label} transformed and lost site autonomy`][lies - 1]
+      addPoint(x, y, `LIE ${lies}`)
+    } else if (profile.kind === 'drug-synthesis') {
+      if (!selectedElements.includes(target) && selectedElements.length < 2) selectedElements = [...selectedElements, target]
+      remember(target).classList.add('hatsu-research-partner')
+      if (selectedElements.length === 2) {
+        for (const partner of selectedElements) {
+          const restored = remember(partner)
+          restored.hidden = false; restored.style.pointerEvents = 'auto'; restored.style.opacity = '1'; restored.removeAttribute('aria-disabled'); restored.removeAttribute('aria-hidden')
+          if ('disabled' in restored) (restored as HTMLButtonElement).disabled = false
+        }
+      }
+      status = selectedElements.length < 2 ? 'Collaborative synthesis requires a second research partner' : `Treatment synthesized · ${selectedElements.map(targetLabel).join(' + ')} restored together`
+      addPoint(x, y, label)
+    } else if (profile.kind === 'aura-levy') {
+      if (!guideItems.some((item) => item.element === target)) guideItems = [...guideItems, guideItemFor(target, label)].slice(-10)
+      guideTitle = 'Tyson · happiness path'
+      const reader = remember(target)
+      reader.classList.add('hatsu-eye-wog-reader')
+      const control = reader.querySelector<HTMLElement>('button,input,textarea,select')
+      if (control) { remember(control); control.style.pointerEvents = 'none'; control.setAttribute('aria-disabled', 'true') }
+      status = `Eye-wog levy collected aura from ${label} · happiness route added, one local control drained`
+      addPoint(x, y, `READER ${guideItems.length}`)
+    } else if (profile.kind === 'desire-trap') {
+      if (!selectedElements.length) {
+        selectedElements = [target]
+        remember(target).classList.add('hatsu-desire')
+        status = `${label} identified as the desired destination · choose convincing bait`
+      } else if (selectedElements.length === 1 && target !== selectedElements[0]) {
+        selectedElements = [...selectedElements, target]
+        remember(target).classList.add('hatsu-desire-bait')
+        status = `${label} materialized as bait · touching it again accepts the trap`
+      } else if (selectedElements[1] === target) {
+        executeSiteTarget(selectedElements[0])
+        status = `${label} accepted · pseudo-coercion forced the site toward ${targetLabel(selectedElements[0])}`
+      }
+      addPoint(x, y, label)
+    } else if (profile.kind === 'diffusive-smoke') {
+      const exposed = remember(target)
+      const exposure = Number(exposed.dataset.hatsuLevel || 0) + 1
+      exposed.dataset.hatsuLevel = String(exposure)
+      exposed.classList.add('hatsu-smoke-converted')
+      const spread = [target, ...Array.from(target.parentElement?.children || []).filter((element): element is HTMLElement => element instanceof HTMLElement).slice(0, 3)]
+      for (const emitter of spread) {
+        remember(emitter).classList.add('hatsu-smoke-converted')
+        if (!guideItems.some((item) => item.element === emitter)) guideItems = [...guideItems, guideItemFor(emitter, targetLabel(emitter))]
+      }
+      guideTitle = 'Salé-salé · converted goodwill network'
+      status = `Smoke exposure ${exposure} · ${guideItems.length} sections now diffuse routes toward the prince`
+      addPoint(x, y, `SMOKE ${exposure}`)
+    } else if (profile.kind === 'solicitation') {
+      if (!selectedElements.length) {
+        selectedElements = [target]
+        remember(target).classList.add('hatsu-solicited')
+        status = `${label}, are you free? Click the same target for yes or another for refusal`
+      } else if (selectedElements[0] === target) {
+        const possessed = remember(target)
+        possessed.classList.add('hatsu-possessed')
+        possessed.setAttribute('aria-disabled', 'true')
+        for (const control of possessed.querySelectorAll<HTMLElement>('a,button,input,select,textarea')) { remember(control); control.style.pointerEvents = 'none' }
+        puppetTarget = possessed
+        status = `${label} answered yes · spider entered and seized its site controls`
+      } else {
+        remember(target).classList.add('hatsu-solicitation-refusal')
+        status = `${label} answered no · the small Beast remains and asks again`
+      }
+      addPoint(x, y, label)
+    } else if (profile.kind === 'room-isolation') {
+      const room = remember(target)
+      room.classList.add('hatsu-isolated-room')
+      room.style.position = 'relative'
+      room.style.zIndex = '25'
+      for (const outsider of Array.from(target.parentElement?.children || [])) {
+        if (!(outsider instanceof HTMLElement) || outsider === target) continue
+        remember(outsider)
+        outsider.style.opacity = '.12'
+        outsider.style.pointerEvents = 'none'
+        outsider.setAttribute('aria-hidden', 'true')
+      }
+      status = `${label} isolated as the real room · surrounding visitors can access only an inert duplicate`
+      addPoint(x, y, 'ROOM 1013')
     } else if (profile.kind === 'postmortem-curse') {
       if (selectedElements[0] !== target) { selectedElements = [target]; studyCount = 0 }
       studyCount += 1
@@ -1160,7 +1407,7 @@
     }
     if (profile.kind === 'capture' && interactWithCuldcept(event, eventElement)) return
     if (profile.kind === 'arrow' && interactWithArrow(event, eventElement)) return
-    const requiresCharacter = ['elastic', 'chain-rule', 'chain-bind', 'control', 'surveillance', 'curse', 'inherit'].includes(profile.kind)
+    const requiresCharacter = ['elastic', 'chain-rule', 'chain-bind', 'control', 'surveillance', 'curse', 'inherit', 'ability-loan'].includes(profile.kind)
     const target = (requiresCharacter
       ? eventElement.closest<HTMLElement>('[data-hatsu-character]')
       : eventElement.closest<HTMLElement>('a, button, article, section, li, [role="button"], h1, h2, h3, p'))
@@ -1282,7 +1529,7 @@
 </script>
 
 {#if profile}
-  <div class="world-effect kind-{profile.kind}" style:--hatsu={profile.color} data-hatsu-ui data-hatsu-impact={siteImpactFor(profile)} aria-hidden={['guardian', 'portal', 'theft', 'pocket', 'spatial', 'vacuum', 'flock', 'chain-rule', 'capture', 'inherit', 'poetry', 'rhythm', 'melody', 'divination', 'prophecy', 'projection', 'relay'].includes(profile.kind) ? undefined : 'true'}>
+  <div class="world-effect kind-{profile.kind}" style:--hatsu={profile.color} data-hatsu-ui data-hatsu-impact={siteImpactFor(profile)} aria-hidden={['guardian', 'portal', 'theft', 'pocket', 'spatial', 'vacuum', 'flock', 'chain-rule', 'capture', 'inherit', 'poetry', 'rhythm', 'melody', 'divination', 'prophecy', 'projection', 'relay', 'ability-loan', 'truth-punch', 'blood-search', 'door-network', 'aura-levy', 'diffusive-smoke'].includes(profile.kind) ? undefined : 'true'}>
     <div class="atmosphere"></div>
     {#if profile.kind === 'future'}
       <div class="future-frame"><span>PARALLEL FUTURE</span><strong>{$parallelFutureVisible ? `${Math.max(0, 10 - seconds)} s` : 'ENDED'}</strong></div>
@@ -1362,7 +1609,7 @@
       <div class="site-guide"><span>{guideTitle}</span>{#each guideItems as item (item.id)}{#if item.href}<a href={item.href}>{item.label} →</a>{:else}<button type="button" onclick={() => followGuide(item)}>{item.label} →</button>{/if}{/each}</div>
     {/if}
     {#if capturedTechniques.length}
-      <div class="captured-techniques"><span>{profile.kind === 'inherit' ? 'BENJAMIN BATON' : profile.kind === 'capture' ? 'CULDCEPT CARD' : 'STEAL CHAIN · INDEX DOLPHIN'}</span>{#each capturedTechniques as technique}<button type="button" onclick={() => activateHatsu(technique)} style:--captured={technique.color}><b>{technique.name}</b><small>Activate captured Hatsu</small></button>{/each}</div>
+      <div class="captured-techniques"><span>{profile.kind === 'inherit' ? 'BENJAMIN BATON' : profile.kind === 'capture' ? 'CULDCEPT CARD' : profile.kind === 'ability-loan' ? 'STEALTH DOLPHIN · SINGLE-USE LOAN' : 'STEAL CHAIN · INDEX DOLPHIN'}</span>{#each capturedTechniques as technique}<button type="button" onclick={() => activateHatsu(technique)} style:--captured={technique.color}><b>{technique.name}</b><small>Activate captured Hatsu</small></button>{/each}</div>
     {/if}
     <div class="readout">
       <span>{profile.name}</span>
@@ -1464,6 +1711,9 @@
   :global(body.hatsu-no-sight main){filter:blur(12px) brightness(.2)!important}:global(body.hatsu-no-hearing main){animation:none!important;filter:grayscale(1) contrast(.8)}:global(body.hatsu-no-speech main :is(input,textarea,button):not([data-hatsu-pass])){pointer-events:none!important;opacity:.35!important}
   :global(.hatsu-suspect){outline:1px dashed #8765aa!important}:global(.hatsu-snake-victim){animation:snake-drain 1.2s ease-out forwards!important}:global(.hatsu-zetsu-test){box-shadow:inset 0 0 0 2px #8fe3f0!important}:global(.hatsu-training-hit){animation:training-hit .7s ease-out!important}:global(.hatsu-zetsu-broken){box-shadow:inset 0 0 25px #ef5b5b66!important}
   :global(.hatsu-serpent-bound){transform:scaleX(.72)!important;filter:hue-rotate(35deg)!important;box-shadow:inset 14px 0 #86c98a44,inset -14px 0 #86c98a44!important}:global(.hatsu-bird-dispatched){outline:1px dotted #b9d8e8!important}:global(.hatsu-relay-cargo)::after{content:'RELAY ' attr(data-hatsu-level);position:absolute;color:#e2b86e;font:700 .45rem monospace}:global(.hatsu-curse-prepared){box-shadow:inset 0 0 0 2px #a04f6855!important}:global(.hatsu-postmortem-drain){animation:postmortem-drain 3s ease-in forwards!important}
+  :global(.hatsu-holy-healed){outline:2px solid #d9f1df!important}:global(.hatsu-vow-subject),:global(.hatsu-contract-signatory){box-shadow:inset 0 0 0 2px #d7dce266!important}:global(.hatsu-vow-clause),:global(.hatsu-contract-clause){outline:2px dashed #d7dce2!important}:global(.hatsu-vow-enforced){filter:grayscale(1) brightness(.45)!important}:global(.hatsu-dolphin-analyzed){outline:2px solid #63d5e6!important}:global(.hatsu-dolphin-recipient){box-shadow:0 0 24px #63d5e666!important}:global(.hatsu-truth-punched){outline:2px solid #f1a06d!important}:global(.hatsu-blood-searched){box-shadow:inset 0 0 24px #b51f3c55!important}
+  :global(.hatsu-lsdf-hideout){outline:2px double #d4c58b!important}:global(.hatsu-lsdf-defendant){box-shadow:inset 0 0 0 2px #d4c58b!important}:global(.hatsu-damage-source){outline:1px solid #db8b78!important}:global(.hatsu-damage-recipient){outline:2px dashed #db8b78!important}:global(.hatsu-hideout-door){border-left:4px solid #7ec8b6!important}:global(.hatsu-body-weapon){box-shadow:inset 0 -5px #c6925e!important}:global(.hatsu-coercion-probe)::after{content:'? ' attr(data-hatsu-level) '/3';color:#d98cae;font:700 .5rem monospace}:global(.hatsu-guardian-coin)::after{content:'COIN AGE ' attr(data-hatsu-level);color:#d7b34f;font:700 .45rem monospace}
+  :global(.hatsu-lie-mark){box-shadow:inset 0 0 0 calc(1px * var(--hatsu-level,1)) #9e6d89!important}:global(.hatsu-research-partner){outline:1px dashed #91bd72!important}:global(.hatsu-eye-wog-reader){box-shadow:inset 0 0 18px #ef91c444!important}:global(.hatsu-desire){outline:2px solid #98b65c!important}:global(.hatsu-desire-bait){box-shadow:0 0 25px #98b65c77!important}:global(.hatsu-smoke-converted){filter:saturate(.8) hue-rotate(18deg)!important}:global(.hatsu-solicited){outline:1px dashed #e8a9a1!important}:global(.hatsu-possessed){filter:grayscale(.75)!important}:global(.hatsu-solicitation-refusal){box-shadow:inset 0 0 16px #e8a9a155!important}:global(.hatsu-isolated-room){box-shadow:0 0 0 3px #7095d6,0 0 40px #7095d655!important}
   @keyframes arrive { from { opacity: 0; transform: translate(-50%,-50%) scale(2); } }
   @keyframes elastic { to { stroke-width: 5; } }
   @keyframes scarlet { 50% { opacity: .72; } }

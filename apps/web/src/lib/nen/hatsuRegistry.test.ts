@@ -3,6 +3,14 @@ import abilityCatalog from '../../../../../data/abilities/abilities.json'
 import { HATSU_PROFILES, HATSU_SITE_IMPACT_BY_KIND, hatsuById, siteImpactFor } from './hatsuRegistry.js'
 
 describe('global Hatsu interaction registry', () => {
+  const auditedMissingHatsu = [
+    'holy-chain', 'judgment-chain', 'stealth-dolphin', 'moonlight-act', 'body-and-soul', 'bloody-mary',
+    'lsdf', 'damage-sweet-home', 'voconte-hideout-doors', 'padaille-weapon-transformation',
+    'camilla-guardian-coercion', 'zhanglei-guardian-coins', 'tserriednich-guardian-lie-marks',
+    'tubeppa-guardian-synthesis', 'tyson-guardian-eye-wogs', 'luzurus-guardian-desire-trap',
+    'salesale-guardian-smoke', 'momoze-guardian-solicitation', 'marayam-guardian-isolation'
+  ]
+
   it('provides an interaction for every catalogued Hatsu', () => {
     const missing = abilityCatalog
       .filter((ability) => !hatsuById(ability.id))
@@ -39,5 +47,10 @@ describe('global Hatsu interaction registry', () => {
       expect(allowedImpacts.has(siteImpactFor(profile)), profile.id).toBe(true)
     }
     expect(Object.keys(HATSU_SITE_IMPACT_BY_KIND)).toHaveLength(HATSU_PROFILES.length)
+  })
+
+  it('keeps every Hatsu found by the extended Black Whale audit', () => {
+    expect(HATSU_PROFILES).toHaveLength(81)
+    expect(auditedMissingHatsu.filter((id) => !hatsuById(id))).toEqual([])
   })
 })

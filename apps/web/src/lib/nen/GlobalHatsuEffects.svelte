@@ -17,6 +17,7 @@
   let status = ''
   let previousId: string | null = null
   let bungeeTimer: ReturnType<typeof setTimeout> | null = null
+  let bungeeFilterActive = false
   let futureTimer: ReturnType<typeof setTimeout> | null = null
   let captureTimer: ReturnType<typeof setTimeout> | null = null
   let captureStart: { x: number; y: number } | null = null
@@ -66,6 +67,7 @@
   function cleanupBungeeSelection() {
     if (bungeeTimer) clearTimeout(bungeeTimer)
     bungeeTimer = null
+    bungeeFilterActive = false
     bungeeSelected.clear()
     if (typeof document === 'undefined') return
     document.body.classList.remove('bungee-gum-filtered')
@@ -89,6 +91,7 @@
     status = `${bungeeSelected.size} characters linked · filter in 5 seconds`
     bungeeTimer = setTimeout(() => {
       document.body.classList.add('bungee-gum-filtered')
+      bungeeFilterActive = true
       status = `${bungeeSelected.size} linked characters · map filtered`
       bungeeTimer = null
     }, 5000)
@@ -261,6 +264,7 @@
   function interact(event: MouseEvent) {
     const eventElement = event.target as Element
     if (!profile || eventElement.closest('[data-hatsu-ui], [data-hatsu-pass]')) return
+    if (profile.kind === 'elastic' && bungeeFilterActive) return
     if (profile.kind === 'guardian') {
       recordGuardianEvent(event, eventElement)
       return
@@ -375,7 +379,7 @@
         {#each chainPairs as pair (pair.to.id)}
           <line x1={pair.from.x} y1={pair.from.y} x2={pair.to.x} y2={pair.to.y}></line>
         {/each}
-        {#if profile.kind !== 'arrow' || points.length < 2}<line class="live" x1={anchor.x} y1={anchor.y} x2={cursor.x} y2={cursor.y}></line>{/if}
+        {#if (profile.kind !== 'arrow' || points.length < 2) && (profile.kind !== 'elastic' || !bungeeFilterActive)}<line class="live" x1={anchor.x} y1={anchor.y} x2={cursor.x} y2={cursor.y}></line>{/if}
       </svg>
     {/if}
     {#each points as point, i (point.id)}

@@ -17,12 +17,32 @@
 
   // Toolbar & Factions setup
   const factions = [
-    { id: 'princes', label: 'Princes' },
-    { id: 'guards', label: 'Guards' },
-    { id: 'hunters', label: 'Hunters' },
-    { id: 'spider', label: 'Phantom Troupe' },
-    { id: 'mafia', label: 'Mafia' }
+    { id: 'princes', label: 'Royal houses', code: 'KKN', mark: '♛', color: '#d9bc69' },
+    { id: 'guards', label: 'Royal guard', code: 'GRD', mark: '◆', color: '#a9b5b5' },
+    { id: 'hunters', label: 'Hunters', code: 'HXA', mark: '✦', color: '#69b8ad' },
+    { id: 'spider', label: 'Phantom Troupe', code: '№13', mark: '✳', color: '#9b78bf' },
+    { id: 'mafia', label: 'Mafia families', code: '3F', mark: '⬡', color: '#b96552' }
   ];
+
+  const tierProfiles: Record<string, {
+    number: string;
+    title: string;
+    subtitle: string;
+    clearance: string;
+    density: number;
+    pressure: string;
+    danger: string;
+    signal: string;
+    anomaly: string;
+    report: string;
+  }> = {
+    overview: { number: '00', title: 'Ship overview', subtitle: 'Five societies under one hull', clearance: 'ARCHIVE / GLOBAL', density: 42, pressure: 'Layered control', danger: 'ELEVATED', signal: 'Cross-deck surveillance active', anomaly: 'Parasitic aura signatures remain unresolved', report: 'Passenger manifests disagree with security counts on the lower decks.' },
+    'tier-1': { number: '01', title: 'Royal precinct', subtitle: 'Ceremonial calm · concealed succession war', clearance: 'KAKIN / ROYAL', density: 18, pressure: 'Silent hostility', danger: 'SEVERE', signal: 'Private armies monitoring all corridors', anomaly: 'Multiple guardian entities inferred · direct observation impossible', report: 'Four deaths in Room 1014. Cause redacted by royal authority.' },
+    'tier-2': { number: '02', title: 'VVIP district', subtitle: 'Privilege behind controlled access', clearance: 'VVIP / BLUE', density: 34, pressure: 'Controlled access', danger: 'GUARDED', signal: 'Detention and transit channels monitored', anomaly: 'Residual aura detected near restricted suites', report: 'Intercepted routing order references an unregistered holding area.' },
+    'tier-3': { number: '03', title: 'Civic deck', subtitle: 'Hospitals, courts and public movement', clearance: 'CIVIL / AMBER', density: 61, pressure: 'Information overload', danger: 'UNSTABLE', signal: 'Justice Bureau feeds partially synchronized', anomaly: 'Unattributed Nen activity reported through civilian channels', report: 'Witness statements conflict after a disappearance near the medical district.' },
+    'tier-4': { number: '04', title: 'Industrial passage', subtitle: 'Cargo routes contested by three families', clearance: 'CREW / RED', density: 79, pressure: 'Faction friction', danger: 'CRITICAL', signal: 'Blind corridors and mafia relays detected', anomaly: 'Spatial discontinuities reported by multiple teams', report: 'Three intercepted transmissions use mutually exclusive location codes.' },
+    'tier-5': { number: '05', title: 'Lower machinery', subtitle: 'Crowding, scarcity and failing oversight', clearance: 'RESTRICTED / BLACK', density: 96, pressure: 'Systemic collapse', danger: 'EXTREME', signal: 'Official surveillance coverage below threshold', anomaly: 'Hostile aura bloom · classification unavailable', report: 'Casualty ledger sealed. Seventeen passenger IDs no longer resolve.' }
+  };
 
   const followLabel: Record<FollowMode, string> = {
     consciousness: 'follow consciousness',
@@ -41,6 +61,14 @@
   });
 
   let currentEvt = $derived(data.events.find((event: any) => event.id === data.selectedEventId) || data.events[data.events.length - 1]);
+
+  let unknownPositionCount = $derived.by(() => {
+    const locations = new Map((data.worldState?.locations || []).map((location: any) => [location.id, location]));
+    return (data.worldState?.presences || []).filter((presence: any) => {
+      const location: any = presence.locationId ? locations.get(presence.locationId) : null;
+      return !location || location.type === 'UNKNOWN';
+    }).length;
+  });
 
   let selectedPerspective = $derived(
     perspectiveOptions.find((opt) => opt.id === mapState.selectedPerspectiveId) || perspectiveOptions[0]
@@ -122,6 +150,8 @@
 
   let trackedPresenceCount = $derived(data.worldState?.presences?.length || 0);
   let activeClearance = $derived(deckClearance[mapState.selectedTier || 'overview']);
+  let activeTierProfile = $derived(tierProfiles[mapState.selectedTier || 'overview']);
+  let activeTierKey = $derived(mapState.selectedTier || 'overview');
 
   $effect(() => {
     mapState.setFollowMode((data.followMode as FollowMode) || 'consciousness');
@@ -214,7 +244,7 @@
     />
   {/if}
 
-  <section class="map-workspace">
+  <section class="map-workspace tier-pressure-{activeTierKey}" data-tier={activeTierKey}>
     <aside class="control-deck">
       <div class="panel-heading">
         <div>
@@ -242,7 +272,7 @@
             onclick={() => mapState.selectTier(`tier-${tierNum}`)}
           >
             <span class="tier-number">0{tierNum}</span>
-            <span><strong>Tier {tierNum}</strong><small>{['Royalty & VVIP', 'VIP & amenities', 'Public & medical', 'Crew & cargo', 'Machinery & storage'][tierNum - 1]}</small></span>
+            <span><strong>Tier {tierNum}</strong><small>{['Royalty & VVIP', 'VIP & amenities', 'Public & medical', 'Crew & cargo', 'Machinery & storage'][tierNum - 1]}</small><i class="density-line"><b style={`width:${tierProfiles[`tier-${tierNum}`].density}%`}></b></i></span>
             <span class="tier-arrow">→</span>
           </button>
         {/each}
@@ -250,15 +280,15 @@
 
       <div class="filter-section">
         <div class="section-label"><span>Factions</span><small>{mapState.filters.factions.length} active</small></div>
-        <div class="filter-grid">
+        <div class="filter-grid faction-identities">
           {#each factions as faction}
-            <label class:active={mapState.filters.factions.includes(faction.id)}>
+            <label class:active={mapState.filters.factions.includes(faction.id)} style={`--faction:${faction.color}`}>
               <input
                 type="checkbox"
                 checked={mapState.filters.factions.includes(faction.id)}
                 onchange={() => mapState.toggleFactionFilter(faction.id)}
               />
-              <span></span>{faction.label}
+              <span class="faction-mark">{faction.mark}</span><span class="faction-name">{faction.label}<small>{faction.code}</small></span>
             </label>
           {/each}
         </div>
@@ -274,6 +304,12 @@
           <div><dt>Zones</dt><dd>{mappedZoneCount}</dd></div>
         </dl>
         <p><i></i>{activeClearance}</p>
+      </div>
+
+      <div class="clearance-card" aria-label="Archive clearance">
+        <div><span>Access level</span><strong>{activeTierProfile.clearance}</strong></div>
+        <p><span>██████</span> ██ ███████ ███</p>
+        <small>Portions withheld by order of the Kakin Crown</small>
       </div>
     </aside>
 
@@ -296,6 +332,8 @@
 
       <div class="map-canvas" role="region" aria-label="Interactive Black Whale map">
         <MapContainer />
+        <div class="pressure-field" aria-hidden="true"></div>
+        <div class="nen-anomaly" aria-hidden="true"><i></i><i></i><i></i><span>UNRESOLVED</span></div>
         <div class="map-coordinate north">N</div>
         <div class="map-scale"><span></span> STRUCTURAL LEVEL</div>
         <div class="scan-readout" data-hatsu-pass aria-live="polite">
@@ -320,6 +358,33 @@
       <UnknownPositions />
       </div>
     </div>
+  </section>
+
+  <section class="intelligence-strip" aria-label="Current intelligence assessment">
+    <article class="tier-brief">
+      <div class="brief-index">{activeTierProfile.number}</div>
+      <div><span>Active environment</span><h2>{activeTierProfile.title}</h2><p>{activeTierProfile.subtitle}</p></div>
+      <div class="density-gauge" style={`--density:${activeTierProfile.density}%`}><span>Human density</span><strong>{activeTierProfile.density}<small>%</small></strong><i><b></b></i><em>{activeTierProfile.pressure}</em></div>
+    </article>
+
+    <article class="threat-brief">
+      <header><span>Threat assessment</span><strong>{activeTierProfile.danger}</strong></header>
+      <div class="threat-row"><i class="threat-icon murder">†</i><p><span>Incident marker</span>{activeTierProfile.report}</p></div>
+      <div class="threat-row"><i class="threat-icon watch">◉</i><p><span>Surveillance</span>{activeTierProfile.signal}</p></div>
+    </article>
+
+    <article class="anomaly-brief">
+      <header><span>Nen phenomenon</span><strong>UNVERIFIED</strong></header>
+      <div class="anomaly-specimen" aria-hidden="true"><i></i><i></i><i></i><b></b></div>
+      <p>{activeTierProfile.anomaly}</p>
+      <small>Do not assign intent · observer contamination possible</small>
+    </article>
+
+    <article class="intercept-brief">
+      <header><span>Intercepted report</span><strong>INT/██-{activeTierProfile.number}</strong></header>
+      <p>Source <b>████████</b> reports that <b>█████</b> crossed the secured boundary without a matching body record.</p>
+      <footer><span>CHAIN OF CUSTODY DISPUTED</span><em>LEVEL {activeTierProfile.number === '00' ? '5' : activeTierProfile.number}</em></footer>
+    </article>
   </section>
 
   <section class="intel-panel">
@@ -354,7 +419,7 @@
       </div>
       <div class="display-toggles">
         <button class:active={mapState.filters.showUnknownPositions} onclick={() => mapState.filters.showUnknownPositions = !mapState.filters.showUnknownPositions}>
-          <span>{mapState.filters.showUnknownPositions ? '✓' : '+'}</span> Unknown positions
+          <span>{mapState.filters.showUnknownPositions ? '✓' : '+'}</span> Unknown positions ({unknownPositionCount})
         </button>
         <button class="danger" class:active={mapState.filters.spoilersEnabled} onclick={() => mapState.filters.spoilersEnabled = !mapState.filters.spoilersEnabled}>
           <span>{mapState.filters.spoilersEnabled ? '!' : '×'}</span> Spoilers
@@ -435,17 +500,19 @@
   .tier-nav strong, .tier-nav small { display: block; }
   .tier-nav strong { font-size: .78rem; font-weight: 600; }
   .tier-nav small { margin-top: .08rem; color: #617170; font-size: .6rem; }
+  .density-line { display: block; width: 100%; height: 2px; margin-top: .35rem; overflow: hidden; background: rgba(117,132,133,.12); }
+  .density-line b { display: block; height: 100%; background: linear-gradient(90deg, var(--gold), #b65647); opacity: .55; }
   .tier-arrow { opacity: .35; font-size: .75rem; }
   .filter-section { margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid rgba(106, 126, 133, .16); }
   .section-label { display: flex; justify-content: space-between; margin-bottom: .65rem; }
   .section-label span { color: #82918f; font-size: .65rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
   .section-label small { color: #536260; font-size: .62rem; }
-  .filter-grid { display: flex; flex-wrap: wrap; gap: .4rem; }
-  .filter-grid label { display: inline-flex; align-items: center; gap: .35rem; padding: .34rem .5rem; border: 1px solid #2a3a42; border-radius: 999px; color: #7f8c8a; background: #0c151c; font-size: .65rem; cursor: pointer; transition: .18s ease; }
-  .filter-grid label.active { border-color: rgba(215,182,93,.45); color: #eadcae; background: rgba(91,74,31,.24); }
+  .filter-grid { display: grid; gap: .35rem; }
+  .filter-grid label { display: grid; grid-template-columns: 1.5rem 1fr; align-items: center; gap: .5rem; padding: .42rem .5rem; border: 1px solid #2a3a42; border-radius: .35rem; color: #7f8c8a; background: linear-gradient(90deg, color-mix(in srgb, var(--faction) 7%, #0c151c), #0c151c 45%); font-size: .65rem; cursor: pointer; transition: .18s ease; }
+  .filter-grid label.active { border-color: color-mix(in srgb, var(--faction) 65%, transparent); color: color-mix(in srgb, var(--faction) 74%, white); background: linear-gradient(90deg, color-mix(in srgb, var(--faction) 22%, #0c151c), #0c151c 72%); box-shadow: inset 2px 0 var(--faction); }
   .filter-grid input { position: absolute; opacity: 0; pointer-events: none; }
-  .filter-grid label > span { width: .38rem; height: .38rem; border: 1px solid currentColor; border-radius: 50%; }
-  .filter-grid label.active > span { background: var(--gold); box-shadow: 0 0 8px rgba(215,182,93,.55); }
+  .filter-grid .faction-mark { display: grid; width: 1.5rem; height: 1.5rem; place-items: center; border: 1px solid color-mix(in srgb, var(--faction) 48%, transparent); border-radius: 50%; color: var(--faction); font-size: .7rem; }
+  .faction-name { display: flex; justify-content: space-between; gap: .5rem; align-items: center; }.faction-name small { color: color-mix(in srgb, var(--faction) 65%, #5d6b6b); font: .45rem/1 var(--font-mono); letter-spacing: .08em; }
   .clear-filters { margin-top: .65rem; padding: 0; border: 0; border-bottom: 1px solid #495957; background: transparent; color: #788886; font-size: .58rem; cursor: pointer; }
   .clear-filters:hover { color: var(--gold-bright); border-color: var(--gold); }
   .deck-signal { margin-top: 1.2rem; padding-top: 1rem; border-top: 1px solid rgba(106,126,133,.16); }
@@ -453,6 +520,8 @@
   .deck-signal dl { display: grid; grid-template-columns: repeat(2,1fr); margin: .7rem 0; gap: 1px; background: rgba(106,126,133,.15); }
   .deck-signal dl div { padding: .6rem; background: #0c151c; }.deck-signal dt { color: #617170; font-size: .5rem; text-transform: uppercase; }.deck-signal dd { margin: .2rem 0 0; color: #dde3dc; font: 500 1.15rem/1 var(--font-display); }
   .deck-signal p { display: flex; align-items: center; gap: .4rem; margin: 0; color: #7e918d; font-size: .58rem; }.deck-signal p i { width: .4rem; height: .4rem; border-radius: 50%; background: #72c3a8; box-shadow: 0 0 8px rgba(114,195,168,.55); }
+  .clearance-card { margin-top: 1rem; padding: .7rem; border: 1px solid rgba(164,75,64,.28); background: repeating-linear-gradient(-45deg,rgba(164,75,64,.035) 0 4px,transparent 4px 9px),rgba(28,15,16,.42); }
+  .clearance-card > div { display: flex; justify-content: space-between; gap: .5rem; }.clearance-card span,.clearance-card small { color: #826d6b; font: .47rem/1.3 var(--font-mono); letter-spacing: .07em; text-transform: uppercase; }.clearance-card strong { color: #bd7a70; font: .49rem/1 var(--font-mono); }.clearance-card p { margin: .65rem 0 .45rem; color: #16191a; background: #9c9484; font: .5rem/1 var(--font-mono); letter-spacing: .04em; }.clearance-card p span { color: #111; }
 
   .map-stage { min-width: 0; display: grid; grid-template-rows: 3rem minmax(0,1fr); background: #060a0e; }
   .map-toolbar { position: relative; z-index: 3; display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 0 1rem; border-bottom: 1px solid rgba(97,120,128,.2); background: rgba(11,18,24,.94); }
@@ -467,12 +536,25 @@
   .live-indicator { color: #88a49c; }
   .live-indicator i { display: inline-block; width: .38rem; height: .38rem; margin-right: .35rem; border-radius: 50%; background: #72c3a8; box-shadow: 0 0 8px rgba(114,195,168,.6); }
   .map-canvas { position: relative; min-height: 0; overflow: hidden; }
+  .pressure-field { position: absolute; z-index: 1; inset: 0; pointer-events: none; opacity: .12; transition: opacity .45s ease; background: repeating-linear-gradient(90deg,transparent 0 19px,rgba(191,72,57,.22) 20px),repeating-linear-gradient(0deg,transparent 0 29px,rgba(191,72,57,.18) 30px); mix-blend-mode: screen; }
+  .tier-pressure-tier-1 .pressure-field { opacity: .025; }.tier-pressure-tier-2 .pressure-field { opacity: .055; }.tier-pressure-tier-3 .pressure-field { opacity: .1; }.tier-pressure-tier-4 .pressure-field { opacity: .17; background-size: 17px 17px, 23px 23px; }.tier-pressure-tier-5 .pressure-field { opacity: .25; background-size: 11px 11px, 15px 15px; filter: contrast(1.8); }
+  .nen-anomaly { position: absolute; z-index: 11; top: 17%; right: 7%; width: 6.5rem; height: 6.5rem; pointer-events: none; opacity: .26; filter: drop-shadow(0 0 14px rgba(128,92,153,.24)); }
+  .nen-anomaly i { position: absolute; inset: 16%; border: 1px solid rgba(160,122,181,.55); border-radius: 44% 56% 38% 62%; transform: rotate(18deg); animation: anomaly-drift 9s ease-in-out infinite alternate; }.nen-anomaly i:nth-child(2){inset:28% 10% 20% 32%;transform:rotate(78deg);animation-delay:-3s}.nen-anomaly i:nth-child(3){inset:7% 32% 34% 15%;transform:rotate(-34deg);animation-delay:-6s}.nen-anomaly span{position:absolute;right:0;bottom:-.75rem;color:#806b89;font:.42rem/1 var(--font-mono);letter-spacing:.13em}.tier-pressure-tier-1 .nen-anomaly,.tier-pressure-tier-5 .nen-anomaly{opacity:.58}.tier-pressure-tier-4 .nen-anomaly{opacity:.4}
+  @keyframes anomaly-drift { to { border-radius: 61% 39% 58% 42%; transform: rotate(51deg) scale(1.09); } }
   .map-coordinate { position: absolute; z-index: 2; top: 1rem; left: 1rem; display: grid; width: 2rem; height: 2rem; place-items: center; border: 1px solid rgba(215,182,93,.25); border-radius: 50%; color: var(--gold); background: rgba(9,15,20,.72); font: 600 .67rem/1 'IBM Plex Sans Condensed', sans-serif; pointer-events: none; }
   .map-coordinate::after { content: ''; position: absolute; top: -.32rem; border: .2rem solid transparent; border-bottom-color: var(--gold); }
   .map-scale { position: absolute; z-index: 2; right: 1rem; bottom: 1rem; color: #566765; font-size: .55rem; letter-spacing: .12em; pointer-events: none; }
   .map-scale span { display: inline-block; width: 2.5rem; height: .35rem; margin-right: .4rem; border: solid #667876; border-width: 0 1px 1px; }
   .scan-readout { position: absolute; z-index: 12; bottom: 1rem; left: 1rem; display: grid; min-width: 13rem; gap: .18rem; padding: .7rem .8rem; border: 1px solid rgba(95,122,128,.25); border-radius: .45rem; background: rgba(8,14,18,.82); box-shadow: 0 10px 30px rgba(0,0,0,.24); backdrop-filter: blur(10px); pointer-events: none; }
   .scan-readout > span { color: var(--gold); font: .48rem/1 var(--font-mono); letter-spacing: .14em; }.scan-readout strong { color: #dce4de; font-size: .75rem; font-weight: 600; }.scan-readout small { color: #647572; font-size: .52rem; }
+
+  .intelligence-strip { max-width:1600px;margin:.75rem auto 0;display:grid;grid-template-columns:1.2fr 1fr 1fr 1fr;gap:1px;border:1px solid rgba(98,122,132,.25);border-radius:.8rem;overflow:hidden;background:rgba(98,122,132,.18); }
+  .intelligence-strip article { min-width:0;padding:1rem;background:linear-gradient(145deg,rgba(16,25,32,.98),rgba(9,15,20,.98)); }
+  .intelligence-strip header { display:flex;justify-content:space-between;gap:.5rem;padding-bottom:.65rem;border-bottom:1px solid rgba(112,132,136,.16); }.intelligence-strip header span,.tier-brief span { color:#687b79;font:.48rem/1 var(--font-mono);letter-spacing:.12em;text-transform:uppercase; }.intelligence-strip header strong { color:#bd685c;font:.5rem/1 var(--font-mono);letter-spacing:.09em; }
+  .tier-brief { display:grid;grid-template-columns:2.5rem 1fr auto;gap:.8rem;align-items:start; }.brief-index{color:rgba(215,182,93,.38);font:500 2.35rem/.8 var(--font-display)}.tier-brief h2{margin:.25rem 0 .2rem;color:#e2e6de;font-size:1.25rem}.tier-brief p{margin:0;color:#71817f;font-size:.58rem;line-height:1.45}.density-gauge{width:5.5rem;text-align:right}.density-gauge strong{display:block;margin:.25rem 0;color:#d8c681;font:500 1.6rem/1 var(--font-display)}.density-gauge strong small{font-size:.55rem}.density-gauge i{display:block;height:3px;background:#263238}.density-gauge i b{display:block;width:var(--density);height:100%;background:linear-gradient(90deg,#8d9d83,#c55c4d)}.density-gauge em{display:block;margin-top:.35rem;color:#7b8583;font:.45rem/1.2 var(--font-mono);font-style:normal}
+  .threat-row{display:grid;grid-template-columns:1.65rem 1fr;gap:.6rem;align-items:center;padding-top:.7rem}.threat-icon{display:grid;width:1.65rem;height:1.65rem;place-items:center;border:1px solid rgba(191,87,73,.35);border-radius:50%;color:#d16a5d;background:rgba(111,38,32,.17);font-style:normal}.threat-icon.watch{border-color:rgba(106,173,161,.28);color:#76aca4;background:rgba(35,80,75,.15)}.threat-row p{margin:0;color:#8b9692;font-size:.56rem;line-height:1.4}.threat-row p span{display:block;margin-bottom:.15rem;color:#667875;font:.44rem/1 var(--font-mono);letter-spacing:.08em;text-transform:uppercase}
+  .anomaly-brief{position:relative;overflow:hidden}.anomaly-specimen{position:absolute;right:.8rem;top:2.9rem;width:3.6rem;height:3.6rem;opacity:.5}.anomaly-specimen i{position:absolute;inset:10%;border:1px solid #765a83;border-radius:50% 45% 62% 35%;transform:rotate(24deg)}.anomaly-specimen i:nth-child(2){inset:22% 5% 8% 29%;transform:rotate(81deg)}.anomaly-specimen i:nth-child(3){inset:37%;border-radius:50%;box-shadow:0 0 14px #714d7c}.anomaly-specimen b{position:absolute;top:47%;left:47%;width:.35rem;height:.35rem;border-radius:50%;background:#ad82bc}.anomaly-brief p{max-width:72%;margin:.8rem 0 .55rem;color:#a498a8;font-size:.62rem;line-height:1.5}.anomaly-brief small{color:#665d68;font:.43rem/1.4 var(--font-mono);letter-spacing:.04em;text-transform:uppercase}
+  .intercept-brief p{margin:.8rem 0;color:#8c918b;font:.57rem/1.55 var(--font-mono)}.intercept-brief p b{padding:0 .15rem;background:#090a0a;color:#090a0a;box-shadow:0 0 0 1px #1e2020}.intercept-brief footer{display:flex;justify-content:space-between;gap:.5rem;margin-top:.75rem;padding-top:.55rem;border-top:1px dashed rgba(189,104,92,.24);color:#9b5e56;font:.42rem/1 var(--font-mono);letter-spacing:.06em}.intercept-brief footer em{color:#817161;font-style:normal}
 
   .intel-panel { max-width: 1600px; margin: .75rem auto 0; display: grid; grid-template-columns: 1.35fr 1fr; gap: .75rem; }
   .perspective-panel, .legend-panel { min-width: 0; padding: .9rem 1rem; border: 1px solid rgba(98,122,132,.25); border-radius: .8rem; background: var(--surface); }
@@ -503,6 +585,7 @@
     .map-workspace { grid-template-columns: 225px minmax(0,1fr); }
     .map-hint { display: none; }
     .intel-panel { grid-template-columns: 1fr; }
+    .intelligence-strip { grid-template-columns:repeat(2,1fr); }
   }
 
   @media (max-width: 720px) {
@@ -522,5 +605,7 @@
     .map-toolbar { padding: 0 .75rem; }
     .intel-panel { grid-template-columns: 1fr; }
     .timeline-shell { padding: .8rem; }
+    .intelligence-strip { grid-template-columns:1fr; }
+    .tier-brief { grid-template-columns:2.5rem 1fr; }.density-gauge{grid-column:1/-1;width:100%;text-align:left}.density-gauge strong{display:inline-block;margin-right:.5rem}
   }
 </style>

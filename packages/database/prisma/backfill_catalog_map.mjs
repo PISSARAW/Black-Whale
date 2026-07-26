@@ -32,13 +32,29 @@ const locationTypeByZone = {
 };
 
 const namedRoomSlugs = new Map([
+	['heil-ly secret hideout', 'tier-2-heilly-secret-hideout'],
+	['heilly secret hideout', 'tier-2-heilly-secret-hideout'],
+	['vvip living quarters', 'tier-1-vvip-living-quarters'],
+	['vip living quarters', 'tier-1-vvip-living-quarters'],
+	['vip area', 'tier-1-vvip-living-quarters'],
+	['casino vip', 'tier-1-vip-casino'],
+	['vip casino', 'tier-1-vip-casino'],
 	['vip jail', 'tier-1-vip-jail'],
 	['vvip prison', 'tier-1-vvip-prison-beyond'],
 	['commissariat central', 'tier-3-central-police-station'],
 	['tribunal central', 'tier-3-central-courthouse'],
 	['clinique', 'tier-3-central-hospital'],
 	['hopital', 'tier-3-central-hospital'],
-	['hôpital', 'tier-3-central-hospital']
+	['hôpital', 'tier-3-central-hospital'],
+	['passage central tier 4–5', 'tier-4-central-passage'],
+	['passage central tier 4-5', 'tier-4-central-passage'],
+	['réfectoire central', 'tier-5-central-dining-hall'],
+	['refectoire central', 'tier-5-central-dining-hall'],
+	['central dining hall', 'tier-5-central-dining-hall'],
+	['installations de recyclage et d’épuration', 'tier-4-recycling-sewage-facilities'],
+	["installations de recyclage et d'epuration", 'tier-4-recycling-sewage-facilities'],
+	['unités résidentielles', 'tier-3-residential-units'],
+	['unites residentielles', 'tier-3-residential-units']
 ]);
 
 function chapterNumber(chapterId) {
@@ -238,6 +254,18 @@ async function main() {
 
 		const existingPresence = await prisma.presence.findFirst({ where: { entityId: body.id } });
 		if (existingPresence) {
+			if (catalogCharacter.mapLocationCorrection && existingPresence.locationId !== location.id) {
+				const requestedPresenceChapter = chapterNumber(catalogCharacter.mapPresenceFromChapterId);
+				const requestedPresenceEvent = requestedPresenceChapter ? await ensureEvent(requestedPresenceChapter) : null;
+				await prisma.presence.update({
+					where: { id: existingPresence.id },
+					data: {
+						locationId: location.id,
+						...(requestedPresenceEvent ? { fromEventId: requestedPresenceEvent.id } : {}),
+						precision: location.type === 'ROOM' ? 'EXACT_ROOM' : location.type === 'TIER' ? 'TIER' : 'ZONE'
+					}
+				});
+			}
 			const untilChapter = chapterNumber(catalogCharacter.mapPresenceUntilChapterId);
 			const untilEvent = untilChapter ? await ensureEvent(untilChapter) : null;
 			if (untilEvent && !existingPresence.untilEventId) {

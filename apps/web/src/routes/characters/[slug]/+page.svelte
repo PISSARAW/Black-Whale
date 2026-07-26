@@ -18,6 +18,8 @@
     voice: 'Voix',
     soul: 'Âme',
     clone: 'Clone',
+    impersonated: 'Usurpation',
+    disguised: 'Déguisé',
     absent: 'Absent'
   };
 
@@ -33,6 +35,8 @@
     voice: 'border-cyan-700/50 bg-cyan-950/40 text-cyan-300',
     soul: 'border-indigo-500/50 bg-indigo-950/50 text-indigo-200',
     clone: 'border-teal-500/50 bg-teal-950/50 text-teal-200',
+    impersonated: 'border-orange-600/50 bg-orange-950/40 text-orange-200',
+    disguised: 'border-lime-600/50 bg-lime-950/40 text-lime-200',
     absent: 'border-gray-800 bg-black/20 text-gray-600'
   };
 </script>

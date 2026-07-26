@@ -25,6 +25,7 @@
       'heilly-processing': { x: 350, y: 500 }
     },
     'tier-2': {
+	  'heilly-secret-hideout': { x: 400, y: 225 },
       'vip-guest-rooms': { x: 300, y: 200 },
       'entertainment-district': { x: 500, y: 250 },
       'shopping-arcade': { x: 700, y: 200 },
@@ -34,6 +35,7 @@
       'detention-facility': { x: 200, y: 500 }
     },
     'tier-3': {
+      'residential-units': { x: 270, y: 360 },
       'medical-district': { x: 300, y: 250 },
       'tier-3-medical-district': { x: 300, y: 250 },
       'central-hospital': { x: 500, y: 190 },
@@ -48,6 +50,8 @@
       'storage-warehouses': { x: 500, y: 500 }
     },
     'tier-4': {
+      'central-passage': { x: 500, y: 525 },
+      'recycling-sewage-facilities': { x: 500, y: 525 },
       'crew-quarters': { x: 250, y: 150 },
       'maintenance-bays': { x: 450, y: 200 },
       'cargo-holds': { x: 700, y: 250 },
@@ -58,6 +62,7 @@
       'communication-hub': { x: 700, y: 450 }
     },
     'tier-5': {
+      'central-dining-hall': { x: 585, y: 370 },
       'lower-decks': { x: 300, y: 200 },
       'storage-tanks': { x: 500, y: 150 },
       'waste-holding': { x: 200, y: 300 },

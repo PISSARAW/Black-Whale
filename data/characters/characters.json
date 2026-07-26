@@ -21,18 +21,445 @@
     "canonicalName": "Hisoka Morrow",
     "aliases": [
       "Le Magicien",
-      "Grim Reaper"
+      "Grim Reaper",
+      "Hisoka Morow"
     ],
-    "description": "Puissant assassin. Traqué par la Brigade Fantôme sur le Tier 5 après avoir assassiné deux de ses membres. Négocie avec la mafia Xi-Yu.",
+    "description": "Magicien, Floor Master et Transmuter d'élite revenu d'entre les morts. Le véritable Hisoka se trouve au casino du Tier 1, tandis que Bonolenov usurpe son apparence pour tromper les mafias.",
     "factionId": null,
     "firstAppearanceChapterId": "ch-340",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": 5,
-      "room": null,
+      "tier": 1,
+      "room": "Casino VIP",
       "status": "actif",
-      "role": "chasseur / traque"
-    }
+      "role": "cible de la Brigade / chasseur solitaire"
+    },
+    "mapLocationCorrection": true,
+    "mapPresenceFromChapterId": "ch-405",
+    "biography": [
+      "Chrollo accepte finalement le duel à mort d'Hisoka à la Tour Céleste. Dès le début, Hisoka comprend que son adversaire a réuni plusieurs capacités spécialement pour ce combat. Loin de reculer devant les explications et la certitude de victoire de Chrollo, il devient toujours plus enthousiaste face à la complexité du défi.",
+      "Hisoka affronte d'abord le corps arbitral manipulé par Black Voice, puis les copies animées par Gallery Fake et Order Stamp. Il analyse méthodiquement les règles révélées par Chrollo, décapite les pantins pour les neutraliser et tente de repérer les changements de capacité à partir de la disparition des marques et des copies.",
+      "Lorsque des dizaines de pantins l'assaillent, Hisoka utilise Bungee Gum pour se déplacer au-dessus de l'arène et transforme des têtes coupées en projectiles renforcés avec Shu. Il parvient à blesser Chrollo, mais tombe dans plusieurs feintes fondées sur Convert Hands et sur la persistance post-mortem des marques de The Sun and Moon.",
+      "Chrollo lance finalement plus de deux cents pantins contre lui. Hisoka improvise un marteau humain avec Bungee Gum, mais une tête explose dans sa main et lui arrache quatre doigts. D'autres explosions détruisent une jambe et le projettent au milieu d'une dernière masse de pantins. Incapable de s'échapper, il meurt étouffé sous les corps après la détonation finale.",
+      "Avant sa mort, Hisoka ordonne à Bungee Gum d'envelopper son cœur et ses poumons puis de se contracter après le combat. Son Nen post-mortem relance ces organes et le ressuscite. Il reconstitue une main, un pied et son visage avec Bungee Gum et Texture Surprise, reconnaissant que combattre Chrollo dans les conditions préparées par celui-ci était une erreur.",
+      "Hisoka change alors les règles de sa chasse : il n'attendra plus que ses adversaires choisissent le lieu ou le moment. Après avoir immobilisé Machi et annoncé qu'il tuera toute la Brigade, il assassine Kortopi puis Shalnark, dont il expose les corps comme avertissement.",
+      "Sur le Black Whale, la Brigade et les familles Xi-Yu et Cha-R lancent une vaste recherche. Les informations concernant Hisoka circulent entre les étages, mais plusieurs apparitions supposées ne sont que Bonolenov transformé. Celui-ci neutralise Zakuro, tue Lynch lorsqu'elle découvre l'imposture et accepte sous cette apparence un laissez-passer VVIP offert par Hinrigh.",
+      "Le véritable Hisoka n'apparaît qu'au onzième jour, au casino du Tier 1. Il joue au SQ-X, abandonne même un jackpot et médite sur son désir de combats singuliers à mort. Il ignore que Bonolenov, toujours déguisé en lui, vient de le repérer et se transforme rapidement en Owl pour ne pas être découvert.",
+      "Au douzième jour, Hinrigh et Zakuro comprennent que le prétendu Hisoka rencontré au Tier 3 était un imposteur ayant assassiné Lynch. Ils déduisent que cette mise en scène visait à pousser les mafias à ouvrir aux membres de la Brigade une route vers les niveaux supérieurs, sans encore connaître toutes les motivations de Bonolenov."
+    ],
+    "abilitiesAndPowers": "Hisoka est un combattant, assassin et tacticien de tout premier plan. Sa force, sa vitesse, ses réflexes et sa résistance lui permettent de rivaliser avec les meilleurs utilisateurs de Nen. Il transforme constamment le terrain en piège, dissimule ses attaches avec In et renforce ses cartes avec Shu jusqu'à pouvoir trancher des os ou du béton. Sa lecture psychologique, son goût du risque et sa capacité à improviser rendent ses deux Hatsu extrêmement dangereux malgré leur principe simple.",
+    "equipment": [
+      {
+        "name": "Cartes à jouer",
+        "description": "Jeu de cartes utilisé comme arme blanche et projectile. Renforcées par Shu, les cartes peuvent trancher la chair, les os et même le béton ; Hisoka peut les rappeler ou modifier leur trajectoire avec Bungee Gum dissimulé par In."
+      }
+    ],
+    "nen": {
+      "type": "transmuter",
+      "typeLabel": "Transformation",
+      "secondaryTypeLabels": [
+        "Matérialisation",
+        "Émission",
+        "Renforcement"
+      ],
+      "overview": "Hisoka possède une aura puissante et sinistre. Transmuter accompli, il contrôle avec précision la forme et l'allongement de son aura et maîtrise également la Matérialisation, l'Émission et vraisemblablement le Renforcement. Il connaît le Nen post-mortem, l'exorcisme et les phénomènes de surcharge mémorielle.",
+      "techniques": [
+        "Ten",
+        "Zetsu",
+        "Ren",
+        "Ken",
+        "Gyo",
+        "Hatsu",
+        "Ko",
+        "Shu",
+        "In"
+      ],
+      "combatProficiency": "Son Ken lui permet de survivre à plusieurs explosions de The Sun and Moon. Avec Shu, ses cartes et même une tête coupée deviennent des projectiles destructeurs ; avec In, il masque les filaments de Bungee Gum et construit des pièges à plusieurs étapes. Après sa mort, il a donné à son aura un ordre automatique capable de redémarrer son cœur et ses poumons.",
+      "abilityIds": [
+        "bungee-gum",
+        "texture-surprise"
+      ]
+    },
+    "mangaAppearances": [
+      {
+        "chapter": 340,
+        "title": "Special Mission",
+        "status": "absent"
+      },
+      {
+        "chapter": 341,
+        "title": "Threats",
+        "status": "absent"
+      },
+      {
+        "chapter": 342,
+        "title": "Challenge",
+        "status": "absent"
+      },
+      {
+        "chapter": 343,
+        "title": "Invitation",
+        "status": "absent"
+      },
+      {
+        "chapter": 344,
+        "title": "Author",
+        "status": "absent"
+      },
+      {
+        "chapter": 345,
+        "title": "Signature",
+        "status": "absent"
+      },
+      {
+        "chapter": 346,
+        "title": "Options",
+        "status": "absent"
+      },
+      {
+        "chapter": 347,
+        "title": "Inauguration",
+        "status": "absent"
+      },
+      {
+        "chapter": 348,
+        "title": "Resolve",
+        "status": "absent"
+      },
+      {
+        "chapter": 349,
+        "title": "Worm Toxin",
+        "status": "absent"
+      },
+      {
+        "chapter": 350,
+        "title": "Prince",
+        "status": "absent"
+      },
+      {
+        "chapter": 351,
+        "title": "Battle to the Death",
+        "status": "appears"
+      },
+      {
+        "chapter": 352,
+        "title": "Troublesome",
+        "status": "appears"
+      },
+      {
+        "chapter": 353,
+        "title": "Cold-Blooded",
+        "status": "appears"
+      },
+      {
+        "chapter": 354,
+        "title": "Heat",
+        "status": "appears"
+      },
+      {
+        "chapter": 355,
+        "title": "Detonation",
+        "status": "appears"
+      },
+      {
+        "chapter": 356,
+        "title": "Unfortunate: Part 1",
+        "status": "death"
+      },
+      {
+        "chapter": 357,
+        "title": "Unfortunate: Part 2",
+        "status": "appears"
+      },
+      {
+        "chapter": 358,
+        "title": "Eve",
+        "status": "absent"
+      },
+      {
+        "chapter": 359,
+        "title": "Departure",
+        "status": "absent"
+      },
+      {
+        "chapter": 360,
+        "title": "Parasite",
+        "status": "absent"
+      },
+      {
+        "chapter": 361,
+        "title": "Withdraw",
+        "status": "absent"
+      },
+      {
+        "chapter": 362,
+        "title": "Resolve",
+        "status": "absent"
+      },
+      {
+        "chapter": 363,
+        "title": "Nen Beast",
+        "status": "absent"
+      },
+      {
+        "chapter": 364,
+        "title": "Speculation",
+        "status": "absent"
+      },
+      {
+        "chapter": 365,
+        "title": "Choice",
+        "status": "absent"
+      },
+      {
+        "chapter": 366,
+        "title": "To Each His Own",
+        "status": "absent"
+      },
+      {
+        "chapter": 367,
+        "title": "Synchronization",
+        "status": "absent"
+      },
+      {
+        "chapter": 368,
+        "title": "Foul Play",
+        "status": "absent"
+      },
+      {
+        "chapter": 369,
+        "title": "Limits",
+        "status": "absent"
+      },
+      {
+        "chapter": 370,
+        "title": "Observation",
+        "status": "absent"
+      },
+      {
+        "chapter": 371,
+        "title": "Mission",
+        "status": "mentioned"
+      },
+      {
+        "chapter": 372,
+        "title": "Disappearance",
+        "status": "absent"
+      },
+      {
+        "chapter": 373,
+        "title": "Inheritance",
+        "status": "absent"
+      },
+      {
+        "chapter": 374,
+        "title": "Ability",
+        "status": "absent"
+      },
+      {
+        "chapter": 375,
+        "title": "Persuasion",
+        "status": "absent"
+      },
+      {
+        "chapter": 376,
+        "title": "Determination",
+        "status": "absent"
+      },
+      {
+        "chapter": 377,
+        "title": "Scheme",
+        "status": "mentioned"
+      },
+      {
+        "chapter": 378,
+        "title": "Balance",
+        "status": "mentioned"
+      },
+      {
+        "chapter": 379,
+        "title": "Collaboration",
+        "status": "mentioned"
+      },
+      {
+        "chapter": 380,
+        "title": "Alarm",
+        "status": "absent"
+      },
+      {
+        "chapter": 381,
+        "title": "Predation",
+        "status": "absent"
+      },
+      {
+        "chapter": 382,
+        "title": "Awakening",
+        "status": "absent"
+      },
+      {
+        "chapter": 383,
+        "title": "Escape",
+        "status": "absent"
+      },
+      {
+        "chapter": 384,
+        "title": "War",
+        "status": "mentioned"
+      },
+      {
+        "chapter": 385,
+        "title": "Warning",
+        "status": "absent"
+      },
+      {
+        "chapter": 386,
+        "title": "Hypothesis",
+        "status": "absent"
+      },
+      {
+        "chapter": 387,
+        "title": "Recreation",
+        "status": "absent"
+      },
+      {
+        "chapter": 388,
+        "title": "Reflection",
+        "status": "absent"
+      },
+      {
+        "chapter": 389,
+        "title": "Curse",
+        "status": "absent"
+      },
+      {
+        "chapter": 390,
+        "title": "Clash: Part 1",
+        "status": "mentioned"
+      },
+      {
+        "chapter": 391,
+        "title": "Clash: Part 2",
+        "status": "mentioned"
+      },
+      {
+        "chapter": 392,
+        "title": "Information",
+        "status": "impersonated"
+      },
+      {
+        "chapter": 393,
+        "title": "Plea",
+        "status": "impersonated"
+      },
+      {
+        "chapter": 394,
+        "title": "Hypothesis",
+        "status": "mentioned"
+      },
+      {
+        "chapter": 395,
+        "title": "Founding: Part 1",
+        "status": "absent"
+      },
+      {
+        "chapter": 396,
+        "title": "Founding: Part 2",
+        "status": "absent"
+      },
+      {
+        "chapter": 397,
+        "title": "Founding: Part 3",
+        "status": "absent"
+      },
+      {
+        "chapter": 398,
+        "title": "Search",
+        "status": "absent"
+      },
+      {
+        "chapter": 399,
+        "title": "Expulsion",
+        "status": "absent"
+      },
+      {
+        "chapter": 400,
+        "title": "Secrecy",
+        "status": "mentioned"
+      },
+      {
+        "chapter": 401,
+        "title": "Moonlight",
+        "status": "absent"
+      },
+      {
+        "chapter": 402,
+        "title": "Letter",
+        "status": "absent"
+      },
+      {
+        "chapter": 403,
+        "title": "Results",
+        "status": "absent"
+      },
+      {
+        "chapter": 404,
+        "title": "Speculation",
+        "status": "absent"
+      },
+      {
+        "chapter": 405,
+        "title": "Performance",
+        "status": "appears"
+      },
+      {
+        "chapter": 406,
+        "title": "Regalia",
+        "status": "mentioned"
+      },
+      {
+        "chapter": 407,
+        "title": "Negotiation",
+        "status": "absent"
+      },
+      {
+        "chapter": 408,
+        "title": "Negotiation: Part 2",
+        "status": "absent"
+      },
+      {
+        "chapter": 409,
+        "title": "Negotiation: Part 3",
+        "status": "absent"
+      },
+      {
+        "chapter": 410,
+        "title": "Negotiation: Part 4",
+        "status": "absent"
+      },
+      {
+        "chapter": 411,
+        "title": "Announcement",
+        "status": "absent"
+      },
+      {
+        "chapter": 412,
+        "title": "Question",
+        "status": "absent"
+      },
+      {
+        "chapter": 413,
+        "title": "Loyalty",
+        "status": "absent"
+      },
+      {
+        "chapter": 414,
+        "title": "Friends",
+        "status": "absent"
+      }
+    ],
+    "battles": [
+      "Hisoka Morow‡* vs. Chrollo Lucilfer"
+    ]
   },
   {
     "id": "illumi",
@@ -2276,17 +2703,124 @@
   {
     "id": "morena-prudo",
     "canonicalName": "Morena Prudo",
-    "aliases": [],
-    "description": "Boss de la famille Heil-Ly. Possède la capacité d'infection Nen 'Et tu, Juliet' récompensant le meurtre.",
+    "aliases": ["Membre Zéro", "Game Master"],
+    "description": "Cheffe révolutionnaire de la nouvelle Heil-Ly et Spécialiste. Contagion transforme jusqu'à vingt-deux recrues en utilisateurs de Nen progressant par le meurtre.",
     "factionId": "mafia-heilly",
     "firstAppearanceChapterId": "ch-378",
     "canonStatus": "canon",
+    "mapLocationCorrection": true,
     "shipLocation": {
-      "tier": 3,
-      "room": null,
+      "tier": 2,
+      "room": "Heil-Ly Secret Hideout",
       "status": "actif",
-      "role": "chef mafia / infection Nen"
-    }
+      "role": "cheffe Heil-Ly / maître du jeu"
+    },
+    "biography": [
+      "Morena embarque avec au moins vingt-deux membres de la Heil-Ly. Elle embrasse chacun d'eux pour activer Contagion, explique que tuer rapporte des niveaux et libère son groupe sur le navire avec l'objectif de détruire Kakin puis le monde entier.",
+      "Ses recrues massacrent des passagers afin d'atteindre le niveau 21 et de développer leurs propres capacités. Leur offensive provoque des centaines de disparitions, rompt l'équilibre des trois mafias et pousse la Xi-Yu ainsi que la Cha-R à envisager son élimination.",
+      "Morena conseille personnellement ses membres sur leurs futurs pouvoirs. Face à Tevelares, Quorolle et Gelato, elle explique que l'expérience, la technique, l'aura et l'ingéniosité déterminent un combat de Nen, puis propose de transformer leurs affrontements en systèmes comparables à des jeux.",
+      "Lorsque sa liaison avec Tserriednich se tait, Morena comprend qu'il soupçonne sa trahison. Elle abandonne le leurre de la chambre 3101, organise plusieurs portes d'accès à sa véritable cache et veut infecter un soldat de Tserriednich afin de suivre les déplacements de son ancien protecteur.",
+      "Elle répartit les rôles entre ses subordonnés : Yokotani et Orarge surveillent les entrées, Notre et Soufflé observent l'ancien repaire, tandis que Dogman doit dépasser le niveau 50 et trouver une personne répondant à des critères très précis.",
+      "Hinrigh et Nobunaga franchissent le piège de la chambre 3101 et découvrent une base aux murs renforcés, probablement par le Nen de Morena. Hinrigh y dissimule un transmetteur qui permet à la Brigade de conclure que la véritable cache se trouve au Tier 2.",
+      "Morena utilise le cortège funèbre de Halkenburg comme couverture pour l'opération de Dogman, désormais niveau 62. Celui-ci enlève Borksen, soldate de Tserriednich et Spécialiste recherchée, puis la conduit dans la base secrète.",
+      "Morena propose à Borksen de rejoindre la Heil-Ly comme « donneuse compatible » et lui impose un jeu de négociation. Le joueur interroge Morena grâce à sept cartes thématiques tandis que la donneuse élimine progressivement les cinq réponses possibles : Oui, Non, Retour, Joker et X.",
+      "Le jeu oblige Morena à révéler son objectif, son pouvoir et des informations sensibles. Elle explique à Borksen ses origines de « Chair », sa volonté irrévocable de détruire Kakin puis le monde, et le besoin d'une Spécialiste capable de développer une aptitude encore tenue secrète.",
+      "Borksen utilise la carte Deal pour récupérer une réponse en échange d'un baiser, l'une des conditions de Contagion. La proclamation de la loi martiale tend brièvement Morena, mais elle poursuit la partie et répond aux questions sur sa famille et sa cache.",
+      "Après plusieurs manœuvres, Borksen termine avec Retour puis choisit volontairement Oui. Morena lui précise qu'elle reste niveau zéro jusqu'à l'accomplissement de la dernière condition et qu'elle pourra retourner auprès de ses amis, mais sera tuée si elle cesse d'être utile. Une tricherie commise pendant le jeu permet en outre à la composante manipulatrice de Contagion de l'influencer."
+    ],
+    "abilitiesAndPowers": "Morena commande la nouvelle Heil-Ly et tous ses membres, devenus utilisateurs de Nen. Elle a organisé seule un coup d'État qui a transformé une organisation de trafiquants en réseau de tueurs révolutionnaires. Très intelligente, elle conçoit la progression de ses recrues comme un jeu, comprend les catégories, vœux et restrictions du Nen et les guide vers des capacités compatibles avec leurs objectifs. Sa faction contrôle officiellement le Tier 3, tandis que sa véritable base secrète se trouve au Tier 2.",
+    "equipment": [
+      {
+        "name": "Jeu de négociation",
+        "description": "Douze cartes utilisées entre une donneuse et un joueur : sept sujets de question pour Morena et cinq réponses finales pour la recrue. Le résultat conditionne l'infection par Contagion et expose les deux parties à des risques servant de restriction de Nen."
+      }
+    ],
+    "nen": {
+      "type": "specialist",
+      "typeLabel": "Spécialisation",
+      "secondaryTypeLabels": ["Combinaison avancée de plusieurs catégories", "Symbiose collective possible"],
+      "overview": "Morena a éveillé spontanément le Nen. Membre Zéro et niveau 45 de Contagion, elle bénéficie d'une quantité et d'un débit d'aura renforcés et pourrait avoir développé une seconde capacité. Nobunaga soupçonne qu'elle crée ou renforce la cache indestructible de la Heil-Ly.",
+      "techniques": ["Hatsu"],
+      "combatProficiency": "Son principal danger réside dans l'organisation, le suivi et la croissance collective de ses recrues plutôt que dans un combat direct connu.",
+      "abilityIds": ["contagion"]
+    },
+    "mangaAppearances": [
+      { "chapter": 340, "title": "Special Mission", "status": "absent" },
+      { "chapter": 341, "title": "Threats", "status": "absent" },
+      { "chapter": 342, "title": "Challenge", "status": "absent" },
+      { "chapter": 343, "title": "Invitation", "status": "absent" },
+      { "chapter": 344, "title": "Author", "status": "absent" },
+      { "chapter": 345, "title": "Signature", "status": "absent" },
+      { "chapter": 346, "title": "Options", "status": "absent" },
+      { "chapter": 347, "title": "Inauguration", "status": "absent" },
+      { "chapter": 348, "title": "Resolve", "status": "absent" },
+      { "chapter": 349, "title": "Worm Toxin", "status": "absent" },
+      { "chapter": 350, "title": "Prince", "status": "absent" },
+      { "chapter": 351, "title": "Battle to the Death", "status": "absent" },
+      { "chapter": 352, "title": "Troublesome", "status": "absent" },
+      { "chapter": 353, "title": "Cold-Blooded", "status": "absent" },
+      { "chapter": 354, "title": "Heat", "status": "absent" },
+      { "chapter": 355, "title": "Detonation", "status": "absent" },
+      { "chapter": 356, "title": "Unfortunate: Part 1", "status": "absent" },
+      { "chapter": 357, "title": "Unfortunate: Part 2", "status": "absent" },
+      { "chapter": 358, "title": "Eve", "status": "absent" },
+      { "chapter": 359, "title": "Departure", "status": "absent" },
+      { "chapter": 360, "title": "Parasite", "status": "absent" },
+      { "chapter": 361, "title": "Withdraw", "status": "absent" },
+      { "chapter": 362, "title": "Resolve", "status": "absent" },
+      { "chapter": 363, "title": "Nen Beast", "status": "absent" },
+      { "chapter": 364, "title": "Speculation", "status": "absent" },
+      { "chapter": 365, "title": "Choice", "status": "absent" },
+      { "chapter": 366, "title": "To Each His Own", "status": "absent" },
+      { "chapter": 367, "title": "Synchronization", "status": "absent" },
+      { "chapter": 368, "title": "Foul Play", "status": "absent" },
+      { "chapter": 369, "title": "Limits", "status": "absent" },
+      { "chapter": 370, "title": "Observation", "status": "absent" },
+      { "chapter": 371, "title": "Mission", "status": "absent" },
+      { "chapter": 372, "title": "Disappearance", "status": "absent" },
+      { "chapter": 373, "title": "Inheritance", "status": "absent" },
+      { "chapter": 374, "title": "Ability", "status": "absent" },
+      { "chapter": 375, "title": "Persuasion", "status": "absent" },
+      { "chapter": 376, "title": "Determination", "status": "absent" },
+      { "chapter": 377, "title": "Scheme", "status": "absent" },
+      { "chapter": 378, "title": "Balance", "status": "debut" },
+      { "chapter": 379, "title": "Collaboration", "status": "mentioned" },
+      { "chapter": 380, "title": "Alarm", "status": "absent" },
+      { "chapter": 381, "title": "Predation", "status": "absent" },
+      { "chapter": 382, "title": "Awakening", "status": "absent" },
+      { "chapter": 383, "title": "Escape", "status": "absent" },
+      { "chapter": 384, "title": "War", "status": "mentioned" },
+      { "chapter": 385, "title": "Warning", "status": "absent" },
+      { "chapter": 386, "title": "Hypothesis", "status": "absent" },
+      { "chapter": 387, "title": "Recreation", "status": "absent" },
+      { "chapter": 388, "title": "Reflection", "status": "absent" },
+      { "chapter": 389, "title": "Curse", "status": "absent" },
+      { "chapter": 390, "title": "Clash: Part 1", "status": "mentioned" },
+      { "chapter": 391, "title": "Clash: Part 2", "status": "pictured" },
+      { "chapter": 392, "title": "Information", "status": "mentioned" },
+      { "chapter": 393, "title": "Plea", "status": "appears" },
+      { "chapter": 394, "title": "Hypothesis", "status": "appears" },
+      { "chapter": 395, "title": "Founding: Part 1", "status": "absent" },
+      { "chapter": 396, "title": "Founding: Part 2", "status": "absent" },
+      { "chapter": 397, "title": "Founding: Part 3", "status": "absent" },
+      { "chapter": 398, "title": "Search", "status": "appears" },
+      { "chapter": 399, "title": "Expulsion", "status": "mentioned" },
+      { "chapter": 400, "title": "Secrecy", "status": "mentioned" },
+      { "chapter": 401, "title": "Moonlight", "status": "absent" },
+      { "chapter": 402, "title": "Letter", "status": "absent" },
+      { "chapter": 403, "title": "Results", "status": "absent" },
+      { "chapter": 404, "title": "Speculation", "status": "absent" },
+      { "chapter": 405, "title": "Performance", "status": "appears" },
+      { "chapter": 406, "title": "Regalia", "status": "absent" },
+      { "chapter": 407, "title": "Negotiation", "status": "appears" },
+      { "chapter": 408, "title": "Negotiation: Part 2", "status": "appears" },
+      { "chapter": 409, "title": "Negotiation: Part 3", "status": "appears" },
+      { "chapter": 410, "title": "Negotiation: Part 4", "status": "appears" },
+      { "chapter": 411, "title": "Announcement", "status": "absent" },
+      { "chapter": 412, "title": "Question", "status": "absent" },
+      { "chapter": 413, "title": "Loyalty", "status": "absent" },
+      { "chapter": 414, "title": "Friends", "status": "absent" }
+    ]
   },
   {
     "id": "luini",
@@ -2307,18 +2841,456 @@
     "id": "chrollo-lucilfer",
     "canonicalName": "Chrollo Lucilfer",
     "aliases": [
-      "Danchou"
+      "Danchou",
+      "Kuroro Lucifer",
+      "Boss"
     ],
-    "description": "Chef de la Brigade Fantôme. Organise la traque d'Hisoka depuis le réfectoire du Tier 5.",
+    "description": "Chef de la Brigade Fantôme et prodige du Nen. Au Tier 3, il utilise Love Dial 6700 pour trouver la capacité idéale avant d'affronter de nouveau Hisoka et projette de voler les régalia de Kakin.",
     "factionId": "phantom-troupe",
     "firstAppearanceChapterId": "ch-71",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": 5,
-      "room": null,
+      "tier": 3,
+      "room": "Hôpital central",
       "status": "actif",
-      "role": "chef / organisateur traque"
-    }
+      "role": "chef de la Brigade / recherche d'une capacité et des régalia"
+    },
+    "mapLocationCorrection": true,
+    "biography": [
+      "Après avoir fait exorciser la chaîne de Kurapika, Chrollo accepte enfin le duel à mort réclamé par Hisoka. Devenu Floor Master de la Tour Céleste, il prépare méthodiquement le combat en réunissant un ensemble de capacités complémentaires et affirme n'avoir jamais eu besoin d'autant de pouvoirs pour tuer un adversaire.",
+      "Chrollo ouvre le combat avec Black Voice, puis révèle The Sun and Moon et Double Face. Son marque-page lui permet de maintenir une capacité active tout en fermant Bandit's Secret ou d'en combiner deux. Il présente ensuite Order Stamp, Gallery Fake et Convert Hands, expliquant à Hisoka les règles de chaque pouvoir avant d'annoncer sa victoire certaine.",
+      "Il copie des spectateurs avec Gallery Fake, les anime avec Order Stamp, se dissimule dans la foule grâce à Convert Hands et conserve certaines copies avec les marques post-mortem de The Sun and Moon. Plus de deux cents pantins finissent par encercler Hisoka ; leurs explosions le tuent et détruisent une partie de l'arène.",
+      "Après le combat, Chrollo rend leurs capacités à Shalnark et Kortopi. Il leur annonce que la Brigade embarquera sur le Black Whale afin de voler les trésors de la famille royale de Kakin. Hisoka ressuscite toutefois grâce à son Nen post-mortem et assassine les deux membres avant le départ.",
+      "Sur le Black Whale, Chrollo apparaît abattu par la mort de Shalnark et Kortopi. Il réunit la Brigade dans le réfectoire central du Tier 5, accepte Illumi parmi les Araignées et ordonne à tous de trouver puis tuer Hisoka. Il fait équipe avec Shizuku et Bonolenov, à qui il confie les rôles les mieux adaptés à leurs capacités.",
+      "Lorsque Shizuku lui demande d'utiliser de nouveau Lovely Ghostwriter, Chrollo constate que la capacité a disparu de son livre, ce qui indique probablement la mort de Neon. La Brigade se dirige ensuite vers les niveaux supérieurs tandis que Chrollo coordonne sa propre stratégie contre Hisoka.",
+      "Au quatrième jour, Chrollo demande à Bonolenov de prendre l'apparence d'Hisoka afin de tromper les mafias et de faciliter l'accès de la Brigade aux étages supérieurs. Le plan sert de solution de repli pendant que Chrollo cherche une capacité précise qui lui permettrait de tuer Hisoka définitivement.",
+      "Au douzième jour, pendant le cortège funéraire de Halkenburg, Chrollo circule au Tier 3 et utilise Love Dial 6700 pour localiser son « partenaire idéal ». L'appareil ne trouvant personne à proximité, il conclut que la cible recherchée se situe dans les niveaux supérieurs.",
+      "Chrollo identifie les trois régalia de Kakin comme des trésors nationaux susceptibles de satisfaire la condition d'amélioration de Skill Hunter. Il envisage de gagner le Tier 1 pour les voler, malgré le risque d'y rencontrer Hisoka avant d'être prêt. Dans la foule de l'hôpital central, Dogman perçoit son aura et l'identifie comme un Floor Master de type Spécialisation."
+    ],
+    "abilitiesAndPowers": "Chrollo est un combattant d'élite, un stratège extrêmement méthodique et l'un des utilisateurs de Nen les plus talentueux de la série. Il a tenu tête simultanément à Silva et Zeno, possède une vitesse et des réflexes exceptionnels, maîtrise le combat à mains nues comme les armes blanches et analyse rapidement les règles d'une capacité. Sa plus grande force reste sa polyvalence : Skill Hunter lui permet de construire des combinaisons complexes de pouvoirs volés, préparées en fonction de l'adversaire et du terrain.",
+    "equipment": [
+      {
+        "name": "Couteau de Ben",
+        "description": "Couteau de fabrication Ben dont le poison est assez puissant pour paralyser une baleine avec environ 0,1 mg. Chrollo l'a notamment utilisé contre Silva."
+      },
+      {
+        "name": "Antennes de Black Voice",
+        "description": "Deux antennes empruntées à Shalnark pour manipuler les cibles de Black Voice. Elles ont été perdues ou détruites pendant le combat contre Hisoka."
+      },
+      {
+        "name": "Téléphone de Black Voice",
+        "description": "Téléphone spécial en forme de chauve-souris appartenant à Shalnark. Il se trouvait encore en possession de Chrollo au moment de la mort de son propriétaire."
+      }
+    ],
+    "nen": {
+      "type": "specialist",
+      "typeLabel": "Spécialisation",
+      "overview": "Prodige de la Spécialisation, Chrollo maintient constamment Ten, possède un Zetsu presque parfait et dispose d'une réserve d'aura suffisante pour combiner plusieurs Hatsu volés. Sa connaissance des restrictions, des failles contractuelles et du Nen post-mortem lui permet d'exploiter chaque capacité au-delà de son usage évident.",
+      "techniques": [
+        "Ten",
+        "Zetsu",
+        "Ren",
+        "Ken",
+        "Gyo",
+        "Hatsu",
+        "En"
+      ],
+      "combatProficiency": "Il associe ses capacités avec une précision tactique remarquable : contre Hisoka, il a préparé le terrain, expliqué volontairement ses pouvoirs pour influencer son raisonnement, créé plus de deux cents pantins et enchaîné jusqu'à cinq techniques volées autour de Skill Hunter et Double Face.",
+      "abilityIds": [
+        "skill-hunter",
+        "double-face",
+        "indoor-fish",
+        "fun-fun-cloth",
+        "chrollo-teleportation",
+        "sun-and-moon",
+        "order-stamp",
+        "convert-hands",
+        "love-dial-6700",
+        "lovely-ghostwriter",
+        "gallery-fake",
+        "black-voice"
+      ]
+    },
+    "mangaAppearances": [
+      {
+        "chapter": 340,
+        "title": "Special Mission",
+        "status": "absent"
+      },
+      {
+        "chapter": 341,
+        "title": "Threats",
+        "status": "absent"
+      },
+      {
+        "chapter": 342,
+        "title": "Challenge",
+        "status": "absent"
+      },
+      {
+        "chapter": 343,
+        "title": "Invitation",
+        "status": "absent"
+      },
+      {
+        "chapter": 344,
+        "title": "Author",
+        "status": "absent"
+      },
+      {
+        "chapter": 345,
+        "title": "Signature",
+        "status": "absent"
+      },
+      {
+        "chapter": 346,
+        "title": "Options",
+        "status": "absent"
+      },
+      {
+        "chapter": 347,
+        "title": "Inauguration",
+        "status": "absent"
+      },
+      {
+        "chapter": 348,
+        "title": "Resolve",
+        "status": "absent"
+      },
+      {
+        "chapter": 349,
+        "title": "Worm Toxin",
+        "status": "absent"
+      },
+      {
+        "chapter": 350,
+        "title": "Prince",
+        "status": "absent"
+      },
+      {
+        "chapter": 351,
+        "title": "Battle to the Death",
+        "status": "appears"
+      },
+      {
+        "chapter": 352,
+        "title": "Troublesome",
+        "status": "appears"
+      },
+      {
+        "chapter": 353,
+        "title": "Cold-Blooded",
+        "status": "appears"
+      },
+      {
+        "chapter": 354,
+        "title": "Heat",
+        "status": "appears"
+      },
+      {
+        "chapter": 355,
+        "title": "Detonation",
+        "status": "appears"
+      },
+      {
+        "chapter": 356,
+        "title": "Unfortunate: Part 1",
+        "status": "appears"
+      },
+      {
+        "chapter": 357,
+        "title": "Unfortunate: Part 2",
+        "status": "appears"
+      },
+      {
+        "chapter": 358,
+        "title": "Eve",
+        "status": "absent"
+      },
+      {
+        "chapter": 359,
+        "title": "Departure",
+        "status": "absent"
+      },
+      {
+        "chapter": 360,
+        "title": "Parasite",
+        "status": "absent"
+      },
+      {
+        "chapter": 361,
+        "title": "Withdraw",
+        "status": "absent"
+      },
+      {
+        "chapter": 362,
+        "title": "Resolve",
+        "status": "absent"
+      },
+      {
+        "chapter": 363,
+        "title": "Nen Beast",
+        "status": "absent"
+      },
+      {
+        "chapter": 364,
+        "title": "Speculation",
+        "status": "absent"
+      },
+      {
+        "chapter": 365,
+        "title": "Choice",
+        "status": "absent"
+      },
+      {
+        "chapter": 366,
+        "title": "To Each His Own",
+        "status": "appears"
+      },
+      {
+        "chapter": 367,
+        "title": "Synchronization",
+        "status": "absent"
+      },
+      {
+        "chapter": 368,
+        "title": "Foul Play",
+        "status": "absent"
+      },
+      {
+        "chapter": 369,
+        "title": "Limits",
+        "status": "absent"
+      },
+      {
+        "chapter": 370,
+        "title": "Observation",
+        "status": "absent"
+      },
+      {
+        "chapter": 371,
+        "title": "Mission",
+        "status": "appears"
+      },
+      {
+        "chapter": 372,
+        "title": "Disappearance",
+        "status": "absent"
+      },
+      {
+        "chapter": 373,
+        "title": "Inheritance",
+        "status": "absent"
+      },
+      {
+        "chapter": 374,
+        "title": "Ability",
+        "status": "absent"
+      },
+      {
+        "chapter": 375,
+        "title": "Persuasion",
+        "status": "absent"
+      },
+      {
+        "chapter": 376,
+        "title": "Determination",
+        "status": "absent"
+      },
+      {
+        "chapter": 377,
+        "title": "Scheme",
+        "status": "appears"
+      },
+      {
+        "chapter": 378,
+        "title": "Balance",
+        "status": "mentioned"
+      },
+      {
+        "chapter": 379,
+        "title": "Collaboration",
+        "status": "absent"
+      },
+      {
+        "chapter": 380,
+        "title": "Alarm",
+        "status": "pictured"
+      },
+      {
+        "chapter": 381,
+        "title": "Predation",
+        "status": "absent"
+      },
+      {
+        "chapter": 382,
+        "title": "Awakening",
+        "status": "absent"
+      },
+      {
+        "chapter": 383,
+        "title": "Escape",
+        "status": "absent"
+      },
+      {
+        "chapter": 384,
+        "title": "War",
+        "status": "absent"
+      },
+      {
+        "chapter": 385,
+        "title": "Warning",
+        "status": "absent"
+      },
+      {
+        "chapter": 386,
+        "title": "Hypothesis",
+        "status": "absent"
+      },
+      {
+        "chapter": 387,
+        "title": "Recreation",
+        "status": "absent"
+      },
+      {
+        "chapter": 388,
+        "title": "Reflection",
+        "status": "absent"
+      },
+      {
+        "chapter": 389,
+        "title": "Curse",
+        "status": "absent"
+      },
+      {
+        "chapter": 390,
+        "title": "Clash: Part 1",
+        "status": "absent"
+      },
+      {
+        "chapter": 391,
+        "title": "Clash: Part 2",
+        "status": "absent"
+      },
+      {
+        "chapter": 392,
+        "title": "Information",
+        "status": "absent"
+      },
+      {
+        "chapter": 393,
+        "title": "Plea",
+        "status": "mentioned"
+      },
+      {
+        "chapter": 394,
+        "title": "Hypothesis",
+        "status": "absent"
+      },
+      {
+        "chapter": 395,
+        "title": "Founding: Part 1",
+        "status": "flashback"
+      },
+      {
+        "chapter": 396,
+        "title": "Founding: Part 2",
+        "status": "flashback"
+      },
+      {
+        "chapter": 397,
+        "title": "Founding: Part 3",
+        "status": "flashback"
+      },
+      {
+        "chapter": 398,
+        "title": "Search",
+        "status": "absent"
+      },
+      {
+        "chapter": 399,
+        "title": "Expulsion",
+        "status": "absent"
+      },
+      {
+        "chapter": 400,
+        "title": "Secrecy",
+        "status": "absent"
+      },
+      {
+        "chapter": 401,
+        "title": "Moonlight",
+        "status": "absent"
+      },
+      {
+        "chapter": 402,
+        "title": "Letter",
+        "status": "absent"
+      },
+      {
+        "chapter": 403,
+        "title": "Results",
+        "status": "absent"
+      },
+      {
+        "chapter": 404,
+        "title": "Speculation",
+        "status": "absent"
+      },
+      {
+        "chapter": 405,
+        "title": "Performance",
+        "status": "appears"
+      },
+      {
+        "chapter": 406,
+        "title": "Regalia",
+        "status": "appears"
+      },
+      {
+        "chapter": 407,
+        "title": "Negotiation",
+        "status": "absent"
+      },
+      {
+        "chapter": 408,
+        "title": "Negotiation: Part 2",
+        "status": "flashback"
+      },
+      {
+        "chapter": 409,
+        "title": "Negotiation: Part 3",
+        "status": "absent"
+      },
+      {
+        "chapter": 410,
+        "title": "Negotiation: Part 4",
+        "status": "absent"
+      },
+      {
+        "chapter": 411,
+        "title": "Announcement",
+        "status": "absent"
+      },
+      {
+        "chapter": 412,
+        "title": "Question",
+        "status": "absent"
+      },
+      {
+        "chapter": 413,
+        "title": "Loyalty",
+        "status": "absent"
+      },
+      {
+        "chapter": 414,
+        "title": "Friends",
+        "status": "absent"
+      }
+    ],
+    "battles": [
+      "Chrollo Lucilfer vs. Hisoka Morow‡*"
+    ]
   },
   {
     "id": "nobunaga-hazama",
@@ -3733,6 +4705,212 @@
     ]
   },
   {
+    "id": "onior-longbao",
+    "canonicalName": "Onior Longbao",
+    "aliases": ["Boss de la Xi-Yu", "Demi-frère de Nasubi"],
+    "description": "Chef de la famille mafieuse Xi-Yu et demi-frère du roi Nasubi. Parrain de Zhang Lei, il dirige depuis les quartiers VVIP du Tier 1.",
+    "factionId": "mafia-xiyu",
+    "firstAppearanceChapterId": "ch-378",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": 1,
+      "room": "VVIP Living Quarters",
+      "status": "actif",
+      "role": "boss de la Xi-Yu / conseiller de Zhang Lei"
+    },
+    "biography": [
+      "Onior embarque sur le Black Whale et s'installe dans la zone résidentielle VVIP du Tier 1. En tant que chef de la Xi-Yu et parrain de Zhang Lei, il maintient un lien direct entre la mafia du navire et la succession royale.",
+      "Au quatrième jour, Brocco Li l'informe que la Brigade Fantôme se trouve à bord. Les deux demi-frères discutent de l'équilibre entre les familles et décident de laisser les Heil-Ly et les Araignées s'affaiblir mutuellement, tout en contrôlant le moment où l'affrontement devra se produire. Onior ordonne ensuite à Hinrigh de trouver Hisoka avant la Brigade.",
+      "Le septième jour, Onior reçoit Zhang Lei, venu lui demander conseil sur le Nen et les Bêtes Gardiennes. Il affirme ne rien connaître à ces notions, malgré l'existence de pouvoirs spéciaux chez certains subordonnés, et recommande au prince d'imiter la patience de Nasubi durant sa propre succession.",
+      "Après le départ de Zhang Lei, Hinrigh lui rapporte les massacres commis par les Heil-Ly et la coopération inattendue de la Brigade dans la recherche de Morena. Rassuré sur l'absence d'Hisoka au Tier 4, Onior autorise les Araignées à fouiller l'étage et charge Hinrigh de poursuivre Morena au Tier 3 puis de la tuer.",
+      "Au douzième jour, juste avant la proclamation de la loi martiale, Zhang Lei traverse une passerelle intérieure depuis la résidence d'Onior vers le Tier 2. Benjamin suppose qu'il cherche refuge au Ministère de la Justice ou tente de rejoindre ses alliés mafieux dans les niveaux inférieurs."
+    ],
+    "abilitiesAndPowers": "Chef de la Xi-Yu, Onior commande l'une des trois plus puissantes organisations criminelles de Kakin. Sa famille possède les ressources financières et les effectifs les plus importants des trois mafias, contrôle le Tier 4 et tire ses profits du trafic d'êtres humains ainsi que de la distribution de marchandises. Soutenu par Zhang Lei, Onior dispose d'une autorité directe sur Hinrigh et de canaux de communication avec la Cha-R de Brocco Li. Aucune capacité personnelle de Nen n'est confirmée.",
+    "mangaAppearances": [
+      { "chapter": 340, "title": "Special Mission", "status": "absent" },
+      { "chapter": 341, "title": "Threats", "status": "absent" },
+      { "chapter": 342, "title": "Challenge", "status": "absent" },
+      { "chapter": 343, "title": "Invitation", "status": "absent" },
+      { "chapter": 344, "title": "Author", "status": "absent" },
+      { "chapter": 345, "title": "Signature", "status": "absent" },
+      { "chapter": 346, "title": "Options", "status": "absent" },
+      { "chapter": 347, "title": "Inauguration", "status": "absent" },
+      { "chapter": 348, "title": "Resolve", "status": "absent" },
+      { "chapter": 349, "title": "Worm Toxin", "status": "absent" },
+      { "chapter": 350, "title": "Prince", "status": "absent" },
+      { "chapter": 351, "title": "Battle to the Death", "status": "absent" },
+      { "chapter": 352, "title": "Troublesome", "status": "absent" },
+      { "chapter": 353, "title": "Cold-Blooded", "status": "absent" },
+      { "chapter": 354, "title": "Heat", "status": "absent" },
+      { "chapter": 355, "title": "Detonation", "status": "absent" },
+      { "chapter": 356, "title": "Unfortunate: Part 1", "status": "absent" },
+      { "chapter": 357, "title": "Unfortunate: Part 2", "status": "absent" },
+      { "chapter": 358, "title": "Eve", "status": "absent" },
+      { "chapter": 359, "title": "Departure", "status": "absent" },
+      { "chapter": 360, "title": "Parasite", "status": "absent" },
+      { "chapter": 361, "title": "Withdraw", "status": "absent" },
+      { "chapter": 362, "title": "Resolve", "status": "absent" },
+      { "chapter": 363, "title": "Nen Beast", "status": "absent" },
+      { "chapter": 364, "title": "Speculation", "status": "absent" },
+      { "chapter": 365, "title": "Choice", "status": "absent" },
+      { "chapter": 366, "title": "To Each His Own", "status": "absent" },
+      { "chapter": 367, "title": "Synchronization", "status": "absent" },
+      { "chapter": 368, "title": "Foul Play", "status": "absent" },
+      { "chapter": 369, "title": "Limits", "status": "absent" },
+      { "chapter": 370, "title": "Observation", "status": "absent" },
+      { "chapter": 371, "title": "Mission", "status": "absent" },
+      { "chapter": 372, "title": "Disappearance", "status": "absent" },
+      { "chapter": 373, "title": "Inheritance", "status": "absent" },
+      { "chapter": 374, "title": "Ability", "status": "absent" },
+      { "chapter": 375, "title": "Persuasion", "status": "absent" },
+      { "chapter": 376, "title": "Determination", "status": "absent" },
+      { "chapter": 377, "title": "Scheme", "status": "absent" },
+      { "chapter": 378, "title": "Balance", "status": "debut" },
+      { "chapter": 379, "title": "Collaboration", "status": "absent" },
+      { "chapter": 380, "title": "Alarm", "status": "absent" },
+      { "chapter": 381, "title": "Predation", "status": "absent" },
+      { "chapter": 382, "title": "Awakening", "status": "absent" },
+      { "chapter": 383, "title": "Escape", "status": "absent" },
+      { "chapter": 384, "title": "War", "status": "appears" },
+      { "chapter": 385, "title": "Warning", "status": "absent" },
+      { "chapter": 386, "title": "Hypothesis", "status": "absent" },
+      { "chapter": 387, "title": "Recreation", "status": "absent" },
+      { "chapter": 388, "title": "Reflection", "status": "absent" },
+      { "chapter": 389, "title": "Curse", "status": "absent" },
+      { "chapter": 390, "title": "Clash: Part 1", "status": "appears" },
+      { "chapter": 391, "title": "Clash: Part 2", "status": "absent" },
+      { "chapter": 392, "title": "Information", "status": "absent" },
+      { "chapter": 393, "title": "Plea", "status": "absent" },
+      { "chapter": 394, "title": "Hypothesis", "status": "absent" },
+      { "chapter": 395, "title": "Founding: Part 1", "status": "absent" },
+      { "chapter": 396, "title": "Founding: Part 2", "status": "absent" },
+      { "chapter": 397, "title": "Founding: Part 3", "status": "absent" },
+      { "chapter": 398, "title": "Search", "status": "absent" },
+      { "chapter": 399, "title": "Expulsion", "status": "absent" },
+      { "chapter": 400, "title": "Secrecy", "status": "absent" },
+      { "chapter": 401, "title": "Moonlight", "status": "absent" },
+      { "chapter": 402, "title": "Letter", "status": "absent" },
+      { "chapter": 403, "title": "Results", "status": "absent" },
+      { "chapter": 404, "title": "Speculation", "status": "absent" },
+      { "chapter": 405, "title": "Performance", "status": "absent" },
+      { "chapter": 406, "title": "Regalia", "status": "absent" },
+      { "chapter": 407, "title": "Negotiation", "status": "absent" },
+      { "chapter": 408, "title": "Negotiation: Part 2", "status": "absent" },
+      { "chapter": 409, "title": "Negotiation: Part 3", "status": "absent" },
+      { "chapter": 410, "title": "Negotiation: Part 4", "status": "mentioned" },
+      { "chapter": 411, "title": "Announcement", "status": "absent" },
+      { "chapter": 412, "title": "Question", "status": "absent" },
+      { "chapter": 413, "title": "Loyalty", "status": "absent" },
+      { "chapter": 414, "title": "Friends", "status": "absent" }
+    ]
+  },
+  {
+    "id": "brocco-li",
+    "canonicalName": "Brocco Li",
+    "aliases": ["Boss de la Cha-R", "Demi-frère de Nasubi"],
+    "description": "Chef de la famille mafieuse Cha-R et demi-frère du roi Nasubi. Parrain de Luzurus, il réside dans les quartiers VVIP du Tier 1.",
+    "factionId": "mafia-char",
+    "firstAppearanceChapterId": "ch-378",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": 1,
+      "room": "VVIP Living Quarters",
+      "status": "actif",
+      "role": "boss de la Cha-R / parrain de Luzurus"
+    },
+    "biography": [
+      "Brocco embarque sur le Black Whale et s'installe dans la zone VVIP du Tier 1. Depuis cette résidence, il dirige la Cha-R, soutenue par le Septième Prince Luzurus et maîtresse du Tier 5 ainsi que des marchandises qui y sont stockées.",
+      "Au quatrième jour, son sous-chef Ken'i Wang lui apprend que la Brigade Fantôme se trouve au Tier 5. Brocco téléphone à son demi-frère Onior et décrit les Araignées comme une force difficile à contrôler, dépourvue de l'étiquette attendue des puissants et admirée jusque par certains de ses propres hommes.",
+      "Brocco et Onior décident de laisser la nouvelle Heil-Ly et la Brigade s'entre-détruire, tout en veillant à maîtriser le moment de leur affrontement. Brocco convoque ensuite Ken'i et lui ordonne de trouver Hisoka avant les Araignées.",
+      "Au septième jour vers vingt-deux heures trente, Brocco profite de son importante collection d'animaux exotiques dans sa résidence.",
+      "Au douzième jour, Ken'i explique à Nobunaga, Phinks et Feitan que les cadres de la Cha-R, dont Brocco, ont assisté à la cérémonie officielle de transmission ayant placé Morena à la tête de la Heil-Ly."
+    ],
+    "abilitiesAndPowers": "En tant que chef de la Cha-R, Brocco commande l'une des trois principales puissances criminelles de Kakin et de nombreux subordonnés, dont Ken'i Wang. Soutenue par Luzurus, sa famille contrôle le Tier 5 du Black Whale et toutes les marchandises qui y transitent ou y sont entreposées. Brocco coordonne sa stratégie avec la Xi-Yu d'Onior afin de préserver l'équilibre mafieux. Aucune capacité personnelle de Nen n'est connue.",
+    "equipment": [
+      {
+        "name": "Collection d'animaux exotiques",
+        "description": "Vaste ménagerie privée conservée dans sa résidence VVIP et auprès de laquelle Brocco passe son temps libre."
+      }
+    ],
+    "mangaAppearances": [
+      { "chapter": 340, "title": "Special Mission", "status": "absent" },
+      { "chapter": 341, "title": "Threats", "status": "absent" },
+      { "chapter": 342, "title": "Challenge", "status": "absent" },
+      { "chapter": 343, "title": "Invitation", "status": "absent" },
+      { "chapter": 344, "title": "Author", "status": "absent" },
+      { "chapter": 345, "title": "Signature", "status": "absent" },
+      { "chapter": 346, "title": "Options", "status": "absent" },
+      { "chapter": 347, "title": "Inauguration", "status": "absent" },
+      { "chapter": 348, "title": "Resolve", "status": "absent" },
+      { "chapter": 349, "title": "Worm Toxin", "status": "absent" },
+      { "chapter": 350, "title": "Prince", "status": "absent" },
+      { "chapter": 351, "title": "Battle to the Death", "status": "absent" },
+      { "chapter": 352, "title": "Troublesome", "status": "absent" },
+      { "chapter": 353, "title": "Cold-Blooded", "status": "absent" },
+      { "chapter": 354, "title": "Heat", "status": "absent" },
+      { "chapter": 355, "title": "Detonation", "status": "absent" },
+      { "chapter": 356, "title": "Unfortunate: Part 1", "status": "absent" },
+      { "chapter": 357, "title": "Unfortunate: Part 2", "status": "absent" },
+      { "chapter": 358, "title": "Eve", "status": "absent" },
+      { "chapter": 359, "title": "Departure", "status": "absent" },
+      { "chapter": 360, "title": "Parasite", "status": "absent" },
+      { "chapter": 361, "title": "Withdraw", "status": "absent" },
+      { "chapter": 362, "title": "Resolve", "status": "absent" },
+      { "chapter": 363, "title": "Nen Beast", "status": "absent" },
+      { "chapter": 364, "title": "Speculation", "status": "absent" },
+      { "chapter": 365, "title": "Choice", "status": "absent" },
+      { "chapter": 366, "title": "To Each His Own", "status": "absent" },
+      { "chapter": 367, "title": "Synchronization", "status": "absent" },
+      { "chapter": 368, "title": "Foul Play", "status": "absent" },
+      { "chapter": 369, "title": "Limits", "status": "absent" },
+      { "chapter": 370, "title": "Observation", "status": "absent" },
+      { "chapter": 371, "title": "Mission", "status": "absent" },
+      { "chapter": 372, "title": "Disappearance", "status": "absent" },
+      { "chapter": 373, "title": "Inheritance", "status": "absent" },
+      { "chapter": 374, "title": "Ability", "status": "absent" },
+      { "chapter": 375, "title": "Persuasion", "status": "absent" },
+      { "chapter": 376, "title": "Determination", "status": "absent" },
+      { "chapter": 377, "title": "Scheme", "status": "absent" },
+      { "chapter": 378, "title": "Balance", "status": "debut" },
+      { "chapter": 379, "title": "Collaboration", "status": "absent" },
+      { "chapter": 380, "title": "Alarm", "status": "absent" },
+      { "chapter": 381, "title": "Predation", "status": "absent" },
+      { "chapter": 382, "title": "Awakening", "status": "absent" },
+      { "chapter": 383, "title": "Escape", "status": "absent" },
+      { "chapter": 384, "title": "War", "status": "appears" },
+      { "chapter": 385, "title": "Warning", "status": "absent" },
+      { "chapter": 386, "title": "Hypothesis", "status": "absent" },
+      { "chapter": 387, "title": "Recreation", "status": "absent" },
+      { "chapter": 388, "title": "Reflection", "status": "absent" },
+      { "chapter": 389, "title": "Curse", "status": "absent" },
+      { "chapter": 390, "title": "Clash: Part 1", "status": "absent" },
+      { "chapter": 391, "title": "Clash: Part 2", "status": "absent" },
+      { "chapter": 392, "title": "Information", "status": "absent" },
+      { "chapter": 393, "title": "Plea", "status": "absent" },
+      { "chapter": 394, "title": "Hypothesis", "status": "absent" },
+      { "chapter": 395, "title": "Founding: Part 1", "status": "absent" },
+      { "chapter": 396, "title": "Founding: Part 2", "status": "absent" },
+      { "chapter": 397, "title": "Founding: Part 3", "status": "absent" },
+      { "chapter": 398, "title": "Search", "status": "absent" },
+      { "chapter": 399, "title": "Expulsion", "status": "absent" },
+      { "chapter": 400, "title": "Secrecy", "status": "absent" },
+      { "chapter": 401, "title": "Moonlight", "status": "absent" },
+      { "chapter": 402, "title": "Letter", "status": "absent" },
+      { "chapter": 403, "title": "Results", "status": "absent" },
+      { "chapter": 404, "title": "Speculation", "status": "absent" },
+      { "chapter": 405, "title": "Performance", "status": "mentioned" },
+      { "chapter": 406, "title": "Regalia", "status": "absent" },
+      { "chapter": 407, "title": "Negotiation", "status": "absent" },
+      { "chapter": 408, "title": "Negotiation: Part 2", "status": "absent" },
+      { "chapter": 409, "title": "Negotiation: Part 3", "status": "absent" },
+      { "chapter": 410, "title": "Negotiation: Part 4", "status": "absent" },
+      { "chapter": 411, "title": "Announcement", "status": "absent" },
+      { "chapter": 412, "title": "Question", "status": "absent" },
+      { "chapter": 413, "title": "Loyalty", "status": "absent" },
+      { "chapter": 414, "title": "Friends", "status": "absent" }
+    ]
+  },
+  {
     "id": "morrissey",
     "canonicalName": "Morrissey",
     "aliases": [],
@@ -3746,5 +4924,2949 @@
       "status": "inconnu",
       "role": "divers"
     }
+  },
+  {
+    "id": "hanal",
+    "canonicalName": "Hanal",
+    "aliases": [],
+    "description": "Passager civil du Tier 3 pris à tort pour Hisoka par Lynch pendant la recherche menée par la famille Xi-Yu.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-392",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": 3,
+      "room": null,
+      "status": "actif",
+      "role": "passager civil"
+    },
+    "mapPresenceFromChapterId": "ch-392",
+    "biography": [
+      "Alors qu'il marche avec des amis au Tier 3 du Black Whale, Hanal est repéré par Zakuro et Lynch, qui recherchent Hisoka pour la famille Xi-Yu. Lynch lui demande s'il est Hisoka puis le frappe immédiatement à l'estomac lorsqu'il tente de lui expliquer qu'elle se trompe. Sa capacité de Nen fait surgir de son corps une voix confirmant qu'il dit la vérité. Tandis qu'Hanal s'effondre, ses amis menacent d'appeler les autorités ; Lynch leur ordonne de ne pas se mêler de l'affaire et les invite à porter leurs réclamations au quartier général Xi-Yu du Tier 4."
+    ],
+    "mangaAppearances": [
+      {
+        "chapter": 340,
+        "title": "Special Mission",
+        "status": "absent"
+      },
+      {
+        "chapter": 341,
+        "title": "Threats",
+        "status": "absent"
+      },
+      {
+        "chapter": 342,
+        "title": "Challenge",
+        "status": "absent"
+      },
+      {
+        "chapter": 343,
+        "title": "Invitation",
+        "status": "absent"
+      },
+      {
+        "chapter": 344,
+        "title": "Author",
+        "status": "absent"
+      },
+      {
+        "chapter": 345,
+        "title": "Signature",
+        "status": "absent"
+      },
+      {
+        "chapter": 346,
+        "title": "Options",
+        "status": "absent"
+      },
+      {
+        "chapter": 347,
+        "title": "Inauguration",
+        "status": "absent"
+      },
+      {
+        "chapter": 348,
+        "title": "Resolve",
+        "status": "absent"
+      },
+      {
+        "chapter": 349,
+        "title": "Worm Toxin",
+        "status": "absent"
+      },
+      {
+        "chapter": 350,
+        "title": "Prince",
+        "status": "absent"
+      },
+      {
+        "chapter": 351,
+        "title": "Battle to the Death",
+        "status": "absent"
+      },
+      {
+        "chapter": 352,
+        "title": "Troublesome",
+        "status": "absent"
+      },
+      {
+        "chapter": 353,
+        "title": "Cold-Blooded",
+        "status": "absent"
+      },
+      {
+        "chapter": 354,
+        "title": "Heat",
+        "status": "absent"
+      },
+      {
+        "chapter": 355,
+        "title": "Detonation",
+        "status": "absent"
+      },
+      {
+        "chapter": 356,
+        "title": "Unfortunate: Part 1",
+        "status": "absent"
+      },
+      {
+        "chapter": 357,
+        "title": "Unfortunate: Part 2",
+        "status": "absent"
+      },
+      {
+        "chapter": 358,
+        "title": "Eve",
+        "status": "absent"
+      },
+      {
+        "chapter": 359,
+        "title": "Departure",
+        "status": "absent"
+      },
+      {
+        "chapter": 360,
+        "title": "Parasite",
+        "status": "absent"
+      },
+      {
+        "chapter": 361,
+        "title": "Withdraw",
+        "status": "absent"
+      },
+      {
+        "chapter": 362,
+        "title": "Resolve",
+        "status": "absent"
+      },
+      {
+        "chapter": 363,
+        "title": "Nen Beast",
+        "status": "absent"
+      },
+      {
+        "chapter": 364,
+        "title": "Speculation",
+        "status": "absent"
+      },
+      {
+        "chapter": 365,
+        "title": "Choice",
+        "status": "absent"
+      },
+      {
+        "chapter": 366,
+        "title": "To Each His Own",
+        "status": "absent"
+      },
+      {
+        "chapter": 367,
+        "title": "Synchronization",
+        "status": "absent"
+      },
+      {
+        "chapter": 368,
+        "title": "Foul Play",
+        "status": "absent"
+      },
+      {
+        "chapter": 369,
+        "title": "Limits",
+        "status": "absent"
+      },
+      {
+        "chapter": 370,
+        "title": "Observation",
+        "status": "absent"
+      },
+      {
+        "chapter": 371,
+        "title": "Mission",
+        "status": "absent"
+      },
+      {
+        "chapter": 372,
+        "title": "Disappearance",
+        "status": "absent"
+      },
+      {
+        "chapter": 373,
+        "title": "Inheritance",
+        "status": "absent"
+      },
+      {
+        "chapter": 374,
+        "title": "Ability",
+        "status": "absent"
+      },
+      {
+        "chapter": 375,
+        "title": "Persuasion",
+        "status": "absent"
+      },
+      {
+        "chapter": 376,
+        "title": "Determination",
+        "status": "absent"
+      },
+      {
+        "chapter": 377,
+        "title": "Scheme",
+        "status": "absent"
+      },
+      {
+        "chapter": 378,
+        "title": "Balance",
+        "status": "absent"
+      },
+      {
+        "chapter": 379,
+        "title": "Collaboration",
+        "status": "absent"
+      },
+      {
+        "chapter": 380,
+        "title": "Alarm",
+        "status": "absent"
+      },
+      {
+        "chapter": 381,
+        "title": "Predation",
+        "status": "absent"
+      },
+      {
+        "chapter": 382,
+        "title": "Awakening",
+        "status": "absent"
+      },
+      {
+        "chapter": 383,
+        "title": "Escape",
+        "status": "absent"
+      },
+      {
+        "chapter": 384,
+        "title": "War",
+        "status": "absent"
+      },
+      {
+        "chapter": 385,
+        "title": "Warning",
+        "status": "absent"
+      },
+      {
+        "chapter": 386,
+        "title": "Hypothesis",
+        "status": "absent"
+      },
+      {
+        "chapter": 387,
+        "title": "Recreation",
+        "status": "absent"
+      },
+      {
+        "chapter": 388,
+        "title": "Reflection",
+        "status": "absent"
+      },
+      {
+        "chapter": 389,
+        "title": "Curse",
+        "status": "absent"
+      },
+      {
+        "chapter": 390,
+        "title": "Clash: Part 1",
+        "status": "absent"
+      },
+      {
+        "chapter": 391,
+        "title": "Clash: Part 2",
+        "status": "absent"
+      },
+      {
+        "chapter": 392,
+        "title": "Information",
+        "status": "debut"
+      },
+      {
+        "chapter": 393,
+        "title": "Plea",
+        "status": "absent"
+      },
+      {
+        "chapter": 394,
+        "title": "Hypothesis",
+        "status": "absent"
+      },
+      {
+        "chapter": 395,
+        "title": "Founding: Part 1",
+        "status": "absent"
+      },
+      {
+        "chapter": 396,
+        "title": "Founding: Part 2",
+        "status": "absent"
+      },
+      {
+        "chapter": 397,
+        "title": "Founding: Part 3",
+        "status": "absent"
+      },
+      {
+        "chapter": 398,
+        "title": "Search",
+        "status": "absent"
+      },
+      {
+        "chapter": 399,
+        "title": "Expulsion",
+        "status": "absent"
+      },
+      {
+        "chapter": 400,
+        "title": "Secrecy",
+        "status": "absent"
+      },
+      {
+        "chapter": 401,
+        "title": "Moonlight",
+        "status": "absent"
+      },
+      {
+        "chapter": 402,
+        "title": "Letter",
+        "status": "absent"
+      },
+      {
+        "chapter": 403,
+        "title": "Results",
+        "status": "absent"
+      },
+      {
+        "chapter": 404,
+        "title": "Speculation",
+        "status": "absent"
+      },
+      {
+        "chapter": 405,
+        "title": "Performance",
+        "status": "absent"
+      },
+      {
+        "chapter": 406,
+        "title": "Regalia",
+        "status": "absent"
+      },
+      {
+        "chapter": 407,
+        "title": "Negotiation",
+        "status": "absent"
+      },
+      {
+        "chapter": 408,
+        "title": "Negotiation: Part 2",
+        "status": "absent"
+      },
+      {
+        "chapter": 409,
+        "title": "Negotiation: Part 3",
+        "status": "absent"
+      },
+      {
+        "chapter": 410,
+        "title": "Negotiation: Part 4",
+        "status": "absent"
+      },
+      {
+        "chapter": 411,
+        "title": "Announcement",
+        "status": "absent"
+      },
+      {
+        "chapter": 412,
+        "title": "Question",
+        "status": "absent"
+      },
+      {
+        "chapter": 413,
+        "title": "Loyalty",
+        "status": "absent"
+      },
+      {
+        "chapter": 414,
+        "title": "Friends",
+        "status": "absent"
+      }
+    ]
+  },
+  {
+    "id": "silent-majority-user",
+    "canonicalName": "Utilisateur de Silent Majority",
+    "aliases": [
+      "Silent Majority User",
+      "Assassin silencieux",
+      "Utilisateur inconnu"
+    ],
+    "description": "Assassin au Nen dont l'identité demeure inconnue. Il infiltre les cours de Kurapika et élimine ses victimes par une malédiction de serpents matérialisés.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-369",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": 1,
+      "room": "1014",
+      "status": "suspect",
+      "role": "assassin infiltré / identité inconnue"
+    },
+    "mapPresenceFromChapterId": "ch-369",
+    "biography": [
+      "Après la découverte du corps exsangue de Woody dans la salle de bain de la chambre 1014, quatre autres gardes sont retrouvés morts de la même manière au retour du premier banquet dominical. Kurapika soupçonne une attaque de Nen provenant d'un assassin dissimulé dans le secteur, mais l'identité de l'utilisateur reste inconnue.",
+      "Au deuxième jour, pendant le premier cours de Nen de Kurapika, l'assassin active They Were Eleven: Silent Majority. Une marionnette masquée apparaît derrière Furykov, mais seuls l'utilisateur et Loberry, la personne possédée, peuvent la voir. L'assassin observe le dispositif de sécurité autour d'Oito et Woble et choisit une victime parmi les dix personnes à portée.",
+      "Lorsque Myuhan franchit la ligne blanche et détourne l'attention du groupe, l'utilisateur envisage de frapper mais constate qu'il se trouve hors de la zone des dix cibles. Comme une désactivation prématurée sans victime retournerait la malédiction contre lui, l'assassin accepte le risque et attend une nouvelle diversion.",
+      "Loberry finit par remarquer la marionnette et attire tous les regards sur elle. L'utilisateur lance alors quatre serpents contre Barrigen. Les créatures percent son corps de multiples bouches et vident entièrement son sang en onze secondes. Sakata tire sur les serpents, visibles même par les personnes ne maîtrisant pas le Nen, avant qu'ils ne disparaissent.",
+      "Kurapika conclut que les serpents sont matérialisés et probablement contrôlés visuellement par Manipulation. Bill souligne que leur visibilité augmente le risque de découverte et renforce donc la capacité. Le lendemain, Myuhan est retrouvé desséché dans une salle de bain ; l'attaque a duré moins de dix secondes et la dernière créature disparaît lorsque l'utilisateur désactive son Nen.",
+      "L'assassin ne frappe plus durant les jours suivants, mais reste une menace non résolue. Au huitième jour, Kurapika constate son silence tout en faisant face à une nouvelle onde d'aura. Au douzième jour, Naipei s'inquiète encore des meurtres du premier cours et Belerainte lui demande de signaler toute apparition d'une jeune fille masquée."
+    ],
+    "abilitiesAndPowers": "L'utilisateur maîtrise suffisamment le Nen pour développer une malédiction combinant vraisemblablement Matérialisation et Manipulation. Il comprend comment des conditions dangereuses, une portée limitée, la visibilité des créatures et le risque de retour de malédiction augmentent la puissance d'un Hatsu. Son aptitude à observer et commenter le cours sans être identifié suggère une grande maîtrise de la dissimulation et de la planification.",
+    "nen": {
+      "type": "conjurer",
+      "typeLabel": "Matérialisation",
+      "secondaryTypeLabels": [
+        "Manipulation"
+      ],
+      "overview": "L'affinité exacte n'est pas officiellement confirmée, mais Silent Majority matérialise des serpents visibles de tous et paraît les diriger à distance par la vue. La capacité repose sur de fortes restrictions et sur une malédiction susceptible de se retourner contre son utilisateur.",
+      "techniques": [
+        "Hatsu"
+      ],
+      "combatProficiency": "Quatre serpents coordonnés peuvent vider une personne de tout son sang en onze secondes. L'utilisateur privilégie les cibles dépourvues de Nen, les lieux clos et les diversions qui empêchent l'assistance de réagir à temps.",
+      "abilityIds": [
+        "silent-majority"
+      ]
+    },
+    "mangaAppearances": [
+      {
+        "chapter": 340,
+        "title": "Special Mission",
+        "status": "absent"
+      },
+      {
+        "chapter": 341,
+        "title": "Threats",
+        "status": "absent"
+      },
+      {
+        "chapter": 342,
+        "title": "Challenge",
+        "status": "absent"
+      },
+      {
+        "chapter": 343,
+        "title": "Invitation",
+        "status": "absent"
+      },
+      {
+        "chapter": 344,
+        "title": "Author",
+        "status": "absent"
+      },
+      {
+        "chapter": 345,
+        "title": "Signature",
+        "status": "absent"
+      },
+      {
+        "chapter": 346,
+        "title": "Options",
+        "status": "absent"
+      },
+      {
+        "chapter": 347,
+        "title": "Inauguration",
+        "status": "absent"
+      },
+      {
+        "chapter": 348,
+        "title": "Resolve",
+        "status": "absent"
+      },
+      {
+        "chapter": 349,
+        "title": "Worm Toxin",
+        "status": "absent"
+      },
+      {
+        "chapter": 350,
+        "title": "Prince",
+        "status": "absent"
+      },
+      {
+        "chapter": 351,
+        "title": "Battle to the Death",
+        "status": "absent"
+      },
+      {
+        "chapter": 352,
+        "title": "Troublesome",
+        "status": "absent"
+      },
+      {
+        "chapter": 353,
+        "title": "Cold-Blooded",
+        "status": "absent"
+      },
+      {
+        "chapter": 354,
+        "title": "Heat",
+        "status": "absent"
+      },
+      {
+        "chapter": 355,
+        "title": "Detonation",
+        "status": "absent"
+      },
+      {
+        "chapter": 356,
+        "title": "Unfortunate: Part 1",
+        "status": "absent"
+      },
+      {
+        "chapter": 357,
+        "title": "Unfortunate: Part 2",
+        "status": "absent"
+      },
+      {
+        "chapter": 358,
+        "title": "Eve",
+        "status": "absent"
+      },
+      {
+        "chapter": 359,
+        "title": "Departure",
+        "status": "absent"
+      },
+      {
+        "chapter": 360,
+        "title": "Parasite",
+        "status": "absent"
+      },
+      {
+        "chapter": 361,
+        "title": "Withdraw",
+        "status": "absent"
+      },
+      {
+        "chapter": 362,
+        "title": "Resolve",
+        "status": "absent"
+      },
+      {
+        "chapter": 363,
+        "title": "Nen Beast",
+        "status": "absent"
+      },
+      {
+        "chapter": 364,
+        "title": "Speculation",
+        "status": "absent"
+      },
+      {
+        "chapter": 365,
+        "title": "Choice",
+        "status": "absent"
+      },
+      {
+        "chapter": 366,
+        "title": "To Each His Own",
+        "status": "absent"
+      },
+      {
+        "chapter": 367,
+        "title": "Synchronization",
+        "status": "absent"
+      },
+      {
+        "chapter": 368,
+        "title": "Foul Play",
+        "status": "absent"
+      },
+      {
+        "chapter": 369,
+        "title": "Limits",
+        "status": "voice"
+      },
+      {
+        "chapter": 370,
+        "title": "Observation",
+        "status": "voice"
+      },
+      {
+        "chapter": 371,
+        "title": "Mission",
+        "status": "absent"
+      },
+      {
+        "chapter": 372,
+        "title": "Disappearance",
+        "status": "absent"
+      },
+      {
+        "chapter": 373,
+        "title": "Inheritance",
+        "status": "absent"
+      },
+      {
+        "chapter": 374,
+        "title": "Ability",
+        "status": "absent"
+      },
+      {
+        "chapter": 375,
+        "title": "Persuasion",
+        "status": "absent"
+      },
+      {
+        "chapter": 376,
+        "title": "Determination",
+        "status": "absent"
+      },
+      {
+        "chapter": 377,
+        "title": "Scheme",
+        "status": "absent"
+      },
+      {
+        "chapter": 378,
+        "title": "Balance",
+        "status": "absent"
+      },
+      {
+        "chapter": 379,
+        "title": "Collaboration",
+        "status": "absent"
+      },
+      {
+        "chapter": 380,
+        "title": "Alarm",
+        "status": "absent"
+      },
+      {
+        "chapter": 381,
+        "title": "Predation",
+        "status": "absent"
+      },
+      {
+        "chapter": 382,
+        "title": "Awakening",
+        "status": "absent"
+      },
+      {
+        "chapter": 383,
+        "title": "Escape",
+        "status": "absent"
+      },
+      {
+        "chapter": 384,
+        "title": "War",
+        "status": "absent"
+      },
+      {
+        "chapter": 385,
+        "title": "Warning",
+        "status": "absent"
+      },
+      {
+        "chapter": 386,
+        "title": "Hypothesis",
+        "status": "absent"
+      },
+      {
+        "chapter": 387,
+        "title": "Recreation",
+        "status": "absent"
+      },
+      {
+        "chapter": 388,
+        "title": "Reflection",
+        "status": "absent"
+      },
+      {
+        "chapter": 389,
+        "title": "Curse",
+        "status": "absent"
+      },
+      {
+        "chapter": 390,
+        "title": "Clash: Part 1",
+        "status": "absent"
+      },
+      {
+        "chapter": 391,
+        "title": "Clash: Part 2",
+        "status": "absent"
+      },
+      {
+        "chapter": 392,
+        "title": "Information",
+        "status": "absent"
+      },
+      {
+        "chapter": 393,
+        "title": "Plea",
+        "status": "absent"
+      },
+      {
+        "chapter": 394,
+        "title": "Hypothesis",
+        "status": "absent"
+      },
+      {
+        "chapter": 395,
+        "title": "Founding: Part 1",
+        "status": "absent"
+      },
+      {
+        "chapter": 396,
+        "title": "Founding: Part 2",
+        "status": "absent"
+      },
+      {
+        "chapter": 397,
+        "title": "Founding: Part 3",
+        "status": "absent"
+      },
+      {
+        "chapter": 398,
+        "title": "Search",
+        "status": "absent"
+      },
+      {
+        "chapter": 399,
+        "title": "Expulsion",
+        "status": "absent"
+      },
+      {
+        "chapter": 400,
+        "title": "Secrecy",
+        "status": "absent"
+      },
+      {
+        "chapter": 401,
+        "title": "Moonlight",
+        "status": "absent"
+      },
+      {
+        "chapter": 402,
+        "title": "Letter",
+        "status": "absent"
+      },
+      {
+        "chapter": 403,
+        "title": "Results",
+        "status": "absent"
+      },
+      {
+        "chapter": 404,
+        "title": "Speculation",
+        "status": "absent"
+      },
+      {
+        "chapter": 405,
+        "title": "Performance",
+        "status": "absent"
+      },
+      {
+        "chapter": 406,
+        "title": "Regalia",
+        "status": "absent"
+      },
+      {
+        "chapter": 407,
+        "title": "Negotiation",
+        "status": "absent"
+      },
+      {
+        "chapter": 408,
+        "title": "Negotiation: Part 2",
+        "status": "absent"
+      },
+      {
+        "chapter": 409,
+        "title": "Negotiation: Part 3",
+        "status": "absent"
+      },
+      {
+        "chapter": 410,
+        "title": "Negotiation: Part 4",
+        "status": "absent"
+      },
+      {
+        "chapter": 411,
+        "title": "Announcement",
+        "status": "absent"
+      },
+      {
+        "chapter": 412,
+        "title": "Question",
+        "status": "absent"
+      },
+      {
+        "chapter": 413,
+        "title": "Loyalty",
+        "status": "absent"
+      },
+      {
+        "chapter": 414,
+        "title": "Friends",
+        "status": "absent"
+      }
+    ]
+  },
+  {
+    "id": "bonolenov-ndongo",
+    "canonicalName": "Bonolenov Ndongo",
+    "aliases": [
+      "Bonolenov",
+      "Bono",
+      "Membre n°10 de la Brigade"
+    ],
+    "description": "Membre de la Brigade Fantôme et guerrier Gyudondond. Au Tier 1, il se transforme en Hisoka puis en Owl pour exécuter le plan de Chrollo.",
+    "factionId": "phantom-troupe",
+    "firstAppearanceChapterId": "ch-377",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": 1,
+      "room": "Casino VIP",
+      "status": "actif",
+      "role": "éclaireur transformé en Owl / recherche d'Hisoka"
+    },
+    "mapPresenceFromChapterId": "ch-405",
+    "biography": [
+      "Bonolenov embarque sur le Black Whale avec la Brigade Fantôme et commence la recherche d'Hisoka au Tier 5. Au quatrième jour, les Araignées se réunissent dans le réfectoire central. Après le départ du groupe, Bonolenov et Shizuku demandent à faire équipe avec Chrollo, tout en acceptant que leur chef revendique le droit de tuer Hisoka.",
+      "Shizuku estime que leurs capacités sont mal adaptées à Bungee Gum. Bonolenov précise qu'il peut se transformer plutôt que simplement se déguiser grâce à Battle Cantabile: Metamorphosen, mais reconnaît manquer de sens stratégique. Chrollo lui confie alors un plan précis. Le trio gagne ensuite le Tier 4 par le passage central.",
+      "Sur les instructions de Chrollo, Bonolenov prend l'apparence d'Hisoka et se montre dans les zones surveillées par les mafias. Le plan consiste à pousser celles-ci à le cacher dans les quartiers supérieurs pour préserver leur équilibre, puis à laisser la Brigade fouiller librement les étages inférieurs en croyant Hisoka déjà isolé.",
+      "Au Tier 3, Lynch frappe le faux Hisoka et découvre grâce à Body and Soul qu'il s'agit d'un imposteur. Bonolenov l'assomme d'un coup au foie si rapide que Zakuro ne le voit pas, neutralise ensuite Zakuro, prend son apparence pour vérifier ce que Lynch a compris, puis tue cette dernière. Il se transforme enfin en Lynch afin de tromper Zakuro et de conduire la mafia jusqu'au cinéma.",
+      "Au douzième jour, toujours transformé en Hisoka, Bonolenov rencontre fortuitement le véritable Hisoka dans le casino du Tier 1. Se souvenant de l'avertissement de Chrollo, il adopte immédiatement l'apparence d'Owl et continue à circuler dans le casino, inquiet que la mafia découvre le meurtre de Lynch et remonte jusqu'à lui.",
+      "Sous sa nouvelle forme, Bonolenov repense à la douleur de Chrollo après les morts de Shalnark et Kortopi. Il comprend que le chef cherche une capacité et les régalia nécessaires pour améliorer Skill Hunter afin de tuer définitivement Hisoka. Bonolenov espère néanmoins que les autres Araignées atteindront Hisoka avant Chrollo et que ce dernier combat clôturera leur représentation."
+    ],
+    "abilitiesAndPowers": "Membre de la Brigade Fantôme doté d'une prime de classe A, Bonolenov est un tueur professionnel, combattant agile et danseur accompli. Les trous rituels de son corps transforment ses mouvements en musique et sa musique en puissance de combat. Il possède une grande vitesse, une force suffisante pour assommer Lynch d'un seul coup et une aura si menaçante qu'elle fait trembler Zakuro. Bien qu'il se dise mauvais stratège, il analyse rapidement Body and Soul et improvise une chaîne complexe d'usurpations d'identité.",
+    "nen": {
+      "type": "conjurer",
+      "typeLabel": "Matérialisation",
+      "overview": "Bonolenov matérialise des armes, des masses destructrices ou des transformations au moyen de Battle Cantabile. Ses Hatsu sont liés à son héritage Gyudondond : il danse et fait circuler l'air dans les trous de son corps pour produire les mélodies nécessaires. La durée ou la puissance semble dépendre du morceau, de la danse et du nombre de trous exposés.",
+      "techniques": [
+        "Ten",
+        "Zetsu",
+        "Ren",
+        "Hatsu"
+      ],
+      "combatProficiency": "Il combat en dansant, évite les attaques avec grâce et peut enchaîner des transformations convaincantes. Metamorphosen lui permet d'imiter Hisoka, Zakuro, Lynch puis Owl, tandis que Prologue et Jupiter lui donnent respectivement une arme de mêlée et une attaque de poursuite massive.",
+      "abilityIds": [
+        "battle-cantabile-prologue",
+        "battle-cantabile-jupiter",
+        "battle-cantabile-metamorphosen"
+      ]
+    },
+    "mangaAppearances": [
+      {
+        "chapter": 340,
+        "title": "Special Mission",
+        "status": "absent"
+      },
+      {
+        "chapter": 341,
+        "title": "Threats",
+        "status": "absent"
+      },
+      {
+        "chapter": 342,
+        "title": "Challenge",
+        "status": "absent"
+      },
+      {
+        "chapter": 343,
+        "title": "Invitation",
+        "status": "absent"
+      },
+      {
+        "chapter": 344,
+        "title": "Author",
+        "status": "absent"
+      },
+      {
+        "chapter": 345,
+        "title": "Signature",
+        "status": "absent"
+      },
+      {
+        "chapter": 346,
+        "title": "Options",
+        "status": "absent"
+      },
+      {
+        "chapter": 347,
+        "title": "Inauguration",
+        "status": "absent"
+      },
+      {
+        "chapter": 348,
+        "title": "Resolve",
+        "status": "absent"
+      },
+      {
+        "chapter": 349,
+        "title": "Worm Toxin",
+        "status": "absent"
+      },
+      {
+        "chapter": 350,
+        "title": "Prince",
+        "status": "absent"
+      },
+      {
+        "chapter": 351,
+        "title": "Battle to the Death",
+        "status": "absent"
+      },
+      {
+        "chapter": 352,
+        "title": "Troublesome",
+        "status": "absent"
+      },
+      {
+        "chapter": 353,
+        "title": "Cold-Blooded",
+        "status": "absent"
+      },
+      {
+        "chapter": 354,
+        "title": "Heat",
+        "status": "absent"
+      },
+      {
+        "chapter": 355,
+        "title": "Detonation",
+        "status": "absent"
+      },
+      {
+        "chapter": 356,
+        "title": "Unfortunate: Part 1",
+        "status": "absent"
+      },
+      {
+        "chapter": 357,
+        "title": "Unfortunate: Part 2",
+        "status": "absent"
+      },
+      {
+        "chapter": 358,
+        "title": "Eve",
+        "status": "absent"
+      },
+      {
+        "chapter": 359,
+        "title": "Departure",
+        "status": "absent"
+      },
+      {
+        "chapter": 360,
+        "title": "Parasite",
+        "status": "absent"
+      },
+      {
+        "chapter": 361,
+        "title": "Withdraw",
+        "status": "absent"
+      },
+      {
+        "chapter": 362,
+        "title": "Resolve",
+        "status": "absent"
+      },
+      {
+        "chapter": 363,
+        "title": "Nen Beast",
+        "status": "absent"
+      },
+      {
+        "chapter": 364,
+        "title": "Speculation",
+        "status": "absent"
+      },
+      {
+        "chapter": 365,
+        "title": "Choice",
+        "status": "absent"
+      },
+      {
+        "chapter": 366,
+        "title": "To Each His Own",
+        "status": "absent"
+      },
+      {
+        "chapter": 367,
+        "title": "Synchronization",
+        "status": "absent"
+      },
+      {
+        "chapter": 368,
+        "title": "Foul Play",
+        "status": "absent"
+      },
+      {
+        "chapter": 369,
+        "title": "Limits",
+        "status": "absent"
+      },
+      {
+        "chapter": 370,
+        "title": "Observation",
+        "status": "absent"
+      },
+      {
+        "chapter": 371,
+        "title": "Mission",
+        "status": "absent"
+      },
+      {
+        "chapter": 372,
+        "title": "Disappearance",
+        "status": "absent"
+      },
+      {
+        "chapter": 373,
+        "title": "Inheritance",
+        "status": "absent"
+      },
+      {
+        "chapter": 374,
+        "title": "Ability",
+        "status": "absent"
+      },
+      {
+        "chapter": 375,
+        "title": "Persuasion",
+        "status": "absent"
+      },
+      {
+        "chapter": 376,
+        "title": "Determination",
+        "status": "absent"
+      },
+      {
+        "chapter": 377,
+        "title": "Scheme",
+        "status": "appears"
+      },
+      {
+        "chapter": 378,
+        "title": "Balance",
+        "status": "absent"
+      },
+      {
+        "chapter": 379,
+        "title": "Collaboration",
+        "status": "absent"
+      },
+      {
+        "chapter": 380,
+        "title": "Alarm",
+        "status": "pictured"
+      },
+      {
+        "chapter": 381,
+        "title": "Predation",
+        "status": "absent"
+      },
+      {
+        "chapter": 382,
+        "title": "Awakening",
+        "status": "absent"
+      },
+      {
+        "chapter": 383,
+        "title": "Escape",
+        "status": "absent"
+      },
+      {
+        "chapter": 384,
+        "title": "War",
+        "status": "absent"
+      },
+      {
+        "chapter": 385,
+        "title": "Warning",
+        "status": "absent"
+      },
+      {
+        "chapter": 386,
+        "title": "Hypothesis",
+        "status": "absent"
+      },
+      {
+        "chapter": 387,
+        "title": "Recreation",
+        "status": "absent"
+      },
+      {
+        "chapter": 388,
+        "title": "Reflection",
+        "status": "absent"
+      },
+      {
+        "chapter": 389,
+        "title": "Curse",
+        "status": "absent"
+      },
+      {
+        "chapter": 390,
+        "title": "Clash: Part 1",
+        "status": "absent"
+      },
+      {
+        "chapter": 391,
+        "title": "Clash: Part 2",
+        "status": "absent"
+      },
+      {
+        "chapter": 392,
+        "title": "Information",
+        "status": "disguised"
+      },
+      {
+        "chapter": 393,
+        "title": "Plea",
+        "status": "disguised"
+      },
+      {
+        "chapter": 394,
+        "title": "Hypothesis",
+        "status": "absent"
+      },
+      {
+        "chapter": 395,
+        "title": "Founding: Part 1",
+        "status": "absent"
+      },
+      {
+        "chapter": 396,
+        "title": "Founding: Part 2",
+        "status": "absent"
+      },
+      {
+        "chapter": 397,
+        "title": "Founding: Part 3",
+        "status": "absent"
+      },
+      {
+        "chapter": 398,
+        "title": "Search",
+        "status": "absent"
+      },
+      {
+        "chapter": 399,
+        "title": "Expulsion",
+        "status": "absent"
+      },
+      {
+        "chapter": 400,
+        "title": "Secrecy",
+        "status": "absent"
+      },
+      {
+        "chapter": 401,
+        "title": "Moonlight",
+        "status": "absent"
+      },
+      {
+        "chapter": 402,
+        "title": "Letter",
+        "status": "absent"
+      },
+      {
+        "chapter": 403,
+        "title": "Results",
+        "status": "absent"
+      },
+      {
+        "chapter": 404,
+        "title": "Speculation",
+        "status": "absent"
+      },
+      {
+        "chapter": 405,
+        "title": "Performance",
+        "status": "appears"
+      },
+      {
+        "chapter": 406,
+        "title": "Regalia",
+        "status": "mentioned"
+      },
+      {
+        "chapter": 407,
+        "title": "Negotiation",
+        "status": "absent"
+      },
+      {
+        "chapter": 408,
+        "title": "Negotiation: Part 2",
+        "status": "absent"
+      },
+      {
+        "chapter": 409,
+        "title": "Negotiation: Part 3",
+        "status": "absent"
+      },
+      {
+        "chapter": 410,
+        "title": "Negotiation: Part 4",
+        "status": "absent"
+      },
+      {
+        "chapter": 411,
+        "title": "Announcement",
+        "status": "absent"
+      },
+      {
+        "chapter": 412,
+        "title": "Question",
+        "status": "absent"
+      },
+      {
+        "chapter": 413,
+        "title": "Loyalty",
+        "status": "absent"
+      },
+      {
+        "chapter": 414,
+        "title": "Friends",
+        "status": "absent"
+      }
+    ]
+  },
+  {
+    "id": "shizuku-murasaki",
+    "canonicalName": "Shizuku Murasaki",
+    "aliases": [
+      "Shizuku",
+      "Membre n°8 de la Brigade"
+    ],
+    "description": "Membre de la Brigade Fantôme et Matérialisatrice. Elle accompagne Chrollo et Bonolenov dans la recherche d'Hisoka et se trouve au passage central reliant les Tiers 4 et 5.",
+    "factionId": "phantom-troupe",
+    "firstAppearanceChapterId": "ch-377",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": 4,
+      "room": "Passage central Tier 4–5",
+      "status": "actif",
+      "role": "voleuse / recherche d'Hisoka"
+    },
+    "mapPresenceFromChapterId": "ch-380",
+    "biography": [
+      "Après la décision de voler les trésors de Kakin, Shizuku embarque sur le Black Whale avec la Brigade Fantôme. Durant les premiers jours, les Araignées fouillent le Tier 5 à la recherche d'Hisoka, qui vient d'assassiner Shalnark et Kortopi.",
+      "Au quatrième jour, la Brigade se réunit dans le réfectoire central bondé du Tier 5. Lorsque la famille Cha-R réclame leur table, les Araignées partent sans conflit. Chrollo autorise chacun à chercher Hisoka comme il l'entend et ordonne au groupe de revenir avec sa tête.",
+      "Shizuku et Bonolenov rejoignent aussitôt Chrollo et lui proposent de faire équipe. Elle reconnaît que Blinky et les capacités de Bonolenov sont mal adaptées à Bungee Gum, mais prévoit de rechercher Hisoka sous un déguisement. Chrollo accepte à condition de porter lui-même le coup fatal.",
+      "Shizuku demande ensuite à Chrollo d'utiliser de nouveau Lovely Ghostwriter pour lire leurs fortunes et obtenir des indices. Il lui révèle que la capacité a disparu de Skill Hunter, impliquant vraisemblablement la mort de Neon Nostrade. Après un silence, Shizuku compare encore le livre de Chrollo au Death Note, ce que Bonolenov lui reproche gentiment.",
+      "Plus tard dans la journée, Shizuku, Chrollo et Bonolenov sont localisés au passage central du Tier 4 reliant les Tiers 4 et 5, poursuivant leur progression vers les niveaux supérieurs."
+    ],
+    "abilitiesAndPowers": "Membre de la Brigade Fantôme et criminelle de classe A, Shizuku est une combattante expérimentée dont la capacité rare est essentielle pour effacer les preuves laissées par le groupe. Elle manie Blinky comme une massue, peut aspirer le sang d'une blessure ouverte et possède des aptitudes de Renforcement élevées pour une Matérialisatrice, ayant survécu indemne à l'explosion d'une voiture.",
+    "nen": {
+      "type": "conjurer",
+      "typeLabel": "Matérialisation",
+      "secondaryTypeLabels": [
+        "Renforcement"
+      ],
+      "overview": "Shizuku matérialise Blinky, un aspirateur doté d'une capacité d'absorption pratiquement illimitée. Elle maîtrise Ten, Hatsu et Gyo, qu'elle applique notamment à ses yeux pour se prémunir contre In.",
+      "techniques": [
+        "Ten",
+        "Gyo",
+        "Hatsu"
+      ],
+      "combatProficiency": "Blinky sert à la fois d'outil, d'arme contondante et de moyen d'exsanguination. La restriction qui l'empêche d'aspirer les êtres vivants et les objets de Nen permet aussi à Shizuku de repérer certains pièges.",
+      "abilityIds": [
+        "blinky"
+      ]
+    },
+    "mangaAppearances": [
+      {
+        "chapter": 340,
+        "title": "Special Mission",
+        "status": "absent"
+      },
+      {
+        "chapter": 341,
+        "title": "Threats",
+        "status": "absent"
+      },
+      {
+        "chapter": 342,
+        "title": "Challenge",
+        "status": "absent"
+      },
+      {
+        "chapter": 343,
+        "title": "Invitation",
+        "status": "absent"
+      },
+      {
+        "chapter": 344,
+        "title": "Author",
+        "status": "absent"
+      },
+      {
+        "chapter": 345,
+        "title": "Signature",
+        "status": "absent"
+      },
+      {
+        "chapter": 346,
+        "title": "Options",
+        "status": "absent"
+      },
+      {
+        "chapter": 347,
+        "title": "Inauguration",
+        "status": "absent"
+      },
+      {
+        "chapter": 348,
+        "title": "Resolve",
+        "status": "absent"
+      },
+      {
+        "chapter": 349,
+        "title": "Worm Toxin",
+        "status": "absent"
+      },
+      {
+        "chapter": 350,
+        "title": "Prince",
+        "status": "absent"
+      },
+      {
+        "chapter": 351,
+        "title": "Battle to the Death",
+        "status": "absent"
+      },
+      {
+        "chapter": 352,
+        "title": "Troublesome",
+        "status": "absent"
+      },
+      {
+        "chapter": 353,
+        "title": "Cold-Blooded",
+        "status": "absent"
+      },
+      {
+        "chapter": 354,
+        "title": "Heat",
+        "status": "absent"
+      },
+      {
+        "chapter": 355,
+        "title": "Detonation",
+        "status": "absent"
+      },
+      {
+        "chapter": 356,
+        "title": "Unfortunate: Part 1",
+        "status": "absent"
+      },
+      {
+        "chapter": 357,
+        "title": "Unfortunate: Part 2",
+        "status": "absent"
+      },
+      {
+        "chapter": 358,
+        "title": "Eve",
+        "status": "absent"
+      },
+      {
+        "chapter": 359,
+        "title": "Departure",
+        "status": "absent"
+      },
+      {
+        "chapter": 360,
+        "title": "Parasite",
+        "status": "absent"
+      },
+      {
+        "chapter": 361,
+        "title": "Withdraw",
+        "status": "absent"
+      },
+      {
+        "chapter": 362,
+        "title": "Resolve",
+        "status": "absent"
+      },
+      {
+        "chapter": 363,
+        "title": "Nen Beast",
+        "status": "absent"
+      },
+      {
+        "chapter": 364,
+        "title": "Speculation",
+        "status": "absent"
+      },
+      {
+        "chapter": 365,
+        "title": "Choice",
+        "status": "absent"
+      },
+      {
+        "chapter": 366,
+        "title": "To Each His Own",
+        "status": "absent"
+      },
+      {
+        "chapter": 367,
+        "title": "Synchronization",
+        "status": "absent"
+      },
+      {
+        "chapter": 368,
+        "title": "Foul Play",
+        "status": "absent"
+      },
+      {
+        "chapter": 369,
+        "title": "Limits",
+        "status": "absent"
+      },
+      {
+        "chapter": 370,
+        "title": "Observation",
+        "status": "absent"
+      },
+      {
+        "chapter": 371,
+        "title": "Mission",
+        "status": "absent"
+      },
+      {
+        "chapter": 372,
+        "title": "Disappearance",
+        "status": "absent"
+      },
+      {
+        "chapter": 373,
+        "title": "Inheritance",
+        "status": "absent"
+      },
+      {
+        "chapter": 374,
+        "title": "Ability",
+        "status": "absent"
+      },
+      {
+        "chapter": 375,
+        "title": "Persuasion",
+        "status": "absent"
+      },
+      {
+        "chapter": 376,
+        "title": "Determination",
+        "status": "absent"
+      },
+      {
+        "chapter": 377,
+        "title": "Scheme",
+        "status": "appears"
+      },
+      {
+        "chapter": 378,
+        "title": "Balance",
+        "status": "absent"
+      },
+      {
+        "chapter": 379,
+        "title": "Collaboration",
+        "status": "absent"
+      },
+      {
+        "chapter": 380,
+        "title": "Alarm",
+        "status": "pictured"
+      },
+      {
+        "chapter": 381,
+        "title": "Predation",
+        "status": "absent"
+      },
+      {
+        "chapter": 382,
+        "title": "Awakening",
+        "status": "absent"
+      },
+      {
+        "chapter": 383,
+        "title": "Escape",
+        "status": "absent"
+      },
+      {
+        "chapter": 384,
+        "title": "War",
+        "status": "absent"
+      },
+      {
+        "chapter": 385,
+        "title": "Warning",
+        "status": "absent"
+      },
+      {
+        "chapter": 386,
+        "title": "Hypothesis",
+        "status": "absent"
+      },
+      {
+        "chapter": 387,
+        "title": "Recreation",
+        "status": "absent"
+      },
+      {
+        "chapter": 388,
+        "title": "Reflection",
+        "status": "absent"
+      },
+      {
+        "chapter": 389,
+        "title": "Curse",
+        "status": "absent"
+      },
+      {
+        "chapter": 390,
+        "title": "Clash: Part 1",
+        "status": "absent"
+      },
+      {
+        "chapter": 391,
+        "title": "Clash: Part 2",
+        "status": "absent"
+      },
+      {
+        "chapter": 392,
+        "title": "Information",
+        "status": "absent"
+      },
+      {
+        "chapter": 393,
+        "title": "Plea",
+        "status": "absent"
+      },
+      {
+        "chapter": 394,
+        "title": "Hypothesis",
+        "status": "absent"
+      },
+      {
+        "chapter": 395,
+        "title": "Founding: Part 1",
+        "status": "absent"
+      },
+      {
+        "chapter": 396,
+        "title": "Founding: Part 2",
+        "status": "absent"
+      },
+      {
+        "chapter": 397,
+        "title": "Founding: Part 3",
+        "status": "absent"
+      },
+      {
+        "chapter": 398,
+        "title": "Search",
+        "status": "absent"
+      },
+      {
+        "chapter": 399,
+        "title": "Expulsion",
+        "status": "absent"
+      },
+      {
+        "chapter": 400,
+        "title": "Secrecy",
+        "status": "absent"
+      },
+      {
+        "chapter": 401,
+        "title": "Moonlight",
+        "status": "absent"
+      },
+      {
+        "chapter": 402,
+        "title": "Letter",
+        "status": "absent"
+      },
+      {
+        "chapter": 403,
+        "title": "Results",
+        "status": "absent"
+      },
+      {
+        "chapter": 404,
+        "title": "Speculation",
+        "status": "absent"
+      },
+      {
+        "chapter": 405,
+        "title": "Performance",
+        "status": "absent"
+      },
+      {
+        "chapter": 406,
+        "title": "Regalia",
+        "status": "absent"
+      },
+      {
+        "chapter": 407,
+        "title": "Negotiation",
+        "status": "absent"
+      },
+      {
+        "chapter": 408,
+        "title": "Negotiation: Part 2",
+        "status": "absent"
+      },
+      {
+        "chapter": 409,
+        "title": "Negotiation: Part 3",
+        "status": "absent"
+      },
+      {
+        "chapter": 410,
+        "title": "Negotiation: Part 4",
+        "status": "absent"
+      },
+      {
+        "chapter": 411,
+        "title": "Announcement",
+        "status": "absent"
+      },
+      {
+        "chapter": 412,
+        "title": "Question",
+        "status": "absent"
+      },
+      {
+        "chapter": 413,
+        "title": "Loyalty",
+        "status": "absent"
+      },
+      {
+        "chapter": 414,
+        "title": "Friends",
+        "status": "absent"
+      }
+    ]
+  },
+  {
+    "id": "franklin-bordeau",
+    "canonicalName": "Franklin Bordeau",
+    "aliases": [
+      "Franklin",
+      "Membre n°7 de la Brigade"
+    ],
+    "description": "Membre de la Brigade Fantôme et Émetteur d'élite. Il attend qu'Hisoka vienne à lui dans le réfectoire central du Tier 5.",
+    "factionId": "phantom-troupe",
+    "firstAppearanceChapterId": "ch-371",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": 5,
+      "room": "Réfectoire central",
+      "status": "actif",
+      "role": "tireur / attente d'Hisoka"
+    },
+    "mapPresenceFromChapterId": "ch-380",
+    "biography": [
+      "Au deuxième jour du voyage, Franklin traverse le Tier 5 avec Phinks, Feitan et Nobunaga lorsqu'ils rencontrent trois membres de la famille Buor. Ceux-ci tentent de les intimider sans reconnaître la Brigade, mais sont facilement battus et conduits au réfectoire central pour être interrogés.",
+      "Les Araignées forcent leurs prisonniers à expliquer l'organisation des trois familles mafieuses de Kakin. Franklin propose de les provoquer toutes les trois et demande laquelle est la plus puissante. Apprenant que la Xi-Yu domine par ses moyens financiers et ses effectifs, il exige que les hommes de Buor convoquent le collecteur de leur tribut. Phinks leur ordonne ensuite de relever les cabines de tous les passagers mesurant plus de 1,88 mètre afin de retrouver Hisoka.",
+      "Au quatrième jour, la Brigade se rassemble dans le réfectoire central bondé. Franklin siège à l'extrémité opposée à Chrollo. Lorsque la Cha-R réclame leur table, les Araignées se retirent sans combattre, puis Chrollo disperse le groupe avec l'ordre de rapporter la tête d'Hisoka.",
+      "Franklin choisit de rester seul dans le réfectoire et y mange lorsqu'Ittoku, consigliere de la Cha-R, vient l'interroger. Il explique qu'il ne gaspille pas ses efforts : puisque Hisoka veut tuer les Araignées, il finira par venir à lui. Il nie l'implication de la Brigade dans l'attaque d'un entrepôt et affirme qu'ils ne passeront pas au vol des trésors avant d'avoir éliminé Hisoka.",
+      "À dix heures le même jour, une vue d'ensemble du Black Whale confirme que Franklin se trouve toujours seul dans le réfectoire central du Tier 5. Les autres membres le contactent plus tard pendant leur chasse au tueur de la Heil-Ly.",
+      "Au dixième jour, lorsque Nobunaga envisage de reformer des binômes, Phinks estime que Franklin refuserait d'attendre dans la base exiguë de la Cha-R, car il déteste les espaces confinés. Ils envisagent plutôt de le laisser chercher dehors pendant que Phinks et Feitan garderaient la base, mais Franklin demeure avant tout leur point d'attente face à Hisoka."
+    ],
+    "abilitiesAndPowers": "Criminel de classe A et membre expérimenté de la Brigade Fantôme, Franklin combine une immense réserve d'aura, une grande résistance physique et une puissance de feu capable d'abattre des dizaines d'adversaires en quelques secondes. Calme, pragmatique et peu impressionnable, il sert souvent de voix raisonnable au groupe. Ses projectiles traversent des pantins de Nen et conservent assez de force pour tuer les personnes protégées derrière eux.",
+    "nen": {
+      "type": "emitter",
+      "typeLabel": "Émission",
+      "secondaryTypeLabels": [
+        "Renforcement"
+      ],
+      "overview": "Franklin est un Émetteur possédant une double affinité avec le Renforcement. Il peut projeter des centaines de balles d'aura sans fatigue visible et son endurance lui a permis de sortir indemne de l'explosion d'une voiture.",
+      "techniques": [
+        "Hatsu"
+      ],
+      "combatProficiency": "La cadence, la vitesse et la puissance de Double Machine Gun lui permettent de saturer une vaste zone. La mutilation volontaire de ses doigts agit comme une restriction et renforce considérablement chaque projectile.",
+      "abilityIds": [
+        "double-machine-gun"
+      ]
+    },
+    "mangaAppearances": [
+      {
+        "chapter": 340,
+        "title": "Special Mission",
+        "status": "absent"
+      },
+      {
+        "chapter": 341,
+        "title": "Threats",
+        "status": "absent"
+      },
+      {
+        "chapter": 342,
+        "title": "Challenge",
+        "status": "absent"
+      },
+      {
+        "chapter": 343,
+        "title": "Invitation",
+        "status": "absent"
+      },
+      {
+        "chapter": 344,
+        "title": "Author",
+        "status": "absent"
+      },
+      {
+        "chapter": 345,
+        "title": "Signature",
+        "status": "absent"
+      },
+      {
+        "chapter": 346,
+        "title": "Options",
+        "status": "absent"
+      },
+      {
+        "chapter": 347,
+        "title": "Inauguration",
+        "status": "absent"
+      },
+      {
+        "chapter": 348,
+        "title": "Resolve",
+        "status": "absent"
+      },
+      {
+        "chapter": 349,
+        "title": "Worm Toxin",
+        "status": "absent"
+      },
+      {
+        "chapter": 350,
+        "title": "Prince",
+        "status": "absent"
+      },
+      {
+        "chapter": 351,
+        "title": "Battle to the Death",
+        "status": "absent"
+      },
+      {
+        "chapter": 352,
+        "title": "Troublesome",
+        "status": "absent"
+      },
+      {
+        "chapter": 353,
+        "title": "Cold-Blooded",
+        "status": "absent"
+      },
+      {
+        "chapter": 354,
+        "title": "Heat",
+        "status": "absent"
+      },
+      {
+        "chapter": 355,
+        "title": "Detonation",
+        "status": "absent"
+      },
+      {
+        "chapter": 356,
+        "title": "Unfortunate: Part 1",
+        "status": "absent"
+      },
+      {
+        "chapter": 357,
+        "title": "Unfortunate: Part 2",
+        "status": "absent"
+      },
+      {
+        "chapter": 358,
+        "title": "Eve",
+        "status": "absent"
+      },
+      {
+        "chapter": 359,
+        "title": "Departure",
+        "status": "absent"
+      },
+      {
+        "chapter": 360,
+        "title": "Parasite",
+        "status": "absent"
+      },
+      {
+        "chapter": 361,
+        "title": "Withdraw",
+        "status": "absent"
+      },
+      {
+        "chapter": 362,
+        "title": "Resolve",
+        "status": "absent"
+      },
+      {
+        "chapter": 363,
+        "title": "Nen Beast",
+        "status": "absent"
+      },
+      {
+        "chapter": 364,
+        "title": "Speculation",
+        "status": "absent"
+      },
+      {
+        "chapter": 365,
+        "title": "Choice",
+        "status": "absent"
+      },
+      {
+        "chapter": 366,
+        "title": "To Each His Own",
+        "status": "absent"
+      },
+      {
+        "chapter": 367,
+        "title": "Synchronization",
+        "status": "absent"
+      },
+      {
+        "chapter": 368,
+        "title": "Foul Play",
+        "status": "absent"
+      },
+      {
+        "chapter": 369,
+        "title": "Limits",
+        "status": "absent"
+      },
+      {
+        "chapter": 370,
+        "title": "Observation",
+        "status": "absent"
+      },
+      {
+        "chapter": 371,
+        "title": "Mission",
+        "status": "appears"
+      },
+      {
+        "chapter": 372,
+        "title": "Disappearance",
+        "status": "absent"
+      },
+      {
+        "chapter": 373,
+        "title": "Inheritance",
+        "status": "absent"
+      },
+      {
+        "chapter": 374,
+        "title": "Ability",
+        "status": "absent"
+      },
+      {
+        "chapter": 375,
+        "title": "Persuasion",
+        "status": "absent"
+      },
+      {
+        "chapter": 376,
+        "title": "Determination",
+        "status": "absent"
+      },
+      {
+        "chapter": 377,
+        "title": "Scheme",
+        "status": "appears"
+      },
+      {
+        "chapter": 378,
+        "title": "Balance",
+        "status": "absent"
+      },
+      {
+        "chapter": 379,
+        "title": "Collaboration",
+        "status": "appears"
+      },
+      {
+        "chapter": 380,
+        "title": "Alarm",
+        "status": "pictured"
+      },
+      {
+        "chapter": 381,
+        "title": "Predation",
+        "status": "absent"
+      },
+      {
+        "chapter": 382,
+        "title": "Awakening",
+        "status": "absent"
+      },
+      {
+        "chapter": 383,
+        "title": "Escape",
+        "status": "absent"
+      },
+      {
+        "chapter": 384,
+        "title": "War",
+        "status": "absent"
+      },
+      {
+        "chapter": 385,
+        "title": "Warning",
+        "status": "absent"
+      },
+      {
+        "chapter": 386,
+        "title": "Hypothesis",
+        "status": "absent"
+      },
+      {
+        "chapter": 387,
+        "title": "Recreation",
+        "status": "absent"
+      },
+      {
+        "chapter": 388,
+        "title": "Reflection",
+        "status": "absent"
+      },
+      {
+        "chapter": 389,
+        "title": "Curse",
+        "status": "absent"
+      },
+      {
+        "chapter": 390,
+        "title": "Clash: Part 1",
+        "status": "absent"
+      },
+      {
+        "chapter": 391,
+        "title": "Clash: Part 2",
+        "status": "absent"
+      },
+      {
+        "chapter": 392,
+        "title": "Information",
+        "status": "mentioned"
+      },
+      {
+        "chapter": 393,
+        "title": "Plea",
+        "status": "absent"
+      },
+      {
+        "chapter": 394,
+        "title": "Hypothesis",
+        "status": "absent"
+      },
+      {
+        "chapter": 395,
+        "title": "Founding: Part 1",
+        "status": "flashback"
+      },
+      {
+        "chapter": 396,
+        "title": "Founding: Part 2",
+        "status": "flashback"
+      },
+      {
+        "chapter": 397,
+        "title": "Founding: Part 3",
+        "status": "flashback"
+      },
+      {
+        "chapter": 398,
+        "title": "Search",
+        "status": "absent"
+      },
+      {
+        "chapter": 399,
+        "title": "Expulsion",
+        "status": "absent"
+      },
+      {
+        "chapter": 400,
+        "title": "Secrecy",
+        "status": "mentioned"
+      },
+      {
+        "chapter": 401,
+        "title": "Moonlight",
+        "status": "absent"
+      },
+      {
+        "chapter": 402,
+        "title": "Letter",
+        "status": "absent"
+      },
+      {
+        "chapter": 403,
+        "title": "Results",
+        "status": "absent"
+      },
+      {
+        "chapter": 404,
+        "title": "Speculation",
+        "status": "absent"
+      },
+      {
+        "chapter": 405,
+        "title": "Performance",
+        "status": "absent"
+      },
+      {
+        "chapter": 406,
+        "title": "Regalia",
+        "status": "absent"
+      },
+      {
+        "chapter": 407,
+        "title": "Negotiation",
+        "status": "absent"
+      },
+      {
+        "chapter": 408,
+        "title": "Negotiation: Part 2",
+        "status": "absent"
+      },
+      {
+        "chapter": 409,
+        "title": "Negotiation: Part 3",
+        "status": "absent"
+      },
+      {
+        "chapter": 410,
+        "title": "Negotiation: Part 4",
+        "status": "absent"
+      },
+      {
+        "chapter": 411,
+        "title": "Announcement",
+        "status": "absent"
+      },
+      {
+        "chapter": 412,
+        "title": "Question",
+        "status": "absent"
+      },
+      {
+        "chapter": 413,
+        "title": "Loyalty",
+        "status": "absent"
+      },
+      {
+        "chapter": 414,
+        "title": "Friends",
+        "status": "absent"
+      }
+    ],
+    "battles": [
+      "Franklin Bordeau, Phinks Magcub, Nobunaga Hazama et Feitan Portor vs. hommes de la famille Buor"
+    ]
+  },
+  {
+    "id": "phinks-magcub",
+    "canonicalName": "Phinks Magcub",
+    "aliases": [
+      "Phinks",
+      "Membre n°5 de la Brigade"
+    ],
+    "description": "Membre de la Brigade Fantôme et Renforceur. Avec Feitan, il progresse vers les niveaux supérieurs par les installations de recyclage situées entre les Tiers 4 et 5.",
+    "factionId": "phantom-troupe",
+    "firstAppearanceChapterId": "ch-371",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": 4,
+      "room": "Installations de recyclage et d'épuration",
+      "status": "actif",
+      "role": "combattant / assaut contre la Heil-Ly"
+    },
+    "mapPresenceFromChapterId": "ch-406",
+    "biography": [
+      "Au deuxième jour du voyage, Phinks, Feitan, Franklin et Nobunaga maîtrisent trois hommes de la famille Buor au Tier 5. Pendant l'interrogatoire, Phinks comprend qu'un intermédiaire collecte les bénéfices entre les chefs et leurs hommes. Il ordonne ensuite aux prisonniers de relever les numéros de cabine de tous les passagers mesurant plus de 1,88 mètre afin de retrouver Hisoka.",
+      "Au quatrième jour, la Brigade se réunit dans le réfectoire central puis se disperse sur ordre de Chrollo. Phinks et Feitan accompagnent Nobunaga au dépôt pour récupérer leurs armes clandestines, refusant de laisser à Hisoka la moindre chance de surprendre l'un d'eux isolé.",
+      "Dans l'entrepôt, un guide de la Cha-R disparaît soudainement avant d'être retrouvé égorgé. Phinks analyse la scène, suit une trace de sang et écarte l'implication d'Hisoka. Lorsque Ken'i les confronte, il déduit que le tueur cherche à marquer le repaire afin d'y ouvrir plus tard une capacité de téléportation.",
+      "Les trois Araignées acceptent de tuer Luini en échange de l'accès aux niveaux supérieurs. Au septième jour, Phinks demande à Ken'i et Tajao de localiser Morena et leur promet que la Brigade se réunira pour traquer le tueur de la Heil-Ly.",
+      "Au dixième jour, Luini se manifeste dans la base de la Cha-R et propose à la Brigade de l'aider à détruire le monde. Phinks et Feitan accueillent ses paroles avec dégoût avant que Nobunaga ne le tue. Phinks annonce ensuite que la Brigade détruira la Heil-Ly tout en gardant Hisoka comme priorité principale.",
+      "Au Tier 3, Phinks, Feitan et Nobunaga explorent les chambres voisines de la pièce 3101 pour comprendre le piège de téléportation. Ils utilisent des otages afin de vérifier son déclenchement continu et débattent des rôles respectifs de l'Émission, de la Matérialisation et d'une éventuelle Spécialisation.",
+      "Hinrigh leur propose d'avaler un transmetteur transformé en huître et franchit lui-même le piège. Phinks reçoit le détecteur et suit son signal avec Feitan. Il reconnaît que son En est trop instable dans une foule : les voix, les mouvements et son propre déplacement interrompent sa concentration, ce qui le limite à de petits espaces comme un entrepôt.",
+      "Le signal permet au groupe de conclure que la cachette de la Heil-Ly se trouve au Tier 2. Nobunaga les rejoint puis insiste pour sécuriser une voie vers les étages supérieurs. Phinks lui rappelle que la guerre mafieuse reste secondaire face à Hisoka, même s'ils acceptent finalement la demande officielle de détruire la Heil-Ly.",
+      "Des souvenirs de Meteor City montrent Phinks enfant, proche de Feitan et des futurs fondateurs de la Brigade. Il vole une cassette à Chrollo, participe au doublage des Power Cleaners comme Nettoyeur Bleu, aide à rechercher Sarasa, assiste à la découverte de son corps et soutient la désignation de Chrollo comme chef du groupe voué à la venger.",
+      "Au douzième jour, Tajao conduit Phinks, Feitan et Nobunaga dans un tunnel secret. Ils atteignent une immense chambre d'épuration et de recyclage entre les Tiers 4 et 5. Phinks comprend que la Heil-Ly a pu remplacer les sous-traitants du traitement des déchets pour attirer et tuer librement des victimes. Nobunaga rebrousse chemin, tandis que Phinks et Feitan se préparent à poursuivre l'infiltration."
+    ],
+    "abilitiesAndPowers": "Phinks est l'un des combattants physiques majeurs de la Brigade Fantôme. Il possède une force, une vitesse et des réflexes exceptionnels, ainsi qu'une solide compréhension théorique du Nen, notamment des capacités de téléportation, du marquage, des espaces matérialisés et des contrats à restrictions. Direct et agressif, il se montre néanmoins prudent face aux pièges et analyse rapidement les scènes de crime et les tactiques adverses.",
+    "nen": {
+      "type": "enhancer",
+      "typeLabel": "Renforcement",
+      "overview": "Phinks est présenté comme un Renforceur maîtrisant un large éventail de techniques. Son En fonctionne dans de petits espaces mais se désagrège lorsqu'il se déplace, entend une voix ou perçoit un mouvement, ce qui le rend dangereux à employer au milieu d'une foule.",
+      "techniques": [
+        "Ten",
+        "Zetsu",
+        "Ren",
+        "Ken",
+        "Gyo",
+        "Ko",
+        "Ryu",
+        "En",
+        "Hatsu"
+      ],
+      "combatProficiency": "Ripper Cyclotron accumule l'aura dans son poing à chaque rotation du bras. Quinze tours ont pulvérisé une Fourmi-Chimère résistante, bien que Phinks estime que la moitié aurait suffi et reconnaisse avoir du mal à doser sa force.",
+      "abilityIds": [
+        "ripper-cyclotron"
+      ]
+    },
+    "mangaAppearances": [
+      {
+        "chapter": 340,
+        "title": "Special Mission",
+        "status": "absent"
+      },
+      {
+        "chapter": 341,
+        "title": "Threats",
+        "status": "absent"
+      },
+      {
+        "chapter": 342,
+        "title": "Challenge",
+        "status": "absent"
+      },
+      {
+        "chapter": 343,
+        "title": "Invitation",
+        "status": "absent"
+      },
+      {
+        "chapter": 344,
+        "title": "Author",
+        "status": "absent"
+      },
+      {
+        "chapter": 345,
+        "title": "Signature",
+        "status": "absent"
+      },
+      {
+        "chapter": 346,
+        "title": "Options",
+        "status": "absent"
+      },
+      {
+        "chapter": 347,
+        "title": "Inauguration",
+        "status": "absent"
+      },
+      {
+        "chapter": 348,
+        "title": "Resolve",
+        "status": "absent"
+      },
+      {
+        "chapter": 349,
+        "title": "Worm Toxin",
+        "status": "absent"
+      },
+      {
+        "chapter": 350,
+        "title": "Prince",
+        "status": "absent"
+      },
+      {
+        "chapter": 351,
+        "title": "Battle to the Death",
+        "status": "absent"
+      },
+      {
+        "chapter": 352,
+        "title": "Troublesome",
+        "status": "absent"
+      },
+      {
+        "chapter": 353,
+        "title": "Cold-Blooded",
+        "status": "absent"
+      },
+      {
+        "chapter": 354,
+        "title": "Heat",
+        "status": "absent"
+      },
+      {
+        "chapter": 355,
+        "title": "Detonation",
+        "status": "absent"
+      },
+      {
+        "chapter": 356,
+        "title": "Unfortunate: Part 1",
+        "status": "absent"
+      },
+      {
+        "chapter": 357,
+        "title": "Unfortunate: Part 2",
+        "status": "absent"
+      },
+      {
+        "chapter": 358,
+        "title": "Eve",
+        "status": "absent"
+      },
+      {
+        "chapter": 359,
+        "title": "Departure",
+        "status": "absent"
+      },
+      {
+        "chapter": 360,
+        "title": "Parasite",
+        "status": "absent"
+      },
+      {
+        "chapter": 361,
+        "title": "Withdraw",
+        "status": "absent"
+      },
+      {
+        "chapter": 362,
+        "title": "Resolve",
+        "status": "absent"
+      },
+      {
+        "chapter": 363,
+        "title": "Nen Beast",
+        "status": "absent"
+      },
+      {
+        "chapter": 364,
+        "title": "Speculation",
+        "status": "absent"
+      },
+      {
+        "chapter": 365,
+        "title": "Choice",
+        "status": "absent"
+      },
+      {
+        "chapter": 366,
+        "title": "To Each His Own",
+        "status": "absent"
+      },
+      {
+        "chapter": 367,
+        "title": "Synchronization",
+        "status": "absent"
+      },
+      {
+        "chapter": 368,
+        "title": "Foul Play",
+        "status": "absent"
+      },
+      {
+        "chapter": 369,
+        "title": "Limits",
+        "status": "absent"
+      },
+      {
+        "chapter": 370,
+        "title": "Observation",
+        "status": "absent"
+      },
+      {
+        "chapter": 371,
+        "title": "Mission",
+        "status": "appears"
+      },
+      {
+        "chapter": 372,
+        "title": "Disappearance",
+        "status": "absent"
+      },
+      {
+        "chapter": 373,
+        "title": "Inheritance",
+        "status": "absent"
+      },
+      {
+        "chapter": 374,
+        "title": "Ability",
+        "status": "absent"
+      },
+      {
+        "chapter": 375,
+        "title": "Persuasion",
+        "status": "absent"
+      },
+      {
+        "chapter": 376,
+        "title": "Determination",
+        "status": "absent"
+      },
+      {
+        "chapter": 377,
+        "title": "Scheme",
+        "status": "appears"
+      },
+      {
+        "chapter": 378,
+        "title": "Balance",
+        "status": "appears"
+      },
+      {
+        "chapter": 379,
+        "title": "Collaboration",
+        "status": "appears"
+      },
+      {
+        "chapter": 380,
+        "title": "Alarm",
+        "status": "appears"
+      },
+      {
+        "chapter": 381,
+        "title": "Predation",
+        "status": "absent"
+      },
+      {
+        "chapter": 382,
+        "title": "Awakening",
+        "status": "absent"
+      },
+      {
+        "chapter": 383,
+        "title": "Escape",
+        "status": "absent"
+      },
+      {
+        "chapter": 384,
+        "title": "War",
+        "status": "appears"
+      },
+      {
+        "chapter": 385,
+        "title": "Warning",
+        "status": "absent"
+      },
+      {
+        "chapter": 386,
+        "title": "Hypothesis",
+        "status": "absent"
+      },
+      {
+        "chapter": 387,
+        "title": "Recreation",
+        "status": "absent"
+      },
+      {
+        "chapter": 388,
+        "title": "Reflection",
+        "status": "absent"
+      },
+      {
+        "chapter": 389,
+        "title": "Curse",
+        "status": "absent"
+      },
+      {
+        "chapter": 390,
+        "title": "Clash: Part 1",
+        "status": "absent"
+      },
+      {
+        "chapter": 391,
+        "title": "Clash: Part 2",
+        "status": "absent"
+      },
+      {
+        "chapter": 392,
+        "title": "Information",
+        "status": "appears"
+      },
+      {
+        "chapter": 393,
+        "title": "Plea",
+        "status": "appears"
+      },
+      {
+        "chapter": 394,
+        "title": "Hypothesis",
+        "status": "absent"
+      },
+      {
+        "chapter": 395,
+        "title": "Founding: Part 1",
+        "status": "appears"
+      },
+      {
+        "chapter": 396,
+        "title": "Founding: Part 2",
+        "status": "flashback"
+      },
+      {
+        "chapter": 397,
+        "title": "Founding: Part 3",
+        "status": "flashback"
+      },
+      {
+        "chapter": 398,
+        "title": "Search",
+        "status": "appears"
+      },
+      {
+        "chapter": 399,
+        "title": "Expulsion",
+        "status": "absent"
+      },
+      {
+        "chapter": 400,
+        "title": "Secrecy",
+        "status": "appears"
+      },
+      {
+        "chapter": 401,
+        "title": "Moonlight",
+        "status": "absent"
+      },
+      {
+        "chapter": 402,
+        "title": "Letter",
+        "status": "absent"
+      },
+      {
+        "chapter": 403,
+        "title": "Results",
+        "status": "absent"
+      },
+      {
+        "chapter": 404,
+        "title": "Speculation",
+        "status": "appears"
+      },
+      {
+        "chapter": 405,
+        "title": "Performance",
+        "status": "appears"
+      },
+      {
+        "chapter": 406,
+        "title": "Regalia",
+        "status": "appears"
+      },
+      {
+        "chapter": 407,
+        "title": "Negotiation",
+        "status": "absent"
+      },
+      {
+        "chapter": 408,
+        "title": "Negotiation: Part 2",
+        "status": "absent"
+      },
+      {
+        "chapter": 409,
+        "title": "Negotiation: Part 3",
+        "status": "absent"
+      },
+      {
+        "chapter": 410,
+        "title": "Negotiation: Part 4",
+        "status": "absent"
+      },
+      {
+        "chapter": 411,
+        "title": "Announcement",
+        "status": "absent"
+      },
+      {
+        "chapter": 412,
+        "title": "Question",
+        "status": "absent"
+      },
+      {
+        "chapter": 413,
+        "title": "Loyalty",
+        "status": "absent"
+      },
+      {
+        "chapter": 414,
+        "title": "Friends",
+        "status": "absent"
+      }
+    ],
+    "battles": [
+      "Phinks Magcub, Nobunaga Hazama, Feitan Portor et Franklin Bordeau vs. hommes de la famille Buor"
+    ]
+  },
+  {
+    "id": "kalluto-zoldyck",
+    "canonicalName": "Kalluto Zoldyck",
+    "aliases": [
+      "Kalluto",
+      "Membre n°4 de la Brigade"
+    ],
+    "description": "Jeune assassin Zoldyck et membre de la Brigade Fantôme. Après la réunion du Tier 5, il est escorté avec Illumi vers des unités résidentielles du Tier 3.",
+    "factionId": "phantom-troupe",
+    "firstAppearanceChapterId": "ch-377",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": 3,
+      "room": "Unités résidentielles",
+      "status": "inconnu",
+      "role": "assassin / sous surveillance des Zodiaques"
+    },
+    "mapPresenceFromChapterId": "ch-380",
+    "biography": [
+      "Kalluto embarque sur le Black Whale avec la Brigade Fantôme et participe à la recherche d'Hisoka. Au quatrième jour, toutes les Araignées se réunissent dans le réfectoire central du Tier 5 et concluent que leur cible ne se trouve probablement pas sur ce niveau.",
+      "Lorsque des membres de la Cha-R réclament leur table, la Brigade se retire sans combattre. Chrollo ordonne à chacun d'agir librement et de revenir avec la tête d'Hisoka, puis Kalluto quitte le réfectoire avec les autres membres.",
+      "Peu après, Kalluto et Illumi se trouvent dans la zone panoramique du Tier 3 lorsqu'une unité militaire les encercle à la suite d'une alerte concernant un passager clandestin dangereux. Kalluto affirme qu'ils dormaient et n'ont pas entendu l'annonce. Mizuri découvre sur Illumi une pièce d'identité VVIP et insiste pour les escorter.",
+      "Mizaistom et Botobai interrompent l'échange. Interrogé sur la présence de la Brigade, Illumi confirme sans détour qu'elle se trouve à bord et laisse entendre qu'il en est membre, ce qui surprend Kalluto. Mizaistom leur attribue des unités résidentielles au Tier 3, puis confie leur surveillance à Botobai et Ginta lorsqu'une urgence l'oblige à partir.",
+      "Les jours suivants, Phinks contacte les autres Araignées pendant la chasse à Luini. Au dixième jour, la mafia autorise progressivement la Brigade à fouiller le Tier 4, mais la position précise de Kalluto après son escorte demeure inconnue."
+    ],
+    "abilitiesAndPowers": "Formé comme assassin de la famille Zoldyck et admis très jeune dans la Brigade Fantôme, Kalluto est déjà un utilisateur de Nen remarquable malgré le fait qu'il se considère comme le membre le plus faible du groupe. Son Zetsu est presque parfait, au point d'impressionner Hisoka, et son Shu permet à son éventail de trancher un câble d'acier. Il combat avec grâce, dissimule ses techniques d'espionnage même aux Araignées et manipule de grandes quantités de papier avec précision.",
+    "equipment": [
+      {
+        "name": "Éventail en papier",
+        "description": "Éventail utilisé pour guider les confettis de Nen et comme arme de coupe. Renforcé avec Shu, il peut sectionner un câble d'acier."
+      }
+    ],
+    "nen": {
+      "type": "manipulator",
+      "typeLabel": "Manipulation",
+      "secondaryTypeLabels": [
+        "Émission"
+      ],
+      "overview": "Kalluto est un Manipulateur orienté vers l'Émission. Il contrôle des confettis et des poupées de papier à des fins d'espionnage ou d'attaque ; les papiers pourraient être matérialisés, mais ils peuvent également être dissimulés dans ses vêtements.",
+      "techniques": [
+        "Zetsu",
+        "Shu",
+        "Hatsu"
+      ],
+      "combatProficiency": "Son Zetsu est décrit comme parfait. En combat, il marque sa cible avec un fragment puis rassemble les autres papiers en un serpent perforant capable de déchiqueter progressivement une Fourmi-Chimère.",
+      "abilityIds": [
+        "surveillance-paper-dolls",
+        "dance-of-the-serpents-bite"
+      ]
+    },
+    "mangaAppearances": [
+      {
+        "chapter": 340,
+        "title": "Special Mission",
+        "status": "absent"
+      },
+      {
+        "chapter": 341,
+        "title": "Threats",
+        "status": "absent"
+      },
+      {
+        "chapter": 342,
+        "title": "Challenge",
+        "status": "absent"
+      },
+      {
+        "chapter": 343,
+        "title": "Invitation",
+        "status": "absent"
+      },
+      {
+        "chapter": 344,
+        "title": "Author",
+        "status": "absent"
+      },
+      {
+        "chapter": 345,
+        "title": "Signature",
+        "status": "absent"
+      },
+      {
+        "chapter": 346,
+        "title": "Options",
+        "status": "absent"
+      },
+      {
+        "chapter": 347,
+        "title": "Inauguration",
+        "status": "absent"
+      },
+      {
+        "chapter": 348,
+        "title": "Resolve",
+        "status": "absent"
+      },
+      {
+        "chapter": 349,
+        "title": "Worm Toxin",
+        "status": "absent"
+      },
+      {
+        "chapter": 350,
+        "title": "Prince",
+        "status": "absent"
+      },
+      {
+        "chapter": 351,
+        "title": "Battle to the Death",
+        "status": "absent"
+      },
+      {
+        "chapter": 352,
+        "title": "Troublesome",
+        "status": "absent"
+      },
+      {
+        "chapter": 353,
+        "title": "Cold-Blooded",
+        "status": "absent"
+      },
+      {
+        "chapter": 354,
+        "title": "Heat",
+        "status": "absent"
+      },
+      {
+        "chapter": 355,
+        "title": "Detonation",
+        "status": "absent"
+      },
+      {
+        "chapter": 356,
+        "title": "Unfortunate: Part 1",
+        "status": "absent"
+      },
+      {
+        "chapter": 357,
+        "title": "Unfortunate: Part 2",
+        "status": "absent"
+      },
+      {
+        "chapter": 358,
+        "title": "Eve",
+        "status": "absent"
+      },
+      {
+        "chapter": 359,
+        "title": "Departure",
+        "status": "absent"
+      },
+      {
+        "chapter": 360,
+        "title": "Parasite",
+        "status": "absent"
+      },
+      {
+        "chapter": 361,
+        "title": "Withdraw",
+        "status": "absent"
+      },
+      {
+        "chapter": 362,
+        "title": "Resolve",
+        "status": "absent"
+      },
+      {
+        "chapter": 363,
+        "title": "Nen Beast",
+        "status": "absent"
+      },
+      {
+        "chapter": 364,
+        "title": "Speculation",
+        "status": "absent"
+      },
+      {
+        "chapter": 365,
+        "title": "Choice",
+        "status": "absent"
+      },
+      {
+        "chapter": 366,
+        "title": "To Each His Own",
+        "status": "absent"
+      },
+      {
+        "chapter": 367,
+        "title": "Synchronization",
+        "status": "absent"
+      },
+      {
+        "chapter": 368,
+        "title": "Foul Play",
+        "status": "absent"
+      },
+      {
+        "chapter": 369,
+        "title": "Limits",
+        "status": "absent"
+      },
+      {
+        "chapter": 370,
+        "title": "Observation",
+        "status": "absent"
+      },
+      {
+        "chapter": 371,
+        "title": "Mission",
+        "status": "absent"
+      },
+      {
+        "chapter": 372,
+        "title": "Disappearance",
+        "status": "absent"
+      },
+      {
+        "chapter": 373,
+        "title": "Inheritance",
+        "status": "absent"
+      },
+      {
+        "chapter": 374,
+        "title": "Ability",
+        "status": "absent"
+      },
+      {
+        "chapter": 375,
+        "title": "Persuasion",
+        "status": "absent"
+      },
+      {
+        "chapter": 376,
+        "title": "Determination",
+        "status": "absent"
+      },
+      {
+        "chapter": 377,
+        "title": "Scheme",
+        "status": "appears"
+      },
+      {
+        "chapter": 378,
+        "title": "Balance",
+        "status": "absent"
+      },
+      {
+        "chapter": 379,
+        "title": "Collaboration",
+        "status": "absent"
+      },
+      {
+        "chapter": 380,
+        "title": "Alarm",
+        "status": "appears"
+      },
+      {
+        "chapter": 381,
+        "title": "Predation",
+        "status": "absent"
+      },
+      {
+        "chapter": 382,
+        "title": "Awakening",
+        "status": "absent"
+      },
+      {
+        "chapter": 383,
+        "title": "Escape",
+        "status": "absent"
+      },
+      {
+        "chapter": 384,
+        "title": "War",
+        "status": "absent"
+      },
+      {
+        "chapter": 385,
+        "title": "Warning",
+        "status": "absent"
+      },
+      {
+        "chapter": 386,
+        "title": "Hypothesis",
+        "status": "absent"
+      },
+      {
+        "chapter": 387,
+        "title": "Recreation",
+        "status": "absent"
+      },
+      {
+        "chapter": 388,
+        "title": "Reflection",
+        "status": "absent"
+      },
+      {
+        "chapter": 389,
+        "title": "Curse",
+        "status": "absent"
+      },
+      {
+        "chapter": 390,
+        "title": "Clash: Part 1",
+        "status": "absent"
+      },
+      {
+        "chapter": 391,
+        "title": "Clash: Part 2",
+        "status": "absent"
+      },
+      {
+        "chapter": 392,
+        "title": "Information",
+        "status": "absent"
+      },
+      {
+        "chapter": 393,
+        "title": "Plea",
+        "status": "absent"
+      },
+      {
+        "chapter": 394,
+        "title": "Hypothesis",
+        "status": "absent"
+      },
+      {
+        "chapter": 395,
+        "title": "Founding: Part 1",
+        "status": "absent"
+      },
+      {
+        "chapter": 396,
+        "title": "Founding: Part 2",
+        "status": "absent"
+      },
+      {
+        "chapter": 397,
+        "title": "Founding: Part 3",
+        "status": "absent"
+      },
+      {
+        "chapter": 398,
+        "title": "Search",
+        "status": "absent"
+      },
+      {
+        "chapter": 399,
+        "title": "Expulsion",
+        "status": "absent"
+      },
+      {
+        "chapter": 400,
+        "title": "Secrecy",
+        "status": "absent"
+      },
+      {
+        "chapter": 401,
+        "title": "Moonlight",
+        "status": "absent"
+      },
+      {
+        "chapter": 402,
+        "title": "Letter",
+        "status": "absent"
+      },
+      {
+        "chapter": 403,
+        "title": "Results",
+        "status": "absent"
+      },
+      {
+        "chapter": 404,
+        "title": "Speculation",
+        "status": "absent"
+      },
+      {
+        "chapter": 405,
+        "title": "Performance",
+        "status": "absent"
+      },
+      {
+        "chapter": 406,
+        "title": "Regalia",
+        "status": "absent"
+      },
+      {
+        "chapter": 407,
+        "title": "Negotiation",
+        "status": "absent"
+      },
+      {
+        "chapter": 408,
+        "title": "Negotiation: Part 2",
+        "status": "absent"
+      },
+      {
+        "chapter": 409,
+        "title": "Negotiation: Part 3",
+        "status": "absent"
+      },
+      {
+        "chapter": 410,
+        "title": "Negotiation: Part 4",
+        "status": "absent"
+      },
+      {
+        "chapter": 411,
+        "title": "Announcement",
+        "status": "absent"
+      },
+      {
+        "chapter": 412,
+        "title": "Question",
+        "status": "absent"
+      },
+      {
+        "chapter": 413,
+        "title": "Loyalty",
+        "status": "absent"
+      },
+      {
+        "chapter": 414,
+        "title": "Friends",
+        "status": "absent"
+      }
+    ]
   }
 ]

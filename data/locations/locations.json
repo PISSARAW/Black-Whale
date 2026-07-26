@@ -40,6 +40,26 @@
     "exits": []
   },
   {
+    "id": "tier-1-vvip-living-quarters",
+    "name": "VVIP Living Quarters",
+    "parentLocationId": "tier-1",
+    "deck": 1,
+    "zoneType": "residential",
+    "description": "Quartiers résidentiels VVIP du Tier 1, où logent notamment les dirigeants des familles mafieuses liés à la royauté.",
+    "entrances": [],
+    "exits": []
+  },
+  {
+    "id": "tier-1-vip-casino",
+    "name": "VIP Casino",
+    "parentLocationId": "tier-1",
+    "deck": 1,
+    "zoneType": "public",
+    "description": "Casino réservé aux passagers du Tier 1. Le véritable Hisoka y joue au SQ-X au onzième jour du voyage.",
+    "entrances": [],
+    "exits": []
+  },
+  {
     "id": "tier-1-supreme-court",
     "name": "Supreme Court",
     "parentLocationId": "tier-1",
@@ -230,6 +250,16 @@
     "exits": []
   },
   {
+    "id": "tier-2-heilly-secret-hideout",
+    "name": "Heil-Ly Secret Hideout",
+    "parentLocationId": "tier-2",
+    "deck": 2,
+    "zoneType": "mafia",
+    "description": "Véritable base secrète de Morena et de la nouvelle Heil-Ly, dissimulée au Tier 2 et renforcée par le Nen.",
+    "entrances": [],
+    "exits": []
+  },
+  {
     "id": "tier-2-theater-venue",
     "name": "Theater Venue",
     "parentLocationId": "tier-2",
@@ -386,6 +416,54 @@
     "deck": 5,
     "zoneType": "medical",
     "description": "Unique clinique du Tier 5, sous-équipée et sans médecins dédiés.",
+    "entrances": [],
+    "exits": []
+  },
+  {
+    "id": "tier-4-central-passage",
+    "name": "Central Passage Tier 4–5",
+    "parentLocationId": "tier-4",
+    "deck": 4,
+    "zoneType": "corridor",
+    "description": "Passage central reliant les Tiers 4 et 5. Chrollo, Shizuku et Bonolenov y progressent au quatrième jour du voyage.",
+    "entrances": [
+      "tier-4"
+    ],
+    "exits": [
+      "tier-5"
+    ]
+  },
+  {
+    "id": "tier-5-central-dining-hall",
+    "name": "Central Dining Hall",
+    "parentLocationId": "tier-5",
+    "deck": 5,
+    "zoneType": "public",
+    "description": "Réfectoire central bondé du Tier 5. Franklin y attend Hisoka tandis que la Brigade l'utilise comme point de rassemblement.",
+    "entrances": [],
+    "exits": []
+  },
+  {
+    "id": "tier-4-recycling-sewage-facilities",
+    "name": "Recycling & Sewage Facilities",
+    "parentLocationId": "tier-4",
+    "deck": 4,
+    "zoneType": "infrastructure",
+    "description": "Grande chambre technique située entre les Tiers 4 et 5, consacrée au recyclage et au traitement des eaux usées. La Brigade y découvre une voie clandestine liée aux opérations de la Heil-Ly.",
+    "entrances": [
+      "tier-4-central-passage"
+    ],
+    "exits": [
+      "tier-5"
+    ]
+  },
+  {
+    "id": "tier-3-residential-units",
+    "name": "Tier 3 Residential Units",
+    "parentLocationId": "tier-3",
+    "deck": 3,
+    "zoneType": "residential",
+    "description": "Unités résidentielles du Tier 3 proposées à Illumi et Kalluto par Mizaistom afin de les loger et de faciliter leur surveillance.",
     "entrances": [],
     "exits": []
   }

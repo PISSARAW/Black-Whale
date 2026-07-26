@@ -365,7 +365,9 @@ export const load: PageServerLoad = async ({ params, cookies }) => {
 			mangaAppearances: jsonCharacter.mangaAppearances || [],
 			battles: jsonCharacter.battles || [],
 			competitions: jsonCharacter.competitions || [],
-			abilities: abilities.filter((ability: any) => ability.ownerId === jsonCharacter.id)
+			abilities: abilities.filter((ability: any) =>
+				ability.ownerId === jsonCharacter.id || ability.userIds?.includes(jsonCharacter.id)
+			)
 		},
 		roleHistory,
 		affiliations: (character?.affiliations || []).map((membership: any) => ({

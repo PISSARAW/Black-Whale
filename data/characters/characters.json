@@ -7828,9 +7828,12 @@
       "overview": "Kurapika forcibly opened Oito's aura nodes. She can see and sense aura and briefly used Little Eye through Stealth Dolphin, though Bill considers her a slow learner.",
       "techniques": [
         "Aura perception",
-        "Ten training"
+        "Ten training",
+        "Borrowed Hatsu"
       ],
-      "abilityIds": []
+      "abilityIds": [
+        "little-eye"
+      ]
     },
     "mangaAppearances": [
       {
@@ -9826,7 +9829,18 @@
     ],
     "biography": [
       "Gel serves on the Zodiacs' scientific team aboard the Black Whale. She takes part in expedition planning, medical coordination and discreet Tier 3 meetings as the voyage's security situation deteriorates."
-    ]
+    ],
+    "nen": {
+      "type": "unknown",
+      "typeLabel": "Unknown type",
+      "overview": "Gel is a highly proficient Nen user and former sparring partner of Isaac Netero. She has shown a partial bodily transformation, while the rest of her abilities remain undisclosed.",
+      "techniques": [
+        "Hatsu"
+      ],
+      "abilityIds": [
+        "snake-arm"
+      ]
+    }
   },
   {
     "id": "melody",
@@ -16908,7 +16922,21 @@
     ],
     "biography": [
       "Cluck joins the expedition's flora and fauna team. Aboard the Black Whale, she remains with the Zodiac organization on Tier 3 and appears in operational overviews of the voyage."
-    ]
+    ],
+    "nen": {
+      "type": "unknown",
+      "typeLabel": "Unknown type",
+      "secondaryTypeLabels": [
+        "Manipulation"
+      ],
+      "overview": "Cluck is a powerful Nen user and former sparring partner of Isaac Netero. She can manipulate hundreds of birds simultaneously and apparently possesses other unrevealed abilities.",
+      "techniques": [
+        "Hatsu"
+      ],
+      "abilityIds": [
+        "bird-manipulation"
+      ]
+    }
   },
   {
     "id": "ginta",
@@ -24204,7 +24232,21 @@
     ],
     "biography": [
       "Tokarine is a Hunter Association medical worker shown aboard the Black Whale at the beginning of the voyage."
-    ]
+    ],
+    "nen": {
+      "type": "unknown",
+      "typeLabel": "Unknown type",
+      "secondaryTypeLabels": [
+        "Emission"
+      ],
+      "overview": "Tokarine is a Pro Hunter with a transport-oriented Nen ability. Its exact natural category is unknown, but the ability is classified as Emission.",
+      "techniques": [
+        "Hatsu"
+      ],
+      "abilityIds": [
+        "transport-portals"
+      ]
+    }
   },
   {
     "id": "borksen",
@@ -25029,7 +25071,18 @@
     ],
     "biography": [
       "Danjin is one of Tserriednich's soldiers who pass the provisional Hunter Exam. He attends Kurapika's Nen classes as the fourth prince's representative and reports the lessons back to his faction."
-    ]
+    ],
+    "nen": {
+      "type": "unknown",
+      "typeLabel": "Unknown type",
+      "overview": "Danjin had his aura nodes opened during Kurapika's class by receiving and using Bill's Erigeron through Stealth Dolphin. Erigeron was returned to Bill after that single use.",
+      "techniques": [
+        "Borrowed Hatsu"
+      ],
+      "abilityIds": [
+        "erigeron"
+      ]
+    }
   },
   {
     "id": "erikkusu",
@@ -25442,7 +25495,19 @@
     ],
     "biography": [
       "Gidal is a provisional Hunter associated with a royal guard contingent and first appears during the succession contest's curse investigations."
-    ]
+    ],
+    "nen": {
+      "type": "unknown",
+      "typeLabel": "Unknown type",
+      "overview": "As one of Camilla's Have-Nots, this guard is a Nen user capable of casting the long-prepared haunting curse Yomotsu Hegui. The natural aura category remains unknown.",
+      "techniques": [
+        "Hatsu",
+        "Post-mortem Nen"
+      ],
+      "abilityIds": [
+        "yomotsu-hegui"
+      ]
+    }
   },
   {
     "id": "lisamsetta",
@@ -25837,7 +25902,19 @@
     ],
     "biography": [
       "Lisamsetta is a provisional Hunter associated with a royal guard contingent and first appears during the succession contest's curse investigations."
-    ]
+    ],
+    "nen": {
+      "type": "unknown",
+      "typeLabel": "Unknown type",
+      "overview": "As one of Camilla's Have-Nots, this guard is a Nen user capable of casting the long-prepared haunting curse Yomotsu Hegui. The natural aura category remains unknown.",
+      "techniques": [
+        "Hatsu",
+        "Post-mortem Nen"
+      ],
+      "abilityIds": [
+        "yomotsu-hegui"
+      ]
+    }
   },
   {
     "id": "meshush",
@@ -26232,7 +26309,19 @@
     ],
     "biography": [
       "Meshush is a provisional Hunter associated with a royal guard contingent and first appears during the succession contest's curse investigations."
-    ]
+    ],
+    "nen": {
+      "type": "unknown",
+      "typeLabel": "Unknown type",
+      "overview": "As one of Camilla's Have-Nots, this guard is a Nen user capable of casting the long-prepared haunting curse Yomotsu Hegui. The natural aura category remains unknown.",
+      "techniques": [
+        "Hatsu",
+        "Post-mortem Nen"
+      ],
+      "abilityIds": [
+        "yomotsu-hegui"
+      ]
+    }
   },
   {
     "id": "mozbe",
@@ -26627,7 +26716,19 @@
     ],
     "biography": [
       "Mozbe is a provisional Hunter associated with a royal guard contingent and first appears during the succession contest's curse investigations."
-    ]
+    ],
+    "nen": {
+      "type": "unknown",
+      "typeLabel": "Unknown type",
+      "overview": "As one of Camilla's Have-Nots, this guard is a Nen user capable of casting the long-prepared haunting curse Yomotsu Hegui. The natural aura category remains unknown.",
+      "techniques": [
+        "Hatsu",
+        "Post-mortem Nen"
+      ],
+      "abilityIds": [
+        "yomotsu-hegui"
+      ]
+    }
   },
   {
     "id": "muhahahasare",

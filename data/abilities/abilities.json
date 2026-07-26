@@ -102,7 +102,10 @@
     "category": "enhancer",
     "description": "Bill significantly accelerates the growth of a living being by bringing his palms together. On a seed immersed in a glass of water, Erigeron makes it germinate in a few moments. The ability can also enhance a person's Nen abilities, but its effects remain weak on untrained or inexperienced individuals.",
     "canonStatus": "canon",
-    "moduleKey": null
+    "moduleKey": null,
+    "userIds": [
+      "danjin"
+    ]
   },
   {
     "id": "kurton-vehicle-transformation",
@@ -133,7 +136,10 @@
     ],
     "description": "Sayird projects a sphere of aura onto an insect or other small living being in order to capture it and take control of it. The largest creature that can be handled is the size of a hamster. It perceives everything the animal sees and hears, while retaining the ability to distinguish the aura. Fast-moving animals are difficult to reach and insects can die from their many predators. Little Eye does not work on living beings materialized by aura, consumes very little aura and remains active if the user loses consciousness. The ability was stolen by Kurapika, passed on to Queen Oito, and then made available to Sayird after she used it.",
     "canonStatus": "canon",
-    "moduleKey": null
+    "moduleKey": null,
+    "userIds": [
+      "queen-oito"
+    ]
   },
   {
     "id": "cross-game",
@@ -218,7 +224,10 @@
     "abilityType": "owl-surveillance-nen-beasts",
     "description": "Musse creates three owl-shaped Nen beasts for intelligence gathering. One eavesdrops through barriers and another attaches by touch to transmit a target's words and actions; after prolonged observation, the user may review earlier footage. Benjamin inherits the ability after Musse's death.",
     "canonStatus": "canon",
-    "moduleKey": null
+    "moduleKey": null,
+    "userIds": [
+      "prince-benjamin"
+    ]
   },
   {
     "id": "culdcept",
@@ -898,6 +907,64 @@
     "category": "unknown",
     "abilityType": "sense-depriving-nen-beasts",
     "description": "Saiyu uses three Nen monkeys whose attacks remove sight, hearing and speech. Losing the three senses also disrupts the victim mentally and can prevent them from maintaining an active ability.",
+    "canonStatus": "canon",
+    "moduleKey": null
+  },
+  {
+    "id": "snake-arm",
+    "ownerId": "gel",
+    "name": "Snake Arm",
+    "alternateNames": [
+      "Unofficial descriptive name"
+    ],
+    "category": "unknown",
+    "abilityType": "partial-body-transformation",
+    "description": "Gel seemingly transforms one arm into a snake whose head bears four heart-shaped markings and a ribbon. The technique stopped Kanzai during a Zodiac confrontation, but its category, conditions and full capabilities have not been revealed.",
+    "canonStatus": "canon",
+    "moduleKey": null
+  },
+  {
+    "id": "bird-manipulation",
+    "ownerId": "cluck",
+    "name": "Bird Manipulation",
+    "alternateNames": [
+      "Unofficial descriptive name"
+    ],
+    "category": "manipulator",
+    "abilityType": "mass-bird-control",
+    "description": "Cluck controls pigeons, and possibly other birds, with enough range and precision to deliver voting forms to more than six hundred Hunters. The complete conditions and limits of the technique remain unknown.",
+    "canonStatus": "canon",
+    "moduleKey": null
+  },
+  {
+    "id": "transport-portals",
+    "ownerId": "tokarine",
+    "name": "Transport Portals",
+    "alternateNames": [
+      "Unofficial descriptive name"
+    ],
+    "category": "emitter",
+    "abilityType": "limited-capacity-transport",
+    "description": "Tokarine possesses a transport-oriented ability intended to move goods between expedition relay points. She states that it cannot teleport and has a much lower capacity than Knov's Hide and Seek, so several additional users would be needed for the mission.",
+    "canonStatus": "canon",
+    "moduleKey": null
+  },
+  {
+    "id": "yomotsu-hegui",
+    "ownerId": "gidal",
+    "userIds": [
+      "lisamsetta",
+      "meshush",
+      "mozbe"
+    ],
+    "name": "Yomotsu Hegui",
+    "alternateNames": [
+      "We Who Were Born Out of Convenience",
+      "Dust in the Wind: Hell Fruit"
+    ],
+    "category": "unknown",
+    "abilityType": "post-mortem-haunting-curse",
+    "description": "A curse shared by Camilla's Have-Nots. The user spends months or years thinking daily about a target while keeping a connected object and a dagger. To activate it, they burn the object, drink an infusion of its ashes and commit suicide with the dagger. The resulting post-mortem curse drains the target's aura and can kill them; proximity, eye contact, preparation time and resolve determine its speed and strength.",
     "canonStatus": "canon",
     "moduleKey": null
   }

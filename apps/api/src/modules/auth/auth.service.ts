@@ -1,6 +1,8 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
+import { timingSafeEqual } from 'node:crypto';
+import { authSecret } from '../../configuration.js';
 
 @Injectable()
 export class AuthService {
@@ -10,8 +12,10 @@ export class AuthService {
   ) {}
 
   async validateAdmin(password: string): Promise<any> {
-    const adminPassword = this.configService.get<string>('ADMIN_PASSWORD') || 'admin';
-    if (password === adminPassword) {
+    const adminPassword = authSecret(this.configService.get<string>('ADMIN_PASSWORD'), 'ADMIN_PASSWORD');
+    const supplied = Buffer.from(password);
+    const expected = Buffer.from(adminPassword);
+    if (supplied.length === expected.length && timingSafeEqual(supplied, expected)) {
       return { role: 'admin' };
     }
     return null;

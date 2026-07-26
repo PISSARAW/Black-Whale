@@ -20,6 +20,7 @@
   }
 </script>
 
+{#if data.authenticated}
 <div class="flex min-h-screen bg-gray-950 text-gray-100">
   <aside class="w-56 bg-gray-900 border-r border-gray-800 p-4 flex flex-col gap-2 text-sm">
     <h2 class="font-bold text-bw-gold text-base mb-2">BW Admin</h2>
@@ -30,6 +31,9 @@
     <a href="/abilities" class="hover:text-bw-gold">Nen Abilities</a>
     <a href="/facts" class="hover:text-bw-gold">Facts</a>
     <a href="/sources" class="hover:text-bw-gold">Sources</a>
+    <form method="POST" action="/logout" class="mt-auto">
+      <button class="text-gray-400 hover:text-white">Déconnexion</button>
+    </form>
   </aside>
   <main class="flex-1 flex flex-col">
     <!-- Top Bar for Spoiler Preview -->
@@ -55,3 +59,6 @@
     </div>
   </main>
 </div>
+{:else}
+  <slot />
+{/if}

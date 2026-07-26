@@ -124,6 +124,12 @@ pnpm build
 pnpm typecheck
 ```
 
+### Production on Hetzner
+
+The hardened production stack, TLS proxy, database migrations, healthchecks,
+and backup/restore runbook are documented in
+[`infrastructure/hetzner/README.md`](infrastructure/hetzner/README.md).
+
 ---
 
 ## Five core questions

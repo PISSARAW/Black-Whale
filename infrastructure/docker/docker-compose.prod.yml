@@ -1,0 +1,192 @@
+name: black-whale
+
+x-app: &app
+  restart: unless-stopped
+  init: true
+  networks: [backend]
+  security_opt: [no-new-privileges:true]
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-black_whale}
+      POSTGRES_USER: ${POSTGRES_USER:-bw_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env.production}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks: [backend]
+    healthcheck:
+      test: [CMD-SHELL, "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    security_opt: [no-new-privileges:true]
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: [redis-server, --appendonly, "yes", --requirepass, "${REDIS_PASSWORD:?Set REDIS_PASSWORD in .env.production}"]
+    volumes:
+      - redis_data:/data
+    networks: [backend]
+    healthcheck:
+      test: [CMD-SHELL, 'REDISCLI_AUTH="$${REDIS_PASSWORD}" redis-cli ping | grep PONG']
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD:?Set REDIS_PASSWORD in .env.production}
+    security_opt: [no-new-privileges:true]
+
+  migrate:
+    <<: *app
+    build:
+      context: ../..
+      dockerfile: infrastructure/docker/Dockerfile.api
+    command: [pnpm, --filter, "@black-whale/database", migrate:deploy]
+    restart: "no"
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgresql://${POSTGRES_USER:-bw_user}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-black_whale}
+      REDIS_URL: redis://:${REDIS_PASSWORD}@redis:6379
+      JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET in .env.production}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:?Set ADMIN_PASSWORD in .env.production}
+      WEB_ORIGIN: https://${DOMAIN:?Set DOMAIN in .env.production}
+    depends_on:
+      postgres: { condition: service_healthy }
+
+  api:
+    <<: *app
+    build:
+      context: ../..
+      dockerfile: infrastructure/docker/Dockerfile.api
+    environment:
+      NODE_ENV: production
+      PORT: "3001"
+      DATABASE_URL: postgresql://${POSTGRES_USER:-bw_user}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-black_whale}
+      REDIS_URL: redis://:${REDIS_PASSWORD}@redis:6379
+      JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET in .env.production}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:?Set ADMIN_PASSWORD in .env.production}
+      WEB_ORIGIN: https://${DOMAIN:?Set DOMAIN in .env.production}
+    expose: ["3001"]
+    healthcheck:
+      test: [CMD, wget, -qO-, http://127.0.0.1:3001/health]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+    depends_on:
+      migrate: { condition: service_completed_successfully }
+      redis: { condition: service_healthy }
+
+  web:
+    <<: *app
+    build:
+      context: ../..
+      dockerfile: infrastructure/docker/Dockerfile.web
+      args:
+        VITE_API_URL: ${API_PUBLIC_URL:?Set API_PUBLIC_URL in .env.production}
+    environment:
+      NODE_ENV: production
+      PORT: "3000"
+      HOST: 0.0.0.0
+      ORIGIN: https://${DOMAIN:?Set DOMAIN in .env.production}
+      API_URL: http://api:3001
+      DATABASE_URL: postgresql://${POSTGRES_USER:-bw_user}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-black_whale}
+    expose: ["3000"]
+    healthcheck:
+      test: [CMD, wget, -qO-, http://127.0.0.1:3000/health]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+    depends_on:
+      api: { condition: service_healthy }
+
+  admin:
+    <<: *app
+    build:
+      context: ../..
+      dockerfile: infrastructure/docker/Dockerfile.admin
+    environment:
+      NODE_ENV: production
+      PORT: "3002"
+      HOST: 0.0.0.0
+      ORIGIN: https://admin.${DOMAIN:?Set DOMAIN in .env.production}
+      DATABASE_URL: postgresql://${POSTGRES_USER:-bw_user}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-black_whale}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:?Set ADMIN_PASSWORD in .env.production}
+      SESSION_SECRET: ${SESSION_SECRET:?Set SESSION_SECRET in .env.production}
+    expose: ["3002"]
+    healthcheck:
+      test: [CMD, wget, -qO-, http://127.0.0.1:3002/health]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+    depends_on:
+      migrate: { condition: service_completed_successfully }
+
+  worker:
+    <<: *app
+    build:
+      context: ../..
+      dockerfile: infrastructure/docker/Dockerfile.worker
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgresql://${POSTGRES_USER:-bw_user}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-black_whale}
+      REDIS_URL: redis://:${REDIS_PASSWORD}@redis:6379
+    depends_on:
+      migrate: { condition: service_completed_successfully }
+      redis: { condition: service_healthy }
+
+  backup:
+    restart: unless-stopped
+    build:
+      context: ../..
+      dockerfile: infrastructure/docker/Dockerfile.backup
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_DB: ${POSTGRES_DB:-black_whale}
+      POSTGRES_USER: ${POSTGRES_USER:-bw_user}
+      PGPASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env.production}
+      BACKUP_RETENTION_DAYS: ${BACKUP_RETENTION_DAYS:-14}
+    volumes:
+      - postgres_backups:/backups
+    networks: [backend]
+    depends_on:
+      postgres: { condition: service_healthy }
+    security_opt: [no-new-privileges:true]
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    environment:
+      DOMAIN: ${DOMAIN:?Set DOMAIN in .env.production}
+      ACME_EMAIL: ${ACME_EMAIL:?Set ACME_EMAIL in .env.production}
+    ports:
+      - 80:80
+      - 443:443
+      - 443:443/udp
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    networks: [backend]
+    depends_on:
+      web: { condition: service_healthy }
+      admin: { condition: service_healthy }
+      api: { condition: service_healthy }
+    security_opt: [no-new-privileges:true]
+
+networks:
+  backend:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  postgres_backups:
+  redis_data:
+  caddy_data:
+  caddy_config:

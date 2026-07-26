@@ -370,6 +370,34 @@ async function main() {
 			});
 			bodyOwner.originalConsciousness = consciousness;
 		}
+		const originalOccupancy = await prisma.bodyOccupancy.findFirst({
+			where: {
+				bodyId: body.id,
+				consciousnessId: consciousness.id,
+				occupancyType: 'ORIGINAL'
+			}
+		});
+		if (!originalOccupancy) {
+			await prisma.bodyOccupancy.create({
+				data: {
+					bodyId: body.id,
+					consciousnessId: consciousness.id,
+					fromEventId: bodyFirstEvent.id,
+					occupancyType: 'ORIGINAL',
+					certainty: 'CONFIRMED'
+				}
+			});
+		}
+		const initialBodyState = await prisma.bodyState.findFirst({ where: { bodyId: body.id } });
+		if (!initialBodyState) {
+			await prisma.bodyState.create({
+				data: {
+					bodyId: body.id,
+					state: isDeadStatus(catalogCharacter.shipLocation?.status) ? 'DEAD' : 'ALIVE',
+					fromEventId: bodyFirstEvent.id
+				}
+			});
+		}
 		if (catalogCharacter.replaceMapPresenceHistory) {
 			await prisma.$transaction([
 				prisma.body.update({

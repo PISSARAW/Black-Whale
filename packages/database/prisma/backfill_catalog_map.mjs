@@ -54,7 +54,9 @@ const namedRoomSlugs = new Map([
 	['installations de recyclage et d’épuration', 'tier-4-recycling-sewage-facilities'],
 	["installations de recyclage et d'epuration", 'tier-4-recycling-sewage-facilities'],
 	['unités résidentielles', 'tier-3-residential-units'],
-	['unites residentielles', 'tier-3-residential-units']
+	['unites residentielles', 'tier-3-residential-units'],
+	['cabines standard', 'tier-5-standard-cabins'],
+	['standard cabins', 'tier-5-standard-cabins']
 ]);
 
 function chapterNumber(chapterId) {
@@ -183,6 +185,7 @@ async function main() {
 	let charactersCreated = 0;
 	let bodiesCreated = 0;
 	let presencesCreated = 0;
+	let presencesUpdated = 0;
 	let presencesEnded = 0;
 	let positionsAlreadyCovered = 0;
 	let positionsWithoutLocation = 0;
@@ -202,7 +205,10 @@ async function main() {
 		}
 
 		const location = resolveLocation(catalogCharacter, locations);
-		if (!location) continue;
+		if (!location) {
+			positionsWithoutLocation += 1;
+			continue;
+		}
 
 		const requestedChapter = chapterNumber(catalogCharacter.firstAppearanceChapterId);
 		const catalogFirstEvent = requestedChapter ? await ensureEvent(requestedChapter) : boardingEvent;
@@ -252,19 +258,40 @@ async function main() {
 			bodiesCreated += 1;
 		}
 
-		const existingPresence = await prisma.presence.findFirst({ where: { entityId: body.id } });
+		const existingPresences = await prisma.presence.findMany({
+			where: { entityId: body.id },
+			include: { fromEvent: { include: { chapter: true } } }
+		});
+		const requestedPresenceChapter = chapterNumber(catalogCharacter.mapPresenceFromChapterId);
+		const existingPresence = existingPresences
+			.sort((left, right) => {
+				if (left.untilEventId === null && right.untilEventId !== null) return -1;
+				if (left.untilEventId !== null && right.untilEventId === null) return 1;
+				return right.fromEvent.chapter.number - left.fromEvent.chapter.number
+					|| right.fromEvent.sequence - left.fromEvent.sequence;
+			})
+			.find((presence) => requestedPresenceChapter === null
+				|| presence.fromEvent.chapter.number === requestedPresenceChapter)
+			|| existingPresences[0];
 		if (existingPresence) {
-			if (catalogCharacter.mapLocationCorrection && existingPresence.locationId !== location.id) {
-				const requestedPresenceChapter = chapterNumber(catalogCharacter.mapPresenceFromChapterId);
-				const requestedPresenceEvent = requestedPresenceChapter ? await ensureEvent(requestedPresenceChapter) : null;
+			const requestedPresenceEvent = requestedPresenceChapter ? await ensureEvent(requestedPresenceChapter) : null;
+			const requestedCertainty = /^(inconnu|suspect)$/i.test(catalogCharacter.shipLocation?.status || '') ? 'PROBABLE' : 'CONFIRMED';
+			const requestedPrecision = location.type === 'ROOM' ? 'EXACT_ROOM' : location.type === 'TIER' ? 'TIER' : 'ZONE';
+			const requiresUpdate = existingPresence.locationId !== location.id
+				|| (requestedPresenceEvent && existingPresence.fromEventId !== requestedPresenceEvent.id)
+				|| existingPresence.precision !== requestedPrecision
+				|| existingPresence.certainty !== requestedCertainty;
+			if (requiresUpdate) {
 				await prisma.presence.update({
 					where: { id: existingPresence.id },
 					data: {
 						locationId: location.id,
 						...(requestedPresenceEvent ? { fromEventId: requestedPresenceEvent.id } : {}),
-						precision: location.type === 'ROOM' ? 'EXACT_ROOM' : location.type === 'TIER' ? 'TIER' : 'ZONE'
+						precision: requestedPrecision,
+						certainty: requestedCertainty
 					}
 				});
+				presencesUpdated += 1;
 			}
 			const untilChapter = chapterNumber(catalogCharacter.mapPresenceUntilChapterId);
 			const untilEvent = untilChapter ? await ensureEvent(untilChapter) : null;
@@ -292,7 +319,6 @@ async function main() {
 			bodyOwner.originalConsciousness = consciousness;
 		}
 
-		const requestedPresenceChapter = chapterNumber(catalogCharacter.mapPresenceFromChapterId);
 		const requestedPresenceEvent = requestedPresenceChapter ? await ensureEvent(requestedPresenceChapter) : null;
 		const requestedUntilChapter = chapterNumber(catalogCharacter.mapPresenceUntilChapterId);
 		const requestedUntilEvent = requestedUntilChapter ? await ensureEvent(requestedUntilChapter) : null;
@@ -341,6 +367,7 @@ async function main() {
 		charactersCreated,
 		bodiesCreated,
 		presencesCreated,
+		presencesUpdated,
 		presencesEnded,
 		positionsAlreadyCovered,
 		positionsWithoutLocation

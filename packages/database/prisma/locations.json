@@ -255,7 +255,7 @@
     "parentLocationId": "tier-2",
     "deck": 2,
     "zoneType": "mafia",
-    "description": "Véritable base secrète de Morena et de la nouvelle Heil-Ly, dissimulée au Tier 2 et renforcée par le Nen.",
+    "description": "Véritable base secrète de Morena et de la nouvelle Heil-Ly, aménagée dans un espace caché entre les Tiers 2 et 3 et renforcée par le Nen. Elle dispose de cinq accès.",
     "entrances": [],
     "exits": []
   },
@@ -464,6 +464,16 @@
     "deck": 3,
     "zoneType": "residential",
     "description": "Unités résidentielles du Tier 3 proposées à Illumi et Kalluto par Mizaistom afin de les loger et de faciliter leur surveillance.",
+    "entrances": [],
+    "exits": []
+  },
+  {
+    "id": "tier-5-standard-cabins",
+    "name": "Tier 5 Standard Cabins",
+    "parentLocationId": "tier-5",
+    "deck": 5,
+    "zoneType": "residential",
+    "description": "Cabines standard de la zone populaire du Tier 5. Machi y est localisée seule après la dispersion de la Brigade.",
     "entrances": [],
     "exits": []
   }

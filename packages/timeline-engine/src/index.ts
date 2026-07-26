@@ -7,6 +7,8 @@ import type {
   Presence,
   Fact,
   Character,
+  BodyOccupancy,
+  AppearanceState,
 } from '@black-whale/domain'
 import {
   buildCanonicalCursors,
@@ -35,6 +37,8 @@ export interface WorldSnapshot {
   activeAbilities: AbilityActivation[]
   bodyStates: Record<string, string>
   presences: Presence[]
+  occupancies: BodyOccupancy[]
+  appearances: AppearanceState[]
   knownFacts: Fact[]
 }
 
@@ -134,6 +138,30 @@ export class TimelineEngine implements ITimelineEngine {
       return started && notEnded
     })
 
+    const occupancies = await this.prisma.bodyOccupancy.findMany({
+      include: {
+        fromEvent: { include: { chapter: true } },
+        untilEvent: { include: { chapter: true } }
+      }
+    })
+    const activeOccupancies = occupancies.filter((occupancy) => {
+      const started = compareEventOrder(occupancy.fromEvent as OrderedEvent, targetEvent) <= 0
+      const notEnded = !occupancy.untilEvent || compareEventOrder(targetEvent, occupancy.untilEvent as OrderedEvent) < 0
+      return started && notEnded
+    })
+
+    const appearances = await this.prisma.appearanceState.findMany({
+      include: {
+        fromEvent: { include: { chapter: true } },
+        untilEvent: { include: { chapter: true } }
+      }
+    })
+    const activeAppearances = appearances.filter((appearance) => {
+      const started = compareEventOrder(appearance.fromEvent as OrderedEvent, targetEvent) <= 0
+      const notEnded = !appearance.untilEvent || compareEventOrder(targetEvent, appearance.untilEvent as OrderedEvent) < 0
+      return started && notEnded
+    })
+
     // Map Prisma models to WorldSnapshot (casting as any for now to align with Domain types)
     return {
       atEventId: targetEvent.id,
@@ -148,6 +176,8 @@ export class TimelineEngine implements ITimelineEngine {
         return acc
       }, {}),
       presences: activePresences as any,
+      occupancies: activeOccupancies as any,
+      appearances: activeAppearances as any,
       knownFacts: []
     }
   }

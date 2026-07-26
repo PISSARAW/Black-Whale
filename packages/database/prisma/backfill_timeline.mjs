@@ -241,6 +241,7 @@ const knownEvents = [
 		sequence: 1,
 		title: 'Kacho and Fugetsu attempt to escape',
 		summary: 'The twins leave the Black Whale in a lifeboat, triggering the succession ceremony trap.',
+		occursOnBlackWhale: false,
 		legacyTitles: []
 	},
 	{
@@ -248,7 +249,17 @@ const knownEvents = [
 		chapterTitle: 'Escape',
 		sequence: 2,
 		title: 'Kacho dies and Without You awakens',
-		summary: "Kacho dies outside the ship; her Guardian Spirit Beast takes her form and rejoins Fugetsu through Magical Worm.",
+		summary: "Kacho dies outside the ship and her Guardian Spirit Beast activates in her image.",
+		occursOnBlackWhale: false,
+		legacyTitles: []
+	},
+	{
+		chapter: 383,
+		chapterTitle: 'Escape',
+		sequence: 3,
+		title: 'Without You rejoins Fugetsu aboard the Black Whale',
+		summary: "The post-mortem Nen construct bearing Kacho's appearance returns through Magical Worm and remains beside Fugetsu.",
+		occursOnBlackWhale: true,
 		legacyTitles: []
 	},
 	{
@@ -720,7 +731,8 @@ async function syncEvent(definition) {
 				chapterId: chapter.id,
 				sequence: definition.sequence,
 				title: definition.title,
-				summary: definition.summary
+				summary: definition.summary,
+				...(definition.occursOnBlackWhale === undefined ? {} : { occursOnBlackWhale: definition.occursOnBlackWhale })
 			}
 		});
 		return 'updated';
@@ -731,7 +743,8 @@ async function syncEvent(definition) {
 			chapterId: chapter.id,
 			sequence: definition.sequence,
 			title: definition.title,
-			summary: definition.summary
+			summary: definition.summary,
+			occursOnBlackWhale: definition.occursOnBlackWhale ?? true
 		}
 	});
 	return 'created';
@@ -762,11 +775,18 @@ async function main() {
 	`);
 	await prisma.$executeRawUnsafe(`
 		UPDATE "NarrativeEvent" event
-		SET "occursOnBlackWhale" = NOT (
-			SELECT chapter."number" < 359 OR chapter."number" IN (396, 397)
-			FROM "Chapter" chapter
-			WHERE chapter."id" = event."chapterId"
-		)
+		SET "occursOnBlackWhale" = CASE
+			WHEN event."title" IN (
+				'Kacho and Fugetsu attempt to escape',
+				'Kacho dies and Without You awakens'
+			) THEN FALSE
+			WHEN event."title" = 'Without You rejoins Fugetsu aboard the Black Whale' THEN TRUE
+			ELSE NOT (
+				SELECT chapter."number" < 359 OR chapter."number" IN (396, 397)
+				FROM "Chapter" chapter
+				WHERE chapter."id" = event."chapterId"
+			)
+		END
 	`);
 	console.log(`Timeline synchronisée : ${results.created} créations, ${results.updated} mises à jour.`);
 }

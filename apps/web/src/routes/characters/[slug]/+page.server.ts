@@ -183,6 +183,33 @@ function buildTimeline(character: any, jsonCharacter: any, locationPaths: Map<st
 	return timeline.sort((a, b) => (a.chapter ?? Number.MAX_SAFE_INTEGER) - (b.chapter ?? Number.MAX_SAFE_INTEGER) || a.sequence - b.sequence);
 }
 
+function appendApparentBodyTimeline(timeline: TimelineEntry[], appearances: any[], locationPaths: Map<string, string>) {
+	for (const appearance of appearances) {
+		const bodyLabel = appearance.body?.label || 'Entité Nen';
+		timeline.push({
+			chapter: appearance.fromEvent.chapter.number,
+			sequence: appearance.fromEvent.sequence,
+			kind: 'appearance',
+			label: `${bodyLabel} prend cette apparence`,
+			detail: eventDetail(appearance.fromEvent),
+			untilChapter: appearance.untilEvent?.chapter.number || null
+		});
+		for (const presence of appearance.body?.presences || []) {
+			timeline.push({
+				chapter: presence.fromEvent.chapter.number,
+				sequence: presence.fromEvent.sequence,
+				kind: 'body-location',
+				label: presenceLocation(presence, locationPaths) || 'Position inconnue',
+				detail: `${bodyLabel} · ${eventDetail(presence.fromEvent) || 'présence active'}`,
+				location: presenceLocation(presence, locationPaths),
+				certainty: presence.certainty,
+				untilChapter: presence.untilEvent?.chapter.number || null
+			});
+		}
+	}
+	return timeline.sort((a, b) => (a.chapter ?? Number.MAX_SAFE_INTEGER) - (b.chapter ?? Number.MAX_SAFE_INTEGER) || a.sequence - b.sequence);
+}
+
 function buildChapterTrajectory(
 	timeline: TimelineEntry[],
 	character: any,
@@ -328,6 +355,17 @@ export const load: PageServerLoad = async ({ params, cookies }) => {
 	}
 
 	let timeline = buildTimeline(character, jsonCharacter, locationPaths);
+	if (character) {
+		const apparentBodies = await prisma.appearanceState.findMany({
+			where: { appearanceCharacterId: character.id },
+			include: {
+				fromEvent: eventInclude,
+				untilEvent: eventInclude,
+				body: { include: bodyInclude }
+			}
+		});
+		timeline = appendApparentBodyTimeline(timeline, apparentBodies, locationPaths);
+	}
 	if (spoilerLimit) timeline = timeline.filter((entry) => entry.chapter === null || entry.chapter <= spoilerLimit);
 	let chapterTrajectory = buildChapterTrajectory(timeline, character, jsonCharacter, chapters, locationPaths);
 	if (spoilerLimit) chapterTrajectory = chapterTrajectory.filter((entry) => entry.chapter <= spoilerLimit);

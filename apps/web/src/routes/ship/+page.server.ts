@@ -97,7 +97,7 @@ export const load: PageServerLoad = async ({ url, cookies }) => {
 
 	const rawWorldState = selectedEvent
 		? await timelineEngine.getWorldState({ eventId: selectedEvent.id })
-		: { characters: [], bodies: [], consciousnesses: [], presences: [], bodyStates: {} };
+		: { characters: [], bodies: [], consciousnesses: [], presences: [], occupancies: [], appearances: [], bodyStates: {} };
 	const nextChapterNumber = events
 		.map((event) => event.chapter.number)
 		.filter((chapterNumber) => chapterNumber > (selectedEvent?.chapter.number ?? Number.MAX_SAFE_INTEGER))
@@ -162,9 +162,15 @@ export const load: PageServerLoad = async ({ url, cookies }) => {
 	// Presences reference bodies, not characters. Resolve the body owner before
 	// applying the spoiler filter so valid character positions are not discarded.
 	const visibleCharacterIds = new Set(visibleCharacters.map((character: any) => character.id));
+	const visibleAppearanceCharacterIds = new Set(visibleCharacters.map((character: any) => character.id));
+	const visibleAppearanceBodyIds = new Set(
+		(rawWorldState.appearances as any[])
+			.filter((appearance) => appearance.appearanceCharacterId && visibleAppearanceCharacterIds.has(appearance.appearanceCharacterId))
+			.map((appearance) => appearance.entityId)
+	);
 	const visibleBodyIds = new Set(
 		(rawWorldState.bodies as any[])
-			.filter((body) => visibleCharacterIds.has(body.originalCharacterId))
+			.filter((body) => visibleCharacterIds.has(body.originalCharacterId) || visibleAppearanceBodyIds.has(body.id))
 			.map((body) => body.id)
 	);
 	const visiblePresences = (rawWorldState.presences as any[]).filter((presence) =>
@@ -202,6 +208,8 @@ export const load: PageServerLoad = async ({ url, cookies }) => {
 			bodies: rawWorldState.bodies,
 			consciousnesses: rawWorldState.consciousnesses,
 			presences: visiblePresences,
+			occupancies: rawWorldState.occupancies,
+			appearances: rawWorldState.appearances,
 			bodyStates: rawWorldState.bodyStates,
 			locations: visibleLocations
 		},
@@ -214,7 +222,10 @@ export const load: PageServerLoad = async ({ url, cookies }) => {
 				) || []
 			})),
 			bodies: nextChapterWorldState.bodies,
+			consciousnesses: nextChapterWorldState.consciousnesses,
 			presences: nextChapterWorldState.presences,
+			occupancies: nextChapterWorldState.occupancies,
+			appearances: nextChapterWorldState.appearances,
 			bodyStates: nextChapterWorldState.bodyStates,
 			locations: visibleLocations
 		} : null,

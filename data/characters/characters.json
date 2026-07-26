@@ -5194,6 +5194,7 @@
     "factionId": "prince-halkenburg",
     "firstAppearanceChapterId": "ch-349",
     "canonStatus": "canon",
+    "temporalIdentityManaged": true,
     "shipLocation": {
       "tier": 1,
       "room": "1009",
@@ -5643,6 +5644,7 @@
     "factionId": "prince-kacho",
     "firstAppearanceChapterId": "ch-349",
     "canonStatus": "canon",
+    "temporalIdentityManaged": true,
     "shipLocation": {
       "tier": 1,
       "room": "1010",

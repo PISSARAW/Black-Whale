@@ -358,6 +358,18 @@ async function main() {
 			bodyOwner.originalBody = body;
 			bodiesCreated += 1;
 		}
+		let consciousness = bodyOwner.originalConsciousness;
+		if (!consciousness) {
+			consciousness = await prisma.consciousness.create({
+				data: {
+					originCharacterId: bodyOwner.id,
+					label: `${bodyOwner.canonicalName} Consciousness`,
+					consciousnessType: 'ORIGINAL',
+					firstVisibleEventId: bodyFirstEvent.id
+				}
+			});
+			bodyOwner.originalConsciousness = consciousness;
+		}
 		if (catalogCharacter.replaceMapPresenceHistory) {
 			await prisma.$transaction([
 				prisma.body.update({
@@ -377,6 +389,10 @@ async function main() {
 					data: { firstVisibleEventId: catalogFirstEvent.id }
 				})] : [])
 			]);
+		}
+		if (catalogCharacter.temporalIdentityManaged) {
+			positionsAlreadyCovered += 1;
+			continue;
 		}
 
 		const existingPresences = await prisma.presence.findMany({
@@ -486,19 +502,6 @@ async function main() {
 			}
 			positionsAlreadyCovered += 1;
 			continue;
-		}
-
-		let consciousness = bodyOwner.originalConsciousness;
-		if (!consciousness) {
-			consciousness = await prisma.consciousness.create({
-				data: {
-					originCharacterId: bodyOwner.id,
-					label: `${bodyOwner.canonicalName} Consciousness`,
-					consciousnessType: 'ORIGINAL',
-					firstVisibleEventId: bodyFirstEvent.id
-				}
-			});
-			bodyOwner.originalConsciousness = consciousness;
 		}
 
 		const requestedPresenceEvent = requestedPresenceChapter ? await ensureEvent(requestedPresenceChapter) : null;

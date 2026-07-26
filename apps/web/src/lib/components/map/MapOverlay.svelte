@@ -89,6 +89,9 @@
   let presences = $derived($page.data.worldState?.presences || []);
   let characters = $derived($page.data.worldState?.characters || []);
   let bodies = $derived($page.data.worldState?.bodies || []);
+  let consciousnesses = $derived($page.data.worldState?.consciousnesses || []);
+  let occupancies = $derived($page.data.worldState?.occupancies || []);
+  let appearances = $derived($page.data.worldState?.appearances || []);
   let locations = $derived($page.data.worldState?.locations || []);
   let perspective = $derived($page.data.perspective || null);
   let events = $derived($page.data.events || []);
@@ -252,17 +255,35 @@
       const observer = perspective?.observer;
 
       const body = bodies.find((candidate: any) => candidate.id === p.entityId);
-      const ownerCharacter = body ? characters.find((candidate: any) => candidate.id === body.originalCharacterId) : null;
+      const appearanceState = appearances.find((candidate: any) => candidate.entityId === p.entityId);
+      const structuralApparentCharacter = appearanceState
+        ? characters.find((candidate: any) => candidate.id === appearanceState.appearanceCharacterId)
+        : null;
+      const biologicalOwner = body
+        ? characters.find((candidate: any) => candidate.id === body.originalCharacterId)
+        : null;
+      const ownerCharacter = biologicalOwner || structuralApparentCharacter;
+      const occupancy = occupancies.find((candidate: any) => candidate.bodyId === p.entityId);
+      const activeConsciousness = occupancy
+        ? consciousnesses.find((candidate: any) => candidate.id === occupancy.consciousnessId)
+        : null;
+      const consciousnessOwner = activeConsciousness?.originCharacterId
+        ? characters.find((candidate: any) => candidate.id === activeConsciousness.originCharacterId)
+        : null;
       const { x, y, loc, tierId } = calculatePresencePosition(p, presences as any[], locations as any[]);
       
       // Unknown positions belong in the dedicated manifest instead of being
       // drawn at arbitrary fallback coordinates on a tier.
       if (!body || !ownerCharacter || !loc || loc.type === 'UNKNOWN') return null;
 
-      const bodyName = toEnglishDisplayName(ownerCharacter?.canonicalName || body?.label) || 'Unknown body';
+      const bodyName = toEnglishDisplayName(biologicalOwner?.canonicalName || body?.label) || 'Unknown body';
+      const structuralConsciousnessName = toEnglishDisplayName(
+        consciousnessOwner?.canonicalName || activeConsciousness?.label || bodyName
+      );
+      const structuralAppearanceName = toEnglishDisplayName(structuralApparentCharacter?.canonicalName || bodyName);
       const perspectiveIsReader = mapState.selectedPerspectiveKind === 'reader';
       const observerCharacter = characters.find((char: any) => char.id === observer?.characterId);
-      const apparentCharacter = characters.find((char: any) => char.id === observer?.apparentCharacterId);
+      const observerApparentCharacter = characters.find((char: any) => char.id === observer?.apparentCharacterId);
       const knownCharacterIds = new Set<string>(perspective?.knownCharacters || []);
       const isObserverBody = Boolean(observer?.currentBodyId && observer.currentBodyId === p.entityId);
 
@@ -280,22 +301,24 @@
 
       const shouldMaskIdentity = !perspectiveIsReader && !hasConfirmedKnowledge;
       const consciousness = isObserverBody
-        ? (observerCharacter?.canonicalName || observer?.consciousnessId || bodyName)
-        : bodyName;
+        ? (observerCharacter?.canonicalName || observer?.consciousnessId || structuralConsciousnessName)
+        : structuralConsciousnessName;
       const appearance = isObserverBody
-        ? (apparentCharacter?.canonicalName || bodyName)
-        : bodyName;
+        ? (observerApparentCharacter?.canonicalName || structuralAppearanceName)
+        : structuralAppearanceName;
       const followedIdentity = mapState.followMode === 'body'
         ? bodyName
         : mapState.followMode === 'appearance'
           ? appearance
           : consciousness;
 
-      const perceivedIdentity = isObserverBody
+      const perceivedIdentity = perspectiveIsReader
+        ? followedIdentity
+        : isObserverBody
         ? followedIdentity
         : shouldMaskIdentity
           ? (hasBeliefOnly ? 'Assumed identity' : 'Unknown individual')
-          : bodyName;
+          : appearance;
 
       const suspicionLabel = !perspectiveIsReader && hasBeliefOnly
         ? 'Active suspicion'
@@ -316,7 +339,11 @@
                   ? 'outdated'
                   : 'unknown';
 
-      const transferFlag = isObserverBody && Boolean(observer?.isDissonant);
+      const structuralTransfer = Boolean(
+        activeConsciousness?.originCharacterId
+        && body.originalCharacterId !== activeConsciousness.originCharacterId
+      );
+      const transferFlag = structuralTransfer || (isObserverBody && Boolean(observer?.isDissonant));
 
       const sourceFromFact = relatedFacts[0]?.predicate || relatedBeliefs[0]?.predicate;
       const sourceLabel = hasConfirmedKnowledge
@@ -360,7 +387,12 @@
 
       const nextPresence = nextChapterState?.presences?.find((candidate: any) => candidate.entityId === p.entityId);
       const nextBiologicalState = nextChapterState?.bodyStates?.[p.entityId];
-      mapped.originalCharacterId = ownerCharacter.id;
+      const followedCharacter = mapState.followMode === 'consciousness'
+        ? consciousnessOwner
+        : mapState.followMode === 'appearance'
+          ? structuralApparentCharacter || biologicalOwner
+          : biologicalOwner;
+      mapped.originalCharacterId = followedCharacter?.id || ownerCharacter.id;
       mapped.hatsuNames = ownerCharacter.hatsuNames || [];
       mapped.futureChange = nextBiologicalState === 'DEAD' || nextBiologicalState === 'DESTROYED'
         ? 'dead'

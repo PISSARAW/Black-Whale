@@ -65,9 +65,10 @@
   <div class="bg-bw-navy border border-bw-gold/20 p-6 rounded-xl mb-10 flex flex-col md:flex-row gap-6 items-end">
     
     <div class="flex-1 relative w-full">
-      <label class="block text-sm text-gray-400 mb-1">Point in time (event)</label>
+      <label for="perspective-event" class="block text-sm text-gray-400 mb-1">Point in time (event)</label>
       <div class="relative">
         <input 
+          id="perspective-event"
           type="text" 
           placeholder="Search by title or chapter..."
           class="w-full bg-bw-dark border border-gray-700 text-white p-3 rounded-lg focus:border-bw-gold focus:outline-none placeholder-gray-600"
@@ -101,8 +102,9 @@
     </div>
 
     <div class="flex-1 w-full">
-      <label class="block text-sm text-gray-400 mb-1">Observer A (required)</label>
+      <label for="observer-a" class="block text-sm text-gray-400 mb-1">Observer A (required)</label>
       <select 
+        id="observer-a"
         bind:value={selectedLeft} 
         on:change={submitForm}
         class="w-full bg-bw-dark border border-gray-700 text-white p-3 rounded-lg focus:border-bw-gold focus:outline-none"
@@ -115,8 +117,9 @@
     </div>
 
     <div class="flex-1 w-full">
-      <label class="block text-sm text-gray-400 mb-1">Observer B (comparison)</label>
+      <label for="observer-b" class="block text-sm text-gray-400 mb-1">Observer B (comparison)</label>
       <select 
+        id="observer-b"
         bind:value={selectedRight} 
         on:change={submitForm}
         class="w-full bg-bw-dark border border-gray-700 text-white p-3 rounded-lg focus:border-bw-gold focus:outline-none"

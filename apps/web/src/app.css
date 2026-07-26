@@ -183,6 +183,21 @@ h1, h2, h3, .font-condensed {
 	border: 0;
 }
 
+/* Progressive, CSS-native editorial reveals. Content remains visible when the
+   browser does not support view timelines. */
+@supports (animation-timeline: view()) {
+	.reveal-on-scroll {
+		animation: editorial-reveal both var(--ease-expo);
+		animation-timeline: view();
+		animation-range: entry 8% cover 32%;
+	}
+
+	@keyframes editorial-reveal {
+		from { opacity: .15; transform: translateY(2.5rem); }
+		to { opacity: 1; transform: translateY(0); }
+	}
+}
+
 @media (max-width: 800px) {
 	:root { --header-height: 3.5rem; }
 	body { background-size: 2.5rem 2.5rem, 2.5rem 2.5rem, auto, auto, auto; }

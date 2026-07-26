@@ -3,6 +3,20 @@
 
   let { data }: { data: PageData } = $props();
   let query = $state('');
+  let scrollProgress = $state(0);
+  let searchInput: HTMLInputElement;
+
+  function updateScrollProgress() {
+    const available = document.documentElement.scrollHeight - window.innerHeight;
+    scrollProgress = available > 0 ? Math.min(1, window.scrollY / available) : 0;
+  }
+
+  function handleShortcut(event: KeyboardEvent) {
+    if (event.key === '/' && document.activeElement?.tagName !== 'INPUT') {
+      event.preventDefault();
+      searchInput?.focus();
+    }
+  }
 
   let normalizedQuery = $derived(
     query
@@ -32,12 +46,15 @@
   let visibleEventCount = $derived(chapters.reduce((total, chapter) => total + chapter.events.length, 0));
 </script>
 
+<svelte:window onscroll={updateScrollProgress} onresize={updateScrollProgress} onkeydown={handleShortcut} />
+
 <svelte:head>
   <title>Timeline — Black Whale</title>
   <meta name="description" content="An interactive timeline of the Succession War arc." />
 </svelte:head>
 
 <div class="timeline-page">
+  <div class="reading-progress" aria-hidden="true"><span style:transform={`scaleX(${scrollProgress})`}></span></div>
   <header class="hero">
     <div class="hero-copy">
       <p class="eyebrow">Narrative dossier · Succession War</p>
@@ -68,7 +85,8 @@
         <circle cx="11" cy="11" r="6.5"></circle>
         <path d="m16 16 4 4"></path>
       </svg>
-      <input bind:value={query} type="search" placeholder="Search by event, chapter, or keyword…" />
+      <input bind:this={searchInput} bind:value={query} type="search" placeholder="Search by event, chapter, or keyword…" />
+      <kbd>/</kbd>
       {#if query}
         <button type="button" onclick={() => (query = '')} aria-label="Clear search">×</button>
       {/if}
@@ -99,7 +117,7 @@
 
     <main class="timeline" aria-live="polite">
       {#each chapters as chapter, chapterIndex (chapter.id)}
-        <section id="chapter-{chapter.number}" class="chapter">
+        <section id="chapter-{chapter.number}" class="chapter reveal-on-scroll">
           <div class="rail" aria-hidden="true">
             <span class="chapter-dot"></span>
             {#if chapterIndex < chapters.length - 1}<span class="line"></span>{/if}
@@ -158,6 +176,9 @@
     color: var(--ink);
   }
 
+  .reading-progress { position: fixed; z-index: 90; top: var(--header-height); right: 0; left: 0; height: 2px; pointer-events: none; }
+  .reading-progress span { display: block; width: 100%; height: 100%; background: linear-gradient(90deg,var(--accent-cyan),var(--accent-gold)); box-shadow: 0 0 12px var(--accent-gold-glow); transform-origin: left; }
+
   .hero {
     display: flex;
     max-width: 1180px;
@@ -199,6 +220,7 @@
   .search-field input { width: 100%; border: 0; outline: 0; background: transparent; color: #eef0e8; font: inherit; font-size: .82rem; }
   .search-field input::placeholder { color: #657174; }
   .search-field button { border: 0; background: none; color: #94a3a4; cursor: pointer; font-size: 1.2rem; }
+  .search-field kbd { padding: .2rem .32rem; border: 1px solid var(--line-default); border-radius: .25rem; color: var(--text-faint); font: .5rem/1 var(--font-mono); }
   .spoiler-badge, .canon-badge { display: flex; flex: none; align-items: center; gap: .45rem; padding: .45rem .7rem; border-radius: .45rem; font-size: .68rem; }
   .spoiler-badge { color: #e7a69f; background: rgba(124,41,38,.18); }
   .canon-badge { color: #91c9bc; background: rgba(34,104,87,.16); }

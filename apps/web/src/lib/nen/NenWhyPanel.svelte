@@ -20,7 +20,7 @@
 </script>
 
 <!--
-  Section 14 — "Pourquoi ?" panel.
+  Section 14 — "Why?" panel.
   Explains why a specific action is unavailable.
   Conditions are shown according to perspective:
     - character perspective: unknown conditions may appear as '?'

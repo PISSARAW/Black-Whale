@@ -3,8 +3,10 @@
   import { page } from '$app/stores'
   import GlobalHatsuController from '$lib/nen/GlobalHatsuController.svelte'
   import GlobalHatsuEffects from '$lib/nen/GlobalHatsuEffects.svelte'
+  import CommandPalette from '$lib/components/CommandPalette.svelte'
 
   let menuOpen = false
+  let paletteOpen = false
 
   const primaryNavigation = [
     { href: '/ship', label: 'Explore' },
@@ -55,9 +57,11 @@
       {/each}
     </nav>
 
-    <div class="header-meta" aria-hidden="true">
-      <span>BW–01</span>
-      <span>EN</span>
+    <div class="header-meta">
+      <button type="button" onclick={() => (paletteOpen = true)} aria-label="Open quick navigation">
+        <span>Quick find</span><kbd>⌘K</kbd>
+      </button>
+      <span aria-hidden="true">EN</span>
     </div>
 
     <button
@@ -110,6 +114,7 @@
   <!-- The Hatsu layer lives at the root so its state and mechanics survive navigation. -->
   <GlobalHatsuEffects />
   <GlobalHatsuController />
+  <CommandPalette bind:open={paletteOpen} />
 </div>
 
 <style>
@@ -213,7 +218,11 @@
     letter-spacing: .12em;
   }
 
-  .header-meta span + span { padding-left: .8rem; border-left: 1px solid var(--line-subtle); }
+  .header-meta button { display: flex; align-items: center; gap: .45rem; padding: .35rem .45rem; border: 0; border-radius: .3rem; background: transparent; color: var(--text-faint); cursor: pointer; font: inherit; letter-spacing: inherit; text-transform: uppercase; }
+  .header-meta button:hover { background: rgba(255,255,255,.04); color: var(--text-primary); }
+  .header-meta kbd { padding: .18rem .28rem; border: 1px solid var(--line-default); border-radius: .2rem; color: var(--accent-gold); font: .48rem/1 var(--font-mono); }
+
+  .header-meta > span { padding-left: .8rem; border-left: 1px solid var(--line-subtle); }
 
   .menu-toggle {
     display: grid;

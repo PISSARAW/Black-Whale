@@ -28,7 +28,7 @@
 </script>
 
 {#if open}
-  <aside class="why" role="dialog" aria-label="Why this information" aria-modal="false">
+  <div class="why" role="dialog" aria-label="Why this information" aria-modal="false">
     <header>
       <h3>Why am I seeing this?</h3>
       <button type="button" onclick={onClose} aria-label="Close">✕</button>
@@ -65,7 +65,7 @@
         <span>{canonicalValue}</span>
       </div>
     {/if}
-  </aside>
+  </div>
 {/if}
 
 <style>

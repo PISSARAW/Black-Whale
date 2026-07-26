@@ -12,7 +12,7 @@
     mentioned: 'Mentioned',
     pictured: 'Pictured',
     death: 'Death',
-    corpse: 'Bodye',
+    corpse: 'Corpse',
     flashback: 'Flashback',
     vision: 'Vision',
     voice: 'Voice',

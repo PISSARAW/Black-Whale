@@ -26,16 +26,16 @@
 <div class="hatsu-dock" data-hatsu-ui>
   {#if $activeHatsu}
     <section class="active-card" style:--hatsu={$activeHatsu.color} aria-live="polite">
-      <button class="sigil active" onclick={() => hatsuPanelOpen.update((open) => !open)} aria-label="Changer de Hatsu">
+      <button class="sigil active" onclick={() => hatsuPanelOpen.update((open) => !open)} aria-label="Change Hatsu">
         <span class="aura-dot"></span>
         NEN
       </button>
       <div class="active-copy">
-        <span class="eyebrow">HATSU ACTIF · {$activeHatsu.owner}</span>
+        <span class="eyebrow">ACTIVE HATSU · {$activeHatsu.owner}</span>
         <strong>{$activeHatsu.name}</strong>
         <span class="instruction">{$activeHatsu.instruction}</span>
       </div>
-      <button class="release" onclick={deactivateHatsu}>Zetsu · couper</button>
+      <button class="release" onclick={deactivateHatsu}>Zetsu · release</button>
     </section>
   {:else}
     <button class="sigil launcher" onclick={() => hatsuPanelOpen.set(true)} aria-label="Activate a Hatsu">

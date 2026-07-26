@@ -148,8 +148,8 @@ const knownEvents = [
 		legacyTitles: []
 	},
 	{
-		chapter: 371,
-		chapterTitle: 'Mission',
+		chapter: 372,
+		chapterTitle: 'Disappearance',
 		sequence: 1,
 		title: 'Hanzo avenges Momoze',
 		summary: 'Hanzo identifies Tuffdy, obtains his confession in detention and kills him with Hanzo Skill 4.',
@@ -196,8 +196,8 @@ const knownEvents = [
 		legacyTitles: ['Début du chapitre 380']
 	},
 	{
-		chapter: 375,
-		chapterTitle: 'Persuasion',
+		chapter: 374,
+		chapterTitle: 'Ability',
 		sequence: 1,
 		title: "Fugetsu's Magical Worm opens",
 		summary: "Fugetsu's Guardian Spirit Beast creates a passage connecting her room to Kacho's.",
@@ -252,8 +252,8 @@ const knownEvents = [
 		legacyTitles: []
 	},
 	{
-		chapter: 387,
-		chapterTitle: 'Recreation',
+		chapter: 386,
+		chapterTitle: 'Hypothesis',
 		sequence: 1,
 		title: 'Tserriednich survives Theta\'s execution attempt',
 		summary: 'Parallel Future lets Tserriednich foresee the gunshot, evade it and conceal the outcome from his guards.',
@@ -372,9 +372,9 @@ const knownEvents = [
 		legacyTitles: []
 	},
 	{
-		chapter: 410,
-		chapterTitle: 'Negotiation: Part 4',
-		sequence: 1,
+		chapter: 413,
+		chapterTitle: 'Loyalty',
+		sequence: 2,
 		title: 'Benjamin discovers the body swap and his infection',
 		summary: 'Benjamin realizes that Halkenburg controls Balsamilco and learns that he has been infected with TSK-17.',
 		legacyTitles: []
@@ -388,20 +388,316 @@ const knownEvents = [
 		legacyTitles: []
 	},
 	{
+		chapter: 413,
+		chapterTitle: 'Loyalty',
+		sequence: 3,
+		title: 'Benjamin proclaims martial law',
+		summary: 'Benjamin orders the capture of the princes and moves his command centre to the Justice Bureau on Tier 2.',
+		legacyTitles: []
+	},
+	{
+		chapter: 412,
+		chapterTitle: 'Question',
+		sequence: 1,
+		title: "Oito reveals that the baby is not Woble",
+		summary: 'Confronted by Kurapika and Bill, Oito admits that the child in room 1014 is her nephew; the real Woble remains missing.',
+		legacyTitles: []
+	},
+	{
+		chapter: 340,
+		chapterTitle: 'Special Mission',
+		sequence: 1,
+		title: 'Kakin announces the Dark Continent expedition',
+		summary: 'Nasubi appoints Beyond Netero to lead Kakin toward the Dark Continent, and the V5 orders the Zodiacs to capture him.',
+		legacyTitles: ['Zodiacs Assemble']
+	},
+	{
+		chapter: 341,
+		chapterTitle: 'Threats',
+		sequence: 1,
+		title: 'Beyond surrenders to the Zodiacs',
+		summary: 'The Zodiacs learn about the Five Threats before Beyond voluntarily places himself in their custody.',
+		legacyTitles: []
+	},
+	{
+		chapter: 342,
+		chapterTitle: 'Challenge',
+		sequence: 1,
+		title: 'The V5 brings Kakin into the V6',
+		summary: 'Beyond challenges the Zodiacs, while the international powers decide to support Kakin and make the Hunters escort him.',
+		legacyTitles: []
+	},
+	{
+		chapter: 343,
+		chapterTitle: 'Invitation',
+		sequence: 1,
+		title: 'Leorio and Kurapika are recruited as Zodiacs',
+		summary: 'Cheadle recruits Leorio for the expedition, and his recommendation brings Kurapika back into contact with the Association.',
+		legacyTitles: []
+	},
+	{
+		chapter: 344,
+		chapterTitle: 'Author',
+		sequence: 1,
+		title: 'Kurapika identifies Tserriednich as his target',
+		summary: 'Mizaistom reveals that Tserriednich owns the remaining Scarlet Eyes, giving Kurapika a route into the expedition.',
+		legacyTitles: []
+	},
+	{
+		chapter: 346,
+		chapterTitle: 'Options',
+		sequence: 1,
+		title: 'Kurapika exposes the risk of a Zodiac mole',
+		summary: 'Kurapika concludes that Beyond prepared allies inside the Hunter Association, and the Zodiacs organize their expedition roles.',
+		legacyTitles: []
+	},
+	{
+		chapter: 347,
+		chapterTitle: 'Inauguration',
+		sequence: 1,
+		title: "Ging reproduces Leorio's Nen technique",
+		summary: 'Ging defeats Muherr\'s staged ambush by copying and extending the remote-punch technique that Leorio once used on him.',
+		legacyTitles: []
+	},
+	{
+		chapter: 350,
+		chapterTitle: 'Prince',
+		sequence: 1,
+		title: 'Kurapika recruits guards for the younger princes',
+		summary: 'Kurapika brings Biscuit, Basho, Izunavi, Hanzo and Melody into the royal bodyguard selection to reach Tserriednich.',
+		legacyTitles: []
+	},
+	{
+		chapter: 352,
+		chapterTitle: 'Troublesome',
+		sequence: 1,
+		title: 'Chrollo combines Order Stamp and Gallery Fake',
+		summary: 'Chrollo demonstrates how copied bodies can be turned into puppets while concealing his movements among the audience.',
+		legacyTitles: []
+	},
+	{
+		chapter: 353,
+		chapterTitle: 'Cold-Blooded',
+		sequence: 1,
+		title: 'Chrollo overwhelms Hisoka with puppets',
+		summary: 'Dozens of controlled spectators attack Hisoka while Chrollo repeatedly strikes from within the crowd.',
+		legacyTitles: []
+	},
+	{
+		chapter: 354,
+		chapterTitle: 'Head',
+		sequence: 1,
+		title: 'Hisoka turns severed heads into weapons',
+		summary: 'Hisoka uses Bungee Gum and Shu to fight through the puppets and briefly injure Chrollo.',
+		legacyTitles: []
+	},
+	{
+		chapter: 355,
+		chapterTitle: 'Detonation',
+		sequence: 1,
+		title: 'Chrollo prepares the explosive final assault',
+		summary: 'Post-mortem Sun and Moon marks preserve copied puppets, allowing Chrollo to assemble an explosive swarm.',
+		legacyTitles: []
+	},
+	{
+		chapter: 361,
+		chapterTitle: 'Withdraw',
+		sequence: 1,
+		title: "Kurapika steals Sayird's ability",
+		summary: 'Kurapika subdues Sayird and uses Steal Chain, revealing the Emperor Time condition needed to control the stolen power.',
+		legacyTitles: []
+	},
+	{
+		chapter: 362,
+		chapterTitle: 'Resolve',
+		sequence: 1,
+		title: 'The rules of the Guardian Spirit Beasts emerge',
+		summary: 'The princes learn that the beasts cannot directly kill one another or another host, while Tserriednich forces Theta to teach him Nen.',
+		legacyTitles: ['Début du chapitre 362']
+	},
+	{
+		chapter: 363,
+		chapterTitle: 'Nen Beast',
+		sequence: 1,
+		title: 'Benjamin deploys his soldiers among the princes',
+		summary: 'After learning the limits of the guardian beasts, Benjamin uses his private army to monitor the other royal factions.',
+		legacyTitles: ['Appearance of Balsamilco Might']
+	},
+	{
+		chapter: 367,
+		chapterTitle: 'Synchronization',
+		sequence: 1,
+		title: 'Kurapika explains the Guardian Spirit Beasts',
+		summary: 'Kurapika shares the mechanics of parasitic Nen with rival guards while Oito and Bill search for an insect for Little Eye.',
+		legacyTitles: []
+	},
+	{
+		chapter: 376,
+		chapterTitle: 'Determination',
+		sequence: 1,
+		title: 'Benjamin and Camilla are placed under judicial surveillance',
+		summary: 'Their competing accounts leave both princes confined under Justice supervision while the court investigates the attack.',
+		legacyTitles: []
+	},
+	{
+		chapter: 379,
+		chapterTitle: 'Collaboration',
+		sequence: 1,
+		title: 'Heil-Ly sabotages the murder investigation',
+		summary: 'Luini escapes through his spatial ability while Cashew mixes truth and lies to mislead Mizaistom.',
+		legacyTitles: []
+	},
+	{
+		chapter: 385,
+		chapterTitle: 'Warning',
+		sequence: 1,
+		title: 'Theta shoots Tserriednich during Zetsu',
+		summary: 'Theta uses the disappearance of the guardian beast during training to execute Tserriednich with a shot to the head.',
+		legacyTitles: []
+	},
+	{
+		chapter: 387,
+		chapterTitle: 'Recreation',
+		sequence: 1,
+		title: 'Tserriednich understands Parallel Future',
+		summary: 'Tserriednich determines that Zetsu grants him a ten-second vision whose predicted outcome remains visible to everyone else.',
+		legacyTitles: []
+	},
+	{
+		chapter: 388,
+		chapterTitle: 'Reflection',
+		sequence: 1,
+		title: 'Kurapika rapidly awakens the Nen students',
+		summary: 'Kurapika lends abilities through Stealth Dolphin to open the students\' aura nodes while Bill demonstrates Water Divination.',
+		legacyTitles: []
+	},
+	{
+		chapter: 390,
+		chapterTitle: 'Clash: Part 1',
+		sequence: 1,
+		title: 'Xi-Yu clashes with Heil-Ly on Tier 3',
+		summary: 'Hinrigh, Lynch and Zakuro confront Heil-Ly members; Hinrigh kills the soldiers who try to expel his team.',
+		legacyTitles: []
+	},
+	{
+		chapter: 391,
+		chapterTitle: 'Clash: Part 2',
+		sequence: 1,
+		title: 'Hinrigh begins tracking the Heil-Ly routes',
+		summary: 'Hinrigh turns a camera into a scouting animal while Lynch and Zakuro continue the search for Hisoka.',
+		legacyTitles: []
+	},
+	{
+		chapter: 394,
+		chapterTitle: 'Hypothesis',
+		sequence: 1,
+		title: 'The room 3101 trap claims Tassi',
+		summary: 'Tassi crosses the threshold, is teleported into the Heil-Ly base and killed so Bille can reach level 21.',
+		legacyTitles: ['Début du chapitre 394']
+	},
+	{
+		chapter: 395,
+		chapterTitle: 'Founding: Part 1',
+		sequence: 1,
+		title: 'The Phantom Troupe probes room 3101',
+		summary: 'Nobunaga, Phinks and Feitan use neighbouring rooms and unwilling test subjects to investigate the Heil-Ly teleportation trap.',
+		legacyTitles: []
+	},
+	{
+		chapter: 396,
+		chapterTitle: 'Founding: Part 2',
+		sequence: 1,
+		title: 'The future Spiders perform in Meteor City',
+		summary: 'A young Chrollo organizes a dubbed screening of Power Cleaners with the children who will later form the Phantom Troupe.',
+		legacyTitles: []
+	},
+	{
+		chapter: 397,
+		chapterTitle: 'Founding: Part 3',
+		sequence: 1,
+		title: "Sarasa's murder shapes the Phantom Troupe",
+		summary: 'The children find Sarasa murdered; Chrollo commits to mastering technology and building a group that will hunt her killers.',
+		legacyTitles: []
+	},
+	{
+		chapter: 399,
+		chapterTitle: 'Expulsion',
+		sequence: 1,
+		title: 'Hinrigh and Nobunaga enter the Heil-Ly hideout',
+		summary: 'The pair crosses the trapped rooms and confronts Morena\'s followers before Yokotani expels them through his legal ability.',
+		legacyTitles: []
+	},
+	{
+		chapter: 400,
+		chapterTitle: 'Secrecy',
+		sequence: 1,
+		title: 'The Phantom Troupe confirms the hideout is on Tier 2',
+		summary: 'Phinks, Feitan and Nobunaga use Hinrigh\'s transmitter to establish that Morena\'s Nen space lies above Tier 3.',
+		legacyTitles: []
+	},
+	{
+		chapter: 401,
+		chapterTitle: 'Moonlight',
+		sequence: 1,
+		title: 'Longhi offers Kurapika a binding alliance',
+		summary: 'Longhi reveals Moonlight Act, her connection to Beyond and the plan to identify which prince may be his child.',
+		legacyTitles: []
+	},
+	{
+		chapter: 403,
+		chapterTitle: 'Results',
+		sequence: 1,
+		title: 'Balsamilco begins the TSK-17 assassination plan',
+		summary: 'Balsamilco enters the Justice Bureau intending to infect Halkenburg during questioning, as Kacho\'s letter reveals Unma is Halkenburg\'s mother.',
+		legacyTitles: []
+	},
+	{
+		chapter: 404,
+		chapterTitle: 'Speculation',
+		sequence: 1,
+		title: "Halkenburg takes Balsamilco's body",
+		summary: 'Halkenburg fires through the courthouse wall and transfers his consciousness into Balsamilco before his original body succumbs.',
+		legacyTitles: []
+	},
+	{
 		chapter: 411,
 		chapterTitle: 'Announcement',
 		sequence: 1,
-		title: 'Benjamin proclaims martial law',
-		summary: 'Benjamin orders the capture of the princes and moves his command centre to the Justice Bureau on Tier 2.',
+		title: 'Kurapika opens the second Nen class',
+		summary: 'Kurapika expands the lessons, explains how the succession ritual can fail and announces that Woble is not an eligible participant.',
+		legacyTitles: []
+	},
+	{
+		chapter: 412,
+		chapterTitle: 'Question',
+		sequence: 2,
+		title: 'Beyond meets Judge Cleapatro',
+		summary: 'Cleapatro visits Beyond in his VVIP cell to review the more than one thousand lawsuits he filed against Kakin.',
+		legacyTitles: []
+	},
+	{
+		chapter: 413,
+		chapterTitle: 'Loyalty',
+		sequence: 1,
+		title: "Halkenburg's burial confirms his soul survives",
+		summary: 'Nasubi observes that Halkenburg\'s flame is unlit and confirms that his succession rights remain while his soul inhabits another body.',
 		legacyTitles: []
 	},
 	{
 		chapter: 414,
 		chapterTitle: 'Friends',
 		sequence: 1,
-		title: "Oito reveals that the baby is not Woble",
-		summary: 'Confronted by Kurapika and Bill, Oito admits that the child in room 1014 is her nephew; the real Woble remains missing.',
-		legacyTitles: ['Début du chapitre 414']
+		title: "Benjamin's soldiers begin their martial-law operations",
+		summary: 'Kanjidol attacks Luzurus\'s guards while military teams prepare to force entry into Halkenburg\'s quarters.',
+		legacyTitles: []
+	},
+	{
+		chapter: 414,
+		chapterTitle: 'Friends',
+		sequence: 2,
+		title: "Kurapika seeks his friends' help to protect Woble",
+		summary: 'Kurapika proposes tracing the real Woble and dismantling Beyond\'s curse, trusting friends on the mainland to protect her.',
+		legacyTitles: []
 	}
 ];
 
@@ -447,6 +743,31 @@ async function main() {
 		const result = await syncEvent(definition);
 		results[result] += 1;
 	}
+
+	// Rebuild the global canonical cursor after chapters or events move. Clearing
+	// first avoids transient collisions on the unique ordinal index.
+	await prisma.$executeRawUnsafe('UPDATE "NarrativeEvent" SET "ordinal" = NULL');
+	await prisma.$executeRawUnsafe(`
+		WITH ordered_events AS (
+			SELECT event."id", ROW_NUMBER() OVER (
+				ORDER BY chapter."number", event."sequence", event."id"
+			) - 1 AS "ordinal"
+			FROM "NarrativeEvent" event
+			JOIN "Chapter" chapter ON chapter."id" = event."chapterId"
+		)
+		UPDATE "NarrativeEvent" event
+		SET "ordinal" = ordered_events."ordinal"
+		FROM ordered_events
+		WHERE event."id" = ordered_events."id"
+	`);
+	await prisma.$executeRawUnsafe(`
+		UPDATE "NarrativeEvent" event
+		SET "occursOnBlackWhale" = NOT (
+			SELECT chapter."number" < 359 OR chapter."number" IN (396, 397)
+			FROM "Chapter" chapter
+			WHERE chapter."id" = event."chapterId"
+		)
+	`);
 	console.log(`Timeline synchronisée : ${results.created} créations, ${results.updated} mises à jour.`);
 }
 

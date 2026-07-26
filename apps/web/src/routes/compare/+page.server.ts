@@ -18,7 +18,10 @@ export const load: PageServerLoad = async ({ cookies, url, fetch }) => {
   }
 
   const events = await prisma.narrativeEvent.findMany({
-    where: maxChapter !== Infinity ? { chapter: { number: { lte: maxChapter } } } : undefined,
+    where: {
+      occursOnBlackWhale: true,
+      ...(maxChapter !== Infinity ? { chapter: { number: { lte: maxChapter } } } : {})
+    },
     orderBy: [{ chapter: { number: 'asc' } }, { sequence: 'asc' }],
     include: { chapter: true }
   });

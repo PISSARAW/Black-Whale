@@ -308,6 +308,8 @@ model NarrativeEvent {
   sequence   Int
   /// Global canonical order. Unlike sequence, this never resets between chapters.
   ordinal    Int?    @unique
+  /// Whether the event belongs to the voyage timeline shown in the Black Whale UI.
+  occursOnBlackWhale Boolean @default(true)
   title      String
   summary    String
   locationId String?

@@ -80,7 +80,10 @@ export const load: PageServerLoad = async ({ url, cookies }) => {
 	// Sequence is local to a chapter. Always order and select through the unique
 	// event id, using chapter number as the primary chronological key.
 	const events = await prisma.narrativeEvent.findMany({
-		where: spoilerProfile ? { chapter: { number: { lte: spoilerProfile.maxChapter } } } : undefined,
+		where: {
+			occursOnBlackWhale: true,
+			...(spoilerProfile ? { chapter: { number: { lte: spoilerProfile.maxChapter } } } : {})
+		},
 		orderBy: [{ chapter: { number: 'asc' } }, { sequence: 'asc' }],
 		include: { chapter: true }
 	});

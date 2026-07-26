@@ -31,7 +31,10 @@ export class WorldStateService {
 
   async listEvents(spoilerLimit?: number) {
     const events = await this.prisma.narrativeEvent.findMany({
-      where: Number.isFinite(spoilerLimit) ? { chapter: { number: { lte: spoilerLimit } } } : undefined,
+      where: {
+        occursOnBlackWhale: true,
+        ...(Number.isFinite(spoilerLimit) ? { chapter: { number: { lte: spoilerLimit } } } : {}),
+      },
       include: { chapter: true },
       orderBy: [{ chapter: { number: 'asc' } }, { sequence: 'asc' }],
     })

@@ -8,12 +8,14 @@ export const load: PageServerLoad = async ({ cookies }) => {
 
 	// Fetch all chapters with their events, filtered by spoiler limit
 	const chapters = await prisma.chapter.findMany({
-		where: maxChapter !== Infinity ? {
-			number: { lte: maxChapter }
-		} : undefined,
+		where: {
+			...(maxChapter !== Infinity ? { number: { lte: maxChapter } } : {}),
+			events: { some: { occursOnBlackWhale: true } }
+		},
 		orderBy: { number: 'asc' },
 		include: {
 			events: {
+				where: { occursOnBlackWhale: true },
 				orderBy: { sequence: 'asc' }
 			}
 		}

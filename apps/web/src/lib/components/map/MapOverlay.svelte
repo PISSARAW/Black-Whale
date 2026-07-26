@@ -255,7 +255,9 @@
       const ownerCharacter = body ? characters.find((candidate: any) => candidate.id === body.originalCharacterId) : null;
       const { x, y, loc, tierId } = calculatePresencePosition(p, presences as any[], locations as any[]);
       
-      if (!body || !ownerCharacter) return null;
+      // Unknown positions belong in the dedicated manifest instead of being
+      // drawn at arbitrary fallback coordinates on a tier.
+      if (!body || !ownerCharacter || !loc || loc.type === 'UNKNOWN') return null;
 
       const bodyName = toEnglishDisplayName(ownerCharacter?.canonicalName || body?.label) || 'Unknown body';
       const perspectiveIsReader = mapState.selectedPerspectiveKind === 'reader';

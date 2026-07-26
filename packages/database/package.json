@@ -18,6 +18,7 @@
     "build": "tsc",
     "generate": "prisma generate",
     "db:push": "prisma db push",
+    "db:sync-passengers": "node prisma/sync_hunterpedia_passengers.mjs",
     "db:backfill-map": "node prisma/backfill_catalog_map.mjs",
     "db:backfill-timeline": "node prisma/backfill_timeline.mjs"
   },

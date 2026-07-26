@@ -273,7 +273,7 @@ async function main() {
   })
   const oito = await prisma.character.create({
     data: { 
-      slug: 'oito-hui-guo-rou', 
+      slug: 'queen-oito',
       canonicalName: 'Oito Hui Guo Rou', 
       firstVisibleEventId: evt1.id, 
       description: '8th Queen',
@@ -283,7 +283,7 @@ async function main() {
   })
   const woble = await prisma.character.create({
     data: { 
-      slug: 'woble-hui-guo-rou', 
+      slug: 'prince-woble',
       canonicalName: 'Woble Hui Guo Rou', 
       firstVisibleEventId: evt1.id, 
       description: '14th Prince',
@@ -293,7 +293,7 @@ async function main() {
   })
   const benjamin = await prisma.character.create({
     data: { 
-      slug: 'benjamin-hui-guo-rou', 
+      slug: 'prince-benjamin',
       canonicalName: 'Benjamin Hui Guo Rou', 
       firstVisibleEventId: evt1.id, 
       description: '1st Prince',
@@ -303,7 +303,7 @@ async function main() {
   })
   const vincent = await prisma.character.create({
     data: { 
-      slug: 'prince-camp-benjamin-soldier-vincent', 
+      slug: 'vincent',
       canonicalName: 'Vincent', 
       firstVisibleEventId: evt3.id, 
       description: 'Benjamin Soldier',

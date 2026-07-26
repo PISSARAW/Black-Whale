@@ -59,6 +59,8 @@ const namedRoomSlugs = new Map([
 	['standard cabins', 'tier-5-standard-cabins']
 ]);
 
+const generatedPassengerDescription = 'Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.';
+
 function chapterNumber(chapterId) {
 	const match = chapterId?.match(/^ch-(\d+)$/);
 	return match ? Number(match[1]) : null;
@@ -138,12 +140,34 @@ async function syncLocations(firstVisibleEventId) {
 		}
 	}
 
+	const ship = synced.get('black-whale-1') || synced.get('black-whale') || null;
+	const unknown = await prisma.location.upsert({
+		where: { slug: 'black-whale-unknown' },
+		update: {
+			name: 'Position inconnue à bord',
+			parentLocationId: ship?.id || null,
+			type: 'UNKNOWN',
+			mapElementId: null
+		},
+		create: {
+			slug: 'black-whale-unknown',
+			name: 'Position inconnue à bord',
+			parentLocationId: ship?.id || null,
+			type: 'UNKNOWN',
+			mapElementId: null,
+			firstVisibleEventId
+		}
+	});
+	synced.set('black-whale-unknown', unknown);
+
 	return synced;
 }
 
 function resolveLocation(character, locations) {
 	const shipLocation = character.shipLocation;
-	if (!shipLocation || (shipLocation.tier == null && !shipLocation.room)) return null;
+	if (!shipLocation || (shipLocation.tier == null && !shipLocation.room)) {
+		return locations.get('black-whale-unknown') || null;
+	}
 
 	const room = String(shipLocation.room || '').trim();
 	const numericRoom = room.match(/^10(?:0[0-9]|1[0-4])$/);
@@ -164,9 +188,85 @@ function resolveLocation(character, locations) {
 	return locations.get(`tier-${shipLocation.tier}`) || null;
 }
 
+async function mergeDuplicateCharacters(catalogCharacters) {
+	const databaseCharacters = await prisma.character.findMany({
+		include: { originalBody: true, originalConsciousness: true }
+	});
+	const catalogByName = new Map(catalogCharacters.map((character) => [character.canonicalName, character.id]));
+	const groups = new Map();
+	for (const character of databaseCharacters) {
+		const group = groups.get(character.canonicalName) || [];
+		group.push(character);
+		groups.set(character.canonicalName, group);
+	}
+
+	let merged = 0;
+	for (const [canonicalName, group] of groups) {
+		if (group.length < 2) continue;
+		const catalogSlug = catalogByName.get(canonicalName);
+		const primary = group.find((character) => character.slug === catalogSlug);
+		if (!primary) continue;
+
+		for (const duplicate of group.filter((character) => character.id !== primary.id)) {
+			if (primary.originalBody && duplicate.originalBody) {
+				console.warn(`Cannot merge ${duplicate.slug}: both duplicate records own a body`);
+				continue;
+			}
+			if (primary.originalConsciousness && duplicate.originalConsciousness) {
+				console.warn(`Cannot merge ${duplicate.slug}: both duplicate records own a consciousness`);
+				continue;
+			}
+
+			await prisma.$transaction([
+				prisma.body.updateMany({ where: { originalCharacterId: duplicate.id }, data: { originalCharacterId: primary.id } }),
+				prisma.consciousness.updateMany({ where: { originCharacterId: duplicate.id }, data: { originCharacterId: primary.id } }),
+				prisma.affiliationMembership.updateMany({ where: { characterId: duplicate.id }, data: { characterId: primary.id } }),
+				prisma.characterRole.updateMany({ where: { characterId: duplicate.id }, data: { characterId: primary.id } }),
+				prisma.characterAssignment.updateMany({ where: { characterId: duplicate.id }, data: { characterId: primary.id } }),
+				prisma.characterAssignment.updateMany({ where: { assignedPrinceId: duplicate.id }, data: { assignedPrinceId: primary.id } }),
+				prisma.nenAbility.updateMany({ where: { ownerId: duplicate.id }, data: { ownerId: primary.id } }),
+				prisma.knowledgeState.updateMany({ where: { observerCharacterId: duplicate.id }, data: { observerCharacterId: primary.id } }),
+				prisma.knowledgeState.updateMany({ where: { sourceCharacterId: duplicate.id }, data: { sourceCharacterId: primary.id } }),
+				prisma.belief.updateMany({ where: { observerCharacterId: duplicate.id }, data: { observerCharacterId: primary.id } }),
+				prisma.belief.updateMany({ where: { subjectType: 'CHARACTER', subjectId: duplicate.id }, data: { subjectId: primary.id } }),
+				prisma.fact.updateMany({ where: { subjectType: 'CHARACTER', subjectId: duplicate.id }, data: { subjectId: primary.id } }),
+				prisma.eventParticipation.updateMany({ where: { participantType: 'CHARACTER', participantId: duplicate.id }, data: { participantId: primary.id } }),
+				prisma.faction.updateMany({ where: { leaderId: duplicate.id }, data: { leaderId: primary.id } }),
+				prisma.character.delete({ where: { id: duplicate.id } })
+			]);
+			primary.originalBody ||= duplicate.originalBody;
+			primary.originalConsciousness ||= duplicate.originalConsciousness;
+			merged += 1;
+		}
+	}
+	return merged;
+}
+
+async function pruneGeneratedPassengerOrphans(catalogCharacters) {
+	const catalogSlugs = new Set(catalogCharacters.map((character) => character.id));
+	const generatedCharacters = await prisma.character.findMany({
+		where: { description: generatedPassengerDescription },
+		include: { originalBody: true, originalConsciousness: true }
+	});
+	let pruned = 0;
+	for (const character of generatedCharacters) {
+		if (catalogSlugs.has(character.slug)) continue;
+		await prisma.$transaction([
+			...(character.originalBody ? [prisma.presence.deleteMany({ where: { entityId: character.originalBody.id } })] : []),
+			...(character.originalBody ? [prisma.body.delete({ where: { id: character.originalBody.id } })] : []),
+			...(character.originalConsciousness ? [prisma.consciousness.delete({ where: { id: character.originalConsciousness.id } })] : []),
+			prisma.character.delete({ where: { id: character.id } })
+		]);
+		pruned += 1;
+	}
+	return pruned;
+}
+
 async function main() {
 	const boardingEvent = await ensureEvent(358, 'Eve');
 	const locations = await syncLocations(boardingEvent.id);
+	const duplicatesMerged = await mergeDuplicateCharacters(characters);
+	const generatedPassengerOrphansPruned = await pruneGeneratedPassengerOrphans(characters);
 	const databaseCharacters = await prisma.character.findMany({
 		include: {
 			firstVisibleEvent: { include: { chapter: true } },
@@ -191,19 +291,6 @@ async function main() {
 	let positionsWithoutLocation = 0;
 
 	for (const catalogCharacter of characters) {
-		const existingDatabaseCharacter = bySlug.get(catalogCharacter.id);
-		if (catalogCharacter.mapPresenceUntilChapterId && existingDatabaseCharacter?.originalBody) {
-			const untilChapter = chapterNumber(catalogCharacter.mapPresenceUntilChapterId);
-			const untilEvent = untilChapter ? await ensureEvent(untilChapter) : null;
-			if (untilEvent) {
-				const result = await prisma.presence.updateMany({
-					where: { entityId: existingDatabaseCharacter.originalBody.id, untilEventId: null },
-					data: { untilEventId: untilEvent.id }
-				});
-				presencesEnded += result.count;
-			}
-		}
-
 		const location = resolveLocation(catalogCharacter, locations);
 		if (!location) {
 			positionsWithoutLocation += 1;
@@ -237,6 +324,20 @@ async function main() {
 			group.push(databaseCharacter);
 			byCanonicalName.set(databaseCharacter.canonicalName, group);
 			charactersCreated += 1;
+		} else {
+			const updated = await prisma.character.update({
+				where: { id: databaseCharacter.id },
+				data: {
+					canonicalName: catalogCharacter.canonicalName,
+					aliases: catalogCharacter.aliases || [],
+					description: catalogCharacter.description || null,
+					narrativeImportance: narrativeImportance(catalogCharacter.canonStatus),
+					modelingLevel: modelingLevel(catalogCharacter.shipLocation?.tier),
+					firstVisibleEventId: catalogFirstEvent.id
+				}
+			});
+			databaseCharacter = { ...databaseCharacter, ...updated, firstVisibleEvent: catalogFirstEvent };
+			bySlug.set(databaseCharacter.slug, databaseCharacter);
 		}
 
 		const canonicalBodyOwner = (byCanonicalName.get(catalogCharacter.canonicalName) || [])
@@ -257,12 +358,37 @@ async function main() {
 			bodyOwner.originalBody = body;
 			bodiesCreated += 1;
 		}
+		if (catalogCharacter.replaceMapPresenceHistory) {
+			await prisma.$transaction([
+				prisma.body.update({
+					where: { id: body.id },
+					data: { firstVisibleEventId: catalogFirstEvent.id }
+				}),
+				prisma.bodyState.updateMany({
+					where: { bodyId: body.id },
+					data: { fromEventId: catalogFirstEvent.id }
+				}),
+				prisma.bodyOccupancy.updateMany({
+					where: { bodyId: body.id },
+					data: { fromEventId: catalogFirstEvent.id }
+				}),
+				...(bodyOwner.originalConsciousness ? [prisma.consciousness.update({
+					where: { id: bodyOwner.originalConsciousness.id },
+					data: { firstVisibleEventId: catalogFirstEvent.id }
+				})] : [])
+			]);
+		}
 
 		const existingPresences = await prisma.presence.findMany({
 			where: { entityId: body.id },
-			include: { fromEvent: { include: { chapter: true } } }
+			include: {
+				fromEvent: { include: { chapter: true } },
+				untilEvent: { include: { chapter: true } },
+				location: true
+			}
 		});
 		const requestedPresenceChapter = chapterNumber(catalogCharacter.mapPresenceFromChapterId);
+		const requestedUntilChapter = chapterNumber(catalogCharacter.mapPresenceUntilChapterId);
 		const existingPresence = existingPresences
 			.sort((left, right) => {
 				if (left.untilEventId === null && right.untilEventId !== null) return -1;
@@ -270,15 +396,23 @@ async function main() {
 				return right.fromEvent.chapter.number - left.fromEvent.chapter.number
 					|| right.fromEvent.sequence - left.fromEvent.sequence;
 			})
-			.find((presence) => requestedPresenceChapter === null
-				|| presence.fromEvent.chapter.number === requestedPresenceChapter)
+			.find((presence) => requestedPresenceChapter !== null
+				? presence.fromEvent.chapter.number === requestedPresenceChapter
+				: requestedUntilChapter !== null
+					? presence.location?.type !== 'UNKNOWN' && presence.fromEvent.chapter.number < requestedUntilChapter
+					: presence.untilEventId === null)
 			|| existingPresences[0];
 		if (existingPresence) {
 			const requestedPresenceEvent = requestedPresenceChapter ? await ensureEvent(requestedPresenceChapter) : null;
 			const requestedCertainty = /^(inconnu|suspect)$/i.test(catalogCharacter.shipLocation?.status || '') ? 'PROBABLE' : 'CONFIRMED';
-			const requestedPrecision = location.type === 'ROOM' ? 'EXACT_ROOM' : location.type === 'TIER' ? 'TIER' : 'ZONE';
+			const requestedPrecision = location.type === 'ROOM'
+				? 'EXACT_ROOM'
+				: location.type === 'TIER'
+					? 'TIER'
+					: location.type === 'UNKNOWN' ? 'UNKNOWN' : 'ZONE';
 			const requiresUpdate = existingPresence.locationId !== location.id
 				|| (requestedPresenceEvent && existingPresence.fromEventId !== requestedPresenceEvent.id)
+				|| (catalogCharacter.replaceMapPresenceHistory && existingPresence.untilEventId !== null)
 				|| existingPresence.precision !== requestedPrecision
 				|| existingPresence.certainty !== requestedCertainty;
 			if (requiresUpdate) {
@@ -287,20 +421,68 @@ async function main() {
 					data: {
 						locationId: location.id,
 						...(requestedPresenceEvent ? { fromEventId: requestedPresenceEvent.id } : {}),
+						...(catalogCharacter.replaceMapPresenceHistory ? { untilEventId: null } : {}),
 						precision: requestedPrecision,
 						certainty: requestedCertainty
 					}
 				});
 				presencesUpdated += 1;
 			}
-			const untilChapter = chapterNumber(catalogCharacter.mapPresenceUntilChapterId);
-			const untilEvent = untilChapter ? await ensureEvent(untilChapter) : null;
-			if (untilEvent && !existingPresence.untilEventId) {
+			if (catalogCharacter.replaceMapPresenceHistory) {
+				await prisma.presence.deleteMany({
+					where: { entityId: body.id, id: { not: existingPresence.id } }
+				});
+			}
+			const untilEvent = requestedUntilChapter ? await ensureEvent(requestedUntilChapter) : null;
+			if (untilEvent && existingPresence.untilEventId !== untilEvent.id) {
 				await prisma.presence.update({
 					where: { id: existingPresence.id },
 					data: { untilEventId: untilEvent.id }
 				});
 				presencesEnded += 1;
+			}
+			if (untilEvent && !isDeadStatus(catalogCharacter.shipLocation?.status)) {
+				const unknownLocation = locations.get('black-whale-unknown');
+				await prisma.presence.deleteMany({
+					where: {
+						entityId: body.id,
+						id: { not: existingPresence.id },
+						fromEventId: untilEvent.id,
+						untilEventId: untilEvent.id,
+						locationId: { not: unknownLocation?.id }
+					}
+				});
+				const continuations = await prisma.presence.findMany({
+					where: { entityId: body.id, fromEventId: untilEvent.id, locationId: unknownLocation?.id },
+					orderBy: { id: 'asc' }
+				});
+				const continuation = continuations[0];
+				if (!continuation) {
+					await prisma.presence.create({
+						data: {
+							entityType: 'BODY',
+							entityId: body.id,
+							locationId: unknownLocation?.id || null,
+							fromEventId: untilEvent.id,
+							precision: 'UNKNOWN',
+							certainty: 'LAST_KNOWN'
+						}
+					});
+					presencesCreated += 1;
+				} else {
+					if (continuation.untilEventId || continuation.precision !== 'UNKNOWN' || continuation.certainty !== 'LAST_KNOWN') {
+						await prisma.presence.update({
+							where: { id: continuation.id },
+							data: { untilEventId: null, precision: 'UNKNOWN', certainty: 'LAST_KNOWN' }
+						});
+						presencesUpdated += 1;
+					}
+					if (continuations.length > 1) {
+						await prisma.presence.deleteMany({
+							where: { id: { in: continuations.slice(1).map((presence) => presence.id) } }
+						});
+					}
+				}
 			}
 			positionsAlreadyCovered += 1;
 			continue;
@@ -320,7 +502,6 @@ async function main() {
 		}
 
 		const requestedPresenceEvent = requestedPresenceChapter ? await ensureEvent(requestedPresenceChapter) : null;
-		const requestedUntilChapter = chapterNumber(catalogCharacter.mapPresenceUntilChapterId);
 		const requestedUntilEvent = requestedUntilChapter ? await ensureEvent(requestedUntilChapter) : null;
 		const presenceStartEvent = requestedPresenceEvent || (bodyFirstEvent.chapter.number > 358 ? bodyFirstEvent : boardingEvent);
 		const existingOccupancy = await prisma.bodyOccupancy.findFirst({ where: { bodyId: body.id } });
@@ -333,7 +514,11 @@ async function main() {
 					locationId: location.id,
 					fromEventId: presenceStartEvent.id,
 					untilEventId: requestedUntilEvent?.id || null,
-					precision: location.type === 'ROOM' ? 'EXACT_ROOM' : location.type === 'TIER' ? 'TIER' : 'ZONE',
+					precision: location.type === 'ROOM'
+						? 'EXACT_ROOM'
+						: location.type === 'TIER'
+							? 'TIER'
+							: location.type === 'UNKNOWN' ? 'UNKNOWN' : 'ZONE',
 					certainty: /^(inconnu|suspect)$/i.test(catalogCharacter.shipLocation?.status || '') ? 'PROBABLE' : 'CONFIRMED'
 				}
 			})
@@ -362,8 +547,14 @@ async function main() {
 		presencesCreated += 1;
 	}
 
+	// A catalogue entry may have been created during this run for a legacy seed
+	// record (Vincent is the historical example), so perform one final merge.
+	const duplicatesMergedAfterCreation = await mergeDuplicateCharacters(characters);
+
 	console.log(JSON.stringify({
 		locationsSynced: locations.size,
+		duplicatesMerged: duplicatesMerged + duplicatesMergedAfterCreation,
+		generatedPassengerOrphansPruned,
 		charactersCreated,
 		bodiesCreated,
 		presencesCreated,

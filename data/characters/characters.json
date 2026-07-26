@@ -7351,12 +7351,14 @@
     "factionId": "prince-woble",
     "firstAppearanceChapterId": "ch-358",
     "canonStatus": "canon",
-    "mapPresenceUntilChapterId": "ch-414",
+    "mapPresenceFromChapterId": "ch-358",
+    "mapPresenceUntilChapterId": null,
+    "replaceMapPresenceHistory": true,
     "shipLocation": {
-      "tier": 1,
-      "room": "1014",
-      "status": "assumed presence until the reveal",
-      "role": "public identity of Woble"
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "véritable Woble — emplacement jamais confirmé"
     },
     "identity": {
       "status": "Impersonated identity",
@@ -7383,13 +7385,16 @@
     "canonicalName": "Oito's Nephew",
     "aliases": [
       "Fake Woble",
-      "Woble substituted"
+      "Woble substituted",
+      "Woble (boy)"
     ],
     "description": "Infant nephew of Oito publicly introduced as the Fourteenth Princess Woble and protected in room 1014.",
     "factionId": "prince-woble",
-    "firstAppearanceChapterId": "ch-414",
+    "firstAppearanceChapterId": "ch-358",
     "canonStatus": "canon",
-    "mapPresenceFromChapterId": "ch-414",
+    "mapPresenceFromChapterId": "ch-358",
+    "mapPresenceUntilChapterId": null,
+    "replaceMapPresenceHistory": true,
     "shipLocation": {
       "tier": 1,
       "room": "1014",
@@ -40873,5 +40878,2147 @@
     "battles": [
       "Machi Komacine vs. Hisoka Morow"
     ]
+  },
+  {
+    "id": "anesuto",
+    "canonicalName": "Anesuto",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "anzel",
+    "canonicalName": "Anzel",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "babimyna",
+    "canonicalName": "Babimyna",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "bachaem",
+    "canonicalName": "Bachaem",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "barrigen",
+    "canonicalName": "Barrigen",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "beeta",
+    "canonicalName": "Beeta",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "bharate",
+    "canonicalName": "Bharate",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "bille",
+    "canonicalName": "Bille",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "bladge",
+    "canonicalName": "Bladge",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "bucket",
+    "canonicalName": "Bucket",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "burvena",
+    "canonicalName": "Burvena",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "butch",
+    "canonicalName": "Butch",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "cashew",
+    "canonicalName": "Cashew",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "cavic",
+    "canonicalName": "Cavic",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "chiffon-toto",
+    "canonicalName": "Chiffon Toto",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "chiyamasi",
+    "canonicalName": "Chiyamasi",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "connelly",
+    "canonicalName": "Connelly",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "coventoba",
+    "canonicalName": "Coventoba",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "daemon",
+    "canonicalName": "Daemon",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "deruboro",
+    "canonicalName": "Deruboro",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "dogman",
+    "canonicalName": "Dogman",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "famule",
+    "canonicalName": "Famule",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "feitan-portor",
+    "canonicalName": "Feitan Portor",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "fukataki",
+    "canonicalName": "Fukataki",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "furichosefu",
+    "canonicalName": "Furichosefu",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "furykov",
+    "canonicalName": "Furykov",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "gadeau",
+    "canonicalName": "Gadeau",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "gateaume",
+    "canonicalName": "Gateaume",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "gelato",
+    "canonicalName": "Gelato",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "gihoruto",
+    "canonicalName": "Gihoruto",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "guerimori",
+    "canonicalName": "Guerimori",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "hashito",
+    "canonicalName": "Hashito",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "heisen",
+    "canonicalName": "Heisen",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "hignori",
+    "canonicalName": "Hignori",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "himonce",
+    "canonicalName": "Himoncé",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "hyuga",
+    "canonicalName": "Hyuga",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "illardia",
+    "canonicalName": "Illardia",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "ittoku",
+    "canonicalName": "Ittoku",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "javietti",
+    "canonicalName": "Javietti",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "kakin-announcer",
+    "canonicalName": "Kakin Announcer",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "kako",
+    "canonicalName": "Kako",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "kanjidol",
+    "canonicalName": "Kanjidol",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "kitokattamu",
+    "canonicalName": "Kitokattamu",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "kobihi",
+    "canonicalName": "Kōbihi",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "komiya",
+    "canonicalName": "Komiya",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "konattsu",
+    "canonicalName": "Konattsu",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "kontasutin",
+    "canonicalName": "Kontasutin",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "koroabde",
+    "canonicalName": "Koroabde",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "ladiolus",
+    "canonicalName": "Ladiolus",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "laroc",
+    "canonicalName": "Laroc",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "lizlura",
+    "canonicalName": "Lizlura",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "loberry",
+    "canonicalName": "Loberry",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "longhi",
+    "canonicalName": "Longhi",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "lynch-fullbokko",
+    "canonicalName": "Lynch Fullbokko",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "macne",
+    "canonicalName": "Macne",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "madwig",
+    "canonicalName": "Madwig",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "maor",
+    "canonicalName": "Maor",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "matvere",
+    "canonicalName": "Matvere",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "misha-hao",
+    "canonicalName": "Misha Hao",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "mizaurouno",
+    "canonicalName": "Mizaurouno",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "momiita",
+    "canonicalName": "Momiita",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "montblanc-toto",
+    "canonicalName": "Montblanc Toto",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "moswana",
+    "canonicalName": "Moswana",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "mushaho",
+    "canonicalName": "Mushaho",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "nadaasu",
+    "canonicalName": "Nadaasu",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "nagmum",
+    "canonicalName": "Nagmum",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "naikeru",
+    "canonicalName": "Naikēru",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "naipei",
+    "canonicalName": "Naipei",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "nikoraurusu",
+    "canonicalName": "Nikoraurusu",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "nipaper",
+    "canonicalName": "Nipaper",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "notre",
+    "canonicalName": "Notre",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "nukuocon",
+    "canonicalName": "Nukuocon",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "odessa",
+    "canonicalName": "Odessa",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "orarge",
+    "canonicalName": "Orarge",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "orau",
+    "canonicalName": "Orau",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "orzny",
+    "canonicalName": "Orzny",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "padaille",
+    "canonicalName": "Padaille",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "perigord",
+    "canonicalName": "Perigord",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "pitakusu",
+    "canonicalName": "Pitakusu",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "quorolle",
+    "canonicalName": "Quorolle",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "reuen",
+    "canonicalName": "Rēuen",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "rice",
+    "canonicalName": "Rice",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "roccoli",
+    "canonicalName": "Roccoli",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "ryoji",
+    "canonicalName": "Ryoji",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "ryubihhi",
+    "canonicalName": "Ryubihhi",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "sakata",
+    "canonicalName": "Sakata",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "saquelle",
+    "canonicalName": "Saquelle",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "sarahell",
+    "canonicalName": "Sarahell",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "satobi",
+    "canonicalName": "Satobi",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "shedule",
+    "canonicalName": "Shedule",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "shikaku",
+    "canonicalName": "Shikaku",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "slakka",
+    "canonicalName": "Slakka",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "sodom",
+    "canonicalName": "Sodom",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "souffle",
+    "canonicalName": "Soufflé",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "sumidori",
+    "canonicalName": "Sumidori",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "sun-bin",
+    "canonicalName": "Sun-bin",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "tagenpaku",
+    "canonicalName": "Tagenpaku",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "tajao",
+    "canonicalName": "Tajao",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "taler",
+    "canonicalName": "Taler",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "tassi",
+    "canonicalName": "Tassi",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "tenftory",
+    "canonicalName": "Tenftory",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "terebellum",
+    "canonicalName": "Terebellum",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "tevelares",
+    "canonicalName": "Tevelares",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "toneaster",
+    "canonicalName": "Toneaster",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "tsudonke",
+    "canonicalName": "Tsudonke",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "tuffdy",
+    "canonicalName": "Tuffdy",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "umanma",
+    "canonicalName": "Umanma",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "vantine",
+    "canonicalName": "Vantine",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "vergei",
+    "canonicalName": "Vergei",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "vic",
+    "canonicalName": "Vic",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "vict",
+    "canonicalName": "Vict",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "vincent",
+    "canonicalName": "Vincent",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "voconte",
+    "canonicalName": "Voconte",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "wolfe",
+    "canonicalName": "Wolfe",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "yokotani",
+    "canonicalName": "Yokotani",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "yuhirai",
+    "canonicalName": "Yuhirai",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "yuri",
+    "canonicalName": "Yuri",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "yushohi",
+    "canonicalName": "Yushohi",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
+    "id": "zakuro-custard",
+    "canonicalName": "Zakuro Custard",
+    "aliases": [],
+    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "factionId": null,
+    "firstAppearanceChapterId": "ch-359",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": null,
+      "room": null,
+      "status": "inconnu",
+      "role": "passager nommé"
+    },
+    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
   }
 ]

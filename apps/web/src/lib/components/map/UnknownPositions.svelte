@@ -32,7 +32,7 @@
 </script>
 
 {#if mapState.filters.showUnknownPositions}
-  <div class="absolute bottom-4 left-4 z-40 w-72 rounded-lg border border-gray-700 bg-[#1a1a1a] p-4 text-[#FFFFF0] shadow-lg">
+  <div class="absolute bottom-4 left-4 z-40 flex max-h-[min(38rem,calc(100%-2rem))] w-80 flex-col rounded-lg border border-gray-700 bg-[#1a1a1a] p-4 text-[#FFFFF0] shadow-lg">
     <div class="mb-3 flex items-center justify-between border-b border-gray-700 pb-2">
       <h3 class="text-sm font-bold tracking-wider text-gray-400 uppercase">Unknown location</h3>
       <button type="button" onclick={() => mapState.filters.showUnknownPositions = false} class="text-gray-500 hover:text-white" aria-label="Close unknown positions">✕</button>
@@ -44,7 +44,7 @@
     </div>
 
     {#if unknownCharacters.length > 0}
-      <ul class="space-y-2 text-sm">
+      <ul class="min-h-0 space-y-2 overflow-y-auto pr-1 text-sm">
         {#each unknownCharacters as character (character.id)}
           <li class="flex items-center text-gray-300">
             <span class="mr-2 h-2 w-2 rounded-full bg-gray-500"></span>

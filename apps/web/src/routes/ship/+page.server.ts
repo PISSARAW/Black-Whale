@@ -63,7 +63,8 @@ function resolveFactionTags(character: any, activeFactionTypes: string[]): Facti
 	return [...tags];
 }
 
-function compareEvents(a: { chapter: { number: number }; sequence: number }, b: { chapter: { number: number }; sequence: number }) {
+function compareEvents(a: { chapter: { number: number }; sequence: number; ordinal?: number | null }, b: { chapter: { number: number }; sequence: number; ordinal?: number | null }) {
+	if (a.ordinal != null && b.ordinal != null) return a.ordinal - b.ordinal;
 	return a.chapter.number - b.chapter.number || a.sequence - b.sequence;
 }
 

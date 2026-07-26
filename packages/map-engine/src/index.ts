@@ -155,6 +155,7 @@ export class MapEngine implements IMapEngine {
   }
 
   private compareEventOrder(left: any, right: any): number {
+    if (left.ordinal != null && right.ordinal != null) return left.ordinal - right.ordinal
     return left.chapter.number - right.chapter.number || left.sequence - right.sequence
   }
 
@@ -167,8 +168,11 @@ export class MapEngine implements IMapEngine {
       }
     })
     return presences.filter((presence: any) =>
-      this.compareEventOrder(presence.fromEvent, targetEvent) <= 0
-      && (!presence.untilEvent || this.compareEventOrder(targetEvent, presence.untilEvent) < 0)
+      presence.fromEvent.chapter.number <= targetEvent.chapter.number
+      && this.compareEventOrder(presence.fromEvent, targetEvent) <= 0
+      && (!presence.untilEvent
+        || presence.untilEvent.chapter.number > targetEvent.chapter.number
+        || this.compareEventOrder(targetEvent, presence.untilEvent) < 0)
     ) as any
   }
 

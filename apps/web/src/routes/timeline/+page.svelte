@@ -143,7 +143,9 @@
                   <a href="/ship?eventId={event.id}" aria-label="{event.title} — open on the map">
                     <span class="event-index">{String(eventIndex + 1).padStart(2, '0')}</span>
                     <span class="event-copy">
-                      {#if voyageTime}<span class:approximate={voyageTime.precision === 'approximate'} class="event-time">{formatVoyageTime(voyageTime)}</span>{/if}
+                      {#if event.isFlashback}<span class="event-time flashback">↶ Flashback · occurrence #{event.ordinal}</span>{/if}
+                      {#if event.occurredAtLabel}<span class="event-time">{event.occurredAtLabel}</span>
+                      {:else if voyageTime}<span class:approximate={voyageTime.precision === 'approximate'} class="event-time">{formatVoyageTime(voyageTime)}</span>{/if}
                       <span class="event-title">{event.title}</span>
                       <span class="event-summary">{event.summary}</span>
                     </span>
@@ -260,6 +262,7 @@
   .event-copy { display: grid; gap: .32rem; min-width: 0; }
   .event-time { width: fit-content; padding: .18rem .36rem; border: 1px solid rgba(112,189,193,.24); border-radius: .25rem; background: rgba(112,189,193,.07); color: #8fc9ca; font: 600 .49rem/1 var(--font-mono); letter-spacing: .08em; text-transform: uppercase; }
   .event-time.approximate { border-color: rgba(201,164,74,.22); background: rgba(201,164,74,.06); color: #c9ad66; }
+  .event-time.flashback { border-color: rgba(173,139,234,.35); background: rgba(173,139,234,.09); color: #c4a8f2; }
   .event-title { color: #e7e8e1; font: 600 1.02rem/1.25 'IBM Plex Sans Condensed', sans-serif; }
   .event-summary { color: #8d9a9d; font-size: .78rem; line-height: 1.5; }
   .event-action { display: flex; align-items: center; gap: .8rem; color: #667779; font-size: .58rem; letter-spacing: .1em; text-transform: uppercase; }

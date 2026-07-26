@@ -404,5 +404,72 @@
       "Tserriednich uses Heil-Lys as weapons"
     ],
     "description": "The Heil-Ly family deploys their Nen infection strategy. Morena Prudo activates her kill-rewarding ability, while Luini uses her dimensional powers to infiltrate secure areas."
+  },
+  {
+    "id": "ch-415",
+    "number": 415,
+    "publicationOrder": 415,
+    "title": "Truth or Falsehood",
+    "date": "2026-07-26",
+    "timeline": [
+      {
+        "event": "Furykov confronts Beyond about his sacrificial curse",
+        "isFlashback": true,
+        "storyDate": "Two months before departure",
+        "charactersInvolved": [
+          "beyond-netero",
+          "furykov"
+        ],
+        "location": "Kakin"
+      },
+      {
+        "event": "Kurapika and Oito prepare a message for the mainland",
+        "storyDate": "Current martial-law period",
+        "charactersInvolved": [
+          "kurapika",
+          "queen-oito",
+          "bill",
+          "babimyna"
+        ],
+        "location": "Black Whale 1 - Tier 1"
+      },
+      {
+        "event": "The royal camps respond to special martial law",
+        "storyDate": "Current martial-law period",
+        "charactersInvolved": [
+          "prince-zhanglei",
+          "coventoba",
+          "prince-tubeppa",
+          "maor",
+          "rihan",
+          "theta",
+          "salkov",
+          "prince-tyson",
+          "prince-fugetsu",
+          "biscuit-krueger",
+          "vergei",
+          "prince-marayam"
+        ],
+        "location": "Black Whale 1 - Tier 1 Royal Residential Sector"
+      },
+      {
+        "event": "Ridge subdues Kanjidol during martial law",
+        "storyDate": "Current martial-law period",
+        "charactersInvolved": [
+          "ridge",
+          "kanjidol",
+          "prince-luzurus"
+        ],
+        "location": "Black Whale 1 - Tier 1 Royal Residential Sector"
+      }
+    ],
+    "location": "Kakin / Black Whale 1 - Tier 1",
+    "keyEvents": [
+      "Furykov analyzes and confronts Beyond about his curse",
+      "Furykov's connection to Beyond",
+      "Conflicting orders reshape the royal camps",
+      "Ridge stops Kanjidol"
+    ],
+    "description": "A flashback two months before departure shows Furykov analyzing the sacrificial curse placed on him at birth and confronting Beyond after the Seed Urn Ceremony assigns it a royal target. In the present, Kurapika and Oito prepare a message for the mainland before martial law spreads and Ridge halts Kanjidol's assault."
   }
 ]

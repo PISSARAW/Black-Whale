@@ -18,7 +18,7 @@
       character.shipLocation?.tier ? `Tier ${character.shipLocation.tier}` : null,
       character.shipLocation?.room
     ].filter(Boolean).join(' · ') || 'Unknown / possibly off ship');
-  let latestState = $derived(timeline.findLast((entry: any) => entry.kind === 'body-state' || entry.kind === 'consciousness-state' || entry.kind === 'appearance'));
+  let latestState = $derived(timeline.findLast((entry: any) => !entry.isFlashback && (entry.kind === 'body-state' || entry.kind === 'consciousness-state' || entry.kind === 'appearance')));
 
   const labels: Record<string, string> = {
     ALIVE: 'Alive', INJURED: 'Injured', UNCONSCIOUS: 'Unconscious', DEAD: 'Dead', DESTROYED: 'Destroyed',

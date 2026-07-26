@@ -16,6 +16,8 @@ type TimelineEntry = {
 	location?: string | null;
 	certainty?: string | null;
 	untilChapter?: number | null;
+	isFlashback?: boolean;
+	occurredAtLabel?: string | null;
 };
 
 type ChapterVisit = {
@@ -116,7 +118,9 @@ function bodyTimeline(body: any, locationPaths: Map<string, string>, includeLoca
 			detail: eventDetail(presence.fromEvent),
 			location: presenceLocation(presence, locationPaths),
 			certainty: presence.certainty,
-			untilChapter: presence.untilEvent?.chapter.number || null
+			untilChapter: presence.untilEvent?.chapter.number || null,
+			isFlashback: presence.fromEvent.isFlashback,
+			occurredAtLabel: presence.fromEvent.occurredAtLabel
 		})) : []),
 		...body.states.map((state: any) => ({
 			chapter: state.fromEvent.chapter.number,
@@ -124,7 +128,9 @@ function bodyTimeline(body: any, locationPaths: Map<string, string>, includeLoca
 			kind: 'body-state' as const,
 			label: state.state,
 			detail: eventDetail(state.fromEvent),
-			untilChapter: state.untilEvent?.chapter.number || null
+			untilChapter: state.untilEvent?.chapter.number || null,
+			isFlashback: state.fromEvent.isFlashback,
+			occurredAtLabel: state.fromEvent.occurredAtLabel
 		}))
 	];
 }
@@ -140,7 +146,9 @@ function buildTimeline(character: any, jsonCharacter: any, locationPaths: Map<st
 			kind: 'consciousness-state',
 			label: state.state,
 			detail: eventDetail(state.fromEvent),
-			untilChapter: state.untilEvent?.chapter.number || null
+			untilChapter: state.untilEvent?.chapter.number || null,
+			isFlashback: state.fromEvent.isFlashback,
+			occurredAtLabel: state.fromEvent.occurredAtLabel
 		});
 	}
 
@@ -160,7 +168,9 @@ function buildTimeline(character: any, jsonCharacter: any, locationPaths: Map<st
 			detail: eventDetail(occupancy.fromEvent),
 			location: presenceLocation(presence, locationPaths),
 			certainty: occupancy.certainty,
-			untilChapter: occupancy.untilEvent?.chapter.number || null
+			untilChapter: occupancy.untilEvent?.chapter.number || null,
+			isFlashback: occupancy.fromEvent.isFlashback,
+			occurredAtLabel: occupancy.fromEvent.occurredAtLabel
 		});
 	}
 
@@ -192,7 +202,9 @@ function appendApparentBodyTimeline(timeline: TimelineEntry[], appearances: any[
 			kind: 'appearance',
 			label: `${bodyLabel} prend cette apparence`,
 			detail: eventDetail(appearance.fromEvent),
-			untilChapter: appearance.untilEvent?.chapter.number || null
+			untilChapter: appearance.untilEvent?.chapter.number || null,
+			isFlashback: appearance.fromEvent.isFlashback,
+			occurredAtLabel: appearance.fromEvent.occurredAtLabel
 		});
 		for (const presence of appearance.body?.presences || []) {
 			timeline.push({
@@ -203,7 +215,9 @@ function appendApparentBodyTimeline(timeline: TimelineEntry[], appearances: any[
 				detail: `${bodyLabel} · ${eventDetail(presence.fromEvent) || 'présence active'}`,
 				location: presenceLocation(presence, locationPaths),
 				certainty: presence.certainty,
-				untilChapter: presence.untilEvent?.chapter.number || null
+				untilChapter: presence.untilEvent?.chapter.number || null,
+				isFlashback: presence.fromEvent.isFlashback,
+				occurredAtLabel: presence.fromEvent.occurredAtLabel
 			});
 		}
 	}
@@ -217,12 +231,15 @@ function buildChapterTrajectory(
 	chapters: any[],
 	locationPaths: Map<string, string>
 ): ChapterTrajectory[] {
-	const chapterNumbers = new Set(timeline.flatMap((entry) => entry.chapter === null ? [] : [entry.chapter]));
+	// A flashback revealed in a chapter is not a present-time position in that
+	// chapter. It stays in the event index but must not move the character there.
+	const chapterNumbers = new Set(timeline.flatMap((entry) => entry.chapter === null || entry.isFlashback ? [] : [entry.chapter]));
 	const identifiers = new Set([jsonCharacter.id, character?.slug].filter(Boolean));
 	const catalogueEvents = new Map<number, any[]>();
 
 	for (const chapter of chapters) {
 		const matchingEvents = (chapter.timeline || []).filter((event: any) =>
+			!event.isFlashback &&
 			(event.charactersInvolved || []).some((id: string) => identifiers.has(id))
 		);
 		if (matchingEvents.length) {
@@ -255,6 +272,7 @@ function buildChapterTrajectory(
 		}
 
 		for (const entry of events) {
+			if (entry.isFlashback) continue;
 			if (entry.kind === 'body-location') addVisit(visits, {
 				sequence: entry.sequence,
 				location: entry.location || entry.label,

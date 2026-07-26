@@ -21,7 +21,8 @@
     "db:sync-passengers": "node prisma/sync_hunterpedia_passengers.mjs",
     "db:backfill-map": "node prisma/backfill_catalog_map.mjs && node prisma/backfill_identity_events.mjs",
     "db:backfill-identities": "node prisma/backfill_identity_events.mjs",
-    "db:backfill-timeline": "node prisma/backfill_timeline.mjs"
+    "db:backfill-timeline": "node prisma/backfill_timeline.mjs",
+    "db:backfill-chapter-415": "node prisma/backfill_chapter_415.mjs"
   },
   "dependencies": {
     "@prisma/client": "^5.0.0"

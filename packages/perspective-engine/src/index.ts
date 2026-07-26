@@ -6,10 +6,12 @@ import type { IKnowledgeEngine, KnowledgeQuery } from '@black-whale/knowledge-en
 type OrderedEvent = {
   id: string
   sequence: number
+  ordinal?: number | null
   chapter: { number: number }
 }
 
 function compareEventOrder(left: OrderedEvent, right: OrderedEvent) {
+  if (left.ordinal != null && right.ordinal != null) return left.ordinal - right.ordinal
   return left.chapter.number - right.chapter.number || left.sequence - right.sequence
 }
 
@@ -147,8 +149,11 @@ export class PerspectiveEngine implements IPerspectiveEngine {
       }
     })
     const activeBodyPresences = allBodyPresences.filter((presence: any) => {
-      const started = compareEventOrder(presence.fromEvent as OrderedEvent, targetEvent as OrderedEvent) <= 0
-      const notEnded = !presence.untilEvent || compareEventOrder(targetEvent as OrderedEvent, presence.untilEvent as OrderedEvent) < 0
+      const started = presence.fromEvent.chapter.number <= targetEvent.chapter.number
+        && compareEventOrder(presence.fromEvent as OrderedEvent, targetEvent as OrderedEvent) <= 0
+      const notEnded = !presence.untilEvent
+        || presence.untilEvent.chapter.number > targetEvent.chapter.number
+        || compareEventOrder(targetEvent as OrderedEvent, presence.untilEvent as OrderedEvent) < 0
       return started && notEnded
     })
     const observerPresence = currentBody

@@ -10,7 +10,7 @@
     "firstAppearanceChapterId": "ch-340",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": 2,
+      "tier": 1,
       "room": "1014",
       "status": "actif",
       "role": "Nen teacher/protector"
@@ -426,12 +426,19 @@
         "chapter": 414,
         "title": "Friends",
         "status": "appears"
+      },
+      {
+        "chapter": 415,
+        "title": "Truth or Falsehood",
+        "status": "appears"
       }
     ],
     "battles": [
       "Kurapika vs. Sayird",
       "Kurapika and Bill vs. Vincent"
-    ]
+    ],
+    "mapPresenceFromChapterId": "ch-415",
+    "temporalIdentityManaged": true
   },
   {
     "id": "hisoka",
@@ -2151,6 +2158,11 @@
         "chapter": 414,
         "title": "Friends",
         "status": "mentioned"
+      },
+      {
+        "chapter": 415,
+        "title": "Truth or Falsehood",
+        "status": "mentioned"
       }
     ],
     "battles": [
@@ -2648,7 +2660,7 @@
     "firstAppearanceChapterId": "ch-349",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": 2,
+      "tier": 1,
       "room": "1003",
       "status": "actif",
       "role": "strategie / renseignement"
@@ -3058,8 +3070,15 @@
         "chapter": 414,
         "title": "Friends",
         "status": "absent"
+      },
+      {
+        "chapter": 415,
+        "title": "Truth or Falsehood",
+        "status": "appears"
       }
-    ]
+    ],
+    "mapPresenceFromChapterId": "ch-415",
+    "temporalIdentityManaged": true
   },
   {
     "id": "prince-tserriednich",
@@ -3497,6 +3516,11 @@
         "chapter": 414,
         "title": "Friends",
         "status": "absent"
+      },
+      {
+        "chapter": 415,
+        "title": "Truth or Falsehood",
+        "status": "mentioned"
       }
     ]
   },
@@ -3919,8 +3943,15 @@
         "chapter": 414,
         "title": "Friends",
         "status": "absent"
+      },
+      {
+        "chapter": 415,
+        "title": "Truth or Falsehood",
+        "status": "appears"
       }
-    ]
+    ],
+    "mapPresenceFromChapterId": "ch-415",
+    "temporalIdentityManaged": true
   },
   {
     "id": "prince-tyson",
@@ -4342,8 +4373,15 @@
         "chapter": 414,
         "title": "Friends",
         "status": "absent"
+      },
+      {
+        "chapter": 415,
+        "title": "Truth or Falsehood",
+        "status": "appears"
       }
-    ]
+    ],
+    "mapPresenceFromChapterId": "ch-415",
+    "temporalIdentityManaged": true
   },
   {
     "id": "prince-luzurus",
@@ -4765,6 +4803,11 @@
         "chapter": 414,
         "title": "Friends",
         "status": "appears"
+      },
+      {
+        "chapter": 415,
+        "title": "Truth or Falsehood",
+        "status": "mentioned"
       }
     ]
   },
@@ -6077,8 +6120,8 @@
     "shipLocation": {
       "tier": 1,
       "room": "1011",
-      "status": "alive / hospitalized at the Bureau of Justice",
-      "role": "teleportation / protected witness"
+      "status": "vivante — ordre d’escorte vers les quartiers VVIP",
+      "role": "princesse sous protection judiciaire"
     },
     "biography": [
       "Fugetsu is introduced as the Eleventh Princess, twin of Kacho and daughter of Seiko. During departure ceremonies, she stays alongside her sister. Kacho offers him an alliance and claims to want to kill their rivals before asking Nasubi to spare him; Fugetsu shyly accepts without immediately perceiving that this hardness is a protective facade.",
@@ -6491,8 +6534,15 @@
         "chapter": 414,
         "title": "Friends",
         "status": "absent"
+      },
+      {
+        "chapter": 415,
+        "title": "Truth or Falsehood",
+        "status": "appears"
       }
-    ]
+    ],
+    "mapPresenceFromChapterId": "ch-415",
+    "temporalIdentityManaged": true
   },
   {
     "id": "prince-momoze",
@@ -7340,8 +7390,15 @@
         "chapter": 414,
         "title": "Friends",
         "status": "absent"
+      },
+      {
+        "chapter": 415,
+        "title": "Truth or Falsehood",
+        "status": "mentioned"
       }
-    ]
+    ],
+    "mapPresenceFromChapterId": "ch-415",
+    "temporalIdentityManaged": true
   },
   {
     "id": "prince-woble",
@@ -7378,6 +7435,11 @@
       {
         "chapter": 414,
         "title": "Friends",
+        "status": "mentioned"
+      },
+      {
+        "chapter": 415,
+        "title": "Truth or Falsehood",
         "status": "mentioned"
       }
     ]
@@ -7818,7 +7880,7 @@
     "firstAppearanceChapterId": "ch-349",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": 2,
+      "tier": 1,
       "room": "1014",
       "status": "actif",
       "role": "alliee / espionne"
@@ -8217,8 +8279,15 @@
         "chapter": 414,
         "title": "Friends",
         "status": "appears"
+      },
+      {
+        "chapter": 415,
+        "title": "Truth or Falsehood",
+        "status": "appears"
       }
-    ]
+    ],
+    "mapPresenceFromChapterId": "ch-415",
+    "temporalIdentityManaged": true
   },
   {
     "id": "beyond-netero",
@@ -8630,6 +8699,12 @@
         "chapter": 414,
         "title": "Friends",
         "status": "appears"
+      },
+      {
+        "chapter": 415,
+        "title": "Truth or Falsehood",
+        "status": "appears",
+        "context": "flashback"
       }
     ]
   },
@@ -10276,7 +10351,7 @@
     "firstAppearanceChapterId": "ch-137",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": 2,
+      "tier": 1,
       "room": "1013",
       "status": "actif",
       "role": "guard / protective"
@@ -10689,8 +10764,15 @@
         "chapter": 414,
         "title": "Friends",
         "status": "absent"
+      },
+      {
+        "chapter": 415,
+        "title": "Truth or Falsehood",
+        "status": "appears"
       }
-    ]
+    ],
+    "mapPresenceFromChapterId": "ch-415",
+    "temporalIdentityManaged": true
   },
   {
     "id": "hanzo",
@@ -11953,7 +12035,7 @@
     "firstAppearanceChapterId": "ch-363",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": 2,
+      "tier": 1,
       "room": "1005",
       "status": "actif",
       "role": "soldat / transfere"
@@ -12355,8 +12437,15 @@
         "chapter": 414,
         "title": "Friends",
         "status": "absent"
+      },
+      {
+        "chapter": 415,
+        "title": "Truth or Falsehood",
+        "status": "appears"
       }
-    ]
+    ],
+    "mapPresenceFromChapterId": "ch-415",
+    "temporalIdentityManaged": true
   },
   {
     "id": "theta",
@@ -12375,7 +12464,7 @@
       "role": "personal guard/instructor of recovering Nen"
     },
     "mapLocationCorrection": true,
-    "mapPresenceFromChapterId": "ch-362",
+    "mapPresenceFromChapterId": "ch-415",
     "biography": [
       "Before the trip, Theta, Salkov and three other Tserriednich guardsmen pass the 289th Hunter Exam. She informs the prince of the results, of the Association's lie checks and of the opposing guards who refused or failed. Tserriednich orders him to resume his defensive duties and study the plans of the Black Whale, including its exits, blind spots and reworked areas.",
       "Two hours after departure, Theta and Salkov understand that Kurapika's announcement will push Tserriednich to learn Nen. Theta decides to teach him herself in order to slow down and control his progress. When she meets her guardian Spirit Beast, she is terrified but convinces herself that only she can still contain the prince.",
@@ -12785,11 +12874,17 @@
         "chapter": 414,
         "title": "Friends",
         "status": "absent"
+      },
+      {
+        "chapter": 415,
+        "title": "Truth or Falsehood",
+        "status": "appears"
       }
     ],
     "battles": [
       "Theta vs. Tserriednich Hui Guo Rou"
-    ]
+    ],
+    "temporalIdentityManaged": true
   },
   {
     "id": "hinrigh-biganduffno",
@@ -20176,7 +20271,7 @@
     "firstAppearanceChapterId": "ch-358",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": 2,
+      "tier": 1,
       "room": "1014",
       "status": "actif",
       "role": "guard"
@@ -20588,6 +20683,11 @@
         "chapter": 414,
         "title": "Friends",
         "status": "appears"
+      },
+      {
+        "chapter": 415,
+        "title": "Truth or Falsehood",
+        "status": "appears"
       }
     ],
     "battles": [
@@ -20602,7 +20702,9 @@
         ],
         "chapter": 364
       }
-    ]
+    ],
+    "mapPresenceFromChapterId": "ch-415",
+    "temporalIdentityManaged": true
   },
   {
     "id": "giuliano",
@@ -22231,15 +22333,15 @@
     "id": "ridge",
     "canonicalName": "Ridge",
     "aliases": [],
-    "description": "Hunter.",
+    "description": "Hunter attached to a royal guard detail. During special martial law, he overpowers and detains Kanjidol after the soldier arms part of Luzurus's guard detail.",
     "factionId": null,
     "firstAppearanceChapterId": "ch-362",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
-      "role": "divers"
+      "tier": 1,
+      "room": "Secteur résidentiel royal",
+      "status": "actif",
+      "role": "Hunter / garde royal"
     },
     "mangaAppearances": [
       {
@@ -22616,11 +22718,18 @@
         "chapter": 414,
         "title": "Friends",
         "status": "appears"
+      },
+      {
+        "chapter": 415,
+        "title": "Truth or Falsehood",
+        "status": "appears"
       }
     ],
     "biography": [
       "Ridge is a Hunter attached to a royal guard detail. He participates in the inter-prince information network and remains active during the later days of the succession contest."
-    ]
+    ],
+    "mapPresenceFromChapterId": "ch-415",
+    "temporalIdentityManaged": true
   },
   {
     "id": "sanbica-norton",
@@ -27165,7 +27274,7 @@
       "role": "garde / instructeur de Nen"
     },
     "mapLocationCorrection": true,
-    "mapPresenceFromChapterId": "ch-348",
+    "mapPresenceFromChapterId": "ch-415",
     "biography": [
       "Salkov is one of Tserriednich's guards who pass the provisional Hunter Exam. He supports Theta's attempt to control the prince's awakening and verifies that no blood remains after her apparent shooting.",
       "During Theta's recovery, Salkov takes over the lessons. He times Tserriednich's Zetsu and realizes that the prince is mastering in days what took him months, while investigating the possibility that Parallel Future activates during Zetsu."
@@ -27556,8 +27665,14 @@
         "chapter": 414,
         "title": "Friends",
         "status": "absent"
+      },
+      {
+        "chapter": 415,
+        "title": "Truth or Falsehood",
+        "status": "appears"
       }
-    ]
+    ],
+    "temporalIdentityManaged": true
   },
   {
     "id": "zomeesa",
@@ -40921,19 +41036,26 @@
     "id": "babimyna",
     "canonicalName": "Babimyna",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "description": "Benjamin's private soldier assigned to monitor the Woble camp. He remains in Room 1014 when Kurapika and Oito prepare their mainland message.",
     "factionId": null,
     "firstAppearanceChapterId": "ch-359",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
-      "role": "passager nommé"
+      "tier": 1,
+      "room": "1014",
+      "status": "actif",
+      "role": "soldat privé de Benjamin / surveillant du camp Woble"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-415",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [
+      {
+        "chapter": 415,
+        "title": "Truth or Falsehood",
+        "status": "appears"
+      }
+    ],
+    "temporalIdentityManaged": true
   },
   {
     "id": "bachaem",
@@ -41191,19 +41313,26 @@
     "id": "coventoba",
     "canonicalName": "Coventoba",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "description": "Benjamin's private soldier assigned to Zhang Lei's camp. He remains in Room 1003 when special martial law is declared.",
     "factionId": null,
     "firstAppearanceChapterId": "ch-359",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
-      "role": "passager nommé"
+      "tier": 1,
+      "room": "1003",
+      "status": "actif",
+      "role": "soldat privé de Benjamin / garde du camp Zhang Lei"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-415",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [
+      {
+        "chapter": 415,
+        "title": "Truth or Falsehood",
+        "status": "appears"
+      }
+    ],
+    "temporalIdentityManaged": true
   },
   {
     "id": "daemon",
@@ -41335,19 +41464,27 @@
     "id": "furykov",
     "canonicalName": "Furykov",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "description": "Benjamin's private soldier and Nen analyst. A cursed child of Beyond who discovered the sacrificial curse after the Seed Urn Ceremony; his current position aboard remains unconfirmed.",
     "factionId": null,
     "firstAppearanceChapterId": "ch-359",
     "canonStatus": "canon",
     "shipLocation": {
       "tier": null,
       "room": null,
-      "status": "inconnu",
-      "role": "passager nommé"
+      "status": "actif — position actuelle inconnue",
+      "role": "soldat privé de Benjamin / analyste Nen"
     },
     "mapPresenceFromChapterId": "ch-359",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [
+      {
+        "chapter": 415,
+        "title": "Truth or Falsehood",
+        "status": "appears",
+        "context": "flashback"
+      }
+    ],
+    "temporalIdentityManaged": true
   },
   {
     "id": "gadeau",
@@ -41623,19 +41760,26 @@
     "id": "kanjidol",
     "canonicalName": "Kanjidol",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "description": "Benjamin's private soldier. After arming part of Luzurus's guard detail during special martial law, he is injured and detained by Hunter Ridge.",
     "factionId": null,
     "firstAppearanceChapterId": "ch-359",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
-      "role": "passager nommé"
+      "tier": 1,
+      "room": "Secteur résidentiel royal",
+      "status": "blessé et détenu",
+      "role": "soldat privé de Benjamin"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-415",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [
+      {
+        "chapter": 415,
+        "title": "Truth or Falsehood",
+        "status": "appears"
+      }
+    ],
+    "temporalIdentityManaged": true
   },
   {
     "id": "kitokattamu",
@@ -41893,19 +42037,26 @@
     "id": "maor",
     "canonicalName": "Maor",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "description": "Tubeppa's senior guard. He remains in Room 1005 with her camp during the special martial-law orders.",
     "factionId": null,
     "firstAppearanceChapterId": "ch-359",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
-      "role": "passager nommé"
+      "tier": 1,
+      "room": "1005",
+      "status": "actif",
+      "role": "capitaine des gardes de Tubeppa"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-415",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [
+      {
+        "chapter": 415,
+        "title": "Truth or Falsehood",
+        "status": "appears"
+      }
+    ],
+    "temporalIdentityManaged": true
   },
   {
     "id": "matvere",
@@ -42829,19 +42980,26 @@
     "id": "vergei",
     "canonicalName": "Vergei",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "description": "Captain of Marayam's guards. He remains inside the prince's Nen-isolated Room 1013 during special martial law.",
     "factionId": null,
     "firstAppearanceChapterId": "ch-359",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
-      "role": "passager nommé"
+      "tier": 1,
+      "room": "1013",
+      "status": "actif",
+      "role": "capitaine des gardes de Marayam"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-415",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [
+      {
+        "chapter": 415,
+        "title": "Truth or Falsehood",
+        "status": "appears"
+      }
+    ],
+    "temporalIdentityManaged": true
   },
   {
     "id": "vic",

@@ -17,7 +17,8 @@ export class WorldStateService {
     const point = {
       eventId: query.eventId,
       chapterId: query.chapterId,
-      sequence: undefined as number | undefined
+      sequence: undefined as number | undefined,
+      revealedThroughChapter: query.spoilerLimit,
     }
     
     const worldState = await this.timelineEngine.getWorldState(point)

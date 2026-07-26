@@ -434,7 +434,10 @@
         <span>Timeline</span>
         <strong>{currentEvt?.title || 'Current state'}</strong>
       </div>
-      <div class="sequence-badge">CH <strong>{currentEvt?.chapter?.number ?? '—'}</strong> · EV <strong>{currentEvt?.sequence ?? '—'}</strong></div>
+      <div class="sequence-badge">
+        {#if currentEvt?.isFlashback}↶ FLASHBACK · {/if}CH <strong>{currentEvt?.chapter?.number ?? '—'}</strong> · EV <strong>{currentEvt?.sequence ?? '—'}</strong>
+        {#if currentEvt?.occurredAtLabel} · <strong>{currentEvt.occurredAtLabel}</strong>{/if}
+      </div>
     </div>
 
     {#if data.events.length > 0}

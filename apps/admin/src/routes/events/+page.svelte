@@ -19,9 +19,11 @@
 					<div>
 						<h2 class="text-xl font-semibold">
 							<span class="text-gray-500 mr-2">Ch. {event.chapter.number} (Seq {event.sequence})</span>
+							{#if event.isFlashback}<span class="text-amber-700 text-sm mr-2">FLASHBACK · Ord. {event.ordinal}</span>{/if}
 							{event.title}
 						</h2>
 						<p class="text-gray-600 mt-1">{event.summary}</p>
+						{#if event.occurredAtLabel}<p class="text-sm text-gray-500 mt-1">Occurred: {event.occurredAtLabel}</p>{/if}
 					</div>
 				</div>
 

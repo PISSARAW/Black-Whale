@@ -43,6 +43,31 @@
 				<label class="block text-sm font-medium text-gray-700 mb-1">Summary</label>
 				<textarea name="summary" rows="3" class="w-full border-gray-300 rounded-md shadow-sm p-2 border" required></textarea>
 			</div>
+
+			<div class="grid grid-cols-2 gap-4">
+				<div>
+					<label for="temporal-mode" class="block text-sm font-medium text-gray-700 mb-1">Narrative mode</label>
+					<select id="temporal-mode" name="temporalMode" class="w-full border-gray-300 rounded-md shadow-sm p-2 border">
+						<option value="current">Current event</option>
+						<option value="flashback">Flashback revealed in this chapter</option>
+					</select>
+				</div>
+				<div>
+					<label for="occurred-at-label" class="block text-sm font-medium text-gray-700 mb-1">In-world time label</label>
+					<input id="occurred-at-label" type="text" name="occurredAtLabel" class="w-full border-gray-300 rounded-md shadow-sm p-2 border" placeholder="e.g. Day 10 · 19:35">
+				</div>
+			</div>
+
+			<div>
+				<label for="occurs-before-event" class="block text-sm font-medium text-gray-700 mb-1">Actually occurred before</label>
+				<select id="occurs-before-event" name="occursBeforeEventId" class="w-full border-gray-300 rounded-md shadow-sm p-2 border">
+					<option value="">End of known chronology (default)</option>
+					{#each data.events as event}
+						<option value={event.id}>Ch. {event.chapter.number} · {event.title}</option>
+					{/each}
+				</select>
+				<p class="text-sm text-gray-500 mt-1">Required for a flashback. This controls world-state chronology, not reading order.</p>
+			</div>
 		</div>
 
 		<!-- Consequence Data -->
@@ -83,7 +108,7 @@
 					<select name="certainty" class="w-full border-gray-300 rounded-md shadow-sm p-2 border">
 						<option value="CONFIRMED">Confirmed</option>
 						<option value="PROBABLE">Probable</option>
-						<option value="LAST_KNOWN">Last Known</option>
+						<option value="UNKNOWN">Unknown</option>
 					</select>
 				</div>
 			</div>

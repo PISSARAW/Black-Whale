@@ -11,6 +11,8 @@ export interface CursorSource {
   id: string
   chapter: { number: number }
   sequence: number
+  /** Canonical occurrence order. Falls back to publication order for legacy data. */
+  ordinal?: number | null
 }
 
 export function compareStoryPosition(
@@ -21,11 +23,15 @@ export function compareStoryPosition(
 }
 
 export function buildCanonicalCursors(events: CursorSource[], branchId = 'canon'): StoryCursor[] {
-  return [...events]
-    .sort((left, right) => left.chapter.number - right.chapter.number || left.sequence - right.sequence)
-    .map((event, ordinal) => ({
+  const ordered = [...events]
+    .sort((left, right) => {
+      if (left.ordinal != null && right.ordinal != null) return left.ordinal - right.ordinal
+      return left.chapter.number - right.chapter.number || left.sequence - right.sequence
+    })
+
+  return ordered.map((event, index) => ({
       branchId,
-      ordinal,
+      ordinal: event.ordinal ?? index,
       eventId: event.id,
       chapterNumber: event.chapter.number,
       localSequence: event.sequence,

@@ -10,6 +10,10 @@ export interface NarrativeEvent {
   id: string;
   chapterId: string;
   sequence: number;
+  /** Chronological occurrence order, independent from the revealing chapter. */
+  ordinal?: number;
+  isFlashback?: boolean;
+  occurredAtLabel?: string;
   title: string;
   summary: string;
   locationId?: string;

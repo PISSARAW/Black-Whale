@@ -307,7 +307,13 @@ model NarrativeEvent {
   chapterId  String
   sequence   Int
   /// Global canonical order. Unlike sequence, this never resets between chapters.
+  /// This is the order in which events actually happened aboard the ship, so a
+  /// flashback may have a lower ordinal than the chapter that reveals it.
   ordinal    Int?    @unique
+  /// True when the source chapter narrates an event that happened earlier.
+  isFlashback Boolean @default(false)
+  /// Human-readable in-world time when canon gives one (for example "Day 10 · 19:35").
+  occurredAtLabel String?
   /// Whether the event belongs to the voyage timeline shown in the Black Whale UI.
   occursOnBlackWhale Boolean @default(true)
   title      String

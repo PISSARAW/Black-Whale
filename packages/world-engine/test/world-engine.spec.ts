@@ -29,6 +29,17 @@ describe('world engine', () => {
     expect(cursors.map(({ eventId, ordinal }) => [eventId, ordinal])).toEqual([['a', 0], ['b', 1]])
   })
 
+  it('places a revealed flashback at its real chronological position', () => {
+    const cursors = buildCanonicalCursors([
+      { id: 'present', chapter: { number: 400 }, sequence: 1, ordinal: 20 },
+      { id: 'flashback', chapter: { number: 410 }, sequence: 1, ordinal: 10 },
+    ])
+    expect(cursors.map(({ eventId, ordinal }) => [eventId, ordinal])).toEqual([
+      ['flashback', 10],
+      ['present', 20],
+    ])
+  })
+
   it('moves universal entities through the same reducer', () => {
     let state = createEmptyWorld(cursor)
     state = reduceWorld(state, event({

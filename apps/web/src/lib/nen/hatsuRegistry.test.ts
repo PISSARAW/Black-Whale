@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import abilityCatalog from '../../../../../data/abilities/abilities.json'
-import { HATSU_PROFILES, hatsuById } from './hatsuRegistry.js'
+import { HATSU_PROFILES, HATSU_SITE_IMPACT_BY_KIND, hatsuById, siteImpactFor } from './hatsuRegistry.js'
 
 describe('global Hatsu interaction registry', () => {
   it('provides an interaction for every catalogued Hatsu', () => {
@@ -26,5 +26,18 @@ describe('global Hatsu interaction registry', () => {
       expect(profile.cost.length).toBeGreaterThan(3)
       expect(profile.action.length).toBeGreaterThan(3)
     }
+  })
+
+  it('requires a non-visual functional site impact for every Hatsu', () => {
+    const allowedImpacts = new Set([
+      'navigation', 'map-state', 'control', 'content-access',
+      'layout', 'storage', 'data-revelation', 'simulation-state'
+    ])
+
+    for (const profile of HATSU_PROFILES) {
+      expect(siteImpactFor(profile), profile.id).toBeTruthy()
+      expect(allowedImpacts.has(siteImpactFor(profile)), profile.id).toBe(true)
+    }
+    expect(Object.keys(HATSU_SITE_IMPACT_BY_KIND)).toHaveLength(HATSU_PROFILES.length)
   })
 })

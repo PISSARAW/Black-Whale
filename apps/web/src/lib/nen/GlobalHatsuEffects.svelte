@@ -3,16 +3,18 @@
   import { goto } from '$app/navigation'
   import { page } from '$app/stores'
   import { mapState, type ZoomLevel } from '$lib/state/mapState.svelte'
-  import { activeHatsu, consumeEmperorTimeHour, emperorTimeLifeHours, parallelFutureVisible } from './hatsuState.js'
+  import { activeHatsu, activateHatsu, consumeEmperorTimeHour, deactivateHatsu, emperorTimeLifeHours, parallelFutureVisible } from './hatsuState.js'
+  import { HATSU_PROFILES, siteImpactFor, type HatsuProfile } from './hatsuRegistry.js'
 
   type Point = { x: number; y: number; label: string; id: number; alert?: boolean; details?: string[] }
   type CaptureZone = { left: number; top: number; width: number; height: number }
   type RecordedEvent = { x: number; y: number; label: string }
   type PortalAnchor = { x: number; y: number; label: string; url: string; zoom: ZoomLevel; tier: string | null; location: string | null }
-  type ElementSnapshot = { style: string; className: string }
-  type StoredItem = { id: number; element: HTMLElement; label: string; mode: 'cloth' | 'space' | 'vacuum' }
-  type FloatingCard = { id: number; x: number; y: number; label: string; kind: 'clone' | 'projection' }
+  type ElementSnapshot = { style: string; className: string; hidden: boolean; disabled?: boolean; open?: boolean; ariaLabel: string | null; ariaDisabled: string | null; ariaHidden: string | null }
+  type StoredItem = { id: number; element: HTMLElement; label: string; mode: 'cloth' | 'space' | 'vacuum' | 'relay' }
+  type FloatingCard = { id: number; x: number; y: number; label: string; kind: 'clone' | 'projection'; href?: string | null }
   type BirdDispatch = { id: number; label: string; href: string | null }
+  type GuideItem = { id: number; label: string; element: HTMLElement; href: string | null }
   let points: Point[] = []
   let cursor = { x: -100, y: -100 }
   let sequence = 0
@@ -24,7 +26,6 @@
   let bungeeFilterActive = false
   let futureTimer: ReturnType<typeof setTimeout> | null = null
   let captureTimer: ReturnType<typeof setTimeout> | null = null
-  let captureStart: { x: number; y: number } | null = null
   let captureZone: CaptureZone | null = null
   let guardianReplayTimer: ReturnType<typeof setInterval> | null = null
   let guardianReplayPoint: RecordedEvent | null = null
@@ -46,6 +47,14 @@
   let trainingOrigin = { x: 0, y: 0 }
   let observerReports: { label: string; count: number }[] = []
   let birdDispatches: BirdDispatch[] = []
+  let capturedTechniques: HatsuProfile[] = []
+  let dowsingSignal = 0
+  let portalCrossings = 0
+  let guardianShield = 1
+  let crossGameTarget: HTMLElement | null = null
+  let guideTitle = ''
+  let guideItems: GuideItem[] = []
+  let dialBest: { score: number; item: GuideItem } | null = null
   const snapshots = new Map<HTMLElement, ElementSnapshot>()
   const observers: MutationObserver[] = []
   const effectTimers = new Set<ReturnType<typeof setTimeout>>()
@@ -77,7 +86,6 @@
     if (captureTimer) clearTimeout(captureTimer)
     futureTimer = null
     captureTimer = null
-    captureStart = null
     captureZone = null
     inheritedCharacters.clear()
     if (guardianReplayTimer) clearInterval(guardianReplayTimer)
@@ -100,6 +108,14 @@
     trainingTarget = null
     observerReports = []
     birdDispatches = []
+    capturedTechniques = []
+    dowsingSignal = 0
+    portalCrossings = 0
+    guardianShield = 1
+    crossGameTarget = null
+    guideTitle = ''
+    guideItems = []
+    dialBest = null
     for (const observer of observers) observer.disconnect()
     observers.length = 0
     for (const timer of effectTimers) clearTimeout(timer)
@@ -108,14 +124,21 @@
       if (!element.isConnected) continue
       element.style.cssText = snapshot.style
       element.className = snapshot.className
+      element.hidden = snapshot.hidden
+      if ('disabled' in element && snapshot.disabled !== undefined) (element as HTMLButtonElement).disabled = snapshot.disabled
+      if (element instanceof HTMLDetailsElement && snapshot.open !== undefined) element.open = snapshot.open
+      if (snapshot.ariaLabel === null) element.removeAttribute('aria-label'); else element.setAttribute('aria-label', snapshot.ariaLabel)
+      if (snapshot.ariaDisabled === null) element.removeAttribute('aria-disabled'); else element.setAttribute('aria-disabled', snapshot.ariaDisabled)
+      if (snapshot.ariaHidden === null) element.removeAttribute('aria-hidden'); else element.setAttribute('aria-hidden', snapshot.ariaHidden)
       delete element.dataset.hatsuLevel
       delete element.dataset.hatsuStored
+      delete element.dataset.hatsuForgery
     }
     snapshots.clear()
     if (typeof document !== 'undefined') {
       document.body.classList.remove(
         'hatsu-haiku-weather', 'hatsu-rhythm', 'hatsu-melody',
-        'hatsu-no-sight', 'hatsu-no-hearing', 'hatsu-no-speech'
+        'hatsu-no-sight', 'hatsu-no-hearing', 'hatsu-no-speech', 'hatsu-portal-exhausted'
       )
     }
   }
@@ -130,18 +153,37 @@
   }
 
   function remember(element: HTMLElement) {
-    if (!snapshots.has(element)) snapshots.set(element, { style: element.style.cssText, className: element.className })
+    if (!snapshots.has(element)) snapshots.set(element, {
+      style: element.style.cssText,
+      className: element.className,
+      hidden: element.hidden,
+      disabled: 'disabled' in element ? (element as HTMLButtonElement).disabled : undefined,
+      open: element instanceof HTMLDetailsElement ? element.open : undefined,
+      ariaLabel: element.getAttribute('aria-label'),
+      ariaDisabled: element.getAttribute('aria-disabled'),
+      ariaHidden: element.getAttribute('aria-hidden')
+    })
     return element
   }
 
+  function restoreElement(element: HTMLElement) {
+    const snapshot = snapshots.get(element)
+    if (!snapshot || !element.isConnected) return
+    element.style.cssText = snapshot.style
+    element.className = snapshot.className
+    element.hidden = snapshot.hidden
+    if ('disabled' in element && snapshot.disabled !== undefined) (element as HTMLButtonElement).disabled = snapshot.disabled
+    if (element instanceof HTMLDetailsElement && snapshot.open !== undefined) element.open = snapshot.open
+    if (snapshot.ariaLabel === null) element.removeAttribute('aria-label'); else element.setAttribute('aria-label', snapshot.ariaLabel)
+    if (snapshot.ariaDisabled === null) element.removeAttribute('aria-disabled'); else element.setAttribute('aria-disabled', snapshot.ariaDisabled)
+    if (snapshot.ariaHidden === null) element.removeAttribute('aria-hidden'); else element.setAttribute('aria-hidden', snapshot.ariaHidden)
+    delete element.dataset.hatsuStored
+    delete element.dataset.hatsuForgery
+    snapshots.delete(element)
+  }
+
   function restoreStored(item: StoredItem) {
-    const snapshot = snapshots.get(item.element)
-    if (snapshot && item.element.isConnected) {
-      item.element.style.cssText = snapshot.style
-      item.element.className = snapshot.className
-      delete item.element.dataset.hatsuStored
-      snapshots.delete(item.element)
-    }
+    restoreElement(item.element)
     storedItems = storedItems.filter((candidate) => candidate.id !== item.id)
     status = `${item.label} restored from ${item.mode}`
   }
@@ -151,6 +193,33 @@
     puppetExecuting = true
     stolenTarget.click()
     schedule(() => { puppetExecuting = false }, 0)
+  }
+
+  function executeSiteTarget(element: HTMLElement) {
+    const control = element.matches('a,button,[role="button"],summary')
+      ? element
+      : element.querySelector<HTMLElement>('a,button,[role="button"],summary')
+    if (control) {
+      puppetExecuting = true
+      control.click()
+      schedule(() => { puppetExecuting = false }, 0)
+      return
+    }
+    const details = element.closest('details') || element.querySelector('details')
+    if (details instanceof HTMLDetailsElement) details.open = !details.open
+    element.scrollIntoView({ behavior: 'smooth', block: 'center' })
+  }
+
+  function guideItemFor(target: HTMLElement, label = targetLabel(target)): GuideItem {
+    const link = target.closest<HTMLAnchorElement>('a') || target.querySelector<HTMLAnchorElement>('a')
+    return { id: ++sequence, label, element: target, href: link?.href || null }
+  }
+
+  function followGuide(item: GuideItem) {
+    if (!item.element.isConnected) return
+    item.element.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    item.element.focus({ preventScroll: true })
+    status = `${guideTitle} guided the site to ${item.label}`
   }
 
   function storeElement(element: HTMLElement, label: string, mode: StoredItem['mode']) {
@@ -173,6 +242,21 @@
     first.style.zIndex = second.style.zIndex = '30'
   }
 
+  const normalizedAbilityName = (name: string) => name.toLowerCase().replace(/[^a-z0-9]+/g, '')
+
+  function profilesFromTarget(target: HTMLElement) {
+    const names = (target.dataset.hatsuList || '').split('|').filter(Boolean)
+    return names.flatMap((name) => {
+      const normalized = normalizedAbilityName(name)
+      const match = HATSU_PROFILES.find((candidate) =>
+        normalizedAbilityName(candidate.name) === normalized ||
+        normalized.includes(normalizedAbilityName(candidate.name)) ||
+        normalizedAbilityName(candidate.name).includes(normalized)
+      )
+      return match ? [match] : []
+    })
+  }
+
   function cleanupBungeeSelection() {
     if (bungeeTimer) clearTimeout(bungeeTimer)
     bungeeTimer = null
@@ -185,9 +269,29 @@
 
   function selectBungeeCharacter(target: HTMLElement, x: number, y: number, label: string) {
     const characterId = target.dataset.hatsuCharacter
-    if (!characterId || bungeeSelected.has(characterId)) return
+    if (!characterId) return
+    if (bungeeSelected.has(characterId)) {
+      const anchorElement = selectedElements[0]
+      if (!anchorElement) return
+      const anchorRect = anchorElement.getBoundingClientRect()
+      for (const linked of selectedElements.slice(1)) {
+        const rect = linked.getBoundingClientRect()
+        remember(linked)
+        linked.style.transition = 'transform .6s cubic-bezier(.2,.9,.2,1)'
+        linked.style.transform = `translate(${anchorRect.left - rect.left}px, ${anchorRect.top - rect.top}px)`
+      }
+      status = `Bungee Gum retracted · ${selectedElements.length} targets pulled to ${targetLabel(anchorElement)}`
+      return
+    }
+
+    const firstPoint = points[0]
+    if (firstPoint && Math.hypot(x - firstPoint.x, y - firstPoint.y) > Math.min(innerWidth, innerHeight) * .8) {
+      status = 'Emitted Bungee Gum exceeded its ten-meter limit and snapped'
+      return
+    }
 
     bungeeSelected.add(characterId)
+    selectedElements = [...selectedElements, target]
     target.dataset.bungeeSelected = 'true'
     addPoint(x, y, label)
     if (bungeeTimer) clearTimeout(bungeeTimer)
@@ -214,55 +318,65 @@
     points = [...points.slice(-7), { x, y, label, id: ++sequence, ...extras }]
   }
 
-  function isInsideZone(x: number, y: number, zone: CaptureZone) {
-    return x >= zone.left && x <= zone.left + zone.width && y >= zone.top && y <= zone.top + zone.height
-  }
-
   function interactWithCuldcept(event: MouseEvent, eventElement: Element) {
-    if (captureZone) {
-      if (isInsideZone(event.clientX, event.clientY, captureZone)) {
-        event.preventDefault()
-        event.stopPropagation()
-        status = 'Sealed zone · interaction blocked'
-      }
+    const target = eventElement.closest<HTMLElement>('[data-hatsu-character]')
+    if (!target) {
+      status = 'Culdcept requires a visible Nen user on the map'
       return true
     }
-
-    if (!eventElement.closest('.map-canvas')) return true
     event.preventDefault()
     event.stopPropagation()
 
-    if (!captureStart) {
-      captureStart = { x: event.clientX, y: event.clientY }
-      points = []
-      addPoint(event.clientX, event.clientY, 'First corner')
-      status = 'Choose the opposite corner of the sealed zone'
+    const label = target.dataset.hatsuCharacterName || targetLabel(target)
+    if (/halkenburg/i.test(label)) {
+      addPoint(event.clientX, event.clientY, `${label} · FAILED`, { alert: true })
+      status = 'Acquisition failed · Grimmel pierced the aura rectangle and every defence'
       return true
     }
 
-    const left = Math.min(captureStart.x, event.clientX)
-    const top = Math.min(captureStart.y, event.clientY)
-    captureZone = {
-      left,
-      top,
-      width: Math.max(24, Math.abs(event.clientX - captureStart.x)),
-      height: Math.max(24, Math.abs(event.clientY - captureStart.y))
+    if (captureTimer) {
+      status = 'Hands remain joined · acquisition is still charging'
+      return true
     }
-    addPoint(event.clientX, event.clientY, 'Opposite corner')
-    captureStart = null
-    status = 'Zone sealed for 10 seconds'
+
+    const rect = target.getBoundingClientRect()
+    captureZone = {
+      left: rect.left - 18,
+      top: rect.top - 28,
+      width: Math.max(64, rect.width + 36),
+      height: Math.max(82, rect.height + 56)
+    }
+    status = `Hands joined · acquiring ${label}'s ability`
+    addPoint(event.clientX, event.clientY, label)
     captureTimer = setTimeout(() => {
+      const acquired = profilesFromTarget(target)[0]
+      if (acquired) {
+        capturedTechniques = [acquired]
+        remember(target).classList.add('hatsu-culdcept-drained')
+        status = `${acquired.name} acquired as a Culdcept card`
+      } else status = `${label} has no registered ability Culdcept can acquire`
       captureZone = null
-      points = []
-      status = 'Seal released · choose a new zone'
       captureTimer = null
-    }, 10000)
+    }, 1600)
     return true
   }
 
   function recordGuardianEvent(event: MouseEvent, eventElement: Element) {
     if (profile?.kind !== 'guardian' || eventElement.closest('[data-hatsu-ui]')) return
     const target = eventElement.closest<HTMLElement>('a, button, article, section, li, [role="button"], h1, h2, h3, p')
+    const threatening = target && (
+      target.dataset.hatsuNextChange === 'dead' ||
+      /death|dead|kill|danger|curse|assassin/i.test(`${target.className} ${target.textContent || ''}`)
+    )
+    if (target && threatening && guardianShield > 0) {
+      event.preventDefault()
+      event.stopPropagation()
+      guardianShield -= 1
+      const rect = target.getBoundingClientRect()
+      addPoint(rect.left + rect.width / 2, rect.top + rect.height / 2, `Protected · ${targetLabel(target)}`)
+      status = `Without You intercepted a lethal event and remained beside the survivor`
+      return
+    }
     recordedEvents = [...recordedEvents.slice(-4), {
       x: event.clientX,
       y: event.clientY,
@@ -334,7 +448,11 @@
     mapState.currentZoomLevel = destination.zoom
     mapState.selectedTier = destination.tier
     mapState.selectedLocationId = destination.location
-    status = `Crossed to ${destination.label}`
+    portalCrossings += 1
+    if (portalCrossings >= 3) {
+      document.body.classList.add('hatsu-portal-exhausted')
+      status = `Crossing ${portalCrossings} complete · Fugetsu's aura is dangerously exhausted`
+    } else status = `Crossed to ${destination.label} · ${portalCrossings}/3 safe uses this night`
   }
 
   async function forceTargetPerspective(target: HTMLElement) {
@@ -364,8 +482,17 @@
     }
     event.preventDefault()
     event.stopPropagation()
-    addPoint(event.clientX, event.clientY, targetLabel(target))
-    status = `Arrow released · forced perspective: ${target.dataset.hatsuCharacterName || targetLabel(target)}`
+    const allies = Array.from(document.querySelectorAll<HTMLElement>('[data-hatsu-character]')).filter((candidate) => candidate !== target)
+    const bearer = allies.length ? allies[sequence % allies.length] : null
+    addPoint(event.clientX, event.clientY, targetLabel(target), { details: bearer ? [`Soul exchanged with ${targetLabel(bearer)}`] : [] })
+    if (bearer) {
+      moveByRects(bearer, target)
+      remember(bearer).classList.add('hatsu-soul-transferred')
+      remember(target).classList.add('hatsu-soul-transferred')
+    }
+    status = bearer
+      ? `Invincible arrow · ${targetLabel(bearer)} and ${target.dataset.hatsuCharacterName || targetLabel(target)} exchanged souls`
+      : `Arrow released · forced perspective: ${target.dataset.hatsuCharacterName || targetLabel(target)}`
     void forceTargetPerspective(target)
     return true
   }
@@ -373,25 +500,241 @@
   function extendedInteraction(event: MouseEvent, target: HTMLElement, x: number, y: number, label: string) {
     if (!profile) return false
 
-    if (profile.kind === 'poetry') {
+    if (profile.kind === 'disguise') {
+      const element = remember(target)
+      const texture = (Number(element.dataset.hatsuLevel || 0) + 1) % 4
+      const forgery = ['OFFICIAL ACCESS', 'CLEARED RECORD', 'AUTHORIZED IDENTITY', 'EMPTY SURFACE'][texture]
+      element.dataset.hatsuLevel = String(texture)
+      element.dataset.hatsuForgery = forgery
+      element.classList.add('hatsu-texture-surprise')
+      element.style.setProperty('--texture-index', String(texture))
+      element.setAttribute('aria-label', `${forgery} — Texture Surprise forgery`)
+      status = `${label}'s real information concealed beneath “${forgery}” · its original function remains underneath`
+      addPoint(x, y, label)
+    } else if (profile.kind === 'scarlet') {
+      const element = remember(target)
+      element.classList.add('hatsu-full-efficiency')
+      element.hidden = false
+      if ('disabled' in element) (element as HTMLButtonElement).disabled = false
+      element.removeAttribute('aria-disabled')
+      element.style.opacity = '1'
+      element.style.filter = 'none'
+      element.style.maxHeight = 'none'
+      element.style.pointerEvents = 'auto'
+      const details = element.closest('details')
+      if (details instanceof HTMLDetailsElement) { remember(details); details.open = true }
+      status = `${label} operated at 100% efficiency · life continues to burn`
+      addPoint(x, y, '100%')
+    } else if (profile.kind === 'chain-rule') {
+      const techniques = profilesFromTarget(target)
+      remember(target).classList.add('hatsu-aura-drained')
+      capturedTechniques = techniques.slice(0, 1)
+      status = capturedTechniques.length
+        ? `${capturedTechniques[0].name} drained from ${label} · use the captured dolphin card`
+        : `${label}'s aura drained · no registered Hatsu found`
+      addPoint(x, y, label, { details: techniques.map((technique) => technique.name) })
+    } else if (profile.kind === 'chain-bind') {
+      const name = target.dataset.hatsuCharacterName || label
+      const spiders = /chrollo|nobunaga|feitan|phinks|franklin|machi|shizuku|bonolenov|kalluto|illumi/i
+      if (!spiders.test(name)) {
+        remember(target).classList.add('hatsu-invalid-chain-target')
+        status = `Vow violated on ${name} · Chain Jail rejects non-Spider target`
+        addPoint(x, y, 'FATAL VOW', { alert: true })
+        schedule(() => deactivateHatsu(), 1400)
+      } else {
+        remember(target).classList.add('hatsu-chain-jailed')
+        target.style.pointerEvents = 'none'
+        status = `${name} bound in forced Zetsu · all actions sealed`
+        addPoint(x, y, name)
+      }
+    } else if (profile.kind === 'dowsing') {
+      const uncertainty = /unknown|suspect|probable|unconfirmed|possibly|alleged/i.test(`${label} ${target.textContent || ''}`)
+      dowsingSignal = uncertainty ? 92 : Math.min(88, 35 + target.querySelectorAll('a,button').length * 12)
+      remember(target).classList.add(uncertainty ? 'hatsu-dowsing-alert' : 'hatsu-dowsing-found')
+      target.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      target.focus({ preventScroll: true })
+      status = uncertainty ? `${label} · pendulum detects uncertainty or deception (${dowsingSignal}%)` : `${label} located · signal ${dowsingSignal}%`
+      addPoint(x, y, label, { alert: uncertainty, details: [`Signal ${dowsingSignal}%`] })
+    } else if (profile.kind === 'enhance') {
+      const element = remember(target)
+      const level = Math.min(5, Number(element.dataset.hatsuLevel || 0) + 1)
+      element.dataset.hatsuLevel = String(level)
+      element.classList.add('hatsu-reinforced')
+      element.style.setProperty('--reinforcement', String(level))
+      if (level === 5) {
+        element.hidden = false
+        element.style.pointerEvents = 'auto'
+        if ('disabled' in element) (element as HTMLButtonElement).disabled = false
+        element.removeAttribute('aria-disabled')
+      }
+      status = `${label} reinforced · aura output ${level}/5${level === 5 ? ' · disabled control forced back into service' : ''}`
+      addPoint(x, y, `REN ${level}`)
+    } else if (profile.kind === 'control') {
+      if (!selectedElements.includes(target)) selectedElements = [...selectedElements, target]
+      remember(target).classList.add('hatsu-royal-controlled')
+      const commander = selectedElements[0]
+      if (commander && target !== commander) {
+        const origin = commander.getBoundingClientRect()
+        const rect = target.getBoundingClientRect()
+        target.style.transition = 'transform .45s ease'
+        target.style.transform = `translate(${(origin.left - rect.left) * .18}px, ${(origin.top - rect.top) * .18}px)`
+      }
+      status = `${selectedElements.length} royal guard${selectedElements.length > 1 ? 's' : ''} linked to one command network`
+      addPoint(x, y, label)
+    } else if (profile.kind === 'growth') {
+      const element = remember(target)
+      const living = Boolean(target.closest('[data-hatsu-character]'))
+      const increment = living ? 1 : 2
+      const level = Math.min(10, Number(element.dataset.hatsuLevel || 0) + increment)
+      element.dataset.hatsuLevel = String(level)
+      element.classList.add('hatsu-erigeron-grown')
+      element.style.transform = `scale(${1 + level * .035})`
+      element.style.filter = `saturate(${1 + level * .08}) brightness(${1 + level * .025})`
+      const details = target.closest('details') || target.querySelector('details')
+      if (details instanceof HTMLDetailsElement) { remember(details); details.open = true }
+      const dormant = target.querySelector<HTMLElement>('[hidden], [aria-hidden="true"]')
+      if (dormant) { remember(dormant); dormant.hidden = false; dormant.removeAttribute('aria-hidden') }
+      status = living ? `${label} Nen growth ${level}/10 · progress is slow on an untrained person` : `${label} germinated to growth stage ${level}/10`
+      addPoint(x, y, `GROW ${level}`)
+    } else if (profile.kind === 'vehicle') {
+      if (selectedElements.includes(target) && selectedElements.length >= 2) {
+        const fuel = selectedElements.length * 20
+        selectedElements.forEach((passenger, index) => {
+          remember(passenger)
+          passenger.style.transition = 'transform 1s cubic-bezier(.2,.8,.2,1)'
+          passenger.style.transform = `translateX(${Math.min(innerWidth * .45, 360)}px) translateY(${index * 4}px) scale(.82)`
+        })
+        status = `Vehicle launched · ${selectedElements.length} passengers · ${fuel}% shared aura fuel`
+      } else if (selectedElements.length < 5 && !selectedElements.includes(target)) {
+        selectedElements = [...selectedElements, target]
+        remember(target).classList.add('hatsu-passenger')
+        status = `${selectedElements.length}/5 passengers aboard · click a passenger to depart`
+        addPoint(x, y, label)
+      }
+    } else if (profile.kind === 'scout') {
+      if (target.closest('[data-hatsu-character]')) {
+        status = `${label} rejected · Little Eye requires a real small animal, not a person or Nen construct`
+        addPoint(x, y, 'INVALID', { alert: true })
+      } else {
+        floatingCards = [{ id: ++sequence, x: Math.min(innerWidth - 270, x + 25), y: Math.min(innerHeight - 160, y + 20), label: `${label} · ${target.querySelectorAll('a').length} paths · ${target.querySelectorAll('[data-hatsu-character]').length} auras`, kind: 'projection' }]
+        remember(target).classList.add('hatsu-little-eye-host')
+        status = `Vision and hearing shared through a small creature inside ${label}`
+        addPoint(x, y, label)
+      }
+    } else if (profile.kind === 'tribunal') {
+      if (crossGameTarget !== target) { crossGameTarget = target; cardIndex = 0 }
+      const element = remember(target)
+      if (cardIndex === 0) {
+        element.classList.add('hatsu-cross-blue')
+        status = `BLUE · ${label} admitted into the court`
+        cardIndex = 1
+      } else if (cardIndex === 1) {
+        element.classList.add('hatsu-cross-warning')
+        status = `YELLOW · warning issued to ${label} · click again if ignored`
+        cardIndex = 2
+      } else if (cardIndex === 2) {
+        element.classList.add('hatsu-cross-restrained')
+        element.setAttribute('aria-disabled', 'true')
+        for (const control of element.querySelectorAll<HTMLElement>('a,button,input,select,textarea')) {
+          remember(control)
+          control.style.pointerEvents = 'none'
+        }
+        status = `YELLOW REVERSED · ${label} immobilized but still visible`
+        cardIndex = 3
+      } else {
+        element.classList.add('hatsu-cross-expelled')
+        element.style.opacity = '0'
+        element.style.transform = 'translateX(110vw)'
+        status = `RED · ${label} expelled from the page`
+        cardIndex = 0
+      }
+      addPoint(x, y, tribunalCards[Math.min(3, cardIndex)])
+    } else if (profile.kind === 'curse') {
+      if (!selectedElements.length) {
+        selectedElements = [target]
+        remember(target).classList.add('hatsu-beyond-cursed')
+        status = `${label} chosen as the distant curse target · choose a sacrificial carrier`
+        addPoint(x, y, `TARGET · ${label}`)
+      } else if (selectedElements.length === 1 && target !== selectedElements[0]) {
+        selectedElements = [...selectedElements, target]
+        remember(target).classList.add('hatsu-sacrifice-carrier')
+        status = `${label} awakened from birth as sacrifice · click the carrier to trigger death`
+        addPoint(x, y, `SACRIFICE · ${label}`)
+      } else if (selectedElements[1] === target) {
+        const victim = selectedElements[0]
+        remember(target).classList.add('hatsu-sacrifice-dead')
+        remember(victim).classList.add('hatsu-curse-triggered')
+        victim.style.pointerEvents = 'none'
+        status = `Sacrifice died · post-mortem curse crossed the site and struck ${targetLabel(victim)}`
+      }
+    } else if (profile.kind === 'blast') {
+      const element = remember(target)
+      const rect = target.getBoundingClientRect()
+      const direction = event.clientX < rect.left + rect.width / 2 ? 1 : -1
+      element.style.transition = 'transform .5s cubic-bezier(.1,.8,.2,1)'
+      element.style.transform = `translateX(${direction * Math.min(240, innerWidth * .25)}px) rotate(${direction * 3}deg)`
+      element.classList.add('hatsu-air-blown')
+      status = `Air Blow broke ${label}'s guard and pushed it across the page`
+      addPoint(x, y, label)
+    } else if (profile.kind === 'surveillance') {
+      selectedElements.forEach((element) => element.classList.remove('hatsu-secret-window'))
+      selectedElements = [target]
+      remember(target).classList.add('hatsu-secret-window')
+      const change = target.dataset.hatsuNextChange || 'stable'
+      const alert = change === 'dead' || change === 'moved'
+      points = [{ x, y, label, id: ++sequence, alert, details: [`Next chapter: ${change}`] }]
+      status = change === 'dead' ? `${label} · owl recorded impending death` : change === 'moved' ? `${label} · owl recorded a location change` : `${label} · live feed stable, earlier footage retained`
+    } else if (profile.kind === 'future') {
+      addPoint(x, y, `PREDICTED · ${label}`)
+      remember(target).classList.add('hatsu-future-afterimage')
+      status = $parallelFutureVisible ? `${label} added to the immutable ten-second prediction · choose a different real action` : `Prediction ended · ${points.length} actions remain as afterimages`
+    } else if (profile.kind === 'resurrection') {
+      const killer = target
+      remember(killer).classList.add('hatsu-camilla-killer')
+      status = `${label} killed Camilla · post-mortem counterattack materializing`
+      addPoint(x, y, label)
+      schedule(() => {
+        remember(killer).classList.add('hatsu-cat-crushed')
+        killer.style.pointerEvents = 'none'
+        document.documentElement.scrollTo({ top: 0, behavior: 'smooth' })
+        status = `${label}'s life force absorbed · Camilla fully resurrected`
+      }, 900)
+    } else if (profile.kind === 'poetry') {
+      if (!guideItems.some((item) => item.element === target)) guideItems = [...guideItems, guideItemFor(target, label)].slice(-3)
       addPoint(x, y, label)
       if (points.length >= 3) {
         document.body.classList.add('hatsu-haiku-weather')
-        status = points.slice(-3).map((point) => point.label).join(' / ')
+        guideTitle = 'Great Haiku · materialized path'
+        status = `${points.slice(-3).map((point) => point.label).join(' / ')} · the three verses are now a navigable path`
       } else status = `${points.length}/3 lines selected · continue the haiku`
     } else if (profile.kind === 'restoration') {
       remember(target).classList.add('hatsu-restored')
+      mapState.currentZoomLevel = 'OVERVIEW'
+      mapState.selectedTier = null
+      mapState.selectedLocationId = null
+      mapState.currentEventIndex = 0
+      const cleanUrl = $page.url.pathname
+      if ($page.url.search) void goto(cleanUrl, { replaceState: true, noScroll: true, keepFocus: true })
       target.scrollIntoView({ behavior: 'smooth', block: 'center' })
-      status = `${label} · fatigue cleared, equivalent to eight hours of rest`
+      status = `${label} restored · chapter filters, map depth and event position returned to their rested baseline`
       addPoint(x, y, label)
     } else if (profile.kind === 'transformation') {
-      remember(target).classList.toggle('hatsu-transformed-body')
-      status = target.classList.contains('hatsu-transformed-body') ? `${label} · compact form` : `${label} · true form restored`
+      const element = remember(target)
+      const compact = element.classList.toggle('hatsu-transformed-body')
+      element.style.maxHeight = compact ? '4.5rem' : 'none'
+      element.style.overflow = compact ? 'hidden' : 'visible'
+      for (const control of element.querySelectorAll<HTMLElement>('a,button,input,select,textarea')) {
+        remember(control)
+        control.style.pointerEvents = compact ? 'none' : 'auto'
+      }
+      status = compact ? `${label} compressed · its nested site controls no longer fit inside the small body` : `${label} · true form and all nested controls restored`
       addPoint(x, y, label)
     } else if (profile.kind === 'rhythm') {
       remember(target).classList.add('hatsu-rhythm-hit')
       document.body.classList.add('hatsu-rhythm')
-      status = `Beat ${points.length + 1} · ${label}`
+      if (!guideItems.some((item) => item.element === target)) guideItems = [...guideItems, guideItemFor(target, label)].slice(-7)
+      guideTitle = 'Battle Prologue · combat sequence'
+      status = `Beat ${points.length + 1} · ${label} added to an executable site sequence`
       addPoint(x, y, label)
     } else if (profile.kind === 'impact') {
       const element = remember(target)
@@ -409,6 +752,9 @@
         selectedElements = [target]
         remember(target).classList.add('hatsu-model')
         status = `${label} memorized · choose the body to transform`
+      } else if (selectedElements[1] === target) {
+        executeSiteTarget(selectedElements[0])
+        status = `${label} reproduced ${targetLabel(selectedElements[0])}'s site action`
       } else {
         const model = selectedElements[0]
         const source = getComputedStyle(model)
@@ -419,7 +765,8 @@
         transformed.style.borderRadius = source.borderRadius
         transformed.style.fontFamily = source.fontFamily
         transformed.classList.add('hatsu-metamorphosen')
-        status = `${label} transformed into ${targetLabel(model)}`
+        selectedElements = [model, transformed]
+        status = `${label} transformed into ${targetLabel(model)} · click the transformed body to reproduce the model's action`
         addPoint(x, y, label)
       }
     } else if (profile.kind === 'theft') {
@@ -476,6 +823,10 @@
         status = 'SUN + MOON · post-mortem detonation'
       }
     } else if (profile.kind === 'command') {
+      if (selectedElements.length < 3 && (target.matches('a,button,[role="button"],[data-hatsu-character]') || target.querySelector('[data-hatsu-character]'))) {
+        status = `${label} rejected · Order Stamp cannot command a living being or an already autonomous control`
+        return true
+      }
       if (selectedElements.length < 3) {
         selectedElements = [...selectedElements, target]
         remember(target).classList.add('hatsu-stamped')
@@ -505,22 +856,28 @@
     } else if (profile.kind === 'divination') {
       const affinity = 50 + Math.abs(Math.round(Math.sin((x + y + label.length) * .01) * 50))
       addPoint(x, y, label, { details: [`Affinity ${affinity}%`] })
-      const best = [...points, { x, y, label, id: sequence + 1 }].sort((a, b) => (b.details?.[0] || '').localeCompare(a.details?.[0] || ''))[0]
-      status = `Dial ${affinity}% · strongest signal: ${best?.label || label}`
+      const item = guideItemFor(target, label)
+      if (!dialBest || affinity > dialBest.score) dialBest = { score: affinity, item }
+      guideTitle = 'Love Dial 6700 · strongest signal'
+      guideItems = dialBest ? [dialBest.item] : []
+      status = `Dial ${affinity}% · strongest signal: ${dialBest?.item.label || label} (${dialBest?.score || affinity}%) · follow it from the guide`
     } else if (profile.kind === 'prophecy') {
-      const links = target.querySelectorAll('a').length
+      const links = Array.from(target.querySelectorAll<HTMLAnchorElement>('a')).slice(0, 4)
       const words = (target.textContent || '').trim().split(/\s+/).length
       prophecyLines = [
         `The ${label.slice(0, 18)} waits beneath a black tide.`,
-        `${links || 'No'} paths open; only one returns unchanged.`,
+        `${links.length || 'No'} paths open; only one returns unchanged.`,
         `When ${words % 12 || 12} bells are counted, an ally becomes a door.`,
         `Guard the final link, or the Whale will erase its name.`
       ]
-      status = `Four-line fortune written for ${label}`
+      guideTitle = 'Lovely Ghostwriter · foretold paths'
+      guideItems = links.map((link) => guideItemFor(link, targetLabel(link)))
+      status = `Four-line fortune written for ${label} · ${guideItems.length} foretold routes can be followed`
       addPoint(x, y, label)
     } else if (profile.kind === 'clone') {
-      floatingCards = [...floatingCards, { id: ++sequence, x: Math.min(innerWidth - 180, x + 35), y: Math.min(innerHeight - 100, y + 25), label, kind: 'clone' }]
-      status = `${label} copied · replica has no original function`
+      const rect = target.getBoundingClientRect()
+      floatingCards = [...floatingCards, { id: ++sequence, x: Math.max(8, Math.min(innerWidth - 180, rect.left)), y: Math.max(8, Math.min(innerHeight - 100, rect.top)), label, kind: 'clone' }]
+      status = `${label} copied · the inert replica now occupies and intercepts the original interaction space`
       addPoint(x, y, label)
     } else if (profile.kind === 'puppet') {
       const control = target.closest<HTMLElement>('a, button')
@@ -545,9 +902,12 @@
       status = `${points.length * 2 + 2} emitted bullets · ${label} knocked back`
       addPoint(x, y, label)
     } else if (profile.kind === 'projection') {
-      floatingCards = [{ id: ++sequence, x: Math.max(16, Math.min(innerWidth - 320, x)), y: Math.max(80, Math.min(innerHeight - 220, y)), label, kind: 'projection' }]
-      remember(target).classList.add('hatsu-sleeping-body')
-      status = `Astral double inspecting ${label} · body must remain undisturbed`
+      const link = target.closest<HTMLAnchorElement>('a') || target.querySelector<HTMLAnchorElement>('a')
+      floatingCards = [{ id: ++sequence, x: Math.max(16, Math.min(innerWidth - 320, x)), y: Math.max(80, Math.min(innerHeight - 220, y)), label, kind: 'projection', href: link?.href || null }]
+      const body = remember(target)
+      body.classList.add('hatsu-sleeping-body')
+      body.style.pointerEvents = 'none'
+      status = `Astral double detached into ${label} · the sleeping body is unusable while the projection can follow its extracted route`
       addPoint(x, y, label)
     } else if (profile.kind === 'animate') {
       remember(target).classList.add('hatsu-animated-object')
@@ -581,7 +941,7 @@
       element.style.transition = 'clip-path .35s, opacity .35s, transform .35s'
       element.style.clipPath = `inset(${Math.min(48, existing * 10)}% ${existing % 2 ? 8 : 18}% ${Math.min(48, existing * 8)}% ${existing % 2 ? 18 : 8}%)`
       element.style.transform = `rotate(${existing * 2}deg) scale(${Math.max(.2, 1 - existing * .15)})`
-      if (existing >= 5) element.style.opacity = '0'
+      if (existing >= 5) { element.style.opacity = '0'; element.style.pointerEvents = 'none' }
       status = `${label} · paper cut ${existing}/5`
       addPoint(x, y, label)
     } else if (profile.kind === 'remote-strike') {
@@ -589,7 +949,8 @@
       element.classList.remove('hatsu-remote-punched')
       void element.offsetWidth
       element.classList.add('hatsu-remote-punched')
-      status = `Aura crossed the page and struck ${label}`
+      executeSiteTarget(element)
+      status = `Aura crossed the page and remotely activated ${label}`
       addPoint(innerWidth - x, y, label)
     } else if (profile.kind === 'spatial') {
       storeElement(target, label, 'space')
@@ -600,20 +961,36 @@
         selectedElements = [target]
         remember(target).classList.add('hatsu-stitch-edge')
         status = `${label} threaded · choose the second torn edge`
-      } else {
+      } else if (selectedElements.length === 1) {
         const first = selectedElements[0]
         remember(first); remember(target)
         first.classList.add('hatsu-stitched')
         target.classList.add('hatsu-stitched')
         first.style.marginBottom = '0'
         target.style.marginTop = '0'
+        first.style.position = target.style.position = 'sticky'
+        first.style.top = '5rem'
+        target.style.top = `calc(5rem + ${Math.max(36, first.getBoundingClientRect().height)}px)`
+        selectedElements = [first, target]
         addPoint(x, y, label)
-        status = `${targetLabel(first)} and ${label} sewn into one body`
+        status = `${targetLabel(first)} and ${label} sewn into one sticky body · activating either edge activates its counterpart`
+      } else if (selectedElements.includes(target)) {
+        const counterpart = selectedElements.find((element) => element !== target)
+        if (counterpart) {
+          executeSiteTarget(target)
+          executeSiteTarget(counterpart)
+        }
+        status = `${label} pulled its stitched counterpart into the same action`
       }
     } else if (profile.kind === 'melody') {
       document.body.classList.add('hatsu-melody')
       remember(target).classList.add('hatsu-note')
-      status = `Note ${points.length + 1} · ${label} resonates calmly`
+      if (!guideItems.some((item) => item.element === target)) guideItems = [...guideItems, guideItemFor(target, label)].slice(-7)
+      guideTitle = 'Enchanting Music · guided score'
+      if (guideItems.length >= 3) {
+        guideItems.slice(-3).forEach((item, index) => schedule(() => followGuide(item), index * 550))
+      }
+      status = `Note ${points.length + 1} · ${label} joined a score that guides focus through the site`
       addPoint(x, y, ['DO', 'RE', 'MI', 'FA', 'SOL', 'LA', 'SI'][points.length % 7])
     } else if (profile.kind === 'infection') {
       const element = remember(target)
@@ -629,7 +1006,17 @@
           sibling.dataset.hatsuLevel = String(Math.max(1, next - 1))
         }
       }
-      status = `Contagion level ${next} · ${current ? 'infection spread to neighboring members' : 'new member initiated'}`
+      if (next >= 20) {
+        const locked = target.matches('[disabled],[aria-disabled="true"],[hidden]') ? target : target.querySelector<HTMLElement>('[disabled],[aria-disabled="true"],[hidden]')
+        if (locked) {
+          remember(locked)
+          locked.hidden = false
+          locked.removeAttribute('aria-disabled')
+          if ('disabled' in locked) (locked as HTMLButtonElement).disabled = false
+          locked.style.pointerEvents = 'auto'
+        }
+      }
+      status = `Contagion level ${next} · ${next >= 20 ? 'a locked site ability was unlocked at the Hatsu threshold' : current ? 'infection spread to neighboring members' : 'new member initiated'}`
       addPoint(x, y, `LV ${next}`)
     } else if (profile.kind === 'windup') {
       if (selectedElements[0] !== target) { selectedElements = [target]; windupPower = 0 }
@@ -639,7 +1026,10 @@
       element.style.transition = 'transform .2s ease'
       if (windupPower >= 6) {
         element.classList.add('hatsu-cyclotron-release')
-        status = `Ripper Cyclotron released at ×${windupPower} power`
+        element.style.pointerEvents = 'none'
+        element.style.maxHeight = '0'
+        element.style.overflow = 'hidden'
+        status = `Ripper Cyclotron released at ×${windupPower} power · ${label} destroyed and removed from interaction`
         windupPower = 0
       } else status = `Arm rotation ${windupPower} · aura multiplier ×${windupPower}`
       addPoint(x, y, label)
@@ -659,7 +1049,11 @@
       } else status = `Hypothesis ${studyCount}/3 · studying ${species}`
       addPoint(x, y, label)
     } else if (profile.kind === 'staff') {
-      remember(target).classList.add('hatsu-staff-pinned')
+      const pinned = remember(target)
+      pinned.classList.add('hatsu-staff-pinned')
+      pinned.style.position = 'sticky'
+      pinned.style.top = '5rem'
+      pinned.style.pointerEvents = 'none'
       for (const sibling of Array.from(target.parentElement?.children || [])) {
         if (!(sibling instanceof HTMLElement) || sibling === target) continue
         remember(sibling)
@@ -667,13 +1061,16 @@
         sibling.style.transform = `translateX(${direction * 28}px)`
         sibling.style.transition = 'transform .35s ease'
       }
-      status = `Priest Staff extended through ${label} · neighbors repelled`
+      status = `Priest Staff extended through ${label} · target pinned and unusable, neighbors repelled`
       addPoint(x, y, label)
     } else if (profile.kind === 'senses') {
       sensesStage = (sensesStage + 1) % 4
       document.body.classList.toggle('hatsu-no-sight', sensesStage >= 1)
       document.body.classList.toggle('hatsu-no-hearing', sensesStage >= 2)
       document.body.classList.toggle('hatsu-no-speech', sensesStage >= 3)
+      if (sensesStage >= 2) {
+        document.querySelectorAll<HTMLMediaElement>('audio,video').forEach((media) => media.pause())
+      }
       status = ['All senses restored', 'Sight sealed', 'Sight + hearing sealed', 'Sight + hearing + speech sealed'][sensesStage]
       addPoint(x, y, ['解', '見', '聞', '言'][sensesStage])
     } else if (profile.kind === 'vacuum') {
@@ -696,18 +1093,26 @@
     } else if (profile.kind === 'training-shot') {
       trainingTarget = target
       trainingOrigin = { x: cursor.x, y: cursor.y }
-      remember(target).classList.add('hatsu-zetsu-test')
-      status = `Maintain perfect focus for 3 seconds · do not move`
+      const trainee = remember(target)
+      trainee.classList.add('hatsu-zetsu-test')
+      trainee.style.pointerEvents = 'none'
+      status = `Maintain perfect focus for 3 seconds · the trainee's site action is sealed in Zetsu`
       addPoint(x, y, label)
       schedule(() => {
         if (!trainingTarget) return
         trainingTarget.classList.add('hatsu-training-hit')
-        status = `${label} maintained Zetsu · controlled shot survived`
+        trainingTarget.style.pointerEvents = 'auto'
+        status = `${label} maintained Zetsu · controlled shot survived and its action was restored`
         trainingTarget = null
       }, 3000)
     } else if (profile.kind === 'serpent') {
       const element = remember(target)
       const restrained = element.classList.toggle('hatsu-serpent-bound')
+      element.setAttribute('aria-disabled', restrained ? 'true' : 'false')
+      for (const control of element.querySelectorAll<HTMLElement>('a,button,input,select,textarea')) {
+        remember(control)
+        control.style.pointerEvents = restrained ? 'none' : 'auto'
+      }
       status = restrained ? `${label} constricted by Snake Arm` : `${label} released from the coils`
       addPoint(x, y, label)
     } else if (profile.kind === 'flock') {
@@ -724,7 +1129,8 @@
       element.style.transition = 'transform .65s ease, opacity .4s'
       element.style.transform = `translateX(${stage * (innerWidth < 700 ? 28 : 75)}px) scale(${1 - stage * .08})`
       element.style.opacity = String(1 - stage * .15)
-      status = `Cargo ${label} · relay stage ${stage}/3${stage === 3 ? ' · delivered without teleportation' : ''}`
+      if (stage === 3) storeElement(element, label, 'relay')
+      status = `Cargo ${label} · relay stage ${stage}/3${stage === 3 ? ' · delivered into relay storage without teleportation' : ''}`
       addPoint(x, y, `RELAY ${stage}`)
     } else if (profile.kind === 'postmortem-curse') {
       if (selectedElements[0] !== target) { selectedElements = [target]; studyCount = 0 }
@@ -754,7 +1160,7 @@
     }
     if (profile.kind === 'capture' && interactWithCuldcept(event, eventElement)) return
     if (profile.kind === 'arrow' && interactWithArrow(event, eventElement)) return
-    const requiresCharacter = ['elastic', 'surveillance', 'inherit'].includes(profile.kind)
+    const requiresCharacter = ['elastic', 'chain-rule', 'chain-bind', 'control', 'surveillance', 'curse', 'inherit'].includes(profile.kind)
     const target = (requiresCharacter
       ? eventElement.closest<HTMLElement>('[data-hatsu-character]')
       : eventElement.closest<HTMLElement>('a, button, article, section, li, [role="button"], h1, h2, h3, p'))
@@ -793,10 +1199,21 @@
     } else if (profile.kind === 'inherit') {
       const characterId = target.dataset.hatsuCharacter
       if (!characterId || inheritedCharacters.has(characterId) || inheritedCharacters.size >= 4) return
+      const name = target.dataset.hatsuCharacterName || label
+      const eligible = /vincent|musse|shikaku|balsamilco|benjamin.*soldier/i.test(`${characterId} ${name}`) || target.dataset.hatsuNextChange === 'dead'
+      if (!eligible) {
+        status = `${name} rejected · Benjamin Baton requires a deceased loyal Military Academy graduate`
+        addPoint(x, y, 'INELIGIBLE', { alert: true })
+        return
+      }
       inheritedCharacters.add(characterId)
       const details = (target.dataset.hatsuList || '').split('|').filter(Boolean)
+      for (const technique of profilesFromTarget(target)) {
+        if (!capturedTechniques.some((candidate) => candidate.id === technique.id)) capturedTechniques = [...capturedTechniques, technique]
+      }
       addPoint(x, y, label, { details })
-      status = `${inheritedCharacters.size}/4 selected abilities`
+      remember(target).classList.add('hatsu-baton-inherited')
+      status = `${inheritedCharacters.size}/4 loyal abilities inherited · palm star awakened`
       return
     } else if (profile.kind === 'vehicle') {
       status = `${Math.min(points.length + 1, 5)}/5 passengers · shared aura`
@@ -811,6 +1228,19 @@
   onMount(() => {
     const move = (event: PointerEvent) => {
       cursor = { x: event.clientX, y: event.clientY }
+      if (profile?.kind === 'dowsing' && points.length === 0) {
+        const nearby = document.elementFromPoint(event.clientX, event.clientY)?.closest<HTMLElement>('a,button,article,section,[role="button"]')
+        if (nearby && !nearby.closest('[data-hatsu-ui]')) {
+          const rect = nearby.getBoundingClientRect()
+          const distance = Math.hypot(event.clientX - (rect.left + rect.width / 2), event.clientY - (rect.top + rect.height / 2))
+          dowsingSignal = Math.max(0, Math.round(100 - distance / 3))
+          status = `Pendulum tracking ${targetLabel(nearby)} · signal ${dowsingSignal}%`
+        }
+      }
+      if (profile?.kind === 'scout' && points.length === 0) {
+        const auras = document.elementsFromPoint(event.clientX, event.clientY).filter((element) => element.closest('[data-hatsu-character]')).length
+        status = `Little Eye remote feed · ${auras} aura signature${auras === 1 ? '' : 's'} under cursor`
+      }
       if (profile?.kind === 'needle' || profile?.kind === 'animate') {
         selectedElements.forEach((element, index) => {
           if (!element.isConnected) return
@@ -823,15 +1253,11 @@
         const distance = Math.hypot(event.clientX - trainingOrigin.x, event.clientY - trainingOrigin.y)
         if (distance > 12) {
           trainingTarget.classList.add('hatsu-zetsu-broken')
+          trainingTarget.style.pointerEvents = 'auto'
           trainingTarget = null
-          status = 'Aura leaked · Zetsu broken before impact'
+          status = 'Aura leaked · Zetsu broken before impact, so the sealed site action escaped'
         }
       }
-    }
-    const blockCapturePointer = (event: PointerEvent) => {
-      if (profile?.kind !== 'capture' || !captureZone || !isInsideZone(event.clientX, event.clientY, captureZone)) return
-      event.preventDefault()
-      event.stopPropagation()
     }
     const click = (event: MouseEvent) => interact(event)
     const timer = window.setInterval(() => {
@@ -840,14 +1266,12 @@
       if (profile.kind === 'scarlet') consumeEmperorTimeHour()
     }, 1000)
     window.addEventListener('pointermove', move, { passive: true })
-    window.addEventListener('pointerdown', blockCapturePointer, true)
     window.addEventListener('click', click, true)
     window.addEventListener('contextmenu', placePortal, true)
     return () => {
       clearInterval(timer)
       cleanupTechniqueState()
       window.removeEventListener('pointermove', move)
-      window.removeEventListener('pointerdown', blockCapturePointer, true)
       window.removeEventListener('click', click, true)
       window.removeEventListener('contextmenu', placePortal, true)
     }
@@ -858,7 +1282,7 @@
 </script>
 
 {#if profile}
-  <div class="world-effect kind-{profile.kind}" style:--hatsu={profile.color} data-hatsu-ui aria-hidden={['guardian', 'portal', 'theft', 'pocket', 'spatial', 'vacuum', 'flock'].includes(profile.kind) ? undefined : 'true'}>
+  <div class="world-effect kind-{profile.kind}" style:--hatsu={profile.color} data-hatsu-ui data-hatsu-impact={siteImpactFor(profile)} aria-hidden={['guardian', 'portal', 'theft', 'pocket', 'spatial', 'vacuum', 'flock', 'chain-rule', 'capture', 'inherit', 'poetry', 'rhythm', 'melody', 'divination', 'prophecy', 'projection', 'relay'].includes(profile.kind) ? undefined : 'true'}>
     <div class="atmosphere"></div>
     {#if profile.kind === 'future'}
       <div class="future-frame"><span>PARALLEL FUTURE</span><strong>{$parallelFutureVisible ? `${Math.max(0, 10 - seconds)} s` : 'ENDED'}</strong></div>
@@ -908,7 +1332,7 @@
       </div>
     {/each}
     {#if captureZone}
-      <div class="capture-zone" style:left={`${captureZone.left}px`} style:top={`${captureZone.top}px`} style:width={`${captureZone.width}px`} style:height={`${captureZone.height}px`}><span>CULDCEPT · SEALED</span></div>
+      <div class="capture-zone" style:left={`${captureZone.left}px`} style:top={`${captureZone.top}px`} style:width={`${captureZone.width}px`} style:height={`${captureZone.height}px`}><span>CULDCEPT · ACQUIRING</span></div>
     {/if}
     {#if profile.kind === 'resurrection' && points.length}
       <div class="cat">CAT<br/><b>POST-MORTEM</b></div>
@@ -918,12 +1342,12 @@
     {/if}
     {#if storedItems.length}
       <div class="storage-tray">
-        <span>{profile.kind === 'pocket' ? 'FUN FUN CLOTH' : profile.kind === 'vacuum' ? 'BLINKY STORAGE' : 'HIDDEN SPACE'}</span>
+        <span>{profile.kind === 'pocket' ? 'FUN FUN CLOTH' : profile.kind === 'vacuum' ? 'BLINKY STORAGE' : profile.kind === 'relay' ? 'TRANSPORT RELAY' : 'HIDDEN SPACE'}</span>
         {#each storedItems as item (item.id)}<button type="button" onclick={() => restoreStored(item)}>{item.label}</button>{/each}
       </div>
     {/if}
     {#each floatingCards as card (card.id)}
-      <div class="floating-card {card.kind}" style:left={`${card.x}px`} style:top={`${card.y}px`}><span>{card.kind === 'clone' ? 'GALLERY FAKE' : 'ASTRAL DOUBLE'}</span><strong>{card.label}</strong><small>{card.kind === 'clone' ? 'Visual copy · no function' : 'Body remains behind'}</small></div>
+      <div class="floating-card {card.kind}" style:left={`${card.x}px`} style:top={`${card.y}px`}><span>{card.kind === 'clone' ? 'GALLERY FAKE' : 'ASTRAL DOUBLE'}</span><strong>{card.label}</strong><small>{card.kind === 'clone' ? 'Inert decoy · original interaction obstructed' : 'Body remains behind'}</small>{#if card.href}<a href={card.href}>Follow route as the double →</a>{/if}</div>
     {/each}
     {#if prophecyLines.length}
       <div class="prophecy"><span>LOVELY GHOSTWRITER</span>{#each prophecyLines as line}<p>{line}</p>{/each}</div>
@@ -933,6 +1357,12 @@
     {/if}
     {#if birdDispatches.length}
       <div class="bird-dispatches"><span>CLUCK · DELIVERY FLOCK</span>{#each birdDispatches as dispatch}{#if dispatch.href}<a href={dispatch.href}>◁ {dispatch.label}</a>{:else}<p>◁ {dispatch.label}</p>{/if}{/each}</div>
+    {/if}
+    {#if guideTitle && guideItems.length}
+      <div class="site-guide"><span>{guideTitle}</span>{#each guideItems as item (item.id)}{#if item.href}<a href={item.href}>{item.label} →</a>{:else}<button type="button" onclick={() => followGuide(item)}>{item.label} →</button>{/if}{/each}</div>
+    {/if}
+    {#if capturedTechniques.length}
+      <div class="captured-techniques"><span>{profile.kind === 'inherit' ? 'BENJAMIN BATON' : profile.kind === 'capture' ? 'CULDCEPT CARD' : 'STEAL CHAIN · INDEX DOLPHIN'}</span>{#each capturedTechniques as technique}<button type="button" onclick={() => activateHatsu(technique)} style:--captured={technique.color}><b>{technique.name}</b><small>Activate captured Hatsu</small></button>{/each}</div>
     {/if}
     <div class="readout">
       <span>{profile.name}</span>
@@ -1001,13 +1431,21 @@
   .portal-door small { margin-top: .35rem; color: #d5f7e9; font: .48rem/1.1 monospace; }
   .cat { position: absolute; top: 50%; left: 50%; display: grid; width: 14rem; height: 14rem; place-items: center; transform: translate(-50%,-50%); border: 2px solid var(--hatsu); border-radius: 50% 50% 44% 44%; background: radial-gradient(circle, color-mix(in srgb, var(--hatsu) 20%, #071019), transparent 70%); color: var(--hatsu); font: 700 1rem/1.1 monospace; text-align: center; filter: drop-shadow(0 0 35px var(--hatsu)); animation: cat .7s ease-out; }
   .cat b { font-size: .55rem; }
-  .stolen-control,.storage-tray,.floating-card,.prophecy,.observer-reports,.bird-dispatches{position:fixed;pointer-events:auto;border:1px solid color-mix(in srgb,var(--hatsu) 55%,#243443);background:#08131bec;color:#eef1ec;box-shadow:0 18px 50px #000b,0 0 25px color-mix(in srgb,var(--hatsu) 12%,transparent);backdrop-filter:blur(12px)}
+  .stolen-control,.storage-tray,.floating-card,.prophecy,.observer-reports,.bird-dispatches,.captured-techniques,.site-guide{position:fixed;pointer-events:auto;border:1px solid color-mix(in srgb,var(--hatsu) 55%,#243443);background:#08131bec;color:#eef1ec;box-shadow:0 18px 50px #000b,0 0 25px color-mix(in srgb,var(--hatsu) 12%,transparent);backdrop-filter:blur(12px)}
   .stolen-control{right:1rem;bottom:6.5rem;display:grid;width:13rem;gap:.25rem;padding:.8rem;border-radius:.5rem;text-align:left;cursor:pointer}.stolen-control span,.storage-tray>span,.floating-card span,.prophecy>span,.observer-reports>span{color:var(--hatsu);font:700 .48rem/1 monospace;letter-spacing:.1em}.stolen-control strong{font-size:.72rem}.stolen-control small,.floating-card small{color:#829094;font-size:.52rem}
   .storage-tray{right:1rem;bottom:6.5rem;display:grid;width:min(17rem,calc(100vw - 2rem));gap:.35rem;padding:.7rem;border-radius:.55rem}.storage-tray button{overflow:hidden;border:1px solid #2c3b45;border-radius:.3rem;background:#101d25;padding:.45rem;color:#d9dfdc;font-size:.58rem;text-align:left;text-overflow:ellipsis;white-space:nowrap;cursor:pointer}.storage-tray button:hover{border-color:var(--hatsu)}
-  .floating-card{display:grid;width:15rem;gap:.3rem;padding:1rem;border-radius:.5rem;transform:rotate(-1deg);animation:arrive .4s ease-out}.floating-card.clone{opacity:.82;filter:grayscale(.25)}.floating-card.projection{border-style:dashed;background:#08131bc7}.floating-card strong{overflow:hidden;font-size:.75rem;text-overflow:ellipsis;white-space:nowrap}
+  .floating-card{display:grid;width:15rem;gap:.3rem;padding:1rem;border-radius:.5rem;transform:rotate(-1deg);animation:arrive .4s ease-out}.floating-card.clone{opacity:.92;filter:grayscale(.25);cursor:not-allowed}.floating-card.projection{border-style:dashed;background:#08131bc7}.floating-card strong{overflow:hidden;font-size:.75rem;text-overflow:ellipsis;white-space:nowrap}.floating-card a{margin-top:.35rem;color:var(--hatsu);font-size:.58rem;text-decoration:none}
   .prophecy{right:1rem;top:7rem;width:min(23rem,calc(100vw - 2rem));padding:1rem;border-radius:.3rem;background:linear-gradient(145deg,#171020ed,#080d13f2)}.prophecy p{margin:.55rem 0 0;color:#d5c9df;font:italic .67rem/1.45 Georgia,serif}
   .observer-reports{right:1rem;top:7rem;display:grid;width:16rem;gap:.35rem;padding:.8rem}.observer-reports p{display:grid;grid-template-columns:2rem 1fr;margin:0;color:#aeb8b8;font-size:.58rem}.observer-reports b{color:var(--hatsu);font-size:.8rem}
   .bird-dispatches{right:1rem;top:7rem;display:grid;width:min(18rem,calc(100vw - 2rem));gap:.3rem;padding:.8rem;border-radius:.6rem}.bird-dispatches>span{color:var(--hatsu);font:700 .48rem/1 monospace;letter-spacing:.1em}.bird-dispatches :is(a,p){margin:0;padding:.4rem;border-top:1px solid #273744;color:#dce7ec;font-size:.58rem;text-decoration:none}.bird-dispatches a:hover{color:var(--hatsu)}
+  .site-guide{right:1rem;top:7rem;display:grid;width:min(19rem,calc(100vw - 2rem));max-height:42vh;overflow:auto;gap:.3rem;padding:.8rem;border-radius:.55rem}.site-guide>span{color:var(--hatsu);font:700 .48rem/1.3 monospace;letter-spacing:.08em;text-transform:uppercase}.site-guide :is(a,button){border:1px solid #293a45;border-radius:.3rem;background:#101d25;padding:.48rem;color:#dce7ec;font-size:.58rem;text-align:left;text-decoration:none;cursor:pointer}.site-guide :is(a,button):hover{border-color:var(--hatsu);color:var(--hatsu)}
+  .captured-techniques{right:1rem;bottom:6.5rem;display:grid;width:min(18rem,calc(100vw - 2rem));gap:.4rem;padding:.8rem;border-radius:.55rem}.captured-techniques>span{color:var(--hatsu);font:700 .48rem/1 monospace;letter-spacing:.1em}.captured-techniques button{display:grid;gap:.2rem;border:1px solid color-mix(in srgb,var(--captured) 45%,#2b3945);border-radius:.35rem;background:color-mix(in srgb,var(--captured) 7%,#0d1922);padding:.55rem;color:#e9eee9;text-align:left;cursor:pointer}.captured-techniques button:hover{border-color:var(--captured)}.captured-techniques b{font-size:.68rem}.captured-techniques small{color:#899698;font-size:.5rem}
+  :global(.hatsu-texture-surprise){position:relative!important;background:repeating-linear-gradient(calc(35deg + var(--texture-index) * 18deg),color-mix(in srgb,var(--hatsu,#d98fc4) 18%,#18222b) 0 8px,#25323a 9px 14px)!important;color:transparent!important;text-shadow:none!important;box-shadow:inset 0 0 0 1px #d98fc488!important}:global(.hatsu-texture-surprise>*){visibility:hidden!important}:global(.hatsu-texture-surprise)::after{content:attr(data-hatsu-forgery);position:absolute;inset:0;display:grid;place-items:center;color:#f2e9ef;font:700 .62rem/1.2 monospace;letter-spacing:.08em;pointer-events:none}:global(.hatsu-full-efficiency){outline:1px solid #ef334088!important;box-shadow:0 0 24px #ef334022!important}
+  :global(.hatsu-aura-drained){filter:grayscale(1) brightness(.38)!important;box-shadow:inset 0 0 20px #d7dce244!important}:global(.hatsu-chain-jailed){filter:grayscale(1)!important;box-shadow:0 0 0 3px #c9ced6,inset 0 0 25px #c9ced666!important}:global(.hatsu-invalid-chain-target){animation:fatal-vow .8s ease-out!important}:global(.hatsu-dowsing-found){outline:1px solid #8ecae6!important}:global(.hatsu-dowsing-alert){outline:2px dashed #ff9d7a!important;filter:contrast(1.2)!important}
+  :global(.hatsu-reinforced){position:relative!important;box-shadow:inset 0 0 calc(8px * var(--reinforcement)) color-mix(in srgb,#f0b429 10%,transparent),0 0 0 calc(1px * var(--reinforcement)) #f0b42955!important;transform:scale(calc(1 + var(--reinforcement) * .012))!important}:global(.hatsu-royal-controlled){outline:1px solid #70d6b288!important}:global(.hatsu-erigeron-grown){transform-origin:center!important;transition:transform .45s,filter .45s!important}:global(.hatsu-passenger){box-shadow:inset 0 -2px #f2a65a!important}
+  :global(.hatsu-little-eye-host){outline:1px dashed #55c2ff!important;filter:saturate(1.2)!important}:global(.hatsu-cross-blue){outline:2px solid #5ba8ff!important}:global(.hatsu-cross-warning){box-shadow:inset 0 0 0 3px #f0c94d!important}:global(.hatsu-cross-restrained){clip-path:inset(0 round .2rem)!important;filter:grayscale(.65)!important}:global(.hatsu-cross-expelled){transition:transform .6s,opacity .5s!important}
+  :global(.hatsu-beyond-cursed){box-shadow:inset 0 0 20px #9d65d033!important}:global(.hatsu-sacrifice-carrier){outline:1px dashed #9d65d0!important}:global(.hatsu-sacrifice-dead){animation:sacrifice-death .8s forwards!important}:global(.hatsu-curse-triggered){animation:curse-trigger 1.4s forwards!important}:global(.hatsu-air-blown){filter:blur(.3px)!important}:global(.hatsu-secret-window){box-shadow:0 0 0 2px #a8b7d8,0 0 25px #a8b7d844!important}:global(.hatsu-future-afterimage){box-shadow:8px 0 #7dd3fc33,-8px 0 #b36bff33!important}
+  :global(.hatsu-camilla-killer){outline:1px solid #ff8fab!important}:global(.hatsu-cat-crushed){animation:cat-crush 1s forwards!important}:global(.hatsu-culdcept-drained){filter:grayscale(.8) brightness(.55)!important}:global(.hatsu-baton-inherited){box-shadow:0 0 0 2px #ffd166,0 0 20px #ffd16655!important}:global(.hatsu-soul-transferred){filter:hue-rotate(120deg)!important}:global(body.hatsu-portal-exhausted main){filter:brightness(.55) saturate(.55);transform:scale(.985);transition:filter .6s,transform .6s}
   :global(body.hatsu-haiku-weather main){filter:sepia(.18) saturate(1.15);animation:haiku-weather 5s ease-in-out infinite}:global(body.hatsu-haiku-weather main::before){content:'俳';position:fixed;z-index:70;right:8vw;top:18vh;color:#e7c87325;font:12rem/1 serif;pointer-events:none}
   :global(.hatsu-restored){filter:saturate(1.2) brightness(1.08)!important;box-shadow:0 0 0 1px #f3b6d288,0 0 35px #f3b6d222!important;animation:restore-pulse 1.2s ease-out}
   :global(.hatsu-transformed-body){transform:scale(.72)!important;transform-origin:center!important;border-radius:45%!important;filter:saturate(.65)!important}
@@ -1050,5 +1488,9 @@
   @keyframes snake-drain{to{filter:grayscale(1);opacity:.06;transform:scale(.8)}}
   @keyframes training-hit{50%{box-shadow:0 0 0 4rem #8fe3f000;filter:brightness(2)}}
   @keyframes postmortem-drain{to{filter:grayscale(1) brightness(.18);opacity:.12;transform:scale(.94)}}
+  @keyframes fatal-vow{50%{filter:brightness(3) saturate(0);transform:scale(.92)}to{opacity:.2}}
+  @keyframes sacrifice-death{to{filter:grayscale(1);opacity:.08;transform:scale(.8)}}
+  @keyframes curse-trigger{50%{box-shadow:0 0 0 5rem #9d65d000;filter:brightness(2)}to{filter:grayscale(1) brightness(.2);opacity:.15}}
+  @keyframes cat-crush{50%{transform:scale(.55);filter:brightness(3)}to{opacity:.06;transform:scale(.1)}}
   @media (prefers-reduced-motion: reduce) { .world-effect * { animation: none !important; } }
 </style>

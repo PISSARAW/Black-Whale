@@ -1,7 +1,29 @@
 <script lang="ts">
   import type { PageData } from './$types';
+  import { HATSU_PROFILES, hatsuById } from '$lib/nen/hatsuRegistry.js';
+  import { activateHatsu } from '$lib/nen/hatsuState.js';
 
   export let data: PageData;
+
+  const fallbackAbilities = HATSU_PROFILES.map((profile) => ({
+    id: profile.id,
+    name: profile.name,
+    owner: profile.owner,
+    category: 'nen',
+    description: profile.rule,
+  }));
+
+  // The checked-in registry is the canonical interaction list. API data only
+  // enriches it, so a stale API cannot silently hide recently added Hatsu.
+  $: abilities = HATSU_PROFILES.map((profile) =>
+    data.abilities?.find((ability: { id: string }) => ability.id === profile.id)
+      ?? fallbackAbilities.find((ability) => ability.id === profile.id)
+  );
+
+  function activate(id: string) {
+    const profile = hatsuById(id);
+    if (profile) activateHatsu(profile);
+  }
 </script>
 
 <svelte:head>
@@ -15,8 +37,9 @@
   </header>
 
   <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-    {#each data.abilities || [] as ability}
-      <a href={`/nen`} class="block group relative bg-bw-navy/50 border border-bw-gold/20 rounded-xl p-6 overflow-hidden hover:border-bw-gold/60 transition-colors">
+    {#each abilities as ability}
+      {@const profile = hatsuById(ability.id)}
+      <article class="block group relative bg-bw-navy/50 border border-bw-gold/20 rounded-xl p-6 overflow-hidden hover:border-bw-gold/60 transition-colors">
         <div class="absolute inset-0 bg-gradient-to-br from-bw-gold/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
         <div class="relative">
           <div class="flex items-start justify-between mb-4">
@@ -31,17 +54,27 @@
           
           <p class="text-gray-400 text-sm mt-2 line-clamp-2">{ability.description || 'No description available.'}</p>
           
-          <div class="mt-6 flex items-center text-bw-gold/80 text-sm font-semibold">
-            <span>Voir l'interaction dynamique</span>
+          {#if profile}
+          <button
+            class="mt-6 flex w-full items-center text-left text-bw-gold/80 text-sm font-semibold hover:text-bw-gold"
+            onclick={() => activate(ability.id)}
+            data-hatsu-pass
+          >
+            <span>Activer sur tout le site</span>
             <svg class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
             </svg>
+          </button>
+          <div class="mt-3 border-l pl-3 text-xs" style={`border-color:${profile.color}`}>
+            <p class="text-gray-400">{profile.instruction}</p>
+            <p class="mt-1 text-gray-600">Coût : {profile.cost}</p>
           </div>
+          {/if}
         </div>
-      </a>
+      </article>
     {/each}
 
-    {#if !data.abilities || data.abilities.length === 0}
+    {#if abilities.length === 0}
       <div class="col-span-full py-12 text-center border border-dashed border-gray-700 rounded-xl">
         <p class="text-gray-500">Aucune capacité trouvée.</p>
       </div>

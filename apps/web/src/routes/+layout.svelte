@@ -1,6 +1,8 @@
 <script lang="ts">
   import '../app.css'
   import { page } from '$app/stores'
+  import GlobalHatsuController from '$lib/nen/GlobalHatsuController.svelte'
+  import GlobalHatsuEffects from '$lib/nen/GlobalHatsuEffects.svelte'
 
   const navigation = [
     { href: '/ship', label: 'Ship Map' },
@@ -17,7 +19,7 @@
 </script>
 
 <div class="app min-h-screen bg-bw-dark text-white">
-  <nav class="app-nav" aria-label="Navigation principale">
+  <nav class="app-nav" aria-label="Navigation principale" data-hatsu-pass>
     <a href="/" class="brand" aria-label="Black Whale — Accueil">
       <span class="brand-mark">BW</span>
       <span>Black Whale</span>
@@ -34,6 +36,10 @@
   <main class="flex-1">
     <slot />
   </main>
+
+  <!-- The Hatsu layer lives at the root so its state and mechanics survive navigation. -->
+  <GlobalHatsuEffects />
+  <GlobalHatsuController />
 </div>
 
 <style>

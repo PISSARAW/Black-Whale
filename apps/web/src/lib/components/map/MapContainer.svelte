@@ -134,6 +134,12 @@
       </button>
     {/if}
 
+    {#if MapAsset && mapState.currentZoomLevel !== 'OVERVIEW'}
+      <p class="canon-note" title="Named zones and fixtures follow published manga panels; distances and unshown geometry are schematic.">
+        Canon zones · schematic geometry
+      </p>
+    {/if}
+
     <!-- Dynamic Overlay for characters -->
     <MapOverlay />
   </div>
@@ -156,6 +162,7 @@
   .zoom-controls span { color: var(--text-muted); font: .5rem/1 var(--font-mono); text-align: center; }
   .zoom-controls .reset { border-right: 0; border-left: 1px solid rgba(101,126,133,.2); color: var(--accent-gold); }
   .keyboard-hint { position: absolute; z-index: 15; right: 1rem; bottom: 1rem; color: var(--text-faint); font: .48rem/1 var(--font-mono); letter-spacing: .04em; text-transform: uppercase; }
+  .canon-note { position: absolute; z-index: 15; top: 3.55rem; left: 1rem; margin: 0; padding: .34rem .48rem; border: 1px solid rgba(200,169,86,.28); border-radius: .25rem; background: rgba(8,14,18,.86); color: var(--text-muted); font: .46rem/1 var(--font-mono); letter-spacing: .06em; text-transform: uppercase; backdrop-filter: blur(8px); }
   .keyboard-hint kbd { display: inline-grid; min-width: 1rem; height: 1rem; margin: 0 .15rem; place-items: center; border: 1px solid rgba(101,126,133,.3); border-radius: .2rem; background: rgba(8,14,18,.75); color: var(--text-secondary); }
   .cartographic-gap { position: absolute; inset: 0; display: grid; max-width: 32rem; height: fit-content; margin: auto; justify-items: center; padding: 2rem; color: var(--text-secondary); text-align: center; }
   .cartographic-gap .gap-mark { position: relative; width: 5rem; height: 5rem; margin-bottom: 1.4rem; border: 1px dashed rgba(200,169,86,.35); border-radius: 50%; }

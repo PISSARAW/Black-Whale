@@ -25,8 +25,8 @@
   <rect x="150" y="150" width="500" height="500" class="wall" />
   <rect x="145" y="145" width="510" height="510" class="nen-reinforced" />
   
-  <text x="400" y="400" class="label text-[#9f7aea]">Nen-Reinforced Walls</text>
-  <text x="400" y="420" class="label text-xs text-gray-400">(Graffiti and grime)</text>
+  <text x="400" y="400" class="label text-[#9f7aea]">Heil-Ly processing / shower room</text>
+  <text x="400" y="420" class="label text-xs text-gray-400">Spatially isolated hideout</text>
   
   <!-- Blood stains -->
   <path class="blood" d="M 300 300 Q 320 350, 350 320 T 400 300 Z" />
@@ -39,18 +39,11 @@
   <rect x="550" y="150" width="100" height="100" fill="#2d3748" stroke="#4a5568" stroke-width="2" />
   <text x="600" y="205" class="label text-[10px]">Restrooms</text>
   
-  <!-- 7 Doors on 3 walls -->
-  <!-- Top wall (2 doors) -->
-  <rect role="button" tabindex="0" aria-label="Inspect map area" onkeydown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.currentTarget.dispatchEvent(new MouseEvent('click', { bubbles: true })); } }} class="door" x="300" y="140" width="50" height="20" onclick={() => handleDoorClick(1)} />
-  <rect role="button" tabindex="0" aria-label="Inspect map area" onkeydown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.currentTarget.dispatchEvent(new MouseEvent('click', { bubbles: true })); } }} class="door" x="450" y="140" width="50" height="20" onclick={() => handleDoorClick(2)} />
-  
-  <!-- Left wall (2 doors) -->
-  <rect role="button" tabindex="0" aria-label="Inspect map area" onkeydown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.currentTarget.dispatchEvent(new MouseEvent('click', { bubbles: true })); } }} class="door" x="140" y="300" width="20" height="50" onclick={() => handleDoorClick(3)} />
-  <rect role="button" tabindex="0" aria-label="Inspect map area" onkeydown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.currentTarget.dispatchEvent(new MouseEvent('click', { bubbles: true })); } }} class="door" x="140" y="450" width="20" height="50" onclick={() => handleDoorClick(4)} />
-  
-  <!-- Right wall (3 doors) -->
-  <rect role="button" tabindex="0" aria-label="Inspect map area" onkeydown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.currentTarget.dispatchEvent(new MouseEvent('click', { bubbles: true })); } }} class="door" x="640" y="300" width="20" height="50" onclick={() => handleDoorClick(5)} />
-  <rect role="button" tabindex="0" aria-label="Inspect map area" onkeydown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.currentTarget.dispatchEvent(new MouseEvent('click', { bubbles: true })); } }} class="door" x="640" y="425" width="20" height="50" onclick={() => handleDoorClick(6)} />
-  <rect role="button" tabindex="0" aria-label="Inspect map area" onkeydown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.currentTarget.dispatchEvent(new MouseEvent('click', { bubbles: true })); } }} class="door" x="640" y="550" width="20" height="50" onclick={() => handleDoorClick(7)} />
+  <!-- Seven canonical doors: five together, one on the adjacent wall, one opposite. -->
+  {#each [0, 1, 2, 3, 4] as i}
+    <rect role="button" tabindex="0" aria-label={`Inspect door ${i + 1}`} onkeydown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.currentTarget.dispatchEvent(new MouseEvent('click', { bubbles: true })); } }} class="door" x={210 + i * 80} y="140" width="50" height="20" onclick={() => handleDoorClick(i + 1)} />
+  {/each}
+  <rect role="button" tabindex="0" aria-label="Inspect door 6" onkeydown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.currentTarget.dispatchEvent(new MouseEvent('click', { bubbles: true })); } }} class="door" x="140" y="375" width="20" height="50" onclick={() => handleDoorClick(6)} />
+  <rect role="button" tabindex="0" aria-label="Inspect door 7" onkeydown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.currentTarget.dispatchEvent(new MouseEvent('click', { bubbles: true })); } }} class="door" x="375" y="640" width="50" height="20" onclick={() => handleDoorClick(7)} />
   
 </svg>

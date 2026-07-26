@@ -20,7 +20,7 @@
   </defs>
 
   <text x="500" y="40" class="label" font-size="28" fill="#FFD700">Soldiers / Associates' Living Quarters (Tier 1)</text>
-  <text x="500" y="65" class="sublabel text-gray-400">Accommodates 800 Guards/Soldiers and 150 Provisional Hunters</text>
+  <text x="500" y="65" class="sublabel text-gray-400">Used by Kakin soldiers and about 150 Provisional Hunters</text>
 
   <g transform="translate(50, 100)">
     

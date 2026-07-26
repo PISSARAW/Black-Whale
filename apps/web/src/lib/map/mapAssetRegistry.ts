@@ -20,6 +20,21 @@ import QueensLivingQuarters from '$lib/assets/maps/local/queens-living-quarters.
 import SoldiersLivingQuarters from '$lib/assets/maps/local/soldiers-living-quarters.svelte';
 import Casino from '$lib/assets/maps/local/casino.svelte';
 import Room37564 from '$lib/assets/maps/local/room-37564.svelte';
+import BanquetHall from '$lib/assets/maps/local/banquet-hall.svelte';
+import BeyondCell from '$lib/assets/maps/local/beyond-cell.svelte';
+import Bulkhead from '$lib/assets/maps/local/bulkhead.svelte';
+import Lifeboats from '$lib/assets/maps/local/lifeboats.svelte';
+import Tier3Cabins from '$lib/assets/maps/local/tier3-cabins.svelte';
+import VipDetention from '$lib/assets/maps/local/vip-detention.svelte';
+import KingQuarters from '$lib/assets/maps/local/king-quarters.svelte';
+import SupremeCourt from '$lib/assets/maps/local/supreme-court.svelte';
+import JusticeBureau from '$lib/assets/maps/local/justice-bureau.svelte';
+import HeillyOffice from '$lib/assets/maps/local/heilly-office.svelte';
+import HeillyHideout from '$lib/assets/maps/local/heilly-hideout.svelte';
+import CentralHospital from '$lib/assets/maps/local/central-hospital.svelte';
+import XiYuOffice from '$lib/assets/maps/local/xi-yu-office.svelte';
+import ChaROffice from '$lib/assets/maps/local/cha-r-office.svelte';
+import Warehouse from '$lib/assets/maps/local/warehouse.svelte';
 
 export const MAP_ASSETS = {
   'black-whale-overview': BlackWhaleOverview,
@@ -43,14 +58,28 @@ export const MAP_ASSETS = {
   'queens-living-quarters': QueensLivingQuarters,
   'soldiers-living-quarters': SoldiersLivingQuarters,
   casino: Casino,
-  'room-37564': Room37564
+  'room-37564': Room37564,
+  'banquet-hall': BanquetHall,
+  'beyond-cell': BeyondCell,
+  bulkhead: Bulkhead,
+  lifeboats: Lifeboats,
+  'tier3-cabins': Tier3Cabins,
+  'vip-detention': VipDetention,
+  'king-quarters': KingQuarters,
+  'supreme-court': SupremeCourt,
+  'justice-bureau': JusticeBureau,
+  'heilly-office': HeillyOffice,
+  'heilly-hideout': HeillyHideout,
+  'central-hospital': CentralHospital,
+  'xi-yu-office': XiYuOffice,
+  'cha-r-office': ChaROffice,
+  warehouse: Warehouse
 } as const;
 
 export type MapAssetKey = keyof typeof MAP_ASSETS;
 
 const LOCATION_ASSETS: Record<string, MapAssetKey> = {
   'room-3101': 'room-3101',
-  't3-heilly': 'heilly-processing',
   'heilly-processing': 'heilly-processing',
   'central-courthouse': 'central-courthouse',
   'central-police-station': 'central-police-station',
@@ -58,13 +87,32 @@ const LOCATION_ASSETS: Record<string, MapAssetKey> = {
   'royal-army-office': 'royal-army-office',
   'observation-deck': 'observation-deck',
   cineplex: 'cineplex',
+  't3-cinema': 'cineplex',
   'central-dining-hall': 'central-dining-hall',
   'princes-burial-chamber': 'princes-burial-chamber',
   'vvip-living-quarters': 'vvip-living-quarters',
   'queens-living-quarters': 'queens-living-quarters',
   'soldiers-living-quarters': 'soldiers-living-quarters',
   casino: 'casino',
-  'room-37564': 'room-37564'
+  'room-37564': 'room-37564',
+  'banquet-hall': 'banquet-hall',
+  'beyond-cell': 'beyond-cell',
+  'vip-detention': 'vip-detention',
+  lifeboats: 'lifeboats',
+  't2-security': 'bulkhead',
+  't3-residential-1st': 'tier3-cabins',
+  't3-residential-ord': 'general-cabins',
+  't3-obs-deck': 'observation-deck',
+  'king-quarters': 'king-quarters',
+  'supreme-court': 'supreme-court',
+  't2-justice': 'justice-bureau',
+  'heilly-hideout': 'heilly-hideout',
+  't3-heilly': 'heilly-office',
+  't3-hospital': 'central-hospital',
+  't3-access-t2': 'bulkhead',
+  't4-xiyu': 'xi-yu-office',
+  't5-char': 'cha-r-office',
+  't5-warehouses': 'warehouse'
 };
 
 export function resolveMapAssetKey(level: 'OVERVIEW' | 'TIER' | 'LOCAL', tierId: string | null, locationId: string | null): MapAssetKey | null {

@@ -67,7 +67,7 @@
 
     <!-- Large crowd of passengers blending in -->
     <g transform="translate(480, 160)">
-      <text x="150" y="-10" class="label text-red-500" font-size="12">Noveau Riche & Deplorables blending</text>
+      <text x="150" y="-10" class="label text-red-500" font-size="12">Nouveau riche & general passengers mixing</text>
       <!-- Draw many small circles for crowd -->
       {#each Array(40) as _, i}
         <circle 

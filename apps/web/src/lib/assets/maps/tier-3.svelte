@@ -97,13 +97,9 @@
         <rect class="zone" class:selected={mapState.selectedLocationId === 'central-police-station'} x="400" y="300" width="100" height="170" />
         <text x="450" y="380" class="label">Central Police</text>
       </g>
-      <g role="button" tabindex="0" aria-label="Open Royal Army Office" onclick={() => handleZoneClick('t3-army-office')} onkeydown={(event) => handleZoneKeydown(event, 't3-army-office')}>
-        <rect class="zone" class:selected={mapState.selectedLocationId === 't3-army-office'} x="500" y="300" width="100" height="85" />
-        <text x="550" y="345" class="label text-xs">Royal Army Office</text>
-      </g>
       <g role="button" tabindex="0" aria-label="Open Central Courthouse" onclick={() => handleZoneClick('central-courthouse')} onkeydown={(event) => handleZoneKeydown(event, 'central-courthouse')}>
-        <rect class="zone" class:selected={mapState.selectedLocationId === 'central-courthouse'} x="500" y="385" width="100" height="85" />
-        <text x="550" y="425" class="label text-xs">Central Courthouse</text>
+        <rect class="zone" class:selected={mapState.selectedLocationId === 'central-courthouse'} x="500" y="300" width="100" height="170" />
+        <text x="550" y="380" class="label text-xs">Central Courthouse</text>
       </g>
     </g>
 
@@ -127,7 +123,7 @@
     <!-- Sas de sécurité vers le haut -->
     <g id="t3-access-t2" role="button" tabindex="0" aria-label="Open Tier 2 Access" onclick={() => handleZoneClick('t3-access-t2')} onkeydown={(event) => handleZoneKeydown(event, 't3-access-t2')}>
       <rect class="zone" class:selected={mapState.selectedLocationId === 't3-access-t2'} x="450" y="60" width="100" height="30" />
-      <text x="500" y="80" class="label text-[10px]">T2 Access (Blocked)</text>
+      <text x="500" y="80" class="label text-[10px]">Emergency bulkhead to Tier 2</text>
     </g>
   </g>
 </svg>

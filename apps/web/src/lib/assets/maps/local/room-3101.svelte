@@ -1,6 +1,8 @@
 <script lang="ts">
+  import { mapState } from '$lib/state/mapState.svelte';
+
   function handleTrapClick() {
-    alert("Trap triggered! Teleporting to the Heil-Ly base (Processing Room).");
+    mapState.selectLocation('heilly-hideout');
   }
 </script>
 

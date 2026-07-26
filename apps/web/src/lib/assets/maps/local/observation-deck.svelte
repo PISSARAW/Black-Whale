@@ -9,8 +9,9 @@
     <style>
       .window-frame { fill: #111; stroke: #333; stroke-width: 8; }
       .sky { fill: qradial-gradient(cx 0.5 cy 0.5 r 0.5 fx 0.5 fy 0.5, #334, #001); }
-      .city-block { fill: #2a2a35; stroke: #111; stroke-width: 1; }
-      .city-light { fill: #FFD700; opacity: 0.6; }
+      .sea { fill: #0b2636; }
+      .wave { fill: none; stroke: #6b9bb3; stroke-width: 2; opacity: .45; }
+      .fixture { fill: #202a30; stroke: #73808a; stroke-width: 2; }
       .label { fill: #FFFFF0; font-family: sans-serif; font-size: 16px; font-weight: bold; pointer-events: none; text-anchor: middle; }
     </style>
     <linearGradient id="skyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
@@ -19,53 +20,31 @@
     </linearGradient>
   </defs>
 
-  <text x="500" y="40" class="label" font-size="28" fill="#FFD700">Observation Deck (Tier 4)</text>
+  <text x="500" y="40" class="label" font-size="28" fill="#FFD700">Observation Deck (Tier 3)</text>
 
   <g transform="translate(0, 80)">
-    <!-- The View (Sky + Cityscape) -->
-    <rect x="50" y="50" width="900" height="400" fill="url(#skyGrad)" />
-    
-    <!-- Horizon Line -->
-    <line x1="50" y1="200" x2="950" y2="200" stroke="#88a" stroke-width="2" />
-    <text x="500" y="190" fill="#fff" opacity="0.5" font-size="12" text-anchor="middle">Horizon</text>
+    <!-- Open-air sightseeing platform at the ship's bow. -->
+    <rect x="50" y="50" width="900" height="180" fill="url(#skyGrad)" />
+    <rect x="50" y="230" width="900" height="220" class="sea" />
+    <line x1="50" y1="230" x2="950" y2="230" stroke="#88a" stroke-width="2" />
+    <path class="wave" d="M60 290 Q130 260 200 290 T340 290 T480 290 T620 290 T760 290 T940 290" />
+    <path class="wave" d="M60 360 Q130 330 200 360 T340 360 T480 360 T620 360 T760 360 T940 360" />
 
-    <!-- Generating random city blocks to simulate the massive slums/city -->
-    <g transform="translate(50, 200)">
-      {#each Array(200) as _, i}
-        <rect 
-          class="city-block"
-          x="{Math.random() * 900}" 
-          y="{Math.random() * 200}" 
-          width="{Math.random() * 30 + 10}" 
-          height="{Math.random() * 20 + 10}" 
-        />
-        {#if Math.random() > 0.7}
-          <rect 
-            class="city-light"
-            x="{Math.random() * 900}" 
-            y="{Math.random() * 200}" 
-            width="2" 
-            height="2" 
-          />
-        {/if}
+    <!-- Canonically shown amenities; their exact spacing is schematic. -->
+    <g transform="translate(120, 330)">
+      {#each [0, 1, 2, 3] as i}
+        <rect class="fixture" x={i * 95} y="0" width="62" height="28" rx="5" />
+        <line x1={i * 95 + 12} y1="28" x2={i * 95 + 4} y2="48" stroke="#73808a" stroke-width="3" />
+        <line x1={i * 95 + 50} y1="28" x2={i * 95 + 58} y2="48" stroke="#73808a" stroke-width="3" />
       {/each}
-      <!-- Some larger structures -->
-      <rect class="city-block" x="200" y="100" width="80" height="60" />
-      <rect class="city-block" x="600" y="120" width="100" height="40" />
-      <rect class="city-block" x="400" y="50" width="150" height="80" />
+      <text x="175" y="72" class="label" font-size="13">Outdoor lounge chairs</text>
     </g>
+    <rect class="fixture" x="610" y="320" width="125" height="95" rx="6" />
+    <text x="672" y="370" class="label" font-size="13">Shops</text>
+    <rect class="fixture" x="760" y="320" width="125" height="95" rx="6" />
+    <text x="822" y="370" class="label" font-size="13">Bars</text>
 
-    <!-- The Massive Window Frame (Foreground) -->
     <path class="window-frame" d="M 0 0 L 1000 0 L 1000 500 L 0 500 Z M 50 50 L 50 450 L 950 450 L 950 50 Z" />
-    
-    <!-- Diagonal Support Pillars -->
-    <path class="window-frame" d="M 200 50 L 150 450 L 120 450 L 170 50 Z" />
-    <path class="window-frame" d="M 800 50 L 850 450 L 880 450 L 830 50 Z" />
-    
-    <!-- Top curved overhang -->
-    <path fill="#111" d="M 50 50 Q 500 120 950 50 L 950 0 L 50 0 Z" />
-
-    <!-- Clickable transparent overlay over the window -->
-    <rect role="button" tabindex="0" aria-label="Inspect the cityscape" onkeydown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.currentTarget.dispatchEvent(new MouseEvent('click', { bubbles: true })); } }} x="200" y="100" width="600" height="300" fill="transparent" cursor="pointer" onclick={() => handleElementClick('cityscape')} />
+    <rect role="button" tabindex="0" aria-label="Inspect the observation deck" onkeydown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.currentTarget.dispatchEvent(new MouseEvent('click', { bubbles: true })); } }} x="80" y="260" width="840" height="180" fill="transparent" cursor="pointer" onclick={() => handleElementClick('observation-deck')} />
   </g>
 </svg>

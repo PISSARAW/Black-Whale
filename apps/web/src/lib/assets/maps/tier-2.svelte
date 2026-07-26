@@ -7,6 +7,9 @@
   function handleZoneKeydown(event: KeyboardEvent, zoneId: string) {
     if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); handleZoneClick(zoneId); }
   }
+  function handleTierAccessKeydown(event: KeyboardEvent) {
+    if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); mapState.selectTier('tier-1'); }
+  }
 </script>
 
 <svg viewBox="0 0 1000 600" class="w-full h-full text-[#FFFFF0]">
@@ -65,12 +68,6 @@
       <text x="400" y="235" class="sublabel">Celebrities & Fortunes</text>
     </g>
 
-    <!-- Théâtre & Divertissements -->
-    <g id="t2-theater" role="button" tabindex="0" aria-label="Open Theater" onclick={() => handleZoneClick('t2-theater')} onkeydown={(event) => handleZoneKeydown(event, 't2-theater')}>
-      <rect class="zone" class:selected={mapState.selectedLocationId === 't2-theater'} x="600" y="150" width="200" height="150" />
-      <text x="700" y="225" class="label">Theater</text>
-    </g>
-
     <!-- Espaces de Réception & Services -->
     <g id="t2-reception" role="button" tabindex="0" aria-label="Open Reception Areas" onclick={() => handleZoneClick('t2-reception')} onkeydown={(event) => handleZoneKeydown(event, 't2-reception')}>
       <rect class="zone" class:selected={mapState.selectedLocationId === 't2-reception'} x="250" y="320" width="250" height="130" />
@@ -84,8 +81,8 @@
     </g>
 
     <!-- Accès Tier 1 -->
-    <g id="t2-access-t1" role="button" tabindex="0" aria-label="Open Tier 1 Access" onclick={() => handleZoneClick('t2-access-t1')} onkeydown={(event) => handleZoneKeydown(event, 't2-access-t1')}>
-      <circle class="zone" class:selected={mapState.selectedLocationId === 't2-access-t1'} cx="525" cy="115" r="25" />
+    <g id="t2-access-t1" role="button" tabindex="0" aria-label="Open Tier 1" onclick={() => mapState.selectTier('tier-1')} onkeydown={handleTierAccessKeydown}>
+      <circle class="zone" cx="525" cy="115" r="25" />
       <text x="525" y="119" class="label text-[10px]">T1</text>
     </g>
 

@@ -71,7 +71,7 @@
     <!-- Princes' Living Quarters (1001-1014) -->
     <g id="t1-princes-quarters">
       <rect x="460" y="310" width="140" height="150" fill="none" stroke="#FFFFF0" stroke-width="2" />
-      <rect class="zone" role="button" tabindex="0" aria-label="Open Princes' Quarters" onclick={() => handleZoneClick('princes-quarters')} onkeydown={(event) => handleZoneKeydown(event, 'princes-quarters')} x="460" y="310" width="140" height="150" fill="transparent" />
+      <rect x="460" y="310" width="140" height="150" fill="transparent" pointer-events="none" />
       
       <!-- Ligne de gauche (Pair) -->
       {#each [2, 4, 6, 8, 10, 12, 14] as i, index}
@@ -112,6 +112,12 @@
         <rect class="zone" class:selected={mapState.selectedLocationId === 'vip-detention'} x="740" y="300" width="100" height="40" />
         <text x="790" y="325" class="sublabel text-xs">VIP Detention</text>
       </g>
+    </g>
+
+    <g id="t1-supreme-court" role="button" tabindex="0" aria-label="Open Supreme Court" onclick={() => handleZoneClick('supreme-court')} onkeydown={(event) => handleZoneKeydown(event, 'supreme-court')}>
+      <rect class="zone" class:selected={mapState.selectedLocationId === 'supreme-court'} x="730" y="370" width="120" height="80" />
+      <text x="790" y="405" class="label text-blue-400 text-[10px]">Supreme Court</text>
+      <text x="790" y="422" class="sublabel text-[9px]">Cleapatro</text>
     </g>
 
     <!-- Lifeboats (Edges of the ship) -->

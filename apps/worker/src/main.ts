@@ -12,7 +12,9 @@ console.log('[worker] Black Whale worker starting...')
 // TODO: initialize job queues (Bull/BullMQ)
 // TODO: register processors
 
-process.on('SIGTERM', () => {
-  console.log('[worker] Shutting down gracefully...')
-  process.exit(0)
+await new Promise<void>((resolve) => {
+  process.once('SIGTERM', resolve)
+  process.once('SIGINT', resolve)
 })
+
+console.log('[worker] Shutting down gracefully...')

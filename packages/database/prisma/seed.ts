@@ -1,10 +1,8 @@
 import { PrismaClient, LocationType, PresencePrecision, PresenceCertainty, BodyStateType, AffiliationType, NarrativeImportance } from '@prisma/client'
+import { readFile } from 'node:fs/promises'
+import { resolve } from 'node:path'
 
 const prisma = new PrismaClient()
-
-// Use dynamic import for Node.js built-ins to avoid ESM issues
-const { readFile } = require('fs/promises')
-const { resolve } = require('path')
 
 // ──────────────────────────────────────────────
 // Helper: Map JSON zoneType to Prisma LocationType

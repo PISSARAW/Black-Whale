@@ -209,16 +209,14 @@
   },
   {
     "id": "secret-window",
-    "ownerId": "prince-benjamin",
+    "ownerId": "musse",
     "name": "Secret Window",
     "alternateNames": [
-      "裏窓の鳥",
-      "Shīkuretto Windō",
       "Rear Window Bird"
     ],
     "category": "unknown",
-    "inheritedFrom": "Musse",
-    "description": "Ability inherited from Musse to create three owl-shaped constructs called Birds. One listens to conversations through obstacles and from a distance. Another is affixed to a target by physical contact and telepathically transmits its actions and words to the user, who is the only one capable of seeing it. Only one creature, or only one of each type, can exist simultaneously. After prolonged monitoring, probably ten days, the user can rewind the recorded information.",
+    "abilityType": "owl-surveillance-nen-beasts",
+    "description": "Musse creates three owl-shaped Nen beasts for intelligence gathering. One eavesdrops through barriers and another attaches by touch to transmit a target's words and actions; after prolonged observation, the user may review earlier footage. Benjamin inherits the ability after Musse's death.",
     "canonStatus": "canon",
     "moduleKey": null
   },
@@ -726,6 +724,180 @@
     ],
     "abilityType": "weak-emitted-projectile",
     "description": "Theta uses her Hatsu to emit a weak projectile of aura towards Tserriednich during her Zetsu exercise. The attack serves to test his ability to maintain complete closure of the aura nodes under pressure and does not appear designed to inflict significant damage. Theta's natural type remains unknown, but the effect likely uses Emission.",
+    "canonStatus": "canon",
+    "moduleKey": null
+  },
+  {
+    "id": "illumi-needle-people",
+    "ownerId": "illumi",
+    "name": "Needle People",
+    "alternateNames": [
+      "針人間"
+    ],
+    "category": "manipulator",
+    "abilityType": "needle-based-total-manipulation",
+    "description": "Illumi infuses needles with aura to reshape faces or completely control a target. Deeply inserted needles turn victims into disposable puppets that obey complex orders until their bodies are exhausted.",
+    "canonStatus": "canon",
+    "moduleKey": null
+  },
+  {
+    "id": "melody-enchanting-music",
+    "ownerId": "melody",
+    "name": "Enchanting Music",
+    "alternateNames": [
+      "A Field in Spring"
+    ],
+    "category": "emitter",
+    "secondaryCategories": [
+      "manipulator"
+    ],
+    "abilityType": "aura-infused-music",
+    "description": "Melody projects aura through her flute. Her repertoire relieves fatigue, calms emotions and creates vivid sensory impressions; when she plays with all her heart, a broadcast performance can absorb an enormous audience's attention for up to three minutes.",
+    "canonStatus": "canon",
+    "moduleKey": null
+  },
+  {
+    "id": "magical-esthetician-cookie",
+    "ownerId": "biscuit-krueger",
+    "name": "Magical Esthetician Cookie",
+    "alternateNames": [
+      "Magical Beautician",
+      "Piano Massage"
+    ],
+    "category": "transmuter",
+    "secondaryCategories": [
+      "manipulator",
+      "emitter"
+    ],
+    "abilityType": "restorative-massage",
+    "description": "Biscuit summons the masseuse Cookie and transmutes a special lotion. Cookie's treatments relieve fatigue and ailments; Piano Massage makes thirty minutes of sleep provide recovery comparable to eight hours.",
+    "canonStatus": "canon",
+    "moduleKey": null
+  },
+  {
+    "id": "biscuit-body-transformation",
+    "ownerId": "biscuit-krueger",
+    "name": "Body Transformation",
+    "alternateNames": [
+      "True Form"
+    ],
+    "category": "transmuter",
+    "abilityType": "body-transformation",
+    "description": "Biscuit normally maintains a small youthful form but can return to her natural, massively muscular body. She dislikes the appearance, yet it releases her full physical strength.",
+    "canonStatus": "canon",
+    "moduleKey": null
+  },
+  {
+    "id": "hanzo-skill-4",
+    "ownerId": "hanzo",
+    "name": "Hanzo Skill 4",
+    "alternateNames": [
+      "Art of the Doppelganger"
+    ],
+    "category": "conjurer",
+    "secondaryCategories": [
+      "manipulator",
+      "emitter"
+    ],
+    "abilityType": "astral-double",
+    "description": "Hanzo projects a hovering double able to pass through matter while his consciousness leaves his sleeping body. He controls it precisely, but speech or touch directed at the body immediately cancels the projection.",
+    "canonStatus": "canon",
+    "moduleKey": null
+  },
+  {
+    "id": "rihan-predator",
+    "ownerId": "rihan",
+    "name": "Predator",
+    "alternateNames": [
+      "Stranger"
+    ],
+    "category": "conjurer",
+    "abilityType": "adaptive-counter-beast",
+    "description": "Rihan grows a counter-creature from his independent analysis of one target ability. Once summoned, the Predator is tailored to devour that ability, but performs poorly against simple attacks, multiple powers or information supplied by others; a success seals Rihan's Nen for 48 hours.",
+    "canonStatus": "canon",
+    "moduleKey": null
+  },
+  {
+    "id": "biohazard-hinrigh",
+    "ownerId": "hinrigh-biganduffno",
+    "name": "Biohazard",
+    "alternateNames": [
+      "Holding the Sun in the Palm of My Hand"
+    ],
+    "category": "conjurer",
+    "secondaryCategories": [
+      "manipulator"
+    ],
+    "abilityType": "object-to-animal-transformation",
+    "description": "Hinrigh changes an object he touches into a living animal while retaining its original function. Handcuffs become pigeons, cameras become cats and weapons become snakes; the transformation ends when its aura supply is exhausted.",
+    "canonStatus": "canon",
+    "moduleKey": null
+  },
+  {
+    "id": "luini-spatial-teleportation",
+    "ownerId": "luini",
+    "name": "Spatial Teleportation",
+    "alternateNames": [
+      "Unseen spatial ability"
+    ],
+    "category": "emitter",
+    "abilityType": "sealed-room-portals",
+    "description": "From a room with one closed door and impenetrable walls, Luini opens portals to places he has already visited and can return through a private transit space. If the anchor room's door is opened, that room is permanently reset and cannot be reused.",
+    "canonStatus": "canon",
+    "moduleKey": null
+  },
+  {
+    "id": "great-haiku",
+    "ownerId": "basho",
+    "name": "Great Haiku",
+    "alternateNames": [
+      "Haiku Ability"
+    ],
+    "category": "unknown",
+    "abilityType": "written-reality-effect",
+    "description": "Basho writes a haiku on paper and invokes its effect. Better poetry and seasonal language increase its power; demonstrated verses create fire, punish lies and produce protective light against weak spirits.",
+    "canonStatus": "canon",
+    "moduleKey": null
+  },
+  {
+    "id": "leorio-remote-punch",
+    "ownerId": "leorio-paradinight",
+    "name": "Remote Punch",
+    "alternateNames": [
+      "Warped Punch"
+    ],
+    "category": "emitter",
+    "secondaryCategories": [
+      "enhancer"
+    ],
+    "abilityType": "surface-traveling-strike",
+    "description": "Leorio strikes a nearby surface and sends aura through it in a line. At a selected point, a portal-like circle forms and an extended fist emerges to uppercut the target from a distance.",
+    "canonStatus": "canon",
+    "moduleKey": null
+  },
+  {
+    "id": "saiyu-priest-staff",
+    "ownerId": "saiyu",
+    "name": "Priest Staff",
+    "alternateNames": [
+      "Wisdom Rod"
+    ],
+    "category": "conjurer",
+    "abilityType": "extendable-conjured-staff",
+    "description": "Saiyu conjures a staff whose length he can change, using it both to restrain allies and to finish opponents disabled by his monkeys.",
+    "canonStatus": "canon",
+    "moduleKey": null
+  },
+  {
+    "id": "saiyu-three-monkeys",
+    "ownerId": "saiyu",
+    "name": "Three Monkeys",
+    "alternateNames": [
+      "Mizaru, Kikazaru and Iwazaru"
+    ],
+    "category": "unknown",
+    "abilityType": "sense-depriving-nen-beasts",
+    "description": "Saiyu uses three Nen monkeys whose attacks remove sight, hearing and speech. Losing the three senses also disrupts the victim mentally and can prevent them from maintaining an active ability.",
     "canonStatus": "canon",
     "moduleKey": null
   }

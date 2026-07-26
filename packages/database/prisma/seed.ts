@@ -312,20 +312,6 @@ async function main() {
 
   console.log('Seeding Presences & States...')
   
-  // Helper to get location ID from map by various possible IDs
-  const getLocationId = (id: string): string | null => {
-    // Try direct match
-    const loc = locationMap.get(id)
-    if (loc) return loc.id
-    
-    // Try to find by slug
-    for (const [key, value] of locationMap.entries()) {
-      if (value.slug === id) return value.id
-    }
-    
-    return null
-  }
-  
   const createBody = async (charId: string, label: string, eventId: string) => {
     return await prisma.body.create({
       data: {
@@ -372,13 +358,13 @@ async function main() {
   await createOriginalIdentity(leorio, leorioBody.id, evt0.id)
 
   // Get actual location IDs
-  const locRoom1014 = room1014 ? getLocationId(room1014.id) : null
-  const locRoom1001 = room1001 ? getLocationId(room1001.id) : null
-  const locZodiacHQ = zodiacHQ ? getLocationId(zodiacHQ.id) : null
-  const locMedicalDistrict = medicalDistrict ? getLocationId(medicalDistrict.id) : null
+  const locRoom1014 = room1014?.id ?? null
+  const locRoom1001 = room1001?.id ?? null
+  const locZodiacHQ = zodiacHQ?.id ?? null
+  const locMedicalDistrict = medicalDistrict?.id ?? null
   
   if (!locRoom1014 || !locRoom1001 || !locZodiacHQ || !locMedicalDistrict) {
-    console.warn('Some locations not found, using fallback references')
+    throw new Error('Required seed location references are missing')
   }
 
   for (const body of [kuraBody, oitoBody, wobleBody]) {
@@ -386,7 +372,7 @@ async function main() {
       data: {
         entityType: 'BODY',
         entityId: body.id,
-        locationId: locRoom1014 || '',
+        locationId: locRoom1014,
         fromEventId: evt1.id,
         precision: PresencePrecision.EXACT_ROOM,
         certainty: PresenceCertainty.CONFIRMED

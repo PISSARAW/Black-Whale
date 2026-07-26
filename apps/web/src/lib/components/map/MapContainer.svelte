@@ -88,10 +88,13 @@
 
       const transform = pz.getTransform();
       const scale = Math.max(transform.scale, zoomLevel === 'OVERVIEW' ? 1.2 : 1);
+      const markerLayer = marker.offsetParent as HTMLElement | null;
+      const markerX = marker.offsetLeft + (markerLayer?.offsetLeft || 0);
+      const markerY = marker.offsetTop + (markerLayer?.offsetTop || 0);
       pz.zoomAbs(0, 0, scale);
       pz.moveTo(
-        containerEl.clientWidth / 2 - marker.offsetLeft * scale,
-        containerEl.clientHeight / 2 - marker.offsetTop * scale
+        containerEl.clientWidth / 2 - markerX * scale,
+        containerEl.clientHeight / 2 - markerY * scale
       );
     });
   });

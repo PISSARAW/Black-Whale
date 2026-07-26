@@ -10,70 +10,56 @@
   // These coordinates are based on the SVG viewBox (0 0 1000 600)
   const locationCoordinates: Record<string, Record<string, { x: number; y: number }>> = {
     'tier-1': {
+      'tier-1': { x: 500, y: 285 },
       'king-quarters': { x: 475, y: 160 },
+      'king-living-quarters': { x: 475, y: 160 },
       'princes-burial-chamber': { x: 475, y: 110 },
-      'banquet-hall': { x: 475, y: 260 },
-      'vvip-living-quarters': { x: 290, y: 380 },
-      'queens-living-quarters': { x: 290, y: 470 },
-      'soldiers-living-quarters': { x: 290, y: 530 },
-      'casino': { x: 400, y: 400 },
-      'cineplex': { x: 600, y: 350 },
-      'central-dining-hall': { x: 600, y: 450 },
-      'observation-deck': { x: 700, y: 200 },
-      'royal-army-office': { x: 700, y: 400 },
-      'general-cabins': { x: 700, y: 500 },
+      'banquet-hall': { x: 475, y: 255 },
+      'vvip-living-quarters': { x: 290, y: 385 },
+      'queens-living-quarters': { x: 422, y: 385 },
+      'royal-residential-sector': { x: 530, y: 385 },
+      'soldiers-living-quarters': { x: 652, y: 385 },
+      'casino': { x: 360, y: 385 },
       'vip-jail': { x: 790, y: 320 },
-      'vvip-prison-beyond': { x: 790, y: 275 },
-      'heilly-processing': { x: 350, y: 500 }
+      'vvip-prison-beyond': { x: 790, y: 270 },
+      'supreme-court': { x: 790, y: 410 },
+      'lifeboats': { x: 865, y: 300 }
     },
     'tier-2': {
-	  'heilly-secret-hideout': { x: 400, y: 225 },
-      'vip-guest-rooms': { x: 300, y: 200 },
-      'entertainment-district': { x: 500, y: 250 },
-      'shopping-arcade': { x: 700, y: 200 },
-      'restaurant-row': { x: 500, y: 350 },
-      'military-barracks': { x: 200, y: 400 },
-      'security-center': { x: 400, y: 450 },
-      'detention-facility': { x: 200, y: 500 }
+      'tier-2': { x: 500, y: 300 },
+      'heilly-secret-hideout': { x: 400, y: 225 },
+      'vip-guest-rooms': { x: 400, y: 225 },
+      'ministry-of-justice': { x: 660, y: 385 },
+      'vip-witness-protection-area': { x: 660, y: 385 },
+      'bulkhead': { x: 500, y: 498 }
     },
     'tier-3': {
+      'tier-3': { x: 500, y: 285 },
       'residential-units': { x: 270, y: 360 },
-      'medical-district': { x: 300, y: 250 },
-      'tier-3-medical-district': { x: 300, y: 250 },
+      'residential-room-3101': { x: 220, y: 195 },
       'central-hospital': { x: 500, y: 190 },
       'central-police-station': { x: 450, y: 385 },
-      'central-courthouse': { x: 550, y: 427 },
-      'royal-army-office': { x: 550, y: 342 },
-      'research-labs': { x: 500, y: 200 },
-      'processing-plants': { x: 700, y: 200 },
-      'waste-management': { x: 200, y: 400 },
-      'power-station': { x: 400, y: 400 },
-      'water-treatment': { x: 600, y: 400 },
-      'storage-warehouses': { x: 500, y: 500 }
+      'central-courthouse': { x: 550, y: 385 },
+      'political-ward': { x: 500, y: 385 },
+      'heilly-family-office': { x: 715, y: 420 },
+      'cineplex': { x: 715, y: 160 },
+      'observation-deck': { x: 715, y: 295 }
     },
     'tier-4': {
+      'tier-4': { x: 485, y: 300 },
       'central-passage': { x: 500, y: 525 },
       'recycling-sewage-facilities': { x: 500, y: 525 },
-      'crew-quarters': { x: 250, y: 150 },
-      'maintenance-bays': { x: 450, y: 200 },
-      'cargo-holds': { x: 700, y: 250 },
-      'engineering-section': { x: 400, y: 350 },
-      'propulsion-systems': { x: 600, y: 350 },
-      'life-support': { x: 300, y: 450 },
-      'navigation-center': { x: 500, y: 450 },
-      'communication-hub': { x: 700, y: 450 }
+      'xi-yu-family-office': { x: 400, y: 300 },
+      'royal-army-conference-room': { x: 575, y: 155 }
     },
     'tier-5': {
+      'tier-5': { x: 450, y: 285 },
       'central-dining-hall': { x: 585, y: 370 },
       'standard-cabins': { x: 270, y: 290 },
-      'lower-decks': { x: 300, y: 200 },
-      'storage-tanks': { x: 500, y: 150 },
-      'waste-holding': { x: 200, y: 300 },
       'recycling-facility': { x: 400, y: 300 },
-      'emergency-generators': { x: 600, y: 300 },
-      'structural-support': { x: 300, y: 400 },
-      'ballast-tanks': { x: 500, y: 400 },
-      'docking-bays': { x: 700, y: 400 }
+      'medical-clinic': { x: 685, y: 375 },
+      'cha-r-family-office': { x: 460, y: 375 },
+      'warehouse': { x: 560, y: 240 }
     }
   };
 
@@ -100,15 +86,6 @@
   let nextChapterState = $derived($page.data.nextChapterState || null);
   let futureMode = $derived($activeHatsu?.id === 'parallel-future' && $parallelFutureVisible);
 
-  function hashToUnit(input: string) {
-    let hash = 0;
-    for (let i = 0; i < input.length; i += 1) {
-      hash = (hash << 5) - hash + input.charCodeAt(i);
-      hash |= 0;
-    }
-    return Math.abs(hash % 1000) / 1000;
-  }
-
   function resolveTierSlug(location: any, byId: Map<string, any>) {
     let current = location;
     let depth = 0;
@@ -117,6 +94,8 @@
       if (current.type === 'TIER') {
         return current.slug;
       }
+      const prefixedTier = current.slug?.match(/^(tier-[1-5])(?:-|$)/)?.[1];
+      if (prefixedTier) return prefixedTier;
       current = current.parentLocationId ? byId.get(current.parentLocationId) : null;
       depth += 1;
     }
@@ -157,6 +136,26 @@
     }
 
     return null;
+  }
+
+  function spreadAroundAnchor(
+    anchor: { x: number; y: number; isSmallRoom?: boolean },
+    index: number,
+    count: number
+  ) {
+    if (count <= 1) return { x: anchor.x, y: anchor.y };
+
+    const columns = Math.min(anchor.isSmallRoom ? 2 : 6, Math.ceil(Math.sqrt(count)));
+    const rows = Math.ceil(count / columns);
+    const column = index % columns;
+    const row = Math.floor(index / columns);
+    const spacingX = anchor.isSmallRoom ? 12 : 24;
+    const spacingY = anchor.isSmallRoom ? 8 : 20;
+
+    return {
+      x: anchor.x + (column - (columns - 1) / 2) * spacingX,
+      y: anchor.y + (row - (rows - 1) / 2) * spacingY
+    };
   }
 
   function getTemporalVisual(presence: any) {
@@ -206,42 +205,41 @@
         const colocatedIndex = Math.max(0, colocatedEntityIds.indexOf(p.entityId));
         const colocatedCount = colocatedEntityIds.length;
 
-        if (colocatedCount > 1 && coords.isSmallRoom) {
-          const columns = Math.min(2, colocatedCount);
-          const rows = Math.ceil(colocatedCount / columns);
-          const column = colocatedIndex % columns;
-          const row = Math.floor(colocatedIndex / columns);
-          x = coords.x + (column - (columns - 1) / 2) * 12;
-          y = coords.y + (row - (rows - 1) / 2) * 8;
-        } else if (colocatedCount > 1) {
-          const angle = (colocatedIndex / colocatedCount) * Math.PI * 2;
-          x = coords.x + Math.cos(angle) * 15;
-          y = coords.y + Math.sin(angle) * 10;
-        } else {
-          x = coords.x;
-          y = coords.y;
-        }
+        ({ x, y } = spreadAroundAnchor(coords, colocatedIndex, colocatedCount));
       } else if (loc.parentLocationId) {
         const parent: any = locationsById.get(loc.parentLocationId);
         const parentCoords = parent ? getExactTierCoordinates(tierId, parent.slug) : undefined;
         if (parentCoords) {
-          const base = hashToUnit(p.entityId);
-          x = parentCoords.x + (base * 80 - 40);
-          y = parentCoords.y + ((1 - base) * 80 - 40);
+          const siblings = sourcePresences
+            .filter((candidate: any) => {
+              const candidateLocation = locationsById.get(candidate.locationId);
+              return candidateLocation?.parentLocationId === loc.parentLocationId;
+            })
+            .map((candidate: any) => candidate.entityId)
+            .sort();
+          ({ x, y } = spreadAroundAnchor(parentCoords, Math.max(0, siblings.indexOf(p.entityId)), siblings.length));
         } else {
-          const base = hashToUnit(p.entityId);
-          x = 250 + base * 520;
-          y = 170 + base * 250;
+          const tierAnchor = getExactTierCoordinates(tierId, tierId) || { x: 500, y: 300 };
+          const tierEntities = sourcePresences
+            .filter((candidate: any) => {
+              const candidateLocation = locationsById.get(candidate.locationId);
+              return candidateLocation && resolveTierSlug(candidateLocation, locationsById) === tierId;
+            })
+            .map((candidate: any) => candidate.entityId)
+            .sort();
+          ({ x, y } = spreadAroundAnchor(tierAnchor, Math.max(0, tierEntities.indexOf(p.entityId)), tierEntities.length));
         }
       } else {
-        const base = hashToUnit(p.entityId);
-        x = 250 + base * 520;
-        y = 170 + base * 250;
+        const tierAnchor = getExactTierCoordinates(tierId, tierId) || { x: 500, y: 300 };
+        const tierEntities = sourcePresences
+          .filter((candidate: any) => {
+            const candidateLocation = locationsById.get(candidate.locationId);
+            return candidateLocation && resolveTierSlug(candidateLocation, locationsById) === tierId;
+          })
+          .map((candidate: any) => candidate.entityId)
+          .sort();
+        ({ x, y } = spreadAroundAnchor(tierAnchor, Math.max(0, tierEntities.indexOf(p.entityId)), tierEntities.length));
       }
-    } else {
-      const base = hashToUnit(p.entityId);
-      x = 300 + base * 320;
-      y = 220 + base * 180;
     }
 
     return { x, y, loc, tierId };
@@ -354,9 +352,8 @@
 
       const visual = tierId ? tierVisuals[tierId] : undefined;
       const temporalVisual = getTemporalVisual(p);
-      const offsetSeed = hashToUnit(`${p.entityId}-offset`);
-      const overviewX = 39 + offsetSeed * 22;
-      const overviewY = (visual?.overviewY ?? 46) + (hashToUnit(`${p.entityId}-row`) * 4 - 2);
+      const overviewX = 50;
+      const overviewY = visual?.overviewY ?? 46;
 
       const mapped: MarkerIdentityState & { tierId: string | null; locationId?: string; location?: any; overviewX: number; overviewY: number } = {
         id: p.entityId,
@@ -411,7 +408,7 @@
     const nextBodies = nextChapterState.bodies || [];
     const nextCharacters = nextChapterState.characters || [];
 
-    return nextPresences.map((presence: any) => {
+    const mappedFuture = nextPresences.map((presence: any) => {
       const body = nextBodies.find((candidate: any) => candidate.id === presence.entityId);
       const character = body ? nextCharacters.find((candidate: any) => candidate.id === body.originalCharacterId) : null;
       const biologicalState = nextChapterState.bodyStates?.[presence.entityId];
@@ -419,23 +416,10 @@
 
       const { x, y, loc, tierId } = calculatePresencePosition(presence, nextPresences, nextLocations);
       const visual = tierId ? tierVisuals[tierId] : undefined;
-      const overviewX = 39 + hashToUnit(`${presence.entityId}-offset`) * 22;
-      const overviewY = (visual?.overviewY ?? 46) + (hashToUnit(`${presence.entityId}-row`) * 4 - 2);
-      const localSeed = hashToUnit(`${presence.entityId}-local`);
-      const displayX = mapState.currentZoomLevel === 'OVERVIEW'
-        ? overviewX
-        : mapState.currentZoomLevel === 'LOCAL'
-          ? 38 + localSeed * 24
-          : x / 10;
-      const displayY = mapState.currentZoomLevel === 'OVERVIEW'
-        ? overviewY
-        : mapState.currentZoomLevel === 'LOCAL'
-          ? 38 + hashToUnit(`${presence.entityId}-local-y`) * 24
-          : y / 6;
       return {
         id: presence.entityId,
-        x: displayX,
-        y: displayY,
+        x: x / 10,
+        y: y / 6,
         body: toEnglishDisplayName(character.canonicalName),
         consciousness: toEnglishDisplayName(character.canonicalName),
         appearance: toEnglishDisplayName(character.canonicalName),
@@ -448,8 +432,8 @@
         temporalDetail: `Position in chapter ${nextChapterState.chapterNumber}`,
         tierId,
         location: loc,
-        overviewX,
-        overviewY,
+        overviewX: 50,
+        overviewY: visual?.overviewY ?? 46,
         hatsuNames: character.hatsuNames || []
       };
     }).filter(Boolean).filter((character: any) => {
@@ -460,12 +444,48 @@
       }
       return true;
     });
+
+    const tierGroups = new Map<string, any[]>();
+    for (const character of mappedFuture) {
+      const group = tierGroups.get(character.tierId || 'outside') || [];
+      group.push(character);
+      tierGroups.set(character.tierId || 'outside', group);
+    }
+    for (const group of tierGroups.values()) group.sort((left, right) => left.id.localeCompare(right.id));
+
+    return mappedFuture.map((character: any, localIndex: number) => {
+      if (mapState.currentZoomLevel === 'OVERVIEW') {
+        const group = tierGroups.get(character.tierId || 'outside') || [character];
+        const index = Math.max(0, group.findIndex((candidate: any) => candidate.id === character.id));
+        const columns = Math.min(12, group.length);
+        const rows = Math.ceil(group.length / columns);
+        const column = index % columns;
+        const row = Math.floor(index / columns);
+        return {
+          ...character,
+          x: 38 + (column + 0.5) * (24 / columns),
+          y: character.overviewY + (row - (rows - 1) / 2) * 1.8
+        };
+      }
+      if (mapState.currentZoomLevel === 'LOCAL') {
+        const columns = Math.min(6, Math.ceil(Math.sqrt(mappedFuture.length)));
+        const rows = Math.ceil(mappedFuture.length / columns);
+        const column = localIndex % columns;
+        const row = Math.floor(localIndex / columns);
+        return {
+          ...character,
+          x: 50 + (column - (columns - 1) / 2) * 3,
+          y: 50 + (row - (rows - 1) / 2) * 3
+        };
+      }
+      return character;
+    });
   });
 
   let visibleCharacters = $derived.by(() => {
     const locationsById = new Map<string, any>((locations as any[]).map((location: any) => [location.id, location] as [string, any]));
 
-    return dynamicCharacters
+    const filteredCharacters = dynamicCharacters
       .filter((character: any) => {
         if (mapState.selectedPerspectiveKind !== 'reader' && Array.isArray(perspective?.visibleBodies)) {
           const visibleBodyIds = new Set<string>(perspective.visibleBodies);
@@ -484,21 +504,83 @@
         const selectedFactions = mapState.filters.factions;
         return selectedFactions.length === 0
           || selectedFactions.some((faction) => character.factionTags?.includes(faction));
-      })
-      .map((character: any) => {
+      });
+
+    const tierGroups = new Map<string, any[]>();
+    for (const character of filteredCharacters) {
+      const group = tierGroups.get(character.tierId || 'outside') || [];
+      group.push(character);
+      tierGroups.set(character.tierId || 'outside', group);
+    }
+    for (const group of tierGroups.values()) group.sort((left, right) => left.id.localeCompare(right.id));
+
+    return filteredCharacters.map((character: any, localIndex: number) => {
         if (mapState.currentZoomLevel === 'OVERVIEW') {
-          return { ...character, x: character.overviewX, y: character.overviewY };
+          const group = tierGroups.get(character.tierId || 'outside') || [character];
+          const index = Math.max(0, group.findIndex((candidate: any) => candidate.id === character.id));
+          const columns = Math.min(12, group.length);
+          const rows = Math.ceil(group.length / columns);
+          const column = index % columns;
+          const row = Math.floor(index / columns);
+          return {
+            ...character,
+            x: 38 + (column + 0.5) * (24 / columns),
+            y: character.overviewY + (row - (rows - 1) / 2) * 1.8
+          };
         }
         if (mapState.currentZoomLevel === 'LOCAL') {
-          const localSeed = hashToUnit(`${character.id}-local`);
-          return { ...character, x: 38 + localSeed * 24, y: 38 + hashToUnit(`${character.id}-local-y`) * 24 };
+          const columns = Math.min(6, Math.ceil(Math.sqrt(filteredCharacters.length)));
+          const rows = Math.ceil(filteredCharacters.length / columns);
+          const column = localIndex % columns;
+          const row = Math.floor(localIndex / columns);
+          return {
+            ...character,
+            x: 50 + (column - (columns - 1) / 2) * 3,
+            y: 50 + (row - (rows - 1) / 2) * 3
+          };
         }
         return character;
       });
   });
+
+  let presenceLayer: HTMLDivElement | undefined = $state();
+  let layerStyle = $state('inset: 0;');
+
+  $effect(() => {
+    mapState.currentZoomLevel;
+    mapState.selectedTier;
+    mapState.selectedLocationId;
+
+    const layer = presenceLayer;
+    const parent = layer?.parentElement;
+    if (!layer || !parent) return;
+
+    const alignWithSvg = () => {
+      const svg = parent.querySelector(':scope > svg') as SVGSVGElement | null;
+      if (!svg?.viewBox?.baseVal?.width || !svg.viewBox.baseVal.height) {
+        layerStyle = 'inset: 0;';
+        return;
+      }
+
+      const width = parent.clientWidth;
+      const height = parent.clientHeight;
+      const viewBox = svg.viewBox.baseVal;
+      const scale = Math.min(width / viewBox.width, height / viewBox.height);
+      const renderedWidth = viewBox.width * scale;
+      const renderedHeight = viewBox.height * scale;
+      const left = (width - renderedWidth) / 2;
+      const top = (height - renderedHeight) / 2;
+      layerStyle = `left:${left}px;top:${top}px;width:${renderedWidth}px;height:${renderedHeight}px;`;
+    };
+
+    alignWithSvg();
+    const observer = new ResizeObserver(alignWithSvg);
+    observer.observe(parent);
+    return () => observer.disconnect();
+  });
 </script>
 
-<div class="presence-layer absolute inset-0 pointer-events-none" aria-label={`${visibleCharacters.length} visible characters`}>
+<div bind:this={presenceLayer} class="presence-layer absolute pointer-events-none" style={layerStyle} aria-label={`${visibleCharacters.length} visible characters`}>
   {#each futureCharacters as char (char.id)}
     <CharacterMarker character={char} future={true} />
   {/each}

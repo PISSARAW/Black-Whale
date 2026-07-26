@@ -24,14 +24,14 @@
   <rect class="zone" x="200" y="100" width="400" height="400" />
   
   <text x="400" y="200" class="label">Living Area / Bedroom</text>
-  <text x="400" y="220" class="label text-xs text-gray-400">Leurre visuel</text>
+  <text x="400" y="220" class="label text-xs text-gray-400">Visual decoy</text>
   
   <!-- Porte d'entrée (Piège) -->
-  <rect class="trap" x="380" y="490" width="40" height="20" fill="#2d3748" onclick={handleTrapClick} />
-  <text x="400" y="535" class="label text-xs text-[#ff4444] cursor-pointer" onclick={handleTrapClick}>Main Door (Teleportation Trap)</text>
+  <rect role="button" tabindex="0" aria-label="Inspect map area" onkeydown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.currentTarget.dispatchEvent(new MouseEvent('click', { bubbles: true })); } }} class="trap" x="380" y="490" width="40" height="20" fill="#2d3748" onclick={handleTrapClick} />
+  <text role="button" tabindex="0" aria-label="Open the main door" onkeydown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.currentTarget.dispatchEvent(new MouseEvent('click', { bubbles: true })); } }} x="400" y="535" class="label text-xs text-[#ff4444] cursor-pointer" onclick={handleTrapClick}>Main Door (Teleportation Trap)</text>
   
   <!-- Faux Mur de plomberie -->
   <rect x="400" y="350" width="200" height="150" fill="#2d3748" stroke="#718096" stroke-width="2" />
   <text x="500" y="425" class="label text-xs">Anomalous Bathroom</text>
-  <text x="500" y="445" class="label text-[10px] text-[#ff4444]">(Ancienne zone technique)</text>
+  <text x="500" y="445" class="label text-[10px] text-[#ff4444]">(Former technical area)</text>
 </svg>

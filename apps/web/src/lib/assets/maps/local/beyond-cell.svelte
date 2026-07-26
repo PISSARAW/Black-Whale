@@ -25,7 +25,7 @@
     
     <!-- Cell Area (Left side) -->
     <!-- It is described as very small -->
-    <rect class="zone" x="0" y="0" width="250" height="400" onclick={() => handleElementClick('beyond-cell')} />
+    <rect role="button" tabindex="0" aria-label="Inspect map area" onkeydown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.currentTarget.dispatchEvent(new MouseEvent('click', { bubbles: true })); } }} class="zone" x="0" y="0" width="250" height="400" onclick={() => handleElementClick('beyond-cell')} />
     
     <!-- Bed -->
     <rect x="30" y="100" width="120" height="250" fill="#111" stroke="#333" stroke-width="2" />
@@ -48,7 +48,7 @@
     <line class="bars" x1="250" y1="0" x2="250" y2="400" />
     
     <!-- Guard Area (Right side) -->
-    <rect class="zone" x="250" y="0" width="350" height="400" onclick={() => handleElementClick('guard-area')} />
+    <rect role="button" tabindex="0" aria-label="Inspect map area" onkeydown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.currentTarget.dispatchEvent(new MouseEvent('click', { bubbles: true })); } }} class="zone" x="250" y="0" width="350" height="400" onclick={() => handleElementClick('guard-area')} />
     <text x="425" y="40" class="label text-blue-400">Zodiac 24-Hour Watch</text>
     
     <!-- Zodiac 1 (Kanzai) -->

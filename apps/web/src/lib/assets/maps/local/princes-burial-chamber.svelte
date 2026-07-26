@@ -36,7 +36,7 @@
     <path d="M 300 200 L 386 250 L 386 350 L 300 400 L 214 350 L 214 250 Z" class="rune" />
 
     <!-- Central Capsule -->
-    <circle class="zone" cx="300" cy="300" r="50" onclick={() => handleElementClick('central-capsule')} />
+    <circle role="button" tabindex="0" aria-label="Inspect map area" onkeydown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.currentTarget.dispatchEvent(new MouseEvent('click', { bubbles: true })); } }} class="zone" cx="300" cy="300" r="50" onclick={() => handleElementClick('central-capsule')} />
     <circle cx="300" cy="300" r="40" class="capsule" />
     <circle cx="300" cy="300" r="30" fill="#111" />
     <circle cx="300" cy="300" r="10" fill="#FFD700" opacity="0.5" />
@@ -48,7 +48,7 @@
     <!-- 14 Caskets around the perimeter -->
     {#each Array(14) as _, i}
       <g transform="translate(300, 300) rotate({i * (360 / 14)}) translate(0, -220)">
-        <rect 
+        <rect role="button" tabindex="0" aria-label="Inspect map area" onkeydown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.currentTarget.dispatchEvent(new MouseEvent('click', { bubbles: true })); } }}
           x="-15" 
           y="-30" 
           width="30" 

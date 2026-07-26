@@ -11,6 +11,7 @@
   import WhyPanel from '$lib/components/perspective/WhyPanel.svelte';
   import ConsciousnessTransferTransition from '$lib/components/perspective/ConsciousnessTransferTransition.svelte';
   import type { FollowMode, PerspectiveContext, PerspectiveOption } from '$lib/components/perspective/types';
+  import { toEnglishDisplayName } from '$lib/utils/displayNames';
 
   let { data }: { data: PageData } = $props();
 
@@ -32,7 +33,7 @@
   let perspectiveOptions = $derived.by(() => {
     const fromCharacters: PerspectiveOption[] = (data.worldState?.characters || []).map((char: any) => ({
       id: char.id,
-      label: char.canonicalName,
+      label: toEnglishDisplayName(char.canonicalName),
       kind: 'character'
     }));
 
@@ -103,6 +104,24 @@
     if (data.events.length < 2) return 100;
     return Math.max(0, Math.min(100, (data.selectedEventIndex / (data.events.length - 1)) * 100));
   });
+
+  const deckClearance: Record<string, string> = {
+    overview: 'Global scan',
+    'tier-1': 'Royal clearance',
+    'tier-2': 'VIP clearance',
+    'tier-3': 'Public access',
+    'tier-4': 'Crew clearance',
+    'tier-5': 'Restricted systems'
+  };
+
+  let mappedZoneCount = $derived.by(() => {
+    const locations = data.worldState?.locations || [];
+    if (!mapState.selectedTier) return locations.length;
+    return locations.filter((location: any) => location.slug === mapState.selectedTier || location.slug?.startsWith(`${mapState.selectedTier}-`)).length;
+  });
+
+  let trackedPresenceCount = $derived(data.worldState?.presences?.length || 0);
+  let activeClearance = $derived(deckClearance[mapState.selectedTier || 'overview']);
 
   $effect(() => {
     mapState.setFollowMode((data.followMode as FollowMode) || 'consciousness');
@@ -243,6 +262,18 @@
             </label>
           {/each}
         </div>
+        {#if mapState.filters.factions.length}
+          <button class="clear-filters" type="button" onclick={() => (mapState.filters.factions = [])}>Clear faction filters</button>
+        {/if}
+      </div>
+
+      <div class="deck-signal" aria-label="Current map intelligence">
+        <span>Current signal</span>
+        <dl>
+          <div><dt>Tracked</dt><dd>{trackedPresenceCount}</dd></div>
+          <div><dt>Zones</dt><dd>{mappedZoneCount}</dd></div>
+        </dl>
+        <p><i></i>{activeClearance}</p>
       </div>
     </aside>
 
@@ -252,6 +283,12 @@
           <span>Black Whale</span><i>/</i><strong class="capitalize">{currentDeckLabel}</strong>
         </div>
         <div class="map-tools">
+          <label class="quick-track">
+            <span>Track</span>
+            <select aria-label="Quickly track a perspective" value={mapState.selectedPerspectiveId} onchange={(event) => handlePerspectiveSelect(event.currentTarget.value)}>
+              {#each perspectiveOptions as option}<option value={option.id}>{option.label}</option>{/each}
+            </select>
+          </label>
           <span class="live-indicator"><i></i> Live data synchronized</span>
           <span class="map-hint">Drag to navigate · Scroll to zoom</span>
         </div>
@@ -261,6 +298,11 @@
         <MapContainer />
         <div class="map-coordinate north">N</div>
         <div class="map-scale"><span></span> STRUCTURAL LEVEL</div>
+        <div class="scan-readout" data-hatsu-pass aria-live="polite">
+          <span>ACTIVE SCAN</span>
+          <strong class="capitalize">{currentDeckLabel}</strong>
+          <small>{mappedZoneCount} mapped zones · {trackedPresenceCount} tracked presences</small>
+        </div>
       <WhyPanel
         open={mapState.explainPanelOpen && !!mapState.explainTarget}
         subject={mapState.explainTarget?.subject || ''}
@@ -404,6 +446,13 @@
   .filter-grid input { position: absolute; opacity: 0; pointer-events: none; }
   .filter-grid label > span { width: .38rem; height: .38rem; border: 1px solid currentColor; border-radius: 50%; }
   .filter-grid label.active > span { background: var(--gold); box-shadow: 0 0 8px rgba(215,182,93,.55); }
+  .clear-filters { margin-top: .65rem; padding: 0; border: 0; border-bottom: 1px solid #495957; background: transparent; color: #788886; font-size: .58rem; cursor: pointer; }
+  .clear-filters:hover { color: var(--gold-bright); border-color: var(--gold); }
+  .deck-signal { margin-top: 1.2rem; padding-top: 1rem; border-top: 1px solid rgba(106,126,133,.16); }
+  .deck-signal > span { color: #70817f; font-size: .56rem; font-weight: 700; letter-spacing: .13em; text-transform: uppercase; }
+  .deck-signal dl { display: grid; grid-template-columns: repeat(2,1fr); margin: .7rem 0; gap: 1px; background: rgba(106,126,133,.15); }
+  .deck-signal dl div { padding: .6rem; background: #0c151c; }.deck-signal dt { color: #617170; font-size: .5rem; text-transform: uppercase; }.deck-signal dd { margin: .2rem 0 0; color: #dde3dc; font: 500 1.15rem/1 var(--font-display); }
+  .deck-signal p { display: flex; align-items: center; gap: .4rem; margin: 0; color: #7e918d; font-size: .58rem; }.deck-signal p i { width: .4rem; height: .4rem; border-radius: 50%; background: #72c3a8; box-shadow: 0 0 8px rgba(114,195,168,.55); }
 
   .map-stage { min-width: 0; display: grid; grid-template-rows: 3rem minmax(0,1fr); background: #060a0e; }
   .map-toolbar { position: relative; z-index: 3; display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 0 1rem; border-bottom: 1px solid rgba(97,120,128,.2); background: rgba(11,18,24,.94); }
@@ -412,6 +461,9 @@
   .map-breadcrumb i { color: #354543; font-style: normal; }
   .map-breadcrumb strong { color: #cbd4ce; font-weight: 500; }
   .map-tools { display: flex; align-items: center; gap: 1rem; color: #5f706f; font-size: .6rem; }
+  .quick-track { display: flex; align-items: center; gap: .45rem; padding-right: 1rem; border-right: 1px solid rgba(97,120,128,.2); color: #657775; }
+  .quick-track > span { font-size: .52rem; letter-spacing: .1em; text-transform: uppercase; }
+  .quick-track select { max-width: 10rem; border: 0; outline: 0; background: transparent; color: #bcc8c2; font-size: .62rem; cursor: pointer; }
   .live-indicator { color: #88a49c; }
   .live-indicator i { display: inline-block; width: .38rem; height: .38rem; margin-right: .35rem; border-radius: 50%; background: #72c3a8; box-shadow: 0 0 8px rgba(114,195,168,.6); }
   .map-canvas { position: relative; min-height: 0; overflow: hidden; }
@@ -419,6 +471,8 @@
   .map-coordinate::after { content: ''; position: absolute; top: -.32rem; border: .2rem solid transparent; border-bottom-color: var(--gold); }
   .map-scale { position: absolute; z-index: 2; right: 1rem; bottom: 1rem; color: #566765; font-size: .55rem; letter-spacing: .12em; pointer-events: none; }
   .map-scale span { display: inline-block; width: 2.5rem; height: .35rem; margin-right: .4rem; border: solid #667876; border-width: 0 1px 1px; }
+  .scan-readout { position: absolute; z-index: 12; bottom: 1rem; left: 1rem; display: grid; min-width: 13rem; gap: .18rem; padding: .7rem .8rem; border: 1px solid rgba(95,122,128,.25); border-radius: .45rem; background: rgba(8,14,18,.82); box-shadow: 0 10px 30px rgba(0,0,0,.24); backdrop-filter: blur(10px); pointer-events: none; }
+  .scan-readout > span { color: var(--gold); font: .48rem/1 var(--font-mono); letter-spacing: .14em; }.scan-readout strong { color: #dce4de; font-size: .75rem; font-weight: 600; }.scan-readout small { color: #647572; font-size: .52rem; }
 
   .intel-panel { max-width: 1600px; margin: .75rem auto 0; display: grid; grid-template-columns: 1.35fr 1fr; gap: .75rem; }
   .perspective-panel, .legend-panel { min-width: 0; padding: .9rem 1rem; border: 1px solid rgba(98,122,132,.25); border-radius: .8rem; background: var(--surface); }
@@ -463,6 +517,8 @@
     .filter-section { margin-top: .8rem; padding-top: .75rem; }
     .map-stage { height: 460px; }
     .map-tools { display: none; }
+    .deck-signal { display: none; }
+    .scan-readout { bottom: .65rem; left: .65rem; min-width: 0; }
     .map-toolbar { padding: 0 .75rem; }
     .intel-panel { grid-template-columns: 1fr; }
     .timeline-shell { padding: .8rem; }

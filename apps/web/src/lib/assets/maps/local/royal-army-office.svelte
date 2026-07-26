@@ -26,7 +26,7 @@
     <rect x="0" y="0" width="800" height="600" class="wall" />
     
     <!-- Stage Area -->
-    <rect class="zone" x="0" y="0" width="800" height="200" onclick={() => handleElementClick('stage')} />
+    <rect role="button" tabindex="0" aria-label="Inspect map area" onkeydown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.currentTarget.dispatchEvent(new MouseEvent('click', { bubbles: true })); } }} class="zone" x="0" y="0" width="800" height="200" onclick={() => handleElementClick('stage')} />
     <line x1="0" y1="200" x2="800" y2="200" stroke="#444" stroke-width="4" />
     
     <!-- Big Projector Screen -->
@@ -68,7 +68,7 @@
     <circle cx="500" cy="480" r="12" class="person" />
 
     <!-- Rows of Audience Seating behind -->
-    <rect class="zone" x="50" y="520" width="700" height="80" onclick={() => handleElementClick('audience')} />
+    <rect role="button" tabindex="0" aria-label="Inspect map area" onkeydown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.currentTarget.dispatchEvent(new MouseEvent('click', { bubbles: true })); } }} class="zone" x="50" y="520" width="700" height="80" onclick={() => handleElementClick('audience')} />
     {#each Array(15) as _, i}
       <circle cx="{80 + i * 45}" cy="540" r="12" class="person" />
       <circle cx="{80 + i * 45}" cy="580" r="12" class="person" />

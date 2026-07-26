@@ -27,7 +27,7 @@
     <rect x="0" y="0" width="900" height="650" class="wall" />
 
     <!-- Stage (Top) -->
-    <rect x="100" y="0" width="700" height="120" class="stage" onclick={() => handleElementClick('stage')} />
+    <rect role="button" tabindex="0" aria-label="Inspect map area" onkeydown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.currentTarget.dispatchEvent(new MouseEvent('click', { bubbles: true })); } }} x="100" y="0" width="700" height="120" class="stage" onclick={() => handleElementClick('stage')} />
     <text x="450" y="60" class="label">Stage</text>
     <rect x="420" y="40" width="60" height="30" fill="#111" stroke="#333" /> <!-- Piano -->
     <text x="450" y="90" class="sublabel">Piano & Performance Area</text>
@@ -37,7 +37,7 @@
     <g class="tables">
       {#each Array(4) as _, row}
         {#each Array(6) as _, col}
-          <g transform="translate({150 + col * 120}, {200 + row * 90})" onclick={() => handleElementClick(`table-${row}-${col}`)}>
+          <g role="button" tabindex="0" aria-label="Inspect map area" onkeydown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.currentTarget.dispatchEvent(new MouseEvent('click', { bubbles: true })); } }} transform="translate({150 + col * 120}, {200 + row * 90})" onclick={() => handleElementClick(`table-${row}-${col}`)}>
             <circle cx="0" cy="0" r="30" class="table" />
             <!-- Seats -->
             <circle cx="0" cy="-35" r="5" fill="#555" />
@@ -50,22 +50,22 @@
     </g>
 
     <!-- Food Buffets (Bottom Left and Right) -->
-    <rect x="50" y="550" width="250" height="60" class="buffet" onclick={() => handleElementClick('buffet-left')} />
+    <rect role="button" tabindex="0" aria-label="Inspect map area" onkeydown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.currentTarget.dispatchEvent(new MouseEvent('click', { bubbles: true })); } }} x="50" y="550" width="250" height="60" class="buffet" onclick={() => handleElementClick('buffet-left')} />
     <text x="175" y="585" class="label" font-size="14">Food Buffet</text>
 
-    <rect x="600" y="550" width="250" height="60" class="buffet" onclick={() => handleElementClick('buffet-right')} />
+    <rect role="button" tabindex="0" aria-label="Inspect map area" onkeydown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.currentTarget.dispatchEvent(new MouseEvent('click', { bubbles: true })); } }} x="600" y="550" width="250" height="60" class="buffet" onclick={() => handleElementClick('buffet-right')} />
     <text x="725" y="585" class="label" font-size="14">Food Buffet</text>
 
     <!-- King's Throne Platform (Bottom Center) -->
-    <path class="throne-platform" d="M 350 650 L 350 550 L 550 550 L 550 650 Z" onclick={() => handleElementClick('throne-platform')} />
+    <path role="button" tabindex="0" aria-label="Inspect map area" onkeydown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.currentTarget.dispatchEvent(new MouseEvent('click', { bubbles: true })); } }} class="throne-platform" d="M 350 650 L 350 550 L 550 550 L 550 650 Z" onclick={() => handleElementClick('throne-platform')} />
     <path class="throne-platform" d="M 370 550 L 370 520 L 530 520 L 530 550 Z" /> <!-- Stairs -->
     <rect x="420" y="570" width="60" height="60" fill="none" stroke="#FFD700" stroke-width="2" /> <!-- Throne -->
     <text x="450" y="610" class="sublabel">King's Throne</text>
 
     <!-- Main Entrance / Passageway (Left Wall) -->
     <line x1="0" y1="300" x2="0" y2="400" stroke="#050505" stroke-width="10" /> <!-- Opening in wall -->
-    <line class="door" x1="-30" y1="300" x2="0" y2="350" onclick={() => handleElementClick('main-doors')} />
-    <line class="door" x1="-30" y1="400" x2="0" y2="350" onclick={() => handleElementClick('main-doors')} />
+    <line role="button" tabindex="0" aria-label="Open the main doors" onkeydown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.currentTarget.dispatchEvent(new MouseEvent('click', { bubbles: true })); } }} class="door" x1="-30" y1="300" x2="0" y2="350" onclick={() => handleElementClick('main-doors')} />
+    <line role="button" tabindex="0" aria-label="Open the main doors" onkeydown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.currentTarget.dispatchEvent(new MouseEvent('click', { bubbles: true })); } }} class="door" x1="-30" y1="400" x2="0" y2="350" onclick={() => handleElementClick('main-doors')} />
     <text x="-40" y="355" class="label" font-size="14" transform="rotate(-90 -40 355)">Passageway</text>
     
     <!-- Guards at entrance -->

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { untrack } from 'svelte';
   import { page } from '$app/stores';
   import { goto } from '$app/navigation';
   import type { PageData } from './$types';
@@ -7,15 +8,15 @@
 
   let { data }: { data: PageData } = $props();
 
-  let selectedEventId = $state(data.selectedEventId || '');
-  let selectedLeft = $state(data.selectedLeft || '');
-  let selectedRight = $state(data.selectedRight || '');
-  let compareCanonical = $state(Boolean(data.compareCanonical));
+  let selectedEventId = $state(untrack(() => data.selectedEventId || ''));
+  let selectedLeft = $state(untrack(() => data.selectedLeft || ''));
+  let selectedRight = $state(untrack(() => data.selectedRight || ''));
+  let compareCanonical = $state(untrack(() => Boolean(data.compareCanonical)));
   let differencesOnly = $state(Boolean($page.url.searchParams.get('diffOnly') === '1'));
-  let zoom = $state(data.sync.zoom || 1);
-  let tier = $state(data.sync.tier || 'tier-1');
-  let zone = $state(data.sync.zone || '');
-  let selectedSubject = $state(data.sync.subject || '');
+  let zoom = $state(untrack(() => data.sync.zoom || 1));
+  let tier = $state(untrack(() => data.sync.tier || 'tier-1'));
+  let zone = $state(untrack(() => data.sync.zone || ''));
+  let selectedSubject = $state(untrack(() => data.sync.subject || ''));
   let snapKey = $state(0);
   let lastSnapSubject = $state('');
 

@@ -66,6 +66,6 @@
     <path fill="#111" d="M 50 50 Q 500 120 950 50 L 950 0 L 50 0 Z" />
 
     <!-- Clickable transparent overlay over the window -->
-    <rect x="200" y="100" width="600" height="300" fill="transparent" cursor="pointer" onclick={() => handleElementClick('cityscape')} />
+    <rect role="button" tabindex="0" aria-label="Inspect the cityscape" onkeydown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.currentTarget.dispatchEvent(new MouseEvent('click', { bubbles: true })); } }} x="200" y="100" width="600" height="300" fill="transparent" cursor="pointer" onclick={() => handleElementClick('cityscape')} />
   </g>
 </svg>

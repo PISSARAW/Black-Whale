@@ -24,7 +24,7 @@
     <rect x="0" y="0" width="700" height="500" class="wall" />
     
     <!-- Judge's Dais (Top) -->
-    <rect class="zone" x="200" y="0" width="300" height="200" onclick={() => handleElementClick('judges-bench')} />
+    <rect role="button" tabindex="0" aria-label="Inspect map area" onkeydown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.currentTarget.dispatchEvent(new MouseEvent('click', { bubbles: true })); } }} class="zone" x="200" y="0" width="300" height="200" onclick={() => handleElementClick('judges-bench')} />
     <rect x="220" y="120" width="260" height="60" class="furniture" /> <!-- Bench -->
     
     <!-- Botobai Gigante -->
@@ -42,7 +42,7 @@
     <text x="600" y="220" class="sublabel">Clerks</text>
     
     <!-- Defendant's Stand (Center) -->
-    <rect class="zone" x="300" y="300" width="100" height="100" onclick={() => handleElementClick('defendant-stand')} />
+    <rect role="button" tabindex="0" aria-label="Inspect map area" onkeydown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.currentTarget.dispatchEvent(new MouseEvent('click', { bubbles: true })); } }} class="zone" x="300" y="300" width="100" height="100" onclick={() => handleElementClick('defendant-stand')} />
     <rect x="310" y="310" width="80" height="40" class="furniture" />
     <circle cx="350" cy="370" r="12" fill="#ddd" /> <!-- Defendant -->
     <line x1="335" y1="380" x2="365" y2="380" stroke="#fff" stroke-width="2" /> <!-- Hands bound -->

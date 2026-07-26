@@ -50,8 +50,8 @@
 
     <!-- Guards (Kakin Royal Army) on Tier 2 side -->
     <!-- (There are 600 stationed on this tier, showing 2 here) -->
-    <circle cx="340" cy="150" r="15" class="guard" onclick={() => handleElementClick('guard-1')} />
-    <circle cx="340" cy="250" r="15" class="guard" onclick={() => handleElementClick('guard-2')} />
+    <circle role="button" tabindex="0" aria-label="Inspect map area" onkeydown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.currentTarget.dispatchEvent(new MouseEvent('click', { bubbles: true })); } }} cx="340" cy="150" r="15" class="guard" onclick={() => handleElementClick('guard-1')} />
+    <circle role="button" tabindex="0" aria-label="Inspect map area" onkeydown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.currentTarget.dispatchEvent(new MouseEvent('click', { bubbles: true })); } }} cx="340" cy="250" r="15" class="guard" onclick={() => handleElementClick('guard-2')} />
     
     <!-- Rifles -->
     <line x1="340" y1="150" x2="380" y2="150" stroke="#111" stroke-width="4" />

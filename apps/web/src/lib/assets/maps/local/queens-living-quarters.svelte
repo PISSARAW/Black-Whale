@@ -31,7 +31,7 @@
     <!-- 4 Queens on Top -->
     {#each Array(4) as _, i}
       <g transform="translate({10 + i * 145}, 10)">
-        <rect class="zone" x="0" y="0" width="135" height="150" onclick={() => handleElementClick(`queen-room-top-${i}`)} />
+        <rect role="button" tabindex="0" aria-label="Inspect map area" onkeydown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.currentTarget.dispatchEvent(new MouseEvent('click', { bubbles: true })); } }} class="zone" x="0" y="0" width="135" height="150" onclick={() => handleElementClick(`queen-room-top-${i}`)} />
         <rect x="0" y="0" width="135" height="150" class="wall" />
         <line class="door" x1="50" y1="150" x2="85" y2="150" /> <!-- Door -->
         
@@ -48,7 +48,7 @@
     <!-- 4 Queens on Bottom -->
     {#each Array(4) as _, i}
       <g transform="translate({10 + i * 145}, 240)">
-        <rect class="zone" x="0" y="0" width="135" height="150" onclick={() => handleElementClick(`queen-room-bottom-${i}`)} />
+        <rect role="button" tabindex="0" aria-label="Inspect map area" onkeydown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.currentTarget.dispatchEvent(new MouseEvent('click', { bubbles: true })); } }} class="zone" x="0" y="0" width="135" height="150" onclick={() => handleElementClick(`queen-room-bottom-${i}`)} />
         <rect x="0" y="0" width="135" height="150" class="wall" />
         <line class="door" x1="50" y1="0" x2="85" y2="0" /> <!-- Door -->
         

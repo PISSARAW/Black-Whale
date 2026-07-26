@@ -31,7 +31,7 @@
     <!-- 3 Cabins in a row -->
     {#each [0, 1, 2] as i}
       <g transform="translate({i * 300}, 50)">
-        <rect class="zone" x="0" y="0" width="300" height="200" onclick={() => handleElementClick(`cabin-${i}`)} />
+        <rect role="button" tabindex="0" aria-label="Inspect map area" onkeydown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.currentTarget.dispatchEvent(new MouseEvent('click', { bubbles: true })); } }} class="zone" x="0" y="0" width="300" height="200" onclick={() => handleElementClick(`cabin-${i}`)} />
         <rect x="0" y="0" width="300" height="200" class="wall" />
         
         <!-- Entrance / Closet area -->
@@ -55,7 +55,7 @@
     <!-- Bottom Half: Upper Floor Single Cabin (Detailed View) -->
     <g transform="translate(350, 350)">
       <text x="100" y="-15" class="label text-green-400">Upper Floor Single Cabin</text>
-      <rect class="zone" x="0" y="0" width="200" height="220" onclick={() => handleElementClick('single-cabin-detail')} />
+      <rect role="button" tabindex="0" aria-label="Inspect map area" onkeydown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.currentTarget.dispatchEvent(new MouseEvent('click', { bubbles: true })); } }} class="zone" x="0" y="0" width="200" height="220" onclick={() => handleElementClick('single-cabin-detail')} />
       <rect x="0" y="0" width="200" height="220" class="wall" />
       
       <!-- Door -->

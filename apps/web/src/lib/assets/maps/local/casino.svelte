@@ -22,7 +22,7 @@
   <g transform="translate(50, 80)">
     
     <!-- Left Area: Slot Machines -->
-    <rect class="zone" x="0" y="0" width="300" height="500" onclick={() => handleElementClick('slot-machines')} />
+    <rect role="button" tabindex="0" aria-label="Inspect map area" onkeydown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.currentTarget.dispatchEvent(new MouseEvent('click', { bubbles: true })); } }} class="zone" x="0" y="0" width="300" height="500" onclick={() => handleElementClick('slot-machines')} />
     <text x="150" y="40" class="label text-yellow-500">Slot Machines</text>
     
     {#each Array(4) as _, row}
@@ -40,7 +40,7 @@
     {/each}
 
     <!-- Center/Right Area: Poker Tables -->
-    <rect class="zone" x="350" y="0" width="550" height="500" onclick={() => handleElementClick('poker-tables')} />
+    <rect role="button" tabindex="0" aria-label="Inspect map area" onkeydown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.currentTarget.dispatchEvent(new MouseEvent('click', { bubbles: true })); } }} class="zone" x="350" y="0" width="550" height="500" onclick={() => handleElementClick('poker-tables')} />
     <text x="625" y="40" class="label text-green-400">Poker Tables (Unconventional Variants)</text>
     
     <!-- Table 1 -->

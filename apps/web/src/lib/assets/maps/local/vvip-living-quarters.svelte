@@ -33,7 +33,7 @@
     <!-- Top Row -->
     {#each Array(4) as _, i}
       <g transform="translate({20 + i * 215}, 70)">
-        <rect class="zone" x="0" y="0" width="200" height="150" onclick={() => handleElementClick(`vvip-room-top-${i}`)} />
+        <rect role="button" tabindex="0" aria-label="Inspect map area" onkeydown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.currentTarget.dispatchEvent(new MouseEvent('click', { bubbles: true })); } }} class="zone" x="0" y="0" width="200" height="150" onclick={() => handleElementClick(`vvip-room-top-${i}`)} />
         <rect x="0" y="0" width="200" height="150" class="wall" />
         <line class="door" x1="80" y1="0" x2="120" y2="0" /> <!-- Door to corridor -->
         
@@ -57,7 +57,7 @@
     <!-- Bottom Row (Mafia Bosses & V5) -->
     {#each Array(4) as _, i}
       <g transform="translate({20 + i * 215}, 280)">
-        <rect class="zone" x="0" y="0" width="200" height="150" onclick={() => handleElementClick(`vvip-room-bottom-${i}`)} />
+        <rect role="button" tabindex="0" aria-label="Inspect map area" onkeydown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.currentTarget.dispatchEvent(new MouseEvent('click', { bubbles: true })); } }} class="zone" x="0" y="0" width="200" height="150" onclick={() => handleElementClick(`vvip-room-bottom-${i}`)} />
         <rect x="0" y="0" width="200" height="150" class="wall" />
         <line class="door" x1="80" y1="0" x2="120" y2="0" />
         

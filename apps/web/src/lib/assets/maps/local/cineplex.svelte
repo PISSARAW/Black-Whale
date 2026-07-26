@@ -24,7 +24,7 @@
   <g transform="translate(50, 80)">
     
     <!-- Left: Food & Drinks -->
-    <rect class="zone" x="0" y="100" width="250" height="300" onclick={() => handleElementClick('food-drinks')} />
+    <rect role="button" tabindex="0" aria-label="Inspect map area" onkeydown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.currentTarget.dispatchEvent(new MouseEvent('click', { bubbles: true })); } }} class="zone" x="0" y="100" width="250" height="300" onclick={() => handleElementClick('food-drinks')} />
     <rect x="0" y="200" width="250" height="60" class="counter" />
     <rect x="20" y="120" width="200" height="40" fill="#111" stroke="#333" />
     <text x="120" y="145" class="label text-yellow-500">FOOD & DRINKS</text>
@@ -35,7 +35,7 @@
     <circle cx="180" cy="190" r="10" class="person" />
 
     <!-- Right: Tickets -->
-    <rect class="zone" x="750" y="100" width="250" height="300" onclick={() => handleElementClick('tickets')} />
+    <rect role="button" tabindex="0" aria-label="Inspect map area" onkeydown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.currentTarget.dispatchEvent(new MouseEvent('click', { bubbles: true })); } }} class="zone" x="750" y="100" width="250" height="300" onclick={() => handleElementClick('tickets')} />
     <rect x="800" y="120" width="150" height="40" fill="#111" stroke="#333" />
     <text x="875" y="145" class="label text-blue-400">TICKETS</text>
     <rect x="800" y="200" width="150" height="60" class="counter" />
@@ -44,7 +44,7 @@
     <circle cx="910" cy="190" r="10" class="person" />
 
     <!-- Center Corridor leading to screens -->
-    <rect class="zone" x="350" y="150" width="300" height="350" onclick={() => handleElementClick('screens-corridor')} />
+    <rect role="button" tabindex="0" aria-label="Inspect map area" onkeydown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.currentTarget.dispatchEvent(new MouseEvent('click', { bubbles: true })); } }} class="zone" x="350" y="150" width="300" height="350" onclick={() => handleElementClick('screens-corridor')} />
     
     <!-- Huge Movie Poster above corridor -->
     <rect x="350" y="50" width="300" height="80" class="screen-sign" />

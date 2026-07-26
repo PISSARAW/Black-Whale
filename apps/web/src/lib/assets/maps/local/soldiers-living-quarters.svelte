@@ -25,7 +25,7 @@
   <g transform="translate(50, 100)">
     
     <!-- Central Path to Lower Tiers -->
-    <rect class="zone" x="0" y="200" width="900" height="50" onclick={() => handleElementClick('passageway-lower-tiers')} />
+    <rect role="button" tabindex="0" aria-label="Inspect map area" onkeydown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.currentTarget.dispatchEvent(new MouseEvent('click', { bubbles: true })); } }} class="zone" x="0" y="200" width="900" height="50" onclick={() => handleElementClick('passageway-lower-tiers')} />
     <text x="450" y="230" class="label text-gray-500" font-size="14">Heavily Guarded Passageway to Lower Tiers</text>
     <!-- Guards blocking path -->
     <circle cx="50" cy="225" r="8" class="soldier" />
@@ -35,7 +35,7 @@
     <text x="450" y="20" class="label text-blue-400">Royal Army Barracks</text>
     {#each Array(4) as _, i}
       <g transform="translate({20 + i * 220}, 40)">
-        <rect class="zone barracks" x="0" y="0" width="200" height="150" onclick={() => handleElementClick(`army-barracks-${i}`)} />
+        <rect role="button" tabindex="0" aria-label="Inspect map area" onkeydown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.currentTarget.dispatchEvent(new MouseEvent('click', { bubbles: true })); } }} class="zone barracks" x="0" y="0" width="200" height="150" onclick={() => handleElementClick(`army-barracks-${i}`)} />
         <!-- Bunk beds -->
         {#each Array(3) as _, r}
           {#each Array(4) as _, c}
@@ -50,7 +50,7 @@
     <text x="450" y="280" class="label text-green-400">Provisional Hunters Quarters</text>
     {#each Array(4) as _, i}
       <g transform="translate({20 + i * 220}, 300)">
-        <rect class="zone barracks" x="0" y="0" width="200" height="150" onclick={() => handleElementClick(`hunter-quarters-${i}`)} />
+        <rect role="button" tabindex="0" aria-label="Inspect map area" onkeydown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.currentTarget.dispatchEvent(new MouseEvent('click', { bubbles: true })); } }} class="zone barracks" x="0" y="0" width="200" height="150" onclick={() => handleElementClick(`hunter-quarters-${i}`)} />
         <!-- Slightly different layout for hunters -->
         {#each Array(4) as _, r}
           {#each Array(3) as _, c}

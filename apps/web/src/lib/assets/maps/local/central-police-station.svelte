@@ -23,7 +23,7 @@
   <g transform="translate(50, 80)">
     
     <!-- Left Half: Main Atrium -->
-    <rect class="zone" x="0" y="0" width="550" height="550" onclick={() => handleElementClick('main-atrium')} />
+    <rect role="button" tabindex="0" aria-label="Inspect map area" onkeydown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.currentTarget.dispatchEvent(new MouseEvent('click', { bubbles: true })); } }} class="zone" x="0" y="0" width="550" height="550" onclick={() => handleElementClick('main-atrium')} />
     <rect x="0" y="0" width="550" height="550" class="wall" />
     <text x="275" y="30" class="label text-blue-400">Main Atrium</text>
 
@@ -51,7 +51,7 @@
     <circle cx="370" cy="530" r="8" fill="#4a5568" />
 
     <!-- Right Half: Community Safety Section -->
-    <rect class="zone" x="600" y="0" width="300" height="300" onclick={() => handleElementClick('community-safety')} />
+    <rect role="button" tabindex="0" aria-label="Inspect map area" onkeydown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.currentTarget.dispatchEvent(new MouseEvent('click', { bubbles: true })); } }} class="zone" x="600" y="0" width="300" height="300" onclick={() => handleElementClick('community-safety')} />
     <rect x="600" y="0" width="300" height="300" class="wall" />
     <text x="750" y="30" class="label text-green-400">Community Safety Section</text>
     

@@ -25,7 +25,7 @@
   <g transform="translate(50, 80)">
     
     <!-- Central Corridor connecting to the area -->
-    <rect class="zone" x="0" y="150" width="900" height="200" onclick={() => handleElementClick('main-corridor')} />
+    <rect role="button" tabindex="0" aria-label="Inspect map area" onkeydown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.currentTarget.dispatchEvent(new MouseEvent('click', { bubbles: true })); } }} class="zone" x="0" y="150" width="900" height="200" onclick={() => handleElementClick('main-corridor')} />
     <text x="450" y="250" class="label text-gray-500" font-size="24" opacity="0.3">Corridor Principal (Assembly Point)</text>
 
     <!-- Partitions between areas -->
@@ -37,7 +37,7 @@
     {#each Array(6) as _, i}
       <g transform="translate({i * 150}, 0)">
         <rect x="0" y="0" width="150" height="150" class="wall" />
-        <rect class="zone" x="0" y="0" width="150" height="150" onclick={() => handleElementClick(`cabin-top-${i}`)} />
+        <rect role="button" tabindex="0" aria-label="Inspect map area" onkeydown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.currentTarget.dispatchEvent(new MouseEvent('click', { bubbles: true })); } }} class="zone" x="0" y="0" width="150" height="150" onclick={() => handleElementClick(`cabin-top-${i}`)} />
         <text x="75" y="50" class="sublabel text-gray-600">Standard Cabin</text>
         <text x="75" y="70" class="sublabel text-[9px] text-gray-500">(Bed, Cupboards, WC)</text>
         <line class="wall" x1="40" y1="150" x2="110" y2="150" /> <!-- Door frame -->
@@ -49,7 +49,7 @@
     {#each Array(6) as _, i}
       <g transform="translate({i * 150}, 350)">
         <rect x="0" y="0" width="150" height="150" class="wall" />
-        <rect class="zone" x="0" y="0" width="150" height="150" onclick={() => handleElementClick(`cabin-bottom-${i}`)} />
+        <rect role="button" tabindex="0" aria-label="Inspect map area" onkeydown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.currentTarget.dispatchEvent(new MouseEvent('click', { bubbles: true })); } }} class="zone" x="0" y="0" width="150" height="150" onclick={() => handleElementClick(`cabin-bottom-${i}`)} />
         <text x="75" y="50" class="sublabel text-gray-600">Standard Cabin</text>
         
         {#if i === 4}

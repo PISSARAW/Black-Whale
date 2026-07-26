@@ -24,7 +24,7 @@
   <g transform="translate(50, 80)">
     
     <!-- Left Side: Launch Site (Exterior View) -->
-    <rect class="zone" x="0" y="0" width="450" height="500" onclick={() => handleElementClick('launch-site')} />
+    <rect role="button" tabindex="0" aria-label="Inspect map area" onkeydown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.currentTarget.dispatchEvent(new MouseEvent('click', { bubbles: true })); } }} class="zone" x="0" y="0" width="450" height="500" onclick={() => handleElementClick('launch-site')} />
     <rect x="0" y="0" width="450" height="500" class="wall" />
     <text x="225" y="40" class="label text-blue-400">Launch Site</text>
     
@@ -61,7 +61,7 @@
     <text x="275" y="335" class="sublabel text-xs text-black">Pod B</text>
     
     <!-- Right Side: Lifeboat Interior -->
-    <rect class="zone" x="450" y="0" width="450" height="500" onclick={() => handleElementClick('lifeboat-interior')} />
+    <rect role="button" tabindex="0" aria-label="Inspect map area" onkeydown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.currentTarget.dispatchEvent(new MouseEvent('click', { bubbles: true })); } }} class="zone" x="450" y="0" width="450" height="500" onclick={() => handleElementClick('lifeboat-interior')} />
     <rect x="450" y="0" width="450" height="500" class="wall" />
     <text x="675" y="40" class="label text-green-400">Lifeboat Interior</text>
 

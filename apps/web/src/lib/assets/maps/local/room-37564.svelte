@@ -32,7 +32,7 @@
     <circle cx="200" cy="250" r="40" class="pillar" />
     <circle cx="700" cy="250" r="40" class="pillar" />
     
-    <rect class="zone" x="0" y="0" width="900" height="500" onclick={() => handleElementClick('crowd')} />
+    <rect role="button" tabindex="0" aria-label="Inspect map area" onkeydown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.currentTarget.dispatchEvent(new MouseEvent('click', { bubbles: true })); } }} class="zone" x="0" y="0" width="900" height="500" onclick={() => handleElementClick('crowd')} />
 
     <!-- Chrollo sitting/standing near a pillar -->
     <g transform="translate(260, 260)">

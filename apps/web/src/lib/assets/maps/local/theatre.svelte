@@ -25,7 +25,7 @@
     <rect x="0" y="0" width="900" height="500" class="wall" />
     
     <!-- Stage (Top) -->
-    <rect class="zone" x="150" y="0" width="600" height="150" onclick={() => handleElementClick('stage')} />
+    <rect role="button" tabindex="0" aria-label="Inspect map area" onkeydown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.currentTarget.dispatchEvent(new MouseEvent('click', { bubbles: true })); } }} class="zone" x="150" y="0" width="600" height="150" onclick={() => handleElementClick('stage')} />
     <path class="stage" d="M 150 0 L 750 0 L 750 120 Q 450 160 150 120 Z" />
     <text x="450" y="60" class="label">Stage</text>
     
@@ -37,7 +37,7 @@
     <circle cx="580" cy="80" r="15" fill="#fff" />
     
     <!-- Main Seating Area -->
-    <rect class="zone" x="200" y="200" width="500" height="280" onclick={() => handleElementClick('seating')} />
+    <rect role="button" tabindex="0" aria-label="Inspect map area" onkeydown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.currentTarget.dispatchEvent(new MouseEvent('click', { bubbles: true })); } }} class="zone" x="200" y="200" width="500" height="280" onclick={() => handleElementClick('seating')} />
     <g class="seats">
       {#each Array(8) as _, row}
         {#each Array(20) as _, col}
@@ -47,10 +47,10 @@
     </g>
 
     <!-- Side Balconies -->
-    <rect class="zone balcony" x="0" y="150" width="120" height="300" onclick={() => handleElementClick('left-balcony')} />
+    <rect role="button" tabindex="0" aria-label="Inspect map area" onkeydown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.currentTarget.dispatchEvent(new MouseEvent('click', { bubbles: true })); } }} class="zone balcony" x="0" y="150" width="120" height="300" onclick={() => handleElementClick('left-balcony')} />
     <text x="60" y="300" class="sublabel" transform="rotate(-90 60 300)">Left Balcony</text>
     
-    <rect class="zone balcony" x="780" y="150" width="120" height="300" onclick={() => handleElementClick('right-balcony')} />
+    <rect role="button" tabindex="0" aria-label="Inspect map area" onkeydown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.currentTarget.dispatchEvent(new MouseEvent('click', { bubbles: true })); } }} class="zone balcony" x="780" y="150" width="120" height="300" onclick={() => handleElementClick('right-balcony')} />
     <text x="840" y="300" class="sublabel" transform="rotate(90 840 300)">Right Balcony</text>
 
     <!-- Entrances -->

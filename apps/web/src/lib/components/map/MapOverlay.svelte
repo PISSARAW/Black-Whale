@@ -3,6 +3,7 @@
   import CharacterMarker from './CharacterMarker.svelte';
   import type { MarkerIdentityState } from '$lib/components/perspective/types';
   import { page } from '$app/stores';
+  import { toEnglishDisplayName } from '$lib/utils/displayNames';
   
   // Mapping between location slugs and SVG coordinates for each tier
   // These coordinates are based on the SVG viewBox (0 0 1000 600)
@@ -250,7 +251,7 @@
         y = 220 + base * 180;
       }
 
-      const bodyName = ownerCharacter?.canonicalName || body?.label || 'Unknown body';
+      const bodyName = toEnglishDisplayName(ownerCharacter?.canonicalName || body?.label) || 'Unknown body';
       const perspectiveIsReader = mapState.selectedPerspectiveKind === 'reader';
       const observerCharacter = characters.find((char: any) => char.id === observer?.characterId);
       const apparentCharacter = characters.find((char: any) => char.id === observer?.apparentCharacterId);

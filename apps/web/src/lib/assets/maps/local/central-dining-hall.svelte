@@ -47,7 +47,7 @@
     </g>
 
     <!-- Top section (Rows of tables receding into the distance) -->
-    <rect class="zone" x="160" y="0" width="740" height="200" onclick={() => handleElementClick('background-tables')} />
+    <rect role="button" tabindex="0" aria-label="Inspect map area" onkeydown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.currentTarget.dispatchEvent(new MouseEvent('click', { bubbles: true })); } }} class="zone" x="160" y="0" width="740" height="200" onclick={() => handleElementClick('background-tables')} />
     
     {#each Array(6) as _, row}
       {#each Array(3) as _, col}
@@ -64,7 +64,7 @@
     {/each}
 
     <!-- Central Focus Table (Foreground) -->
-    <rect class="zone" x="250" y="250" width="500" height="200" onclick={() => handleElementClick('main-table')} />
+    <rect role="button" tabindex="0" aria-label="Inspect map area" onkeydown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.currentTarget.dispatchEvent(new MouseEvent('click', { bubbles: true })); } }} class="zone" x="250" y="250" width="500" height="200" onclick={() => handleElementClick('main-table')} />
     
     <rect x="350" y="280" width="300" height="80" class="table" />
     <rect x="330" y="250" width="340" height="20" class="bench" /> <!-- Top bench -->

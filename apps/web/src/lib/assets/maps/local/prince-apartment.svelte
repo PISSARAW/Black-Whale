@@ -38,13 +38,13 @@
     <line class="door" x1="400" y1="0" x2="350" y2="30" />
 
     <!-- Living Room (Center, massive) -->
-    <rect class="zone" x="0" y="250" width="700" height="280" onclick={() => handleElementClick('living')} />
+    <rect role="button" tabindex="0" aria-label="Inspect map area" onkeydown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.currentTarget.dispatchEvent(new MouseEvent('click', { bubbles: true })); } }} class="zone" x="0" y="250" width="700" height="280" onclick={() => handleElementClick('living')} />
     <text x="250" y="390" class="label" font-size="24">Living</text>
     <rect x="300" y="350" width="80" height="60" class="furniture" /> <!-- Center Table -->
 
     <!-- Servants' Quarters (Top Left) -->
     <!-- Bounds: x: 0 to 300, y: 0 to 250 -->
-    <rect class="zone" x="0" y="0" width="300" height="250" onclick={() => handleElementClick('servants')} />
+    <rect role="button" tabindex="0" aria-label="Inspect map area" onkeydown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.currentTarget.dispatchEvent(new MouseEvent('click', { bubbles: true })); } }} class="zone" x="0" y="0" width="300" height="250" onclick={() => handleElementClick('servants')} />
     <line class="wall" x1="300" y1="0" x2="300" y2="250" />
     <line class="wall" x1="0" y1="250" x2="250" y2="250" />
     <line class="door" x1="250" y1="250" x2="300" y2="210" /> <!-- Door to living -->
@@ -57,7 +57,7 @@
 
     <!-- Kitchen (Top Right) -->
     <!-- Bounds: x: 400 to 700, y: 0 to 150 -->
-    <rect class="zone" x="400" y="0" width="300" height="150" onclick={() => handleElementClick('kitchen')} />
+    <rect role="button" tabindex="0" aria-label="Inspect map area" onkeydown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.currentTarget.dispatchEvent(new MouseEvent('click', { bubbles: true })); } }} class="zone" x="400" y="0" width="300" height="150" onclick={() => handleElementClick('kitchen')} />
     <line class="wall" x1="400" y1="0" x2="400" y2="350" />
     <line class="wall" x1="400" y1="150" x2="700" y2="150" />
     <text x="600" y="75" class="label">Kitchen</text>
@@ -70,7 +70,7 @@
     
     <!-- Dining (Middle Right, below Kitchen) -->
     <!-- Bounds: x: 400 to 700, y: 150 to 350 -->
-    <rect class="zone" x="400" y="150" width="300" height="200" onclick={() => handleElementClick('dining')} />
+    <rect role="button" tabindex="0" aria-label="Inspect map area" onkeydown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.currentTarget.dispatchEvent(new MouseEvent('click', { bubbles: true })); } }} class="zone" x="400" y="150" width="300" height="200" onclick={() => handleElementClick('dining')} />
     <line class="wall" x1="400" y1="350" x2="600" y2="350" />
     <line class="door" x1="600" y1="350" x2="650" y2="310" /> <!-- Door to Living -->
     <text x="550" y="250" class="label">Dining</text>
@@ -78,7 +78,7 @@
 
     <!-- Prince's Master Bedroom (Bottom Left/Center) -->
     <!-- Bounds: x: 0 to 500, y: 530 to 680 -->
-    <rect class="zone" x="0" y="530" width="500" height="150" onclick={() => handleElementClick('master-bedroom')} />
+    <rect role="button" tabindex="0" aria-label="Inspect map area" onkeydown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.currentTarget.dispatchEvent(new MouseEvent('click', { bubbles: true })); } }} class="zone" x="0" y="530" width="500" height="150" onclick={() => handleElementClick('master-bedroom')} />
     <line class="wall" x1="0" y1="530" x2="420" y2="530" />
     <line class="door" x1="420" y1="530" x2="470" y2="490" /> <!-- Door from Living -->
     <line class="wall" x1="500" y1="530" x2="500" y2="680" />
@@ -88,7 +88,7 @@
     
     <!-- Bathroom / Toilet (Bottom Right) -->
     <!-- Bounds: x: 500 to 700, y: 530 to 680 -->
-    <rect class="zone" x="500" y="530" width="200" height="150" onclick={() => handleElementClick('bathroom')} />
+    <rect role="button" tabindex="0" aria-label="Inspect map area" onkeydown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.currentTarget.dispatchEvent(new MouseEvent('click', { bubbles: true })); } }} class="zone" x="500" y="530" width="200" height="150" onclick={() => handleElementClick('bathroom')} />
     <line class="wall" x1="500" y1="530" x2="700" y2="530" />
     <!-- Bathroom door is inside the living room leading to a small corridor maybe? Let's add a door at 550,530 -->
     <line class="door" x1="530" y1="530" x2="580" y2="490" /> 

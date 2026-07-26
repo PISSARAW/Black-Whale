@@ -23,9 +23,6 @@
 						</h2>
 						<p class="text-gray-600 mt-1">{event.summary}</p>
 					</div>
-					<div class="text-sm bg-gray-100 px-3 py-1 rounded">
-						Visible from Ch: {event.firstVisibleChapter}
-					</div>
 				</div>
 
 				{#if event.presencesFrom.length > 0}
@@ -34,7 +31,7 @@
 						<ul class="space-y-1">
 							{#each event.presencesFrom as presence}
 								<li class="text-sm">
-									<span class="font-medium">{presence.character.canonicalName}</span> moved to 
+									<span class="font-medium">{presence.body?.character?.canonicalName ?? 'Unknown Character'}</span> moved to 
 									<span class="font-medium">{presence.location?.name ?? 'Unknown Location'}</span>
 									<span class="text-gray-400 text-xs ml-2">({presence.precision}, {presence.certainty})</span>
 								</li>

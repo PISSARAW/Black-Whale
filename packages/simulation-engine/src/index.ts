@@ -1,66 +1,80 @@
-import type { SimulationBranch, SimulationEvent } from '@black-whale/domain'
-import type { WorldSnapshot } from '@black-whale/timeline-engine'
-
-// ──────────────────────────────────────────────
-// Types
-// ──────────────────────────────────────────────
+import {
+  InMemoryBranchEngine,
+  type BranchRulePolicy,
+  type ProposedWorldEvent,
+  type WorldBranch,
+  type WorldEvent,
+  type WorldState,
+} from '@black-whale/world-engine'
 
 export type SimulationMode = 'strict-canon' | 'rule-compatible' | 'sandbox'
 
 export interface CreateBranchInput {
+  id: string
   parentEventId: string
   mode: SimulationMode
+  name?: string
   ownerId?: string
 }
 
-export interface SimulationAction {
-  type: string
-  payload: Record<string, unknown>
-}
-
 export interface SimulationStepResult {
-  snapshot: WorldSnapshot
-  appliedEvents: SimulationEvent[]
+  snapshot: WorldState
+  appliedEvents: WorldEvent[]
   canonFidelity: number
   warnings: string[]
 }
 
-// ──────────────────────────────────────────────
-// Interface
-// ──────────────────────────────────────────────
-
-export interface ISimulationEngine {
-  /** Create a new simulation branch from a canonical event */
-  createBranch(input: CreateBranchInput): Promise<SimulationBranch>
-
-  /** Apply a user action to a branch and return the resulting state */
-  applyAction(branchId: string, action: SimulationAction): Promise<SimulationStepResult>
-
-  /** Get the current state of a simulation branch */
-  getBranchState(branchId: string): Promise<WorldSnapshot>
-
-  /** List all branches owned by a user */
-  listBranches(ownerId: string): Promise<SimulationBranch[]>
+function toPolicy(mode: SimulationMode): BranchRulePolicy {
+  if (mode === 'strict-canon') return 'STRICT_CANON'
+  if (mode === 'sandbox') return 'SANDBOX'
+  return 'RULE_COMPATIBLE'
 }
 
-// ──────────────────────────────────────────────
-// Stub
-// ──────────────────────────────────────────────
+/**
+ * Branching is deliberately persistence-agnostic. Canon and simulations share
+ * the same WorldState and reducers; the API decides how branch events are stored.
+ */
+export class SimulationEngine {
+  private readonly branches = new InMemoryBranchEngine()
 
-export class SimulationEngine implements ISimulationEngine {
-  async createBranch(input: CreateBranchInput): Promise<SimulationBranch> {
-    throw new Error(`SimulationEngine.createBranch not implemented — parentEventId: ${input.parentEventId}`)
+  createBranch(input: CreateBranchInput, baseState: WorldState): WorldBranch {
+    if (baseState.cursor.eventId !== input.parentEventId) {
+      throw new Error(`Base state ${baseState.cursor.eventId} does not match fork ${input.parentEventId}`)
+    }
+    return this.branches.createBranch({
+      id: input.id,
+      name: input.name ?? `Simulation from ${input.parentEventId}`,
+      kind: 'SIMULATION',
+      rulePolicy: toPolicy(input.mode),
+      ownerId: input.ownerId,
+      baseState,
+    })
   }
 
-  async applyAction(branchId: string, action: SimulationAction): Promise<SimulationStepResult> {
-    throw new Error(`SimulationEngine.applyAction not implemented — branchId: ${branchId}`)
+  restoreBranch(branch: WorldBranch, snapshot: WorldState, events: WorldEvent[] = []): void {
+    this.branches.restoreBranch(branch, snapshot, events)
   }
 
-  async getBranchState(branchId: string): Promise<WorldSnapshot> {
-    throw new Error(`SimulationEngine.getBranchState not implemented — branchId: ${branchId}`)
+  applyEvents(branchId: string, events: ProposedWorldEvent[]): SimulationStepResult {
+    const result = this.branches.append(branchId, events)
+    const policy = this.branches.getBranch(branchId).rulePolicy
+    return {
+      snapshot: result.state,
+      appliedEvents: result.events,
+      canonFidelity: policy === 'STRICT_CANON' ? 1 : policy === 'RULE_COMPATIBLE' ? 0.75 : 0,
+      warnings: policy === 'SANDBOX' ? ['Sandbox branch: canonical constraints may be bypassed.'] : [],
+    }
   }
 
-  async listBranches(ownerId: string): Promise<SimulationBranch[]> {
-    throw new Error(`SimulationEngine.listBranches not implemented — ownerId: ${ownerId}`)
+  getBranchState(branchId: string): WorldState {
+    return this.branches.getState(branchId)
+  }
+
+  getBranch(branchId: string): WorldBranch {
+    return this.branches.getBranch(branchId)
+  }
+
+  listBranches(ownerId?: string): WorldBranch[] {
+    return this.branches.listBranches(ownerId)
   }
 }

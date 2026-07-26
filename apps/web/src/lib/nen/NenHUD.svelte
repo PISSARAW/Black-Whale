@@ -33,7 +33,7 @@
   // the wheel has no entries) with ability-specific entries.
   $: mergedWheel = wheelEntries.length > 0
     ? wheelEntries
-    : BASE_NEN_ACTIONS.map((a) => ({ ...a, visibility: 'locked' as const, hint: 'Aucune capacité active' }))
+    : BASE_NEN_ACTIONS.map((a) => ({ ...a, visibility: 'locked' as const, hint: 'No active ability' }))
 
   function handleActionSelect(e: CustomEvent<NenActionWheelEntry>) {
     whyPanelData = null
@@ -47,29 +47,29 @@
       actionId: e.detail.id,
       available: false,
       conditions: [
-        { label: 'Action reconnue', status: 'met' },
-        { label: e.detail.hint ?? 'Condition non remplie', status: 'unmet' },
+        { label: 'Recognized action', status: 'met' },
+        { label: e.detail.hint ?? 'Unmet condition', status: 'unmet' },
       ],
     }
   }
 
   const overlayLabels: Record<string, string> = {
-    RANGE:        'Portée',
-    TRAJECTORY:   'Trajectoire',
+    RANGE:        'Range',
+    TRAJECTORY:   'Trajectory',
     AURA:         'Aura',
     TENSION:      'Tension',
-    FUTURE:       'Futur',
-    CONTROL_LINK: 'Lien de contrôle',
+    FUTURE:       'Future',
+    CONTROL_LINK: 'Control link',
   }
 
   const inputModeLabels: Record<string, string> = {
-    CLICK:            'Clic',
-    DRAG:             'Glisser',
-    HOLD:             'Maintenir',
-    DRAW:             'Tracer',
-    SEQUENCE:         'Séquence',
-    TARGET_SELECTION: 'Sélection de cible',
-    CUSTOM:           'Interface dédiée',
+    CLICK:            'Click',
+    DRAG:             'Drag',
+    HOLD:             'Hold',
+    DRAW:             'Draw',
+    SEQUENCE:         'Sequence',
+    TARGET_SELECTION: 'Target selection',
+    CUSTOM:           'Custom interface',
   }
 </script>
 
@@ -80,11 +80,11 @@
   │ NenStatusBar (chapter / identity / perspective)    │
   ├─────────────┬──────────────────────┬───────────────┤
   │ Left panel  │ Centre (map slot)    │ Right panel   │
-  │ Capacités   │                      │ Règles actives│
-  │ Action wheel│                      │ Cibles        │
-  │ Cycle       │                      │ Coûts         │
+  │ Abilities   │                      │ Active rules  │
+  │ Action wheel│                      │ Targets       │
+  │ Cycle       │                      │ Costs         │
   ├─────────────┴──────────────────────┴───────────────┤
-  │ Chronologie (slot)                                 │
+  │ Timeline (slot)                                    │
   └────────────────────────────────────────────────────┘
 -->
 <div class="nen-hud flex flex-col h-full bg-bw-dark text-white">
@@ -103,11 +103,11 @@
         <div class="bg-bw-navy border border-bw-gold/30 rounded p-2 text-xs">
           <div class="text-bw-gold font-bold mb-1 truncate">{activeManifest.abilityId}</div>
           <div class="text-gray-400">
-            Mode : <span class="text-white">{inputModeLabels[activeManifest.inputMode] ?? activeManifest.inputMode}</span>
+            Mode: <span class="text-white">{inputModeLabels[activeManifest.inputMode] ?? activeManifest.inputMode}</span>
           </div>
           {#if activeManifest.overlays.length > 0}
             <div class="text-gray-400 mt-0.5">
-              Superpositions :
+              Overlays:
               <span class="text-white">{activeManifest.overlays.map(o => overlayLabels[o] ?? o).join(', ')}</span>
             </div>
           {/if}
@@ -140,7 +140,7 @@
     <main class="flex-1 overflow-hidden relative">
       <slot name="map">
         <div class="flex items-center justify-center h-full text-gray-600 text-sm italic select-none">
-          Carte non disponible
+          Map unavailable
         </div>
       </slot>
     </main>
@@ -151,7 +151,7 @@
       <!-- Active rules -->
       {#if activeRules.length > 0}
         <div class="bg-bw-navy border border-bw-gold/20 rounded p-2 text-xs">
-          <div class="text-bw-gold font-bold mb-1 tracking-wider">RÈGLES ACTIVES</div>
+          <div class="text-bw-gold font-bold mb-1 tracking-wider">ACTIVE RULES</div>
           <ul class="flex flex-col gap-0.5">
             {#each activeRules as rule}
               <li class="text-gray-300 before:content-['·'] before:mr-1 before:text-bw-gold">{rule}</li>
@@ -163,7 +163,7 @@
       <!-- Active targets -->
       {#if activeTargets.length > 0}
         <div class="bg-bw-navy border border-bw-gold/20 rounded p-2 text-xs">
-          <div class="text-bw-gold font-bold mb-1 tracking-wider">CIBLES</div>
+          <div class="text-bw-gold font-bold mb-1 tracking-wider">TARGETS</div>
           <ul class="flex flex-col gap-0.5">
             {#each activeTargets as t}
               <li class="text-gray-300">{t}</li>
@@ -175,7 +175,7 @@
       <!-- Aura cost -->
       {#if auraCost}
         <div class="bg-bw-navy border border-bw-gold/20 rounded p-2 text-xs">
-          <div class="text-bw-gold font-bold mb-1 tracking-wider">COÛT</div>
+          <div class="text-bw-gold font-bold mb-1 tracking-wider">COST</div>
           <p class="text-gray-300">{auraCost}</p>
         </div>
       {/if}
@@ -187,13 +187,13 @@
           <div class="text-bw-gold font-bold mb-1 tracking-wider">PERSPECTIVE</div>
           <ul class="flex flex-col gap-0.5 text-gray-300">
             {#if pt.canChangeBody}
-              <li>● Changement de corps possible</li>
+              <li>● Body change available</li>
             {/if}
             {#if pt.canChangeConsciousness}
-              <li>● Transfert de conscience possible</li>
+              <li>● Consciousness transfer available</li>
             {/if}
             {#if pt.canFollowAura}
-              <li>● Suivre l'entité d'aura</li>
+              <li>● Follow aura entity</li>
             {/if}
           </ul>
         </div>
@@ -207,7 +207,7 @@
   <footer class="border-t border-bw-gold/20 h-16 shrink-0">
     <slot name="timeline">
       <div class="flex items-center justify-center h-full text-gray-700 text-xs italic select-none">
-        Chronologie
+        Timeline
       </div>
     </slot>
   </footer>

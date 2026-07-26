@@ -15,6 +15,16 @@ export class MapController {
     return this.mapService.getMapState(eventId)
   }
 
+  @Get('scene')
+  @Version('1')
+  @ApiOperation({ summary: 'Get a perspective-ready map scene at a given event' })
+  getMapScene(
+    @Query('eventId') eventId: string,
+    @Query('assetKey') assetKey = 'black-whale-overview',
+  ) {
+    return this.mapService.getMapScene(eventId, assetKey)
+  }
+
   @Get('entities/:entityId/presence')
   @Version('1')
   @ApiOperation({ summary: 'Get entity presence at a given event' })

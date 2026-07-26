@@ -6,7 +6,7 @@ import type {
   NenAbility,
   AbilityActivation,
   Fact,
-  FactKnowledge,
+  KnowledgeState,
   Presence,
 } from '@black-whale/domain'
 
@@ -54,7 +54,7 @@ export interface PerspectiveDto {
   suspectedThreats: string[]
   falseInformation: Fact[]
   knownDeaths: string[]
-  knowledgeItems: FactKnowledge[]
+  knowledgeItems: KnowledgeState[]
 }
 
 // ──────────────────────────────────────────────
@@ -79,7 +79,16 @@ export interface NenValidateRequestDto {
   interaction: string
   targets: string[]
   eventId: string
+  actionId?: string
+  parameters?: Record<string, unknown>
+  anchors?: Array<{
+    entityId?: string
+    locationId?: string
+    point?: { x: number; y: number; coordinateSpace: string }
+  }>
 }
+
+export type NenPlanRequestDto = NenValidateRequestDto
 
 export interface NenValidateResponseDto {
   allowed: boolean
@@ -105,7 +114,7 @@ export interface CreateSimulationDto {
 }
 
 export interface SimulationActionDto {
-  branchId: string
+  branchId?: string
   actionType: string
   payload: Record<string, unknown>
 }

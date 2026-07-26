@@ -9,7 +9,6 @@ services:
       - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./database/migrations:/docker-entrypoint-initdb.d
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U bw_user -d black_whale"]
       interval: 10s
@@ -30,7 +29,7 @@ services:
 
   api:
     build:
-      context: ..
+      context: ../..
       dockerfile: infrastructure/docker/Dockerfile.api
     ports:
       - "3001:3001"
@@ -40,34 +39,53 @@ services:
       REDIS_URL: redis://redis:6379
       PORT: "3001"
     depends_on:
-      postgres:
-        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
       redis:
+        condition: service_healthy
+
+  migrate:
+    build:
+      context: ../..
+      dockerfile: infrastructure/docker/Dockerfile.api
+    # Fresh development stacks have no Prisma migration history yet. db push
+    # creates the single canonical Prisma schema; production upgrades use the
+    # reviewed additive migration in packages/database/prisma/migrations.
+    command: ["pnpm", "--filter", "@black-whale/database", "exec", "prisma", "db", "push", "--skip-generate"]
+    environment:
+      DATABASE_URL: "postgresql://${POSTGRES_USER:-bw_user}:${POSTGRES_PASSWORD:-bw_password}@postgres:5432/${POSTGRES_DB:-black_whale}"
+    depends_on:
+      postgres:
         condition: service_healthy
 
   web:
     build:
-      context: ..
+      context: ../..
       dockerfile: infrastructure/docker/Dockerfile.web
     ports:
       - "3000:3000"
     environment:
+      API_URL: http://api:3001
       VITE_API_URL: http://api:3001
+      DATABASE_URL: "postgresql://${POSTGRES_USER:-bw_user}:${POSTGRES_PASSWORD:-bw_password}@postgres:5432/${POSTGRES_DB:-black_whale}"
     depends_on:
       - api
 
   admin:
     build:
-      context: ..
+      context: ../..
       dockerfile: infrastructure/docker/Dockerfile.admin
     ports:
       - "3002:3002"
+    environment:
+      API_URL: http://api:3001
+      DATABASE_URL: "postgresql://${POSTGRES_USER:-bw_user}:${POSTGRES_PASSWORD:-bw_password}@postgres:5432/${POSTGRES_DB:-black_whale}"
     depends_on:
       - api
 
   worker:
     build:
-      context: ..
+      context: ../..
       dockerfile: infrastructure/docker/Dockerfile.worker
     environment:
       DATABASE_URL: "postgresql://${POSTGRES_USER:-bw_user}:${POSTGRES_PASSWORD:-bw_password}@postgres:5432/${POSTGRES_DB:-black_whale}"

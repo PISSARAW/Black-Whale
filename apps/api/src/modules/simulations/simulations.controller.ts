@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Version } from '@nestjs/common'
+import { Body, Controller, Get, Param, Post, Query, Version } from '@nestjs/common'
 import { ApiOperation, ApiTags } from '@nestjs/swagger'
 import { SimulationsService } from './simulations.service.js'
 import type { CreateSimulationDto, SimulationActionDto } from '@black-whale/contracts'
@@ -20,6 +20,16 @@ export class SimulationsController {
   @ApiOperation({ summary: 'Get the current state of a simulation branch' })
   getState(@Param('branchId') branchId: string) {
     return this.simulationsService.getBranchState(branchId)
+  }
+
+  @Get(':branchId/map-scene')
+  @Version('1')
+  @ApiOperation({ summary: 'Project a simulation branch as a map scene' })
+  getMapScene(
+    @Param('branchId') branchId: string,
+    @Query('assetKey') assetKey = 'black-whale-overview',
+  ) {
+    return this.simulationsService.getMapScene(branchId, assetKey)
   }
 
   @Post(':branchId/actions')

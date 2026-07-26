@@ -5,11 +5,16 @@ export default {
   theme: {
     extend: {
       colors: {
-        'bw-dark': '#0a0a0f',
-        'bw-navy': '#0d1b2a',
-        'bw-gold': '#c9a44a',
-        'bw-scarlet': '#b22222',
+        'bw-dark': '#070a0c',
+        'bw-navy': '#111a20',
+        'bw-gold': '#c8a956',
+        'bw-scarlet': '#c85d4e',
       },
+			fontFamily: {
+				sans: ['Manrope', 'Avenir Next', 'sans-serif'],
+				condensed: ['Barlow Condensed', 'Arial Narrow', 'sans-serif'],
+				mono: ['IBM Plex Mono', 'monospace'],
+			},
     },
   },
   plugins: [],

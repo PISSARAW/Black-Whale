@@ -1,8 +1,9 @@
-import { prisma } from '$lib/server/db';
+import { getPrisma } from '$lib/server/db';
 import { fail, redirect } from '@sveltejs/kit';
 import type { PageServerLoad, Actions } from './$types';
 
 export const load: PageServerLoad = async () => {
+	const prisma = await getPrisma();
 	const chapters = await prisma.chapter.findMany({ orderBy: { number: 'asc' } });
 	const characters = await prisma.character.findMany({ orderBy: { canonicalName: 'asc' } });
 	const locations = await prisma.location.findMany({ orderBy: { name: 'asc' } });
@@ -13,12 +14,12 @@ export const load: PageServerLoad = async () => {
 export const actions: Actions = {
 	default: async ({ request }) => {
 		const data = await request.formData();
+		const prisma = await getPrisma();
 		
 		const chapterId = data.get('chapterId')?.toString();
 		const sequence = parseInt(data.get('sequence')?.toString() || '0');
 		const title = data.get('title')?.toString();
 		const summary = data.get('summary')?.toString();
-		const firstVisibleChapter = parseInt(data.get('firstVisibleChapter')?.toString() || '0');
 
 		// Consequence data
 		const characterId = data.get('characterId')?.toString();
@@ -32,46 +33,53 @@ export const actions: Actions = {
 
 		try {
 			// Run everything in a transaction
-			await prisma.$transaction(async (tx) => {
+            await prisma.$transaction(async (tx: any) => {
 				// 1. Create the event
 				const event = await tx.narrativeEvent.create({
 					data: {
 						chapterId,
 						sequence,
 						title,
-						summary,
-						firstVisibleChapter
+						summary
 					}
 				});
 
 				// 2. Handle consequences if provided
 				if (characterId && locationId && precision && certainty) {
-					// 2a. Find currently open presence for this character
-					const activePresence = await tx.presence.findFirst({
-						where: {
-							entityId: characterId,
-							untilEventId: null
-						}
+					// 2a. Find the original body of the character
+					const originalBody = await tx.body.findFirst({
+						where: { originalCharacterId: characterId, bodyType: 'ORIGINAL' }
 					});
 
-					// 2b. Close the previous presence
-					if (activePresence) {
-						await tx.presence.update({
-							where: { id: activePresence.id },
-							data: { untilEventId: event.id }
+					if (originalBody) {
+						// 2b. Find currently open presence for this body
+						const activePresence = await tx.presence.findFirst({
+							where: {
+								entityId: originalBody.id,
+								untilEventId: null
+							}
+						});
+
+						// 2c. Close the previous presence
+						if (activePresence) {
+							await tx.presence.update({
+								where: { id: activePresence.id },
+								data: { untilEventId: event.id }
+							});
+						}
+
+						// 2d. Create the new presence
+						await tx.presence.create({
+							data: {
+								entityType: 'BODY',
+								entityId: originalBody.id,
+								locationId: locationId,
+								fromEventId: event.id,
+								precision,
+								certainty
+							}
 						});
 					}
-
-					// 2c. Create the new presence
-					await tx.presence.create({
-						data: {
-							entityId: characterId,
-							locationId: locationId,
-							fromEventId: event.id,
-							precision,
-							certainty
-						}
-					});
 				}
 			});
 		} catch (err) {

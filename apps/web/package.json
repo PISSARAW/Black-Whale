@@ -9,7 +9,7 @@
     "preview": "vite preview",
     "lint": "eslint src --ext .svelte,.ts",
     "typecheck": "svelte-check --tsconfig ./tsconfig.json",
-    "test": "vitest run",
+    "test": "vitest run --passWithNoTests",
     "clean": "rimraf .svelte-kit build"
   },
   "dependencies": {
@@ -27,7 +27,7 @@
     "svelte": "^5.0.0"
   },
   "devDependencies": {
-    "@sveltejs/adapter-auto": "^3.0.0",
+    "@sveltejs/adapter-node": "^5.0.0",
     "@sveltejs/kit": "^2.0.0",
     "@sveltejs/vite-plugin-svelte": "^4.0.0",
     "autoprefixer": "^10.4.0",

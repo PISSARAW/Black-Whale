@@ -4,11 +4,11 @@
   export let status: NenStatusHeader
 
   const perspectiveLabels: Record<string, string> = {
-    character: 'Personnage',
+    character: 'Character',
     omniscient: 'Omniscient',
-    body: 'Corps',
+    body: 'Body',
     aura: 'Aura',
-    apparent: 'Apparente',
+    apparent: 'Apparent',
   }
 </script>
 
@@ -26,15 +26,15 @@
 
   <span class="text-gray-600">|</span>
 
-  <!-- Conscience suivie -->
-  <span title="Conscience suivie">
-    <span class="text-gray-500">Conscience :</span>
+  <!-- Consciousness suivie -->
+  <span title="Followed consciousness">
+    <span class="text-gray-500">Consciousness :</span>
     <span class="ml-1 text-white">{status.followedConsciousnessId}</span>
   </span>
 
-  <!-- Corps occupé -->
-  <span title="Corps occupé">
-    <span class="text-gray-500">Corps :</span>
+  <!-- Body occupé -->
+  <span title="Occupied body">
+    <span class="text-gray-500">Body :</span>
     <span
       class="ml-1"
       class:text-bw-scarlet={status.occupiedBodyId !== status.followedConsciousnessId}
@@ -46,8 +46,8 @@
 
   <!-- Identité perçue -->
   {#if status.perceivedAs !== status.occupiedBodyId}
-    <span title="Perçu par les autres comme">
-      <span class="text-gray-500">Perçu comme :</span>
+    <span title="Perceived by others as">
+      <span class="text-gray-500">Perceived as:</span>
       <span class="ml-1 text-bw-gold italic">{status.perceivedAs}</span>
     </span>
   {/if}
@@ -55,13 +55,13 @@
   <span class="text-gray-600">|</span>
 
   <!-- Perspective -->
-  <span title="Mode de perspective">
+  <span title="Perspective mode">
     <span class="text-gray-500">Perspective :</span>
     <span class="ml-1 text-bw-gold">{perspectiveLabels[status.perspectiveMode] ?? status.perspectiveMode}</span>
   </span>
 
   <!-- Aura -->
-  <span class="flex items-center gap-2 ml-auto" title="Aura restante">
+  <span class="flex items-center gap-2 ml-auto" title="Remaining aura">
     <span class="text-gray-500">Nen :</span>
     <span class="relative w-24 h-2 bg-gray-700 rounded-full overflow-hidden">
       <span
@@ -80,8 +80,8 @@
 <!-- Dissonance banner — shown when consciousness ≠ body -->
 {#if status.occupiedBodyId !== status.followedConsciousnessId}
   <div class="bg-bw-scarlet/10 border-b border-bw-scarlet/40 text-bw-scarlet text-xs text-center py-1 font-mono">
-    Vous êtes <strong>{status.followedConsciousnessId}</strong> —
-    vous occupez le corps de <strong>{status.occupiedBodyId}</strong> —
-    les autres vous perçoivent comme <strong>{status.perceivedAs}</strong>
+    You are <strong>{status.followedConsciousnessId}</strong> —
+    you occupy the body of <strong>{status.occupiedBodyId}</strong> —
+    others perceive you as <strong>{status.perceivedAs}</strong>
   </div>
 {/if}

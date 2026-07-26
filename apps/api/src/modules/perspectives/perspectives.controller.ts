@@ -7,6 +7,20 @@ import { PerspectivesService } from './perspectives.service.js'
 export class PerspectivesController {
   constructor(private readonly perspectivesService: PerspectivesService) {}
 
+  @Get('compare')
+  @Version('1')
+  @ApiOperation({ summary: 'Compare two character perspectives at a given event' })
+  @ApiQuery({ name: 'left', required: true })
+  @ApiQuery({ name: 'right', required: true })
+  @ApiQuery({ name: 'eventId', required: true })
+  compare(
+    @Query('left') left: string,
+    @Query('right') right: string,
+    @Query('eventId') eventId: string,
+  ) {
+    return this.perspectivesService.compare(left, right, eventId)
+  }
+
   @Get(':characterId')
   @Version('1')
   @ApiOperation({ summary: 'Build a perspective for a character at a given event' })
@@ -20,19 +34,5 @@ export class PerspectivesController {
     @Query('mode') mode?: string,
   ) {
     return this.perspectivesService.buildPerspective({ observerId: characterId, eventId, spoilerLimit, mode: mode as any })
-  }
-
-  @Get('compare')
-  @Version('1')
-  @ApiOperation({ summary: 'Compare two character perspectives at a given event' })
-  @ApiQuery({ name: 'left', required: true })
-  @ApiQuery({ name: 'right', required: true })
-  @ApiQuery({ name: 'eventId', required: true })
-  compare(
-    @Query('left') left: string,
-    @Query('right') right: string,
-    @Query('eventId') eventId: string,
-  ) {
-    return this.perspectivesService.compare(left, right, eventId)
   }
 }

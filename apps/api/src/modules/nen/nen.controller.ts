@@ -34,4 +34,14 @@ export class NenController {
   ) {
     return this.nenService.validate(abilityId, dto)
   }
+
+  @Post('abilities/:abilityId/plan')
+  @Version('1')
+  @ApiOperation({ summary: 'Build the authoritative interaction plan for a Nen ability' })
+  plan(
+    @Param('abilityId') abilityId: string,
+    @Body() dto: NenValidateRequestDto,
+  ) {
+    return this.nenService.plan(abilityId, dto)
+  }
 }

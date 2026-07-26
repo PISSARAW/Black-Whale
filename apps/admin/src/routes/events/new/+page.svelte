@@ -35,11 +35,6 @@
 			</div>
 
 			<div>
-				<label class="block text-sm font-medium text-gray-700 mb-1">First Visible Chapter</label>
-				<input type="number" name="firstVisibleChapter" class="w-full border-gray-300 rounded-md shadow-sm p-2 border" required min="1" placeholder="Chapter where this event becomes visible">
-			</div>
-
-			<div>
 				<label class="block text-sm font-medium text-gray-700 mb-1">Title</label>
 				<input type="text" name="title" class="w-full border-gray-300 rounded-md shadow-sm p-2 border" required>
 			</div>

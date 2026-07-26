@@ -1,12 +1,13 @@
-import { prisma } from '$lib/server/db';
+import { getPrisma } from '$lib/server/db';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ cookies }) => {
+	const prisma = await getPrisma();
 	const spoilerLimitCookie = cookies.get('adminSpoilerLimit');
 	const spoilerLimit = spoilerLimitCookie ? parseInt(spoilerLimitCookie) : null;
 
 	const whereClause = spoilerLimit ? {
-		firstVisibleChapter: { lte: spoilerLimit }
+		chapter: { number: { lte: spoilerLimit } }
 	} : {};
 
 	const events = await prisma.narrativeEvent.findMany({
@@ -14,10 +15,10 @@ export const load: PageServerLoad = async ({ cookies }) => {
 		include: {
 			chapter: true,
 			presencesFrom: {
-				include: { character: true, location: true }
+				include: { body: { include: { character: true } }, location: true }
 			},
 			presencesUntil: {
-				include: { character: true, location: true }
+				include: { body: { include: { character: true } }, location: true }
 			}
 		},
 		orderBy: [

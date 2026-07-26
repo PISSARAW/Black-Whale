@@ -4,9 +4,9 @@ describe('Spoiler Engine', () => {
   describe('filterVisible', () => {
     it('should remove entities that appear after maxChapter', () => {
       const entities = [
-        { id: '1', firstVisibleChapter: 380 },
-        { id: '2', firstVisibleChapter: 385 },
-        { id: '3', firstVisibleChapter: 390 },
+        { id: '1', firstVisibleEvent: { chapter: { number: 380 } } },
+        { id: '2', firstVisibleEvent: { chapter: { number: 385 } } },
+        { id: '3', firstVisibleEvent: { chapter: { number: 390 } } },
       ];
 
       const result = filterVisible(entities, { maxChapter: 385 });
@@ -18,9 +18,9 @@ describe('Spoiler Engine', () => {
   describe('filterTemporalRecords', () => {
     it('should remove records originating from events after maxChapter', () => {
       const presences = [
-        { id: '1', fromEvent: { firstVisibleChapter: 380 } },
-        { id: '2', fromEvent: { firstVisibleChapter: 385 } },
-        { id: '3', fromEvent: { firstVisibleChapter: 390 } },
+        { id: '1', fromEvent: { chapter: { number: 380 } } },
+        { id: '2', fromEvent: { chapter: { number: 385 } } },
+        { id: '3', fromEvent: { chapter: { number: 390 } } },
       ];
 
       const result = filterTemporalRecords(presences, { maxChapter: 385 });
@@ -33,11 +33,11 @@ describe('Spoiler Engine', () => {
     it('should mask the untilEvent if it occurs after maxChapter', () => {
       const presences = [
         // Ended before maxChapter - should remain untouched
-        { id: '1', untilEvent: { firstVisibleChapter: 380 } },
+        { id: '1', untilEvent: { chapter: { number: 380 } } },
         // Ended at maxChapter - should remain untouched
-        { id: '2', untilEvent: { firstVisibleChapter: 385 } },
+        { id: '2', untilEvent: { chapter: { number: 385 } } },
         // Ended after maxChapter - should be masked (nullified)
-        { id: '3', untilEvent: { firstVisibleChapter: 390 } },
+        { id: '3', untilEvent: { chapter: { number: 390 } } },
         // No end yet
         { id: '4', untilEvent: null },
       ];

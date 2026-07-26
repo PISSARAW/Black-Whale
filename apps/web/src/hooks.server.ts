@@ -1,8 +1,9 @@
 import type { Handle, HandleFetch } from '@sveltejs/kit';
 
 export const handle: Handle = async ({ event, resolve }) => {
-  // Read spoiler limit from cookies (default to Infinity or a very high number if none)
-  const spoilerLimitCookie = event.cookies.get('spoiler_limit');
+  // The settings UI uses userSpoilerLimit. Keep the legacy name as a fallback
+  // while existing sessions naturally rotate to the canonical cookie.
+  const spoilerLimitCookie = event.cookies.get('userSpoilerLimit') ?? event.cookies.get('spoiler_limit');
   const maxChapter = spoilerLimitCookie ? parseInt(spoilerLimitCookie, 10) : 1000;
   
   event.locals.maxChapter = maxChapter;

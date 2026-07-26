@@ -1,38 +1,480 @@
 [
   {
-    "id": "black-whale",
+    "id": "black-whale-1",
     "name": "Black Whale 1",
     "parentLocationId": null,
     "deck": null,
-    "zoneType": "unknown",
+    "zoneType": "ship",
+    "description": "Vaisseau semi-submersible colossal en forme de baleine noire, comptant 41 ponts et pouvant accueillir 200 000 passagers.",
     "entrances": [],
     "exits": []
   },
   {
-    "id": "deck-1",
-    "name": "Deck 1",
-    "parentLocationId": "black-whale",
-    "deck": 1,
-    "zoneType": "unknown",
-    "entrances": ["gangway-1"],
-    "exits": ["gangway-1"]
+    "id": "zodiac-hq",
+    "name": "Zodiac HQ",
+    "parentLocationId": null,
+    "deck": null,
+    "zoneType": "administrative",
+    "description": "Headquarters of the Zodiacs, secret organization of the 12 most powerful members of the Hunters Association.",
+    "entrances": [],
+    "exits": []
   },
   {
-    "id": "royal-quarters-deck1",
-    "name": "Royal Quarters — Deck 1",
-    "parentLocationId": "deck-1",
+    "id": "tier-1",
+    "name": "Tier 1",
+    "parentLocationId": "black-whale-1",
+    "deck": 1,
+    "zoneType": "tier",
+    "description": "Panopticon Summit and Royal Arena. Hosts the Kakin Royal Family, V5/V6 politicians, industrial leaders, Beyond Netero, Kurapika.",
+    "entrances": [],
+    "exits": []
+  },
+  {
+    "id": "tier-1-banquet-hall",
+    "name": "Banquet Hall",
+    "parentLocationId": "tier-1",
+    "deck": 1,
+    "zoneType": "public",
+    "description": "Public gathering space, location of the departure ceremony and mandatory Sunday dinners.",
+    "entrances": [],
+    "exits": []
+  },
+  {
+    "id": "tier-1-vvip-living-quarters",
+    "name": "VVIP Living Quarters",
+    "parentLocationId": "tier-1",
+    "deck": 1,
+    "zoneType": "residential",
+    "description": "Tier 1 VVIP residential neighborhoods, where the leaders of mafia families linked to royalty live in particular.",
+    "entrances": [],
+    "exits": []
+  },
+  {
+    "id": "tier-1-vip-casino",
+    "name": "VIP Casino",
+    "parentLocationId": "tier-1",
+    "deck": 1,
+    "zoneType": "public",
+    "description": "Casino reserved for Tier 1 passengers. The real Hisoka plays SQ-X there on the eleventh day of the trip.",
+    "entrances": [],
+    "exits": []
+  },
+  {
+    "id": "tier-1-supreme-court",
+    "name": "Supreme Court",
+    "parentLocationId": "tier-1",
+    "deck": 1,
+    "zoneType": "administrative",
+    "description": "Highest jurisdiction on the ship, managed by Supreme Magistrate Cleapatro.",
+    "entrances": [],
+    "exits": []
+  },
+  {
+    "id": "tier-1-vip-jail",
+    "name": "VIP Jail",
+    "parentLocationId": "tier-1-supreme-court",
+    "deck": 1,
+    "zoneType": "prison",
+    "description": "Supreme Court high security VVIP incarceration area. Camilla was confined there.",
+    "entrances": [],
+    "exits": []
+  },
+  {
+    "id": "tier-1-vvip-prison-beyond",
+    "name": "VVIP Prison (Beyond Netero)",
+    "parentLocationId": "tier-1",
+    "deck": 1,
+    "zoneType": "prison",
+    "description": "High security cell holding Beyond Netero, monitored by the Zodiacs.",
+    "entrances": [],
+    "exits": []
+  },
+  {
+    "id": "tier-1-royal-residential-sector",
+    "name": "Royal Residential Sector",
+    "parentLocationId": "tier-1",
+    "deck": 1,
+    "zoneType": "residential",
+    "description": "Vast central artery serving the 14 luxurious suites of the princes of Kakin.",
+    "entrances": [],
+    "exits": []
+  },
+  {
+    "id": "tier-1-royal-residential-sector-room-1001",
+    "name": "Room 1001 (Benjamin)",
+    "parentLocationId": "tier-1-royal-residential-sector",
     "deck": 1,
     "zoneType": "quarters",
-    "entrances": ["corridor-deck1-north"],
-    "exits": ["corridor-deck1-north"]
+    "description": "Transformed into a paramilitary command center by 1st Prince Benjamin.",
+    "entrances": [],
+    "exits": []
   },
   {
-    "id": "military-zone-deck1",
-    "name": "Military Zone — Deck 1",
-    "parentLocationId": "deck-1",
+    "id": "tier-1-royal-residential-sector-room-1002",
+    "name": "Room 1002 (Camilla)",
+    "parentLocationId": "tier-1-royal-residential-sector",
     "deck": 1,
+    "zoneType": "quarters",
+    "description": "Plot space of the 2nd Princess Camilla.",
+    "entrances": [],
+    "exits": []
+  },
+  {
+    "id": "tier-1-royal-residential-sector-room-1003",
+    "name": "Room 1003 (Zhang Lei)",
+    "parentLocationId": "tier-1-royal-residential-sector",
+    "deck": 1,
+    "zoneType": "quarters",
+    "description": "Coordination center with the Xi-Yu mafia forces, managed by the 3rd Prince Zhang Lei.",
+    "entrances": [],
+    "exits": []
+  },
+  {
+    "id": "tier-1-royal-residential-sector-room-1004",
+    "name": "Room 1004 (Tserriednich)",
+    "parentLocationId": "tier-1-royal-residential-sector",
+    "deck": 1,
+    "zoneType": "quarters",
+    "description": "Occult laboratory of the 4th Prince Tserriednich, undergoing temporal and perceptual distortions.",
+    "entrances": [],
+    "exits": []
+  },
+  {
+    "id": "tier-1-royal-residential-sector-room-1005",
+    "name": "Room 1005 (Tubeppa)",
+    "parentLocationId": "tier-1-royal-residential-sector",
+    "deck": 1,
+    "zoneType": "quarters",
+    "description": "Analysis laboratory for the 5th Princess Tubeppa.",
+    "entrances": [],
+    "exits": []
+  },
+  {
+    "id": "tier-1-royal-residential-sector-room-1006",
+    "name": "Room 1006 (Tyson)",
+    "parentLocationId": "tier-1-royal-residential-sector",
+    "deck": 1,
+    "zoneType": "quarters",
+    "description": "Safe room of the 6th Princess Tyson.",
+    "entrances": [],
+    "exits": []
+  },
+  {
+    "id": "tier-1-royal-residential-sector-room-1007",
+    "name": "Room 1007 (Luzurus)",
+    "parentLocationId": "tier-1-royal-residential-sector",
+    "deck": 1,
+    "zoneType": "quarters",
+    "description": "Base of the Cha-R mafia family affiliated with the 7th Prince Luzurus.",
+    "entrances": [],
+    "exits": []
+  },
+  {
+    "id": "tier-1-royal-residential-sector-room-1008",
+    "name": "Room 1008 (Salé-salé)",
+    "parentLocationId": "tier-1-royal-residential-sector",
+    "deck": 1,
+    "zoneType": "quarters",
+    "description": "Permanent party zone of the 8th Prince Salé-salé.",
+    "entrances": [],
+    "exits": []
+  },
+  {
+    "id": "tier-1-royal-residential-sector-room-1009",
+    "name": "Room 1009 (Halkenburg)",
+    "parentLocationId": "tier-1-royal-residential-sector",
+    "deck": 1,
+    "zoneType": "quarters",
+    "description": "Fortification of the supporters of the 9th Prince Halkenburg.",
+    "entrances": [],
+    "exits": []
+  },
+  {
+    "id": "tier-1-royal-residential-sector-room-1010",
+    "name": "Room 1010 (Kacho)",
+    "parentLocationId": "tier-1-royal-residential-sector",
+    "deck": 1,
+    "zoneType": "quarters",
+    "description": "Chamber of the 10th Princess Kacho, anchor point of a network of space tunnels.",
+    "entrances": [],
+    "exits": []
+  },
+  {
+    "id": "tier-1-royal-residential-sector-room-1011",
+    "name": "Room 1011 (Fugetsu)",
+    "parentLocationId": "tier-1-royal-residential-sector",
+    "deck": 1,
+    "zoneType": "quarters",
+    "description": "Room of the 11th Princess Fugetsu from where her dimensional escapes operate.",
+    "entrances": [],
+    "exits": []
+  },
+  {
+    "id": "tier-1-royal-residential-sector-room-1012",
+    "name": "Room 1012 (Momoze)",
+    "parentLocationId": "tier-1-royal-residential-sector",
+    "deck": 1,
+    "zoneType": "quarters",
+    "description": "Crime scene of the 12th Princess Momoze.",
+    "entrances": [],
+    "exits": []
+  },
+  {
+    "id": "tier-1-royal-residential-sector-room-1013",
+    "name": "Room 1013 (Marayam)",
+    "parentLocationId": "tier-1-royal-residential-sector",
+    "deck": 1,
+    "zoneType": "quarters",
+    "description": "Major architectural anomaly. The entire room was ripped from the ship's physical reality by a Beast of Nen, creating a parallel dimension for the 13th Prince Marayam.",
+    "entrances": [],
+    "exits": []
+  },
+  {
+    "id": "tier-1-royal-residential-sector-room-1014",
+    "name": "Room 1014 (Woble)",
+    "parentLocationId": "tier-1-royal-residential-sector",
+    "deck": 1,
+    "zoneType": "quarters",
+    "description": "Stronghold of resistance led by Kurapika for the 14th Princess Woble.",
+    "entrances": [],
+    "exits": []
+  },
+  {
+    "id": "tier-2",
+    "name": "Tier 2",
+    "parentLocationId": "black-whale-1",
+    "deck": 2,
+    "zoneType": "tier",
+    "description": "Home to the aristocracy, celebrities, financial elite and supportive Hunters.",
+    "entrances": [],
+    "exits": []
+  },
+  {
+    "id": "tier-2-heilly-secret-hideout",
+    "name": "Heil-Ly Secret Hideout",
+    "parentLocationId": "tier-2",
+    "deck": 2,
+    "zoneType": "mafia",
+    "description": "Morena and the new Heil-Ly's true secret base, built in a hidden space between Tiers 2 and 3 and reinforced with Nen. It has five access points.",
+    "entrances": [],
+    "exits": []
+  },
+  {
+    "id": "tier-2-theater-venue",
+    "name": "Theater Venue",
+    "parentLocationId": "tier-2",
+    "deck": 2,
+    "zoneType": "public",
+    "description": "Place of official announcements and propaganda to maintain the illusion of a peaceful cruise.",
+    "entrances": [],
+    "exits": []
+  },
+  {
+    "id": "tier-2-ministry-of-justice",
+    "name": "Ministry of Justice",
+    "parentLocationId": "tier-2",
+    "deck": 2,
+    "zoneType": "administrative",
+    "description": "Five-story structure constituting the ship's most neutral jurisdiction.",
+    "entrances": [],
+    "exits": []
+  },
+  {
+    "id": "tier-2-vip-witness-protection-area",
+    "name": "VIP Witness Protection Area",
+    "parentLocationId": "tier-2-ministry-of-justice",
+    "deck": 2,
+    "zoneType": "administrative",
+    "description": "Impenetrable complex where Melody and Fugetsu were detained and interrogated.",
+    "entrances": [],
+    "exits": []
+  },
+  {
+    "id": "tier-2-bulkhead",
+    "name": "Tier 2 Bulkhead",
+    "parentLocationId": "tier-2",
+    "deck": 2,
+    "zoneType": "infrastructure",
+    "description": "Colossal watertight bulkhead separating Tier 2 from Tier 3. Can only be unlocked from Tier 2.",
+    "entrances": [],
+    "exits": []
+  },
+  {
+    "id": "tier-3",
+    "name": "Tier 3",
+    "parentLocationId": "black-whale-1",
+    "deck": 3,
+    "zoneType": "tier",
+    "description": "Hosts upper middle class, medical personnel and the Zodiacs. Administrative buffer zone.",
+    "entrances": [],
+    "exits": []
+  },
+  {
+    "id": "tier-3-political-ward",
+    "name": "Political Ward",
+    "parentLocationId": "tier-3",
+    "deck": 3,
+    "zoneType": "administrative",
+    "description": "Central section bringing together law enforcement agencies.",
+    "entrances": [],
+    "exits": []
+  },
+  {
+    "id": "tier-3-central-police-station",
+    "name": "Central Police Station",
+    "parentLocationId": "tier-3-political-ward",
+    "deck": 3,
+    "zoneType": "administrative",
+    "description": "Four-story building under the authority of Mizaistom Nana, incorporating dormitories for officers.",
+    "entrances": [],
+    "exits": []
+  },
+  {
+    "id": "tier-3-central-courthouse",
+    "name": "Central Courthouse",
+    "parentLocationId": "tier-3-political-ward",
+    "deck": 3,
+    "zoneType": "administrative",
+    "description": "Managed by Botobai Gigante, handling civil crimes with the assistance of popular juries.",
+    "entrances": [],
+    "exits": []
+  },
+  {
+    "id": "tier-3-royal-army-office",
+    "name": "Royal Army Office",
+    "parentLocationId": "tier-3-political-ward",
+    "deck": 3,
     "zoneType": "military",
-    "entrances": ["corridor-deck1-south"],
-    "exits": ["corridor-deck1-south"]
+    "description": "Base of operations for regular military patrols sent to the Lower Tiers.",
+    "entrances": [],
+    "exits": []
+  },
+  {
+    "id": "tier-3-central-hospital",
+    "name": "Central Hospital",
+    "parentLocationId": "tier-3-political-ward",
+    "deck": 3,
+    "zoneType": "medical",
+    "description": "State-of-the-art medical facility on the ship.",
+    "entrances": [],
+    "exits": []
+  },
+  {
+    "id": "tier-3-residential-room-3101",
+    "name": "Room 3101 (Heil-Ly Hideout)",
+    "parentLocationId": "tier-3",
+    "deck": 3,
+    "zoneType": "quarters",
+    "description": "Lair of the Heil-Ly mafia family, perverted by Nen traps.",
+    "entrances": [],
+    "exits": []
+  },
+  {
+    "id": "tier-4",
+    "name": "Tier 4",
+    "parentLocationId": "black-whale-1",
+    "deck": 4,
+    "zoneType": "tier",
+    "description": "Dense residential area, merchants and lower class. Territories disputed by the Cha-R and Xi-Yu mafias.",
+    "entrances": [],
+    "exits": []
+  },
+  {
+    "id": "tier-4-char-r-headquarters",
+    "name": "Cha-R Headquarters",
+    "parentLocationId": "tier-4",
+    "deck": 4,
+    "zoneType": "mafia",
+    "description": "Large warehouse fortified by the Cha-R family, equipped with armored doors and a network of cameras.",
+    "entrances": [],
+    "exits": []
+  },
+  {
+    "id": "tier-5",
+    "name": "Tier 5",
+    "parentLocationId": "black-whale-1",
+    "deck": 5,
+    "zoneType": "tier",
+    "description": "Lowest class, precarious dormitories. Starting point for the Phantom Troupe's hunt for Hisoka.",
+    "entrances": [],
+    "exits": []
+  },
+  {
+    "id": "tier-5-central-cafeteria",
+    "name": "Central Cafeteria",
+    "parentLocationId": "tier-5",
+    "deck": 5,
+    "zoneType": "public",
+    "description": "Gigantic central refectory. Rallying place of the Phantom Troupe.",
+    "entrances": [],
+    "exits": []
+  },
+  {
+    "id": "tier-5-medical-clinic",
+    "name": "Tier 5 Medical Clinic",
+    "parentLocationId": "tier-5",
+    "deck": 5,
+    "zoneType": "medical",
+    "description": "Only Tier 5 clinic, under-equipped and without dedicated doctors.",
+    "entrances": [],
+    "exits": []
+  },
+  {
+    "id": "tier-4-central-passage",
+    "name": "Central Passage Tier 4–5",
+    "parentLocationId": "tier-4",
+    "deck": 4,
+    "zoneType": "corridor",
+    "description": "Central passage connecting Tiers 4 and 5. Chrollo, Shizuku and Bonolenov progress there on the fourth day of the journey.",
+    "entrances": [
+      "tier-4"
+    ],
+    "exits": [
+      "tier-5"
+    ]
+  },
+  {
+    "id": "tier-5-central-dining-hall",
+    "name": "Central Dining Hall",
+    "parentLocationId": "tier-5",
+    "deck": 5,
+    "zoneType": "public",
+    "description": "Crowded central mess hall of Tier 5. Franklin waits for Hisoka there while the Brigade uses it as an assembly point.",
+    "entrances": [],
+    "exits": []
+  },
+  {
+    "id": "tier-4-recycling-sewage-facilities",
+    "name": "Recycling & Sewage Facilities",
+    "parentLocationId": "tier-4",
+    "deck": 4,
+    "zoneType": "infrastructure",
+    "description": "Large technical room located between Tiers 4 and 5, dedicated to recycling and wastewater treatment. The Brigade discovers a clandestine route linked to Heil-Ly operations.",
+    "entrances": [
+      "tier-4-central-passage"
+    ],
+    "exits": [
+      "tier-5"
+    ]
+  },
+  {
+    "id": "tier-3-residential-units",
+    "name": "Tier 3 Residential Units",
+    "parentLocationId": "tier-3",
+    "deck": 3,
+    "zoneType": "residential",
+    "description": "Tier 3 residential units offered in Illumi and Kalluto by Mizaistom in order to house them and facilitate their surveillance.",
+    "entrances": [],
+    "exits": []
+  },
+  {
+    "id": "tier-5-standard-cabins",
+    "name": "Tier 5 Standard Cabins",
+    "parentLocationId": "tier-5",
+    "deck": 5,
+    "zoneType": "residential",
+    "description": "Standard cabins in the popular Tier 5 area. Machi is located there alone after the Brigade's dispersal.",
+    "entrances": [],
+    "exits": []
   }
 ]

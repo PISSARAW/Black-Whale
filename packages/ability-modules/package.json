@@ -17,7 +17,7 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run",
+    "test": "vitest run --passWithNoTests",
     "clean": "rimraf dist *.tsbuildinfo"
   },
   "dependencies": {
@@ -26,6 +26,7 @@
     "@black-whale/ability-sdk": "workspace:*"
   },
   "devDependencies": {
+    "@black-whale/world-engine": "workspace:*",
     "typescript": "^5.5.0",
     "vitest": "^2.0.0",
     "rimraf": "^5.0.0"

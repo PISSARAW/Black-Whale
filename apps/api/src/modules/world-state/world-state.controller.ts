@@ -16,8 +16,25 @@ export class WorldStateController {
   getWorldState(
     @Query('eventId') eventId?: string,
     @Query('chapterId') chapterId?: string,
-    @Query('spoilerLimit') spoilerLimit?: number,
+    @Query('spoilerLimit') spoilerLimit?: string,
   ) {
-    return this.worldStateService.getWorldState({ eventId, chapterId, spoilerLimit })
+    return this.worldStateService.getWorldState({
+      eventId,
+      chapterId,
+      spoilerLimit: this.parseSpoilerLimit(spoilerLimit),
+    })
+  }
+
+  @Get('events')
+  @Version('1')
+  @ApiOperation({ summary: 'List canonical narrative events with their global cursor' })
+  listEvents(@Query('spoilerLimit') spoilerLimit?: string) {
+    return this.worldStateService.listEvents(this.parseSpoilerLimit(spoilerLimit))
+  }
+
+  private parseSpoilerLimit(value?: string) {
+    if (value === undefined) return undefined
+    const parsed = Number.parseInt(value, 10)
+    return Number.isFinite(parsed) ? parsed : undefined
   }
 }

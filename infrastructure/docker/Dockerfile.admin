@@ -1,24 +1,15 @@
-FROM node:20-alpine AS base
-RUN npm install -g pnpm
+FROM node:20-alpine AS builder
+RUN corepack enable
 WORKDIR /app
-
-FROM base AS deps
-COPY pnpm-workspace.yaml package.json pnpm-lock.yaml* ./
-COPY packages/domain/package.json ./packages/domain/
-COPY packages/contracts/package.json ./packages/contracts/
-COPY packages/ui/package.json ./packages/ui/
-COPY apps/admin/package.json ./apps/admin/
+COPY . .
 RUN pnpm install --frozen-lockfile
-
-FROM deps AS builder
-COPY packages ./packages
-COPY apps/admin ./apps/admin
-RUN pnpm --filter "@black-whale/admin" build
+RUN pnpm turbo build --filter=@black-whale/admin
 
 FROM node:20-alpine AS runner
+RUN corepack enable
 WORKDIR /app
-COPY --from=builder /app/apps/admin/build ./build
-COPY --from=builder /app/apps/admin/package.json ./
+COPY --from=builder /app /app
+ENV NODE_ENV=production
 ENV PORT=3002
 EXPOSE 3002
-CMD ["node", "build"]
+CMD ["node", "apps/admin/build"]

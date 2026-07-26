@@ -7,7 +7,7 @@
       "伸縮自在の愛",
       "Banjī Gamu",
       "Elastic Love",
-      "Amour élastique"
+      "Elastic love"
     ],
     "category": "transmuter",
     "secondaryCategories": [
@@ -15,7 +15,7 @@
       "manipulator"
     ],
     "abilityType": "elastic-adhesive-aura",
-    "description": "Hisoka donne à son aura les propriétés combinées du caoutchouc et de la gomme : elle est à la fois élastique, adhésive, résistante et capable de se contracter sur commande avec une force croissante selon son étirement. Il peut l'émettre depuis ses mains ou ses pieds, la fixer par contact ou à distance, attirer une cible, renvoyer des projectiles, se propulser, courir sur les murs, immobiliser un adversaire ou refermer une plaie. Séparée de son corps, elle se rompt au-delà de dix mètres. Dissimulée avec In, elle forme des pièges presque imperceptibles. Après sa mort, Hisoka l'a programmée pour comprimer son cœur et ses poumons, puis l'utilise comme prothèse pour remplacer ses membres perdus.",
+    "description": "Hisoka gives his aura the combined properties of rubber and gum: it is elastic, adhesive, resistant and capable of contracting on command with increasing force depending on its stretch. He can emit it from his hands or feet, fix it by contact or from a distance, attract a target, reflect projectiles, propel himself, run on walls, immobilize an opponent or close a wound. Separated from its body, it breaks beyond ten meters. Concealed with In, it forms almost imperceptible traps. After her death, Hisoka programmed it to compress his heart and lungs, then uses it as a prosthesis to replace his lost limbs.",
     "canonStatus": "canon",
     "moduleKey": "bungee-gum"
   },
@@ -31,7 +31,7 @@
     ],
     "category": "conjurer",
     "abilityType": "surface-disguise",
-    "description": "Hisoka applique son aura sur une surface plane et lisse, comme du papier, du tissu ou même une prothèse faite de Bungee Gum, afin d'y matérialiser l'apparence visuelle de plus de mille textures. L'illusion est visible par les non-utilisateurs de Nen et ne laisse plus d'aura détectable une fois active. Elle ne modifie toutefois pas le toucher de la surface d'origine, de sorte qu'un contact peut révéler le faux. Hisoka l'utilise pour falsifier des textes, masquer ses blessures et reconstruire visuellement son visage et ses membres.",
+    "description": "Hisoka applies his aura to a flat, smooth surface, such as paper, fabric or even a prosthesis made of Bungee Gum, in order to materialize the visual appearance of more than a thousand textures. The illusion is visible to non-Nen users and no longer leaves a detectable aura once active. However, it does not change the feel of the original surface, so contact can reveal the fake. Hisoka uses it to falsify texts, hide his injuries, and visually reconstruct his face and limbs.",
     "canonStatus": "canon",
     "moduleKey": null
   },
@@ -93,20 +93,27 @@
     "id": "erigeron",
     "ownerId": "bill",
     "name": "Erigeron",
-    "alternateNames": ["Halcyon", "球根", "Harujion", "Bulb"],
+    "alternateNames": [
+      "Halcyon",
+      "球根",
+      "Harujion",
+      "Bulb"
+    ],
     "category": "enhancer",
-    "description": "Bill accélère considérablement la croissance d'un être vivant en approchant les paumes de ses mains. Sur une graine plongée dans un verre d'eau, Erigeron la fait germer en quelques instants. La capacité peut aussi améliorer les facultés de Nen d'une personne, mais ses effets restent faibles sur les individus sans entraînement ou peu expérimentés.",
+    "description": "Bill significantly accelerates the growth of a living being by bringing his palms together. On a seed immersed in a glass of water, Erigeron makes it germinate in a few moments. The ability can also enhance a person's Nen abilities, but its effects remain weak on untrained or inexperienced individuals.",
     "canonStatus": "canon",
     "moduleKey": null
   },
   {
     "id": "kurton-vehicle-transformation",
     "ownerId": "kurton",
-    "name": "Transformation en bateau ou véhicule",
-    "alternateNames": ["Capacité non nommée"],
+    "name": "Transformation into a boat or vehicle",
+    "alternateNames": [
+      "Unnamed ability"
+    ],
     "category": "conjurer",
     "abilityType": "symbiotic",
-    "description": "Capacité de type symbiotique permettant à Kurton de transformer son corps en bateau ou en voiture capable de transporter jusqu'à cinq passagers, en utilisant leur aura comme carburant. Compte tenu de son type de Nen et de la ressemblance avec la capacité de Tsubone, cette transformation relève très probablement de la Matérialisation.",
+    "description": "Symbiotic-like ability allowing Kurton to transform his body into a boat or car capable of carrying up to five passengers, using their aura as fuel. Given his Nen type and the resemblance to Tsubone's ability, this transformation is most likely Materialization.",
     "canonStatus": "canon",
     "moduleKey": null
   },
@@ -114,10 +121,17 @@
     "id": "little-eye",
     "ownerId": "sayird",
     "name": "Little Eye",
-    "alternateNames": ["裏窓", "Ritoru Ai", "Rear Window", "Roach"],
+    "alternateNames": [
+      "裏窓",
+      "Ritoru Ai",
+      "Rear Window",
+      "Roach"
+    ],
     "category": "emitter",
-    "secondaryCategories": ["manipulator"],
-    "description": "Sayird projette une sphère d'aura sur un insecte ou un autre petit être vivant afin de le capturer et d'en prendre le contrôle. La plus grande créature manipulable est de la taille d'un hamster. Il perçoit tout ce que l'animal voit et entend, tout en conservant la capacité de distinguer l'aura. Les animaux rapides sont difficiles à atteindre et les insectes peuvent mourir de leurs nombreux prédateurs. Little Eye ne fonctionne pas sur les êtres vivants matérialisés par l'aura, consomme très peu d'aura et reste actif si l'utilisateur perd connaissance. La capacité fut volée par Kurapika, transmise à la Reine Oito, puis rendue disponible à Sayird après son utilisation par celle-ci.",
+    "secondaryCategories": [
+      "manipulator"
+    ],
+    "description": "Sayird projects a sphere of aura onto an insect or other small living being in order to capture it and take control of it. The largest creature that can be handled is the size of a hamster. It perceives everything the animal sees and hears, while retaining the ability to distinguish the aura. Fast-moving animals are difficult to reach and insects can die from their many predators. Little Eye does not work on living beings materialized by aura, consumes very little aura and remains active if the user loses consciousness. The ability was stolen by Kurapika, passed on to Queen Oito, and then made available to Sayird after she used it.",
     "canonStatus": "canon",
     "moduleKey": null
   },
@@ -125,25 +139,42 @@
     "id": "cross-game",
     "ownerId": "mizaistom-nana",
     "name": "Cross Game",
-    "alternateNames": ["密室裁判", "Kurosu Gēmu", "The Closed-Door Trial", "Le Procès à huis clos"],
+    "alternateNames": [
+      "密室裁判",
+      "Kurosu Gēmu",
+      "The Closed-Door Trial",
+      "The closed trial"
+    ],
     "category": "unknown",
     "cards": [
-      { "color": "blue", "effect": "Admission dans le tribunal" },
-      { "color": "yellow", "effect": "Immobilisation et mise sous contrôle" },
-      { "color": "red", "effect": "Expulsion du tribunal" }
+      {
+        "color": "blue",
+        "effect": "Admission into court"
+      },
+      {
+        "color": "yellow",
+        "effect": "Immobilization and control"
+      },
+      {
+        "color": "red",
+        "effect": "Expulsion from court"
+      }
     ],
-    "description": "Mizaistom emploie trois cartes pour restreindre les actions d'une personne. La carte bleue l'admet dans le tribunal, la jaune la place sous son contrôle et la rouge l'en expulse. Avec la carte jaune, il montre d'abord la carte et formule un avertissement. Si la cible l'ignore, il retourne la carte et annonce « Restraint » : un parallélépipède rectangle l'enferme et l'empêche de bouger, sans l'empêcher de parler. L'effet est bref, mais peut être réappliqué autant de fois que nécessaire et utilisé simultanément contre plusieurs cibles.",
+    "description": "Mizaistom uses three cards to restrict a person's actions. The blue card admits her into the court, the yellow card places her under his control and the red card expels her. With the yellow card, he first shows the card and issues a warning. If the target ignores it, he turns the card over and announces “Restraint”: a rectangular parallelepiped confines him and prevents him from moving, without preventing him from speaking. The effect is brief, but can be reapplied as many times as necessary and used against multiple targets simultaneously.",
     "canonStatus": "canon",
     "moduleKey": null
   },
   {
     "id": "beyond-sacrificial-curse",
     "ownerId": "beyond-netero",
-    "name": "Malédiction sacrificielle",
-    "alternateNames": ["Sacrificial Curse", "Capacité non nommée"],
+    "name": "Sacrificial Curse",
+    "alternateNames": [
+      "Sacrificial Curse",
+      "Unnamed ability"
+    ],
     "category": "unknown",
     "abilityType": "curse",
-    "description": "Beyond a placé une puissante malédiction sur plusieurs de ses enfants. Sa marque n'est visible qu'avec Gyo. Elle éveille les enfants au Nen dès leur naissance et les transforme en sacrifices maudits de puissance variable. À la mort d'un sacrifice, la malédiction tue la cible choisie lors de sa pose. Selon Longhi, elle serait assez puissante pour tuer un prince malgré sa Bête spirituelle gardienne, même à grande distance. Un exorciste a qualifié la marque de Longhi de malédiction la plus puissante qu'il ait jamais observée. Selon la Reine Unma, Beyond peut provoquer à tout moment la mort de ses enfants afin de déclencher la malédiction.",
+    "description": "Beyond placed a powerful curse on many of his children. His mark is only visible with Gyo. She awakens children to Nen from birth and transforms them into cursed sacrifices of varying power. When a sacrifice dies, the curse kills the target chosen when it was placed. According to Longhi, it would be powerful enough to kill a prince despite its guardian Spirit Beast, even at great distances. One exorcist called Longhi's mark the most powerful curse he had ever observed. According to Queen Unma, Beyond can cause the death of her children at any time in order to trigger the curse.",
     "canonStatus": "canon",
     "moduleKey": null
   },
@@ -151,9 +182,13 @@
     "id": "benjamin-baton",
     "ownerId": "prince-benjamin",
     "name": "Benjamin Baton",
-    "alternateNames": ["星を継ぐもの", "Those Who Inherit The Stars", "Ceux qui héritent des étoiles"],
+    "alternateNames": [
+      "星を継ぐもの",
+      "Those Who Inherit The Stars",
+      "Those who inherit the stars"
+    ],
     "category": "unknown",
-    "description": "Lorsqu'un utilisateur de Nen ayant juré fidélité à Benjamin meurt, le Premier Prince hérite de sa capacité. Le défunt doit avoir obtenu son diplôme de l'Académie militaire royale de Kakin et appartenir à l'armée privée de Benjamin. Le pouvoir se manifeste sous la forme de quatre étoiles dans la paume droite. Une capacité active continue sous le contrôle de Benjamin après la mort de son propriétaire, même si celui-ci en avait perdu le contrôle ou si elle avait été volée. Le nombre maximal de capacités héritables reste inconnu et le pouvoir présente des similitudes avec la Spécialisation.",
+    "description": "When a Nen user who swore loyalty to Benjamin dies, the First Prince inherits his ability. The deceased must have graduated from the Kakin Royal Military Academy and belonged to Benjamin's private army. The power manifests itself in the form of four stars in the right palm. An active ability continues under Benjamin's control after the death of its owner, even if he had lost control of it or if it had been stolen. The maximum number of inheritable abilities remains unknown and the power has similarities to Specialization.",
     "canonStatus": "canon",
     "moduleKey": null
   },
@@ -161,10 +196,14 @@
     "id": "air-blow",
     "ownerId": "prince-benjamin",
     "name": "Air Blow",
-    "alternateNames": ["虚空拳", "Ea Burō", "Empty Air Fist"],
+    "alternateNames": [
+      "虚空拳",
+      "Ea Burō",
+      "Empty Air Fist"
+    ],
     "category": "unknown",
     "inheritedFrom": "Vincent",
-    "description": "Capacité héritée de Vincent. Son utilisateur original tentait de l'activer depuis sa paume gauche afin de briser la garde d'un utilisateur de Nen capable d'arrêter des balles avec son aura. Elle ne semble pas nécessiter de contact direct avec la cible, mais son fonctionnement précis reste inconnu.",
+    "description": "Ability inherited from Vincent. Its original user was attempting to activate it from his left palm in order to break the guard of a Nen user capable of stopping bullets with his aura. It does not appear to require direct contact with the target, but its precise functioning remains unknown.",
     "canonStatus": "canon",
     "moduleKey": null
   },
@@ -172,10 +211,14 @@
     "id": "secret-window",
     "ownerId": "prince-benjamin",
     "name": "Secret Window",
-    "alternateNames": ["裏窓の鳥", "Shīkuretto Windō", "Rear Window Bird"],
+    "alternateNames": [
+      "裏窓の鳥",
+      "Shīkuretto Windō",
+      "Rear Window Bird"
+    ],
     "category": "unknown",
     "inheritedFrom": "Musse",
-    "description": "Capacité héritée de Musse permettant de créer trois constructions en forme de chouette appelées Birds. L'une écoute les conversations à travers les obstacles et à distance. Une autre est apposée à une cible par contact physique et transmet télépathiquement ses actes et ses paroles à l'utilisateur, seul capable de la voir. Une seule créature, ou une seule de chaque type, peut exister simultanément. Après une surveillance prolongée, probablement dix jours, l'utilisateur peut rembobiner les informations enregistrées.",
+    "description": "Ability inherited from Musse to create three owl-shaped constructs called Birds. One listens to conversations through obstacles and from a distance. Another is affixed to a target by physical contact and telepathically transmits its actions and words to the user, who is the only one capable of seeing it. Only one creature, or only one of each type, can exist simultaneously. After prolonged monitoring, probably ten days, the user can rewind the recorded information.",
     "canonStatus": "canon",
     "moduleKey": null
   },
@@ -183,10 +226,14 @@
     "id": "culdcept",
     "ownerId": "prince-benjamin",
     "name": "Culdcept",
-    "alternateNames": ["遊戯王", "Karudoseputo", "King of Games"],
+    "alternateNames": [
+      "遊戯王",
+      "Karudoseputo",
+      "King of Games"
+    ],
     "category": "unknown",
     "inheritedFrom": "Shikaku",
-    "description": "Capacité héritée de Shikaku servant à acquérir la capacité d'un autre utilisateur de Nen sous la forme d'une carte. L'utilisateur joint ses mains, produit un éclair puis forme un rectangle d'aura avec ses doigts, dont la couleur s'assombrit pendant la préparation. Sa seule utilisation connue échoua face à la flèche de Halkenburg, capable de traverser toutes les défenses.",
+    "description": "Ability inherited from Shikaku used to acquire another Nen user's ability in the form of a card. The user brings their hands together, produces a flash of lightning, then forms an aura rectangle with their fingers, the color of which darkens during preparation. Its only known use failed against Halkenburg's arrow, capable of penetrating all defenses.",
     "canonStatus": "canon",
     "moduleKey": null
   },
@@ -194,9 +241,17 @@
     "id": "parallel-future",
     "ownerId": "prince-tserriednich",
     "name": "Parallel Future",
-    "alternateNames": ["Precognition", "Dream", "予知夢", "Yochimu", "Foresight Dream", "Ephemeral Ten Seconds", "刹那の10秒"],
+    "alternateNames": [
+      "Precognition",
+      "Dream",
+      "予知夢",
+      "Yochimu",
+      "Foresight Dream",
+      "Ephemeral Ten Seconds",
+      "刹那の10秒"
+    ],
     "category": "specialist",
-    "description": "Lorsque Tserriednich ferme les yeux et active Zetsu, il reçoit instantanément une vision des dix secondes suivantes. S'il maintient Zetsu, le temps réel reprend tandis que sa vision reste constamment dix secondes en avance ; il perçoit simultanément la prédiction et le présent et peut de nouveau se déplacer. Lorsqu'il met fin à la précognition, toutes les personnes apparues dans la vision, sauf lui, perçoivent les dix secondes suivantes exactement comme elles avaient été prédites, même s'il modifie réellement ses actions grâce à sa connaissance du futur. Le lien éventuel avec sa Bête de Nen personnelle et l'effet sur les personnes absentes de la vision restent inconnus.",
+    "description": "When Tserriednich closes his eyes and activates Zetsu, he instantly receives a vision of the next ten seconds. If he holds Zetsu, real time resumes while his vision constantly stays ten seconds ahead; he simultaneously perceives the prediction and the present and can move again. When he ends the precognition, everyone in the vision except him perceives the next ten seconds exactly as predicted, even though he actually changes his actions due to his knowledge of the future. The possible connection to his personal Nen Beast and the effect on those absent from the vision remain unknown.",
     "canonStatus": "canon",
     "moduleKey": null
   },
@@ -204,11 +259,19 @@
     "id": "grimmel-the-dissonance",
     "ownerId": "prince-halkenburg",
     "name": "The Boy Who Shoots the Arrow: Grimmel the Dissonance",
-    "alternateNames": ["少年は残酷な弓を射る", "Grimmel le Dissonance", "Le garçon qui tire la flèche"],
+    "alternateNames": [
+      "少年は残酷な弓を射る",
+      "Grimmel the Dissonance",
+      "The boy who shoots the arrow"
+    ],
     "category": "unknown",
-    "secondaryCategories": ["emitter", "manipulator", "transmuter"],
+    "secondaryCategories": [
+      "emitter",
+      "manipulator",
+      "transmuter"
+    ],
     "abilityType": "symbiotic-soul-transfer",
-    "description": "Halkenburg rassemble l'aura des porteurs du pinion de sa Bête Gardienne qui partagent une même volonté. Cette aura forme autour du groupe une armure réputée invincible, tandis que sa propre aura prend la forme d'un arc. La flèche traverse les murs, les capacités et toutes les défenses jusqu'à la cible, puis échange son âme avec celle d'un porteur marqué choisi aléatoirement, Halkenburg compris. La conscience alliée prend prioritairement le contrôle du corps adverse ; l'autre reste endormie jusqu'à ce que la première dorme ou que son corps meure. Si le corps du porteur allié meurt d'abord, l'âme de la cible retourne dans son corps et devient prioritaire. Halkenburg doit vraisemblablement accepter de risquer sa vie à chaque tir.",
+    "description": "Halkenburg brings together the aura of the bearers of the pinion of his Guardian Beast who share the same will. This aura forms around the group an armor deemed invincible, while his own aura takes the form of an arc. The arrow passes through walls, abilities, and all defenses to the target, then swaps its soul with that of a randomly chosen marked bearer, including Halkenburg. The allied consciousness primarily takes control of the opposing body; the other remains asleep until the first sleeps or its body dies. If the allied wielder's body dies first, the target's soul returns to their body and takes priority. Halkenburg must probably agree to risk his life with each shot.",
     "canonStatus": "canon",
     "moduleKey": null
   },
@@ -216,10 +279,15 @@
     "id": "without-you",
     "ownerId": "prince-kacho",
     "name": "Without You",
-    "alternateNames": ["２人セゾン", "キミガイナイ", "Kimi ga Inai", "Season of Two"],
+    "alternateNames": [
+      "２人セゾン",
+      "キミガイナイ",
+      "Kimi ga Inai",
+      "Season of Two"
+    ],
     "category": "unknown",
     "abilityType": "symbiotic-post-mortem",
-    "description": "Bête Gardienne symbiotique et initialement sans forme, activée par la mort de la première des jumelles Kacho et Fugetsu. Elle prend l'apparence, la personnalité, les souvenirs et la conscience apparente de la défunte, puis reste auprès de la survivante pour la protéger jusqu'à sa mort. Sous la forme de Kacho, elle est visible de tous, indiscernable de l'originale, capable d'interagir avec Magical Worm et de traverser les obstacles matériels. L'hôte étant morte, son existence est soutenue par le Nen post-mortem.",
+    "description": "Symbiotic and initially formless Guardian Beast, activated by the death of the first of the twins Kacho and Fugetsu. She takes on the deceased's appearance, personality, memories, and apparent consciousness, then stays with the survivor to protect her until she dies. In Kacho's form, she is visible to all, indistinguishable from the original, capable of interacting with Magical Worm and crossing material obstacles. The host being dead, its existence is supported by post-mortem Nen.",
     "canonStatus": "canon",
     "moduleKey": null
   },
@@ -227,11 +295,19 @@
     "id": "magical-worm",
     "ownerId": "prince-fugetsu",
     "name": "Magical Worm",
-    "alternateNames": ["秘密の扉", "Majikaru Wāmu", "Secret Door", "Porte secrète"],
+    "alternateNames": [
+      "秘密の扉",
+      "Majikaru Wāmu",
+      "Secret Door",
+      "Secret door"
+    ],
     "category": "unknown",
-    "secondaryCategories": ["conjurer", "emitter"],
+    "secondaryCategories": [
+      "conjurer",
+      "emitter"
+    ],
     "abilityType": "symbiotic-teleportation",
-    "description": "La Bête Gardienne de Fugetsu matérialise une Porte de départ ouvrant sur un tunnel dimensionnel, puis une trappe permettant d'émerger dans un autre lieu. La porte disparaît dès qu'elle est fermée, mais Fugetsu peut rebrousser chemin tant qu'elle ne sort pas entièrement. Une fois sortie, une Porte de retour apparaît et menait initialement à une destination choisie puis ouverte par Kacho. Le pouvoir ne fonctionnait normalement qu'une fois par nuit et épuisait Fugetsu. Après la mort de Kacho, Fugetsu semble pouvoir ouvrir seule le retour et répéter les trajets, mais cette évolution pourrait être provoquée par un piège ennemi qui la pousse à s'épuiser.",
+    "description": "Fugetsu's Guardian Beast materializes a Start Door opening onto a dimensional tunnel, then a trapdoor allowing you to emerge in another location. The door disappears as soon as it is closed, but Fugetsu can turn back as long as it does not come out entirely. Once out, a Return Door appears and initially led to a destination chosen and then opened by Kacho. The power normally only worked once a night and exhausted Fugetsu. After Kacho's death, Fugetsu appears to be able to open the return route on her own and repeat the routes, but this development could be caused by an enemy trap that causes her to become exhausted.",
     "canonStatus": "canon",
     "moduleKey": null
   },
@@ -239,11 +315,18 @@
     "id": "contagion",
     "ownerId": "morena-prudo",
     "name": "Contagion",
-    "alternateNames": ["恋のエチュード", "サイキンオセン", "Saikin Osen", "Etude of Love"],
+    "alternateNames": [
+      "恋のエチュード",
+      "サイキンオセン",
+      "Saikin Osen",
+      "Etude of Love"
+    ],
     "category": "specialist",
-    "secondaryCategories": ["manipulator"],
+    "secondaryCategories": [
+      "manipulator"
+    ],
     "abilityType": "infection-leveling-symbiotic",
-    "description": "Par sa salive, Morena peut infecter jusqu'à vingt-deux personnes et suivre leur position, leur état, leurs points et leur niveau. Un meurtre rapporte un niveau pour une personne ordinaire, dix pour un utilisateur de Nen et cinquante pour un prince. La quantité et le débit d'aura augmentent à chaque niveau ; au niveau 20, la recrue manifeste une capacité unique, et au niveau 100 elle devient à son tour Membre Zéro capable de créer sa communauté. Pour infecter une nouvelle cible, Morena doit jouer son jeu de négociation jusqu'à une réponse finale Oui, l'embrasser et lui faire assister à un meurtre commis par elle ou un allié. Avant les trois conditions, la cible reste niveau zéro. Tricher ou abandonner le jeu peut déclencher une Manipulation limitant la réponse à Oui ou Non. Les effets persistent jusqu'à la mort de Morena ou de la cible, ou jusqu'à l'accomplissement du jeu.",
+    "description": "Through her saliva, Morena can infect up to twenty-two people and track their location, condition, points, and level. A kill grants one level for an ordinary person, ten for a Nen user, and fifty for a prince. The quantity and flow of aura increases with each level; at level 20, the recruit manifests a unique ability, and at level 100 he in turn becomes Member Zero capable of creating his community. To infect a new target, Morena must play her negotiation game to a final answer Yes, kiss him and make him witness a murder committed by her or an ally. Before the three conditions, the target remains level zero. Cheating or abandoning the game can trigger a Manipulation limiting the answer to Yes or No. The effects persist until Morena or the target dies, or until the game is completed.",
     "canonStatus": "canon",
     "moduleKey": null
   },
@@ -251,195 +334,200 @@
     "id": "cats-name",
     "ownerId": "prince-camilla",
     "name": "Cat's Name",
-    "alternateNames": ["百万回生きた猫", "Neko no Namae", "The Cat Who Lived a Million Times", "Le Chat qui vécut un million de fois"],
+    "alternateNames": [
+      "百万回生きた猫",
+      "Neko no Namae",
+      "The Cat Who Lived a Million Times",
+      "The Cat Who Lived a Million Times"
+    ],
     "category": "unknown",
     "abilityType": "counteractive-post-mortem",
-    "description": "Capacité de contre-attaque qui s'active après la mort de Camilla. Une immense Bête de Nen féline apparaît derrière son meurtrier, l'écrase entre ses pattes et absorbe son énergie vitale en détruisant son corps. L'énergie est concentrée dans l'extrémité lumineuse de sa queue puis versée dans la bouche de Camilla, guérissant entièrement ses blessures et la ressuscitant. Le Nen post-mortem rend la capacité extrêmement puissante, mais elle ne protège pas Camilla des blessures non mortelles et reste inutile si l'adversaire refuse de la tuer directement. Elle pourrait fonctionner contre plusieurs meurtriers. On ignore si Camilla doit mourir en Zetsu ou si elle l'utilise seulement pour faciliter sa propre mort.",
+    "description": "Counterattack ability that activates after Camilla's death. An immense feline Nen Beast appears behind his murderer, crushes him between its paws and absorbs his life energy, destroying his body. The energy is concentrated into the glowing tip of its tail and then poured into Camilla's mouth, fully healing her wounds and resurrecting her. Post-mortem Nen makes the ability extremely powerful, but it does not protect Camilla from non-lethal injury and remains useless if the opponent refuses to kill her directly. It could work against several murderers. It is unknown whether Camilla must die in Zetsu or if she is only using it to facilitate her own death.",
     "canonStatus": "canon",
     "moduleKey": null
   },
   {
-     "id": "skill-hunter",
-     "ownerId": "chrollo-lucilfer",
-     "name": "Skill Hunter",
-     "alternateNames": [
-       "盗賊の極意",
-       "Sukiru Hantā",
-       "Bandit's Secret",
-       "Le Secret du voleur"
-     ],
-     "category": "specialist",
-     "abilityType": "ability-theft",
-     "description": "Chrollo matérialise un livre dans lequel il vole et conserve les capacités de Nen d'autrui. Il doit voir la capacité en action, interroger son propriétaire et obtenir des réponses, faire toucher par la victime l'empreinte de la couverture, le tout en moins d'une heure. La victime perd alors son pouvoir. Pour l'utiliser, Chrollo ouvre le livre à la bonne page et le garde dans sa main droite. Une capacité disparaît normalement à la mort de son créateur, sauf si le Nen post-mortem la maintient. Skill Hunter peut être amélioré ; Chrollo estime devoir voler un trésor national tel qu'un régalia de Kakin pour obtenir l'amélioration nécessaire à sa prochaine cible.",
-     "canonStatus": "canon",
-     "moduleKey": null
-   },
-   {
-     "id": "double-face",
-     "ownerId": "chrollo-lucilfer",
-     "name": "Double Face",
-     "alternateNames": [
-       "栞のテーマ",
-       "Daburu Feisu",
-       "Bookmark Theme",
-       "Thème du marque-page"
-     ],
-     "category": "specialist",
-     "abilityType": "skill-hunter-extension",
-     "description": "Marque-page propre à Bandit's Secret. Placé sur une page, il maintient la capacité correspondante même si le livre est fermé et libère ainsi les deux mains de Chrollo. Avec le livre ouvert sur une autre page, il permet d'employer deux capacités volées simultanément. Cette extension impose des conditions supplémentaires encore inconnues.",
-     "canonStatus": "canon",
-     "moduleKey": null
-   },
-   {
-     "id": "indoor-fish",
-     "ownerId": "chrollo-lucilfer",
-     "name": "Indoor Fish",
-     "alternateNames": [
-       "密室遊魚",
-       "Indoa Fisshu",
-       "Fish Playing Behind Closed Doors"
-     ],
-     "category": "unknown",
-     "abilityType": "stolen-ability",
-     "description": "Capacité volée invoquant des poissons squelettiques qui ne survivent que dans une pièce entièrement close. Ils dévorent la chair humaine sans provoquer douleur ni saignement ; la victime reste consciente même après une blessure mortelle, dont les effets ne se manifestent qu'à la disparition des poissons.",
-     "canonStatus": "canon",
-     "moduleKey": null
-   },
-   {
-     "id": "fun-fun-cloth",
-     "ownerId": "chrollo-lucilfer",
-     "name": "Fun Fun Cloth",
-     "alternateNames": [
-       "不思議で便利な大風呂敷",
-       "Fan Fan Kurosu",
-       "Mysterious Convenient Kerchief"
-     ],
-     "category": "conjurer",
-     "abilityType": "stolen-ability",
-     "inheritedFrom": "Owl",
-     "description": "Étoffe matérialisée, volée à Owl, dont la taille varie à volonté. Tout objet ou individu enveloppé est miniaturisé jusqu'à tenir dans la paume, puis retrouve sa taille normale une fois libéré, sans être blessé par le processus.",
-     "canonStatus": "canon",
-     "moduleKey": null
-   },
-   {
-     "id": "chrollo-teleportation",
-     "ownerId": "chrollo-lucilfer",
-     "name": "Téléportation",
-     "alternateNames": [
-       "Unseen Teleportation Ability"
-     ],
-     "category": "unknown",
-     "secondaryCategories": [
-       "emitter"
-     ],
-     "abilityType": "stolen-ability",
-     "description": "Capacité volée non nommée permettant de téléporter une personne contre son gré. Chrollo l'a utilisée sans bouger et sans voir ni la cible ni sa destination pour éloigner Nobunaga d'Hisoka. Son type exact est inconnu, mais l'Émission est probable.",
-     "canonStatus": "canon",
-     "moduleKey": null
-   },
-   {
-     "id": "sun-and-moon",
-     "ownerId": "chrollo-lucilfer",
-     "name": "The Sun and Moon",
-     "alternateNames": [
-       "番いの破壊者",
-       "San Ando Mūn",
-       "Paired Destruction",
-       "Le Soleil et la Lune"
-     ],
-     "category": "unknown",
-     "secondaryCategories": [
-       "emitter",
-       "transmuter"
-     ],
-     "abilityType": "stolen-post-mortem",
-     "inheritedFrom": "Ancien de Meteor City",
-     "description": "Deux symboles apparaissent sur les mains : un soleil positif à gauche et une lune négative à droite. Chrollo marque ses cibles par contact ; lorsque les deux signes se touchent, ils explosent. Trois à cinq secondes de charge produisent une explosion capable de tuer les personnes alentour. Le Nen post-mortem de l'ancien de Meteor City maintient le pouvoir dans Skill Hunter et conserve les marques jusqu'à leur explosion, même livre fermé.",
-     "canonStatus": "canon",
-     "moduleKey": null
-   },
-   {
-     "id": "order-stamp",
-     "ownerId": "chrollo-lucilfer",
-     "name": "Order Stamp",
-     "alternateNames": [
-       "人間の証明",
-       "Ōdā Sutanpu",
-       "Proof of Humanity"
-     ],
-     "category": "conjurer",
-     "secondaryCategories": [
-       "manipulator"
-     ],
-     "abilityType": "stolen-ability",
-     "description": "Un tampon matérialisé anime un objet inerte possédant une tête et lui impose un ordre vocal simple. Il ne fonctionne pas sur de vrais cadavres, conformément aux convictions du créateur originel, mais contrôle les copies de corps produites par Gallery Fake. La décapitation annule l'effet ; plus de deux cents pantins peuvent être commandés simultanément.",
-     "canonStatus": "canon",
-     "moduleKey": null
-   },
-   {
-     "id": "convert-hands",
-     "ownerId": "chrollo-lucilfer",
-     "name": "Convert Hands",
-     "alternateNames": [
-       "転校生",
-       "Konbāto Hanzu",
-       "Transfer Student"
-     ],
-     "category": "unknown",
-     "abilityType": "stolen-appearance-swap",
-     "description": "La main droite donne l'apparence de Chrollo à la personne touchée, tandis que la gauche lui donne l'apparence de sa cible. Un contact des deux mains échange instantanément leurs formes. Seule l'apparence change, jamais les capacités ni la personnalité, et les marques demeurant sur ses paumes peuvent trahir Chrollo.",
-     "canonStatus": "canon",
-     "moduleKey": null
-   },
-   {
-     "id": "love-dial-6700",
-     "ownerId": "chrollo-lucilfer",
-     "name": "Love Dial 6700",
-     "alternateNames": [
-       "恋のダイヤル６７００",
-       "忌まわし電話",
-       "Imawashi Denwa",
-       "Disgusting Telephone"
-     ],
-     "category": "conjurer",
-     "abilityType": "stolen-search",
-     "inheritedFrom": "Narumi McGait",
-     "description": "Téléphone matérialisé permettant de rechercher un « partenaire idéal » selon des critères précis. Après saisie, il fournit un numéro de 6 à 20 chiffres puis guide l'utilisateur vers la cible et indique notamment si elle se trouve à proximité. Les appels quotidiens sont limités et un nouvel essai peut exiger un délai ou un changement de zone. Chrollo l'utilise au Tier 3 pour trouver un utilisateur possédant la capacité qu'il désire voler.",
-     "canonStatus": "canon",
-     "moduleKey": null
-   },
-   {
-     "id": "lovely-ghostwriter",
-     "ownerId": "chrollo-lucilfer",
-     "name": "Lovely Ghostwriter",
-     "alternateNames": [
-       "天使の自動筆記",
-       "Raburī Gōsuto Raitā",
-       "Angelic Auto Writing"
-     ],
-     "category": "specialist",
-     "abilityType": "former-stolen-ability",
-     "inheritedFrom": "Neon Nostrade",
-     "description": "Ancienne capacité volée à Neon Nostrade, capable de prédire sous forme de poèmes les événements des semaines à venir à partir du nom, de la date de naissance et du groupe sanguin d'une personne. L'utilisateur ne peut prédire son propre avenir. Elle a disparu de Skill Hunter avant le voyage du Black Whale, suggérant la mort de Neon.",
-     "canonStatus": "canon",
-     "moduleKey": null
-   },
-   {
-     "id": "gallery-fake",
-     "ownerId": "chrollo-lucilfer",
-     "name": "Gallery Fake",
-     "alternateNames": [
-       "神の左手悪魔の右手",
-       "Gyararī Feiku",
-       "Divine Left Hand, Demonic Right Hand"
-     ],
-     "category": "conjurer",
-     "abilityType": "former-borrowed-ability",
-     "inheritedFrom": "Kortopi",
-     "description": "Ancienne capacité empruntée à Kortopi : la main droite crée la copie exacte d'un objet touché par la gauche. Les êtres vivants deviennent des copies inertes, sans reproduire leurs pouvoirs, et disparaissent après vingt-quatre heures. Chrollo pouvait suivre chaque copie avec En et en a créé plus de deux cents contre Hisoka. Le pouvoir a vraisemblablement disparu après la mort de Kortopi.",
-     "canonStatus": "canon",
-     "moduleKey": null
-   },
+    "id": "skill-hunter",
+    "ownerId": "chrollo-lucilfer",
+    "name": "Skill Hunter",
+    "alternateNames": [
+      "盗賊の極意",
+      "Sukiru Hantā",
+      "Bandit's Secret",
+      "The Thief's Secret"
+    ],
+    "category": "specialist",
+    "abilityType": "ability-theft",
+    "description": "Chrollo materializes a book in which he steals and retains the Nen abilities of others. He must see the ability in action, interview its owner and get answers, have the victim touch the blanket's imprint, all in less than an hour. The victim then loses his power. To use it, Chrollo opens the book to the correct page and holds it in his right hand. An ability normally disappears upon the death of its creator, unless post-mortem Nen maintains it. Skill Hunter can be improved; Chrollo believes he must steal a national treasure such as a Kakin Regalia to obtain the upgrade needed for his next target.",
+    "canonStatus": "canon",
+    "moduleKey": null
+  },
+  {
+    "id": "double-face",
+    "ownerId": "chrollo-lucilfer",
+    "name": "Double Face",
+    "alternateNames": [
+      "栞のテーマ",
+      "Daburu Feisu",
+      "Bookmark Theme",
+      "Bookmark theme"
+    ],
+    "category": "specialist",
+    "abilityType": "skill-hunter-extension",
+    "description": "Bookmark specific to Bandit's Secret. Placed on a page, it maintains the corresponding ability even if the book is closed and thus frees both of Chrollo's hands. With the book open on another page, it allows you to use two stolen abilities simultaneously. This extension imposes additional conditions that are still unknown.",
+    "canonStatus": "canon",
+    "moduleKey": null
+  },
+  {
+    "id": "indoor-fish",
+    "ownerId": "chrollo-lucilfer",
+    "name": "Indoor Fish",
+    "alternateNames": [
+      "密室遊魚",
+      "Indoa Fisshu",
+      "Fish Playing Behind Closed Doors"
+    ],
+    "category": "unknown",
+    "abilityType": "stolen-ability",
+    "description": "Stolen ability summoning skeletal fish that only survive in a completely enclosed room. They devour human flesh without causing pain or bleeding; the victim remains conscious even after a fatal injury, the effects of which only become apparent when the fish disappear.",
+    "canonStatus": "canon",
+    "moduleKey": null
+  },
+  {
+    "id": "fun-fun-cloth",
+    "ownerId": "chrollo-lucilfer",
+    "name": "Fun Fun Cloth",
+    "alternateNames": [
+      "不思議で便利な大風呂敷",
+      "Fan Fan Kurosu",
+      "Mysterious Convenient Kerchief"
+    ],
+    "category": "conjurer",
+    "abilityType": "stolen-ability",
+    "inheritedFrom": "Owl",
+    "description": "Materialized fabric, stolen from Owl, whose size varies at will. Any enveloped object or individual is miniaturized to fit in the palm, then returns to normal size once released, unharmed in the process.",
+    "canonStatus": "canon",
+    "moduleKey": null
+  },
+  {
+    "id": "chrollo-teleportation",
+    "ownerId": "chrollo-lucilfer",
+    "name": "Teleport",
+    "alternateNames": [
+      "Unseen Teleportation Ability"
+    ],
+    "category": "unknown",
+    "secondaryCategories": [
+      "emitter"
+    ],
+    "abilityType": "stolen-ability",
+    "description": "Unnamed stolen ability to teleport a person against their will. Chrollo used it without moving and without seeing the target or its destination to keep Nobunaga away from Hisoka. Its exact type is unknown, but the Emission is probable.",
+    "canonStatus": "canon",
+    "moduleKey": null
+  },
+  {
+    "id": "sun-and-moon",
+    "ownerId": "chrollo-lucilfer",
+    "name": "The Sun and Moon",
+    "alternateNames": [
+      "番いの破壊者",
+      "San Ando Mūn",
+      "Paired Destruction",
+      "The Sun and the Moon"
+    ],
+    "category": "unknown",
+    "secondaryCategories": [
+      "emitter",
+      "transmuter"
+    ],
+    "abilityType": "stolen-post-mortem",
+    "inheritedFrom": "Ancien de Meteor City",
+    "description": "Two symbols appear on the hands: a positive sun on the left and a negative moon on the right. Chrollo marks his targets by contact; when the two signs touch, they explode. Three to five seconds of charging produces an explosion capable of killing surrounding people. The Meteor City Elder's post-mortem Nen maintains power in Skill Hunter and retains the marks until they explode, even with a closed book.",
+    "canonStatus": "canon",
+    "moduleKey": null
+  },
+  {
+    "id": "order-stamp",
+    "ownerId": "chrollo-lucilfer",
+    "name": "Order Stamp",
+    "alternateNames": [
+      "人間の証明",
+      "Ōdā Sutanpu",
+      "Proof of Humanity"
+    ],
+    "category": "conjurer",
+    "secondaryCategories": [
+      "manipulator"
+    ],
+    "abilityType": "stolen-ability",
+    "description": "A materialized buffer animates an inert object with a head and imposes a simple vocal command on it. It does not work on real corpses, in accordance with the original creator's beliefs, but controls the body copies produced by Gallery Fake. Decapitation negates the effect; more than two hundred puppets can be ordered simultaneously.",
+    "canonStatus": "canon",
+    "moduleKey": null
+  },
+  {
+    "id": "convert-hands",
+    "ownerId": "chrollo-lucilfer",
+    "name": "Convert Hands",
+    "alternateNames": [
+      "転校生",
+      "Konbāto Hanzu",
+      "Transfer Student"
+    ],
+    "category": "unknown",
+    "abilityType": "stolen-appearance-swap",
+    "description": "The right hand gives the affected person the appearance of Chrollo, while the left gives them the appearance of their target. A touch of the two hands instantly exchanges their shapes. Only appearance changes, never abilities or personality, and the marks remaining on his palms can betray Chrollo.",
+    "canonStatus": "canon",
+    "moduleKey": null
+  },
+  {
+    "id": "love-dial-6700",
+    "ownerId": "chrollo-lucilfer",
+    "name": "Love Dial 6700",
+    "alternateNames": [
+      "恋のダイヤル６７００",
+      "忌まわし電話",
+      "Imawashi Denwa",
+      "Disgusting Telephone"
+    ],
+    "category": "conjurer",
+    "abilityType": "stolen-search",
+    "inheritedFrom": "Narumi McGait",
+    "description": "Materialized telephone allowing you to search for an “ideal partner” according to specific criteria. After entry, it provides a 6 to 20 digit number then guides the user to the target and indicates in particular whether it is nearby. Daily calls are limited and retrying may require a delay or change of zone. Chrollo uses it at Tier 3 to find a user with the ability he wants to steal.",
+    "canonStatus": "canon",
+    "moduleKey": null
+  },
+  {
+    "id": "lovely-ghostwriter",
+    "ownerId": "chrollo-lucilfer",
+    "name": "Lovely Ghostwriter",
+    "alternateNames": [
+      "天使の自動筆記",
+      "Raburī Gōsuto Raitā",
+      "Angelic Auto Writing"
+    ],
+    "category": "specialist",
+    "abilityType": "former-stolen-ability",
+    "inheritedFrom": "Neon Nostrade",
+    "description": "Ancient ability stolen from Neon Nostrade, capable of predicting in the form of poems the events of the coming weeks based on a person's name, date of birth and blood type. The user cannot predict his own future. She disappeared from Skill Hunter before the Black Whale's journey, suggesting Neon's death.",
+    "canonStatus": "canon",
+    "moduleKey": null
+  },
+  {
+    "id": "gallery-fake",
+    "ownerId": "chrollo-lucilfer",
+    "name": "Gallery Fake",
+    "alternateNames": [
+      "神の左手悪魔の右手",
+      "Gyararī Feiku",
+      "Divine Left Hand, Demonic Right Hand"
+    ],
+    "category": "conjurer",
+    "abilityType": "former-borrowed-ability",
+    "inheritedFrom": "Kortopi",
+    "description": "Ancient ability borrowed from Kortopi: the right hand creates an exact copy of an object touched by the left. Living beings become inert copies, without reproducing their powers, and disappear after twenty-four hours. Chrollo could track every copy with En and created over two hundred against Hisoka. Power presumably disappeared after Kortopi's death.",
+    "canonStatus": "canon",
+    "moduleKey": null
+  },
   {
     "id": "black-voice",
     "ownerId": "chrollo-lucilfer",
@@ -452,7 +540,7 @@
     "category": "manipulator",
     "abilityType": "former-borrowed-ability",
     "inheritedFrom": "Shalnark",
-    "description": "Ancienne capacité empruntée à Shalnark. Une antenne plantée dans une cible permet de la contrôler entièrement au moyen d'un téléphone spécial et de lui transmettre des ordres vocaux. Chrollo gardait une seconde antenne comme menace et feinte. La capacité a vraisemblablement disparu après la mort de Shalnark.",
+    "description": "Old ability borrowed from Shalnark. An antenna planted in a target allows it to be controlled entirely by means of a special telephone and to transmit voice orders. Chrollo kept a second antenna as a threat and feint. The ability presumably disappeared after Shalnark's death.",
     "canonStatus": "canon",
     "moduleKey": null
   },
@@ -465,14 +553,14 @@
       "サイレントマジョリティー",
       "Sairento Majoritī",
       "They Were Eleven!",
-      "Majorité silencieuse"
+      "silent majority"
     ],
     "category": "conjurer",
     "secondaryCategories": [
       "manipulator"
     ],
     "abilityType": "curse-remote-blood-drain",
-    "description": "L'utilisateur fait apparaître une marionnette masquée que seuls lui-même et une personne possédée peuvent voir, puis choisit une victime parmi dix personnes à portée. Quatre serpents matérialisés, couverts de plusieurs bouches et visibles de tous, percent la cible et aspirent son sang. Un serpent met quarante-quatre secondes à vider un corps ; les quatre ensemble n'en demandent que onze. Leurs yeux sur la poitrine de la marionnette s'illuminent lors de l'attaque. La capacité semble guidée visuellement et recourir à la Manipulation. Si la marionnette est désactivée de façon inattendue sans avoir tué personne, la malédiction se retourne contre son utilisateur. Les serpents disparaissent dès que le Nen est désactivé.",
+    "description": "The user conjures up a masked puppet that only they and a possessed person can see, then chooses a victim from ten people within range. Four materialized snakes, covered with several mouths and visible to all, pierce the target and suck its blood. A snake takes forty-four seconds to empty a body; the four together only require eleven. Their eyes on the puppet's chest light up during the attack. The ability appears visually guided and uses Manipulation. If the puppet is unexpectedly deactivated without having killed anyone, the curse turns against its user. Snakes disappear as soon as Nen is deactivated.",
     "canonStatus": "canon",
     "moduleKey": null
   },
@@ -487,7 +575,7 @@
     ],
     "category": "conjurer",
     "abilityType": "musical-conjuration",
-    "description": "Bonolenov danse et joue une mélodie en faisant passer l'air dans les trous de son corps. Prologue matérialise autour de lui une tenue de guerrier ainsi qu'une longue lance, qu'il manie à grande vitesse pour transpercer sa cible.",
+    "description": "Bonolenov dances and plays a melody by passing air through the holes in his body. Prologue materializes around him a warrior's outfit as well as a long spear, which he wields at high speed to pierce his target.",
     "canonStatus": "canon",
     "moduleKey": null
   },
@@ -502,7 +590,7 @@
     ],
     "category": "conjurer",
     "abilityType": "musical-pursuit-crush",
-    "description": "Après avoir exécuté la danse et la mélodie requises, Bonolenov matérialise autour de lui une gigantesque sphère ayant l'apparence de Jupiter. Elle poursuit à très grande vitesse la cible tant que celle-ci reste à portée auditive de la musique, puis l'écrase sous sa masse.",
+    "description": "After performing the required dance and melody, Bonolenov materializes around himself a gigantic sphere having the appearance of Jupiter. It pursues the target at very high speed as long as it remains within hearing range of the music, then crushes it under its mass.",
     "canonStatus": "canon",
     "moduleKey": null
   },
@@ -517,7 +605,7 @@
     ],
     "category": "conjurer",
     "abilityType": "musical-transformation",
-    "description": "Bonolenov peut prendre l'apparence d'une personne avec laquelle il a parlé. Il conserve cette forme pendant une durée pouvant atteindre le temps passé auprès du modèle ; rester près d'une cible inconsciente semble également compter. La transformation n'a pas de limite de taille connue, même si une forte différence de taille pourrait réduire sa durée. Sur le Black Whale, il imite successivement Hisoka, Zakuro, Lynch et Owl avec suffisamment de précision pour tromper leurs proches.",
+    "description": "Bonolenov can take on the appearance of a person with whom he has spoken. It maintains this form for a period of up to the time spent with the model; staying near an unconscious target also seems to count. The transformation has no known size limit, although a large difference in size could reduce its duration. On the Black Whale, he successively imitates Hisoka, Zakuro, Lynch and Owl with enough precision to fool those close to him.",
     "canonStatus": "canon",
     "moduleKey": null
   },
@@ -532,7 +620,7 @@
     ],
     "category": "conjurer",
     "abilityType": "infinite-selective-vacuum",
-    "description": "Shizuku matérialise un aspirateur capable d'absorber une quantité apparemment illimitée de matières non vivantes. Blinky ne peut aspirer ni ce qu'elle considère comme vivant ni les objets constitués de Nen, restriction utile pour détecter des pièges. Seul le dernier objet avalé peut être recraché et Shizuku ignore où disparaît le reste. Elle doit généralement annoncer à voix haute ce qu'elle souhaite aspirer. Blinky efface le sang, les cadavres et les traces d'un crime, retire poisons ou gaz d'un organisme sans aspirer la victime, sert de massue en combat et peut vider le sang d'un adversaire par une plaie ouverte.",
+    "description": "Shizuku materializes a vacuum cleaner capable of absorbing a seemingly unlimited amount of non-living matter. Blinky cannot suck up anything it considers alive or objects made of Nen, a useful restriction for detecting traps. Only the last swallowed object can be spat out and Shizuku does not know where the rest disappears. She usually has to announce out loud what she wants to aspirate. Blinky erases blood, corpses and traces of a crime, removes poisons or gas from an organism without sucking the victim, serves as a club in combat and can drain the blood of an opponent through an open wound.",
     "canonStatus": "canon",
     "moduleKey": null
   },
@@ -544,14 +632,14 @@
       "俺の両手は機関銃",
       "Daburu Mashin Gan",
       "My Ambidextrous Machine Guns",
-      "Mes deux mains sont des mitrailleuses"
+      "My two hands are machine guns"
     ],
     "category": "emitter",
     "secondaryCategories": [
       "enhancer"
     ],
     "abilityType": "rapid-fire-aura-bullets",
-    "description": "Franklin a sectionné ses dix doigts au niveau des phalanges distales et tire par leurs extrémités des balles d'aura à très haute cadence. Leur vitesse et leur puissance permettent de massacrer plusieurs dizaines de personnes en quelques secondes et de traverser des constructions de Nen tout en conservant une force létale. Cette mutilation n'était pas techniquement nécessaire, mais sa conviction qu'elle rendrait l'attaque plus efficace constitue une restriction volontaire qui augmente fortement la puissance des projectiles.",
+    "description": "Franklin has severed his ten fingers at the level of the distal phalanges and fires aura bullets from their ends at a very high rate. Their speed and power make it possible to massacre several dozen people in a few seconds and to cross Nen constructions while maintaining lethal force. This mutilation was not technically necessary, but his belief that it would make the attack more effective constitutes a voluntary restriction which greatly increases the power of the projectiles.",
     "canonStatus": "canon",
     "moduleKey": null
   },
@@ -566,14 +654,14 @@
     ],
     "category": "enhancer",
     "abilityType": "rotation-charged-punch",
-    "description": "Phinks fait tourner son bras dans le sens horaire et augmente à chaque rotation la quantité d'aura concentrée dans son poing. La puissance s'accumule jusqu'au coup suivant : quinze tours de son bras droit ont suffi à pulvériser en un seul impact le corps résistant d'une Fourmi-Chimère. Il estimait toutefois qu'environ sept tours auraient été suffisants et admet avoir du mal à calibrer précisément ses frappes.",
+    "description": "Phinks rotates his arm clockwise and with each rotation increases the amount of aura concentrated in his fist. The power builds up until the next blow: fifteen turns of his right arm were enough to pulverize the resistant body of a Chimera Ant in a single impact. However, he felt that around seven rounds would have been enough and admits to having difficulty calibrating his strikes precisely.",
     "canonStatus": "canon",
     "moduleKey": null
   },
   {
     "id": "surveillance-paper-dolls",
     "ownerId": "kalluto-zoldyck",
-    "name": "Poupées de papier de surveillance",
+    "name": "Surveillance paper dolls",
     "alternateNames": [
       "Surveillance Paper Dolls"
     ],
@@ -582,7 +670,7 @@
       "emitter"
     ],
     "abilityType": "remote-audio-surveillance",
-    "description": "Kalluto fixe discrètement un confetti sur une personne puis fabrique une poupée de papier à son image. Il peut alors entendre les conversations tenues autour de la cible et recueillir des informations à distance sans être détecté. Même les utilisateurs de Nen de la Brigade n'ont pas remarqué qu'ils étaient surveillés. Cette technique, ou une capacité apparentée, lui a également permis de localiser l'exorciste Abengane sur Greed Island.",
+    "description": "Kalluto discreetly fixes confetti on a person then makes a paper doll in their image. It can then hear conversations held around the target and gather information remotely without being detected. Even the Brigade's Nen users didn't notice that they were being watched. This technique, or a related ability, also allowed him to locate the exorcist Abengane on Greed Island.",
     "canonStatus": "canon",
     "moduleKey": null
   },
@@ -594,14 +682,50 @@
       "蛇咬の舞",
       "Dakō no Mai",
       "Snake Bite Dance",
-      "Danse de la morsure du serpent"
+      "Snakebite Dance"
     ],
     "category": "manipulator",
     "secondaryCategories": [
       "emitter"
     ],
     "abilityType": "paper-serpent-barrage",
-    "description": "Kalluto laisse tomber des confettis puis les soulève et les projette sous plusieurs angles avec les mouvements de son éventail. Dès qu'un fragment se plante dans la cible, il rassemble les autres en un courant tourbillonnant semblable à un serpent, qui converge vers ce point et transperce la même zone. Il peut répéter l'assaut avec plusieurs marques jusqu'à mettre le corps en pièces.",
+    "description": "Kalluto drops confetti then lifts it up and throws it at multiple angles with the movements of his fan. As soon as a fragment embeds itself in the target, it gathers the others into a swirling, snake-like current, which converges on that point and pierces the same area. He can repeat the assault with several marks until the body is torn to pieces.",
+    "canonStatus": "canon",
+    "moduleKey": null
+  },
+  {
+    "id": "nen-stitches",
+    "ownerId": "machi-komacine",
+    "name": "Nen Stitches",
+    "alternateNames": [
+      "念糸縫合",
+      "Nenshi Hōgō",
+      "Spiritual Suture",
+      "Sutures de Nen"
+    ],
+    "category": "transmuter",
+    "secondaryCategories": [
+      "emitter",
+      "enhancer"
+    ],
+    "abilityType": "aura-threads",
+    "description": "Machi transforms her aura into versatile wires that she can mask with In. They are used to control a target's movements like a puppet, track what they touch, set traps, capture, strangle or cut up an opponent. Short, they are extremely resistant and can lift a ton; their strength decreases with their length and when they no longer remain connected to his fingers. Machi also uses them as surgical sutures capable of closing a wound or quickly reattaching a severed limb by reconnecting the tissues with such precision that mobility returns immediately.",
+    "canonStatus": "canon",
+    "moduleKey": null
+  },
+  {
+    "id": "theta-aura-projectile",
+    "ownerId": "theta",
+    "name": "Aura Projectile",
+    "alternateNames": [
+      "Unseen Aura Projectile"
+    ],
+    "category": "unknown",
+    "secondaryCategories": [
+      "emitter"
+    ],
+    "abilityType": "weak-emitted-projectile",
+    "description": "Theta uses her Hatsu to emit a weak projectile of aura towards Tserriednich during her Zetsu exercise. The attack serves to test his ability to maintain complete closure of the aura nodes under pressure and does not appear designed to inflict significant damage. Theta's natural type remains unknown, but the effect likely uses Emission.",
     "canonStatus": "canon",
     "moduleKey": null
   }

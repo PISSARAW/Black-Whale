@@ -2,111 +2,111 @@
   {
     "id": "kakin-royal-family",
     "name": "Kakin Royal Family",
-    "description": "La famille royale souveraine de l'Empire de Kakin, menée par le Roi Nasubi Hui Guo Rou."
+    "description": "The sovereign royal family of the Kakin Empire, led by King Nasubi Hui Guo Rou."
   },
   {
     "id": "hunter-association",
     "name": "Hunter Association",
-    "description": "Organisation mondiale des Hunters, en charge de l'expédition sur le Continent des Ténèbres et de la sécurité civile du Black Whale."
+    "description": "World Hunter Organization, in charge of the expedition to the Dark Continent and the civil security of the Black Whale."
   },
   {
     "id": "zodiacs",
     "name": "The Zodiacs",
-    "description": "Les douze plus hauts dirigeants de l'Association des Hunters."
+    "description": "The twelve highest-ranking leaders of the Hunters Association."
   },
   {
     "id": "kakin-royal-army",
     "name": "Kakin Royal Army",
-    "description": "Force militaire de l'Empire (2 000 soldats à bord), responsable de la loi martiale et de la sécurité des Tiers 1 et 2."
+    "description": "Military force of the Empire (2,000 soldiers on board), responsible for martial law and the security of Tiers 1 and 2."
   },
   {
     "id": "phantom-troupe",
     "name": "Phantom Troupe",
-    "description": "Aussi connue sous le nom de la Brigade Fantôme (Araignée). Organisation criminelle infiltrée sur le Tier 5 pour traquer Hisoka."
+    "description": "Also known as the Phantom (Spider) Squad. Criminal organization infiltrated Tier 5 to hunt down Hisoka."
   },
   {
     "id": "mafia-xiyu",
     "name": "Xi-Yu Family",
-    "description": "Famille mafieuse secrètement soutenue par le 3ème Prince Zhang Lei. Maintient l'ordre économique. Sous-chef : Hinrigh."
+    "description": "Mafia family secretly supported by 3rd Prince Zhang Lei. Maintains economic order. Sous chef: Hinrigh."
   },
   {
     "id": "mafia-char",
     "name": "Cha-R Family",
-    "description": "Famille mafieuse sous la protection du 7ème Prince Luzurus. Contrôle les entrepôts du Tier 4."
+    "description": "Mafia family under the protection of the 7th Prince Luzurus. Controls Tier 4 warehouses."
   },
   {
     "id": "mafia-heilly",
     "name": "Heil-Ly Family",
-    "description": "Famille mafieuse instrumentalisée par le 4ème Prince Tserriednich. Dirigée par Morena Prudo, vise à détruire l'équilibre par le chaos."
+    "description": "Mafia family exploited by the 4th Prince Tserriednich. Led by Morena Prudo, aims to destroy balance through chaos."
   },
   {
     "id": "prince-benjamin",
     "name": "Faction Benjamin",
-    "description": "Forces militaires privées (Garde Royale de Kakin) loyales au 1er Prince Benjamin."
+    "description": "Private military forces (Kakin Royal Guard) loyal to 1st Prince Benjamin."
   },
   {
     "id": "prince-camilla",
     "name": "Faction Camilla",
-    "description": "Intimes et partisans de la 2ème Princesse Camilla."
+    "description": "Intimates and supporters of the 2nd Princess Camilla."
   },
   {
     "id": "prince-zhanglei",
     "name": "Faction Zhang Lei",
-    "description": "Forces loyales au 3ème Prince Zhang Lei, liées à la mafia Xi-Yu."
+    "description": "Forces loyal to 3rd Prince Zhang Lei, linked to the Xi-Yu mafia."
   },
   {
     "id": "prince-tserriednich",
     "name": "Faction Tserriednich",
-    "description": "Partisans du 4ème Prince Tserriednich, en lien avec la mafia Heil-Ly."
+    "description": "Supporters of the 4th Prince Tserriednich, linked to the Heil-Ly mafia."
   },
   {
     "id": "prince-tubeppa",
     "name": "Faction Tubeppa",
-    "description": "Partisans et gardes de la 5ème Princesse Tubeppa."
+    "description": "Supporters and guards of the 5th Princess Tubeppa."
   },
   {
     "id": "prince-tyson",
     "name": "Faction Tyson",
-    "description": "Gardes de la 6ème Princesse Tyson, dévoués aux tabous romantiques."
+    "description": "Guards of the 6th Princess Tyson, devoted to romantic taboos."
   },
   {
     "id": "prince-luzurus",
     "name": "Faction Luzurus",
-    "description": "Forces liées au 7ème Prince Luzurus et à la mafia Cha-R."
+    "description": "Forces linked to the 7th Prince Luzurus and the Cha-R mafia."
   },
   {
     "id": "prince-salesale",
-    "name": "Faction Salé-salé",
-    "description": "Garde manipulée par la Bête de Nen du 8ème Prince Salé-salé."
+    "name": "Salty Faction",
+    "description": "Guard manipulated by the Beast of Nen of the 8th Prince Salé-salé."
   },
   {
     "id": "prince-halkenburg",
     "name": "Faction Halkenburg",
-    "description": "Partisans du 9ème Prince Halkenburg, partageant une aura collective."
+    "description": "Supporters of the 9th Prince Halkenburg, sharing a collective aura."
   },
   {
     "id": "prince-kacho",
     "name": "Faction Kacho",
-    "description": "Entourage de la 10ème Princesse Kacho."
+    "description": "Entourage of the 10th Princess Kacho."
   },
   {
     "id": "prince-fugetsu",
     "name": "Faction Fugetsu",
-    "description": "Entourage de la 11ème Princesse Fugetsu."
+    "description": "Entourage of the 11th Princess Fugetsu."
   },
   {
     "id": "prince-momoze",
     "name": "Faction Momoze",
-    "description": "Gardes de la 12ème Princesse Momoze (assassinée)."
+    "description": "Guards of the 12th Princess Momoze (assassinated)."
   },
   {
     "id": "prince-marayam",
     "name": "Faction Marayam",
-    "description": "Défenseurs du 13ème Prince Marayam (Hunters et gardes)."
+    "description": "Defenders of the 13th Prince Marayam (Hunters and guards)."
   },
   {
     "id": "prince-woble",
     "name": "Faction Woble",
-    "description": "Hunters (menés par Kurapika) et gardes protégeant la 14ème Princesse Woble et la Reine Oito."
+    "description": "Hunters (led by Kurapika) and guards protecting the 14th Princess Woble and Queen Oito."
   }
 ]

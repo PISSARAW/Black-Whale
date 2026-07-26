@@ -5,6 +5,7 @@
   import type { PageData } from './$types';
   import PerspectiveDifference from '$lib/components/perspective/PerspectiveDifference.svelte';
   import CompareTierMap from '$lib/components/perspective/CompareTierMap.svelte';
+  import { toEnglishDisplayName, toEnglishEventTitle } from '$lib/utils/displayNames';
 
   let { data }: { data: PageData } = $props();
 
@@ -123,7 +124,7 @@
         return {
           id: presence.entityId,
           subjectId: owner?.id || body?.id || presence.entityId,
-          name: owner?.canonicalName || body?.label || presence.entityId,
+          name: toEnglishDisplayName(owner?.canonicalName || body?.label) || presence.entityId,
           locationName: location?.name || 'Unknown location',
           tier: location ? resolveTier(location) : null,
           zone: location?.slug || ''
@@ -172,7 +173,7 @@
         id: presence.entityId,
         bodyId: body?.id || presence.entityId,
         subjectId: owner?.id || body?.id || presence.entityId,
-        name: owner?.canonicalName || body?.label || presence.entityId,
+        name: toEnglishDisplayName(owner?.canonicalName || body?.label) || presence.entityId,
         tier: markerTier,
         zone: location?.slug || '',
         x,
@@ -295,7 +296,7 @@
   });
 
   function getCharacterName(id: string) {
-    return data.characters.find((character) => character.id === id)?.canonicalName || id;
+    return toEnglishDisplayName(data.characters.find((character) => character.id === id)?.canonicalName) || id;
   }
 
   function buildUrl() {
@@ -384,14 +385,22 @@
   <title>Perspective Comparison - Black Whale</title>
 </svelte:head>
 
-<div class="max-w-7xl mx-auto p-6 space-y-6">
-  <header class="bw-panel p-5">
-    <h1 class="font-condensed text-3xl tracking-wide text-[#e7ca87]">Perspective Comparison</h1>
-    <p class="text-sm text-slate-300 mt-2">Same tier, zoom, zone, and selected subject: two synchronized truths.</p>
-    <div class="mt-3 flex flex-wrap gap-2 items-center">
+<div class="compare-page">
+  <header class="compare-hero">
+    <div class="hero-copy">
+      <p class="eyebrow">Investigation room · Synchronized intelligence</p>
+      <h1>Truth is<br />relative.</h1>
+      <p>Compare what two observers believe at the same event, location, and scale—then reveal the canonical record when clearance allows.</p>
+    </div>
+    <dl class="hero-metrics">
+      <div><dt>Active event</dt><dd>CH. {eventLabel?.chapter.number ?? '—'}</dd></div>
+      <div><dt>Detected gaps</dt><dd>{differences.length}</dd></div>
+      <div><dt>Subjects in view</dt><dd>{entitiesInView.length}</dd></div>
+    </dl>
+    <div class="truth-control">
       <button
         type="button"
-        class={`text-xs border rounded px-3 py-2 ${compareCanonical ? 'border-amber-300 bg-amber-300/10' : 'border-slate-700'}`}
+        class:active={compareCanonical}
         onclick={() => {
           if (canonicalBlockedBySpoiler) return;
           compareCanonical = !compareCanonical;
@@ -410,15 +419,16 @@
           Canonical view unavailable beyond the permitted spoiler limit.
         </p>
       {/if}
+      <nav aria-label="Related intelligence views"><a href="/perspectives">Perspective setup</a><a href="/ship">Return to ship map</a></nav>
     </div>
   </header>
 
-  <section class="bw-panel p-4 grid lg:grid-cols-4 gap-3">
+  <section class="control-panel primary-controls">
     <label class="grid gap-1 lg:col-span-1">
       <span class="text-xs uppercase tracking-wider text-slate-400">Event</span>
       <select bind:value={selectedEventId} onchange={submitFetch} class="bg-slate-900 border border-slate-700 rounded px-3 py-2 text-sm">
         {#each data.events as event}
-          <option value={event.id}>Ch.{event.chapter.number} - {event.title}</option>
+          <option value={event.id}>Ch.{event.chapter.number} - {toEnglishEventTitle(event.title)}</option>
         {/each}
       </select>
     </label>
@@ -427,7 +437,7 @@
       <span class="text-xs uppercase tracking-wider text-slate-400">Perspective A</span>
       <select bind:value={selectedLeft} onchange={submitFetch} class="bg-slate-900 border border-slate-700 rounded px-3 py-2 text-sm">
         {#each data.characters as char}
-          <option value={char.id}>{char.canonicalName}</option>
+          <option value={char.id}>{toEnglishDisplayName(char.canonicalName)}</option>
         {/each}
       </select>
     </label>
@@ -437,7 +447,7 @@
       <select bind:value={selectedRight} onchange={submitFetch} class="bg-slate-900 border border-slate-700 rounded px-3 py-2 text-sm">
         {#each data.characters as char}
           {#if char.id !== selectedLeft}
-            <option value={char.id}>{char.canonicalName}</option>
+            <option value={char.id}>{toEnglishDisplayName(char.canonicalName)}</option>
           {/if}
         {/each}
       </select>
@@ -455,7 +465,7 @@
     </button>
   </section>
 
-  <section class="bw-panel p-4 grid grid-cols-2 lg:grid-cols-5 gap-3 items-end">
+  <section class="control-panel sync-controls">
     <label class="grid gap-1">
       <span class="text-xs uppercase tracking-wider text-slate-400">Synchronized zoom</span>
       <input type="range" min="1" max="5" step="1" bind:value={zoom} oninput={() => syncState(true)} />
@@ -480,12 +490,18 @@
       </select>
     </label>
 
-    <p class="text-xs text-slate-400">{eventLabel ? `Ch.${eventLabel.chapter.number} / ${eventLabel.title}` : 'Event non selectionne'}</p>
+    <p class="event-readout">{eventLabel ? `Ch.${eventLabel.chapter.number} / ${toEnglishEventTitle(eventLabel.title)}` : 'No event selected'}</p>
   </section>
 
+  <div class="comparison-title" aria-label="Active comparison">
+    <div><span>A</span><strong>{getCharacterName(selectedLeft)}</strong></div>
+    <i>VERSUS</i>
+    <div><span>B</span><strong>{getCharacterName(selectedRight)}</strong></div>
+  </div>
+
   {#if !differencesOnly}
-    <section class={`grid grid-cols-1 ${compareCanonical ? 'xl:grid-cols-3' : 'lg:grid-cols-2'} gap-4`}>
-      <article class="bw-panel p-4">
+    <section class={`comparison-grid ${compareCanonical ? 'with-canon' : ''}`}>
+      <article class="comparison-column side-a">
         <h2 class="text-sm uppercase tracking-widest text-slate-400 mb-2">Perspective A - {getCharacterName(selectedLeft)}</h2>
         <p class="text-xs text-slate-400 mb-3">Zoom {zoom} · {tier} · {zone || 'all zones'}</p>
         <ul class="space-y-1 max-h-48 overflow-y-auto pr-1">
@@ -523,7 +539,7 @@
         </div>
       </article>
 
-      <article class="bw-panel p-4">
+      <article class="comparison-column side-b">
         <h2 class="text-sm uppercase tracking-widest text-slate-400 mb-2">Perspective B - {getCharacterName(selectedRight)}</h2>
         <p class="text-xs text-slate-400 mb-3">Synchronized with A (tier/zoom/zone/sujet)</p>
         <ul class="space-y-1 max-h-48 overflow-y-auto pr-1">
@@ -562,7 +578,7 @@
       </article>
 
       {#if compareCanonical}
-        <article class="bw-panel p-4">
+        <article class="comparison-column canonical-column">
           <h2 class="text-sm uppercase tracking-widest text-slate-400 mb-2">Reader Truth — Canonical reality</h2>
           <p class="text-xs text-slate-400 mb-3">Spoiler limit: chapter {data.spoilerLimit ?? 'unlimited'}</p>
 
@@ -594,7 +610,7 @@
   {/if}
 
   {#if differencesOnly}
-    <section class="bw-panel p-4 md:hidden">
+    <section class="difference-mobile md:hidden">
       <h2 class="text-sm uppercase tracking-widest text-slate-400 mb-3">Differences only (mobile)</h2>
       <div class="space-y-2">
         {#each filteredDifferences as diff}
@@ -609,7 +625,7 @@
     </section>
   {/if}
 
-  <section class="bw-panel p-4" class:hidden={differencesOnly && filteredDifferences.length > 0}>
+  <section class="difference-panel" class:hidden={differencesOnly && filteredDifferences.length > 0}>
     <div class="flex flex-wrap gap-2 mb-4">
       {#each filters as filter}
         <button
@@ -640,3 +656,12 @@
     </div>
   </section>
 </div>
+
+<style>
+  .compare-page{max-width:100rem;margin:auto;padding:clamp(2rem,5vw,5rem) var(--page-gutter) 7rem}.compare-hero{display:grid;grid-template-columns:1fr auto minmax(15rem,.4fr);align-items:end;gap:clamp(2rem,5vw,5rem);margin-bottom:2.5rem}.hero-copy h1{margin:.7rem 0 1rem;font-size:clamp(4rem,8vw,7.5rem);font-weight:500;letter-spacing:-.06em;line-height:.72;text-transform:uppercase}.hero-copy>p:last-child{max-width:42rem;margin:0;color:var(--text-secondary);font-size:.85rem;line-height:1.7}.hero-metrics{display:flex;margin:0;border:1px solid var(--line-default);border-radius:.55rem}.hero-metrics div{min-width:7rem;padding:.8rem;border-right:1px solid var(--line-subtle)}.hero-metrics div:last-child{border:0}.hero-metrics dt{color:var(--text-faint);font:.46rem/1 var(--font-mono);letter-spacing:.08em;text-transform:uppercase}.hero-metrics dd{margin:.35rem 0 0;color:var(--accent-gold-bright);font:500 1.2rem/1 var(--font-display)}.truth-control{display:grid;gap:.6rem}.truth-control button{padding:.8rem 1rem;border:1px solid var(--line-strong);border-radius:.4rem;background:rgba(200,169,86,.07);color:var(--accent-gold-bright);font-size:.65rem;cursor:pointer}.truth-control button.active{background:var(--accent-gold);color:var(--surface-void)}.truth-control p{margin:0!important;padding:.65rem!important;border-radius:.35rem;font-size:.58rem!important;line-height:1.45}.truth-control nav{display:flex;gap:.8rem}.truth-control nav a{padding-bottom:.25rem;border-bottom:1px solid var(--line-default);color:var(--text-muted);font-size:.52rem;text-decoration:none;text-transform:uppercase}.truth-control nav a:hover{border-color:var(--accent-gold);color:var(--accent-gold-bright)}
+  .control-panel{display:grid;gap:.7rem;margin-top:.7rem;padding:.75rem;border:1px solid var(--line-default);border-radius:.65rem;background:rgba(11,18,24,.84);box-shadow:0 12px 32px rgba(0,0,0,.16)}.primary-controls{grid-template-columns:repeat(4,1fr)}.sync-controls{grid-template-columns:1fr 1fr 2fr 1fr;align-items:end}.control-panel label{display:grid;gap:.4rem}.control-panel label>span{color:var(--text-faint)!important;font:.48rem/1 var(--font-mono)!important;letter-spacing:.1em;text-transform:uppercase}.control-panel select{min-width:0;border:1px solid var(--line-default)!important;border-radius:.35rem!important;background:#091117!important;color:var(--text-primary)!important;font-size:.66rem!important}.control-panel>button{border:1px solid var(--line-default)!important;border-radius:.35rem!important;background:#101a21!important;color:var(--text-secondary);cursor:pointer}.control-panel>button:hover{border-color:var(--line-strong)!important;color:var(--accent-gold-bright)}.event-readout{overflow:hidden;margin:0;padding:.7rem;color:var(--text-muted);font:.52rem/1.35 var(--font-mono);text-overflow:ellipsis;white-space:nowrap}
+  .comparison-title{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:1.5rem;margin:2.5rem 0 1rem}.comparison-title>div{display:grid;grid-template-columns:2rem 1fr;align-items:center;gap:.8rem;padding:.85rem 1rem;border-block:1px solid var(--line-default)}.comparison-title>div:last-child{text-align:right}.comparison-title span{display:grid;width:1.8rem;height:1.8rem;place-items:center;border:1px solid var(--line-strong);border-radius:50%;color:var(--accent-gold);font:.55rem/1 var(--font-mono)}.comparison-title>div:last-child span{grid-column:2}.comparison-title>div:last-child strong{grid-column:1;grid-row:1}.comparison-title strong{font:500 1.15rem/1 var(--font-display)}.comparison-title i{color:var(--text-faint);font:normal .48rem/1 var(--font-mono);letter-spacing:.12em}
+  .comparison-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.7rem}.comparison-grid.with-canon{grid-template-columns:repeat(3,minmax(0,1fr))}.comparison-column{min-width:0;padding:1rem;border:1px solid var(--line-default);border-radius:.6rem;background:linear-gradient(150deg,rgba(17,28,35,.94),rgba(8,14,18,.94))}.comparison-column.side-a{box-shadow:inset 2px 0 #5bb9ad}.comparison-column.side-b{box-shadow:inset -2px 0 #ad8bea}.canonical-column{border-color:rgba(200,169,86,.35);box-shadow:inset 0 2px var(--accent-gold)}.comparison-column h2{color:var(--text-secondary)!important;font:.52rem/1 var(--font-mono)!important}.difference-panel,.difference-mobile{margin-top:.8rem;padding:1rem;border:1px solid var(--line-default);border-radius:.6rem;background:rgba(11,18,24,.84)}.difference-panel>div:first-child button{border-color:var(--line-default)!important;border-radius:999px!important;color:var(--text-muted)}.difference-panel>div:first-child button:hover{color:var(--text-primary)}
+  @media(max-width:1100px){.compare-hero{grid-template-columns:1fr 1fr}.truth-control{grid-column:1/-1}.comparison-grid.with-canon{grid-template-columns:1fr 1fr}.canonical-column{grid-column:1/-1}.sync-controls{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:760px){.compare-page{padding-inline:1rem}.compare-hero{grid-template-columns:1fr}.hero-metrics{width:100%;overflow-x:auto}.hero-metrics div{min-width:0;flex:1}.primary-controls,.sync-controls{grid-template-columns:1fr}.comparison-title{grid-template-columns:1fr;gap:.45rem}.comparison-title i{text-align:center}.comparison-grid,.comparison-grid.with-canon{grid-template-columns:1fr}.canonical-column{grid-column:auto}}
+</style>

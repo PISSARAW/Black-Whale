@@ -2,6 +2,7 @@
   import { page } from '$app/stores';
   import { goto } from '$app/navigation';
   import type { PageData } from './$types';
+  import { toEnglishDisplayName } from '$lib/utils/displayNames';
 
   export let data: PageData;
 
@@ -40,7 +41,7 @@
   }
 
   function getCharacterName(id: string) {
-    return data.characters.find(c => c.id === id)?.canonicalName || id;
+    return toEnglishDisplayName(data.characters.find(c => c.id === id)?.canonicalName) || id;
   }
 </script>
 
@@ -111,7 +112,7 @@
       >
         <option value="" disabled>Choose a character</option>
         {#each data.characters as char}
-          <option value={char.id}>{char.canonicalName}</option>
+          <option value={char.id}>{toEnglishDisplayName(char.canonicalName)}</option>
         {/each}
       </select>
     </div>
@@ -127,7 +128,7 @@
         <option value="">(None — single view)</option>
         {#each data.characters as char}
           {#if char.id !== selectedLeft}
-            <option value={char.id}>{char.canonicalName}</option>
+            <option value={char.id}>{toEnglishDisplayName(char.canonicalName)}</option>
           {/if}
         {/each}
       </select>

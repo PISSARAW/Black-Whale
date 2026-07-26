@@ -12,7 +12,6 @@
     { href: '/characters', label: 'Search the passenger registry', group: 'Primary', code: 'C' },
     { href: '/perspectives', label: 'Inspect character knowledge', group: 'Primary', code: 'K' },
     { href: '/abilities', label: 'Browse the ability archive', group: 'Dossier', code: 'A' },
-    { href: '/nen', label: 'Open the Nen system', group: 'Dossier', code: 'N' },
     { href: '/compare', label: 'Compare perspectives', group: 'Dossier', code: 'P' },
     { href: '/relationships', label: 'View the faction network', group: 'Dossier', code: 'F' },
     { href: '/simulations', label: 'Run simulations', group: 'Dossier', code: 'S' }

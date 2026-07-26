@@ -17,10 +17,9 @@
 
   const secondaryNavigation = [
     { href: '/abilities', label: 'Ability Archive', index: '01' },
-    { href: '/nen', label: 'Nen System', index: '02' },
-    { href: '/compare', label: 'Compare Perspectives', index: '03' },
-    { href: '/relationships', label: 'Faction Network', index: '04' },
-    { href: '/simulations', label: 'Simulations', index: '05' }
+    { href: '/compare', label: 'Compare Perspectives', index: '02' },
+    { href: '/relationships', label: 'Faction Network', index: '03' },
+    { href: '/simulations', label: 'Simulations', index: '04' }
   ]
 
   const isActive = (href: string) => $page.url.pathname.startsWith(href)

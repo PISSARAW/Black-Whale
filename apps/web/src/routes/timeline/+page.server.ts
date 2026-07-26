@@ -3,7 +3,8 @@ import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ cookies }) => {
 	const spoilerLimitCookie = cookies.get('userSpoilerLimit');
-	const maxChapter = spoilerLimitCookie ? parseInt(spoilerLimitCookie) : Infinity;
+	const parsedSpoilerLimit = spoilerLimitCookie ? Number.parseInt(spoilerLimitCookie, 10) : Number.NaN;
+	const maxChapter = Number.isFinite(parsedSpoilerLimit) ? parsedSpoilerLimit : Infinity;
 
 	// Fetch all chapters with their events, filtered by spoiler limit
 	const chapters = await prisma.chapter.findMany({

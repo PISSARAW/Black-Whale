@@ -22,14 +22,23 @@ export const load: PageServerLoad = async ({ params, cookies }) => {
 	// Read directly from the JSON file for rapid prototyping
 	const projectRoot = join(__dirname, '../../../../../../');
 	const charactersPath = join(projectRoot, 'data/characters/characters.json');
-	const charactersData = await fs.readFile(charactersPath, 'utf-8');
+	const abilitiesPath = join(projectRoot, 'data/abilities/abilities.json');
+	const [charactersData, abilitiesData] = await Promise.all([
+		fs.readFile(charactersPath, 'utf-8'),
+		fs.readFile(abilitiesPath, 'utf-8')
+	]);
 	const characters = JSON.parse(charactersData);
+	const abilities = JSON.parse(abilitiesData);
 	
 	const jsonCharacter = characters.find((c: any) => c.id === params.slug);
 
 	if (!jsonCharacter) {
 		throw error(404, 'Character not found');
 	}
+
+	const characterAbilities = abilities.filter((ability: any) => ability.ownerId === jsonCharacter.id);
+	const chapterMatch = jsonCharacter.firstAppearanceChapterId?.match(/ch-(\d+)/);
+	const firstVisibleChapterNumber = chapterMatch ? parseInt(chapterMatch[1]) : 340;
 
 	// Try to find character in database with slug = params.slug
 	let character = await prisma.character.findUnique({
@@ -76,15 +85,6 @@ export const load: PageServerLoad = async ({ params, cookies }) => {
 
 	// If still not found in database, create a mock character from JSON
 	if (!character) {
-		// Extract chapter number from firstAppearanceChapterId
-		let firstVisibleChapterNumber = 340;
-		if (jsonCharacter.firstAppearanceChapterId) {
-			const match = jsonCharacter.firstAppearanceChapterId.match(/ch-(\d+)/);
-			if (match) {
-				firstVisibleChapterNumber = parseInt(match[1]);
-			}
-		}
-
 		// Spoiler checking based on JSON data
 		if (spoilerProfile && firstVisibleChapterNumber > spoilerProfile.maxChapter) {
 			throw error(404, 'Character not found');
@@ -98,8 +98,18 @@ export const load: PageServerLoad = async ({ params, cookies }) => {
 				canonicalName: jsonCharacter.canonicalName,
 				aliases: jsonCharacter.aliases || [],
 				description: jsonCharacter.description || null,
+				suspectedAllegiance: jsonCharacter.suspectedAllegiance || null,
+				biography: jsonCharacter.biography || [],
+				abilitiesAndPowers: jsonCharacter.abilitiesAndPowers || null,
+				equipment: jsonCharacter.equipment || [],
+				guardianSpiritBeast: jsonCharacter.guardianSpiritBeast || null,
+				identity: jsonCharacter.identity || null,
 				narrativeImportance: getNarrativeImportance(jsonCharacter.canonStatus || 'canon'),
 				modelingLevel: 3,
+				nen: jsonCharacter.nen || null,
+				mangaAppearances: jsonCharacter.mangaAppearances || [],
+				battles: jsonCharacter.battles || [],
+				abilities: characterAbilities,
 				firstVisibleEvent: {
 					chapter: { number: firstVisibleChapterNumber }
 				}
@@ -110,7 +120,7 @@ export const load: PageServerLoad = async ({ params, cookies }) => {
 	}
 
 	// Spoiler checking
-	if (spoilerProfile && character.firstVisibleEvent.chapter.number > spoilerProfile.maxChapter) {
+	if (spoilerProfile && firstVisibleChapterNumber > spoilerProfile.maxChapter) {
 		throw error(404, 'Character not found'); // Hide future characters entirely
 	}
 
@@ -127,7 +137,27 @@ export const load: PageServerLoad = async ({ params, cookies }) => {
 	}
 
 	return { 
-		character, 
+		character: {
+			...character,
+			description: jsonCharacter.description || character.description,
+			suspectedAllegiance: jsonCharacter.suspectedAllegiance || null,
+			biography: jsonCharacter.biography || [],
+			abilitiesAndPowers: jsonCharacter.abilitiesAndPowers || null,
+			equipment: jsonCharacter.equipment || [],
+			guardianSpiritBeast: jsonCharacter.guardianSpiritBeast || null,
+			identity: jsonCharacter.identity || null,
+			nen: jsonCharacter.nen || null,
+			mangaAppearances: jsonCharacter.mangaAppearances || [],
+			battles: jsonCharacter.battles || [],
+			abilities: characterAbilities,
+			firstVisibleEvent: {
+				...character.firstVisibleEvent,
+				chapter: {
+					...character.firstVisibleEvent.chapter,
+					number: firstVisibleChapterNumber
+				}
+			}
+		},
 		presences: visiblePresences, 
 		states: visibleStates 
 	};

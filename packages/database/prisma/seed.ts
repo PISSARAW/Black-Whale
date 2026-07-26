@@ -80,6 +80,9 @@ async function main() {
   const ch340 = await prisma.chapter.create({ data: { number: 340, title: 'Special Mission' } })
   const ch358 = await prisma.chapter.create({ data: { number: 358, title: 'Eve' } })
   const ch359 = await prisma.chapter.create({ data: { number: 359, title: 'Departure' } })
+  const ch360 = await prisma.chapter.create({ data: { number: 360, title: 'Parasite' } })
+  const ch364 = await prisma.chapter.create({ data: { number: 364, title: 'Speculation' } })
+  const ch373 = await prisma.chapter.create({ data: { number: 373, title: 'Inheritance' } })
   const ch382 = await prisma.chapter.create({ data: { number: 382, title: 'Awakening' } })
 
   console.log('Seeding Initial Events...')
@@ -103,6 +106,17 @@ async function main() {
     }
   })
 
+  // Woody's death is documented in his passenger record and his chapter 358
+  // appearance. Keep it separate from boarding so it remains addressable.
+  await prisma.narrativeEvent.create({
+    data: {
+      chapterId: ch358.id,
+      sequence: 2,
+      title: 'Woody is found dead',
+      summary: 'Woody is found exsanguinated in the bathroom of room 1014.',
+    }
+  })
+
   // Event 2: Departure (Ch 359)
   const evt2 = await prisma.narrativeEvent.create({
     data: {
@@ -113,13 +127,42 @@ async function main() {
     }
   })
 
-  // Event 3: Vincent arrives at 1014
+  // Sayird's two recorded battles both occur in chapter 360.
+  await prisma.narrativeEvent.create({
+    data: {
+      chapterId: ch360.id,
+      sequence: 1,
+      title: 'Sayird is manipulated',
+      summary: 'Controlled by a parasitic Nen ability, Sayird kills Kurton and attacks Kurapika before being subdued.',
+    }
+  })
+
+  // These events are cross-referenced by the passenger biographies and their
+  // explicit battle chapters in data/characters/characters.json.
   const evt3 = await prisma.narrativeEvent.create({
     data: {
-      chapterId: ch359.id,
-      sequence: 3,
-      title: 'Vincent arrives',
-      summary: 'Vincent enters room 1014.',
+      chapterId: ch364.id,
+      sequence: 1,
+      title: 'Vincent attacks room 1014',
+      summary: 'Vincent kills Sandra, opens fire on Bill and Kurapika, then poisons himself after they overpower him.',
+    }
+  })
+
+  await prisma.narrativeEvent.create({
+    data: {
+      chapterId: ch373.id,
+      sequence: 1,
+      title: 'Camilla resurrects after Musse kills her',
+      summary: "Camilla's post-mortem Nen beast kills Musse and uses his life force to restore her body.",
+    }
+  })
+
+  await prisma.narrativeEvent.create({
+    data: {
+      chapterId: ch373.id,
+      sequence: 2,
+      title: 'Camilla attacks Benjamin',
+      summary: 'Camilla shoots at Furykov, Benjamin and Balsamilco before Furykov breaks her arm and arrests her.',
     }
   })
 

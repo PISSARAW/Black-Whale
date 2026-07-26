@@ -20,8 +20,8 @@
       'observation-deck': { x: 700, y: 200 },
       'royal-army-office': { x: 700, y: 400 },
       'general-cabins': { x: 700, y: 500 },
-      'central-police-station': { x: 500, y: 500 },
-      'central-courthouse': { x: 500, y: 450 },
+      'vip-jail': { x: 790, y: 320 },
+      'vvip-prison-beyond': { x: 790, y: 275 },
       'heilly-processing': { x: 350, y: 500 }
     },
     'tier-2': {
@@ -36,6 +36,10 @@
     'tier-3': {
       'medical-district': { x: 300, y: 250 },
       'tier-3-medical-district': { x: 300, y: 250 },
+      'central-hospital': { x: 500, y: 190 },
+      'central-police-station': { x: 450, y: 385 },
+      'central-courthouse': { x: 550, y: 427 },
+      'royal-army-office': { x: 550, y: 342 },
       'research-labs': { x: 500, y: 200 },
       'processing-plants': { x: 700, y: 200 },
       'waste-management': { x: 200, y: 400 },
@@ -111,7 +115,7 @@
     let current = location;
     let depth = 0;
     while (current && depth < 8) {
-      if (current.slug === targetSlug) return true;
+      if (current.slug === targetSlug || current.slug.endsWith(`-${targetSlug}`)) return true;
       current = current.parentLocationId ? byId.get(current.parentLocationId) : null;
       depth += 1;
     }

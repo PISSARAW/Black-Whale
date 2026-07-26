@@ -17,7 +17,9 @@
   "scripts": {
     "build": "tsc",
     "generate": "prisma generate",
-    "db:push": "prisma db push"
+    "db:push": "prisma db push",
+    "db:backfill-map": "node prisma/backfill_catalog_map.mjs",
+    "db:backfill-timeline": "node prisma/backfill_timeline.mjs"
   },
   "dependencies": {
     "@prisma/client": "^5.0.0"

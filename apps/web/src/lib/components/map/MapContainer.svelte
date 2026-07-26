@@ -102,6 +102,10 @@
         <Room3101 />
       {:else if mapState.selectedLocationId === 't3-heilly' || mapState.selectedLocationId === 'heilly-processing'}
         <HeillyProcessing />
+      {:else if mapState.selectedLocationId === 'central-courthouse'}
+        <CentralCourthouse />
+      {:else if mapState.selectedLocationId === 'central-police-station'}
+        <CentralPoliceStation />
       {:else if mapState.selectedLocationId === 'general-cabins'}
         <GeneralCabins />
       {:else if mapState.selectedLocationId === 'royal-army-office'}

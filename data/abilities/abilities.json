@@ -72,11 +72,159 @@
     "moduleKey": null
   },
   {
-    "id": "woble-hatsu",
-    "ownerId": "woble-hui-guo-rou",
-    "name": "Prince's Agility",
-    "category": "transmuter",
-    "description": "Woble's Nen enhances his speed and reflexes, making him extremely agile in combat.",
+    "id": "erigeron",
+    "ownerId": "bill",
+    "name": "Erigeron",
+    "alternateNames": ["Halcyon", "球根", "Harujion", "Bulb"],
+    "category": "enhancer",
+    "description": "Bill accélère considérablement la croissance d'un être vivant en approchant les paumes de ses mains. Sur une graine plongée dans un verre d'eau, Erigeron la fait germer en quelques instants. La capacité peut aussi améliorer les facultés de Nen d'une personne, mais ses effets restent faibles sur les individus sans entraînement ou peu expérimentés.",
+    "canonStatus": "canon",
+    "moduleKey": null
+  },
+  {
+    "id": "kurton-vehicle-transformation",
+    "ownerId": "kurton",
+    "name": "Transformation en bateau ou véhicule",
+    "alternateNames": ["Capacité non nommée"],
+    "category": "conjurer",
+    "abilityType": "symbiotic",
+    "description": "Capacité de type symbiotique permettant à Kurton de transformer son corps en bateau ou en voiture capable de transporter jusqu'à cinq passagers, en utilisant leur aura comme carburant. Compte tenu de son type de Nen et de la ressemblance avec la capacité de Tsubone, cette transformation relève très probablement de la Matérialisation.",
+    "canonStatus": "canon",
+    "moduleKey": null
+  },
+  {
+    "id": "little-eye",
+    "ownerId": "sayird",
+    "name": "Little Eye",
+    "alternateNames": ["裏窓", "Ritoru Ai", "Rear Window", "Roach"],
+    "category": "emitter",
+    "secondaryCategories": ["manipulator"],
+    "description": "Sayird projette une sphère d'aura sur un insecte ou un autre petit être vivant afin de le capturer et d'en prendre le contrôle. La plus grande créature manipulable est de la taille d'un hamster. Il perçoit tout ce que l'animal voit et entend, tout en conservant la capacité de distinguer l'aura. Les animaux rapides sont difficiles à atteindre et les insectes peuvent mourir de leurs nombreux prédateurs. Little Eye ne fonctionne pas sur les êtres vivants matérialisés par l'aura, consomme très peu d'aura et reste actif si l'utilisateur perd connaissance. La capacité fut volée par Kurapika, transmise à la Reine Oito, puis rendue disponible à Sayird après son utilisation par celle-ci.",
+    "canonStatus": "canon",
+    "moduleKey": null
+  },
+  {
+    "id": "cross-game",
+    "ownerId": "mizaistom-nana",
+    "name": "Cross Game",
+    "alternateNames": ["密室裁判", "Kurosu Gēmu", "The Closed-Door Trial", "Le Procès à huis clos"],
+    "category": "unknown",
+    "cards": [
+      { "color": "blue", "effect": "Admission dans le tribunal" },
+      { "color": "yellow", "effect": "Immobilisation et mise sous contrôle" },
+      { "color": "red", "effect": "Expulsion du tribunal" }
+    ],
+    "description": "Mizaistom emploie trois cartes pour restreindre les actions d'une personne. La carte bleue l'admet dans le tribunal, la jaune la place sous son contrôle et la rouge l'en expulse. Avec la carte jaune, il montre d'abord la carte et formule un avertissement. Si la cible l'ignore, il retourne la carte et annonce « Restraint » : un parallélépipède rectangle l'enferme et l'empêche de bouger, sans l'empêcher de parler. L'effet est bref, mais peut être réappliqué autant de fois que nécessaire et utilisé simultanément contre plusieurs cibles.",
+    "canonStatus": "canon",
+    "moduleKey": null
+  },
+  {
+    "id": "beyond-sacrificial-curse",
+    "ownerId": "beyond-netero",
+    "name": "Malédiction sacrificielle",
+    "alternateNames": ["Sacrificial Curse", "Capacité non nommée"],
+    "category": "unknown",
+    "abilityType": "curse",
+    "description": "Beyond a placé une puissante malédiction sur plusieurs de ses enfants. Sa marque n'est visible qu'avec Gyo. Elle éveille les enfants au Nen dès leur naissance et les transforme en sacrifices maudits de puissance variable. À la mort d'un sacrifice, la malédiction tue la cible choisie lors de sa pose. Selon Longhi, elle serait assez puissante pour tuer un prince malgré sa Bête spirituelle gardienne, même à grande distance. Un exorciste a qualifié la marque de Longhi de malédiction la plus puissante qu'il ait jamais observée. Selon la Reine Unma, Beyond peut provoquer à tout moment la mort de ses enfants afin de déclencher la malédiction.",
+    "canonStatus": "canon",
+    "moduleKey": null
+  },
+  {
+    "id": "benjamin-baton",
+    "ownerId": "prince-benjamin",
+    "name": "Benjamin Baton",
+    "alternateNames": ["星を継ぐもの", "Those Who Inherit The Stars", "Ceux qui héritent des étoiles"],
+    "category": "unknown",
+    "description": "Lorsqu'un utilisateur de Nen ayant juré fidélité à Benjamin meurt, le Premier Prince hérite de sa capacité. Le défunt doit avoir obtenu son diplôme de l'Académie militaire royale de Kakin et appartenir à l'armée privée de Benjamin. Le pouvoir se manifeste sous la forme de quatre étoiles dans la paume droite. Une capacité active continue sous le contrôle de Benjamin après la mort de son propriétaire, même si celui-ci en avait perdu le contrôle ou si elle avait été volée. Le nombre maximal de capacités héritables reste inconnu et le pouvoir présente des similitudes avec la Spécialisation.",
+    "canonStatus": "canon",
+    "moduleKey": null
+  },
+  {
+    "id": "air-blow",
+    "ownerId": "prince-benjamin",
+    "name": "Air Blow",
+    "alternateNames": ["虚空拳", "Ea Burō", "Empty Air Fist"],
+    "category": "unknown",
+    "inheritedFrom": "Vincent",
+    "description": "Capacité héritée de Vincent. Son utilisateur original tentait de l'activer depuis sa paume gauche afin de briser la garde d'un utilisateur de Nen capable d'arrêter des balles avec son aura. Elle ne semble pas nécessiter de contact direct avec la cible, mais son fonctionnement précis reste inconnu.",
+    "canonStatus": "canon",
+    "moduleKey": null
+  },
+  {
+    "id": "secret-window",
+    "ownerId": "prince-benjamin",
+    "name": "Secret Window",
+    "alternateNames": ["裏窓の鳥", "Shīkuretto Windō", "Rear Window Bird"],
+    "category": "unknown",
+    "inheritedFrom": "Musse",
+    "description": "Capacité héritée de Musse permettant de créer trois constructions en forme de chouette appelées Birds. L'une écoute les conversations à travers les obstacles et à distance. Une autre est apposée à une cible par contact physique et transmet télépathiquement ses actes et ses paroles à l'utilisateur, seul capable de la voir. Une seule créature, ou une seule de chaque type, peut exister simultanément. Après une surveillance prolongée, probablement dix jours, l'utilisateur peut rembobiner les informations enregistrées.",
+    "canonStatus": "canon",
+    "moduleKey": null
+  },
+  {
+    "id": "culdcept",
+    "ownerId": "prince-benjamin",
+    "name": "Culdcept",
+    "alternateNames": ["遊戯王", "Karudoseputo", "King of Games"],
+    "category": "unknown",
+    "inheritedFrom": "Shikaku",
+    "description": "Capacité héritée de Shikaku servant à acquérir la capacité d'un autre utilisateur de Nen sous la forme d'une carte. L'utilisateur joint ses mains, produit un éclair puis forme un rectangle d'aura avec ses doigts, dont la couleur s'assombrit pendant la préparation. Sa seule utilisation connue échoua face à la flèche de Halkenburg, capable de traverser toutes les défenses.",
+    "canonStatus": "canon",
+    "moduleKey": null
+  },
+  {
+    "id": "parallel-future",
+    "ownerId": "prince-tserriednich",
+    "name": "Parallel Future",
+    "alternateNames": ["Precognition", "Dream", "予知夢", "Yochimu", "Foresight Dream", "Ephemeral Ten Seconds", "刹那の10秒"],
+    "category": "specialist",
+    "description": "Lorsque Tserriednich ferme les yeux et active Zetsu, il reçoit instantanément une vision des dix secondes suivantes. S'il maintient Zetsu, le temps réel reprend tandis que sa vision reste constamment dix secondes en avance ; il perçoit simultanément la prédiction et le présent et peut de nouveau se déplacer. Lorsqu'il met fin à la précognition, toutes les personnes apparues dans la vision, sauf lui, perçoivent les dix secondes suivantes exactement comme elles avaient été prédites, même s'il modifie réellement ses actions grâce à sa connaissance du futur. Le lien éventuel avec sa Bête de Nen personnelle et l'effet sur les personnes absentes de la vision restent inconnus.",
+    "canonStatus": "canon",
+    "moduleKey": null
+  },
+  {
+    "id": "grimmel-the-dissonance",
+    "ownerId": "prince-halkenburg",
+    "name": "The Boy Who Shoots the Arrow: Grimmel the Dissonance",
+    "alternateNames": ["少年は残酷な弓を射る", "Grimmel le Dissonance", "Le garçon qui tire la flèche"],
+    "category": "unknown",
+    "secondaryCategories": ["emitter", "manipulator", "transmuter"],
+    "abilityType": "symbiotic-soul-transfer",
+    "description": "Halkenburg rassemble l'aura des porteurs du pinion de sa Bête Gardienne qui partagent une même volonté. Cette aura forme autour du groupe une armure réputée invincible, tandis que sa propre aura prend la forme d'un arc. La flèche traverse les murs, les capacités et toutes les défenses jusqu'à la cible, puis échange son âme avec celle d'un porteur marqué choisi aléatoirement, Halkenburg compris. La conscience alliée prend prioritairement le contrôle du corps adverse ; l'autre reste endormie jusqu'à ce que la première dorme ou que son corps meure. Si le corps du porteur allié meurt d'abord, l'âme de la cible retourne dans son corps et devient prioritaire. Halkenburg doit vraisemblablement accepter de risquer sa vie à chaque tir.",
+    "canonStatus": "canon",
+    "moduleKey": null
+  },
+  {
+    "id": "without-you",
+    "ownerId": "prince-kacho",
+    "name": "Without You",
+    "alternateNames": ["２人セゾン", "キミガイナイ", "Kimi ga Inai", "Season of Two"],
+    "category": "unknown",
+    "abilityType": "symbiotic-post-mortem",
+    "description": "Bête Gardienne symbiotique et initialement sans forme, activée par la mort de la première des jumelles Kacho et Fugetsu. Elle prend l'apparence, la personnalité, les souvenirs et la conscience apparente de la défunte, puis reste auprès de la survivante pour la protéger jusqu'à sa mort. Sous la forme de Kacho, elle est visible de tous, indiscernable de l'originale, capable d'interagir avec Magical Worm et de traverser les obstacles matériels. L'hôte étant morte, son existence est soutenue par le Nen post-mortem.",
+    "canonStatus": "canon",
+    "moduleKey": null
+  },
+  {
+    "id": "magical-worm",
+    "ownerId": "prince-fugetsu",
+    "name": "Magical Worm",
+    "alternateNames": ["秘密の扉", "Majikaru Wāmu", "Secret Door", "Porte secrète"],
+    "category": "unknown",
+    "secondaryCategories": ["conjurer", "emitter"],
+    "abilityType": "symbiotic-teleportation",
+    "description": "La Bête Gardienne de Fugetsu matérialise une Porte de départ ouvrant sur un tunnel dimensionnel, puis une trappe permettant d'émerger dans un autre lieu. La porte disparaît dès qu'elle est fermée, mais Fugetsu peut rebrousser chemin tant qu'elle ne sort pas entièrement. Une fois sortie, une Porte de retour apparaît et menait initialement à une destination choisie puis ouverte par Kacho. Le pouvoir ne fonctionnait normalement qu'une fois par nuit et épuisait Fugetsu. Après la mort de Kacho, Fugetsu semble pouvoir ouvrir seule le retour et répéter les trajets, mais cette évolution pourrait être provoquée par un piège ennemi qui la pousse à s'épuiser.",
+    "canonStatus": "canon",
+    "moduleKey": null
+  },
+  {
+    "id": "cats-name",
+    "ownerId": "prince-camilla",
+    "name": "Cat's Name",
+    "alternateNames": ["百万回生きた猫", "Neko no Namae", "The Cat Who Lived a Million Times", "Le Chat qui vécut un million de fois"],
+    "category": "unknown",
+    "abilityType": "counteractive-post-mortem",
+    "description": "Capacité de contre-attaque qui s'active après la mort de Camilla. Une immense Bête de Nen féline apparaît derrière son meurtrier, l'écrase entre ses pattes et absorbe son énergie vitale en détruisant son corps. L'énergie est concentrée dans l'extrémité lumineuse de sa queue puis versée dans la bouche de Camilla, guérissant entièrement ses blessures et la ressuscitant. Le Nen post-mortem rend la capacité extrêmement puissante, mais elle ne protège pas Camilla des blessures non mortelles et reste inutile si l'adversaire refuse de la tuer directement. Elle pourrait fonctionner contre plusieurs meurtriers. On ignore si Camilla doit mourir en Zetsu ou si elle l'utilise seulement pour faciliter sa propre mort.",
     "canonStatus": "canon",
     "moduleKey": null
   }

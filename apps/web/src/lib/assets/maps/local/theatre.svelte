@@ -18,7 +18,7 @@
     </style>
   </defs>
   
-  <text x="500" y="40" class="label" font-size="28" fill="#FFD700">Théâtre (Tier 2)</text>
+  <text x="500" y="40" class="label" font-size="28" fill="#FFD700">Theater (Tier 2)</text>
 
   <g transform="translate(50, 80)">
     <!-- Main Walls -->

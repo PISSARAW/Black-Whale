@@ -78,14 +78,14 @@
       {/if}
     </div>
 
-    <aside class="legend" aria-label="Legende comparative">
+    <aside class="legend" aria-label="Comparison legend">
       <h3>Codes</h3>
-      <p><strong>=</strong> cohérent entre A et B</p>
-      <p><strong>←</strong> information uniquement en A</p>
-      <p><strong>→</strong> information uniquement en B</p>
-      <p><strong>≠</strong> contradiction explicite</p>
-      <p><strong>~</strong> écart de certitude</p>
-      <p><strong>⏱</strong> divergence temporelle</p>
+      <p><strong>=</strong> consistent between A and B</p>
+      <p><strong>←</strong> information only in A</p>
+      <p><strong>→</strong> information only in B</p>
+      <p><strong>≠</strong> explicit contradiction</p>
+      <p><strong>~</strong> certainty gap</p>
+      <p><strong>⏱</strong> temporal divergence</p>
     </aside>
   </div>
 </section>

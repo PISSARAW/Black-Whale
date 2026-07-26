@@ -58,20 +58,20 @@
     <!-- Quartiers VIP & Célébrités -->
     <g id="t2-vip" onclick={() => handleZoneClick('t2-vip')}>
       <rect class="zone" class:selected={mapState.selectedLocationId === 't2-vip'} x="250" y="150" width="300" height="150" />
-      <text x="400" y="215" class="label">Quartiers VIP</text>
-      <text x="400" y="235" class="sublabel">Célébrités & Fortunes</text>
+      <text x="400" y="215" class="label">VIP Quarters</text>
+      <text x="400" y="235" class="sublabel">Celebrities & Fortunes</text>
     </g>
 
     <!-- Théâtre & Divertissements -->
     <g id="t2-theater" onclick={() => handleZoneClick('t2-theater')}>
       <rect class="zone" class:selected={mapState.selectedLocationId === 't2-theater'} x="600" y="150" width="200" height="150" />
-      <text x="700" y="225" class="label">Le Théâtre</text>
+      <text x="700" y="225" class="label">Theater</text>
     </g>
 
     <!-- Espaces de Réception & Services -->
     <g id="t2-reception" onclick={() => handleZoneClick('t2-reception')}>
       <rect class="zone" class:selected={mapState.selectedLocationId === 't2-reception'} x="250" y="320" width="250" height="130" />
-      <text x="375" y="380" class="label text-sm">Espaces de Réception</text>
+      <text x="375" y="380" class="label text-sm">Reception Areas</text>
     </g>
 
     <!-- Ministry of Justice HQ -->
@@ -89,11 +89,11 @@
     <!-- Secteur de Sécurité & Accès Tier 3 -->
     <g id="t2-security" onclick={() => handleZoneClick('t2-security')}>
       <path class="zone" class:selected={mapState.selectedLocationId === 't2-security'} d="M 150 480 L 850 480 L 850 515 C 750 520, 250 520, 150 515 Z" />
-      <text x="500" y="505" class="label text-xs">Secteur de Sécurité (600 Guards Stationed)</text>
+      <text x="500" y="505" class="label text-xs">Security Sector (600 Guards Stationed)</text>
     </g>
 
     <!-- CLOISON BLINDÉE TIER 2 - TIER 3 -->
     <path class="barrier" d="M 150 520 L 850 520" />
-    <text x="500" y="535" class="label text-[10px]" fill="#FF4500">CLOISON BLINDÉE (VERS TIER 3)</text>
+    <text x="500" y="535" class="label text-[10px]" fill="#FF4500">ARMORED BULKHEAD (TO TIER 3)</text>
   </g>
 </svg>

@@ -11,9 +11,9 @@
     mapState.openExplainPanel({
       subject: marker.perceivedIdentity,
       value: marker.body,
-      source: marker.temporalLabel || marker.sourceLabel || 'Observation directe',
-      observedAt: marker.temporalDetail || marker.sinceLabel || 'événement non précisé',
-      freshness: marker.knowledgeState === 'outdated' ? 'non confirmee recemment' : 'information recente',
+      source: marker.temporalLabel || marker.sourceLabel || 'Direct observation',
+      observedAt: marker.temporalDetail || marker.sinceLabel || 'unspecified event',
+      freshness: marker.knowledgeState === 'outdated' ? 'not recently confirmed' : 'recent information',
       knowledgeState: marker.knowledgeState,
       canonicalValue: `${marker.body} / ${marker.consciousness}`
     });

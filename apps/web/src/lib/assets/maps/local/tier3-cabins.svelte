@@ -17,7 +17,7 @@
     </style>
   </defs>
   
-  <text x="500" y="40" class="label" font-size="28" fill="#FFD700">Cabines de Première Classe (Tier 3)</text>
+  <text x="500" y="40" class="label" font-size="28" fill="#FFD700">First-Class Cabins (Tier 3)</text>
 
   <g transform="translate(50, 80)">
     

@@ -98,8 +98,8 @@
     <!-- Entrepôts & Stockage -->
     <g id="t5-warehouses" onclick={() => handleZoneClick('t5-warehouses')}>
       <rect class="zone warehouse" class:selected={mapState.selectedLocationId === 't5-warehouses'} x="400" y="170" width="320" height="140" />
-      <text x="560" y="235" class="label">Entrepôts Principaux</text>
-      <text x="560" y="255" class="sublabel">Zones de Stockage</text>
+      <text x="560" y="235" class="label">Main Warehouses</text>
+      <text x="560" y="255" class="sublabel">Storage Areas</text>
     </g>
 
     <!-- Bureau Cha-R -->

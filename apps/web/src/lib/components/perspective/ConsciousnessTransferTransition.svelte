@@ -13,16 +13,16 @@
 </script>
 
 {#if visible}
-  <section class="transfer" aria-label="Transition de transfert de conscience">
+  <section class="transfer" aria-label="Consciousness transfer transition">
     <article>
-      <h3>Corps d'origine</h3>
+      <h3>Body d'origine</h3>
       <p>{fromBody}</p>
     </article>
     <div class="line" aria-hidden="true">
       <span>{consciousness}</span>
     </div>
     <article>
-      <h3>Corps de destination</h3>
+      <h3>Body de destination</h3>
       <p>{toBody}</p>
     </article>
   </section>

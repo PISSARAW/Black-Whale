@@ -4,19 +4,19 @@
   let { data }: { data: PageData } = $props();
 
   // Group characters by faction
-  const charactersByFaction = data.characters.reduce((acc: Record<string, any[]>, char: any) => {
-    const faction = char.factionId || 'Indépendant';
+  let charactersByFaction: Record<string, any[]> = $derived(data.characters.reduce((acc: Record<string, any[]>, char: any) => {
+    const faction = char.factionId || 'Independent';
     if (!acc[faction]) acc[faction] = [];
     acc[faction].push(char);
     return acc;
-  }, {});
+  }, {}));
 </script>
 
 <svelte:head><title>Characters — Black Whale</title></svelte:head>
 
 <div class="p-6 max-w-7xl mx-auto bg-[#050505] min-h-screen">
-  <h1 class="text-4xl font-bold text-[#FFD700] mb-2 tracking-widest uppercase">Registre des Passagers</h1>
-  <p class="text-gray-400 mb-8">Liste des personnages connus à bord du Black Whale 1, classés par affiliation.</p>
+  <h1 class="text-4xl font-bold text-[#FFD700] mb-2 tracking-widest uppercase">Passenger Registry</h1>
+  <p class="text-gray-400 mb-8">Known characters aboard Black Whale 1, organized by affiliation.</p>
   
   <div class="space-y-12">
     {#each Object.entries(charactersByFaction) as [faction, chars]}

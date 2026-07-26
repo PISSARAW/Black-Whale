@@ -11,7 +11,7 @@
     freshness,
     state,
     revealReality = false,
-    canonicalValue = 'inconnue',
+    canonicalValue = 'unknown',
     onClose
   }: {
     open: boolean;
@@ -28,19 +28,19 @@
 </script>
 
 {#if open}
-  <aside class="why" role="dialog" aria-label="Pourquoi cette information" aria-modal="false">
+  <aside class="why" role="dialog" aria-label="Why this information" aria-modal="false">
     <header>
-      <h3>Pourquoi vois-je cela ?</h3>
-      <button type="button" onclick={onClose} aria-label="Fermer">✕</button>
+      <h3>Why am I seeing this?</h3>
+      <button type="button" onclick={onClose} aria-label="Close">✕</button>
     </header>
 
     <dl>
       <div>
-        <dt>Personnage</dt>
+        <dt>Character</dt>
         <dd>{subject}</dd>
       </div>
       <div>
-        <dt>Valeur affichée</dt>
+        <dt>Displayed value</dt>
         <dd>{displayedValue}</dd>
       </div>
       <div>
@@ -52,16 +52,16 @@
         <dd>{observedAt}</dd>
       </div>
       <div>
-        <dt>Actualité</dt>
+        <dt>Freshness</dt>
         <dd>{freshness}</dd>
       </div>
     </dl>
 
-    <KnowledgeStatus state={state} label="Statut de connaissance" details={source} />
+    <KnowledgeStatus state={state} label="Knowledge status" details={source} />
 
     {#if revealReality}
       <div class="canon">
-        <strong>Réalité canonique</strong>
+        <strong>Canonical reality</strong>
         <span>{canonicalValue}</span>
       </div>
     {/if}

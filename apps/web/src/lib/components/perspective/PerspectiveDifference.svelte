@@ -19,7 +19,7 @@
 <article class="difference" data-code={code}>
   <header>
     <h3>{title}</h3>
-    <span class="code" aria-label="Type de différence">{code}</span>
+    <span class="code" aria-label="Difference type">{code}</span>
   </header>
   <div class="columns">
     <p><strong>{leftLabel}:</strong> {leftValue}</p>

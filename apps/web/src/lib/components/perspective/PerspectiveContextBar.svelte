@@ -20,8 +20,8 @@
 
   <div class="identities">
     <IdentityBadge label="Perspective" value={context.perspectiveName} anomaly={context.hasAnomaly} />
-    <IdentityBadge label="Conscience" value={context.followedConsciousness} anomaly={context.hasAnomaly} />
-    <IdentityBadge label="Corps" value={context.occupiedBody} anomaly={context.hasAnomaly} />
+    <IdentityBadge label="Consciousness" value={context.followedConsciousness} anomaly={context.hasAnomaly} />
+    <IdentityBadge label="Body" value={context.occupiedBody} anomaly={context.hasAnomaly} />
     <IdentityBadge label="Apparence" value={context.apparentIdentity} anomaly={context.hasAnomaly} subtle={!context.hasAnomaly} />
   </div>
 

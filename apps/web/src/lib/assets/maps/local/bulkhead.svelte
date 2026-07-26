@@ -16,8 +16,8 @@
     </style>
   </defs>
   
-  <text x="500" y="40" class="label" font-size="28" fill="#FFD700">Cloison Étanche (Tier 2/3 Bulkhead)</text>
-  <text x="500" y="70" class="sublabel text-red-500 font-bold">ACCÈS RESTREINT (Ouverture en urgence uniquement depuis le Tier 2)</text>
+  <text x="500" y="40" class="label" font-size="28" fill="#FFD700">Watertight Bulkhead (Tier 2/3)</text>
+  <text x="500" y="70" class="sublabel text-red-500 font-bold">RESTRICTED ACCESS (Emergency opening from Tier 2 only)</text>
 
   <g transform="translate(50, 100)">
     <!-- Corridor Walls -->

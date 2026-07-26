@@ -49,19 +49,19 @@
       cardIndex = (cardIndex + 1) % tribunalCards.length
       status = tribunalCards[cardIndex]
     } else if (profile.kind === 'resurrection') {
-      status = status.includes('RÉSURRECTION') ? 'Simuler la mort' : 'MORT → CONTRE-ATTAQUE → RÉSURRECTION'
+      status = status.includes('RESURRECTION') ? 'Simulate death' : 'DEATH → COUNTERATTACK → RESURRECTION'
     } else if (profile.kind === 'inherit') {
-      status = `${Math.min(points.length + 1, 4)}/4 étoiles héritées`
+      status = `${Math.min(points.length + 1, 4)}/4 inherited stars`
     } else if (profile.kind === 'vehicle') {
-      status = `${Math.min(points.length + 1, 5)}/5 passagers · aura partagée`
+      status = `${Math.min(points.length + 1, 5)}/5 passengers · shared aura`
     } else if (profile.kind === 'future') {
-      status = `Vision : T + 10 s · présent : ${seconds}s`
+      status = `Vision: T + 10 s · present: ${seconds}s`
     } else if (profile.kind === 'portal') {
-      status = points.length % 2 === 0 ? 'Porte de départ ouverte' : 'Porte de retour matérialisée'
+      status = points.length % 2 === 0 ? 'Departure door open' : 'Return door materialized'
     } else if (profile.kind === 'arrow') {
-      status = points.length === 0 ? 'Arc matérialisé · relâchez pour tirer' : 'IMPACT · transfert de conscience'
+      status = points.length === 0 ? 'Bow materialized · release to fire' : 'IMPACT · consciousness transfer'
     } else {
-      status = `${profile.action} · ${label || 'cible acquise'}`
+      status = `${profile.action} · ${label || 'target acquired'}`
     }
     addPoint(x, y, label)
   }
@@ -87,7 +87,7 @@
   <div class="world-effect kind-{profile.kind}" style:--hatsu={profile.color} data-hatsu-ui aria-hidden="true">
     <div class="atmosphere"></div>
     {#if profile.kind === 'future'}
-      <div class="future-frame"><span>PRÉDICTION</span><strong>+10.00 s</strong></div>
+      <div class="future-frame"><span>PREDICTION</span><strong>+10.00 s</strong></div>
       <div class="future-ghost" style:left={`${cursor.x + 26}px`} style:top={`${cursor.y}px`}></div>
     {/if}
     {#if profile.kind === 'guardian'}
@@ -127,7 +127,7 @@
       <span>{profile.name}</span>
       <strong>{status}</strong>
       <small>{profile.rule}</small>
-      {#if profile.kind === 'scarlet'}<em>VIE CONSOMMÉE · {seconds} H</em>{/if}
+      {#if profile.kind === 'scarlet'}<em>LIFE CONSUMED · {seconds} H</em>{/if}
     </div>
   </div>
 {/if}

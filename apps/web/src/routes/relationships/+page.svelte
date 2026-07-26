@@ -26,7 +26,7 @@
   
   <!-- Factions Sidebar -->
   <aside class="w-1/3 bg-[#0a0a0a] border-r border-[#222] overflow-y-auto p-6 flex flex-col gap-4">
-    <h1 class="text-2xl font-bold text-[#FFD700] uppercase tracking-widest mb-4">Graphe d'Allégeance</h1>
+    <h1 class="text-2xl font-bold text-[#FFD700] uppercase tracking-widest mb-4">Allegiance Network</h1>
     
     {#each data.factions as faction}
       <button 
@@ -39,9 +39,9 @@
         
         <div class="mt-3 flex items-center justify-between">
           <span class="text-xs font-mono text-gray-500 uppercase">
-            {getCharactersForFaction(faction.id).length} Membre(s)
+            {getCharactersForFaction(faction.id).length} Member(s)
           </span>
-          <span class="text-xs text-[#FFD700] opacity-0 group-hover:opacity-100 transition-opacity">Inspecter →</span>
+          <span class="text-xs text-[#FFD700] opacity-0 group-hover:opacity-100 transition-opacity">Inspect →</span>
         </div>
       </button>
     {/each}
@@ -68,7 +68,7 @@
             </div>
           {:else}
             <div class="col-span-full text-center text-gray-600 border border-dashed border-gray-800 p-8 rounded-lg">
-              Aucun membre affilié connu pour le moment.
+              No known affiliated members at this time.
             </div>
           {/each}
         </div>
@@ -78,8 +78,8 @@
         <div class="inline-block w-32 h-32 border-4 border-dashed border-gray-800 rounded-full flex items-center justify-center mb-6 mx-auto">
           <span class="text-[#FFD700] font-bold text-4xl opacity-50">?</span>
         </div>
-        <h2 class="text-2xl text-gray-500 uppercase tracking-widest font-bold">Sélectionnez une Faction</h2>
-        <p class="text-gray-600 mt-2">Pour analyser le réseau d'allégeance.</p>
+        <h2 class="text-2xl text-gray-500 uppercase tracking-widest font-bold">Select a Faction</h2>
+        <p class="text-gray-600 mt-2">Analyze its allegiance network.</p>
       </div>
     {/if}
   </main>

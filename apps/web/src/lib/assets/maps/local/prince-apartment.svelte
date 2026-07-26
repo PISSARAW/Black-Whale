@@ -98,7 +98,7 @@
 
     <!-- Dynamic Elements per room -->
     {#if roomNumber === '1014'}
-      <text x="350" y="440" class="sublabel">Salle de cours de Nen</text>
+      <text x="350" y="440" class="sublabel">Nen Classroom</text>
       <circle cx="350" cy="460" r="60" fill="rgba(255, 0, 0, 0.1)" stroke="red" stroke-width="2" stroke-dasharray="5,5" />
     {/if}
   </g>

@@ -29,18 +29,18 @@
 {#if availability}
   <div class="why-panel bg-bw-navy border border-bw-gold/30 rounded-lg p-4 w-72 text-sm shadow-lg">
     <div class="flex items-start justify-between mb-3">
-      <span class="text-bw-gold font-semibold text-xs tracking-widest">POURQUOI ?</span>
+      <span class="text-bw-gold font-semibold text-xs tracking-widest">WHY?</span>
       <button
         class="text-gray-500 hover:text-white text-xs leading-none"
         onclick={() => dispatch('close')}
-        aria-label="Fermer"
+        aria-label="Close"
       >✕</button>
     </div>
 
     <p class="text-gray-400 text-xs mb-3">
       {availability.available
-        ? 'Cette action est disponible.'
-        : 'Cette action est actuellement impossible.'}
+        ? 'This action is available.'
+        : 'This action is currently unavailable.'}
     </p>
 
     <ul class="flex flex-col gap-1.5">
@@ -53,7 +53,7 @@
             class:italic={cond.status === 'unknown'}
           >
             {#if cond.status === 'unknown' && perspectiveMode === 'character'}
-              Condition inconnue
+              Unknown condition
             {:else}
               {cond.label}
             {/if}
@@ -65,7 +65,7 @@
     <!-- Omniscient canonical reason -->
     {#if perspectiveMode === 'omniscient' && availability.canonicalReason}
       <div class="mt-3 pt-3 border-t border-gray-700 text-xs text-gray-400">
-        <span class="text-bw-gold">Cause réelle :</span>
+        <span class="text-bw-gold">Actual cause:</span>
         <p class="mt-1 text-gray-300">{availability.canonicalReason}</p>
       </div>
     {/if}

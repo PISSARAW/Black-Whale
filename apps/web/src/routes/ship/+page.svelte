@@ -17,16 +17,16 @@
   // Toolbar & Factions setup
   const factions = [
     { id: 'princes', label: 'Princes' },
-    { id: 'guards', label: 'Gardes' },
+    { id: 'guards', label: 'Guards' },
     { id: 'hunters', label: 'Hunters' },
-    { id: 'spider', label: 'Brigade' },
-    { id: 'mafia', label: 'Mafias' }
+    { id: 'spider', label: 'Phantom Troupe' },
+    { id: 'mafia', label: 'Mafia' }
   ];
 
   const followLabel: Record<FollowMode, string> = {
-    consciousness: 'suivre la conscience',
-    body: 'suivre le corps',
-    appearance: "suivre l'apparence publique"
+    consciousness: 'follow consciousness',
+    body: 'follow body',
+    appearance: 'follow public appearance'
   };
 
   let perspectiveOptions = $derived.by(() => {
@@ -36,7 +36,7 @@
       kind: 'character'
     }));
 
-    return [{ id: 'reader', label: 'Vue du lecteur', kind: 'reader' as const }, ...fromCharacters];
+    return [{ id: 'reader', label: 'Reader view', kind: 'reader' as const }, ...fromCharacters];
   });
 
   let currentEvt = $derived(data.events.find((event: any) => event.id === data.selectedEventId) || data.events[data.events.length - 1]);
@@ -46,7 +46,7 @@
   );
 
   let contextState = $derived.by((): PerspectiveContext => {
-    const perspectiveName = selectedPerspective?.label || 'Vue du lecteur';
+    const perspectiveName = selectedPerspective?.label || 'Reader view';
     const observer = data.perspective?.observer;
     const observerCharacter = data.worldState?.characters?.find((char: any) => char.id === observer?.characterId);
     const occupiedBody = data.worldState?.bodies?.find((body: any) => body.id === observer?.currentBodyId);
@@ -73,29 +73,29 @@
 
     return {
       reality: [
-        { id: 'r0', label: 'Evenement reel', index: baseSequence - 2 },
-        { id: 'r1', label: currentEvt?.title || 'Etat courant', index: baseSequence }
+        { id: 'r0', label: 'Canonical event', index: baseSequence - 2 },
+        { id: 'r1', label: currentEvt?.title || 'Current state', index: baseSequence }
       ],
       body: [
-        { id: 'b0', label: 'Deplacement corporel', index: baseSequence - 1 },
-        { id: 'b1', label: 'Etat biologique', index: baseSequence }
+        { id: 'b0', label: 'Body movement', index: baseSequence - 1 },
+        { id: 'b1', label: 'Biological state', index: baseSequence }
       ],
       consciousness: [
-        { id: 'c0', label: 'Ancrage mental', index: baseSequence - 1 },
-        { id: 'c1', label: 'Transfert', index: baseSequence, emphasis: contextState.hasAnomaly }
+        { id: 'c0', label: 'Mental anchor', index: baseSequence - 1 },
+        { id: 'c1', label: 'Transfer', index: baseSequence, emphasis: contextState.hasAnomaly }
       ],
       knowledge: [
-        { id: 'k0', label: 'Information recue', index: baseSequence - 2 },
-        { id: 'k1', label: 'Mise a jour perspective', index: baseSequence, detail: selectedPerspective?.kind === 'reader' ? 'Canon filtre spoilers' : 'Point de vue subjectif' }
+        { id: 'k0', label: 'Information received', index: baseSequence - 2 },
+        { id: 'k1', label: 'Perspective update', index: baseSequence, detail: selectedPerspective?.kind === 'reader' ? 'Spoiler-filtered canon' : 'Subjective point of view' }
       ]
     };
   });
 
   let currentDeckLabel = $derived(
     mapState.currentZoomLevel === 'OVERVIEW'
-      ? 'Vue générale'
+      ? 'Overview'
       : mapState.currentZoomLevel === 'LOCAL'
-        ? (mapState.selectedLocationId || 'Espace local').replaceAll('-', ' ')
+        ? (mapState.selectedLocationId || 'Local area').replaceAll('-', ' ')
         : `Tier ${mapState.selectedTier?.replace('tier-', '') || ''}`
   );
 
@@ -155,21 +155,21 @@
 </script>
 
 <svelte:head>
-  <title>Cartographie du Black Whale — Hunter x Hunter</title>
-  <meta name="description" content="Explorez les ponts du Black Whale, les positions connues et les perspectives des personnages." />
+  <title>Black Whale Map — Hunter × Hunter</title>
+  <meta name="description" content="Explore the Black Whale decks, known positions, and character perspectives." />
 </svelte:head>
 
 <div class="ship-page">
   <header class="ship-hero">
     <div class="hero-copy">
-      <div class="eyebrow"><span></span> Expédition vers le Continent Noir</div>
+      <div class="eyebrow"><span></span> Dark Continent Expedition</div>
       <h1>Black Whale <em>01</em></h1>
-      <p>Cartographie tactique des ponts, présences et zones d’influence.</p>
+      <p>Tactical mapping of decks, presences, and zones of influence.</p>
     </div>
 
-    <div class="hero-status" aria-label="Statut de la carte">
-      <div><span>Événement</span><strong>Ch. {currentEvt?.chapter?.number ?? '—'} · Ev. {currentEvt?.sequence ?? '—'}</strong></div>
-      <div><span>Zone active</span><strong class="capitalize">{currentDeckLabel}</strong></div>
+    <div class="hero-status" aria-label="Map status">
+      <div><span>Event</span><strong>Ch. {currentEvt?.chapter?.number ?? '—'} · Ev. {currentEvt?.sequence ?? '—'}</strong></div>
+      <div><span>Active zone</span><strong class="capitalize">{currentDeckLabel}</strong></div>
       <div><span>Perspective</span><strong>{contextState.perspectiveName}</strong></div>
     </div>
 
@@ -180,9 +180,9 @@
         onclick={() => mapState.setCompareWithReader(!mapState.compareWithReader)}
       >
         <span class="action-icon">◫</span>
-        {mapState.compareWithReader ? 'Canon affiché' : 'Comparer au canon'}
+        {mapState.compareWithReader ? 'Canon visible' : 'Compare with canon'}
       </button>
-      <a href="/compare">Comparer les perspectives <span>↗</span></a>
+      <a href="/compare">Compare perspectives <span>↗</span></a>
     </div>
   </header>
 
@@ -200,19 +200,19 @@
       <div class="panel-heading">
         <div>
           <span>Navigation</span>
-          <h2>Ponts du navire</h2>
+          <h2>Ship decks</h2>
         </div>
         <span class="deck-count">05</span>
       </div>
 
-      <nav class="tier-nav" aria-label="Ponts du Black Whale">
+      <nav class="tier-nav" aria-label="Black Whale decks">
         <button
           class:active={mapState.currentZoomLevel === 'OVERVIEW'}
           aria-current={mapState.currentZoomLevel === 'OVERVIEW' ? 'page' : undefined}
           onclick={() => mapState.selectTier(null)}
         >
           <span class="tier-number">00</span>
-          <span><strong>Vue générale</strong><small>Structure du navire</small></span>
+          <span><strong>Overview</strong><small>Ship structure</small></span>
           <span class="tier-arrow">↗</span>
         </button>
 
@@ -223,14 +223,14 @@
             onclick={() => mapState.selectTier(`tier-${tierNum}`)}
           >
             <span class="tier-number">0{tierNum}</span>
-            <span><strong>Tier {tierNum}</strong><small>{['Royauté & VVIP', 'VIP & commodités', 'Public & médical', 'Équipage & fret', 'Machines & stockage'][tierNum - 1]}</small></span>
+            <span><strong>Tier {tierNum}</strong><small>{['Royalty & VVIP', 'VIP & amenities', 'Public & medical', 'Crew & cargo', 'Machinery & storage'][tierNum - 1]}</small></span>
             <span class="tier-arrow">→</span>
           </button>
         {/each}
       </nav>
 
       <div class="filter-section">
-        <div class="section-label"><span>Factions</span><small>{mapState.filters.factions.length} actives</small></div>
+        <div class="section-label"><span>Factions</span><small>{mapState.filters.factions.length} active</small></div>
         <div class="filter-grid">
           {#each factions as faction}
             <label class:active={mapState.filters.factions.includes(faction.id)}>
@@ -252,15 +252,15 @@
           <span>Black Whale</span><i>/</i><strong class="capitalize">{currentDeckLabel}</strong>
         </div>
         <div class="map-tools">
-          <span class="live-indicator"><i></i> Données synchronisées</span>
-          <span class="map-hint">Déplacer pour naviguer · Molette pour zoomer</span>
+          <span class="live-indicator"><i></i> Live data synchronized</span>
+          <span class="map-hint">Drag to navigate · Scroll to zoom</span>
         </div>
       </header>
 
-      <div class="map-canvas" role="region" aria-label="Carte interactive du Black Whale">
+      <div class="map-canvas" role="region" aria-label="Interactive Black Whale map">
         <MapContainer />
         <div class="map-coordinate north">N</div>
-        <div class="map-scale"><span></span> NIVEAU STRUCTUREL</div>
+        <div class="map-scale"><span></span> STRUCTURAL LEVEL</div>
       <WhyPanel
         open={mapState.explainPanelOpen && !!mapState.explainTarget}
         subject={mapState.explainTarget?.subject || ''}
@@ -270,7 +270,7 @@
         freshness={mapState.explainTarget?.freshness || ''}
         state={mapState.explainTarget?.knowledgeState || 'unknown'}
         revealReality={mapState.compareWithReader}
-        canonicalValue={mapState.explainTarget?.canonicalValue || 'inconnue'}
+        canonicalValue={mapState.explainTarget?.canonicalValue || 'unknown'}
         onClose={() => mapState.closeExplainPanel()}
       />
       
@@ -283,7 +283,7 @@
   <section class="intel-panel">
     <div class="perspective-panel">
       <div class="panel-heading compact">
-        <div><span>Point de vue</span><h2>Filtre d’observation</h2></div>
+        <div><span>Point of view</span><h2>Observation filter</h2></div>
         <span class="mode-pill">{followLabel[mapState.followMode]}</span>
       </div>
       <PerspectiveSelector
@@ -296,23 +296,23 @@
     </div>
 
     <div class="legend-panel">
-      <div class="panel-heading compact"><div><span>Lecture de la carte</span><h2>Certitude temporelle</h2></div></div>
-      <div class="position-legend" aria-label="Couleurs selon la certitude temporelle">
+      <div class="panel-heading compact"><div><span>Map legend</span><h2>Temporal certainty</h2></div></div>
+      <div class="position-legend" aria-label="Colors by temporal certainty">
         {#each [
-          { label: 'Événement courant', color: '#55d1e2' },
-          { label: 'Période confirmée', color: '#ad8bea' },
-          { label: 'Chapitre courant', color: '#6ac890' },
-          { label: 'Confirmée', color: '#5bb9ad' },
-          { label: 'Supposée', color: '#f0b75e' },
-          { label: 'Dernière position', color: '#e47f61' },
-          { label: 'Inconnue', color: '#8a9798' }
+          { label: 'Current event', color: '#55d1e2' },
+          { label: 'Confirmed period', color: '#ad8bea' },
+          { label: 'Current chapter', color: '#6ac890' },
+          { label: 'Confirmed', color: '#5bb9ad' },
+          { label: 'Assumed', color: '#f0b75e' },
+          { label: 'Last known position', color: '#e47f61' },
+          { label: 'Unknown', color: '#8a9798' }
         ] as status}
           <span style={`--status-color: ${status.color}`}><i></i>{status.label}</span>
         {/each}
       </div>
       <div class="display-toggles">
         <button class:active={mapState.filters.showUnknownPositions} onclick={() => mapState.filters.showUnknownPositions = !mapState.filters.showUnknownPositions}>
-          <span>{mapState.filters.showUnknownPositions ? '✓' : '+'}</span> Positions inconnues
+          <span>{mapState.filters.showUnknownPositions ? '✓' : '+'}</span> Unknown positions
         </button>
         <button class="danger" class:active={mapState.filters.spoilersEnabled} onclick={() => mapState.filters.spoilersEnabled = !mapState.filters.spoilersEnabled}>
           <span>{mapState.filters.spoilersEnabled ? '!' : '×'}</span> Spoilers
@@ -324,8 +324,8 @@
   <footer class="timeline-shell">
     <div class="timeline-header">
       <div>
-        <span>Chronologie</span>
-        <strong>{currentEvt?.title || 'État courant'}</strong>
+        <span>Timeline</span>
+        <strong>{currentEvt?.title || 'Current state'}</strong>
       </div>
       <div class="sequence-badge">CH <strong>{currentEvt?.chapter?.number ?? '—'}</strong> · EV <strong>{currentEvt?.sequence ?? '—'}</strong></div>
     </div>
@@ -333,11 +333,11 @@
     {#if data.events.length > 0}
       <div class="range-wrap" style={`--progress: ${eventProgress}%`}>
         <span>Ch.{data.events[0].chapter.number}</span>
-        <input aria-label="Événement de la chronologie" type="range" min="0" max={data.events.length - 1} value={data.selectedEventIndex} oninput={handleTimelineChange} />
+        <input aria-label="Timeline event" type="range" min="0" max={data.events.length - 1} value={data.selectedEventIndex} oninput={handleTimelineChange} />
         <span>Ch.{data.events[data.events.length - 1].chapter.number}</span>
       </div>
     {:else}
-      <p class="empty-state">Aucun événement disponible.</p>
+      <p class="empty-state">No events available.</p>
     {/if}
 
     <PerspectiveTimeline reality={timelinePoints.reality} body={timelinePoints.body} consciousness={timelinePoints.consciousness} knowledge={timelinePoints.knowledge} currentIndex={data.selectedEventIndex || 0} />

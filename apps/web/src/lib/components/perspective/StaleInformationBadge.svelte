@@ -6,9 +6,9 @@
   } = $props();
 </script>
 
-<div class="stale" role="status" aria-label={`Information obsolète depuis ${lastConfirmed}`}>
+<div class="stale" role="status" aria-label={`Information outdated since ${lastConfirmed}`}>
   <span aria-hidden="true">⏱</span>
-  Dernière information : {lastConfirmed}
+  Latest information: {lastConfirmed}
 </div>
 
 <style>

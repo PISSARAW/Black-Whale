@@ -24,7 +24,7 @@
   data-follow-target={marker.isFollowTarget ? 'true' : undefined}
   style={styleString}
   style:transform="translate(-50%, -50%)"
-  aria-label={`${marker.perceivedIdentity}, ${marker.locationLabel || 'position inconnue'}, ${marker.temporalLabel || 'statut inconnu'}`}
+  aria-label={`${marker.perceivedIdentity}, ${marker.locationLabel || 'unknown position'}, ${marker.temporalLabel || 'unknown status'}`}
   onclick={() => onExplain?.(marker)}
 >
   <span class="pulse" aria-hidden="true"></span>
@@ -32,12 +32,12 @@
   <span class="tooltip" role="tooltip">
     <span class="tooltip-topline">
       <strong>{marker.perceivedIdentity}</strong>
-      <i>{marker.temporalLabel || 'Statut inconnu'}</i>
+      <i>{marker.temporalLabel || 'Unknown status'}</i>
     </span>
-    <span class="location">{marker.locationLabel || 'Localisation non précisée'} · {marker.tierLabel || 'Hors tier'}</span>
+    <span class="location">{marker.locationLabel || 'Unspecified location'} · {marker.tierLabel || 'Outside tier'}</span>
     {#if marker.temporalDetail}<span class="temporal-detail">{marker.temporalDetail}</span>{/if}
-    {#if hasAnomaly}<span class="anomaly-label">Conscience transférée</span>{/if}
-    {#if marker.suspicionLabel}<span class="suspicion">Identité supposée</span>{/if}
+    {#if hasAnomaly}<span class="anomaly-label">Transferred consciousness</span>{/if}
+    {#if marker.suspicionLabel}<span class="suspicion">Assumed identity</span>{/if}
   </span>
 </button>
 

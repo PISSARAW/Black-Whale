@@ -20,8 +20,8 @@
   let lastSnapSubject = $state('');
 
   const tiers = ['tier-1', 'tier-2', 'tier-3', 'tier-4', 'tier-5'];
-  const filters = ['Tous', 'Identites', 'Positions', 'Statuts', 'Capacites', 'Affiliations', 'Evenements'];
-  let activeFilter = $state('Tous');
+  const filters = ['All', 'Identities', 'Positions', 'Statuses', 'Abilities', 'Affiliations', 'Events'];
+  let activeFilter = $state('All');
 
   let locations = $derived(data.worldState?.locations || []);
   let presences = $derived(data.worldState?.presences || []);
@@ -123,7 +123,7 @@
           id: presence.entityId,
           subjectId: owner?.id || body?.id || presence.entityId,
           name: owner?.canonicalName || body?.label || presence.entityId,
-          locationName: location?.name || 'Localisation inconnue',
+          locationName: location?.name || 'Unknown location',
           tier: location ? resolveTier(location) : null,
           zone: location?.slug || ''
         };
@@ -231,8 +231,8 @@
     );
 
     if (facts.length > 0) return marker.name;
-    if (beliefs.length > 0) return 'Identite supposee';
-    return 'Individu inconnu';
+    if (beliefs.length > 0) return 'Assumed identity';
+    return 'Unknown individual';
   }
 
   let leftMapMarkers = $derived(scopedMarkers.map((marker: any) => ({
@@ -265,16 +265,16 @@
     const facts = (canonicalTruth.facts || []).filter((fact: any) => fact.subjectId === selectedSubject);
     const objectivePosition = canonicalTruth.positions?.[selectedSubject];
     const rows = facts.map((fact: any) => ({
-      type: 'fait canonique',
+      type: 'canonical fact',
       key: fact.predicate,
       value: formatValue(fact.value)
     }));
 
     if (objectivePosition) {
       rows.unshift({
-        type: 'position reelle',
+        type: 'actual position',
         key: 'locationId',
-        value: objectivePosition.locationId || 'inconnue'
+        value: objectivePosition.locationId || 'unknown'
       });
     }
 
@@ -337,20 +337,20 @@
   }
 
   function formatValue(value: unknown) {
-    if (value === undefined || value === null) return 'inconnu';
+    if (value === undefined || value === null) return 'unknown';
     if (typeof value === 'string') return value;
     return JSON.stringify(value);
   }
 
   function matchesFilter(diff: any) {
-    if (activeFilter === 'Tous') return true;
+    if (activeFilter === 'All') return true;
     const byFilter: Record<string, string[]> = {
-      Identites: ['IDENTITY', 'EXISTENCE'],
+      Identities: ['IDENTITY', 'EXISTENCE'],
       Positions: ['POSITION'],
-      Statuts: ['BIOLOGICAL_STATE', 'BELIEF'],
-      Capacites: ['ABILITY'],
+      Statuses: ['BIOLOGICAL_STATE', 'BELIEF'],
+      Abilities: ['ABILITY'],
       Affiliations: ['AFFILIATION'],
-      Evenements: ['EVENT']
+      Events: ['EVENT']
     };
     return (byFilter[activeFilter] || []).includes(diff.dimension);
   }
@@ -362,12 +362,12 @@
     const beliefs = (perspective?.beliefs || []).filter((belief: any) => !selectedSubject || belief.subjectId === selectedSubject);
     return [
       ...facts.map((fact: any) => ({
-        type: fact.truthStatus === 'CONTESTED' ? 'croyance contestee' : 'fait',
+        type: fact.truthStatus === 'CONTESTED' ? 'contested belief' : 'fact',
         key: fact.predicate,
         value: formatValue(fact.value)
       })),
       ...beliefs.map((belief: any) => ({
-        type: 'croyance',
+        type: 'belief',
         key: belief.predicate,
         value: formatValue(belief.believedValue)
       }))
@@ -386,7 +386,7 @@
 <div class="max-w-7xl mx-auto p-6 space-y-6">
   <header class="bw-panel p-5">
     <h1 class="font-condensed text-3xl tracking-wide text-[#e7ca87]">Perspective Comparison</h1>
-    <p class="text-sm text-slate-300 mt-2">Meme tier, meme zoom, meme zone, meme sujet selectionne: deux verites synchronisees.</p>
+    <p class="text-sm text-slate-300 mt-2">Same tier, zoom, zone, and selected subject: two synchronized truths.</p>
     <div class="mt-3 flex flex-wrap gap-2 items-center">
       <button
         type="button"
@@ -397,16 +397,16 @@
           syncState(true);
         }}
       >
-        {compareCanonical ? 'Masquer colonne Reader truth' : 'Comparer a la realite canonique'}
+        {compareCanonical ? 'Hide Reader Truth column' : 'Compare with canonical reality'}
       </button>
       {#if compareCanonical}
         <p class="text-xs text-amber-200/80 border border-amber-300/40 rounded px-3 py-2">
-          Attention: cette comparaison revele les erreurs et illusions de la perspective selectionnee.
+          Warning: this comparison reveals errors and illusions in the selected perspective.
         </p>
       {/if}
       {#if canonicalBlockedBySpoiler}
         <p class="text-xs text-red-200 border border-red-400/40 rounded px-3 py-2">
-          Vue canonique indisponible au-dela de la limite spoiler autorisee.
+          Canonical view unavailable beyond the permitted spoiler limit.
         </p>
       {/if}
     </div>
@@ -414,7 +414,7 @@
 
   <section class="bw-panel p-4 grid lg:grid-cols-4 gap-3">
     <label class="grid gap-1 lg:col-span-1">
-      <span class="text-xs uppercase tracking-wider text-slate-400">Evenement</span>
+      <span class="text-xs uppercase tracking-wider text-slate-400">Event</span>
       <select bind:value={selectedEventId} onchange={submitFetch} class="bg-slate-900 border border-slate-700 rounded px-3 py-2 text-sm">
         {#each data.events as event}
           <option value={event.id}>Ch.{event.chapter.number} - {event.title}</option>
@@ -450,18 +450,18 @@
         syncState(true);
       }}
     >
-      {differencesOnly ? 'Voir cartes synchronisees' : 'Mode differences seulement'}
+      {differencesOnly ? 'View synchronized maps' : 'Differences only'}
     </button>
   </section>
 
   <section class="bw-panel p-4 grid grid-cols-2 lg:grid-cols-5 gap-3 items-end">
     <label class="grid gap-1">
-      <span class="text-xs uppercase tracking-wider text-slate-400">Zoom synchronise</span>
+      <span class="text-xs uppercase tracking-wider text-slate-400">Synchronized zoom</span>
       <input type="range" min="1" max="5" step="1" bind:value={zoom} oninput={() => syncState(true)} />
     </label>
 
     <label class="grid gap-1">
-      <span class="text-xs uppercase tracking-wider text-slate-400">Tier synchronise</span>
+      <span class="text-xs uppercase tracking-wider text-slate-400">Synchronized tier</span>
       <select bind:value={tier} onchange={() => { zone = ''; syncState(true); }} class="bg-slate-900 border border-slate-700 rounded px-3 py-2 text-sm">
         {#each tiers as tierOption}
           <option value={tierOption}>{tierOption.toUpperCase()}</option>
@@ -470,23 +470,23 @@
     </label>
 
     <label class="grid gap-1 lg:col-span-2">
-      <span class="text-xs uppercase tracking-wider text-slate-400">Zone synchronisee</span>
+      <span class="text-xs uppercase tracking-wider text-slate-400">Synchronized zone</span>
       <select bind:value={zone} onchange={() => syncState(true)} class="bg-slate-900 border border-slate-700 rounded px-3 py-2 text-sm">
-        <option value="">Toutes les zones du tier</option>
+        <option value="">All zones in this tier</option>
         {#each zonesInTier as location}
           <option value={location.slug}>{location.name}</option>
         {/each}
       </select>
     </label>
 
-    <p class="text-xs text-slate-400">{eventLabel ? `Ch.${eventLabel.chapter.number} / ${eventLabel.title}` : 'Evenement non selectionne'}</p>
+    <p class="text-xs text-slate-400">{eventLabel ? `Ch.${eventLabel.chapter.number} / ${eventLabel.title}` : 'Event non selectionne'}</p>
   </section>
 
   {#if !differencesOnly}
     <section class={`grid grid-cols-1 ${compareCanonical ? 'xl:grid-cols-3' : 'lg:grid-cols-2'} gap-4`}>
       <article class="bw-panel p-4">
         <h2 class="text-sm uppercase tracking-widest text-slate-400 mb-2">Perspective A - {getCharacterName(selectedLeft)}</h2>
-        <p class="text-xs text-slate-400 mb-3">Zoom {zoom} · {tier} · {zone || 'toutes zones'}</p>
+        <p class="text-xs text-slate-400 mb-3">Zoom {zoom} · {tier} · {zone || 'all zones'}</p>
         <ul class="space-y-1 max-h-48 overflow-y-auto pr-1">
           {#each entitiesInView as entity}
             <li>
@@ -524,7 +524,7 @@
 
       <article class="bw-panel p-4">
         <h2 class="text-sm uppercase tracking-widest text-slate-400 mb-2">Perspective B - {getCharacterName(selectedRight)}</h2>
-        <p class="text-xs text-slate-400 mb-3">Synchronisee avec A (tier/zoom/zone/sujet)</p>
+        <p class="text-xs text-slate-400 mb-3">Synchronized with A (tier/zoom/zone/sujet)</p>
         <ul class="space-y-1 max-h-48 overflow-y-auto pr-1">
           {#each entitiesInView as entity}
             <li>
@@ -562,8 +562,8 @@
 
       {#if compareCanonical}
         <article class="bw-panel p-4">
-          <h2 class="text-sm uppercase tracking-widest text-slate-400 mb-2">Reader truth - Realite canonique</h2>
-          <p class="text-xs text-slate-400 mb-3">Contrainte spoiler: chapitre {data.spoilerLimit ?? 'illimite'}</p>
+          <h2 class="text-sm uppercase tracking-widest text-slate-400 mb-2">Reader Truth — Canonical reality</h2>
+          <p class="text-xs text-slate-400 mb-3">Spoiler limit: chapter {data.spoilerLimit ?? 'unlimited'}</p>
 
           <CompareTierMap
             title={`Reader truth · ${tier.toUpperCase()}`}
@@ -584,7 +584,7 @@
               </div>
             {/each}
             {#if canonicalRows.length === 0}
-              <p class="text-xs text-slate-400">Aucune information canonique specifique pour ce sujet a cet instant.</p>
+              <p class="text-xs text-slate-400">No specific canonical information for this subject at this time.</p>
             {/if}
           </div>
         </article>
@@ -594,7 +594,7 @@
 
   {#if differencesOnly}
     <section class="bw-panel p-4 md:hidden">
-      <h2 class="text-sm uppercase tracking-widest text-slate-400 mb-3">Differences seulement (mobile)</h2>
+      <h2 class="text-sm uppercase tracking-widest text-slate-400 mb-3">Differences only (mobile)</h2>
       <div class="space-y-2">
         {#each filteredDifferences as diff}
           <article class="border border-slate-700 rounded p-3">
@@ -634,7 +634,7 @@
       {/each}
 
       {#if filteredDifferences.length === 0}
-        <p class="text-sm text-slate-400">Aucune difference sur ce filtre.</p>
+        <p class="text-sm text-slate-400">No differences for this filter.</p>
       {/if}
     </div>
   </section>

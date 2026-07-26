@@ -13,7 +13,7 @@
 
   const status: NenStatusHeader = {
     chapterId: '360',
-    narrativeTime: 'Jour 3, 14:22',
+    narrativeTime: 'Day 3, 14:22',
     followedConsciousnessId: 'hisoka',
     occupiedBodyId: 'hisoka',
     perspectiveMode: 'character',
@@ -31,26 +31,26 @@
 
   // Section 3 — universal cycle demo state for Bungee Gum
   const cycleSteps: NenCycleStep[] = [
-    { id: 'OBSERVE',             label: 'Observer',              status: 'completed' },
-    { id: 'PREPARE_AURA',        label: 'Préparer l\'aura',      status: 'completed' },
-    { id: 'SELECT_TARGET',       label: 'Sélectionner une cible', status: 'current',
-      note: 'Cliquez sur un point d\'ancrage sur la carte' },
-    { id: 'FILL_CONDITIONS',     label: 'Remplir les conditions', status: 'pending' },
-    { id: 'ACTIVATE',            label: 'Activer',                status: 'pending' },
-    { id: 'MAINTAIN',            label: 'Maintenir / diriger',    status: 'pending' },
-    { id: 'PAY_COST',            label: 'Payer le coût',          status: 'pending' },
-    { id: 'SUFFER_CONSEQUENCES', label: 'Subir les conséquences', status: 'pending' },
+    { id: 'OBSERVE',             label: 'Observe',              status: 'completed' },
+    { id: 'PREPARE_AURA',        label: 'Prepare aura',         status: 'completed' },
+    { id: 'SELECT_TARGET',       label: 'Select a target',      status: 'current',
+      note: 'Click an anchor point on the map' },
+    { id: 'FILL_CONDITIONS',     label: 'Meet conditions',      status: 'pending' },
+    { id: 'ACTIVATE',            label: 'Activate',             status: 'pending' },
+    { id: 'MAINTAIN',            label: 'Maintain / direct',    status: 'pending' },
+    { id: 'PAY_COST',            label: 'Pay the cost',         status: 'pending' },
+    { id: 'SUFFER_CONSEQUENCES', label: 'Face consequences',   status: 'pending' },
   ]
 
   const activeRules = [
-    'Propriétés : caoutchouc + gomme',
-    'Adhérence : active',
-    'Extension max : 10 m',
-    'Connexion : maintenue',
+    'Properties: rubber + gum',
+    'Adhesion: active',
+    'Maximum extension: 10 m',
+    'Connection: maintained',
   ]
 
   const activeTargets: string[] = []
-  const auraCost = 'Continu — faible par seconde'
+  const auraCost = 'Continuous — low per second'
 </script>
 
 <svelte:head>
@@ -74,19 +74,19 @@
         <div class="border border-bw-gold/20 rounded-lg p-6 text-center max-w-sm">
           <p class="text-bw-gold font-semibold mb-2">Bungee Gum — Hisoka</p>
           <p class="text-gray-400 text-sm mb-4">
-            Glissez depuis un point d'origine pour tirer un filament d'aura
-            et l'attacher à une cible.
+            Drag from an origin point to draw out an aura strand
+            and attach it to a target.
           </p>
           <div class="font-mono text-xs text-left bg-bw-dark rounded p-3 text-gray-300 leading-relaxed">
             <p>[Hisoka] ──────────── [?]</p>
             <br />
-            <p class="text-gray-500">Longueur : —</p>
-            <p class="text-gray-500">Tension : —</p>
-            <p class="text-gray-500">Adhérence : en attente</p>
+            <p class="text-gray-500">Length: —</p>
+            <p class="text-gray-500">Tension: —</p>
+            <p class="text-gray-500">Adhesion: pending</p>
           </div>
         </div>
         <p class="text-gray-700 text-xs italic">
-          Carte interactive — à connecter au MapEngine
+          Interactive map — pending MapEngine connection
         </p>
       </div>
     </svelte:fragment>
@@ -94,7 +94,7 @@
     <svelte:fragment slot="timeline">
       <div class="flex items-center gap-3 px-4 h-full text-xs text-gray-500 font-mono overflow-x-auto">
         <span class="text-bw-gold shrink-0">Ch. 360</span>
-        {#each ['Entrée sur le pont', 'Activation du En', '← Maintenant', 'Impact', 'Rétraction'] as evt, i}
+        {#each ['Enter the deck', 'Activate En', '← Now', 'Impact', 'Retraction'] as evt, i}
           <span class:text-white={i === 2} class:text-bw-gold={i === 2}>{evt}</span>
           {#if i < 4}
             <span class="text-gray-700">──</span>

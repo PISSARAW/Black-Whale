@@ -16,13 +16,13 @@
   } = $props();
 
   const followOptions: Array<{ id: FollowMode; label: string }> = [
-    { id: 'consciousness', label: 'Suivre la conscience' },
-    { id: 'body', label: 'Suivre le corps' },
-    { id: 'appearance', label: "Suivre l'apparence publique" }
+    { id: 'consciousness', label: 'Follow consciousness' },
+    { id: 'body', label: 'Follow body' },
+    { id: 'appearance', label: 'Follow public appearance' }
   ];
 </script>
 
-<section class="selector" aria-label="Sélecteur de perspective">
+<section class="selector" aria-label="Perspective selector">
   <div class="perspective-control">
     <label for="perspective-select">Perspective</label>
     <select
@@ -37,8 +37,8 @@
   </div>
 
   <div class="follow-control">
-    <h2>Suivi</h2>
-    <ul role="radiogroup" aria-label="Choisir le mode de suivi">
+    <h2>Tracking</h2>
+    <ul role="radiogroup" aria-label="Choose tracking mode">
       {#each followOptions as option}
         <li>
           <button

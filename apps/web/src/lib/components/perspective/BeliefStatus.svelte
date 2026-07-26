@@ -11,4 +11,4 @@
   } = $props();
 </script>
 
-<KnowledgeStatus state={state} label="Source de connaissance" details={source} />
+<KnowledgeStatus state={state} label="Knowledge source" details={source} />

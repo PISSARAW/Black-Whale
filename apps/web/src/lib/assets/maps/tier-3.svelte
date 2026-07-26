@@ -63,7 +63,7 @@
     <!-- Zone Résidentielle -->
     <g id="t3-residential-1st">
       <rect class="zone" class:selected={mapState.selectedLocationId === 't3-residential-1st'} x="180" y="100" width="180" height="150" onclick={() => handleZoneClick('t3-residential-1st')} />
-      <text x="270" y="160" class="label">Cabines 1ère Classe</text>
+      <text x="270" y="160" class="label">First-Class Cabins</text>
       
       <!-- Chambre 3101 -->
       <g onclick={(e) => { e.stopPropagation(); handleZoneClick('room-3101'); }}>
@@ -117,14 +117,14 @@
     </g>
     <g id="t3-heilly" onclick={() => handleZoneClick('t3-heilly')}>
       <rect class="zone" class:selected={mapState.selectedLocationId === 't3-heilly'} x="640" y="370" width="150" height="100" />
-      <text x="715" y="420" class="label">Bureau Heil-Ly</text>
-      <text x="715" y="440" class="sublabel text-purple-400">Zone Officielle</text>
+      <text x="715" y="420" class="label">Heil-Ly Office</text>
+      <text x="715" y="440" class="sublabel text-purple-400">Official Zone</text>
     </g>
 
     <!-- Sas de sécurité vers le haut -->
     <g id="t3-access-t2" onclick={() => handleZoneClick('t3-access-t2')}>
       <rect class="zone" class:selected={mapState.selectedLocationId === 't3-access-t2'} x="450" y="60" width="100" height="30" />
-      <text x="500" y="80" class="label text-[10px]">Accès T2 (Bloqué)</text>
+      <text x="500" y="80" class="label text-[10px]">T2 Access (Blocked)</text>
     </g>
   </g>
 </svg>

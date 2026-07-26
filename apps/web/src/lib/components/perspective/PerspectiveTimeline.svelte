@@ -22,14 +22,14 @@
   } = $props();
 
   let lines = $derived([
-    { label: 'Realite', points: reality },
-    { label: 'Corps', points: body },
-    { label: 'Conscience', points: consciousness },
-    { label: 'Connaissance', points: knowledge }
+    { label: 'Reality', points: reality },
+    { label: 'Body', points: body },
+    { label: 'Consciousness', points: consciousness },
+    { label: 'Knowledge', points: knowledge }
   ]);
 </script>
 
-<section class="timeline-v2" aria-label="Chronologie multi flux">
+<section class="timeline-v2" aria-label="Multi-stream timeline">
   {#each lines as line}
     <div class="line">
       <h3>{line.label}</h3>

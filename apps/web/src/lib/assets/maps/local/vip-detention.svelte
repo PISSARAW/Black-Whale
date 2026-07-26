@@ -17,7 +17,7 @@
     </style>
   </defs>
   
-  <text x="500" y="40" class="label" font-size="28" fill="#FFD700">Zone de Détention V.I.P.</text>
+  <text x="500" y="40" class="label" font-size="28" fill="#FFD700">V.I.P. Detention Area</text>
 
   <g transform="translate(50, 80)">
     <!-- Outer boundary -->

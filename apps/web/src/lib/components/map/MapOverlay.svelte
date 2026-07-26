@@ -63,6 +63,7 @@
     },
     'tier-5': {
       'central-dining-hall': { x: 585, y: 370 },
+      'standard-cabins': { x: 270, y: 290 },
       'lower-decks': { x: 300, y: 200 },
       'storage-tanks': { x: 500, y: 150 },
       'waste-holding': { x: 200, y: 300 },
@@ -153,13 +154,13 @@
 
   function getTemporalVisual(presence: any) {
     if (presence.certainty === 'PROBABLE') {
-      return { color: '#f0b75e', label: 'Position supposée', detail: 'Présence probable, non confirmée' };
+      return { color: '#f0b75e', label: 'Assumed position', detail: 'Likely presence, unconfirmed' };
     }
     if (presence.certainty === 'LAST_KNOWN') {
-      return { color: '#e47f61', label: 'Dernière position connue', detail: 'Information potentiellement obsolète' };
+      return { color: '#e47f61', label: 'Last known position', detail: 'Potentially outdated information' };
     }
     if (presence.certainty !== 'CONFIRMED') {
-      return { color: '#8a9798', label: 'Statut inconnu', detail: 'Niveau de certitude non renseigné' };
+      return { color: '#8a9798', label: 'Unknown status', detail: 'Certainty level not provided' };
     }
 
     const fromSequence = presence.fromEvent?.sequence;
@@ -168,17 +169,17 @@
     if (untilSequence !== undefined && untilSequence !== null) {
       return {
         color: '#ad8bea',
-        label: 'Confirmé sur une période',
-        detail: `Événements ${fromSequence ?? '?'} à ${untilSequence}`
+        label: 'Confirmed over a period',
+        detail: `Events ${fromSequence ?? '?'} to ${untilSequence}`
       };
     }
     if (presence.fromEventId === currentEvent?.id) {
-      return { color: '#55d1e2', label: 'Confirmé à cet événement', detail: `Événement ${currentSequence}` };
+      return { color: '#55d1e2', label: 'Confirmed at this event', detail: `Event ${currentSequence}` };
     }
     if (presence.fromEvent?.chapterId && presence.fromEvent.chapterId === currentEvent?.chapterId) {
-      return { color: '#6ac890', label: 'Confirmé durant ce chapitre', detail: `Depuis l’événement ${fromSequence ?? '?'}` };
+      return { color: '#6ac890', label: 'Confirmed during this chapter', detail: `Since event ${fromSequence ?? '?'}` };
     }
-    return { color: '#5bb9ad', label: 'Présence confirmée', detail: `Depuis l’événement ${fromSequence ?? '?'}` };
+    return { color: '#5bb9ad', label: 'Confirmed presence', detail: `Since event ${fromSequence ?? '?'}` };
   }
 
   let dynamicCharacters = $derived(
@@ -249,7 +250,7 @@
         y = 220 + base * 180;
       }
 
-      const bodyName = ownerCharacter?.canonicalName || body?.label || 'Corps inconnu';
+      const bodyName = ownerCharacter?.canonicalName || body?.label || 'Unknown body';
       const perspectiveIsReader = mapState.selectedPerspectiveKind === 'reader';
       const observerCharacter = characters.find((char: any) => char.id === observer?.characterId);
       const apparentCharacter = characters.find((char: any) => char.id === observer?.apparentCharacterId);
@@ -284,11 +285,11 @@
       const perceivedIdentity = isObserverBody
         ? followedIdentity
         : shouldMaskIdentity
-          ? (hasBeliefOnly ? 'Identite supposee' : 'Individu inconnu')
+          ? (hasBeliefOnly ? 'Assumed identity' : 'Unknown individual')
           : bodyName;
 
       const suspicionLabel = !perspectiveIsReader && hasBeliefOnly
-        ? 'Soupcon actif'
+        ? 'Active suspicion'
         : undefined;
 
       const contested = relatedFacts.some((fact: any) => fact.truthStatus === 'CONTESTED');
@@ -310,10 +311,10 @@
 
       const sourceFromFact = relatedFacts[0]?.predicate || relatedBeliefs[0]?.predicate;
       const sourceLabel = hasConfirmedKnowledge
-        ? `Fait: ${sourceFromFact}`
+        ? `Fact: ${sourceFromFact}`
         : hasBeliefOnly
-          ? `Croyance: ${sourceFromFact}`
-          : 'Presence structurelle';
+          ? `Belief: ${sourceFromFact}`
+          : 'Structural presence';
 
       const visual = tierId ? tierVisuals[tierId] : undefined;
       const temporalVisual = getTemporalVisual(p);
@@ -338,10 +339,10 @@
         suspicionLabel,
         knowledgeState,
         sourceLabel,
-        sinceLabel: p.fromEventId ? `depuis ${p.fromEventId}` : 'evenement inconnu',
+        sinceLabel: p.fromEventId ? `since ${p.fromEventId}` : 'unknown event',
         positionColor: temporalVisual.color,
-        tierLabel: visual?.label || 'Hors tier',
-        locationLabel: loc?.name || 'Position inconnue',
+        tierLabel: visual?.label || 'Outside tier',
+        locationLabel: loc?.name || 'Unknown position',
         temporalLabel: temporalVisual.label,
         temporalDetail: temporalVisual.detail,
         factionTags: ownerCharacter?.factionTags || [],
@@ -388,7 +389,7 @@
   });
 </script>
 
-<div class="presence-layer absolute inset-0 pointer-events-none" aria-label={`${visibleCharacters.length} personnages visibles`}>
+<div class="presence-layer absolute inset-0 pointer-events-none" aria-label={`${visibleCharacters.length} visible characters`}>
   {#each visibleCharacters as char (char.id)}
     <CharacterMarker character={char} />
   {/each}

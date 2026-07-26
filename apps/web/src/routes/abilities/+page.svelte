@@ -32,8 +32,8 @@
 
 <div class="max-w-4xl mx-auto p-8">
   <header class="mb-12">
-    <h1 class="text-3xl font-bold text-bw-gold mb-2">Base de données du Nen</h1>
-    <p class="text-gray-400">Liste des capacités enregistrées dans le moteur.</p>
+    <h1 class="text-3xl font-bold text-bw-gold mb-2">Nen Ability Archive</h1>
+    <p class="text-gray-400">Abilities registered in the narrative engine.</p>
   </header>
 
   <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -60,14 +60,14 @@
             onclick={() => activate(ability.id)}
             data-hatsu-pass
           >
-            <span>Activer sur tout le site</span>
+            <span>Activate across the site</span>
             <svg class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
             </svg>
           </button>
           <div class="mt-3 border-l pl-3 text-xs" style={`border-color:${profile.color}`}>
             <p class="text-gray-400">{profile.instruction}</p>
-            <p class="mt-1 text-gray-600">Coût : {profile.cost}</p>
+            <p class="mt-1 text-gray-600">Cost: {profile.cost}</p>
           </div>
           {/if}
         </div>
@@ -76,7 +76,7 @@
 
     {#if abilities.length === 0}
       <div class="col-span-full py-12 text-center border border-dashed border-gray-700 rounded-xl">
-        <p class="text-gray-500">Aucune capacité trouvée.</p>
+        <p class="text-gray-500">No abilities found.</p>
       </div>
     {/if}
   </div>

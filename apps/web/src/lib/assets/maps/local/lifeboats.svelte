@@ -19,7 +19,7 @@
     </style>
   </defs>
   
-  <text x="500" y="40" class="label" font-size="28" fill="#FFD700">Canots de Sauvetage (Lifeboats)</text>
+  <text x="500" y="40" class="label" font-size="28" fill="#FFD700">Lifeboats</text>
 
   <g transform="translate(50, 80)">
     

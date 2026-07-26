@@ -33,29 +33,29 @@
 </script>
 
 <svelte:head>
-  <title>Chronologie — Black Whale</title>
-  <meta name="description" content="Chronologie interactive de l'arc de la Guerre de Succession." />
+  <title>Timeline — Black Whale</title>
+  <meta name="description" content="An interactive timeline of the Succession War arc." />
 </svelte:head>
 
 <div class="timeline-page">
   <header class="hero">
     <div class="hero-copy">
-      <p class="eyebrow">Dossier narratif · Guerre de Succession</p>
-      <h1>Chronologie</h1>
-      <p class="intro">Suivez les événements du Black Whale dans leur ordre canonique et ouvrez la carte à n'importe quel instant du récit.</p>
+      <p class="eyebrow">Narrative dossier · Succession War</p>
+      <h1>Timeline</h1>
+      <p class="intro">Follow the Black Whale events in canonical order and open the map at any point in the story.</p>
     </div>
 
-    <dl class="stats" aria-label="Résumé de la chronologie">
+    <dl class="stats" aria-label="Timeline summary">
       <div>
-        <dt>Chapitres</dt>
+        <dt>Chapters</dt>
         <dd>{data.chapters.length}</dd>
       </div>
       <div>
-        <dt>Événements</dt>
+        <dt>Events</dt>
         <dd>{eventCount}</dd>
       </div>
       <div>
-        <dt>Dernier relevé</dt>
+        <dt>Latest record</dt>
         <dd>{data.chapters.at(-1)?.number ?? '—'}</dd>
       </div>
     </dl>
@@ -63,29 +63,29 @@
 
   <div class="toolbar">
     <label class="search-field">
-      <span class="sr-only">Rechercher dans la chronologie</span>
+      <span class="sr-only">Search the timeline</span>
       <svg viewBox="0 0 24 24" aria-hidden="true">
         <circle cx="11" cy="11" r="6.5"></circle>
         <path d="m16 16 4 4"></path>
       </svg>
-      <input bind:value={query} type="search" placeholder="Rechercher un événement, un chapitre…" />
+      <input bind:value={query} type="search" placeholder="Search by event, chapter, or keyword…" />
       {#if query}
-        <button type="button" onclick={() => (query = '')} aria-label="Effacer la recherche">×</button>
+        <button type="button" onclick={() => (query = '')} aria-label="Clear search">×</button>
       {/if}
     </label>
 
     {#if data.spoilerLimit}
-      <div class="spoiler-badge" title="Les événements ultérieurs sont masqués">
+      <div class="spoiler-badge" title="Later events are hidden">
         <span aria-hidden="true">◉</span>
-        Spoilers limités au chapitre {data.spoilerLimit}
+        Spoilers limited to chapter {data.spoilerLimit}
       </div>
     {:else}
-      <div class="canon-badge"><span aria-hidden="true">●</span> Canon complet</div>
+      <div class="canon-badge"><span aria-hidden="true">●</span> Full canon</div>
     {/if}
   </div>
 
   <div class="timeline-layout">
-    <aside aria-label="Accès rapide aux chapitres">
+    <aside aria-label="Quick chapter access">
       <p>Index</p>
       <nav>
         {#each data.chapters as chapter}
@@ -108,23 +108,23 @@
           <div class="chapter-content">
             <header class="chapter-header">
               <div>
-                <p>Chapitre {chapter.number}</p>
-                <h2>{chapter.title || 'Sans titre'}</h2>
+                <p>Chapter {chapter.number}</p>
+                <h2>{chapter.title || 'Untitled'}</h2>
               </div>
-              <span>{chapter.events.length} {chapter.events.length === 1 ? 'événement' : 'événements'}</span>
+              <span>{chapter.events.length} {chapter.events.length === 1 ? 'event' : 'events'}</span>
             </header>
 
             <ol class="events">
               {#each chapter.events as event, eventIndex (event.id)}
                 <li>
-                  <a href="/ship?eventId={event.id}" aria-label="{event.title} — ouvrir sur la carte">
+                  <a href="/ship?eventId={event.id}" aria-label="{event.title} — open on the map">
                     <span class="event-index">{String(eventIndex + 1).padStart(2, '0')}</span>
                     <span class="event-copy">
                       <span class="event-title">{event.title}</span>
                       <span class="event-summary">{event.summary}</span>
                     </span>
                     <span class="event-action">
-                      <span>Séq. {event.sequence}</span>
+                      <span>Seq. {event.sequence}</span>
                       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg>
                     </span>
                   </a>
@@ -138,12 +138,12 @@
       {#if chapters.length === 0}
         <div class="empty-state">
           <span aria-hidden="true">⌁</span>
-          <h2>Aucun événement trouvé</h2>
-          <p>Essayez un autre titre, numéro de chapitre ou mot-clé.</p>
-          <button type="button" onclick={() => (query = '')}>Réinitialiser la recherche</button>
+          <h2>No events found</h2>
+          <p>Try another title, chapter number, or keyword.</p>
+          <button type="button" onclick={() => (query = '')}>Reset search</button>
         </div>
       {:else if normalizedQuery}
-        <p class="results-count">{visibleEventCount} résultat{visibleEventCount === 1 ? '' : 's'} sur {eventCount}</p>
+        <p class="results-count">{visibleEventCount} of {eventCount} result{visibleEventCount === 1 ? '' : 's'}</p>
       {/if}
     </main>
   </div>

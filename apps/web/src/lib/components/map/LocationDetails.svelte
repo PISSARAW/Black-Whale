@@ -5,18 +5,18 @@
   // Mock data for location details
   const mockLocationData: Record<string, any> = {
     'room-1014': {
-      name: 'Chambre 1014',
+      name: 'Room 1014',
       tier: 'Tier 1',
-      sector: 'Secteur Royal',
+      sector: 'Royal Sector',
       characters: ['Kurapika', 'Oito', 'Woble', 'Bill'],
-      events: ['Réunion de sécurité', 'Formation au Nen']
+      events: ['Security meeting', 'Nen training']
     },
     'room-1004': {
-      name: 'Chambre 1004',
+      name: 'Room 1004',
       tier: 'Tier 1',
-      sector: 'Secteur Royal',
+      sector: 'Royal Sector',
       characters: ['Tserriednich'],
-      events: ['Entraînement Nen']
+      events: ['Nen training']
     }
   };
 
@@ -26,8 +26,8 @@
     mapState.selectLocation(null);
   }
 
-  const tabs = ['Identite', 'Corps', 'Conscience', 'Connaissances', 'Perspectives'];
-  let activeTab = $state('Identite');
+  const tabs = ['Identity', 'Body', 'Consciousness', 'Knowledge', 'Perspectives'];
+  let activeTab = $state('Identity');
 </script>
 
 {#if mapState.selectedLocationId && locationDetails}
@@ -56,9 +56,9 @@
       </div>
     </div>
 
-    {#if activeTab === 'Identite'}
+    {#if activeTab === 'Identity'}
       <div class="mb-5">
-        <h3 class="text-sm font-semibold uppercase tracking-wider mb-2 border-b border-gray-700 pb-1">Identite affichee</h3>
+        <h3 class="text-sm font-semibold uppercase tracking-wider mb-2 border-b border-gray-700 pb-1">Displayed identity</h3>
         <ul class="space-y-2 text-sm text-gray-300">
           {#each locationDetails.characters as char}
             <li class="flex items-center">
@@ -68,36 +68,36 @@
           {/each}
         </ul>
       </div>
-    {:else if activeTab === 'Corps'}
+    {:else if activeTab === 'Body'}
       <div class="mb-5">
-        <h3 class="text-sm font-semibold uppercase tracking-wider mb-2 border-b border-gray-700 pb-1">Etat biologique percu</h3>
-        <KnowledgeStatus state="confirmed" label="Corps presentes" details="Observation directe" />
+        <h3 class="text-sm font-semibold uppercase tracking-wider mb-2 border-b border-gray-700 pb-1">Perceived biological state</h3>
+        <KnowledgeStatus state="confirmed" label="Bodies present" details="Direct observation" />
         <div class="mt-2">
-          <KnowledgeStatus state="outdated" label="Blessures" details="Derniere mention: evenement 389-18" />
+          <KnowledgeStatus state="outdated" label="Injuries" details="Last mentioned: event 389-18" />
         </div>
       </div>
-    {:else if activeTab === 'Conscience'}
+    {:else if activeTab === 'Consciousness'}
       <div class="mb-5 space-y-2">
-        <h3 class="text-sm font-semibold uppercase tracking-wider mb-2 border-b border-gray-700 pb-1">Conscience</h3>
-        <KnowledgeStatus state="suspected" label="Anomalie possible" details="Comportement inhabituel" />
-        <KnowledgeStatus state="believed" label="Conscience active" details="Presomption de continuite" />
+        <h3 class="text-sm font-semibold uppercase tracking-wider mb-2 border-b border-gray-700 pb-1">Consciousness</h3>
+        <KnowledgeStatus state="suspected" label="Possible anomaly" details="Unusual behavior" />
+        <KnowledgeStatus state="believed" label="Active consciousness" details="Assumed continuity" />
       </div>
-    {:else if activeTab === 'Connaissances'}
+    {:else if activeTab === 'Knowledge'}
       <div class="mb-5 space-y-2">
-        <h3 class="text-sm font-semibold uppercase tracking-wider mb-2 border-b border-gray-700 pb-1">Connaissances de l'observateur</h3>
-        <KnowledgeStatus state="confirmed" label="Position" details="Observee personnellement" />
-        <KnowledgeStatus state="reported" label="Affiliation" details="Rapport recu de Melody" />
-        <KnowledgeStatus state="rumor" label="Capacite" details="Source non verifiee" />
+        <h3 class="text-sm font-semibold uppercase tracking-wider mb-2 border-b border-gray-700 pb-1">Observer knowledge</h3>
+        <KnowledgeStatus state="confirmed" label="Position" details="Personally observed" />
+        <KnowledgeStatus state="reported" label="Affiliation" details="Report received from Melody" />
+        <KnowledgeStatus state="rumor" label="Ability" details="Unverified source" />
       </div>
     {:else}
       <div class="mb-5">
-        <h3 class="text-sm font-semibold uppercase tracking-wider mb-2 border-b border-gray-700 pb-1">Perspectives divergentes</h3>
-        <p class="text-sm text-gray-300">Certaines perspectives affichent une identite stable, d'autres signalent une contradiction.</p>
+        <h3 class="text-sm font-semibold uppercase tracking-wider mb-2 border-b border-gray-700 pb-1">Diverging perspectives</h3>
+        <p class="text-sm text-gray-300">Some perspectives show a stable identity; others flag a contradiction.</p>
       </div>
     {/if}
 
     <div>
-      <h3 class="text-sm font-semibold uppercase tracking-wider mb-2 border-b border-gray-700 pb-1">Evenements</h3>
+      <h3 class="text-sm font-semibold uppercase tracking-wider mb-2 border-b border-gray-700 pb-1">Events</h3>
       <ul class="space-y-1 text-sm text-gray-300 list-disc list-inside">
         {#each locationDetails.events as event}
           <li>{event}</li>
@@ -106,7 +106,7 @@
     </div>
 
     <div class="mt-auto text-xs text-gray-500">
-      Dernière mise à jour: Événement 04
+      Last updated: Event 04
     </div>
   </div>
 {/if}

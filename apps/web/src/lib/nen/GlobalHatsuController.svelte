@@ -38,7 +38,7 @@
       <button class="release" onclick={deactivateHatsu}>Zetsu · couper</button>
     </section>
   {:else}
-    <button class="sigil launcher" onclick={() => hatsuPanelOpen.set(true)} aria-label="Activer un Hatsu">
+    <button class="sigil launcher" onclick={() => hatsuPanelOpen.set(true)} aria-label="Activate a Hatsu">
       <span class="aura-dot"></span>
       NEN
     </button>
@@ -46,15 +46,15 @@
 
   {#if $hatsuPanelOpen}
     <div class="backdrop" onclick={() => hatsuPanelOpen.set(false)} role="presentation"></div>
-    <section class="picker" aria-label="Sélection du Hatsu">
+    <section class="picker" aria-label="Hatsu selection">
       <header>
         <div>
-          <span class="eyebrow">SYSTÈME D’AURA GLOBAL</span>
-          <h2>Activer une technique</h2>
+          <span class="eyebrow">GLOBAL AURA SYSTEM</span>
+          <h2>Activate a technique</h2>
         </div>
-        <button class="close" onclick={() => hatsuPanelOpen.set(false)} aria-label="Fermer">×</button>
+        <button class="close" onclick={() => hatsuPanelOpen.set(false)} aria-label="Close">×</button>
       </header>
-      <input bind:value={query} placeholder="Technique ou utilisateur…" aria-label="Rechercher un Hatsu" />
+      <input bind:value={query} placeholder="Technique ou utilisateur…" aria-label="Search Hatsu" />
       <div class="ability-list">
         {#each filtered as profile (profile.id)}
           <button class:current={$activeHatsu?.id === profile.id} onclick={() => activateHatsu(profile)} style:--hatsu={profile.color}>

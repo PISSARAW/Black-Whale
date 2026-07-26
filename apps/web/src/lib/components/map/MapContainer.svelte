@@ -130,7 +130,7 @@
         <Room37564 />
       {:else}
         <div class="flex items-center justify-center w-full h-full text-[#FFFFF0]">
-          <h2>Carte détaillée pour {mapState.selectedLocationId} non disponible en V1</h2>
+          <h2>Detailed map for {mapState.selectedLocationId} unavailable in V1</h2>
         </div>
       {/if}
     {:else if mapState.selectedTier === 'tier-1'}
@@ -146,7 +146,7 @@
     {:else}
       <!-- Fallback for other tiers -->
       <div class="flex items-center justify-center w-full h-full text-[#FFFFF0]">
-        <h2>Map pour {mapState.selectedTier} introuvable</h2>
+        <h2>Map for {mapState.selectedTier} not found</h2>
       </div>
     {/if}
 
@@ -155,7 +155,7 @@
         class="absolute top-4 left-4 px-3 py-1 bg-[#1a202c] text-[#e2e8f0] border border-[#4a5568] rounded shadow hover:bg-[#2d3748] z-10 font-bold pointer-events-auto"
         onclick={() => mapState.selectLocation(null)}
       >
-        ← Retour au Tier
+        ← Back to tier
       </button>
     {/if}
 

@@ -60,8 +60,9 @@ export const load: PageServerLoad = async ({ params, cookies }) => {
 		}
 	});
 
-	// If not found with exact slug, try to find by canonicalName
-	if (!character) {
+	// Some legacy seed records use a different slug and own the canonical body.
+	// Fall back to that record when the exact catalog entry has no movement history.
+	if (!character?.originalBody) {
 		const charactersByName = await prisma.character.findMany({
 			where: { canonicalName: jsonCharacter.canonicalName },
 			include: {
@@ -80,7 +81,7 @@ export const load: PageServerLoad = async ({ params, cookies }) => {
 				}
 			}
 		});
-		character = charactersByName[0] || null;
+		character = charactersByName.find((candidate) => candidate.originalBody) || charactersByName[0] || null;
 	}
 
 	// If still not found in database, create a mock character from JSON
@@ -109,6 +110,7 @@ export const load: PageServerLoad = async ({ params, cookies }) => {
 				nen: jsonCharacter.nen || null,
 				mangaAppearances: jsonCharacter.mangaAppearances || [],
 				battles: jsonCharacter.battles || [],
+				competitions: jsonCharacter.competitions || [],
 				abilities: characterAbilities,
 				firstVisibleEvent: {
 					chapter: { number: firstVisibleChapterNumber }
@@ -149,6 +151,7 @@ export const load: PageServerLoad = async ({ params, cookies }) => {
 			nen: jsonCharacter.nen || null,
 			mangaAppearances: jsonCharacter.mangaAppearances || [],
 			battles: jsonCharacter.battles || [],
+			competitions: jsonCharacter.competitions || [],
 			abilities: characterAbilities,
 			firstVisibleEvent: {
 				...character.firstVisibleEvent,

@@ -2,9 +2,9 @@
   import { mapState } from '$lib/state/mapState.svelte';
 
   const unknownCharacters = [
-    { label: 'Nobunaga', state: 'identite connue' },
-    { label: 'Soldat probablement lie a Benjamin', state: 'identite partielle' },
-    { label: 'Deux individus non identifies', state: 'inconnu' }
+    { label: 'Nobunaga', state: 'known identity' },
+    { label: 'Soldier probably linked to Benjamin', state: 'partial identity' },
+    { label: 'Two unidentified individuals', state: 'unknown' }
   ];
 
   const summary = {
@@ -18,15 +18,15 @@
 {#if mapState.filters.showUnknownPositions}
   <div class="absolute bottom-4 left-4 w-72 bg-[#1a1a1a] border border-gray-700 text-[#FFFFF0] p-4 shadow-lg z-40 rounded-lg">
     <div class="flex justify-between items-center mb-3 pb-2 border-b border-gray-700">
-      <h3 class="text-sm font-bold text-gray-400 uppercase tracking-wider">Localisation inconnue</h3>
+      <h3 class="text-sm font-bold text-gray-400 uppercase tracking-wider">Unknown location</h3>
       <button onclick={() => mapState.filters.showUnknownPositions = false} class="text-gray-500 hover:text-white">✕</button>
     </div>
 
     <div class="text-xs mb-3 p-2 border border-gray-700 rounded bg-[#121212] space-y-1">
-      <p>{summary.bodies} corps detectes</p>
-      <p>{summary.identified} personnes identifiees</p>
-      <p>{summary.partial} personnes partiellement identifiees</p>
-      <p>{summary.unknown} personnes inconnues</p>
+      <p>{summary.bodies} bodies detected</p>
+      <p>{summary.identified} people identified</p>
+      <p>{summary.partial} people partially identified</p>
+      <p>{summary.unknown} unknown people</p>
     </div>
     
     <ul class="space-y-2 text-sm">

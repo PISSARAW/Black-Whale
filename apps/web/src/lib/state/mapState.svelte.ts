@@ -9,7 +9,7 @@ export const mapState = $state({
   selectedLocationId: null as string | null,
   selectedPerspectiveId: 'reader' as string,
   selectedPerspectiveKind: 'reader' as PerspectiveKind,
-  selectedPerspectiveName: 'Vue du lecteur' as string,
+  selectedPerspectiveName: 'Reader view' as string,
   followMode: 'consciousness' as FollowMode,
   compareWithReader: false,
   explainPanelOpen: false,

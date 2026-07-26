@@ -7,19 +7,19 @@
   let states = $derived(data.states);
 
   const appearanceLabels: Record<string, string> = {
-    debut: 'Début',
-    appears: 'Apparaît',
-    mentioned: 'Mentionné',
-    pictured: 'Illustré',
-    death: 'Mort',
-    corpse: 'Cadavre',
+    debut: 'Debut',
+    appears: 'Appears',
+    mentioned: 'Mentioned',
+    pictured: 'Pictured',
+    death: 'Death',
+    corpse: 'Bodye',
     flashback: 'Flashback',
     vision: 'Vision',
-    voice: 'Voix',
-    soul: 'Âme',
+    voice: 'Voice',
+    soul: 'Soul',
     clone: 'Clone',
-    impersonated: 'Usurpation',
-    disguised: 'Déguisé',
+    impersonated: 'Impersonated',
+    disguised: 'Disguised',
     absent: 'Absent'
   };
 
@@ -45,7 +45,7 @@
 
 <div class="p-6 max-w-5xl mx-auto">
   <div class="mb-6">
-    <a href="/characters" class="text-bw-gold hover:underline">← Retour aux personnages</a>
+    <a href="/characters" class="text-bw-gold hover:underline">← Back to characters</a>
   </div>
 
   <header class="bg-[#111] border border-[#333] rounded-lg p-6 mb-8">
@@ -57,14 +57,14 @@
         {/if}
       </div>
       <div class="flex flex-wrap gap-3">
-        <span class="px-3 py-1 bg-bw-gold/10 text-bw-gold rounded-full text-sm border border-bw-gold/30">Apparu Ch. {character.firstVisibleEvent.chapter.number}</span>
+        <span class="px-3 py-1 bg-bw-gold/10 text-bw-gold rounded-full text-sm border border-bw-gold/30">First seen Ch. {character.firstVisibleEvent.chapter.number}</span>
         {#if character.nen}
           <span class="px-3 py-1 bg-red-950/40 text-red-300 rounded-full text-sm border border-red-800/40">
             Nen · {character.nen.typeLabel}{character.nen.secondaryTypeLabels?.length ? ` / ${character.nen.secondaryTypeLabels.join(' / ')}` : ''}
           </span>
         {/if}
         {#if character.suspectedAllegiance}
-          <span class="px-3 py-1 bg-amber-950/40 text-amber-300 rounded-full text-sm border border-amber-800/40">Allégeance suspectée · {character.suspectedAllegiance}</span>
+          <span class="px-3 py-1 bg-amber-950/40 text-amber-300 rounded-full text-sm border border-amber-800/40">Suspected allegiance · {character.suspectedAllegiance}</span>
         {/if}
       </div>
     </div>
@@ -78,7 +78,7 @@
           <p class="mt-2 text-sm leading-relaxed text-amber-100">{character.identity.description}</p>
         </div>
         <a class="shrink-0 rounded-lg border border-amber-600/40 px-3 py-2 text-sm text-amber-300 hover:bg-amber-900/30" href={`/characters/${character.identity.counterpartId}`}>
-          Voir {character.identity.counterpartLabel}
+          View {character.identity.counterpartLabel}
         </a>
       </div>
     </section>
@@ -86,7 +86,7 @@
 
   {#if character.biography?.length}
     <section class="bg-[#0b0b0b] border border-[#2a2a2a] rounded-xl p-6 mb-8">
-      <h2 class="text-2xl font-bold text-gray-100 border-b border-[#2a2a2a] pb-4 mb-4">Parcours</h2>
+      <h2 class="text-2xl font-bold text-gray-100 border-b border-[#2a2a2a] pb-4 mb-4">Biography</h2>
       <div class="space-y-4 text-sm text-gray-300 leading-relaxed">
         {#each character.biography as paragraph}
           <p>{paragraph}</p>
@@ -97,14 +97,14 @@
 
   {#if character.abilitiesAndPowers}
     <section class="bg-[#0b0b0b] border border-[#2a2a2a] rounded-xl p-6 mb-8">
-      <h2 class="text-2xl font-bold text-gray-100 border-b border-[#2a2a2a] pb-4 mb-4">Aptitudes et pouvoirs</h2>
+      <h2 class="text-2xl font-bold text-gray-100 border-b border-[#2a2a2a] pb-4 mb-4">Abilities and powers</h2>
       <p class="text-sm text-gray-300 leading-relaxed">{character.abilitiesAndPowers}</p>
     </section>
   {/if}
 
   {#if character.equipment?.length}
     <section class="bg-[#0b0b0b] border border-[#2a2a2a] rounded-xl p-6 mb-8">
-      <h2 class="text-2xl font-bold text-gray-100 border-b border-[#2a2a2a] pb-4 mb-4">Équipement</h2>
+      <h2 class="text-2xl font-bold text-gray-100 border-b border-[#2a2a2a] pb-4 mb-4">Equipment</h2>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
         {#each character.equipment as item}
           <article class="rounded-lg border border-[#303030] bg-[#111] p-4">
@@ -130,7 +130,7 @@
           <p>{character.nen.overview}</p>
           {#if character.nen.waterDivination}
             <div class="rounded-lg border border-blue-900/40 bg-blue-950/20 p-4">
-              <h3 class="font-semibold text-blue-200 mb-1">Divination par l'eau</h3>
+              <h3 class="font-semibold text-blue-200 mb-1">Water divination</h3>
               <p class="text-gray-400">{character.nen.waterDivination}</p>
             </div>
           {/if}
@@ -155,7 +155,7 @@
                 <p class="text-xs text-gray-500 mt-1">{ability.alternateNames.join(' · ')}</p>
               {/if}
               {#if ability.inheritedFrom}
-                <p class="text-xs text-bw-gold/70 mt-2">Héritée de {ability.inheritedFrom}</p>
+                <p class="text-xs text-bw-gold/70 mt-2">Inherited from {ability.inheritedFrom}</p>
               {/if}
               <p class="text-sm text-gray-300 leading-relaxed mt-4">{ability.description}</p>
             </article>
@@ -168,7 +168,7 @@
   {#if character.guardianSpiritBeast}
     <section class="bg-[#0b0b0b] border border-violet-900/40 rounded-xl p-6 mb-8">
       <div class="flex flex-wrap items-center justify-between gap-3 border-b border-[#2a2a2a] pb-4 mb-4">
-        <h2 class="text-2xl font-bold text-gray-100">Bête spirituelle gardienne</h2>
+        <h2 class="text-2xl font-bold text-gray-100">Guardian Spirit Beast</h2>
         <span class="text-xs uppercase tracking-widest text-violet-300">{character.guardianSpiritBeast.type}</span>
       </div>
       <p class="text-sm text-gray-300 leading-relaxed">{character.guardianSpiritBeast.description}</p>
@@ -187,7 +187,7 @@
 
   <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
     <section>
-      <h2 class="text-2xl font-bold text-gray-100 mb-6 border-b border-[#333] pb-2">Historique des déplacements</h2>
+      <h2 class="text-2xl font-bold text-gray-100 mb-6 border-b border-[#333] pb-2">Movement history</h2>
       
       {#if presences.length > 0}
         <div class="relative border-l border-[#333] ml-3 space-y-6">
@@ -195,23 +195,23 @@
             <div class="relative pl-6">
               <div class="absolute w-3 h-3 bg-bw-gold rounded-full -left-[6.5px] top-1.5 ring-4 ring-[#050505]"></div>
               <div class="bg-[#111] border border-[#222] p-4 rounded-lg">
-                <div class="text-xs text-gray-400 mb-1">Ch. {presence.fromEvent.chapter.number} — Séquence {presence.fromEvent.sequence}</div>
-                <h3 class="font-bold text-white mb-1">Position : {presence.location?.name || 'Inconnue'}</h3>
-                <p class="text-sm text-gray-400">Certitude : <span class="text-gray-300">{presence.certainty}</span></p>
+                <div class="text-xs text-gray-400 mb-1">Ch. {presence.fromEvent.chapter.number} — Sequence {presence.fromEvent.sequence}</div>
+                <h3 class="font-bold text-white mb-1">Position: {presence.location?.name || 'Unknown'}</h3>
+                <p class="text-sm text-gray-400">Certainty: <span class="text-gray-300">{presence.certainty}</span></p>
                 {#if presence.untilEvent}
-                  <div class="mt-2 text-xs text-gray-500 border-t border-[#333] pt-2">Jusqu'au Ch. {presence.untilEvent.chapter.number}</div>
+                  <div class="mt-2 text-xs text-gray-500 border-t border-[#333] pt-2">Until Ch. {presence.untilEvent.chapter.number}</div>
                 {/if}
               </div>
             </div>
           {/each}
         </div>
       {:else}
-        <p class="text-gray-500 italic">Aucun déplacement connu.</p>
+        <p class="text-gray-500 italic">No known movements.</p>
       {/if}
     </section>
 
     <section>
-      <h2 class="text-2xl font-bold text-gray-100 mb-6 border-b border-[#333] pb-2">États biologiques & statut</h2>
+      <h2 class="text-2xl font-bold text-gray-100 mb-6 border-b border-[#333] pb-2">Biological states & status</h2>
       
       {#if states.length > 0}
         <div class="relative border-l border-[#333] ml-3 space-y-6">
@@ -226,22 +226,35 @@
           {/each}
         </div>
       {:else}
-        <p class="text-gray-500 italic">Aucun état particulier enregistré.</p>
+        <p class="text-gray-500 italic">No specific state recorded.</p>
       {/if}
     </section>
   </div>
 
   {#if character.battles?.length}
     <section class="mb-8">
-      <h2 class="text-2xl font-bold text-gray-100 mb-4 border-b border-[#333] pb-2">Combats</h2>
+      <h2 class="text-2xl font-bold text-gray-100 mb-4 border-b border-[#333] pb-2">Battles</h2>
       <div class="grid gap-3">
         {#each character.battles as battle}
           <article class="rounded-lg border border-red-900/30 bg-red-950/10 p-4 flex flex-wrap items-center justify-between gap-3">
             <div>
-              <p class="font-semibold text-gray-100">{battle.label || `${character.canonicalName} contre ${battle.opponents.join(', ')}`}</p>
-              <p class="text-xs text-gray-500 mt-1">Arc {battle.arc}</p>
+              <p class="font-semibold text-gray-100">{typeof battle === 'string' ? battle : battle.label || `${character.canonicalName} vs. ${(battle.opponents || []).join(', ')}`}</p>
+              {#if typeof battle !== 'string' && battle.arc}<p class="text-xs text-gray-500 mt-1">Arc {battle.arc}</p>{/if}
             </div>
-            <span class="text-sm text-red-300">Chapitre {battle.chapter}</span>
+            {#if typeof battle !== 'string' && battle.chapter}<span class="text-sm text-red-300">Chapter {battle.chapter}</span>{/if}
+          </article>
+        {/each}
+      </div>
+    </section>
+  {/if}
+
+  {#if character.competitions?.length}
+    <section class="mb-8">
+      <h2 class="text-2xl font-bold text-gray-100 mb-4 border-b border-[#333] pb-2">Battles</h2>
+      <div class="grid gap-3">
+        {#each character.competitions as competition}
+          <article class="rounded-lg border border-violet-900/30 bg-violet-950/10 p-4">
+            <p class="font-semibold text-gray-100">{typeof competition === 'string' ? competition : competition.label}</p>
           </article>
         {/each}
       </div>
@@ -252,8 +265,8 @@
     <section>
       <div class="flex flex-wrap items-end justify-between gap-3 mb-4 border-b border-[#333] pb-2">
         <div>
-          <h2 class="text-2xl font-bold text-gray-100">Apparitions dans le manga</h2>
-          <p class="text-sm text-gray-500 mt-1">Arc de la Guerre de Succession · chapitres 340 à 414</p>
+          <h2 class="text-2xl font-bold text-gray-100">Manga appearances</h2>
+          <p class="text-sm text-gray-500 mt-1">Succession War arc · chapters 340–414</p>
         </div>
         <p class="text-xs text-gray-500">{character.mangaAppearances.filter((entry: any) => entry.status !== 'absent').length} occurrences</p>
       </div>

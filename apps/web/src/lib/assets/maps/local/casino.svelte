@@ -23,7 +23,7 @@
     
     <!-- Left Area: Slot Machines -->
     <rect class="zone" x="0" y="0" width="300" height="500" onclick={() => handleElementClick('slot-machines')} />
-    <text x="150" y="40" class="label text-yellow-500">Machines à Sous</text>
+    <text x="150" y="40" class="label text-yellow-500">Slot Machines</text>
     
     {#each Array(4) as _, row}
       {#each Array(3) as _, col}
@@ -41,7 +41,7 @@
 
     <!-- Center/Right Area: Poker Tables -->
     <rect class="zone" x="350" y="0" width="550" height="500" onclick={() => handleElementClick('poker-tables')} />
-    <text x="625" y="40" class="label text-green-400">Tables de Poker (Variantes non-conventionnelles)</text>
+    <text x="625" y="40" class="label text-green-400">Poker Tables (Unconventional Variants)</text>
     
     <!-- Table 1 -->
     <g transform="translate(450, 150)">

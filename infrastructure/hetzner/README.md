@@ -21,7 +21,7 @@ chmod 600 .env.production
 openssl rand -base64 48
 ```
 
-Generate a different random value for every secret. Use `openssl rand -hex 32` for PostgreSQL and Redis passwords so they remain safe inside connection URLs; base64 is suitable for the session secret. Set `DOMAIN` and `ACME_EMAIL`. Never commit `.env.production`.
+Generate a different random value for every secret. Use `openssl rand -hex 32` for the PostgreSQL password so it remains safe inside the connection URL; base64 is suitable for the session secret. Set `DOMAIN` and `ACME_EMAIL`. Never commit `.env.production`.
 
 ## 3. First deployment and upgrades
 

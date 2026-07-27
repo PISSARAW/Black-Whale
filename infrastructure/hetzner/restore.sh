@@ -20,7 +20,7 @@ echo "This replaces all data in database '$POSTGRES_DB'. Type the database name 
 read -r confirmation
 [ "$confirmation" = "$POSTGRES_DB" ] || { echo "Restore cancelled."; exit 1; }
 
-docker compose --env-file "$env_file" -f "$compose_file" stop api web admin worker backup
+docker compose --env-file "$env_file" -f "$compose_file" stop web admin backup
 docker compose --env-file "$env_file" -f "$compose_file" exec -T postgres \
   dropdb --username "$POSTGRES_USER" --if-exists "$POSTGRES_DB"
 docker compose --env-file "$env_file" -f "$compose_file" exec -T postgres \

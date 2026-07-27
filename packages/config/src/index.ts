@@ -1,7 +1,6 @@
 /** Shared environment variable schema */
 export const ENV_SCHEMA = {
   DATABASE_URL: { required: true, description: 'PostgreSQL connection string' },
-  REDIS_URL: { required: true, description: 'Redis connection string' },
   SESSION_SECRET: { required: true, description: 'Secret for session signing' },
   STORAGE_BUCKET: { required: false, description: 'S3 / R2 bucket name' },
   STORAGE_ENDPOINT: { required: false, description: 'S3 / R2 endpoint URL' },

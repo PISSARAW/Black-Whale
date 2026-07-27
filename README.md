@@ -16,8 +16,7 @@ Docker deployment on Hetzner.
 black-whale/
 ├── apps/
 │   ├── web/       # Public SvelteKit app (port 3000)
-│   ├── admin/     # Back-office SvelteKit app (port 3002)
-│   └── worker/    # Async jobs (snapshots, cache warming)
+│   └── admin/     # Back-office SvelteKit app (port 3002)
 │
 ├── packages/
 │   ├── domain/              # Shared TypeScript models & domain events
@@ -74,7 +73,6 @@ black-whale/
 - Node ≥ 20
 - pnpm ≥ 9
 - PostgreSQL database running locally
-- Redis 7 when running the complete stack
 
 ### Install
 
@@ -140,7 +138,7 @@ pnpm test
 ## Production on Hetzner
 
 The production topology exposes only ports 80 and 443 through Caddy. The web,
-admin, PostgreSQL, and Redis services remain on a private Docker network.
+admin and PostgreSQL services remain on a private Docker network.
 The admin panel requires an authenticated, signed, HTTP-only session.
 
 Prepare the configuration and generate a different secret for every variable:
@@ -148,7 +146,7 @@ Prepare the configuration and generate a different secret for every variable:
 ```bash
 cp .env.production.example .env.production
 chmod 600 .env.production
-# Use `openssl rand -hex 32` for PostgreSQL and Redis passwords.
+# Use `openssl rand -hex 32` for the PostgreSQL password.
 ```
 
 After configuring the domain and its `admin` DNS record, deploy with:

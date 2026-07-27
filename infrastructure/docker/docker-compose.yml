@@ -15,18 +15,6 @@ services:
       timeout: 5s
       retries: 5
 
-  redis:
-    image: redis:7-alpine
-    ports:
-      - "6379:6379"
-    volumes:
-      - redis_data:/data
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
   migrate:
     build:
       context: ../..
@@ -65,19 +53,5 @@ services:
       migrate:
         condition: service_completed_successfully
 
-  worker:
-    build:
-      context: ../..
-      dockerfile: infrastructure/docker/Dockerfile.worker
-    environment:
-      DATABASE_URL: "postgresql://${POSTGRES_USER:-bw_user}:${POSTGRES_PASSWORD:-bw_password}@postgres:5432/${POSTGRES_DB:-black_whale}"
-      REDIS_URL: redis://redis:6379
-    depends_on:
-      postgres:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-
 volumes:
   postgres_data:
-  redis_data:

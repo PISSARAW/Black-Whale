@@ -24,22 +24,6 @@ services:
       retries: 10
     security_opt: [no-new-privileges:true]
 
-  redis:
-    image: redis:7-alpine
-    restart: unless-stopped
-    command: [redis-server, --appendonly, "yes", --requirepass, "${REDIS_PASSWORD:?Set REDIS_PASSWORD in .env.production}"]
-    volumes:
-      - redis_data:/data
-    networks: [backend]
-    healthcheck:
-      test: [CMD-SHELL, 'REDISCLI_AUTH="$${REDIS_PASSWORD}" redis-cli ping | grep PONG']
-      interval: 10s
-      timeout: 5s
-      retries: 10
-    environment:
-      REDIS_PASSWORD: ${REDIS_PASSWORD:?Set REDIS_PASSWORD in .env.production}
-    security_opt: [no-new-privileges:true]
-
   migrate:
     <<: *app
     build:
@@ -107,19 +91,6 @@ services:
     depends_on:
       migrate: { condition: service_completed_successfully }
 
-  worker:
-    <<: *app
-    build:
-      context: ../..
-      dockerfile: infrastructure/docker/Dockerfile.worker
-    environment:
-      NODE_ENV: production
-      DATABASE_URL: postgresql://${POSTGRES_USER:-bw_user}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-black_whale}
-      REDIS_URL: redis://:${REDIS_PASSWORD}@redis:6379
-    depends_on:
-      migrate: { condition: service_completed_successfully }
-      redis: { condition: service_healthy }
-
   backup:
     restart: unless-stopped
     build:
@@ -165,6 +136,5 @@ networks:
 volumes:
   postgres_data:
   postgres_backups:
-  redis_data:
   caddy_data:
   caddy_config:

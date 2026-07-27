@@ -31,15 +31,6 @@
 	}
 }
 
-api.{$DOMAIN} {
-	import security_headers
-	header X-Robots-Tag "noindex, nofollow"
-	encode zstd gzip
-	reverse_proxy api:3001 {
-		import client_ip
-	}
-}
-
 admin.{$DOMAIN} {
 	import security_headers
 	# The back-office holds unpublished editorial data: keep it out of indexes

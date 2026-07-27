@@ -44,56 +44,24 @@ services:
     <<: *app
     build:
       context: ../..
-      dockerfile: infrastructure/docker/Dockerfile.api
-    command: [pnpm, --filter, "@black-whale/database", migrate:deploy]
+      dockerfile: infrastructure/docker/Dockerfile.migrate
     restart: "no"
     environment:
       NODE_ENV: production
       DATABASE_URL: postgresql://${POSTGRES_USER:-bw_user}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-black_whale}
-      REDIS_URL: redis://:${REDIS_PASSWORD}@redis:6379
-      JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET in .env.production}
-      ADMIN_PASSWORD: ${ADMIN_PASSWORD:?Set ADMIN_PASSWORD in .env.production}
-      WEB_ORIGIN: https://${DOMAIN:?Set DOMAIN in .env.production}
     depends_on:
       postgres: { condition: service_healthy }
-
-  api:
-    <<: *app
-    build:
-      context: ../..
-      dockerfile: infrastructure/docker/Dockerfile.api
-    environment:
-      NODE_ENV: production
-      PORT: "3001"
-      DATABASE_URL: postgresql://${POSTGRES_USER:-bw_user}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-black_whale}
-      REDIS_URL: redis://:${REDIS_PASSWORD}@redis:6379
-      JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET in .env.production}
-      ADMIN_PASSWORD: ${ADMIN_PASSWORD:?Set ADMIN_PASSWORD in .env.production}
-      WEB_ORIGIN: https://${DOMAIN:?Set DOMAIN in .env.production}
-    expose: ["3001"]
-    healthcheck:
-      test: [CMD, wget, -qO-, http://127.0.0.1:3001/health]
-      interval: 15s
-      timeout: 5s
-      retries: 10
-      start_period: 20s
-    depends_on:
-      migrate: { condition: service_completed_successfully }
-      redis: { condition: service_healthy }
 
   web:
     <<: *app
     build:
       context: ../..
       dockerfile: infrastructure/docker/Dockerfile.web
-      args:
-        VITE_API_URL: ${API_PUBLIC_URL:?Set API_PUBLIC_URL in .env.production}
     environment:
       NODE_ENV: production
       PORT: "3000"
       HOST: 0.0.0.0
       ORIGIN: https://${DOMAIN:?Set DOMAIN in .env.production}
-      API_URL: http://api:3001
       # Caddy is the single hop in front of this container, so the last entry of
       # X-Forwarded-For is the real client. Without these two, every request
       # appears to come from the Docker bridge address.
@@ -109,7 +77,7 @@ services:
       retries: 10
       start_period: 20s
     depends_on:
-      api: { condition: service_healthy }
+      migrate: { condition: service_completed_successfully }
 
   admin:
     <<: *app
@@ -188,7 +156,6 @@ services:
     depends_on:
       web: { condition: service_healthy }
       admin: { condition: service_healthy }
-      api: { condition: service_healthy }
     security_opt: [no-new-privileges:true]
 
 networks:

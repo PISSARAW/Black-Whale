@@ -13,7 +13,6 @@
   },
   "dependencies": {
     "@black-whale/ability-modules": "workspace:*",
-    "@black-whale/contracts": "workspace:*",
     "@black-whale/database": "workspace:*",
     "@black-whale/domain": "workspace:*",
     "@black-whale/identity-engine": "workspace:*",

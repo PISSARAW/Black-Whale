@@ -5,8 +5,6 @@ WORKDIR /app
 COPY . .
 RUN pnpm install --frozen-lockfile
 RUN pnpm --filter @black-whale/database generate
-ARG VITE_API_URL=http://localhost:3001
-ENV VITE_API_URL=$VITE_API_URL
 RUN pnpm turbo build --filter=@black-whale/web
 
 FROM node:20-alpine AS runner

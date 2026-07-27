@@ -27,27 +27,10 @@ services:
       timeout: 5s
       retries: 5
 
-  api:
-    build:
-      context: ../..
-      dockerfile: infrastructure/docker/Dockerfile.api
-    ports:
-      - "3001:3001"
-    environment:
-      NODE_ENV: development
-      DATABASE_URL: "postgresql://${POSTGRES_USER:-bw_user}:${POSTGRES_PASSWORD:-bw_password}@postgres:5432/${POSTGRES_DB:-black_whale}"
-      REDIS_URL: redis://redis:6379
-      PORT: "3001"
-    depends_on:
-      migrate:
-        condition: service_completed_successfully
-      redis:
-        condition: service_healthy
-
   migrate:
     build:
       context: ../..
-      dockerfile: infrastructure/docker/Dockerfile.api
+      dockerfile: infrastructure/docker/Dockerfile.migrate
     # Fresh development stacks have no Prisma migration history yet. db push
     # creates the single canonical Prisma schema; production upgrades use the
     # reviewed additive migration in packages/database/prisma/migrations.
@@ -65,11 +48,10 @@ services:
     ports:
       - "3000:3000"
     environment:
-      API_URL: http://api:3001
-      VITE_API_URL: http://api:3001
       DATABASE_URL: "postgresql://${POSTGRES_USER:-bw_user}:${POSTGRES_PASSWORD:-bw_password}@postgres:5432/${POSTGRES_DB:-black_whale}"
     depends_on:
-      - api
+      migrate:
+        condition: service_completed_successfully
 
   admin:
     build:
@@ -78,10 +60,10 @@ services:
     ports:
       - "3002:3002"
     environment:
-      API_URL: http://api:3001
       DATABASE_URL: "postgresql://${POSTGRES_USER:-bw_user}:${POSTGRES_PASSWORD:-bw_password}@postgres:5432/${POSTGRES_DB:-black_whale}"
     depends_on:
-      - api
+      migrate:
+        condition: service_completed_successfully
 
   worker:
     build:

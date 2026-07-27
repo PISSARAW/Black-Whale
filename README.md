@@ -4,7 +4,7 @@
 
 Track bodies, consciousnesses, Nen abilities, and character knowledge across every chapter of the Black Whale arc.
 
-🚀 **Status:** Production-ready — the application, API, administration panel,
+🚀 **Status:** Production-ready — the application, administration panel,
 database migrations, HTTPS proxy, healthchecks, and backups are ready for a
 Docker deployment on Hetzner.
 
@@ -17,12 +17,10 @@ black-whale/
 ├── apps/
 │   ├── web/       # Public SvelteKit app (port 3000)
 │   ├── admin/     # Back-office SvelteKit app (port 3002)
-│   ├── api/       # NestJS REST API (port 3001)
 │   └── worker/    # Async jobs (snapshots, cache warming)
 │
 ├── packages/
 │   ├── domain/              # Shared TypeScript models & domain events
-│   ├── contracts/           # API DTOs shared between frontend & backend
 │   ├── database/            # Prisma schema and PostgreSQL client
 │   ├── world-engine/        # Pure event reducer, invariants, cursors & projections
 │   ├── timeline-engine/     # Reconstructs world state at any event
@@ -58,9 +56,8 @@ black-whale/
 | Layer | Tech |
 |---|---|
 | Frontend | SvelteKit 5, Tailwind CSS, TanStack Query |
-| Backend | NestJS 10, Fastify |
+| Server | SvelteKit load functions and form actions |
 | Database | PostgreSQL 16 |
-| Cache | Redis 7 |
 | ORM | Prisma |
 | Reverse proxy | Caddy with automatic HTTPS |
 | Deployment | Docker Compose on Hetzner Cloud |
@@ -90,7 +87,7 @@ pnpm install
 Make sure to create `.env` files in your applications with a valid database connection string:
 
 ```bash
-# Set your DATABASE_URL in the .env file (apps/api, apps/web, apps/admin, packages/database)
+# Set your DATABASE_URL in the .env file (apps/web, apps/admin, packages/database)
 DATABASE_URL="postgresql://<user>@localhost:5432/blackwhale?schema=public"
 ```
 
@@ -118,7 +115,6 @@ docker compose -f infrastructure/docker/docker-compose.yml up --build
 pnpm dev
 
 # Individual apps
-pnpm --filter "@black-whale/api" dev
 pnpm --filter "@black-whale/web" dev
 pnpm --filter "@black-whale/admin" dev
 ```
@@ -144,7 +140,7 @@ pnpm test
 ## Production on Hetzner
 
 The production topology exposes only ports 80 and 443 through Caddy. The web,
-API, admin, PostgreSQL, and Redis services remain on a private Docker network.
+admin, PostgreSQL, and Redis services remain on a private Docker network.
 The admin panel requires an authenticated, signed, HTTP-only session.
 
 Prepare the configuration and generate a different secret for every variable:
@@ -155,7 +151,7 @@ chmod 600 .env.production
 # Use `openssl rand -hex 32` for PostgreSQL and Redis passwords.
 ```
 
-After configuring the domain and its `api` and `admin` DNS records, deploy with:
+After configuring the domain and its `admin` DNS record, deploy with:
 
 ```bash
 ./infrastructure/hetzner/deploy.sh
@@ -168,7 +164,6 @@ and renews the TLS certificates automatically.
 | Service | Production URL |
 |---|---|
 | Public application | `https://<domain>` |
-| REST API | `https://api.<domain>` |
 | Administration | `https://admin.<domain>` |
 | Health endpoints | `/health` on each application service |
 
@@ -196,14 +191,12 @@ canonical event or simulation branch identifies a `StoryCursor`; the pure
 those same events; and the map consumes a `MapScene` projection instead of
 reimplementing domain rules in Svelte.
 
-### Simulation branch API
+### Simulation branches
 
-```text
-POST /v1/simulations                         create a fork at a canonical event
-GET  /v1/simulations/:branchId               read its projected world state
-POST /v1/simulations/:branchId/actions       execute a typed action/Hatsu
-GET  /v1/simulations/:branchId/map-scene     project the branch on the map
-```
+`/simulations` forks the canonical timeline at an event, executes typed
+actions against the branch, and projects the result on the map — all through
+`SimulationStore` in `packages/simulation-engine`, called directly from the
+route's load function and form actions.
 
 ---
 
@@ -217,15 +210,3 @@ GET  /v1/simulations/:branchId/map-scene     project the branch on the map
 | **v4** | Ability modules migrated to the shared runtime | 🏗️ In progress |
 | **v5** | Persistent branches and map projections | 🏗️ First vertical shipped |
 
----
-
-## API docs
-
-In development, Swagger documentation is available at:
-
-```
-http://localhost:3001/docs
-```
-
-Swagger is disabled in production by default. Set `ENABLE_API_DOCS=true` only
-when public API documentation is intentionally required.

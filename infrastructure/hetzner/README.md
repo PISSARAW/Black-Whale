@@ -9,7 +9,6 @@ Create a server with at least 2 vCPU, 4 GB RAM, and 40 GB disk. Attach an SSH ke
 Point these DNS records to the server before starting Caddy:
 
 - `example.com`
-- `api.example.com`
 - `admin.example.com`
 
 Install Docker Engine and its Compose plugin from Docker's official Debian/Ubuntu repository. Add the deployment user to the `docker` group, clone the repository, and keep the checkout under a dedicated directory such as `/opt/black-whale`.
@@ -22,7 +21,7 @@ chmod 600 .env.production
 openssl rand -base64 48
 ```
 
-Generate a different random value for every secret. Use `openssl rand -hex 32` for PostgreSQL and Redis passwords so they remain safe inside connection URLs; base64 is suitable for the JWT and session secrets. Set `DOMAIN`, `API_PUBLIC_URL=https://api.<domain>`, and `ACME_EMAIL`. Never commit `.env.production`.
+Generate a different random value for every secret. Use `openssl rand -hex 32` for PostgreSQL and Redis passwords so they remain safe inside connection URLs; base64 is suitable for the session secret. Set `DOMAIN` and `ACME_EMAIL`. Never commit `.env.production`.
 
 ## 3. First deployment and upgrades
 

@@ -1,0 +1,12 @@
+FROM node:20-alpine
+RUN apk add --no-cache openssl libc6-compat
+RUN corepack enable
+WORKDIR /app
+COPY . .
+# The Prisma CLI is a dev dependency of the database package, so the install has
+# to happen before NODE_ENV is pinned to production.
+RUN pnpm install --frozen-lockfile
+RUN pnpm --filter @black-whale/database generate
+ENV NODE_ENV=production
+USER node
+CMD ["pnpm", "--filter", "@black-whale/database", "migrate:deploy"]

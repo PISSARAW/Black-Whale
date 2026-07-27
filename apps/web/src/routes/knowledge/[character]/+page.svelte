@@ -34,7 +34,7 @@
   <section class="bw-panel p-4">
     <h2 class="text-sm uppercase tracking-widest text-slate-400 mb-3">Information state</h2>
     <div class="grid sm:grid-cols-2 gap-2">
-      {#each entries as entry}
+      {#each entries as entry, entryIndex (entryIndex)}
         <KnowledgeStatus state={entry.state} label={entry.label} details={entry.details} />
       {/each}
     </div>

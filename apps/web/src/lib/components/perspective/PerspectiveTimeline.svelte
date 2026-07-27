@@ -30,11 +30,11 @@
 </script>
 
 <section class="timeline-v2" aria-label="Multi-stream timeline">
-  {#each lines as line}
+  {#each lines as line, lineIndex (lineIndex)}
     <div class="line">
       <h3>{line.label}</h3>
       <ol>
-        {#each line.points as point}
+        {#each line.points as point, pointIndex (pointIndex)}
           <li class:active={point.index <= currentIndex} class:emphasis={point.emphasis}>
             <span class="dot" aria-hidden="true">●</span>
             <span class="text">{point.label}</span>

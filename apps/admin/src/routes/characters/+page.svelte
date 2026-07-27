@@ -130,7 +130,7 @@
           <td colspan="7" class="px-4 py-6 text-center text-gray-400">No characters found</td>
         </tr>
       {:else}
-        {#each filteredCharacters as character}
+        {#each filteredCharacters as character (character.id)}
           <tr class="border-t border-gray-100 hover:bg-gray-50">
             <td class="px-4 py-3 font-medium text-gray-900">{character.canonicalName}</td>
             <td class="px-4 py-3 text-gray-600">{character.slug}</td>
@@ -220,7 +220,7 @@
             name="narrativeImportance"
             class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-bw-gold focus:border-transparent"
           >
-            {#each narrativeImportanceOptions as option}
+            {#each narrativeImportanceOptions as option (option.value)}
               <option value={option.value}>{option.label}</option>
             {/each}
           </select>
@@ -246,7 +246,7 @@
             class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-bw-gold focus:border-transparent"
           >
             <option value="">Select an event...</option>
-            {#each events as event}
+            {#each events as event (event.id)}
               <option value={event.id}>{event.title} (Seq: {event.sequence})</option>
             {/each}
           </select>
@@ -255,7 +255,7 @@
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-1">Aliases</label>
           <div class="space-y-2">
-            {#each newCharacter.aliases as alias, index}
+            {#each newCharacter.aliases as alias, index (index)}
               <div class="flex gap-2">
                 <input
                   type="text"

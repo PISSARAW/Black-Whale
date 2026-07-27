@@ -62,7 +62,7 @@
   <meta name="twitter:description" content={description} />
   <meta name="twitter:image" content={image} />
 
-  {#each nodes as node}
+  {#each nodes as node, nodeIndex (nodeIndex)}
     <!-- eslint-disable-next-line svelte/no-at-html-tags, no-useless-escape -->
     {@html `<script type="application/ld+json">${serialise(node)}<\/script>`}
   {/each}

@@ -30,7 +30,7 @@
       value={selectedPerspective}
       onchange={(event) => onPerspectiveSelect(event.currentTarget.value)}
     >
-      {#each options as option}
+      {#each options as option (option.id)}
         <option value={option.id}>{option.label}</option>
       {/each}
     </select>
@@ -39,7 +39,7 @@
   <div class="follow-control">
     <h2>Tracking</h2>
     <ul role="radiogroup" aria-label="Choose tracking mode">
-      {#each followOptions as option}
+      {#each followOptions as option (option.id)}
         <li>
           <button
             type="button"

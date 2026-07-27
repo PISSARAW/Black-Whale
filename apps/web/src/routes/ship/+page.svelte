@@ -380,7 +380,7 @@
           <span class="tier-arrow">↗</span>
         </button>
 
-        {#each [1, 2, 3, 4, 5] as tierNum}
+        {#each [1, 2, 3, 4, 5] as tierNum (tierNum)}
           <button
             class:active={mapState.selectedTier === `tier-${tierNum}`}
             aria-current={mapState.selectedTier === `tier-${tierNum}` ? 'page' : undefined}
@@ -410,7 +410,7 @@
           <span>Factions</span><small>{mapState.filters.factions.length} active</small>
         </div>
         <div class="filter-grid faction-identities">
-          {#each factions as faction}
+          {#each factions as faction (faction.id)}
             <label
               class:active={mapState.filters.factions.includes(faction.id)}
               style={`--faction:${faction.color}`}
@@ -470,7 +470,8 @@
               value={mapState.selectedPerspectiveId}
               onchange={(event) => handlePerspectiveSelect(event.currentTarget.value)}
             >
-              {#each perspectiveOptions as option}<option value={option.id}>{option.label}</option
+              {#each perspectiveOptions as option (option.id)}<option value={option.id}
+                  >{option.label}</option
                 >{/each}
             </select>
           </label>
@@ -587,7 +588,7 @@
         </div>
       </div>
       <div class="position-legend" aria-label="Colors by temporal certainty">
-        {#each [{ label: 'Current event', color: '#55d1e2' }, { label: 'Confirmed period', color: '#ad8bea' }, { label: 'Current chapter', color: '#6ac890' }, { label: 'Confirmed', color: '#5bb9ad' }, { label: 'Assumed', color: '#f0b75e' }, { label: 'Last known position', color: '#e47f61' }, { label: 'Unknown', color: '#8a9798' }] as status}
+        {#each [{ label: 'Current event', color: '#55d1e2' }, { label: 'Confirmed period', color: '#ad8bea' }, { label: 'Current chapter', color: '#6ac890' }, { label: 'Confirmed', color: '#5bb9ad' }, { label: 'Assumed', color: '#f0b75e' }, { label: 'Last known position', color: '#e47f61' }, { label: 'Unknown', color: '#8a9798' }] as status (status)}
           <span style={`--status-color: ${status.color}`}><i></i>{status.label}</span>
         {/each}
       </div>

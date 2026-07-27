@@ -114,7 +114,7 @@
         <div
           class="absolute z-10 w-full mt-1 bg-bw-dark border border-gray-700 rounded-lg shadow-xl max-h-60 overflow-y-auto"
         >
-          {#each filteredEvents as event}
+          {#each filteredEvents as event (event.id)}
             <button
               class="w-full text-left px-4 py-2 hover:bg-bw-navy text-sm border-b border-gray-800 last:border-0"
               on:click={() => selectEvent(event.id)}
@@ -139,7 +139,7 @@
         class="w-full bg-bw-dark border border-gray-700 text-white p-3 rounded-lg focus:border-bw-gold focus:outline-none"
       >
         <option value="" disabled>Choose a character</option>
-        {#each data.characters as char}
+        {#each data.characters as char (char.id)}
           <option value={char.id}>{toEnglishDisplayName(char.canonicalName)}</option>
         {/each}
       </select>
@@ -156,7 +156,7 @@
         class="w-full bg-bw-dark border border-gray-700 text-white p-3 rounded-lg focus:border-bw-gold focus:outline-none"
       >
         <option value="">(None — single view)</option>
-        {#each data.characters as char}
+        {#each data.characters as char (char.id)}
           {#if char.id !== selectedLeft}
             <option value={char.id}>{toEnglishDisplayName(char.canonicalName)}</option>
           {/if}
@@ -201,7 +201,7 @@
           Subjective facts & beliefs
         </h3>
         <ul class="space-y-2">
-          {#each data.leftPerspective?.knownFacts || [] as fact}
+          {#each data.leftPerspective?.knownFacts || [] as fact (fact.id)}
             <li class="p-3 bg-gray-900 rounded border border-gray-800 text-sm flex flex-col">
               <span class="text-gray-500 mb-1">{fact.predicate} (Subject: {fact.subjectId})</span>
               <span class="text-white font-medium">{JSON.stringify(fact.value)}</span>
@@ -241,7 +241,7 @@
           Subjective facts & beliefs
         </h3>
         <ul class="space-y-2">
-          {#each data.rightPerspective?.knownFacts || [] as fact}
+          {#each data.rightPerspective?.knownFacts || [] as fact (fact.id)}
             <li class="p-3 bg-gray-900 rounded border border-gray-800 text-sm flex flex-col">
               <span class="text-gray-500 mb-1">{fact.predicate} (Subject: {fact.subjectId})</span>
               <span class="text-white font-medium">{JSON.stringify(fact.value)}</span>
@@ -259,7 +259,7 @@
       <h3 class="text-xl font-bold text-white mb-4">Contradictions & Perspective Differences</h3>
 
       <div class="space-y-3">
-        {#each data.comparison as diff}
+        {#each data.comparison as diff, diffIndex (diffIndex)}
           <div
             class="p-4 rounded-lg border flex items-center justify-between
             {diff.differenceType === 'CONTRADICTION'
@@ -355,7 +355,7 @@
         </h3>
 
         <div class="space-y-4">
-          {#each data.leftPerspective.knownFacts || [] as fact}
+          {#each data.leftPerspective.knownFacts || [] as fact (fact.id)}
             <div
               class="p-4 bg-gray-900 rounded-lg border border-gray-800 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
             >

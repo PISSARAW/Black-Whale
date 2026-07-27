@@ -154,7 +154,7 @@
           <td colspan="7" class="px-4 py-6 text-center text-gray-400">No facts found</td>
         </tr>
       {:else}
-        {#each filteredFacts as fact}
+        {#each filteredFacts as fact (fact.id)}
           <tr class="border-t border-gray-100 hover:bg-gray-50">
             <td class="px-4 py-3 text-gray-600">{fact.id}</td>
             <td class="px-4 py-3">
@@ -219,7 +219,7 @@
             name="subjectType"
             class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-bw-gold focus:border-transparent"
           >
-            {#each subjectTypeOptions as option}
+            {#each subjectTypeOptions as option (option.value)}
               <option value={option.value}>{option.label}</option>
             {/each}
           </select>
@@ -235,15 +235,15 @@
           >
             <option value="">Select a subject...</option>
             {#if newFact.subjectType === 'CHARACTER'}
-              {#each characters as character}
+              {#each characters as character (character.id)}
                 <option value={character.id}>{character.canonicalName}</option>
               {/each}
             {:else if newFact.subjectType === 'LOCATION'}
-              {#each locations as location}
+              {#each locations as location (location.id)}
                 <option value={location.id}>{location.name}</option>
               {/each}
             {:else if newFact.subjectType === 'EVENT'}
-              {#each events as event}
+              {#each events as event (event.id)}
                 <option value={event.id}>{event.title} (Seq: {event.sequence})</option>
               {/each}
             {:else}
@@ -290,7 +290,7 @@
             name="truthStatus"
             class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-bw-gold focus:border-transparent"
           >
-            {#each truthStatusOptions as option}
+            {#each truthStatusOptions as option (option.value)}
               <option value={option.value}>{option.label}</option>
             {/each}
           </select>
@@ -304,7 +304,7 @@
             class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-bw-gold focus:border-transparent"
           >
             <option value="">Select an event...</option>
-            {#each events as event}
+            {#each events as event (event.id)}
               <option value={event.id}>{event.title} (Seq: {event.sequence})</option>
             {/each}
           </select>
@@ -320,7 +320,7 @@
             class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-bw-gold focus:border-transparent"
           >
             <option value="">None (still valid)</option>
-            {#each events as event}
+            {#each events as event (event.id)}
               <option value={event.id}>{event.title} (Seq: {event.sequence})</option>
             {/each}
           </select>
@@ -334,7 +334,7 @@
             class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-bw-gold focus:border-transparent"
           >
             <option value="">Select an event...</option>
-            {#each events as event}
+            {#each events as event (event.id)}
               <option value={event.id}>{event.title} (Seq: {event.sequence})</option>
             {/each}
           </select>

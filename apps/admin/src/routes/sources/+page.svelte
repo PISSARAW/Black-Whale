@@ -25,7 +25,7 @@
           <td colspan="4" class="px-4 py-6 text-center text-gray-400">No sources found</td>
         </tr>
       {:else}
-        {#each data.sources as source}
+        {#each data.sources as source (source.id)}
           <tr class="border-t border-gray-100 hover:bg-gray-50">
             <td class="px-4 py-3 font-medium text-gray-900">{source.chapterNumber}</td>
             <td class="px-4 py-3 text-gray-600">{source.page || '-'}</td>

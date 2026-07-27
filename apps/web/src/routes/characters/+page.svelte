@@ -145,7 +145,7 @@
         >{/if}
     </label>
     <div class="faction-filter" aria-label="Filter by affiliation">
-      {#each factions as faction}
+      {#each factions as faction (faction)}
         <button
           type="button"
           class:active={activeFaction === faction}
@@ -158,7 +158,7 @@
 
   {#if filteredCharacters.length}
     <div class="registry-groups" aria-live="polite">
-      {#each Object.entries(charactersByFaction) as [faction, characters], groupIndex}
+      {#each Object.entries(charactersByFaction) as [faction, characters], groupIndex (faction)}
         {@const identity = factionIdentity(faction)}
         <section
           class="faction-group reveal-on-scroll"

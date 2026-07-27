@@ -54,7 +54,7 @@
     <article class="bw-panel p-4">
       <h2 class="text-sm uppercase tracking-widest text-slate-400 mb-3">Active knowledge</h2>
       <div class="space-y-2">
-        {#each rows as row}
+        {#each rows as row, rowIndex (rowIndex)}
           <KnowledgeStatus state={row.state} label={row.label} details={row.details} />
         {/each}
       </div>

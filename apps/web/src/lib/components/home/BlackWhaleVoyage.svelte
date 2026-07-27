@@ -111,7 +111,7 @@
       </g>
 
       <g class="portholes" aria-hidden="true">
-        {#each portholes as porthole}
+        {#each portholes as porthole, portholeIndex (portholeIndex)}
           <circle cx={porthole.x} cy={porthole.y} r="3.2" style={`--delay:${porthole.delay}`} />
         {/each}
       </g>

@@ -133,7 +133,7 @@
     <aside aria-label="Quick chapter access">
       <p>Index</p>
       <nav>
-        {#each data.chapters as chapter}
+        {#each data.chapters as chapter (chapter.id)}
           <a href="#chapter-{chapter.number}">
             <span>CH.</span>
             <strong>{chapter.number}</strong>

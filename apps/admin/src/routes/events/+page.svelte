@@ -13,7 +13,7 @@
   </div>
 
   <div class="space-y-4">
-    {#each data.events as event}
+    {#each data.events as event (event.id)}
       <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
         <div class="flex justify-between items-start">
           <div>
@@ -37,7 +37,7 @@
           <div class="mt-4 pt-4 border-t border-gray-100">
             <h3 class="text-sm font-semibold text-gray-500 mb-2">Consequences (Movements)</h3>
             <ul class="space-y-1">
-              {#each event.presencesFrom as presence}
+              {#each event.presencesFrom as presence (presence.id)}
                 <li class="text-sm">
                   <span class="font-medium"
                     >{presence.body?.character?.canonicalName ?? 'Unknown Character'}</span

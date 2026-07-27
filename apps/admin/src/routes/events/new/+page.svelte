@@ -27,7 +27,7 @@
             required
           >
             <option value="">Select Chapter...</option>
-            {#each data.chapters as chapter}
+            {#each data.chapters as chapter (chapter.id)}
               <option value={chapter.id}>Chapter {chapter.number} - {chapter.title}</option>
             {/each}
           </select>
@@ -102,7 +102,7 @@
           class="w-full border-gray-300 rounded-md shadow-sm p-2 border"
         >
           <option value="">End of known chronology (default)</option>
-          {#each data.events as event}
+          {#each data.events as event (event.id)}
             <option value={event.id}>Ch. {event.chapter.number} · {event.title}</option>
           {/each}
         </select>
@@ -124,7 +124,7 @@
           <label class="block text-sm font-medium text-gray-700 mb-1">Character</label>
           <select name="characterId" class="w-full border-gray-300 rounded-md shadow-sm p-2 border">
             <option value="">No consequence...</option>
-            {#each data.characters as char}
+            {#each data.characters as char (char.id)}
               <option value={char.id}>{char.canonicalName}</option>
             {/each}
           </select>
@@ -133,7 +133,7 @@
           <label class="block text-sm font-medium text-gray-700 mb-1">New Location</label>
           <select name="locationId" class="w-full border-gray-300 rounded-md shadow-sm p-2 border">
             <option value="">Select Location...</option>
-            {#each data.locations as loc}
+            {#each data.locations as loc (loc.id)}
               <option value={loc.id}>{loc.name} ({loc.type})</option>
             {/each}
           </select>

@@ -94,7 +94,7 @@
     </header>
 
     <div class="dossier-grid">
-      {#each dossiers as dossier}
+      {#each dossiers as dossier (dossier.index)}
         <a href={dossier.href} class="dossier-card">
           <span class="index">{dossier.index}</span>
           <span class="tag">{dossier.tag}</span>

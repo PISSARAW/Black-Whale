@@ -84,7 +84,7 @@
     </a>
 
     <nav class="primary-nav" aria-label="Primary navigation">
-      {#each primaryNavigation as item}
+      {#each primaryNavigation as item (item.href)}
         <a
           href={item.href}
           class:active={isActive(item.href)}
@@ -136,7 +136,7 @@
         </div>
 
         <nav class="menu-primary" aria-label="Main sections">
-          {#each primaryNavigation as item}
+          {#each primaryNavigation as item (item.href)}
             <a
               href={item.href}
               class:active={isActive(item.href)}
@@ -149,7 +149,7 @@
         </nav>
 
         <nav class="menu-sections" aria-label="Archive sections">
-          {#each secondaryNavigation as item}
+          {#each secondaryNavigation as item (item.href)}
             <a href={item.href} class:active={isActive(item.href)} onclick={closeMenu}>
               <span>{item.index}</span>
               <strong>{item.label}</strong>

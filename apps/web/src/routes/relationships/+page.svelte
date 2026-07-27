@@ -178,7 +178,7 @@
               <h3>Known connections</h3>
             </div>
             <div class="relation-filters" aria-label="Filter connections">
-              {#each ['all', 'alliance', 'cooperation', 'conflict', 'control'] as type}
+              {#each ['all', 'alliance', 'cooperation', 'conflict', 'control'] as type (type)}
                 <button
                   type="button"
                   class:active={relationFilter === type}

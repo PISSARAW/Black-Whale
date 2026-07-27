@@ -31,7 +31,7 @@
 
   <section class="bw-panel p-4">
     <ol class="space-y-3">
-      {#each history as entry}
+      {#each history as entry, entryIndex (entryIndex)}
         <li class="border border-slate-700 rounded p-3">
           <p class="text-xs uppercase tracking-wider text-slate-400">Event {entry.event}</p>
           <p class="text-sm text-slate-100">{entry.label}</p>

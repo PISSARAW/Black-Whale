@@ -41,7 +41,7 @@
       <label>
         Canonical event
         <select name="parentEventId" required disabled={!data.events.length}>
-          {#each [...data.events].reverse() as event}
+          {#each [...data.events].reverse() as event (event.id)}
             <option value={event.id}
               >Ch. {event.chapter.number} · {event.sequence} — {event.title}</option
             >
@@ -114,7 +114,7 @@
             Target entity
             <select name="targetId" required>
               <option value="">Select target</option>
-              {#each entities.filter((entity) => entity.id !== 'hisoka') as entity}
+              {#each entities.filter((entity) => entity.id !== 'hisoka') as entity (entity.id)}
                 <option value={entity.id}>{entity.label} · {entity.kind}</option>
               {/each}
             </select>
@@ -136,7 +136,7 @@
       </div>
       {#if effects.length}
         <div class="effects">
-          {#each effects as effect}
+          {#each effects as effect (effect.id)}
             <article>
               <strong>{effect.kind}</strong><span>{effect.abilityId}</span><code
                 >{effect.state}</code

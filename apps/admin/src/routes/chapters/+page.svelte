@@ -25,7 +25,7 @@
           <td colspan="4" class="px-4 py-6 text-center text-gray-400">No chapters found</td>
         </tr>
       {:else}
-        {#each data.chapters as chapter}
+        {#each data.chapters as chapter (chapter.id)}
           <tr class="border-t border-gray-100 hover:bg-gray-50">
             <td class="px-4 py-3 font-medium text-gray-900">{chapter.number}</td>
             <td class="px-4 py-3 text-gray-600">{chapter.title || '-'}</td>

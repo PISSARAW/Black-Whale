@@ -125,7 +125,7 @@
           <td colspan="7" class="px-4 py-6 text-center text-gray-400">No abilities found</td>
         </tr>
       {:else}
-        {#each filteredAbilities as ability}
+        {#each filteredAbilities as ability (ability.id)}
           <tr class="border-t border-gray-100 hover:bg-gray-50">
             <td class="px-4 py-3 font-medium text-gray-900">{ability.name}</td>
             <td class="px-4 py-3 text-gray-600">{ability.id}</td>
@@ -208,7 +208,7 @@
             class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-bw-gold focus:border-transparent"
           >
             <option value="">Select a character...</option>
-            {#each characters as character}
+            {#each characters as character (character.id)}
               <option value={character.id}>{character.canonicalName}</option>
             {/each}
           </select>
@@ -224,7 +224,7 @@
             name="category"
             class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-bw-gold focus:border-transparent"
           >
-            {#each categoryOptions as option}
+            {#each categoryOptions as option (option.value)}
               <option value={option.value}>{option.label}</option>
             {/each}
           </select>
@@ -240,7 +240,7 @@
             name="canonStatus"
             class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-bw-gold focus:border-transparent"
           >
-            {#each canonStatusOptions as option}
+            {#each canonStatusOptions as option (option.value)}
               <option value={option.value}>{option.label}</option>
             {/each}
           </select>

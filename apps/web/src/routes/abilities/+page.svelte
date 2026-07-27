@@ -43,7 +43,7 @@
   </header>
 
   <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-    {#each abilities as ability}
+    {#each abilities as ability (ability.id)}
       {@const profile = hatsuById(ability.id)}
       <article
         data-hatsu-id={ability.id}

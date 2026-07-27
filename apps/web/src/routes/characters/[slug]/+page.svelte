@@ -226,13 +226,13 @@
 
         {#if roleHistory.length || affiliations.length}
           <div class="role-history">
-            {#each roleHistory as role}
+            {#each roleHistory as role, roleIndex (roleIndex)}
               <article>
                 <small>CH. {role.chapter}{role.untilChapter ? `–${role.untilChapter}` : '+'}</small
                 ><strong>{role.label}</strong>{#if role.detail}<p>{role.detail}</p>{/if}
               </article>
             {/each}
-            {#each affiliations as affiliation}
+            {#each affiliations as affiliation, affiliationIndex (affiliationIndex)}
               <article>
                 <small
                   >CH. {affiliation.chapter}{affiliation.untilChapter
@@ -267,14 +267,16 @@
             <h2>Biography</h2>
           </header>
           <div class="prose-record">
-            {#each character.biography as paragraph}<p>{paragraph}</p>{/each}
+            {#each character.biography as paragraph, paragraphIndex (paragraphIndex)}<p>
+                {paragraph}
+              </p>{/each}
           </div>
           {#if character.abilitiesAndPowers}<div class="capability-summary">
               <small>ABILITIES & POWERS</small>
               <p>{character.abilitiesAndPowers}</p>
             </div>{/if}
           {#if character.equipment?.length}<div class="equipment-grid">
-              {#each character.equipment as item}<article>
+              {#each character.equipment as item, itemIndex (itemIndex)}<article>
                   <strong>{item.name}</strong>
                   <p>{item.description}</p>
                 </article>{/each}
@@ -303,12 +305,14 @@
               </div>
             </div>
             {#if character.nen.techniques?.length}<div class="technique-list">
-                {#each character.nen.techniques as technique}<span>{technique}</span>{/each}
+                {#each character.nen.techniques as technique, techniqueIndex (techniqueIndex)}<span
+                    >{technique}</span
+                  >{/each}
               </div>{/if}
           {/if}
           {#if character.abilities?.length}
             <div class="ability-grid">
-              {#each character.abilities as ability}
+              {#each character.abilities as ability, abilityIndex (abilityIndex)}
                 {@const profile = hatsuById(ability.id)}
                 <article
                   class:interactive={Boolean(profile)}
@@ -357,7 +361,7 @@
         </header>
         {#if documentedAppearances.length}
           <div class="appearance-grid">
-            {#each documentedAppearances as appearance}<article>
+            {#each documentedAppearances as appearance, appearanceIndex (appearanceIndex)}<article>
                 <strong>{appearance.chapter}</strong>
                 <div>
                   <span>{appearance.title}</span><small>{humanize(appearance.status)}</small>
@@ -374,12 +378,15 @@
         {#if character.battles?.length || character.competitions?.length}
           <div class="encounter-grid">
             {#if character.battles?.length}<article>
-                <small>BATTLES</small>{#each character.battles as battle}<p>
+                <small>BATTLES</small
+                >{#each character.battles as battle, battleIndex (battleIndex)}<p>
                     {typeof battle === 'string' ? battle : battle.label || battle.name}
                   </p>{/each}
               </article>{/if}
             {#if character.competitions?.length}<article>
-                <small>COMPETITIONS</small>{#each character.competitions as competition}<p>
+                <small>COMPETITIONS</small
+                >{#each character.competitions as competition, competitionIndex (competitionIndex)}<p
+                  >
                     {typeof competition === 'string'
                       ? competition
                       : competition.label || competition.name}
@@ -402,7 +409,7 @@
 
         {#if chapterTrajectory.length}
           <ol class="trajectory">
-            {#each chapterTrajectory as chapter}
+            {#each chapterTrajectory as chapter, chapterIndex (chapterIndex)}
               <li class:multi-location={chapter.visits.length > 1}>
                 <div class="chapter">
                   <span>CH.</span><strong>{chapter.chapter}</strong><small
@@ -421,7 +428,7 @@
                         : 'POSITION IN CHAPTER'}</small
                   >
                   <ol class="visits">
-                    {#each chapter.visits as visit, index}
+                    {#each chapter.visits as visit, index (index)}
                       <li
                         class:unknown={visit.location === 'Position inconnue'}
                         class:consciousness={visit.subject === 'consciousness'}
@@ -441,7 +448,7 @@
                   </ol>
                   {#if chapter.events.some((entry: any) => entry.kind !== 'body-location' && entry.kind !== 'consciousness-location')}
                     <div class="chapter-states">
-                      {#each chapter.events.filter((entry: any) => entry.kind !== 'body-location' && entry.kind !== 'consciousness-location') as entry}
+                      {#each chapter.events.filter((entry: any) => entry.kind !== 'body-location' && entry.kind !== 'consciousness-location') as entry, entryIndex (entryIndex)}
                         <span>{kindLabels[entry.kind]} · {humanize(entry.label)}</span>
                       {/each}
                     </div>

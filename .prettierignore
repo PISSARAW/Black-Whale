@@ -1,0 +1,13 @@
+node_modules/
+dist/
+build/
+.svelte-kit/
+.turbo/
+
+# Generated, and large enough that reformatting only hides real changes.
+pnpm-lock.yaml
+packages/database/package-lock.json
+packages/database/prisma/migrations/
+
+# Vite writes these next to the config it is loading; they are not source.
+apps/*/vite.config.ts.timestamp-*.mjs

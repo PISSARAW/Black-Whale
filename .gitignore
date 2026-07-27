@@ -10,3 +10,6 @@ build/
 .env.production
 black-whale-manual-*.sql.gz
 *.log
+
+# Vite dev artefacts
+apps/*/vite.config.ts.timestamp-*.mjs

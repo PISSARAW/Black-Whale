@@ -1,5 +1,7 @@
 <script lang="ts">
   import {
+    DEPARTURE_DATE,
+    DEPARTURE_TIME,
     LATEST_RECORDED_DAY,
     TERRITORIAL_WATERS_DAYS,
     VOYAGE_DURATION_DAYS,
@@ -31,7 +33,7 @@
   </div>
 
   <div class="labels">
-    <span><b>01</b> Departure</span>
+    <span title="{DEPARTURE_DATE}, {DEPARTURE_TIME}"><b>01</b> Departure</span>
     <span class="waters" style:left={`${watersMarker}%`}><b>21</b> Final check</span>
     <span><b>56</b> New Continent</span>
   </div>

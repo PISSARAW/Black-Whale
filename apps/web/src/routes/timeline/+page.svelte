@@ -1,12 +1,13 @@
 <script lang="ts">
   import type { PageData } from './$types'
   import VoyageProgress from '$lib/components/VoyageProgress.svelte'
-  import { formatVoyageTime, voyageTimeForEvent } from '$lib/voyageTime'
+  import { LAST_DATED_CHAPTER, formatVoyageTime, voyageTimeForEvent } from '$lib/voyageTime'
   import Seo from '$lib/components/Seo.svelte'
   import { breadcrumbSchema } from '$lib/seo/schema'
 
   let { data }: { data: PageData } = $props()
   let query = $state('')
+  let order = $state<'story' | 'chronological'>('story')
   let scrollProgress = $state(0)
   let searchInput: HTMLInputElement
 
@@ -30,28 +31,58 @@
       .toLowerCase(),
   )
 
+  type Chapter = PageData['chapters'][number]
+  type Event = Chapter['events'][number]
+
+  function matches(chapter: Chapter, event: Event) {
+    if (!normalizedQuery) return true
+    return `${chapter.number} ${chapter.title || ''} ${event.title} ${event.summary}`
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase()
+      .includes(normalizedQuery)
+  }
+
+  // Narration order: chapters as published, events in reading sequence.
   let chapters = $derived(
     data.chapters
       .map((chapter) => ({
         ...chapter,
-        events: chapter.events.filter((event) => {
-          if (!normalizedQuery) return true
-          return `${chapter.number} ${chapter.title || ''} ${event.title} ${event.summary}`
-            .normalize('NFD')
-            .replace(/[\u0300-\u036f]/g, '')
-            .toLowerCase()
-            .includes(normalizedQuery)
-        }),
+        events: chapter.events.filter((event) => matches(chapter, event)),
       }))
       .filter((chapter) => chapter.events.length > 0),
   )
 
+  // Chronological order: a flat run over `ordinal`, the order in which the
+  // events actually happened aboard the ship. Flashbacks move back to where
+  // they belong instead of sitting in the chapter that reveals them.
+  let chronologicalEvents = $derived(
+    data.chapters
+      .flatMap((chapter) =>
+        chapter.events
+          .filter((event) => matches(chapter, event))
+          .map((event) => ({ event, chapter })),
+      )
+      .sort(
+        (a, b) =>
+          (a.event.ordinal ?? Number.MAX_SAFE_INTEGER) -
+            (b.event.ordinal ?? Number.MAX_SAFE_INTEGER) ||
+          a.chapter.number - b.chapter.number ||
+          a.event.sequence - b.event.sequence,
+      ),
+  )
+
+  // What the chip above an event title actually claims, spelled out on hover.
+  const precisionHint = {
+    exact: 'Hour stated by the manga',
+    day: 'Day stated by the manga, no hour given',
+    approximate: 'Day inferred from the surrounding chapters',
+  }
+
   let eventCount = $derived(
     data.chapters.reduce((total, chapter) => total + chapter.events.length, 0),
   )
-  let visibleEventCount = $derived(
-    chapters.reduce((total, chapter) => total + chapter.events.length, 0),
-  )
+  let visibleEventCount = $derived(chronologicalEvents.length)
 </script>
 
 <svelte:window
@@ -69,6 +100,36 @@
   ])}
 />
 
+{#snippet eventTime(chapterNumber: number, event: Event, flashbackLabel: string)}
+  {#if event.isFlashback}
+    <span class="event-time flashback">{flashbackLabel}</span>
+  {/if}
+
+  {#if event.occurredAtLabel}
+    <span class="event-time" title="Time recorded on the event itself">{event.occurredAtLabel}</span
+    >
+  {:else if event.isFlashback}
+    <!-- A flashback happened before the chapter that reveals it: the chapter's
+         voyage day would be plainly wrong here, so we claim nothing. -->
+  {:else}
+    {@const voyageTime = voyageTimeForEvent(chapterNumber, event.title)}
+    {#if voyageTime}
+      <span
+        class="event-time"
+        class:approximate={voyageTime.precision === 'approximate'}
+        class:anchored={voyageTime.precision === 'exact'}
+        title={precisionHint[voyageTime.precision]}>{formatVoyageTime(voyageTime)}</span
+      >
+    {:else if chapterNumber > LAST_DATED_CHAPTER}
+      <span
+        class="event-time undated"
+        title="Canon does not anchor a voyage day past chapter {LAST_DATED_CHAPTER} yet"
+        >Undated</span
+      >
+    {/if}
+  {/if}
+{/snippet}
+
 <div class="timeline-page">
   <div class="reading-progress" aria-hidden="true">
     <span style:transform={`scaleX(${scrollProgress})`}></span>
@@ -78,7 +139,8 @@
       <p class="eyebrow">Narrative dossier · Succession War</p>
       <h1>Timeline</h1>
       <p class="intro">
-        Follow the Black Whale events in canonical order and open the map at any point in the story.
+        Follow the Black Whale events chapter by chapter, replay them in the order they actually
+        happened, and open the map at any point in the story.
       </p>
     </div>
 
@@ -119,6 +181,25 @@
       {/if}
     </label>
 
+    <div class="order-switch" role="group" aria-label="Timeline order">
+      <button
+        type="button"
+        aria-pressed={order === 'story'}
+        onclick={() => (order = 'story')}
+        title="Events grouped by chapter, in reading order"
+      >
+        Story order
+      </button>
+      <button
+        type="button"
+        aria-pressed={order === 'chronological'}
+        onclick={() => (order = 'chronological')}
+        title="Events in the order they happened aboard the ship"
+      >
+        Chronological
+      </button>
+    </div>
+
     {#if data.spoilerLimit}
       <div class="spoiler-badge" title="Later events are hidden">
         <span aria-hidden="true">◉</span>
@@ -129,21 +210,70 @@
     {/if}
   </div>
 
-  <div class="timeline-layout">
-    <aside aria-label="Quick chapter access">
-      <p>Index</p>
-      <nav>
-        {#each data.chapters as chapter (chapter.id)}
-          <a href="#chapter-{chapter.number}">
-            <span>CH.</span>
-            <strong>{chapter.number}</strong>
-          </a>
-        {/each}
-      </nav>
-    </aside>
+  <div class="timeline-layout" class:no-index={order === 'chronological'}>
+    {#if order === 'story'}
+      <aside aria-label="Quick chapter access">
+        <p>Index</p>
+        <nav>
+          {#each data.chapters as chapter (chapter.id)}
+            <a href="#chapter-{chapter.number}">
+              <span>CH.</span>
+              <strong>{chapter.number}</strong>
+            </a>
+          {/each}
+        </nav>
+      </aside>
+    {/if}
 
     <main class="timeline" aria-live="polite">
-      {#each chapters as chapter, chapterIndex (chapter.id)}
+      {#if order === 'chronological' && chronologicalEvents.length > 0}
+        <section class="chapter reveal-on-scroll">
+          <div class="rail" aria-hidden="true">
+            <span class="chapter-dot"></span>
+            <span class="line"></span>
+          </div>
+
+          <div class="chapter-content">
+            <header class="chapter-header">
+              <div>
+                <p>Voyage chronology</p>
+                <h2>In the order it happened</h2>
+              </div>
+              <span
+                >{chronologicalEvents.length}
+                {chronologicalEvents.length === 1 ? 'event' : 'events'}</span
+              >
+            </header>
+
+            <ol class="events">
+              {#each chronologicalEvents as { event, chapter } (event.id)}
+                <li>
+                  <a href="/ship?eventId={event.id}" aria-label="{event.title} — open on the map">
+                    <span class="event-index">{event.ordinal ?? '—'}</span>
+                    <span class="event-copy">
+                      {@render eventTime(
+                        chapter.number,
+                        event,
+                        `↶ Revealed in chapter ${chapter.number}`,
+                      )}
+                      <span class="event-title">{event.title}</span>
+                      <span class="event-summary">{event.summary}</span>
+                    </span>
+                    <span class="event-action">
+                      <span>Ch. {chapter.number}</span>
+                      <svg viewBox="0 0 24 24" aria-hidden="true"
+                        ><path d="m9 18 6-6-6-6"></path></svg
+                      >
+                    </span>
+                  </a>
+                </li>
+              {/each}
+            </ol>
+          </div>
+        </section>
+      {/if}
+
+      {#each order === 'story' ? chapters : [] as chapter, chapterIndex (chapter.id)}
         <section id="chapter-{chapter.number}" class="chapter reveal-on-scroll">
           <div class="rail" aria-hidden="true">
             <span class="chapter-dot"></span>
@@ -162,21 +292,15 @@
 
             <ol class="events">
               {#each chapter.events as event, eventIndex (event.id)}
-                {@const voyageTime = voyageTimeForEvent(chapter.number, event.title)}
                 <li>
                   <a href="/ship?eventId={event.id}" aria-label="{event.title} — open on the map">
                     <span class="event-index">{String(eventIndex + 1).padStart(2, '0')}</span>
                     <span class="event-copy">
-                      {#if event.isFlashback}<span class="event-time flashback"
-                          >↶ Flashback · occurrence #{event.ordinal}</span
-                        >{/if}
-                      {#if event.occurredAtLabel}<span class="event-time"
-                          >{event.occurredAtLabel}</span
-                        >
-                      {:else if voyageTime}<span
-                          class:approximate={voyageTime.precision === 'approximate'}
-                          class="event-time">{formatVoyageTime(voyageTime)}</span
-                        >{/if}
+                      {@render eventTime(
+                        chapter.number,
+                        event,
+                        `↶ Flashback · occurrence #${event.ordinal}`,
+                      )}
                       <span class="event-title">{event.title}</span>
                       <span class="event-summary">{event.summary}</span>
                     </span>
@@ -194,7 +318,7 @@
         </section>
       {/each}
 
-      {#if chapters.length === 0}
+      {#if visibleEventCount === 0}
         <div class="empty-state">
           <span aria-hidden="true">⌁</span>
           <h2>No events found</h2>
@@ -322,7 +446,8 @@
     margin: 0 auto 2.4rem;
     align-items: center;
     justify-content: space-between;
-    gap: 1rem;
+    flex-wrap: wrap;
+    gap: 0.75rem 1rem;
     padding: 0.65rem;
     border: 1px solid rgba(105, 128, 137, 0.24);
     border-radius: 0.8rem;
@@ -369,6 +494,38 @@
     color: var(--text-faint);
     font: 0.5rem/1 var(--font-mono);
   }
+  .order-switch {
+    display: flex;
+    flex: none;
+    margin-left: auto;
+    gap: 2px;
+    padding: 2px;
+    border: 1px solid rgba(105, 128, 137, 0.24);
+    border-radius: 0.5rem;
+    background: rgba(9, 16, 23, 0.6);
+  }
+  .order-switch button {
+    padding: 0.4rem 0.7rem;
+    border: 0;
+    border-radius: 0.38rem;
+    background: none;
+    color: #7f8f91;
+    cursor: pointer;
+    font: inherit;
+    font-size: 0.68rem;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+    transition: 0.18s ease;
+  }
+  .order-switch button:hover {
+    color: #e3c66f;
+  }
+  .order-switch button[aria-pressed='true'] {
+    background: rgba(201, 164, 74, 0.14);
+    box-shadow: inset 0 0 0 1px rgba(201, 164, 74, 0.35);
+    color: #e3c66f;
+  }
+
   .spoiler-badge,
   .canon-badge {
     display: flex;
@@ -397,6 +554,9 @@
     margin: 0 auto;
     grid-template-columns: 76px minmax(0, 1fr);
     gap: clamp(1.5rem, 4vw, 4rem);
+  }
+  .timeline-layout.no-index {
+    grid-template-columns: minmax(0, 1fr);
   }
   aside {
     position: sticky;
@@ -556,6 +716,17 @@
     border-color: rgba(201, 164, 74, 0.22);
     background: rgba(201, 164, 74, 0.06);
     color: #c9ad66;
+  }
+  /* An hour the manga states outright, not one we derived. */
+  .event-time.anchored {
+    border-color: rgba(112, 189, 193, 0.55);
+    background: rgba(112, 189, 193, 0.16);
+    color: #b6e6e7;
+  }
+  .event-time.undated {
+    border-color: rgba(148, 163, 184, 0.22);
+    background: rgba(148, 163, 184, 0.06);
+    color: #8b97a8;
   }
   .event-time.flashback {
     border-color: rgba(173, 139, 234, 0.35);

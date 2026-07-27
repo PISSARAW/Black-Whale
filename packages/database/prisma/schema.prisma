@@ -312,7 +312,8 @@ model NarrativeEvent {
   ordinal    Int?    @unique
   /// True when the source chapter narrates an event that happened earlier.
   isFlashback Boolean @default(false)
-  /// Human-readable in-world time when canon gives one (for example "Day 10 · 19:35").
+  /// Human-readable in-world time when canon gives one (for example "Day 8 · 20:00",
+  /// the first weekly banquet). Leave empty rather than inventing a time.
   occurredAtLabel String?
   /// Whether the event belongs to the voyage timeline shown in the Black Whale UI.
   occursOnBlackWhale Boolean @default(true)

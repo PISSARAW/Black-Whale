@@ -47,6 +47,7 @@ export interface MarkerIdentityState {
   isFollowTarget?: boolean
   originalCharacterId?: string
   hatsuNames?: string[]
+  hatsuIds?: string[]
   futureChange?: 'stable' | 'moved' | 'dead'
 }
 

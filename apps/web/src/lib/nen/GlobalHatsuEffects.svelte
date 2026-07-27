@@ -12,7 +12,7 @@
     parallelFutureVisible,
   } from './hatsuState.js'
   import {
-    HATSU_PROFILES,
+    hatsuById,
     siteImpactFor,
     visualSignatureFor,
     type HatsuProfile,
@@ -38,8 +38,12 @@
     location: string | null
   }
   type ElementSnapshot = {
-    style: string
-    className: string
+    /** Inline declarations present before the Hatsu touched the element. */
+    style: Map<string, string>
+    /** The element's own transform, which Hatsu transforms compose with. */
+    transform: string
+    /** Classes the page already carried, which a Hatsu must never strip. */
+    classNames: string[]
     hidden: boolean
     disabled?: boolean
     open?: boolean
@@ -101,6 +105,7 @@
   let previousId: string | null = null
   let bungeeTimer: ReturnType<typeof setTimeout> | null = null
   let bungeeFilterActive = false
+  let bungeeOrigin: { x: number; y: number } | null = null
   let futureTimer: ReturnType<typeof setTimeout> | null = null
   let captureTimer: ReturnType<typeof setTimeout> | null = null
   let captureZone: CaptureZone | null = null
@@ -136,6 +141,10 @@
   // Cleanup bookkeeping, not view state.
   // eslint-disable-next-line svelte/prefer-svelte-reactivity
   const snapshots = new Map<HTMLElement, ElementSnapshot>()
+  // Which inline properties a Hatsu actually wrote, so restoring gives back
+  // only those and leaves the ones the page owns alone.
+  // eslint-disable-next-line svelte/prefer-svelte-reactivity
+  const styleWrites = new Map<HTMLElement, Set<string>>()
   const observers: MutationObserver[] = []
   // Cleanup bookkeeping, not view state.
   // eslint-disable-next-line svelte/prefer-svelte-reactivity
@@ -165,19 +174,26 @@
     seconds = 0
     cardIndex = 0
     status = profile ? profile.action : ''
-    if (profile?.kind === 'future') {
-      status = 'Present positions: cyan · next chapter: violet'
-      // Neither write below feeds this block's guard (`profile?.id !== previousId`),
-      // so neither can re-trigger it, and cleanupTechniqueState clears this timer
-      // when the technique changes. No loop, and no stale write.
-      /* eslint-disable svelte/infinite-reactive-loop */
-      futureTimer = setTimeout(() => {
-        parallelFutureVisible.set(false)
-        status = 'Ten-second vision complete'
-        futureTimer = null
-      }, 10000)
-      /* eslint-enable svelte/infinite-reactive-loop */
-    }
+  }
+
+  // The vision expires ten seconds after it becomes visible, not ten seconds
+  // after the technique id changes: re-selecting Parallel Future while it is
+  // already active makes it visible again without changing the id, and used to
+  // leave the future overlay on forever.
+  $: if (profile?.kind === 'future' && $parallelFutureVisible) armFutureVision()
+
+  function armFutureVision() {
+    if (futureTimer) clearTimeout(futureTimer)
+    seconds = 0
+    status = 'Present positions: cyan · next chapter: violet'
+    // `parallelFutureVisible` is only ever cleared here, and the guard above
+    // requires it to be true, so this cannot re-enter. cleanupTechniqueState
+    // clears the timer when the technique changes.
+    futureTimer = setTimeout(() => {
+      parallelFutureVisible.set(false)
+      status = 'Ten-second vision complete'
+      futureTimer = null
+    }, 10000)
   }
 
   function captureSiteState(): SiteSnapshot | null {
@@ -303,8 +319,8 @@
     effectTimers.clear()
     for (const [element, snapshot] of snapshots) {
       if (!element.isConnected) continue
-      element.style.cssText = snapshot.style
-      element.className = snapshot.className
+      restoreStyle(element, snapshot)
+      restoreClasses(element, snapshot)
       element.hidden = snapshot.hidden
       if ('disabled' in element && snapshot.disabled !== undefined)
         (element as HTMLButtonElement).disabled = snapshot.disabled
@@ -321,6 +337,7 @@
       delete element.dataset.hatsuForgery
     }
     snapshots.clear()
+    styleWrites.clear()
     if (typeof document !== 'undefined') {
       document.body.classList.remove(
         'hatsu-haiku-weather',
@@ -339,16 +356,76 @@
     const timer = setTimeout(() => {
       effectTimers.delete(timer)
       callback()
+      captureStyleWrites()
     }, delay)
     effectTimers.add(timer)
     return timer
   }
 
+  function inlineStyleOf(element: HTMLElement) {
+    // Cleanup bookkeeping, not view state.
+    // eslint-disable-next-line svelte/prefer-svelte-reactivity
+    const declarations = new Map<string, string>()
+    for (const property of Array.from(element.style))
+      declarations.set(property, element.style.getPropertyValue(property))
+    return declarations
+  }
+
+  /**
+   * Record every inline property whose value no longer matches the snapshot as
+   * Hatsu-owned. Called synchronously after each batch of effects, before the
+   * page can re-render, so a difference can only come from us.
+   */
+  function captureStyleWrites() {
+    for (const [element, snapshot] of snapshots) {
+      if (!element.isConnected) continue
+      for (const property of Array.from(element.style)) {
+        if (snapshot.style.get(property) === element.style.getPropertyValue(property)) continue
+        // Cleanup bookkeeping, not view state.
+        // eslint-disable-next-line svelte/prefer-svelte-reactivity
+        const written = styleWrites.get(element) ?? new Set<string>()
+        written.add(property)
+        styleWrites.set(element, written)
+      }
+    }
+  }
+
+  /**
+   * Compose with the element's own transform instead of replacing it. Map
+   * markers centre themselves with `translate(-50%, -50%)`, which a bare
+   * assignment would drop, shifting every marker by half its size.
+   */
+  function applyTransform(element: HTMLElement, transform: string) {
+    const base = snapshots.get(element)?.transform ?? ''
+    element.style.transform = base ? `${base} ${transform}` : transform
+  }
+
+  function restoreStyle(element: HTMLElement, snapshot: ElementSnapshot) {
+    for (const property of styleWrites.get(element) ?? []) {
+      const original = snapshot.style.get(property)
+      if (original === undefined) element.style.removeProperty(property)
+      else element.style.setProperty(property, original)
+    }
+    styleWrites.delete(element)
+  }
+
+  /**
+   * Drop only the classes a Hatsu added. Restoring `className` wholesale used
+   * to revert classes the page had toggled meanwhile, and the framework — which
+   * diffs against its own last value — never put them back.
+   */
+  function restoreClasses(element: HTMLElement, snapshot: ElementSnapshot) {
+    for (const name of Array.from(element.classList))
+      if (name.startsWith('hatsu-') && !snapshot.classNames.includes(name))
+        element.classList.remove(name)
+  }
+
   function remember(element: HTMLElement) {
     if (!snapshots.has(element))
       snapshots.set(element, {
-        style: element.style.cssText,
-        className: element.className,
+        style: inlineStyleOf(element),
+        transform: element.style.transform,
+        classNames: Array.from(element.classList),
         hidden: element.hidden,
         disabled: 'disabled' in element ? (element as HTMLButtonElement).disabled : undefined,
         open: element instanceof HTMLDetailsElement ? element.open : undefined,
@@ -362,8 +439,8 @@
   function restoreElement(element: HTMLElement) {
     const snapshot = snapshots.get(element)
     if (!snapshot || !element.isConnected) return
-    element.style.cssText = snapshot.style
-    element.className = snapshot.className
+    restoreStyle(element, snapshot)
+    restoreClasses(element, snapshot)
     element.hidden = snapshot.hidden
     if ('disabled' in element && snapshot.disabled !== undefined)
       (element as HTMLButtonElement).disabled = snapshot.disabled
@@ -432,7 +509,7 @@
     remember(element)
     element.dataset.hatsuStored = mode
     element.style.transition = 'transform .45s ease, opacity .35s ease'
-    element.style.transform = 'scale(.04) rotate(-8deg)'
+    applyTransform(element, 'scale(.04) rotate(-8deg)')
     element.style.opacity = '0'
     element.style.pointerEvents = 'none'
     storedItems = [...storedItems, { id: ++sequence, element, label, mode }]
@@ -444,23 +521,21 @@
     const a = first.getBoundingClientRect()
     const b = second.getBoundingClientRect()
     first.style.transition = second.style.transition = 'transform .55s cubic-bezier(.2,.8,.2,1)'
-    first.style.transform = `translate(${b.left - a.left}px, ${b.top - a.top}px)`
-    second.style.transform = `translate(${a.left - b.left}px, ${a.top - b.top}px)`
+    applyTransform(first, `translate(${b.left - a.left}px, ${b.top - a.top}px)`)
+    applyTransform(second, `translate(${a.left - b.left}px, ${a.top - b.top}px)`)
     first.style.zIndex = second.style.zIndex = '30'
   }
 
-  const normalizedAbilityName = (name: string) => name.toLowerCase().replace(/[^a-z0-9]+/g, '')
-
+  /**
+   * `data-hatsu-list` carries catalogue ids, which are the same keys the
+   * registry is built on. Matching on display names instead used to resolve
+   * "Spatial Teleportation" to Chrollo's "Teleport" and to miss Kurton
+   * entirely, because catalogue and registry wording diverge.
+   */
   function profilesFromTarget(target: HTMLElement) {
-    const names = (target.dataset.hatsuList || '').split('|').filter(Boolean)
-    return names.flatMap((name) => {
-      const normalized = normalizedAbilityName(name)
-      const match = HATSU_PROFILES.find(
-        (candidate) =>
-          normalizedAbilityName(candidate.name) === normalized ||
-          normalized.includes(normalizedAbilityName(candidate.name)) ||
-          normalizedAbilityName(candidate.name).includes(normalized),
-      )
+    const ids = (target.dataset.hatsuList || '').split('|').filter(Boolean)
+    return ids.flatMap((id) => {
+      const match = hatsuById(id)
       return match ? [match] : []
     })
   }
@@ -469,6 +544,7 @@
     if (bungeeTimer) clearTimeout(bungeeTimer)
     bungeeTimer = null
     bungeeFilterActive = false
+    bungeeOrigin = null
     bungeeSelected.clear()
     if (typeof document === 'undefined') return
     document.body.classList.remove('bungee-gum-filtered')
@@ -488,21 +564,27 @@
         const rect = linked.getBoundingClientRect()
         remember(linked)
         linked.style.transition = 'transform .6s cubic-bezier(.2,.9,.2,1)'
-        linked.style.transform = `translate(${anchorRect.left - rect.left}px, ${anchorRect.top - rect.top}px)`
+        applyTransform(
+          linked,
+          `translate(${anchorRect.left - rect.left}px, ${anchorRect.top - rect.top}px)`,
+        )
       }
       status = `Bungee Gum retracted · ${selectedElements.length} targets pulled to ${targetLabel(anchorElement)}`
       return
     }
 
-    const firstPoint = points[0]
+    // Measured from where the gum was emitted, which `points` cannot stand in
+    // for: it only keeps the last eight impacts, so past eight selections the
+    // origin drifted forward and the range limit stopped triggering.
     if (
-      firstPoint &&
-      Math.hypot(x - firstPoint.x, y - firstPoint.y) > Math.min(innerWidth, innerHeight) * 0.8
+      bungeeOrigin &&
+      Math.hypot(x - bungeeOrigin.x, y - bungeeOrigin.y) > Math.min(innerWidth, innerHeight) * 0.8
     ) {
       status = 'Emitted Bungee Gum exceeded its ten-meter limit and snapped'
       return
     }
 
+    bungeeOrigin ??= { x, y }
     bungeeSelected.add(characterId)
     selectedElements = [...selectedElements, target]
     target.dataset.bungeeSelected = 'true'
@@ -632,7 +714,9 @@
       if (index >= recordedEvents.length && guardianReplayTimer) {
         clearInterval(guardianReplayTimer)
         guardianReplayTimer = null
-        setTimeout(() => {
+        // Tracked, so releasing the Hatsu mid-replay cannot write the marker
+        // back after the technique is gone.
+        schedule(() => {
           guardianReplayPoint = null
         }, 700)
       }
@@ -836,7 +920,10 @@
         const origin = commander.getBoundingClientRect()
         const rect = target.getBoundingClientRect()
         target.style.transition = 'transform .45s ease'
-        target.style.transform = `translate(${(origin.left - rect.left) * 0.18}px, ${(origin.top - rect.top) * 0.18}px)`
+        applyTransform(
+          target,
+          `translate(${(origin.left - rect.left) * 0.18}px, ${(origin.top - rect.top) * 0.18}px)`,
+        )
       }
       status = `${selectedElements.length} royal guard${selectedElements.length > 1 ? 's' : ''} linked to one command network`
       addPoint(x, y, label)
@@ -847,7 +934,7 @@
       const level = Math.min(10, Number(element.dataset.hatsuLevel || 0) + increment)
       element.dataset.hatsuLevel = String(level)
       element.classList.add('hatsu-erigeron-grown')
-      element.style.transform = `scale(${1 + level * 0.035})`
+      applyTransform(element, `scale(${1 + level * 0.035})`)
       element.style.filter = `saturate(${1 + level * 0.08}) brightness(${1 + level * 0.025})`
       const details = target.closest('details') || target.querySelector('details')
       if (details instanceof HTMLDetailsElement) {
@@ -870,7 +957,10 @@
         selectedElements.forEach((passenger, index) => {
           remember(passenger)
           passenger.style.transition = 'transform 1s cubic-bezier(.2,.8,.2,1)'
-          passenger.style.transform = `translateX(${Math.min(innerWidth * 0.45, 360)}px) translateY(${index * 4}px) scale(.82)`
+          applyTransform(
+            passenger,
+            `translateX(${Math.min(innerWidth * 0.45, 360)}px) translateY(${index * 4}px) scale(.82)`,
+          )
         })
         status = `Vehicle launched · ${selectedElements.length} passengers · ${fuel}% shared aura fuel`
       } else if (selectedElements.length < 5 && !selectedElements.includes(target)) {
@@ -878,6 +968,10 @@
         remember(target).classList.add('hatsu-passenger')
         status = `${selectedElements.length}/5 passengers aboard · click a passenger to depart`
         addPoint(x, y, label)
+      } else if (selectedElements.includes(target)) {
+        status = `${label} is already aboard · the vehicle needs a second passenger before it departs`
+      } else {
+        status = `${label} refused · the transformed hull is full at 5 passengers`
       }
     } else if (profile.kind === 'scout') {
       if (target.closest('[data-hatsu-character]')) {
@@ -925,7 +1019,7 @@
       } else {
         element.classList.add('hatsu-cross-expelled')
         element.style.opacity = '0'
-        element.style.transform = 'translateX(110vw)'
+        applyTransform(element, 'translateX(110vw)')
         status = `RED · ${label} expelled from the page`
         cardIndex = 0
       }
@@ -953,7 +1047,10 @@
       const rect = target.getBoundingClientRect()
       const direction = event.clientX < rect.left + rect.width / 2 ? 1 : -1
       element.style.transition = 'transform .5s cubic-bezier(.1,.8,.2,1)'
-      element.style.transform = `translateX(${direction * Math.min(240, innerWidth * 0.25)}px) rotate(${direction * 3}deg)`
+      applyTransform(
+        element,
+        `translateX(${direction * Math.min(240, innerWidth * 0.25)}px) rotate(${direction * 3}deg)`,
+      )
       element.classList.add('hatsu-air-blown')
       status = `Air Blow broke ${label}'s guard and pushed it across the page`
       addPoint(x, y, label)
@@ -1148,7 +1245,10 @@
           const rect = puppet.getBoundingClientRect()
           remember(puppet)
           puppet.style.transition = 'transform .7s ease'
-          puppet.style.transform = `translate(${destination.left - rect.left}px, ${destination.top - rect.top}px) scale(.72)`
+          applyTransform(
+            puppet,
+            `translate(${destination.left - rect.left}px, ${destination.top - rect.top}px) scale(.72)`,
+          )
         }
         status = `Order executed · ${selectedElements.length} puppets marched to ${label}`
       }
@@ -1221,7 +1321,10 @@
       const element = remember(target)
       const force = Math.min(120, 18 + points.length * 12)
       element.style.transition = 'transform .18s ease-out'
-      element.style.transform = `translate(${event.clientX < innerWidth / 2 ? force : -force}px, ${((points.length % 3) - 1) * 12}px)`
+      applyTransform(
+        element,
+        `translate(${event.clientX < innerWidth / 2 ? force : -force}px, ${((points.length % 3) - 1) * 12}px)`,
+      )
       element.classList.add('hatsu-bullet-hit')
       status = `${points.length * 2 + 2} emitted bullets · ${label} knocked back`
       addPoint(x, y, label)
@@ -1279,7 +1382,10 @@
       element.dataset.hatsuLevel = String(existing)
       element.style.transition = 'clip-path .35s, opacity .35s, transform .35s'
       element.style.clipPath = `inset(${Math.min(48, existing * 10)}% ${existing % 2 ? 8 : 18}% ${Math.min(48, existing * 8)}% ${existing % 2 ? 18 : 8}%)`
-      element.style.transform = `rotate(${existing * 2}deg) scale(${Math.max(0.2, 1 - existing * 0.15)})`
+      applyTransform(
+        element,
+        `rotate(${existing * 2}deg) scale(${Math.max(0.2, 1 - existing * 0.15)})`,
+      )
       if (existing >= 5) {
         element.style.opacity = '0'
         element.style.pointerEvents = 'none'
@@ -1373,7 +1479,7 @@
       }
       windupPower += 1
       const element = remember(target)
-      element.style.transform = `rotate(${windupPower * 18}deg) scale(${1 + windupPower * 0.025})`
+      applyTransform(element, `rotate(${windupPower * 18}deg) scale(${1 + windupPower * 0.025})`)
       element.style.transition = 'transform .2s ease'
       if (windupPower >= 6) {
         element.classList.add('hatsu-cyclotron-release')
@@ -1414,7 +1520,7 @@
         remember(sibling)
         const direction =
           sibling.compareDocumentPosition(target) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1
-        sibling.style.transform = `translateX(${direction * 28}px)`
+        applyTransform(sibling, `translateX(${direction * 28}px)`)
         sibling.style.transition = 'transform .35s ease'
       }
       status = `Priest Staff extended through ${label} · target pinned and unusable, neighbors repelled`
@@ -1496,7 +1602,10 @@
       element.dataset.hatsuLevel = String(stage)
       element.classList.add('hatsu-relay-cargo')
       element.style.transition = 'transform .65s ease, opacity .4s'
-      element.style.transform = `translateX(${stage * (innerWidth < 700 ? 28 : 75)}px) scale(${1 - stage * 0.08})`
+      applyTransform(
+        element,
+        `translateX(${stage * (innerWidth < 700 ? 28 : 75)}px) scale(${1 - stage * 0.08})`,
+      )
       element.style.opacity = String(1 - stage * 0.15)
       if (stage === 3) storeElement(element, label, 'relay')
       status = `Cargo ${label} · relay stage ${stage}/3${stage === 3 ? ' · delivered into relay storage without teleportation' : ''}`
@@ -1609,7 +1718,7 @@
       } else if (selectedElements[1] === target) {
         const intruder = remember(target)
         intruder.style.transition = 'transform .7s ease, opacity .5s'
-        intruder.style.transform = 'translateX(110vw)'
+        applyTransform(intruder, 'translateX(110vw)')
         intruder.style.pointerEvents = 'none'
         intruder.setAttribute('aria-disabled', 'true')
         status = `LSDF guards expelled ${label} without inflicting damage`
@@ -1857,7 +1966,13 @@
       : eventElement.closest<HTMLElement>(
           'a, button, article, section, li, [role="button"], h1, h2, h3, p',
         )
-    if (!target) return
+    if (!target) {
+      // Character-bound techniques only have targets on the ship map. Saying so
+      // beats swallowing the click with no explanation.
+      if (requiresCharacter)
+        status = `${profile.name} needs a Nen user · open the ship map and click a character marker`
+      return
+    }
     // Navigation remains usable while a Hatsu is active. Ordinary page
     // targets are captured by the technique instead of firing their action.
     if (!target.closest('nav')) {
@@ -1871,27 +1986,10 @@
 
     if (extendedInteraction(event, target, x, y, label)) return
 
+    // Only the kinds `extendedInteraction` does not claim reach this point.
     if (profile.kind === 'elastic') {
       selectBungeeCharacter(target, x, y, label)
       return
-    } else if (profile.kind === 'surveillance') {
-      const change = target.dataset.hatsuNextChange || 'stable'
-      const alert = change === 'dead' || change === 'moved'
-      points = [{ x, y, label, id: ++sequence, alert }]
-      status =
-        change === 'dead'
-          ? `${label} · death detected next chapter`
-          : change === 'moved'
-            ? `${label} · movement detected next chapter`
-            : `${label} · no change detected next chapter`
-      return
-    } else if (profile.kind === 'tribunal') {
-      cardIndex = (cardIndex + 1) % tribunalCards.length
-      status = tribunalCards[cardIndex]
-    } else if (profile.kind === 'resurrection') {
-      status = status.includes('RESURRECTION')
-        ? 'Simulate death'
-        : 'DEATH → COUNTERATTACK → RESURRECTION'
     } else if (profile.kind === 'inherit') {
       const characterId = target.dataset.hatsuCharacter
       if (!characterId || inheritedCharacters.has(characterId) || inheritedCharacters.size >= 4)
@@ -1906,22 +2004,18 @@
         return
       }
       inheritedCharacters.add(characterId)
-      const details = (target.dataset.hatsuList || '').split('|').filter(Boolean)
-      for (const technique of profilesFromTarget(target)) {
+      const inherited = profilesFromTarget(target)
+      for (const technique of inherited) {
         if (!capturedTechniques.some((candidate) => candidate.id === technique.id))
           capturedTechniques = [...capturedTechniques, technique]
       }
-      addPoint(x, y, label, { details })
+      addPoint(x, y, label, { details: inherited.map((technique) => technique.name) })
       remember(target).classList.add('hatsu-baton-inherited')
       status = `${inheritedCharacters.size}/4 loyal abilities inherited · palm star awakened`
       return
-    } else if (profile.kind === 'vehicle') {
-      status = `${Math.min(points.length + 1, 5)}/5 passengers · shared aura`
-    } else if (profile.kind === 'future') {
-      return
-    } else {
-      status = `${profile.action} · ${label || 'target acquired'}`
     }
+
+    status = `${profile.action} · ${label || 'target acquired'}`
     addPoint(x, y, label)
   }
 
@@ -1953,7 +2047,10 @@
           if (!element.isConnected) return
           const rect = element.getBoundingClientRect()
           const strength = profile.kind === 'needle' ? 0.22 : 0.08
-          element.style.transform = `translate(${(event.clientX - rect.left) * strength}px, ${(event.clientY - rect.top) * strength + index * 3}px)`
+          applyTransform(
+            element,
+            `translate(${(event.clientX - rect.left) * strength}px, ${(event.clientY - rect.top) * strength + index * 3}px)`,
+          )
         })
       }
       if (profile?.kind === 'training-shot' && trainingTarget) {
@@ -1968,8 +2065,12 @@
           status = 'Aura leaked · Zetsu broken before impact, so the sealed site action escaped'
         }
       }
+      captureStyleWrites()
     }
-    const click = (event: MouseEvent) => interact(event)
+    const click = (event: MouseEvent) => {
+      interact(event)
+      captureStyleWrites()
+    }
     const timer = window.setInterval(() => {
       if (!profile) return
       seconds += 1
@@ -2001,6 +2102,8 @@
     aria-hidden={[
       'guardian',
       'portal',
+      'scout',
+      'clone',
       'theft',
       'pocket',
       'spatial',

@@ -35,7 +35,7 @@
   data-hatsu-character-name={marker.perceivedIdentity}
   data-hatsu-perspective-id={marker.originalCharacterId}
   data-hatsu-next-change={marker.futureChange}
-  data-hatsu-list={marker.hatsuNames?.join('|')}
+  data-hatsu-list={marker.hatsuIds?.join('|')}
   style={styleString}
   style:transform="translate(-50%, -50%)"
   aria-label={`${marker.perceivedIdentity}, ${marker.locationLabel || 'unknown position'}, ${marker.temporalLabel || 'unknown status'}`}

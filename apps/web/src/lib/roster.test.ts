@@ -4,6 +4,7 @@ import {
   buildCatalogIndex,
   buildHatsuIndex,
   factionTagsForMembershipType,
+  hatsuIdsFor,
   hatsuNamesFor,
   resolveFactionTags,
 } from './roster'
@@ -82,10 +83,10 @@ describe('resolveFactionTags', () => {
 
 describe('hatsuNamesFor', () => {
   const hatsu = buildHatsuIndex([
-    { ownerId: 'hisoka', name: 'Bungee Gum' },
-    { ownerId: 'hisoka', name: 'Texture Surprise' },
-    { ownerId: 'kurapika', name: 'Emperor Time' },
-    { ownerId: null, name: 'Unattributed technique' },
+    { id: 'bungee-gum', ownerId: 'hisoka', name: 'Bungee Gum' },
+    { id: 'texture-surprise', ownerId: 'hisoka', name: 'Texture Surprise' },
+    { id: 'emperor-time', ownerId: 'kurapika', name: 'Emperor Time' },
+    { id: 'orphan', ownerId: null, name: 'Unattributed technique' },
   ])
 
   it('collects every ability of one owner', () => {
@@ -96,7 +97,16 @@ describe('hatsuNamesFor', () => {
   })
 
   it('drops abilities with no owner', () => {
-    expect([...hatsu.values()].flat()).not.toContain('Unattributed technique')
+    expect([...hatsu.values()].flat().map((ability) => ability.name)).not.toContain(
+      'Unattributed technique',
+    )
+  })
+
+  it('exposes catalogue ids, which is what the interaction layer resolves on', () => {
+    expect(hatsuIdsFor({ canonicalName: 'Hisoka Morow' }, index, hatsu)).toEqual([
+      'bungee-gum',
+      'texture-surprise',
+    ])
   })
 
   it('falls back to the slug when the catalogue does not know the name', () => {

@@ -458,6 +458,7 @@
               : biologicalOwner
         mapped.originalCharacterId = followedCharacter?.id || ownerCharacter.id
         mapped.hatsuNames = ownerCharacter.hatsuNames || []
+        mapped.hatsuIds = ownerCharacter.hatsuIds || []
         mapped.futureChange =
           nextBiologicalState === 'DEAD' || nextBiologicalState === 'DESTROYED'
             ? 'dead'
@@ -512,6 +513,7 @@
           overviewX: 50,
           overviewY: visual?.overviewY ?? 46,
           hatsuNames: character.hatsuNames || [],
+          hatsuIds: character.hatsuIds || [],
         }
       })
       .filter(Boolean)

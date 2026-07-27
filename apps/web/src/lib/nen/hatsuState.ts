@@ -1,6 +1,12 @@
 import { get, writable } from 'svelte/store'
 import type { HatsuProfile } from './hatsuRegistry.js'
 
+/**
+ * All three keys live in sessionStorage so an activation and the penalties it
+ * incurs share one lifetime. Keeping the active Hatsu in localStorage let a new
+ * tab restore the technique while resetting its Emperor Time debt and its
+ * forced Zetsu, which made the cost free.
+ */
 const ACTIVE_HATSU_KEY = 'black-whale:hatsu'
 const EMPEROR_TIME_HOURS_KEY = 'black-whale:emperor-time-hours'
 const FORCED_ZETSU_UNTIL_KEY = 'black-whale:forced-zetsu-until'
@@ -55,14 +61,14 @@ export function activateHatsu(profile: HatsuProfile) {
   parallelFutureVisible.set(profile.id === 'parallel-future')
   activeHatsu.set(profile)
   hatsuPanelOpen.set(false)
-  if (typeof localStorage !== 'undefined') localStorage.setItem(ACTIVE_HATSU_KEY, profile.id)
+  if (typeof sessionStorage !== 'undefined') sessionStorage.setItem(ACTIVE_HATSU_KEY, profile.id)
   return true
 }
 
 export function deactivateHatsu() {
   activeHatsu.set(null)
   parallelFutureVisible.set(false)
-  if (typeof localStorage !== 'undefined') localStorage.removeItem(ACTIVE_HATSU_KEY)
+  if (typeof sessionStorage !== 'undefined') sessionStorage.removeItem(ACTIVE_HATSU_KEY)
 }
 
 export function consumeEmperorTimeHour() {
@@ -86,7 +92,7 @@ export function enterForcedZetsu() {
   activeHatsu.set(null)
   parallelFutureVisible.set(false)
   hatsuPanelOpen.set(false)
-  if (typeof localStorage !== 'undefined') localStorage.removeItem(ACTIVE_HATSU_KEY)
+  if (typeof sessionStorage !== 'undefined') sessionStorage.removeItem(ACTIVE_HATSU_KEY)
   if (typeof sessionStorage !== 'undefined')
     sessionStorage.setItem(FORCED_ZETSU_UNTIL_KEY, String(until))
 }

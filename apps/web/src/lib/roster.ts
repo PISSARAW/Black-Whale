@@ -15,7 +15,14 @@ export interface FactionSubject {
 }
 
 export interface AbilityCatalogEntry {
+  id: string
   ownerId?: string | null
+  name: string
+}
+
+/** A catalogued Hatsu reduced to what the map markers carry. */
+export interface HatsuReference {
+  id: string
   name: string
 }
 
@@ -24,14 +31,14 @@ export function buildCatalogIndex(catalog: CatalogCharacter[]): Map<string, Cata
   return new Map(catalog.map((character) => [character.canonicalName, character]))
 }
 
-/** Index Hatsu names by their owner's catalogue id. */
-export function buildHatsuIndex(abilities: AbilityCatalogEntry[]): Map<string, string[]> {
-  const byOwner = new Map<string, string[]>()
+/** Index Hatsu by their owner's catalogue id. */
+export function buildHatsuIndex(abilities: AbilityCatalogEntry[]): Map<string, HatsuReference[]> {
+  const byOwner = new Map<string, HatsuReference[]>()
   for (const ability of abilities) {
     if (!ability.ownerId) continue
-    const names = byOwner.get(ability.ownerId) ?? []
-    names.push(ability.name)
-    byOwner.set(ability.ownerId, names)
+    const owned = byOwner.get(ability.ownerId) ?? []
+    owned.push({ id: ability.id, name: ability.name })
+    byOwner.set(ability.ownerId, owned)
   }
   return byOwner
 }
@@ -102,12 +109,34 @@ export function resolveFactionTags(
   return [...tags]
 }
 
-/** The Hatsu names attributed to a character, resolved through the catalogue. */
+/** The Hatsu attributed to a character, resolved through the catalogue. */
+export function hatsuFor(
+  subject: FactionSubject,
+  catalogIndex: Map<string, CatalogCharacter>,
+  hatsuIndex: Map<string, HatsuReference[]>,
+): HatsuReference[] {
+  const ownerId = catalogIndex.get(subject.canonicalName)?.id ?? subject.slug
+  return (ownerId ? hatsuIndex.get(ownerId) : undefined) ?? []
+}
+
+/**
+ * The Hatsu ids attributed to a character. Ids — not display names — are what
+ * the interaction layer resolves against, because catalogue names and registry
+ * names diverge often enough that name matching picks the wrong technique.
+ */
+export function hatsuIdsFor(
+  subject: FactionSubject,
+  catalogIndex: Map<string, CatalogCharacter>,
+  hatsuIndex: Map<string, HatsuReference[]>,
+): string[] {
+  return hatsuFor(subject, catalogIndex, hatsuIndex).map((hatsu) => hatsu.id)
+}
+
+/** The Hatsu names attributed to a character, for display. */
 export function hatsuNamesFor(
   subject: FactionSubject,
   catalogIndex: Map<string, CatalogCharacter>,
-  hatsuIndex: Map<string, string[]>,
+  hatsuIndex: Map<string, HatsuReference[]>,
 ): string[] {
-  const ownerId = catalogIndex.get(subject.canonicalName)?.id ?? subject.slug
-  return (ownerId ? hatsuIndex.get(ownerId) : undefined) ?? []
+  return hatsuFor(subject, catalogIndex, hatsuIndex).map((hatsu) => hatsu.name)
 }

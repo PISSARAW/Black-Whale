@@ -27,7 +27,7 @@
 
   onMount(() => {
     hydrateHatsuSession()
-    const remembered = hatsuById(localStorage.getItem('black-whale:hatsu'))
+    const remembered = hatsuById(sessionStorage.getItem('black-whale:hatsu'))
     if (remembered) activateHatsu(remembered)
 
     const clock = window.setInterval(() => {

@@ -3,7 +3,13 @@ import type { CatalogCharacter } from '$lib/server/data-files'
 import { buildPerspective } from '$lib/server/perspectives'
 import { readSpoilerProfile } from '$lib/server/spoiler'
 import { compareEventOrder, TimelineEngine } from '@black-whale/timeline-engine'
-import { buildCatalogIndex, buildHatsuIndex, hatsuNamesFor, resolveFactionTags } from '$lib/roster'
+import {
+  buildCatalogIndex,
+  buildHatsuIndex,
+  hatsuIdsFor,
+  hatsuNamesFor,
+  resolveFactionTags,
+} from '$lib/roster'
 import characterCatalog from '../../../../../data/characters/characters.json'
 import abilityCatalog from '../../../../../data/abilities/abilities.json'
 import type { PageServerLoad } from './$types'
@@ -115,6 +121,7 @@ export const load: PageServerLoad = async ({ url, cookies }) => {
       catalogIndex,
     ),
     hatsuNames: hatsuNamesFor(character, catalogIndex, hatsuIndex),
+    hatsuIds: hatsuIdsFor(character, catalogIndex, hatsuIndex),
   }))
 
   const perspectiveIsAvailable =
@@ -199,6 +206,7 @@ export const load: PageServerLoad = async ({ url, cookies }) => {
           characters: nextChapterWorldState.characters.map((character: any) => ({
             ...character,
             hatsuNames: hatsuNamesFor(character, catalogIndex, hatsuIndex),
+            hatsuIds: hatsuIdsFor(character, catalogIndex, hatsuIndex),
           })),
           bodies: nextChapterWorldState.bodies,
           consciousnesses: nextChapterWorldState.consciousnesses,

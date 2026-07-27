@@ -8,16 +8,16 @@
  */
 
 export interface OrderedEvent {
-  sequence: number;
+  sequence: number
   /** Chronological occurrence order, independent from the revealing chapter. */
-  ordinal?: number | null;
-  chapter: { number: number };
+  ordinal?: number | null
+  chapter: { number: number }
 }
 
 /** A row that holds between two events, such as a presence or a belief. */
 export interface TemporalRecord {
-  fromEvent: OrderedEvent;
-  untilEvent?: OrderedEvent | null;
+  fromEvent: OrderedEvent
+  untilEvent?: OrderedEvent | null
 }
 
 /**
@@ -28,13 +28,13 @@ export interface TemporalRecord {
  * that have not been placed on the ship's timeline yet.
  */
 export function compareEventOrder(left: OrderedEvent, right: OrderedEvent): number {
-  if (left.ordinal != null && right.ordinal != null) return left.ordinal - right.ordinal;
-  return left.chapter.number - right.chapter.number || left.sequence - right.sequence;
+  if (left.ordinal != null && right.ordinal != null) return left.ordinal - right.ordinal
+  return left.chapter.number - right.chapter.number || left.sequence - right.sequence
 }
 
 /** Whether an event has been revealed to a reader who has read that far. */
 export function isRevealed(event: OrderedEvent, revealedThroughChapter: number): boolean {
-  return event.chapter.number <= revealedThroughChapter;
+  return event.chapter.number <= revealedThroughChapter
 }
 
 /**
@@ -53,14 +53,14 @@ export function isRevealed(event: OrderedEvent, revealedThroughChapter: number):
 export function isActiveAt(
   record: TemporalRecord,
   targetEvent: OrderedEvent,
-  revealedThroughChapter: number = targetEvent.chapter.number
+  revealedThroughChapter: number = targetEvent.chapter.number,
 ): boolean {
   const started =
     isRevealed(record.fromEvent, revealedThroughChapter) &&
-    compareEventOrder(record.fromEvent, targetEvent) <= 0;
+    compareEventOrder(record.fromEvent, targetEvent) <= 0
 
-  const endIsKnown = record.untilEvent && isRevealed(record.untilEvent, revealedThroughChapter);
-  const notEnded = !endIsKnown || compareEventOrder(targetEvent, record.untilEvent!) < 0;
+  const endIsKnown = record.untilEvent && isRevealed(record.untilEvent, revealedThroughChapter)
+  const notEnded = !endIsKnown || compareEventOrder(targetEvent, record.untilEvent!) < 0
 
-  return started && notEnded;
+  return started && notEnded
 }

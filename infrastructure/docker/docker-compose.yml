@@ -6,11 +6,11 @@ services:
       POSTGRES_USER: bw_user
       POSTGRES_PASSWORD: bw_password
     ports:
-      - "5433:5432"
+      - '5433:5432'
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U bw_user -d black_whale"]
+      test: ['CMD-SHELL', 'pg_isready -U bw_user -d black_whale']
       interval: 10s
       timeout: 5s
       retries: 5
@@ -22,9 +22,19 @@ services:
     # Fresh development stacks have no Prisma migration history yet. db push
     # creates the single canonical Prisma schema; production upgrades use the
     # reviewed additive migration in packages/database/prisma/migrations.
-    command: ["pnpm", "--filter", "@black-whale/database", "exec", "prisma", "db", "push", "--skip-generate"]
+    command:
+      [
+        'pnpm',
+        '--filter',
+        '@black-whale/database',
+        'exec',
+        'prisma',
+        'db',
+        'push',
+        '--skip-generate',
+      ]
     environment:
-      DATABASE_URL: "postgresql://${POSTGRES_USER:-bw_user}:${POSTGRES_PASSWORD:-bw_password}@postgres:5432/${POSTGRES_DB:-black_whale}"
+      DATABASE_URL: 'postgresql://${POSTGRES_USER:-bw_user}:${POSTGRES_PASSWORD:-bw_password}@postgres:5432/${POSTGRES_DB:-black_whale}'
     depends_on:
       postgres:
         condition: service_healthy
@@ -34,9 +44,9 @@ services:
       context: ../..
       dockerfile: infrastructure/docker/Dockerfile.web
     ports:
-      - "3000:3000"
+      - '3000:3000'
     environment:
-      DATABASE_URL: "postgresql://${POSTGRES_USER:-bw_user}:${POSTGRES_PASSWORD:-bw_password}@postgres:5432/${POSTGRES_DB:-black_whale}"
+      DATABASE_URL: 'postgresql://${POSTGRES_USER:-bw_user}:${POSTGRES_PASSWORD:-bw_password}@postgres:5432/${POSTGRES_DB:-black_whale}'
     depends_on:
       migrate:
         condition: service_completed_successfully
@@ -46,9 +56,9 @@ services:
       context: ../..
       dockerfile: infrastructure/docker/Dockerfile.admin
     ports:
-      - "3002:3002"
+      - '3002:3002'
     environment:
-      DATABASE_URL: "postgresql://${POSTGRES_USER:-bw_user}:${POSTGRES_PASSWORD:-bw_password}@postgres:5432/${POSTGRES_DB:-black_whale}"
+      DATABASE_URL: 'postgresql://${POSTGRES_USER:-bw_user}:${POSTGRES_PASSWORD:-bw_password}@postgres:5432/${POSTGRES_DB:-black_whale}'
     depends_on:
       migrate:
         condition: service_completed_successfully

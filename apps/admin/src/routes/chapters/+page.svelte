@@ -1,7 +1,7 @@
 <script lang="ts">
-import type { PageData } from './$types';
+  import type { PageData } from './$types'
 
-let { data }: { data: PageData } = $props();
+  let { data }: { data: PageData } = $props()
 </script>
 
 <svelte:head><title>Chapters — BW Admin</title></svelte:head>
@@ -41,5 +41,7 @@ let { data }: { data: PageData } = $props();
 </div>
 
 <style>
-  .bw-gold { color: #FFD700; }
+  .bw-gold {
+    color: #ffd700;
+  }
 </style>

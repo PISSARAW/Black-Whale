@@ -1,111 +1,111 @@
-import { describe, expect, it } from 'vitest';
-import type { CatalogCharacter } from '$lib/server/data-files';
+import { describe, expect, it } from 'vitest'
+import type { CatalogCharacter } from '$lib/server/data-files'
 import {
-	buildCatalogIndex,
-	buildHatsuIndex,
-	factionTagsForMembershipType,
-	hatsuNamesFor,
-	resolveFactionTags
-} from './roster';
+  buildCatalogIndex,
+  buildHatsuIndex,
+  factionTagsForMembershipType,
+  hatsuNamesFor,
+  resolveFactionTags,
+} from './roster'
 
 const CATALOG: CatalogCharacter[] = [
-	{ id: 'prince-benjamin', canonicalName: 'Benjamin Hui Guo Rou', factionId: 'prince-benjamin' },
-	{ id: 'kurapika', canonicalName: 'Kurapika', factionId: 'zodiacs' },
-	{ id: 'hisoka', canonicalName: 'Hisoka Morow', factionId: 'phantom-troupe' },
-	{ id: 'nobunaga', canonicalName: 'Nobunaga Hazama', factionId: 'phantom-troupe' },
-	{ id: 'morena', canonicalName: 'Morena Prudo', factionId: 'mafia-xi-yu' },
-	{
-		id: 'bill',
-		canonicalName: 'Bill',
-		factionId: 'prince-woble',
-		shipLocation: { role: 'Garde du corps de la reine Oito' }
-	},
-	{ id: 'unknown-passenger', canonicalName: 'Unknown Passenger', factionId: null }
-];
+  { id: 'prince-benjamin', canonicalName: 'Benjamin Hui Guo Rou', factionId: 'prince-benjamin' },
+  { id: 'kurapika', canonicalName: 'Kurapika', factionId: 'zodiacs' },
+  { id: 'hisoka', canonicalName: 'Hisoka Morow', factionId: 'phantom-troupe' },
+  { id: 'nobunaga', canonicalName: 'Nobunaga Hazama', factionId: 'phantom-troupe' },
+  { id: 'morena', canonicalName: 'Morena Prudo', factionId: 'mafia-xi-yu' },
+  {
+    id: 'bill',
+    canonicalName: 'Bill',
+    factionId: 'prince-woble',
+    shipLocation: { role: 'Garde du corps de la reine Oito' },
+  },
+  { id: 'unknown-passenger', canonicalName: 'Unknown Passenger', factionId: null },
+]
 
-const index = buildCatalogIndex(CATALOG);
+const index = buildCatalogIndex(CATALOG)
 const tags = (name: string, types: string[] = []) =>
-	resolveFactionTags({ canonicalName: name }, types, index);
+  resolveFactionTags({ canonicalName: name }, types, index)
 
 describe('factionTagsForMembershipType', () => {
-	it('maps both royal army flavours to the guard chip', () => {
-		expect(factionTagsForMembershipType('KAKIN_ROYAL_ARMY')).toEqual(['guards']);
-		expect(factionTagsForMembershipType('BENJAMIN_PRIVATE_ARMY')).toEqual(['guards']);
-	});
+  it('maps both royal army flavours to the guard chip', () => {
+    expect(factionTagsForMembershipType('KAKIN_ROYAL_ARMY')).toEqual(['guards'])
+    expect(factionTagsForMembershipType('BENJAMIN_PRIVATE_ARMY')).toEqual(['guards'])
+  })
 
-	it('returns nothing for an affiliation with no chip', () => {
-		expect(factionTagsForMembershipType('CIVILIAN_COHORT')).toEqual([]);
-	});
-});
+  it('returns nothing for an affiliation with no chip', () => {
+    expect(factionTagsForMembershipType('CIVILIAN_COHORT')).toEqual([])
+  })
+})
 
 describe('resolveFactionTags', () => {
-	it('tags only the heirs as princes, not their camp', () => {
-		expect(tags('Benjamin Hui Guo Rou')).toContain('princes');
-		expect(tags('Bill')).not.toContain('princes');
-	});
+  it('tags only the heirs as princes, not their camp', () => {
+    expect(tags('Benjamin Hui Guo Rou')).toContain('princes')
+    expect(tags('Bill')).not.toContain('princes')
+  })
 
-	it('derives the spider and mafia chips from the catalogue faction', () => {
-		expect(tags('Hisoka Morow')).toContain('spider');
-		expect(tags('Morena Prudo')).toContain('mafia');
-	});
+  it('derives the spider and mafia chips from the catalogue faction', () => {
+    expect(tags('Hisoka Morow')).toContain('spider')
+    expect(tags('Morena Prudo')).toContain('mafia')
+  })
 
-	it('treats the Zodiacs as hunters', () => {
-		expect(tags('Kurapika')).toContain('hunters');
-	});
+  it('treats the Zodiacs as hunters', () => {
+    expect(tags('Kurapika')).toContain('hunters')
+  })
 
-	it('matches accented French role text', () => {
-		// "Garde du corps" only reaches the /garde/ pattern once accents are stripped.
-		expect(tags('Bill')).toContain('guards');
-	});
+  it('matches accented French role text', () => {
+    // "Garde du corps" only reaches the /garde/ pattern once accents are stripped.
+    expect(tags('Bill')).toContain('guards')
+  })
 
-	it('prefers a recorded membership over the catalogue fallback', () => {
-		// Nobunaga is catalogued with the Troupe, but the temporal record puts him
-		// in the royal army at this point in the story. Both chips apply.
-		const result = tags('Nobunaga Hazama', ['KAKIN_ROYAL_ARMY']);
-		expect(result).toContain('guards');
-		expect(result).toContain('spider');
-	});
+  it('prefers a recorded membership over the catalogue fallback', () => {
+    // Nobunaga is catalogued with the Troupe, but the temporal record puts him
+    // in the royal army at this point in the story. Both chips apply.
+    const result = tags('Nobunaga Hazama', ['KAKIN_ROYAL_ARMY'])
+    expect(result).toContain('guards')
+    expect(result).toContain('spider')
+  })
 
-	it('returns nothing for a character the catalogue does not know', () => {
-		expect(tags('Someone Entirely New')).toEqual([]);
-	});
+  it('returns nothing for a character the catalogue does not know', () => {
+    expect(tags('Someone Entirely New')).toEqual([])
+  })
 
-	it('never repeats a chip reached by two routes', () => {
-		const result = tags('Kurapika', ['HUNTER_ASSOCIATION']);
-		expect(result.filter((tag) => tag === 'hunters')).toHaveLength(1);
-	});
+  it('never repeats a chip reached by two routes', () => {
+    const result = tags('Kurapika', ['HUNTER_ASSOCIATION'])
+    expect(result.filter((tag) => tag === 'hunters')).toHaveLength(1)
+  })
 
-	it('ignores a null faction rather than matching the mafia prefix', () => {
-		expect(tags('Unknown Passenger')).toEqual([]);
-	});
-});
+  it('ignores a null faction rather than matching the mafia prefix', () => {
+    expect(tags('Unknown Passenger')).toEqual([])
+  })
+})
 
 describe('hatsuNamesFor', () => {
-	const hatsu = buildHatsuIndex([
-		{ ownerId: 'hisoka', name: 'Bungee Gum' },
-		{ ownerId: 'hisoka', name: 'Texture Surprise' },
-		{ ownerId: 'kurapika', name: 'Emperor Time' },
-		{ ownerId: null, name: 'Unattributed technique' }
-	]);
+  const hatsu = buildHatsuIndex([
+    { ownerId: 'hisoka', name: 'Bungee Gum' },
+    { ownerId: 'hisoka', name: 'Texture Surprise' },
+    { ownerId: 'kurapika', name: 'Emperor Time' },
+    { ownerId: null, name: 'Unattributed technique' },
+  ])
 
-	it('collects every ability of one owner', () => {
-		expect(hatsuNamesFor({ canonicalName: 'Hisoka Morow' }, index, hatsu)).toEqual([
-			'Bungee Gum',
-			'Texture Surprise'
-		]);
-	});
+  it('collects every ability of one owner', () => {
+    expect(hatsuNamesFor({ canonicalName: 'Hisoka Morow' }, index, hatsu)).toEqual([
+      'Bungee Gum',
+      'Texture Surprise',
+    ])
+  })
 
-	it('drops abilities with no owner', () => {
-		expect([...hatsu.values()].flat()).not.toContain('Unattributed technique');
-	});
+  it('drops abilities with no owner', () => {
+    expect([...hatsu.values()].flat()).not.toContain('Unattributed technique')
+  })
 
-	it('falls back to the slug when the catalogue does not know the name', () => {
-		expect(hatsuNamesFor({ canonicalName: 'Unlisted', slug: 'kurapika' }, index, hatsu)).toEqual([
-			'Emperor Time'
-		]);
-	});
+  it('falls back to the slug when the catalogue does not know the name', () => {
+    expect(hatsuNamesFor({ canonicalName: 'Unlisted', slug: 'kurapika' }, index, hatsu)).toEqual([
+      'Emperor Time',
+    ])
+  })
 
-	it('returns an empty list rather than undefined for an unknown character', () => {
-		expect(hatsuNamesFor({ canonicalName: 'Nobody' }, index, hatsu)).toEqual([]);
-	});
-});
+  it('returns an empty list rather than undefined for an unknown character', () => {
+    expect(hatsuNamesFor({ canonicalName: 'Nobody' }, index, hatsu)).toEqual([])
+  })
+})

@@ -3,13 +3,13 @@
     leftTitle,
     rightTitle,
     leftContent,
-    rightContent
+    rightContent,
   }: {
-    leftTitle: string;
-    rightTitle: string;
-    leftContent: string;
-    rightContent: string;
-  } = $props();
+    leftTitle: string
+    rightTitle: string
+    leftContent: string
+    rightContent: string
+  } = $props()
 </script>
 
 <section class="split-map" aria-label="Comparaison de perspectives">

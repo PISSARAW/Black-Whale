@@ -3,18 +3,19 @@
   import { createEventDispatcher } from 'svelte'
 
   export let availability: ActionAvailability | null = null
-  export let perspectiveMode: 'character' | 'omniscient' | 'body' | 'aura' | 'apparent' = 'character'
+  export let perspectiveMode: 'character' | 'omniscient' | 'body' | 'aura' | 'apparent' =
+    'character'
 
   const dispatch = createEventDispatcher<{ close: void }>()
 
   const statusIcon: Record<string, string> = {
-    met:     '✓',
-    unmet:   '✗',
+    met: '✓',
+    unmet: '✗',
     unknown: '?',
   }
   const statusClass: Record<string, string> = {
-    met:     'text-green-400',
-    unmet:   'text-bw-scarlet',
+    met: 'text-green-400',
+    unmet: 'text-bw-scarlet',
     unknown: 'text-gray-500 italic',
   }
 </script>
@@ -33,8 +34,8 @@
       <button
         class="text-gray-500 hover:text-white text-xs leading-none"
         onclick={() => dispatch('close')}
-        aria-label="Close"
-      >✕</button>
+        aria-label="Close">✕</button
+      >
     </div>
 
     <p class="text-gray-400 text-xs mb-3">
@@ -46,7 +47,9 @@
     <ul class="flex flex-col gap-1.5">
       {#each availability.conditions as cond (cond.label)}
         <li class="flex items-start gap-2">
-          <span class="shrink-0 font-mono {statusClass[cond.status]}">{statusIcon[cond.status]}</span>
+          <span class="shrink-0 font-mono {statusClass[cond.status]}"
+            >{statusIcon[cond.status]}</span
+          >
           <span
             class:text-gray-300={cond.status !== 'unknown'}
             class:text-gray-600={cond.status === 'unknown'}

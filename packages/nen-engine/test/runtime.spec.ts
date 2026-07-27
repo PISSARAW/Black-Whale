@@ -78,15 +78,22 @@ const request = (overrides: Record<string, unknown> = {}) => ({
 
 describe('parseNenActionRequest', () => {
   it('accepts a well-formed action', () => {
-    expect(parseNenActionRequest(request())).toMatchObject({ actorId: 'hisoka', interaction: 'attach' })
+    expect(parseNenActionRequest(request())).toMatchObject({
+      actorId: 'hisoka',
+      interaction: 'attach',
+    })
   })
 
   it('rejects a missing actor', () => {
-    expect(() => parseNenActionRequest(request({ actorId: undefined }))).toThrow(NenActionInputError)
+    expect(() => parseNenActionRequest(request({ actorId: undefined }))).toThrow(
+      NenActionInputError,
+    )
   })
 
   it('rejects an over-long identifier', () => {
-    expect(() => parseNenActionRequest(request({ actorId: 'x'.repeat(129) }))).toThrow(/at most 128/)
+    expect(() => parseNenActionRequest(request({ actorId: 'x'.repeat(129) }))).toThrow(
+      /at most 128/,
+    )
   })
 
   it('rejects more than sixteen targets', () => {
@@ -122,17 +129,16 @@ describe('NenRuntime context building', () => {
     const { engine, execute } = runtime()
     await engine.executeInState('bungee-gum', parseNenActionRequest(request()), world())
 
-    const context = execute.mock.calls[0]?.[0] as unknown as { worldState: WorldState; actorId: string }
+    const context = execute.mock.calls[0]?.[0] as unknown as {
+      worldState: WorldState
+      actorId: string
+    }
     expect(context.worldState.abilitiesByOwner['hisoka']).toContain('bungee-gum')
   })
 
   it('does not grant an ability the actor does not own', async () => {
     const { engine, execute } = runtime()
-    await engine.executeInState(
-      'emperor-time',
-      parseNenActionRequest(request()),
-      world(),
-    )
+    await engine.executeInState('emperor-time', parseNenActionRequest(request()), world())
     // The module registered is bungee-gum, so emperor-time never reaches it.
     expect(execute).not.toHaveBeenCalled()
   })
@@ -141,12 +147,16 @@ describe('NenRuntime context building', () => {
     const { engine, execute } = runtime()
     await engine.executeInState('bungee-gum', parseNenActionRequest(request()), world())
 
-    const context = execute.mock.calls[0]?.[0] as unknown as { targetRefs: Array<{ id: string; kind: string }> }
+    const context = execute.mock.calls[0]?.[0] as unknown as {
+      targetRefs: Array<{ id: string; kind: string }>
+    }
     expect(context.targetRefs[0]).toEqual({ id: 'door-3101', kind: 'OBJECT' })
   })
 
   it('falls back to a slug lookup when the reference is not an entity id', async () => {
-    const resolveCharacterId = vi.fn(async (slug: string) => (slug === 'hisoka-morow' ? 'hisoka' : null))
+    const resolveCharacterId = vi.fn(async (slug: string) =>
+      slug === 'hisoka-morow' ? 'hisoka' : null,
+    )
     const { engine, execute } = runtime({ resolveCharacterId })
     await engine.executeInState(
       'bungee-gum',
@@ -167,7 +177,9 @@ describe('NenRuntime context building', () => {
       world(),
     )
 
-    const context = execute.mock.calls[0]?.[0] as unknown as { targetRefs: Array<{ id: string; kind: string }> }
+    const context = execute.mock.calls[0]?.[0] as unknown as {
+      targetRefs: Array<{ id: string; kind: string }>
+    }
     expect(context.targetRefs[0]).toEqual({ id: 'something-unmodelled', kind: 'OBJECT' })
   })
 

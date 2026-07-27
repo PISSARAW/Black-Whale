@@ -23,19 +23,18 @@ export function compareStoryPosition(
 }
 
 export function buildCanonicalCursors(events: CursorSource[], branchId = 'canon'): StoryCursor[] {
-  const ordered = [...events]
-    .sort((left, right) => {
-      if (left.ordinal != null && right.ordinal != null) return left.ordinal - right.ordinal
-      return left.chapter.number - right.chapter.number || left.sequence - right.sequence
-    })
+  const ordered = [...events].sort((left, right) => {
+    if (left.ordinal != null && right.ordinal != null) return left.ordinal - right.ordinal
+    return left.chapter.number - right.chapter.number || left.sequence - right.sequence
+  })
 
   return ordered.map((event, index) => ({
-      branchId,
-      ordinal: event.ordinal ?? index,
-      eventId: event.id,
-      chapterNumber: event.chapter.number,
-      localSequence: event.sequence,
-    }))
+    branchId,
+    ordinal: event.ordinal ?? index,
+    eventId: event.id,
+    chapterNumber: event.chapter.number,
+    localSequence: event.sequence,
+  }))
 }
 
 export function assertCursorProgression(previous: StoryCursor, next: StoryCursor): void {

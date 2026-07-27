@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { KnowledgeVisualState } from './types';
+  import type { KnowledgeVisualState } from './types'
 
   const iconByState: Record<KnowledgeVisualState, string> = {
     known: '✓',
@@ -11,18 +11,18 @@
     rejected: '⨯',
     outdated: '⏱',
     contradicted: '≠',
-    unknown: '—'
-  };
+    unknown: '—',
+  }
 
   let {
     state,
     label,
-    details = ''
+    details = '',
   }: {
-    state: KnowledgeVisualState;
-    label: string;
-    details?: string;
-  } = $props();
+    state: KnowledgeVisualState
+    label: string
+    details?: string
+  } = $props()
 </script>
 
 <div class="knowledge-status" data-state={state} role="status" aria-label={`${label}: ${state}`}>

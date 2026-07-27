@@ -47,9 +47,7 @@
     "zoneType": "quarters",
     "description": "Résidence du roi Nasubi, séparée des quartiers des Princes par la salle de banquet ; le salon montré possède un sol à motifs, un mobilier orné et des tableaux.",
     "entrances": [],
-    "exits": [
-      "tier-1-banquet-hall"
-    ]
+    "exits": ["tier-1-banquet-hall"]
   },
   {
     "id": "tier-1-vvip-living-quarters",
@@ -428,12 +426,8 @@
     "deck": 4,
     "zoneType": "corridor",
     "description": "Passage central reliant les Tiers 4 et 5. Chrollo, Shizuku et Bonolenov y progressent au quatrième jour du voyage.",
-    "entrances": [
-      "tier-4"
-    ],
-    "exits": [
-      "tier-5"
-    ]
+    "entrances": ["tier-4"],
+    "exits": ["tier-5"]
   },
   {
     "id": "tier-5-central-dining-hall",
@@ -452,12 +446,8 @@
     "deck": null,
     "zoneType": "infrastructure",
     "description": "Installation de traitement des eaux usées située entre les Tiers 4 et 5. Son plan interne précis et un éventuel lien avec les routes Heil-Ly ne sont pas confirmés.",
-    "entrances": [
-      "tier-4-central-passage"
-    ],
-    "exits": [
-      "tier-5"
-    ]
+    "entrances": ["tier-4-central-passage"],
+    "exits": ["tier-5"]
   },
   {
     "id": "tier-3-residential-units",

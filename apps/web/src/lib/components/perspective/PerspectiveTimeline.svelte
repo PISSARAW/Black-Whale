@@ -1,10 +1,10 @@
 <script lang="ts">
   interface TimelinePoint {
-    id: string;
-    label: string;
-    index: number;
-    emphasis?: boolean;
-    detail?: string;
+    id: string
+    label: string
+    index: number
+    emphasis?: boolean
+    detail?: string
   }
 
   let {
@@ -12,21 +12,21 @@
     body,
     consciousness,
     knowledge,
-    currentIndex
+    currentIndex,
   }: {
-    reality: TimelinePoint[];
-    body: TimelinePoint[];
-    consciousness: TimelinePoint[];
-    knowledge: TimelinePoint[];
-    currentIndex: number;
-  } = $props();
+    reality: TimelinePoint[]
+    body: TimelinePoint[]
+    consciousness: TimelinePoint[]
+    knowledge: TimelinePoint[]
+    currentIndex: number
+  } = $props()
 
   let lines = $derived([
     { label: 'Reality', points: reality },
     { label: 'Body', points: body },
     { label: 'Consciousness', points: consciousness },
-    { label: 'Knowledge', points: knowledge }
-  ]);
+    { label: 'Knowledge', points: knowledge },
+  ])
 </script>
 
 <section class="timeline-v2" aria-label="Multi-stream timeline">

@@ -1,6 +1,6 @@
-import type { FollowMode, PerspectiveKind } from '$lib/components/perspective/types';
+import type { FollowMode, PerspectiveKind } from '$lib/components/perspective/types'
 
-export type ZoomLevel = 'OVERVIEW' | 'TIER' | 'LOCAL';
+export type ZoomLevel = 'OVERVIEW' | 'TIER' | 'LOCAL'
 
 export const mapState = $state({
   currentZoomLevel: 'OVERVIEW' as ZoomLevel,
@@ -13,81 +13,101 @@ export const mapState = $state({
   compareWithReader: false,
   explainPanelOpen: false,
   explainTarget: null as null | {
-    subject: string;
-    value: string;
-    source: string;
-    observedAt: string;
-    freshness: string;
-    knowledgeState: 'known' | 'confirmed' | 'reported' | 'believed' | 'suspected' | 'rumor' | 'rejected' | 'outdated' | 'contradicted' | 'unknown';
-    canonicalValue?: string;
+    subject: string
+    value: string
+    source: string
+    observedAt: string
+    freshness: string
+    knowledgeState:
+      | 'known'
+      | 'confirmed'
+      | 'reported'
+      | 'believed'
+      | 'suspected'
+      | 'rumor'
+      | 'rejected'
+      | 'outdated'
+      | 'contradicted'
+      | 'unknown'
+    canonicalValue?: string
   },
   currentEventIndex: 0,
   filters: {
     factions: [] as string[],
     spoilersEnabled: false,
-    showUnknownPositions: false
+    showUnknownPositions: false,
   },
-  
+
   setZoomLevel(level: ZoomLevel) {
-    this.currentZoomLevel = level;
+    this.currentZoomLevel = level
   },
-  
+
   selectTier(tierId: string | null) {
-    this.selectedTier = tierId;
-    this.currentZoomLevel = tierId ? 'TIER' : 'OVERVIEW';
-    this.selectedLocationId = null;
+    this.selectedTier = tierId
+    this.currentZoomLevel = tierId ? 'TIER' : 'OVERVIEW'
+    this.selectedLocationId = null
   },
-  
+
   selectLocation(locationId: string | null) {
-    this.selectedLocationId = locationId;
+    this.selectedLocationId = locationId
     if (locationId) {
-      this.currentZoomLevel = 'LOCAL';
+      this.currentZoomLevel = 'LOCAL'
     } else {
-      this.currentZoomLevel = this.selectedTier ? 'TIER' : 'OVERVIEW';
+      this.currentZoomLevel = this.selectedTier ? 'TIER' : 'OVERVIEW'
     }
   },
-  
+
   setEventIndex(index: number) {
-    this.currentEventIndex = index;
+    this.currentEventIndex = index
   },
 
   setPerspective(id: string, name: string, kind: PerspectiveKind) {
-    this.selectedPerspectiveId = id;
-    this.selectedPerspectiveName = name;
-    this.selectedPerspectiveKind = kind;
+    this.selectedPerspectiveId = id
+    this.selectedPerspectiveName = name
+    this.selectedPerspectiveKind = kind
   },
 
   setFollowMode(mode: FollowMode) {
-    this.followMode = mode;
+    this.followMode = mode
   },
 
   setCompareWithReader(nextValue: boolean) {
-    this.compareWithReader = nextValue;
+    this.compareWithReader = nextValue
   },
 
   openExplainPanel(payload: {
-    subject: string;
-    value: string;
-    source: string;
-    observedAt: string;
-    freshness: string;
-    knowledgeState: 'known' | 'confirmed' | 'reported' | 'believed' | 'suspected' | 'rumor' | 'rejected' | 'outdated' | 'contradicted' | 'unknown';
-    canonicalValue?: string;
+    subject: string
+    value: string
+    source: string
+    observedAt: string
+    freshness: string
+    knowledgeState:
+      | 'known'
+      | 'confirmed'
+      | 'reported'
+      | 'believed'
+      | 'suspected'
+      | 'rumor'
+      | 'rejected'
+      | 'outdated'
+      | 'contradicted'
+      | 'unknown'
+    canonicalValue?: string
   }) {
-    this.explainTarget = payload;
-    this.explainPanelOpen = true;
+    this.explainTarget = payload
+    this.explainPanelOpen = true
   },
 
   closeExplainPanel() {
-    this.explainPanelOpen = false;
-    this.explainTarget = null;
+    this.explainPanelOpen = false
+    this.explainTarget = null
   },
-  
+
   toggleFactionFilter(factionId: string) {
     if (this.filters.factions.includes(factionId)) {
-      this.filters.factions = this.filters.factions.filter(f => f !== factionId);
+      this.filters.factions = this.filters.factions.filter((f) => f !== factionId)
     } else {
-      this.filters.factions.push(factionId);
+      this.filters.factions.push(factionId)
     }
-  }
-});
+  },
+})

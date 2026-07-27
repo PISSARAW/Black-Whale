@@ -13,7 +13,9 @@ function requireEntity(state: WorldState, entityId: string, expectedKind?: strin
 export function reduceWorld(previous: WorldState, event: WorldEvent): WorldState {
   assertCursorProgression(previous.cursor, event.cursor)
   if (event.branchId !== event.cursor.branchId) {
-    throw new Error(`Event branch ${event.branchId} does not match cursor branch ${event.cursor.branchId}`)
+    throw new Error(
+      `Event branch ${event.branchId} does not match cursor branch ${event.cursor.branchId}`,
+    )
   }
 
   const next = cloneWorld(previous)

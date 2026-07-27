@@ -1,13 +1,17 @@
 <script lang="ts">
-  import BodyConsciousnessMarker from '$lib/components/perspective/BodyConsciousnessMarker.svelte';
-  import type { MarkerIdentityState } from '$lib/components/perspective/types';
-  import { mapState } from '$lib/state/mapState.svelte';
+  import BodyConsciousnessMarker from '$lib/components/perspective/BodyConsciousnessMarker.svelte'
+  import type { MarkerIdentityState } from '$lib/components/perspective/types'
+  import { mapState } from '$lib/state/mapState.svelte'
 
-  let { character, future = false, futureMode = false }: {
-    character: MarkerIdentityState;
-    future?: boolean;
-    futureMode?: boolean;
-  } = $props();
+  let {
+    character,
+    future = false,
+    futureMode = false,
+  }: {
+    character: MarkerIdentityState
+    future?: boolean
+    futureMode?: boolean
+  } = $props()
 
   function explainMarker(marker: MarkerIdentityState) {
     mapState.openExplainPanel({
@@ -15,11 +19,18 @@
       value: marker.body,
       source: marker.temporalLabel || marker.sourceLabel || 'Direct observation',
       observedAt: marker.temporalDetail || marker.sinceLabel || 'unspecified event',
-      freshness: marker.knowledgeState === 'outdated' ? 'not recently confirmed' : 'recent information',
+      freshness:
+        marker.knowledgeState === 'outdated' ? 'not recently confirmed' : 'recent information',
       knowledgeState: marker.knowledgeState,
-      canonicalValue: `${marker.body} / ${marker.consciousness}`
-    });
+      canonicalValue: `${marker.body} / ${marker.consciousness}`,
+    })
   }
 </script>
 
-<BodyConsciousnessMarker marker={character} compact={mapState.currentZoomLevel === 'OVERVIEW'} onExplain={explainMarker} {future} {futureMode} />
+<BodyConsciousnessMarker
+  marker={character}
+  compact={mapState.currentZoomLevel === 'OVERVIEW'}
+  onExplain={explainMarker}
+  {future}
+  {futureMode}
+/>

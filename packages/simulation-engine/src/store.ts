@@ -45,7 +45,11 @@ export interface SimulationStorePorts {
   ): Promise<AbilityExecutionResult>
 }
 
-export const SIMULATION_MODES: readonly SimulationMode[] = ['strict-canon', 'rule-compatible', 'sandbox']
+export const SIMULATION_MODES: readonly SimulationMode[] = [
+  'strict-canon',
+  'rule-compatible',
+  'sandbox',
+]
 export const SIMULATION_ACTION_TYPES = ['ACTIVATE_ABILITY', 'MOVE_ENTITY'] as const
 
 export type SimulationActionType = (typeof SIMULATION_ACTION_TYPES)[number]
@@ -122,7 +126,10 @@ export function parseSimulationActionInput(raw: unknown): SimulationActionInput 
     throw new SimulationInputError(`payload must be at most ${MAX_PAYLOAD_BYTES} bytes`)
   }
 
-  return { actionType: actionType as SimulationActionType, payload: payload as Record<string, unknown> }
+  return {
+    actionType: actionType as SimulationActionType,
+    payload: payload as Record<string, unknown>,
+  }
 }
 
 /**
@@ -141,7 +148,12 @@ export class SimulationStore {
   async createBranch(input: CreateSimulationInput) {
     const baseState = await this.ports.loadKernelState(input.parentEventId)
     const branch = this.engine.createBranch(
-      { id: randomUUID(), parentEventId: input.parentEventId, mode: input.mode, ownerId: input.ownerId },
+      {
+        id: randomUUID(),
+        parentEventId: input.parentEventId,
+        mode: input.mode,
+        ownerId: input.ownerId,
+      },
       baseState,
     )
 
@@ -206,7 +218,10 @@ export class SimulationStore {
     return result
   }
 
-  private async activateAbility(state: WorldState, payload: Record<string, unknown>): Promise<ProposedWorldEvent[]> {
+  private async activateAbility(
+    state: WorldState,
+    payload: Record<string, unknown>,
+  ): Promise<ProposedWorldEvent[]> {
     const targets = payload['targets']
     const parameters = payload['parameters']
     const result = await this.ports.executeAbility(
@@ -224,7 +239,8 @@ export class SimulationStore {
       },
       state,
     )
-    if (!result.allowed) throw new SimulationInputError(result.reason ?? 'Ability activation rejected')
+    if (!result.allowed)
+      throw new SimulationInputError(result.reason ?? 'Ability activation rejected')
     return result.events ?? []
   }
 
@@ -271,7 +287,8 @@ export class SimulationStore {
       },
     })
     const projection = stored?.projections[0]
-    if (!stored || !projection) throw new SimulationNotFoundError(`Simulation branch ${branchId} not found`)
+    if (!stored || !projection)
+      throw new SimulationNotFoundError(`Simulation branch ${branchId} not found`)
 
     const snapshot = projection.payload as unknown as WorldState
     this.engine.restoreBranch(
@@ -289,7 +306,11 @@ export class SimulationStore {
     )
   }
 
-  private async persistStep(branchId: string, events: WorldEvent[], snapshot: WorldState): Promise<void> {
+  private async persistStep(
+    branchId: string,
+    events: WorldEvent[],
+    snapshot: WorldState,
+  ): Promise<void> {
     await this.prisma.$transaction(async (transaction) => {
       for (const event of events) {
         await transaction.worldEventRecord.create({

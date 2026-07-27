@@ -17,7 +17,9 @@
   Displays chapter, time, consciousness, body, perspective and aura level
   so the user always knows WHO they are following and HOW they perceive the world.
 -->
-<div class="nen-status-bar flex items-center gap-6 px-4 py-2 bg-bw-navy border-b border-bw-gold/30 text-xs font-mono text-gray-300 overflow-x-auto whitespace-nowrap">
+<div
+  class="nen-status-bar flex items-center gap-6 px-4 py-2 bg-bw-navy border-b border-bw-gold/30 text-xs font-mono text-gray-300 overflow-x-auto whitespace-nowrap"
+>
   <!-- Chapitre / Heure -->
   <span class="text-bw-gold font-semibold">Ch. {status.chapterId}</span>
   {#if status.narrativeTime}
@@ -57,7 +59,9 @@
   <!-- Perspective -->
   <span title="Perspective mode">
     <span class="text-gray-500">Perspective :</span>
-    <span class="ml-1 text-bw-gold">{perspectiveLabels[status.perspectiveMode] ?? status.perspectiveMode}</span>
+    <span class="ml-1 text-bw-gold"
+      >{perspectiveLabels[status.perspectiveMode] ?? status.perspectiveMode}</span
+    >
   </span>
 
   <!-- Aura -->
@@ -79,9 +83,11 @@
 
 <!-- Dissonance banner — shown when consciousness ≠ body -->
 {#if status.occupiedBodyId !== status.followedConsciousnessId}
-  <div class="bg-bw-scarlet/10 border-b border-bw-scarlet/40 text-bw-scarlet text-xs text-center py-1 font-mono">
-    You are <strong>{status.followedConsciousnessId}</strong> —
-    you occupy the body of <strong>{status.occupiedBodyId}</strong> —
-    others perceive you as <strong>{status.perceivedAs}</strong>
+  <div
+    class="bg-bw-scarlet/10 border-b border-bw-scarlet/40 text-bw-scarlet text-xs text-center py-1 font-mono"
+  >
+    You are <strong>{status.followedConsciousnessId}</strong> — you occupy the body of
+    <strong>{status.occupiedBodyId}</strong>
+    — others perceive you as <strong>{status.perceivedAs}</strong>
   </div>
 {/if}

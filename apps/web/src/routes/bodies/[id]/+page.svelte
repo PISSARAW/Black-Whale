@@ -1,14 +1,18 @@
 <script lang="ts">
-  import Seo from '$lib/components/Seo.svelte';
-  import { page } from '$app/stores';
+  import Seo from '$lib/components/Seo.svelte'
+  import { page } from '$app/stores'
 
-  let id = $derived(($page.params as Record<string, string | undefined>).id || ($page.params as Record<string, string | undefined>).slug || 'unknown');
+  let id = $derived(
+    ($page.params as Record<string, string | undefined>).id ||
+      ($page.params as Record<string, string | undefined>).slug ||
+      'unknown',
+  )
 
   const history = [
     { event: '389-11', label: 'Body observed on Tier 1', status: 'active' },
     { event: '389-17', label: 'Behavioral anomaly reported', status: 'suspected' },
-    { event: '389-22', label: 'Recalculated consciousness occupancy', status: 'transfer' }
-  ];
+    { event: '389-22', label: 'Recalculated consciousness occupancy', status: 'transfer' },
+  ]
 </script>
 
 <Seo
@@ -20,7 +24,9 @@
 <div class="max-w-4xl mx-auto p-6 space-y-4">
   <header class="bw-panel p-5">
     <h1 class="font-condensed text-3xl text-[#e5c57a]">Body history: {id}</h1>
-    <p class="text-sm text-slate-300 mt-2">Biological timeline, consciousness occupancy, and public appearance.</p>
+    <p class="text-sm text-slate-300 mt-2">
+      Biological timeline, consciousness occupancy, and public appearance.
+    </p>
   </header>
 
   <section class="bw-panel p-4">

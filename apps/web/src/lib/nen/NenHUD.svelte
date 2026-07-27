@@ -31,9 +31,14 @@
 
   // Merge base Nen actions (always visible as 'locked' placeholders when
   // the wheel has no entries) with ability-specific entries.
-  $: mergedWheel = wheelEntries.length > 0
-    ? wheelEntries
-    : BASE_NEN_ACTIONS.map((a) => ({ ...a, visibility: 'locked' as const, hint: 'No active ability' }))
+  $: mergedWheel =
+    wheelEntries.length > 0
+      ? wheelEntries
+      : BASE_NEN_ACTIONS.map((a) => ({
+          ...a,
+          visibility: 'locked' as const,
+          hint: 'No active ability',
+        }))
 
   function handleActionSelect(e: CustomEvent<NenActionWheelEntry>) {
     whyPanelData = null
@@ -54,22 +59,22 @@
   }
 
   const overlayLabels: Record<string, string> = {
-    RANGE:        'Range',
-    TRAJECTORY:   'Trajectory',
-    AURA:         'Aura',
-    TENSION:      'Tension',
-    FUTURE:       'Future',
+    RANGE: 'Range',
+    TRAJECTORY: 'Trajectory',
+    AURA: 'Aura',
+    TENSION: 'Tension',
+    FUTURE: 'Future',
     CONTROL_LINK: 'Control link',
   }
 
   const inputModeLabels: Record<string, string> = {
-    CLICK:            'Click',
-    DRAG:             'Drag',
-    HOLD:             'Hold',
-    DRAW:             'Draw',
-    SEQUENCE:         'Sequence',
+    CLICK: 'Click',
+    DRAG: 'Drag',
+    HOLD: 'Hold',
+    DRAW: 'Draw',
+    SEQUENCE: 'Sequence',
     TARGET_SELECTION: 'Target selection',
-    CUSTOM:           'Custom interface',
+    CUSTOM: 'Custom interface',
   }
 </script>
 
@@ -88,27 +93,28 @@
   └────────────────────────────────────────────────────┘
 -->
 <div class="nen-hud flex flex-col h-full bg-bw-dark text-white">
-
   <!-- TOP BAR -->
   <NenStatusBar {status} />
 
   <!-- BODY: three-column layout -->
   <div class="flex flex-1 overflow-hidden">
-
     <!-- LEFT PANEL: abilities / action wheel / cycle -->
     <aside class="flex flex-col gap-3 p-3 w-56 border-r border-bw-gold/20 overflow-y-auto shrink-0">
-
       <!-- Active ability info -->
       {#if activeManifest}
         <div class="bg-bw-navy border border-bw-gold/30 rounded p-2 text-xs">
           <div class="text-bw-gold font-bold mb-1 truncate">{activeManifest.abilityId}</div>
           <div class="text-gray-400">
-            Mode: <span class="text-white">{inputModeLabels[activeManifest.inputMode] ?? activeManifest.inputMode}</span>
+            Mode: <span class="text-white"
+              >{inputModeLabels[activeManifest.inputMode] ?? activeManifest.inputMode}</span
+            >
           </div>
           {#if activeManifest.overlays.length > 0}
             <div class="text-gray-400 mt-0.5">
               Overlays:
-              <span class="text-white">{activeManifest.overlays.map(o => overlayLabels[o] ?? o).join(', ')}</span>
+              <span class="text-white"
+                >{activeManifest.overlays.map((o) => overlayLabels[o] ?? o).join(', ')}</span
+              >
             </div>
           {/if}
         </div>
@@ -139,7 +145,9 @@
     <!-- CENTRE: map slot -->
     <main class="flex-1 overflow-hidden relative">
       <slot name="map">
-        <div class="flex items-center justify-center h-full text-gray-600 text-sm italic select-none">
+        <div
+          class="flex items-center justify-center h-full text-gray-600 text-sm italic select-none"
+        >
           Map unavailable
         </div>
       </slot>
@@ -147,14 +155,15 @@
 
     <!-- RIGHT PANEL: active rules, targets, costs -->
     <aside class="flex flex-col gap-3 p-3 w-52 border-l border-bw-gold/20 overflow-y-auto shrink-0">
-
       <!-- Active rules -->
       {#if activeRules.length > 0}
         <div class="bg-bw-navy border border-bw-gold/20 rounded p-2 text-xs">
           <div class="text-bw-gold font-bold mb-1 tracking-wider">ACTIVE RULES</div>
           <ul class="flex flex-col gap-0.5">
             {#each activeRules as rule}
-              <li class="text-gray-300 before:content-['·'] before:mr-1 before:text-bw-gold">{rule}</li>
+              <li class="text-gray-300 before:content-['·'] before:mr-1 before:text-bw-gold">
+                {rule}
+              </li>
             {/each}
           </ul>
         </div>

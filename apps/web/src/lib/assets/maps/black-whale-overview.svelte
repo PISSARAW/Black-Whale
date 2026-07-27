@@ -1,14 +1,14 @@
 <script lang="ts">
-  import { mapState } from '$lib/state/mapState.svelte';
+  import { mapState } from '$lib/state/mapState.svelte'
 
   function handleTierClick(tierId: string) {
-    mapState.selectTier(tierId);
+    mapState.selectTier(tierId)
   }
 
   function handleTierKeydown(event: KeyboardEvent, tierId: string) {
     if (event.key === 'Enter' || event.key === ' ') {
-      event.preventDefault();
-      handleTierClick(tierId);
+      event.preventDefault()
+      handleTierClick(tierId)
     }
   }
 </script>
@@ -18,17 +18,22 @@
     <style>
       .tier {
         fill: #1a1a1a;
-        stroke: #FFD700;
+        stroke: #ffd700;
         stroke-width: 2;
-        transition: fill 0.2s, transform 0.2s;
+        transition:
+          fill 0.2s,
+          transform 0.2s;
         cursor: pointer;
       }
       .tier:hover {
         fill: #2a2a2a;
       }
-      g[role='button']:focus .tier { fill: #2a2a2a; stroke-width: 4; }
+      g[role='button']:focus .tier {
+        fill: #2a2a2a;
+        stroke-width: 4;
+      }
       .text-label {
-        fill: #FFFFF0;
+        fill: #fffff0;
         font-family: sans-serif;
         font-size: 28px;
         font-weight: bold;
@@ -43,36 +48,89 @@
   <rect x="0" y="580" width="1000" height="120" fill="#0f172a" stroke="none" />
 
   <!-- TIER 1 -->
-  <g role="button" tabindex="0" aria-label="Open Tier 1" onclick={() => handleTierClick('tier-1')} onkeydown={(event) => handleTierKeydown(event, 'tier-1')}>
+  <g
+    role="button"
+    tabindex="0"
+    aria-label="Open Tier 1"
+    onclick={() => handleTierClick('tier-1')}
+    onkeydown={(event) => handleTierKeydown(event, 'tier-1')}
+  >
     <!-- Superstructure (bridge) and top deck -->
-    <path class="tier" d="M 450 80 L 550 80 L 550 120 L 650 120 C 670 120, 700 150, 750 180 L 250 180 C 300 150, 330 120, 350 120 L 450 120 Z" />
+    <path
+      class="tier"
+      d="M 450 80 L 550 80 L 550 120 L 650 120 C 670 120, 700 150, 750 180 L 250 180 C 300 150, 330 120, 350 120 L 450 120 Z"
+    />
     <text x="500" y="160" class="text-label">TIER 1</text>
   </g>
 
   <!-- TIER 2 -->
-  <g role="button" tabindex="0" aria-label="Open Tier 2" onclick={() => handleTierClick('tier-2')} onkeydown={(event) => handleTierKeydown(event, 'tier-2')}>
-    <path class="tier" d="M 250 180 L 750 180 C 800 200, 830 230, 850 260 L 150 260 C 170 230, 200 200, 250 180 Z" />
+  <g
+    role="button"
+    tabindex="0"
+    aria-label="Open Tier 2"
+    onclick={() => handleTierClick('tier-2')}
+    onkeydown={(event) => handleTierKeydown(event, 'tier-2')}
+  >
+    <path
+      class="tier"
+      d="M 250 180 L 750 180 C 800 200, 830 230, 850 260 L 150 260 C 170 230, 200 200, 250 180 Z"
+    />
     <text x="500" y="235" class="text-label">TIER 2</text>
   </g>
 
   <!-- TIER 3 -->
-  <g role="button" tabindex="0" aria-label="Open Tier 3" onclick={() => handleTierClick('tier-3')} onkeydown={(event) => handleTierKeydown(event, 'tier-3')}>
-    <path class="tier" d="M 150 260 L 850 260 C 870 300, 880 340, 880 380 L 100 380 C 100 340, 120 300, 150 260 Z" />
+  <g
+    role="button"
+    tabindex="0"
+    aria-label="Open Tier 3"
+    onclick={() => handleTierClick('tier-3')}
+    onkeydown={(event) => handleTierKeydown(event, 'tier-3')}
+  >
+    <path
+      class="tier"
+      d="M 150 260 L 850 260 C 870 300, 880 340, 880 380 L 100 380 C 100 340, 120 300, 150 260 Z"
+    />
     <text x="500" y="335" class="text-label">TIER 3</text>
     <!-- Whale Eye -->
-    <circle cx="200" cy="320" r="35" fill="#050505" stroke="#FFD700" stroke-width="3" pointer-events="none" />
+    <circle
+      cx="200"
+      cy="320"
+      r="35"
+      fill="#050505"
+      stroke="#FFD700"
+      stroke-width="3"
+      pointer-events="none"
+    />
     <circle cx="200" cy="320" r="15" fill="#FFFFF0" pointer-events="none" />
   </g>
 
   <!-- TIER 4 -->
-  <g role="button" tabindex="0" aria-label="Open Tier 4" onclick={() => handleTierClick('tier-4')} onkeydown={(event) => handleTierKeydown(event, 'tier-4')}>
-    <path class="tier" d="M 100 380 L 880 380 C 880 430, 860 470, 830 500 L 120 500 C 100 470, 95 430, 100 380 Z" />
+  <g
+    role="button"
+    tabindex="0"
+    aria-label="Open Tier 4"
+    onclick={() => handleTierClick('tier-4')}
+    onkeydown={(event) => handleTierKeydown(event, 'tier-4')}
+  >
+    <path
+      class="tier"
+      d="M 100 380 L 880 380 C 880 430, 860 470, 830 500 L 120 500 C 100 470, 95 430, 100 380 Z"
+    />
     <text x="500" y="455" class="text-label">TIER 4</text>
   </g>
 
   <!-- TIER 5 -->
-  <g role="button" tabindex="0" aria-label="Open Tier 5" onclick={() => handleTierClick('tier-5')} onkeydown={(event) => handleTierKeydown(event, 'tier-5')}>
-    <path class="tier" d="M 120 500 L 830 500 C 780 580, 700 600, 600 600 L 300 600 C 200 600, 150 560, 120 500 Z" />
+  <g
+    role="button"
+    tabindex="0"
+    aria-label="Open Tier 5"
+    onclick={() => handleTierClick('tier-5')}
+    onkeydown={(event) => handleTierKeydown(event, 'tier-5')}
+  >
+    <path
+      class="tier"
+      d="M 120 500 L 830 500 C 780 580, 700 600, 600 600 L 300 600 C 200 600, 150 560, 120 500 Z"
+    />
     <text x="500" y="565" class="text-label">TIER 5</text>
   </g>
 </svg>

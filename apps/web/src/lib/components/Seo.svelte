@@ -1,13 +1,13 @@
 <script lang="ts">
-  import { page } from '$app/stores';
+  import { page } from '$app/stores'
   import {
     DEFAULT_DESCRIPTION,
     DEFAULT_IMAGE,
     SITE_NAME,
     TWITTER_CARD,
     absoluteUrl,
-    pageTitle
-  } from '$lib/seo/config';
+    pageTitle,
+  } from '$lib/seo/config'
 
   let {
     title = null,
@@ -15,28 +15,28 @@
     image = DEFAULT_IMAGE,
     type = 'website',
     noindex = false,
-    jsonLd = null
+    jsonLd = null,
   }: {
-    title?: string | null;
-    description?: string;
-    image?: string;
-    type?: 'website' | 'article' | 'profile';
-    noindex?: boolean;
+    title?: string | null
+    description?: string
+    image?: string
+    type?: 'website' | 'article' | 'profile'
+    noindex?: boolean
     /** A single schema.org node or a list of them, serialised into ld+json. */
-    jsonLd?: unknown;
-  } = $props();
+    jsonLd?: unknown
+  } = $props()
 
-  let resolvedTitle = $derived(pageTitle(title));
+  let resolvedTitle = $derived(pageTitle(title))
   // Query strings (spoiler filters, selected character, …) are view state, not
   // distinct documents — the canonical always points at the bare path.
-  let canonical = $derived(absoluteUrl($page.url.pathname));
-  let nodes = $derived(jsonLd === null ? [] : Array.isArray(jsonLd) ? jsonLd : [jsonLd]);
+  let canonical = $derived(absoluteUrl($page.url.pathname))
+  let nodes = $derived(jsonLd === null ? [] : Array.isArray(jsonLd) ? jsonLd : [jsonLd])
 
   // A closing script tag inside a JSON string would end the block early, so
   // every angle bracket is escaped. The bracket itself is built from its char
   // code because the Svelte parser reads a literal one here as markup.
-  const LESS_THAN = String.fromCharCode(60);
-  const serialise = (node: unknown) => JSON.stringify(node).replaceAll(LESS_THAN, '\\u003c');
+  const LESS_THAN = String.fromCharCode(60)
+  const serialise = (node: unknown) => JSON.stringify(node).replaceAll(LESS_THAN, '\\u003c')
 </script>
 
 <svelte:head>

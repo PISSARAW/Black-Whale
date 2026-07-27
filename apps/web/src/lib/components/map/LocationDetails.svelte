@@ -1,85 +1,99 @@
 <script lang="ts">
-  import { page } from '$app/stores';
-  import { mapState } from '$lib/state/mapState.svelte';
-  import { toEnglishDisplayName } from '$lib/utils/displayNames';
+  import { page } from '$app/stores'
+  import { mapState } from '$lib/state/mapState.svelte'
+  import { toEnglishDisplayName } from '$lib/utils/displayNames'
 
-  let locations = $derived($page.data.worldState?.locations || []);
-  let presences = $derived($page.data.worldState?.presences || []);
-  let bodies = $derived($page.data.worldState?.bodies || []);
-  let characters = $derived($page.data.worldState?.characters || []);
+  let locations = $derived($page.data.worldState?.locations || [])
+  let presences = $derived($page.data.worldState?.presences || [])
+  let bodies = $derived($page.data.worldState?.bodies || [])
+  let characters = $derived($page.data.worldState?.characters || [])
 
   function matchesSlug(slug: string | undefined, target: string) {
-    return slug === target || Boolean(slug?.endsWith(`-${target}`));
+    return slug === target || Boolean(slug?.endsWith(`-${target}`))
   }
 
   function belongsToLocation(location: any, targetSlug: string, byId: Map<string, any>) {
-    let current = location;
-    let depth = 0;
+    let current = location
+    let depth = 0
 
     while (current && depth < 8) {
-      if (matchesSlug(current.slug, targetSlug)) return true;
-      current = current.parentLocationId ? byId.get(current.parentLocationId) : null;
-      depth += 1;
+      if (matchesSlug(current.slug, targetSlug)) return true
+      current = current.parentLocationId ? byId.get(current.parentLocationId) : null
+      depth += 1
     }
 
-    return false;
+    return false
   }
 
   let locationDetails = $derived.by(() => {
-    const targetSlug = mapState.selectedLocationId;
-    if (!targetSlug) return null;
+    const targetSlug = mapState.selectedLocationId
+    if (!targetSlug) return null
 
-    const byId = new Map<string, any>(locations.map((location: any) => [location.id, location]));
-    const location = locations.find((candidate: any) => matchesSlug(candidate.slug, targetSlug));
-    if (!location) return null;
+    const byId = new Map<string, any>(locations.map((location: any) => [location.id, location]))
+    const location = locations.find((candidate: any) => matchesSlug(candidate.slug, targetSlug))
+    if (!location) return null
 
-    let tier = location;
-    while (tier?.parentLocationId && tier.type !== 'TIER') tier = byId.get(tier.parentLocationId);
+    let tier = location
+    while (tier?.parentLocationId && tier.type !== 'TIER') tier = byId.get(tier.parentLocationId)
 
     const presentCharacters = presences.flatMap((presence: any) => {
-      const presenceLocation = byId.get(presence.locationId);
-      if (!presenceLocation || !belongsToLocation(presenceLocation, targetSlug, byId)) return [];
+      const presenceLocation = byId.get(presence.locationId)
+      if (!presenceLocation || !belongsToLocation(presenceLocation, targetSlug, byId)) return []
 
-      const body = bodies.find((candidate: any) => candidate.id === presence.entityId);
+      const body = bodies.find((candidate: any) => candidate.id === presence.entityId)
       const character = body
         ? characters.find((candidate: any) => candidate.id === body.originalCharacterId)
-        : null;
+        : null
 
       return character
-        ? [{
-            id: character.id,
-            name: toEnglishDisplayName(character.canonicalName),
-            certainty: presence.certainty
-          }]
-        : [];
-    });
+        ? [
+            {
+              id: character.id,
+              name: toEnglishDisplayName(character.canonicalName),
+              certainty: presence.certainty,
+            },
+          ]
+        : []
+    })
 
     return {
       name: location.name,
       tier: tier?.name || 'Black Whale',
       parent: location.parentLocationId ? byId.get(location.parentLocationId)?.name : null,
-      presentCharacters
-    };
-  });
+      presentCharacters,
+    }
+  })
 
   function closePanel() {
-    mapState.selectLocation(null);
+    mapState.selectLocation(null)
   }
 </script>
 
 {#if mapState.selectedLocationId && locationDetails}
-  <aside class="absolute top-0 right-0 z-40 flex h-full w-[22rem] flex-col overflow-y-auto border-l border-[#FFD700] bg-[#1a1a1a] p-6 text-[#FFFFF0] shadow-2xl" aria-label="Location details">
-    <button type="button" onclick={closePanel} class="absolute top-4 right-4 text-gray-400 hover:text-white" aria-label="Close location details">
+  <aside
+    class="absolute top-0 right-0 z-40 flex h-full w-[22rem] flex-col overflow-y-auto border-l border-[#FFD700] bg-[#1a1a1a] p-6 text-[#FFFFF0] shadow-2xl"
+    aria-label="Location details"
+  >
+    <button
+      type="button"
+      onclick={closePanel}
+      class="absolute top-4 right-4 text-gray-400 hover:text-white"
+      aria-label="Close location details"
+    >
       ✕
     </button>
 
-    <h2 class="mb-1 text-xl font-bold tracking-wider text-[#FFD700] uppercase">{locationDetails.name}</h2>
+    <h2 class="mb-1 text-xl font-bold tracking-wider text-[#FFD700] uppercase">
+      {locationDetails.name}
+    </h2>
     <p class="mb-6 text-sm text-gray-400">
       {locationDetails.tier}{locationDetails.parent ? ` · ${locationDetails.parent}` : ''}
     </p>
 
     <section>
-      <h3 class="mb-2 border-b border-gray-700 pb-1 text-sm font-semibold tracking-wider uppercase">Characters at this location</h3>
+      <h3 class="mb-2 border-b border-gray-700 pb-1 text-sm font-semibold tracking-wider uppercase">
+        Characters at this location
+      </h3>
       {#if locationDetails.presentCharacters.length > 0}
         <ul class="space-y-2 text-sm text-gray-300">
           {#each locationDetails.presentCharacters as character (character.id)}
@@ -88,7 +102,9 @@
                 <span class="mr-2 h-2 w-2 rounded-full bg-emerald-400"></span>
                 {character.name}
               </span>
-              <span class="text-[10px] tracking-wide text-gray-500 uppercase">{(character.certainty || 'UNKNOWN').replaceAll('_', ' ')}</span>
+              <span class="text-[10px] tracking-wide text-gray-500 uppercase"
+                >{(character.certainty || 'UNKNOWN').replaceAll('_', ' ')}</span
+              >
             </li>
           {/each}
         </ul>
@@ -97,6 +113,8 @@
       {/if}
     </section>
 
-    <p class="mt-auto pt-8 text-xs text-gray-500">Derived from presence records for the selected event.</p>
+    <p class="mt-auto pt-8 text-xs text-gray-500">
+      Derived from presence records for the selected event.
+    </p>
   </aside>
 {/if}

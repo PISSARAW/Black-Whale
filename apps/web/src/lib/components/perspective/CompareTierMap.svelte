@@ -1,16 +1,16 @@
 <script lang="ts">
-  import BlackWhaleOverview from '$lib/assets/maps/black-whale-overview.svelte';
+  import BlackWhaleOverview from '$lib/assets/maps/black-whale-overview.svelte'
 
   interface CompareMarker {
-    id: string;
-    subjectId: string;
-    label: string;
-    tier: string | null;
-    x: number;
-    y: number;
-    certainty: string;
-    code: '=' | '←' | '→' | '≠' | '~' | '⏱';
-    selected?: boolean;
+    id: string
+    subjectId: string
+    label: string
+    tier: string | null
+    x: number
+    y: number
+    certainty: string
+    code: '=' | '←' | '→' | '≠' | '~' | '⏱'
+    selected?: boolean
   }
 
   let {
@@ -21,38 +21,40 @@
     focusY = 300,
     snapKey = 0,
     markers,
-    onSelect
+    onSelect,
   }: {
-    title: string;
-    tier: string;
-    zoom: number;
-    focusX?: number;
-    focusY?: number;
-    snapKey?: number;
-    markers: CompareMarker[];
-    onSelect?: (subjectId: string) => void;
-  } = $props();
+    title: string
+    tier: string
+    zoom: number
+    focusX?: number
+    focusY?: number
+    snapKey?: number
+    markers: CompareMarker[]
+    onSelect?: (subjectId: string) => void
+  } = $props()
 
-  let markerLayer = $derived(markers.filter((marker) => marker.tier === tier));
-  let transform = $derived(`translate(calc(50% - ${focusX * zoom}px), calc(50% - ${focusY * zoom}px)) scale(${zoom})`);
-  let snapActive = $state(false);
+  let markerLayer = $derived(markers.filter((marker) => marker.tier === tier))
+  let transform = $derived(
+    `translate(calc(50% - ${focusX * zoom}px), calc(50% - ${focusY * zoom}px)) scale(${zoom})`,
+  )
+  let snapActive = $state(false)
 
   $effect(() => {
-    if (!snapKey) return;
+    if (!snapKey) return
 
-    snapActive = true;
+    snapActive = true
     const timer = setTimeout(() => {
-      snapActive = false;
-    }, 320);
+      snapActive = false
+    }, 320)
 
-    return () => clearTimeout(timer);
-  });
+    return () => clearTimeout(timer)
+  })
 </script>
 
 <section class="pane" aria-label={title}>
   <header>{title}</header>
   <div class="viewport">
-    <div class="scene" class:snap={snapActive} style:transform={transform}>
+    <div class="scene" class:snap={snapActive} style:transform>
       <div class="map-root">
         <BlackWhaleOverview />
       </div>

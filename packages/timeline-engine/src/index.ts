@@ -76,7 +76,7 @@ import {
   isActiveAt,
   isRevealed,
   type OrderedEvent as Orderable,
-  type TemporalRecord
+  type TemporalRecord,
 } from '@black-whale/domain'
 
 // Re-exported so callers that already reach for the timeline engine do not need
@@ -107,7 +107,7 @@ export class TimelineEngine implements ITimelineEngine {
     const temporalWhere = { fromEvent: revealedBound }
     const temporalInclude = {
       fromEvent: { include: { chapter: true } },
-      untilEvent: { include: { chapter: true } }
+      untilEvent: { include: { chapter: true } },
     }
 
     // The reveal check is repeated here on purpose: the SQL bound is an
@@ -120,28 +120,35 @@ export class TimelineEngine implements ITimelineEngine {
     const active = (record: unknown) =>
       isActiveAt(record as TemporalRecord, targetEvent, revealedThroughChapter)
 
-    const [allCharacters, allBodies, allConsciousnesses, presences, states, occupancies, appearances] =
-      await Promise.all([
-        this.prisma.character.findMany({
-          where: visibleWhere,
-          include: { firstVisibleEvent: { include: { chapter: true } } }
-        }),
-        this.prisma.body.findMany({
-          where: visibleWhere,
-          include: { firstVisibleEvent: { include: { chapter: true } } }
-        }),
-        this.prisma.consciousness.findMany({
-          where: visibleWhere,
-          include: { firstVisibleEvent: { include: { chapter: true } } }
-        }),
-        this.prisma.presence.findMany({
-          where: { entityType: 'BODY', ...temporalWhere },
-          include: temporalInclude
-        }),
-        this.prisma.bodyState.findMany({ where: temporalWhere, include: temporalInclude }),
-        this.prisma.bodyOccupancy.findMany({ where: temporalWhere, include: temporalInclude }),
-        this.prisma.appearanceState.findMany({ where: temporalWhere, include: temporalInclude })
-      ])
+    const [
+      allCharacters,
+      allBodies,
+      allConsciousnesses,
+      presences,
+      states,
+      occupancies,
+      appearances,
+    ] = await Promise.all([
+      this.prisma.character.findMany({
+        where: visibleWhere,
+        include: { firstVisibleEvent: { include: { chapter: true } } },
+      }),
+      this.prisma.body.findMany({
+        where: visibleWhere,
+        include: { firstVisibleEvent: { include: { chapter: true } } },
+      }),
+      this.prisma.consciousness.findMany({
+        where: visibleWhere,
+        include: { firstVisibleEvent: { include: { chapter: true } } },
+      }),
+      this.prisma.presence.findMany({
+        where: { entityType: 'BODY', ...temporalWhere },
+        include: temporalInclude,
+      }),
+      this.prisma.bodyState.findMany({ where: temporalWhere, include: temporalInclude }),
+      this.prisma.bodyOccupancy.findMany({ where: temporalWhere, include: temporalInclude }),
+      this.prisma.appearanceState.findMany({ where: temporalWhere, include: temporalInclude }),
+    ])
 
     const characters = allCharacters.filter(startedBefore)
     const bodies = allBodies.filter(startedBefore)
@@ -167,7 +174,7 @@ export class TimelineEngine implements ITimelineEngine {
       presences: activePresences as any,
       occupancies: activeOccupancies as any,
       appearances: activeAppearances as any,
-      knownFacts: []
+      knownFacts: [],
     }
   }
 
@@ -178,12 +185,15 @@ export class TimelineEngine implements ITimelineEngine {
 
     const events = await this.prisma.narrativeEvent.findMany({
       where: { chapter: { number: { lte: revealedThroughChapter } } },
-      include: { chapter: true }
+      include: { chapter: true },
     })
 
     return events
-      .filter((event) => isRevealed(event as OrderedEvent, revealedThroughChapter)
-        && compareEventOrder(event as OrderedEvent, targetEvent) <= 0)
+      .filter(
+        (event) =>
+          isRevealed(event as OrderedEvent, revealedThroughChapter) &&
+          compareEventOrder(event as OrderedEvent, targetEvent) <= 0,
+      )
       .sort((left, right) => compareEventOrder(left as OrderedEvent, right as OrderedEvent))
   }
 
@@ -197,60 +207,75 @@ export class TimelineEngine implements ITimelineEngine {
 
     const kernelRevealedThrough = point.revealedThroughChapter ?? targetEvent.chapter.number
 
-    const [snapshot, orderedEvents, locations, occupancies, consciousnessStates] = await Promise.all([
-      this.getWorldState({ ...point, eventId: targetEvent.id }),
-      this.prisma.narrativeEvent.findMany({
-        where: { chapter: { number: { lte: kernelRevealedThrough } } },
-        include: { chapter: true },
-      }),
-      this.prisma.location.findMany({
-        where: { firstVisibleEvent: { chapter: { number: { lte: kernelRevealedThrough } } } },
-        include: { firstVisibleEvent: { include: { chapter: true } } },
-      }),
-      this.prisma.bodyOccupancy.findMany({
-        where: { fromEvent: { chapter: { number: { lte: kernelRevealedThrough } } } },
-        include: {
-          fromEvent: { include: { chapter: true } },
-          untilEvent: { include: { chapter: true } },
-        },
-      }),
-      this.prisma.consciousnessState.findMany({
-        where: { fromEvent: { chapter: { number: { lte: kernelRevealedThrough } } } },
-        include: {
-          fromEvent: { include: { chapter: true } },
-          untilEvent: { include: { chapter: true } },
-        },
-      }),
-    ])
+    const [snapshot, orderedEvents, locations, occupancies, consciousnessStates] =
+      await Promise.all([
+        this.getWorldState({ ...point, eventId: targetEvent.id }),
+        this.prisma.narrativeEvent.findMany({
+          where: { chapter: { number: { lte: kernelRevealedThrough } } },
+          include: { chapter: true },
+        }),
+        this.prisma.location.findMany({
+          where: { firstVisibleEvent: { chapter: { number: { lte: kernelRevealedThrough } } } },
+          include: { firstVisibleEvent: { include: { chapter: true } } },
+        }),
+        this.prisma.bodyOccupancy.findMany({
+          where: { fromEvent: { chapter: { number: { lte: kernelRevealedThrough } } } },
+          include: {
+            fromEvent: { include: { chapter: true } },
+            untilEvent: { include: { chapter: true } },
+          },
+        }),
+        this.prisma.consciousnessState.findMany({
+          where: { fromEvent: { chapter: { number: { lte: kernelRevealedThrough } } } },
+          include: {
+            fromEvent: { include: { chapter: true } },
+            untilEvent: { include: { chapter: true } },
+          },
+        }),
+      ])
 
     const cursors = buildCanonicalCursors(orderedEvents as any[])
-    const cursor = cursors.find((candidate) => candidate.eventId === targetEvent.id) ?? {
-      branchId: 'canon',
-      ordinal: 0,
-      eventId: targetEvent.id,
-      chapterNumber: targetEvent.chapter.number,
-      localSequence: targetEvent.sequence,
-    } satisfies StoryCursor
+    const cursor =
+      cursors.find((candidate) => candidate.eventId === targetEvent.id) ??
+      ({
+        branchId: 'canon',
+        ordinal: 0,
+        eventId: targetEvent.id,
+        chapterNumber: targetEvent.chapter.number,
+        localSequence: targetEvent.sequence,
+      } satisfies StoryCursor)
     const state = createEmptyWorld(cursor)
     const revealedThroughChapter = kernelRevealedThrough
 
     const activeConsciousnessState = new Map<string, string>()
     for (const consciousnessState of consciousnessStates as any[]) {
-      if (isActiveAt(consciousnessState, targetEvent, revealedThroughChapter)) activeConsciousnessState.set(consciousnessState.consciousnessId, consciousnessState.state)
+      if (isActiveAt(consciousnessState, targetEvent, revealedThroughChapter))
+        activeConsciousnessState.set(consciousnessState.consciousnessId, consciousnessState.state)
     }
 
-    const register = (entity: { id: string; label: string; kind: WorldEntityKind; originalCharacterId?: string; metadata?: Record<string, unknown> }) => {
+    const register = (entity: {
+      id: string
+      label: string
+      kind: WorldEntityKind
+      originalCharacterId?: string
+      metadata?: Record<string, unknown>
+    }) => {
       state.entities[entity.id] = entity
     }
     for (const character of snapshot.characters) {
-      const consciousness = snapshot.consciousnesses.find((candidate) => candidate.originCharacterId === character.id)
-      const originalBody = snapshot.bodies.find((candidate) => candidate.originalCharacterId === character.id)
+      const consciousness = snapshot.consciousnesses.find(
+        (candidate) => candidate.originCharacterId === character.id,
+      )
+      const originalBody = snapshot.bodies.find(
+        (candidate) => candidate.originalCharacterId === character.id,
+      )
       const biologicalState = originalBody ? snapshot.bodyStates[originalBody.id] : undefined
-      const legacyMentalState = biologicalState === 'UNCONSCIOUS'
-        ? 'UNCONSCIOUS'
-        : biologicalState === 'DEAD' || biologicalState === 'DESTROYED'
-          ? 'DESTROYED'
-          : 'ACTIVE'
+      const legacyMentalState =
+        biologicalState === 'UNCONSCIOUS'
+          ? 'UNCONSCIOUS'
+          : biologicalState === 'DEAD' || biologicalState === 'DESTROYED'
+            ? 'DESTROYED'
+            : 'ACTIVE'
       register({
         id: character.id,
         label: character.canonicalName,
@@ -258,13 +283,18 @@ export class TimelineEngine implements ITimelineEngine {
         originalCharacterId: character.id,
         metadata: {
           mentalState: consciousness
-            ? activeConsciousnessState.get(consciousness.id) ?? legacyMentalState
+            ? (activeConsciousnessState.get(consciousness.id) ?? legacyMentalState)
             : legacyMentalState,
         },
       })
     }
     for (const body of snapshot.bodies) {
-      register({ id: body.id, label: body.label, kind: 'BODY', originalCharacterId: body.originalCharacterId })
+      register({
+        id: body.id,
+        label: body.label,
+        kind: 'BODY',
+        originalCharacterId: body.originalCharacterId,
+      })
     }
     for (const consciousness of snapshot.consciousnesses) {
       register({
@@ -275,14 +305,16 @@ export class TimelineEngine implements ITimelineEngine {
         metadata: { mentalState: activeConsciousnessState.get(consciousness.id) ?? 'ACTIVE' },
       })
     }
-    for (const location of locations.filter((candidate: any) =>
-      isRevealed(candidate.firstVisibleEvent, revealedThroughChapter)
-      && compareEventOrder(candidate.firstVisibleEvent, targetEvent) <= 0
+    for (const location of locations.filter(
+      (candidate: any) =>
+        isRevealed(candidate.firstVisibleEvent, revealedThroughChapter) &&
+        compareEventOrder(candidate.firstVisibleEvent, targetEvent) <= 0,
     )) {
       register({ id: location.id, label: location.name, kind: 'LOCATION' })
     }
 
-    for (const [bodyId, bodyState] of Object.entries(snapshot.bodyStates)) state.bodyStates[bodyId] = bodyState
+    for (const [bodyId, bodyState] of Object.entries(snapshot.bodyStates))
+      state.bodyStates[bodyId] = bodyState
     for (const presence of snapshot.presences) {
       const kind = presence.entityType as WorldEntityKind
       if (!state.entities[presence.entityId]) {
@@ -309,7 +341,7 @@ export class TimelineEngine implements ITimelineEngine {
     if (point.eventId) {
       return this.prisma.narrativeEvent.findUnique({
         where: { id: point.eventId },
-        include: { chapter: true }
+        include: { chapter: true },
       })
     }
 
@@ -317,7 +349,7 @@ export class TimelineEngine implements ITimelineEngine {
       return this.prisma.narrativeEvent.findFirst({
         where: { chapterId: point.chapterId },
         orderBy: { sequence: 'desc' },
-        include: { chapter: true }
+        include: { chapter: true },
       })
     }
 
@@ -327,7 +359,7 @@ export class TimelineEngine implements ITimelineEngine {
       return this.prisma.narrativeEvent.findFirst({
         where: { sequence: point.sequence },
         orderBy: { chapter: { number: 'desc' } },
-        include: { chapter: true }
+        include: { chapter: true },
       })
     }
 
@@ -349,6 +381,8 @@ export async function listCanonicalEvents(prisma: PrismaClient, spoilerLimit?: n
     orderBy: [{ chapter: { number: 'asc' } }, { sequence: 'asc' }],
   })
 
-  const cursorByEvent = new Map(buildCanonicalCursors(events).map((cursor) => [cursor.eventId, cursor]))
+  const cursorByEvent = new Map(
+    buildCanonicalCursors(events).map((cursor) => [cursor.eventId, cursor]),
+  )
   return events.map((event) => ({ ...event, cursor: cursorByEvent.get(event.id) }))
 }

@@ -28,16 +28,20 @@ function fact(id: string, overrides: Record<string, unknown> = {}) {
   }
 }
 
-function build(options: {
-  event?: typeof EVENT | null
-  presences?: unknown[]
-  trueFacts?: unknown[]
-  knowledge?: unknown[]
-  beliefs?: unknown[]
-  body?: unknown
-} = {}) {
+function build(
+  options: {
+    event?: typeof EVENT | null
+    presences?: unknown[]
+    trueFacts?: unknown[]
+    knowledge?: unknown[]
+    beliefs?: unknown[]
+    body?: unknown
+  } = {},
+) {
   const prisma = {
-    narrativeEvent: { findUnique: async () => (options.event === undefined ? EVENT : options.event) },
+    narrativeEvent: {
+      findUnique: async () => (options.event === undefined ? EVENT : options.event),
+    },
     consciousness: { findUnique: async () => null },
     body: { findUnique: async () => (options.body === undefined ? KURAPIKA_BODY : options.body) },
     presence: { findMany: async () => options.presences ?? [] },
@@ -65,7 +69,11 @@ function build(options: {
   return new PerspectiveEngine(prisma, identityEngine, knowledgeEngine)
 }
 
-const request = { observerCharacterId: 'kurapika', eventId: 'event-3', spoilerLimit: Number.POSITIVE_INFINITY }
+const request = {
+  observerCharacterId: 'kurapika',
+  eventId: 'event-3',
+  spoilerLimit: Number.POSITIVE_INFINITY,
+}
 
 describe('PerspectiveEngine spoiler handling', () => {
   it('refuses to build a perspective past the reader’s limit', async () => {
@@ -80,7 +88,9 @@ describe('PerspectiveEngine spoiler handling', () => {
   })
 
   it('refuses an unknown event', async () => {
-    await expect(build({ event: null }).buildPerspective(request)).rejects.toThrow(/Event event-3 not found/)
+    await expect(build({ event: null }).buildPerspective(request)).rejects.toThrow(
+      /Event event-3 not found/,
+    )
   })
 })
 
@@ -169,14 +179,19 @@ describe('PerspectiveEngine direct perception', () => {
 
   it('stops seeing a body that has left the room', async () => {
     const state = await build({
-      presences: [presence('body-kurapika', 'room-1014'), presence('body-oito', 'room-1014', EVENT)],
+      presences: [
+        presence('body-kurapika', 'room-1014'),
+        presence('body-oito', 'room-1014', EVENT),
+      ],
     }).buildPerspective(request)
 
     expect(state.visibleBodies).toEqual(['body-kurapika'])
   })
 
   it('sees only itself when it has no recorded position', async () => {
-    const state = await build({ presences: [presence('body-oito', 'room-1014')] }).buildPerspective(request)
+    const state = await build({ presences: [presence('body-oito', 'room-1014')] }).buildPerspective(
+      request,
+    )
 
     expect(state.visibleBodies).toEqual(['body-kurapika'])
     expect(state.knownLocations).toEqual([])

@@ -1,102 +1,103 @@
 <script lang="ts">
-import type { PageData } from './$types';
-import { enhance } from '$app/forms';
+  import type { PageData } from './$types'
+  import { enhance } from '$app/forms'
 
-let { data }: { data: PageData } = $props();
+  let { data }: { data: PageData } = $props()
 
-let searchQuery = $state('');
-let showCreateModal = $state(false);
-let jsonPlaceholder = '{"key": "value"}';
+  let searchQuery = $state('')
+  let showCreateModal = $state(false)
+  let jsonPlaceholder = '{"key": "value"}'
 
-let newFact = $state({
-  id: '',
-  subjectType: 'CHARACTER' as const,
-  subjectId: '',
-  predicate: '',
-  value: {} as Record<string, any>,
-  valueJson: '{}',
-  validFromEventId: '',
-  validUntilEventId: null as string | null,
-  truthStatus: 'CONFIRMED' as const,
-  firstVisibleEventId: ''
-});
-
-let filteredFacts = $derived(
-  data.facts.filter(fact => 
-    fact.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    fact.predicate.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    JSON.stringify(fact.value).toLowerCase().includes(searchQuery.toLowerCase())
-  )
-);
-
-const subjectTypeOptions = [
-  { value: 'CHARACTER', label: 'Character' },
-  { value: 'BODY', label: 'Body' },
-  { value: 'CONSCIOUSNESS', label: 'Consciousness' },
-  { value: 'LOCATION', label: 'Location' },
-  { value: 'EVENT', label: 'Event' },
-  { value: 'ABILITY', label: 'Ability' },
-  { value: 'AFFILIATION', label: 'Affiliation' },
-  { value: 'COHORT', label: 'Cohort' }
-];
-
-const truthStatusOptions = [
-  { value: 'CONFIRMED', label: 'Confirmed' },
-  { value: 'STRONGLY_IMPLIED', label: 'Strongly Implied' },
-  { value: 'DEDUCED', label: 'Deduction' },
-  { value: 'CONTESTED', label: 'Contested' }
-];
-
-function openCreateModal() {
-  showCreateModal = true;
-}
-
-function closeCreateModal() {
-  showCreateModal = false;
-  newFact = {
+  let newFact = $state({
     id: '',
-    subjectType: 'CHARACTER',
+    subjectType: 'CHARACTER' as const,
     subjectId: '',
     predicate: '',
-    value: {},
+    value: {} as Record<string, any>,
     valueJson: '{}',
     validFromEventId: '',
-    validUntilEventId: null,
-    truthStatus: 'CONFIRMED',
-    firstVisibleEventId: ''
-  };
-}
+    validUntilEventId: null as string | null,
+    truthStatus: 'CONFIRMED' as const,
+    firstVisibleEventId: '',
+  })
 
-let events = $derived(data.events || []);
-let characters = $derived(data.characters || []);
-let locations = $derived(data.locations || []);
+  let filteredFacts = $derived(
+    data.facts.filter(
+      (fact) =>
+        fact.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        fact.predicate.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        JSON.stringify(fact.value).toLowerCase().includes(searchQuery.toLowerCase()),
+    ),
+  )
 
-function getSubjectName(subjectType: string, subjectId: string): string {
-  if (subjectType === 'CHARACTER') {
-    const character = characters.find(c => c.id === subjectId);
-    return character ? character.canonicalName : 'Unknown';
-  }
-  if (subjectType === 'LOCATION') {
-    const location = locations.find(l => l.id === subjectId);
-    return location ? location.name : 'Unknown';
-  }
-  if (subjectType === 'EVENT') {
-    const event = events.find(e => e.id === subjectId);
-    return event ? event.title : 'Unknown';
-  }
-  return subjectId;
-}
+  const subjectTypeOptions = [
+    { value: 'CHARACTER', label: 'Character' },
+    { value: 'BODY', label: 'Body' },
+    { value: 'CONSCIOUSNESS', label: 'Consciousness' },
+    { value: 'LOCATION', label: 'Location' },
+    { value: 'EVENT', label: 'Event' },
+    { value: 'ABILITY', label: 'Ability' },
+    { value: 'AFFILIATION', label: 'Affiliation' },
+    { value: 'COHORT', label: 'Cohort' },
+  ]
 
-function getSubjectTypeLabel(subjectType: string): string {
-  const option = subjectTypeOptions.find(o => o.value === subjectType);
-  return option ? option.label : subjectType;
-}
+  const truthStatusOptions = [
+    { value: 'CONFIRMED', label: 'Confirmed' },
+    { value: 'STRONGLY_IMPLIED', label: 'Strongly Implied' },
+    { value: 'DEDUCED', label: 'Deduction' },
+    { value: 'CONTESTED', label: 'Contested' },
+  ]
 
-function handleOverlayClick(e: any) {
-  if (e.target === e.currentTarget) {
-    closeCreateModal();
+  function openCreateModal() {
+    showCreateModal = true
   }
-}
+
+  function closeCreateModal() {
+    showCreateModal = false
+    newFact = {
+      id: '',
+      subjectType: 'CHARACTER',
+      subjectId: '',
+      predicate: '',
+      value: {},
+      valueJson: '{}',
+      validFromEventId: '',
+      validUntilEventId: null,
+      truthStatus: 'CONFIRMED',
+      firstVisibleEventId: '',
+    }
+  }
+
+  let events = $derived(data.events || [])
+  let characters = $derived(data.characters || [])
+  let locations = $derived(data.locations || [])
+
+  function getSubjectName(subjectType: string, subjectId: string): string {
+    if (subjectType === 'CHARACTER') {
+      const character = characters.find((c) => c.id === subjectId)
+      return character ? character.canonicalName : 'Unknown'
+    }
+    if (subjectType === 'LOCATION') {
+      const location = locations.find((l) => l.id === subjectId)
+      return location ? location.name : 'Unknown'
+    }
+    if (subjectType === 'EVENT') {
+      const event = events.find((e) => e.id === subjectId)
+      return event ? event.title : 'Unknown'
+    }
+    return subjectId
+  }
+
+  function getSubjectTypeLabel(subjectType: string): string {
+    const option = subjectTypeOptions.find((o) => o.value === subjectType)
+    return option ? option.label : subjectType
+  }
+
+  function handleOverlayClick(e: any) {
+    if (e.target === e.currentTarget) {
+      closeCreateModal()
+    }
+  }
 </script>
 
 <svelte:head><title>Facts — BW Admin</title></svelte:head>
@@ -112,8 +113,18 @@ function handleOverlayClick(e: any) {
       bind:value={searchQuery}
       class="w-full bg-white border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-bw-gold focus:border-transparent"
     />
-    <svg class="absolute left-3 top-2.5 h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+    <svg
+      class="absolute left-3 top-2.5 h-4 w-4 text-gray-400"
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+      />
     </svg>
   </div>
   <button
@@ -151,16 +162,23 @@ function handleOverlayClick(e: any) {
                 {getSubjectTypeLabel(fact.subjectType)}
               </span>
             </td>
-            <td class="px-4 py-3 text-gray-600">{getSubjectName(fact.subjectType, fact.subjectId)}</td>
+            <td class="px-4 py-3 text-gray-600"
+              >{getSubjectName(fact.subjectType, fact.subjectId)}</td
+            >
             <td class="px-4 py-3 text-gray-600">{fact.predicate}</td>
             <td class="px-4 py-3 text-gray-600 max-w-xs truncate">{JSON.stringify(fact.value)}</td>
             <td class="px-4 py-3">
-              <span class="px-2 py-1 rounded-full text-xs font-medium 
-                {fact.truthStatus === 'CONFIRMED' ? 'bg-green-100 text-green-700' :
-                  fact.truthStatus === 'STRONGLY_IMPLIED' ? 'bg-blue-100 text-blue-700' :
-                  fact.truthStatus === 'DEDUCED' ? 'bg-purple-100 text-purple-700' :
-                  'bg-orange-100 text-orange-700'}
-              ">
+              <span
+                class="px-2 py-1 rounded-full text-xs font-medium
+                {fact.truthStatus === 'CONFIRMED'
+                  ? 'bg-green-100 text-green-700'
+                  : fact.truthStatus === 'STRONGLY_IMPLIED'
+                    ? 'bg-blue-100 text-blue-700'
+                    : fact.truthStatus === 'DEDUCED'
+                      ? 'bg-purple-100 text-purple-700'
+                      : 'bg-orange-100 text-orange-700'}
+              "
+              >
                 {fact.truthStatus}
               </span>
             </td>
@@ -175,10 +193,13 @@ function handleOverlayClick(e: any) {
 </div>
 
 {#if showCreateModal}
-  <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4" onclick={handleOverlayClick}>
+  <div
+    class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+    onclick={handleOverlayClick}
+  >
     <div class="bg-white rounded-lg shadow-xl p-6 max-w-lg w-full">
       <h2 class="text-xl font-bold text-bw-gold mb-4">Create New Fact</h2>
-      
+
       <form method="POST" use:enhance class="space-y-4" onsubmit={closeCreateModal}>
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-1">ID *</label>
@@ -190,7 +211,7 @@ function handleOverlayClick(e: any) {
             class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-bw-gold focus:border-transparent"
           />
         </div>
-        
+
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-1">Subject Type</label>
           <select
@@ -203,7 +224,7 @@ function handleOverlayClick(e: any) {
             {/each}
           </select>
         </div>
-        
+
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-1">Subject ID *</label>
           <select
@@ -230,7 +251,7 @@ function handleOverlayClick(e: any) {
             {/if}
           </select>
         </div>
-        
+
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-1">Predicate *</label>
           <input
@@ -242,15 +263,15 @@ function handleOverlayClick(e: any) {
             class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-bw-gold focus:border-transparent"
           />
         </div>
-        
+
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-1">Value (JSON)</label>
           <textarea
             bind:value={newFact.valueJson}
             oninput={(e: any) => {
               try {
-                newFact.value = JSON.parse((e.target as HTMLTextAreaElement).value);
-                newFact.valueJson = (e.target as HTMLTextAreaElement).value;
+                newFact.value = JSON.parse((e.target as HTMLTextAreaElement).value)
+                newFact.valueJson = (e.target as HTMLTextAreaElement).value
               } catch {
                 // Keep previous value if invalid JSON
               }
@@ -261,7 +282,7 @@ function handleOverlayClick(e: any) {
             class="w-full border border-gray-300 rounded-md px-3 py-2 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-bw-gold focus:border-transparent"
           ></textarea>
         </div>
-        
+
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-1">Truth Status</label>
           <select
@@ -274,7 +295,7 @@ function handleOverlayClick(e: any) {
             {/each}
           </select>
         </div>
-        
+
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-1">Valid From Event</label>
           <select
@@ -288,9 +309,11 @@ function handleOverlayClick(e: any) {
             {/each}
           </select>
         </div>
-        
+
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Valid Until Event (Optional)</label>
+          <label class="block text-sm font-medium text-gray-700 mb-1"
+            >Valid Until Event (Optional)</label
+          >
           <select
             bind:value={newFact.validUntilEventId}
             name="validUntilEventId"
@@ -302,7 +325,7 @@ function handleOverlayClick(e: any) {
             {/each}
           </select>
         </div>
-        
+
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-1">First Visible Event</label>
           <select
@@ -316,7 +339,7 @@ function handleOverlayClick(e: any) {
             {/each}
           </select>
         </div>
-        
+
         <div class="flex justify-end gap-3 pt-4">
           <button
             type="button"
@@ -338,5 +361,7 @@ function handleOverlayClick(e: any) {
 {/if}
 
 <style>
-  .bw-gold { color: #FFD700; }
+  .bw-gold {
+    color: #ffd700;
+  }
 </style>

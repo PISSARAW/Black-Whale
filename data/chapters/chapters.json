@@ -24,10 +24,7 @@
       {
         "event": "Beyond Netero is imprisoned in Tier 1 VVIP prison",
         "storyDate": "Jour 1",
-        "charactersInvolved": [
-          "beyond-netero",
-          "zodiaques"
-        ],
+        "charactersInvolved": ["beyond-netero", "zodiaques"],
         "location": "Tier 1 - Prison VVIP"
       },
       {
@@ -83,19 +80,13 @@
       {
         "event": "Explanation of the rules: the Urn of the Seed will choose the successor",
         "storyDate": "Jour 2",
-        "charactersInvolved": [
-          "nasubi-hui-guo-rou",
-          "all the princes"
-        ],
+        "charactersInvolved": ["nasubi-hui-guo-rou", "all the princes"],
         "location": "Tier 1"
       },
       {
         "event": "The factions begin to organize themselves in their respective chambers",
         "storyDate": "Jour 2-3",
-        "charactersInvolved": [
-          "all the princes",
-          "leurs gardes et allies"
-        ],
+        "charactersInvolved": ["all the princes", "leurs gardes et allies"],
         "location": "Tiers 1-2 - Chambers of the princes"
       }
     ],
@@ -117,44 +108,25 @@
       {
         "event": "Hisoka arrives in Tier 5 and begins his hunt",
         "storyDate": "Jour 10",
-        "charactersInvolved": [
-          "hisoka",
-          "illumi",
-          "chrollo-lucilfer",
-          "nobunaga-hazama"
-        ],
+        "charactersInvolved": ["hisoka", "illumi", "chrollo-lucilfer", "nobunaga-hazama"],
         "location": "Tier 5 - Refectoire"
       },
       {
         "event": "The Phantom Troupe settles in Tier 5",
         "storyDate": "Jour 10",
-        "charactersInvolved": [
-          "chrollo-lucilfer",
-          "nobunaga-hazama",
-          "illumi"
-        ],
+        "charactersInvolved": ["chrollo-lucilfer", "nobunaga-hazama", "illumi"],
         "location": "Tier 5"
       },
       {
         "event": "Premieres tensions entre factions mafieuses (Xi-Yu, Cha-R, Heil-Ly)",
         "storyDate": "Jour 11",
-        "charactersInvolved": [
-          "hinrigh-biganduffno",
-          "keni-wang",
-          "morena-prudo",
-          "luini"
-        ],
+        "charactersInvolved": ["hinrigh-biganduffno", "keni-wang", "morena-prudo", "luini"],
         "location": "Tiers 4-5"
       },
       {
         "event": "Kurapika begins teaching Nen to Queen Oito and training Woble's guards",
         "storyDate": "Jour 12",
-        "charactersInvolved": [
-          "kurapika",
-          "queen-oito",
-          "prince-woble",
-          "bill"
-        ],
+        "charactersInvolved": ["kurapika", "queen-oito", "prince-woble", "bill"],
         "location": "Tier 2 - Woble's Chamber"
       }
     ],
@@ -177,83 +149,49 @@
       {
         "event": "Assassination of Momoze (12th Princess) in room 1012",
         "storyDate": "Jour 15",
-        "charactersInvolved": [
-          "prince-momoze",
-          "hanzo",
-          "biscuit-krueger",
-          "luini"
-        ],
+        "charactersInvolved": ["prince-momoze", "hanzo", "biscuit-krueger", "luini"],
         "location": "Tier 2 - Room 1012"
       },
       {
         "event": "Marayam (13th Prince) activates his Nen ability to isolate room 1013",
         "storyDate": "Jour 15",
-        "charactersInvolved": [
-          "prince-marayam",
-          "biscuit-krueger",
-          "hanzo"
-        ],
+        "charactersInvolved": ["prince-marayam", "biscuit-krueger", "hanzo"],
         "location": "Tier 2 - Room 1013"
       },
       {
         "event": "Benjamin (1st Prince) imposes Martial Law from room 1001",
         "storyDate": "Jour 16",
-        "charactersInvolved": [
-          "prince-benjamin",
-          "balsamilco-might",
-          "musse",
-          "rihan"
-        ],
+        "charactersInvolved": ["prince-benjamin", "balsamilco-might", "musse", "rihan"],
         "location": "Tier 1 - Room 1001"
       },
       {
         "event": "Camilla (2nd Princess) attempts to murder Benjamin and is imprisoned",
         "storyDate": "Jour 17",
-        "charactersInvolved": [
-          "prince-camilla",
-          "prince-benjamin",
-          "balsamilco-might"
-        ],
+        "charactersInvolved": ["prince-camilla", "prince-benjamin", "balsamilco-might"],
         "location": "Tier 1 - VIP Jail"
       },
       {
         "event": "Tserriednich (4th Prince) manipulates the Heil-Ly to sow chaos",
         "storyDate": "Jour 18",
-        "charactersInvolved": [
-          "prince-tserriednich",
-          "theta",
-          "morena-prudo",
-          "luini"
-        ],
+        "charactersInvolved": ["prince-tserriednich", "theta", "morena-prudo", "luini"],
         "location": "Tiers 3-5"
       },
       {
         "event": "Kacho (10th Princess) and Fugetsu (11th Princess) try to escape with Melody",
         "storyDate": "Jour 19",
-        "charactersInvolved": [
-          "prince-kacho",
-          "prince-fugetsu",
-          "melody"
-        ],
+        "charactersInvolved": ["prince-kacho", "prince-fugetsu", "melody"],
         "location": "Tier 1 - Banquet dominical"
       },
       {
         "event": "Hisoka assassinates two members of the Phantom Troupe in Tier 5",
         "storyDate": "Jour 20",
-        "charactersInvolved": [
-          "hisoka",
-          "chrollo-lucilfer",
-          "nobunaga-hazama"
-        ],
+        "charactersInvolved": ["hisoka", "chrollo-lucilfer", "nobunaga-hazama"],
         "location": "Tier 5"
       },
       {
         "event": "Kurapika uses Little Eye (cockroaches) to spy on other factions",
         "storyDate": "Jour 21",
-        "charactersInvolved": [
-          "kurapika",
-          "queen-oito"
-        ],
+        "charactersInvolved": ["kurapika", "queen-oito"],
         "location": "Tier 2"
       }
     ],
@@ -279,32 +217,19 @@
       {
         "event": "Benjamin strengthens Martial Law with Balsamilco Might",
         "storyDate": "Jour 22",
-        "charactersInvolved": [
-          "prince-benjamin",
-          "balsamilco-might",
-          "rihan",
-          "musse"
-        ],
+        "charactersInvolved": ["prince-benjamin", "balsamilco-might", "rihan", "musse"],
         "location": "Tier 1"
       },
       {
         "event": "Rihan is transferred from Benjamin to Sale-sale then to Tubeppa",
         "storyDate": "Jour 23",
-        "charactersInvolved": [
-          "rihan",
-          "prince-benjamin",
-          "prince-salesale",
-          "prince-tubeppa"
-        ],
+        "charactersInvolved": ["rihan", "prince-benjamin", "prince-salesale", "prince-tubeppa"],
         "location": "Tiers 1-2"
       },
       {
         "event": "Tubeppa (5th Princess) transforms her room 1005 into a laboratory",
         "storyDate": "Jour 24",
-        "charactersInvolved": [
-          "prince-tubeppa",
-          "rihan"
-        ],
+        "charactersInvolved": ["prince-tubeppa", "rihan"],
         "location": "Tier 2 - Room 1005"
       }
     ],
@@ -326,29 +251,19 @@
       {
         "event": "The Xi-Yu (Hinrigh) family operates on the lower thirds",
         "storyDate": "Jour 25",
-        "charactersInvolved": [
-          "hinrigh-biganduffno",
-          "hisoka"
-        ],
+        "charactersInvolved": ["hinrigh-biganduffno", "hisoka"],
         "location": "Tiers 4-5"
       },
       {
         "event": "The Cha-R family (Ken'i Wang) tactically allies with the Phantom Troupe",
         "storyDate": "Jour 26",
-        "charactersInvolved": [
-          "keni-wang",
-          "chrollo-lucilfer",
-          "nobunaga-hazama"
-        ],
+        "charactersInvolved": ["keni-wang", "chrollo-lucilfer", "nobunaga-hazama"],
         "location": "Tier 5"
       },
       {
         "event": "Hisoka negotiates with the Xi-Yu mafia",
         "storyDate": "Jour 27",
-        "charactersInvolved": [
-          "hisoka",
-          "hinrigh-biganduffno"
-        ],
+        "charactersInvolved": ["hisoka", "hinrigh-biganduffno"],
         "location": "Tier 4"
       }
     ],
@@ -370,30 +285,19 @@
       {
         "event": "Morena Prudo activates 'Et tu, Juliet' on the ship",
         "storyDate": "Jour 28",
-        "charactersInvolved": [
-          "morena-prudo",
-          "luini",
-          "prince-tserriednich"
-        ],
+        "charactersInvolved": ["morena-prudo", "luini", "prince-tserriednich"],
         "location": "Tiers 3-5"
       },
       {
         "event": "Luini uses his dimensional ability to pass through armored walls",
         "storyDate": "Jour 29",
-        "charactersInvolved": [
-          "luini",
-          "morena-prudo"
-        ],
+        "charactersInvolved": ["luini", "morena-prudo"],
         "location": "Tier 4"
       },
       {
         "event": "Tserriednich uses the Heil-Ly to sow chaos",
         "storyDate": "Jour 30",
-        "charactersInvolved": [
-          "prince-tserriednich",
-          "theta",
-          "morena-prudo"
-        ],
+        "charactersInvolved": ["prince-tserriednich", "theta", "morena-prudo"],
         "location": "All third parties"
       }
     ],
@@ -416,21 +320,13 @@
         "event": "Furykov confronts Beyond about his sacrificial curse",
         "isFlashback": true,
         "storyDate": "Two months before departure",
-        "charactersInvolved": [
-          "beyond-netero",
-          "furykov"
-        ],
+        "charactersInvolved": ["beyond-netero", "furykov"],
         "location": "Kakin"
       },
       {
         "event": "Kurapika and Oito prepare a message for the mainland",
         "storyDate": "Current martial-law period",
-        "charactersInvolved": [
-          "kurapika",
-          "queen-oito",
-          "bill",
-          "babimyna"
-        ],
+        "charactersInvolved": ["kurapika", "queen-oito", "bill", "babimyna"],
         "location": "Black Whale 1 - Tier 1"
       },
       {
@@ -455,11 +351,7 @@
       {
         "event": "Ridge subdues Kanjidol during martial law",
         "storyDate": "Current martial-law period",
-        "charactersInvolved": [
-          "ridge",
-          "kanjidol",
-          "prince-luzurus"
-        ],
+        "charactersInvolved": ["ridge", "kanjidol", "prince-luzurus"],
         "location": "Black Whale 1 - Tier 1 Royal Residential Sector"
       }
     ],

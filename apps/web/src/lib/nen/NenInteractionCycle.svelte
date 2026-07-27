@@ -4,18 +4,18 @@
   export let steps: NenCycleStep[]
 
   const statusClass: Record<string, string> = {
-    pending:   'border-gray-700 text-gray-600',
-    current:   'border-bw-gold text-white bg-bw-gold/10 font-semibold',
+    pending: 'border-gray-700 text-gray-600',
+    current: 'border-bw-gold text-white bg-bw-gold/10 font-semibold',
     completed: 'border-green-700 text-green-400',
-    skipped:   'border-gray-700 text-gray-600 line-through',
-    blocked:   'border-bw-scarlet text-bw-scarlet',
+    skipped: 'border-gray-700 text-gray-600 line-through',
+    blocked: 'border-bw-scarlet text-bw-scarlet',
   }
   const statusIcon: Record<string, string> = {
-    pending:   '○',
-    current:   '◉',
+    pending: '○',
+    current: '◉',
     completed: '✓',
-    skipped:   '–',
-    blocked:   '✗',
+    skipped: '–',
+    blocked: '✗',
   }
 </script>
 
@@ -34,7 +34,9 @@
         <div class="flex flex-col min-w-0">
           <span class="truncate">{step.label}</span>
           {#if step.note && (step.status === 'current' || step.status === 'blocked')}
-            <span class="text-gray-500 text-[10px] leading-tight mt-0.5 whitespace-normal">{step.note}</span>
+            <span class="text-gray-500 text-[10px] leading-tight mt-0.5 whitespace-normal"
+              >{step.note}</span
+            >
           {/if}
         </div>
       </li>

@@ -1,73 +1,74 @@
 <script lang="ts">
-import type { PageData } from './$types';
-import { enhance } from '$app/forms';
+  import type { PageData } from './$types'
+  import { enhance } from '$app/forms'
 
-let { data }: { data: PageData } = $props();
+  let { data }: { data: PageData } = $props()
 
-let searchQuery = $state('');
-let showCreateModal = $state(false);
-let newAbility = $state({
-  id: '',
-  ownerId: '',
-  name: '',
-  category: 'CONJURATION' as const,
-  description: '',
-  canonStatus: 'CANON' as const,
-  moduleKey: ''
-});
-
-let filteredAbilities = $derived(
-  data.abilities.filter(ability => 
-    ability.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    ability.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    ability.description.toLowerCase().includes(searchQuery.toLowerCase())
-  )
-);
-
-const categoryOptions = [
-  { value: 'CONJURATION', label: 'Conjuration' },
-  { value: 'MANIPULATION', label: 'Manipulation' },
-  { value: 'TRANSMUTATION', label: 'Transmutation' },
-  { value: 'EMITTER', label: 'Emitter' },
-  { value: 'ENHANCER', label: 'Enhancer' },
-  { value: 'SPECIALIST', label: 'Specialist' }
-];
-
-const canonStatusOptions = [
-  { value: 'CANON', label: 'Canon' },
-  { value: 'SEMI_CANON', label: 'Semi-Canon' },
-  { value: 'NON_CANON', label: 'Non-Canon' }
-];
-
-function openCreateModal() {
-  showCreateModal = true;
-}
-
-function closeCreateModal() {
-  showCreateModal = false;
-  newAbility = {
+  let searchQuery = $state('')
+  let showCreateModal = $state(false)
+  let newAbility = $state({
     id: '',
     ownerId: '',
     name: '',
-    category: 'CONJURATION',
+    category: 'CONJURATION' as const,
     description: '',
-    canonStatus: 'CANON',
-    moduleKey: ''
-  };
-}
+    canonStatus: 'CANON' as const,
+    moduleKey: '',
+  })
 
-let characters = $derived(data.characters || []);
+  let filteredAbilities = $derived(
+    data.abilities.filter(
+      (ability) =>
+        ability.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        ability.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        ability.description.toLowerCase().includes(searchQuery.toLowerCase()),
+    ),
+  )
 
-function getOwnerName(ownerId: string): string {
-  const character = characters.find(c => c.id === ownerId);
-  return character ? character.canonicalName : 'Unknown';
-}
+  const categoryOptions = [
+    { value: 'CONJURATION', label: 'Conjuration' },
+    { value: 'MANIPULATION', label: 'Manipulation' },
+    { value: 'TRANSMUTATION', label: 'Transmutation' },
+    { value: 'EMITTER', label: 'Emitter' },
+    { value: 'ENHANCER', label: 'Enhancer' },
+    { value: 'SPECIALIST', label: 'Specialist' },
+  ]
 
-function handleOverlayClick(e: any) {
-  if (e.target === e.currentTarget) {
-    closeCreateModal();
+  const canonStatusOptions = [
+    { value: 'CANON', label: 'Canon' },
+    { value: 'SEMI_CANON', label: 'Semi-Canon' },
+    { value: 'NON_CANON', label: 'Non-Canon' },
+  ]
+
+  function openCreateModal() {
+    showCreateModal = true
   }
-}
+
+  function closeCreateModal() {
+    showCreateModal = false
+    newAbility = {
+      id: '',
+      ownerId: '',
+      name: '',
+      category: 'CONJURATION',
+      description: '',
+      canonStatus: 'CANON',
+      moduleKey: '',
+    }
+  }
+
+  let characters = $derived(data.characters || [])
+
+  function getOwnerName(ownerId: string): string {
+    const character = characters.find((c) => c.id === ownerId)
+    return character ? character.canonicalName : 'Unknown'
+  }
+
+  function handleOverlayClick(e: any) {
+    if (e.target === e.currentTarget) {
+      closeCreateModal()
+    }
+  }
 </script>
 
 <svelte:head><title>Abilities — BW Admin</title></svelte:head>
@@ -83,8 +84,18 @@ function handleOverlayClick(e: any) {
       bind:value={searchQuery}
       class="w-full bg-white border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-bw-gold focus:border-transparent"
     />
-    <svg class="absolute left-3 top-2.5 h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+    <svg
+      class="absolute left-3 top-2.5 h-4 w-4 text-gray-400"
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+      />
     </svg>
   </div>
   <button
@@ -120,16 +131,22 @@ function handleOverlayClick(e: any) {
             <td class="px-4 py-3 text-gray-600">{ability.id}</td>
             <td class="px-4 py-3 text-gray-600">{getOwnerName(ability.ownerId)}</td>
             <td class="px-4 py-3">
-              <span class="px-2 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-700">
+              <span
+                class="px-2 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-700"
+              >
                 {ability.category}
               </span>
             </td>
             <td class="px-4 py-3">
-              <span class="px-2 py-1 rounded-full text-xs font-medium 
-                {ability.canonStatus === 'CANON' ? 'bg-green-100 text-green-700' :
-                  ability.canonStatus === 'SEMI_CANON' ? 'bg-blue-100 text-blue-700' :
-                  'bg-gray-100 text-gray-700'}
-              ">
+              <span
+                class="px-2 py-1 rounded-full text-xs font-medium
+                {ability.canonStatus === 'CANON'
+                  ? 'bg-green-100 text-green-700'
+                  : ability.canonStatus === 'SEMI_CANON'
+                    ? 'bg-blue-100 text-blue-700'
+                    : 'bg-gray-100 text-gray-700'}
+              "
+              >
                 {ability.canonStatus}
               </span>
             </td>
@@ -145,10 +162,13 @@ function handleOverlayClick(e: any) {
 </div>
 
 {#if showCreateModal}
-  <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4" onclick={handleOverlayClick}>
+  <div
+    class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+    onclick={handleOverlayClick}
+  >
     <div class="bg-white rounded-lg shadow-xl p-6 max-w-lg w-full">
       <h2 class="text-xl font-bold text-bw-gold mb-4">Create New Ability</h2>
-      
+
       <form method="POST" use:enhance class="space-y-4" onsubmit={closeCreateModal}>
         <div>
           <label for="ability-id" class="block text-sm font-medium text-gray-700 mb-1">ID *</label>
@@ -161,9 +181,11 @@ function handleOverlayClick(e: any) {
             class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-bw-gold focus:border-transparent"
           />
         </div>
-        
+
         <div>
-          <label for="ability-name" class="block text-sm font-medium text-gray-700 mb-1">Name *</label>
+          <label for="ability-name" class="block text-sm font-medium text-gray-700 mb-1"
+            >Name *</label
+          >
           <input
             id="ability-name"
             type="text"
@@ -173,9 +195,11 @@ function handleOverlayClick(e: any) {
             class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-bw-gold focus:border-transparent"
           />
         </div>
-        
+
         <div>
-          <label for="ability-owner" class="block text-sm font-medium text-gray-700 mb-1">Owner *</label>
+          <label for="ability-owner" class="block text-sm font-medium text-gray-700 mb-1"
+            >Owner *</label
+          >
           <select
             id="ability-owner"
             bind:value={newAbility.ownerId}
@@ -189,9 +213,11 @@ function handleOverlayClick(e: any) {
             {/each}
           </select>
         </div>
-        
+
         <div>
-          <label for="ability-category" class="block text-sm font-medium text-gray-700 mb-1">Category</label>
+          <label for="ability-category" class="block text-sm font-medium text-gray-700 mb-1"
+            >Category</label
+          >
           <select
             id="ability-category"
             bind:value={newAbility.category}
@@ -203,9 +229,11 @@ function handleOverlayClick(e: any) {
             {/each}
           </select>
         </div>
-        
+
         <div>
-          <label for="ability-canon" class="block text-sm font-medium text-gray-700 mb-1">Canon Status</label>
+          <label for="ability-canon" class="block text-sm font-medium text-gray-700 mb-1"
+            >Canon Status</label
+          >
           <select
             id="ability-canon"
             bind:value={newAbility.canonStatus}
@@ -217,9 +245,11 @@ function handleOverlayClick(e: any) {
             {/each}
           </select>
         </div>
-        
+
         <div>
-          <label for="ability-desc" class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+          <label for="ability-desc" class="block text-sm font-medium text-gray-700 mb-1"
+            >Description</label
+          >
           <textarea
             id="ability-desc"
             bind:value={newAbility.description}
@@ -228,9 +258,11 @@ function handleOverlayClick(e: any) {
             class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-bw-gold focus:border-transparent"
           ></textarea>
         </div>
-        
+
         <div>
-          <label for="ability-module" class="block text-sm font-medium text-gray-700 mb-1">Module Key</label>
+          <label for="ability-module" class="block text-sm font-medium text-gray-700 mb-1"
+            >Module Key</label
+          >
           <input
             id="ability-module"
             type="text"
@@ -240,7 +272,7 @@ function handleOverlayClick(e: any) {
             class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-bw-gold focus:border-transparent"
           />
         </div>
-        
+
         <div class="flex justify-end gap-3 pt-4">
           <button
             type="button"
@@ -262,5 +294,7 @@ function handleOverlayClick(e: any) {
 {/if}
 
 <style>
-  .bw-gold { color: #FFD700; }
+  .bw-gold {
+    color: #ffd700;
+  }
 </style>

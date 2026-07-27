@@ -7,7 +7,7 @@ const config = {
   kit: {
     adapter: adapter(),
     alias: {
-      '$lib': './src/lib',
+      $lib: './src/lib',
     },
     // Every backend call goes through a server-side load function, so the
     // browser only ever talks to its own origin. SvelteKit nonces its own

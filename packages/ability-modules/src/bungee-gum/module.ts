@@ -33,29 +33,13 @@ export const bungeeGum = defineAbility({
   id: 'bungee-gum',
   owner: 'hisoka',
 
-  conditions: [
-    canUseNen(),
-    isConscious(),
-  ],
+  conditions: [canUseNen(), isConscious()],
 
-  targets: [
-    person(),
-    object(),
-    surface(),
-    self(),
-  ],
+  targets: [person(), object(), surface(), self()],
 
-  interactions: [
-    attach(),
-    stretch(),
-    retract(),
-    detach(),
-    release(),
-  ],
+  interactions: [attach(), stretch(), retract(), detach(), release()],
 
-  effects: [
-    elasticConnection(),
-  ],
+  effects: [elasticConnection()],
 
   ui: { componentKey: 'BungeeGumInteraction' },
 
@@ -74,10 +58,38 @@ export const bungeeGum = defineAbility({
   }),
 
   actionWheel: [
-    wheelEntry({ id: 'attach', label: 'Attacher', abilityId: 'bungee-gum', visibility: 'available' }),
-    wheelEntry({ id: 'stretch', label: 'Étirer', abilityId: 'bungee-gum', visibility: 'locked', hint: 'Requiert un point d\'ancrage actif' }),
-    wheelEntry({ id: 'retract', label: 'Rétracter', abilityId: 'bungee-gum', visibility: 'locked', hint: 'Requiert un filament tendu' }),
-    wheelEntry({ id: 'detach', label: 'Détacher', abilityId: 'bungee-gum', visibility: 'locked', hint: 'Requiert une connexion active' }),
-    wheelEntry({ id: 'release', label: 'Relâcher', abilityId: 'bungee-gum', visibility: 'available' }),
+    wheelEntry({
+      id: 'attach',
+      label: 'Attacher',
+      abilityId: 'bungee-gum',
+      visibility: 'available',
+    }),
+    wheelEntry({
+      id: 'stretch',
+      label: 'Étirer',
+      abilityId: 'bungee-gum',
+      visibility: 'locked',
+      hint: "Requiert un point d'ancrage actif",
+    }),
+    wheelEntry({
+      id: 'retract',
+      label: 'Rétracter',
+      abilityId: 'bungee-gum',
+      visibility: 'locked',
+      hint: 'Requiert un filament tendu',
+    }),
+    wheelEntry({
+      id: 'detach',
+      label: 'Détacher',
+      abilityId: 'bungee-gum',
+      visibility: 'locked',
+      hint: 'Requiert une connexion active',
+    }),
+    wheelEntry({
+      id: 'release',
+      label: 'Relâcher',
+      abilityId: 'bungee-gum',
+      visibility: 'available',
+    }),
   ],
 })

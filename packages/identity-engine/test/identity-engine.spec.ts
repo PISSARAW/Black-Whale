@@ -14,7 +14,13 @@ const TSERRIEDNICH_BODY = {
 }
 
 function consciousness(id: string, originCharacterId: string) {
-  return { id, originCharacterId, label: id, consciousnessType: 'HUMAN', firstVisibleEventId: 'event-1' }
+  return {
+    id,
+    originCharacterId,
+    label: id,
+    consciousnessType: 'HUMAN',
+    firstVisibleEventId: 'event-1',
+  }
 }
 
 /** Only the four reads IdentityEngine performs. */
@@ -25,8 +31,12 @@ function fakePrisma(options: {
   appearances?: unknown[]
 }) {
   return {
-    narrativeEvent: { findUnique: async () => (options.event === undefined ? EVENT : options.event) },
-    body: { findUnique: async () => (options.body === undefined ? TSERRIEDNICH_BODY : options.body) },
+    narrativeEvent: {
+      findUnique: async () => (options.event === undefined ? EVENT : options.event),
+    },
+    body: {
+      findUnique: async () => (options.body === undefined ? TSERRIEDNICH_BODY : options.body),
+    },
     bodyOccupancy: { findMany: async () => options.occupancies ?? [] },
     appearanceState: { findMany: async () => options.appearances ?? [] },
   } as never
@@ -46,7 +56,11 @@ describe('IdentityEngine.resolveIdentity', () => {
     const engine = new IdentityEngine(
       fakePrisma({
         occupancies: [
-          { consciousness: consciousness('mind-tserriednich', 'tserriednich'), fromEvent: EARLIER, untilEvent: null },
+          {
+            consciousness: consciousness('mind-tserriednich', 'tserriednich'),
+            fromEvent: EARLIER,
+            untilEvent: null,
+          },
         ],
       }),
     )
@@ -62,7 +76,11 @@ describe('IdentityEngine.resolveIdentity', () => {
     const engine = new IdentityEngine(
       fakePrisma({
         occupancies: [
-          { consciousness: consciousness('mind-hisoka', 'hisoka'), fromEvent: EARLIER, untilEvent: null },
+          {
+            consciousness: consciousness('mind-hisoka', 'hisoka'),
+            fromEvent: EARLIER,
+            untilEvent: null,
+          },
         ],
       }),
     )
@@ -77,7 +95,11 @@ describe('IdentityEngine.resolveIdentity', () => {
     const engine = new IdentityEngine(
       fakePrisma({
         occupancies: [
-          { consciousness: consciousness('mind-hisoka', 'hisoka'), fromEvent: EARLIER, untilEvent: EVENT },
+          {
+            consciousness: consciousness('mind-hisoka', 'hisoka'),
+            fromEvent: EARLIER,
+            untilEvent: EVENT,
+          },
         ],
       }),
     )
@@ -90,7 +112,11 @@ describe('IdentityEngine.resolveIdentity', () => {
     const engine = new IdentityEngine(
       fakePrisma({
         occupancies: [
-          { consciousness: consciousness('mind-hisoka', 'hisoka'), fromEvent: LATER, untilEvent: null },
+          {
+            consciousness: consciousness('mind-hisoka', 'hisoka'),
+            fromEvent: LATER,
+            untilEvent: null,
+          },
         ],
       }),
     )
@@ -102,13 +128,23 @@ describe('IdentityEngine.resolveIdentity', () => {
     const engine = new IdentityEngine(
       fakePrisma({
         occupancies: [
-          { consciousness: consciousness('mind-old', 'someone'), fromEvent: EARLIER, untilEvent: null },
-          { consciousness: consciousness('mind-new', 'hisoka'), fromEvent: EVENT, untilEvent: null },
+          {
+            consciousness: consciousness('mind-old', 'someone'),
+            fromEvent: EARLIER,
+            untilEvent: null,
+          },
+          {
+            consciousness: consciousness('mind-new', 'hisoka'),
+            fromEvent: EVENT,
+            untilEvent: null,
+          },
         ],
       }),
     )
 
-    expect((await engine.resolveIdentity('body-tserriednich', 'event-3')).consciousness?.id).toBe('mind-new')
+    expect((await engine.resolveIdentity('body-tserriednich', 'event-3')).consciousness?.id).toBe(
+      'mind-new',
+    )
   })
 
   it('lets an active appearance override who the body is taken for', async () => {
@@ -118,7 +154,9 @@ describe('IdentityEngine.resolveIdentity', () => {
       }),
     )
 
-    expect((await engine.resolveIdentity('body-tserriednich', 'event-3')).perceivedAs).toBe('benjamin')
+    expect((await engine.resolveIdentity('body-tserriednich', 'event-3')).perceivedAs).toBe(
+      'benjamin',
+    )
   })
 
   it('drops a disguise that has been lifted', async () => {
@@ -128,12 +166,16 @@ describe('IdentityEngine.resolveIdentity', () => {
       }),
     )
 
-    expect((await engine.resolveIdentity('body-tserriednich', 'event-3')).perceivedAs).toBe('tserriednich')
+    expect((await engine.resolveIdentity('body-tserriednich', 'event-3')).perceivedAs).toBe(
+      'tserriednich',
+    )
   })
 
   it('refuses an unknown event rather than guessing', async () => {
     const engine = new IdentityEngine(fakePrisma({ event: null }))
-    await expect(engine.resolveIdentity('body-tserriednich', 'nope')).rejects.toThrow(/Event nope not found/)
+    await expect(engine.resolveIdentity('body-tserriednich', 'nope')).rejects.toThrow(
+      /Event nope not found/,
+    )
   })
 
   it('refuses an unknown body', async () => {
@@ -145,7 +187,9 @@ describe('IdentityEngine.resolveIdentity', () => {
 describe('IdentityEngine.findBodyOf', () => {
   it('returns the body a consciousness currently occupies', async () => {
     const engine = new IdentityEngine(
-      fakePrisma({ occupancies: [{ body: TSERRIEDNICH_BODY, fromEvent: EARLIER, untilEvent: null }] }),
+      fakePrisma({
+        occupancies: [{ body: TSERRIEDNICH_BODY, fromEvent: EARLIER, untilEvent: null }],
+      }),
     )
 
     expect((await engine.findBodyOf('mind-hisoka', 'event-3'))?.id).toBe('body-tserriednich')
@@ -153,7 +197,9 @@ describe('IdentityEngine.findBodyOf', () => {
 
   it('returns null when the occupancy is over', async () => {
     const engine = new IdentityEngine(
-      fakePrisma({ occupancies: [{ body: TSERRIEDNICH_BODY, fromEvent: EARLIER, untilEvent: EVENT }] }),
+      fakePrisma({
+        occupancies: [{ body: TSERRIEDNICH_BODY, fromEvent: EARLIER, untilEvent: EVENT }],
+      }),
     )
 
     expect(await engine.findBodyOf('mind-hisoka', 'event-3')).toBeNull()

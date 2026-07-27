@@ -3,13 +3,13 @@
     label,
     value,
     anomaly = false,
-    subtle = false
+    subtle = false,
   }: {
-    label: string;
-    value: string;
-    anomaly?: boolean;
-    subtle?: boolean;
-  } = $props();
+    label: string
+    value: string
+    anomaly?: boolean
+    subtle?: boolean
+  } = $props()
 </script>
 
 <div class:identity-badge={true} class:anomaly class:subtle>

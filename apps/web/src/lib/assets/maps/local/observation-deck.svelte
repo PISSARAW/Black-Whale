@@ -1,18 +1,45 @@
 <script lang="ts">
   function handleElementClick(elementId: string) {
-    console.log(`Clicked on ${elementId} in Observation Deck`);
+    console.log(`Clicked on ${elementId} in Observation Deck`)
   }
 </script>
 
-<svg viewBox="0 0 1000 600" class="w-full h-full text-[#FFFFF0] bg-[#050505] rounded-lg border border-[#333]">
+<svg
+  viewBox="0 0 1000 600"
+  class="w-full h-full text-[#FFFFF0] bg-[#050505] rounded-lg border border-[#333]"
+>
   <defs>
     <style>
-      .window-frame { fill: #111; stroke: #333; stroke-width: 8; }
-      .sky { fill: qradial-gradient(cx 0.5 cy 0.5 r 0.5 fx 0.5 fy 0.5, #334, #001); }
-      .sea { fill: #0b2636; }
-      .wave { fill: none; stroke: #6b9bb3; stroke-width: 2; opacity: .45; }
-      .fixture { fill: #202a30; stroke: #73808a; stroke-width: 2; }
-      .label { fill: #FFFFF0; font-family: sans-serif; font-size: 16px; font-weight: bold; pointer-events: none; text-anchor: middle; }
+      .window-frame {
+        fill: #111;
+        stroke: #333;
+        stroke-width: 8;
+      }
+      .sky {
+        fill: qradial-gradient(cx 0.5 cy 0.5 r 0.5 fx 0.5 fy 0.5, #334, #001);
+      }
+      .sea {
+        fill: #0b2636;
+      }
+      .wave {
+        fill: none;
+        stroke: #6b9bb3;
+        stroke-width: 2;
+        opacity: 0.45;
+      }
+      .fixture {
+        fill: #202a30;
+        stroke: #73808a;
+        stroke-width: 2;
+      }
+      .label {
+        fill: #fffff0;
+        font-family: sans-serif;
+        font-size: 16px;
+        font-weight: bold;
+        pointer-events: none;
+        text-anchor: middle;
+      }
     </style>
     <linearGradient id="skyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
       <stop offset="0%" stop-color="#445" />
@@ -44,7 +71,27 @@
     <rect class="fixture" x="760" y="320" width="125" height="95" rx="6" />
     <text x="822" y="370" class="label" font-size="13">Bars</text>
 
-    <path class="window-frame" d="M 0 0 L 1000 0 L 1000 500 L 0 500 Z M 50 50 L 50 450 L 950 450 L 950 50 Z" />
-    <rect role="button" tabindex="0" aria-label="Inspect the observation deck" onkeydown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.currentTarget.dispatchEvent(new MouseEvent('click', { bubbles: true })); } }} x="80" y="260" width="840" height="180" fill="transparent" cursor="pointer" onclick={() => handleElementClick('observation-deck')} />
+    <path
+      class="window-frame"
+      d="M 0 0 L 1000 0 L 1000 500 L 0 500 Z M 50 50 L 50 450 L 950 450 L 950 50 Z"
+    />
+    <rect
+      role="button"
+      tabindex="0"
+      aria-label="Inspect the observation deck"
+      onkeydown={(event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault()
+          event.currentTarget.dispatchEvent(new MouseEvent('click', { bubbles: true }))
+        }
+      }}
+      x="80"
+      y="260"
+      width="840"
+      height="180"
+      fill="transparent"
+      cursor="pointer"
+      onclick={() => handleElementClick('observation-deck')}
+    />
   </g>
 </svg>

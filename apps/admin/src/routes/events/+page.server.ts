@@ -1,31 +1,30 @@
-import { getPrisma } from '$lib/server/db';
-import type { PageServerLoad } from './$types';
+import { getPrisma } from '$lib/server/db'
+import type { PageServerLoad } from './$types'
 
 export const load: PageServerLoad = async ({ cookies }) => {
-	const prisma = await getPrisma();
-	const spoilerLimitCookie = cookies.get('adminSpoilerLimit');
-	const spoilerLimit = spoilerLimitCookie ? parseInt(spoilerLimitCookie) : null;
+  const prisma = await getPrisma()
+  const spoilerLimitCookie = cookies.get('adminSpoilerLimit')
+  const spoilerLimit = spoilerLimitCookie ? parseInt(spoilerLimitCookie) : null
 
-	const whereClause = spoilerLimit ? {
-		chapter: { number: { lte: spoilerLimit } }
-	} : {};
+  const whereClause = spoilerLimit
+    ? {
+        chapter: { number: { lte: spoilerLimit } },
+      }
+    : {}
 
-	const events = await prisma.narrativeEvent.findMany({
-		where: whereClause,
-		include: {
-			chapter: true,
-			presencesFrom: {
-				include: { body: { include: { character: true } }, location: true }
-			},
-			presencesUntil: {
-				include: { body: { include: { character: true } }, location: true }
-			}
-		},
-		orderBy: [
-			{ chapter: { number: 'asc' } },
-			{ sequence: 'asc' }
-		]
-	});
+  const events = await prisma.narrativeEvent.findMany({
+    where: whereClause,
+    include: {
+      chapter: true,
+      presencesFrom: {
+        include: { body: { include: { character: true } }, location: true },
+      },
+      presencesUntil: {
+        include: { body: { include: { character: true } }, location: true },
+      },
+    },
+    orderBy: [{ chapter: { number: 'asc' } }, { sequence: 'asc' }],
+  })
 
-	return { events };
-};
+  return { events }
+}

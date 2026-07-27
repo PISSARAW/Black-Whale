@@ -64,7 +64,11 @@ export function projectMapScene(state: WorldState, context: MapSceneContext): Ma
     effectLinks,
     auraLayers: activeEffects
       .filter((effect) => effect.kind === 'AURA_MODIFIER')
-      .map((effect) => ({ effectId: effect.id, source: effect.source, attributes: effect.attributes })),
+      .map((effect) => ({
+        effectId: effect.id,
+        source: effect.source,
+        attributes: effect.attributes,
+      })),
     fogEntityIds: visible
       ? Object.keys(state.entities).filter((entityId) => !visible.has(entityId))
       : [],

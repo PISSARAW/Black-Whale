@@ -1,9 +1,27 @@
 import { describe, expect, it, vi } from 'vitest'
 import { TimelineEngine } from '../src/index.js'
 
-const CH401 = { id: 'event-1', chapterId: 'ch-401', sequence: 1, ordinal: 10, chapter: { number: 401 } }
-const CH405 = { id: 'event-3', chapterId: 'ch-405', sequence: 3, ordinal: 30, chapter: { number: 405 } }
-const CH412 = { id: 'event-9', chapterId: 'ch-412', sequence: 9, ordinal: 90, chapter: { number: 412 } }
+const CH401 = {
+  id: 'event-1',
+  chapterId: 'ch-401',
+  sequence: 1,
+  ordinal: 10,
+  chapter: { number: 401 },
+}
+const CH405 = {
+  id: 'event-3',
+  chapterId: 'ch-405',
+  sequence: 3,
+  ordinal: 30,
+  chapter: { number: 405 },
+}
+const CH412 = {
+  id: 'event-9',
+  chapterId: 'ch-412',
+  sequence: 9,
+  ordinal: 90,
+  chapter: { number: 412 },
+}
 
 function visible(id: string, firstVisibleEvent = CH401) {
   return { id, firstVisibleEvent }
@@ -14,16 +32,18 @@ function temporal(overrides: Record<string, unknown> = {}) {
 }
 
 /** Records every `where` the engine sends, so query bounds can be asserted. */
-function fakePrisma(options: {
-  event?: typeof CH405 | null
-  characters?: unknown[]
-  bodies?: unknown[]
-  consciousnesses?: unknown[]
-  presences?: unknown[]
-  states?: unknown[]
-  occupancies?: unknown[]
-  appearances?: unknown[]
-} = {}) {
+function fakePrisma(
+  options: {
+    event?: typeof CH405 | null
+    characters?: unknown[]
+    bodies?: unknown[]
+    consciousnesses?: unknown[]
+    presences?: unknown[]
+    states?: unknown[]
+    occupancies?: unknown[]
+    appearances?: unknown[]
+  } = {},
+) {
   const calls: Record<string, unknown[]> = {}
   const model = (name: string, rows: unknown[] | undefined) => ({
     findMany: vi.fn(async (args?: unknown) => {
@@ -132,7 +152,10 @@ describe('TimelineEngine.getWorldState temporal records', () => {
 
   it('filters appearances on the same rule', async () => {
     const { prisma } = fakePrisma({
-      appearances: [temporal({ entityId: 'body-a' }), temporal({ entityId: 'body-b', fromEvent: CH412 })],
+      appearances: [
+        temporal({ entityId: 'body-a' }),
+        temporal({ entityId: 'body-b', fromEvent: CH412 }),
+      ],
     })
     const state = await new TimelineEngine(prisma).getWorldState({ eventId: 'event-3' })
 
@@ -160,7 +183,10 @@ describe('TimelineEngine.getWorldState query bounds', () => {
 
   it('uses the explicit reveal limit rather than the target chapter', async () => {
     const { prisma, calls } = fakePrisma()
-    await new TimelineEngine(prisma).getWorldState({ eventId: 'event-3', revealedThroughChapter: 401 })
+    await new TimelineEngine(prisma).getWorldState({
+      eventId: 'event-3',
+      revealedThroughChapter: 401,
+    })
 
     const where = (calls['character']?.[0] as { where?: Record<string, unknown> })?.where
     expect(where).toMatchObject({ firstVisibleEvent: { chapter: { number: { lte: 401 } } } })

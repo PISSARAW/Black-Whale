@@ -10,11 +10,11 @@ export default {
         'bw-gold': '#c8a956',
         'bw-scarlet': '#c85d4e',
       },
-			fontFamily: {
-				sans: ['Manrope', 'Avenir Next', 'sans-serif'],
-				condensed: ['Barlow Condensed', 'Arial Narrow', 'sans-serif'],
-				mono: ['IBM Plex Mono', 'monospace'],
-			},
+      fontFamily: {
+        sans: ['Manrope', 'Avenir Next', 'sans-serif'],
+        condensed: ['Barlow Condensed', 'Arial Narrow', 'sans-serif'],
+        mono: ['IBM Plex Mono', 'monospace'],
+      },
     },
   },
   plugins: [],

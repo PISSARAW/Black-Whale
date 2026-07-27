@@ -11,19 +11,19 @@
   }>()
 
   const visibilityClass: Record<ActionVisibility, string> = {
-    available:            'border-bw-gold text-white hover:bg-bw-gold/20 cursor-pointer',
-    locked:               'border-gray-600 text-gray-500 cursor-not-allowed',
-    hidden:               'hidden',
-    unknown:              'border-gray-700 text-gray-600 italic cursor-default',
-    warning:              'border-yellow-600 text-yellow-400 hover:bg-yellow-900/20 cursor-pointer',
+    available: 'border-bw-gold text-white hover:bg-bw-gold/20 cursor-pointer',
+    locked: 'border-gray-600 text-gray-500 cursor-not-allowed',
+    hidden: 'hidden',
+    unknown: 'border-gray-700 text-gray-600 italic cursor-default',
+    warning: 'border-yellow-600 text-yellow-400 hover:bg-yellow-900/20 cursor-pointer',
   }
 
   const visibilityIcon: Record<ActionVisibility, string> = {
     available: '',
-    locked:    '🔒',
-    hidden:    '',
-    unknown:   '?',
-    warning:   '⚠',
+    locked: '🔒',
+    hidden: '',
+    unknown: '?',
+    warning: '⚠',
   }
 
   function handleClick(entry: NenActionWheelEntry) {
@@ -53,7 +53,9 @@
         <!-- svelte-ignore a11y-click-events-have-key-events -->
         <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
         <li
-          class="flex items-center justify-between gap-2 px-3 py-1.5 rounded border text-sm transition-colors {visibilityClass[entry.visibility]}"
+          class="flex items-center justify-between gap-2 px-3 py-1.5 rounded border text-sm transition-colors {visibilityClass[
+            entry.visibility
+          ]}"
           title={entry.hint ?? entry.label}
           onclick={() => handleClick(entry)}
         >

@@ -40,7 +40,9 @@ export class SimulationEngine {
 
   createBranch(input: CreateBranchInput, baseState: WorldState): WorldBranch {
     if (baseState.cursor.eventId !== input.parentEventId) {
-      throw new Error(`Base state ${baseState.cursor.eventId} does not match fork ${input.parentEventId}`)
+      throw new Error(
+        `Base state ${baseState.cursor.eventId} does not match fork ${input.parentEventId}`,
+      )
     }
     return this.branches.createBranch({
       id: input.id,
@@ -63,7 +65,8 @@ export class SimulationEngine {
       snapshot: result.state,
       appliedEvents: result.events,
       canonFidelity: policy === 'STRICT_CANON' ? 1 : policy === 'RULE_COMPATIBLE' ? 0.75 : 0,
-      warnings: policy === 'SANDBOX' ? ['Sandbox branch: canonical constraints may be bypassed.'] : [],
+      warnings:
+        policy === 'SANDBOX' ? ['Sandbox branch: canonical constraints may be bypassed.'] : [],
     }
   }
 

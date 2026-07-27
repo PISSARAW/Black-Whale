@@ -1,13 +1,13 @@
 export interface SpoilerProfile {
-  maxChapter: number;
+  maxChapter: number
 }
 
 export interface VisibleEntity {
   firstVisibleEvent: {
     chapter: {
-      number: number;
-    };
-  };
+      number: number
+    }
+  }
 }
 
 /**
@@ -15,7 +15,7 @@ export interface VisibleEntity {
  */
 export function getSpoilerFilter(profile?: SpoilerProfile) {
   if (!profile || profile.maxChapter === Infinity) {
-    return {};
+    return {}
   }
   return {
     firstVisibleEvent: {
@@ -25,7 +25,7 @@ export function getSpoilerFilter(profile?: SpoilerProfile) {
         },
       },
     },
-  };
+  }
 }
 
 /**
@@ -36,16 +36,14 @@ export function filterVisible<T extends VisibleEntity>(
   profile?: SpoilerProfile,
 ): T[] {
   if (!profile || profile.maxChapter === Infinity) {
-    return entities;
+    return entities
   }
-  return entities.filter(
-    (entity) => entity.firstVisibleEvent.chapter.number <= profile.maxChapter,
-  );
+  return entities.filter((entity) => entity.firstVisibleEvent.chapter.number <= profile.maxChapter)
 }
 
 /**
- * Specifically for temporal records (Presence, State, Affiliation) 
- * where we need to check the event's visibility. 
+ * Specifically for temporal records (Presence, State, Affiliation)
+ * where we need to check the event's visibility.
  * Assumes the record has a joined `fromEvent: { chapter: { number: number } }`.
  */
 export function filterTemporalRecords<T extends { fromEvent: { chapter: { number: number } } }>(
@@ -53,15 +51,13 @@ export function filterTemporalRecords<T extends { fromEvent: { chapter: { number
   profile?: SpoilerProfile,
 ): T[] {
   if (!profile || profile.maxChapter === Infinity) {
-    return records;
+    return records
   }
-  return records.filter(
-    (record) => record.fromEvent.chapter.number <= profile.maxChapter,
-  );
+  return records.filter((record) => record.fromEvent.chapter.number <= profile.maxChapter)
 }
 
 /**
- * Removes the `untilEvent` if it occurs after the maxChapter, 
+ * Removes the `untilEvent` if it occurs after the maxChapter,
  * simulating that the state is still current for the user.
  */
 export function maskFutureEnds<T extends { untilEvent?: { chapter: { number: number } } | null }>(
@@ -69,15 +65,12 @@ export function maskFutureEnds<T extends { untilEvent?: { chapter: { number: num
   profile?: SpoilerProfile,
 ): T[] {
   if (!profile || profile.maxChapter === Infinity) {
-    return records;
+    return records
   }
   return records.map((record) => {
-    if (
-      record.untilEvent &&
-      record.untilEvent.chapter.number > profile.maxChapter
-    ) {
-      return { ...record, untilEvent: null };
+    if (record.untilEvent && record.untilEvent.chapter.number > profile.maxChapter) {
+      return { ...record, untilEvent: null }
     }
-    return record;
-  });
+    return record
+  })
 }

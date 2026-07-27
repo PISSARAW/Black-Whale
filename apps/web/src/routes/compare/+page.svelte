@@ -1,40 +1,48 @@
 <script lang="ts">
-  import { untrack } from 'svelte';
-  import { page } from '$app/stores';
-  import { goto } from '$app/navigation';
-  import type { PageData } from './$types';
-  import PerspectiveDifference from '$lib/components/perspective/PerspectiveDifference.svelte';
-  import CompareTierMap from '$lib/components/perspective/CompareTierMap.svelte';
-  import Seo from '$lib/components/Seo.svelte';
-  import { breadcrumbSchema } from '$lib/seo/schema';
-  import { toEnglishDisplayName, toEnglishEventTitle } from '$lib/utils/displayNames';
+  import { untrack } from 'svelte'
+  import { page } from '$app/stores'
+  import { goto } from '$app/navigation'
+  import type { PageData } from './$types'
+  import PerspectiveDifference from '$lib/components/perspective/PerspectiveDifference.svelte'
+  import CompareTierMap from '$lib/components/perspective/CompareTierMap.svelte'
+  import Seo from '$lib/components/Seo.svelte'
+  import { breadcrumbSchema } from '$lib/seo/schema'
+  import { toEnglishDisplayName, toEnglishEventTitle } from '$lib/utils/displayNames'
 
-  let { data }: { data: PageData } = $props();
+  let { data }: { data: PageData } = $props()
 
-  let selectedEventId = $state(untrack(() => data.selectedEventId || ''));
-  let selectedLeft = $state(untrack(() => data.selectedLeft || ''));
-  let selectedRight = $state(untrack(() => data.selectedRight || ''));
-  let compareCanonical = $state(untrack(() => Boolean(data.compareCanonical)));
-  let differencesOnly = $state(Boolean($page.url.searchParams.get('diffOnly') === '1'));
-  let zoom = $state(untrack(() => data.sync.zoom || 1));
-  let tier = $state(untrack(() => data.sync.tier || 'tier-1'));
-  let zone = $state(untrack(() => data.sync.zone || ''));
-  let selectedSubject = $state(untrack(() => data.sync.subject || ''));
-  let snapKey = $state(0);
-  let lastSnapSubject = $state('');
+  let selectedEventId = $state(untrack(() => data.selectedEventId || ''))
+  let selectedLeft = $state(untrack(() => data.selectedLeft || ''))
+  let selectedRight = $state(untrack(() => data.selectedRight || ''))
+  let compareCanonical = $state(untrack(() => Boolean(data.compareCanonical)))
+  let differencesOnly = $state(Boolean($page.url.searchParams.get('diffOnly') === '1'))
+  let zoom = $state(untrack(() => data.sync.zoom || 1))
+  let tier = $state(untrack(() => data.sync.tier || 'tier-1'))
+  let zone = $state(untrack(() => data.sync.zone || ''))
+  let selectedSubject = $state(untrack(() => data.sync.subject || ''))
+  let snapKey = $state(0)
+  let lastSnapSubject = $state('')
 
-  const tiers = ['tier-1', 'tier-2', 'tier-3', 'tier-4', 'tier-5'];
-  const filters = ['All', 'Identities', 'Positions', 'Statuses', 'Abilities', 'Affiliations', 'Events'];
-  let activeFilter = $state('All');
+  const tiers = ['tier-1', 'tier-2', 'tier-3', 'tier-4', 'tier-5']
+  const filters = [
+    'All',
+    'Identities',
+    'Positions',
+    'Statuses',
+    'Abilities',
+    'Affiliations',
+    'Events',
+  ]
+  let activeFilter = $state('All')
 
-  let locations = $derived(data.worldState?.locations || []);
-  let presences = $derived(data.worldState?.presences || []);
-  let bodies = $derived(data.worldState?.bodies || []);
-  let characters = $derived(data.worldState?.characters || []);
-  let differences = $derived(data.comparison || []);
-  let canonicalTruth = $derived(data.canonicalTruth || { facts: [], positions: {} });
+  let locations = $derived(data.worldState?.locations || [])
+  let presences = $derived(data.worldState?.presences || [])
+  let bodies = $derived(data.worldState?.bodies || [])
+  let characters = $derived(data.worldState?.characters || [])
+  let differences = $derived(data.comparison || [])
+  let canonicalTruth = $derived(data.canonicalTruth || { facts: [], positions: {} })
 
-  let eventLabel = $derived(data.events.find((event) => event.id === selectedEventId));
+  let eventLabel = $derived(data.events.find((event) => event.id === selectedEventId))
 
   const locationCoordinates: Record<string, Record<string, { x: number; y: number }>> = {
     'tier-1': {
@@ -44,15 +52,15 @@
       'vvip-living-quarters': { x: 290, y: 380 },
       'queens-living-quarters': { x: 290, y: 470 },
       'soldiers-living-quarters': { x: 290, y: 530 },
-      'casino': { x: 400, y: 400 },
-      'cineplex': { x: 600, y: 350 },
+      casino: { x: 400, y: 400 },
+      cineplex: { x: 600, y: 350 },
       'central-dining-hall': { x: 600, y: 450 },
       'observation-deck': { x: 700, y: 200 },
       'royal-army-office': { x: 700, y: 400 },
       'general-cabins': { x: 700, y: 500 },
       'central-police-station': { x: 500, y: 500 },
       'central-courthouse': { x: 500, y: 450 },
-      'heilly-processing': { x: 350, y: 500 }
+      'heilly-processing': { x: 350, y: 500 },
     },
     'tier-2': {
       'vip-guest-rooms': { x: 300, y: 200 },
@@ -61,7 +69,7 @@
       'restaurant-row': { x: 500, y: 350 },
       'military-barracks': { x: 200, y: 400 },
       'security-center': { x: 400, y: 450 },
-      'detention-facility': { x: 200, y: 500 }
+      'detention-facility': { x: 200, y: 500 },
     },
     'tier-3': {
       'medical-district': { x: 300, y: 250 },
@@ -71,7 +79,7 @@
       'waste-management': { x: 200, y: 400 },
       'power-station': { x: 400, y: 400 },
       'water-treatment': { x: 600, y: 400 },
-      'storage-warehouses': { x: 500, y: 500 }
+      'storage-warehouses': { x: 500, y: 500 },
     },
     'tier-4': {
       'crew-quarters': { x: 250, y: 150 },
@@ -81,7 +89,7 @@
       'propulsion-systems': { x: 600, y: 350 },
       'life-support': { x: 300, y: 450 },
       'navigation-center': { x: 500, y: 450 },
-      'communication-hub': { x: 700, y: 450 }
+      'communication-hub': { x: 700, y: 450 },
     },
     'tier-5': {
       'lower-decks': { x: 300, y: 200 },
@@ -91,84 +99,94 @@
       'emergency-generators': { x: 600, y: 300 },
       'structural-support': { x: 300, y: 400 },
       'ballast-tanks': { x: 500, y: 400 },
-      'docking-bays': { x: 700, y: 400 }
-    }
-  };
+      'docking-bays': { x: 700, y: 400 },
+    },
+  }
 
   function hashToUnit(input: string) {
-    let hash = 0;
+    let hash = 0
     for (let i = 0; i < input.length; i += 1) {
-      hash = (hash << 5) - hash + input.charCodeAt(i);
-      hash |= 0;
+      hash = (hash << 5) - hash + input.charCodeAt(i)
+      hash |= 0
     }
-    return Math.abs(hash % 1000) / 1000;
+    return Math.abs(hash % 1000) / 1000
   }
 
   let entitiesInView = $derived.by(() => {
-    const byLocation = new Map<string, any>(locations.map((location: any) => [location.id, location] as [string, any]));
+    const byLocation = new Map<string, any>(
+      locations.map((location: any) => [location.id, location] as [string, any]),
+    )
 
     function resolveTier(location: any) {
-      let current = location;
-      let depth = 0;
+      let current = location
+      let depth = 0
       while (current && depth < 8) {
-        if (current.type === 'TIER') return current.slug;
-        current = current.parentLocationId ? byLocation.get(current.parentLocationId) : null;
-        depth += 1;
+        if (current.type === 'TIER') return current.slug
+        current = current.parentLocationId ? byLocation.get(current.parentLocationId) : null
+        depth += 1
       }
-      return null;
+      return null
     }
 
     return presences
       .map((presence: any) => {
-        const body = bodies.find((item: any) => item.id === presence.entityId);
-        const owner = body ? characters.find((item: any) => item.id === body.originalCharacterId) : null;
-        const location = byLocation.get(presence.locationId);
+        const body = bodies.find((item: any) => item.id === presence.entityId)
+        const owner = body
+          ? characters.find((item: any) => item.id === body.originalCharacterId)
+          : null
+        const location = byLocation.get(presence.locationId)
         return {
           id: presence.entityId,
           subjectId: owner?.id || body?.id || presence.entityId,
           name: toEnglishDisplayName(owner?.canonicalName || body?.label) || presence.entityId,
           locationName: location?.name || 'Unknown location',
           tier: location ? resolveTier(location) : null,
-          zone: location?.slug || ''
-        };
+          zone: location?.slug || '',
+        }
       })
-      .filter((item: any) => (!tier || item.tier === tier) && (!zone || item.zone === zone));
-  });
+      .filter((item: any) => (!tier || item.tier === tier) && (!zone || item.zone === zone))
+  })
 
   let zonesInTier = $derived(
-    locations.filter((location: any) => location.slug?.startsWith(tier) && location.type !== 'TIER')
-  );
+    locations.filter(
+      (location: any) => location.slug?.startsWith(tier) && location.type !== 'TIER',
+    ),
+  )
 
   let baseMarkers = $derived.by(() => {
-    const byLocation = new Map<string, any>(locations.map((location: any) => [location.id, location] as [string, any]));
+    const byLocation = new Map<string, any>(
+      locations.map((location: any) => [location.id, location] as [string, any]),
+    )
 
     function resolveTier(location: any) {
-      let current = location;
-      let depth = 0;
+      let current = location
+      let depth = 0
       while (current && depth < 8) {
-        if (current.type === 'TIER') return current.slug;
-        current = current.parentLocationId ? byLocation.get(current.parentLocationId) : null;
-        depth += 1;
+        if (current.type === 'TIER') return current.slug
+        current = current.parentLocationId ? byLocation.get(current.parentLocationId) : null
+        depth += 1
       }
-      return null;
+      return null
     }
 
     return presences.map((presence: any) => {
-      const body = bodies.find((item: any) => item.id === presence.entityId);
-      const owner = body ? characters.find((item: any) => item.id === body.originalCharacterId) : null;
-      const location = byLocation.get(presence.locationId);
-      const markerTier = location ? resolveTier(location) : null;
+      const body = bodies.find((item: any) => item.id === presence.entityId)
+      const owner = body
+        ? characters.find((item: any) => item.id === body.originalCharacterId)
+        : null
+      const location = byLocation.get(presence.locationId)
+      const markerTier = location ? resolveTier(location) : null
 
-      let x = 500;
-      let y = 300;
+      let x = 500
+      let y = 300
       if (location && markerTier && locationCoordinates[markerTier]?.[location.slug]) {
-        const coords = locationCoordinates[markerTier][location.slug];
-        x = coords.x;
-        y = coords.y;
+        const coords = locationCoordinates[markerTier][location.slug]
+        x = coords.x
+        y = coords.y
       } else {
-        const base = hashToUnit(presence.entityId || 'unknown');
-        x = 220 + base * 560;
-        y = 160 + (1 - base) * 280;
+        const base = hashToUnit(presence.entityId || 'unknown')
+        x = 220 + base * 560
+        y = 160 + (1 - base) * 280
       }
 
       return {
@@ -180,207 +198,224 @@
         zone: location?.slug || '',
         x,
         y,
-        certainty: presence.certainty || 'UNKNOWN'
-      };
-    });
-  });
+        certainty: presence.certainty || 'UNKNOWN',
+      }
+    })
+  })
 
   let scopedMarkers = $derived(
-    baseMarkers.filter((marker: any) => marker.tier === tier && (!zone || marker.zone === zone))
-  );
+    baseMarkers.filter((marker: any) => marker.tier === tier && (!zone || marker.zone === zone)),
+  )
 
   function codeWeight(code: '=' | '←' | '→' | '≠' | '~' | '⏱') {
-    if (code === '≠') return 5;
-    if (code === '⏱') return 4;
-    if (code === '←' || code === '→') return 3;
-    if (code === '~') return 2;
-    return 1;
+    if (code === '≠') return 5
+    if (code === '⏱') return 4
+    if (code === '←' || code === '→') return 3
+    if (code === '~') return 2
+    return 1
   }
 
   function differenceCode(diff: any): '=' | '←' | '→' | '≠' | '~' | '⏱' {
-    if (diff.dimension === 'EVENT') return '⏱';
-    return pickCode(diff);
+    if (diff.dimension === 'EVENT') return '⏱'
+    return pickCode(diff)
   }
 
   let subjectCodeMap = $derived.by(() => {
-    const map = new Map<string, '=' | '←' | '→' | '≠' | '~' | '⏱'>();
+    const map = new Map<string, '=' | '←' | '→' | '≠' | '~' | '⏱'>()
 
     for (const diff of differences as any[]) {
-      const subjectId = diff.subjectId;
-      if (!subjectId) continue;
+      const subjectId = diff.subjectId
+      if (!subjectId) continue
 
-      const code = differenceCode(diff);
-      const existing = map.get(subjectId) || '=';
+      const code = differenceCode(diff)
+      const existing = map.get(subjectId) || '='
 
       if (codeWeight(code) > codeWeight(existing)) {
-        map.set(subjectId, code);
+        map.set(subjectId, code)
       }
     }
 
-    return map;
-  });
+    return map
+  })
 
   function markerLabel(marker: any, perspective: any, mode: 'left' | 'right' | 'reader') {
-    if (mode === 'reader') return marker.name;
-    if (!perspective) return marker.name;
+    if (mode === 'reader') return marker.name
+    if (!perspective) return marker.name
 
-    const observerId = perspective.observer?.characterId;
-    if (observerId && marker.subjectId === observerId) return marker.name;
+    const observerId = perspective.observer?.characterId
+    if (observerId && marker.subjectId === observerId) return marker.name
 
-    const facts = (perspective.knownFacts || []).filter((fact: any) =>
-      fact.subjectId === marker.subjectId || fact.subjectId === marker.bodyId
-    );
-    const beliefs = (perspective.beliefs || []).filter((belief: any) =>
-      belief.subjectId === marker.subjectId || belief.subjectId === marker.bodyId
-    );
+    const facts = (perspective.knownFacts || []).filter(
+      (fact: any) => fact.subjectId === marker.subjectId || fact.subjectId === marker.bodyId,
+    )
+    const beliefs = (perspective.beliefs || []).filter(
+      (belief: any) => belief.subjectId === marker.subjectId || belief.subjectId === marker.bodyId,
+    )
 
-    if (facts.length > 0) return marker.name;
-    if (beliefs.length > 0) return 'Assumed identity';
-    return 'Unknown individual';
+    if (facts.length > 0) return marker.name
+    if (beliefs.length > 0) return 'Assumed identity'
+    return 'Unknown individual'
   }
 
-  let leftMapMarkers = $derived(scopedMarkers.map((marker: any) => ({
-    ...marker,
-    label: markerLabel(marker, data.leftPerspective, 'left'),
-    code: subjectCodeMap.get(marker.subjectId) || '=',
-    selected: marker.subjectId === selectedSubject
-  })));
+  let leftMapMarkers = $derived(
+    scopedMarkers.map((marker: any) => ({
+      ...marker,
+      label: markerLabel(marker, data.leftPerspective, 'left'),
+      code: subjectCodeMap.get(marker.subjectId) || '=',
+      selected: marker.subjectId === selectedSubject,
+    })),
+  )
 
-  let rightMapMarkers = $derived(scopedMarkers.map((marker: any) => ({
-    ...marker,
-    label: markerLabel(marker, data.rightPerspective, 'right'),
-    code: subjectCodeMap.get(marker.subjectId) || '=',
-    selected: marker.subjectId === selectedSubject
-  })));
+  let rightMapMarkers = $derived(
+    scopedMarkers.map((marker: any) => ({
+      ...marker,
+      label: markerLabel(marker, data.rightPerspective, 'right'),
+      code: subjectCodeMap.get(marker.subjectId) || '=',
+      selected: marker.subjectId === selectedSubject,
+    })),
+  )
 
-  let readerMapMarkers = $derived(scopedMarkers.map((marker: any) => ({
-    ...marker,
-    label: markerLabel(marker, null, 'reader'),
-    code: subjectCodeMap.get(marker.subjectId) || '=',
-    selected: marker.subjectId === selectedSubject
-  })));
+  let readerMapMarkers = $derived(
+    scopedMarkers.map((marker: any) => ({
+      ...marker,
+      label: markerLabel(marker, null, 'reader'),
+      code: subjectCodeMap.get(marker.subjectId) || '=',
+      selected: marker.subjectId === selectedSubject,
+    })),
+  )
 
   let focusMarker = $derived(
-    scopedMarkers.find((marker: any) => marker.subjectId === selectedSubject) || scopedMarkers[0] || { x: 500, y: 300 }
-  );
+    scopedMarkers.find((marker: any) => marker.subjectId === selectedSubject) ||
+      scopedMarkers[0] || { x: 500, y: 300 },
+  )
 
   let canonicalRows = $derived.by(() => {
-    if (!compareCanonical) return [];
-    const facts = (canonicalTruth.facts || []).filter((fact: any) => fact.subjectId === selectedSubject);
-    const objectivePosition = canonicalTruth.positions?.[selectedSubject];
+    if (!compareCanonical) return []
+    const facts = (canonicalTruth.facts || []).filter(
+      (fact: any) => fact.subjectId === selectedSubject,
+    )
+    const objectivePosition = canonicalTruth.positions?.[selectedSubject]
     const rows = facts.map((fact: any) => ({
       type: 'canonical fact',
       key: fact.predicate,
-      value: formatValue(fact.value)
-    }));
+      value: formatValue(fact.value),
+    }))
 
     if (objectivePosition) {
       rows.unshift({
         type: 'actual position',
         key: 'locationId',
-        value: objectivePosition.locationId || 'unknown'
-      });
+        value: objectivePosition.locationId || 'unknown',
+      })
     }
 
-    return rows;
-  });
+    return rows
+  })
 
   $effect(() => {
     if (!selectedSubject && entitiesInView.length > 0) {
-      selectedSubject = entitiesInView[0].subjectId;
+      selectedSubject = entitiesInView[0].subjectId
     }
-  });
+  })
 
   $effect(() => {
-    if (!selectedSubject || selectedSubject === lastSnapSubject) return;
-    lastSnapSubject = selectedSubject;
-    snapKey += 1;
-  });
+    if (!selectedSubject || selectedSubject === lastSnapSubject) return
+    lastSnapSubject = selectedSubject
+    snapKey += 1
+  })
 
   function getCharacterName(id: string) {
-    return toEnglishDisplayName(data.characters.find((character) => character.id === id)?.canonicalName) || id;
+    return (
+      toEnglishDisplayName(
+        data.characters.find((character) => character.id === id)?.canonicalName,
+      ) || id
+    )
   }
 
   function buildUrl() {
-    const url = new URL($page.url);
-    if (selectedEventId) url.searchParams.set('eventId', selectedEventId);
-    if (selectedLeft) url.searchParams.set('left', selectedLeft);
-    if (selectedRight) url.searchParams.set('right', selectedRight);
-    url.searchParams.set('zoom', String(zoom));
-    url.searchParams.set('tier', tier);
-    if (zone) url.searchParams.set('zone', zone);
-    else url.searchParams.delete('zone');
-    if (selectedSubject) url.searchParams.set('subject', selectedSubject);
-    else url.searchParams.delete('subject');
-    if (compareCanonical) url.searchParams.set('canonical', '1');
-    else url.searchParams.delete('canonical');
-    if (differencesOnly) url.searchParams.set('diffOnly', '1');
-    else url.searchParams.delete('diffOnly');
-    return url;
+    const url = new URL($page.url)
+    if (selectedEventId) url.searchParams.set('eventId', selectedEventId)
+    if (selectedLeft) url.searchParams.set('left', selectedLeft)
+    if (selectedRight) url.searchParams.set('right', selectedRight)
+    url.searchParams.set('zoom', String(zoom))
+    url.searchParams.set('tier', tier)
+    if (zone) url.searchParams.set('zone', zone)
+    else url.searchParams.delete('zone')
+    if (selectedSubject) url.searchParams.set('subject', selectedSubject)
+    else url.searchParams.delete('subject')
+    if (compareCanonical) url.searchParams.set('canonical', '1')
+    else url.searchParams.delete('canonical')
+    if (differencesOnly) url.searchParams.set('diffOnly', '1')
+    else url.searchParams.delete('diffOnly')
+    return url
   }
 
   function submitFetch() {
-    goto(buildUrl().toString(), { keepFocus: true });
+    goto(buildUrl().toString(), { keepFocus: true })
   }
 
   function syncState(replaceState = true) {
-    goto(buildUrl().toString(), { keepFocus: true, replaceState });
+    goto(buildUrl().toString(), { keepFocus: true, replaceState })
   }
 
   function selectEntity(subjectId: string) {
-    selectedSubject = subjectId;
-    syncState(true);
+    selectedSubject = subjectId
+    syncState(true)
   }
 
   function pickCode(diff: any): '=' | '←' | '→' | '≠' | '~' | '⏱' {
-    if (diff.differenceType === 'LEFT_ONLY') return '←';
-    if (diff.differenceType === 'RIGHT_ONLY') return '→';
-    if (diff.differenceType === 'CONTRADICTION') return '≠';
-    if (diff.differenceType === 'CONFIDENCE_GAP') return '~';
-    return '=';
+    if (diff.differenceType === 'LEFT_ONLY') return '←'
+    if (diff.differenceType === 'RIGHT_ONLY') return '→'
+    if (diff.differenceType === 'CONTRADICTION') return '≠'
+    if (diff.differenceType === 'CONFIDENCE_GAP') return '~'
+    return '='
   }
 
   function formatValue(value: unknown) {
-    if (value === undefined || value === null) return 'unknown';
-    if (typeof value === 'string') return value;
-    return JSON.stringify(value);
+    if (value === undefined || value === null) return 'unknown'
+    if (typeof value === 'string') return value
+    return JSON.stringify(value)
   }
 
   function matchesFilter(diff: any) {
-    if (activeFilter === 'All') return true;
+    if (activeFilter === 'All') return true
     const byFilter: Record<string, string[]> = {
       Identities: ['IDENTITY', 'EXISTENCE'],
       Positions: ['POSITION'],
       Statuses: ['BIOLOGICAL_STATE', 'BELIEF'],
       Abilities: ['ABILITY'],
       Affiliations: ['AFFILIATION'],
-      Events: ['EVENT']
-    };
-    return (byFilter[activeFilter] || []).includes(diff.dimension);
+      Events: ['EVENT'],
+    }
+    return (byFilter[activeFilter] || []).includes(diff.dimension)
   }
 
-  let filteredDifferences = $derived(differences.filter((diff: any) => matchesFilter(diff)));
+  let filteredDifferences = $derived(differences.filter((diff: any) => matchesFilter(diff)))
 
   function perspectiveRows(perspective: any) {
-    const facts = (perspective?.knownFacts || []).filter((fact: any) => !selectedSubject || fact.subjectId === selectedSubject);
-    const beliefs = (perspective?.beliefs || []).filter((belief: any) => !selectedSubject || belief.subjectId === selectedSubject);
+    const facts = (perspective?.knownFacts || []).filter(
+      (fact: any) => !selectedSubject || fact.subjectId === selectedSubject,
+    )
+    const beliefs = (perspective?.beliefs || []).filter(
+      (belief: any) => !selectedSubject || belief.subjectId === selectedSubject,
+    )
     return [
       ...facts.map((fact: any) => ({
         type: fact.truthStatus === 'CONTESTED' ? 'contested belief' : 'fact',
         key: fact.predicate,
-        value: formatValue(fact.value)
+        value: formatValue(fact.value),
       })),
       ...beliefs.map((belief: any) => ({
         type: 'belief',
         key: belief.predicate,
-        value: formatValue(belief.believedValue)
-      }))
-    ];
+        value: formatValue(belief.believedValue),
+      })),
+    ]
   }
 
   let canonicalBlockedBySpoiler = $derived(
-    Boolean(data.spoilerLimit && eventLabel && eventLabel.chapter.number > data.spoilerLimit)
-  );
+    Boolean(data.spoilerLimit && eventLabel && eventLabel.chapter.number > data.spoilerLimit),
+  )
 </script>
 
 <Seo
@@ -388,7 +423,7 @@
   description="Put two characters side by side and see exactly where their knowledge of the Black Whale diverges — who is misinformed, and since which chapter."
   jsonLd={breadcrumbSchema([
     { name: 'Home', path: '/' },
-    { name: 'Compare perspectives', path: '/compare' }
+    { name: 'Compare perspectives', path: '/compare' },
   ])}
 />
 
@@ -397,21 +432,33 @@
     <div class="hero-copy">
       <p class="eyebrow">Investigation room · Synchronized intelligence</p>
       <h1>Truth is<br />relative.</h1>
-      <p>Compare what two observers believe at the same event, location, and scale—then reveal the canonical record when clearance allows.</p>
+      <p>
+        Compare what two observers believe at the same event, location, and scale—then reveal the
+        canonical record when clearance allows.
+      </p>
     </div>
     <dl class="hero-metrics">
-      <div><dt>Active event</dt><dd>CH. {eventLabel?.chapter.number ?? '—'}</dd></div>
-      <div><dt>Detected gaps</dt><dd>{differences.length}</dd></div>
-      <div><dt>Subjects in view</dt><dd>{entitiesInView.length}</dd></div>
+      <div>
+        <dt>Active event</dt>
+        <dd>CH. {eventLabel?.chapter.number ?? '—'}</dd>
+      </div>
+      <div>
+        <dt>Detected gaps</dt>
+        <dd>{differences.length}</dd>
+      </div>
+      <div>
+        <dt>Subjects in view</dt>
+        <dd>{entitiesInView.length}</dd>
+      </div>
     </dl>
     <div class="truth-control">
       <button
         type="button"
         class:active={compareCanonical}
         onclick={() => {
-          if (canonicalBlockedBySpoiler) return;
-          compareCanonical = !compareCanonical;
-          syncState(true);
+          if (canonicalBlockedBySpoiler) return
+          compareCanonical = !compareCanonical
+          syncState(true)
         }}
       >
         {compareCanonical ? 'Hide Reader Truth column' : 'Compare with canonical reality'}
@@ -426,23 +473,35 @@
           Canonical view unavailable beyond the permitted spoiler limit.
         </p>
       {/if}
-      <nav aria-label="Related intelligence views"><a href="/perspectives">Perspective setup</a><a href="/ship">Return to ship map</a></nav>
+      <nav aria-label="Related intelligence views">
+        <a href="/perspectives">Perspective setup</a><a href="/ship">Return to ship map</a>
+      </nav>
     </div>
   </header>
 
   <section class="control-panel primary-controls">
     <label class="grid gap-1 lg:col-span-1">
       <span class="text-xs uppercase tracking-wider text-slate-400">Event</span>
-      <select bind:value={selectedEventId} onchange={submitFetch} class="bg-slate-900 border border-slate-700 rounded px-3 py-2 text-sm">
+      <select
+        bind:value={selectedEventId}
+        onchange={submitFetch}
+        class="bg-slate-900 border border-slate-700 rounded px-3 py-2 text-sm"
+      >
         {#each data.events as event}
-          <option value={event.id}>Ch.{event.chapter.number} - {toEnglishEventTitle(event.title)}</option>
+          <option value={event.id}
+            >Ch.{event.chapter.number} - {toEnglishEventTitle(event.title)}</option
+          >
         {/each}
       </select>
     </label>
 
     <label class="grid gap-1 lg:col-span-1">
       <span class="text-xs uppercase tracking-wider text-slate-400">Perspective A</span>
-      <select bind:value={selectedLeft} onchange={submitFetch} class="bg-slate-900 border border-slate-700 rounded px-3 py-2 text-sm">
+      <select
+        bind:value={selectedLeft}
+        onchange={submitFetch}
+        class="bg-slate-900 border border-slate-700 rounded px-3 py-2 text-sm"
+      >
         {#each data.characters as char}
           <option value={char.id}>{toEnglishDisplayName(char.canonicalName)}</option>
         {/each}
@@ -451,7 +510,11 @@
 
     <label class="grid gap-1 lg:col-span-1">
       <span class="text-xs uppercase tracking-wider text-slate-400">Perspective B</span>
-      <select bind:value={selectedRight} onchange={submitFetch} class="bg-slate-900 border border-slate-700 rounded px-3 py-2 text-sm">
+      <select
+        bind:value={selectedRight}
+        onchange={submitFetch}
+        class="bg-slate-900 border border-slate-700 rounded px-3 py-2 text-sm"
+      >
         {#each data.characters as char}
           {#if char.id !== selectedLeft}
             <option value={char.id}>{toEnglishDisplayName(char.canonicalName)}</option>
@@ -464,8 +527,8 @@
       type="button"
       class="bw-panel px-4 py-3 text-sm hover:bg-slate-800 lg:col-span-1"
       onclick={() => {
-        differencesOnly = !differencesOnly;
-        syncState(true);
+        differencesOnly = !differencesOnly
+        syncState(true)
       }}
     >
       {differencesOnly ? 'View synchronized maps' : 'Differences only'}
@@ -475,12 +538,26 @@
   <section class="control-panel sync-controls">
     <label class="grid gap-1">
       <span class="text-xs uppercase tracking-wider text-slate-400">Synchronized zoom</span>
-      <input type="range" min="1" max="5" step="1" bind:value={zoom} oninput={() => syncState(true)} />
+      <input
+        type="range"
+        min="1"
+        max="5"
+        step="1"
+        bind:value={zoom}
+        oninput={() => syncState(true)}
+      />
     </label>
 
     <label class="grid gap-1">
       <span class="text-xs uppercase tracking-wider text-slate-400">Synchronized tier</span>
-      <select bind:value={tier} onchange={() => { zone = ''; syncState(true); }} class="bg-slate-900 border border-slate-700 rounded px-3 py-2 text-sm">
+      <select
+        bind:value={tier}
+        onchange={() => {
+          zone = ''
+          syncState(true)
+        }}
+        class="bg-slate-900 border border-slate-700 rounded px-3 py-2 text-sm"
+      >
         {#each tiers as tierOption}
           <option value={tierOption}>{tierOption.toUpperCase()}</option>
         {/each}
@@ -489,7 +566,11 @@
 
     <label class="grid gap-1 lg:col-span-2">
       <span class="text-xs uppercase tracking-wider text-slate-400">Synchronized zone</span>
-      <select bind:value={zone} onchange={() => syncState(true)} class="bg-slate-900 border border-slate-700 rounded px-3 py-2 text-sm">
+      <select
+        bind:value={zone}
+        onchange={() => syncState(true)}
+        class="bg-slate-900 border border-slate-700 rounded px-3 py-2 text-sm"
+      >
         <option value="">All zones in this tier</option>
         {#each zonesInTier as location}
           <option value={location.slug}>{location.name}</option>
@@ -497,7 +578,11 @@
       </select>
     </label>
 
-    <p class="event-readout">{eventLabel ? `Ch.${eventLabel.chapter.number} / ${toEnglishEventTitle(eventLabel.title)}` : 'No event selected'}</p>
+    <p class="event-readout">
+      {eventLabel
+        ? `Ch.${eventLabel.chapter.number} / ${toEnglishEventTitle(eventLabel.title)}`
+        : 'No event selected'}
+    </p>
   </section>
 
   <div class="comparison-title" aria-label="Active comparison">
@@ -509,7 +594,9 @@
   {#if !differencesOnly}
     <section class={`comparison-grid ${compareCanonical ? 'with-canon' : ''}`}>
       <article class="comparison-column side-a">
-        <h2 class="text-sm uppercase tracking-widest text-slate-400 mb-2">Perspective A - {getCharacterName(selectedLeft)}</h2>
+        <h2 class="text-sm uppercase tracking-widest text-slate-400 mb-2">
+          Perspective A - {getCharacterName(selectedLeft)}
+        </h2>
         <p class="text-xs text-slate-400 mb-3">Zoom {zoom} · {tier} · {zone || 'all zones'}</p>
         <ul class="space-y-1 max-h-48 overflow-y-auto pr-1">
           {#each entitiesInView as entity}
@@ -527,8 +614,8 @@
 
         <CompareTierMap
           title={`Perspective A · ${tier.toUpperCase()}`}
-          tier={tier}
-          zoom={zoom}
+          {tier}
+          {zoom}
           focusX={focusMarker.x}
           focusY={focusMarker.y}
           {snapKey}
@@ -547,7 +634,9 @@
       </article>
 
       <article class="comparison-column side-b">
-        <h2 class="text-sm uppercase tracking-widest text-slate-400 mb-2">Perspective B - {getCharacterName(selectedRight)}</h2>
+        <h2 class="text-sm uppercase tracking-widest text-slate-400 mb-2">
+          Perspective B - {getCharacterName(selectedRight)}
+        </h2>
         <p class="text-xs text-slate-400 mb-3">Synchronized with A (tier/zoom/zone/sujet)</p>
         <ul class="space-y-1 max-h-48 overflow-y-auto pr-1">
           {#each entitiesInView as entity}
@@ -565,8 +654,8 @@
 
         <CompareTierMap
           title={`Perspective B · ${tier.toUpperCase()}`}
-          tier={tier}
-          zoom={zoom}
+          {tier}
+          {zoom}
           focusX={focusMarker.x}
           focusY={focusMarker.y}
           {snapKey}
@@ -586,13 +675,17 @@
 
       {#if compareCanonical}
         <article class="comparison-column canonical-column">
-          <h2 class="text-sm uppercase tracking-widest text-slate-400 mb-2">Reader Truth — Canonical reality</h2>
-          <p class="text-xs text-slate-400 mb-3">Spoiler limit: chapter {data.spoilerLimit ?? 'unlimited'}</p>
+          <h2 class="text-sm uppercase tracking-widest text-slate-400 mb-2">
+            Reader Truth — Canonical reality
+          </h2>
+          <p class="text-xs text-slate-400 mb-3">
+            Spoiler limit: chapter {data.spoilerLimit ?? 'unlimited'}
+          </p>
 
           <CompareTierMap
             title={`Reader truth · ${tier.toUpperCase()}`}
-            tier={tier}
-            zoom={zoom}
+            {tier}
+            {zoom}
             focusX={focusMarker.x}
             focusY={focusMarker.y}
             {snapKey}
@@ -608,7 +701,9 @@
               </div>
             {/each}
             {#if canonicalRows.length === 0}
-              <p class="text-xs text-slate-400">No specific canonical information for this subject at this time.</p>
+              <p class="text-xs text-slate-400">
+                No specific canonical information for this subject at this time.
+              </p>
             {/if}
           </div>
         </article>
@@ -618,21 +713,30 @@
 
   {#if differencesOnly}
     <section class="difference-mobile md:hidden">
-      <h2 class="text-sm uppercase tracking-widest text-slate-400 mb-3">Differences only (mobile)</h2>
+      <h2 class="text-sm uppercase tracking-widest text-slate-400 mb-3">
+        Differences only (mobile)
+      </h2>
       <div class="space-y-2">
         {#each filteredDifferences as diff}
           <article class="border border-slate-700 rounded p-3">
             <p class="text-xs uppercase tracking-wider text-slate-400">{diff.dimension}</p>
             <p class="text-sm text-slate-100 mt-1">{diff.subjectId}</p>
-            <p class="text-xs text-slate-300 mt-2">{getCharacterName(selectedLeft)}: {formatValue(diff.leftValue)}</p>
-            <p class="text-xs text-slate-300">{getCharacterName(selectedRight)}: {formatValue(diff.rightValue)}</p>
+            <p class="text-xs text-slate-300 mt-2">
+              {getCharacterName(selectedLeft)}: {formatValue(diff.leftValue)}
+            </p>
+            <p class="text-xs text-slate-300">
+              {getCharacterName(selectedRight)}: {formatValue(diff.rightValue)}
+            </p>
           </article>
         {/each}
       </div>
     </section>
   {/if}
 
-  <section class="difference-panel" class:hidden={differencesOnly && filteredDifferences.length > 0}>
+  <section
+    class="difference-panel"
+    class:hidden={differencesOnly && filteredDifferences.length > 0}
+  >
     <div class="flex flex-wrap gap-2 mb-4">
       {#each filters as filter}
         <button
@@ -665,10 +769,290 @@
 </div>
 
 <style>
-  .compare-page{max-width:100rem;margin:auto;padding:clamp(2rem,5vw,5rem) var(--page-gutter) 7rem}.compare-hero{display:grid;grid-template-columns:1fr auto minmax(15rem,.4fr);align-items:end;gap:clamp(2rem,5vw,5rem);margin-bottom:2.5rem}.hero-copy h1{margin:.7rem 0 1rem;font-size:clamp(4rem,8vw,7.5rem);font-weight:500;letter-spacing:-.06em;line-height:.72;text-transform:uppercase}.hero-copy>p:last-child{max-width:42rem;margin:0;color:var(--text-secondary);font-size:.85rem;line-height:1.7}.hero-metrics{display:flex;margin:0;border:1px solid var(--line-default);border-radius:.55rem}.hero-metrics div{min-width:7rem;padding:.8rem;border-right:1px solid var(--line-subtle)}.hero-metrics div:last-child{border:0}.hero-metrics dt{color:var(--text-faint);font:.46rem/1 var(--font-mono);letter-spacing:.08em;text-transform:uppercase}.hero-metrics dd{margin:.35rem 0 0;color:var(--accent-gold-bright);font:500 1.2rem/1 var(--font-display)}.truth-control{display:grid;gap:.6rem}.truth-control button{padding:.8rem 1rem;border:1px solid var(--line-strong);border-radius:.4rem;background:rgba(200,169,86,.07);color:var(--accent-gold-bright);font-size:.65rem;cursor:pointer}.truth-control button.active{background:var(--accent-gold);color:var(--surface-void)}.truth-control p{margin:0!important;padding:.65rem!important;border-radius:.35rem;font-size:.58rem!important;line-height:1.45}.truth-control nav{display:flex;gap:.8rem}.truth-control nav a{padding-bottom:.25rem;border-bottom:1px solid var(--line-default);color:var(--text-muted);font-size:.52rem;text-decoration:none;text-transform:uppercase}.truth-control nav a:hover{border-color:var(--accent-gold);color:var(--accent-gold-bright)}
-  .control-panel{display:grid;gap:.7rem;margin-top:.7rem;padding:.75rem;border:1px solid var(--line-default);border-radius:.65rem;background:rgba(11,18,24,.84);box-shadow:0 12px 32px rgba(0,0,0,.16)}.primary-controls{grid-template-columns:repeat(4,1fr)}.sync-controls{grid-template-columns:1fr 1fr 2fr 1fr;align-items:end}.control-panel label{display:grid;gap:.4rem}.control-panel label>span{color:var(--text-faint)!important;font:.48rem/1 var(--font-mono)!important;letter-spacing:.1em;text-transform:uppercase}.control-panel select{min-width:0;border:1px solid var(--line-default)!important;border-radius:.35rem!important;background:#091117!important;color:var(--text-primary)!important;font-size:.66rem!important}.control-panel>button{border:1px solid var(--line-default)!important;border-radius:.35rem!important;background:#101a21!important;color:var(--text-secondary);cursor:pointer}.control-panel>button:hover{border-color:var(--line-strong)!important;color:var(--accent-gold-bright)}.event-readout{overflow:hidden;margin:0;padding:.7rem;color:var(--text-muted);font:.52rem/1.35 var(--font-mono);text-overflow:ellipsis;white-space:nowrap}
-  .comparison-title{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:1.5rem;margin:2.5rem 0 1rem}.comparison-title>div{display:grid;grid-template-columns:2rem 1fr;align-items:center;gap:.8rem;padding:.85rem 1rem;border-block:1px solid var(--line-default)}.comparison-title>div:last-child{text-align:right}.comparison-title span{display:grid;width:1.8rem;height:1.8rem;place-items:center;border:1px solid var(--line-strong);border-radius:50%;color:var(--accent-gold);font:.55rem/1 var(--font-mono)}.comparison-title>div:last-child span{grid-column:2}.comparison-title>div:last-child strong{grid-column:1;grid-row:1}.comparison-title strong{font:500 1.15rem/1 var(--font-display)}.comparison-title i{color:var(--text-faint);font:normal .48rem/1 var(--font-mono);letter-spacing:.12em}
-  .comparison-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.7rem}.comparison-grid.with-canon{grid-template-columns:repeat(3,minmax(0,1fr))}.comparison-column{min-width:0;padding:1rem;border:1px solid var(--line-default);border-radius:.6rem;background:linear-gradient(150deg,rgba(17,28,35,.94),rgba(8,14,18,.94))}.comparison-column.side-a{box-shadow:inset 2px 0 #5bb9ad}.comparison-column.side-b{box-shadow:inset -2px 0 #ad8bea}.canonical-column{border-color:rgba(200,169,86,.35);box-shadow:inset 0 2px var(--accent-gold)}.comparison-column h2{color:var(--text-secondary)!important;font:.52rem/1 var(--font-mono)!important}.difference-panel,.difference-mobile{margin-top:.8rem;padding:1rem;border:1px solid var(--line-default);border-radius:.6rem;background:rgba(11,18,24,.84)}.difference-panel>div:first-child button{border-color:var(--line-default)!important;border-radius:999px!important;color:var(--text-muted)}.difference-panel>div:first-child button:hover{color:var(--text-primary)}
-  @media(max-width:1100px){.compare-hero{grid-template-columns:1fr 1fr}.truth-control{grid-column:1/-1}.comparison-grid.with-canon{grid-template-columns:1fr 1fr}.canonical-column{grid-column:1/-1}.sync-controls{grid-template-columns:repeat(2,1fr)}}
-  @media(max-width:760px){.compare-page{padding-inline:1rem}.compare-hero{grid-template-columns:1fr}.hero-metrics{width:100%;overflow-x:auto}.hero-metrics div{min-width:0;flex:1}.primary-controls,.sync-controls{grid-template-columns:1fr}.comparison-title{grid-template-columns:1fr;gap:.45rem}.comparison-title i{text-align:center}.comparison-grid,.comparison-grid.with-canon{grid-template-columns:1fr}.canonical-column{grid-column:auto}}
+  .compare-page {
+    max-width: 100rem;
+    margin: auto;
+    padding: clamp(2rem, 5vw, 5rem) var(--page-gutter) 7rem;
+  }
+  .compare-hero {
+    display: grid;
+    grid-template-columns: 1fr auto minmax(15rem, 0.4fr);
+    align-items: end;
+    gap: clamp(2rem, 5vw, 5rem);
+    margin-bottom: 2.5rem;
+  }
+  .hero-copy h1 {
+    margin: 0.7rem 0 1rem;
+    font-size: clamp(4rem, 8vw, 7.5rem);
+    font-weight: 500;
+    letter-spacing: -0.06em;
+    line-height: 0.72;
+    text-transform: uppercase;
+  }
+  .hero-copy > p:last-child {
+    max-width: 42rem;
+    margin: 0;
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    line-height: 1.7;
+  }
+  .hero-metrics {
+    display: flex;
+    margin: 0;
+    border: 1px solid var(--line-default);
+    border-radius: 0.55rem;
+  }
+  .hero-metrics div {
+    min-width: 7rem;
+    padding: 0.8rem;
+    border-right: 1px solid var(--line-subtle);
+  }
+  .hero-metrics div:last-child {
+    border: 0;
+  }
+  .hero-metrics dt {
+    color: var(--text-faint);
+    font: 0.46rem/1 var(--font-mono);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .hero-metrics dd {
+    margin: 0.35rem 0 0;
+    color: var(--accent-gold-bright);
+    font: 500 1.2rem/1 var(--font-display);
+  }
+  .truth-control {
+    display: grid;
+    gap: 0.6rem;
+  }
+  .truth-control button {
+    padding: 0.8rem 1rem;
+    border: 1px solid var(--line-strong);
+    border-radius: 0.4rem;
+    background: rgba(200, 169, 86, 0.07);
+    color: var(--accent-gold-bright);
+    font-size: 0.65rem;
+    cursor: pointer;
+  }
+  .truth-control button.active {
+    background: var(--accent-gold);
+    color: var(--surface-void);
+  }
+  .truth-control p {
+    margin: 0 !important;
+    padding: 0.65rem !important;
+    border-radius: 0.35rem;
+    font-size: 0.58rem !important;
+    line-height: 1.45;
+  }
+  .truth-control nav {
+    display: flex;
+    gap: 0.8rem;
+  }
+  .truth-control nav a {
+    padding-bottom: 0.25rem;
+    border-bottom: 1px solid var(--line-default);
+    color: var(--text-muted);
+    font-size: 0.52rem;
+    text-decoration: none;
+    text-transform: uppercase;
+  }
+  .truth-control nav a:hover {
+    border-color: var(--accent-gold);
+    color: var(--accent-gold-bright);
+  }
+  .control-panel {
+    display: grid;
+    gap: 0.7rem;
+    margin-top: 0.7rem;
+    padding: 0.75rem;
+    border: 1px solid var(--line-default);
+    border-radius: 0.65rem;
+    background: rgba(11, 18, 24, 0.84);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.16);
+  }
+  .primary-controls {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  .sync-controls {
+    grid-template-columns: 1fr 1fr 2fr 1fr;
+    align-items: end;
+  }
+  .control-panel label {
+    display: grid;
+    gap: 0.4rem;
+  }
+  .control-panel label > span {
+    color: var(--text-faint) !important;
+    font: 0.48rem/1 var(--font-mono) !important;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .control-panel select {
+    min-width: 0;
+    border: 1px solid var(--line-default) !important;
+    border-radius: 0.35rem !important;
+    background: #091117 !important;
+    color: var(--text-primary) !important;
+    font-size: 0.66rem !important;
+  }
+  .control-panel > button {
+    border: 1px solid var(--line-default) !important;
+    border-radius: 0.35rem !important;
+    background: #101a21 !important;
+    color: var(--text-secondary);
+    cursor: pointer;
+  }
+  .control-panel > button:hover {
+    border-color: var(--line-strong) !important;
+    color: var(--accent-gold-bright);
+  }
+  .event-readout {
+    overflow: hidden;
+    margin: 0;
+    padding: 0.7rem;
+    color: var(--text-muted);
+    font: 0.52rem/1.35 var(--font-mono);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .comparison-title {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 1.5rem;
+    margin: 2.5rem 0 1rem;
+  }
+  .comparison-title > div {
+    display: grid;
+    grid-template-columns: 2rem 1fr;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 0.85rem 1rem;
+    border-block: 1px solid var(--line-default);
+  }
+  .comparison-title > div:last-child {
+    text-align: right;
+  }
+  .comparison-title span {
+    display: grid;
+    width: 1.8rem;
+    height: 1.8rem;
+    place-items: center;
+    border: 1px solid var(--line-strong);
+    border-radius: 50%;
+    color: var(--accent-gold);
+    font: 0.55rem/1 var(--font-mono);
+  }
+  .comparison-title > div:last-child span {
+    grid-column: 2;
+  }
+  .comparison-title > div:last-child strong {
+    grid-column: 1;
+    grid-row: 1;
+  }
+  .comparison-title strong {
+    font: 500 1.15rem/1 var(--font-display);
+  }
+  .comparison-title i {
+    color: var(--text-faint);
+    font: normal 0.48rem/1 var(--font-mono);
+    letter-spacing: 0.12em;
+  }
+  .comparison-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.7rem;
+  }
+  .comparison-grid.with-canon {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .comparison-column {
+    min-width: 0;
+    padding: 1rem;
+    border: 1px solid var(--line-default);
+    border-radius: 0.6rem;
+    background: linear-gradient(150deg, rgba(17, 28, 35, 0.94), rgba(8, 14, 18, 0.94));
+  }
+  .comparison-column.side-a {
+    box-shadow: inset 2px 0 #5bb9ad;
+  }
+  .comparison-column.side-b {
+    box-shadow: inset -2px 0 #ad8bea;
+  }
+  .canonical-column {
+    border-color: rgba(200, 169, 86, 0.35);
+    box-shadow: inset 0 2px var(--accent-gold);
+  }
+  .comparison-column h2 {
+    color: var(--text-secondary) !important;
+    font: 0.52rem/1 var(--font-mono) !important;
+  }
+  .difference-panel,
+  .difference-mobile {
+    margin-top: 0.8rem;
+    padding: 1rem;
+    border: 1px solid var(--line-default);
+    border-radius: 0.6rem;
+    background: rgba(11, 18, 24, 0.84);
+  }
+  .difference-panel > div:first-child button {
+    border-color: var(--line-default) !important;
+    border-radius: 999px !important;
+    color: var(--text-muted);
+  }
+  .difference-panel > div:first-child button:hover {
+    color: var(--text-primary);
+  }
+  @media (max-width: 1100px) {
+    .compare-hero {
+      grid-template-columns: 1fr 1fr;
+    }
+    .truth-control {
+      grid-column: 1/-1;
+    }
+    .comparison-grid.with-canon {
+      grid-template-columns: 1fr 1fr;
+    }
+    .canonical-column {
+      grid-column: 1/-1;
+    }
+    .sync-controls {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (max-width: 760px) {
+    .compare-page {
+      padding-inline: 1rem;
+    }
+    .compare-hero {
+      grid-template-columns: 1fr;
+    }
+    .hero-metrics {
+      width: 100%;
+      overflow-x: auto;
+    }
+    .hero-metrics div {
+      min-width: 0;
+      flex: 1;
+    }
+    .primary-controls,
+    .sync-controls {
+      grid-template-columns: 1fr;
+    }
+    .comparison-title {
+      grid-template-columns: 1fr;
+      gap: 0.45rem;
+    }
+    .comparison-title i {
+      text-align: center;
+    }
+    .comparison-grid,
+    .comparison-grid.with-canon {
+      grid-template-columns: 1fr;
+    }
+    .canonical-column {
+      grid-column: auto;
+    }
+  }
 </style>

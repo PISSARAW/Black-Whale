@@ -1,14 +1,14 @@
 <script lang="ts">
-  import IdentityBadge from './IdentityBadge.svelte';
-  import type { PerspectiveContext } from './types';
+  import IdentityBadge from './IdentityBadge.svelte'
+  import type { PerspectiveContext } from './types'
 
   let {
     context,
-    modeLabel
+    modeLabel,
   }: {
-    context: PerspectiveContext;
-    modeLabel: string;
-  } = $props();
+    context: PerspectiveContext
+    modeLabel: string
+  } = $props()
 </script>
 
 <header class="context-bar" aria-label="Contexte de perspective">
@@ -19,10 +19,23 @@
   </div>
 
   <div class="identities">
-    <IdentityBadge label="Perspective" value={context.perspectiveName} anomaly={context.hasAnomaly} />
-    <IdentityBadge label="Consciousness" value={context.followedConsciousness} anomaly={context.hasAnomaly} />
+    <IdentityBadge
+      label="Perspective"
+      value={context.perspectiveName}
+      anomaly={context.hasAnomaly}
+    />
+    <IdentityBadge
+      label="Consciousness"
+      value={context.followedConsciousness}
+      anomaly={context.hasAnomaly}
+    />
     <IdentityBadge label="Body" value={context.occupiedBody} anomaly={context.hasAnomaly} />
-    <IdentityBadge label="Apparence" value={context.apparentIdentity} anomaly={context.hasAnomaly} subtle={!context.hasAnomaly} />
+    <IdentityBadge
+      label="Apparence"
+      value={context.apparentIdentity}
+      anomaly={context.hasAnomaly}
+      subtle={!context.hasAnomaly}
+    />
   </div>
 
   <div class="mode">
@@ -39,8 +52,11 @@
     align-items: center;
     padding: 0.6rem 1rem;
     border: 1px solid var(--line);
-    background:
-      linear-gradient(110deg, color-mix(in srgb, var(--panel) 84%, #102220 16%), color-mix(in srgb, var(--panel) 90%, #0a1115 10%));
+    background: linear-gradient(
+      110deg,
+      color-mix(in srgb, var(--panel) 84%, #102220 16%),
+      color-mix(in srgb, var(--panel) 90%, #0a1115 10%)
+    );
     border-radius: 0.72rem;
   }
 

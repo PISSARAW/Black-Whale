@@ -52,17 +52,17 @@ black-whale/
 
 ## Stack
 
-| Layer | Tech |
-|---|---|
-| Frontend | SvelteKit 5, Tailwind CSS, TanStack Query |
-| Server | SvelteKit load functions and form actions |
-| Database | PostgreSQL 16 |
-| ORM | Prisma |
-| Reverse proxy | Caddy with automatic HTTPS |
-| Deployment | Docker Compose on Hetzner Cloud |
-| Search | Meilisearch (to add) |
-| Storage | Cloudflare R2 / S3 (to add) |
-| Monorepo | pnpm workspaces + Turborepo |
+| Layer         | Tech                                      |
+| ------------- | ----------------------------------------- |
+| Frontend      | SvelteKit 5, Tailwind CSS, TanStack Query |
+| Server        | SvelteKit load functions and form actions |
+| Database      | PostgreSQL 16                             |
+| ORM           | Prisma                                    |
+| Reverse proxy | Caddy with automatic HTTPS                |
+| Deployment    | Docker Compose on Hetzner Cloud           |
+| Search        | Meilisearch (to add)                      |
+| Storage       | Cloudflare R2 / S3 (to add)               |
+| Monorepo      | pnpm workspaces + Turborepo               |
 
 ---
 
@@ -160,11 +160,11 @@ The command validates the Compose configuration, builds the images, applies
 Prisma migrations, and starts the services with healthchecks. Caddy then obtains
 and renews the TLS certificates automatically.
 
-| Service | Production URL |
-|---|---|
-| Public application | `https://<domain>` |
-| Administration | `https://admin.<domain>` |
-| Health endpoints | `/health` on each application service |
+| Service            | Production URL                        |
+| ------------------ | ------------------------------------- |
+| Public application | `https://<domain>`                    |
+| Administration     | `https://admin.<domain>`              |
+| Health endpoints   | `/health` on each application service |
 
 PostgreSQL is dumped every 24 hours with 14-day retention by default. Immediate
 backup and guarded restoration commands are included in `infrastructure/hetzner`.
@@ -201,11 +201,10 @@ route's load function and form actions.
 
 ## MVP roadmap
 
-| Version | Scope | Status |
-|---|---|---|
-| **v1** | Ship map, characters, positions, timeline, spoiler filter | ✅ Released |
-| **v2** | Body/consciousness split, knowledge engine, perspective comparison | ✅ Foundation shipped |
-| **v3** | Nen action plans, explainable conditions, typed effects | 🏗️ Bungee Gum vertical shipped |
-| **v4** | Ability modules migrated to the shared runtime | 🏗️ In progress |
-| **v5** | Persistent branches and map projections | 🏗️ First vertical shipped |
-
+| Version | Scope                                                              | Status                         |
+| ------- | ------------------------------------------------------------------ | ------------------------------ |
+| **v1**  | Ship map, characters, positions, timeline, spoiler filter          | ✅ Released                    |
+| **v2**  | Body/consciousness split, knowledge engine, perspective comparison | ✅ Foundation shipped          |
+| **v3**  | Nen action plans, explainable conditions, typed effects            | 🏗️ Bungee Gum vertical shipped |
+| **v4**  | Ability modules migrated to the shared runtime                     | 🏗️ In progress                 |
+| **v5**  | Persistent branches and map projections                            | 🏗️ First vertical shipped      |

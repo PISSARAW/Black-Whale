@@ -47,9 +47,7 @@
     "zoneType": "quarters",
     "description": "King Nasubi's residence, separated from the Princes' living quarters by the Banquet Hall; its shown living room has patterned flooring, ornate furniture, and paintings.",
     "entrances": [],
-    "exits": [
-      "tier-1-banquet-hall"
-    ]
+    "exits": ["tier-1-banquet-hall"]
   },
   {
     "id": "tier-1-vvip-living-quarters",
@@ -428,12 +426,8 @@
     "deck": 4,
     "zoneType": "corridor",
     "description": "Central passage connecting Tiers 4 and 5. Chrollo, Shizuku and Bonolenov progress there on the fourth day of the journey.",
-    "entrances": [
-      "tier-4"
-    ],
-    "exits": [
-      "tier-5"
-    ]
+    "entrances": ["tier-4"],
+    "exits": ["tier-5"]
   },
   {
     "id": "tier-5-central-dining-hall",
@@ -452,12 +446,8 @@
     "deck": null,
     "zoneType": "infrastructure",
     "description": "Sewage processing facility for the ship's passengers, located between Tiers 4 and 5. Its precise internal layout and any connection to Heil-Ly routes are unconfirmed.",
-    "entrances": [
-      "tier-4-central-passage"
-    ],
-    "exits": [
-      "tier-5"
-    ]
+    "entrances": ["tier-4-central-passage"],
+    "exits": ["tier-5"]
   },
   {
     "id": "tier-3-residential-units",

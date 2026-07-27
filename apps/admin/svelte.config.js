@@ -7,7 +7,7 @@ const config = {
   kit: {
     adapter: adapter(),
     alias: {
-      '$lib': './src/lib',
+      $lib: './src/lib',
     },
     // The back-office renders editor-supplied text (event titles, summaries,
     // fact statements). A CSP keeps a stored-XSS mistake from becoming code

@@ -5,15 +5,15 @@
     leftValue,
     rightLabel,
     rightValue,
-    code
+    code,
   }: {
-    title: string;
-    leftLabel: string;
-    leftValue: string;
-    rightLabel: string;
-    rightValue: string;
-    code: '=' | '←' | '→' | '≠' | '~' | '⏱';
-  } = $props();
+    title: string
+    leftLabel: string
+    leftValue: string
+    rightLabel: string
+    rightValue: string
+    code: '=' | '←' | '→' | '≠' | '~' | '⏱'
+  } = $props()
 </script>
 
 <article class="difference" data-code={code}>

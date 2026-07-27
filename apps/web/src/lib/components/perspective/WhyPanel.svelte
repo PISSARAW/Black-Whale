@@ -1,6 +1,6 @@
 <script lang="ts">
-  import KnowledgeStatus from './KnowledgeStatus.svelte';
-  import type { KnowledgeVisualState } from './types';
+  import KnowledgeStatus from './KnowledgeStatus.svelte'
+  import type { KnowledgeVisualState } from './types'
 
   let {
     open,
@@ -12,19 +12,19 @@
     state,
     revealReality = false,
     canonicalValue = 'unknown',
-    onClose
+    onClose,
   }: {
-    open: boolean;
-    subject: string;
-    displayedValue: string;
-    source: string;
-    observedAt: string;
-    freshness: string;
-    state: KnowledgeVisualState;
-    revealReality?: boolean;
-    canonicalValue?: string;
-    onClose: () => void;
-  } = $props();
+    open: boolean
+    subject: string
+    displayedValue: string
+    source: string
+    observedAt: string
+    freshness: string
+    state: KnowledgeVisualState
+    revealReality?: boolean
+    canonicalValue?: string
+    onClose: () => void
+  } = $props()
 </script>
 
 {#if open}
@@ -57,7 +57,7 @@
       </div>
     </dl>
 
-    <KnowledgeStatus state={state} label="Knowledge status" details={source} />
+    <KnowledgeStatus {state} label="Knowledge status" details={source} />
 
     {#if revealReality}
       <div class="canon">

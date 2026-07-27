@@ -49,7 +49,9 @@ function fakePrisma(options: {
   facts?: unknown[]
 }) {
   return {
-    narrativeEvent: { findUnique: async () => (options.event === undefined ? EVENT : options.event) },
+    narrativeEvent: {
+      findUnique: async () => (options.event === undefined ? EVENT : options.event),
+    },
     knowledgeState: { findMany: vi.fn(async () => options.knowledge ?? []) },
     belief: { findMany: vi.fn(async () => options.beliefs ?? []) },
     fact: { findMany: vi.fn(async () => options.facts ?? []) },
@@ -85,10 +87,15 @@ describe('KnowledgeEngine.getKnowledgeOf', () => {
   it('narrows the query to one subject when asked', async () => {
     const prisma = fakePrisma({ knowledge: [] })
     const engine = new KnowledgeEngine(prisma)
-    await engine.getKnowledgeOf({ observerId: 'kurapika', eventId: 'event-3', subjectId: 'prince-woble' })
+    await engine.getKnowledgeOf({
+      observerId: 'kurapika',
+      eventId: 'event-3',
+      subjectId: 'prince-woble',
+    })
 
-    const call = (prisma as unknown as { knowledgeState: { findMany: { mock: { calls: unknown[][] } } } })
-      .knowledgeState.findMany.mock.calls[0]?.[0] as { where: Record<string, unknown> }
+    const call = (
+      prisma as unknown as { knowledgeState: { findMany: { mock: { calls: unknown[][] } } } }
+    ).knowledgeState.findMany.mock.calls[0]?.[0] as { where: Record<string, unknown> }
     expect(call.where).toMatchObject({
       observerCharacterId: 'kurapika',
       fact: { subjectId: 'prince-woble' },
@@ -97,9 +104,9 @@ describe('KnowledgeEngine.getKnowledgeOf', () => {
 
   it('refuses an unknown event rather than returning nothing', async () => {
     const engine = new KnowledgeEngine(fakePrisma({ event: null }))
-    await expect(engine.getKnowledgeOf({ observerId: 'kurapika', eventId: 'nope' })).rejects.toThrow(
-      /Event nope not found/,
-    )
+    await expect(
+      engine.getKnowledgeOf({ observerId: 'kurapika', eventId: 'nope' }),
+    ).rejects.toThrow(/Event nope not found/)
   })
 })
 
@@ -113,7 +120,9 @@ describe('KnowledgeEngine.getBeliefsOf', () => {
   })
 
   it('drops a belief that has been corrected', async () => {
-    const engine = new KnowledgeEngine(fakePrisma({ beliefs: [beliefRow('b1', { untilEvent: EVENT })] }))
+    const engine = new KnowledgeEngine(
+      fakePrisma({ beliefs: [beliefRow('b1', { untilEvent: EVENT })] }),
+    )
 
     expect(await engine.getBeliefsOf({ observerId: 'kurapika', eventId: 'event-3' })).toEqual([])
   })
@@ -121,7 +130,11 @@ describe('KnowledgeEngine.getBeliefsOf', () => {
   it('filters beliefs by subject directly, not through a fact', async () => {
     const prisma = fakePrisma({ beliefs: [] })
     const engine = new KnowledgeEngine(prisma)
-    await engine.getBeliefsOf({ observerId: 'kurapika', eventId: 'event-3', subjectId: 'tserriednich' })
+    await engine.getBeliefsOf({
+      observerId: 'kurapika',
+      eventId: 'event-3',
+      subjectId: 'tserriednich',
+    })
 
     const call = (prisma as unknown as { belief: { findMany: { mock: { calls: unknown[][] } } } })
       .belief.findMany.mock.calls[0]?.[0] as { where: Record<string, unknown> }

@@ -1,4 +1,11 @@
-import { PrismaClient, LocationType, PresencePrecision, PresenceCertainty, BodyStateType, NarrativeImportance } from '@prisma/client'
+import {
+  PrismaClient,
+  LocationType,
+  PresencePrecision,
+  PresenceCertainty,
+  BodyStateType,
+  NarrativeImportance,
+} from '@prisma/client'
 import { readFile } from 'node:fs/promises'
 import { resolve } from 'node:path'
 
@@ -91,7 +98,7 @@ async function main() {
       sequence: 1,
       title: 'Zodiacs Assemble',
       summary: 'Kurapika and Leorio join the Zodiacs.',
-    }
+    },
   })
 
   // Event 1: Boarding
@@ -101,7 +108,7 @@ async function main() {
       sequence: 1,
       title: 'Boarding the Black Whale',
       summary: 'Passengers board the ship.',
-    }
+    },
   })
 
   // Woody's death is documented in his passenger record and his chapter 358
@@ -112,7 +119,7 @@ async function main() {
       sequence: 2,
       title: 'Woody is found dead',
       summary: 'Woody is found exsanguinated in the bathroom of room 1014.',
-    }
+    },
   })
 
   // Event 2: Departure (Ch 359)
@@ -122,7 +129,7 @@ async function main() {
       sequence: 2,
       title: 'Ship Departs',
       summary: 'The Black Whale departs for the Dark Continent.',
-    }
+    },
   })
 
   // Sayird's two recorded battles both occur in chapter 360.
@@ -131,8 +138,9 @@ async function main() {
       chapterId: ch360.id,
       sequence: 1,
       title: 'Sayird is manipulated',
-      summary: 'Controlled by a parasitic Nen ability, Sayird kills Kurton and attacks Kurapika before being subdued.',
-    }
+      summary:
+        'Controlled by a parasitic Nen ability, Sayird kills Kurton and attacks Kurapika before being subdued.',
+    },
   })
 
   // These events are cross-referenced by the passenger biographies and their
@@ -142,8 +150,9 @@ async function main() {
       chapterId: ch364.id,
       sequence: 1,
       title: 'Vincent attacks room 1014',
-      summary: 'Vincent kills Sandra, opens fire on Bill and Kurapika, then poisons himself after they overpower him.',
-    }
+      summary:
+        'Vincent kills Sandra, opens fire on Bill and Kurapika, then poisons himself after they overpower him.',
+    },
   })
 
   await prisma.narrativeEvent.create({
@@ -151,8 +160,9 @@ async function main() {
       chapterId: ch373.id,
       sequence: 1,
       title: 'Camilla resurrects after Musse kills her',
-      summary: "Camilla's post-mortem Nen beast kills Musse and uses his life force to restore her body.",
-    }
+      summary:
+        "Camilla's post-mortem Nen beast kills Musse and uses his life force to restore her body.",
+    },
   })
 
   await prisma.narrativeEvent.create({
@@ -160,8 +170,9 @@ async function main() {
       chapterId: ch373.id,
       sequence: 2,
       title: 'Camilla attacks Benjamin',
-      summary: 'Camilla shoots at Furykov, Benjamin and Balsamilco before Furykov breaks her arm and arrests her.',
-    }
+      summary:
+        'Camilla shoots at Furykov, Benjamin and Balsamilco before Furykov breaks her arm and arrests her.',
+    },
   })
 
   // Event 4: Halkenburg Collapse
@@ -171,11 +182,11 @@ async function main() {
       sequence: 1,
       title: 'Halkenburg Collapse',
       summary: 'Halkenburg collapses and is taken to the medical facility.',
-    }
+    },
   })
 
   console.log('Seeding Locations from V2 detailed data...')
-  
+
   // Read locations from JSON file
   const locationsFilePath = resolve(process.cwd(), 'prisma', 'locations.json')
   const locationsData = JSON.parse(await readFile(locationsFilePath, 'utf-8')) as Array<{
@@ -188,23 +199,23 @@ async function main() {
     entrances: string[]
     exits: string[]
   }>
-  
+
   // Create a map from JSON id to Prisma Location for parent resolution
-  const locationMap: Map<string, { id: string, slug: string }> = new Map()
-  
+  const locationMap: Map<string, { id: string; slug: string }> = new Map()
+
   // First pass: create all locations
   for (const loc of locationsData) {
     const locationType = mapZoneTypeToLocationType(loc.zoneType)
     const mapElementId = generateMapElementId(loc.id)
-    
+
     // Determine firstVisibleEventId based on tier/deck
     let firstVisibleEventId = evt1.id // Default: visible at boarding
     if (loc.id === 'zodiac-hq') {
       firstVisibleEventId = evt0.id // Zodiac HQ visible earlier
     }
-    
+
     const slug = loc.id.replace(/[^a-zA-Z0-9-]/g, '-').toLowerCase()
-    
+
     const created = await prisma.location.create({
       data: {
         slug,
@@ -213,113 +224,118 @@ async function main() {
         parentLocationId: null, // Will be set in second pass
         mapElementId,
         firstVisibleEventId,
-      }
+      },
     })
-    
+
     locationMap.set(loc.id, { id: created.id, slug: created.slug })
   }
-  
+
   // Second pass: set parent relationships
   for (const loc of locationsData) {
     const current = locationMap.get(loc.id)
     if (!current) continue
-    
+
     if (loc.parentLocationId && loc.parentLocationId !== 'null') {
       const parent = locationMap.get(loc.parentLocationId)
       if (parent) {
         await prisma.location.update({
           where: { id: current.id },
-          data: { parentLocationId: parent.id }
+          data: { parentLocationId: parent.id },
         })
       }
     }
   }
-  
+
   // Get references to key locations for the rest of the seed
   const zodiacHQ = locationMap.get('zodiac-hq')
   const blackWhale = locationMap.get('black-whale-1') || locationMap.get('black-whale')
   const tier1 = locationMap.get('tier-1')
   const tier3 = locationMap.get('tier-3')
-  const medicalDistrict = locationMap.get('tier-3-medical-district') || locationMap.get('tier-3-central-hospital')
-  const room1014 = locationMap.get('tier-1-royal-residential-sector-room-1014') || locationMap.get('tier-1-vvip-room-1014')
-  const room1001 = locationMap.get('tier-1-royal-residential-sector-room-1001') || locationMap.get('tier-1-vvip-room-1001')
-  
+  const medicalDistrict =
+    locationMap.get('tier-3-medical-district') || locationMap.get('tier-3-central-hospital')
+  const room1014 =
+    locationMap.get('tier-1-royal-residential-sector-room-1014') ||
+    locationMap.get('tier-1-vvip-room-1014')
+  const room1001 =
+    locationMap.get('tier-1-royal-residential-sector-room-1001') ||
+    locationMap.get('tier-1-vvip-room-1001')
+
   if (!blackWhale || !zodiacHQ || !tier1 || !tier3) {
     throw new Error('Required locations not found in seed data')
   }
 
   console.log('Seeding Characters...')
   const leorio = await prisma.character.create({
-    data: { 
-      slug: 'leorio-paradinight', 
-      canonicalName: 'Leorio Paradinight', 
-      firstVisibleEventId: evt0.id, 
+    data: {
+      slug: 'leorio-paradinight',
+      canonicalName: 'Leorio Paradinight',
+      firstVisibleEventId: evt0.id,
       description: 'Zodiac, Doctor',
       narrativeImportance: NarrativeImportance.PRIMARY,
-      modelingLevel: 1
-    }
+      modelingLevel: 1,
+    },
   })
   const kurapika = await prisma.character.create({
-    data: { 
-      slug: 'kurapika', 
-      canonicalName: 'Kurapika', 
-      firstVisibleEventId: evt1.id, 
+    data: {
+      slug: 'kurapika',
+      canonicalName: 'Kurapika',
+      firstVisibleEventId: evt1.id,
       description: 'Hunter',
       narrativeImportance: NarrativeImportance.PRIMARY,
-      modelingLevel: 1
-    }
+      modelingLevel: 1,
+    },
   })
   const oito = await prisma.character.create({
-    data: { 
+    data: {
       slug: 'queen-oito',
-      canonicalName: 'Oito Hui Guo Rou', 
-      firstVisibleEventId: evt1.id, 
+      canonicalName: 'Oito Hui Guo Rou',
+      firstVisibleEventId: evt1.id,
       description: '8th Queen',
       narrativeImportance: NarrativeImportance.PRIMARY,
-      modelingLevel: 1
-    }
+      modelingLevel: 1,
+    },
   })
   const woble = await prisma.character.create({
-    data: { 
+    data: {
       slug: 'prince-woble',
-      canonicalName: 'Woble Hui Guo Rou', 
-      firstVisibleEventId: evt1.id, 
+      canonicalName: 'Woble Hui Guo Rou',
+      firstVisibleEventId: evt1.id,
       description: '14th Prince',
       narrativeImportance: NarrativeImportance.PRIMARY,
-      modelingLevel: 1
-    }
+      modelingLevel: 1,
+    },
   })
   const benjamin = await prisma.character.create({
-    data: { 
+    data: {
       slug: 'prince-benjamin',
-      canonicalName: 'Benjamin Hui Guo Rou', 
-      firstVisibleEventId: evt1.id, 
+      canonicalName: 'Benjamin Hui Guo Rou',
+      firstVisibleEventId: evt1.id,
       description: '1st Prince',
       narrativeImportance: NarrativeImportance.PRIMARY,
-      modelingLevel: 1
-    }
+      modelingLevel: 1,
+    },
   })
   const vincent = await prisma.character.create({
-    data: { 
+    data: {
       slug: 'vincent',
-      canonicalName: 'Vincent', 
-      firstVisibleEventId: evt3.id, 
+      canonicalName: 'Vincent',
+      firstVisibleEventId: evt3.id,
       description: 'Benjamin Soldier',
       narrativeImportance: NarrativeImportance.SECONDARY,
-      modelingLevel: 2
-    }
+      modelingLevel: 2,
+    },
   })
 
   console.log('Seeding Presences & States...')
-  
+
   const createBody = async (charId: string, label: string, eventId: string) => {
     return await prisma.body.create({
       data: {
         originalCharacterId: charId,
         label,
         bodyType: 'ORIGINAL',
-        firstVisibleEventId: eventId
-      }
+        firstVisibleEventId: eventId,
+      },
     })
   }
 
@@ -330,14 +346,18 @@ async function main() {
   const vincentBody = await createBody(vincent.id, 'Vincent Body', evt3.id)
   const leorioBody = await createBody(leorio.id, 'Leorio Body', evt0.id)
 
-  const createOriginalIdentity = async (character: { id: string; canonicalName: string }, bodyId: string, eventId: string) => {
+  const createOriginalIdentity = async (
+    character: { id: string; canonicalName: string },
+    bodyId: string,
+    eventId: string,
+  ) => {
     const consciousness = await prisma.consciousness.create({
       data: {
         originCharacterId: character.id,
         label: `${character.canonicalName} Consciousness`,
         consciousnessType: 'ORIGINAL',
-        firstVisibleEventId: eventId
-      }
+        firstVisibleEventId: eventId,
+      },
     })
     await prisma.bodyOccupancy.create({
       data: {
@@ -345,8 +365,8 @@ async function main() {
         consciousnessId: consciousness.id,
         fromEventId: eventId,
         occupancyType: 'ORIGINAL',
-        certainty: 'CONFIRMED'
-      }
+        certainty: 'CONFIRMED',
+      },
     })
   }
 
@@ -362,7 +382,7 @@ async function main() {
   const locRoom1001 = room1001?.id ?? null
   const locZodiacHQ = zodiacHQ?.id ?? null
   const locMedicalDistrict = medicalDistrict?.id ?? null
-  
+
   if (!locRoom1014 || !locRoom1001 || !locZodiacHQ || !locMedicalDistrict) {
     throw new Error('Required seed location references are missing')
   }
@@ -375,15 +395,15 @@ async function main() {
         locationId: locRoom1014,
         fromEventId: evt1.id,
         precision: PresencePrecision.EXACT_ROOM,
-        certainty: PresenceCertainty.CONFIRMED
-      }
+        certainty: PresenceCertainty.CONFIRMED,
+      },
     })
     await prisma.bodyState.create({
       data: {
         bodyId: body.id,
         state: BodyStateType.ALIVE,
-        fromEventId: evt1.id
-      }
+        fromEventId: evt1.id,
+      },
     })
   }
 
@@ -396,16 +416,16 @@ async function main() {
         locationId: locRoom1001,
         fromEventId: evt1.id,
         precision: PresencePrecision.EXACT_ROOM,
-        certainty: PresenceCertainty.CONFIRMED
-      }
+        certainty: PresenceCertainty.CONFIRMED,
+      },
     })
   }
   await prisma.bodyState.create({
     data: {
       bodyId: benBody.id,
       state: BodyStateType.ALIVE,
-      fromEventId: evt1.id
-    }
+      fromEventId: evt1.id,
+    },
   })
 
   if (locRoom1014) {
@@ -416,16 +436,16 @@ async function main() {
         locationId: locRoom1014,
         fromEventId: evt3.id,
         precision: PresencePrecision.EXACT_ROOM,
-        certainty: PresenceCertainty.CONFIRMED
-      }
+        certainty: PresenceCertainty.CONFIRMED,
+      },
     })
   }
   await prisma.bodyState.create({
     data: {
       bodyId: vincentBody.id,
       state: BodyStateType.ALIVE,
-      fromEventId: evt3.id
-    }
+      fromEventId: evt3.id,
+    },
   })
 
   // Leorio
@@ -438,8 +458,8 @@ async function main() {
         fromEventId: evt0.id,
         precision: PresencePrecision.EXACT_ROOM,
         certainty: PresenceCertainty.CONFIRMED,
-        untilEventId: evt1.id
-      }
+        untilEventId: evt1.id,
+      },
     })
   }
   if (locMedicalDistrict) {
@@ -450,18 +470,18 @@ async function main() {
         locationId: locMedicalDistrict,
         fromEventId: evt1.id,
         precision: PresencePrecision.EXACT_ROOM,
-        certainty: PresenceCertainty.CONFIRMED
-      }
+        certainty: PresenceCertainty.CONFIRMED,
+      },
     })
   }
   // Event 4 (Halkenburg collapse) Leorio is still in Medical District, so presence remains the same.
-  
+
   await prisma.bodyState.create({
     data: {
       bodyId: leorioBody.id,
       state: BodyStateType.ALIVE,
-      fromEventId: evt0.id
-    }
+      fromEventId: evt0.id,
+    },
   })
 
   // console.log('Seeding Abilities...')
@@ -484,8 +504,8 @@ async function main() {
       validFromEventId: evt0.id,
       validUntilEventId: null,
       truthStatus: 'CONFIRMED' as any,
-      firstVisibleEventId: evt0.id
-    }
+      firstVisibleEventId: evt0.id,
+    },
   })
 
   // Fact about Benjamin being the 1st Prince
@@ -499,8 +519,8 @@ async function main() {
       validFromEventId: evt1.id,
       validUntilEventId: null,
       truthStatus: 'CONFIRMED' as any,
-      firstVisibleEventId: evt1.id
-    }
+      firstVisibleEventId: evt1.id,
+    },
   })
 
   // Fact about Room 1014 location
@@ -514,8 +534,8 @@ async function main() {
       validFromEventId: evt1.id,
       validUntilEventId: null,
       truthStatus: 'CONFIRMED' as any,
-      firstVisibleEventId: evt1.id
-    }
+      firstVisibleEventId: evt1.id,
+    },
   })
 
   // Fact about Halkenburg collapse
@@ -529,8 +549,8 @@ async function main() {
       validFromEventId: evt4.id,
       validUntilEventId: null,
       truthStatus: 'CONFIRMED' as any,
-      firstVisibleEventId: evt4.id
-    }
+      firstVisibleEventId: evt4.id,
+    },
   })
 
   console.log('Seeding KnowledgeStates...')
@@ -546,8 +566,8 @@ async function main() {
       confidence: 1.0,
       acquisitionMethod: 'DIRECT_OBSERVATION' as any,
       sourceCharacterId: null,
-      acquisitionEventId: evt1.id
-    }
+      acquisitionEventId: evt1.id,
+    },
   })
 
   // Leorio knows about Kurapika being a Hunter
@@ -562,8 +582,8 @@ async function main() {
       confidence: 1.0,
       acquisitionMethod: 'DIRECT_OBSERVATION' as any,
       sourceCharacterId: null,
-      acquisitionEventId: evt0.id
-    }
+      acquisitionEventId: evt0.id,
+    },
   })
 
   // Oito knows about Room 1014 being VVIP (by being there)
@@ -578,15 +598,15 @@ async function main() {
       confidence: 1.0,
       acquisitionMethod: 'DIRECT_OBSERVATION' as any,
       sourceCharacterId: null,
-      acquisitionEventId: evt1.id
-    }
+      acquisitionEventId: evt1.id,
+    },
   })
 
   console.log('Seed completed successfully.')
 }
 
 main()
-  .catch(e => {
+  .catch((e) => {
     console.error(e)
     process.exit(1)
   })

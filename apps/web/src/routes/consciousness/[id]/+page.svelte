@@ -1,14 +1,18 @@
 <script lang="ts">
-  import Seo from '$lib/components/Seo.svelte';
-  import { page } from '$app/stores';
+  import Seo from '$lib/components/Seo.svelte'
+  import { page } from '$app/stores'
 
-  let id = $derived(($page.params as Record<string, string | undefined>).id || ($page.params as Record<string, string | undefined>).slug || 'unknown');
+  let id = $derived(
+    ($page.params as Record<string, string | undefined>).id ||
+      ($page.params as Record<string, string | undefined>).slug ||
+      'unknown',
+  )
 
   const transfers = [
     { event: '389-12', from: 'Body A', to: 'Body B', confidence: 'confirmed' },
     { event: '389-18', from: 'Body B', to: 'Body B', confidence: 'stable' },
-    { event: '390-03', from: 'Body B', to: 'Unknown', confidence: 'uncertain' }
-  ];
+    { event: '390-03', from: 'Body B', to: 'Unknown', confidence: 'uncertain' },
+  ]
 </script>
 
 <Seo

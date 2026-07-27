@@ -1,25 +1,25 @@
 <script lang="ts">
-  import type { FollowMode, PerspectiveOption } from './types';
+  import type { FollowMode, PerspectiveOption } from './types'
 
   let {
     options,
     selectedPerspective,
     followMode,
     onPerspectiveSelect,
-    onFollowModeSelect
+    onFollowModeSelect,
   }: {
-    options: PerspectiveOption[];
-    selectedPerspective: string;
-    followMode: FollowMode;
-    onPerspectiveSelect: (id: string) => void;
-    onFollowModeSelect: (mode: FollowMode) => void;
-  } = $props();
+    options: PerspectiveOption[]
+    selectedPerspective: string
+    followMode: FollowMode
+    onPerspectiveSelect: (id: string) => void
+    onFollowModeSelect: (mode: FollowMode) => void
+  } = $props()
 
   const followOptions: Array<{ id: FollowMode; label: string }> = [
     { id: 'consciousness', label: 'Follow consciousness' },
     { id: 'body', label: 'Follow body' },
-    { id: 'appearance', label: 'Follow public appearance' }
-  ];
+    { id: 'appearance', label: 'Follow public appearance' },
+  ]
 </script>
 
 <section class="selector" aria-label="Perspective selector">
@@ -61,8 +61,11 @@
   .selector {
     border: 1px solid var(--line);
     border-radius: 0.72rem;
-    background:
-      linear-gradient(180deg, color-mix(in srgb, var(--panel) 83%, #0f221f 17%), color-mix(in srgb, var(--panel) 94%, #10171f 6%));
+    background: linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--panel) 83%, #0f221f 17%),
+      color-mix(in srgb, var(--panel) 94%, #10171f 6%)
+    );
     padding: 0.72rem;
     display: grid;
     grid-template-columns: minmax(12rem, 1fr) minmax(0, 2fr);

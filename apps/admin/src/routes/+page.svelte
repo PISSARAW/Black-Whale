@@ -1,7 +1,7 @@
 <script lang="ts">
-import type { PageData } from './$types';
+  import type { PageData } from './$types'
 
-let { data }: { data: PageData } = $props();
+  let { data }: { data: PageData } = $props()
 </script>
 
 <svelte:head><title>Dashboard — BW Admin</title></svelte:head>
@@ -40,15 +40,41 @@ let { data }: { data: PageData } = $props();
 <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
   <h3 class="text-lg font-semibold text-gray-800 mb-4">Quick Access</h3>
   <div class="flex flex-wrap gap-3">
-    <a href="/chapters" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-md text-gray-700 transition-colors">Chapters</a>
-    <a href="/abilities" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-md text-gray-700 transition-colors">Abilities</a>
-    <a href="/characters" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-md text-gray-700 transition-colors">Characters</a>
-    <a href="/sources" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-md text-gray-700 transition-colors">Sources</a>
-    <a href="/events" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-md text-gray-700 transition-colors">Events</a>
-    <a href="/facts" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-md text-gray-700 transition-colors">Facts</a>
+    <a
+      href="/chapters"
+      class="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-md text-gray-700 transition-colors"
+      >Chapters</a
+    >
+    <a
+      href="/abilities"
+      class="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-md text-gray-700 transition-colors"
+      >Abilities</a
+    >
+    <a
+      href="/characters"
+      class="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-md text-gray-700 transition-colors"
+      >Characters</a
+    >
+    <a
+      href="/sources"
+      class="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-md text-gray-700 transition-colors"
+      >Sources</a
+    >
+    <a
+      href="/events"
+      class="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-md text-gray-700 transition-colors"
+      >Events</a
+    >
+    <a
+      href="/facts"
+      class="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-md text-gray-700 transition-colors"
+      >Facts</a
+    >
   </div>
 </div>
 
 <style>
-  .bw-gold { color: #FFD700; }
+  .bw-gold {
+    color: #ffd700;
+  }
 </style>

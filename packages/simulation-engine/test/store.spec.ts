@@ -54,15 +54,15 @@ describe('parseCreateSimulationInput', () => {
   })
 
   it('rejects an unknown rule policy', () => {
-    expect(() => parseCreateSimulationInput({ parentEventId: 'event-1', mode: 'anything-goes' })).toThrow(
-      SimulationInputError,
-    )
+    expect(() =>
+      parseCreateSimulationInput({ parentEventId: 'event-1', mode: 'anything-goes' }),
+    ).toThrow(SimulationInputError)
   })
 
   it('rejects an over-long identifier', () => {
-    expect(() => parseCreateSimulationInput({ parentEventId: 'x'.repeat(129), mode: 'sandbox' })).toThrow(
-      SimulationInputError,
-    )
+    expect(() =>
+      parseCreateSimulationInput({ parentEventId: 'x'.repeat(129), mode: 'sandbox' }),
+    ).toThrow(SimulationInputError)
   })
 })
 
@@ -75,12 +75,16 @@ describe('parseSimulationActionInput', () => {
 
   it('rejects a payload with too many keys', () => {
     const payload = Object.fromEntries(Array.from({ length: 33 }, (_, index) => [`k${index}`, 1]))
-    expect(() => parseSimulationActionInput({ actionType: 'MOVE_ENTITY', payload })).toThrow(SimulationInputError)
+    expect(() => parseSimulationActionInput({ actionType: 'MOVE_ENTITY', payload })).toThrow(
+      SimulationInputError,
+    )
   })
 
   it('rejects a payload over the byte budget', () => {
     const payload = { blob: 'x'.repeat(9 * 1024) }
-    expect(() => parseSimulationActionInput({ actionType: 'MOVE_ENTITY', payload })).toThrow(SimulationInputError)
+    expect(() => parseSimulationActionInput({ actionType: 'MOVE_ENTITY', payload })).toThrow(
+      SimulationInputError,
+    )
   })
 })
 
@@ -107,7 +111,12 @@ describe('SimulationStore.applyAction', () => {
     await expect(
       store.applyAction(branch.id, {
         actionType: 'ACTIVATE_ABILITY',
-        payload: { abilityId: 'bungee-gum', actorId: 'hisoka', interaction: 'attach', targets: ['gon'] },
+        payload: {
+          abilityId: 'bungee-gum',
+          actorId: 'hisoka',
+          interaction: 'attach',
+          targets: ['gon'],
+        },
       }),
     ).rejects.toThrow(/Target is out of reach/)
   })
@@ -119,10 +128,19 @@ describe('SimulationStore.applyAction', () => {
 
     await store.applyAction(branch.id, {
       actionType: 'ACTIVATE_ABILITY',
-      payload: { abilityId: 'bungee-gum', actorId: 'hisoka', interaction: 'attach', targets: ['gon'] },
+      payload: {
+        abilityId: 'bungee-gum',
+        actorId: 'hisoka',
+        interaction: 'attach',
+        targets: ['gon'],
+      },
     })
 
-    const [, request, state] = executeAbility.mock.calls[0] as unknown as [string, { eventId: string }, WorldState]
+    const [, request, state] = executeAbility.mock.calls[0] as unknown as [
+      string,
+      { eventId: string },
+      WorldState,
+    ]
     expect(request.eventId).toBe('event-1')
     expect(state.cursor.branchId).toBe(branch.id)
   })

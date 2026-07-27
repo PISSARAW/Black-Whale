@@ -65,7 +65,10 @@ export class InMemoryBranchEngine {
     })
   }
 
-  append(branchId: string, proposed: ProposedWorldEvent[]): { state: WorldState; events: WorldEvent[] } {
+  append(
+    branchId: string,
+    proposed: ProposedWorldEvent[],
+  ): { state: WorldState; events: WorldEvent[] } {
     const record = this.requireRecord(branchId)
     const applied: WorldEvent[] = []
     for (const event of proposed) {

@@ -5,7 +5,12 @@ const EVENT = { id: 'event-3', sequence: 3, ordinal: 30, chapter: { number: 405 
 const EARLIER = { id: 'event-1', sequence: 1, ordinal: 10, chapter: { number: 401 } }
 const LATER = { id: 'event-9', sequence: 9, ordinal: 90, chapter: { number: 412 } }
 
-const ROOM_1014 = { id: 'room-1014', name: 'Room 1014', parentLocationId: 'tier-1', mapElementId: 'room-1014' }
+const ROOM_1014 = {
+  id: 'room-1014',
+  name: 'Room 1014',
+  parentLocationId: 'tier-1',
+  mapElementId: 'room-1014',
+}
 const TIER_1 = { id: 'tier-1', name: 'Tier 1', parentLocationId: null, deck: 1 }
 const LOCATIONS = [TIER_1, ROOM_1014]
 
@@ -23,7 +28,9 @@ function presence(entityId: string, overrides: Record<string, unknown> = {}) {
 function fakePrisma(options: { event?: typeof EVENT | null; presences?: unknown[] }) {
   return {
     location: { findMany: async () => LOCATIONS, findFirst: async () => null },
-    narrativeEvent: { findUnique: async () => (options.event === undefined ? EVENT : options.event) },
+    narrativeEvent: {
+      findUnique: async () => (options.event === undefined ? EVENT : options.event),
+    },
     presence: { findMany: async () => options.presences ?? [], findFirst: async () => null },
   } as never
 }
@@ -80,7 +87,11 @@ describe('MapEngine.getEntitiesAt', () => {
       fakePrisma({ presences: [presence('kurapika'), presence('oito'), presence('woble')] }),
     )
 
-    expect(await engine.getEntitiesAt('room-1014', 'event-3')).toEqual(['kurapika', 'oito', 'woble'])
+    expect(await engine.getEntitiesAt('room-1014', 'event-3')).toEqual([
+      'kurapika',
+      'oito',
+      'woble',
+    ])
   })
 
   it('excludes entities that have already left the room', async () => {
@@ -93,7 +104,9 @@ describe('MapEngine.getEntitiesAt', () => {
 
   it('excludes entities in a different room', async () => {
     const engine = new MapEngine(
-      fakePrisma({ presences: [presence('kurapika'), presence('hisoka', { locationId: 'tier-4' })] }),
+      fakePrisma({
+        presences: [presence('kurapika'), presence('hisoka', { locationId: 'tier-4' })],
+      }),
     )
 
     expect(await engine.getEntitiesAt('room-1014', 'event-3')).toEqual(['kurapika'])

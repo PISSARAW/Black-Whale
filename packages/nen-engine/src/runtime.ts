@@ -65,7 +65,11 @@ function boundedString(value: unknown, field: string, maxLength = MAX_ID_LENGTH)
   return value
 }
 
-function optionalBoundedString(value: unknown, field: string, maxLength = MAX_ID_LENGTH): string | undefined {
+function optionalBoundedString(
+  value: unknown,
+  field: string,
+  maxLength = MAX_ID_LENGTH,
+): string | undefined {
   if (value === undefined || value === null) return undefined
   return boundedString(value, field, maxLength)
 }
@@ -109,7 +113,10 @@ export function parseNenActionRequest(raw: unknown): NenActionRequest {
   }
 
   const parameters = input['parameters']
-  if (parameters !== undefined && (typeof parameters !== 'object' || parameters === null || Array.isArray(parameters))) {
+  if (
+    parameters !== undefined &&
+    (typeof parameters !== 'object' || parameters === null || Array.isArray(parameters))
+  ) {
     throw new NenActionInputError('parameters must be a plain object')
   }
 
@@ -124,7 +131,10 @@ export function parseNenActionRequest(raw: unknown): NenActionRequest {
   }
 }
 
-function parseAnchorPoint(raw: unknown, index: number): { x: number; y: number; coordinateSpace: string } {
+function parseAnchorPoint(
+  raw: unknown,
+  index: number,
+): { x: number; y: number; coordinateSpace: string } {
   if (typeof raw !== 'object' || raw === null) {
     throw new NenActionInputError(`anchors[${index}].point must be an object`)
   }
@@ -135,7 +145,11 @@ function parseAnchorPoint(raw: unknown, index: number): { x: number; y: number; 
   return {
     x: point['x'],
     y: point['y'],
-    coordinateSpace: boundedString(point['coordinateSpace'], `anchors[${index}].point.coordinateSpace`, MAX_INTERACTION_LENGTH),
+    coordinateSpace: boundedString(
+      point['coordinateSpace'],
+      `anchors[${index}].point.coordinateSpace`,
+      MAX_INTERACTION_LENGTH,
+    ),
   }
 }
 
@@ -180,11 +194,18 @@ export class NenRuntime {
     return this.engine.plan(await this.contextFromEvent(abilityId, request))
   }
 
-  async executeInState(abilityId: string, request: NenActionRequest, worldState: WorldState): Promise<AbilityResult> {
+  async executeInState(
+    abilityId: string,
+    request: NenActionRequest,
+    worldState: WorldState,
+  ): Promise<AbilityResult> {
     return this.engine.execute(await this.buildContext(abilityId, request, worldState))
   }
 
-  private async contextFromEvent(abilityId: string, request: NenActionRequest): Promise<AbilityContext> {
+  private async contextFromEvent(
+    abilityId: string,
+    request: NenActionRequest,
+  ): Promise<AbilityContext> {
     return this.buildContext(abilityId, request, await this.ports.loadWorldState(request.eventId))
   }
 
@@ -215,7 +236,9 @@ export class NenRuntime {
       actionId: request.actionId ?? request.interaction,
       parameters: request.parameters,
       anchors: request.anchors?.map((anchor) => ({
-        entity: anchor.entityId ? targetRefs.find((target) => target.id === anchor.entityId) : undefined,
+        entity: anchor.entityId
+          ? targetRefs.find((target) => target.id === anchor.entityId)
+          : undefined,
         locationId: anchor.locationId,
         point: anchor.point,
       })),

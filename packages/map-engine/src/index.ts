@@ -78,14 +78,14 @@ function getDeckFromLocation(location: any, allLocations: any[]): number | undef
       return parseInt(match[1])
     }
   }
-  
+
   if (location.parentLocationId) {
-    const parent = allLocations.find(l => l.id === location.parentLocationId)
+    const parent = allLocations.find((l) => l.id === location.parentLocationId)
     if (parent) {
       return getDeckFromLocation(parent, allLocations)
     }
   }
-  
+
   return undefined
 }
 
@@ -94,7 +94,7 @@ function getDeckFromLocation(location: any, allLocations: any[]): number | undef
  */
 function toLocationNode(dbLocation: any, allLocations: any[]): LocationNode {
   const deck = getDeckFromLocation(dbLocation, allLocations)
-  
+
   return {
     id: dbLocation.id,
     parentId: dbLocation.parentLocationId || undefined,
@@ -104,7 +104,7 @@ function toLocationNode(dbLocation: any, allLocations: any[]): LocationNode {
     capacity: undefined,
     entrances: [],
     exits: [],
-    accessRules: []
+    accessRules: [],
   }
 }
 
@@ -112,10 +112,10 @@ function toLocationNode(dbLocation: any, allLocations: any[]): LocationNode {
  * Build layer structure from flat locations list
  */
 function buildLayers(locations: any[]): ShipLayer[] {
-  const nodes: LocationNode[] = locations.map(l => toLocationNode(l, locations))
-  
+  const nodes: LocationNode[] = locations.map((l) => toLocationNode(l, locations))
+
   const deckMap = new Map<number, LocationNode[]>()
-  
+
   for (const node of nodes) {
     if (node.deck !== undefined) {
       if (!deckMap.has(node.deck)) {
@@ -124,18 +124,18 @@ function buildLayers(locations: any[]): ShipLayer[] {
       deckMap.get(node.deck)!.push(node)
     }
   }
-  
+
   const layers: ShipLayer[] = []
   const sortedDecks = Array.from(deckMap.keys()).sort((a, b) => a - b)
-  
+
   for (const deck of sortedDecks) {
     layers.push({
       deck,
       label: `Tier ${deck}`,
-      zones: deckMap.get(deck) || []
+      zones: deckMap.get(deck) || [],
     })
   }
-  
+
   return layers
 }
 
@@ -149,7 +149,7 @@ export class MapEngine implements IMapEngine {
   private async resolveEvent(eventId: string): Promise<any | null> {
     const event = await this.prisma.narrativeEvent.findUnique({
       where: { id: eventId },
-      include: { chapter: true }
+      include: { chapter: true },
     })
     return event
   }
@@ -159,8 +159,8 @@ export class MapEngine implements IMapEngine {
       include: {
         location: true,
         fromEvent: { include: { chapter: true } },
-        untilEvent: { include: { chapter: true } }
-      }
+        untilEvent: { include: { chapter: true } },
+      },
     })
     return presences.filter((presence: any) => isActiveAt(presence, targetEvent)) as any
   }
@@ -172,7 +172,7 @@ export class MapEngine implements IMapEngine {
     }
 
     const allLocations = await this.prisma.location.findMany({
-      orderBy: { name: 'asc' }
+      orderBy: { name: 'asc' },
     })
 
     const activePresences = await this.getActivePresencesAtEvent(targetEvent)
@@ -189,7 +189,7 @@ export class MapEngine implements IMapEngine {
     return {
       atEventId: eventId,
       layers,
-      entityPositions
+      entityPositions,
     }
   }
 
@@ -199,15 +199,16 @@ export class MapEngine implements IMapEngine {
       return null
     }
 
-    const presence = (await this.getActivePresencesAtEvent(targetEvent))
-      .find((candidate) => candidate.entityId === entityId) as any
+    const presence = (await this.getActivePresencesAtEvent(targetEvent)).find(
+      (candidate) => candidate.entityId === entityId,
+    ) as any
 
     if (!presence || !presence.locationId) {
       return null
     }
 
     const allLocations = await this.prisma.location.findMany()
-    
+
     return toLocationNode(presence.location, allLocations)
   }
 
@@ -217,8 +218,9 @@ export class MapEngine implements IMapEngine {
       return []
     }
 
-    const presences = (await this.getActivePresencesAtEvent(targetEvent))
-      .filter((presence) => presence.locationId === locationId)
+    const presences = (await this.getActivePresencesAtEvent(targetEvent)).filter(
+      (presence) => presence.locationId === locationId,
+    )
 
     return presences.map((p: { entityId: string }) => p.entityId)
   }
@@ -229,9 +231,9 @@ export class MapEngine implements IMapEngine {
         OR: [
           { id: locationId },
           { parentLocationId: locationId },
-          { parentLocation: { id: locationId } }
-        ]
-      }
+          { parentLocation: { id: locationId } },
+        ],
+      },
     })
 
     if (allLocations.length === 0) {
@@ -245,13 +247,13 @@ export class MapEngine implements IMapEngine {
 
     const children = allLocations.filter((l: any) => l.parentLocationId === locationId)
     const parent = allLocations.find((l: any) => l.id === location.parentLocationId)
-    
+
     const neighbors: LocationNode[] = []
-    
+
     if (parent) {
       neighbors.push(toLocationNode(parent, allLocations))
     }
-    
+
     for (const child of children) {
       neighbors.push(toLocationNode(child, allLocations))
     }

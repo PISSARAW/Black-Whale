@@ -1,9 +1,9 @@
 <script lang="ts">
   let {
-    lastConfirmed
+    lastConfirmed,
   }: {
-    lastConfirmed: string;
-  } = $props();
+    lastConfirmed: string
+  } = $props()
 </script>
 
 <div class="stale" role="status" aria-label={`Information outdated since ${lastConfirmed}`}>

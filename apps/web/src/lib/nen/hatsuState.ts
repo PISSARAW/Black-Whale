@@ -21,7 +21,10 @@ function readSessionNumber(key: string) {
 }
 
 export function hydrateHatsuSession() {
-  const lifeHours = Math.min(readSessionNumber(EMPEROR_TIME_HOURS_KEY), EMPEROR_TIME_LIFE_LIMIT_HOURS - 1)
+  const lifeHours = Math.min(
+    readSessionNumber(EMPEROR_TIME_HOURS_KEY),
+    EMPEROR_TIME_LIFE_LIMIT_HOURS - 1,
+  )
   const zetsuUntil = readSessionNumber(FORCED_ZETSU_UNTIL_KEY)
   emperorTimeLifeHours.set(lifeHours)
 
@@ -66,7 +69,8 @@ export function consumeEmperorTimeHour() {
   const next = get(emperorTimeLifeHours) + 1
   if (next < EMPEROR_TIME_LIFE_LIMIT_HOURS) {
     emperorTimeLifeHours.set(next)
-    if (typeof sessionStorage !== 'undefined') sessionStorage.setItem(EMPEROR_TIME_HOURS_KEY, String(next))
+    if (typeof sessionStorage !== 'undefined')
+      sessionStorage.setItem(EMPEROR_TIME_HOURS_KEY, String(next))
     return false
   }
 
@@ -83,5 +87,6 @@ export function enterForcedZetsu() {
   parallelFutureVisible.set(false)
   hatsuPanelOpen.set(false)
   if (typeof localStorage !== 'undefined') localStorage.removeItem(ACTIVE_HATSU_KEY)
-  if (typeof sessionStorage !== 'undefined') sessionStorage.setItem(FORCED_ZETSU_UNTIL_KEY, String(until))
+  if (typeof sessionStorage !== 'undefined')
+    sessionStorage.setItem(FORCED_ZETSU_UNTIL_KEY, String(until))
 }

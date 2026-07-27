@@ -1,8 +1,8 @@
-import type { Cookies } from '@sveltejs/kit';
+import type { Cookies } from '@sveltejs/kit'
 
-export const SPOILER_COOKIE = 'userSpoilerLimit';
+export const SPOILER_COOKIE = 'userSpoilerLimit'
 /** Older sessions carry the previous cookie name; honour it until they rotate. */
-const LEGACY_SPOILER_COOKIE = 'spoiler_limit';
+const LEGACY_SPOILER_COOKIE = 'spoiler_limit'
 
 /**
  * The reader's spoiler cap, or undefined when it is unset.
@@ -13,15 +13,15 @@ const LEGACY_SPOILER_COOKIE = 'spoiler_limit';
  * a refusal.
  */
 export function readSpoilerLimit(cookies: Cookies): number | undefined {
-	const raw = cookies.get(SPOILER_COOKIE) ?? cookies.get(LEGACY_SPOILER_COOKIE);
-	if (!raw) return undefined;
+  const raw = cookies.get(SPOILER_COOKIE) ?? cookies.get(LEGACY_SPOILER_COOKIE)
+  if (!raw) return undefined
 
-	const parsed = Number.parseInt(raw, 10);
-	return Number.isSafeInteger(parsed) && parsed >= 0 ? parsed : undefined;
+  const parsed = Number.parseInt(raw, 10)
+  return Number.isSafeInteger(parsed) && parsed >= 0 ? parsed : undefined
 }
 
 /** The same cap shaped as a spoiler-engine profile, or undefined when unset. */
 export function readSpoilerProfile(cookies: Cookies): { maxChapter: number } | undefined {
-	const maxChapter = readSpoilerLimit(cookies);
-	return maxChapter === undefined ? undefined : { maxChapter };
+  const maxChapter = readSpoilerLimit(cookies)
+  return maxChapter === undefined ? undefined : { maxChapter }
 }

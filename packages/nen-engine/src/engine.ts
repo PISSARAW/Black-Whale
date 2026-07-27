@@ -94,31 +94,13 @@ export interface PerspectiveModifier {
 
 /** How the user physically interacts with the ability */
 export type NenInteractionMode =
-  | 'CLICK'
-  | 'DRAG'
-  | 'HOLD'
-  | 'DRAW'
-  | 'SEQUENCE'
-  | 'TARGET_SELECTION'
-  | 'CUSTOM'
+  'CLICK' | 'DRAG' | 'HOLD' | 'DRAW' | 'SEQUENCE' | 'TARGET_SELECTION' | 'CUSTOM'
 
 /** What kinds of entities the ability can target */
-export type NenAllowedTarget =
-  | 'CHARACTER'
-  | 'BODY'
-  | 'OBJECT'
-  | 'LOCATION'
-  | 'AURA'
-  | 'EVENT'
+export type NenAllowedTarget = 'CHARACTER' | 'BODY' | 'OBJECT' | 'LOCATION' | 'AURA' | 'EVENT'
 
 /** Visual overlays rendered on the map during the interaction */
-export type NenOverlayType =
-  | 'RANGE'
-  | 'TRAJECTORY'
-  | 'AURA'
-  | 'TENSION'
-  | 'FUTURE'
-  | 'CONTROL_LINK'
+export type NenOverlayType = 'RANGE' | 'TRAJECTORY' | 'AURA' | 'TENSION' | 'FUTURE' | 'CONTROL_LINK'
 
 /** Declares how the ability may change the tracked entity (section 11) */
 export interface NenPerspectiveTransition {
@@ -326,7 +308,7 @@ export interface INenEngine {
 
 /** The six base Nen actions always considered for the wheel */
 export const BASE_NEN_ACTIONS: NenActionWheelEntry[] = [
-  { id: 'observe-aura', label: 'Observer l\'aura', abilityId: null, visibility: 'available' },
+  { id: 'observe-aura', label: "Observer l'aura", abilityId: null, visibility: 'available' },
   { id: 'activate-en', label: 'Activer En', abilityId: null, visibility: 'available' },
   { id: 'use-ability', label: 'Utiliser capacité', abilityId: null, visibility: 'available' },
   { id: 'maintain-effect', label: 'Maintenir effet', abilityId: null, visibility: 'available' },
@@ -364,8 +346,11 @@ export class NenEngine implements INenEngine {
     const plan = await this.plan(context)
     return {
       allowed: plan.status === 'AVAILABLE',
-      reason: plan.status === 'AVAILABLE' ? undefined : `Ability action is ${plan.status.toLowerCase()}`,
-      violatedRules: plan.conditions.filter((condition) => condition.status === 'UNMET').map((condition) => condition.id),
+      reason:
+        plan.status === 'AVAILABLE' ? undefined : `Ability action is ${plan.status.toLowerCase()}`,
+      violatedRules: plan.conditions
+        .filter((condition) => condition.status === 'UNMET')
+        .map((condition) => condition.id),
       conditions: plan.conditions,
     }
   }
@@ -406,8 +391,8 @@ export class NenEngine implements INenEngine {
     // Fallback for base actions
     return {
       actionId,
-      available: BASE_NEN_ACTIONS.some(a => a.id === actionId),
-      conditions: [{ label: 'Action de base du Nen', status: 'met' }]
+      available: BASE_NEN_ACTIONS.some((a) => a.id === actionId),
+      conditions: [{ label: 'Action de base du Nen', status: 'met' }],
     }
   }
 }

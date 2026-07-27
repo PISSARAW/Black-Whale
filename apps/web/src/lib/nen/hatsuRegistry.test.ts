@@ -1,14 +1,35 @@
 import { describe, expect, it } from 'vitest'
 import abilityCatalog from '../../../../../data/abilities/abilities.json'
-import { HATSU_PROFILES, HATSU_SITE_IMPACT_BY_KIND, HATSU_VISUAL_SIGNATURE_BY_KIND, hatsuById, siteImpactFor, visualSignatureFor } from './hatsuRegistry.js'
+import {
+  HATSU_PROFILES,
+  HATSU_SITE_IMPACT_BY_KIND,
+  HATSU_VISUAL_SIGNATURE_BY_KIND,
+  hatsuById,
+  siteImpactFor,
+  visualSignatureFor,
+} from './hatsuRegistry.js'
 
 describe('global Hatsu interaction registry', () => {
   const auditedMissingHatsu = [
-    'holy-chain', 'judgment-chain', 'stealth-dolphin', 'moonlight-act', 'body-and-soul', 'bloody-mary',
-    'lsdf', 'damage-sweet-home', 'voconte-hideout-doors', 'padaille-weapon-transformation',
-    'camilla-guardian-coercion', 'zhanglei-guardian-coins', 'tserriednich-guardian-lie-marks',
-    'tubeppa-guardian-synthesis', 'tyson-guardian-eye-wogs', 'luzurus-guardian-desire-trap',
-    'salesale-guardian-smoke', 'momoze-guardian-solicitation', 'marayam-guardian-isolation'
+    'holy-chain',
+    'judgment-chain',
+    'stealth-dolphin',
+    'moonlight-act',
+    'body-and-soul',
+    'bloody-mary',
+    'lsdf',
+    'damage-sweet-home',
+    'voconte-hideout-doors',
+    'padaille-weapon-transformation',
+    'camilla-guardian-coercion',
+    'zhanglei-guardian-coins',
+    'tserriednich-guardian-lie-marks',
+    'tubeppa-guardian-synthesis',
+    'tyson-guardian-eye-wogs',
+    'luzurus-guardian-desire-trap',
+    'salesale-guardian-smoke',
+    'momoze-guardian-solicitation',
+    'marayam-guardian-isolation',
   ]
 
   it('provides an interaction for every catalogued Hatsu', () => {
@@ -38,8 +59,14 @@ describe('global Hatsu interaction registry', () => {
 
   it('requires a non-visual functional site impact for every Hatsu', () => {
     const allowedImpacts = new Set([
-      'navigation', 'map-state', 'control', 'content-access',
-      'layout', 'storage', 'data-revelation', 'simulation-state'
+      'navigation',
+      'map-state',
+      'control',
+      'content-access',
+      'layout',
+      'storage',
+      'data-revelation',
+      'simulation-state',
     ])
 
     for (const profile of HATSU_PROFILES) {
@@ -60,6 +87,8 @@ describe('global Hatsu interaction registry', () => {
     expect(Object.keys(HATSU_VISUAL_SIGNATURE_BY_KIND)).toHaveLength(HATSU_PROFILES.length)
     expect(signatures.every((signature) => signature.glyph.length > 0)).toBe(true)
     expect(signatures.every((signature) => signature.manifestation.length > 8)).toBe(true)
-    expect(new Set(signatures.map((signature) => signature.manifestation)).size).toBe(HATSU_PROFILES.length)
+    expect(new Set(signatures.map((signature) => signature.manifestation)).size).toBe(
+      HATSU_PROFILES.length,
+    )
   })
 })

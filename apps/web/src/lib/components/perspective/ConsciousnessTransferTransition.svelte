@@ -3,13 +3,13 @@
     fromBody,
     toBody,
     consciousness,
-    visible = false
+    visible = false,
   }: {
-    fromBody: string;
-    toBody: string;
-    consciousness: string;
-    visible?: boolean;
-  } = $props();
+    fromBody: string
+    toBody: string
+    consciousness: string
+    visible?: boolean
+  } = $props()
 </script>
 
 {#if visible}
@@ -89,9 +89,15 @@
   }
 
   @keyframes pulse {
-    0% { opacity: 0.25; }
-    50% { opacity: 1; }
-    100% { opacity: 0.25; }
+    0% {
+      opacity: 0.25;
+    }
+    50% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0.25;
+    }
   }
 
   @keyframes reveal {

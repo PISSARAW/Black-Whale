@@ -13,7 +13,12 @@ const cursor = {
 describe('Bungee Gum ability contract', () => {
   it('uses the same conditions to plan and execute an activation', () => {
     const worldState = createEmptyWorld(cursor)
-    worldState.entities.hisoka = { id: 'hisoka', kind: 'CHARACTER', label: 'Hisoka', metadata: { mentalState: 'ACTIVE' } }
+    worldState.entities.hisoka = {
+      id: 'hisoka',
+      kind: 'CHARACTER',
+      label: 'Hisoka',
+      metadata: { mentalState: 'ACTIVE' },
+    }
     worldState.entities.wall = { id: 'wall', kind: 'OBJECT', label: 'Wall' }
     worldState.abilitiesByOwner.hisoka = ['bungee-gum']
 

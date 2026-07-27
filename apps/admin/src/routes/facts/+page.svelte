@@ -92,10 +92,6 @@ function getSubjectTypeLabel(subjectType: string): string {
   return option ? option.label : subjectType;
 }
 
-function handleModalClick(e: any) {
-  e.stopPropagation();
-}
-
 function handleOverlayClick(e: any) {
   if (e.target === e.currentTarget) {
     closeCreateModal();

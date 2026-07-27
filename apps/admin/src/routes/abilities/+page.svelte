@@ -63,10 +63,6 @@ function getOwnerName(ownerId: string): string {
   return character ? character.canonicalName : 'Unknown';
 }
 
-function handleModalClick(e: any) {
-  e.stopPropagation();
-}
-
 function handleOverlayClick(e: any) {
   if (e.target === e.currentTarget) {
     closeCreateModal();

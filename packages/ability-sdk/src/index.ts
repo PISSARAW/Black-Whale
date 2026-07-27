@@ -296,7 +296,7 @@ export function defineAbility(def: AbilityDefinition): NenAbilityModule {
       return def.actionWheel ?? []
     },
 
-    explainAction(actionId: string, ctx: AbilityContext): ActionAvailability {
+    explainAction(actionId: string, _ctx: AbilityContext): ActionAvailability {
       const available = def.interactions?.some((i) => i.id === actionId) ?? false
       return {
         actionId,

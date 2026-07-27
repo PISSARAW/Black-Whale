@@ -41,7 +41,8 @@
   function handleGlobalKeydown(event: KeyboardEvent) {
     if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
       event.preventDefault();
-      open ? close() : show();
+      if (open) close();
+      else show();
     } else if (event.key === 'Escape' && open) {
       close();
     }

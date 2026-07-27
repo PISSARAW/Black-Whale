@@ -1,5 +1,5 @@
 import type { PrismaClient } from '@black-whale/database'
-import type { Character, Body, Consciousness } from '@black-whale/domain'
+import type { Body, Consciousness } from '@black-whale/domain'
 
 type OrderedEvent = {
   sequence: number

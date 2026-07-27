@@ -34,7 +34,7 @@
     <rect role="button" tabindex="0" aria-label="Inspect map area" onkeydown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.currentTarget.dispatchEvent(new MouseEvent('click', { bubbles: true })); } }} class="zone" x="0" y="0" width="900" height="500" onclick={() => handleElementClick('crowd')} />
 
     <!-- Dense crowd of Tier 5 passengers -->
-    {#each Array(80) as _, i}
+    {#each Array(80) as _, _i}
       <circle
         cx="{Math.random() * 860 + 20}"
         cy="{Math.random() * 460 + 20}"

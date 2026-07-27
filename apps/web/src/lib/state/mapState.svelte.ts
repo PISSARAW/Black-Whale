@@ -1,4 +1,3 @@
-import type { MapAnchor, MapRegion } from '@black-whale/domain';
 import type { FollowMode, PerspectiveKind } from '$lib/components/perspective/types';
 
 export type ZoomLevel = 'OVERVIEW' | 'TIER' | 'LOCAL';

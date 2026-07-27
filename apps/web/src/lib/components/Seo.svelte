@@ -63,6 +63,7 @@
   <meta name="twitter:image" content={image} />
 
   {#each nodes as node}
+    <!-- eslint-disable-next-line svelte/no-at-html-tags, no-useless-escape -->
     {@html `<script type="application/ld+json">${serialise(node)}<\/script>`}
   {/each}
 </svelte:head>

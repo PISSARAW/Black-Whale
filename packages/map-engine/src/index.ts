@@ -1,4 +1,4 @@
-import type { Location, Presence } from '@black-whale/domain'
+import type { Presence } from '@black-whale/domain'
 
 // Minimal PrismaClient interface for our needs
 interface PrismaClient {

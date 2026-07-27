@@ -1,4 +1,4 @@
-import type { NenAbility, AbilityActivation, NenEffect } from '@black-whale/domain'
+import type { AbilityActivation } from '@black-whale/domain'
 import type {
   EntityRef,
   ProposedWorldEvent,
@@ -382,7 +382,7 @@ export class NenEngine implements INenEngine {
     return module.execute(context)
   }
 
-  async getActiveAbilities(eventId: string): Promise<AbilityActivation[]> {
+  async getActiveAbilities(_eventId: string): Promise<AbilityActivation[]> {
     // Return empty array for now since AbilityActivation is not stored in DB
     return []
   }

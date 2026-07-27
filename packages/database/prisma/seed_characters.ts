@@ -34,7 +34,6 @@ async function main() {
 	console.log(`Found ${characters.length} characters in JSON file`);
 
 	// Get or create chapters
-	const chapterIds = new Map<string, string>();
 	const uniqueChapterIds = new Set<string>();
 	
 	// First pass: collect all unique chapter IDs
@@ -141,7 +140,7 @@ async function main() {
 			continue;
 		}
 
-		const character = await prisma.character.create({
+		await prisma.character.create({
 			data: {
 				slug: char.id,
 				canonicalName: char.canonicalName,

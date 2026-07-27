@@ -65,10 +65,6 @@ function updateAlias(index: number, value: string) {
 
 let events = $derived(data.events || []);
 
-function handleModalClick(e: any) {
-  e.stopPropagation();
-}
-
 function handleOverlayClick(e: any) {
   if (e.target === e.currentTarget) {
     closeCreateModal();

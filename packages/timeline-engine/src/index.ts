@@ -221,7 +221,7 @@ export class TimelineEngine implements ITimelineEngine {
       .sort((left, right) => compareEventOrder(left as OrderedEvent, right as OrderedEvent))
   }
 
-  async getNearestSnapshot(point: TimelinePoint): Promise<WorldSnapshot | null> {
+  async getNearestSnapshot(_point: TimelinePoint): Promise<WorldSnapshot | null> {
     return null // Pas de snapshot implémenté en V1
   }
 

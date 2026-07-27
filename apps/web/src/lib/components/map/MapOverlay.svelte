@@ -247,7 +247,6 @@
 
   let dynamicCharacters = $derived(
     presences.map((p: any) => {
-      const locationsById = new Map<string, any>((locations as any[]).map((location: any) => [location.id, location] as [string, any]));
       const facts = perspective?.knownFacts || [];
       const beliefs = perspective?.beliefs || [];
       const observer = perspective?.observer;
@@ -547,9 +546,9 @@
   let layerStyle = $state('inset: 0;');
 
   $effect(() => {
-    mapState.currentZoomLevel;
-    mapState.selectedTier;
-    mapState.selectedLocationId;
+    // Bare reads: this is how a rune effect registers its dependencies.
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+    mapState.currentZoomLevel, mapState.selectedTier, mapState.selectedLocationId;
 
     const layer = presenceLayer;
     const parent = layer?.parentElement;

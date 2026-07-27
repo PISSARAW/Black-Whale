@@ -82,7 +82,7 @@
     <circle cx="640" cy="385" r="20" class="passenger" />
     
     <!-- Huge crowd milling about in the negative space -->
-    {#each Array(30) as _, i}
+    {#each Array(30) as _, _i}
       <circle 
         cx="{160 + Math.random() * 740}" 
         cy="{Math.random() * 200 + 300}" 

@@ -1,4 +1,4 @@
-import type { Character, Fact, KnowledgeState, Belief, PerspectiveState, PerspectiveRequest, PerspectiveDifference, Body } from '@black-whale/domain'
+import type { PerspectiveState, PerspectiveRequest, PerspectiveDifference, Body } from '@black-whale/domain'
 import type { PrismaClient } from '@black-whale/database'
 import type { IIdentityEngine } from '@black-whale/identity-engine'
 import type { IKnowledgeEngine, KnowledgeQuery } from '@black-whale/knowledge-engine'

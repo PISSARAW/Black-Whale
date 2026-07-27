@@ -1,4 +1,4 @@
-import { PrismaClient, LocationType, PresencePrecision, PresenceCertainty, BodyStateType, AffiliationType, NarrativeImportance } from '@prisma/client'
+import { PrismaClient, LocationType, PresencePrecision, PresenceCertainty, BodyStateType, NarrativeImportance } from '@prisma/client'
 import { readFile } from 'node:fs/promises'
 import { resolve } from 'node:path'
 
@@ -116,7 +116,7 @@ async function main() {
   })
 
   // Event 2: Departure (Ch 359)
-  const evt2 = await prisma.narrativeEvent.create({
+  await prisma.narrativeEvent.create({
     data: {
       chapterId: ch359.id,
       sequence: 2,
@@ -519,7 +519,7 @@ async function main() {
   })
 
   // Fact about Halkenburg collapse
-  const fact4 = await prisma.fact.create({
+  await prisma.fact.create({
     data: {
       id: 'fact-halkenburg-collapsed',
       subjectType: 'CHARACTER' as any,

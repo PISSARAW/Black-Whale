@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { ActionAvailability, WhyCondition } from '@black-whale/nen-engine'
+  import type { ActionAvailability } from '@black-whale/nen-engine'
   import { createEventDispatcher } from 'svelte'
 
   export let availability: ActionAvailability | null = null

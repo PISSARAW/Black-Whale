@@ -69,7 +69,7 @@
     <g transform="translate(480, 160)">
       <text x="150" y="-10" class="label text-red-500" font-size="12">Nouveau riche & general passengers mixing</text>
       <!-- Draw many small circles for crowd -->
-      {#each Array(40) as _, i}
+      {#each Array(40) as _, _i}
         <circle 
           cx="{Math.random() * 300}" 
           cy="{Math.random() * 160 + 10}" 

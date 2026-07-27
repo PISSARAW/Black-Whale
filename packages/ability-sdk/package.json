@@ -17,7 +17,8 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc --noEmit",
-    "clean": "rimraf dist *.tsbuildinfo"
+    "clean": "rimraf dist *.tsbuildinfo",
+    "test": "vitest run"
   },
   "dependencies": {
     "@black-whale/domain": "workspace:*",
@@ -26,6 +27,8 @@
   },
   "devDependencies": {
     "typescript": "^5.5.0",
-    "rimraf": "^5.0.0"
+    "rimraf": "^5.0.0",
+    "vitest": "^2.0.0",
+    "@black-whale/world-engine": "workspace:*"
   }
 }

@@ -50,9 +50,6 @@ importers:
       '@black-whale/domain':
         specifier: workspace:*
         version: link:../../packages/domain
-      '@black-whale/ui':
-        specifier: workspace:*
-        version: link:../../packages/ui
       '@prisma/client':
         specifier: ^5.0.0
         version: 5.22.0(prisma@5.22.0)
@@ -123,9 +120,6 @@ importers:
       '@black-whale/timeline-engine':
         specifier: workspace:*
         version: link:../../packages/timeline-engine
-      '@black-whale/ui':
-        specifier: workspace:*
-        version: link:../../packages/ui
       '@prisma/client':
         specifier: ^5.0.0
         version: 5.22.0(prisma@5.22.0)
@@ -216,6 +210,9 @@ importers:
       typescript:
         specifier: ^5.5.0
         version: 5.9.3
+      vitest:
+        specifier: ^2.0.0
+        version: 2.1.9(@types/node@26.1.1)(terser@5.49.0)
 
   packages/config:
     devDependencies:
@@ -419,15 +416,6 @@ importers:
       vitest:
         specifier: ^2.0.0
         version: 2.1.9(@types/node@26.1.1)(terser@5.49.0)
-
-  packages/ui:
-    devDependencies:
-      svelte:
-        specifier: ^5.0.0
-        version: 5.56.7(@typescript-eslint/types@8.65.0)
-      typescript:
-        specifier: ^5.5.0
-        version: 5.9.3
 
   packages/world-engine:
     devDependencies:

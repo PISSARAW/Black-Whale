@@ -1,19 +1,7 @@
-import type { PerspectiveState, PerspectiveRequest, PerspectiveDifference, Body } from '@black-whale/domain'
+import { isActiveAt, type PerspectiveState, type PerspectiveRequest, type PerspectiveDifference, type Body } from '@black-whale/domain'
 import type { PrismaClient } from '@black-whale/database'
 import type { IIdentityEngine } from '@black-whale/identity-engine'
 import type { IKnowledgeEngine, KnowledgeQuery } from '@black-whale/knowledge-engine'
-
-type OrderedEvent = {
-  id: string
-  sequence: number
-  ordinal?: number | null
-  chapter: { number: number }
-}
-
-function compareEventOrder(left: OrderedEvent, right: OrderedEvent) {
-  if (left.ordinal != null && right.ordinal != null) return left.ordinal - right.ordinal
-  return left.chapter.number - right.chapter.number || left.sequence - right.sequence
-}
 
 // ──────────────────────────────────────────────
 // Interface
@@ -148,14 +136,7 @@ export class PerspectiveEngine implements IPerspectiveEngine {
         untilEvent: { include: { chapter: true } }
       }
     })
-    const activeBodyPresences = allBodyPresences.filter((presence: any) => {
-      const started = presence.fromEvent.chapter.number <= targetEvent.chapter.number
-        && compareEventOrder(presence.fromEvent as OrderedEvent, targetEvent as OrderedEvent) <= 0
-      const notEnded = !presence.untilEvent
-        || presence.untilEvent.chapter.number > targetEvent.chapter.number
-        || compareEventOrder(targetEvent as OrderedEvent, presence.untilEvent as OrderedEvent) < 0
-      return started && notEnded
-    })
+    const activeBodyPresences = allBodyPresences.filter((presence: any) => isActiveAt(presence, targetEvent as any))
     const observerPresence = currentBody
       ? activeBodyPresences.find((presence: any) => presence.entityId === currentBody?.id)
       : undefined

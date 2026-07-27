@@ -1,6 +1,7 @@
 export * from './character.js';
 export * from './identity.js';
 export * from './temporal.js';
+export * from './ordering.js';
 export * from './location.js';
 export * from './knowledge.js';
 export * from './perspective.js';

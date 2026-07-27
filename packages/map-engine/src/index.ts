@@ -1,4 +1,4 @@
-import type { Presence } from '@black-whale/domain'
+import { isActiveAt, type Presence } from '@black-whale/domain'
 
 // Minimal PrismaClient interface for our needs
 interface PrismaClient {
@@ -154,11 +154,6 @@ export class MapEngine implements IMapEngine {
     return event
   }
 
-  private compareEventOrder(left: any, right: any): number {
-    if (left.ordinal != null && right.ordinal != null) return left.ordinal - right.ordinal
-    return left.chapter.number - right.chapter.number || left.sequence - right.sequence
-  }
-
   private async getActivePresencesAtEvent(targetEvent: any): Promise<Presence[]> {
     const presences = await this.prisma.presence.findMany({
       include: {
@@ -167,13 +162,7 @@ export class MapEngine implements IMapEngine {
         untilEvent: { include: { chapter: true } }
       }
     })
-    return presences.filter((presence: any) =>
-      presence.fromEvent.chapter.number <= targetEvent.chapter.number
-      && this.compareEventOrder(presence.fromEvent, targetEvent) <= 0
-      && (!presence.untilEvent
-        || presence.untilEvent.chapter.number > targetEvent.chapter.number
-        || this.compareEventOrder(targetEvent, presence.untilEvent) < 0)
-    ) as any
+    return presences.filter((presence: any) => isActiveAt(presence, targetEvent)) as any
   }
 
   async getMapState(eventId: string): Promise<MapState> {

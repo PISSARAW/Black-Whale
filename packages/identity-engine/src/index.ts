@@ -1,27 +1,5 @@
 import type { PrismaClient } from '@black-whale/database'
-import type { Body, Consciousness } from '@black-whale/domain'
-
-type OrderedEvent = {
-  sequence: number
-  ordinal?: number | null
-  chapter: { number: number }
-}
-
-function compareEventOrder(left: OrderedEvent, right: OrderedEvent) {
-  if (left.ordinal != null && right.ordinal != null) return left.ordinal - right.ordinal
-  return left.chapter.number - right.chapter.number || left.sequence - right.sequence
-}
-
-function isActiveAt(
-  record: { fromEvent: OrderedEvent; untilEvent?: OrderedEvent | null },
-  targetEvent: OrderedEvent
-) {
-  return record.fromEvent.chapter.number <= targetEvent.chapter.number
-    && compareEventOrder(record.fromEvent, targetEvent) <= 0
-    && (!record.untilEvent
-      || record.untilEvent.chapter.number > targetEvent.chapter.number
-      || compareEventOrder(targetEvent, record.untilEvent) < 0)
-}
+import { compareEventOrder, isActiveAt, type Body, type Consciousness } from '@black-whale/domain'
 
 // ──────────────────────────────────────────────
 // Types

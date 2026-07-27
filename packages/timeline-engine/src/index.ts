@@ -71,22 +71,14 @@ export interface ITimelineEngine {
 
 import type { PrismaClient } from '@black-whale/database'
 
-type OrderedEvent = {
-  id: string
-  chapterId: string
-  sequence: number
-  ordinal: number | null
-  chapter: { number: number }
-}
+import { compareEventOrder, isRevealed, type OrderedEvent as Orderable } from '@black-whale/domain'
 
-export function compareEventOrder(left: OrderedEvent, right: OrderedEvent) {
-  if (left.ordinal != null && right.ordinal != null) return left.ordinal - right.ordinal
-  return left.chapter.number - right.chapter.number || left.sequence - right.sequence
-}
+// Re-exported so callers that already reach for the timeline engine do not need
+// to know these live in the domain package.
+export { compareEventOrder, isRevealed }
 
-export function isRevealed(event: OrderedEvent, revealedThroughChapter: number) {
-  return event.chapter.number <= revealedThroughChapter
-}
+/** A narrative event row as loaded here: orderable, and carrying its keys. */
+type OrderedEvent = Orderable & { id: string; chapterId: string }
 
 export class TimelineEngine implements ITimelineEngine {
   constructor(private readonly prisma: PrismaClient) {}

@@ -1,0 +1,13 @@
+{
+  "name": "Black Whale — Succession Archive",
+  "short_name": "Black Whale",
+  "description": "An interactive Hunter × Hunter archive of the Succession War: passengers, decks, factions, Nen and perspectives.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#070a0c",
+  "theme_color": "#070a0c",
+  "icons": [
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" },
+    { "src": "/apple-touch-icon.png", "sizes": "180x180", "type": "image/png" }
+  ]
+}

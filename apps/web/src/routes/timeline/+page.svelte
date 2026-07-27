@@ -2,6 +2,8 @@
   import type { PageData } from './$types';
   import VoyageProgress from '$lib/components/VoyageProgress.svelte';
   import { formatVoyageTime, voyageTimeForEvent } from '$lib/voyageTime';
+  import Seo from '$lib/components/Seo.svelte';
+  import { breadcrumbSchema } from '$lib/seo/schema';
 
   let { data }: { data: PageData } = $props();
   let query = $state('');
@@ -50,10 +52,14 @@
 
 <svelte:window onscroll={updateScrollProgress} onresize={updateScrollProgress} onkeydown={handleShortcut} />
 
-<svelte:head>
-  <title>Timeline — Black Whale</title>
-  <meta name="description" content="An interactive timeline of the Succession War arc." />
-</svelte:head>
+<Seo
+  title="Succession War Timeline"
+  description="An interactive chapter-by-chapter timeline of the Succession War arc: every confrontation, alliance and Nen transfer in canonical order."
+  jsonLd={breadcrumbSchema([
+    { name: 'Home', path: '/' },
+    { name: 'Timeline', path: '/timeline' }
+  ])}
+/>
 
 <div class="timeline-page">
   <div class="reading-progress" aria-hidden="true"><span style:transform={`scaleX(${scrollProgress})`}></span></div>

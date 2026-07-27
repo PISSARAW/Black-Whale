@@ -3,6 +3,8 @@
   import { toEnglishAlias, toEnglishDisplayName } from '$lib/utils/displayNames';
   import { hatsuById } from '$lib/nen/hatsuRegistry.js';
   import { activeHatsu, activateHatsu } from '$lib/nen/hatsuState.js';
+  import Seo from '$lib/components/Seo.svelte';
+  import { breadcrumbSchema, characterSchema } from '$lib/seo/schema';
 
   let { data }: { data: PageData } = $props();
   let character = $derived(data.character as any);
@@ -13,6 +15,15 @@
   let documentedAppearances = $derived((character.mangaAppearances || []).filter((appearance: any) => appearance.status !== 'absent'));
   let displayName = $derived(toEnglishDisplayName(character.canonicalName));
   let initials = $derived(displayName.split(/\s+/).slice(0, 2).map((part: string) => part[0]).join(''));
+  let factionName = $derived(
+    character.factionId ? character.factionId.replaceAll('-', ' ').replace(/\b\w/g, (letter: string) => letter.toUpperCase()) : null
+  );
+  // Search snippets cut around 160 characters, so prefer the canon summary and
+  // trim it on a word boundary rather than shipping a truncated sentence.
+  let metaDescription = $derived(
+    truncate(character.description) ||
+      `Ship role, faction and chapter-by-chapter movement record for ${displayName} aboard the Black Whale.`
+  );
   let latestKnownChapter = $derived(chapterTrajectory.findLast((chapter: any) => chapter.visits.some((visit: any) => visit.location !== 'Position inconnue')));
   let currentLocation = $derived(latestKnownChapter?.visits.map((visit: any) => visit.location).join(' → ') || [
       character.shipLocation?.tier ? `Tier ${character.shipLocation.tier}` : null,
@@ -39,16 +50,37 @@
 
   const humanize = (value: string) => labels[value] || value.toLowerCase().replaceAll('_', ' ');
 
+  function truncate(value?: string | null, limit = 158): string {
+    const text = value?.replace(/\s+/g, ' ').trim() ?? '';
+    if (text.length <= limit) return text;
+    const cut = text.slice(0, limit);
+    return `${cut.slice(0, cut.lastIndexOf(' ')).replace(/[.,;:]$/, '')}…`;
+  }
+
   function activateAbility(abilityId: string) {
     const profile = hatsuById(abilityId);
     if (profile) activateHatsu(profile);
   }
 </script>
 
-<svelte:head>
-  <title>{displayName} — Role & movement</title>
-  <meta name="description" content={`Ship role and chapter-by-chapter movement record for ${displayName}.`} />
-</svelte:head>
+<Seo
+  title={`${displayName} · Role & movement`}
+  description={metaDescription}
+  type="profile"
+  jsonLd={[
+    characterSchema({
+      name: displayName,
+      path: `/characters/${character.id}`,
+      description: metaDescription,
+      affiliation: factionName
+    }),
+    breadcrumbSchema([
+      { name: 'Home', path: '/' },
+      { name: 'Characters', path: '/characters' },
+      { name: displayName, path: `/characters/${character.id}` }
+    ])
+  ]}
+/>
 
 <div class="dossier-page">
   <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/characters">Passenger registry</a><span>/</span><strong>{displayName}</strong></nav>

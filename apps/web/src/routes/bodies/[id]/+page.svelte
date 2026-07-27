@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Seo from '$lib/components/Seo.svelte';
   import { page } from '$app/stores';
 
   let id = $derived(($page.params as Record<string, string | undefined>).id || ($page.params as Record<string, string | undefined>).slug || 'unknown');
@@ -10,9 +11,11 @@
   ];
 </script>
 
-<svelte:head>
-  <title>Body {id} - Black Whale</title>
-</svelte:head>
+<Seo
+  title={`Body ${id}`}
+  description={`Continuity record for body ${id}: observed positions, reported states and suspected identity swaps aboard the Black Whale.`}
+  noindex
+/>
 
 <div class="max-w-4xl mx-auto p-6 space-y-4">
   <header class="bw-panel p-5">

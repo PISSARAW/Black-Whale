@@ -1,5 +1,7 @@
 <script lang="ts">
   import type { PageData } from './$types';
+  import Seo from '$lib/components/Seo.svelte';
+  import { breadcrumbSchema } from '$lib/seo/schema';
 
   type CharacterRecord = {
     id: string;
@@ -54,10 +56,14 @@
   }
 </script>
 
-<svelte:head>
-  <title>Faction Intelligence — Black Whale</title>
-  <meta name="description" content="Inspect the alliances, conflicts and known members shaping the Black Whale succession war." />
-</svelte:head>
+<Seo
+  title="Faction Intelligence"
+  description="Inspect the alliances, conflicts and known members shaping the Black Whale succession war — prince factions, mafia families, Hunters and the Phantom Troupe."
+  jsonLd={breadcrumbSchema([
+    { name: 'Home', path: '/' },
+    { name: 'Factions', path: '/relationships' }
+  ])}
+/>
 
 <div class="network-page">
   <header class="network-hero">

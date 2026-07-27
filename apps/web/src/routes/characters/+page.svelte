@@ -1,5 +1,7 @@
 <script lang="ts">
   import type { PageData } from './$types';
+  import Seo from '$lib/components/Seo.svelte';
+  import { breadcrumbSchema, collectionSchema } from '$lib/seo/schema';
 
   let { data }: { data: PageData } = $props();
   let query = $state('');
@@ -40,10 +42,25 @@
   }, {}));
 </script>
 
-<svelte:head>
-  <title>Passenger Registry — Black Whale</title>
-  <meta name="description" content="Search the people, factions, and identities aboard the Black Whale." />
-</svelte:head>
+<Seo
+  title="Passenger Registry"
+  description={`Browse all ${(data.characters ?? []).length} passengers of the Black Whale: princes, guards, mafia, Hunters and Phantom Troupe members, with faction, deck and first appearance.`}
+  jsonLd={[
+    collectionSchema({
+      name: 'Black Whale passenger registry',
+      path: '/characters',
+      description: 'Every catalogued passenger aboard the Black Whale, with faction and identity records.',
+      items: (data.characters ?? []).map((character: { id: string; canonicalName: string }) => ({
+        name: character.canonicalName,
+        path: `/characters/${character.id}`
+      }))
+    }),
+    breadcrumbSchema([
+      { name: 'Home', path: '/' },
+      { name: 'Characters', path: '/characters' }
+    ])
+  ]}
+/>
 
 <div class="registry-page">
   <header class="registry-hero">

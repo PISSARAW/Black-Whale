@@ -6,6 +6,8 @@
   import LocationDetails from '$lib/components/map/LocationDetails.svelte';
   import UnknownPositions from '$lib/components/map/UnknownPositions.svelte';
   import { mapState } from '$lib/state/mapState.svelte';
+  import Seo from '$lib/components/Seo.svelte';
+  import { breadcrumbSchema } from '$lib/seo/schema';
   import PerspectiveSelector from '$lib/components/perspective/PerspectiveSelector.svelte';
   import PerspectiveTimeline from '$lib/components/perspective/PerspectiveTimeline.svelte';
   import WhyPanel from '$lib/components/perspective/WhyPanel.svelte';
@@ -203,10 +205,14 @@
   }
 </script>
 
-<svelte:head>
-  <title>Black Whale Map — Hunter × Hunter</title>
-  <meta name="description" content="Explore the Black Whale decks, known positions, and character perspectives." />
-</svelte:head>
+<Seo
+  title="Black Whale Map — Hunter × Hunter"
+  description="Explore the five tiers of the Black Whale deck by deck: rooms, known character positions and the perspective of anyone aboard, chapter by chapter."
+  jsonLd={breadcrumbSchema([
+    { name: 'Home', path: '/' },
+    { name: 'Ship map', path: '/ship' }
+  ])}
+/>
 
 <div class="ship-page">
   <header class="ship-hero">

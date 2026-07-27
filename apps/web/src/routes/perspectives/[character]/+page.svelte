@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Seo from '$lib/components/Seo.svelte';
   import { page } from '$app/stores';
   import KnowledgeStatus from '$lib/components/perspective/KnowledgeStatus.svelte';
   import PerspectiveTimeline from '$lib/components/perspective/PerspectiveTimeline.svelte';
@@ -19,9 +20,11 @@
   };
 </script>
 
-<svelte:head>
-  <title>Perspective {character} - Black Whale</title>
-</svelte:head>
+<Seo
+  title={`Perspective — ${character}`}
+  description={`The Black Whale as ${character} understands it: their timeline, their sources, and where their information has gone stale.`}
+  noindex
+/>
 
 <div class="max-w-6xl mx-auto p-6 space-y-5">
   <header class="bw-panel p-5">

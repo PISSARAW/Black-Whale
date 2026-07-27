@@ -2,6 +2,8 @@
   import type { PageData } from './$types';
   import { HATSU_PROFILES, hatsuById } from '$lib/nen/hatsuRegistry.js';
   import { activateHatsu } from '$lib/nen/hatsuState.js';
+  import Seo from '$lib/components/Seo.svelte';
+  import { breadcrumbSchema } from '$lib/seo/schema';
 
   export let data: PageData;
 
@@ -26,9 +28,14 @@
   }
 </script>
 
-<svelte:head>
-  <title>Abilities — Black Whale</title>
-</svelte:head>
+<Seo
+  title="Nen Ability Archive"
+  description="Every Nen ability documented aboard the Black Whale — conditions, limitations and owners, from Bungee Gum to the princes' guardian spirit beasts."
+  jsonLd={breadcrumbSchema([
+    { name: 'Home', path: '/' },
+    { name: 'Abilities', path: '/abilities' }
+  ])}
+/>
 
 <div class="max-w-4xl mx-auto p-8">
   <header class="mb-12">

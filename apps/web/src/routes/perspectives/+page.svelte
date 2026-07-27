@@ -3,6 +3,8 @@
   import { goto } from '$app/navigation';
   import type { PageData } from './$types';
   import { toEnglishDisplayName } from '$lib/utils/displayNames';
+  import Seo from '$lib/components/Seo.svelte';
+  import { breadcrumbSchema } from '$lib/seo/schema';
 
   export let data: PageData;
 
@@ -45,9 +47,14 @@
   }
 </script>
 
-<svelte:head>
-  <title>Perspectives & Comparison — Black Whale</title>
-</svelte:head>
+<Seo
+  title="Perspectives & Comparison"
+  description="See the Succession War through each character's eyes: what they know, what they only believe, and where their information has gone stale."
+  jsonLd={breadcrumbSchema([
+    { name: 'Home', path: '/' },
+    { name: 'Perspectives', path: '/perspectives' }
+  ])}
+/>
 
 <div class="max-w-7xl mx-auto p-6">
   <header class="mb-10">

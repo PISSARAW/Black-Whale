@@ -5,6 +5,8 @@
   import type { PageData } from './$types';
   import PerspectiveDifference from '$lib/components/perspective/PerspectiveDifference.svelte';
   import CompareTierMap from '$lib/components/perspective/CompareTierMap.svelte';
+  import Seo from '$lib/components/Seo.svelte';
+  import { breadcrumbSchema } from '$lib/seo/schema';
   import { toEnglishDisplayName, toEnglishEventTitle } from '$lib/utils/displayNames';
 
   let { data }: { data: PageData } = $props();
@@ -381,9 +383,14 @@
   );
 </script>
 
-<svelte:head>
-  <title>Perspective Comparison - Black Whale</title>
-</svelte:head>
+<Seo
+  title="Perspective Comparison"
+  description="Put two characters side by side and see exactly where their knowledge of the Black Whale diverges — who is misinformed, and since which chapter."
+  jsonLd={breadcrumbSchema([
+    { name: 'Home', path: '/' },
+    { name: 'Compare perspectives', path: '/compare' }
+  ])}
+/>
 
 <div class="compare-page">
   <header class="compare-hero">

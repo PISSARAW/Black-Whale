@@ -1,6 +1,8 @@
 <script lang="ts">
   import BlackWhaleVoyage from '$lib/components/home/BlackWhaleVoyage.svelte';
   import VoyageProgress from '$lib/components/VoyageProgress.svelte';
+  import Seo from '$lib/components/Seo.svelte';
+  import { websiteSchema } from '$lib/seo/schema';
 
   const dossiers = [
     { index: '01', title: 'Spatial intelligence', copy: 'Navigate five tiers and inspect who is where at any point in the voyage.', href: '/ship', tag: 'LIVE MAP' },
@@ -9,10 +11,10 @@
   ];
 </script>
 
-<svelte:head>
-  <title>Black Whale — Succession Archive</title>
-  <meta name="description" content="Navigate the people, places, knowledge, and Nen systems of the Black Whale Succession War." />
-</svelte:head>
+<Seo
+  description="Navigate the people, decks, knowledge and Nen systems of the Black Whale Succession War — an interactive Hunter × Hunter archive."
+  jsonLd={websiteSchema()}
+/>
 
 <div class="home-page">
   <section class="hero">

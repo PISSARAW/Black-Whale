@@ -132,6 +132,20 @@ export function parseSimulationActionInput(raw: unknown): SimulationActionInput 
   }
 }
 
+/** The effect an event acts upon, when it acts upon one. */
+function touchedEffectId(event: WorldEvent): string | undefined {
+  switch (event.type) {
+    case 'EFFECT_CREATED':
+      return event.payload.effect.id
+    case 'EFFECT_ENDED':
+    case 'EFFECT_STATE_CHANGED':
+    case 'EFFECT_ATTRIBUTE_CHANGED':
+      return event.payload.effectId
+    default:
+      return undefined
+  }
+}
+
 /**
  * Persists simulation branches: the in-memory `SimulationEngine` owns the rules,
  * this owns the rows. A branch that is not resident in memory is rehydrated from
@@ -327,21 +341,28 @@ export class SimulationStore {
             payload: event.payload as unknown as object,
           },
         })
-        if (event.type === 'EFFECT_CREATED') {
-          const effect = event.payload.effect
-          await transaction.worldEffectRecord.create({
-            data: {
-              id: effect.id,
-              branchId,
-              abilityId: effect.abilityId,
-              kind: effect.kind,
-              sourceEntityId: effect.source.id,
-              targetEntityIds: effect.targets.map((target) => target.id),
-              state: effect.state,
-              startedOrdinal: event.cursor.ordinal,
-              attributes: effect.attributes as unknown as object,
-              anchors: effect.anchors as unknown as object,
-            },
+        const effectId = touchedEffectId(event)
+        // Read the effect back from the snapshot rather than from the event: a
+        // state or attribute change carries a delta, and the post-mortem
+        // invariant may have ended effects no event mentions.
+        const effect = effectId ? snapshot.effects[effectId] : undefined
+        if (effect) {
+          const row = {
+            branchId,
+            abilityId: effect.abilityId,
+            kind: effect.kind,
+            sourceEntityId: effect.source.id,
+            targetEntityIds: effect.targets.map((target) => target.id),
+            state: effect.state,
+            startedOrdinal: effect.startedAt.ordinal,
+            endedOrdinal: effect.endedAt?.ordinal,
+            attributes: effect.attributes as unknown as object,
+            anchors: effect.anchors as unknown as object,
+          }
+          await transaction.worldEffectRecord.upsert({
+            where: { id: effect.id },
+            create: { id: effect.id, ...row },
+            update: row,
           })
         }
       }

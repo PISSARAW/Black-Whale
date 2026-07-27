@@ -70,6 +70,29 @@ export class SimulationEngine {
     }
   }
 
+  /**
+   * Fold a predicted branch back into its parent, leaving the listed subjects
+   * free to act otherwise (Parallel Future, ch. 401+).
+   */
+  mergeBranch(input: {
+    targetBranchId: string
+    sourceBranchId: string
+    excludeSubjectIds?: string[]
+    fromOrdinal?: number
+  }): SimulationStepResult & { skippedEvents: WorldEvent[] } {
+    const merged = this.branches.mergeInto(input)
+    const policy = this.branches.getBranch(input.targetBranchId).rulePolicy
+    return {
+      snapshot: merged.state,
+      appliedEvents: merged.events,
+      skippedEvents: merged.skipped,
+      canonFidelity: policy === 'STRICT_CANON' ? 1 : policy === 'RULE_COMPATIBLE' ? 0.75 : 0,
+      warnings: merged.skipped.length
+        ? [`${merged.skipped.length} predicted events were overridden by a diverging actor.`]
+        : [],
+    }
+  }
+
   getBranchState(branchId: string): WorldState {
     return this.branches.getState(branchId)
   }

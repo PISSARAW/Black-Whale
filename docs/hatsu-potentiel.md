@@ -34,6 +34,12 @@ manifest d'interaction qui change concrètement l'UI, (3) des conditions explici
 dans le panneau « Pourquoi ? », et (4) une empreinte visible dans au moins un des cinq
 « core questions » du README.
 
+> **État au 27/07/2026** — le P1 est implémenté : les sept primitives du §2 existent dans
+> `world-engine`/`ability-sdk`, et les 23 modules prioritaires sont écrits, câblés
+> (`moduleKey` dans `abilities.json`, enregistrés dans `apps/web/src/lib/server/nen.ts`) et
+> couverts par des tests. Les fiches ci-dessous restent la référence canon ; les mentions
+> « à ajouter » du §2 sont désormais historiques. Détail en fin de document (§6).
+
 ## 2. Primitives manquantes (à ajouter avant/pendant la vague de modules)
 
 1. **`ABILITY_REVOKED`** — symétrique d'`ABILITY_GRANTED`. Indispensable pour Skill Hunter
@@ -678,16 +684,35 @@ locales, affichés tels quels dans l'UI (fidélité manga = les règles sont tou
 
 ## 6. Ordre d'implémentation proposé
 
-| Vague | Modules | Débloque |
-| --- | --- | --- |
-| 1 | Chapelet Kurapika (6 chaînes) + Emperor Time (coût) | `ABILITY_REVOKED`, prêt, coût vital, vertical protagoniste |
-| 2 | Grimmel + Hanzo Skill 4 + Without You | soulSwap, post-mortem, le trio identity-engine |
-| 3 | Contagion + Silent Majority + LSDF (vertical Heil-Ly) | cohortes, niveaux, mode enquête |
-| 4 | Magical Worm + Luini + Marayam (vertical spatial) | portails, invariants de lieux, duplication d'espace |
-| 5 | Hisoka (Bungee Gum étendu + Texture Surprise) + Metamorphosen + Convert Hands | Gyo, masques, mode « apparent » |
-| 6 | Skill Hunter + Benjamin Baton + malédiction de Beyond | héritage/vol, spoiler-engine ch. 415 |
-| 7 | Parallel Future | merge sélectif de branches, overlay FUTURE |
-| 8+ | P2/P3 restants par opportunité d'arc | complétude catalogue |
+| Vague | Modules | Débloque | État |
+| --- | --- | --- | --- |
+| 1 | Chapelet Kurapika (6 chaînes) + Emperor Time (coût) | `ABILITY_REVOKED`, prêt, coût vital, vertical protagoniste | ✅ |
+| 2 | Grimmel + Hanzo Skill 4 + Without You | soulSwap, post-mortem, le trio identity-engine | ✅ |
+| 3 | Contagion + Silent Majority + LSDF (vertical Heil-Ly) | cohortes, niveaux, mode enquête | ✅ Contagion ; Silent Majority et LSDF restent P2 |
+| 4 | Magical Worm + Luini + Marayam (vertical spatial) | portails, invariants de lieux, duplication d'espace | ✅ |
+| 5 | Hisoka (Bungee Gum étendu + Texture Surprise) + Metamorphosen + Convert Hands | Gyo, masques, mode « apparent » | ✅ sauf Convert Hands (P2) |
+| 6 | Skill Hunter + Benjamin Baton + malédiction de Beyond | héritage/vol, spoiler-engine ch. 415 | ✅ + Cat's Name et Little Eye ; Benjamin Baton reste P2 |
+| 7 | Parallel Future | merge sélectif de branches, overlay FUTURE | ✅ module + `SimulationEngine.mergeBranch` |
+| 8+ | P2/P3 restants par opportunité d'arc | complétude catalogue | à faire |
+
+### Ce que la vague P1 a effectivement livré
+
+- **world-engine** : `ABILITY_REVOKED`, `EFFECT_STATE_CHANGED`, `EFFECT_ATTRIBUTE_CHANGED`
+  (compteurs et listes de cohorte), invariant post-mortem dans le reducer, vaisseaux de
+  conscience non corporels (double astral), `eventSubjectIds` + `InMemoryBranchEngine.mergeInto`
+  pour le merge sélectif, et le rendu Gyo / `appearsAs` dans `projectMapScene`.
+- **ability-sdk** : découpé en `context`/`conditions`/`effects`/`interactions`/`define` ;
+  builders `perceptionMask`, `controlLink`, `portal`, `curse`, `constraint`, `abilityGrant`,
+  `abilityRevoke`, `knowledgeGrant`, `soulSwap`, `spawnNenEntity`, `attributeCounter` ;
+  décorateurs `postMortem`, `masked`, `dormant`, `revealedAt`, `sourcedFrom` ; `defineAbility`
+  accepte désormais des **actions** distinctes, un **coût**, des **modificateurs de
+  perspective** et des **notes canon non bloquantes** (« condition non révélée » qui n'empêche
+  pas une action que le manga montre).
+- **23 modules** : bungee-gum (étendu), texture-surprise, chain-jail, judgment-chain,
+  dowsing-chain, holy-chain, steal-chain, stealth-dolphin, emperor-time,
+  grimmel-the-dissonance, hanzo-skill-4, without-you, contagion, magical-worm,
+  luini-spatial-teleportation, marayam-guardian-isolation, battle-cantabile-metamorphosen,
+  skill-hunter, double-face, beyond-sacrificial-curse, cats-name, little-eye, parallel-future.
 
 Chaque vague suit le pattern bungee-gum : module dans `ability-modules`, `moduleKey` renseigné
 dans `abilities.json`, manifest + action wheel + panneau « Pourquoi ? », et une scène canon de

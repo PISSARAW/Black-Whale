@@ -1,18 +1,24 @@
 import {
-  defineAbility,
-  canUseNen,
-  isConscious,
-  person,
-  object,
-  surface,
-  self,
-  attach,
-  stretch,
-  retract,
-  detach,
-  release,
-  elasticConnection,
   buildManifest,
+  canUseNen,
+  defineAbility,
+  detach,
+  elasticConnection,
+  isConscious,
+  masked,
+  maxDistance,
+  object,
+  param,
+  person,
+  postMortem,
+  release,
+  requiresTarget,
+  retract,
+  self,
+  setEffectState,
+  stretch,
+  surface,
+  attach,
   wheelEntry,
 } from '@black-whale/ability-sdk'
 
@@ -28,10 +34,17 @@ import {
  *   3. Attach to a second point
  *   4. Adjust tension
  *   5. Release or retract
+ *
+ * The three canonical limits the module enforces rather than describes:
+ *   - a filament separated from the body snaps past ten metres;
+ *   - concealed with In it is invisible to every perspective but Gyo;
+ *   - programmed before death it keeps working afterwards (ch. 357).
  */
 export const bungeeGum = defineAbility({
   id: 'bungee-gum',
+  name: 'Bungee Gum',
   owner: 'hisoka',
+  category: 'transmuter',
 
   conditions: [canUseNen(), isConscious()],
 
@@ -40,6 +53,66 @@ export const bungeeGum = defineAbility({
   interactions: [attach(), stretch(), retract(), detach(), release()],
 
   effects: [elasticConnection()],
+
+  actions: {
+    attach: {
+      label: 'Attacher',
+      conditions: [requiresTarget('Un point d’ancrage est visé')],
+      effects: [elasticConnection()],
+    },
+
+    'set-trap': {
+      label: 'Poser un piège (In)',
+      conditions: [requiresTarget('Une surface est visée')],
+      // Real, invisible, and only revealed by the Gyo toggle.
+      effects: [masked(elasticConnection())],
+      hint: 'Visible uniquement en Gyo ou en mode omniscient',
+    },
+
+    detach: {
+      label: 'Détacher le filament',
+      // Separated from his body, the filament breaks past ten metres.
+      conditions: [maxDistance(10)],
+      effects: [
+        setEffectState({
+          state: 'ACTIVE',
+          attributes: { detached: true, maxDistanceMeters: 10 },
+        }),
+      ],
+    },
+
+    'program-post-mortem': {
+      label: 'Programmer post-mortem',
+      effects: [
+        postMortem((ctx) =>
+          elasticConnection()(ctx).map((event) =>
+            event.type === 'EFFECT_CREATED'
+              ? {
+                  ...event,
+                  payload: {
+                    effect: {
+                      ...event.payload.effect,
+                      attributes: {
+                        ...event.payload.effect.attributes,
+                        organ: param(ctx, 'organ') ?? 'heart',
+                        purpose: 'resuscitation',
+                      },
+                    },
+                  },
+                }
+              : event,
+          ),
+        ),
+      ],
+      cost: { label: 'Aura maintenue après la mort', unit: 'aura' },
+      hint: 'Cœur, poumons, prothèses — actif après la mort de Hisoka (ch. 357)',
+    },
+
+    release: {
+      label: 'Relâcher',
+      effects: [setEffectState({ state: 'ENDED' })],
+    },
+  },
 
   ui: { componentKey: 'BungeeGumInteraction' },
 
@@ -65,6 +138,13 @@ export const bungeeGum = defineAbility({
       visibility: 'available',
     }),
     wheelEntry({
+      id: 'set-trap',
+      label: 'Poser un piège (In)',
+      abilityId: 'bungee-gum',
+      visibility: 'available',
+      hint: 'Invisible sauf en Gyo',
+    }),
+    wheelEntry({
       id: 'stretch',
       label: 'Étirer',
       abilityId: 'bungee-gum',
@@ -83,7 +163,14 @@ export const bungeeGum = defineAbility({
       label: 'Détacher',
       abilityId: 'bungee-gum',
       visibility: 'locked',
-      hint: 'Requiert une connexion active',
+      hint: 'Rompt au-delà de 10 m une fois séparé du corps',
+    }),
+    wheelEntry({
+      id: 'program-post-mortem',
+      label: 'Programmer post-mortem',
+      abilityId: 'bungee-gum',
+      visibility: 'warning',
+      hint: 'Survit à la mort de Hisoka',
     }),
     wheelEntry({
       id: 'release',

@@ -1,0 +1,99 @@
+import {
+  bodyState,
+  buildManifest,
+  canUseNen,
+  curse,
+  defineAbility,
+  effectIsLive,
+  masked,
+  param,
+  person,
+  postMortem,
+  requiresParameter,
+  requiresTarget,
+  revealedAt,
+  setEffectState,
+} from '@black-whale/ability-sdk'
+
+/** The chapter that turns these birthmarks into a threat. */
+const REVEAL_CHAPTER = 415
+
+/**
+ * Sacrificial curse — Beyond Netero
+ *
+ * A birthmark visible only in Gyo, carried from birth, that kills a designated
+ * target when the sacrifice dies. Before chapter 415 the marked characters look
+ * ordinary; after it, the Gyo toggle reveals the marks and the sacrifice → royal
+ * target graph unfolds. The spoiler engine is what guards that, not a caption.
+ */
+export const beyondSacrificialCurse = defineAbility({
+  id: 'beyond-sacrificial-curse',
+  name: 'Malédiction sacrificielle',
+  owner: 'beyond-netero',
+  category: 'specialist',
+
+  conditions: [canUseNen()],
+
+  targets: [person()],
+
+  actions: {
+    mark: {
+      label: 'Marquer un sacrifice',
+      conditions: [
+        requiresTarget('Un enfant est marqué'),
+        requiresParameter('curseTargetId', 'La cible désignée est choisie'),
+      ],
+      effects: [
+        revealedAt(
+          // Masked: the birthmark only exists for Gyo and for the omniscient view.
+          // Post-mortem: the whole point is that it fires when its bearer dies.
+          masked(
+            postMortem(
+              curse({
+                trigger: 'sacrifice-death',
+                rules: [
+                  'La marque de naissance n’est visible qu’en Gyo.',
+                  'Le porteur est éveillé au Nen dès la naissance.',
+                  'La mort du sacrifice tue la cible désignée, malgré son gardien et à grande distance.',
+                ],
+                attributes: (ctx) => ({
+                  // Sealed until the reveal: the target is part of the mystery.
+                  curseTargetId: param(ctx, 'curseTargetId'),
+                  sealed: true,
+                }),
+              }),
+            ),
+          ),
+          REVEAL_CHAPTER,
+        ),
+      ],
+      cost: { label: 'La vie du sacrifice', unit: 'vie' },
+    },
+
+    trigger: {
+      label: 'Déclencher le sacrifice',
+      conditions: [
+        effectIsLive('effectId', 'La marque est encore en place'),
+        requiresParameter('curseTargetId', 'La cible désignée est connue'),
+      ],
+      effects: [
+        setEffectState({ state: 'TRIGGERED', attributes: { firedAt: 'sacrifice-death' } }),
+        bodyState({ bodyId: (ctx) => param(ctx, 'curseTargetId'), state: 'DEAD' }),
+      ],
+      hint: 'La mort du porteur tue la cible, quel que soit son gardien',
+    },
+  },
+
+  ui: { componentKey: 'SacrificialCurseGraph' },
+
+  interactionManifest: buildManifest('beyond-sacrificial-curse', {
+    inputMode: 'TARGET_SELECTION',
+    allowedTargets: ['CHARACTER', 'BODY'],
+    overlays: ['AURA'],
+    entryActions: ['mark'],
+    requiredState: ['canUseNen'],
+    customComponent: 'SacrificialCurseGraph',
+  }),
+})
+
+export const BEYOND_CURSE_REVEAL_CHAPTER = REVEAL_CHAPTER

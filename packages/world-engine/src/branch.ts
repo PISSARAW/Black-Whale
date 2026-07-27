@@ -1,5 +1,5 @@
 import type { StoryCursor } from './cursor.js'
-import type { ProposedWorldEvent, WorldEvent } from './events.js'
+import { eventSubjectIds, type ProposedWorldEvent, type WorldEvent } from './events.js'
 import { reduceWorld } from './reducer.js'
 import { cloneValue, cloneWorld, type WorldState } from './state.js'
 
@@ -92,6 +92,40 @@ export class InMemoryBranchEngine {
       applied.push(worldEvent)
     }
     return { state: cloneWorld(record.state), events: cloneValue(applied) }
+  }
+
+  /**
+   * Replays a branch's events onto another branch, dropping the ones that concern
+   * an excluded subject. This is the selective merge Parallel Future needs: the
+   * predicted ten seconds happen to everybody except the one who saw them coming.
+   */
+  mergeInto(input: {
+    targetBranchId: string
+    sourceBranchId: string
+    excludeSubjectIds?: string[]
+    fromOrdinal?: number
+  }): { state: WorldState; events: WorldEvent[]; skipped: WorldEvent[] } {
+    const source = this.requireRecord(input.sourceBranchId)
+    const excluded = new Set(input.excludeSubjectIds ?? [])
+    const fromOrdinal = input.fromOrdinal ?? 0
+    const candidates = source.events.filter((event) => event.cursor.ordinal > fromOrdinal)
+    const skipped = candidates.filter((event) =>
+      eventSubjectIds(event).some((subjectId) => excluded.has(subjectId)),
+    )
+    const kept = candidates.filter((event) => !skipped.includes(event))
+    const applied = this.append(
+      input.targetBranchId,
+      kept.map(
+        ({
+          id: _id,
+          schemaVersion: _schemaVersion,
+          branchId: _branchId,
+          cursor: _cursor,
+          ...rest
+        }) => rest as ProposedWorldEvent,
+      ),
+    )
+    return { ...applied, skipped: cloneValue(skipped) }
   }
 
   getState(branchId: string): WorldState {

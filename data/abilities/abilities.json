@@ -20,7 +20,7 @@
     "abilityType": "surface-disguise",
     "description": "Hisoka applies his aura to a flat, smooth surface, such as paper, fabric or even a prosthesis made of Bungee Gum, in order to materialize the visual appearance of more than a thousand textures. The illusion is visible to non-Nen users and no longer leaves a detectable aura once active. However, it does not change the feel of the original surface, so contact can reveal the fake. Hisoka uses it to falsify texts, hide his injuries, and visually reconstruct his face and limbs.",
     "canonStatus": "canon",
-    "moduleKey": null
+    "moduleKey": "texture-surprise"
   },
   {
     "id": "emperor-time",
@@ -38,7 +38,7 @@
     "category": "conjurer",
     "description": "Kurapika's chain with conditions on targets. Violating them causes death.",
     "canonStatus": "canon",
-    "moduleKey": null
+    "moduleKey": "steal-chain"
   },
   {
     "id": "chain-jail",
@@ -47,7 +47,7 @@
     "category": "conjurer",
     "description": "Chains that can bind and immobilize a target. Strength varies based on conditions.",
     "canonStatus": "canon",
-    "moduleKey": null
+    "moduleKey": "chain-jail"
   },
   {
     "id": "dowsing-chain",
@@ -56,7 +56,7 @@
     "category": "conjurer",
     "description": "Chain that can locate a specific target with precision.",
     "canonStatus": "canon",
-    "moduleKey": null
+    "moduleKey": "dowsing-chain"
   },
   {
     "id": "benjamin-aura",
@@ -107,7 +107,7 @@
     "secondaryCategories": ["manipulator"],
     "description": "Sayird projects a sphere of aura onto an insect or other small living being in order to capture it and take control of it. The largest creature that can be handled is the size of a hamster. It perceives everything the animal sees and hears, while retaining the ability to distinguish the aura. Fast-moving animals are difficult to reach and insects can die from their many predators. Little Eye does not work on living beings materialized by aura, consumes very little aura and remains active if the user loses consciousness. The ability was stolen by Kurapika, passed on to Queen Oito, and then made available to Sayird after she used it.",
     "canonStatus": "canon",
-    "moduleKey": null,
+    "moduleKey": "little-eye",
     "userIds": ["queen-oito"]
   },
   {
@@ -143,7 +143,7 @@
     "abilityType": "curse",
     "description": "Beyond placed a powerful curse on many of his children. His mark is only visible with Gyo. She awakens children to Nen from birth and transforms them into cursed sacrifices of varying power. When a sacrifice dies, the curse kills the target chosen when it was placed. According to Longhi, it would be powerful enough to kill a prince despite its guardian Spirit Beast, even at great distances. One exorcist called Longhi's mark the most powerful curse he had ever observed. According to Queen Unma, Beyond can cause the death of her children at any time in order to trigger the curse.",
     "canonStatus": "canon",
-    "moduleKey": null
+    "moduleKey": "beyond-sacrificial-curse"
   },
   {
     "id": "benjamin-baton",
@@ -209,7 +209,7 @@
     "category": "specialist",
     "description": "When Tserriednich closes his eyes and activates Zetsu, he instantly receives a vision of the next ten seconds. If he holds Zetsu, real time resumes while his vision constantly stays ten seconds ahead; he simultaneously perceives the prediction and the present and can move again. When he ends the precognition, everyone in the vision except him perceives the next ten seconds exactly as predicted, even though he actually changes his actions due to his knowledge of the future. The possible connection to his personal Nen Beast and the effect on those absent from the vision remain unknown.",
     "canonStatus": "canon",
-    "moduleKey": null
+    "moduleKey": "parallel-future"
   },
   {
     "id": "grimmel-the-dissonance",
@@ -225,7 +225,7 @@
     "abilityType": "symbiotic-soul-transfer",
     "description": "Halkenburg brings together the aura of the bearers of the pinion of his Guardian Beast who share the same will. This aura forms around the group an armor deemed invincible, while his own aura takes the form of an arc. The arrow passes through walls, abilities, and all defenses to the target, then swaps its soul with that of a randomly chosen marked bearer, including Halkenburg. The allied consciousness primarily takes control of the opposing body; the other remains asleep until the first sleeps or its body dies. If the allied wielder's body dies first, the target's soul returns to their body and takes priority. Halkenburg must probably agree to risk his life with each shot.",
     "canonStatus": "canon",
-    "moduleKey": null
+    "moduleKey": "grimmel-the-dissonance"
   },
   {
     "id": "without-you",
@@ -236,7 +236,7 @@
     "abilityType": "symbiotic-post-mortem",
     "description": "Symbiotic and initially formless Guardian Beast, activated by the death of the first of the twins Kacho and Fugetsu. She takes on the deceased's appearance, personality, memories, and apparent consciousness, then stays with the survivor to protect her until she dies. In Kacho's form, she is visible to all, indistinguishable from the original, capable of interacting with Magical Worm and crossing material obstacles. The host being dead, its existence is supported by post-mortem Nen.",
     "canonStatus": "canon",
-    "moduleKey": null
+    "moduleKey": "without-you"
   },
   {
     "id": "magical-worm",
@@ -248,7 +248,7 @@
     "abilityType": "symbiotic-teleportation",
     "description": "Fugetsu's Guardian Beast materializes a Start Door opening onto a dimensional tunnel, then a trapdoor allowing you to emerge in another location. The door disappears as soon as it is closed, but Fugetsu can turn back as long as it does not come out entirely. Once out, a Return Door appears and initially led to a destination chosen and then opened by Kacho. The power normally only worked once a night and exhausted Fugetsu. After Kacho's death, Fugetsu appears to be able to open the return route on her own and repeat the routes, but this development could be caused by an enemy trap that causes her to become exhausted.",
     "canonStatus": "canon",
-    "moduleKey": null
+    "moduleKey": "magical-worm"
   },
   {
     "id": "contagion",
@@ -260,7 +260,7 @@
     "abilityType": "infection-leveling-symbiotic",
     "description": "Through her saliva, Morena can infect up to twenty-two people and track their location, condition, points, and level. A kill grants one level for an ordinary person, ten for a Nen user, and fifty for a prince. The quantity and flow of aura increases with each level; at level 20, the recruit manifests a unique ability, and at level 100 he in turn becomes Member Zero capable of creating his community. To infect a new target, Morena must play her negotiation game to a final answer Yes, kiss him and make him witness a murder committed by her or an ally. Before the three conditions, the target remains level zero. Cheating or abandoning the game can trigger a Manipulation limiting the answer to Yes or No. The effects persist until Morena or the target dies, or until the game is completed.",
     "canonStatus": "canon",
-    "moduleKey": null
+    "moduleKey": "contagion"
   },
   {
     "id": "cats-name",
@@ -276,7 +276,7 @@
     "abilityType": "counteractive-post-mortem",
     "description": "Counterattack ability that activates after Camilla's death. An immense feline Nen Beast appears behind his murderer, crushes him between its paws and absorbs his life energy, destroying his body. The energy is concentrated into the glowing tip of its tail and then poured into Camilla's mouth, fully healing her wounds and resurrecting her. Post-mortem Nen makes the ability extremely powerful, but it does not protect Camilla from non-lethal injury and remains useless if the opponent refuses to kill her directly. It could work against several murderers. It is unknown whether Camilla must die in Zetsu or if she is only using it to facilitate her own death.",
     "canonStatus": "canon",
-    "moduleKey": null
+    "moduleKey": "cats-name"
   },
   {
     "id": "skill-hunter",
@@ -287,7 +287,7 @@
     "abilityType": "ability-theft",
     "description": "Chrollo materializes a book in which he steals and retains the Nen abilities of others. He must see the ability in action, interview its owner and get answers, have the victim touch the blanket's imprint, all in less than an hour. The victim then loses his power. To use it, Chrollo opens the book to the correct page and holds it in his right hand. An ability normally disappears upon the death of its creator, unless post-mortem Nen maintains it. Skill Hunter can be improved; Chrollo believes he must steal a national treasure such as a Kakin Regalia to obtain the upgrade needed for his next target.",
     "canonStatus": "canon",
-    "moduleKey": null
+    "moduleKey": "skill-hunter"
   },
   {
     "id": "double-face",
@@ -298,7 +298,7 @@
     "abilityType": "skill-hunter-extension",
     "description": "Bookmark specific to Bandit's Secret. Placed on a page, it maintains the corresponding ability even if the book is closed and thus frees both of Chrollo's hands. With the book open on another page, it allows you to use two stolen abilities simultaneously. This extension imposes additional conditions that are still unknown.",
     "canonStatus": "canon",
-    "moduleKey": null
+    "moduleKey": "double-face"
   },
   {
     "id": "indoor-fish",
@@ -498,7 +498,7 @@
     "abilityType": "musical-transformation",
     "description": "Bonolenov can take on the appearance of a person with whom he has spoken. It maintains this form for a period of up to the time spent with the model; staying near an unconscious target also seems to count. The transformation has no known size limit, although a large difference in size could reduce its duration. On the Black Whale, he successively imitates Hisoka, Zakuro, Lynch and Owl with enough precision to fool those close to him.",
     "canonStatus": "canon",
-    "moduleKey": null
+    "moduleKey": "battle-cantabile-metamorphosen"
   },
   {
     "id": "blinky",
@@ -643,7 +643,7 @@
     "abilityType": "astral-double",
     "description": "Hanzo projects a hovering double able to pass through matter while his consciousness leaves his sleeping body. He controls it precisely, but speech or touch directed at the body immediately cancels the projection.",
     "canonStatus": "canon",
-    "moduleKey": null
+    "moduleKey": "hanzo-skill-4"
   },
   {
     "id": "rihan-predator",
@@ -677,7 +677,7 @@
     "abilityType": "sealed-room-portals",
     "description": "From a room with one closed door and impenetrable walls, Luini opens portals to places he has already visited and can return through a private transit space. If the anchor room's door is opened, that room is permanently reset and cannot be reused.",
     "canonStatus": "canon",
-    "moduleKey": null
+    "moduleKey": "luini-spatial-teleportation"
   },
   {
     "id": "great-haiku",
@@ -779,7 +779,7 @@
     "abilityType": "conjured-healing-chain",
     "description": "Kurapika's cross-tipped thumb chain enhances natural healing. Emperor Time lets it repair severe injuries, including a shattered arm, within seconds.",
     "canonStatus": "canon",
-    "moduleKey": null
+    "moduleKey": "holy-chain"
   },
   {
     "id": "judgment-chain",
@@ -791,7 +791,7 @@
     "abilityType": "conditional-heart-chain",
     "description": "Kurapika implants a blade and chain around a target's heart, declares binding rules and kills the target if one is violated. He also uses it on himself to enforce Chain Jail's vow.",
     "canonStatus": "canon",
-    "moduleKey": null
+    "moduleKey": "judgment-chain"
   },
   {
     "id": "stealth-dolphin",
@@ -802,7 +802,7 @@
     "abilityType": "stolen-ability-analysis-and-loan",
     "description": "During Emperor Time, a dolphin Nen Beast analyzes the ability held by Steal Chain. Kurapika can use it once or loan it to another person, whose aura nodes are opened when the borrowed ability is consumed.",
     "canonStatus": "canon",
-    "moduleKey": null
+    "moduleKey": "stealth-dolphin"
   },
   {
     "id": "moonlight-act",
@@ -984,6 +984,6 @@
     "abilityType": "spatial-room-isolation",
     "description": "Marayam's Guardian Spirit Beast isolates room 1013 behind a spatial barrier. Occupants can leave, but outsiders and former occupants reach an empty duplicate and can no longer perceive those still inside.",
     "canonStatus": "canon",
-    "moduleKey": null
+    "moduleKey": "marayam-guardian-isolation"
   }
 ]

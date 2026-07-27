@@ -1,9 +1,5 @@
-import fs from 'fs/promises';
-import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
+import { readDataFile } from '$lib/server/data-files';
 import type { PageServerLoad } from './$types';
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
 
 type NetworkRelation = {
 	id: string;
@@ -109,21 +105,19 @@ const relations: NetworkRelation[] = [
 ];
 
 export const load: PageServerLoad = async ({ cookies }) => {
-	const projectRoot = join(__dirname, '../../../../../');
-	const [factionsData, charactersData] = await Promise.all([
-		fs.readFile(join(projectRoot, 'data/factions/factions.json'), 'utf-8'),
-		fs.readFile(join(projectRoot, 'data/characters/characters.json'), 'utf-8')
+	const [factions, allCharacters] = await Promise.all([
+		readDataFile<Array<{ id: string; name: string; description: string }>>('factions/factions.json'),
+		readDataFile<Array<{ firstAppearanceChapterId?: string | null }>>('characters/characters.json')
 	]);
 
 	const spoilerCookie = cookies.get('userSpoilerLimit');
 	const parsedLimit = spoilerCookie ? Number.parseInt(spoilerCookie, 10) : Number.NaN;
 	const spoilerLimit = Number.isFinite(parsedLimit) ? parsedLimit : undefined;
-	const characters = JSON.parse(charactersData).filter((character: { firstAppearanceChapterId?: string | null }) => {
+	const characters = allCharacters.filter((character) => {
 		if (!spoilerLimit || !character.firstAppearanceChapterId) return true;
 		const firstChapter = Number.parseInt(character.firstAppearanceChapterId, 10);
 		return !Number.isFinite(firstChapter) || firstChapter <= spoilerLimit;
 	});
-	const factions = JSON.parse(factionsData) as Array<{ id: string; name: string; description: string }>;
 
 	// Some recently catalogued affiliations do not yet exist in the legacy faction file.
 	for (const factionId of new Set<string>(characters.map((character: { factionId?: string | null }) => character.factionId).filter(Boolean))) {

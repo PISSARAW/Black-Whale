@@ -1,11 +1,7 @@
 import { prisma } from '$lib/server/db';
 import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
-import fs from 'fs/promises';
-import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
+import { readDataFile } from '$lib/server/data-files';
 
 type TimelineEntry = {
 	chapter: number | null;
@@ -343,12 +339,11 @@ function buildChapterTrajectory(
 export const load: PageServerLoad = async ({ params, cookies }) => {
 	const spoilerLimitCookie = cookies.get('userSpoilerLimit');
 	const spoilerLimit = spoilerLimitCookie ? Number.parseInt(spoilerLimitCookie) : null;
-	const projectRoot = join(__dirname, '../../../../../../');
 	const [characters, chapters, locations, abilities] = await Promise.all([
-		fs.readFile(join(projectRoot, 'data/characters/characters.json'), 'utf-8').then(JSON.parse),
-		fs.readFile(join(projectRoot, 'data/chapters/chapters.json'), 'utf-8').then(JSON.parse),
-		fs.readFile(join(projectRoot, 'data/locations/locations.json'), 'utf-8').then(JSON.parse),
-		fs.readFile(join(projectRoot, 'data/abilities/abilities.json'), 'utf-8').then(JSON.parse)
+		readDataFile<any[]>('characters/characters.json'),
+		readDataFile<any[]>('chapters/chapters.json'),
+		readDataFile<any[]>('locations/locations.json'),
+		readDataFile<any[]>('abilities/abilities.json')
 	]);
 	const locationPaths = buildLocationPaths(locations);
 	const jsonCharacter = characters.find((candidate: any) => candidate.id === params.slug);

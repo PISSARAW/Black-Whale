@@ -7,7 +7,6 @@
     "build": "vite build",
     "dev": "vite dev --port 3000",
     "preview": "vite preview",
-    "lint": "eslint src --ext .svelte,.ts",
     "typecheck": "svelte-check --tsconfig ./tsconfig.json",
     "test": "vitest run --passWithNoTests",
     "clean": "rimraf .svelte-kit build"

@@ -132,7 +132,7 @@
     ],
     "description": "Mizaistom uses three cards to restrict a person's actions. The blue card admits her into the court, the yellow card places her under his control and the red card expels her. With the yellow card, he first shows the card and issues a warning. If the target ignores it, he turns the card over and announces “Restraint”: a rectangular parallelepiped confines him and prevents him from moving, without preventing him from speaking. The effect is brief, but can be reapplied as many times as necessary and used against multiple targets simultaneously.",
     "canonStatus": "canon",
-    "moduleKey": null
+    "moduleKey": "cross-game"
   },
   {
     "id": "beyond-sacrificial-curse",
@@ -157,7 +157,7 @@
     "category": "unknown",
     "description": "When a Nen user who swore loyalty to Benjamin dies, the First Prince inherits his ability. The deceased must have graduated from the Kakin Royal Military Academy and belonged to Benjamin's private army. The power manifests itself in the form of four stars in the right palm. An active ability continues under Benjamin's control after the death of its owner, even if he had lost control of it or if it had been stolen. The maximum number of inheritable abilities remains unknown and the power has similarities to Specialization.",
     "canonStatus": "canon",
-    "moduleKey": null
+    "moduleKey": "benjamin-baton"
   },
   {
     "id": "air-blow",
@@ -179,7 +179,7 @@
     "abilityType": "owl-surveillance-nen-beasts",
     "description": "Musse creates three owl-shaped Nen beasts for intelligence gathering. One eavesdrops through barriers and another attaches by touch to transmit a target's words and actions; after prolonged observation, the user may review earlier footage. Benjamin inherits the ability after Musse's death.",
     "canonStatus": "canon",
-    "moduleKey": null,
+    "moduleKey": "secret-window",
     "userIds": ["prince-benjamin"]
   },
   {
@@ -355,7 +355,7 @@
     "inheritedFrom": "Ancien de Meteor City",
     "description": "Two symbols appear on the hands: a positive sun on the left and a negative moon on the right. Chrollo marks his targets by contact; when the two signs touch, they explode. Three to five seconds of charging produces an explosion capable of killing surrounding people. The Meteor City Elder's post-mortem Nen maintains power in Skill Hunter and retains the marks until they explode, even with a closed book.",
     "canonStatus": "canon",
-    "moduleKey": null
+    "moduleKey": "sun-and-moon"
   },
   {
     "id": "order-stamp",
@@ -378,7 +378,7 @@
     "abilityType": "stolen-appearance-swap",
     "description": "The right hand gives the affected person the appearance of Chrollo, while the left gives them the appearance of their target. A touch of the two hands instantly exchanges their shapes. Only appearance changes, never abilities or personality, and the marks remaining on his palms can betray Chrollo.",
     "canonStatus": "canon",
-    "moduleKey": null
+    "moduleKey": "convert-hands"
   },
   {
     "id": "love-dial-6700",
@@ -395,7 +395,7 @@
     "inheritedFrom": "Narumi McGait",
     "description": "Materialized telephone allowing you to search for an “ideal partner” according to specific criteria. After entry, it provides a 6 to 20 digit number then guides the user to the target and indicates in particular whether it is nearby. Daily calls are limited and retrying may require a delay or change of zone. Chrollo uses it at Tier 3 to find a user with the ability he wants to steal.",
     "canonStatus": "canon",
-    "moduleKey": null
+    "moduleKey": "love-dial-6700"
   },
   {
     "id": "lovely-ghostwriter",
@@ -453,7 +453,7 @@
     "abilityType": "curse-remote-blood-drain",
     "description": "The user conjures up a masked puppet that only they and a possessed person can see, then chooses a victim from ten people within range. Four materialized snakes, covered with several mouths and visible to all, pierce the target and suck its blood. A snake takes forty-four seconds to empty a body; the four together only require eleven. Their eyes on the puppet's chest light up during the attack. The ability appears visually guided and uses Manipulation. If the puppet is unexpectedly deactivated without having killed anyone, the curse turns against its user. Snakes disappear as soon as Nen is deactivated.",
     "canonStatus": "canon",
-    "moduleKey": null
+    "moduleKey": "silent-majority"
   },
   {
     "id": "battle-cantabile-prologue",
@@ -549,7 +549,7 @@
     "abilityType": "remote-audio-surveillance",
     "description": "Kalluto discreetly fixes confetti on a person then makes a paper doll in their image. It can then hear conversations held around the target and gather information remotely without being detected. Even the Brigade's Nen users didn't notice that they were being watched. This technique, or a related ability, also allowed him to locate the exorcist Abengane on Greed Island.",
     "canonStatus": "canon",
-    "moduleKey": null
+    "moduleKey": "surveillance-paper-dolls"
   },
   {
     "id": "dance-of-the-serpents-bite",
@@ -561,7 +561,7 @@
     "abilityType": "paper-serpent-barrage",
     "description": "Kalluto drops confetti then lifts it up and throws it at multiple angles with the movements of his fan. As soon as a fragment embeds itself in the target, it gathers the others into a swirling, snake-like current, which converges on that point and pierces the same area. He can repeat the assault with several marks until the body is torn to pieces.",
     "canonStatus": "canon",
-    "moduleKey": null
+    "moduleKey": "dance-of-the-serpents-bite"
   },
   {
     "id": "nen-stitches",
@@ -573,7 +573,7 @@
     "abilityType": "aura-threads",
     "description": "Machi transforms her aura into versatile wires that she can mask with In. They are used to control a target's movements like a puppet, track what they touch, set traps, capture, strangle or cut up an opponent. Short, they are extremely resistant and can lift a ton; their strength decreases with their length and when they no longer remain connected to his fingers. Machi also uses them as surgical sutures capable of closing a wound or quickly reattaching a severed limb by reconnecting the tissues with such precision that mobility returns immediately.",
     "canonStatus": "canon",
-    "moduleKey": null
+    "moduleKey": "nen-stitches"
   },
   {
     "id": "theta-aura-projectile",
@@ -596,7 +596,7 @@
     "abilityType": "needle-based-total-manipulation",
     "description": "Illumi infuses needles with aura to reshape faces or completely control a target. Deeply inserted needles turn victims into disposable puppets that obey complex orders until their bodies are exhausted.",
     "canonStatus": "canon",
-    "moduleKey": null
+    "moduleKey": "illumi-needle-people"
   },
   {
     "id": "melody-enchanting-music",
@@ -608,7 +608,7 @@
     "abilityType": "aura-infused-music",
     "description": "Melody projects aura through her flute. Her repertoire relieves fatigue, calms emotions and creates vivid sensory impressions; when she plays with all her heart, a broadcast performance can absorb an enormous audience's attention for up to three minutes.",
     "canonStatus": "canon",
-    "moduleKey": null
+    "moduleKey": "melody-enchanting-music"
   },
   {
     "id": "magical-esthetician-cookie",
@@ -654,7 +654,7 @@
     "abilityType": "adaptive-counter-beast",
     "description": "Rihan grows a counter-creature from his independent analysis of one target ability. Once summoned, the Predator is tailored to devour that ability, but performs poorly against simple attacks, multiple powers or information supplied by others; a success seals Rihan's Nen for 48 hours.",
     "canonStatus": "canon",
-    "moduleKey": null
+    "moduleKey": "rihan-predator"
   },
   {
     "id": "biohazard-hinrigh",
@@ -767,7 +767,7 @@
     "abilityType": "post-mortem-haunting-curse",
     "description": "A curse shared by Camilla's Have-Nots. The user spends months or years thinking daily about a target while keeping a connected object and a dagger. To activate it, they burn the object, drink an infusion of its ashes and commit suicide with the dagger. The resulting post-mortem curse drains the target's aura and can kill them; proximity, eye contact, preparation time and resolve determine its speed and strength.",
     "canonStatus": "canon",
-    "moduleKey": null
+    "moduleKey": "yomotsu-hegui"
   },
   {
     "id": "holy-chain",
@@ -813,7 +813,7 @@
     "abilityType": "voluntary-contract-reward-penalty",
     "description": "Longhi offers a voluntary contract with explicit terms, duration, rewards and penalties. Once both parties consent, Moonlight Act enforces the agreement through Manipulation.",
     "canonStatus": "canon",
-    "moduleKey": null
+    "moduleKey": "moonlight-act"
   },
   {
     "id": "body-and-soul",
@@ -846,7 +846,7 @@
     "abilityType": "hideout-legal-defense-puppets",
     "description": "While Morena is present in the Heil-Ly hideout, Yokotani identifies unlawful intruders and conjures invincible guards. Their level rises with the crime; they cannot injure defendants but can expel them.",
     "canonStatus": "canon",
-    "moduleKey": null
+    "moduleKey": "lsdf"
   },
   {
     "id": "damage-sweet-home",
@@ -901,7 +901,7 @@
     "abilityType": "cumulative-nen-coins",
     "description": "Zhang Lei's Guardian Spirit Beast produces a coin each day. Its value and stored aura grow with time, reset on transfer and are expected to grant abilities under long-term conditions that remain partly hypothetical.",
     "canonStatus": "canon",
-    "moduleKey": null
+    "moduleKey": "zhanglei-guardian-coins"
   },
   {
     "id": "tserriednich-guardian-lie-marks",
@@ -915,7 +915,7 @@
     "abilityType": "progressive-lie-marking-curse",
     "description": "Tserriednich's Guardian Spirit Beast cuts a person who lies to him, infects the wound after a second lie and warns that a third will transform the liar into something inhuman.",
     "canonStatus": "canon",
-    "moduleKey": null
+    "moduleKey": "tserriednich-guardian-lie-marks"
   },
   {
     "id": "tubeppa-guardian-synthesis",
@@ -961,7 +961,7 @@
     "abilityType": "diffusive-coercive-smoke",
     "description": "Salé-salé's Guardian Spirit Beast emits smoke that gradually creates goodwill toward him. Converted people grow copies that spread the influence further, while holding one's breath prevents infection.",
     "canonStatus": "canon",
-    "moduleKey": null
+    "moduleKey": "salesale-guardian-smoke"
   },
   {
     "id": "momoze-guardian-solicitation",
@@ -972,7 +972,7 @@
     "abilityType": "solicitation-and-possession",
     "description": "A small beast repeatedly asks whether a target is free. Refusal prolongs the solicitation; agreement inserts a spider into the target's ear and takes control while feeding on the victim's aura.",
     "canonStatus": "canon",
-    "moduleKey": null
+    "moduleKey": "momoze-guardian-solicitation"
   },
   {
     "id": "marayam-guardian-isolation",

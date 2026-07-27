@@ -159,6 +159,35 @@ export const effectAttributeAtLeast = (
     return value >= threshold ? 'MET' : 'UNMET'
   })
 
+/**
+ * A yes/no fact the caller asserts: holding one's breath against Salé-salé's
+ * smoke, keeping eye contact for Yomotsu Hegui, having been warned by a card.
+ */
+export const declaredFlag = (key: string, expected: boolean, label: string): ConditionFn =>
+  condition(`flag-${key}-${expected}`, label, (ctx) => {
+    const value = ctx.parameters?.[key]
+    return typeof value === 'boolean' ? (value === expected ? 'MET' : 'UNMET') : 'UNKNOWN'
+  })
+
+/**
+ * Rihan's Predator only works on what he found out alone: the knowledge engine
+ * becomes the activation condition, which no other ability in the catalogue does.
+ */
+export const soleObserverOf = (factPrefix: string, label: string): ConditionFn =>
+  condition(`sole-observer-${factPrefix}`, label, (ctx) => {
+    if (!ctx.worldState) return 'UNKNOWN'
+    const matches = (records: Record<string, unknown>): boolean =>
+      Object.keys(records).some((factId) => factId.startsWith(factPrefix))
+
+    const own = ctx.worldState.knowledgeByObserver[ctx.actorId]
+    if (!own || !matches(own)) return 'UNMET'
+
+    const sharedWithSomeoneElse = Object.entries(ctx.worldState.knowledgeByObserver).some(
+      ([observerId, records]) => observerId !== ctx.actorId && matches(records),
+    )
+    return sharedWithSomeoneElse ? 'UNMET' : 'MET'
+  })
+
 /** Skill Hunter steals within the hour, Metamorphosen lasts a bounded time. */
 export const withinMinutes = (key: string, limit: number, label: string): ConditionFn =>
   condition(`within-${key}-${limit}`, label, (ctx) => {

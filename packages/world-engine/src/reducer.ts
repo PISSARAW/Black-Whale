@@ -39,6 +39,33 @@ function isSourcedBy(state: WorldState, effect: EffectInstance, bodyId: string):
   return source?.metadata?.['bodyId'] === bodyId
 }
 
+/** The character a body belongs to, for the rules that reason about people. */
+function characterOfBody(state: WorldState, bodyId: string): string {
+  return state.entities[bodyId]?.originalCharacterId ?? bodyId
+}
+
+/**
+ * Benjamin Baton, as a rule of the world rather than a page of the wiki: an
+ * ABILITY_GRANT effect declaring `inheritTo` over a list of members hands the
+ * abilities of any member who dies to the heir. The timeline then tells the
+ * attrition of Benjamin's army through the powers he collects.
+ */
+function applyInheritanceInvariant(state: WorldState, bodyId: string): void {
+  const deceased = characterOfBody(state, bodyId)
+  for (const effect of Object.values(state.effects)) {
+    if (effect.state === 'ENDED') continue
+    const heir = effect.attributes['inheritTo']
+    const members = effect.attributes['memberIds']
+    if (typeof heir !== 'string' || !Array.isArray(members)) continue
+    if (!members.includes(deceased) && !members.includes(bodyId)) continue
+
+    const inherited = state.abilitiesByOwner[deceased] ?? []
+    const owned = state.abilitiesByOwner[heir] ?? []
+    for (const abilityId of inherited) if (!owned.includes(abilityId)) owned.push(abilityId)
+    state.abilitiesByOwner[heir] = owned
+  }
+}
+
 /**
  * "Nen grows stronger after death" as a reducer invariant rather than a footnote:
  * a source's death ends the effects it was sustaining, and only those it programmed
@@ -82,6 +109,9 @@ export function reduceWorld(previous: WorldState, event: WorldEvent): WorldState
       requireEntity(next, event.payload.bodyId, 'BODY')
       next.bodyStates[event.payload.bodyId] = event.payload.state
       if (DEAD_BODY_STATES.has(event.payload.state)) {
+        // Inheritance first: the heir collects what the dead owned before the
+        // effects that owner was sustaining are torn down.
+        applyInheritanceInvariant(next, event.payload.bodyId)
         applyPostMortemInvariant(next, event.payload.bodyId)
       }
       return next

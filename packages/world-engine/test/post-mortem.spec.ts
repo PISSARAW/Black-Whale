@@ -189,6 +189,71 @@ describe('ability revocation', () => {
   })
 })
 
+describe('inheritance invariant', () => {
+  /** Benjamin, his roster effect, and a soldier who owns an ability. */
+  function army() {
+    let state = seeded()
+    for (const [ordinal, entity] of [
+      [4, { id: 'benjamin', kind: 'CHARACTER' as const, label: 'Benjamin' }],
+      [5, { id: 'musse', kind: 'CHARACTER' as const, label: 'Musse' }],
+      [
+        6,
+        {
+          id: 'musse-body',
+          kind: 'BODY' as const,
+          label: 'Corps de Musse',
+          originalCharacterId: 'musse',
+        },
+      ],
+    ] as const) {
+      state = reduceWorld(state, event(ordinal, { type: 'ENTITY_REGISTERED', payload: { entity } }))
+    }
+    state = reduceWorld(
+      state,
+      event(7, {
+        type: 'ABILITY_GRANTED',
+        payload: { ownerId: 'musse', abilityId: 'secret-window' },
+      }),
+    )
+    state = reduceWorld(
+      state,
+      event(8, {
+        type: 'EFFECT_CREATED',
+        payload: {
+          effect: {
+            id: 'baton',
+            kind: 'ABILITY_GRANT',
+            abilityId: 'benjamin-baton',
+            source: { id: 'benjamin', kind: 'CHARACTER' },
+            targets: [],
+            state: 'ACTIVE',
+            attributes: { inheritTo: 'benjamin', memberIds: ['musse'] },
+            startedAt: cursor(8),
+          },
+        },
+      }),
+    )
+    return state
+  }
+
+  it('hands a dead soldier’s abilities to the heir', () => {
+    const state = reduceWorld(
+      army(),
+      event(9, { type: 'BODY_STATE_CHANGED', payload: { bodyId: 'musse-body', state: 'DEAD' } }),
+    )
+    expect(state.abilitiesByOwner['benjamin']).toEqual(['secret-window'])
+  })
+
+  it('ignores the death of somebody who is not on the roster', () => {
+    let state = army()
+    state = reduceWorld(
+      state,
+      event(9, { type: 'BODY_STATE_CHANGED', payload: { bodyId: 'hisoka-body', state: 'DEAD' } }),
+    )
+    expect(state.abilitiesByOwner['benjamin']).toBeUndefined()
+  })
+})
+
 describe('Gyo and apparent identity', () => {
   it('hides a masked effect from a character and shows it under Gyo', () => {
     let state = seeded()

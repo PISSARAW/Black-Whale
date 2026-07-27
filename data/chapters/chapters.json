@@ -8,7 +8,7 @@
     "timeline": [
       {
         "event": "Departure of the Black Whale from the port of Kakin",
-        "storyDate": "Day 1 of the trip",
+        "storyDate": "Day 1 · 12:00",
         "charactersInvolved": [
           "nasubi-hui-guo-rou",
           "beyond-netero",
@@ -23,13 +23,13 @@
       },
       {
         "event": "Beyond Netero is imprisoned in Tier 1 VVIP prison",
-        "storyDate": "Jour 1",
+        "storyDate": "Day 1",
         "charactersInvolved": ["beyond-netero", "zodiaques"],
         "location": "Tier 1 - Prison VVIP"
       },
       {
         "event": "Kurapika and Leorio join the Zodiacs on board",
-        "storyDate": "Jour 1",
+        "storyDate": "Day 1",
         "charactersInvolved": [
           "kurapika",
           "leorio-paradinight",
@@ -56,7 +56,7 @@
     "timeline": [
       {
         "event": "Meeting of the princes on Tier 1 - Official announcement of the War of Succession",
-        "storyDate": "Jour 2",
+        "storyDate": "Day 1",
         "charactersInvolved": [
           "nasubi-hui-guo-rou",
           "prince-benjamin",
@@ -79,13 +79,13 @@
       },
       {
         "event": "Explanation of the rules: the Urn of the Seed will choose the successor",
-        "storyDate": "Jour 2",
+        "storyDate": "Day 1",
         "charactersInvolved": ["nasubi-hui-guo-rou", "all the princes"],
         "location": "Tier 1"
       },
       {
         "event": "The factions begin to organize themselves in their respective chambers",
-        "storyDate": "Jour 2-3",
+        "storyDate": "≈ Day 1-2",
         "charactersInvolved": ["all the princes", "leurs gardes et allies"],
         "location": "Tiers 1-2 - Chambers of the princes"
       }
@@ -107,25 +107,25 @@
     "timeline": [
       {
         "event": "Hisoka arrives in Tier 5 and begins his hunt",
-        "storyDate": "Jour 10",
+        "storyDate": "≈ Day 4",
         "charactersInvolved": ["hisoka", "illumi", "chrollo-lucilfer", "nobunaga-hazama"],
         "location": "Tier 5 - Refectoire"
       },
       {
         "event": "The Phantom Troupe settles in Tier 5",
-        "storyDate": "Jour 10",
+        "storyDate": "≈ Day 4",
         "charactersInvolved": ["chrollo-lucilfer", "nobunaga-hazama", "illumi"],
         "location": "Tier 5"
       },
       {
         "event": "Premieres tensions entre factions mafieuses (Xi-Yu, Cha-R, Heil-Ly)",
-        "storyDate": "Jour 11",
+        "storyDate": "≈ Day 4",
         "charactersInvolved": ["hinrigh-biganduffno", "keni-wang", "morena-prudo", "luini"],
         "location": "Tiers 4-5"
       },
       {
         "event": "Kurapika begins teaching Nen to Queen Oito and training Woble's guards",
-        "storyDate": "Jour 12",
+        "storyDate": "Day 2",
         "charactersInvolved": ["kurapika", "queen-oito", "prince-woble", "bill"],
         "location": "Tier 2 - Woble's Chamber"
       }
@@ -148,49 +148,49 @@
     "timeline": [
       {
         "event": "Assassination of Momoze (12th Princess) in room 1012",
-        "storyDate": "Jour 15",
+        "storyDate": "Day 1 (night)",
         "charactersInvolved": ["prince-momoze", "hanzo", "biscuit-krueger", "luini"],
         "location": "Tier 2 - Room 1012"
       },
       {
         "event": "Marayam (13th Prince) activates his Nen ability to isolate room 1013",
-        "storyDate": "Jour 15",
+        "storyDate": "≈ Day 1-2",
         "charactersInvolved": ["prince-marayam", "biscuit-krueger", "hanzo"],
         "location": "Tier 2 - Room 1013"
       },
       {
         "event": "Benjamin (1st Prince) imposes Martial Law from room 1001",
-        "storyDate": "Jour 16",
+        "storyDate": "Day 2",
         "charactersInvolved": ["prince-benjamin", "balsamilco-might", "musse", "rihan"],
         "location": "Tier 1 - Room 1001"
       },
       {
         "event": "Camilla (2nd Princess) attempts to murder Benjamin and is imprisoned",
-        "storyDate": "Jour 17",
+        "storyDate": "≈ Day 2-3",
         "charactersInvolved": ["prince-camilla", "prince-benjamin", "balsamilco-might"],
         "location": "Tier 1 - VIP Jail"
       },
       {
         "event": "Tserriednich (4th Prince) manipulates the Heil-Ly to sow chaos",
-        "storyDate": "Jour 18",
+        "storyDate": "≈ Day 4 onwards",
         "charactersInvolved": ["prince-tserriednich", "theta", "morena-prudo", "luini"],
         "location": "Tiers 3-5"
       },
       {
         "event": "Kacho (10th Princess) and Fugetsu (11th Princess) try to escape with Melody",
-        "storyDate": "Jour 19",
+        "storyDate": "Day 8 (night) · banquet",
         "charactersInvolved": ["prince-kacho", "prince-fugetsu", "melody"],
         "location": "Tier 1 - Banquet dominical"
       },
       {
         "event": "Hisoka assassinates two members of the Phantom Troupe in Tier 5",
-        "storyDate": "Jour 20",
+        "storyDate": "Before departure (chapter 357)",
         "charactersInvolved": ["hisoka", "chrollo-lucilfer", "nobunaga-hazama"],
         "location": "Tier 5"
       },
       {
         "event": "Kurapika uses Little Eye (cockroaches) to spy on other factions",
-        "storyDate": "Jour 21",
+        "storyDate": "≈ Day 2-3",
         "charactersInvolved": ["kurapika", "queen-oito"],
         "location": "Tier 2"
       }
@@ -216,19 +216,19 @@
     "timeline": [
       {
         "event": "Benjamin strengthens Martial Law with Balsamilco Might",
-        "storyDate": "Jour 22",
+        "storyDate": "Day 2",
         "charactersInvolved": ["prince-benjamin", "balsamilco-might", "rihan", "musse"],
         "location": "Tier 1"
       },
       {
         "event": "Rihan is transferred from Benjamin to Sale-sale then to Tubeppa",
-        "storyDate": "Jour 23",
+        "storyDate": "≈ Day 3-4",
         "charactersInvolved": ["rihan", "prince-benjamin", "prince-salesale", "prince-tubeppa"],
         "location": "Tiers 1-2"
       },
       {
         "event": "Tubeppa (5th Princess) transforms her room 1005 into a laboratory",
-        "storyDate": "Jour 24",
+        "storyDate": "≈ Day 2-3",
         "charactersInvolved": ["prince-tubeppa", "rihan"],
         "location": "Tier 2 - Room 1005"
       }
@@ -250,19 +250,19 @@
     "timeline": [
       {
         "event": "The Xi-Yu (Hinrigh) family operates on the lower thirds",
-        "storyDate": "Jour 25",
+        "storyDate": "≈ Day 3",
         "charactersInvolved": ["hinrigh-biganduffno", "hisoka"],
         "location": "Tiers 4-5"
       },
       {
         "event": "The Cha-R family (Ken'i Wang) tactically allies with the Phantom Troupe",
-        "storyDate": "Jour 26",
+        "storyDate": "Day 7",
         "charactersInvolved": ["keni-wang", "chrollo-lucilfer", "nobunaga-hazama"],
         "location": "Tier 5"
       },
       {
         "event": "Hisoka negotiates with the Xi-Yu mafia",
-        "storyDate": "Jour 27",
+        "storyDate": "≈ Day 10",
         "charactersInvolved": ["hisoka", "hinrigh-biganduffno"],
         "location": "Tier 4"
       }
@@ -284,19 +284,19 @@
     "timeline": [
       {
         "event": "Morena Prudo activates 'Et tu, Juliet' on the ship",
-        "storyDate": "Jour 28",
+        "storyDate": "≈ Day 4 onwards",
         "charactersInvolved": ["morena-prudo", "luini", "prince-tserriednich"],
         "location": "Tiers 3-5"
       },
       {
         "event": "Luini uses his dimensional ability to pass through armored walls",
-        "storyDate": "Jour 29",
+        "storyDate": "≈ Day 10",
         "charactersInvolved": ["luini", "morena-prudo"],
         "location": "Tier 4"
       },
       {
         "event": "Tserriednich uses the Heil-Ly to sow chaos",
-        "storyDate": "Jour 30",
+        "storyDate": "≈ Day 4 onwards",
         "charactersInvolved": ["prince-tserriednich", "theta", "morena-prudo"],
         "location": "All third parties"
       }
@@ -319,19 +319,19 @@
       {
         "event": "Furykov confronts Beyond about his sacrificial curse",
         "isFlashback": true,
-        "storyDate": "Two months before departure",
+        "storyDate": "≈ 2 months before departure",
         "charactersInvolved": ["beyond-netero", "furykov"],
         "location": "Kakin"
       },
       {
         "event": "Kurapika and Oito prepare a message for the mainland",
-        "storyDate": "Current martial-law period",
+        "storyDate": "Martial law, after Day 12",
         "charactersInvolved": ["kurapika", "queen-oito", "bill", "babimyna"],
         "location": "Black Whale 1 - Tier 1"
       },
       {
         "event": "The royal camps respond to special martial law",
-        "storyDate": "Current martial-law period",
+        "storyDate": "Martial law, after Day 12",
         "charactersInvolved": [
           "prince-zhanglei",
           "coventoba",
@@ -350,7 +350,7 @@
       },
       {
         "event": "Ridge subdues Kanjidol during martial law",
-        "storyDate": "Current martial-law period",
+        "storyDate": "Martial law, after Day 12",
         "charactersInvolved": ["ridge", "kanjidol", "prince-luzurus"],
         "location": "Black Whale 1 - Tier 1 Royal Residential Sector"
       }

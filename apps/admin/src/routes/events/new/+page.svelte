@@ -87,7 +87,7 @@
             type="text"
             name="occurredAtLabel"
             class="w-full border-gray-300 rounded-md shadow-sm p-2 border"
-            placeholder="e.g. Day 10 · 19:35"
+            placeholder="e.g. Day 8 · 20:00"
           />
         </div>
       </div>

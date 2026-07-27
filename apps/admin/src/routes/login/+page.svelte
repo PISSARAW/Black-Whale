@@ -14,7 +14,13 @@
     <label for="password" class="mt-6 block text-sm text-gray-300">Mot de passe</label>
     <input id="password" name="password" type="password" required autofocus autocomplete="current-password"
       class="mt-2 w-full rounded-md border border-gray-700 bg-gray-950 px-3 py-2 text-white outline-none focus:border-yellow-400" />
-    {#if form?.invalid}<p class="mt-3 text-sm text-red-400">Mot de passe incorrect.</p>{/if}
+    {#if form?.throttled}
+      <p class="mt-3 text-sm text-red-400">
+        Trop de tentatives. Réessayez dans {Math.ceil((form.retryAfterSeconds ?? 60) / 60)} minute(s).
+      </p>
+    {:else if form?.invalid}
+      <p class="mt-3 text-sm text-red-400">Mot de passe incorrect.</p>
+    {/if}
     <button class="mt-6 w-full rounded-md bg-yellow-400 px-4 py-2 font-semibold text-gray-950 hover:bg-yellow-300">Se connecter</button>
   </form>
 </main>

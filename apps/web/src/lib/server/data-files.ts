@@ -31,3 +31,24 @@ export async function readDataFile<T = unknown>(relativePath: string): Promise<T
 	const contents = await fs.readFile(join(dataRoot(), relativePath), 'utf-8');
 	return JSON.parse(contents) as T;
 }
+
+/**
+ * A passenger as catalogued in data/characters/characters.json. Only the fields
+ * the site reads are declared; the file carries more (biography, battles, nen).
+ */
+export interface CatalogCharacter {
+	id: string;
+	canonicalName: string;
+	aliases?: string[];
+	description?: string;
+	factionId?: string | null;
+	firstAppearanceChapterId?: string | null;
+	canonStatus?: string;
+	shipLocation?: { tier?: number; room?: string; status?: string; role?: string | null } | null;
+}
+
+export interface CatalogFaction {
+	id: string;
+	name: string;
+	description: string;
+}

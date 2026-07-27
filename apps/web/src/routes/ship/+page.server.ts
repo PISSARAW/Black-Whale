@@ -1,4 +1,5 @@
 import { prisma } from '$lib/server/db';
+import type { CatalogCharacter } from '$lib/server/data-files';
 import { buildPerspective } from '$lib/server/perspectives';
 import { TimelineEngine } from '@black-whale/timeline-engine';
 import characterCatalog from '../../../../../data/characters/characters.json';
@@ -7,14 +8,6 @@ import type { PageServerLoad } from './$types';
 import { redirect } from '@sveltejs/kit';
 
 type FactionFilterId = 'princes' | 'guards' | 'hunters' | 'spider' | 'mafia';
-
-type CatalogCharacter = {
-	id: string;
-	canonicalName: string;
-	description?: string;
-	factionId?: string | null;
-	shipLocation?: { role?: string | null } | null;
-};
 
 const catalogByName = new Map(
 	(characterCatalog as CatalogCharacter[]).map((character) => [character.canonicalName, character])

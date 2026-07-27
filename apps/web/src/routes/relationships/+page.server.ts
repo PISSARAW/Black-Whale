@@ -1,4 +1,4 @@
-import { readDataFile } from '$lib/server/data-files';
+import { readDataFile, type CatalogCharacter, type CatalogFaction } from '$lib/server/data-files';
 import type { PageServerLoad } from './$types';
 
 type NetworkRelation = {
@@ -106,8 +106,8 @@ const relations: NetworkRelation[] = [
 
 export const load: PageServerLoad = async ({ cookies }) => {
 	const [factions, allCharacters] = await Promise.all([
-		readDataFile<Array<{ id: string; name: string; description: string }>>('factions/factions.json'),
-		readDataFile<Array<{ firstAppearanceChapterId?: string | null }>>('characters/characters.json')
+		readDataFile<CatalogFaction[]>('factions/factions.json'),
+		readDataFile<CatalogCharacter[]>('characters/characters.json')
 	]);
 
 	const spoilerCookie = cookies.get('userSpoilerLimit');
@@ -120,7 +120,12 @@ export const load: PageServerLoad = async ({ cookies }) => {
 	});
 
 	// Some recently catalogued affiliations do not yet exist in the legacy faction file.
-	for (const factionId of new Set<string>(characters.map((character: { factionId?: string | null }) => character.factionId).filter(Boolean))) {
+	const catalogueFactionIds = new Set(
+		characters
+			.map((character) => character.factionId)
+			.filter((factionId): factionId is string => Boolean(factionId))
+	);
+	for (const factionId of catalogueFactionIds) {
 		if (!factions.some((faction) => faction.id === factionId)) {
 			factions.push({
 				id: factionId,

@@ -55,20 +55,52 @@ const namedRoomSlugs = new Map([
   ["installations de recyclage et d'epuration", 'tier-4-recycling-sewage-facilities'],
   ['unités résidentielles', 'tier-3-residential-units'],
   ['unites residentielles', 'tier-3-residential-units'],
+  ['residential units', 'tier-3-residential-units'],
   ['cabines standard', 'tier-5-standard-cabins'],
   ['standard cabins', 'tier-5-standard-cabins'],
+  ['recycling & sewage facilities', 'tier-4-recycling-sewage-facilities'],
+  ['recycling and sewage facilities', 'tier-4-recycling-sewage-facilities'],
+  ['central hospital', 'tier-3-central-hospital'],
+  ['cha-r family hideout', 'tier-5-cha-r-family-office'],
+  ['justice bureau office', 'tier-2-ministry-of-justice'],
+  ['secteur résidentiel royal', 'tier-1-royal-residential-sector'],
+  ['secteur residentiel royal', 'tier-1-royal-residential-sector'],
+  ['royal residential sector', 'tier-1-royal-residential-sector'],
 ])
 
 const generatedPassengerDescription =
   'Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.'
 
+/// Chapter references are `ch-<number>`, optionally pinned to one event of that
+/// chapter with `ch-<number>.<sequence>`. Without a sequence the chapter's first
+/// event is used, which is all most entries need.
+function chapterReference(chapterId) {
+  const match = chapterId?.match(/^ch-(\d+)(?:\.(\d+))?$/)
+  if (!match) return null
+  return { number: Number(match[1]), sequence: match[2] ? Number(match[2]) : null }
+}
+
 function chapterNumber(chapterId) {
-  const match = chapterId?.match(/^ch-(\d+)$/)
-  return match ? Number(match[1]) : null
+  return chapterReference(chapterId)?.number ?? null
 }
 
 function isDeadStatus(status) {
-  return /^(mort|morte|decede|decedee|décédé|décédée)$/i.test(status || '')
+  return /^(mort|morte|decede|decedee|décédé|décédée|dead|deceased)$/i.test(status || '')
+}
+
+/// The chapter a character dies in, read from the catalogue's appearance list.
+/// A `death` entry only counts when the character is not present again later:
+/// Hisoka "dies" in 356 and is back on panel in 357, so he never leaves the map.
+const presentStatuses = new Set(['appears', 'debut', 'disguised', 'death'])
+
+function deathChapter(character) {
+  const appearances = character.mangaAppearances || []
+  const death = [...appearances].reverse().find((entry) => entry.status === 'death')
+  if (!death) return null
+  const returnsLater = appearances.some(
+    (entry) => entry.chapter > death.chapter && presentStatuses.has(entry.status),
+  )
+  return returnsLater ? null : death.chapter
 }
 
 function narrativeImportance(canonStatus) {
@@ -83,26 +115,168 @@ function modelingLevel(tier) {
   return tier ? 3 : 4
 }
 
-async function ensureEvent(number, title = `Chapitre ${number}`) {
+async function ensureEvent(number, title = `Chapitre ${number}`, sequence = null) {
   const chapter = await prisma.chapter.upsert({
     where: { number },
     update: {},
     create: { number, title },
   })
   const existing = await prisma.narrativeEvent.findFirst({
-    where: { chapterId: chapter.id },
+    where: { chapterId: chapter.id, ...(sequence === null ? {} : { sequence }) },
     orderBy: { sequence: 'asc' },
   })
   if (existing) return { ...existing, chapter: { number } }
   const created = await prisma.narrativeEvent.create({
     data: {
       chapterId: chapter.id,
-      sequence: 1,
+      sequence: sequence ?? 1,
       title: `Début du chapitre ${number}`,
       summary: `Événement de référence pour le chapitre ${number}`,
     },
   })
+  orderedEventsCache = null
   return { ...created, chapter: { number } }
+}
+
+async function resolveEventRef(chapterId) {
+  const reference = chapterReference(chapterId)
+  if (!reference) return null
+  return ensureEvent(reference.number, `Chapitre ${reference.number}`, reference.sequence)
+}
+
+/// Presences are half-open: `isActiveAt` stops reporting a record at its
+/// `untilEvent`. A character who dies in an event is still standing there when
+/// it happens, so the closing bound is the *next* event on the timeline, not
+/// the death itself. Without this a victim silently vanishes from the very
+/// chapter that kills them.
+let orderedEventsCache = null
+
+async function orderedEvents() {
+  if (!orderedEventsCache) {
+    const events = await prisma.narrativeEvent.findMany({ include: { chapter: true } })
+    orderedEventsCache = events.sort(
+      (left, right) =>
+        (left.ordinal ?? Number.MAX_SAFE_INTEGER) - (right.ordinal ?? Number.MAX_SAFE_INTEGER) ||
+        left.chapter.number - right.chapter.number ||
+        left.sequence - right.sequence,
+    )
+  }
+  return orderedEventsCache
+}
+
+async function eventAfter(event) {
+  if (!event) return null
+  const events = await orderedEvents()
+  const index = events.findIndex((candidate) => candidate.id === event.id)
+  if (index === -1 || index + 1 >= events.length) return null
+  const next = events[index + 1]
+  return { ...next, chapter: { number: next.chapter.number } }
+}
+
+function precisionFor(location) {
+  if (location.type === 'ROOM') return 'EXACT_ROOM'
+  if (location.type === 'TIER') return 'TIER'
+  if (location.type === 'UNKNOWN') return 'UNKNOWN'
+  return 'ZONE'
+}
+
+/// `shipLocation` can only ever describe one position, so a character who moves
+/// during the arc declares each leg in `mapTrajectory` instead. A leg ends where
+/// the next one begins — deriving the handoff rather than restating it is what
+/// keeps consecutive legs from overlapping — and `untilChapterId` is only for a
+/// final leg that stops without a successor.
+///
+/// Ids are deterministic so a rerun updates legs in place, and a trajectory that
+/// loses a leg drops the stale presence instead of leaving it behind.
+async function syncTrajectory(character, body, locations) {
+  const legs = character.mapTrajectory
+  const keptIds = []
+  let created = 0
+  let updated = 0
+
+  for (const [index, leg] of legs.entries()) {
+    const location = locations.get(leg.location)
+    if (!location) {
+      throw new Error(`${character.id}: unknown trajectory location "${leg.location}"`)
+    }
+    const fromEvent = await resolveEventRef(leg.fromChapterId)
+    if (!fromEvent) {
+      throw new Error(`${character.id}: unusable trajectory start "${leg.fromChapterId}"`)
+    }
+    const nextLeg = legs[index + 1]
+    const untilEvent = nextLeg
+      ? await resolveEventRef(nextLeg.fromChapterId)
+      : await eventAfter(await resolveEventRef(leg.untilChapterId))
+
+    const id = `trajectory-${character.id}-${index}`
+    const data = {
+      entityType: 'BODY',
+      entityId: body.id,
+      locationId: location.id,
+      fromEventId: fromEvent.id,
+      untilEventId: untilEvent?.id ?? null,
+      precision: precisionFor(location),
+      certainty: leg.certainty || 'CONFIRMED',
+    }
+    const existing = await prisma.presence.findUnique({ where: { id } })
+    if (existing) {
+      await prisma.presence.update({ where: { id }, data })
+      updated += 1
+    } else {
+      await prisma.presence.create({ data: { id, ...data } })
+      created += 1
+    }
+    keptIds.push(id)
+  }
+
+  await prisma.presence.deleteMany({ where: { entityId: body.id, id: { notIn: keptIds } } })
+  return { created, updated }
+}
+
+/// A body that dies holds one ALIVE record up to the death and one DEAD record
+/// from it. The catalogue owns the date, so both bounds are rewritten on every
+/// run rather than only filled in when missing.
+async function reconcileMortality(body, firstEvent, deathEvent) {
+  const states = await prisma.bodyState.findMany({
+    where: { bodyId: body.id },
+    orderBy: { id: 'asc' },
+  })
+  const alive = states.find((state) => state.state === 'ALIVE')
+  const dead = states.find((state) => state.state === 'DEAD')
+  let changed = 0
+
+  if (!alive) {
+    await prisma.bodyState.create({
+      data: {
+        bodyId: body.id,
+        state: 'ALIVE',
+        fromEventId: firstEvent.id,
+        untilEventId: deathEvent.id,
+      },
+    })
+    changed += 1
+  } else if (alive.fromEventId !== firstEvent.id || alive.untilEventId !== deathEvent.id) {
+    await prisma.bodyState.update({
+      where: { id: alive.id },
+      data: { fromEventId: firstEvent.id, untilEventId: deathEvent.id },
+    })
+    changed += 1
+  }
+
+  if (!dead) {
+    await prisma.bodyState.create({
+      data: { bodyId: body.id, state: 'DEAD', fromEventId: deathEvent.id },
+    })
+    changed += 1
+  } else if (dead.fromEventId !== deathEvent.id || dead.untilEventId !== null) {
+    await prisma.bodyState.update({
+      where: { id: dead.id },
+      data: { fromEventId: deathEvent.id, untilEventId: null },
+    })
+    changed += 1
+  }
+
+  return changed
 }
 
 async function syncLocations(firstVisibleEventId) {
@@ -344,6 +518,8 @@ async function main() {
   let presencesCreated = 0
   let presencesUpdated = 0
   let presencesEnded = 0
+  let trajectoriesSynced = 0
+  let mortalitiesReconciled = 0
   let positionsAlreadyCovered = 0
   let positionsWithoutLocation = 0
 
@@ -487,6 +663,26 @@ async function main() {
       continue
     }
 
+    const chapterOfDeath = deathChapter(catalogCharacter)
+    const deathEvent = chapterOfDeath ? await ensureEvent(chapterOfDeath) : null
+    // `mapPresenceUntilChapterId` may pin the exact event, which is finer than
+    // the chapter a death status can name — a chapter holds several events and
+    // the victim rarely falls in the first one.
+    const pinnedLastEvent = await resolveEventRef(catalogCharacter.mapPresenceUntilChapterId)
+    if (deathEvent) {
+      const diedAt =
+        pinnedLastEvent?.chapter?.number === chapterOfDeath ? pinnedLastEvent : deathEvent
+      mortalitiesReconciled += await reconcileMortality(body, bodyFirstEvent, diedAt)
+    }
+
+    if (catalogCharacter.mapTrajectory?.length) {
+      const written = await syncTrajectory(catalogCharacter, body, locations)
+      presencesCreated += written.created
+      presencesUpdated += written.updated
+      trajectoriesSynced += 1
+      continue
+    }
+
     const existingPresences = await prisma.presence.findMany({
       where: { entityId: body.id },
       include: {
@@ -496,7 +692,13 @@ async function main() {
       },
     })
     const requestedPresenceChapter = chapterNumber(catalogCharacter.mapPresenceFromChapterId)
-    const requestedUntilChapter = chapterNumber(catalogCharacter.mapPresenceUntilChapterId)
+    // Both the catalogue field and the death read as "last chapter still on the
+    // map", so the record closes on the event after it: a victim is present in
+    // the chapter that kills them.
+    const lastPresentEvent = pinnedLastEvent || deathEvent
+    const requestedUntilChapter = lastPresentEvent?.chapter?.number ?? null
+    const untilEvent = await eventAfter(lastPresentEvent)
+    const leavesTheMap = deathEvent !== null || isDeadStatus(catalogCharacter.shipLocation?.status)
     const existingPresence =
       existingPresences
         .sort((left, right) => {
@@ -524,14 +726,7 @@ async function main() {
       )
         ? 'PROBABLE'
         : 'CONFIRMED'
-      const requestedPrecision =
-        location.type === 'ROOM'
-          ? 'EXACT_ROOM'
-          : location.type === 'TIER'
-            ? 'TIER'
-            : location.type === 'UNKNOWN'
-              ? 'UNKNOWN'
-              : 'ZONE'
+      const requestedPrecision = precisionFor(location)
       const requiresUpdate =
         existingPresence.locationId !== location.id ||
         (requestedPresenceEvent && existingPresence.fromEventId !== requestedPresenceEvent.id) ||
@@ -556,7 +751,6 @@ async function main() {
           where: { entityId: body.id, id: { not: existingPresence.id } },
         })
       }
-      const untilEvent = requestedUntilChapter ? await ensureEvent(requestedUntilChapter) : null
       if (untilEvent && existingPresence.untilEventId !== untilEvent.id) {
         await prisma.presence.update({
           where: { id: existingPresence.id },
@@ -564,7 +758,15 @@ async function main() {
         })
         presencesEnded += 1
       }
-      if (untilEvent && !isDeadStatus(catalogCharacter.shipLocation?.status)) {
+      if (untilEvent && leavesTheMap) {
+        // Whoever leaves the map for good keeps exactly one record, closed at
+        // the end. Anything else is a last-known continuation from a run made
+        // before the death was known, and it would put a corpse back on deck.
+        await prisma.presence.deleteMany({
+          where: { entityId: body.id, id: { not: existingPresence.id } },
+        })
+      }
+      if (untilEvent && !leavesTheMap) {
         const unknownLocation = locations.get('black-whale-unknown')
         await prisma.presence.deleteMany({
           where: {
@@ -604,12 +806,22 @@ async function main() {
             })
             presencesUpdated += 1
           }
-          if (continuations.length > 1) {
-            await prisma.presence.deleteMany({
-              where: { id: { in: continuations.slice(1).map((presence) => presence.id) } },
-            })
-          }
         }
+        // Moving the bound leaves the continuation from the previous run
+        // stranded at the old event, so sweep every "position inconnue" record
+        // that is not the one we just settled — matching only the current bound
+        // is what let duplicates accumulate.
+        const keptContinuation = await prisma.presence.findFirst({
+          where: { entityId: body.id, fromEventId: untilEvent.id, locationId: unknownLocation?.id },
+          orderBy: { id: 'asc' },
+        })
+        await prisma.presence.deleteMany({
+          where: {
+            entityId: body.id,
+            locationId: unknownLocation?.id,
+            id: { notIn: [existingPresence.id, keptContinuation?.id].filter(Boolean) },
+          },
+        })
       }
       positionsAlreadyCovered += 1
       continue
@@ -617,9 +829,6 @@ async function main() {
 
     const requestedPresenceEvent = requestedPresenceChapter
       ? await ensureEvent(requestedPresenceChapter)
-      : null
-    const requestedUntilEvent = requestedUntilChapter
-      ? await ensureEvent(requestedUntilChapter)
       : null
     const presenceStartEvent =
       requestedPresenceEvent ||
@@ -633,15 +842,8 @@ async function main() {
           entityId: body.id,
           locationId: location.id,
           fromEventId: presenceStartEvent.id,
-          untilEventId: requestedUntilEvent?.id || null,
-          precision:
-            location.type === 'ROOM'
-              ? 'EXACT_ROOM'
-              : location.type === 'TIER'
-                ? 'TIER'
-                : location.type === 'UNKNOWN'
-                  ? 'UNKNOWN'
-                  : 'ZONE',
+          untilEventId: untilEvent?.id || null,
+          precision: precisionFor(location),
           certainty: /^(inconnu|suspect)$/i.test(catalogCharacter.shipLocation?.status || '')
             ? 'PROBABLE'
             : 'CONFIRMED',
@@ -691,6 +893,8 @@ async function main() {
         presencesCreated,
         presencesUpdated,
         presencesEnded,
+        trajectoriesSynced,
+        mortalitiesReconciled,
         positionsAlreadyCovered,
         positionsWithoutLocation,
       },

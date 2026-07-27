@@ -853,7 +853,7 @@
       "role": "assassin / membre de la Brigade"
     },
     "mapLocationCorrection": true,
-    "mapPresenceFromChapterId": "ch-380",
+    "mapPresenceFromChapterId": "ch-377",
     "biography": [
       "Illumi joins the Phantom Troupe as member number 11 and boards the Black Whale with Kalluto. He openly explains that Hisoka hired him to kill him, treating the contract as a prenuptial agreement between assassins.",
       "On the fourth day, soldiers find Illumi and Kalluto in Tier 3's vista area. Mizaistom questions him, learns that the Phantom Troupe is aboard and assigns both Zoldycks residential quarters under Zodiac supervision."
@@ -2548,6 +2548,16 @@
         "allies": [],
         "opponents": ["Benjamin Hui Guo Rou", "Balsamilco Might", "Furykov"],
         "chapter": 373
+      }
+    ],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1002",
+        "fromChapterId": "ch-358"
+      },
+      {
+        "location": "tier-1-vip-jail",
+        "fromChapterId": "ch-376"
       }
     ]
   },
@@ -10160,6 +10170,16 @@
         "title": "Friends",
         "status": "absent"
       }
+    ],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1010",
+        "fromChapterId": "ch-358"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1011",
+        "fromChapterId": "ch-384"
+      }
     ]
   },
   {
@@ -10585,7 +10605,7 @@
     "firstAppearanceChapterId": "ch-5",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": 2,
+      "tier": 1,
       "room": "1013",
       "status": "actif",
       "role": "guard/ninja"
@@ -13054,6 +13074,16 @@
     "battles": [
       "Hinrigh Biganduffno vs. Padaille, Quorolle and Tevelares",
       "Hinrigh Biganduffno and Nobunaga Hazama vs. the Heil-Ly Family"
+    ],
+    "mapTrajectory": [
+      {
+        "location": "tier-4",
+        "fromChapterId": "ch-377"
+      },
+      {
+        "location": "tier-2-heilly-secret-hideout",
+        "fromChapterId": "ch-399"
+      }
     ]
   },
   {
@@ -15141,6 +15171,16 @@
       "Nobunaga Hazama, Phinks Magcub, Feitan Portor and Franklin Bordeau vs. Buor Family thugs",
       "Nobunaga Hazama vs. Luini",
       "Nobunaga Hazama and Hinrigh Biganduffno vs. the Heil-Ly Family"
+    ],
+    "mapTrajectory": [
+      {
+        "location": "tier-5",
+        "fromChapterId": "ch-358"
+      },
+      {
+        "location": "tier-2-heilly-secret-hideout",
+        "fromChapterId": "ch-399"
+      }
     ]
   },
   {
@@ -19150,7 +19190,7 @@
     "firstAppearanceChapterId": "ch-unknown",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": 2,
+      "tier": 1,
       "room": "1007",
       "status": "actif",
       "role": "guard"
@@ -19555,7 +19595,7 @@
     "firstAppearanceChapterId": "ch-368",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": 2,
+      "tier": 1,
       "room": "1013",
       "status": "actif",
       "role": "garde / Hunter"
@@ -20787,8 +20827,8 @@
     "firstAppearanceChapterId": "ch-unknown",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": 2,
-      "room": null,
+      "tier": 1,
+      "room": "1006",
       "status": "inconnu",
       "role": "prince tyson"
     },
@@ -21587,7 +21627,7 @@
     "firstAppearanceChapterId": "ch-358",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": 2,
+      "tier": 1,
       "room": "1014",
       "status": "decede",
       "role": "garde / transport"
@@ -22800,7 +22840,7 @@
     "firstAppearanceChapterId": "ch-358",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": 2,
+      "tier": 1,
       "room": "1014",
       "status": "en_detention",
       "role": "ancien garde"
@@ -24029,7 +24069,6 @@
     },
     "suspectedAllegiance": "Heil-Ly — Contagion, niveau 0",
     "mapLocationCorrection": true,
-    "mapPresenceFromChapterId": "ch-407",
     "biography": [
       "Borksen is a first-class soldier, provisional Hunter and former comrade of Tserriednich at the Military Academy. When Otocin reveals that she knows about the NEN, Gipper uses a transfer request as a test and eventually swaps her position with hers, sending her from the royal sector to Tier 3.",
       "Meeting Momolly, Otocin and their friends on a reservation, Borksen confirms that Theta is secretly teaching Nen in Tserriednich. She does not yet know the details of this power, but Theta and Salkov's reactions are enough for her to compare it to a weapon classified as a defense secret. She recommends that the group avoid Morena and cooperate with Xi-Yu or Cha-R.",
@@ -24436,7 +24475,18 @@
         "status": "absent"
       }
     ],
-    "competitions": ["Borksen vs. Morena Prudo — negotiation game"]
+    "competitions": ["Borksen vs. Morena Prudo — negotiation game"],
+    "mapTrajectory": [
+      {
+        "location": "black-whale-unknown",
+        "fromChapterId": "ch-394",
+        "certainty": "PROBABLE"
+      },
+      {
+        "location": "tier-2-heilly-secret-hideout",
+        "fromChapterId": "ch-405"
+      }
+    ]
   },
   {
     "id": "danjin",
@@ -26652,17 +26702,17 @@
       {
         "chapter": 370,
         "title": "Observation",
-        "status": "appears"
+        "status": "death"
       },
       {
         "chapter": 371,
         "title": "Mission",
-        "status": "appears"
+        "status": "corpse"
       },
       {
         "chapter": 372,
         "title": "Disappearance",
-        "status": "appears"
+        "status": "corpse"
       },
       {
         "chapter": 373,
@@ -31671,7 +31721,7 @@
       "role": "soldat / recherche de Borksen"
     },
     "mapLocationCorrection": true,
-    "mapPresenceFromChapterId": "ch-407",
+    "mapPresenceFromChapterId": "ch-394",
     "biography": [
       "After the soldiers burst into the Heil-Ly offices in Tier 3, Otocin asks Corporal Gipper to prepare a strategy against possible Nen users. Gipper ignores this term; Otocin explains that this is a dangerous power spreading to Tier 1 and speculates that this threat explains Tserriednich's apparent inaction.",
       "Otocin reveals he has the information from Borksen, temporary Hunter assigned to the royal quarters. Gipper decides to request his transfer as advisor, then threatens to gouge out Otocin's eyes if he shortens the prince's name again. Otocin, however, continues to use the nicknames “Tserried” and “Tserri”, much to the annoyance of his superior.",
@@ -34843,9 +34893,9 @@
     "firstAppearanceChapterId": "ch-358",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": 2,
+      "tier": 1,
       "room": "1014",
-      "status": "deceased",
+      "status": "mort",
       "role": "servant of Queen Oito"
     },
     "biography": [
@@ -35239,9 +35289,9 @@
     "firstAppearanceChapterId": "ch-360",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": 2,
+      "tier": 1,
       "room": "1014",
-      "status": "active",
+      "status": "actif",
       "role": "servant of Queen Oito"
     },
     "biography": [
@@ -35642,9 +35692,9 @@
     "firstAppearanceChapterId": "ch-358",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": 2,
+      "tier": 1,
       "room": "1014",
-      "status": "deceased",
+      "status": "mort",
       "role": "suspected bodyguard/spy"
     },
     "suspectedAllegiance": "Unidentified high-ranking queen",
@@ -36028,7 +36078,8 @@
         "title": "Friends",
         "status": "flashback"
       }
-    ]
+    ],
+    "mapPresenceUntilChapterId": "ch-358.2"
   },
   {
     "id": "onior-longbao",
@@ -38052,7 +38103,6 @@
       "status": "actif",
       "role": "scout transformed into Owl / search for Hisoka"
     },
-    "mapPresenceFromChapterId": "ch-405",
     "biography": [
       "Bonolenov boards the Black Whale with the Phantom Troupe and begins the search for Hisoka in Tier 5. On the fourth day, the Spiders gather in the central mess hall. After the group leaves, Bonolenov and Shizuku ask to team up with Chrollo, while accepting that their leader claims the right to kill Hisoka.",
       "Shizuku believes that their abilities are poorly suited to Bungee Gum. Bonolenov clarifies that he can transform rather than simply disguise himself thanks to Battle Cantabile: Metamorphosen, but admits to lacking strategic sense. Chrollo then entrusts him with a precise plan. The trio then reaches Tier 4 through the central passage.",
@@ -38450,6 +38500,16 @@
         "title": "Friends",
         "status": "absent"
       }
+    ],
+    "mapTrajectory": [
+      {
+        "location": "tier-5",
+        "fromChapterId": "ch-359"
+      },
+      {
+        "location": "tier-1-vip-casino",
+        "fromChapterId": "ch-405"
+      }
     ]
   },
   {
@@ -38466,7 +38526,6 @@
       "status": "actif",
       "role": "voleuse / recherche d'Hisoka"
     },
-    "mapPresenceFromChapterId": "ch-380",
     "biography": [
       "After the decision to steal Kakin's treasures, Shizuku boards the Black Whale with the Phantom Troupe. During the first days, the Spiders search Tier 5 in search of Hisoka, who has just murdered Shalnark and Kortopi.",
       "On the fourth day, the Brigade meets in the crowded central mess hall of Tier 5. When the Cha-R family demands their table, the Spiders leave without conflict. Chrollo allows everyone to search for Hisoka as they wish and orders the group to return with his head.",
@@ -38860,6 +38919,16 @@
         "title": "Friends",
         "status": "absent"
       }
+    ],
+    "mapTrajectory": [
+      {
+        "location": "tier-5",
+        "fromChapterId": "ch-359"
+      },
+      {
+        "location": "tier-4-central-passage",
+        "fromChapterId": "ch-380"
+      }
     ]
   },
   {
@@ -38876,7 +38945,7 @@
       "status": "actif",
       "role": "tireur / attente d'Hisoka"
     },
-    "mapPresenceFromChapterId": "ch-380",
+    "mapPresenceFromChapterId": "ch-359",
     "biography": [
       "On the second day of the journey, Franklin is traveling through Tier 5 with Phinks, Feitan, and Nobunaga when they encounter three members of the Buor family. They try to intimidate them without recognizing the Brigade, but are easily beaten and taken to the central refectory for questioning.",
       "The Spiders force their prisoners to explain the organization of Kakin's three mafia families. Franklin offers to provoke all three and asks which one is the most powerful. Learning that the Xi-Yu dominates by its financial means and its personnel, he demands that Buor's men summon the collector of their tribute. Phinks then orders them to raise the cabins of all passengers taller than 1.88 meters in order to find Hisoka.",
@@ -39290,7 +39359,6 @@
       "status": "actif",
       "role": "fighter / assault against the Heil-Ly"
     },
-    "mapPresenceFromChapterId": "ch-406",
     "biography": [
       "On the second day of the trip, Phinks, Feitan, Franklin and Nobunaga subdue three men from the Buor family at Tier 5. During the interrogation, Phinks understands that a middleman collects the profits between the leaders and their men. He then orders the prisoners to take down the cabin numbers of all passengers taller than 1.88 meters in order to find Hisoka.",
       "On the fourth day, the Brigade meets in the central dining hall then disperses on Chrollo's orders. Phinks and Feitan accompany Nobunaga to the depot to retrieve their clandestine weapons, refusing to give Hisoka even the slightest chance to catch any of them isolated.",
@@ -39691,6 +39759,16 @@
     ],
     "battles": [
       "Phinks Magcub, Nobunaga Hazama, Feitan Portor and Franklin Bordeau vs. men of the Buor family"
+    ],
+    "mapTrajectory": [
+      {
+        "location": "tier-5",
+        "fromChapterId": "ch-359"
+      },
+      {
+        "location": "tier-4-recycling-sewage-facilities",
+        "fromChapterId": "ch-406"
+      }
     ]
   },
   {
@@ -39707,7 +39785,7 @@
       "status": "inconnu",
       "role": "assassin / under surveillance of the Zodiacs"
     },
-    "mapPresenceFromChapterId": "ch-380",
+    "mapPresenceFromChapterId": "ch-377",
     "biography": [
       "Kalluto boards the Black Whale with the Phantom Troupe and participates in the search for Hisoka. On the fourth day, all the Spiders gather in the central mess hall of Tier 5 and conclude that their target is probably not on this level.",
       "When members of the Cha-R demand their table, the Brigade withdraws without a fight. Chrollo orders everyone to act freely and return with Hisoka's head, then Kalluto leaves the dining hall with the other members.",
@@ -40123,7 +40201,7 @@
       "status": "actif",
       "role": "combattante / chasse d'Hisoka"
     },
-    "mapPresenceFromChapterId": "ch-380",
+    "mapPresenceFromChapterId": "ch-359",
     "biography": [
       "After the duel between Chrollo and Hisoka at the Celestial Tower, Machi remains with the body with Shalnark and Kortopi. The two men leave after confirming the death, but she remains to repair the corpse, Hisoka having paid for the service in advance. She also thanks him for helping to exorcise Chrollo.",
       "As Machi prepares her sons, the aura suddenly surrounds the body. She immediately recognizes a post-mortem Nen: Bungee Gum compresses Hisoka's heart and lungs until resuscitating him. Machi advises him to choose his battles from now on and offers to stitch him up, but he reconstructs his face and limbs himself with Bungee Gum and Texture Surprise.",
@@ -40616,8 +40694,14 @@
       "role": "passager nommé"
     },
     "mapPresenceFromChapterId": "ch-359",
-    "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mapPresenceUntilChapterId": "ch-369.2",
+    "mangaAppearances": [
+      {
+        "chapter": 369,
+        "title": "Limits",
+        "status": "death"
+      }
+    ]
   },
   {
     "id": "beeta",
@@ -40936,19 +41020,35 @@
     "id": "feitan-portor",
     "canonicalName": "Feitan Portor",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
+    "description": "Member of the Phantom Troupe. Boards with the Spiders in Tier 5 and works the lower tiers with Phinks during the hunt for Hisoka.",
     "factionId": null,
     "firstAppearanceChapterId": "ch-359",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
+      "tier": 5,
       "room": null,
-      "status": "inconnu",
-      "role": "passager nommé"
+      "status": "actif",
+      "role": "combattant / chasse d’Hisoka"
     },
     "mapPresenceFromChapterId": "ch-359",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [
+      {
+        "chapter": 371,
+        "title": "Mission",
+        "status": "appears"
+      },
+      {
+        "chapter": 395,
+        "title": "Founding: Part 1",
+        "status": "appears"
+      },
+      {
+        "chapter": 400,
+        "title": "Secrecy",
+        "status": "appears"
+      }
+    ]
   },
   {
     "id": "fukataki",
@@ -41520,8 +41620,14 @@
       "role": "passager nommé"
     },
     "mapPresenceFromChapterId": "ch-359",
-    "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mapPresenceUntilChapterId": "ch-393",
+    "mangaAppearances": [
+      {
+        "chapter": 393,
+        "title": "Plea",
+        "status": "death"
+      }
+    ]
   },
   {
     "id": "macne",
@@ -42355,8 +42461,14 @@
       "role": "passager nommé"
     },
     "mapPresenceFromChapterId": "ch-359",
-    "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mapPresenceUntilChapterId": "ch-394",
+    "mangaAppearances": [
+      {
+        "chapter": 394,
+        "title": "Hypothesis",
+        "status": "death"
+      }
+    ]
   },
   {
     "id": "tenftory",

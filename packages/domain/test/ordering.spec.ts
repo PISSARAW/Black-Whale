@@ -80,3 +80,27 @@ describe('isActiveAt', () => {
     expect(isActiveAt(record, event(402, 1, 20))).toBe(true)
   })
 })
+
+describe('isActiveAt with an explicit reveal limit', () => {
+  const target = event(405, 3, 30)
+
+  it('defaults to the target event’s own chapter', () => {
+    const record = { fromEvent: event(405, 1, 20) }
+    expect(isActiveAt(record, target)).toBe(isActiveAt(record, target, 405))
+  })
+
+  it('hides a record opened in a chapter the reader has not reached', () => {
+    // Reading through 402, but inspecting the world as of chapter 405.
+    const record = { fromEvent: event(404, 1, 20) }
+    expect(isActiveAt(record, target)).toBe(true)
+    expect(isActiveAt(record, target, 402)).toBe(false)
+  })
+
+  it('keeps a record open when its end is past the reader’s limit', () => {
+    // The record ends before the target event, but in a chapter the reader has
+    // not read: reporting it as ended would leak that chapter.
+    const record = { fromEvent: event(401, 1, 10), untilEvent: event(404, 1, 20) }
+    expect(isActiveAt(record, target)).toBe(false)
+    expect(isActiveAt(record, target, 402)).toBe(true)
+  })
+})

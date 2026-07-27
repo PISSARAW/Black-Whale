@@ -38,19 +38,29 @@ export function isRevealed(event: OrderedEvent, revealedThroughChapter: number):
 }
 
 /**
- * Whether a record holds at `targetEvent`.
+ * Whether a record holds at `targetEvent`, for a reader who has read through
+ * `revealedThroughChapter` (by default, the target event's own chapter).
  *
- * The chapter comparison is not redundant with `compareEventOrder`: a record
- * whose bounds carry ordinals could otherwise be reported as active at an event
- * the reader has not reached, since ordinals ignore publication order entirely.
- * A record with no `untilEvent` is open-ended and still holds.
+ * The chapter guard is not redundant with `compareEventOrder`: a record whose
+ * bounds carry ordinals could otherwise be reported as active at an event the
+ * reader has not reached, since ordinals ignore publication order entirely.
+ *
+ * The same guard applies to the closing event, and that asymmetry is the point.
+ * A record with no `untilEvent` is open-ended, but so is one whose end is only
+ * revealed in a later chapter: telling the reader it has ended would leak the
+ * chapter that ends it.
  */
-export function isActiveAt(record: TemporalRecord, targetEvent: OrderedEvent): boolean {
-  return (
-    record.fromEvent.chapter.number <= targetEvent.chapter.number &&
-    compareEventOrder(record.fromEvent, targetEvent) <= 0 &&
-    (!record.untilEvent ||
-      record.untilEvent.chapter.number > targetEvent.chapter.number ||
-      compareEventOrder(targetEvent, record.untilEvent) < 0)
-  );
+export function isActiveAt(
+  record: TemporalRecord,
+  targetEvent: OrderedEvent,
+  revealedThroughChapter: number = targetEvent.chapter.number
+): boolean {
+  const started =
+    isRevealed(record.fromEvent, revealedThroughChapter) &&
+    compareEventOrder(record.fromEvent, targetEvent) <= 0;
+
+  const endIsKnown = record.untilEvent && isRevealed(record.untilEvent, revealedThroughChapter);
+  const notEnded = !endIsKnown || compareEventOrder(targetEvent, record.untilEvent!) < 0;
+
+  return started && notEnded;
 }

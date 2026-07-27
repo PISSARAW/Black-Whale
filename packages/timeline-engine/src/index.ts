@@ -71,7 +71,13 @@ export interface ITimelineEngine {
 
 import type { PrismaClient } from '@black-whale/database'
 
-import { compareEventOrder, isRevealed, type OrderedEvent as Orderable } from '@black-whale/domain'
+import {
+  compareEventOrder,
+  isActiveAt,
+  isRevealed,
+  type OrderedEvent as Orderable,
+  type TemporalRecord
+} from '@black-whale/domain'
 
 // Re-exported so callers that already reach for the timeline engine do not need
 // to know these live in the domain package.
@@ -91,92 +97,59 @@ export class TimelineEngine implements ITimelineEngine {
     const revealedThroughChapter = point.revealedThroughChapter ?? targetEvent.chapter.number
 
     // Récupérer les événements actifs (statuts et présences)
-    const allCharacters = await this.prisma.character.findMany({
-      include: { firstVisibleEvent: { include: { chapter: true } } }
-    })
-    const characters = allCharacters.filter((character: any) =>
-      isRevealed(character.firstVisibleEvent as OrderedEvent, revealedThroughChapter)
-      && compareEventOrder(character.firstVisibleEvent as OrderedEvent, targetEvent) <= 0
-    )
-    const allBodies = await this.prisma.body.findMany({
-      include: { firstVisibleEvent: { include: { chapter: true } } }
-    })
-    const bodies = allBodies.filter((body: any) =>
-      isRevealed(body.firstVisibleEvent as OrderedEvent, revealedThroughChapter)
-      && compareEventOrder(body.firstVisibleEvent as OrderedEvent, targetEvent) <= 0
-    )
-    const allConsciousnesses = await this.prisma.consciousness.findMany({
-      include: { firstVisibleEvent: { include: { chapter: true } } }
-    })
-    const consciousnesses = allConsciousnesses.filter((consciousness: any) =>
-      isRevealed(consciousness.firstVisibleEvent as OrderedEvent, revealedThroughChapter)
-      && compareEventOrder(consciousness.firstVisibleEvent as OrderedEvent, targetEvent) <= 0
-    )
-    
-    const presences = await this.prisma.presence.findMany({
-      where: {
-        entityType: 'BODY'
-      },
-      include: {
-        fromEvent: { include: { chapter: true } },
-        untilEvent: { include: { chapter: true } }
-      }
-    })
+    // Push the chapter bound into SQL. It is the first conjunct of both
+    // predicates below, so the rows it removes could never have survived the
+    // in-memory pass — which still runs, because the ordinal comparison has no
+    // SQL equivalent. Without it every one of these tables was read whole on
+    // every request.
+    const revealedBound = { chapter: { number: { lte: revealedThroughChapter } } }
+    const visibleWhere = { firstVisibleEvent: revealedBound }
+    const temporalWhere = { fromEvent: revealedBound }
+    const temporalInclude = {
+      fromEvent: { include: { chapter: true } },
+      untilEvent: { include: { chapter: true } }
+    }
 
-    const activePresences = presences.filter((presence) => {
-      const started = isRevealed(presence.fromEvent as OrderedEvent, revealedThroughChapter)
-        && compareEventOrder(presence.fromEvent as OrderedEvent, targetEvent) <= 0
-      const endIsKnown = presence.untilEvent
-        && isRevealed(presence.untilEvent as OrderedEvent, revealedThroughChapter)
-      const notEnded = !endIsKnown || compareEventOrder(targetEvent, presence.untilEvent as OrderedEvent) < 0
-      return started && notEnded
-    })
+    // The reveal check is repeated here on purpose: the SQL bound is an
+    // optimisation, not the guarantee. Dropping it would make correctness
+    // depend on the query, and a caller reading these rows another way would
+    // silently leak.
+    const startedBefore = (record: { firstVisibleEvent: unknown }) =>
+      isRevealed(record.firstVisibleEvent as OrderedEvent, revealedThroughChapter) &&
+      compareEventOrder(record.firstVisibleEvent as OrderedEvent, targetEvent) <= 0
+    const active = (record: unknown) =>
+      isActiveAt(record as TemporalRecord, targetEvent, revealedThroughChapter)
 
-    const states = await this.prisma.bodyState.findMany({
-      include: {
-        fromEvent: { include: { chapter: true } },
-        untilEvent: { include: { chapter: true } }
-      }
-    })
+    const [allCharacters, allBodies, allConsciousnesses, presences, states, occupancies, appearances] =
+      await Promise.all([
+        this.prisma.character.findMany({
+          where: visibleWhere,
+          include: { firstVisibleEvent: { include: { chapter: true } } }
+        }),
+        this.prisma.body.findMany({
+          where: visibleWhere,
+          include: { firstVisibleEvent: { include: { chapter: true } } }
+        }),
+        this.prisma.consciousness.findMany({
+          where: visibleWhere,
+          include: { firstVisibleEvent: { include: { chapter: true } } }
+        }),
+        this.prisma.presence.findMany({
+          where: { entityType: 'BODY', ...temporalWhere },
+          include: temporalInclude
+        }),
+        this.prisma.bodyState.findMany({ where: temporalWhere, include: temporalInclude }),
+        this.prisma.bodyOccupancy.findMany({ where: temporalWhere, include: temporalInclude }),
+        this.prisma.appearanceState.findMany({ where: temporalWhere, include: temporalInclude })
+      ])
 
-    const activeStates = states.filter((state) => {
-      const started = isRevealed(state.fromEvent as OrderedEvent, revealedThroughChapter)
-        && compareEventOrder(state.fromEvent as OrderedEvent, targetEvent) <= 0
-      const endIsKnown = state.untilEvent
-        && isRevealed(state.untilEvent as OrderedEvent, revealedThroughChapter)
-      const notEnded = !endIsKnown || compareEventOrder(targetEvent, state.untilEvent as OrderedEvent) < 0
-      return started && notEnded
-    })
-
-    const occupancies = await this.prisma.bodyOccupancy.findMany({
-      include: {
-        fromEvent: { include: { chapter: true } },
-        untilEvent: { include: { chapter: true } }
-      }
-    })
-    const activeOccupancies = occupancies.filter((occupancy) => {
-      const started = isRevealed(occupancy.fromEvent as OrderedEvent, revealedThroughChapter)
-        && compareEventOrder(occupancy.fromEvent as OrderedEvent, targetEvent) <= 0
-      const endIsKnown = occupancy.untilEvent
-        && isRevealed(occupancy.untilEvent as OrderedEvent, revealedThroughChapter)
-      const notEnded = !endIsKnown || compareEventOrder(targetEvent, occupancy.untilEvent as OrderedEvent) < 0
-      return started && notEnded
-    })
-
-    const appearances = await this.prisma.appearanceState.findMany({
-      include: {
-        fromEvent: { include: { chapter: true } },
-        untilEvent: { include: { chapter: true } }
-      }
-    })
-    const activeAppearances = appearances.filter((appearance) => {
-      const started = isRevealed(appearance.fromEvent as OrderedEvent, revealedThroughChapter)
-        && compareEventOrder(appearance.fromEvent as OrderedEvent, targetEvent) <= 0
-      const endIsKnown = appearance.untilEvent
-        && isRevealed(appearance.untilEvent as OrderedEvent, revealedThroughChapter)
-      const notEnded = !endIsKnown || compareEventOrder(targetEvent, appearance.untilEvent as OrderedEvent) < 0
-      return started && notEnded
-    })
+    const characters = allCharacters.filter(startedBefore)
+    const bodies = allBodies.filter(startedBefore)
+    const consciousnesses = allConsciousnesses.filter(startedBefore)
+    const activePresences = presences.filter(active)
+    const activeStates = states.filter(active)
+    const activeOccupancies = occupancies.filter(active)
+    const activeAppearances = appearances.filter(active)
 
     // Map Prisma models to WorldSnapshot (casting as any for now to align with Domain types)
     return {
@@ -204,6 +177,7 @@ export class TimelineEngine implements ITimelineEngine {
     const revealedThroughChapter = point.revealedThroughChapter ?? targetEvent.chapter.number
 
     const events = await this.prisma.narrativeEvent.findMany({
+      where: { chapter: { number: { lte: revealedThroughChapter } } },
       include: { chapter: true }
     })
 
@@ -221,17 +195,27 @@ export class TimelineEngine implements ITimelineEngine {
     const targetEvent = await this.resolveEvent(point)
     if (!targetEvent) throw new Error('Unable to resolve timeline point')
 
+    const kernelRevealedThrough = point.revealedThroughChapter ?? targetEvent.chapter.number
+
     const [snapshot, orderedEvents, locations, occupancies, consciousnessStates] = await Promise.all([
       this.getWorldState({ ...point, eventId: targetEvent.id }),
-      this.prisma.narrativeEvent.findMany({ include: { chapter: true } }),
-      this.prisma.location.findMany({ include: { firstVisibleEvent: { include: { chapter: true } } } }),
+      this.prisma.narrativeEvent.findMany({
+        where: { chapter: { number: { lte: kernelRevealedThrough } } },
+        include: { chapter: true },
+      }),
+      this.prisma.location.findMany({
+        where: { firstVisibleEvent: { chapter: { number: { lte: kernelRevealedThrough } } } },
+        include: { firstVisibleEvent: { include: { chapter: true } } },
+      }),
       this.prisma.bodyOccupancy.findMany({
+        where: { fromEvent: { chapter: { number: { lte: kernelRevealedThrough } } } },
         include: {
           fromEvent: { include: { chapter: true } },
           untilEvent: { include: { chapter: true } },
         },
       }),
       this.prisma.consciousnessState.findMany({
+        where: { fromEvent: { chapter: { number: { lte: kernelRevealedThrough } } } },
         include: {
           fromEvent: { include: { chapter: true } },
           untilEvent: { include: { chapter: true } },
@@ -248,16 +232,11 @@ export class TimelineEngine implements ITimelineEngine {
       localSequence: targetEvent.sequence,
     } satisfies StoryCursor
     const state = createEmptyWorld(cursor)
-    const revealedThroughChapter = point.revealedThroughChapter ?? targetEvent.chapter.number
+    const revealedThroughChapter = kernelRevealedThrough
 
     const activeConsciousnessState = new Map<string, string>()
     for (const consciousnessState of consciousnessStates as any[]) {
-      const active = isRevealed(consciousnessState.fromEvent, revealedThroughChapter)
-        && compareEventOrder(consciousnessState.fromEvent, targetEvent) <= 0
-        && (!consciousnessState.untilEvent
-          || !isRevealed(consciousnessState.untilEvent, revealedThroughChapter)
-          || compareEventOrder(targetEvent, consciousnessState.untilEvent) < 0)
-      if (active) activeConsciousnessState.set(consciousnessState.consciousnessId, consciousnessState.state)
+      if (isActiveAt(consciousnessState, targetEvent, revealedThroughChapter)) activeConsciousnessState.set(consciousnessState.consciousnessId, consciousnessState.state)
     }
 
     const register = (entity: { id: string; label: string; kind: WorldEntityKind; originalCharacterId?: string; metadata?: Record<string, unknown> }) => {
@@ -319,12 +298,8 @@ export class TimelineEngine implements ITimelineEngine {
     }
 
     for (const occupancy of occupancies as any[]) {
-      const active = isRevealed(occupancy.fromEvent, revealedThroughChapter)
-        && compareEventOrder(occupancy.fromEvent, targetEvent) <= 0
-        && (!occupancy.untilEvent
-          || !isRevealed(occupancy.untilEvent, revealedThroughChapter)
-          || compareEventOrder(targetEvent, occupancy.untilEvent) < 0)
-      if (active) state.consciousnessByBody[occupancy.bodyId] = occupancy.consciousnessId ?? null
+      if (isActiveAt(occupancy, targetEvent, revealedThroughChapter))
+        state.consciousnessByBody[occupancy.bodyId] = occupancy.consciousnessId ?? null
     }
 
     return state

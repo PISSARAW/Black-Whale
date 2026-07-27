@@ -8,7 +8,7 @@
     "dev": "vite dev --port 3000",
     "preview": "vite preview",
     "typecheck": "svelte-check --tsconfig ./tsconfig.json",
-    "test": "vitest run --passWithNoTests",
+    "test": "vitest run",
     "clean": "rimraf .svelte-kit build"
   },
   "dependencies": {

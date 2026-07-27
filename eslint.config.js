@@ -23,7 +23,6 @@ export default tseslint.config(
       '**/*.tsbuildinfo',
       'apps/*/vite.config.ts.timestamp-*.mjs',
       'packages/database/prisma/migrations/**',
-      'infrastructure/database/**',
     ],
   },
 

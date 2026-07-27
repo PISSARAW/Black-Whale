@@ -58,4 +58,4 @@ Test restoration periodically on a non-production server.
 
 ## 5. Existing development databases
 
-The production migration history is a squashed baseline generated from the canonical Prisma schema. It is intended for the first production installation. The former additive migrations are archived under `infrastructure/database/legacy-prisma-migrations` for reference. Do not point the production Compose file at an old development database without taking a dump and planning a one-time migration.
+`packages/database/prisma/migrations` is the only migration history. It is a squashed baseline generated from the canonical Prisma schema, intended for a first production installation. Do not point the production Compose file at an old development database without taking a dump and planning a one-time migration.

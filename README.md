@@ -96,9 +96,10 @@ createdb blackwhale
 pnpm --filter "@black-whale/database" db:push
 ```
 
-Development uses `prisma db push`. Production uses the versioned baseline in
-`packages/database/prisma/migrations` through `prisma migrate deploy`; do not
-use `db push` against production.
+`packages/database/prisma/schema.prisma` is the single source of truth for the
+schema, and `packages/database/prisma/migrations` its only migration history.
+Development uses `prisma db push`; production applies the versioned baseline
+through `prisma migrate deploy`. Do not use `db push` against production.
 
 Alternatively, start the complete development stack:
 

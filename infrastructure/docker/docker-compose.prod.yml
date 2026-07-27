@@ -94,6 +94,12 @@ services:
       HOST: 0.0.0.0
       ORIGIN: https://${DOMAIN:?Set DOMAIN in .env.production}
       API_URL: http://api:3001
+      # Caddy is the single hop in front of this container, so the last entry of
+      # X-Forwarded-For is the real client. Without these two, every request
+      # appears to come from the Docker bridge address.
+      ADDRESS_HEADER: X-Forwarded-For
+      XFF_DEPTH: "1"
+      BODY_SIZE_LIMIT: "512K"
       DATABASE_URL: postgresql://${POSTGRES_USER:-bw_user}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-black_whale}
     expose: ["3000"]
     healthcheck:
@@ -115,6 +121,11 @@ services:
       PORT: "3002"
       HOST: 0.0.0.0
       ORIGIN: https://admin.${DOMAIN:?Set DOMAIN in .env.production}
+      # The login rate limiter keys on the client address; without these it
+      # would see only the Caddy container and bucket every attacker together.
+      ADDRESS_HEADER: X-Forwarded-For
+      XFF_DEPTH: "1"
+      BODY_SIZE_LIMIT: "512K"
       DATABASE_URL: postgresql://${POSTGRES_USER:-bw_user}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-black_whale}
       ADMIN_PASSWORD: ${ADMIN_PASSWORD:?Set ADMIN_PASSWORD in .env.production}
       SESSION_SECRET: ${SESSION_SECRET:?Set SESSION_SECRET in .env.production}

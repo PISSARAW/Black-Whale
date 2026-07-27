@@ -9,8 +9,12 @@ export async function backendRequest<T>(fetcher: typeof fetch, path: string, ini
     }
   });
   if (!response.ok) {
-    const message = await response.text();
-    throw new Error(`Backend ${response.status}: ${message || path}`);
+    // The backend body can carry stack traces, SQL text or validation echoes.
+    // It is logged for operators but never propagated into a page the public
+    // can read — callers surface `error.message` straight to the user.
+    const detail = await response.text().catch(() => '');
+    console.error(`[backend] ${response.status} ${path}${detail ? ` — ${detail}` : ''}`);
+    throw new Error(`Backend request failed (${response.status}).`);
   }
   return response.json() as Promise<T>;
 }

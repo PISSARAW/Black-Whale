@@ -9,24 +9,47 @@
 		X-Frame-Options "DENY"
 		Referrer-Policy "strict-origin-when-cross-origin"
 		Permissions-Policy "camera=(), microphone=(), geolocation=()"
+		Cross-Origin-Opener-Policy "same-origin"
 		-Server
+		-X-Powered-By
 	}
+}
+
+# Replace, don't append: `{remote_host}` is the real TCP peer, so a
+# client-supplied X-Forwarded-For never reaches the apps. The login rate limiter
+# and the API throttler both key on this value.
+(client_ip) {
+	header_up X-Forwarded-For {remote_host}
+	header_up X-Real-IP {remote_host}
 }
 
 {$DOMAIN} {
 	import security_headers
 	encode zstd gzip
-	reverse_proxy web:3000
+	reverse_proxy web:3000 {
+		import client_ip
+	}
 }
 
 api.{$DOMAIN} {
 	import security_headers
+	header X-Robots-Tag "noindex, nofollow"
 	encode zstd gzip
-	reverse_proxy api:3001
+	reverse_proxy api:3001 {
+		import client_ip
+	}
 }
 
 admin.{$DOMAIN} {
 	import security_headers
+	# The back-office holds unpublished editorial data: keep it out of indexes
+	# and out of any shared cache.
+	header {
+		X-Robots-Tag "noindex, nofollow, noarchive"
+		Cache-Control "no-store, private"
+	}
 	encode zstd gzip
-	reverse_proxy admin:3002
+	reverse_proxy admin:3002 {
+		import client_ip
+	}
 }

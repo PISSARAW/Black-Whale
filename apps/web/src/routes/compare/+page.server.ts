@@ -1,12 +1,12 @@
 import { prisma } from '$lib/server/db';
+import { readSpoilerProfile } from '$lib/server/spoiler';
 import type { PageServerLoad } from './$types';
 import { filterVisible } from '@black-whale/spoiler-engine';
 import { TimelineEngine } from '@black-whale/timeline-engine';
 
 export const load: PageServerLoad = async ({ cookies, url, fetch }) => {
-  const spoilerLimitCookie = cookies.get('userSpoilerLimit');
-  const maxChapter = spoilerLimitCookie ? parseInt(spoilerLimitCookie) : Infinity;
-  const spoilerProfile = spoilerLimitCookie ? { maxChapter } : undefined;
+  const spoilerProfile = readSpoilerProfile(cookies);
+  const maxChapter = spoilerProfile?.maxChapter;
 
   let characters = await prisma.character.findMany({
     orderBy: { canonicalName: 'asc' },
@@ -20,7 +20,7 @@ export const load: PageServerLoad = async ({ cookies, url, fetch }) => {
   const events = await prisma.narrativeEvent.findMany({
     where: {
       occursOnBlackWhale: true,
-      ...(maxChapter !== Infinity ? { chapter: { number: { lte: maxChapter } } } : {})
+      ...(maxChapter !== undefined ? { chapter: { number: { lte: maxChapter } } } : {})
     },
     orderBy: [{ chapter: { number: 'asc' } }, { sequence: 'asc' }],
     include: { chapter: true }

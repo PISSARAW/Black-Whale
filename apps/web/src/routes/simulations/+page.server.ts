@@ -8,6 +8,7 @@ import {
 } from '@black-whale/simulation-engine';
 import { prisma } from '$lib/server/db';
 import { simulationStore } from '$lib/server/simulations';
+import { readSpoilerLimit } from '$lib/server/spoiler';
 import { rateLimit } from '$lib/server/rateLimit';
 import type { Actions, PageServerLoad } from './$types';
 
@@ -30,9 +31,7 @@ function message(error: unknown, fallback: string): string {
 }
 
 export const load: PageServerLoad = async ({ url, cookies }) => {
-  const spoilerCookie = cookies.get('userSpoilerLimit');
-  const parsedLimit = spoilerCookie ? Number.parseInt(spoilerCookie, 10) : undefined;
-  const events = await listCanonicalEvents(prisma, Number.isFinite(parsedLimit) ? parsedLimit : undefined);
+  const events = await listCanonicalEvents(prisma, readSpoilerLimit(cookies));
 
   const branchId = url.searchParams.get('branch');
   if (!branchId) return { events, branch: null, scene: null, branchError: null };

@@ -1,6 +1,7 @@
 import { prisma } from '$lib/server/db';
 import type { CatalogCharacter } from '$lib/server/data-files';
 import { buildPerspective } from '$lib/server/perspectives';
+import { readSpoilerProfile } from '$lib/server/spoiler';
 import { TimelineEngine } from '@black-whale/timeline-engine';
 import characterCatalog from '../../../../../data/characters/characters.json';
 import abilityCatalog from '../../../../../data/abilities/abilities.json';
@@ -69,8 +70,7 @@ export const load: PageServerLoad = async ({ url, cookies }) => {
 	const requestedEventId = url.searchParams.get('eventId');
 	const legacySequence = url.searchParams.get('sequence') ? parseInt(url.searchParams.get('sequence') as string) : undefined;
 	
-	const spoilerLimitCookie = cookies.get('userSpoilerLimit');
-	const spoilerProfile = spoilerLimitCookie ? { maxChapter: parseInt(spoilerLimitCookie) } : undefined;
+	const spoilerProfile = readSpoilerProfile(cookies);
 
 	// Sequence is local to a chapter. Always order and select through the unique
 	// event id, using chapter number as the primary chronological key.

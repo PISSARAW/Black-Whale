@@ -1,15 +1,14 @@
 import { prisma } from '$lib/server/db';
+import { readSpoilerLimit } from '$lib/server/spoiler';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ cookies }) => {
-	const spoilerLimitCookie = cookies.get('userSpoilerLimit');
-	const parsedSpoilerLimit = spoilerLimitCookie ? Number.parseInt(spoilerLimitCookie, 10) : Number.NaN;
-	const maxChapter = Number.isFinite(parsedSpoilerLimit) ? parsedSpoilerLimit : Infinity;
+	const maxChapter = readSpoilerLimit(cookies);
 
 	// Fetch all chapters with their events, filtered by spoiler limit
 	const chapters = await prisma.chapter.findMany({
 		where: {
-			...(maxChapter !== Infinity ? { number: { lte: maxChapter } } : {}),
+			...(maxChapter !== undefined ? { number: { lte: maxChapter } } : {}),
 			events: { some: { occursOnBlackWhale: true } }
 		},
 		orderBy: { number: 'asc' },
@@ -23,6 +22,6 @@ export const load: PageServerLoad = async ({ cookies }) => {
 
 	return {
 		chapters,
-		spoilerLimit: maxChapter !== Infinity ? maxChapter : undefined
+		spoilerLimit: maxChapter
 	};
 };

@@ -1,4 +1,5 @@
 import { prisma } from '$lib/server/db';
+import { buildPerspective } from '$lib/server/perspectives';
 import { TimelineEngine } from '@black-whale/timeline-engine';
 import characterCatalog from '../../../../../data/characters/characters.json';
 import abilityCatalog from '../../../../../data/abilities/abilities.json';
@@ -186,13 +187,13 @@ export const load: PageServerLoad = async ({ url, cookies }) => {
 
 	if (selectedEvent?.id && selectedPerspectiveId !== 'reader') {
 		try {
-			const spoilerQuery = spoilerProfile?.maxChapter ? `&spoilerLimit=${spoilerProfile.maxChapter}` : '';
-			const perspectiveResponse = await fetch(`http://localhost:3001/v1/perspectives/${selectedPerspectiveId}?eventId=${selectedEvent.id}${spoilerQuery}`);
-			if (perspectiveResponse.ok) {
-				perspective = await perspectiveResponse.json();
-			}
+			perspective = await buildPerspective(
+				selectedPerspectiveId,
+				selectedEvent.id,
+				spoilerProfile?.maxChapter
+			);
 		} catch (error) {
-			console.error('Failed to fetch perspective for ship page', error);
+			console.error('Failed to build perspective for ship page', error);
 		}
 	}
 

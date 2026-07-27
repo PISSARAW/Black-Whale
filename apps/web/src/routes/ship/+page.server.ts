@@ -2,66 +2,20 @@ import { prisma } from '$lib/server/db';
 import type { CatalogCharacter } from '$lib/server/data-files';
 import { buildPerspective } from '$lib/server/perspectives';
 import { readSpoilerProfile } from '$lib/server/spoiler';
-import { TimelineEngine } from '@black-whale/timeline-engine';
+import { compareEventOrder, TimelineEngine } from '@black-whale/timeline-engine';
+import {
+	buildCatalogIndex,
+	buildHatsuIndex,
+	hatsuNamesFor,
+	resolveFactionTags
+} from '$lib/roster';
 import characterCatalog from '../../../../../data/characters/characters.json';
 import abilityCatalog from '../../../../../data/abilities/abilities.json';
 import type { PageServerLoad } from './$types';
 import { redirect } from '@sveltejs/kit';
 
-type FactionFilterId = 'princes' | 'guards' | 'hunters' | 'spider' | 'mafia';
-
-const catalogByName = new Map(
-	(characterCatalog as CatalogCharacter[]).map((character) => [character.canonicalName, character])
-);
-const hatsuNamesByOwnerId = new Map<string, string[]>();
-for (const ability of abilityCatalog as Array<{ ownerId?: string | null; name: string }>) {
-	if (!ability.ownerId) continue;
-	const names = hatsuNamesByOwnerId.get(ability.ownerId) || [];
-	names.push(ability.name);
-	hatsuNamesByOwnerId.set(ability.ownerId, names);
-}
-
-function addFactionType(tags: Set<FactionFilterId>, type: string) {
-	if (type === 'KAKIN_ROYAL_ARMY' || type === 'BENJAMIN_PRIVATE_ARMY') tags.add('guards');
-	if (type === 'HUNTER_ASSOCIATION') tags.add('hunters');
-	if (type === 'PHANTOM_TROUPE') tags.add('spider');
-	if (type === 'MAFIA_FAMILY') tags.add('mafia');
-}
-
-function resolveFactionTags(character: any, activeFactionTypes: string[]): FactionFilterId[] {
-	const tags = new Set<FactionFilterId>();
-	activeFactionTypes.forEach((type) => addFactionType(tags, type));
-
-	// The imported canon catalogue remains a fallback while the temporal
-	// AffiliationMembership table is progressively populated.
-	const catalogCharacter = catalogByName.get(character.canonicalName);
-	const factionId = catalogCharacter?.factionId || '';
-	const searchableRole = [
-		character.slug,
-		character.description,
-		catalogCharacter?.description,
-		catalogCharacter?.shipLocation?.role
-	]
-		.filter(Boolean)
-		.join(' ')
-		.normalize('NFD')
-		.replace(/[\u0300-\u036f]/g, '')
-		.toLowerCase();
-
-	// "Princes" désigne les héritiers eux-mêmes, pas tous les membres de leur camp.
-	if (catalogCharacter?.id.startsWith('prince-')) tags.add('princes');
-	if (factionId === 'phantom-troupe') tags.add('spider');
-	if (factionId.startsWith('mafia-')) tags.add('mafia');
-	if (factionId === 'zodiacs' || /\b(hunter|zodiaque)\b/.test(searchableRole)) tags.add('hunters');
-	if (/\b(garde|guard|protecteur|soldat|soldier|securite)\b/.test(searchableRole)) tags.add('guards');
-
-	return [...tags];
-}
-
-function compareEvents(a: { chapter: { number: number }; sequence: number; ordinal?: number | null }, b: { chapter: { number: number }; sequence: number; ordinal?: number | null }) {
-	if (a.ordinal != null && b.ordinal != null) return a.ordinal - b.ordinal;
-	return a.chapter.number - b.chapter.number || a.sequence - b.sequence;
-}
+const catalogIndex = buildCatalogIndex(characterCatalog as CatalogCharacter[]);
+const hatsuIndex = buildHatsuIndex(abilityCatalog);
 
 export const load: PageServerLoad = async ({ url, cookies }) => {
 	const timelineEngine = new TimelineEngine(prisma);
@@ -131,18 +85,16 @@ export const load: PageServerLoad = async ({ url, cookies }) => {
 		: [];
 	const activeFactionTypesByCharacter = new Map<string, string[]>();
 	for (const membership of memberships) {
-		if (!selectedEvent || compareEvents(membership.fromEvent, selectedEvent) > 0) continue;
-		if (membership.untilEvent && compareEvents(selectedEvent, membership.untilEvent) >= 0) continue;
+		if (!selectedEvent || compareEventOrder(membership.fromEvent, selectedEvent) > 0) continue;
+		if (membership.untilEvent && compareEventOrder(selectedEvent, membership.untilEvent) >= 0) continue;
 		const types = activeFactionTypesByCharacter.get(membership.characterId) || [];
 		types.push(membership.faction.type);
 		activeFactionTypesByCharacter.set(membership.characterId, types);
 	}
 	visibleCharacters = visibleCharacters.map((character: any) => ({
 		...character,
-		factionTags: resolveFactionTags(character, activeFactionTypesByCharacter.get(character.id) || []),
-		hatsuNames: hatsuNamesByOwnerId.get(
-			(characterCatalog as CatalogCharacter[]).find((entry) => entry.canonicalName === character.canonicalName)?.id || character.slug
-		) || []
+		factionTags: resolveFactionTags(character, activeFactionTypesByCharacter.get(character.id) || [], catalogIndex),
+		hatsuNames: hatsuNamesFor(character, catalogIndex, hatsuIndex)
 	}));
 
 	const perspectiveIsAvailable = requestedPerspectiveId === 'reader'
@@ -212,9 +164,7 @@ export const load: PageServerLoad = async ({ url, cookies }) => {
 			chapterNumber: nextChapterNumber,
 			characters: nextChapterWorldState.characters.map((character: any) => ({
 				...character,
-				hatsuNames: hatsuNamesByOwnerId.get(
-					(characterCatalog as CatalogCharacter[]).find((entry) => entry.canonicalName === character.canonicalName)?.id || character.slug
-				) || []
+				hatsuNames: hatsuNamesFor(character, catalogIndex, hatsuIndex)
 			})),
 			bodies: nextChapterWorldState.bodies,
 			consciousnesses: nextChapterWorldState.consciousnesses,

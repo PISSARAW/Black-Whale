@@ -1,15 +1,19 @@
 import { Body, Controller, Get, Param, Post, Query, Version } from '@nestjs/common'
 import { ApiOperation, ApiTags } from '@nestjs/swagger'
+import { Throttle } from '@nestjs/throttler'
 import { SimulationsService } from './simulations.service.js'
-import type { CreateSimulationDto, SimulationActionDto } from '@black-whale/contracts'
+import { CreateSimulationDto, SimulationActionDto } from './dto/simulation.dto.js'
 
 @ApiTags('simulations')
 @Controller('simulations')
 export class SimulationsController {
   constructor(private readonly simulationsService: SimulationsService) {}
 
+  // Branch creation persists rows from an unauthenticated caller, so it gets a
+  // much tighter budget than the read endpoints.
   @Post()
   @Version('1')
+  @Throttle({ default: { limit: 10, ttl: 60_000 } })
   @ApiOperation({ summary: 'Create a new simulation branch' })
   create(@Body() dto: CreateSimulationDto) {
     return this.simulationsService.createBranch(dto)
@@ -34,6 +38,7 @@ export class SimulationsController {
 
   @Post(':branchId/actions')
   @Version('1')
+  @Throttle({ default: { limit: 30, ttl: 60_000 } })
   @ApiOperation({ summary: 'Apply an action to a simulation branch' })
   applyAction(
     @Param('branchId') branchId: string,

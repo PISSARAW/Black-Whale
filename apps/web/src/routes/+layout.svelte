@@ -4,9 +4,12 @@
   import GlobalHatsuController from '$lib/nen/GlobalHatsuController.svelte'
   import GlobalHatsuEffects from '$lib/nen/GlobalHatsuEffects.svelte'
   import CommandPalette from '$lib/components/CommandPalette.svelte'
+  import { tick } from 'svelte'
 
   let menuOpen = false
   let paletteOpen = false
+  let menuPanel: HTMLElement | undefined
+  let menuButton: HTMLButtonElement | undefined
 
   const primaryNavigation = [
     { href: '/ship', label: 'Explore' },
@@ -27,12 +30,44 @@
   function closeMenu() {
     menuOpen = false
   }
+
+  async function toggleMenu() {
+    menuOpen = !menuOpen
+    if (menuOpen) {
+      await tick()
+      menuPanel?.focus()
+    } else {
+      menuButton?.focus()
+    }
+  }
+
+  function openPalette() {
+    menuOpen = false
+    paletteOpen = true
+  }
+
+  function handleKeydown(event: KeyboardEvent) {
+    if (event.key === 'Escape' && menuOpen) {
+      menuOpen = false
+      menuButton?.focus()
+    }
+  }
+
+  // A drawer covering the viewport must not let the page scroll behind it.
+  $: if (typeof document !== 'undefined') {
+    document.body.style.overflow = menuOpen ? 'hidden' : ''
+  }
+
+  // Any navigation (including browser back) closes the drawer.
+  $: if ($page.url.pathname) menuOpen = false
 </script>
 
 <svelte:head>
   <meta name="theme-color" content="#070a0c" />
   <meta name="color-scheme" content="dark" />
 </svelte:head>
+
+<svelte:window onkeydown={handleKeydown} />
 
 <div class="app-shell">
   <a class="skip-link" href="#main-content">Skip to main content</a>
@@ -57,20 +92,21 @@
     </nav>
 
     <div class="header-meta">
-      <button type="button" onclick={() => (paletteOpen = true)} aria-label="Open quick navigation">
+      <button type="button" onclick={openPalette} aria-label="Open quick navigation">
         <span>Quick find</span><kbd>⌘K</kbd>
       </button>
       <span aria-hidden="true">EN</span>
     </div>
 
     <button
+      bind:this={menuButton}
       class="menu-toggle"
       class:open={menuOpen}
       type="button"
       aria-label={menuOpen ? 'Close navigation menu' : 'Open navigation menu'}
       aria-expanded={menuOpen}
       aria-controls="site-menu"
-      onclick={() => (menuOpen = !menuOpen)}
+      onclick={toggleMenu}
     >
       <span></span>
       <span></span>
@@ -79,27 +115,51 @@
 
   {#if menuOpen}
     <div class="menu-backdrop" role="presentation" onclick={closeMenu}></div>
-    <aside id="site-menu" class="site-menu" aria-label="Site navigation" data-hatsu-pass>
-      <div class="menu-heading">
-        <p>Navigation dossier</p>
-        <span>CLASSIFIED / 05 SECTIONS</span>
-      </div>
+    <div
+      bind:this={menuPanel}
+      id="site-menu"
+      class="site-menu"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Site navigation"
+      tabindex="-1"
+      data-hatsu-pass
+    >
+      <div class="menu-scroll">
+        <div class="menu-heading">
+          <p>Navigation dossier</p>
+          <span>CLASSIFIED / 05 SECTIONS</span>
+        </div>
 
-      <nav aria-label="Archive sections">
-        {#each secondaryNavigation as item}
-          <a href={item.href} class:active={isActive(item.href)} onclick={closeMenu}>
-            <span>{item.index}</span>
-            <strong>{item.label}</strong>
-            <i aria-hidden="true">↗</i>
-          </a>
-        {/each}
-      </nav>
+        <nav class="menu-primary" aria-label="Main sections">
+          {#each primaryNavigation as item}
+            <a href={item.href} class:active={isActive(item.href)} aria-current={isActive(item.href) ? 'page' : undefined} onclick={closeMenu}>
+              {item.label}
+            </a>
+          {/each}
+        </nav>
 
-      <div class="menu-footer">
-        <span>Dark Continent Expedition</span>
-        <span>Archive status: active</span>
+        <nav class="menu-sections" aria-label="Archive sections">
+          {#each secondaryNavigation as item}
+            <a href={item.href} class:active={isActive(item.href)} onclick={closeMenu}>
+              <span>{item.index}</span>
+              <strong>{item.label}</strong>
+              <i aria-hidden="true">↗</i>
+            </a>
+          {/each}
+        </nav>
+
+        <button class="menu-search" type="button" onclick={openPalette}>
+          <span aria-hidden="true">⌕</span>
+          <span>Quick find</span>
+        </button>
+
+        <div class="menu-footer">
+          <span>Dark Continent Expedition</span>
+          <span>Archive status: active</span>
+        </div>
       </div>
-    </aside>
+    </div>
   {/if}
 
   <main id="main-content">
@@ -225,6 +285,7 @@
 
   .menu-toggle {
     display: grid;
+    min-width: 3rem;
     place-content: center;
     gap: .35rem;
     border: 0;
@@ -246,22 +307,36 @@
     top: var(--header-height);
     right: 0;
     bottom: 0;
-    display: grid;
     width: min(34rem, 100%);
-    grid-template-rows: auto 1fr auto;
-    padding: clamp(1.5rem, 4vw, 3.5rem);
     border-left: 1px solid var(--line-default);
     background: linear-gradient(145deg, rgba(18, 28, 34, .98), rgba(6, 9, 11, .99));
     box-shadow: -30px 0 80px rgba(0, 0, 0, .36);
     animation: menu-in var(--duration-slow) var(--ease-expo);
   }
 
+  .site-menu:focus { outline: none; }
+
+  .menu-scroll {
+    display: grid;
+    height: 100%;
+    grid-template-rows: auto 1fr auto;
+    overflow-y: auto;
+    padding: clamp(1.5rem, 4vw, 3.5rem);
+    padding-bottom: max(clamp(1.5rem, 4vw, 3.5rem), env(safe-area-inset-bottom));
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+
   .menu-heading,
   .menu-footer { display: flex; justify-content: space-between; gap: 1rem; color: var(--text-faint); font-family: var(--font-mono); font-size: .56rem; letter-spacing: .12em; text-transform: uppercase; }
   .menu-heading p { margin: 0; color: var(--accent-gold); }
-  .site-menu nav { align-self: center; }
+  .menu-sections { align-self: center; }
 
-  .site-menu nav a {
+  /* Primary destinations and search live in the header on desktop. */
+  .menu-primary,
+  .menu-search { display: none; }
+
+  .menu-sections a {
     display: grid;
     grid-template-columns: 2.5rem 1fr auto;
     align-items: baseline;
@@ -273,10 +348,12 @@
     transition: color var(--duration-fast) var(--ease-out), padding var(--duration-base) var(--ease-out);
   }
 
-  .site-menu nav a:hover { padding-left: .5rem; color: var(--accent-gold-bright); }
-  .site-menu nav a > span { color: var(--text-faint); font-family: var(--font-mono); font-size: .56rem; }
-  .site-menu nav a strong { font-family: var(--font-display); font-size: clamp(1.75rem, 4vw, 2.75rem); font-weight: 500; letter-spacing: -.02em; }
-  .site-menu nav a i { color: var(--accent-gold); font-style: normal; font-size: .8rem; }
+  .menu-sections a:hover { padding-left: .5rem; color: var(--accent-gold-bright); }
+  .menu-sections a.active { color: var(--accent-gold-bright); }
+  .menu-sections a.active > span { color: var(--accent-gold); }
+  .menu-sections a > span { color: var(--text-faint); font-family: var(--font-mono); font-size: .56rem; }
+  .menu-sections a strong { font-family: var(--font-display); font-size: clamp(1.75rem, 4vw, 2.75rem); font-weight: 500; letter-spacing: -.02em; }
+  .menu-sections a i { color: var(--accent-gold); font-style: normal; font-size: .8rem; }
   .menu-footer { align-self: end; padding-top: 1rem; border-top: 1px solid var(--line-subtle); }
 
   .route-shell { min-height: calc(100vh - var(--header-height)); animation: route-enter var(--duration-slow) var(--ease-expo) both; }
@@ -294,7 +371,84 @@
     .primary-nav, .header-meta { display: none; }
     .brand { padding-inline: 1rem; }
     .brand-copy small { display: none; }
-    .site-menu { border-left: 0; }
+
+    .menu-toggle { min-width: 3.25rem; }
+    .menu-toggle span { width: 1.25rem; }
+
+    .menu-backdrop { inset: 0; }
+
+    .site-menu {
+      top: 0;
+      left: 0;
+      width: 100%;
+      border-left: 0;
+      border-top: 1px solid var(--line-subtle);
+    }
+
+    .menu-scroll {
+      grid-template-rows: auto auto auto auto auto;
+      align-content: start;
+      gap: 1.25rem;
+      padding: calc(var(--header-height) + 1rem) 1.25rem max(1.5rem, env(safe-area-inset-bottom));
+    }
+
+    .menu-heading { flex-direction: column; gap: .3rem; }
+
+    /* The primary destinations are unreachable from the header on mobile,
+       so the drawer carries them as a compact pill row. */
+    .menu-primary {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: .5rem;
+    }
+
+    .menu-primary a {
+      display: flex;
+      min-height: 3rem;
+      align-items: center;
+      justify-content: center;
+      padding: .5rem;
+      border: 1px solid var(--line-subtle);
+      border-radius: var(--radius-sm);
+      background: rgba(255, 255, 255, .02);
+      color: var(--text-secondary);
+      font-size: .82rem;
+      font-weight: 600;
+      text-align: center;
+      text-decoration: none;
+    }
+
+    .menu-primary a.active {
+      border-color: var(--line-strong);
+      background: var(--accent-gold-glow);
+      color: var(--accent-gold-bright);
+    }
+
+    .menu-sections { align-self: start; }
+    .menu-sections a { min-height: 3.25rem; align-items: center; padding: .55rem 0; gap: .75rem; grid-template-columns: 1.75rem 1fr auto; }
+    .menu-sections a strong { font-size: 1.4rem; }
+    .menu-sections a:hover { padding-left: 0; }
+
+    .menu-search {
+      display: flex;
+      min-height: 3rem;
+      align-items: center;
+      gap: .6rem;
+      padding: 0 .9rem;
+      border: 1px solid var(--line-default);
+      border-radius: var(--radius-sm);
+      background: transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-family: var(--font-mono);
+      font-size: .62rem;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+
+    .menu-search > span:first-child { color: var(--accent-gold); font-size: 1rem; }
+
+    .menu-footer { flex-direction: column; gap: .3rem; align-self: start; padding-top: .75rem; }
   }
 
   @media (prefers-reduced-motion: reduce) {

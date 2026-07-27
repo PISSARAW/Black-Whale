@@ -133,10 +133,18 @@
   let guideItems: GuideItem[] = []
   let dialBest: { score: number; item: GuideItem } | null = null
   let siteSnapshot: SiteSnapshot | null = null
+  // Cleanup bookkeeping, not view state.
+  // eslint-disable-next-line svelte/prefer-svelte-reactivity
   const snapshots = new Map<HTMLElement, ElementSnapshot>()
   const observers: MutationObserver[] = []
+  // Cleanup bookkeeping, not view state.
+  // eslint-disable-next-line svelte/prefer-svelte-reactivity
   const effectTimers = new Set<ReturnType<typeof setTimeout>>()
+  // Cleanup bookkeeping, not view state.
+  // eslint-disable-next-line svelte/prefer-svelte-reactivity
   const bungeeSelected = new Set<string>()
+  // Cleanup bookkeeping, not view state.
+  // eslint-disable-next-line svelte/prefer-svelte-reactivity
   const inheritedCharacters = new Set<string>()
   const tribunalCards = [
     'BLEU · ADMISSION',
@@ -159,11 +167,16 @@
     status = profile ? profile.action : ''
     if (profile?.kind === 'future') {
       status = 'Present positions: cyan · next chapter: violet'
+      // Neither write below feeds this block's guard (`profile?.id !== previousId`),
+      // so neither can re-trigger it, and cleanupTechniqueState clears this timer
+      // when the technique changes. No loop, and no stale write.
+      /* eslint-disable svelte/infinite-reactive-loop */
       futureTimer = setTimeout(() => {
         parallelFutureVisible.set(false)
         status = 'Ten-second vision complete'
         futureTimer = null
       }, 10000)
+      /* eslint-enable svelte/infinite-reactive-loop */
     }
   }
 
@@ -2064,7 +2077,7 @@
         </div>{/if}
     {/if}
     {#if profile.kind === 'portal'}
-      {#each portalAnchors as portal, index}
+      {#each portalAnchors as portal, index (index)}
         {#if portalIsVisible(portal)}
           <button
             class="portal-door"
@@ -2161,19 +2174,22 @@
     {/each}
     {#if prophecyLines.length}
       <div class="prophecy">
-        <span>LOVELY GHOSTWRITER</span>{#each prophecyLines as line}<p>{line}</p>{/each}
+        <span>LOVELY GHOSTWRITER</span>{#each prophecyLines as line, lineIndex (lineIndex)}<p>
+            {line}
+          </p>{/each}
       </div>
     {/if}
     {#if observerReports.length}
       <div class="observer-reports">
-        <span>PAPER SURVEILLANCE</span>{#each observerReports as report}<p>
+        <span>PAPER SURVEILLANCE</span>{#each observerReports as report (report.label)}<p>
             <b>{report.count}</b>{report.label}
           </p>{/each}
       </div>
     {/if}
     {#if birdDispatches.length}
       <div class="bird-dispatches">
-        <span>CLUCK · DELIVERY FLOCK</span>{#each birdDispatches as dispatch}{#if dispatch.href}<a
+        <span>CLUCK · DELIVERY FLOCK</span
+        >{#each birdDispatches as dispatch, dispatchIndex (dispatchIndex)}{#if dispatch.href}<a
               href={dispatch.href}>◁ {dispatch.label}</a
             >{:else}<p>◁ {dispatch.label}</p>{/if}{/each}
       </div>
@@ -2196,7 +2212,7 @@
               : profile.kind === 'ability-loan'
                 ? 'STEALTH DOLPHIN · SINGLE-USE LOAN'
                 : 'STEAL CHAIN · INDEX DOLPHIN'}</span
-        >{#each capturedTechniques as technique}<button
+        >{#each capturedTechniques as technique (technique.id)}<button
             type="button"
             onclick={() => activateHatsu(technique)}
             style:--captured={technique.color}
@@ -2212,7 +2228,7 @@
         >{/if}
       {#if profile.kind === 'inherit' && points.length}
         <div class="inherit-results">
-          {#each points as point}
+          {#each points as point, pointIndex (pointIndex)}
             <div>
               <b>★ {point.label}</b><span
                 >{point.details?.length ? point.details.join(' · ') : 'No known Hatsu'}</span

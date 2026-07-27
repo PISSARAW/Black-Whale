@@ -531,6 +531,8 @@
         return true
       })
 
+    // Local grouping, discarded at the end of the block; never rendered from.
+    // eslint-disable-next-line svelte/prefer-svelte-reactivity
     const tierGroups = new Map<string, any[]>()
     for (const character of mappedFuture) {
       const group = tierGroups.get(character.tierId || 'outside') || []
@@ -611,6 +613,8 @@
       )
     })
 
+    // Local grouping, discarded at the end of the block; never rendered from.
+    // eslint-disable-next-line svelte/prefer-svelte-reactivity
     const tierGroups = new Map<string, any[]>()
     for (const character of filteredCharacters) {
       const group = tierGroups.get(character.tierId || 'outside') || []

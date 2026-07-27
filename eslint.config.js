@@ -34,17 +34,17 @@ export default tseslint.config(
       globals: { ...globals.node, ...globals.browser },
     },
     rules: {
-      // The codebase leans on `any` in the view layer. Surfacing every instance
-      // as an error would make the gate unusable on day one; as a warning it
-      // stays visible and countable without blocking.
+      // The view layer still leans on `any` where load functions hand untyped
+      // rows to components. It stays a warning there — see the packages
+      // override below, where it is an error and the count is zero.
       '@typescript-eslint/no-explicit-any': 'warn',
       '@typescript-eslint/no-unused-vars': [
         'error',
         { argsIgnorePattern: '^_', varsIgnorePattern: '^_', caughtErrors: 'none' },
       ],
-      // Prisma and the engines return promises everywhere; an unawaited one is
-      // a real defect rather than a style preference.
-      'no-console': ['warn', { allow: ['warn', 'error'] }],
+      // Logging on a public page is a defect, not a style preference. warn and
+      // error stay allowed: they go to an operator, not to a visitor.
+      'no-console': ['error', { allow: ['warn', 'error'] }],
       eqeqeq: ['error', 'always', { null: 'ignore' }],
       'no-var': 'error',
       'prefer-const': 'error',
@@ -69,14 +69,19 @@ export default tseslint.config(
       // rewrites them to `const` en masse, which is noise rather than a fix.
       'prefer-const': 'off',
 
-      // Real, but a pre-existing backlog across ~190 sites. Warnings keep them
-      // visible and countable without making the gate unusable on day one.
-      'svelte/require-each-key': 'warn',
-      'svelte/no-navigation-without-resolve': 'warn',
-      'svelte/prefer-svelte-reactivity': 'warn',
-      // Two hits in GlobalHatsuEffects.svelte that need the whole 1900-line
-      // component understood before they can be called real or spurious.
-      'svelte/infinite-reactive-loop': 'warn',
+      // Neither app configures `paths.base`: both are served at the root of
+      // their own host, so resolve() is the identity function here. Turn this
+      // back on if a base path is ever introduced.
+      'svelte/no-navigation-without-resolve': 'off',
+    },
+  },
+
+  {
+    // The domain and the engines are typed end to end and stay that way: `any`
+    // there erases checking for every caller downstream.
+    files: ['packages/**/*.ts'],
+    rules: {
+      '@typescript-eslint/no-explicit-any': 'error',
     },
   },
 

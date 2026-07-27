@@ -221,6 +221,8 @@
   }
 
   let subjectCodeMap = $derived.by(() => {
+    // Local lookup built and consumed inside this function.
+    // eslint-disable-next-line svelte/prefer-svelte-reactivity
     const map = new Map<string, '=' | '←' | '→' | '≠' | '~' | '⏱'>()
 
     for (const diff of differences as any[]) {
@@ -487,7 +489,7 @@
         onchange={submitFetch}
         class="bg-slate-900 border border-slate-700 rounded px-3 py-2 text-sm"
       >
-        {#each data.events as event}
+        {#each data.events as event (event.id)}
           <option value={event.id}
             >Ch.{event.chapter.number} - {toEnglishEventTitle(event.title)}</option
           >
@@ -502,7 +504,7 @@
         onchange={submitFetch}
         class="bg-slate-900 border border-slate-700 rounded px-3 py-2 text-sm"
       >
-        {#each data.characters as char}
+        {#each data.characters as char (char.id)}
           <option value={char.id}>{toEnglishDisplayName(char.canonicalName)}</option>
         {/each}
       </select>
@@ -515,7 +517,7 @@
         onchange={submitFetch}
         class="bg-slate-900 border border-slate-700 rounded px-3 py-2 text-sm"
       >
-        {#each data.characters as char}
+        {#each data.characters as char (char.id)}
           {#if char.id !== selectedLeft}
             <option value={char.id}>{toEnglishDisplayName(char.canonicalName)}</option>
           {/if}
@@ -558,7 +560,7 @@
         }}
         class="bg-slate-900 border border-slate-700 rounded px-3 py-2 text-sm"
       >
-        {#each tiers as tierOption}
+        {#each tiers as tierOption (tierOption)}
           <option value={tierOption}>{tierOption.toUpperCase()}</option>
         {/each}
       </select>
@@ -572,7 +574,7 @@
         class="bg-slate-900 border border-slate-700 rounded px-3 py-2 text-sm"
       >
         <option value="">All zones in this tier</option>
-        {#each zonesInTier as location}
+        {#each zonesInTier as location (location.id)}
           <option value={location.slug}>{location.name}</option>
         {/each}
       </select>
@@ -599,7 +601,7 @@
         </h2>
         <p class="text-xs text-slate-400 mb-3">Zoom {zoom} · {tier} · {zone || 'all zones'}</p>
         <ul class="space-y-1 max-h-48 overflow-y-auto pr-1">
-          {#each entitiesInView as entity}
+          {#each entitiesInView as entity (entity.id)}
             <li>
               <button
                 type="button"
@@ -624,7 +626,7 @@
         />
 
         <div class="mt-4 space-y-2">
-          {#each perspectiveRows(data.leftPerspective) as row}
+          {#each perspectiveRows(data.leftPerspective) as row, rowIndex (rowIndex)}
             <div class="text-xs border border-slate-700 rounded px-2 py-2">
               <span class="uppercase tracking-wider text-slate-400">{row.type}</span>
               <p class="text-slate-100 mt-1">{row.key}: {row.value}</p>
@@ -639,7 +641,7 @@
         </h2>
         <p class="text-xs text-slate-400 mb-3">Synchronized with A (tier/zoom/zone/sujet)</p>
         <ul class="space-y-1 max-h-48 overflow-y-auto pr-1">
-          {#each entitiesInView as entity}
+          {#each entitiesInView as entity (entity.id)}
             <li>
               <button
                 type="button"
@@ -664,7 +666,7 @@
         />
 
         <div class="mt-4 space-y-2">
-          {#each perspectiveRows(data.rightPerspective) as row}
+          {#each perspectiveRows(data.rightPerspective) as row, rowIndex (rowIndex)}
             <div class="text-xs border border-slate-700 rounded px-2 py-2">
               <span class="uppercase tracking-wider text-slate-400">{row.type}</span>
               <p class="text-slate-100 mt-1">{row.key}: {row.value}</p>
@@ -694,7 +696,7 @@
           />
 
           <div class="mt-4 space-y-2">
-            {#each canonicalRows as row}
+            {#each canonicalRows as row, rowIndex (rowIndex)}
               <div class="text-xs border border-slate-700 rounded px-2 py-2">
                 <span class="uppercase tracking-wider text-slate-400">{row.type}</span>
                 <p class="text-slate-100 mt-1">{row.key}: {row.value}</p>
@@ -717,7 +719,7 @@
         Differences only (mobile)
       </h2>
       <div class="space-y-2">
-        {#each filteredDifferences as diff}
+        {#each filteredDifferences as diff, diffIndex (diffIndex)}
           <article class="border border-slate-700 rounded p-3">
             <p class="text-xs uppercase tracking-wider text-slate-400">{diff.dimension}</p>
             <p class="text-sm text-slate-100 mt-1">{diff.subjectId}</p>
@@ -738,7 +740,7 @@
     class:hidden={differencesOnly && filteredDifferences.length > 0}
   >
     <div class="flex flex-wrap gap-2 mb-4">
-      {#each filters as filter}
+      {#each filters as filter (filter)}
         <button
           type="button"
           class={`px-3 py-1 text-xs border rounded ${activeFilter === filter ? 'border-emerald-300 bg-emerald-300/10' : 'border-slate-700'}`}
@@ -750,7 +752,7 @@
     </div>
 
     <div class="grid gap-3">
-      {#each filteredDifferences as diff}
+      {#each filteredDifferences as diff, diffIndex (diffIndex)}
         <PerspectiveDifference
           title={`${diff.subjectId} · ${diff.dimension}`}
           leftLabel={getCharacterName(selectedLeft)}

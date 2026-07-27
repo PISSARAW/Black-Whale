@@ -32,7 +32,8 @@ function toPolicy(mode: SimulationMode): BranchRulePolicy {
 
 /**
  * Branching is deliberately persistence-agnostic. Canon and simulations share
- * the same WorldState and reducers; the API decides how branch events are stored.
+ * the same WorldState and reducers; `SimulationStore` decides how branch events
+ * are stored.
  */
 export class SimulationEngine {
   private readonly branches = new InMemoryBranchEngine()

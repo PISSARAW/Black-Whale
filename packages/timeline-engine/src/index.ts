@@ -367,3 +367,21 @@ export class TimelineEngine implements ITimelineEngine {
     return null
   }
 }
+
+/**
+ * List the canonical Black Whale events in reading order, each annotated with
+ * its chronological cursor. `spoilerLimit` caps the chapters a reader may see.
+ */
+export async function listCanonicalEvents(prisma: PrismaClient, spoilerLimit?: number) {
+  const events = await prisma.narrativeEvent.findMany({
+    where: {
+      occursOnBlackWhale: true,
+      ...(Number.isFinite(spoilerLimit) ? { chapter: { number: { lte: spoilerLimit } } } : {}),
+    },
+    include: { chapter: true },
+    orderBy: [{ chapter: { number: 'asc' } }, { sequence: 'asc' }],
+  })
+
+  const cursorByEvent = new Map(buildCanonicalCursors(events).map((cursor) => [cursor.eventId, cursor]))
+  return events.map((event) => ({ ...event, cursor: cursorByEvent.get(event.id) }))
+}

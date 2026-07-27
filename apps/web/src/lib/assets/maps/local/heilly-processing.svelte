@@ -75,7 +75,7 @@
   <text x="600" y="205" class="label text-[10px]">Restrooms</text>
 
   <!-- Seven canonical doors: five together, one on the adjacent wall, one opposite. -->
-  {#each [0, 1, 2, 3, 4] as i}
+  {#each [0, 1, 2, 3, 4] as i (i)}
     <rect
       role="button"
       tabindex="0"

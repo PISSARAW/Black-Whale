@@ -1,7 +1,8 @@
 <script lang="ts">
-  function handleElementClick(elementId: string) {
-    console.log(`Clicked on ${elementId} in General Cabins`)
-  }
+  // Room interactions are not wired up yet. The elements keep their click
+  // and keyboard affordances so the behaviour can be attached in one place
+  // when it exists; until then this must not log on a public page.
+  function handleElementClick(_elementId: string) {}
 </script>
 
 <svg
@@ -95,7 +96,7 @@
     <text x="675" y="470" class="label text-blue-400">Area E</text>
 
     <!-- Top Cabins (Standard Single Cabins: bed, cupboards, shelves, bathroom) -->
-    {#each Array(6) as _, i}
+    {#each Array(6) as _, i (i)}
       <g transform="translate({i * 150}, 0)">
         <rect x="0" y="0" width="150" height="150" class="wall" />
         <rect
@@ -125,7 +126,7 @@
     {/each}
 
     <!-- Bottom Cabins (One Open) -->
-    {#each Array(6) as _, i}
+    {#each Array(6) as _, i (i)}
       <g transform="translate({i * 150}, 350)">
         <rect x="0" y="0" width="150" height="150" class="wall" />
         <rect
@@ -169,7 +170,7 @@
         >Nouveau riche & general passengers mixing</text
       >
       <!-- Draw many small circles for crowd -->
-      {#each Array(40) as _, _i}
+      {#each Array(40) as _, _i (_i)}
         <circle
           cx={Math.random() * 300}
           cy={Math.random() * 160 + 10}

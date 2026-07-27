@@ -1,7 +1,8 @@
 <script lang="ts">
-  function handleElementClick(elementId: string) {
-    console.log(`Clicked on ${elementId} in Observation Deck`)
-  }
+  // Room interactions are not wired up yet. The elements keep their click
+  // and keyboard affordances so the behaviour can be attached in one place
+  // when it exists; until then this must not log on a public page.
+  function handleElementClick(_elementId: string) {}
 </script>
 
 <svg
@@ -59,7 +60,7 @@
 
     <!-- Canonically shown amenities; their exact spacing is schematic. -->
     <g transform="translate(120, 330)">
-      {#each [0, 1, 2, 3] as i}
+      {#each [0, 1, 2, 3] as i (i)}
         <rect class="fixture" x={i * 95} y="0" width="62" height="28" rx="5" />
         <line x1={i * 95 + 12} y1="28" x2={i * 95 + 4} y2="48" stroke="#73808a" stroke-width="3" />
         <line x1={i * 95 + 50} y1="28" x2={i * 95 + 58} y2="48" stroke="#73808a" stroke-width="3" />

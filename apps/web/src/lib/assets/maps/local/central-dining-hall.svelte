@@ -1,7 +1,8 @@
 <script lang="ts">
-  function handleElementClick(elementId: string) {
-    console.log(`Clicked on ${elementId} in Central Dining Hall`)
-  }
+  // Room interactions are not wired up yet. The elements keep their click
+  // and keyboard affordances so the behaviour can be attached in one place
+  // when it exists; until then this must not log on a public page.
+  function handleElementClick(_elementId: string) {}
 </script>
 
 <svg
@@ -104,13 +105,13 @@
       onclick={() => handleElementClick('background-tables')}
     />
 
-    {#each Array(6) as _, row}
-      {#each Array(3) as _, col}
+    {#each Array(6) as _, row (row)}
+      {#each Array(3) as _, col (col)}
         <g transform="translate({180 + col * 240}, {row * 30})">
           <rect x="10" y="0" width="180" height="15" class="table" />
           <rect x="0" y="20" width="200" height="5" class="bench" />
           <!-- Small dots for people -->
-          {#each Array(8) as _, p}
+          {#each Array(8) as _, p (p)}
             <circle cx={20 + p * 20} cy="-5" r="4" class="passenger" />
             <circle cx={20 + p * 20} cy="22" r="4" class="passenger" />
           {/each}
@@ -156,7 +157,7 @@
     <circle cx="640" cy="385" r="20" class="passenger" />
 
     <!-- Huge crowd milling about in the negative space -->
-    {#each Array(30) as _, _i}
+    {#each Array(30) as _, _i (_i)}
       <circle
         cx={160 + Math.random() * 740}
         cy={Math.random() * 200 + 300}

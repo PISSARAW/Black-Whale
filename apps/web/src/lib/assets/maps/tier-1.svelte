@@ -200,7 +200,7 @@
       <rect x="460" y="310" width="140" height="150" fill="transparent" pointer-events="none" />
 
       <!-- Ligne de gauche (Pair) -->
-      {#each [2, 4, 6, 8, 10, 12, 14] as i, index}
+      {#each [2, 4, 6, 8, 10, 12, 14] as i, index (index)}
         <g
           role="button"
           tabindex="0"
@@ -226,7 +226,7 @@
       {/each}
 
       <!-- Ligne de droite (Impair) -->
-      {#each [1, 3, 5, 7, 9, 11, 13] as i, index}
+      {#each [1, 3, 5, 7, 9, 11, 13] as i, index (index)}
         <g
           role="button"
           tabindex="0"

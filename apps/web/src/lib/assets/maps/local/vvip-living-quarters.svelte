@@ -1,7 +1,8 @@
 <script lang="ts">
-  function handleElementClick(elementId: string) {
-    console.log(`Clicked on ${elementId} in VVIP Living Quarters`)
-  }
+  // Room interactions are not wired up yet. The elements keep their click
+  // and keyboard affordances so the behaviour can be attached in one place
+  // when it exists; until then this must not log on a public page.
+  function handleElementClick(_elementId: string) {}
 </script>
 
 <svg
@@ -66,7 +67,7 @@
 
     <!-- Room Layout Grid -->
     <!-- Top Row -->
-    {#each Array(4) as _, i}
+    {#each Array(4) as _, i (i)}
       <g transform="translate({20 + i * 215}, 70)">
         <rect
           role="button"
@@ -105,7 +106,7 @@
     <rect class="corridor" x="10" y="230" width="880" height="40" />
 
     <!-- Bottom Row (Mafia Bosses & V5) -->
-    {#each Array(4) as _, i}
+    {#each Array(4) as _, i (i)}
       <g transform="translate({20 + i * 215}, 280)">
         <rect
           role="button"

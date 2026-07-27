@@ -1,7 +1,7 @@
 <script lang="ts">
-  function inspect(area: string) {
-    console.log(`Inspecting ${area} in the Cha-R office`)
-  }
+  // Area inspection is not wired up yet; the keyboard and click affordances
+  // stay so the behaviour can be attached in one place when it exists.
+  function inspect(_area: string) {}
   function inspectWithKeyboard(event: KeyboardEvent, area: string) {
     if (event.key === 'Enter' || event.key === ' ') inspect(area)
   }
@@ -99,7 +99,7 @@
     />
     <text x="625" y="78" class="label">Monitor Room</text>
     <text x="625" y="100" class="sub">Surveillance of key Tier 5 areas</text>
-    {#each Array(9) as _, i}<rect
+    {#each Array(9) as _, i (i)}<rect
         class="screen"
         x={470 + (i % 3) * 105}
         y={140 + Math.floor(i / 3) * 75}

@@ -1,7 +1,7 @@
 <script lang="ts">
-  function inspect(area: string) {
-    console.log(`Inspecting ${area} in the Heil-Ly secret hideout`)
-  }
+  // Area inspection is not wired up yet; the keyboard and click affordances
+  // stay so the behaviour can be attached in one place when it exists.
+  function inspect(_area: string) {}
   function inspectWithKeyboard(event: KeyboardEvent, area: string) {
     if (event.key === 'Enter' || event.key === ' ') inspect(area)
   }
@@ -72,7 +72,7 @@
     />
     <text x="175" y="135" class="label">Processing / Shower Room</text>
     <text x="175" y="160" class="sub">Seven doors across three walls</text>
-    {#each [0, 1, 2, 3, 4] as i}<rect
+    {#each [0, 1, 2, 3, 4] as i (i)}<rect
         class="door"
         x={65 + i * 48}
         y="32"

@@ -1,7 +1,8 @@
 <script lang="ts">
-  function handleElementClick(elementId: string) {
-    console.log(`Clicked on ${elementId} in Princes' Burial Chamber`)
-  }
+  // Room interactions are not wired up yet. The elements keep their click
+  // and keyboard affordances so the behaviour can be attached in one place
+  // when it exists; until then this must not log on a public page.
+  function handleElementClick(_elementId: string) {}
 </script>
 
 <svg
@@ -112,7 +113,7 @@
     <circle cx="370" cy="300" r="15" class="pot" />
 
     <!-- 14 Caskets around the perimeter -->
-    {#each Array(14) as _, i}
+    {#each Array(14) as _, i (i)}
       <g transform="translate(300, 300) rotate({i * (360 / 14)}) translate(0, -220)">
         <rect
           role="button"

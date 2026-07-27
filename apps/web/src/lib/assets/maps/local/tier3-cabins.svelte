@@ -1,7 +1,8 @@
 <script lang="ts">
-  function handleElementClick(elementId: string) {
-    console.log(`Clicked on ${elementId} in Tier 3 Cabins`)
-  }
+  // Room interactions are not wired up yet. The elements keep their click
+  // and keyboard affordances so the behaviour can be attached in one place
+  // when it exists; until then this must not log on a public page.
+  function handleElementClick(_elementId: string) {}
 </script>
 
 <svg
@@ -62,7 +63,7 @@
     <text x="450" y="280" class="sublabel text-gray-500">Hallway</text>
 
     <!-- 3 Cabins in a row -->
-    {#each [0, 1, 2] as i}
+    {#each [0, 1, 2] as i (i)}
       <g transform="translate({i * 300}, 50)">
         <rect
           role="button"

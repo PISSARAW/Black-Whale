@@ -1,7 +1,7 @@
 <script lang="ts">
-  function inspect(area: string) {
-    console.log(`Inspecting ${area} in the Justice Bureau`)
-  }
+  // Area inspection is not wired up yet; the keyboard and click affordances
+  // stay so the behaviour can be attached in one place when it exists.
+  function inspect(_area: string) {}
   function inspectWithKeyboard(event: KeyboardEvent, area: string) {
     if (event.key === 'Enter' || event.key === ' ') inspect(area)
   }

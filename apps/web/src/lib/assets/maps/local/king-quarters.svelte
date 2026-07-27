@@ -1,7 +1,7 @@
 <script lang="ts">
-  function inspect(area: string) {
-    console.log(`Inspecting ${area} in the King's Living Quarters`)
-  }
+  // Area inspection is not wired up yet; the keyboard and click affordances
+  // stay so the behaviour can be attached in one place when it exists.
+  function inspect(_area: string) {}
   function inspectWithKeyboard(event: KeyboardEvent, area: string) {
     if (event.key === 'Enter' || event.key === ' ') inspect(area)
   }
@@ -72,7 +72,7 @@
     <rect x="105" y="205" width="95" height="170" rx="8" class="furniture" />
     <rect x="550" y="205" width="95" height="170" rx="8" class="furniture" />
     <rect x="315" y="330" width="120" height="55" class="furniture" />
-    {#each [135, 285, 435, 585] as x}
+    {#each [135, 285, 435, 585] as x (x)}
       <rect x={x - 35} y="65" width="70" height="90" class="painting" />
     {/each}
     <line x1="300" y1="520" x2="450" y2="520" stroke="#050505" stroke-width="14" />

@@ -1,7 +1,8 @@
 <script lang="ts">
-  function handleElementClick(elementId: string) {
-    console.log(`Clicked on ${elementId} in Royal Army Conference Room`)
-  }
+  // Room interactions are not wired up yet. The elements keep their click
+  // and keyboard affordances so the behaviour can be attached in one place
+  // when it exists; until then this must not log on a public page.
+  function handleElementClick(_elementId: string) {}
 </script>
 
 <svg
@@ -137,7 +138,7 @@
       height="80"
       onclick={() => handleElementClick('audience')}
     />
-    {#each Array(15) as _, i}
+    {#each Array(15) as _, i (i)}
       <circle cx={80 + i * 45} cy="540" r="12" class="person" />
       <circle cx={80 + i * 45} cy="580" r="12" class="person" />
     {/each}

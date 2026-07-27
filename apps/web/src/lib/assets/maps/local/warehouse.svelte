@@ -1,7 +1,7 @@
 <script lang="ts">
-  function inspect(area: string) {
-    console.log(`Inspecting ${area} in the Tier 5 warehouse`)
-  }
+  // Area inspection is not wired up yet; the keyboard and click affordances
+  // stay so the behaviour can be attached in one place when it exists.
+  function inspect(_area: string) {}
   function inspectWithKeyboard(event: KeyboardEvent, area: string) {
     if (event.key === 'Enter' || event.key === ' ') inspect(area)
   }
@@ -71,7 +71,7 @@
       onclick={() => inspect('cargo')}
       onkeydown={(event) => inspectWithKeyboard(event, 'cargo')}
     />
-    {#each Array(24) as _, i}
+    {#each Array(24) as _, i (i)}
       <rect
         class="crate"
         x={60 + (i % 6) * 130}
@@ -89,7 +89,7 @@
     <text x="435" y="490" class="label">Main Entrance</text>
     <path d="M520 470 h42 l15 12 h-57 z" fill="#b9c1c5" stroke="#222" stroke-width="2" />
     <text x="550" y="505" class="sub">Security camera installed after loading</text>
-    {#each [[315, 465], [555, 465], [315, 430], [555, 430]] as point}
+    {#each [[315, 465], [555, 465], [315, 430], [555, 430]] as point, pointIndex (pointIndex)}
       <circle class="guard" cx={point[0]} cy={point[1]} r="14" />
     {/each}
     <text x="435" y="448" class="sub">Four perimeter guard posts</text>

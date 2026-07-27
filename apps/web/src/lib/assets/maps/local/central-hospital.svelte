@@ -1,7 +1,7 @@
 <script lang="ts">
-  function inspect(area: string) {
-    console.log(`Inspecting ${area} in the Central Hospital`)
-  }
+  // Area inspection is not wired up yet; the keyboard and click affordances
+  // stay so the behaviour can be attached in one place when it exists.
+  function inspect(_area: string) {}
   function inspectWithKeyboard(event: KeyboardEvent, area: string) {
     if (event.key === 'Enter' || event.key === ' ') inspect(area)
   }
@@ -67,7 +67,7 @@
       onkeydown={(event) => inspectWithKeyboard(event, 'central-medical-clinic')}
     />
     <text x="275" y="75" class="label">Central Medical Clinic</text>
-    {#each [0, 1, 2, 3] as i}
+    {#each [0, 1, 2, 3] as i (i)}
       <rect
         class="bed"
         x={75 + (i % 2) * 240}

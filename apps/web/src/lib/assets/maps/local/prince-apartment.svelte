@@ -4,9 +4,10 @@
   // Extract room number, e.g. "room-1014" -> "1014"
   let roomNumber = $derived(mapState.selectedLocationId?.split('-')[1] || '1000')
 
-  function handleElementClick(elementId: string) {
-    console.log(`Clicked on ${elementId} in room ${roomNumber}`)
-  }
+  // Room interactions are not wired up yet. The elements keep their click
+  // and keyboard affordances so the behaviour can be attached in one place
+  // when it exists; until then this must not log on a public page.
+  function handleElementClick(_elementId: string) {}
 </script>
 
 <svg

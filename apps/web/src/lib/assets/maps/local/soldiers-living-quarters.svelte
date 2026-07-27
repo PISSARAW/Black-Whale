@@ -1,7 +1,8 @@
 <script lang="ts">
-  function handleElementClick(elementId: string) {
-    console.log(`Clicked on ${elementId} in Soldiers/Associates' Living Quarters`)
-  }
+  // Room interactions are not wired up yet. The elements keep their click
+  // and keyboard affordances so the behaviour can be attached in one place
+  // when it exists; until then this must not log on a public page.
+  function handleElementClick(_elementId: string) {}
 </script>
 
 <svg
@@ -94,7 +95,7 @@
 
     <!-- Top section: Royal Army Barracks -->
     <text x="450" y="20" class="label text-blue-400">Royal Army Barracks</text>
-    {#each Array(4) as _, i}
+    {#each Array(4) as _, i (i)}
       <g transform="translate({20 + i * 220}, 40)">
         <rect
           role="button"
@@ -114,8 +115,8 @@
           onclick={() => handleElementClick(`army-barracks-${i}`)}
         />
         <!-- Bunk beds -->
-        {#each Array(3) as _, r}
-          {#each Array(4) as _, c}
+        {#each Array(3) as _, r (r)}
+          {#each Array(4) as _, c (c)}
             <rect x={10 + c * 45} y={10 + r * 45} width="40" height="30" class="bunk" />
             <circle cx={30 + c * 45} cy={25 + r * 45} r="6" class="soldier" />
           {/each}
@@ -125,7 +126,7 @@
 
     <!-- Bottom section: Provisional Hunters Quarters -->
     <text x="450" y="280" class="label text-green-400">Provisional Hunters Quarters</text>
-    {#each Array(4) as _, i}
+    {#each Array(4) as _, i (i)}
       <g transform="translate({20 + i * 220}, 300)">
         <rect
           role="button"
@@ -145,8 +146,8 @@
           onclick={() => handleElementClick(`hunter-quarters-${i}`)}
         />
         <!-- Slightly different layout for hunters -->
-        {#each Array(4) as _, r}
-          {#each Array(3) as _, c}
+        {#each Array(4) as _, r (r)}
+          {#each Array(3) as _, c (c)}
             <rect x={25 + c * 55} y={15 + r * 30} width="40" height="20" class="bunk" />
             {#if Math.random() > 0.3}
               <circle cx={45 + c * 55} cy={25 + r * 30} r="6" class="hunter" />

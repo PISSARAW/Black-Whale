@@ -1,7 +1,8 @@
 <script lang="ts">
-  function handleElementClick(elementId: string) {
-    console.log(`Clicked on ${elementId} in VIP Casino`)
-  }
+  // Room interactions are not wired up yet. The elements keep their click
+  // and keyboard affordances so the behaviour can be attached in one place
+  // when it exists; until then this must not log on a public page.
+  function handleElementClick(_elementId: string) {}
 </script>
 
 <svg
@@ -72,8 +73,8 @@
     />
     <text x="150" y="40" class="label text-yellow-500">Slot Machines</text>
 
-    {#each Array(4) as _, row}
-      {#each Array(3) as _, col}
+    {#each Array(4) as _, row (row)}
+      {#each Array(3) as _, col (col)}
         <g transform="translate({40 + col * 80}, {80 + row * 100})">
           <rect x="0" y="0" width="50" height="70" class="slot-machine" />
           <rect x="10" y="10" width="30" height="30" fill="#111" />

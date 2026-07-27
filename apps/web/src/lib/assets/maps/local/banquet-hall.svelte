@@ -1,7 +1,8 @@
 <script lang="ts">
-  function handleElementClick(elementId: string) {
-    console.log(`Clicked on ${elementId} in Banquet Hall`)
-  }
+  // Room interactions are not wired up yet. The elements keep their click
+  // and keyboard affordances so the behaviour can be attached in one place
+  // when it exists; until then this must not log on a public page.
+  function handleElementClick(_elementId: string) {}
 </script>
 
 <svg
@@ -99,8 +100,8 @@
 
     <!-- Dining Tables (Middle Area) -->
     <g class="tables">
-      {#each Array(4) as _, row}
-        {#each Array(6) as _, col}
+      {#each Array(4) as _, row (row)}
+        {#each Array(6) as _, col (col)}
           <g
             role="button"
             tabindex="0"

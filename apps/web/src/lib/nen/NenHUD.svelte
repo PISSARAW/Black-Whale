@@ -40,11 +40,10 @@
           hint: 'No active ability',
         }))
 
-  function handleActionSelect(e: CustomEvent<NenActionWheelEntry>) {
+  // Execution belongs to the parent, which forwards the selection. Closing the
+  // panel is the only thing the HUD itself owns here.
+  function handleActionSelect(_e: CustomEvent<NenActionWheelEntry>) {
     whyPanelData = null
-    // Parent should handle actual action execution via slot/forwarding;
-    // here we just surface a console note for demonstration.
-    console.info('[NenHUD] Action selected:', e.detail)
   }
 
   function handleActionInspect(e: CustomEvent<NenActionWheelEntry>) {
@@ -160,7 +159,7 @@
         <div class="bg-bw-navy border border-bw-gold/20 rounded p-2 text-xs">
           <div class="text-bw-gold font-bold mb-1 tracking-wider">ACTIVE RULES</div>
           <ul class="flex flex-col gap-0.5">
-            {#each activeRules as rule}
+            {#each activeRules as rule, ruleIndex (ruleIndex)}
               <li class="text-gray-300 before:content-['·'] before:mr-1 before:text-bw-gold">
                 {rule}
               </li>
@@ -174,7 +173,7 @@
         <div class="bg-bw-navy border border-bw-gold/20 rounded p-2 text-xs">
           <div class="text-bw-gold font-bold mb-1 tracking-wider">TARGETS</div>
           <ul class="flex flex-col gap-0.5">
-            {#each activeTargets as t}
+            {#each activeTargets as t, tIndex (tIndex)}
               <li class="text-gray-300">{t}</li>
             {/each}
           </ul>

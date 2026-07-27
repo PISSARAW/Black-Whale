@@ -83,7 +83,7 @@ describe('TimelineEngine.getWorldState visibility', () => {
     })
     const state = await new TimelineEngine(prisma).getWorldState({ eventId: 'event-3' })
 
-    expect(state.characters.map((character: any) => character.id)).toEqual(['kurapika'])
+    expect(state.characters.map((character) => character.id)).toEqual(['kurapika'])
   })
 
   it('applies the same rule to bodies and consciousnesses', async () => {
@@ -104,7 +104,7 @@ describe('TimelineEngine.getWorldState visibility', () => {
       revealedThroughChapter: 401,
     })
 
-    expect(state.characters.map((character: any) => character.id)).toEqual(['kurapika'])
+    expect(state.characters.map((character) => character.id)).toEqual(['kurapika'])
   })
 })
 

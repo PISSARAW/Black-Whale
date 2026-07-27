@@ -1,5 +1,4 @@
 import type {
-  NarrativeEvent,
   Body,
   Consciousness,
   Location,
@@ -56,7 +55,7 @@ export interface ITimelineEngine {
   getWorldState(point: TimelinePoint): Promise<WorldSnapshot>
 
   /** Return all events in chronological order up to a given point. */
-  getEventsBefore(point: TimelinePoint): Promise<NarrativeEvent[]>
+  getEventsBefore(point: TimelinePoint): Promise<CanonicalEventRow[]>
 
   /** Return the nearest persisted snapshot at or before the given point. */
   getNearestSnapshot(point: TimelinePoint): Promise<WorldSnapshot | null>
@@ -84,7 +83,13 @@ import {
 export { compareEventOrder, isRevealed }
 
 /** A narrative event row as loaded here: orderable, and carrying its keys. */
-type OrderedEvent = Orderable & { id: string; chapterId: string }
+export type CanonicalEventRow = Orderable & { id: string; chapterId: string }
+
+/** A temporal row scoped to one body, as the reducers below read it. */
+type BodyStateRow = TemporalRecord & { bodyId: string; state: string }
+type OccupancyRow = TemporalRecord & { bodyId: string; consciousnessId?: string | null }
+type ConsciousnessStateRow = TemporalRecord & { consciousnessId: string; state: string }
+type VisibleRow = { id: string; name: string; firstVisibleEvent: Orderable }
 
 export class TimelineEngine implements ITimelineEngine {
   constructor(private readonly prisma: PrismaClient) {}
@@ -115,8 +120,8 @@ export class TimelineEngine implements ITimelineEngine {
     // depend on the query, and a caller reading these rows another way would
     // silently leak.
     const startedBefore = (record: { firstVisibleEvent: unknown }) =>
-      isRevealed(record.firstVisibleEvent as OrderedEvent, revealedThroughChapter) &&
-      compareEventOrder(record.firstVisibleEvent as OrderedEvent, targetEvent) <= 0
+      isRevealed(record.firstVisibleEvent as CanonicalEventRow, revealedThroughChapter) &&
+      compareEventOrder(record.firstVisibleEvent as CanonicalEventRow, targetEvent) <= 0
     const active = (record: unknown) =>
       isActiveAt(record as TemporalRecord, targetEvent, revealedThroughChapter)
 
@@ -158,27 +163,33 @@ export class TimelineEngine implements ITimelineEngine {
     const activeOccupancies = occupancies.filter(active)
     const activeAppearances = appearances.filter(active)
 
-    // Map Prisma models to WorldSnapshot (casting as any for now to align with Domain types)
+    // Prisma rows carry their joins and their own column names, so they are not
+    // domain objects. `as unknown as` keeps the mismatch explicit while still
+    // handing callers a checked type — `as any` used to erase it for everyone
+    // downstream.
     return {
       atEventId: targetEvent.id,
-      characters: characters as any,
-      bodies: bodies as any,
-      consciousnesses: consciousnesses as any,
+      characters: characters as unknown as WorldSnapshot['characters'],
+      bodies: bodies as unknown as WorldSnapshot['bodies'],
+      consciousnesses: consciousnesses as unknown as WorldSnapshot['consciousnesses'],
       locations: [],
       activeAbilities: [],
-      bodyStates: activeStates.reduce((acc: Record<string, string>, state: any) => {
-        // En V2, l'état est lié au bodyId
-        acc[state.bodyId] = state.state
-        return acc
-      }, {}),
-      presences: activePresences as any,
-      occupancies: activeOccupancies as any,
-      appearances: activeAppearances as any,
+      bodyStates: (activeStates as unknown as BodyStateRow[]).reduce<Record<string, string>>(
+        (acc, state) => {
+          // The state is attached to the body, not to the character.
+          acc[state.bodyId] = state.state
+          return acc
+        },
+        {},
+      ),
+      presences: activePresences as unknown as WorldSnapshot['presences'],
+      occupancies: activeOccupancies as unknown as WorldSnapshot['occupancies'],
+      appearances: activeAppearances as unknown as WorldSnapshot['appearances'],
       knownFacts: [],
     }
   }
 
-  async getEventsBefore(point: TimelinePoint): Promise<any[]> {
+  async getEventsBefore(point: TimelinePoint): Promise<CanonicalEventRow[]> {
     const targetEvent = await this.resolveEvent(point)
     if (!targetEvent) return []
     const revealedThroughChapter = point.revealedThroughChapter ?? targetEvent.chapter.number
@@ -191,10 +202,12 @@ export class TimelineEngine implements ITimelineEngine {
     return events
       .filter(
         (event) =>
-          isRevealed(event as OrderedEvent, revealedThroughChapter) &&
-          compareEventOrder(event as OrderedEvent, targetEvent) <= 0,
+          isRevealed(event as CanonicalEventRow, revealedThroughChapter) &&
+          compareEventOrder(event as CanonicalEventRow, targetEvent) <= 0,
       )
-      .sort((left, right) => compareEventOrder(left as OrderedEvent, right as OrderedEvent))
+      .sort((left, right) =>
+        compareEventOrder(left as CanonicalEventRow, right as CanonicalEventRow),
+      )
   }
 
   async getNearestSnapshot(_point: TimelinePoint): Promise<WorldSnapshot | null> {
@@ -234,7 +247,7 @@ export class TimelineEngine implements ITimelineEngine {
         }),
       ])
 
-    const cursors = buildCanonicalCursors(orderedEvents as any[])
+    const cursors = buildCanonicalCursors(orderedEvents as unknown as CanonicalEventRow[])
     const cursor =
       cursors.find((candidate) => candidate.eventId === targetEvent.id) ??
       ({
@@ -248,7 +261,7 @@ export class TimelineEngine implements ITimelineEngine {
     const revealedThroughChapter = kernelRevealedThrough
 
     const activeConsciousnessState = new Map<string, string>()
-    for (const consciousnessState of consciousnessStates as any[]) {
+    for (const consciousnessState of consciousnessStates as unknown as ConsciousnessStateRow[]) {
       if (isActiveAt(consciousnessState, targetEvent, revealedThroughChapter))
         activeConsciousnessState.set(consciousnessState.consciousnessId, consciousnessState.state)
     }
@@ -305,8 +318,8 @@ export class TimelineEngine implements ITimelineEngine {
         metadata: { mentalState: activeConsciousnessState.get(consciousness.id) ?? 'ACTIVE' },
       })
     }
-    for (const location of locations.filter(
-      (candidate: any) =>
+    for (const location of (locations as unknown as VisibleRow[]).filter(
+      (candidate) =>
         isRevealed(candidate.firstVisibleEvent, revealedThroughChapter) &&
         compareEventOrder(candidate.firstVisibleEvent, targetEvent) <= 0,
     )) {
@@ -329,7 +342,7 @@ export class TimelineEngine implements ITimelineEngine {
       }
     }
 
-    for (const occupancy of occupancies as any[]) {
+    for (const occupancy of occupancies as unknown as OccupancyRow[]) {
       if (isActiveAt(occupancy, targetEvent, revealedThroughChapter))
         state.consciousnessByBody[occupancy.bodyId] = occupancy.consciousnessId ?? null
     }
@@ -337,7 +350,7 @@ export class TimelineEngine implements ITimelineEngine {
     return state
   }
 
-  private async resolveEvent(point: TimelinePoint): Promise<OrderedEvent | null> {
+  private async resolveEvent(point: TimelinePoint): Promise<CanonicalEventRow | null> {
     if (point.eventId) {
       return this.prisma.narrativeEvent.findUnique({
         where: { id: point.eventId },

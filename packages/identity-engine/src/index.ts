@@ -57,8 +57,8 @@ export class IdentityEngine implements IIdentityEngine {
       },
     })
     const occupancy = occupancies
-      .filter((candidate: any) => isActiveAt(candidate, targetEvent as any))
-      .sort((left: any, right: any) => compareEventOrder(right.fromEvent, left.fromEvent))[0]
+      .filter((candidate) => isActiveAt(candidate, targetEvent))
+      .sort((left, right) => compareEventOrder(right.fromEvent, left.fromEvent))[0]
 
     const consciousness = occupancy?.consciousness ?? null
 
@@ -71,8 +71,8 @@ export class IdentityEngine implements IIdentityEngine {
       },
     })
     const appearance = appearances
-      .filter((candidate: any) => isActiveAt(candidate, targetEvent as any))
-      .sort((left: any, right: any) => compareEventOrder(right.fromEvent, left.fromEvent))[0]
+      .filter((candidate) => isActiveAt(candidate, targetEvent))
+      .sort((left, right) => compareEventOrder(right.fromEvent, left.fromEvent))[0]
 
     const perceivedAs = appearance?.appearanceCharacterId ?? body.originalCharacterId ?? null
 
@@ -86,7 +86,7 @@ export class IdentityEngine implements IIdentityEngine {
       id: body.id,
       originalCharacterId: body.originalCharacterId ?? undefined,
       label: body.label,
-      bodyType: body.bodyType as any,
+      bodyType: body.bodyType as Body['bodyType'],
       firstVisibleEventId: body.firstVisibleEventId,
     }
 
@@ -95,7 +95,7 @@ export class IdentityEngine implements IIdentityEngine {
           id: consciousness.id,
           originCharacterId: consciousness.originCharacterId ?? undefined,
           label: consciousness.label,
-          consciousnessType: consciousness.consciousnessType as any,
+          consciousnessType: consciousness.consciousnessType as Consciousness['consciousnessType'],
           firstVisibleEventId: consciousness.firstVisibleEventId,
         }
       : null
@@ -125,8 +125,8 @@ export class IdentityEngine implements IIdentityEngine {
       },
     })
     const occupancy = occupancies
-      .filter((candidate: any) => isActiveAt(candidate, targetEvent as any))
-      .sort((left: any, right: any) => compareEventOrder(right.fromEvent, left.fromEvent))[0]
+      .filter((candidate) => isActiveAt(candidate, targetEvent))
+      .sort((left, right) => compareEventOrder(right.fromEvent, left.fromEvent))[0]
 
     if (!occupancy?.body) return null
 
@@ -135,7 +135,7 @@ export class IdentityEngine implements IIdentityEngine {
       id: body.id,
       originalCharacterId: body.originalCharacterId ?? undefined,
       label: body.label,
-      bodyType: body.bodyType as any,
+      bodyType: body.bodyType as Body['bodyType'],
       firstVisibleEventId: body.firstVisibleEventId,
     }
   }
@@ -174,8 +174,8 @@ export class IdentityEngine implements IIdentityEngine {
         },
       })
       const appearance = appearances
-        .filter((candidate: any) => isActiveAt(candidate, targetEvent as any))
-        .sort((left: any, right: any) => compareEventOrder(right.fromEvent, left.fromEvent))[0]
+        .filter((candidate) => isActiveAt(candidate, targetEvent))
+        .sort((left, right) => compareEventOrder(right.fromEvent, left.fromEvent))[0]
 
       let targetBodyId = appearance?.entityId
 

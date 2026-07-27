@@ -1,6 +1,12 @@
 import { describe, expect, it } from 'vitest'
 import type { AbilityContext } from '@black-whale/nen-engine'
-import { createEmptyWorld, type StoryCursor, type WorldState } from '@black-whale/world-engine'
+import {
+  createEmptyWorld,
+  type EffectInstance,
+  type ProposedWorldEvent,
+  type StoryCursor,
+  type WorldState,
+} from '@black-whale/world-engine'
 import {
   attach,
   canUseNen,
@@ -27,6 +33,12 @@ function world(mutate: (state: WorldState) => void = () => {}): WorldState {
   state.entities['hisoka'] = { id: 'hisoka', kind: 'CHARACTER', label: 'Hisoka' }
   mutate(state)
   return state
+}
+
+/** Narrow an EFFECT_CREATED event down to the effect it carries. */
+function effectOf(event: ProposedWorldEvent | undefined): EffectInstance {
+  if (!event || event.type !== 'EFFECT_CREATED') throw new Error('Expected an EFFECT_CREATED event')
+  return event.payload.effect
 }
 
 function context(overrides: Partial<AbilityContext> = {}): AbilityContext {
@@ -95,7 +107,7 @@ describe('condition builders', () => {
 describe('effect builders', () => {
   it('anchors an elastic connection to both ends', () => {
     const [event] = elasticConnection()(context())
-    const effect = (event as { payload: { effect: Record<string, any> } }).payload.effect
+    const effect = effectOf(event)
 
     expect(effect.kind).toBe('ELASTIC_BINDING')
     expect(effect.attributes).toEqual({ retractable: true, adhesive: true })
@@ -107,7 +119,7 @@ describe('effect builders', () => {
   it('derives a deterministic effect id, so a replay does not duplicate it', () => {
     const first = elasticConnection()(context())
     const second = elasticConnection()(context())
-    expect((first[0] as any).payload.effect.id).toBe((second[0] as any).payload.effect.id)
+    expect(effectOf(first[0]).id).toBe(effectOf(second[0]).id)
   })
 
   it('emits nothing when a transfer has no destination body', () => {

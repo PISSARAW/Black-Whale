@@ -1,5 +1,6 @@
 import {
   isActiveAt,
+  type SubjectiveFact,
   type PerspectiveState,
   type PerspectiveRequest,
   type PerspectiveDifference,
@@ -83,7 +84,7 @@ export class PerspectiveEngine implements IPerspectiveEngine {
             id: originalBody.id,
             originalCharacterId: originalBody.originalCharacterId ?? undefined,
             label: originalBody.label,
-            bodyType: originalBody.bodyType as any,
+            bodyType: originalBody.bodyType as Body['bodyType'],
             firstVisibleEventId: originalBody.firstVisibleEventId,
           }
         }
@@ -112,8 +113,8 @@ export class PerspectiveEngine implements IPerspectiveEngine {
 
     // 4. Construct subjective facts
     // This involves replacing objective truths with subjective beliefs
-    const subjectiveFacts = trueFacts
-      .map((fact) => {
+    const subjectiveFacts: SubjectiveFact[] = trueFacts
+      .map((fact): SubjectiveFact | null => {
         // Is there a known knowledge state for this fact?
         const kState = knowledge.find((k) => k.factId === fact.id)
 
@@ -126,7 +127,8 @@ export class PerspectiveEngine implements IPerspectiveEngine {
           return {
             ...fact,
             value: overridingBelief.believedValue,
-            truthStatus: 'CONTESTED', // Indicates subjective mismatch
+            // The observer holds a value the world contradicts.
+            truthStatus: 'CONTESTED',
           }
         }
 
@@ -149,23 +151,23 @@ export class PerspectiveEngine implements IPerspectiveEngine {
         untilEvent: { include: { chapter: true } },
       },
     })
-    const activeBodyPresences = allBodyPresences.filter((presence: any) =>
-      isActiveAt(presence, targetEvent as any),
+    const activeBodyPresences = allBodyPresences.filter((presence) =>
+      isActiveAt(presence, targetEvent),
     )
     const observerPresence = currentBody
-      ? activeBodyPresences.find((presence: any) => presence.entityId === currentBody?.id)
+      ? activeBodyPresences.find((presence) => presence.entityId === currentBody?.id)
       : undefined
     const visibleBodies = observerPresence?.locationId
       ? activeBodyPresences
-          .filter((presence: any) => presence.locationId === observerPresence.locationId)
-          .map((presence: any) => presence.entityId)
+          .filter((presence) => presence.locationId === observerPresence.locationId)
+          .map((presence) => presence.entityId)
       : currentBody
         ? [currentBody.id]
         : []
 
     const explicitlyKnownCharacterIds = subjectiveFacts
-      .filter((fact: any) => fact.subjectType === 'CHARACTER')
-      .map((fact: any) => fact.subjectId)
+      .filter((fact) => fact.subjectType === 'CHARACTER')
+      .map((fact) => fact.subjectId)
     const knownCharacters = [
       ...new Set([request.observerCharacterId, ...explicitlyKnownCharacterIds]),
     ]

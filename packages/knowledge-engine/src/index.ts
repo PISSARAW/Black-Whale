@@ -63,16 +63,16 @@ export class KnowledgeEngine implements IKnowledgeEngine {
     })
 
     return states
-      .filter((state: any) => isActiveAt(state, targetEvent as any))
-      .map((k: any) => ({
+      .filter((state) => isActiveAt(state, targetEvent))
+      .map((k) => ({
         id: k.id,
         observerCharacterId: k.observerCharacterId,
         factId: k.factId,
         fromEventId: k.fromEventId,
         untilEventId: k.untilEventId ?? undefined,
-        epistemicState: k.epistemicState as any,
+        epistemicState: k.epistemicState as KnowledgeState['epistemicState'],
         confidence: k.confidence ?? undefined,
-        acquisitionMethod: k.acquisitionMethod as any,
+        acquisitionMethod: k.acquisitionMethod as KnowledgeState['acquisitionMethod'],
         sourceCharacterId: k.sourceCharacterId ?? undefined,
         acquisitionEventId: k.acquisitionEventId,
       }))
@@ -100,8 +100,8 @@ export class KnowledgeEngine implements IKnowledgeEngine {
     })
 
     return beliefs
-      .filter((belief: any) => isActiveAt(belief, targetEvent as any))
-      .map((b: any) => ({
+      .filter((belief) => isActiveAt(belief, targetEvent))
+      .map((b) => ({
         id: b.id,
         observerCharacterId: b.observerCharacterId,
         subjectType: b.subjectType,
@@ -136,16 +136,16 @@ export class KnowledgeEngine implements IKnowledgeEngine {
     })
 
     return facts
-      .filter((fact: any) => isActiveAt(fact, targetEvent as any))
-      .map((f: any) => ({
+      .filter((fact) => isActiveAt(fact, targetEvent))
+      .map((f) => ({
         id: f.id,
-        subjectType: f.subjectType as any,
+        subjectType: f.subjectType as Fact['subjectType'],
         subjectId: f.subjectId,
         predicate: f.predicate,
         value: f.value,
         validFromEventId: f.validFromEventId,
         validUntilEventId: f.validUntilEventId ?? undefined,
-        truthStatus: f.truthStatus as any,
+        truthStatus: f.truthStatus as Fact['truthStatus'],
         firstVisibleEventId: f.firstVisibleEventId,
       }))
   }

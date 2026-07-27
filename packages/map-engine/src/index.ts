@@ -1,17 +1,45 @@
-import { isActiveAt, type Presence } from '@black-whale/domain'
+import { isActiveAt, type OrderedEvent, type TemporalRecord } from '@black-whale/domain'
 
-// Minimal PrismaClient interface for our needs
+// ──────────────────────────────────────────────
+// Database rows
+// ──────────────────────────────────────────────
+
+/** The Location columns this engine reads. */
+export interface LocationRow {
+  id: string
+  name: string
+  slug?: string | null
+  parentLocationId?: string | null
+  mapElementId?: string | null
+}
+
+/** A narrative event with the chapter its ordering depends on. */
+export type EventRow = OrderedEvent & { id: string }
+
+/** A Presence joined with the events that bound it and its location. */
+export type PresenceRow = TemporalRecord & {
+  entityId: string
+  entityType: string
+  locationId?: string | null
+  location?: LocationRow | null
+}
+
+/**
+ * The slice of PrismaClient this engine needs, declared here so the package
+ * stays independent of the generated client. Query arguments are opaque: they
+ * are forwarded untouched.
+ */
 interface PrismaClient {
   location: {
-    findMany: (args?: any) => Promise<any[]>
-    findFirst: (args?: any) => Promise<any | null>
+    findMany: (args?: unknown) => Promise<LocationRow[]>
+    findFirst: (args?: unknown) => Promise<LocationRow | null>
   }
   narrativeEvent: {
-    findUnique: (args?: any) => Promise<any | null>
+    findUnique: (args?: unknown) => Promise<EventRow | null>
   }
   presence: {
-    findMany: (args?: any) => Promise<any[]>
-    findFirst: (args?: any) => Promise<any | null>
+    findMany: (args?: unknown) => Promise<PresenceRow[]>
+    findFirst: (args?: unknown) => Promise<PresenceRow | null>
   }
 }
 
@@ -71,7 +99,10 @@ export interface IMapEngine {
  * Extract deck number from location slug or parent hierarchy
  * Tier locations have slugs like 'tier-1', 'tier-2', etc.
  */
-function getDeckFromLocation(location: any, allLocations: any[]): number | undefined {
+function getDeckFromLocation(
+  location: LocationRow,
+  allLocations: LocationRow[],
+): number | undefined {
   if (location.slug?.startsWith('tier-')) {
     const match = location.slug.match(/tier-(\d+)/)
     if (match) {
@@ -92,7 +123,7 @@ function getDeckFromLocation(location: any, allLocations: any[]): number | undef
 /**
  * Convert a database Location to a LocationNode
  */
-function toLocationNode(dbLocation: any, allLocations: any[]): LocationNode {
+function toLocationNode(dbLocation: LocationRow, allLocations: LocationRow[]): LocationNode {
   const deck = getDeckFromLocation(dbLocation, allLocations)
 
   return {
@@ -111,7 +142,7 @@ function toLocationNode(dbLocation: any, allLocations: any[]): LocationNode {
 /**
  * Build layer structure from flat locations list
  */
-function buildLayers(locations: any[]): ShipLayer[] {
+function buildLayers(locations: LocationRow[]): ShipLayer[] {
   const nodes: LocationNode[] = locations.map((l) => toLocationNode(l, locations))
 
   const deckMap = new Map<number, LocationNode[]>()
@@ -146,7 +177,7 @@ function buildLayers(locations: any[]): ShipLayer[] {
 export class MapEngine implements IMapEngine {
   constructor(private readonly prisma: PrismaClient) {}
 
-  private async resolveEvent(eventId: string): Promise<any | null> {
+  private async resolveEvent(eventId: string): Promise<EventRow | null> {
     const event = await this.prisma.narrativeEvent.findUnique({
       where: { id: eventId },
       include: { chapter: true },
@@ -154,7 +185,7 @@ export class MapEngine implements IMapEngine {
     return event
   }
 
-  private async getActivePresencesAtEvent(targetEvent: any): Promise<Presence[]> {
+  private async getActivePresencesAtEvent(targetEvent: EventRow): Promise<PresenceRow[]> {
     const presences = await this.prisma.presence.findMany({
       include: {
         location: true,
@@ -162,7 +193,7 @@ export class MapEngine implements IMapEngine {
         untilEvent: { include: { chapter: true } },
       },
     })
-    return presences.filter((presence: any) => isActiveAt(presence, targetEvent)) as any
+    return presences.filter((presence) => isActiveAt(presence, targetEvent))
   }
 
   async getMapState(eventId: string): Promise<MapState> {
@@ -201,9 +232,9 @@ export class MapEngine implements IMapEngine {
 
     const presence = (await this.getActivePresencesAtEvent(targetEvent)).find(
       (candidate) => candidate.entityId === entityId,
-    ) as any
+    )
 
-    if (!presence || !presence.locationId) {
+    if (!presence?.location || !presence.locationId) {
       return null
     }
 
@@ -240,13 +271,13 @@ export class MapEngine implements IMapEngine {
       return []
     }
 
-    const location = allLocations.find((l: any) => l.id === locationId)
+    const location = allLocations.find((l) => l.id === locationId)
     if (!location) {
       return []
     }
 
-    const children = allLocations.filter((l: any) => l.parentLocationId === locationId)
-    const parent = allLocations.find((l: any) => l.id === location.parentLocationId)
+    const children = allLocations.filter((l) => l.parentLocationId === locationId)
+    const parent = allLocations.find((l) => l.id === location.parentLocationId)
 
     const neighbors: LocationNode[] = []
 

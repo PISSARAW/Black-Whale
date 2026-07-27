@@ -1,10 +1,11 @@
 import { prisma } from '$lib/server/db';
+import { buildPerspective, comparePerspectives } from '$lib/server/perspectives';
 import { readSpoilerProfile } from '$lib/server/spoiler';
 import type { PageServerLoad } from './$types';
 import { filterVisible } from '@black-whale/spoiler-engine';
 import { TimelineEngine } from '@black-whale/timeline-engine';
 
-export const load: PageServerLoad = async ({ cookies, url, fetch }) => {
+export const load: PageServerLoad = async ({ cookies, url }) => {
   const spoilerProfile = readSpoilerProfile(cookies);
   const maxChapter = spoilerProfile?.maxChapter;
 
@@ -45,17 +46,13 @@ export const load: PageServerLoad = async ({ cookies, url, fetch }) => {
 
   if (selectedEventId && selectedLeft && selectedRight) {
     try {
-      const [leftRes, rightRes, compareRes] = await Promise.all([
-        fetch(`http://localhost:3001/v1/perspectives/${selectedLeft}?eventId=${selectedEventId}`),
-        fetch(`http://localhost:3001/v1/perspectives/${selectedRight}?eventId=${selectedEventId}`),
-        fetch(`http://localhost:3001/v1/perspectives/compare?left=${selectedLeft}&right=${selectedRight}&eventId=${selectedEventId}`)
+      [leftPerspective, rightPerspective, comparison] = await Promise.all([
+        buildPerspective(selectedLeft, selectedEventId),
+        buildPerspective(selectedRight, selectedEventId),
+        comparePerspectives(selectedLeft, selectedRight, selectedEventId)
       ]);
-
-      if (leftRes.ok) leftPerspective = await leftRes.json();
-      if (rightRes.ok) rightPerspective = await rightRes.json();
-      if (compareRes.ok) comparison = await compareRes.json();
     } catch (error) {
-      console.error('Failed to fetch perspective comparison payloads', error);
+      console.error('Failed to build perspective comparison', error);
     }
   }
 

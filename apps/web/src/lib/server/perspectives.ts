@@ -23,3 +23,11 @@ export async function buildPerspective(observerCharacterId: string, eventId: str
 
 	return { observerId: observerCharacterId, eventId, mode: 'character' as const, ...perspective };
 }
+
+/** The points on which two characters' views of the same event diverge. */
+export async function comparePerspectives(leftId: string, rightId: string, eventId: string) {
+	return perspectiveEngine.comparePerspectives(
+		{ observerCharacterId: leftId, eventId, spoilerLimit: Number.POSITIVE_INFINITY },
+		{ observerCharacterId: rightId, eventId, spoilerLimit: Number.POSITIVE_INFINITY }
+	);
+}

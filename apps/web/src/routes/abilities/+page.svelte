@@ -7,20 +7,19 @@
 
   export let data: PageData;
 
-  const fallbackAbilities = HATSU_PROFILES.map((profile) => ({
-    id: profile.id,
-    name: profile.name,
-    owner: profile.owner,
-    category: 'nen',
-    description: profile.rule,
-  }));
-
-  // The checked-in registry is the canonical interaction list. API data only
-  // enriches it, so a stale API cannot silently hide recently added Hatsu.
-  $: abilities = HATSU_PROFILES.map((profile) =>
-    data.abilities?.find((ability: { id: string }) => ability.id === profile.id)
-      ?? fallbackAbilities.find((ability) => ability.id === profile.id)
-  );
+  // The checked-in registry is the canonical interaction list; the ability
+  // catalogue only enriches it, so a profile that is missing from the
+  // catalogue still renders from the registry rather than becoming a hole.
+  $: abilities = HATSU_PROFILES.map((profile) => {
+    const catalogued = data.abilities.find((ability) => ability.id === profile.id);
+    return {
+      id: profile.id,
+      name: catalogued?.name ?? profile.name,
+      owner: catalogued?.owner ?? profile.owner,
+      category: catalogued?.category ?? 'nen',
+      description: catalogued?.description ?? profile.rule
+    };
+  });
 
   function activate(id: string) {
     const profile = hatsuById(id);

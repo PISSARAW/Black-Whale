@@ -1,9 +1,10 @@
 import { prisma } from '$lib/server/db';
+import { buildPerspective, comparePerspectives } from '$lib/server/perspectives';
 import { readSpoilerProfile } from '$lib/server/spoiler';
 import type { PageServerLoad } from './$types';
 import { filterVisible } from '@black-whale/spoiler-engine';
 
-export const load: PageServerLoad = async ({ cookies, url, fetch }) => {
+export const load: PageServerLoad = async ({ cookies, url }) => {
 	const spoilerProfile = readSpoilerProfile(cookies);
 	const maxChapter = spoilerProfile?.maxChapter;
 
@@ -43,18 +44,14 @@ export const load: PageServerLoad = async ({ cookies, url, fetch }) => {
 
 	if (eventId && leftCharacterId) {
 		try {
-			const resLeft = await fetch(`http://localhost:3001/v1/perspectives/${leftCharacterId}?eventId=${eventId}`);
-			if (resLeft.ok) leftPerspective = await resLeft.json();
+			leftPerspective = await buildPerspective(leftCharacterId, eventId);
 
 			if (rightCharacterId) {
-				const resRight = await fetch(`http://localhost:3001/v1/perspectives/${rightCharacterId}?eventId=${eventId}`);
-				if (resRight.ok) rightPerspective = await resRight.json();
-
-				const resCompare = await fetch(`http://localhost:3001/v1/perspectives/compare?left=${leftCharacterId}&right=${rightCharacterId}&eventId=${eventId}`);
-				if (resCompare.ok) comparison = await resCompare.json();
+				rightPerspective = await buildPerspective(rightCharacterId, eventId);
+				comparison = await comparePerspectives(leftCharacterId, rightCharacterId, eventId);
 			}
 		} catch (e) {
-			console.error("Failed to fetch perspective data from API", e);
+			console.error('Failed to build perspective data', e);
 		}
 	}
 

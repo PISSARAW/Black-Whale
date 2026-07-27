@@ -1,12 +1,21 @@
 <script lang="ts">
   import type { PageData, ActionData } from './$types';
+  import Seo from '$lib/components/Seo.svelte';
+  import { breadcrumbSchema } from '$lib/seo/schema';
 
   let { data, form }: { data: PageData; form: ActionData } = $props();
   let entities = $derived(Object.values(data.branch?.snapshot?.entities || {}) as any[]);
   let effects = $derived(Object.values(data.branch?.snapshot?.effects || {}) as any[]);
 </script>
 
-<svelte:head><title>Simulation Lab — Black Whale</title></svelte:head>
+<Seo
+  title="Simulation Lab"
+  description="Fork the canonical Black Whale timeline, execute Nen rules against a branch, and inspect the projected world without altering canon."
+  jsonLd={breadcrumbSchema([
+    { name: 'Home', path: '/' },
+    { name: 'Simulations', path: '/simulations' }
+  ])}
+/>
 
 <div class="lab">
   <header>
@@ -15,8 +24,8 @@
     <span>Fork canon, execute Nen rules and inspect the projected world without altering the canonical timeline.</span>
   </header>
 
-  {#if data.backendError}
-    <aside class="error"><strong>Backend unavailable</strong><span>{data.backendError}</span></aside>
+  {#if data.branchError}
+    <aside class="error"><strong>Branch unavailable</strong><span>{data.branchError}</span></aside>
   {/if}
   {#if form?.message}<aside class="error"><span>{form.message}</span></aside>{/if}
 

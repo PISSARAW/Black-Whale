@@ -35,6 +35,12 @@ describe('ability module registry', () => {
     expect(wrongOwner).toEqual([])
   })
 
+  it('covers the whole catalogue: every hatsu impacts the site', () => {
+    const withoutModule = catalog.filter((ability) => !ability.moduleKey).map((a) => a.id)
+    expect(withoutModule).toEqual([])
+    expect(abilityModules).toHaveLength(catalog.length)
+  })
+
   it('does not register the same ability twice', () => {
     const ids = abilityModules.map((module) => module.manifest.id)
     expect(new Set(ids).size).toBe(ids.length)

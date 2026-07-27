@@ -34,12 +34,13 @@ manifest d'interaction qui change concrètement l'UI, (3) des conditions explici
 dans le panneau « Pourquoi ? », et (4) une empreinte visible dans au moins un des cinq
 « core questions » du README.
 
-> **État au 27/07/2026** — le P1 **et** le P2 sont implémentés : les sept primitives du §2
-> existent dans `world-engine`/`ability-sdk`, et les 43 modules correspondants sont écrits,
-> câblés (`moduleKey` dans `abilities.json`, tableau `abilityModules` enregistré dans
-> `apps/web/src/lib/server/nen.ts`) et couverts par des tests. Les fiches ci-dessous restent
-> la référence canon ; les mentions « à ajouter » du §2 sont désormais historiques.
-> Détail en fin de document (§6).
+> **État au 27/07/2026 — objectif atteint : 81 hatsu sur 81 impactent le site.** Les sept
+> primitives du §2 existent dans `world-engine`/`ability-sdk`, et chaque capacité du
+> catalogue a un module qui émet des events typés, un manifest d'interaction, des conditions
+> affichables et une empreinte dans au moins un engine. Le câblage est vérifié par un test
+> (`apps/web/src/lib/server/nen-registry.test.ts`) : aucune capacité ne peut retomber à
+> l'état de paragraphe de description. Les fiches ci-dessous restent la référence canon ;
+> les mentions « à ajouter » du §2 sont historiques. Détail en fin de document (§6).
 
 ## 2. Primitives manquantes (à ajouter avant/pendant la vague de modules)
 
@@ -694,7 +695,7 @@ locales, affichés tels quels dans l'UI (fidélité manga = les règles sont tou
 | 5 | Hisoka (Bungee Gum étendu + Texture Surprise) + Metamorphosen + Convert Hands | Gyo, masques, mode « apparent » | ✅ |
 | 6 | Skill Hunter + Benjamin Baton + malédiction de Beyond | héritage/vol, spoiler-engine ch. 415 | ✅ + Cat's Name et Little Eye |
 | 7 | Parallel Future | merge sélectif de branches, overlay FUTURE | ✅ module + `SimulationEngine.mergeBranch` |
-| 8+ | P3 restants par opportunité d'arc | complétude catalogue | à faire |
+| 8 | P3 : les 38 capacités restantes | complétude catalogue — 81/81 | ✅ |
 
 ### Ce que la vague P1 a effectivement livré
 
@@ -731,6 +732,26 @@ locales, affichés tels quels dans l'UI (fidélité manga = les règles sont tou
   tserriednich-guardian-lie-marks, cross-game, lsdf, zhanglei-guardian-coins.
 - **Garde-fou de câblage** : `abilityModules` est le registre unique, et un test compare la
   liste enregistrée aux `moduleKey` du catalogue — les deux ne peuvent plus diverger.
+
+### Ce que la vague P3 a bouclé
+
+Les 38 capacités restantes, regroupées par faction plutôt qu'en 38 dossiers :
+`chrollo-stolen` (Indoor Fish, Fun Fun Cloth, téléportation, Order Stamp, Gallery Fake,
+Black Voice, Lovely Ghostwriter), `troupe` (Prologue, Jupiter, Blinky, Double Machine Gun,
+Ripper Cyclotron), `royal-guardians` (Camilla, Tubeppa, Tyson, Luzurus), `heil-ly` (Voconte,
+Bloody Mary, Padaille, Gel), `benjamin-inherited` (Air Blow, Culdcept, aura), `zodiacs`
+(bâton et trois singes de Saiyu, Great Haiku, Cluck, Leorio), `biscuit`, `expedition`
+(Kurton, Tokarine, Theta), `mafia` (Hinrigh, Lynch, Terebellum) et `woble` (Bill, Oito).
+
+Deux points de fidélité que cette vague met à l'épreuve, conformément au §5 :
+
+- **Les inconnues restent inconnues.** Le gardien de Camilla porte une condition `unrevealed`
+  *bloquante* : personne ne peut l'exécuter tant que le manga n'a pas dit comment. Air Blow,
+  la téléportation sans nom de Chrollo et le hatsu propre à Oito portent des notes non
+  bloquantes qui disent ce qui manque.
+- **Les échecs canon comptent.** Culdcept a une action « capture avortée » qui produit un
+  event : l'échec contre la flèche de Halkenburg (ch. 411) est visible dans la timeline au
+  lieu d'être passé sous silence.
 
 Chaque vague suit le pattern bungee-gum : module dans `ability-modules`, `moduleKey` renseigné
 dans `abilities.json`, manifest + action wheel + panneau « Pourquoi ? », et une scène canon de

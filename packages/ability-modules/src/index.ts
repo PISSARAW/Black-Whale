@@ -41,6 +41,50 @@ import { tserriednichGuardianLieMarks } from './tserriednich-guardian-lie-marks/
 import { withoutYou } from './without-you/module.js'
 import { yomotsuHegui } from './yomotsu-hegui/module.js'
 import { zhangleiGuardianCoins } from './zhanglei-guardian-coins/module.js'
+import {
+  blackVoice,
+  chrolloTeleportation,
+  funFunCloth,
+  galleryFake,
+  indoorFish,
+  lovelyGhostwriter,
+  orderStamp,
+} from './chrollo-stolen/module.js'
+import {
+  battleCantabileJupiter,
+  battleCantabilePrologue,
+  blinky,
+  doubleMachineGun,
+  ripperCyclotron,
+} from './troupe/module.js'
+import {
+  camillaGuardianCoercion,
+  luzurusGuardianDesireTrap,
+  tubeppaGuardianSynthesis,
+  tysonGuardianEyeWogs,
+} from './royal-guardians/module.js'
+import {
+  bloodyMary,
+  padailleWeaponTransformation,
+  snakeArm,
+  voconteHideoutDoors,
+} from './heil-ly/module.js'
+import { airBlow, benjaminAura, culdcept } from './benjamin-inherited/module.js'
+import {
+  birdManipulation,
+  greatHaiku,
+  leorioRemotePunch,
+  saiyuPriestStaff,
+  saiyuThreeMonkeys,
+} from './zodiacs/module.js'
+import { biscuitBodyTransformation, magicalEstheticianCookie } from './biscuit/module.js'
+import {
+  kurtonVehicleTransformation,
+  thetaAuraProjectile,
+  transportPortals,
+} from './expedition/module.js'
+import { biohazardHinrigh, bodyAndSoul, damageSweetHome } from './mafia/module.js'
+import { erigeron, oitoHatsu } from './woble/module.js'
 
 export { bungeeGum } from './bungee-gum/module.js'
 export { chainJail } from './chain-jail/module.js'
@@ -89,6 +133,52 @@ export {
 export { crossGame } from './cross-game/module.js'
 export { lsdf } from './lsdf/module.js'
 export { zhangleiGuardianCoins } from './zhanglei-guardian-coins/module.js'
+
+export {
+  blackVoice,
+  chrolloTeleportation,
+  funFunCloth,
+  galleryFake,
+  indoorFish,
+  lovelyGhostwriter,
+  orderStamp,
+} from './chrollo-stolen/module.js'
+export {
+  battleCantabileJupiter,
+  battleCantabilePrologue,
+  blinky,
+  doubleMachineGun,
+  ripperCyclotron,
+} from './troupe/module.js'
+export {
+  camillaGuardianCoercion,
+  luzurusGuardianDesireTrap,
+  tubeppaGuardianSynthesis,
+  tysonGuardianEyeWogs,
+} from './royal-guardians/module.js'
+export {
+  bloodyMary,
+  padailleWeaponTransformation,
+  snakeArm,
+  voconteHideoutDoors,
+} from './heil-ly/module.js'
+export { airBlow, benjaminAura, culdcept } from './benjamin-inherited/module.js'
+export {
+  SAIYU_MONKEYS,
+  birdManipulation,
+  greatHaiku,
+  leorioRemotePunch,
+  saiyuPriestStaff,
+  saiyuThreeMonkeys,
+} from './zodiacs/module.js'
+export { biscuitBodyTransformation, magicalEstheticianCookie } from './biscuit/module.js'
+export {
+  kurtonVehicleTransformation,
+  thetaAuraProjectile,
+  transportPortals,
+} from './expedition/module.js'
+export { biohazardHinrigh, bodyAndSoul, damageSweetHome } from './mafia/module.js'
+export { erigeron, oitoHatsu } from './woble/module.js'
 
 /**
  * Every implemented module. Registering this array rather than a hand-kept list
@@ -139,4 +229,42 @@ export const abilityModules: NenAbilityModule[] = [
   crossGame,
   lsdf,
   zhangleiGuardianCoins,
+  indoorFish,
+  funFunCloth,
+  chrolloTeleportation,
+  orderStamp,
+  galleryFake,
+  blackVoice,
+  lovelyGhostwriter,
+  battleCantabilePrologue,
+  battleCantabileJupiter,
+  blinky,
+  doubleMachineGun,
+  ripperCyclotron,
+  camillaGuardianCoercion,
+  tubeppaGuardianSynthesis,
+  tysonGuardianEyeWogs,
+  luzurusGuardianDesireTrap,
+  voconteHideoutDoors,
+  bloodyMary,
+  padailleWeaponTransformation,
+  snakeArm,
+  airBlow,
+  culdcept,
+  benjaminAura,
+  saiyuPriestStaff,
+  saiyuThreeMonkeys,
+  greatHaiku,
+  birdManipulation,
+  leorioRemotePunch,
+  magicalEstheticianCookie,
+  biscuitBodyTransformation,
+  kurtonVehicleTransformation,
+  transportPortals,
+  thetaAuraProjectile,
+  biohazardHinrigh,
+  bodyAndSoul,
+  damageSweetHome,
+  erigeron,
+  oitoHatsu,
 ]

@@ -65,7 +65,7 @@
     "category": "enhancer",
     "description": "Benjamin's powerful aura manipulation allows him to enhance his physical abilities significantly.",
     "canonStatus": "canon",
-    "moduleKey": null
+    "moduleKey": "benjamin-aura"
   },
   {
     "id": "oito-hatsu",
@@ -74,7 +74,7 @@
     "category": "manipulator",
     "description": "Oito's ability to control and manipulate her royal guards with precision.",
     "canonStatus": "canon",
-    "moduleKey": null
+    "moduleKey": "oito-hatsu"
   },
   {
     "id": "erigeron",
@@ -84,7 +84,7 @@
     "category": "enhancer",
     "description": "Bill significantly accelerates the growth of a living being by bringing his palms together. On a seed immersed in a glass of water, Erigeron makes it germinate in a few moments. The ability can also enhance a person's Nen abilities, but its effects remain weak on untrained or inexperienced individuals.",
     "canonStatus": "canon",
-    "moduleKey": null,
+    "moduleKey": "erigeron",
     "userIds": ["danjin"]
   },
   {
@@ -96,7 +96,7 @@
     "abilityType": "symbiotic",
     "description": "Symbiotic-like ability allowing Kurton to transform his body into a boat or car capable of carrying up to five passengers, using their aura as fuel. Given his Nen type and the resemblance to Tsubone's ability, this transformation is most likely Materialization.",
     "canonStatus": "canon",
-    "moduleKey": null
+    "moduleKey": "kurton-vehicle-transformation"
   },
   {
     "id": "little-eye",
@@ -168,7 +168,7 @@
     "inheritedFrom": "Vincent",
     "description": "Ability inherited from Vincent. Its original user was attempting to activate it from his left palm in order to break the guard of a Nen user capable of stopping bullets with his aura. It does not appear to require direct contact with the target, but its precise functioning remains unknown.",
     "canonStatus": "canon",
-    "moduleKey": null
+    "moduleKey": "air-blow"
   },
   {
     "id": "secret-window",
@@ -191,7 +191,7 @@
     "inheritedFrom": "Shikaku",
     "description": "Ability inherited from Shikaku used to acquire another Nen user's ability in the form of a card. The user brings their hands together, produces a flash of lightning, then forms an aura rectangle with their fingers, the color of which darkens during preparation. Its only known use failed against Halkenburg's arrow, capable of penetrating all defenses.",
     "canonStatus": "canon",
-    "moduleKey": null
+    "moduleKey": "culdcept"
   },
   {
     "id": "parallel-future",
@@ -309,7 +309,7 @@
     "abilityType": "stolen-ability",
     "description": "Stolen ability summoning skeletal fish that only survive in a completely enclosed room. They devour human flesh without causing pain or bleeding; the victim remains conscious even after a fatal injury, the effects of which only become apparent when the fish disappear.",
     "canonStatus": "canon",
-    "moduleKey": null
+    "moduleKey": "indoor-fish"
   },
   {
     "id": "fun-fun-cloth",
@@ -325,7 +325,7 @@
     "inheritedFrom": "Owl",
     "description": "Materialized fabric, stolen from Owl, whose size varies at will. Any enveloped object or individual is miniaturized to fit in the palm, then returns to normal size once released, unharmed in the process.",
     "canonStatus": "canon",
-    "moduleKey": null
+    "moduleKey": "fun-fun-cloth"
   },
   {
     "id": "chrollo-teleportation",
@@ -337,7 +337,7 @@
     "abilityType": "stolen-ability",
     "description": "Unnamed stolen ability to teleport a person against their will. Chrollo used it without moving and without seeing the target or its destination to keep Nobunaga away from Hisoka. Its exact type is unknown, but the Emission is probable.",
     "canonStatus": "canon",
-    "moduleKey": null
+    "moduleKey": "chrollo-teleportation"
   },
   {
     "id": "sun-and-moon",
@@ -367,7 +367,7 @@
     "abilityType": "stolen-ability",
     "description": "A materialized buffer animates an inert object with a head and imposes a simple vocal command on it. It does not work on real corpses, in accordance with the original creator's beliefs, but controls the body copies produced by Gallery Fake. Decapitation negates the effect; more than two hundred puppets can be ordered simultaneously.",
     "canonStatus": "canon",
-    "moduleKey": null
+    "moduleKey": "order-stamp"
   },
   {
     "id": "convert-hands",
@@ -407,7 +407,7 @@
     "inheritedFrom": "Neon Nostrade",
     "description": "Ancient ability stolen from Neon Nostrade, capable of predicting in the form of poems the events of the coming weeks based on a person's name, date of birth and blood type. The user cannot predict his own future. She disappeared from Skill Hunter before the Black Whale's journey, suggesting Neon's death.",
     "canonStatus": "canon",
-    "moduleKey": null
+    "moduleKey": "lovely-ghostwriter"
   },
   {
     "id": "gallery-fake",
@@ -423,7 +423,7 @@
     "inheritedFrom": "Kortopi",
     "description": "Ancient ability borrowed from Kortopi: the right hand creates an exact copy of an object touched by the left. Living beings become inert copies, without reproducing their powers, and disappear after twenty-four hours. Chrollo could track every copy with En and created over two hundred against Hisoka. Power presumably disappeared after Kortopi's death.",
     "canonStatus": "canon",
-    "moduleKey": null
+    "moduleKey": "gallery-fake"
   },
   {
     "id": "black-voice",
@@ -435,7 +435,7 @@
     "inheritedFrom": "Shalnark",
     "description": "Old ability borrowed from Shalnark. An antenna planted in a target allows it to be controlled entirely by means of a special telephone and to transmit voice orders. Chrollo kept a second antenna as a threat and feint. The ability presumably disappeared after Shalnark's death.",
     "canonStatus": "canon",
-    "moduleKey": null
+    "moduleKey": "black-voice"
   },
   {
     "id": "silent-majority",
@@ -468,7 +468,7 @@
     "abilityType": "musical-conjuration",
     "description": "Bonolenov dances and plays a melody by passing air through the holes in his body. Prologue materializes around him a warrior's outfit as well as a long spear, which he wields at high speed to pierce his target.",
     "canonStatus": "canon",
-    "moduleKey": null
+    "moduleKey": "battle-cantabile-prologue"
   },
   {
     "id": "battle-cantabile-jupiter",
@@ -483,7 +483,7 @@
     "abilityType": "musical-pursuit-crush",
     "description": "After performing the required dance and melody, Bonolenov materializes around himself a gigantic sphere having the appearance of Jupiter. It pursues the target at very high speed as long as it remains within hearing range of the music, then crushes it under its mass.",
     "canonStatus": "canon",
-    "moduleKey": null
+    "moduleKey": "battle-cantabile-jupiter"
   },
   {
     "id": "battle-cantabile-metamorphosen",
@@ -509,7 +509,7 @@
     "abilityType": "infinite-selective-vacuum",
     "description": "Shizuku materializes a vacuum cleaner capable of absorbing a seemingly unlimited amount of non-living matter. Blinky cannot suck up anything it considers alive or objects made of Nen, a useful restriction for detecting traps. Only the last swallowed object can be spat out and Shizuku does not know where the rest disappears. She usually has to announce out loud what she wants to aspirate. Blinky erases blood, corpses and traces of a crime, removes poisons or gas from an organism without sucking the victim, serves as a club in combat and can drain the blood of an opponent through an open wound.",
     "canonStatus": "canon",
-    "moduleKey": null
+    "moduleKey": "blinky"
   },
   {
     "id": "double-machine-gun",
@@ -526,7 +526,7 @@
     "abilityType": "rapid-fire-aura-bullets",
     "description": "Franklin has severed his ten fingers at the level of the distal phalanges and fires aura bullets from their ends at a very high rate. Their speed and power make it possible to massacre several dozen people in a few seconds and to cross Nen constructions while maintaining lethal force. This mutilation was not technically necessary, but his belief that it would make the attack more effective constitutes a voluntary restriction which greatly increases the power of the projectiles.",
     "canonStatus": "canon",
-    "moduleKey": null
+    "moduleKey": "double-machine-gun"
   },
   {
     "id": "ripper-cyclotron",
@@ -537,7 +537,7 @@
     "abilityType": "rotation-charged-punch",
     "description": "Phinks rotates his arm clockwise and with each rotation increases the amount of aura concentrated in his fist. The power builds up until the next blow: fifteen turns of his right arm were enough to pulverize the resistant body of a Chimera Ant in a single impact. However, he felt that around seven rounds would have been enough and admits to having difficulty calibrating his strikes precisely.",
     "canonStatus": "canon",
-    "moduleKey": null
+    "moduleKey": "ripper-cyclotron"
   },
   {
     "id": "surveillance-paper-dolls",
@@ -585,7 +585,7 @@
     "abilityType": "weak-emitted-projectile",
     "description": "Theta uses her Hatsu to emit a weak projectile of aura towards Tserriednich during her Zetsu exercise. The attack serves to test his ability to maintain complete closure of the aura nodes under pressure and does not appear designed to inflict significant damage. Theta's natural type remains unknown, but the effect likely uses Emission.",
     "canonStatus": "canon",
-    "moduleKey": null
+    "moduleKey": "theta-aura-projectile"
   },
   {
     "id": "illumi-needle-people",
@@ -620,7 +620,7 @@
     "abilityType": "restorative-massage",
     "description": "Biscuit summons the masseuse Cookie and transmutes a special lotion. Cookie's treatments relieve fatigue and ailments; Piano Massage makes thirty minutes of sleep provide recovery comparable to eight hours.",
     "canonStatus": "canon",
-    "moduleKey": null
+    "moduleKey": "magical-esthetician-cookie"
   },
   {
     "id": "biscuit-body-transformation",
@@ -631,7 +631,7 @@
     "abilityType": "body-transformation",
     "description": "Biscuit normally maintains a small youthful form but can return to her natural, massively muscular body. She dislikes the appearance, yet it releases her full physical strength.",
     "canonStatus": "canon",
-    "moduleKey": null
+    "moduleKey": "biscuit-body-transformation"
   },
   {
     "id": "hanzo-skill-4",
@@ -666,7 +666,7 @@
     "abilityType": "object-to-animal-transformation",
     "description": "Hinrigh changes an object he touches into a living animal while retaining its original function. Handcuffs become pigeons, cameras become cats and weapons become snakes; the transformation ends when its aura supply is exhausted.",
     "canonStatus": "canon",
-    "moduleKey": null
+    "moduleKey": "biohazard-hinrigh"
   },
   {
     "id": "luini-spatial-teleportation",
@@ -688,7 +688,7 @@
     "abilityType": "written-reality-effect",
     "description": "Basho writes a haiku on paper and invokes its effect. Better poetry and seasonal language increase its power; demonstrated verses create fire, punish lies and produce protective light against weak spirits.",
     "canonStatus": "canon",
-    "moduleKey": null
+    "moduleKey": "great-haiku"
   },
   {
     "id": "leorio-remote-punch",
@@ -700,7 +700,7 @@
     "abilityType": "surface-traveling-strike",
     "description": "Leorio strikes a nearby surface and sends aura through it in a line. At a selected point, a portal-like circle forms and an extended fist emerges to uppercut the target from a distance.",
     "canonStatus": "canon",
-    "moduleKey": null
+    "moduleKey": "leorio-remote-punch"
   },
   {
     "id": "saiyu-priest-staff",
@@ -711,7 +711,7 @@
     "abilityType": "extendable-conjured-staff",
     "description": "Saiyu conjures a staff whose length he can change, using it both to restrain allies and to finish opponents disabled by his monkeys.",
     "canonStatus": "canon",
-    "moduleKey": null
+    "moduleKey": "saiyu-priest-staff"
   },
   {
     "id": "saiyu-three-monkeys",
@@ -722,7 +722,7 @@
     "abilityType": "sense-depriving-nen-beasts",
     "description": "Saiyu uses three Nen monkeys whose attacks remove sight, hearing and speech. Losing the three senses also disrupts the victim mentally and can prevent them from maintaining an active ability.",
     "canonStatus": "canon",
-    "moduleKey": null
+    "moduleKey": "saiyu-three-monkeys"
   },
   {
     "id": "snake-arm",
@@ -733,7 +733,7 @@
     "abilityType": "partial-body-transformation",
     "description": "Gel seemingly transforms one arm into a snake whose head bears four heart-shaped markings and a ribbon. The technique stopped Kanzai during a Zodiac confrontation, but its category, conditions and full capabilities have not been revealed.",
     "canonStatus": "canon",
-    "moduleKey": null
+    "moduleKey": "snake-arm"
   },
   {
     "id": "bird-manipulation",
@@ -744,7 +744,7 @@
     "abilityType": "mass-bird-control",
     "description": "Cluck controls pigeons, and possibly other birds, with enough range and precision to deliver voting forms to more than six hundred Hunters. The complete conditions and limits of the technique remain unknown.",
     "canonStatus": "canon",
-    "moduleKey": null
+    "moduleKey": "bird-manipulation"
   },
   {
     "id": "transport-portals",
@@ -755,7 +755,7 @@
     "abilityType": "limited-capacity-transport",
     "description": "Tokarine possesses a transport-oriented ability intended to move goods between expedition relay points. She states that it cannot teleport and has a much lower capacity than Knov's Hide and Seek, so several additional users would be needed for the mission.",
     "canonStatus": "canon",
-    "moduleKey": null
+    "moduleKey": "transport-portals"
   },
   {
     "id": "yomotsu-hegui",
@@ -824,7 +824,7 @@
     "abilityType": "truth-extracting-punch",
     "description": "When Lynch punches a target after asking a question, an aura voice from the target's body answers truthfully even if their conscious mouth lies or stays silent.",
     "canonStatus": "canon",
-    "moduleKey": null
+    "moduleKey": "body-and-soul"
   },
   {
     "id": "bloody-mary",
@@ -835,7 +835,7 @@
     "abilityType": "self-blood-manipulation",
     "description": "Zakuro manipulates blood released from an open wound. It can restrain targets or divide into eyed droplets that search independently for thirty to forty minutes before returning to normal blood.",
     "canonStatus": "canon",
-    "moduleKey": null
+    "moduleKey": "bloody-mary"
   },
   {
     "id": "lsdf",
@@ -857,7 +857,7 @@
     "abilityType": "damage-transfer",
     "description": "Terebellum redirects damage received by a touched object or person into another touched target. Damage is transferred rather than erased and the exact living-target conditions remain limited.",
     "canonStatus": "canon",
-    "moduleKey": null
+    "moduleKey": "damage-sweet-home"
   },
   {
     "id": "voconte-hideout-doors",
@@ -868,7 +868,7 @@
     "abilityType": "hideout-door-network",
     "description": "Voconte creates doors throughout the Heil-Ly base, connecting rooms into a controlled network and letting members reroute movement through the hideout.",
     "canonStatus": "canon",
-    "moduleKey": null
+    "moduleKey": "voconte-hideout-doors"
   },
   {
     "id": "padaille-weapon-transformation",
@@ -879,7 +879,7 @@
     "abilityType": "body-part-weapon-transformation",
     "description": "Padaille transforms parts of his body into weapons and tools he knows. His right arm becomes a demolition hammer while retaining bodily control.",
     "canonStatus": "canon",
-    "moduleKey": null
+    "moduleKey": "padaille-weapon-transformation"
   },
   {
     "id": "camilla-guardian-coercion",
@@ -890,7 +890,7 @@
     "abilityType": "conditional-total-coercion",
     "description": "Camilla's Guardian Spirit Beast can completely control a target after unknown conditions are fulfilled. The exact trigger and behavior remain unrevealed.",
     "canonStatus": "canon",
-    "moduleKey": null
+    "moduleKey": "camilla-guardian-coercion"
   },
   {
     "id": "zhanglei-guardian-coins",
@@ -926,7 +926,7 @@
     "abilityType": "collaborative-chemical-synthesis",
     "description": "With a collaborative partner, Tubeppa's Guardian Spirit Beast synthesizes drugs and chemicals capable of producing many effects. Their exact range remains unknown.",
     "canonStatus": "canon",
-    "moduleKey": null
+    "moduleKey": "tubeppa-guardian-synthesis"
   },
   {
     "id": "tyson-guardian-eye-wogs",
@@ -938,7 +938,7 @@
     "abilityType": "diffusive-aura-levy",
     "description": "Eye-wogs attach to readers of Tyson's Book, collect their aura and return happiness proportional to how deeply they have absorbed its teachings. Breaking the doctrine's taboo brings punishment.",
     "canonStatus": "canon",
-    "moduleKey": null
+    "moduleKey": "tyson-guardian-eye-wogs"
   },
   {
     "id": "luzurus-guardian-desire-trap",
@@ -950,7 +950,7 @@
     "abilityType": "desire-bait-coercion-trap",
     "description": "Luzurus's Guardian Spirit Beast materializes a target's desire as bait. Satisfying that desire triggers a trap followed by pseudo-coercive Manipulation.",
     "canonStatus": "canon",
-    "moduleKey": null
+    "moduleKey": "luzurus-guardian-desire-trap"
   },
   {
     "id": "salesale-guardian-smoke",

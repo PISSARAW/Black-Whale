@@ -104,14 +104,26 @@ export function defineAbility(def: AbilityDefinition): NenAbilityModule {
     return own ?? (def.cost === undefined ? undefined : resolve(def.cost, ctx))
   }
 
-  const derivedWheel = (): NenActionWheelEntry[] =>
-    Object.entries(def.actions ?? {}).map(([id, action]) => ({
+  const derivedWheel = (): NenActionWheelEntry[] => {
+    const fromActions = Object.entries(def.actions ?? {}).map(([id, action]) => ({
       id,
       label: action.label,
       abilityId: def.id,
       visibility: action.locked ? ('locked' as const) : ('available' as const),
       hint: action.hint,
     }))
+    if (fromActions.length > 0) return fromActions
+    // An ability with a single undifferentiated effect still needs somewhere to
+    // be clicked, so it offers a plain activation.
+    return [
+      {
+        id: 'activate',
+        label: def.name ?? def.id,
+        abilityId: def.id,
+        visibility: 'available' as const,
+      },
+    ]
+  }
 
   return {
     manifest,

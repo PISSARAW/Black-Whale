@@ -62,7 +62,6 @@ const characterInclude = {
   },
 } as const
 
-
 export const load: PageServerLoad = async ({ params, cookies }) => {
   const spoilerLimitCookie = cookies.get('userSpoilerLimit')
   const spoilerLimit = spoilerLimitCookie ? Number.parseInt(spoilerLimitCookie) : null

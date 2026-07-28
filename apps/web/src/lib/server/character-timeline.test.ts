@@ -102,20 +102,28 @@ describe('buildTimeline', () => {
 
   /** The catalogue covers states the temporal tables have no rows for. */
   it('adds exceptional catalogue appearances', () => {
-    const timeline = buildTimeline({ originalBody: emptyBody }, {
-      mangaAppearances: [
-        { chapter: 2, status: 'debut', title: 'Departure' },
-        { chapter: 3, status: 'pictured', title: 'Poster' },
-      ],
-    }, paths)
+    const timeline = buildTimeline(
+      { originalBody: emptyBody },
+      {
+        mangaAppearances: [
+          { chapter: 2, status: 'debut', title: 'Departure' },
+          { chapter: 3, status: 'pictured', title: 'Poster' },
+        ],
+      },
+      paths,
+    )
 
     expect(timeline.map((entry) => entry.label)).toEqual(['debut', 'pictured'])
   })
 
   it('ignores catalogue appearances that are not exceptional', () => {
-    const timeline = buildTimeline({ originalBody: emptyBody }, {
-      mangaAppearances: [{ chapter: 2, status: 'mentioned', title: 'Rumour' }],
-    }, paths)
+    const timeline = buildTimeline(
+      { originalBody: emptyBody },
+      {
+        mangaAppearances: [{ chapter: 2, status: 'mentioned', title: 'Rumour' }],
+      },
+      paths,
+    )
 
     expect(timeline).toEqual([])
   })
@@ -126,9 +134,13 @@ describe('buildTimeline', () => {
       originalBody: { presences: [], states: [{ state: 'DEAD', fromEvent: event(9, 1) }] },
     }
 
-    const timeline = buildTimeline(character, {
-      mangaAppearances: [{ chapter: 9, status: 'death', title: 'Killed' }],
-    }, paths)
+    const timeline = buildTimeline(
+      character,
+      {
+        mangaAppearances: [{ chapter: 9, status: 'death', title: 'Killed' }],
+      },
+      paths,
+    )
 
     expect(timeline).toHaveLength(1)
     expect(timeline[0].kind).toBe('body-state')
@@ -143,9 +155,7 @@ describe('buildChapterTrajectory', () => {
   const paths = new Map<string, string>()
 
   it('falls back to an explicit unknown position', () => {
-    const timeline = [
-      { chapter: 4, sequence: 1, kind: 'body-state' as const, label: 'WOUNDED' },
-    ]
+    const timeline = [{ chapter: 4, sequence: 1, kind: 'body-state' as const, label: 'WOUNDED' }]
 
     const [chapter] = buildChapterTrajectory(timeline, null, { id: 'x' }, [], paths)
 
@@ -155,7 +165,13 @@ describe('buildChapterTrajectory', () => {
 
   it('flags a chapter where the same subject changes location', () => {
     const timeline = [
-      { chapter: 4, sequence: 1, kind: 'body-location' as const, label: 'Casino', location: 'Casino' },
+      {
+        chapter: 4,
+        sequence: 1,
+        kind: 'body-location' as const,
+        label: 'Casino',
+        location: 'Casino',
+      },
       { chapter: 4, sequence: 2, kind: 'body-location' as const, label: 'Deck', location: 'Deck' },
     ]
 
@@ -167,8 +183,20 @@ describe('buildChapterTrajectory', () => {
 
   it('does not flag movement when the character stays put', () => {
     const timeline = [
-      { chapter: 4, sequence: 1, kind: 'body-location' as const, label: 'Casino', location: 'Casino' },
-      { chapter: 4, sequence: 2, kind: 'body-location' as const, label: 'casino ', location: 'casino ' },
+      {
+        chapter: 4,
+        sequence: 1,
+        kind: 'body-location' as const,
+        label: 'Casino',
+        location: 'Casino',
+      },
+      {
+        chapter: 4,
+        sequence: 2,
+        kind: 'body-location' as const,
+        label: 'casino ',
+        location: 'casino ',
+      },
     ]
 
     const [chapter] = buildChapterTrajectory(timeline, null, { id: 'x' }, [], paths)

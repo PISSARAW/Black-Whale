@@ -43,7 +43,10 @@ describe('readLegacySequence', () => {
     expect(readLegacySequence('12')).toBe(12)
   })
 
-  it.each([null, undefined, '', '  ', 'abc', '1.5'])('rejects %o rather than yielding NaN', (raw) => {
-    expect(readLegacySequence(raw)).toBeUndefined()
-  })
+  it.each([null, undefined, '', '  ', 'abc', '1.5'])(
+    'rejects %o rather than yielding NaN',
+    (raw) => {
+      expect(readLegacySequence(raw)).toBeUndefined()
+    },
+  )
 })

@@ -246,7 +246,45 @@
     <!-- Toilet -->
 
     <!-- Dynamic Elements per room -->
-    {#if roomNumber === '1014'}
+    <!--
+      One asset draws fourteen apartments, so the shared plan holds only what
+      every suite has: a bed, a dining table, a living room. Canon seats several
+      princes on a fixture that is theirs alone — Luzurus never leaves his couch,
+      Camilla receives from her massage table, Woble is in a cradle — and a plan
+      that draws none of them leaves those markers floating in a room the map
+      says is empty. Each block below is a fixture a chapter puts on panel, and
+      `localSpotAnchors` in `markerProjection.ts` reads its centre.
+    -->
+    {#if roomNumber === '1001'}
+      <!-- Benjamin runs the war from his console, ch. 363, 389 and 413. -->
+      <rect x="460" y="400" width="180" height="70" class="furniture" />
+      <text x="550" y="490" class="sublabel">Command console</text>
+    {:else if roomNumber === '1002'}
+      <!-- Camilla is attended on her table, ch. 413. -->
+      <rect x="90" y="300" width="150" height="60" rx="10" class="furniture" />
+      <text x="165" y="380" class="sublabel">Massage table</text>
+    {:else if roomNumber === '1004'}
+      <!-- Tserriednich's Zetsu drills, ch. 362 through 404. -->
+      <rect
+        x="440"
+        y="370"
+        width="210"
+        height="130"
+        fill="rgba(255, 0, 0, 0.08)"
+        stroke="red"
+        stroke-width="2"
+        stroke-dasharray="5,5"
+      />
+      <text x="545" y="355" class="sublabel">Zetsu training zone</text>
+    {:else if roomNumber === '1006'}
+      <!-- Tyson preaches from a fixed seat, her disciples before her, ch. 375. -->
+      <rect x="110" y="300" width="130" height="60" class="furniture" />
+      <text x="175" y="380" class="sublabel">Preaching dais</text>
+    {:else if roomNumber === '1007'}
+      <!-- Luzurus is on this couch in ch. 362, 366 and still in 414. -->
+      <rect x="90" y="420" width="190" height="60" rx="12" class="furniture" />
+      <text x="185" y="500" class="sublabel">Couch</text>
+    {:else if roomNumber === '1014'}
       <text x="350" y="440" class="sublabel">Nen Classroom</text>
       <circle
         cx="350"
@@ -257,6 +295,9 @@
         stroke-width="2"
         stroke-dasharray="5,5"
       />
+      <!-- Woble's cradle, on the guarded side of the class. -->
+      <rect x="500" y="430" width="100" height="70" rx="8" class="furniture" />
+      <text x="550" y="520" class="sublabel">Cradle</text>
     {/if}
   </g>
 </svg>

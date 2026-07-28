@@ -184,11 +184,50 @@ const localSpotAnchors: Record<
   },
 
   // The prince apartments below share `local/prince-apartment.svelte`: 800 × 800,
-  // contents offset by (50, 70), one bed drawn at (20, 550) 100 × 110 in the
-  // master bedroom that spans x 0–500, y 530–680. No fallback is declared for
-  // them — the centred grid already drops an unplaced passenger in the living
-  // room, which is where an apartment holds anyone canon does not seat.
+  // contents offset by (50, 70). The shared plan draws a bed at (20, 550)
+  // 100 × 110 in the master bedroom, a living-room table at (300, 350) 80 × 60,
+  // and the asset adds one per-room fixture where canon seats a prince on
+  // something of his own. No fallback is declared for any of them — the centred
+  // grid already drops an unplaced passenger in the living room, which is where
+  // an apartment holds everyone canon does not seat.
+  //
+  // A spot is the passenger's habitual place across the arc, not a freeze-frame:
+  // Tserriednich stands over the water glass in ch. 376 and is on his training
+  // floor in seven other chapters, so the training floor is what the room shows.
 
+  // Benjamin takes his reports from the command post, ch. 363, 389 and 413.
+  'tier-1-royal-residential-sector-room-1001': {
+    occupants: { 'prince-benjamin': { x: 75, y: 63.13 } },
+  },
+  // Camilla holds court from the massage table, ch. 413.
+  'tier-1-royal-residential-sector-room-1002': {
+    occupants: { 'prince-camilla': { x: 26.88, y: 50 } },
+  },
+  // Zhang Lei works the ZhangCoins from the low table, ch. 374 to 404.
+  'tier-1-royal-residential-sector-room-1003': {
+    occupants: { 'prince-zhanglei': { x: 48.75, y: 56.25 } },
+  },
+  // Tserriednich drills Zetsu on his training floor; Theta is laid on a bed
+  // after his Nen beast marks her in ch. 385, with Salkov at her side.
+  'tier-1-royal-residential-sector-room-1004': {
+    occupants: {
+      'prince-tserriednich': { x: 74.38, y: 63.13 },
+      theta: { x: 15, y: 84.38 },
+      salkov: { x: 22, y: 84.38 },
+    },
+  },
+  // Tyson preaches from her seat, her disciples ranged in front, ch. 375.
+  'tier-1-royal-residential-sector-room-1006': {
+    occupants: { 'prince-tyson': { x: 28.13, y: 50 } },
+  },
+  // Luzurus does not get off this couch between ch. 362 and ch. 414.
+  'tier-1-royal-residential-sector-room-1007': {
+    occupants: { 'prince-luzurus': { x: 29.38, y: 65 } },
+  },
+  // Salé-salé holds his permanent party from the bed, ch. 362 to his murder.
+  'tier-1-royal-residential-sector-room-1008': {
+    occupants: { 'prince-salesale': { x: 15, y: 84.38 } },
+  },
   // Kacho cries over the photos of her sister in bed, ch. 382, and it is the bed
   // Silent Majority comes to.
   'tier-1-royal-residential-sector-room-1010': {
@@ -206,10 +245,46 @@ const localSpotAnchors: Record<
   'tier-1-royal-residential-sector-room-1012': {
     occupants: { 'prince-momoze': { x: 15, y: 84.38 } },
   },
-  // Ch. 401: Kurapika and Bill take Longhi out of the Nen class and into 1014's
-  // master bedroom, past the bed, for a lesson the room is not meant to hear.
+  // Hanzo leaves his body on the bed while his Nen double hunts Tuffdy, ch. 372,
+  // and climbs back into it there in ch. 375.
+  'tier-1-royal-residential-sector-room-1013': {
+    occupants: { hanzo: { x: 15, y: 84.38 } },
+  },
+  // 1014 is the room the arc stages most often, so it carries the most spots.
+  // Kurapika stands at the front of the Nen class facing the students, who keep
+  // the centred grid above him; the guarded side of the room — cradle, queen,
+  // her two bodyguards — sits between the class and the master bedroom. Two
+  // bodies never leave the places they fell in: Woody on the bathroom floor
+  // (ch. 359) and Vincent by the entrance (ch. 364).
   'tier-1-royal-residential-sector-room-1014': {
-    occupants: { longhi: { x: 56.25, y: 86.25 } },
+    occupants: {
+      kurapika: { x: 50, y: 72 },
+      // Oito swapped the babies, so the cradle holds whichever one the archive
+      // currently believes is in it.
+      'prince-woble': { x: 75, y: 66.88 },
+      'oito-nephew-fake-woble': { x: 75, y: 66.88 },
+      'queen-oito': { x: 69, y: 66.88 },
+      bill: { x: 69, y: 61 },
+      shimanu: { x: 81, y: 61 },
+      longhi: { x: 56.25, y: 86.25 },
+      woody: { x: 81.25, y: 86.25 },
+      vincent: { x: 50, y: 16.25 },
+    },
+  },
+
+  // `local/justice-bureau.svelte`, 1000 × 700, contents offset by (60, 90).
+  // Melody and Kaiser are questioned across the interrogation table in ch. 386
+  // and ch. 400; nobody else in the bureau is placed, so there is no fallback.
+  'tier-2-ministry-of-justice': {
+    occupants: { melody: { x: 74, y: 30 }, kaiser: { x: 82, y: 30 } },
+  },
+  // Witness protection is a room the bureau plan draws but the archive files as
+  // its own location, so without an anchor everyone confined there landed in the
+  // middle of the whole bureau. Fugetsu and Without You are the only occupants
+  // and canon keeps them together, so the whole location shares the safe area.
+  'tier-2-vip-witness-protection-area': {
+    occupants: {},
+    fallback: { x: 28, y: 67.86 },
   },
 }
 

@@ -435,6 +435,74 @@ describe('packMarkersForZoom', () => {
     expect(student.y).toBe(50)
   })
 
+  it('seats each prince on the fixture his own apartment draws', () => {
+    const seats = [
+      ['tier-1-royal-residential-sector-room-1001', 'prince-benjamin', 75, 63.13],
+      ['tier-1-royal-residential-sector-room-1004', 'prince-tserriednich', 74.38, 63.13],
+      ['tier-1-royal-residential-sector-room-1007', 'prince-luzurus', 29.38, 65],
+    ] as const
+
+    for (const [locationId, characterSlug, x, y] of seats) {
+      const [placed] = packMarkersForZoom(
+        [{ ...markers[0], id: characterSlug, locationId, characterSlug } as MapMarker],
+        'LOCAL',
+      )
+      expect(placed.x).toBeCloseTo(x)
+      expect(placed.y).toBeCloseTo(y)
+    }
+  })
+
+  it('splits 1014 between the class, the cradle and the two bodies on its floors', () => {
+    const room = [
+      ['kurapika', 'kurapika'],
+      ['woble', 'prince-woble'],
+      ['oito', 'queen-oito'],
+      ['woody', 'woody'],
+      ['vincent', 'vincent'],
+      ['student', 'sakata'],
+    ].map(
+      ([id, slug]) =>
+        ({
+          ...markers[0],
+          id,
+          locationId: 'tier-1-royal-residential-sector-room-1014',
+          characterSlug: slug,
+        }) as MapMarker,
+    )
+    const [kurapika, woble, oito, woody, vincent, student] = packMarkersForZoom(room, 'LOCAL')
+
+    // Oito is beside the cradle, not in it, and both sit right of the class.
+    expect(woble.x).toBeCloseTo(75)
+    expect(oito.y).toBeCloseTo(woble.y)
+    expect(oito.x).toBeLessThan(woble.x)
+    expect(kurapika.x).toBeLessThan(oito.x)
+    // Kurapika faces the class, which keeps the centred grid above him.
+    expect(kurapika.y).toBeGreaterThan(student.y)
+    expect(student.x).toBe(50)
+    // The bathroom is bottom right of the plan, the entrance top centre.
+    expect(woody.y).toBeGreaterThan(kurapika.y)
+    expect(vincent.y).toBeLessThan(student.y)
+  })
+
+  it('holds the confined inside the safe area the bureau plan draws', () => {
+    const safe = ['prince-fugetsu', 'prince-kacho'].map(
+      (slug) =>
+        ({
+          ...markers[0],
+          id: slug,
+          locationId: 'tier-2-vip-witness-protection-area',
+          characterSlug: slug,
+        }) as MapMarker,
+    )
+    const [fugetsu, kacho] = packMarkersForZoom(safe, 'LOCAL')
+
+    // Neither is named on a fixture, so both fan out from the room's corner
+    // rather than sitting in the middle of the bureau at large.
+    expect(fugetsu.x).toBeCloseTo(28)
+    expect(kacho.x).toBeCloseTo(32)
+    expect(fugetsu.y).toBeCloseTo(67.86)
+  })
+
   it('packs overview by tier, so a lone tier sits on its own band', () => {
     const packed = packMarkersForZoom(markers, 'OVERVIEW')
     const [first, second, third] = packed

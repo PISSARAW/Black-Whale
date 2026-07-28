@@ -28,6 +28,13 @@
 
   const isActive = (href: string) => $page.url.pathname.startsWith(href)
 
+  // The drawer that carries the secondary sections is behind {#if menuOpen},
+  // so nothing links to them in the server-rendered markup — crawlers see the
+  // Ability Archive, Faction Network and Simulations as orphans. The footer is
+  // the one place every route can expose them without any JavaScript.
+  // UTC keeps the year identical between the server render and hydration.
+  const copyrightYear = new Date().getUTCFullYear()
+
   function closeMenu() {
     menuOpen = false
   }
@@ -185,6 +192,30 @@
       </div>
     {/key}
   </main>
+
+  <footer class="app-footer" data-hatsu-pass>
+    <div class="footer-brand">
+      <strong>Black Whale</strong>
+      <small>Succession Archive · Kakin Royal Expedition</small>
+    </div>
+
+    <nav class="footer-nav" aria-label="Archive sections">
+      <p>Sections</p>
+      <ul>
+        {#each primaryNavigation as item (item.href)}
+          <li><a href={item.href}>{item.label}</a></li>
+        {/each}
+        {#each secondaryNavigation as item (item.href)}
+          <li><a href={item.href}>{item.label}</a></li>
+        {/each}
+      </ul>
+    </nav>
+
+    <div class="footer-legal">
+      <span>© {copyrightYear} Black Whale Archive</span>
+      <span>Unofficial fan project · Hunter × Hunter is © Yoshihiro Togashi / Shueisha</span>
+    </div>
+  </footer>
 
   <!-- The Hatsu layer lives at the root so its state and mechanics survive navigation. -->
   <GlobalHatsuEffects />
@@ -498,6 +529,73 @@
     border-top: 1px solid var(--line-subtle);
   }
 
+  .app-footer {
+    display: grid;
+    grid-template-columns: minmax(14rem, 1fr) minmax(0, 2fr);
+    gap: 2rem clamp(2rem, 6vw, 5rem);
+    border-top: 1px solid var(--line-subtle);
+    background: color-mix(in srgb, var(--surface-void) 96%, transparent);
+    padding: clamp(2rem, 5vw, 3.5rem) clamp(1.25rem, 5vw, 4rem)
+      max(clamp(2rem, 5vw, 3.5rem), env(safe-area-inset-bottom));
+  }
+
+  .footer-brand strong {
+    display: block;
+    color: var(--text-primary);
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    letter-spacing: 0.025em;
+  }
+  .footer-brand small {
+    display: block;
+    margin-top: 0.4rem;
+    color: var(--text-faint);
+    font-family: var(--font-mono);
+    font-size: 0.52rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .footer-nav p {
+    margin: 0 0 0.9rem;
+    color: var(--accent-gold);
+    font-family: var(--font-mono);
+    font-size: 0.52rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .footer-nav ul {
+    display: grid;
+    margin: 0;
+    padding: 0;
+    grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+    gap: 0.55rem 1.5rem;
+    list-style: none;
+  }
+
+  .footer-nav a {
+    color: var(--text-secondary);
+    font-size: 0.78rem;
+    text-decoration: none;
+    transition: color var(--duration-fast) var(--ease-out);
+  }
+  .footer-nav a:hover {
+    color: var(--accent-gold-bright);
+  }
+
+  .footer-legal {
+    display: grid;
+    gap: 0.35rem;
+    grid-column: 1 / -1;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--line-subtle);
+    color: var(--text-faint);
+    font-family: var(--font-mono);
+    font-size: 0.54rem;
+    letter-spacing: 0.1em;
+  }
+
   .route-shell {
     min-height: calc(100vh - var(--header-height));
     animation: route-enter var(--duration-slow) var(--ease-expo) both;
@@ -663,6 +761,10 @@
       gap: 0.3rem;
       align-self: start;
       padding-top: 0.75rem;
+    }
+
+    .app-footer {
+      grid-template-columns: 1fr;
     }
   }
 

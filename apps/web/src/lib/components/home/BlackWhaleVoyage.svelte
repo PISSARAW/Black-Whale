@@ -8,8 +8,8 @@
 
 <div class="voyage" aria-label="Black Whale 1 navigating across the ocean">
   <div class="atmosphere" aria-hidden="true"></div>
-  <div class="coordinate north">N 47° 18′ 09″</div>
-  <div class="coordinate vessel">BW.01 / UNDERWAY</div>
+  <div class="plate vessel">Black Whale 1</div>
+  <div class="plate route">Kakin → New Continent</div>
 
   <svg viewBox="0 0 920 610" role="img" aria-labelledby="voyage-title voyage-description">
     <title id="voyage-title">Black Whale 1 at sea</title>
@@ -153,8 +153,8 @@
     </g>
   </svg>
 
-  <div class="telemetry" aria-hidden="true">
-    <span><i></i> Ocean route stable</span><span>1,500 M / 200,000 PAX</span>
+  <div class="specs" aria-hidden="true">
+    <span>Semi-submersible · 41 decks</span><span>200,000 passengers</span>
   </div>
 </div>
 
@@ -209,8 +209,10 @@
     mix-blend-mode: screen;
     pointer-events: none;
   }
-  .coordinate,
-  .telemetry {
+  /* Corner plates carry the vessel's canon specification, not a simulated
+     instrument readout: the archive has no live position to report. */
+  .plate,
+  .specs {
     position: absolute;
     z-index: 5;
     color: #708086;
@@ -218,30 +220,21 @@
     letter-spacing: 0.11em;
     text-transform: uppercase;
   }
-  .coordinate.north {
+  .plate.route {
     top: 1rem;
     right: 1rem;
   }
-  .coordinate.vessel {
+  .plate.vessel {
     top: 1rem;
     left: 1rem;
     color: #c8a956;
   }
-  .telemetry {
+  .specs {
     right: 1rem;
     bottom: 0.85rem;
     left: 1rem;
     display: flex;
     justify-content: space-between;
-  }
-  .telemetry i {
-    display: inline-block;
-    width: 0.34rem;
-    height: 0.34rem;
-    margin-right: 0.35rem;
-    border-radius: 50%;
-    background: #70bdc1;
-    box-shadow: 0 0 8px #70bdc1;
   }
   .stars circle {
     fill: #b6d2d0;
@@ -427,8 +420,8 @@
       min-width: 37rem;
       transform: translateX(-18%);
     }
-    .coordinate,
-    .telemetry {
+    .plate,
+    .specs {
       display: none;
     }
   }

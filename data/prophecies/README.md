@@ -1,6 +1,6 @@
 # Prophéties — Lovely Ghostwriter
 
-75 prophéties écrites dans le style des poèmes de Neon Nostrade, une par personnage
+78 prophéties écrites dans le style des poèmes de Neon Nostrade, une par personnage
 majeur de la Guerre de Succession — princes, reines, camp Woble, Hunters, Brigade
 fantôme et les trois familles mafieuses.
 
@@ -22,7 +22,8 @@ image-présage, un impératif, puis la ligne de destin — et vise ce que le per
 veut réellement, pas ce qu'il annonce vouloir. Kurapika est prévenu du prix en
 années, pas des Yeux ; Camilla apprend qu'elle ne mourra jamais et ne sera jamais
 aimée ; Momoze, Salé-salé, Kacho, Woody, Vincent, Musse, Tuffdy, Luini, Lynch,
-Padaille et Keeney reçoivent l'annonce de leur mort.
+Padaille, Sumidori et Keeney reçoivent l'annonce de leur mort — Shikaku et
+Halkenburg celle de leur corps seul.
 
 Chrollo n'a pas de poème (`"blank": true`) : la capacité ne peut pas écrire l'avenir
 de celui qui l'utilise, et c'est lui qui tient la page depuis Yorknew.

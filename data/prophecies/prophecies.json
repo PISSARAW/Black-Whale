@@ -476,6 +476,57 @@
     "canonStatus": "apocryphal"
   },
   {
+    "id": "prophecy-shikaku",
+    "subjectId": "shikaku",
+    "subjectName": "Shikaku",
+    "factionId": "prince-benjamin",
+    "desire": "To report accurately and be believed — to be the pair of eyes the First Prince cannot do without.",
+    "poem": [
+      "You will be posted beside a prince who does not want the throne, and told to write it all down.",
+      "On the day the silence ends you will be the first to be afraid, and you will be right.",
+      "Your defences are flawless and the arrow will not take them into account.",
+      "Your body will die by its own hand outside 1007, and the hand will not be yours."
+    ],
+    "reading": "Shikaku is Benjamin's soldier placed as Halkenburg's royal bodyguard. The collective aura raised by the minute of silence for Momoze terrifies him, and his reports are what let Benjamin follow the ninth prince's rise. Grimmel's arrow passes through Culdcept and every defence, then swaps the target's soul with that of a randomly marked bearer: Sumidori takes control of Shikaku's body, and Halkenburg uses it to stage a suicide in front of Room 1007 that Basho and Luzurus hear. Benjamin inherits Culdcept on the death. Where Shikaku's own consciousness goes, the ability's rule implies but the chapters do not follow.",
+    "foretells": "death of the body",
+    "horizon": "Day 6 – Day 9 of the voyage",
+    "canonStatus": "apocryphal"
+  },
+  {
+    "id": "prophecy-sumidori",
+    "subjectId": "sumidori",
+    "subjectName": "Sumidori",
+    "factionId": "prince-halkenburg",
+    "desire": "To be one of the ones whose will actually counts — the prince said the aura is made of them, and he meant it.",
+    "poem": [
+      "You will give a prince your will and it will be gathered up with everyone else's.",
+      "The arrow he fires will not carry you where you thought you were going.",
+      "You will wake in the enemy's uniform, with his rank and his orders in your pockets.",
+      "Your own prince will decide what that body does next, and what it does is shoot itself."
+    ],
+    "reading": "Grimmel is fuelled by the marked bearers who share Halkenburg's will, and the arrow swaps the target's soul with one of them chosen at random — the allied consciousness taking control of the enemy body. Sumidori is the one drawn: his soul lands in Shikaku's body, Halkenburg experiments with the relationship between the two consciousnesses, and then uses the possessed body to simulate Shikaku's suicide. The follower whose loyalty powers the weapon is the one it spends.",
+    "foretells": "death",
+    "horizon": "Day 6 – Day 9 of the voyage",
+    "canonStatus": "apocryphal"
+  },
+  {
+    "id": "prophecy-vict",
+    "subjectId": "vict",
+    "subjectName": "Vict",
+    "factionId": "prince-benjamin",
+    "desire": "To carry out the order and come back to his own quarters to be debriefed.",
+    "poem": [
+      "You will be sent to see how far the ninth one has got, and seeing will be enough to be shot for.",
+      "The arrow cannot be blocked and cannot be dodged; do not spend your last second looking for the third option.",
+      "Your prince will check that you are alive, and will be satisfied by the answer.",
+      "Alive is the only thing anyone will ever be able to confirm about you."
+    ],
+    "reading": "On the tenth day Vict moves against Halkenburg and a new arrow hits him; Benjamin and Balsamilco hear the defeat and conclude the weapon is impossible to block or dodge and that any sufficiently loyal follower can feed it, guard or not. Benjamin confirms through Benjamin Baton that Vict still lives — which establishes the body, not the occupant. Under Grimmel's rule a marked soul now holds that body while its own sleeps, and the chapters have not yet said whose.",
+    "foretells": "an unresolved occupancy",
+    "horizon": "Day 10 of the voyage",
+    "canonStatus": "apocryphal"
+  },
+  {
     "id": "prophecy-furykov",
     "subjectId": "furykov",
     "subjectName": "Furykov",

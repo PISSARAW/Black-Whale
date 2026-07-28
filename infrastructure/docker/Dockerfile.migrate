@@ -9,4 +9,10 @@ RUN pnpm install --frozen-lockfile
 RUN pnpm --filter @black-whale/database generate
 ENV NODE_ENV=production
 USER node
-CMD ["pnpm", "--filter", "@black-whale/database", "migrate:deploy"]
+# `migrate:deploy` only moves the schema. Everything the archive actually shows —
+# locations, characters, presences — lives in data/*.json and reaches the
+# database solely through the backfills, so a deploy that stopped at the schema
+# shipped new code onto an old catalogue: the map would query rooms production
+# did not have. The backfills are idempotent and ordered, timeline first because
+# the catalogue anchors its trajectories on the events it declares.
+CMD ["sh", "-c", "pnpm --filter @black-whale/database migrate:deploy && pnpm --filter @black-whale/database db:backfill-timeline && pnpm --filter @black-whale/database db:backfill-map"]

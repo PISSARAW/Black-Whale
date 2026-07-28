@@ -52,6 +52,7 @@
       >{marker.locationLabel || 'Unspecified location'} · {marker.tierLabel || 'Outside tier'}</span
     >
     {#if marker.temporalDetail}<span class="temporal-detail">{marker.temporalDetail}</span>{/if}
+    {#if marker.spotLabel}<span class="spot-label">{marker.spotLabel}</span>{/if}
     {#if hasAnomaly}<span class="anomaly-label">Transferred consciousness</span>{/if}
     {#if marker.suspicionLabel}<span class="suspicion">Assumed identity</span>{/if}
   </span>
@@ -214,6 +215,15 @@
     margin-top: 0.25rem;
     color: #a5b1ae;
     font-size: 0.58rem;
+  }
+  /* Dimmer than the temporal detail: it is a caveat on the dot's own position,
+     not a fact about the passenger. */
+  .spot-label {
+    display: block;
+    margin-top: 0.15rem;
+    color: #7d8a88;
+    font-size: 0.55rem;
+    font-style: italic;
   }
   .anomaly-label,
   .suspicion {

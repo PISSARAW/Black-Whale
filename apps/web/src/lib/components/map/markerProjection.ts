@@ -165,11 +165,19 @@ const localRoomAnchors: Record<string, { x: number; y: number }> = Object.fromEn
  *
  * Coordinates are percentages of the local SVG box, read off the fixtures the
  * room asset draws. Anything not listed keeps the centred grid.
+ *
+ * Every spot carries what it is worth. A local map draws a point per marker
+ * whether the story gave one or not, so without this the passenger canon shows
+ * asleep in a named bed and the passenger canon only ever puts "in room 1004"
+ * render identically — the map would be claiming precision the chapters never
+ * granted. `inferred` marks the spots that are a reading of the scene rather
+ * than a panel: a bodyguard beside the person they guard, a delegation at the
+ * only table their cabin has. Unlisted passengers claim nothing at all and say
+ * so in the tooltip.
  */
-const localSpotAnchors: Record<
-  string,
-  { occupants: Record<string, { x: number; y: number }>; fallback?: { x: number; y: number } }
-> = {
+type Spot = { x: number; y: number; inferred?: true }
+
+const localSpotAnchors: Record<string, { occupants: Record<string, Spot>; fallback?: Spot }> = {
   // `local/beyond-cell.svelte`, 800 × 600, contents offset by (100, 100).
   'tier-1-vvip-prison-beyond': {
     // The bed, against the wall his right arm is bolted to.
@@ -213,7 +221,9 @@ const localSpotAnchors: Record<
     occupants: {
       'prince-tserriednich': { x: 74.38, y: 63.13 },
       theta: { x: 15, y: 84.38 },
-      salkov: { x: 22, y: 84.38 },
+      // Salkov is at her side through the scene; the panels frame the two of
+      // them, not the corner of the room they are in.
+      salkov: { x: 22, y: 84.38, inferred: true },
     },
   },
   // Tyson preaches from her seat, her disciples ranged in front, ch. 375.
@@ -264,8 +274,10 @@ const localSpotAnchors: Record<
       'prince-woble': { x: 75, y: 66.88 },
       'oito-nephew-fake-woble': { x: 75, y: 66.88 },
       'queen-oito': { x: 69, y: 66.88 },
-      bill: { x: 69, y: 61 },
-      shimanu: { x: 81, y: 61 },
+      // The two bodyguards keep the protected side of the room. Canon says
+      // that much and never places them against a fixture.
+      bill: { x: 69, y: 61, inferred: true },
+      shimanu: { x: 81, y: 61, inferred: true },
       longhi: { x: 56.25, y: 86.25 },
       woody: { x: 81.25, y: 86.25 },
       vincent: { x: 50, y: 16.25 },
@@ -288,7 +300,7 @@ const localSpotAnchors: Record<
   // and canon keeps them together, so the whole location shares the safe area.
   'tier-2-vip-witness-protection-area': {
     occupants: {},
-    fallback: { x: 28, y: 67.86 },
+    fallback: { x: 28, y: 67.86, inferred: true },
   },
 
   // `local/king-quarters.svelte`, 900 × 650, contents offset by (75, 75).
@@ -314,8 +326,8 @@ const localSpotAnchors: Record<
   // the fallback is the table, so the whole delegation gathers at it. Fugetsu
   // hides in the same block in ch. 380 and gets the bed instead.
   'tier-3-residential-first-class': {
-    occupants: { 'prince-fugetsu': { x: 45, y: 91.67 } },
-    fallback: { x: 55, y: 91.67 },
+    occupants: { 'prince-fugetsu': { x: 45, y: 91.67, inferred: true } },
+    fallback: { x: 55, y: 91.67, inferred: true },
   },
   // `local/lifeboats.svelte`, 1000 × 600, contents offset by (50, 80).
   // The twins board the same pod in ch. 383; Keeney holds the emergency door.
@@ -323,7 +335,9 @@ const localSpotAnchors: Record<
     occupants: {
       'prince-kacho': { x: 30.5, y: 55 },
       'prince-fugetsu': { x: 34.5, y: 55 },
-      keeney: { x: 9, y: 31.67 },
+      // Keeney lets them through the emergency door; the post is his role,
+      // not a panel.
+      keeney: { x: 9, y: 31.67, inferred: true },
     },
   },
   // `local/casino.svelte`, 1000 × 600, contents offset by (50, 80).
@@ -340,13 +354,16 @@ const localSpotAnchors: Record<
   // The Troupe gathers information from the foreground table, ch. 371 and 377.
   'tier-5-central-dining-hall': {
     occupants: {},
-    fallback: { x: 55, y: 66.67 },
+    fallback: { x: 55, y: 66.67, inferred: true },
   },
   // `local/cha-r-office.svelte`, 1000 × 680, contents offset by (70, 90).
   // Tajao and Wang hold the main office table in ch. 405–406. Luini is not
   // placed: he comes through a hole in a wall the plan does not draw.
   'tier-5-cha-r-family-office': {
-    occupants: { tajao: { x: 25, y: 41.18 }, 'keni-wang': { x: 30, y: 41.18 } },
+    occupants: {
+      tajao: { x: 25, y: 41.18, inferred: true },
+      'keni-wang': { x: 30, y: 41.18, inferred: true },
+    },
   },
 }
 
@@ -357,12 +374,26 @@ const localSpotAnchors: Record<
  * canon assigns to this passenger, which the marker sits on alone, and the
  * room's catch-all corner, which several markers share and must fan out across.
  */
-function spotAnchorFor(marker: MapMarker): { x: number; y: number; exact: boolean } | null {
+function spotAnchorFor(marker: MapMarker): (Spot & { exact: boolean }) | null {
   const room = localSpotAnchors[marker.locationId ?? '']
   if (!room) return null
   const own = marker.characterSlug ? room.occupants[marker.characterSlug] : undefined
   if (own) return { ...own, exact: true }
   return room.fallback ? { ...room.fallback, exact: false } : null
+}
+
+/**
+ * What a local marker's position inside its room is worth, as the tooltip says it.
+ *
+ * A depicted spot needs no note: the marker is where the panel put the person.
+ * The other two do. An inferred spot is the archive reading a scene rather than
+ * copying it, and no spot at all means the room is the whole of the claim — the
+ * marker still has to be drawn somewhere, and the grid position it gets is an
+ * artefact of drawing it, not a statement about the room.
+ */
+function spotNoteFor(spot: { inferred?: true } | null): string | undefined {
+  if (!spot) return 'Room confirmed · position in room not depicted'
+  return spot.inferred ? 'Position in room inferred from the scene, not depicted' : undefined
 }
 
 export const tierVisuals: Record<string, { label: string; overviewY: number }> = {
@@ -955,10 +986,13 @@ export function packMarkersForZoom<T extends MapMarker>(markers: T[], zoom: Zoom
 
     return markers.map((marker) => {
       const spot = spotAnchorFor(marker)
+      // Every local marker states what its position in the room is worth, so a
+      // fixture canon named and a point the map had to invent never read alike.
+      const spotLabel = spotNoteFor(spot)
       if (spot?.exact) {
         // Canon names this fixture for this passenger, so the marker sits on it
         // rather than being fanned out with the rest of the room.
-        return { ...marker, x: spot.x, y: spot.y }
+        return { ...marker, x: spot.x, y: spot.y, spotLabel }
       }
       if (spot) {
         // Everyone the room catches by default shares one corner, so they do
@@ -968,7 +1002,12 @@ export function packMarkersForZoom<T extends MapMarker>(markers: T[], zoom: Zoom
           .map((peer) => peer.id)
           .sort()
         const seat = Math.max(0, peers.indexOf(marker.id))
-        return { ...marker, x: spot.x + (seat % 3) * 4, y: spot.y + Math.floor(seat / 3) * 5 }
+        return {
+          ...marker,
+          x: spot.x + (seat % 3) * 4,
+          y: spot.y + Math.floor(seat / 3) * 5,
+          spotLabel,
+        }
       }
 
       const anchor = localRoomAnchors[marker.locationId ?? '']
@@ -982,10 +1021,12 @@ export function packMarkersForZoom<T extends MapMarker>(markers: T[], zoom: Zoom
         const seat = Math.max(0, roommates.indexOf(marker.id))
         const roomColumns = Math.min(2, roommates.length)
         const roomRows = Math.ceil(roommates.length / roomColumns)
+        // A room anchor answers which room, never where in it.
         return {
           ...marker,
           x: anchor.x + ((seat % roomColumns) - (roomColumns - 1) / 2) * 5,
           y: anchor.y + (Math.floor(seat / roomColumns) - (roomRows - 1) / 2) * 5,
+          spotLabel,
         }
       }
 
@@ -997,6 +1038,7 @@ export function packMarkersForZoom<T extends MapMarker>(markers: T[], zoom: Zoom
         ...marker,
         x: 50 + ((index % columns) - (columns - 1) / 2) * 3,
         y: 50 + (Math.floor(index / columns) - (rows - 1) / 2) * 3,
+        spotLabel,
       }
     })
   }

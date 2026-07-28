@@ -543,6 +543,32 @@ describe('packMarkersForZoom', () => {
     expect(barrigen.y).toBeLessThan(kurapika.y)
   })
 
+  it('says what each local position in a room is worth', () => {
+    const room = [
+      ['beyond-netero', 'tier-1-vvip-prison-beyond'],
+      ['keeney', 'tier-1-lifeboats'],
+      ['danjin', 'tier-1-royal-residential-sector-room-1004'],
+    ].map(
+      ([characterSlug, locationId]) =>
+        ({ ...markers[0], id: characterSlug, locationId, characterSlug }) as MapMarker,
+    )
+    const [beyond, keeney, danjin] = packMarkersForZoom(room, 'LOCAL')
+
+    // A panel puts Beyond on that bed, so the marker claims it outright.
+    expect(beyond.spotLabel).toBeUndefined()
+    // Keeney's post is his role, not a panel.
+    expect(keeney.spotLabel).toMatch(/inferred/)
+    // Danjin is only ever "in 1004": the dot had to go somewhere, and says so.
+    expect(danjin.spotLabel).toMatch(/not depicted/)
+  })
+
+  it('does not caveat positions outside a local map', () => {
+    for (const zoom of ['TIER', 'OVERVIEW'] as const) {
+      const [packed] = packMarkersForZoom([markers[0]], zoom)
+      expect(packed.spotLabel).toBeUndefined()
+    }
+  })
+
   it('packs overview by tier, so a lone tier sits on its own band', () => {
     const packed = packMarkersForZoom(markers, 'OVERVIEW')
     const [first, second, third] = packed

@@ -41,6 +41,17 @@ export interface MarkerIdentityState {
   positionColor?: string
   tierLabel?: string
   locationLabel?: string
+  /**
+   * What the marker's position *inside* its room is worth, on a local map only.
+   *
+   * The archive's `certainty` answers "is this the right room". It says nothing
+   * about the point the marker occupies in it, and a local map draws that point
+   * whether canon gave one or not — so a passenger the story only ever puts "in
+   * 1004" renders as precisely as one shown lying on a named bed. This label is
+   * how the two stop looking alike; it is absent exactly when a panel puts the
+   * passenger on the fixture the marker sits on.
+   */
+  spotLabel?: string
   temporalLabel?: string
   temporalDetail?: string
   factionTags?: string[]

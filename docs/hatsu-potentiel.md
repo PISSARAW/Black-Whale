@@ -14,19 +14,19 @@
 
 ## 1. Ce que le moteur sait déjà exprimer
 
-| Primitive | Où | Utilisable pour |
-| --- | --- | --- |
-| `EFFECT_CREATED` / `EFFECT_ENDED` + `EffectKind` (`ELASTIC_BINDING`, `ADHESIVE_BINDING`, `PERCEPTION_MASK`, `CONTROL_LINK`, `PORTAL`, `CURSE`, `AURA_MODIFIER`, `ABILITY_GRANT`, `CONSTRAINT`, `CUSTOM`) | world-engine | La quasi-totalité des hatsu persistants |
-| `CONSCIOUSNESS_TRANSFERRED` | world-engine + identity-engine | Grimmel, Hanzo, possession |
-| `ENTITY_MOVED` (`SpatialEstimate` avec `precision`/`certainty`/`probability`) | world-engine + map-engine | Téléportations, traques, estimations |
-| `KNOWLEDGE_GRANTED` (`KNOWN`/`BELIEVED`/`SUSPECTED`/`DOUBTED`/`REJECTED`) | knowledge-engine | Tout hatsu d'espionnage **et** de tromperie (croyances fausses) |
-| `ABILITY_GRANTED` | world-engine | Vol, prêt, héritage de capacités |
-| `BODY_STATE_CHANGED` | identity-engine | Morts, blessures, résurrections |
-| Kinds d'entités `NEN_ENTITY`, `AURA_ENTITY`, `PORTAL`, `CURSE`, `CONSTRUCT`, `COHORT` | world-engine | Bêtes de Nen, gardiens, marques, réseaux |
-| Manifest d'interaction (`inputMode`, `overlays` dont `FUTURE` et `CONTROL_LINK`, `perspectiveTransition`) | nen-engine | UX dédiée par hatsu |
-| `PerspectiveModifier` (`hide`/`reveal`/`distort`/`replace`) | nen-engine → perspective-engine | In, déguisements, illusions |
-| `revealedAtChapter` sur les events | spoiler-engine | Révélation progressive des mécaniques |
-| Branches de simulation (`SimulationStore`) | simulation-engine | « Et si… » par hatsu |
+| Primitive                                                                                                                                                                                                | Où                              | Utilisable pour                                                 |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------- | --------------------------------------------------------------- |
+| `EFFECT_CREATED` / `EFFECT_ENDED` + `EffectKind` (`ELASTIC_BINDING`, `ADHESIVE_BINDING`, `PERCEPTION_MASK`, `CONTROL_LINK`, `PORTAL`, `CURSE`, `AURA_MODIFIER`, `ABILITY_GRANT`, `CONSTRAINT`, `CUSTOM`) | world-engine                    | La quasi-totalité des hatsu persistants                         |
+| `CONSCIOUSNESS_TRANSFERRED`                                                                                                                                                                              | world-engine + identity-engine  | Grimmel, Hanzo, possession                                      |
+| `ENTITY_MOVED` (`SpatialEstimate` avec `precision`/`certainty`/`probability`)                                                                                                                            | world-engine + map-engine       | Téléportations, traques, estimations                            |
+| `KNOWLEDGE_GRANTED` (`KNOWN`/`BELIEVED`/`SUSPECTED`/`DOUBTED`/`REJECTED`)                                                                                                                                | knowledge-engine                | Tout hatsu d'espionnage **et** de tromperie (croyances fausses) |
+| `ABILITY_GRANTED`                                                                                                                                                                                        | world-engine                    | Vol, prêt, héritage de capacités                                |
+| `BODY_STATE_CHANGED`                                                                                                                                                                                     | identity-engine                 | Morts, blessures, résurrections                                 |
+| Kinds d'entités `NEN_ENTITY`, `AURA_ENTITY`, `PORTAL`, `CURSE`, `CONSTRUCT`, `COHORT`                                                                                                                    | world-engine                    | Bêtes de Nen, gardiens, marques, réseaux                        |
+| Manifest d'interaction (`inputMode`, `overlays` dont `FUTURE` et `CONTROL_LINK`, `perspectiveTransition`)                                                                                                | nen-engine                      | UX dédiée par hatsu                                             |
+| `PerspectiveModifier` (`hide`/`reveal`/`distort`/`replace`)                                                                                                                                              | nen-engine → perspective-engine | In, déguisements, illusions                                     |
+| `revealedAtChapter` sur les events                                                                                                                                                                       | spoiler-engine                  | Révélation progressive des mécaniques                           |
+| Branches de simulation (`SimulationStore`)                                                                                                                                                               | simulation-engine               | « Et si… » par hatsu                                            |
 
 **Principe directeur** : un hatsu est poussé « à son max » quand il n'est plus un paragraphe de
 description mais (1) un module qui émet des events typés rejoués par le world-engine, (2) un
@@ -83,6 +83,7 @@ Pattern : `EFFECT_CREATED` kind `ELASTIC_BINDING`/`CONSTRAINT`, overlays `TENSIO
 `TRAJECTORY`, inputMode `DRAG` ou `CLICK`. Le map-engine dessine le lien entre les ancres.
 
 #### Bungee Gum — Hisoka `bungee-gum` ✅ (module de référence)
+
 - **Canon** : élastique + adhésif, rupture au-delà de ~10 m une fois séparé du corps, dissimulable
   avec In, programmable post-mortem (cœur/poumons, prothèses).
 - **À pousser plus loin** : (1) condition `maxDistance(10)` sur les filaments détachés ;
@@ -95,6 +96,7 @@ Pattern : `EFFECT_CREATED` kind `ELASTIC_BINDING`/`CONSTRAINT`, overlays `TENSIO
 - **Priorité** : P1 (étendre le module existant).
 
 #### Nen Stitches — Machi `nen-stitches`
+
 - **Canon** : fils d'aura masquables par In ; résistance décroissante avec la longueur ;
   contrôle de cible façon marionnette ; sutures chirurgicales.
 - **Events** : `ELASTIC_BINDING` (fil, `attributes.masked: true|false`), `CONTROL_LINK`
@@ -105,8 +107,10 @@ Pattern : `EFFECT_CREATED` kind `ELASTIC_BINDING`/`CONSTRAINT`, overlays `TENSIO
 - **Priorité** : P2.
 
 #### Chain Jail / Steal Chain / Judgment Chain / Holy Chain / Dowsing Chain / Stealth Dolphin — Kurapika
+
 Le **chapelet de Kurapika est un P1 absolu** : c'est le protagoniste de l'arc et le seul
 personnage dont les cinq doigts couvrent cinq engines différents.
+
 - **Chain Jail** (`chain-jail`) : `CONSTRAINT` sur cible + condition canon « cible ∈ Brigade »
   (serment). Violation → voir Judgment Chain sur lui-même. Le panneau « Pourquoi ? » affiche le
   serment : c'est exactement la pédagogie des vows du manga.
@@ -125,13 +129,14 @@ personnage dont les cinq doigts couvrent cinq engines différents.
   `attributes.loan: true`, consommation → `ABILITY_REVOKED` automatique + ouverture des nœuds
   d'aura de l'emprunteur (Oito devient utilisatrice de Nen dans le worldState !).
 - **Manifest** : `TARGET_SELECTION`, overlays `CONTROL_LINK|RANGE`, `customComponent:
-  'ChainInteraction'` avec sélection du doigt.
+'ChainInteraction'` avec sélection du doigt.
 - **Impact site** : la chaîne Little Eye → Steal Chain → prêt à Oito → exécution par Oito est
   **la** démo du moteur : quatre events types différents sur une seule séquence canonique
   (ch. 369), traçable dans la timeline et visible dans la perspective d'Oito.
 - **Priorité** : P1.
 
 #### Emperor Time — Kurapika `emperor-time` (moduleKey existant)
+
 - **Canon** : 100 % d'efficacité dans toutes les catégories ; **1 h d'espérance de vie par
   seconde** ; déclenché par les yeux écarlates (émotion) ou à volonté.
 - **Events** : `AURA_MODIFIER` (`attributes: { allCategories: 1.0 }`) + compteur
@@ -144,6 +149,7 @@ personnage dont les cinq doigts couvrent cinq engines différents.
 - **Priorité** : P1 (le module existe, ajouter le compteur).
 
 #### Ripper Cyclotron — Phinks `ripper-cyclotron`
+
 - **Canon** : +aura par rotation de bras, difficile à calibrer.
 - **Events** : `AURA_MODIFIER` avec `attributes.charge: n` (incrément par interaction `rotate`).
 - **Manifest** : `HOLD` (maintenir pour tourner), overlay `AURA`.
@@ -151,6 +157,7 @@ personnage dont les cinq doigts couvrent cinq engines différents.
 - **Priorité** : P3.
 
 #### Double Machine Gun — Franklin `double-machine-gun`
+
 - **Canon** : mutilation volontaire = restriction qui augmente la puissance.
 - **Events** : `AURA_MODIFIER` + dégâts de zone (`BODY_STATE_CHANGED` en masse — massacre des
   soldats Cha-R).
@@ -159,6 +166,7 @@ personnage dont les cinq doigts couvrent cinq engines différents.
 - **Priorité** : P3.
 
 #### Dance of the Serpent's Bite / Surveillance Paper Dolls — Kalluto
+
 - **Canon** : confettis marqueurs ; poupée de papier = écoute à distance indétectable.
 - **Events** : surveillance → `KNOWLEDGE_GRANTED` répétés à Kalluto sur tout ce qui se dit
   autour de la cible marquée (`CONTROL_LINK` kind avec `attributes.mode: 'listen'`) ; attaque →
@@ -168,6 +176,7 @@ personnage dont les cinq doigts couvrent cinq engines différents.
 - **Priorité** : P2.
 
 #### Battle Cantabile (Prologue / Jupiter / Metamorphosen) — Bonolenov
+
 - **Canon** : nécessite danse + mélodie (condition d'activation) ; Metamorphosen = prendre
   l'apparence d'une personne côtoyée, durée ≤ temps passé avec le modèle.
 - **Events** : Prologue/Jupiter → `EFFECT_CREATED` (CONSTRUCT arme/sphère) ; **Metamorphosen →
@@ -179,6 +188,7 @@ personnage dont les cinq doigts couvrent cinq engines différents.
 - **Priorité** : P1.
 
 #### Padaille (armes corporelles), Gel (bras-serpent), Saiyu (bâton + trois singes)
+
 - **Events** : transformations → `CUSTOM`/`CONSTRUCT` ; **Trois Singes → trois effets
   `CONSTRAINT` distincts (`attributes.sense: 'sight'|'hearing'|'speech'`)** qui coupent des
   canaux de perception : la cible sous Mizaru ne génère plus de `KNOWLEDGE_GRANTED` visuels —
@@ -192,6 +202,7 @@ Pattern : ces hatsu n'altèrent presque pas le monde physique — leur output es
 quoi, depuis quand, par quel canal, et avec quelle fiabilité.
 
 #### Little Eye — Sayird → Kurapika → Oito `little-eye`
+
 - **Canon** : sphère d'aura sur un petit animal (≤ hamster) ; perception de tout ce que voit et
   entend l'animal ; reste actif si l'utilisateur perd conscience ; volé puis prêté.
 - **Events** : `CONTROL_LINK` (source: utilisateur, target: NEN_ENTITY animal) ; l'animal est
@@ -205,6 +216,7 @@ quoi, depuis quand, par quel canal, et avec quelle fiabilité.
 - **Priorité** : P1.
 
 #### Secret Window — Musse → Benjamin `secret-window`
+
 - **Canon** : trois hiboux ; écoute à travers les cloisons ; replay des observations passées.
 - **Events** : trois `NEN_ENTITY` hiboux positionnés ; `KNOWLEDGE_GRANTED` au propriétaire ;
   **le replay canon = votre timeline-engine** : « revoir les enregistrements » est exactement
@@ -215,6 +227,7 @@ quoi, depuis quand, par quel canal, et avec quelle fiabilité.
 - **Priorité** : P2.
 
 #### Body and Soul — Lynch `body-and-soul`
+
 - **Canon** : un coup de poing après une question force le corps à répondre la vérité.
 - **Events** : `KNOWLEDGE_GRANTED(KNOWN)` à Lynch **même si la cible ment** — le contraste
   entre la parole (fausse) et la réponse du corps (vraie) est exactement la différence
@@ -224,6 +237,7 @@ quoi, depuis quand, par quel canal, et avec quelle fiabilité.
 - **Priorité** : P3.
 
 #### Melody (Enchanting Music) `melody-enchanting-music` + ouïe absolue (trait)
+
 - **Canon** : la flûte apaise/capte l'attention ; son ouïe détecte mensonges et battements.
 - **Events** : flûte → `AURA_MODIFIER` de zone (`attributes.mood`) sur un `COHORT` d'auditeurs ;
   ouïe passive → règle de perspective : Melody obtient des `KNOWLEDGE_GRANTED(SUSPECTED/KNOWN)`
@@ -233,6 +247,7 @@ quoi, depuis quand, par quel canal, et avec quelle fiabilité.
 - **Priorité** : P2.
 
 #### Love Dial 6700 — Chrollo `love-dial-6700`
+
 - **Canon** : recherche d'une personne par critères ; nombre guide ; quota journalier.
 - **Events** : `KNOWLEDGE_GRANTED` (position en `certainty: PROBABLE`, `precision: TIER`) —
   parfait pour le champ `probability` de `SpatialEstimate`.
@@ -241,6 +256,7 @@ quoi, depuis quand, par quel canal, et avec quelle fiabilité.
 - **Priorité** : P2.
 
 #### Cluck (oiseaux), Kalluto (voir A), Theta (projectile-test)
+
 - Cluck : `CONTROL_LINK` de masse sur COHORT d'oiseaux — hors Black Whale, P3.
 - Theta : son projectile est un **test de Zetsu** sur Tserriednich : event unique dont l'intérêt
   est le `KNOWLEDGE_GRANTED` (Theta apprend le niveau de contrôle du prince — et le cache).
@@ -252,10 +268,11 @@ Pattern : `PERCEPTION_MASK` + `KNOWLEDGE_GRANTED(BELIEVED, fait faux)` aux obser
 La vérité n'existe qu'en mode omniscient ; chaque perspective voit `appearsAs`.
 
 #### Texture Surprise — Hisoka `texture-surprise`
+
 - **Canon** : n'importe quelle surface plane ; indétectable à l'aura une fois actif ; le
   toucher révèle la supercherie ; utilisé pour visage/membres/textes falsifiés.
 - **Events** : `PERCEPTION_MASK` sur OBJECT ou BODY (`attributes: { appearsAs, tactileFail:
-  true, auraDetectable: false }`).
+true, auraDetectable: false }`).
 - **Impact site** : post-ch. 357, le « Hisoka reconstruit » : son corps porte des masques
   Texture Surprise permanents. En mode Gyo, rien ; au toucher, la vérité. Les faux documents
   (examens des gardes) deviennent des OBJECTs masqués que seule la perspective omnisciente lit
@@ -263,18 +280,20 @@ La vérité n'existe qu'en mode omniscient ; chaque perspective voit `appearsAs`
 - **Priorité** : P1 (combo avec Bungee Gum, même vertical Hisoka).
 
 #### Convert Hands — Chrollo `convert-hands`
+
 - **Canon** : main droite → apparence de Chrollo ; gauche → apparence de la cible ; l'échange
   au contact ; les marques sur les paumes peuvent trahir.
 - **Events** : deux `PERCEPTION_MASK` croisés — c'est le **swap d'apparence** (vs Grimmel, swap
   d'âme). L'identity-engine ne bouge pas ; seul le perspective-engine est trompé.
 - **Impact site** : la scène canon (Chrollo/Hisoka au combat de sumo) prouve que le site sait
-  distinguer *qui est où* de *qui semble être où*. Sur le Black Whale : outil d'esquive dans la
+  distinguer _qui est où_ de _qui semble être où_. Sur le Black Whale : outil d'esquive dans la
   traque Hisoka vs Brigade.
 - **Priorité** : P2.
 
 #### Metamorphosen — Bonolenov → voir A (P1, brouillard de guerre du Tier 5).
 
 #### Hanzo Skill 4 (double astral) `hanzo-skill-4`
+
 - **Canon** : double traversant la matière pendant que le corps dort ; parole/contact sur le
   corps annule la projection.
 - **Events** : spawn `AURA_ENTITY` double + **`CONSCIOUSNESS_TRANSFERRED` vers le double** ;
@@ -284,7 +303,8 @@ La vérité n'existe qu'en mode omniscient ; chaque perspective voit `appearsAs`
   l'identity-engine avant Grimmel. La garde de Marayam (ch. 390+) l'utilise canoniquement.
 - **Priorité** : P1 (marchepied vers Grimmel).
 
-#### In (technique de base, pas un hatsu) 
+#### In (technique de base, pas un hatsu)
+
 - Convention transverse : tout effet peut porter `attributes.masked: true` → invisible dans
   toutes les perspectives sauf omnisciente ou observateur en Gyo. Un seul toggle UI (« Gyo »)
   sert Bungee Gum, Nen Stitches, les pièges, la marque de Beyond.
@@ -296,6 +316,7 @@ Pattern : `CONTROL_LINK` (source contrôleur → target contrôlé) + bascule de
 perte d'agentivité.
 
 #### Needle People — Illumi `illumi-needle-people`
+
 - **Canon** : aiguilles → contrôle total, corps jetables ; aussi remodelage de visage
   (aiguille dans le crâne = déguisement durable).
 - **Events** : `CONTROL_LINK` (`attributes: { vector: 'needle', disposable: true }`) ; le
@@ -306,6 +327,7 @@ perte d'agentivité.
 - **Priorité** : P2.
 
 #### Black Voice — Chrollo (ex-Shalnark) `black-voice`
+
 - **Canon** : antenne plantée = contrôle téléphonique complet ; seconde antenne en menace.
 - **Events** : `CONTROL_LINK` (`attributes.vector: 'antenna'`) ; ordre vocal = l'action du
   contrôleur exécutée avec le corps de la cible (le module route l'`AbilityContext` : actorId =
@@ -314,6 +336,7 @@ perte d'agentivité.
   `ABILITY_REVOKED` à la mort de Shalnark est un beau cas de timeline).
 
 #### Order Stamp — Chrollo `order-stamp`
+
 - **Canon** : anime des « objets » à tête, pas les vrais cadavres ; >200 pantins ; décapitation
   annule.
 - **Events** : `CONTROL_LINK` de masse sur COHORT de copies Gallery Fake — le combo canon
@@ -322,6 +345,7 @@ perte d'agentivité.
 - **Priorité** : P3 (hors Black Whale, mais spectaculaire en simulation).
 
 #### Momoze (« Are You Free? ») `momoze-guardian-solicitation`
+
 - **Canon** : sollicitation répétée ; l'accord insère une araignée dans l'oreille → contrôle,
   drain d'aura.
 - **Events** : bête = NEN_ENTITY ; phase 1 effet `CUSTOM` (sollicitation, DORMANT) ; accord →
@@ -332,6 +356,7 @@ perte d'agentivité.
 - **Priorité** : P2.
 
 #### Salé-salé (fumée de bienveillance) `salesale-guardian-smoke`
+
 - **Canon** : conversion progressive ; les convertis portent des copies qui propagent ;
   retenir son souffle protège.
 - **Events** : `AURA_MODIFIER` de zone + COHORT `convertis` qui **croît par contagion spatiale**
@@ -341,9 +366,11 @@ perte d'agentivité.
 - **Priorité** : P2.
 
 #### Camilla (coercition du gardien) `camilla-guardian-coercion` — conditions inconnues.
+
 - Effet `CUSTOM` DORMANT + fiche « inconnues » (voir §5 spoilers/canon). P3 en attendant canon.
 
 #### Moonlight Act — Longhi `moonlight-act`
+
 - **Canon** : contrat volontaire à termes explicites, récompenses/pénalités, exécuté par
   Manipulation.
 - **Events** : `CONSTRAINT` (`attributes: { terms[], duration, reward, penalty }`) co-signé
@@ -360,6 +387,7 @@ Pattern : kind `PORTAL`, `ENTITY_MOVED`, et surtout des **invariants spatiaux** 
 Whale est un graphe de lieux que ces hatsu court-circuitent ou verrouillent.
 
 #### Magical Worm — Fugetsu `magical-worm`
+
 - **Canon** : porte de départ → tunnel → trappe de sortie ; retour possible tant qu'on n'est
   pas complètement sorti ; à l'origine 1×/nuit, épuisant, retour ouvert par Kacho ; après la
   mort de Kacho, Fugetsu répète les trajets — développement suspect (piège ennemi ?).
@@ -375,6 +403,7 @@ Whale est un graphe de lieux que ces hatsu court-circuitent ou verrouillent.
 - **Priorité** : P1.
 
 #### Luini (portails en chambre scellée) `luini-spatial-teleportation`
+
 - **Canon** : depuis une pièce à porte fermée, portails vers lieux déjà visités ; espace de
   transit privé ; si la porte de la pièce-ancre s'ouvre → pièce brûlée définitivement.
 - **Events** : PORTAL réseau + **invariant d'invalidation** : `EFFECT_ENDED` automatique si un
@@ -385,6 +414,7 @@ Whale est un graphe de lieux que ces hatsu court-circuitent ou verrouillent.
 - **Priorité** : P1.
 
 #### Marayam (isolement de la chambre 1013) `marayam-guardian-isolation`
+
 - **Canon** : chambre 1013 derrière une barrière spatiale ; les sortants et extérieurs
   atteignent un **duplicata vide** et ne perçoivent plus les occupants réels.
 - **Events** : effet `PORTAL`/`CUSTOM` sur LOCATION + **duplication du lieu** : `room-1013` et
@@ -397,15 +427,18 @@ Whale est un graphe de lieux que ces hatsu court-circuitent ou verrouillent.
 - **Priorité** : P1.
 
 #### Voconte (portes du repaire) `voconte-hideout-doors` — réseau de portes Heil-Ly.
+
 - `PORTAL` interne au repaire ; recombine la topologie. P3, s'appuie sur Luini.
 
 #### Kurton (bateau/voiture) `kurton-vehicle-transformation`
+
 - BODY→CONSTRUCT véhicule, passagers = aura-carburant (`attributes.fuel`). Évasion maritime
   potentielle : P3 tant que le canon n'avance pas.
 
 #### Tokarine (relais logistiques) `transport-portals` — hors navire, P3.
 
 #### Fun Fun Cloth — Chrollo `fun-fun-cloth`
+
 - **Canon** : miniaturisation de tout objet/personne enveloppé, restitution intacte.
 - **Events** : la cible **disparaît des presences** (contenue : `attributes.containedIn`) puis
   réapparaît ailleurs — un « transport d'entité par entité ». Utilisé pour exfiltrer les corps
@@ -413,17 +446,20 @@ Whale est un graphe de lieux que ces hatsu court-circuitent ou verrouillent.
 - **Priorité** : P3.
 
 #### Leorio — Remote Punch `leorio-remote-punch`
+
 - **Canon** : frappe traversant une surface, sortie en un point choisi.
 - **Events** : event d'attaque avec `TRAJECTORY` à travers la géométrie du navire.
 - **Impact site** : petit mais mémorable : l'uppercut à distance en overlay sur la carte ;
   P3 (P2 si scène médicale de Leorio au Tier 3 développée).
 
 #### Chrollo — Teleport `chrollo-teleportation` — `ENTITY_MOVED` forcé sur autrui sans ligne
-  de vue (canon : Nobunaga écarté). P3.
+
+de vue (canon : Nobunaga écarté). P3.
 
 ### F. Réseaux, niveaux et cohortes
 
 #### Contagion (Et tu, Juliet) — Morena `contagion` — **P1, le boss de fin du moteur**
+
 - **Canon** : ≤ 22 infectés par salive ; suivi position/état/points ; 1 niveau par meurtre
   d'ordinaire, 10 par Nen user, 50 par prince ; capacité unique à lvl 20 ; Member Zero à
   lvl 100 ; triple condition d'infection (jeu gagné en « Yes » + baiser + meurtre observé) ;
@@ -438,10 +474,11 @@ Whale est un graphe de lieux que ces hatsu court-circuitent ou verrouillent.
 - **Impact site** : **le tableau de bord Heil-Ly** : liste des 22 slots, niveaux en direct,
   carte des kills, arbre « qui a infecté qui ». La montée en niveau pendant les massacres des
   Tiers 3-4 devient une visualisation de données temps-réel sur la timeline. Aucun autre hatsu
-  ne fait autant travailler *tous* les engines à la fois.
+  ne fait autant travailler _tous_ les engines à la fois.
 - **Priorité** : P1.
 
 #### Silent Majority `silent-majority` (utilisateur : membre Heil-Ly non identifié)
+
 - **Canon** : pantin visible du seul utilisateur ; victime choisie parmi 10 personnes à portée ;
   4 serpents, 44 s par serpent, 11 s à quatre ; désactivation prématurée → malédiction
   retournée ; serpents disparaissent hors Nen.
@@ -455,6 +492,7 @@ Whale est un graphe de lieux que ces hatsu court-circuitent ou verrouillent.
 - **Priorité** : P2.
 
 #### Benjamin Baton → voir G. Eye-wogs (Tyson) :
+
 - **Canon** : se fixent aux lecteurs du Livre, prélèvent l'aura, rendent du bonheur
   proportionnel à l'adhésion ; tabou → punition.
 - **Events** : COHORT lecteurs + `AURA_MODIFIER` par lecteur (`levy`), violation de tabou →
@@ -462,6 +500,7 @@ Whale est un graphe de lieux que ces hatsu court-circuitent ou verrouillent.
 - **Priorité** : P3.
 
 #### Halkenburg — Grimmel the Dissonance `grimmel-the-dissonance` — **P1**
+
 - **Canon** : aura des porteurs d'aileron partageant sa volonté → armure « invincible » ; l'arc
   transperce tout ; la flèche **échange l'âme de la cible avec celle d'un porteur marqué choisi
   au hasard (Halkenburg inclus)** ; la conscience alliée prime dans le corps adverse ; l'autre
@@ -469,7 +508,7 @@ Whale est un graphe de lieux que ces hatsu court-circuitent ou verrouillent.
   retourne prioritaire ; Halkenburg risque sa vie à chaque tir.
 - **Events** : COHORT porteurs + armure (`AURA_MODIFIER` de groupe) ; tir = `soulSwap()` :
   **deux `CONSCIOUSNESS_TRANSFERRED` atomiques** + états de sommeil (`metadata.mentalState:
-  'SUPPRESSED'`) ; règles de priorité encodées comme invariants world-engine ; cible aléatoire
+'SUPPRESSED'`) ; règles de priorité encodées comme invariants world-engine ; cible aléatoire
   parmi `memberIds` (en simulation : choisir ; en canon : suivre le manga — le tir sur le
   garde, ch. 411+).
 - **Manifest** : `TARGET_SELECTION`, overlay `TRAJECTORY` (la flèche traverse les murs !),
@@ -485,6 +524,7 @@ Pattern : `ABILITY_GRANTED` / `ABILITY_REVOKED`, avec conditions historiques (se
 académie, mort) vérifiées contre le timeline-engine.
 
 #### Skill Hunter + Double Face — Chrollo `skill-hunter`, `double-face`
+
 - **Canon** : 4 conditions en <1 h (voir la capacité, interroger, réponses, contact paume-
   couverture) ; la victime perd le pouvoir ; capacité morte si créateur mort (sauf post-mortem) ;
   Bookmark = 2 capacités simultanées / mains libres ; upgrade convoité via un trésor national
@@ -500,6 +540,7 @@ académie, mort) vérifiées contre le timeline-engine.
 - **Priorité** : P1.
 
 #### Benjamin Baton `benjamin-baton` (+ Air Blow, Culdcept, Secret Window hérités)
+
 - **Canon** : hérite à la mort d'un loyaliste diplômé de l'académie militaire ; 4 étoiles dans
   la paume ; une capacité active continue sous son contrôle même volée/perdue.
 - **Events** : invariant : `BODY_STATE_CHANGED(DEAD)` d'un membre du COHORT `benjamin-army` →
@@ -510,10 +551,12 @@ académie, mort) vérifiées contre le timeline-engine.
 - **Priorité** : P2 (l'invariant est P1 car il alimente la timeline automatiquement).
 
 #### Culdcept `culdcept` — capture d'ability en carte ; échec canon contre la flèche de
-  Halkenburg (l'event « échec » est intéressant : un `EFFECT_CREATED` avorté, à
-  montrer dans la timeline du ch. 411). P3.
+
+Halkenburg (l'event « échec » est intéressant : un `EFFECT_CREATED` avorté, à
+montrer dans la timeline du ch. 411). P3.
 
 #### Rihan — Predator `rihan-predator`
+
 - **Canon** : analyse solitaire d'une capacité cible → créature contre-mesure ; inefficace si
   infos fournies par autrui ; succès = Nen scellé 48 h.
 - **Events** : phase d'analyse = accumulation de `KNOWLEDGE_GRANTED` **de Rihan uniquement**
@@ -525,7 +568,8 @@ académie, mort) vérifiées contre le timeline-engine.
 - **Priorité** : P2.
 
 #### Erigeron — Bill `erigeron` — croissance accélérée + **boost des capacités d'autrui**
-  (`AURA_MODIFIER` sur la cible, faible sur non-entraînés). Support discret du camp Woble ; P3.
+
+(`AURA_MODIFIER` sur la cible, faible sur non-entraînés). Support discret du camp Woble ; P3.
 
 ### H. Malédictions et post-mortem
 
@@ -533,6 +577,7 @@ Pattern : `CURSE` DORMANT + déclencheur + `postMortem`. Le spoiler-engine excel
 plupart sont révélées tardivement (`revealedAtChapter`).
 
 #### Sacrificial Curse — Beyond `beyond-sacrificial-curse`
+
 - **Canon** : marque de naissance visible uniquement en Gyo ; éveille au Nen dès la naissance ;
   mort du sacrifice → mort de la cible désignée, malgré gardien, à grande distance ; Beyond
   peut déclencher en faisant mourir ses enfants ; la plus puissante jamais observée (Furykov).
@@ -545,6 +590,7 @@ plupart sont révélées tardivement (`revealedAtChapter`).
 - **Priorité** : P1 (fraîcheur canon).
 
 #### Yomotsu Hegui — Gidal & les Have-Nots `yomotsu-hegui`
+
 - **Canon** : des mois de préparation rituelle ; activation = brûler l'objet, boire les
   cendres, suicide au poignard ; drain d'aura post-mortem ; force fonction de proximité,
   contact visuel, préparation, résolution.
@@ -557,11 +603,13 @@ plupart sont révélées tardivement (`revealedAtChapter`).
 - **Priorité** : P2.
 
 #### Sun and Moon — Chrollo (ex-Aîné) `sun-and-moon` — marques `CURSE` DORMANT posées par
-  contact, contact soleil+lune → `TRIGGERED` explosion ; postMortem (persiste livre fermé).
-  Canon riche au combat de sumo ; sur le Black Whale, la menace des marques posées sur
-  Hisoka ? P2.
+
+contact, contact soleil+lune → `TRIGGERED` explosion ; postMortem (persiste livre fermé).
+Canon riche au combat de sumo ; sur le Black Whale, la menace des marques posées sur
+Hisoka ? P2.
 
 #### Cat's Name — Camilla `cats-name`
+
 - **Canon** : contre-attaque post-mortem : tue le meurtrier, absorbe sa vie, ressuscite
   Camilla ; inutile si on refuse de la tuer.
 - **Events** : `CURSE` DORMANT permanent sur BODY Camilla ; `BODY_STATE_CHANGED(DEAD)` de
@@ -574,6 +622,7 @@ plupart sont révélées tardivement (`revealedAtChapter`).
 - **Priorité** : P1 (petit module, gros effet démonstratif en simulation).
 
 #### Without You — Kacho/Fugetsu `without-you`
+
 - **Canon** : à la mort de la première jumelle, prend son apparence/personnalité/souvenirs,
   visible de tous, traverse la matière, interagit avec Magical Worm ; post-mortem.
 - **Events** : mort de Kacho → spawn NEN_ENTITY « Kacho » (`postMortem`,
@@ -586,14 +635,17 @@ plupart sont révélées tardivement (`revealedAtChapter`).
 - **Priorité** : P1.
 
 #### Judgment Chain → voir A (P1, Kurapika).
+
 #### Tserriednich (marques de mensonge) `tserriednich-guardian-lie-marks` — compteur 1/2/3
-  mensonges = `CURSE` à `attributes.lieCount` incrémental ; troisième → transformation.
-  L'interrogatoire de Theta vit sous cette épée de Damoclès : afficher le compteur sur sa
-  fiche dans la perspective de Theta (elle le sait). P2.
+
+mensonges = `CURSE` à `attributes.lieCount` incrémental ; troisième → transformation.
+L'interrogatoire de Theta vit sous cette épée de Damoclès : afficher le compteur sur sa
+fiche dans la perspective de Theta (elle le sait). P2.
 
 ### I. Temporalité et précognition (le timeline-engine comme cible)
 
 #### Parallel Future — Tserriednich `parallel-future` — **P1, le hatsu-signature du site**
+
 - **Canon** : Zetsu fermé les yeux → vision des 10 prochaines secondes ; en maintenant Zetsu,
   vision constamment 10 s en avance, perception double (présent + futur) ; à la fin, autrui vit
   les 10 s prédites tandis que lui agit autrement grâce à sa connaissance.
@@ -608,13 +660,17 @@ plupart sont révélées tardivement (`revealedAtChapter`).
   frame par frame — la meilleure explication visuelle jamais faite de ce pouvoir.
 - **Priorité** : P1 (après Grimmel/Contagion — dépend du merge de branches).
 
-#### Emperor Time (coût temporel) → voir A. 
+#### Emperor Time (coût temporel) → voir A.
+
 #### Guardian Coins — Zhang Lei `zhanglei-guardian-coins` — accrual quotidien
-  (`attributes.value` +1/jour, reset au transfert) : le moteur a des jours story-time, la
-  pièce est un objet traçable donné à Hisoka/Brigade (canon ch. 395+) — sa circulation sur la
-  carte est un fil narratif. P2.
+
+(`attributes.value` +1/jour, reset au transfert) : le moteur a des jours story-time, la
+pièce est un objet traçable donné à Hisoka/Brigade (canon ch. 395+) — sa circulation sur la
+carte est un fil narratif. P2.
+
 #### Lovely Ghostwriter — prédictions en poèmes ; capacité disparue (mort probable de Néon) —
-  fiche historique + event `ABILITY_REVOKED` daté, P3.
+
+fiche historique + event `ABILITY_REVOKED` daté, P3.
 
 ### J. Zones à règles, tribunaux, pièges
 
@@ -622,22 +678,26 @@ Pattern : `CONSTRAINT` de zone à `attributes.rules[]` lisibles — des mini-sys
 locales, affichés tels quels dans l'UI (fidélité manga = les règles sont toujours énoncées).
 
 #### Cross Game — Mizaistom `cross-game`
+
 - Cartes bleue/jaune/rouge = admission/contrôle/expulsion ; avertissement avant « Restraint » ;
   bref, réitérable, multi-cibles. Events : `CONSTRAINT` (parallélépipède, la cible parle mais
   ne bouge plus). Impact : l'outil judiciaire des Zodiaques — chaque usage documente une
   procédure (qui a été averti, quand). P2.
 
 #### A Battle of Wits: LSDF — Yokotani `lsdf`
+
 - Gardes invincibles anti-intrus **dont le niveau dépend du crime commis** ; ne blessent pas,
   expulsent ; conditionné à la présence de Morena au repaire. Events : `CONSTRAINT` de LOCATION
-  + spawn CONSTRUCT proportionnel. Le repaire Heil-Ly devient une zone de règles visibles. P2.
+  - spawn CONSTRUCT proportionnel. Le repaire Heil-Ly devient une zone de règles visibles. P2.
 
 #### Indoor Fish — Chrollo `indoor-fish` — poissons uniquement en pièce close (invariant :
-  l'effet s'`ENDED` si la pièce s'ouvre — même primitive que Luini inversée) ; blessures
-  indolores différées (BODY_STATE effectif à la fin de l'effet). P3.
+
+l'effet s'`ENDED` si la pièce s'ouvre — même primitive que Luini inversée) ; blessures
+indolores différées (BODY_STATE effectif à la fin de l'effet). P3.
 
 #### Desire Trap — Luzurus `luzurus-guardian-desire-trap` — matérialise le désir de la cible
-  en appât ; satisfaction → piège + pseudo-coercition. `CUSTOM` DORMANT → `TRIGGERED`. P3.
+
+en appât ; satisfaction → piège + pseudo-coercition. `CUSTOM` DORMANT → `TRIGGERED`. P3.
 
 #### Marayam / Luini / Voconte → déjà en E (zones spatiales).
 
@@ -658,7 +718,7 @@ locales, affichés tels quels dans l'UI (fidélité manga = les règles sont tou
    hatsu servis.
 2. **La fiche « Serments & restrictions »** sur chaque capacité : les conditions du
    `AbilityActionPlan` rendues en langage manga (Kurapika, Franklin, Yomotsu Hegui, Morena).
-   La pédagogie Nen du site vient de là : *toute puissance a un prix affichable*.
+   La pédagogie Nen du site vient de là : _toute puissance a un prix affichable_.
 3. **Provenance des connaissances** : chaque `KNOWLEDGE_GRANTED` porte `sourceIds` → l'UI peut
    répondre « comment Kurapika sait-il cela ? » (par Little Eye, cafard n° 3, ch. 390).
 4. **Le mode enquête** : croiser presences × capacités actives × connaissances pour les
@@ -686,16 +746,16 @@ locales, affichés tels quels dans l'UI (fidélité manga = les règles sont tou
 
 ## 6. Ordre d'implémentation proposé
 
-| Vague | Modules | Débloque | État |
-| --- | --- | --- | --- |
-| 1 | Chapelet Kurapika (6 chaînes) + Emperor Time (coût) | `ABILITY_REVOKED`, prêt, coût vital, vertical protagoniste | ✅ |
-| 2 | Grimmel + Hanzo Skill 4 + Without You | soulSwap, post-mortem, le trio identity-engine | ✅ |
-| 3 | Contagion + Silent Majority + LSDF (vertical Heil-Ly) | cohortes, niveaux, mode enquête | ✅ |
-| 4 | Magical Worm + Luini + Marayam (vertical spatial) | portails, invariants de lieux, duplication d'espace | ✅ |
-| 5 | Hisoka (Bungee Gum étendu + Texture Surprise) + Metamorphosen + Convert Hands | Gyo, masques, mode « apparent » | ✅ |
-| 6 | Skill Hunter + Benjamin Baton + malédiction de Beyond | héritage/vol, spoiler-engine ch. 415 | ✅ + Cat's Name et Little Eye |
-| 7 | Parallel Future | merge sélectif de branches, overlay FUTURE | ✅ module + `SimulationEngine.mergeBranch` |
-| 8 | P3 : les 38 capacités restantes | complétude catalogue — 81/81 | ✅ |
+| Vague | Modules                                                                       | Débloque                                                   | État                                       |
+| ----- | ----------------------------------------------------------------------------- | ---------------------------------------------------------- | ------------------------------------------ |
+| 1     | Chapelet Kurapika (6 chaînes) + Emperor Time (coût)                           | `ABILITY_REVOKED`, prêt, coût vital, vertical protagoniste | ✅                                         |
+| 2     | Grimmel + Hanzo Skill 4 + Without You                                         | soulSwap, post-mortem, le trio identity-engine             | ✅                                         |
+| 3     | Contagion + Silent Majority + LSDF (vertical Heil-Ly)                         | cohortes, niveaux, mode enquête                            | ✅                                         |
+| 4     | Magical Worm + Luini + Marayam (vertical spatial)                             | portails, invariants de lieux, duplication d'espace        | ✅                                         |
+| 5     | Hisoka (Bungee Gum étendu + Texture Surprise) + Metamorphosen + Convert Hands | Gyo, masques, mode « apparent »                            | ✅                                         |
+| 6     | Skill Hunter + Benjamin Baton + malédiction de Beyond                         | héritage/vol, spoiler-engine ch. 415                       | ✅ + Cat's Name et Little Eye              |
+| 7     | Parallel Future                                                               | merge sélectif de branches, overlay FUTURE                 | ✅ module + `SimulationEngine.mergeBranch` |
+| 8     | P3 : les 38 capacités restantes                                               | complétude catalogue — 81/81                               | ✅                                         |
 
 ### Ce que la vague P1 a effectivement livré
 
@@ -746,7 +806,7 @@ Bloody Mary, Padaille, Gel), `benjamin-inherited` (Air Blow, Culdcept, aura), `z
 Deux points de fidélité que cette vague met à l'épreuve, conformément au §5 :
 
 - **Les inconnues restent inconnues.** Le gardien de Camilla porte une condition `unrevealed`
-  *bloquante* : personne ne peut l'exécuter tant que le manga n'a pas dit comment. Air Blow,
+  _bloquante_ : personne ne peut l'exécuter tant que le manga n'a pas dit comment. Air Blow,
   la téléportation sans nom de Chrollo et le hatsu propre à Oito portent des notes non
   bloquantes qui disent ce qui manque.
 - **Les échecs canon comptent.** Culdcept a une action « capture avortée » qui produit un

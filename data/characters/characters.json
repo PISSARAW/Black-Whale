@@ -1255,7 +1255,7 @@
     "canonStatus": "canon",
     "shipLocation": {
       "tier": 1,
-      "room": "1000",
+      "room": "King's Living Quarters",
       "status": "actif",
       "role": "organisateur"
     },
@@ -5557,6 +5557,20 @@
         "title": "Friends",
         "status": "mentioned"
       }
+    ],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1009",
+        "fromChapterId": "ch-358"
+      },
+      {
+        "location": "tier-1-king-living-quarters",
+        "fromChapterId": "ch-382.2"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1009",
+        "fromChapterId": "ch-383"
+      }
     ]
   },
   {
@@ -5984,6 +5998,17 @@
         "chapter": 414,
         "title": "Friends",
         "status": "mentioned"
+      }
+    ],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1010",
+        "fromChapterId": "ch-358"
+      },
+      {
+        "location": "tier-1-lifeboats",
+        "fromChapterId": "ch-383",
+        "untilChapterId": "ch-383.2"
       }
     ]
   },
@@ -6420,7 +6445,26 @@
       }
     ],
     "mapPresenceFromChapterId": "ch-415",
-    "temporalIdentityManaged": true
+    "temporalIdentityManaged": true,
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1011",
+        "fromChapterId": "ch-358"
+      },
+      {
+        "location": "tier-3",
+        "fromChapterId": "ch-380",
+        "certainty": "PROBABLE"
+      },
+      {
+        "location": "tier-1-lifeboats",
+        "fromChapterId": "ch-383"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1011",
+        "fromChapterId": "ch-383.3"
+      }
+    ]
   },
   {
     "id": "prince-momoze",
@@ -10177,6 +10221,10 @@
         "fromChapterId": "ch-358"
       },
       {
+        "location": "tier-1-banquet-hall",
+        "fromChapterId": "ch-383"
+      },
+      {
         "location": "tier-1-royal-residential-sector-room-1011",
         "fromChapterId": "ch-384"
       }
@@ -13081,6 +13129,10 @@
         "fromChapterId": "ch-377"
       },
       {
+        "location": "tier-3-residential-room-3101",
+        "fromChapterId": "ch-395"
+      },
+      {
         "location": "tier-2-heilly-secret-hideout",
         "fromChapterId": "ch-399"
       }
@@ -13481,6 +13533,22 @@
         "chapter": 414,
         "title": "Friends",
         "status": "absent"
+      }
+    ],
+    "mapTrajectory": [
+      {
+        "location": "tier-5",
+        "fromChapterId": "ch-371",
+        "certainty": "PROBABLE"
+      },
+      {
+        "location": "tier-3-residential-room-3101",
+        "fromChapterId": "ch-395"
+      },
+      {
+        "location": "tier-5",
+        "fromChapterId": "ch-399",
+        "certainty": "PROBABLE"
       }
     ]
   },
@@ -14317,7 +14385,26 @@
         "status": "absent"
       }
     ],
-    "battles": ["Luini vs. Nobunaga Hazama"]
+    "battles": ["Luini vs. Nobunaga Hazama"],
+    "mapTrajectory": [
+      {
+        "location": "tier-5-cha-r-family-office",
+        "fromChapterId": "ch-371"
+      },
+      {
+        "location": "tier-3-residential-standard",
+        "fromChapterId": "ch-378"
+      },
+      {
+        "location": "tier-5-warehouse",
+        "fromChapterId": "ch-378.2"
+      },
+      {
+        "location": "tier-5-cha-r-family-office",
+        "fromChapterId": "ch-384",
+        "untilChapterId": "ch-393"
+      }
+    ]
   },
   {
     "id": "chrollo-lucilfer",
@@ -14758,7 +14845,22 @@
         "status": "absent"
       }
     ],
-    "battles": ["Chrollo Lucilfer vs. Hisoka Morow‡*"]
+    "battles": ["Chrollo Lucilfer vs. Hisoka Morow‡*"],
+    "mapTrajectory": [
+      {
+        "location": "tier-5",
+        "fromChapterId": "ch-359"
+      },
+      {
+        "location": "tier-1-princes-burial-chamber",
+        "fromChapterId": "ch-405.3"
+      },
+      {
+        "location": "tier-1",
+        "fromChapterId": "ch-406",
+        "certainty": "PROBABLE"
+      }
+    ]
   },
   {
     "id": "nobunaga-hazama",
@@ -15176,6 +15278,18 @@
       {
         "location": "tier-5",
         "fromChapterId": "ch-358"
+      },
+      {
+        "location": "tier-5-warehouse",
+        "fromChapterId": "ch-378.2"
+      },
+      {
+        "location": "tier-5",
+        "fromChapterId": "ch-380"
+      },
+      {
+        "location": "tier-3-residential-room-3101",
+        "fromChapterId": "ch-395"
       },
       {
         "location": "tier-2-heilly-secret-hideout",
@@ -21616,6 +21730,18 @@
     "biography": [
       "Keeney is a Hunter guarding Kacho and Fugetsu. He pilots the escape craft during their attempt to leave the Black Whale and sacrifices himself after the succession ritual prevents their departure.",
       "His plan gives the sisters a chance to flee, but Kacho is killed by the boundary and Fugetsu returns to the ship through her magical door."
+    ],
+    "mapTrajectory": [
+      {
+        "location": "black-whale-unknown",
+        "fromChapterId": "ch-358",
+        "certainty": "PROBABLE"
+      },
+      {
+        "location": "tier-1-lifeboats",
+        "fromChapterId": "ch-383",
+        "untilChapterId": "ch-383.3"
+      }
     ]
   },
   {
@@ -37676,6 +37802,12 @@
         "title": "Friends",
         "status": "absent"
       }
+    ],
+    "mapTrajectory": [
+      {
+        "location": "tier-3-residential-standard",
+        "fromChapterId": "ch-392"
+      }
     ]
   },
   {
@@ -38505,6 +38637,15 @@
       {
         "location": "tier-5",
         "fromChapterId": "ch-359"
+      },
+      {
+        "location": "tier-3-cineplex",
+        "fromChapterId": "ch-392"
+      },
+      {
+        "location": "tier-3",
+        "fromChapterId": "ch-394",
+        "certainty": "PROBABLE"
       },
       {
         "location": "tier-1-vip-casino",
@@ -39766,6 +39907,18 @@
         "fromChapterId": "ch-359"
       },
       {
+        "location": "tier-5-warehouse",
+        "fromChapterId": "ch-378.2"
+      },
+      {
+        "location": "tier-5",
+        "fromChapterId": "ch-380"
+      },
+      {
+        "location": "tier-3-residential-room-3101",
+        "fromChapterId": "ch-395"
+      },
+      {
         "location": "tier-4-recycling-sewage-facilities",
         "fromChapterId": "ch-406"
       }
@@ -40845,7 +40998,23 @@
     },
     "mapPresenceFromChapterId": "ch-359",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "black-whale-unknown",
+        "fromChapterId": "ch-358",
+        "certainty": "PROBABLE"
+      },
+      {
+        "location": "tier-3-central-police-station",
+        "fromChapterId": "ch-379"
+      },
+      {
+        "location": "black-whale-unknown",
+        "fromChapterId": "ch-380",
+        "certainty": "PROBABLE"
+      }
+    ]
   },
   {
     "id": "cavic",
@@ -41047,6 +41216,28 @@
         "chapter": 400,
         "title": "Secrecy",
         "status": "appears"
+      }
+    ],
+    "mapTrajectory": [
+      {
+        "location": "tier-5",
+        "fromChapterId": "ch-359"
+      },
+      {
+        "location": "tier-5-warehouse",
+        "fromChapterId": "ch-378.2"
+      },
+      {
+        "location": "tier-5",
+        "fromChapterId": "ch-380"
+      },
+      {
+        "location": "tier-3-residential-room-3101",
+        "fromChapterId": "ch-395"
+      },
+      {
+        "location": "tier-4-recycling-sewage-facilities",
+        "fromChapterId": "ch-406"
       }
     ]
   },
@@ -41626,6 +41817,17 @@
         "chapter": 393,
         "title": "Plea",
         "status": "death"
+      }
+    ],
+    "mapTrajectory": [
+      {
+        "location": "tier-3",
+        "fromChapterId": "ch-392"
+      },
+      {
+        "location": "tier-3-cineplex",
+        "fromChapterId": "ch-392.2",
+        "untilChapterId": "ch-393"
       }
     ]
   },
@@ -42468,6 +42670,18 @@
         "title": "Hypothesis",
         "status": "death"
       }
+    ],
+    "mapTrajectory": [
+      {
+        "location": "black-whale-unknown",
+        "fromChapterId": "ch-358",
+        "certainty": "PROBABLE"
+      },
+      {
+        "location": "tier-3-residential-room-3101",
+        "fromChapterId": "ch-394",
+        "untilChapterId": "ch-394"
+      }
     ]
   },
   {
@@ -42817,6 +43031,22 @@
     },
     "mapPresenceFromChapterId": "ch-359",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "black-whale-unknown",
+        "fromChapterId": "ch-358",
+        "certainty": "PROBABLE"
+      },
+      {
+        "location": "tier-3-cineplex",
+        "fromChapterId": "ch-393"
+      },
+      {
+        "location": "black-whale-unknown",
+        "fromChapterId": "ch-394",
+        "certainty": "PROBABLE"
+      }
+    ]
   }
 ]

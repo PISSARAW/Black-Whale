@@ -3,6 +3,7 @@
   import CharacterMarker from './CharacterMarker.svelte'
   import { page } from '$app/stores'
   import { activeHatsu, parallelFutureVisible } from '$lib/nen/hatsuState.js'
+  import { resolveRegionLocationSlug } from '$lib/map/mapAssetRegistry'
   import {
     belongsToLocation,
     packMarkersForZoom,
@@ -80,8 +81,10 @@
   function withinMapScope(marker: MapMarker, locationsById: Map<string, Location>) {
     if (mapState.currentZoomLevel === 'OVERVIEW') return true
     if (mapState.selectedTier && marker.tierId !== mapState.selectedTier) return false
-    if (mapState.currentZoomLevel === 'LOCAL' && mapState.selectedLocationId)
-      return belongsToLocation(marker.location, mapState.selectedLocationId, locationsById)
+    if (mapState.currentZoomLevel === 'LOCAL' && mapState.selectedLocationId) {
+      const targetSlug = resolveRegionLocationSlug(mapState.selectedLocationId)
+      return targetSlug ? belongsToLocation(marker.location, targetSlug, locationsById) : false
+    }
     return true
   }
 

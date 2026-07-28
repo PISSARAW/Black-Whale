@@ -29,6 +29,9 @@ const locationTypeByZone = {
   corridor: 'CORRIDOR',
   zone: 'ZONE',
   room: 'ROOM',
+  storage: 'ZONE',
+  evacuation: 'ZONE',
+  ceremonial: 'ZONE',
 }
 
 const namedRoomSlugs = new Map([
@@ -66,6 +69,24 @@ const namedRoomSlugs = new Map([
   ['secteur résidentiel royal', 'tier-1-royal-residential-sector'],
   ['secteur residentiel royal', 'tier-1-royal-residential-sector'],
   ['royal residential sector', 'tier-1-royal-residential-sector'],
+  ["king's living quarters", 'tier-1-king-living-quarters'],
+  ['kings living quarters', 'tier-1-king-living-quarters'],
+  ['quartiers du roi', 'tier-1-king-living-quarters'],
+  ["queens' living quarters", 'tier-1-queens-living-quarters'],
+  ['queens living quarters', 'tier-1-queens-living-quarters'],
+  ["soldiers' living quarters", 'tier-1-soldiers-living-quarters'],
+  ['soldiers living quarters', 'tier-1-soldiers-living-quarters'],
+  ['burial chamber', 'tier-1-princes-burial-chamber'],
+  ['lifeboat', 'tier-1-lifeboats'],
+  ['canot de sauvetage', 'tier-1-lifeboats'],
+  ['cineplex', 'tier-3-cineplex'],
+  ['cinema', 'tier-3-cineplex'],
+  ['cinéma', 'tier-3-cineplex'],
+  ['observation deck', 'tier-3-observation-deck'],
+  ['warehouse', 'tier-5-warehouse'],
+  ['entrepot', 'tier-5-warehouse'],
+  ['entrepôt', 'tier-5-warehouse'],
+  ['area 37564', 'tier-5-area-37564'],
 ])
 
 const generatedPassengerDescription =
@@ -337,7 +358,55 @@ async function syncLocations(firstVisibleEventId) {
   })
   synced.set('black-whale-unknown', unknown)
 
+  await pruneLocationsOutsideCatalog(synced)
+
   return synced
+}
+
+/// Earlier passes seeded rooms under slugs the catalogue later renamed, so the
+/// database accumulated pairs describing one place — `tier-5-central-cafeteria`
+/// beside `tier-5-central-dining-hall`, `tier-1-vvip-room-1014` beside the room
+/// the princes' sector actually owns. Whichever slug the map happened to query
+/// looked empty. The catalogue is the source of truth: a location it does not
+/// declare is a leftover and goes, but only once nothing points at it. Anything
+/// still carrying presences, cohorts, events or children is left in place and
+/// reported, because that is a rename to reconcile by hand, not a stray row.
+async function pruneLocationsOutsideCatalog(synced) {
+  const keptSlugs = [...synced.keys()]
+  const blocked = new Map()
+  let progressed = true
+
+  // A stray can parent another stray, and Prisma refuses to delete a row that
+  // still has children. Each pass frees one level of nesting, so repeat until a
+  // pass changes nothing.
+  while (progressed) {
+    progressed = false
+    const strays = await prisma.location.findMany({
+      where: { slug: { notIn: keptSlugs } },
+      include: { _count: { select: { presences: true, cohorts: true, childLocations: true } } },
+    })
+
+    for (const stray of strays) {
+      const events = await prisma.narrativeEvent.count({ where: { locationId: stray.id } })
+      const dependents =
+        stray._count.presences + stray._count.cohorts + stray._count.childLocations + events
+      if (dependents > 0) {
+        blocked.set(stray.slug, dependents)
+        continue
+      }
+      await prisma.location.delete({ where: { id: stray.id } })
+      blocked.delete(stray.slug)
+      console.log(`Lieu hors catalogue supprimé : ${stray.slug}`)
+      progressed = true
+    }
+  }
+
+  for (const [slug, dependents] of blocked) {
+    console.warn(
+      `Lieu hors catalogue conservé (${dependents} référence(s)) : ${slug}. ` +
+        'Ajoutez-le à data/locations/locations.json ou déplacez ses références.',
+    )
+  }
 }
 
 function resolveLocation(character, locations) {
@@ -658,8 +727,21 @@ async function main() {
           : []),
       ])
     }
+    // `temporalIdentityManaged` means the identity backfill owns this body's
+    // history — which consciousness rides it, when it dies, where the corpse
+    // goes — and that the single position inferred from `shipLocation` must not
+    // compete with it. A `mapTrajectory` is not an inference though: it is an
+    // explicitly authored route, and skipping it left the princes stranded in
+    // their apartments through scenes that happen elsewhere. Declared legs are
+    // written here; the identity backfill still runs afterwards and still has
+    // the last word on where the body ends up.
     if (catalogCharacter.temporalIdentityManaged) {
       positionsAlreadyCovered += 1
+      if (!catalogCharacter.mapTrajectory?.length) continue
+      const written = await syncTrajectory(catalogCharacter, body, locations)
+      presencesCreated += written.created
+      presencesUpdated += written.updated
+      trajectoriesSynced += 1
       continue
     }
 

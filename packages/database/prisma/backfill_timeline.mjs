@@ -254,6 +254,16 @@ const knownEvents = [
     legacyTitles: [],
   },
   {
+    chapter: 378,
+    chapterTitle: 'Chaos',
+    sequence: 2,
+    title: 'Luini empties the Tier 5 warehouse guardpost',
+    summary:
+      'Nobunaga, Phinks and Feitan come to collect their smuggled weapons and find the warehouse guards gone and a blood trail at the entrance; Luini kills the Cha-R man escorting them and opens a portal above their heads.',
+    occursAfterTitle: 'Morena unleashes Contagion',
+    legacyTitles: [],
+  },
+  {
     chapter: 382,
     chapterTitle: 'Awakening',
     sequence: 2,

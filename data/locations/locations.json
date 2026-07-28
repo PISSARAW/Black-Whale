@@ -50,6 +50,46 @@
     "exits": ["tier-1-banquet-hall"]
   },
   {
+    "id": "tier-1-queens-living-quarters",
+    "name": "Queens' Living Quarters",
+    "parentLocationId": "tier-1",
+    "deck": 1,
+    "zoneType": "residential",
+    "description": "Residential block assigned to the eight queens of Kakin. The deck plan places it on Tier 1, but no scene has yet been shown inside it: the queens who matter to the contest are quartered with their sons, Oito in room 1014 and Sevanti in room 1013.",
+    "entrances": [],
+    "exits": []
+  },
+  {
+    "id": "tier-1-soldiers-living-quarters",
+    "name": "Soldiers' Living Quarters",
+    "parentLocationId": "tier-1",
+    "deck": 1,
+    "zoneType": "military",
+    "description": "Barracks for the Royal Army detachment posted to Tier 1. Roughly 2,000 guards and soldiers sail with the ship and 70% of them are stationed on Tiers 1 and 2; Mizaistom later moves 800 of them down to the lower tiers.",
+    "entrances": [],
+    "exits": []
+  },
+  {
+    "id": "tier-1-princes-burial-chamber",
+    "name": "Princes' Burial Chamber",
+    "parentLocationId": "tier-1",
+    "deck": 1,
+    "zoneType": "ceremonial",
+    "description": "Funerary hall where the princes killed during the voyage are laid out. Halkenburg's burial is held there, and Chrollo works the mourners with Love Dial 6700 under cover of the procession.",
+    "entrances": [],
+    "exits": ["tier-1-banquet-hall"]
+  },
+  {
+    "id": "tier-1-lifeboats",
+    "name": "Lifeboat Deck",
+    "parentLocationId": "tier-1",
+    "deck": 1,
+    "zoneType": "evacuation",
+    "description": "Launch bays and escape hatch on the outer edge of Tier 1. Kacho and Fugetsu reach open water from here in chapter 383; it is the only place in the arc where anyone physically leaves the Black Whale.",
+    "entrances": [],
+    "exits": []
+  },
+  {
     "id": "tier-1-vvip-living-quarters",
     "name": "VVIP Living Quarters",
     "parentLocationId": "tier-1",
@@ -370,6 +410,46 @@
     "exits": []
   },
   {
+    "id": "tier-3-residential-first-class",
+    "name": "First-Class Residential Block",
+    "parentLocationId": "tier-3",
+    "deck": 3,
+    "zoneType": "residential",
+    "description": "Upper passenger cabins on Tier 3, the best accommodation available outside the royal tiers.",
+    "entrances": [],
+    "exits": []
+  },
+  {
+    "id": "tier-3-residential-standard",
+    "name": "Standard Residential Block",
+    "parentLocationId": "tier-3",
+    "deck": 3,
+    "zoneType": "residential",
+    "description": "Ordinary Tier 3 cabins, and the hunting ground of Morena's Contagion carriers: Luini alone kills twenty people here before teleporting out, and the resulting panic is what pushes Mizaistom to redeploy the Royal Army.",
+    "entrances": [],
+    "exits": ["tier-3-residential-room-3101"]
+  },
+  {
+    "id": "tier-3-cineplex",
+    "name": "Cineplex",
+    "parentLocationId": "tier-3",
+    "deck": 3,
+    "zoneType": "public",
+    "description": "Tier 3 cinema. Bonolenov, wearing Hisoka's face on Chrollo's orders, sits through a film here waiting for the Heil-Ly to notice him and move him somewhere more interesting.",
+    "entrances": [],
+    "exits": []
+  },
+  {
+    "id": "tier-3-observation-deck",
+    "name": "Observation Deck",
+    "parentLocationId": "tier-3",
+    "deck": 3,
+    "zoneType": "public",
+    "description": "Public viewing deck on Tier 3, the highest open area general passengers can reach.",
+    "entrances": [],
+    "exits": []
+  },
+  {
     "id": "tier-3-heilly-family-office",
     "name": "Heil-Ly Family Office",
     "parentLocationId": "tier-3",
@@ -486,6 +566,16 @@
     "deck": 5,
     "zoneType": "storage",
     "description": "Cha-R-controlled warehouse storing regular and black-market goods, watched by four guards before Luini's attack and by a camera installed at the entrance.",
+    "entrances": [],
+    "exits": []
+  },
+  {
+    "id": "tier-5-area-37564",
+    "name": "Area 37564",
+    "parentLocationId": "tier-5",
+    "deck": 5,
+    "zoneType": "public",
+    "description": "Numbered Tier 5 sector the Phantom Troupe uses as its assembly point once the members scatter across the lower tiers.",
     "entrances": [],
     "exits": []
   }

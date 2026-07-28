@@ -143,7 +143,7 @@ async function main() {
     kachoDeath,
     withoutYouReturn,
     centralHospital,
-    ministryOfJustice,
+    fugetsuRoom,
     witnessProtection,
     unknownLocation,
     // Chapter 400 is where the confinement is on panel: Melody is let in to
@@ -161,7 +161,7 @@ async function main() {
     requiredEvent('Kacho dies and Without You awakens'),
     requiredEvent('Without You rejoins Fugetsu aboard the Black Whale'),
     requiredLocation('tier-3-central-hospital'),
-    requiredLocation('tier-2-ministry-of-justice'),
+    requiredLocation('tier-1-royal-residential-sector-room-1011'),
     requiredLocation('tier-2-vip-witness-protection-area'),
     requiredLocation('black-whale-unknown'),
     requiredEvent('The Phantom Troupe confirms the hideout is on Tier 2'),
@@ -348,15 +348,23 @@ async function main() {
       cause: 'NEN_ABILITY',
     },
   })
+  // Without You goes where Fugetsu goes, and between the failed escape and the
+  // confinement Fugetsu is back in her own apartment — so the construct is in
+  // 1011 with her, not in the Ministry of Justice at large. It used to be filed
+  // at the bureau, which put the twins in two different rooms of the ship for
+  // seventeen events, the bed they share on panel included.
   await upsertPresence({
-    id: 'presence-without-you-justice-bureau',
+    id: 'presence-without-you-fugetsu-room',
     bodyId: withoutYouBody.id,
-    locationId: ministryOfJustice.id,
+    locationId: fugetsuRoom.id,
     fromEventId: withoutYouReturn.id,
     untilEventId: fugetsuProtected.id,
-    precision: 'ZONE',
+    precision: 'EXACT_ROOM',
     certainty: 'CONFIRMED',
   })
+  // The bureau record this replaced, dropped so a rerun does not leave the
+  // construct standing in two places at once.
+  await prisma.presence.deleteMany({ where: { id: 'presence-without-you-justice-bureau' } })
   // The construct is not held in the bureau at large: it is shut in the witness
   // protection area with Fugetsu, which is where it finds her exhausted and
   // arranges for Melody to cross her in the halls.

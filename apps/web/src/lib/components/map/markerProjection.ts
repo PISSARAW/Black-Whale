@@ -182,6 +182,35 @@ const localSpotAnchors: Record<
     // The first-class cell, the one a detained princess is held in.
     occupants: { 'prince-camilla': { x: 27, y: 33.33 } },
   },
+
+  // The prince apartments below share `local/prince-apartment.svelte`: 800 × 800,
+  // contents offset by (50, 70), one bed drawn at (20, 550) 100 × 110 in the
+  // master bedroom that spans x 0–500, y 530–680. No fallback is declared for
+  // them — the centred grid already drops an unplaced passenger in the living
+  // room, which is where an apartment holds anyone canon does not seat.
+
+  // Kacho cries over the photos of her sister in bed, ch. 382, and it is the bed
+  // Silent Majority comes to.
+  'tier-1-royal-residential-sector-room-1010': {
+    occupants: { 'prince-kacho': { x: 15, y: 84.38 } },
+  },
+  // Ch. 400 puts both twins in Fugetsu's bed, so they lie side by side on it:
+  // the same fixture, offset by half its width rather than stacked.
+  'tier-1-royal-residential-sector-room-1011': {
+    occupants: {
+      'prince-fugetsu': { x: 12.5, y: 84.38 },
+      'prince-kacho': { x: 18, y: 84.38 },
+    },
+  },
+  // Momoze is asleep in her bed in ch. 361, which is where Tuffdy kills her.
+  'tier-1-royal-residential-sector-room-1012': {
+    occupants: { 'prince-momoze': { x: 15, y: 84.38 } },
+  },
+  // Ch. 401: Kurapika and Bill take Longhi out of the Nen class and into 1014's
+  // master bedroom, past the bed, for a lesson the room is not meant to hear.
+  'tier-1-royal-residential-sector-room-1014': {
+    occupants: { longhi: { x: 56.25, y: 86.25 } },
+  },
 }
 
 /**

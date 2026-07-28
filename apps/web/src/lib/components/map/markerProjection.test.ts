@@ -380,6 +380,61 @@ describe('packMarkersForZoom', () => {
     expect(guard.y).toBe(50)
   })
 
+  it('puts a princess on her own bed rather than her apartment floor', () => {
+    const momoze = {
+      ...markers[0],
+      id: 'momoze',
+      locationId: 'tier-1-royal-residential-sector-room-1012',
+      characterSlug: 'prince-momoze',
+    } as MapMarker
+    const [placed] = packMarkersForZoom([momoze], 'LOCAL')
+
+    // The bed the apartment asset draws in the master bedroom.
+    expect(placed.x).toBeCloseTo(15)
+    expect(placed.y).toBeCloseTo(84.38)
+  })
+
+  it('lays the twins side by side on the one bed they share', () => {
+    const bedroom = [
+      ['fugetsu', 'prince-fugetsu'],
+      ['kacho', 'prince-kacho'],
+    ].map(
+      ([id, slug]) =>
+        ({
+          ...markers[0],
+          id,
+          locationId: 'tier-1-royal-residential-sector-room-1011',
+          characterSlug: slug,
+        }) as MapMarker,
+    )
+    const [fugetsu, kacho] = packMarkersForZoom(bedroom, 'LOCAL')
+
+    expect(fugetsu.y).toBeCloseTo(kacho.y)
+    expect(kacho.x - fugetsu.x).toBeCloseTo(5.5)
+  })
+
+  it('holds Longhi in 1014’s master bedroom while the class keeps the living room', () => {
+    const room = [
+      ['longhi', 'longhi'],
+      ['student', 'sakata'],
+    ].map(
+      ([id, slug]) =>
+        ({
+          ...markers[0],
+          id,
+          locationId: 'tier-1-royal-residential-sector-room-1014',
+          characterSlug: slug,
+        }) as MapMarker,
+    )
+    const [longhi, student] = packMarkersForZoom(room, 'LOCAL')
+
+    expect(longhi.x).toBeCloseTo(56.25)
+    expect(longhi.y).toBeCloseTo(86.25)
+    // 1014 declares no fallback, so everyone else keeps the centred grid.
+    expect(student.x).toBe(50)
+    expect(student.y).toBe(50)
+  })
+
   it('packs overview by tier, so a lone tier sits on its own band', () => {
     const packed = packMarkersForZoom(markers, 'OVERVIEW')
     const [first, second, third] = packed

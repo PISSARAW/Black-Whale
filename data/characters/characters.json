@@ -41945,6 +41945,21 @@
     },
     "mapPresenceFromChapterId": "ch-369",
     "mapPresenceUntilChapterId": null,
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1005",
+        "fromChapterId": "ch-369"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1014",
+        "fromChapterId": "ch-401"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1005",
+        "fromChapterId": "ch-402",
+        "certainty": "PROBABLE"
+      }
+    ],
     "mangaAppearances": []
   },
   {

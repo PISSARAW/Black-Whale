@@ -7,7 +7,7 @@
     "build": "vite build",
     "dev": "vite dev --port 3002",
     "preview": "vite preview",
-    "typecheck": "svelte-check --tsconfig ./tsconfig.json",
+    "typecheck": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "clean": "rimraf .svelte-kit build"
   },
   "dependencies": {

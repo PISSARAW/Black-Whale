@@ -44,6 +44,8 @@ export interface CatalogCharacter {
   factionId?: string | null
   firstAppearanceChapterId?: string | null
   canonStatus?: string
+  /** 'databook' when the post comes from Togashi's sheets and no chapter shows it. */
+  positionProvenance?: 'databook'
   shipLocation?: { tier?: number; room?: string; status?: string; role?: string | null } | null
 }
 

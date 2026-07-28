@@ -239,6 +239,12 @@ for (const character of targets) {
       location.tier = 1
       location.room = PRINCE_ROOM[post]
       changes.push(`room=${PRINCE_ROOM[post]} (${post})`)
+      // Un poste connu des seules fiches Togashi n'est daté par aucune planche :
+      // la carte le placera à l'embarquement, donc en PROBABLE et non en CONFIRMED.
+      if (infobox.databookOnly) {
+        character.positionProvenance = 'databook'
+        changes.push('positionProvenance=databook')
+      }
     }
     if (infobox.occupation && PLACEHOLDER_ROLES.has(location.role ?? '')) {
       location.role = infobox.occupation

@@ -25076,7 +25076,8 @@
     "biography": [
       "Erikkusu is one of Tserriednich's soldiers who qualify as provisional Hunters before departure. No individual action or Nen ability has yet been shown in the published chapters."
     ],
-    "mapPresenceFromChapterId": null
+    "mapPresenceFromChapterId": null,
+    "positionProvenance": "databook"
   },
   {
     "id": "gidal",
@@ -26703,7 +26704,8 @@
     "biography": [
       "Muhahahasare qualifies as a provisional Hunter before the Black Whale's departure. No separate appearance record or personal Nen ability is currently documented by Hunterpedia."
     ],
-    "mapPresenceFromChapterId": null
+    "mapPresenceFromChapterId": null,
+    "positionProvenance": "databook"
   },
   {
     "id": "myuhan",
@@ -27529,7 +27531,8 @@
     "biography": [
       "Zomeesa qualifies as a provisional Hunter before the Black Whale's departure. No separate appearance record or personal Nen ability is currently documented by Hunterpedia."
     ],
-    "mapPresenceFromChapterId": null
+    "mapPresenceFromChapterId": null,
+    "positionProvenance": "databook"
   },
   {
     "id": "unma-hui-guo-rou",
@@ -41670,7 +41673,8 @@
     },
     "mapPresenceFromChapterId": null,
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "positionProvenance": "databook"
   },
   {
     "id": "kobihi",
@@ -42090,7 +42094,8 @@
     },
     "mapPresenceFromChapterId": null,
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "positionProvenance": "databook"
   },
   {
     "id": "nagmum",

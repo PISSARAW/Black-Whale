@@ -109,6 +109,18 @@ function isDeadStatus(status) {
   return /^(mort|morte|decede|decedee|décédé|décédée|dead|deceased)$/i.test(status || '')
 }
 
+/// How firmly the map may assert a position.
+///
+/// `positionProvenance: 'databook'` marks a post known only from Togashi's
+/// character sheets: the room is stated, the chapter never is, so the presence
+/// falls back to the boarding event and must not read as an observed fact.
+function certaintyFor(character) {
+  if (character.positionProvenance === 'databook') return 'PROBABLE'
+  return /^(inconnu|suspect)$/i.test(character.shipLocation?.status || '')
+    ? 'PROBABLE'
+    : 'CONFIRMED'
+}
+
 /// The chapter a character dies in, read from the catalogue's appearance list.
 /// A `death` entry only counts when the character is not present again later:
 /// Hisoka "dies" in 356 and is back on panel in 357, so he never leaves the map.
@@ -803,11 +815,7 @@ async function main() {
       const requestedPresenceEvent = requestedPresenceChapter
         ? await ensureEvent(requestedPresenceChapter)
         : null
-      const requestedCertainty = /^(inconnu|suspect)$/i.test(
-        catalogCharacter.shipLocation?.status || '',
-      )
-        ? 'PROBABLE'
-        : 'CONFIRMED'
+      const requestedCertainty = certaintyFor(catalogCharacter)
       const requestedPrecision = precisionFor(location)
       const requiresUpdate =
         existingPresence.locationId !== location.id ||
@@ -926,9 +934,7 @@ async function main() {
           fromEventId: presenceStartEvent.id,
           untilEventId: untilEvent?.id || null,
           precision: precisionFor(location),
-          certainty: /^(inconnu|suspect)$/i.test(catalogCharacter.shipLocation?.status || '')
-            ? 'PROBABLE'
-            : 'CONFIRMED',
+          certainty: certaintyFor(catalogCharacter),
         },
       }),
     ]

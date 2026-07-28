@@ -144,7 +144,11 @@ async function main() {
     withoutYouReturn,
     centralHospital,
     ministryOfJustice,
+    witnessProtection,
     unknownLocation,
+    // Chapter 400 is where the confinement is on panel: Melody is let in to
+    // examine Fugetsu, who is already being held in witness protection.
+    fugetsuProtected,
   ] = await Promise.all([
     requiredCharacter('prince-halkenburg'),
     requiredCharacter('balsamilco-might'),
@@ -158,7 +162,9 @@ async function main() {
     requiredEvent('Without You rejoins Fugetsu aboard the Black Whale'),
     requiredLocation('tier-3-central-hospital'),
     requiredLocation('tier-2-ministry-of-justice'),
+    requiredLocation('tier-2-vip-witness-protection-area'),
     requiredLocation('black-whale-unknown'),
+    requiredEvent('The Phantom Troupe confirms the hideout is on Tier 2'),
   ])
   const eventOrdinals = await eventOrdinalsById()
 
@@ -347,6 +353,18 @@ async function main() {
     bodyId: withoutYouBody.id,
     locationId: ministryOfJustice.id,
     fromEventId: withoutYouReturn.id,
+    untilEventId: fugetsuProtected.id,
+    precision: 'ZONE',
+    certainty: 'CONFIRMED',
+  })
+  // The construct is not held in the bureau at large: it is shut in the witness
+  // protection area with Fugetsu, which is where it finds her exhausted and
+  // arranges for Melody to cross her in the halls.
+  await upsertPresence({
+    id: 'presence-without-you-witness-protection',
+    bodyId: withoutYouBody.id,
+    locationId: witnessProtection.id,
+    fromEventId: fugetsuProtected.id,
     precision: 'ZONE',
     certainty: 'CONFIRMED',
   })

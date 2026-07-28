@@ -6463,6 +6463,10 @@
       {
         "location": "tier-1-royal-residential-sector-room-1011",
         "fromChapterId": "ch-383.3"
+      },
+      {
+        "location": "tier-2-vip-witness-protection-area",
+        "fromChapterId": "ch-400"
       }
     ]
   },
@@ -9010,6 +9014,20 @@
     "biography": [
       "Mizaistom helps reorganize the Zodiacs for the Dark Continent expedition and leads security aboard the Black Whale. From Tier 3, he coordinates the police, courts and military response to disappearances and mafia violence.",
       "He intercepts Illumi and Kalluto, confirms that the Phantom Troupe is aboard and places them in monitored residential quarters. During special martial law, he continues the criminal investigation while trying to preserve the Justice Bureau's independence."
+    ],
+    "mapTrajectory": [
+      {
+        "location": "tier-3-central-police-station",
+        "fromChapterId": "ch-358"
+      },
+      {
+        "location": "tier-4-royal-army-conference-room",
+        "fromChapterId": "ch-380.2"
+      },
+      {
+        "location": "tier-3-central-police-station",
+        "fromChapterId": "ch-381"
+      }
     ]
   },
   {
@@ -9405,6 +9423,21 @@
     ],
     "biography": [
       "Botobai joins the expedition's defense team and works as a senior judicial figure in Tier 3. He assists Mizaistom with the containment of Illumi and Kalluto and later participates in the Justice Department response during special martial law."
+    ],
+    "mapTrajectory": [
+      {
+        "location": "tier-3-central-courthouse",
+        "fromChapterId": "ch-358"
+      },
+      {
+        "location": "tier-4-royal-army-conference-room",
+        "fromChapterId": "ch-380.2",
+        "certainty": "PROBABLE"
+      },
+      {
+        "location": "tier-3-central-courthouse",
+        "fromChapterId": "ch-381"
+      }
     ]
   },
   {
@@ -10227,6 +10260,10 @@
       {
         "location": "tier-1-royal-residential-sector-room-1011",
         "fromChapterId": "ch-384"
+      },
+      {
+        "location": "tier-2-ministry-of-justice",
+        "fromChapterId": "ch-400"
       }
     ]
   },
@@ -13125,8 +13162,13 @@
     ],
     "mapTrajectory": [
       {
-        "location": "tier-4",
-        "fromChapterId": "ch-377"
+        "location": "tier-4-xi-yu-family-office",
+        "fromChapterId": "ch-377",
+        "certainty": "PROBABLE"
+      },
+      {
+        "location": "tier-3",
+        "fromChapterId": "ch-390"
       },
       {
         "location": "tier-3-residential-room-3101",
@@ -32254,8 +32296,8 @@
     "firstAppearanceChapterId": "ch-371",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": 3,
-      "room": null,
+      "tier": 1,
+      "room": "Supreme Court",
       "status": "inconnu",
       "role": "justice bureau"
     },
@@ -32638,6 +32680,16 @@
     ],
     "biography": [
       "Cleapatro works for Kakin's Office of Justice. He appears during the voyage's legal proceedings and remains involved after the declaration of special martial law."
+    ],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-supreme-court",
+        "fromChapterId": "ch-359"
+      },
+      {
+        "location": "tier-1-vvip-prison-beyond",
+        "fromChapterId": "ch-412.2"
+      }
     ]
   },
   {

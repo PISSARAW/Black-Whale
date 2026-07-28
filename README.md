@@ -186,6 +186,19 @@ Before opening a pull request, run `pnpm lint`, `pnpm typecheck` and `pnpm test`
 
 ---
 
+## Licence and credit
+
+Build your own version — that is what the licence is for. Two of them apply:
+
+| What                                           | Licence                   | What it asks of you                                      |
+| ---------------------------------------------- | ------------------------- | -------------------------------------------------------- |
+| Source code                                    | [MIT](LICENSE)            | Keep the copyright notice in the source                  |
+| `data/` catalogue and the hand-drawn ship maps | [CC BY 4.0](LICENSE-DATA) | Credit the author **wherever the material is displayed** |
+
+The second one is the important one. If you deploy a fork, the catalogue and the maps must be credited in the interface itself, not only in your repository:
+
+> Catalogue and ship maps by Ginks — https://github.com/PISSARAW/Black-Whale — licensed under CC BY 4.0. Modified.
+
 ## Disclaimer
 
-An unofficial, non-commercial fan project. Hunter × Hunter is created by Yoshihiro Togashi and published by Shueisha; all rights to the work belong to them. This archive documents the story, hosts no scans, and reproduces no chapter content.
+An unofficial, non-commercial fan project. Hunter × Hunter is created by Yoshihiro Togashi and published by Shueisha; all rights to the work belong to them. Neither licence above grants any right in that underlying work. This archive documents the story, hosts no scans, and reproduces no chapter content.

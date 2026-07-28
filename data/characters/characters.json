@@ -1255,7 +1255,7 @@
     "canonStatus": "canon",
     "shipLocation": {
       "tier": 1,
-      "room": "1000",
+      "room": "King's Living Quarters",
       "status": "actif",
       "role": "organisateur"
     },
@@ -5557,6 +5557,20 @@
         "title": "Friends",
         "status": "mentioned"
       }
+    ],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1009",
+        "fromChapterId": "ch-358"
+      },
+      {
+        "location": "tier-1-king-living-quarters",
+        "fromChapterId": "ch-382.2"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1009",
+        "fromChapterId": "ch-383"
+      }
     ]
   },
   {
@@ -5984,6 +5998,17 @@
         "chapter": 414,
         "title": "Friends",
         "status": "mentioned"
+      }
+    ],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1010",
+        "fromChapterId": "ch-358"
+      },
+      {
+        "location": "tier-1-lifeboats",
+        "fromChapterId": "ch-383",
+        "untilChapterId": "ch-383.2"
       }
     ]
   },
@@ -6420,7 +6445,30 @@
       }
     ],
     "mapPresenceFromChapterId": "ch-415",
-    "temporalIdentityManaged": true
+    "temporalIdentityManaged": true,
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1011",
+        "fromChapterId": "ch-358"
+      },
+      {
+        "location": "tier-3",
+        "fromChapterId": "ch-380",
+        "certainty": "PROBABLE"
+      },
+      {
+        "location": "tier-1-lifeboats",
+        "fromChapterId": "ch-383"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1011",
+        "fromChapterId": "ch-383.3"
+      },
+      {
+        "location": "tier-2-vip-witness-protection-area",
+        "fromChapterId": "ch-400"
+      }
+    ]
   },
   {
     "id": "prince-momoze",
@@ -8966,6 +9014,20 @@
     "biography": [
       "Mizaistom helps reorganize the Zodiacs for the Dark Continent expedition and leads security aboard the Black Whale. From Tier 3, he coordinates the police, courts and military response to disappearances and mafia violence.",
       "He intercepts Illumi and Kalluto, confirms that the Phantom Troupe is aboard and places them in monitored residential quarters. During special martial law, he continues the criminal investigation while trying to preserve the Justice Bureau's independence."
+    ],
+    "mapTrajectory": [
+      {
+        "location": "tier-3-central-police-station",
+        "fromChapterId": "ch-358"
+      },
+      {
+        "location": "tier-4-royal-army-conference-room",
+        "fromChapterId": "ch-380.2"
+      },
+      {
+        "location": "tier-3-central-police-station",
+        "fromChapterId": "ch-381"
+      }
     ]
   },
   {
@@ -9361,6 +9423,21 @@
     ],
     "biography": [
       "Botobai joins the expedition's defense team and works as a senior judicial figure in Tier 3. He assists Mizaistom with the containment of Illumi and Kalluto and later participates in the Justice Department response during special martial law."
+    ],
+    "mapTrajectory": [
+      {
+        "location": "tier-3-central-courthouse",
+        "fromChapterId": "ch-358"
+      },
+      {
+        "location": "tier-4-royal-army-conference-room",
+        "fromChapterId": "ch-380.2",
+        "certainty": "PROBABLE"
+      },
+      {
+        "location": "tier-3-central-courthouse",
+        "fromChapterId": "ch-381"
+      }
     ]
   },
   {
@@ -10177,8 +10254,16 @@
         "fromChapterId": "ch-358"
       },
       {
+        "location": "tier-1-banquet-hall",
+        "fromChapterId": "ch-383"
+      },
+      {
         "location": "tier-1-royal-residential-sector-room-1011",
         "fromChapterId": "ch-384"
+      },
+      {
+        "location": "tier-2-ministry-of-justice",
+        "fromChapterId": "ch-400"
       }
     ]
   },
@@ -13077,8 +13162,17 @@
     ],
     "mapTrajectory": [
       {
-        "location": "tier-4",
-        "fromChapterId": "ch-377"
+        "location": "tier-4-xi-yu-family-office",
+        "fromChapterId": "ch-377",
+        "certainty": "PROBABLE"
+      },
+      {
+        "location": "tier-3",
+        "fromChapterId": "ch-390"
+      },
+      {
+        "location": "tier-3-residential-room-3101",
+        "fromChapterId": "ch-395"
       },
       {
         "location": "tier-2-heilly-secret-hideout",
@@ -13481,6 +13575,22 @@
         "chapter": 414,
         "title": "Friends",
         "status": "absent"
+      }
+    ],
+    "mapTrajectory": [
+      {
+        "location": "tier-5",
+        "fromChapterId": "ch-371",
+        "certainty": "PROBABLE"
+      },
+      {
+        "location": "tier-3-residential-room-3101",
+        "fromChapterId": "ch-395"
+      },
+      {
+        "location": "tier-5",
+        "fromChapterId": "ch-399",
+        "certainty": "PROBABLE"
       }
     ]
   },
@@ -14317,7 +14427,26 @@
         "status": "absent"
       }
     ],
-    "battles": ["Luini vs. Nobunaga Hazama"]
+    "battles": ["Luini vs. Nobunaga Hazama"],
+    "mapTrajectory": [
+      {
+        "location": "tier-5-cha-r-family-office",
+        "fromChapterId": "ch-371"
+      },
+      {
+        "location": "tier-3-residential-standard",
+        "fromChapterId": "ch-378"
+      },
+      {
+        "location": "tier-5-warehouse",
+        "fromChapterId": "ch-378.2"
+      },
+      {
+        "location": "tier-5-cha-r-family-office",
+        "fromChapterId": "ch-384",
+        "untilChapterId": "ch-393"
+      }
+    ]
   },
   {
     "id": "chrollo-lucilfer",
@@ -14758,7 +14887,22 @@
         "status": "absent"
       }
     ],
-    "battles": ["Chrollo Lucilfer vs. Hisoka Morow‡*"]
+    "battles": ["Chrollo Lucilfer vs. Hisoka Morow‡*"],
+    "mapTrajectory": [
+      {
+        "location": "tier-5",
+        "fromChapterId": "ch-359"
+      },
+      {
+        "location": "tier-1-princes-burial-chamber",
+        "fromChapterId": "ch-405.3"
+      },
+      {
+        "location": "tier-1",
+        "fromChapterId": "ch-406",
+        "certainty": "PROBABLE"
+      }
+    ]
   },
   {
     "id": "nobunaga-hazama",
@@ -15178,6 +15322,18 @@
         "fromChapterId": "ch-358"
       },
       {
+        "location": "tier-5-warehouse",
+        "fromChapterId": "ch-378.2"
+      },
+      {
+        "location": "tier-5",
+        "fromChapterId": "ch-380"
+      },
+      {
+        "location": "tier-3-residential-room-3101",
+        "fromChapterId": "ch-395"
+      },
+      {
         "location": "tier-2-heilly-secret-hideout",
         "fromChapterId": "ch-399"
       }
@@ -15188,14 +15344,14 @@
     "canonicalName": "Gantai",
     "aliases": [],
     "description": "Black Whale staff.",
-    "factionId": null,
+    "factionId": "kakin-royal-family",
     "firstAppearanceChapterId": "ch-358",
     "canonStatus": "canon",
     "shipLocation": {
       "tier": null,
       "room": null,
       "status": "inconnu",
-      "role": "personnel"
+      "role": "Announcer Personality for the Dark Continent Voyage"
     },
     "mangaAppearances": [
       {
@@ -15583,14 +15739,14 @@
     "canonicalName": "Tamazo",
     "aliases": [],
     "description": "Black Whale staff.",
-    "factionId": null,
+    "factionId": "kakin-royal-family",
     "firstAppearanceChapterId": "ch-358",
     "canonStatus": "canon",
     "shipLocation": {
       "tier": null,
       "room": null,
       "status": "inconnu",
-      "role": "personnel"
+      "role": "Announcer Personality for the Dark Continent Voyage"
     },
     "mangaAppearances": [
       {
@@ -15982,8 +16138,8 @@
     "firstAppearanceChapterId": "ch-unknown",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
+      "tier": 3,
+      "room": "Cineplex",
       "status": "inconnu",
       "role": "annonceur"
     },
@@ -20428,14 +20584,14 @@
     "canonicalName": "Giuliano",
     "aliases": [],
     "description": "Hunter.",
-    "factionId": null,
+    "factionId": "prince-tyson",
     "firstAppearanceChapterId": "ch-362",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
-      "role": "divers"
+      "tier": 1,
+      "room": "1006",
+      "status": "actif",
+      "role": "Hunter ; Royal Bodyguard for Prince Tyson"
     },
     "mangaAppearances": [
       {
@@ -21227,14 +21383,14 @@
     "canonicalName": "Keeney",
     "aliases": [],
     "description": "Hunter.",
-    "factionId": null,
+    "factionId": "prince-kacho",
     "firstAppearanceChapterId": "ch-374",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
-      "role": "divers"
+      "tier": 1,
+      "room": "1010",
+      "status": "mort",
+      "role": "Hunter ; Bodyguard for Prince Kacho"
     },
     "mangaAppearances": [
       {
@@ -21616,6 +21772,18 @@
     "biography": [
       "Keeney is a Hunter guarding Kacho and Fugetsu. He pilots the escape craft during their attempt to leave the Black Whale and sacrifices himself after the succession ritual prevents their departure.",
       "His plan gives the sisters a chance to flee, but Kacho is killed by the boundary and Fugetsu returns to the ship through her magical door."
+    ],
+    "mapTrajectory": [
+      {
+        "location": "black-whale-unknown",
+        "fromChapterId": "ch-358",
+        "certainty": "PROBABLE"
+      },
+      {
+        "location": "tier-1-lifeboats",
+        "fromChapterId": "ch-383",
+        "untilChapterId": "ch-383.3"
+      }
     ]
   },
   {
@@ -22441,14 +22609,14 @@
     "canonicalName": "Sanbica Norton",
     "aliases": [],
     "description": "Hunter.",
-    "factionId": null,
+    "factionId": "hunter-association",
     "firstAppearanceChapterId": "ch-346",
     "canonStatus": "canon",
     "shipLocation": {
       "tier": null,
       "room": null,
       "status": "inconnu",
-      "role": "divers"
+      "role": "Virus Hunter (Single-Star) ; Doctor"
     },
     "mangaAppearances": [
       {
@@ -23260,14 +23428,14 @@
     "canonicalName": "Scairt",
     "aliases": [],
     "description": "Hunter.",
-    "factionId": null,
+    "factionId": "prince-luzurus",
     "firstAppearanceChapterId": "ch-362",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
-      "role": "divers"
+      "tier": 1,
+      "room": "1007",
+      "status": "actif",
+      "role": "Hunter ; Royal Bodyguard for Prince Luzurus"
     },
     "mangaAppearances": [
       {
@@ -23655,14 +23823,14 @@
     "canonicalName": "Tokarine",
     "aliases": [],
     "description": "Hunter.",
-    "factionId": null,
+    "factionId": "hunter-association",
     "firstAppearanceChapterId": "ch-359",
     "canonStatus": "canon",
     "shipLocation": {
       "tier": null,
       "room": null,
       "status": "inconnu",
-      "role": "divers"
+      "role": "Hunter"
     },
     "mangaAppearances": [
       {
@@ -24051,7 +24219,8 @@
       "overview": "Tokarine is a Pro Hunter with a transport-oriented Nen ability. Its exact natural category is unknown, but the ability is classified as Emission.",
       "techniques": ["Hatsu"],
       "abilityIds": ["transport-portals"]
-    }
+    },
+    "mapPresenceFromChapterId": "ch-359"
   },
   {
     "id": "borksen",
@@ -24493,14 +24662,14 @@
     "canonicalName": "Danjin",
     "aliases": [],
     "description": "Provisional Hunter (PH).",
-    "factionId": null,
+    "factionId": "prince-tserriednich",
     "firstAppearanceChapterId": "ch-348",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
-      "role": "divers"
+      "tier": 1,
+      "room": "1004",
+      "status": "actif",
+      "role": "Private Soldier for Prince Tserriednich Hui Guo Rou ; Provisional Hunter"
     },
     "mangaAppearances": [
       {
@@ -24895,32 +25064,34 @@
     "canonicalName": "Erikkusu",
     "aliases": [],
     "description": "Provisional Hunter (PH).",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-unknown",
+    "factionId": "prince-tubeppa",
+    "firstAppearanceChapterId": null,
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
-      "role": "divers"
+      "tier": 1,
+      "room": "1005",
+      "status": "actif",
+      "role": "Bodyguard for Prince Tubeppa ; Provisional Hunter"
     },
     "biography": [
       "Erikkusu is one of Tserriednich's soldiers who qualify as provisional Hunters before departure. No individual action or Nen ability has yet been shown in the published chapters."
-    ]
+    ],
+    "mapPresenceFromChapterId": null,
+    "positionProvenance": "databook"
   },
   {
     "id": "gidal",
     "canonicalName": "Gidal",
     "aliases": [],
     "description": "Provisional Hunter (PH).",
-    "factionId": null,
+    "factionId": "prince-camilla",
     "firstAppearanceChapterId": "ch-389",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
-      "role": "divers"
+      "tier": 1,
+      "room": "1002",
+      "status": "actif",
+      "role": "Private Guard of Prince Camilla ; Provisional Hunter"
     },
     "mangaAppearances": [
       {
@@ -25315,14 +25486,14 @@
     "canonicalName": "Lisamsetta",
     "aliases": [],
     "description": "Provisional Hunter (PH).",
-    "factionId": null,
+    "factionId": "prince-camilla",
     "firstAppearanceChapterId": "ch-389",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
-      "role": "divers"
+      "tier": 1,
+      "room": "1002",
+      "status": "actif",
+      "role": "Private Guard of Prince Camilla ; Provisional Hunter"
     },
     "mangaAppearances": [
       {
@@ -25717,14 +25888,14 @@
     "canonicalName": "Meshush",
     "aliases": [],
     "description": "Provisional Hunter (PH).",
-    "factionId": null,
+    "factionId": "prince-camilla",
     "firstAppearanceChapterId": "ch-389",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
-      "role": "divers"
+      "tier": 1,
+      "room": "1002",
+      "status": "actif",
+      "role": "Private Guard of Prince Camilla ; Provisional Hunter"
     },
     "mangaAppearances": [
       {
@@ -26119,14 +26290,14 @@
     "canonicalName": "Mozbe",
     "aliases": [],
     "description": "Provisional Hunter (PH).",
-    "factionId": null,
+    "factionId": "prince-camilla",
     "firstAppearanceChapterId": "ch-389",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
-      "role": "divers"
+      "tier": 1,
+      "room": "1002",
+      "status": "actif",
+      "role": "Private Guard of Prince Camilla ; Provisional Hunter"
     },
     "mangaAppearances": [
       {
@@ -26521,32 +26692,34 @@
     "canonicalName": "Muhahahasare",
     "aliases": [],
     "description": "Provisional Hunter (PH).",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-unknown",
+    "factionId": "prince-tubeppa",
+    "firstAppearanceChapterId": null,
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
-      "role": "divers"
+      "tier": 1,
+      "room": "1005",
+      "status": "actif",
+      "role": "Bodyguard for Prince Tubeppa ; Provisional Hunter"
     },
     "biography": [
       "Muhahahasare qualifies as a provisional Hunter before the Black Whale's departure. No separate appearance record or personal Nen ability is currently documented by Hunterpedia."
-    ]
+    ],
+    "mapPresenceFromChapterId": null,
+    "positionProvenance": "databook"
   },
   {
     "id": "myuhan",
     "canonicalName": "Myuhan",
     "aliases": [],
     "description": "Provisional Hunter (PH).",
-    "factionId": null,
+    "factionId": "prince-tserriednich",
     "firstAppearanceChapterId": "ch-348",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
-      "role": "divers"
+      "tier": 1,
+      "room": "1004",
+      "status": "mort",
+      "role": "Private Soldier for Prince Tserriednich Hui Guo Rou ; Provisional Hunter ; 289th Hunter Exam Examinee"
     },
     "mangaAppearances": [
       {
@@ -27346,18 +27519,20 @@
     "canonicalName": "Zomeesa",
     "aliases": [],
     "description": "Provisional Hunter (PH).",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-unknown",
+    "factionId": "prince-tubeppa",
+    "firstAppearanceChapterId": null,
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
-      "role": "divers"
+      "tier": 1,
+      "room": "1005",
+      "status": "actif",
+      "role": "Bodyguard for Prince Tubeppa ; Provisional Hunter"
     },
     "biography": [
       "Zomeesa qualifies as a provisional Hunter before the Black Whale's departure. No separate appearance record or personal Nen ability is currently documented by Hunterpedia."
-    ]
+    ],
+    "mapPresenceFromChapterId": null,
+    "positionProvenance": "databook"
   },
   {
     "id": "unma-hui-guo-rou",
@@ -27369,7 +27544,7 @@
     "canonStatus": "canon",
     "shipLocation": {
       "tier": 1,
-      "room": null,
+      "room": "Queens' Living Quarters",
       "status": "inconnu",
       "role": "kakin royal family"
     },
@@ -27764,7 +27939,7 @@
     "canonStatus": "canon",
     "shipLocation": {
       "tier": 1,
-      "room": null,
+      "room": "Queens' Living Quarters",
       "status": "inconnu",
       "role": "kakin royal family"
     },
@@ -28159,7 +28334,7 @@
     "canonStatus": "canon",
     "shipLocation": {
       "tier": 1,
-      "room": null,
+      "room": "Queens' Living Quarters",
       "status": "inconnu",
       "role": "kakin royal family"
     },
@@ -28554,7 +28729,7 @@
     "canonStatus": "canon",
     "shipLocation": {
       "tier": 1,
-      "room": null,
+      "room": "Queens' Living Quarters",
       "status": "inconnu",
       "role": "kakin royal family"
     },
@@ -28949,7 +29124,7 @@
     "canonStatus": "canon",
     "shipLocation": {
       "tier": 1,
-      "room": null,
+      "room": "Queens' Living Quarters",
       "status": "inconnu",
       "role": "kakin royal family"
     },
@@ -29344,7 +29519,7 @@
     "canonStatus": "canon",
     "shipLocation": {
       "tier": 1,
-      "room": null,
+      "room": "Queens' Living Quarters",
       "status": "inconnu",
       "role": "kakin royal family"
     },
@@ -30124,6 +30299,12 @@
     "biography": [
       "Sevanti is Kakin's seventh queen and mother of Momoze and Marayam. She transfers most guards from Momoze to Marayam, leaving her daughter dangerously exposed.",
       "After Momoze's murder, Sevanti remains inside room 1013 with Marayam as his Guardian Spirit Beast isolates the quarters behind a spatial barrier."
+    ],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1013",
+        "fromChapterId": "ch-359"
+      }
     ]
   },
   {
@@ -31309,6 +31490,17 @@
     ],
     "biography": [
       "Mizuri is a Kakin soldier who intercepts Illumi and Kalluto in Tier 3, checks their VVIP identification and attempts to escort them before the Zodiacs intervene."
+    ],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-soldiers-living-quarters",
+        "fromChapterId": "ch-359",
+        "certainty": "PROBABLE"
+      },
+      {
+        "location": "tier-3",
+        "fromChapterId": "ch-380.2"
+      }
     ]
   },
   {
@@ -32124,8 +32316,8 @@
     "firstAppearanceChapterId": "ch-371",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": 3,
-      "room": null,
+      "tier": 1,
+      "room": "Supreme Court",
       "status": "inconnu",
       "role": "justice bureau"
     },
@@ -32508,6 +32700,16 @@
     ],
     "biography": [
       "Cleapatro works for Kakin's Office of Justice. He appears during the voyage's legal proceedings and remains involved after the declaration of special martial law."
+    ],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-supreme-court",
+        "fromChapterId": "ch-359"
+      },
+      {
+        "location": "tier-1-vvip-prison-beyond",
+        "fromChapterId": "ch-412.2"
+      }
     ]
   },
   {
@@ -34099,14 +34301,14 @@
     "canonicalName": "Nugui",
     "aliases": [],
     "description": "Passager / Autre affiliation.",
-    "factionId": null,
+    "factionId": "kakin-royal-family",
     "firstAppearanceChapterId": "ch-349",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
+      "tier": 1,
+      "room": "King's Living Quarters",
       "status": "inconnu",
-      "role": "divers"
+      "role": "Personal Butler for King Nasubi"
     },
     "mangaAppearances": [
       {
@@ -34494,14 +34696,14 @@
     "canonicalName": "Mandam",
     "aliases": [],
     "description": "Passager / Autre affiliation.",
-    "factionId": null,
+    "factionId": "kakin-royal-family",
     "firstAppearanceChapterId": "ch-366",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
+      "tier": 1,
+      "room": "Queens' Living Quarters",
       "status": "inconnu",
-      "role": "divers"
+      "role": "Captain and Coordinator of the Royal Bodyguards affiliated with Queen Duazul"
     },
     "mangaAppearances": [
       {
@@ -36892,14 +37094,14 @@
     "canonicalName": "Morrissey",
     "aliases": [],
     "description": "Passager / Autre affiliation.",
-    "factionId": null,
+    "factionId": "kakin-royal-family",
     "firstAppearanceChapterId": "ch-376",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
+      "tier": 1,
+      "room": "King's Living Quarters",
       "status": "inconnu",
-      "role": "divers"
+      "role": "Grand Chamberlain for King Nasubi"
     },
     "mangaAppearances": [
       {
@@ -37675,6 +37877,12 @@
         "chapter": 414,
         "title": "Friends",
         "status": "absent"
+      }
+    ],
+    "mapTrajectory": [
+      {
+        "location": "tier-3-residential-standard",
+        "fromChapterId": "ch-392"
       }
     ]
   },
@@ -38505,6 +38713,15 @@
       {
         "location": "tier-5",
         "fromChapterId": "ch-359"
+      },
+      {
+        "location": "tier-3-cineplex",
+        "fromChapterId": "ch-392"
+      },
+      {
+        "location": "tier-3",
+        "fromChapterId": "ch-394",
+        "certainty": "PROBABLE"
       },
       {
         "location": "tier-1-vip-casino",
@@ -39766,6 +39983,18 @@
         "fromChapterId": "ch-359"
       },
       {
+        "location": "tier-5-warehouse",
+        "fromChapterId": "ch-378.2"
+      },
+      {
+        "location": "tier-5",
+        "fromChapterId": "ch-380"
+      },
+      {
+        "location": "tier-3-residential-room-3101",
+        "fromChapterId": "ch-395"
+      },
+      {
         "location": "tier-4-recycling-sewage-facilities",
         "fromChapterId": "ch-406"
       }
@@ -40604,17 +40833,17 @@
     "id": "anesuto",
     "canonicalName": "Anesuto",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Personal Soldier for Prince Halkenburg. Kakin Empire ; Halkenburg Hui Guo Rou.",
+    "factionId": "prince-halkenburg",
+    "firstAppearanceChapterId": "ch-362",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
-      "role": "passager nommé"
+      "tier": 1,
+      "room": "1009",
+      "status": "actif",
+      "role": "Personal Soldier for Prince Halkenburg"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-362",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -40622,17 +40851,17 @@
     "id": "anzel",
     "canonicalName": "Anzel",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Royal Bodyguard for Prince Tyson. Kakin Empire ; Tyson Hui Guo Rou.",
+    "factionId": "prince-tyson",
+    "firstAppearanceChapterId": "ch-400",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
-      "role": "passager nommé"
+      "tier": 1,
+      "room": "1006",
+      "status": "actif",
+      "role": "Royal Bodyguard for Prince Tyson"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-400",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -40641,8 +40870,8 @@
     "canonicalName": "Babimyna",
     "aliases": [],
     "description": "Benjamin's private soldier assigned to monitor the Woble camp. He remains in Room 1014 when Kurapika and Oito prepare their mainland message.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "factionId": "prince-benjamin",
+    "firstAppearanceChapterId": "ch-363",
     "canonStatus": "canon",
     "shipLocation": {
       "tier": 1,
@@ -40650,7 +40879,7 @@
       "status": "actif",
       "role": "soldat privé de Benjamin / surveillant du camp Woble"
     },
-    "mapPresenceFromChapterId": "ch-415",
+    "mapPresenceFromChapterId": "ch-363",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": [
       {
@@ -40665,17 +40894,17 @@
     "id": "bachaem",
     "canonicalName": "Bachaem",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Royal Bodyguard for Prince Fugetsu Hui Guo Rou. Kakin Empire ; Fugetsu Hui Guo Rou.",
+    "factionId": "prince-fugetsu",
+    "firstAppearanceChapterId": "ch-366",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
-      "role": "passager nommé"
+      "tier": 1,
+      "room": "1011",
+      "status": "actif",
+      "role": "Royal Bodyguard for Prince Fugetsu Hui Guo Rou"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-366",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -40683,17 +40912,17 @@
     "id": "barrigen",
     "canonicalName": "Barrigen",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Royal Bodyguard for Prince Marayam Hui Guo Rou. Kakin Empire ; Sevanti Hui Guo Rou ; Marayam Hui Guo Rou.",
+    "factionId": "prince-marayam",
+    "firstAppearanceChapterId": "ch-368",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
-      "role": "passager nommé"
+      "tier": 1,
+      "room": "1013",
+      "status": "mort",
+      "role": "Royal Bodyguard for Prince Marayam Hui Guo Rou"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-368",
     "mapPresenceUntilChapterId": "ch-369.2",
     "mangaAppearances": [
       {
@@ -40707,17 +40936,17 @@
     "id": "beeta",
     "canonicalName": "Beeta",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Royal Bodyguard for Prince Tubeppa. Kakin Empire ; Tubeppa Hui Guo Rou.",
+    "factionId": "prince-tubeppa",
+    "firstAppearanceChapterId": "ch-366",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
-      "role": "passager nommé"
+      "tier": 1,
+      "room": "1005",
+      "status": "actif",
+      "role": "Royal Bodyguard for Prince Tubeppa"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-366",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -40725,17 +40954,17 @@
     "id": "bharate",
     "canonicalName": "Bharate",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Royal Bodyguard for Prince Luzurus. Kakin Empire ; Luzurus Hui Guo Rou.",
+    "factionId": "prince-luzurus",
+    "firstAppearanceChapterId": "ch-386",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
-      "role": "passager nommé"
+      "tier": 1,
+      "room": "1007",
+      "status": "actif",
+      "role": "Royal Bodyguard for Prince Luzurus"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-386",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -40743,17 +40972,17 @@
     "id": "bille",
     "canonicalName": "Bille",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Mafioso ; Arcade Employee. Heil-Ly Family.",
+    "factionId": "mafia-heilly",
+    "firstAppearanceChapterId": "ch-378",
     "canonStatus": "canon",
     "shipLocation": {
       "tier": null,
       "room": null,
       "status": "inconnu",
-      "role": "passager nommé"
+      "role": "Mafioso ; Arcade Employee"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-378",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -40761,17 +40990,17 @@
     "id": "bladge",
     "canonicalName": "Bladge",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Spy for Queen Tang Zhao Li Hui Guo Rou. Kakin Empire ; Tang Zhao Li Hui Guo Rou.",
+    "factionId": "kakin-royal-family",
+    "firstAppearanceChapterId": "ch-361",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
+      "tier": 1,
       "room": null,
       "status": "inconnu",
-      "role": "passager nommé"
+      "role": "Spy for Queen Tang Zhao Li Hui Guo Rou"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-361",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -40779,17 +41008,17 @@
     "id": "bucket",
     "canonicalName": "Bucket",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Private Guard of Prince Camilla. Kakin Empire ; Have-Nots ; Camilla Hui Guo Rou.",
+    "factionId": "prince-camilla",
+    "firstAppearanceChapterId": "ch-373",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
-      "role": "passager nommé"
+      "tier": 1,
+      "room": "1002",
+      "status": "actif",
+      "role": "Private Guard of Prince Camilla"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-373",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -40797,17 +41026,17 @@
     "id": "burvena",
     "canonicalName": "Burvena",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Private Guard of Prince Camilla. Kakin Empire ; Have-Nots ; Camilla Hui Guo Rou.",
+    "factionId": "prince-camilla",
+    "firstAppearanceChapterId": "ch-389",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
-      "role": "passager nommé"
+      "tier": 1,
+      "room": "1002",
+      "status": "actif",
+      "role": "Private Guard of Prince Camilla"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-389",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -40815,17 +41044,17 @@
     "id": "butch",
     "canonicalName": "Butch",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Private Soldier for Prince Benjamin Hui Guo Rou. Kakin Empire ; Benjamin Hui Guo Rou.",
+    "factionId": "prince-benjamin",
+    "firstAppearanceChapterId": "ch-358",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
-      "role": "passager nommé"
+      "tier": 1,
+      "room": "1001",
+      "status": "actif",
+      "role": "Private Soldier for Prince Benjamin Hui Guo Rou"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-358",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -40833,35 +41062,51 @@
     "id": "cashew",
     "canonicalName": "Cashew",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Mafioso. Heil-Ly Family.",
+    "factionId": "mafia-heilly",
+    "firstAppearanceChapterId": "ch-378",
     "canonStatus": "canon",
     "shipLocation": {
       "tier": null,
       "room": null,
       "status": "inconnu",
-      "role": "passager nommé"
+      "role": "Mafioso"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-378",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "black-whale-unknown",
+        "fromChapterId": "ch-358",
+        "certainty": "PROBABLE"
+      },
+      {
+        "location": "tier-3-central-police-station",
+        "fromChapterId": "ch-379"
+      },
+      {
+        "location": "black-whale-unknown",
+        "fromChapterId": "ch-380",
+        "certainty": "PROBABLE"
+      }
+    ]
   },
   {
     "id": "cavic",
     "canonicalName": "Cavic",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Private Guard of Prince Camilla. Kakin Empire ; Have-Nots ; Camilla Hui Guo Rou.",
+    "factionId": "prince-camilla",
+    "firstAppearanceChapterId": "ch-389",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
-      "role": "passager nommé"
+      "tier": 1,
+      "room": "1002",
+      "status": "actif",
+      "role": "Private Guard of Prince Camilla"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-389",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -40869,17 +41114,17 @@
     "id": "chiffon-toto",
     "canonicalName": "Chiffon Toto",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Mafioso ; Seamstress ; Arts and Crafts. Heil-Ly Family.",
+    "factionId": "mafia-heilly",
+    "firstAppearanceChapterId": "ch-378",
     "canonStatus": "canon",
     "shipLocation": {
       "tier": null,
       "room": null,
       "status": "inconnu",
-      "role": "passager nommé"
+      "role": "Mafioso ; Seamstress ; Arts and Crafts"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-378",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -40887,17 +41132,17 @@
     "id": "chiyamasi",
     "canonicalName": "Chiyamasi",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Private Soldier for Prince Benjamin Hui Guo Rou. Kakin Empire ; Benjamin Hui Guo Rou.",
+    "factionId": "prince-benjamin",
+    "firstAppearanceChapterId": "ch-358",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
-      "role": "passager nommé"
+      "tier": 1,
+      "room": "1001",
+      "status": "actif",
+      "role": "Private Soldier for Prince Benjamin Hui Guo Rou"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-358",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -40905,17 +41150,17 @@
     "id": "connelly",
     "canonicalName": "Connelly",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Mafioso Lieutenant. Xi-Yu Family.",
+    "factionId": "mafia-xiyu",
+    "firstAppearanceChapterId": "ch-378",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
+      "tier": 4,
       "room": null,
       "status": "inconnu",
-      "role": "passager nommé"
+      "role": "Mafioso Lieutenant"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-378",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -40924,8 +41169,8 @@
     "canonicalName": "Coventoba",
     "aliases": [],
     "description": "Benjamin's private soldier assigned to Zhang Lei's camp. He remains in Room 1003 when special martial law is declared.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "factionId": "prince-benjamin",
+    "firstAppearanceChapterId": "ch-358",
     "canonStatus": "canon",
     "shipLocation": {
       "tier": 1,
@@ -40933,7 +41178,7 @@
       "status": "actif",
       "role": "soldat privé de Benjamin / garde du camp Zhang Lei"
     },
-    "mapPresenceFromChapterId": "ch-415",
+    "mapPresenceFromChapterId": "ch-358",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": [
       {
@@ -40948,17 +41193,17 @@
     "id": "daemon",
     "canonicalName": "Daemon",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Mafioso ; Construction Worker. Heil-Ly Family.",
+    "factionId": "mafia-heilly",
+    "firstAppearanceChapterId": "ch-378",
     "canonStatus": "canon",
     "shipLocation": {
       "tier": null,
       "room": null,
       "status": "inconnu",
-      "role": "passager nommé"
+      "role": "Mafioso ; Construction Worker"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-378",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -40966,17 +41211,17 @@
     "id": "deruboro",
     "canonicalName": "Deruboro",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Personal Soldier for Prince Halkenburg. Kakin Empire ; Halkenburg Hui Guo Rou.",
+    "factionId": "prince-halkenburg",
+    "firstAppearanceChapterId": "ch-375",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
-      "role": "passager nommé"
+      "tier": 1,
+      "room": "1009",
+      "status": "actif",
+      "role": "Personal Soldier for Prince Halkenburg"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-375",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -40984,35 +41229,50 @@
     "id": "dogman",
     "canonicalName": "Dogman",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Mafioso ; Professional Wrestler. Heil-Ly Family.",
+    "factionId": "mafia-heilly",
+    "firstAppearanceChapterId": "ch-378",
     "canonStatus": "canon",
     "shipLocation": {
       "tier": null,
       "room": null,
       "status": "inconnu",
-      "role": "passager nommé"
+      "role": "Mafioso ; Professional Wrestler"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-378",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "black-whale-unknown",
+        "fromChapterId": "ch-358",
+        "certainty": "PROBABLE"
+      },
+      {
+        "location": "tier-1-princes-burial-chamber",
+        "fromChapterId": "ch-405"
+      },
+      {
+        "location": "tier-2-heilly-secret-hideout",
+        "fromChapterId": "ch-407"
+      }
+    ]
   },
   {
     "id": "famule",
     "canonicalName": "Famule",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Private Soldier for Queen Duazul assigned to Prince Luzurus. Kakin Empire ; Duazul Hui Guo Rou ; Luzurus Hui Guo Rou.",
+    "factionId": "prince-luzurus",
+    "firstAppearanceChapterId": "ch-386",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
-      "role": "passager nommé"
+      "tier": 1,
+      "room": "1007",
+      "status": "actif",
+      "role": "Private Soldier for Queen Duazul assigned to Prince Luzurus"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-386",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -41021,8 +41281,8 @@
     "canonicalName": "Feitan Portor",
     "aliases": [],
     "description": "Member of the Phantom Troupe. Boards with the Spiders in Tier 5 and works the lower tiers with Phinks during the hunt for Hisoka.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "factionId": "phantom-troupe",
+    "firstAppearanceChapterId": "ch-71",
     "canonStatus": "canon",
     "shipLocation": {
       "tier": 5,
@@ -41030,7 +41290,7 @@
       "status": "actif",
       "role": "combattant / chasse d’Hisoka"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-71",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": [
       {
@@ -41048,23 +41308,45 @@
         "title": "Secrecy",
         "status": "appears"
       }
+    ],
+    "mapTrajectory": [
+      {
+        "location": "tier-5",
+        "fromChapterId": "ch-359"
+      },
+      {
+        "location": "tier-5-warehouse",
+        "fromChapterId": "ch-378.2"
+      },
+      {
+        "location": "tier-5",
+        "fromChapterId": "ch-380"
+      },
+      {
+        "location": "tier-3-residential-room-3101",
+        "fromChapterId": "ch-395"
+      },
+      {
+        "location": "tier-4-recycling-sewage-facilities",
+        "fromChapterId": "ch-406"
+      }
     ]
   },
   {
     "id": "fukataki",
     "canonicalName": "Fukataki",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Majordomo of Prince Camilla. Kakin Empire ; Have-Nots ; Camilla Hui Guo Rou.",
+    "factionId": "prince-camilla",
+    "firstAppearanceChapterId": "ch-389",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
-      "role": "passager nommé"
+      "tier": 1,
+      "room": "1002",
+      "status": "actif",
+      "role": "Majordomo of Prince Camilla"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-389",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -41072,17 +41354,17 @@
     "id": "furichosefu",
     "canonicalName": "Furichosefu",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Personal Soldier for Prince Halkenburg. Kakin Empire ; Halkenburg Hui Guo Rou.",
+    "factionId": "prince-halkenburg",
+    "firstAppearanceChapterId": "ch-362",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
-      "role": "passager nommé"
+      "tier": 1,
+      "room": "1009",
+      "status": "actif",
+      "role": "Personal Soldier for Prince Halkenburg"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-362",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -41091,16 +41373,16 @@
     "canonicalName": "Furykov",
     "aliases": [],
     "description": "Benjamin's private soldier and Nen analyst. A cursed child of Beyond who discovered the sacrificial curse after the Seed Urn Ceremony; his current position aboard remains unconfirmed.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "factionId": "prince-benjamin",
+    "firstAppearanceChapterId": "ch-363",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
+      "tier": 1,
+      "room": "1001",
       "status": "actif — position actuelle inconnue",
       "role": "soldat privé de Benjamin / analyste Nen"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-363",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": [
       {
@@ -41116,17 +41398,17 @@
     "id": "gadeau",
     "canonicalName": "Gadeau",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Private Soldier for Queen Duazul assigned to Prince Luzurus. Kakin Empire ; Duazul Hui Guo Rou ; Luzurus Hui Guo Rou.",
+    "factionId": "prince-luzurus",
+    "firstAppearanceChapterId": "ch-389",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
-      "role": "passager nommé"
+      "tier": 1,
+      "room": "1007",
+      "status": "actif",
+      "role": "Private Soldier for Queen Duazul assigned to Prince Luzurus"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-389",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -41134,17 +41416,17 @@
     "id": "gateaume",
     "canonicalName": "Gateaume",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Mafioso ; Insurance Scammer. Heil-Ly Family.",
+    "factionId": "mafia-heilly",
+    "firstAppearanceChapterId": "ch-378",
     "canonStatus": "canon",
     "shipLocation": {
       "tier": null,
       "room": null,
       "status": "inconnu",
-      "role": "passager nommé"
+      "role": "Mafioso ; Insurance Scammer"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-378",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -41152,17 +41434,17 @@
     "id": "gelato",
     "canonicalName": "Gelato",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Mafioso ; Pro Gamer. Heil-Ly Family.",
+    "factionId": "mafia-heilly",
+    "firstAppearanceChapterId": "ch-378",
     "canonStatus": "canon",
     "shipLocation": {
       "tier": null,
       "room": null,
       "status": "inconnu",
-      "role": "passager nommé"
+      "role": "Mafioso ; Pro Gamer"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-378",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -41170,17 +41452,17 @@
     "id": "gihoruto",
     "canonicalName": "Gihoruto",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Personal Soldier for Prince Halkenburg. Kakin Empire ; Halkenburg Hui Guo Rou.",
+    "factionId": "prince-halkenburg",
+    "firstAppearanceChapterId": "ch-375",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
-      "role": "passager nommé"
+      "tier": 1,
+      "room": "1009",
+      "status": "actif",
+      "role": "Personal Soldier for Prince Halkenburg"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-375",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -41188,17 +41470,17 @@
     "id": "guerimori",
     "canonicalName": "Guerimori",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Personal Soldier for Prince Halkenburg. Kakin Empire ; Halkenburg Hui Guo Rou.",
+    "factionId": "prince-halkenburg",
+    "firstAppearanceChapterId": "ch-375",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
-      "role": "passager nommé"
+      "tier": 1,
+      "room": "1009",
+      "status": "actif",
+      "role": "Personal Soldier for Prince Halkenburg"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-375",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -41206,17 +41488,17 @@
     "id": "hashito",
     "canonicalName": "Hashito",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Royal Bodyguard for Prince Woble Hui Guo Rou. Kakin Empire ; Zhang Lei Hui Guo Rou.",
+    "factionId": "prince-zhanglei",
+    "firstAppearanceChapterId": "ch-366",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
-      "role": "passager nommé"
+      "tier": 1,
+      "room": "1014",
+      "status": "actif",
+      "role": "Royal Bodyguard for Prince Woble Hui Guo Rou"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-366",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -41224,17 +41506,17 @@
     "id": "heisen",
     "canonicalName": "Heisen",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Researcher ; Servant for Prince Tubeppa Hui Guo Rou. Kakin Empire ; Tubeppa Hui Guo Rou.",
+    "factionId": "prince-tubeppa",
+    "firstAppearanceChapterId": "ch-388",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
-      "role": "passager nommé"
+      "tier": 1,
+      "room": "1005",
+      "status": "actif",
+      "role": "Researcher ; Servant for Prince Tubeppa Hui Guo Rou"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-388",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -41242,17 +41524,17 @@
     "id": "hignori",
     "canonicalName": "Hignori",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Private Guard of Prince Camilla. Kakin Empire ; Have-Nots ; Camilla Hui Guo Rou.",
+    "factionId": "prince-camilla",
+    "firstAppearanceChapterId": "ch-373",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
-      "role": "passager nommé"
+      "tier": 1,
+      "room": "1002",
+      "status": "actif",
+      "role": "Private Guard of Prince Camilla"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-373",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -41260,17 +41542,17 @@
     "id": "himonce",
     "canonicalName": "Himoncé",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Royal Bodyguard for Prince Tyson. Kakin Empire ; Tyson Hui Guo Rou.",
+    "factionId": "prince-tyson",
+    "firstAppearanceChapterId": "ch-375",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
-      "role": "passager nommé"
+      "tier": 1,
+      "room": "1006",
+      "status": "actif",
+      "role": "Royal Bodyguard for Prince Tyson"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-375",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -41278,17 +41560,17 @@
     "id": "hyuga",
     "canonicalName": "Hyuga",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Royal Bodyguard for Prince Tyson. Kakin Empire ; Tyson Hui Guo Rou.",
+    "factionId": "prince-tyson",
+    "firstAppearanceChapterId": "ch-400",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
-      "role": "passager nommé"
+      "tier": 1,
+      "room": "1006",
+      "status": "actif",
+      "role": "Royal Bodyguard for Prince Tyson"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-400",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -41296,17 +41578,17 @@
     "id": "illardia",
     "canonicalName": "Illardia",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Prince Fugetsu's Maid. Kakin Empire ; Fugetsu Hui Guo Rou.",
+    "factionId": "prince-fugetsu",
+    "firstAppearanceChapterId": "ch-369",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
-      "role": "passager nommé"
+      "tier": 1,
+      "room": "1011",
+      "status": "actif",
+      "role": "Prince Fugetsu's Maid"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-369",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -41314,17 +41596,17 @@
     "id": "ittoku",
     "canonicalName": "Ittoku",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Consigliere of the Cha-R Family. Cha-R Family.",
+    "factionId": "mafia-char",
+    "firstAppearanceChapterId": "ch-379",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
+      "tier": 5,
       "room": null,
       "status": "inconnu",
-      "role": "passager nommé"
+      "role": "Consigliere of the Cha-R Family"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-379",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -41332,17 +41614,17 @@
     "id": "javietti",
     "canonicalName": "Javietti",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Private Soldier for Queen Duazul assigned to Prince Luzurus. Kakin Empire ; Duazul Hui Guo Rou ; Luzurus Hui Guo Rou.",
+    "factionId": "prince-luzurus",
+    "firstAppearanceChapterId": "ch-386",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
-      "role": "passager nommé"
+      "tier": 1,
+      "room": "1007",
+      "status": "actif",
+      "role": "Private Soldier for Queen Duazul assigned to Prince Luzurus"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-386",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -41350,15 +41632,15 @@
     "id": "kakin-announcer",
     "canonicalName": "Kakin Announcer",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
+    "description": "Announcer Personality for the Dark Continent Voyage. Kakin Empire.",
+    "factionId": "kakin-royal-family",
     "firstAppearanceChapterId": "ch-359",
     "canonStatus": "canon",
     "shipLocation": {
       "tier": null,
       "room": null,
       "status": "inconnu",
-      "role": "passager nommé"
+      "role": "Announcer Personality for the Dark Continent Voyage"
     },
     "mapPresenceFromChapterId": "ch-359",
     "mapPresenceUntilChapterId": null,
@@ -41368,17 +41650,17 @@
     "id": "kako",
     "canonicalName": "Kako",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Private Guard of Prince Camilla. Kakin Empire ; Have-Nots ; Camilla Hui Guo Rou.",
+    "factionId": "prince-camilla",
+    "firstAppearanceChapterId": "ch-389",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
-      "role": "passager nommé"
+      "tier": 1,
+      "room": "1002",
+      "status": "actif",
+      "role": "Private Guard of Prince Camilla"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-389",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -41387,8 +41669,8 @@
     "canonicalName": "Kanjidol",
     "aliases": [],
     "description": "Benjamin's private soldier. After arming part of Luzurus's guard detail during special martial law, he is injured and detained by Hunter Ridge.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "factionId": "prince-benjamin",
+    "firstAppearanceChapterId": "ch-363",
     "canonStatus": "canon",
     "shipLocation": {
       "tier": 1,
@@ -41396,7 +41678,7 @@
       "status": "blessé et détenu",
       "role": "soldat privé de Benjamin"
     },
-    "mapPresenceFromChapterId": "ch-415",
+    "mapPresenceFromChapterId": "ch-363",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": [
       {
@@ -41411,35 +41693,36 @@
     "id": "kitokattamu",
     "canonicalName": "Kitokattamu",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Royal Bodyguard for Prince Tubeppa. Kakin Empire ; Tubeppa Hui Guo Rou. Révélé dans les fiches de Togashi (Jump Ryu! Vol. 21), sans apparition dans le manga.",
+    "factionId": "prince-tubeppa",
+    "firstAppearanceChapterId": null,
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
-      "role": "passager nommé"
+      "tier": 1,
+      "room": "1005",
+      "status": "actif",
+      "role": "Royal Bodyguard for Prince Tubeppa"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": null,
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "positionProvenance": "databook"
   },
   {
     "id": "kobihi",
     "canonicalName": "Kōbihi",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Personal Soldier for Prince Halkenburg. Kakin Empire ; Halkenburg Hui Guo Rou.",
+    "factionId": "prince-halkenburg",
+    "firstAppearanceChapterId": "ch-362",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
-      "role": "passager nommé"
+      "tier": 1,
+      "room": "1009",
+      "status": "actif",
+      "role": "Personal Soldier for Prince Halkenburg"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-362",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -41447,17 +41730,17 @@
     "id": "komiya",
     "canonicalName": "Komiya",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Researcher ; Servant for Prince Tubeppa. Kakin Empire ; Tubeppa Hui Guo Rou.",
+    "factionId": "prince-tubeppa",
+    "firstAppearanceChapterId": "ch-415",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
-      "role": "passager nommé"
+      "tier": 1,
+      "room": "1005",
+      "status": "actif",
+      "role": "Researcher ; Servant for Prince Tubeppa"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-415",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -41465,17 +41748,17 @@
     "id": "konattsu",
     "canonicalName": "Konattsu",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Royal Bodyguard for Prince Tubeppa Hui Guo Rou. Kakin Empire ; Tubeppa Hui Guo Rou.",
+    "factionId": "prince-tubeppa",
+    "firstAppearanceChapterId": "ch-366",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
-      "role": "passager nommé"
+      "tier": 1,
+      "room": "1005",
+      "status": "actif",
+      "role": "Royal Bodyguard for Prince Tubeppa Hui Guo Rou"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-366",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -41483,17 +41766,17 @@
     "id": "kontasutin",
     "canonicalName": "Kontasutin",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Personal Soldier for Prince Halkenburg. Kakin Empire ; Halkenburg Hui Guo Rou.",
+    "factionId": "prince-halkenburg",
+    "firstAppearanceChapterId": "ch-362",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
-      "role": "passager nommé"
+      "tier": 1,
+      "room": "1009",
+      "status": "actif",
+      "role": "Personal Soldier for Prince Halkenburg"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-362",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -41501,17 +41784,17 @@
     "id": "koroabde",
     "canonicalName": "Koroabde",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Spy for Queen Tang Zhao Li Hui Guo Rou. Kakin Empire ; Tang Zhao Li Hui Guo Rou.",
+    "factionId": "kakin-royal-family",
+    "firstAppearanceChapterId": "ch-374",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
+      "tier": 1,
       "room": null,
       "status": "inconnu",
-      "role": "passager nommé"
+      "role": "Spy for Queen Tang Zhao Li Hui Guo Rou"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-374",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -41519,17 +41802,17 @@
     "id": "ladiolus",
     "canonicalName": "Ladiolus",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Prince Fugetsu's Maid. Kakin Empire ; Fugetsu Hui Guo Rou.",
+    "factionId": "prince-fugetsu",
+    "firstAppearanceChapterId": "ch-369",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
-      "role": "passager nommé"
+      "tier": 1,
+      "room": "1011",
+      "status": "actif",
+      "role": "Prince Fugetsu's Maid"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-369",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -41537,17 +41820,17 @@
     "id": "laroc",
     "canonicalName": "Laroc",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Spy for Katrono Hui Guo Rou. Kakin Empire ; Katrono Hui Guo Rou.",
+    "factionId": "kakin-royal-family",
+    "firstAppearanceChapterId": "ch-366",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
+      "tier": 1,
       "room": null,
       "status": "inconnu",
-      "role": "passager nommé"
+      "role": "Spy for Katrono Hui Guo Rou"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-366",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -41555,17 +41838,17 @@
     "id": "lizlura",
     "canonicalName": "Lizlura",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Prince Kacho's Servant. Kakin Empire ; Kacho Hui Guo Rou.",
+    "factionId": "prince-kacho",
+    "firstAppearanceChapterId": "ch-411",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
-      "role": "passager nommé"
+      "tier": 1,
+      "room": "1010",
+      "status": "actif",
+      "role": "Prince Kacho's Servant"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-411",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -41573,17 +41856,17 @@
     "id": "loberry",
     "canonicalName": "Loberry",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Prince Kacho's Maid. Kakin Empire ; Kacho Hui Guo Rou.",
+    "factionId": "prince-kacho",
+    "firstAppearanceChapterId": "ch-366",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
-      "role": "passager nommé"
+      "tier": 1,
+      "room": "1010",
+      "status": "actif",
+      "role": "Prince Kacho's Maid"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-366",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -41591,17 +41874,17 @@
     "id": "longhi",
     "canonicalName": "Longhi",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Royal Bodyguard for Prince Tubeppa. Kakin Empire ; Tubeppa Hui Guo Rou.",
+    "factionId": "prince-tubeppa",
+    "firstAppearanceChapterId": "ch-369",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
-      "role": "passager nommé"
+      "tier": 1,
+      "room": "1005",
+      "status": "actif",
+      "role": "Royal Bodyguard for Prince Tubeppa"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-369",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -41609,17 +41892,17 @@
     "id": "lynch-fullbokko",
     "canonicalName": "Lynch Fullbokko",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Mafioso. Xi-Yu Family.",
+    "factionId": "mafia-xiyu",
+    "firstAppearanceChapterId": "ch-390",
     "canonStatus": "canon",
     "shipLocation": {
       "tier": null,
       "room": null,
-      "status": "inconnu",
-      "role": "passager nommé"
+      "status": "mort",
+      "role": "Mafioso"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-390",
     "mapPresenceUntilChapterId": "ch-393",
     "mangaAppearances": [
       {
@@ -41627,23 +41910,34 @@
         "title": "Plea",
         "status": "death"
       }
+    ],
+    "mapTrajectory": [
+      {
+        "location": "tier-3",
+        "fromChapterId": "ch-392"
+      },
+      {
+        "location": "tier-3-cineplex",
+        "fromChapterId": "ch-392.2",
+        "untilChapterId": "ch-393"
+      }
     ]
   },
   {
     "id": "macne",
     "canonicalName": "Macne",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Royal Bodyguard for Prince Luzurus. Kakin Empire ; Luzurus Hui Guo Rou.",
+    "factionId": "prince-luzurus",
+    "firstAppearanceChapterId": "ch-389",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
-      "role": "passager nommé"
+      "tier": 1,
+      "room": "1007",
+      "status": "actif",
+      "role": "Royal Bodyguard for Prince Luzurus"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-389",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -41651,17 +41945,17 @@
     "id": "madwig",
     "canonicalName": "Madwig",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Royal Bodyguard for Prince Tyson. Kakin Empire ; Tyson Hui Guo Rou.",
+    "factionId": "prince-tyson",
+    "firstAppearanceChapterId": "ch-375",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
-      "role": "passager nommé"
+      "tier": 1,
+      "room": "1006",
+      "status": "actif",
+      "role": "Royal Bodyguard for Prince Tyson"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-375",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -41670,8 +41964,8 @@
     "canonicalName": "Maor",
     "aliases": [],
     "description": "Tubeppa's senior guard. He remains in Room 1005 with her camp during the special martial-law orders.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "factionId": "prince-tubeppa",
+    "firstAppearanceChapterId": "ch-363",
     "canonStatus": "canon",
     "shipLocation": {
       "tier": 1,
@@ -41679,7 +41973,7 @@
       "status": "actif",
       "role": "capitaine des gardes de Tubeppa"
     },
-    "mapPresenceFromChapterId": "ch-415",
+    "mapPresenceFromChapterId": "ch-363",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": [
       {
@@ -41694,17 +41988,17 @@
     "id": "matvere",
     "canonicalName": "Matvere",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Mafioso ; Temp Staffing/Mediator. Heil-Ly Family.",
+    "factionId": "mafia-heilly",
+    "firstAppearanceChapterId": "ch-378",
     "canonStatus": "canon",
     "shipLocation": {
       "tier": null,
       "room": null,
       "status": "inconnu",
-      "role": "passager nommé"
+      "role": "Mafioso ; Temp Staffing/Mediator"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-378",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -41712,17 +42006,17 @@
     "id": "misha-hao",
     "canonicalName": "Misha Hao",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Undertaker. Xi-Yu Family.",
+    "factionId": "mafia-xiyu",
+    "firstAppearanceChapterId": "ch-392",
     "canonStatus": "canon",
     "shipLocation": {
       "tier": null,
       "room": null,
-      "status": "inconnu",
-      "role": "passager nommé"
+      "status": "mort",
+      "role": "Undertaker"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-392",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -41730,17 +42024,17 @@
     "id": "mizaurouno",
     "canonicalName": "Mizaurouno",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Royal Bodyguard for Prince Tubeppa Hui Guo Rou. Kakin Empire ; Tubeppa Hui Guo Rou.",
+    "factionId": "prince-tubeppa",
+    "firstAppearanceChapterId": "ch-366",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
-      "role": "passager nommé"
+      "tier": 1,
+      "room": "1005",
+      "status": "actif",
+      "role": "Royal Bodyguard for Prince Tubeppa Hui Guo Rou"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-366",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -41748,17 +42042,17 @@
     "id": "momiita",
     "canonicalName": "Momiita",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Royal Bodyguard for Prince Tubeppa. Kakin Empire ; Tubeppa Hui Guo Rou.",
+    "factionId": "prince-tubeppa",
+    "firstAppearanceChapterId": "ch-415",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
-      "role": "passager nommé"
+      "tier": 1,
+      "room": "1005",
+      "status": "actif",
+      "role": "Royal Bodyguard for Prince Tubeppa"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-415",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -41766,17 +42060,17 @@
     "id": "montblanc-toto",
     "canonicalName": "Montblanc Toto",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Mafioso ; Cleaner ; Feed Manufacturer. Heil-Ly Family.",
+    "factionId": "mafia-heilly",
+    "firstAppearanceChapterId": "ch-378",
     "canonStatus": "canon",
     "shipLocation": {
       "tier": null,
       "room": null,
       "status": "inconnu",
-      "role": "passager nommé"
+      "role": "Mafioso ; Cleaner ; Feed Manufacturer"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-378",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -41784,17 +42078,17 @@
     "id": "moswana",
     "canonicalName": "Moswana",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Private Guard of Prince Camilla. Kakin Empire ; Have-Nots ; Camilla Hui Guo Rou.",
+    "factionId": "prince-camilla",
+    "firstAppearanceChapterId": "ch-363",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
-      "role": "passager nommé"
+      "tier": 1,
+      "room": "1002",
+      "status": "actif",
+      "role": "Private Guard of Prince Camilla"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-363",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -41802,17 +42096,17 @@
     "id": "mushaho",
     "canonicalName": "Mushaho",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Captain of Queen Swinko-swinko's Royal Guard. Kakin Empire ; Swinko-swinko Hui Guo Rou.",
+    "factionId": "kakin-royal-family",
+    "firstAppearanceChapterId": "ch-362",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
+      "tier": 1,
+      "room": "Queens' Living Quarters",
       "status": "inconnu",
-      "role": "passager nommé"
+      "role": "Captain of Queen Swinko-swinko's Royal Guard"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-362",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -41820,35 +42114,36 @@
     "id": "nadaasu",
     "canonicalName": "Nadaasu",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Servant for Prince Tubeppa. Kakin Empire ; Tubeppa Hui Guo Rou. Révélé dans les fiches de Togashi (Jump Ryu! Vol. 21), sans apparition dans le manga.",
+    "factionId": "prince-tubeppa",
+    "firstAppearanceChapterId": null,
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
-      "role": "passager nommé"
+      "tier": 1,
+      "room": "1005",
+      "status": "actif",
+      "role": "Servant for Prince Tubeppa"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": null,
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "positionProvenance": "databook"
   },
   {
     "id": "nagmum",
     "canonicalName": "Nagmum",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Spy for Queen Seiko Hui Guo Rou. Kakin Empire ; Seiko Hui Guo Rou.",
+    "factionId": "kakin-royal-family",
+    "firstAppearanceChapterId": "ch-366",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
+      "tier": 1,
       "room": null,
       "status": "inconnu",
-      "role": "passager nommé"
+      "role": "Spy for Queen Seiko Hui Guo Rou"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-366",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -41856,17 +42151,17 @@
     "id": "naikeru",
     "canonicalName": "Naikēru",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Personal Soldier for Prince Halkenburg. Kakin Empire ; Halkenburg Hui Guo Rou.",
+    "factionId": "prince-halkenburg",
+    "firstAppearanceChapterId": "ch-375",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
-      "role": "passager nommé"
+      "tier": 1,
+      "room": "1009",
+      "status": "actif",
+      "role": "Personal Soldier for Prince Halkenburg"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-375",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -41874,17 +42169,17 @@
     "id": "naipei",
     "canonicalName": "Naipei",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Prince Marayam's Servant. Kakin Empire ; Marayam Hui Guo Rou.",
+    "factionId": "prince-marayam",
+    "firstAppearanceChapterId": "ch-366",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
-      "role": "passager nommé"
+      "tier": 1,
+      "room": "1013",
+      "status": "actif",
+      "role": "Prince Marayam's Servant"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-366",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -41892,17 +42187,17 @@
     "id": "nikoraurusu",
     "canonicalName": "Nikoraurusu",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Captain of the Guards for Prince Halkenburg. Kakin Empire ; Halkenburg Hui Guo Rou.",
+    "factionId": "prince-halkenburg",
+    "firstAppearanceChapterId": "ch-362",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
-      "role": "passager nommé"
+      "tier": 1,
+      "room": "1009",
+      "status": "actif",
+      "role": "Captain of the Guards for Prince Halkenburg"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-362",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -41910,17 +42205,17 @@
     "id": "nipaper",
     "canonicalName": "Nipaper",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Spy for Queen Duazul Hui Guo Rou. Kakin Empire ; Queen Duazul Hui Guo Rou.",
+    "factionId": "kakin-royal-family",
+    "firstAppearanceChapterId": "ch-361",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
+      "tier": 1,
       "room": null,
       "status": "inconnu",
-      "role": "passager nommé"
+      "role": "Spy for Queen Duazul Hui Guo Rou"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-361",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -41928,17 +42223,17 @@
     "id": "notre",
     "canonicalName": "Notre",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Mafioso ; Plumber. Heil-Ly Family.",
+    "factionId": "mafia-heilly",
+    "firstAppearanceChapterId": "ch-378",
     "canonStatus": "canon",
     "shipLocation": {
       "tier": null,
       "room": null,
       "status": "inconnu",
-      "role": "passager nommé"
+      "role": "Mafioso ; Plumber"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-378",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -41946,17 +42241,17 @@
     "id": "nukuocon",
     "canonicalName": "Nukuocon",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Private Guard of Prince Camilla. Kakin Empire ; Have-Nots ; Camilla Hui Guo Rou.",
+    "factionId": "prince-camilla",
+    "firstAppearanceChapterId": "ch-373",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
-      "role": "passager nommé"
+      "tier": 1,
+      "room": "1002",
+      "status": "actif",
+      "role": "Private Guard of Prince Camilla"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-373",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -41964,17 +42259,17 @@
     "id": "odessa",
     "canonicalName": "Odessa",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Private Soldier for Queen Duazul assigned to Prince Luzurus. Kakin Empire ; Duazul Hui Guo Rou ; Luzurus Hui Guo Rou.",
+    "factionId": "prince-luzurus",
+    "firstAppearanceChapterId": "ch-389",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
-      "role": "passager nommé"
+      "tier": 1,
+      "room": "1007",
+      "status": "actif",
+      "role": "Private Soldier for Queen Duazul assigned to Prince Luzurus"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-389",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -41982,17 +42277,17 @@
     "id": "orarge",
     "canonicalName": "Orarge",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Mafioso ; Waste Disposal Contractor. Heil-Ly Family.",
+    "factionId": "mafia-heilly",
+    "firstAppearanceChapterId": "ch-378",
     "canonStatus": "canon",
     "shipLocation": {
       "tier": null,
       "room": null,
       "status": "inconnu",
-      "role": "passager nommé"
+      "role": "Mafioso ; Waste Disposal Contractor"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-378",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -42000,17 +42295,17 @@
     "id": "orau",
     "canonicalName": "Orau",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Private Soldier for Prince Benjamin Hui Guo Rou ; Royal Bodyguard for Prince Tyson Hui Guo Rou. Kakin Empire ; Benjamin Hui Guo Rou.",
+    "factionId": "prince-benjamin",
+    "firstAppearanceChapterId": "ch-358",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
-      "role": "passager nommé"
+      "tier": 1,
+      "room": "1006",
+      "status": "actif",
+      "role": "Private Soldier for Prince Benjamin Hui Guo Rou ; Royal Bodyguard for Prince Tyson Hui Guo Rou"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-358",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -42018,17 +42313,17 @@
     "id": "orzny",
     "canonicalName": "Orzny",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Spy for Queen Unma Hui Guo Rou ; Royal Bodyguard for Prince Benjamin Hui Guo Rou. Kakin Empire ; Unma Hui Guo Rou ; Benjamin Hui Guo Rou.",
+    "factionId": "prince-benjamin",
+    "firstAppearanceChapterId": "ch-375",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
-      "role": "passager nommé"
+      "tier": 1,
+      "room": "1001",
+      "status": "actif",
+      "role": "Spy for Queen Unma Hui Guo Rou ; Royal Bodyguard for Prince Benjamin Hui Guo Rou"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-375",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -42036,17 +42331,17 @@
     "id": "padaille",
     "canonicalName": "Padaille",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Mafioso ; Demolition Worker. Heil-Ly Family.",
+    "factionId": "mafia-heilly",
+    "firstAppearanceChapterId": "ch-378",
     "canonStatus": "canon",
     "shipLocation": {
       "tier": null,
       "room": null,
-      "status": "inconnu",
-      "role": "passager nommé"
+      "status": "mort",
+      "role": "Mafioso ; Demolition Worker"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-378",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -42054,17 +42349,17 @@
     "id": "perigord",
     "canonicalName": "Perigord",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Mafioso ; Investigator's Assistant. Heil-Ly Family.",
+    "factionId": "mafia-heilly",
+    "firstAppearanceChapterId": "ch-378",
     "canonStatus": "canon",
     "shipLocation": {
       "tier": null,
       "room": null,
       "status": "inconnu",
-      "role": "passager nommé"
+      "role": "Mafioso ; Investigator's Assistant"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-378",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -42072,17 +42367,17 @@
     "id": "pitakusu",
     "canonicalName": "Pitakusu",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Servant for Prince Tubeppa. Kakin Empire ; Tubeppa Hui Guo Rou.",
+    "factionId": "prince-tubeppa",
+    "firstAppearanceChapterId": "ch-415",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
-      "role": "passager nommé"
+      "tier": 1,
+      "room": "1005",
+      "status": "actif",
+      "role": "Servant for Prince Tubeppa"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-415",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -42090,17 +42385,17 @@
     "id": "quorolle",
     "canonicalName": "Quorolle",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Mafioso ; Repairman. Heil-Ly Family.",
+    "factionId": "mafia-heilly",
+    "firstAppearanceChapterId": "ch-378",
     "canonStatus": "canon",
     "shipLocation": {
       "tier": null,
       "room": null,
       "status": "inconnu",
-      "role": "passager nommé"
+      "role": "Mafioso ; Repairman"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-378",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -42108,17 +42403,17 @@
     "id": "reuen",
     "canonicalName": "Rēuen",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Personal Soldier for Prince Halkenburg. Kakin Empire ; Halkenburg Hui Guo Rou.",
+    "factionId": "prince-halkenburg",
+    "firstAppearanceChapterId": "ch-375",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
-      "role": "passager nommé"
+      "tier": 1,
+      "room": "1009",
+      "status": "actif",
+      "role": "Personal Soldier for Prince Halkenburg"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-375",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -42126,17 +42421,17 @@
     "id": "rice",
     "canonicalName": "Rice",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Private Soldier for Duazul Hui Guo Rou assigned to Prince Luzurus Hui Guo Rou. Kakin Empire ; Luzurus Hui Guo Rou ; Duazul Hui Guo Rou.",
+    "factionId": "prince-luzurus",
+    "firstAppearanceChapterId": "ch-386",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
-      "role": "passager nommé"
+      "tier": 1,
+      "room": "1007",
+      "status": "actif",
+      "role": "Private Soldier for Duazul Hui Guo Rou assigned to Prince Luzurus Hui Guo Rou"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-386",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -42144,17 +42439,17 @@
     "id": "roccoli",
     "canonicalName": "Roccoli",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Prince Kacho's Servant. Kakin Empire ; Kacho Hui Guo Rou.",
+    "factionId": "prince-kacho",
+    "firstAppearanceChapterId": "ch-366",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
-      "role": "passager nommé"
+      "tier": 1,
+      "room": "1010",
+      "status": "actif",
+      "role": "Prince Kacho's Servant"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-366",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -42162,17 +42457,17 @@
     "id": "ryoji",
     "canonicalName": "Ryoji",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Royal Bodyguard for Prince Fugetsu Hui Guo Rou. Kakin Empire ; Fugetsu Hui Guo Rou.",
+    "factionId": "prince-fugetsu",
+    "firstAppearanceChapterId": "ch-366",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
-      "role": "passager nommé"
+      "tier": 1,
+      "room": "1011",
+      "status": "actif",
+      "role": "Royal Bodyguard for Prince Fugetsu Hui Guo Rou"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-366",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -42180,17 +42475,17 @@
     "id": "ryubihhi",
     "canonicalName": "Ryubihhi",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Royal Bodyguard for Prince Tubeppa. Kakin Empire ; Tubeppa Hui Guo Rou.",
+    "factionId": "prince-tubeppa",
+    "firstAppearanceChapterId": "ch-415",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
-      "role": "passager nommé"
+      "tier": 1,
+      "room": "1005",
+      "status": "actif",
+      "role": "Royal Bodyguard for Prince Tubeppa"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-415",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -42198,17 +42493,17 @@
     "id": "sakata",
     "canonicalName": "Sakata",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Royal Bodyguard for Prince Woble Hui Guo Rou. Kakin Empire ; Zhang Lei Hui Guo Rou.",
+    "factionId": "prince-zhanglei",
+    "firstAppearanceChapterId": "ch-366",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
-      "role": "passager nommé"
+      "tier": 1,
+      "room": "1014",
+      "status": "actif",
+      "role": "Royal Bodyguard for Prince Woble Hui Guo Rou"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-366",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -42216,17 +42511,17 @@
     "id": "saquelle",
     "canonicalName": "Saquelle",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Private Soldier for Prince Benjamin Hui Guo Rou ; Royal Bodyguard for Prince Marayam Hui Guo Rou. Kakin Empire ; Benjamin Hui Guo Rou.",
+    "factionId": "prince-benjamin",
+    "firstAppearanceChapterId": "ch-358",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
-      "role": "passager nommé"
+      "tier": 1,
+      "room": "1013",
+      "status": "actif",
+      "role": "Private Soldier for Prince Benjamin Hui Guo Rou ; Royal Bodyguard for Prince Marayam Hui Guo Rou"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-358",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -42234,17 +42529,17 @@
     "id": "sarahell",
     "canonicalName": "Sarahell",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Captain of the Private Guards of Prince Camilla. Kakin Empire ; Have-Nots ; Camilla Hui Guo Rou.",
+    "factionId": "prince-camilla",
+    "firstAppearanceChapterId": "ch-363",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
-      "role": "passager nommé"
+      "tier": 1,
+      "room": "1002",
+      "status": "actif",
+      "role": "Captain of the Private Guards of Prince Camilla"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-363",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -42252,17 +42547,17 @@
     "id": "satobi",
     "canonicalName": "Satobi",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Captain of Queen Duazul's Royal Guard. Kakin Empire ; Duazul Hui Guo Rou ; Luzurus Hui Guo Rou.",
+    "factionId": "prince-luzurus",
+    "firstAppearanceChapterId": "ch-369",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
+      "tier": 1,
+      "room": "Queens' Living Quarters",
       "status": "inconnu",
-      "role": "passager nommé"
+      "role": "Captain of Queen Duazul's Royal Guard"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-369",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -42270,17 +42565,17 @@
     "id": "shedule",
     "canonicalName": "Shedule",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Bodyguard for Prince Halkenburg. Kakin Empire ; Halkenburg Hui Guo Rou.",
+    "factionId": "prince-halkenburg",
+    "firstAppearanceChapterId": "ch-362",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
-      "role": "passager nommé"
+      "tier": 1,
+      "room": "1009",
+      "status": "actif",
+      "role": "Bodyguard for Prince Halkenburg"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-362",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -42288,17 +42583,17 @@
     "id": "shikaku",
     "canonicalName": "Shikaku",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Private Soldier for Prince Benjamin Hui Guo Rou ; Royal Bodyguard for Prince Halkenburg Hui Guo Rou. Benjamin Hui Guo Rou ; Kakin Empire ; Halkenburg Hui Guo Rou.",
+    "factionId": "prince-benjamin",
+    "firstAppearanceChapterId": "ch-363",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
-      "role": "passager nommé"
+      "tier": 1,
+      "room": "1009",
+      "status": "mort",
+      "role": "Private Soldier for Prince Benjamin Hui Guo Rou ; Royal Bodyguard for Prince Halkenburg Hui Guo Rou"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-363",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -42306,17 +42601,17 @@
     "id": "slakka",
     "canonicalName": "Slakka",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Royal Bodyguard for Prince Zhang Lei Hui Guo Rou ; Spy for Queen Duazul Hui Guo Rou. Kakin Empire ; Zhang Lei Hui Guo Rou ; Duazul Hui Guo Rou.",
+    "factionId": "prince-zhanglei",
+    "firstAppearanceChapterId": "ch-365",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
-      "role": "passager nommé"
+      "tier": 1,
+      "room": "1003",
+      "status": "actif",
+      "role": "Royal Bodyguard for Prince Zhang Lei Hui Guo Rou ; Spy for Queen Duazul Hui Guo Rou"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-365",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -42324,17 +42619,17 @@
     "id": "sodom",
     "canonicalName": "Sodom",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Mafioso ; Back-Alley Doctor ; Hitman. Heil-Ly Family.",
+    "factionId": "mafia-heilly",
+    "firstAppearanceChapterId": "ch-378",
     "canonStatus": "canon",
     "shipLocation": {
       "tier": null,
       "room": null,
       "status": "inconnu",
-      "role": "passager nommé"
+      "role": "Mafioso ; Back-Alley Doctor ; Hitman"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-378",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -42342,17 +42637,17 @@
     "id": "souffle",
     "canonicalName": "Soufflé",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Mafioso ; Hacker. Heil-Ly Family.",
+    "factionId": "mafia-heilly",
+    "firstAppearanceChapterId": "ch-378",
     "canonStatus": "canon",
     "shipLocation": {
       "tier": null,
       "room": null,
       "status": "inconnu",
-      "role": "passager nommé"
+      "role": "Mafioso ; Hacker"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-378",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -42360,17 +42655,17 @@
     "id": "sumidori",
     "canonicalName": "Sumidori",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Private Soldier for Prince Halkenburg Hui Guo Rou. Kakin Empire ; Halkenburg Hui Guo Rou.",
+    "factionId": "prince-halkenburg",
+    "firstAppearanceChapterId": "ch-362",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
-      "role": "passager nommé"
+      "tier": 1,
+      "room": "1009",
+      "status": "mort",
+      "role": "Private Soldier for Prince Halkenburg Hui Guo Rou"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-362",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -42378,17 +42673,17 @@
     "id": "sun-bin",
     "canonicalName": "Sun-bin",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Mafioso. Cha-R Family.",
+    "factionId": "mafia-char",
+    "firstAppearanceChapterId": "ch-377",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
+      "tier": 5,
       "room": null,
       "status": "inconnu",
-      "role": "passager nommé"
+      "role": "Mafioso"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-377",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -42396,17 +42691,17 @@
     "id": "tagenpaku",
     "canonicalName": "Tagenpaku",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Personal Soldier for Prince Halkenburg. Kakin Empire ; Halkenburg Hui Guo Rou.",
+    "factionId": "prince-halkenburg",
+    "firstAppearanceChapterId": "ch-375",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
-      "role": "passager nommé"
+      "tier": 1,
+      "room": "1009",
+      "status": "mort",
+      "role": "Personal Soldier for Prince Halkenburg"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-375",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -42414,17 +42709,17 @@
     "id": "tajao",
     "canonicalName": "Tajao",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Vice Boss of the Cha-R Family ; Military Advisor for the Seventh Prince's Army. Cha-R Family ; Luzurus Hui Guo Rou.",
+    "factionId": "mafia-char",
+    "firstAppearanceChapterId": "ch-384",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
+      "tier": 5,
       "room": null,
       "status": "inconnu",
-      "role": "passager nommé"
+      "role": "Vice Boss of the Cha-R Family ; Military Advisor for the Seventh Prince's Army"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-384",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -42432,17 +42727,17 @@
     "id": "taler",
     "canonicalName": "Taler",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Private Guard of Prince Camilla. Kakin Empire ; Have-Nots ; Camilla Hui Guo Rou.",
+    "factionId": "prince-camilla",
+    "firstAppearanceChapterId": "ch-389",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
-      "role": "passager nommé"
+      "tier": 1,
+      "room": "1002",
+      "status": "actif",
+      "role": "Private Guard of Prince Camilla"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-389",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -42450,17 +42745,17 @@
     "id": "tassi",
     "canonicalName": "Tassi",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Mafioso. Xi-Yu Family.",
+    "factionId": "mafia-xiyu",
+    "firstAppearanceChapterId": "ch-394",
     "canonStatus": "canon",
     "shipLocation": {
       "tier": null,
       "room": null,
-      "status": "inconnu",
-      "role": "passager nommé"
+      "status": "mort",
+      "role": "Mafioso"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-394",
     "mapPresenceUntilChapterId": "ch-394",
     "mangaAppearances": [
       {
@@ -42468,23 +42763,35 @@
         "title": "Hypothesis",
         "status": "death"
       }
+    ],
+    "mapTrajectory": [
+      {
+        "location": "black-whale-unknown",
+        "fromChapterId": "ch-358",
+        "certainty": "PROBABLE"
+      },
+      {
+        "location": "tier-3-residential-room-3101",
+        "fromChapterId": "ch-394",
+        "untilChapterId": "ch-394"
+      }
     ]
   },
   {
     "id": "tenftory",
     "canonicalName": "Tenftory",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Royal Bodyguard for Prince Zhang Lei. Kakin Empire ; Zhang Lei Hui Guo Rou.",
+    "factionId": "prince-zhanglei",
+    "firstAppearanceChapterId": "ch-363",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
-      "role": "passager nommé"
+      "tier": 1,
+      "room": "1003",
+      "status": "actif",
+      "role": "Royal Bodyguard for Prince Zhang Lei"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-363",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -42492,17 +42799,17 @@
     "id": "terebellum",
     "canonicalName": "Terebellum",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Mafioso ; Transporter ; Hitman. Heil-Ly Family.",
+    "factionId": "mafia-heilly",
+    "firstAppearanceChapterId": "ch-378",
     "canonStatus": "canon",
     "shipLocation": {
       "tier": null,
       "room": null,
       "status": "inconnu",
-      "role": "passager nommé"
+      "role": "Mafioso ; Transporter ; Hitman"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-378",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -42510,17 +42817,17 @@
     "id": "tevelares",
     "canonicalName": "Tevelares",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Mafioso ; Civil Engineer. Heil-Ly Family.",
+    "factionId": "mafia-heilly",
+    "firstAppearanceChapterId": "ch-378",
     "canonStatus": "canon",
     "shipLocation": {
       "tier": null,
       "room": null,
       "status": "inconnu",
-      "role": "passager nommé"
+      "role": "Mafioso ; Civil Engineer"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-378",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -42528,17 +42835,17 @@
     "id": "toneaster",
     "canonicalName": "Toneaster",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Prince Fugetsu's Servant. Kakin Empire ; Fugetsu Hui Guo Rou.",
+    "factionId": "prince-fugetsu",
+    "firstAppearanceChapterId": "ch-411",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
-      "role": "passager nommé"
+      "tier": 1,
+      "room": "1011",
+      "status": "actif",
+      "role": "Prince Fugetsu's Servant"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-411",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -42546,17 +42853,17 @@
     "id": "tsudonke",
     "canonicalName": "Tsudonke",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Mafioso Supervisor. Cha-R Family.",
+    "factionId": "mafia-char",
+    "firstAppearanceChapterId": "ch-380",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
+      "tier": 5,
       "room": null,
       "status": "inconnu",
-      "role": "passager nommé"
+      "role": "Mafioso Supervisor"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-380",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -42564,17 +42871,17 @@
     "id": "tuffdy",
     "canonicalName": "Tuffdy",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Spy for Queen Swinko-swinko ; Royal Bodyguard for Prince Momoze. Kakin Empire ; Swinko-swinko Hui Guo Rou ; Momoze Hui Guo Rou.",
+    "factionId": "prince-momoze",
+    "firstAppearanceChapterId": "ch-366",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
-      "role": "passager nommé"
+      "tier": 1,
+      "room": "1012",
+      "status": "mort",
+      "role": "Spy for Queen Swinko-swinko ; Royal Bodyguard for Prince Momoze"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-366",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -42582,17 +42889,17 @@
     "id": "umanma",
     "canonicalName": "Umanma",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Private Guard of Prince Camilla. Kakin Empire ; Have-Nots ; Camilla Hui Guo Rou.",
+    "factionId": "prince-camilla",
+    "firstAppearanceChapterId": "ch-373",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
-      "role": "passager nommé"
+      "tier": 1,
+      "room": "1002",
+      "status": "actif",
+      "role": "Private Guard of Prince Camilla"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-373",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -42600,17 +42907,17 @@
     "id": "vantine",
     "canonicalName": "Vantine",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Private Military Commander for Prince Tserriednich. Kakin Empire ; Tserriednich Hui Guo Rou.",
+    "factionId": "prince-tserriednich",
+    "firstAppearanceChapterId": "ch-363",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
-      "role": "passager nommé"
+      "tier": 1,
+      "room": "1004",
+      "status": "actif",
+      "role": "Private Military Commander for Prince Tserriednich"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-363",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -42619,8 +42926,8 @@
     "canonicalName": "Vergei",
     "aliases": [],
     "description": "Captain of Marayam's guards. He remains inside the prince's Nen-isolated Room 1013 during special martial law.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "factionId": "prince-marayam",
+    "firstAppearanceChapterId": "ch-361",
     "canonStatus": "canon",
     "shipLocation": {
       "tier": 1,
@@ -42628,7 +42935,7 @@
       "status": "actif",
       "role": "capitaine des gardes de Marayam"
     },
-    "mapPresenceFromChapterId": "ch-415",
+    "mapPresenceFromChapterId": "ch-361",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": [
       {
@@ -42643,17 +42950,17 @@
     "id": "vic",
     "canonicalName": "Vic",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Mafioso. Cha-R Family.",
+    "factionId": "mafia-char",
+    "firstAppearanceChapterId": "ch-380",
     "canonStatus": "canon",
     "shipLocation": {
       "tier": null,
       "room": null,
-      "status": "inconnu",
-      "role": "passager nommé"
+      "status": "mort",
+      "role": "Mafioso"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-380",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -42661,17 +42968,17 @@
     "id": "vict",
     "canonicalName": "Vict",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Private Soldier for Prince Benjamin Hui Guo Rou ; Royal Bodyguard for Prince Halkenburg. Kakin Empire ; Benjamin Hui Guo Rou.",
+    "factionId": "prince-benjamin",
+    "firstAppearanceChapterId": "ch-358",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
-      "role": "passager nommé"
+      "tier": 1,
+      "room": "1009",
+      "status": "actif",
+      "role": "Private Soldier for Prince Benjamin Hui Guo Rou ; Royal Bodyguard for Prince Halkenburg"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-358",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -42679,17 +42986,17 @@
     "id": "vincent",
     "canonicalName": "Vincent",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Private Soldier for Prince Benjamin Hui Guo Rou ; Royal Bodyguard for Prince Woble Hui Guo Rou. Kakin Empire ; Benjamin Hui Guo Rou.",
+    "factionId": "prince-benjamin",
+    "firstAppearanceChapterId": "ch-358",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
-      "role": "passager nommé"
+      "tier": 1,
+      "room": "1014",
+      "status": "mort",
+      "role": "Private Soldier for Prince Benjamin Hui Guo Rou ; Royal Bodyguard for Prince Woble Hui Guo Rou"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-358",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -42697,17 +43004,17 @@
     "id": "voconte",
     "canonicalName": "Voconte",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Mafioso ; Mercenary Transporter. Heil-Ly Family.",
+    "factionId": "mafia-heilly",
+    "firstAppearanceChapterId": "ch-378",
     "canonStatus": "canon",
     "shipLocation": {
       "tier": null,
       "room": null,
       "status": "inconnu",
-      "role": "passager nommé"
+      "role": "Mafioso ; Mercenary Transporter"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-378",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -42715,17 +43022,17 @@
     "id": "wolfe",
     "canonicalName": "Wolfe",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Spy for Queen Unma Hui Guo Rou (Former) ; Royal Bodyguard for Prince Benjamin Hui Guo Rou. Kakin Empire ; Unma Hui Guo Rou ; Benjamin Hui Guo Rou.",
+    "factionId": "prince-benjamin",
+    "firstAppearanceChapterId": "ch-373",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
-      "role": "passager nommé"
+      "tier": 1,
+      "room": "1001",
+      "status": "mort",
+      "role": "Spy for Queen Unma Hui Guo Rou (Former) ; Royal Bodyguard for Prince Benjamin Hui Guo Rou"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-373",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -42733,35 +43040,46 @@
     "id": "yokotani",
     "canonicalName": "Yokotani",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Mafioso ; Unscrupulous Lawyer ; Legal Advisor for the Heil-Ly Family. Heil-Ly Family.",
+    "factionId": "mafia-heilly",
+    "firstAppearanceChapterId": "ch-378",
     "canonStatus": "canon",
     "shipLocation": {
       "tier": null,
       "room": null,
       "status": "inconnu",
-      "role": "passager nommé"
+      "role": "Mafioso ; Unscrupulous Lawyer ; Legal Advisor for the Heil-Ly Family"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-378",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "black-whale-unknown",
+        "fromChapterId": "ch-358",
+        "certainty": "PROBABLE"
+      },
+      {
+        "location": "tier-2-heilly-secret-hideout",
+        "fromChapterId": "ch-399"
+      }
+    ]
   },
   {
     "id": "yuhirai",
     "canonicalName": "Yuhirai",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Bodyguard for Prince Halkenburg. Kakin Empire ; Halkenburg Hui Guo Rou.",
+    "factionId": "prince-halkenburg",
+    "firstAppearanceChapterId": "ch-362",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
-      "role": "passager nommé"
+      "tier": 1,
+      "room": "1009",
+      "status": "actif",
+      "role": "Bodyguard for Prince Halkenburg"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-362",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -42769,17 +43087,17 @@
     "id": "yuri",
     "canonicalName": "Yuri",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Prince Kacho's Servant. Kakin Empire ; Kacho Hui Guo Rou.",
+    "factionId": "prince-kacho",
+    "firstAppearanceChapterId": "ch-366",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
-      "role": "passager nommé"
+      "tier": 1,
+      "room": "1010",
+      "status": "actif",
+      "role": "Prince Kacho's Servant"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-366",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -42787,17 +43105,17 @@
     "id": "yushohi",
     "canonicalName": "Yushohi",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Private Soldier for Prince Benjamin Hui Guo Rou. Kakin Empire ; Benjamin Hui Guo Rou.",
+    "factionId": "prince-benjamin",
+    "firstAppearanceChapterId": "ch-358",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
-      "role": "passager nommé"
+      "tier": 1,
+      "room": "1001",
+      "status": "actif",
+      "role": "Private Soldier for Prince Benjamin Hui Guo Rou"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-358",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": []
   },
@@ -42805,18 +43123,34 @@
     "id": "zakuro-custard",
     "canonicalName": "Zakuro Custard",
     "aliases": [],
-    "description": "Named passenger aboard Black Whale 1. No precise position is currently documented in the local map data.",
-    "factionId": null,
-    "firstAppearanceChapterId": "ch-359",
+    "description": "Mafioso. Xi-Yu Family.",
+    "factionId": "mafia-xiyu",
+    "firstAppearanceChapterId": "ch-390",
     "canonStatus": "canon",
     "shipLocation": {
       "tier": null,
       "room": null,
       "status": "inconnu",
-      "role": "passager nommé"
+      "role": "Mafioso"
     },
-    "mapPresenceFromChapterId": "ch-359",
+    "mapPresenceFromChapterId": "ch-390",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "black-whale-unknown",
+        "fromChapterId": "ch-358",
+        "certainty": "PROBABLE"
+      },
+      {
+        "location": "tier-3-cineplex",
+        "fromChapterId": "ch-393"
+      },
+      {
+        "location": "black-whale-unknown",
+        "fromChapterId": "ch-394",
+        "certainty": "PROBABLE"
+      }
+    ]
   }
 ]

@@ -25,6 +25,24 @@ async function requiredLocation(slug) {
   return location
 }
 
+async function eventOrdinalsById() {
+  const events = await prisma.narrativeEvent.findMany({ select: { id: true, ordinal: true } })
+  return new Map(events.map((event) => [event.id, event.ordinal ?? Number.MAX_SAFE_INTEGER]))
+}
+
+/// Capping a body's earlier presences at the moment it changes hands assumes
+/// those presences all run past that moment. Once the catalogue can route a
+/// managed character through several rooms, some of them already close earlier —
+/// and rewriting their end to the later event resurrects the body in a room it
+/// had left, overlapping the leg that followed. Only presences still open, or
+/// closing after the cut, are pulled back to it.
+function closesAfter(presence, cutEvent, ordinals) {
+  if (!presence.untilEventId) return true
+  const end = ordinals.get(presence.untilEventId) ?? Number.MAX_SAFE_INTEGER
+  const cut = ordinals.get(cutEvent.id) ?? Number.MAX_SAFE_INTEGER
+  return end > cut
+}
+
 async function endOriginalOccupancy(character, untilEventId) {
   const occupancy = await prisma.bodyOccupancy.findFirst({
     where: {
@@ -126,7 +144,11 @@ async function main() {
     withoutYouReturn,
     centralHospital,
     ministryOfJustice,
+    witnessProtection,
     unknownLocation,
+    // Chapter 400 is where the confinement is on panel: Melody is let in to
+    // examine Fugetsu, who is already being held in witness protection.
+    fugetsuProtected,
   ] = await Promise.all([
     requiredCharacter('prince-halkenburg'),
     requiredCharacter('balsamilco-might'),
@@ -140,8 +162,11 @@ async function main() {
     requiredEvent('Without You rejoins Fugetsu aboard the Black Whale'),
     requiredLocation('tier-3-central-hospital'),
     requiredLocation('tier-2-ministry-of-justice'),
+    requiredLocation('tier-2-vip-witness-protection-area'),
     requiredLocation('black-whale-unknown'),
+    requiredEvent('The Phantom Troupe confirms the hideout is on Tier 2'),
   ])
+  const eventOrdinals = await eventOrdinalsById()
 
   // Grimmel the Dissonance swaps the selected supporter and target.
   await endOriginalOccupancy(sumidori, shikakuStrike.id)
@@ -200,6 +225,7 @@ async function main() {
     },
   })
   for (const presence of halkenburgPriorPresences) {
+    if (!closesAfter(presence, balsamilcoStrike, eventOrdinals)) continue
     await prisma.presence.update({
       where: { id: presence.id },
       data: { untilEventId: balsamilcoStrike.id },
@@ -249,6 +275,7 @@ async function main() {
     where: { entityId: kacho.originalBody.id },
   })
   for (const presence of kachoPresences) {
+    if (!closesAfter(presence, kachoDeath, eventOrdinals)) continue
     await prisma.presence.update({
       where: { id: presence.id },
       data: { untilEventId: kachoDeath.id },
@@ -326,6 +353,18 @@ async function main() {
     bodyId: withoutYouBody.id,
     locationId: ministryOfJustice.id,
     fromEventId: withoutYouReturn.id,
+    untilEventId: fugetsuProtected.id,
+    precision: 'ZONE',
+    certainty: 'CONFIRMED',
+  })
+  // The construct is not held in the bureau at large: it is shut in the witness
+  // protection area with Fugetsu, which is where it finds her exhausted and
+  // arranges for Melody to cross her in the halls.
+  await upsertPresence({
+    id: 'presence-without-you-witness-protection',
+    bodyId: withoutYouBody.id,
+    locationId: witnessProtection.id,
+    fromEventId: fugetsuProtected.id,
     precision: 'ZONE',
     certainty: 'CONFIRMED',
   })

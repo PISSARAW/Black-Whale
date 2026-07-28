@@ -111,6 +111,8 @@ const locationCoordinates: Record<string, Record<string, { x: number; y: number 
     'heilly-family-office': { x: 715, y: 420 },
     cineplex: { x: 715, y: 160 },
     'observation-deck': { x: 715, y: 295 },
+    'residential-first-class': { x: 270, y: 175 },
+    'residential-standard': { x: 270, y: 370 },
   },
   'tier-4': {
     'tier-4': { x: 485, y: 300 },
@@ -127,6 +129,7 @@ const locationCoordinates: Record<string, Record<string, { x: number; y: number 
     'medical-clinic': { x: 685, y: 375 },
     'cha-r-family-office': { x: 460, y: 375 },
     warehouse: { x: 560, y: 240 },
+    'area-37564': { x: 270, y: 355 },
   },
 }
 

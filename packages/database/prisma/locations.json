@@ -50,6 +50,46 @@
     "exits": ["tier-1-banquet-hall"]
   },
   {
+    "id": "tier-1-queens-living-quarters",
+    "name": "Queens' Living Quarters",
+    "parentLocationId": "tier-1",
+    "deck": 1,
+    "zoneType": "residential",
+    "description": "Bloc résidentiel attribué aux huit reines de Kakin. Le plan du navire le situe au Tier 1, mais aucune scène ne s'y déroule encore : les reines qui comptent dans la succession logent auprès de leurs fils, Oito en 1014 et Sevanti en 1013.",
+    "entrances": [],
+    "exits": []
+  },
+  {
+    "id": "tier-1-soldiers-living-quarters",
+    "name": "Soldiers' Living Quarters",
+    "parentLocationId": "tier-1",
+    "deck": 1,
+    "zoneType": "military",
+    "description": "Casernement du détachement de l'Armée royale affecté au Tier 1. Environ 2 000 gardes et soldats voyagent à bord, dont 70 % stationnés sur les Tiers 1 et 2 ; Mizaistom en redéploiera 800 vers les ponts inférieurs.",
+    "entrances": [],
+    "exits": []
+  },
+  {
+    "id": "tier-1-princes-burial-chamber",
+    "name": "Princes' Burial Chamber",
+    "parentLocationId": "tier-1",
+    "deck": 1,
+    "zoneType": "ceremonial",
+    "description": "Salle funéraire où reposent les princes tués pendant la traversée. Les funérailles de Halkenburg s'y tiennent, et Chrollo travaille le cortège avec Love Dial 6700 sous couvert de la procession.",
+    "entrances": [],
+    "exits": ["tier-1-banquet-hall"]
+  },
+  {
+    "id": "tier-1-lifeboats",
+    "name": "Lifeboat Deck",
+    "parentLocationId": "tier-1",
+    "deck": 1,
+    "zoneType": "evacuation",
+    "description": "Baies de mise à l'eau et écoutille de secours sur le flanc du Tier 1. Kacho et Fugetsu atteignent la mer libre depuis là au chapitre 383 ; c'est le seul endroit de l'arc où quelqu'un quitte physiquement le Black Whale.",
+    "entrances": [],
+    "exits": []
+  },
+  {
     "id": "tier-1-vvip-living-quarters",
     "name": "VVIP Living Quarters",
     "parentLocationId": "tier-1",
@@ -262,10 +302,10 @@
   {
     "id": "tier-2-heilly-secret-hideout",
     "name": "Heil-Ly Secret Hideout",
-    "parentLocationId": "black-whale-1",
-    "deck": null,
+    "parentLocationId": "tier-2",
+    "deck": 2,
     "zoneType": "mafia",
-    "description": "Base secrète de Morena dans un espace inconnu entre les Tiers 2 et 3. Elle possède cinq entrées et des pièces reliées par téléportation Nen ; sa relation physique exacte au navire reste incertaine.",
+    "description": "Base secrète de Morena, accessible par cinq entrées dont les pièces sont reliées par téléportation Nen — d'où l'impression durable d'un espace propre entre les Tiers 2 et 3. Le transmetteur d'Hinrigh, planté au-delà du piège de la chambre 3101, la situe au Tier 2.",
     "entrances": [],
     "exits": []
   },
@@ -366,6 +406,46 @@
     "deck": 3,
     "zoneType": "quarters",
     "description": "Chambre ordinaire du Tier 3 utilisée comme piège de téléportation vers la cachette secrète Heil-Ly ; elle n'est pas la cachette elle-même.",
+    "entrances": [],
+    "exits": []
+  },
+  {
+    "id": "tier-3-residential-first-class",
+    "name": "First-Class Residential Block",
+    "parentLocationId": "tier-3",
+    "deck": 3,
+    "zoneType": "residential",
+    "description": "Cabines supérieures du Tier 3, le meilleur logement disponible hors des ponts royaux.",
+    "entrances": [],
+    "exits": []
+  },
+  {
+    "id": "tier-3-residential-standard",
+    "name": "Standard Residential Block",
+    "parentLocationId": "tier-3",
+    "deck": 3,
+    "zoneType": "residential",
+    "description": "Cabines ordinaires du Tier 3, terrain de chasse des porteurs de Contagion de Morena : Luini y tue vingt personnes à lui seul avant de se téléporter, et la panique qui suit pousse Mizaistom à redéployer l'Armée royale.",
+    "entrances": [],
+    "exits": ["tier-3-residential-room-3101"]
+  },
+  {
+    "id": "tier-3-cineplex",
+    "name": "Cineplex",
+    "parentLocationId": "tier-3",
+    "deck": 3,
+    "zoneType": "public",
+    "description": "Cinéma du Tier 3. Bonolenov, portant le visage d'Hisoka sur ordre de Chrollo, y regarde un film en attendant que les Heil-Ly le remarquent et le déplacent ailleurs.",
+    "entrances": [],
+    "exits": []
+  },
+  {
+    "id": "tier-3-observation-deck",
+    "name": "Observation Deck",
+    "parentLocationId": "tier-3",
+    "deck": 3,
+    "zoneType": "public",
+    "description": "Pont d'observation public du Tier 3, la zone ouverte la plus haute accessible aux passagers ordinaires.",
     "entrances": [],
     "exits": []
   },
@@ -486,6 +566,16 @@
     "deck": 5,
     "zoneType": "storage",
     "description": "Entrepôt contrôlé par les Cha-R contenant des biens ordinaires et de contrebande, gardé par quatre hommes avant l'attaque de Luini et surveillé par une caméra à l'entrée.",
+    "entrances": [],
+    "exits": []
+  },
+  {
+    "id": "tier-5-area-37564",
+    "name": "Area 37564",
+    "parentLocationId": "tier-5",
+    "deck": 5,
+    "zoneType": "public",
+    "description": "Secteur numéroté du Tier 5 servant de point de rassemblement à la Brigade Fantôme une fois ses membres dispersés dans les ponts inférieurs.",
     "entrances": [],
     "exits": []
   }

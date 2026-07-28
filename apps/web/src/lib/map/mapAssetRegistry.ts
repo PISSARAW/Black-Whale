@@ -100,6 +100,8 @@ const LOCATION_ASSETS: Record<string, MapAssetKey> = {
   'vip-detention': 'vip-detention',
   lifeboats: 'lifeboats',
   't2-security': 'bulkhead',
+  't2-vip': 'heilly-hideout',
+  't5-residential': 'general-cabins',
   't3-residential-1st': 'tier3-cabins',
   't3-residential-ord': 'general-cabins',
   't3-obs-deck': 'observation-deck',
@@ -113,6 +115,74 @@ const LOCATION_ASSETS: Record<string, MapAssetKey> = {
   't4-xiyu': 'xi-yu-office',
   't5-char': 'cha-r-office',
   't5-warehouses': 'warehouse',
+}
+
+/// The deck SVGs name their clickable regions themselves, and those names are
+/// not the catalogue's location slugs: the region is `king-quarters` where the
+/// archive stores `tier-1-king-living-quarters`, `t5-warehouses` where it stores
+/// `tier-5-warehouse`. Consumers used to bridge the two with a suffix match,
+/// which silently succeeded for `banquet-hall` and silently failed for every
+/// region whose name is not a suffix of its slug — those rooms rendered empty
+/// however many people the archive placed in them. This table is the bridge:
+/// every clickable region resolves here or nowhere.
+///
+/// A `null` means the region is drawn but has no catalogued location behind it
+/// yet, so clicking it shows the deck without inventing an occupant.
+const REGION_LOCATION_SLUGS: Record<string, string | null> = {
+  // Tier 1
+  'banquet-hall': 'tier-1-banquet-hall',
+  'beyond-cell': 'tier-1-vvip-prison-beyond',
+  casino: 'tier-1-vip-casino',
+  'king-quarters': 'tier-1-king-living-quarters',
+  lifeboats: 'tier-1-lifeboats',
+  'princes-burial-chamber': 'tier-1-princes-burial-chamber',
+  'queens-living-quarters': 'tier-1-queens-living-quarters',
+  'soldiers-living-quarters': 'tier-1-soldiers-living-quarters',
+  'supreme-court': 'tier-1-supreme-court',
+  'vip-detention': 'tier-1-vip-jail',
+  'vvip-living-quarters': 'tier-1-vvip-living-quarters',
+  // Tier 2
+  't2-justice': 'tier-2-ministry-of-justice',
+  't2-reception': null,
+  't2-security': 'tier-2-bulkhead',
+  't2-vip': 'tier-2-heilly-secret-hideout',
+  // Tier 3
+  'central-courthouse': 'tier-3-central-courthouse',
+  'central-police-station': 'tier-3-central-police-station',
+  'room-3101': 'tier-3-residential-room-3101',
+  't3-access-t2': 'tier-2-bulkhead',
+  't3-cinema': 'tier-3-cineplex',
+  't3-heilly': 'tier-3-heilly-family-office',
+  't3-hospital': 'tier-3-central-hospital',
+  't3-obs-deck': 'tier-3-observation-deck',
+  't3-residential-1st': 'tier-3-residential-first-class',
+  't3-residential-ord': 'tier-3-residential-standard',
+  // Tier 4
+  'royal-army-office': 'tier-4-royal-army-conference-room',
+  't4-dist-center': null,
+  't4-dist-east': null,
+  't4-dist-west': null,
+  't4-medical-limited': null,
+  't4-recycling': 'tier-4-recycling-sewage-facilities',
+  't4-xiyu': 'tier-4-xi-yu-family-office',
+  // Tier 5
+  'central-dining-hall': 'tier-5-central-dining-hall',
+  'room-37564': 'tier-5-area-37564',
+  't5-char': 'tier-5-cha-r-family-office',
+  't5-medical-none': 'tier-5-medical-clinic',
+  't5-recycling': 'tier-4-recycling-sewage-facilities',
+  't5-residential': 'tier-5-standard-cabins',
+  't5-warehouses': 'tier-5-warehouse',
+}
+
+/// Prince apartments are drawn from one shared asset, so their region ids carry
+/// the room number instead of appearing in the table above.
+export function resolveRegionLocationSlug(regionId: string | null): string | null {
+  if (!regionId) return null
+  const princeRoom = regionId.match(/room-(10(?:0[1-9]|1[0-4]))$/)
+  if (princeRoom) return `tier-1-royal-residential-sector-room-${princeRoom[1]}`
+  if (regionId in REGION_LOCATION_SLUGS) return REGION_LOCATION_SLUGS[regionId]
+  return regionId
 }
 
 export function resolveMapAssetKey(

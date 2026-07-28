@@ -2,6 +2,7 @@
   import { page } from '$app/stores'
   import { mapState } from '$lib/state/mapState.svelte'
   import { toEnglishDisplayName } from '$lib/utils/displayNames'
+  import { resolveRegionLocationSlug } from '$lib/map/mapAssetRegistry'
 
   let locations = $derived($page.data.worldState?.locations || [])
   let presences = $derived($page.data.worldState?.presences || [])
@@ -26,7 +27,7 @@
   }
 
   let locationDetails = $derived.by(() => {
-    const targetSlug = mapState.selectedLocationId
+    const targetSlug = resolveRegionLocationSlug(mapState.selectedLocationId)
     if (!targetSlug) return null
 
     const byId = new Map<string, any>(locations.map((location: any) => [location.id, location]))

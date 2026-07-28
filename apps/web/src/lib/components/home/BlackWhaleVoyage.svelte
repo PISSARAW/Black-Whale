@@ -6,7 +6,9 @@
   }))
 </script>
 
-<div class="voyage" aria-label="Black Whale 1 navigating across the ocean">
+<!-- The label lives on the <svg> below: a bare <div> has the `generic` role,
+     which is not allowed to carry an accessible name. -->
+<div class="voyage">
   <div class="atmosphere" aria-hidden="true"></div>
   <div class="plate vessel">Black Whale 1</div>
   <div class="plate route">Kakin → New Continent</div>
@@ -133,6 +135,7 @@
           <path d="M459 53h10v22h-10Z" />
           <path class="royal-windows" d="M388 162h207M408 134h145M430 106h75" />
           <path class="mast" d="M515 95V58m0 8 30 13m-30-7-26 10" />
+          <circle class="royal-beacon" cx="515" cy="58" r="4" />
         </g>
       </g>
 
@@ -363,7 +366,17 @@
   .royal-platform {
     transform-origin: 470px 180px;
   }
+  /* The hover flourish pulses a beacon's opacity rather than animating a
+     drop-shadow on the whole platform: `filter` cannot be composited, so the
+     old version ran the signal on the main thread every frame. */
+  .royal-beacon {
+    fill: rgba(211, 185, 100, 0.9);
+    opacity: 0;
+  }
   .ship:hover .royal-platform {
+    filter: drop-shadow(0 0 8px rgba(211, 185, 100, 0.4));
+  }
+  .ship:hover .royal-beacon {
     animation: royal-signal 1.4s ease-in-out infinite alternate;
   }
   @keyframes bob {
@@ -411,8 +424,11 @@
     }
   }
   @keyframes royal-signal {
+    from {
+      opacity: 0.15;
+    }
     to {
-      filter: drop-shadow(0 0 8px rgba(211, 185, 100, 0.4));
+      opacity: 1;
     }
   }
   @media (max-width: 600px) {
@@ -432,8 +448,13 @@
     .wave-line,
     .wake path,
     .stars circle,
-    .portholes circle {
+    .portholes circle,
+    .royal-beacon {
       animation: none;
+    }
+    /* Without the pulse the beacon would never show, so light it statically. */
+    .ship:hover .royal-beacon {
+      opacity: 1;
     }
   }
 </style>

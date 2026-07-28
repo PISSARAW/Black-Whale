@@ -26,7 +26,17 @@
     </div>
   </header>
 
-  <div class="route" aria-label={`Day ${LATEST_RECORDED_DAY} of ${VOYAGE_DURATION_DAYS}`}>
+  <!-- A bare <div> has the `generic` role, which cannot carry an accessible
+       name; the track is a progress indicator, so say that outright. -->
+  <div
+    class="route"
+    role="progressbar"
+    aria-label="Voyage progress"
+    aria-valuemin={0}
+    aria-valuemax={VOYAGE_DURATION_DAYS}
+    aria-valuenow={LATEST_RECORDED_DAY}
+    aria-valuetext={`Day ${LATEST_RECORDED_DAY} of ${VOYAGE_DURATION_DAYS}`}
+  >
     <div class="track"><span class="elapsed" style:width={`${progress}%`}></span></div>
     <span class="ship" style:left={`${progress}%`} aria-hidden="true">◆</span>
     <span class="checkpoint" style:left={`${watersMarker}%`} aria-hidden="true"></span>

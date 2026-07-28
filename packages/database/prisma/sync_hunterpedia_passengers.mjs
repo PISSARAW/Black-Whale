@@ -1,3 +1,12 @@
+/**
+ * Ajoute au catalogue les passagers de Black Whale 1 encore absents, à partir de la
+ * catégorie Hunterpedia. Les fiches créées ici ne sont qu'un GABARIT : factionId null,
+ * firstAppearanceChapterId 'ch-359' et shipLocation vide sont des valeurs de remplissage,
+ * pas des observations du manga.
+ *
+ * Enchaîner systématiquement avec enrich_hunterpedia_passengers.mjs, qui lit l'infobox de
+ * chaque page pour renseigner faction, chambre et chapitre de première apparition réels.
+ */
 import { readFile, writeFile } from 'node:fs/promises'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -93,6 +102,9 @@ console.log(
       previousCatalogSize: catalog.length - additions.length,
       added: additions.length,
       catalogSize: catalog.length,
+      nextStep: additions.length
+        ? 'node packages/database/prisma/enrich_hunterpedia_passengers.mjs'
+        : null,
     },
     null,
     2,

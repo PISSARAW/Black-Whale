@@ -25,6 +25,18 @@
 
 {$DOMAIN} {
 	import security_headers
+
+	# SvelteKit only marks its own hashed bundles (`/_app/immutable`) as
+	# cacheable; everything under `static/` is served with no freshness at all,
+	# so the fonts are re-fetched on every visit. These filenames are stable and
+	# their contents never change in place — a new face gets a new file name.
+	header /fonts/* Cache-Control "public, max-age=31536000, immutable"
+	# The icons and the share card do get replaced in place occasionally, so they
+	# get a long-but-revalidatable window instead of `immutable`.
+	header /favicon.svg Cache-Control "public, max-age=604800"
+	header /apple-touch-icon.png Cache-Control "public, max-age=604800"
+	header /og-default.png Cache-Control "public, max-age=604800"
+
 	encode zstd gzip
 	reverse_proxy web:3000 {
 		import client_ip

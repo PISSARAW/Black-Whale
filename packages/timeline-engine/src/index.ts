@@ -399,3 +399,15 @@ export async function listCanonicalEvents(prisma: PrismaClient, spoilerLimit?: n
   )
   return events.map((event) => ({ ...event, cursor: cursorByEvent.get(event.id) }))
 }
+
+// ──────────────────────────────────────────────
+// Pure derivations
+// ──────────────────────────────────────────────
+//
+// Reconstructing a snapshot needs the database; reading one does not. These
+// modules hold the logic that used to sit inline in SvelteKit `load`s, where
+// it could only be exercised by booting a route with a seeded database.
+
+export * from './selection.js'
+export * from './snapshot.js'
+export * from './affiliations.js'

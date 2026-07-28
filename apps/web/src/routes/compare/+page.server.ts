@@ -1,9 +1,10 @@
+import { resolveComparisonSelection } from '$lib/server/compare-selection'
 import { prisma } from '$lib/server/db'
 import { buildPerspective, comparePerspectives } from '$lib/server/perspectives'
 import { readSpoilerProfile } from '$lib/server/spoiler'
 import type { PageServerLoad } from './$types'
 import { filterVisible } from '@black-whale/spoiler-engine'
-import { TimelineEngine } from '@black-whale/timeline-engine'
+import { buildCanonicalPositions, TimelineEngine } from '@black-whale/timeline-engine'
 
 export const load: PageServerLoad = async ({ cookies, url }) => {
   const spoilerProfile = readSpoilerProfile(cookies)
@@ -28,17 +29,8 @@ export const load: PageServerLoad = async ({ cookies, url }) => {
   })
 
   const defaultEvent = events[events.length - 1]
-  const selectedEventId = url.searchParams.get('eventId') || defaultEvent?.id || ''
-  const selectedLeft = url.searchParams.get('left') || characters[0]?.id || ''
-  const selectedRight = url.searchParams.get('right') || characters[1]?.id || ''
-  const compareCanonical = url.searchParams.get('canonical') === '1'
-
-  const sync = {
-    zoom: Number(url.searchParams.get('zoom') || '1'),
-    tier: url.searchParams.get('tier') || 'tier-1',
-    zone: url.searchParams.get('zone') || '',
-    subject: url.searchParams.get('subject') || '',
-  }
+  const { selectedEventId, selectedLeft, selectedRight, compareCanonical, sync } =
+    resolveComparisonSelection(url.searchParams, { characters, events })
 
   let leftPerspective: any = null
   let rightPerspective: any = null
@@ -99,21 +91,9 @@ export const load: PageServerLoad = async ({ cookies, url }) => {
           },
         })
 
-        const bodyById = new Map((rawWorld.bodies || []).map((body: any) => [body.id, body]))
-        const positions: Record<string, { locationId: string | null; certainty: string }> = {}
-
-        for (const presence of rawWorld.presences || []) {
-          const body = bodyById.get(presence.entityId)
-          const subjectId = body?.originalCharacterId || presence.entityId
-          positions[subjectId] = {
-            locationId: presence.locationId || null,
-            certainty: presence.certainty || 'CONFIRMED',
-          }
-        }
-
         canonicalTruth = {
           facts: objectiveFacts,
-          positions,
+          positions: buildCanonicalPositions(rawWorld),
           chapter: selectedEventChapter || null,
           restrictedBySpoiler: spoilerProfile?.maxChapter ?? null,
         }

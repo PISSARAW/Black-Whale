@@ -123,7 +123,7 @@ export const HATSU_SITE_IMPACT_BY_KIND = {
   tribunal: 'control',
   curse: 'control',
   inherit: 'control',
-  blast: 'layout',
+  blast: 'control',
   surveillance: 'data-revelation',
   capture: 'control',
   future: 'data-revelation',
@@ -131,10 +131,10 @@ export const HATSU_SITE_IMPACT_BY_KIND = {
   guardian: 'simulation-state',
   portal: 'map-state',
   resurrection: 'control',
-  poetry: 'navigation',
+  poetry: 'content-access',
   restoration: 'map-state',
   transformation: 'content-access',
-  rhythm: 'navigation',
+  rhythm: 'control',
   impact: 'content-access',
   mimicry: 'control',
   theft: 'control',
@@ -158,10 +158,10 @@ export const HATSU_SITE_IMPACT_BY_KIND = {
   'remote-strike': 'control',
   spatial: 'storage',
   stitch: 'control',
-  melody: 'navigation',
+  melody: 'control',
   infection: 'control',
   windup: 'content-access',
-  predator: 'content-access',
+  predator: 'control',
   staff: 'control',
   senses: 'control',
   vacuum: 'storage',
@@ -530,7 +530,7 @@ export const HATSU_PROFILES: HatsuProfile[] = [
     owner: 'Kurapika',
     kind: 'scarlet',
     instruction:
-      'Restore any faded or restricted element to full efficiency while every active second consumes one hour of session life.',
+      'Sweep a whole section at 100% efficiency in every category at once; each activation bills three more hours of session life.',
     rule: 'Scarlet eyes grant 100% efficiency in every Nen category, but one year consumed forces five minutes of Zetsu.',
     cost: '1 second = 1 hour of life',
     color: '#ef3340',
@@ -542,7 +542,7 @@ export const HATSU_PROFILES: HatsuProfile[] = [
     owner: 'Kurapika',
     kind: 'chain-rule',
     instruction:
-      'Drive the chain into a map character to drain their aura and capture the first registered Hatsu in the Index Dolphin card.',
+      'Drive the syringe into a map character to drain their aura, hold them in Zetsu and keep one of their registered Hatsu.',
     rule: 'The target is forced into an aura-depleted state while the stolen ability becomes available to Kurapika.',
     cost: 'Contact, maintained drain and one captured ability',
     color: '#d7dce2',
@@ -578,7 +578,7 @@ export const HATSU_PROFILES: HatsuProfile[] = [
     owner: 'Benjamin',
     kind: 'enhance',
     instruction:
-      'Click a target repeatedly to stack up to five layers of Ren, increasing its size, brightness and resistance.',
+      'Click a target repeatedly to stack up to five layers of Ren; the fifth spills the mantle onto everything beside it.',
     rule: 'Benjamin’s immense aura reinforces physical output and defence in proportion to the aura committed.',
     cost: 'Increasing aura per reinforcement layer',
     color: '#f0b429',
@@ -626,7 +626,7 @@ export const HATSU_PROFILES: HatsuProfile[] = [
     owner: 'Sayird',
     kind: 'scout',
     instruction:
-      'Move the remote eye to detect aura, then click a non-character area to open a detached visual and auditory scouting feed.',
+      'Move the remote eye to detect aura, then click a target no bigger than a hamster to open its visual and auditory feed.',
     rule: 'Only a real small creature can be possessed; people and materialized Nen life are invalid hosts.',
     cost: 'Very low aura · vulnerable animal host',
     color: '#55c2ff',
@@ -638,7 +638,7 @@ export const HATSU_PROFILES: HatsuProfile[] = [
     owner: 'Mizaistom',
     kind: 'tribunal',
     instruction:
-      'Click one target through Blue admission, Yellow warning, reversed Yellow restraint and Red expulsion.',
+      'Click one target through Blue admission, Yellow control, reversed Yellow restraint — which wears off — and Red dismissal.',
     rule: 'Restraint activates only after the warning is ignored, prevents movement but not speech, and can be reapplied.',
     cost: 'Brief reusable card effects',
     color: '#f0c94d',
@@ -650,7 +650,7 @@ export const HATSU_PROFILES: HatsuProfile[] = [
     owner: 'Beyond',
     kind: 'curse',
     instruction:
-      'Choose the distant victim, choose a separate sacrificial carrier, then click the carrier again to trigger the post-mortem curse.',
+      'Choose the distant victim; the sacrifice among its own is chosen with it and hidden, so use Gyo to find the mark before spending it.',
     rule: 'The dormant mark awakens its carrier from birth and kills the preselected target only when that sacrifice dies.',
     cost: 'Prepared child sacrifice · death · post-mortem Nen',
     color: '#9d65d0',
@@ -674,7 +674,7 @@ export const HATSU_PROFILES: HatsuProfile[] = [
     owner: 'Benjamin / Vincent',
     kind: 'blast',
     instruction:
-      'Click an element to emit a ranged palm shock that breaks its guard and physically knocks it across the page.',
+      'Click an element from any distance to strip the guards another technique put on it; nothing is moved and nothing is touched.',
     rule: 'The inherited emission attack strikes without direct contact; its complete conditions remain unknown.',
     cost: 'Unknown emitted aura',
     color: '#c6f1ff',
@@ -766,11 +766,11 @@ export const HATSU_PROFILES: HatsuProfile[] = [
   },
   {
     id: 'great-haiku',
-    name: 'Great Haiku',
+    name: 'Great Hiker',
     owner: 'Basho',
     kind: 'poetry',
     instruction:
-      'Select three pieces of page copy to compose a haiku; the finished verse materializes as a navigable three-stop path through the site.',
+      'Select three pieces of page copy; a word of light purifies what it names, a word of fire burns it, and a poem with neither does nothing.',
     rule: 'The result grows stronger when the three selected lines form a convincing poem.',
     cost: 'Three lines · quality determines power',
     color: '#e7c873',
@@ -806,7 +806,7 @@ export const HATSU_PROFILES: HatsuProfile[] = [
     owner: 'Bonolenov',
     kind: 'rhythm',
     instruction:
-      'Strike page elements in sequence; each beat becomes a playable navigation step in the combat score.',
+      'Play the piece over one element to conjure its warrior attire and spear: it gains reach over its neighbours and cover against everything else.',
     rule: 'Air passing through the body’s holes becomes battle music whose rhythm carries the technique.',
     cost: 'Continuous movement and rhythm',
     color: '#d7b56d',
@@ -818,7 +818,7 @@ export const HATSU_PROFILES: HatsuProfile[] = [
     owner: 'Bonolenov',
     kind: 'impact',
     instruction:
-      'Choose a target and drop a miniature Jupiter on it, collapsing that part of the page under immense weight.',
+      'Conjure Jupiter over a target; once the dance is done it chases, and only leaving earshot of the music escapes it.',
     rule: 'The conjured planet crushes the designated target with overwhelming mass.',
     cost: 'One massive impact',
     color: '#d9935b',
@@ -830,7 +830,7 @@ export const HATSU_PROFILES: HatsuProfile[] = [
     owner: 'Bonolenov',
     kind: 'mimicry',
     instruction:
-      'Select a model, then another element; the second adopts its form and reproduces its site action when clicked.',
+      'Spend time on a model to buy time in its form, then transform another element; the form drops by itself when that time runs out.',
     rule: 'Battle music changes Bonolenov’s appearance into a chosen identity or object.',
     cost: 'Model plus target',
     color: '#a889c8',
@@ -878,7 +878,7 @@ export const HATSU_PROFILES: HatsuProfile[] = [
     owner: 'Chrollo',
     kind: 'pocket',
     instruction:
-      'Click any section to shrink it into a cloth token; click the token to restore it at full size.',
+      'Click any section to wrap it down to a palm-sized bundle; click the bundle to let it back out at full size, undamaged.',
     rule: 'Anything wrapped by the cloth is reduced and stored without damage.',
     cost: 'Stored targets remain bound',
     color: '#d9d1bd',
@@ -889,7 +889,8 @@ export const HATSU_PROFILES: HatsuProfile[] = [
     name: 'Teleport',
     owner: 'Chrollo',
     kind: 'teleport',
-    instruction: 'Select two page elements to exchange their exact positions instantly.',
+    instruction:
+      'Click one element to move it somewhere else on the page; you do not choose where it lands and it is not asked.',
     rule: 'The stolen technique forcibly relocates targets without requiring visible travel.',
     cost: 'Two valid destinations',
     color: '#7dd4d0',
@@ -901,7 +902,7 @@ export const HATSU_PROFILES: HatsuProfile[] = [
     owner: 'Chrollo',
     kind: 'polarity',
     instruction:
-      'Mark one element with the Sun and another with the Moon; touching either detonates both marks and blasts the two targets away.',
+      'Mark the Sun, hold the contact to charge it, then mark the Moon; the pair only goes off once the two marks touch, and a full charge takes the neighbours.',
     rule: 'Opposite marks explode on contact and persist through post-mortem Nen.',
     cost: 'One Sun mark plus one Moon mark',
     color: '#ffb347',
@@ -913,7 +914,7 @@ export const HATSU_PROFILES: HatsuProfile[] = [
     owner: 'Chrollo',
     kind: 'command',
     instruction:
-      'Stamp non-interactive blocks, then click a destination to command every stamped puppet to march there.',
+      'Stamp lifeless blocks that have a head, then click a destination to give all three puppets one simple order.',
     rule: 'The stamp controls puppets as objects, never beings the user considers alive.',
     cost: 'Only inanimate page bodies',
     color: '#cf6d62',
@@ -937,7 +938,7 @@ export const HATSU_PROFILES: HatsuProfile[] = [
     owner: 'Chrollo',
     kind: 'divination',
     instruction:
-      'Click page elements to make the dial measure affinity and point toward the strongest match on the current page.',
+      'Dial from an area to learn only whether the ideal partner is in range; the handset then refuses until you move, and it has six calls a day.',
     rule: 'The phone-like divination tool guides its user toward a desired person through changing compatibility readings.',
     cost: 'Repeated readings improve direction',
     color: '#f08db6',
@@ -949,7 +950,7 @@ export const HATSU_PROFILES: HatsuProfile[] = [
     owner: 'Chrollo',
     kind: 'prophecy',
     instruction:
-      'Select a character or section to write a four-line prophecy whose foretold links become navigable routes.',
+      'Select a subject carrying a name, a date and a type; the first quatrain is always its past, and the foretold links become routes.',
     rule: 'Automatic writing predicts the target’s immediate future in cryptic verse while hiding their own prophecy from them.',
     cost: 'Target information and written medium',
     color: '#d8c7ed',
@@ -961,7 +962,7 @@ export const HATSU_PROFILES: HatsuProfile[] = [
     owner: 'Chrollo',
     kind: 'clone',
     instruction:
-      'Click a page element to place a perfect-looking inert duplicate over its interaction space as a functional decoy.',
+      'Click a page element to lay a perfect-looking inert duplicate beside it: the copy answers to nothing the original does.',
     rule: 'Gallery Fake creates exact copies that lack the original’s living qualities and special powers.',
     cost: 'Copies vanish after twenty-four hours',
     color: '#a7c8c5',
@@ -973,7 +974,7 @@ export const HATSU_PROFILES: HatsuProfile[] = [
     owner: 'Chrollo',
     kind: 'puppet',
     instruction:
-      'Plant an antenna in a button or link, then click anywhere to remotely force the captured control to act.',
+      'Plant both antennae in buttons or links, then click anywhere; the order goes into one of them and never says which.',
     rule: 'The antenna grants total remote control until removed or the target is destroyed.',
     cost: 'One antenna and one controller',
     color: '#7f92b8',
@@ -985,7 +986,7 @@ export const HATSU_PROFILES: HatsuProfile[] = [
     owner: 'Franklin',
     kind: 'barrage',
     instruction:
-      'Every click fires paired aura bullets that knock page elements backward; rapid fire compounds the displacement.',
+      'Every click sprays the target and everything standing beside it; Nen constructs do not stop the bullets.',
     rule: 'Severed fingertips emit a sustained, powerful volley whose force rewards commitment.',
     cost: 'Continuous emitted aura',
     color: '#e6ad57',
@@ -997,7 +998,7 @@ export const HATSU_PROFILES: HatsuProfile[] = [
     owner: 'Hanzo',
     kind: 'projection',
     instruction:
-      'Click a section to disable the sleeping body and send an astral double through the section’s extracted route.',
+      'Send the double out of a section and it passes through anything; touching the sleeping body it left behind pulls it straight back.',
     rule: 'Hanzo’s consciousness leaves his sleeping body as an invisible double but must return if the body is disturbed.',
     cost: 'Motionless unconscious body',
     color: '#8bd1cf',
@@ -1009,7 +1010,7 @@ export const HATSU_PROFILES: HatsuProfile[] = [
     owner: 'Hinrigh',
     kind: 'animate',
     instruction:
-      'Click a nonliving interface object to animate it; transformed controls crawl toward the cursor while retaining their original function.',
+      'Click a nonliving object to animate it a few seconds later, keeping its function; ten small bodies a day, two large, and the aura runs out.',
     rule: 'Touched machines and objects become living animals without losing their practical properties.',
     cost: 'Direct contact with an object',
     color: '#77c887',
@@ -1021,7 +1022,7 @@ export const HATSU_PROFILES: HatsuProfile[] = [
     owner: 'Illumi',
     kind: 'needle',
     instruction:
-      'Pierce page elements with needles; converted targets lose their own action and obediently follow the cursor.',
+      'Pierce an element with one needle and one order; it carries the order out until it burns itself out, and survives crippled.',
     rule: 'Needles overwrite autonomy and turn people into disposable puppets until exhaustion or death.',
     cost: 'One needle per puppet',
     color: '#b6a4d8',
@@ -1045,7 +1046,7 @@ export const HATSU_PROFILES: HatsuProfile[] = [
     owner: 'Kalluto',
     kind: 'shred',
     instruction:
-      'Click a target repeatedly to slice it into finer paper strips until its content scatters away.',
+      'The first confetti sticks at the exact point you click; every volley after that converges on that same wound, wherever you aim.',
     rule: 'A fan controls razor paper confetti capable of tracking and cutting a chosen target.',
     cost: 'Sustained paper swarm',
     color: '#f1a7bb',
@@ -1057,7 +1058,7 @@ export const HATSU_PROFILES: HatsuProfile[] = [
     owner: 'Leorio',
     kind: 'remote-strike',
     instruction:
-      'Click any target: aura crosses the page and remotely triggers the control or disclosure struck by the reproduced fist.',
+      'Strike an element and the aura runs along its surface, coming up under another element on that same surface; strike again for another fist.',
     rule: 'Aura travels through a surface and reproduces the punch at a distant point.',
     cost: 'A connected surface and emitted aura',
     color: '#62c6e8',
@@ -1069,7 +1070,7 @@ export const HATSU_PROFILES: HatsuProfile[] = [
     owner: 'Luini',
     kind: 'spatial',
     instruction:
-      'Send sections through the page boundary into a hidden room; reopen the spatial hatch to bring them back.',
+      'Send sections into the hidden room, which only opens from a section with a single way out; unsealing that section burns it for good.',
     rule: 'Luini passes through walls into a private connected space but must respect his marked entry points.',
     cost: 'Prepared boundary and return route',
     color: '#8a78d6',
@@ -1081,7 +1082,7 @@ export const HATSU_PROFILES: HatsuProfile[] = [
     owner: 'Machi',
     kind: 'stitch',
     instruction:
-      'Select two sections to sew them into one sticky body; activating either stitched edge pulls the counterpart into action.',
+      'Sew two sections together — the shorter the thread, the stronger the seam — or sew a section to itself to put back what was cut off it.',
     rule: 'Aura threads reconnect severed flesh with exceptional speed and precision.',
     cost: 'Thread length and precision',
     color: '#dd77b7',
@@ -1093,7 +1094,7 @@ export const HATSU_PROFILES: HatsuProfile[] = [
     owner: 'Melody',
     kind: 'melody',
     instruction:
-      'Click elements to add notes; every three-note phrase guides site focus through the selected emotional sequence.',
+      'Play three notes and every other section stops noticing anything for three minutes, however many of them are listening.',
     rule: 'Music carries aura directly into listeners, soothing them and shaping their emotional state.',
     cost: 'Continuous performance and hearing',
     color: '#70c6d7',
@@ -1105,7 +1106,7 @@ export const HATSU_PROFILES: HatsuProfile[] = [
     owner: 'Morena',
     kind: 'infection',
     instruction:
-      'Infect an element, then click infected nodes to spread levels through neighboring content until the page becomes a Heil-Ly network.',
+      'Infect a member at level 0, then point it at targets: a plain one is worth 1, a character 10, a heading 50, an ability comes at 20 and Member Zero at 100.',
     rule: 'Members gain levels through murder and unlock power at thresholds while infection spreads only by Morena’s kiss.',
     cost: 'Membership, targets and escalating levels',
     color: '#d94f68',
@@ -1117,7 +1118,7 @@ export const HATSU_PROFILES: HatsuProfile[] = [
     owner: 'Phinks',
     kind: 'windup',
     instruction:
-      'Click the same target to wind the arm; six rotations release the stored impact and remove that section from use.',
+      'Wind the arm on one target, then punch a different one; under four rotations does nothing and over seven takes the bystanders too.',
     rule: 'Every full arm rotation increases the aura concentrated in the next punch.',
     cost: 'Visible wind-up time',
     color: '#f2c34f',
@@ -1129,7 +1130,7 @@ export const HATSU_PROFILES: HatsuProfile[] = [
     owner: 'Rihan',
     kind: 'predator',
     instruction:
-      'Study the same interface species three times; once its rules are known, Predator materializes and removes every matching target.',
+      'Read one registered Hatsu three times on your own; Predator then counters it everywhere it is carried, and costs all Nen for forty-eight hours.',
     rule: 'Predator becomes stronger and more specialized as Rihan correctly deduces an enemy ability’s conditions.',
     cost: 'Accurate analysis · weak against unknowns',
     color: '#7bb66c',
@@ -1141,7 +1142,7 @@ export const HATSU_PROFILES: HatsuProfile[] = [
     owner: 'Saiyu',
     kind: 'staff',
     instruction:
-      'Plant the staff on an element to pin it and repel neighboring content away from the impact point.',
+      'Plant the staff and lengthen it: every thrust reaches one body further out along the row.',
     rule: 'The conjured staff extends and strikes with force at close or mid range.',
     cost: 'One controlled staff',
     color: '#d5a94f',
@@ -1165,7 +1166,7 @@ export const HATSU_PROFILES: HatsuProfile[] = [
     owner: 'Shizuku',
     kind: 'vacuum',
     instruction:
-      'Click nonliving page content to vacuum it into Blinky’s storage; living character markers are rejected.',
+      'Name and vacuum nonliving content; Nen refuses to go in, which exposes traps, and a living target gets its foreign effects drawn out instead.',
     rule: 'Blinky sucks up any nonliving matter Shizuku names, except Nen constructs and things she considers alive.',
     cost: 'Declared nonliving target',
     color: '#85b9d8',
@@ -1201,7 +1202,7 @@ export const HATSU_PROFILES: HatsuProfile[] = [
     owner: 'Gel',
     kind: 'serpent',
     instruction:
-      'Click an element to coil the transformed arm around it; the restrained target compresses and cannot act until clicked again.',
+      'Coil the arm three times to tighten it — pinned from the second — and a fourth touch lets go of everything at once.',
     rule: 'Gel partially transforms her arm into a snake capable of instantly restraining a Zodiac-level target.',
     cost: 'Maintained partial transformation',
     color: '#86c98a',
@@ -1237,7 +1238,7 @@ export const HATSU_PROFILES: HatsuProfile[] = [
     owner: "Camilla's Have-Nots",
     kind: 'postmortem-curse',
     instruction:
-      'Perform five preparation rites on the same target; the final click simulates the user’s sacrifice and releases the aura-draining curse.',
+      'Name the target, keep something connected to it, then perform five rites on that object; distance decides the delay and the fifth ends the user.',
     rule: 'Years of fixation, a connected object, ashes, proximity and suicide empower a post-mortem curse against one target.',
     cost: 'Long preparation · connected object · user’s life',
     color: '#a04f68',
@@ -1249,7 +1250,7 @@ export const HATSU_PROFILES: HatsuProfile[] = [
     owner: 'Kurapika',
     kind: 'healing',
     instruction:
-      'Click damaged, hidden or disabled content to restore its original state and reopen its controls.',
+      'Close a wound in two passes; content that is not damaged gives the cross nothing to work on.',
     rule: 'The cross-tipped thumb chain accelerates natural healing and reaches full restorative efficiency during Emperor Time.',
     cost: 'Enhancement aura · strongest under Emperor Time',
     color: '#d9f1df',
@@ -1261,7 +1262,7 @@ export const HATSU_PROFILES: HatsuProfile[] = [
     owner: 'Kurapika',
     kind: 'heart-vow',
     instruction:
-      'Choose a subject, choose a forbidden site action, then touch that forbidden action again to enforce the lethal heart condition.',
+      'Put the stake in one subject and declare up to two rules onto that same subject; touching anything else is the violation.',
     rule: 'The implanted chain pierces the heart only when the declared rule is knowingly violated.',
     cost: 'Emperor Time · explicit rule · lethal enforcement',
     color: '#d7dce2',
@@ -1273,7 +1274,7 @@ export const HATSU_PROFILES: HatsuProfile[] = [
     owner: 'Kurapika',
     kind: 'ability-loan',
     instruction:
-      'Select a Nen user to analyze their registered Hatsu, then select a recipient and activate the single-use loan from the dolphin panel.',
+      'Read out what Steal Chain has already taken, then loan it to one recipient; it is spent after a single use and a non-user is awakened by it.',
     rule: 'The dolphin exists during Emperor Time, explains the captured ability and opens a non-user’s aura nodes when the loan is consumed.',
     cost: 'Emperor Time remains active until the loaded ability is used',
     color: '#63d5e6',
@@ -1285,7 +1286,7 @@ export const HATSU_PROFILES: HatsuProfile[] = [
     owner: 'Longhi',
     kind: 'contract',
     instruction:
-      'Choose two consenting parties, then choose a clause; touching that clause again records a breach and applies the agreed penalty.',
+      'Two parties sign voluntarily; touching either of them honours the terms and rewards both, touching anyone else is a breach worth a week of Zetsu.',
     rule: 'Only a voluntary agreement with explicit terms can be rewarded or punished by the Manipulation contract.',
     cost: 'Mutual consent · declared duration and penalty',
     color: '#c6ddff',
@@ -1297,7 +1298,7 @@ export const HATSU_PROFILES: HatsuProfile[] = [
     owner: 'Lynch',
     kind: 'truth-punch',
     instruction:
-      'Punch a section after questioning it to extract its real destinations, hidden controls and factual DOM state into a truth report.',
+      'Ask once and punch; keep hitting the same target and its own voice expands on the answer it already gave.',
     rule: 'The body’s emitted voice answers the question truthfully even when the conscious target lies or stays silent.',
     cost: 'A direct punch after a clear question',
     color: '#f1a06d',
@@ -1309,7 +1310,7 @@ export const HATSU_PROFILES: HatsuProfile[] = [
     owner: 'Zakuro',
     kind: 'blood-search',
     instruction:
-      'Release searching blood drops onto a section; they find its routes and characters and return them as a navigable search trail.',
+      'Release a drop and leave it: it reports its findings on its own over the next minutes, then dries up and takes them with it.',
     rule: 'Only Zakuro’s own blood can be manipulated; autonomous eyed droplets expire after roughly thirty to forty minutes.',
     cost: 'Open wound · carried blood supply · limited search time',
     color: '#b51f3c',
@@ -1321,7 +1322,7 @@ export const HATSU_PROFILES: HatsuProfile[] = [
     owner: 'Yokotani',
     kind: 'legal-defense',
     instruction:
-      'Designate the Heil-Ly hideout, identify an intruder and click them again to sentence and expel them from that site section.',
+      'Designate the hideout, then stand a numbered guard on any intruder inside it: it can do nothing, and nothing can be done to it.',
     rule: 'The invincible guards work only in Morena’s hideout after Yokotani identifies unlawful intruders; they expel but cannot injure.',
     cost: 'Morena present · hideout only · declared offense',
     color: '#d4c58b',
@@ -1333,7 +1334,7 @@ export const HATSU_PROFILES: HatsuProfile[] = [
     owner: 'Terebellum',
     kind: 'damage-transfer',
     instruction:
-      'Touch a protected element and a recipient; hitting the protected element again transfers its collapse to the recipient.',
+      'Rest the left hand on a recipient first; every blow after that lands there instead, and striking the recipient itself makes it take the damage.',
     rule: 'Damage is redirected between touched targets rather than erased, with stricter limits when living bodies are involved.',
     cost: 'Prior contact with both source and recipient',
     color: '#db8b78',
@@ -1345,7 +1346,7 @@ export const HATSU_PROFILES: HatsuProfile[] = [
     owner: 'Voconte',
     kind: 'door-network',
     instruction:
-      'Mark sections as rooms; the generated door network becomes a panel for moving focus directly between them.',
+      'Arm one frame and one return frame; stepping into either comes out at the other, walking past does nothing, and Nen constructs are not moved.',
     rule: 'The doors connect prepared rooms throughout the Heil-Ly base instead of opening unrestricted portals anywhere.',
     cost: 'Prepared hideout walls and connected rooms',
     color: '#7ec8b6',
@@ -1353,11 +1354,11 @@ export const HATSU_PROFILES: HatsuProfile[] = [
   },
   {
     id: 'padaille-weapon-transformation',
-    name: 'Weapon Transformation',
+    name: 'I’m Coming to Get You',
     owner: 'Padaille',
     kind: 'weapon-body',
     instruction:
-      'Transform a button, link or disclosure into a body weapon, then strike with it to execute the control as an attack.',
+      'Cycle the hand through hammer, drill and axe: one flattens the target, one bores open what it kept shut, one takes a part off it.',
     rule: 'Padaille changes his own body into familiar weapons and tools rather than conjuring independent equipment.',
     cost: 'Known weapon shape · transformed body part',
     color: '#c6925e',
@@ -1381,7 +1382,7 @@ export const HATSU_PROFILES: HatsuProfile[] = [
     owner: 'Zhang Lei Guardian Beast',
     kind: 'coin-growth',
     instruction:
-      'Give a target a coin and revisit it to accumulate value; threshold growth progressively opens concealed content and controls.',
+      'Revisit the same holder to multiply the coin by ten and eventually awaken it; giving the coin to anyone else resets it to 1 and wipes what was accumulated.',
     rule: 'One coin is produced daily, accumulates Nen over time and resets to value one whenever ownership changes.',
     cost: 'Long accumulation · transfer resets value',
     color: '#d7b34f',
@@ -1393,7 +1394,7 @@ export const HATSU_PROFILES: HatsuProfile[] = [
     owner: 'Tserriednich Guardian Beast',
     kind: 'lie-marks',
     instruction:
-      'Mark the same suspect for three detected lies: cut, infected warning, then irreversible removal of their site autonomy.',
+      'The beast judges each answer and only marks the ones it reads as lies: a cut, then an infected warning, then something no longer itself.',
     rule: 'Each lie escalates the curse and the third transforms the liar into something no longer human.',
     cost: 'Three lies told in Tserriednich’s presence',
     color: '#9e6d89',
@@ -1405,7 +1406,7 @@ export const HATSU_PROFILES: HatsuProfile[] = [
     owner: 'Tubeppa Guardian Beast',
     kind: 'drug-synthesis',
     instruction:
-      'Choose two collaborating page components; the Beast synthesizes a treatment that restores and enables both.',
+      'Choose two collaborating components; two carrying routes give a shortcut, two carrying material give a revelation, and a mismatched pair gives an inert batch.',
     rule: 'The chemical-producing Beast requires a collaborative partner and can create many effects whose limits remain unknown.',
     cost: 'Active alliance · two cooperating components',
     color: '#91bd72',
@@ -1417,7 +1418,7 @@ export const HATSU_PROFILES: HatsuProfile[] = [
     owner: 'Tyson Guardian Beast',
     kind: 'aura-levy',
     instruction:
-      'Attach Eye-wogs to selected readers; each reading drains a control while adding its destination to a shared happiness path.',
+      'Attach an Eye-wog to a reader: it levies one control and returns happiness in proportion to how much was read; asking twice breaks the one taboo.',
     rule: 'Depth of engagement with Tyson’s Book determines returned happiness, while violating its single taboo brings punishment.',
     cost: 'Book exposure · continuous aura levy',
     color: '#ef91c4',
@@ -1429,7 +1430,7 @@ export const HATSU_PROFILES: HatsuProfile[] = [
     owner: 'Luzurus Guardian Beast',
     kind: 'desire-trap',
     instruction:
-      'Choose a desired destination, then a bait control; touching the bait again springs the trap and forces navigation to the desire.',
+      'Read a target and the Beast materializes its desire as bait; the coercion only starts once the bait is taken.',
     rule: 'The Beast materializes what its victim wants and applies pseudo-coercive Manipulation only after the bait is accepted.',
     cost: 'Known desire · voluntarily satisfied bait',
     color: '#98b65c',
@@ -1453,7 +1454,7 @@ export const HATSU_PROFILES: HatsuProfile[] = [
     owner: 'Momoze Guardian Beast',
     kind: 'solicitation',
     instruction:
-      'Ask one target twice: choosing another target represents refusal and continued harassment; clicking the same target accepts possession.',
+      'Ask a target and touch it again for yes; every target left unanswered keeps being pestered, and only one body can be held at a time.',
     rule: 'Only an affirmative answer lets the spider enter the ear and manipulate the victim using their own aura.',
     cost: 'Repeated solicitation · explicit yes · heavy host fatigue',
     color: '#e8a9a1',
@@ -1465,7 +1466,7 @@ export const HATSU_PROFILES: HatsuProfile[] = [
     owner: 'Marayam Guardian Beast',
     kind: 'room-isolation',
     instruction:
-      'Choose a room section to isolate it; surrounding content loses access while the protected room remains fully interactive inside.',
+      'Isolate the real room, then watch anyone outside who reaches for it arrive in an empty copy instead.',
     rule: 'Occupants may leave the real room but outsiders and former occupants can reach only an empty spatial duplicate.',
     cost: 'Protected room · one-way perceptual boundary',
     color: '#7095d6',

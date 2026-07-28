@@ -85,9 +85,10 @@
       {/if}
     </div>
 
-    <div class="ship-visual"><BlackWhaleVoyage /><VoyageProgress /></div>
-
-    <div class="hero-index" aria-hidden="true">001</div>
+    <div class="ship-visual">
+      <div class="voyage-bleed"><BlackWhaleVoyage /></div>
+      <VoyageProgress />
+    </div>
   </section>
 
   <section class="metrics reveal-on-scroll" aria-label="Archive metrics">
@@ -259,14 +260,6 @@
     justify-self: center;
     gap: 0.8rem;
   }
-  .hero-index {
-    position: absolute;
-    right: 1.5rem;
-    bottom: 1rem;
-    color: rgba(240, 238, 230, 0.035);
-    font: 500 clamp(8rem, 20vw, 18rem)/0.75 var(--font-display);
-    pointer-events: none;
-  }
   .metrics {
     display: grid;
     max-width: var(--container-wide);
@@ -299,7 +292,7 @@
   .manifest {
     max-width: var(--container-wide);
     margin: 0 auto;
-    padding: clamp(6rem, 12vw, 11rem) var(--page-gutter);
+    padding: clamp(4.5rem, 8vw, 7.5rem) var(--page-gutter);
   }
   .manifest > header {
     display: grid;
@@ -328,10 +321,15 @@
     grid-template-columns: repeat(3, 1fr);
     border-top: 1px solid var(--line-default);
   }
+  /* The copy sits at the foot of the card and the index at its head; the space
+     between them is whatever is left, rather than a fixed heading margin that
+     leaves a dead band at the top. */
   .dossier-card {
     position: relative;
-    min-height: 24rem;
-    padding: 1.5rem;
+    display: flex;
+    min-height: 19rem;
+    flex-direction: column;
+    padding: 1.5rem 1.5rem 4rem;
     border-right: 1px solid var(--line-default);
     color: inherit;
     text-decoration: none;
@@ -362,7 +360,7 @@
   }
   .dossier-card h3 {
     max-width: 18rem;
-    margin: 7.5rem 0 1rem;
+    margin: auto 0 1rem;
     font-size: 2.2rem;
     line-height: 0.95;
     /* These titles are sentences, not labels: balancing keeps the second line
@@ -385,7 +383,7 @@
   }
   .closing {
     position: relative;
-    padding: clamp(7rem, 14vw, 13rem) var(--page-gutter);
+    padding: clamp(5rem, 9vw, 8.5rem) var(--page-gutter);
     border-top: 1px solid var(--line-subtle);
     text-align: center;
     background: radial-gradient(circle at 50% 60%, rgba(37, 83, 89, 0.18), transparent 42%);
@@ -430,12 +428,9 @@
       grid-template-columns: 1fr;
     }
     .dossier-card {
-      min-height: 18rem;
+      min-height: 15rem;
       border-right: 0;
       border-bottom: 1px solid var(--line-default);
-    }
-    .dossier-card h3 {
-      margin-top: 4.5rem;
     }
   }
   @media (max-width: 600px) {
@@ -445,7 +440,9 @@
     .hero h1 {
       font-size: clamp(4rem, 22vw, 6rem);
     }
-    .ship-visual {
+    /* The illustration is allowed to run off the edge; the progress panel below
+       it carries figures and must stay inside the viewport. */
+    .voyage-bleed {
       width: 125%;
       margin-left: -12.5%;
       overflow: hidden;

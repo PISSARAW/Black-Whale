@@ -302,6 +302,84 @@ describe('packMarkersForZoom', () => {
     expect(packed.every((marker) => marker.x > 40 && marker.x < 60)).toBe(true)
   })
 
+  it('seats a queen in her own room instead of the shared centre grid', () => {
+    const queens = ['unma', 'duazul'].map(
+      (id, index) =>
+        ({
+          ...markers[0],
+          id,
+          locationId: `tier-1-queens-living-quarters-room-0${index + 1}`,
+        }) as MapMarker,
+    )
+    const [unma, duazul] = packMarkersForZoom([...queens, markers[2]], 'LOCAL')
+
+    // Room 01 is the first of the northern row, room 02 the next one along.
+    expect(unma.y).toBeCloseTo(30.83)
+    expect(duazul.y).toBeCloseTo(30.83)
+    expect(duazul.x - unma.x).toBeCloseTo(18.13)
+  })
+
+  it('keeps a roomless marker centred when a roomed one shares the map', () => {
+    const queen = {
+      ...markers[0],
+      locationId: 'tier-1-queens-living-quarters-room-04',
+    } as MapMarker
+    const [, guard] = packMarkersForZoom([queen, markers[1]], 'LOCAL')
+
+    expect(guard.x).toBe(50)
+    expect(guard.y).toBe(50)
+  })
+
+  it('sits a passenger on the fixture canon names for him', () => {
+    const beyond = {
+      ...markers[0],
+      id: 'beyond',
+      locationId: 'tier-1-vvip-prison-beyond',
+      characterSlug: 'beyond-netero',
+    } as MapMarker
+    const [placed] = packMarkersForZoom([beyond], 'LOCAL')
+
+    // The bed, against the wall his right arm is manacled to.
+    expect(placed.x).toBeCloseTo(23.75)
+    expect(placed.y).toBeCloseTo(54.17)
+  })
+
+  it('drops the rest of the room on its fallback corner, fanned out', () => {
+    const cell = ['beyond-netero', 'cleapatro', 'saiyu'].map(
+      (slug) =>
+        ({
+          ...markers[0],
+          id: slug,
+          locationId: 'tier-1-vvip-prison-beyond',
+          characterSlug: slug,
+        }) as MapMarker,
+    )
+    const [beyond, cleapatro, saiyu] = packMarkersForZoom(cell, 'LOCAL')
+
+    // Beyond keeps his bed; the two watching him share the guard side.
+    expect(beyond.x).toBeCloseTo(23.75)
+    expect(cleapatro.x).toBeCloseTo(65.63)
+    expect(saiyu.x).toBeCloseTo(69.63)
+    expect(`${cleapatro.x},${cleapatro.y}`).not.toBe(`${saiyu.x},${saiyu.y}`)
+  })
+
+  it('leaves a room without a fallback to the centre grid', () => {
+    const jail = ['prince-camilla', 'guard'].map(
+      (slug) =>
+        ({
+          ...markers[0],
+          id: slug,
+          locationId: 'tier-1-vip-jail',
+          characterSlug: slug,
+        }) as MapMarker,
+    )
+    const [camilla, guard] = packMarkersForZoom(jail, 'LOCAL')
+
+    expect(camilla.x).toBeCloseTo(27)
+    expect(guard.x).toBe(50)
+    expect(guard.y).toBe(50)
+  })
+
   it('packs overview by tier, so a lone tier sits on its own band', () => {
     const packed = packMarkersForZoom(markers, 'OVERVIEW')
     const [first, second, third] = packed

@@ -6452,7 +6452,7 @@
         "fromChapterId": "ch-358"
       },
       {
-        "location": "tier-3",
+        "location": "tier-3-residential-first-class",
         "fromChapterId": "ch-380",
         "certainty": "PROBABLE"
       },
@@ -12760,7 +12760,7 @@
     "canonStatus": "canon",
     "shipLocation": {
       "tier": 4,
-      "room": null,
+      "room": "Xi-Yu Family Office",
       "status": "actif",
       "role": "sous-chef mafia"
     },
@@ -13167,8 +13167,9 @@
         "certainty": "PROBABLE"
       },
       {
-        "location": "tier-3",
-        "fromChapterId": "ch-390"
+        "location": "tier-3-residential-standard",
+        "fromChapterId": "ch-390",
+        "certainty": "PROBABLE"
       },
       {
         "location": "tier-3-residential-room-3101",
@@ -13178,7 +13179,9 @@
         "location": "tier-2-heilly-secret-hideout",
         "fromChapterId": "ch-399"
       }
-    ]
+    ],
+    "positionProvenance": "inferred",
+    "mapLocationCorrection": true
   },
   {
     "id": "keni-wang",
@@ -13190,7 +13193,7 @@
     "canonStatus": "canon",
     "shipLocation": {
       "tier": 5,
-      "room": null,
+      "room": "Cha-R Family Office",
       "status": "actif",
       "role": "chef operations / allie Brigade"
     },
@@ -13579,7 +13582,7 @@
     ],
     "mapTrajectory": [
       {
-        "location": "tier-5",
+        "location": "tier-5-cha-r-family-office",
         "fromChapterId": "ch-371",
         "certainty": "PROBABLE"
       },
@@ -13588,11 +13591,13 @@
         "fromChapterId": "ch-395"
       },
       {
-        "location": "tier-5",
+        "location": "tier-5-cha-r-family-office",
         "fromChapterId": "ch-399",
         "certainty": "PROBABLE"
       }
-    ]
+    ],
+    "positionProvenance": "inferred",
+    "mapLocationCorrection": true
   },
   {
     "id": "morena-prudo",
@@ -14890,15 +14895,16 @@
     "battles": ["Chrollo Lucilfer vs. Hisoka Morow‡*"],
     "mapTrajectory": [
       {
-        "location": "tier-5",
-        "fromChapterId": "ch-359"
+        "location": "tier-5-standard-cabins",
+        "fromChapterId": "ch-359",
+        "certainty": "PROBABLE"
       },
       {
         "location": "tier-1-princes-burial-chamber",
         "fromChapterId": "ch-405.3"
       },
       {
-        "location": "tier-1",
+        "location": "tier-1-banquet-hall",
         "fromChapterId": "ch-406",
         "certainty": "PROBABLE"
       }
@@ -14914,7 +14920,7 @@
     "canonStatus": "canon",
     "shipLocation": {
       "tier": 5,
-      "room": null,
+      "room": "Tier 5 Standard Cabins",
       "status": "actif",
       "role": "combattant / premiere ligne"
     },
@@ -15318,16 +15324,18 @@
     ],
     "mapTrajectory": [
       {
-        "location": "tier-5",
-        "fromChapterId": "ch-358"
+        "location": "tier-5-standard-cabins",
+        "fromChapterId": "ch-358",
+        "certainty": "PROBABLE"
       },
       {
         "location": "tier-5-warehouse",
         "fromChapterId": "ch-378.2"
       },
       {
-        "location": "tier-5",
-        "fromChapterId": "ch-380"
+        "location": "tier-5-standard-cabins",
+        "fromChapterId": "ch-380",
+        "certainty": "PROBABLE"
       },
       {
         "location": "tier-3-residential-room-3101",
@@ -15337,7 +15345,9 @@
         "location": "tier-2-heilly-secret-hideout",
         "fromChapterId": "ch-399"
       }
-    ]
+    ],
+    "positionProvenance": "inferred",
+    "mapLocationCorrection": true
   },
   {
     "id": "gantai",
@@ -16553,7 +16563,7 @@
     "canonStatus": "canon",
     "shipLocation": {
       "tier": 3,
-      "room": null,
+      "room": "First-Class Residential Block",
       "status": "actif",
       "role": "zodiaque"
     },
@@ -16944,7 +16954,9 @@
       "overview": "Cluck is a powerful Nen user and former sparring partner of Isaac Netero. She can manipulate hundreds of birds simultaneously and apparently possesses other unrevealed abilities.",
       "techniques": ["Hatsu"],
       "abilityIds": ["bird-manipulation"]
-    }
+    },
+    "positionProvenance": "inferred",
+    "mapLocationCorrection": true
   },
   {
     "id": "ginta",
@@ -16956,7 +16968,7 @@
     "canonStatus": "canon",
     "shipLocation": {
       "tier": 3,
-      "room": null,
+      "room": "First-Class Residential Block",
       "status": "actif",
       "role": "zodiaque"
     },
@@ -17339,7 +17351,9 @@
     ],
     "biography": [
       "Ginta joins the expedition's flora and fauna team and helps supervise Illumi and Kalluto after Mizaistom relocates them to Tier 3 residential units."
-    ]
+    ],
+    "positionProvenance": "inferred",
+    "mapLocationCorrection": true
   },
   {
     "id": "kanzai",
@@ -17351,7 +17365,7 @@
     "canonStatus": "canon",
     "shipLocation": {
       "tier": 3,
-      "room": null,
+      "room": "First-Class Residential Block",
       "status": "actif",
       "role": "zodiaque"
     },
@@ -17734,7 +17748,9 @@
     ],
     "biography": [
       "Kanzai serves on the expedition's defense team. He accompanies the Zodiacs aboard the Black Whale and remains active in Tier 3 security coordination through the voyage."
-    ]
+    ],
+    "positionProvenance": "inferred",
+    "mapLocationCorrection": true
   },
   {
     "id": "leorio-paradinight",
@@ -18152,7 +18168,7 @@
     "canonStatus": "canon",
     "shipLocation": {
       "tier": 3,
-      "room": null,
+      "room": "First-Class Residential Block",
       "status": "actif",
       "role": "zodiaque"
     },
@@ -18535,7 +18551,9 @@
     ],
     "biography": [
       "Pyon joins the expedition's intelligence team and contributes to the Zodiacs' information systems. She remains based with the Association contingent on Tier 3."
-    ]
+    ],
+    "positionProvenance": "inferred",
+    "mapLocationCorrection": true
   },
   {
     "id": "saccho-kobayakawa",
@@ -18547,7 +18565,7 @@
     "canonStatus": "canon",
     "shipLocation": {
       "tier": 3,
-      "room": null,
+      "room": "First-Class Residential Block",
       "status": "actif",
       "role": "zodiaque"
     },
@@ -18930,7 +18948,9 @@
     ],
     "biography": [
       "Saccho joins the expedition's intelligence team and takes part in the Zodiacs' preparations, internal-security discussions and voyage coordination."
-    ]
+    ],
+    "positionProvenance": "inferred",
+    "mapLocationCorrection": true
   },
   {
     "id": "saiyu",
@@ -18942,7 +18962,7 @@
     "canonStatus": "canon",
     "shipLocation": {
       "tier": 3,
-      "room": null,
+      "room": "First-Class Residential Block",
       "status": "suspect",
       "role": "zodiaque / taupe potentiel"
     },
@@ -19335,7 +19355,9 @@
       "overview": "Saiyu conjures an extendable staff and employs three Nen monkeys. Successful attacks remove sight, hearing and speech and can destabilize the target's ability.",
       "techniques": ["Hatsu"],
       "abilityIds": ["saiyu-priest-staff", "saiyu-three-monkeys"]
-    }
+    },
+    "positionProvenance": "inferred",
+    "mapLocationCorrection": true
   },
   {
     "id": "basho",
@@ -27544,7 +27566,7 @@
     "canonStatus": "canon",
     "shipLocation": {
       "tier": 1,
-      "room": "Queens' Living Quarters",
+      "room": "Queen's Room 01",
       "status": "inconnu",
       "role": "kakin royal family"
     },
@@ -27939,7 +27961,7 @@
     "canonStatus": "canon",
     "shipLocation": {
       "tier": 1,
-      "room": "Queens' Living Quarters",
+      "room": "Queen's Room 02",
       "status": "inconnu",
       "role": "kakin royal family"
     },
@@ -28334,7 +28356,7 @@
     "canonStatus": "canon",
     "shipLocation": {
       "tier": 1,
-      "room": "Queens' Living Quarters",
+      "room": "Queen's Room 03",
       "status": "inconnu",
       "role": "kakin royal family"
     },
@@ -28729,7 +28751,7 @@
     "canonStatus": "canon",
     "shipLocation": {
       "tier": 1,
-      "room": "Queens' Living Quarters",
+      "room": "Queen's Room 04",
       "status": "inconnu",
       "role": "kakin royal family"
     },
@@ -29124,7 +29146,7 @@
     "canonStatus": "canon",
     "shipLocation": {
       "tier": 1,
-      "room": "Queens' Living Quarters",
+      "room": "Queen's Room 05",
       "status": "inconnu",
       "role": "kakin royal family"
     },
@@ -29519,7 +29541,7 @@
     "canonStatus": "canon",
     "shipLocation": {
       "tier": 1,
-      "room": "Queens' Living Quarters",
+      "room": "Queen's Room 06",
       "status": "inconnu",
       "role": "kakin royal family"
     },
@@ -29915,7 +29937,7 @@
     "canonStatus": "canon",
     "shipLocation": {
       "tier": 1,
-      "room": null,
+      "room": "Queen's Room 07",
       "status": "inconnu",
       "role": "kakin royal family"
     },
@@ -30305,7 +30327,9 @@
         "location": "tier-1-royal-residential-sector-room-1013",
         "fromChapterId": "ch-359"
       }
-    ]
+    ],
+    "positionProvenance": "inferred",
+    "mapLocationCorrection": true
   },
   {
     "id": "gipper",
@@ -30317,7 +30341,7 @@
     "canonStatus": "canon",
     "shipLocation": {
       "tier": 1,
-      "room": null,
+      "room": "Soldiers' Living Quarters",
       "status": "inconnu",
       "role": "kakin royal army"
     },
@@ -30700,7 +30724,9 @@
     ],
     "biography": [
       "Gipper is a Kakin Royal Army soldier involved in the security operations that intensify during special martial law."
-    ]
+    ],
+    "positionProvenance": "inferred",
+    "mapLocationCorrection": true
   },
   {
     "id": "maizan",
@@ -30712,7 +30738,7 @@
     "canonStatus": "canon",
     "shipLocation": {
       "tier": 1,
-      "room": null,
+      "room": "Soldiers' Living Quarters",
       "status": "inconnu",
       "role": "kakin royal army"
     },
@@ -31095,7 +31121,9 @@
     ],
     "biography": [
       "Maizan is a Kakin Royal Army officer who appears during the search for Hisoka and is later referenced in the military response to the mafia conflict."
-    ]
+    ],
+    "positionProvenance": "inferred",
+    "mapLocationCorrection": true
   },
   {
     "id": "mizuri",
@@ -31107,7 +31135,7 @@
     "canonStatus": "canon",
     "shipLocation": {
       "tier": 1,
-      "room": null,
+      "room": "Soldiers' Living Quarters",
       "status": "inconnu",
       "role": "kakin royal army"
     },
@@ -31498,10 +31526,13 @@
         "certainty": "PROBABLE"
       },
       {
-        "location": "tier-3",
-        "fromChapterId": "ch-380.2"
+        "location": "tier-3-central-police-station",
+        "fromChapterId": "ch-380.2",
+        "certainty": "PROBABLE"
       }
-    ]
+    ],
+    "positionProvenance": "inferred",
+    "mapLocationCorrection": true
   },
   {
     "id": "momolly",
@@ -31513,7 +31544,7 @@
     "canonStatus": "canon",
     "shipLocation": {
       "tier": 1,
-      "room": null,
+      "room": "Soldiers' Living Quarters",
       "status": "inconnu",
       "role": "kakin royal army"
     },
@@ -31896,7 +31927,9 @@
     ],
     "biography": [
       "Momolly is a Kakin Royal Army member assigned to lower-tier security during the Heil-Ly investigation and the period preceding special martial law."
-    ]
+    ],
+    "positionProvenance": "inferred",
+    "mapLocationCorrection": true
   },
   {
     "id": "otocin",
@@ -33121,7 +33154,7 @@
     "canonStatus": "canon",
     "shipLocation": {
       "tier": 3,
-      "room": null,
+      "room": "Central Courthouse",
       "status": "inconnu",
       "role": "justice bureau"
     },
@@ -33504,7 +33537,9 @@
     ],
     "biography": [
       "Peuckert is a Justice Bureau employee aboard the Black Whale who supports the department's administration and later legal operations involving the princes."
-    ]
+    ],
+    "positionProvenance": "inferred",
+    "mapLocationCorrection": true
   },
   {
     "id": "steiner",
@@ -33516,7 +33551,7 @@
     "canonStatus": "canon",
     "shipLocation": {
       "tier": 3,
-      "room": null,
+      "room": "Central Courthouse",
       "status": "inconnu",
       "role": "justice bureau"
     },
@@ -33899,7 +33934,9 @@
     ],
     "biography": [
       "Steiner represents the International Permit Agency and accompanies the voyage. He observes Kakin's expedition from its announcement through the Black Whale's developing crises."
-    ]
+    ],
+    "positionProvenance": "inferred",
+    "mapLocationCorrection": true
   },
   {
     "id": "worio-bay",
@@ -33911,7 +33948,7 @@
     "canonStatus": "canon",
     "shipLocation": {
       "tier": 3,
-      "room": null,
+      "room": "Central Courthouse",
       "status": "inconnu",
       "role": "justice bureau"
     },
@@ -34294,7 +34331,9 @@
     ],
     "biography": [
       "Worio Bay is an Office of Justice official introduced during the legal and medical response to Halkenburg's collapse."
-    ]
+    ],
+    "positionProvenance": "inferred",
+    "mapLocationCorrection": true
   },
   {
     "id": "nugui",
@@ -37494,7 +37533,7 @@
     "canonStatus": "canon",
     "shipLocation": {
       "tier": 3,
-      "room": null,
+      "room": "Standard Residential Block",
       "status": "actif",
       "role": "passager civil"
     },
@@ -37884,7 +37923,9 @@
         "location": "tier-3-residential-standard",
         "fromChapterId": "ch-392"
       }
-    ]
+    ],
+    "positionProvenance": "inferred",
+    "mapLocationCorrection": true
   },
   {
     "id": "silent-majority-user",
@@ -38711,15 +38752,16 @@
     ],
     "mapTrajectory": [
       {
-        "location": "tier-5",
-        "fromChapterId": "ch-359"
+        "location": "tier-5-standard-cabins",
+        "fromChapterId": "ch-359",
+        "certainty": "PROBABLE"
       },
       {
         "location": "tier-3-cineplex",
         "fromChapterId": "ch-392"
       },
       {
-        "location": "tier-3",
+        "location": "tier-3-residential-standard",
         "fromChapterId": "ch-394",
         "certainty": "PROBABLE"
       },
@@ -39139,8 +39181,9 @@
     ],
     "mapTrajectory": [
       {
-        "location": "tier-5",
-        "fromChapterId": "ch-359"
+        "location": "tier-5-standard-cabins",
+        "fromChapterId": "ch-359",
+        "certainty": "PROBABLE"
       },
       {
         "location": "tier-4-central-passage",
@@ -39979,16 +40022,18 @@
     ],
     "mapTrajectory": [
       {
-        "location": "tier-5",
-        "fromChapterId": "ch-359"
+        "location": "tier-5-standard-cabins",
+        "fromChapterId": "ch-359",
+        "certainty": "PROBABLE"
       },
       {
         "location": "tier-5-warehouse",
         "fromChapterId": "ch-378.2"
       },
       {
-        "location": "tier-5",
-        "fromChapterId": "ch-380"
+        "location": "tier-5-standard-cabins",
+        "fromChapterId": "ch-380",
+        "certainty": "PROBABLE"
       },
       {
         "location": "tier-3-residential-room-3101",
@@ -40996,13 +41041,15 @@
     "canonStatus": "canon",
     "shipLocation": {
       "tier": 1,
-      "room": null,
+      "room": "Queens' Living Quarters",
       "status": "inconnu",
       "role": "Spy for Queen Tang Zhao Li Hui Guo Rou"
     },
     "mapPresenceFromChapterId": "ch-361",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "positionProvenance": "inferred",
+    "mapLocationCorrection": true
   },
   {
     "id": "bucket",
@@ -41156,13 +41203,15 @@
     "canonStatus": "canon",
     "shipLocation": {
       "tier": 4,
-      "room": null,
+      "room": "Xi-Yu Family Office",
       "status": "inconnu",
       "role": "Mafioso Lieutenant"
     },
     "mapPresenceFromChapterId": "ch-378",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "positionProvenance": "inferred",
+    "mapLocationCorrection": true
   },
   {
     "id": "coventoba",
@@ -41286,7 +41335,7 @@
     "canonStatus": "canon",
     "shipLocation": {
       "tier": 5,
-      "room": null,
+      "room": "Tier 5 Standard Cabins",
       "status": "actif",
       "role": "combattant / chasse d’Hisoka"
     },
@@ -41311,16 +41360,18 @@
     ],
     "mapTrajectory": [
       {
-        "location": "tier-5",
-        "fromChapterId": "ch-359"
+        "location": "tier-5-standard-cabins",
+        "fromChapterId": "ch-359",
+        "certainty": "PROBABLE"
       },
       {
         "location": "tier-5-warehouse",
         "fromChapterId": "ch-378.2"
       },
       {
-        "location": "tier-5",
-        "fromChapterId": "ch-380"
+        "location": "tier-5-standard-cabins",
+        "fromChapterId": "ch-380",
+        "certainty": "PROBABLE"
       },
       {
         "location": "tier-3-residential-room-3101",
@@ -41330,7 +41381,9 @@
         "location": "tier-4-recycling-sewage-facilities",
         "fromChapterId": "ch-406"
       }
-    ]
+    ],
+    "positionProvenance": "inferred",
+    "mapLocationCorrection": true
   },
   {
     "id": "fukataki",
@@ -41602,13 +41655,15 @@
     "canonStatus": "canon",
     "shipLocation": {
       "tier": 5,
-      "room": null,
+      "room": "Cha-R Family Office",
       "status": "inconnu",
       "role": "Consigliere of the Cha-R Family"
     },
     "mapPresenceFromChapterId": "ch-379",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "positionProvenance": "inferred",
+    "mapLocationCorrection": true
   },
   {
     "id": "javietti",
@@ -41790,13 +41845,15 @@
     "canonStatus": "canon",
     "shipLocation": {
       "tier": 1,
-      "room": null,
+      "room": "Queens' Living Quarters",
       "status": "inconnu",
       "role": "Spy for Queen Tang Zhao Li Hui Guo Rou"
     },
     "mapPresenceFromChapterId": "ch-374",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "positionProvenance": "inferred",
+    "mapLocationCorrection": true
   },
   {
     "id": "ladiolus",
@@ -41826,13 +41883,15 @@
     "canonStatus": "canon",
     "shipLocation": {
       "tier": 1,
-      "room": null,
+      "room": "Queens' Living Quarters",
       "status": "inconnu",
       "role": "Spy for Katrono Hui Guo Rou"
     },
     "mapPresenceFromChapterId": "ch-366",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "positionProvenance": "inferred",
+    "mapLocationCorrection": true
   },
   {
     "id": "lizlura",
@@ -41913,8 +41972,9 @@
     ],
     "mapTrajectory": [
       {
-        "location": "tier-3",
-        "fromChapterId": "ch-392"
+        "location": "tier-3-residential-standard",
+        "fromChapterId": "ch-392",
+        "certainty": "PROBABLE"
       },
       {
         "location": "tier-3-cineplex",
@@ -42139,13 +42199,15 @@
     "canonStatus": "canon",
     "shipLocation": {
       "tier": 1,
-      "room": null,
+      "room": "Queens' Living Quarters",
       "status": "inconnu",
       "role": "Spy for Queen Seiko Hui Guo Rou"
     },
     "mapPresenceFromChapterId": "ch-366",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "positionProvenance": "inferred",
+    "mapLocationCorrection": true
   },
   {
     "id": "naikeru",
@@ -42211,13 +42273,15 @@
     "canonStatus": "canon",
     "shipLocation": {
       "tier": 1,
-      "room": null,
+      "room": "Queens' Living Quarters",
       "status": "inconnu",
       "role": "Spy for Queen Duazul Hui Guo Rou"
     },
     "mapPresenceFromChapterId": "ch-361",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "positionProvenance": "inferred",
+    "mapLocationCorrection": true
   },
   {
     "id": "notre",
@@ -42679,13 +42743,15 @@
     "canonStatus": "canon",
     "shipLocation": {
       "tier": 5,
-      "room": null,
+      "room": "Cha-R Family Office",
       "status": "inconnu",
       "role": "Mafioso"
     },
     "mapPresenceFromChapterId": "ch-377",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "positionProvenance": "inferred",
+    "mapLocationCorrection": true
   },
   {
     "id": "tagenpaku",
@@ -42715,13 +42781,15 @@
     "canonStatus": "canon",
     "shipLocation": {
       "tier": 5,
-      "room": null,
+      "room": "Cha-R Family Office",
       "status": "inconnu",
       "role": "Vice Boss of the Cha-R Family ; Military Advisor for the Seventh Prince's Army"
     },
     "mapPresenceFromChapterId": "ch-384",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "positionProvenance": "inferred",
+    "mapLocationCorrection": true
   },
   {
     "id": "taler",
@@ -42859,13 +42927,15 @@
     "canonStatus": "canon",
     "shipLocation": {
       "tier": 5,
-      "room": null,
+      "room": "Cha-R Family Office",
       "status": "inconnu",
       "role": "Mafioso Supervisor"
     },
     "mapPresenceFromChapterId": "ch-380",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "positionProvenance": "inferred",
+    "mapLocationCorrection": true
   },
   {
     "id": "tuffdy",

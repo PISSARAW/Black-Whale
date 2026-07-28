@@ -98,9 +98,22 @@ for (const character of characters) {
     fail(scope, `room ${room} is on Tier 1 but the catalogue claims Tier ${shipLocation.tier}`)
   }
 
+  // A tier is a deck, not a place. Standing a body on one puts it at the tier
+  // anchor, which on every deck plan is open floor between the rooms — the map
+  // then shows a passenger loitering in a corridor canon never put them in.
+  // Whenever canon names the tier and not the room, the catalogue names the
+  // room the passenger's affiliation implies and marks the entry `inferred`, so
+  // the presence is drawn as an assumption rather than as an observation.
+  if (shipLocation.tier != null && !room) {
+    fail(scope, `is on Tier ${shipLocation.tier} with no room: name the room its role implies`)
+  }
+
   for (const [index, leg] of (character.mapTrajectory || []).entries()) {
     if (!leg.location || !leg.fromChapterId) {
       fail(scope, `trajectory leg ${index} needs both a location and a fromChapterId`)
+    }
+    if (/^tier-[1-5]$/.test(leg.location || '')) {
+      fail(scope, `trajectory leg ${index} stops at "${leg.location}": name a room on that tier`)
     }
     const next = character.mapTrajectory[index + 1]
     if (next && leg.untilChapterId) {
@@ -158,6 +171,18 @@ for (const character of characters) {
       )
     }
   }
+}
+
+/// The catalogue check above covers what the catalogue authors; this covers what
+/// the projection wrote, including presences no catalogue entry owns.
+for (const presence of presences) {
+  if (presence.location?.type !== 'TIER') continue
+  const owner = bodies.find((body) => body.id === presence.entityId)
+  const scope = charactersById.get(owner?.originalCharacterId)?.slug || presence.entityId
+  fail(
+    scope,
+    `presence ${presence.id} sits on ${presence.location.slug}, which is a deck not a room`,
+  )
 }
 
 await prisma.$disconnect()

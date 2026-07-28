@@ -3,6 +3,20 @@
   // and keyboard affordances so the behaviour can be attached in one place
   // when it exists; until then this must not log on a public page.
   function handleElementClick(_elementId: string) {}
+
+  /// The eight rooms of the block, laid out as two rows of four around the
+  /// private corridor. Numbers match the `-room-01`…`-room-08` locations the
+  /// catalogue declares, which is what lets a marker land in its own room.
+  const rooms = Array.from({ length: 8 }, (_, index) => {
+    const isNorth = index < 4
+    const column = index % 4
+    return {
+      number: String(index + 1).padStart(2, '0'),
+      isNorth,
+      x: 10 + column * 145,
+      y: isNorth ? 10 : 240,
+    }
+  })
 </script>
 
 <svg
@@ -55,20 +69,22 @@
   >
 
   <g transform="translate(100, 100)">
-    <!-- Assuming a layout similar to Princes but for the 8 Queens -->
+    <!-- The block is on the deck plan; its interior arrangement is not, so the
+         rooms are drawn like the princes' sector. Only the count is canon. -->
     <rect x="0" y="0" width="600" height="400" class="wall" />
 
     <!-- Central Corridor -->
     <rect x="0" y="160" width="600" height="80" fill="rgba(255,255,255,0.02)" />
     <text x="300" y="205" class="sublabel text-gray-500">Queens' Private Corridor</text>
 
-    <!-- 4 Queens on Top -->
-    {#each Array(4) as _, i (i)}
-      <g transform="translate({10 + i * 145}, 10)">
+    <!-- Eight rooms for eight queens: 01–04 north of the corridor, 05–08 south.
+         The block holds one room per queen, so none of them is a shared suite. -->
+    {#each rooms as room (room.number)}
+      <g transform="translate({room.x}, {room.y})">
         <rect
           role="button"
           tabindex="0"
-          aria-label="Inspect map area"
+          aria-label="Inspect Queen's Room {room.number}"
           onkeydown={(event) => {
             if (event.key === 'Enter' || event.key === ' ') {
               event.preventDefault()
@@ -80,48 +96,22 @@
           y="0"
           width="135"
           height="150"
-          onclick={() => handleElementClick(`queen-room-top-${i}`)}
+          onclick={() => handleElementClick(`queens-living-quarters-room-${room.number}`)}
         />
         <rect x="0" y="0" width="135" height="150" class="wall" />
-        <line class="door" x1="50" y1="150" x2="85" y2="150" />
-        <!-- Door -->
-
-        {#if i === 0}
-          <text x="67.5" y="75" class="label text-yellow-500">Room 01</text>
-          <text x="67.5" y="95" class="sublabel text-yellow-200">Royal suite</text>
-          <rect x="40" y="20" width="55" height="30" class="furniture" />
-          <!-- Bed -->
-        {:else}
-          <text x="67.5" y="75" class="label text-gray-400">Queen's Room</text>
-        {/if}
-      </g>
-    {/each}
-
-    <!-- 4 Queens on Bottom -->
-    {#each Array(4) as _, i (i)}
-      <g transform="translate({10 + i * 145}, 240)">
-        <rect
-          role="button"
-          tabindex="0"
-          aria-label="Inspect map area"
-          onkeydown={(event) => {
-            if (event.key === 'Enter' || event.key === ' ') {
-              event.preventDefault()
-              event.currentTarget.dispatchEvent(new MouseEvent('click', { bubbles: true }))
-            }
-          }}
-          class="zone"
-          x="0"
-          y="0"
-          width="135"
-          height="150"
-          onclick={() => handleElementClick(`queen-room-bottom-${i}`)}
+        <line
+          class="door"
+          x1="50"
+          y1={room.isNorth ? 150 : 0}
+          x2="85"
+          y2={room.isNorth ? 150 : 0}
         />
-        <rect x="0" y="0" width="135" height="150" class="wall" />
-        <line class="door" x1="50" y1="0" x2="85" y2="0" />
-        <!-- Door -->
+        <!-- Door, always on the corridor side -->
 
-        <text x="67.5" y="75" class="label text-gray-400">Queen's Room</text>
+        <rect x="40" y={room.isNorth ? 20 : 100} width="55" height="30" class="furniture" />
+        <!-- Bed -->
+        <text x="67.5" y="80" class="label text-gray-400">Queen's Room</text>
+        <text x="67.5" y="100" class="sublabel text-yellow-200">{room.number}</text>
       </g>
     {/each}
   </g>

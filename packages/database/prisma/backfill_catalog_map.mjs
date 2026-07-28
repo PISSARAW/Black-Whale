@@ -88,6 +88,22 @@ const namedRoomSlugs = new Map([
   ['entrepot', 'tier-5-warehouse'],
   ['entrepôt', 'tier-5-warehouse'],
   ['area 37564', 'tier-5-area-37564'],
+  ['supreme court', 'tier-1-supreme-court'],
+  ['cour supreme', 'tier-1-supreme-court'],
+  ['banquet hall', 'tier-1-banquet-hall'],
+  ['salle de banquet', 'tier-1-banquet-hall'],
+  ['central courthouse', 'tier-3-central-courthouse'],
+  ['central police station', 'tier-3-central-police-station'],
+  ['first-class residential block', 'tier-3-residential-first-class'],
+  ['first class residential block', 'tier-3-residential-first-class'],
+  // Gel's science team met in the Tier 3 cabins, which is the first-class block.
+  ['cabine scientifique', 'tier-3-residential-first-class'],
+  ['standard residential block', 'tier-3-residential-standard'],
+  ['heil-ly family office', 'tier-3-heilly-family-office'],
+  ['xi-yu family office', 'tier-4-xi-yu-family-office'],
+  ['cha-r family office', 'tier-5-cha-r-family-office'],
+  ['medical clinic', 'tier-5-medical-clinic'],
+  ['bulkhead', 'tier-2-bulkhead'],
 ])
 
 const generatedPassengerDescription =
@@ -115,8 +131,15 @@ function isDeadStatus(status) {
 /// `positionProvenance: 'databook'` marks a post known only from Togashi's
 /// character sheets: the room is stated, the chapter never is, so the presence
 /// falls back to the boarding event and must not read as an observed fact.
+///
+/// `'inferred'` is weaker still: canon places the passenger on a tier and never
+/// names their room, so the catalogue picks the room their affiliation implies —
+/// a Cha-R soldier in the Cha-R office, a queen's spy in the queens' block. That
+/// is a better answer than leaving them adrift on the deck, but it is a
+/// deduction, and the map has to show it as one.
 function certaintyFor(character) {
   if (character.positionProvenance === 'databook') return 'PROBABLE'
+  if (character.positionProvenance === 'inferred') return 'PROBABLE'
   return /^(inconnu|suspect)$/i.test(character.shipLocation?.status || '')
     ? 'PROBABLE'
     : 'CONFIRMED'
@@ -440,14 +463,30 @@ function resolveLocation(character, locations) {
     .toLocaleLowerCase('fr')
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '')
+
+  // The queens' block numbers its eight rooms rather than naming them, so they
+  // resolve by pattern like the princes' 1001\u20131014 do. Falling back to the block
+  // keeps a queen inside her quarters if the room slug is ever dropped.
+  const queenRoomMatch = normalizedRoom.match(/^queen[\u2019']?s room (0[1-8])$/)
+  if (queenRoomMatch) {
+    return (
+      locations.get(`tier-1-queens-living-quarters-room-${queenRoomMatch[1]}`) ||
+      locations.get('tier-1-queens-living-quarters') ||
+      locations.get('tier-1')
+    )
+  }
+
   for (const [label, slug] of namedRoomSlugs) {
     if (normalizedRoom.includes(label.normalize('NFD').replace(/[\u0300-\u036f]/g, ''))) {
       return locations.get(slug) || locations.get(`tier-${shipLocation.tier}`)
     }
   }
 
-  // Les cabines scientifiques n'ont pas encore de sous-zone canonique dans le catalogue.
-  if (normalizedRoom.includes('scientifique')) return locations.get('tier-3')
+  // A tier is a whole deck, not a place: a body dropped on one lands wherever
+  // the tier anchor happens to be, which reads as standing in a corridor. The
+  // catalogue is expected to name a room — `verify_map_coverage.mjs` fails the
+  // run when it does not — so this remains only for an entry authored while the
+  // catalogue is mid-edit.
   return locations.get(`tier-${shipLocation.tier}`) || null
 }
 

@@ -60,6 +60,86 @@
     "exits": []
   },
   {
+    "id": "tier-1-queens-living-quarters-room-01",
+    "name": "Queen's Room 01",
+    "parentLocationId": "tier-1-queens-living-quarters",
+    "deck": 1,
+    "zoneType": "quarters",
+    "description": "One of the eight rooms of the queens' block. The plan gives the block eight queens; it does not say which room belongs to which queen, so any occupant here is placed by rank, not by a panel.",
+    "entrances": [],
+    "exits": []
+  },
+  {
+    "id": "tier-1-queens-living-quarters-room-02",
+    "name": "Queen's Room 02",
+    "parentLocationId": "tier-1-queens-living-quarters",
+    "deck": 1,
+    "zoneType": "quarters",
+    "description": "One of the eight rooms of the queens' block. The plan gives the block eight queens; it does not say which room belongs to which queen, so any occupant here is placed by rank, not by a panel.",
+    "entrances": [],
+    "exits": []
+  },
+  {
+    "id": "tier-1-queens-living-quarters-room-03",
+    "name": "Queen's Room 03",
+    "parentLocationId": "tier-1-queens-living-quarters",
+    "deck": 1,
+    "zoneType": "quarters",
+    "description": "One of the eight rooms of the queens' block. The plan gives the block eight queens; it does not say which room belongs to which queen, so any occupant here is placed by rank, not by a panel.",
+    "entrances": [],
+    "exits": []
+  },
+  {
+    "id": "tier-1-queens-living-quarters-room-04",
+    "name": "Queen's Room 04",
+    "parentLocationId": "tier-1-queens-living-quarters",
+    "deck": 1,
+    "zoneType": "quarters",
+    "description": "One of the eight rooms of the queens' block. The plan gives the block eight queens; it does not say which room belongs to which queen, so any occupant here is placed by rank, not by a panel.",
+    "entrances": [],
+    "exits": []
+  },
+  {
+    "id": "tier-1-queens-living-quarters-room-05",
+    "name": "Queen's Room 05",
+    "parentLocationId": "tier-1-queens-living-quarters",
+    "deck": 1,
+    "zoneType": "quarters",
+    "description": "One of the eight rooms of the queens' block. The plan gives the block eight queens; it does not say which room belongs to which queen, so any occupant here is placed by rank, not by a panel.",
+    "entrances": [],
+    "exits": []
+  },
+  {
+    "id": "tier-1-queens-living-quarters-room-06",
+    "name": "Queen's Room 06",
+    "parentLocationId": "tier-1-queens-living-quarters",
+    "deck": 1,
+    "zoneType": "quarters",
+    "description": "One of the eight rooms of the queens' block. The plan gives the block eight queens; it does not say which room belongs to which queen, so any occupant here is placed by rank, not by a panel.",
+    "entrances": [],
+    "exits": []
+  },
+  {
+    "id": "tier-1-queens-living-quarters-room-07",
+    "name": "Queen's Room 07",
+    "parentLocationId": "tier-1-queens-living-quarters",
+    "deck": 1,
+    "zoneType": "quarters",
+    "description": "One of the eight rooms of the queens' block. The plan gives the block eight queens; it does not say which room belongs to which queen, so any occupant here is placed by rank, not by a panel.",
+    "entrances": [],
+    "exits": []
+  },
+  {
+    "id": "tier-1-queens-living-quarters-room-08",
+    "name": "Queen's Room 08",
+    "parentLocationId": "tier-1-queens-living-quarters",
+    "deck": 1,
+    "zoneType": "quarters",
+    "description": "One of the eight rooms of the queens' block. The plan gives the block eight queens; it does not say which room belongs to which queen, so any occupant here is placed by rank, not by a panel.",
+    "entrances": [],
+    "exits": []
+  },
+  {
     "id": "tier-1-soldiers-living-quarters",
     "name": "Soldiers' Living Quarters",
     "parentLocationId": "tier-1",

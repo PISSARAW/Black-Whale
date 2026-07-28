@@ -62,6 +62,8 @@ export interface MapNextChapterState extends MapWorldState {
 export type MapMarker = MarkerIdentityState & {
   tierId: string | null
   locationId?: string
+  /** Catalogue slug of the body's owner, which is what `localSpotAnchors` keys on. */
+  characterSlug?: string
   location?: Location | null
   overviewX: number
   overviewY: number
@@ -131,6 +133,70 @@ const locationCoordinates: Record<string, Record<string, { x: number; y: number 
     warehouse: { x: 560, y: 240 },
     'area-37564': { x: 270, y: 355 },
   },
+}
+
+/**
+ * Room anchors inside a local map, as percentages of the local SVG box.
+ *
+ * A tier map draws a block as one region, so `locationCoordinates` stops at the
+ * block. Zoomed into the block the rooms are drawn individually, and a marker
+ * that ignores them lands in the corridor whatever room the archive assigned.
+ * A slug listed here is placed in its own room; anything else keeps the centred
+ * grid, which is still the right answer for a local map with no rooms drawn.
+ */
+const localRoomAnchors: Record<string, { x: number; y: number }> = Object.fromEntries(
+  // Two rows of four around the private corridor, matching the room grid in
+  // `local/queens-living-quarters.svelte`.
+  Array.from({ length: 8 }, (_, index) => [
+    `tier-1-queens-living-quarters-room-${String(index + 1).padStart(2, '0')}`,
+    { x: 22.19 + (index % 4) * 18.13, y: index < 4 ? 30.83 : 69.17 },
+  ]),
+)
+
+/**
+ * Where inside a drawn room a passenger actually is, when canon says.
+ *
+ * `localRoomAnchors` answers "which room"; this answers "which corner of it".
+ * Beyond Netero is not merely in his cell, he is manacled to the wall beside the
+ * bed, and a marker floating over the middle of the floor contradicts the only
+ * panel we have of the place. `occupants` places passengers canon puts somewhere
+ * specific, and `fallback` catches everyone else the story sends into the room —
+ * the Zodiacs watching Beyond belong on their side of the bars, not on his bed.
+ *
+ * Coordinates are percentages of the local SVG box, read off the fixtures the
+ * room asset draws. Anything not listed keeps the centred grid.
+ */
+const localSpotAnchors: Record<
+  string,
+  { occupants: Record<string, { x: number; y: number }>; fallback?: { x: number; y: number } }
+> = {
+  // `local/beyond-cell.svelte`, 800 × 600, contents offset by (100, 100).
+  'tier-1-vvip-prison-beyond': {
+    // The bed, against the wall his right arm is bolted to.
+    occupants: { 'beyond-netero': { x: 23.75, y: 54.17 } },
+    // The guard half, past the bars: the Zodiacs' 24-hour watch.
+    fallback: { x: 65.63, y: 50 },
+  },
+  // `local/vip-detention.svelte`, 1000 × 600, contents offset by (50, 80).
+  'tier-1-vip-jail': {
+    // The first-class cell, the one a detained princess is held in.
+    occupants: { 'prince-camilla': { x: 27, y: 33.33 } },
+  },
+}
+
+/**
+ * The spot a marker occupies inside its room, if the room declares any.
+ *
+ * `exact` separates the two cases the caller has to treat differently: a fixture
+ * canon assigns to this passenger, which the marker sits on alone, and the
+ * room's catch-all corner, which several markers share and must fan out across.
+ */
+function spotAnchorFor(marker: MapMarker): { x: number; y: number; exact: boolean } | null {
+  const room = localSpotAnchors[marker.locationId ?? '']
+  if (!room) return null
+  const own = marker.characterSlug ? room.occupants[marker.characterSlug] : undefined
+  if (own) return { ...own, exact: true }
+  return room.fallback ? { ...room.fallback, exact: false } : null
 }
 
 export const tierVisuals: Record<string, { label: string; overviewY: number }> = {
@@ -610,6 +676,7 @@ export function projectPresenceMarker(
     id: presence.entityId,
     tierId,
     locationId: loc.slug,
+    characterSlug: ownerCharacter.slug,
     location: loc,
     overviewX: 50,
     overviewY: visual?.overviewY ?? 46,
@@ -682,6 +749,8 @@ export function projectFutureMarker(
     temporalLabel: 'Parallel future',
     temporalDetail: `Position in chapter ${next.chapterNumber}`,
     tierId,
+    locationId: loc?.slug,
+    characterSlug: character.slug,
     location: loc,
     overviewX: 50,
     overviewY: visual?.overviewY ?? 46,
@@ -708,13 +777,62 @@ export function packMarkersForZoom<T extends MapMarker>(markers: T[], zoom: Zoom
   if (zoom === 'TIER') return markers
 
   if (zoom === 'LOCAL') {
-    const columns = Math.min(6, Math.ceil(Math.sqrt(markers.length)))
-    const rows = Math.ceil(markers.length / columns)
-    return markers.map((marker, index) => ({
-      ...marker,
-      x: 50 + ((index % columns) - (columns - 1) / 2) * 3,
-      y: 50 + (Math.floor(index / columns) - (rows - 1) / 2) * 3,
-    }))
+    // A spot inside the room outranks the room itself, which outranks the
+    // centred grid. Markers with either kind of anchor leave the grid, and the
+    // rest must be counted among themselves, or a single anchored marker would
+    // still shift everyone else off centre.
+    const unanchored = markers.filter(
+      (marker) => !spotAnchorFor(marker) && !localRoomAnchors[marker.locationId ?? ''],
+    )
+    const columns = Math.min(6, Math.ceil(Math.sqrt(unanchored.length)))
+    const rows = Math.ceil(unanchored.length / columns)
+
+    return markers.map((marker) => {
+      const spot = spotAnchorFor(marker)
+      if (spot?.exact) {
+        // Canon names this fixture for this passenger, so the marker sits on it
+        // rather than being fanned out with the rest of the room.
+        return { ...marker, x: spot.x, y: spot.y }
+      }
+      if (spot) {
+        // Everyone the room catches by default shares one corner, so they do
+        // have to fan out — the guard side of a cell holds a whole watch.
+        const peers = markers
+          .filter((peer) => !spotAnchorFor(peer)?.exact && peer.locationId === marker.locationId)
+          .map((peer) => peer.id)
+          .sort()
+        const seat = Math.max(0, peers.indexOf(marker.id))
+        return { ...marker, x: spot.x + (seat % 3) * 4, y: spot.y + Math.floor(seat / 3) * 5 }
+      }
+
+      const anchor = localRoomAnchors[marker.locationId ?? '']
+      if (anchor) {
+        // A room is 17% of the box wide and 25% tall, so occupants fan out in
+        // steps small enough to stay inside their own walls.
+        const roommates = markers
+          .filter((peer) => peer.locationId === marker.locationId)
+          .map((peer) => peer.id)
+          .sort()
+        const seat = Math.max(0, roommates.indexOf(marker.id))
+        const roomColumns = Math.min(2, roommates.length)
+        const roomRows = Math.ceil(roommates.length / roomColumns)
+        return {
+          ...marker,
+          x: anchor.x + ((seat % roomColumns) - (roomColumns - 1) / 2) * 5,
+          y: anchor.y + (Math.floor(seat / roomColumns) - (roomRows - 1) / 2) * 5,
+        }
+      }
+
+      const index = Math.max(
+        0,
+        unanchored.findIndex((peer) => peer.id === marker.id),
+      )
+      return {
+        ...marker,
+        x: 50 + ((index % columns) - (columns - 1) / 2) * 3,
+        y: 50 + (Math.floor(index / columns) - (rows - 1) / 2) * 3,
+      }
+    })
   }
 
   const tierGroups = new Map<string, T[]>()

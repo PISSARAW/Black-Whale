@@ -1,7 +1,7 @@
 import { goto } from '$app/navigation'
 import type { Page } from '@sveltejs/kit'
 
-import { setAmbientMuffled } from '$lib/audio/ambient.js'
+import { playHatsuNote, setAmbientMuffled } from '$lib/audio/ambient.js'
 import { mapState } from '$lib/state/mapState.svelte'
 import { deactivateHatsu } from './hatsuState.js'
 import type { HatsuInteractionKind, HatsuProfile } from './hatsuRegistry.js'
@@ -827,10 +827,17 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
     if (!ctx.guideItems.some((item) => item.element === target))
       ctx.guideItems = [...ctx.guideItems, ctx.guideItemFor(target, label)].slice(-7)
     ctx.guideTitle = 'Enchanting Music · guided score'
+    // The score is written on screen as DO…SI, so it has to be heard as well:
+    // the note just added sounds now, and the guided sweep replays its phrase.
+    const note = ctx.points.length
+    playHatsuNote(note)
     if (ctx.guideItems.length >= 3) {
-      ctx.guideItems
-        .slice(-3)
-        .forEach((item, index) => ctx.schedule(() => ctx.followGuide(item), index * 550))
+      ctx.guideItems.slice(-3).forEach((item, index) =>
+        ctx.schedule(() => {
+          playHatsuNote(Math.max(0, note - 2 + index), { velocity: 0.6 })
+          ctx.followGuide(item)
+        }, index * 550),
+      )
     }
     ctx.status = `Note ${ctx.points.length + 1} · ${label} joined a score that guides focus through the site`
     ctx.addPoint(x, y, ['DO', 'RE', 'MI', 'FA', 'SOL', 'LA', 'SI'][ctx.points.length % 7])

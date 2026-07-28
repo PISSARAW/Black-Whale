@@ -257,6 +257,67 @@ function scheduleBar(g: Graph, index: number, at: number) {
   }
 }
 
+/**
+ * Melody's flute, one degree per solfège syllable: A natural minor, so a score
+ * played over the voyage theme stays in the same key as the pad underneath it.
+ * DO is A4 and the seven entries line up with the DO…SI labels the Hatsu draws.
+ */
+const SOLFEGE = [0, 2, 3, 5, 7, 8, 10]
+
+/** Kept only while the theme is off — otherwise notes go through its mixer. */
+let fluteGraph: Graph | null = null
+
+function fluteTarget(): Graph | null {
+  if (graph) return graph
+  if (typeof window === 'undefined') return null
+  if (!fluteGraph) {
+    // A click must never fail because the browser has no Web Audio; the score
+    // still draws itself, it just stays silent.
+    try {
+      fluteGraph = buildGraph()
+    } catch {
+      return null
+    }
+    applyMuffle(fluteGraph, muffled, 0.05)
+  }
+  // A click is a gesture, so this resume always has permission to succeed.
+  if (fluteGraph.context.state === 'suspended') void fluteGraph.context.resume()
+  return fluteGraph
+}
+
+/**
+ * Sound one note of Enchanting Music. `degree` counts syllables from DO and
+ * wraps every seven, matching the label sequence, so a run of clicks is heard
+ * as the scale it is written as.
+ */
+export function playHatsuNote(degree: number, options: { velocity?: number } = {}) {
+  const g = fluteTarget()
+  if (!g) return
+  const step = ((Math.round(degree) % SOLFEGE.length) + SOLFEGE.length) % SOLFEGE.length
+  // Every wrap climbs an octave, so a long score rises instead of circling.
+  const octave = Math.floor(Math.round(degree) / SOLFEGE.length)
+  const midi = 69 + SOLFEGE[step] + 12 * Math.min(octave, 2)
+  const at = g.context.currentTime + 0.02
+  const peak = 0.18 * (options.velocity ?? 1)
+
+  voice(g, at, midiToHz(midi), 0.45, {
+    type: 'triangle',
+    peak,
+    attack: 0.05,
+    release: 0.6,
+    vibrato: 3.5,
+    send: 0.6,
+  })
+  // A quiet octave above gives the triangle the breathy edge of a flute.
+  voice(g, at, midiToHz(midi + 12), 0.3, {
+    type: 'sine',
+    peak: peak * 0.35,
+    attack: 0.02,
+    release: 0.5,
+    send: 0.8,
+  })
+}
+
 function tick() {
   if (!graph) return
   const { context } = graph
@@ -284,6 +345,12 @@ export async function startAmbient() {
   // The toggle exists in both the header and the drawer; only one may start it.
   if (scheduler) return
   if (!graph) graph = buildGraph()
+  // The theme's own mixer takes over the flute; drop the stand-in context so a
+  // session of toggling never stacks up idle AudioContexts.
+  if (fluteGraph) {
+    void fluteGraph.context.close()
+    fluteGraph = null
+  }
   // Browsers hand back a suspended context until a gesture resumes it.
   if (graph.context.state === 'suspended') await graph.context.resume()
 
@@ -327,6 +394,7 @@ export function setAmbientMuffled(on: boolean) {
   muffled = on
   ambientMuffled.set(on)
   if (graph) applyMuffle(graph, on, 0.9)
+  if (fluteGraph) applyMuffle(fluteGraph, on, 0.9)
 }
 
 export function ambientWasEnabled() {

@@ -27544,7 +27544,7 @@
     "canonStatus": "canon",
     "shipLocation": {
       "tier": 1,
-      "room": null,
+      "room": "Queens' Living Quarters",
       "status": "inconnu",
       "role": "kakin royal family"
     },
@@ -27939,7 +27939,7 @@
     "canonStatus": "canon",
     "shipLocation": {
       "tier": 1,
-      "room": null,
+      "room": "Queens' Living Quarters",
       "status": "inconnu",
       "role": "kakin royal family"
     },
@@ -28334,7 +28334,7 @@
     "canonStatus": "canon",
     "shipLocation": {
       "tier": 1,
-      "room": null,
+      "room": "Queens' Living Quarters",
       "status": "inconnu",
       "role": "kakin royal family"
     },
@@ -28729,7 +28729,7 @@
     "canonStatus": "canon",
     "shipLocation": {
       "tier": 1,
-      "room": null,
+      "room": "Queens' Living Quarters",
       "status": "inconnu",
       "role": "kakin royal family"
     },
@@ -29124,7 +29124,7 @@
     "canonStatus": "canon",
     "shipLocation": {
       "tier": 1,
-      "room": null,
+      "room": "Queens' Living Quarters",
       "status": "inconnu",
       "role": "kakin royal family"
     },
@@ -29519,7 +29519,7 @@
     "canonStatus": "canon",
     "shipLocation": {
       "tier": 1,
-      "room": null,
+      "room": "Queens' Living Quarters",
       "status": "inconnu",
       "role": "kakin royal family"
     },
@@ -30299,6 +30299,12 @@
     "biography": [
       "Sevanti is Kakin's seventh queen and mother of Momoze and Marayam. She transfers most guards from Momoze to Marayam, leaving her daughter dangerously exposed.",
       "After Momoze's murder, Sevanti remains inside room 1013 with Marayam as his Guardian Spirit Beast isolates the quarters behind a spatial barrier."
+    ],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1013",
+        "fromChapterId": "ch-359"
+      }
     ]
   },
   {
@@ -31484,6 +31490,17 @@
     ],
     "biography": [
       "Mizuri is a Kakin soldier who intercepts Illumi and Kalluto in Tier 3, checks their VVIP identification and attempts to escort them before the Zodiacs intervene."
+    ],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-soldiers-living-quarters",
+        "fromChapterId": "ch-359",
+        "certainty": "PROBABLE"
+      },
+      {
+        "location": "tier-3",
+        "fromChapterId": "ch-380.2"
+      }
     ]
   },
   {
@@ -34684,7 +34701,7 @@
     "canonStatus": "canon",
     "shipLocation": {
       "tier": 1,
-      "room": null,
+      "room": "Queens' Living Quarters",
       "status": "inconnu",
       "role": "Captain and Coordinator of the Royal Bodyguards affiliated with Queen Duazul"
     },
@@ -42085,7 +42102,7 @@
     "canonStatus": "canon",
     "shipLocation": {
       "tier": 1,
-      "room": null,
+      "room": "Queens' Living Quarters",
       "status": "inconnu",
       "role": "Captain of Queen Swinko-swinko's Royal Guard"
     },
@@ -42536,7 +42553,7 @@
     "canonStatus": "canon",
     "shipLocation": {
       "tier": 1,
-      "room": null,
+      "room": "Queens' Living Quarters",
       "status": "inconnu",
       "role": "Captain of Queen Duazul's Royal Guard"
     },

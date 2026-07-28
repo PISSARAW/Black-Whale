@@ -73,6 +73,7 @@ const namedRoomSlugs = new Map([
   ['kings living quarters', 'tier-1-king-living-quarters'],
   ['quartiers du roi', 'tier-1-king-living-quarters'],
   ["queens' living quarters", 'tier-1-queens-living-quarters'],
+  ['queens’ living quarters', 'tier-1-queens-living-quarters'],
   ['queens living quarters', 'tier-1-queens-living-quarters'],
   ["soldiers' living quarters", 'tier-1-soldiers-living-quarters'],
   ['soldiers living quarters', 'tier-1-soldiers-living-quarters'],

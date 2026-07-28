@@ -3,6 +3,7 @@ import {
   buildAffiliations,
   buildCharacterProfile,
   buildRoleHistory,
+  isVisibleAtSpoilerLimit,
   readFirstAppearanceChapter,
 } from './character-profile.js'
 
@@ -36,7 +37,10 @@ describe('buildCharacterProfile', () => {
   })
 
   it('attaches abilities owned by the character', () => {
-    const abilities = [{ id: 'chain', ownerId: 'kurapika' }, { id: 'other', ownerId: 'hisoka' }]
+    const abilities = [
+      { id: 'chain', ownerId: 'kurapika' },
+      { id: 'other', ownerId: 'hisoka' },
+    ]
 
     expect(buildCharacterProfile({ id: 'kurapika' }, abilities, null).abilities).toEqual([
       abilities[0],
@@ -54,7 +58,9 @@ describe('buildCharacterProfile', () => {
 describe('buildRoleHistory', () => {
   it('merges roles and official assignments', () => {
     const history = buildRoleHistory({
-      roles: [{ roleName: 'Bodyguard', fromEvent: event(2), untilEvent: { chapter: { number: 8 } } }],
+      roles: [
+        { roleName: 'Bodyguard', fromEvent: event(2), untilEvent: { chapter: { number: 8 } } },
+      ],
       assignments: [{ officialRole: 'Hunter', fromEvent: event(5) }],
     })
 
@@ -102,5 +108,25 @@ describe('readFirstAppearanceChapter', () => {
   it('returns null when the catalogue records no debut', () => {
     expect(readFirstAppearanceChapter({})).toBeNull()
     expect(readFirstAppearanceChapter({ firstAppearanceChapterId: 'unknown' })).toBeNull()
+  })
+})
+
+describe('isVisibleAtSpoilerLimit', () => {
+  it('hides a character who debuts after the reader stopped', () => {
+    expect(isVisibleAtSpoilerLimit({ firstAppearanceChapterId: 'ch-389' }, 370)).toBe(false)
+  })
+
+  it('shows a character who debuts on or before the limit', () => {
+    expect(isVisibleAtSpoilerLimit({ firstAppearanceChapterId: 'ch-349' }, 370)).toBe(true)
+    expect(isVisibleAtSpoilerLimit({ firstAppearanceChapterId: 'ch-370' }, 370)).toBe(true)
+  })
+
+  it('shows everyone when no limit is set', () => {
+    expect(isVisibleAtSpoilerLimit({ firstAppearanceChapterId: 'ch-415' })).toBe(true)
+  })
+
+  /** Databook-only characters carry a null debut and must stay visible. */
+  it('shows a character whose debut is unknown', () => {
+    expect(isVisibleAtSpoilerLimit({ firstAppearanceChapterId: null }, 370)).toBe(true)
   })
 })

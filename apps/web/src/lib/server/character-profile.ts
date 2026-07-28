@@ -119,3 +119,19 @@ export function readFirstAppearanceChapter(jsonCharacter: any): number | null {
   const match = jsonCharacter.firstAppearanceChapterId?.match(/ch-(\d+)/)
   return match ? Number.parseInt(match[1]) : null
 }
+
+/**
+ * Whether a character may be shown to a reader who has stopped at `spoilerLimit`.
+ *
+ * An absent limit or an unknown debut both mean "no restriction". Parse the id
+ * with readFirstAppearanceChapter rather than Number.parseInt: ids look like
+ * 'ch-349', so a direct parse yields NaN and silently reveals everyone.
+ */
+export function isVisibleAtSpoilerLimit(
+  jsonCharacter: { firstAppearanceChapterId?: string | null },
+  spoilerLimit?: number,
+): boolean {
+  if (!spoilerLimit) return true
+  const firstChapter = readFirstAppearanceChapter(jsonCharacter)
+  return firstChapter === null || firstChapter <= spoilerLimit
+}

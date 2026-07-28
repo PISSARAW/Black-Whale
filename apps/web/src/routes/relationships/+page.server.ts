@@ -1,3 +1,4 @@
+import { isVisibleAtSpoilerLimit } from '$lib/server/character-profile'
 import { readDataFile, type CatalogCharacter, type CatalogFaction } from '$lib/server/data-files'
 import type { PageServerLoad } from './$types'
 
@@ -121,11 +122,9 @@ export const load: PageServerLoad = async ({ cookies }) => {
   const spoilerCookie = cookies.get('userSpoilerLimit')
   const parsedLimit = spoilerCookie ? Number.parseInt(spoilerCookie, 10) : Number.NaN
   const spoilerLimit = Number.isFinite(parsedLimit) ? parsedLimit : undefined
-  const characters = allCharacters.filter((character) => {
-    if (!spoilerLimit || !character.firstAppearanceChapterId) return true
-    const firstChapter = Number.parseInt(character.firstAppearanceChapterId, 10)
-    return !Number.isFinite(firstChapter) || firstChapter <= spoilerLimit
-  })
+  const characters = allCharacters.filter((character) =>
+    isVisibleAtSpoilerLimit(character, spoilerLimit),
+  )
 
   // Some recently catalogued affiliations do not yet exist in the legacy faction file.
   const catalogueFactionIds = new Set(

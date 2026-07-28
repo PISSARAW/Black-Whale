@@ -4,6 +4,7 @@
   import GlobalHatsuController from '$lib/nen/GlobalHatsuController.svelte'
   import GlobalHatsuEffects from '$lib/nen/GlobalHatsuEffects.svelte'
   import CommandPalette from '$lib/components/CommandPalette.svelte'
+  import AmbientToggle from '$lib/audio/AmbientToggle.svelte'
   import { tick } from 'svelte'
 
   let menuOpen = false
@@ -96,6 +97,7 @@
     </nav>
 
     <div class="header-meta">
+      <AmbientToggle />
       <button type="button" onclick={openPalette} aria-label="Open quick navigation">
         <span>Quick find</span><kbd>⌘K</kbd>
       </button>
@@ -162,6 +164,11 @@
           <span aria-hidden="true">⌕</span>
           <span>Quick find</span>
         </button>
+
+        <!-- The header meta row is hidden on mobile, so the theme toggle rides here. -->
+        <div class="menu-audio">
+          <AmbientToggle />
+        </div>
 
         <div class="menu-footer">
           <span>Dark Continent Expedition</span>

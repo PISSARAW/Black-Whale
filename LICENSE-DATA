@@ -1,0 +1,53 @@
+# Catalogue and illustrations — CC BY 4.0
+
+Copyright (c) 2026 Ginks
+
+## What this covers
+
+Everything listed here is licensed under the Creative Commons
+Attribution 4.0 International licence (CC BY 4.0):
+
+- `data/` — the catalogue: chapters, characters, abilities, locations, and the
+  relations between them, as compiled and structured in this repository.
+- `apps/web/src/lib/assets/maps/` — the hand-drawn SVG deck, room and overview
+  maps of the Black Whale.
+
+The source code is licensed separately, under the MIT licence — see LICENSE.
+
+## What you may do
+
+Share, copy, redistribute, adapt, remix and build upon this material, for any
+purpose, including commercially. These rights cannot be revoked as long as the
+licence terms are respected.
+
+## What you must do — attribution
+
+You must give appropriate credit, provide a link to this repository, and
+indicate whether you made changes. The credit must appear wherever the material
+is displayed, including in a deployed web interface — not only in source code.
+
+Reproducing this line satisfies the requirement:
+
+> Catalogue and ship maps by Ginks — https://github.com/PISSARAW/Black-Whale —
+> licensed under CC BY 4.0. Modified.
+
+Drop "Modified." if you changed nothing.
+
+You may not apply legal terms or technological measures that legally restrict
+others from doing anything the licence permits.
+
+## Full text
+
+The complete legal text of CC BY 4.0 governs and is available at:
+
+https://creativecommons.org/licenses/by/4.0/legalcode
+
+SPDX-License-Identifier: CC-BY-4.0
+
+## What no one grants you
+
+Hunter × Hunter, its characters, its story and its setting are created by
+Yoshihiro Togashi and published by Shueisha. This licence covers only the
+compilation, structure and original illustrations produced for this archive.
+It grants no right whatsoever in the underlying work, and nothing here is
+endorsed by or affiliated with the rights holders.

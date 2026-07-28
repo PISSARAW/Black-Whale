@@ -27,17 +27,17 @@
   {
     "id": "mafia-xiyu",
     "name": "Xi-Yu Family",
-    "description": "Mafia family secretly supported by 3rd Prince Zhang Lei. Maintains economic order. Sous chef: Hinrigh."
+    "description": "Mafia family secretly supported by 3rd Prince Zhang Lei. Maintains economic order and controls Tier 4. Boss: Onior Longbao, quartered in the Tier 1 VVIP living quarters; underboss: Hinrigh."
   },
   {
     "id": "mafia-char",
     "name": "Cha-R Family",
-    "description": "Mafia family under the protection of the 7th Prince Luzurus. Controls Tier 4 warehouses."
+    "description": "Mafia family under the protection of the 7th Prince Luzurus. Controls Tier 5 and the commodities stored there, warehouses included. Boss: Brocco Li, quartered in the Tier 1 VVIP living quarters; underboss: Ken'i Wang."
   },
   {
     "id": "mafia-heilly",
     "name": "Heil-Ly Family",
-    "description": "Mafia family exploited by the 4th Prince Tserriednich. Led by Morena Prudo, aims to destroy balance through chaos."
+    "description": "Mafia family exploited by the 4th Prince Tserriednich. Assigned Tier 3, the uppermost of the three mafia-run decks, but its registered office there is abandoned early for a secret hideout on Tier 2. Led by Morena Prudo, aims to destroy balance through chaos."
   },
   {
     "id": "prince-benjamin",

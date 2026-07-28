@@ -302,10 +302,10 @@
   {
     "id": "tier-2-heilly-secret-hideout",
     "name": "Heil-Ly Secret Hideout",
-    "parentLocationId": "black-whale-1",
-    "deck": null,
+    "parentLocationId": "tier-2",
+    "deck": 2,
     "zoneType": "mafia",
-    "description": "Morena's secret base in an unknown space between Tiers 2 and 3. It has five entrances and rooms connected by Nen teleportation; its exact physical relation to the ship remains uncertain.",
+    "description": "Morena's secret base, reached through five entrances whose rooms are connected by Nen teleportation, which is why it long read as a space of its own between Tiers 2 and 3. Hinrigh's transmitter, planted beyond the room 3101 trap, places it on Tier 2.",
     "entrances": [],
     "exits": []
   },

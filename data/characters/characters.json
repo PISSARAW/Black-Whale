@@ -16138,8 +16138,8 @@
     "firstAppearanceChapterId": "ch-unknown",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
+      "tier": 3,
+      "room": "Cineplex",
       "status": "inconnu",
       "role": "annonceur"
     },
@@ -34288,8 +34288,8 @@
     "firstAppearanceChapterId": "ch-349",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
+      "tier": 1,
+      "room": "King's Living Quarters",
       "status": "inconnu",
       "role": "Personal Butler for King Nasubi"
     },
@@ -34683,7 +34683,7 @@
     "firstAppearanceChapterId": "ch-366",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
+      "tier": 1,
       "room": null,
       "status": "inconnu",
       "role": "Captain and Coordinator of the Royal Bodyguards affiliated with Queen Duazul"
@@ -37081,8 +37081,8 @@
     "firstAppearanceChapterId": "ch-376",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
+      "tier": 1,
+      "room": "King's Living Quarters",
       "status": "inconnu",
       "role": "Grand Chamberlain for King Nasubi"
     },
@@ -40978,7 +40978,7 @@
     "firstAppearanceChapterId": "ch-361",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
+      "tier": 1,
       "room": null,
       "status": "inconnu",
       "role": "Spy for Queen Tang Zhao Li Hui Guo Rou"
@@ -41138,7 +41138,7 @@
     "firstAppearanceChapterId": "ch-378",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
+      "tier": 4,
       "room": null,
       "status": "inconnu",
       "role": "Mafioso Lieutenant"
@@ -41224,7 +41224,22 @@
     },
     "mapPresenceFromChapterId": "ch-378",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "black-whale-unknown",
+        "fromChapterId": "ch-358",
+        "certainty": "PROBABLE"
+      },
+      {
+        "location": "tier-1-princes-burial-chamber",
+        "fromChapterId": "ch-405"
+      },
+      {
+        "location": "tier-2-heilly-secret-hideout",
+        "fromChapterId": "ch-407"
+      }
+    ]
   },
   {
     "id": "famule",
@@ -41569,7 +41584,7 @@
     "firstAppearanceChapterId": "ch-379",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
+      "tier": 5,
       "room": null,
       "status": "inconnu",
       "role": "Consigliere of the Cha-R Family"
@@ -41757,7 +41772,7 @@
     "firstAppearanceChapterId": "ch-374",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
+      "tier": 1,
       "room": null,
       "status": "inconnu",
       "role": "Spy for Queen Tang Zhao Li Hui Guo Rou"
@@ -41793,7 +41808,7 @@
     "firstAppearanceChapterId": "ch-366",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
+      "tier": 1,
       "room": null,
       "status": "inconnu",
       "role": "Spy for Katrono Hui Guo Rou"
@@ -42069,7 +42084,7 @@
     "firstAppearanceChapterId": "ch-362",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
+      "tier": 1,
       "room": null,
       "status": "inconnu",
       "role": "Captain of Queen Swinko-swinko's Royal Guard"
@@ -42106,7 +42121,7 @@
     "firstAppearanceChapterId": "ch-366",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
+      "tier": 1,
       "room": null,
       "status": "inconnu",
       "role": "Spy for Queen Seiko Hui Guo Rou"
@@ -42178,7 +42193,7 @@
     "firstAppearanceChapterId": "ch-361",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
+      "tier": 1,
       "room": null,
       "status": "inconnu",
       "role": "Spy for Queen Duazul Hui Guo Rou"
@@ -42520,7 +42535,7 @@
     "firstAppearanceChapterId": "ch-369",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
+      "tier": 1,
       "room": null,
       "status": "inconnu",
       "role": "Captain of Queen Duazul's Royal Guard"
@@ -42646,7 +42661,7 @@
     "firstAppearanceChapterId": "ch-377",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
+      "tier": 5,
       "room": null,
       "status": "inconnu",
       "role": "Mafioso"
@@ -42682,7 +42697,7 @@
     "firstAppearanceChapterId": "ch-384",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
+      "tier": 5,
       "room": null,
       "status": "inconnu",
       "role": "Vice Boss of the Cha-R Family ; Military Advisor for the Seventh Prince's Army"
@@ -42826,7 +42841,7 @@
     "firstAppearanceChapterId": "ch-380",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
+      "tier": 5,
       "room": null,
       "status": "inconnu",
       "role": "Mafioso Supervisor"
@@ -43020,7 +43035,18 @@
     },
     "mapPresenceFromChapterId": "ch-378",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "black-whale-unknown",
+        "fromChapterId": "ch-358",
+        "certainty": "PROBABLE"
+      },
+      {
+        "location": "tier-2-heilly-secret-hideout",
+        "fromChapterId": "ch-399"
+      }
+    ]
   },
   {
     "id": "yuhirai",

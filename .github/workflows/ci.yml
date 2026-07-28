@@ -47,6 +47,13 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      # The Prisma client is generated code, and nothing in the install
+      # generates it. Without it every `prisma.*` call is typed `any`, so the
+      # type check fails on implicit-any callbacks that are fully typed in a
+      # working checkout. Dockerfile.web generates it for the same reason.
+      - name: Generate Prisma client
+        run: pnpm --filter "@black-whale/database" generate
+
       - name: Lint
         run: pnpm lint
 

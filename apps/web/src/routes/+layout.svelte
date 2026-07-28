@@ -445,9 +445,10 @@
     align-self: center;
   }
 
-  /* Primary destinations and search live in the header on desktop. */
+  /* Primary destinations, search and the theme toggle live in the header on desktop. */
   .menu-primary,
-  .menu-search {
+  .menu-search,
+  .menu-audio {
     display: none;
   }
 
@@ -647,6 +648,14 @@
     .menu-search > span:first-child {
       color: var(--accent-gold);
       font-size: 1rem;
+    }
+
+    .menu-audio {
+      display: flex;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      font-size: 0.62rem;
+      letter-spacing: 0.12em;
     }
 
     .menu-footer {

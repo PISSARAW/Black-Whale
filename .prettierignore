@@ -11,3 +11,6 @@ packages/database/prisma/migrations/
 
 # Vite writes these next to the config it is loading; they are not source.
 apps/*/vite.config.ts.timestamp-*.mjs
+
+# Vendored webfaces: generated once from the Google Fonts API, never edited.
+apps/web/src/fonts.css

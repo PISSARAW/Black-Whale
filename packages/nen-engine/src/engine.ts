@@ -1,8 +1,11 @@
-import type { AbilityActivation } from '@black-whale/domain'
+import type { AbilityActivation, AbilityState } from '@black-whale/domain'
 import type {
+  EffectInstance,
+  EffectKind,
   EntityRef,
   ProposedWorldEvent,
   StoryCursor,
+  WorldEventType,
   WorldState,
 } from '@black-whale/world-engine'
 
@@ -60,6 +63,31 @@ export interface AbilityResult {
   events?: ProposedWorldEvent[]
 }
 
+/**
+ * What an action would do if it were run, read off the effect builders
+ * themselves rather than described in prose. The plan and the execution
+ * therefore speak the same vocabulary: the world event that would be proposed,
+ * and the entities it would land on.
+ *
+ * Not every ability creates an aura effect — Dowsing Chain grants knowledge,
+ * Holy Chain changes a body state, Chrollo's portal moves someone — so the
+ * projection is keyed on the event, with `kind` filled in only when one of
+ * them is an effect.
+ */
+export interface ProjectedEffect {
+  event: WorldEventType
+  /** The effect created, when the event creates one. */
+  kind?: EffectKind
+  state?: EffectInstance['state']
+  abilityId: string
+  /** Entity ids the event would apply to, in the order the module names them. */
+  targets: string[]
+  /** In: real but invisible outside Gyo or omniscience. */
+  masked?: boolean
+  /** Keeps running once its user is dead (Bungee Gum, ch. 357). */
+  postMortem?: boolean
+}
+
 export interface AbilityActionPlan {
   abilityId: string
   actionId: string
@@ -71,7 +99,7 @@ export interface AbilityActionPlan {
     maximum?: number
   }
   interaction?: AbilityInteractionManifest
-  projectedEffects: string[]
+  projectedEffects: ProjectedEffect[]
   cost?: { label: string; amount?: number; unit?: string }
 }
 
@@ -284,8 +312,12 @@ export interface INenEngine {
   /** Execute an ability and generate domain events */
   execute(context: AbilityContext): Promise<AbilityResult>
 
-  /** List all currently active abilities at a point in time */
-  getActiveAbilities(eventId: string): Promise<AbilityActivation[]>
+  /**
+   * List the abilities still running in a world state. Activations are not
+   * stored: they are derived from the effects the state carries, so a branch
+   * and canon answer with the same rule.
+   */
+  getActiveAbilities(state: WorldState): Promise<AbilityActivation[]>
 
   /** Register a plugin module for a specific ability */
   registerModule(module: NenAbilityModule): void
@@ -306,18 +338,123 @@ export interface INenEngine {
 // Base Nen action wheel (section 4)
 // ──────────────────────────────────────────────
 
-/** The six base Nen actions always considered for the wheel */
-export const BASE_NEN_ACTIONS: NenActionWheelEntry[] = [
-  { id: 'observe-aura', label: "Observer l'aura", abilityId: null, visibility: 'available' },
-  { id: 'activate-en', label: 'Activer En', abilityId: null, visibility: 'available' },
-  { id: 'use-ability', label: 'Utiliser capacité', abilityId: null, visibility: 'available' },
-  { id: 'maintain-effect', label: 'Maintenir effet', abilityId: null, visibility: 'available' },
-  { id: 'release-aura', label: 'Libérer aura', abilityId: null, visibility: 'available' },
-  { id: 'cancel', label: 'Annuler', abilityId: null, visibility: 'available' },
+/**
+ * A base action and the world-state predicate that gates it. The predicates
+ * duplicate no ability logic: they read the same three facts the SDK reads
+ * (consciousness, owned abilities, live effects), which is all the Nen basics
+ * depend on. The SDK cannot be imported here — it depends on this package.
+ */
+export interface BaseNenAction {
+  id: string
+  label: string
+  /** What must hold for the action to be offered, and why when it does not. */
+  requirement: string
+  evaluate: (context: AbilityContext) => AbilityConditionStatus
+}
+
+function isConscious(context: AbilityContext): AbilityConditionStatus {
+  const actor = context.worldState?.entities[context.actorId]
+  if (!actor) return 'UNKNOWN'
+  const state = String(actor.metadata?.['mentalState'] ?? actor.metadata?.['state'] ?? '')
+  return state ? (state === 'ACTIVE' ? 'MET' : 'UNMET') : 'UNKNOWN'
+}
+
+function ownsAnAbility(context: AbilityContext): AbilityConditionStatus {
+  if (!context.worldState) return 'UNKNOWN'
+  return (context.worldState.abilitiesByOwner[context.actorId]?.length ?? 0) > 0 ? 'MET' : 'UNMET'
+}
+
+/** Effects the actor is the source of and that have not ended. */
+function liveEffectsOf(context: AbilityContext): EffectInstance[] {
+  if (!context.worldState) return []
+  return Object.values(context.worldState.effects).filter(
+    (effect) => effect.source.id === context.actorId && effect.state !== 'ENDED',
+  )
+}
+
+function maintainsAnEffect(context: AbilityContext): AbilityConditionStatus {
+  if (!context.worldState) return 'UNKNOWN'
+  return liveEffectsOf(context).length > 0 ? 'MET' : 'UNMET'
+}
+
+/** Neither Nen nor a body is required to stop looking, or to change one's mind. */
+const always = (): AbilityConditionStatus => 'MET'
+
+/**
+ * The six base Nen actions always considered for the wheel. They are
+ * definitions, not verdicts: `evaluateBaseAction` decides per context.
+ */
+export const BASE_NEN_ACTIONS: BaseNenAction[] = [
+  {
+    id: 'observe-aura',
+    label: "Observer l'aura",
+    requirement: 'L’acteur est conscient',
+    evaluate: isConscious,
+  },
+  {
+    id: 'activate-en',
+    label: 'Activer En',
+    requirement: 'L’acteur est conscient et sait manier le Nen',
+    evaluate: (context) => {
+      const conscious = isConscious(context)
+      if (conscious !== 'MET') return conscious
+      return ownsAnAbility(context)
+    },
+  },
+  {
+    id: 'use-ability',
+    label: 'Utiliser capacité',
+    requirement: 'L’acteur possède au moins une capacité',
+    evaluate: ownsAnAbility,
+  },
+  {
+    id: 'maintain-effect',
+    label: 'Maintenir effet',
+    requirement: 'Un effet de l’acteur est encore en cours',
+    evaluate: maintainsAnEffect,
+  },
+  {
+    id: 'release-aura',
+    label: 'Libérer aura',
+    requirement: 'L’acteur est conscient',
+    evaluate: isConscious,
+  },
+  { id: 'cancel', label: 'Annuler', requirement: 'Toujours disponible', evaluate: always },
 ]
 
+const VISIBILITY_BY_STATUS: Record<AbilityConditionStatus, ActionVisibility> = {
+  MET: 'available',
+  UNMET: 'locked',
+  UNKNOWN: 'unknown',
+}
+
+/** One base action turned into a wheel entry for the given context. */
+export function evaluateBaseAction(
+  action: BaseNenAction,
+  context: AbilityContext,
+): NenActionWheelEntry {
+  const status = action.evaluate(context)
+  return {
+    id: action.id,
+    label: action.label,
+    abilityId: null,
+    visibility: VISIBILITY_BY_STATUS[status],
+    ...(status === 'MET' ? {} : { hint: action.requirement }),
+  }
+}
+
+/**
+ * Effect lifecycle → activation state. A dormant trap is still a running
+ * ability, and one its user programmed before dying keeps its own state so the
+ * timeline can say so rather than calling it merely "active".
+ */
+function activationState(effect: EffectInstance): AbilityState {
+  if (effect.state === 'ENDED') return 'inactive'
+  return effect.attributes['postMortem'] === true ? 'post_mortem' : 'active'
+}
+
 // ──────────────────────────────────────────────
-// Stub
+// Engine
 // ──────────────────────────────────────────────
 
 export class NenEngine implements INenEngine {
@@ -367,20 +504,53 @@ export class NenEngine implements INenEngine {
     return module.execute(context)
   }
 
-  async getActiveAbilities(_eventId: string): Promise<AbilityActivation[]> {
-    // Return empty array for now since AbilityActivation is not stored in DB
-    return []
-  }
+  /**
+   * Derived from the effects still standing in the state: one activation per
+   * ability that owns at least one effect that has not ended. Nothing is read
+   * from a table, so a simulated branch reports its abilities exactly like canon.
+   */
+  async getActiveAbilities(state: WorldState): Promise<AbilityActivation[]> {
+    const byAbility = new Map<string, AbilityActivation>()
 
-  async buildActionWheel(context: AbilityContext): Promise<NenActionWheelEntry[]> {
-    let moduleActions: NenActionWheelEntry[] = []
-    if (context.abilityId) {
-      const module = this.modules.get(context.abilityId)
-      if (module) {
-        moduleActions = module.getActionWheel(context)
+    for (const effect of Object.values(state.effects)) {
+      if (effect.state === 'ENDED') continue
+      const candidate: AbilityActivation = {
+        id: `${effect.abilityId}:${effect.source.id}`,
+        abilityId: effect.abilityId,
+        actorId: effect.source.id,
+        startedAtEventId: effect.startedAt.eventId,
+        state: activationState(effect),
+        ...(effect.endedAt ? { endedAtEventId: effect.endedAt.eventId } : {}),
+      }
+      const existing = byAbility.get(candidate.id)
+      // Several effects can belong to one activation; the post-mortem one wins,
+      // because it is the fact the reader came for.
+      if (!existing || (existing.state !== 'post_mortem' && candidate.state === 'post_mortem')) {
+        byAbility.set(candidate.id, candidate)
       }
     }
-    return [...BASE_NEN_ACTIONS, ...moduleActions]
+
+    return [...byAbility.values()]
+  }
+
+  /**
+   * The wheel of an actor, not of one ability: every module the actor owns
+   * contributes its entries, each evaluated against a context carrying its own
+   * ability id. Kurapika's five fingers and Chrollo's stolen book are one wheel.
+   */
+  async buildActionWheel(context: AbilityContext): Promise<NenActionWheelEntry[]> {
+    const base = BASE_NEN_ACTIONS.map((action) => evaluateBaseAction(action, context))
+
+    const owned = context.worldState?.abilitiesByOwner[context.actorId] ?? []
+    const abilityIds = [...new Set([...owned, ...(context.abilityId ? [context.abilityId] : [])])]
+
+    const moduleActions = abilityIds.flatMap((abilityId) => {
+      const module = this.modules.get(abilityId)
+      if (!module) return []
+      return module.getActionWheel({ ...context, abilityId })
+    })
+
+    return [...base, ...moduleActions]
   }
 
   async explainAction(actionId: string, context: AbilityContext): Promise<ActionAvailability> {
@@ -388,11 +558,28 @@ export class NenEngine implements INenEngine {
     if (module) {
       return module.explainAction(actionId, context)
     }
-    // Fallback for base actions
+
+    const base = BASE_NEN_ACTIONS.find((action) => action.id === actionId)
+    if (!base) {
+      return {
+        actionId,
+        available: false,
+        conditions: [{ label: 'Action inconnue du moteur', status: 'unmet' }],
+      }
+    }
+
+    // A base action explains itself with the predicate that gates it, so the
+    // "Why?" panel never falls back to "because it is a base action".
+    const status = base.evaluate(context)
     return {
       actionId,
-      available: BASE_NEN_ACTIONS.some((a) => a.id === actionId),
-      conditions: [{ label: 'Action de base du Nen', status: 'met' }],
+      available: status === 'MET',
+      conditions: [
+        {
+          label: base.requirement,
+          status: status === 'MET' ? 'met' : status === 'UNMET' ? 'unmet' : 'unknown',
+        },
+      ],
     }
   }
 }

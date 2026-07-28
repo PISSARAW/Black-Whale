@@ -168,13 +168,15 @@ The full [Hetzner runbook](infrastructure/hetzner/README.md) covers server sizin
 
 ## Roadmap
 
-| Version | Scope                                                              | Status                         |
-| ------- | ------------------------------------------------------------------ | ------------------------------ |
-| **v1**  | Ship map, characters, positions, timeline, spoiler filter          | ✅ Released                    |
-| **v2**  | Body/consciousness split, knowledge engine, perspective comparison | ✅ Foundation shipped          |
-| **v3**  | Nen action plans, explainable conditions, typed effects            | 🏗️ Bungee Gum vertical shipped |
-| **v4**  | Ability modules migrated to the shared runtime                     | 🏗️ In progress                 |
-| **v5**  | Persistent branches and map projections                            | 🏗️ First vertical shipped      |
+| Version | Scope                                                              | Status                                      |
+| ------- | ------------------------------------------------------------------ | ------------------------------------------- |
+| **v1**  | Ship map, characters, positions, timeline, spoiler filter          | ✅ Released                                 |
+| **v2**  | Body/consciousness split, knowledge engine, perspective comparison | ✅ Foundation shipped                       |
+| **v3**  | Nen action plans, explainable conditions, typed effects            | ✅ Shipped — surfaced in `/simulations`     |
+| **v4**  | Ability modules migrated to the shared runtime                     | ✅ All 81 catalogue abilities have a module |
+| **v5**  | Persistent branches and map projections                            | 🏗️ First vertical shipped                   |
+
+A v3 plan is built by the ability module itself: its conditions are predicates over the world state, and its projected effects are obtained by running its own effect builders. The archive therefore cannot describe an ability doing one thing and execute another — [`/simulations`](https://exploreblackwhale.com/simulations) shows the plan before you run it.
 
 ---
 

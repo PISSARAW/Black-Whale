@@ -14,7 +14,10 @@ import {
   elasticConnection,
   isAlive,
   isConscious,
+  knowledgeGrant,
+  masked,
   maxDistance,
+  postMortem,
   teleport,
   transferConsciousness,
   wheelEntry,
@@ -190,6 +193,54 @@ describe('defineAbility', () => {
     expect(result.allowed).toBe(true)
     expect(result.events?.[0]?.type).toBe('EFFECT_CREATED')
     expect(result.generatedEvents).toHaveLength(1)
+  })
+
+  it('projects the effects it would emit instead of numbering them', () => {
+    const [projected, ...rest] = ability.plan(owned()).projectedEffects
+    expect(rest).toHaveLength(0)
+    expect(projected).toMatchObject({
+      event: 'EFFECT_CREATED',
+      kind: 'ELASTIC_BINDING',
+      state: 'ACTIVE',
+      abilityId: 'bungee-gum',
+      targets: ['door-3101'],
+    })
+  })
+
+  it('carries In and post-mortem into the projection', () => {
+    const concealed = defineAbility({
+      id: 'bungee-gum',
+      owner: 'hisoka',
+      effects: [masked(postMortem(elasticConnection()))],
+    })
+    expect(concealed.plan(owned()).projectedEffects[0]).toMatchObject({
+      masked: true,
+      postMortem: true,
+    })
+  })
+
+  it('projects an ability that grants knowledge rather than creating an aura effect', () => {
+    const dowsing = defineAbility({
+      id: 'dowsing-chain',
+      owner: 'kurapika',
+      effects: [knowledgeGrant({ factId: 'position:kortopi', state: 'KNOWN' })],
+    })
+    const [projected] = dowsing.plan(context({ abilityId: 'dowsing-chain' })).projectedEffects
+    expect(projected).toMatchObject({ event: 'KNOWLEDGE_GRANTED', targets: ['hisoka'] })
+    expect(projected?.kind).toBeUndefined()
+  })
+
+  it('omits an effect it cannot project rather than inventing one', () => {
+    const unprojectable = defineAbility({
+      id: 'bungee-gum',
+      owner: 'hisoka',
+      effects: [
+        () => {
+          throw new Error('needs a parameter the caller has not supplied')
+        },
+      ],
+    })
+    expect(unprojectable.plan(owned()).projectedEffects).toEqual([])
   })
 
   it('explains an action it does not know about', () => {

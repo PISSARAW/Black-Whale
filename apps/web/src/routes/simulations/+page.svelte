@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { PageData, ActionData } from './$types'
   import Seo from '$lib/components/Seo.svelte'
+  import { NenWhyPanel } from '$lib/nen'
   import { breadcrumbSchema } from '$lib/seo/schema'
 
   let { data, form }: { data: PageData; form: ActionData } = $props()
@@ -104,22 +105,40 @@
           <h2>Execute Bungee Gum</h2>
         </div>
         <p>
-          The server evaluates the same conditions used by the UI, then emits typed effect events
-          into this branch.
+          Selecting a target plans the action against this branch. The conditions and effects below
+          are the module's own — the same ones the server runs on activation.
         </p>
-        <form method="POST" action="?/activateBungee">
-          <input type="hidden" name="branchId" value={data.branch.branch.id} />
-          <label>Actor reference<input name="actorId" value="hisoka" required /></label>
+
+        <!-- A GET form: the selection lives in the URL, so the plan is computed
+             server-side and the panel works without any client-side JavaScript. -->
+        <form method="GET" action="/simulations">
+          <input type="hidden" name="branch" value={data.branch.branch.id} />
+          <label
+            >Actor reference<input name="actor" value={data.selection.actorId} required /></label
+          >
           <label>
             Target entity
-            <select name="targetId" required>
+            <select name="target" required>
               <option value="">Select target</option>
-              {#each entities.filter((entity) => entity.id !== 'hisoka') as entity (entity.id)}
-                <option value={entity.id}>{entity.label} · {entity.kind}</option>
+              {#each entities.filter((entity) => entity.id !== data.selection.actorId) as entity (entity.id)}
+                <option value={entity.id} selected={entity.id === data.selection.targetId}
+                  >{entity.label} · {entity.kind}</option
+                >
               {/each}
             </select>
           </label>
-          <button type="submit">Attach aura</button>
+          <button type="submit">Plan action</button>
+        </form>
+
+        {#if data.plan}
+          <NenWhyPanel plan={data.plan} />
+        {/if}
+
+        <form method="POST" action="?/activateBungee">
+          <input type="hidden" name="branchId" value={data.branch.branch.id} />
+          <input type="hidden" name="actorId" value={data.selection.actorId} />
+          <input type="hidden" name="targetId" value={data.selection.targetId ?? ''} />
+          <button type="submit" disabled={data.plan?.status !== 'AVAILABLE'}>Attach aura</button>
         </form>
       </article>
     </section>
@@ -266,6 +285,11 @@
   .ability-panel form {
     grid-template-columns: 1fr;
     margin-top: 1rem;
+  }
+  .ability-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
   }
   .scene-panel {
     margin-top: 1rem;

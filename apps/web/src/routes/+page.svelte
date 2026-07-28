@@ -1,27 +1,49 @@
 <script lang="ts">
+  import type { PageData } from './$types'
   import BlackWhaleVoyage from '$lib/components/home/BlackWhaleVoyage.svelte'
   import VoyageProgress from '$lib/components/VoyageProgress.svelte'
   import Seo from '$lib/components/Seo.svelte'
   import { websiteSchema } from '$lib/seo/schema'
 
+  let { data }: { data: PageData } = $props()
+
+  const pad = (value: number) => (value < 10 ? `0${value}` : String(value))
+
+  // A fixed locale and time zone keep the server render and the hydrated
+  // markup identical whatever the visitor's machine is set to.
+  const dateFormatter = new Intl.DateTimeFormat('en-GB', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+    timeZone: 'UTC',
+  })
+  const formatDate = (value: string) => dateFormatter.format(new Date(value))
+
+  let metrics = $derived([
+    { value: pad(data.metrics.tiers), label: 'Ship tiers' },
+    { value: String(data.metrics.passengers), label: 'Passengers catalogued' },
+    { value: String(data.metrics.rooms), label: 'Rooms charted' },
+    { value: String(data.metrics.abilities), label: 'Nen abilities' },
+  ])
+
   const dossiers = [
     {
       index: '01',
-      title: 'Spatial intelligence',
+      title: 'The ship, deck by deck',
       copy: 'Navigate five tiers and inspect who is where at any point in the voyage.',
       href: '/ship',
       tag: 'LIVE MAP',
     },
     {
       index: '02',
-      title: 'Canonical sequence',
+      title: 'Every event, in order',
       copy: 'Trace each confrontation, alliance, and transfer in narrative order.',
       href: '/timeline',
       tag: 'EVENT LOG',
     },
     {
       index: '03',
-      title: 'Subjective truth',
+      title: 'What each character knows',
       copy: 'See the same world through different minds, memories, and assumptions.',
       href: '/perspectives',
       tag: 'KNOWLEDGE',
@@ -40,8 +62,9 @@
       <p class="eyebrow">Kakin Royal Expedition · Voyage 001</p>
       <h1><span>Enter the</span> Black Whale</h1>
       <p class="lede">
-        A living intelligence archive for the Succession War—mapping bodies, consciousness, Nen, and
-        incomplete truths across one impossible voyage.
+        An archive of the Succession War arc. It records where every passenger is, which body holds
+        which consciousness, what Nen is in play, and what each character believes at that moment of
+        the voyage.
       </p>
 
       <div class="hero-actions">
@@ -51,10 +74,15 @@
         <a class="secondary-action" href="/characters">Open passenger registry</a>
       </div>
 
-      <div class="transmission" aria-label="Archive transmission status">
-        <span class="signal"><i></i><i></i><i></i><i></i></span>
-        <span><strong>Archive online</strong><small>Canonical records synchronized</small></span>
-      </div>
+      {#if data.latestChapter}
+        <a class="latest-record" href="/timeline">
+          <span class="record-label">Latest indexed chapter</span>
+          <span class="record-body">
+            <strong>{data.latestChapter.number} · {data.latestChapter.title}</strong>
+            <small>Published {formatDate(data.latestChapter.date)}</small>
+          </span>
+        </a>
+      {/if}
     </div>
 
     <div class="ship-visual"><BlackWhaleVoyage /><VoyageProgress /></div>
@@ -63,22 +91,12 @@
   </section>
 
   <section class="metrics reveal-on-scroll" aria-label="Archive metrics">
-    <div>
-      <span>05</span>
-      <p>Ship tiers</p>
-    </div>
-    <div>
-      <span>100+</span>
-      <p>Tracked passengers</p>
-    </div>
-    <div>
-      <span>03</span>
-      <p>Truth layers</p>
-    </div>
-    <div>
-      <span>∞</span>
-      <p>Competing motives</p>
-    </div>
+    {#each metrics as metric (metric.label)}
+      <div>
+        <span>{metric.value}</span>
+        <p>{metric.label}</p>
+      </div>
+    {/each}
   </section>
 
   <section class="manifest reveal-on-scroll">
@@ -107,9 +125,9 @@
   </section>
 
   <section class="closing reveal-on-scroll">
-    <p class="eyebrow">Current operational theater</p>
-    <h2>The ship is moving.<br />Knowledge is not.</h2>
-    <a href="/timeline">Begin with the first recorded event <span>→</span></a>
+    <p class="eyebrow">Where to begin</p>
+    <h2>Start at the first<br />recorded event.</h2>
+    <a href="/timeline">Open the timeline <span>→</span></a>
   </section>
 </div>
 
@@ -206,52 +224,33 @@
   .secondary-action:hover {
     color: var(--text-primary);
   }
-  .transmission {
-    display: flex;
-    align-items: center;
-    gap: 0.8rem;
+  .latest-record {
+    display: inline-grid;
     margin-top: 3.3rem;
+    gap: 0.3rem;
+    padding-left: 0.9rem;
+    border-left: 1px solid var(--line-strong);
     color: var(--text-muted);
+    text-decoration: none;
   }
-  .transmission > span:last-child {
-    display: grid;
-    gap: 0.15rem;
-  }
-  .transmission strong {
-    color: var(--state-known);
-    font: 600 0.56rem/1 var(--font-mono);
-    letter-spacing: 0.1em;
+  .record-label {
+    color: var(--text-faint);
+    font: 0.5rem/1.2 var(--font-mono);
+    letter-spacing: var(--tracking-label);
     text-transform: uppercase;
   }
-  .transmission small {
-    font: 0.5rem/1.2 var(--font-mono);
+  .latest-record strong {
+    color: var(--text-secondary);
+    font: 600 0.72rem/1.2 var(--font-mono);
+    transition: color var(--duration-fast) var(--ease-out);
   }
-  .signal {
-    display: flex;
-    height: 1.1rem;
-    align-items: end;
-    gap: 2px;
+  .latest-record:hover strong {
+    color: var(--accent-gold-bright);
   }
-  .signal i {
+  .latest-record small {
     display: block;
-    width: 2px;
-    background: var(--state-known);
-    animation: signal 1.3s ease-in-out infinite alternate;
-  }
-  .signal i:nth-child(1) {
-    height: 35%;
-  }
-  .signal i:nth-child(2) {
-    height: 70%;
-    animation-delay: -0.4s;
-  }
-  .signal i:nth-child(3) {
-    height: 100%;
-    animation-delay: -0.8s;
-  }
-  .signal i:nth-child(4) {
-    height: 55%;
-    animation-delay: -0.2s;
+    margin-top: 0.15rem;
+    font: 0.5rem/1.2 var(--font-mono);
   }
   .ship-visual {
     position: relative;
@@ -409,12 +408,6 @@
   .closing a:hover span {
     transform: translateX(0.4rem);
   }
-  @keyframes signal {
-    to {
-      opacity: 0.35;
-      transform: scaleY(0.45);
-    }
-  }
   @media (max-width: 900px) {
     .hero {
       min-height: auto;
@@ -463,11 +456,6 @@
     }
     .manifest {
       padding-inline: 1rem;
-    }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .signal i {
-      animation: none;
     }
   }
 </style>

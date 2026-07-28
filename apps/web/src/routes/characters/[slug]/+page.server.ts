@@ -65,11 +65,12 @@ const characterInclude = {
 export const load: PageServerLoad = async ({ params, cookies }) => {
   const spoilerLimitCookie = cookies.get('userSpoilerLimit')
   const spoilerLimit = spoilerLimitCookie ? Number.parseInt(spoilerLimitCookie) : null
-  const [characters, chapters, locations, abilities] = await Promise.all([
+  const [characters, chapters, locations, abilities, prophecies] = await Promise.all([
     readDataFile<any[]>('characters/characters.json'),
     readDataFile<any[]>('chapters/chapters.json'),
     readDataFile<any[]>('locations/locations.json'),
     readDataFile<any[]>('abilities/abilities.json'),
+    readDataFile<any[]>('prophecies/prophecies.json'),
   ])
   const locationPaths = buildLocationPaths(locations)
   const jsonCharacter = characters.find((candidate: any) => candidate.id === params.slug)
@@ -119,8 +120,13 @@ export const load: PageServerLoad = async ({ params, cookies }) => {
   if (spoilerLimit)
     chapterTrajectory = chapterTrajectory.filter((entry) => entry.chapter <= spoilerLimit)
 
+  // Prophecies carry no chapter anchor, so the spoiler limit cannot filter them;
+  // the sheet ships collapsed on the page instead of being withheld here.
+  const prophecy = prophecies.find((sheet: any) => sheet.subjectId === params.slug) ?? null
+
   return {
     character: buildCharacterProfile(jsonCharacter, abilities, firstVisibleChapterNumber),
+    prophecy,
     roleHistory: buildRoleHistory(character),
     affiliations: buildAffiliations(character),
     timeline,

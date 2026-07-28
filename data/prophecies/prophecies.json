@@ -778,6 +778,23 @@
     "canonStatus": "apocryphal"
   },
   {
+    "id": "prophecy-feitan-portor",
+    "subjectId": "feitan-portor",
+    "subjectName": "Feitan Portor",
+    "factionId": "phantom-troupe",
+    "desire": "Work he is unusually good at, done to people who have earned it — and a web intact enough to keep handing him some.",
+    "poem": [
+      "You will go down through the decks of this ship and find decks under those.",
+      "Blood by a warehouse will not give you a name, only the fact that someone is measuring doors.",
+      "Whatever is done to you will be returned with interest, and with light.",
+      "The man you are hunting has already died once. Make certain the second one holds."
+    ],
+    "reading": "Feitan works the lower tiers with Phinks: the Buor interrogation, the Cha-R warehouse where the guide is found with his throat cut, and the reading that the killer is marking rooms to unlock a teleport anchor later. He and Phinks meet Luini's offer with open disgust before Nobunaga takes his head, and on the twelfth day Tajao leads them under Tier 4 into the recycling chamber, where the two of them continue after Nobunaga turns back. The third line is his own Hatsu's logic — damage taken is what fuels what he returns.",
+    "foretells": "descent",
+    "horizon": "Day 2 – Day 12 of the voyage",
+    "canonStatus": "apocryphal"
+  },
+  {
     "id": "prophecy-franklin-bordeau",
     "subjectId": "franklin-bordeau",
     "subjectName": "Franklin Bordeau",
@@ -894,6 +911,329 @@
     "reading": "Onior, Xi-Yu head, Nasubi's half-brother and Zhang Lei's godfather, learns from Brocco Li that the Troupe is aboard and decides with him to let the Heil-Ly and the Spiders weaken each other while controlling the timing of the collision. He tells Zhang Lei he knows nothing of Nen or the Guardian Beasts — despite special powers among his own men — and advises him to imitate Nasubi's patience. On the twelfth day Zhang Lei escapes Tier 1 through a passage inside Onior's residence.",
     "foretells": "control of timing",
     "horizon": "Day 4 – Day 12 of the voyage",
+    "canonStatus": "apocryphal"
+  },
+  {
+    "id": "prophecy-brocco-li",
+    "subjectId": "brocco-li",
+    "subjectName": "Brocco Li",
+    "factionId": "mafia-char",
+    "desire": "To own the lower half of this ship without ever having to fight anyone for it.",
+    "poem": [
+      "You will be told the spiders are aboard and you will not change your evening.",
+      "Two families will be allowed to eat one another; only the hour is yours to set.",
+      "Do not send a man to admire them. Send one to find the magician first.",
+      "Your animals will be the last things on this ship that are still yours."
+    ],
+    "reading": "Brocco rules the Cha-R from the Tier 1 VVIP quarter with Luzurus's backing and Tier 5 in hand. Ken'i reports the Troupe's presence on the fourth day; Brocco calls his half-brother Onior, describes the Spiders as difficult to control and admired even by his own men, and the two agree to let the Heil-Ly and the Troupe grind each other down while keeping control of when they collide. He then orders Ken'i to reach Hisoka before the Spiders do — and on the seventh day is shown enjoying his collection of exotic animals.",
+    "foretells": "control of timing",
+    "horizon": "Day 4 – Day 12 of the voyage",
+    "canonStatus": "apocryphal"
+  },
+  {
+    "id": "prophecy-keni-wang",
+    "subjectId": "keni-wang",
+    "subjectName": "Ken'i Wang",
+    "factionId": "mafia-char",
+    "desire": "To keep Kakin standing and the civilians out of it — with a mafia and a band of thieves as the only instruments available.",
+    "poem": [
+      "You will hand corridors and weapons to killers and file it as containment.",
+      "The blood outside your warehouse is a survey, not a murder; someone is marking a door.",
+      "Do not tell your boss which side of that bargain you are actually serving.",
+      "You will ask thieves to save a country, and they will agree for reasons of their own."
+    ],
+    "reading": "Ken'i runs Cha-R operations on Tier 5, confronts the Troupe when warehouse guards vanish and concludes a Heil-Ly attacker is marking the hideout for teleportation. With Tajao he trades access and weapons for the Spiders' help against Luini and Morena, and formally asks the Troupe to destroy the new Heil-Ly. He serves Brocco Li while privately intending to protect the Kakin state and limit civilian damage — which requires manipulating the mafia and the Phantom Troupe at the same time.",
+    "foretells": "a bargain",
+    "horizon": "Day 2 – Day 12 of the voyage",
+    "canonStatus": "apocryphal"
+  },
+  {
+    "id": "prophecy-tajao",
+    "subjectId": "tajao",
+    "subjectName": "Tajao",
+    "factionId": "mafia-char",
+    "desire": "To be the man who knows the route — his worth to both families is the map.",
+    "poem": [
+      "You will buy spiders with access and pay them in tunnels.",
+      "Ask them for the woman; they will offer you her whole family instead.",
+      "On the twelfth day take three of them under the floor of the world.",
+      "The chamber you show them was never built for waste, and one of the three will turn back."
+    ],
+    "reading": "Tajao, Cha-R vice boss and military advisor to the Seventh Prince's army, trades access for the Troupe's help against the Heil-Ly; Phinks asks him and Ken'i to locate Morena and promises the Brigade will hunt the Heil-Ly Killer together. On the twelfth day Tajao leads Phinks, Feitan and Nobunaga through a secret tunnel into the purification and recycling chamber between Tiers 4 and 5 — where Phinks works out that the Heil-Ly likely replaced the waste contractors in order to lure and kill freely. Nobunaga leaves to secure another way up.",
+    "foretells": "a route opened",
+    "horizon": "Day 4 – Day 12 of the voyage",
+    "canonStatus": "apocryphal"
+  },
+  {
+    "id": "prophecy-ittoku",
+    "subjectId": "ittoku",
+    "subjectName": "Ittoku",
+    "factionId": "mafia-char",
+    "desire": "To know what the guests intend before the family is forced to react to it.",
+    "poem": [
+      "You will find him eating alone in a hall built for five hundred.",
+      "He will tell you the truth: he is not searching, he is being come to.",
+      "Believe the part about the treasure. It is waiting behind a magician.",
+      "A consigliere's work is to ask in time, and nothing you learn will be in time."
+    ],
+    "reading": "Ittoku, Cha-R consigliere, questions Franklin in the Tier 5 central mess hall, where he has stayed alone on the logic that Hisoka wants to kill the Spiders and will therefore come to whoever sits still. Franklin denies the Troupe's involvement in the warehouse killing and states plainly that Kakin's treasures will not be touched until Hisoka is dealt with — an accurate answer that gives the family nothing it can act on.",
+    "foretells": "a truthful answer",
+    "horizon": "Day 4 of the voyage",
+    "canonStatus": "apocryphal"
+  },
+  {
+    "id": "prophecy-zakuro-custard",
+    "subjectId": "zakuro-custard",
+    "subjectName": "Zakuro Custard",
+    "factionId": "mafia-xiyu",
+    "desire": "To be one of the ones trusted with the real work — and to still be standing when it is done.",
+    "poem": [
+      "You will stand beside the wrong magician and see nothing happen at all.",
+      "The woman next to you will drop, and you will not have seen the hand that did it.",
+      "Someone will wear your face while you sleep, and then wear hers.",
+      "On the twelfth day you will finally learn who you have been following."
+    ],
+    "reading": "Bonolenov, impersonating Hisoka, drops Lynch with a liver blow so fast that Zakuro does not see it, then neutralises Zakuro, takes her form to confirm what Lynch had understood, kills Lynch and wears Lynch to lead the mafia to the cinema. On the twelfth day Zakuro and Hinrigh work out that the Hisoka they met in Tier 3 was an impostor and Lynch's murderer, and that the staging was meant to make the families open a route upward.",
+    "foretells": "an imposture",
+    "horizon": "Day 4 – Day 12 of the voyage",
+    "canonStatus": "apocryphal"
+  },
+  {
+    "id": "prophecy-lynch-fullbokko",
+    "subjectId": "lynch-fullbokko",
+    "subjectName": "Lynch Fullbokko",
+    "factionId": "mafia-xiyu",
+    "desire": "To be the one who spots it — to hit first and be proved right in front of everyone.",
+    "poem": [
+      "You will strike him once and your ability will tell you the truth immediately.",
+      "You will be right, and being right will need about three seconds to become fatal.",
+      "A blow to the liver, too quick for the woman beside you to follow.",
+      "He will put your face on afterwards, and the whole family will follow you to the cinema."
+    ],
+    "reading": "Lynch hits the false Hisoka and Body and Soul identifies the imposture. Bonolenov drops her with a liver strike Zakuro cannot see, neutralises Zakuro, takes her shape to verify exactly what Lynch had understood, and then kills Lynch — before transforming into Lynch to mislead Zakuro and steer the mafia to the cinema. Hinrigh and Zakuro only reconstruct the murder on the twelfth day.",
+    "foretells": "death",
+    "horizon": "Day 4 of the voyage",
+    "canonStatus": "apocryphal"
+  },
+  {
+    "id": "prophecy-misha-hao",
+    "subjectId": "misha-hao",
+    "subjectName": "Misha Hao",
+    "factionId": "mafia-xiyu",
+    "desire": "A decent burial for everyone the family loses — which aboard this ship is an unreasonable request.",
+    "poem": [
+      "You keep the family's dead, and the family's dead are not arriving.",
+      "Hundreds will go missing on five decks and none of them will be brought to you.",
+      "Do not ask who is doing the disposing; they hold a contract of their own.",
+      "The only honest ledger aboard will be the one you cannot fill."
+    ],
+    "reading": "Misha Hao is recorded as the Xi-Yu family's undertaker and nothing else — the registry holds his trade and his house, no scene. The sheet is written from the shape of the voyage around him: the Heil-Ly killings produce hundreds of disappearances rather than bodies, and the Spiders later conclude the family may have taken over the ship's waste processing precisely so that the dead never surface.",
+    "foretells": "an empty ledger",
+    "horizon": "Day 1 – Day 12 of the voyage",
+    "canonStatus": "apocryphal"
+  },
+  {
+    "id": "prophecy-dogman",
+    "subjectId": "dogman",
+    "subjectName": "Dogman",
+    "factionId": "mafia-heilly",
+    "desire": "To climb faster than anyone else she kissed — the ring made him someone once, and Contagion is a better ring.",
+    "poem": [
+      "Twenty-one killings buy a talent of your own, and you will not stop at twenty-one.",
+      "Pass fifty and she will start calling you a name instead of a number.",
+      "Walk in behind a prince's coffin; nobody counts mourners.",
+      "At sixty-two you will carry off a soldier, and she is the only reason you were grown."
+    ],
+    "reading": "Contagion grants abilities past level 21 and Morena assigns Dogman the task of exceeding level 50 and finding a person matching very specific criteria. He reaches level 62 and uses Halkenburg's funeral procession as cover to abduct Borksen — the Specialist Morena needs — and deliver her to the hidden base, where Morena offers her membership as a 'compatible donor'.",
+    "foretells": "an abduction",
+    "horizon": "Day 1 – Day 12 of the voyage",
+    "canonStatus": "apocryphal"
+  },
+  {
+    "id": "prophecy-padaille",
+    "subjectId": "padaille",
+    "subjectName": "Padaille",
+    "factionId": "mafia-heilly",
+    "desire": "A demolition worth the name — to be one of the three who brought down a made man.",
+    "poem": [
+      "Three of you will corner one of theirs and enjoy the arithmetic.",
+      "His handcuffs will turn into birds; that is the moment to leave, and you will not take it.",
+      "Nothing the kiss gave you has finished growing yet.",
+      "You will be the first of hers the other side gets to count."
+    ],
+    "reading": "Three Heil-Ly ambush Hinrigh in the lower tiers. Biohazard turns his own handcuffs into pigeons — the ability makes living animals of touched objects while preserving their function — and Hinrigh traps Padaille and kills him. It is one of the first Heil-Ly losses the Xi-Yu can put a name to, in a campaign that until then had produced only disappearances.",
+    "foretells": "death",
+    "horizon": "Day 4 – Day 12 of the voyage",
+    "canonStatus": "apocryphal"
+  },
+  {
+    "id": "prophecy-sodom",
+    "subjectId": "sodom",
+    "subjectName": "Sodom",
+    "factionId": "mafia-heilly",
+    "desire": "To keep practising — the trade he had ashore, with the paperwork finally removed.",
+    "poem": [
+      "The kiss did not make you this. It only sharpened what you already sold.",
+      "Every patient is a level and every level is another hand to work with.",
+      "Do not envy the ones who kill loudly; the family counts both the same.",
+      "A doctor climbs fastest of all, because nobody runs from one."
+    ],
+    "reading": "The registry gives Sodom a back-alley doctor's practice, a hitman's contracts and the Heil-Ly — that is the whole record so far. The sheet is written from Contagion's rule rather than from a scene: Morena kisses each recruit, killing raises their level, and abilities appear once they pass twenty-one, which is why the ship's disappearances are a curriculum and not a crime wave.",
+    "foretells": "levelling",
+    "horizon": "Day 1 – Day 12 of the voyage",
+    "canonStatus": "apocryphal"
+  },
+  {
+    "id": "prophecy-terebellum",
+    "subjectId": "terebellum",
+    "subjectName": "Terebellum",
+    "factionId": "mafia-heilly",
+    "desire": "To stop being the one who carries what other people made.",
+    "poem": [
+      "The bodies you used to move for a fee you are now permitted to produce.",
+      "Five decks, and you already know every way between two of them.",
+      "Do not let the same family see you twice in the same corridor.",
+      "You will be paid in ability, and it will be spent on her war rather than yours."
+    ],
+    "reading": "Terebellum is catalogued as a transporter and hitman of the Heil-Ly and nothing further; the sheet reads from Contagion's terms. Morena's recruits level by killing and receive their own powers past level 21, but the family's structure keeps the return: she distributes the roles, and members are kept for exactly as long as they are useful — a condition she states outright to Borksen.",
+    "foretells": "levelling",
+    "horizon": "Day 1 – Day 12 of the voyage",
+    "canonStatus": "apocryphal"
+  },
+  {
+    "id": "prophecy-tevelares",
+    "subjectId": "tevelares",
+    "subjectName": "Tevelares",
+    "factionId": "mafia-heilly",
+    "desire": "To build something that holds — the one instinct he brought aboard intact.",
+    "poem": [
+      "She will sit with three of you and explain what a fight is actually made of.",
+      "Experience, technique, aura, and the idea nobody had; she will tell you to prefer the last.",
+      "Design your power the way you designed structures: for load, not for beauty.",
+      "Every rule you invent will hold, and it will be holding up her world instead of yours."
+    ],
+    "reading": "Morena personally advises Tevelares, Quorolle and Gelato on the abilities they are growing, explaining that experience, technique, aura and ingenuity are what decide a Nen fight, and proposing that they convert their confrontations into systems comparable to games. Tevelares is catalogued as a civil engineer; the fit between the trade and the method is the whole of the sheet.",
+    "foretells": "a system",
+    "horizon": "Day 1 – Day 12 of the voyage",
+    "canonStatus": "apocryphal"
+  },
+  {
+    "id": "prophecy-quorolle",
+    "subjectId": "quorolle",
+    "subjectName": "Quorolle",
+    "factionId": "mafia-heilly",
+    "desire": "To be needed for what he can fix rather than for what he can break.",
+    "poem": [
+      "What is broken you can put back — a rarer talent here than killing is.",
+      "She will teach you that a fight is a system before it is ever a fist.",
+      "Repair nothing belonging to the families; the work will have your name in it.",
+      "You will be given a power that fits your hands exactly, and a war that does not."
+    ],
+    "reading": "Quorolle is one of the three recruits Morena coaches directly on their developing abilities, alongside Tevelares and Gelato, and is catalogued as a repairman. Her lesson is that a Nen fight is decided by experience, technique, aura and ingenuity, and that a confrontation can be built into a system — the same shape as the seven-card negotiation game she later imposes on Borksen.",
+    "foretells": "a system",
+    "horizon": "Day 1 – Day 12 of the voyage",
+    "canonStatus": "apocryphal"
+  },
+  {
+    "id": "prophecy-gelato",
+    "subjectId": "gelato",
+    "subjectName": "Gelato",
+    "factionId": "mafia-heilly",
+    "desire": "A game with real stakes at last — and a rank inside it that nobody can dispute.",
+    "poem": [
+      "You will be told to make your fights into games, and it will sound like a promotion.",
+      "Levels, conditions, a win screen: you have played this before and lost nothing by it.",
+      "The people you are matched against did not agree to the rules and cannot read them.",
+      "The best player in her family is the one who never asks what the prize is for."
+    ],
+    "reading": "Gelato is catalogued as a professional gamer and is one of the three Heil-Ly Morena advises on their abilities. She explicitly proposes turning their fights into systems comparable to games — a doctrine Contagion already embodies, with levels earned by killing and powers unlocked past twenty-one. What the levels are ultimately being spent on is Morena's own stated goal: to destroy Kakin, and then everything after it.",
+    "foretells": "a game with stakes",
+    "horizon": "Day 1 – Day 12 of the voyage",
+    "canonStatus": "apocryphal"
+  },
+  {
+    "id": "prophecy-yokotani",
+    "subjectId": "yokotani",
+    "subjectName": "Yokotani",
+    "factionId": "mafia-heilly",
+    "desire": "To find the clause everyone else missed — it has always worked before.",
+    "poem": [
+      "You read contracts for a living, and this one you signed with your mouth.",
+      "Watch the entrances; you were chosen because you notice which door is lawful.",
+      "Do not draft yourself a way out. She has read further down the page than you.",
+      "The only term that matters is the one where she decides how long you are useful."
+    ],
+    "reading": "Yokotani is the Heil-Ly's legal adviser and, when Morena redistributes the roles after abandoning the Room 3101 decoy, he and Orarge are given the entrances to watch. Contagion is activated by a kiss and carries conditions of its own; Morena tells Borksen plainly that she will be able to go back to her friends and will be killed the moment she stops being useful.",
+    "foretells": "a binding term",
+    "horizon": "Day 1 – Day 12 of the voyage",
+    "canonStatus": "apocryphal"
+  },
+  {
+    "id": "prophecy-orarge",
+    "subjectId": "orarge",
+    "subjectName": "Orarge",
+    "factionId": "mafia-heilly",
+    "desire": "To run the disposal on a scale nobody ashore would have signed off on.",
+    "poem": [
+      "Your trade was making things stop existing; she has only widened the contract.",
+      "Stand at the entrance and count who comes in. The ship is the bin now.",
+      "Between two decks there is a chamber your industry knows the shape of.",
+      "Spiders will find it before the law does, and they will not have been looking for you."
+    ],
+    "reading": "Orarge is catalogued as a waste disposal contractor and is posted with Yokotani to watch the entrances of Morena's real base. On the twelfth day Tajao leads Phinks and Feitan into the purification and recycling chamber between Tiers 4 and 5, where Phinks concludes the Heil-Ly may have replaced the waste-processing contractors in order to lure victims and kill them without a body ever surfacing.",
+    "foretells": "an industry",
+    "horizon": "Day 1 – Day 12 of the voyage",
+    "canonStatus": "apocryphal"
+  },
+  {
+    "id": "prophecy-notre",
+    "subjectId": "notre",
+    "subjectName": "Notre",
+    "factionId": "mafia-heilly",
+    "desire": "To be posted where the work is, not where the family parks the ones it can spare.",
+    "poem": [
+      "You will be sent back to the house she has already walked out of.",
+      "Sit in the decoy and look occupied; the door still does what it was built to do.",
+      "Do not wonder why they keep arriving. That room is bait with plumbing.",
+      "By the end, the pipes of this ship will be the only map anybody trusts."
+    ],
+    "reading": "When Morena abandons Room 3101 she leaves the trap live and assigns Notre and Soufflé to watch the old lair. The trap keeps working: Hinrigh and Nobunaga cross it and find a base with walls reinforced, probably by Morena's Nen. Notre is catalogued as a plumber — the trade and the posting are what the sheet is built from.",
+    "foretells": "a decoy",
+    "horizon": "Day 1 – Day 12 of the voyage",
+    "canonStatus": "apocryphal"
+  },
+  {
+    "id": "prophecy-souffle",
+    "subjectId": "souffle",
+    "subjectName": "Soufflé",
+    "factionId": "mafia-heilly",
+    "desire": "To be the one who sees them coming, from a room where nobody can reach her.",
+    "poem": [
+      "You will watch the old address from a screen and see the enemy walk straight into it.",
+      "A man will swallow his own signal and let the room take him on purpose.",
+      "Do not assume a hideout is hidden because no one has said its name.",
+      "Your family will be located by a transmitter, and not by any mistake of yours."
+    ],
+    "reading": "Soufflé, the Heil-Ly's hacker, is posted with Notre to observe the abandoned Room 3101 lair. Hinrigh has Biohazard turn a transmitter into an oyster, swallows it and walks into the teleport trap deliberately; Phinks tracks the signal with Feitan and the Spiders conclude the real base sits on Tier 2. The base is found by a device rather than by a lapse in her watch.",
+    "foretells": "exposure",
+    "horizon": "Day 4 – Day 12 of the voyage",
+    "canonStatus": "apocryphal"
+  },
+  {
+    "id": "prophecy-montblanc-toto",
+    "subjectId": "montblanc-toto",
+    "subjectName": "Montblanc Toto",
+    "factionId": "mafia-heilly",
+    "desire": "To keep the two trades he already had, now that no one is checking the paperwork on either.",
+    "poem": [
+      "Cleaner and maker of feed: you knew what a body was for before she kissed you.",
+      "The ladder is the only thing that is new, and you will climb it quietly.",
+      "Kill without noise and the number rises with no witness attached to it.",
+      "Hundreds will be missing from this ship and not one of them will be found."
+    ],
+    "reading": "Montblanc Toto is catalogued as a Heil-Ly cleaner and feed manufacturer, with no scene recorded yet; the sheet is written from Contagion's rule and from the shape of the campaign around him. Morena's recruits level by killing and their offensive produces hundreds of disappearances, unbalancing all three families and pushing the Xi-Yu and Cha-R toward eliminating her.",
+    "foretells": "levelling",
+    "horizon": "Day 1 – Day 12 of the voyage",
     "canonStatus": "apocryphal"
   },
   {

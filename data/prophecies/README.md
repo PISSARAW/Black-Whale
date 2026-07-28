@@ -1,7 +1,8 @@
 # Prophéties — Lovely Ghostwriter
 
-55 prophéties écrites dans le style des poèmes de Neon Nostrade, une par personnage
-majeur de la Guerre de Succession.
+75 prophéties écrites dans le style des poèmes de Neon Nostrade, une par personnage
+majeur de la Guerre de Succession — princes, reines, camp Woble, Hunters, Brigade
+fantôme et les trois familles mafieuses.
 
 ## Statut : `apocryphal`
 
@@ -20,11 +21,16 @@ Chaque poème suit la structure des prophéties du manga : un repère temporel, 
 image-présage, un impératif, puis la ligne de destin — et vise ce que le personnage
 veut réellement, pas ce qu'il annonce vouloir. Kurapika est prévenu du prix en
 années, pas des Yeux ; Camilla apprend qu'elle ne mourra jamais et ne sera jamais
-aimée ; Momoze, Salé-salé, Kacho, Woody, Vincent, Musse, Tuffdy, Luini et Keeney
-reçoivent l'annonce de leur mort.
+aimée ; Momoze, Salé-salé, Kacho, Woody, Vincent, Musse, Tuffdy, Luini, Lynch,
+Padaille et Keeney reçoivent l'annonce de leur mort.
 
 Chrollo n'a pas de poème (`"blank": true`) : la capacité ne peut pas écrire l'avenir
 de celui qui l'utilise, et c'est lui qui tient la page depuis Yorknew.
+
+Une partie des Heil-Ly n'a, dans le registre, qu'un métier et une famille — aucune
+scène. Leurs feuilles sont écrites depuis la règle de Contagion (le baiser, les
+niveaux gagnés en tuant, la capacité au-delà du vingt-et-unième) et leur `reading`
+le dit explicitement plutôt que d'inventer un événement.
 
 ## Champs
 

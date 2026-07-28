@@ -43,6 +43,10 @@ Princes, guards, mafia families, Hunters and the Phantom Troupe, grouped by fact
 
 [![The passenger registry](.github/assets/characters.png)](https://exploreblackwhale.com/characters)
 
+### Trace who is working with — or against — whom
+
+[`/relationships`](https://exploreblackwhale.com/relationships) draws the alliances, rivalries, patronages and proxy wars between princes, mafia families and Hunter factions. Every edge carries the chapter it was established in and the passage that evidences it, and the spoiler filter hides the ones you have not reached yet.
+
 ### Read the Nen
 
 81 abilities across 54 users, each with its category, conditions and cost — and each one executable against the archive itself, so you can watch an ability change what the site shows you.

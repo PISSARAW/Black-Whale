@@ -11,6 +11,7 @@
     emperorTimeLifeHours,
     parallelFutureVisible,
   } from './hatsuState.js'
+  import { setAmbientMuffled } from '$lib/audio/ambient.js'
   import {
     hatsuById,
     siteImpactFor,
@@ -298,6 +299,7 @@
     puppetTarget = null
     puppetExecuting = false
     sensesStage = 0
+    setAmbientMuffled(false)
     windupPower = 0
     infectionLevel = 0
     studyTarget = ''
@@ -1530,6 +1532,9 @@
       document.body.classList.toggle('hatsu-no-sight', sensesStage >= 1)
       document.body.classList.toggle('hatsu-no-hearing', sensesStage >= 2)
       document.body.classList.toggle('hatsu-no-speech', sensesStage >= 3)
+      // Sealed hearing drowns the voyage theme rather than stopping it: the
+      // visitor keeps their own audio setting, they just cannot hear through it.
+      setAmbientMuffled(sensesStage >= 2)
       if (sensesStage >= 2) {
         document.querySelectorAll<HTMLMediaElement>('audio,video').forEach((media) => media.pause())
       }

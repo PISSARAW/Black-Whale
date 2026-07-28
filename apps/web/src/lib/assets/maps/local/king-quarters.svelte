@@ -75,6 +75,9 @@
     {#each [135, 285, 435, 585] as x (x)}
       <rect x={x - 35} y="65" width="70" height="90" class="painting" />
     {/each}
+    <!-- Halkenburg is laid out here in ch. 413, Nasubi standing beside him. -->
+    <rect x="250" y="400" width="250" height="70" rx="4" class="furniture" />
+    <text x="375" y="392" class="sub">Bier</text>
     <line x1="300" y1="520" x2="450" y2="520" stroke="#050505" stroke-width="14" />
     <path d="M300 515 Q375 435 450 515" fill="none" stroke="#ffd700" stroke-width="4" />
     <text x="375" y="490" class="sub">Guarded gate toward the Banquet Hall</text>

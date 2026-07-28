@@ -26743,6 +26743,17 @@
       "status": "mort",
       "role": "Private Soldier for Prince Tserriednich Hui Guo Rou ; Provisional Hunter ; 289th Hunter Exam Examinee"
     },
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1004",
+        "fromChapterId": "ch-358"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1014",
+        "fromChapterId": "ch-369",
+        "untilChapterId": "ch-370"
+      }
+    ],
     "mangaAppearances": [
       {
         "chapter": 340,
@@ -40969,6 +40980,17 @@
     },
     "mapPresenceFromChapterId": "ch-368",
     "mapPresenceUntilChapterId": "ch-369.2",
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1013",
+        "fromChapterId": "ch-368"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1014",
+        "fromChapterId": "ch-369",
+        "untilChapterId": "ch-369.2"
+      }
+    ],
     "mangaAppearances": [
       {
         "chapter": 369,

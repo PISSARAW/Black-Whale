@@ -503,6 +503,46 @@ describe('packMarkersForZoom', () => {
     expect(fugetsu.y).toBeCloseTo(67.86)
   })
 
+  it('gathers a delegation on a shared fixture while naming one of its own', () => {
+    const cabin = ['kanzai', 'saiyu', 'pyon', 'prince-fugetsu'].map(
+      (slug) =>
+        ({
+          ...markers[0],
+          id: slug,
+          locationId: 'tier-3-residential-first-class',
+          characterSlug: slug,
+        }) as MapMarker,
+    )
+    const [kanzai, saiyu, pyon, fugetsu] = packMarkersForZoom(cabin, 'LOCAL')
+
+    // The Zodiacs fan out around the strategy table, seated by sorted id so the
+    // arrangement does not depend on the order the world state hands them over.
+    expect(kanzai.x).toBeCloseTo(55)
+    expect(pyon.x).toBeCloseTo(59)
+    expect(saiyu.x).toBeCloseTo(63)
+    // ...and Fugetsu, who hides in the same block, keeps the bed instead.
+    expect(fugetsu.x).toBeCloseTo(45)
+  })
+
+  it('puts the two classroom victims on the floor they fell on', () => {
+    const room = ['barrigen', 'myuhan', 'kurapika'].map(
+      (slug) =>
+        ({
+          ...markers[0],
+          id: slug,
+          locationId: 'tier-1-royal-residential-sector-room-1014',
+          characterSlug: slug,
+        }) as MapMarker,
+    )
+    const [barrigen, myuhan, kurapika] = packMarkersForZoom(room, 'LOCAL')
+
+    // Both lie on the class floor, either side of the teacher who is below them.
+    expect(barrigen.y).toBeCloseTo(myuhan.y)
+    expect(barrigen.x).toBeLessThan(kurapika.x)
+    expect(myuhan.x).toBeGreaterThan(kurapika.x)
+    expect(barrigen.y).toBeLessThan(kurapika.y)
+  })
+
   it('packs overview by tier, so a lone tier sits on its own band', () => {
     const packed = packMarkersForZoom(markers, 'OVERVIEW')
     const [first, second, third] = packed

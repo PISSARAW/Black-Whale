@@ -142,6 +142,11 @@
 
       <!-- Door to WC -->
       <line class="door" x1="100" y1="0" x2="120" y2="30" />
+
+      <!-- The Zodiacs work the expedition maps here in ch. 359. -->
+      <rect x="110" y="70" width="80" height="100" class="furniture" />
+      <text x="150" y="115" class="sublabel text-xs">STRATEGY</text>
+      <text x="150" y="130" class="sublabel text-xs">TABLE</text>
     </g>
   </g>
 </svg>

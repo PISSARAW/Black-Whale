@@ -269,6 +269,10 @@ const localSpotAnchors: Record<
       longhi: { x: 56.25, y: 86.25 },
       woody: { x: 81.25, y: 86.25 },
       vincent: { x: 50, y: 16.25 },
+      // Silent Majority drops these two on the classroom floor itself, in front
+      // of the students it is hiding among — ch. 369 and ch. 370.
+      barrigen: { x: 40, y: 62 },
+      myuhan: { x: 60, y: 62 },
     },
   },
 
@@ -285,6 +289,64 @@ const localSpotAnchors: Record<
   'tier-2-vip-witness-protection-area': {
     occupants: {},
     fallback: { x: 28, y: 67.86 },
+  },
+
+  // `local/king-quarters.svelte`, 900 × 650, contents offset by (75, 75).
+  // Nasubi receives from the central seat, ch. 382; the bier the asset now draws
+  // holds Halkenburg in ch. 413, his father standing over him.
+  'tier-1-king-living-quarters': {
+    occupants: {
+      'nasubi-hui-guo-rou': { x: 50, y: 50.38 },
+      'prince-halkenburg': { x: 50, y: 78.46 },
+    },
+  },
+  // `local/heilly-hideout.svelte`, 1100 × 760, contents offset by (55, 95).
+  // Morena runs Heil-Ly from the head of the communal table, ch. 378 onward, and
+  // ch. 407–410 seat Borksen at the far end for the negotiation game.
+  'tier-2-heilly-secret-hideout': {
+    occupants: {
+      'morena-prudo': { x: 50.45, y: 82.24 },
+      borksen: { x: 62.27, y: 82.24 },
+    },
+  },
+  // `local/tier3-cabins.svelte`, 1000 × 600, contents offset by (50, 80).
+  // The Zodiacs work the expedition maps around the strategy table in ch. 359;
+  // the fallback is the table, so the whole delegation gathers at it. Fugetsu
+  // hides in the same block in ch. 380 and gets the bed instead.
+  'tier-3-residential-first-class': {
+    occupants: { 'prince-fugetsu': { x: 45, y: 91.67 } },
+    fallback: { x: 55, y: 91.67 },
+  },
+  // `local/lifeboats.svelte`, 1000 × 600, contents offset by (50, 80).
+  // The twins board the same pod in ch. 383; Keeney holds the emergency door.
+  'tier-1-lifeboats': {
+    occupants: {
+      'prince-kacho': { x: 30.5, y: 55 },
+      'prince-fugetsu': { x: 34.5, y: 55 },
+      keeney: { x: 9, y: 31.67 },
+    },
+  },
+  // `local/casino.svelte`, 1000 × 600, contents offset by (50, 80).
+  // Hisoka plays the unconventional variants in ch. 405.
+  'tier-1-vip-casino': {
+    occupants: { hisoka: { x: 60, y: 46.67 } },
+  },
+  // `local/cineplex.svelte`, 1000 × 600, contents offset by (50, 80).
+  // Bonolenov watches from the seating area in ch. 393, wearing Hisoka's face.
+  'tier-3-cineplex': {
+    occupants: { 'bonolenov-ndongo': { x: 25, y: 84.17 } },
+  },
+  // `local/central-dining-hall.svelte`, 1000 × 600, contents offset by (50, 80).
+  // The Troupe gathers information from the foreground table, ch. 371 and 377.
+  'tier-5-central-dining-hall': {
+    occupants: {},
+    fallback: { x: 55, y: 66.67 },
+  },
+  // `local/cha-r-office.svelte`, 1000 × 680, contents offset by (70, 90).
+  // Tajao and Wang hold the main office table in ch. 405–406. Luini is not
+  // placed: he comes through a hole in a wall the plan does not draw.
+  'tier-5-cha-r-family-office': {
+    occupants: { tajao: { x: 25, y: 41.18 }, 'keni-wang': { x: 30, y: 41.18 } },
   },
 }
 

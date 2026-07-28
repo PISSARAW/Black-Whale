@@ -361,10 +361,13 @@
     color: var(--accent-gold);
   }
   .dossier-card h3 {
-    max-width: 16rem;
+    max-width: 18rem;
     margin: 7.5rem 0 1rem;
     font-size: 2.2rem;
     line-height: 0.95;
+    /* These titles are sentences, not labels: balancing keeps the second line
+       from collapsing to a single orphaned word. */
+    text-wrap: balance;
   }
   .dossier-card p {
     max-width: 19rem;

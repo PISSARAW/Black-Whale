@@ -1,4 +1,4 @@
-import type { WorldState, EntityRef } from '@black-whale/world-engine'
+import { cloneWorld, type WorldState, type EntityRef } from '@black-whale/world-engine'
 import {
   NenEngine,
   type AbilityActionPlan,
@@ -181,9 +181,19 @@ export class NenRuntime {
   }
 
   async getActiveState(abilityId: string, eventId: string) {
-    const active = await this.engine.getActiveAbilities(eventId)
+    return this.getActiveStateIn(abilityId, eventId, await this.ports.loadWorldState(eventId))
+  }
+
+  /** The same answer for a branch, whose state is already in hand. */
+  async getActiveStateIn(abilityId: string, eventId: string, worldState: WorldState) {
+    const active = await this.engine.getActiveAbilities(worldState)
     const ability = active.find((entry) => entry.abilityId === abilityId)
     return { abilityId, eventId, state: ability ? ability.state : 'inactive' }
+  }
+
+  /** Every ability still running in a state, canon or branch. */
+  async getActiveAbilities(worldState: WorldState) {
+    return this.engine.getActiveAbilities(worldState)
   }
 
   async validate(abilityId: string, request: NenActionRequest): Promise<ValidationResult> {
@@ -192,6 +202,19 @@ export class NenRuntime {
 
   async plan(abilityId: string, request: NenActionRequest): Promise<AbilityActionPlan> {
     return this.engine.plan(await this.contextFromEvent(abilityId, request))
+  }
+
+  /**
+   * The plan an action would follow inside a state the caller already holds —
+   * a simulation branch. The state is cloned first: planning must never grant
+   * the actor the ability the way executing does.
+   */
+  async planInState(
+    abilityId: string,
+    request: NenActionRequest,
+    worldState: WorldState,
+  ): Promise<AbilityActionPlan> {
+    return this.engine.plan(await this.buildContext(abilityId, request, cloneWorld(worldState)))
   }
 
   async executeInState(

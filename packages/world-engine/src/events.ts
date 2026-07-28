@@ -98,6 +98,14 @@ export type ProposedWorldEvent = WorldEvent extends infer TEvent
  * actions diverge because he knows what was coming.
  */
 export function eventSubjectIds(event: WorldEvent): string[] {
+  return proposedSubjectIds(event)
+}
+
+/**
+ * The same answer for an event that has not been accepted yet, so a plan can
+ * name the entities it would touch before anything is written.
+ */
+export function proposedSubjectIds(event: ProposedWorldEvent): string[] {
   switch (event.type) {
     case 'ENTITY_REGISTERED':
       return [event.payload.entity.id]

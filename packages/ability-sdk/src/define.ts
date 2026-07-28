@@ -10,9 +10,11 @@ import type {
   NenAbilityModule,
   NenActionWheelEntry,
   PerspectiveModifier,
+  ProjectedEffect,
   ValidationResult,
   WhyCondition,
 } from '@black-whale/nen-engine'
+import { proposedSubjectIds, type ProposedWorldEvent } from '@black-whale/world-engine'
 import type { ConditionFn } from './conditions.js'
 import { resolve, type Resolvable } from './context.js'
 import type { EffectBuilder } from './effects.js'
@@ -98,6 +100,42 @@ export function defineAbility(def: AbilityDefinition): NenAbilityModule {
   const effectsOf = (ctx: AbilityContext): EffectBuilder[] =>
     actionOf(ctx)?.effects ?? def.effects ?? []
 
+  /**
+   * What the action would create, obtained by running the effect builders
+   * themselves. They are pure functions of the context — nothing is persisted
+   * until an application service accepts the events — so the projection and the
+   * execution can never describe two different things.
+   */
+  const projectionOf = (ctx: AbilityContext): ProjectedEffect[] =>
+    effectsOf(ctx).flatMap((builder) => {
+      let events: ProposedWorldEvent[]
+      try {
+        events = builder(ctx)
+      } catch {
+        // A builder that needs a parameter the caller has not supplied yet
+        // cannot be projected. Guessing here would put a fiction in the panel.
+        return []
+      }
+      return events.map((event) => {
+        const base = {
+          event: event.type,
+          abilityId: ctx.abilityId,
+          targets: proposedSubjectIds(event),
+        }
+        if (event.type !== 'EFFECT_CREATED') return base
+        const effect = event.payload.effect
+        return {
+          ...base,
+          kind: effect.kind,
+          state: effect.state,
+          abilityId: effect.abilityId,
+          targets: effect.targets.map((target) => target.id),
+          ...(effect.attributes['masked'] === true ? { masked: true } : {}),
+          ...(effect.attributes['postMortem'] === true ? { postMortem: true } : {}),
+        }
+      })
+    })
+
   const costOf = (ctx: AbilityContext): AbilityCost | undefined => {
     const action = actionOf(ctx)
     const own = action?.cost === undefined ? undefined : resolve(action.cost, ctx)
@@ -145,7 +183,7 @@ export function defineAbility(def: AbilityDefinition): NenAbilityModule {
           minimum: interaction?.allowedTargets.length ? 1 : 0,
         },
         interaction,
-        projectedEffects: effectsOf(ctx).map((_, index) => `effect:${index}`),
+        projectedEffects: projectionOf(ctx),
         ...(cost ? { cost } : {}),
       }
     },

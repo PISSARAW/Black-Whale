@@ -2,7 +2,14 @@ import { prisma } from '$lib/server/db'
 import type { CatalogCharacter } from '$lib/server/data-files'
 import { buildPerspective } from '$lib/server/perspectives'
 import { readSpoilerProfile } from '$lib/server/spoiler'
-import { compareEventOrder, TimelineEngine } from '@black-whale/timeline-engine'
+import {
+  activeFactionTypesAt,
+  filterPresencesByBodies,
+  readLegacySequence,
+  resolveVisibleBodyIds,
+  selectEvent,
+  TimelineEngine,
+} from '@black-whale/timeline-engine'
 import {
   buildCatalogIndex,
   buildHatsuIndex,
@@ -23,9 +30,7 @@ export const load: PageServerLoad = async ({ url, cookies }) => {
   const requestedPerspectiveId = url.searchParams.get('perspective') || 'reader'
   const followMode = url.searchParams.get('follow') || 'consciousness'
   const requestedEventId = url.searchParams.get('eventId')
-  const legacySequence = url.searchParams.get('sequence')
-    ? parseInt(url.searchParams.get('sequence') as string)
-    : undefined
+  const legacySequence = readLegacySequence(url.searchParams.get('sequence'))
 
   const spoilerProfile = readSpoilerProfile(cookies)
 
@@ -40,15 +45,10 @@ export const load: PageServerLoad = async ({ url, cookies }) => {
     include: { chapter: true },
   })
 
-  const selectedEvent =
-    events.find((event) => event.id === requestedEventId) ||
-    (legacySequence !== undefined
-      ? [...events].reverse().find((event) => event.sequence === legacySequence)
-      : undefined) ||
-    events[events.length - 1]
-  const selectedEventIndex = selectedEvent
-    ? events.findIndex((event) => event.id === selectedEvent.id)
-    : 0
+  const { event: selectedEvent, index: selectedEventIndex } = selectEvent(events, {
+    eventId: requestedEventId,
+    sequence: legacySequence,
+  })
   const sequence = selectedEvent?.sequence ?? 0
 
   const rawWorldState = selectedEvent
@@ -104,15 +104,7 @@ export const load: PageServerLoad = async ({ url, cookies }) => {
           },
         })
       : []
-  const activeFactionTypesByCharacter = new Map<string, string[]>()
-  for (const membership of memberships) {
-    if (!selectedEvent || compareEventOrder(membership.fromEvent, selectedEvent) > 0) continue
-    if (membership.untilEvent && compareEventOrder(selectedEvent, membership.untilEvent) >= 0)
-      continue
-    const types = activeFactionTypesByCharacter.get(membership.characterId) || []
-    types.push(membership.faction.type)
-    activeFactionTypesByCharacter.set(membership.characterId, types)
-  }
+  const activeFactionTypesByCharacter = activeFactionTypesAt(memberships, selectedEvent)
   visibleCharacters = visibleCharacters.map((character: any) => ({
     ...character,
     factionTags: resolveFactionTags(
@@ -137,30 +129,8 @@ export const load: PageServerLoad = async ({ url, cookies }) => {
   // Presences reference bodies, not characters. Resolve the body owner before
   // applying the spoiler filter so valid character positions are not discarded.
   const visibleCharacterIds = new Set(visibleCharacters.map((character: any) => character.id))
-  const visibleAppearanceCharacterIds = new Set(
-    visibleCharacters.map((character: any) => character.id),
-  )
-  const visibleAppearanceBodyIds = new Set(
-    (rawWorldState.appearances as any[])
-      .filter(
-        (appearance) =>
-          appearance.appearanceCharacterId &&
-          visibleAppearanceCharacterIds.has(appearance.appearanceCharacterId),
-      )
-      .map((appearance) => appearance.entityId),
-  )
-  const visibleBodyIds = new Set(
-    (rawWorldState.bodies as any[])
-      .filter(
-        (body) =>
-          visibleCharacterIds.has(body.originalCharacterId) ||
-          visibleAppearanceBodyIds.has(body.id),
-      )
-      .map((body) => body.id),
-  )
-  const visiblePresences = (rawWorldState.presences as any[]).filter((presence) =>
-    visibleBodyIds.has(presence.entityId),
-  )
+  const visibleBodyIds = resolveVisibleBodyIds(rawWorldState, visibleCharacterIds)
+  const visiblePresences = filterPresencesByBodies(rawWorldState.presences, visibleBodyIds)
 
   // Load locations to match presences to actual SVGs
   const visibleLocations = await prisma.location.findMany({

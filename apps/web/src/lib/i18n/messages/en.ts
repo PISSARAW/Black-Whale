@@ -86,6 +86,8 @@ export const en = {
       sprintKeys: 'Shift',
       use: 'Change deck, enter a room',
       useKeys: 'E, on a stairwell or at a door',
+      nen: 'Cast the active Hatsu',
+      nenKeys: 'F, or click, on the room or the solid you are facing',
     },
     provenance: {
       title: 'What is canon here',
@@ -103,6 +105,138 @@ export const en = {
         'The deck plans are schematic. The reconstruction scales them so the rooms come out the size the panels imply, which is not a measurement of the ship.',
     },
     sourcesLink: 'Where every room comes from',
+
+    /**
+     * Nen in the walk. The archive's other pages let a technique work on what is
+     * written; here it works on the ship, and nothing else — so the copy talks
+     * about rooms and decks throughout, never about sections or controls.
+     */
+    hatsu: {
+      title: 'Nen in the walk',
+      reach: 'Any room in the ship, from anywhere in the ship',
+      aiming: (room: string) => `Facing ${room}`,
+      aimingNothing: 'Facing nothing the aura can hold',
+      castHint: 'Press F, or click, to cast on it — or pick any room in the ship below',
+      inert: (name: string, carried: number) =>
+        `${name} works on what a page says, and the walk has only rooms: it does nothing here. ${carried} techniques answer to the ship — Emperor Time, Blinky, the Hideout Doors and the rest.`,
+      inertShort: 'Inert in the walk',
+      targets: 'Cast on a room',
+      allDecks: 'The whole ship',
+      holding: 'What the aura is holding',
+      release: 'Let the ship go',
+      nothingHeld: 'Nothing yet',
+      copy: 'Empty copy',
+      copySource: 'An empty duplicate of the room. Nothing in it is the ship.',
+      reports: {
+        noTarget: 'Nothing in reach to cast on',
+        teleported: (room: string) => `Sent to ${room} — you did not choose where you landed`,
+        doorArmed: (room: string) => `First frame installed in ${room} · arm a second to join them`,
+        doorsPaired: (a: string, b: string) =>
+          `${a} and ${b} are one threshold now · step into either and come out at the other`,
+        doorsRearmed: (room: string) =>
+          `The old pair is down · first frame installed in ${room}`,
+        phasingOn: 'Walls stopped being walls · walk through the ship',
+        phasingOff: 'Back inside the geometry · the walls hold again',
+        eyeSent: (room: string) => `The eye is parked in ${room} · its feed is in the corner`,
+        eyeRecalled: 'The eye is back with you',
+        sealedSight: 'Sight sealed · the decks are still there and you cannot see them',
+        sealedHearing: 'Hearing sealed as well · the ship has gone quiet',
+        sealedSpeech: 'Speech sealed too · the walk will not say what room you are in',
+        sealedReleased: 'The three released · sight, hearing and speech return',
+        dowsed: (room: string, metres: number, decks: number) =>
+          decks
+            ? `${room} · ${metres} m away, ${decks} level${decks > 1 ? 's' : ''} off`
+            : `${room} · ${metres} m away, on this level`,
+        watching: (room: string) => `A paper doll is in ${room}, counting every arrival`,
+        isolatedInside: (room: string) =>
+          `${room} is isolated around you · you may leave, and you will not get back in`,
+        isolatedOutside: (room: string) =>
+          `${room} is isolated · from out here you can only reach an empty copy of it`,
+        stripped: (room: string, count: number) =>
+          count
+            ? `${count} hold${count > 1 ? 's' : ''} blown off ${room} · nothing was moved`
+            : `Nothing was holding ${room}`,
+        laidOpen: (spaces: number, decks: number) =>
+          `Every category at 100% · ${spaces} rooms across ${decks} levels held open at once`,
+        emptied: (room: string, structures: number) =>
+          structures
+            ? `${structures} solid${structures > 1 ? 's' : ''} swallowed out of ${room}`
+            : `${room} was already bare`,
+        refused: (room: string) =>
+          `Blinky refuses ${room} · Nen is holding it, which is how the trap shows`,
+        dispatched: (room: string) => `A bird is back from ${room} with what the room rests on`,
+
+        // On the solids. A room is a place and a solid is a thing: these all
+        // say what happened to a thing, and never what happened to a page.
+        noSolid: 'Nothing solid down the reticle',
+        boundFast: (solid: string) => `${solid} is held fast · nothing but the chain gets it back`,
+        gumSet: (solid: string) => `Gum on ${solid} · take hold of a second thing to pull them together`,
+        gumPulled: (solid: string, other: string) => `${solid} snapped across to ${other}`,
+        forged: (solid: string) =>
+          `${solid} is wearing another surface · what it is, and what it stops, are unchanged`,
+        wrapped: (solid: string) => `${solid} wrapped small · nothing about it is damaged`,
+        unwrapped: (solid: string) => `${solid} is out of the cloth, the size it was`,
+        pushed: (solid: string, metres: number) =>
+          metres
+            ? `${solid} pushed ${metres} m · it is a thing, so it moves like one`
+            : `${solid} is against the wall of its room and goes no further`,
+        copied: (solid: string) =>
+          `A copy of ${solid} stands beside it · it is drawn cold, because no page supports it`,
+        crushed: (solid: string) => `${solid} is flat under the weight`,
+        volley: (solid: string, hits: number) => `${solid} driven back · volley ${hits} of 3`,
+        shattered: (solid: string) => `${solid} does not stand any more`,
+        woundUp: (turns: number) => `${turns} rotation${turns > 1 ? 's' : ''} wound into the next punch`,
+        launched: (solid: string, metres: number) =>
+          metres ? `${solid} sent ${metres} m across the room` : `${solid} had nowhere to go`,
+        struck: (solid: string) => `The staff comes down on ${solid} and turns it`,
+        bound: (solid: string) => `The snake has ${solid} · nothing else moves it now`,
+        released: (solid: string) => `${solid} is let go`,
+        cameUpUnder: (solid: string, other: string) =>
+          `The aura ran out of ${solid} along the floor and came up under ${other}`,
+        stitched: (solid: string) => `${solid} is back as the blueprint has it`,
+        nothingToStitch: (solid: string) => `Nothing was done to ${solid} to undo`,
+        animated: (solid: string) => `${solid} is awake, and no less solid for it`,
+        shredStuck: (solid: string) => `The confetti sticks in ${solid} · every volley now goes there`,
+        shredCut: (solid: string, left: number) => `${solid} is cut down to ${left}% of itself`,
+        grown: (solid: string) => `${solid} has grown out of all proportion`,
+        growthRefused: (solid: string) => `${solid} barely stirs · Nen is already in it`,
+        marked: (solid: string, sun: boolean) => `${sun ? '☀' : '☾'} on ${solid}`,
+        detonated: (solid: string, other: string) => `${solid} and ${other} met, and neither is left`,
+        swapped: (solid: string, other: string) =>
+          `${solid} and ${other} have exchanged appearances, and nothing else`,
+        cargoTaken: (solid: string) => `${solid} is loaded · name the relay it comes out at`,
+        cargoLanded: (solid: string, room: string) => `${solid} is standing in ${room}`,
+      },
+      /** The read-out over the canvas, and the index, when a solid is the target. */
+      solids: {
+        reach: 'Any solid in the ship, from anywhere in it',
+        castHint: 'Press F, or click, to cast on it — or pick any solid in the ship below',
+        aiming: (solid: string) => `Facing ${solid}`,
+        aimingNothing: 'Nothing solid in front of you',
+        targets: 'Cast on a solid',
+        relayTargets: 'Name the relay it comes out at',
+        pairing: (solid: string) => `Holding ${solid}`,
+        of: (solid: string, room: string) => `${solid} — ${room}`,
+        copy: 'copy',
+      },
+      holds: {
+        solid: 'Solids held',
+        wound: 'The confetti is in',
+        windup: (turns: number) => `${turns} rotation${turns === 1 ? '' : 's'} wound up`,
+        laidOpen: 'The whole ship, laid open',
+        isolated: 'Isolated room',
+        doors: 'Hideout doors',
+        eye: 'Remote eye',
+        watched: 'Paper dolls',
+        emptied: 'Swallowed',
+        dowsing: 'The chain points at',
+        phasing: 'Walking through walls',
+        sealed: 'Senses sealed',
+        dispatches: 'Dispatches',
+        visits: (count: number) => `${count} arrival${count === 1 ? '' : 's'}`,
+        armed: 'armed',
+      },
+    },
   },
 
   tourSources: {

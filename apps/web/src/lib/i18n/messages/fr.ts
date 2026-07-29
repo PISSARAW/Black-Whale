@@ -85,6 +85,8 @@ export const fr: Messages = {
       sprintKeys: 'Maj',
       use: 'Changer de pont, entrer dans une pièce',
       useKeys: 'E, sur une cage d’escalier ou devant une porte',
+      nen: 'Lancer le Hatsu actif',
+      nenKeys: 'F, ou un clic, sur la pièce ou le volume que vous regardez',
     },
     provenance: {
       title: 'Ce qui est canon ici',
@@ -102,6 +104,131 @@ export const fr: Messages = {
         "Les plans des ponts sont schématiques. La reconstruction les met à l'échelle pour que les pièces fassent la taille que les planches impliquent — ce n'est pas une mesure du vaisseau.",
     },
     sourcesLink: "D'où vient chaque pièce",
+
+    hatsu: {
+      title: 'Le Nen dans la visite',
+      reach: "N'importe quelle pièce du vaisseau, depuis n'importe où dans le vaisseau",
+      aiming: (room) => `Face à ${room}`,
+      aimingNothing: "Face à rien que l'aura puisse saisir",
+      castHint:
+        'F, ou un clic, pour lancer dessus — ou choisissez ci-dessous une pièce du vaisseau',
+      inert: (name, carried) =>
+        `${name} agit sur ce qu'une page dit, et la visite n'a que des pièces : il ne fait rien ici. ${carried} techniques répondent au vaisseau — Emperor Time, Blinky, les Portes de la planque et les autres.`,
+      inertShort: 'Sans prise dans la visite',
+      targets: 'Lancer sur une pièce',
+      allDecks: 'Tout le vaisseau',
+      holding: "Ce que l'aura retient",
+      release: 'Rendre le vaisseau',
+      nothingHeld: 'Rien pour l’instant',
+      copy: 'Copie vide',
+      copySource: "Un double vide de la pièce. Rien de ce qu'il contient n'est le vaisseau.",
+      reports: {
+        noTarget: 'Rien à portée sur quoi lancer',
+        teleported: (room) => `Envoyé dans ${room} — vous n'avez pas choisi où vous tombiez`,
+        doorArmed: (room) =>
+          `Premier cadre installé dans ${room} · armez-en un second pour les relier`,
+        doorsPaired: (a, b) =>
+          `${a} et ${b} ne font plus qu'un seuil · entrez par l'un, ressortez par l'autre`,
+        doorsRearmed: (room) => `L'ancienne paire est tombée · premier cadre installé dans ${room}`,
+        phasingOn: 'Les murs ont cessé d’être des murs · traversez le vaisseau',
+        phasingOff: 'De retour dans la géométrie · les murs tiennent à nouveau',
+        eyeSent: (room) => `L'œil est posé dans ${room} · son flux est dans le coin`,
+        eyeRecalled: "L'œil est revenu près de vous",
+        sealedSight: 'Vue scellée · les ponts sont toujours là et vous ne les voyez plus',
+        sealedHearing: "Ouïe scellée à son tour · le vaisseau s'est tu",
+        sealedSpeech: 'Parole scellée aussi · la visite ne dira plus dans quelle pièce vous êtes',
+        sealedReleased: 'Les trois libérés · la vue, l’ouïe et la parole reviennent',
+        dowsed: (room, metres, decks) =>
+          decks
+            ? `${room} · à ${metres} m, ${decks} niveau${decks > 1 ? 'x' : ''} d'écart`
+            : `${room} · à ${metres} m, sur ce niveau`,
+        watching: (room) => `Une poupée de papier est dans ${room} et compte chaque arrivée`,
+        isolatedInside: (room) =>
+          `${room} est isolée autour de vous · vous pouvez sortir, et vous ne pourrez plus rentrer`,
+        isolatedOutside: (room) =>
+          `${room} est isolée · d'ici vous n'atteindrez qu'une copie vide`,
+        stripped: (room, count) =>
+          count
+            ? `${count} emprise${count > 1 ? 's' : ''} soufflée${count > 1 ? 's' : ''} sur ${room} · rien n'a été déplacé`
+            : `Rien ne retenait ${room}`,
+        laidOpen: (spaces, decks) =>
+          `Toutes les catégories à 100 % · ${spaces} pièces sur ${decks} niveaux ouvertes d'un coup`,
+        emptied: (room, structures) =>
+          structures
+            ? `${structures} volume${structures > 1 ? 's' : ''} aspiré${structures > 1 ? 's' : ''} hors de ${room}`
+            : `${room} était déjà nue`,
+        refused: (room) =>
+          `Blinky refuse ${room} · du Nen la retient, et c'est ainsi que le piège se voit`,
+        dispatched: (room) => `Un oiseau revient de ${room} avec ce sur quoi la pièce repose`,
+
+        noSolid: 'Rien de solide dans le réticule',
+        boundFast: (solid) => `${solid} est tenu ferme · seule la couture le rend`,
+        gumSet: (solid) => `Gomme sur ${solid} · saisissez un second volume pour les rapprocher`,
+        gumPulled: (solid, other) => `${solid} a claqué jusqu'à ${other}`,
+        forged: (solid) =>
+          `${solid} porte une autre surface · ce qu'il est, et ce qu'il arrête, n'ont pas changé`,
+        wrapped: (solid) => `${solid} emballé, réduit · rien n'y est abîmé`,
+        unwrapped: (solid) => `${solid} ressort du tissu, à sa taille`,
+        pushed: (solid, metres) =>
+          metres
+            ? `${solid} poussé de ${metres} m · c'est une chose, elle se déplace comme telle`
+            : `${solid} bute contre le mur de sa pièce et n'ira pas plus loin`,
+        copied: (solid) =>
+          `Une copie de ${solid} se dresse à côté · elle est froide, car aucune planche ne la soutient`,
+        crushed: (solid) => `${solid} est aplati sous la masse`,
+        volley: (solid, hits) => `${solid} repoussé · rafale ${hits} sur 3`,
+        shattered: (solid) => `${solid} ne tient plus debout`,
+        woundUp: (turns) => `${turns} rotation${turns > 1 ? 's' : ''} enroulée${turns > 1 ? 's' : ''} dans le prochain coup`,
+        launched: (solid, metres) =>
+          metres ? `${solid} projeté à ${metres} m` : `${solid} n'avait nulle part où aller`,
+        struck: (solid) => `Le bâton s'abat sur ${solid} et le fait pivoter`,
+        bound: (solid) => `Le serpent tient ${solid} · plus rien d'autre ne le bouge`,
+        released: (solid) => `${solid} est relâché`,
+        cameUpUnder: (solid, other) =>
+          `L'aura a couru depuis ${solid} le long du sol et a resurgi sous ${other}`,
+        stitched: (solid) => `${solid} est revenu tel que le plan le donne`,
+        nothingToStitch: (solid) => `Rien n'avait été fait à ${solid}`,
+        animated: (solid) => `${solid} s'est éveillé, et n'en est pas moins solide`,
+        shredStuck: (solid) => `Le confetti se fiche dans ${solid} · toutes les volées y convergeront`,
+        shredCut: (solid, left) => `${solid} est taillé à ${left} % de lui-même`,
+        grown: (solid) => `${solid} a grossi hors de toute proportion`,
+        growthRefused: (solid) => `${solid} bouge à peine · du Nen l'habite déjà`,
+        marked: (solid, sun) => `${sun ? '☀' : '☾'} sur ${solid}`,
+        detonated: (solid, other) => `${solid} et ${other} se sont rejoints, il ne reste ni l'un ni l'autre`,
+        swapped: (solid, other) => `${solid} et ${other} ont échangé leur apparence, et rien d'autre`,
+        cargoTaken: (solid) => `${solid} est chargé · désignez le relais de sortie`,
+        cargoLanded: (solid, room) => `${solid} se dresse dans ${room}`,
+      },
+      solids: {
+        reach: "N'importe quel volume du vaisseau, depuis n'importe où dans le vaisseau",
+        castHint:
+          'F, ou un clic, pour lancer dessus — ou choisissez ci-dessous un volume du vaisseau',
+        aiming: (solid) => `Face à ${solid}`,
+        aimingNothing: 'Rien de solide devant vous',
+        targets: 'Lancer sur un volume',
+        relayTargets: 'Désignez le relais de sortie',
+        pairing: (solid) => `Tient ${solid}`,
+        of: (solid, room) => `${solid} — ${room}`,
+        copy: 'copie',
+      },
+      holds: {
+        solid: 'Volumes retenus',
+        wound: 'Le confetti est dans',
+        windup: (turns) => `${turns} rotation${turns === 1 ? '' : 's'} enroulée${turns === 1 ? '' : 's'}`,
+        laidOpen: 'Tout le vaisseau, ouvert',
+        isolated: 'Pièce isolée',
+        doors: 'Portes de la planque',
+        eye: 'Œil déporté',
+        watched: 'Poupées de papier',
+        emptied: 'Aspiré',
+        dowsing: 'Le pendule désigne',
+        phasing: 'Traversée des murs',
+        sealed: 'Sens scellés',
+        dispatches: 'Dépêches',
+        visits: (count) => `${count} arrivée${count === 1 ? '' : 's'}`,
+        armed: 'armé',
+      },
+    },
   },
 
   tourSources: {

@@ -104,9 +104,46 @@ describe('interiors', () => {
   const interiors = ship.tiers.filter((tier) => tier.kind === 'interior')
 
   it('draws an interior for every prince, at its own scale', () => {
-    expect(interiors).toHaveLength(14)
     for (let n = 1; n <= 14; n++) {
       expect(interiors.some((tier) => tier.id === `interior-room-${1000 + n}`)).toBe(true)
+    }
+  })
+
+  it('draws an interior for every room plan that has more than one room', () => {
+    // The eight multi-room plans under $lib/assets/maps/local. The rest of the
+    // local plans draw a single room, which the deck already carries.
+    for (const slug of [
+      'vip-detention',
+      'soldiers-quarters',
+      'justice-bureau',
+      'central-hospital',
+      'cineplex',
+      'cha-r-office',
+      'general-cabins',
+      'tier3-cabins',
+    ]) {
+      expect(
+        interiors.some((tier) => tier.id === `interior-${slug}`),
+        `${slug} has no interior`,
+      ).toBe(true)
+    }
+  })
+
+  it('hangs every interior off a room that exists on a deck', () => {
+    for (const tier of interiors) {
+      const parent = ship.spaces.get(tier.parentSpaceId!)
+      expect(parent, `${tier.id} hangs off nothing`).toBeDefined()
+      expect(ship.decks.some((deck) => deck.id === parent!.tierId)).toBe(true)
+    }
+  })
+
+  it('gives every interior a way in and a way back out', () => {
+    for (const tier of interiors) {
+      const link = ship.links.find((candidate) => candidate.to.startsWith(tier.parentSpaceId!))
+      expect(link, `${tier.id} cannot be entered`).toBeDefined()
+      expect(link!.kind).toBe('door')
+      // Both ends given, since the two sides have different origins.
+      expect(link!.atTo).toBeDefined()
     }
   })
 
@@ -219,6 +256,47 @@ describe('the link back to the catalogue', () => {
     for (const space of blueprint.spaces) {
       if (space.provenance === 'inferred') continue
       expect(space.source.length, `${space.id} has no source`).toBeGreaterThan(8)
+    }
+  })
+
+  // `/tour/sources` publishes these strings as the account of the whole
+  // reconstruction. A source left untranslated would read as an English
+  // footnote on a French page, which is exactly the sort of unexplained
+  // surface the page exists to remove.
+  it('states every source and every reason in both languages', () => {
+    for (const tier of blueprint.tiers) {
+      expect(tier.sourceFr.trim(), `${tier.id} has no French source`).not.toBe('')
+      expect(tier.sourceFr, `${tier.id} was not translated`).not.toBe(tier.source)
+    }
+    for (const space of blueprint.spaces) {
+      expect(space.sourceFr.trim(), `${space.id} has no French source`).not.toBe('')
+      expect(space.sourceFr, `${space.id} was not translated`).not.toBe(space.source)
+    }
+    for (const connection of blueprint.links) {
+      const id = `${connection.from} → ${connection.to}`
+      expect(connection.sourceFr.trim(), `${id} has no French source`).not.toBe('')
+      expect(connection.sourceFr, `${id} was not translated`).not.toBe(connection.source)
+    }
+    for (const wall of [...blueprint.seals, ...blueprint.doors]) {
+      const id = `${wall.a} | ${wall.b}`
+      expect(wall.reasonFr.trim(), `${id} has no French reason`).not.toBe('')
+      expect(wall.reasonFr, `${id} was not translated`).not.toBe(wall.reason)
+    }
+  })
+
+  // The same source told two ways is two claims to check instead of one.
+  it('phrases one source one way, in each language', () => {
+    const byEnglish = new Map<string, Set<string>>()
+    for (const space of blueprint.spaces) {
+      const translations = byEnglish.get(space.source) ?? new Set<string>()
+      translations.add(space.sourceFr)
+      byEnglish.set(space.source, translations)
+    }
+    for (const [english, translations] of byEnglish) {
+      expect(
+        [...translations],
+        `"${english}" is translated ${translations.size} ways`,
+      ).toHaveLength(1)
     }
   })
 })

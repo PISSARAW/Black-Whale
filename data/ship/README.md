@@ -96,11 +96,11 @@ canots a une moitié bâbord et une moitié tribord pour une seule fiche.
 
 ### `provenance` — ce que le manga soutient vraiment
 
-| Valeur     | Sens                                                                     |
-| ---------- | ------------------------------------------------------------------------ |
-| `panel`    | Une planche montre la salle ; sa forme y est relevée.                    |
-| `plan`     | Elle figure sur la coupe du vaisseau, qui n'en donne pas l'intérieur.    |
-| `inferred` | Rien ne la montre. Elle existe pour que le pont soit continu.            |
+| Valeur     | Sens                                                                  |
+| ---------- | --------------------------------------------------------------------- |
+| `panel`    | Une planche montre la salle ; sa forme y est relevée.                 |
+| `plan`     | Elle figure sur la coupe du vaisseau, qui n'en donne pas l'intérieur. |
+| `inferred` | Rien ne la montre. Elle existe pour que le pont soit continu.         |
 
 C'est la même exigence que `positionProvenance` dans
 [`../CONVENTIONS.md`](../CONVENTIONS.md) : la reconstruction doit avouer ce
@@ -108,6 +108,15 @@ qu'elle invente. Les surfaces `inferred` sont rendues dans une teinte froide et
 portent un badge dans l'interface — un couloir déduit ne doit jamais passer
 pour du canon. `source` est obligatoire dans tous les cas ; pour `inferred`,
 elle dit pourquoi l'espace a été ajouté, et ne doit pas citer de chapitre.
+
+`sourceFr` la double en français, comme `nameFr` double `name` — de même
+`reasonFr` pour les `doors` et les `seals`. Ces phrases ne sont pas des notes
+internes : [`/tour/sources`](../../apps/web/src/routes/tour/sources) les publie
+telles quelles, espace par espace, et c'est la page qui répond à _« d'où sortez-vous
+tout ça ? »_. Une source laissée en anglais s'y lirait comme une note de bas de
+page étrangère sur une page française ; `validateBlueprint` la refuse donc, et
+un test vérifie en plus qu'une même source anglaise n'est jamais traduite de
+deux façons.
 
 ## Les intérieurs
 
@@ -123,6 +132,17 @@ carte `/ship` et la visite montrent le même pont 1 — et l'intérieur est un
 **niveau à part**, tracé à sa taille réelle, dans lequel on entre par la porte.
 C'est la structure de `/ship` (plan de pont → plan de salle), en volume.
 
+Vingt-deux pièces ont ainsi leur intérieur : les quatorze appartements
+princiers, et les huit plans de salle qui comptent plus d'une pièce — quartier
+de détention VIP, quartiers des soldats, bureau de la Justice, hôpital central,
+cinéplexe, bureau Cha-R, cabines standard, cabines de première classe. Les 23
+autres plans locaux ne dessinent qu'une salle, que le pont porte déjà.
+
+Chaque plan a **sa propre échelle**, choisie sur ce que ses pièces doivent
+mesurer pour être parcourues — une cabine standard de 6 m, une cellule de 10 —
+c'est-à-dire précisément la mesure que les plans de pont schématiques ne
+portent pas.
+
 Un niveau d'intérieur porte `kind: "interior"` et `parentSpaceId`, la pièce dont
 il est le dedans. Un `link` de type `door` les relie. Ce lien est le seul à
 porter **deux** positions, `at` et `atTo` : ses deux extrémités vivent dans des
@@ -133,6 +153,13 @@ Le plan d'appartement cloisonne la cuisine de tous les côtés. Une cuisine où
 personne ne peut entrer est un lapsus de dessin, pas une affirmation sur le
 vaisseau : la visite ouvre la seule porte qu'elle doit avoir, sur la salle à
 manger qu'elle dessert. C'est consigné dans le `reason` de la porte.
+
+### Le français
+
+Chaque `source` et chaque `reason` a son pendant `sourceFr` / `reasonFr`, et
+`nameFr` accompagne `name`. Une entrée non traduite — ou identique à l'anglais —
+fait échouer les tests : sans ça, une fiche non traduite arriverait au lecteur
+francophone sous forme de prose anglaise au milieu du panneau.
 
 ## Modifier le vaisseau
 

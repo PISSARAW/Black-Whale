@@ -21,6 +21,10 @@ export type Polygon = Vec2[]
  * - `plan`  — it appears on the ship's deck cross-section, without an interior.
  * - `inferred` — nothing shows it. It exists so the deck is contiguous, and the
  *   tour marks it as such rather than passing it off as canon.
+ *
+ * The tag says how strong the claim is; the `source` beside it says what backs
+ * it, in both languages, because `/tour/sources` publishes the two together and
+ * a reader who only reads French is owed the same account as everyone else.
  */
 export type Provenance = 'panel' | 'plan' | 'inferred'
 
@@ -74,6 +78,7 @@ export interface Tier {
   ceiling: number
   provenance: Provenance
   source: string
+  sourceFr: string
   /** The outer hull at this tier, drawn as a reference outline. */
   hull: Polygon
 }
@@ -92,6 +97,7 @@ export interface Space {
   category: SpaceCategory
   provenance: Provenance
   source: string
+  sourceFr: string
   /** Floor-to-ceiling height, or `null` to take the tier's default. */
   ceiling: number | null
   /**
@@ -124,6 +130,7 @@ export interface DoorOverride {
   at: Vec2
   width: number
   reason: string
+  reasonFr: string
 }
 
 /** A vertical connection. Unlike a doorway it carries its own position. */
@@ -141,6 +148,7 @@ export interface Link {
   atTo?: Vec2
   provenance: Provenance
   source: string
+  sourceFr: string
 }
 
 /**
@@ -156,6 +164,7 @@ export interface Seal {
   a: string
   b: string
   reason: string
+  reasonFr: string
 }
 
 export interface Blueprint {

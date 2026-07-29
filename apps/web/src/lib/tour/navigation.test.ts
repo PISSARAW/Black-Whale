@@ -70,6 +70,7 @@ describe('linkUnderfoot', () => {
       at: [0, 0],
       provenance: 'inferred',
       source: 'test',
+      sourceFr: 'test',
     },
   ]
 
@@ -83,6 +84,22 @@ describe('linkUnderfoot', () => {
 
   it('offers nothing from too far away', () => {
     expect(linkUnderfoot(links, 'a', [LINK_REACH + 1, 0])).toBeNull()
+  })
+
+  it('offers a door from anywhere in the room it belongs to', () => {
+    const doorway: Link[] = [
+      {
+        from: 'a',
+        to: 'b',
+        kind: 'door',
+        at: [0, 0],
+        atTo: [5, 5],
+        provenance: 'plan',
+        source: 't',
+        sourceFr: 't',
+      },
+    ]
+    expect(linkUnderfoot(doorway, 'a', [LINK_REACH * 20, 0])?.to).toBe('b')
   })
 
   it('offers nothing from a space the link does not touch', () => {

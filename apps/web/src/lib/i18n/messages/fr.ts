@@ -41,6 +41,7 @@ export const fr: Messages = {
     factionNetwork: 'Réseau des factions',
     simulations: 'Simulations',
     virtualTour: 'Visite virtuelle',
+    shipSources: 'Sources du vaisseau',
   },
 
   tour: {
@@ -54,7 +55,7 @@ export const fr: Messages = {
     engaged: 'Échap pour libérer le pointeur',
     loading: 'Construction du pont…',
     unsupported:
-      "Cette visite exige WebGL, que ce navigateur ne propose pas. Les plans des ponts restent accessibles sur la carte du vaisseau.",
+      'Cette visite exige WebGL, que ce navigateur ne propose pas. Les plans des ponts restent accessibles sur la carte du vaisseau.',
     deck: 'Pont',
     decks: 'Ponts',
     rooms: 'Salles',
@@ -96,6 +97,72 @@ export const fr: Messages = {
         'Rien ne la montre. Elle existe pour que le pont tienne debout, et sa lumière est froide pour que ça se voie.',
       scaleHelp:
         "Les plans des ponts sont schématiques. La reconstruction les met à l'échelle pour que les pièces fassent la taille que les planches impliquent — ce n'est pas une mesure du vaisseau.",
+    },
+    sourcesLink: "D'où vient chaque pièce",
+  },
+
+  tourSources: {
+    seoTitle: 'Sources — D’où vient chaque pièce du Black Whale',
+    seoDescription:
+      'Les preuves derrière le Black Whale reconstruit, pièce par pièce : le chapitre ou le plan sur lequel repose chacun des 205 espaces, les couloirs que la reconstruction a inventés, et les cloisons murées à dessein.',
+    breadcrumb: 'Sources',
+    title: 'D’où vient chaque pièce',
+    intro:
+      'La reconstruction affirme quelque chose du vaisseau à chaque surface qu’elle dessine : elle publie donc la preuve de chacune. Rien ici n’est un résumé — c’est tout ce sur quoi la visite est bâtie, pièce par pièce, et chaque espace que le manga ne montre pas est déclaré comme inventé.',
+    counts: (spaces, sources) => `${spaces} espaces, appuyés sur ${sources} sources distinctes`,
+    tally: (label, count) => `${count} ${label.toLowerCase()}`,
+
+    method: {
+      title: 'Ce que les dessins donnent vraiment',
+      crossSection:
+        'La coupe du ch. 349 est l’ossature. Elle empile les cinq ponts et nomme ce qui se trouve sur chacun — l’essentiel du vaisseau en dépend. Mais c’est un diagramme de voisinage, pas un relevé : elle dit ce qui jouxte quoi, jamais les dimensions, jamais l’intérieur d’une pièce.',
+      apartmentPlan:
+        'Le plan d’appartement princier donne les sept pièces derrière une seule porte, et le ch. 362 et les suivants montrent ces pièces meublées chez Benjamin, Tserriednich et Luzurus. Le plan des ponts dessine le même appartement comme une petite boîte : les deux dessins ne sont pas à la même échelle, et ils ne l’ont jamais été. La visite garde les deux plutôt que d’en déformer un — le pont conserve l’empreinte que le plan dessine, et l’intérieur est un niveau à part, à sa taille réelle.',
+      scale:
+        'Une unité des plans de ponts vaut 0,35 m, un facteur fixé par la taille des pièces et non par la coque. Lus au pied de la lettre, les plans donnent une salle de banquet de 450 m que personne ne pourrait traverser. Les 175 m auxquels la reconstruction aboutit sont une propriété de la reconstruction, pas une mesure du Black Whale.',
+      doorways:
+        'Les portes ne sont pas écrites. Deux espaces qui partagent une portion de mur communiquent, dérivé de la seule géométrie : une cloison déplacée de deux mètres ne peut donc pas laisser une porte en suspens — c’est une salle devenue inaccessible qui fait échouer les tests.',
+    },
+
+    controls: {
+      search: 'Chercher une pièce ou une source',
+      searchPlaceholder: 'Chambre funéraire, ch. 358, couloir…',
+      evidence: 'Preuve',
+      groupBy: 'Regrouper par',
+      bySource: 'Source',
+      byDeck: 'Pont',
+    },
+
+    spaces: (count) => `${count} espace${count === 1 ? '' : 's'}`,
+    walkThere: (name) => `Marcher jusqu’à ${name}`,
+    insideOf: (room) => `intérieur de ${room}`,
+    noMatch: 'Aucun espace ne correspond.',
+
+    links: {
+      title: 'Comment les ponts sont reliés',
+      help: 'Escaliers, ascenseurs et cloisons sont les seules liaisons que le plan consigne à la main, parce que les deux espaces qu’ils relient ne partagent aucun mur d’où déduire une ouverture.',
+      stair: 'Escalier',
+      lift: 'Ascenseur',
+      bulkhead: 'Cloison',
+      door: 'Porte',
+    },
+
+    seals: {
+      title: 'Murs laissés aveugles à dessein',
+      help: 'Puisqu’une porte découle d’un mur partagé, un mur censé rester plein doit être déclaré — et une déclaration est une affirmation sur le vaisseau : elle porte donc sa raison.',
+    },
+
+    doors: {
+      title: 'Portes placées à la main',
+      help: 'Une porte est placée à la main quand le plan de la pièce la dessine ailleurs qu’au milieu du mur partagé, et quand elle est l’unique entrée d’un appartement — que rien d’autre ne pourrait ouvrir.',
+      walls: (count) => `${count} mur${count === 1 ? '' : 's'}`,
+    },
+
+    data: {
+      title: 'Vérifiez vous-même',
+      help: 'Chaque ligne de cette page est un champ du plan que la visite charge. C’est un unique fichier édité à la main, et la suite de tests échoue si un espace n’a pas de source, si un espace déduit revendique un chapitre, ou si une salle du vaisseau devient inaccessible.',
+      file: 'data/ship/blueprint.json',
+      walkIt: 'Parcourir le vaisseau',
     },
   },
 

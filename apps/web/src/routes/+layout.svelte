@@ -29,6 +29,7 @@
     { href: '/relationships', label: $t.nav.factionNetwork, index: '03' },
     { href: '/simulations', label: $t.nav.simulations, index: '04' },
     { href: '/tour', label: $t.nav.virtualTour, index: '05' },
+    { href: '/tour/sources', label: $t.nav.shipSources, index: '06' },
   ]
 
   // Compared against the locale-stripped path, so a section stays highlighted

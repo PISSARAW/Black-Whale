@@ -41,7 +41,11 @@
   const insideInterior = $derived(plan.tier.kind === 'interior')
   const french = $derived($locale === 'fr')
 
-  const nameOf = (entity: { name: string; nameFr: string }) => (french ? entity.nameFr : entity.name)
+  const nameOf = (entity: { name: string; nameFr: string }) =>
+    french ? entity.nameFr : entity.name
+
+  const sourceOf = (entity: { source: string; sourceFr: string }) =>
+    french ? entity.sourceFr : entity.source
 
   const sortedSpaces = $derived(
     [...plan.spaces].sort((a, b) => nameOf(a).localeCompare(nameOf(b), french ? 'fr' : 'en')),
@@ -119,7 +123,9 @@
 
   <div class="grid gap-4 lg:grid-cols-[1fr_320px]">
     <!-- The walk -->
-    <section class="relative min-h-[420px] overflow-hidden rounded-lg border border-[#333] lg:h-[70vh]">
+    <section
+      class="relative min-h-[420px] overflow-hidden rounded-lg border border-[#333] lg:h-[70vh]"
+    >
       <TourScene
         {ship}
         bind:tierId
@@ -157,7 +163,7 @@
             {provenanceLabel(currentSpace)}
           </span>
           <p class="mt-1 text-xs leading-snug text-[#FFFFF0]/60">
-            {currentSpace.source || $t.tour.noSource}
+            {sourceOf(currentSpace) || $t.tour.noSource}
           </p>
         {/if}
       </div>
@@ -276,6 +282,14 @@
           </li>
           <li class="border-t border-[#333] pt-1.5 text-[#FFFFF0]/50">
             {$t.tour.provenance.scaleHelp}
+          </li>
+          <li class="pt-0.5">
+            <a
+              href={$link('/tour/sources')}
+              class="text-[#FFD700]/80 underline underline-offset-2 transition-colors hover:text-[#FFD700]"
+            >
+              {$t.tour.sourcesLink} →
+            </a>
           </li>
         </ul>
       </section>

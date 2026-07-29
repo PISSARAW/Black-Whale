@@ -226,6 +226,8 @@ export function validateBlueprint(source: Blueprint = blueprint): string[] {
     if (!PROVENANCES.has(tier.provenance)) {
       issues.push(`tier ${tier.id}: unknown provenance "${tier.provenance}"`)
     }
+    if (!tier.source.trim()) issues.push(`tier ${tier.id}: missing source`)
+    if (!tier.sourceFr.trim()) issues.push(`tier ${tier.id}: missing French source`)
 
     // An interior is the inside of one room on a deck, and the only way in is
     // the door that joins them. Without both, it is a level nobody can reach.
@@ -233,7 +235,9 @@ export function validateBlueprint(source: Blueprint = blueprint): string[] {
       const parent = source.spaces.find((space) => space.id === tier.parentSpaceId)
       if (!parent) {
         issues.push(`level ${tier.id}: names no room on a deck it is the inside of`)
-      } else if (source.tiers.find((candidate) => candidate.id === parent.tierId)?.kind !== 'deck') {
+      } else if (
+        source.tiers.find((candidate) => candidate.id === parent.tierId)?.kind !== 'deck'
+      ) {
         issues.push(`level ${tier.id}: its room is not on a deck`)
       }
       const joined = source.links.some(
@@ -261,6 +265,7 @@ export function validateBlueprint(source: Blueprint = blueprint): string[] {
       issues.push(`space ${space.id}: footprint has no usable area`)
     }
     if (!space.source.trim()) issues.push(`space ${space.id}: missing source`)
+    if (!space.sourceFr.trim()) issues.push(`space ${space.id}: missing French source`)
     if (!space.nameFr.trim()) issues.push(`space ${space.id}: missing French name`)
   }
 
@@ -289,6 +294,7 @@ export function validateBlueprint(source: Blueprint = blueprint): string[] {
       continue
     }
     if (!seal.reason.trim()) issues.push(`seal ${seal.a} | ${seal.b}: missing reason`)
+    if (!seal.reasonFr.trim()) issues.push(`seal ${seal.a} | ${seal.b}: missing French reason`)
     const shared = longestSharedWall(a.footprint, b.footprint)
     if (!shared || shared.to - shared.from < MIN_DOOR_WIDTH) {
       issues.push(`seal ${seal.a} | ${seal.b}: these spaces share no wall to seal`)
@@ -305,6 +311,7 @@ export function validateBlueprint(source: Blueprint = blueprint): string[] {
       continue
     }
     if (!door.reason.trim()) issues.push(`door ${door.a} | ${door.b}: missing reason`)
+    if (!door.reasonFr.trim()) issues.push(`door ${door.a} | ${door.b}: missing French reason`)
     if (door.width < MIN_DOOR_WIDTH) {
       issues.push(`door ${door.a} | ${door.b}: ${door.width} m is too narrow to pass`)
     }
@@ -327,6 +334,10 @@ export function validateBlueprint(source: Blueprint = blueprint): string[] {
     }
     if (!LINK_KINDS.has(link.kind)) {
       issues.push(`link ${link.from} → ${link.to}: unknown kind "${link.kind}"`)
+    }
+    if (!link.source.trim()) issues.push(`link ${link.from} → ${link.to}: missing source`)
+    if (!link.sourceFr.trim()) {
+      issues.push(`link ${link.from} → ${link.to}: missing French source`)
     }
   }
 

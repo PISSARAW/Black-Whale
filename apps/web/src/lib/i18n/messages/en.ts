@@ -42,6 +42,7 @@ export const en = {
     factionNetwork: 'Faction Network',
     simulations: 'Simulations',
     virtualTour: 'Virtual Tour',
+    shipSources: 'Ship Sources',
   },
 
   tour: {
@@ -97,6 +98,73 @@ export const en = {
         'Nothing shows it. It exists so the deck holds together, and it is lit cold so you can tell.',
       scaleHelp:
         'The deck plans are schematic. The reconstruction scales them so the rooms come out the size the panels imply, which is not a measurement of the ship.',
+    },
+    sourcesLink: 'Where every room comes from',
+  },
+
+  tourSources: {
+    seoTitle: 'Sources — Where every room of the Black Whale comes from',
+    seoDescription:
+      'The evidence behind the reconstructed Black Whale, room by room: which chapter or plan each of the 205 spaces rests on, which corridors the reconstruction invented, and which walls were sealed on purpose.',
+    breadcrumb: 'Sources',
+    title: 'Where every room comes from',
+    intro:
+      'The reconstruction makes a claim about the ship for every surface it draws, so it publishes the evidence for each one. Nothing here is a summary: this is the whole of what the tour is built on, room by room, and every space the manga does not show is listed as invented.',
+    counts: (spaces: number, sources: number) =>
+      `${spaces} spaces, resting on ${sources} distinct sources`,
+    tally: (label: string, count: number) => `${count} ${label.toLowerCase()}`,
+
+    method: {
+      title: 'What the drawings actually give',
+      crossSection:
+        'The cross-section in ch. 349 is the backbone. It stacks the five tiers and names what sits on each, which is what most of the ship rests on — but it is a diagram of adjacency, not a survey: it says what adjoins what, never how big anything is and never what is inside a room.',
+      apartmentPlan:
+        'The prince apartment plan gives the seven rooms behind one door, and ch. 362 onward shows those rooms furnished for Benjamin, Tserriednich and Luzurus. The deck plan draws the same apartment as a small box, because the two drawings are not to the same scale and never were. The tour keeps both rather than distorting either: the deck holds the footprint the plan draws, and the interior is a separate level at its own size.',
+      scale:
+        'One unit of the deck plans is read as 0.35 m, a factor set by the size of the rooms and not by the hull. Read at face value the plans give a 450 m banquet hall nobody could cross. The 175 m the reconstruction comes out at is a property of the reconstruction, not a measurement of the Black Whale.',
+      doorways:
+        'Doorways are not authored. Two spaces that share a stretch of wall open onto each other, derived from the geometry alone, so a footprint nudged by two metres cannot leave a door hanging in mid-air — a room that becomes unreachable fails the test suite instead.',
+    },
+
+    controls: {
+      search: 'Search a room or a source',
+      searchPlaceholder: 'Burial chamber, ch. 358, corridor…',
+      evidence: 'Evidence',
+      groupBy: 'Group by',
+      bySource: 'Source',
+      byDeck: 'Deck',
+    },
+
+    spaces: (count: number) => `${count} ${count === 1 ? 'space' : 'spaces'}`,
+    walkThere: (name: string) => `Walk to ${name}`,
+    insideOf: (room: string) => `inside ${room}`,
+    noMatch: 'No space matches that.',
+
+    links: {
+      title: 'How the decks are joined',
+      help: 'Stairs, lifts and bulkheads are the only connections the blueprint stores by hand, because the two spaces they join share no wall to derive an opening from.',
+      stair: 'Stairwell',
+      lift: 'Lift',
+      bulkhead: 'Bulkhead',
+      door: 'Door',
+    },
+
+    seals: {
+      title: 'Walls left blind on purpose',
+      help: 'Since a doorway follows from a shared wall, a wall meant to stay solid has to be declared — and a declaration is a claim about the ship, so it carries its reason.',
+    },
+
+    doors: {
+      title: 'Doors placed by hand',
+      help: 'A door is placed by hand when the room plan draws it somewhere other than the middle of the shared wall, and when it is the single entrance to an apartment, which nothing else could open.',
+      walls: (count: number) => `${count} ${count === 1 ? 'wall' : 'walls'}`,
+    },
+
+    data: {
+      title: 'Check it yourself',
+      help: 'Every line on this page is a field in the blueprint the tour loads. It is a single hand-edited file, and the test suite fails if a space carries no source, if an inferred space claims a chapter, or if any room of the ship becomes unreachable.',
+      file: 'data/ship/blueprint.json',
+      walkIt: 'Walk the ship',
     },
   },
 

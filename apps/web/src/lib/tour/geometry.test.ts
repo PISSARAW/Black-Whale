@@ -31,7 +31,12 @@ const ell: Polygon = [
   [0, 10],
 ]
 
-function space(id: string, footprint: Polygon, tierId = 'tier-1', envelope: string | null = null): Space {
+function space(
+  id: string,
+  footprint: Polygon,
+  tierId = 'tier-1',
+  envelope: string | null = null,
+): Space {
   return {
     id,
     tierId,
@@ -41,6 +46,7 @@ function space(id: string, footprint: Polygon, tierId = 'tier-1', envelope: stri
     category: 'room',
     provenance: 'inferred',
     source: 'test',
+    sourceFr: 'test',
     ceiling: null,
     envelope,
     footprint,
@@ -93,15 +99,12 @@ describe('deriveDoorways', () => {
   it('opens a doorway where two rooms share a wall', () => {
     const doorways = deriveDoorways([
       space('a', square),
-      space(
-        'b',
-        [
-          [10, 0],
-          [20, 0],
-          [20, 10],
-          [10, 10],
-        ],
-      ),
+      space('b', [
+        [10, 0],
+        [20, 0],
+        [20, 10],
+        [10, 10],
+      ]),
     ])
 
     expect(doorways).toHaveLength(1)
@@ -115,15 +118,12 @@ describe('deriveDoorways', () => {
   it('leaves rooms that only touch at a corner sealed', () => {
     const doorways = deriveDoorways([
       space('a', square),
-      space(
-        'b',
-        [
-          [10, 10],
-          [20, 10],
-          [20, 20],
-          [10, 20],
-        ],
-      ),
+      space('b', [
+        [10, 10],
+        [20, 10],
+        [20, 20],
+        [10, 20],
+      ]),
     ])
     expect(doorways).toEqual([])
   })
@@ -178,7 +178,14 @@ describe('deriveDoorways', () => {
       overrides: new Map([
         [
           sealKey('a', 'b'),
-          { a: 'a', b: 'b', at: [10, 8] as Vec2, width: 2, reason: 'front door' },
+          {
+            a: 'a',
+            b: 'b',
+            at: [10, 8] as Vec2,
+            width: 2,
+            reason: 'front door',
+            reasonFr: 'porte d’entrée',
+          },
         ],
       ]),
     })
@@ -196,7 +203,14 @@ describe('deriveDoorways', () => {
       overrides: new Map([
         [
           sealKey('a', 'b'),
-          { a: 'a', b: 'b', at: [10, 40] as Vec2, width: 2, reason: 'off the end' },
+          {
+            a: 'a',
+            b: 'b',
+            at: [10, 40] as Vec2,
+            width: 2,
+            reason: 'off the end',
+            reasonFr: 'hors du mur',
+          },
         ],
       ]),
     })
@@ -209,15 +223,12 @@ describe('deriveDoorways', () => {
   it('narrows the opening to the wall when the wall is short', () => {
     const doorways = deriveDoorways([
       space('a', square),
-      space(
-        'b',
-        [
-          [10, 4],
-          [20, 4],
-          [20, 6],
-          [10, 6],
-        ],
-      ),
+      space('b', [
+        [10, 4],
+        [20, 4],
+        [20, 6],
+        [10, 6],
+      ]),
     ])
     expect(doorways[0].width).toBeCloseTo(2)
   })
@@ -232,15 +243,12 @@ describe('wallSegments', () => {
     const a = space('a', square)
     const doorways = deriveDoorways([
       a,
-      space(
-        'b',
-        [
-          [10, 0],
-          [20, 0],
-          [20, 10],
-          [10, 10],
-        ],
-      ),
+      space('b', [
+        [10, 0],
+        [20, 0],
+        [20, 10],
+        [10, 10],
+      ]),
     ])
     const walls = wallSegments(a, doorways)
 

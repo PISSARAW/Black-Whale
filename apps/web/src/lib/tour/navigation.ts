@@ -115,8 +115,14 @@ export function linkUnderfoot(
     if (link.from !== spaceId && link.to !== spaceId) continue
     // Measure against the end the visitor is actually standing on: the two
     // ends of a door into an interior are in different coordinate spaces.
-    const here = link.from === spaceId ? link.at : (link.atTo ?? link.at)
-    if (len(sub(point, here)) > LINK_REACH) continue
+    // A door into a room's interior is offered from anywhere in that room:
+    // the whole space is the threshold, and hunting for a spot on the floor of
+    // a sixty-metre block would be a puzzle, not a tour. A stairwell still has
+    // to be stood on.
+    if (link.kind !== 'door') {
+      const here = link.from === spaceId ? link.at : (link.atTo ?? link.at)
+      if (len(sub(point, here)) > LINK_REACH) continue
+    }
     return { link, to: link.from === spaceId ? link.to : link.from }
   }
   return null

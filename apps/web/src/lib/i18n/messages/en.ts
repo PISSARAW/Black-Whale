@@ -41,6 +41,59 @@ export const en = {
     comparePerspectives: 'Compare Perspectives',
     factionNetwork: 'Faction Network',
     simulations: 'Simulations',
+    virtualTour: 'Virtual Tour',
+  },
+
+  tour: {
+    seoTitle: 'Virtual Tour — Walk the Black Whale',
+    seoDescription:
+      'A first-person walk through the reconstructed Black Whale: five tiers, every room the deck plans and the manga account for, and every corridor the reconstruction had to invent, marked as such.',
+    title: 'Walk the Black Whale',
+    intro:
+      'The ship as architecture, not as a stage: no passengers, no chapter, no timeline. Every surface says where it comes from — a panel, the deck plan, or the reconstruction itself.',
+    enter: 'Click to walk',
+    engaged: 'Press Esc to release the pointer',
+    loading: 'Building the deck…',
+    unsupported:
+      'This walk needs WebGL, which this browser is not offering. The deck plans on the ship map remain available.',
+    deck: 'Deck',
+    decks: 'Decks',
+    rooms: 'Rooms',
+    currentRoom: 'You are in',
+    outside: 'Between decks',
+    source: 'Source',
+    noSource: 'No source recorded',
+    scale: (metres: number) =>
+      `${metres.toLocaleString('en-GB')} m of reconstructed hull, bow to stern`,
+    counts: (spaces: number, tiers: number) =>
+      `${spaces} reconstructed spaces across ${tiers} tiers`,
+    minimap: (deckName: string) => `Plan of ${deckName}`,
+    jumpTo: 'Jump to a space',
+    takeLink: (destination: string) => `Press E to take the stairs to ${destination}`,
+    takeBulkhead: (destination: string) => `Press E to pass the bulkhead to ${destination}`,
+    controls: {
+      title: 'Controls',
+      move: 'Move',
+      moveKeys: 'W A S D or the arrow keys',
+      look: 'Look',
+      lookKeys: 'Move the mouse, or drag on a touchscreen',
+      sprint: 'Run',
+      sprintKeys: 'Shift',
+      use: 'Change deck',
+      useKeys: 'E, on a stairwell',
+    },
+    provenance: {
+      title: 'What is canon here',
+      panel: 'Shown in a panel',
+      plan: 'On the deck plan',
+      inferred: 'Reconstructed',
+      panelHelp: 'A chapter shows this room; its shape is read off that panel.',
+      planHelp: 'It appears on the ship’s cross-section, which gives no interior.',
+      inferredHelp:
+        'Nothing shows it. It exists so the deck holds together, and it is lit cold so you can tell.',
+      scaleHelp:
+        'The deck plans are schematic. The reconstruction scales them so the rooms come out the size the panels imply, which is not a measurement of the ship.',
+    },
   },
 
   layout: {

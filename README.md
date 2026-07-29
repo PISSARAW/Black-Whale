@@ -2,7 +2,7 @@
 
 **An interactive archive of the Hunter × Hunter Succession War — where every record belongs to a time, a source, and a point of view.**
 
-[**exploreblackwhale.com**](https://exploreblackwhale.com) · [Ship map](https://exploreblackwhale.com/ship) · [Timeline](https://exploreblackwhale.com/timeline) · [Passenger registry](https://exploreblackwhale.com/characters) · [Nen abilities](https://exploreblackwhale.com/abilities)
+[**exploreblackwhale.com**](https://exploreblackwhale.com) · [Ship map](https://exploreblackwhale.com/ship) · [Virtual tour](https://exploreblackwhale.com/tour) · [Timeline](https://exploreblackwhale.com/timeline) · [Passenger registry](https://exploreblackwhale.com/characters) · [Nen abilities](https://exploreblackwhale.com/abilities)
 
 [![CI](https://github.com/PISSARAW/Black-Whale/actions/workflows/ci.yml/badge.svg)](https://github.com/PISSARAW/Black-Whale/actions/workflows/ci.yml)
 ![SvelteKit 5](https://img.shields.io/badge/SvelteKit-5-ff3e00)
@@ -30,6 +30,12 @@ A canonical event identifies a `StoryCursor`; a pure reducer replays typed event
 Five tiers, 37 hand-drawn SVG deck and room maps, and every tracked body placed on them at the event you select. Move the cursor along the story and the ship repopulates.
 
 [![The interactive ship map](.github/assets/ship.png)](https://exploreblackwhale.com/ship)
+
+### Walk it in first person
+
+[`/tour`](https://exploreblackwhale.com/tour) is the same ship as geometry rather than as a drawing: five decks, 107 reconstructed spaces, and a first-person walk through all of them. It carries no passengers and no chapter — it answers _how the ship is built_, where the map answers _who is where_.
+
+Every surface declares what it is worth as evidence. A room a panel shows is lit warm, a room that only appears on the deck cross-section is left plain, and a corridor the reconstruction had to invent to make the deck contiguous is lit cold and badged as such. Doorways are not authored: two rooms that share a stretch of wall open onto each other, so an unreachable room fails the test suite rather than the visit.
 
 ### Replay the voyage event by event
 
@@ -103,7 +109,8 @@ black-whale/
 │   ├── ui/                  # Shared Svelte components
 │   └── config/              # Shared environment config
 │
-├── data/                    # The catalogue: chapters, characters, abilities, locations
+├── data/                    # The catalogue: chapters, characters, abilities, locations,
+│                            # plus ship/blueprint.json, the metric reconstruction
 └── infrastructure/
     ├── docker/              # Development and production Docker stacks
     └── hetzner/             # Deploy, backup, restore, and operations runbook
@@ -179,6 +186,7 @@ The full [Hetzner runbook](infrastructure/hetzner/README.md) covers server sizin
 | **v3**  | Nen action plans, explainable conditions, typed effects            | ✅ Shipped — surfaced in `/simulations`     |
 | **v4**  | Ability modules migrated to the shared runtime                     | ✅ All 81 catalogue abilities have a module |
 | **v5**  | Persistent branches and map projections                            | 🏗️ First vertical shipped                   |
+| **v6**  | Metric reconstruction of the ship and a first-person walk          | ✅ Shipped — [`/tour`](https://exploreblackwhale.com/tour) |
 
 A v3 plan is built by the ability module itself: its conditions are predicates over the world state, and its projected effects are obtained by running its own effect builders. The archive therefore cannot describe an ability doing one thing and execute another — [`/simulations`](https://exploreblackwhale.com/simulations) shows the plan before you run it.
 

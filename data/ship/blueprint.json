@@ -1,0 +1,3749 @@
+{
+  "$schema": "./blueprint.schema.md",
+  "meta": {
+    "unit": "metre",
+    "scale": "One unit of the 1000x600 deck-plan viewBox is 0.35 m. The deck plans are schematic, so the factor is set by room size rather than by the ship’s overall length.",
+    "origin": "Ship midpoint: SVG (500, 300). +x is starboard, +z is aft, +y is up.",
+    "note": "Horizontal doorways are derived from shared walls at load time and are not stored here. Only vertical links carry an explicit position."
+  },
+  "tiers": [
+    {
+      "id": "tier-1",
+      "locationId": "tier-1",
+      "name": "Tier 1",
+      "nameFr": "Pont 1",
+      "elevation": 72,
+      "ceiling": 5,
+      "provenance": "plan",
+      "source": "Deck cross-section, ch. 349",
+      "hull": [
+        [
+          -87.5,
+          -70
+        ],
+        [
+          -101.67,
+          -66.08
+        ],
+        [
+          -112.7,
+          -55.44
+        ],
+        [
+          -120.57,
+          -39.76
+        ],
+        [
+          -125.3,
+          -20.72
+        ],
+        [
+          -126.87,
+          0
+        ],
+        [
+          -125.3,
+          20.72
+        ],
+        [
+          -120.57,
+          39.76
+        ],
+        [
+          -112.7,
+          55.44
+        ],
+        [
+          -101.67,
+          66.08
+        ],
+        [
+          -87.5,
+          70
+        ],
+        [
+          70,
+          70
+        ],
+        [
+          88.9,
+          66.08
+        ],
+        [
+          103.6,
+          55.44
+        ],
+        [
+          114.1,
+          39.76
+        ],
+        [
+          120.4,
+          20.72
+        ],
+        [
+          122.5,
+          0
+        ],
+        [
+          120.4,
+          -20.72
+        ],
+        [
+          114.1,
+          -39.76
+        ],
+        [
+          103.6,
+          -55.44
+        ],
+        [
+          88.9,
+          -66.08
+        ],
+        [
+          70,
+          -70
+        ]
+      ]
+    },
+    {
+      "id": "tier-2",
+      "locationId": "tier-2",
+      "name": "Tier 2",
+      "nameFr": "Pont 2",
+      "elevation": 54,
+      "ceiling": 5,
+      "provenance": "plan",
+      "source": "Deck cross-section, ch. 349",
+      "hull": [
+        [
+          -105,
+          -77
+        ],
+        [
+          -119.17,
+          -72.69
+        ],
+        [
+          -130.2,
+          -60.98
+        ],
+        [
+          -138.07,
+          -43.74
+        ],
+        [
+          -142.8,
+          -22.79
+        ],
+        [
+          -144.37,
+          0
+        ],
+        [
+          -142.8,
+          22.79
+        ],
+        [
+          -138.07,
+          43.74
+        ],
+        [
+          -130.2,
+          60.98
+        ],
+        [
+          -119.17,
+          72.69
+        ],
+        [
+          -105,
+          77
+        ],
+        [
+          87.5,
+          77
+        ],
+        [
+          106.4,
+          72.69
+        ],
+        [
+          121.1,
+          60.98
+        ],
+        [
+          131.6,
+          43.74
+        ],
+        [
+          137.9,
+          22.79
+        ],
+        [
+          140,
+          0
+        ],
+        [
+          137.9,
+          -22.79
+        ],
+        [
+          131.6,
+          -43.74
+        ],
+        [
+          121.1,
+          -60.98
+        ],
+        [
+          106.4,
+          -72.69
+        ],
+        [
+          87.5,
+          -77
+        ]
+      ]
+    },
+    {
+      "id": "tier-3",
+      "locationId": "tier-3",
+      "name": "Tier 3",
+      "nameFr": "Pont 3",
+      "elevation": 36,
+      "ceiling": 6,
+      "provenance": "plan",
+      "source": "Deck cross-section, ch. 349",
+      "hull": [
+        [
+          -133,
+          -87.5
+        ],
+        [
+          -143.39,
+          -82.6
+        ],
+        [
+          -151.48,
+          -69.3
+        ],
+        [
+          -157.25,
+          -49.7
+        ],
+        [
+          -160.72,
+          -25.9
+        ],
+        [
+          -161.87,
+          0
+        ],
+        [
+          -160.72,
+          25.9
+        ],
+        [
+          -157.25,
+          49.7
+        ],
+        [
+          -151.48,
+          69.3
+        ],
+        [
+          -143.39,
+          82.6
+        ],
+        [
+          -133,
+          87.5
+        ],
+        [
+          122.5,
+          87.5
+        ],
+        [
+          134.79,
+          82.6
+        ],
+        [
+          144.34,
+          69.3
+        ],
+        [
+          151.16,
+          49.7
+        ],
+        [
+          155.26,
+          25.9
+        ],
+        [
+          156.63,
+          0
+        ],
+        [
+          155.26,
+          -25.9
+        ],
+        [
+          151.17,
+          -49.7
+        ],
+        [
+          144.34,
+          -69.3
+        ],
+        [
+          134.79,
+          -82.6
+        ],
+        [
+          122.5,
+          -87.5
+        ]
+      ]
+    },
+    {
+      "id": "tier-4",
+      "locationId": "tier-4",
+      "name": "Tier 4",
+      "nameFr": "Pont 4",
+      "elevation": 18,
+      "ceiling": 4.5,
+      "provenance": "plan",
+      "source": "Deck cross-section, ch. 349",
+      "hull": [
+        [
+          -133,
+          -87.5
+        ],
+        [
+          -142.45,
+          -82.6
+        ],
+        [
+          -149.8,
+          -69.3
+        ],
+        [
+          -155.05,
+          -49.7
+        ],
+        [
+          -158.2,
+          -25.9
+        ],
+        [
+          -159.25,
+          0
+        ],
+        [
+          -158.2,
+          25.9
+        ],
+        [
+          -155.05,
+          49.7
+        ],
+        [
+          -149.8,
+          69.3
+        ],
+        [
+          -142.45,
+          82.6
+        ],
+        [
+          -133,
+          87.5
+        ],
+        [
+          122.5,
+          87.5
+        ],
+        [
+          133.84,
+          82.6
+        ],
+        [
+          142.66,
+          69.3
+        ],
+        [
+          148.96,
+          49.7
+        ],
+        [
+          152.74,
+          25.9
+        ],
+        [
+          154,
+          0
+        ],
+        [
+          152.74,
+          -25.9
+        ],
+        [
+          148.96,
+          -49.7
+        ],
+        [
+          142.66,
+          -69.3
+        ],
+        [
+          133.84,
+          -82.6
+        ],
+        [
+          122.5,
+          -87.5
+        ]
+      ]
+    },
+    {
+      "id": "tier-5",
+      "locationId": "tier-5",
+      "name": "Tier 5",
+      "nameFr": "Pont 5",
+      "elevation": 0,
+      "ceiling": 4.5,
+      "provenance": "plan",
+      "source": "Deck cross-section, ch. 349",
+      "hull": [
+        [
+          -122.5,
+          -70
+        ],
+        [
+          -131.95,
+          -66.57
+        ],
+        [
+          -139.3,
+          -57.26
+        ],
+        [
+          -144.55,
+          -43.54
+        ],
+        [
+          -147.7,
+          -26.88
+        ],
+        [
+          -148.75,
+          -8.75
+        ],
+        [
+          -147.7,
+          9.38
+        ],
+        [
+          -144.55,
+          26.04
+        ],
+        [
+          -139.3,
+          39.76
+        ],
+        [
+          -131.95,
+          49.07
+        ],
+        [
+          -122.5,
+          52.5
+        ],
+        [
+          87.5,
+          52.5
+        ],
+        [
+          96.95,
+          49.07
+        ],
+        [
+          104.3,
+          39.76
+        ],
+        [
+          109.55,
+          26.04
+        ],
+        [
+          112.7,
+          9.38
+        ],
+        [
+          113.75,
+          -8.75
+        ],
+        [
+          112.7,
+          -26.88
+        ],
+        [
+          109.55,
+          -43.54
+        ],
+        [
+          104.3,
+          -57.26
+        ],
+        [
+          96.95,
+          -66.57
+        ],
+        [
+          87.5,
+          -70
+        ]
+      ]
+    }
+  ],
+  "spaces": [
+    {
+      "id": "tier-1-king-living-quarters",
+      "tierId": "tier-1",
+      "locationId": "tier-1-king-living-quarters",
+      "name": "King's Living Quarters",
+      "nameFr": "Quartiers du Roi",
+      "category": "quarters",
+      "provenance": "plan",
+      "source": "Deck plan, ch. 349",
+      "ceiling": 7,
+      "footprint": [
+        [
+          -105,
+          -63
+        ],
+        [
+          87.5,
+          -63
+        ],
+        [
+          87.5,
+          -35
+        ],
+        [
+          -105,
+          -35
+        ]
+      ]
+    },
+    {
+      "id": "tier-1-princes-burial-chamber",
+      "tierId": "tier-1",
+      "locationId": "tier-1-princes-burial-chamber",
+      "name": "Princes' Burial Chamber",
+      "nameFr": "Chambre funéraire des princes",
+      "category": "ceremonial",
+      "provenance": "panel",
+      "source": "Ch. 358 — the chamber is shown, its position on the deck is not.",
+      "ceiling": 6,
+      "footprint": [
+        [
+          -13.3,
+          -68.25
+        ],
+        [
+          -16.8,
+          -71.75
+        ],
+        [
+          -16.8,
+          -79.8
+        ],
+        [
+          -13.3,
+          -83.3
+        ],
+        [
+          -4.2,
+          -83.3
+        ],
+        [
+          -0.7,
+          -79.8
+        ],
+        [
+          -0.7,
+          -71.75
+        ],
+        [
+          -4.2,
+          -68.25
+        ]
+      ]
+    },
+    {
+      "id": "tier-1-banquet-hall",
+      "tierId": "tier-1",
+      "locationId": "tier-1-banquet-hall",
+      "name": "Banquet Hall",
+      "nameFr": "Salle du banquet",
+      "category": "public",
+      "provenance": "panel",
+      "source": "Ch. 349 — departure ceremony",
+      "ceiling": 9,
+      "footprint": [
+        [
+          -87.5,
+          -28
+        ],
+        [
+          70,
+          -28
+        ],
+        [
+          70,
+          -3.5
+        ],
+        [
+          -87.5,
+          -3.5
+        ]
+      ]
+    },
+    {
+      "id": "tier-1-vvip-living-quarters",
+      "tierId": "tier-1",
+      "locationId": "tier-1-vvip-living-quarters",
+      "name": "VVIP Living Quarters",
+      "nameFr": "Quartiers VVIP",
+      "category": "residential",
+      "provenance": "plan",
+      "source": "Deck plan, ch. 349",
+      "ceiling": null,
+      "footprint": [
+        [
+          -87.5,
+          3.5
+        ],
+        [
+          -59.5,
+          3.5
+        ],
+        [
+          -59.5,
+          56
+        ],
+        [
+          -87.5,
+          56
+        ]
+      ]
+    },
+    {
+      "id": "tier-1-vip-casino",
+      "tierId": "tier-1",
+      "locationId": "tier-1-vip-casino",
+      "name": "VIP Casino",
+      "nameFr": "Casino VIP",
+      "category": "public",
+      "provenance": "plan",
+      "source": "Deck plan, ch. 349",
+      "ceiling": null,
+      "footprint": [
+        [
+          -57.75,
+          3.5
+        ],
+        [
+          -40.25,
+          3.5
+        ],
+        [
+          -40.25,
+          56
+        ],
+        [
+          -57.75,
+          56
+        ]
+      ]
+    },
+    {
+      "id": "tier-1-queens-living-quarters-room-01",
+      "tierId": "tier-1",
+      "locationId": "tier-1-queens-living-quarters-room-01",
+      "name": "Queen's Room 01",
+      "nameFr": "Chambre de reine 01",
+      "category": "quarters",
+      "provenance": "inferred",
+      "source": "The plan gives the block eight rooms; it does not lay them out.",
+      "ceiling": null,
+      "footprint": [
+        [
+          -38.5,
+          3.5
+        ],
+        [
+          -30.1,
+          3.5
+        ],
+        [
+          -30.1,
+          16.63
+        ],
+        [
+          -38.5,
+          16.63
+        ]
+      ]
+    },
+    {
+      "id": "tier-1-queens-living-quarters-room-02",
+      "tierId": "tier-1",
+      "locationId": "tier-1-queens-living-quarters-room-02",
+      "name": "Queen's Room 02",
+      "nameFr": "Chambre de reine 02",
+      "category": "quarters",
+      "provenance": "inferred",
+      "source": "The plan gives the block eight rooms; it does not lay them out.",
+      "ceiling": null,
+      "footprint": [
+        [
+          -24.15,
+          3.5
+        ],
+        [
+          -15.75,
+          3.5
+        ],
+        [
+          -15.75,
+          16.63
+        ],
+        [
+          -24.15,
+          16.63
+        ]
+      ]
+    },
+    {
+      "id": "tier-1-queens-living-quarters-room-03",
+      "tierId": "tier-1",
+      "locationId": "tier-1-queens-living-quarters-room-03",
+      "name": "Queen's Room 03",
+      "nameFr": "Chambre de reine 03",
+      "category": "quarters",
+      "provenance": "inferred",
+      "source": "The plan gives the block eight rooms; it does not lay them out.",
+      "ceiling": null,
+      "footprint": [
+        [
+          -38.5,
+          16.63
+        ],
+        [
+          -30.1,
+          16.63
+        ],
+        [
+          -30.1,
+          29.75
+        ],
+        [
+          -38.5,
+          29.75
+        ]
+      ]
+    },
+    {
+      "id": "tier-1-queens-living-quarters-room-04",
+      "tierId": "tier-1",
+      "locationId": "tier-1-queens-living-quarters-room-04",
+      "name": "Queen's Room 04",
+      "nameFr": "Chambre de reine 04",
+      "category": "quarters",
+      "provenance": "inferred",
+      "source": "The plan gives the block eight rooms; it does not lay them out.",
+      "ceiling": null,
+      "footprint": [
+        [
+          -24.15,
+          16.63
+        ],
+        [
+          -15.75,
+          16.63
+        ],
+        [
+          -15.75,
+          29.75
+        ],
+        [
+          -24.15,
+          29.75
+        ]
+      ]
+    },
+    {
+      "id": "tier-1-queens-living-quarters-room-05",
+      "tierId": "tier-1",
+      "locationId": "tier-1-queens-living-quarters-room-05",
+      "name": "Queen's Room 05",
+      "nameFr": "Chambre de reine 05",
+      "category": "quarters",
+      "provenance": "inferred",
+      "source": "The plan gives the block eight rooms; it does not lay them out.",
+      "ceiling": null,
+      "footprint": [
+        [
+          -38.5,
+          29.75
+        ],
+        [
+          -30.1,
+          29.75
+        ],
+        [
+          -30.1,
+          42.88
+        ],
+        [
+          -38.5,
+          42.88
+        ]
+      ]
+    },
+    {
+      "id": "tier-1-queens-living-quarters-room-06",
+      "tierId": "tier-1",
+      "locationId": "tier-1-queens-living-quarters-room-06",
+      "name": "Queen's Room 06",
+      "nameFr": "Chambre de reine 06",
+      "category": "quarters",
+      "provenance": "inferred",
+      "source": "The plan gives the block eight rooms; it does not lay them out.",
+      "ceiling": null,
+      "footprint": [
+        [
+          -24.15,
+          29.75
+        ],
+        [
+          -15.75,
+          29.75
+        ],
+        [
+          -15.75,
+          42.88
+        ],
+        [
+          -24.15,
+          42.88
+        ]
+      ]
+    },
+    {
+      "id": "tier-1-queens-living-quarters-room-07",
+      "tierId": "tier-1",
+      "locationId": "tier-1-queens-living-quarters-room-07",
+      "name": "Queen's Room 07",
+      "nameFr": "Chambre de reine 07",
+      "category": "quarters",
+      "provenance": "inferred",
+      "source": "The plan gives the block eight rooms; it does not lay them out.",
+      "ceiling": null,
+      "footprint": [
+        [
+          -38.5,
+          42.88
+        ],
+        [
+          -30.1,
+          42.88
+        ],
+        [
+          -30.1,
+          56
+        ],
+        [
+          -38.5,
+          56
+        ]
+      ]
+    },
+    {
+      "id": "tier-1-queens-living-quarters-room-08",
+      "tierId": "tier-1",
+      "locationId": "tier-1-queens-living-quarters-room-08",
+      "name": "Queen's Room 08",
+      "nameFr": "Chambre de reine 08",
+      "category": "quarters",
+      "provenance": "inferred",
+      "source": "The plan gives the block eight rooms; it does not lay them out.",
+      "ceiling": null,
+      "footprint": [
+        [
+          -24.15,
+          42.88
+        ],
+        [
+          -15.75,
+          42.88
+        ],
+        [
+          -15.75,
+          56
+        ],
+        [
+          -24.15,
+          56
+        ]
+      ]
+    },
+    {
+      "id": "tier-1-queens-living-quarters",
+      "tierId": "tier-1",
+      "locationId": "tier-1-queens-living-quarters",
+      "name": "Queens' Quarters Corridor",
+      "nameFr": "Couloir des quartiers des reines",
+      "category": "corridor",
+      "provenance": "inferred",
+      "source": "Reconstructed to make the deck contiguous; no panel shows it.",
+      "ceiling": null,
+      "footprint": [
+        [
+          -30.1,
+          3.5
+        ],
+        [
+          -24.15,
+          3.5
+        ],
+        [
+          -24.15,
+          56
+        ],
+        [
+          -30.1,
+          56
+        ]
+      ]
+    },
+    {
+      "id": "tier-1-royal-residential-sector-room-1001",
+      "tierId": "tier-1",
+      "locationId": "tier-1-royal-residential-sector-room-1001",
+      "name": "Room 1001 (Benjamin)",
+      "nameFr": "Chambre 1001 (Benjamin)",
+      "category": "quarters",
+      "provenance": "panel",
+      "source": "Ch. 349 — room numbers and the corridor that serves them",
+      "ceiling": null,
+      "footprint": [
+        [
+          22.75,
+          3.5
+        ],
+        [
+          35,
+          3.5
+        ],
+        [
+          35,
+          10.99
+        ],
+        [
+          22.75,
+          10.99
+        ]
+      ]
+    },
+    {
+      "id": "tier-1-royal-residential-sector-room-1002",
+      "tierId": "tier-1",
+      "locationId": "tier-1-royal-residential-sector-room-1002",
+      "name": "Room 1002 (Camilla)",
+      "nameFr": "Chambre 1002 (Camilla)",
+      "category": "quarters",
+      "provenance": "panel",
+      "source": "Ch. 349 — room numbers and the corridor that serves them",
+      "ceiling": null,
+      "footprint": [
+        [
+          -14,
+          3.5
+        ],
+        [
+          -1.75,
+          3.5
+        ],
+        [
+          -1.75,
+          10.99
+        ],
+        [
+          -14,
+          10.99
+        ]
+      ]
+    },
+    {
+      "id": "tier-1-royal-residential-sector-room-1003",
+      "tierId": "tier-1",
+      "locationId": "tier-1-royal-residential-sector-room-1003",
+      "name": "Room 1003 (Zhang Lei)",
+      "nameFr": "Chambre 1003 (Zhang Lei)",
+      "category": "quarters",
+      "provenance": "panel",
+      "source": "Ch. 349 — room numbers and the corridor that serves them",
+      "ceiling": null,
+      "footprint": [
+        [
+          22.75,
+          10.99
+        ],
+        [
+          35,
+          10.99
+        ],
+        [
+          35,
+          18.48
+        ],
+        [
+          22.75,
+          18.48
+        ]
+      ]
+    },
+    {
+      "id": "tier-1-royal-residential-sector-room-1004",
+      "tierId": "tier-1",
+      "locationId": "tier-1-royal-residential-sector-room-1004",
+      "name": "Room 1004 (Tserriednich)",
+      "nameFr": "Chambre 1004 (Tserriednich)",
+      "category": "quarters",
+      "provenance": "panel",
+      "source": "Ch. 349 — room numbers and the corridor that serves them",
+      "ceiling": null,
+      "footprint": [
+        [
+          -14,
+          10.99
+        ],
+        [
+          -1.75,
+          10.99
+        ],
+        [
+          -1.75,
+          18.48
+        ],
+        [
+          -14,
+          18.48
+        ]
+      ]
+    },
+    {
+      "id": "tier-1-royal-residential-sector-room-1005",
+      "tierId": "tier-1",
+      "locationId": "tier-1-royal-residential-sector-room-1005",
+      "name": "Room 1005 (Tubeppa)",
+      "nameFr": "Chambre 1005 (Tubeppa)",
+      "category": "quarters",
+      "provenance": "panel",
+      "source": "Ch. 349 — room numbers and the corridor that serves them",
+      "ceiling": null,
+      "footprint": [
+        [
+          22.75,
+          18.48
+        ],
+        [
+          35,
+          18.48
+        ],
+        [
+          35,
+          25.97
+        ],
+        [
+          22.75,
+          25.97
+        ]
+      ]
+    },
+    {
+      "id": "tier-1-royal-residential-sector-room-1006",
+      "tierId": "tier-1",
+      "locationId": "tier-1-royal-residential-sector-room-1006",
+      "name": "Room 1006 (Tyson)",
+      "nameFr": "Chambre 1006 (Tyson)",
+      "category": "quarters",
+      "provenance": "panel",
+      "source": "Ch. 349 — room numbers and the corridor that serves them",
+      "ceiling": null,
+      "footprint": [
+        [
+          -14,
+          18.48
+        ],
+        [
+          -1.75,
+          18.48
+        ],
+        [
+          -1.75,
+          25.97
+        ],
+        [
+          -14,
+          25.97
+        ]
+      ]
+    },
+    {
+      "id": "tier-1-royal-residential-sector-room-1007",
+      "tierId": "tier-1",
+      "locationId": "tier-1-royal-residential-sector-room-1007",
+      "name": "Room 1007 (Luzurus)",
+      "nameFr": "Chambre 1007 (Luzurus)",
+      "category": "quarters",
+      "provenance": "panel",
+      "source": "Ch. 349 — room numbers and the corridor that serves them",
+      "ceiling": null,
+      "footprint": [
+        [
+          22.75,
+          25.97
+        ],
+        [
+          35,
+          25.97
+        ],
+        [
+          35,
+          33.46
+        ],
+        [
+          22.75,
+          33.46
+        ]
+      ]
+    },
+    {
+      "id": "tier-1-royal-residential-sector-room-1008",
+      "tierId": "tier-1",
+      "locationId": "tier-1-royal-residential-sector-room-1008",
+      "name": "Room 1008 (Salé-salé)",
+      "nameFr": "Chambre 1008 (Salé-salé)",
+      "category": "quarters",
+      "provenance": "panel",
+      "source": "Ch. 349 — room numbers and the corridor that serves them",
+      "ceiling": null,
+      "footprint": [
+        [
+          -14,
+          25.97
+        ],
+        [
+          -1.75,
+          25.97
+        ],
+        [
+          -1.75,
+          33.46
+        ],
+        [
+          -14,
+          33.46
+        ]
+      ]
+    },
+    {
+      "id": "tier-1-royal-residential-sector-room-1009",
+      "tierId": "tier-1",
+      "locationId": "tier-1-royal-residential-sector-room-1009",
+      "name": "Room 1009 (Halkenburg)",
+      "nameFr": "Chambre 1009 (Halkenburg)",
+      "category": "quarters",
+      "provenance": "panel",
+      "source": "Ch. 349 — room numbers and the corridor that serves them",
+      "ceiling": null,
+      "footprint": [
+        [
+          22.75,
+          33.46
+        ],
+        [
+          35,
+          33.46
+        ],
+        [
+          35,
+          40.95
+        ],
+        [
+          22.75,
+          40.95
+        ]
+      ]
+    },
+    {
+      "id": "tier-1-royal-residential-sector-room-1010",
+      "tierId": "tier-1",
+      "locationId": "tier-1-royal-residential-sector-room-1010",
+      "name": "Room 1010 (Kacho)",
+      "nameFr": "Chambre 1010 (Kacho)",
+      "category": "quarters",
+      "provenance": "panel",
+      "source": "Ch. 349 — room numbers and the corridor that serves them",
+      "ceiling": null,
+      "footprint": [
+        [
+          -14,
+          33.46
+        ],
+        [
+          -1.75,
+          33.46
+        ],
+        [
+          -1.75,
+          40.95
+        ],
+        [
+          -14,
+          40.95
+        ]
+      ]
+    },
+    {
+      "id": "tier-1-royal-residential-sector-room-1011",
+      "tierId": "tier-1",
+      "locationId": "tier-1-royal-residential-sector-room-1011",
+      "name": "Room 1011 (Fugetsu)",
+      "nameFr": "Chambre 1011 (Fugetsu)",
+      "category": "quarters",
+      "provenance": "panel",
+      "source": "Ch. 349 — room numbers and the corridor that serves them",
+      "ceiling": null,
+      "footprint": [
+        [
+          22.75,
+          40.95
+        ],
+        [
+          35,
+          40.95
+        ],
+        [
+          35,
+          48.44
+        ],
+        [
+          22.75,
+          48.44
+        ]
+      ]
+    },
+    {
+      "id": "tier-1-royal-residential-sector-room-1012",
+      "tierId": "tier-1",
+      "locationId": "tier-1-royal-residential-sector-room-1012",
+      "name": "Room 1012 (Momoze)",
+      "nameFr": "Chambre 1012 (Momoze)",
+      "category": "quarters",
+      "provenance": "panel",
+      "source": "Ch. 349 — room numbers and the corridor that serves them",
+      "ceiling": null,
+      "footprint": [
+        [
+          -14,
+          40.95
+        ],
+        [
+          -1.75,
+          40.95
+        ],
+        [
+          -1.75,
+          48.44
+        ],
+        [
+          -14,
+          48.44
+        ]
+      ]
+    },
+    {
+      "id": "tier-1-royal-residential-sector-room-1013",
+      "tierId": "tier-1",
+      "locationId": "tier-1-royal-residential-sector-room-1013",
+      "name": "Room 1013 (Marayam)",
+      "nameFr": "Chambre 1013 (Marayam)",
+      "category": "quarters",
+      "provenance": "panel",
+      "source": "Ch. 349 — room numbers and the corridor that serves them",
+      "ceiling": null,
+      "footprint": [
+        [
+          22.75,
+          48.44
+        ],
+        [
+          35,
+          48.44
+        ],
+        [
+          35,
+          56
+        ],
+        [
+          22.75,
+          56
+        ]
+      ]
+    },
+    {
+      "id": "tier-1-royal-residential-sector-room-1014",
+      "tierId": "tier-1",
+      "locationId": "tier-1-royal-residential-sector-room-1014",
+      "name": "Room 1014 (Woble)",
+      "nameFr": "Chambre 1014 (Woble)",
+      "category": "quarters",
+      "provenance": "panel",
+      "source": "Ch. 349 — room numbers and the corridor that serves them",
+      "ceiling": null,
+      "footprint": [
+        [
+          -14,
+          48.44
+        ],
+        [
+          -1.75,
+          48.44
+        ],
+        [
+          -1.75,
+          56
+        ],
+        [
+          -14,
+          56
+        ]
+      ]
+    },
+    {
+      "id": "tier-1-royal-residential-sector",
+      "tierId": "tier-1",
+      "locationId": "tier-1-royal-residential-sector",
+      "name": "Royal Residential Corridor",
+      "nameFr": "Couloir du secteur royal",
+      "category": "corridor",
+      "provenance": "panel",
+      "source": "Ch. 349 — the guarded corridor between the princes’ rooms",
+      "ceiling": null,
+      "footprint": [
+        [
+          -1.75,
+          3.5
+        ],
+        [
+          22.75,
+          3.5
+        ],
+        [
+          22.75,
+          56
+        ],
+        [
+          -1.75,
+          56
+        ]
+      ]
+    },
+    {
+      "id": "tier-1-soldiers-living-quarters",
+      "tierId": "tier-1",
+      "locationId": "tier-1-soldiers-living-quarters",
+      "name": "Soldiers' Living Quarters",
+      "nameFr": "Quartiers des soldats",
+      "category": "military",
+      "provenance": "plan",
+      "source": "Deck plan, ch. 349",
+      "ceiling": null,
+      "footprint": [
+        [
+          36.75,
+          3.5
+        ],
+        [
+          70,
+          3.5
+        ],
+        [
+          70,
+          56
+        ],
+        [
+          36.75,
+          56
+        ]
+      ]
+    },
+    {
+      "id": "tier-1-vvip-prison-beyond",
+      "tierId": "tier-1",
+      "locationId": "tier-1-vvip-prison-beyond",
+      "name": "Beyond Netero's Holding Cell",
+      "nameFr": "Cellule de Beyond Netero",
+      "category": "prison",
+      "provenance": "panel",
+      "source": "Ch. 350 — the high-security cell and its manacles",
+      "ceiling": null,
+      "footprint": [
+        [
+          85.75,
+          -17.5
+        ],
+        [
+          117.25,
+          -17.5
+        ],
+        [
+          117.25,
+          -3.5
+        ],
+        [
+          85.75,
+          -3.5
+        ]
+      ]
+    },
+    {
+      "id": "tier-1-vip-jail",
+      "tierId": "tier-1",
+      "locationId": "tier-1-vip-jail",
+      "name": "VIP Jail",
+      "nameFr": "Prison VIP",
+      "category": "prison",
+      "provenance": "plan",
+      "source": "Deck plan, ch. 349",
+      "ceiling": null,
+      "footprint": [
+        [
+          85.75,
+          0
+        ],
+        [
+          117.25,
+          0
+        ],
+        [
+          117.25,
+          14
+        ],
+        [
+          85.75,
+          14
+        ]
+      ]
+    },
+    {
+      "id": "tier-1-jail-block-walkway",
+      "tierId": "tier-1",
+      "locationId": null,
+      "name": "Jail Block Walkway",
+      "nameFr": "Coursive du bloc pénitentiaire",
+      "category": "corridor",
+      "provenance": "inferred",
+      "source": "Reconstructed to make the deck contiguous; no panel shows it.",
+      "ceiling": null,
+      "footprint": [
+        [
+          117.25,
+          -17.5
+        ],
+        [
+          122.5,
+          -17.5
+        ],
+        [
+          122.5,
+          17.5
+        ],
+        [
+          117.25,
+          17.5
+        ]
+      ]
+    },
+    {
+      "id": "tier-1-jail-block-hall",
+      "tierId": "tier-1",
+      "locationId": null,
+      "name": "Jail Block Hall",
+      "nameFr": "Hall du bloc pénitentiaire",
+      "category": "corridor",
+      "provenance": "inferred",
+      "source": "Reconstructed to make the deck contiguous; no panel shows it.",
+      "ceiling": null,
+      "footprint": [
+        [
+          80.5,
+          -28
+        ],
+        [
+          122.5,
+          -28
+        ],
+        [
+          122.5,
+          -17.5
+        ],
+        [
+          85.75,
+          -17.5
+        ],
+        [
+          85.75,
+          17.5
+        ],
+        [
+          80.5,
+          17.5
+        ]
+      ]
+    },
+    {
+      "id": "tier-1-supreme-court",
+      "tierId": "tier-1",
+      "locationId": "tier-1-supreme-court",
+      "name": "Supreme Court",
+      "nameFr": "Cour suprême",
+      "category": "administrative",
+      "provenance": "plan",
+      "source": "Deck plan, ch. 349",
+      "ceiling": 8,
+      "footprint": [
+        [
+          80.5,
+          24.5
+        ],
+        [
+          122.5,
+          24.5
+        ],
+        [
+          122.5,
+          52.5
+        ],
+        [
+          80.5,
+          52.5
+        ]
+      ]
+    },
+    {
+      "id": "tier-1-lifeboats-port",
+      "tierId": "tier-1",
+      "locationId": "tier-1-lifeboats",
+      "name": "Lifeboat Deck (port)",
+      "nameFr": "Pont des canots (bâbord)",
+      "category": "evacuation",
+      "provenance": "plan",
+      "source": "Deck plan, ch. 349",
+      "ceiling": null,
+      "footprint": [
+        [
+          -133,
+          -17.5
+        ],
+        [
+          -122.5,
+          -17.5
+        ],
+        [
+          -122.5,
+          17.5
+        ],
+        [
+          -133,
+          17.5
+        ]
+      ]
+    },
+    {
+      "id": "tier-1-lifeboats-starboard",
+      "tierId": "tier-1",
+      "locationId": "tier-1-lifeboats",
+      "name": "Lifeboat Deck (starboard)",
+      "nameFr": "Pont des canots (tribord)",
+      "category": "evacuation",
+      "provenance": "plan",
+      "source": "Deck plan, ch. 349",
+      "ceiling": null,
+      "footprint": [
+        [
+          122.5,
+          -17.5
+        ],
+        [
+          133,
+          -17.5
+        ],
+        [
+          133,
+          17.5
+        ],
+        [
+          122.5,
+          17.5
+        ]
+      ]
+    },
+    {
+      "id": "tier-1-royal-approach",
+      "tierId": "tier-1",
+      "locationId": null,
+      "name": "Royal Approach",
+      "nameFr": "Vestibule royal",
+      "category": "corridor",
+      "provenance": "inferred",
+      "source": "Reconstructed to make the deck contiguous; no panel shows it.",
+      "ceiling": null,
+      "footprint": [
+        [
+          -87.5,
+          -35
+        ],
+        [
+          70,
+          -35
+        ],
+        [
+          70,
+          -28
+        ],
+        [
+          -87.5,
+          -28
+        ]
+      ]
+    },
+    {
+      "id": "tier-1-main-corridor",
+      "tierId": "tier-1",
+      "locationId": null,
+      "name": "Main Corridor",
+      "nameFr": "Couloir principal",
+      "category": "corridor",
+      "provenance": "inferred",
+      "source": "Reconstructed to make the deck contiguous; no panel shows it.",
+      "ceiling": null,
+      "footprint": [
+        [
+          -87.5,
+          -3.5
+        ],
+        [
+          70,
+          -3.5
+        ],
+        [
+          70,
+          3.5
+        ],
+        [
+          -87.5,
+          3.5
+        ]
+      ]
+    },
+    {
+      "id": "tier-1-port-promenade",
+      "tierId": "tier-1",
+      "locationId": null,
+      "name": "Port Promenade",
+      "nameFr": "Promenade bâbord",
+      "category": "corridor",
+      "provenance": "inferred",
+      "source": "Reconstructed to make the deck contiguous; no panel shows it.",
+      "ceiling": null,
+      "footprint": [
+        [
+          -122.5,
+          -63
+        ],
+        [
+          -105,
+          -63
+        ],
+        [
+          -105,
+          -35
+        ],
+        [
+          -87.5,
+          -35
+        ],
+        [
+          -87.5,
+          59.5
+        ],
+        [
+          -122.5,
+          59.5
+        ]
+      ]
+    },
+    {
+      "id": "tier-1-burial-passage",
+      "tierId": "tier-1",
+      "locationId": null,
+      "name": "Burial Chamber Passage",
+      "nameFr": "Passage de la chambre funéraire",
+      "category": "corridor",
+      "provenance": "inferred",
+      "source": "Reconstructed to make the deck contiguous; no panel shows it.",
+      "ceiling": null,
+      "footprint": [
+        [
+          -13.3,
+          -68.25
+        ],
+        [
+          -4.2,
+          -68.25
+        ],
+        [
+          -4.2,
+          -63
+        ],
+        [
+          -13.3,
+          -63
+        ]
+      ]
+    },
+    {
+      "id": "tier-1-starboard-corridor",
+      "tierId": "tier-1",
+      "locationId": null,
+      "name": "Starboard Corridor",
+      "nameFr": "Couloir tribord",
+      "category": "corridor",
+      "provenance": "inferred",
+      "source": "Reconstructed to make the deck contiguous; no panel shows it.",
+      "ceiling": null,
+      "footprint": [
+        [
+          70,
+          -35
+        ],
+        [
+          80.5,
+          -35
+        ],
+        [
+          80.5,
+          59.5
+        ],
+        [
+          70,
+          59.5
+        ]
+      ]
+    },
+    {
+      "id": "tier-1-aft-promenade",
+      "tierId": "tier-1",
+      "locationId": null,
+      "name": "Aft Promenade",
+      "nameFr": "Promenade arrière",
+      "category": "corridor",
+      "provenance": "inferred",
+      "source": "Reconstructed to make the deck contiguous; no panel shows it.",
+      "ceiling": null,
+      "footprint": [
+        [
+          -87.5,
+          56
+        ],
+        [
+          70,
+          56
+        ],
+        [
+          70,
+          63
+        ],
+        [
+          -87.5,
+          63
+        ]
+      ]
+    },
+    {
+      "id": "tier-2-vip-quarters",
+      "tierId": "tier-2",
+      "locationId": null,
+      "name": "VIP Quarters",
+      "nameFr": "Quartiers VIP",
+      "category": "residential",
+      "provenance": "plan",
+      "source": "Deck plan, ch. 349 — celebrities and fortunes",
+      "ceiling": null,
+      "footprint": [
+        [
+          -87.5,
+          -52.5
+        ],
+        [
+          -10.5,
+          -52.5
+        ],
+        [
+          -10.5,
+          0
+        ],
+        [
+          -87.5,
+          0
+        ]
+      ]
+    },
+    {
+      "id": "tier-2-heilly-secret-hideout",
+      "tierId": "tier-2",
+      "locationId": "tier-2-heilly-secret-hideout",
+      "name": "Heil-Ly Secret Hideout",
+      "nameFr": "Planque secrète Heil-Ly",
+      "category": "mafia",
+      "provenance": "panel",
+      "source": "Ch. 356 — concealed inside the VIP block; the exact room is not shown.",
+      "ceiling": null,
+      "footprint": [
+        [
+          -8.75,
+          -52.5
+        ],
+        [
+          17.5,
+          -52.5
+        ],
+        [
+          17.5,
+          0
+        ],
+        [
+          -8.75,
+          0
+        ]
+      ]
+    },
+    {
+      "id": "tier-2-screening-room",
+      "tierId": "tier-2",
+      "locationId": "tier-2-screening-room",
+      "name": "Screening Room",
+      "nameFr": "Salle de projection",
+      "category": "public",
+      "provenance": "panel",
+      "source": "Ch. 359 — amphitheatre and projection wall",
+      "ceiling": 10,
+      "footprint": [
+        [
+          -87.5,
+          7
+        ],
+        [
+          0,
+          7
+        ],
+        [
+          0,
+          52.5
+        ],
+        [
+          -87.5,
+          52.5
+        ]
+      ]
+    },
+    {
+      "id": "tier-2-ministry-of-justice",
+      "tierId": "tier-2",
+      "locationId": "tier-2-ministry-of-justice",
+      "name": "Ministry of Justice",
+      "nameFr": "Ministère de la Justice",
+      "category": "administrative",
+      "provenance": "plan",
+      "source": "Deck plan, ch. 349",
+      "ceiling": null,
+      "footprint": [
+        [
+          7,
+          7
+        ],
+        [
+          70,
+          7
+        ],
+        [
+          70,
+          52.5
+        ],
+        [
+          7,
+          52.5
+        ]
+      ]
+    },
+    {
+      "id": "tier-2-vip-witness-protection-area",
+      "tierId": "tier-2",
+      "locationId": "tier-2-vip-witness-protection-area",
+      "name": "VIP Witness Protection Area",
+      "nameFr": "Zone de protection des témoins VIP",
+      "category": "administrative",
+      "provenance": "plan",
+      "source": "Deck plan, ch. 349",
+      "ceiling": null,
+      "footprint": [
+        [
+          71.75,
+          7
+        ],
+        [
+          105,
+          7
+        ],
+        [
+          105,
+          52.5
+        ],
+        [
+          71.75,
+          52.5
+        ]
+      ]
+    },
+    {
+      "id": "tier-2-bulkhead",
+      "tierId": "tier-2",
+      "locationId": "tier-2-bulkhead",
+      "name": "Tier 2 Bulkhead",
+      "nameFr": "Cloison blindée du pont 2",
+      "category": "infrastructure",
+      "provenance": "panel",
+      "source": "Ch. 349 — armoured bulkhead, 600 guards stationed",
+      "ceiling": null,
+      "footprint": [
+        [
+          -122.5,
+          63
+        ],
+        [
+          122.5,
+          63
+        ],
+        [
+          122.5,
+          75.25
+        ],
+        [
+          -122.5,
+          75.25
+        ]
+      ]
+    },
+    {
+      "id": "tier-2-tier-1-access",
+      "tierId": "tier-2",
+      "locationId": null,
+      "name": "Tier 1 Stairwell",
+      "nameFr": "Cage d’escalier vers le pont 1",
+      "category": "corridor",
+      "provenance": "inferred",
+      "source": "Reconstructed to make the deck contiguous; no panel shows it.",
+      "ceiling": null,
+      "footprint": [
+        [
+          4.2,
+          -58.8
+        ],
+        [
+          1.05,
+          -61.95
+        ],
+        [
+          1.05,
+          -69.65
+        ],
+        [
+          4.2,
+          -72.8
+        ],
+        [
+          13.3,
+          -72.8
+        ],
+        [
+          16.45,
+          -69.65
+        ],
+        [
+          16.45,
+          -61.95
+        ],
+        [
+          13.3,
+          -58.8
+        ]
+      ]
+    },
+    {
+      "id": "tier-2-forward-corridor",
+      "tierId": "tier-2",
+      "locationId": null,
+      "name": "Forward Corridor",
+      "nameFr": "Couloir avant",
+      "category": "corridor",
+      "provenance": "inferred",
+      "source": "Reconstructed to make the deck contiguous; no panel shows it.",
+      "ceiling": null,
+      "footprint": [
+        [
+          -87.5,
+          -58.8
+        ],
+        [
+          105,
+          -58.8
+        ],
+        [
+          105,
+          -52.5
+        ],
+        [
+          -87.5,
+          -52.5
+        ]
+      ]
+    },
+    {
+      "id": "tier-2-main-corridor",
+      "tierId": "tier-2",
+      "locationId": null,
+      "name": "Main Corridor",
+      "nameFr": "Couloir principal",
+      "category": "corridor",
+      "provenance": "inferred",
+      "source": "Reconstructed to make the deck contiguous; no panel shows it.",
+      "ceiling": null,
+      "footprint": [
+        [
+          -87.5,
+          0
+        ],
+        [
+          105,
+          0
+        ],
+        [
+          105,
+          7
+        ],
+        [
+          -87.5,
+          7
+        ]
+      ]
+    },
+    {
+      "id": "tier-2-aft-corridor",
+      "tierId": "tier-2",
+      "locationId": null,
+      "name": "Aft Corridor",
+      "nameFr": "Couloir arrière",
+      "category": "corridor",
+      "provenance": "inferred",
+      "source": "Reconstructed to make the deck contiguous; no panel shows it.",
+      "ceiling": null,
+      "footprint": [
+        [
+          -87.5,
+          52.5
+        ],
+        [
+          105,
+          52.5
+        ],
+        [
+          105,
+          63
+        ],
+        [
+          -87.5,
+          63
+        ]
+      ]
+    },
+    {
+      "id": "tier-2-port-promenade",
+      "tierId": "tier-2",
+      "locationId": null,
+      "name": "Port Promenade",
+      "nameFr": "Promenade bâbord",
+      "category": "corridor",
+      "provenance": "inferred",
+      "source": "Reconstructed to make the deck contiguous; no panel shows it.",
+      "ceiling": null,
+      "footprint": [
+        [
+          -122.5,
+          -58.8
+        ],
+        [
+          -87.5,
+          -58.8
+        ],
+        [
+          -87.5,
+          63
+        ],
+        [
+          -122.5,
+          63
+        ]
+      ]
+    },
+    {
+      "id": "tier-2-starboard-promenade",
+      "tierId": "tier-2",
+      "locationId": null,
+      "name": "Starboard Promenade",
+      "nameFr": "Promenade tribord",
+      "category": "corridor",
+      "provenance": "inferred",
+      "source": "Reconstructed to make the deck contiguous; no panel shows it.",
+      "ceiling": null,
+      "footprint": [
+        [
+          105,
+          -58.8
+        ],
+        [
+          133,
+          -58.8
+        ],
+        [
+          133,
+          63
+        ],
+        [
+          105,
+          63
+        ]
+      ]
+    },
+    {
+      "id": "tier-3-residential-first-class",
+      "tierId": "tier-3",
+      "locationId": "tier-3-residential-first-class",
+      "name": "First-Class Residential Block",
+      "nameFr": "Bloc résidentiel première classe",
+      "category": "residential",
+      "provenance": "plan",
+      "source": "Deck plan, ch. 349",
+      "ceiling": null,
+      "footprint": [
+        [
+          -112,
+          -70
+        ],
+        [
+          -49,
+          -70
+        ],
+        [
+          -49,
+          -17.5
+        ],
+        [
+          -112,
+          -17.5
+        ],
+        [
+          -112,
+          -31.5
+        ],
+        [
+          -91,
+          -31.5
+        ],
+        [
+          -91,
+          -42
+        ],
+        [
+          -112,
+          -42
+        ]
+      ]
+    },
+    {
+      "id": "tier-3-residential-room-3101",
+      "tierId": "tier-3",
+      "locationId": "tier-3-residential-room-3101",
+      "name": "Room 3101 (Heil-Ly Trap)",
+      "nameFr": "Chambre 3101 (piège Heil-Ly)",
+      "category": "quarters",
+      "provenance": "panel",
+      "source": "Ch. 361 — the Heil-Ly trap room",
+      "ceiling": null,
+      "footprint": [
+        [
+          -112,
+          -42
+        ],
+        [
+          -91,
+          -42
+        ],
+        [
+          -91,
+          -31.5
+        ],
+        [
+          -112,
+          -31.5
+        ]
+      ]
+    },
+    {
+      "id": "tier-3-residential-standard",
+      "tierId": "tier-3",
+      "locationId": "tier-3-residential-standard",
+      "name": "Standard Residential Block",
+      "nameFr": "Bloc résidentiel standard",
+      "category": "residential",
+      "provenance": "plan",
+      "source": "Deck plan, ch. 349",
+      "ceiling": null,
+      "footprint": [
+        [
+          -112,
+          -10.5
+        ],
+        [
+          -49,
+          -10.5
+        ],
+        [
+          -49,
+          59.5
+        ],
+        [
+          -112,
+          59.5
+        ]
+      ]
+    },
+    {
+      "id": "tier-3-central-hospital",
+      "tierId": "tier-3",
+      "locationId": "tier-3-central-hospital",
+      "name": "Central Hospital",
+      "nameFr": "Hôpital central",
+      "category": "medical",
+      "provenance": "plan",
+      "source": "Deck plan, ch. 349 — medical ward (Ikagaku Tokku), three clinics",
+      "ceiling": null,
+      "footprint": [
+        [
+          -35,
+          -70
+        ],
+        [
+          35,
+          -70
+        ],
+        [
+          35,
+          -7
+        ],
+        [
+          -35,
+          -7
+        ]
+      ]
+    },
+    {
+      "id": "tier-3-central-police-station",
+      "tierId": "tier-3",
+      "locationId": "tier-3-central-police-station",
+      "name": "Central Police Station",
+      "nameFr": "Commissariat central",
+      "category": "administrative",
+      "provenance": "plan",
+      "source": "Deck plan, ch. 349",
+      "ceiling": null,
+      "footprint": [
+        [
+          -35,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          45.5
+        ],
+        [
+          -35,
+          45.5
+        ]
+      ]
+    },
+    {
+      "id": "tier-3-residential-units",
+      "tierId": "tier-3",
+      "locationId": "tier-3-residential-units",
+      "name": "Central Police Dorm Room",
+      "nameFr": "Dortoir du commissariat central",
+      "category": "quarters",
+      "provenance": "inferred",
+      "source": "The catalogue puts the dorm inside the station; the plan does not place it.",
+      "ceiling": null,
+      "footprint": [
+        [
+          -35,
+          45.5
+        ],
+        [
+          0,
+          45.5
+        ],
+        [
+          0,
+          59.5
+        ],
+        [
+          -35,
+          59.5
+        ]
+      ]
+    },
+    {
+      "id": "tier-3-central-courthouse",
+      "tierId": "tier-3",
+      "locationId": "tier-3-central-courthouse",
+      "name": "Central Courthouse",
+      "nameFr": "Palais de justice central",
+      "category": "administrative",
+      "provenance": "plan",
+      "source": "Deck plan, ch. 349",
+      "ceiling": 8,
+      "footprint": [
+        [
+          0,
+          0
+        ],
+        [
+          35,
+          0
+        ],
+        [
+          35,
+          59.5
+        ],
+        [
+          0,
+          59.5
+        ]
+      ]
+    },
+    {
+      "id": "tier-3-cineplex",
+      "tierId": "tier-3",
+      "locationId": "tier-3-cineplex",
+      "name": "Cineplex",
+      "nameFr": "Cinéplexe",
+      "category": "public",
+      "provenance": "plan",
+      "source": "Deck plan, ch. 349 — eight screens",
+      "ceiling": 8,
+      "footprint": [
+        [
+          49,
+          -70
+        ],
+        [
+          101.5,
+          -70
+        ],
+        [
+          101.5,
+          -28
+        ],
+        [
+          49,
+          -28
+        ]
+      ]
+    },
+    {
+      "id": "tier-3-observation-deck",
+      "tierId": "tier-3",
+      "locationId": "tier-3-observation-deck",
+      "name": "Observation Deck",
+      "nameFr": "Pont d'observation",
+      "category": "public",
+      "provenance": "plan",
+      "source": "Deck plan, ch. 349",
+      "ceiling": 9,
+      "footprint": [
+        [
+          49,
+          -21
+        ],
+        [
+          101.5,
+          -21
+        ],
+        [
+          115.5,
+          17.5
+        ],
+        [
+          49,
+          17.5
+        ]
+      ]
+    },
+    {
+      "id": "tier-3-heilly-family-office",
+      "tierId": "tier-3",
+      "locationId": "tier-3-heilly-family-office",
+      "name": "Heil-Ly Family Office",
+      "nameFr": "Bureau de la famille Heil-Ly",
+      "category": "mafia",
+      "provenance": "plan",
+      "source": "Deck plan, ch. 349",
+      "ceiling": null,
+      "footprint": [
+        [
+          49,
+          24.5
+        ],
+        [
+          101.5,
+          24.5
+        ],
+        [
+          101.5,
+          59.5
+        ],
+        [
+          49,
+          59.5
+        ]
+      ]
+    },
+    {
+      "id": "tier-3-bulkhead-access",
+      "tierId": "tier-3",
+      "locationId": null,
+      "name": "Emergency Bulkhead to Tier 2",
+      "nameFr": "Sas de secours vers le pont 2",
+      "category": "corridor",
+      "provenance": "plan",
+      "source": "Deck plan, ch. 349 — emergency bulkhead",
+      "ceiling": null,
+      "footprint": [
+        [
+          -17.5,
+          -86.8
+        ],
+        [
+          17.5,
+          -86.8
+        ],
+        [
+          17.5,
+          -81.2
+        ],
+        [
+          -17.5,
+          -81.2
+        ]
+      ]
+    },
+    {
+      "id": "tier-3-forward-corridor",
+      "tierId": "tier-3",
+      "locationId": null,
+      "name": "Forward Corridor",
+      "nameFr": "Couloir avant",
+      "category": "corridor",
+      "provenance": "inferred",
+      "source": "Reconstructed to make the deck contiguous; no panel shows it.",
+      "ceiling": null,
+      "footprint": [
+        [
+          -122.5,
+          -81.2
+        ],
+        [
+          115.5,
+          -81.2
+        ],
+        [
+          115.5,
+          -70
+        ],
+        [
+          -122.5,
+          -70
+        ]
+      ]
+    },
+    {
+      "id": "tier-3-central-spine",
+      "tierId": "tier-3",
+      "locationId": null,
+      "name": "Central Spine",
+      "nameFr": "Épine centrale",
+      "category": "corridor",
+      "provenance": "inferred",
+      "source": "Reconstructed to make the deck contiguous; no panel shows it.",
+      "ceiling": null,
+      "footprint": [
+        [
+          -49,
+          -70
+        ],
+        [
+          -35,
+          -70
+        ],
+        [
+          -35,
+          59.5
+        ],
+        [
+          -49,
+          59.5
+        ]
+      ]
+    },
+    {
+      "id": "tier-3-starboard-corridor",
+      "tierId": "tier-3",
+      "locationId": null,
+      "name": "Starboard Corridor",
+      "nameFr": "Couloir tribord",
+      "category": "corridor",
+      "provenance": "inferred",
+      "source": "Reconstructed to make the deck contiguous; no panel shows it.",
+      "ceiling": null,
+      "footprint": [
+        [
+          35,
+          -70
+        ],
+        [
+          49,
+          -70
+        ],
+        [
+          49,
+          59.5
+        ],
+        [
+          35,
+          59.5
+        ]
+      ]
+    },
+    {
+      "id": "tier-3-aft-corridor",
+      "tierId": "tier-3",
+      "locationId": null,
+      "name": "Aft Corridor",
+      "nameFr": "Couloir arrière",
+      "category": "corridor",
+      "provenance": "inferred",
+      "source": "Reconstructed to make the deck contiguous; no panel shows it.",
+      "ceiling": null,
+      "footprint": [
+        [
+          -122.5,
+          59.5
+        ],
+        [
+          115.5,
+          59.5
+        ],
+        [
+          115.5,
+          71.75
+        ],
+        [
+          -122.5,
+          71.75
+        ]
+      ]
+    },
+    {
+      "id": "tier-3-port-promenade",
+      "tierId": "tier-3",
+      "locationId": null,
+      "name": "Port Promenade",
+      "nameFr": "Promenade bâbord",
+      "category": "corridor",
+      "provenance": "inferred",
+      "source": "Reconstructed to make the deck contiguous; no panel shows it.",
+      "ceiling": null,
+      "footprint": [
+        [
+          -140,
+          -70
+        ],
+        [
+          -112,
+          -70
+        ],
+        [
+          -112,
+          59.5
+        ],
+        [
+          -140,
+          59.5
+        ]
+      ]
+    },
+    {
+      "id": "tier-3-starboard-promenade",
+      "tierId": "tier-3",
+      "locationId": null,
+      "name": "Starboard Promenade",
+      "nameFr": "Promenade tribord",
+      "category": "corridor",
+      "provenance": "inferred",
+      "source": "Reconstructed to make the deck contiguous; no panel shows it.",
+      "ceiling": null,
+      "footprint": [
+        [
+          101.5,
+          -70
+        ],
+        [
+          154,
+          -70
+        ],
+        [
+          154,
+          59.5
+        ],
+        [
+          101.5,
+          59.5
+        ],
+        [
+          101.5,
+          17.5
+        ],
+        [
+          115.5,
+          17.5
+        ],
+        [
+          101.5,
+          -21
+        ]
+      ]
+    },
+    {
+      "id": "tier-4-general-area-west-north",
+      "tierId": "tier-4",
+      "locationId": null,
+      "name": "West General Area (forward)",
+      "nameFr": "Zone générale ouest (avant)",
+      "category": "residential",
+      "provenance": "plan",
+      "source": "Deck plan, ch. 349 — general passenger area, over 300 civilians per guard",
+      "ceiling": null,
+      "footprint": [
+        [
+          -119,
+          -77
+        ],
+        [
+          -70,
+          -77
+        ],
+        [
+          -70,
+          -24.5
+        ],
+        [
+          -119,
+          -24.5
+        ]
+      ]
+    },
+    {
+      "id": "tier-4-general-area-west-mid",
+      "tierId": "tier-4",
+      "locationId": null,
+      "name": "West General Area (midships)",
+      "nameFr": "Zone générale ouest (milieu)",
+      "category": "residential",
+      "provenance": "plan",
+      "source": "Deck plan, ch. 349 — general passenger area, over 300 civilians per guard",
+      "ceiling": null,
+      "footprint": [
+        [
+          -119,
+          -10.5
+        ],
+        [
+          -70,
+          -10.5
+        ],
+        [
+          -70,
+          10.5
+        ],
+        [
+          -119,
+          10.5
+        ]
+      ]
+    },
+    {
+      "id": "tier-4-general-area-west-south",
+      "tierId": "tier-4",
+      "locationId": null,
+      "name": "West General Area (aft)",
+      "nameFr": "Zone générale ouest (arrière)",
+      "category": "residential",
+      "provenance": "plan",
+      "source": "Deck plan, ch. 349 — general passenger area, over 300 civilians per guard",
+      "ceiling": null,
+      "footprint": [
+        [
+          -119,
+          24.5
+        ],
+        [
+          -70,
+          24.5
+        ],
+        [
+          -70,
+          63
+        ],
+        [
+          -119,
+          63
+        ]
+      ]
+    },
+    {
+      "id": "tier-4-general-area-center-north",
+      "tierId": "tier-4",
+      "locationId": null,
+      "name": "Central General Area (forward)",
+      "nameFr": "Zone générale centrale (avant)",
+      "category": "residential",
+      "provenance": "plan",
+      "source": "Deck plan, ch. 349 — general passenger area, over 300 civilians per guard",
+      "ceiling": null,
+      "footprint": [
+        [
+          -63,
+          -77
+        ],
+        [
+          -7,
+          -77
+        ],
+        [
+          -7,
+          -24.5
+        ],
+        [
+          -63,
+          -24.5
+        ]
+      ]
+    },
+    {
+      "id": "tier-4-general-area-center-south",
+      "tierId": "tier-4",
+      "locationId": null,
+      "name": "Central General Area (aft)",
+      "nameFr": "Zone générale centrale (arrière)",
+      "category": "residential",
+      "provenance": "plan",
+      "source": "Deck plan, ch. 349 — general passenger area, over 300 civilians per guard",
+      "ceiling": null,
+      "footprint": [
+        [
+          -63,
+          24.5
+        ],
+        [
+          -7,
+          24.5
+        ],
+        [
+          -7,
+          63
+        ],
+        [
+          -63,
+          63
+        ]
+      ]
+    },
+    {
+      "id": "tier-4-general-area-east",
+      "tierId": "tier-4",
+      "locationId": null,
+      "name": "East General Area",
+      "nameFr": "Zone générale est",
+      "category": "residential",
+      "provenance": "plan",
+      "source": "Deck plan, ch. 349 — general passenger area, over 300 civilians per guard",
+      "ceiling": null,
+      "footprint": [
+        [
+          59.5,
+          -77
+        ],
+        [
+          108.5,
+          -77
+        ],
+        [
+          108.5,
+          63
+        ],
+        [
+          59.5,
+          63
+        ]
+      ]
+    },
+    {
+      "id": "tier-4-xi-yu-family-office",
+      "tierId": "tier-4",
+      "locationId": "tier-4-xi-yu-family-office",
+      "name": "Xi-Yu Family Office",
+      "nameFr": "Bureau de la famille Xi-Yu",
+      "category": "mafia",
+      "provenance": "plan",
+      "source": "Deck plan, ch. 349",
+      "ceiling": null,
+      "footprint": [
+        [
+          -63,
+          -10.5
+        ],
+        [
+          -7,
+          -10.5
+        ],
+        [
+          -7,
+          10.5
+        ],
+        [
+          -63,
+          10.5
+        ]
+      ]
+    },
+    {
+      "id": "tier-4-royal-army-conference-room",
+      "tierId": "tier-4",
+      "locationId": "tier-4-royal-army-conference-room",
+      "name": "Kakin Royal Army Conference Room",
+      "nameFr": "Salle de conférence de l'armée royale de Kakin",
+      "category": "military",
+      "provenance": "panel",
+      "source": "Ch. 350 — security coordination meeting",
+      "ceiling": null,
+      "footprint": [
+        [
+          0,
+          -77
+        ],
+        [
+          52.5,
+          -77
+        ],
+        [
+          52.5,
+          -24.5
+        ],
+        [
+          0,
+          -24.5
+        ]
+      ]
+    },
+    {
+      "id": "tier-4-medical-clinic",
+      "tierId": "tier-4",
+      "locationId": null,
+      "name": "Tier 4 Medical Clinic",
+      "nameFr": "Clinique du pont 4",
+      "category": "medical",
+      "provenance": "plan",
+      "source": "Deck plan, ch. 349 — the only clinic on this tier",
+      "ceiling": null,
+      "footprint": [
+        [
+          0,
+          24.5
+        ],
+        [
+          52.5,
+          24.5
+        ],
+        [
+          52.5,
+          63
+        ],
+        [
+          0,
+          63
+        ]
+      ]
+    },
+    {
+      "id": "tier-4-central-passage",
+      "tierId": "tier-4",
+      "locationId": "tier-4-central-passage",
+      "name": "Central Passage Tier 4–5",
+      "nameFr": "Passage central ponts 4–5",
+      "category": "corridor",
+      "provenance": "panel",
+      "source": "Ch. 380 — Shizuku is placed in this passage",
+      "ceiling": null,
+      "footprint": [
+        [
+          -119,
+          -24.5
+        ],
+        [
+          54.25,
+          -24.5
+        ],
+        [
+          54.25,
+          -10.5
+        ],
+        [
+          -119,
+          -10.5
+        ]
+      ]
+    },
+    {
+      "id": "tier-4-secondary-passage",
+      "tierId": "tier-4",
+      "locationId": null,
+      "name": "Secondary Transport Route",
+      "nameFr": "Voie de transport secondaire",
+      "category": "corridor",
+      "provenance": "plan",
+      "source": "Deck plan, ch. 349 — second transport route",
+      "ceiling": null,
+      "footprint": [
+        [
+          -119,
+          10.5
+        ],
+        [
+          54.25,
+          10.5
+        ],
+        [
+          54.25,
+          24.5
+        ],
+        [
+          -119,
+          24.5
+        ]
+      ]
+    },
+    {
+      "id": "tier-4-recycling-sewage-facilities",
+      "tierId": "tier-4",
+      "locationId": "tier-4-recycling-sewage-facilities",
+      "name": "Recycling & Sewage Facilities",
+      "nameFr": "Installations de recyclage et d’assainissement",
+      "category": "infrastructure",
+      "provenance": "plan",
+      "source": "Deck plan, ch. 349",
+      "ceiling": 8,
+      "footprint": [
+        [
+          -133,
+          70
+        ],
+        [
+          122.5,
+          70
+        ],
+        [
+          122.5,
+          85.75
+        ],
+        [
+          -133,
+          85.75
+        ]
+      ]
+    },
+    {
+      "id": "tier-4-forward-corridor",
+      "tierId": "tier-4",
+      "locationId": null,
+      "name": "Forward Corridor",
+      "nameFr": "Couloir avant",
+      "category": "corridor",
+      "provenance": "inferred",
+      "source": "Reconstructed to make the deck contiguous; no panel shows it.",
+      "ceiling": null,
+      "footprint": [
+        [
+          -129.5,
+          -84
+        ],
+        [
+          122.5,
+          -84
+        ],
+        [
+          122.5,
+          -77
+        ],
+        [
+          -129.5,
+          -77
+        ]
+      ]
+    },
+    {
+      "id": "tier-4-port-corridor",
+      "tierId": "tier-4",
+      "locationId": null,
+      "name": "Port Corridor",
+      "nameFr": "Couloir bâbord",
+      "category": "corridor",
+      "provenance": "inferred",
+      "source": "Reconstructed to make the deck contiguous; no panel shows it.",
+      "ceiling": null,
+      "footprint": [
+        [
+          -129.5,
+          -77
+        ],
+        [
+          -119,
+          -77
+        ],
+        [
+          -119,
+          70
+        ],
+        [
+          -129.5,
+          70
+        ]
+      ]
+    },
+    {
+      "id": "tier-4-starboard-corridor",
+      "tierId": "tier-4",
+      "locationId": null,
+      "name": "Starboard Corridor",
+      "nameFr": "Couloir tribord",
+      "category": "corridor",
+      "provenance": "inferred",
+      "source": "Reconstructed to make the deck contiguous; no panel shows it.",
+      "ceiling": null,
+      "footprint": [
+        [
+          54.25,
+          -77
+        ],
+        [
+          59.5,
+          -77
+        ],
+        [
+          59.5,
+          63
+        ],
+        [
+          54.25,
+          63
+        ]
+      ]
+    },
+    {
+      "id": "tier-4-aft-corridor",
+      "tierId": "tier-4",
+      "locationId": null,
+      "name": "Aft Corridor",
+      "nameFr": "Couloir arrière",
+      "category": "corridor",
+      "provenance": "inferred",
+      "source": "Reconstructed to make the deck contiguous; no panel shows it.",
+      "ceiling": null,
+      "footprint": [
+        [
+          -119,
+          63
+        ],
+        [
+          122.5,
+          63
+        ],
+        [
+          122.5,
+          70
+        ],
+        [
+          -119,
+          70
+        ]
+      ]
+    },
+    {
+      "id": "tier-4-starboard-promenade",
+      "tierId": "tier-4",
+      "locationId": null,
+      "name": "Starboard Promenade",
+      "nameFr": "Promenade tribord",
+      "category": "corridor",
+      "provenance": "inferred",
+      "source": "Reconstructed to make the deck contiguous; no panel shows it.",
+      "ceiling": null,
+      "footprint": [
+        [
+          108.5,
+          -77
+        ],
+        [
+          154,
+          -77
+        ],
+        [
+          154,
+          63
+        ],
+        [
+          108.5,
+          63
+        ]
+      ]
+    },
+    {
+      "id": "tier-5-technical-recycling",
+      "tierId": "tier-5",
+      "locationId": "tier-4-recycling-sewage-facilities",
+      "name": "Technical & Recycling Level",
+      "nameFr": "Niveau technique et recyclage",
+      "category": "infrastructure",
+      "provenance": "plan",
+      "source": "Deck plan, ch. 349 — technical installations towards Tier 4",
+      "ceiling": 8,
+      "footprint": [
+        [
+          -122.5,
+          -70
+        ],
+        [
+          87.5,
+          -70
+        ],
+        [
+          87.5,
+          -52.5
+        ],
+        [
+          -122.5,
+          -52.5
+        ]
+      ]
+    },
+    {
+      "id": "tier-5-standard-cabins",
+      "tierId": "tier-5",
+      "locationId": "tier-5-standard-cabins",
+      "name": "Tier 5 Standard Cabins (forward)",
+      "nameFr": "Cabines standard du pont 5 (avant)",
+      "category": "residential",
+      "provenance": "plan",
+      "source": "Deck plan, ch. 349",
+      "ceiling": null,
+      "footprint": [
+        [
+          -112,
+          -45.5
+        ],
+        [
+          -49,
+          -45.5
+        ],
+        [
+          -49,
+          12.25
+        ],
+        [
+          -112,
+          12.25
+        ]
+      ]
+    },
+    {
+      "id": "tier-5-standard-cabins-aft",
+      "tierId": "tier-5",
+      "locationId": "tier-5-standard-cabins",
+      "name": "Tier 5 Standard Cabins (aft)",
+      "nameFr": "Cabines standard du pont 5 (arrière)",
+      "category": "residential",
+      "provenance": "plan",
+      "source": "Deck plan, ch. 349",
+      "ceiling": null,
+      "footprint": [
+        [
+          -112,
+          26.25
+        ],
+        [
+          -49,
+          26.25
+        ],
+        [
+          -49,
+          42
+        ],
+        [
+          -112,
+          42
+        ]
+      ]
+    },
+    {
+      "id": "tier-5-area-37564",
+      "tierId": "tier-5",
+      "locationId": "tier-5-area-37564",
+      "name": "Area 37564",
+      "nameFr": "Zone 37564",
+      "category": "public",
+      "provenance": "panel",
+      "source": "Ch. 358 — assembly point 37564",
+      "ceiling": null,
+      "footprint": [
+        [
+          -94.5,
+          12.25
+        ],
+        [
+          -66.5,
+          12.25
+        ],
+        [
+          -66.5,
+          26.25
+        ],
+        [
+          -94.5,
+          26.25
+        ]
+      ]
+    },
+    {
+      "id": "tier-5-cabin-cross-corridor-west",
+      "tierId": "tier-5",
+      "locationId": null,
+      "name": "Cabin Cross Corridor (west)",
+      "nameFr": "Couloir transversal des cabines (ouest)",
+      "category": "corridor",
+      "provenance": "inferred",
+      "source": "Reconstructed to make the deck contiguous; no panel shows it.",
+      "ceiling": null,
+      "footprint": [
+        [
+          -112,
+          12.25
+        ],
+        [
+          -94.5,
+          12.25
+        ],
+        [
+          -94.5,
+          26.25
+        ],
+        [
+          -112,
+          26.25
+        ]
+      ]
+    },
+    {
+      "id": "tier-5-cabin-cross-corridor-east",
+      "tierId": "tier-5",
+      "locationId": null,
+      "name": "Cabin Cross Corridor (east)",
+      "nameFr": "Couloir transversal des cabines (est)",
+      "category": "corridor",
+      "provenance": "inferred",
+      "source": "Reconstructed to make the deck contiguous; no panel shows it.",
+      "ceiling": null,
+      "footprint": [
+        [
+          -66.5,
+          12.25
+        ],
+        [
+          -49,
+          12.25
+        ],
+        [
+          -49,
+          26.25
+        ],
+        [
+          -66.5,
+          26.25
+        ]
+      ]
+    },
+    {
+      "id": "tier-5-warehouse",
+      "tierId": "tier-5",
+      "locationId": "tier-5-warehouse",
+      "name": "Warehouse",
+      "nameFr": "Entrepôt",
+      "category": "storage",
+      "provenance": "plan",
+      "source": "Deck plan, ch. 349",
+      "ceiling": 12,
+      "footprint": [
+        [
+          -35,
+          -45.5
+        ],
+        [
+          77,
+          -45.5
+        ],
+        [
+          77,
+          3.5
+        ],
+        [
+          -35,
+          3.5
+        ]
+      ]
+    },
+    {
+      "id": "tier-5-cha-r-family-office",
+      "tierId": "tier-5",
+      "locationId": "tier-5-cha-r-family-office",
+      "name": "Cha-R Family Office",
+      "nameFr": "Bureau de la famille Cha-R",
+      "category": "mafia",
+      "provenance": "plan",
+      "source": "Deck plan, ch. 349",
+      "ceiling": null,
+      "footprint": [
+        [
+          -35,
+          10.5
+        ],
+        [
+          7,
+          10.5
+        ],
+        [
+          7,
+          42
+        ],
+        [
+          -35,
+          42
+        ]
+      ]
+    },
+    {
+      "id": "tier-5-central-dining-hall",
+      "tierId": "tier-5",
+      "locationId": "tier-5-central-dining-hall",
+      "name": "Central Dining Hall",
+      "nameFr": "Réfectoire central",
+      "category": "public",
+      "provenance": "panel",
+      "source": "Ch. 358 — the Buor toll on meals",
+      "ceiling": null,
+      "footprint": [
+        [
+          14,
+          10.5
+        ],
+        [
+          45.5,
+          10.5
+        ],
+        [
+          45.5,
+          42
+        ],
+        [
+          14,
+          42
+        ]
+      ]
+    },
+    {
+      "id": "tier-5-medical-clinic",
+      "tierId": "tier-5",
+      "locationId": "tier-5-medical-clinic",
+      "name": "Tier 5 Medical Clinic",
+      "nameFr": "Clinique du pont 5",
+      "category": "medical",
+      "provenance": "plan",
+      "source": "Deck plan, ch. 349",
+      "ceiling": null,
+      "footprint": [
+        [
+          52.5,
+          10.5
+        ],
+        [
+          77,
+          10.5
+        ],
+        [
+          77,
+          42
+        ],
+        [
+          52.5,
+          42
+        ]
+      ]
+    },
+    {
+      "id": "tier-5-forward-corridor",
+      "tierId": "tier-5",
+      "locationId": null,
+      "name": "Forward Corridor",
+      "nameFr": "Couloir avant",
+      "category": "corridor",
+      "provenance": "inferred",
+      "source": "Reconstructed to make the deck contiguous; no panel shows it.",
+      "ceiling": null,
+      "footprint": [
+        [
+          -112,
+          -52.5
+        ],
+        [
+          77,
+          -52.5
+        ],
+        [
+          77,
+          -45.5
+        ],
+        [
+          -112,
+          -45.5
+        ]
+      ]
+    },
+    {
+      "id": "tier-5-main-corridor",
+      "tierId": "tier-5",
+      "locationId": null,
+      "name": "Main Corridor",
+      "nameFr": "Couloir principal",
+      "category": "corridor",
+      "provenance": "inferred",
+      "source": "Reconstructed to make the deck contiguous; no panel shows it.",
+      "ceiling": null,
+      "footprint": [
+        [
+          -49,
+          -45.5
+        ],
+        [
+          -35,
+          -45.5
+        ],
+        [
+          -35,
+          42
+        ],
+        [
+          -49,
+          42
+        ]
+      ]
+    },
+    {
+      "id": "tier-5-transverse-corridor",
+      "tierId": "tier-5",
+      "locationId": null,
+      "name": "Transverse Corridor",
+      "nameFr": "Couloir transversal",
+      "category": "corridor",
+      "provenance": "inferred",
+      "source": "Reconstructed to make the deck contiguous; no panel shows it.",
+      "ceiling": null,
+      "footprint": [
+        [
+          -35,
+          3.5
+        ],
+        [
+          77,
+          3.5
+        ],
+        [
+          77,
+          10.5
+        ],
+        [
+          -35,
+          10.5
+        ]
+      ]
+    },
+    {
+      "id": "tier-5-service-corridor-forward",
+      "tierId": "tier-5",
+      "locationId": null,
+      "name": "Service Corridor (forward)",
+      "nameFr": "Couloir de service (avant)",
+      "category": "corridor",
+      "provenance": "inferred",
+      "source": "Reconstructed to make the deck contiguous; no panel shows it.",
+      "ceiling": null,
+      "footprint": [
+        [
+          7,
+          10.5
+        ],
+        [
+          14,
+          10.5
+        ],
+        [
+          14,
+          42
+        ],
+        [
+          7,
+          42
+        ]
+      ]
+    },
+    {
+      "id": "tier-5-service-corridor-aft",
+      "tierId": "tier-5",
+      "locationId": null,
+      "name": "Service Corridor (aft)",
+      "nameFr": "Couloir de service (arrière)",
+      "category": "corridor",
+      "provenance": "inferred",
+      "source": "Reconstructed to make the deck contiguous; no panel shows it.",
+      "ceiling": null,
+      "footprint": [
+        [
+          45.5,
+          10.5
+        ],
+        [
+          52.5,
+          10.5
+        ],
+        [
+          52.5,
+          42
+        ],
+        [
+          45.5,
+          42
+        ]
+      ]
+    },
+    {
+      "id": "tier-5-aft-corridor",
+      "tierId": "tier-5",
+      "locationId": null,
+      "name": "Aft Corridor",
+      "nameFr": "Couloir arrière",
+      "category": "corridor",
+      "provenance": "inferred",
+      "source": "Reconstructed to make the deck contiguous; no panel shows it.",
+      "ceiling": null,
+      "footprint": [
+        [
+          -119,
+          42
+        ],
+        [
+          91,
+          42
+        ],
+        [
+          91,
+          52.5
+        ],
+        [
+          -119,
+          52.5
+        ]
+      ]
+    },
+    {
+      "id": "tier-5-port-promenade",
+      "tierId": "tier-5",
+      "locationId": null,
+      "name": "Port Promenade",
+      "nameFr": "Promenade bâbord",
+      "category": "corridor",
+      "provenance": "inferred",
+      "source": "Reconstructed to make the deck contiguous; no panel shows it.",
+      "ceiling": null,
+      "footprint": [
+        [
+          -140,
+          -52.5
+        ],
+        [
+          -112,
+          -52.5
+        ],
+        [
+          -112,
+          42
+        ],
+        [
+          -140,
+          42
+        ]
+      ]
+    },
+    {
+      "id": "tier-5-starboard-promenade",
+      "tierId": "tier-5",
+      "locationId": null,
+      "name": "Starboard Promenade",
+      "nameFr": "Promenade tribord",
+      "category": "corridor",
+      "provenance": "inferred",
+      "source": "Reconstructed to make the deck contiguous; no panel shows it.",
+      "ceiling": null,
+      "footprint": [
+        [
+          77,
+          -52.5
+        ],
+        [
+          105,
+          -52.5
+        ],
+        [
+          105,
+          42
+        ],
+        [
+          77,
+          42
+        ]
+      ]
+    }
+  ],
+  "links": [
+    {
+      "from": "tier-2-tier-1-access",
+      "to": "tier-1-royal-approach",
+      "kind": "stair",
+      "at": [
+        8.75,
+        -31.5
+      ],
+      "provenance": "plan",
+      "source": "Deck plan, ch. 349 — Tier 1 access from Tier 2"
+    },
+    {
+      "from": "tier-3-bulkhead-access",
+      "to": "tier-2-bulkhead",
+      "kind": "bulkhead",
+      "at": [
+        0,
+        -84
+      ],
+      "provenance": "panel",
+      "source": "Ch. 349 — the armoured bulkhead between Tier 2 and Tier 3"
+    },
+    {
+      "from": "tier-3-aft-corridor",
+      "to": "tier-4-forward-corridor",
+      "kind": "stair",
+      "at": [
+        -35,
+        63
+      ],
+      "provenance": "inferred",
+      "source": "No panel shows how Tier 3 reaches Tier 4."
+    },
+    {
+      "from": "tier-4-central-passage",
+      "to": "tier-5-main-corridor",
+      "kind": "stair",
+      "at": [
+        -42,
+        -17.5
+      ],
+      "provenance": "panel",
+      "source": "Ch. 380 — the passage is named for linking Tiers 4 and 5."
+    },
+    {
+      "from": "tier-4-recycling-sewage-facilities",
+      "to": "tier-5-technical-recycling",
+      "kind": "stair",
+      "at": [
+        0,
+        77
+      ],
+      "provenance": "plan",
+      "source": "Deck plan, ch. 349 — the technical boundary between Tier 4 and Tier 5"
+    }
+  ]
+}

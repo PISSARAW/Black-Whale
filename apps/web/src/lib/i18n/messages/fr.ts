@@ -40,6 +40,58 @@ export const fr: Messages = {
     comparePerspectives: 'Comparer les points de vue',
     factionNetwork: 'Réseau des factions',
     simulations: 'Simulations',
+    virtualTour: 'Visite virtuelle',
+  },
+
+  tour: {
+    seoTitle: 'Visite virtuelle — Parcourir le Black Whale',
+    seoDescription:
+      'Une visite à la première personne du Black Whale reconstruit : cinq ponts, toutes les salles que les plans et le manga documentent, et tous les couloirs que la reconstruction a dû inventer, signalés comme tels.',
+    title: 'Parcourir le Black Whale',
+    intro:
+      "Le vaisseau comme architecture, pas comme décor : ni passagers, ni chapitre, ni chronologie. Chaque surface dit d'où elle vient — une planche, le plan des ponts, ou la reconstruction elle-même.",
+    enter: 'Cliquez pour marcher',
+    engaged: 'Échap pour libérer le pointeur',
+    loading: 'Construction du pont…',
+    unsupported:
+      "Cette visite exige WebGL, que ce navigateur ne propose pas. Les plans des ponts restent accessibles sur la carte du vaisseau.",
+    deck: 'Pont',
+    decks: 'Ponts',
+    rooms: 'Salles',
+    currentRoom: 'Vous êtes dans',
+    outside: 'Entre deux ponts',
+    source: 'Source',
+    noSource: 'Aucune source consignée',
+    scale: (metres) =>
+      `${metres.toLocaleString('fr-FR')} m de coque reconstruite, de la proue à la poupe`,
+    counts: (spaces, tiers) => `${spaces} espaces reconstruits sur ${tiers} ponts`,
+    minimap: (deckName) => `Plan du ${deckName}`,
+    jumpTo: 'Rejoindre un espace',
+    takeLink: (destination) => `Appuyez sur E pour rejoindre ${destination} par l'escalier`,
+    takeBulkhead: (destination) => `Appuyez sur E pour franchir la cloison vers ${destination}`,
+    controls: {
+      title: 'Commandes',
+      move: 'Se déplacer',
+      moveKeys: 'Z Q S D ou les flèches',
+      look: 'Regarder',
+      lookKeys: 'Bougez la souris, ou faites glisser sur écran tactile',
+      sprint: 'Courir',
+      sprintKeys: 'Maj',
+      use: 'Changer de pont',
+      useKeys: 'E, sur une cage d’escalier',
+    },
+    provenance: {
+      title: 'Ce qui est canon ici',
+      panel: 'Montré sur une planche',
+      plan: 'Sur le plan des ponts',
+      inferred: 'Reconstruit',
+      panelHelp: 'Un chapitre montre cette salle ; sa forme est relevée sur cette planche.',
+      planHelp: "Elle figure sur la coupe du vaisseau, qui n'en donne pas l'intérieur.",
+      inferredHelp:
+        'Rien ne la montre. Elle existe pour que le pont tienne debout, et sa lumière est froide pour que ça se voie.',
+      scaleHelp:
+        "Les plans des ponts sont schématiques. La reconstruction les met à l'échelle pour que les pièces fassent la taille que les planches impliquent — ce n'est pas une mesure du vaisseau.",
+    },
   },
 
   layout: {

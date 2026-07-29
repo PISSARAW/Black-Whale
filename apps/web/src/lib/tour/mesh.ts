@@ -86,6 +86,7 @@ const STRUCTURE_COLOURS: Record<StructureKind, number> = {
   pillar: 0x6a5a4a,
   bars: 0x7f868e,
   manacle: 0x6f6250,
+  camera: 0x22262a,
 }
 
 const WALL_COLOUR = hex(0x4a4038)

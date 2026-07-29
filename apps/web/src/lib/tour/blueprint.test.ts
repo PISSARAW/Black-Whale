@@ -109,6 +109,19 @@ describe('party walls and apartment envelopes', () => {
       expect([door.a, door.b]).toContain('tier-1-queens-corridor')
     }
   })
+
+  // The hold abuts a corridor on three sides and the starboard promenade on the
+  // fourth, so left to the shared-wall rule it opened four ways. The plan draws
+  // one entrance and puts four guard posts and a camera on it; a hold anyone can
+  // stroll into off the promenade is not the room that plan describes.
+  it('lets the Cha-R warehouse be entered only by its guarded freight door', () => {
+    const doors = boundaryDoors('tier-5-warehouse')
+    expect(doors, `the hold has ${doors.length} ways in`).toHaveLength(1)
+
+    const [door] = doors
+    expect([door.a, door.b]).toContain('tier-5-transverse-corridor')
+    expect(door.width).toBeGreaterThanOrEqual(6)
+  })
 })
 
 describe('interiors', () => {

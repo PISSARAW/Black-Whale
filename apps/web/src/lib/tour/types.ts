@@ -69,6 +69,9 @@ export type LinkKind = 'stair' | 'lift' | 'bulkhead' | 'door'
  *   row of uprights to look through, which is the whole point of a cell.
  * - `manacle` — the cuff and the wall bolt ch. 350 chains Beyond Netero by.
  *   Small, and kept for the same reason the coffins are: it is what the room is.
+ * - `camera` — a lens on a bracket, watching a door. The warehouse plan draws
+ *   one and says when it went up, which is the sort of thing the plan is for:
+ *   who is watching the cargo, and since when.
  */
 export type StructureKind =
   | 'spring'
@@ -85,6 +88,7 @@ export type StructureKind =
   | 'pillar'
   | 'bars'
   | 'manacle'
+  | 'camera'
 
 /**
  * What a level is: a deck of the ship, or the inside of a single room drawn at

@@ -269,6 +269,7 @@ const STRUCTURE_KINDS = new Set([
   'pillar',
   'bars',
   'manacle',
+  'camera',
 ])
 
 /**

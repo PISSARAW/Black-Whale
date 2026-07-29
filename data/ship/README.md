@@ -193,6 +193,8 @@ Le second : **ce qu'une planche montre est ce que la pièce est** —
   (chap. 383) ;
 - le réfectoire du pont 5 est ses longues tables en rangées (chap. 377) ;
 - le pont des canots est les capsules alignées sur leurs berceaux (chap. 383) ;
+- l'entrepôt du pont 5 est ses rangées de caisses, que son plan dessine et que
+  la reconstruction pose dans les travées entre les piliers ;
 - et l'espace entre la coque et le vaisseau est fait des ressorts qui portent
   l'un dans l'autre (chap. 406).
 

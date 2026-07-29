@@ -170,14 +170,19 @@ on ne le traverse pas.
 
 La visite ne meuble pas le vaisseau. Une chaise n'est pas de l'architecture, et
 sa place n'est pas ce que les planches consignent. Quelques pièces font
-exception, parce que ce qu'une planche y montre **est** ce qui s'y dresse : la
-chambre funéraire est une couronne de quatorze cercueils autour d'un reliquaire
-(chap. 371), la salle de banquet est sa scène, l'estrade du trône et le buffet
-qui la sert (chap. 383), et l'espace entre la coque et le vaisseau est fait des
-ressorts qui portent l'un dans l'autre (chap. 406) — et le pont des canots est
-les capsules alignées sur leurs berceaux (chap. 383). Les laisser de côté aurait
-dessiné un tambour vide, une halle vide et un hangar vide — et affirmé en creux
-que les planches ne montrent rien.
+exception, parce que ce qu'une planche y montre **est** ce qui s'y dresse :
+
+- la chambre funéraire est une couronne de quatorze cercueils autour d'un
+  reliquaire (chap. 371) ;
+- la salle de banquet est sa scène, l'estrade du trône et le buffet qui la sert
+  (chap. 383) ;
+- le réfectoire du pont 5 est ses longues tables en rangées (chap. 377) ;
+- le pont des canots est les capsules alignées sur leurs berceaux (chap. 383) ;
+- et l'espace entre la coque et le vaisseau est fait des ressorts qui portent
+  l'un dans l'autre (chap. 406).
+
+Les laisser de côté aurait dessiné un tambour vide, une halle vide et un hangar
+vide — et affirmé en creux que les planches ne montrent rien.
 
 Une structure porte donc **sa propre source** : la pièce peut reposer sur un
 chapitre et ce qui s'y dresse sur un autre. C'est le cas de la chambre
@@ -198,8 +203,11 @@ rectangle tourné vers le centre, les ressorts un seizième de cercle.
 Les faces d'une structure entrent dans **la même liste de murs** que celles de
 la pièce : un ressort qu'on voit est un ressort qu'on contourne, exactement
 comme un pilier. `validateBlueprint` refuse une structure qui déborde de sa
-pièce, qui se dresse sur un pilier, ou qui occupe le point où le visiteur
-arrive — ce qui reviendrait à une salle où l'on ne peut pas entrer. Deux
+pièce, qui se dresse sur un pilier, qui occupe le point où le visiteur arrive,
+ou qui se plante devant une porte — les portes étant déduites des murs
+partagés, rien dans la pièce ne sait qu'elles sont là, et un comptoir posé en
+travers laisserait une ouverture dessinée, franchie par le contrôle de
+connexité, et close pour le visiteur. Deux
 structures ne peuvent pas non plus se chevaucher, sauf si l'une contient
 entièrement l'autre : c'est un mât sur son socle, pas deux volumes qui se
 disputent le même sol.

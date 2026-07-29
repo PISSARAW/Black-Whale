@@ -543,15 +543,15 @@
       "nameFr": "Cinéplexe",
       "elevation": 36,
       "ceiling": 6,
-      "provenance": "plan",
-      "source": "Cineplex plan; eight screens, named but not drawn",
+      "provenance": "panel",
+      "source": "Ch. 393 — the concourse: the food stall, the ticket windows and the way down to the screens.",
       "hull": [
         [-25, -12.5],
         [25, -12.5],
         [25, 12.5],
         [-25, 12.5]
       ],
-      "sourceFr": "Plan du cinéplexe ; huit salles, nommées mais non dessinées"
+      "sourceFr": "Chap. 393 — le hall : le stand de restauration, les guichets et l'allée qui descend vers les salles."
     },
     {
       "id": "interior-cha-r-office",
@@ -3787,8 +3787,8 @@
       "name": "Observation Deck",
       "nameFr": "Pont d'observation",
       "category": "public",
-      "provenance": "plan",
-      "source": "Deck plan, ch. 349",
+      "provenance": "panel",
+      "source": "Ch. 380 — the observation deck: the curved window, and the container city under it.",
       "ceiling": 9,
       "envelope": null,
       "footprint": [
@@ -3797,7 +3797,7 @@
         [115.5, 17.5],
         [49, 17.5]
       ],
-      "sourceFr": "Plan des ponts, chap. 349"
+      "sourceFr": "Chap. 380 — le pont d'observation : la baie incurvée, et la ville de conteneurs en dessous."
     },
     {
       "id": "tier-3-heilly-family-office",
@@ -5101,8 +5101,8 @@
       "name": "Food & Drinks",
       "nameFr": "Confiserie",
       "category": "public",
-      "provenance": "plan",
-      "source": "Cineplex plan; eight screens, named but not drawn",
+      "provenance": "panel",
+      "source": "Ch. 393 — the concourse: the food stall, the ticket windows and the way down to the screens.",
       "ceiling": 6,
       "envelope": null,
       "footprint": [
@@ -5111,7 +5111,7 @@
         [-12.5, 7.5],
         [-25, 7.5]
       ],
-      "sourceFr": "Plan du cinéplexe ; huit salles, nommées mais non dessinées"
+      "sourceFr": "Chap. 393 — le hall : le stand de restauration, les guichets et l'allée qui descend vers les salles."
     },
     {
       "id": "tier-3-cineplex-foyer-port",
@@ -5139,8 +5139,8 @@
       "name": "Screen Corridor (Screens 1–8)",
       "nameFr": "Couloir des salles (salles 1 à 8)",
       "category": "public",
-      "provenance": "plan",
-      "source": "Cineplex plan; eight screens, named but not drawn",
+      "provenance": "panel",
+      "source": "Ch. 393 — the concourse: the food stall, the ticket windows and the way down to the screens.",
       "ceiling": 6,
       "envelope": null,
       "footprint": [
@@ -5149,7 +5149,7 @@
         [7.5, 12.5],
         [-7.5, 12.5]
       ],
-      "sourceFr": "Plan du cinéplexe ; huit salles, nommées mais non dessinées"
+      "sourceFr": "Chap. 393 — le hall : le stand de restauration, les guichets et l'allée qui descend vers les salles."
     },
     {
       "id": "tier-3-cineplex-foyer-starboard",
@@ -5177,8 +5177,8 @@
       "name": "Ticket Desk",
       "nameFr": "Billetterie",
       "category": "public",
-      "provenance": "plan",
-      "source": "Cineplex plan; eight screens, named but not drawn",
+      "provenance": "panel",
+      "source": "Ch. 393 — the concourse: the food stall, the ticket windows and the way down to the screens.",
       "ceiling": 6,
       "envelope": null,
       "footprint": [
@@ -5187,7 +5187,7 @@
         [25, 7.5],
         [12.5, 7.5]
       ],
-      "sourceFr": "Plan du cinéplexe ; huit salles, nommées mais non dessinées"
+      "sourceFr": "Chap. 393 — le hall : le stand de restauration, les guichets et l'allée qui descend vers les salles."
     },
     {
       "id": "tier-5-cha-r-family-office-main-office",
@@ -7959,6 +7959,141 @@
       "provenance": "panel",
       "source": "Ch. 383 — the inside of a pod: a ring of seats about the central post, under the hatch.",
       "sourceFr": "Chap. 383 — l'intérieur d'une capsule : une couronne de sièges autour du mât central, sous l'écoutille."
+    },
+    {
+      "id": "tier-3-cineplex-food-counter",
+      "spaceId": "tier-3-cineplex-concession",
+      "kind": "counter",
+      "name": "Food & Drinks Counter",
+      "nameFr": "Comptoir de restauration",
+      "at": [-23.2, 0],
+      "size": [1.6, 10],
+      "rotation": 0,
+      "height": 1.2,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 393 — the concourse: the food stall, the ticket windows and the way down to the screens.",
+      "sourceFr": "Chap. 393 — le hall : le stand de restauration, les guichets et l'allée qui descend vers les salles."
+    },
+    {
+      "id": "tier-3-cineplex-seating-island",
+      "spaceId": "tier-3-cineplex-concession",
+      "kind": "platform",
+      "name": "Seating Island",
+      "nameFr": "Îlot de sièges",
+      "at": [-17, 0],
+      "size": [3.4, 3.4],
+      "rotation": 0,
+      "height": 0.5,
+      "sides": 12,
+      "provenance": "panel",
+      "source": "Ch. 393 — the concourse: the food stall, the ticket windows and the way down to the screens.",
+      "sourceFr": "Chap. 393 — le hall : le stand de restauration, les guichets et l'allée qui descend vers les salles."
+    },
+    {
+      "id": "tier-3-cineplex-ticket-windows",
+      "spaceId": "tier-3-cineplex-ticket-desk",
+      "kind": "counter",
+      "name": "Ticket Windows",
+      "nameFr": "Guichets",
+      "at": [23.2, 0],
+      "size": [1.6, 10],
+      "rotation": 0,
+      "height": 1.2,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 393 — the concourse: the food stall, the ticket windows and the way down to the screens.",
+      "sourceFr": "Chap. 393 — le hall : le stand de restauration, les guichets et l'allée qui descend vers les salles."
+    },
+    {
+      "id": "tier-3-cineplex-concourse-pillar",
+      "spaceId": "tier-3-cineplex-screen-corridor",
+      "kind": "pillar",
+      "name": "Concourse Pillar",
+      "nameFr": "Pilier du hall",
+      "at": [0, 10],
+      "size": [1.6, 1.6],
+      "rotation": 0,
+      "height": 6,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 393 — the concourse: the food stall, the ticket windows and the way down to the screens.",
+      "sourceFr": "Chap. 393 — le hall : le stand de restauration, les guichets et l'allée qui descend vers les salles."
+    },
+    {
+      "id": "tier-5-central-dining-hall-table-01",
+      "spaceId": "tier-5-central-dining-hall",
+      "kind": "table",
+      "name": "Refectory Table 1",
+      "nameFr": "Table de réfectoire 1",
+      "at": [17, 26.25],
+      "size": [1.6, 22],
+      "rotation": 0,
+      "height": 0.75,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 377 — the hall at a meal: long tables in rows, and the raised platform among them.",
+      "sourceFr": "Chap. 377 — la salle à l'heure du repas : de longues tables en rangées, et l'estrade au milieu."
+    },
+    {
+      "id": "tier-5-central-dining-hall-table-02",
+      "spaceId": "tier-5-central-dining-hall",
+      "kind": "table",
+      "name": "Refectory Table 2",
+      "nameFr": "Table de réfectoire 2",
+      "at": [21, 26.25],
+      "size": [1.6, 22],
+      "rotation": 0,
+      "height": 0.75,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 377 — the hall at a meal: long tables in rows, and the raised platform among them.",
+      "sourceFr": "Chap. 377 — la salle à l'heure du repas : de longues tables en rangées, et l'estrade au milieu."
+    },
+    {
+      "id": "tier-5-central-dining-hall-table-03",
+      "spaceId": "tier-5-central-dining-hall",
+      "kind": "table",
+      "name": "Refectory Table 3",
+      "nameFr": "Table de réfectoire 3",
+      "at": [39, 26.25],
+      "size": [1.6, 22],
+      "rotation": 0,
+      "height": 0.75,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 377 — the hall at a meal: long tables in rows, and the raised platform among them.",
+      "sourceFr": "Chap. 377 — la salle à l'heure du repas : de longues tables en rangées, et l'estrade au milieu."
+    },
+    {
+      "id": "tier-5-central-dining-hall-table-04",
+      "spaceId": "tier-5-central-dining-hall",
+      "kind": "table",
+      "name": "Refectory Table 4",
+      "nameFr": "Table de réfectoire 4",
+      "at": [43, 26.25],
+      "size": [1.6, 22],
+      "rotation": 0,
+      "height": 0.75,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 377 — the hall at a meal: long tables in rows, and the raised platform among them.",
+      "sourceFr": "Chap. 377 — la salle à l'heure du repas : de longues tables en rangées, et l'estrade au milieu."
+    },
+    {
+      "id": "tier-5-central-dining-hall-platform",
+      "spaceId": "tier-5-central-dining-hall",
+      "kind": "platform",
+      "name": "Raised Platform",
+      "nameFr": "Estrade",
+      "at": [29.75, 26.25],
+      "size": [7, 9],
+      "rotation": 0,
+      "height": 0.45,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 377 — the hall at a meal: long tables in rows, and the raised platform among them.",
+      "sourceFr": "Chap. 377 — la salle à l'heure du repas : de longues tables en rangées, et l'estrade au milieu."
     }
   ]
 }

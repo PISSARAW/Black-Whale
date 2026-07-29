@@ -10,7 +10,7 @@ import {
   validateBlueprint,
 } from './blueprint'
 import { pointInPolygon, polygonArea, sealKey, structureFootprint } from './geometry'
-import type { Vec2 } from './types'
+import type { Blueprint, Space, Vec2 } from './types'
 
 const ship = buildShip()
 
@@ -305,6 +305,93 @@ describe('what stands in the rooms', () => {
         }
       }
     }
+  })
+
+  it('refuses a solid set down in front of a doorway', () => {
+    // Two rooms sharing a wall, and a counter parked across the opening the
+    // geometry derives from it: the room stays connected on paper and shut in
+    // practice, which is the failure the rule exists to catch.
+    const room = (id: string, footprint: Vec2[]): Space => ({
+      id,
+      tierId: 'tier',
+      locationId: null,
+      name: id,
+      nameFr: id,
+      category: 'room',
+      provenance: 'plan',
+      source: 'a source long enough',
+      sourceFr: 'une source assez longue',
+      ceiling: null,
+      envelope: null,
+      footprint,
+    })
+
+    const blocked: Blueprint = {
+      meta: { unit: 'metre', scale: '', origin: '', note: '' },
+      tiers: [
+        {
+          id: 'tier',
+          kind: 'deck',
+          parentSpaceId: null,
+          locationId: null,
+          name: 'Tier',
+          nameFr: 'Pont',
+          elevation: 0,
+          ceiling: 4,
+          provenance: 'plan',
+          source: 'a source long enough',
+          sourceFr: 'une source assez longue',
+          hull: [
+            [-20, -20],
+            [20, -20],
+            [20, 20],
+            [-20, 20],
+          ],
+        },
+      ],
+      spaces: [
+        room('west', [
+          [-10, -5],
+          [0, -5],
+          [0, 5],
+          [-10, 5],
+        ]),
+        room('east', [
+          [0, -5],
+          [10, -5],
+          [10, 5],
+          [0, 5],
+        ]),
+      ],
+      links: [],
+      seals: [],
+      doors: [],
+      structures: [
+        {
+          id: 'counter',
+          spaceId: 'east',
+          kind: 'counter',
+          name: 'Counter',
+          nameFr: 'Comptoir',
+          at: [1, 0],
+          size: [2, 4],
+          rotation: 0,
+          height: 1.1,
+          sides: null,
+          provenance: 'plan',
+          source: 'a source long enough',
+          sourceFr: 'une source assez longue',
+        },
+      ],
+    }
+
+    expect(validateBlueprint(blocked)).toContain(
+      'structure counter: stands in the doorway west | east',
+    )
+
+    // Slid off the axis of the door, the same counter is fine.
+    blocked.structures[0].at = [2, 2.5]
+    expect(validateBlueprint(blocked)).toEqual([])
   })
 
   it('states every structure source in both languages', () => {

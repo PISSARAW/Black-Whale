@@ -11,6 +11,7 @@ import blueprintJson from '../../../../../data/ship/blueprint.json'
 import {
   COLUMN_HALF_WIDTH,
   COLUMN_SPACING,
+  EPSILON,
   columnPositions,
   columnWalls,
   deriveDoorways,
@@ -258,6 +259,7 @@ const STRUCTURE_KINDS = new Set([
   'casket',
   'platform',
   'counter',
+  'table',
   'lifeboat',
   'pillar',
 ])
@@ -458,6 +460,38 @@ export function validateBlueprint(source: Blueprint = blueprint): string[] {
   // The whole ship has to be one connected space, or part of the
   // reconstruction is scenery the visitor can see but never enter.
   const ship = buildShip(source)
+
+  // A doorway is derived from a shared wall, so nothing in the room knows it is
+  // there. A solid set down in front of one leaves an opening that is drawn,
+  // walked through by the connectivity check, and shut in the visitor's face.
+  for (const plan of ship.plans.values()) {
+    for (const doorway of plan.doorways) {
+      const middle: Vec2 = [
+        (doorway.start[0] + doorway.end[0]) / 2,
+        (doorway.start[1] + doorway.end[1]) / 2,
+      ]
+      const along = Math.hypot(
+        doorway.end[0] - doorway.start[0],
+        doorway.end[1] - doorway.start[1],
+      )
+      if (along < EPSILON) continue
+      const normal: Vec2 = [
+        -(doorway.end[1] - doorway.start[1]) / along,
+        (doorway.end[0] - doorway.start[0]) / along,
+      ]
+
+      for (const structure of plan.structures) {
+        if (structure.spaceId !== doorway.a && structure.spaceId !== doorway.b) continue
+        const outline = structureFootprint(structure)
+        for (const step of [-1.2, 1.2]) {
+          const at: Vec2 = [middle[0] + normal[0] * step, middle[1] + normal[1] * step]
+          if (pointInPolygon(at, outline)) {
+            issues.push(`structure ${structure.id}: stands in the doorway ${doorway.a} | ${doorway.b}`)
+          }
+        }
+      }
+    }
+  }
   const start = source.spaces[0]
   if (start) {
     const reached = new Set<string>([start.id])

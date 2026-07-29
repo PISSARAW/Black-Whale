@@ -213,6 +213,7 @@
         {heading}
         currentSpaceId={currentSpace?.id ?? null}
         label={$t.tour.minimap(nameOf(plan.tier))}
+        {nameOf}
         onSelect={goToSpace}
       />
 

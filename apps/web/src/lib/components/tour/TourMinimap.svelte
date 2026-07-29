@@ -3,6 +3,20 @@
    * A plan view of the deck being walked, drawn straight from the same
    * footprints as the 3D geometry. It is a read-out of the tour, not a second
    * map: it shares no code with `/ship` and carries no passengers.
+   *
+   * It does share the drawing convention, though, because it is the same ship.
+   * The deck maps of `/ship` are generated from this blueprint by
+   * `scripts/generate-deck-maps.py`, and a visitor arriving from them should
+   * recognise the deck under their feet: rooms in maroon on bone, circulation
+   * dashed and nearly unlit, invented spaces in cold slate, the hull in gold,
+   * and a name on every room wide enough to hold one.
+   *
+   * Where it departs is scale. `/ship` draws a fixed 1000 x 600 frame, one unit
+   * to 0.35 m, and can set stroke widths and type sizes against it; this frames
+   * whatever level is being walked — a whole deck, or the inside of one
+   * apartment — so the same numbers are expressed in `unit`, the width of one
+   * `/ship` plan unit in this view. A wall then reads at the same weight on a
+   * deck and in a bedroom.
    */
   import type { TierPlan } from '$lib/tour/blueprint'
   import type { Space, Vec2 } from '$lib/tour/types'
@@ -14,10 +28,20 @@
     heading: number
     currentSpaceId: string | null
     label: string
+    /** The name to write on a room, in the language being read. */
+    nameOf?: (space: Space) => string
     onSelect?: (space: Space) => void
   }
 
-  let { plan, position, heading, currentSpaceId, label, onSelect }: Props = $props()
+  let {
+    plan,
+    position,
+    heading,
+    currentSpaceId,
+    label,
+    nameOf = (space) => space.name,
+    onSelect,
+  }: Props = $props()
 
   const PADDING = 20
 
@@ -35,16 +59,86 @@
     }
   })
 
+  /**
+   * One `/ship` plan unit, in metres, for a view of this size: the deck maps
+   * are 1000 x 600 and this is `bounds`, so everything they set in plan units —
+   * a 4-unit hull, a 1.5-unit wall, 12-point type — carries across unchanged.
+   */
+  const unit = $derived(Math.max(bounds.width / 1000, bounds.height / 600))
+
   const path = (points: readonly Vec2[]) =>
     points.map((point, index) => `${index === 0 ? 'M' : 'L'} ${point[0]} ${point[1]}`).join(' ') +
     ' Z'
 
-  const fillFor = (space: Space) => {
-    if (space.id === currentSpaceId) return '#FFD700'
-    if (space.provenance === 'inferred') return '#2b3a4a'
-    if (space.provenance === 'panel') return '#4a3320'
-    return '#2a1f1f'
+  /**
+   * Circulation first, so the rooms it runs between are drawn over it — the
+   * order `generate-deck-maps.py` writes the deck maps in.
+   */
+  const ordered = $derived(
+    [...plan.spaces].sort(
+      (a, b) => Number(a.category !== 'corridor') - Number(b.category !== 'corridor'),
+    ),
+  )
+
+  const centroid = (footprint: readonly Vec2[]): Vec2 => {
+    let area = 0
+    let cx = 0
+    let cz = 0
+    for (let i = 0; i < footprint.length; i++) {
+      const [x0, z0] = footprint[i]
+      const [x1, z1] = footprint[(i + 1) % footprint.length]
+      const cross = x0 * z1 - x1 * z0
+      area += cross
+      cx += (x0 + x1) * cross
+      cz += (z0 + z1) * cross
+    }
+    area *= 0.5
+    return area ? [cx / (6 * area), cz / (6 * area)] : [footprint[0][0], footprint[0][1]]
   }
+
+  interface Caption {
+    id: string
+    text: string
+    at: Vec2
+    size: number
+    turned: boolean
+  }
+
+  /**
+   * A name only where it fits, by the rule the deck maps use: 6.5 plan units a
+   * character across, 16 down, and a room taller than it is wide takes its name
+   * on its side. A room too small for 9-point type goes unnamed rather than
+   * spilling over its neighbours — the walk names it in the panel anyway.
+   */
+  const captions = $derived.by(() =>
+    plan.spaces.reduce<Caption[]>((named, space) => {
+      const text = nameOf(space)
+      const xs = space.footprint.map((point) => point[0] / unit)
+      const zs = space.footprint.map((point) => point[1] / unit)
+      const width = Math.max(...xs) - Math.min(...xs)
+      const height = Math.max(...zs) - Math.min(...zs)
+
+      let size = width > text.length * 6.5 && height > 16 ? 12 : 0
+      if (!size && width > text.length * 5 && height > 12) size = 9
+      let turned = false
+      if (!size && height > width) {
+        size = height > text.length * 6.5 && width > 16 ? 12 : 0
+        if (!size && height > text.length * 5 && width > 12) size = 9
+        turned = Boolean(size)
+      }
+      if (!size) return named
+
+      const [cx, cz] = centroid(space.footprint)
+      named.push({
+        id: space.id,
+        text,
+        at: [cx, cz + (size * unit) / 3],
+        size: size * unit,
+        turned,
+      })
+      return named
+    }, []),
+  )
 
   // The camera looks along (-sin, -cos); the cone on the map has to agree.
   const cone = $derived.by(() => {
@@ -65,23 +159,23 @@
   <svg
     viewBox="{bounds.minX} {bounds.minZ} {bounds.width} {bounds.height}"
     class="h-full w-full"
+    style="--unit: {unit}"
     role="img"
     aria-label={label}
   >
-    <path d={path(plan.tier.hull)} fill="#0d0808" stroke="#FFD700" stroke-width="2" />
+    <path class="hull" d={path(plan.tier.hull)} />
 
-    {#each plan.spaces as space (space.id)}
+    {#each ordered as space (space.id)}
       {#if onSelect}
         <path
           d={path(space.footprint)}
-          fill={fillFor(space)}
-          stroke="#FFFFF0"
-          stroke-width="0.8"
-          opacity={space.id === currentSpaceId ? 1 : 0.75}
-          class="cursor-pointer transition-opacity hover:opacity-100"
+          class="zone clickable"
+          class:through={space.category === 'corridor'}
+          class:inferred={space.provenance === 'inferred'}
+          class:selected={space.id === currentSpaceId}
           role="button"
           tabindex="0"
-          aria-label={space.name}
+          aria-label={nameOf(space)}
           onclick={() => onSelect?.(space)}
           onkeydown={(event) => {
             if (event.key === 'Enter' || event.key === ' ') {
@@ -93,15 +187,73 @@
       {:else}
         <path
           d={path(space.footprint)}
-          fill={fillFor(space)}
-          stroke="#FFFFF0"
-          stroke-width="0.8"
-          opacity="0.75"
+          class="zone"
+          class:through={space.category === 'corridor'}
+          class:inferred={space.provenance === 'inferred'}
+          class:selected={space.id === currentSpaceId}
         />
       {/if}
     {/each}
 
+    {#each captions as caption (caption.id)}
+      <text
+        class="label"
+        x={caption.at[0]}
+        y={caption.at[1]}
+        font-size={caption.size}
+        transform={caption.turned ? `rotate(-90 ${caption.at[0]} ${caption.at[1]})` : ''}
+        >{caption.text}</text
+      >
+    {/each}
+
     <path d={cone} fill="#FFFFF0" opacity="0.55" />
-    <circle cx={position[0]} cy={position[1]} r="4" fill="#FFFFF0" />
+    <circle cx={position[0]} cy={position[1]} r={unit * 5} fill="#FFFFF0" />
   </svg>
 </figure>
+
+<style>
+  /* The deck-plan convention of `/ship`, in plan units of this view. */
+  .hull {
+    fill: #1a0f0f;
+    stroke: #ffd700;
+    stroke-width: calc(var(--unit) * 4);
+  }
+  .zone {
+    fill: #2a1515;
+    stroke: #fffff0;
+    stroke-width: calc(var(--unit) * 1.5);
+    transition: fill 0.2s;
+  }
+  .zone.clickable {
+    cursor: pointer;
+  }
+  .zone.clickable:hover {
+    fill: #3d1c1c;
+  }
+  .zone.through {
+    fill: #150b0b;
+    stroke: #ffd700;
+    stroke-opacity: 0.35;
+    stroke-width: var(--unit);
+    stroke-dasharray: calc(var(--unit) * 4) calc(var(--unit) * 4);
+  }
+  .zone.inferred {
+    fill: #16171c;
+    stroke: #9dc4e0;
+    stroke-opacity: 0.4;
+  }
+  /* The room being stood in reads the way a selected region reads on `/ship`. */
+  .zone.selected {
+    fill: #4d2020;
+    stroke: #ffd700;
+    stroke-opacity: 1;
+    stroke-width: calc(var(--unit) * 2.5);
+    stroke-dasharray: none;
+  }
+  .label {
+    fill: #fffff0;
+    font-family: sans-serif;
+    pointer-events: none;
+    text-anchor: middle;
+  }
+</style>

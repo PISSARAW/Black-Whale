@@ -23,9 +23,11 @@ dessine. Trois rangs, dans cet ordre :
    huit suites du bloc VVIP. Ces volumes portent la provenance `map`, un rang
    sous les dessins, parce qu'une carte `/ship` est la lecture de ce dossier et
    pas le trait de Togashi.
-3. **Là où ni l'un ni l'autre ne dit rien, rien n'est posé.** Les chambrées des
-   soldats restent nues : ni planche ni carte n'y dessine de couchette, et une
-   couchette inventée serait du décor.
+3. **Là où ni l'un ni l'autre ne dit rien, rien n'est posé.** Les suites VVIP
+   restent nues : ni planche ni carte n'y dessine de meuble, et un meuble
+   inventé serait du décor. La règle se lit dans les deux sens — les chambrées
+   des soldats, elles, sont meublées, parce que leur plan y dessine douze
+   couchettes par salle, et les laisser vides aurait été retrancher au plan.
 
 Le corollaire vaut dans l'autre sens : quand la visite tient plus que la carte
 parce qu'une planche le montre — la salle de projection et ses quinze volumes
@@ -256,6 +258,17 @@ l'ameublement, et ces meubles portent donc la source du plan et sa provenance
 `plan`. Les quatorze appartements sont le même plan : le jeu de meubles est
 authoré une fois, dans le repère de l'appartement, et répété pour chaque prince.
 
+Il vaut pour tout plan de salle, pas seulement celui des princes : les douze
+couchettes que chaque chambrée de soldats et chaque salle des Hunters
+provisoires dessine, le lit que chaque chambre de reine porte contre le mur
+opposé à sa porte, les deux piliers de la zone 37564, les galeries et la
+colonnade de l'atrium du poste de police. Ces volumes-là portent la provenance
+`map` et nomment le plan dont ils sortent. Le plan de salle est schématique, lui
+aussi : il dit combien de couchettes et en quelles rangées, pas à quel
+centimètre — la reconstruction garde le compte et les rangées, et écarte les
+allées de quoi passer, exactement comme elle donne un pas de six mètres aux
+tables du banquet.
+
 Il vaut aussi pour ce qu'une **planche** meuble : le salon du Roi et ses sièges
 appariés, ses tableaux et sa baie (chap. 382), la couchette, le lavabo et le
 cabinet de la cellule de première classe (chap. 373), la couchette de la
@@ -275,6 +288,12 @@ Le second : **ce qu'une planche montre est ce que la pièce est** —
 - le pont des canots est les capsules alignées sur leurs berceaux (chap. 383) ;
 - la salle de projection est sa scène à cadre sous rideau, ses loges et son
   parterre (chap. 359) ;
+- une salle du cinéplexe est son **écran** : le plan n'en dessine pas
+  l'intérieur, mais il nomme les huit salles d'après l'écran qu'elles portent,
+  et une salle appelée « Screen 4 » sans écran serait une pièce vide. L'écran se
+  dresse sur le mur qui fait face à l'entrée. Les fauteuils, eux, restent
+  dehors : aucun dessin n'en pose la place ;
+- une capsule de sauvetage est sa couronne de sièges autour du mât (chap. 383) ;
 - l'entrepôt du pont 5 est ses rangées de caisses, que son plan dessine et que
   la reconstruction pose dans les travées entre les piliers ;
 - le casino VIP est sa salle de jeu, les devantures autour et la mezzanine

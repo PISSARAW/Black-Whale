@@ -705,6 +705,44 @@
         [-3.05, 11.37]
       ],
       "sourceFr": "Le chap. 358 montre la chambre ; le chap. 371 la dessine ronde, les quatorze cercueils disposés en rayons autour de son centre."
+    },
+    {
+      "id": "interior-royal-army-conference",
+      "kind": "interior",
+      "parentSpaceId": "tier-4-royal-army-conference-room",
+      "locationId": "tier-4-royal-army-conference-room",
+      "name": "Royal Army Conference Room",
+      "nameFr": "Salle de conférence de l’Armée royale",
+      "elevation": 18,
+      "ceiling": 5,
+      "provenance": "plan",
+      "source": "Conference room plan; the briefing Mizaistom holds in ch. 350",
+      "hull": [
+        [-11.5, -9],
+        [11.5, -9],
+        [11.5, 9],
+        [-11.5, 9]
+      ],
+      "sourceFr": "Plan de la salle de conférence ; le briefing que Mizaistom tient au chap. 350"
+    },
+    {
+      "id": "interior-xi-yu-office",
+      "kind": "interior",
+      "parentSpaceId": "tier-4-xi-yu-family-office",
+      "locationId": "tier-4-xi-yu-family-office",
+      "name": "Xi-Yu Family Office",
+      "nameFr": "Bureau de la famille Xi-Yu",
+      "elevation": 18,
+      "ceiling": 4,
+      "provenance": "plan",
+      "source": "Xi-Yu office plan; the forward section, inside the Black Whale's teeth",
+      "hull": [
+        [-9.5, -5.5],
+        [9.5, -5.5],
+        [9.5, 7.5],
+        [-9.5, 7.5]
+      ],
+      "sourceFr": "Plan du bureau Xi-Yu ; la section avant, dans les « dents » du Black Whale"
     }
   ],
   "spaces": [
@@ -5848,6 +5886,63 @@
         [-2.66, 9.92]
       ],
       "sourceFr": "Le chap. 358 montre la chambre ; le chap. 371 la dessine ronde, les quatorze cercueils disposés en rayons autour de son centre."
+    },
+    {
+      "id": "tier-4-royal-army-conference-room-floor",
+      "tierId": "interior-royal-army-conference",
+      "locationId": "tier-4-royal-army-conference-room",
+      "name": "Conference Floor",
+      "nameFr": "Salle de conférence",
+      "category": "military",
+      "provenance": "plan",
+      "source": "Conference room plan; the briefing Mizaistom holds in ch. 350",
+      "ceiling": 5,
+      "envelope": null,
+      "footprint": [
+        [-10, -7.5],
+        [10, -7.5],
+        [10, 7.5],
+        [-10, 7.5]
+      ],
+      "sourceFr": "Plan de la salle de conférence ; le briefing que Mizaistom tient au chap. 350"
+    },
+    {
+      "id": "tier-4-xi-yu-family-office-meeting-room",
+      "tierId": "interior-xi-yu-office",
+      "locationId": "tier-4-xi-yu-family-office",
+      "name": "Family Meeting Office",
+      "nameFr": "Bureau de réunion de la famille",
+      "category": "mafia",
+      "provenance": "plan",
+      "source": "Xi-Yu office plan; the forward section, inside the Black Whale's teeth",
+      "ceiling": 4,
+      "envelope": null,
+      "footprint": [
+        [-8.05, -4.05],
+        [8.05, -4.05],
+        [8.05, 4.05],
+        [-8.05, 4.05]
+      ],
+      "sourceFr": "Plan du bureau Xi-Yu ; la section avant, dans les « dents » du Black Whale"
+    },
+    {
+      "id": "tier-4-xi-yu-family-office-entrance",
+      "tierId": "interior-xi-yu-office",
+      "locationId": "tier-4-xi-yu-family-office",
+      "name": "Guarded Entrance",
+      "nameFr": "Entrée gardée",
+      "category": "mafia",
+      "provenance": "plan",
+      "source": "Xi-Yu office plan; the forward section, inside the Black Whale's teeth",
+      "ceiling": 4,
+      "envelope": null,
+      "footprint": [
+        [-3, 4.05],
+        [3, 4.05],
+        [3, 6.15],
+        [-3, 6.15]
+      ],
+      "sourceFr": "Plan du bureau Xi-Yu ; la section avant, dans les « dents » du Black Whale"
     }
   ],
   "links": [
@@ -6155,6 +6250,26 @@
       "provenance": "inferred",
       "source": "Reconstructed as the way from the passage into the chamber; the plan draws the chamber but no threshold.",
       "sourceFr": "Reconstruit comme le passage vers la chambre ; le plan dessine la chambre, pas son seuil."
+    },
+    {
+      "from": "tier-4-royal-army-conference-room",
+      "to": "tier-4-royal-army-conference-room-floor",
+      "kind": "door",
+      "at": [26.25, -50.75],
+      "atTo": [0, 6.5],
+      "provenance": "plan",
+      "source": "Conference room plan; the briefing Mizaistom holds in ch. 350",
+      "sourceFr": "Plan de la salle de conférence ; le briefing que Mizaistom tient au chap. 350"
+    },
+    {
+      "from": "tier-4-xi-yu-family-office",
+      "to": "tier-4-xi-yu-family-office-entrance",
+      "kind": "door",
+      "at": [-35, 8],
+      "atTo": [0, 5.6],
+      "provenance": "plan",
+      "source": "Xi-Yu office plan; the forward section, inside the Black Whale's teeth",
+      "sourceFr": "Plan du bureau Xi-Yu ; la section avant, dans les « dents » du Black Whale"
     }
   ],
   "seals": [
@@ -7475,6 +7590,14 @@
       "width": 3,
       "reason": "Door placed where the room plan draws it.",
       "reasonFr": "Porte placée là où le plan de la salle la dessine."
+    },
+    {
+      "a": "tier-4-xi-yu-family-office-meeting-room",
+      "b": "tier-4-xi-yu-family-office-entrance",
+      "at": [0, 4.05],
+      "width": 2.4,
+      "reason": "Reconstructed as the threshold between the guarded entrance and the office; the plan draws both but no door between them.",
+      "reasonFr": "Reconstruit comme le seuil entre l'entrée gardée et le bureau ; le plan dessine les deux, pas la porte entre eux."
     }
   ],
   "structures": [
@@ -12373,6 +12496,118 @@
       "provenance": "plan",
       "source": "Cha-R office plan; the middle section beside the propeller",
       "sourceFr": "Plan du bureau Cha-R ; la section centrale, près de l’hélice"
+    },
+    {
+      "id": "tier-4-royal-army-conference-room-floor-screen",
+      "spaceId": "tier-4-royal-army-conference-room-floor",
+      "kind": "painting",
+      "name": "Briefing Screen",
+      "nameFr": "Écran de briefing",
+      "at": [0, -7.38],
+      "size": [7.5, 0.22],
+      "rotation": 0,
+      "base": 1.0,
+      "height": 3.0,
+      "sides": null,
+      "provenance": "plan",
+      "source": "Conference room plan; the briefing Mizaistom holds in ch. 350",
+      "sourceFr": "Plan de la salle de conférence ; le briefing que Mizaistom tient au chap. 350"
+    },
+    {
+      "id": "tier-4-royal-army-conference-room-floor-chart-board",
+      "spaceId": "tier-4-royal-army-conference-room-floor",
+      "kind": "painting",
+      "name": "Chart Board",
+      "nameFr": "Tableau des cartes",
+      "at": [-9.88, -3],
+      "size": [0.22, 5],
+      "rotation": 0,
+      "base": 1.1,
+      "height": 2.5,
+      "sides": null,
+      "provenance": "plan",
+      "source": "Conference room plan; the briefing Mizaistom holds in ch. 350",
+      "sourceFr": "Plan de la salle de conférence ; le briefing que Mizaistom tient au chap. 350"
+    },
+    {
+      "id": "tier-4-royal-army-conference-room-floor-lectern",
+      "spaceId": "tier-4-royal-army-conference-room-floor",
+      "kind": "counter",
+      "name": "Lectern",
+      "nameFr": "Pupitre",
+      "at": [-0.75, -3.25],
+      "size": [1.0, 1.0],
+      "rotation": 0,
+      "base": 0,
+      "height": 1.1,
+      "sides": null,
+      "provenance": "plan",
+      "source": "Conference room plan; the briefing Mizaistom holds in ch. 350",
+      "sourceFr": "Plan de la salle de conférence ; le briefing que Mizaistom tient au chap. 350"
+    },
+    {
+      "id": "tier-4-royal-army-conference-room-floor-table-head",
+      "spaceId": "tier-4-royal-army-conference-room-floor",
+      "kind": "table",
+      "name": "Conference Table (head)",
+      "nameFr": "Table de conférence (tête)",
+      "at": [0, -0.65],
+      "size": [7.5, 1.2],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.75,
+      "sides": null,
+      "provenance": "plan",
+      "source": "Conference room plan; the briefing Mizaistom holds in ch. 350",
+      "sourceFr": "Plan de la salle de conférence ; le briefing que Mizaistom tient au chap. 350"
+    },
+    {
+      "id": "tier-4-royal-army-conference-room-floor-table-port",
+      "spaceId": "tier-4-royal-army-conference-room-floor",
+      "kind": "table",
+      "name": "Conference Table (port arm)",
+      "nameFr": "Table de conférence (branche bâbord)",
+      "at": [-2.5, 1.95],
+      "size": [2.5, 3.6],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.75,
+      "sides": null,
+      "provenance": "plan",
+      "source": "Conference room plan; the briefing Mizaistom holds in ch. 350",
+      "sourceFr": "Plan de la salle de conférence ; le briefing que Mizaistom tient au chap. 350"
+    },
+    {
+      "id": "tier-4-royal-army-conference-room-floor-table-starboard",
+      "spaceId": "tier-4-royal-army-conference-room-floor",
+      "kind": "table",
+      "name": "Conference Table (starboard arm)",
+      "nameFr": "Table de conférence (branche tribord)",
+      "at": [2.5, 1.95],
+      "size": [2.5, 3.6],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.75,
+      "sides": null,
+      "provenance": "plan",
+      "source": "Conference room plan; the briefing Mizaistom holds in ch. 350",
+      "sourceFr": "Plan de la salle de conférence ; le briefing que Mizaistom tient au chap. 350"
+    },
+    {
+      "id": "tier-4-xi-yu-family-office-meeting-room-meeting-desk",
+      "spaceId": "tier-4-xi-yu-family-office-meeting-room",
+      "kind": "table",
+      "name": "Meeting Desk",
+      "nameFr": "Table de réunion",
+      "at": [0, 0.3],
+      "size": [9.6, 2.5],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.75,
+      "sides": null,
+      "provenance": "plan",
+      "source": "Xi-Yu office plan; the forward section, inside the Black Whale's teeth",
+      "sourceFr": "Plan du bureau Xi-Yu ; la section avant, dans les « dents » du Black Whale"
     }
   ]
 }

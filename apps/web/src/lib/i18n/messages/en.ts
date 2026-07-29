@@ -105,7 +105,7 @@ export const en = {
   tourSources: {
     seoTitle: 'Sources — Where every room of the Black Whale comes from',
     seoDescription:
-      'The evidence behind the reconstructed Black Whale, room by room: which chapter or plan each of the 266 spaces rests on, which corridors the reconstruction invented, and which walls were sealed on purpose.',
+      'The evidence behind the reconstructed Black Whale, room by room: which chapter or plan each of the 269 spaces rests on, which corridors the reconstruction invented, and which walls were sealed on purpose.',
     breadcrumb: 'Sources',
     title: 'Where every room comes from',
     intro:

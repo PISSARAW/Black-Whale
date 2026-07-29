@@ -135,7 +135,7 @@ carte `/ship` et la visite montrent le même pont 1 — et l'intérieur est un
 **niveau à part**, tracé à sa taille réelle, dans lequel on entre par la porte.
 C'est la structure de `/ship` (plan de pont → plan de salle), en volume.
 
-Vingt-six pièces ont ainsi leur intérieur : les quatorze appartements
+Vingt-huit pièces ont ainsi leur intérieur : les quatorze appartements
 princiers, les huit plans de salle qui comptent plus d'une pièce — quartier
 de détention VIP, quartiers des soldats, bureau de la Justice, hôpital central,
 cinéplexe, bureau Cha-R, cabines standard, cabines de première classe — puis
@@ -143,7 +143,10 @@ trois volumes qu'aucune boîte de pont ne peut contenir : le salon du Roi, que l
 chap. 382 montre du sol au plafond ; la chambre funéraire, dont le plan de
 salle donne une rotonde de vingt mètres là où le pont ne réserve qu'un tambour
 de seize, où un cercueil de 2,2 m frôlerait le mur ; et la suspension de la
-coque du chap. 406, dont les ressorts font trois fois la hauteur d'un pont. S'y ajoute un canot de
+coque du chap. 406, dont les ressorts font trois fois la hauteur d'un pont. Le
+pont 4 en ajoute deux du même ordre : la salle de conférence de l'Armée royale,
+à qui le pont réserve 52 × 52 m quand son plan dessine une salle de 20 × 15
+autour d'une seule table, et le bureau Xi-Yu et son entrée gardée. S'y ajoute un canot de
 sauvetage : le chap. 383 en montre l'intérieur, et une capsule de cinq mètres
 n'est pas une salle du pont mais un volume posé dessus, dans lequel on entre
 par son écoutille. Les 23 autres plans locaux ne dessinent qu'une salle, que le

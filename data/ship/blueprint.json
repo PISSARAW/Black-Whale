@@ -4626,8 +4626,8 @@
       "name": "Prison Corridor",
       "nameFr": "Coursive du quartier",
       "category": "corridor",
-      "provenance": "plan",
-      "source": "V.I.P. detention plan; the block shown in ch. 350",
+      "provenance": "panel",
+      "source": "Ch. 372 — the block's corridor and the watch at his desk, on the way to the detained guards' cells.",
       "ceiling": 3.5,
       "envelope": null,
       "footprint": [
@@ -4636,7 +4636,7 @@
         [22.5, 2.5],
         [-22.5, 2.5]
       ],
-      "sourceFr": "Plan du quartier de détention VIP ; le bloc montré au chap. 350"
+      "sourceFr": "Chap. 372 — le couloir du quartier et le gardien à son bureau, sur le chemin des cellules des gardes détenus."
     },
     {
       "id": "tier-1-vip-jail-cell-first-class",
@@ -4683,8 +4683,8 @@
       "name": "Standard Cell",
       "nameFr": "Cellule standard",
       "category": "prison",
-      "provenance": "plan",
-      "source": "V.I.P. detention plan; the block shown in ch. 350",
+      "provenance": "panel",
+      "source": "Ch. 372 — the cell one of Momoze's detained guards is held in: bunk, washstand and lavatory, seen from above.",
       "ceiling": 3.5,
       "envelope": null,
       "footprint": [
@@ -4693,7 +4693,7 @@
         [-2.5, 12.5],
         [-10, 12.5]
       ],
-      "sourceFr": "Plan du quartier de détention VIP ; le bloc montré au chap. 350"
+      "sourceFr": "Chap. 372 — la cellule où est détenu l'un des gardes de Momoze : couchette, lavabo et cabinet, vus de dessus."
     },
     {
       "id": "tier-1-vip-jail-cell-standard-2",
@@ -11597,6 +11597,70 @@
       "provenance": "panel",
       "source": "Ch. 350 shows the high-security cell and its manacles; ch. 359 the barred front and the watch kept in front of it.",
       "sourceFr": "Le chap. 350 montre la cellule de haute sécurité et ses entraves ; le chap. 359, la façade à barreaux et la garde tenue devant."
+    },
+    {
+      "id": "tier-1-vip-jail-cell-standard-bunk",
+      "spaceId": "tier-1-vip-jail-cell-standard",
+      "kind": "bed",
+      "name": "Bunk",
+      "nameFr": "Couchette",
+      "at": [-8.8, 5.5],
+      "size": [1.0, 2.1],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.5,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 372 — the cell one of Momoze's detained guards is held in: bunk, washstand and lavatory, seen from above.",
+      "sourceFr": "Chap. 372 — la cellule où est détenu l'un des gardes de Momoze : couchette, lavabo et cabinet, vus de dessus."
+    },
+    {
+      "id": "tier-1-vip-jail-cell-standard-washstand",
+      "spaceId": "tier-1-vip-jail-cell-standard",
+      "kind": "basin",
+      "name": "Washstand",
+      "nameFr": "Lavabo",
+      "at": [-9.5, 8.6],
+      "size": [0.7, 0.6],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.9,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 372 — the cell one of Momoze's detained guards is held in: bunk, washstand and lavatory, seen from above.",
+      "sourceFr": "Chap. 372 — la cellule où est détenu l'un des gardes de Momoze : couchette, lavabo et cabinet, vus de dessus."
+    },
+    {
+      "id": "tier-1-vip-jail-cell-standard-lavatory",
+      "spaceId": "tier-1-vip-jail-cell-standard",
+      "kind": "basin",
+      "name": "Lavatory",
+      "nameFr": "Cabinet",
+      "at": [-9.5, 9.9],
+      "size": [0.6, 0.6],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.45,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 372 — the cell one of Momoze's detained guards is held in: bunk, washstand and lavatory, seen from above.",
+      "sourceFr": "Chap. 372 — la cellule où est détenu l'un des gardes de Momoze : couchette, lavabo et cabinet, vus de dessus."
+    },
+    {
+      "id": "tier-1-vip-jail-corridor-watch-desk",
+      "spaceId": "tier-1-vip-jail-corridor",
+      "kind": "counter",
+      "name": "Watch Desk",
+      "nameFr": "Bureau du gardien",
+      "at": [-19, 0],
+      "size": [1.4, 0.8],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.75,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 372 — the block's corridor and the watch at his desk, on the way to the detained guards' cells.",
+      "sourceFr": "Chap. 372 — le couloir du quartier et le gardien à son bureau, sur le chemin des cellules des gardes détenus."
     }
   ]
 }

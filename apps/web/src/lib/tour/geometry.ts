@@ -477,6 +477,68 @@ export function structureFootprint(structure: Structure): Polygon {
   ])
 }
 
+/** Across-the-run thickness of one upright of a grille, in metres. */
+export const BAR_THICKNESS = 0.06
+
+/** Centre-to-centre spacing of the uprights: close enough that no one passes. */
+export const BAR_PITCH = 0.19
+
+/** How deep the rail that caps a run of bars is, measured down from its top. */
+export const BAR_RAIL = 0.12
+
+/**
+ * The uprights a run of bars is drawn as, in the level's coordinates.
+ *
+ * A grille is stored as a single solid — its `size` is the length of the run
+ * and the thickness of the screen — because that is what it does: you walk
+ * around it, and the gate beside it is where you get through. Drawing it as
+ * one slab, though, would be a partition, and a cell you cannot see into is a
+ * store room. So the run is *drawn* as this row of uprights and the rail over
+ * them, while collision keeps reading the run itself. The two cannot drift:
+ * every upright is inside the outline collision already uses.
+ */
+export function grilleBars(structure: Structure): Polygon[] {
+  const [width, depth] = structure.size
+  const alongX = width >= depth
+  const length = alongX ? width : depth
+  const across = alongX ? depth : width
+
+  const count = Math.max(2, Math.round(length / BAR_PITCH))
+  const step = (length - BAR_THICKNESS) / (count - 1)
+  const angle = (structure.rotation * Math.PI) / 180
+  const cos = Math.cos(angle)
+  const sin = Math.sin(angle)
+
+  const bars: Polygon[] = []
+  for (let index = 0; index < count; index++) {
+    const offset = -length / 2 + BAR_THICKNESS / 2 + index * step
+    const halfAlong = BAR_THICKNESS / 2
+    const halfAcross = across / 2
+    const centre: Vec2 = alongX ? [offset, 0] : [0, offset]
+    const half: Vec2 = alongX ? [halfAlong, halfAcross] : [halfAcross, halfAlong]
+
+    bars.push(
+      (
+        [
+          [-half[0], -half[1]],
+          [half[0], -half[1]],
+          [half[0], half[1]],
+          [-half[0], half[1]],
+        ] as Vec2[]
+      ).map(([x, z]) => {
+        const localX = centre[0] + x
+        const localZ = centre[1] + z
+        return [
+          structure.at[0] + localX * cos - localZ * sin,
+          structure.at[1] + localX * sin + localZ * cos,
+        ] as Vec2
+      }),
+    )
+  }
+
+  return bars
+}
+
 /** The faces of a structure, as wall segments the visitor collides with. */
 export function structureWalls(structure: Structure): WallSegment[] {
   return [...iterateEdges(structureFootprint(structure))].map(([start, end]) => ({

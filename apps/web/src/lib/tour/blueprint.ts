@@ -267,6 +267,8 @@ const STRUCTURE_KINDS = new Set([
   'painting',
   'lifeboat',
   'pillar',
+  'bars',
+  'manacle',
 ])
 
 /**

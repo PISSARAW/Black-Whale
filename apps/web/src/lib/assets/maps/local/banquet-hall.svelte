@@ -1,50 +1,108 @@
 <script lang="ts">
+  /**
+   * The Banquet Hall, drawn from `data/ship/blueprint.json`.
+   *
+   * The hall is the long room the ch. 349 deck plan cuts across the fore of
+   * Tier 1: 157.5 m of it, 24.5 m deep, entered from the guarded vestibule that
+   * runs its whole length. What stands in it is what the panels show — the
+   * stage at the head, the throne on its dais before it, the round tables in
+   * rows with an aisle left open on the throne's axis, and the buffet counters
+   * at the far end. No dimension is invented here: `x()` and `y()` map the
+   * blueprint's metres into this viewBox, and every fixture is placed by the
+   * coordinates the blueprint gives it, so the plan and the tour cannot drift
+   * apart the way they had.
+   */
+
   // Room interactions are not wired up yet. The elements keep their click
   // and keyboard affordances so the behaviour can be attached in one place
   // when it exists; until then this must not log on a public page.
   function handleElementClick(_elementId: string) {}
+
+  function activate(event: KeyboardEvent) {
+    if (event.key !== 'Enter' && event.key !== ' ') return
+    event.preventDefault()
+    ;(event.currentTarget as Element).dispatchEvent(new MouseEvent('click', { bubbles: true }))
+  }
+
+  /** Six pixels to the metre, with the vestibule's fore wall at the origin. */
+  const SCALE = 6
+  const x = (metres: number) => (metres + 87.5) * SCALE + 28
+  const y = (metres: number) => (metres + 35) * SCALE + 96
+
+  // The hall and the vestibule, as the footprints give them.
+  const hall = { x0: -87.5, x1: 70, y0: -28, y1: -3.5 }
+  const vestibule = { y0: -35, y1: -28 }
+
+  // The four table rows, an aisle between the second and the third, and the
+  // eighteen columns they run in: the same grid the blueprint lays.
+  const rows = [-24.5, -19.5, -12, -7]
+  const columns = Array.from({ length: 18 }, (_, index) => -58 + index * 6)
+  const TABLE_RADIUS = 1.3
+
+  /** Openings the tour derives from the shared walls, at their own width. */
+  const doors = [
+    { id: 'vestibule-doors', axis: 'y' as const, at: -28, from: -10.25, to: -7.25 },
+    { id: 'main-corridor', axis: 'y' as const, at: -3.5, from: -46.15, to: -43.15 },
+    { id: 'princes-gate', axis: 'y' as const, at: -3.5, from: 9, to: 12 },
+    { id: 'main-corridor-starboard', axis: 'y' as const, at: -3.5, from: 44.9, to: 47.9 },
+    { id: 'starboard-corridor', axis: 'x' as const, at: 70, from: -17.25, to: -14.25 },
+  ]
 </script>
 
 <svg
-  viewBox="0 0 1000 800"
+  viewBox="0 0 1000 320"
   class="w-full h-full text-[#FFFFF0] bg-[#050505] rounded-lg border border-[#333]"
 >
   <defs>
     <style>
       .wall {
         stroke: #fffff0;
-        stroke-width: 6;
+        stroke-width: 3;
         fill: none;
       }
-      .stage {
-        fill: rgba(139, 69, 19, 0.2);
-        stroke: #8b4513;
-        stroke-width: 3;
+      .room {
+        fill: rgba(255, 255, 240, 0.03);
       }
-      .table {
-        fill: rgba(255, 255, 255, 0.1);
-        stroke: #666;
+      .vestibule {
+        fill: rgba(255, 255, 240, 0.015);
+        stroke: #fffff0;
         stroke-width: 2;
-        cursor: pointer;
-        transition: fill 0.2s;
+        stroke-opacity: 0.5;
       }
-      .table:hover {
-        fill: rgba(255, 215, 0, 0.3);
-        stroke: #ffd700;
+      .stage {
+        fill: rgba(139, 69, 19, 0.25);
+        stroke: #8b4513;
+        stroke-width: 2;
       }
       .throne-platform {
-        fill: rgba(255, 215, 0, 0.1);
+        fill: rgba(255, 215, 0, 0.12);
         stroke: #ffd700;
-        stroke-width: 3;
+        stroke-width: 2;
       }
       .buffet {
         fill: rgba(200, 200, 200, 0.15);
         stroke: #aaa;
         stroke-width: 2;
       }
+      .table {
+        fill: rgba(255, 255, 255, 0.08);
+        stroke: #666;
+        stroke-width: 1;
+        cursor: pointer;
+        transition:
+          fill 0.2s,
+          stroke 0.2s;
+      }
+      .table:hover {
+        fill: rgba(255, 215, 0, 0.3);
+        stroke: #ffd700;
+      }
+      .interactive {
+        cursor: pointer;
+      }
       .door {
         stroke: #ffd700;
-        stroke-width: 6;
+        stroke-width: 4;
         cursor: pointer;
       }
       .door:hover {
@@ -53,182 +111,139 @@
       .label {
         fill: #fffff0;
         font-family: sans-serif;
-        font-size: 18px;
-        font-weight: bold;
+        font-size: 11px;
         pointer-events: none;
         text-anchor: middle;
       }
       .sublabel {
         fill: #ffd700;
-        font-size: 14px;
+        font-family: sans-serif;
+        font-size: 10px;
         pointer-events: none;
         text-anchor: middle;
       }
     </style>
   </defs>
 
-  <text x="500" y="40" class="label" font-size="32" fill="#FFD700">Banquet Hall</text>
+  <text x="500" y="30" class="label" font-size="22" font-weight="bold" fill="#FFD700">
+    Banquet Hall
+  </text>
+  <text x="500" y="48" class="label" font-size="10" fill="#FFFFF0" opacity="0.55">
+    157.5 m × 24.5 m — Tier 1, ch. 349 deck plan
+  </text>
 
-  <g transform="translate(50, 80)">
-    <!-- Main Hall Walls -->
-    <rect x="0" y="0" width="900" height="650" class="wall" />
+  <!-- The guarded vestibule the hall is entered from, ch. 383 -->
+  <rect
+    x={x(hall.x0)}
+    y={y(vestibule.y0)}
+    width={(hall.x1 - hall.x0) * SCALE}
+    height={(vestibule.y1 - vestibule.y0) * SCALE}
+    class="vestibule"
+  />
+  <text x={x(-40)} y={y(-31.2)} class="label" font-size="10" opacity="0.7">Vestibule</text>
+  <!-- The stair up from Tier 2 -->
+  <line x1={x(7.25)} y1={y(vestibule.y0)} x2={x(10.25)} y2={y(vestibule.y0)} class="door" />
+  <text x={x(8.75)} y={y(-36.2)} class="sublabel">Tier 2</text>
 
-    <!-- Stage (Top) -->
-    <rect
+  <!-- The hall itself -->
+  <rect
+    x={x(hall.x0)}
+    y={y(hall.y0)}
+    width={(hall.x1 - hall.x0) * SCALE}
+    height={(hall.y1 - hall.y0) * SCALE}
+    class="room wall"
+  />
+
+  <!-- The openings, cut out of the walls they are derived from -->
+  {#each doors as door (door.id)}
+    <line
       role="button"
       tabindex="0"
-      aria-label="Inspect map area"
-      onkeydown={(event) => {
-        if (event.key === 'Enter' || event.key === ' ') {
-          event.preventDefault()
-          event.currentTarget.dispatchEvent(new MouseEvent('click', { bubbles: true }))
-        }
-      }}
-      x="100"
-      y="0"
-      width="700"
-      height="120"
-      class="stage"
-      onclick={() => handleElementClick('stage')}
+      aria-label="Open the doors"
+      onkeydown={activate}
+      class="door"
+      x1={door.axis === 'y' ? x(door.from) : x(door.at)}
+      y1={door.axis === 'y' ? y(door.at) : y(door.from)}
+      x2={door.axis === 'y' ? x(door.to) : x(door.at)}
+      y2={door.axis === 'y' ? y(door.at) : y(door.to)}
+      onclick={() => handleElementClick(door.id)}
     />
-    <text x="450" y="60" class="label">Stage</text>
-    <rect x="420" y="40" width="60" height="30" fill="#111" stroke="#333" />
-    <!-- Piano -->
-    <text x="450" y="90" class="sublabel">Piano & Performance Area</text>
-    <line class="wall" x1="100" y1="120" x2="800" y2="120" />
-    <!-- Stage edge -->
+  {/each}
 
-    <!-- Dining Tables (Middle Area) -->
-    <g class="tables">
-      {#each Array(4) as _, row (row)}
-        {#each Array(6) as _, col (col)}
-          <g
-            role="button"
-            tabindex="0"
-            aria-label="Inspect map area"
-            onkeydown={(event) => {
-              if (event.key === 'Enter' || event.key === ' ') {
-                event.preventDefault()
-                event.currentTarget.dispatchEvent(new MouseEvent('click', { bubbles: true }))
-              }
-            }}
-            transform="translate({150 + col * 120}, {200 + row * 90})"
-            onclick={() => handleElementClick(`table-${row}-${col}`)}
-          >
-            <circle cx="0" cy="0" r="30" class="table" />
-            <!-- Seats -->
-            <circle cx="0" cy="-35" r="5" fill="#555" />
-            <circle cx="0" cy="35" r="5" fill="#555" />
-            <circle cx="-35" cy="0" r="5" fill="#555" />
-            <circle cx="35" cy="0" r="5" fill="#555" />
-          </g>
-        {/each}
+  <!-- Stage, at the head of the hall and across its whole depth -->
+  <rect
+    role="button"
+    tabindex="0"
+    aria-label="Inspect map area"
+    onkeydown={activate}
+    class="stage interactive"
+    x={x(-86)}
+    y={y(-25.75)}
+    width={7 * SCALE}
+    height={20 * SCALE}
+    onclick={() => handleElementClick('stage')}
+  />
+  <text x={x(-82.5)} y={y(-15.75)} class="label" transform="rotate(-90 {x(-82.5)} {y(-15.75)})"
+    >Stage</text
+  >
+
+  <!-- The throne on its dais, facing the hall -->
+  <rect
+    role="button"
+    tabindex="0"
+    aria-label="Inspect map area"
+    onkeydown={activate}
+    class="throne-platform interactive"
+    x={x(-72.25)}
+    y={y(-19.75)}
+    width={6 * SCALE}
+    height={8 * SCALE}
+    onclick={() => handleElementClick('throne-dais')}
+  />
+  <rect
+    x={x(-70.5)}
+    y={y(-17.25)}
+    width={2.5 * SCALE}
+    height={3 * SCALE}
+    fill="none"
+    stroke="#FFD700"
+    stroke-width="1.5"
+  />
+  <text x={x(-69.25)} y={y(-21)} class="sublabel">King's Throne</text>
+
+  <!-- The tables, four rows with the throne's axis left open between them -->
+  <g class="tables">
+    {#each rows as row, rowIndex (row)}
+      {#each columns as column, columnIndex (column)}
+        <circle
+          role="button"
+          tabindex="0"
+          aria-label="Inspect map area"
+          onkeydown={activate}
+          class="table"
+          cx={x(column)}
+          cy={y(row)}
+          r={TABLE_RADIUS * SCALE}
+          onclick={() => handleElementClick(`table-${rowIndex}-${columnIndex}`)}
+        />
       {/each}
-    </g>
-
-    <!-- Food Buffets (Bottom Left and Right) -->
-    <rect
-      role="button"
-      tabindex="0"
-      aria-label="Inspect map area"
-      onkeydown={(event) => {
-        if (event.key === 'Enter' || event.key === ' ') {
-          event.preventDefault()
-          event.currentTarget.dispatchEvent(new MouseEvent('click', { bubbles: true }))
-        }
-      }}
-      x="50"
-      y="550"
-      width="250"
-      height="60"
-      class="buffet"
-      onclick={() => handleElementClick('buffet-left')}
-    />
-    <text x="175" y="585" class="label" font-size="14">Food Buffet</text>
-
-    <rect
-      role="button"
-      tabindex="0"
-      aria-label="Inspect map area"
-      onkeydown={(event) => {
-        if (event.key === 'Enter' || event.key === ' ') {
-          event.preventDefault()
-          event.currentTarget.dispatchEvent(new MouseEvent('click', { bubbles: true }))
-        }
-      }}
-      x="600"
-      y="550"
-      width="250"
-      height="60"
-      class="buffet"
-      onclick={() => handleElementClick('buffet-right')}
-    />
-    <text x="725" y="585" class="label" font-size="14">Food Buffet</text>
-
-    <!-- King's Throne Platform (Bottom Center) -->
-    <path
-      role="button"
-      tabindex="0"
-      aria-label="Inspect map area"
-      onkeydown={(event) => {
-        if (event.key === 'Enter' || event.key === ' ') {
-          event.preventDefault()
-          event.currentTarget.dispatchEvent(new MouseEvent('click', { bubbles: true }))
-        }
-      }}
-      class="throne-platform"
-      d="M 350 650 L 350 550 L 550 550 L 550 650 Z"
-      onclick={() => handleElementClick('throne-platform')}
-    />
-    <path class="throne-platform" d="M 370 550 L 370 520 L 530 520 L 530 550 Z" />
-    <!-- Stairs -->
-    <rect x="420" y="570" width="60" height="60" fill="none" stroke="#FFD700" stroke-width="2" />
-    <!-- Throne -->
-    <text x="450" y="610" class="sublabel">King's Throne</text>
-
-    <!-- Main Entrance / Passageway (Left Wall) -->
-    <line x1="0" y1="300" x2="0" y2="400" stroke="#050505" stroke-width="10" />
-    <!-- Opening in wall -->
-    <line
-      role="button"
-      tabindex="0"
-      aria-label="Open the main doors"
-      onkeydown={(event) => {
-        if (event.key === 'Enter' || event.key === ' ') {
-          event.preventDefault()
-          event.currentTarget.dispatchEvent(new MouseEvent('click', { bubbles: true }))
-        }
-      }}
-      class="door"
-      x1="-30"
-      y1="300"
-      x2="0"
-      y2="350"
-      onclick={() => handleElementClick('main-doors')}
-    />
-    <line
-      role="button"
-      tabindex="0"
-      aria-label="Open the main doors"
-      onkeydown={(event) => {
-        if (event.key === 'Enter' || event.key === ' ') {
-          event.preventDefault()
-          event.currentTarget.dispatchEvent(new MouseEvent('click', { bubbles: true }))
-        }
-      }}
-      class="door"
-      x1="-30"
-      y1="400"
-      x2="0"
-      y2="350"
-      onclick={() => handleElementClick('main-doors')}
-    />
-    <text x="-40" y="355" class="label" font-size="14" transform="rotate(-90 -40 355)"
-      >Passageway</text
-    >
-
-    <!-- Guards at entrance -->
-    <circle cx="20" cy="280" r="10" fill="#4a5568" />
-    <circle cx="20" cy="420" r="10" fill="#4a5568" />
+    {/each}
   </g>
+
+  <!-- The buffet the hall is served from, ch. 383 -->
+  {#each [-22, -9.5] as centre, index (centre)}
+    <rect
+      role="button"
+      tabindex="0"
+      aria-label="Inspect map area"
+      onkeydown={activate}
+      class="buffet interactive"
+      x={x(49)}
+      y={y(centre - 1.1)}
+      width={14 * SCALE}
+      height={2.2 * SCALE}
+      onclick={() => handleElementClick(`buffet-${index + 1}`)}
+    />
+  {/each}
+  <text x={x(56)} y={y(-15)} class="label" font-size="10">Buffet</text>
 </svg>

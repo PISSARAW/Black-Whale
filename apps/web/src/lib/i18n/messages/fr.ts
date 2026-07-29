@@ -149,7 +149,7 @@ export const fr: Messages = {
 
     structures: {
       title: 'Ce qui se dresse dans les pièces',
-      help: 'La visite ne décore pas : elle n’invente jamais la place d’une chaise. Elle ne dessine un volume que dans deux cas. Quand un plan l’y met — le plan d’appartement princier dessine les lits, les canapés, la table à manger et la cuisine, ce qui est un relevé et non de l’ameublement. Et quand ce qu’une planche montre est ce que la pièce est : la couronne de cercueils est la chambre funéraire, les ressorts sont ce sur quoi la coque porte le vaisseau. Chacun est plein, et chacun porte sa propre source — qui n’est pas toujours celle de la pièce autour de lui.',
+      help: 'La visite ne décore pas : elle n’invente jamais la place d’une chaise. Elle ne dessine un volume que dans deux cas. Quand un plan l’y met — le plan d’appartement princier dessine les lits, les canapés, la table à manger et la cuisine, ce qui est un relevé et non de l’ameublement. Et quand ce qu’une planche montre est ce que la pièce est : la couronne de cercueils est la chambre funéraire, les ressorts sont ce sur quoi la coque porte le vaisseau, et la grille de sa façade est la cellule. Chacun est plein, et chacun porte sa propre source — qui n’est pas toujours celle de la pièce autour de lui.',
       standingIn: (room) => `dans ${room}`,
       count: (count) => `${count} volume${count === 1 ? '' : 's'}`,
     },
@@ -161,7 +161,7 @@ export const fr: Messages = {
 
     doors: {
       title: 'Portes placées à la main',
-      help: 'Une porte est placée à la main quand le plan de la pièce la dessine ailleurs qu’au milieu du mur partagé, et quand elle est l’unique entrée d’un appartement — que rien d’autre ne pourrait ouvrir.',
+      help: 'Une porte est placée à la main quand le plan de la pièce la dessine ailleurs qu’au milieu du mur partagé, et quand elle est l’unique entrée d’un appartement — que rien d’autre ne pourrait ouvrir. C’est aussi ainsi qu’un mur est ouvert sur toute sa longueur, pour les façades que les plans dessinent en barreaux et non en mur : une cellule est fermée par la grille qui se dresse dans l’ouverture, pas par le mur que la visite y aurait bâti.',
       walls: (count) => `${count} mur${count === 1 ? '' : 's'}`,
     },
 

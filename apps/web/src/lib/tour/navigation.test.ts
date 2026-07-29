@@ -131,6 +131,58 @@ describe('walking the reconstruction itself', () => {
     }
   })
 
+  it('lets the visitor through the gate of a cell, and nowhere else along it', () => {
+    for (const [cellId, outside] of [
+      ['tier-1-vip-jail-cell-first-class', 'tier-1-vip-jail-corridor'],
+      ['tier-1-vip-jail-cell-standard', 'tier-1-vip-jail-corridor'],
+      ['tier-1-vvip-prison-beyond-cell', 'tier-1-vvip-prison-beyond-watch'],
+    ]) {
+      const cell = ship.spaces.get(cellId)!
+      const plan = ship.plans.get(cell.tierId)!
+      const front = plan.doorways.find(
+        (door) => [door.a, door.b].includes(cellId) && [door.a, door.b].includes(outside),
+      )!
+
+      const span = Math.hypot(front.end[0] - front.start[0], front.end[1] - front.start[1])
+      const along: Vec2 = [
+        (front.end[0] - front.start[0]) / span,
+        (front.end[1] - front.start[1]) / span,
+      ]
+      const across: Vec2 = [-along[1], along[0]]
+      const middle: Vec2 = [
+        (front.start[0] + front.end[0]) / 2,
+        (front.start[1] + front.end[1]) / 2,
+      ]
+      // Which way the cell lies from its own front.
+      const facing = pointInPolygon([middle[0] + across[0], middle[1] + across[1]], cell.footprint)
+        ? 1
+        : -1
+      const step = (from: Vec2, distance: number): Vec2 => [
+        from[0] + across[0] * facing * distance,
+        from[1] + across[1] * facing * distance,
+      ]
+
+      // Straight at the gate: in.
+      expect(
+        pointInPolygon(
+          resolveMovement(step(middle, -2), step(middle, 2), plan.walls),
+          cell.footprint,
+        ),
+        `${cellId} cannot be entered`,
+      ).toBe(true)
+
+      // The same walk two metres along the front runs into the grille.
+      const beside: Vec2 = [middle[0] + along[0] * 2, middle[1] + along[1] * 2]
+      expect(
+        pointInPolygon(
+          resolveMovement(step(beside, -2), step(beside, 2), plan.walls),
+          cell.footprint,
+        ),
+        `${cellId} can be walked into through its bars`,
+      ).toBe(false)
+    }
+  })
+
   it('never spawns the visitor inside a wall', () => {
     for (const plan of ship.plans.values()) {
       for (const space of plan.spaces) {

@@ -151,7 +151,7 @@ export const en = {
 
     structures: {
       title: 'What stands in the rooms',
-      help: 'The tour does not decorate: it never invents where a chair stood. It draws a solid in two cases only. When a drawing puts it there — the prince apartment plan draws the beds, the sofas, the dining table and the kitchen, which is survey rather than furnishing. And when what a panel shows is what the room is: the ring of coffins is the burial chamber, the springs are what the hull carries the ship on. Each is solid, and each carries its own source, which is not always the source of the room around it.',
+      help: 'The tour does not decorate: it never invents where a chair stood. It draws a solid in two cases only. When a drawing puts it there — the prince apartment plan draws the beds, the sofas, the dining table and the kitchen, which is survey rather than furnishing. And when what a panel shows is what the room is: the ring of coffins is the burial chamber, the springs are what the hull carries the ship on, and the grille across its front is the cell. Each is solid, and each carries its own source, which is not always the source of the room around it.',
       standingIn: (room: string) => `in ${room}`,
       count: (count: number) => `${count} ${count === 1 ? 'solid' : 'solids'}`,
     },
@@ -163,7 +163,7 @@ export const en = {
 
     doors: {
       title: 'Doors placed by hand',
-      help: 'A door is placed by hand when the room plan draws it somewhere other than the middle of the shared wall, and when it is the single entrance to an apartment, which nothing else could open.',
+      help: 'A door is placed by hand when the room plan draws it somewhere other than the middle of the shared wall, and when it is the single entrance to an apartment, which nothing else could open. It is also how a wall is opened over its whole length, for the fronts the plans draw in bars rather than in wall: a cell is shut by the grille standing in the opening, not by the wall the tour would otherwise have built there.',
       walls: (count: number) => `${count} ${count === 1 ? 'wall' : 'walls'}`,
     },
 

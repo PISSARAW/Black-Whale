@@ -7,8 +7,10 @@
  * these buffers to a `BufferGeometry`.
  */
 import {
+  BAR_RAIL,
   COLUMN_HALF_WIDTH,
   DOOR_HEIGHT,
+  grilleBars,
   iterateEdges,
   structureFootprint,
   triangulate,
@@ -82,6 +84,8 @@ const STRUCTURE_COLOURS: Record<StructureKind, number> = {
   painting: 0x1d1a16,
   lifeboat: 0x8a8f96,
   pillar: 0x6a5a4a,
+  bars: 0x7f868e,
+  manacle: 0x6f6250,
 }
 
 const WALL_COLOUR = hex(0x4a4038)
@@ -255,6 +259,34 @@ export function buildTierMesh(plan: TierPlan): TierMesh {
     const colour = colourFor(hex(STRUCTURE_COLOURS[structure.kind]), structure.provenance)
     const bottom = tier.elevation + structure.base
     const top = Math.min(bottom + structure.height, heightOf(room))
+
+    // A run of bars is one solid to walk around and a row of uprights to see
+    // through: drawn as a slab it would be the wall the cell fronts are not.
+    if (structure.kind === 'bars') {
+      const railBottom = Math.max(bottom, top - BAR_RAIL)
+      for (const bar of grilleBars(structure)) {
+        for (const [start, end] of iterateEdges(bar)) {
+          builder.quad(start, end, bottom, railBottom, colour)
+        }
+      }
+
+      // The rail closes the tops of the uprights and gives the run a line to
+      // read at a distance, the way a lintel does over a door.
+      for (const [start, end] of iterateEdges(outline)) {
+        builder.quad(start, end, railBottom, top, colour)
+        horizontal(start, end, railBottom + OFFSET)
+        horizontal(start, end, top - OFFSET)
+      }
+      const railCap = triangulate(outline)
+      for (let i = 0; i < railCap.length; i += 3) {
+        const a = outline[railCap[i]]
+        const b = outline[railCap[i + 1]]
+        const c = outline[railCap[i + 2]]
+        builder.triangle([a[0], top, a[1]], [b[0], top, b[1]], [c[0], top, c[1]], colour)
+      }
+      for (const corner of outline) vertical(corner, bottom, top)
+      continue
+    }
 
     for (const [start, end] of iterateEdges(outline)) {
       builder.quad(start, end, bottom, top, colour)

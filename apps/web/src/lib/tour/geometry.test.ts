@@ -1,8 +1,11 @@
 import { describe, expect, it } from 'vitest'
 import {
+  BAR_PITCH,
+  BAR_THICKNESS,
   DOOR_WIDTH,
   collinearOverlap,
   deriveDoorways,
+  grilleBars,
   interiorPoint,
   pointInPolygon,
   polygonArea,
@@ -369,6 +372,73 @@ describe('structureFootprint', () => {
     expect(structureWalls(coffin)[0].spaceId).toBe('chamber')
   })
 })
+
+describe('grilleBars', () => {
+  const grille: Structure = {
+    id: 'grille',
+    spaceId: 'cell',
+    kind: 'bars',
+    name: 'Cell Bars',
+    nameFr: 'Barreaux de cellule',
+    at: [0, 0],
+    size: [4, 0.14],
+    rotation: 0,
+    base: 0,
+    height: 2.6,
+    sides: null,
+    provenance: 'plan',
+    source: 'source',
+    sourceFr: 'source',
+  }
+
+  it('fills the run with uprights at the spacing a cell is barred at', () => {
+    const bars = grilleBars(grille)
+    expect(bars.length).toBe(Math.round(4 / BAR_PITCH))
+    for (const bar of bars) {
+      const xs = bar.map((point) => point[0])
+      expect(Math.max(...xs) - Math.min(...xs)).toBeCloseTo(BAR_THICKNESS)
+    }
+  })
+
+  it('keeps every upright inside the run the visitor collides with', () => {
+    for (const rotation of [0, 30, 90]) {
+      const outline = structureFootprint({ ...grille, rotation })
+      for (const bar of grilleBars({ ...grille, rotation })) {
+        for (const corner of bar) {
+          // The end uprights sit on the face of the run, so a corner counts as
+          // inside when it is on the outline as well as within it.
+          expect(pointInPolygon(corner, outline) || onEdge(corner, outline)).toBe(true)
+        }
+      }
+    }
+  })
+
+  it('runs the uprights along the long axis, whichever it is', () => {
+    const acrossZ = grilleBars({ ...grille, size: [0.14, 4] })
+    expect(acrossZ.length).toBe(Math.round(4 / BAR_PITCH))
+    const zs = acrossZ.map((bar) => bar[0][1])
+    expect(Math.max(...zs) - Math.min(...zs)).toBeGreaterThan(3)
+  })
+})
+
+/** Whether a point sits on the outline rather than strictly within it. */
+function onEdge(point: Vec2, polygon: Polygon): boolean {
+  for (let i = 0; i < polygon.length; i++) {
+    const a = polygon[i]
+    const b = polygon[(i + 1) % polygon.length]
+    const t = Math.max(
+      0,
+      Math.min(
+        1,
+        ((point[0] - a[0]) * (b[0] - a[0]) + (point[1] - a[1]) * (b[1] - a[1])) /
+          ((b[0] - a[0]) ** 2 + (b[1] - a[1]) ** 2),
+      ),
+    )
+    const closest = [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t]
+    if (Math.hypot(point[0] - closest[0], point[1] - closest[1]) < 0.001) return true
+  }
+  return false
+}
 
 describe('interiorPoint', () => {
   it('lands inside a concave room rather than in its notch', () => {

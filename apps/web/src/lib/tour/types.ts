@@ -63,6 +63,12 @@ export type LinkKind = 'stair' | 'lift' | 'bulkhead' | 'door'
  * - `lifeboat` — an escape pod on its cradle in the launch bay.
  * - `pillar` — a post a panel draws, as opposed to the grid `columnPositions`
  *   lays under a hall too wide to roof without one.
+ * - `bars` — a run of grille. A cell is not a room with a door in it: the
+ *   detention plans draw the whole front of every cell in bars, and so does the
+ *   plan of the high-security cell. The run is one solid to walk around and a
+ *   row of uprights to look through, which is the whole point of a cell.
+ * - `manacle` — the cuff and the wall bolt ch. 350 chains Beyond Netero by.
+ *   Small, and kept for the same reason the coffins are: it is what the room is.
  */
 export type StructureKind =
   | 'spring'
@@ -77,6 +83,8 @@ export type StructureKind =
   | 'painting'
   | 'lifeboat'
   | 'pillar'
+  | 'bars'
+  | 'manacle'
 
 /**
  * What a level is: a deck of the ship, or the inside of a single room drawn at

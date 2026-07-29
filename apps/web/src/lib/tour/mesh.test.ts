@@ -90,6 +90,24 @@ describe('the solids standing in the rooms', () => {
     }
   })
 
+  it('draws a run of bars as uprights you can see between', () => {
+    const plan = ship.plans.get('interior-beyond-cell')!
+    const grille = plan.structures.filter((structure) => structure.kind === 'bars')
+    expect(grille.length).toBeGreaterThan(0)
+
+    const asBars = buildTierMesh(plan).triangles
+    const asSlabs = buildTierMesh({
+      ...plan,
+      // The same runs, told they are cabinets: one box each.
+      structures: plan.structures.map((structure) =>
+        structure.kind === 'bars' ? { ...structure, kind: 'cabinet' as const } : structure,
+      ),
+    }).triangles
+
+    // Two boxes against fifty uprights and the rail over them.
+    expect(asBars).toBeGreaterThan(asSlabs * 4)
+  })
+
   it('draws more geometry for a room with something in it', () => {
     const withCoffins = buildTierMesh(ship.plans.get('tier-1')!).triangles
     const empty = buildTierMesh({

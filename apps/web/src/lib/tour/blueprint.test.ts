@@ -9,7 +9,14 @@ import {
   spawnPoint,
   validateBlueprint,
 } from './blueprint'
-import { pointInPolygon, polygonArea, sealKey, structureFootprint } from './geometry'
+import {
+  grilleBars,
+  longestSharedWall,
+  pointInPolygon,
+  polygonArea,
+  sealKey,
+  structureFootprint,
+} from './geometry'
 import type { Blueprint, Space, Structure, Vec2 } from './types'
 
 const ship = buildShip()
@@ -114,9 +121,10 @@ describe('interiors', () => {
   })
 
   it('draws an interior for every room plan that has more than one room', () => {
-    // The eight multi-room plans under $lib/assets/maps/local. The rest of the
+    // The nine multi-room plans under $lib/assets/maps/local. The rest of the
     // local plans draw a single room, which the deck already carries.
     for (const slug of [
+      'beyond-cell',
       'vip-detention',
       'soldiers-quarters',
       'justice-bureau',
@@ -216,6 +224,77 @@ describe('interiors', () => {
       expect(neighbours(`${prefix}-entrance`).has(`${prefix}-kitchen`)).toBe(false)
       expect(neighbours(`${prefix}-living`).has(`${prefix}-bedroom`)).toBe(true)
     }
+  })
+})
+
+/**
+ * A cell is not a room with a door in it. Every detention plan the archive
+ * publishes draws the whole front of every cell as bars — and a tour that
+ * walls that front in and cuts a three-metre doorway through it draws a store
+ * room, whoever is named on the door.
+ */
+describe('the cells', () => {
+  /** Each cell, and the space its bars front onto. */
+  const cells: Array<[string, string]> = [
+    ['tier-1-vip-jail-cell-first-class', 'tier-1-vip-jail-corridor'],
+    ['tier-1-vip-jail-cell-vip', 'tier-1-vip-jail-corridor'],
+    ['tier-1-vip-jail-cell-standard', 'tier-1-vip-jail-corridor'],
+    ['tier-1-vip-jail-cell-standard-2', 'tier-1-vip-jail-corridor'],
+    ['tier-1-vvip-prison-beyond-cell', 'tier-1-vvip-prison-beyond-watch'],
+  ]
+
+  it('opens the whole front of every cell, and stands a grille in it', () => {
+    for (const [cellId, outside] of cells) {
+      const cell = ship.spaces.get(cellId)!
+      const plan = ship.plans.get(cell.tierId)!
+      const front = longestSharedWall(cell.footprint, ship.spaces.get(outside)!.footprint)!
+
+      const opening = plan.doorways.find(
+        (door) => [door.a, door.b].includes(cellId) && [door.a, door.b].includes(outside),
+      )
+      expect(opening, `${cellId} does not front onto ${outside}`).toBeDefined()
+      expect(opening!.width, `${cellId} is fronted in wall`).toBeCloseTo(front.to - front.from, 2)
+
+      const grille = plan.structures.filter(
+        (structure) => structure.spaceId === cellId && structure.kind === 'bars',
+      )
+      expect(grille, `${cellId} has no bars`).toHaveLength(2)
+      for (const run of grille) {
+        for (const bar of grilleBars(run)) {
+          for (const corner of bar) {
+            expect(pointInPolygon(corner, cell.footprint), `${run.id} is in a wall`).toBe(true)
+          }
+        }
+      }
+    }
+  })
+
+  it('holds Beyond Netero behind the bars, and the watch in front of them', () => {
+    const inside = ship.structures.filter(
+      (structure) => structure.spaceId === 'tier-1-vvip-prison-beyond-cell',
+    )
+    // What ch. 350 draws in it: the bunk, the urinal, and the manacle he is
+    // chained to the wall by.
+    expect(inside.map((structure) => structure.kind).sort()).toEqual([
+      'bars',
+      'bars',
+      'basin',
+      'bed',
+      'manacle',
+    ])
+
+    const watch = ship.structures.filter(
+      (structure) => structure.spaceId === 'tier-1-vvip-prison-beyond-watch',
+    )
+    expect(watch, 'the Zodiac watch keeps no stations').toHaveLength(3)
+  })
+
+  it('leaves nothing but the plan box on the deck itself', () => {
+    // The cell is drawn on its own level now, so the deck may only claim what
+    // the cross-section claims: a box, and the plan it comes from.
+    const box = ship.spaces.get('tier-1-vvip-prison-beyond')!
+    expect(box.provenance).toBe('plan')
+    expect(ship.structures.filter((structure) => structure.spaceId === box.id)).toEqual([])
   })
 })
 

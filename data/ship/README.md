@@ -70,12 +70,18 @@ de le refaire à chaque retouche du plan.
 
 ### Les portes explicites
 
-`doors` place une ouverture à la main plutôt qu'au milieu du mur partagé. Deux
+`doors` place une ouverture à la main plutôt qu'au milieu du mur partagé. Trois
 usages :
 
 1. Ouvrir l'entrée d'une enveloppe — rien d'autre ne peut le faire.
 2. Poser une porte là où le plan la dessine : la porte des domestiques est dans
    l'angle près du salon, pas au centre de la cloison.
+3. Ouvrir un mur **sur toute sa longueur**, quand le plan ne dessine pas là un
+   mur. C'est le cas des cellules : le plan du quartier de détention VIP comme
+   celui de la cellule de haute sécurité tracent toute la façade de chaque
+   cellule en barreaux. L'ouverture fait donc la largeur de la façade, il ne
+   reste aucun mur à cet endroit, et ce qui ferme la cellule est la grille qui
+   s'y dresse — une structure de type `bars`, percée d'une porte au milieu.
 
 ### Les portes ne sont pas stockées
 
@@ -86,6 +92,13 @@ communiquent ; un espace qui n'en partage aucune est scellé. Les ouvertures son
 C'est délibéré : on ne peut pas laisser traîner une porte qui ne mène nulle
 part après avoir déplacé une cloison de deux mètres. En revanche une salle
 devenue inaccessible fait échouer `validateBlueprint`, donc la suite de tests.
+
+Le revers est qu'une ouverture calculée peut tomber sur ce qui se dresse contre
+le mur : la salle de banquet et la promenade bâbord partagent un mur, et la
+porte que la géométrie y centrait ouvrait au milieu de la scène. C'est un
+`seal` — la scène occupe ce mur sur toute la profondeur de la salle, et on
+entre par le vestibule. Un mur aveugle est une affirmation sur le navire, donc
+il est écrit, avec sa raison, plutôt que deviné.
 
 ### `locationId`
 
@@ -135,10 +148,11 @@ carte `/ship` et la visite montrent le même pont 1 — et l'intérieur est un
 **niveau à part**, tracé à sa taille réelle, dans lequel on entre par la porte.
 C'est la structure de `/ship` (plan de pont → plan de salle), en volume.
 
-Trente-trois pièces ont ainsi leur intérieur : les quatorze appartements
-princiers, les huit plans de salle qui comptent plus d'une pièce — quartier
-de détention VIP, quartiers des soldats, bureau de la Justice, hôpital central,
-cinéplexe, bureau Cha-R, cabines standard, cabines de première classe — puis
+Trente-quatre pièces ont ainsi leur intérieur : les quatorze appartements
+princiers, les neuf plans de salle qui comptent plus d'une pièce — quartier
+de détention VIP, cellule de haute sécurité, quartiers des soldats, bureau de la
+Justice, hôpital central, cinéplexe, bureau Cha-R, cabines standard, cabines de
+première classe — puis
 trois volumes qu'aucune boîte de pont ne peut contenir : le salon du Roi, que le
 chap. 382 montre du sol au plafond ; la chambre funéraire, dont le plan de
 salle donne une rotonde de vingt mètres là où le pont ne réserve qu'un tambour
@@ -153,7 +167,7 @@ un : la planque des Heil-Ly, dont le plan donne cinq pièces derrière une porte
 que le chap. 356 dit dissimulée sans dire où. S'y ajoute un canot de
 sauvetage : le chap. 383 en montre l'intérieur, et une capsule de cinq mètres
 n'est pas une salle du pont mais un volume posé dessus, dans lequel on entre
-par son écoutille. Les 23 autres plans locaux ne dessinent qu'une salle, que le
+par son écoutille. Les 22 autres plans locaux ne dessinent qu'une salle, que le
 pont porte déjà.
 
 Chaque plan a **sa propre échelle**, choisie sur ce que ses pièces doivent
@@ -196,16 +210,30 @@ Le second : **ce qu'une planche montre est ce que la pièce est** —
 
 - la chambre funéraire est une couronne de quatorze cercueils autour d'un
   reliquaire (chap. 371) ;
-- la salle de banquet est sa scène, l'estrade du trône et le buffet qui la sert
-  (chap. 383) ;
+- la salle de banquet est sa scène, l'estrade du trône, les tables rondes du
+  banquet inaugural (chap. 359) et le buffet qui la sert (chap. 383) ; les
+  soixante-douze tables sont posées en quatre rangées, l'allée du trône laissée
+  libre entre la deuxième et la troisième — la planche montre des rangées de
+  tables rondes, la reconstruction leur donne un pas de six mètres ;
 - le réfectoire du pont 5 est ses longues tables en rangées (chap. 377) ;
 - le pont des canots est les capsules alignées sur leurs berceaux (chap. 383) ;
 - la salle de projection est sa scène à cadre sous rideau, ses loges et son
   parterre (chap. 359) ;
 - l'entrepôt du pont 5 est ses rangées de caisses, que son plan dessine et que
   la reconstruction pose dans les travées entre les piliers ;
+- une cellule est sa **grille** : les plans de détention dessinent toute la
+  façade de chaque cellule en barreaux, et la cellule de haute sécurité est en
+  outre l'entrave murale à laquelle le chap. 350 enchaîne Beyond Netero ;
 - et l'espace entre la coque et le vaisseau est fait des ressorts qui portent
   l'un dans l'autre (chap. 406).
+
+Une grille (`kind: "bars"`) est stockée comme **un seul** volume — sa `size`
+donne la longueur de la travée et l'épaisseur de l'écran — parce que c'est ce
+qu'elle fait : on la contourne, et on passe par la porte laissée à côté. Elle
+est en revanche **dessinée** comme la rangée de montants qu'elle est, sous son
+bandeau : une cellule dans laquelle on ne voit pas est une réserve. Les deux ne
+peuvent pas diverger, `grilleBars` posant chaque montant à l'intérieur du
+contour que les collisions lisent déjà.
 
 Les laisser de côté aurait dessiné un tambour vide, une halle vide et un hangar
 vide — et affirmé en creux que les planches ne montrent rien.

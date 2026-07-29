@@ -315,9 +315,12 @@ const localSpotAnchors: Record<string, { occupants: Record<string, Spot>; fallba
       'prince-halkenburg': { x: 50, y: 78.46 },
     },
   },
-  // `local/banquet-hall.svelte`, 1000 × 800, contents offset by (50, 80). The
-  // plan draws a throne platform at the bottom and a 6 × 4 grid of round tables
-  // whose centres land on x = 200 + col × 120 and y = 280 + row × 90.
+  // `local/banquet-hall.svelte`, 1000 × 320, six pixels to the metre with the
+  // vestibule's fore wall at the origin — the asset draws the hall the ch. 349
+  // deck plan cuts, 157.5 m long and 24.5 m deep, and the same grid of tables
+  // the blueprint lays: four rows on y = -24.5, -19.5, -12 and -7, eighteen
+  // columns from x = -58 at a six-metre pitch, and the throne's axis left open
+  // between the second row and the third.
   //
   // Only the throne is depicted: the inaugural banquet of ch. 359 seats Nasubi
   // on it, and the hall holds him nowhere else. Everyone else is at a table the
@@ -326,32 +329,33 @@ const localSpotAnchors: Record<string, { occupants: Record<string, Spot>; fallba
   // the child. Those are readings of the scene, not copies of it.
   'tier-1-banquet-hall': {
     occupants: {
-      'nasubi-hui-guo-rou': { x: 50, y: 85 },
-      'prince-benjamin': { x: 68, y: 35, inferred: true },
+      // The dais, thirteen metres in front of the stage.
+      'nasubi-hui-guo-rou': { x: 13.75, y: 66.09 },
+      'prince-benjamin': { x: 63.7, y: 49.69, inferred: true },
       // Ch. 362 has Tserriednich and Tubeppa strike their alliance here, so
       // they share a table.
-      'prince-tserriednich': { x: 30.5, y: 57.5, inferred: true },
-      'prince-tubeppa': { x: 33.5, y: 57.5, inferred: true },
-      'prince-camilla': { x: 68, y: 57.5, inferred: true },
-      'prince-zhanglei': { x: 80, y: 57.5, inferred: true },
+      'prince-tserriednich': { x: 34.1, y: 73.13, inferred: true },
+      'prince-tubeppa': { x: 35.7, y: 73.13, inferred: true },
+      'prince-camilla': { x: 63.7, y: 73.13, inferred: true },
+      'prince-zhanglei': { x: 70.9, y: 73.13, inferred: true },
       // Halkenburg keeps a corner until he crosses to the throne in ch. 361 to
       // tell his father he withdraws. The corner is the habitual place; the
       // crossing is the freeze-frame the anchors deliberately do not chase.
-      'prince-halkenburg': { x: 80, y: 35, inferred: true },
-      'prince-kacho': { x: 18.5, y: 46.25, inferred: true },
-      'prince-fugetsu': { x: 21.5, y: 46.25, inferred: true },
-      'queen-oito': { x: 44, y: 57.5, inferred: true },
-      'oito-nephew-fake-woble': { x: 46.5, y: 57.5, inferred: true },
+      'prince-halkenburg': { x: 81.7, y: 49.69, inferred: true },
+      'prince-kacho': { x: 23.3, y: 59.06, inferred: true },
+      'prince-fugetsu': { x: 24.9, y: 59.06, inferred: true },
+      'queen-oito': { x: 48.5, y: 73.13, inferred: true },
+      'oito-nephew-fake-woble': { x: 50.1, y: 73.13, inferred: true },
       // Momoze is in a corner, and the catalogue's own biographies seat her
       // beside Marayam, who stays with their mother Sevanti: one corner table
       // for the three of them. Which corner is not depicted.
-      'sevanti-hui-guo-rou': { x: 17, y: 35, inferred: true },
-      'prince-marayam': { x: 20, y: 35, inferred: true },
-      'prince-momoze': { x: 23, y: 35, inferred: true },
+      'sevanti-hui-guo-rou': { x: 19.7, y: 49.69, inferred: true },
+      'prince-marayam': { x: 20.5, y: 49.69, inferred: true },
+      'prince-momoze': { x: 21.3, y: 49.69, inferred: true },
     },
-    // The hall seats two hundred: anyone the chapter does not single out belongs
-    // among the tables, not on the king's platform.
-    fallback: { x: 56, y: 46.25, inferred: true },
+    // The hall seats the whole ceremony: anyone the chapter does not single out
+    // belongs among the tables, not on the king's dais.
+    fallback: { x: 52.9, y: 59.06, inferred: true },
   },
   // `local/heilly-hideout.svelte`, 1100 × 760, contents offset by (55, 95).
   // Morena runs Heil-Ly from the head of the communal table, ch. 378 onward, and

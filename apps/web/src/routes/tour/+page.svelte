@@ -30,6 +30,7 @@
     aimsAtSolids,
     arriveInTour,
     castInTour,
+    identityOf,
     worksInTour,
     worksOnTheBody,
     wormExit,
@@ -71,6 +72,16 @@
   const sortedSpaces = $derived(
     [...plan.spaces].sort((a, b) => nameOf(a).localeCompare(nameOf(b), french ? 'fr' : 'en')),
   )
+
+  /**
+   * A room under the name the walk currently gives it.
+   *
+   * Grimmel's arrow swaps what two rooms are, so every place the walk says a
+   * room's name — the read-out, the index, the panel — has to ask this rather
+   * than read the blueprint directly, or the same room ends up called two
+   * things on one screen.
+   */
+  const named = (space: Space) => identityOf(ship, world, space)
 
   const provenanceLabel = (space: Space) => $t.tour.provenance[space.provenance]
 
@@ -343,7 +354,7 @@
               : ''}
           </p>
           <p class="text-lg font-semibold leading-tight text-[#FFFFF0]">
-            {currentSpace ? nameOf(currentSpace) : $t.tour.outside}
+            {currentSpace ? nameOf(named(currentSpace)) : $t.tour.outside}
           </p>
           {#if currentSpace && inEmptyCopy}
             <!-- An isolated room reached from outside: the walls are the ship's
@@ -357,13 +368,13 @@
           {:else if currentSpace}
             <span
               class="mt-1 inline-block rounded border px-1.5 py-0.5 text-[10px] uppercase tracking-wider {provenanceClass(
-                currentSpace,
+                named(currentSpace),
               )}"
             >
-              {provenanceLabel(currentSpace)}
+              {provenanceLabel(named(currentSpace))}
             </span>
             <p class="mt-1 text-xs leading-snug text-[#FFFFF0]/60">
-              {sourceOf(currentSpace) || $t.tour.noSource}
+              {sourceOf(named(currentSpace)) || $t.tour.noSource}
             </p>
           {/if}
         </div>
@@ -390,7 +401,7 @@
               ? $t.tour.hatsu.solids.aiming(nameOf(aimedSolidAt))
               : $t.tour.hatsu.solids.aimingNothing}
           {:else}
-            {aimedAt ? $t.tour.hatsu.aiming(nameOf(aimedAt)) : $t.tour.hatsu.aimingNothing}
+            {aimedAt ? $t.tour.hatsu.aiming(nameOf(named(aimedAt))) : $t.tour.hatsu.aimingNothing}
           {/if}
         </p>
       {/if}
@@ -449,6 +460,8 @@
           {report}
           {aimedAt}
           {aimedSolidAt}
+          at={position}
+          standingIn={currentSpace?.id ?? null}
           {nameOf}
           {sourceOf}
           onRelease={release}
@@ -524,13 +537,13 @@
                         ? `color-mix(in srgb, ${technique.color} 18%, transparent)`
                         : undefined}
                     >
-                      <span class="truncate">{nameOf(space)}</span>
+                      <span class="truncate">{nameOf(named(space))}</span>
                       <span
                         class="shrink-0 rounded border px-1 py-px text-[9px] uppercase {provenanceClass(
-                          space,
+                          named(space),
                         )}"
                       >
-                        {provenanceLabel(space)}
+                        {provenanceLabel(named(space))}
                       </span>
                     </button>
                   </li>
@@ -550,13 +563,13 @@
                     ? 'bg-[#FFD700]/15 text-[#FFD700]'
                     : 'text-[#FFFFF0]/80'}"
                 >
-                  <span class="truncate">{nameOf(space)}</span>
+                  <span class="truncate">{nameOf(named(space))}</span>
                   <span
                     class="shrink-0 rounded border px-1 py-px text-[9px] uppercase {provenanceClass(
-                      space,
+                      named(space),
                     )}"
                   >
-                    {provenanceLabel(space)}
+                    {provenanceLabel(named(space))}
                   </span>
                 </button>
               </li>

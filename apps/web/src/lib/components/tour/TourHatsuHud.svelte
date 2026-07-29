@@ -11,6 +11,8 @@
   import {
     TOUR_HATSU_KINDS,
     aimsAtSolids,
+    dialReading,
+    identityOf,
     solidById,
     worksOnTheBody,
     type TourReport,
@@ -36,6 +38,9 @@
     aimedAt: Space | null
     /** The solid down the reticle, for the techniques that work on solids. */
     aimedSolidAt: Structure | null
+    /** Where the visitor stands, which the dial reads a distance off. */
+    at: [number, number]
+    standingIn: string | null
     nameOf: (entity: { name: string; nameFr: string }) => string
     /** What a room rests on, in the visitor's language: the flock brings it back. */
     sourceOf: (entity: { source: string; sourceFr: string }) => string
@@ -50,6 +55,8 @@
     report,
     aimedAt,
     aimedSolidAt,
+    at,
+    standingIn,
     nameOf,
     sourceOf,
     onRelease,
@@ -64,8 +71,26 @@
 
   const roomName = (id: string) => {
     const space = ship.spaces.get(id)
-    return space ? nameOf(space) : id
+    // Named as the walk names it, so a room the arrow swapped is not called two
+    // different things by two different panels.
+    return space ? nameOf(identityOf(ship, world, space)) : id
   }
+
+  /** What the dial reads from where the visitor is standing, this instant. */
+  const dial = $derived(dialReading(ship, world, at, standingIn))
+
+  /** The verses, as lines rather than as indices. */
+  const written = $derived(
+    world.verses.map((verse) => ({
+      room: roomName(verse.spaceId),
+      lines: [
+        $t.tour.hatsu.verse.provenance[verse.lines[0]],
+        $t.tour.hatsu.verse.ways[verse.lines[1]],
+        $t.tour.hatsu.verse.standing[verse.lines[2]],
+        $t.tour.hatsu.verse.level[verse.lines[3]],
+      ],
+    })),
+  )
 
   const solidName = (id: string) => {
     const solid = solidById(ship, world, id)
@@ -269,6 +294,45 @@
         return say.deduced(report.what, report.strength)
       case 'nothing-to-deduce':
         return say.nothingToDeduce
+
+      case 'owl-attached':
+        return say.owlAttached(report.rooms)
+      case 'owl-recalled':
+        return say.owlRecalled(report.rooms)
+      case 'foreseen':
+        return say.foreseen(roomName(report.spaceId))
+      case 'diverged':
+        return say.diverged(roomName(report.spaceId), roomName(report.wentTo))
+      case 'written':
+        return say.written(roomName(report.spaceId))
+      case 'line-taken':
+        return say.lineTaken(roomName(report.spaceId), report.lines)
+      case 'poem-read':
+        return say.poemRead(report.strength)
+      case 'dial-set':
+        return say.dialSet(roomName(report.spaceId))
+      case 'dial-read':
+        return say.dialRead(roomName(report.spaceId), report.reading)
+      case 'droplet-sent':
+        return say.dropletSent(roomName(report.spaceId), report.left)
+      case 'droplets-dry':
+        return say.dropletsDry
+      case 'droplet-expired':
+        return say.dropletExpired(roomName(report.spaceId))
+      case 'name-taken':
+        return say.nameTaken(roomName(report.spaceId))
+      case 'counterattack':
+        return say.counterattack(roomName(report.spaceId), report.released)
+      case 'marked-victim':
+        return say.markedVictim(roomName(report.spaceId))
+      case 'sacrifice-found':
+        return say.sacrificeFound(roomName(report.spaceId))
+      case 'curse-fell':
+        return say.curseFell(roomName(report.victim), roomName(report.sacrifice))
+      case 'souls-swapped':
+        return say.soulsSwapped(roomName(report.a), roomName(report.b))
+      case 'arrow-drawn':
+        return say.arrowDrawn(roomName(report.spaceId))
     }
   })
 
@@ -307,6 +371,25 @@
         label: held.sealed,
         value: ['', '👁', '👁 👂', '👁 👂 🗣'][world.sealed],
       })
+    }
+    if (world.owl) rows.push({ label: held.owl, value: `${world.trail.length}` })
+    if (world.foreseen) rows.push({ label: held.foreseen, value: roomName(world.foreseen.spaceId) })
+    if (world.poem.length) {
+      rows.push({ label: held.poem, value: world.poem.map(roomName).join(' → ') })
+    }
+    if (world.dial) {
+      rows.push({
+        label: held.dial,
+        value: dial ? `${roomName(world.dial)} · ${dial.reading}` : roomName(world.dial),
+      })
+    }
+    for (const drop of world.droplets) {
+      rows.push({ label: held.droplets, value: `${roomName(drop.spaceId)} · ${drop.life}` })
+    }
+    for (const id of world.ninelives) rows.push({ label: held.ninelives, value: roomName(id) })
+    if (world.curse) rows.push({ label: held.curse, value: roomName(world.curse.victim) })
+    for (const [a, b] of world.souls) {
+      rows.push({ label: held.souls, value: `${roomName(a)} ⇄ ${roomName(b)}` })
     }
     const body = world.body
     if (body.enhance) rows.push({ label: held.enhance, value: `${body.enhance} / 6` })
@@ -425,6 +508,20 @@
     </dl>
   {:else}
     <p class="mt-1 text-[11px] text-[#FFFFF0]/40">{$t.tour.hatsu.nothingHeld}</p>
+  {/if}
+
+  {#if written.length}
+    <p class="mt-3 text-[10px] uppercase tracking-widest text-[#FFFFF0]/45">
+      {$t.tour.hatsu.holds.verses}
+    </p>
+    {#each written as verse (verse.room)}
+      <div class="mt-1 border-l-2 border-[#FFFFF0]/15 pl-2">
+        <p class="text-[10px] uppercase tracking-wider text-[#FFFFF0]/40">{verse.room}</p>
+        {#each verse.lines as line (line)}
+          <p class="text-[11px] italic leading-snug text-[#FFFFF0]/70">{line}</p>
+        {/each}
+      </div>
+    {/each}
   {/if}
 
   <button

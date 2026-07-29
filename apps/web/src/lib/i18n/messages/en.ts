@@ -168,6 +168,33 @@ export const en = {
 
         // On the solids. A room is a place and a solid is a thing: these all
         // say what happened to a thing, and never what happened to a page.
+        owlAttached: (rooms: number) =>
+          `The owl is with you · ${rooms} room${rooms === 1 ? '' : 's'} already on the trail, and it keeps them`,
+        owlRecalled: (rooms: number) => `The owl is off · ${rooms} kept anyway, as the walk always does`,
+        foreseen: (room: string) => `Ten seconds on: ${room} · the vision does not revise itself`,
+        diverged: (room: string, went: string) => `The prediction still reads ${room}; you went to ${went}`,
+        written: (room: string) => `The pen has written ${room} down`,
+        lineTaken: (room: string, lines: number) => `${room} taken · line ${lines} of 3`,
+        poemRead: (strength: number) =>
+          strength
+            ? `The three read as one route · ${strength} of them actually adjoin, and it carries`
+            : `Three lines that do not meet · it will carry you, and badly`,
+        dialSet: (room: string) => `The dial is set to ${room}`,
+        dialRead: (room: string, reading: number) => `${room} · reading ${reading}`,
+        dropletSent: (room: string, metres: number) =>
+          `A droplet found ${room}, ${metres} m off — nowhere the walk has been`,
+        dropletsDry: 'Every room has been walked into · there is nothing left to look for',
+        dropletExpired: (room: string) => `The droplet on ${room} has dried up`,
+        nameTaken: (room: string) => `${room} has the cat's name · kill it and it answers`,
+        counterattack: (room: string, released: number) =>
+          `${room} was killed, and answered · ${released} hold${released === 1 ? '' : 's'} taken off whoever did it`,
+        markedVictim: (room: string) =>
+          `${room} is marked · the sacrifice was chosen among its own and hidden from you`,
+        sacrificeFound: (room: string) => `The sacrifice is in ${room}`,
+        curseFell: (victim: string, sacrifice: string) =>
+          `The sacrifice was spent in ${sacrifice} · ${victim} is gone with it`,
+        soulsSwapped: (a: string, b: string) => `${a} and ${b} woke as each other · both walls stand where they stood`,
+        arrowDrawn: (room: string) => `The bow is drawn on ${room} · strike a second`,
         reinforced: (committed: number) =>
           `Aura committed · ${committed} of 6 · you go further and faster for it`,
         boarded: 'Boarded · load up to five and they are what fuels the run',
@@ -285,7 +312,47 @@ export const en = {
         of: (solid: string, room: string) => `${solid} — ${room}`,
         copy: 'copy',
       },
+      /**
+       * The automatic writing. Four lines, each drawn off something the room's
+       * own record actually says, so the prophecy is cryptic and never false.
+       */
+      verse: {
+        provenance: [
+          "A page holds it up, and the page does not blink.",
+          "The cross-section swears to it, and shows no inside.",
+          "Only this archive's own hand draws it.",
+          "Nothing draws it. It stands so the deck can.",
+        ],
+        ways: [
+          "No way leads in. It waits to be reached.",
+          "One threshold, and everything passes through it.",
+          "Few doors, and each of them chosen.",
+          "Many ways in, and none of them quiet.",
+        ],
+        standing: [
+          "Nothing stands here. That is the claim.",
+          "A little stands, and it is what the room is.",
+          "What stands here fills it before you do.",
+          "You will walk around more than you walk through.",
+        ],
+        level: [
+          "Above, someone is still asleep.",
+          "Below, the springs take the weight.",
+          "The hull is closer than it looks.",
+          "It is not the deck that decides this one.",
+        ],
+      },
       holds: {
+        trail: 'The trail',
+        owl: 'The owl keeps',
+        foreseen: 'Ten seconds on',
+        verses: 'Written down',
+        poem: 'The poem',
+        dial: 'The dial reads',
+        droplets: 'Droplets out',
+        ninelives: "The cat's name on",
+        curse: 'Marked',
+        souls: 'Woke as',
         enhance: 'Aura committed',
         riding: 'Aboard',
         eyes: 'Eyes at',

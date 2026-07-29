@@ -161,6 +161,33 @@ export const fr: Messages = {
           `Blinky refuse ${room} · du Nen la retient, et c'est ainsi que le piège se voit`,
         dispatched: (room) => `Un oiseau revient de ${room} avec ce sur quoi la pièce repose`,
 
+        owlAttached: (rooms) =>
+          `Le hibou vous suit · ${rooms} pièce${rooms === 1 ? '' : 's'} déjà sur le fil, et il les garde`,
+        owlRecalled: (rooms) => `Le hibou est rappelé · ${rooms} gardées quand même, comme toujours`,
+        foreseen: (room) => `Dix secondes plus tard : ${room} · la vision ne se corrige pas`,
+        diverged: (room, went) => `La prédiction dit toujours ${room} ; vous êtes allé dans ${went}`,
+        written: (room) => `La plume a écrit ${room}`,
+        lineTaken: (room, lines) => `${room} retenue · vers ${lines} sur 3`,
+        poemRead: (strength) =>
+          strength
+            ? `Les trois se lisent comme une route · ${strength} d'entre elles se touchent vraiment, et ça porte`
+            : `Trois vers qui ne se rejoignent pas · ça vous portera, et mal`,
+        dialSet: (room) => `Le cadran est réglé sur ${room}`,
+        dialRead: (room, reading) => `${room} · relevé ${reading}`,
+        dropletSent: (room, metres) =>
+          `Une goutte a trouvé ${room}, à ${metres} m — là où la visite n'est jamais allée`,
+        dropletsDry: "Chaque pièce a été foulée · il ne reste rien à chercher",
+        dropletExpired: (room) => `La goutte sur ${room} s'est asséchée`,
+        nameTaken: (room) => `${room} porte le nom du chat · tuez-la et elle répond`,
+        counterattack: (room, released) =>
+          `${room} a été tuée, et a répondu · ${released} emprise${released === 1 ? '' : 's'} arrachée${released === 1 ? '' : 's'} à qui l'a fait`,
+        markedVictim: (room) =>
+          `${room} est marquée · le sacrifice a été choisi parmi les siens et vous est caché`,
+        sacrificeFound: (room) => `Le sacrifice est dans ${room}`,
+        curseFell: (victim, sacrifice) =>
+          `Le sacrifice a été consommé dans ${sacrifice} · ${victim} s'en va avec lui`,
+        soulsSwapped: (a, b) => `${a} et ${b} se sont réveillées l'une dans l'autre · les deux murs sont restés`,
+        arrowDrawn: (room) => `L'arc est bandé sur ${room} · frappez-en une seconde`,
         reinforced: (committed) =>
           `Aura engagée · ${committed} sur 6 · vous allez plus loin et plus vite`,
         boarded: 'Embarqué · chargez-en cinq, et ce sont eux le carburant',
@@ -274,7 +301,43 @@ export const fr: Messages = {
         of: (solid, room) => `${solid} — ${room}`,
         copy: 'copie',
       },
+      verse: {
+        provenance: [
+          "Une planche la soutient, et la planche ne cille pas.",
+          "La coupe en atteste, et n'en montre pas l'intérieur.",
+          "Seule la main de cette archive la dessine.",
+          "Rien ne la dessine. Elle tient pour que le pont tienne.",
+        ],
+        ways: [
+          "Aucun chemin n'y mène. Elle attend qu'on l'atteigne.",
+          "Un seuil, et tout passe par lui.",
+          "Peu de portes, et chacune choisie.",
+          "Beaucoup d'accès, et aucun qui soit calme.",
+        ],
+        standing: [
+          "Rien ne s'y dresse. C'est cela, l'affirmation.",
+          "Peu s'y dresse, et c'est ce que la pièce est.",
+          "Ce qui s'y dresse la remplit avant vous.",
+          "Vous contournerez plus que vous ne traverserez.",
+        ],
+        level: [
+          "Au-dessus, quelqu'un dort encore.",
+          "En dessous, les ressorts portent la masse.",
+          "La coque est plus proche qu'il n'y paraît.",
+          "Ce n'est pas le pont qui décide de celle-ci.",
+        ],
+      },
       holds: {
+        trail: 'Le fil',
+        owl: 'Le hibou garde',
+        foreseen: 'Dix secondes plus tard',
+        verses: 'Écrites',
+        poem: 'Le poème',
+        dial: 'Le cadran lit',
+        droplets: 'Gouttes en chasse',
+        ninelives: 'Le nom du chat sur',
+        curse: 'Marquée',
+        souls: 'Réveillée en',
         enhance: 'Aura engagée',
         riding: 'À bord',
         eyes: 'Yeux à',

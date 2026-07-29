@@ -98,6 +98,16 @@ export const TOUR_HATSU_KINDS = [
   'mimicry',
   'melody',
   'predator',
+  // On the record the walk keeps of itself.
+  'surveillance',
+  'future',
+  'prophecy',
+  'poetry',
+  'divination',
+  'blood-search',
+  'resurrection',
+  'curse',
+  'arrow',
 ] as const satisfies readonly HatsuInteractionKind[]
 
 /**
@@ -250,6 +260,35 @@ export interface TourWorld {
   cameFrom: string | null
 
   /**
+   * The walk's record of itself: every room set foot in, in order.
+   *
+   * The last noun, and the only one that is not in the ship at all. The walk
+   * has always known where the visitor is; this is what it remembers of where
+   * they have been, and what the techniques of the fourth wave read, write and
+   * predict. It is kept whether or not anything is watching, because half of
+   * them are about being able to look back.
+   */
+  trail: string[]
+  /** The owl, which keeps what the trail would otherwise let go. */
+  owl: boolean
+  /** Where the ten-second vision says the visitor will be. It does not update. */
+  foreseen: { spaceId: string; at: Vec2 } | null
+  /** What the automatic writing has set down, newest first. */
+  verses: { spaceId: string; lines: number[] }[]
+  /** The three rooms of the poem, and how well they read as one. */
+  poem: string[]
+  /** The room the dial is set to, which it reads a distance off continuously. */
+  dial: string | null
+  /** Droplets out searching, and how many more arrivals they have left. */
+  droplets: { spaceId: string; life: number }[]
+  /** Rooms under Cat's Name: kill one and the counterattack answers. */
+  ninelives: string[]
+  /** The intended victim, and the sacrifice chosen among its own and hidden. */
+  curse: { victim: string; sacrifice: string } | null
+  /** Pairs of rooms whose identities the arrow exchanged. */
+  souls: [string, string][]
+
+  /**
    * What the techniques have made of the visitor themselves.
    *
    * The walk had two nouns — the room and the thing standing in it — and both
@@ -352,6 +391,16 @@ export const EMPTY_WORLD: TourWorld = {
   snakes: null,
   trap: null,
   cameFrom: null,
+  trail: [],
+  owl: false,
+  foreseen: null,
+  verses: [],
+  poem: [],
+  dial: null,
+  droplets: [],
+  ninelives: [],
+  curse: null,
+  souls: [],
   body: RESTING_BODY,
 }
 
@@ -395,6 +444,15 @@ export const worldIsQuiet = (world: TourWorld): boolean =>
   !world.worm &&
   !world.snakes &&
   !world.trap &&
+  !world.owl &&
+  !world.foreseen &&
+  !world.verses.length &&
+  !world.poem.length &&
+  !world.dial &&
+  !world.droplets.length &&
+  !world.ninelives.length &&
+  !world.curse &&
+  !world.souls.length &&
   bodyIsRested(world.body)
 
 /**
@@ -496,6 +554,26 @@ export type TourReport =
   | { kind: 'soothed'; opened: boolean }
   | { kind: 'deduced'; what: string; strength: number }
   | { kind: 'nothing-to-deduce' }
+  // On the record.
+  | { kind: 'owl-attached'; rooms: number }
+  | { kind: 'owl-recalled'; rooms: number }
+  | { kind: 'foreseen'; spaceId: string }
+  | { kind: 'diverged'; spaceId: string; wentTo: string }
+  | { kind: 'written'; spaceId: string }
+  | { kind: 'line-taken'; spaceId: string; lines: number }
+  | { kind: 'poem-read'; strength: number }
+  | { kind: 'dial-set'; spaceId: string }
+  | { kind: 'dial-read'; spaceId: string; reading: number }
+  | { kind: 'droplet-sent'; spaceId: string; left: number }
+  | { kind: 'droplets-dry' }
+  | { kind: 'droplet-expired'; spaceId: string }
+  | { kind: 'name-taken'; spaceId: string }
+  | { kind: 'counterattack'; spaceId: string; released: number }
+  | { kind: 'marked-victim'; spaceId: string }
+  | { kind: 'sacrifice-found'; spaceId: string }
+  | { kind: 'curse-fell'; victim: string; sacrifice: string }
+  | { kind: 'souls-swapped'; a: string; b: string }
+  | { kind: 'arrow-drawn'; spaceId: string }
 
 export interface TourCastResult {
   world: TourWorld
@@ -1211,13 +1289,147 @@ function spawnPointNear(room: Space, at: Vec2): Vec2 {
   return pointInPolygon(at, room.footprint) ? at : centroid(room)
 }
 
+// ── The record ────────────────────────────────────────────────────────────
+//
+// The fourth noun is the only one that is not in the ship: what the walk
+// remembers of itself. Half of these techniques read it, the other half write
+// to it or predict it, and two of them are about what a room *is* rather than
+// where it stands.
+
+/**
+ * A room as the walk should name it.
+ *
+ * Grimmel's arrow exchanges two souls, and the only thing a room has that
+ * could be called one is its identity: what it is called, what stands behind
+ * that claim, and how strong the claim is. The walls stay where they were —
+ * this is not a room that moved, it is a room that woke up as another.
+ */
+export function identityOf(ship: Ship, world: TourWorld, space: Space): Space {
+  for (const [a, b] of world.souls) {
+    const other = space.id === a ? b : space.id === b ? a : null
+    if (!other) continue
+    const soul = ship.spaces.get(other)
+    if (!soul) continue
+    return {
+      ...space,
+      name: soul.name,
+      nameFr: soul.nameFr,
+      category: soul.category,
+      provenance: soul.provenance,
+      source: soul.source,
+      sourceFr: soul.sourceFr,
+    }
+  }
+  return space
+}
+
+/** How the dial reads, from a hundred at the door to nothing across the ship. */
+export function dialReading(ship: Ship, world: TourWorld, at: Vec2, standingIn: string | null) {
+  const wanted = world.dial ? ship.spaces.get(world.dial) : null
+  if (!wanted) return null
+  if (standingIn === wanted.id) return { spaceId: wanted.id, reading: 100 }
+  const { metres, decks } = distanceTo(ship, wanted, at, standingIn)
+  const reading = Math.max(0, Math.round(100 - metres / 1.6 - decks * 12))
+  return { spaceId: wanted.id, reading }
+}
+
+/**
+ * The verse the automatic writing sets down about a room.
+ *
+ * Numbers rather than text: which of the catalogue's lines were drawn, and the
+ * page reads them out in the visitor's own language. Cryptic, but never false —
+ * every line is chosen off the room's own record, which is the point of a
+ * prophecy that has to come true.
+ */
+export function verseFor(ship: Ship, space: Space): number[] {
+  const ways = ship.adjacency.get(space.id)?.length ?? 0
+  const standing = ship.structures.filter((solid) => solid.spaceId === space.id).length
+  return [
+    ['panel', 'plan', 'map', 'inferred'].indexOf(space.provenance),
+    ways === 0 ? 0 : ways === 1 ? 1 : ways < 4 ? 2 : 3,
+    standing === 0 ? 0 : standing < 4 ? 1 : standing < 12 ? 2 : 3,
+    space.tierId.length % 4,
+  ]
+}
+
+/** The rooms the walk has not set foot in, nearest first. */
+export function unwalked(ship: Ship, world: TourWorld, at: Vec2, standingIn: string | null) {
+  return [...ship.spaces.values()]
+    .filter((space) => !world.trail.includes(space.id))
+    .map((space) => ({ space, ...distanceTo(ship, space, at, standingIn) }))
+    .sort((a, b) => a.metres + a.decks * 40 - (b.metres + b.decks * 40))
+}
+
+/**
+ * Where the visitor will be in ten seconds if they carry on as they are.
+ *
+ * The prediction is taken once and never revised, which is the whole of the
+ * technique: everyone else goes on seeing it even when the real walk diverges.
+ */
+export function tenSecondsOn(
+  ship: Ship,
+  world: TourWorld,
+  tierId: string,
+  at: Vec2,
+  heading: number,
+): { spaceId: string; at: Vec2 } | null {
+  const plan = ship.plans.get(tierId)
+  if (!plan) return null
+  const reach = 6 * paceOf(world.body) * 10
+  const ahead: Vec2 = [at[0] - Math.sin(heading) * reach, at[1] - Math.cos(heading) * reach]
+  const landing = plan.spaces.find((space) => pointInPolygon(ahead, space.footprint))
+  const here = plan.spaces.find((space) => pointInPolygon(at, space.footprint))
+  const space = landing ?? here
+  return space ? { spaceId: space.id, at: landing ? ahead : at } : null
+}
+
 /**
  * Runs one cast against the world and returns the next one.
  *
  * Pure, and total: an unhandled kind reports `inert` rather than throwing, so a
  * technique picked from the dock can never break the walk.
+ *
+ * The cast itself is `runCast`; this is where Cat's Name gets to answer it,
+ * because a counterattack is by definition something that happens *because* of
+ * what another technique just did.
  */
 export function castInTour(
+  world: TourWorld,
+  kind: HatsuInteractionKind,
+  input: TourCastInput,
+): TourCastResult {
+  return answerForTheCat(world, runCast(world, kind, input))
+}
+
+/**
+ * A room under Cat's Name that is killed strikes back at whoever killed it.
+ *
+ * Only direct death counts: emptying a room or chaining it shut is a killing,
+ * and everything short of that — moving what stands in it, watching it,
+ * walking through its walls — passes the ability by, exactly as refusing to
+ * kill does. What the counterattack takes is everything the aura was holding.
+ */
+function answerForTheCat(before: TourWorld, result: TourCastResult): TourCastResult {
+  const killed = before.ninelives.find(
+    (id) =>
+      (result.world.emptied.includes(id) && !before.emptied.includes(id)) ||
+      (result.world.shut.includes(id) && !before.shut.includes(id)),
+  )
+  if (!killed) return result
+
+  const released = holdsInWorld(before).length
+  return {
+    world: {
+      ...EMPTY_WORLD,
+      // What the walk remembers of itself is not a hold, and is not taken.
+      trail: result.world.trail,
+      cameFrom: result.world.cameFrom,
+    },
+    report: { kind: 'counterattack', spaceId: killed, released },
+  }
+}
+
+function runCast(
   world: TourWorld,
   kind: HatsuInteractionKind,
   input: TourCastInput,
@@ -1514,6 +1726,106 @@ export function castInTour(
     case 'guardian':
       return { world: { ...world, double: target.id }, report: { kind: 'double-posted', spaceId: target.id } }
 
+    // ── The record ───────────────────────────────────────────────────────
+
+    // The owl retains what was recorded earlier, for later review. The trail
+    // is kept either way; what the owl adds is that you can look back at it,
+    // and that it holds the rooms open through the hull while it does.
+    case 'surveillance':
+      return world.owl
+        ? { world: { ...world, owl: false }, report: { kind: 'owl-recalled', rooms: world.trail.length } }
+        : { world: { ...world, owl: true }, report: { kind: 'owl-attached', rooms: world.trail.length } }
+
+    // Ten seconds on, taken once. The vision does not revise itself: that is
+    // what makes diverging from it worth anything.
+    case 'future': {
+      const seen = tenSecondsOn(ship, world, target.tierId, at, input.heading ?? 0)
+      if (!seen) return { world, report: { kind: 'no-target' } }
+      return { world: { ...world, foreseen: seen }, report: { kind: 'foreseen', spaceId: seen.spaceId } }
+    }
+
+    case 'prophecy': {
+      const verses = [
+        { spaceId: target.id, lines: verseFor(ship, identityOf(ship, world, target)) },
+        ...world.verses.filter((verse) => verse.spaceId !== target.id),
+      ].slice(0, 6)
+      return { world: { ...world, verses }, report: { kind: 'written', spaceId: target.id } }
+    }
+
+    // Three lines make the poem, and the poem is only as strong as the three
+    // read together: rooms that actually adjoin carry it.
+    case 'poetry': {
+      if (world.poem.length >= 3) {
+        return { world: { ...world, poem: [target.id] }, report: { kind: 'line-taken', spaceId: target.id, lines: 1 } }
+      }
+      const poem = [...new Set([...world.poem, target.id])]
+      if (poem.length < 3) {
+        return { world: { ...world, poem }, report: { kind: 'line-taken', spaceId: target.id, lines: poem.length } }
+      }
+      const strength = poem.reduce(
+        (total, room, index) =>
+          total + (ship.adjacency.get(room)?.includes(poem[(index + 1) % poem.length]) ? 1 : 0),
+        0,
+      )
+      return { world: { ...world, poem }, report: { kind: 'poem-read', strength } }
+    }
+
+    case 'divination': {
+      const reading = dialReading(ship, { ...world, dial: target.id }, at, standingIn)
+      return {
+        world: { ...world, dial: target.id },
+        report: reading
+          ? { kind: 'dial-read', spaceId: target.id, reading: reading.reading }
+          : { kind: 'dial-set', spaceId: target.id },
+      }
+    }
+
+    // Her own blood and nothing else: each droplet goes and finds the nearest
+    // room the walk has never set foot in, and expires a few arrivals later.
+    case 'blood-search': {
+      const found = unwalked(ship, world, at, standingIn)[0]
+      if (!found) return { world, report: { kind: 'droplets-dry' } }
+      const droplets = [
+        { spaceId: found.space.id, life: 3 },
+        ...world.droplets.filter((drop) => drop.spaceId !== found.space.id),
+      ].slice(0, 4)
+      return {
+        world: { ...world, droplets },
+        report: { kind: 'droplet-sent', spaceId: found.space.id, left: found.metres },
+      }
+    }
+
+    case 'resurrection':
+      return {
+        world: { ...world, ninelives: [...new Set([...world.ninelives, target.id])] },
+        report: { kind: 'name-taken', spaceId: target.id },
+      }
+
+    // The victim is chosen openly and the sacrifice is chosen among its own and
+    // hidden. Emperor Time is the Gyo that finds it.
+    case 'curse': {
+      const own = ship.adjacency.get(target.id) ?? []
+      const sacrifice = own[target.id.length % Math.max(1, own.length)] ?? target.id
+      return {
+        world: { ...world, curse: { victim: target.id, sacrifice } },
+        report: { kind: 'marked-victim', spaceId: target.id },
+      }
+    }
+
+    // The arrow pierces every defence, so it is not refused by a shut or an
+    // isolated room, and what it exchanges is what a room is.
+    case 'arrow': {
+      if (!world.pairing) {
+        return { world: { ...world, pairing: target.id }, report: { kind: 'arrow-drawn', spaceId: target.id } }
+      }
+      const first = world.pairing
+      if (first === target.id) return { world, report: { kind: 'arrow-drawn', spaceId: target.id } }
+      return {
+        world: { ...world, pairing: null, souls: [...world.souls, [first, target.id]] },
+        report: { kind: 'souls-swapped', a: first, b: target.id },
+      }
+    }
+
     case 'flock': {
       const dispatches = [target.id, ...without(world.dispatches, (id) => id === target.id)].slice(0, 8)
       return { world: { ...world, dispatches }, report: { kind: 'dispatched', spaceId: target.id } }
@@ -1739,6 +2051,17 @@ export function shellsFor(world: TourWorld, ship: Ship): string[] {
     ...(world.eye ? [world.eye] : []),
     ...(world.dowsing ? [world.dowsing] : []),
     ...(world.isolated ? [world.isolated.spaceId] : []),
+    // The record, drawn where it happened: what the owl kept, what was
+    // foreseen, what the poem strung together, what the droplets found.
+    ...(world.owl ? world.trail : []),
+    ...(world.foreseen ? [world.foreseen.spaceId] : []),
+    ...world.poem,
+    ...world.droplets.map((drop) => drop.spaceId),
+    ...(world.dial ? [world.dial] : []),
+    ...world.ninelives,
+    ...(world.curse ? [world.curse.victim] : []),
+    ...world.souls.flat(),
+    ...(world.body.projected ? [world.body.projected.spaceId] : []),
   ]
   return [...new Set(ids)].filter((id) => ship.spaces.has(id))
 }
@@ -1807,6 +2130,41 @@ export function arriveInTour(world: TourWorld, ship: Ship, spaceId: string | nul
   }
 
   if (!spaceId) return { world: next, report, travelTo, punished }
+
+  // The walk remembers where it has been, watched or not.
+  next = { ...next, trail: [...next.trail, spaceId].slice(-200) }
+
+  // A droplet lasts a few arrivals and then dries up.
+  if (next.droplets.length) {
+    const aged = next.droplets.map((drop) => ({ ...drop, life: drop.life - 1 }))
+    const spent = aged.find((drop) => drop.life <= 0)
+    next = { ...next, droplets: aged.filter((drop) => drop.life > 0) }
+    if (spent) report = { kind: 'droplet-expired', spaceId: spent.spaceId }
+  }
+
+  // The poem is a route: stepping into one of its three lines carries you to
+  // the next, and it carries better the better the three read together.
+  const line = next.poem.indexOf(spaceId)
+  if (next.poem.length === 3 && line >= 0 && spaceId !== leaving) {
+    const onward = next.poem[(line + 1) % 3]
+    if (onward !== leaving) {
+      return { world: { ...next, cameFrom: onward }, travelTo: onward, report }
+    }
+  }
+
+  // The sacrifice was chosen among the victim's own and hidden. Walking into
+  // it is what spends it.
+  if (next.curse && spaceId === next.curse.sacrifice) {
+    const victim = next.curse.victim
+    return {
+      world: {
+        ...next,
+        curse: null,
+        emptied: [...new Set([...next.emptied, victim])],
+      },
+      report: { kind: 'curse-fell', victim, sacrifice: spaceId },
+    }
+  }
 
   if (next.watched.some((doll) => doll.spaceId === spaceId)) {
     next = {

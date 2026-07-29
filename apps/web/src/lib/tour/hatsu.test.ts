@@ -11,10 +11,12 @@ import {
   arriveInTour,
   castInTour,
   detachedOn,
+  dialReading,
   doorExit,
   emptiedOn,
   heldSolidIds,
   eyesOf,
+  identityOf,
   linkIsOpen,
   paceOf,
   planSealed,
@@ -23,6 +25,7 @@ import {
   solidNow,
   solidWalls,
   reachOf,
+  verseFor,
   walksThroughWalls,
   wanderOffset,
   worksInTour,
@@ -58,9 +61,10 @@ describe('the technique roster', () => {
 
   it('carries a technique across only when the walk can honour it', () => {
     const teleport = HATSU_PROFILES.find((profile) => profile.kind === 'teleport')!
-    const poetry = HATSU_PROFILES.find((profile) => profile.kind === 'poetry')!
+    // Black Voice needs a mind to take over, and the walk has none by design.
+    const puppet = HATSU_PROFILES.find((profile) => profile.kind === 'puppet')!
     expect(worksInTour(teleport)).toBe(true)
-    expect(worksInTour(poetry)).toBe(false)
+    expect(worksInTour(puppet)).toBe(false)
     expect(worksInTour(null)).toBe(false)
   })
 })
@@ -818,6 +822,134 @@ describe('the music, the chain and the deduction', () => {
     expect(rested.world.body.enhance).toBe(0)
     expect(rested.world.body.dance).toBe(0)
     expect(rested.world.worm?.crossings).toBe(0)
+  })
+})
+
+// ── The record ────────────────────────────────────────────────────────────
+
+describe('what the walk remembers of itself', () => {
+  it('keeps the trail whether or not anything is watching, and never counts it as a hold', () => {
+    const walked = arriveInTour(EMPTY_WORLD, ship, roomA.id)
+    expect(walked.world.trail).toEqual([roomA.id])
+    expect(worldIsQuiet(walked.world)).toBe(true)
+
+    const owl = door(walked.world, 'surveillance', roomA.id)
+    expect(owl.report).toMatchObject({ kind: 'owl-attached', rooms: 1 })
+    expect(worldIsQuiet(owl.world)).toBe(false)
+  })
+
+  it('takes the ten seconds once and does not revise them', () => {
+    const seen = castInTour(EMPTY_WORLD, 'future', {
+      ship,
+      targetId: busiest.space.id,
+      standingIn: busiest.space.id,
+      at: centreOf(busiest.space),
+      heading: 0,
+    })
+    expect(seen.report).toMatchObject({ kind: 'foreseen' })
+    const foreseen = seen.world.foreseen
+    // Walking somewhere else leaves the prediction exactly as it was.
+    const walked = arriveInTour(seen.world, ship, elsewhere.id)
+    expect(walked.world.foreseen).toEqual(foreseen)
+  })
+
+  it("writes a verse off the room's own record, and the same one twice", () => {
+    const written = door(EMPTY_WORLD, 'prophecy', roomA.id)
+    expect(written.world.verses[0].spaceId).toBe(roomA.id)
+    expect(written.world.verses[0].lines).toHaveLength(4)
+    expect(verseFor(ship, roomA)).toEqual(written.world.verses[0].lines)
+  })
+
+  it('reads the dial higher the closer the visitor is', () => {
+    const world = door(EMPTY_WORLD, 'divination', roomA.id).world
+    const near = dialReading(ship, world, centreOf(roomA), roomA.id)!
+    const far = dialReading(ship, world, [900, 900], elsewhere.id)!
+    expect(near.reading).toBe(100)
+    expect(far.reading).toBeLessThan(near.reading)
+  })
+
+  it('sends a droplet to the nearest room never walked into, and lets it dry up', () => {
+    const sent = castInTour(EMPTY_WORLD, 'blood-search', {
+      ship,
+      targetId: roomA.id,
+      standingIn: roomA.id,
+      at: centreOf(roomA),
+    })
+    if (sent.report.kind !== 'droplet-sent') throw new Error('unreachable')
+    expect(sent.world.droplets).toHaveLength(1)
+    expect(sent.world.trail).not.toContain(sent.report.spaceId)
+
+    let world = sent.world
+    for (let step = 0; step < 3; step++) {
+      world = arriveInTour(world, ship, step % 2 ? roomA.id : roomB.id).world
+    }
+    expect(world.droplets).toEqual([])
+  })
+
+  it('takes three lines, then reads them as one route', () => {
+    let world = door(EMPTY_WORLD, 'poetry', roomA.id).world
+    world = door(world, 'poetry', roomB.id).world
+    const read = door(world, 'poetry', busiest.space.id)
+    if (read.report.kind !== 'poem-read') throw new Error('unreachable')
+    expect(read.world.poem).toHaveLength(3)
+    expect(read.report.strength).toBeGreaterThanOrEqual(0)
+
+    // And the route carries: stepping into a line comes out at the next.
+    const carried = arriveInTour({ ...read.world, cameFrom: null }, ship, roomA.id)
+    expect(carried.travelTo).toBe(roomB.id)
+  })
+})
+
+describe('the arrow, the cat and the curse', () => {
+  it('exchanges what two rooms are, and leaves both walls where they stood', () => {
+    const drawn = door(EMPTY_WORLD, 'arrow', roomA.id)
+    expect(drawn.report).toMatchObject({ kind: 'arrow-drawn' })
+    const swapped = door(drawn.world, 'arrow', roomB.id)
+    expect(swapped.report).toMatchObject({ kind: 'souls-swapped' })
+
+    const worn = identityOf(ship, swapped.world, roomA)
+    expect(worn.name).toBe(roomB.name)
+    expect(worn.provenance).toBe(roomB.provenance)
+    expect(worn.footprint).toEqual(roomA.footprint)
+    expect(identityOf(ship, swapped.world, roomB).name).toBe(roomA.name)
+  })
+
+  it('answers a killing with everything the killer was holding', () => {
+    let world = door(EMPTY_WORLD, 'resurrection', busiest.space.id).world
+    world = door(world, 'paper-spy', roomA.id).world
+    world = door(world, 'scout', roomB.id).world
+
+    const killed = door(world, 'vacuum', busiest.space.id)
+    if (killed.report.kind !== 'counterattack') throw new Error('unreachable')
+    expect(killed.report.released).toBeGreaterThan(0)
+    expect(worldIsQuiet(killed.world)).toBe(true)
+  })
+
+  it('lets everything short of a killing pass by', () => {
+    const world = door(EMPTY_WORLD, 'resurrection', busiest.space.id).world
+    const solid = ship.structures.find((s) => s.spaceId === busiest.space.id)!
+    const shoved = castInTour(world, 'command', {
+      ship,
+      targetId: busiest.space.id,
+      targetSolidId: solid.id,
+      standingIn: busiest.space.id,
+      at: centreOf(busiest.space),
+      heading: 0,
+    })
+    expect(shoved.report.kind).not.toBe('counterattack')
+    expect(shoved.world.ninelives).toEqual([busiest.space.id])
+  })
+
+  it("hides the sacrifice among the victim's own, and spends it on arrival", () => {
+    const marked = door(EMPTY_WORLD, 'curse', roomA.id)
+    expect(marked.report).toMatchObject({ kind: 'marked-victim', spaceId: roomA.id })
+    const sacrifice = marked.world.curse!.sacrifice
+    expect(ship.adjacency.get(roomA.id)).toContain(sacrifice)
+
+    const fell = arriveInTour({ ...marked.world, cameFrom: null }, ship, sacrifice)
+    expect(fell.report).toMatchObject({ kind: 'curse-fell', victim: roomA.id })
+    expect(fell.world.emptied).toContain(roomA.id)
+    expect(fell.world.curse).toBeNull()
   })
 })
 

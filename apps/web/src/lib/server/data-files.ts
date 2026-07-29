@@ -1,6 +1,7 @@
 import fs from 'fs/promises'
 import { existsSync } from 'fs'
 import { dirname, join, parse } from 'path'
+import type { BeyondLineage } from '$lib/beyondLineage'
 
 // Resolving the JSON data directory from `import.meta.url` breaks in production:
 // the bundled server chunks live under build/server/chunks/... so the relative
@@ -44,6 +45,8 @@ export interface CatalogCharacter {
   factionId?: string | null
   firstAppearanceChapterId?: string | null
   canonStatus?: string
+  /** Absent once the reader's spoiler cap sits below the chapter that reveals it. */
+  beyondLineage?: BeyondLineage
   /** 'databook' when the post comes from Togashi's sheets and no chapter shows it. */
   positionProvenance?: 'databook'
   shipLocation?: { tier?: number; room?: string; status?: string; role?: string | null } | null

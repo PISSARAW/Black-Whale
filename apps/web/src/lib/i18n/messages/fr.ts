@@ -139,6 +139,16 @@ export const fr: Messages = {
     emptyTag: 'AUCUN RÉSULTAT',
     emptyTitle: 'Le registre n’a renvoyé aucune identité.',
     emptyCopy: 'Changez d’affiliation ou élargissez votre recherche.',
+    beyondLineage: {
+      filterLabel: 'Filtrer par filiation avec Beyond',
+      all: 'Tout le monde',
+      any: 'Enfants de Beyond',
+      confirmed: 'Marqués',
+      suspected: 'Suspectés',
+      badgeConfirmed: 'Enfant de Beyond · marqué',
+      badgeSuspected: 'Enfant de Beyond · suspecté',
+      emptyCopy: 'Aucune fiche ne correspond à la filiation de Beyond à votre limite de lecture.',
+    },
     categories: {
       intruderCell: 'Cellule d’intrus',
       mafiaFamily: 'Famille mafieuse',

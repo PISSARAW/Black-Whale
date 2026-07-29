@@ -3,6 +3,7 @@
   import Seo from '$lib/components/Seo.svelte'
   import { breadcrumbSchema, collectionSchema } from '$lib/seo/schema'
   import { link, t } from '$lib/i18n'
+  import type { BeyondLineageStatus } from '$lib/beyondLineage'
 
   let { data }: { data: PageData } = $props()
   let query = $state('')
@@ -10,6 +11,34 @@
   // below does not depend on the active language.
   const ALL_FACTIONS = '*'
   let activeFaction = $state(ALL_FACTIONS)
+
+  // Beyond's lineage cuts across factions — a marked guard and a suspected
+  // prince never share one — so it is a second axis rather than another faction
+  // chip. The server drops the field past the reader's spoiler cap, so an
+  // absent lineage here means "not one of them, as far as this reader knows".
+  const ANY_LINEAGE = 'any'
+  type LineageFilter = 'all' | typeof ANY_LINEAGE | BeyondLineageStatus
+  let activeLineage = $state<LineageFilter>('all')
+  const lineageOf = (character: any): BeyondLineageStatus | undefined =>
+    character.beyondLineage?.status
+  // The whole control disappears rather than sitting there empty: an always-on
+  // chip would tell a spoiler-capped reader that there is something to reveal.
+  let lineageAvailable = $derived(data.characters.some((character: any) => lineageOf(character)))
+  let lineageFilters: LineageFilter[] = $derived([
+    'all',
+    ANY_LINEAGE,
+    ...(['confirmed', 'suspected'] as BeyondLineageStatus[]).filter((status) =>
+      data.characters.some((character: any) => lineageOf(character) === status),
+    ),
+  ])
+  let lineageLabel = $derived((filter: LineageFilter) =>
+    filter === 'all' ? $t.registry.beyondLineage.all : $t.registry.beyondLineage[filter],
+  )
+  let lineageBadge = $derived((status: BeyondLineageStatus) =>
+    status === 'confirmed'
+      ? $t.registry.beyondLineage.badgeConfirmed
+      : $t.registry.beyondLineage.badgeSuspected,
+  )
 
   const normalize = (value: string) =>
     value
@@ -95,10 +124,14 @@
     data.characters.filter((character: any) => {
       const faction = factionKey(character.factionId)
       const matchesFaction = activeFaction === ALL_FACTIONS || faction === activeFaction
+      const lineage = lineageOf(character)
+      const matchesLineage =
+        activeLineage === 'all' ||
+        (activeLineage === ANY_LINEAGE ? Boolean(lineage) : lineage === activeLineage)
       const haystack = normalize(
-        `${character.canonicalName} ${(character.aliases || []).join(' ')} ${character.description || ''} ${faction} ${factionLabel(faction)}`,
+        `${character.canonicalName} ${(character.aliases || []).join(' ')} ${character.description || ''} ${faction} ${factionLabel(faction)}${lineage ? ` ${lineageBadge(lineage)}` : ''}`,
       )
-      return matchesFaction && haystack.includes(normalize(query.trim()))
+      return matchesFaction && matchesLineage && haystack.includes(normalize(query.trim()))
     }),
   )
 
@@ -174,6 +207,19 @@
         >
       {/each}
     </div>
+    {#if lineageAvailable}
+      <div class="lineage-filter" aria-label={$t.registry.beyondLineage.filterLabel}>
+        <span aria-hidden="true">✶</span>
+        {#each lineageFilters as filter (filter)}
+          <button
+            type="button"
+            class:active={activeLineage === filter}
+            aria-pressed={activeLineage === filter}
+            onclick={() => (activeLineage = filter)}>{lineageLabel(filter)}</button
+          >
+        {/each}
+      </div>
+    {/if}
   </section>
 
   {#if filteredCharacters.length}
@@ -221,6 +267,15 @@
                       : $t.registry.secondary}
                   </div>
                   <h3>{character.canonicalName}</h3>
+                  {#if character.beyondLineage}
+                    <p
+                      class="lineage-badge"
+                      class:suspected={character.beyondLineage.status === 'suspected'}
+                      title={character.beyondLineage.evidence}
+                    >
+                      {lineageBadge(character.beyondLineage.status)}
+                    </p>
+                  {/if}
                   {#if character.aliases?.length}<p class="aliases">
                       {$t.registry.aka} · {character.aliases.slice(0, 2).join(' / ')}
                     </p>{/if}
@@ -244,12 +299,15 @@
     <section class="empty-state" aria-live="polite">
       <span>{$t.registry.emptyTag}</span>
       <h2>{$t.registry.emptyTitle}</h2>
-      <p>{$t.registry.emptyCopy}</p>
+      <p>
+        {activeLineage === 'all' ? $t.registry.emptyCopy : $t.registry.beyondLineage.emptyCopy}
+      </p>
       <button
         type="button"
         onclick={() => {
           query = ''
           activeFaction = ALL_FACTIONS
+          activeLineage = 'all'
         }}>{$t.common.resetFilters}</button
       >
     </section>
@@ -380,6 +438,58 @@
     border-color: var(--line-strong);
     background: rgba(200, 169, 86, 0.08);
     color: var(--accent-gold-bright);
+  }
+  /* Spans both columns: the lineage axis applies on top of whatever faction is
+     selected, so it reads as a second line rather than a neighbour. */
+  .lineage-filter {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    grid-column: 1 / -1;
+    padding-top: 0.55rem;
+    border-top: 1px solid var(--line-subtle);
+  }
+  .lineage-filter > span {
+    padding-left: 0.35rem;
+    color: var(--accent-alert);
+    font-size: 0.6rem;
+  }
+  .lineage-filter button {
+    flex: none;
+    padding: 0.5rem 0.65rem;
+    border: 1px solid transparent;
+    border-radius: 0.35rem;
+    background: transparent;
+    color: var(--text-muted);
+    font: 0.52rem/1 var(--font-mono);
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+  .lineage-filter button:hover {
+    color: var(--text-primary);
+  }
+  .lineage-filter button.active {
+    border-color: color-mix(in srgb, var(--accent-alert) 45%, transparent);
+    background: color-mix(in srgb, var(--accent-alert) 10%, transparent);
+    color: var(--accent-alert);
+  }
+  .lineage-badge {
+    display: inline-block;
+    margin: 0 0 0.35rem;
+    padding: 0.2rem 0.4rem;
+    border: 1px solid color-mix(in srgb, var(--accent-alert) 40%, transparent);
+    border-radius: 0.25rem;
+    color: var(--accent-alert);
+    font: 0.44rem/1 var(--font-mono);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  /* A hypothesis must not look like a confirmed birthmark. */
+  .lineage-badge.suspected {
+    border-style: dashed;
+    border-color: color-mix(in srgb, var(--accent-alert) 25%, transparent);
+    color: color-mix(in srgb, var(--accent-alert) 65%, var(--text-muted));
   }
   .registry-groups {
     display: grid;

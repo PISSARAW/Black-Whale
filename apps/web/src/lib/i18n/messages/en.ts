@@ -140,6 +140,16 @@ export const en = {
     emptyTag: 'NO MATCH',
     emptyTitle: 'The registry returned no identity.',
     emptyCopy: 'Change the affiliation or try a broader search.',
+    beyondLineage: {
+      filterLabel: 'Filter by Beyond’s lineage',
+      all: 'Everyone',
+      any: 'Beyond’s children',
+      confirmed: 'Marked',
+      suspected: 'Suspected',
+      badgeConfirmed: 'Child of Beyond · marked',
+      badgeSuspected: 'Child of Beyond · suspected',
+      emptyCopy: 'No record matches Beyond’s lineage at your reading limit.',
+    },
     categories: {
       intruderCell: 'Intruder cell',
       mafiaFamily: 'Mafia family',

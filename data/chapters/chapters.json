@@ -211,11 +211,11 @@
     "id": "ch-363",
     "number": 363,
     "publicationOrder": 363,
-    "title": "Martial Law",
+    "title": "Nen Beasts",
     "date": "2017-04-18",
     "timeline": [
       {
-        "event": "Benjamin strengthens Martial Law with Balsamilco Might",
+        "event": "Benjamin posts his private soldiers in every prince's quarters, on Balsamilco's counsel",
         "storyDate": "Day 2",
         "charactersInvolved": ["prince-benjamin", "balsamilco-might", "rihan", "musse"],
         "location": "Tier 1"
@@ -230,16 +230,19 @@
         "event": "Tubeppa (5th Princess) transforms her room 1005 into a laboratory",
         "storyDate": "≈ Day 2-3",
         "charactersInvolved": ["prince-tubeppa", "rihan"],
-        "location": "Tier 2 - Room 1005"
+        "location": "Tier 1 - Room 1005"
       }
     ],
     "location": "Tier 1-2",
     "keyEvents": [
-      "Strengthening Martial Law by Benjamin",
+      "Camilla asks the king to confirm that only biological death drops a prince from the contest",
+      "Balsamilco tells Benjamin every prince carries a beast he cannot see",
+      "Benjamin posts his soldiers in the princes' quarters",
+      "Vincent stabs a servant in room 1014",
       "Transfert de Rihan entre factions",
       "Tubeppa etablit son laboratoire"
     ],
-    "description": "Benjamin consolidates his military power. Martial Law applies strictly on the ship. Transfers of guards between princes become a common strategy."
+    "description": "The princes take the measure of their Guardian Spirit Beasts. Zhang Lei reads the massacre of Woble's detail as the key to them, Camilla presses the king on the rules, and Benjamin — who cannot see his own beast — posts his private soldiers in every prince's quarters, which is how Vincent walks into room 1014. The two later entries below, Rihan's transfers and Tubeppa's laboratory, belong to chapters this catalogue has not separated out yet."
   },
   {
     "id": "ch-377",

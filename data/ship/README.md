@@ -266,13 +266,25 @@ c'est la disposition que le pont 1 tient. Les quatorze appartements sont le
 même plan : le jeu de meubles est
 authoré une fois, dans le repère de l'appartement, et répété pour chaque prince.
 
-Un seul en porte davantage, et c'est l'ordre d'autorité qui le veut : le
-chap. 360 montre le salon du **1014**, celui de Woble, et une planche l'emporte
-sur le plan. Ce que Kurapika y trouve s'ajoute donc au jeu commun, pour ce
-seul appartement : le téléphone mural par lequel il appelle Biscuit, l'armoire
-et la table de présentation le long du mur tribord, le fauteuil canné, les deux
-sellettes à sculpture, et les tableaux encadrés du mur lambrissé. Les treize
-autres salons gardent le jeu du plan, parce qu'aucune page ne les montre.
+Deux en portent davantage, et c'est l'ordre d'autorité qui le veut : là où une
+planche entre dans une pièce, elle l'emporte sur le plan, et ce qu'elle montre
+s'ajoute au jeu commun pour ce seul appartement.
+
+- Le **1014**, celui de Woble : le chap. 360 montre son salon tel que Kurapika
+  le trouve — le téléphone mural par lequel il appelle Biscuit, l'armoire et la
+  table de présentation le long du mur tribord, le fauteuil canné, les deux
+  sellettes à sculpture, les tableaux encadrés du mur lambrissé.
+- Le **1003**, celui de Zhang Lei : le chap. 365 montre sa salle à manger, où
+  il reçoit la reine Oito. Le jeu commun y posait une table de 1,6 × 2,4 ; la
+  planche en donne une longue table sculptée avec un fauteuil à haut dossier à
+  chaque bout, et autour la crédence, la statue sur sa sellette, le cadre au
+  mur et le guéridon. C'est le cas où la planche ne complète pas le plan mais
+  le corrige : la table du 1003 est **refaite**, pas doublée, parce que deux
+  tables ne peuvent pas tenir la même place.
+
+Les autres appartements gardent le jeu du plan, parce qu'aucune page ne les
+montre. Ce n'est pas une inégalité de traitement : c'est le dossier qui dit ce
+qu'il sait, pièce par pièce.
 
 Il vaut pour tout plan de salle, pas seulement celui des princes : les douze
 couchettes que chaque chambrée de soldats et chaque salle des Hunters

@@ -1,98 +1,146 @@
 <script lang="ts">
+  /**
+   * The observation deck, drawn from `data/ship/blueprint.json`.
+   *
+   * It used to be drawn as an open-air platform at the bow, over a sea with
+   * waves on it. The Black Whale crosses to the Dark Continent through the
+   * sky, and the deck plan puts this room inboard on Tier 3, starboard of the
+   * corridor, with one wall slanted across the deck. What it looks out of is
+   * the window ch. 380 draws curved, and what lies under it is the container
+   * city on the tiers below — not water.
+   *
+   * So this is a plan like the others: the room at its footprint, the window
+   * along the outboard wall, and the two ways in.
+   */
+
   // Room interactions are not wired up yet. The elements keep their click
   // and keyboard affordances so the behaviour can be attached in one place
   // when it exists; until then this must not log on a public page.
   function handleElementClick(_elementId: string) {}
+
+  function activate(event: KeyboardEvent) {
+    if (event.key !== 'Enter' && event.key !== ' ') return
+    event.preventDefault()
+    ;(event.currentTarget as Element).dispatchEvent(new MouseEvent('click', { bubbles: true }))
+  }
+
+  /** Thirteen pixels to the metre, in the coordinates of the Tier 3 plan. */
+  const SCALE = 13
+  const x = (metres: number) => (metres - 49) * SCALE + 70
+  const y = (metres: number) => (metres + 21) * SCALE + 70
+
+  /** The footprint, corner for corner. */
+  const footprint: [number, number][] = [
+    [49, -21],
+    [101.5, -21],
+    [115.5, 17.5],
+    [49, 17.5],
+  ]
+  const outline = footprint.map(([mx, my]) => `${x(mx)},${y(my)}`).join(' ')
+
+  // The window stands just inside the slanted outboard wall, the way the
+  // blueprint places it: offset 0.35 m in, and 36 of the wall's 41 m long.
+  // These are the ends of that solid, not an eyeballed line along the wall.
+  const bay = { from: [102.02, -18.54], to: [114.32, 15.28] }
 </script>
 
 <svg
-  viewBox="0 0 1000 600"
+  viewBox="0 0 1000 620"
   class="w-full h-full text-[#FFFFF0] bg-[#050505] rounded-lg border border-[#333]"
 >
   <defs>
     <style>
-      .window-frame {
-        fill: #111;
-        stroke: #333;
-        stroke-width: 8;
+      .room {
+        fill: rgba(255, 255, 240, 0.03);
+        stroke: #fffff0;
+        stroke-width: 3;
       }
-      .sky {
-        fill: qradial-gradient(cx 0.5 cy 0.5 r 0.5 fx 0.5 fy 0.5, #334, #001);
+      .window {
+        stroke: #9dc4e0;
+        stroke-width: 9;
+        stroke-linecap: round;
+        cursor: pointer;
       }
-      .sea {
-        fill: #0b2636;
+      .window:hover {
+        stroke: #d8ecfa;
       }
-      .wave {
-        fill: none;
-        stroke: #6b9bb3;
-        stroke-width: 2;
-        opacity: 0.45;
+      .door {
+        stroke: #ffd700;
+        stroke-width: 5;
+        cursor: pointer;
       }
-      .fixture {
-        fill: #202a30;
-        stroke: #73808a;
-        stroke-width: 2;
+      .door:hover {
+        stroke: #fff;
       }
       .label {
         fill: #fffff0;
         font-family: sans-serif;
-        font-size: 16px;
-        font-weight: bold;
+        font-size: 12px;
+        pointer-events: none;
+        text-anchor: middle;
+      }
+      .sublabel {
+        fill: #9dc4e0;
+        font-family: sans-serif;
+        font-size: 11px;
         pointer-events: none;
         text-anchor: middle;
       }
     </style>
-    <linearGradient id="skyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stop-color="#445" />
-      <stop offset="100%" stop-color="#112" />
-    </linearGradient>
   </defs>
 
-  <text x="500" y="40" class="label" font-size="28" fill="#FFD700">Observation Deck (Tier 3)</text>
+  <text x="500" y="30" class="label" font-size="22" font-weight="bold" fill="#FFD700">
+    Observation Deck — Tier 3
+  </text>
+  <text x="500" y="50" class="label" font-size="10" opacity="0.55">
+    66.5 m × 38.5 m, 9 m under the deckhead — ch. 380
+  </text>
 
-  <g transform="translate(0, 80)">
-    <!-- Open-air sightseeing platform at the ship's bow. -->
-    <rect x="50" y="50" width="900" height="180" fill="url(#skyGrad)" />
-    <rect x="50" y="230" width="900" height="220" class="sea" />
-    <line x1="50" y1="230" x2="950" y2="230" stroke="#88a" stroke-width="2" />
-    <path class="wave" d="M60 290 Q130 260 200 290 T340 290 T480 290 T620 290 T760 290 T940 290" />
-    <path class="wave" d="M60 360 Q130 330 200 360 T340 360 T480 360 T620 360 T760 360 T940 360" />
+  <polygon points={outline} class="room" />
 
-    <!-- Canonically shown amenities; their exact spacing is schematic. -->
-    <g transform="translate(120, 330)">
-      {#each [0, 1, 2, 3] as i (i)}
-        <rect class="fixture" x={i * 95} y="0" width="62" height="28" rx="5" />
-        <line x1={i * 95 + 12} y1="28" x2={i * 95 + 4} y2="48" stroke="#73808a" stroke-width="3" />
-        <line x1={i * 95 + 50} y1="28" x2={i * 95 + 58} y2="48" stroke="#73808a" stroke-width="3" />
-      {/each}
-      <text x="175" y="72" class="label" font-size="13">Outdoor lounge chairs</text>
-    </g>
-    <rect class="fixture" x="610" y="320" width="125" height="95" rx="6" />
-    <text x="672" y="370" class="label" font-size="13">Shops</text>
-    <rect class="fixture" x="760" y="320" width="125" height="95" rx="6" />
-    <text x="822" y="370" class="label" font-size="13">Bars</text>
+  <!-- The window, along the outboard wall the plan slants -->
+  <line
+    role="button"
+    tabindex="0"
+    aria-label="Inspect the observation window"
+    onkeydown={activate}
+    class="window"
+    x1={x(bay.from[0])}
+    y1={y(bay.from[1])}
+    x2={x(bay.to[0])}
+    y2={y(bay.to[1])}
+    onclick={() => handleElementClick('observation-window')}
+  />
+  <text x={x(101)} y={y(3)} class="sublabel" transform="rotate(70 {x(101)} {y(3)})">
+    Observation window
+  </text>
+  <text x={x(78)} y={y(-2)} class="label" font-size="11" opacity="0.6">
+    The container city lies on the tiers below
+  </text>
 
-    <path
-      class="window-frame"
-      d="M 0 0 L 1000 0 L 1000 500 L 0 500 Z M 50 50 L 50 450 L 950 450 L 950 50 Z"
-    />
-    <rect
-      role="button"
-      tabindex="0"
-      aria-label="Inspect the observation deck"
-      onkeydown={(event) => {
-        if (event.key === 'Enter' || event.key === ' ') {
-          event.preventDefault()
-          event.currentTarget.dispatchEvent(new MouseEvent('click', { bubbles: true }))
-        }
-      }}
-      x="80"
-      y="260"
-      width="840"
-      height="180"
-      fill="transparent"
-      cursor="pointer"
-      onclick={() => handleElementClick('observation-deck')}
-    />
-  </g>
+  <!-- The two ways in: the starboard corridor, and the promenade aft -->
+  <line
+    role="button"
+    tabindex="0"
+    aria-label="Open the doors"
+    onkeydown={activate}
+    class="door"
+    x1={x(49)}
+    y1={y(-3.25)}
+    x2={x(49)}
+    y2={y(-0.25)}
+    onclick={() => handleElementClick('starboard-corridor')}
+  />
+  <line
+    role="button"
+    tabindex="0"
+    aria-label="Open the doors"
+    onkeydown={activate}
+    class="door"
+    x1={x(107)}
+    y1={y(17.5)}
+    x2={x(110)}
+    y2={y(17.5)}
+    onclick={() => handleElementClick('starboard-promenade')}
+  />
 </svg>

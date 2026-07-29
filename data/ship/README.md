@@ -221,6 +221,12 @@ Le second : **ce qu'une planche montre est ce que la pièce est** —
   parterre (chap. 359) ;
 - l'entrepôt du pont 5 est ses rangées de caisses, que son plan dessine et que
   la reconstruction pose dans les travées entre les piliers ;
+- le casino VIP est sa salle de jeu, les devantures autour et la mezzanine
+  au-dessus (chap. 405) — c'est la mezzanine qui lui donne ses 8 m sous
+  plafond, aucune salle à galerie ne tenant sous les 5 m du pont ;
+- le pont d'observation est la baie par laquelle il regarde dehors
+  (chap. 380) : la planche la dessine incurvée, le plan des ponts dessine en
+  biais le mur qui la porte, et la baie suit le mur ;
 - une cellule est sa **grille** : les plans de détention dessinent toute la
   façade de chaque cellule en barreaux, et la cellule de haute sécurité est en
   outre l'entrave murale à laquelle le chap. 350 enchaîne Beyond Netero ;

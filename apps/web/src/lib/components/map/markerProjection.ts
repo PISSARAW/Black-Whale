@@ -385,10 +385,15 @@ const localSpotAnchors: Record<string, { occupants: Record<string, Spot>; fallba
       keeney: { x: 9, y: 31.67, inferred: true },
     },
   },
-  // `local/casino.svelte`, 1000 × 600, contents offset by (50, 80).
-  // Hisoka plays the unconventional variants in ch. 405.
+  // `local/casino.svelte`, 1000 × 400, sixteen pixels to the metre with the
+  // room turned a quarter turn: fore to the left, port at the top. The gaming
+  // floor is two columns of nine tables, on x = -53.5 and -44.5, from z = 8
+  // aft at a 5.5 m pitch — the same tables the blueprint lays.
+  //
+  // Hisoka plays the unconventional variants in ch. 405. Which table is not
+  // depicted, so he takes one on the port column, mid-room.
   'tier-1-vip-casino': {
-    occupants: { hisoka: { x: 60, y: 46.67 } },
+    occupants: { hisoka: { x: 50.4, y: 34.5, inferred: true } },
   },
   // `local/cineplex.svelte`, 1000 × 600, contents offset by (50, 80).
   // Bonolenov watches from the seating area in ch. 393, wearing Hisoka's face.

@@ -135,7 +135,7 @@ carte `/ship` et la visite montrent le même pont 1 — et l'intérieur est un
 **niveau à part**, tracé à sa taille réelle, dans lequel on entre par la porte.
 C'est la structure de `/ship` (plan de pont → plan de salle), en volume.
 
-Trente-deux pièces ont ainsi leur intérieur : les quatorze appartements
+Trente-trois pièces ont ainsi leur intérieur : les quatorze appartements
 princiers, les huit plans de salle qui comptent plus d'une pièce — quartier
 de détention VIP, quartiers des soldats, bureau de la Justice, hôpital central,
 cinéplexe, bureau Cha-R, cabines standard, cabines de première classe — puis
@@ -148,7 +148,9 @@ pont 4 en ajoute deux du même ordre : la salle de conférence de l'Armée royal
 à qui le pont réserve 52 × 52 m quand son plan dessine une salle de 20 × 15
 autour d'une seule table, et le bureau Xi-Yu et son entrée gardée. Le pont 3 en
 ajoute quatre : la chambre 3101 et sa salle de bains anormale, le poste de
-police et sa fontaine, le tribunal, et le bureau Heil-Ly. S'y ajoute un canot de
+police et sa fontaine, le tribunal, et le bureau Heil-Ly. Le pont 2 en ajoute
+un : la planque des Heil-Ly, dont le plan donne cinq pièces derrière une porte
+que le chap. 356 dit dissimulée sans dire où. S'y ajoute un canot de
 sauvetage : le chap. 383 en montre l'intérieur, et une capsule de cinq mètres
 n'est pas une salle du pont mais un volume posé dessus, dans lequel on entre
 par son écoutille. Les 23 autres plans locaux ne dessinent qu'une salle, que le

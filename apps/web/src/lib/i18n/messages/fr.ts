@@ -104,7 +104,7 @@ export const fr: Messages = {
   tourSources: {
     seoTitle: 'Sources — D’où vient chaque pièce du Black Whale',
     seoDescription:
-      'Les preuves derrière le Black Whale reconstruit, pièce par pièce : le chapitre ou le plan sur lequel repose chacun des 277 espaces, les couloirs que la reconstruction a inventés, et les cloisons murées à dessein.',
+      'Les preuves derrière le Black Whale reconstruit, pièce par pièce : le chapitre ou le plan sur lequel repose chacun des 282 espaces, les couloirs que la reconstruction a inventés, et les cloisons murées à dessein.',
     breadcrumb: 'Sources',
     title: 'D’où vient chaque pièce',
     intro:

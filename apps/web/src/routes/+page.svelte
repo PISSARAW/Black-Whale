@@ -57,6 +57,11 @@
         <a class="primary-action" href={$link('/ship')}
           ><span>{$t.home.exploreShip}</span><i aria-hidden="true">↗</i></a
         >
+        <!-- The deck plans and the walk are two readings of one reconstruction,
+             so the hero offers both rather than burying the tour in the nav. -->
+        <a class="ghost-action" href={$link('/tour')}
+          ><span>{$t.home.walkTheShip}</span><i aria-hidden="true">↗</i></a
+        >
         <a class="secondary-action" href={$link('/characters')}>{$t.home.openRegistry}</a>
       </div>
 
@@ -197,6 +202,32 @@
     box-shadow: 0 14px 35px rgba(200, 169, 86, 0.2);
   }
   .primary-action i {
+    font-style: normal;
+  }
+  /* The same button, unfilled: a second way in, not a second first choice. */
+  .ghost-action {
+    display: flex;
+    min-width: 13rem;
+    justify-content: space-between;
+    gap: 2rem;
+    padding: 0.9rem 1rem;
+    border: 1px solid var(--accent-gold);
+    border-radius: 0.35rem;
+    color: var(--accent-gold-bright);
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    transition:
+      transform 0.25s var(--ease-out),
+      background 0.25s,
+      box-shadow 0.25s;
+  }
+  .ghost-action:hover {
+    transform: translateY(-3px);
+    background: rgba(200, 169, 86, 0.12);
+    box-shadow: 0 14px 35px rgba(200, 169, 86, 0.12);
+  }
+  .ghost-action i {
     font-style: normal;
   }
   .secondary-action {

@@ -207,6 +207,7 @@ export const fr: Messages = {
     titleBrand: 'Black Whale',
     lede: "Une archive de l'arc de la guerre de succession. Elle consigne où se trouve chaque passager, quel corps abrite quelle conscience, quels Nen sont en jeu et ce que chaque personnage croit à cet instant du voyage.",
     exploreShip: 'Explorer le navire',
+    walkTheShip: 'Faire la visite virtuelle',
     openRegistry: 'Ouvrir le registre des passagers',
     latestChapter: 'Dernier chapitre indexé',
     published: (date) => `Publié le ${date}`,

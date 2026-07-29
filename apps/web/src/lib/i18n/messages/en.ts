@@ -209,6 +209,7 @@ export const en = {
     titleBrand: 'Black Whale',
     lede: 'An archive of the Succession War arc. It records where every passenger is, which body holds which consciousness, what Nen is in play, and what each character believes at that moment of the voyage.',
     exploreShip: 'Explore the ship',
+    walkTheShip: 'Take the virtual tour',
     openRegistry: 'Open passenger registry',
     latestChapter: 'Latest indexed chapter',
     published: (date: string) => `Published ${date}`,

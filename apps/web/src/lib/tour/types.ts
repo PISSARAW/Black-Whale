@@ -59,6 +59,7 @@ export type LinkKind = 'stair' | 'lift' | 'bulkhead' | 'door'
  * - `seat` — a sofa or an armchair.
  * - `cabinet` — a wardrobe, a sideboard, a bedside table.
  * - `basin` — a bath or a washstand.
+ * - `painting` — a framed canvas or a window: a solid hung off the floor.
  * - `lifeboat` — an escape pod on its cradle in the launch bay.
  * - `pillar` — a post a panel draws, as opposed to the grid `columnPositions`
  *   lays under a hall too wide to roof without one.
@@ -73,6 +74,7 @@ export type StructureKind =
   | 'seat'
   | 'cabinet'
   | 'basin'
+  | 'painting'
   | 'lifeboat'
   | 'pillar'
 
@@ -174,7 +176,13 @@ export interface Structure {
   size: Vec2
   /** Turned about its own centre, in degrees. */
   rotation: number
-  /** How far it stands off the floor. */
+  /**
+   * How far it is off the floor, for something hung rather than stood: a
+   * canvas on the wall, the window at the end of the King's salon. Zero for
+   * anything resting on the floor, which is nearly everything.
+   */
+  base: number
+  /** How far it stands, measured from `base`. */
   height: number
   /** Cut as a rounded solid of this many sides, or `null` for a rectangle. */
   sides: number | null

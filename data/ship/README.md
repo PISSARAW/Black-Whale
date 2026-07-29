@@ -177,6 +177,12 @@ l'ameublement, et ces meubles portent donc la source du plan et sa provenance
 `plan`. Les quatorze appartements sont le même plan : le jeu de meubles est
 authoré une fois, dans le repère de l'appartement, et répété pour chaque prince.
 
+Il vaut aussi pour ce qu'une **planche** meuble : le salon du Roi et ses sièges
+appariés, ses tableaux et sa baie (chap. 382), la couchette, le lavabo et le
+cabinet de la cellule de première classe (chap. 373), la couchette de la
+cellule de haute sécurité (chap. 359). Le petit mobilier reste dehors : une
+lampe qu'on ne peut pas traverser fait d'une chambre un labyrinthe.
+
 Le second : **ce qu'une planche montre est ce que la pièce est** —
 
 - la chambre funéraire est une couronne de quatorze cercueils autour d'un
@@ -202,10 +208,13 @@ funéraire, montrée au chap. 358 et dessinée ronde au chap. 371.
 | `size`     | L'encombrement en `x` et en `z`, avant rotation.                  |
 | `rotation` | En degrés, autour de son propre centre.                           |
 | `sides`    | `null` pour un rectangle, sinon un polygone régulier à `n` côtés. |
-| `height`   | Ce dont elle dépasse du sol.                                      |
+| `base`     | Sa hauteur d'accrochage : 0 si elle pose au sol.                  |
+| `height`   | Ce dont elle s'élève, mesuré depuis `base`.                       |
 
 `sides` évite d'écrire quatorze quadrilatères à la main : les cercueils sont un
-rectangle tourné vers le centre, les ressorts un seizième de cercle.
+rectangle tourné vers le centre, les ressorts un seizième de cercle. `base` sert
+à ce qui est accroché plutôt que posé — les tableaux du salon du Roi et la
+grande baie du fond, que le chap. 382 dessine à hauteur d'homme et au-dessus.
 
 Les faces d'une structure entrent dans **la même liste de murs** que celles de
 la pièce : un ressort qu'on voit est un ressort qu'on contourne, exactement

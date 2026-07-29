@@ -10,7 +10,7 @@ import {
   validateBlueprint,
 } from './blueprint'
 import { pointInPolygon, polygonArea, sealKey, structureFootprint } from './geometry'
-import type { Blueprint, Space, Vec2 } from './types'
+import type { Blueprint, Space, Structure, Vec2 } from './types'
 
 const ship = buildShip()
 
@@ -307,10 +307,8 @@ describe('what stands in the rooms', () => {
     }
   })
 
-  it('refuses a solid set down in front of a doorway', () => {
-    // Two rooms sharing a wall, and a counter parked across the opening the
-    // geometry derives from it: the room stays connected on paper and shut in
-    // practice, which is the failure the rule exists to catch.
+  /** Two rooms sharing a wall, under a four-metre ceiling. */
+  const sandbox = (structures: Structure[]): Blueprint => {
     const room = (id: string, footprint: Vec2[]): Space => ({
       id,
       tierId: 'tier',
@@ -326,7 +324,7 @@ describe('what stands in the rooms', () => {
       footprint,
     })
 
-    const blocked: Blueprint = {
+    return {
       meta: { unit: 'metre', scale: '', origin: '', note: '' },
       tiers: [
         {
@@ -366,32 +364,51 @@ describe('what stands in the rooms', () => {
       links: [],
       seals: [],
       doors: [],
-      structures: [
-        {
-          id: 'counter',
-          spaceId: 'east',
-          kind: 'counter',
-          name: 'Counter',
-          nameFr: 'Comptoir',
-          at: [1, 0],
-          size: [2, 4],
-          rotation: 0,
-          height: 1.1,
-          sides: null,
-          provenance: 'plan',
-          source: 'a source long enough',
-          sourceFr: 'une source assez longue',
-        },
-      ],
+      structures,
     }
+  }
 
-    expect(validateBlueprint(blocked)).toContain(
+  const solid = (overrides: Partial<Structure> = {}): Structure => ({
+    id: 'counter',
+    spaceId: 'east',
+    kind: 'counter',
+    name: 'Counter',
+    nameFr: 'Comptoir',
+    at: [1, 0],
+    size: [2, 4],
+    rotation: 0,
+    base: 0,
+    height: 1.1,
+    sides: null,
+    provenance: 'plan',
+    source: 'a source long enough',
+    sourceFr: 'une source assez longue',
+    ...overrides,
+  })
+
+  it('refuses a solid set down in front of a doorway', () => {
+    // The room stays connected on paper and shut in practice, which is the
+    // failure the rule exists to catch: nothing in the room knows the doorway
+    // is there, since it is derived from the shared wall.
+    expect(validateBlueprint(sandbox([solid()]))).toContain(
       'structure counter: stands in the doorway west | east',
     )
 
     // Slid off the axis of the door, the same counter is fine.
-    blocked.structures[0].at = [2, 2.5]
-    expect(validateBlueprint(blocked)).toEqual([])
+    expect(validateBlueprint(sandbox([solid({ at: [2, 2.5] })]))).toEqual([])
+  })
+
+  it('hangs a painting off the floor, and refuses one hung through the ceiling', () => {
+    const canvas = (base: number, height: number) =>
+      solid({ id: 'canvas', kind: 'painting', at: [2, 2.5], size: [0.2, 1.6], base, height })
+
+    expect(validateBlueprint(sandbox([canvas(1.4, 1.8)]))).toEqual([])
+    expect(validateBlueprint(sandbox([canvas(1.4, 3)]))).toContain(
+      'structure canvas: goes through the ceiling of east',
+    )
+    expect(validateBlueprint(sandbox([canvas(-0.5, 1.8)]))).toContain(
+      'structure canvas: hangs below the floor',
+    )
   })
 
   it('states every structure source in both languages', () => {

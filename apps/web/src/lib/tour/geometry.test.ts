@@ -330,6 +330,7 @@ describe('structureFootprint', () => {
     at: [0, 0],
     size: [1, 3],
     rotation: 0,
+    base: 0,
     height: 0.85,
     sides: null,
     provenance: 'panel',

@@ -79,6 +79,7 @@ const STRUCTURE_COLOURS: Record<StructureKind, number> = {
   seat: 0x342a24,
   cabinet: 0x2e251d,
   basin: 0x3f4246,
+  painting: 0x1d1a16,
   lifeboat: 0x8a8f96,
   pillar: 0x6a5a4a,
 }
@@ -248,11 +249,12 @@ export function buildTierMesh(plan: TierPlan): TierMesh {
     if (!room) continue
     const outline = structureFootprint(structure)
     const colour = colourFor(hex(STRUCTURE_COLOURS[structure.kind]), structure.provenance)
-    const top = Math.min(tier.elevation + structure.height, heightOf(room))
+    const bottom = tier.elevation + structure.base
+    const top = Math.min(bottom + structure.height, heightOf(room))
 
     for (const [start, end] of iterateEdges(outline)) {
-      builder.quad(start, end, tier.elevation, top, colour)
-      vertical(start, tier.elevation, top)
+      builder.quad(start, end, bottom, top, colour)
+      vertical(start, bottom, top)
       horizontal(start, end, top - OFFSET)
     }
 
@@ -262,6 +264,15 @@ export function buildTierMesh(plan: TierPlan): TierMesh {
       const b = outline[cap[i + 1]]
       const c = outline[cap[i + 2]]
       builder.triangle([a[0], top, a[1]], [b[0], top, b[1]], [c[0], top, c[1]], colour)
+      // Hung off the floor, so it is closed underneath as well as on top.
+      if (structure.base > 0) {
+        builder.triangle(
+          [a[0], bottom, a[1]],
+          [c[0], bottom, c[1]],
+          [b[0], bottom, b[1]],
+          colour,
+        )
+      }
     }
   }
 

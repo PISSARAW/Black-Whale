@@ -264,6 +264,7 @@ const STRUCTURE_KINDS = new Set([
   'seat',
   'cabinet',
   'basin',
+  'painting',
   'lifeboat',
   'pillar',
 ])
@@ -416,6 +417,7 @@ export function validateBlueprint(source: Blueprint = blueprint): string[] {
     if (!structure.sourceFr.trim()) issues.push(`${id}: missing French source`)
     if (!structure.nameFr.trim()) issues.push(`${id}: missing French name`)
     if (structure.height <= 0) issues.push(`${id}: stands no higher than the floor`)
+    if (structure.base < 0) issues.push(`${id}: hangs below the floor`)
     if (structure.sides !== null && structure.sides < 3) {
       issues.push(`${id}: ${structure.sides} sides cannot enclose anything`)
     }
@@ -431,6 +433,11 @@ export function validateBlueprint(source: Blueprint = blueprint): string[] {
     if (polygonArea(outline) < 0.25) issues.push(`${id}: has no usable footprint`)
     if (!outline.every((corner) => pointInPolygon(corner, room.footprint))) {
       issues.push(`${id}: sticks out of ${room.id}`)
+    }
+
+    const tier = source.tiers.find((candidate) => candidate.id === room.tierId)
+    if (tier && structure.base + structure.height > ceilingOf(room, tier) + EPSILON) {
+      issues.push(`${id}: goes through the ceiling of ${room.id}`)
     }
   }
 

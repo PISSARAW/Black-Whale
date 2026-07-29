@@ -1,7 +1,9 @@
 import { describe, expect, it } from 'vitest'
 import { buildShip } from './blueprint'
 import {
+  CAPACITY,
   EMPTY_WORLD,
+  RESTING_BODY,
   SOLID_HATSU_KINDS,
   TOUR_HATSU_KINDS,
   aimedSolid,
@@ -12,12 +14,16 @@ import {
   doorExit,
   emptiedOn,
   heldSolidIds,
+  eyesOf,
   linkIsOpen,
+  paceOf,
   planSealed,
   planWithout,
   shellsFor,
   solidNow,
   solidWalls,
+  reachOf,
+  walksThroughWalls,
   wanderOffset,
   worksInTour,
   wormExit,
@@ -650,6 +656,168 @@ describe('Silent Majority', () => {
     const fed = arriveInTour({ ...loosed.world, cameFrom: null }, ship, victim)
     expect(fed.world.snakes?.fed).toBe(true)
     expect(fed.report).toMatchObject({ kind: 'snakes-fed' })
+  })
+})
+
+// ── The body ──────────────────────────────────────────────────────────────
+
+const on = (
+  world: TourWorld,
+  kind: Parameters<typeof castInTour>[1],
+  extra: Partial<Parameters<typeof castInTour>[2]> = {},
+) =>
+  castInTour(world, kind, {
+    ship,
+    targetId: busiest.space.id,
+    standingIn: busiest.space.id,
+    at: centreOf(busiest.space),
+    ...extra,
+  })
+
+describe('what the techniques make of the visitor', () => {
+  it('buys speed and reach with the aura committed, and stops buying', () => {
+    let world = EMPTY_WORLD
+    expect(paceOf(world.body)).toBe(1)
+    for (let cast = 0; cast < 9; cast++) world = on(world, 'enhance').world
+    expect(world.body.enhance).toBe(6)
+    expect(paceOf(world.body)).toBeGreaterThan(1)
+    expect(reachOf(world.body)).toBeGreaterThan(reachOf(RESTING_BODY))
+  })
+
+  it('changes the height of the eyes and leaves the walk its own', () => {
+    // The ring starts on the visitor's own body, which is where it belongs.
+    const child = on(EMPTY_WORLD, 'transformation')
+    expect(eyesOf(child.world.body)).toBeCloseTo(0.95)
+    const tall = on(child.world, 'transformation')
+    expect(eyesOf(tall.world.body)).toBeCloseTo(3.4)
+    const own = on(tall.world, 'transformation')
+    expect(own.world.body.eyes).toBeNull()
+    expect(eyesOf(own.world.body)).toBe(1.7)
+  })
+
+  it('carries five and no more, and sets them down where it stops', () => {
+    let world = on(EMPTY_WORLD, 'vehicle').world
+    expect(world.body.riding).toBe(true)
+
+    // Kurton's own technique loads what it is aimed at, and so does anything
+    // else aimed at a solid while he is being ridden.
+    const room = ship.structures.filter((solid) => solid.spaceId === busiest.space.id)
+    world = on(world, 'vehicle', { targetSolidId: room[0].id }).world
+    expect(world.body.passengers).toEqual([room[0].id])
+    for (const solid of room.slice(1, CAPACITY)) {
+      world = on(world, 'impact', { targetSolidId: solid.id }).world
+    }
+    expect(world.body.passengers).toHaveLength(CAPACITY)
+    expect(on(world, 'impact', { targetSolidId: room[CAPACITY].id }).report).toEqual({
+      kind: 'hold-full',
+    })
+
+    // Carried is not walked around: a passenger stops being an obstacle.
+    expect(
+      solidWalls(ship, world, busiest.space.tierId).some((wall) =>
+        world.body.passengers.includes(wall.structureId ?? ''),
+      ),
+    ).toBe(false)
+
+    // Aimed at nothing, the same technique is the one that lets you off.
+    const down = on(world, 'vehicle', { standingIn: elsewhere.id, targetSolidId: null })
+    expect(down.report).toMatchObject({ kind: 'alighted', passengers: CAPACITY })
+    expect(down.world.body.passengers).toEqual([])
+  })
+
+  it('rides the passengers around the vehicle rather than where they were picked up', () => {
+    let world = on(EMPTY_WORLD, 'vehicle').world
+    const solid = ship.structures.find((s) => s.spaceId === busiest.space.id)!
+    world = on(world, 'impact', { targetSolidId: solid.id }).world
+
+    const parked = detachedOn(ship, world, busiest.space.tierId)[0].structure.at
+    const carried = detachedOn(ship, world, busiest.space.tierId, 0, [999, 999])[0].structure.at
+    expect(parked).not.toEqual(carried)
+  })
+})
+
+describe('leaving the body behind', () => {
+  it('goes on without it, and comes back to it', () => {
+    const gone = on(EMPTY_WORLD, 'projection')
+    expect(gone.world.body.projected?.spaceId).toBe(busiest.space.id)
+    expect(walksThroughWalls(gone.world)).toBe(true)
+    const back = on(gone.world, 'projection')
+    expect(back.world.body.projected).toBeNull()
+    expect(walksThroughWalls(back.world)).toBe(false)
+  })
+
+  it('is pulled back the moment the body is disturbed', () => {
+    const gone = on(EMPTY_WORLD, 'projection').world
+    const shut = { ...gone, shut: [busiest.space.id] }
+    const next = on(shut, 'enhance')
+    expect(next.report).toMatchObject({ kind: 'body-disturbed', spaceId: busiest.space.id })
+    expect(next.travelTo).toBe(busiest.space.id)
+    expect(next.world.body.projected).toBeNull()
+  })
+})
+
+describe('the music, the chain and the deduction', () => {
+  it('needs the prologue before it can take a shape, and gives it back', () => {
+    const solid = ship.structures.find((s) => s.spaceId === busiest.space.id)!
+    expect(on(EMPTY_WORLD, 'mimicry', { targetSolidId: solid.id }).report).toEqual({
+      kind: 'dance-needed',
+    })
+    const playing = on(EMPTY_WORLD, 'rhythm').world
+    const worn = on(playing, 'mimicry', { targetSolidId: solid.id })
+    expect(worn.world.body.mimic).toBe(solid.id)
+    expect(worn.world.body.eyes).toBeGreaterThan(0)
+    expect(on(worn.world, 'mimicry').world.body.mimic).toBeNull()
+  })
+
+  it('opens the three senses the monkeys sealed, and holds them open', () => {
+    const sealed = { ...EMPTY_WORLD, sealed: 2 }
+    const soothed = on(sealed, 'melody')
+    expect(soothed.world.sealed).toBe(0)
+    expect(soothed.world.body.soothed).toBe(true)
+    expect(soothed.report).toEqual({ kind: 'soothed', opened: true })
+  })
+
+  it('mends what was crushed in the room, and the whole ship under Emperor Time', () => {
+    const solids = ship.structures.filter((s) => s.spaceId === busiest.space.id)
+    let world = on(EMPTY_WORLD, 'impact', { targetSolidId: solids[0].id }).world
+    world = on(world, 'impact', { targetSolidId: solids[1].id }).world
+    const far = ship.structures.find((s) => s.spaceId !== busiest.space.id)!
+    world = on(world, 'impact', { targetSolidId: far.id }).world
+
+    const here = on(world, 'healing')
+    if (here.report.kind !== 'mended') throw new Error('unreachable')
+    expect(here.report.solids).toBe(2)
+    expect(here.world.solids[far.id]).toBeDefined()
+
+    const everywhere = on({ ...world, laidOpen: true }, 'healing')
+    if (everywhere.report.kind !== 'mended') throw new Error('unreachable')
+    expect(everywhere.report.solids).toBe(3)
+  })
+
+  it('gets stronger by naming a hold it has not named before, and runs out', () => {
+    let world = on(EMPTY_WORLD, 'paper-spy').world
+    world = on(world, 'room-isolation').world
+
+    const first = on(world, 'predator')
+    if (first.report.kind !== 'deduced') throw new Error('unreachable')
+    expect(first.report.strength).toBe(1)
+    expect(first.world.body.enhance).toBe(1)
+
+    const second = on(first.world, 'predator')
+    expect(second.report).toMatchObject({ kind: 'deduced', strength: 2 })
+    // Two holds named, and the third cast has nothing left to name.
+    expect(on(second.world, 'predator').report).toEqual({ kind: 'nothing-to-deduce' })
+  })
+
+  it('rests the exhaustion the walk wrote down', () => {
+    let world = on(EMPTY_WORLD, 'enhance').world
+    world = on(world, 'rhythm').world
+    world = { ...world, worm: { a: 'a', b: 'b', crossings: 2 } }
+
+    const rested = on(world, 'restoration')
+    expect(rested.world.body.enhance).toBe(0)
+    expect(rested.world.body.dance).toBe(0)
+    expect(rested.world.worm?.crossings).toBe(0)
   })
 })
 

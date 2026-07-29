@@ -24,10 +24,14 @@
     emptiedOn,
     eyeHeightIn,
     heldSolidIds,
+    eyesOf,
     linkIsOpen,
+    paceOf,
+    reachOf,
     shellsFor,
     solidWalls,
     walkedPlan,
+    walksThroughWalls,
     wanderOffset,
     type TourWorld,
   } from '$lib/tour/hatsu'
@@ -481,6 +485,8 @@
             key: string
             mesh: import('three').Mesh
             edges: import('three').LineSegments
+            /** Where its geometry was baked, so it can be offset from there. */
+            at: Vec2
           }
         | undefined
       > = {}
@@ -520,27 +526,50 @@
           const edges = new THREE.LineSegments(edgeGeometry, edgeMaterial)
           scene.add(mesh)
           scene.add(edges)
-          solids[structure.id] = { key, mesh, edges }
+          solids[structure.id] = { key, mesh, edges, at: structure.at }
         }
 
         for (const id of Object.keys(solids)) if (!standing[id]) dropSolid(id)
       }
 
-      /** Carries the wander of an animated solid onto what is drawn. */
+      /**
+       * Where a solid is this instant, as against where its geometry was baked.
+       *
+       * A solid that wanders and one that is being carried both move every
+       * frame, and neither is worth re-extruding for it: the same few dozen
+       * triangles are drawn at an offset instead. `detachedOn` is the one place
+       * that decides where they are, so the picture cannot drift from what the
+       * collision test reads.
+       */
       function driftSolids(seconds: number) {
+        const moving = world.body.passengers.length
+          ? new Map(
+              detachedOn(ship, world, currentTierId, seconds, pointer).map((held) => [
+                held.structure.id,
+                held.structure.at,
+              ]),
+            )
+          : null
+
         for (const [id, held] of Object.entries(solids)) {
           if (!held) continue
-          const drift = world.solids[id]?.alive ? wanderOffset(id, seconds) : null
+          const carried = moving?.get(id)
+          const drift = carried
+            ? ([carried[0] - held.at[0], carried[1] - held.at[1]] as Vec2)
+            : world.solids[id]?.alive
+              ? wanderOffset(id, seconds)
+              : null
           held.mesh.position.set(drift ? drift[0] : 0, 0, drift ? drift[1] : 0)
           held.edges.position.copy(held.mesh.position)
         }
       }
 
       /** The room and the solid down the reticle, and the cast that lands on them. */
-      const facing = () => (activePlan ? aimedSpace(activePlan, pointer, yaw) : null)
+      const facing = () =>
+        activePlan ? aimedSpace(activePlan, pointer, yaw, reachOf(world.body)) : null
       const facingSolid = () => {
         const plan = ship.plans.get(currentTierId)
-        return plan ? aimedSolid(ship, world, plan, pointer, yaw) : null
+        return plan ? aimedSolid(ship, world, plan, pointer, yaw, reachOf(world.body) / 2) : null
       }
 
       function cast() {
@@ -682,7 +711,10 @@
         if (magnitude > 0) {
           strafe /= magnitude
           advance /= magnitude
-          const speed = (holding('ShiftLeft', 'ShiftRight') ? SPRINT_SPEED : WALK_SPEED) * delta
+          const speed =
+            (holding('ShiftLeft', 'ShiftRight') ? SPRINT_SPEED : WALK_SPEED) *
+            paceOf(world.body) *
+            delta
           // A camera at yaw looks along (-sin, -cos) and has (cos, -sin) to its
           // right, which is what three.js does to (0, 0, -1) and (1, 0, 0).
           const sin = Math.sin(yaw)
@@ -693,7 +725,7 @@
           ]
           // Luini walks through the walls rather than around them, so the move
           // is taken whole and the collision pass is simply not run.
-          pointer = world.phasing
+          pointer = walksThroughWalls(world)
             ? target
             : resolveMovement(
                 pointer,
@@ -703,7 +735,7 @@
         }
 
         const standing = spaceAt(plan, pointer)
-        const eye = plan.tier.elevation + EYE_HEIGHT
+        const eye = plan.tier.elevation + eyesOf(world.body, EYE_HEIGHT)
         camera.position.set(pointer[0], eye, pointer[1])
         camera.rotation.set(0, 0, 0)
         camera.rotateY(yaw)

@@ -161,6 +161,33 @@ export const fr: Messages = {
           `Blinky refuse ${room} · du Nen la retient, et c'est ainsi que le piège se voit`,
         dispatched: (room) => `Un oiseau revient de ${room} avec ce sur quoi la pièce repose`,
 
+        reinforced: (committed) =>
+          `Aura engagée · ${committed} sur 6 · vous allez plus loin et plus vite`,
+        boarded: 'Embarqué · chargez-en cinq, et ce sont eux le carburant',
+        alighted: (room, passengers) =>
+          passengers ? `Posé dans ${room} · ${passengers} déposés avec vous` : `Posé dans ${room}`,
+        loaded: (solid, passengers) => `${solid} à bord · ${passengers} sur 5`,
+        holdFull: 'La soute en prend cinq, et elle en a cinq',
+        projected: (room) => `Le corps reste dans ${room} · le double continue sans lui`,
+        returned: (room) => `De retour dans le corps, dans ${room}`,
+        bodyDisturbed: (room) =>
+          `Quelque chose a atteint le corps dans ${room} · vous y êtes rappelé`,
+        reshaped: (metres) =>
+          `Yeux à ${metres.toFixed(2)} m · la forme a changé, et rien dessous`,
+        rested: (hours) => `${hours} heures de repos en un soin court · la fatigue est tombée`,
+        mended: (room, solids) =>
+          solids
+            ? `${solids} réparé${solids > 1 ? 's' : ''}${room ? ` dans ${room}` : ' dans tout le vaisseau'}`
+            : `Rien n'était abîmé ici`,
+        dancePlayed: (bars) => `Le prologue, mesure ${bars} · la musique porte tout le reste`,
+        danceNeeded: 'Pas encore de musique · jouez d’abord le prologue',
+        mimicked: (solid) => `Vous êtes ${solid}, pour l'œil`,
+        unmimicked: 'Votre propre forme à nouveau',
+        soothed: (opened) =>
+          opened ? 'Les trois se rouvrent, et la musique les tient ouverts' : 'La musique continue',
+        deduced: (what, strength) =>
+          `Condition lue — ${what} · ${strength} nommées, et plus fort à chacune`,
+        nothingToDeduce: 'Plus rien à lire : chaque emprise a été nommée',
         jailed: (room, doors) =>
           `${room} est enchaînée · ${doors} accès, et aucun qui s'ouvre`,
         jailRefused: (room) =>
@@ -230,6 +257,11 @@ export const fr: Messages = {
         cargoTaken: (solid) => `${solid} est chargé · désignez le relais de sortie`,
         cargoLanded: (solid, room) => `${solid} se dresse dans ${room}`,
       },
+      body: {
+        reach: "Elle agit sur vous, où que vous soyez dans le vaisseau",
+        castHint: 'F, ou un clic n’importe où dans la visite',
+        noTarget: 'Rien à viser : la cible, c’est vous',
+      },
       solids: {
         reach: "N'importe quel volume du vaisseau, depuis n'importe où dans le vaisseau",
         castHint:
@@ -243,6 +275,14 @@ export const fr: Messages = {
         copy: 'copie',
       },
       holds: {
+        enhance: 'Aura engagée',
+        riding: 'À bord',
+        eyes: 'Yeux à',
+        projected: 'Le corps est dans',
+        dance: 'Le prologue',
+        mimic: "Sous la forme de",
+        soothed: 'La musique tient',
+        deduced: 'Conditions lues',
         shut: 'Enchaînée',
         guarded: 'Gardée',
         pinned: 'Retenu dans',

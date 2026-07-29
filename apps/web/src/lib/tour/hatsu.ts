@@ -87,7 +87,42 @@ export const TOUR_HATSU_KINDS = [
   'snakes',
   'portal',
   'guardian',
+  // On the visitor walking through them.
+  'enhance',
+  'vehicle',
+  'projection',
+  'transformation',
+  'restoration',
+  'healing',
+  'rhythm',
+  'mimicry',
+  'melody',
+  'predator',
 ] as const satisfies readonly HatsuInteractionKind[]
+
+/**
+ * The techniques that work on the visitor rather than on the ship.
+ *
+ * They need nothing to aim at — the target is whoever is walking — so the
+ * reticle is not consulted and the index offers nothing. Two of them are the
+ * exception and say so in their own branch: the vehicle takes cargo, and
+ * Metamorphosen needs a thing to take the shape of.
+ */
+export const BODY_HATSU_KINDS = new Set<HatsuInteractionKind>([
+  'enhance',
+  'vehicle',
+  'projection',
+  'transformation',
+  'restoration',
+  'healing',
+  'rhythm',
+  'mimicry',
+  'melody',
+  'predator',
+])
+
+export const worksOnTheBody = (profile: HatsuProfile | null) =>
+  Boolean(profile) && BODY_HATSU_KINDS.has(profile!.kind)
 
 /**
  * The techniques whose target is a solid rather than a room.
@@ -213,6 +248,48 @@ export interface TourWorld {
   trap: string | null
   /** Where the visitor was standing before the room they are in now. */
   cameFrom: string | null
+
+  /**
+   * What the techniques have made of the visitor themselves.
+   *
+   * The walk had two nouns — the room and the thing standing in it — and both
+   * are out there in the ship. This is the third, and it is the only one on
+   * this side of the eye: how fast you go, how tall you stand, how far the
+   * aura carries, and whether you are still in your body at all.
+   */
+  body: TourBody
+}
+
+export interface TourBody {
+  /** Aura committed to reinforcement: it buys speed and reach. */
+  enhance: number
+  /** Riding Kurton, and the solids riding with him. Capacity is five. */
+  riding: boolean
+  passengers: string[]
+  /** Eye height in metres, or `null` for the walk's own. */
+  eyes: number | null
+  /** The sleeping body, left behind while the double goes on. */
+  projected: { spaceId: string; at: Vec2 } | null
+  /** Bars of the prologue played, which is what the other two pieces run on. */
+  dance: number
+  /** The solid Metamorphosen has taken the shape of. */
+  mimic: string | null
+  /** Music holding the senses open against anything that would seal them. */
+  soothed: boolean
+  /** The holds Predator has correctly named, which is what makes it stronger. */
+  deduced: string[]
+}
+
+export const RESTING_BODY: TourBody = {
+  enhance: 0,
+  riding: false,
+  passengers: [],
+  eyes: null,
+  projected: null,
+  dance: 0,
+  mimic: null,
+  soothed: false,
+  deduced: [],
 }
 
 /**
@@ -275,7 +352,20 @@ export const EMPTY_WORLD: TourWorld = {
   snakes: null,
   trap: null,
   cameFrom: null,
+  body: RESTING_BODY,
 }
+
+/** The visitor as the walk was built for: their own legs, their own eyes. */
+export const bodyIsRested = (body: TourBody): boolean =>
+  !body.enhance &&
+  !body.riding &&
+  !body.passengers.length &&
+  body.eyes === null &&
+  !body.projected &&
+  !body.dance &&
+  !body.mimic &&
+  !body.soothed &&
+  !body.deduced.length
 
 /** Nothing in the world is being held by aura. */
 export const worldIsQuiet = (world: TourWorld): boolean =>
@@ -304,7 +394,8 @@ export const worldIsQuiet = (world: TourWorld): boolean =>
   !world.double &&
   !world.worm &&
   !world.snakes &&
-  !world.trap
+  !world.trap &&
+  bodyIsRested(world.body)
 
 /**
  * What the technique did, as data. The component turns it into a sentence in
@@ -386,6 +477,25 @@ export type TourReport =
   | { kind: 'worm-spent' }
   | { kind: 'double-posted'; spaceId: string }
   | { kind: 'double-spent'; spaceId: string }
+  // On the visitor.
+  | { kind: 'reinforced'; committed: number }
+  | { kind: 'boarded'; passengers: number }
+  | { kind: 'alighted'; spaceId: string | null; passengers: number }
+  | { kind: 'loaded'; solidId: string; passengers: number }
+  | { kind: 'hold-full' }
+  | { kind: 'projected'; spaceId: string }
+  | { kind: 'returned'; spaceId: string }
+  | { kind: 'body-disturbed'; spaceId: string }
+  | { kind: 'reshaped'; metres: number }
+  | { kind: 'rested'; hours: number }
+  | { kind: 'mended'; spaceId: string | null; solids: number }
+  | { kind: 'dance-played'; bars: number }
+  | { kind: 'dance-needed' }
+  | { kind: 'mimicked'; solidId: string }
+  | { kind: 'unmimicked' }
+  | { kind: 'soothed'; opened: boolean }
+  | { kind: 'deduced'; what: string; strength: number }
+  | { kind: 'nothing-to-deduce' }
 
 export interface TourCastResult {
   world: TourWorld
@@ -489,6 +599,8 @@ export function detachedOn(
   world: TourWorld,
   tierId: string,
   seconds = 0,
+  /** Where the visitor is, so anything Kurton is carrying rides along. */
+  carrier?: Vec2,
 ): { structure: Structure; room: Space }[] {
   const emptied = new Set(emptiedOn(world, tierId, ship))
   const out: { structure: Structure; room: Space }[] = []
@@ -501,6 +613,15 @@ export function detachedOn(
     if (!room || room.tierId !== tierId || emptied.has(room.id)) continue
 
     let structure = solidNow(original, hold)
+    // Riding: set around the vehicle rather than where it was picked up.
+    if (carrier && world.body.passengers.includes(id)) {
+      const seat = world.body.passengers.indexOf(id)
+      const angle = (seat * Math.PI * 2) / CAPACITY
+      structure = {
+        ...structure,
+        at: [carrier[0] + Math.cos(angle) * 1.6, carrier[1] + Math.sin(angle) * 1.6],
+      }
+    }
     if (hold.alive) {
       const drift = wanderOffset(id, seconds)
       structure = { ...structure, at: [structure.at[0] + drift[0], structure.at[1] + drift[1]] }
@@ -517,7 +638,9 @@ export function solidWalls(
   tierId: string,
   seconds = 0,
 ): WallSegment[] {
+  // What is being carried is not something to walk around: it moves with you.
   return detachedOn(ship, world, tierId, seconds)
+    .filter(({ structure }) => !world.body.passengers.includes(structure.id))
     .filter(({ structure }) => blocksTheFloor(structure))
     .flatMap(({ structure }) => structureWalls(structure))
 }
@@ -572,6 +695,22 @@ function castOnSolid(
 ): TourCastResult {
   const { ship, targetSolidId, at, heading = 0 } = input
   const structure = solidById(ship, world, targetSolidId ?? null)
+
+  // Anything aimed at a solid while Kurton is being ridden loads it instead,
+  // up to the five he carries: a vehicle passes what it is given to its hold.
+  if (world.body.riding && structure && !world.body.passengers.includes(structure.id)) {
+    if (world.body.passengers.length >= CAPACITY) {
+      return { world, report: { kind: 'hold-full' } }
+    }
+    const passengers = [...world.body.passengers, structure.id]
+    return {
+      world: {
+        ...withHold(world, structure.id, {}),
+        body: { ...world.body, passengers },
+      },
+      report: { kind: 'loaded', solidId: structure.id, passengers: passengers.length },
+    }
+  }
 
   // Winding up needs nothing to hit: the turns are the whole of the technique
   // until there is something to spend them on.
@@ -836,6 +975,242 @@ function castOnSolid(
   }
 }
 
+// ── The body ──────────────────────────────────────────────────────────────
+//
+// The third noun, and the only one on this side of the eye. Nothing here is
+// aimed: the target is whoever is walking.
+
+/** How fast the visitor goes, as a multiplier on the walk's own pace. */
+export function paceOf(body: TourBody): number {
+  const committed = 1 + body.enhance * 0.35
+  // Kurton is fuelled by his passengers: an empty vehicle is barely a vehicle.
+  const carried = body.riding ? 1.6 + body.passengers.length * 0.35 : 1
+  return committed * carried
+}
+
+/** Where the visitor's eyes are, in metres off the floor of the deck. */
+export function eyesOf(body: TourBody, standing = 1.7): number {
+  if (body.eyes !== null) return body.eyes
+  if (body.riding) return standing + 0.9
+  return standing
+}
+
+/** How far the aura carries down the reticle. */
+export const reachOf = (body: TourBody): number => 90 * (1 + body.enhance * 0.4)
+
+/** The five things Kurton can carry, taken from the room he was boarded in. */
+export const CAPACITY = 5
+
+/**
+ * Whether the visitor goes through walls rather than around them.
+ *
+ * Two techniques ask for it and mean different things by it — Luini steps
+ * through, Hanzo's double was never solid in the first place — but the walk
+ * has one answer to give.
+ */
+export const walksThroughWalls = (world: TourWorld): boolean =>
+  world.phasing || Boolean(world.body.projected)
+
+/** Everything the aura is holding, named plainly, for Predator to work through. */
+export function holdsInWorld(world: TourWorld): string[] {
+  return [
+    ...(world.laidOpen ? ['laidOpen'] : []),
+    ...(world.isolated ? [`isolated:${world.isolated.spaceId}`] : []),
+    ...world.doors.map((id) => `door:${id}`),
+    ...world.emptied.map((id) => `emptied:${id}`),
+    ...(world.eye ? [`eye:${world.eye}`] : []),
+    ...(world.sealed ? [`sealed:${world.sealed}`] : []),
+    ...(world.phasing ? ['phasing'] : []),
+    ...world.watched.map((doll) => `doll:${doll.spaceId}`),
+    ...(world.dowsing ? [`dowsing:${world.dowsing}`] : []),
+    ...Object.keys(world.solids).map((id) => `solid:${id}`),
+    ...world.shut.map((id) => `shut:${id}`),
+    ...world.guarded.map((id) => `guarded:${id}`),
+    ...(world.pinned ? [`pinned:${world.pinned}`] : []),
+    ...(world.vow ? [`vow:${world.vow}`] : []),
+    ...(world.pact ? [`pact:${world.pact}`] : []),
+    ...world.devouring.map((id) => `fish:${id}`),
+    ...Object.keys(world.cards).map((id) => `card:${id}`),
+    ...(world.double ? [`double:${world.double}`] : []),
+    ...(world.worm ? [`worm:${world.worm.a}`] : []),
+    ...(world.snakes ? ['snakes'] : []),
+    ...(world.trap ? [`trap:${world.trap}`] : []),
+  ]
+}
+
+/**
+ * One cast on the visitor themselves.
+ *
+ * The two that do take a target say so here rather than in the roster: Kurton
+ * loads a solid while he is being ridden, and Metamorphosen needs a thing to
+ * take the shape of.
+ */
+function castOnBody(
+  world: TourWorld,
+  kind: HatsuInteractionKind,
+  input: TourCastInput,
+): TourCastResult {
+  const { ship, targetSolidId, standingIn, at } = input
+  const body = world.body
+  const withBody = (patch: Partial<TourBody>): TourWorld => ({
+    ...world,
+    body: { ...body, ...patch },
+  })
+
+  switch (kind) {
+    // Reinforcement in proportion to the aura committed, and it is committed a
+    // handful at a time.
+    case 'enhance': {
+      const committed = Math.min(6, body.enhance + 1)
+      return { world: withBody({ enhance: committed }), report: { kind: 'reinforced', committed } }
+    }
+
+    // Kurton carries five, and what he carries is what fuels him. Boarding
+    // takes the room's own solids up; alighting sets them down where you stop.
+    case 'vehicle': {
+      if (body.riding) {
+        // Aimed at something he is not already carrying, Kurton loads it; aimed
+        // at nothing, he sets down what he has and lets the visitor off.
+        const aimed = solidById(ship, world, targetSolidId ?? null)
+        if (aimed && !body.passengers.includes(aimed.id)) return castOnSolid(world, kind, input)
+
+        const room = standingIn ? ship.spaces.get(standingIn) : null
+        const solids = { ...world.solids }
+        for (const id of body.passengers) {
+          const carried = solidById(ship, world, id)
+          if (!carried || !room) continue
+          solids[id] = { ...solids[id], at: spawnPointNear(room, at) }
+        }
+        return {
+          world: {
+            ...world,
+            solids,
+            copies: world.copies.map((copy) =>
+              body.passengers.includes(copy.id) && room ? { ...copy, spaceId: room.id } : copy,
+            ),
+            body: { ...body, riding: false, passengers: [] },
+          },
+          report: { kind: 'alighted', spaceId: standingIn, passengers: body.passengers.length },
+        }
+      }
+      return { world: withBody({ riding: true }), report: { kind: 'boarded', passengers: 0 } }
+    }
+
+    // Hanzo leaves the body where it is and goes on without it. The double
+    // walks through the ship; the body is a place you have to come back to.
+    case 'projection': {
+      if (body.projected) {
+        return {
+          world: withBody({ projected: null }),
+          report: { kind: 'returned', spaceId: body.projected.spaceId },
+        }
+      }
+      if (!standingIn) return { world, report: { kind: 'no-target' } }
+      return {
+        world: withBody({ projected: { spaceId: standingIn, at } }),
+        report: { kind: 'projected', spaceId: standingIn },
+      }
+    }
+
+    // The body changes radically and the identity underneath does not: a child's
+    // eyes, the walk's own, and something that sees over the bulkheads.
+    case 'transformation': {
+      // The walk's own eyes, the girl she goes about as, and what she actually
+      // is. Cycling from `null` rather than from a height keeps the visitor's
+      // ordinary body first in the ring, where it belongs.
+      const cycle: (number | null)[] = [null, 0.95, 3.4]
+      const eyes = cycle[(cycle.indexOf(body.eyes) + 1) % cycle.length]
+      return { world: withBody({ eyes }), report: { kind: 'reshaped', metres: eyes ?? 1.7 } }
+    }
+
+    // Cookie compresses hours of rest into a short treatment. What the walk has
+    // to be rested of is the exhaustion its own techniques wrote down: the
+    // tunnel that has been asked too often, and the aura committed to force.
+    case 'restoration': {
+      const hours = 24
+      return {
+        world: {
+          ...world,
+          worm: world.worm ? { ...world.worm, crossings: 0 } : null,
+          body: { ...body, enhance: 0, dance: 0 },
+        },
+        report: { kind: 'rested', hours },
+      }
+    }
+
+    // The chain that heals: what has been crushed, shredded or swallowed in one
+    // room is mended, and under Emperor Time the whole ship is.
+    case 'healing': {
+      const whole = world.laidOpen
+      const solids = { ...world.solids }
+      let mended = 0
+      for (const id of Object.keys(solids)) {
+        const hurt = solids[id]
+        if (hurt.copyOf) continue
+        const room = solidById(ship, world, id)?.spaceId
+        if (!whole && room !== standingIn) continue
+        if (!hurt.gone && !hurt.squash && !hurt.scale) continue
+        delete solids[id]
+        mended++
+      }
+      return {
+        world: { ...world, solids },
+        report: { kind: 'mended', spaceId: whole ? null : standingIn, solids: mended },
+      }
+    }
+
+    case 'rhythm': {
+      const bars = body.dance + 1
+      return { world: withBody({ dance: bars }), report: { kind: 'dance-played', bars } }
+    }
+
+    // Metamorphosen runs on the prologue: without the music there is nothing to
+    // change shape with.
+    case 'mimicry': {
+      if (!body.dance) return { world, report: { kind: 'dance-needed' } }
+      if (body.mimic) return { world: withBody({ mimic: null, eyes: null }), report: { kind: 'unmimicked' } }
+      const shape = solidById(ship, world, targetSolidId ?? null)
+      if (!shape) return { world, report: { kind: 'no-solid' } }
+      const worn = solidNow(shape, world.solids[shape.id])
+      return {
+        world: withBody({ mimic: shape.id, eyes: Math.max(0.4, worn.base + worn.height) }),
+        report: { kind: 'mimicked', solidId: shape.id },
+      }
+    }
+
+    // Music carried straight into the listener. What it soothes here is the
+    // only thing in the walk that can be done to a sense: it opens the three
+    // the monkeys sealed, and holds them open.
+    case 'melody': {
+      const opened = world.sealed > 0
+      return {
+        world: { ...world, sealed: 0, body: { ...body, soothed: !body.soothed || opened } },
+        report: { kind: 'soothed', opened },
+      }
+    }
+
+    // Predator gets stronger by correctly naming what it is up against. There
+    // is exactly one thing in the walk to be up against: the aura's own holds.
+    case 'predator': {
+      const unnamed = holdsInWorld(world).find((hold) => !body.deduced.includes(hold))
+      if (!unnamed) return { world, report: { kind: 'nothing-to-deduce' } }
+      const deduced = [...body.deduced, unnamed]
+      return {
+        world: withBody({ deduced, enhance: Math.min(6, body.enhance + 1) }),
+        report: { kind: 'deduced', what: unnamed, strength: deduced.length },
+      }
+    }
+
+    default:
+      return { world, report: { kind: 'inert' } }
+  }
+}
+
+/** A clear spot in a room to set something down, near where the visitor is. */
+function spawnPointNear(room: Space, at: Vec2): Vec2 {
+  return pointInPolygon(at, room.footprint) ? at : centroid(room)
+}
+
 /**
  * Runs one cast against the world and returns the next one.
  *
@@ -848,6 +1223,24 @@ export function castInTour(
   input: TourCastInput,
 ): TourCastResult {
   const { ship, targetId, standingIn, at } = input
+
+  // The sleeping body has to be somewhere the walk still leaves alone. Shut it,
+  // guard it or empty it and Hanzo is pulled back into it, whatever he was in
+  // the middle of.
+  if (world.body.projected) {
+    const where = world.body.projected.spaceId
+    const disturbed =
+      world.shut.includes(where) || world.guarded.includes(where) || world.emptied.includes(where)
+    if (disturbed) {
+      return {
+        world: { ...world, body: { ...world.body, projected: null } },
+        travelTo: where,
+        report: { kind: 'body-disturbed', spaceId: where },
+      }
+    }
+  }
+
+  if (BODY_HATSU_KINDS.has(kind)) return castOnBody(world, kind, input)
   if (SOLID_HATSU_KINDS.has(kind)) return castOnSolid(world, kind, input)
 
   const target = targetId ? (ship.spaces.get(targetId) ?? null) : null

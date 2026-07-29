@@ -12,6 +12,7 @@
     TOUR_HATSU_KINDS,
     aimsAtSolids,
     solidById,
+    worksOnTheBody,
     type TourReport,
     type TourWorld,
   } from '$lib/tour/hatsu'
@@ -57,7 +58,9 @@
   // The technique under the visitor's own name for it, as the dock names it.
   const named = $derived(localizeHatsu(profile, $locale))
   /** Whether this technique's target is a thing rather than a place. */
-  const onSolids = $derived(aimsAtSolids(profile))
+  const onSolids = $derived(aimsAtSolids(profile) || profile.kind === 'mimicry')
+  /** Or whether it has no target at all, because the target is the visitor. */
+  const onBody = $derived(worksOnTheBody(profile) && !onSolids)
 
   const roomName = (id: string) => {
     const space = ship.spaces.get(id)
@@ -229,6 +232,43 @@
         return say.doublePosted(roomName(report.spaceId))
       case 'double-spent':
         return say.doubleSpent(roomName(report.spaceId))
+
+      case 'reinforced':
+        return say.reinforced(report.committed)
+      case 'boarded':
+        return say.boarded
+      case 'alighted':
+        return say.alighted(report.spaceId ? roomName(report.spaceId) : '—', report.passengers)
+      case 'loaded':
+        return say.loaded(solidName(report.solidId), report.passengers)
+      case 'hold-full':
+        return say.holdFull
+      case 'projected':
+        return say.projected(roomName(report.spaceId))
+      case 'returned':
+        return say.returned(roomName(report.spaceId))
+      case 'body-disturbed':
+        return say.bodyDisturbed(roomName(report.spaceId))
+      case 'reshaped':
+        return say.reshaped(report.metres)
+      case 'rested':
+        return say.rested(report.hours)
+      case 'mended':
+        return say.mended(report.spaceId ? roomName(report.spaceId) : '', report.solids)
+      case 'dance-played':
+        return say.dancePlayed(report.bars)
+      case 'dance-needed':
+        return say.danceNeeded
+      case 'mimicked':
+        return say.mimicked(solidName(report.solidId))
+      case 'unmimicked':
+        return say.unmimicked
+      case 'soothed':
+        return say.soothed(report.opened)
+      case 'deduced':
+        return say.deduced(report.what, report.strength)
+      case 'nothing-to-deduce':
+        return say.nothingToDeduce
     }
   })
 
@@ -268,6 +308,17 @@
         value: ['', '👁', '👁 👂', '👁 👂 🗣'][world.sealed],
       })
     }
+    const body = world.body
+    if (body.enhance) rows.push({ label: held.enhance, value: `${body.enhance} / 6` })
+    if (body.riding) {
+      rows.push({ label: held.riding, value: `${body.passengers.map(solidName).join(', ') || '—'}` })
+    }
+    if (body.eyes !== null) rows.push({ label: held.eyes, value: `${body.eyes.toFixed(2)} m` })
+    if (body.projected) rows.push({ label: held.projected, value: roomName(body.projected.spaceId) })
+    if (body.dance) rows.push({ label: held.dance, value: `${body.dance}` })
+    if (body.mimic) rows.push({ label: held.mimic, value: solidName(body.mimic) })
+    if (body.soothed) rows.push({ label: held.soothed, value: '♪' })
+    if (body.deduced.length) rows.push({ label: held.deduced, value: `${body.deduced.length}` })
     for (const id of world.shut) rows.push({ label: held.shut, value: roomName(id) })
     for (const id of world.guarded) rows.push({ label: held.guarded, value: roomName(id) })
     if (world.pinned) rows.push({ label: held.pinned, value: roomName(world.pinned) })
@@ -324,13 +375,15 @@
   <p class="mt-1 text-sm font-semibold text-[#FFFFF0]">{named.name}</p>
   <p class="text-[11px] text-[#FFFFF0]/50">
     {named.owner}{castable
-      ? ` · ${onSolids ? $t.tour.hatsu.solids.reach : $t.tour.hatsu.reach}`
+      ? ` · ${onBody ? $t.tour.hatsu.body.reach : onSolids ? $t.tour.hatsu.solids.reach : $t.tour.hatsu.reach}`
       : ` · ${$t.tour.hatsu.inertShort}`}
   </p>
 
   {#if castable}
     <p class="mt-2 text-xs text-[#FFFFF0]/80">
-      {#if onSolids}
+      {#if onBody}
+        {$t.tour.hatsu.body.noTarget}
+      {:else if onSolids}
         {aimedSolidAt
           ? $t.tour.hatsu.solids.aiming(nameOf(aimedSolidAt))
           : $t.tour.hatsu.solids.aimingNothing}
@@ -339,7 +392,11 @@
       {/if}
     </p>
     <p class="text-[11px] text-[#FFFFF0]/45">
-      {onSolids ? $t.tour.hatsu.solids.castHint : $t.tour.hatsu.castHint}
+      {onBody
+        ? $t.tour.hatsu.body.castHint
+        : onSolids
+          ? $t.tour.hatsu.solids.castHint
+          : $t.tour.hatsu.castHint}
     </p>
   {:else}
     <p class="mt-2 text-xs leading-snug text-[#FFFFF0]/60">

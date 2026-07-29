@@ -31,6 +31,7 @@
     arriveInTour,
     castInTour,
     worksInTour,
+    worksOnTheBody,
     wormExit,
     type TourReport,
     type TourWorld,
@@ -236,7 +237,15 @@
    * Whether the active technique takes a thing rather than a place — and, for
    * Transport Portals, whether it is past the cargo and waiting for the relay.
    */
-  const onSolids = $derived(aimsAtSolids(technique) && !(technique?.kind === 'relay' && world.pairing))
+  const onSolids = $derived(
+    (aimsAtSolids(technique) && !(technique?.kind === 'relay' && world.pairing)) ||
+      technique?.kind === 'mimicry' ||
+      // Anything aimed at a solid while Kurton is ridden loads it into his hold.
+      Boolean(technique && world.body.riding),
+  )
+
+  /** A technique whose target is the visitor has nothing for the index to offer. */
+  const onBody = $derived(worksOnTheBody(technique) && !onSolids)
 
   /**
    * Every solid in the ship, grouped by the room it stands in.
@@ -448,7 +457,9 @@
 
       <section>
         <p class="mb-2 text-[10px] uppercase tracking-widest text-[#FFD700]/70">
-          {#if onSolids}
+          {#if onBody}
+            {$t.tour.hatsu.body.noTarget}
+          {:else if onSolids}
             {$t.tour.hatsu.solids.targets} · {$t.tour.hatsu.allDecks}
           {:else if technique?.kind === 'relay' && world.pairing}
             {$t.tour.hatsu.solids.relayTargets}
@@ -458,7 +469,11 @@
             {$t.tour.jumpTo}
           {/if}
         </p>
-        {#if onSolids}
+        {#if onBody}
+          <p class="rounded border border-[#333] px-2.5 py-2 text-xs leading-snug text-[#FFFFF0]/50">
+            {$t.tour.hatsu.body.castHint}
+          </p>
+        {:else if onSolids}
           <!-- The same reach, one noun down: every solid in the ship, under the
                room it stands in. -->
           <ul class="max-h-56 overflow-y-auto rounded border border-[#333]">

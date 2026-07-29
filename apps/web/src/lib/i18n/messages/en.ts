@@ -168,6 +168,35 @@ export const en = {
 
         // On the solids. A room is a place and a solid is a thing: these all
         // say what happened to a thing, and never what happened to a page.
+        reinforced: (committed: number) =>
+          `Aura committed · ${committed} of 6 · you go further and faster for it`,
+        boarded: 'Boarded · load up to five and they are what fuels the run',
+        alighted: (room: string, passengers: number) =>
+          passengers
+            ? `Set down in ${room} · ${passengers} put down with you`
+            : `Set down in ${room}`,
+        loaded: (solid: string, passengers: number) => `${solid} aboard · ${passengers} of 5`,
+        holdFull: 'The hold takes five, and it has five',
+        projected: (room: string) => `The body stays in ${room} · the double goes on without it`,
+        returned: (room: string) => `Back in the body, in ${room}`,
+        bodyDisturbed: (room: string) =>
+          `Something reached the body in ${room} · you are pulled back into it`,
+        reshaped: (metres: number) =>
+          `Eyes at ${metres.toFixed(2)} m · the shape changed and nothing underneath did`,
+        rested: (hours: number) => `${hours} hours of rest in a short treatment · the strain is gone`,
+        mended: (room: string, solids: number) =>
+          solids
+            ? `${solids} mended${room ? ` in ${room}` : ' across the whole ship'}`
+            : `Nothing here was hurt`,
+        dancePlayed: (bars: number) => `The prologue, bar ${bars} · the music is what the rest runs on`,
+        danceNeeded: 'No music yet · play the prologue first',
+        mimicked: (solid: string) => `You are ${solid}, to the eye`,
+        unmimicked: 'Your own shape again',
+        soothed: (opened: boolean): string =>
+          opened ? 'The three open again, and the music holds them open' : 'The music plays on',
+        deduced: (what: string, strength: number) =>
+          `Condition read — ${what} · ${strength} named, and stronger for each`,
+        nothingToDeduce: 'Nothing left to read: every hold has been named',
         jailed: (room: string, doors: number) =>
           `${room} is chained shut · ${doors} way${doors === 1 ? '' : 's'} in, and none of them open`,
         jailRefused: (room: string) =>
@@ -238,6 +267,12 @@ export const en = {
         cargoTaken: (solid: string) => `${solid} is loaded · name the relay it comes out at`,
         cargoLanded: (solid: string, room: string) => `${solid} is standing in ${room}`,
       },
+      /** The techniques whose target is whoever is walking. */
+      body: {
+        reach: 'It works on you, wherever in the ship you are',
+        castHint: 'Press F, or click anywhere in the walk',
+        noTarget: 'Nothing to aim at: the target is you',
+      },
       /** The read-out over the canvas, and the index, when a solid is the target. */
       solids: {
         reach: 'Any solid in the ship, from anywhere in it',
@@ -251,6 +286,14 @@ export const en = {
         copy: 'copy',
       },
       holds: {
+        enhance: 'Aura committed',
+        riding: 'Aboard',
+        eyes: 'Eyes at',
+        projected: 'The body is in',
+        dance: 'The prologue',
+        mimic: 'Wearing',
+        soothed: 'The music holds',
+        deduced: 'Conditions read',
         shut: 'Chained shut',
         guarded: 'Guarded',
         pinned: 'Held in',

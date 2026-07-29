@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { t } from '$lib/i18n'
+
   const portholes = Array.from({ length: 24 }, (_, index) => ({
     x: 268 + (index % 8) * 54,
     y: 302 + Math.floor(index / 8) * 42,
@@ -10,15 +12,12 @@
      which is not allowed to carry an accessible name. -->
 <div class="voyage">
   <div class="atmosphere" aria-hidden="true"></div>
-  <div class="plate vessel">Black Whale 1</div>
-  <div class="plate route">Kakin → New Continent</div>
+  <div class="plate vessel">{$t.voyageArt.vessel}</div>
+  <div class="plate route">{$t.voyageArt.route}</div>
 
   <svg viewBox="0 0 920 610" role="img" aria-labelledby="voyage-title voyage-description">
-    <title id="voyage-title">Black Whale 1 at sea</title>
-    <desc id="voyage-description"
-      >The colossal whale-shaped expedition vessel carries the Tier 1 royal ship above its five
-      decks while moving through dark ocean swells.</desc
-    >
+    <title id="voyage-title">{$t.voyageArt.title}</title>
+    <desc id="voyage-description">{$t.voyageArt.description}</desc>
     <defs>
       <linearGradient id="night-sky" x1="0" y1="0" x2="0" y2="1">
         <stop offset="0" stop-color="#14242b" />
@@ -157,7 +156,7 @@
   </svg>
 
   <div class="specs" aria-hidden="true">
-    <span>Semi-submersible · 41 decks</span><span>200,000 passengers</span>
+    <span>{$t.voyageArt.specsHull}</span><span>{$t.voyageArt.specsPassengers}</span>
   </div>
 </div>
 

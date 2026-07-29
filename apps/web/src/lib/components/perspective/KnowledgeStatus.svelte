@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { KnowledgeVisualState } from './types'
+  import { t } from '$lib/i18n'
 
   const iconByState: Record<KnowledgeVisualState, string> = {
     known: '✓',
@@ -25,7 +26,12 @@
   } = $props()
 </script>
 
-<div class="knowledge-status" data-state={state} role="status" aria-label={`${label}: ${state}`}>
+<div
+  class="knowledge-status"
+  data-state={state}
+  role="status"
+  aria-label={$t.perspectiveUi.statusAria(label, state)}
+>
   <span class="icon" aria-hidden="true">{iconByState[state]}</span>
   <span class="label">{label}</span>
   {#if details}

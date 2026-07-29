@@ -2,7 +2,7 @@
   import { page } from '$app/stores'
   import { mapState } from '$lib/state/mapState.svelte'
   import { displayName } from '$lib/utils/displayNames'
-  import { locale } from '$lib/i18n'
+  import { locale, t } from '$lib/i18n'
 
   let unknownCharacters = $derived.by(() => {
     const worldState = $page.data.worldState
@@ -27,14 +27,16 @@
           id: presence.entityId,
           label: character
             ? displayName(character.canonicalName, $locale)
-            : 'Unidentified individual',
-          state: character ? 'known identity' : 'unknown identity',
+            : $t.map.unidentifiedIndividual,
+          // A boolean rather than the rendered label, so the count below does
+          // not depend on the active language.
+          identified: Boolean(character),
         }
       })
   })
 
   let identifiedCount = $derived(
-    unknownCharacters.filter((character: any) => character.state === 'known identity').length,
+    unknownCharacters.filter((character: any) => character.identified).length,
   )
 </script>
 
@@ -43,18 +45,22 @@
     class="absolute bottom-4 left-4 z-40 flex max-h-[min(38rem,calc(100%-2rem))] w-80 flex-col rounded-lg border border-gray-700 bg-[#1a1a1a] p-4 text-[#FFFFF0] shadow-lg"
   >
     <div class="mb-3 flex items-center justify-between border-b border-gray-700 pb-2">
-      <h3 class="text-sm font-bold tracking-wider text-gray-400 uppercase">Unknown location</h3>
+      <h3 class="text-sm font-bold tracking-wider text-gray-400 uppercase">
+        {$t.mapUi.unknownLocationTitle}
+      </h3>
       <button
         type="button"
         onclick={() => (mapState.filters.showUnknownPositions = false)}
         class="text-gray-500 hover:text-white"
-        aria-label="Close unknown positions">✕</button
+        aria-label={$t.mapUi.closeUnknownPositions}>✕</button
       >
     </div>
 
     <div class="mb-3 space-y-1 rounded border border-gray-700 bg-[#121212] p-2 text-xs">
-      <p>{unknownCharacters.length} bodies without a mapped location</p>
-      <p>{identifiedCount} identified · {unknownCharacters.length - identifiedCount} unknown</p>
+      <p>{$t.mapUi.bodiesWithoutLocation(unknownCharacters.length)}</p>
+      <p>
+        {$t.mapUi.identifiedSplit(identifiedCount, unknownCharacters.length - identifiedCount)}
+      </p>
     </div>
 
     {#if unknownCharacters.length > 0}
@@ -63,12 +69,14 @@
           <li class="flex items-center text-gray-300">
             <span class="mr-2 h-2 w-2 rounded-full bg-gray-500"></span>
             <span>{character.label}</span>
-            <span class="ml-2 text-xs text-gray-500">{character.state}</span>
+            <span class="ml-2 text-xs text-gray-500"
+              >{character.identified ? $t.map.knownIdentity : $t.map.unknownIdentity}</span
+            >
           </li>
         {/each}
       </ul>
     {:else}
-      <p class="text-sm text-gray-400">Every tracked body has a mapped location at this event.</p>
+      <p class="text-sm text-gray-400">{$t.mapUi.everyBodyMapped}</p>
     {/if}
   </div>
 {/if}

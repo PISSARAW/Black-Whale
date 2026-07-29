@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { t } from '$lib/i18n'
+
   let {
     lastConfirmed,
   }: {
@@ -6,9 +8,9 @@
   } = $props()
 </script>
 
-<div class="stale" role="status" aria-label={`Information outdated since ${lastConfirmed}`}>
+<div class="stale" role="status" aria-label={$t.perspectiveUi.staleAria(lastConfirmed)}>
   <span aria-hidden="true">⏱</span>
-  Latest information: {lastConfirmed}
+  {$t.perspectiveUi.staleLabel(lastConfirmed)}
 </div>
 
 <style>

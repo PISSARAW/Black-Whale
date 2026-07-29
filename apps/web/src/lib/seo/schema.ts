@@ -1,13 +1,14 @@
-import { DEFAULT_DESCRIPTION, SITE_NAME, SITE_URL, absoluteUrl } from './config'
+import { SITE_NAME, SITE_URL, absoluteUrl } from './config'
 
-export function websiteSchema() {
+/** `description` and `language` come from the active locale's catalogue. */
+export function websiteSchema(site: { description: string; language: string; path: string }) {
   return {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
     name: SITE_NAME,
-    url: SITE_URL,
-    description: DEFAULT_DESCRIPTION,
-    inLanguage: 'en',
+    url: absoluteUrl(site.path),
+    description: site.description,
+    inLanguage: site.language,
     about: {
       '@type': 'CreativeWorkSeries',
       name: 'Hunter × Hunter',

@@ -5,6 +5,8 @@
   import GlobalHatsuEffects from '$lib/nen/GlobalHatsuEffects.svelte'
   import CommandPalette from '$lib/components/CommandPalette.svelte'
   import AmbientToggle from '$lib/audio/AmbientToggle.svelte'
+  import LanguageSwitcher from '$lib/i18n/LanguageSwitcher.svelte'
+  import { link, routePath, t } from '$lib/i18n'
   import { tick } from 'svelte'
 
   let menuOpen = false
@@ -12,21 +14,25 @@
   let menuPanel: HTMLElement | undefined
   let menuButton: HTMLButtonElement | undefined
 
-  const primaryNavigation = [
-    { href: '/ship', label: 'Explore' },
-    { href: '/timeline', label: 'Timeline' },
-    { href: '/characters', label: 'Characters' },
-    { href: '/perspectives', label: 'Knowledge' },
+  // `href` is the unprefixed route; `$link` turns it into the URL for the
+  // locale being rendered.
+  $: primaryNavigation = [
+    { href: '/ship', label: $t.nav.explore },
+    { href: '/timeline', label: $t.nav.timeline },
+    { href: '/characters', label: $t.nav.characters },
+    { href: '/perspectives', label: $t.nav.knowledge },
   ]
 
-  const secondaryNavigation = [
-    { href: '/abilities', label: 'Ability Archive', index: '01' },
-    { href: '/compare', label: 'Compare Perspectives', index: '02' },
-    { href: '/relationships', label: 'Faction Network', index: '03' },
-    { href: '/simulations', label: 'Simulations', index: '04' },
+  $: secondaryNavigation = [
+    { href: '/abilities', label: $t.nav.abilityArchive, index: '01' },
+    { href: '/compare', label: $t.nav.comparePerspectives, index: '02' },
+    { href: '/relationships', label: $t.nav.factionNetwork, index: '03' },
+    { href: '/simulations', label: $t.nav.simulations, index: '04' },
   ]
 
-  const isActive = (href: string) => $page.url.pathname.startsWith(href)
+  // Compared against the locale-stripped path, so a section stays highlighted
+  // in every language.
+  const isActive = (href: string) => $routePath.startsWith(href)
 
   // The drawer that carries the secondary sections is behind {#if menuOpen},
   // so nothing links to them in the server-rendered markup — crawlers see the
@@ -78,23 +84,23 @@
 <svelte:window onkeydown={handleKeydown} />
 
 <div class="app-shell">
-  <a class="skip-link" href="#main-content">Skip to main content</a>
+  <a class="skip-link" href="#main-content">{$t.layout.skipToContent}</a>
 
   <header class="app-header" data-hatsu-pass>
-    <a href="/" class="brand" aria-label="Black Whale — Home" onclick={closeMenu}>
+    <a href={$link('/')} class="brand" aria-label={$t.layout.brandHome} onclick={closeMenu}>
       <span class="brand-mark" aria-hidden="true">
         <span>BW</span>
       </span>
       <span class="brand-copy">
         <strong>Black Whale</strong>
-        <small>Succession Archive</small>
+        <small>{$t.layout.brandTagline}</small>
       </span>
     </a>
 
-    <nav class="primary-nav" aria-label="Primary navigation">
+    <nav class="primary-nav" aria-label={$t.layout.primaryNavigation}>
       {#each primaryNavigation as item (item.href)}
         <a
-          href={item.href}
+          href={$link(item.href)}
           class:active={isActive(item.href)}
           aria-current={isActive(item.href) ? 'page' : undefined}
         >
@@ -105,10 +111,10 @@
 
     <div class="header-meta">
       <AmbientToggle />
-      <button type="button" onclick={openPalette} aria-label="Open quick navigation">
-        <span>Quick find</span><kbd>⌘K</kbd>
+      <button type="button" onclick={openPalette} aria-label={$t.layout.openQuickNavigation}>
+        <span>{$t.layout.quickFind}</span><kbd>⌘K</kbd>
       </button>
-      <span aria-hidden="true">EN</span>
+      <span class="language-slot"><LanguageSwitcher /></span>
     </div>
 
     <button
@@ -116,7 +122,7 @@
       class="menu-toggle"
       class:open={menuOpen}
       type="button"
-      aria-label={menuOpen ? 'Close navigation menu' : 'Open navigation menu'}
+      aria-label={menuOpen ? $t.layout.closeMenu : $t.layout.openMenu}
       aria-expanded={menuOpen}
       aria-controls="site-menu"
       onclick={toggleMenu}
@@ -134,20 +140,20 @@
       class="site-menu"
       role="dialog"
       aria-modal="true"
-      aria-label="Site navigation"
+      aria-label={$t.layout.siteNavigation}
       tabindex="-1"
       data-hatsu-pass
     >
       <div class="menu-scroll">
         <div class="menu-heading">
-          <p>Navigation dossier</p>
-          <span>CLASSIFIED / 05 SECTIONS</span>
+          <p>{$t.layout.menuDossier}</p>
+          <span>{$t.layout.menuClassified}</span>
         </div>
 
-        <nav class="menu-primary" aria-label="Main sections">
+        <nav class="menu-primary" aria-label={$t.layout.mainSections}>
           {#each primaryNavigation as item (item.href)}
             <a
-              href={item.href}
+              href={$link(item.href)}
               class:active={isActive(item.href)}
               aria-current={isActive(item.href) ? 'page' : undefined}
               onclick={closeMenu}
@@ -157,9 +163,9 @@
           {/each}
         </nav>
 
-        <nav class="menu-sections" aria-label="Archive sections">
+        <nav class="menu-sections" aria-label={$t.layout.archiveSections}>
           {#each secondaryNavigation as item (item.href)}
-            <a href={item.href} class:active={isActive(item.href)} onclick={closeMenu}>
+            <a href={$link(item.href)} class:active={isActive(item.href)} onclick={closeMenu}>
               <span>{item.index}</span>
               <strong>{item.label}</strong>
               <i aria-hidden="true">↗</i>
@@ -169,17 +175,19 @@
 
         <button class="menu-search" type="button" onclick={openPalette}>
           <span aria-hidden="true">⌕</span>
-          <span>Quick find</span>
+          <span>{$t.layout.quickFind}</span>
         </button>
 
-        <!-- The header meta row is hidden on mobile, so the theme toggle rides here. -->
+        <!-- The header meta row is hidden on mobile, so the theme toggle and the
+             language switcher ride here. -->
         <div class="menu-audio">
           <AmbientToggle />
+          <LanguageSwitcher compact />
         </div>
 
         <div class="menu-footer">
-          <span>Dark Continent Expedition</span>
-          <span>Archive status: active</span>
+          <span>{$t.layout.menuFooterExpedition}</span>
+          <span>{$t.layout.menuFooterStatus}</span>
         </div>
       </div>
     </div>
@@ -196,24 +204,24 @@
   <footer class="app-footer" data-hatsu-pass>
     <div class="footer-brand">
       <strong>Black Whale</strong>
-      <small>Succession Archive · Kakin Royal Expedition</small>
+      <small>{$t.layout.footerTagline}</small>
     </div>
 
-    <nav class="footer-nav" aria-label="Archive sections">
-      <p>Sections</p>
+    <nav class="footer-nav" aria-label={$t.layout.archiveSections}>
+      <p>{$t.layout.footerSections}</p>
       <ul>
         {#each primaryNavigation as item (item.href)}
-          <li><a href={item.href}>{item.label}</a></li>
+          <li><a href={$link(item.href)}>{item.label}</a></li>
         {/each}
         {#each secondaryNavigation as item (item.href)}
-          <li><a href={item.href}>{item.label}</a></li>
+          <li><a href={$link(item.href)}>{item.label}</a></li>
         {/each}
       </ul>
     </nav>
 
     <div class="footer-legal">
-      <span>© {copyrightYear} Black Whale Archive</span>
-      <span>Unofficial fan project · Hunter × Hunter is © Yoshihiro Togashi / Shueisha</span>
+      <span>{$t.layout.copyright(copyrightYear)}</span>
+      <span>{$t.layout.disclaimer}</span>
     </div>
   </footer>
 
@@ -750,6 +758,9 @@
 
     .menu-audio {
       display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
       color: var(--text-muted);
       font-family: var(--font-mono);
       font-size: 0.62rem;

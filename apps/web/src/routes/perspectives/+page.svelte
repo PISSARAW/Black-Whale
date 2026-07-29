@@ -2,9 +2,10 @@
   import { page } from '$app/stores'
   import { goto } from '$app/navigation'
   import type { PageData } from './$types'
-  import { toEnglishDisplayName } from '$lib/utils/displayNames'
+  import { displayName } from '$lib/utils/displayNames'
   import Seo from '$lib/components/Seo.svelte'
   import { breadcrumbSchema } from '$lib/seo/schema'
+  import { link, locale, t } from '$lib/i18n'
 
   export let data: PageData
 
@@ -44,41 +45,40 @@
   }
 
   function getCharacterName(id: string) {
-    return toEnglishDisplayName(data.characters.find((c) => c.id === id)?.canonicalName) || id
+    return displayName(data.characters.find((c) => c.id === id)?.canonicalName, $locale) || id
   }
 </script>
 
 <Seo
-  title="Perspectives & Comparison"
-  description="See the Succession War through each character's eyes: what they know, what they only believe, and where their information has gone stale."
+  title={$t.perspectives.seoTitle}
+  description={$t.perspectives.seoDescription}
   jsonLd={breadcrumbSchema([
-    { name: 'Home', path: '/' },
-    { name: 'Perspectives', path: '/perspectives' },
+    { name: $t.common.home, path: $link('/') },
+    { name: $t.perspectives.breadcrumb, path: $link('/perspectives') },
   ])}
 />
 
 <div class="max-w-7xl mx-auto p-6">
   <header class="mb-10">
-    <h1 class="text-3xl font-bold text-bw-gold mb-2">Perspectives & Comparison</h1>
-    <p class="text-gray-400">
-      Explore a character's subjective world at a precise moment, or compare the beliefs of two
-      protagonists.
-    </p>
+    <h1 class="text-3xl font-bold text-bw-gold mb-2">{$t.perspectives.title}</h1>
+    <p class="text-gray-400">{$t.perspectives.intro}</p>
     <div class="mt-4 flex flex-wrap gap-2 text-xs">
       {#if selectedLeft}
         <a
-          href={`/perspectives/${selectedLeft}`}
+          href={$link(`/perspectives/${selectedLeft}`)}
           class="border border-gray-700 rounded px-3 py-1 hover:border-bw-gold"
-          >Open subjective map</a
+          >{$t.perspectives.openSubjectiveMap}</a
         >
         <a
-          href={`/knowledge/${selectedLeft}`}
+          href={$link(`/knowledge/${selectedLeft}`)}
           class="border border-gray-700 rounded px-3 py-1 hover:border-bw-gold"
-          >Open knowledge map</a
+          >{$t.perspectives.openKnowledgeMap}</a
         >
       {/if}
-      <a href="/compare" class="border border-gray-700 rounded px-3 py-1 hover:border-bw-gold"
-        >Perspective Comparison</a
+      <a
+        href={$link('/compare')}
+        class="border border-gray-700 rounded px-3 py-1 hover:border-bw-gold"
+        >{$t.perspectives.openComparison}</a
       >
     </div>
   </header>
@@ -89,13 +89,13 @@
   >
     <div class="flex-1 relative w-full">
       <label for="perspective-event" class="block text-sm text-gray-400 mb-1"
-        >Point in time (event)</label
+        >{$t.perspectives.pointInTime}</label
       >
       <div class="relative">
         <input
           id="perspective-event"
           type="text"
-          placeholder="Search by title or chapter..."
+          placeholder={$t.perspectives.searchEventPlaceholder}
           class="w-full bg-bw-dark border border-gray-700 text-white p-3 rounded-lg focus:border-bw-gold focus:outline-none placeholder-gray-600"
           bind:value={searchEventQuery}
           on:focus={() => (showEventDropdown = true)}
@@ -105,7 +105,7 @@
           <div
             class="absolute inset-y-0 left-0 right-0 p-3 bg-bw-dark border border-bw-gold/50 rounded-lg pointer-events-none truncate text-bw-gold"
           >
-            Ch. {selectedEvent.chapter.number} — {selectedEvent.title}
+            {$t.perspectives.eventOption(selectedEvent.chapter.number, selectedEvent.title)}
           </div>
         {/if}
       </div>
@@ -119,35 +119,39 @@
               class="w-full text-left px-4 py-2 hover:bg-bw-navy text-sm border-b border-gray-800 last:border-0"
               on:click={() => selectEvent(event.id)}
             >
-              <span class="text-bw-gold mr-2 font-mono text-xs">Ch.{event.chapter.number}</span>
+              <span class="text-bw-gold mr-2 font-mono text-xs"
+                >{$t.common.chapterShort(event.chapter.number)}</span
+              >
               <span class="text-white">{event.title}</span>
             </button>
           {/each}
           {#if filteredEvents.length === 0}
-            <div class="px-4 py-3 text-sm text-gray-500">No events found.</div>
+            <div class="px-4 py-3 text-sm text-gray-500">{$t.perspectives.noEvents}</div>
           {/if}
         </div>
       {/if}
     </div>
 
     <div class="flex-1 w-full">
-      <label for="observer-a" class="block text-sm text-gray-400 mb-1">Observer A (required)</label>
+      <label for="observer-a" class="block text-sm text-gray-400 mb-1"
+        >{$t.perspectives.observerA}</label
+      >
       <select
         id="observer-a"
         bind:value={selectedLeft}
         on:change={submitForm}
         class="w-full bg-bw-dark border border-gray-700 text-white p-3 rounded-lg focus:border-bw-gold focus:outline-none"
       >
-        <option value="" disabled>Choose a character</option>
+        <option value="" disabled>{$t.perspectives.chooseCharacter}</option>
         {#each data.characters as char (char.id)}
-          <option value={char.id}>{toEnglishDisplayName(char.canonicalName)}</option>
+          <option value={char.id}>{displayName(char.canonicalName, $locale)}</option>
         {/each}
       </select>
     </div>
 
     <div class="flex-1 w-full">
       <label for="observer-b" class="block text-sm text-gray-400 mb-1"
-        >Observer B (comparison)</label
+        >{$t.perspectives.observerB}</label
       >
       <select
         id="observer-b"
@@ -155,10 +159,10 @@
         on:change={submitForm}
         class="w-full bg-bw-dark border border-gray-700 text-white p-3 rounded-lg focus:border-bw-gold focus:outline-none"
       >
-        <option value="">(None — single view)</option>
+        <option value="">{$t.perspectives.noneSingleView}</option>
         {#each data.characters as char (char.id)}
           {#if char.id !== selectedLeft}
-            <option value={char.id}>{toEnglishDisplayName(char.canonicalName)}</option>
+            <option value={char.id}>{displayName(char.canonicalName, $locale)}</option>
           {/if}
         {/each}
       </select>
@@ -168,7 +172,7 @@
   <!-- Résultat -->
   {#if !selectedEventId || !selectedLeft}
     <div class="py-20 text-center border border-dashed border-gray-700 rounded-xl">
-      <p class="text-gray-500">Select an event and at least one observer to view the data.</p>
+      <p class="text-gray-500">{$t.perspectives.selectPrompt}</p>
     </div>
   {:else if selectedRight && data.comparison}
     <!-- Mode Comparaison -->
@@ -180,35 +184,39 @@
         </h2>
 
         <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-3">
-          Identity state (V2)
+          {$t.perspectives.identityState}
         </h3>
         <div
           class="bg-bw-navy/50 p-4 rounded-lg border border-gray-800 mb-6 font-mono text-xs text-gray-300"
         >
           <p>
-            Occupied body: <span class="text-white"
-              >{data.leftPerspective?.observer?.currentBodyId || 'Unknown'}</span
+            {$t.perspectives.occupiedBody}:
+            <span class="text-white"
+              >{data.leftPerspective?.observer?.currentBodyId || $t.common.unknown}</span
             >
           </p>
           <p>
-            Active consciousness: <span class="text-white"
-              >{data.leftPerspective?.observer?.consciousnessId || 'Unknown'}</span
+            {$t.perspectives.activeConsciousness}:
+            <span class="text-white"
+              >{data.leftPerspective?.observer?.consciousnessId || $t.common.unknown}</span
             >
           </p>
         </div>
 
         <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-3">
-          Subjective facts & beliefs
+          {$t.perspectives.subjectiveFacts}
         </h3>
         <ul class="space-y-2">
           {#each data.leftPerspective?.knownFacts || [] as fact (fact.id)}
             <li class="p-3 bg-gray-900 rounded border border-gray-800 text-sm flex flex-col">
-              <span class="text-gray-500 mb-1">{fact.predicate} (Subject: {fact.subjectId})</span>
+              <span class="text-gray-500 mb-1"
+                >{$t.perspectives.factSubject(fact.predicate, fact.subjectId)}</span
+              >
               <span class="text-white font-medium">{JSON.stringify(fact.value)}</span>
             </li>
           {/each}
           {#if data.leftPerspective?.knownFacts?.length === 0}
-            <li class="text-gray-500 italic text-sm">No known facts retrieved.</li>
+            <li class="text-gray-500 italic text-sm">{$t.perspectives.noKnownFacts}</li>
           {/if}
         </ul>
       </div>
@@ -220,35 +228,39 @@
         </h2>
 
         <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-3">
-          Identity state (V2)
+          {$t.perspectives.identityState}
         </h3>
         <div
           class="bg-bw-navy/50 p-4 rounded-lg border border-gray-800 mb-6 font-mono text-xs text-gray-300"
         >
           <p>
-            Occupied body: <span class="text-white"
-              >{data.rightPerspective?.observer?.currentBodyId || 'Unknown'}</span
+            {$t.perspectives.occupiedBody}:
+            <span class="text-white"
+              >{data.rightPerspective?.observer?.currentBodyId || $t.common.unknown}</span
             >
           </p>
           <p>
-            Active consciousness: <span class="text-white"
-              >{data.rightPerspective?.observer?.consciousnessId || 'Unknown'}</span
+            {$t.perspectives.activeConsciousness}:
+            <span class="text-white"
+              >{data.rightPerspective?.observer?.consciousnessId || $t.common.unknown}</span
             >
           </p>
         </div>
 
         <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-3">
-          Subjective facts & beliefs
+          {$t.perspectives.subjectiveFacts}
         </h3>
         <ul class="space-y-2">
           {#each data.rightPerspective?.knownFacts || [] as fact (fact.id)}
             <li class="p-3 bg-gray-900 rounded border border-gray-800 text-sm flex flex-col">
-              <span class="text-gray-500 mb-1">{fact.predicate} (Subject: {fact.subjectId})</span>
+              <span class="text-gray-500 mb-1"
+                >{$t.perspectives.factSubject(fact.predicate, fact.subjectId)}</span
+              >
               <span class="text-white font-medium">{JSON.stringify(fact.value)}</span>
             </li>
           {/each}
           {#if data.rightPerspective?.knownFacts?.length === 0}
-            <li class="text-gray-500 italic text-sm">No known facts retrieved.</li>
+            <li class="text-gray-500 italic text-sm">{$t.perspectives.noKnownFacts}</li>
           {/if}
         </ul>
       </div>
@@ -256,7 +268,7 @@
 
     <!-- Section Différences -->
     <div class="mt-8 bg-bw-navy/30 border border-bw-gold/30 rounded-xl p-6">
-      <h3 class="text-xl font-bold text-white mb-4">Contradictions & Perspective Differences</h3>
+      <h3 class="text-xl font-bold text-white mb-4">{$t.perspectives.differencesTitle}</h3>
 
       <div class="space-y-3">
         {#each data.comparison as diff, diffIndex (diffIndex)}
@@ -272,13 +284,17 @@
               >
               <span class="text-sm text-white font-medium">
                 {#if diff.differenceType === 'LEFT_ONLY'}
-                  {getCharacterName(selectedLeft)} knows this, but {getCharacterName(selectedRight)} does
-                  not.
+                  {$t.perspectives.knowsButNot(
+                    getCharacterName(selectedLeft),
+                    getCharacterName(selectedRight),
+                  )}
                 {:else if diff.differenceType === 'RIGHT_ONLY'}
-                  {getCharacterName(selectedRight)} knows this, but {getCharacterName(selectedLeft)} does
-                  not.
+                  {$t.perspectives.knowsButNot(
+                    getCharacterName(selectedRight),
+                    getCharacterName(selectedLeft),
+                  )}
                 {:else if diff.differenceType === 'CONTRADICTION'}
-                  Contradiction
+                  {$t.perspectives.contradiction}
                 {/if}
               </span>
             </div>
@@ -289,7 +305,7 @@
                   <span>{getCharacterName(selectedLeft)} :</span>
                   <br />{JSON.stringify(diff.leftValue)}
                 </div>
-                <div class="text-gray-600">VS</div>
+                <div class="text-gray-600">{$t.perspectives.versus}</div>
                 <div class="text-red-400">
                   <span>{getCharacterName(selectedRight)} :</span>
                   <br />{JSON.stringify(diff.rightValue)}
@@ -297,19 +313,17 @@
               </div>
             {:else if diff.differenceType === 'LEFT_ONLY'}
               <div class="text-xs font-mono text-gray-300 bg-gray-800 p-2 rounded">
-                Value: {JSON.stringify(diff.leftValue)}
+                {$t.perspectives.value(JSON.stringify(diff.leftValue))}
               </div>
             {:else if diff.differenceType === 'RIGHT_ONLY'}
               <div class="text-xs font-mono text-gray-300 bg-gray-800 p-2 rounded">
-                Value: {JSON.stringify(diff.rightValue)}
+                {$t.perspectives.value(JSON.stringify(diff.rightValue))}
               </div>
             {/if}
           </div>
         {/each}
         {#if data.comparison.length === 0}
-          <p class="text-gray-400 text-sm italic">
-            No differences found in the information known by both characters.
-          </p>
+          <p class="text-gray-400 text-sm italic">{$t.perspectives.noDifferences}</p>
         {/if}
       </div>
     </div>
@@ -317,7 +331,7 @@
     <!-- Mode Simple (Un seul observateur) -->
     <div class="bg-bw-dark border border-gray-800 rounded-xl p-8 max-w-3xl mx-auto">
       <h2 class="text-3xl font-bold text-bw-gold mb-6 pb-4 border-b border-gray-800">
-        {getCharacterName(selectedLeft)}'s perspective
+        {$t.perspectives.perspectiveOf(getCharacterName(selectedLeft))}
       </h2>
 
       <div class="mb-8">
@@ -325,21 +339,21 @@
           class="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-4 flex items-center"
         >
           <span class="w-8 h-[1px] bg-gray-700 mr-3"></span>
-          Apparent identity & physical state (V2 engine)
+          {$t.perspectives.apparentIdentity}
           <span class="w-8 h-[1px] bg-gray-700 ml-3"></span>
         </h3>
 
         <div class="grid grid-cols-2 gap-4">
           <div class="bg-bw-navy p-4 rounded-lg border border-gray-800">
-            <span class="block text-xs text-gray-500 mb-1">Occupied body</span>
+            <span class="block text-xs text-gray-500 mb-1">{$t.perspectives.occupiedBody}</span>
             <span class="font-mono text-white text-sm"
-              >{data.leftPerspective.observer?.currentBodyId || 'Not found'}</span
+              >{data.leftPerspective.observer?.currentBodyId || $t.perspectives.notFound}</span
             >
           </div>
           <div class="bg-bw-navy p-4 rounded-lg border border-gray-800">
-            <span class="block text-xs text-gray-500 mb-1">Consciousness</span>
+            <span class="block text-xs text-gray-500 mb-1">{$t.perspectives.consciousness}</span>
             <span class="font-mono text-white text-sm"
-              >{data.leftPerspective.observer?.consciousnessId || 'Not found'}</span
+              >{data.leftPerspective.observer?.consciousnessId || $t.perspectives.notFound}</span
             >
           </div>
         </div>
@@ -350,7 +364,7 @@
           class="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-4 flex items-center"
         >
           <span class="w-8 h-[1px] bg-gray-700 mr-3"></span>
-          Knowledge & belief base
+          {$t.perspectives.knowledgeBase}
           <span class="w-8 h-[1px] bg-gray-700 ml-3"></span>
         </h3>
 
@@ -363,11 +377,13 @@
                 <span
                   class="inline-block px-2 py-1 bg-gray-800 text-gray-400 rounded text-[10px] uppercase font-bold mb-2"
                 >
-                  {fact.truthStatus === 'CONTESTED' ? 'Contested belief' : 'Verified fact'}
+                  {fact.truthStatus === 'CONTESTED'
+                    ? $t.perspectives.contestedBelief
+                    : $t.perspectives.verifiedFact}
                 </span>
                 <p class="text-white text-sm font-medium">{fact.predicate}</p>
                 <p class="text-gray-500 text-xs mt-1">
-                  Subject: <span class="font-mono">{fact.subjectId}</span>
+                  {$t.perspectives.subjectPrefix} <span class="font-mono">{fact.subjectId}</span>
                 </p>
               </div>
               <div
@@ -382,7 +398,7 @@
             <div
               class="p-8 text-center border border-dashed border-gray-800 rounded-lg text-gray-500 italic"
             >
-              This character has no verified knowledge at this point in time.
+              {$t.perspectives.noVerifiedKnowledge}
             </div>
           {/if}
         </div>
@@ -394,7 +410,7 @@
       <div
         class="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-bw-gold border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
       ></div>
-      <p class="mt-4 text-gray-500">Retrieving perspective data from the engine...</p>
+      <p class="mt-4 text-gray-500">{$t.perspectives.retrieving}</p>
     </div>
   {/if}
 </div>

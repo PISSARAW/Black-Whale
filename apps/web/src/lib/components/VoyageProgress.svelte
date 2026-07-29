@@ -6,6 +6,7 @@
     TERRITORIAL_WATERS_DAYS,
     VOYAGE_DURATION_DAYS,
   } from '$lib/voyageTime'
+  import { t } from '$lib/i18n'
 
   let { compact = false }: { compact?: boolean } = $props()
 
@@ -14,15 +15,15 @@
   const remainingDays = VOYAGE_DURATION_DAYS - LATEST_RECORDED_DAY
 </script>
 
-<section class:compact class="voyage-progress" aria-label="Black Whale voyage progress">
+<section class:compact class="voyage-progress" aria-label={$t.voyage.label}>
   <header>
     <div>
-      <p>Ship time · Latest canon record</p>
-      <strong>Day {LATEST_RECORDED_DAY}</strong>
+      <p>{$t.voyage.shipTime}</p>
+      <strong>{$t.voyage.day(LATEST_RECORDED_DAY)}</strong>
     </div>
     <div class="remaining">
       <span>{remainingDays}</span>
-      <small>days remaining</small>
+      <small>{$t.voyage.daysRemaining}</small>
     </div>
   </header>
 
@@ -31,11 +32,11 @@
   <div
     class="route"
     role="progressbar"
-    aria-label="Voyage progress"
+    aria-label={$t.voyage.progressLabel}
     aria-valuemin={0}
     aria-valuemax={VOYAGE_DURATION_DAYS}
     aria-valuenow={LATEST_RECORDED_DAY}
-    aria-valuetext={`Day ${LATEST_RECORDED_DAY} of ${VOYAGE_DURATION_DAYS}`}
+    aria-valuetext={$t.voyage.valueText(LATEST_RECORDED_DAY, VOYAGE_DURATION_DAYS)}
   >
     <div class="track"><span class="elapsed" style:width={`${progress}%`}></span></div>
     <span class="ship" style:left={`${progress}%`} aria-hidden="true">◆</span>
@@ -43,15 +44,15 @@
   </div>
 
   <div class="labels">
-    <span title="{DEPARTURE_DATE}, {DEPARTURE_TIME}"><b>01</b> Departure</span>
-    <span class="waters" style:left={`${watersMarker}%`}><b>21</b> Final check</span>
-    <span><b>56</b> New Continent</span>
+    <span title="{DEPARTURE_DATE}, {DEPARTURE_TIME}"><b>01</b> {$t.voyage.departure}</span>
+    <span class="waters" style:left={`${watersMarker}%`}><b>21</b> {$t.voyage.finalCheck}</span>
+    <span><b>56</b> {$t.voyage.newContinent}</span>
   </div>
 
   {#if !compact}
     <footer>
-      <span><i></i> Territorial waters</span>
-      <span>3 weeks known waters · 5 weeks uncharted</span>
+      <span><i></i> {$t.voyage.territorialWaters}</span>
+      <span>{$t.voyage.waterSplit}</span>
     </footer>
   {/if}
 </section>

@@ -10,6 +10,7 @@
     refreshForcedZetsu,
   } from './hatsuState.js'
   import { HATSU_PROFILES, hatsuById } from './hatsuRegistry.js'
+  import { t } from '$lib/i18n'
 
   let query = ''
   let now = Date.now()
@@ -53,9 +54,9 @@
     <section class="zetsu-card" aria-live="polite">
       <span class="zetsu-mark">絶</span>
       <div>
-        <span class="eyebrow">FORCED ZETSU</span>
-        <strong>Nen sealed · {formatRemaining(zetsuRemaining)}</strong>
-        <small>Emperor Time exhausted one year of life.</small>
+        <span class="eyebrow">{$t.nen.forcedZetsu}</span>
+        <strong>{$t.nen.nenSealed(formatRemaining(zetsuRemaining))}</strong>
+        <small>{$t.nen.zetsuCost}</small>
       </div>
     </section>
   {:else if $activeHatsu}
@@ -63,25 +64,25 @@
       <button
         class="sigil active"
         onclick={() => hatsuPanelOpen.update((open) => !open)}
-        aria-label="Change Hatsu"
+        aria-label={$t.nen.changeHatsu}
       >
         <span class="aura-dot"></span>
         NEN
       </button>
       <div class="active-copy">
-        <span class="eyebrow">ACTIVE HATSU · {$activeHatsu.owner}</span>
+        <span class="eyebrow">{$t.nen.activeHatsu($activeHatsu.owner)}</span>
         <strong>{$activeHatsu.name}</strong>
         <span class="instruction">{$activeHatsu.instruction}</span>
       </div>
       <button type="button" class="release" data-hatsu-release onclick={deactivateHatsu}
-        >Zetsu · release</button
+        >{$t.nen.release}</button
       >
     </section>
   {:else}
     <button
       class="sigil launcher"
       onclick={() => hatsuPanelOpen.set(true)}
-      aria-label="Activate a Hatsu"
+      aria-label={$t.nen.activateAHatsu}
     >
       <span class="aura-dot"></span>
       NEN
@@ -90,16 +91,21 @@
 
   {#if $hatsuPanelOpen}
     <div class="backdrop" onclick={() => hatsuPanelOpen.set(false)} role="presentation"></div>
-    <section class="picker" aria-label="Hatsu selection">
+    <section class="picker" aria-label={$t.nen.pickerLabel}>
       <header>
         <div>
-          <span class="eyebrow">GLOBAL AURA SYSTEM</span>
-          <h2>Activate a technique</h2>
+          <span class="eyebrow">{$t.nen.globalAura}</span>
+          <h2>{$t.nen.activateTechnique}</h2>
         </div>
-        <button class="close" onclick={() => hatsuPanelOpen.set(false)} aria-label="Close">×</button
+        <button class="close" onclick={() => hatsuPanelOpen.set(false)} aria-label={$t.common.close}
+          >×</button
         >
       </header>
-      <input bind:value={query} placeholder="Technique ou utilisateur…" aria-label="Search Hatsu" />
+      <input
+        bind:value={query}
+        placeholder={$t.nen.searchPlaceholder}
+        aria-label={$t.nen.searchHatsu}
+      />
       <div class="ability-list">
         {#each filtered as profile (profile.id)}
           <button
@@ -115,9 +121,7 @@
           </button>
         {/each}
       </div>
-      <footer>
-        {HATSU_PROFILES.length} techniques connues · l’activation persiste pendant la navigation
-      </footer>
+      <footer>{$t.nen.pickerFooter(HATSU_PROFILES.length)}</footer>
     </section>
   {/if}
 </div>

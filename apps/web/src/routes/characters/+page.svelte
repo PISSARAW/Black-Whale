@@ -2,80 +2,101 @@
   import type { PageData } from './$types'
   import Seo from '$lib/components/Seo.svelte'
   import { breadcrumbSchema, collectionSchema } from '$lib/seo/schema'
+  import { link, t } from '$lib/i18n'
 
   let { data }: { data: PageData } = $props()
   let query = $state('')
-  let activeFaction = $state('All')
+  // Sentinel for "no faction filter", kept out of the copy so the comparison
+  // below does not depend on the active language.
+  const ALL_FACTIONS = '*'
+  let activeFaction = $state(ALL_FACTIONS)
 
   const normalize = (value: string) =>
     value
       .normalize('NFD')
       .replace(/[\u0300-\u036f]/g, '')
       .toLowerCase()
-  const factionLabel = (value?: string | null) =>
-    value ? value.replace(/^prince-/, 'Faction ').replaceAll('-', ' ') : 'Independent'
+  // Groups are keyed on a language-independent form of the faction id, so the
+  // classification below and the active filter keep working in every locale.
+  // Only the rendering of that key is translated.
+  const factionKey = (value?: string | null) =>
+    value ? value.replace(/^prince-/, 'faction ').replaceAll('-', ' ') : 'independent'
+
+  let factionLabel = $derived((key: string) => {
+    if (key === 'independent') return $t.registry.independent
+    if (key.startsWith('faction '))
+      return `${$t.registry.factionPrefix}${key.slice('faction '.length)}`
+    return key
+  })
 
   const royalPalette = ['#d4b563', '#a98655', '#7f9d8b', '#9d7b95', '#718ca2', '#b17c68', '#859f62']
-  const factionIdentity = (faction: string) => {
-    const normalized = faction.toLowerCase()
-    if (normalized.includes('phantom troupe'))
+  let factionIdentity = $derived((key: string) => {
+    if (key.includes('phantom troupe'))
       return {
-        category: 'Intruder cell',
+        category: $t.registry.categories.intruderCell,
         code: '№13',
         mark: '✳',
         accent: '#9b78bf',
         wash: '#211628',
       }
-    if (normalized.includes('mafia'))
-      return { category: 'Mafia family', code: '3F', mark: '⬡', accent: '#b96552', wash: '#251716' }
-    if (normalized.includes('zodiac') || normalized.includes('hunter'))
+    if (key.includes('mafia'))
       return {
-        category: 'Hunter Association',
+        category: $t.registry.categories.mafiaFamily,
+        code: '3F',
+        mark: '⬡',
+        accent: '#b96552',
+        wash: '#251716',
+      }
+    if (key.includes('zodiac') || key.includes('hunter'))
+      return {
+        category: $t.registry.categories.hunterAssociation,
         code: 'HXA',
         mark: '✦',
         accent: '#69b8ad',
         wash: '#112421',
       }
-    if (normalized.includes('kakin royal army') || normalized.includes('justice bureau'))
+    if (key.includes('kakin royal army') || key.includes('justice bureau'))
       return {
-        category: 'State authority',
+        category: $t.registry.categories.stateAuthority,
         code: 'KKN',
         mark: '◆',
         accent: '#93a3a5',
         wash: '#172126',
       }
-    if (normalized.startsWith('faction ')) {
-      const hash = [...normalized].reduce((sum, char) => sum + char.charCodeAt(0), 0)
+    if (key.startsWith('faction ')) {
+      const hash = [...key].reduce((sum, char) => sum + char.charCodeAt(0), 0)
       const accent = royalPalette[hash % royalPalette.length]
       return {
-        category: 'Royal household',
-        code: faction.replace('Faction ', '').slice(0, 3).toUpperCase(),
+        category: $t.registry.categories.royalHousehold,
+        code: key.slice('faction '.length).slice(0, 3).toUpperCase(),
         mark: '♛',
         accent,
         wash: '#241f15',
       }
     }
     return {
-      category: 'Unaligned record',
+      category: $t.registry.categories.unaligned,
       code: 'IND',
       mark: '·',
       accent: '#778788',
       wash: '#151d20',
     }
-  }
+  })
 
+  // Sorted on the translated label so the filter row reads alphabetically in
+  // whichever language is on screen.
   let factions: string[] = $derived([
-    'All',
+    ALL_FACTIONS,
     ...Array.from(
-      new Set<string>(data.characters.map((character: any) => factionLabel(character.factionId))),
-    ).sort(),
+      new Set<string>(data.characters.map((character: any) => factionKey(character.factionId))),
+    ).sort((a, b) => factionLabel(a).localeCompare(factionLabel(b), $t.common.intlLocale)),
   ])
   let filteredCharacters = $derived(
     data.characters.filter((character: any) => {
-      const faction = factionLabel(character.factionId)
-      const matchesFaction = activeFaction === 'All' || faction === activeFaction
+      const faction = factionKey(character.factionId)
+      const matchesFaction = activeFaction === ALL_FACTIONS || faction === activeFaction
       const haystack = normalize(
-        `${character.canonicalName} ${(character.aliases || []).join(' ')} ${character.description || ''} ${faction}`,
+        `${character.canonicalName} ${(character.aliases || []).join(' ')} ${character.description || ''} ${faction} ${factionLabel(faction)}`,
       )
       return matchesFaction && haystack.includes(normalize(query.trim()))
     }),
@@ -83,7 +104,7 @@
 
   let charactersByFaction: Record<string, any[]> = $derived(
     filteredCharacters.reduce((acc: Record<string, any[]>, character: any) => {
-      const faction = factionLabel(character.factionId)
+      const faction = factionKey(character.factionId)
       ;(acc[faction] ||= []).push(character)
       return acc
     }, {}),
@@ -91,22 +112,21 @@
 </script>
 
 <Seo
-  title="Passenger Registry"
-  description={`Browse all ${(data.characters ?? []).length} passengers of the Black Whale: princes, guards, mafia, Hunters and Phantom Troupe members, with faction, deck and first appearance.`}
+  title={$t.registry.seoTitle}
+  description={$t.registry.seoDescription((data.characters ?? []).length)}
   jsonLd={[
     collectionSchema({
-      name: 'Black Whale passenger registry',
-      path: '/characters',
-      description:
-        'Every catalogued passenger aboard the Black Whale, with faction and identity records.',
+      name: $t.registry.collectionName,
+      path: $link('/characters'),
+      description: $t.registry.collectionDescription,
       items: (data.characters ?? []).map((character: { id: string; canonicalName: string }) => ({
         name: character.canonicalName,
-        path: `/characters/${character.id}`,
+        path: $link(`/characters/${character.id}`),
       })),
     }),
     breadcrumbSchema([
-      { name: 'Home', path: '/' },
-      { name: 'Characters', path: '/characters' },
+      { name: $t.common.home, path: $link('/') },
+      { name: $t.nav.characters, path: $link('/characters') },
     ]),
   ]}
 />
@@ -114,43 +134,43 @@
 <div class="registry-page">
   <header class="registry-hero">
     <div>
-      <p class="eyebrow">Manifest 02 · Identity records</p>
-      <h1>Passenger<br />Registry</h1>
+      <p class="eyebrow">{$t.registry.eyebrow}</p>
+      <h1>{$t.registry.titleLine1}<br />{$t.registry.titleLine2}</h1>
     </div>
     <div class="hero-note">
-      <p>
-        Every identity is a moving target. Browse confirmed passengers, aliases, affiliations, and
-        first recorded appearances.
-      </p>
+      <p>{$t.registry.note}</p>
       <dl>
         <div>
-          <dt>Total records</dt>
+          <dt>{$t.registry.totalRecords}</dt>
           <dd>{data.characters.length}</dd>
         </div>
         <div>
-          <dt>Visible</dt>
+          <dt>{$t.registry.visible}</dt>
           <dd>{filteredCharacters.length}</dd>
         </div>
       </dl>
     </div>
   </header>
 
-  <section class="registry-controls" aria-label="Registry filters">
+  <section class="registry-controls" aria-label={$t.registry.filtersLabel}>
     <label class="search-field">
       <span aria-hidden="true">⌕</span>
-      <span class="sr-only">Search passengers</span>
-      <input bind:value={query} type="search" placeholder="Search by name, alias, or keyword…" />
-      {#if query}<button type="button" onclick={() => (query = '')} aria-label="Clear search"
-          >×</button
+      <span class="sr-only">{$t.registry.searchPassengers}</span>
+      <input bind:value={query} type="search" placeholder={$t.registry.searchPlaceholder} />
+      {#if query}<button
+          type="button"
+          onclick={() => (query = '')}
+          aria-label={$t.common.clearSearch}>×</button
         >{/if}
     </label>
-    <div class="faction-filter" aria-label="Filter by affiliation">
+    <div class="faction-filter" aria-label={$t.registry.filterByAffiliation}>
       {#each factions as faction (faction)}
         <button
           type="button"
           class:active={activeFaction === faction}
           aria-pressed={activeFaction === faction}
-          onclick={() => (activeFaction = faction)}>{faction}</button
+          onclick={() => (activeFaction = faction)}
+          >{faction === ALL_FACTIONS ? $t.common.all : factionLabel(faction)}</button
         >
       {/each}
     </div>
@@ -170,16 +190,16 @@
               <i aria-hidden="true">{identity.mark}</i>
               <div>
                 <small>{identity.category} · {identity.code}</small>
-                <h2>{faction}</h2>
+                <h2>{factionLabel(faction)}</h2>
               </div>
             </div>
-            <p>{characters.length} {characters.length === 1 ? 'record' : 'records'}</p>
+            <p>{characters.length} {$t.common.records(characters.length)}</p>
           </header>
 
           <div class="character-grid">
             {#each characters as character, index (character.id)}
               <a
-                href="/characters/{character.id}"
+                href={$link(`/characters/${character.id}`)}
                 class="character-card"
                 data-affiliation={identity.category}
               >
@@ -197,20 +217,20 @@
                   <div class="card-status">
                     <span class:canon={character.canonStatus === 'canon'}></span>{identity.code} · {character.canonStatus ===
                     'canon'
-                      ? 'Canonical'
-                      : 'Secondary'}
+                      ? $t.registry.canonical
+                      : $t.registry.secondary}
                   </div>
                   <h3>{character.canonicalName}</h3>
                   {#if character.aliases?.length}<p class="aliases">
-                      AKA · {character.aliases.slice(0, 2).join(' / ')}
+                      {$t.registry.aka} · {character.aliases.slice(0, 2).join(' / ')}
                     </p>{/if}
                   <p class="description">
-                    {character.description || 'No public intelligence is currently available.'}
+                    {character.description || $t.registry.noIntelligence}
                   </p>
                   <div class="card-footer">
                     <span
                       >{character.firstAppearanceChapterId?.replace('-', ' ') ||
-                        'Appearance unknown'}</span
+                        $t.registry.appearanceUnknown}</span
                     ><i aria-hidden="true">↗</i>
                   </div>
                 </div>
@@ -222,15 +242,15 @@
     </div>
   {:else}
     <section class="empty-state" aria-live="polite">
-      <span>NO MATCH</span>
-      <h2>The registry returned no identity.</h2>
-      <p>Change the affiliation or try a broader search.</p>
+      <span>{$t.registry.emptyTag}</span>
+      <h2>{$t.registry.emptyTitle}</h2>
+      <p>{$t.registry.emptyCopy}</p>
       <button
         type="button"
         onclick={() => {
           query = ''
-          activeFaction = 'All'
-        }}>Reset filters</button
+          activeFaction = ALL_FACTIONS
+        }}>{$t.common.resetFilters}</button
       >
     </section>
   {/if}

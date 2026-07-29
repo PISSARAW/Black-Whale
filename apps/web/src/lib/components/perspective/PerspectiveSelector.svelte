@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { FollowMode, PerspectiveOption } from './types'
+  import { t } from '$lib/i18n'
 
   let {
     options,
@@ -15,16 +16,16 @@
     onFollowModeSelect: (mode: FollowMode) => void
   } = $props()
 
-  const followOptions: Array<{ id: FollowMode; label: string }> = [
-    { id: 'consciousness', label: 'Follow consciousness' },
-    { id: 'body', label: 'Follow body' },
-    { id: 'appearance', label: 'Follow public appearance' },
-  ]
+  let followOptions: Array<{ id: FollowMode; label: string }> = $derived([
+    { id: 'consciousness', label: $t.perspectiveUi.followOptions.consciousness },
+    { id: 'body', label: $t.perspectiveUi.followOptions.body },
+    { id: 'appearance', label: $t.perspectiveUi.followOptions.appearance },
+  ])
 </script>
 
-<section class="selector" aria-label="Perspective selector">
+<section class="selector" aria-label={$t.perspectiveUi.selectorLabel}>
   <div class="perspective-control">
-    <label for="perspective-select">Perspective</label>
+    <label for="perspective-select">{$t.perspectiveUi.perspective}</label>
     <select
       id="perspective-select"
       value={selectedPerspective}
@@ -37,8 +38,8 @@
   </div>
 
   <div class="follow-control">
-    <h2>Tracking</h2>
-    <ul role="radiogroup" aria-label="Choose tracking mode">
+    <h2>{$t.perspectiveUi.tracking}</h2>
+    <ul role="radiogroup" aria-label={$t.perspectiveUi.chooseTrackingMode}>
       {#each followOptions as option (option.id)}
         <li>
           <button

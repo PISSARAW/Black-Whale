@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { t } from '$lib/i18n'
+
   /**
    * A Lovely Ghostwriter sheet.
    *
@@ -27,26 +29,23 @@
 
 <article class="sheet">
   <header>
-    <p class="sheet-code">LOVELY GHOSTWRITER · APOCRYPHAL SHEET</p>
+    <p class="sheet-code">{$t.prophecy.sheetCode}</p>
     <dl>
       <div>
-        <dt>Covers</dt>
+        <dt>{$t.prophecy.covers}</dt>
         <dd>{prophecy.horizon}</dd>
       </div>
       <div>
-        <dt>Foretells</dt>
+        <dt>{$t.prophecy.foretells}</dt>
         <dd>{prophecy.foretells}</dd>
       </div>
     </dl>
   </header>
 
-  <p class="desire"><span>What the subject wants</span>{prophecy.desire}</p>
+  <p class="desire"><span>{$t.prophecy.desireLabel}</span>{prophecy.desire}</p>
 
   {#if prophecy.blank}
-    <p class="unwritten">
-      The page for this subject was never written — the ability cannot predict the future of whoever
-      is holding it.
-    </p>
+    <p class="unwritten">{$t.prophecy.unwritten}</p>
   {:else}
     <blockquote>
       {#each prophecy.poem as line, lineIndex (lineIndex)}<span>{line}</span>{/each}
@@ -54,14 +53,11 @@
   {/if}
 
   <details>
-    <summary>Read the gloss — names the events the poem only gestures at</summary>
+    <summary>{$t.prophecy.glossSummary}</summary>
     <p>{prophecy.reading}</p>
   </details>
 
-  <footer>
-    Written in the style of Neon Nostrade's poems. Lovely Ghostwriter had already vanished from
-    Skill Hunter when the Black Whale sailed: this sheet is a reconstruction, not a record.
-  </footer>
+  <footer>{$t.prophecy.footer}</footer>
 </article>
 
 <style>

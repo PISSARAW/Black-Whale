@@ -17,124 +17,74 @@
     PerspectiveContext,
     PerspectiveOption,
   } from '$lib/components/perspective/types'
-  import { toEnglishDisplayName } from '$lib/utils/displayNames'
+  import { displayName } from '$lib/utils/displayNames'
+  import { link, locale, t } from '$lib/i18n'
 
   let { data }: { data: PageData } = $props()
 
   // Toolbar & Factions setup
-  const factions = [
-    { id: 'princes', label: 'Royal houses', code: 'KKN', mark: '♛', color: '#d9bc69' },
-    { id: 'guards', label: 'Royal guard', code: 'GRD', mark: '◆', color: '#a9b5b5' },
-    { id: 'hunters', label: 'Hunters', code: 'HXA', mark: '✦', color: '#69b8ad' },
-    { id: 'spider', label: 'Phantom Troupe', code: '№13', mark: '✳', color: '#9b78bf' },
-    { id: 'mafia', label: 'Mafia families', code: '3F', mark: '⬡', color: '#b96552' },
-  ]
+  let factions = $derived([
+    { id: 'princes', label: $t.ship.factions.princes, code: 'KKN', mark: '♛', color: '#d9bc69' },
+    { id: 'guards', label: $t.ship.factions.guards, code: 'GRD', mark: '◆', color: '#a9b5b5' },
+    { id: 'hunters', label: $t.ship.factions.hunters, code: 'HXA', mark: '✦', color: '#69b8ad' },
+    { id: 'spider', label: $t.ship.factions.spider, code: '№13', mark: '✳', color: '#9b78bf' },
+    { id: 'mafia', label: $t.ship.factions.mafia, code: '3F', mark: '⬡', color: '#b96552' },
+  ])
 
-  const tierProfiles: Record<
-    string,
-    {
-      number: string
-      title: string
-      subtitle: string
-      clearance: string
-      density: number
-      pressure: string
-      danger: string
-      signal: string
-      anomaly: string
-      report: string
-    }
-  > = {
-    overview: {
-      number: '00',
-      title: 'Ship overview',
-      subtitle: 'Five societies under one hull',
-      clearance: 'ARCHIVE / GLOBAL',
-      density: 42,
-      pressure: 'Layered control',
-      danger: 'ELEVATED',
-      signal: 'Cross-deck surveillance active',
-      anomaly: 'Parasitic aura signatures remain unresolved',
-      report: 'Passenger manifests disagree with security counts on the lower decks.',
-    },
-    'tier-1': {
-      number: '01',
-      title: 'Royal precinct',
-      subtitle: 'Ceremonial calm · concealed succession war',
-      clearance: 'KAKIN / ROYAL',
-      density: 18,
-      pressure: 'Silent hostility',
-      danger: 'SEVERE',
-      signal: 'Private armies monitoring all corridors',
-      anomaly: 'Multiple guardian entities inferred · direct observation impossible',
-      report: 'Four deaths in Room 1014. Cause redacted by royal authority.',
-    },
-    'tier-2': {
-      number: '02',
-      title: 'VVIP district',
-      subtitle: 'Privilege behind controlled access',
-      clearance: 'VVIP / BLUE',
-      density: 34,
-      pressure: 'Controlled access',
-      danger: 'GUARDED',
-      signal: 'Detention and transit channels monitored',
-      anomaly: 'Residual aura detected near restricted suites',
-      report: 'Intercepted routing order references an unregistered holding area.',
-    },
-    'tier-3': {
-      number: '03',
-      title: 'Civic deck',
-      subtitle: 'Hospitals, courts and public movement',
-      clearance: 'CIVIL / AMBER',
-      density: 61,
-      pressure: 'Information overload',
-      danger: 'UNSTABLE',
-      signal: 'Justice Bureau feeds partially synchronized',
-      anomaly: 'Unattributed Nen activity reported through civilian channels',
-      report: 'Witness statements conflict after a disappearance near the medical district.',
-    },
-    'tier-4': {
-      number: '04',
-      title: 'Industrial passage',
-      subtitle: 'Cargo routes contested by three families',
-      clearance: 'CREW / RED',
-      density: 79,
-      pressure: 'Faction friction',
-      danger: 'CRITICAL',
-      signal: 'Blind corridors and mafia relays detected',
-      anomaly: 'Spatial discontinuities reported by multiple teams',
-      report: 'Three intercepted transmissions use mutually exclusive location codes.',
-    },
-    'tier-5': {
-      number: '05',
-      title: 'Lower machinery',
-      subtitle: 'Crowding, scarcity and failing oversight',
-      clearance: 'RESTRICTED / BLACK',
-      density: 96,
-      pressure: 'Systemic collapse',
-      danger: 'EXTREME',
-      signal: 'Official surveillance coverage below threshold',
-      anomaly: 'Hostile aura bloom · classification unavailable',
-      report: 'Casualty ledger sealed. Seventeen passenger IDs no longer resolve.',
-    },
+  // The numbers are structural; every string comes from the catalogue.
+  const tierDensity: Record<string, number> = {
+    overview: 42,
+    'tier-1': 18,
+    'tier-2': 34,
+    'tier-3': 61,
+    'tier-4': 79,
+    'tier-5': 96,
   }
 
-  const followLabel: Record<FollowMode, string> = {
-    consciousness: 'follow consciousness',
-    body: 'follow body',
-    appearance: 'follow public appearance',
+  const tierNumber: Record<string, string> = {
+    overview: '00',
+    'tier-1': '01',
+    'tier-2': '02',
+    'tier-3': '03',
+    'tier-4': '04',
+    'tier-5': '05',
   }
+
+  let tierProfiles = $derived(
+    Object.fromEntries(
+      Object.entries($t.ship.tiers).map(([key, copy]) => [
+        key,
+        { ...copy, number: tierNumber[key], density: tierDensity[key] },
+      ]),
+    ) as Record<
+      string,
+      {
+        number: string
+        title: string
+        subtitle: string
+        clearance: string
+        density: number
+        pressure: string
+        danger: string
+        signal: string
+        anomaly: string
+        report: string
+      }
+    >,
+  )
+
+  let followLabel: Record<FollowMode, string> = $derived($t.ship.followLabels)
 
   let perspectiveOptions = $derived.by(() => {
     const fromCharacters: PerspectiveOption[] = (data.worldState?.characters || []).map(
       (char: any) => ({
         id: char.id,
-        label: toEnglishDisplayName(char.canonicalName),
+        label: displayName(char.canonicalName, $locale),
         kind: 'character',
       }),
     )
 
-    return [{ id: 'reader', label: 'Reader view', kind: 'reader' as const }, ...fromCharacters]
+    return [{ id: 'reader', label: $t.ship.readerView, kind: 'reader' as const }, ...fromCharacters]
   })
 
   let currentEvt = $derived(
@@ -158,7 +108,7 @@
   )
 
   let contextState = $derived.by((): PerspectiveContext => {
-    const perspectiveName = selectedPerspective?.label || 'Reader view'
+    const perspectiveName = selectedPerspective?.label || $t.ship.readerView
     const observer = data.perspective?.observer
     const observerCharacter = data.worldState?.characters?.find(
       (char: any) => char.id === observer?.characterId,
@@ -191,27 +141,32 @@
 
     return {
       reality: [
-        { id: 'r0', label: 'Canonical event', index: baseSequence - 2 },
-        { id: 'r1', label: currentEvt?.title || 'Current state', index: baseSequence },
+        { id: 'r0', label: $t.ship.timelinePoints.canonicalEvent, index: baseSequence - 2 },
+        { id: 'r1', label: currentEvt?.title || $t.ship.currentState, index: baseSequence },
       ],
       body: [
-        { id: 'b0', label: 'Body movement', index: baseSequence - 1 },
-        { id: 'b1', label: 'Biological state', index: baseSequence },
+        { id: 'b0', label: $t.ship.timelinePoints.bodyMovement, index: baseSequence - 1 },
+        { id: 'b1', label: $t.ship.timelinePoints.biologicalState, index: baseSequence },
       ],
       consciousness: [
-        { id: 'c0', label: 'Mental anchor', index: baseSequence - 1 },
-        { id: 'c1', label: 'Transfer', index: baseSequence, emphasis: contextState.hasAnomaly },
+        { id: 'c0', label: $t.ship.timelinePoints.mentalAnchor, index: baseSequence - 1 },
+        {
+          id: 'c1',
+          label: $t.ship.timelinePoints.transfer,
+          index: baseSequence,
+          emphasis: contextState.hasAnomaly,
+        },
       ],
       knowledge: [
-        { id: 'k0', label: 'Information received', index: baseSequence - 2 },
+        { id: 'k0', label: $t.ship.timelinePoints.informationReceived, index: baseSequence - 2 },
         {
           id: 'k1',
-          label: 'Perspective update',
+          label: $t.ship.timelinePoints.perspectiveUpdate,
           index: baseSequence,
           detail:
             selectedPerspective?.kind === 'reader'
-              ? 'Spoiler-filtered canon'
-              : 'Subjective point of view',
+              ? $t.ship.timelinePoints.spoilerFiltered
+              : $t.ship.timelinePoints.subjectiveView,
         },
       ],
     }
@@ -219,10 +174,10 @@
 
   let currentDeckLabel = $derived(
     mapState.currentZoomLevel === 'OVERVIEW'
-      ? 'Overview'
+      ? $t.ship.overview
       : mapState.currentZoomLevel === 'LOCAL'
-        ? (mapState.selectedLocationId || 'Local area').replaceAll('-', ' ')
-        : `Tier ${mapState.selectedTier?.replace('tier-', '') || ''}`,
+        ? (mapState.selectedLocationId || $t.ship.localArea).replaceAll('-', ' ')
+        : $t.ship.tierLabel(mapState.selectedTier?.replace('tier-', '') || ''),
   )
 
   let eventProgress = $derived.by(() => {
@@ -230,14 +185,7 @@
     return Math.max(0, Math.min(100, (data.selectedEventIndex / (data.events.length - 1)) * 100))
   })
 
-  const deckClearance: Record<string, string> = {
-    overview: 'Global scan',
-    'tier-1': 'Royal clearance',
-    'tier-2': 'VIP clearance',
-    'tier-3': 'Public access',
-    'tier-4': 'Crew clearance',
-    'tier-5': 'Restricted systems',
-  }
+  let deckClearance: Record<string, string> = $derived($t.ship.deckClearance)
 
   let mappedZoneCount = $derived.by(() => {
     const locations = data.worldState?.locations || []
@@ -311,30 +259,35 @@
 </script>
 
 <Seo
-  title="Black Whale Map — Hunter × Hunter"
-  description="Explore the five tiers of the Black Whale deck by deck: rooms, known character positions and the perspective of anyone aboard, chapter by chapter."
+  title={$t.ship.seoTitle}
+  description={$t.ship.seoDescription}
   jsonLd={breadcrumbSchema([
-    { name: 'Home', path: '/' },
-    { name: 'Ship map', path: '/ship' },
+    { name: $t.common.home, path: $link('/') },
+    { name: $t.ship.breadcrumb, path: $link('/ship') },
   ])}
 />
 
 <div class="ship-page">
   <header class="ship-hero">
     <div class="hero-copy">
-      <div class="eyebrow"><span></span> Dark Continent Expedition</div>
+      <div class="eyebrow"><span></span> {$t.ship.eyebrow}</div>
       <h1>Black Whale <em>01</em></h1>
-      <p>Tactical mapping of decks, presences, and zones of influence.</p>
+      <p>{$t.ship.intro}</p>
     </div>
 
-    <div class="hero-status" aria-label="Map status">
+    <div class="hero-status" aria-label={$t.ship.statusLabel}>
       <div>
-        <span>Event</span><strong
-          >Ch. {currentEvt?.chapter?.number ?? '—'} · Ev. {currentEvt?.sequence ?? '—'}</strong
+        <span>{$t.ship.event}</span><strong
+          >{$t.ship.eventValue(
+            currentEvt?.chapter?.number ?? '—',
+            currentEvt?.sequence ?? '—',
+          )}</strong
         >
       </div>
-      <div><span>Active zone</span><strong class="capitalize">{currentDeckLabel}</strong></div>
-      <div><span>Perspective</span><strong>{contextState.perspectiveName}</strong></div>
+      <div>
+        <span>{$t.ship.activeZone}</span><strong class="capitalize">{currentDeckLabel}</strong>
+      </div>
+      <div><span>{$t.ship.perspective}</span><strong>{contextState.perspectiveName}</strong></div>
     </div>
 
     <div class="hero-actions">
@@ -344,9 +297,9 @@
         onclick={() => mapState.setCompareWithReader(!mapState.compareWithReader)}
       >
         <span class="action-icon">◫</span>
-        {mapState.compareWithReader ? 'Canon visible' : 'Compare with canon'}
+        {mapState.compareWithReader ? $t.ship.canonVisible : $t.ship.compareWithCanon}
       </button>
-      <a href="/compare">Compare perspectives <span>↗</span></a>
+      <a href={$link('/compare')}>{$t.ship.comparePerspectives} <span>↗</span></a>
     </div>
   </header>
 
@@ -363,20 +316,20 @@
     <aside class="control-deck">
       <div class="panel-heading">
         <div>
-          <span>Navigation</span>
-          <h2>Ship decks</h2>
+          <span>{$t.ship.navigation}</span>
+          <h2>{$t.ship.shipDecks}</h2>
         </div>
         <span class="deck-count">05</span>
       </div>
 
-      <nav class="tier-nav" aria-label="Black Whale decks">
+      <nav class="tier-nav" aria-label={$t.ship.decksNavLabel}>
         <button
           class:active={mapState.currentZoomLevel === 'OVERVIEW'}
           aria-current={mapState.currentZoomLevel === 'OVERVIEW' ? 'page' : undefined}
           onclick={() => mapState.selectTier(null)}
         >
           <span class="tier-number">00</span>
-          <span><strong>Overview</strong><small>Ship structure</small></span>
+          <span><strong>{$t.ship.overview}</strong><small>{$t.ship.shipStructure}</small></span>
           <span class="tier-arrow">↗</span>
         </button>
 
@@ -388,14 +341,8 @@
           >
             <span class="tier-number">0{tierNum}</span>
             <span
-              ><strong>Tier {tierNum}</strong><small
-                >{[
-                  'Royalty & VVIP',
-                  'VIP & amenities',
-                  'Public & medical',
-                  'Crew & cargo',
-                  'Machinery & storage',
-                ][tierNum - 1]}</small
+              ><strong>{$t.ship.tierLabel(tierNum)}</strong><small
+                >{$t.ship.tierSummaries[tierNum - 1]}</small
               ><i class="density-line"
                 ><b style={`width:${tierProfiles[`tier-${tierNum}`].density}%`}></b></i
               ></span
@@ -407,7 +354,9 @@
 
       <div class="filter-section">
         <div class="section-label">
-          <span>Factions</span><small>{mapState.filters.factions.length} active</small>
+          <span>{$t.ship.factionsLabel}</span><small
+            >{$t.ship.factionsActive(mapState.filters.factions.length)}</small
+          >
         </div>
         <div class="filter-grid faction-identities">
           {#each factions as faction (faction.id)}
@@ -430,30 +379,30 @@
           <button
             class="clear-filters"
             type="button"
-            onclick={() => (mapState.filters.factions = [])}>Clear faction filters</button
+            onclick={() => (mapState.filters.factions = [])}>{$t.ship.clearFactionFilters}</button
           >
         {/if}
       </div>
 
-      <div class="deck-signal" aria-label="Current map intelligence">
-        <span>Current signal</span>
+      <div class="deck-signal" aria-label={$t.ship.intelligenceLabel}>
+        <span>{$t.ship.currentSignal}</span>
         <dl>
           <div>
-            <dt>Tracked</dt>
+            <dt>{$t.ship.tracked}</dt>
             <dd>{trackedPresenceCount}</dd>
           </div>
           <div>
-            <dt>Zones</dt>
+            <dt>{$t.ship.zones}</dt>
             <dd>{mappedZoneCount}</dd>
           </div>
         </dl>
         <p><i></i>{activeClearance}</p>
       </div>
 
-      <div class="clearance-card" aria-label="Archive clearance">
-        <div><span>Access level</span><strong>{activeTierProfile.clearance}</strong></div>
+      <div class="clearance-card" aria-label={$t.ship.clearanceLabel}>
+        <div><span>{$t.ship.accessLevel}</span><strong>{activeTierProfile.clearance}</strong></div>
         <p><span>██████</span> ██ ███████ ███</p>
-        <small>Portions withheld by order of the Kakin Crown</small>
+        <small>{$t.ship.withheld}</small>
       </div>
     </aside>
 
@@ -464,9 +413,9 @@
         </div>
         <div class="map-tools">
           <label class="quick-track">
-            <span>Track</span>
+            <span>{$t.ship.track}</span>
             <select
-              aria-label="Quickly track a perspective"
+              aria-label={$t.ship.trackAria}
               value={mapState.selectedPerspectiveId}
               onchange={(event) => handlePerspectiveSelect(event.currentTarget.value)}
             >
@@ -475,23 +424,23 @@
                 >{/each}
             </select>
           </label>
-          <span class="live-indicator"><i></i> Live data synchronized</span>
-          <span class="map-hint">Drag to navigate · Scroll to zoom</span>
+          <span class="live-indicator"><i></i> {$t.ship.liveData}</span>
+          <span class="map-hint">{$t.ship.mapHint}</span>
         </div>
       </header>
 
-      <div class="map-canvas" role="region" aria-label="Interactive Black Whale map">
+      <div class="map-canvas" role="region" aria-label={$t.ship.mapRegion}>
         <MapContainer />
         <div class="pressure-field" aria-hidden="true"></div>
         <div class="nen-anomaly" aria-hidden="true">
-          <i></i><i></i><i></i><span>UNRESOLVED</span>
+          <i></i><i></i><i></i><span>{$t.ship.unresolved}</span>
         </div>
         <div class="map-coordinate north">N</div>
-        <div class="map-scale"><span></span> STRUCTURAL LEVEL</div>
+        <div class="map-scale"><span></span> {$t.ship.structuralLevel}</div>
         <div class="scan-readout" data-hatsu-pass aria-live="polite">
-          <span>ACTIVE SCAN</span>
+          <span>{$t.ship.activeScan}</span>
           <strong class="capitalize">{currentDeckLabel}</strong>
-          <small>{mappedZoneCount} mapped zones · {trackedPresenceCount} tracked presences</small>
+          <small>{$t.ship.scanReadout(mappedZoneCount, trackedPresenceCount)}</small>
         </div>
         <WhyPanel
           open={mapState.explainPanelOpen && !!mapState.explainTarget}
@@ -502,7 +451,7 @@
           freshness={mapState.explainTarget?.freshness || ''}
           state={mapState.explainTarget?.knowledgeState || 'unknown'}
           revealReality={mapState.compareWithReader}
-          canonicalValue={mapState.explainTarget?.canonicalValue || 'unknown'}
+          canonicalValue={mapState.explainTarget?.canonicalValue ?? null}
           onClose={() => mapState.closeExplainPanel()}
         />
 
@@ -512,51 +461,54 @@
     </div>
   </section>
 
-  <section class="intelligence-strip" aria-label="Current intelligence assessment">
+  <section class="intelligence-strip" aria-label={$t.ship.assessmentLabel}>
     <article class="tier-brief">
       <div class="brief-index">{activeTierProfile.number}</div>
       <div>
-        <span>Active environment</span>
+        <span>{$t.ship.activeEnvironment}</span>
         <h2>{activeTierProfile.title}</h2>
         <p>{activeTierProfile.subtitle}</p>
       </div>
       <div class="density-gauge" style={`--density:${activeTierProfile.density}%`}>
-        <span>Human density</span><strong>{activeTierProfile.density}<small>%</small></strong><i
-          ><b></b></i
-        ><em>{activeTierProfile.pressure}</em>
+        <span>{$t.ship.humanDensity}</span><strong
+          >{activeTierProfile.density}<small>%</small></strong
+        ><i><b></b></i><em>{activeTierProfile.pressure}</em>
       </div>
     </article>
 
     <article class="threat-brief">
-      <header><span>Threat assessment</span><strong>{activeTierProfile.danger}</strong></header>
+      <header>
+        <span>{$t.ship.threatAssessment}</span><strong>{activeTierProfile.danger}</strong>
+      </header>
       <div class="threat-row">
         <i class="threat-icon murder">†</i>
-        <p><span>Incident marker</span>{activeTierProfile.report}</p>
+        <p><span>{$t.ship.incidentMarker}</span>{activeTierProfile.report}</p>
       </div>
       <div class="threat-row">
         <i class="threat-icon watch">◉</i>
-        <p><span>Surveillance</span>{activeTierProfile.signal}</p>
+        <p><span>{$t.ship.surveillance}</span>{activeTierProfile.signal}</p>
       </div>
     </article>
 
     <article class="anomaly-brief">
-      <header><span>Nen phenomenon</span><strong>UNVERIFIED</strong></header>
+      <header><span>{$t.ship.nenPhenomenon}</span><strong>{$t.ship.unverified}</strong></header>
       <div class="anomaly-specimen" aria-hidden="true"><i></i><i></i><i></i><b></b></div>
       <p>{activeTierProfile.anomaly}</p>
-      <small>Do not assign intent · observer contamination possible</small>
+      <small>{$t.ship.anomalyCaveat}</small>
     </article>
 
     <article class="intercept-brief">
       <header>
-        <span>Intercepted report</span><strong>INT/██-{activeTierProfile.number}</strong>
+        <span>{$t.ship.interceptedReport}</span><strong>INT/██-{activeTierProfile.number}</strong>
       </header>
       <p>
-        Source <b>████████</b> reports that <b>█████</b> crossed the secured boundary without a matching
-        body record.
+        {$t.ship.interceptCopy.lead} <b>████████</b>
+        {$t.ship.interceptCopy.mid} <b>█████</b>
+        {$t.ship.interceptCopy.tail}
       </p>
       <footer>
-        <span>CHAIN OF CUSTODY DISPUTED</span><em
-          >LEVEL {activeTierProfile.number === '00' ? '5' : activeTierProfile.number}</em
+        <span>{$t.ship.chainOfCustody}</span><em
+          >{$t.ship.level(activeTierProfile.number === '00' ? '5' : activeTierProfile.number)}</em
         >
       </footer>
     </article>
@@ -566,8 +518,8 @@
     <div class="perspective-panel">
       <div class="panel-heading compact">
         <div>
-          <span>Point of view</span>
-          <h2>Observation filter</h2>
+          <span>{$t.ship.pointOfView}</span>
+          <h2>{$t.ship.observationFilter}</h2>
         </div>
         <span class="mode-pill">{followLabel[mapState.followMode]}</span>
       </div>
@@ -583,12 +535,12 @@
     <div class="legend-panel">
       <div class="panel-heading compact">
         <div>
-          <span>Map legend</span>
-          <h2>Temporal certainty</h2>
+          <span>{$t.ship.mapLegend}</span>
+          <h2>{$t.ship.temporalCertainty}</h2>
         </div>
       </div>
-      <div class="position-legend" aria-label="Colors by temporal certainty">
-        {#each [{ label: 'Current event', color: '#55d1e2' }, { label: 'Confirmed period', color: '#ad8bea' }, { label: 'Current chapter', color: '#6ac890' }, { label: 'Confirmed', color: '#5bb9ad' }, { label: 'Assumed', color: '#f0b75e' }, { label: 'Last known position', color: '#e47f61' }, { label: 'Unknown', color: '#8a9798' }] as status (status)}
+      <div class="position-legend" aria-label={$t.ship.legendLabel}>
+        {#each [{ label: $t.ship.legend.currentEvent, color: '#55d1e2' }, { label: $t.ship.legend.confirmedPeriod, color: '#ad8bea' }, { label: $t.ship.legend.currentChapter, color: '#6ac890' }, { label: $t.ship.legend.confirmed, color: '#5bb9ad' }, { label: $t.ship.legend.assumed, color: '#f0b75e' }, { label: $t.ship.legend.lastKnown, color: '#e47f61' }, { label: $t.ship.legend.unknown, color: '#8a9798' }] as status (status.label)}
           <span style={`--status-color: ${status.color}`}><i></i>{status.label}</span>
         {/each}
       </div>
@@ -598,14 +550,16 @@
           onclick={() =>
             (mapState.filters.showUnknownPositions = !mapState.filters.showUnknownPositions)}
         >
-          <span>{mapState.filters.showUnknownPositions ? '✓' : '+'}</span> Unknown positions ({unknownPositionCount})
+          <span>{mapState.filters.showUnknownPositions ? '✓' : '+'}</span>
+          {$t.ship.unknownPositions(unknownPositionCount)}
         </button>
         <button
           class="danger"
           class:active={mapState.filters.spoilersEnabled}
           onclick={() => (mapState.filters.spoilersEnabled = !mapState.filters.spoilersEnabled)}
         >
-          <span>{mapState.filters.spoilersEnabled ? '!' : '×'}</span> Spoilers
+          <span>{mapState.filters.spoilersEnabled ? '!' : '×'}</span>
+          {$t.ship.spoilers}
         </button>
       </div>
     </div>
@@ -614,12 +568,13 @@
   <footer class="timeline-shell">
     <div class="timeline-header">
       <div>
-        <span>Timeline</span>
-        <strong>{currentEvt?.title || 'Current state'}</strong>
+        <span>{$t.ship.timeline}</span>
+        <strong>{currentEvt?.title || $t.ship.currentState}</strong>
       </div>
       <div class="sequence-badge">
-        {#if currentEvt?.isFlashback}↶ FLASHBACK ·
-        {/if}CH <strong>{currentEvt?.chapter?.number ?? '—'}</strong> · EV
+        {#if currentEvt?.isFlashback}{$t.ship.flashbackBadge}
+        {/if}{$t.ship.chapterBadge} <strong>{currentEvt?.chapter?.number ?? '—'}</strong> ·
+        {$t.ship.eventBadge}
         <strong>{currentEvt?.sequence ?? '—'}</strong>
         {#if currentEvt?.occurredAtLabel}
           · <strong>{currentEvt.occurredAtLabel}</strong>{/if}
@@ -628,19 +583,19 @@
 
     {#if data.events.length > 0}
       <div class="range-wrap" style={`--progress: ${eventProgress}%`}>
-        <span>Ch.{data.events[0].chapter.number}</span>
+        <span>{$t.common.chapterShort(data.events[0].chapter.number)}</span>
         <input
-          aria-label="Timeline event"
+          aria-label={$t.ship.timelineEvent}
           type="range"
           min="0"
           max={data.events.length - 1}
           value={data.selectedEventIndex}
           oninput={handleTimelineChange}
         />
-        <span>Ch.{data.events[data.events.length - 1].chapter.number}</span>
+        <span>{$t.common.chapterShort(data.events[data.events.length - 1].chapter.number)}</span>
       </div>
     {:else}
-      <p class="empty-state">No events available.</p>
+      <p class="empty-state">{$t.ship.noEvents}</p>
     {/if}
 
     <PerspectiveTimeline

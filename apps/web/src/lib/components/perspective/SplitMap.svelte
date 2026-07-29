@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { t } from '$lib/i18n'
+
   let {
     leftTitle,
     rightTitle,
@@ -12,7 +14,7 @@
   } = $props()
 </script>
 
-<section class="split-map" aria-label="Comparaison de perspectives">
+<section class="split-map" aria-label={$t.perspectiveUi.comparisonLabel}>
   <article>
     <header>{leftTitle}</header>
     <div>{leftContent}</div>

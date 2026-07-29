@@ -1,6 +1,7 @@
 <script lang="ts">
   import IdentityBadge from './IdentityBadge.svelte'
   import type { PerspectiveContext } from './types'
+  import { t } from '$lib/i18n'
 
   let {
     context,
@@ -11,27 +12,33 @@
   } = $props()
 </script>
 
-<header class="context-bar" aria-label="Contexte de perspective">
+<header class="context-bar" aria-label={$t.perspectiveUi.contextLabel}>
   <div class="meta">
-    <span>Ch. {context.chapter}</span>
-    <span>Ev. {context.eventLabel}</span>
-    <span>Spoilers &lt;= {context.spoilerLimit ?? 'all'}</span>
+    <span>{$t.common.chapterShort(context.chapter)}</span>
+    <span>{$t.ship.eventBadge}. {context.eventLabel}</span>
+    <span
+      >{$t.perspectiveUi.spoilersUpTo(context.spoilerLimit ?? $t.perspectiveUi.allChapters)}</span
+    >
   </div>
 
   <div class="identities">
     <IdentityBadge
-      label="Perspective"
+      label={$t.perspectiveUi.perspective}
       value={context.perspectiveName}
       anomaly={context.hasAnomaly}
     />
     <IdentityBadge
-      label="Consciousness"
+      label={$t.perspectiveUi.streams.consciousness}
       value={context.followedConsciousness}
       anomaly={context.hasAnomaly}
     />
-    <IdentityBadge label="Body" value={context.occupiedBody} anomaly={context.hasAnomaly} />
     <IdentityBadge
-      label="Apparence"
+      label={$t.perspectiveUi.streams.body}
+      value={context.occupiedBody}
+      anomaly={context.hasAnomaly}
+    />
+    <IdentityBadge
+      label={$t.perspectiveUi.apparentIdentity}
       value={context.apparentIdentity}
       anomaly={context.hasAnomaly}
       subtle={!context.hasAnomaly}
@@ -39,7 +46,7 @@
   </div>
 
   <div class="mode">
-    <span>Mode :</span>
+    <span>{$t.perspectiveUi.mode}</span>
     <strong>{modeLabel}</strong>
   </div>
 </header>

@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { t } from '$lib/i18n'
+
   let {
     fromBody,
     toBody,
@@ -13,16 +15,16 @@
 </script>
 
 {#if visible}
-  <section class="transfer" aria-label="Consciousness transfer transition">
+  <section class="transfer" aria-label={$t.perspectiveUi.transferLabel}>
     <article>
-      <h3>Body d'origine</h3>
+      <h3>{$t.perspectiveUi.originBody}</h3>
       <p>{fromBody}</p>
     </article>
     <div class="line" aria-hidden="true">
       <span>{consciousness}</span>
     </div>
     <article>
-      <h3>Body de destination</h3>
+      <h3>{$t.perspectiveUi.destinationBody}</h3>
       <p>{toBody}</p>
     </article>
   </section>

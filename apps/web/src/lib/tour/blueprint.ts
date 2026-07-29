@@ -15,12 +15,25 @@ import {
   columnWalls,
   deriveDoorways,
   interiorPoint,
+  longestSharedWall,
+  MIN_DOOR_WIDTH,
+  sealKey,
   polygonArea,
   polygonsOverlap,
   pointInPolygon,
   wallSegments,
 } from './geometry'
-import type { Blueprint, Doorway, Link, Space, Tier, Vec2, WallSegment } from './types'
+import type {
+  Blueprint,
+  DoorOverride,
+  Doorway,
+  Link,
+  Seal,
+  Space,
+  Tier,
+  Vec2,
+  WallSegment,
+} from './types'
 
 export const blueprint = blueprintJson as unknown as Blueprint
 
@@ -37,10 +50,15 @@ export interface TierPlan {
 
 export interface Ship {
   blueprint: Blueprint
+  /** Every level: the decks, plus the interiors drawn at their own scale. */
   tiers: Tier[]
+  /** The decks alone, in the order the cross-section stacks them. */
+  decks: Tier[]
   spaces: Map<string, Space>
   plans: Map<string, TierPlan>
   links: Link[]
+  seals: Seal[]
+  doors: DoorOverride[]
   /** Space id → the spaces it opens onto, across doorways and vertical links. */
   adjacency: Map<string, string[]>
 }
@@ -55,6 +73,10 @@ export function buildShip(source: Blueprint = blueprint): Ship {
   const spaces = new Map(source.spaces.map((space) => [space.id, space]))
   const plans = new Map<string, TierPlan>()
   const adjacency = new Map<string, string[]>()
+  const sealed = new Set((source.seals ?? []).map((seal) => sealKey(seal.a, seal.b)))
+  const overrides = new Map<string, DoorOverride>(
+    (source.doors ?? []).map((door) => [sealKey(door.a, door.b), door]),
+  )
 
   const connect = (from: string, to: string) => {
     const existing = adjacency.get(from)
@@ -64,7 +86,7 @@ export function buildShip(source: Blueprint = blueprint): Ship {
 
   for (const tier of tiers) {
     const tierSpaces = source.spaces.filter((space) => space.tierId === tier.id)
-    const doorways = deriveDoorways(tierSpaces)
+    const doorways = deriveDoorways(tierSpaces, { sealed, overrides })
     const walls = tierSpaces.flatMap((space) => wallSegments(space, doorways))
 
     const columns = new Map<string, Vec2[]>()
@@ -89,7 +111,26 @@ export function buildShip(source: Blueprint = blueprint): Ship {
     connect(link.to, link.from)
   }
 
-  return { blueprint: source, tiers, spaces, plans, links: source.links, adjacency }
+  return {
+    blueprint: source,
+    tiers,
+    decks: tiers.filter((tier) => tier.kind === 'deck'),
+    spaces,
+    plans,
+    links: source.links,
+    seals: source.seals ?? [],
+    doors: source.doors ?? [],
+    adjacency,
+  }
+}
+
+/** The deck a level belongs to: itself, or the deck its room stands on. */
+export function deckOf(ship: Ship, tierId: string): Tier | null {
+  const tier = ship.tiers.find((candidate) => candidate.id === tierId)
+  if (!tier) return null
+  if (tier.kind === 'deck') return tier
+  const parent = tier.parentSpaceId ? ship.spaces.get(tier.parentSpaceId) : null
+  return parent ? (ship.tiers.find((candidate) => candidate.id === parent.tierId) ?? null) : null
 }
 
 /** The space a point falls in on a given tier, or `null` out in the hull. */
@@ -169,7 +210,7 @@ export function entrySpace(plan: TierPlan): Space {
 }
 
 const PROVENANCES = new Set(['panel', 'plan', 'inferred'])
-const LINK_KINDS = new Set(['stair', 'lift', 'bulkhead'])
+const LINK_KINDS = new Set(['stair', 'lift', 'bulkhead', 'door'])
 
 /**
  * Every rule the reconstruction has to satisfy, as a list of failures. An empty
@@ -184,6 +225,23 @@ export function validateBlueprint(source: Blueprint = blueprint): string[] {
     if (polygonArea(tier.hull) <= 0) issues.push(`tier ${tier.id}: hull has no area`)
     if (!PROVENANCES.has(tier.provenance)) {
       issues.push(`tier ${tier.id}: unknown provenance "${tier.provenance}"`)
+    }
+
+    // An interior is the inside of one room on a deck, and the only way in is
+    // the door that joins them. Without both, it is a level nobody can reach.
+    if (tier.kind === 'interior') {
+      const parent = source.spaces.find((space) => space.id === tier.parentSpaceId)
+      if (!parent) {
+        issues.push(`level ${tier.id}: names no room on a deck it is the inside of`)
+      } else if (source.tiers.find((candidate) => candidate.id === parent.tierId)?.kind !== 'deck') {
+        issues.push(`level ${tier.id}: its room is not on a deck`)
+      }
+      const joined = source.links.some(
+        (link) => link.from === tier.parentSpaceId || link.to === tier.parentSpaceId,
+      )
+      if (!joined) issues.push(`level ${tier.id}: no door joins it to its room`)
+    } else if (tier.parentSpaceId !== null) {
+      issues.push(`level ${tier.id}: a deck cannot be the inside of a room`)
     }
   }
 
@@ -216,6 +274,46 @@ export function validateBlueprint(source: Blueprint = blueprint): string[] {
           issues.push(`spaces ${tierSpaces[i].id} and ${tierSpaces[j].id} overlap`)
         }
       }
+    }
+  }
+
+  const sealedPairs = new Set((source.seals ?? []).map((seal) => sealKey(seal.a, seal.b)))
+
+  // A seal that names a wall the two rooms do not actually share is stale:
+  // someone moved a footprint and the seal is now silently doing nothing.
+  for (const seal of source.seals ?? []) {
+    const a = source.spaces.find((space) => space.id === seal.a)
+    const b = source.spaces.find((space) => space.id === seal.b)
+    if (!a || !b) {
+      issues.push(`seal ${seal.a} | ${seal.b}: names a space that does not exist`)
+      continue
+    }
+    if (!seal.reason.trim()) issues.push(`seal ${seal.a} | ${seal.b}: missing reason`)
+    const shared = longestSharedWall(a.footprint, b.footprint)
+    if (!shared || shared.to - shared.from < MIN_DOOR_WIDTH) {
+      issues.push(`seal ${seal.a} | ${seal.b}: these spaces share no wall to seal`)
+    }
+  }
+
+  // A declared door has to name a wall that exists, or it silently does
+  // nothing and an envelope ends up with no way in.
+  for (const door of source.doors ?? []) {
+    const a = source.spaces.find((space) => space.id === door.a)
+    const b = source.spaces.find((space) => space.id === door.b)
+    if (!a || !b) {
+      issues.push(`door ${door.a} | ${door.b}: names a space that does not exist`)
+      continue
+    }
+    if (!door.reason.trim()) issues.push(`door ${door.a} | ${door.b}: missing reason`)
+    if (door.width < MIN_DOOR_WIDTH) {
+      issues.push(`door ${door.a} | ${door.b}: ${door.width} m is too narrow to pass`)
+    }
+    const shared = longestSharedWall(a.footprint, b.footprint)
+    if (!shared || shared.to - shared.from < MIN_DOOR_WIDTH) {
+      issues.push(`door ${door.a} | ${door.b}: these spaces share no wall to open`)
+    }
+    if (sealedPairs.has(sealKey(door.a, door.b))) {
+      issues.push(`door ${door.a} | ${door.b}: the same pair is also sealed`)
     }
   }
 

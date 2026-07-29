@@ -7,11 +7,12 @@ import {
   pointInPolygon,
   polygonArea,
   polygonsOverlap,
+  sealKey,
   signedArea,
   triangulate,
   wallSegments,
 } from './geometry'
-import type { Polygon, Space } from './types'
+import type { Polygon, Space, Vec2 } from './types'
 
 const square: Polygon = [
   [0, 0],
@@ -30,7 +31,7 @@ const ell: Polygon = [
   [0, 10],
 ]
 
-function space(id: string, footprint: Polygon, tierId = 'tier-1'): Space {
+function space(id: string, footprint: Polygon, tierId = 'tier-1', envelope: string | null = null): Space {
   return {
     id,
     tierId,
@@ -41,9 +42,18 @@ function space(id: string, footprint: Polygon, tierId = 'tier-1'): Space {
     provenance: 'inferred',
     source: 'test',
     ceiling: null,
+    envelope,
     footprint,
   }
 }
+
+/** The square immediately to starboard of `square`, sharing its x = 10 wall. */
+const neighbour: Polygon = [
+  [10, 0],
+  [20, 0],
+  [20, 10],
+  [10, 10],
+]
 
 describe('polygon basics', () => {
   it('measures area regardless of winding', () => {
@@ -133,6 +143,67 @@ describe('deriveDoorways', () => {
       ),
     ])
     expect(doorways).toEqual([])
+  })
+
+  it('leaves a sealed pair of rooms with no way through', () => {
+    const a = space('a', square)
+    const b = space('b', neighbour)
+    expect(deriveDoorways([a, b], { sealed: new Set([sealKey('a', 'b')]) })).toEqual([])
+    // The seal is order-independent.
+    expect(deriveDoorways([a, b], { sealed: new Set([sealKey('b', 'a')]) })).toEqual([])
+  })
+
+  it('never joins two rooms that belong to different units', () => {
+    const a = space('a', square, 'tier-1', 'apartment-1')
+    const b = space('b', neighbour, 'tier-1', 'apartment-2')
+    expect(deriveDoorways([a, b])).toEqual([])
+  })
+
+  it('joins rooms inside the same unit as usual', () => {
+    const a = space('a', square, 'tier-1', 'apartment-1')
+    const b = space('b', neighbour, 'tier-1', 'apartment-1')
+    expect(deriveDoorways([a, b])).toHaveLength(1)
+  })
+
+  it('shuts a room off from everything outside its unit', () => {
+    const a = space('a', square, 'tier-1', 'apartment-1')
+    const corridor = space('b', neighbour)
+    expect(deriveDoorways([a, corridor])).toEqual([])
+  })
+
+  it('opens a declared door even across units, where it was declared', () => {
+    const a = space('a', square, 'tier-1', 'apartment-1')
+    const corridor = space('b', neighbour)
+    const doorways = deriveDoorways([a, corridor], {
+      overrides: new Map([
+        [
+          sealKey('a', 'b'),
+          { a: 'a', b: 'b', at: [10, 8] as Vec2, width: 2, reason: 'front door' },
+        ],
+      ]),
+    })
+
+    expect(doorways).toHaveLength(1)
+    expect(doorways[0].width).toBe(2)
+    // Centred on z = 8, where it was asked for, not on the middle of the wall.
+    expect((doorways[0].start[1] + doorways[0].end[1]) / 2).toBeCloseTo(8)
+  })
+
+  it('pulls a declared door back inside the wall it is on', () => {
+    const a = space('a', square, 'tier-1', 'apartment-1')
+    const corridor = space('b', neighbour)
+    const doorways = deriveDoorways([a, corridor], {
+      overrides: new Map([
+        [
+          sealKey('a', 'b'),
+          { a: 'a', b: 'b', at: [10, 40] as Vec2, width: 2, reason: 'off the end' },
+        ],
+      ]),
+    })
+
+    const centre = (doorways[0].start[1] + doorways[0].end[1]) / 2
+    expect(centre).toBeGreaterThanOrEqual(1)
+    expect(centre).toBeLessThanOrEqual(9)
   })
 
   it('narrows the opening to the wall when the wall is short', () => {

@@ -56,10 +56,31 @@ serait bâtie sur poteaux et qu'un volume vide ne donne au visiteur aucun repèr
 de distance. Le rendu et les collisions lisent la même fonction : un pilier
 qu'on voit est un pilier qu'on contourne.
 
+### Les enveloppes
+
+Un appartement princier, ce sont sept pièces derrière **une seule** porte. Ses
+pièces jouxtent celles du voisin sur toute la cloison mitoyenne, et aucune de
+ces cloisons n'est percée : un prince rejoint sa suite par le couloir gardé et
+par nulle part ailleurs.
+
+`envelope` dit ça une fois pour toutes. Deux espaces d'enveloppes différentes ne
+communiquent jamais — sauf si une entrée de `doors` l'énonce. Sans cette
+notion, il aurait fallu sceller une trentaine de murs un par un et se souvenir
+de le refaire à chaque retouche du plan.
+
+### Les portes explicites
+
+`doors` place une ouverture à la main plutôt qu'au milieu du mur partagé. Deux
+usages :
+
+1. Ouvrir l'entrée d'une enveloppe — rien d'autre ne peut le faire.
+2. Poser une porte là où le plan la dessine : la porte des domestiques est dans
+   l'angle près du salon, pas au centre de la cloison.
+
 ### Les portes ne sont pas stockées
 
-Deux espaces qui partagent une portion de mur communiquent ; un espace qui n'en
-partage aucune est scellé. Les ouvertures sont calculées au chargement par
+Hors enveloppe et hors `doors`, deux espaces qui partagent une portion de mur
+communiquent ; un espace qui n'en partage aucune est scellé. Les ouvertures sont calculées au chargement par
 `deriveDoorways` à partir de la seule géométrie.
 
 C'est délibéré : on ne peut pas laisser traîner une porte qui ne mène nulle
@@ -87,6 +108,31 @@ qu'elle invente. Les surfaces `inferred` sont rendues dans une teinte froide et
 portent un badge dans l'interface — un couloir déduit ne doit jamais passer
 pour du canon. `source` est obligatoire dans tous les cas ; pour `inferred`,
 elle dit pourquoi l'espace a été ajouté, et ne doit pas citer de chapitre.
+
+## Les intérieurs
+
+Le plan des ponts dessine les chambres des princes comme une colonne de petites
+boîtes. C'est un diagramme de voisinage, pas un relevé : le plan d'appartement
+donne sept pièces à chaque prince, et sept pièces n'entrent pas dans une boîte
+de 12 × 7 m. Les deux dessins ne sont pas à la même échelle, et ils ne l'ont
+jamais été.
+
+Plutôt que d'en déformer un pour le faire entrer dans l'autre, la visite garde
+les deux. Le pont conserve **exactement** l'empreinte que le plan dessine — la
+carte `/ship` et la visite montrent le même pont 1 — et l'intérieur est un
+**niveau à part**, tracé à sa taille réelle, dans lequel on entre par la porte.
+C'est la structure de `/ship` (plan de pont → plan de salle), en volume.
+
+Un niveau d'intérieur porte `kind: "interior"` et `parentSpaceId`, la pièce dont
+il est le dedans. Un `link` de type `door` les relie. Ce lien est le seul à
+porter **deux** positions, `at` et `atTo` : ses deux extrémités vivent dans des
+repères différents, le pont d'un côté et l'intérieur de l'autre, qui a sa
+propre origine.
+
+Le plan d'appartement cloisonne la cuisine de tous les côtés. Une cuisine où
+personne ne peut entrer est un lapsus de dessin, pas une affirmation sur le
+vaisseau : la visite ouvre la seule porte qu'elle doit avoir, sur la salle à
+manger qu'elle dessert. C'est consigné dans le `reason` de la porte.
 
 ## Modifier le vaisseau
 

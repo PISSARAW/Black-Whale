@@ -33,7 +33,9 @@ Five tiers, 37 hand-drawn SVG deck and room maps, and every tracked body placed 
 
 ### Walk it in first person
 
-[`/tour`](https://exploreblackwhale.com/tour) is the same ship as geometry rather than as a drawing: five decks, 107 reconstructed spaces, and a first-person walk through all of them. It carries no passengers and no chapter — it answers _how the ship is built_, where the map answers _who is where_.
+[`/tour`](https://exploreblackwhale.com/tour) is the same ship as geometry rather than as a drawing: five decks, 205 reconstructed spaces, and a first-person walk through all of them. It carries no passengers and no chapter — it answers _how the ship is built_, where the map answers _who is where_.
+
+The deck plans are schematic and the room plans are not, so the tour keeps both rather than distorting either: a deck shows the footprint its plan draws, and a room with an interior of its own — each prince's apartment, its seven rooms behind one guarded door — is entered through that door and walked at full size.
 
 Every surface declares what it is worth as evidence. A room a panel shows is lit warm, a room that only appears on the deck cross-section is left plain, and a corridor the reconstruction had to invent to make the deck contiguous is lit cold and badged as such. Doorways are not authored: two rooms that share a stretch of wall open onto each other, so an unreachable room fails the test suite rather than the visit.
 

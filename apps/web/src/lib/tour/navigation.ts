@@ -113,7 +113,10 @@ export function linkUnderfoot(
 
   for (const link of links) {
     if (link.from !== spaceId && link.to !== spaceId) continue
-    if (len(sub(point, link.at)) > LINK_REACH) continue
+    // Measure against the end the visitor is actually standing on: the two
+    // ends of a door into an interior are in different coordinate spaces.
+    const here = link.from === spaceId ? link.at : (link.atTo ?? link.at)
+    if (len(sub(point, here)) > LINK_REACH) continue
     return { link, to: link.from === spaceId ? link.to : link.from }
   }
   return null

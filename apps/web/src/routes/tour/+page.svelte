@@ -14,7 +14,7 @@
   import { breadcrumbSchema } from '$lib/seo/schema'
   import { link, t } from '$lib/i18n'
   import { locale } from '$lib/i18n'
-  import { buildShip, entrySpace } from '$lib/tour/blueprint'
+  import { buildShip, deckOf, entrySpace } from '$lib/tour/blueprint'
   import type { Link, Space } from '$lib/tour/types'
 
   const ship = buildShip()
@@ -37,6 +37,8 @@
   let heading = $state(0)
 
   const plan = $derived(ship.plans.get(tierId)!)
+  const deck = $derived(deckOf(ship, tierId))
+  const insideInterior = $derived(plan.tier.kind === 'interior')
   const french = $derived($locale === 'fr')
 
   const nameOf = (entity: { name: string; nameFr: string }) => (french ? entity.nameFr : entity.name)
@@ -60,15 +62,21 @@
     if (!destination) return null
     const tier = ship.tiers.find((candidate) => candidate.id === destination.tierId)
     const label = `${nameOf(destination)}${tier ? ` — ${nameOf(tier)}` : ''}`
+    if (availableLink.link.kind === 'door') {
+      const target = ship.tiers.find((candidate) => candidate.id === destination.tierId)
+      return target?.kind === 'interior'
+        ? $t.tour.enterInterior(nameOf(target))
+        : $t.tour.leaveInterior(nameOf(destination))
+    }
     return availableLink.link.kind === 'bulkhead'
       ? $t.tour.takeBulkhead(label)
       : $t.tour.takeLink(label)
   })
 
-  /** Bow-to-stern length of the ship, read off the widest tier. */
+  /** Bow-to-stern length of the ship, read off the widest deck. */
   const shipLength = Math.round(
     Math.max(
-      ...ship.tiers.map((tier) => {
+      ...ship.decks.map((tier) => {
         const zs = tier.hull.map((point) => point[1])
         return Math.max(...zs) - Math.min(...zs)
       }),
@@ -101,7 +109,11 @@
     <h1 class="text-3xl font-bold tracking-tight text-[#FFFFF0] sm:text-4xl">{$t.tour.title}</h1>
     <p class="mt-2 max-w-3xl text-sm leading-relaxed text-[#FFFFF0]/70">{$t.tour.intro}</p>
     <p class="mt-2 text-xs uppercase tracking-widest text-[#FFD700]/70">
-      {$t.tour.counts(ship.blueprint.spaces.length, ship.tiers.length)} · {$t.tour.scale(shipLength)}
+      {$t.tour.counts(
+        ship.blueprint.spaces.length,
+        ship.decks.length,
+        ship.tiers.length - ship.decks.length,
+      )} · {$t.tour.scale(shipLength)}
     </p>
   </header>
 
@@ -129,7 +141,9 @@
       <!-- Where the visitor stands, and what it is worth as evidence -->
       <div class="pointer-events-none absolute left-3 top-3 max-w-sm">
         <p class="text-[10px] uppercase tracking-widest text-[#FFD700]/70">
-          {nameOf(plan.tier)}
+          {deck ? nameOf(deck) : nameOf(plan.tier)}{insideInterior
+            ? ` · ${$t.tour.insideOf(nameOf(plan.tier))}`
+            : ''}
         </p>
         <p class="text-lg font-semibold leading-tight text-[#FFFFF0]">
           {currentSpace ? nameOf(currentSpace) : $t.tour.outside}
@@ -168,12 +182,12 @@
       <nav aria-label={$t.tour.decks}>
         <p class="mb-2 text-[10px] uppercase tracking-widest text-[#FFD700]/70">{$t.tour.decks}</p>
         <div class="flex flex-wrap gap-1.5">
-          {#each ship.tiers as tier (tier.id)}
+          {#each ship.decks as tier (tier.id)}
             <button
               type="button"
               onclick={() => selectTier(tier.id)}
-              aria-current={tier.id === tierId ? 'true' : undefined}
-              class="rounded border px-2.5 py-1 text-xs transition-colors {tier.id === tierId
+              aria-current={tier.id === deck?.id ? 'true' : undefined}
+              class="rounded border px-2.5 py-1 text-xs transition-colors {tier.id === deck?.id
                 ? 'border-[#FFD700] bg-[#FFD700]/15 text-[#FFD700]'
                 : 'border-[#333] text-[#FFFFF0]/70 hover:border-[#FFD700]/50 hover:text-[#FFFFF0]'}"
             >

@@ -64,11 +64,16 @@ export const fr: Messages = {
     noSource: 'Aucune source consignée',
     scale: (metres) =>
       `${metres.toLocaleString('fr-FR')} m de coque reconstruite, de la proue à la poupe`,
-    counts: (spaces, tiers) => `${spaces} espaces reconstruits sur ${tiers} ponts`,
+    counts: (spaces, decks, interiors) =>
+      `${spaces} espaces reconstruits sur ${decks} ponts, dont ${interiors} intérieurs de pièces à leur propre échelle`,
     minimap: (deckName) => `Plan du ${deckName}`,
     jumpTo: 'Rejoindre un espace',
     takeLink: (destination) => `Appuyez sur E pour rejoindre ${destination} par l'escalier`,
     takeBulkhead: (destination) => `Appuyez sur E pour franchir la cloison vers ${destination}`,
+    enterInterior: (destination) => `Appuyez sur E pour entrer dans ${destination}`,
+    leaveInterior: (destination) => `Appuyez sur E pour ressortir vers ${destination}`,
+    insideOf: (room) => `Intérieur de ${room}`,
+    atFullSize: 'Dessiné à sa propre échelle',
     controls: {
       title: 'Commandes',
       move: 'Se déplacer',
@@ -77,8 +82,8 @@ export const fr: Messages = {
       lookKeys: 'Bougez la souris, ou faites glisser sur écran tactile',
       sprint: 'Courir',
       sprintKeys: 'Maj',
-      use: 'Changer de pont',
-      useKeys: 'E, sur une cage d’escalier',
+      use: 'Changer de pont, entrer dans une pièce',
+      useKeys: 'E, sur une cage d’escalier ou devant une porte',
     },
     provenance: {
       title: 'Ce qui est canon ici',

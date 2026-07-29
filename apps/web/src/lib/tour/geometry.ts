@@ -6,7 +6,7 @@
  * renderer, the collision test and the validation suite, so a wall the player
  * bumps into is by construction the wall that was drawn.
  */
-import type { Doorway, Polygon, Space, Vec2, WallSegment } from './types'
+import type { DoorOverride, Doorway, Polygon, Space, Vec2, WallSegment } from './types'
 
 /** Below this, two coordinates are the same point. Footprints are in metres. */
 export const EPSILON = 0.05
@@ -102,15 +102,56 @@ export function collinearOverlap(
 
 const along = (a: Vec2, unit: Vec2, t: number): Vec2 => [a[0] + unit[0] * t, a[1] + unit[1] * t]
 
+/** The key under which a pair of spaces is sealed, order-independent. */
+export const sealKey = (a: string, b: string): string => [a, b].sort().join('|')
+
+/** The longest stretch of wall two footprints hold in common. */
+export function longestSharedWall(
+  a: Polygon,
+  b: Polygon,
+): { from: number; to: number; a1: Vec2; unit: Vec2 } | null {
+  let best: { from: number; to: number; a1: Vec2; unit: Vec2 } | null = null
+
+  for (const [a1, a2] of iterateEdges(a)) {
+    const dir = sub(a2, a1)
+    const length = len(dir)
+    if (length < EPSILON) continue
+    const unit: Vec2 = [dir[0] / length, dir[1] / length]
+
+    for (const [b1, b2] of iterateEdges(b)) {
+      const overlap = collinearOverlap(a1, a2, b1, b2)
+      if (!overlap) continue
+      if (!best || overlap.to - overlap.from > best.to - best.from) {
+        best = { ...overlap, a1, unit }
+      }
+    }
+  }
+
+  return best
+}
+
 /**
  * Finds every doorway on a tier by looking for walls two spaces hold in common.
  *
- * Adjacency *is* the connection: nothing in the blueprint says "these two rooms
+ * Adjacency is the connection: nothing in the blueprint says "these two rooms
  * have a door". A footprint that touches its neighbour opens onto it, and one
- * that does not is sealed — which is why an unreachable space is a data error
+ * that does not is shut off — which is why an unreachable space is a data error
  * the validator can state plainly.
+ *
+ * Adjacency alone is not *sufficient*, though. Two princes' apartments share a
+ * party wall and no door: you reach either one from the guarded corridor, never
+ * from your neighbour. `sealed` names those pairs, and the blueprint has to say
+ * so explicitly — a blind wall is a claim about the ship, so it is recorded
+ * rather than guessed from the category of the rooms.
  */
-export function deriveDoorways(spaces: Space[]): Doorway[] {
+export interface DoorwayRules {
+  /** Pairs that share a wall with nothing through it. */
+  sealed?: ReadonlySet<string>
+  /** Pairs whose opening is placed by hand, keyed by `sealKey`. */
+  overrides?: ReadonlyMap<string, DoorOverride>
+}
+
+export function deriveDoorways(spaces: Space[], rules: DoorwayRules = {}): Doorway[] {
   const doorways: Doorway[] = []
 
   for (let i = 0; i < spaces.length; i++) {
@@ -119,29 +160,35 @@ export function deriveDoorways(spaces: Space[]): Doorway[] {
       const b = spaces[j]
       if (a.tierId !== b.tierId) continue
 
-      let best: { from: number; to: number; a1: Vec2; unit: Vec2 } | null = null
+      const key = sealKey(a.id, b.id)
+      const override = rules.overrides?.get(key)
 
-      for (const [a1, a2] of iterateEdges(a.footprint)) {
-        const dir = sub(a2, a1)
-        const length = len(dir)
-        if (length < EPSILON) continue
-        const unit: Vec2 = [dir[0] / length, dir[1] / length]
-
-        for (const [b1, b2] of iterateEdges(b.footprint)) {
-          const overlap = collinearOverlap(a1, a2, b1, b2)
-          if (!overlap) continue
-          const span = overlap.to - overlap.from
-          if (!best || span > best.to - best.from) best = { ...overlap, a1, unit }
-        }
+      // A declared door beats everything: it is how an envelope is entered at
+      // all, and how a plan places an opening the geometry would have centred.
+      if (!override) {
+        if (rules.sealed?.has(key)) continue
+        if (a.envelope !== b.envelope) continue
       }
 
+      const best = longestSharedWall(a.footprint, b.footprint)
       if (!best) continue
       const span = best.to - best.from
-      if (span < MIN_DOOR_WIDTH) continue
+      if (!override && span < MIN_DOOR_WIDTH) continue
 
-      // One opening per pair, centred on the longest wall they share.
-      const width = Math.min(DOOR_WIDTH, span)
-      const middle = (best.from + best.to) / 2
+      const width = Math.min(override?.width ?? DOOR_WIDTH, span)
+      // Where along the shared wall the opening sits: the declared point,
+      // projected onto the wall and pulled back inside it, or its midpoint.
+      const middle = override
+        ? Math.min(
+            best.to - width / 2,
+            Math.max(
+              best.from + width / 2,
+              (override.at[0] - best.a1[0]) * best.unit[0] +
+                (override.at[1] - best.a1[1]) * best.unit[1],
+            ),
+          )
+        : (best.from + best.to) / 2
+
       doorways.push({
         tierId: a.tierId,
         a: a.id,

@@ -65,12 +65,16 @@ export const en = {
     noSource: 'No source recorded',
     scale: (metres: number) =>
       `${metres.toLocaleString('en-GB')} m of reconstructed hull, bow to stern`,
-    counts: (spaces: number, tiers: number) =>
-      `${spaces} reconstructed spaces across ${tiers} tiers`,
+    counts: (spaces: number, decks: number, interiors: number) =>
+      `${spaces} reconstructed spaces across ${decks} decks, with ${interiors} room interiors drawn at their own scale`,
     minimap: (deckName: string) => `Plan of ${deckName}`,
     jumpTo: 'Jump to a space',
     takeLink: (destination: string) => `Press E to take the stairs to ${destination}`,
     takeBulkhead: (destination: string) => `Press E to pass the bulkhead to ${destination}`,
+    enterInterior: (destination: string) => `Press E to step inside ${destination}`,
+    leaveInterior: (destination: string) => `Press E to step back out to ${destination}`,
+    insideOf: (room: string) => `Inside ${room}`,
+    atFullSize: 'Drawn at its own scale',
     controls: {
       title: 'Controls',
       move: 'Move',
@@ -79,8 +83,8 @@ export const en = {
       lookKeys: 'Move the mouse, or drag on a touchscreen',
       sprint: 'Run',
       sprintKeys: 'Shift',
-      use: 'Change deck',
-      useKeys: 'E, on a stairwell',
+      use: 'Change deck, enter a room',
+      useKeys: 'E, on a stairwell or at a door',
     },
     provenance: {
       title: 'What is canon here',

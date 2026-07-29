@@ -111,7 +111,6 @@
         vertexColors: true,
         side: THREE.DoubleSide,
       })
-      let deck: import('three').Mesh | null = null
 
       // The gold outline the deck plans are drawn in, carried into three
       // dimensions: without it the decks read as one unbroken surface.
@@ -120,7 +119,24 @@
         transparent: true,
         opacity: 0.32,
       })
-      let deckEdges: import('three').LineSegments | null = null
+
+      /**
+       * The decks already extruded, kept so a staircase taken twice does not
+       * pay for the same geometry twice.
+       *
+       * A deck is a couple of hundred kilobytes of buffers and the ship has
+       * five, so holding all of them costs about a megabyte — cheap enough that
+       * the cache is never evicted. Only the deck being walked is in the scene;
+       * the others sit here detached, uploaded to the GPU but not drawn.
+       */
+      // A plain record rather than a Map: the render loop owns this cache and
+       // nothing in the markup reads it, so it must stay out of Svelte's
+       // reactivity instead of driving it.
+      const decks: Record<
+        string,
+        { deck: import('three').Mesh; edges: import('three').LineSegments } | undefined
+      > = {}
+      let visible: { deck: import('three').Mesh; edges: import('three').LineSegments } | null = null
 
       /** State the render loop owns; Svelte state is only mirrored out of it. */
       let pointer: Vec2 = [0, 0]
@@ -138,27 +154,32 @@
         const plan = ship.plans.get(nextTierId)
         if (!plan) return
 
-        if (deck) {
-          scene.remove(deck)
-          deck.geometry.dispose()
-        }
-        if (deckEdges) {
-          scene.remove(deckEdges)
-          deckEdges.geometry.dispose()
+        if (visible) {
+          scene.remove(visible.deck)
+          scene.remove(visible.edges)
         }
 
-        const mesh = buildTierMesh(plan)
-        const geometry = new THREE.BufferGeometry()
-        geometry.setAttribute('position', new THREE.BufferAttribute(mesh.positions, 3))
-        geometry.setAttribute('normal', new THREE.BufferAttribute(mesh.normals, 3))
-        geometry.setAttribute('color', new THREE.BufferAttribute(mesh.colors, 3))
-        deck = new THREE.Mesh(geometry, material)
-        scene.add(deck)
+        let built = decks[nextTierId]
+        if (!built) {
+          const mesh = buildTierMesh(plan)
+          const geometry = new THREE.BufferGeometry()
+          geometry.setAttribute('position', new THREE.BufferAttribute(mesh.positions, 3))
+          geometry.setAttribute('normal', new THREE.BufferAttribute(mesh.normals, 3))
+          geometry.setAttribute('color', new THREE.BufferAttribute(mesh.colors, 3))
 
-        const edgeGeometry = new THREE.BufferGeometry()
-        edgeGeometry.setAttribute('position', new THREE.BufferAttribute(mesh.edges, 3))
-        deckEdges = new THREE.LineSegments(edgeGeometry, edgeMaterial)
-        scene.add(deckEdges)
+          const edgeGeometry = new THREE.BufferGeometry()
+          edgeGeometry.setAttribute('position', new THREE.BufferAttribute(mesh.edges, 3))
+
+          built = {
+            deck: new THREE.Mesh(geometry, material),
+            edges: new THREE.LineSegments(edgeGeometry, edgeMaterial),
+          }
+          decks[nextTierId] = built
+        }
+
+        scene.add(built.deck)
+        scene.add(built.edges)
+        visible = built
 
         currentTierId = nextTierId
         const entry = entrySpace(plan)
@@ -291,9 +312,7 @@
         if (magnitude > 0) {
           strafe /= magnitude
           advance /= magnitude
-          const speed =
-            (holding('ShiftLeft', 'ShiftRight') ? SPRINT_SPEED : WALK_SPEED) *
-            delta
+          const speed = (holding('ShiftLeft', 'ShiftRight') ? SPRINT_SPEED : WALK_SPEED) * delta
           // A camera at yaw looks along (-sin, -cos) and has (cos, -sin) to its
           // right, which is what three.js does to (0, 0, -1) and (1, 0, 0).
           const sin = Math.sin(yaw)
@@ -341,8 +360,12 @@
         window.removeEventListener('keydown', onKeyDown)
         window.removeEventListener('keyup', onKeyUp)
         document.removeEventListener('pointerlockchange', onPointerLockChange)
-        deck?.geometry.dispose()
-        deckEdges?.geometry.dispose()
+        for (const built of Object.values(decks)) {
+          built?.deck.geometry.dispose()
+          built?.edges.geometry.dispose()
+        }
+        for (const key of Object.keys(decks)) delete decks[key]
+        visible = null
         edgeMaterial.dispose()
         material.dispose()
         renderer.dispose()

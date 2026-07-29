@@ -161,6 +161,25 @@ export const fr: Messages = {
           `Blinky refuse ${room} · du Nen la retient, et c'est ainsi que le piège se voit`,
         dispatched: (room) => `Un oiseau revient de ${room} avec ce sur quoi la pièce repose`,
 
+        nothingToSteal: (room) => `Rien ne retient ${room} : il n'y a rien à y prendre`,
+        takenIntoTheBook: (room, technique) =>
+          `${technique} est dans le livre · ${room} est lâchée, car son propriétaire ne peut s'en servir tant qu'elle est tenue`,
+        needsTwoPages: 'Une page ne fait pas deux · prenez-en une seconde avant d\'en marquer une',
+        bookmarked: (technique) => `${technique} maintenue vive à côté de la page ouverte`,
+        acquisitionFailed: (room) =>
+          `${room} est passée sous la flèche · on n'y acquiert plus rien`,
+        carded: (room, technique) =>
+          `${technique} acquise en carte · ${room} la garde aussi, et la carte se dépense en la jouant`,
+        notEligible: (room) => `${room} n'est pas morte · seul ce qui a été tué transmet quelque chose`,
+        inherited: (room, technique) =>
+          `${room} a été tuée par ${technique}, et c'est cela qu'elle transmet`,
+        drained: (room, technique) =>
+          `${technique} arrachée à ${room} · plus rien n'atteint cette pièce tant que le livre ne la rend pas`,
+        needsEmperorTime: "Le dauphin n'existe que pendant Emperor Time",
+        nothingToLend: "Le livre est vide · rien à expliquer, rien à prêter",
+        lent: (technique) => `${technique} expliquée et ouverte · le prochain lancer consomme le prêt`,
+        pageSpent: (technique) => `${technique} est dépensée`,
+        inZetsu: (room) => `${room} n'a plus d'aura à offrir · la chaîne l'a drainée`,
         owlAttached: (rooms) =>
           `Le hibou vous suit · ${rooms} pièce${rooms === 1 ? '' : 's'} déjà sur le fil, et il les garde`,
         owlRecalled: (rooms) => `Le hibou est rappelé · ${rooms} gardées quand même, comme toujours`,
@@ -327,7 +346,20 @@ export const fr: Messages = {
           "Ce n'est pas le pont qui décide de celle-ci.",
         ],
       },
+      book: {
+        title: 'Le livre',
+        cast: 'Lancer cette page',
+        hint: 'Une page se lance là où vous visez, comme le reste',
+        card: 'carte',
+        loan: 'prêt',
+      },
       holds: {
+        book: 'Dans le livre',
+        openPage: 'Ouvert sur',
+        bookmark: 'Tenue à côté',
+        hand: 'Cartes en main',
+        zetsu: 'Drainée',
+        loan: 'Prêtée',
         trail: 'Le fil',
         owl: 'Le hibou garde',
         foreseen: 'Dix secondes plus tard',

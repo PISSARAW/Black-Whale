@@ -108,6 +108,13 @@ export const TOUR_HATSU_KINDS = [
   'resurrection',
   'curse',
   'arrow',
+  // On the techniques themselves.
+  'theft',
+  'bookmark',
+  'capture',
+  'inherit',
+  'chain-rule',
+  'ability-loan',
 ] as const satisfies readonly HatsuInteractionKind[]
 
 /**
@@ -289,6 +296,17 @@ export interface TourWorld {
   souls: [string, string][]
 
   /**
+   * The book, and what is in it.
+   *
+   * The last wave needs no new noun in the ship: what it needs is to be able
+   * to hold more than one technique at once. The dock still gives the walk
+   * exactly one aura; these six take a second — off the ship itself, from
+   * whatever technique is currently holding a room — and put it somewhere it
+   * can be cast from.
+   */
+  book: TourBook
+
+  /**
    * What the techniques have made of the visitor themselves.
    *
    * The walk had two nouns — the room and the thing standing in it — and both
@@ -297,6 +315,30 @@ export interface TourWorld {
    * aura carries, and whether you are still in your body at all.
    */
   body: TourBody
+}
+
+export interface TourBook {
+  /** Techniques taken and kept. Only an open page can be cast. */
+  pages: HatsuInteractionKind[]
+  /** The page Skill Hunter has the book open on. */
+  open: HatsuInteractionKind | null
+  /** The second page Double Face keeps live beside it. */
+  bookmark: HatsuInteractionKind | null
+  /** Culdcept's cards: acquired without taking, and spent on use. */
+  cards: HatsuInteractionKind[]
+  /** Rooms Steal Chain has drained: no technique reaches them until it returns. */
+  zetsu: string[]
+  /** The page the dolphin has lent out, which the next cast consumes. */
+  loan: HatsuInteractionKind | null
+}
+
+export const CLOSED_BOOK: TourBook = {
+  pages: [],
+  open: null,
+  bookmark: null,
+  cards: [],
+  zetsu: [],
+  loan: null,
 }
 
 export interface TourBody {
@@ -401,8 +443,13 @@ export const EMPTY_WORLD: TourWorld = {
   ninelives: [],
   curse: null,
   souls: [],
+  book: CLOSED_BOOK,
   body: RESTING_BODY,
 }
+
+/** Nothing taken, nothing open, nothing drained. */
+export const bookIsShut = (book: TourBook): boolean =>
+  !book.pages.length && !book.cards.length && !book.zetsu.length && !book.loan
 
 /** The visitor as the walk was built for: their own legs, their own eyes. */
 export const bodyIsRested = (body: TourBody): boolean =>
@@ -453,6 +500,7 @@ export const worldIsQuiet = (world: TourWorld): boolean =>
   !world.ninelives.length &&
   !world.curse &&
   !world.souls.length &&
+  bookIsShut(world.book) &&
   bodyIsRested(world.body)
 
 /**
@@ -574,6 +622,21 @@ export type TourReport =
   | { kind: 'curse-fell'; victim: string; sacrifice: string }
   | { kind: 'souls-swapped'; a: string; b: string }
   | { kind: 'arrow-drawn'; spaceId: string }
+  // On the techniques.
+  | { kind: 'nothing-to-steal'; spaceId: string }
+  | { kind: 'taken-into-the-book'; spaceId: string; technique: HatsuInteractionKind }
+  | { kind: 'needs-two-pages' }
+  | { kind: 'bookmarked'; technique: HatsuInteractionKind }
+  | { kind: 'acquisition-failed'; spaceId: string }
+  | { kind: 'carded'; spaceId: string; technique: HatsuInteractionKind }
+  | { kind: 'not-eligible'; spaceId: string }
+  | { kind: 'inherited'; spaceId: string; technique: HatsuInteractionKind }
+  | { kind: 'drained'; spaceId: string; technique: HatsuInteractionKind }
+  | { kind: 'needs-emperor-time' }
+  | { kind: 'nothing-to-lend' }
+  | { kind: 'lent'; technique: HatsuInteractionKind }
+  | { kind: 'page-spent'; technique: HatsuInteractionKind }
+  | { kind: 'in-zetsu'; spaceId: string }
 
 export interface TourCastResult {
   world: TourWorld
@@ -1383,6 +1446,214 @@ export function tenSecondsOn(
   return space ? { spaceId: space.id, at: landing ? ahead : at } : null
 }
 
+// ── The book ──────────────────────────────────────────────────────────────
+//
+// Nothing new in the ship: what these six need is for the walk to be able to
+// hold two techniques at once. What they take, they take off the ship — from
+// whatever technique is currently holding a room, which is the only other Nen
+// user the reconstruction has.
+
+/**
+ * The technique holding a room, if any.
+ *
+ * This is what Skill Hunter reads. It is deliberately the same list the panel
+ * shows: a hold you can see listed is a hold you can steal, and one that is
+ * not is not there to be taken.
+ */
+export function techniqueHolding(world: TourWorld, spaceId: string): HatsuInteractionKind | null {
+  if (world.isolated?.spaceId === spaceId) return 'room-isolation'
+  if (world.shut.includes(spaceId)) return 'chain-bind'
+  if (world.devouring.includes(spaceId)) return 'devour'
+  if (world.guarded.includes(spaceId)) return 'legal-defense'
+  if (world.cards[spaceId]) return 'tribunal'
+  if (world.doors.includes(spaceId)) return 'door-network'
+  if (world.emptied.includes(spaceId)) return 'vacuum'
+  if (world.eye === spaceId) return 'scout'
+  if (world.watched.some((doll) => doll.spaceId === spaceId)) return 'paper-spy'
+  if (world.double === spaceId) return 'guardian'
+  if (world.worm?.a === spaceId || world.worm?.b === spaceId) return 'portal'
+  if (world.trap === spaceId) return 'desire-trap'
+  if (world.ninelives.includes(spaceId)) return 'resurrection'
+  if (world.curse?.victim === spaceId) return 'curse'
+  if (world.dial === spaceId) return 'divination'
+  if (world.poem.includes(spaceId)) return 'poetry'
+  if (world.droplets.some((drop) => drop.spaceId === spaceId)) return 'blood-search'
+  if (world.verses.some((verse) => verse.spaceId === spaceId)) return 'prophecy'
+  if (world.souls.some(([a, b]) => a === spaceId || b === spaceId)) return 'arrow'
+  if (world.foreseen?.spaceId === spaceId) return 'future'
+  if (world.dowsing === spaceId) return 'dowsing'
+  return null
+}
+
+/**
+ * Takes one hold off a room.
+ *
+ * A stolen ability cannot be used by its owner while it is held, so what the
+ * book takes it also lets go of: the room comes back, and the technique is in
+ * the book instead of on the ship.
+ */
+export function releaseHold(world: TourWorld, spaceId: string): TourWorld {
+  return {
+    ...world,
+    isolated: world.isolated?.spaceId === spaceId ? null : world.isolated,
+    shut: world.shut.filter((id) => id !== spaceId),
+    devouring: world.devouring.filter((id) => id !== spaceId),
+    guarded: world.guarded.filter((id) => id !== spaceId),
+    cards: Object.fromEntries(Object.entries(world.cards).filter(([id]) => id !== spaceId)),
+    doors: world.doors.filter((id) => id !== spaceId),
+    emptied: world.emptied.filter((id) => id !== spaceId),
+    eye: world.eye === spaceId ? null : world.eye,
+    watched: world.watched.filter((doll) => doll.spaceId !== spaceId),
+    double: world.double === spaceId ? null : world.double,
+    worm: world.worm?.a === spaceId || world.worm?.b === spaceId ? null : world.worm,
+    trap: world.trap === spaceId ? null : world.trap,
+    ninelives: world.ninelives.filter((id) => id !== spaceId),
+    curse: world.curse?.victim === spaceId ? null : world.curse,
+    dial: world.dial === spaceId ? null : world.dial,
+    poem: world.poem.filter((id) => id !== spaceId),
+    droplets: world.droplets.filter((drop) => drop.spaceId !== spaceId),
+    verses: world.verses.filter((verse) => verse.spaceId !== spaceId),
+    souls: world.souls.filter(([a, b]) => a !== spaceId && b !== spaceId),
+    foreseen: world.foreseen?.spaceId === spaceId ? null : world.foreseen,
+    dowsing: world.dowsing === spaceId ? null : world.dowsing,
+  }
+}
+
+/**
+ * What a page costs to use.
+ *
+ * A stolen page stays in the book and can be cast again; a Culdcept card is
+ * spent by being played, and so is the dolphin's loan. Nothing else about the
+ * cast changes, so this is applied after it rather than woven into it.
+ */
+export function spendPage(world: TourWorld, kind: HatsuInteractionKind): TourWorld {
+  const book = world.book
+  if (book.loan === kind) return { ...world, book: { ...book, loan: null } }
+  const card = book.cards.indexOf(kind)
+  if (card < 0) return world
+  return {
+    ...world,
+    book: { ...book, cards: book.cards.filter((_, index) => index !== card) },
+  }
+}
+
+/** The pages the visitor may actually cast from, in the order the panel lists them. */
+export function castablePages(book: TourBook): HatsuInteractionKind[] {
+  return [
+    ...(book.open ? [book.open] : []),
+    ...(book.bookmark && book.bookmark !== book.open ? [book.bookmark] : []),
+    ...book.cards,
+    ...(book.loan ? [book.loan] : []),
+  ]
+}
+
+/**
+ * One cast on the techniques rather than on the ship.
+ */
+function castOnTechniques(
+  world: TourWorld,
+  kind: HatsuInteractionKind,
+  target: Space,
+): TourCastResult {
+  const book = world.book
+  const held = techniqueHolding(world, target.id)
+  const withBook = (patch: Partial<TourBook>): TourWorld => ({
+    ...world,
+    book: { ...book, ...patch },
+  })
+
+  switch (kind) {
+    // What is taken is let go of: the owner cannot use it while the book has it.
+    case 'theft': {
+      if (!held) return { world, report: { kind: 'nothing-to-steal', spaceId: target.id } }
+      const pages = [...new Set([...book.pages, held])]
+      return {
+        world: { ...releaseHold(world, target.id), book: { ...book, pages, open: held } },
+        report: { kind: 'taken-into-the-book', spaceId: target.id, technique: held },
+      }
+    }
+
+    // The bookmark is what makes two at once possible at all.
+    case 'bookmark': {
+      if (book.pages.length < 2) return { world, report: { kind: 'needs-two-pages' } }
+      const other = book.pages.find((page) => page !== book.open) ?? null
+      return {
+        world: withBook({ bookmark: other }),
+        report: { kind: 'bookmarked', technique: other! },
+      }
+    }
+
+    // Culdcept acquires without taking — and the arrow it cannot pierce is the
+    // arrow that has already been through the room.
+    case 'capture': {
+      if (world.souls.some(([a, b]) => a === target.id || b === target.id)) {
+        return { world, report: { kind: 'acquisition-failed', spaceId: target.id } }
+      }
+      if (!held) return { world, report: { kind: 'nothing-to-steal', spaceId: target.id } }
+      return {
+        world: withBook({ cards: [...book.cards, held] }),
+        report: { kind: 'carded', spaceId: target.id, technique: held },
+      }
+    }
+
+    // Only the dead pass anything on. A room that has been killed — emptied, or
+    // chained shut — is the walk's only corpse, and what it hands over is
+    // whatever killed it.
+    case 'inherit': {
+      const killed = world.emptied.includes(target.id)
+        ? ('vacuum' as HatsuInteractionKind)
+        : world.shut.includes(target.id)
+          ? ('chain-bind' as HatsuInteractionKind)
+          : null
+      if (!killed) return { world, report: { kind: 'not-eligible', spaceId: target.id } }
+      const pages = [...new Set([...book.pages, killed])]
+      return {
+        world: withBook({ pages, open: book.open ?? killed }),
+        report: { kind: 'inherited', spaceId: target.id, technique: killed },
+      }
+    }
+
+    // The chain drains as it takes: nothing reaches that room again until the
+    // book gives it back.
+    case 'chain-rule': {
+      if (!held) return { world, report: { kind: 'nothing-to-steal', spaceId: target.id } }
+      const pages = [...new Set([...book.pages, held])]
+      return {
+        world: {
+          ...releaseHold(world, target.id),
+          book: { ...book, pages, open: held, zetsu: [...new Set([...book.zetsu, target.id])] },
+        },
+        report: { kind: 'drained', spaceId: target.id, technique: held },
+      }
+    }
+
+    // The dolphin only exists during Emperor Time, and what it does is explain
+    // a captured ability and open it to someone who could not otherwise use it.
+    case 'ability-loan': {
+      if (!world.laidOpen) return { world, report: { kind: 'needs-emperor-time' } }
+      const lent = book.open ?? book.pages[0]
+      if (!lent) return { world, report: { kind: 'nothing-to-lend' } }
+      return { world: withBook({ loan: lent }), report: { kind: 'lent', technique: lent } }
+    }
+
+    default:
+      return { world, report: { kind: 'inert' } }
+  }
+}
+
+const BOOK_HATSU_KINDS = new Set<HatsuInteractionKind>([
+  'theft',
+  'bookmark',
+  'capture',
+  'inherit',
+  'chain-rule',
+  'ability-loan',
+])
+
+/** Whether a technique reads the book rather than the ship. */
+export const worksOnTechniques = (profile: HatsuProfile | null) =>
+  Boolean(profile) && BOOK_HATSU_KINDS.has(profile!.kind)
+
 /**
  * Runs one cast against the world and returns the next one.
  *
@@ -1487,6 +1758,14 @@ function runCast(
   }
 
   if (!target) return { world, report: { kind: 'no-target' } }
+
+  // Steal Chain leaves the room it drained with no aura to reach: nothing
+  // touches it again until the book gives the ability back.
+  if (world.book.zetsu.includes(target.id) && kind !== 'theft') {
+    return { world, report: { kind: 'in-zetsu', spaceId: target.id } }
+  }
+
+  if (BOOK_HATSU_KINDS.has(kind)) return castOnTechniques(world, kind, target)
 
   switch (kind) {
     case 'door-network': {

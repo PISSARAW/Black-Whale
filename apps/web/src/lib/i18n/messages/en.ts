@@ -168,6 +168,25 @@ export const en = {
 
         // On the solids. A room is a place and a solid is a thing: these all
         // say what happened to a thing, and never what happened to a page.
+        nothingToSteal: (room: string) => `Nothing is holding ${room}, so there is nothing in it to take`,
+        takenIntoTheBook: (room: string, technique: string) =>
+          `${technique} is in the book · ${room} is let go of, because its owner cannot use it while it is held`,
+        needsTwoPages: 'One page is not two · take a second before marking one',
+        bookmarked: (technique: string) => `${technique} kept live beside the open page`,
+        acquisitionFailed: (room: string) =>
+          `${room} has been through the arrow · nothing acquires anything from it`,
+        carded: (room: string, technique: string) =>
+          `${technique} acquired as a card · ${room} keeps it too, and the card is spent by playing it`,
+        notEligible: (room: string) => `${room} is not dead · only what was killed passes anything on`,
+        inherited: (room: string, technique: string) =>
+          `${room} was killed by ${technique}, and that is what it hands over`,
+        drained: (room: string, technique: string) =>
+          `${technique} pulled out of ${room} · nothing reaches that room until the book returns it`,
+        needsEmperorTime: 'The dolphin exists during Emperor Time and not otherwise',
+        nothingToLend: 'The book is empty · there is nothing to explain and nothing to lend',
+        lent: (technique: string) => `${technique} explained and opened · the next cast consumes the loan`,
+        pageSpent: (technique: string) => `${technique} is spent`,
+        inZetsu: (room: string) => `${room} has no aura left to reach · the chain drained it`,
         owlAttached: (rooms: number) =>
           `The owl is with you · ${rooms} room${rooms === 1 ? '' : 's'} already on the trail, and it keeps them`,
         owlRecalled: (rooms: number) => `The owl is off · ${rooms} kept anyway, as the walk always does`,
@@ -342,7 +361,21 @@ export const en = {
           "It is not the deck that decides this one.",
         ],
       },
+      /** The pages the visitor can cast from, which is the whole of wave five. */
+      book: {
+        title: 'The book',
+        cast: 'Cast this page',
+        hint: 'A page is cast where you are aiming, like anything else',
+        card: 'card',
+        loan: 'loan',
+      },
       holds: {
+        book: 'In the book',
+        openPage: 'Open at',
+        bookmark: 'Kept beside it',
+        hand: 'Cards in hand',
+        zetsu: 'Drained',
+        loan: 'On loan',
         trail: 'The trail',
         owl: 'The owl keeps',
         foreseen: 'Ten seconds on',

@@ -21,6 +21,7 @@
   import TourScene from '$lib/components/tour/TourScene.svelte'
   import { setAmbientMuffled } from '$lib/audio/ambient'
   import { activeHatsu, enterForcedZetsu } from '$lib/nen/hatsuState'
+  import type { HatsuInteractionKind } from '$lib/nen/hatsuRegistry'
   import { breadcrumbSchema } from '$lib/seo/schema'
   import { link, t } from '$lib/i18n'
   import { locale } from '$lib/i18n'
@@ -31,6 +32,7 @@
     arriveInTour,
     castInTour,
     identityOf,
+    spendPage,
     worksInTour,
     worksOnTheBody,
     wormExit,
@@ -198,6 +200,26 @@
       heading,
     })
     world = result.world
+    report = result.report
+    if (result.travelTo) goToSpace(ship.spaces.get(result.travelTo)!)
+  }
+
+  /**
+   * A page of the book, cast at whatever the visitor is aiming at.
+   *
+   * This is the whole of what the fifth wave bought: the dock still gives the
+   * walk exactly one aura, and the book gives it a second to cast with.
+   */
+  function castPage(kind: HatsuInteractionKind) {
+    const result = castInTour(world, kind, {
+      ship,
+      targetId: aimedAt?.id ?? currentSpace?.id ?? null,
+      targetSolidId: aimedSolidAt?.id ?? null,
+      standingIn: currentSpace?.id ?? null,
+      at: position,
+      heading,
+    })
+    world = spendPage(result.world, kind)
     report = result.report
     if (result.travelTo) goToSpace(ship.spaces.get(result.travelTo)!)
   }
@@ -465,6 +487,7 @@
           {nameOf}
           {sourceOf}
           onRelease={release}
+          onCastPage={castPage}
         />
       {/if}
 

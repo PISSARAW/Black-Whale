@@ -11,6 +11,7 @@
   import {
     TOUR_HATSU_KINDS,
     aimsAtSolids,
+    castablePages,
     dialReading,
     identityOf,
     solidById,
@@ -21,7 +22,11 @@
   import type { Space, Structure } from '$lib/tour/types'
   import { locale, t } from '$lib/i18n'
   import { localizeHatsu } from '$lib/i18n/hatsu'
-  import type { HatsuProfile } from '$lib/nen/hatsuRegistry'
+  import {
+    HATSU_PROFILES,
+    type HatsuInteractionKind,
+    type HatsuProfile,
+  } from '$lib/nen/hatsuRegistry'
 
   interface Props {
     ship: Ship
@@ -45,6 +50,8 @@
     /** What a room rests on, in the visitor's language: the flock brings it back. */
     sourceOf: (entity: { source: string; sourceFr: string }) => string
     onRelease: () => void
+    /** Casts a page of the book at whatever the visitor is aiming at. */
+    onCastPage: (kind: HatsuInteractionKind) => void
   }
 
   const {
@@ -60,6 +67,7 @@
     nameOf,
     sourceOf,
     onRelease,
+    onCastPage,
   }: Props = $props()
 
   // The technique under the visitor's own name for it, as the dock names it.
@@ -68,12 +76,26 @@
   const onSolids = $derived(aimsAtSolids(profile) || profile.kind === 'mimicry')
   /** Or whether it has no target at all, because the target is the visitor. */
   const onBody = $derived(worksOnTheBody(profile) && !onSolids)
+  /** The pages of the book the visitor can actually play right now. */
+  const pages = $derived(castablePages(world.book))
 
   const roomName = (id: string) => {
     const space = ship.spaces.get(id)
     // Named as the walk names it, so a room the arrow swapped is not called two
     // different things by two different panels.
     return space ? nameOf(identityOf(ship, world, space)) : id
+  }
+
+  /**
+   * A stolen technique under the name of whoever it was taken from.
+   *
+   * The book holds kinds, not profiles — what was taken off a room is an
+   * ability, not a person's copy of one — so the registry is asked for the
+   * profile that carries that kind, and the visitor reads the name they know.
+   */
+  const pageName = (kind: string) => {
+    const profile = HATSU_PROFILES.find((candidate) => candidate.kind === kind)
+    return profile ? localizeHatsu(profile, $locale).name : kind
   }
 
   /** What the dial reads from where the visitor is standing, this instant. */
@@ -333,6 +355,35 @@
         return say.soulsSwapped(roomName(report.a), roomName(report.b))
       case 'arrow-drawn':
         return say.arrowDrawn(roomName(report.spaceId))
+
+      case 'nothing-to-steal':
+        return say.nothingToSteal(roomName(report.spaceId))
+      case 'taken-into-the-book':
+        return say.takenIntoTheBook(roomName(report.spaceId), pageName(report.technique))
+      case 'needs-two-pages':
+        return say.needsTwoPages
+      case 'bookmarked':
+        return say.bookmarked(pageName(report.technique))
+      case 'acquisition-failed':
+        return say.acquisitionFailed(roomName(report.spaceId))
+      case 'carded':
+        return say.carded(roomName(report.spaceId), pageName(report.technique))
+      case 'not-eligible':
+        return say.notEligible(roomName(report.spaceId))
+      case 'inherited':
+        return say.inherited(roomName(report.spaceId), pageName(report.technique))
+      case 'drained':
+        return say.drained(roomName(report.spaceId), pageName(report.technique))
+      case 'needs-emperor-time':
+        return say.needsEmperorTime
+      case 'nothing-to-lend':
+        return say.nothingToLend
+      case 'lent':
+        return say.lent(pageName(report.technique))
+      case 'page-spent':
+        return say.pageSpent(pageName(report.technique))
+      case 'in-zetsu':
+        return say.inZetsu(roomName(report.spaceId))
     }
   })
 
@@ -372,6 +423,13 @@
         value: ['', '👁', '👁 👂', '👁 👂 🗣'][world.sealed],
       })
     }
+    const book = world.book
+    if (book.pages.length) rows.push({ label: held.book, value: book.pages.map(pageName).join(', ') })
+    if (book.open) rows.push({ label: held.openPage, value: pageName(book.open) })
+    if (book.bookmark) rows.push({ label: held.bookmark, value: pageName(book.bookmark) })
+    if (book.cards.length) rows.push({ label: held.hand, value: book.cards.map(pageName).join(', ') })
+    for (const id of book.zetsu) rows.push({ label: held.zetsu, value: roomName(id) })
+    if (book.loan) rows.push({ label: held.loan, value: pageName(book.loan) })
     if (world.owl) rows.push({ label: held.owl, value: `${world.trail.length}` })
     if (world.foreseen) rows.push({ label: held.foreseen, value: roomName(world.foreseen.spaceId) })
     if (world.poem.length) {
@@ -508,6 +566,29 @@
     </dl>
   {:else}
     <p class="mt-1 text-[11px] text-[#FFFFF0]/40">{$t.tour.hatsu.nothingHeld}</p>
+  {/if}
+
+  {#if pages.length}
+    <p class="mt-3 text-[10px] uppercase tracking-widest text-[#FFFFF0]/45">
+      {$t.tour.hatsu.book.title}
+    </p>
+    <p class="text-[10px] leading-snug text-[#FFFFF0]/35">{$t.tour.hatsu.book.hint}</p>
+    <div class="mt-1 flex flex-wrap gap-1">
+      {#each pages as page, index (`${page}-${index}`)}
+        <button
+          type="button"
+          onclick={() => onCastPage(page)}
+          title={$t.tour.hatsu.book.cast}
+          class="rounded border border-[#444] px-1.5 py-0.5 text-[11px] text-[#FFFFF0]/80 transition-colors hover:border-[#FFD700]/60 hover:text-[#FFFFF0]"
+        >
+          {pageName(page)}{world.book.cards.includes(page)
+            ? ` · ${$t.tour.hatsu.book.card}`
+            : world.book.loan === page
+              ? ` · ${$t.tour.hatsu.book.loan}`
+              : ''}
+        </button>
+      {/each}
+    </div>
   {/if}
 
   {#if written.length}

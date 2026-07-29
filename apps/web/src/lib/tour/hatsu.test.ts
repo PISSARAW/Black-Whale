@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { buildShip } from './blueprint'
 import {
   CAPACITY,
+  CLOSED_BOOK,
   EMPTY_WORLD,
   RESTING_BODY,
   SOLID_HATSU_KINDS,
@@ -10,6 +11,7 @@ import {
   aimedSpace,
   arriveInTour,
   castInTour,
+  castablePages,
   detachedOn,
   dialReading,
   doorExit,
@@ -24,6 +26,8 @@ import {
   shellsFor,
   solidNow,
   solidWalls,
+  spendPage,
+  techniqueHolding,
   reachOf,
   verseFor,
   walksThroughWalls,
@@ -950,6 +954,103 @@ describe('the arrow, the cat and the curse', () => {
     expect(fell.report).toMatchObject({ kind: 'curse-fell', victim: roomA.id })
     expect(fell.world.emptied).toContain(roomA.id)
     expect(fell.world.curse).toBeNull()
+  })
+})
+
+// ── The book ──────────────────────────────────────────────────────────────
+
+describe('taking a technique off the ship', () => {
+  it('reads back exactly the hold the panel would list', () => {
+    const isolated = door(EMPTY_WORLD, 'room-isolation', roomA.id).world
+    expect(techniqueHolding(isolated, roomA.id)).toBe('room-isolation')
+    expect(techniqueHolding(isolated, roomB.id)).toBeNull()
+    expect(techniqueHolding(door(EMPTY_WORLD, 'scout', roomA.id).world, roomA.id)).toBe('scout')
+  })
+
+  it('takes the ability and lets go of the room in the same movement', () => {
+    const watched = door(EMPTY_WORLD, 'paper-spy', roomA.id).world
+    const stolen = door(watched, 'theft', roomA.id)
+    expect(stolen.report).toMatchObject({ kind: 'taken-into-the-book', technique: 'paper-spy' })
+    expect(stolen.world.book.pages).toEqual(['paper-spy'])
+    expect(stolen.world.book.open).toBe('paper-spy')
+    // The owner cannot use it while the book has it.
+    expect(stolen.world.watched).toEqual([])
+    expect(techniqueHolding(stolen.world, roomA.id)).toBeNull()
+  })
+
+  it('says so when there is nothing on the room to take', () => {
+    expect(door(EMPTY_WORLD, 'theft', roomA.id).report).toMatchObject({ kind: 'nothing-to-steal' })
+  })
+
+  it('keeps a second page live beside the open one, which is the whole point', () => {
+    let world = door(EMPTY_WORLD, 'paper-spy', roomA.id).world
+    world = door(world, 'theft', roomA.id).world
+    expect(door(world, 'bookmark', roomA.id).report).toEqual({ kind: 'needs-two-pages' })
+
+    world = door(world, 'scout', roomB.id).world
+    world = door(world, 'theft', roomB.id).world
+    const marked = door(world, 'bookmark', roomA.id)
+    expect(marked.report).toMatchObject({ kind: 'bookmarked' })
+    expect(castablePages(marked.world.book)).toHaveLength(2)
+  })
+
+  it('cards an ability without taking it, and the arrow makes that fail', () => {
+    const watched = door(EMPTY_WORLD, 'paper-spy', roomA.id).world
+    const carded = door(watched, 'capture', roomA.id)
+    expect(carded.report).toMatchObject({ kind: 'carded', technique: 'paper-spy' })
+    expect(carded.world.book.cards).toEqual(['paper-spy'])
+    // Acquired, not taken: the doll is still there.
+    expect(carded.world.watched).toHaveLength(1)
+
+    const pierced = { ...watched, souls: [[roomA.id, roomB.id]] as [string, string][] }
+    expect(door(pierced, 'capture', roomA.id).report).toMatchObject({ kind: 'acquisition-failed' })
+  })
+
+  it('inherits only from a room that was actually killed', () => {
+    expect(door(EMPTY_WORLD, 'inherit', roomA.id).report).toMatchObject({ kind: 'not-eligible' })
+    const killed = door(EMPTY_WORLD, 'vacuum', roomA.id).world
+    const passed = door(killed, 'inherit', roomA.id)
+    expect(passed.report).toMatchObject({ kind: 'inherited', technique: 'vacuum' })
+    expect(passed.world.book.pages).toEqual(['vacuum'])
+  })
+
+  it('drains the room it steals from, and nothing reaches it after', () => {
+    const watched = door(EMPTY_WORLD, 'paper-spy', roomA.id).world
+    const drained = door(watched, 'chain-rule', roomA.id)
+    expect(drained.report).toMatchObject({ kind: 'drained', technique: 'paper-spy' })
+    expect(drained.world.book.zetsu).toEqual([roomA.id])
+
+    // Every technique but the one that can take it back is refused.
+    expect(door(drained.world, 'scout', roomA.id).report).toEqual({
+      kind: 'in-zetsu',
+      spaceId: roomA.id,
+    })
+    expect(door(drained.world, 'scout', roomB.id).report).not.toMatchObject({ kind: 'in-zetsu' })
+  })
+
+  it('lends a page only while Emperor Time is up, and the loan is spent by use', () => {
+    let world = door(EMPTY_WORLD, 'paper-spy', roomA.id).world
+    world = door(world, 'theft', roomA.id).world
+    expect(door(world, 'ability-loan', roomA.id).report).toEqual({ kind: 'needs-emperor-time' })
+
+    const lent = door({ ...world, laidOpen: true }, 'ability-loan', roomA.id)
+    expect(lent.report).toMatchObject({ kind: 'lent', technique: 'paper-spy' })
+    expect(castablePages(lent.world.book)).toContain('paper-spy')
+    expect(spendPage(lent.world, 'paper-spy').book.loan).toBeNull()
+  })
+
+  it('spends a card when it is played and leaves a stolen page alone', () => {
+    const world = door(door(EMPTY_WORLD, 'paper-spy', roomA.id).world, 'capture', roomA.id).world
+    expect(spendPage(world, 'paper-spy').book.cards).toEqual([])
+
+    const stolen = door(door(EMPTY_WORLD, 'scout', roomA.id).world, 'theft', roomA.id).world
+    expect(spendPage(stolen, 'scout').book.pages).toEqual(['scout'])
+  })
+
+  it('is quiet again once the book is shut', () => {
+    const world = door(door(EMPTY_WORLD, 'paper-spy', roomA.id).world, 'theft', roomA.id).world
+    expect(worldIsQuiet(world)).toBe(false)
+    expect(worldIsQuiet({ ...world, book: CLOSED_BOOK })).toBe(true)
   })
 })
 

@@ -1,6 +1,7 @@
 <script lang="ts">
   import { locale, t } from '$lib/i18n'
   import { localizeHatsu, localizeHatsuList, manifestationFor } from '$lib/i18n/hatsu'
+  import { hatsuStatusFor } from '$lib/i18n/hatsuStatus'
   import { onMount } from 'svelte'
   import { goto } from '$app/navigation'
   import { page } from '$app/stores'
@@ -828,6 +829,9 @@
     },
     get page() {
       return $page
+    },
+    get m() {
+      return hatsuStatusFor($locale)
     },
     get parallelFutureVisible() {
       return $parallelFutureVisible

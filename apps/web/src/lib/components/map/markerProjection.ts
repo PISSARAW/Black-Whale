@@ -100,6 +100,7 @@ const locationCoordinates: Record<string, Record<string, { x: number; y: number 
     'vip-guest-rooms': { x: 400, y: 225 },
     'ministry-of-justice': { x: 660, y: 385 },
     'vip-witness-protection-area': { x: 660, y: 385 },
+    'screening-room': { x: 375, y: 385 },
     bulkhead: { x: 500, y: 498 },
   },
   'tier-3': {

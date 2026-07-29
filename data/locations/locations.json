@@ -410,6 +410,16 @@
     "exits": []
   },
   {
+    "id": "tier-2-screening-room",
+    "name": "Screening Room",
+    "parentLocationId": "tier-2",
+    "deck": 2,
+    "zoneType": "public",
+    "description": "Amphitheatre-shaped hall on Tier 2, drawn in the chapter 359 cutaway: raked rows of cinema seating facing a projection wall, used to brief the tier's passengers rather than to entertain them.",
+    "entrances": [],
+    "exits": []
+  },
+  {
     "id": "tier-2-bulkhead",
     "name": "Tier 2 Bulkhead",
     "parentLocationId": "tier-2",

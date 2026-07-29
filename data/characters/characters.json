@@ -1694,6 +1694,11 @@
     "factionId": "prince-benjamin",
     "firstAppearanceChapterId": "ch-348",
     "canonStatus": "canon",
+    "beyondLineage": {
+      "status": "suspected",
+      "revealedInChapterId": "ch-401",
+      "evidence": "Longhi asks Kurapika to investigate his hypothesis that Beyond fathered one of the fourteen princes."
+    },
     "shipLocation": {
       "tier": 1,
       "room": "1001",
@@ -2158,6 +2163,11 @@
     "factionId": "prince-camilla",
     "firstAppearanceChapterId": "ch-349",
     "canonStatus": "canon",
+    "beyondLineage": {
+      "status": "suspected",
+      "revealedInChapterId": "ch-401",
+      "evidence": "Longhi asks Kurapika to investigate his hypothesis that Beyond fathered one of the fourteen princes."
+    },
     "shipLocation": {
       "tier": 1,
       "room": "VIP Jail",
@@ -2627,6 +2637,11 @@
     "factionId": "prince-zhanglei",
     "firstAppearanceChapterId": "ch-349",
     "canonStatus": "canon",
+    "beyondLineage": {
+      "status": "suspected",
+      "revealedInChapterId": "ch-401",
+      "evidence": "Longhi asks Kurapika to investigate his hypothesis that Beyond fathered one of the fourteen princes."
+    },
     "shipLocation": {
       "tier": 1,
       "room": "1003",
@@ -3074,6 +3089,11 @@
     "factionId": "prince-tserriednich",
     "firstAppearanceChapterId": "ch-345",
     "canonStatus": "canon",
+    "beyondLineage": {
+      "status": "suspected",
+      "revealedInChapterId": "ch-401",
+      "evidence": "Longhi asks Kurapika to investigate his hypothesis that Beyond fathered one of the fourteen princes."
+    },
     "shipLocation": {
       "tier": 1,
       "room": "1004",
@@ -3522,6 +3542,11 @@
     "factionId": "prince-tubeppa",
     "firstAppearanceChapterId": "ch-349",
     "canonStatus": "canon",
+    "beyondLineage": {
+      "status": "suspected",
+      "revealedInChapterId": "ch-401",
+      "evidence": "Longhi asks Kurapika to investigate his hypothesis that Beyond fathered one of the fourteen princes."
+    },
     "shipLocation": {
       "tier": 1,
       "room": "1005",
@@ -3963,6 +3988,11 @@
     "factionId": "prince-tyson",
     "firstAppearanceChapterId": "ch-349",
     "canonStatus": "canon",
+    "beyondLineage": {
+      "status": "suspected",
+      "revealedInChapterId": "ch-401",
+      "evidence": "Longhi asks Kurapika to investigate his hypothesis that Beyond fathered one of the fourteen princes."
+    },
     "shipLocation": {
       "tier": 1,
       "room": "1006",
@@ -4391,6 +4421,11 @@
     "factionId": "prince-luzurus",
     "firstAppearanceChapterId": "ch-349",
     "canonStatus": "canon",
+    "beyondLineage": {
+      "status": "suspected",
+      "revealedInChapterId": "ch-401",
+      "evidence": "Longhi asks Kurapika to investigate his hypothesis that Beyond fathered one of the fourteen princes."
+    },
     "shipLocation": {
       "tier": 1,
       "room": "1007",
@@ -4817,6 +4852,11 @@
     "factionId": "prince-salesale",
     "firstAppearanceChapterId": "ch-349",
     "canonStatus": "canon",
+    "beyondLineage": {
+      "status": "suspected",
+      "revealedInChapterId": "ch-401",
+      "evidence": "Longhi asks Kurapika to investigate his hypothesis that Beyond fathered one of the fourteen princes."
+    },
     "shipLocation": {
       "tier": 1,
       "room": "1008",
@@ -5231,6 +5271,11 @@
     "factionId": "prince-halkenburg",
     "firstAppearanceChapterId": "ch-349",
     "canonStatus": "canon",
+    "beyondLineage": {
+      "status": "suspected",
+      "revealedInChapterId": "ch-401",
+      "evidence": "Longhi asks Kurapika to investigate his hypothesis that Beyond fathered one of the fourteen princes."
+    },
     "temporalIdentityManaged": true,
     "shipLocation": {
       "tier": 1,
@@ -5694,6 +5739,11 @@
     "factionId": "prince-kacho",
     "firstAppearanceChapterId": "ch-349",
     "canonStatus": "canon",
+    "beyondLineage": {
+      "status": "suspected",
+      "revealedInChapterId": "ch-401",
+      "evidence": "Longhi asks Kurapika to investigate his hypothesis that Beyond fathered one of the fourteen princes."
+    },
     "temporalIdentityManaged": true,
     "shipLocation": {
       "tier": 1,
@@ -6141,6 +6191,11 @@
     "factionId": "prince-fugetsu",
     "firstAppearanceChapterId": "ch-349",
     "canonStatus": "canon",
+    "beyondLineage": {
+      "status": "suspected",
+      "revealedInChapterId": "ch-401",
+      "evidence": "Longhi asks Kurapika to investigate his hypothesis that Beyond fathered one of the fourteen princes."
+    },
     "shipLocation": {
       "tier": 1,
       "room": "1011",
@@ -6607,6 +6662,11 @@
     "factionId": "prince-momoze",
     "firstAppearanceChapterId": "ch-349",
     "canonStatus": "canon",
+    "beyondLineage": {
+      "status": "suspected",
+      "revealedInChapterId": "ch-401",
+      "evidence": "Longhi asks Kurapika to investigate his hypothesis that Beyond fathered one of the fourteen princes."
+    },
     "shipLocation": {
       "tier": 1,
       "room": "1012",
@@ -7042,6 +7102,11 @@
     "factionId": "prince-marayam",
     "firstAppearanceChapterId": "ch-349",
     "canonStatus": "canon",
+    "beyondLineage": {
+      "status": "suspected",
+      "revealedInChapterId": "ch-401",
+      "evidence": "Longhi asks Kurapika to investigate his hypothesis that Beyond fathered one of the fourteen princes."
+    },
     "shipLocation": {
       "tier": 1,
       "room": "1013",
@@ -7492,6 +7557,11 @@
     "factionId": "prince-woble",
     "firstAppearanceChapterId": "ch-358",
     "canonStatus": "canon",
+    "beyondLineage": {
+      "status": "suspected",
+      "revealedInChapterId": "ch-401",
+      "evidence": "Longhi asks Kurapika to investigate his hypothesis that Beyond fathered one of the fourteen princes."
+    },
     "mapPresenceFromChapterId": "ch-358",
     "mapPresenceUntilChapterId": null,
     "replaceMapPresenceHistory": true,
@@ -41778,6 +41848,11 @@
     "factionId": "prince-benjamin",
     "firstAppearanceChapterId": "ch-363",
     "canonStatus": "canon",
+    "beyondLineage": {
+      "status": "confirmed",
+      "revealedInChapterId": "ch-415",
+      "evidence": "Beyond marked him at birth; after the Seed Urn Ceremony he finds the birthmark and confronts Beyond about the sacrificial curse."
+    },
     "shipLocation": {
       "tier": 1,
       "room": "1001",

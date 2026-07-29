@@ -1,0 +1,408 @@
+/**
+ * Turns the flat footprints of `data/ship/blueprint.json` into the polygons,
+ * doorways and wall stretches a first-person walk needs.
+ *
+ * Everything here is pure and framework-free: the same functions feed the
+ * renderer, the collision test and the validation suite, so a wall the player
+ * bumps into is by construction the wall that was drawn.
+ */
+import type { Doorway, Polygon, Space, Vec2, WallSegment } from './types'
+
+/** Below this, two coordinates are the same point. Footprints are in metres. */
+export const EPSILON = 0.05
+
+/** Doorways are cut to this width when the shared wall allows it. */
+export const DOOR_WIDTH = 3
+
+/** A shared wall shorter than this is a corner touch, not a way through. */
+export const MIN_DOOR_WIDTH = 1.2
+
+/** Head height of an opening. Above it, the wall carries on to the ceiling. */
+export const DOOR_HEIGHT = 2.6
+
+const sub = (a: Vec2, b: Vec2): Vec2 => [a[0] - b[0], a[1] - b[1]]
+const len = (a: Vec2) => Math.hypot(a[0], a[1])
+const dot = (a: Vec2, b: Vec2) => a[0] * b[0] + a[1] * b[1]
+const cross = (a: Vec2, b: Vec2) => a[0] * b[1] - a[1] * b[0]
+
+/** Twice the signed area. Positive means counter-clockwise in `[x, z]`. */
+export function signedArea(polygon: Polygon): number {
+  let total = 0
+  for (let i = 0; i < polygon.length; i++) {
+    const a = polygon[i]
+    const b = polygon[(i + 1) % polygon.length]
+    total += cross(a, b)
+  }
+  return total / 2
+}
+
+export const polygonArea = (polygon: Polygon): number => Math.abs(signedArea(polygon))
+
+/** Returns the polygon wound counter-clockwise, copying only when needed. */
+export function toCounterClockwise(polygon: Polygon): Polygon {
+  return signedArea(polygon) < 0 ? [...polygon].reverse() : polygon
+}
+
+/** Ray casting. Points exactly on an edge are not guaranteed either way. */
+export function pointInPolygon(point: Vec2, polygon: Polygon): boolean {
+  let inside = false
+  for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+    const a = polygon[i]
+    const b = polygon[j]
+    const straddles = a[1] > point[1] !== b[1] > point[1]
+    if (!straddles) continue
+    const x = ((b[0] - a[0]) * (point[1] - a[1])) / (b[1] - a[1]) + a[0]
+    if (point[0] < x) inside = !inside
+  }
+  return inside
+}
+
+/** The closest point to `p` on segment `a`→`b`. */
+export function closestPointOnSegment(p: Vec2, a: Vec2, b: Vec2): Vec2 {
+  const ab = sub(b, a)
+  const lengthSquared = dot(ab, ab)
+  if (lengthSquared < EPSILON * EPSILON) return a
+  let t = dot(sub(p, a), ab) / lengthSquared
+  t = Math.max(0, Math.min(1, t))
+  return [a[0] + ab[0] * t, a[1] + ab[1] * t]
+}
+
+export const iterateEdges = function* (polygon: Polygon): Generator<[Vec2, Vec2]> {
+  for (let i = 0; i < polygon.length; i++) {
+    yield [polygon[i], polygon[(i + 1) % polygon.length]]
+  }
+}
+
+/**
+ * The stretch two segments share when they lie on the same line, expressed as
+ * the distance along `a1`→`a2`. Returns `null` when they are not collinear or
+ * only meet at a point.
+ */
+export function collinearOverlap(
+  a1: Vec2,
+  a2: Vec2,
+  b1: Vec2,
+  b2: Vec2,
+): { from: number; to: number } | null {
+  const dir = sub(a2, a1)
+  const length = len(dir)
+  if (length < EPSILON) return null
+  const unit: Vec2 = [dir[0] / length, dir[1] / length]
+
+  // Both ends of B have to sit on A's line, and B has to run along it.
+  if (Math.abs(cross(unit, sub(b1, a1))) > EPSILON) return null
+  if (Math.abs(cross(unit, sub(b2, a1))) > EPSILON) return null
+
+  const t1 = dot(sub(b1, a1), unit)
+  const t2 = dot(sub(b2, a1), unit)
+  const from = Math.max(0, Math.min(t1, t2))
+  const to = Math.min(length, Math.max(t1, t2))
+  return to - from > EPSILON ? { from, to } : null
+}
+
+const along = (a: Vec2, unit: Vec2, t: number): Vec2 => [a[0] + unit[0] * t, a[1] + unit[1] * t]
+
+/**
+ * Finds every doorway on a tier by looking for walls two spaces hold in common.
+ *
+ * Adjacency *is* the connection: nothing in the blueprint says "these two rooms
+ * have a door". A footprint that touches its neighbour opens onto it, and one
+ * that does not is sealed — which is why an unreachable space is a data error
+ * the validator can state plainly.
+ */
+export function deriveDoorways(spaces: Space[]): Doorway[] {
+  const doorways: Doorway[] = []
+
+  for (let i = 0; i < spaces.length; i++) {
+    for (let j = i + 1; j < spaces.length; j++) {
+      const a = spaces[i]
+      const b = spaces[j]
+      if (a.tierId !== b.tierId) continue
+
+      let best: { from: number; to: number; a1: Vec2; unit: Vec2 } | null = null
+
+      for (const [a1, a2] of iterateEdges(a.footprint)) {
+        const dir = sub(a2, a1)
+        const length = len(dir)
+        if (length < EPSILON) continue
+        const unit: Vec2 = [dir[0] / length, dir[1] / length]
+
+        for (const [b1, b2] of iterateEdges(b.footprint)) {
+          const overlap = collinearOverlap(a1, a2, b1, b2)
+          if (!overlap) continue
+          const span = overlap.to - overlap.from
+          if (!best || span > best.to - best.from) best = { ...overlap, a1, unit }
+        }
+      }
+
+      if (!best) continue
+      const span = best.to - best.from
+      if (span < MIN_DOOR_WIDTH) continue
+
+      // One opening per pair, centred on the longest wall they share.
+      const width = Math.min(DOOR_WIDTH, span)
+      const middle = (best.from + best.to) / 2
+      doorways.push({
+        tierId: a.tierId,
+        a: a.id,
+        b: b.id,
+        start: along(best.a1, best.unit, middle - width / 2),
+        end: along(best.a1, best.unit, middle + width / 2),
+        width,
+      })
+    }
+  }
+
+  return doorways
+}
+
+/**
+ * The walls of one space, with its doorways cut out.
+ *
+ * Each edge is walked as an interval, the openings that fall on it are removed,
+ * and what is left comes back as wall. An edge fully spanned by an opening
+ * yields nothing.
+ */
+export function wallSegments(space: Space, doorways: Doorway[]): WallSegment[] {
+  const mine = doorways.filter((door) => door.a === space.id || door.b === space.id)
+  const walls: WallSegment[] = []
+
+  for (const [a1, a2] of iterateEdges(space.footprint)) {
+    const dir = sub(a2, a1)
+    const length = len(dir)
+    if (length < EPSILON) continue
+    const unit: Vec2 = [dir[0] / length, dir[1] / length]
+
+    const gaps: Array<[number, number]> = []
+    for (const door of mine) {
+      const overlap = collinearOverlap(a1, a2, door.start, door.end)
+      if (overlap) gaps.push([overlap.from, overlap.to])
+    }
+    gaps.sort((left, right) => left[0] - right[0])
+
+    let cursor = 0
+    for (const [from, to] of gaps) {
+      if (from - cursor > EPSILON) {
+        walls.push({ spaceId: space.id, start: along(a1, unit, cursor), end: along(a1, unit, from) })
+      }
+      cursor = Math.max(cursor, to)
+    }
+    if (length - cursor > EPSILON) {
+      walls.push({ spaceId: space.id, start: along(a1, unit, cursor), end: along(a1, unit, length) })
+    }
+  }
+
+  return walls
+}
+
+/**
+ * Ear clipping for simple polygons, concave included. Returns index triples
+ * into the polygon, wound counter-clockwise.
+ *
+ * The footprints have a handful of vertices each, so the quadratic loop costs
+ * nothing and the alternative — pulling in a triangulation dependency for the
+ * few notched rooms on the ship — is not worth it.
+ */
+export function triangulate(polygon: Polygon): number[] {
+  const ccw = toCounterClockwise(polygon)
+  const flipped = ccw !== polygon
+  const remaining = ccw.map((_, index) => index)
+  const triangles: number[] = []
+
+  const at = (index: number) => ccw[index]
+  const map = (index: number) => (flipped ? polygon.length - 1 - index : index)
+
+  let guard = remaining.length * remaining.length
+  while (remaining.length > 3 && guard-- > 0) {
+    let clipped = false
+
+    for (let i = 0; i < remaining.length; i++) {
+      const prev = remaining[(i - 1 + remaining.length) % remaining.length]
+      const current = remaining[i]
+      const next = remaining[(i + 1) % remaining.length]
+      const a = at(prev)
+      const b = at(current)
+      const c = at(next)
+
+      // Reflex corners cannot be ears.
+      if (cross(sub(b, a), sub(c, b)) <= EPSILON) continue
+
+      // Nor can a corner with another vertex sitting inside it.
+      const contains = remaining.some((index) => {
+        if (index === prev || index === current || index === next) return false
+        return pointInTriangle(at(index), a, b, c)
+      })
+      if (contains) continue
+
+      triangles.push(map(prev), map(current), map(next))
+      remaining.splice(i, 1)
+      clipped = true
+      break
+    }
+
+    // A polygon that is not simple would otherwise spin here forever.
+    if (!clipped) break
+  }
+
+  if (remaining.length === 3) triangles.push(...remaining.map(map))
+  return triangles
+}
+
+function pointInTriangle(p: Vec2, a: Vec2, b: Vec2, c: Vec2): boolean {
+  const d1 = cross(sub(b, a), sub(p, a))
+  const d2 = cross(sub(c, b), sub(p, b))
+  const d3 = cross(sub(a, c), sub(p, c))
+  return d1 >= 0 && d2 >= 0 && d3 >= 0
+}
+
+/**
+ * A point inside the polygon and clear of its walls.
+ *
+ * Rooms are expected to share walls, so a point sitting *on* an edge says
+ * nothing about whether two of them overlap — only a point strictly within
+ * does.
+ */
+export function strictlyInside(point: Vec2, polygon: Polygon): boolean {
+  if (!pointInPolygon(point, polygon)) return false
+  for (const [a, b] of iterateEdges(polygon)) {
+    if (len(sub(point, closestPointOnSegment(point, a, b))) <= EPSILON) return false
+  }
+  return true
+}
+
+/** Whether two polygons share interior area, which no two spaces may do. */
+export function polygonsOverlap(a: Polygon, b: Polygon): boolean {
+  if (a.some((point) => strictlyInside(point, b))) return true
+  if (b.some((point) => strictlyInside(point, a))) return true
+
+  // Vertices alone miss the case of two rooms drawn on the same floor, whose
+  // corners all land on each other's walls.
+  if (triangleCentroids(a).some((point) => strictlyInside(point, b))) return true
+  if (triangleCentroids(b).some((point) => strictlyInside(point, a))) return true
+
+  for (const [a1, a2] of iterateEdges(a)) {
+    for (const [b1, b2] of iterateEdges(b)) {
+      if (segmentsProperlyCross(a1, a2, b1, b2)) return true
+    }
+  }
+  return false
+}
+
+function triangleCentroids(polygon: Polygon): Vec2[] {
+  const triangles = triangulate(polygon)
+  const points: Vec2[] = []
+  for (let i = 0; i < triangles.length; i += 3) {
+    const a = polygon[triangles[i]]
+    const b = polygon[triangles[i + 1]]
+    const c = polygon[triangles[i + 2]]
+    points.push([(a[0] + b[0] + c[0]) / 3, (a[1] + b[1] + c[1]) / 3])
+  }
+  return points
+}
+
+/** Crossings that pass through each other, ignoring shared walls and corners. */
+function segmentsProperlyCross(a1: Vec2, a2: Vec2, b1: Vec2, b2: Vec2): boolean {
+  const d1 = cross(sub(a2, a1), sub(b1, a1))
+  const d2 = cross(sub(a2, a1), sub(b2, a1))
+  const d3 = cross(sub(b2, b1), sub(a1, b1))
+  const d4 = cross(sub(b2, b1), sub(a2, b1))
+  return (
+    ((d1 > EPSILON && d2 < -EPSILON) || (d1 < -EPSILON && d2 > EPSILON)) &&
+    ((d3 > EPSILON && d4 < -EPSILON) || (d3 < -EPSILON && d4 > EPSILON))
+  )
+}
+
+/** Half the width of a structural column, in metres. */
+export const COLUMN_HALF_WIDTH = 0.45
+
+/** Spaces smaller than this carry their own roof and get no columns. */
+export const COLUMN_MIN_AREA = 420
+
+/** Centre-to-centre spacing of the column grid. */
+export const COLUMN_SPACING = 11
+
+/** A column is never planted closer than this to a wall. */
+const COLUMN_MARGIN = 3.5
+
+/**
+ * Where a room needs pillars to hold its ceiling up.
+ *
+ * The deck plans draw rooms as empty outlines, which at these sizes leaves the
+ * visitor in a featureless hall with nothing to judge distance against. A hall
+ * of this span would be built on columns, so the reconstruction puts them on a
+ * regular grid — and the renderer and the collision test read this same
+ * function, so a pillar you can see is a pillar you walk around.
+ */
+export function columnPositions(footprint: Polygon): Vec2[] {
+  if (polygonArea(footprint) < COLUMN_MIN_AREA) return []
+
+  const xs = footprint.map((point) => point[0])
+  const zs = footprint.map((point) => point[1])
+  const minX = Math.min(...xs)
+  const maxX = Math.max(...xs)
+  const minZ = Math.min(...zs)
+  const maxZ = Math.max(...zs)
+
+  // Centre the grid on the room, so the pillars read as deliberate rather than
+  // as whatever fell out of the bounding box.
+  const countX = Math.floor((maxX - minX - COLUMN_MARGIN * 2) / COLUMN_SPACING)
+  const countZ = Math.floor((maxZ - minZ - COLUMN_MARGIN * 2) / COLUMN_SPACING)
+  if (countX < 1 && countZ < 1) return []
+
+  const startX = (minX + maxX) / 2 - ((countX - 1) * COLUMN_SPACING) / 2
+  const startZ = (minZ + maxZ) / 2 - ((countZ - 1) * COLUMN_SPACING) / 2
+  const columns: Vec2[] = []
+
+  for (let i = 0; i < Math.max(countX, 1); i++) {
+    for (let j = 0; j < Math.max(countZ, 1); j++) {
+      const point: Vec2 = [startX + i * COLUMN_SPACING, startZ + j * COLUMN_SPACING]
+      if (!pointInPolygon(point, footprint)) continue
+      const clearOfWalls = [...iterateEdges(footprint)].every(
+        ([a, b]) => len(sub(point, closestPointOnSegment(point, a, b))) > COLUMN_MARGIN,
+      )
+      if (clearOfWalls) columns.push(point)
+    }
+  }
+
+  return columns
+}
+
+/** The four faces of a column, as wall segments the visitor collides with. */
+export function columnWalls(spaceId: string, centre: Vec2): WallSegment[] {
+  const h = COLUMN_HALF_WIDTH
+  const corners: Vec2[] = [
+    [centre[0] - h, centre[1] - h],
+    [centre[0] + h, centre[1] - h],
+    [centre[0] + h, centre[1] + h],
+    [centre[0] - h, centre[1] + h],
+  ]
+  return corners.map((corner, index) => ({
+    spaceId,
+    start: corner,
+    end: corners[(index + 1) % corners.length],
+  }))
+}
+
+/** A representative interior point, used to drop the visitor into a space. */
+export function interiorPoint(polygon: Polygon): Vec2 {
+  const triangles = triangulate(polygon)
+  let best: Vec2 = centroid(polygon)
+  let bestArea = -1
+
+  for (let i = 0; i < triangles.length; i += 3) {
+    const a = polygon[triangles[i]]
+    const b = polygon[triangles[i + 1]]
+    const c = polygon[triangles[i + 2]]
+    const area = Math.abs(cross(sub(b, a), sub(c, a))) / 2
+    if (area > bestArea) {
+      bestArea = area
+      best = [(a[0] + b[0] + c[0]) / 3, (a[1] + b[1] + c[1]) / 3]
+    }
+  }
+  return best
+}
+
+function centroid(polygon: Polygon): Vec2 {
+  const sum = polygon.reduce<[number, number]>((acc, p) => [acc[0] + p[0], acc[1] + p[1]], [0, 0])
+  return [sum[0] / polygon.length, sum[1] / polygon.length]
+}

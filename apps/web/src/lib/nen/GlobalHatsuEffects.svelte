@@ -19,6 +19,7 @@
   } from './hatsuRegistry.js'
   import {
     runHatsuInteraction,
+    GALLERY_FAKE_CLASS,
     type BirdDispatch,
     type FloatingCard,
     type GuideItem,
@@ -325,6 +326,7 @@
     snapshots.clear()
     styleWrites.clear()
     if (typeof document !== 'undefined') {
+      for (const replica of document.querySelectorAll(`.${GALLERY_FAKE_CLASS}`)) replica.remove()
       document.body.classList.remove(
         'hatsu-haiku-weather',
         'hatsu-rhythm',
@@ -1344,12 +1346,7 @@
     {/if}
     {#each floatingCards as card (card.id)}
       <div class="floating-card {card.kind}" style:left={`${card.x}px`} style:top={`${card.y}px`}>
-        <span>{card.kind === 'clone' ? 'GALLERY FAKE' : 'ASTRAL DOUBLE'}</span><strong
-          >{card.label}</strong
-        ><small
-          >{card.kind === 'clone'
-            ? 'Inert decoy · original interaction obstructed'
-            : 'Body remains behind'}</small
+        <span>ASTRAL DOUBLE</span><strong>{card.label}</strong><small>Body remains behind</small
         >{#if card.href}<a href={card.href}>Follow route as the double →</a>{/if}
       </div>
     {/each}
@@ -2022,11 +2019,6 @@
     transform: rotate(-1deg);
     animation: arrive 0.4s ease-out;
   }
-  .floating-card.clone {
-    opacity: 0.92;
-    filter: grayscale(0.25);
-    cursor: not-allowed;
-  }
   .floating-card.projection {
     border-style: dashed;
     background: #08131bc7;
@@ -2396,6 +2388,28 @@
   :global(.hatsu-right-hand) {
     outline: 2px solid #8aa9ce !important;
   }
+  /*
+   * The copy is a real duplicate of the clicked node, so nothing but its own
+   * frozen inline styles applies to it. These few rules are what make it
+   * findable: it peels off the original, keeps the pinned box, and carries the
+   * faint aura ring that is the only way to tell a Gallery Fake from the thing
+   * it copied.
+   */
+  :global(.hatsu-gallery-fake) {
+    animation: gallery-fake-arrive 0.28s ease-out !important;
+    outline: 1px solid #a7c8c5 !important;
+    box-shadow:
+      0 0 0 4px #a7c8c526,
+      0 18px 40px #0412146b !important;
+    overflow: hidden !important;
+    user-select: none !important;
+  }
+  :global(.hatsu-gallery-fake.hatsu-gallery-corpse) {
+    filter: grayscale(0.7) brightness(0.85) !important;
+  }
+  :global(.hatsu-gallery-original) {
+    outline: 1px dashed #a7c8c580 !important;
+  }
   :global(.hatsu-antenna) {
     box-shadow: 0 -8px 0 -6px #7f92b8 !important;
   }
@@ -2593,6 +2607,134 @@
       0 0 0 3px #7095d6,
       0 0 40px #7095d655 !important;
   }
+
+  /*
+   * The states the techniques gained when each was rewritten against its own
+   * canon mechanics: the refusals, the halfway steps and the side effects that
+   * used to be indistinguishable from one another.
+   */
+  :global(.hatsu-reinforced-spill) {
+    box-shadow: inset 0 0 22px #f0b42933 !important;
+  }
+  :global(.hatsu-royal-commander) {
+    box-shadow: 0 0 0 2px #70d6b2 !important;
+  }
+  :global(.hatsu-royal-answered) {
+    box-shadow: 0 0 22px #70d6b288 !important;
+  }
+  :global(.hatsu-gyo-empty) {
+    outline: 1px dotted #6d7482 !important;
+  }
+  :global(.hatsu-curse-target) {
+    outline: 1px solid #8e6ea8 !important;
+  }
+  :global(.hatsu-curse-relic)::after {
+    content: 'RITE ' attr(data-hatsu-level) '/5';
+    color: #8e6ea8;
+    font: 700 0.45rem monospace;
+  }
+  :global(.hatsu-haiku-line) {
+    box-shadow: inset 3px 0 #c9b06e !important;
+  }
+  :global(.hatsu-haiku-burnt) {
+    filter: sepia(0.7) contrast(1.3) !important;
+  }
+  :global(.hatsu-haiku-weak) {
+    outline: 1px dotted #8a8577 !important;
+  }
+  :global(.hatsu-prologue-armed) {
+    box-shadow:
+      0 0 0 2px #c8a24e,
+      inset 0 0 20px #c8a24e33 !important;
+  }
+  :global(.hatsu-spear-reach) {
+    box-shadow: inset -3px 0 #c8a24e !important;
+  }
+  :global(.hatsu-enchanted-listener) {
+    filter: blur(1.5px) saturate(0.5) !important;
+  }
+  :global(.hatsu-fun-fun-wrapped) {
+    outline: 1px dashed #9fc3d4 !important;
+  }
+  :global(.hatsu-stamped-head)::after {
+    content: attr(data-hatsu-forgery);
+    color: #b0704f;
+    font: 700 0.6rem monospace;
+  }
+  :global(.hatsu-antenna-feint) {
+    box-shadow: 0 -8px 0 -6px #4c5568 !important;
+  }
+  :global(.hatsu-needle-crippled) {
+    box-shadow: inset 0 0 0 1px #6f6a7d !important;
+  }
+  :global(.hatsu-confetti-stuck) {
+    outline: 1px dotted #b58fa8 !important;
+  }
+  :global(.hatsu-serpent-cut) {
+    filter: contrast(1.15) !important;
+  }
+  :global(.hatsu-room-unsealed) {
+    outline: 2px dashed #7a6f5e !important;
+    filter: grayscale(0.6) !important;
+  }
+  :global(.hatsu-cyclotron-arm) {
+    box-shadow: 0 0 0 2px #d2793f !important;
+  }
+  :global(.hatsu-cyclotron-splash) {
+    filter: grayscale(0.5) !important;
+  }
+  :global(.hatsu-contagion-victim) {
+    filter: grayscale(1) !important;
+  }
+  :global(.hatsu-contagion-awakened)::after {
+    content: 'LV ' attr(data-hatsu-level);
+    color: #a6577f;
+    font: 700 0.5rem monospace;
+  }
+  :global(.hatsu-coin-awakened) {
+    box-shadow: 0 0 24px #d7b34f77 !important;
+  }
+  :global(.hatsu-coercion-total) {
+    box-shadow: 0 0 0 2px #d98cae !important;
+  }
+  :global(.hatsu-lie-honest) {
+    outline: 1px solid #7fa88a !important;
+  }
+  :global(.hatsu-synthesis-failed) {
+    filter: grayscale(0.85) !important;
+  }
+  :global(.hatsu-tyson-punished) {
+    outline: 2px solid #ef91c4 !important;
+  }
+  :global(.hatsu-solicitation-pestered)::after {
+    content: attr(data-hatsu-forgery);
+    color: #e8a9a1;
+    font: 700 0.7rem monospace;
+  }
+  :global(.hatsu-empty-duplicate) {
+    outline: 1px dashed #7095d6 !important;
+  }
+  :global(.hatsu-vow-violation) {
+    outline: 2px solid #c2495c !important;
+  }
+  :global(.hatsu-contract-rewarded) {
+    box-shadow: 0 0 22px #b3c46e66 !important;
+  }
+  :global(.hatsu-contract-zetsu) {
+    outline: 1px solid #6d7482 !important;
+  }
+  :global(.hatsu-nodes-opened) {
+    box-shadow: 0 0 0 2px #7fc4d6 !important;
+  }
+  :global(.hatsu-blood-trace) {
+    outline: 1px dotted #a8434f !important;
+  }
+  :global(.hatsu-body-weapon-severed) {
+    outline: 1px dashed #c6925e !important;
+  }
+  :global(.hatsu-hideout-return) {
+    border-right: 4px solid #7ec8b6 !important;
+  }
   @keyframes arrive {
     from {
       opacity: 0;
@@ -2691,6 +2833,12 @@
       transform: scale(1.8);
       opacity: 0;
       filter: brightness(4);
+    }
+  }
+  @keyframes gallery-fake-arrive {
+    from {
+      transform: translate(var(--gallery-fake-dx, 0px), var(--gallery-fake-dy, 0px)) scale(1.03);
+      opacity: 0.15;
     }
   }
   @keyframes animated-object {

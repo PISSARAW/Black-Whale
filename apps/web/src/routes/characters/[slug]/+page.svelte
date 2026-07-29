@@ -4,10 +4,12 @@
   import { hatsuById } from '$lib/nen/hatsuRegistry.js'
   import { activeHatsu, activateHatsu } from '$lib/nen/hatsuState.js'
   import Seo from '$lib/components/Seo.svelte'
+  import ProphecyPoem from '$lib/components/ProphecyPoem.svelte'
   import { breadcrumbSchema, characterSchema } from '$lib/seo/schema'
 
   let { data }: { data: PageData } = $props()
   let character = $derived(data.character as any)
+  let prophecy = $derived((data as any).prophecy)
   let timeline = $derived((data.timeline || []) as any[])
   let chapterTrajectory = $derived((data.chapterTrajectory || []) as any[])
   let roleHistory = $derived((data.roleHistory || []) as any[])
@@ -50,6 +52,23 @@
         .filter(Boolean)
         .join(' · ') ||
       'Unknown / possibly off ship',
+  )
+  // The file index numbers whatever the dossier actually renders, so an optional
+  // section appearing or disappearing cannot leave the list counting wrong.
+  let sections = $derived(
+    [
+      { id: 'role', label: 'Role aboard', shown: true },
+      { id: 'identity', label: 'Identity continuity', shown: Boolean(character.identity) },
+      { id: 'biography', label: 'Biography', shown: Boolean(character.biography?.length) },
+      {
+        id: 'nen',
+        label: 'Nen & abilities',
+        shown: Boolean(character.nen || character.abilities?.length),
+      },
+      { id: 'prophecy', label: 'Ghostwriter sheet', shown: Boolean(prophecy) },
+      { id: 'appearances', label: 'Manga appearances', shown: true },
+      { id: 'trajectory', label: 'Chapter trajectory', shown: true },
+    ].filter((section) => section.shown),
   )
   let latestState = $derived(
     timeline.findLast(
@@ -181,16 +200,11 @@
     <aside class="dossier-index">
       <p>File index</p>
       <nav aria-label="Dossier sections">
-        <a href="#role"><span>01</span>Role aboard</a>
-        {#if character.identity}<a href="#identity"><span>02</span>Identity continuity</a>{/if}
-        {#if character.biography?.length}<a href="#biography"
-            ><span>{character.identity ? '03' : '02'}</span>Biography</a
-          >{/if}
-        {#if character.nen || character.abilities?.length}<a href="#nen"
-            ><span>{character.identity ? '04' : '03'}</span>Nen & abilities</a
-          >{/if}
-        <a href="#appearances"><span>{character.identity ? '05' : '04'}</span>Manga appearances</a>
-        <a href="#trajectory"><span>{character.identity ? '06' : '05'}</span>Chapter trajectory</a>
+        {#each sections as section, sectionIndex (section.id)}
+          <a href={`#${section.id}`}
+            ><span>{String(sectionIndex + 1).padStart(2, '0')}</span>{section.label}</a
+          >
+        {/each}
       </nav>
       <div class="scope-note">
         <span>Scope</span>
@@ -351,6 +365,16 @@
               {/each}
             </div>
           {/if}
+        </section>
+      {/if}
+
+      {#if prophecy}
+        <section id="prophecy" class="dossier-section reveal-on-scroll">
+          <header>
+            <p class="section-code">APOCRYPHAL · LOVELY GHOSTWRITER</p>
+            <h2>Ghostwriter sheet</h2>
+          </header>
+          <ProphecyPoem {prophecy} />
         </section>
       {/if}
 

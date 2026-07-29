@@ -154,7 +154,7 @@ export const saiyuThreeMonkeys = defineAbility({
 export const SAIYU_MONKEYS = MONKEYS
 
 /**
- * Great Haiku — Basho
+ * Great Hiker — Basho
  *
  * The poem is the ability: its quality and its seasonal word decide the power,
  * and both are stored so the effect can explain itself in the terms the manga
@@ -162,7 +162,7 @@ export const SAIYU_MONKEYS = MONKEYS
  */
 export const greatHaiku = defineAbility({
   id: 'great-haiku',
-  name: 'Great Haiku',
+  name: 'Great Hiker',
   owner: 'basho',
   category: 'specialist',
 

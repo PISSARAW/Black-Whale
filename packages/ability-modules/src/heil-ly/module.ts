@@ -149,7 +149,7 @@ export const bloodyMary = defineAbility({
  */
 export const padailleWeaponTransformation = defineAbility({
   id: 'padaille-weapon-transformation',
-  name: 'Padaille — transformation en armes',
+  name: 'I’m Coming to Get You',
   owner: 'padaille',
   category: 'conjurer',
 

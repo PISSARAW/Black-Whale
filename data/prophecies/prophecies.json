@@ -1,0 +1,1324 @@
+[
+  {
+    "id": "prophecy-kurapika",
+    "subjectId": "kurapika",
+    "subjectName": "Kurapika",
+    "factionId": "prince-woble",
+    "desire": "To take back every pair of scarlet eyes, and to stand in the same room as the man who owns the last of them — whatever standing there costs.",
+    "poem": [
+      "In the first month at sea you will sleep on the same floor as the eyes you buried.",
+      "A chain will answer every question you put to it, except the one about yourself.",
+      "Do not measure this voyage in hours. Hours are the currency you are spending.",
+      "You will hold your family again, and they will already have been paid for."
+    ],
+    "reading": "Room 1014 and Tserriednich's quarters share Tier 1: the collection Kurapika crossed the world for is a corridor away. Dowsing Chain interrogates everyone but its holder, and Emperor Time bills one hour of life per second — the nine hours he loses unconscious are the first instalment. The last line is the trap of the arc: the eyes can be recovered, but only by the man who is spending himself to recover them.",
+    "foretells": "cost",
+    "horizon": "Day 1 – Day 12 of the voyage",
+    "canonStatus": "apocryphal"
+  },
+  {
+    "id": "prophecy-prince-benjamin",
+    "subjectId": "prince-benjamin",
+    "subjectName": "Benjamin Hui Guo Rou",
+    "factionId": "prince-benjamin",
+    "desire": "To be the only one left standing, and to be remembered as the strength that carried Kakin — not as a brother who won a lottery.",
+    "poem": [
+      "You will build a wall of your own men and count yourself safe behind it.",
+      "In the second week a loyal mouth will smile at you, and the wound will arrive in uniform.",
+      "Do not ask which mother gave the order; the answer will not let you sleep.",
+      "The crown will be handed to you, and you will be given one season to wear it."
+    ],
+    "reading": "Benjamin's whole doctrine is the loyalty of the Benjamin Baton network, and the infection reaches him through it: Furykov, his own analyst, admits to carrying TSK-17 into him under Unma's pressure — the first queen, his own mother. Martial law is the season he buys himself; the succession he starts arranging for his illegitimate child is a man drawing up a will.",
+    "foretells": "betrayal from within",
+    "horizon": "Day 1 – Day 12 of the voyage",
+    "canonStatus": "apocryphal"
+  },
+  {
+    "id": "prophecy-prince-camilla",
+    "subjectId": "prince-camilla",
+    "subjectName": "Camilla Hui Guo Rou",
+    "factionId": "prince-camilla",
+    "desire": "To be obeyed absolutely — to have her brothers and sisters choose, of their own will, to die for her.",
+    "poem": [
+      "Early in the voyage you will be shot three times in a corridor you chose yourself.",
+      "You will be dressed again before supper, and the man who fired will not be.",
+      "Do not look for the servant who vanished; he is under your feet, keeping you warm.",
+      "You will never be killed, and you will never once be loved as you asked."
+    ],
+    "reading": "Camilla provokes Musse in Zetsu, takes his three bullets, and Cat's Name crushes him and burns his life to resurrect her intact. She reports him as a deserter and has his belongings destroyed. Her ability guarantees the survival she demands and cannot produce the devotion she actually wants — Musse dies obeying her under threat, and Benjamin inherits his eyes anyway.",
+    "foretells": "death and return",
+    "horizon": "Day 1 – Day 12 of the voyage",
+    "canonStatus": "apocryphal"
+  },
+  {
+    "id": "prophecy-prince-zhanglei",
+    "subjectId": "prince-zhanglei",
+    "subjectName": "Zhang Lei Hui Guo Rou",
+    "factionId": "prince-zhanglei",
+    "desire": "To win slowly and correctly — to be the prince whose patience, not whose knife, made him king.",
+    "poem": [
+      "On the third day a coin will fall from a mouth that has no throat.",
+      "Keep it ten days and it will be worth ten of itself; give it away and it will be worth one.",
+      "Do not count the men who thank you for it. Count the ones who cannot stop.",
+      "You will be crowned by an ability that will not be finished until you are old."
+    ],
+    "reading": "Zhang Lei's Guardian Beast produces numbered coins that appreciate after ten days and reset to 1 on transfer. Kurapika estimates the accumulation could awaken a non-user in roughly 180 days and grant an ability near 640 — and privately suspects a pseudo-coercive Manipulation binding the holders' loyalty, a suspicion he keeps from Coventoba. The power rewards exactly the long-horizon temperament Zhang Lei prides himself on, and rewards it too late for this war.",
+    "foretells": "slow victory",
+    "horizon": "Day 1 – Day 12 of the voyage",
+    "canonStatus": "apocryphal"
+  },
+  {
+    "id": "prophecy-prince-tserriednich",
+    "subjectId": "prince-tserriednich",
+    "subjectName": "Tserriednich Hui Guo Rou",
+    "factionId": "prince-tserriednich",
+    "desire": "To possess perfectly — beauty, technique, the world — and to be the only one in the room who sees the whole of it.",
+    "poem": [
+      "Within a day of learning to look, you will already be looking further than your teacher.",
+      "Shut your eyes and ten seconds will be laid out for you like a set table.",
+      "Do not thank the woman who tried to stop you; her cheek is paying for the lesson.",
+      "Everything you collect will keep its colour, and none of it will ever look back."
+    ],
+    "reading": "Tserriednich sees aura within hours, holds an hour of Zetsu on his third attempt and reaches 3.496 seconds of activation while running. Parallel Future shows him the next ten seconds and lets him act against them — which is how he survives Theta's execution attempt, while his Guardian Beast opens her cheek for lying and warns her that the next lie takes her humanity. The last line is the whole of him: the scarlet eyes are perfect, permanent, and cannot admire him back.",
+    "foretells": "ascension",
+    "horizon": "Day 1 – Day 12 of the voyage",
+    "canonStatus": "apocryphal"
+  },
+  {
+    "id": "prophecy-prince-tubeppa",
+    "subjectId": "prince-tubeppa",
+    "subjectName": "Tubeppa Hui Guo Rou",
+    "factionId": "prince-tubeppa",
+    "desire": "To understand the game completely before playing it, and to win it the way an experiment is won — by having the better model.",
+    "poem": [
+      "You will read a brother's absence from an empty chair and be right about it.",
+      "The truce you sign will grow a beast behind your shoulder that was waiting for a signature.",
+      "Do not trust the guard who learns fastest; she has an older father than you think.",
+      "Your method will hold for fifteen days, and the fifteenth day will come."
+    ],
+    "reading": "Tubeppa deduces Salé-salé's death from his absence at the banquet, and her Guardian Beast manifests only once the truce with Room 1014 is concluded — its condition appears to be established collaboration. Longhi, the guard she sends, is already a Nen user, seals the contract with Moonlight Act, and is one of Beyond Netero's children. The truce she engineers runs to the fifteenth day; the arc's clock stops on the twelfth, with martial law declared.",
+    "foretells": "a deadline",
+    "horizon": "Day 1 – Day 12 of the voyage",
+    "canonStatus": "apocryphal"
+  },
+  {
+    "id": "prophecy-prince-tyson",
+    "subjectId": "prince-tyson",
+    "subjectName": "Tyson Hui Guo Rou",
+    "factionId": "prince-tyson",
+    "desire": "To be loved without conditions, and to be told by her mother that she was never a disappointment.",
+    "poem": [
+      "Your little ones will go out through the walls while you are still saying you send no one.",
+      "A man will read your book and go quiet, and you will call it peace.",
+      "Do not ask whether the calm in his eyes is his own.",
+      "You will fill this ship with love, and it will be the only weapon on board you did not know you were holding."
+    ],
+    "reading": "Tyson sends no guards to the Nen classes, yet her Guardian Beast's Eye-wogs enter Room 1014 on the first day. Izunavi notices that reading the Book of Tyson leaves Giuliano unnaturally placid and suspects the Beast is behind it. She distributed the book to the younger princes, their mothers and — as a condition of her own participation — the king; she entered the contest only because her mother Katrono wanted revenge for the other queens' contempt.",
+    "foretells": "an unwitting weapon",
+    "horizon": "Day 1 – Day 12 of the voyage",
+    "canonStatus": "apocryphal"
+  },
+  {
+    "id": "prophecy-prince-luzurus",
+    "subjectId": "prince-luzurus",
+    "subjectName": "Luzurus Hui Guo Rou",
+    "factionId": "prince-luzurus",
+    "desire": "To keep his hands clean and stay alive — and, if a throne is unavoidable, to leave behind one useful thing rather than a reign.",
+    "poem": [
+      "A leaf that harms no one will pass through your hands and you will think of the sick.",
+      "On the ninth day a shot outside your door will be a man dying in someone else's body.",
+      "When a dead girl's letter arrives, read it twice and give it to the law.",
+      "Be careful of small doors. Someone has already measured your room for one."
+    ],
+    "reading": "Luzurus plans a clinical trial for Clean Leaf, hears Shikaku's suicide outside Room 1007 — a body by then occupied by Sumidori's transferred soul — and hands Kacho's posthumous letter straight to Kaiser, reading it as a political bomb. He is right to be careful: the letter's delivery is a pretext to mark Room 1007 as a Magical Worm destination, for a plan that ends with him unconscious, in a dinghy, past the succession boundary, staged as an overdose.",
+    "foretells": "a plot against him",
+    "horizon": "Day 1 – Day 12 of the voyage",
+    "canonStatus": "apocryphal"
+  },
+  {
+    "id": "prophecy-prince-salesale",
+    "subjectId": "prince-salesale",
+    "subjectName": "Salé-salé Hui Guo Rou",
+    "factionId": "prince-salesale",
+    "desire": "To be adored by a crowd — to walk into a room and have everyone there mean it.",
+    "poem": [
+      "Everyone around you will be sincere, and none of it will have come from you.",
+      "Something round and white above your head will be eaten first, and quietly.",
+      "On the sixth night you will not hear the door, and the women will call your name a long time.",
+      "Your song will not be performed. They will tell the ship you had a cold."
+    ],
+    "reading": "Salé-salé's Guardian Beast exhales a smoke that manufactures affection and reproduces itself over anyone sufficiently exposed. Rihan studies Koroabde for seventy hours, has Predator devour the copy and then the parent Beast, and hands the room to Yushohi — who kills the prince with Stand by Me on the night of the sixth day. The rap performance he promised for the banquet never happens; his absence is explained away as illness, and Tubeppa reads the empty chair correctly.",
+    "foretells": "death",
+    "horizon": "Night of Day 6",
+    "canonStatus": "apocryphal"
+  },
+  {
+    "id": "prophecy-prince-halkenburg",
+    "subjectId": "prince-halkenburg",
+    "subjectName": "Halkenburg Hui Guo Rou",
+    "factionId": "prince-halkenburg",
+    "desire": "To end the succession without killing a single sibling — to be the last prince who refuses, and to be right.",
+    "poem": [
+      "A minute of silence for a dead sister will make a weapon out of everyone standing near you.",
+      "You will fire at your father and at yourself, and neither shot will be allowed to land.",
+      "Your arrow will pass through every defence and put strangers in each other's houses.",
+      "In the second week your body will be carried down a corridor with music, and you will walk behind it."
+    ],
+    "reading": "The minute of silence for Momoze converts his supporters' shared will into the collective aura of Grimmel the Dissonance; the Guardian Beasts stop both the bullet meant for Nasubi and the one he turns on himself. His arrows transfer souls — Sumidori into Shikaku, then his own into Balsamilco. Poisoned with TSK-17, his original body dies on the morning of the twelfth day and is escorted from Tier 3 to the Tier 1 morgue by the funeral procession he himself requested from Benjamin, while his consciousness marches in his assassin's skin.",
+    "foretells": "death of the body",
+    "horizon": "Morning of Day 12",
+    "canonStatus": "apocryphal"
+  },
+  {
+    "id": "prophecy-prince-kacho",
+    "subjectId": "prince-kacho",
+    "subjectName": "Kacho Hui Guo Rou",
+    "factionId": "prince-kacho",
+    "desire": "To get her sister off this ship alive — and to be believed, just once, when she says she is not the spoiled one.",
+    "poem": [
+      "You will play the cruel princess so well that only the flute will hear you lying.",
+      "On the eighth night the music will empty a whole floor and the boat will be waiting.",
+      "Hands out of the water will ask which of you meant to leave.",
+      "Your sister will go through the door. You will not, and you will arrive anyway."
+    ],
+    "reading": "Melody hears in Kacho's heartbeat that the tantrums are a performance. Her flute holds the Tier 1 banquet for three minutes while Keeney takes the twins to a lifeboat; the moment they clear the Black Whale, the succession ritual attacks with spectral hands. Kacho pushes Fugetsu into Magical Worm and closes the door behind her — she dies in the boat, and Without You, her post-mortem Guardian Beast, takes her face, her memories and her resolve through the tunnel after her sister.",
+    "foretells": "death",
+    "horizon": "Night of Day 8",
+    "canonStatus": "apocryphal"
+  },
+  {
+    "id": "prophecy-prince-fugetsu",
+    "subjectId": "prince-fugetsu",
+    "subjectName": "Fugetsu Hui Guo Rou",
+    "factionId": "prince-fugetsu",
+    "desire": "To never be separated from Kacho again — to be the one who protects, for once, instead of the one who is hidden.",
+    "poem": [
+      "A door from your childhood will open on a wall that has no other side.",
+      "Use it and you will be happy; use it again and you will be lighter.",
+      "Do not celebrate the mark on your shoulder. Something has already started drinking.",
+      "The sister who comes back through with you will be exactly her, and she will not be her."
+    ],
+    "reading": "Magical Worm opens as the playground door of the twins' childhood. After Kacho's death Fugetsu discovers she can open it repeatedly and becomes compulsive about it — Melody reads her aura as low as Zetsu, surrounded by spirits, with a puncture-like mark on her shoulder blade suspected to come from Luzurus's Beast. Benjamin's Guardian Beast disperses the parasites and he judges she will not survive ten days in that state. The Kacho at her bedside is Without You, keeping the substitution secret to protect her.",
+    "foretells": "wasting",
+    "horizon": "Day 3 – Day 12 of the voyage",
+    "canonStatus": "apocryphal"
+  },
+  {
+    "id": "prophecy-prince-momoze",
+    "subjectId": "prince-momoze",
+    "subjectName": "Momoze Hui Guo Rou",
+    "factionId": "prince-momoze",
+    "desire": "To be worth guarding — to be treated as a princess of Kakin and not as the child her mother could afford to leave uncovered.",
+    "poem": [
+      "Your mother will come to your room and leave with almost everyone in it.",
+      "Say nothing kind about it; the ones who go will remember that you smiled.",
+      "Something you never asked for is feeding on you while you sew, and it will finish before you wake.",
+      "You will fall asleep at four with six guards, and the hands will belong to one of them."
+    ],
+    "reading": "Sevanti transfers nearly all of Momoze's staff to Marayam, leaving her six guards; Momoze accepts it calmly and privately concludes that her brother's fear proves him unfit. Her Guardian Beast — the one that took Sayird and killed Kurton — drains her until she sleeps, and vanishes for lack of aura, leaving her defenceless. Tuffdy, one of her own six, strangles her in Room 1012; Oito sees it through Little Eye's cockroach and the warning arrives too late.",
+    "foretells": "death",
+    "horizon": "Afternoon of Day 2",
+    "canonStatus": "apocryphal"
+  },
+  {
+    "id": "prophecy-prince-marayam",
+    "subjectId": "prince-marayam",
+    "subjectName": "Marayam Hui Guo Rou",
+    "factionId": "prince-marayam",
+    "desire": "To be left alone with his toys and his mother, and to stop being afraid.",
+    "poem": [
+      "They will give you your sister's guards and you will hold your clothes and say nothing.",
+      "What grows behind you grows on your fear; it will be tallest on the day she dies.",
+      "Your room will step out of the ship and take everyone inside it with you.",
+      "You may leave whenever you like. You will never find the way back in."
+    ],
+    "reading": "Sevanti moves Momoze's team to Marayam; his Guardian Beast, gentle at first, becomes gigantic and thorned as the child's fear rises, and Hanzo and Biscuit conclude its shape tracks his stress directly. After Momoze's death the real Room 1013 is isolated behind a one-way Nen space — occupants can leave and even telephone out, but anyone who leaves can no longer find, see or hear the room. Biscuit chooses to stay inside with him.",
+    "foretells": "isolation",
+    "horizon": "Day 2 – Day 12 of the voyage",
+    "canonStatus": "apocryphal"
+  },
+  {
+    "id": "prophecy-prince-woble",
+    "subjectId": "prince-woble",
+    "subjectName": "Woble Hui Guo Rou",
+    "factionId": "prince-woble",
+    "desire": "Nothing yet — which is why everyone else's wants are being spent on her.",
+    "poem": [
+      "Fourteen names were read out and one of them was not where it was said to be.",
+      "The child in the cradle will be defended by a stranger who has never seen you.",
+      "Your name will be said slightly wrong, and a hunter will hear the difference.",
+      "Two babies will be kept alive because one man refused to choose between them."
+    ],
+    "reading": "Oito swapped the real Woble for her sister's child; everything recorded in Room 1014 belongs to the substitute. Bill catches it through the phonetics of the Kakin language — the queen's pronunciation of the name has changed — and Kurapika's chain gets the confession. He then plans a public demonstration designed to keep both infants alive. Where the true Fourteenth Princess is, and in what condition, remains unrecorded.",
+    "foretells": "substitution",
+    "horizon": "Day 10 – Day 12 of the voyage",
+    "canonStatus": "apocryphal"
+  },
+  {
+    "id": "prophecy-queen-oito",
+    "subjectId": "queen-oito",
+    "subjectName": "Oito Hui Guo Rou",
+    "factionId": "prince-woble",
+    "desire": "To get her daughter off this ship and out of the succession entirely — to stop being a queen and go back to being a mother.",
+    "poem": [
+      "You will hire a man to help you run, and he will tell you there is nowhere to run to.",
+      "Your eyes will be opened by force and you will be given an insect for a second pair.",
+      "Through it you will watch a princess die, and you will stop wanting to leave.",
+      "The lie you told before boarding will be heard in a single syllable."
+    ],
+    "reading": "Oito hires Kurapika hoping to escape the voyage and learns instead that the ship is a killing contest. He forces her aura nodes open and lends her Sayird's Little Eye; the cockroach she steers through the ventilation shows her Momoze's murder, which hardens her into staying. On the tenth day the substitution she arranged before departure is exposed by her own pronunciation of Woble's name.",
+    "foretells": "resolve",
+    "horizon": "Day 1 – Day 12 of the voyage",
+    "canonStatus": "apocryphal"
+  },
+  {
+    "id": "prophecy-nasubi-hui-guo-rou",
+    "subjectId": "nasubi-hui-guo-rou",
+    "subjectName": "Nasubi Hui Guo Rou",
+    "factionId": "kakin-royal-family",
+    "desire": "A Kakin that outlives him — a nation rooted deep enough that the price in children is arithmetic, not grief.",
+    "poem": [
+      "You will call fourteen names and refuse to explain what withdrawal means.",
+      "A son will shoot you and something will catch the bullet before you have to be brave.",
+      "You will weep beside a capsule and say the girl shines brighter now.",
+      "Every life aboard is already spent. Only you are calling it a harvest."
+    ],
+    "reading": "Nasubi revives the succession ritual, refuses to define abandonment, and can see the Guardian Beasts the princes cannot. Halkenburg forces his way in, demands an end to the contest and fires; a Guardian Beast stops the shot. Nasubi mourns over Momoze's funeral capsule — one of fourteen arranged around a hidden chamber — and calls her the foundation of the great Tree of Kakin, insisting a king must accept every life in the nation as part of the succession.",
+    "foretells": "sacrifice accepted",
+    "horizon": "Day 1 – Day 12 of the voyage",
+    "canonStatus": "apocryphal"
+  },
+  {
+    "id": "prophecy-unma-hui-guo-rou",
+    "subjectId": "unma-hui-guo-rou",
+    "subjectName": "Unma Hui Guo Rou",
+    "factionId": "kakin-royal-family",
+    "desire": "To have one of her own sons on the throne — and to be the queen who decided which one.",
+    "poem": [
+      "Two of your children were built to win and only one of them was told the truth.",
+      "You will not need a weapon. You will need a frightened man who owes his birth to a curse.",
+      "Do not be in the room. Be the reason someone else was.",
+      "The first prince will fall ill from a loyalty you arranged years ago."
+    ],
+    "reading": "Unma is the first queen and mother of both Benjamin and Tserriednich — brothers presented publicly as sons of different houses, and biologically also the mother of Halkenburg, raised as Duazul's. When Furykov confesses to infecting Benjamin with TSK-17, he names Unma's coercion as the reason, while claiming he was trying to escape the curse Beyond laid on him at birth.",
+    "foretells": "a queen's hand",
+    "horizon": "Day 12 of the voyage",
+    "canonStatus": "apocryphal"
+  },
+  {
+    "id": "prophecy-duazul-hui-guo-rou",
+    "subjectId": "duazul-hui-guo-rou",
+    "subjectName": "Duazul Hui Guo Rou",
+    "factionId": "kakin-royal-family",
+    "desire": "To keep her rank untouched — four children in the contest and no fingerprints on any of them.",
+    "poem": [
+      "Four of them are yours and you will back none of them, and call it fairness.",
+      "Your eldest will talk to you about dresses and then about murder, in the same breath.",
+      "She will order you to move closer to the boy you raised for another woman.",
+      "Whichever of them survives, they will remember that you waited to see."
+    ],
+    "reading": "Duazul is the second queen and mother of Camilla, Tubeppa, Luzurus and Halkenburg — the last of them biologically Unma's, adopted into her house. In Room 1002 Camilla discusses clothing and then announces flatly that she intends to kill Benjamin and then Halkenburg, ordering her mother to get closer to him. Luzurus, hearing a killing outside his door, dismisses the idea that Duazul organised it: she actively supports none of her children.",
+    "foretells": "neutrality",
+    "horizon": "Day 1 – Day 12 of the voyage",
+    "canonStatus": "apocryphal"
+  },
+  {
+    "id": "prophecy-sevanti-hui-guo-rou",
+    "subjectId": "sevanti-hui-guo-rou",
+    "subjectName": "Sevanti Hui Guo Rou",
+    "factionId": "kakin-royal-family",
+    "desire": "To keep her son alive at any price the ledger will accept.",
+    "poem": [
+      "You will walk into your daughter's room and take the walls away with you.",
+      "She will not argue. Remember that, later, when there is time for it.",
+      "By the next morning six guards will be in irons and one of them will be the answer.",
+      "The boy you saved will grow a wall of his own, and you will live inside it."
+    ],
+    "reading": "Sevanti transfers almost all of Momoze's guards — Hanzo and Vergei among them — to Marayam, citing his fear. Momoze accepts the decision without protest and is strangled hours later by one of the six left to her; the whole detail is arrested for collusion and court-martialled. Sevanti then remains inside Room 1013 with Marayam when his Guardian Beast seals the quarters behind its one-way barrier.",
+    "foretells": "a mother's arithmetic",
+    "horizon": "Day 2 – Day 12 of the voyage",
+    "canonStatus": "apocryphal"
+  },
+  {
+    "id": "prophecy-seiko-hui-guo-rou",
+    "subjectId": "seiko-hui-guo-rou",
+    "subjectName": "Seiko Hui Guo Rou",
+    "factionId": "kakin-royal-family",
+    "desire": "To hold her position in the queens' hierarchy without losing both daughters to it.",
+    "poem": [
+      "You will let them play together and it will be the last favour you can give.",
+      "Music will be requested, and you will approve it, and it will not be for the guests.",
+      "After the eighth night you will be severe with the one who comes back.",
+      "Neither of your daughters will be where you believe her to be."
+    ],
+    "reading": "Seiko permits Kacho and Fugetsu to rehearse the glassharmonica with Melody for the Sunday banquet — cover for the escape attempt the music itself makes possible. Kacho dies at the succession boundary; the twin who returns is accompanied by a post-mortem Guardian Beast wearing her sister's face. Seiko is outwardly harsh with Fugetsu afterwards, and her real intentions stay unread even by Melody and Kaiser.",
+    "foretells": "loss",
+    "horizon": "Day 8 – Day 12 of the voyage",
+    "canonStatus": "apocryphal"
+  },
+  {
+    "id": "prophecy-bill",
+    "subjectId": "bill",
+    "subjectName": "Bill",
+    "factionId": "prince-woble",
+    "desire": "To reach the Dark Continent — the reason he took a bodyguard's post he believed would be the safest on the ship.",
+    "poem": [
+      "You chose the quietest room on the deck and it will become the loudest.",
+      "You will accuse the newcomer of using the queen, and then you will follow his orders.",
+      "You will hand out your own ability to strangers and be right to be afraid of it.",
+      "The continent will still be there. The cowardice you boarded with will not."
+    ],
+    "reading": "Bill admits he picked Room 1014 believing it the safest berth, and that after learning of the succession war he could not flee a post chosen out of cowardice. He starts by accusing Kurapika of exploiting Oito's trust and ends running the classroom's security, trains the queen in secret, and lets Kurapika borrow Erigeron to open the students' aura pores — while stating plainly his fear that the powers handed out in Room 1014 will one day be aimed back at it.",
+    "foretells": "commitment",
+    "horizon": "Day 1 – Day 12 of the voyage",
+    "canonStatus": "apocryphal"
+  },
+  {
+    "id": "prophecy-shimanu",
+    "subjectId": "shimanu",
+    "subjectName": "Shimanu",
+    "factionId": "prince-woble",
+    "desire": "To keep her household — the queen, the child, and the family waiting for her in Kakin — intact enough to go home to.",
+    "poem": [
+      "Two will leave your post and you will stay, and the other one who stays will die.",
+      "Three princes will call at once and you will choose the middle one correctly.",
+      "A chain will be pointed at your throat by a man who has already decided you are innocent.",
+      "You will be asked why you remain, and your answer will be a house you have not seen in weeks."
+    ],
+    "reading": "Of the four handmaidens, only Shimanu and Sandra stay after Sayird's rampage; Vincent then kills Sandra, leaving Shimanu the sole servant. When Benjamin, Zhang Lei and Tubeppa call together she takes Zhang Lei's over Kurapika's instruction to answer the First Prince, reading each prince's temperament exactly. Kurapika later suspects her of being the Silent Majority user and apologises; asked why she stays, she speaks of her loyal family back in Kakin.",
+    "foretells": "endurance",
+    "horizon": "Day 1 – Day 12 of the voyage",
+    "canonStatus": "apocryphal"
+  },
+  {
+    "id": "prophecy-woody",
+    "subjectId": "woody",
+    "subjectName": "Woody",
+    "factionId": "prince-woble",
+    "desire": "To finish a quiet errand for a higher queen and step off this ship with the fee and no one the wiser.",
+    "poem": [
+      "You will board with two masters and be paid attention by neither.",
+      "The infant you are watching is watching you, and it has no idea what it is.",
+      "In the first days the tiled room will hold you and there will be nothing left to drain.",
+      "They will name your employer only after they have named your body."
+    ],
+    "reading": "Woody is assigned to Oito and Woble and is found in the bathroom shortly after departure, dried out — death attributed to exsanguination. Only afterwards is he identified as a spy planted by one of the higher-ranking queens. Kurapika's first hypothesis is that Woble's own Guardian Beast killed him when the princess felt threatened; Silent Majority's later killings unsettle that reading, and the case stays open.",
+    "foretells": "death",
+    "horizon": "Day 1 of the voyage",
+    "canonStatus": "apocryphal"
+  },
+  {
+    "id": "prophecy-sayird",
+    "subjectId": "sayird",
+    "subjectName": "Sayird",
+    "factionId": "prince-woble",
+    "desire": "To reach the Dark Continent with Beyond's team — a bodyguard's contract is only the fare.",
+    "poem": [
+      "Your hands will do work you did not order and you will remember all of it.",
+      "The colleague who could have carried you out will be the first one you stop.",
+      "A chain will take your eye and your ability at once, and leave you breathing.",
+      "You will be led away alive, which is more than the room will grant anyone else that day."
+    ],
+    "reading": "Momoze's Guardian Beast takes control of Sayird; he kills Kurton — whose transformation into a vehicle was the camp's escape plan — and two immobilised guards before Kurapika subdues him. Steal Chain strips Little Eye and leaves him unable to use Nen for hours. Bill wants him shot; Kurapika takes him alive and the army takes him into custody, and the ability returns to him once Oito is done borrowing it.",
+    "foretells": "possession",
+    "horizon": "Day 1 of the voyage",
+    "canonStatus": "apocryphal"
+  },
+  {
+    "id": "prophecy-vincent",
+    "subjectId": "vincent",
+    "subjectName": "Vincent",
+    "factionId": "prince-benjamin",
+    "desire": "To be the soldier who did what the First Prince needed done, and to be listed among the loyal ones afterwards.",
+    "poem": [
+      "You will be sent into a room of hunters with permission that reads like a licence.",
+      "You will kill the servant first, which will teach them what you are, too early.",
+      "Two of them will take you to the floor and one will try to keep you alive.",
+      "Your last order will arrive through your ear, and you will swallow it."
+    ],
+    "reading": "Benjamin's soldiers are placed in the princes' quarters authorised to kill in self-defence. Vincent kills the servant Sandra and opens fire; Bill blocks the rounds with reinforced Nen and, with Kurapika, brings him down. He poisons himself rather than be questioned — Bill tries in vain to make him bring it up — and Kurapika only gets the body released to the army after showing the earpiece he was wearing. Benjamin and Balsamilco treat the failure as data on Kurapika's and Bill's abilities.",
+    "foretells": "death",
+    "horizon": "Day 1 of the voyage",
+    "canonStatus": "apocryphal"
+  },
+  {
+    "id": "prophecy-musse",
+    "subjectId": "musse",
+    "subjectName": "Musse",
+    "factionId": "prince-benjamin",
+    "desire": "To serve the strongest brother from inside the weakest sister's rooms, and to be alive when it pays out.",
+    "poem": [
+      "You will listen through a wall and hear your own death being planned in a pleasant voice.",
+      "She will hold her aura down and offer you a choice that is not one.",
+      "Fire three times. All three will land. It will not matter.",
+      "Your birds will keep working for a man who is no longer paying you."
+    ],
+    "reading": "Musse eavesdrops with Secret Window as Camilla tells Duazul she will kill Benjamin. She confronts him in Zetsu and offers him help or death; he shoots her three times. Cat's Name crushes him, burns his life to resurrect her intact, and Benjamin Baton transfers Secret Window to Benjamin on his death — so the surveillance bird stays fastened to Camilla and keeps reporting, for a master who has already inherited it.",
+    "foretells": "death",
+    "horizon": "Day 2 of the voyage",
+    "canonStatus": "apocryphal"
+  },
+  {
+    "id": "prophecy-balsamilco-might",
+    "subjectId": "balsamilco-might",
+    "subjectName": "Balsamilco Might",
+    "factionId": "prince-benjamin",
+    "desire": "To be the mind behind the crown — to hand Benjamin a war already solved.",
+    "poem": [
+      "You will talk your prince out of every fight he would have won by temper.",
+      "You will read the ninth one's aura correctly and prepare a death without a weapon.",
+      "The wall between you will not be a wall.",
+      "You will keep your rank, your uniform and your voice, and none of them will be in your body."
+    ],
+    "reading": "Balsamilco restrains Benjamin's impulses, analyses Halkenburg's collective aura and engineers the TSK-17 assassination, approaching the hospital disguised as a military physician. Halkenburg's arrow reaches him through a wall and exchanges their souls: Balsamilco's consciousness is trapped in the poisoned, dying royal body, while his own body walks back to Benjamin carrying the prince who was supposed to be the victim.",
+    "foretells": "displacement",
+    "horizon": "Day 11 – Day 12 of the voyage",
+    "canonStatus": "apocryphal"
+  },
+  {
+    "id": "prophecy-shikaku",
+    "subjectId": "shikaku",
+    "subjectName": "Shikaku",
+    "factionId": "prince-benjamin",
+    "desire": "To report accurately and be believed — to be the pair of eyes the First Prince cannot do without.",
+    "poem": [
+      "You will be posted beside a prince who does not want the throne, and told to write it all down.",
+      "On the day the silence ends you will be the first to be afraid, and you will be right.",
+      "Your defences are flawless and the arrow will not take them into account.",
+      "Your body will die by its own hand outside 1007, and the hand will not be yours."
+    ],
+    "reading": "Shikaku is Benjamin's soldier placed as Halkenburg's royal bodyguard. The collective aura raised by the minute of silence for Momoze terrifies him, and his reports are what let Benjamin follow the ninth prince's rise. Grimmel's arrow passes through Culdcept and every defence, then swaps the target's soul with that of a randomly marked bearer: Sumidori takes control of Shikaku's body, and Halkenburg uses it to stage a suicide in front of Room 1007 that Basho and Luzurus hear. Benjamin inherits Culdcept on the death. Where Shikaku's own consciousness goes, the ability's rule implies but the chapters do not follow.",
+    "foretells": "death of the body",
+    "horizon": "Day 6 – Day 9 of the voyage",
+    "canonStatus": "apocryphal"
+  },
+  {
+    "id": "prophecy-sumidori",
+    "subjectId": "sumidori",
+    "subjectName": "Sumidori",
+    "factionId": "prince-halkenburg",
+    "desire": "To be one of the ones whose will actually counts — the prince said the aura is made of them, and he meant it.",
+    "poem": [
+      "You will give a prince your will and it will be gathered up with everyone else's.",
+      "The arrow he fires will not carry you where you thought you were going.",
+      "You will wake in the enemy's uniform, with his rank and his orders in your pockets.",
+      "Your own prince will decide what that body does next, and what it does is shoot itself."
+    ],
+    "reading": "Grimmel is fuelled by the marked bearers who share Halkenburg's will, and the arrow swaps the target's soul with one of them chosen at random — the allied consciousness taking control of the enemy body. Sumidori is the one drawn: his soul lands in Shikaku's body, Halkenburg experiments with the relationship between the two consciousnesses, and then uses the possessed body to simulate Shikaku's suicide. The follower whose loyalty powers the weapon is the one it spends.",
+    "foretells": "death",
+    "horizon": "Day 6 – Day 9 of the voyage",
+    "canonStatus": "apocryphal"
+  },
+  {
+    "id": "prophecy-vict",
+    "subjectId": "vict",
+    "subjectName": "Vict",
+    "factionId": "prince-benjamin",
+    "desire": "To carry out the order and come back to his own quarters to be debriefed.",
+    "poem": [
+      "You will be sent to see how far the ninth one has got, and seeing will be enough to be shot for.",
+      "The arrow cannot be blocked and cannot be dodged; do not spend your last second looking for the third option.",
+      "Your prince will check that you are alive, and will be satisfied by the answer.",
+      "Alive is the only thing anyone will ever be able to confirm about you."
+    ],
+    "reading": "On the tenth day Vict moves against Halkenburg and a new arrow hits him; Benjamin and Balsamilco hear the defeat and conclude the weapon is impossible to block or dodge and that any sufficiently loyal follower can feed it, guard or not. Benjamin confirms through Benjamin Baton that Vict still lives — which establishes the body, not the occupant. Under Grimmel's rule a marked soul now holds that body while its own sleeps, and the chapters have not yet said whose.",
+    "foretells": "an unresolved occupancy",
+    "horizon": "Day 10 of the voyage",
+    "canonStatus": "apocryphal"
+  },
+  {
+    "id": "prophecy-furykov",
+    "subjectId": "furykov",
+    "subjectName": "Furykov",
+    "factionId": "prince-benjamin",
+    "desire": "To live past the curse he was born under — to be the one cursed child who found the loophole.",
+    "poem": [
+      "You will stop a princess with your bare arm and be praised for your loyalty that day.",
+      "The mark you carry is older than your service and was not given by a king.",
+      "The queen will ask you for something and you will call it a way out.",
+      "You will save yourself by making a god of the man you are killing."
+    ],
+    "reading": "Furykov blocks Camilla's shot with Ken and breaks her arm arresting her — Benjamin's model soldier. He is also one of Beyond Netero's children, marked at birth by the sacrificial curse Longhi describes. Under Unma's pressure he carries TSK-17 into Benjamin, and justifies it by insisting the prince's Guardian Beast will transform him after death into Kakin's protective deity — a story Benjamin accepts, and which conveniently keeps Furykov alive.",
+    "foretells": "betrayal",
+    "horizon": "Day 12 of the voyage",
+    "canonStatus": "apocryphal"
+  },
+  {
+    "id": "prophecy-tuffdy",
+    "subjectId": "tuffdy",
+    "subjectName": "Tuffdy",
+    "factionId": "prince-momoze",
+    "desire": "To finish the job a higher queen bought and be one of six suspects instead of one culprit.",
+    "poem": [
+      "You will wait for the small sleep and the guard that is not made of men.",
+      "Your hands will be enough; nothing in that room will be watching from inside.",
+      "But something will be watching from the vent, and it will not have a mouth to shout with.",
+      "You will be locked up safely, and a shape with no body will come in through the wall."
+    ],
+    "reading": "Tuffdy, one of Momoze's remaining six and a plant of Queen Swinko-swinko, waits until the princess's Guardian Beast dissipates for lack of aura and strangles her. Oito sees the murder through Little Eye's cockroach but the warning is too slow. The six are arrested; Hanzo, using Hanzo Skill 4, sends his astral double into the cell, gets the confession and strangles him.",
+    "foretells": "death",
+    "horizon": "Day 2 – Day 3 of the voyage",
+    "canonStatus": "apocryphal"
+  },
+  {
+    "id": "prophecy-hanzo",
+    "subjectId": "hanzo",
+    "subjectName": "Hanzo",
+    "factionId": "prince-marayam",
+    "desire": "To be the shinobi nobody has to worry about — and, now, to not be the man who was standing elsewhere.",
+    "poem": [
+      "You will be moved to a safer child and told it is not your decision.",
+      "The girl you left will die at four in the afternoon with the door unforced.",
+      "Leave your body somewhere no one can find it, and take back what you came for.",
+      "You will return the room and the room will be gone."
+    ],
+    "reading": "Sevanti reassigns Hanzo from Momoze to Marayam; Momoze is strangled that afternoon and he takes the blame onto himself. Hanzo Skill 4 leaves his sleeping body behind while the astral double reaches Tuffdy's cell, extracts the confession and kills him. When the projection snaps back, Room 1013 has been isolated behind Marayam's Nen barrier — he can stand where the door was and find nothing.",
+    "foretells": "guilt and vengeance",
+    "horizon": "Day 2 – Day 12 of the voyage",
+    "canonStatus": "apocryphal"
+  },
+  {
+    "id": "prophecy-biscuit-krueger",
+    "subjectId": "biscuit-krueger",
+    "subjectName": "Biscuit Krueger",
+    "factionId": "prince-marayam",
+    "desire": "Beautiful things, dug up with her own hands — and, second-best, a promising child to shape.",
+    "poem": [
+      "You came aboard for jewels and you will be given a frightened boy instead.",
+      "You will show your true shape to a captain who does not believe in aura, and he will believe.",
+      "When the room steps outside the world, everyone will be counting the exits.",
+      "You will stay in, which is not like you, and it will be the finest thing you take home."
+    ],
+    "reading": "Biscuit hires on as Marayam's bodyguard on the Dark Continent expedition and ends up inside the sealed Room 1013. She reveals her muscular form to convince Vergei that Nen exists, and works with Hanzo on the barrier. When servants must step out to keep up appearances — knowing they will never find their way back in — she chooses to remain with the child.",
+    "foretells": "a choice",
+    "horizon": "Day 2 – Day 12 of the voyage",
+    "canonStatus": "apocryphal"
+  },
+  {
+    "id": "prophecy-melody",
+    "subjectId": "melody",
+    "subjectName": "Melody",
+    "factionId": "prince-kacho",
+    "desire": "To hear one heart that is telling the truth — and to protect the girl whose heartbeat told her the tantrums were a lie.",
+    "poem": [
+      "You will be hired by a princess who is acting, and only you will know it.",
+      "Play, and a whole deck will forget itself for three minutes; that is all the time she is buying.",
+      "Do not be glad when she comes back through the door.",
+      "A judge will ask you for a second performance, and his heart will not change tempo once."
+    ],
+    "reading": "Melody's hearing reads Kacho's heartbeat and identifies the spoiled-princess act. Her Nen-infused flute holds the Tier 1 banquet for roughly three minutes so Keeney can get the twins to the boat. The Kacho who returns through Magical Worm is Without You. Detained and questioned afterwards, Melody agrees to play again for Kaiser while suspecting from his unnaturally steady heartbeat that he is under Manipulation.",
+    "foretells": "a false return",
+    "horizon": "Day 1 – Day 12 of the voyage",
+    "canonStatus": "apocryphal"
+  },
+  {
+    "id": "prophecy-basho",
+    "subjectId": "basho",
+    "subjectName": "Basho",
+    "factionId": "prince-luzurus",
+    "desire": "To write the one poem worth the paper — and, in the meantime, to take honest money from a prince who does not lie to him.",
+    "poem": [
+      "Answer the advertisement with no name on it; the smoke in that room is safer than most.",
+      "A sound like thunder with no weather will come from a prince who did not want to fight.",
+      "On the ninth day a corpse outside a door will have died twice and only once by its own hand.",
+      "The verse you need has not been written because the season word has not happened yet."
+    ],
+    "reading": "Basho answers Luzurus's anonymous advertisement and senses the overwhelming aura of Grimmel the Dissonance. He investigates Shikaku's suicide outside Room 1007 and suspects a post-mortem curse — the body was in fact occupied by Sumidori's transferred soul when it pulled the trigger. His haiku take effect according to the poem's quality and its seasonal word; he later helps Benjamin drive the spirits off Fugetsu.",
+    "foretells": "an unfinished poem",
+    "horizon": "Day 1 – Day 12 of the voyage",
+    "canonStatus": "apocryphal"
+  },
+  {
+    "id": "prophecy-theta",
+    "subjectId": "theta",
+    "subjectName": "Theta",
+    "factionId": "prince-tserriednich",
+    "desire": "To be the one person able to hold Tserriednich back — because if she cannot, no one will.",
+    "poem": [
+      "You will teach him slowly on purpose and he will overtake you in a single afternoon.",
+      "The creature at his shoulder can hear a lie the moment your mouth makes it.",
+      "Wait for his eyes to close and fire; you will see him fall and you will be wrong.",
+      "Lie a second time and it will take what is left of you, and let you go on working."
+    ],
+    "reading": "Theta volunteers to teach Tserriednich in order to slow him, and he masters Gyo in half a day. His Guardian Beast marks her cheek for her first lie. During the Zetsu exercise she shoots him, sees the body — and three minutes later the blood is gone and the prince is standing among his guards calling it training: Parallel Future. The Beast warns her that another lie costs her humanity, and she wakes with the wound spreading, still in his service.",
+    "foretells": "a failed execution",
+    "horizon": "Day 1 – Day 11 of the voyage",
+    "canonStatus": "apocryphal"
+  },
+  {
+    "id": "prophecy-beyond-netero",
+    "subjectId": "beyond-netero",
+    "subjectName": "Beyond Netero",
+    "factionId": null,
+    "desire": "To stand on the Dark Continent as himself — not as the son of the man who went first.",
+    "poem": [
+      "You will surrender to the people hunting you and gain a berth by doing it.",
+      "Your cell is on the deck where the crown sleeps; that was the point.",
+      "Do not send for the judge until you have finished the book; the case is a thousand old refusals.",
+      "Children you scattered are already aboard, and one of them is being called a prince."
+    ],
+    "reading": "Beyond phones Beans and turns himself in to the Zodiacs, correctly predicting that the V5 will approve the expedition and that the Hunters will escort him. He rides in a Tier 1 VVIP cell under Saiyu, Saccho and Kanzai. On the eleventh day he receives Judge Cleapatro — known to him since childhood — and they work through the 1,047 suits he filed against Kakin's government. Longhi identifies herself as one of his cursed children and argues that his aim is not merely to seat Benjamin but that he fathered one of the fourteen princes.",
+    "foretells": "a longer plan",
+    "horizon": "Day 1 – Day 12 of the voyage",
+    "canonStatus": "apocryphal"
+  },
+  {
+    "id": "prophecy-mizaistom-nana",
+    "subjectId": "mizaistom-nana",
+    "subjectName": "Mizaistom Nana",
+    "factionId": "zodiacs",
+    "desire": "To keep one lawful institution standing on a ship designed to make law impossible.",
+    "poem": [
+      "You will be handed a city with five floors and no borders you are allowed to close.",
+      "Two assassins will admit what they are to your face, and you will only be able to give them rooms.",
+      "The disappearances are not a crime wave; they are a curriculum.",
+      "In the second week a soldier will take your courts, and half of what he says will be true."
+    ],
+    "reading": "Mizaistom runs security aboard the Black Whale from Tier 3, coordinating police, courts and military against the disappearances. Illumi confirms the Phantom Troupe is aboard and all he can do is assign him and Kalluto monitored quarters. The killings are Contagion levelling Morena's recruits. When Benjamin proclaims martial law and demands military, judicial and administrative power, Mizaistom hears the opportunistic half-truths in the justification and keeps the criminal investigation running anyway.",
+    "foretells": "institutional siege",
+    "horizon": "Day 1 – Day 12 of the voyage",
+    "canonStatus": "apocryphal"
+  },
+  {
+    "id": "prophecy-cheadle-yorkshire",
+    "subjectId": "cheadle-yorkshire",
+    "subjectName": "Cheadle Yorkshire",
+    "factionId": "zodiacs",
+    "desire": "To bring the expedition home with fewer bodies than the mission class predicts.",
+    "poem": [
+      "You will assemble the best medicine that has ever left this continent.",
+      "The sickness you meet will not be one of the five you prepared for.",
+      "On the eleventh day a prince will be wheeled in and you will nearly have it.",
+      "Uniforms will take the patient from your hands, and he was not the patient anyway."
+    ],
+    "reading": "Cheadle organises the expedition's medical and scientific staff, recruits Leorio and runs the Tier 3 clinic. The collapsed Halkenburg is brought to her on the eleventh day, poisoned with TSK-17; Benjamin's royal medical unit removes him before the Hunters can establish the cause. The body on the trolley is Halkenburg's — the consciousness inside it is Balsamilco's.",
+    "foretells": "a case taken away",
+    "horizon": "Day 11 of the voyage",
+    "canonStatus": "apocryphal"
+  },
+  {
+    "id": "prophecy-leorio-paradinight",
+    "subjectId": "leorio-paradinight",
+    "subjectName": "Leorio Paradinight",
+    "factionId": "zodiacs",
+    "desire": "To become the doctor who would have saved his friend — and to keep the friends he has from spending themselves.",
+    "poem": [
+      "You will be offered a seat you did not earn and immediately ask for a second one.",
+      "The man you ask it for will not give you his address.",
+      "You will carry medicine on the third deck while the war happens two floors above you.",
+      "Stay a doctor. Of the ones who boarded with you, you are the only one not being spent."
+    ],
+    "reading": "Cheadle recruits Leorio as Ging's successor with study abroad attached; his first move is to ask for a seat for Kurapika, who then refuses to give him an email address. Aboard, he works the Tier 3 medical centre and helps receive Halkenburg on the eleventh day before Benjamin's doctors take over. The last line is the arc's quiet contrast: Kurapika pays in years, Theta in her face, Bill in his cover — Leorio is the one still building something.",
+    "foretells": "survival",
+    "horizon": "Day 1 – Day 12 of the voyage",
+    "canonStatus": "apocryphal"
+  },
+  {
+    "id": "prophecy-chrollo-lucilfer",
+    "subjectId": "chrollo-lucilfer",
+    "subjectName": "Chrollo Lucilfer",
+    "factionId": "phantom-troupe",
+    "desire": "An ability good enough to end Hisoka permanently — and the treasures that would buy it.",
+    "poem": [],
+    "blank": true,
+    "reading": "Lovely Ghostwriter cannot write the future of the person using it. Chrollo has held the page since Yorknew, so no sheet exists for him — and when Shizuku asks him to read their fortunes aboard the Black Whale, he finds the ability gone from Skill Hunter altogether, which he takes as evidence that Neon Nostrade is dead. The one man on this ship who could have had every prophecy in the book is the only one the book was never able to answer.",
+    "foretells": "nothing — the page is blank by the ability's own restriction",
+    "horizon": "not applicable",
+    "canonStatus": "apocryphal"
+  },
+  {
+    "id": "prophecy-hisoka",
+    "subjectId": "hisoka",
+    "subjectName": "Hisoka Morrow",
+    "factionId": null,
+    "desire": "One fight against a fully ripened opponent, with everything on the table — and to be the one who chooses when it starts.",
+    "poem": [
+      "He will accept at last, and he will have spent a year choosing what to accept with.",
+      "Two hundred of the dead will stand up for him and four of your fingers will leave with a head.",
+      "You will stop breathing under a pile of borrowed corpses, exactly where he asked you to.",
+      "Your heart will beat again on its own instruction — and after that you will stop waiting to be invited."
+    ],
+    "reading": "Chrollo finally takes the duel at Heavens Arena, having assembled Black Voice, The Sun and Moon, Double Face, Order Stamp, Gallery Fake and Convert Hands specifically for it. Hisoka loses four fingers to an exploding head, then a leg, and suffocates beneath the puppets. Bungee Gum, pre-ordered to contract around his heart and lungs after the fight, resurrects him; he rebuilds his face and limbs with Texture Surprise, concedes that fighting on Chrollo's terms was the mistake, and changes his rule — from then on he picks the time and place, starting with Kortopi and Shalnark.",
+    "foretells": "death and resurrection",
+    "horizon": "Before departure — Heavens Arena",
+    "canonStatus": "apocryphal"
+  },
+  {
+    "id": "prophecy-illumi",
+    "subjectId": "illumi",
+    "subjectName": "Illumi Zoldyck",
+    "factionId": "phantom-troupe",
+    "desire": "A clean contract, correctly executed — and a brother who stays where the family put him.",
+    "poem": [
+      "The man who wants you to kill him will pay you to do it and call it an engagement.",
+      "You will join a family that is not yours in order to keep the terms.",
+      "Say what you are to the law's face; it costs nothing and buys you a room.",
+      "A needle can hold anything in shape except a decision someone made for themselves."
+    ],
+    "reading": "Illumi becomes the Troupe's eleventh member and boards with Kalluto, explaining plainly that Hisoka hired him to kill him and treating the contract like a prenuptial agreement between assassins. Questioned in Tier 3, he confirms the Troupe is aboard and implies his own membership, surprising Kalluto — and is assigned monitored residential quarters for it. His needles reshape and dominate targets; the standing exception in his life is Killua, who left anyway.",
+    "foretells": "a contract",
+    "horizon": "Day 1 – Day 4 of the voyage",
+    "canonStatus": "apocryphal"
+  },
+  {
+    "id": "prophecy-kalluto-zoldyck",
+    "subjectId": "kalluto-zoldyck",
+    "subjectName": "Kalluto Zoldyck",
+    "factionId": "phantom-troupe",
+    "desire": "To be worth enough to the Spiders that they help bring a brother home.",
+    "poem": [
+      "You joined a web to reach a boy who left, and you have not said so out loud.",
+      "You will hold a table with monsters and give it up without a word when asked.",
+      "Confetti travels where children are not searched.",
+      "Your brother is not on this ship. Neither, yet, is the reason you are."
+    ],
+    "reading": "Kalluto took Hisoka's vacated seat in the Troupe as a route toward Killua. Aboard, the Spiders sweep Tier 5, cede their table to the Cha-R without a fight and scatter on Chrollo's order to return with Hisoka's head. Kalluto talks the military patrol down in the Tier 3 vista area, and after the escort his position stops being recorded. Killua is nowhere in the Black Whale's registry.",
+    "foretells": "a long detour",
+    "horizon": "Day 1 – Day 4 of the voyage",
+    "canonStatus": "apocryphal"
+  },
+  {
+    "id": "prophecy-machi-komacine",
+    "subjectId": "machi-komacine",
+    "subjectName": "Machi Komacine",
+    "factionId": "phantom-troupe",
+    "desire": "To settle what she has with Hisoka herself — and to keep the web whole while she does it.",
+    "poem": [
+      "You will be paid in advance to repair a corpse and you will stay when the others go.",
+      "The aura will come back into it while your thread is still in your hand.",
+      "Advise him to choose his fights; he will pin you to the floor and give you a message instead.",
+      "You will ask for the right to kill him and be told the whole family wants it."
+    ],
+    "reading": "Machi remains with Hisoka's body after the duel because he had paid her in advance to sew it back together — and she is present when Bungee Gum's post-mortem contraction restarts his heart and lungs. He immobilises her with his aura and makes her the messenger of his new hunting rule. On the second day of the voyage she finds Chrollo in the Tier 5 market and claims priority on the kill; he refuses to toss a coin for it, because this time every Spider wants the same revenge.",
+    "foretells": "a denied claim",
+    "horizon": "Before departure – Day 4 of the voyage",
+    "canonStatus": "apocryphal"
+  },
+  {
+    "id": "prophecy-nobunaga-hazama",
+    "subjectId": "nobunaga-hazama",
+    "subjectName": "Nobunaga Hazama",
+    "factionId": "phantom-troupe",
+    "desire": "The Spiders in one room again — the shape of the group he lost when Uvogin died.",
+    "poem": [
+      "You will drink and argue with three of them and be happiest doing the roughest work.",
+      "A man will step out of a hole in the air and offer you the end of the world.",
+      "You will not let him finish the sentence.",
+      "Every road you cut upward will be a road that takes the family further apart."
+    ],
+    "reading": "Nobunaga works Tier 5 with Phinks, Feitan and Franklin, breaking Buor thugs for information. When Luini emerges from a portal to propose an alliance in destroying the world, Nobunaga decapitates him instantly. He then probes Morena's trap with Hinrigh using Shu and En, insists on securing a route upward, and on the twelfth day splits from Phinks and Feitan in the recycling passage to take a separate path — the Troupe scattering across five tiers while he keeps trying to hold it together.",
+    "foretells": "dispersal",
+    "horizon": "Day 2 – Day 12 of the voyage",
+    "canonStatus": "apocryphal"
+  },
+  {
+    "id": "prophecy-phinks-magcub",
+    "subjectId": "phinks-magcub",
+    "subjectName": "Phinks Magcub",
+    "factionId": "phantom-troupe",
+    "desire": "To find Hisoka before Hisoka finds any of them alone — and to be the one who does the finding.",
+    "poem": [
+      "You will hunt a man by his height and learn nothing except how many tall men there are.",
+      "Blood in a warehouse will not be his; someone is marking rooms for a door.",
+      "Keep your En for small spaces; a crowd will take it apart while you stand in it.",
+      "You will swallow a signal to find a hideout, and the hideout will not be the thing you wanted."
+    ],
+    "reading": "Phinks has the Buor men list every passenger over 1.88 m to locate Hisoka. In the Cha-R warehouse he reads the guide's murder correctly — the killer is marking the lair to unlock a teleport anchor later. He admits his En disintegrates in crowds, with voices, movement or his own motion breaking it. Hinrigh's swallowed transmitter lets him and Feitan trace the Heil-Ly base to Tier 2, and Phinks keeps repeating that the mafia war is secondary: Hisoka is the priority.",
+    "foretells": "a diverted hunt",
+    "horizon": "Day 2 – Day 12 of the voyage",
+    "canonStatus": "apocryphal"
+  },
+  {
+    "id": "prophecy-feitan-portor",
+    "subjectId": "feitan-portor",
+    "subjectName": "Feitan Portor",
+    "factionId": "phantom-troupe",
+    "desire": "Work he is unusually good at, done to people who have earned it — and a web intact enough to keep handing him some.",
+    "poem": [
+      "You will go down through the decks of this ship and find decks under those.",
+      "Blood by a warehouse will not give you a name, only the fact that someone is measuring doors.",
+      "Whatever is done to you will be returned with interest, and with light.",
+      "The man you are hunting has already died once. Make certain the second one holds."
+    ],
+    "reading": "Feitan works the lower tiers with Phinks: the Buor interrogation, the Cha-R warehouse where the guide is found with his throat cut, and the reading that the killer is marking rooms to unlock a teleport anchor later. He and Phinks meet Luini's offer with open disgust before Nobunaga takes his head, and on the twelfth day Tajao leads them under Tier 4 into the recycling chamber, where the two of them continue after Nobunaga turns back. The third line is his own Hatsu's logic — damage taken is what fuels what he returns.",
+    "foretells": "descent",
+    "horizon": "Day 2 – Day 12 of the voyage",
+    "canonStatus": "apocryphal"
+  },
+  {
+    "id": "prophecy-franklin-bordeau",
+    "subjectId": "franklin-bordeau",
+    "subjectName": "Franklin Bordeau",
+    "factionId": "phantom-troupe",
+    "desire": "To be there when it happens, without wasting a step getting there.",
+    "poem": [
+      "The others will comb five decks and you will pick a chair.",
+      "You will not be wrong. He wants all of you; he will come to whoever is sitting still.",
+      "A consigliere will ask you what you are doing and you will tell him the truth.",
+      "The treasure can wait. Nothing gets robbed until the magician is finished."
+    ],
+    "reading": "Franklin stays alone in the Tier 5 central mess hall while the Troupe disperses, on the logic that Hisoka wants to kill the Spiders and will therefore come to him. He tells Ittoku exactly that, denies the Troupe's involvement in the warehouse killing, and states that the theft of Kakin's treasures waits until Hisoka is dealt with. Phinks notes he would never accept waiting inside the cramped Cha-R base — he hates confined spaces.",
+    "foretells": "patience",
+    "horizon": "Day 2 – Day 10 of the voyage",
+    "canonStatus": "apocryphal"
+  },
+  {
+    "id": "prophecy-shizuku-murasaki",
+    "subjectId": "shizuku-murasaki",
+    "subjectName": "Shizuku Murasaki",
+    "factionId": "phantom-troupe",
+    "desire": "To be useful to the group, and to be told what happens next by someone who knows.",
+    "poem": [
+      "You will ask the leader to read the future and he will look for the page.",
+      "It will not be there, and what that means is that a girl on the mainland has stopped breathing.",
+      "You will say the book is like the death note, and be gently corrected, and mean no harm.",
+      "Your vacuum takes anything at all except the thing you wanted taken."
+    ],
+    "reading": "Shizuku asks Chrollo to use Lovely Ghostwriter for clues in the hunt for Hisoka; he finds it gone from Skill Hunter, which points to Neon Nostrade's death — the ability leaves the book when its original owner dies. She then compares the book to the Death Note again and Bonolenov chides her for it. Blinky's absorption is effectively unlimited and useless against Bungee Gum, which is why she asks to pair with Chrollo in the first place.",
+    "foretells": "a prophecy that cannot be written",
+    "horizon": "Day 4 of the voyage",
+    "canonStatus": "apocryphal"
+  },
+  {
+    "id": "prophecy-bonolenov-ndongo",
+    "subjectId": "bonolenov-ndongo",
+    "subjectName": "Bonolenov Ndongo",
+    "factionId": "phantom-troupe",
+    "desire": "A performance worth the dance — a finale his vanished people would have recognised.",
+    "poem": [
+      "You will be asked to wear the magician's face and walk where the families can see it.",
+      "A woman will touch you and know, and she will not be allowed to say it.",
+      "Wear the one you knocked down, then the one you killed; the audience will follow either.",
+      "In the first-class hall you will meet the original at last, and become an owl instead."
+    ],
+    "reading": "On Chrollo's instruction Bonolenov uses Battle Cantabile: Metamorphosen to impersonate Hisoka in mafia-watched areas. Lynch identifies the imposture through Body and Soul; he drops Zakuro, takes her form to confirm what Lynch understood, kills Lynch and then wears Lynch to steer the mafia to the cinema. On the twelfth day, still in Hisoka's face, he runs into the real Hisoka in the Tier 1 casino and immediately switches to Owl — hoping privately that another Spider reaches Hisoka before Chrollo does, and that the fight is the group's last number.",
+    "foretells": "a near miss",
+    "horizon": "Day 4 – Day 12 of the voyage",
+    "canonStatus": "apocryphal"
+  },
+  {
+    "id": "prophecy-morena-prudo",
+    "subjectId": "morena-prudo",
+    "subjectName": "Morena Prudo",
+    "factionId": "mafia-heilly",
+    "desire": "To destroy Kakin and then everything after it — and, before that, to find the one Specialist who can make it possible.",
+    "poem": [
+      "You will kiss twenty-two of them and none of it will be affection.",
+      "Killing will be schooling; by the twenty-first they will each have a talent of their own.",
+      "The protector who kept you will go silent, and you will move house before he moves men.",
+      "You will stay at level zero until the last condition is met, and you will not be waiting for a person."
+    ],
+    "reading": "Morena boards with at least twenty-two Heil-Ly, activates Contagion by kiss, and sets them to level up by murder — abilities appearing past level 21. Hundreds vanish. When Tserriednich's silence tells her he has understood the betrayal, she abandons the Room 3101 decoy for a reinforced base and moves to infect one of his soldiers. Member Zero at level 45, she uses Halkenburg's funeral procession as cover for Dogman to seize Borksen, the Specialist she needs — and tells her she remains level zero until the final condition is fulfilled.",
+    "foretells": "escalation",
+    "horizon": "Day 1 – Day 12 of the voyage",
+    "canonStatus": "apocryphal"
+  },
+  {
+    "id": "prophecy-luini",
+    "subjectId": "luini",
+    "subjectName": "Luini",
+    "factionId": "mafia-heilly",
+    "desire": "To be recognised by the people he thinks are like him — spiders who hate the world as fluently as he does.",
+    "poem": [
+      "Doors will obey you: any room you have walked into is a room you can arrive in.",
+      "You will kill enough strangers to be given a talent, and you will think it makes you interesting.",
+      "On the tenth day you will step out of the air in front of four of them and offer to end the world together.",
+      "The sword will not wait for the end of your sentence."
+    ],
+    "reading": "Contagion carries Luini past level 21 into a portal ability that links a sealed room to anywhere he has previously been, and he uses it to kill across the ship and mark mafia territory. When he appears at the Cha-R base to recruit the Phantom Troupe on the strength of a shared love of destruction, Phinks and Feitan react with disgust and Nobunaga decapitates him on the spot. The teleport network outlives him through the other Heil-Ly, and his death pushes the Cha-R into open alliance with the Troupe.",
+    "foretells": "death",
+    "horizon": "Day 10 of the voyage",
+    "canonStatus": "apocryphal"
+  },
+  {
+    "id": "prophecy-hinrigh-biganduffno",
+    "subjectId": "hinrigh-biganduffno",
+    "subjectName": "Hinrigh Biganduffno",
+    "factionId": "mafia-xiyu",
+    "desire": "To be the man the family cannot run without — competent where everyone else is merely dangerous.",
+    "poem": [
+      "Three will corner you and you will turn your own handcuffs into birds.",
+      "You will find the magician before the spiders do and sell him a better seat.",
+      "Do not eat anything in that house; let the animals do it for you.",
+      "You will swallow your own signal and walk into the trap on purpose, and it will work."
+    ],
+    "reading": "Ambushed by three Heil-Ly, Hinrigh turns handcuffs into pigeons with Biohazard, traps Padaille and kills him. He locates Hisoka in Tier 3 and negotiates a move to a Tier 1 cinema, keeping him away from the Troupe. Inside Morena's hideout he uses Biohazard animals to test doors, weapons and food, then hides a transmitter in an oyster, swallows it and walks into the teleport trap so the Spiders can triangulate the base between Tiers 2 and 3.",
+    "foretells": "success",
+    "horizon": "Day 4 – Day 12 of the voyage",
+    "canonStatus": "apocryphal"
+  },
+  {
+    "id": "prophecy-onior-longbao",
+    "subjectId": "onior-longbao",
+    "subjectName": "Onior Longbao",
+    "factionId": "mafia-xiyu",
+    "desire": "To choose the hour of every fight on this ship, including the ones he does not join.",
+    "poem": [
+      "You will be told the spiders are aboard and you will pour another drink.",
+      "Let the killers and the thieves grind each other; you decide only when they meet.",
+      "A prince will ask you what Nen is and you will say you have never heard the word.",
+      "Doors inside your own house will be worth more than every deck below you."
+    ],
+    "reading": "Onior, Xi-Yu head, Nasubi's half-brother and Zhang Lei's godfather, learns from Brocco Li that the Troupe is aboard and decides with him to let the Heil-Ly and the Spiders weaken each other while controlling the timing of the collision. He tells Zhang Lei he knows nothing of Nen or the Guardian Beasts — despite special powers among his own men — and advises him to imitate Nasubi's patience. On the twelfth day Zhang Lei escapes Tier 1 through a passage inside Onior's residence.",
+    "foretells": "control of timing",
+    "horizon": "Day 4 – Day 12 of the voyage",
+    "canonStatus": "apocryphal"
+  },
+  {
+    "id": "prophecy-brocco-li",
+    "subjectId": "brocco-li",
+    "subjectName": "Brocco Li",
+    "factionId": "mafia-char",
+    "desire": "To own the lower half of this ship without ever having to fight anyone for it.",
+    "poem": [
+      "You will be told the spiders are aboard and you will not change your evening.",
+      "Two families will be allowed to eat one another; only the hour is yours to set.",
+      "Do not send a man to admire them. Send one to find the magician first.",
+      "Your animals will be the last things on this ship that are still yours."
+    ],
+    "reading": "Brocco rules the Cha-R from the Tier 1 VVIP quarter with Luzurus's backing and Tier 5 in hand. Ken'i reports the Troupe's presence on the fourth day; Brocco calls his half-brother Onior, describes the Spiders as difficult to control and admired even by his own men, and the two agree to let the Heil-Ly and the Troupe grind each other down while keeping control of when they collide. He then orders Ken'i to reach Hisoka before the Spiders do — and on the seventh day is shown enjoying his collection of exotic animals.",
+    "foretells": "control of timing",
+    "horizon": "Day 4 – Day 12 of the voyage",
+    "canonStatus": "apocryphal"
+  },
+  {
+    "id": "prophecy-keni-wang",
+    "subjectId": "keni-wang",
+    "subjectName": "Ken'i Wang",
+    "factionId": "mafia-char",
+    "desire": "To keep Kakin standing and the civilians out of it — with a mafia and a band of thieves as the only instruments available.",
+    "poem": [
+      "You will hand corridors and weapons to killers and file it as containment.",
+      "The blood outside your warehouse is a survey, not a murder; someone is marking a door.",
+      "Do not tell your boss which side of that bargain you are actually serving.",
+      "You will ask thieves to save a country, and they will agree for reasons of their own."
+    ],
+    "reading": "Ken'i runs Cha-R operations on Tier 5, confronts the Troupe when warehouse guards vanish and concludes a Heil-Ly attacker is marking the hideout for teleportation. With Tajao he trades access and weapons for the Spiders' help against Luini and Morena, and formally asks the Troupe to destroy the new Heil-Ly. He serves Brocco Li while privately intending to protect the Kakin state and limit civilian damage — which requires manipulating the mafia and the Phantom Troupe at the same time.",
+    "foretells": "a bargain",
+    "horizon": "Day 2 – Day 12 of the voyage",
+    "canonStatus": "apocryphal"
+  },
+  {
+    "id": "prophecy-tajao",
+    "subjectId": "tajao",
+    "subjectName": "Tajao",
+    "factionId": "mafia-char",
+    "desire": "To be the man who knows the route — his worth to both families is the map.",
+    "poem": [
+      "You will buy spiders with access and pay them in tunnels.",
+      "Ask them for the woman; they will offer you her whole family instead.",
+      "On the twelfth day take three of them under the floor of the world.",
+      "The chamber you show them was never built for waste, and one of the three will turn back."
+    ],
+    "reading": "Tajao, Cha-R vice boss and military advisor to the Seventh Prince's army, trades access for the Troupe's help against the Heil-Ly; Phinks asks him and Ken'i to locate Morena and promises the Brigade will hunt the Heil-Ly Killer together. On the twelfth day Tajao leads Phinks, Feitan and Nobunaga through a secret tunnel into the purification and recycling chamber between Tiers 4 and 5 — where Phinks works out that the Heil-Ly likely replaced the waste contractors in order to lure and kill freely. Nobunaga leaves to secure another way up.",
+    "foretells": "a route opened",
+    "horizon": "Day 4 – Day 12 of the voyage",
+    "canonStatus": "apocryphal"
+  },
+  {
+    "id": "prophecy-ittoku",
+    "subjectId": "ittoku",
+    "subjectName": "Ittoku",
+    "factionId": "mafia-char",
+    "desire": "To know what the guests intend before the family is forced to react to it.",
+    "poem": [
+      "You will find him eating alone in a hall built for five hundred.",
+      "He will tell you the truth: he is not searching, he is being come to.",
+      "Believe the part about the treasure. It is waiting behind a magician.",
+      "A consigliere's work is to ask in time, and nothing you learn will be in time."
+    ],
+    "reading": "Ittoku, Cha-R consigliere, questions Franklin in the Tier 5 central mess hall, where he has stayed alone on the logic that Hisoka wants to kill the Spiders and will therefore come to whoever sits still. Franklin denies the Troupe's involvement in the warehouse killing and states plainly that Kakin's treasures will not be touched until Hisoka is dealt with — an accurate answer that gives the family nothing it can act on.",
+    "foretells": "a truthful answer",
+    "horizon": "Day 4 of the voyage",
+    "canonStatus": "apocryphal"
+  },
+  {
+    "id": "prophecy-zakuro-custard",
+    "subjectId": "zakuro-custard",
+    "subjectName": "Zakuro Custard",
+    "factionId": "mafia-xiyu",
+    "desire": "To be one of the ones trusted with the real work — and to still be standing when it is done.",
+    "poem": [
+      "You will stand beside the wrong magician and see nothing happen at all.",
+      "The woman next to you will drop, and you will not have seen the hand that did it.",
+      "Someone will wear your face while you sleep, and then wear hers.",
+      "On the twelfth day you will finally learn who you have been following."
+    ],
+    "reading": "Bonolenov, impersonating Hisoka, drops Lynch with a liver blow so fast that Zakuro does not see it, then neutralises Zakuro, takes her form to confirm what Lynch had understood, kills Lynch and wears Lynch to lead the mafia to the cinema. On the twelfth day Zakuro and Hinrigh work out that the Hisoka they met in Tier 3 was an impostor and Lynch's murderer, and that the staging was meant to make the families open a route upward.",
+    "foretells": "an imposture",
+    "horizon": "Day 4 – Day 12 of the voyage",
+    "canonStatus": "apocryphal"
+  },
+  {
+    "id": "prophecy-lynch-fullbokko",
+    "subjectId": "lynch-fullbokko",
+    "subjectName": "Lynch Fullbokko",
+    "factionId": "mafia-xiyu",
+    "desire": "To be the one who spots it — to hit first and be proved right in front of everyone.",
+    "poem": [
+      "You will strike him once and your ability will tell you the truth immediately.",
+      "You will be right, and being right will need about three seconds to become fatal.",
+      "A blow to the liver, too quick for the woman beside you to follow.",
+      "He will put your face on afterwards, and the whole family will follow you to the cinema."
+    ],
+    "reading": "Lynch hits the false Hisoka and Body and Soul identifies the imposture. Bonolenov drops her with a liver strike Zakuro cannot see, neutralises Zakuro, takes her shape to verify exactly what Lynch had understood, and then kills Lynch — before transforming into Lynch to mislead Zakuro and steer the mafia to the cinema. Hinrigh and Zakuro only reconstruct the murder on the twelfth day.",
+    "foretells": "death",
+    "horizon": "Day 4 of the voyage",
+    "canonStatus": "apocryphal"
+  },
+  {
+    "id": "prophecy-misha-hao",
+    "subjectId": "misha-hao",
+    "subjectName": "Misha Hao",
+    "factionId": "mafia-xiyu",
+    "desire": "A decent burial for everyone the family loses — which aboard this ship is an unreasonable request.",
+    "poem": [
+      "You keep the family's dead, and the family's dead are not arriving.",
+      "Hundreds will go missing on five decks and none of them will be brought to you.",
+      "Do not ask who is doing the disposing; they hold a contract of their own.",
+      "The only honest ledger aboard will be the one you cannot fill."
+    ],
+    "reading": "Misha Hao is recorded as the Xi-Yu family's undertaker and nothing else — the registry holds his trade and his house, no scene. The sheet is written from the shape of the voyage around him: the Heil-Ly killings produce hundreds of disappearances rather than bodies, and the Spiders later conclude the family may have taken over the ship's waste processing precisely so that the dead never surface.",
+    "foretells": "an empty ledger",
+    "horizon": "Day 1 – Day 12 of the voyage",
+    "canonStatus": "apocryphal"
+  },
+  {
+    "id": "prophecy-dogman",
+    "subjectId": "dogman",
+    "subjectName": "Dogman",
+    "factionId": "mafia-heilly",
+    "desire": "To climb faster than anyone else she kissed — the ring made him someone once, and Contagion is a better ring.",
+    "poem": [
+      "Twenty-one killings buy a talent of your own, and you will not stop at twenty-one.",
+      "Pass fifty and she will start calling you a name instead of a number.",
+      "Walk in behind a prince's coffin; nobody counts mourners.",
+      "At sixty-two you will carry off a soldier, and she is the only reason you were grown."
+    ],
+    "reading": "Contagion grants abilities past level 21 and Morena assigns Dogman the task of exceeding level 50 and finding a person matching very specific criteria. He reaches level 62 and uses Halkenburg's funeral procession as cover to abduct Borksen — the Specialist Morena needs — and deliver her to the hidden base, where Morena offers her membership as a 'compatible donor'.",
+    "foretells": "an abduction",
+    "horizon": "Day 1 – Day 12 of the voyage",
+    "canonStatus": "apocryphal"
+  },
+  {
+    "id": "prophecy-padaille",
+    "subjectId": "padaille",
+    "subjectName": "Padaille",
+    "factionId": "mafia-heilly",
+    "desire": "A demolition worth the name — to be one of the three who brought down a made man.",
+    "poem": [
+      "Three of you will corner one of theirs and enjoy the arithmetic.",
+      "His handcuffs will turn into birds; that is the moment to leave, and you will not take it.",
+      "Nothing the kiss gave you has finished growing yet.",
+      "You will be the first of hers the other side gets to count."
+    ],
+    "reading": "Three Heil-Ly ambush Hinrigh in the lower tiers. Biohazard turns his own handcuffs into pigeons — the ability makes living animals of touched objects while preserving their function — and Hinrigh traps Padaille and kills him. It is one of the first Heil-Ly losses the Xi-Yu can put a name to, in a campaign that until then had produced only disappearances.",
+    "foretells": "death",
+    "horizon": "Day 4 – Day 12 of the voyage",
+    "canonStatus": "apocryphal"
+  },
+  {
+    "id": "prophecy-sodom",
+    "subjectId": "sodom",
+    "subjectName": "Sodom",
+    "factionId": "mafia-heilly",
+    "desire": "To keep practising — the trade he had ashore, with the paperwork finally removed.",
+    "poem": [
+      "The kiss did not make you this. It only sharpened what you already sold.",
+      "Every patient is a level and every level is another hand to work with.",
+      "Do not envy the ones who kill loudly; the family counts both the same.",
+      "A doctor climbs fastest of all, because nobody runs from one."
+    ],
+    "reading": "The registry gives Sodom a back-alley doctor's practice, a hitman's contracts and the Heil-Ly — that is the whole record so far. The sheet is written from Contagion's rule rather than from a scene: Morena kisses each recruit, killing raises their level, and abilities appear once they pass twenty-one, which is why the ship's disappearances are a curriculum and not a crime wave.",
+    "foretells": "levelling",
+    "horizon": "Day 1 – Day 12 of the voyage",
+    "canonStatus": "apocryphal"
+  },
+  {
+    "id": "prophecy-terebellum",
+    "subjectId": "terebellum",
+    "subjectName": "Terebellum",
+    "factionId": "mafia-heilly",
+    "desire": "To stop being the one who carries what other people made.",
+    "poem": [
+      "The bodies you used to move for a fee you are now permitted to produce.",
+      "Five decks, and you already know every way between two of them.",
+      "Do not let the same family see you twice in the same corridor.",
+      "You will be paid in ability, and it will be spent on her war rather than yours."
+    ],
+    "reading": "Terebellum is catalogued as a transporter and hitman of the Heil-Ly and nothing further; the sheet reads from Contagion's terms. Morena's recruits level by killing and receive their own powers past level 21, but the family's structure keeps the return: she distributes the roles, and members are kept for exactly as long as they are useful — a condition she states outright to Borksen.",
+    "foretells": "levelling",
+    "horizon": "Day 1 – Day 12 of the voyage",
+    "canonStatus": "apocryphal"
+  },
+  {
+    "id": "prophecy-tevelares",
+    "subjectId": "tevelares",
+    "subjectName": "Tevelares",
+    "factionId": "mafia-heilly",
+    "desire": "To build something that holds — the one instinct he brought aboard intact.",
+    "poem": [
+      "She will sit with three of you and explain what a fight is actually made of.",
+      "Experience, technique, aura, and the idea nobody had; she will tell you to prefer the last.",
+      "Design your power the way you designed structures: for load, not for beauty.",
+      "Every rule you invent will hold, and it will be holding up her world instead of yours."
+    ],
+    "reading": "Morena personally advises Tevelares, Quorolle and Gelato on the abilities they are growing, explaining that experience, technique, aura and ingenuity are what decide a Nen fight, and proposing that they convert their confrontations into systems comparable to games. Tevelares is catalogued as a civil engineer; the fit between the trade and the method is the whole of the sheet.",
+    "foretells": "a system",
+    "horizon": "Day 1 – Day 12 of the voyage",
+    "canonStatus": "apocryphal"
+  },
+  {
+    "id": "prophecy-quorolle",
+    "subjectId": "quorolle",
+    "subjectName": "Quorolle",
+    "factionId": "mafia-heilly",
+    "desire": "To be needed for what he can fix rather than for what he can break.",
+    "poem": [
+      "What is broken you can put back — a rarer talent here than killing is.",
+      "She will teach you that a fight is a system before it is ever a fist.",
+      "Repair nothing belonging to the families; the work will have your name in it.",
+      "You will be given a power that fits your hands exactly, and a war that does not."
+    ],
+    "reading": "Quorolle is one of the three recruits Morena coaches directly on their developing abilities, alongside Tevelares and Gelato, and is catalogued as a repairman. Her lesson is that a Nen fight is decided by experience, technique, aura and ingenuity, and that a confrontation can be built into a system — the same shape as the seven-card negotiation game she later imposes on Borksen.",
+    "foretells": "a system",
+    "horizon": "Day 1 – Day 12 of the voyage",
+    "canonStatus": "apocryphal"
+  },
+  {
+    "id": "prophecy-gelato",
+    "subjectId": "gelato",
+    "subjectName": "Gelato",
+    "factionId": "mafia-heilly",
+    "desire": "A game with real stakes at last — and a rank inside it that nobody can dispute.",
+    "poem": [
+      "You will be told to make your fights into games, and it will sound like a promotion.",
+      "Levels, conditions, a win screen: you have played this before and lost nothing by it.",
+      "The people you are matched against did not agree to the rules and cannot read them.",
+      "The best player in her family is the one who never asks what the prize is for."
+    ],
+    "reading": "Gelato is catalogued as a professional gamer and is one of the three Heil-Ly Morena advises on their abilities. She explicitly proposes turning their fights into systems comparable to games — a doctrine Contagion already embodies, with levels earned by killing and powers unlocked past twenty-one. What the levels are ultimately being spent on is Morena's own stated goal: to destroy Kakin, and then everything after it.",
+    "foretells": "a game with stakes",
+    "horizon": "Day 1 – Day 12 of the voyage",
+    "canonStatus": "apocryphal"
+  },
+  {
+    "id": "prophecy-yokotani",
+    "subjectId": "yokotani",
+    "subjectName": "Yokotani",
+    "factionId": "mafia-heilly",
+    "desire": "To find the clause everyone else missed — it has always worked before.",
+    "poem": [
+      "You read contracts for a living, and this one you signed with your mouth.",
+      "Watch the entrances; you were chosen because you notice which door is lawful.",
+      "Do not draft yourself a way out. She has read further down the page than you.",
+      "The only term that matters is the one where she decides how long you are useful."
+    ],
+    "reading": "Yokotani is the Heil-Ly's legal adviser and, when Morena redistributes the roles after abandoning the Room 3101 decoy, he and Orarge are given the entrances to watch. Contagion is activated by a kiss and carries conditions of its own; Morena tells Borksen plainly that she will be able to go back to her friends and will be killed the moment she stops being useful.",
+    "foretells": "a binding term",
+    "horizon": "Day 1 – Day 12 of the voyage",
+    "canonStatus": "apocryphal"
+  },
+  {
+    "id": "prophecy-orarge",
+    "subjectId": "orarge",
+    "subjectName": "Orarge",
+    "factionId": "mafia-heilly",
+    "desire": "To run the disposal on a scale nobody ashore would have signed off on.",
+    "poem": [
+      "Your trade was making things stop existing; she has only widened the contract.",
+      "Stand at the entrance and count who comes in. The ship is the bin now.",
+      "Between two decks there is a chamber your industry knows the shape of.",
+      "Spiders will find it before the law does, and they will not have been looking for you."
+    ],
+    "reading": "Orarge is catalogued as a waste disposal contractor and is posted with Yokotani to watch the entrances of Morena's real base. On the twelfth day Tajao leads Phinks and Feitan into the purification and recycling chamber between Tiers 4 and 5, where Phinks concludes the Heil-Ly may have replaced the waste-processing contractors in order to lure victims and kill them without a body ever surfacing.",
+    "foretells": "an industry",
+    "horizon": "Day 1 – Day 12 of the voyage",
+    "canonStatus": "apocryphal"
+  },
+  {
+    "id": "prophecy-notre",
+    "subjectId": "notre",
+    "subjectName": "Notre",
+    "factionId": "mafia-heilly",
+    "desire": "To be posted where the work is, not where the family parks the ones it can spare.",
+    "poem": [
+      "You will be sent back to the house she has already walked out of.",
+      "Sit in the decoy and look occupied; the door still does what it was built to do.",
+      "Do not wonder why they keep arriving. That room is bait with plumbing.",
+      "By the end, the pipes of this ship will be the only map anybody trusts."
+    ],
+    "reading": "When Morena abandons Room 3101 she leaves the trap live and assigns Notre and Soufflé to watch the old lair. The trap keeps working: Hinrigh and Nobunaga cross it and find a base with walls reinforced, probably by Morena's Nen. Notre is catalogued as a plumber — the trade and the posting are what the sheet is built from.",
+    "foretells": "a decoy",
+    "horizon": "Day 1 – Day 12 of the voyage",
+    "canonStatus": "apocryphal"
+  },
+  {
+    "id": "prophecy-souffle",
+    "subjectId": "souffle",
+    "subjectName": "Soufflé",
+    "factionId": "mafia-heilly",
+    "desire": "To be the one who sees them coming, from a room where nobody can reach her.",
+    "poem": [
+      "You will watch the old address from a screen and see the enemy walk straight into it.",
+      "A man will swallow his own signal and let the room take him on purpose.",
+      "Do not assume a hideout is hidden because no one has said its name.",
+      "Your family will be located by a transmitter, and not by any mistake of yours."
+    ],
+    "reading": "Soufflé, the Heil-Ly's hacker, is posted with Notre to observe the abandoned Room 3101 lair. Hinrigh has Biohazard turn a transmitter into an oyster, swallows it and walks into the teleport trap deliberately; Phinks tracks the signal with Feitan and the Spiders conclude the real base sits on Tier 2. The base is found by a device rather than by a lapse in her watch.",
+    "foretells": "exposure",
+    "horizon": "Day 4 – Day 12 of the voyage",
+    "canonStatus": "apocryphal"
+  },
+  {
+    "id": "prophecy-montblanc-toto",
+    "subjectId": "montblanc-toto",
+    "subjectName": "Montblanc Toto",
+    "factionId": "mafia-heilly",
+    "desire": "To keep the two trades he already had, now that no one is checking the paperwork on either.",
+    "poem": [
+      "Cleaner and maker of feed: you knew what a body was for before she kissed you.",
+      "The ladder is the only thing that is new, and you will climb it quietly.",
+      "Kill without noise and the number rises with no witness attached to it.",
+      "Hundreds will be missing from this ship and not one of them will be found."
+    ],
+    "reading": "Montblanc Toto is catalogued as a Heil-Ly cleaner and feed manufacturer, with no scene recorded yet; the sheet is written from Contagion's rule and from the shape of the campaign around him. Morena's recruits level by killing and their offensive produces hundreds of disappearances, unbalancing all three families and pushing the Xi-Yu and Cha-R toward eliminating her.",
+    "foretells": "levelling",
+    "horizon": "Day 1 – Day 12 of the voyage",
+    "canonStatus": "apocryphal"
+  },
+  {
+    "id": "prophecy-keeney",
+    "subjectId": "keeney",
+    "subjectName": "Keeney",
+    "factionId": "prince-kacho",
+    "desire": "To get two girls off a ship that was never going to let them go.",
+    "poem": [
+      "You will plan it well: the music, the corridor, the boat, the hour.",
+      "Nothing you accounted for will fail.",
+      "The sea itself is the guard, and it has been on duty since the ceremony.",
+      "One of them will get through a door. You will not need a return trip."
+    ],
+    "reading": "Keeney leads the twins out under cover of Melody's performance and pilots the escape craft. The plan's execution is clean; the succession ritual is what stops it, spectral hands attacking the moment the boat clears the Black Whale. Fugetsu escapes through Magical Worm, Kacho dies at the boundary, and Keeney does not come back.",
+    "foretells": "death",
+    "horizon": "Night of Day 8",
+    "canonStatus": "apocryphal"
+  },
+  {
+    "id": "prophecy-borksen",
+    "subjectId": "borksen",
+    "subjectName": "Borksen",
+    "factionId": "kakin-royal-army",
+    "desire": "An ordinary future — the plain life she assumed she was owed before any of this started.",
+    "poem": [
+      "You will watch two friends change and understand exactly why, and be unable to say it usefully.",
+      "The ones who came up with you will close around you, and it will not be enough.",
+      "You will be taken during a funeral, by a man who has killed more than sixty people to reach you.",
+      "You will be dealt seven cards and told you are a compatible donor; play well, and you are still the prize."
+    ],
+    "reading": "Borksen reads the change in Theta and Salkov as proof of how dangerous Nen is, and her old Military Academy comrades try to shield her — Tserriednich, absorbed in his training, does not react. Under cover of Halkenburg's funeral procession, Dogman, now past level 62, abducts her to Morena's base. There she is offered membership as a 'compatible donor' and made to play a seven-card negotiation game; she uses Deal and pays a kiss, one of Contagion's conditions, and is told she will be kept only as long as she is useful.",
+    "foretells": "capture",
+    "horizon": "Day 12 of the voyage",
+    "canonStatus": "apocryphal"
+  }
+]

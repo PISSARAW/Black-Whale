@@ -682,8 +682,8 @@
   {
     "id": "great-haiku",
     "ownerId": "basho",
-    "name": "Great Haiku",
-    "alternateNames": ["Haiku Ability"],
+    "name": "Great Hiker",
+    "alternateNames": ["Great Haiku", "Great Wandering Haiku Poet", "Haiku Ability"],
     "category": "unknown",
     "abilityType": "written-reality-effect",
     "description": "Basho writes a haiku on paper and invokes its effect. Better poetry and seasonal language increase its power; demonstrated verses create fire, punish lies and produce protective light against weak spirits.",
@@ -873,8 +873,8 @@
   {
     "id": "padaille-weapon-transformation",
     "ownerId": "padaille",
-    "name": "Weapon Transformation",
-    "alternateNames": ["Unofficial descriptive name"],
+    "name": "I'm Coming to Get You",
+    "alternateNames": ["Weapon Transformation"],
     "category": "conjurer",
     "abilityType": "body-part-weapon-transformation",
     "description": "Padaille transforms parts of his body into weapons and tools he knows. His right arm becomes a demolition hammer while retaining bodily control.",

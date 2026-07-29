@@ -800,7 +800,7 @@ Les 38 capacités restantes, regroupées par faction plutôt qu'en 38 dossiers :
 Black Voice, Lovely Ghostwriter), `troupe` (Prologue, Jupiter, Blinky, Double Machine Gun,
 Ripper Cyclotron), `royal-guardians` (Camilla, Tubeppa, Tyson, Luzurus), `heil-ly` (Voconte,
 Bloody Mary, Padaille, Gel), `benjamin-inherited` (Air Blow, Culdcept, aura), `zodiacs`
-(bâton et trois singes de Saiyu, Great Haiku, Cluck, Leorio), `biscuit`, `expedition`
+(bâton et trois singes de Saiyu, Great Hiker, Cluck, Leorio), `biscuit`, `expedition`
 (Kurton, Tokarine, Theta), `mafia` (Hinrigh, Lynch, Terebellum) et `woble` (Bill, Oito).
 
 Deux points de fidélité que cette vague met à l'épreuve, conformément au §5 :

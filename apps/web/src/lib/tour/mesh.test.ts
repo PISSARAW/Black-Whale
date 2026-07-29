@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { buildShip, ceilingOf } from './blueprint'
+import { structureFootprint } from './geometry'
 import { buildTierMesh, colourFor } from './mesh'
 
 const ship = buildShip()
@@ -58,6 +59,35 @@ describe('the solids standing in the rooms', () => {
     let highest = -Infinity
     for (let i = 1; i < mesh.positions.length; i += 3) highest = Math.max(highest, mesh.positions[i])
     expect(highest).toBeGreaterThanOrEqual(plan.tier.elevation + tallest)
+  })
+
+  it('never extrudes a solid to the ceiling the way it does a wall', () => {
+    // The faces of a structure are in `plan.walls` so the visitor collides
+    // with them. Drawn by the wall pass as well, a bed would come out as a
+    // partition from floor to ceiling — which is what a deck full of
+    // furniture looked like before the renderer learned to skip them.
+    for (const plan of ship.plans.values()) {
+      if (!plan.structures.length) continue
+      const mesh = buildTierMesh(plan)
+
+      for (const structure of plan.structures) {
+        const room = plan.spaces.find((space) => space.id === structure.spaceId)!
+        const top = plan.tier.elevation + Math.min(structure.base + structure.height, ceilingOf(room, plan.tier))
+
+        for (const corner of structureFootprint(structure)) {
+          for (let i = 0; i < mesh.positions.length; i += 3) {
+            const onCorner =
+              Math.abs(mesh.positions[i] - corner[0]) < 0.001 &&
+              Math.abs(mesh.positions[i + 2] - corner[1]) < 0.001
+            if (!onCorner) continue
+            expect(
+              mesh.positions[i + 1],
+              `${structure.id} is drawn as a wall`,
+            ).toBeLessThanOrEqual(top + 0.001)
+          }
+        }
+      }
+    }
   })
 
   it('draws more geometry for a room with something in it', () => {

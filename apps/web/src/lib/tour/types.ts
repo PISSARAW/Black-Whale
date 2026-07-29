@@ -280,4 +280,14 @@ export interface WallSegment {
   spaceId: string
   start: Vec2
   end: Vec2
+  /**
+   * Set when the segment is a face of a solid standing in the room rather than
+   * a wall of the room itself.
+   *
+   * Collision reads the whole list, which is the point: a coffin stops you the
+   * way a bulkhead does. The renderer must not, though — a wall is extruded to
+   * the ceiling, and a bed drawn that way is a partition. The structure pass
+   * raises these to their own height instead.
+   */
+  structureId?: string
 }

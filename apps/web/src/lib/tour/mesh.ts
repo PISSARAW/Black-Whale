@@ -193,8 +193,12 @@ export function buildTierMesh(plan: TierPlan): TierMesh {
   }
 
   // Room walls and column faces arrive in the same list, which is the point:
-  // the visitor collides with exactly what is drawn here.
+  // the visitor collides with exactly what is drawn here. The faces of a solid
+  // standing in a room are in that list too, for the same reason, but they are
+  // raised by the structure pass below: extruded to the ceiling like a wall, a
+  // bed would be a partition.
   for (const wall of plan.walls) {
+    if (wall.structureId) continue
     const space = spaces.get(wall.spaceId)
     if (!space) continue
     const top = heightOf(space)

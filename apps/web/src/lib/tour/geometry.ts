@@ -483,6 +483,7 @@ export function structureWalls(structure: Structure): WallSegment[] {
     spaceId: structure.spaceId,
     start,
     end,
+    structureId: structure.id,
   }))
 }
 

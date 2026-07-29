@@ -82,6 +82,10 @@ export type LinkKind = 'stair' | 'lift' | 'bulkhead' | 'door'
  * - `camera` — a lens on a bracket, watching a door. The warehouse plan draws
  *   one and says when it went up, which is the sort of thing the plan is for:
  *   who is watching the cargo, and since when.
+ * - `duct` — a run of ducting and conduit under the deckhead. Hung clear of
+ *   head height, so it is walked under rather than round. Ch. 366 draws the
+ *   deckhead of bay 37564 bare: the services are what tells you the place is a
+ *   hold with people in it and not a deck built to be lived on.
  * - `telephone` — the wall set a room is reached on. Small, and kept for the
  *   reason the manacle is: ch. 360 hangs one in Prince Woble's rooms, and it is
  *   standing at it that Kurapika calls Biscuit and learns what the beasts are.
@@ -103,6 +107,7 @@ export type StructureKind =
   | 'manacle'
   | 'camera'
   | 'telephone'
+  | 'duct'
 
 /**
  * What a level is: a deck of the ship, or the inside of a single room drawn at

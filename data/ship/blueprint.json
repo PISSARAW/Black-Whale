@@ -19668,6 +19668,54 @@
       "provenance": "panel",
       "source": "Ch. 366 — Prince Tubeppa's rooms given over to her work: the desk she sits at with her laptop, its chair, the whiteboards of equations down the starboard wall, and the board of pinned papers beside them.",
       "sourceFr": "Chap. 366 — les appartements de la princesse Tubeppa rendus à son travail : le bureau où elle s'assied devant son ordinateur, son siège, les tableaux blancs couverts d'équations le long du mur tribord, et le panneau de feuilles épinglées à côté d'eux."
+    },
+    {
+      "id": "tier-5-area-37564-sign",
+      "spaceId": "tier-5-area-37564",
+      "kind": "painting",
+      "name": "Bay Sign — 37564",
+      "nameFr": "Panneau de zone — 37564",
+      "at": [-80.5, 12.6],
+      "size": [3.2, 0.3],
+      "rotation": 0,
+      "base": 2.9,
+      "height": 1.0,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 366 — the deckhead of bay 37564 and the bay sign under it: runs of ducting and conduit overhead, and a bare floor the passengers sit down on.",
+      "sourceFr": "Chap. 366 — le plafond de la zone 37564 et le panneau qui pend dessous : des gaines et des chemins de câbles au-dessus, et un sol nu où les passagers s'assoient."
+    },
+    {
+      "id": "tier-5-area-37564-duct-port",
+      "spaceId": "tier-5-area-37564",
+      "kind": "duct",
+      "name": "Overhead Services (port)",
+      "nameFr": "Gaines et câbles (bâbord)",
+      "at": [-80.5, 16.0],
+      "size": [26.0, 0.7],
+      "rotation": 0,
+      "base": 3.6,
+      "height": 0.6,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 366 — the deckhead of bay 37564 and the bay sign under it: runs of ducting and conduit overhead, and a bare floor the passengers sit down on.",
+      "sourceFr": "Chap. 366 — le plafond de la zone 37564 et le panneau qui pend dessous : des gaines et des chemins de câbles au-dessus, et un sol nu où les passagers s'assoient."
+    },
+    {
+      "id": "tier-5-area-37564-duct-starboard",
+      "spaceId": "tier-5-area-37564",
+      "kind": "duct",
+      "name": "Overhead Services (starboard)",
+      "nameFr": "Gaines et câbles (tribord)",
+      "at": [-80.5, 22.5],
+      "size": [26.0, 0.7],
+      "rotation": 0,
+      "base": 3.6,
+      "height": 0.6,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 366 — the deckhead of bay 37564 and the bay sign under it: runs of ducting and conduit overhead, and a bare floor the passengers sit down on.",
+      "sourceFr": "Chap. 366 — le plafond de la zone 37564 et le panneau qui pend dessous : des gaines et des chemins de câbles au-dessus, et un sol nu où les passagers s'assoient."
     }
   ]
 }

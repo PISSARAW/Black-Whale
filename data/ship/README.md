@@ -335,6 +335,14 @@ Le second : **ce qu'une planche montre est ce que la pièce est** —
 - une capsule de sauvetage est sa couronne de sièges autour du mât (chap. 383) ;
 - l'entrepôt du pont 5 est ses rangées de caisses, que son plan dessine et que
   la reconstruction pose dans les travées entre les piliers ;
+- la zone 37564 est son **plafond** : le chap. 366 la dessine bondée, et ce
+  qu'il y a à voir est au-dessus des têtes — les gaines et les chemins de
+  câbles à nu, et le panneau qui pend sous eux. Ces volumes-là sont accrochés
+  au-dessus de 2,10 m : on marche dessous, ils n'arrêtent personne. La même
+  planche vaut pour ce qu'elle ne dessine **pas** : le sol est nu, les
+  passagers s'assoient dessus. Le vide de cette salle n'est plus un silence du
+  dossier, c'est une planche qui l'affirme — et c'est pour ça qu'il est écrit
+  ici plutôt que laissé à deviner ;
 - le casino VIP est sa salle de jeu, les devantures autour et la mezzanine
   au-dessus (chap. 405) — c'est la mezzanine qui lui donne ses 8 m sous
   plafond, aucune salle à galerie ne tenant sous les 5 m du pont ;

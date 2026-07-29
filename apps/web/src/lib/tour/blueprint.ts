@@ -260,6 +260,10 @@ const STRUCTURE_KINDS = new Set([
   'platform',
   'counter',
   'table',
+  'bed',
+  'seat',
+  'cabinet',
+  'basin',
   'lifeboat',
   'pillar',
 ])

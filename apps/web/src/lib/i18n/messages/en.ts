@@ -151,7 +151,7 @@ export const en = {
 
     structures: {
       title: 'What stands in the rooms',
-      help: 'The tour does not furnish the ship — a chair is not architecture, and where one stood is not something the panels record. A few rooms are the exception, because what a panel shows is the thing standing in them: the ring of coffins is the burial chamber, the springs are what the hull carries the ship on. Those are drawn, they are solid, and they carry their own source, which is not always the source of the room around them.',
+      help: 'The tour does not decorate: it never invents where a chair stood. It draws a solid in two cases only. When a drawing puts it there — the prince apartment plan draws the beds, the sofas, the dining table and the kitchen, which is survey rather than furnishing. And when what a panel shows is what the room is: the ring of coffins is the burial chamber, the springs are what the hull carries the ship on. Each is solid, and each carries its own source, which is not always the source of the room around it.',
       standingIn: (room: string) => `in ${room}`,
       count: (count: number) => `${count} ${count === 1 ? 'solid' : 'solids'}`,
     },

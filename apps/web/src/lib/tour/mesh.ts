@@ -75,6 +75,10 @@ const STRUCTURE_COLOURS: Record<StructureKind, number> = {
   platform: 0x4c3a17,
   counter: 0x3c3227,
   table: 0x33291f,
+  bed: 0x4a4642,
+  seat: 0x342a24,
+  cabinet: 0x2e251d,
+  basin: 0x3f4246,
   lifeboat: 0x8a8f96,
   pillar: 0x6a5a4a,
 }

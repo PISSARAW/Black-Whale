@@ -168,9 +168,16 @@ manger qu'elle dessert. C'est consigné dans le `reason` de la porte.
 `structures` pose un solide **dans** un espace : on le voit, on le contourne,
 on ne le traverse pas.
 
-La visite ne meuble pas le vaisseau. Une chaise n'est pas de l'architecture, et
-sa place n'est pas ce que les planches consignent. Quelques pièces font
-exception, parce que ce qu'une planche y montre **est** ce qui s'y dresse :
+La visite ne **décore** pas : elle n'invente jamais la place d'une chaise. Elle
+ne pose un volume que dans deux cas.
+
+Le premier : **un dessin l'y met**. Le plan d'appartement princier dessine les
+lits, les canapés, la table à manger et la cuisine — c'est un relevé, pas de
+l'ameublement, et ces meubles portent donc la source du plan et sa provenance
+`plan`. Les quatorze appartements sont le même plan : le jeu de meubles est
+authoré une fois, dans le repère de l'appartement, et répété pour chaque prince.
+
+Le second : **ce qu'une planche montre est ce que la pièce est** —
 
 - la chambre funéraire est une couronne de quatorze cercueils autour d'un
   reliquaire (chap. 371) ;

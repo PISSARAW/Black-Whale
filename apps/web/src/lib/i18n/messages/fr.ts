@@ -149,7 +149,7 @@ export const fr: Messages = {
 
     structures: {
       title: 'Ce qui se dresse dans les pièces',
-      help: 'La visite ne meuble pas le vaisseau : une chaise n’est pas de l’architecture, et sa place n’est pas ce que les planches consignent. Quelques pièces font exception, parce que ce qu’une planche y montre est justement ce qui s’y dresse : la couronne de cercueils est la chambre funéraire, les ressorts sont ce sur quoi la coque porte le vaisseau. Ceux-là sont dessinés, ils sont pleins, et ils portent leur propre source — qui n’est pas toujours celle de la pièce autour d’eux.',
+      help: 'La visite ne décore pas : elle n’invente jamais la place d’une chaise. Elle ne dessine un volume que dans deux cas. Quand un plan l’y met — le plan d’appartement princier dessine les lits, les canapés, la table à manger et la cuisine, ce qui est un relevé et non de l’ameublement. Et quand ce qu’une planche montre est ce que la pièce est : la couronne de cercueils est la chambre funéraire, les ressorts sont ce sur quoi la coque porte le vaisseau. Chacun est plein, et chacun porte sa propre source — qui n’est pas toujours celle de la pièce autour de lui.',
       standingIn: (room) => `dans ${room}`,
       count: (count) => `${count} volume${count === 1 ? '' : 's'}`,
     },

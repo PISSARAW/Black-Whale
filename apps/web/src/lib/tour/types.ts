@@ -54,7 +54,11 @@ export type LinkKind = 'stair' | 'lift' | 'bulkhead' | 'door'
  * - `casket` — a coffin in the burial chamber, and the reliquary at its centre.
  * - `platform` — a stage or a dais: floor raised above the floor.
  * - `counter` — a servery or a guard post: a run of desk you are kept behind.
- * - `table` — a refectory table, where the rows of them are what the hall is.
+ * - `table` — a table, from a refectory bench to a prince's dining table.
+ * - `bed` — a bed or a bunk.
+ * - `seat` — a sofa or an armchair.
+ * - `cabinet` — a wardrobe, a sideboard, a bedside table.
+ * - `basin` — a bath or a washstand.
  * - `lifeboat` — an escape pod on its cradle in the launch bay.
  * - `pillar` — a post a panel draws, as opposed to the grid `columnPositions`
  *   lays under a hall too wide to roof without one.
@@ -65,6 +69,10 @@ export type StructureKind =
   | 'platform'
   | 'counter'
   | 'table'
+  | 'bed'
+  | 'seat'
+  | 'cabinet'
+  | 'basin'
   | 'lifeboat'
   | 'pillar'
 

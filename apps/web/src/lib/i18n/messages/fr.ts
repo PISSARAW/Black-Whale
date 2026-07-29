@@ -104,7 +104,7 @@ export const fr: Messages = {
   tourSources: {
     seoTitle: 'Sources — D’où vient chaque pièce du Black Whale',
     seoDescription:
-      'Les preuves derrière le Black Whale reconstruit, pièce par pièce : le chapitre ou le plan sur lequel repose chacun des 205 espaces, les couloirs que la reconstruction a inventés, et les cloisons murées à dessein.',
+      'Les preuves derrière le Black Whale reconstruit, pièce par pièce : le chapitre ou le plan sur lequel repose chacun des 264 espaces, les couloirs que la reconstruction a inventés, et les cloisons murées à dessein.',
     breadcrumb: 'Sources',
     title: 'D’où vient chaque pièce',
     intro:
@@ -145,6 +145,13 @@ export const fr: Messages = {
       lift: 'Ascenseur',
       bulkhead: 'Cloison',
       door: 'Porte',
+    },
+
+    structures: {
+      title: 'Ce qui se dresse dans les pièces',
+      help: 'La visite ne meuble pas le vaisseau : une chaise n’est pas de l’architecture, et sa place n’est pas ce que les planches consignent. Quelques pièces font exception, parce que ce qu’une planche y montre est justement ce qui s’y dresse : la couronne de cercueils est la chambre funéraire, les ressorts sont ce sur quoi la coque porte le vaisseau. Ceux-là sont dessinés, ils sont pleins, et ils portent leur propre source — qui n’est pas toujours celle de la pièce autour d’eux.',
+      standingIn: (room) => `dans ${room}`,
+      count: (count) => `${count} volume${count === 1 ? '' : 's'}`,
     },
 
     seals: {

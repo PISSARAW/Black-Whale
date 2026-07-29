@@ -609,6 +609,44 @@
         [-22.5, 14.25]
       ],
       "sourceFr": "Plan des cabines de première classe"
+    },
+    {
+      "id": "interior-king-quarters",
+      "kind": "interior",
+      "parentSpaceId": "tier-1-king-living-quarters",
+      "locationId": "tier-1-king-living-quarters",
+      "name": "King's Living Quarters",
+      "nameFr": "Quartiers du Roi",
+      "elevation": 0,
+      "ceiling": 7,
+      "provenance": "panel",
+      "source": "Ch. 382 — the King's living room: patterned floor, paired seating, framed paintings and the window at the far end.",
+      "hull": [
+        [-14, -10.5],
+        [14, -10.5],
+        [14, 14.5],
+        [-14, 14.5]
+      ],
+      "sourceFr": "Chap. 382 — le salon du Roi : sol à motifs, sièges appariés, tableaux encadrés et la baie du fond."
+    },
+    {
+      "id": "interior-hull-suspension",
+      "kind": "interior",
+      "parentSpaceId": "tier-5-technical-recycling",
+      "locationId": null,
+      "name": "Hull Suspension",
+      "nameFr": "Suspension de la coque",
+      "elevation": 0,
+      "ceiling": 22,
+      "provenance": "panel",
+      "source": "Ch. 406 — the sprung mounts the hull carries the ship on, with gangways run between them.",
+      "hull": [
+        [-22, -12],
+        [22, -12],
+        [22, 6],
+        [-22, 6]
+      ],
+      "sourceFr": "Chap. 406 — les suspensions à ressort sur lesquelles la coque porte le vaisseau, avec des passerelles entre elles."
     }
   ],
   "spaces": [
@@ -619,8 +657,8 @@
       "name": "King's Living Quarters",
       "nameFr": "Quartiers du Roi",
       "category": "quarters",
-      "provenance": "plan",
-      "source": "Deck plan, ch. 349",
+      "provenance": "panel",
+      "source": "Ch. 382 — the King's living room: patterned floor, paired seating, framed paintings and the window at the far end.",
       "ceiling": 7,
       "envelope": null,
       "footprint": [
@@ -629,7 +667,7 @@
         [87.5, -35],
         [-105, -35]
       ],
-      "sourceFr": "Plan des ponts, chap. 349"
+      "sourceFr": "Chap. 382 — le salon du Roi : sol à motifs, sièges appariés, tableaux encadrés et la baie du fond."
     },
     {
       "id": "tier-1-princes-burial-chamber",
@@ -639,20 +677,28 @@
       "nameFr": "Chambre funéraire des princes",
       "category": "ceremonial",
       "provenance": "panel",
-      "source": "Ch. 358 — the chamber is shown, its position on the deck is not.",
+      "source": "Ch. 358 shows the chamber; ch. 371 draws it round, the fourteen coffins set radially about its centre.",
       "ceiling": 6,
       "envelope": null,
       "footprint": [
-        [-13.3, -68.25],
-        [-16.8, -71.75],
-        [-16.8, -79.8],
-        [-13.3, -83.3],
-        [-4.2, -83.3],
-        [-0.7, -79.8],
-        [-0.7, -71.75],
-        [-4.2, -68.25]
+        [-5.97, -68.25],
+        [-3.43, -69.77],
+        [-1.63, -72.11],
+        [-0.79, -74.94],
+        [-1.04, -77.89],
+        [-2.34, -80.54],
+        [-4.52, -82.54],
+        [-7.27, -83.61],
+        [-10.23, -83.61],
+        [-12.98, -82.54],
+        [-15.16, -80.54],
+        [-16.46, -77.89],
+        [-16.71, -74.94],
+        [-15.87, -72.11],
+        [-14.07, -69.77],
+        [-11.53, -68.25]
       ],
-      "sourceFr": "Chap. 358 — la chambre est montrée, sa position sur le pont ne l'est pas."
+      "sourceFr": "Le chap. 358 montre la chambre ; le chap. 371 la dessine ronde, les quatorze cercueils disposés en rayons autour de son centre."
     },
     {
       "id": "tier-1-burial-passage",
@@ -666,10 +712,10 @@
       "ceiling": null,
       "envelope": null,
       "footprint": [
-        [-13.3, -68.25],
-        [-4.2, -68.25],
-        [-4.2, -63],
-        [-13.3, -63]
+        [-11.53, -68.25],
+        [-5.97, -68.25],
+        [-5.97, -63],
+        [-11.53, -63]
       ],
       "sourceFr": "Reconstruit pour rendre le pont continu ; aucune planche ne le montre."
     },
@@ -3103,7 +3149,7 @@
       "nameFr": "Cellule de Beyond Netero",
       "category": "prison",
       "provenance": "panel",
-      "source": "Ch. 350 — the high-security cell and its manacles",
+      "source": "Ch. 350 shows the high-security cell and its manacles; ch. 359 the barred front and the watch kept in front of it.",
       "ceiling": null,
       "envelope": null,
       "footprint": [
@@ -3112,7 +3158,7 @@
         [117.25, -3.5],
         [85.75, -3.5]
       ],
-      "sourceFr": "Chap. 350 — la cellule de haute sécurité et ses entraves"
+      "sourceFr": "Le chap. 350 montre la cellule de haute sécurité et ses entraves ; le chap. 359, la façade à barreaux et la garde tenue devant."
     },
     {
       "id": "tier-1-vip-jail",
@@ -3234,11 +3280,11 @@
       "id": "tier-1-royal-approach",
       "tierId": "tier-1",
       "locationId": null,
-      "name": "Royal Approach",
-      "nameFr": "Vestibule royal",
+      "name": "Banquet Hall Vestibule",
+      "nameFr": "Vestibule de la salle de banquet",
       "category": "corridor",
-      "provenance": "inferred",
-      "source": "Reconstructed to make the deck contiguous; no panel shows it.",
+      "provenance": "panel",
+      "source": "Ch. 383 — the guarded vestibule outside the Banquet Hall's doors.",
       "ceiling": null,
       "envelope": null,
       "footprint": [
@@ -3247,14 +3293,14 @@
         [70, -28],
         [-87.5, -28]
       ],
-      "sourceFr": "Reconstruit pour rendre le pont continu ; aucune planche ne le montre."
+      "sourceFr": "Chap. 383 — le vestibule gardé devant les portes de la salle de banquet."
     },
     {
       "id": "tier-1-main-corridor",
       "tierId": "tier-1",
       "locationId": null,
-      "name": "Main Corridor",
-      "nameFr": "Couloir principal",
+      "name": "Main Corridor (port)",
+      "nameFr": "Couloir principal (bâbord)",
       "category": "corridor",
       "provenance": "inferred",
       "source": "Reconstructed to make the deck contiguous; no panel shows it.",
@@ -3262,8 +3308,8 @@
       "envelope": null,
       "footprint": [
         [-87.5, -3.5],
-        [70, -3.5],
-        [70, 3.5],
+        [-1.8, -3.5],
+        [-1.8, 3.5],
         [-87.5, 3.5]
       ],
       "sourceFr": "Reconstruit pour rendre le pont continu ; aucune planche ne le montre."
@@ -4580,8 +4626,8 @@
       "name": "First-Class Cell",
       "nameFr": "Cellule première classe",
       "category": "prison",
-      "provenance": "plan",
-      "source": "V.I.P. detention plan; the block shown in ch. 350",
+      "provenance": "panel",
+      "source": "Ch. 373 — the first-class cell Camilla is held in: bunk, washstand and lavatory behind the bars.",
       "ceiling": 3.5,
       "envelope": null,
       "footprint": [
@@ -4590,7 +4636,7 @@
         [-2.5, -2.5],
         [-15, -2.5]
       ],
-      "sourceFr": "Plan du quartier de détention VIP ; le bloc montré au chap. 350"
+      "sourceFr": "Chap. 373 — la cellule de première classe où Camilla est détenue : couchette, lavabo et cabinet derrière les barreaux."
     },
     {
       "id": "tier-1-vip-jail-cell-vip",
@@ -5560,6 +5606,120 @@
         [-5, 14.25]
       ],
       "sourceFr": "Plan des cabines de première classe"
+    },
+    {
+      "id": "tier-1-king-living-quarters-living",
+      "tierId": "interior-king-quarters",
+      "locationId": "tier-1-king-living-quarters",
+      "name": "Royal Living Room",
+      "nameFr": "Salon royal",
+      "category": "quarters",
+      "provenance": "panel",
+      "source": "Ch. 382 — the King's living room: patterned floor, paired seating, framed paintings and the window at the far end.",
+      "ceiling": 7,
+      "envelope": null,
+      "footprint": [
+        [-12, -8.32],
+        [12, -8.32],
+        [12, 8.32],
+        [-12, 8.32]
+      ],
+      "sourceFr": "Chap. 382 — le salon du Roi : sol à motifs, sièges appariés, tableaux encadrés et la baie du fond."
+    },
+    {
+      "id": "tier-1-king-living-quarters-vestibule",
+      "tierId": "interior-king-quarters",
+      "locationId": null,
+      "name": "Royal Vestibule",
+      "nameFr": "Vestibule royal",
+      "category": "corridor",
+      "provenance": "inferred",
+      "source": "Reconstructed so the living room opens onto the Banquet Hall; no panel shows the way in.",
+      "ceiling": 5,
+      "envelope": null,
+      "footprint": [
+        [-4.5, 8.32],
+        [4.5, 8.32],
+        [4.5, 12.32],
+        [-4.5, 12.32]
+      ],
+      "sourceFr": "Reconstruit pour que le salon s'ouvre sur la salle de banquet ; aucune planche ne montre l'entrée."
+    },
+    {
+      "id": "tier-1-princes-quarters-gate",
+      "tierId": "tier-1",
+      "locationId": null,
+      "name": "Princes' Quarters Gate",
+      "nameFr": "Poste des quartiers princiers",
+      "category": "military",
+      "provenance": "panel",
+      "source": "Ch. 382 — the guarded gate to the princes' quarters, its desk and its posted soldiers.",
+      "ceiling": null,
+      "envelope": null,
+      "footprint": [
+        [-1.8, -3.5],
+        [22.8, -3.5],
+        [22.8, 3.5],
+        [-1.8, 3.5]
+      ],
+      "sourceFr": "Chap. 382 — le poste gardé à l'entrée des quartiers princiers, son comptoir et ses soldats en faction."
+    },
+    {
+      "id": "tier-1-main-corridor-starboard",
+      "tierId": "tier-1",
+      "locationId": null,
+      "name": "Main Corridor (starboard)",
+      "nameFr": "Couloir principal (tribord)",
+      "category": "corridor",
+      "provenance": "inferred",
+      "source": "Reconstructed to make the deck contiguous; no panel shows it.",
+      "ceiling": null,
+      "envelope": null,
+      "footprint": [
+        [22.8, -3.5],
+        [70, -3.5],
+        [70, 3.5],
+        [22.8, 3.5]
+      ],
+      "sourceFr": "Reconstruit pour rendre le pont continu ; aucune planche ne le montre."
+    },
+    {
+      "id": "tier-5-hull-suspension-bay",
+      "tierId": "interior-hull-suspension",
+      "locationId": null,
+      "name": "Spring Bay",
+      "nameFr": "Baie des ressorts",
+      "category": "infrastructure",
+      "provenance": "panel",
+      "source": "Ch. 406 — the sprung mounts the hull carries the ship on, with gangways run between them.",
+      "ceiling": 22,
+      "envelope": null,
+      "footprint": [
+        [-20, -10],
+        [20, -10],
+        [20, 0],
+        [-20, 0]
+      ],
+      "sourceFr": "Chap. 406 — les suspensions à ressort sur lesquelles la coque porte le vaisseau, avec des passerelles entre elles."
+    },
+    {
+      "id": "tier-5-hull-suspension-gangway",
+      "tierId": "interior-hull-suspension",
+      "locationId": null,
+      "name": "Suspension Gangway",
+      "nameFr": "Passerelle de suspension",
+      "category": "infrastructure",
+      "provenance": "inferred",
+      "source": "Reconstructed as the way in among the springs; the panel shows gangways but not where they run.",
+      "ceiling": 22,
+      "envelope": null,
+      "footprint": [
+        [-20, 0],
+        [20, 0],
+        [20, 4],
+        [-20, 4]
+      ],
+      "sourceFr": "Reconstruit comme le chemin d'accès entre les ressorts ; la planche montre des passerelles, pas leur tracé."
     }
   ],
   "links": [
@@ -5827,6 +5987,26 @@
       "provenance": "plan",
       "source": "Deck plan, ch. 349 — the technical boundary between Tier 4 and Tier 5",
       "sourceFr": "Plan des ponts, chap. 349 — la limite technique entre les ponts 4 et 5"
+    },
+    {
+      "from": "tier-1-king-living-quarters",
+      "to": "tier-1-king-living-quarters-vestibule",
+      "kind": "door",
+      "at": [-8.75, -37],
+      "atTo": [0, 11],
+      "provenance": "inferred",
+      "source": "Reconstructed so the living room opens onto the Banquet Hall; no panel shows the way in.",
+      "sourceFr": "Reconstruit pour que le salon s'ouvre sur la salle de banquet ; aucune planche ne montre l'entrée."
+    },
+    {
+      "from": "tier-5-technical-recycling",
+      "to": "tier-5-hull-suspension-gangway",
+      "kind": "door",
+      "at": [0, -61],
+      "atTo": [0, 2],
+      "provenance": "inferred",
+      "source": "Reconstructed as the way in among the springs; the panel shows gangways but not where they run.",
+      "sourceFr": "Reconstruit comme le chemin d'accès entre les ressorts ; la planche montre des passerelles, pas leur tracé."
     }
   ],
   "seals": [
@@ -7147,6 +7327,398 @@
       "width": 3,
       "reason": "Door placed where the room plan draws it.",
       "reasonFr": "Porte placée là où le plan de la salle la dessine."
+    }
+  ],
+  "structures": [
+    {
+      "id": "tier-1-banquet-hall-stage",
+      "spaceId": "tier-1-banquet-hall",
+      "kind": "platform",
+      "name": "Stage",
+      "nameFr": "Scène",
+      "at": [-82.5, -15.75],
+      "size": [7, 20],
+      "rotation": 0,
+      "height": 1.4,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 383 — the stage at the end of the hall, and the throne on its dais before it.",
+      "sourceFr": "Chap. 383 — la scène au bout de la salle, et le trône sur son estrade devant elle."
+    },
+    {
+      "id": "tier-1-banquet-hall-throne-dais",
+      "spaceId": "tier-1-banquet-hall",
+      "kind": "platform",
+      "name": "Throne Dais",
+      "nameFr": "Estrade du trône",
+      "at": [-69.25, -15.75],
+      "size": [6, 8],
+      "rotation": 0,
+      "height": 1,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 383 — the stage at the end of the hall, and the throne on its dais before it.",
+      "sourceFr": "Chap. 383 — la scène au bout de la salle, et le trône sur son estrade devant elle."
+    },
+    {
+      "id": "tier-1-princes-burial-chamber-coffin-01",
+      "spaceId": "tier-1-princes-burial-chamber",
+      "kind": "casket",
+      "name": "Coffin 1",
+      "nameFr": "Cercueil 1",
+      "at": [-7.39, -69.8],
+      "size": [0.95, 2.2],
+      "rotation": -12.86,
+      "height": 0.85,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 358 shows the chamber; ch. 371 draws it round, the fourteen coffins set radially about its centre.",
+      "sourceFr": "Le chap. 358 montre la chambre ; le chap. 371 la dessine ronde, les quatorze cercueils disposés en rayons autour de son centre."
+    },
+    {
+      "id": "tier-1-princes-burial-chamber-coffin-02",
+      "spaceId": "tier-1-princes-burial-chamber",
+      "kind": "casket",
+      "name": "Coffin 2",
+      "nameFr": "Cercueil 2",
+      "at": [-4.95, -70.98],
+      "size": [0.95, 2.2],
+      "rotation": -38.57,
+      "height": 0.85,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 358 shows the chamber; ch. 371 draws it round, the fourteen coffins set radially about its centre.",
+      "sourceFr": "Le chap. 358 montre la chambre ; le chap. 371 la dessine ronde, les quatorze cercueils disposés en rayons autour de son centre."
+    },
+    {
+      "id": "tier-1-princes-burial-chamber-coffin-03",
+      "spaceId": "tier-1-princes-burial-chamber",
+      "kind": "casket",
+      "name": "Coffin 3",
+      "nameFr": "Cercueil 3",
+      "at": [-3.25, -73.1],
+      "size": [0.95, 2.2],
+      "rotation": -64.29,
+      "height": 0.85,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 358 shows the chamber; ch. 371 draws it round, the fourteen coffins set radially about its centre.",
+      "sourceFr": "Le chap. 358 montre la chambre ; le chap. 371 la dessine ronde, les quatorze cercueils disposés en rayons autour de son centre."
+    },
+    {
+      "id": "tier-1-princes-burial-chamber-coffin-04",
+      "spaceId": "tier-1-princes-burial-chamber",
+      "kind": "casket",
+      "name": "Coffin 4",
+      "nameFr": "Cercueil 4",
+      "at": [-2.65, -75.75],
+      "size": [0.95, 2.2],
+      "rotation": -90.0,
+      "height": 0.85,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 358 shows the chamber; ch. 371 draws it round, the fourteen coffins set radially about its centre.",
+      "sourceFr": "Le chap. 358 montre la chambre ; le chap. 371 la dessine ronde, les quatorze cercueils disposés en rayons autour de son centre."
+    },
+    {
+      "id": "tier-1-princes-burial-chamber-coffin-05",
+      "spaceId": "tier-1-princes-burial-chamber",
+      "kind": "casket",
+      "name": "Coffin 5",
+      "nameFr": "Cercueil 5",
+      "at": [-3.25, -78.4],
+      "size": [0.95, 2.2],
+      "rotation": -115.71,
+      "height": 0.85,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 358 shows the chamber; ch. 371 draws it round, the fourteen coffins set radially about its centre.",
+      "sourceFr": "Le chap. 358 montre la chambre ; le chap. 371 la dessine ronde, les quatorze cercueils disposés en rayons autour de son centre."
+    },
+    {
+      "id": "tier-1-princes-burial-chamber-coffin-06",
+      "spaceId": "tier-1-princes-burial-chamber",
+      "kind": "casket",
+      "name": "Coffin 6",
+      "nameFr": "Cercueil 6",
+      "at": [-4.95, -80.52],
+      "size": [0.95, 2.2],
+      "rotation": -141.43,
+      "height": 0.85,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 358 shows the chamber; ch. 371 draws it round, the fourteen coffins set radially about its centre.",
+      "sourceFr": "Le chap. 358 montre la chambre ; le chap. 371 la dessine ronde, les quatorze cercueils disposés en rayons autour de son centre."
+    },
+    {
+      "id": "tier-1-princes-burial-chamber-coffin-07",
+      "spaceId": "tier-1-princes-burial-chamber",
+      "kind": "casket",
+      "name": "Coffin 7",
+      "nameFr": "Cercueil 7",
+      "at": [-7.39, -81.7],
+      "size": [0.95, 2.2],
+      "rotation": -167.14,
+      "height": 0.85,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 358 shows the chamber; ch. 371 draws it round, the fourteen coffins set radially about its centre.",
+      "sourceFr": "Le chap. 358 montre la chambre ; le chap. 371 la dessine ronde, les quatorze cercueils disposés en rayons autour de son centre."
+    },
+    {
+      "id": "tier-1-princes-burial-chamber-coffin-08",
+      "spaceId": "tier-1-princes-burial-chamber",
+      "kind": "casket",
+      "name": "Coffin 8",
+      "nameFr": "Cercueil 8",
+      "at": [-10.11, -81.7],
+      "size": [0.95, 2.2],
+      "rotation": -192.86,
+      "height": 0.85,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 358 shows the chamber; ch. 371 draws it round, the fourteen coffins set radially about its centre.",
+      "sourceFr": "Le chap. 358 montre la chambre ; le chap. 371 la dessine ronde, les quatorze cercueils disposés en rayons autour de son centre."
+    },
+    {
+      "id": "tier-1-princes-burial-chamber-coffin-09",
+      "spaceId": "tier-1-princes-burial-chamber",
+      "kind": "casket",
+      "name": "Coffin 9",
+      "nameFr": "Cercueil 9",
+      "at": [-12.55, -80.52],
+      "size": [0.95, 2.2],
+      "rotation": -218.57,
+      "height": 0.85,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 358 shows the chamber; ch. 371 draws it round, the fourteen coffins set radially about its centre.",
+      "sourceFr": "Le chap. 358 montre la chambre ; le chap. 371 la dessine ronde, les quatorze cercueils disposés en rayons autour de son centre."
+    },
+    {
+      "id": "tier-1-princes-burial-chamber-coffin-10",
+      "spaceId": "tier-1-princes-burial-chamber",
+      "kind": "casket",
+      "name": "Coffin 10",
+      "nameFr": "Cercueil 10",
+      "at": [-14.25, -78.4],
+      "size": [0.95, 2.2],
+      "rotation": -244.29,
+      "height": 0.85,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 358 shows the chamber; ch. 371 draws it round, the fourteen coffins set radially about its centre.",
+      "sourceFr": "Le chap. 358 montre la chambre ; le chap. 371 la dessine ronde, les quatorze cercueils disposés en rayons autour de son centre."
+    },
+    {
+      "id": "tier-1-princes-burial-chamber-coffin-11",
+      "spaceId": "tier-1-princes-burial-chamber",
+      "kind": "casket",
+      "name": "Coffin 11",
+      "nameFr": "Cercueil 11",
+      "at": [-14.85, -75.75],
+      "size": [0.95, 2.2],
+      "rotation": -270.0,
+      "height": 0.85,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 358 shows the chamber; ch. 371 draws it round, the fourteen coffins set radially about its centre.",
+      "sourceFr": "Le chap. 358 montre la chambre ; le chap. 371 la dessine ronde, les quatorze cercueils disposés en rayons autour de son centre."
+    },
+    {
+      "id": "tier-1-princes-burial-chamber-coffin-12",
+      "spaceId": "tier-1-princes-burial-chamber",
+      "kind": "casket",
+      "name": "Coffin 12",
+      "nameFr": "Cercueil 12",
+      "at": [-14.25, -73.1],
+      "size": [0.95, 2.2],
+      "rotation": -295.71,
+      "height": 0.85,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 358 shows the chamber; ch. 371 draws it round, the fourteen coffins set radially about its centre.",
+      "sourceFr": "Le chap. 358 montre la chambre ; le chap. 371 la dessine ronde, les quatorze cercueils disposés en rayons autour de son centre."
+    },
+    {
+      "id": "tier-1-princes-burial-chamber-coffin-13",
+      "spaceId": "tier-1-princes-burial-chamber",
+      "kind": "casket",
+      "name": "Coffin 13",
+      "nameFr": "Cercueil 13",
+      "at": [-12.55, -70.98],
+      "size": [0.95, 2.2],
+      "rotation": -321.43,
+      "height": 0.85,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 358 shows the chamber; ch. 371 draws it round, the fourteen coffins set radially about its centre.",
+      "sourceFr": "Le chap. 358 montre la chambre ; le chap. 371 la dessine ronde, les quatorze cercueils disposés en rayons autour de son centre."
+    },
+    {
+      "id": "tier-1-princes-burial-chamber-coffin-14",
+      "spaceId": "tier-1-princes-burial-chamber",
+      "kind": "casket",
+      "name": "Coffin 14",
+      "nameFr": "Cercueil 14",
+      "at": [-10.11, -69.8],
+      "size": [0.95, 2.2],
+      "rotation": -347.14,
+      "height": 0.85,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 358 shows the chamber; ch. 371 draws it round, the fourteen coffins set radially about its centre.",
+      "sourceFr": "Le chap. 358 montre la chambre ; le chap. 371 la dessine ronde, les quatorze cercueils disposés en rayons autour de son centre."
+    },
+    {
+      "id": "tier-1-princes-burial-chamber-reliquary",
+      "spaceId": "tier-1-princes-burial-chamber",
+      "kind": "casket",
+      "name": "Central Reliquary",
+      "nameFr": "Reliquaire central",
+      "at": [-8.75, -75.75],
+      "size": [2.4, 2.4],
+      "rotation": 0,
+      "height": 2.2,
+      "sides": 16,
+      "provenance": "panel",
+      "source": "Ch. 358 shows the chamber; ch. 371 draws it round, the fourteen coffins set radially about its centre.",
+      "sourceFr": "Le chap. 358 montre la chambre ; le chap. 371 la dessine ronde, les quatorze cercueils disposés en rayons autour de son centre."
+    },
+    {
+      "id": "tier-5-hull-suspension-spring-01",
+      "spaceId": "tier-5-hull-suspension-bay",
+      "kind": "spring",
+      "name": "Suspension Spring 1",
+      "nameFr": "Ressort de suspension 1",
+      "at": [-16.5, -5],
+      "size": [3.6, 3.6],
+      "rotation": 0,
+      "height": 18,
+      "sides": 16,
+      "provenance": "panel",
+      "source": "Ch. 406 — the sprung mounts the hull carries the ship on, with gangways run between them.",
+      "sourceFr": "Chap. 406 — les suspensions à ressort sur lesquelles la coque porte le vaisseau, avec des passerelles entre elles."
+    },
+    {
+      "id": "tier-5-hull-suspension-spring-02",
+      "spaceId": "tier-5-hull-suspension-bay",
+      "kind": "spring",
+      "name": "Suspension Spring 2",
+      "nameFr": "Ressort de suspension 2",
+      "at": [-9.9, -5],
+      "size": [3.6, 3.6],
+      "rotation": 0,
+      "height": 18,
+      "sides": 16,
+      "provenance": "panel",
+      "source": "Ch. 406 — the sprung mounts the hull carries the ship on, with gangways run between them.",
+      "sourceFr": "Chap. 406 — les suspensions à ressort sur lesquelles la coque porte le vaisseau, avec des passerelles entre elles."
+    },
+    {
+      "id": "tier-5-hull-suspension-spring-03",
+      "spaceId": "tier-5-hull-suspension-bay",
+      "kind": "spring",
+      "name": "Suspension Spring 3",
+      "nameFr": "Ressort de suspension 3",
+      "at": [-3.3, -5],
+      "size": [3.6, 3.6],
+      "rotation": 0,
+      "height": 18,
+      "sides": 16,
+      "provenance": "panel",
+      "source": "Ch. 406 — the sprung mounts the hull carries the ship on, with gangways run between them.",
+      "sourceFr": "Chap. 406 — les suspensions à ressort sur lesquelles la coque porte le vaisseau, avec des passerelles entre elles."
+    },
+    {
+      "id": "tier-5-hull-suspension-spring-04",
+      "spaceId": "tier-5-hull-suspension-bay",
+      "kind": "spring",
+      "name": "Suspension Spring 4",
+      "nameFr": "Ressort de suspension 4",
+      "at": [3.3, -5],
+      "size": [3.6, 3.6],
+      "rotation": 0,
+      "height": 18,
+      "sides": 16,
+      "provenance": "panel",
+      "source": "Ch. 406 — the sprung mounts the hull carries the ship on, with gangways run between them.",
+      "sourceFr": "Chap. 406 — les suspensions à ressort sur lesquelles la coque porte le vaisseau, avec des passerelles entre elles."
+    },
+    {
+      "id": "tier-5-hull-suspension-spring-05",
+      "spaceId": "tier-5-hull-suspension-bay",
+      "kind": "spring",
+      "name": "Suspension Spring 5",
+      "nameFr": "Ressort de suspension 5",
+      "at": [9.9, -5],
+      "size": [3.6, 3.6],
+      "rotation": 0,
+      "height": 18,
+      "sides": 16,
+      "provenance": "panel",
+      "source": "Ch. 406 — the sprung mounts the hull carries the ship on, with gangways run between them.",
+      "sourceFr": "Chap. 406 — les suspensions à ressort sur lesquelles la coque porte le vaisseau, avec des passerelles entre elles."
+    },
+    {
+      "id": "tier-5-hull-suspension-spring-06",
+      "spaceId": "tier-5-hull-suspension-bay",
+      "kind": "spring",
+      "name": "Suspension Spring 6",
+      "nameFr": "Ressort de suspension 6",
+      "at": [16.5, -5],
+      "size": [3.6, 3.6],
+      "rotation": 0,
+      "height": 18,
+      "sides": 16,
+      "provenance": "panel",
+      "source": "Ch. 406 — the sprung mounts the hull carries the ship on, with gangways run between them.",
+      "sourceFr": "Chap. 406 — les suspensions à ressort sur lesquelles la coque porte le vaisseau, avec des passerelles entre elles."
+    },
+    {
+      "id": "tier-1-banquet-hall-buffet-01",
+      "spaceId": "tier-1-banquet-hall",
+      "kind": "counter",
+      "name": "Buffet Counter 1",
+      "nameFr": "Comptoir de buffet 1",
+      "at": [56, -22],
+      "size": [14, 2.2],
+      "rotation": 0,
+      "height": 1.1,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 383 — the buffet the hall is served from, chefs behind the counter and the dishes laid along it.",
+      "sourceFr": "Chap. 383 — le buffet qui sert la salle, les cuisiniers derrière le comptoir et les plats disposés dessus."
+    },
+    {
+      "id": "tier-1-banquet-hall-buffet-02",
+      "spaceId": "tier-1-banquet-hall",
+      "kind": "counter",
+      "name": "Buffet Counter 2",
+      "nameFr": "Comptoir de buffet 2",
+      "at": [56, -9.5],
+      "size": [14, 2.2],
+      "rotation": 0,
+      "height": 1.1,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 383 — the buffet the hall is served from, chefs behind the counter and the dishes laid along it.",
+      "sourceFr": "Chap. 383 — le buffet qui sert la salle, les cuisiniers derrière le comptoir et les plats disposés dessus."
+    },
+    {
+      "id": "tier-1-princes-quarters-gate-desk",
+      "spaceId": "tier-1-princes-quarters-gate",
+      "kind": "counter",
+      "name": "Gate Desk",
+      "nameFr": "Comptoir du poste",
+      "at": [14, 0],
+      "size": [6, 1.4],
+      "rotation": 0,
+      "height": 1.1,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 382 — the guarded gate to the princes' quarters, its desk and its posted soldiers.",
+      "sourceFr": "Chap. 382 — le poste gardé à l'entrée des quartiers princiers, son comptoir et ses soldats en faction."
     }
   ]
 }

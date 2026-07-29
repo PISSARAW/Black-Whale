@@ -90,9 +90,12 @@ devenue inaccessible fait échouer `validateBlueprint`, donc la suite de tests.
 ### `locationId`
 
 Rattache un espace à `data/locations/locations.json`, pour que la visite et le
-catalogue parlent du même lieu. `null` signifie que la reconstruction a inventé
-cet espace. Plusieurs espaces peuvent partager un `locationId` : le pont des
-canots a une moitié bâbord et une moitié tribord pour une seule fiche.
+catalogue parlent du même lieu. `null` signifie que le catalogue ne tient
+aucune fiche pour cet espace — le plus souvent parce que la reconstruction l'a
+inventé, parfois parce qu'une planche montre un lieu que le catalogue n'a pas
+encore, comme le poste gardé à l'entrée des quartiers princiers. Plusieurs
+espaces peuvent partager un `locationId` : le pont des canots a une moitié
+bâbord et une moitié tribord pour une seule fiche.
 
 ### `provenance` — ce que le manga soutient vraiment
 
@@ -132,11 +135,14 @@ carte `/ship` et la visite montrent le même pont 1 — et l'intérieur est un
 **niveau à part**, tracé à sa taille réelle, dans lequel on entre par la porte.
 C'est la structure de `/ship` (plan de pont → plan de salle), en volume.
 
-Vingt-deux pièces ont ainsi leur intérieur : les quatorze appartements
-princiers, et les huit plans de salle qui comptent plus d'une pièce — quartier
+Vingt-quatre pièces ont ainsi leur intérieur : les quatorze appartements
+princiers, les huit plans de salle qui comptent plus d'une pièce — quartier
 de détention VIP, quartiers des soldats, bureau de la Justice, hôpital central,
-cinéplexe, bureau Cha-R, cabines standard, cabines de première classe. Les 23
-autres plans locaux ne dessinent qu'une salle, que le pont porte déjà.
+cinéplexe, bureau Cha-R, cabines standard, cabines de première classe — puis
+deux volumes qu'aucune boîte de pont ne peut contenir : le salon du Roi, que le
+chap. 382 montre du sol au plafond, et la suspension de la coque du chap. 406,
+dont les ressorts font trois fois la hauteur d'un pont. Les 23 autres plans
+locaux ne dessinent qu'une salle, que le pont porte déjà.
 
 Chaque plan a **sa propre échelle**, choisie sur ce que ses pièces doivent
 mesurer pour être parcourues — une cabine standard de 6 m, une cellule de 10 —
@@ -153,6 +159,44 @@ Le plan d'appartement cloisonne la cuisine de tous les côtés. Une cuisine où
 personne ne peut entrer est un lapsus de dessin, pas une affirmation sur le
 vaisseau : la visite ouvre la seule porte qu'elle doit avoir, sur la salle à
 manger qu'elle dessert. C'est consigné dans le `reason` de la porte.
+
+## Les structures
+
+`structures` pose un solide **dans** un espace : on le voit, on le contourne,
+on ne le traverse pas.
+
+La visite ne meuble pas le vaisseau. Une chaise n'est pas de l'architecture, et
+sa place n'est pas ce que les planches consignent. Quelques pièces font
+exception, parce que ce qu'une planche y montre **est** ce qui s'y dresse : la
+chambre funéraire est une couronne de quatorze cercueils autour d'un reliquaire
+(chap. 371), la salle de banquet est sa scène, l'estrade du trône et le buffet
+qui la sert (chap. 383), et l'espace entre la coque et le vaisseau est fait des
+ressorts qui portent l'un dans l'autre (chap. 406). Les laisser de côté aurait
+dessiné un tambour vide, une halle vide et un hangar vide — et affirmé en creux
+que les planches ne montrent rien.
+
+Une structure porte donc **sa propre source** : la pièce peut reposer sur un
+chapitre et ce qui s'y dresse sur un autre. C'est le cas de la chambre
+funéraire, montrée au chap. 358 et dessinée ronde au chap. 371.
+
+| Champ      | Sens                                                              |
+| ---------- | ----------------------------------------------------------------- |
+| `spaceId`  | L'espace où elle se dresse ; son niveau en découle.               |
+| `at`       | Le centre, dans le repère du niveau.                              |
+| `size`     | L'encombrement en `x` et en `z`, avant rotation.                  |
+| `rotation` | En degrés, autour de son propre centre.                           |
+| `sides`    | `null` pour un rectangle, sinon un polygone régulier à `n` côtés. |
+| `height`   | Ce dont elle dépasse du sol.                                      |
+
+`sides` évite d'écrire quatorze quadrilatères à la main : les cercueils sont un
+rectangle tourné vers le centre, les ressorts un seizième de cercle.
+
+Les faces d'une structure entrent dans **la même liste de murs** que celles de
+la pièce : un ressort qu'on voit est un ressort qu'on contourne, exactement
+comme un pilier. `validateBlueprint` refuse une structure qui déborde de sa
+pièce, qui en chevauche une autre, qui se dresse sur un pilier — ou qui occupe
+le point où le visiteur arrive, ce qui reviendrait à une salle où l'on ne peut
+pas entrer.
 
 ### Le français
 

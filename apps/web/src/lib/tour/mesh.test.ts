@@ -49,6 +49,27 @@ describe('buildTierMesh', () => {
   })
 })
 
+describe('the solids standing in the rooms', () => {
+  it('raises the springs to their own height, not the room floor', () => {
+    const plan = ship.plans.get('interior-hull-suspension')!
+    const mesh = buildTierMesh(plan)
+    const tallest = Math.max(...plan.structures.map((structure) => structure.height))
+
+    let highest = -Infinity
+    for (let i = 1; i < mesh.positions.length; i += 3) highest = Math.max(highest, mesh.positions[i])
+    expect(highest).toBeGreaterThanOrEqual(plan.tier.elevation + tallest)
+  })
+
+  it('draws more geometry for a room with something in it', () => {
+    const withCoffins = buildTierMesh(ship.plans.get('tier-1')!).triangles
+    const empty = buildTierMesh({
+      ...ship.plans.get('tier-1')!,
+      structures: [],
+    }).triangles
+    expect(withCoffins).toBeGreaterThan(empty)
+  })
+})
+
 describe('colourFor', () => {
   const base = [0.5, 0.5, 0.5] as const
 

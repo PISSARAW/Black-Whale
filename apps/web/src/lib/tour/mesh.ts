@@ -6,10 +6,16 @@
  * tested without a WebGL context. The Svelte component does nothing but hand
  * these buffers to a `BufferGeometry`.
  */
-import { COLUMN_HALF_WIDTH, DOOR_HEIGHT, triangulate } from './geometry'
+import {
+  COLUMN_HALF_WIDTH,
+  DOOR_HEIGHT,
+  iterateEdges,
+  structureFootprint,
+  triangulate,
+} from './geometry'
 import { ceilingOf } from './blueprint'
 import type { TierPlan } from './blueprint'
-import type { Provenance, Space, SpaceCategory, Vec2 } from './types'
+import type { Provenance, Space, SpaceCategory, StructureKind, Vec2 } from './types'
 
 export interface TierMesh {
   positions: Float32Array
@@ -56,6 +62,18 @@ const CATEGORY_COLOURS: Record<SpaceCategory, number> = {
   evacuation: 0x14262a,
   infrastructure: 0x1e1e1e,
   storage: 0x24211a,
+}
+
+/**
+ * What stands in a room, kept apart from the room itself: bare machinery for
+ * the springs, near-black lacquer for the coffins, and the gold of the deck
+ * plans for a stage or a dais.
+ */
+const STRUCTURE_COLOURS: Record<StructureKind, number> = {
+  spring: 0x6d7078,
+  casket: 0x241d1d,
+  platform: 0x4c3a17,
+  counter: 0x3c3227,
 }
 
 const WALL_COLOUR = hex(0x4a4038)
@@ -212,6 +230,31 @@ export function buildTierMesh(plan: TierPlan): TierMesh {
         colour,
       )
       for (const corner of corners) vertical(corner, tier.elevation, top)
+    }
+  }
+
+  // What stands in the rooms. Its sides are already in `plan.walls`, so this
+  // only has to raise them: the same outline, extruded to its own height and
+  // capped, and never taller than the room it stands in.
+  for (const structure of plan.structures) {
+    const room = spaces.get(structure.spaceId)
+    if (!room) continue
+    const outline = structureFootprint(structure)
+    const colour = colourFor(hex(STRUCTURE_COLOURS[structure.kind]), structure.provenance)
+    const top = Math.min(tier.elevation + structure.height, heightOf(room))
+
+    for (const [start, end] of iterateEdges(outline)) {
+      builder.quad(start, end, tier.elevation, top, colour)
+      vertical(start, tier.elevation, top)
+      horizontal(start, end, top - OFFSET)
+    }
+
+    const cap = triangulate(outline)
+    for (let i = 0; i < cap.length; i += 3) {
+      const a = outline[cap[i]]
+      const b = outline[cap[i + 1]]
+      const c = outline[cap[i + 2]]
+      builder.triangle([a[0], top, a[1]], [b[0], top, b[1]], [c[0], top, c[1]], colour)
     }
   }
 

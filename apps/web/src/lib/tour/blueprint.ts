@@ -21,6 +21,8 @@ import {
   polygonArea,
   polygonsOverlap,
   pointInPolygon,
+  structureFootprint,
+  structureWalls,
   wallSegments,
 } from './geometry'
 import type {
@@ -30,6 +32,7 @@ import type {
   Link,
   Seal,
   Space,
+  Structure,
   Tier,
   Vec2,
   WallSegment,
@@ -46,6 +49,8 @@ export interface TierPlan {
   walls: WallSegment[]
   /** Column centres, by space id, for the renderer to raise pillars on. */
   columns: Map<string, Vec2[]>
+  /** The solids standing on this level: springs, coffins, stages. */
+  structures: Structure[]
 }
 
 export interface Ship {
@@ -59,6 +64,7 @@ export interface Ship {
   links: Link[]
   seals: Seal[]
   doors: DoorOverride[]
+  structures: Structure[]
   /** Space id → the spaces it opens onto, across doorways and vertical links. */
   adjacency: Map<string, string[]>
 }
@@ -84,8 +90,11 @@ export function buildShip(source: Blueprint = blueprint): Ship {
     else adjacency.set(from, [to])
   }
 
+  const allStructures = source.structures ?? []
+
   for (const tier of tiers) {
     const tierSpaces = source.spaces.filter((space) => space.tierId === tier.id)
+    const onThisTier = new Set(tierSpaces.map((space) => space.id))
     const doorways = deriveDoorways(tierSpaces, { sealed, overrides })
     const walls = tierSpaces.flatMap((space) => wallSegments(space, doorways))
 
@@ -97,7 +106,12 @@ export function buildShip(source: Blueprint = blueprint): Ship {
       for (const centre of centres) walls.push(...columnWalls(space.id, centre))
     }
 
-    plans.set(tier.id, { tier, spaces: tierSpaces, doorways, walls, columns })
+    // A structure's faces join the room's own walls, so the collision test and
+    // the renderer read one list and cannot disagree about what is solid.
+    const structures = allStructures.filter((structure) => onThisTier.has(structure.spaceId))
+    for (const structure of structures) walls.push(...structureWalls(structure))
+
+    plans.set(tier.id, { tier, spaces: tierSpaces, doorways, walls, columns, structures })
 
     for (const space of tierSpaces) if (!adjacency.has(space.id)) adjacency.set(space.id, [])
     for (const door of doorways) {
@@ -120,6 +134,7 @@ export function buildShip(source: Blueprint = blueprint): Ship {
     links: source.links,
     seals: source.seals ?? [],
     doors: source.doors ?? [],
+    structures: allStructures,
     adjacency,
   }
 }
@@ -143,21 +158,47 @@ export function spaceAt(plan: TierPlan, point: Vec2): Space | null {
  *
  * The natural centre of a large room is exactly where a column tends to be, so
  * a spawn that lands on one is nudged clear rather than dropping the visitor
- * inside a pillar.
+ * inside a pillar. The same holds for anything else standing in the room: the
+ * middle of the burial chamber is the middle of the reliquary, and the middle
+ * of the spring bay is a spring.
  */
-export function spawnPoint(space: Space): Vec2 {
+export function spawnPoint(space: Space, structures: Structure[] = []): Vec2 {
   const point = interiorPoint(space.footprint)
   const clearance = COLUMN_HALF_WIDTH + 1.2
 
+  let candidate = point
   for (const centre of columnPositions(space.footprint)) {
     const dx = point[0] - centre[0]
     const dz = point[1] - centre[1]
     if (Math.abs(dx) > clearance || Math.abs(dz) > clearance) continue
     const shifted: Vec2 = [centre[0] + COLUMN_SPACING / 2, centre[1]]
-    return pointInPolygon(shifted, space.footprint) ? shifted : [centre[0], centre[1] + clearance]
+    candidate = pointInPolygon(shifted, space.footprint)
+      ? shifted
+      : [centre[0], centre[1] + clearance]
+    break
   }
 
-  return point
+  const solids = structures
+    .filter((structure) => structure.spaceId === space.id)
+    .map((structure) => structureFootprint(structure))
+  const clear = (at: Vec2) =>
+    pointInPolygon(at, space.footprint) && !solids.some((solid) => pointInPolygon(at, solid))
+  if (clear(candidate)) return candidate
+
+  // Step outwards in a ring until the floor is free. Rooms with something in
+  // the middle are exactly the ones worth arriving in facing it.
+  for (const distance of [2, 4, 6, 8, 12]) {
+    for (let step = 0; step < 8; step++) {
+      const angle = (step * Math.PI) / 4
+      const at: Vec2 = [
+        candidate[0] + Math.cos(angle) * distance,
+        candidate[1] + Math.sin(angle) * distance,
+      ]
+      if (clear(at)) return at
+    }
+  }
+
+  return candidate
 }
 
 /**
@@ -211,6 +252,7 @@ export function entrySpace(plan: TierPlan): Space {
 
 const PROVENANCES = new Set(['panel', 'plan', 'inferred'])
 const LINK_KINDS = new Set(['stair', 'lift', 'bulkhead', 'door'])
+const STRUCTURE_KINDS = new Set(['spring', 'casket', 'platform', 'counter'])
 
 /**
  * Every rule the reconstruction has to satisfy, as a list of failures. An empty
@@ -338,6 +380,66 @@ export function validateBlueprint(source: Blueprint = blueprint): string[] {
     if (!link.source.trim()) issues.push(`link ${link.from} → ${link.to}: missing source`)
     if (!link.sourceFr.trim()) {
       issues.push(`link ${link.from} → ${link.to}: missing French source`)
+    }
+  }
+
+  // A structure is solid, so it has to stand somewhere real, stay inside the
+  // room it belongs to, and leave that room walkable: one planted half in a
+  // wall, or on the very spot the visitor arrives at, is a room you cannot
+  // enter rather than a room with something in it.
+  const structureIds = new Set<string>()
+  const byRoom = new Map<string, Structure[]>()
+  for (const structure of source.structures ?? []) {
+    const id = `structure ${structure.id}`
+    if (structureIds.has(structure.id)) issues.push(`${id}: duplicate id`)
+    structureIds.add(structure.id)
+
+    if (!STRUCTURE_KINDS.has(structure.kind)) issues.push(`${id}: unknown kind "${structure.kind}"`)
+    if (!PROVENANCES.has(structure.provenance)) {
+      issues.push(`${id}: unknown provenance "${structure.provenance}"`)
+    }
+    if (!structure.source.trim()) issues.push(`${id}: missing source`)
+    if (!structure.sourceFr.trim()) issues.push(`${id}: missing French source`)
+    if (!structure.nameFr.trim()) issues.push(`${id}: missing French name`)
+    if (structure.height <= 0) issues.push(`${id}: stands no higher than the floor`)
+    if (structure.sides !== null && structure.sides < 3) {
+      issues.push(`${id}: ${structure.sides} sides cannot enclose anything`)
+    }
+
+    const room = source.spaces.find((space) => space.id === structure.spaceId)
+    if (!room) {
+      issues.push(`${id}: stands in "${structure.spaceId}", which does not exist`)
+      continue
+    }
+    byRoom.set(structure.spaceId, [...(byRoom.get(structure.spaceId) ?? []), structure])
+
+    const outline = structureFootprint(structure)
+    if (polygonArea(outline) < 0.25) issues.push(`${id}: has no usable footprint`)
+    if (!outline.every((corner) => pointInPolygon(corner, room.footprint))) {
+      issues.push(`${id}: sticks out of ${room.id}`)
+    }
+  }
+
+  for (const [spaceId, standing] of byRoom) {
+    const room = source.spaces.find((space) => space.id === spaceId)!
+    for (let i = 0; i < standing.length; i++) {
+      for (let j = i + 1; j < standing.length; j++) {
+        if (polygonsOverlap(structureFootprint(standing[i]), structureFootprint(standing[j]))) {
+          issues.push(`structures ${standing[i].id} and ${standing[j].id} stand in each other`)
+        }
+      }
+      for (const centre of columnPositions(room.footprint)) {
+        if (pointInPolygon(centre, structureFootprint(standing[i]))) {
+          issues.push(`structure ${standing[i].id}: stands on a column of ${room.id}`)
+        }
+      }
+    }
+
+    const arrival = spawnPoint(room, standing)
+    for (const structure of standing) {
+      if (pointInPolygon(arrival, structureFootprint(structure))) {
+        issues.push(`structure ${structure.id}: the visitor arrives inside it`)
+      }
     }
   }
 

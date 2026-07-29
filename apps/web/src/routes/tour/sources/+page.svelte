@@ -151,6 +151,41 @@
     }),
   )
 
+  /**
+   * What stands in the rooms, gathered by source: fourteen coffins rest on one
+   * panel between them, and listing them one by one would bury the claim.
+   */
+  const solids = $derived.by(() => {
+    const collected: Record<
+      string,
+      { label: string; provenance: Provenance; rooms: Set<string>; count: number } | undefined
+    > = {}
+
+    for (const structure of ship.structures) {
+      const room = ship.spaces.get(structure.spaceId)
+      const existing = collected[structure.source]
+      if (existing) {
+        existing.count += 1
+        if (room) existing.rooms.add(nameOf(room))
+        continue
+      }
+      collected[structure.source] = {
+        label: sourceOf(structure),
+        provenance: structure.provenance,
+        rooms: new Set(room ? [nameOf(room)] : []),
+        count: 1,
+      }
+    }
+
+    return Object.values(collected)
+      .filter((entry) => entry !== undefined)
+      .sort(
+        (a, b) =>
+          PROVENANCE_ORDER.indexOf(a.provenance) - PROVENANCE_ORDER.indexOf(b.provenance) ||
+          b.count - a.count,
+      )
+  })
+
   /** Seals and hand-placed doors say the same thing many times over. */
   function byReason(entries: Array<{ reason: string; reasonFr: string }>) {
     const counted: Record<string, { label: string; count: number } | undefined> = {}
@@ -350,6 +385,35 @@
       {/each}
     </ul>
   </section>
+
+  <!-- What a panel shows standing in a room is a claim like any other -->
+  {#if solids.length}
+    <section class="mt-10">
+      <h2 class="text-xs uppercase tracking-widest text-[#FFD700]/70">
+        {$t.tourSources.structures.title}
+      </h2>
+      <p class="mt-2 max-w-3xl text-sm leading-relaxed text-[#FFFFF0]/60">
+        {$t.tourSources.structures.help}
+      </p>
+      <ul class="mt-3 divide-y divide-[#222] rounded-lg border border-[#333]">
+        {#each solids as entry (entry.label)}
+          <li class="flex flex-wrap items-baseline gap-x-3 gap-y-1 p-3 text-xs">
+            <span
+              class="shrink-0 rounded border px-1.5 py-0.5 text-[10px] uppercase tracking-wider {provenanceClass(
+                entry.provenance,
+              )}"
+            >
+              {$t.tourSources.structures.count(entry.count)}
+            </span>
+            <span class="flex-1 text-[#FFFFF0]/90">{entry.label}</span>
+            <span class="text-[#FFFFF0]/50">
+              {$t.tourSources.structures.standingIn([...entry.rooms].join(', '))}
+            </span>
+          </li>
+        {/each}
+      </ul>
+    </section>
+  {/if}
 
   <!-- The joins, the blind walls and the hand-placed doors: claims too -->
   <section class="mt-10">

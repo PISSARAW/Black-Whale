@@ -105,7 +105,7 @@ export const en = {
   tourSources: {
     seoTitle: 'Sources — Where every room of the Black Whale comes from',
     seoDescription:
-      'The evidence behind the reconstructed Black Whale, room by room: which chapter or plan each of the 205 spaces rests on, which corridors the reconstruction invented, and which walls were sealed on purpose.',
+      'The evidence behind the reconstructed Black Whale, room by room: which chapter or plan each of the 264 spaces rests on, which corridors the reconstruction invented, and which walls were sealed on purpose.',
     breadcrumb: 'Sources',
     title: 'Where every room comes from',
     intro:
@@ -147,6 +147,13 @@ export const en = {
       lift: 'Lift',
       bulkhead: 'Bulkhead',
       door: 'Door',
+    },
+
+    structures: {
+      title: 'What stands in the rooms',
+      help: 'The tour does not furnish the ship — a chair is not architecture, and where one stood is not something the panels record. A few rooms are the exception, because what a panel shows is the thing standing in them: the ring of coffins is the burial chamber, the springs are what the hull carries the ship on. Those are drawn, they are solid, and they carry their own source, which is not always the source of the room around them.',
+      standingIn: (room: string) => `in ${room}`,
+      count: (count: number) => `${count} ${count === 1 ? 'solid' : 'solids'}`,
     },
 
     seals: {

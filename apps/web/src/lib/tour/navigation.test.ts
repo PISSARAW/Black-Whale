@@ -113,7 +113,7 @@ describe('walking the reconstruction itself', () => {
   it('keeps the visitor inside the ship from every spawn point', () => {
     for (const [tierId, plan] of ship.plans) {
       for (const space of plan.spaces) {
-        const start = spawnPoint(space)
+        const start = spawnPoint(space, plan.structures)
         // Shove hard in each direction; every push has to end up somewhere
         // that is still a room, never out in the hull.
         for (const direction of [
@@ -134,7 +134,7 @@ describe('walking the reconstruction itself', () => {
   it('never spawns the visitor inside a wall', () => {
     for (const plan of ship.plans.values()) {
       for (const space of plan.spaces) {
-        const start = spawnPoint(space)
+        const start = spawnPoint(space, plan.structures)
         expect(pointInPolygon(start, space.footprint)).toBe(true)
         expect(resolveMovement(start, start, plan.walls)).toEqual(start)
       }

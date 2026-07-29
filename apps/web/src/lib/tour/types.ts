@@ -48,6 +48,16 @@ export type SpaceCategory =
 export type LinkKind = 'stair' | 'lift' | 'bulkhead' | 'door'
 
 /**
+ * What kind of solid stands inside a room.
+ *
+ * - `spring` — one of the sprung mounts the hull carries the ship on.
+ * - `casket` — a coffin in the burial chamber, and the reliquary at its centre.
+ * - `platform` — a stage or a dais: floor raised above the floor.
+ * - `counter` — a servery or a guard post: a run of desk you are kept behind.
+ */
+export type StructureKind = 'spring' | 'casket' | 'platform' | 'counter'
+
+/**
  * What a level is: a deck of the ship, or the inside of a single room drawn at
  * its own scale.
  *
@@ -116,6 +126,45 @@ export interface Space {
 }
 
 /**
+ * A solid standing inside a space: seen, and walked around.
+ *
+ * Rooms are stored as empty outlines, which is enough for most of the ship —
+ * furniture is not architecture and the tour does not pretend to know where a
+ * chair was. A few panels show something else, though: what a room *is* is the
+ * thing standing in it. The burial chamber is fourteen coffins set in a ring,
+ * the banquet hall is its stage and the throne on its dais, and the space
+ * between the hull and the ship is the springs that carry one inside the other.
+ * Leaving those out would draw an empty drum, an empty shed and an empty hall,
+ * and would quietly claim the panels show nothing.
+ *
+ * A structure is therefore geometry like any other, and carries its own source:
+ * the room may rest on one chapter and what stands in it on another. The walls
+ * of a structure go into the same list as the walls of the room, so a spring
+ * you can see is a spring you have to walk around.
+ */
+export interface Structure {
+  id: string
+  /** The space it stands in; its level follows from that space. */
+  spaceId: string
+  kind: StructureKind
+  name: string
+  nameFr: string
+  /** Centre, in the coordinates of the level the space is on. */
+  at: Vec2
+  /** Full extent across `x` and `z` before rotation, in metres. */
+  size: Vec2
+  /** Turned about its own centre, in degrees. */
+  rotation: number
+  /** How far it stands off the floor. */
+  height: number
+  /** Cut as a rounded solid of this many sides, or `null` for a rectangle. */
+  sides: number | null
+  provenance: Provenance
+  source: string
+  sourceFr: string
+}
+
+/**
  * A doorway placed by hand rather than centred on the shared wall.
  *
  * The room plans put their doors where they mean them — the servants' door in
@@ -179,6 +228,7 @@ export interface Blueprint {
   links: Link[]
   seals: Seal[]
   doors: DoorOverride[]
+  structures: Structure[]
 }
 
 /**

@@ -9,7 +9,8 @@ import {
   spawnPoint,
   validateBlueprint,
 } from './blueprint'
-import { pointInPolygon, polygonArea, sealKey } from './geometry'
+import { pointInPolygon, polygonArea, sealKey, structureFootprint } from './geometry'
+import type { Vec2 } from './types'
 
 const ship = buildShip()
 
@@ -139,9 +140,14 @@ describe('interiors', () => {
 
   it('gives every interior a way in and a way back out', () => {
     for (const tier of interiors) {
-      const link = ship.links.find((candidate) => candidate.to.startsWith(tier.parentSpaceId!))
+      // The room may also have a stairwell in it, so the door is picked by
+      // what it joins rather than by being the first link that names the room.
+      const link = ship.links.find(
+        (candidate) =>
+          candidate.kind === 'door' &&
+          (candidate.from === tier.parentSpaceId || candidate.to === tier.parentSpaceId),
+      )
       expect(link, `${tier.id} cannot be entered`).toBeDefined()
-      expect(link!.kind).toBe('door')
       // Both ends given, since the two sides have different origins.
       expect(link!.atTo).toBeDefined()
     }
@@ -206,6 +212,103 @@ describe('interiors', () => {
       expect(neighbours(`${prefix}-servants`).has(`${prefix}-entrance`)).toBe(false)
       expect(neighbours(`${prefix}-entrance`).has(`${prefix}-kitchen`)).toBe(false)
       expect(neighbours(`${prefix}-living`).has(`${prefix}-bedroom`)).toBe(true)
+    }
+  })
+})
+
+describe('what stands in the rooms', () => {
+  const inRoom = (spaceId: string) =>
+    ship.structures.filter((structure) => structure.spaceId === spaceId)
+
+  it('stands everything it draws in a room that exists', () => {
+    for (const structure of ship.structures) {
+      expect(ship.spaces.get(structure.spaceId), `${structure.id} stands nowhere`).toBeDefined()
+    }
+  })
+
+  it('sets the ring of coffins the burial chamber is drawn as', () => {
+    const chamber = ship.spaces.get('tier-1-princes-burial-chamber')!
+    const standing = inRoom(chamber.id)
+    expect(standing.filter((structure) => structure.id.includes('coffin'))).toHaveLength(14)
+
+    // Every one of them radial, inside the chamber, and clear of its walls.
+    for (const coffin of standing) {
+      for (const corner of structureFootprint(coffin)) {
+        expect(pointInPolygon(corner, chamber.footprint), `${coffin.id} is in a wall`).toBe(true)
+      }
+    }
+  })
+
+  it('leaves the way into the burial chamber open', () => {
+    const plan = ship.plans.get('tier-1')!
+    const door = plan.doorways.find(
+      (candidate) =>
+        [candidate.a, candidate.b].includes('tier-1-princes-burial-chamber') &&
+        [candidate.a, candidate.b].includes('tier-1-burial-passage'),
+    )
+    expect(door, 'the burial chamber has no doorway').toBeDefined()
+
+    // Walk in from the threshold: a coffin set on the axis of the door would
+    // seal the room the derived doorway says is open.
+    const from: Vec2 = [(door!.start[0] + door!.end[0]) / 2, (door!.start[1] + door!.end[1]) / 2]
+    const inside: Vec2 = [from[0], from[1] - 4]
+    for (const coffin of inRoom('tier-1-princes-burial-chamber')) {
+      expect(
+        pointInPolygon(inside, structureFootprint(coffin)),
+        `${coffin.id} blocks the doorway`,
+      ).toBe(false)
+    }
+  })
+
+  it('carries the springs the hull holds the ship on', () => {
+    const springs = inRoom('tier-5-hull-suspension-bay')
+    expect(springs.length).toBeGreaterThan(1)
+    for (const spring of springs) {
+      expect(spring.kind).toBe('spring')
+      // Taller than a deck: the reason the bay is a level of its own.
+      expect(spring.height).toBeGreaterThan(ship.decks[0].ceiling)
+    }
+  })
+
+  it('collides with everything it draws', () => {
+    for (const plan of ship.plans.values()) {
+      for (const structure of plan.structures) {
+        const faces = plan.walls.filter((wall) => wall.spaceId === structure.spaceId)
+        const outline = structureFootprint(structure)
+        for (const corner of outline) {
+          expect(
+            faces.some(
+              (wall) =>
+                Math.hypot(wall.start[0] - corner[0], wall.start[1] - corner[1]) < 0.01 ||
+                Math.hypot(wall.end[0] - corner[0], wall.end[1] - corner[1]) < 0.01,
+            ),
+            `${structure.id} can be walked through`,
+          ).toBe(true)
+        }
+      }
+    }
+  })
+
+  it('never drops the visitor inside a solid', () => {
+    for (const plan of ship.plans.values()) {
+      for (const space of plan.spaces) {
+        const at = spawnPoint(space, plan.structures)
+        for (const structure of plan.structures) {
+          if (structure.spaceId !== space.id) continue
+          expect(
+            pointInPolygon(at, structureFootprint(structure)),
+            `${space.id} spawns inside ${structure.id}`,
+          ).toBe(false)
+        }
+      }
+    }
+  })
+
+  it('states every structure source in both languages', () => {
+    for (const structure of ship.structures) {
+      expect(structure.sourceFr.trim(), `${structure.id} has no French source`).not.toBe('')
+      expect(structure.sourceFr, `${structure.id} was not translated`).not.toBe(structure.source)
+      expect(structure.nameFr, `${structure.id} was not translated`).not.toBe('')
     }
   })
 })

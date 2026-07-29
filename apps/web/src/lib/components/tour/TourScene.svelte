@@ -183,7 +183,7 @@
 
         currentTierId = nextTierId
         const entry = entrySpace(plan)
-        pointer = at ?? spawnPoint(entry)
+        pointer = at ?? spawnPoint(entry, plan.structures)
         if (!at) {
           yaw = spawnFacing(entry, pointer)
           pitch = 0
@@ -195,7 +195,7 @@
       function goTo(spaceId: string) {
         const space = ship.spaces.get(spaceId)
         if (!space) return
-        const at = spawnPoint(space)
+        const at = spawnPoint(space, ship.plans.get(space.tierId)?.structures ?? [])
         yaw = spawnFacing(space, at)
         pitch = 0
         if (space.tierId !== currentTierId) loadTier(space.tierId, at)

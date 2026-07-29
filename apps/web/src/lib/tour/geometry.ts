@@ -6,7 +6,7 @@
  * renderer, the collision test and the validation suite, so a wall the player
  * bumps into is by construction the wall that was drawn.
  */
-import type { DoorOverride, Doorway, Polygon, Space, Vec2, WallSegment } from './types'
+import type { DoorOverride, Doorway, Polygon, Space, Structure, Vec2, WallSegment } from './types'
 
 /** Below this, two coordinates are the same point. Footprints are in metres. */
 export const EPSILON = 0.05
@@ -427,6 +427,48 @@ export function columnWalls(spaceId: string, centre: Vec2): WallSegment[] {
     spaceId,
     start: corner,
     end: corners[(index + 1) % corners.length],
+  }))
+}
+
+/**
+ * The outline of a solid standing in a room, in the level's coordinates.
+ *
+ * A rectangle when `sides` is `null` — a coffin, a stage — and otherwise a
+ * regular polygon of that many sides inscribed in the same box, which is how a
+ * spring or a reliquary comes out round. Both are then turned about the centre,
+ * so the ring of coffins can point every one of its members at the middle of
+ * the chamber without fourteen hand-written quadrilaterals in the blueprint.
+ */
+export function structureFootprint(structure: Structure): Polygon {
+  const [halfWidth, halfDepth] = [structure.size[0] / 2, structure.size[1] / 2]
+  const angle = (structure.rotation * Math.PI) / 180
+  const cos = Math.cos(angle)
+  const sin = Math.sin(angle)
+
+  const local: Vec2[] = structure.sides
+    ? Array.from({ length: structure.sides }, (_, index) => {
+        const step = (index * 2 * Math.PI) / structure.sides!
+        return [Math.sin(step) * halfWidth, Math.cos(step) * halfDepth] as Vec2
+      })
+    : [
+        [-halfWidth, -halfDepth],
+        [halfWidth, -halfDepth],
+        [halfWidth, halfDepth],
+        [-halfWidth, halfDepth],
+      ]
+
+  return local.map(([x, z]) => [
+    structure.at[0] + x * cos - z * sin,
+    structure.at[1] + x * sin + z * cos,
+  ])
+}
+
+/** The faces of a structure, as wall segments the visitor collides with. */
+export function structureWalls(structure: Structure): WallSegment[] {
+  return [...iterateEdges(structureFootprint(structure))].map(([start, end]) => ({
+    spaceId: structure.spaceId,
+    start,
+    end,
   }))
 }
 

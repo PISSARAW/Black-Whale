@@ -9,10 +9,12 @@ import {
   polygonsOverlap,
   sealKey,
   signedArea,
+  structureFootprint,
+  structureWalls,
   triangulate,
   wallSegments,
 } from './geometry'
-import type { Polygon, Space, Vec2 } from './types'
+import type { Polygon, Space, Structure, Vec2 } from './types'
 
 const square: Polygon = [
   [0, 0],
@@ -315,6 +317,55 @@ describe('polygonsOverlap', () => {
         [-5, 6],
       ]),
     ).toBe(true)
+  })
+})
+
+describe('structureFootprint', () => {
+  const coffin: Structure = {
+    id: 'coffin',
+    spaceId: 'chamber',
+    kind: 'casket',
+    name: 'Coffin',
+    nameFr: 'Cercueil',
+    at: [0, 0],
+    size: [1, 3],
+    rotation: 0,
+    height: 0.85,
+    sides: null,
+    provenance: 'panel',
+    source: 'source',
+    sourceFr: 'source',
+  }
+
+  it('draws a rectangle the size it was given', () => {
+    expect(polygonArea(structureFootprint(coffin))).toBeCloseTo(3)
+  })
+
+  it('turns it about its own centre, keeping the area', () => {
+    const turned = structureFootprint({ ...coffin, rotation: 90 })
+    expect(polygonArea(turned)).toBeCloseTo(3)
+    // Its long side now runs across x rather than along z.
+    const xs = turned.map((point) => point[0])
+    expect(Math.max(...xs) - Math.min(...xs)).toBeCloseTo(3)
+  })
+
+  it('places a turned solid around the point it stands on', () => {
+    const moved = structureFootprint({ ...coffin, at: [4, -2], rotation: 30 })
+    expect(pointInPolygon([4, -2], moved)).toBe(true)
+  })
+
+  it('cuts a round solid as a polygon inside the box it was given', () => {
+    const spring = structureFootprint({ ...coffin, sides: 16, size: [4, 4] })
+    expect(spring).toHaveLength(16)
+    // Inscribed, so it comes in just under the circle of the same width.
+    expect(polygonArea(spring)).toBeLessThan(Math.PI * 4)
+    expect(polygonArea(spring)).toBeGreaterThan(Math.PI * 3.8)
+  })
+
+  it('gives one wall per side, for the visitor to collide with', () => {
+    expect(structureWalls(coffin)).toHaveLength(4)
+    expect(structureWalls({ ...coffin, sides: 16 })).toHaveLength(16)
+    expect(structureWalls(coffin)[0].spaceId).toBe('chamber')
   })
 })
 

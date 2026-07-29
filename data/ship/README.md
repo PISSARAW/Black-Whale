@@ -258,6 +258,14 @@ l'ameublement, et ces meubles portent donc la source du plan et sa provenance
 `plan`. Les quatorze appartements sont le même plan : le jeu de meubles est
 authoré une fois, dans le repère de l'appartement, et répété pour chaque prince.
 
+Un seul en porte davantage, et c'est l'ordre d'autorité qui le veut : le
+chap. 360 montre le salon du **1014**, celui de Woble, et une planche l'emporte
+sur le plan. Ce que Kurapika y trouve s'ajoute donc au jeu commun, pour ce
+seul appartement : le téléphone mural par lequel il appelle Biscuit, l'armoire
+et la table de présentation le long du mur tribord, le fauteuil canné, les deux
+sellettes à sculpture, et les tableaux encadrés du mur lambrissé. Les treize
+autres salons gardent le jeu du plan, parce qu'aucune page ne les montre.
+
 Il vaut pour tout plan de salle, pas seulement celui des princes : les douze
 couchettes que chaque chambrée de soldats et chaque salle des Hunters
 provisoires dessine, le lit que chaque chambre de reine porte contre le mur

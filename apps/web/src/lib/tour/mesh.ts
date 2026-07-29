@@ -87,6 +87,7 @@ const STRUCTURE_COLOURS: Record<StructureKind, number> = {
   bars: 0x7f868e,
   manacle: 0x6f6250,
   camera: 0x22262a,
+  telephone: 0x2a2622,
 }
 
 const WALL_COLOUR = hex(0x4a4038)

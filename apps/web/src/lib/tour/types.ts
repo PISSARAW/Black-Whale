@@ -54,8 +54,11 @@ export type LinkKind = 'stair' | 'lift' | 'bulkhead' | 'door'
  * - `casket` — a coffin in the burial chamber, and the reliquary at its centre.
  * - `platform` — a stage or a dais: floor raised above the floor.
  * - `counter` — a servery or a guard post: a run of desk you are kept behind.
+ * - `lifeboat` — an escape pod on its cradle in the launch bay.
+ * - `pillar` — a post a panel draws, as opposed to the grid `columnPositions`
+ *   lays under a hall too wide to roof without one.
  */
-export type StructureKind = 'spring' | 'casket' | 'platform' | 'counter'
+export type StructureKind = 'spring' | 'casket' | 'platform' | 'counter' | 'lifeboat' | 'pillar'
 
 /**
  * What a level is: a deck of the ship, or the inside of a single room drawn at

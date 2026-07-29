@@ -335,6 +335,20 @@ export function polygonsOverlap(a: Polygon, b: Polygon): boolean {
   return false
 }
 
+/**
+ * Whether `inner` lies wholly within `outer` — one thing standing on another,
+ * rather than two things claiming the same floor.
+ */
+export function polygonContains(outer: Polygon, inner: Polygon): boolean {
+  if (!inner.every((point) => pointInPolygon(point, outer))) return false
+  for (const [a1, a2] of iterateEdges(outer)) {
+    for (const [b1, b2] of iterateEdges(inner)) {
+      if (segmentsProperlyCross(a1, a2, b1, b2)) return false
+    }
+  }
+  return true
+}
+
 function triangleCentroids(polygon: Polygon): Vec2[] {
   const triangles = triangulate(polygon)
   const points: Vec2[] = []

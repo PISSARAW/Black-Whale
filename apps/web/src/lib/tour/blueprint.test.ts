@@ -36,8 +36,11 @@ describe('the ship blueprint', () => {
     expect([...elevations].sort((a, b) => b - a)).toEqual(elevations)
   })
 
-  it('opens at least one doorway on every deck', () => {
+  it('opens at least one doorway on every level that has two rooms to join', () => {
     for (const [tierId, plan] of ship.plans) {
+      // A lifeboat is one room: nothing to open onto, and the link that puts
+      // it on the ship is what the connectivity check tests instead.
+      if (plan.spaces.length < 2) continue
       expect(plan.doorways.length, `${tierId} has no doorway`).toBeGreaterThan(0)
     }
   })

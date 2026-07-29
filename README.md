@@ -33,11 +33,11 @@ Five tiers, 37 hand-drawn SVG deck and room maps, and every tracked body placed 
 
 ### Walk it in first person
 
-[`/tour`](https://exploreblackwhale.com/tour) is the same ship as geometry rather than as a drawing: five decks, 264 reconstructed spaces, and a first-person walk through all of them. It carries no passengers and no chapter — it answers _how the ship is built_, where the map answers _who is where_.
+[`/tour`](https://exploreblackwhale.com/tour) is the same ship as geometry rather than as a drawing: five decks, 265 reconstructed spaces, and a first-person walk through all of them. It carries no passengers and no chapter — it answers _how the ship is built_, where the map answers _who is where_.
 
-The deck plans are schematic and the room plans are not, so the tour keeps both rather than distorting either: a deck shows the footprint its plan draws, and a room with an interior of its own — each prince's apartment, the detention block, the Justice Bureau, the hospital, the King's living room, twenty-four in all — is entered through its door and walked at full size.
+The deck plans are schematic and the room plans are not, so the tour keeps both rather than distorting either: a deck shows the footprint its plan draws, and a room with an interior of its own — each prince's apartment, the detention block, the Justice Bureau, the hospital, the King's living room, a lifeboat, twenty-five in all — is entered through its door and walked at full size.
 
-The tour does not furnish the ship, but where a panel shows that what a room _is_ is the thing standing in it, that thing is drawn and carries its own source: the fourteen coffins ringing the burial chamber, the banquet hall's stage and the throne on its dais, and the springs the hull holds the ship on. They are solid, so you walk around them.
+The tour does not furnish the ship, but where a panel shows that what a room _is_ is the thing standing in it, that thing is drawn and carries its own source: the fourteen coffins ringing the burial chamber, the banquet hall's stage and the throne on its dais, and the springs the hull holds the ship on, the pods on their cradles in the launch bays. They are solid, so you walk around them.
 
 Every surface declares what it is worth as evidence. A room a panel shows is lit warm, a room that only appears on the deck cross-section is left plain, and a corridor the reconstruction had to invent to make the deck contiguous is lit cold and badged as such. Doorways are not authored: two rooms that share a stretch of wall open onto each other, so an unreachable room fails the test suite rather than the visit.
 

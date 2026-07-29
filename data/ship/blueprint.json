@@ -601,14 +601,14 @@
       "elevation": 36,
       "ceiling": 3.5,
       "provenance": "plan",
-      "source": "First-class cabins plan",
+      "source": "First-class floor plan, ch. 393",
       "hull": [
         [-22.5, -14.25],
         [22.5, -14.25],
         [22.5, 14.25],
         [-22.5, 14.25]
       ],
-      "sourceFr": "Plan des cabines de première classe"
+      "sourceFr": "Plan de la première classe, chap. 393"
     },
     {
       "id": "interior-king-quarters",
@@ -647,6 +647,25 @@
         [-22, 6]
       ],
       "sourceFr": "Chap. 406 — les suspensions à ressort sur lesquelles la coque porte le vaisseau, avec des passerelles entre elles."
+    },
+    {
+      "id": "interior-lifeboat",
+      "kind": "interior",
+      "parentSpaceId": "tier-1-lifeboats-port",
+      "locationId": "tier-1-lifeboats",
+      "name": "Lifeboat",
+      "nameFr": "Canot de sauvetage",
+      "elevation": 0,
+      "ceiling": 2.6,
+      "provenance": "panel",
+      "source": "Ch. 383 — the inside of a pod: a ring of seats about the central post, under the hatch.",
+      "hull": [
+        [-3.2, -3.2],
+        [3.2, -3.2],
+        [3.2, 3.2],
+        [-3.2, 3.2]
+      ],
+      "sourceFr": "Chap. 383 — l'intérieur d'une capsule : une couronne de sièges autour du mât central, sous l'écoutille."
     }
   ],
   "spaces": [
@@ -764,8 +783,8 @@
       "name": "VIP Casino",
       "nameFr": "Casino VIP",
       "category": "public",
-      "provenance": "plan",
-      "source": "Deck plan, ch. 349",
+      "provenance": "panel",
+      "source": "Ch. 405 — the gaming floor, the shopfronts around it and the mezzanine above.",
       "ceiling": null,
       "envelope": null,
       "footprint": [
@@ -774,7 +793,7 @@
         [-40.25, 56],
         [-57.75, 56]
       ],
-      "sourceFr": "Plan des ponts, chap. 349"
+      "sourceFr": "Chap. 405 — la salle de jeu, les boutiques autour et la mezzanine au-dessus."
     },
     {
       "id": "tier-1-queens-corridor",
@@ -3245,8 +3264,8 @@
       "name": "Lifeboat Deck (port)",
       "nameFr": "Pont des canots (bâbord)",
       "category": "evacuation",
-      "provenance": "plan",
-      "source": "Deck plan, ch. 349",
+      "provenance": "panel",
+      "source": "Ch. 383 — the launch bay: the pods on their cradles and the launch console beside them.",
       "ceiling": null,
       "envelope": null,
       "footprint": [
@@ -3255,7 +3274,7 @@
         [-122.5, 17.5],
         [-133, 17.5]
       ],
-      "sourceFr": "Plan des ponts, chap. 349"
+      "sourceFr": "Chap. 383 — la baie de lancement : les capsules sur leurs berceaux et la console de mise à l'eau à côté."
     },
     {
       "id": "tier-1-lifeboats-starboard",
@@ -3264,8 +3283,8 @@
       "name": "Lifeboat Deck (starboard)",
       "nameFr": "Pont des canots (tribord)",
       "category": "evacuation",
-      "provenance": "plan",
-      "source": "Deck plan, ch. 349",
+      "provenance": "panel",
+      "source": "Ch. 383 — the launch bay: the pods on their cradles and the launch console beside them.",
       "ceiling": null,
       "envelope": null,
       "footprint": [
@@ -3274,7 +3293,7 @@
         [133, 17.5],
         [122.5, 17.5]
       ],
-      "sourceFr": "Plan des ponts, chap. 349"
+      "sourceFr": "Chap. 383 — la baie de lancement : les capsules sur leurs berceaux et la console de mise à l'eau à côté."
     },
     {
       "id": "tier-1-royal-approach",
@@ -5501,7 +5520,7 @@
       "nameFr": "Couloir",
       "category": "corridor",
       "provenance": "plan",
-      "source": "First-class cabins plan",
+      "source": "First-class floor plan, ch. 393",
       "ceiling": 3.5,
       "envelope": null,
       "footprint": [
@@ -5510,7 +5529,7 @@
         [22.5, 0.75],
         [-22.5, 0.75]
       ],
-      "sourceFr": "Plan des cabines de première classe"
+      "sourceFr": "Plan de la première classe, chap. 393"
     },
     {
       "id": "tier-3-residential-first-class-suite-1",
@@ -5520,7 +5539,7 @@
       "nameFr": "Suite de première classe 1",
       "category": "quarters",
       "provenance": "plan",
-      "source": "First-class cabins plan",
+      "source": "First-class floor plan, ch. 393",
       "ceiling": 3.5,
       "envelope": "tier-3-residential-first-class-suite-1",
       "footprint": [
@@ -5529,7 +5548,7 @@
         [-7.5, -1.75],
         [-22.5, -1.75]
       ],
-      "sourceFr": "Plan des cabines de première classe"
+      "sourceFr": "Plan de la première classe, chap. 393"
     },
     {
       "id": "tier-3-residential-first-class-suite-2",
@@ -5539,7 +5558,7 @@
       "nameFr": "Suite de première classe 2",
       "category": "quarters",
       "provenance": "plan",
-      "source": "First-class cabins plan",
+      "source": "First-class floor plan, ch. 393",
       "ceiling": 3.5,
       "envelope": "tier-3-residential-first-class-suite-2",
       "footprint": [
@@ -5548,7 +5567,7 @@
         [7.5, -1.75],
         [-7.5, -1.75]
       ],
-      "sourceFr": "Plan des cabines de première classe"
+      "sourceFr": "Plan de la première classe, chap. 393"
     },
     {
       "id": "tier-3-residential-first-class-suite-3",
@@ -5558,7 +5577,7 @@
       "nameFr": "Suite de première classe 3",
       "category": "quarters",
       "provenance": "plan",
-      "source": "First-class cabins plan",
+      "source": "First-class floor plan, ch. 393",
       "ceiling": 3.5,
       "envelope": "tier-3-residential-first-class-suite-3",
       "footprint": [
@@ -5567,7 +5586,7 @@
         [22.5, -1.75],
         [7.5, -1.75]
       ],
-      "sourceFr": "Plan des cabines de première classe"
+      "sourceFr": "Plan de la première classe, chap. 393"
     },
     {
       "id": "tier-3-residential-first-class-companionway",
@@ -5596,7 +5615,7 @@
       "nameFr": "Cabine simple de l’étage",
       "category": "quarters",
       "provenance": "plan",
-      "source": "First-class cabins plan",
+      "source": "First-class floor plan, ch. 393",
       "ceiling": 3.5,
       "envelope": null,
       "footprint": [
@@ -5605,7 +5624,7 @@
         [5, 14.25],
         [-5, 14.25]
       ],
-      "sourceFr": "Plan des cabines de première classe"
+      "sourceFr": "Plan de la première classe, chap. 393"
     },
     {
       "id": "tier-1-king-living-quarters-living",
@@ -5720,6 +5739,37 @@
         [-20, 4]
       ],
       "sourceFr": "Reconstruit comme le chemin d'accès entre les ressorts ; la planche montre des passerelles, pas leur tracé."
+    },
+    {
+      "id": "tier-1-lifeboats-port-pod-cabin",
+      "tierId": "interior-lifeboat",
+      "locationId": "tier-1-lifeboats",
+      "name": "Pod Cabin",
+      "nameFr": "Cabine de la capsule",
+      "category": "evacuation",
+      "provenance": "panel",
+      "source": "Ch. 383 — the inside of a pod: a ring of seats about the central post, under the hatch.",
+      "ceiling": 2.6,
+      "envelope": null,
+      "footprint": [
+        [0.0, 2.6],
+        [0.99, 2.4],
+        [1.84, 1.84],
+        [2.4, 0.99],
+        [2.6, 0.0],
+        [2.4, -0.99],
+        [1.84, -1.84],
+        [0.99, -2.4],
+        [0.0, -2.6],
+        [-0.99, -2.4],
+        [-1.84, -1.84],
+        [-2.4, -0.99],
+        [-2.6, -0.0],
+        [-2.4, 0.99],
+        [-1.84, 1.84],
+        [-0.99, 2.4]
+      ],
+      "sourceFr": "Chap. 383 — l'intérieur d'une capsule : une couronne de sièges autour du mât central, sous l'écoutille."
     }
   ],
   "links": [
@@ -6007,6 +6057,16 @@
       "provenance": "inferred",
       "source": "Reconstructed as the way in among the springs; the panel shows gangways but not where they run.",
       "sourceFr": "Reconstruit comme le chemin d'accès entre les ressorts ; la planche montre des passerelles, pas leur tracé."
+    },
+    {
+      "from": "tier-1-lifeboats-port",
+      "to": "tier-1-lifeboats-port-pod-cabin",
+      "kind": "door",
+      "at": [-127.75, -12],
+      "atTo": [0, 2],
+      "provenance": "panel",
+      "source": "Ch. 383 — the inside of a pod: a ring of seats about the central post, under the hatch.",
+      "sourceFr": "Chap. 383 — l'intérieur d'une capsule : une couronne de sièges autour du mât central, sous l'écoutille."
     }
   ],
   "seals": [
@@ -7719,6 +7779,186 @@
       "provenance": "panel",
       "source": "Ch. 382 — the guarded gate to the princes' quarters, its desk and its posted soldiers.",
       "sourceFr": "Chap. 382 — le poste gardé à l'entrée des quartiers princiers, son comptoir et ses soldats en faction."
+    },
+    {
+      "id": "tier-1-lifeboats-port-pod-01",
+      "spaceId": "tier-1-lifeboats-port",
+      "kind": "lifeboat",
+      "name": "Lifeboat 1",
+      "nameFr": "Canot 1",
+      "at": [-127.75, -12],
+      "size": [4.6, 4.6],
+      "rotation": 0,
+      "height": 3.4,
+      "sides": 16,
+      "provenance": "panel",
+      "source": "Ch. 383 — the launch bay: the pods on their cradles and the launch console beside them.",
+      "sourceFr": "Chap. 383 — la baie de lancement : les capsules sur leurs berceaux et la console de mise à l'eau à côté."
+    },
+    {
+      "id": "tier-1-lifeboats-port-pod-02",
+      "spaceId": "tier-1-lifeboats-port",
+      "kind": "lifeboat",
+      "name": "Lifeboat 2",
+      "nameFr": "Canot 2",
+      "at": [-127.75, -4],
+      "size": [4.6, 4.6],
+      "rotation": 0,
+      "height": 3.4,
+      "sides": 16,
+      "provenance": "panel",
+      "source": "Ch. 383 — the launch bay: the pods on their cradles and the launch console beside them.",
+      "sourceFr": "Chap. 383 — la baie de lancement : les capsules sur leurs berceaux et la console de mise à l'eau à côté."
+    },
+    {
+      "id": "tier-1-lifeboats-port-pod-03",
+      "spaceId": "tier-1-lifeboats-port",
+      "kind": "lifeboat",
+      "name": "Lifeboat 3",
+      "nameFr": "Canot 3",
+      "at": [-127.75, 4],
+      "size": [4.6, 4.6],
+      "rotation": 0,
+      "height": 3.4,
+      "sides": 16,
+      "provenance": "panel",
+      "source": "Ch. 383 — the launch bay: the pods on their cradles and the launch console beside them.",
+      "sourceFr": "Chap. 383 — la baie de lancement : les capsules sur leurs berceaux et la console de mise à l'eau à côté."
+    },
+    {
+      "id": "tier-1-lifeboats-port-pod-04",
+      "spaceId": "tier-1-lifeboats-port",
+      "kind": "lifeboat",
+      "name": "Lifeboat 4",
+      "nameFr": "Canot 4",
+      "at": [-127.75, 12],
+      "size": [4.6, 4.6],
+      "rotation": 0,
+      "height": 3.4,
+      "sides": 16,
+      "provenance": "panel",
+      "source": "Ch. 383 — the launch bay: the pods on their cradles and the launch console beside them.",
+      "sourceFr": "Chap. 383 — la baie de lancement : les capsules sur leurs berceaux et la console de mise à l'eau à côté."
+    },
+    {
+      "id": "tier-1-lifeboats-port-console",
+      "spaceId": "tier-1-lifeboats-port",
+      "kind": "counter",
+      "name": "Launch Console",
+      "nameFr": "Console de lancement",
+      "at": [-127.75, 16.4],
+      "size": [2.4, 1.2],
+      "rotation": 0,
+      "height": 1.2,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 383 — the launch bay: the pods on their cradles and the launch console beside them.",
+      "sourceFr": "Chap. 383 — la baie de lancement : les capsules sur leurs berceaux et la console de mise à l'eau à côté."
+    },
+    {
+      "id": "tier-1-lifeboats-starboard-pod-01",
+      "spaceId": "tier-1-lifeboats-starboard",
+      "kind": "lifeboat",
+      "name": "Lifeboat 1",
+      "nameFr": "Canot 1",
+      "at": [127.75, -12],
+      "size": [4.6, 4.6],
+      "rotation": 0,
+      "height": 3.4,
+      "sides": 16,
+      "provenance": "panel",
+      "source": "Ch. 383 — the launch bay: the pods on their cradles and the launch console beside them.",
+      "sourceFr": "Chap. 383 — la baie de lancement : les capsules sur leurs berceaux et la console de mise à l'eau à côté."
+    },
+    {
+      "id": "tier-1-lifeboats-starboard-pod-02",
+      "spaceId": "tier-1-lifeboats-starboard",
+      "kind": "lifeboat",
+      "name": "Lifeboat 2",
+      "nameFr": "Canot 2",
+      "at": [127.75, -4],
+      "size": [4.6, 4.6],
+      "rotation": 0,
+      "height": 3.4,
+      "sides": 16,
+      "provenance": "panel",
+      "source": "Ch. 383 — the launch bay: the pods on their cradles and the launch console beside them.",
+      "sourceFr": "Chap. 383 — la baie de lancement : les capsules sur leurs berceaux et la console de mise à l'eau à côté."
+    },
+    {
+      "id": "tier-1-lifeboats-starboard-pod-03",
+      "spaceId": "tier-1-lifeboats-starboard",
+      "kind": "lifeboat",
+      "name": "Lifeboat 3",
+      "nameFr": "Canot 3",
+      "at": [127.75, 4],
+      "size": [4.6, 4.6],
+      "rotation": 0,
+      "height": 3.4,
+      "sides": 16,
+      "provenance": "panel",
+      "source": "Ch. 383 — the launch bay: the pods on their cradles and the launch console beside them.",
+      "sourceFr": "Chap. 383 — la baie de lancement : les capsules sur leurs berceaux et la console de mise à l'eau à côté."
+    },
+    {
+      "id": "tier-1-lifeboats-starboard-pod-04",
+      "spaceId": "tier-1-lifeboats-starboard",
+      "kind": "lifeboat",
+      "name": "Lifeboat 4",
+      "nameFr": "Canot 4",
+      "at": [127.75, 12],
+      "size": [4.6, 4.6],
+      "rotation": 0,
+      "height": 3.4,
+      "sides": 16,
+      "provenance": "panel",
+      "source": "Ch. 383 — the launch bay: the pods on their cradles and the launch console beside them.",
+      "sourceFr": "Chap. 383 — la baie de lancement : les capsules sur leurs berceaux et la console de mise à l'eau à côté."
+    },
+    {
+      "id": "tier-1-lifeboats-starboard-console",
+      "spaceId": "tier-1-lifeboats-starboard",
+      "kind": "counter",
+      "name": "Launch Console",
+      "nameFr": "Console de lancement",
+      "at": [127.75, 16.4],
+      "size": [2.4, 1.2],
+      "rotation": 0,
+      "height": 1.2,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 383 — the launch bay: the pods on their cradles and the launch console beside them.",
+      "sourceFr": "Chap. 383 — la baie de lancement : les capsules sur leurs berceaux et la console de mise à l'eau à côté."
+    },
+    {
+      "id": "tier-1-lifeboats-port-pod-post",
+      "spaceId": "tier-1-lifeboats-port-pod-cabin",
+      "kind": "pillar",
+      "name": "Central Post",
+      "nameFr": "Mât central",
+      "at": [0, 0],
+      "size": [0.9, 0.9],
+      "rotation": 0,
+      "height": 2.6,
+      "sides": 12,
+      "provenance": "panel",
+      "source": "Ch. 383 — the inside of a pod: a ring of seats about the central post, under the hatch.",
+      "sourceFr": "Chap. 383 — l'intérieur d'une capsule : une couronne de sièges autour du mât central, sous l'écoutille."
+    },
+    {
+      "id": "tier-1-lifeboats-port-pod-base",
+      "spaceId": "tier-1-lifeboats-port-pod-cabin",
+      "kind": "platform",
+      "name": "Post Base",
+      "nameFr": "Socle du mât",
+      "at": [0, 0],
+      "size": [2.2, 2.2],
+      "rotation": 0,
+      "height": 0.45,
+      "sides": 16,
+      "provenance": "panel",
+      "source": "Ch. 383 — the inside of a pod: a ring of seats about the central post, under the hatch.",
+      "sourceFr": "Chap. 383 — l'intérieur d'une capsule : une couronne de sièges autour du mât central, sous l'écoutille."
     }
   ]
 }

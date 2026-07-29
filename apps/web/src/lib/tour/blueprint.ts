@@ -19,6 +19,7 @@ import {
   MIN_DOOR_WIDTH,
   sealKey,
   polygonArea,
+  polygonContains,
   polygonsOverlap,
   pointInPolygon,
   structureFootprint,
@@ -252,7 +253,14 @@ export function entrySpace(plan: TierPlan): Space {
 
 const PROVENANCES = new Set(['panel', 'plan', 'inferred'])
 const LINK_KINDS = new Set(['stair', 'lift', 'bulkhead', 'door'])
-const STRUCTURE_KINDS = new Set(['spring', 'casket', 'platform', 'counter'])
+const STRUCTURE_KINDS = new Set([
+  'spring',
+  'casket',
+  'platform',
+  'counter',
+  'lifeboat',
+  'pillar',
+])
 
 /**
  * Every rule the reconstruction has to satisfy, as a list of failures. An empty
@@ -424,7 +432,11 @@ export function validateBlueprint(source: Blueprint = blueprint): string[] {
     const room = source.spaces.find((space) => space.id === spaceId)!
     for (let i = 0; i < standing.length; i++) {
       for (let j = i + 1; j < standing.length; j++) {
-        if (polygonsOverlap(structureFootprint(standing[i]), structureFootprint(standing[j]))) {
+        const a = structureFootprint(standing[i])
+        const b = structureFootprint(standing[j])
+        // One wholly inside the other is a post on its plinth, which the
+        // panels do draw; anything else is two solids on the same floor.
+        if (polygonsOverlap(a, b) && !polygonContains(a, b) && !polygonContains(b, a)) {
           issues.push(`structures ${standing[i].id} and ${standing[j].id} stand in each other`)
         }
       }

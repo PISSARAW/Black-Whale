@@ -24,9 +24,10 @@
     emptiedOn,
     eyeHeightIn,
     heldSolidIds,
-    planWithout,
+    linkIsOpen,
     shellsFor,
     solidWalls,
+    walkedPlan,
     wanderOffset,
     type TourWorld,
   } from '$lib/tour/hatsu'
@@ -67,6 +68,11 @@
     onCast?: (spaceId: string | null, solidId: string | null) => void
     /** Fired whenever the visitor sets foot in a different space. */
     onArrive?: (spaceId: string | null) => void
+    /**
+     * Asked, on the same arrival, where Fugetsu's tunnel comes out — or `null`
+     * when the visitor did not step into either of its ends.
+     */
+    onWorm?: (spaceId: string | null, arrivedFrom: string | null) => string | null
     /** Shown while three.js and the first deck are being prepared. */
     loadingLabel: string
     /** Shown instead of the walk when the browser cannot give us WebGL. */
@@ -91,6 +97,7 @@
     aimedSolidAt = $bindable(null),
     onCast,
     onArrive,
+    onWorm,
   }: Props = $props()
 
   const EYE_HEIGHT = 1.7
@@ -196,7 +203,8 @@
        * A deck as Nen currently leaves it. The empty suffix is the deck whole.
        */
       const worldKey = (nextTierId: string) =>
-        `${nextTierId}::${emptiedOn(world, nextTierId, ship).sort().join(',')}::${heldSolidIds(world).sort().join(',')}`
+        `${nextTierId}::${emptiedOn(world, nextTierId, ship).sort().join(',')}` +
+        `::${heldSolidIds(world).sort().join(',')}::${world.shut.slice().sort().join(',')}`
 
       /**
        * A deck Nen has taken a room out of, at most one per deck.
@@ -217,10 +225,7 @@
       > = {}
 
       function extrude(nextTierId: string) {
-        const plan = ship.plans.get(nextTierId)!
-        const mesh = buildTierMesh(
-          planWithout(plan, emptiedOn(world, nextTierId, ship), heldSolidIds(world)),
-        )
+        const mesh = buildTierMesh(walkedPlan(ship, world, nextTierId))
         const geometry = new THREE.BufferGeometry()
         geometry.setAttribute('position', new THREE.BufferAttribute(mesh.positions, 3))
         geometry.setAttribute('normal', new THREE.BufferAttribute(mesh.normals, 3))
@@ -243,7 +248,7 @@
       function buildDeck(nextTierId: string) {
         const key = worldKey(nextTierId)
 
-        if (key === `${nextTierId}::::`) {
+        if (key === `${nextTierId}::::::`) {
           const built = decks[nextTierId] ?? extrude(nextTierId)
           decks[nextTierId] = built
           return { built, key }
@@ -291,7 +296,7 @@
         scene.add(built.edges)
         visible = built
         activeKey = key
-        activePlan = planWithout(plan, emptiedOn(world, nextTierId, ship), heldSolidIds(world))
+        activePlan = walkedPlan(ship, world, nextTierId)
 
         currentTierId = nextTierId
         const entry = entrySpace(plan)
@@ -458,7 +463,7 @@
         }
         visible = built
         activeKey = key
-        activePlan = planWithout(plan, emptiedOn(world, currentTierId, ship), heldSolidIds(world))
+        activePlan = walkedPlan(ship, world, currentTierId)
       }
 
       /**
@@ -637,6 +642,8 @@
 
       /** The room the door pair last delivered the visitor to. */
       let arrivedFrom: string | null = null
+      /** The end of Fugetsu's tunnel the visitor was last delivered to. */
+      let wormFrom: string | null = null
       let lastSpaceId: string | null = null
       let aimedId: string | null = null
       let aimedSolidId: string | null = null
@@ -708,7 +715,9 @@
         // Mirror the loop's state out for the HUD, without re-rendering on
         // every frame: these only change when they actually change.
         if (standing?.id !== untrack(() => currentSpace)?.id) currentSpace = standing
-        const link = linkUnderfoot(ship.links, standing?.id ?? null, pointer)
+        const link = linkIsOpen(world, standing?.id ?? null)
+          ? linkUnderfoot(ship.links, standing?.id ?? null, pointer)
+          : null
         if (link?.to !== untrack(() => availableLink)?.to) availableLink = link
         position = pointer
         heading = yaw
@@ -725,6 +734,13 @@
             goTo(exit)
             return
           }
+          const tunnel = onWorm?.(standingId, wormFrom)
+          if (tunnel) {
+            wormFrom = tunnel
+            goTo(tunnel)
+            return
+          }
+          wormFrom = null
         }
 
         // The reticle is polled rather than traced every frame: it walks the

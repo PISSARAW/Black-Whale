@@ -20,7 +20,16 @@
  * `TourScene` is the only thing that knows how to draw it.
  */
 import { ceilingOf, type Ship, type TierPlan } from './blueprint'
-import { blocksTheFloor, pointInPolygon, structureFootprint, structureWalls } from './geometry'
+import {
+  blocksTheFloor,
+  columnWalls,
+  deriveDoorways,
+  pointInPolygon,
+  sealKey,
+  structureFootprint,
+  structureWalls,
+  wallSegments,
+} from './geometry'
 import type { Space, Structure, StructureKind, Vec2, WallSegment } from './types'
 import type { HatsuInteractionKind, HatsuProfile } from '$lib/nen/hatsuRegistry'
 
@@ -67,6 +76,17 @@ export const TOUR_HATSU_KINDS = [
   'polarity',
   'identity-swap',
   'relay',
+  // On the doors between them.
+  'chain-bind',
+  'devour',
+  'legal-defense',
+  'tribunal',
+  'heart-vow',
+  'contract',
+  'desire-trap',
+  'snakes',
+  'portal',
+  'guardian',
 ] as const satisfies readonly HatsuInteractionKind[]
 
 /**
@@ -161,6 +181,38 @@ export interface TourWorld {
   wound: string | null
   /** Rotations wound into the next punch. */
   windup: number
+
+  /**
+   * Rooms whose doorways are shut.
+   *
+   * Not a flag on the renderer: the doorways of a deck are derived from the
+   * walls its rooms share, so a shut room is one the derivation is told to
+   * treat as sealed, and the opening stops being drawn and stops being
+   * walkable in the same pass. What you cannot see through, you cannot cross.
+   */
+  shut: string[]
+  /** Rooms whose guards put an intruder back where they came from. */
+  guarded: string[]
+  /** The room the visitor may not leave. */
+  pinned: string | null
+  /** The rule the visitor declared, which only punishes when it is broken. */
+  vow: string | null
+  /** The terms the visitor took on, which close when they are met. */
+  pact: string | null
+  /** Rooms the fish are in. Nothing shows until the visitor walks out. */
+  devouring: string[]
+  /** Cards laid on a room: 1 admitted, 2 restrained, 3 dismissed. */
+  cards: Record<string, number>
+  /** The double standing in a room, which takes one punishment and is spent. */
+  double: string | null
+  /** Fugetsu's tunnel: a pair, and how much it has been asked for. */
+  worm: { a: string; b: string; crossings: number } | null
+  /** The rooms the snakes are loose in, and whether they have had a victim. */
+  snakes: { rooms: string[]; fed: boolean } | null
+  /** The room the bait was materialized in, which closes once it is taken. */
+  trap: string | null
+  /** Where the visitor was standing before the room they are in now. */
+  cameFrom: string | null
 }
 
 /**
@@ -211,6 +263,18 @@ export const EMPTY_WORLD: TourWorld = {
   pairing: null,
   wound: null,
   windup: 0,
+  shut: [],
+  guarded: [],
+  pinned: null,
+  vow: null,
+  pact: null,
+  devouring: [],
+  cards: {},
+  double: null,
+  worm: null,
+  snakes: null,
+  trap: null,
+  cameFrom: null,
 }
 
 /** Nothing in the world is being held by aura. */
@@ -229,7 +293,18 @@ export const worldIsQuiet = (world: TourWorld): boolean =>
   !world.copies.length &&
   !world.pairing &&
   !world.wound &&
-  !world.windup
+  !world.windup &&
+  !world.shut.length &&
+  !world.guarded.length &&
+  !world.pinned &&
+  !world.vow &&
+  !world.pact &&
+  !world.devouring.length &&
+  !Object.keys(world.cards).length &&
+  !world.double &&
+  !world.worm &&
+  !world.snakes &&
+  !world.trap
 
 /**
  * What the technique did, as data. The component turns it into a sentence in
@@ -285,6 +360,32 @@ export type TourReport =
   | { kind: 'swapped'; solidId: string; otherId: string }
   | { kind: 'cargo-taken'; solidId: string }
   | { kind: 'cargo-landed'; solidId: string; spaceId: string }
+  // On the doors.
+  | { kind: 'jailed'; spaceId: string; doors: number }
+  | { kind: 'jail-refused'; spaceId: string }
+  | { kind: 'fish-loosed'; spaceId: string }
+  | { kind: 'fish-fed'; spaceId: string; solidId: string }
+  | { kind: 'guards-posted'; spaceId: string }
+  | { kind: 'expelled'; spaceId: string; toId: string }
+  | { kind: 'card-blue'; spaceId: string }
+  | { kind: 'card-yellow'; spaceId: string }
+  | { kind: 'card-red'; spaceId: string }
+  | { kind: 'vow-declared'; spaceId: string }
+  | { kind: 'vow-broken'; spaceId: string }
+  | { kind: 'pact-taken'; spaceId: string }
+  | { kind: 'pact-met'; spaceId: string; released: number }
+  | { kind: 'bait-set'; spaceId: string }
+  | { kind: 'trapped'; spaceId: string }
+  | { kind: 'held-fast'; spaceId: string }
+  | { kind: 'snakes-loosed'; rooms: number }
+  | { kind: 'snakes-fed'; spaceId: string }
+  | { kind: 'snakes-rebound' }
+  | { kind: 'worm-set'; spaceId: string }
+  | { kind: 'worm-open'; a: string; b: string }
+  | { kind: 'worm-crossed'; spaceId: string; crossings: number }
+  | { kind: 'worm-spent' }
+  | { kind: 'double-posted'; spaceId: string }
+  | { kind: 'double-spent'; spaceId: string }
 
 export interface TourCastResult {
   world: TourWorld
@@ -894,6 +995,132 @@ export function castInTour(
       }
     }
 
+    // ── The doors ────────────────────────────────────────────────────────
+    //
+    // A shut room is not a room with a locked door drawn on it: the deck's
+    // doorways are derived from the walls its rooms share, and these tell the
+    // derivation to treat those walls as blind. The opening stops being drawn
+    // and stops being walkable in the same pass.
+
+    // Chain Jail is absolute, and it is only ever used on a Spider. In the
+    // walk the Spider is the technique: a room nothing is holding is a room
+    // Kurapika has no business chaining, and the chain refuses it.
+    case 'chain-bind': {
+      if (!nenHeld(world).includes(target.id) && !world.emptied.includes(target.id)) {
+        return { world, report: { kind: 'jail-refused', spaceId: target.id } }
+      }
+      const doors = ship.adjacency.get(target.id)?.length ?? 0
+      return {
+        world: { ...world, shut: [...new Set([...world.shut, target.id])] },
+        report: { kind: 'jailed', spaceId: target.id, doors },
+      }
+    }
+
+    // The fish only eat inside a closed room, and the victim feels nothing
+    // while it lasts: nothing is taken until the visitor walks out again.
+    case 'devour': {
+      if (!world.shut.includes(target.id)) {
+        return { world, report: { kind: 'jail-refused', spaceId: target.id } }
+      }
+      return {
+        world: { ...world, devouring: [...new Set([...world.devouring, target.id])] },
+        report: { kind: 'fish-loosed', spaceId: target.id },
+      }
+    }
+
+    case 'legal-defense':
+      return {
+        world: { ...world, guarded: [...new Set([...world.guarded, target.id])] },
+        report: { kind: 'guards-posted', spaceId: target.id },
+      }
+
+    // Blue admits, yellow restrains — and the restraint is only ever applied
+    // to someone already warned — red dismisses and shuts the room behind them.
+    case 'tribunal': {
+      const card = Math.min(3, (world.cards[target.id] ?? 0) + 1)
+      const cards = { ...world.cards, [target.id]: card }
+      if (card === 1) return { world: { ...world, cards }, report: { kind: 'card-blue', spaceId: target.id } }
+      if (card === 2) {
+        return {
+          world: { ...world, cards, pinned: standingIn === target.id ? target.id : world.pinned },
+          report: { kind: 'card-yellow', spaceId: target.id },
+        }
+      }
+      return {
+        world: {
+          ...world,
+          cards,
+          pinned: world.pinned === target.id ? null : world.pinned,
+          shut: [...new Set([...world.shut, target.id])],
+          guarded: [...new Set([...world.guarded, target.id])],
+        },
+        report: { kind: 'card-red', spaceId: target.id },
+      }
+    }
+
+    // The chain through the heart does nothing at all until the rule it names
+    // is knowingly broken. Declaring it is the whole of the cast.
+    case 'heart-vow':
+      return { world: { ...world, vow: target.id }, report: { kind: 'vow-declared', spaceId: target.id } }
+
+    case 'contract':
+      return { world: { ...world, pact: target.id }, report: { kind: 'pact-taken', spaceId: target.id } }
+
+    // The bait is what the victim wanted: a copy of something out of the room
+    // they are standing in, stood in the trap. Coercion comes after it is taken.
+    case 'desire-trap': {
+      const wanted = ship.structures.find((solid) => solid.spaceId === standingIn)
+      const copies = wanted
+        ? [
+            ...world.copies,
+            {
+              ...wanted,
+              id: `${wanted.id}::bait${world.copies.length + 1}`,
+              spaceId: target.id,
+              at: centroid(target),
+            },
+          ]
+        : world.copies
+      const solids = wanted
+        ? { ...world.solids, [copies[copies.length - 1].id]: { copyOf: wanted.id } }
+        : world.solids
+      return {
+        world: { ...world, copies, solids, trap: target.id },
+        report: { kind: 'bait-set', spaceId: target.id },
+      }
+    }
+
+    // Ten rooms in range, four snakes, and a curse that comes back on the user
+    // if it is dismissed without a victim.
+    case 'snakes': {
+      const here = standingIn ? ship.spaces.get(standingIn) : null
+      const rooms = [...ship.spaces.values()]
+        .filter((space) => space.tierId === (here?.tierId ?? target.tierId))
+        .map((space) => ({ space, distance: distanceTo(ship, space, at, standingIn).metres }))
+        .sort((a, b) => a.distance - b.distance)
+        .slice(0, 10)
+        .map((near) => near.space.id)
+      return {
+        world: { ...world, snakes: { rooms, fed: false } },
+        report: { kind: 'snakes-loosed', rooms: rooms.length },
+      }
+    }
+
+    // The tunnel works once a night. Asking it again is what exhausts it.
+    case 'portal': {
+      if (!world.worm) {
+        return { world: { ...world, worm: { a: target.id, b: '', crossings: 0 } }, report: { kind: 'worm-set', spaceId: target.id } }
+      }
+      if (!world.worm.b) {
+        const worm = { ...world.worm, b: target.id }
+        return { world: { ...world, worm }, report: { kind: 'worm-open', a: worm.a, b: worm.b } }
+      }
+      return { world: { ...world, worm: { a: target.id, b: '', crossings: 0 } }, report: { kind: 'worm-set', spaceId: target.id } }
+    }
+
+    case 'guardian':
+      return { world: { ...world, double: target.id }, report: { kind: 'double-posted', spaceId: target.id } }
+
     case 'flock': {
       const dispatches = [target.id, ...without(world.dispatches, (id) => id === target.id)].slice(0, 8)
       return { world: { ...world, dispatches }, report: { kind: 'dispatched', spaceId: target.id } }
@@ -962,6 +1189,65 @@ export function aimedSpace(plan: TierPlan, at: Vec2, heading: number, range = 90
     if (space && space.id !== here?.id) return space
   }
   return here
+}
+
+/**
+ * The deck with a room's doorways shut.
+ *
+ * The reconstruction derives its doorways from the walls two rooms share, and
+ * takes a list of pairs to treat as blind — which is exactly what a technique
+ * that shuts a room needs. So this is not a lock drawn over an opening: it is
+ * the same derivation, told that these walls have no door in them, and the
+ * opening stops being drawn and stops being walkable in one pass.
+ *
+ * A stairwell is not a doorway and is not closed by this. That is deliberate:
+ * `linkUnderfoot` is what offers a stair, and the walk refuses that separately
+ * for a room that is shut.
+ */
+export function planSealed(ship: Ship, plan: TierPlan, shut: readonly string[]): TierPlan {
+  const closed = new Set(shut.filter((id) => ship.spaces.get(id)?.tierId === plan.tier.id))
+  if (!closed.size) return plan
+
+  const sealed = new Set([
+    ...ship.seals.map((seal) => sealKey(seal.a, seal.b)),
+    ...plan.doorways
+      .filter((door) => closed.has(door.a) || closed.has(door.b))
+      .map((door) => sealKey(door.a, door.b)),
+  ])
+  // A declared door would re-open the wall the seal just closed, so the ones
+  // into a shut room are dropped with it.
+  const overrides = new Map(
+    ship.doors
+      .filter((door) => !closed.has(door.a) && !closed.has(door.b))
+      .map((door) => [sealKey(door.a, door.b), door] as const),
+  )
+
+  const doorways = deriveDoorways(plan.spaces, { sealed, overrides })
+  const walls = plan.spaces.flatMap((space) => wallSegments(space, doorways))
+  for (const [spaceId, centres] of plan.columns) {
+    for (const centre of centres) walls.push(...columnWalls(spaceId, centre))
+  }
+  for (const structure of plan.structures) {
+    if (blocksTheFloor(structure)) walls.push(...structureWalls(structure))
+  }
+  return { ...plan, doorways, walls }
+}
+
+/**
+ * The deck as the visitor actually meets it: shut, emptied, and with whatever
+ * the aura is holding lifted out of it.
+ *
+ * One place, so the renderer and the collision test cannot end up reading two
+ * different ships.
+ */
+export function walkedPlan(ship: Ship, world: TourWorld, tierId: string): TierPlan {
+  const plan = ship.plans.get(tierId)
+  if (!plan) throw new Error(`no plan for ${tierId}`)
+  return planWithout(
+    planSealed(ship, plan, world.shut),
+    emptiedOn(world, tierId, ship),
+    heldSolidIds(world),
+  )
 }
 
 /**
@@ -1070,6 +1356,156 @@ export function eyeHeightIn(space: Space, ship: Ship): number {
   if (!tier) return 1.7
   return tier.elevation + Math.min(2.2, ceilingOf(space, tier) - 0.4)
 }
+
+/**
+ * What happens because the visitor set foot somewhere.
+ *
+ * Every technique in the third wave is about a threshold rather than about a
+ * room, so none of them does anything at the moment it is cast: the guards are
+ * posted, the rule is declared, the fish are loosed, and then the walk goes on
+ * as before until someone crosses a line. This is that crossing, in one place,
+ * so the page has no rules of its own to keep in step.
+ */
+export interface TourArrival {
+  world: TourWorld
+  /** Where the walk has to put the visitor instead, if anywhere. */
+  travelTo?: string
+  report?: TourReport
+  /** Whether the archive's own penalty — forced Zetsu — has been incurred. */
+  punished?: boolean
+}
+
+export function arriveInTour(world: TourWorld, ship: Ship, spaceId: string | null): TourArrival {
+  const leaving = world.cameFrom
+  if (spaceId === leaving) return { world }
+
+  let next: TourWorld = { ...world, cameFrom: spaceId }
+  let report: TourReport | undefined
+  let travelTo: string | undefined
+  let punished = false
+
+  /** The double takes one punishment and is spent doing it. */
+  const intercept = () => {
+    if (!next.double) return false
+    report = { kind: 'double-spent', spaceId: next.double }
+    next = { ...next, double: null }
+    return true
+  }
+
+  // What was left behind, before what was entered.
+  if (leaving && next.devouring.includes(leaving)) {
+    const eaten = ship.structures.find(
+      (solid) => solid.spaceId === leaving && !next.solids[solid.id]?.gone,
+    )
+    if (eaten) {
+      next = { ...next, solids: { ...next.solids, [eaten.id]: { ...next.solids[eaten.id], gone: true } } }
+      report = { kind: 'fish-fed', spaceId: leaving, solidId: eaten.id }
+    }
+  }
+
+  // Held fast: the yellow card, and the trap that has already closed.
+  const heldIn = next.pinned ?? (leaving && next.cards[leaving] === 2 ? leaving : null)
+  if (heldIn && leaving === heldIn && spaceId !== heldIn && !intercept()) {
+    return {
+      world: { ...world, cameFrom: heldIn },
+      travelTo: heldIn,
+      report: { kind: 'held-fast', spaceId: heldIn },
+    }
+  }
+
+  if (!spaceId) return { world: next, report, travelTo, punished }
+
+  if (next.watched.some((doll) => doll.spaceId === spaceId)) {
+    next = {
+      ...next,
+      watched: next.watched.map((doll) =>
+        doll.spaceId === spaceId ? { ...doll, visits: doll.visits + 1 } : doll,
+      ),
+    }
+  }
+  if (next.isolated?.occupant && next.isolated.spaceId !== spaceId) {
+    next = { ...next, isolated: { ...next.isolated, occupant: false } }
+  }
+
+  // The bait has been taken, so the coercion starts.
+  if (next.trap === spaceId) {
+    next = { ...next, trap: null, pinned: spaceId }
+    report = { kind: 'trapped', spaceId }
+  }
+
+  // The terms are met, and a contract that closes releases what it was
+  // weighed against: every door another technique had shut.
+  if (next.pact === spaceId) {
+    const released = next.shut.length + next.guarded.length
+    next = { ...next, pact: null, shut: [], guarded: [], cards: {} }
+    report = { kind: 'pact-met', spaceId, released }
+  }
+
+  if (next.snakes && !next.snakes.fed && next.snakes.rooms.includes(spaceId)) {
+    next = { ...next, snakes: { ...next.snakes, fed: true } }
+    report = { kind: 'snakes-fed', spaceId }
+  }
+
+  // The guards expel an intruder without injuring them: back where they came
+  // from, and no further.
+  if (next.guarded.includes(spaceId) && leaving && leaving !== spaceId) {
+    if (!intercept()) {
+      return {
+        world: { ...next, cameFrom: leaving },
+        travelTo: leaving,
+        report: { kind: 'expelled', spaceId, toId: leaving },
+      }
+    }
+  }
+
+  // The chain only ever punishes a rule that was knowingly broken.
+  if (next.vow === spaceId) {
+    if (!intercept()) {
+      punished = true
+      report = { kind: 'vow-broken', spaceId }
+    }
+  }
+
+  return { world: next, travelTo, report, punished }
+}
+
+/**
+ * Where Fugetsu's tunnel puts someone who steps into one of its two ends.
+ *
+ * Unlike the hideout doors it wears out: the route is meant to be walked once
+ * a night, and asking it again and again is what exhausts the worm. The third
+ * crossing is the last, and the pair collapses behind it.
+ */
+export function wormExit(
+  world: TourWorld,
+  spaceId: string | null,
+  arrivedFrom: string | null,
+): { to: string; world: TourWorld; report: TourReport } | null {
+  const worm = world.worm
+  if (!worm?.b || !spaceId || spaceId === arrivedFrom) return null
+  const to = spaceId === worm.a ? worm.b : spaceId === worm.b ? worm.a : null
+  if (!to) return null
+
+  const crossings = worm.crossings + 1
+  if (crossings >= 3) {
+    return { to, world: { ...world, worm: null }, report: { kind: 'worm-spent' } }
+  }
+  return {
+    to,
+    world: { ...world, worm: { ...worm, crossings } },
+    report: { kind: 'worm-crossed', spaceId: to, crossings },
+  }
+}
+
+/**
+ * Whether a stairwell may be taken from where the visitor stands.
+ *
+ * A shut room is shut: its doorways are gone from the geometry, and the stair
+ * out of it has to be refused separately, since a link carries its own
+ * position and no wall stands between the visitor and it.
+ */
+export const linkIsOpen = (world: TourWorld, spaceId: string | null): boolean =>
+  !spaceId || (!world.shut.includes(spaceId) && world.pinned !== spaceId)
 
 /**
  * Where the hideout doors put someone who steps into one of the pair.

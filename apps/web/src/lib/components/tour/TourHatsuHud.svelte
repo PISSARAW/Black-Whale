@@ -178,6 +178,57 @@
         return say.cargoTaken(solidName(report.solidId))
       case 'cargo-landed':
         return say.cargoLanded(solidName(report.solidId), roomName(report.spaceId))
+
+      case 'jailed':
+        return say.jailed(roomName(report.spaceId), report.doors)
+      case 'jail-refused':
+        return say.jailRefused(roomName(report.spaceId))
+      case 'fish-loosed':
+        return say.fishLoosed(roomName(report.spaceId))
+      case 'fish-fed':
+        return say.fishFed(roomName(report.spaceId), solidName(report.solidId))
+      case 'guards-posted':
+        return say.guardsPosted(roomName(report.spaceId))
+      case 'expelled':
+        return say.expelled(roomName(report.spaceId), roomName(report.toId))
+      case 'card-blue':
+        return say.cardBlue(roomName(report.spaceId))
+      case 'card-yellow':
+        return say.cardYellow(roomName(report.spaceId))
+      case 'card-red':
+        return say.cardRed(roomName(report.spaceId))
+      case 'vow-declared':
+        return say.vowDeclared(roomName(report.spaceId))
+      case 'vow-broken':
+        return say.vowBroken(roomName(report.spaceId))
+      case 'pact-taken':
+        return say.pactTaken(roomName(report.spaceId))
+      case 'pact-met':
+        return say.pactMet(roomName(report.spaceId), report.released)
+      case 'bait-set':
+        return say.baitSet(roomName(report.spaceId))
+      case 'trapped':
+        return say.trapped(roomName(report.spaceId))
+      case 'held-fast':
+        return say.heldFast(roomName(report.spaceId))
+      case 'snakes-loosed':
+        return say.snakesLoosed(report.rooms)
+      case 'snakes-fed':
+        return say.snakesFed(roomName(report.spaceId))
+      case 'snakes-rebound':
+        return say.snakesRebound
+      case 'worm-set':
+        return say.wormSet(roomName(report.spaceId))
+      case 'worm-open':
+        return say.wormOpen(roomName(report.a), roomName(report.b))
+      case 'worm-crossed':
+        return say.wormCrossed(roomName(report.spaceId), report.crossings)
+      case 'worm-spent':
+        return say.wormSpent
+      case 'double-posted':
+        return say.doublePosted(roomName(report.spaceId))
+      case 'double-spent':
+        return say.doubleSpent(roomName(report.spaceId))
     }
   })
 
@@ -215,6 +266,31 @@
       rows.push({
         label: held.sealed,
         value: ['', '👁', '👁 👂', '👁 👂 🗣'][world.sealed],
+      })
+    }
+    for (const id of world.shut) rows.push({ label: held.shut, value: roomName(id) })
+    for (const id of world.guarded) rows.push({ label: held.guarded, value: roomName(id) })
+    if (world.pinned) rows.push({ label: held.pinned, value: roomName(world.pinned) })
+    if (world.vow) rows.push({ label: held.vow, value: roomName(world.vow) })
+    if (world.pact) rows.push({ label: held.pact, value: roomName(world.pact) })
+    for (const id of world.devouring) rows.push({ label: held.devouring, value: roomName(id) })
+    for (const [id, card] of Object.entries(world.cards)) {
+      rows.push({ label: held.cards, value: `${roomName(id)} · ${['', '☐', '☒', '✕'][card]}` })
+    }
+    if (world.double) rows.push({ label: held.double, value: roomName(world.double) })
+    if (world.trap) rows.push({ label: held.trap, value: roomName(world.trap) })
+    if (world.worm) {
+      rows.push({
+        label: held.worm,
+        value: world.worm.b
+          ? `${roomName(world.worm.a)} ⇄ ${roomName(world.worm.b)} · ${held.crossings(world.worm.crossings)}`
+          : `${roomName(world.worm.a)} · ${held.armed}`,
+      })
+    }
+    if (world.snakes) {
+      rows.push({
+        label: held.snakes,
+        value: `${world.snakes.rooms.length} · ${world.snakes.fed ? '✓' : '—'}`,
       })
     }
     if (world.pairing) {

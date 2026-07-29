@@ -6,17 +6,21 @@ import {
   TOUR_HATSU_KINDS,
   aimedSolid,
   aimedSpace,
+  arriveInTour,
   castInTour,
   detachedOn,
   doorExit,
   emptiedOn,
   heldSolidIds,
+  linkIsOpen,
+  planSealed,
   planWithout,
   shellsFor,
   solidNow,
   solidWalls,
   wanderOffset,
   worksInTour,
+  wormExit,
   worldIsQuiet,
   type TourWorld,
 } from './hatsu'
@@ -457,6 +461,195 @@ describe('the solids as the walk has to draw and collide with them', () => {
     if (cleared.report.kind !== 'stripped') throw new Error('unreachable')
     expect(cleared.report.count).toBe(2)
     expect(worldIsQuiet(cleared.world)).toBe(true)
+  })
+})
+
+// ── The doors ─────────────────────────────────────────────────────────────
+
+/** A room with a doorway to shut, and the room on the other side of it. */
+const joined = [...ship.plans.values()]
+  .flatMap((plan) => plan.doorways)
+  .find((door) => ship.spaces.get(door.a)?.tierId === busiest.space.tierId)!
+const roomA = ship.spaces.get(joined.a)!
+const roomB = ship.spaces.get(joined.b)!
+
+const door = (
+  world: TourWorld,
+  kind: Parameters<typeof castInTour>[1],
+  targetId: string | null,
+  standingIn: string | null = null,
+) => castInTour(world, kind, { ship, targetId, standingIn, at: [0, 0] })
+
+describe('shutting a room', () => {
+  it('takes the doorway out of the geometry rather than drawing a lock on it', () => {
+    const plan = ship.plans.get(roomA.tierId)!
+    const shut = planSealed(ship, plan, [roomA.id])
+
+    const before = plan.doorways.filter((d) => d.a === roomA.id || d.b === roomA.id).length
+    const after = shut.doorways.filter((d) => d.a === roomA.id || d.b === roomA.id).length
+    expect(before).toBeGreaterThan(0)
+    expect(after).toBe(0)
+
+    // And the wall is back across the opening, so it stops the visitor too.
+    // Measured as length rather than as a count: a doorway splits one wall
+    // into two segments, so closing it makes the list shorter and the wall
+    // longer, which is the whole point.
+    const run = (walls: typeof plan.walls) =>
+      walls
+        .filter((wall) => wall.spaceId === roomA.id && !wall.structureId)
+        .reduce((total, wall) => total + Math.hypot(wall.end[0] - wall.start[0], wall.end[1] - wall.start[1]), 0)
+    expect(run(shut.walls)).toBeGreaterThan(run(plan.walls))
+  })
+
+  it('leaves the rest of the deck exactly as it was', () => {
+    const plan = ship.plans.get(roomA.tierId)!
+    expect(planSealed(ship, plan, [])).toBe(plan)
+    expect(planSealed(ship, plan, ['a-room-on-another-deck'])).toBe(plan)
+  })
+
+  it('refuses to chain a room no technique is holding, and takes one that is', () => {
+    expect(door(EMPTY_WORLD, 'chain-bind', roomA.id).report).toMatchObject({ kind: 'jail-refused' })
+    const watched = door(EMPTY_WORLD, 'paper-spy', roomA.id).world
+    const jailed = door(watched, 'chain-bind', roomA.id)
+    expect(jailed.report).toMatchObject({ kind: 'jailed', spaceId: roomA.id })
+    expect(jailed.world.shut).toEqual([roomA.id])
+  })
+
+  it('refuses the stair out of a shut room as well as the door', () => {
+    const world = { ...EMPTY_WORLD, shut: [roomA.id] }
+    expect(linkIsOpen(world, roomA.id)).toBe(false)
+    expect(linkIsOpen(world, roomB.id)).toBe(true)
+    expect(linkIsOpen(EMPTY_WORLD, roomA.id)).toBe(true)
+  })
+})
+
+describe('what waits at a threshold', () => {
+  it('expels an intruder back where they came from, and does not injure them', () => {
+    const world = door(EMPTY_WORLD, 'legal-defense', roomA.id).world
+    const arrival = arriveInTour({ ...world, cameFrom: roomB.id }, ship, roomA.id)
+    expect(arrival.travelTo).toBe(roomB.id)
+    expect(arrival.report).toMatchObject({ kind: 'expelled', spaceId: roomA.id })
+    expect(arrival.punished).toBeFalsy()
+  })
+
+  it('lets the double take one punishment, and only one', () => {
+    let world = door(EMPTY_WORLD, 'legal-defense', roomA.id).world
+    world = door(world, 'guardian', roomB.id).world
+
+    const first = arriveInTour({ ...world, cameFrom: roomB.id }, ship, roomA.id)
+    expect(first.travelTo).toBeUndefined()
+    expect(first.report).toMatchObject({ kind: 'double-spent' })
+    expect(first.world.double).toBeNull()
+
+    const second = arriveInTour({ ...first.world, cameFrom: roomB.id }, ship, roomA.id)
+    expect(second.travelTo).toBe(roomB.id)
+  })
+
+  it('punishes the vow only when the rule is actually broken', () => {
+    const world = door(EMPTY_WORLD, 'heart-vow', roomA.id).world
+    expect(arriveInTour({ ...world, cameFrom: roomB.id }, ship, roomB.id).punished).toBeFalsy()
+    const broken = arriveInTour({ ...world, cameFrom: roomB.id }, ship, roomA.id)
+    expect(broken.punished).toBe(true)
+    expect(broken.report).toMatchObject({ kind: 'vow-broken' })
+  })
+
+  it('closes the contract on its terms, and releases what was shut', () => {
+    let world = door(EMPTY_WORLD, 'legal-defense', roomB.id).world
+    world = door(world, 'paper-spy', roomB.id).world
+    world = door(world, 'chain-bind', roomB.id).world
+    world = door(world, 'contract', roomA.id).world
+
+    const met = arriveInTour({ ...world, cameFrom: roomB.id }, ship, roomA.id)
+    if (met.report?.kind !== 'pact-met') throw new Error('unreachable')
+    expect(met.report.released).toBe(2)
+    expect(met.world.shut).toEqual([])
+    expect(met.world.guarded).toEqual([])
+  })
+
+  it('holds the visitor where the yellow card found them, until it is dismissed', () => {
+    const blue = door(EMPTY_WORLD, 'tribunal', roomA.id, roomA.id)
+    expect(blue.report).toMatchObject({ kind: 'card-blue' })
+    const yellow = door(blue.world, 'tribunal', roomA.id, roomA.id)
+    expect(yellow.world.pinned).toBe(roomA.id)
+
+    const leaving = arriveInTour({ ...yellow.world, cameFrom: roomA.id }, ship, roomB.id)
+    expect(leaving.travelTo).toBe(roomA.id)
+    expect(leaving.report).toMatchObject({ kind: 'held-fast' })
+
+    const red = door(yellow.world, 'tribunal', roomA.id, roomA.id)
+    expect(red.world.pinned).toBeNull()
+    expect(red.world.shut).toContain(roomA.id)
+  })
+
+  it('materializes the bait, and closes once it is taken', () => {
+    const trap = door(EMPTY_WORLD, 'desire-trap', roomA.id, busiest.space.id)
+    expect(trap.world.copies).toHaveLength(1)
+    expect(trap.world.copies[0].spaceId).toBe(roomA.id)
+    const taken = arriveInTour({ ...trap.world, cameFrom: roomB.id }, ship, roomA.id)
+    expect(taken.report).toMatchObject({ kind: 'trapped' })
+    expect(taken.world.pinned).toBe(roomA.id)
+  })
+
+  it('lets the fish take one thing each time the room is walked out of', () => {
+    let world = door(EMPTY_WORLD, 'paper-spy', busiest.space.id).world
+    world = door(world, 'chain-bind', busiest.space.id).world
+    const loosed = door(world, 'devour', busiest.space.id)
+    expect(loosed.report).toMatchObject({ kind: 'fish-loosed' })
+
+    // Nothing at all while the visitor is inside.
+    const inside = arriveInTour({ ...loosed.world, cameFrom: null }, ship, busiest.space.id)
+    expect(inside.report?.kind).not.toBe('fish-fed')
+
+    const out = arriveInTour({ ...loosed.world, cameFrom: busiest.space.id }, ship, roomB.id)
+    expect(out.report).toMatchObject({ kind: 'fish-fed' })
+    expect(Object.values(out.world.solids).filter((hold) => hold.gone)).toHaveLength(1)
+  })
+
+  it('refuses to loose the fish anywhere but a closed room', () => {
+    expect(door(EMPTY_WORLD, 'devour', roomA.id).report).toMatchObject({ kind: 'jail-refused' })
+  })
+})
+
+describe("Fugetsu's tunnel", () => {
+  it('opens on the second end and collapses on the third crossing', () => {
+    const set = door(EMPTY_WORLD, 'portal', roomA.id)
+    expect(set.report).toMatchObject({ kind: 'worm-set' })
+    let world = door(set.world, 'portal', roomB.id).world
+    expect(world.worm).toMatchObject({ a: roomA.id, b: roomB.id, crossings: 0 })
+
+    const first = wormExit(world, roomA.id, null)!
+    expect(first.to).toBe(roomB.id)
+    world = first.world
+    const second = wormExit(world, roomA.id, null)!
+    world = second.world
+    const third = wormExit(world, roomA.id, null)!
+    expect(third.report).toEqual({ kind: 'worm-spent' })
+    expect(third.world.worm).toBeNull()
+  })
+
+  it('does nothing for someone walking past, or just delivered', () => {
+    const world = { ...EMPTY_WORLD, worm: { a: roomA.id, b: roomB.id, crossings: 0 } }
+    expect(wormExit(world, roomA.id, roomA.id)).toBeNull()
+    expect(wormExit(world, busiest.space.id, null)).toBeNull()
+    expect(wormExit({ ...EMPTY_WORLD, worm: { a: roomA.id, b: '', crossings: 0 } }, roomA.id, null)).toBeNull()
+  })
+})
+
+describe('Silent Majority', () => {
+  it('takes the ten rooms nearest the visitor, and remembers whether it fed', () => {
+    const loosed = castInTour(EMPTY_WORLD, 'snakes', {
+      ship,
+      targetId: roomA.id,
+      standingIn: roomA.id,
+      at: [0, 0],
+    })
+    expect(loosed.world.snakes?.rooms).toHaveLength(10)
+    expect(loosed.world.snakes?.fed).toBe(false)
+
+    const victim = loosed.world.snakes!.rooms[3]
+    const fed = arriveInTour({ ...loosed.world, cameFrom: null }, ship, victim)
+    expect(fed.world.snakes?.fed).toBe(true)
+    expect(fed.report).toMatchObject({ kind: 'snakes-fed' })
   })
 })
 

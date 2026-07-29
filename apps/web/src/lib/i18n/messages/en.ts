@@ -168,6 +168,37 @@ export const en = {
 
         // On the solids. A room is a place and a solid is a thing: these all
         // say what happened to a thing, and never what happened to a page.
+        jailed: (room: string, doors: number) =>
+          `${room} is chained shut · ${doors} way${doors === 1 ? '' : 's'} in, and none of them open`,
+        jailRefused: (room: string) =>
+          `Nothing is holding ${room} · the chain is for what Nen is already in`,
+        fishLoosed: (room: string) => `The fish are in ${room} · nothing will show while you are`,
+        fishFed: (room: string, solid: string) => `${solid} was not there when you looked back into ${room}`,
+        guardsPosted: (room: string) => `Guards on ${room} · an intruder is put out, not hurt`,
+        expelled: (room: string, back: string) => `Put out of ${room}, back into ${back}`,
+        cardBlue: (room: string) => `Blue: ${room} is admitted, and warned`,
+        cardYellow: (room: string) => `Yellow: ${room} holds you where you stand`,
+        cardRed: (room: string) => `Red: ${room} is dismissed and shut behind you`,
+        vowDeclared: (room: string) => `The rule is set: you will not enter ${room}`,
+        vowBroken: (room: string) => `You entered ${room} knowing · the chain takes the aura for it`,
+        pactTaken: (room: string) => `The terms are taken: reach ${room}`,
+        pactMet: (room: string, released: number) =>
+          released
+            ? `${room} reached · the contract closes and lets ${released} hold${released === 1 ? '' : 's'} go`
+            : `${room} reached · the contract closes with nothing owed`,
+        baitSet: (room: string) => `What you wanted is standing in ${room}`,
+        trapped: (room: string) => `You took it · ${room} does not let you back out`,
+        heldFast: (room: string) => `${room} will not let you leave`,
+        snakesLoosed: (rooms: number) => `Four snakes, ${rooms} rooms in range · one of them has to be entered`,
+        snakesFed: (room: string) => `The curse found its victim in ${room}`,
+        snakesRebound: 'Dismissed with no victim · the curse comes back on the one who set it',
+        wormSet: (room: string) => `One end of the tunnel in ${room} · name the other`,
+        wormOpen: (a: string, b: string) => `${a} and ${b} are a night's route, and it is meant to be walked once`,
+        wormCrossed: (room: string, crossings: number) =>
+          `Out in ${room} · crossing ${crossings} of 3, and the worm is tiring`,
+        wormSpent: 'The tunnel collapses · it was never meant to be asked three times',
+        doublePosted: (room: string) => `The double stands in ${room}, beside whoever is left`,
+        doubleSpent: (room: string) => `The double took it in your place, and is gone from ${room}`,
         noSolid: 'Nothing solid down the reticle',
         boundFast: (solid: string) => `${solid} is held fast · nothing but the chain gets it back`,
         gumSet: (solid: string) => `Gum on ${solid} · take hold of a second thing to pull them together`,
@@ -220,6 +251,18 @@ export const en = {
         copy: 'copy',
       },
       holds: {
+        shut: 'Chained shut',
+        guarded: 'Guarded',
+        pinned: 'Held in',
+        vow: 'The rule',
+        pact: 'The terms',
+        devouring: 'The fish are in',
+        cards: 'Cards laid',
+        double: 'The double',
+        worm: 'The tunnel',
+        snakes: 'Snakes loose in',
+        trap: 'The bait is in',
+        crossings: (n: number) => `${n} of 3 crossings`,
         solid: 'Solids held',
         wound: 'The confetti is in',
         windup: (turns: number) => `${turns} rotation${turns === 1 ? '' : 's'} wound up`,

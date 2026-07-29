@@ -20,7 +20,7 @@
   import TourMinimap from '$lib/components/tour/TourMinimap.svelte'
   import TourScene from '$lib/components/tour/TourScene.svelte'
   import { setAmbientMuffled } from '$lib/audio/ambient'
-  import { activeHatsu } from '$lib/nen/hatsuState'
+  import { activeHatsu, enterForcedZetsu } from '$lib/nen/hatsuState'
   import { breadcrumbSchema } from '$lib/seo/schema'
   import { link, t } from '$lib/i18n'
   import { locale } from '$lib/i18n'
@@ -28,8 +28,10 @@
   import {
     EMPTY_WORLD,
     aimsAtSolids,
+    arriveInTour,
     castInTour,
     worksInTour,
+    wormExit,
     type TourReport,
     type TourWorld,
   } from '$lib/tour/hatsu'
@@ -139,14 +141,36 @@
   // would be unreachable if changing technique quietly undid the last one. What
   // is still standing is always listed in the panel, and released from it.
   $effect(() => {
-    if ($activeHatsu) return
-    world = EMPTY_WORLD
-    report = null
+    if (!$activeHatsu) {
+      world = EMPTY_WORLD
+      report = null
+      return
+    }
+    // Taking an aura up again is what clears the last penalty off the walk.
+    penalty = null
   })
 
+  /**
+   * Handing the ship back is not always free. Silent Majority is a curse that
+   * has to find a victim: dismissing it without one turns it on the user, and
+   * the archive already has a penalty for that.
+   */
   function release() {
+    const rebound = Boolean(world.snakes && !world.snakes.fed)
     world = EMPTY_WORLD
     report = null
+    if (rebound) punish($t.tour.hatsu.reports.snakesRebound)
+  }
+
+  /**
+   * The two techniques that can turn on their user cost the aura itself, which
+   * takes the panel down with it — so what happened has to be said over the
+   * walk instead, where the visitor is still looking.
+   */
+  let penalty = $state<string | null>(null)
+  function punish(said: string) {
+    penalty = said
+    enterForcedZetsu()
   }
 
   onDestroy(() => setAmbientMuffled(false))
@@ -167,21 +191,33 @@
   }
 
   /**
-   * Arriving somewhere is what the dolls count, and what lets an isolated room's
-   * occupant out of it: walk out and the boundary closes behind you.
+   * Setting foot somewhere is where half the techniques actually happen: the
+   * guards expel, the chain punishes, the fish take one more thing, the dolls
+   * count. `arriveInTour` holds all of it, so the page only carries out what it
+   * is told — including the archive's own penalty, which is Zetsu.
    */
   function arrived(spaceId: string | null) {
-    if (world.watched.some((doll) => doll.spaceId === spaceId)) {
-      world = {
-        ...world,
-        watched: world.watched.map((doll) =>
-          doll.spaceId === spaceId ? { ...doll, visits: doll.visits + 1 } : doll,
-        ),
-      }
+    const arrival = arriveInTour(world, ship, spaceId)
+    world = arrival.world
+    if (arrival.report) report = arrival.report
+    if (arrival.travelTo) {
+      const back = ship.spaces.get(arrival.travelTo)
+      if (back) goToSpace(back)
     }
-    if (world.isolated?.occupant && world.isolated.spaceId !== spaceId) {
-      world = { ...world, isolated: { ...world.isolated, occupant: false } }
+    // A vow broken is a vow broken: the aura goes, and with it the ship comes
+    // back — the same five minutes of Zetsu the rest of the archive charges.
+    if (arrival.punished && spaceId) {
+      punish($t.tour.hatsu.reports.vowBroken(nameOf(ship.spaces.get(spaceId)!)))
     }
+  }
+
+  /** Fugetsu's tunnel, asked on the same arrival the doors are asked on. */
+  function crossWorm(spaceId: string | null, arrivedFrom: string | null) {
+    const crossing = wormExit(world, spaceId, arrivedFrom)
+    if (!crossing) return null
+    world = crossing.world
+    report = crossing.report
+    return crossing.to
   }
 
   /** With a technique up, the index stops being a way to travel and becomes the reach. */
@@ -276,6 +312,7 @@
         aiming={Boolean(technique)}
         onCast={castOn}
         onArrive={arrived}
+        onWorm={crossWorm}
         loadingLabel={$t.tour.loading}
         unsupportedLabel={$t.tour.unsupported}
       />
@@ -321,6 +358,15 @@
             </p>
           {/if}
         </div>
+      {/if}
+
+      {#if penalty}
+        <p
+          class="pointer-events-none absolute bottom-20 left-1/2 max-w-md -translate-x-1/2 rounded border border-[#ef3340]/60 bg-[#050505]/90 px-3 py-1.5 text-center text-xs leading-snug text-[#ef8a90]"
+          aria-live="polite"
+        >
+          {penalty}
+        </p>
       {/if}
 
       <!-- Bottom right: the top right of the canvas is the remote eye's feed. -->

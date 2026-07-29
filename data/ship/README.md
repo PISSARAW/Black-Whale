@@ -254,8 +254,16 @@ ne pose un volume que dans deux cas.
 
 Le premier : **un dessin l'y met**. Le plan d'appartement princier dessine les
 lits, les canapés, la table à manger et la cuisine — c'est un relevé, pas de
-l'ameublement, et ces meubles portent donc la source du plan et sa provenance
-`plan`. Les quatorze appartements sont le même plan : le jeu de meubles est
+l'ameublement, et ces meubles portent donc la source du plan. Ce plan-là est
+encarté sur la double page du chap. 363, celle de la zone d'habitation vue en
+coupe, avec ses sept pièces nommées : salle du personnel, cuisine, salle à
+manger, salon, chambre du prince, salle d'eau. C'est donc une planche, et la
+provenance est `panel` — elle a longtemps porté `plan` par excès de prudence,
+ce qui revenait à ranger un dessin de Togashi au rang de la coupe qui n'entre
+dans aucune pièce. La même page range les quatorze appartements en deux
+rangées de sept de part et d'autre du couloir gardé, impairs à tribord, et
+c'est la disposition que le pont 1 tient. Les quatorze appartements sont le
+même plan : le jeu de meubles est
 authoré une fois, dans le repère de l'appartement, et répété pour chaque prince.
 
 Un seul en porte davantage, et c'est l'ordre d'autorité qui le veut : le

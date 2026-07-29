@@ -546,10 +546,10 @@
       "provenance": "panel",
       "source": "Ch. 393 — the concourse: the food stall, the ticket windows and the way down to the screens.",
       "hull": [
-        [-25, -12.5],
-        [25, -12.5],
-        [25, 12.5],
-        [-25, 12.5]
+        [-28, -12.5],
+        [28, -12.5],
+        [28, 37.5],
+        [-28, 37.5]
       ],
       "sourceFr": "Chap. 393 — le hall : le stand de restauration, les guichets et l'allée qui descend vers les salles."
     },
@@ -5571,6 +5571,177 @@
       "sourceFr": "Chap. 393 — le hall : le stand de restauration, les guichets et l'allée qui descend vers les salles."
     },
     {
+      "id": "tier-3-cineplex-screens-hall",
+      "tierId": "interior-cineplex",
+      "locationId": null,
+      "name": "Screens Hall",
+      "nameFr": "Hall des salles",
+      "category": "corridor",
+      "provenance": "inferred",
+      "source": "Reconstructed so the eight screens the plan names are reached from the concourse.",
+      "ceiling": null,
+      "envelope": null,
+      "footprint": [
+        [-28, 12.5],
+        [28, 12.5],
+        [28, 17.5],
+        [-28, 17.5]
+      ],
+      "sourceFr": "Reconstruit pour que les huit salles nommées par le plan se rejoignent depuis le hall."
+    },
+    {
+      "id": "tier-3-cineplex-screen-1",
+      "tierId": "interior-cineplex",
+      "locationId": null,
+      "name": "Screen 1",
+      "nameFr": "Salle 1",
+      "category": "public",
+      "provenance": "inferred",
+      "source": "The cineplex plan names eight screens; it does not draw them.",
+      "ceiling": null,
+      "envelope": "cineplex-screen-1",
+      "footprint": [
+        [-28, 17.5],
+        [-21, 17.5],
+        [-21, 37.5],
+        [-28, 37.5]
+      ],
+      "sourceFr": "Le plan du cinéplexe nomme huit salles ; il n'en donne pas la disposition."
+    },
+    {
+      "id": "tier-3-cineplex-screen-2",
+      "tierId": "interior-cineplex",
+      "locationId": null,
+      "name": "Screen 2",
+      "nameFr": "Salle 2",
+      "category": "public",
+      "provenance": "inferred",
+      "source": "The cineplex plan names eight screens; it does not draw them.",
+      "ceiling": null,
+      "envelope": "cineplex-screen-2",
+      "footprint": [
+        [-21, 17.5],
+        [-14, 17.5],
+        [-14, 37.5],
+        [-21, 37.5]
+      ],
+      "sourceFr": "Le plan du cinéplexe nomme huit salles ; il n'en donne pas la disposition."
+    },
+    {
+      "id": "tier-3-cineplex-screen-3",
+      "tierId": "interior-cineplex",
+      "locationId": null,
+      "name": "Screen 3",
+      "nameFr": "Salle 3",
+      "category": "public",
+      "provenance": "inferred",
+      "source": "The cineplex plan names eight screens; it does not draw them.",
+      "ceiling": null,
+      "envelope": "cineplex-screen-3",
+      "footprint": [
+        [-14, 17.5],
+        [-7, 17.5],
+        [-7, 37.5],
+        [-14, 37.5]
+      ],
+      "sourceFr": "Le plan du cinéplexe nomme huit salles ; il n'en donne pas la disposition."
+    },
+    {
+      "id": "tier-3-cineplex-screen-4",
+      "tierId": "interior-cineplex",
+      "locationId": null,
+      "name": "Screen 4",
+      "nameFr": "Salle 4",
+      "category": "public",
+      "provenance": "inferred",
+      "source": "The cineplex plan names eight screens; it does not draw them.",
+      "ceiling": null,
+      "envelope": "cineplex-screen-4",
+      "footprint": [
+        [-7, 17.5],
+        [0, 17.5],
+        [0, 37.5],
+        [-7, 37.5]
+      ],
+      "sourceFr": "Le plan du cinéplexe nomme huit salles ; il n'en donne pas la disposition."
+    },
+    {
+      "id": "tier-3-cineplex-screen-5",
+      "tierId": "interior-cineplex",
+      "locationId": null,
+      "name": "Screen 5",
+      "nameFr": "Salle 5",
+      "category": "public",
+      "provenance": "inferred",
+      "source": "The cineplex plan names eight screens; it does not draw them.",
+      "ceiling": null,
+      "envelope": "cineplex-screen-5",
+      "footprint": [
+        [0, 17.5],
+        [7, 17.5],
+        [7, 37.5],
+        [0, 37.5]
+      ],
+      "sourceFr": "Le plan du cinéplexe nomme huit salles ; il n'en donne pas la disposition."
+    },
+    {
+      "id": "tier-3-cineplex-screen-6",
+      "tierId": "interior-cineplex",
+      "locationId": null,
+      "name": "Screen 6",
+      "nameFr": "Salle 6",
+      "category": "public",
+      "provenance": "inferred",
+      "source": "The cineplex plan names eight screens; it does not draw them.",
+      "ceiling": null,
+      "envelope": "cineplex-screen-6",
+      "footprint": [
+        [7, 17.5],
+        [14, 17.5],
+        [14, 37.5],
+        [7, 37.5]
+      ],
+      "sourceFr": "Le plan du cinéplexe nomme huit salles ; il n'en donne pas la disposition."
+    },
+    {
+      "id": "tier-3-cineplex-screen-7",
+      "tierId": "interior-cineplex",
+      "locationId": null,
+      "name": "Screen 7",
+      "nameFr": "Salle 7",
+      "category": "public",
+      "provenance": "inferred",
+      "source": "The cineplex plan names eight screens; it does not draw them.",
+      "ceiling": null,
+      "envelope": "cineplex-screen-7",
+      "footprint": [
+        [14, 17.5],
+        [21, 17.5],
+        [21, 37.5],
+        [14, 37.5]
+      ],
+      "sourceFr": "Le plan du cinéplexe nomme huit salles ; il n'en donne pas la disposition."
+    },
+    {
+      "id": "tier-3-cineplex-screen-8",
+      "tierId": "interior-cineplex",
+      "locationId": null,
+      "name": "Screen 8",
+      "nameFr": "Salle 8",
+      "category": "public",
+      "provenance": "inferred",
+      "source": "The cineplex plan names eight screens; it does not draw them.",
+      "ceiling": null,
+      "envelope": "cineplex-screen-8",
+      "footprint": [
+        [21, 17.5],
+        [28, 17.5],
+        [28, 37.5],
+        [21, 37.5]
+      ],
+      "sourceFr": "Le plan du cinéplexe nomme huit salles ; il n'en donne pas la disposition."
+    },
+    {
       "id": "tier-5-cha-r-family-office-main-office",
       "tierId": "interior-cha-r-office",
       "locationId": "tier-5-cha-r-family-office",
@@ -7240,6 +7411,70 @@
     }
   ],
   "doors": [
+    {
+      "a": "tier-3-cineplex-screen-1",
+      "b": "tier-3-cineplex-screens-hall",
+      "at": [-24.5, 17.5],
+      "width": 2,
+      "reason": "The screen opens onto the hall that serves the eight of them.",
+      "reasonFr": "La salle n'ouvre que sur le hall qui dessert les huit."
+    },
+    {
+      "a": "tier-3-cineplex-screen-2",
+      "b": "tier-3-cineplex-screens-hall",
+      "at": [-17.5, 17.5],
+      "width": 2,
+      "reason": "The screen opens onto the hall that serves the eight of them.",
+      "reasonFr": "La salle n'ouvre que sur le hall qui dessert les huit."
+    },
+    {
+      "a": "tier-3-cineplex-screen-3",
+      "b": "tier-3-cineplex-screens-hall",
+      "at": [-10.5, 17.5],
+      "width": 2,
+      "reason": "The screen opens onto the hall that serves the eight of them.",
+      "reasonFr": "La salle n'ouvre que sur le hall qui dessert les huit."
+    },
+    {
+      "a": "tier-3-cineplex-screen-4",
+      "b": "tier-3-cineplex-screens-hall",
+      "at": [-3.5, 17.5],
+      "width": 2,
+      "reason": "The screen opens onto the hall that serves the eight of them.",
+      "reasonFr": "La salle n'ouvre que sur le hall qui dessert les huit."
+    },
+    {
+      "a": "tier-3-cineplex-screen-5",
+      "b": "tier-3-cineplex-screens-hall",
+      "at": [3.5, 17.5],
+      "width": 2,
+      "reason": "The screen opens onto the hall that serves the eight of them.",
+      "reasonFr": "La salle n'ouvre que sur le hall qui dessert les huit."
+    },
+    {
+      "a": "tier-3-cineplex-screen-6",
+      "b": "tier-3-cineplex-screens-hall",
+      "at": [10.5, 17.5],
+      "width": 2,
+      "reason": "The screen opens onto the hall that serves the eight of them.",
+      "reasonFr": "La salle n'ouvre que sur le hall qui dessert les huit."
+    },
+    {
+      "a": "tier-3-cineplex-screen-7",
+      "b": "tier-3-cineplex-screens-hall",
+      "at": [17.5, 17.5],
+      "width": 2,
+      "reason": "The screen opens onto the hall that serves the eight of them.",
+      "reasonFr": "La salle n'ouvre que sur le hall qui dessert les huit."
+    },
+    {
+      "a": "tier-3-cineplex-screen-8",
+      "b": "tier-3-cineplex-screens-hall",
+      "at": [24.5, 17.5],
+      "width": 2,
+      "reason": "The screen opens onto the hall that serves the eight of them.",
+      "reasonFr": "La salle n'ouvre que sur le hall qui dessert les huit."
+    },
     {
       "a": "tier-1-vvip-restricted-royal-01",
       "b": "tier-1-vvip-corridor",
@@ -10345,6 +10580,22 @@
       "provenance": "panel",
       "source": "Ch. 393 — the concourse: the food stall, the ticket windows and the way down to the screens.",
       "sourceFr": "Chap. 393 — le hall : le stand de restauration, les guichets et l'allée qui descend vers les salles."
+    },
+    {
+      "id": "tier-3-cineplex-screen-corridor-poster",
+      "spaceId": "tier-3-cineplex-screen-corridor",
+      "kind": "painting",
+      "name": "Feature Poster",
+      "nameFr": "Affiche du film",
+      "at": [0, 12.3],
+      "size": [8, 0.3],
+      "rotation": 0,
+      "base": 3,
+      "height": 2.2,
+      "sides": null,
+      "provenance": "map",
+      "source": "The /ship cineplex plan hangs the feature's poster over the way down to the screens.",
+      "sourceFr": "Le plan du cinéplexe sur /ship accroche l'affiche du film au-dessus de l'allée qui descend vers les salles."
     },
     {
       "id": "tier-3-observation-deck-window",
@@ -16473,6 +16724,54 @@
       "provenance": "panel",
       "source": "Ch. 359 — the theatre: a proscenium stage under its curtain, boxes down the side walls, and the screen standing on the stage.",
       "sourceFr": "Chap. 359 — le théâtre : une scène à cadre sous son rideau, des loges le long des murs latéraux, et l'écran posé sur la scène."
+    },
+    {
+      "id": "tier-2-bulkhead-locking-gear-01",
+      "spaceId": "tier-2-bulkhead",
+      "kind": "cabinet",
+      "name": "Locking Gear (forward)",
+      "nameFr": "Verrou (avant)",
+      "at": [0, 65.5],
+      "size": [2.4, 1.6],
+      "rotation": 0,
+      "base": 0,
+      "height": 2.4,
+      "sides": null,
+      "provenance": "map",
+      "source": "The /ship bulkhead plan: the armoured door with its locking gear, and the emergency control panel on the Tier 2 side — the only side it opens from.",
+      "sourceFr": "Le plan de la cloison sur /ship : la porte blindée et ses verrous, et le panneau d'ouverture d'urgence du côté du pont 2 — le seul d'où elle s'ouvre."
+    },
+    {
+      "id": "tier-2-bulkhead-locking-gear-02",
+      "spaceId": "tier-2-bulkhead",
+      "kind": "cabinet",
+      "name": "Locking Gear (aft)",
+      "nameFr": "Verrou (arrière)",
+      "at": [0, 72.7],
+      "size": [2.4, 1.6],
+      "rotation": 0,
+      "base": 0,
+      "height": 2.4,
+      "sides": null,
+      "provenance": "map",
+      "source": "The /ship bulkhead plan: the armoured door with its locking gear, and the emergency control panel on the Tier 2 side — the only side it opens from.",
+      "sourceFr": "Le plan de la cloison sur /ship : la porte blindée et ses verrous, et le panneau d'ouverture d'urgence du côté du pont 2 — le seul d'où elle s'ouvre."
+    },
+    {
+      "id": "tier-2-bulkhead-emergency-panel",
+      "spaceId": "tier-2-bulkhead",
+      "kind": "counter",
+      "name": "Emergency Control Panel",
+      "nameFr": "Panneau d'ouverture d'urgence",
+      "at": [-3.4, 69.1],
+      "size": [1.2, 0.5],
+      "rotation": 0,
+      "base": 0,
+      "height": 1.4,
+      "sides": null,
+      "provenance": "map",
+      "source": "The /ship bulkhead plan: the armoured door with its locking gear, and the emergency control panel on the Tier 2 side — the only side it opens from.",
+      "sourceFr": "Le plan de la cloison sur /ship : la porte blindée et ses verrous, et le panneau d'ouverture d'urgence du côté du pont 2 — le seul d'où elle s'ouvre."
     },
     {
       "id": "tier-5-central-dining-hall-table-01",

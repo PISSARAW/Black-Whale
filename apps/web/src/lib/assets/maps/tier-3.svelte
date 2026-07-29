@@ -1,15 +1,232 @@
 <script lang="ts">
+  /**
+   * Tier 3, generated from `data/ship/blueprint.json`.
+   *
+   * One unit of this 1000 x 600 viewBox is 0.35 m and the ship's midpoint is
+   * (500, 300) — the frame the reconstruction is authored in. So every room is
+   * drawn where the blueprint puts it, and every room the blueprint holds is
+   * drawn: this map used to name a dozen of them and leave the rest as deck.
+   *
+   * Rooms the catalogue has a record for are clickable and zoom into their own
+   * plan. Corridors and the spaces the reconstruction invented to keep the deck
+   * contiguous are drawn dimmer and are not: there is nothing to open.
+   *
+   * Do not hand-edit — regenerate from the blueprint.
+   */
   import { mapState } from '$lib/state/mapState.svelte'
 
-  function handleZoneClick(zoneId: string) {
-    mapState.selectLocation(zoneId)
+  type Region = {
+    id: string
+    region: string | null
+    points: string
+    label: string
+    size: number
+    at: [number, number]
+    turned: boolean
+    through: boolean
+    inferred: boolean
   }
-  function handleZoneKeydown(event: KeyboardEvent, zoneId: string) {
-    if (event.key === 'Enter' || event.key === ' ') {
-      event.preventDefault()
-      event.stopPropagation()
-      handleZoneClick(zoneId)
-    }
+
+  const regions: Region[] = [
+    {
+      id: 'tier-3-bulkhead-access',
+      region: null,
+      points: '450.0,52.0 550.0,52.0 550.0,68.0 450.0,68.0',
+      label: '',
+      size: 0,
+      at: [500.0, 60.0],
+      turned: false,
+      through: true,
+      inferred: false,
+    },
+    {
+      id: 'tier-3-forward-corridor',
+      region: null,
+      points: '150.0,68.0 830.0,68.0 830.0,100.0 150.0,100.0',
+      label: 'Forward Corridor',
+      size: 12,
+      at: [490.0, 88.0],
+      turned: false,
+      through: true,
+      inferred: true,
+    },
+    {
+      id: 'tier-3-central-spine',
+      region: null,
+      points: '360.0,100.0 400.0,100.0 400.0,470.0 360.0,470.0',
+      label: 'Central Spine',
+      size: 12,
+      at: [380.0, 289.0],
+      turned: true,
+      through: true,
+      inferred: true,
+    },
+    {
+      id: 'tier-3-starboard-corridor',
+      region: null,
+      points: '600.0,100.0 640.0,100.0 640.0,470.0 600.0,470.0',
+      label: 'Starboard Corridor',
+      size: 12,
+      at: [620.0, 289.0],
+      turned: true,
+      through: true,
+      inferred: true,
+    },
+    {
+      id: 'tier-3-aft-corridor',
+      region: null,
+      points: '150.0,470.0 830.0,470.0 830.0,505.0 150.0,505.0',
+      label: 'Aft Corridor',
+      size: 12,
+      at: [490.0, 491.5],
+      turned: false,
+      through: true,
+      inferred: true,
+    },
+    {
+      id: 'tier-3-port-promenade',
+      region: null,
+      points: '100.0,100.0 180.0,100.0 180.0,470.0 100.0,470.0',
+      label: 'Port Promenade',
+      size: 9,
+      at: [140.0, 288.0],
+      turned: false,
+      through: true,
+      inferred: true,
+    },
+    {
+      id: 'tier-3-starboard-promenade',
+      region: null,
+      points: '790.0,100.0 940.0,100.0 940.0,470.0 790.0,470.0 790.0,350.0 830.0,350.0 790.0,240.0',
+      label: 'Starboard Promenade',
+      size: 12,
+      at: [867.5, 287.8],
+      turned: false,
+      through: true,
+      inferred: true,
+    },
+    {
+      id: 'tier-3-residential-first-class',
+      region: 't3-residential-1st',
+      points:
+        '180.0,100.0 360.0,100.0 360.0,250.0 180.0,250.0 180.0,210.0 240.0,210.0 240.0,180.0 180.0,180.0',
+      label: 'First-Class Residential Block',
+      size: 9,
+      at: [274.3, 176.6],
+      turned: false,
+      through: false,
+      inferred: false,
+    },
+    {
+      id: 'tier-3-residential-room-3101',
+      region: 'room-3101',
+      points: '180.0,180.0 240.0,180.0 240.0,210.0 180.0,210.0',
+      label: '',
+      size: 0,
+      at: [210.0, 195.0],
+      turned: false,
+      through: false,
+      inferred: false,
+    },
+    {
+      id: 'tier-3-residential-standard',
+      region: 't3-residential-ord',
+      points: '180.0,270.0 360.0,270.0 360.0,470.0 180.0,470.0',
+      label: 'Standard Residential Block',
+      size: 12,
+      at: [270.0, 374.0],
+      turned: false,
+      through: false,
+      inferred: false,
+    },
+    {
+      id: 'tier-3-central-hospital',
+      region: 't3-hospital',
+      points: '400.0,100.0 600.0,100.0 600.0,280.0 400.0,280.0',
+      label: 'Central Hospital',
+      size: 12,
+      at: [500.0, 194.0],
+      turned: false,
+      through: false,
+      inferred: false,
+    },
+    {
+      id: 'tier-3-central-police-station',
+      region: 'central-police-station',
+      points: '400.0,300.0 500.0,300.0 500.0,430.0 400.0,430.0',
+      label: 'Central Police Station',
+      size: 9,
+      at: [450.0, 368.0],
+      turned: true,
+      through: false,
+      inferred: false,
+    },
+    {
+      id: 'tier-3-residential-units',
+      region: 'central-police-station',
+      points: '400.0,430.0 500.0,430.0 500.0,470.0 400.0,470.0',
+      label: '',
+      size: 0,
+      at: [450.0, 450.0],
+      turned: false,
+      through: false,
+      inferred: true,
+    },
+    {
+      id: 'tier-3-central-courthouse',
+      region: 'central-courthouse',
+      points: '500.0,300.0 600.0,300.0 600.0,470.0 500.0,470.0',
+      label: 'Central Courthouse',
+      size: 9,
+      at: [550.0, 388.0],
+      turned: false,
+      through: false,
+      inferred: false,
+    },
+    {
+      id: 'tier-3-cineplex',
+      region: 't3-cinema',
+      points: '640.0,100.0 790.0,100.0 790.0,220.0 640.0,220.0',
+      label: 'Cineplex',
+      size: 12,
+      at: [715.0, 164.0],
+      turned: false,
+      through: false,
+      inferred: false,
+    },
+    {
+      id: 'tier-3-observation-deck',
+      region: 't3-obs-deck',
+      points: '640.0,240.0 790.0,240.0 830.0,350.0 640.0,350.0',
+      label: 'Observation Deck',
+      size: 12,
+      at: [725.4, 301.2],
+      turned: false,
+      through: false,
+      inferred: false,
+    },
+    {
+      id: 'tier-3-heilly-family-office',
+      region: 't3-heilly',
+      points: '640.0,370.0 790.0,370.0 790.0,470.0 640.0,470.0',
+      label: 'Heil-Ly Family Office',
+      size: 12,
+      at: [715.0, 424.0],
+      turned: false,
+      through: false,
+      inferred: false,
+    },
+  ]
+
+  function select(regionId: string | null) {
+    if (regionId) mapState.selectLocation(regionId)
+  }
+
+  function selectWithKeyboard(event: KeyboardEvent, regionId: string | null) {
+    if (event.key !== 'Enter' && event.key !== ' ') return
+    event.preventDefault()
+    event.stopPropagation()
+    select(regionId)
   }
 </script>
 
@@ -17,263 +234,89 @@
   <defs>
     <style>
       .hull {
-        fill: #2d3748; /* administrative gray */
-        stroke: #718096;
+        fill: #1a0f0f;
+        stroke: #ffd700;
         stroke-width: 4;
       }
       .zone {
-        fill: #1a202c;
-        stroke: #4a5568;
+        fill: #2a1515;
+        stroke: #fffff0;
         stroke-width: 1.5;
         transition: fill 0.2s;
+      }
+      .zone.clickable {
         cursor: pointer;
       }
-      .zone:hover {
-        fill: #2d3748;
+      .zone.clickable:hover {
+        fill: #3d1c1c;
       }
       .zone.selected {
-        stroke: #4299e1;
-        fill: #2c5282;
-      }
-      .medical {
-        fill: #2b6cb0;
-        stroke: #90cdf4;
-      }
-      .medical:hover {
-        fill: #3182ce;
-      }
-      .medical.selected {
         stroke: #ffd700;
-        fill: #2c5282;
+        stroke-width: 2.5;
+        fill: #4d2020;
+      }
+      .zone.through {
+        fill: #150b0b;
+        stroke: #ffd700;
+        stroke-opacity: 0.35;
+        stroke-width: 1;
+        stroke-dasharray: 4 4;
+      }
+      .zone.inferred {
+        fill: #16171c;
+        stroke: #9dc4e0;
+        stroke-opacity: 0.4;
       }
       .label {
-        fill: #e2e8f0;
+        fill: #fffff0;
         font-family: sans-serif;
-        font-size: 13px;
-        font-weight: bold;
-        pointer-events: none;
-        text-anchor: middle;
-      }
-      .sublabel {
-        fill: #a0aec0;
-        font-size: 10px;
         pointer-events: none;
         text-anchor: middle;
       }
     </style>
   </defs>
 
-  <!-- Outer Hull Tier 3 (Widest deck) -->
-  <path class="hull" d="M 120 50 C 10 50, 10 550, 120 550 L 850 550 C 980 550, 980 50, 850 50 Z" />
+  <polygon
+    class="hull"
+    points="120.0,50.0 90.31,64.0 67.2,102.0 50.71,158.0 40.8,226.0 37.51,300.0 40.8,374.0 50.71,442.0 67.2,498.0 90.31,536.0 120.0,550.0 850.0,550.0 885.11,536.0 912.4,498.0 931.89,442.0 943.6,374.0 947.51,300.0 943.6,226.0 931.91,158.0 912.4,102.0 885.11,64.0 850.0,50.0"
+  />
 
   <g id="tier-3-zones">
-    <!-- Zone Résidentielle -->
-    <g id="t3-residential-1st">
-      <rect
-        class="zone"
-        role="button"
-        tabindex="0"
-        aria-label="Open First-class Residential Zone"
-        class:selected={mapState.selectedLocationId === 't3-residential-1st'}
-        x="180"
-        y="100"
-        width="180"
-        height="150"
-        onclick={() => handleZoneClick('t3-residential-1st')}
-        onkeydown={(event) => handleZoneKeydown(event, 't3-residential-1st')}
-      />
-      <text x="270" y="160" class="label">First-Class Cabins</text>
-
-      <!-- Chambre 3101 -->
-      <g
-        role="button"
-        tabindex="0"
-        aria-label="Open Room 3101"
-        onclick={(e) => {
-          e.stopPropagation()
-          handleZoneClick('room-3101')
-        }}
-        onkeydown={(event) => handleZoneKeydown(event, 'room-3101')}
-      >
-        <rect
+    {#each regions as zone (zone.id)}
+      {#if zone.region}
+        <g
+          role="button"
+          tabindex="0"
+          aria-label={`Open ${zone.label || zone.id}`}
+          onclick={() => select(zone.region)}
+          onkeydown={(event) => selectWithKeyboard(event, zone.region)}
+        >
+          <polygon
+            class="zone clickable"
+            class:through={zone.through}
+            class:inferred={zone.inferred}
+            class:selected={mapState.selectedLocationId === zone.region}
+            points={zone.points}
+          />
+        </g>
+      {:else}
+        <polygon
           class="zone"
-          class:selected={mapState.selectedLocationId === 'room-3101'}
-          x="200"
-          y="180"
-          width="40"
-          height="30"
-          fill="#4a5568"
+          class:through={zone.through}
+          class:inferred={zone.inferred}
+          points={zone.points}
         />
-        <text x="220" y="200" class="label text-[10px]">3101</text>
-      </g>
-    </g>
+      {/if}
+    {/each}
 
-    <g
-      id="t3-residential-ord"
-      role="button"
-      tabindex="0"
-      aria-label="Open Standard Residential Zone"
-      onclick={() => handleZoneClick('t3-residential-ord')}
-      onkeydown={(event) => handleZoneKeydown(event, 't3-residential-ord')}
-    >
-      <rect
-        class="zone"
-        class:selected={mapState.selectedLocationId === 't3-residential-ord'}
-        x="180"
-        y="270"
-        width="180"
-        height="200"
-      />
-      <text x="270" y="360" class="label">Cabines Ordinaires</text>
-    </g>
-
-    <!-- Secteur Médical (Ikagaku Tokku) -->
-    <g
-      id="t3-hospital"
-      role="button"
-      tabindex="0"
-      aria-label="Open Medical Ward"
-      onclick={() => handleZoneClick('t3-hospital')}
-      onkeydown={(event) => handleZoneKeydown(event, 't3-hospital')}
-    >
-      <rect
-        class="zone medical"
-        class:selected={mapState.selectedLocationId === 't3-hospital'}
-        x="400"
-        y="100"
-        width="200"
-        height="180"
-      />
-      <text x="500" y="160" class="label text-blue-300">Medical Ward (Ikagaku Tokku)</text>
-      <text x="500" y="185" class="label" fill="#FFFFF0">Central Hospital & Research Inst.</text>
-      <text x="500" y="205" class="sublabel" fill="#ebf8ff">3 Clinics (Central Medical Clinic)</text
+    {#each regions.filter((zone) => zone.size > 0) as zone (zone.id)}
+      <text
+        class="label"
+        x={zone.at[0]}
+        y={zone.at[1]}
+        font-size={zone.size}
+        transform={zone.turned ? `rotate(-90 ${zone.at[0]} ${zone.at[1]})` : ''}>{zone.label}</text
       >
-    </g>
-
-    <!-- Secteur Administratif & Judiciaire (Political Ward) -->
-    <g id="t3-political-ward">
-      <rect
-        x="390"
-        y="290"
-        width="220"
-        height="190"
-        fill="none"
-        stroke="#e2e8f0"
-        stroke-width="2"
-        stroke-dasharray="4,4"
-      />
-      <text x="500" y="280" class="label text-gray-300">Political Ward (Seiji Tokku)</text>
-
-      <g
-        role="button"
-        tabindex="0"
-        aria-label="Open Central Police Station"
-        onclick={() => handleZoneClick('central-police-station')}
-        onkeydown={(event) => handleZoneKeydown(event, 'central-police-station')}
-      >
-        <rect
-          class="zone"
-          class:selected={mapState.selectedLocationId === 'central-police-station'}
-          x="400"
-          y="300"
-          width="100"
-          height="170"
-        />
-        <text x="450" y="380" class="label">Central Police</text>
-      </g>
-      <g
-        role="button"
-        tabindex="0"
-        aria-label="Open Central Courthouse"
-        onclick={() => handleZoneClick('central-courthouse')}
-        onkeydown={(event) => handleZoneKeydown(event, 'central-courthouse')}
-      >
-        <rect
-          class="zone"
-          class:selected={mapState.selectedLocationId === 'central-courthouse'}
-          x="500"
-          y="300"
-          width="100"
-          height="170"
-        />
-        <text x="550" y="380" class="label text-xs">Central Courthouse</text>
-      </g>
-    </g>
-
-    <!-- Loisirs & Heil-Ly -->
-    <g
-      id="t3-cinema"
-      role="button"
-      tabindex="0"
-      aria-label="Open Movie Theater"
-      onclick={() => handleZoneClick('t3-cinema')}
-      onkeydown={(event) => handleZoneKeydown(event, 't3-cinema')}
-    >
-      <rect
-        class="zone"
-        class:selected={mapState.selectedLocationId === 't3-cinema'}
-        x="640"
-        y="100"
-        width="150"
-        height="120"
-      />
-      <text x="715" y="160" class="label">Movie Theatre</text>
-      <text x="715" y="175" class="sublabel text-[9px]">(Cineplex - 8 Screens)</text>
-    </g>
-    <g
-      id="t3-obs-deck"
-      role="button"
-      tabindex="0"
-      aria-label="Open Observation Deck"
-      onclick={() => handleZoneClick('t3-obs-deck')}
-      onkeydown={(event) => handleZoneKeydown(event, 't3-obs-deck')}
-    >
-      <path
-        class="zone"
-        class:selected={mapState.selectedLocationId === 't3-obs-deck'}
-        d="M 640 240 L 790 240 L 830 350 L 640 350 Z"
-      />
-      <text x="715" y="300" class="label">Observation Deck</text>
-      <text x="715" y="315" class="sublabel">(Front of the Ship)</text>
-    </g>
-    <g
-      id="t3-heilly"
-      role="button"
-      tabindex="0"
-      aria-label="Open Heil-Ly Office"
-      onclick={() => handleZoneClick('t3-heilly')}
-      onkeydown={(event) => handleZoneKeydown(event, 't3-heilly')}
-    >
-      <rect
-        class="zone"
-        class:selected={mapState.selectedLocationId === 't3-heilly'}
-        x="640"
-        y="370"
-        width="150"
-        height="100"
-      />
-      <text x="715" y="420" class="label">Heil-Ly Office</text>
-      <text x="715" y="440" class="sublabel text-purple-400">Official Zone</text>
-    </g>
-
-    <!-- Sas de sécurité vers le haut -->
-    <g
-      id="t3-access-t2"
-      role="button"
-      tabindex="0"
-      aria-label="Open Tier 2 Access"
-      onclick={() => handleZoneClick('t3-access-t2')}
-      onkeydown={(event) => handleZoneKeydown(event, 't3-access-t2')}
-    >
-      <rect
-        class="zone"
-        class:selected={mapState.selectedLocationId === 't3-access-t2'}
-        x="450"
-        y="60"
-        width="100"
-        height="30"
-      />
-      <text x="500" y="80" class="label text-[10px]">Emergency bulkhead to Tier 2</text>
-    </g>
+    {/each}
   </g>
 </svg>

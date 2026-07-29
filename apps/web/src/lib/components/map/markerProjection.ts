@@ -76,65 +76,97 @@ export type MapMarker = MarkerIdentityState & {
 // ──────────────────────────────────────────────
 
 /**
- * Location slugs to SVG coordinates, per tier. Coordinates are expressed in the
- * shared `0 0 1000 600` viewBox of the tier maps.
+ * Location ids to SVG coordinates, per deck, in the shared `0 0 1000 600`
+ * viewBox of the tier maps.
+ *
+ * Generated from `data/ship/blueprint.json`, like the deck maps themselves: a
+ * location's anchor is the centroid of the space the reconstruction gives it,
+ * so a marker lands in the room the map draws rather than near it. Where one
+ * location is split across two spaces — the lifeboat deck has a port half and
+ * a starboard half — the larger half wins, because a marker has to be
+ * somewhere. Each deck also anchors itself, for a passenger the archive places
+ * on the tier and nowhere finer.
+ *
+ * `small` marks a room too tight for the wide fan-out: co-located markers in a
+ * prince's room close up rather than spilling through the party wall.
  */
-const locationCoordinates: Record<string, Record<string, { x: number; y: number }>> = {
+type TierAnchor = { x: number; y: number; small?: true }
+
+const locationCoordinates: Record<string, Record<string, TierAnchor>> = {
   'tier-1': {
-    'tier-1': { x: 500, y: 285 },
-    'king-quarters': { x: 475, y: 160 },
-    'king-living-quarters': { x: 475, y: 160 },
-    'princes-burial-chamber': { x: 475, y: 110 },
-    'banquet-hall': { x: 475, y: 255 },
-    'vvip-living-quarters': { x: 290, y: 385 },
-    'queens-living-quarters': { x: 422, y: 385 },
-    'royal-residential-sector': { x: 530, y: 385 },
-    'soldiers-living-quarters': { x: 652, y: 385 },
-    casino: { x: 360, y: 385 },
-    'vip-jail': { x: 790, y: 320 },
-    'vvip-prison-beyond': { x: 790, y: 270 },
-    'supreme-court': { x: 790, y: 410 },
-    lifeboats: { x: 865, y: 300 },
+    'tier-1': { x: 523.9, y: 284.8 },
+    'tier-1-banquet-hall': { x: 475.0, y: 255.0 },
+    'tier-1-king-living-quarters': { x: 475.0, y: 160.0 },
+    'tier-1-lifeboats': { x: 135.0, y: 300.0, small: true },
+    'tier-1-princes-burial-chamber': { x: 475.0, y: 83.4, small: true },
+    'tier-1-queens-living-quarters': { x: 422.5, y: 385.0, small: true },
+    'tier-1-queens-living-quarters-room-01': { x: 402.0, y: 328.8, small: true },
+    'tier-1-queens-living-quarters-room-02': { x: 443.0, y: 328.8, small: true },
+    'tier-1-queens-living-quarters-room-03': { x: 402.0, y: 366.3, small: true },
+    'tier-1-queens-living-quarters-room-04': { x: 443.0, y: 366.3, small: true },
+    'tier-1-queens-living-quarters-room-05': { x: 402.0, y: 403.8, small: true },
+    'tier-1-queens-living-quarters-room-06': { x: 443.0, y: 403.8, small: true },
+    'tier-1-queens-living-quarters-room-07': { x: 402.0, y: 441.3, small: true },
+    'tier-1-queens-living-quarters-room-08': { x: 443.0, y: 441.3, small: true },
+    'tier-1-royal-residential-sector': { x: 530.0, y: 385.0 },
+    'tier-1-royal-residential-sector-room-1001': { x: 582.5, y: 320.7, small: true },
+    'tier-1-royal-residential-sector-room-1002': { x: 477.5, y: 320.7, small: true },
+    'tier-1-royal-residential-sector-room-1003': { x: 582.5, y: 342.1, small: true },
+    'tier-1-royal-residential-sector-room-1004': { x: 477.5, y: 342.1, small: true },
+    'tier-1-royal-residential-sector-room-1005': { x: 582.5, y: 363.5, small: true },
+    'tier-1-royal-residential-sector-room-1006': { x: 477.5, y: 363.5, small: true },
+    'tier-1-royal-residential-sector-room-1007': { x: 582.5, y: 384.9, small: true },
+    'tier-1-royal-residential-sector-room-1008': { x: 477.5, y: 384.9, small: true },
+    'tier-1-royal-residential-sector-room-1009': { x: 582.5, y: 406.3, small: true },
+    'tier-1-royal-residential-sector-room-1010': { x: 477.5, y: 406.3, small: true },
+    'tier-1-royal-residential-sector-room-1011': { x: 582.5, y: 427.7, small: true },
+    'tier-1-royal-residential-sector-room-1012': { x: 477.5, y: 427.7, small: true },
+    'tier-1-royal-residential-sector-room-1013': { x: 582.5, y: 449.2, small: true },
+    'tier-1-royal-residential-sector-room-1014': { x: 477.5, y: 449.2, small: true },
+    'tier-1-soldiers-living-quarters': { x: 652.5, y: 385.0 },
+    'tier-1-supreme-court': { x: 790.0, y: 410.0 },
+    'tier-1-vip-casino': { x: 360.0, y: 385.0 },
+    'tier-1-vip-jail': { x: 790.0, y: 320.0, small: true },
+    'tier-1-vvip-living-quarters': { x: 292.9, y: 385.0, small: true },
+    'tier-1-vvip-prison-beyond': { x: 790.0, y: 270.0, small: true },
   },
   'tier-2': {
-    'tier-2': { x: 500, y: 300 },
-    'heilly-secret-hideout': { x: 400, y: 225 },
-    'vip-guest-rooms': { x: 400, y: 225 },
-    'ministry-of-justice': { x: 660, y: 385 },
-    'vip-witness-protection-area': { x: 660, y: 385 },
-    'screening-room': { x: 375, y: 385 },
-    bulkhead: { x: 500, y: 498 },
+    'tier-2': { x: 517.0, y: 394.2 },
+    'tier-2-bulkhead': { x: 500.0, y: 497.5, small: true },
+    'tier-2-heilly-secret-hideout': { x: 512.5, y: 225.0 },
+    'tier-2-ministry-of-justice': { x: 610.0, y: 385.0 },
+    'tier-2-screening-room': { x: 375.0, y: 385.0 },
+    'tier-2-vip-witness-protection-area': { x: 752.5, y: 385.0 },
   },
   'tier-3': {
-    'tier-3': { x: 500, y: 285 },
-    'residential-units': { x: 270, y: 360 },
-    'residential-room-3101': { x: 220, y: 195 },
-    'central-hospital': { x: 500, y: 190 },
-    'central-police-station': { x: 450, y: 385 },
-    'central-courthouse': { x: 550, y: 385 },
-    'political-ward': { x: 500, y: 385 },
-    'heilly-family-office': { x: 715, y: 420 },
-    cineplex: { x: 715, y: 160 },
-    'observation-deck': { x: 715, y: 295 },
-    'residential-first-class': { x: 270, y: 175 },
-    'residential-standard': { x: 270, y: 370 },
+    'tier-3': { x: 482.8, y: 285.4 },
+    'tier-3-central-courthouse': { x: 550.0, y: 385.0 },
+    'tier-3-central-hospital': { x: 500.0, y: 190.0 },
+    'tier-3-central-police-station': { x: 450.0, y: 365.0 },
+    'tier-3-cineplex': { x: 715.0, y: 160.0 },
+    'tier-3-heilly-family-office': { x: 715.0, y: 420.0 },
+    'tier-3-observation-deck': { x: 725.4, y: 297.2 },
+    'tier-3-residential-first-class': { x: 274.3, y: 173.6 },
+    'tier-3-residential-room-3101': { x: 210.0, y: 195.0, small: true },
+    'tier-3-residential-standard': { x: 270.0, y: 370.0 },
+    'tier-3-residential-units': { x: 450.0, y: 450.0, small: true },
   },
   'tier-4': {
-    'tier-4': { x: 485, y: 300 },
-    'central-passage': { x: 500, y: 525 },
-    'recycling-sewage-facilities': { x: 500, y: 525 },
-    'xi-yu-family-office': { x: 400, y: 300 },
-    'royal-army-conference-room': { x: 575, y: 155 },
+    'tier-4': { x: 481.2, y: 336.1 },
+    'tier-4-central-passage': { x: 407.5, y: 250.0, small: true },
+    'tier-4-recycling-sewage-facilities': { x: 485.0, y: 522.5 },
+    'tier-4-royal-army-conference-room': { x: 575.0, y: 155.0 },
+    'tier-4-xi-yu-family-office': { x: 400.0, y: 300.0 },
   },
   'tier-5': {
-    'tier-5': { x: 450, y: 285 },
-    'central-dining-hall': { x: 585, y: 370 },
-    'standard-cabins': { x: 270, y: 290 },
-    'recycling-facility': { x: 400, y: 300 },
-    'medical-clinic': { x: 685, y: 375 },
-    'cha-r-family-office': { x: 460, y: 375 },
-    warehouse: { x: 560, y: 240 },
-    'area-37564': { x: 270, y: 355 },
+    'tier-5': { x: 451.6, y: 254.0 },
+    'tier-4-recycling-sewage-facilities': { x: 450.0, y: 125.0 },
+    'tier-5-area-37564': { x: 270.0, y: 355.0, small: true },
+    'tier-5-central-dining-hall': { x: 585.0, y: 375.0 },
+    'tier-5-cha-r-family-office': { x: 460.0, y: 375.0 },
+    'tier-5-medical-clinic': { x: 685.0, y: 375.0 },
+    'tier-5-standard-cabins': { x: 270.0, y: 252.5 },
+    'tier-5-warehouse': { x: 560.0, y: 240.0 },
   },
 }
 
@@ -501,24 +533,20 @@ export function belongsToLocation(
 
 function getExactTierCoordinates(tierId: string, locationSlug: string) {
   const tierCoordinates = locationCoordinates[tierId] || {}
+  // Longest key first, so a room beats the deck it stands on: exact id, then
+  // the id it hangs under — a cell answers to its block, a ward to its deck —
+  // and last the old suffix match, for a slug that names a room without its
+  // deck in front of it.
   const coordinateKey = Object.keys(tierCoordinates)
     .sort((left, right) => right.length - left.length)
-    .find((key) => locationSlug === key || locationSlug.endsWith(`-${key}`))
-  const directCoordinates = coordinateKey ? tierCoordinates[coordinateKey] : undefined
-  if (directCoordinates) return { ...directCoordinates, isSmallRoom: false }
-
-  // Tier 1 rooms 1001–1014 are drawn as two vertical columns in tier-1.svelte.
-  // Odd rooms are on the right, even rooms on the left.
-  const princeRoomMatch = tierId === 'tier-1' ? locationSlug.match(/room-10(0[1-9]|1[0-4])$/) : null
-  if (princeRoomMatch) {
-    const roomNumber = Number(princeRoomMatch[1])
-    const row = Math.floor((roomNumber - 1) / 2)
-    return {
-      x: roomNumber % 2 === 0 ? 477.5 : 582.5,
-      y: 320.7 + row * 21.4,
-      isSmallRoom: true,
-    }
-  }
+    .find(
+      (key) =>
+        locationSlug === key ||
+        locationSlug.startsWith(`${key}-`) ||
+        locationSlug.endsWith(`-${key}`),
+    )
+  const anchor = coordinateKey ? tierCoordinates[coordinateKey] : undefined
+  if (anchor) return { x: anchor.x, y: anchor.y, isSmallRoom: anchor.small === true }
 
   return null
 }

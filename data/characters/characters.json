@@ -427,6 +427,14 @@
       {
         "location": "tier-1-royal-residential-sector-room-1014",
         "fromChapterId": "ch-360"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1003",
+        "fromChapterId": "ch-365"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1014",
+        "fromChapterId": "ch-366.4"
       }
     ]
   },
@@ -1674,7 +1682,7 @@
       },
       {
         "location": "tier-1-king-living-quarters",
-        "fromChapterId": "ch-363"
+        "fromChapterId": "ch-363.2"
       }
     ]
   },
@@ -2138,7 +2146,7 @@
       },
       {
         "location": "tier-1-royal-residential-sector-room-1001",
-        "fromChapterId": "ch-363"
+        "fromChapterId": "ch-363.2"
       }
     ]
   },
@@ -2603,7 +2611,7 @@
       },
       {
         "location": "tier-1-royal-residential-sector-room-1002",
-        "fromChapterId": "ch-363"
+        "fromChapterId": "ch-363.2"
       },
       {
         "location": "tier-1-vip-jail",
@@ -3049,8 +3057,12 @@
         "fromChapterId": "ch-359.4"
       },
       {
-        "location": "tier-1-royal-residential-sector-room-1003",
+        "location": "tier-1-royal-residential-sector",
         "fromChapterId": "ch-363"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1003",
+        "fromChapterId": "ch-363.2"
       }
     ]
   },
@@ -5229,6 +5241,7 @@
     "biography": [
       "Halkenburg is introduced as the Ninth Prince, officially the son of Duazul but biologically born to Unma before being adopted. A brilliant student at Miwal University, physicist, world-class archer and public critic of the monarchy, he initially refuses to participate in a fratricidal war.",
       "Before the trip, Kurapika mistakenly believes he is responding to an ad from Halkenburg, whose popularity would have attracted assassins. On board, the prince reaffirms to Nasubi that he does not want the throne at the price of blood, but his father replies that he is free to act as he wishes.",
+      "His beast acts long before he knows he has one: back in room 1009 on the first days, he finds all eleven of his bodyguards unconscious on the floor and no cause he can see. Nothing in the room explains it, and the archive only reads it backwards — the ability that knocked them out is the one he will awaken twenty chapters later, and it runs on the aura of the followers it marks.",
       "After Momoze's death, Halkenburg gathered his supporters for a minute of silence. Their shared will unleashes an immense wave of aura and his Guardian Beast marks their hands with a pinion, increasing their collective aura to a level that terrifies Shikaku.",
       "Halkenburg tried for several days to deliver a petition to Nasubi. On the sixth day, he finally forced the passage with his men, demanded an end to the succession and shot the king. The Beast of Nasubi stops the bullet; when he turns the weapon on himself, his own Guardian Beast also prevents his suicide.",
       "Nasubi explains to him that the survival of the country takes precedence over that of the princes and that he will have to become king before he can abolish the monarchy. Halkenburg then fully accepts the fight and awakens Grimmel the Dissonance, an ability powered by the will and aura of his marked followers.",
@@ -7949,6 +7962,14 @@
       {
         "location": "tier-1-royal-residential-sector-room-1014",
         "fromChapterId": "ch-360"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1003",
+        "fromChapterId": "ch-365"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1014",
+        "fromChapterId": "ch-366.4"
       }
     ]
   },
@@ -8379,6 +8400,14 @@
       {
         "location": "tier-1-royal-residential-sector-room-1014",
         "fromChapterId": "ch-360"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1003",
+        "fromChapterId": "ch-365"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1014",
+        "fromChapterId": "ch-366.4"
       }
     ]
   },
@@ -12101,7 +12130,18 @@
       "abilityIds": ["secret-window"]
     },
     "battles": ["Musse vs. Camilla Hui Guo Rou"],
-    "mapPresenceUntilChapterId": "ch-373"
+    "mapPresenceUntilChapterId": "ch-373",
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1001",
+        "fromChapterId": "ch-358"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1002",
+        "fromChapterId": "ch-366",
+        "untilChapterId": "ch-373"
+      }
+    ]
   },
   {
     "id": "rihan",
@@ -15093,6 +15133,10 @@
         "location": "tier-5-standard-cabins",
         "fromChapterId": "ch-359",
         "certainty": "PROBABLE"
+      },
+      {
+        "location": "tier-5-area-37564",
+        "fromChapterId": "ch-366"
       },
       {
         "location": "tier-1-princes-burial-chamber",
@@ -21226,14 +21270,14 @@
     "id": "izunavi",
     "canonicalName": "Izunavi",
     "aliases": [],
-    "description": "Hunter. Master of Kurapika, hired by Tyson.",
+    "description": "Hunter. Master of Kurapika, hired by Tyson. Holds zone 6, where the chapter 362 sweep shows him at his post answering the princess about her Guardian Spirit Beast.",
     "factionId": "prince-tyson",
     "firstAppearanceChapterId": "ch-unknown",
     "canonStatus": "canon",
     "shipLocation": {
       "tier": 1,
       "room": "1006",
-      "status": "inconnu",
+      "status": "actif",
       "role": "prince tyson"
     },
     "biography": [
@@ -29768,6 +29812,16 @@
     ],
     "biography": [
       "Swinko-swinko is Kakin's fifth queen and mother of Tubeppa and Tyson. She is introduced with the royal mothers as the succession contest begins."
+    ],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-queens-living-quarters-room-05",
+        "fromChapterId": "ch-358"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1008",
+        "fromChapterId": "ch-366"
+      }
     ]
   },
   {
@@ -35773,7 +35827,8 @@
         "title": "Friends",
         "status": "absent"
       }
-    ]
+    ],
+    "mapPresenceUntilChapterId": "ch-363.4"
   },
   {
     "id": "shimanu",
@@ -41179,7 +41234,6 @@
       "status": "actif",
       "role": "soldat privé de Benjamin / surveillant du camp Woble"
     },
-    "mapPresenceFromChapterId": "ch-363",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": [
       {
@@ -41188,12 +41242,22 @@
         "status": "appears"
       }
     ],
-    "temporalIdentityManaged": true
+    "temporalIdentityManaged": true,
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1001",
+        "fromChapterId": "ch-358"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1014",
+        "fromChapterId": "ch-364.2"
+      }
+    ]
   },
   {
     "id": "bachaem",
     "canonicalName": "Bachaem",
-    "aliases": [],
+    "aliases": ["Bachaemu"],
     "description": "Royal Bodyguard for Prince Fugetsu Hui Guo Rou. Kakin Empire ; Fugetsu Hui Guo Rou.",
     "factionId": "prince-fugetsu",
     "firstAppearanceChapterId": "ch-366",
@@ -41300,22 +41364,31 @@
   {
     "id": "bladge",
     "canonicalName": "Bladge",
-    "aliases": [],
-    "description": "Spy for Queen Tang Zhao Li Hui Guo Rou. Kakin Empire ; Tang Zhao Li Hui Guo Rou.",
-    "factionId": "kakin-royal-family",
+    "aliases": ["Buraggi"],
+    "description": "Royal Bodyguard for Prince Momoze Hui Guo Rou ; Spy for Queen Tang Zhao Li Hui Guo Rou. The chapter 366 sweep puts him at her door.",
+    "factionId": "prince-momoze",
     "firstAppearanceChapterId": "ch-361",
     "canonStatus": "canon",
     "shipLocation": {
       "tier": 1,
-      "room": "Queens' Living Quarters",
-      "status": "inconnu",
-      "role": "Spy for Queen Tang Zhao Li Hui Guo Rou"
+      "room": "1012",
+      "status": "actif",
+      "role": "Royal Bodyguard for Prince Momoze Hui Guo Rou ; Spy for Queen Tang Zhao Li Hui Guo Rou"
     },
     "mapPresenceFromChapterId": "ch-361",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": [],
-    "positionProvenance": "inferred",
-    "mapLocationCorrection": true
+    "mapLocationCorrection": true,
+    "mapTrajectory": [
+      {
+        "location": "tier-1-queens-living-quarters",
+        "fromChapterId": "ch-361"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1012",
+        "fromChapterId": "ch-366"
+      }
+    ]
   },
   {
     "id": "bucket",
@@ -41369,7 +41442,17 @@
     },
     "mapPresenceFromChapterId": "ch-358",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1001",
+        "fromChapterId": "ch-358"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1005",
+        "fromChapterId": "ch-366"
+      }
+    ]
   },
   {
     "id": "cashew",
@@ -41819,7 +41902,17 @@
     },
     "mapPresenceFromChapterId": "ch-366",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1003",
+        "fromChapterId": "ch-358"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1014",
+        "fromChapterId": "ch-367"
+      }
+    ]
   },
   {
     "id": "heisen",
@@ -42142,7 +42235,7 @@
   {
     "id": "laroc",
     "canonicalName": "Laroc",
-    "aliases": [],
+    "aliases": ["Larokku"],
     "description": "Spy for Katrono Hui Guo Rou. Kakin Empire ; Katrono Hui Guo Rou.",
     "factionId": "kakin-royal-family",
     "firstAppearanceChapterId": "ch-366",
@@ -42156,8 +42249,17 @@
     "mapPresenceFromChapterId": "ch-366",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": [],
-    "positionProvenance": "inferred",
-    "mapLocationCorrection": true
+    "mapLocationCorrection": true,
+    "mapTrajectory": [
+      {
+        "location": "tier-1-queens-living-quarters",
+        "fromChapterId": "ch-358"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1012",
+        "fromChapterId": "ch-366"
+      }
+    ]
   },
   {
     "id": "lizlura",
@@ -42473,22 +42575,31 @@
   {
     "id": "nagmum",
     "canonicalName": "Nagmum",
-    "aliases": [],
-    "description": "Spy for Queen Seiko Hui Guo Rou. Kakin Empire ; Seiko Hui Guo Rou.",
-    "factionId": "kakin-royal-family",
+    "aliases": ["Nagomamu"],
+    "description": "Royal Bodyguard for Prince Momoze Hui Guo Rou ; Spy for Queen Seiko Hui Guo Rou. The chapter 366 sweep puts him at her door.",
+    "factionId": "prince-momoze",
     "firstAppearanceChapterId": "ch-366",
     "canonStatus": "canon",
     "shipLocation": {
       "tier": 1,
-      "room": "Queens' Living Quarters",
-      "status": "inconnu",
-      "role": "Spy for Queen Seiko Hui Guo Rou"
+      "room": "1012",
+      "status": "actif",
+      "role": "Royal Bodyguard for Prince Momoze Hui Guo Rou ; Spy for Queen Seiko Hui Guo Rou"
     },
     "mapPresenceFromChapterId": "ch-366",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": [],
-    "positionProvenance": "inferred",
-    "mapLocationCorrection": true
+    "mapLocationCorrection": true,
+    "mapTrajectory": [
+      {
+        "location": "tier-1-queens-living-quarters",
+        "fromChapterId": "ch-366"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1012",
+        "fromChapterId": "ch-366"
+      }
+    ]
   },
   {
     "id": "naikeru",
@@ -42545,24 +42656,51 @@
     "mangaAppearances": []
   },
   {
+    "id": "vict",
+    "canonicalName": "Vict",
+    "aliases": [],
+    "description": "Private Soldier for Prince Benjamin Hui Guo Rou ; Royal Bodyguard for Prince Halkenburg. Kakin Empire ; Benjamin Hui Guo Rou.",
+    "factionId": "prince-benjamin",
+    "firstAppearanceChapterId": "ch-358",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": 1,
+      "room": "1009",
+      "status": "actif",
+      "role": "Private Soldier for Prince Benjamin Hui Guo Rou ; Royal Bodyguard for Prince Halkenburg"
+    },
+    "mapPresenceFromChapterId": "ch-358",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": []
+  },
+  {
     "id": "nipaper",
     "canonicalName": "Nipaper",
-    "aliases": [],
-    "description": "Spy for Queen Duazul Hui Guo Rou. Kakin Empire ; Queen Duazul Hui Guo Rou.",
-    "factionId": "kakin-royal-family",
+    "aliases": ["Nipeibaa"],
+    "description": "Royal Bodyguard for Prince Momoze Hui Guo Rou ; Spy for Queen Duazul Hui Guo Rou. The chapter 366 sweep puts him at her door.",
+    "factionId": "prince-momoze",
     "firstAppearanceChapterId": "ch-361",
     "canonStatus": "canon",
     "shipLocation": {
       "tier": 1,
-      "room": "Queens' Living Quarters",
-      "status": "inconnu",
-      "role": "Spy for Queen Duazul Hui Guo Rou"
+      "room": "1012",
+      "status": "actif",
+      "role": "Royal Bodyguard for Prince Momoze Hui Guo Rou ; Spy for Queen Duazul Hui Guo Rou"
     },
     "mapPresenceFromChapterId": "ch-361",
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": [],
-    "positionProvenance": "inferred",
-    "mapLocationCorrection": true
+    "mapLocationCorrection": true,
+    "mapTrajectory": [
+      {
+        "location": "tier-1-queens-living-quarters",
+        "fromChapterId": "ch-361"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1012",
+        "fromChapterId": "ch-366"
+      }
+    ]
   },
   {
     "id": "notre",
@@ -42850,7 +42988,17 @@
     },
     "mapPresenceFromChapterId": "ch-366",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1003",
+        "fromChapterId": "ch-358"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1014",
+        "fromChapterId": "ch-367"
+      }
+    ]
   },
   {
     "id": "saquelle",
@@ -43221,7 +43369,7 @@
   {
     "id": "tuffdy",
     "canonicalName": "Tuffdy",
-    "aliases": [],
+    "aliases": ["Tafudi"],
     "description": "Spy for Queen Swinko-swinko ; Royal Bodyguard for Prince Momoze. Kakin Empire ; Swinko-swinko Hui Guo Rou ; Momoze Hui Guo Rou.",
     "factionId": "prince-momoze",
     "firstAppearanceChapterId": "ch-366",
@@ -43316,24 +43464,6 @@
     "mangaAppearances": []
   },
   {
-    "id": "vict",
-    "canonicalName": "Vict",
-    "aliases": [],
-    "description": "Private Soldier for Prince Benjamin Hui Guo Rou ; Royal Bodyguard for Prince Halkenburg. Kakin Empire ; Benjamin Hui Guo Rou.",
-    "factionId": "prince-benjamin",
-    "firstAppearanceChapterId": "ch-358",
-    "canonStatus": "canon",
-    "shipLocation": {
-      "tier": 1,
-      "room": "1009",
-      "status": "actif",
-      "role": "Private Soldier for Prince Benjamin Hui Guo Rou ; Royal Bodyguard for Prince Halkenburg"
-    },
-    "mapPresenceFromChapterId": "ch-358",
-    "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
-  },
-  {
     "id": "vincent",
     "canonicalName": "Vincent",
     "aliases": [],
@@ -43348,7 +43478,7 @@
       "role": "Private Soldier for Prince Benjamin Hui Guo Rou ; Royal Bodyguard for Prince Woble Hui Guo Rou"
     },
     "mapPresenceFromChapterId": "ch-358",
-    "mapPresenceUntilChapterId": null,
+    "mapPresenceUntilChapterId": "ch-364",
     "mangaAppearances": []
   },
   {

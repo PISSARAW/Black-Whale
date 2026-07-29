@@ -124,8 +124,18 @@ const knownEvents = [
     sequence: 1,
     title: 'Vincent attacks room 1014',
     summary:
-      'Vincent kills Sandra, opens fire on Bill and Kurapika, then poisons himself after they overpower him.',
+      'Sandra dies of the wound he gave her at the end of the previous chapter. Vincent then opens fire on Bill and Kurapika, and poisons himself once they overpower him.',
     legacyTitles: ['Vincent arrives'],
+  },
+  {
+    chapter: 364,
+    chapterTitle: 'Speculation',
+    sequence: 2,
+    title: 'Benjamin hears his man out and replaces him',
+    summary:
+      'Room 1001 listens in as Vincent is pinned and dies. Benjamin and Balsamilco lose the spy the deployment bought them, and Babimyna is sent to take the post in room 1014 — the man Bill will be told to watch.',
+    legacyTitles: [],
+    occursAfterTitle: 'Vincent attacks room 1014',
   },
   {
     chapter: 373,
@@ -142,8 +152,28 @@ const knownEvents = [
     sequence: 1,
     title: 'Zhang Lei and Tubeppa approach room 1014',
     summary:
-      'Both princes seek information from Kurapika; Zhang Lei receives Oito and Woble while Tubeppa proposes a truce.',
+      'Benjamin, Zhang Lei and Tubeppa all call room 1014 at once — Zhang Lei from his chair, over a snack. Both of the latter seek information from Kurapika; Zhang Lei receives Oito and Woble at the dining table of his own suite, Sakata on his left and Coventoba on his right, while Tubeppa proposes a truce.',
     legacyTitles: [],
+  },
+  {
+    chapter: 366,
+    chapterTitle: 'To Each His Own',
+    sequence: 3,
+    title: 'The fourteen suites, one by one',
+    summary:
+      "The chapter walks every room of the royal residential sector. Marayam eats under three servants and three guards, Biscuit among them; Nipaper, Bladge, Laroc and a fourth guard the archive has not identified hold Momoze's door while she sleeps, Nagmum and Tuffdy off duty in the guards' beds; Fugetsu looks through photographs in bed under two; Kacho takes her meal with Melody in the room; Halkenburg wakes to find his eleven bodyguards unharmed; Salé-salé lies in with two women, three guards and his mother Swinko-swinko; Luzurus talks with his lead Hunter; Tyson plays with a guard under Izunavi's eye; Butch reports to Tubeppa in her office; Theta and Tserriednich work the training floor; Zhang Lei holds his dining table with Oito, the child and a standing Kurapika at the far end; Camilla eats with her mother while Musse sits alone at a desk down the passage; and Balsamilco keeps the telephone by Benjamin's door, Furykov in the room. Kurapika's party then goes home to 1014, where Babimyna has taken Vincent's post. Six decks down, Chrollo sits in Area 37564.",
+    legacyTitles: [],
+    occursAfterTitle: 'Chrollo orders the hunt for Hisoka',
+  },
+  {
+    chapter: 366,
+    chapterTitle: 'To Each His Own',
+    sequence: 4,
+    title: 'Kurapika brings the Woble camp home',
+    summary:
+      "Kurapika, Oito and the child leave Zhang Lei's table and return to room 1014, where Babimyna now stands in Vincent's place among the guards already posted there.",
+    legacyTitles: [],
+    occursAfterTitle: 'The fourteen suites, one by one',
   },
   {
     chapter: 366,
@@ -653,13 +683,63 @@ const knownEvents = [
     legacyTitles: ['Début du chapitre 362'],
   },
   {
+    chapter: 362,
+    chapterTitle: 'Resolve',
+    sequence: 2,
+    title: 'The princes take stock of their beasts, room by room',
+    summary:
+      "The chapter walks the royal residential sector. Luzurus questions three of his Hunters from his armchair, Basho among them, and sets them to watching for other beasts. Tyson takes a head massage and a manicure from her detail while asking Izunavi — Kurapika's own Nen teacher — what her beast looks like, and is pleased to hear fairies. Salé-salé holds a party with his women and shows no interest in either the contest or the thing hovering over him. Theta and Salkov settle in the corridor how much Nen they will let Tserriednich have.",
+    legacyTitles: [],
+    occursAfterTitle: 'The rules of the Guardian Spirit Beasts emerge',
+  },
+  {
+    chapter: 362,
+    chapterTitle: 'Resolve',
+    sequence: 3,
+    title: "Halkenburg's eleven bodyguards collapse",
+    summary:
+      'Halkenburg comes back to room 1009 and finds all eleven of his bodyguards unconscious on the floor, with no explanation he can see. It is the first act of his Guardian Spirit Beast, twenty chapters before he awakens Grimmel the Dissonance and learns that the ability runs on the aura of the followers it marks.',
+    legacyTitles: [],
+    occursAfterTitle: 'The princes take stock of their beasts, room by room',
+  },
+  {
     chapter: 363,
-    chapterTitle: 'Nen Beast',
+    chapterTitle: 'Nen Beasts',
     sequence: 1,
+    title: 'Camilla puts the drop-out rule to the king',
+    summary:
+      "Zhang Lei opens the chapter learning in the corridor, then in room 1003, that Woble's detail has been all but wiped out, and reads the beasts as the key to it. In the banquet hall Camilla asks her father to confirm that only biological death counts as dropping out of the contest; Benjamin comes up behind her, mocks the question and tells her she is unqualified. Both leave the hall — she frustrated, he furious, with two soldiers behind him.",
+    legacyTitles: [],
+    occursAfterTitle: "Halkenburg's eleven bodyguards collapse",
+  },
+  {
+    chapter: 363,
+    chapterTitle: 'Nen Beasts',
+    sequence: 2,
+    title: 'Balsamilco talks Benjamin down in room 1001',
+    summary:
+      "Balsamilco tells Benjamin across the table that every prince carries a Nen beast, and that he cannot see his own. He counsels patience on two counts: moving alone is dangerous while the beasts are invisible to him, and Kurapika's emergency broadcast has made Nen common knowledge in every camp, which costs them the advantage they held.",
+    legacyTitles: [],
+    occursAfterTitle: 'Camilla puts the drop-out rule to the king',
+  },
+  {
+    chapter: 363,
+    chapterTitle: 'Nen Beasts',
+    sequence: 3,
     title: 'Benjamin deploys his soldiers among the princes',
     summary:
-      'After learning the limits of the guardian beasts, Benjamin uses his private army to monitor the other royal factions.',
+      'After learning the limits of the guardian beasts, Benjamin uses his private army to monitor the other royal factions, in rotating shifts and with orders to report and to shoot in self-defence. The chapter takes the reactions room by room: Zhang Lei with six guards, Camilla with two, promising death to whoever comes in, Tserriednich with Theta and one more guard ignoring the whole thing, and Tubeppa with a single guard, asking after Kurapika.',
     legacyTitles: ['Appearance of Balsamilco Might'],
+  },
+  {
+    chapter: 363,
+    chapterTitle: 'Nen Beasts',
+    sequence: 4,
+    title: 'Vincent stabs a servant in room 1014',
+    summary:
+      'Oito carries the child while Kurapika and Bill wait for the spy Benjamin has certainly sent. He comes in as Vincent, stabs the servant Sandra at the entrance and calls it self-defence. Kurapika reads it for what it is — the assassination attempt the deployment was cover for — and the room turns on him in the next chapter.',
+    legacyTitles: [],
+    occursAfterTitle: 'Benjamin deploys his soldiers among the princes',
   },
   {
     chapter: 367,

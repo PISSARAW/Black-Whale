@@ -278,14 +278,12 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
   disguise: (ctx, { target, x, y, label }) => {
     const element = ctx.remember(target)
     const texture = (Number(element.dataset.hatsuLevel || 0) + 1) % 4
-    const forgery = ['OFFICIAL ACCESS', 'CLEARED RECORD', 'AUTHORIZED IDENTITY', 'EMPTY SURFACE'][
-      texture
-    ]
+    const forgery = ctx.m.tokens.forgeries[texture]
     element.dataset.hatsuLevel = String(texture)
     element.dataset.hatsuForgery = forgery
     element.classList.add('hatsu-texture-surprise')
     element.style.setProperty('--texture-index', String(texture))
-    element.setAttribute('aria-label', `${forgery} — Texture Surprise forgery`)
+    element.setAttribute('aria-label', ctx.m.tokens.forgeryAria(forgery))
     ctx.status = ctx.m['disguise'].forged(label, forgery)
     ctx.addPoint(x, y, label)
     return true
@@ -345,7 +343,7 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
     if (!spiders.test(name)) {
       ctx.remember(target).classList.add('hatsu-invalid-chain-target')
       ctx.status = ctx.m['chain-bind'].vowViolated(name)
-      ctx.addPoint(x, y, 'FATAL VOW', { alert: true })
+      ctx.addPoint(x, y, ctx.m.tokens.fatalVow, { alert: true })
       ctx.schedule(() => deactivateHatsu(), 1400)
     } else {
       ctx.remember(target).classList.add('hatsu-chain-jailed')
@@ -385,7 +383,7 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
       }
     }
     ctx.status = ctx.m['enhance'].reinforced(level === 5, label, level)
-    ctx.addPoint(x, y, `REN ${level}`)
+    ctx.addPoint(x, y, ctx.m.tokens.ren(level))
     return true
   },
   control: (ctx, { target, x, y, label }) => {
@@ -396,14 +394,14 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
       ctx.selectedElements = [target]
       ctx.remember(target).classList.add('hatsu-royal-commander')
       ctx.status = ctx.m['control'].guarded(label)
-      ctx.addPoint(x, y, `CHARGE · ${label}`)
+      ctx.addPoint(x, y, ctx.m.tokens.charge(label))
       return true
     }
     const commander = network[0]
     if (network.includes(target)) {
       for (const guard of network) ctx.remember(guard).classList.add('hatsu-royal-answered')
       ctx.status = ctx.m['control'].answered(label, network.length)
-      ctx.addPoint(x, y, `ANSWERED ×${network.length}`)
+      ctx.addPoint(x, y, ctx.m.tokens.answered(network.length))
       return true
     }
     ctx.selectedElements = [...network, target]
@@ -440,7 +438,7 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
       dormant.removeAttribute('aria-hidden')
     }
     ctx.status = ctx.m['growth'].grown(living, label, level)
-    ctx.addPoint(x, y, `GROW ${level}`)
+    ctx.addPoint(x, y, ctx.m.tokens.grow(level))
     return true
   },
   vehicle: (ctx, { target, x, y, label }) => {
@@ -474,14 +472,14 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
     // the ceiling — and it slides off anything that was made out of aura.
     if (isNenMade(target)) {
       ctx.status = ctx.m['scout'].conjured(label)
-      ctx.addPoint(x, y, 'CONJURED', { alert: true })
+      ctx.addPoint(x, y, ctx.m.tokens.conjured, { alert: true })
       return true
     }
     const rect = target.getBoundingClientRect()
     const size = Math.round(rect.width * rect.height)
     if (size > SMALL_HOST_AREA) {
       ctx.status = ctx.m['scout'].tooBig(Math.round(size / SMALL_HOST_AREA), label)
-      ctx.addPoint(x, y, 'TOO BIG', { alert: true })
+      ctx.addPoint(x, y, ctx.m.tokens.tooBig, { alert: true })
       return true
     }
     ctx.floatingCards = [
@@ -554,7 +552,7 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
       ctx.selectedElements = [target, sacrifice]
       ctx.remember(sacrifice).dataset.hatsuLevel = 'cursed'
       ctx.status = ctx.m['curse'].victim(label)
-      ctx.addPoint(x, y, `VICTIM · ${label}`)
+      ctx.addPoint(x, y, ctx.m.tokens.victim(label))
       return true
     }
     const [victim, sacrifice] = ctx.selectedElements
@@ -563,7 +561,7 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
       const found = target.contains(sacrifice)
       ctx.remember(target).classList.add(found ? 'hatsu-beyond-cursed' : 'hatsu-gyo-empty')
       ctx.status = ctx.m['curse'].searched(found, label)
-      ctx.addPoint(x, y, found ? 'MARK FOUND' : 'NO TRACE', { alert: !found })
+      ctx.addPoint(x, y, found ? ctx.m.tokens.markFound : ctx.m.tokens.noTrace, { alert: !found })
       return true
     }
     ctx.remember(sacrifice).classList.add('hatsu-sacrifice-dead')
@@ -592,7 +590,9 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
     }
     ctx.remember(target).classList.add('hatsu-air-blown')
     ctx.status = ctx.m['blast'].fired(broken, label)
-    ctx.addPoint(x, y, broken ? `GUARD ×${broken}` : 'NO GUARD', { alert: !broken })
+    ctx.addPoint(x, y, broken ? ctx.m.tokens.guardsBroken(broken) : ctx.m.tokens.noGuard, {
+      alert: !broken,
+    })
     return true
   },
   surveillance: (ctx, { target, x, y, label }) => {
@@ -606,7 +606,7 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
     return true
   },
   future: (ctx, { target, x, y, label }) => {
-    ctx.addPoint(x, y, `PREDICTED · ${label}`)
+    ctx.addPoint(x, y, ctx.m.tokens.predicted(label))
     ctx.remember(target).classList.add('hatsu-future-afterimage')
     ctx.status = ctx.m['future'].predicted(ctx.parallelFutureVisible, label, ctx.points.length)
     return true
@@ -655,7 +655,7 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
         cleared += 1
       }
       ctx.status = ctx.m['poetry'].light(ctx.targetLabel(purified), poem, cleared, seasonal)
-      ctx.addPoint(x, y, seasonal ? 'LIGHT ++' : 'LIGHT')
+      ctx.addPoint(x, y, seasonal ? ctx.m.tokens.lightSeasonal : ctx.m.tokens.light)
       return true
     }
     if (/fire|burn|flame|ash|blood|death|kill|break/i.test(poem)) {
@@ -664,12 +664,12 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
       burnt.style.pointerEvents = 'none'
       burnt.style.opacity = seasonal ? '.1' : '.3'
       ctx.status = ctx.m['poetry'].fire(poem, label, seasonal)
-      ctx.addPoint(x, y, seasonal ? 'FIRE ++' : 'FIRE', { alert: true })
+      ctx.addPoint(x, y, seasonal ? ctx.m.tokens.fireSeasonal : ctx.m.tokens.fire, { alert: true })
       return true
     }
     ctx.remember(target).classList.add('hatsu-haiku-weak')
     ctx.status = ctx.m['poetry'].inert(poem)
-    ctx.addPoint(x, y, 'NO INVOCATION', { alert: true })
+    ctx.addPoint(x, y, ctx.m.tokens.noInvocation, { alert: true })
     return true
   },
   restoration: (ctx, { target, x, y, label }) => {
@@ -706,7 +706,7 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
       controls.length,
       label,
     )
-    ctx.addPoint(x, y, small ? `SMALL · ${label}` : `TRUE · ${label}`)
+    ctx.addPoint(x, y, small ? ctx.m.tokens.small(label) : ctx.m.tokens.trueForm(label))
     return true
   },
   rhythm: (ctx, { target, x, y, label }) => {
@@ -727,7 +727,7 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
       ctx.applyTransform(struck, 'translateX(-10px)')
     }
     ctx.status = ctx.m['rhythm'].armed(reach.length, label)
-    ctx.addPoint(x, y, `ARMED · ${label}`)
+    ctx.addPoint(x, y, ctx.m.tokens.armed(label))
     return true
   },
   impact: (ctx, { target, x, y, label }) => {
@@ -821,7 +821,7 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
     }
     if (held.length >= 2) {
       ctx.status = ctx.m['bookmark'].twoOnly(label)
-      ctx.addPoint(x, y, 'TWO ONLY', { alert: true })
+      ctx.addPoint(x, y, ctx.m.tokens.twoOnly, { alert: true })
       return true
     }
     ctx.selectedElements = [...held, target]
@@ -840,7 +840,7 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
     const room = target.closest<HTMLElement>('section, article, li') || target
     if (room.querySelector('a[href]')) {
       ctx.status = ctx.m['devour'].notSealed(label)
-      ctx.addPoint(x, y, 'NOT SEALED', { alert: true })
+      ctx.addPoint(x, y, ctx.m.tokens.notSealed, { alert: true })
       return true
     }
     const element = ctx.remember(target)
@@ -852,7 +852,7 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
       element.style.textShadow = 'none'
       ctx.status = ctx.m['devour'].eaten(label)
     } else ctx.status = ctx.m['devour'].biting(label, bites)
-    ctx.addPoint(x, y, `BITE ${bites}`)
+    ctx.addPoint(x, y, ctx.m.tokens.bite(bites))
     return true
   },
   pocket: (ctx, { target, x, y, label }) => {
@@ -864,7 +864,7 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
     element.style.transformOrigin = 'left top'
     ctx.applyTransform(element, wrapped ? 'scale(.16) rotate(-6deg)' : 'scale(1)')
     ctx.status = ctx.m['pocket'].wrapped(wrapped, label)
-    ctx.addPoint(x, y, wrapped ? `WRAPPED · ${label}` : `RELEASED · ${label}`)
+    ctx.addPoint(x, y, wrapped ? ctx.m.tokens.wrapped(label) : ctx.m.tokens.released(label))
     return true
   },
   teleport: (ctx, { target, x, y, label }) => {
@@ -908,7 +908,7 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
       const charge = counterOn(target)
       ctx.applyTransform(target, `scale(${1 + charge * 0.02})`)
       ctx.status = ctx.m['polarity'].charging(charge, label)
-      ctx.addPoint(x, y, `CHARGE ${charge}`)
+      ctx.addPoint(x, y, ctx.m.tokens.chargeLevel(charge))
       return true
     }
     const [sun, moon] = ctx.selectedElements
@@ -920,7 +920,7 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
     if (gap > 220) {
       ctx.moveByRects(sun, moon)
       ctx.status = ctx.m['polarity'].closing(Math.round(gap))
-      ctx.addPoint(x, y, 'CLOSING')
+      ctx.addPoint(x, y, ctx.m.tokens.closing)
       return true
     }
     const caught =
@@ -933,7 +933,7 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
       killed += 1
     }
     ctx.status = ctx.m['polarity'].detonated(charge >= 4, killed, charge)
-    ctx.addPoint(x, y, 'DETONATION', { alert: true })
+    ctx.addPoint(x, y, ctx.m.tokens.detonation, { alert: true })
     return true
   },
   command: (ctx, { target, x, y, label }) => {
@@ -944,7 +944,7 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
     if (stamped.length < 3) {
       if (!head) {
         ctx.status = ctx.m['command'].noHead(label)
-        ctx.addPoint(x, y, 'NO HEAD', { alert: true })
+        ctx.addPoint(x, y, ctx.m.tokens.noHead, { alert: true })
         return true
       }
       const conjured = isNenMade(target) || Boolean(target.dataset.hatsuFake)
@@ -953,7 +953,7 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
         Boolean(target.querySelector('[data-hatsu-character]'))
       if (living && !conjured) {
         ctx.status = ctx.m['command'].alive(label)
-        ctx.addPoint(x, y, 'ALIVE', { alert: true })
+        ctx.addPoint(x, y, ctx.m.tokens.alive, { alert: true })
         return true
       }
       ctx.selectedElements = [...stamped, target]
@@ -975,7 +975,7 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
       )
     }
     ctx.status = ctx.m['command'].order(label, stamped.length)
-    ctx.addPoint(x, y, `ORDER · ${label}`)
+    ctx.addPoint(x, y, ctx.m.tokens.order(label))
     return true
   },
   'identity-swap': (ctx, { target, x, y, label }) => {
@@ -1023,13 +1023,13 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
     const area = ctx.targetLabel(target.closest<HTMLElement>('section, article, main') || target)
     if (ctx.studyTarget === area) {
       ctx.status = ctx.m['divination'].sameArea()
-      ctx.addPoint(x, y, 'REFUSED', { alert: true })
+      ctx.addPoint(x, y, ctx.m.tokens.refused, { alert: true })
       return true
     }
     ctx.studyCount += 1
     if (ctx.studyCount > 6) {
       ctx.status = ctx.m['divination'].noCalls()
-      ctx.addPoint(x, y, 'NO CALLS', { alert: true })
+      ctx.addPoint(x, y, ctx.m.tokens.noCalls, { alert: true })
       return true
     }
     ctx.studyTarget = area
@@ -1058,7 +1058,7 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
     // about something that has already happened.
     if (target.closest('[data-hatsu-ui]')) {
       ctx.status = ctx.m['prophecy'].ownFuture()
-      ctx.addPoint(x, y, 'NO OWN FUTURE', { alert: true })
+      ctx.addPoint(x, y, ctx.m.tokens.noOwnFuture, { alert: true })
       return true
     }
     const name = target.dataset.hatsuCharacterName || label
@@ -1074,7 +1074,7 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
         .filter(Boolean)
         .join(' or ')
       ctx.status = ctx.m['prophecy'].incomplete(name, missing)
-      ctx.addPoint(x, y, 'INCOMPLETE', { alert: true })
+      ctx.addPoint(x, y, ctx.m.tokens.incomplete, { alert: true })
       return true
     }
     const links = Array.from(target.querySelectorAll<HTMLAnchorElement>('a')).slice(0, 4)
@@ -1185,7 +1185,7 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
       for (const control of controlsOf(body)) control.style.pointerEvents = 'auto'
       ctx.selectedElements = []
       ctx.status = ctx.m['projection'].recalled(ctx.targetLabel(body))
-      ctx.addPoint(x, y, 'RECALLED', { alert: true })
+      ctx.addPoint(x, y, ctx.m.tokens.recalled, { alert: true })
       return true
     }
     if (body?.isConnected) {
@@ -1229,7 +1229,7 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
     }).length
     if (large ? largeCount >= 2 : live.length - largeCount >= 10) {
       ctx.status = ctx.m['animate'].noAura(label, large)
-      ctx.addPoint(x, y, 'NO AURA', { alert: true })
+      ctx.addPoint(x, y, ctx.m.tokens.noAura, { alert: true })
       return true
     }
     ctx.selectedElements = [...live, target]
@@ -1316,7 +1316,7 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
       target.dataset.hatsuLevel = '0'
       target.dataset.hatsuForgery = `${px},${py}`
       ctx.status = ctx.m['shred'].stuck(label, px, py)
-      ctx.addPoint(x, y, 'STUCK')
+      ctx.addPoint(x, y, ctx.m.tokens.stuck)
       return true
     }
     const cuts = counterOn(anchor)
@@ -1330,7 +1330,7 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
       anchor.style.pointerEvents = 'none'
     }
     ctx.status = ctx.m['shred'].tracking(ctx.targetLabel(anchor), target === anchor, cuts, label)
-    ctx.addPoint(x, y, `PASS ${cuts}`)
+    ctx.addPoint(x, y, ctx.m.tokens.pass(cuts))
     return true
   },
   'remote-strike': (ctx, { event, target, x, y, label }) => {
@@ -1342,7 +1342,7 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
     )
     if (!along.length) {
       ctx.status = ctx.m['remote-strike'].alone(label)
-      ctx.addPoint(x, y, 'NO SURFACE', { alert: true })
+      ctx.addPoint(x, y, ctx.m.tokens.noSurface, { alert: true })
       return true
     }
     const punches = counterOn(surface)
@@ -1367,7 +1367,7 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
     const room = target.closest<HTMLElement>('section, article, details, li') || target
     if (room.dataset.hatsuLevel === 'burnt') {
       ctx.status = ctx.m['spatial'].burnt(ctx.targetLabel(room))
-      ctx.addPoint(x, y, 'RESET', { alert: true })
+      ctx.addPoint(x, y, ctx.m.tokens.reset, { alert: true })
       return true
     }
     const doors = room.querySelectorAll('a[href], details[open], [aria-expanded="true"]').length
@@ -1375,7 +1375,7 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
       room.dataset.hatsuLevel = 'burnt'
       ctx.remember(room).classList.add('hatsu-room-unsealed')
       ctx.status = ctx.m['spatial'].tooManyDoors(ctx.targetLabel(room), doors)
-      ctx.addPoint(x, y, `${doors} DOORS`, { alert: true })
+      ctx.addPoint(x, y, ctx.m.tokens.doors(doors), { alert: true })
       return true
     }
     ctx.storeElement(target, label, 'space')
@@ -1406,7 +1406,9 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
         limb.style.removeProperty('max-height')
       }
       ctx.status = ctx.m['stitch'].reattached(severed.length, label)
-      ctx.addPoint(x, y, severed.length ? 'REATTACHED' : 'NOTHING TORN', { alert: !severed.length })
+      ctx.addPoint(x, y, severed.length ? ctx.m.tokens.reattached : ctx.m.tokens.nothingTorn, {
+        alert: !severed.length,
+      })
       return true
     }
     const length = Math.round(distanceBetween(first, target))
@@ -1427,7 +1429,9 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
       ctx.selectedElements = []
       ctx.status = ctx.m['stitch'].slack(length)
     }
-    ctx.addPoint(x, y, strong ? `SEWN ${length}px` : `SLACK ${length}px`, { alert: !strong })
+    ctx.addPoint(x, y, strong ? ctx.m.tokens.sewn(length) : ctx.m.tokens.slack(length), {
+      alert: !strong,
+    })
     return true
   },
   melody: (ctx, { target, x, y, label }) => {
@@ -1438,7 +1442,7 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
     // The score is written on screen as DO…SI, so it has to be heard as well.
     const note = ctx.points.length
     playHatsuNote(note)
-    ctx.addPoint(x, y, ['DO', 'RE', 'MI', 'FA', 'SOL', 'LA', 'SI'][note % 7])
+    ctx.addPoint(x, y, ctx.m.tokens.notes[note % 7])
     if (note + 1 < 3) {
       ctx.status = ctx.m['melody'].playing(note + 1)
       return true
@@ -1476,7 +1480,7 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
     if (members.includes(target)) {
       ctx.selectedElements = [...members.filter((member) => member !== target), target]
       ctx.status = ctx.m['infection'].holdingKnife(label, target.dataset.hatsuLevel || 0)
-      ctx.addPoint(x, y, `LV ${target.dataset.hatsuLevel || 0}`)
+      ctx.addPoint(x, y, ctx.m.tokens.level(target.dataset.hatsuLevel || 0))
       return true
     }
     const killer = members[members.length - 1]
@@ -1486,7 +1490,7 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
       target.dataset.hatsuLevel = '0'
       ctx.infectionLevel = 0
       ctx.status = ctx.m['infection'].kissed(label)
-      ctx.addPoint(x, y, 'LV 0')
+      ctx.addPoint(x, y, ctx.m.tokens.levelZero)
       return true
     }
     const worth = /^h[1-6]$/i.test(target.tagName)
@@ -1520,7 +1524,7 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
       }
     }
     ctx.status = ctx.m['infection'].killed(ctx.targetLabel(killer), label, worth, level, note)
-    ctx.addPoint(x, y, `+${worth} → LV ${level}`, { alert: level >= 20 })
+    ctx.addPoint(x, y, ctx.m.tokens.levelGain(worth, level), { alert: level >= 20 })
     return true
   },
   windup: (ctx, { target, x, y, label }) => {
@@ -1561,7 +1565,7 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
       }
       ctx.status = ctx.m['windup'].landed(power > 7, power, label, splash.length)
     }
-    ctx.addPoint(x, y, `HIT ×${power}`, { alert: power > 7 || power < 4 })
+    ctx.addPoint(x, y, ctx.m.tokens.hit(power), { alert: power > 7 || power < 4 })
     ctx.windupPower = 0
     ctx.selectedElements = []
     return true
@@ -1572,12 +1576,12 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
     const techniques = ctx.profilesFromTarget(target)
     if (!techniques.length) {
       ctx.status = ctx.m['predator'].nothingToRead(label)
-      ctx.addPoint(x, y, 'NOTHING TO READ', { alert: true })
+      ctx.addPoint(x, y, ctx.m.tokens.nothingToRead, { alert: true })
       return true
     }
     if (techniques.length > 1) {
       ctx.status = ctx.m['predator'].tooMany(techniques.length, label)
-      ctx.addPoint(x, y, `${techniques.length} ABILITIES`, { alert: true })
+      ctx.addPoint(x, y, ctx.m.tokens.abilities(techniques.length), { alert: true })
       return true
     }
     const [studied] = techniques
@@ -1589,7 +1593,7 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
     ctx.remember(target).classList.add('hatsu-studied')
     if (ctx.studyCount < 3) {
       ctx.status = ctx.m['predator'].working(studied.name, ctx.studyCount)
-      ctx.addPoint(x, y, `READ ${ctx.studyCount}/3`, { details: [studied.rule] })
+      ctx.addPoint(x, y, ctx.m.tokens.read(ctx.studyCount), { details: [studied.rule] })
       return true
     }
     const prey = Array.from(
@@ -1601,7 +1605,7 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
     }
     ctx.capturedTechniques = [studied]
     ctx.status = ctx.m['predator'].countered(studied.name, prey.length)
-    ctx.addPoint(x, y, 'COUNTERED', { details: [studied.name] })
+    ctx.addPoint(x, y, ctx.m.tokens.countered, { details: [studied.name] })
     ctx.schedule(() => deactivateHatsu(), 1600)
     return true
   },
@@ -1624,7 +1628,7 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
       hit.style.pointerEvents = 'none'
     }
     ctx.status = ctx.m['staff'].reached(struck.length, reach, label)
-    ctx.addPoint(x, y, `REACH ${reach}`)
+    ctx.addPoint(x, y, ctx.m.tokens.reach(reach))
     return true
   },
   senses: (ctx, { x, y }) => {
@@ -1651,12 +1655,14 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
       for (const substance of foreign) target.classList.remove(substance)
       if (foreign.length) target.style.pointerEvents = 'auto'
       ctx.status = ctx.m['vacuum'].alive(foreign.length, label)
-      ctx.addPoint(x, y, foreign.length ? 'CLEANED' : 'ALIVE', { alert: !foreign.length })
+      ctx.addPoint(x, y, foreign.length ? ctx.m.tokens.cleaned : ctx.m.tokens.alive, {
+        alert: !foreign.length,
+      })
       return true
     }
     if (isNenMade(target) || target.dataset.hatsuFake) {
       ctx.status = ctx.m['vacuum'].nenTrap(label)
-      ctx.addPoint(x, y, 'NEN TRAP', { alert: true })
+      ctx.addPoint(x, y, ctx.m.tokens.nenTrap, { alert: true })
       return true
     }
     ctx.storeElement(target, label, 'vacuum')
@@ -1671,7 +1677,7 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
     if (!field.includes(target)) {
       if (field.length >= 10) {
         ctx.status = ctx.m['snakes'].outOfRange(label)
-        ctx.addPoint(x, y, 'OUT OF RANGE', { alert: true })
+        ctx.addPoint(x, y, ctx.m.tokens.outOfRange, { alert: true })
         return true
       }
       ctx.selectedElements = [...field, target]
@@ -1686,7 +1692,7 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
     }
     if (field.some((suspect) => suspect.classList.contains('hatsu-snake-victim'))) {
       ctx.status = ctx.m['snakes'].spent()
-      ctx.addPoint(x, y, 'SPENT', { alert: true })
+      ctx.addPoint(x, y, ctx.m.tokens.spent, { alert: true })
       return true
     }
     ctx.remember(target).classList.add('hatsu-snake-victim')
@@ -1724,7 +1730,7 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
       element.style.removeProperty('max-width')
       for (const control of controlsOf(element)) control.style.pointerEvents = 'auto'
       ctx.status = ctx.m['serpent'].released(label)
-      ctx.addPoint(x, y, `FREED · ${label}`)
+      ctx.addPoint(x, y, ctx.m.tokens.freed(label))
       return true
     }
     element.classList.add('hatsu-serpent-bound')
@@ -1738,7 +1744,7 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
       }
     }
     ctx.status = ctx.m['serpent'].coiling(coils >= 3, coils >= 2, coils, label)
-    ctx.addPoint(x, y, `COIL ${coils}`)
+    ctx.addPoint(x, y, ctx.m.tokens.coil(coils))
     return true
   },
   flock: (ctx, { target, x, y, label }) => {
@@ -1765,7 +1771,7 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
     element.style.opacity = String(1 - stage * 0.15)
     if (stage === 3) ctx.storeElement(element, label, 'relay')
     ctx.status = ctx.m['relay'].staged(label, stage === 3, stage)
-    ctx.addPoint(x, y, `RELAY ${stage}`)
+    ctx.addPoint(x, y, ctx.m.tokens.relay(stage))
     return true
   },
   healing: (ctx, { target, x, y, label }) => {
@@ -1776,7 +1782,7 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
       : target.querySelector<HTMLElement>(RESTRICTED_SELECTOR)
     if (!wounded) {
       ctx.status = ctx.m['healing'].unhurt(label)
-      ctx.addPoint(x, y, 'UNHURT', { alert: true })
+      ctx.addPoint(x, y, ctx.m.tokens.unhurt, { alert: true })
       return true
     }
     const stage = counterOn(ctx.remember(wounded))
@@ -1785,7 +1791,7 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
     wounded.style.opacity = String(Math.min(1, 0.3 + stage * 0.35))
     if (stage >= 2) liftRestriction(wounded)
     ctx.status = ctx.m['healing'].mending(stage >= 2, ctx.targetLabel(wounded))
-    ctx.addPoint(x, y, stage >= 2 ? `HEALED · ${label}` : `MENDING ${stage}/2`)
+    ctx.addPoint(x, y, stage >= 2 ? ctx.m.tokens.healed(label) : ctx.m.tokens.mending(stage))
     return true
   },
   'heart-vow': (ctx, { target, x, y, label }) => {
@@ -1797,7 +1803,7 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
       ctx.remember(target).classList.add('hatsu-vow-subject')
       target.dataset.hatsuLevel = '0'
       ctx.status = ctx.m['heart-vow'].staked(label)
-      ctx.addPoint(x, y, `HEART · ${label}`)
+      ctx.addPoint(x, y, ctx.m.tokens.heart(label))
       return true
     }
     if (target === subject) {
@@ -1809,7 +1815,7 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
       }
       subject.classList.add('hatsu-vow-clause')
       ctx.status = ctx.m['heart-vow'].declared(clauses, label)
-      ctx.addPoint(x, y, `RULE ${clauses}`)
+      ctx.addPoint(x, y, ctx.m.tokens.rule(clauses))
       return true
     }
     ctx.remember(subject)
@@ -1818,7 +1824,7 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
     subject.classList.add('hatsu-vow-enforced')
     ctx.remember(target).classList.add('hatsu-vow-violation')
     ctx.status = ctx.m['heart-vow'].broken(ctx.targetLabel(subject), label)
-    ctx.addPoint(x, y, 'STAKE', { alert: true })
+    ctx.addPoint(x, y, ctx.m.tokens.stake, { alert: true })
     return true
   },
   'ability-loan': (ctx, { target, x, y, label }) => {
@@ -1827,7 +1833,7 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
     // and the loan is spent after a single use.
     if (!ctx.capturedTechniques.length) {
       ctx.status = ctx.m['ability-loan'].empty()
-      ctx.addPoint(x, y, 'EMPTY', { alert: true })
+      ctx.addPoint(x, y, ctx.m.tokens.empty, { alert: true })
       return true
     }
     const [loaned] = ctx.capturedTechniques
@@ -1846,7 +1852,7 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
     ctx.capturedTechniques = []
     ctx.selectedElements = []
     ctx.status = ctx.m['ability-loan'].spent(loaned.name, label, awakened)
-    ctx.addPoint(x, y, `SPENT · ${loaned.name}`)
+    ctx.addPoint(x, y, ctx.m.tokens.spentAbility(loaned.name))
     return true
   },
   contract: (ctx, { target, x, y, label }) => {
@@ -1857,7 +1863,7 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
       ctx.selectedElements = [...signed, target]
       ctx.remember(target).classList.add('hatsu-contract-signatory')
       ctx.status = ctx.m['contract'].signed(signed.length === 0, label)
-      ctx.addPoint(x, y, `SIGN ${signed.length + 1}/2`)
+      ctx.addPoint(x, y, ctx.m.tokens.sign(signed.length + 1))
       return true
     }
     if (signed.includes(target)) {
@@ -1871,7 +1877,7 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
         }
       }
       ctx.status = ctx.m['contract'].honoured()
-      ctx.addPoint(x, y, 'REWARD')
+      ctx.addPoint(x, y, ctx.m.tokens.reward)
       return true
     }
     const breacher = ctx.remember(signed[1])
@@ -1879,7 +1885,7 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
     breacher.style.pointerEvents = 'none'
     breacher.style.filter = 'grayscale(1)'
     ctx.status = ctx.m['contract'].breached(ctx.targetLabel(breacher), label)
-    ctx.addPoint(x, y, 'ZETSU', { alert: true })
+    ctx.addPoint(x, y, ctx.m.tokens.zetsu, { alert: true })
     ctx.schedule(() => {
       breacher.classList.remove('hatsu-contract-zetsu')
       breacher.style.pointerEvents = 'auto'
@@ -1922,7 +1928,7 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
     ).slice(0, 4)
     ctx.guideTitle = ctx.m['blood-search'].guideTitle()
     ctx.status = ctx.m['blood-search'].released(label)
-    ctx.addPoint(x, y, `DROP ${drop}`)
+    ctx.addPoint(x, y, ctx.m.tokens.drop(drop))
     traces.forEach((trace, index) =>
       ctx.schedule(
         () => {
@@ -1948,23 +1954,23 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
       ctx.selectedElements = [target]
       ctx.remember(target).classList.add('hatsu-lsdf-hideout')
       ctx.status = ctx.m['legal-defense'].declared(label)
-      ctx.addPoint(x, y, `HIDEOUT · ${label}`)
+      ctx.addPoint(x, y, ctx.m.tokens.hideout(label))
       return true
     }
     if (!hideout.contains(target)) {
       ctx.status = ctx.m['legal-defense'].outside(label)
-      ctx.addPoint(x, y, 'NO JURISDICTION', { alert: true })
+      ctx.addPoint(x, y, ctx.m.tokens.noJurisdiction, { alert: true })
       return true
     }
     const guarded = ctx.remember(target)
     const level = counterOn(guarded)
     guarded.classList.add('hatsu-lsdf-defendant')
-    guarded.dataset.hatsuForgery = `LV ${level}`
+    guarded.dataset.hatsuForgery = ctx.m.tokens.level(level)
     guarded.dataset.hatsuConjured = 'lsdf'
     guarded.style.pointerEvents = 'none'
     guarded.setAttribute('aria-disabled', 'true')
     ctx.status = ctx.m['legal-defense'].guarded(level, label)
-    ctx.addPoint(x, y, `GUARD ${level}`)
+    ctx.addPoint(x, y, ctx.m.tokens.guardLevel(level))
     return true
   },
   'damage-transfer': (ctx, { target, x, y, label }) => {
@@ -1975,7 +1981,7 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
       ctx.selectedElements = [target]
       ctx.remember(target).classList.add('hatsu-damage-recipient')
       ctx.status = ctx.m['damage-transfer'].resting(label)
-      ctx.addPoint(x, y, `SINK · ${label}`)
+      ctx.addPoint(x, y, ctx.m.tokens.sink(label))
       return true
     }
     if (target === sink) {
@@ -1986,7 +1992,7 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
       sink.style.pointerEvents = 'none'
       ctx.selectedElements = []
       ctx.status = ctx.m['damage-transfer'].noSink(label)
-      ctx.addPoint(x, y, 'LEFT HAND', { alert: true })
+      ctx.addPoint(x, y, ctx.m.tokens.leftHand, { alert: true })
       return true
     }
     const load = counterOn(ctx.remember(sink))
@@ -2007,7 +2013,7 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
     // stepping back out of it does nothing, and it only ever moves people.
     if (isNenMade(target) || target.dataset.hatsuFake) {
       ctx.status = ctx.m['door-network'].nenConstruct(label)
-      ctx.addPoint(x, y, 'NOT MOVED', { alert: true })
+      ctx.addPoint(x, y, ctx.m.tokens.notMoved, { alert: true })
       return true
     }
     const trap = ctx.selectedElements[0]
@@ -2015,7 +2021,7 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
       ctx.selectedElements = [target]
       ctx.remember(target).classList.add('hatsu-hideout-door')
       ctx.status = ctx.m['door-network'].trapArmed(label)
-      ctx.addPoint(x, y, 'TRAP DOOR')
+      ctx.addPoint(x, y, ctx.m.tokens.trapDoor)
       return true
     }
     const back = ctx.selectedElements[1]
@@ -2023,7 +2029,7 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
       ctx.selectedElements = [trap, target]
       ctx.remember(target).classList.add('hatsu-hideout-return')
       ctx.status = ctx.m['door-network'].returnArmed(label)
-      ctx.addPoint(x, y, 'RETURN DOOR')
+      ctx.addPoint(x, y, ctx.m.tokens.returnDoor)
       return true
     }
     const inTrap = trap === target || trap.contains(target)
@@ -2035,7 +2041,7 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
     const destination = inTrap ? back : trap
     ctx.followGuide(ctx.guideItemFor(destination, ctx.targetLabel(destination)))
     ctx.status = ctx.m['door-network'].crossed(ctx.targetLabel(destination), label)
-    ctx.addPoint(x, y, inTrap ? 'INTO THE HIDEOUT' : 'BACK TO 3101')
+    ctx.addPoint(x, y, inTrap ? ctx.m.tokens.intoHideout : ctx.m.tokens.backToRoom)
     return true
   },
   'weapon-body': (ctx, { target, x, y, label }) => {
@@ -2081,7 +2087,7 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
     if (ctx.puppetTarget?.isConnected && target !== ctx.puppetTarget) {
       ctx.executeSiteTarget(ctx.puppetTarget)
       ctx.status = ctx.m['coercive-beast'].obeyed(ctx.targetLabel(ctx.puppetTarget))
-      ctx.addPoint(x, y, 'OBEYED')
+      ctx.addPoint(x, y, ctx.m.tokens.obeyed)
       return true
     }
     const conditions = [
@@ -2098,11 +2104,11 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
       ctx.puppetTarget = controlled
       controlled.classList.add('hatsu-coercion-total')
       ctx.status = ctx.m['coercive-beast'].taken(label)
-      ctx.addPoint(x, y, 'TAKEN')
+      ctx.addPoint(x, y, ctx.m.tokens.taken)
       return true
     }
     ctx.status = ctx.m['coercive-beast'].probed(met, label, contacts)
-    ctx.addPoint(x, y, met ? `MET ${contacts}/3` : 'UNMET', { alert: !met })
+    ctx.addPoint(x, y, met ? ctx.m.tokens.met(contacts) : ctx.m.tokens.unmet, { alert: !met })
     return true
   },
   'coin-growth': (ctx, { target, x, y, label }) => {
@@ -2154,7 +2160,7 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
     if (!lying) {
       ctx.remember(target).classList.add('hatsu-lie-honest')
       ctx.status = ctx.m['lie-marks'].truthful(label)
-      ctx.addPoint(x, y, 'TRUE')
+      ctx.addPoint(x, y, ctx.m.tokens.trueAnswer)
       return true
     }
     const liar = ctx.remember(target)
@@ -2167,7 +2173,7 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
       liar.style.filter = 'grayscale(1) blur(2px)'
     }
     ctx.status = ctx.m['lie-marks'].marked(lies - 1, label)
-    ctx.addPoint(x, y, `LIE ${lies}`, { alert: lies === 3 })
+    ctx.addPoint(x, y, ctx.m.tokens.lie(lies), { alert: lies === 3 })
     return true
   },
   'drug-synthesis': (ctx, { target, x, y, label }) => {
@@ -2178,7 +2184,7 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
       ctx.selectedElements = [target]
       ctx.remember(target).classList.add('hatsu-research-partner')
       ctx.status = ctx.m['drug-synthesis'].partner(label)
-      ctx.addPoint(x, y, `PARTNER · ${label}`)
+      ctx.addPoint(x, y, ctx.m.tokens.partner(label))
       return true
     }
     if (first === target) {
@@ -2206,9 +2212,14 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
       ctx.status = ctx.m['drug-synthesis'].inert(ctx.targetLabel(first), label)
     }
     ctx.selectedElements = []
-    ctx.addPoint(x, y, routes ? 'ROUTE' : material ? 'REVEAL' : 'INERT', {
-      alert: !routes && !material,
-    })
+    ctx.addPoint(
+      x,
+      y,
+      routes ? ctx.m.tokens.route : material ? ctx.m.tokens.reveal : ctx.m.tokens.inert,
+      {
+        alert: !routes && !material,
+      },
+    )
     return true
   },
   'aura-levy': (ctx, { target, x, y, label }) => {
@@ -2221,7 +2232,7 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
       reader.style.filter = 'grayscale(1) contrast(.4)'
       ctx.guideItems = ctx.guideItems.filter((item) => item.element !== target)
       ctx.status = ctx.m['aura-levy'].taboo(label)
-      ctx.addPoint(x, y, 'TABOO', { alert: true })
+      ctx.addPoint(x, y, ctx.m.tokens.taboo, { alert: true })
       return true
     }
     const read = (target.textContent || '').trim().length
@@ -2264,7 +2275,7 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
         },
       ]
       ctx.status = ctx.m['desire-trap'].bait(label)
-      ctx.addPoint(x, y, `BAIT · ${label}`)
+      ctx.addPoint(x, y, ctx.m.tokens.bait(label))
       return true
     }
     ctx.floatingCards = []
@@ -2272,7 +2283,7 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
     ctx.executeSiteTarget(desire)
     ctx.selectedElements = []
     ctx.status = ctx.m['desire-trap'].sprung(ctx.targetLabel(desire))
-    ctx.addPoint(x, y, 'TRAP SPRUNG', { alert: true })
+    ctx.addPoint(x, y, ctx.m.tokens.trapSprung, { alert: true })
     return true
   },
   'diffusive-smoke': (ctx, { target, x, y }) => {
@@ -2300,7 +2311,7 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
     }
     const swayed = breathe(target, SOURCE_RADIUS, 0)
     ctx.status = ctx.m['diffusive-smoke'].released(swayed)
-    ctx.addPoint(x, y, `${swayed} INHALING`)
+    ctx.addPoint(x, y, ctx.m.tokens.inhaling(swayed))
     return true
   },
   solicitation: (ctx, { target, x, y, label }) => {
@@ -2308,7 +2319,7 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
     // asking. Only one body can be held, and it feeds on that body's own aura.
     if (ctx.puppetTarget?.isConnected && ctx.puppetTarget !== target) {
       ctx.status = ctx.m['solicitation'].alreadyHeld(ctx.targetLabel(ctx.puppetTarget))
-      ctx.addPoint(x, y, 'TOO TIRED', { alert: true })
+      ctx.addPoint(x, y, ctx.m.tokens.tooTired, { alert: true })
       return true
     }
     const asked = ctx.selectedElements.filter((element) => element.isConnected)
@@ -2333,7 +2344,7 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
     }
     ctx.puppetTarget = possessed
     ctx.status = ctx.m['solicitation'].saidYes(asked.length - 1, label)
-    ctx.addPoint(x, y, 'YES', { alert: true })
+    ctx.addPoint(x, y, ctx.m.tokens.yes, { alert: true })
     ctx.schedule(() => {
       possessed.classList.remove('hatsu-possessed')
       possessed.removeAttribute('aria-disabled')
@@ -2354,7 +2365,7 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
       real.style.position = 'relative'
       real.style.zIndex = '25'
       ctx.status = ctx.m['room-isolation'].realRoom(label)
-      ctx.addPoint(x, y, 'ROOM 1013')
+      ctx.addPoint(x, y, ctx.m.tokens.protectedRoom)
       return true
     }
     if (room.contains(target) || room === target) {
@@ -2373,7 +2384,7 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
       emptied += 1
     }
     ctx.status = ctx.m['room-isolation'].emptyCopy(label, emptied)
-    ctx.addPoint(x, y, 'EMPTY COPY')
+    ctx.addPoint(x, y, ctx.m.tokens.emptyCopy)
     return true
   },
   'postmortem-curse': (ctx, { target, x, y, label }) => {
@@ -2385,7 +2396,7 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
       ctx.selectedElements = [target]
       ctx.remember(target).classList.add('hatsu-curse-target')
       ctx.status = ctx.m['postmortem-curse'].target(label)
-      ctx.addPoint(x, y, `TARGET · ${label}`)
+      ctx.addPoint(x, y, ctx.m.tokens.target(label))
       return true
     }
     if (!relic?.isConnected) {
@@ -2397,14 +2408,14 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
           ctx.targetLabel(target).slice(0, 6) === ctx.targetLabel(victim).slice(0, 6))
       if (!connected) {
         ctx.status = ctx.m['postmortem-curse'].notConnected(ctx.targetLabel(victim), label)
-        ctx.addPoint(x, y, 'NOT CONNECTED', { alert: true })
+        ctx.addPoint(x, y, ctx.m.tokens.notConnected, { alert: true })
         return true
       }
       ctx.selectedElements = [victim, target]
       ctx.remember(target).classList.add('hatsu-curse-relic')
       ctx.studyCount = 0
       ctx.status = ctx.m['postmortem-curse'].relic(label)
-      ctx.addPoint(x, y, `RELIC · ${label}`)
+      ctx.addPoint(x, y, ctx.m.tokens.relic(label))
       return true
     }
     if (target !== relic) {
@@ -2417,7 +2428,7 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
     const gap = Math.round(distanceBetween(relic, victim))
     if (ctx.studyCount < 5) {
       ctx.status = ctx.m['postmortem-curse'].rite(ctx.targetLabel(victim), ctx.studyCount, gap)
-      ctx.addPoint(x, y, `RITE ${ctx.studyCount}`)
+      ctx.addPoint(x, y, ctx.m.tokens.rite(ctx.studyCount))
       return true
     }
     const close = gap < 220

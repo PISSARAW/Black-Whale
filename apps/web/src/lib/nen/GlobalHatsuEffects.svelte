@@ -144,12 +144,7 @@
   // Cleanup bookkeeping, not view state.
   // eslint-disable-next-line svelte/prefer-svelte-reactivity
   const inheritedCharacters = new Set<string>()
-  const tribunalCards = [
-    'BLEU · ADMISSION',
-    'JAUNE · AVERTISSEMENT',
-    'JAUNE · RESTRAINT',
-    'ROUGE · EXPULSION',
-  ]
+  $: tribunalCards = hatsuStatusFor($locale).tokens.tribunalCards
 
   // The technique is read in the visitor's language; the id, kind and colour
   // the branches below dispatch on are untouched by the overlay.

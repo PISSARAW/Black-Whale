@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { t } from '$lib/i18n'
   import panzoom from 'panzoom'
   import { tick } from 'svelte'
   import { mapState } from '$lib/state/mapState.svelte'
@@ -115,11 +116,11 @@
   let MapAsset = $derived(getMapAsset(mapAssetKey))
   let hasDetailedMap = $derived(Boolean(isLocalZoom && MapAsset))
   let selectedLocationLabel = $derived(
-    (mapState.selectedLocationId || 'Unmapped area').replaceAll('-', ' '),
+    (mapState.selectedLocationId || $t.mapUi.unmappedArea).replaceAll('-', ' '),
   )
 </script>
 
-<div class="map-frame" role="region" aria-label="Interactive deck map">
+<div class="map-frame" role="region" aria-label={$t.mapUi.regionLabel}>
   <!-- Panzoom target -->
   <div bind:this={containerEl} class="relative w-full h-full transform-origin-top-left">
     <!-- SVG Map Render -->
@@ -128,19 +129,17 @@
     {:else if isLocalZoom}
       <section class="cartographic-gap" aria-live="polite">
         <div class="gap-mark" aria-hidden="true"><span></span><i></i></div>
-        <p>Cartographic gap · local scan unavailable</p>
+        <p>{$t.mapUi.gapEyebrow}</p>
         <h2 class="capitalize">{selectedLocationLabel}</h2>
-        <span
-          >This zone is indexed in the archive, but no verified local floor plan has been recovered.</span
-        >
+        <span>{$t.mapUi.gapCopy}</span>
         <button type="button" onclick={() => mapState.selectLocation(null)}
-          >Return to tier map</button
+          >{$t.mapUi.returnToTierMap}</button
         >
       </section>
     {:else}
       <!-- Fallback for other tiers -->
       <div class="flex items-center justify-center w-full h-full text-[#FFFFF0]">
-        <h2>Map for {mapState.selectedTier} not found</h2>
+        <h2>{$t.mapUi.mapNotFound(mapState.selectedTier ?? '')}</h2>
       </div>
     {/if}
 
@@ -149,16 +148,13 @@
         class="absolute top-4 left-4 px-3 py-1 bg-[#1a202c] text-[#e2e8f0] border border-[#4a5568] rounded shadow hover:bg-[#2d3748] z-10 font-bold pointer-events-auto"
         onclick={() => mapState.selectLocation(null)}
       >
-        ← Back to tier
+        {$t.mapUi.backToTier}
       </button>
     {/if}
 
     {#if MapAsset && mapState.currentZoomLevel !== 'OVERVIEW'}
-      <p
-        class="canon-note"
-        title="Named zones and fixtures follow published manga panels; distances and unshown geometry are schematic."
-      >
-        Canon zones · schematic geometry
+      <p class="canon-note" title={$t.mapUi.canonNoteTitle}>
+        {$t.mapUi.canonNote}
       </p>
     {/if}
 
@@ -166,31 +162,33 @@
     <MapOverlay />
   </div>
 
-  <div class="zoom-controls" data-hatsu-pass aria-label="Map zoom controls">
+  <div class="zoom-controls" data-hatsu-pass aria-label={$t.mapUi.zoomControls}>
     <button
       type="button"
       onclick={() => zoomBy(1.25)}
       onkeydown={handleMapKeydown}
-      aria-label="Zoom in">+</button
+      aria-label={$t.mapUi.zoomIn}>+</button
     >
     <span aria-live="polite">{zoomPercent}%</span>
     <button
       type="button"
       onclick={() => zoomBy(0.8)}
       onkeydown={handleMapKeydown}
-      aria-label="Zoom out">−</button
+      aria-label={$t.mapUi.zoomOut}>−</button
     >
     <button
       class="reset"
       type="button"
       onclick={resetView}
       onkeydown={handleMapKeydown}
-      aria-label="Reset map view">⌖</button
+      aria-label={$t.mapUi.resetView}>⌖</button
     >
   </div>
 
   <div class="keyboard-hint" aria-hidden="true">
-    <kbd>+</kbd><kbd>−</kbd> zoom <kbd>0</kbd> reset
+    <kbd>+</kbd><kbd>−</kbd>
+    {$t.mapUi.keyboardZoom} <kbd>0</kbd>
+    {$t.mapUi.keyboardReset}
   </div>
 </div>
 

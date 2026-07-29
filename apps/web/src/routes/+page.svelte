@@ -4,82 +4,68 @@
   import VoyageProgress from '$lib/components/VoyageProgress.svelte'
   import Seo from '$lib/components/Seo.svelte'
   import { websiteSchema } from '$lib/seo/schema'
+  import { link, locale, t } from '$lib/i18n'
+  import { LOCALE_TAGS } from '$lib/i18n/config'
 
   let { data }: { data: PageData } = $props()
 
   const pad = (value: number) => (value < 10 ? `0${value}` : String(value))
 
-  // A fixed locale and time zone keep the server render and the hydrated
-  // markup identical whatever the visitor's machine is set to.
-  const dateFormatter = new Intl.DateTimeFormat('en-GB', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-    timeZone: 'UTC',
-  })
-  const formatDate = (value: string) => dateFormatter.format(new Date(value))
+  // A fixed time zone keeps the server render and the hydrated markup identical
+  // whatever the visitor's machine is set to; the locale follows the copy.
+  let dateFormatter = $derived(
+    new Intl.DateTimeFormat($t.common.intlLocale, {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+      timeZone: 'UTC',
+    }),
+  )
+  let formatDate = $derived((value: string) => dateFormatter.format(new Date(value)))
 
   let metrics = $derived([
-    { value: pad(data.metrics.tiers), label: 'Ship tiers' },
-    { value: String(data.metrics.passengers), label: 'Passengers catalogued' },
-    { value: String(data.metrics.rooms), label: 'Rooms charted' },
-    { value: String(data.metrics.abilities), label: 'Nen abilities' },
+    { value: pad(data.metrics.tiers), label: $t.home.metrics.tiers },
+    { value: String(data.metrics.passengers), label: $t.home.metrics.passengers },
+    { value: String(data.metrics.rooms), label: $t.home.metrics.rooms },
+    { value: String(data.metrics.abilities), label: $t.home.metrics.abilities },
   ])
 
-  const dossiers = [
-    {
-      index: '01',
-      title: 'The ship, deck by deck',
-      copy: 'Navigate five tiers and inspect who is where at any point in the voyage.',
-      href: '/ship',
-      tag: 'LIVE MAP',
-    },
-    {
-      index: '02',
-      title: 'Every event, in order',
-      copy: 'Trace each confrontation, alliance, and transfer in narrative order.',
-      href: '/timeline',
-      tag: 'EVENT LOG',
-    },
-    {
-      index: '03',
-      title: 'What each character knows',
-      copy: 'See the same world through different minds, memories, and assumptions.',
-      href: '/perspectives',
-      tag: 'KNOWLEDGE',
-    },
-  ]
+  let dossiers = $derived([
+    { index: '01', href: '/ship', ...$t.home.dossiers.ship },
+    { index: '02', href: '/timeline', ...$t.home.dossiers.timeline },
+    { index: '03', href: '/perspectives', ...$t.home.dossiers.perspectives },
+  ])
 </script>
 
 <Seo
-  description="Navigate the people, decks, knowledge and Nen systems of the Black Whale Succession War — an interactive Hunter × Hunter archive."
-  jsonLd={websiteSchema()}
+  description={$t.home.seoDescription}
+  jsonLd={websiteSchema({
+    description: $t.seo.siteDescription,
+    language: LOCALE_TAGS[$locale].html,
+    path: $link('/'),
+  })}
 />
 
 <div class="home-page">
   <section class="hero">
     <div class="hero-copy">
-      <p class="eyebrow">Kakin Royal Expedition · Voyage 001</p>
-      <h1><span>Enter the</span> Black Whale</h1>
-      <p class="lede">
-        An archive of the Succession War arc. It records where every passenger is, which body holds
-        which consciousness, what Nen is in play, and what each character believes at that moment of
-        the voyage.
-      </p>
+      <p class="eyebrow">{$t.home.eyebrow}</p>
+      <h1><span>{$t.home.titleLead}</span> {$t.home.titleBrand}</h1>
+      <p class="lede">{$t.home.lede}</p>
 
       <div class="hero-actions">
-        <a class="primary-action" href="/ship"
-          ><span>Explore the ship</span><i aria-hidden="true">↗</i></a
+        <a class="primary-action" href={$link('/ship')}
+          ><span>{$t.home.exploreShip}</span><i aria-hidden="true">↗</i></a
         >
-        <a class="secondary-action" href="/characters">Open passenger registry</a>
+        <a class="secondary-action" href={$link('/characters')}>{$t.home.openRegistry}</a>
       </div>
 
       {#if data.latestChapter}
-        <a class="latest-record" href="/timeline">
-          <span class="record-label">Latest indexed chapter</span>
+        <a class="latest-record" href={$link('/timeline')}>
+          <span class="record-label">{$t.home.latestChapter}</span>
           <span class="record-body">
             <strong>{data.latestChapter.number} · {data.latestChapter.title}</strong>
-            <small>Published {formatDate(data.latestChapter.date)}</small>
+            <small>{$t.home.published(formatDate(data.latestChapter.date))}</small>
           </span>
         </a>
       {/if}
@@ -91,7 +77,7 @@
     </div>
   </section>
 
-  <section class="metrics reveal-on-scroll" aria-label="Archive metrics">
+  <section class="metrics reveal-on-scroll" aria-label={$t.home.metricsLabel}>
     {#each metrics as metric (metric.label)}
       <div>
         <span>{metric.value}</span>
@@ -103,32 +89,29 @@
   <section class="manifest reveal-on-scroll">
     <header>
       <div>
-        <p class="eyebrow">Intelligence architecture</p>
-        <h2>One voyage.<br />Many realities.</h2>
+        <p class="eyebrow">{$t.home.manifestEyebrow}</p>
+        <h2>{$t.home.manifestTitleLine1}<br />{$t.home.manifestTitleLine2}</h2>
       </div>
-      <p>
-        The archive never treats information as absolute. Every record belongs to a time, a source,
-        and a point of view.
-      </p>
+      <p>{$t.home.manifestCopy}</p>
     </header>
 
     <div class="dossier-grid">
       {#each dossiers as dossier (dossier.index)}
-        <a href={dossier.href} class="dossier-card">
+        <a href={$link(dossier.href)} class="dossier-card">
           <span class="index">{dossier.index}</span>
           <span class="tag">{dossier.tag}</span>
           <h3>{dossier.title}</h3>
           <p>{dossier.copy}</p>
-          <i aria-hidden="true">Explore ↗</i>
+          <i aria-hidden="true">{$t.home.dossierExplore}</i>
         </a>
       {/each}
     </div>
   </section>
 
   <section class="closing reveal-on-scroll">
-    <p class="eyebrow">Where to begin</p>
-    <h2>Start at the first<br />recorded event.</h2>
-    <a href="/timeline">Open the timeline <span>→</span></a>
+    <p class="eyebrow">{$t.home.closingEyebrow}</p>
+    <h2>{$t.home.closingTitleLine1}<br />{$t.home.closingTitleLine2}</h2>
+    <a href={$link('/timeline')}>{$t.home.openTimeline} <span>→</span></a>
   </section>
 </div>
 

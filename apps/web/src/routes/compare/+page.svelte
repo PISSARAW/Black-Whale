@@ -7,7 +7,8 @@
   import CompareTierMap from '$lib/components/perspective/CompareTierMap.svelte'
   import Seo from '$lib/components/Seo.svelte'
   import { breadcrumbSchema } from '$lib/seo/schema'
-  import { toEnglishDisplayName, toEnglishEventTitle } from '$lib/utils/displayNames'
+  import { displayName, eventTitle } from '$lib/utils/displayNames'
+  import { link, locale, t } from '$lib/i18n'
 
   let { data }: { data: PageData } = $props()
 
@@ -24,16 +25,17 @@
   let lastSnapSubject = $state('')
 
   const tiers = ['tier-1', 'tier-2', 'tier-3', 'tier-4', 'tier-5']
-  const filters = [
-    'All',
-    'Identities',
-    'Positions',
-    'Statuses',
-    'Abilities',
-    'Affiliations',
-    'Events',
-  ]
-  let activeFilter = $state('All')
+  // The id drives the dimension lookup; only the label is translated.
+  let filters = $derived([
+    { id: 'all', label: $t.compare.filters.all },
+    { id: 'identities', label: $t.compare.filters.identities },
+    { id: 'positions', label: $t.compare.filters.positions },
+    { id: 'statuses', label: $t.compare.filters.statuses },
+    { id: 'abilities', label: $t.compare.filters.abilities },
+    { id: 'affiliations', label: $t.compare.filters.affiliations },
+    { id: 'events', label: $t.compare.filters.events },
+  ])
+  let activeFilter = $state('all')
 
   let locations = $derived(data.worldState?.locations || [])
   let presences = $derived(data.worldState?.presences || [])
@@ -138,8 +140,8 @@
         return {
           id: presence.entityId,
           subjectId: owner?.id || body?.id || presence.entityId,
-          name: toEnglishDisplayName(owner?.canonicalName || body?.label) || presence.entityId,
-          locationName: location?.name || 'Unknown location',
+          name: displayName(owner?.canonicalName || body?.label, $locale) || presence.entityId,
+          locationName: location?.name || $t.compare.unknownLocation,
           tier: location ? resolveTier(location) : null,
           zone: location?.slug || '',
         }
@@ -193,7 +195,7 @@
         id: presence.entityId,
         bodyId: body?.id || presence.entityId,
         subjectId: owner?.id || body?.id || presence.entityId,
-        name: toEnglishDisplayName(owner?.canonicalName || body?.label) || presence.entityId,
+        name: displayName(owner?.canonicalName || body?.label, $locale) || presence.entityId,
         tier: markerTier,
         zone: location?.slug || '',
         x,
@@ -255,8 +257,8 @@
     )
 
     if (facts.length > 0) return marker.name
-    if (beliefs.length > 0) return 'Assumed identity'
-    return 'Unknown individual'
+    if (beliefs.length > 0) return $t.compare.assumedIdentity
+    return $t.compare.unknownIndividual
   }
 
   let leftMapMarkers = $derived(
@@ -298,16 +300,16 @@
     )
     const objectivePosition = canonicalTruth.positions?.[selectedSubject]
     const rows = facts.map((fact: any) => ({
-      type: 'canonical fact',
+      type: $t.compare.rowTypes.canonicalFact,
       key: fact.predicate,
       value: formatValue(fact.value),
     }))
 
     if (objectivePosition) {
       rows.unshift({
-        type: 'actual position',
+        type: $t.compare.rowTypes.actualPosition,
         key: 'locationId',
-        value: objectivePosition.locationId || 'unknown',
+        value: objectivePosition.locationId || $t.compare.unknownValue,
       })
     }
 
@@ -328,8 +330,9 @@
 
   function getCharacterName(id: string) {
     return (
-      toEnglishDisplayName(
+      displayName(
         data.characters.find((character) => character.id === id)?.canonicalName,
+        $locale,
       ) || id
     )
   }
@@ -374,20 +377,20 @@
   }
 
   function formatValue(value: unknown) {
-    if (value === undefined || value === null) return 'unknown'
+    if (value === undefined || value === null) return $t.compare.unknownValue
     if (typeof value === 'string') return value
     return JSON.stringify(value)
   }
 
   function matchesFilter(diff: any) {
-    if (activeFilter === 'All') return true
+    if (activeFilter === 'all') return true
     const byFilter: Record<string, string[]> = {
-      Identities: ['IDENTITY', 'EXISTENCE'],
-      Positions: ['POSITION'],
-      Statuses: ['BIOLOGICAL_STATE', 'BELIEF'],
-      Abilities: ['ABILITY'],
-      Affiliations: ['AFFILIATION'],
-      Events: ['EVENT'],
+      identities: ['IDENTITY', 'EXISTENCE'],
+      positions: ['POSITION'],
+      statuses: ['BIOLOGICAL_STATE', 'BELIEF'],
+      abilities: ['ABILITY'],
+      affiliations: ['AFFILIATION'],
+      events: ['EVENT'],
     }
     return (byFilter[activeFilter] || []).includes(diff.dimension)
   }
@@ -403,12 +406,15 @@
     )
     return [
       ...facts.map((fact: any) => ({
-        type: fact.truthStatus === 'CONTESTED' ? 'contested belief' : 'fact',
+        type:
+          fact.truthStatus === 'CONTESTED'
+            ? $t.compare.rowTypes.contestedBelief
+            : $t.compare.rowTypes.fact,
         key: fact.predicate,
         value: formatValue(fact.value),
       })),
       ...beliefs.map((belief: any) => ({
-        type: 'belief',
+        type: $t.compare.rowTypes.belief,
         key: belief.predicate,
         value: formatValue(belief.believedValue),
       })),
@@ -421,35 +427,32 @@
 </script>
 
 <Seo
-  title="Perspective Comparison"
-  description="Put two characters side by side and see exactly where their knowledge of the Black Whale diverges — who is misinformed, and since which chapter."
+  title={$t.compare.seoTitle}
+  description={$t.compare.seoDescription}
   jsonLd={breadcrumbSchema([
-    { name: 'Home', path: '/' },
-    { name: 'Compare perspectives', path: '/compare' },
+    { name: $t.common.home, path: $link('/') },
+    { name: $t.compare.breadcrumb, path: $link('/compare') },
   ])}
 />
 
 <div class="compare-page">
   <header class="compare-hero">
     <div class="hero-copy">
-      <p class="eyebrow">Investigation room · Synchronized intelligence</p>
-      <h1>Truth is<br />relative.</h1>
-      <p>
-        Compare what two observers believe at the same event, location, and scale—then reveal the
-        canonical record when clearance allows.
-      </p>
+      <p class="eyebrow">{$t.compare.eyebrow}</p>
+      <h1>{$t.compare.titleLine1}<br />{$t.compare.titleLine2}</h1>
+      <p>{$t.compare.intro}</p>
     </div>
     <dl class="hero-metrics">
       <div>
-        <dt>Active event</dt>
-        <dd>CH. {eventLabel?.chapter.number ?? '—'}</dd>
+        <dt>{$t.compare.activeEvent}</dt>
+        <dd>{$t.characterDetail.chapterUpper(eventLabel?.chapter.number ?? '—')}</dd>
       </div>
       <div>
-        <dt>Detected gaps</dt>
+        <dt>{$t.compare.detectedGaps}</dt>
         <dd>{differences.length}</dd>
       </div>
       <div>
-        <dt>Subjects in view</dt>
+        <dt>{$t.compare.subjectsInView}</dt>
         <dd>{entitiesInView.length}</dd>
       </div>
     </dl>
@@ -463,27 +466,29 @@
           syncState(true)
         }}
       >
-        {compareCanonical ? 'Hide Reader Truth column' : 'Compare with canonical reality'}
+        {compareCanonical ? $t.compare.hideCanonical : $t.compare.showCanonical}
       </button>
       {#if compareCanonical}
         <p class="text-xs text-amber-200/80 border border-amber-300/40 rounded px-3 py-2">
-          Warning: this comparison reveals errors and illusions in the selected perspective.
+          {$t.compare.canonicalWarning}
         </p>
       {/if}
       {#if canonicalBlockedBySpoiler}
         <p class="text-xs text-red-200 border border-red-400/40 rounded px-3 py-2">
-          Canonical view unavailable beyond the permitted spoiler limit.
+          {$t.compare.canonicalBlocked}
         </p>
       {/if}
-      <nav aria-label="Related intelligence views">
-        <a href="/perspectives">Perspective setup</a><a href="/ship">Return to ship map</a>
+      <nav aria-label={$t.compare.relatedViews}>
+        <a href={$link('/perspectives')}>{$t.compare.perspectiveSetup}</a><a href={$link('/ship')}
+          >{$t.compare.returnToMap}</a
+        >
       </nav>
     </div>
   </header>
 
   <section class="control-panel primary-controls">
     <label class="grid gap-1 lg:col-span-1">
-      <span class="text-xs uppercase tracking-wider text-slate-400">Event</span>
+      <span class="text-xs uppercase tracking-wider text-slate-400">{$t.compare.event}</span>
       <select
         bind:value={selectedEventId}
         onchange={submitFetch}
@@ -491,27 +496,30 @@
       >
         {#each data.events as event (event.id)}
           <option value={event.id}
-            >Ch.{event.chapter.number} - {toEnglishEventTitle(event.title)}</option
+            >{$t.compare.eventOption(
+              event.chapter.number,
+              eventTitle(event.title, $locale),
+            )}</option
           >
         {/each}
       </select>
     </label>
 
     <label class="grid gap-1 lg:col-span-1">
-      <span class="text-xs uppercase tracking-wider text-slate-400">Perspective A</span>
+      <span class="text-xs uppercase tracking-wider text-slate-400">{$t.compare.perspectiveA}</span>
       <select
         bind:value={selectedLeft}
         onchange={submitFetch}
         class="bg-slate-900 border border-slate-700 rounded px-3 py-2 text-sm"
       >
         {#each data.characters as char (char.id)}
-          <option value={char.id}>{toEnglishDisplayName(char.canonicalName)}</option>
+          <option value={char.id}>{displayName(char.canonicalName, $locale)}</option>
         {/each}
       </select>
     </label>
 
     <label class="grid gap-1 lg:col-span-1">
-      <span class="text-xs uppercase tracking-wider text-slate-400">Perspective B</span>
+      <span class="text-xs uppercase tracking-wider text-slate-400">{$t.compare.perspectiveB}</span>
       <select
         bind:value={selectedRight}
         onchange={submitFetch}
@@ -519,7 +527,7 @@
       >
         {#each data.characters as char (char.id)}
           {#if char.id !== selectedLeft}
-            <option value={char.id}>{toEnglishDisplayName(char.canonicalName)}</option>
+            <option value={char.id}>{displayName(char.canonicalName, $locale)}</option>
           {/if}
         {/each}
       </select>
@@ -533,13 +541,15 @@
         syncState(true)
       }}
     >
-      {differencesOnly ? 'View synchronized maps' : 'Differences only'}
+      {differencesOnly ? $t.compare.viewSynchronized : $t.compare.differencesOnly}
     </button>
   </section>
 
   <section class="control-panel sync-controls">
     <label class="grid gap-1">
-      <span class="text-xs uppercase tracking-wider text-slate-400">Synchronized zoom</span>
+      <span class="text-xs uppercase tracking-wider text-slate-400"
+        >{$t.compare.synchronizedZoom}</span
+      >
       <input
         type="range"
         min="1"
@@ -551,7 +561,9 @@
     </label>
 
     <label class="grid gap-1">
-      <span class="text-xs uppercase tracking-wider text-slate-400">Synchronized tier</span>
+      <span class="text-xs uppercase tracking-wider text-slate-400"
+        >{$t.compare.synchronizedTier}</span
+      >
       <select
         bind:value={tier}
         onchange={() => {
@@ -567,13 +579,15 @@
     </label>
 
     <label class="grid gap-1 lg:col-span-2">
-      <span class="text-xs uppercase tracking-wider text-slate-400">Synchronized zone</span>
+      <span class="text-xs uppercase tracking-wider text-slate-400"
+        >{$t.compare.synchronizedZone}</span
+      >
       <select
         bind:value={zone}
         onchange={() => syncState(true)}
         class="bg-slate-900 border border-slate-700 rounded px-3 py-2 text-sm"
       >
-        <option value="">All zones in this tier</option>
+        <option value="">{$t.compare.allZonesInTier}</option>
         {#each zonesInTier as location (location.id)}
           <option value={location.slug}>{location.name}</option>
         {/each}
@@ -582,14 +596,14 @@
 
     <p class="event-readout">
       {eventLabel
-        ? `Ch.${eventLabel.chapter.number} / ${toEnglishEventTitle(eventLabel.title)}`
-        : 'No event selected'}
+        ? $t.compare.eventReadout(eventLabel.chapter.number, eventTitle(eventLabel.title, $locale))
+        : $t.compare.noEventSelected}
     </p>
   </section>
 
-  <div class="comparison-title" aria-label="Active comparison">
+  <div class="comparison-title" aria-label={$t.compare.activeComparison}>
     <div><span>A</span><strong>{getCharacterName(selectedLeft)}</strong></div>
-    <i>VERSUS</i>
+    <i>{$t.compare.versus}</i>
     <div><span>B</span><strong>{getCharacterName(selectedRight)}</strong></div>
   </div>
 
@@ -597,9 +611,11 @@
     <section class={`comparison-grid ${compareCanonical ? 'with-canon' : ''}`}>
       <article class="comparison-column side-a">
         <h2 class="text-sm uppercase tracking-widest text-slate-400 mb-2">
-          Perspective A - {getCharacterName(selectedLeft)}
+          {$t.compare.columnA(getCharacterName(selectedLeft))}
         </h2>
-        <p class="text-xs text-slate-400 mb-3">Zoom {zoom} · {tier} · {zone || 'all zones'}</p>
+        <p class="text-xs text-slate-400 mb-3">
+          {$t.compare.scopeReadout(zoom, tier, zone || $t.compare.allZones)}
+        </p>
         <ul class="space-y-1 max-h-48 overflow-y-auto pr-1">
           {#each entitiesInView as entity (entity.id)}
             <li>
@@ -615,7 +631,7 @@
         </ul>
 
         <CompareTierMap
-          title={`Perspective A · ${tier.toUpperCase()}`}
+          title={$t.compare.mapTitleA(tier.toUpperCase())}
           {tier}
           {zoom}
           focusX={focusMarker.x}
@@ -637,9 +653,9 @@
 
       <article class="comparison-column side-b">
         <h2 class="text-sm uppercase tracking-widest text-slate-400 mb-2">
-          Perspective B - {getCharacterName(selectedRight)}
+          {$t.compare.columnB(getCharacterName(selectedRight))}
         </h2>
-        <p class="text-xs text-slate-400 mb-3">Synchronized with A (tier/zoom/zone/sujet)</p>
+        <p class="text-xs text-slate-400 mb-3">{$t.compare.syncedWithA}</p>
         <ul class="space-y-1 max-h-48 overflow-y-auto pr-1">
           {#each entitiesInView as entity (entity.id)}
             <li>
@@ -655,7 +671,7 @@
         </ul>
 
         <CompareTierMap
-          title={`Perspective B · ${tier.toUpperCase()}`}
+          title={$t.compare.mapTitleB(tier.toUpperCase())}
           {tier}
           {zoom}
           focusX={focusMarker.x}
@@ -678,14 +694,14 @@
       {#if compareCanonical}
         <article class="comparison-column canonical-column">
           <h2 class="text-sm uppercase tracking-widest text-slate-400 mb-2">
-            Reader Truth — Canonical reality
+            {$t.compare.readerTruthTitle}
           </h2>
           <p class="text-xs text-slate-400 mb-3">
-            Spoiler limit: chapter {data.spoilerLimit ?? 'unlimited'}
+            {$t.compare.spoilerLimit(data.spoilerLimit ?? $t.compare.unlimited)}
           </p>
 
           <CompareTierMap
-            title={`Reader truth · ${tier.toUpperCase()}`}
+            title={$t.compare.mapTitleReader(tier.toUpperCase())}
             {tier}
             {zoom}
             focusX={focusMarker.x}
@@ -703,9 +719,7 @@
               </div>
             {/each}
             {#if canonicalRows.length === 0}
-              <p class="text-xs text-slate-400">
-                No specific canonical information for this subject at this time.
-              </p>
+              <p class="text-xs text-slate-400">{$t.compare.noCanonicalInfo}</p>
             {/if}
           </div>
         </article>
@@ -716,7 +730,7 @@
   {#if differencesOnly}
     <section class="difference-mobile md:hidden">
       <h2 class="text-sm uppercase tracking-widest text-slate-400 mb-3">
-        Differences only (mobile)
+        {$t.compare.differencesMobile}
       </h2>
       <div class="space-y-2">
         {#each filteredDifferences as diff, diffIndex (diffIndex)}
@@ -740,13 +754,13 @@
     class:hidden={differencesOnly && filteredDifferences.length > 0}
   >
     <div class="flex flex-wrap gap-2 mb-4">
-      {#each filters as filter (filter)}
+      {#each filters as filter (filter.id)}
         <button
           type="button"
-          class={`px-3 py-1 text-xs border rounded ${activeFilter === filter ? 'border-emerald-300 bg-emerald-300/10' : 'border-slate-700'}`}
-          onclick={() => (activeFilter = filter)}
+          class={`px-3 py-1 text-xs border rounded ${activeFilter === filter.id ? 'border-emerald-300 bg-emerald-300/10' : 'border-slate-700'}`}
+          onclick={() => (activeFilter = filter.id)}
         >
-          {filter}
+          {filter.label}
         </button>
       {/each}
     </div>
@@ -764,7 +778,7 @@
       {/each}
 
       {#if filteredDifferences.length === 0}
-        <p class="text-sm text-slate-400">No differences for this filter.</p>
+        <p class="text-sm text-slate-400">{$t.compare.noDifferencesForFilter}</p>
       {/if}
     </div>
   </section>

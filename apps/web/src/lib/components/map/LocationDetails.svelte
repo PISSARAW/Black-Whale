@@ -1,7 +1,8 @@
 <script lang="ts">
   import { page } from '$app/stores'
   import { mapState } from '$lib/state/mapState.svelte'
-  import { toEnglishDisplayName } from '$lib/utils/displayNames'
+  import { displayName } from '$lib/utils/displayNames'
+  import { locale, t } from '$lib/i18n'
   import { resolveRegionLocationSlug } from '$lib/map/mapAssetRegistry'
 
   let locations = $derived($page.data.worldState?.locations || [])
@@ -50,7 +51,7 @@
         ? [
             {
               id: character.id,
-              name: toEnglishDisplayName(character.canonicalName),
+              name: displayName(character.canonicalName, $locale),
               certainty: presence.certainty,
             },
           ]
@@ -73,13 +74,13 @@
 {#if mapState.selectedLocationId && locationDetails}
   <aside
     class="absolute top-0 right-0 z-40 flex h-full w-[22rem] flex-col overflow-y-auto border-l border-[#FFD700] bg-[#1a1a1a] p-6 text-[#FFFFF0] shadow-2xl"
-    aria-label="Location details"
+    aria-label={$t.mapUi.locationDetails}
   >
     <button
       type="button"
       onclick={closePanel}
       class="absolute top-4 right-4 text-gray-400 hover:text-white"
-      aria-label="Close location details"
+      aria-label={$t.mapUi.closeLocationDetails}
     >
       ✕
     </button>
@@ -93,7 +94,7 @@
 
     <section>
       <h3 class="mb-2 border-b border-gray-700 pb-1 text-sm font-semibold tracking-wider uppercase">
-        Characters at this location
+        {$t.mapUi.charactersHere}
       </h3>
       {#if locationDetails.presentCharacters.length > 0}
         <ul class="space-y-2 text-sm text-gray-300">
@@ -110,12 +111,12 @@
           {/each}
         </ul>
       {:else}
-        <p class="text-sm text-gray-400">No tracked character is present at the selected event.</p>
+        <p class="text-sm text-gray-400">{$t.mapUi.noCharacterHere}</p>
       {/if}
     </section>
 
     <p class="mt-auto pt-8 text-xs text-gray-500">
-      Derived from presence records for the selected event.
+      {$t.mapUi.derivedFrom}
     </p>
   </aside>
 {/if}

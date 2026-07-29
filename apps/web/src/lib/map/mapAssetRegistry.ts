@@ -35,6 +35,7 @@ import CentralHospital from '$lib/assets/maps/local/central-hospital.svelte'
 import XiYuOffice from '$lib/assets/maps/local/xi-yu-office.svelte'
 import ChaROffice from '$lib/assets/maps/local/cha-r-office.svelte'
 import Warehouse from '$lib/assets/maps/local/warehouse.svelte'
+import ScreeningRoom from '$lib/assets/maps/local/screening-room.svelte'
 
 export const MAP_ASSETS = {
   'black-whale-overview': BlackWhaleOverview,
@@ -74,6 +75,7 @@ export const MAP_ASSETS = {
   'xi-yu-office': XiYuOffice,
   'cha-r-office': ChaROffice,
   warehouse: Warehouse,
+  'screening-room': ScreeningRoom,
 } as const
 
 export type MapAssetKey = keyof typeof MAP_ASSETS
@@ -101,6 +103,7 @@ const LOCATION_ASSETS: Record<string, MapAssetKey> = {
   lifeboats: 'lifeboats',
   't2-security': 'bulkhead',
   't2-vip': 'heilly-hideout',
+  't2-screening-room': 'screening-room',
   't5-residential': 'general-cabins',
   't3-residential-1st': 'tier3-cabins',
   't3-residential-ord': 'general-cabins',
@@ -143,7 +146,7 @@ const REGION_LOCATION_SLUGS: Record<string, string | null> = {
   'vvip-living-quarters': 'tier-1-vvip-living-quarters',
   // Tier 2
   't2-justice': 'tier-2-ministry-of-justice',
-  't2-reception': null,
+  't2-screening-room': 'tier-2-screening-room',
   't2-security': 'tier-2-bulkhead',
   't2-vip': 'tier-2-heilly-secret-hideout',
   // Tier 3

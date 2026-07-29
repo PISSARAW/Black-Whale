@@ -1,24 +1,20 @@
 <script lang="ts">
   import { page } from '$app/stores'
-  import {
-    DEFAULT_DESCRIPTION,
-    DEFAULT_IMAGE,
-    SITE_NAME,
-    TWITTER_CARD,
-    absoluteUrl,
-    pageTitle,
-  } from '$lib/seo/config'
+  import { DEFAULT_IMAGE, SITE_NAME, TWITTER_CARD, absoluteUrl, pageTitle } from '$lib/seo/config'
+  import { locale, routePath, t } from '$lib/i18n'
+  import { DEFAULT_LOCALE, LOCALE_TAGS, alternatePaths } from '$lib/i18n/config'
 
   let {
     title = null,
-    description = DEFAULT_DESCRIPTION,
+    description = null,
     image = DEFAULT_IMAGE,
     type = 'website',
     noindex = false,
     jsonLd = null,
   }: {
     title?: string | null
-    description?: string
+    /** Falls back to the site-wide description in the active locale. */
+    description?: string | null
     image?: string
     type?: 'website' | 'article' | 'profile'
     noindex?: boolean
@@ -26,11 +22,20 @@
     jsonLd?: unknown
   } = $props()
 
-  let resolvedTitle = $derived(pageTitle(title))
+  let resolvedTitle = $derived(pageTitle(title, $t.seo.siteTitle))
+  let resolvedDescription = $derived(description ?? $t.seo.siteDescription)
   // Query strings (spoiler filters, selected character, …) are view state, not
   // distinct documents — the canonical always points at the bare path.
   let canonical = $derived(absoluteUrl($page.url.pathname))
   let nodes = $derived(jsonLd === null ? [] : Array.isArray(jsonLd) ? jsonLd : [jsonLd])
+
+  // Each locale is its own indexable document; the alternates tell crawlers they
+  // are the same page, and `x-default` names the one to serve when no language
+  // preference applies.
+  let alternates = $derived(alternatePaths($routePath))
+  let defaultAlternate = $derived(
+    absoluteUrl(alternates.find((entry) => entry.locale === DEFAULT_LOCALE)!.path),
+  )
 
   // A closing script tag inside a JSON string would end the block early, so
   // every angle bracket is escaped. The bracket itself is built from its char
@@ -41,8 +46,16 @@
 
 <svelte:head>
   <title>{resolvedTitle}</title>
-  <meta name="description" content={description} />
+  <meta name="description" content={resolvedDescription} />
   <link rel="canonical" href={canonical} />
+  {#each alternates as alternate (alternate.locale)}
+    <link
+      rel="alternate"
+      hreflang={LOCALE_TAGS[alternate.locale].html}
+      href={absoluteUrl(alternate.path)}
+    />
+  {/each}
+  <link rel="alternate" hreflang="x-default" href={defaultAlternate} />
   {#if noindex}
     <meta name="robots" content="noindex, nofollow" />
   {:else}
@@ -52,14 +65,17 @@
   <meta property="og:site_name" content={SITE_NAME} />
   <meta property="og:type" content={type} />
   <meta property="og:title" content={resolvedTitle} />
-  <meta property="og:description" content={description} />
+  <meta property="og:description" content={resolvedDescription} />
   <meta property="og:url" content={canonical} />
   <meta property="og:image" content={image} />
-  <meta property="og:locale" content="en_US" />
+  <meta property="og:locale" content={LOCALE_TAGS[$locale].openGraph} />
+  {#each alternates.filter((alternate) => alternate.locale !== $locale) as alternate (alternate.locale)}
+    <meta property="og:locale:alternate" content={LOCALE_TAGS[alternate.locale].openGraph} />
+  {/each}
 
   <meta name="twitter:card" content={TWITTER_CARD} />
   <meta name="twitter:title" content={resolvedTitle} />
-  <meta name="twitter:description" content={description} />
+  <meta name="twitter:description" content={resolvedDescription} />
   <meta name="twitter:image" content={image} />
 
   {#each nodes as node, nodeIndex (nodeIndex)}

@@ -1,4 +1,7 @@
 <script lang="ts">
+  import { locale, t } from '$lib/i18n'
+  import { localizeHatsu, localizeHatsuList, manifestationFor } from '$lib/i18n/hatsu'
+  import { hatsuStatusFor } from '$lib/i18n/hatsuStatus'
   import { onMount } from 'svelte'
   import { goto } from '$app/navigation'
   import { page } from '$app/stores'
@@ -141,15 +144,14 @@
   // Cleanup bookkeeping, not view state.
   // eslint-disable-next-line svelte/prefer-svelte-reactivity
   const inheritedCharacters = new Set<string>()
-  const tribunalCards = [
-    'BLEU · ADMISSION',
-    'JAUNE · AVERTISSEMENT',
-    'JAUNE · RESTRAINT',
-    'ROUGE · EXPULSION',
-  ]
+  $: tribunalCards = hatsuStatusFor($locale).tokens.tribunalCards
 
-  $: profile = $activeHatsu
-  $: visualSignature = profile ? visualSignatureFor(profile) : null
+  // The technique is read in the visitor's language; the id, kind and colour
+  // the branches below dispatch on are untouched by the overlay.
+  $: profile = $activeHatsu ? localizeHatsu($activeHatsu, $locale) : null
+  $: visualSignature = profile
+    ? { ...visualSignatureFor(profile), manifestation: manifestationFor(profile, $locale) }
+    : null
   $: if (profile?.id !== previousId) {
     const hadActiveHatsu = previousId !== null
     const releasingHatsu = hadActiveHatsu && !profile
@@ -823,6 +825,9 @@
     get page() {
       return $page
     },
+    get m() {
+      return hatsuStatusFor($locale)
+    },
     get parallelFutureVisible() {
       return $parallelFutureVisible
     },
@@ -1238,8 +1243,8 @@
     {/if}
     {#if profile.kind === 'future'}
       <div class="future-frame">
-        <span>PARALLEL FUTURE</span><strong
-          >{$parallelFutureVisible ? `${Math.max(0, 10 - seconds)} s` : 'ENDED'}</strong
+        <span>{$t.nen.parallelFuture}</span><strong
+          >{$parallelFutureVisible ? `${Math.max(0, 10 - seconds)} s` : $t.nen.ended}</strong
         >
       </div>
     {/if}
@@ -1248,8 +1253,8 @@
         class="guardian"
         type="button"
         onclick={replayGuardianEvents}
-        aria-label="Replay the last five events"
-        ><span>♙</span><small>KACHO · NEN POST-MORTEM</small></button
+        aria-label={$t.nen.replayLastEvents}
+        ><span>♙</span><small>{$t.nen.guardianLabel}</small></button
       >
       {#if guardianReplayPoint}<div
           class="guardian-replay"
@@ -1268,8 +1273,8 @@
             style:left={`${portal.x}px`}
             style:top={`${portal.y}px`}
             onclick={() => crossPortal(index)}
-            ><span>{index === 0 ? 'START' : 'RETURN'}</span><small
-              >{index === 0 ? 'Enter tunnel' : 'Cross back'}</small
+            ><span>{index === 0 ? $t.nen.portalStart : $t.nen.portalReturn}</span><small
+              >{index === 0 ? $t.nen.enterTunnel : $t.nen.crossBack}</small
             ></button
           >
         {/if}
@@ -1314,7 +1319,7 @@
         style:width={`${captureZone.width}px`}
         style:height={`${captureZone.height}px`}
       >
-        <span>CULDCEPT · ACQUIRING</span>
+        <span>{$t.nen.culdceptAcquiring}</span>
       </div>
     {/if}
     {#if profile.kind === 'resurrection' && points.length}
@@ -1322,8 +1327,8 @@
     {/if}
     {#if stolenTarget}
       <button class="stolen-control" type="button" onclick={useStolenControl}
-        ><span>SKILL HUNTER</span><strong>{targetLabel(stolenTarget)}</strong><small
-          >Use stolen control</small
+        ><span>{$t.nen.skillHunter}</span><strong>{targetLabel(stolenTarget)}</strong><small
+          >{$t.nen.useStolenControl}</small
         ></button
       >
     {/if}
@@ -1331,12 +1336,12 @@
       <div class="storage-tray">
         <span
           >{profile.kind === 'pocket'
-            ? 'FUN FUN CLOTH'
+            ? $t.nen.trays.pocket
             : profile.kind === 'vacuum'
-              ? 'BLINKY STORAGE'
+              ? $t.nen.trays.vacuum
               : profile.kind === 'relay'
-                ? 'TRANSPORT RELAY'
-                : 'HIDDEN SPACE'}</span
+                ? $t.nen.trays.relay
+                : $t.nen.trays.hidden}</span
         >
         {#each storedItems as item (item.id)}<button
             type="button"
@@ -1346,8 +1351,9 @@
     {/if}
     {#each floatingCards as card (card.id)}
       <div class="floating-card {card.kind}" style:left={`${card.x}px`} style:top={`${card.y}px`}>
-        <span>ASTRAL DOUBLE</span><strong>{card.label}</strong><small>Body remains behind</small
-        >{#if card.href}<a href={card.href}>Follow route as the double →</a>{/if}
+        <span>{$t.nen.astralDouble}</span><strong>{card.label}</strong><small
+          >{$t.nen.bodyRemains}</small
+        >{#if card.href}<a href={card.href}>{$t.nen.followAsDouble}</a>{/if}
       </div>
     {/each}
     {#if prophecyLines.length}
@@ -1384,17 +1390,17 @@
       <div class="captured-techniques">
         <span
           >{profile.kind === 'inherit'
-            ? 'BENJAMIN BATON'
+            ? $t.nen.captured.inherit
             : profile.kind === 'capture'
-              ? 'CULDCEPT CARD'
+              ? $t.nen.captured.capture
               : profile.kind === 'ability-loan'
-                ? 'STEALTH DOLPHIN · SINGLE-USE LOAN'
-                : 'STEAL CHAIN · INDEX DOLPHIN'}</span
-        >{#each capturedTechniques as technique (technique.id)}<button
+                ? $t.nen.captured.abilityLoan
+                : $t.nen.captured.steal}</span
+        >{#each localizeHatsuList(capturedTechniques, $locale) as technique (technique.id)}<button
             type="button"
             onclick={() => activateHatsu(technique)}
             style:--captured={technique.color}
-            ><b>{technique.name}</b><small>Activate captured Hatsu</small></button
+            ><b>{technique.name}</b><small>{$t.nen.activateCaptured}</small></button
           >{/each}
       </div>
     {/if}
@@ -1402,14 +1408,13 @@
       <span>{profile.name}</span>
       <strong>{status}</strong>
       <small>{profile.rule}</small>
-      {#if profile.kind === 'scarlet'}<em>LIFE CONSUMED · {$emperorTimeLifeHours} / 8,760 H</em
-        >{/if}
+      {#if profile.kind === 'scarlet'}<em>{$t.nen.lifeConsumed($emperorTimeLifeHours)}</em>{/if}
       {#if profile.kind === 'inherit' && points.length}
         <div class="inherit-results">
           {#each points as point, pointIndex (pointIndex)}
             <div>
               <b>★ {point.label}</b><span
-                >{point.details?.length ? point.details.join(' · ') : 'No known Hatsu'}</span
+                >{point.details?.length ? point.details.join(' · ') : $t.nen.noKnownHatsu}</span
               >
             </div>
           {/each}

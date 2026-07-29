@@ -15,6 +15,7 @@ describe('resolveRegionLocationSlug', () => {
     expect(resolveRegionLocationSlug('t3-residential-ord')).toBe('tier-3-residential-standard')
     expect(resolveRegionLocationSlug('vip-detention')).toBe('tier-1-vip-jail')
     expect(resolveRegionLocationSlug('beyond-cell')).toBe('tier-1-vvip-prison-beyond')
+    expect(resolveRegionLocationSlug('t2-screening-room')).toBe('tier-2-screening-room')
   })
 
   it('resolves prince apartments from their room number', () => {
@@ -29,7 +30,7 @@ describe('resolveRegionLocationSlug', () => {
 
   it('returns null for regions the catalogue does not cover yet', () => {
     expect(resolveRegionLocationSlug('t4-dist-west')).toBeNull()
-    expect(resolveRegionLocationSlug('t2-reception')).toBeNull()
+    expect(resolveRegionLocationSlug('t4-medical-limited')).toBeNull()
     expect(resolveRegionLocationSlug(null)).toBeNull()
   })
 })

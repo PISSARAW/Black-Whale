@@ -4,6 +4,7 @@
   import { LAST_DATED_CHAPTER, formatVoyageTime, voyageTimeForEvent } from '$lib/voyageTime'
   import Seo from '$lib/components/Seo.svelte'
   import { breadcrumbSchema } from '$lib/seo/schema'
+  import { link, t } from '$lib/i18n'
 
   let { data }: { data: PageData } = $props()
   let query = $state('')
@@ -73,11 +74,7 @@
   )
 
   // What the chip above an event title actually claims, spelled out on hover.
-  const precisionHint = {
-    exact: 'Hour stated by the manga',
-    day: 'Day stated by the manga, no hour given',
-    approximate: 'Day inferred from the surrounding chapters',
-  }
+  let precisionHint = $derived($t.timeline.precision)
 
   let eventCount = $derived(
     data.chapters.reduce((total, chapter) => total + chapter.events.length, 0),
@@ -92,11 +89,11 @@
 />
 
 <Seo
-  title="Succession War Timeline"
-  description="An interactive chapter-by-chapter timeline of the Succession War arc: every confrontation, alliance and Nen transfer in canonical order."
+  title={$t.timeline.seoTitle}
+  description={$t.timeline.seoDescription}
   jsonLd={breadcrumbSchema([
-    { name: 'Home', path: '/' },
-    { name: 'Timeline', path: '/timeline' },
+    { name: $t.common.home, path: $link('/') },
+    { name: $t.timeline.breadcrumb, path: $link('/timeline') },
   ])}
 />
 
@@ -106,8 +103,7 @@
   {/if}
 
   {#if event.occurredAtLabel}
-    <span class="event-time" title="Time recorded on the event itself">{event.occurredAtLabel}</span
-    >
+    <span class="event-time" title={$t.timeline.timeOnEvent}>{event.occurredAtLabel}</span>
   {:else if event.isFlashback}
     <!-- A flashback happened before the chapter that reveals it: the chapter's
          voyage day would be plainly wrong here, so we claim nothing. -->
@@ -121,10 +117,8 @@
         title={precisionHint[voyageTime.precision]}>{formatVoyageTime(voyageTime)}</span
       >
     {:else if chapterNumber > LAST_DATED_CHAPTER}
-      <span
-        class="event-time undated"
-        title="Canon does not anchor a voyage day past chapter {LAST_DATED_CHAPTER} yet"
-        >Undated</span
+      <span class="event-time undated" title={$t.timeline.undatedHint(LAST_DATED_CHAPTER)}
+        >{$t.timeline.undated}</span
       >
     {/if}
   {/if}
@@ -136,25 +130,22 @@
   </div>
   <header class="hero">
     <div class="hero-copy">
-      <p class="eyebrow">Narrative dossier · Succession War</p>
-      <h1>Timeline</h1>
-      <p class="intro">
-        Follow the Black Whale events chapter by chapter, replay them in the order they actually
-        happened, and open the map at any point in the story.
-      </p>
+      <p class="eyebrow">{$t.timeline.eyebrow}</p>
+      <h1>{$t.timeline.title}</h1>
+      <p class="intro">{$t.timeline.intro}</p>
     </div>
 
-    <dl class="stats" aria-label="Timeline summary">
+    <dl class="stats" aria-label={$t.timeline.summaryLabel}>
       <div>
-        <dt>Chapters</dt>
+        <dt>{$t.timeline.chapters}</dt>
         <dd>{data.chapters.length}</dd>
       </div>
       <div>
-        <dt>Events</dt>
+        <dt>{$t.timeline.events}</dt>
         <dd>{eventCount}</dd>
       </div>
       <div>
-        <dt>Latest record</dt>
+        <dt>{$t.timeline.latestRecord}</dt>
         <dd>{data.chapters.at(-1)?.number ?? '—'}</dd>
       </div>
     </dl>
@@ -164,7 +155,7 @@
 
   <div class="toolbar">
     <label class="search-field">
-      <span class="sr-only">Search the timeline</span>
+      <span class="sr-only">{$t.timeline.searchLabel}</span>
       <svg viewBox="0 0 24 24" aria-hidden="true">
         <circle cx="11" cy="11" r="6.5"></circle>
         <path d="m16 16 4 4"></path>
@@ -173,51 +164,53 @@
         bind:this={searchInput}
         bind:value={query}
         type="search"
-        placeholder="Search by event, chapter, or keyword…"
+        placeholder={$t.timeline.searchPlaceholder}
       />
       <kbd>/</kbd>
       {#if query}
-        <button type="button" onclick={() => (query = '')} aria-label="Clear search">×</button>
+        <button type="button" onclick={() => (query = '')} aria-label={$t.common.clearSearch}
+          >×</button
+        >
       {/if}
     </label>
 
-    <div class="order-switch" role="group" aria-label="Timeline order">
+    <div class="order-switch" role="group" aria-label={$t.timeline.orderLabel}>
       <button
         type="button"
         aria-pressed={order === 'story'}
         onclick={() => (order = 'story')}
-        title="Events grouped by chapter, in reading order"
+        title={$t.timeline.storyOrderHint}
       >
-        Story order
+        {$t.timeline.storyOrder}
       </button>
       <button
         type="button"
         aria-pressed={order === 'chronological'}
         onclick={() => (order = 'chronological')}
-        title="Events in the order they happened aboard the ship"
+        title={$t.timeline.chronologicalHint}
       >
-        Chronological
+        {$t.timeline.chronological}
       </button>
     </div>
 
     {#if data.spoilerLimit}
-      <div class="spoiler-badge" title="Later events are hidden">
+      <div class="spoiler-badge" title={$t.timeline.spoilerHint}>
         <span aria-hidden="true">◉</span>
-        Spoilers limited to chapter {data.spoilerLimit}
+        {$t.timeline.spoilerLimited(data.spoilerLimit)}
       </div>
     {:else}
-      <div class="canon-badge"><span aria-hidden="true">●</span> Full canon</div>
+      <div class="canon-badge"><span aria-hidden="true">●</span> {$t.timeline.fullCanon}</div>
     {/if}
   </div>
 
   <div class="timeline-layout" class:no-index={order === 'chronological'}>
     {#if order === 'story'}
-      <aside aria-label="Quick chapter access">
-        <p>Index</p>
+      <aside aria-label={$t.timeline.quickChapterAccess}>
+        <p>{$t.timeline.index}</p>
         <nav>
           {#each data.chapters as chapter (chapter.id)}
             <a href="#chapter-{chapter.number}">
-              <span>CH.</span>
+              <span>{$t.timeline.chapterAbbrev}</span>
               <strong>{chapter.number}</strong>
             </a>
           {/each}
@@ -236,31 +229,34 @@
           <div class="chapter-content">
             <header class="chapter-header">
               <div>
-                <p>Voyage chronology</p>
-                <h2>In the order it happened</h2>
+                <p>{$t.timeline.chronologyEyebrow}</p>
+                <h2>{$t.timeline.chronologyTitle}</h2>
               </div>
               <span
                 >{chronologicalEvents.length}
-                {chronologicalEvents.length === 1 ? 'event' : 'events'}</span
+                {$t.common.events(chronologicalEvents.length)}</span
               >
             </header>
 
             <ol class="events">
               {#each chronologicalEvents as { event, chapter } (event.id)}
                 <li>
-                  <a href="/ship?eventId={event.id}" aria-label="{event.title} — open on the map">
+                  <a
+                    href={$link(`/ship?eventId=${event.id}`)}
+                    aria-label={$t.timeline.openOnMap(event.title)}
+                  >
                     <span class="event-index">{event.ordinal ?? '—'}</span>
                     <span class="event-copy">
                       {@render eventTime(
                         chapter.number,
                         event,
-                        `↶ Revealed in chapter ${chapter.number}`,
+                        $t.timeline.revealedIn(chapter.number),
                       )}
                       <span class="event-title">{event.title}</span>
                       <span class="event-summary">{event.summary}</span>
                     </span>
                     <span class="event-action">
-                      <span>Ch. {chapter.number}</span>
+                      <span>{$t.common.chapterShort(chapter.number)}</span>
                       <svg viewBox="0 0 24 24" aria-hidden="true"
                         ><path d="m9 18 6-6-6-6"></path></svg
                       >
@@ -283,29 +279,31 @@
           <div class="chapter-content">
             <header class="chapter-header">
               <div>
-                <p>Chapter {chapter.number}</p>
-                <h2>{chapter.title || 'Untitled'}</h2>
+                <p>{$t.timeline.chapterLabel(chapter.number)}</p>
+                <h2>{chapter.title || $t.timeline.untitled}</h2>
               </div>
-              <span>{chapter.events.length} {chapter.events.length === 1 ? 'event' : 'events'}</span
-              >
+              <span>{chapter.events.length} {$t.common.events(chapter.events.length)}</span>
             </header>
 
             <ol class="events">
               {#each chapter.events as event, eventIndex (event.id)}
                 <li>
-                  <a href="/ship?eventId={event.id}" aria-label="{event.title} — open on the map">
+                  <a
+                    href={$link(`/ship?eventId=${event.id}`)}
+                    aria-label={$t.timeline.openOnMap(event.title)}
+                  >
                     <span class="event-index">{String(eventIndex + 1).padStart(2, '0')}</span>
                     <span class="event-copy">
                       {@render eventTime(
                         chapter.number,
                         event,
-                        `↶ Flashback · occurrence #${event.ordinal}`,
+                        $t.timeline.flashbackOccurrence(event.ordinal),
                       )}
                       <span class="event-title">{event.title}</span>
                       <span class="event-summary">{event.summary}</span>
                     </span>
                     <span class="event-action">
-                      <span>Seq. {event.sequence}</span>
+                      <span>{$t.timeline.sequenceShort(event.sequence)}</span>
                       <svg viewBox="0 0 24 24" aria-hidden="true"
                         ><path d="m9 18 6-6-6-6"></path></svg
                       >
@@ -321,14 +319,12 @@
       {#if visibleEventCount === 0}
         <div class="empty-state">
           <span aria-hidden="true">⌁</span>
-          <h2>No events found</h2>
-          <p>Try another title, chapter number, or keyword.</p>
-          <button type="button" onclick={() => (query = '')}>Reset search</button>
+          <h2>{$t.timeline.emptyTitle}</h2>
+          <p>{$t.timeline.emptyCopy}</p>
+          <button type="button" onclick={() => (query = '')}>{$t.common.resetSearch}</button>
         </div>
       {:else if normalizedQuery}
-        <p class="results-count">
-          {visibleEventCount} of {eventCount} result{visibleEventCount === 1 ? '' : 's'}
-        </p>
+        <p class="results-count">{$t.common.results(visibleEventCount, eventCount)}</p>
       {/if}
     </main>
   </div>

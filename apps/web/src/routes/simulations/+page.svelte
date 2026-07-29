@@ -3,6 +3,7 @@
   import Seo from '$lib/components/Seo.svelte'
   import { NenWhyPanel } from '$lib/nen'
   import { breadcrumbSchema } from '$lib/seo/schema'
+  import { link, t } from '$lib/i18n'
 
   let { data, form }: { data: PageData; form: ActionData } = $props()
   let entities = $derived(Object.values(data.branch?.snapshot?.entities || {}) as any[])
@@ -10,54 +11,57 @@
 </script>
 
 <Seo
-  title="Simulation Lab"
-  description="Fork the canonical Black Whale timeline, execute Nen rules against a branch, and inspect the projected world without altering canon."
+  title={$t.simulations.seoTitle}
+  description={$t.simulations.seoDescription}
   jsonLd={breadcrumbSchema([
-    { name: 'Home', path: '/' },
-    { name: 'Simulations', path: '/simulations' },
+    { name: $t.common.home, path: $link('/') },
+    { name: $t.simulations.breadcrumb, path: $link('/simulations') },
   ])}
 />
 
 <div class="lab">
   <header>
-    <p>WORLD KERNEL / BRANCH LAB</p>
-    <h1>Simulation Lab</h1>
-    <span
-      >Fork canon, execute Nen rules and inspect the projected world without altering the canonical
-      timeline.</span
-    >
+    <p>{$t.simulations.eyebrow}</p>
+    <h1>{$t.simulations.title}</h1>
+    <span>{$t.simulations.intro}</span>
   </header>
 
   {#if data.branchError}
-    <aside class="error"><strong>Branch unavailable</strong><span>{data.branchError}</span></aside>
+    <aside class="error">
+      <strong>{$t.simulations.branchUnavailable}</strong><span>{data.branchError}</span>
+    </aside>
   {/if}
   {#if form?.message}<aside class="error"><span>{form.message}</span></aside>{/if}
 
   <section class="panel create-panel">
     <div>
       <small>01</small>
-      <h2>Fork canonical state</h2>
+      <h2>{$t.simulations.forkTitle}</h2>
     </div>
     <form method="POST" action="?/create">
       <label>
-        Canonical event
+        {$t.simulations.canonicalEvent}
         <select name="parentEventId" required disabled={!data.events.length}>
           {#each [...data.events].reverse() as event (event.id)}
             <option value={event.id}
-              >Ch. {event.chapter.number} · {event.sequence} — {event.title}</option
+              >{$t.simulations.eventOption(
+                event.chapter.number,
+                event.sequence,
+                event.title,
+              )}</option
             >
           {/each}
         </select>
       </label>
       <label>
-        Rule policy
+        {$t.simulations.rulePolicy}
         <select name="mode">
-          <option value="rule-compatible">Rule compatible</option>
-          <option value="strict-canon">Strict canon</option>
-          <option value="sandbox">Sandbox</option>
+          <option value="rule-compatible">{$t.simulations.policies.ruleCompatible}</option>
+          <option value="strict-canon">{$t.simulations.policies.strictCanon}</option>
+          <option value="sandbox">{$t.simulations.policies.sandbox}</option>
         </select>
       </label>
-      <button type="submit" disabled={!data.events.length}>Create branch</button>
+      <button type="submit" disabled={!data.events.length}>{$t.simulations.createBranch}</button>
     </form>
   </section>
 
@@ -66,34 +70,36 @@
       <article class="panel branch-state">
         <div class="heading">
           <small>02</small>
-          <h2>Branch state</h2>
+          <h2>{$t.simulations.branchStateTitle}</h2>
         </div>
         <dl>
           <div>
-            <dt>ID</dt>
+            <dt>{$t.simulations.id}</dt>
             <dd>{data.branch.branch.id}</dd>
           </div>
           <div>
-            <dt>Policy</dt>
+            <dt>{$t.simulations.policy}</dt>
             <dd>{data.branch.branch.rulePolicy}</dd>
           </div>
           <div>
-            <dt>Fork</dt>
+            <dt>{$t.simulations.fork}</dt>
             <dd>
-              Ch. {data.branch.branch.forkCursor.chapterNumber} / ordinal {data.branch.branch
-                .forkCursor.ordinal}
+              {$t.simulations.forkValue(
+                data.branch.branch.forkCursor.chapterNumber,
+                data.branch.branch.forkCursor.ordinal,
+              )}
             </dd>
           </div>
           <div>
-            <dt>Current cursor</dt>
+            <dt>{$t.simulations.currentCursor}</dt>
             <dd>{data.branch.snapshot.cursor.ordinal}</dd>
           </div>
           <div>
-            <dt>Entities</dt>
+            <dt>{$t.simulations.entities}</dt>
             <dd>{entities.length}</dd>
           </div>
           <div>
-            <dt>Active effects</dt>
+            <dt>{$t.simulations.activeEffects}</dt>
             <dd>{effects.filter((effect) => effect.state === 'ACTIVE').length}</dd>
           </div>
         </dl>
@@ -102,24 +108,25 @@
       <article class="panel ability-panel">
         <div class="heading">
           <small>03</small>
-          <h2>Execute Bungee Gum</h2>
+          <h2>{$t.simulations.executeTitle}</h2>
         </div>
-        <p>
-          Selecting a target plans the action against this branch. The conditions and effects below
-          are the module's own — the same ones the server runs on activation.
-        </p>
+        <p>{$t.simulations.executeCopy}</p>
 
         <!-- A GET form: the selection lives in the URL, so the plan is computed
              server-side and the panel works without any client-side JavaScript. -->
-        <form method="GET" action="/simulations">
+        <form method="GET" action={$link('/simulations')}>
           <input type="hidden" name="branch" value={data.branch.branch.id} />
           <label
-            >Actor reference<input name="actor" value={data.selection.actorId} required /></label
+            >{$t.simulations.actorReference}<input
+              name="actor"
+              value={data.selection.actorId}
+              required
+            /></label
           >
           <label>
-            Target entity
+            {$t.simulations.targetEntity}
             <select name="target" required>
-              <option value="">Select target</option>
+              <option value="">{$t.simulations.selectTarget}</option>
               {#each entities.filter((entity) => entity.id !== data.selection.actorId) as entity (entity.id)}
                 <option value={entity.id} selected={entity.id === data.selection.targetId}
                   >{entity.label} · {entity.kind}</option
@@ -127,7 +134,7 @@
               {/each}
             </select>
           </label>
-          <button type="submit">Plan action</button>
+          <button type="submit">{$t.simulations.planAction}</button>
         </form>
 
         {#if data.plan}
@@ -138,7 +145,9 @@
           <input type="hidden" name="branchId" value={data.branch.branch.id} />
           <input type="hidden" name="actorId" value={data.selection.actorId} />
           <input type="hidden" name="targetId" value={data.selection.targetId ?? ''} />
-          <button type="submit" disabled={data.plan?.status !== 'AVAILABLE'}>Attach aura</button>
+          <button type="submit" disabled={data.plan?.status !== 'AVAILABLE'}
+            >{$t.simulations.attachAura}</button
+          >
         </form>
       </article>
     </section>
@@ -146,12 +155,14 @@
     <section class="panel scene-panel">
       <div class="heading">
         <small>04</small>
-        <h2>Projected MapScene</h2>
+        <h2>{$t.simulations.sceneTitle}</h2>
       </div>
       <div class="metrics">
-        <span>{data.scene?.markers?.length || 0}<small>markers</small></span>
-        <span>{data.scene?.effectLinks?.length || 0}<small>effect links</small></span>
-        <span>{data.scene?.auraLayers?.length || 0}<small>aura layers</small></span>
+        <span>{data.scene?.markers?.length || 0}<small>{$t.simulations.markers}</small></span>
+        <span
+          >{data.scene?.effectLinks?.length || 0}<small>{$t.simulations.effectLinks}</small></span
+        >
+        <span>{data.scene?.auraLayers?.length || 0}<small>{$t.simulations.auraLayers}</small></span>
       </div>
       {#if effects.length}
         <div class="effects">
@@ -164,7 +175,7 @@
           {/each}
         </div>
       {:else}
-        <p class="empty">No branch-specific effect has been emitted yet.</p>
+        <p class="empty">{$t.simulations.noEffects}</p>
       {/if}
     </section>
   {/if}

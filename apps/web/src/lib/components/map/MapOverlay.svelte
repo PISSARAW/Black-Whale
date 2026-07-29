@@ -15,6 +15,7 @@
     type MapWorldState,
   } from './markerProjection'
   import type { PerspectiveState, Location } from '@black-whale/domain'
+  import { locale } from '$lib/i18n'
 
   /**
    * `$page.data` is untyped across routes, so the shapes are asserted once here
@@ -54,6 +55,7 @@
           perspectiveIsReader: mapState.selectedPerspectiveKind === 'reader',
           currentEvent,
           currentSequence,
+          locale: $locale,
         }),
       )
       .filter((marker): marker is MapMarker => marker !== null),
@@ -70,11 +72,11 @@
     )
 
     const projected = next.presences
-      .map((presence) => projectFutureMarker(presence, next, world.locations))
+      .map((presence) => projectFutureMarker(presence, next, world.locations, $locale))
       .filter((marker): marker is MapMarker => marker !== null)
       .filter((marker) => withinMapScope(marker, locationsById))
 
-    return packMarkersForZoom(projected, mapState.currentZoomLevel)
+    return packMarkersForZoom(projected, mapState.currentZoomLevel, $locale)
   })
 
   /** Tier and room filters, shared by the present and the parallel-future overlay. */
@@ -107,7 +109,7 @@
       )
     })
 
-    return packMarkersForZoom(filtered, mapState.currentZoomLevel)
+    return packMarkersForZoom(filtered, mapState.currentZoomLevel, $locale)
   })
 
   let presenceLayer: HTMLDivElement | undefined = $state()

@@ -7,6 +7,7 @@
     startAmbient,
     toggleAmbient,
   } from './ambient.js'
+  import { t } from '$lib/i18n'
 
   onMount(() => {
     if (!ambientWasEnabled()) return
@@ -27,9 +28,9 @@
 
   $: label = $ambientPlaying
     ? $ambientMuffled
-      ? 'Voyage theme sealed by Three Monkeys — turn off'
-      : 'Turn off the voyage theme'
-    : 'Play the voyage theme'
+      ? $t.audio.sealedOff
+      : $t.audio.turnOff
+    : $t.audio.turnOn
 </script>
 
 <button
@@ -45,7 +46,7 @@
   <span class="bars" aria-hidden="true">
     <i></i><i></i><i></i>
   </span>
-  <span class="text">{$ambientPlaying && $ambientMuffled ? 'Sealed' : 'Theme'}</span>
+  <span class="text">{$ambientPlaying && $ambientMuffled ? $t.audio.sealed : $t.audio.theme}</span>
 </button>
 
 <style>

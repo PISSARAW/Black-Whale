@@ -1,21 +1,62 @@
 <script lang="ts">
   import { goto } from '$app/navigation'
   import { tick } from 'svelte'
+  import { link, t } from '$lib/i18n'
 
   let { open = $bindable(false) }: { open?: boolean } = $props()
   let query = $state('')
   let input = $state<HTMLInputElement>()
 
-  const destinations = [
-    { href: '/ship', label: 'Explore the Black Whale', group: 'Primary', code: 'E' },
-    { href: '/timeline', label: 'Open the timeline', group: 'Primary', code: 'T' },
-    { href: '/characters', label: 'Search the passenger registry', group: 'Primary', code: 'C' },
-    { href: '/perspectives', label: 'Inspect character knowledge', group: 'Primary', code: 'K' },
-    { href: '/abilities', label: 'Browse the ability archive', group: 'Dossier', code: 'A' },
-    { href: '/compare', label: 'Compare perspectives', group: 'Dossier', code: 'P' },
-    { href: '/relationships', label: 'View the faction network', group: 'Dossier', code: 'F' },
-    { href: '/simulations', label: 'Run simulations', group: 'Dossier', code: 'S' },
-  ]
+  let destinations = $derived([
+    {
+      href: '/ship',
+      label: $t.palette.destinations.ship,
+      group: $t.palette.groups.primary,
+      code: 'E',
+    },
+    {
+      href: '/timeline',
+      label: $t.palette.destinations.timeline,
+      group: $t.palette.groups.primary,
+      code: 'T',
+    },
+    {
+      href: '/characters',
+      label: $t.palette.destinations.characters,
+      group: $t.palette.groups.primary,
+      code: 'C',
+    },
+    {
+      href: '/perspectives',
+      label: $t.palette.destinations.perspectives,
+      group: $t.palette.groups.primary,
+      code: 'K',
+    },
+    {
+      href: '/abilities',
+      label: $t.palette.destinations.abilities,
+      group: $t.palette.groups.dossier,
+      code: 'A',
+    },
+    {
+      href: '/compare',
+      label: $t.palette.destinations.compare,
+      group: $t.palette.groups.dossier,
+      code: 'P',
+    },
+    {
+      href: '/relationships',
+      label: $t.palette.destinations.relationships,
+      group: $t.palette.groups.dossier,
+      code: 'F',
+    },
+    {
+      href: '/simulations',
+      label: $t.palette.destinations.simulations,
+      group: $t.palette.groups.dossier,
+      code: 'S',
+    },
+  ])
 
   let results = $derived(
     destinations.filter((item) =>
@@ -37,7 +78,7 @@
 
   function navigate(href: string) {
     close()
-    goto(href)
+    goto($link(href))
   }
 
   function handleGlobalKeydown(event: KeyboardEvent) {
@@ -68,17 +109,17 @@
       role="dialog"
       tabindex="-1"
       aria-modal="true"
-      aria-label="Quick navigation"
+      aria-label={$t.palette.dialogLabel}
     >
       <div class="command-search">
         <span aria-hidden="true">⌕</span>
-        <label class="sr-only" for="command-query">Search site destinations</label>
+        <label class="sr-only" for="command-query">{$t.palette.searchLabel}</label>
         <input
           id="command-query"
           bind:this={input}
           bind:value={query}
           onkeydown={handleInputKeydown}
-          placeholder="Where do you want to go?"
+          placeholder={$t.palette.placeholder}
           autocomplete="off"
         />
         <kbd>ESC</kbd>
@@ -94,11 +135,13 @@
             </button>
           {/each}
         {:else}
-          <div class="command-empty">No destination matches “{query}”.</div>
+          <div class="command-empty">{$t.palette.empty(query)}</div>
         {/if}
       </div>
 
-      <footer><span>Enter to open first result</span><span>⌘K anywhere</span></footer>
+      <footer>
+        <span>{$t.palette.enterHint}</span><span>{$t.palette.shortcutHint}</span>
+      </footer>
     </div>
   </div>
 {/if}

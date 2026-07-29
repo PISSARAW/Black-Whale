@@ -1,6 +1,7 @@
 <script lang="ts">
   import KnowledgeStatus from './KnowledgeStatus.svelte'
   import type { KnowledgeVisualState } from './types'
+  import { t } from '$lib/i18n'
 
   let {
     open,
@@ -11,7 +12,7 @@
     freshness,
     state,
     revealReality = false,
-    canonicalValue = 'unknown',
+    canonicalValue = null,
     onClose,
   }: {
     open: boolean
@@ -22,47 +23,47 @@
     freshness: string
     state: KnowledgeVisualState
     revealReality?: boolean
-    canonicalValue?: string
+    canonicalValue?: string | null
     onClose: () => void
   } = $props()
 </script>
 
 {#if open}
-  <div class="why" role="dialog" aria-label="Why this information" aria-modal="false">
+  <div class="why" role="dialog" aria-label={$t.perspectiveUi.whyLabel} aria-modal="false">
     <header>
-      <h3>Why am I seeing this?</h3>
-      <button type="button" onclick={onClose} aria-label="Close">✕</button>
+      <h3>{$t.perspectiveUi.whyTitle}</h3>
+      <button type="button" onclick={onClose} aria-label={$t.common.close}>✕</button>
     </header>
 
     <dl>
       <div>
-        <dt>Character</dt>
+        <dt>{$t.perspectiveUi.character}</dt>
         <dd>{subject}</dd>
       </div>
       <div>
-        <dt>Displayed value</dt>
+        <dt>{$t.perspectiveUi.displayedValue}</dt>
         <dd>{displayedValue}</dd>
       </div>
       <div>
-        <dt>Source</dt>
+        <dt>{$t.perspectiveUi.source}</dt>
         <dd>{source}</dd>
       </div>
       <div>
-        <dt>Observation</dt>
+        <dt>{$t.perspectiveUi.observation}</dt>
         <dd>{observedAt}</dd>
       </div>
       <div>
-        <dt>Freshness</dt>
+        <dt>{$t.perspectiveUi.freshness}</dt>
         <dd>{freshness}</dd>
       </div>
     </dl>
 
-    <KnowledgeStatus {state} label="Knowledge status" details={source} />
+    <KnowledgeStatus {state} label={$t.perspectiveUi.knowledgeStatus} details={source} />
 
     {#if revealReality}
       <div class="canon">
-        <strong>Canonical reality</strong>
-        <span>{canonicalValue}</span>
+        <strong>{$t.perspectiveUi.canonicalReality}</strong>
+        <span>{canonicalValue ?? $t.map.unknownPosition}</span>
       </div>
     {/if}
   </div>

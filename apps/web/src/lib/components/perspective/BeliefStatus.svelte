@@ -1,6 +1,7 @@
 <script lang="ts">
   import KnowledgeStatus from './KnowledgeStatus.svelte'
   import type { KnowledgeVisualState } from './types'
+  import { t } from '$lib/i18n'
 
   let {
     state,
@@ -11,4 +12,4 @@
   } = $props()
 </script>
 
-<KnowledgeStatus {state} label="Knowledge source" details={source} />
+<KnowledgeStatus {state} label={$t.perspectiveUi.knowledgeSource} details={source} />

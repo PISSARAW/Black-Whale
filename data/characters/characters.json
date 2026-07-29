@@ -14,8 +14,8 @@
       "role": "Nen teacher/protector"
     },
     "biography": [
-      "Kurapika joins the Zodiacs and the expedition in order to approach Tserriednich, the owner of the last Kurta scarlet eyes. He recruits trusted Hunters as royal bodyguards, then accepts Queen Oito's contract and becomes the principal protector of Prince Woble.",
-      "After Woody's unexplained death, Kurapika identifies the existence of parasitic Nen and exposes the hidden succession war to the guards. He neutralizes Sayird with Steal Chain, defeats Vincent with Bill and uses Emperor Time to investigate the attacks while keeping Benjamin's soldiers under surveillance.",
+      "Kurapika joins the Zodiacs and the expedition in order to approach Tserriednich, the owner of the last Kurta scarlet eyes. He recruits trusted Hunters as royal bodyguards, then accepts Queen Oito's contract and becomes the principal protector of Prince Woble. The Hunters he brings aboard are posted one per prince, and canon numbers those posts by the prince they serve: Kurapika holds zone 14, Melody zone 10 with Kacho, Biscuit zone 13 with Marayam, Basho zone 7 with Luzurus, Izunavi zone 6 with Tyson, Hanzo zone 12 with Momoze until Queen Sevanti moves him to 13. Zone n is room 100n in the catalogue's own numbering.",
+      "After Woody's unexplained death, Kurapika identifies the existence of parasitic Nen and exposes the hidden succession war to the guards. He does it in room 1014, gun and Dowsing Chain drawn, questioning the detail one by one: two of them admit they already knew and are not Woble's men. Oito orders him to shoot them where they stand; he has them tied to chairs instead, and what one of them says reframes the five bodies of the day before — Oito is the lowest-ranked queen, so the other seven had each placed a guard around her as an informant. He neutralizes Sayird with Steal Chain, defeats Vincent with Bill and uses Emperor Time to investigate the attacks while keeping Benjamin's soldiers under surveillance.",
       "To break Woble's isolation, he publicly offers Nen lessons to the representatives of the other princes. The classes create a fragile balance of deterrence, but also place room 1014 at the center of Silent Majority's murders and of the princes' diplomatic maneuvers.",
       "Kurapika lends Little Eye to Oito, interrogates suspects with Dowsing Chain and awakens students by temporarily transferring Bill's Erigeron. Every second spent in Emperor Time consumes an hour of his life, a cost that becomes critical when he remains unconscious for nine hours.",
       "On the tenth day, he negotiates a truce with Tubeppa through Longhi and learns that Beyond Netero fathered several children in Kakin. He then uncovers Oito's substitution of the real Woble and organizes a public demonstration intended to keep both babies alive."
@@ -414,7 +414,21 @@
     ],
     "battles": ["Kurapika vs. Sayird", "Kurapika and Bill vs. Vincent"],
     "mapPresenceFromChapterId": "ch-415",
-    "temporalIdentityManaged": true
+    "temporalIdentityManaged": true,
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1014",
+        "fromChapterId": "ch-358"
+      },
+      {
+        "location": "tier-1-royal-residential-sector",
+        "fromChapterId": "ch-359.5"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1014",
+        "fromChapterId": "ch-360"
+      }
+    ]
   },
   {
     "id": "hisoka",
@@ -1648,6 +1662,20 @@
         "title": "Friends",
         "status": "mentioned"
       }
+    ],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-king-living-quarters",
+        "fromChapterId": "ch-358"
+      },
+      {
+        "location": "tier-1-banquet-hall",
+        "fromChapterId": "ch-359.4"
+      },
+      {
+        "location": "tier-1-king-living-quarters",
+        "fromChapterId": "ch-363"
+      }
     ]
   },
   {
@@ -2097,6 +2125,20 @@
         "allies": ["Balsamilco Might", "Furykov"],
         "opponents": ["Camilla Hui Guo Rou"],
         "chapter": 373
+      }
+    ],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1001",
+        "fromChapterId": "ch-358"
+      },
+      {
+        "location": "tier-1-banquet-hall",
+        "fromChapterId": "ch-359.4"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1001",
+        "fromChapterId": "ch-363"
       }
     ]
   },
@@ -2556,6 +2598,14 @@
         "fromChapterId": "ch-358"
       },
       {
+        "location": "tier-1-banquet-hall",
+        "fromChapterId": "ch-359.4"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1002",
+        "fromChapterId": "ch-363"
+      },
+      {
         "location": "tier-1-vip-jail",
         "fromChapterId": "ch-376"
       }
@@ -2988,7 +3038,21 @@
       }
     ],
     "mapPresenceFromChapterId": "ch-415",
-    "temporalIdentityManaged": true
+    "temporalIdentityManaged": true,
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1003",
+        "fromChapterId": "ch-358"
+      },
+      {
+        "location": "tier-1-banquet-hall",
+        "fromChapterId": "ch-359.4"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1003",
+        "fromChapterId": "ch-363"
+      }
+    ]
   },
   {
     "id": "prince-tserriednich",
@@ -3422,6 +3486,20 @@
         "title": "Truth or Falsehood",
         "status": "mentioned"
       }
+    ],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1004",
+        "fromChapterId": "ch-358"
+      },
+      {
+        "location": "tier-1-banquet-hall",
+        "fromChapterId": "ch-359.4"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1004",
+        "fromChapterId": "ch-363"
+      }
     ]
   },
   {
@@ -3849,7 +3927,21 @@
       }
     ],
     "mapPresenceFromChapterId": "ch-415",
-    "temporalIdentityManaged": true
+    "temporalIdentityManaged": true,
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1005",
+        "fromChapterId": "ch-358"
+      },
+      {
+        "location": "tier-1-banquet-hall",
+        "fromChapterId": "ch-359.4"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1005",
+        "fromChapterId": "ch-363"
+      }
+    ]
   },
   {
     "id": "prince-tyson",
@@ -5564,6 +5656,14 @@
         "fromChapterId": "ch-358"
       },
       {
+        "location": "tier-1-banquet-hall",
+        "fromChapterId": "ch-359.4"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1009",
+        "fromChapterId": "ch-362"
+      },
+      {
         "location": "tier-1-king-living-quarters",
         "fromChapterId": "ch-382.2"
       },
@@ -6004,6 +6104,14 @@
       {
         "location": "tier-1-royal-residential-sector-room-1010",
         "fromChapterId": "ch-358"
+      },
+      {
+        "location": "tier-1-banquet-hall",
+        "fromChapterId": "ch-359.4"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1010",
+        "fromChapterId": "ch-359.5"
       },
       {
         "location": "tier-1-lifeboats",
@@ -6452,6 +6560,14 @@
         "fromChapterId": "ch-358"
       },
       {
+        "location": "tier-1-banquet-hall",
+        "fromChapterId": "ch-359.4"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1011",
+        "fromChapterId": "ch-359.5"
+      },
+      {
         "location": "tier-3-residential-first-class",
         "fromChapterId": "ch-380",
         "certainty": "PROBABLE"
@@ -6888,6 +7004,21 @@
         "title": "Friends",
         "status": "absent"
       }
+    ],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1012",
+        "fromChapterId": "ch-358"
+      },
+      {
+        "location": "tier-1-banquet-hall",
+        "fromChapterId": "ch-359.4"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1012",
+        "fromChapterId": "ch-361",
+        "untilChapterId": "ch-368"
+      }
     ]
   },
   {
@@ -7320,7 +7451,25 @@
       }
     ],
     "mapPresenceFromChapterId": "ch-415",
-    "temporalIdentityManaged": true
+    "temporalIdentityManaged": true,
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1013",
+        "fromChapterId": "ch-358"
+      },
+      {
+        "location": "tier-1-banquet-hall",
+        "fromChapterId": "ch-359.4"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1012",
+        "fromChapterId": "ch-361"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1013",
+        "fromChapterId": "ch-372"
+      }
+    ]
   },
   {
     "id": "prince-woble",
@@ -7783,6 +7932,24 @@
         "title": "Friends",
         "status": "appears"
       }
+    ],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1014",
+        "fromChapterId": "ch-358"
+      },
+      {
+        "location": "tier-1-banquet-hall",
+        "fromChapterId": "ch-359.4"
+      },
+      {
+        "location": "tier-1-royal-residential-sector",
+        "fromChapterId": "ch-359.5"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1014",
+        "fromChapterId": "ch-360"
+      }
     ]
   },
   {
@@ -8195,7 +8362,25 @@
       }
     ],
     "mapPresenceFromChapterId": "ch-415",
-    "temporalIdentityManaged": true
+    "temporalIdentityManaged": true,
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1014",
+        "fromChapterId": "ch-358"
+      },
+      {
+        "location": "tier-1-banquet-hall",
+        "fromChapterId": "ch-359.4"
+      },
+      {
+        "location": "tier-1-royal-residential-sector",
+        "fromChapterId": "ch-359.5"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1014",
+        "fromChapterId": "ch-360"
+      }
+    ]
   },
   {
     "id": "beyond-netero",
@@ -9013,12 +9198,21 @@
     ],
     "biography": [
       "Mizaistom helps reorganize the Zodiacs for the Dark Continent expedition and leads security aboard the Black Whale. From Tier 3, he coordinates the police, courts and military response to disappearances and mafia violence.",
+      "He boards ahead of the crossing and turns straight to the three lower decks, where conditions are worse than the Zodiacs expected; with Botobai he helps the troops and the private security take hold of them. He phones Kurapika to say so and to excuse himself from the Zodiac meeting, then holds his first briefing with the Kakin royal troops in the Tier 4 conference room — the same room he will summon twenty chapters later to redeploy 800 soldiers to the lower tiers.",
       "He intercepts Illumi and Kalluto, confirms that the Phantom Troupe is aboard and places them in monitored residential quarters. During special martial law, he continues the criminal investigation while trying to preserve the Justice Bureau's independence."
     ],
     "mapTrajectory": [
       {
         "location": "tier-3-central-police-station",
         "fromChapterId": "ch-358"
+      },
+      {
+        "location": "tier-4-royal-army-conference-room",
+        "fromChapterId": "ch-359"
+      },
+      {
+        "location": "tier-3-central-police-station",
+        "fromChapterId": "ch-360"
       },
       {
         "location": "tier-4-royal-army-conference-room",
@@ -9034,7 +9228,7 @@
     "id": "botobai-gigante",
     "canonicalName": "Botobai Gigante",
     "aliases": ["Dragon"],
-    "description": "Zodiac. Sits as a judge at the Central Court (Tier 3).",
+    "description": "Zodiac. Sits as a judge at the Central Court (Tier 3). Towering, wrinkled and white-haired under an outsized judicial wig — taller seated than most men standing, which is what makes him unmistakable on the bench.",
     "factionId": "zodiacs",
     "firstAppearanceChapterId": "ch-318",
     "canonStatus": "canon",
@@ -9422,7 +9616,8 @@
       }
     ],
     "biography": [
-      "Botobai joins the expedition's defense team and works as a senior judicial figure in Tier 3. He assists Mizaistom with the containment of Illumi and Kalluto and later participates in the Justice Department response during special martial law."
+      "Botobai joins the expedition's defense team and works as a senior judicial figure in Tier 3. He assists Mizaistom with the containment of Illumi and Kalluto and later participates in the Justice Department response during special martial law.",
+      "Triple-Star Terrorist Hunter and the eldest of the Zodiacs — Mizaistom reckons Beyond's plan was already fifty years old when even Botobai was a child, which is part of why no Zodiac can be cleared by age alone. The departure shows him on the bench of the Central Courthouse, the post he holds for the crossing; he leaves it only for the Tier 4 conference room when Mizaistom moves 800 soldiers to the lower tiers."
     ],
     "mapTrajectory": [
       {
@@ -16556,8 +16751,8 @@
   {
     "id": "cluck",
     "canonicalName": "Cluck",
-    "aliases": [],
-    "description": "Zodiaque.",
+    "aliases": ["Rooster"],
+    "description": "Zodiac. Flora and fauna team. Sits the departure logistics meeting in the Tier 3 first-class compartment.",
     "factionId": "zodiacs",
     "firstAppearanceChapterId": "ch-340",
     "canonStatus": "canon",
@@ -16945,7 +17140,8 @@
       }
     ],
     "biography": [
-      "Cluck joins the expedition's flora and fauna team. Aboard the Black Whale, she remains with the Zodiac organization on Tier 3 and appears in operational overviews of the voyage."
+      "Cluck joins the expedition's flora and fauna team. Aboard the Black Whale, she remains with the Zodiac organization on Tier 3 and appears in operational overviews of the voyage.",
+      "The departure fixes that berth rather than assuming it: she is in the first-class compartment with Pyon, Gel, Ginta and three Hunters, working through the expedition's supply and transport logistics."
     ],
     "nen": {
       "type": "unknown",
@@ -16955,14 +17151,13 @@
       "techniques": ["Hatsu"],
       "abilityIds": ["bird-manipulation"]
     },
-    "positionProvenance": "inferred",
     "mapLocationCorrection": true
   },
   {
     "id": "ginta",
     "canonicalName": "Ginta",
-    "aliases": [],
-    "description": "Zodiaque.",
+    "aliases": ["Sheep"],
+    "description": "Zodiac. Flora and fauna team. Sits the departure logistics meeting in the Tier 3 first-class compartment, and later supervises Illumi and Kalluto.",
     "factionId": "zodiacs",
     "firstAppearanceChapterId": "ch-340",
     "canonStatus": "canon",
@@ -17350,24 +17545,24 @@
       }
     ],
     "biography": [
-      "Ginta joins the expedition's flora and fauna team and helps supervise Illumi and Kalluto after Mizaistom relocates them to Tier 3 residential units."
+      "Ginta joins the expedition's flora and fauna team and helps supervise Illumi and Kalluto after Mizaistom relocates them to Tier 3 residential units.",
+      "At the departure he is in the first-class compartment with Pyon, Gel, Cluck and three Hunters, which is what puts him on Tier 3 by observation rather than by assumption."
     ],
-    "positionProvenance": "inferred",
     "mapLocationCorrection": true
   },
   {
     "id": "kanzai",
     "canonicalName": "Kanzai",
-    "aliases": [],
-    "description": "Zodiaque.",
+    "aliases": ["Tiger"],
+    "description": "Zodiac. Stands the watch outside Beyond Netero's Tier 1 cell alongside Saccho and Saiyu.",
     "factionId": "zodiacs",
     "firstAppearanceChapterId": "ch-340",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": 3,
-      "room": "First-Class Residential Block",
+      "tier": 1,
+      "room": "VVIP Prison",
       "status": "actif",
-      "role": "zodiaque"
+      "role": "zodiaque / garde de Beyond"
     },
     "mangaAppearances": [
       {
@@ -17747,9 +17942,19 @@
       }
     ],
     "biography": [
-      "Kanzai serves on the expedition's defense team. He accompanies the Zodiacs aboard the Black Whale and remains active in Tier 3 security coordination through the voyage."
+      "Kanzai serves on the expedition's defense team. He accompanies the Zodiacs aboard the Black Whale and remains active in Tier 3 security coordination through the voyage.",
+      "From the departure he is one of the three Zodiacs posted on the guard side of Beyond Netero's cell, with Saccho and Saiyu. Kanzai is the one who says out loud that three of them on a confined man is superfluous, which is what starts the talk of a rotation. Beyond jokes with him on the tenth day and asks him to arrange a meeting; when Judge Cleapatro comes on the eleventh, Kanzai and Saiyu refuse to leave the two of them alone."
     ],
-    "positionProvenance": "inferred",
+    "mapTrajectory": [
+      {
+        "location": "tier-3-residential-first-class",
+        "fromChapterId": "ch-340"
+      },
+      {
+        "location": "tier-1-vvip-prison-beyond",
+        "fromChapterId": "ch-359"
+      }
+    ],
     "mapLocationCorrection": true
   },
   {
@@ -18161,8 +18366,8 @@
   {
     "id": "pyon",
     "canonicalName": "Pyon",
-    "aliases": [],
-    "description": "Zodiaque.",
+    "aliases": ["Rabbit"],
+    "description": "Zodiac. Intelligence team. Holds the Tier 3 first-class compartment, where she chairs the Association meeting shown at the departure.",
     "factionId": "zodiacs",
     "firstAppearanceChapterId": "ch-340",
     "canonStatus": "canon",
@@ -18550,24 +18755,25 @@
       }
     ],
     "biography": [
-      "Pyon joins the expedition's intelligence team and contributes to the Zodiacs' information systems. She remains based with the Association contingent on Tier 3."
+      "Pyon joins the expedition's intelligence team and contributes to the Zodiacs' information systems. She remains based with the Association contingent on Tier 3.",
+      "At the departure she sits a meeting of seven in the Tier 3 first-class compartment: the Zodiacs Gel, Cluck and Ginta, the doctors Sanbica Norton and Tokarine, and one more Hunter the chapter leaves unnamed. They work through the expedition's logistics — supply distribution, and the transport arrangements Tokarine's ability cannot carry alone. It is the room the Association contingent works from, and the only panel that fixes it.",
+      "She announces to the Zodiacs that she has been folding Ancient Language data into their software in case the expedition meets a Dark Continent civilisation, and that reconstruction comes first once the passenger list is retrieved. On the twelfth day Kurapika is still waiting on her sweep of the passengers under two years old for Prince Woble."
     ],
-    "positionProvenance": "inferred",
     "mapLocationCorrection": true
   },
   {
     "id": "saccho-kobayakawa",
     "canonicalName": "Saccho Kobayakawa",
-    "aliases": [],
-    "description": "Zodiaque.",
+    "aliases": ["Horse"],
+    "description": "Zodiac. Stands the watch outside Beyond Netero's Tier 1 cell alongside Saiyu and Kanzai.",
     "factionId": "zodiacs",
     "firstAppearanceChapterId": "ch-340",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": 3,
-      "room": "First-Class Residential Block",
+      "tier": 1,
+      "room": "VVIP Prison",
       "status": "actif",
-      "role": "zodiaque"
+      "role": "zodiaque / garde de Beyond"
     },
     "mangaAppearances": [
       {
@@ -18947,24 +19153,34 @@
       }
     ],
     "biography": [
-      "Saccho joins the expedition's intelligence team and takes part in the Zodiacs' preparations, internal-security discussions and voyage coordination."
+      "Saccho joins the expedition's intelligence team and takes part in the Zodiacs' preparations, internal-security discussions and voyage coordination.",
+      "Saccho volunteers to watch over Beyond in prison as early as Cheadle's interview, and from the departure he stands the watch on the guard side of the cell with Saiyu and Kanzai. When Kanzai says out loud that three Zodiacs on one confined man is superfluous, Saccho privately agrees it is a waste of personnel and proposes they settle a rotation and put it to Mizaistom, so one of them can go help the royal troops."
     ],
-    "positionProvenance": "inferred",
+    "mapTrajectory": [
+      {
+        "location": "tier-3-residential-first-class",
+        "fromChapterId": "ch-340"
+      },
+      {
+        "location": "tier-1-vvip-prison-beyond",
+        "fromChapterId": "ch-359"
+      }
+    ],
     "mapLocationCorrection": true
   },
   {
     "id": "saiyu",
     "canonicalName": "Saiyu",
-    "aliases": [],
-    "description": "Zodiac. Suspected of being Beyond's mole.",
+    "aliases": ["Monkey"],
+    "description": "Zodiac. Suspected of being Beyond's mole, and one of the three Zodiacs standing the watch outside his Tier 1 cell.",
     "factionId": "zodiacs",
     "firstAppearanceChapterId": "ch-340",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": 3,
-      "room": "First-Class Residential Block",
+      "tier": 1,
+      "room": "VVIP Prison",
       "status": "suspect",
-      "role": "zodiaque / taupe potentiel"
+      "role": "zodiaque / taupe potentiel, garde de Beyond"
     },
     "mangaAppearances": [
       {
@@ -19345,7 +19561,8 @@
     ],
     "biography": [
       "Saiyu is assigned to the expedition's defense team but Kurapika identifies him as Beyond Netero's likely mole among the Zodiacs. The group chooses to monitor him rather than reveal the discovery.",
-      "His disclosed combat plan uses a conjured extending staff and three Nen monkeys that remove an opponent's sight, hearing and speech before he closes in."
+      "His disclosed combat plan uses a conjured extending staff and three Nen monkeys that remove an opponent's sight, hearing and speech before he closes in.",
+      "From the departure he stands the watch outside Beyond's cell with Saccho and Kanzai — the suspected mole posted at the door of the man he is suspected of serving. When Judge Cleapatro visits on the eleventh day, Saiyu and Kanzai refuse Beyond's request to be left alone with her."
     ],
     "abilitiesAndPowers": "Saiyu is a Blacklist Hunter and staff fighter. His disclosed strategy suppresses three senses before a finishing melee assault.",
     "nen": {
@@ -19356,7 +19573,16 @@
       "techniques": ["Hatsu"],
       "abilityIds": ["saiyu-priest-staff", "saiyu-three-monkeys"]
     },
-    "positionProvenance": "inferred",
+    "mapTrajectory": [
+      {
+        "location": "tier-3-residential-first-class",
+        "fromChapterId": "ch-340"
+      },
+      {
+        "location": "tier-1-vvip-prison-beyond",
+        "fromChapterId": "ch-359"
+      }
+    ],
     "mapLocationCorrection": true
   },
   {
@@ -22222,7 +22448,7 @@
     ],
     "mapLocationCorrection": true,
     "mapPresenceFromChapterId": "ch-358",
-    "mapPresenceUntilChapterId": "ch-360"
+    "mapPresenceUntilChapterId": "ch-360.2"
   },
   {
     "id": "ridge",
@@ -22630,14 +22856,14 @@
     "id": "sanbica-norton",
     "canonicalName": "Sanbica Norton",
     "aliases": [],
-    "description": "Hunter.",
+    "description": "Single-Star Virus Hunter and doctor. Sits the Association meeting Pyon holds in the Tier 3 first-class compartment at the departure.",
     "factionId": "hunter-association",
     "firstAppearanceChapterId": "ch-346",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
+      "tier": 3,
+      "room": "First-Class Residential Block",
+      "status": "actif",
       "role": "Virus Hunter (Single-Star) ; Doctor"
     },
     "mangaAppearances": [
@@ -23018,7 +23244,8 @@
       }
     ],
     "biography": [
-      "Sanbica joins the Hunter Association's medical personnel aboard the Black Whale and works with the scientific team on Tier 3."
+      "Sanbica joins the Hunter Association's medical personnel aboard the Black Whale and works with the scientific team on Tier 3.",
+      "At the departure she is one of the seven in the first-class compartment where Pyon meets Gel, Cluck, Ginta, Tokarine and one unnamed Hunter — the panel that first puts her somewhere on the ship rather than merely aboard it."
     ]
   },
   {
@@ -23844,14 +24071,14 @@
     "id": "tokarine",
     "canonicalName": "Tokarine",
     "aliases": [],
-    "description": "Hunter.",
+    "description": "Hunter Association medic. Debuts at the departure, in the Tier 3 first-class compartment meeting Pyon holds.",
     "factionId": "hunter-association",
     "firstAppearanceChapterId": "ch-359",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
+      "tier": 3,
+      "room": "First-Class Residential Block",
+      "status": "actif",
       "role": "Hunter"
     },
     "mangaAppearances": [
@@ -24232,7 +24459,8 @@
       }
     ],
     "biography": [
-      "Tokarine is a Hunter Association medical worker shown aboard the Black Whale at the beginning of the voyage."
+      "Tokarine is a Hunter Association medical worker shown aboard the Black Whale at the beginning of the voyage.",
+      "Their one panel is the departure meeting in the Tier 3 first-class compartment, seated with the Zodiacs Pyon, Gel, Cluck and Ginta, Sanbica Norton and one unnamed Hunter. Tokarine is the Hunter meant to carry transport back from the Dark Continent to the staging base, and says so plainly: the ability cannot teleport and its capacity is low, nothing like Knov's, which is why Gel is told to find more transporters."
     ],
     "nen": {
       "type": "unknown",
@@ -30337,6 +30565,18 @@
       {
         "location": "tier-1-royal-residential-sector-room-1013",
         "fromChapterId": "ch-359"
+      },
+      {
+        "location": "tier-1-banquet-hall",
+        "fromChapterId": "ch-359.4"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1012",
+        "fromChapterId": "ch-361"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1013",
+        "fromChapterId": "ch-372"
       }
     ],
     "positionProvenance": "inferred",
@@ -33159,15 +33399,15 @@
     "id": "peuckert",
     "canonicalName": "Peuckert",
     "aliases": [],
-    "description": "Member of the Office of Justice.",
+    "description": "IPA member on loan to Kakin's Justice Bureau. Shares Steiner's Tier 1 quarters, where he debuts at the departure.",
     "factionId": "justice-bureau",
     "firstAppearanceChapterId": "ch-359",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": 3,
-      "room": "Central Courthouse",
-      "status": "inconnu",
-      "role": "justice bureau"
+      "tier": 1,
+      "room": "VVIP Living Quarters",
+      "status": "actif",
+      "role": "IPA ; detache au Justice Bureau"
     },
     "mangaAppearances": [
       {
@@ -33547,7 +33787,8 @@
       }
     ],
     "biography": [
-      "Peuckert is a Justice Bureau employee aboard the Black Whale who supports the department's administration and later legal operations involving the princes."
+      "Peuckert is a Justice Bureau employee aboard the Black Whale who supports the department's administration and later legal operations involving the princes.",
+      "He is in fact one of the IPA members lent to the Bureau's Investigation Department alongside Steiner, and he debuts in their Tier 1 quarters at the departure: when Steiner says one of them will succeed him as Deputy Secretary if he dies, Peuckert is the one who answers that the Hunter Association is there to protect them and that the current IPA Director is one of the unofficial sole survivors. The chapter does not name him — that waits twenty-five chapters, until 384."
     ],
     "positionProvenance": "inferred",
     "mapLocationCorrection": true
@@ -33556,15 +33797,15 @@
     "id": "steiner",
     "canonicalName": "Steiner",
     "aliases": [],
-    "description": "Member of the Office of Justice.",
+    "description": "Deputy Secretary of the International Permit Agency, on loan to Kakin's Justice Bureau for the voyage and assigned as Beyond Netero's guide. Tall, bespectacled; reads Journey to the New World in his Tier 1 quarters.",
     "factionId": "justice-bureau",
     "firstAppearanceChapterId": "ch-341",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": 3,
-      "room": "Central Courthouse",
-      "status": "inconnu",
-      "role": "justice bureau"
+      "tier": 1,
+      "room": "VVIP Living Quarters",
+      "status": "actif",
+      "role": "IPA Deputy Secretary ; guide de Beyond"
     },
     "mangaAppearances": [
       {
@@ -33944,7 +34185,9 @@
       }
     ],
     "biography": [
-      "Steiner represents the International Permit Agency and accompanies the voyage. He observes Kakin's expedition from its announcement through the Black Whale's developing crises."
+      "Steiner represents the International Permit Agency and accompanies the voyage. He observes Kakin's expedition from its announcement through the Black Whale's developing crises.",
+      "As Deputy Secretary he coordinates every Restricted Voyage Agency, and once the V6 clears Kakin's expedition he is made Beyond Netero's guide. He and several other IPA members are lent to Kakin's Justice Bureau Investigation Department for the duration of the crossing, which is why the archive files him with the Bureau rather than with an agency of his own.",
+      "At the departure he is in his Tier 1 quarters with three other IPA members, reading Journey to the New World and telling them to at least get through the chapter on the labyrinthine city — if he dies, one of them becomes Deputy Secretary. Peuckert answers that the Hunter Association is there to protect them and that the current IPA Director is one of the unofficial sole survivors. The chapter gives the tier and the room's function, never its number: the VVIP quarters are where Tier 1 lodges dignitaries, so the position stays an inference."
     ],
     "positionProvenance": "inferred",
     "mapLocationCorrection": true
@@ -35951,8 +36194,9 @@
     },
     "suspectedAllegiance": "Unidentified high-ranking queen",
     "biography": [
-      "Woody is assigned to protect Queen Oito and Prince Woble during the trip. Shortly after leaving, his dried body is discovered in the bathroom. His death was attributed to exsanguination.",
-      "After learning that Woody was a spy sent by one of the higher-ranking queens, Kurapika speculates that he may have been killed by Woble's Guardian Spirit Beast when the princess felt threatened. Silent Majority's subsequent attacks, however, seem to refute this hypothesis. Woody reappears in a memory of Woble during a conversation between Kurapika, Bill and Oito, on the afternoon of the twelfth day of the journey, before special martial law was declared."
+      "Woody is assigned to protect Queen Oito and Prince Woble during the trip. He dies between 12:15 and 12:30 on the first day — the ship leaves port at noon, so within the half hour that follows it — and his dried body is discovered on the bathroom floor of room 1014. His death was attributed to exsanguination.",
+      "Kurapika reaches the bathroom shortly afterwards, with Bill, Kurton, Sayird and two more of the detail. His is not the only body of that afternoon: coming back from the inaugural banquet, the same group finds four more bodyguards drained of blood in a corridor of the royal residential sector. Five deaths in one afternoon is what turns an unexplained corpse into the pattern Kurapika reads as parasitic Nen.",
+      "The interrogation of the following chapter puts his death in its set: the five guards killed that afternoon were each serving a queen other than Oito, the seven higher-ranked ones having posted informants around the lowest-ranked of them. After learning that Woody was a spy sent by one of the higher-ranking queens, Kurapika speculates that he may have been killed by Woble's Guardian Spirit Beast when the princess felt threatened. Silent Majority's subsequent attacks, however, seem to refute this hypothesis. Woody reappears in a memory of Woble during a conversation between Kurapika, Bill and Oito, on the afternoon of the twelfth day of the journey, before special martial law was declared."
     ],
     "mangaAppearances": [
       {
@@ -36331,7 +36575,7 @@
         "status": "flashback"
       }
     ],
-    "mapPresenceUntilChapterId": "ch-358.2"
+    "mapPresenceUntilChapterId": "ch-359.3"
   },
   {
     "id": "onior-longbao",

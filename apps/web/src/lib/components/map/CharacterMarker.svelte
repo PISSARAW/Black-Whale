@@ -2,6 +2,7 @@
   import BodyConsciousnessMarker from '$lib/components/perspective/BodyConsciousnessMarker.svelte'
   import type { MarkerIdentityState } from '$lib/components/perspective/types'
   import { mapState } from '$lib/state/mapState.svelte'
+  import { t } from '$lib/i18n'
 
   let {
     character,
@@ -17,7 +18,7 @@
     mapState.openExplainPanel({
       subject: marker.perceivedIdentity,
       value: marker.body,
-      source: marker.temporalLabel || marker.sourceLabel || 'Direct observation',
+      source: marker.temporalLabel || marker.sourceLabel || $t.mapUi.directObservation,
       observedAt: marker.temporalDetail || marker.sinceLabel || 'unspecified event',
       freshness:
         marker.knowledgeState === 'outdated' ? 'not recently confirmed' : 'recent information',

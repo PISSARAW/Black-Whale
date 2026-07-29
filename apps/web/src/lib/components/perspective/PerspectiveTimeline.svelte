@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { t } from '$lib/i18n'
+
   interface TimelinePoint {
     id: string
     label: string
@@ -22,14 +24,14 @@
   } = $props()
 
   let lines = $derived([
-    { label: 'Reality', points: reality },
-    { label: 'Body', points: body },
-    { label: 'Consciousness', points: consciousness },
-    { label: 'Knowledge', points: knowledge },
+    { label: $t.perspectiveUi.streams.reality, points: reality },
+    { label: $t.perspectiveUi.streams.body, points: body },
+    { label: $t.perspectiveUi.streams.consciousness, points: consciousness },
+    { label: $t.perspectiveUi.streams.knowledge, points: knowledge },
   ])
 </script>
 
-<section class="timeline-v2" aria-label="Multi-stream timeline">
+<section class="timeline-v2" aria-label={$t.perspectiveUi.streamsLabel}>
   {#each lines as line, lineIndex (lineIndex)}
     <div class="line">
       <h3>{line.label}</h3>

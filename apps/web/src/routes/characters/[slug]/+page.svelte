@@ -1,11 +1,12 @@
 <script lang="ts">
   import type { PageData } from './$types'
-  import { toEnglishAlias, toEnglishDisplayName } from '$lib/utils/displayNames'
+  import { aliasLabel, displayName as toDisplayName, locationLabel } from '$lib/utils/displayNames'
   import { hatsuById } from '$lib/nen/hatsuRegistry.js'
   import { activeHatsu, activateHatsu } from '$lib/nen/hatsuState.js'
   import Seo from '$lib/components/Seo.svelte'
   import ProphecyPoem from '$lib/components/ProphecyPoem.svelte'
   import { breadcrumbSchema, characterSchema } from '$lib/seo/schema'
+  import { link, locale, t } from '$lib/i18n'
 
   let { data }: { data: PageData } = $props()
   let character = $derived(data.character as any)
@@ -17,7 +18,7 @@
   let documentedAppearances = $derived(
     (character.mangaAppearances || []).filter((appearance: any) => appearance.status !== 'absent'),
   )
-  let displayName = $derived(toEnglishDisplayName(character.canonicalName))
+  let displayName = $derived(toDisplayName(character.canonicalName, $locale))
   let initials = $derived(
     displayName
       .split(/\s+/)
@@ -35,8 +36,7 @@
   // Search snippets cut around 160 characters, so prefer the canon summary and
   // trim it on a word boundary rather than shipping a truncated sentence.
   let metaDescription = $derived(
-    truncate(character.description) ||
-      `Ship role, faction and chapter-by-chapter movement record for ${displayName} aboard the Black Whale.`,
+    truncate(character.description) || $t.characterDetail.fallbackDescription(displayName),
   )
   let latestKnownChapter = $derived(
     chapterTrajectory.findLast((chapter: any) =>
@@ -46,28 +46,36 @@
   let currentLocation = $derived(
     latestKnownChapter?.visits.map((visit: any) => visit.location).join(' → ') ||
       [
-        character.shipLocation?.tier ? `Tier ${character.shipLocation.tier}` : null,
+        character.shipLocation?.tier ? $t.ship.tierLabel(character.shipLocation.tier) : null,
         character.shipLocation?.room,
       ]
         .filter(Boolean)
         .join(' · ') ||
-      'Unknown / possibly off ship',
+      $t.characterDetail.unknownLocation,
   )
   // The file index numbers whatever the dossier actually renders, so an optional
   // section appearing or disappearing cannot leave the list counting wrong.
   let sections = $derived(
     [
-      { id: 'role', label: 'Role aboard', shown: true },
-      { id: 'identity', label: 'Identity continuity', shown: Boolean(character.identity) },
-      { id: 'biography', label: 'Biography', shown: Boolean(character.biography?.length) },
+      { id: 'role', label: $t.characterDetail.sections.role, shown: true },
+      {
+        id: 'identity',
+        label: $t.characterDetail.sections.identity,
+        shown: Boolean(character.identity),
+      },
+      {
+        id: 'biography',
+        label: $t.characterDetail.sections.biography,
+        shown: Boolean(character.biography?.length),
+      },
       {
         id: 'nen',
-        label: 'Nen & abilities',
+        label: $t.characterDetail.sections.nen,
         shown: Boolean(character.nen || character.abilities?.length),
       },
-      { id: 'prophecy', label: 'Ghostwriter sheet', shown: Boolean(prophecy) },
-      { id: 'appearances', label: 'Manga appearances', shown: true },
-      { id: 'trajectory', label: 'Chapter trajectory', shown: true },
+      { id: 'prophecy', label: $t.characterDetail.sections.prophecy, shown: Boolean(prophecy) },
+      { id: 'appearances', label: $t.characterDetail.sections.appearances, shown: true },
+      { id: 'trajectory', label: $t.characterDetail.sections.trajectory, shown: true },
     ].filter((section) => section.shown),
   )
   let latestState = $derived(
@@ -80,40 +88,12 @@
     ),
   )
 
-  const labels: Record<string, string> = {
-    ALIVE: 'Alive',
-    INJURED: 'Injured',
-    UNCONSCIOUS: 'Unconscious',
-    DEAD: 'Dead',
-    DESTROYED: 'Destroyed',
-    PRESERVED: 'Body preserved',
-    UNKNOWN: 'Unknown',
-    ACTIVE: 'Consciousness active',
-    TRANSFERRED: 'Consciousness transferred',
-    SUPPRESSED: 'Consciousness suppressed',
-    DORMANT: 'Consciousness dormant',
-    DISCONNECTED: 'Consciousness disconnected',
-    death: 'Death',
-    corpse: 'Corpse located',
-    soul: 'Soul / consciousness',
-    clone: 'Clone or Nen copy',
-    impersonated: 'Identity impersonated',
-    disguised: 'Disguised presence',
-    absent: 'Position unknown',
-    debut: 'First located',
-    appears: 'Located in chapter',
-    pictured: 'Position depicted',
-  }
+  let labels: Record<string, string> = $derived($t.characterDetail.states)
+  let kindLabels: Record<string, string> = $derived($t.characterDetail.kinds)
 
-  const kindLabels: Record<string, string> = {
-    'body-location': 'Body movement',
-    'body-state': 'Body state',
-    'consciousness-state': 'Consciousness state',
-    'consciousness-location': 'Consciousness location',
-    appearance: 'Reported presence',
-  }
-
-  const humanize = (value: string) => labels[value] || value.toLowerCase().replaceAll('_', ' ')
+  let humanize = $derived(
+    (value: string) => labels[value] || value.toLowerCase().replaceAll('_', ' '),
+  )
 
   function truncate(value?: string | null, limit = 158): string {
     const text = value?.replace(/\s+/g, ' ').trim() ?? ''
@@ -129,77 +109,87 @@
 </script>
 
 <Seo
-  title={`${displayName} · Role & movement`}
+  title={$t.characterDetail.seoTitle(displayName)}
   description={metaDescription}
   type="profile"
   jsonLd={[
     characterSchema({
       name: displayName,
-      path: `/characters/${character.id}`,
+      path: $link(`/characters/${character.id}`),
       description: metaDescription,
       affiliation: factionName,
     }),
     breadcrumbSchema([
-      { name: 'Home', path: '/' },
-      { name: 'Characters', path: '/characters' },
-      { name: displayName, path: `/characters/${character.id}` },
+      { name: $t.common.home, path: $link('/') },
+      { name: $t.nav.characters, path: $link('/characters') },
+      { name: displayName, path: $link(`/characters/${character.id}`) },
     ]),
   ]}
 />
 
 <div class="dossier-page">
-  <nav class="breadcrumb" aria-label="Breadcrumb">
-    <a href="/characters">Passenger registry</a><span>/</span><strong>{displayName}</strong>
+  <nav class="breadcrumb" aria-label={$t.characterDetail.breadcrumbLabel}>
+    <a href={$link('/characters')}>{$t.characterDetail.registryLink}</a><span>/</span><strong
+      >{displayName}</strong
+    >
   </nav>
 
   <header class="dossier-hero">
     <div class="identity-plate" aria-hidden="true">
       <span class="scan-line"></span><strong>{initials}</strong><small
-        >SUBJECT / {(character.slug || character.id).toUpperCase()}</small
+        >{$t.characterDetail.subjectPrefix} / {(
+          character.slug || character.id
+        ).toUpperCase()}</small
       >
     </div>
 
     <div class="hero-copy">
-      <p class="eyebrow">Ship role · Movement record</p>
+      <p class="eyebrow">{$t.characterDetail.eyebrow}</p>
       <h1>{displayName}</h1>
       {#if character.aliases?.length}<p class="aliases">
-          Also known as · {character.aliases.map(toEnglishAlias).join(' / ')}
+          {$t.characterDetail.alsoKnownAs} · {character.aliases
+            .map((alias: string) => aliasLabel(alias, $locale))
+            .join(' / ')}
         </p>{/if}
       <div class="primary-role">
-        <span>Role aboard</span>
-        <strong>{character.shipLocation?.role || 'No confirmed role'}</strong>
+        <span>{$t.characterDetail.roleAboard}</span>
+        <strong>{character.shipLocation?.role || $t.characterDetail.noConfirmedRole}</strong>
       </div>
       <div class="hero-links">
-        <a href={`/ship?perspective=${character.id}`}>Locate on ship <span>⌖</span></a>
+        <a href={$link(`/ship?perspective=${character.id}`)}
+          >{$t.characterDetail.locateOnShip} <span>⌖</span></a
+        >
       </div>
     </div>
 
     <dl class="record-stats">
       <div>
-        <dt>First record</dt>
+        <dt>{$t.characterDetail.firstRecord}</dt>
         <dd>
-          {character.firstVisibleChapter ? `CH. ${character.firstVisibleChapter}` : 'Unknown'}
+          {character.firstVisibleChapter
+            ? $t.characterDetail.chapterUpper(character.firstVisibleChapter)
+            : $t.common.unknown}
         </dd>
       </div>
       <div>
-        <dt>Latest position</dt>
+        <dt>{$t.characterDetail.latestPosition}</dt>
         <dd>{currentLocation}</dd>
       </div>
       <div>
-        <dt>Reported status</dt>
-        <dd>{character.shipLocation?.status || 'Unconfirmed'}</dd>
+        <dt>{$t.characterDetail.reportedStatus}</dt>
+        <dd>{character.shipLocation?.status || $t.characterDetail.unconfirmed}</dd>
       </div>
       <div>
-        <dt>Latest transition</dt>
-        <dd>{latestState ? humanize(latestState.label) : 'None recorded'}</dd>
+        <dt>{$t.characterDetail.latestTransition}</dt>
+        <dd>{latestState ? humanize(latestState.label) : $t.characterDetail.noneRecorded}</dd>
       </div>
     </dl>
   </header>
 
   <div class="dossier-layout">
     <aside class="dossier-index">
-      <p>File index</p>
-      <nav aria-label="Dossier sections">
+      <p>{$t.characterDetail.fileIndex}</p>
+      <nav aria-label={$t.characterDetail.dossierSections}>
         {#each sections as section, sectionIndex (section.id)}
           <a href={`#${section.id}`}
             ><span>{String(sectionIndex + 1).padStart(2, '0')}</span>{section.label}</a
@@ -207,32 +197,30 @@
         {/each}
       </nav>
       <div class="scope-note">
-        <span>Scope</span>
-        <p>
-          Only operational role, body location, consciousness location and continuity states are
-          retained.
-        </p>
+        <span>{$t.characterDetail.scope}</span>
+        <p>{$t.characterDetail.scopeNote}</p>
       </div>
     </aside>
 
     <main class="dossier-content">
       <section id="role" class="dossier-section role-section reveal-on-scroll">
         <header>
-          <p class="section-code">OPERATIONAL POSITION</p>
-          <h2>Role aboard</h2>
+          <p class="section-code">{$t.characterDetail.codes.operationalPosition}</p>
+          <h2>{$t.characterDetail.sections.role}</h2>
         </header>
         <div class="role-grid">
           <article>
-            <span>Current function</span><strong>{character.shipLocation?.role || 'Unknown'}</strong
+            <span>{$t.characterDetail.currentFunction}</span><strong
+              >{character.shipLocation?.role || $t.common.unknown}</strong
             >
           </article>
           <article>
-            <span>Current / last-known area</span><strong>{currentLocation}</strong><small
-              >{character.shipLocation?.status || 'Status unconfirmed'}</small
+            <span>{$t.characterDetail.currentArea}</span><strong>{currentLocation}</strong><small
+              >{character.shipLocation?.status || $t.characterDetail.statusUnconfirmed}</small
             >
           </article>
           {#if character.factionId}<article>
-              <span>Catalogue affiliation</span><strong
+              <span>{$t.characterDetail.catalogueAffiliation}</span><strong
                 >{character.factionId.replaceAll('-', ' ')}</strong
               >
             </article>{/if}
@@ -242,14 +230,17 @@
           <div class="role-history">
             {#each roleHistory as role, roleIndex (roleIndex)}
               <article>
-                <small>CH. {role.chapter}{role.untilChapter ? `–${role.untilChapter}` : '+'}</small
+                <small
+                  >{$t.characterDetail.chapterUpper(role.chapter)}{role.untilChapter
+                    ? `–${role.untilChapter}`
+                    : '+'}</small
                 ><strong>{role.label}</strong>{#if role.detail}<p>{role.detail}</p>{/if}
               </article>
             {/each}
             {#each affiliations as affiliation, affiliationIndex (affiliationIndex)}
               <article>
                 <small
-                  >CH. {affiliation.chapter}{affiliation.untilChapter
+                  >{$t.characterDetail.chapterUpper(affiliation.chapter)}{affiliation.untilChapter
                     ? `–${affiliation.untilChapter}`
                     : '+'} · {affiliation.status}</small
                 ><strong>{affiliation.name}</strong>
@@ -262,14 +253,16 @@
 
       {#if character.identity}
         <section id="identity" class="identity-alert dossier-section reveal-on-scroll">
-          <div class="section-code">IDENTITY / CONTINUITY</div>
+          <div class="section-code">{$t.characterDetail.codes.identityContinuity}</div>
           <div>
             <p>{character.identity.status}</p>
-            <h2>Body and identity differ</h2>
+            <h2>{$t.characterDetail.identityTitle}</h2>
             <span>{character.identity.description}</span>
           </div>
-          <a href={`/characters/${character.identity.counterpartId}`}
-            >Related record<br /><strong>{character.identity.counterpartLabel} ↗</strong></a
+          <a href={$link(`/characters/${character.identity.counterpartId}`)}
+            >{$t.characterDetail.relatedRecord}<br /><strong
+              >{character.identity.counterpartLabel} ↗</strong
+            ></a
           >
         </section>
       {/if}
@@ -277,8 +270,8 @@
       {#if character.biography?.length}
         <section id="biography" class="dossier-section reveal-on-scroll">
           <header>
-            <p class="section-code">CHARACTER RECORD</p>
-            <h2>Biography</h2>
+            <p class="section-code">{$t.characterDetail.codes.characterRecord}</p>
+            <h2>{$t.characterDetail.sections.biography}</h2>
           </header>
           <div class="prose-record">
             {#each character.biography as paragraph, paragraphIndex (paragraphIndex)}<p>
@@ -286,7 +279,7 @@
               </p>{/each}
           </div>
           {#if character.abilitiesAndPowers}<div class="capability-summary">
-              <small>ABILITIES & POWERS</small>
+              <small>{$t.characterDetail.abilitiesAndPowers}</small>
               <p>{character.abilitiesAndPowers}</p>
             </div>{/if}
           {#if character.equipment?.length}<div class="equipment-grid">
@@ -301,13 +294,13 @@
       {#if character.nen || character.abilities?.length}
         <section id="nen" class="dossier-section reveal-on-scroll">
           <header>
-            <p class="section-code">AURA PROFILE</p>
-            <h2>Nen & abilities</h2>
+            <p class="section-code">{$t.characterDetail.codes.auraProfile}</p>
+            <h2>{$t.characterDetail.sections.nen}</h2>
           </header>
           {#if character.nen}
             <div class="nen-profile">
               <article>
-                <small>PRIMARY TYPE</small><strong
+                <small>{$t.characterDetail.primaryType}</small><strong
                   >{character.nen.typeLabel || character.nen.type}</strong
                 >{#if character.nen.secondaryTypeLabels?.length}<span
                     >{character.nen.secondaryTypeLabels.join(' · ')}</span
@@ -347,15 +340,18 @@
                       type="button"
                       class="ability-description"
                       onclick={() => activateAbility(ability.id)}
-                      aria-label={`Activate ${ability.name}: ${ability.description}`}
+                      aria-label={$t.characterDetail.activateAbility(
+                        ability.name,
+                        ability.description,
+                      )}
                       aria-pressed={$activeHatsu?.id === ability.id}
                       data-hatsu-pass
                     >
                       <span>{ability.description}</span>
                       <small
                         >{$activeHatsu?.id === ability.id
-                          ? 'HATSU ACTIVE'
-                          : 'CLICK DESCRIPTION TO ACTIVATE'}</small
+                          ? $t.characterDetail.hatsuActive
+                          : $t.characterDetail.clickToActivate}</small
                       >
                     </button>
                   {:else}
@@ -371,8 +367,8 @@
       {#if prophecy}
         <section id="prophecy" class="dossier-section reveal-on-scroll">
           <header>
-            <p class="section-code">APOCRYPHAL · LOVELY GHOSTWRITER</p>
-            <h2>Ghostwriter sheet</h2>
+            <p class="section-code">{$t.characterDetail.codes.apocryphal}</p>
+            <h2>{$t.characterDetail.sections.prophecy}</h2>
           </header>
           <ProphecyPoem {prophecy} />
         </section>
@@ -380,8 +376,8 @@
 
       <section id="appearances" class="dossier-section reveal-on-scroll">
         <header>
-          <p class="section-code">SOURCE INDEX</p>
-          <h2>Manga appearances</h2>
+          <p class="section-code">{$t.characterDetail.codes.sourceIndex}</p>
+          <h2>{$t.characterDetail.sections.appearances}</h2>
         </header>
         {#if documentedAppearances.length}
           <div class="appearance-grid">
@@ -393,22 +389,19 @@
               </article>{/each}
           </div>
         {:else}<div class="empty">
-            <strong>No individual appearance record documented.</strong>
-            <p>
-              Hunterpedia does not provide a dedicated Succession Contest appearance template for
-              this character.
-            </p>
+            <strong>{$t.characterDetail.noAppearanceRecord}</strong>
+            <p>{$t.characterDetail.noAppearanceCopy}</p>
           </div>{/if}
         {#if character.battles?.length || character.competitions?.length}
           <div class="encounter-grid">
             {#if character.battles?.length}<article>
-                <small>BATTLES</small
+                <small>{$t.characterDetail.battles}</small
                 >{#each character.battles as battle, battleIndex (battleIndex)}<p>
                     {typeof battle === 'string' ? battle : battle.label || battle.name}
                   </p>{/each}
               </article>{/if}
             {#if character.competitions?.length}<article>
-                <small>COMPETITIONS</small
+                <small>{$t.characterDetail.competitions}</small
                 >{#each character.competitions as competition, competitionIndex (competitionIndex)}<p
                   >
                     {typeof competition === 'string'
@@ -422,34 +415,28 @@
 
       <section id="trajectory" class="dossier-section reveal-on-scroll">
         <header>
-          <p class="section-code">BODY · CONSCIOUSNESS · SPECIAL SPACE</p>
-          <h2>Chapter trajectory</h2>
+          <p class="section-code">{$t.characterDetail.codes.trajectory}</p>
+          <h2>{$t.characterDetail.sections.trajectory}</h2>
         </header>
-        <p class="trajectory-intro">
-          The body and consciousness are tracked independently. “Unknown” is kept as a meaningful
-          position; transfers, death, copies, dimensional passages and possible exits from the ship
-          remain explicit.
-        </p>
+        <p class="trajectory-intro">{$t.characterDetail.trajectoryIntro}</p>
 
         {#if chapterTrajectory.length}
           <ol class="trajectory">
             {#each chapterTrajectory as chapter, chapterIndex (chapterIndex)}
               <li class:multi-location={chapter.visits.length > 1}>
                 <div class="chapter">
-                  <span>CH.</span><strong>{chapter.chapter}</strong><small
-                    >{chapter.visits.length > 1
-                      ? `${chapter.visits.length} POSITIONS`
-                      : '1 POSITION'}</small
+                  <span>{$t.timeline.chapterAbbrev}</span><strong>{chapter.chapter}</strong><small
+                    >{$t.characterDetail.positionsCount(chapter.visits.length)}</small
                   >
                 </div>
                 <span class="event-dot"></span>
                 <article>
                   <small
                     >{chapter.isMovement
-                      ? 'ROUTE WITHIN CHAPTER'
+                      ? $t.characterDetail.routeWithinChapter
                       : chapter.visits.length > 1
-                        ? 'BODY / CONSCIOUSNESS POSITIONS'
-                        : 'POSITION IN CHAPTER'}</small
+                        ? $t.characterDetail.bodyConsciousnessPositions
+                        : $t.characterDetail.positionInChapter}</small
                   >
                   <ol class="visits">
                     {#each chapter.visits as visit, index (index)}
@@ -459,7 +446,7 @@
                       >
                         <span class="visit-order">{String(index + 1).padStart(2, '0')}</span>
                         <div>
-                          <h3>⌖ {visit.location}</h3>
+                          <h3>⌖ {locationLabel(visit.location, $locale)}</h3>
                           <small
                             >{visit.subject}{visit.certainty
                               ? ` · ${humanize(visit.certainty)}`
@@ -483,8 +470,8 @@
           </ol>
         {:else}
           <div class="empty">
-            <strong>No chapter transition recorded.</strong>
-            <p>Current or last-known position: {currentLocation}.</p>
+            <strong>{$t.characterDetail.noTransition}</strong>
+            <p>{$t.characterDetail.lastKnownPosition(currentLocation)}</p>
           </div>
         {/if}
       </section>

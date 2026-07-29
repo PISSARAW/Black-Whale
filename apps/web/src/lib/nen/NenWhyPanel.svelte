@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { AbilityActionPlan } from '@black-whale/nen-engine'
+  import { t } from '$lib/i18n'
 
   /**
    * Section 14 — the "Why?" panel, fed by the same `AbilityActionPlan` the
@@ -9,19 +10,14 @@
    */
   let { plan }: { plan: AbilityActionPlan } = $props()
 
-  const STATUS_LABEL: Record<AbilityActionPlan['status'], string> = {
-    AVAILABLE: 'Action disponible',
-    LOCKED: 'Action verrouillée',
-    UNKNOWN: 'Conditions non révélées par le canon',
-    FORBIDDEN: 'Action refusée par le moteur',
-  }
+  let STATUS_LABEL: Record<AbilityActionPlan['status'], string> = $derived($t.nen.planStatus)
 
   const MARK = { MET: '✓', UNMET: '✗', UNKNOWN: '?' }
 </script>
 
 <div class="why" data-status={plan.status}>
   <div class="head">
-    <span class="tag">POURQUOI ?</span>
+    <span class="tag">{$t.nen.why}</span>
     <span class="verdict">{STATUS_LABEL[plan.status]}</span>
   </div>
 
@@ -37,13 +33,13 @@
 
   {#if plan.cost}
     <p class="cost">
-      Coût : {plan.cost.label}{#if plan.cost.amount !== undefined}
+      {$t.nen.cost(plan.cost.label)}{#if plan.cost.amount !== undefined}
         — {plan.cost.amount}{plan.cost.unit ? ` ${plan.cost.unit}` : ''}{/if}
     </p>
   {/if}
 
   <div class="projection">
-    <span class="tag">EFFETS PROJETÉS</span>
+    <span class="tag">{$t.nen.projectedEffects}</span>
     {#if plan.projectedEffects.length}
       <ul class="effects">
         {#each plan.projectedEffects as effect, index (`${effect.event}-${index}`)}
@@ -52,15 +48,14 @@
                  names the world event it would propose. -->
             <strong>{effect.kind ?? effect.event}</strong>
             {#if effect.state}<code>{effect.state}</code>{/if}
-            <span>{effect.targets.length ? effect.targets.join(', ') : 'aucune cible'}</span>
-            {#if effect.masked}<em title="In : réel mais invisible hors Gyo">masqué</em>{/if}
-            {#if effect.postMortem}<em title="Survit à la mort de l’utilisateur">post-mortem</em
-              >{/if}
+            <span>{effect.targets.length ? effect.targets.join(', ') : $t.nen.noTarget}</span>
+            {#if effect.masked}<em title={$t.nen.maskedTitle}>{$t.nen.masked}</em>{/if}
+            {#if effect.postMortem}<em title={$t.nen.postMortemTitle}>{$t.nen.postMortem}</em>{/if}
           </li>
         {/each}
       </ul>
     {:else}
-      <p class="empty">Aucun effet projetable dans cet état.</p>
+      <p class="empty">{$t.nen.noProjectedEffects}</p>
     {/if}
   </div>
 </div>

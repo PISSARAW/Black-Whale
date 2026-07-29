@@ -2,6 +2,7 @@
   import type { PageData } from './$types'
   import Seo from '$lib/components/Seo.svelte'
   import { breadcrumbSchema } from '$lib/seo/schema'
+  import { link, t } from '$lib/i18n'
 
   type CharacterRecord = {
     id: string
@@ -63,7 +64,7 @@
         (a, b) =>
           b.relationCount - a.relationCount ||
           b.memberCount - a.memberCount ||
-          a.name.localeCompare(b.name),
+          a.name.localeCompare(b.name, $t.common.intlLocale),
       ),
   )
 
@@ -74,35 +75,32 @@
 </script>
 
 <Seo
-  title="Faction Intelligence"
-  description="Inspect the alliances, conflicts and known members shaping the Black Whale succession war — prince factions, mafia families, Hunters and the Phantom Troupe."
+  title={$t.factions.seoTitle}
+  description={$t.factions.seoDescription}
   jsonLd={breadcrumbSchema([
-    { name: 'Home', path: '/' },
-    { name: 'Factions', path: '/relationships' },
+    { name: $t.common.home, path: $link('/') },
+    { name: $t.factions.breadcrumb, path: $link('/relationships') },
   ])}
 />
 
 <div class="network-page">
   <header class="network-hero">
     <div>
-      <p class="eyebrow">Strategic intelligence · Black Whale</p>
-      <h1>Faction Network</h1>
-      <p class="intro">
-        Trace who cooperates, who is being used, and where open conflict has begun. Every connection
-        is tied to the chapter that establishes it.
-      </p>
+      <p class="eyebrow">{$t.factions.eyebrow}</p>
+      <h1>{$t.factions.title}</h1>
+      <p class="intro">{$t.factions.intro}</p>
     </div>
     <dl class="network-stats">
       <div>
-        <dt>Factions</dt>
+        <dt>{$t.factions.factions}</dt>
         <dd>{data.factions.length}</dd>
       </div>
       <div>
-        <dt>Known ties</dt>
+        <dt>{$t.factions.knownTies}</dt>
         <dd>{data.relations.length}</dd>
       </div>
       <div>
-        <dt>Affiliated people</dt>
+        <dt>{$t.factions.affiliatedPeople}</dt>
         <dd>{characters.filter((character) => character.factionId).length}</dd>
       </div>
     </dl>
@@ -110,21 +108,21 @@
 
   {#if data.spoilerLimit}
     <div class="spoiler-notice">
-      <span>◉</span> Intelligence limited to chapter {data.spoilerLimit}. Later connections remain
-      concealed.
+      <span>◉</span>
+      {$t.factions.spoilerNotice(data.spoilerLimit)}
     </div>
   {/if}
 
   <main class="network-workspace">
-    <aside class="faction-index" aria-label="Faction index">
+    <aside class="faction-index" aria-label={$t.factions.indexLabel}>
       <div class="index-heading">
         <div>
           <span>01</span>
-          <h2>Choose a faction</h2>
+          <h2>{$t.factions.chooseFaction}</h2>
         </div>
         <label>
-          <span class="sr-only">Search factions</span>
-          <input bind:value={query} type="search" placeholder="Search the network…" />
+          <span class="sr-only">{$t.factions.searchFactions}</span>
+          <input bind:value={query} type="search" placeholder={$t.factions.searchPlaceholder} />
         </label>
       </div>
 
@@ -139,13 +137,13 @@
             <span class="node" aria-hidden="true"></span>
             <span class="faction-copy"
               ><strong>{faction.name}</strong><small
-                >{faction.memberCount} personnel · {faction.relationCount} ties</small
+                >{$t.factions.factionSummary(faction.memberCount, faction.relationCount)}</small
               ></span
             >
             <span class="arrow">›</span>
           </button>
         {:else}
-          <p class="empty-index">No faction matches this search.</p>
+          <p class="empty-index">{$t.factions.emptyIndex}</p>
         {/each}
       </nav>
     </aside>
@@ -162,9 +160,11 @@
           </div>
           <div>
             <p>
-              Selected dossier · {String(
-                data.factions.findIndex((faction) => faction.id === selectedFactionId) + 1,
-              ).padStart(2, '0')}
+              {$t.factions.selectedDossier(
+                String(
+                  data.factions.findIndex((faction) => faction.id === selectedFactionId) + 1,
+                ).padStart(2, '0'),
+              )}
             </p>
             <h2>{activeFaction.name}</h2>
             <span>{activeFaction.description}</span>
@@ -175,14 +175,14 @@
           <div class="section-title">
             <div>
               <span>02</span>
-              <h3>Known connections</h3>
+              <h3>{$t.factions.knownConnections}</h3>
             </div>
-            <div class="relation-filters" aria-label="Filter connections">
-              {#each ['all', 'alliance', 'cooperation', 'conflict', 'control'] as type (type)}
+            <div class="relation-filters" aria-label={$t.factions.filterConnections}>
+              {#each ['all', 'alliance', 'cooperation', 'conflict', 'control'] as const as type (type)}
                 <button
                   type="button"
                   class:active={relationFilter === type}
-                  onclick={() => (relationFilter = type)}>{type}</button
+                  onclick={() => (relationFilter = type)}>{$t.factions.relationTypes[type]}</button
                 >
               {/each}
             </div>
@@ -197,8 +197,12 @@
                 <div class="relation-glyph" aria-hidden="true">{palette[relation.type]?.mark}</div>
                 <div class="tie-copy">
                   <p>
-                    <span>{relation.type}</span><a href="/timeline#chapter-{relation.chapter}"
-                      >Established ch. {relation.chapter}</a
+                    <span
+                      >{$t.factions.relationTypes[
+                        relation.type as keyof typeof $t.factions.relationTypes
+                      ] || relation.type}</span
+                    ><a href={$link(`/timeline#chapter-${relation.chapter}`)}
+                      >{$t.factions.establishedIn(relation.chapter)}</a
                     >
                   </p>
                   <button type="button" onclick={() => selectFaction(relation.counterpartId)}
@@ -210,12 +214,9 @@
               </article>
             {:else}
               <div class="empty-state">
-                <span>Signal absent</span>
-                <h4>No documented connection</h4>
-                <p>
-                  This does not mean the faction is neutral—only that the current dossier has no
-                  chapter-backed tie matching this filter.
-                </p>
+                <span>{$t.factions.signalAbsent}</span>
+                <h4>{$t.factions.noConnection}</h4>
+                <p>{$t.factions.noConnectionCopy}</p>
               </div>
             {/each}
           </div>
@@ -225,13 +226,13 @@
           <div class="section-title">
             <div>
               <span>03</span>
-              <h3>Known personnel</h3>
+              <h3>{$t.factions.knownPersonnel}</h3>
             </div>
-            <small>{members.length} records</small>
+            <small>{$t.factions.recordCount(members.length)}</small>
           </div>
           <div class="member-grid">
             {#each members as character (character.id)}
-              <a href="/characters/{character.id}">
+              <a href={$link(`/characters/${character.id}`)}>
                 <span class="initials"
                   >{character.canonicalName
                     .split(' ')
@@ -243,14 +244,14 @@
                   ><strong>{character.canonicalName}</strong><small
                     >{character.shipLocation?.role ||
                       character.aliases?.[0] ||
-                      'Affiliation confirmed'}</small
+                      $t.factions.affiliationConfirmed}</small
                   ></span
                 >
                 <i>↗</i>
               </a>
             {:else}
               <div class="empty-state compact">
-                <p>No named personnel are confirmed in the current catalogue.</p>
+                <p>{$t.factions.noPersonnel}</p>
               </div>
             {/each}
           </div>

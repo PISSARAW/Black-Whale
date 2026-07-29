@@ -88,24 +88,25 @@
       <text x="400" y="235" class="sublabel">Celebrities & Fortunes</text>
     </g>
 
-    <!-- Espaces de Réception & Services -->
+    <!-- Salle de projection : l'amphithéâtre de la coupe du chapitre 359 -->
     <g
-      id="t2-reception"
+      id="t2-screening-room"
       role="button"
       tabindex="0"
-      aria-label="Open Reception Areas"
-      onclick={() => handleZoneClick('t2-reception')}
-      onkeydown={(event) => handleZoneKeydown(event, 't2-reception')}
+      aria-label="Open Screening Room"
+      onclick={() => handleZoneClick('t2-screening-room')}
+      onkeydown={(event) => handleZoneKeydown(event, 't2-screening-room')}
     >
       <rect
         class="zone"
-        class:selected={mapState.selectedLocationId === 't2-reception'}
+        class:selected={mapState.selectedLocationId === 't2-screening-room'}
         x="250"
         y="320"
         width="250"
         height="130"
       />
-      <text x="375" y="380" class="label text-sm">Reception Areas</text>
+      <text x="375" y="375" class="label text-sm">Screening Room</text>
+      <text x="375" y="395" class="sublabel">Amphitheatre & Projection Wall</text>
     </g>
 
     <!-- Ministry of Justice HQ -->

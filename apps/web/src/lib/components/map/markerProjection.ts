@@ -16,7 +16,9 @@ import type {
   KnowledgeVisualState,
   MarkerIdentityState,
 } from '$lib/components/perspective/types'
-import { toEnglishDisplayName } from '$lib/utils/displayNames'
+import { displayName } from '$lib/utils/displayNames'
+import { DEFAULT_LOCALE, type Locale } from '$lib/i18n/config'
+import { messagesFor } from '$lib/i18n'
 
 /**
  * Turning a world-state presence into a map marker.
@@ -100,6 +102,7 @@ const locationCoordinates: Record<string, Record<string, { x: number; y: number 
     'vip-guest-rooms': { x: 400, y: 225 },
     'ministry-of-justice': { x: 660, y: 385 },
     'vip-witness-protection-area': { x: 660, y: 385 },
+    'screening-room': { x: 375, y: 385 },
     bulkhead: { x: 500, y: 498 },
   },
   'tier-3': {
@@ -312,6 +315,44 @@ const localSpotAnchors: Record<string, { occupants: Record<string, Spot>; fallba
       'prince-halkenburg': { x: 50, y: 78.46 },
     },
   },
+  // `local/banquet-hall.svelte`, 1000 × 800, contents offset by (50, 80). The
+  // plan draws a throne platform at the bottom and a 6 × 4 grid of round tables
+  // whose centres land on x = 200 + col × 120 and y = 280 + row × 90.
+  //
+  // Only the throne is depicted: the inaugural banquet of ch. 359 seats Nasubi
+  // on it, and the hall holds him nowhere else. Everyone else is at a table the
+  // chapter shows but the archive cannot number, so they take one table each and
+  // say so — the twins share theirs because they leave together, and Oito holds
+  // the child. Those are readings of the scene, not copies of it.
+  'tier-1-banquet-hall': {
+    occupants: {
+      'nasubi-hui-guo-rou': { x: 50, y: 85 },
+      'prince-benjamin': { x: 68, y: 35, inferred: true },
+      // Ch. 362 has Tserriednich and Tubeppa strike their alliance here, so
+      // they share a table.
+      'prince-tserriednich': { x: 30.5, y: 57.5, inferred: true },
+      'prince-tubeppa': { x: 33.5, y: 57.5, inferred: true },
+      'prince-camilla': { x: 68, y: 57.5, inferred: true },
+      'prince-zhanglei': { x: 80, y: 57.5, inferred: true },
+      // Halkenburg keeps a corner until he crosses to the throne in ch. 361 to
+      // tell his father he withdraws. The corner is the habitual place; the
+      // crossing is the freeze-frame the anchors deliberately do not chase.
+      'prince-halkenburg': { x: 80, y: 35, inferred: true },
+      'prince-kacho': { x: 18.5, y: 46.25, inferred: true },
+      'prince-fugetsu': { x: 21.5, y: 46.25, inferred: true },
+      'queen-oito': { x: 44, y: 57.5, inferred: true },
+      'oito-nephew-fake-woble': { x: 46.5, y: 57.5, inferred: true },
+      // Momoze is in a corner, and the catalogue's own biographies seat her
+      // beside Marayam, who stays with their mother Sevanti: one corner table
+      // for the three of them. Which corner is not depicted.
+      'sevanti-hui-guo-rou': { x: 17, y: 35, inferred: true },
+      'prince-marayam': { x: 20, y: 35, inferred: true },
+      'prince-momoze': { x: 23, y: 35, inferred: true },
+    },
+    // The hall seats two hundred: anyone the chapter does not single out belongs
+    // among the tables, not on the king's platform.
+    fallback: { x: 56, y: 46.25, inferred: true },
+  },
   // `local/heilly-hideout.svelte`, 1100 × 760, contents offset by (55, 95).
   // Morena runs Heil-Ly from the head of the communal table, ch. 378 onward, and
   // ch. 407–410 seat Borksen at the far end for the negotiation game.
@@ -391,17 +432,27 @@ function spotAnchorFor(marker: MapMarker): (Spot & { exact: boolean }) | null {
  * marker still has to be drawn somewhere, and the grid position it gets is an
  * artefact of drawing it, not a statement about the room.
  */
-function spotNoteFor(spot: { inferred?: true } | null): string | undefined {
-  if (!spot) return 'Room confirmed · position in room not depicted'
-  return spot.inferred ? 'Position in room inferred from the scene, not depicted' : undefined
+function spotNoteFor(
+  spot: { inferred?: true } | null,
+  locale: Locale = DEFAULT_LOCALE,
+): string | undefined {
+  const m = messagesFor(locale).map
+  if (!spot) return m.roomConfirmed
+  return spot.inferred ? m.spotInferred : undefined
 }
 
-export const tierVisuals: Record<string, { label: string; overviewY: number }> = {
-  'tier-1': { label: 'Tier 1', overviewY: 21 },
-  'tier-2': { label: 'Tier 2', overviewY: 31 },
-  'tier-3': { label: 'Tier 3', overviewY: 46 },
-  'tier-4': { label: 'Tier 4', overviewY: 63 },
-  'tier-5': { label: 'Tier 5', overviewY: 78 },
+/** Where each deck sits in the overview; the label is built from the catalogue. */
+export const tierOverviewY: Record<string, number> = {
+  'tier-1': 21,
+  'tier-2': 31,
+  'tier-3': 46,
+  'tier-4': 63,
+  'tier-5': 78,
+}
+
+export function tierLabelFor(tierId: string, locale: Locale = DEFAULT_LOCALE): string {
+  const number = tierId.replace('tier-', '')
+  return messagesFor(locale).ship.tierLabel(number)
 }
 
 export function resolveTierSlug(
@@ -549,19 +600,18 @@ export function getTemporalVisual(
   presence: MapPresence,
   currentEvent: MapEvent | null | undefined,
   currentSequence: number,
+  locale: Locale = DEFAULT_LOCALE,
 ) {
+  const m = messagesFor(locale).map.temporal
+
   if (presence.certainty === 'PROBABLE') {
-    return { color: '#f0b75e', label: 'Assumed position', detail: 'Likely presence, unconfirmed' }
+    return { color: '#f0b75e', label: m.assumedPosition, detail: m.assumedDetail }
   }
   if (presence.certainty === 'LAST_KNOWN') {
-    return {
-      color: '#e47f61',
-      label: 'Last known position',
-      detail: 'Potentially outdated information',
-    }
+    return { color: '#e47f61', label: m.lastKnown, detail: m.lastKnownDetail }
   }
   if (presence.certainty !== 'CONFIRMED') {
-    return { color: '#8a9798', label: 'Unknown status', detail: 'Certainty level not provided' }
+    return { color: '#8a9798', label: m.unknownStatus, detail: m.unknownDetail }
   }
 
   const fromSequence = presence.fromEvent?.sequence
@@ -570,28 +620,28 @@ export function getTemporalVisual(
   if (untilSequence !== undefined && untilSequence !== null) {
     return {
       color: '#ad8bea',
-      label: 'Confirmed over a period',
-      detail: `Events ${fromSequence ?? '?'} to ${untilSequence}`,
+      label: m.confirmedPeriod,
+      detail: m.periodDetail(fromSequence ?? '?', untilSequence),
     }
   }
   if (presence.fromEventId === currentEvent?.id) {
     return {
       color: '#55d1e2',
-      label: 'Confirmed at this event',
-      detail: `Event ${currentSequence}`,
+      label: m.confirmedAtEvent,
+      detail: m.eventDetail(currentSequence),
     }
   }
   if (presence.fromEvent?.chapterId && presence.fromEvent.chapterId === currentEvent?.chapterId) {
     return {
       color: '#6ac890',
-      label: 'Confirmed during this chapter',
-      detail: `Since event ${fromSequence ?? '?'}`,
+      label: m.confirmedInChapter,
+      detail: m.sinceDetail(fromSequence ?? '?'),
     }
   }
   return {
     color: '#5bb9ad',
-    label: 'Confirmed presence',
-    detail: `Since event ${fromSequence ?? '?'}`,
+    label: m.confirmedPresence,
+    detail: m.sinceDetail(fromSequence ?? '?'),
   }
 }
 
@@ -708,18 +758,20 @@ interface IdentityNames {
 }
 
 /** The names the world state carries, before any observer is taken into account. */
-function structuralNames(entities: PresenceEntities) {
+function structuralNames(entities: PresenceEntities, locale: Locale) {
   const bodyName =
-    toEnglishDisplayName(entities.biologicalOwner?.canonicalName || entities.body?.label) ||
-    'Unknown body'
+    displayName(entities.biologicalOwner?.canonicalName || entities.body?.label, locale) ||
+    messagesFor(locale).map.unknownBody
 
   return {
     bodyName,
-    consciousnessName: toEnglishDisplayName(
+    consciousnessName: displayName(
       entities.consciousnessOwner?.canonicalName || entities.activeConsciousness?.label || bodyName,
+      locale,
     ),
-    appearanceName: toEnglishDisplayName(
+    appearanceName: displayName(
       entities.structuralApparentCharacter?.canonicalName || bodyName,
+      locale,
     ),
   }
 }
@@ -756,10 +808,12 @@ function perceivedName(
   appearance: string,
   knowledge: KnowledgeView,
   perspectiveIsReader: boolean,
+  locale: Locale,
 ) {
   if (perspectiveIsReader || knowledge.isObserverBody) return followedIdentity
   if (knowledge.hasConfirmedKnowledge) return appearance
-  return knowledge.hasBeliefOnly ? 'Assumed identity' : 'Unknown individual'
+  const m = messagesFor(locale).map
+  return knowledge.hasBeliefOnly ? m.assumedIdentity : m.unknownIndividual
 }
 
 /** The three identity axes, then the one the visitor is actually shown. */
@@ -769,8 +823,9 @@ function resolveIdentityNames(
   perspective: PerspectiveState | null,
   followMode: FollowMode,
   perspectiveIsReader: boolean,
+  locale: Locale,
 ): IdentityNames {
-  const structural = structuralNames(entities)
+  const structural = structuralNames(entities, locale)
   const { consciousness, appearance } = observedNames(structural, knowledge, perspective)
 
   const followedIdentity =
@@ -784,16 +839,23 @@ function resolveIdentityNames(
     bodyName: structural.bodyName,
     consciousness,
     appearance,
-    perceivedIdentity: perceivedName(followedIdentity, appearance, knowledge, perspectiveIsReader),
+    perceivedIdentity: perceivedName(
+      followedIdentity,
+      appearance,
+      knowledge,
+      perspectiveIsReader,
+      locale,
+    ),
   }
 }
 
 /** Where the marker's claim comes from, so the panel can cite it. */
-function resolveSourceLabel(knowledge: KnowledgeView) {
+function resolveSourceLabel(knowledge: KnowledgeView, locale: Locale) {
+  const m = messagesFor(locale).map
   const predicate = knowledge.relatedFacts[0]?.predicate || knowledge.relatedBeliefs[0]?.predicate
-  if (knowledge.hasConfirmedKnowledge) return `Fact: ${predicate}`
-  if (knowledge.hasBeliefOnly) return `Belief: ${predicate}`
-  return 'Structural presence'
+  if (knowledge.hasConfirmedKnowledge) return m.factSource(predicate)
+  if (knowledge.hasBeliefOnly) return m.beliefSource(predicate)
+  return m.structuralPresence
 }
 
 /** The character the follow mode is tracking, which need not be the body's owner. */
@@ -833,6 +895,8 @@ export interface ProjectionContext {
   perspectiveIsReader: boolean
   currentEvent: MapEvent | null
   currentSequence: number
+  /** Names come out of a partly French catalogue; the locale decides whether they are anglicised. */
+  locale?: Locale
 }
 
 /**
@@ -844,7 +908,14 @@ export function projectPresenceMarker(
   presence: MapPresence,
   context: ProjectionContext,
 ): MapMarker | null {
-  const { world, perspective, nextChapterState, followMode, perspectiveIsReader } = context
+  const {
+    world,
+    perspective,
+    nextChapterState,
+    followMode,
+    perspectiveIsReader,
+    locale = DEFAULT_LOCALE,
+  } = context
 
   const entities = resolveEntities(presence.entityId, world)
   const { body, ownerCharacter } = entities
@@ -863,10 +934,16 @@ export function projectPresenceMarker(
     perspective,
     followMode,
     perspectiveIsReader,
+    locale,
   )
 
-  const visual = tierId ? tierVisuals[tierId] : undefined
-  const temporalVisual = getTemporalVisual(presence, context.currentEvent, context.currentSequence)
+  const messages = messagesFor(locale).map
+  const temporalVisual = getTemporalVisual(
+    presence,
+    context.currentEvent,
+    context.currentSequence,
+    locale,
+  )
   const followedCharacter = resolveFollowedCharacter(entities, followMode)
 
   return {
@@ -876,7 +953,7 @@ export function projectPresenceMarker(
     characterSlug: ownerCharacter.slug,
     location: loc,
     overviewX: 50,
-    overviewY: visual?.overviewY ?? 46,
+    overviewY: (tierId ? tierOverviewY[tierId] : undefined) ?? 46,
     x: x / 10,
     y: y / 6,
     body: names.bodyName,
@@ -887,13 +964,15 @@ export function projectPresenceMarker(
       hasConsciousnessTransfer(body, entities) ||
       (knowledge.isObserverBody && Boolean(perspective?.observer?.isDissonant)),
     suspicionLabel:
-      !perspectiveIsReader && knowledge.hasBeliefOnly ? 'Active suspicion' : undefined,
+      !perspectiveIsReader && knowledge.hasBeliefOnly ? messages.activeSuspicion : undefined,
     knowledgeState: resolveKnowledgeState(presence, knowledge),
-    sourceLabel: resolveSourceLabel(knowledge),
-    sinceLabel: presence.fromEventId ? `since ${presence.fromEventId}` : 'unknown event',
+    sourceLabel: resolveSourceLabel(knowledge, locale),
+    sinceLabel: presence.fromEventId
+      ? messages.sinceEvent(presence.fromEventId)
+      : messages.unknownEvent,
     positionColor: temporalVisual.color,
-    tierLabel: visual?.label || 'Outside tier',
-    locationLabel: loc.name || 'Unknown position',
+    tierLabel: tierId ? tierLabelFor(tierId, locale) : messages.outsideTier,
+    locationLabel: loc.name || messages.unknownPosition,
     temporalLabel: temporalVisual.label,
     temporalDetail: temporalVisual.detail,
     factionTags: ownerCharacter.factionTags || [],
@@ -914,6 +993,7 @@ export function projectFutureMarker(
   presence: MapPresence,
   next: MapNextChapterState,
   fallbackLocations: Location[],
+  locale: Locale = DEFAULT_LOCALE,
 ): MapMarker | null {
   const body = next.bodies.find((candidate) => candidate.id === presence.entityId)
   const character = body
@@ -928,8 +1008,8 @@ export function projectFutureMarker(
     next.presences,
     next.locations.length ? next.locations : fallbackLocations,
   )
-  const visual = tierId ? tierVisuals[tierId] : undefined
-  const name = toEnglishDisplayName(character.canonicalName)
+  const messages = messagesFor(locale).map
+  const name = displayName(character.canonicalName, locale)
 
   return {
     id: presence.entityId,
@@ -938,19 +1018,19 @@ export function projectFutureMarker(
     body: name,
     consciousness: name,
     appearance: name,
-    perceivedIdentity: `${name} · Ch. ${next.chapterNumber}`,
+    perceivedIdentity: messages.futureIdentity(name, next.chapterNumber),
     knowledgeState: 'confirmed',
     positionColor: '#d598ff',
-    tierLabel: visual?.label || 'Outside tier',
-    locationLabel: loc?.name || 'Unknown future position',
-    temporalLabel: 'Parallel future',
-    temporalDetail: `Position in chapter ${next.chapterNumber}`,
+    tierLabel: tierId ? tierLabelFor(tierId, locale) : messages.outsideTier,
+    locationLabel: loc?.name || messages.unknownFuturePosition,
+    temporalLabel: messages.parallelFuture,
+    temporalDetail: messages.positionInChapter(next.chapterNumber),
     tierId,
     locationId: loc?.slug,
     characterSlug: character.slug,
     location: loc,
     overviewX: 50,
-    overviewY: visual?.overviewY ?? 46,
+    overviewY: (tierId ? tierOverviewY[tierId] : undefined) ?? 46,
     hatsuNames: character.hatsuNames || [],
     hatsuIds: character.hatsuIds || [],
   }
@@ -970,7 +1050,11 @@ export type ZoomLevel = 'OVERVIEW' | 'TIER' | 'LOCAL'
  * Both the present and the parallel-future overlays used to carry an identical
  * copy of this block.
  */
-export function packMarkersForZoom<T extends MapMarker>(markers: T[], zoom: ZoomLevel): T[] {
+export function packMarkersForZoom<T extends MapMarker>(
+  markers: T[],
+  zoom: ZoomLevel,
+  locale: Locale = DEFAULT_LOCALE,
+): T[] {
   if (zoom === 'TIER') return markers
 
   if (zoom === 'LOCAL') {
@@ -988,7 +1072,7 @@ export function packMarkersForZoom<T extends MapMarker>(markers: T[], zoom: Zoom
       const spot = spotAnchorFor(marker)
       // Every local marker states what its position in the room is worth, so a
       // fixture canon named and a point the map had to invent never read alike.
-      const spotLabel = spotNoteFor(spot)
+      const spotLabel = spotNoteFor(spot, locale)
       if (spot?.exact) {
         // Canon names this fixture for this passenger, so the marker sits on it
         // rather than being fanned out with the rest of the room.

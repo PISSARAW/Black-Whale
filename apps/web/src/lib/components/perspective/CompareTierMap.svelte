@@ -1,5 +1,6 @@
 <script lang="ts">
   import BlackWhaleOverview from '$lib/assets/maps/black-whale-overview.svelte'
+  import { t } from '$lib/i18n'
 
   interface CompareMarker {
     id: string
@@ -67,7 +68,7 @@
             class:selected={marker.selected}
             style={`left:${marker.x}px;top:${marker.y}px`}
             onclick={() => onSelect?.(marker.subjectId)}
-            aria-label={`${marker.label} (${marker.certainty})`}
+            aria-label={$t.perspectiveUi.markerAria(marker.label, marker.certainty)}
           >
             <span class="code">{marker.code}</span>
             <span>{marker.label}</span>
@@ -80,14 +81,14 @@
       {/if}
     </div>
 
-    <aside class="legend" aria-label="Comparison legend">
-      <h3>Codes</h3>
-      <p><strong>=</strong> consistent between A and B</p>
-      <p><strong>←</strong> information only in A</p>
-      <p><strong>→</strong> information only in B</p>
-      <p><strong>≠</strong> explicit contradiction</p>
-      <p><strong>~</strong> certainty gap</p>
-      <p><strong>⏱</strong> temporal divergence</p>
+    <aside class="legend" aria-label={$t.perspectiveUi.legendLabel}>
+      <h3>{$t.perspectiveUi.codes}</h3>
+      <p><strong>=</strong> {$t.perspectiveUi.codeLegend.same}</p>
+      <p><strong>←</strong> {$t.perspectiveUi.codeLegend.leftOnly}</p>
+      <p><strong>→</strong> {$t.perspectiveUi.codeLegend.rightOnly}</p>
+      <p><strong>≠</strong> {$t.perspectiveUi.codeLegend.contradiction}</p>
+      <p><strong>~</strong> {$t.perspectiveUi.codeLegend.confidenceGap}</p>
+      <p><strong>⏱</strong> {$t.perspectiveUi.codeLegend.temporal}</p>
     </aside>
   </div>
 </section>

@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { MarkerIdentityState } from './types'
+  import { t } from '$lib/i18n'
 
   let {
     marker,
@@ -38,7 +39,11 @@
   data-hatsu-list={marker.hatsuIds?.join('|')}
   style={styleString}
   style:transform="translate(-50%, -50%)"
-  aria-label={`${marker.perceivedIdentity}, ${marker.locationLabel || 'unknown position'}, ${marker.temporalLabel || 'unknown status'}`}
+  aria-label={$t.perspectiveUi.markerPosition(
+    marker.perceivedIdentity,
+    marker.locationLabel || $t.perspectiveUi.unknownPosition,
+    marker.temporalLabel || $t.perspectiveUi.unknownStatusLower,
+  )}
   onclick={() => onExplain?.(marker)}
 >
   <span class="pulse" aria-hidden="true"></span>
@@ -46,15 +51,18 @@
   <span class="tooltip" role="tooltip">
     <span class="tooltip-topline">
       <strong>{marker.perceivedIdentity}</strong>
-      <i>{marker.temporalLabel || 'Unknown status'}</i>
+      <i>{marker.temporalLabel || $t.perspectiveUi.unknownStatus}</i>
     </span>
     <span class="location"
-      >{marker.locationLabel || 'Unspecified location'} · {marker.tierLabel || 'Outside tier'}</span
+      >{marker.locationLabel || $t.perspectiveUi.unspecifiedLocation} · {marker.tierLabel ||
+        $t.perspectiveUi.outsideTier}</span
     >
     {#if marker.temporalDetail}<span class="temporal-detail">{marker.temporalDetail}</span>{/if}
     {#if marker.spotLabel}<span class="spot-label">{marker.spotLabel}</span>{/if}
-    {#if hasAnomaly}<span class="anomaly-label">Transferred consciousness</span>{/if}
-    {#if marker.suspicionLabel}<span class="suspicion">Assumed identity</span>{/if}
+    {#if hasAnomaly}<span class="anomaly-label">{$t.perspectiveUi.transferredConsciousness}</span
+      >{/if}
+    {#if marker.suspicionLabel}<span class="suspicion">{$t.perspectiveUi.assumedIdentity}</span
+      >{/if}
   </span>
 </button>
 

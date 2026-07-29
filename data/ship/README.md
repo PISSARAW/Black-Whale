@@ -266,7 +266,7 @@ c'est la disposition que le pont 1 tient. Les quatorze appartements sont le
 même plan : le jeu de meubles est
 authoré une fois, dans le repère de l'appartement, et répété pour chaque prince.
 
-Deux en portent davantage, et c'est l'ordre d'autorité qui le veut : là où une
+Trois en portent davantage, et c'est l'ordre d'autorité qui le veut : là où une
 planche entre dans une pièce, elle l'emporte sur le plan, et ce qu'elle montre
 s'ajoute au jeu commun pour ce seul appartement.
 
@@ -281,6 +281,12 @@ s'ajoute au jeu commun pour ce seul appartement.
   mur et le guéridon. C'est le cas où la planche ne complète pas le plan mais
   le corrige : la table du 1003 est **refaite**, pas doublée, parce que deux
   tables ne peuvent pas tenir la même place.
+- Le **1005**, celui de Tubeppa : le chap. 366 montre son salon rendu à son
+  travail — le bureau devant lequel elle s'assied, son siège, les tableaux
+  blancs couverts d'équations le long du mur tribord, le panneau de feuilles
+  épinglées. Le jeu commun n'est pas touché : il tient l'autre bout de la
+  pièce, et c'est bien ce que la planche montre — un salon dont un bout est
+  devenu un cabinet de travail, pas un salon remplacé.
 
 Les autres appartements gardent le jeu du plan, parce qu'aucune page ne les
 montre. Ce n'est pas une inégalité de traitement : c'est le dossier qui dit ce

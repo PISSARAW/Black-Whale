@@ -280,8 +280,13 @@ tables du banquet.
 Il vaut aussi pour ce qu'une **planche** meuble : le salon du Roi et ses sièges
 appariés, ses tableaux et sa baie (chap. 382), la couchette, le lavabo et le
 cabinet de la cellule de première classe (chap. 373), la couchette de la
-cellule de haute sécurité (chap. 359). Le petit mobilier reste dehors : une
-lampe qu'on ne peut pas traverser fait d'une chambre un labyrinthe.
+cellule de haute sécurité et la table basse où repose la boisson de Beyond,
+avec, de l'autre côté des barreaux, le banc de la garde, sa table, son étagère
+et son poste mural (chap. 359). Le petit mobilier reste dehors : une lampe
+qu'on ne peut pas traverser fait d'une chambre un labyrinthe. Deux exceptions,
+et elles ont la même raison que l'entrave de Beyond : le téléphone mural du
+1014 et l'interphone du poste de garde. Ce qui se joue dans ces deux pièces-là
+se joue debout devant eux.
 
 Le second : **ce qu'une planche montre est ce que la pièce est** —
 

@@ -104,8 +104,15 @@ describe('the solids standing in the rooms', () => {
       ),
     }).triangles
 
+    // What the room draws with no grille in it at all, so the comparison is
+    // between the two ways of drawing the runs and not between two rooms.
+    const withoutGrille = buildTierMesh({
+      ...plan,
+      structures: plan.structures.filter((structure) => structure.kind !== 'bars'),
+    }).triangles
+
     // Two boxes against fifty uprights and the rail over them.
-    expect(asBars).toBeGreaterThan(asSlabs * 4)
+    expect(asBars - withoutGrille).toBeGreaterThan((asSlabs - withoutGrille) * 4)
   })
 
   it('draws more geometry for a room with something in it', () => {

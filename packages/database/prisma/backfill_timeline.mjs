@@ -58,17 +58,61 @@ const knownEvents = [
     legacyTitles: [],
   },
   {
-    chapter: 358,
-    chapterTitle: 'Eve',
-    sequence: 2,
+    // The ship sails at noon and Woody dies between 12:15 and 12:30, so the
+    // death belongs to the departure chapter, not to the eve: chapter 358 is
+    // before the ship exists as a place, and the on-ship rule below turns every
+    // event under 359 off-ship. Filed at 358 the death was dropped from the
+    // ship timeline entirely, and the bathroom-floor spot `localSpotAnchors`
+    // reserves for the body could never be reached.
+    chapter: 359,
+    chapterTitle: 'Departure',
+    sequence: 3,
     title: 'Woody is found dead',
-    summary: 'Woody is found exsanguinated in the bathroom of room 1014.',
+    summary:
+      'Woody dies between 12:15 and 12:30, minutes after the Black Whale leaves port, and is found exsanguinated on the bathroom floor of room 1014. Kurapika reaches the bathroom shortly afterwards with Bill, Kurton, Sayird and two more of the detail.',
+    occurredAtLabel: 'Day 1 · 12:15-12:30',
     legacyTitles: [],
+    // The event already held an ordinal from when it sat at 358.2, and curated
+    // ordinals are preserved, so moving the chapter alone would have left the
+    // death ordered before the departure it follows.
+    occursAfterTitle: 'Ship Departs',
+  },
+  {
+    chapter: 359,
+    chapterTitle: 'Departure',
+    sequence: 4,
+    title: 'The inaugural banquet gathers the royal family',
+    summary:
+      'The Tier 1 banquet hall receives the court for the first dinner of the crossing: Nasubi on his throne, the five highest princes — Benjamin, Camilla, Zhang Lei, Tserriednich and Tubeppa — Halkenburg, Kacho and Fugetsu, Momoze in a corner with Marayam and their mother Sevanti, and Queen Oito with the child the archive later learns is her nephew. The hall holds through chapters 359 to 362 as the princes leave at staggered intervals: Kacho uses hers to propose an alliance to Fugetsu, Halkenburg crosses to the throne to tell his father he withdraws from the contest, Tserriednich and Tubeppa strike their own alliance, and Nasubi lays down the rules the Guardian Spirit Beasts must obey.',
+    legacyTitles: [],
+    occursAfterTitle: 'Woody is found dead',
+  },
+  {
+    chapter: 359,
+    chapterTitle: 'Departure',
+    sequence: 5,
+    title: 'Four more guards are found exsanguinated',
+    summary:
+      'Escorting Oito and the child back from the banquet, Kurapika and his detail come on four more bodyguards dead in a corridor of the royal residential sector, drained of blood exactly as Woody was. Five deaths in an afternoon is what turns an unexplained corpse into the pattern Kurapika reads as parasitic Nen. The four are never named; the next chapter establishes that each of the five was serving a queen other than Oito.',
+    legacyTitles: [],
+    occursAfterTitle: 'The inaugural banquet gathers the royal family',
   },
   {
     chapter: 360,
     chapterTitle: 'Parasite',
     sequence: 1,
+    title: 'Kurapika interrogates the detail',
+    summary:
+      "Gun and Dowsing Chain drawn in room 1014, Kurapika tells the bodyguards and servants what the voyage really is — a succession war — and questions each of them on what they already knew. Two admit they knew and that they are not Woble's men. Oito orders him to shoot them on the spot; he has them tied to chairs instead, and one explains that the five dead guards each served someone else: Oito being the lowest-ranked queen, the other seven placed their own guards around her as informants.",
+    legacyTitles: [],
+    occursAfterTitle: 'Four more guards are found exsanguinated',
+  },
+  {
+    chapter: 360,
+    chapterTitle: 'Parasite',
+    // The interrogation above comes first: it gathers the whole detail, Kurton
+    // included, and he dies in this event.
+    sequence: 2,
     title: 'Sayird is manipulated',
     summary:
       'Controlled by a parasitic Nen ability, Sayird kills Kurton and attacks Kurapika before being subdued.',

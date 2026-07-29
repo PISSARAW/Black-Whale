@@ -35,7 +35,7 @@
     "parentLocationId": "tier-1",
     "deck": 1,
     "zoneType": "public",
-    "description": "Ceremony and reception hall between the King's and Princes' living quarters, used for the departure ceremony and scheduled Sunday banquets.",
+    "description": "Ceremony and reception hall between the King's and Princes' living quarters, used for the departure ceremony and scheduled Sunday banquets. It holds the inaugural banquet on the afternoon of the first day, with Nasubi on his throne and the princes leaving at staggered intervals.",
     "entrances": [],
     "exits": []
   },
@@ -215,7 +215,7 @@
     "parentLocationId": "tier-1",
     "deck": 1,
     "zoneType": "prison",
-    "description": "High security cell holding Beyond Netero, monitored by the Zodiacs.",
+    "description": "High security cell holding Beyond Netero. Three Zodiacs hold the guard side of the bars around the clock: Saiyu, Saccho Kobayakawa and Kanzai.",
     "entrances": [],
     "exits": []
   },
@@ -225,7 +225,7 @@
     "parentLocationId": "tier-1",
     "deck": 1,
     "zoneType": "residential",
-    "description": "Vast central artery serving the 14 luxurious suites of the princes of Kakin.",
+    "description": "Vast central artery serving the 14 luxurious suites of the princes of Kakin. Canon calls each suite a zone, numbered after the prince it houses, and posts one of Kurapika's Hunters to each: zone 14 is his own, room 1014. Four more bodyguards are found exsanguinated in this corridor on the first afternoon.",
     "entrances": [],
     "exits": []
   },
@@ -475,7 +475,7 @@
     "parentLocationId": "tier-4",
     "deck": 4,
     "zoneType": "military",
-    "description": "Conference room used for ship-security briefings and headed during the voyage by Mizaistom.",
+    "description": "Conference room used for ship-security briefings and headed during the voyage by Mizaistom, from his first briefing to the royal troops at the departure to the emergency meeting where he moves 800 of the 2,000 soldiers down to Tiers 3-5.",
     "entrances": [],
     "exits": []
   },
@@ -505,7 +505,7 @@
     "parentLocationId": "tier-3",
     "deck": 3,
     "zoneType": "residential",
-    "description": "Upper passenger cabins on Tier 3, the best accommodation available outside the royal tiers.",
+    "description": "Upper passenger cabins on Tier 3, the best accommodation available outside the royal tiers. The Hunter Association contingent works from here: at the departure seven of them sit a logistics meeting in the compartment — the Zodiacs Pyon, Gel, Cluck and Ginta, the doctors Sanbica Norton and Tokarine, and one unnamed Hunter.",
     "entrances": [],
     "exits": []
   },

@@ -111,17 +111,6 @@ async function main() {
     },
   })
 
-  // Woody's death is documented in his passenger record and his chapter 358
-  // appearance. Keep it separate from boarding so it remains addressable.
-  await prisma.narrativeEvent.create({
-    data: {
-      chapterId: ch358.id,
-      sequence: 2,
-      title: 'Woody is found dead',
-      summary: 'Woody is found exsanguinated in the bathroom of room 1014.',
-    },
-  })
-
   // Event 2: Departure (Ch 359)
   await prisma.narrativeEvent.create({
     data: {
@@ -129,6 +118,19 @@ async function main() {
       sequence: 2,
       title: 'Ship Departs',
       summary: 'The Black Whale departs for the Dark Continent.',
+    },
+  })
+
+  // Woody dies between 12:15 and 12:30, so after the noon departure above and
+  // in the chapter that shows the corpse — his 358 appearance has him alive.
+  // Keep it separate from the departure so it remains addressable.
+  await prisma.narrativeEvent.create({
+    data: {
+      chapterId: ch359.id,
+      sequence: 3,
+      title: 'Woody is found dead',
+      summary: 'Woody is found exsanguinated in the bathroom of room 1014.',
+      occurredAtLabel: 'Day 1 · 12:15-12:30',
     },
   })
 

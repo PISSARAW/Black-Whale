@@ -56,6 +56,14 @@ serait bâtie sur poteaux et qu'un volume vide ne donne au visiteur aucun repèr
 de distance. Le rendu et les collisions lisent la même fonction : un pilier
 qu'on voit est un pilier qu'on contourne.
 
+Il en va de même des **structures** : leurs faces rejoignent les murs de la
+pièce, sauf pour ce qui est suspendu au-dessus de la tête. Un solide dont le
+dessous dégage 2,10 m est dessiné là où il pend et n'arrête personne au sol —
+sans quoi la mezzanine du casino condamnerait les boutiques qu'elle abrite, les
+loges de la salle de projection barreraient les allées latérales qu'elles
+surplombent, et le rideau de scène serait un mur en travers de l'avant-scène.
+C'est `blocksTheFloor` qui tranche, et un test vérifie les deux sens.
+
 ### Les enveloppes
 
 Un appartement princier, ce sont sept pièces derrière **une seule** porte. Ses

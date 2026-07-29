@@ -10,6 +10,7 @@ import {
   validateBlueprint,
 } from './blueprint'
 import {
+  blocksTheFloor,
   grilleBars,
   longestSharedWall,
   pointInPolygon,
@@ -364,9 +365,10 @@ describe('what stands in the rooms', () => {
     }
   })
 
-  it('collides with everything it draws', () => {
+  it('collides with everything it draws standing on the floor', () => {
     for (const plan of ship.plans.values()) {
       for (const structure of plan.structures) {
+        if (!blocksTheFloor(structure)) continue
         const faces = plan.walls.filter((wall) => wall.spaceId === structure.spaceId)
         const outline = structureFootprint(structure)
         for (const corner of outline) {
@@ -379,6 +381,26 @@ describe('what stands in the rooms', () => {
             `${structure.id} can be walked through`,
           ).toBe(true)
         }
+      }
+    }
+  })
+
+  it('lets the visitor walk under what hangs over head height', () => {
+    // A mezzanine, a theatre box, a curtain across a proscenium: drawn where
+    // they hang, and no obstacle on the floor they hang over. Collide with
+    // those and the room fences off the very places they are drawn above.
+    const hung = [...ship.plans.values()].flatMap((plan) =>
+      plan.structures.filter((structure) => !blocksTheFloor(structure)),
+    )
+    expect(hung.length).toBeGreaterThan(0)
+
+    for (const plan of ship.plans.values()) {
+      for (const structure of plan.structures) {
+        if (blocksTheFloor(structure)) continue
+        expect(
+          plan.walls.some((wall) => wall.structureId === structure.id),
+          `${structure.id} hangs at ${structure.base} m and is still walked into`,
+        ).toBe(false)
       }
     }
   })

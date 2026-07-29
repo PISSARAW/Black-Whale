@@ -23,6 +23,7 @@ import {
   polygonContains,
   polygonsOverlap,
   pointInPolygon,
+  blocksTheFloor,
   structureFootprint,
   structureWalls,
   wallSegments,
@@ -109,9 +110,13 @@ export function buildShip(source: Blueprint = blueprint): Ship {
     }
 
     // A structure's faces join the room's own walls, so the collision test and
-    // the renderer read one list and cannot disagree about what is solid.
+    // the renderer read one list and cannot disagree about what is solid —
+    // except for what is hung above head height, which is drawn where it hangs
+    // and walked under rather than around.
     const structures = allStructures.filter((structure) => onThisTier.has(structure.spaceId))
-    for (const structure of structures) walls.push(...structureWalls(structure))
+    for (const structure of structures) {
+      if (blocksTheFloor(structure)) walls.push(...structureWalls(structure))
+    }
 
     plans.set(tier.id, { tier, spaces: tierSpaces, doorways, walls, columns, structures })
 
@@ -181,7 +186,7 @@ export function spawnPoint(space: Space, structures: Structure[] = []): Vec2 {
   }
 
   const solids = structures
-    .filter((structure) => structure.spaceId === space.id)
+    .filter((structure) => structure.spaceId === space.id && blocksTheFloor(structure))
     .map((structure) => structureFootprint(structure))
   const clear = (at: Vec2) =>
     pointInPolygon(at, space.footprint) && !solids.some((solid) => pointInPolygon(at, solid))
@@ -484,10 +489,7 @@ export function validateBlueprint(source: Blueprint = blueprint): string[] {
         (doorway.start[0] + doorway.end[0]) / 2,
         (doorway.start[1] + doorway.end[1]) / 2,
       ]
-      const along = Math.hypot(
-        doorway.end[0] - doorway.start[0],
-        doorway.end[1] - doorway.start[1],
-      )
+      const along = Math.hypot(doorway.end[0] - doorway.start[0], doorway.end[1] - doorway.start[1])
       if (along < EPSILON) continue
       const normal: Vec2 = [
         -(doorway.end[1] - doorway.start[1]) / along,
@@ -500,7 +502,9 @@ export function validateBlueprint(source: Blueprint = blueprint): string[] {
         for (const step of [-1.2, 1.2]) {
           const at: Vec2 = [middle[0] + normal[0] * step, middle[1] + normal[1] * step]
           if (pointInPolygon(at, outline)) {
-            issues.push(`structure ${structure.id}: stands in the doorway ${doorway.a} | ${doorway.b}`)
+            issues.push(
+              `structure ${structure.id}: stands in the doorway ${doorway.a} | ${doorway.b}`,
+            )
           }
         }
       }

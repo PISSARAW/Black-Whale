@@ -230,12 +230,20 @@ export function wallSegments(space: Space, doorways: Doorway[]): WallSegment[] {
     let cursor = 0
     for (const [from, to] of gaps) {
       if (from - cursor > EPSILON) {
-        walls.push({ spaceId: space.id, start: along(a1, unit, cursor), end: along(a1, unit, from) })
+        walls.push({
+          spaceId: space.id,
+          start: along(a1, unit, cursor),
+          end: along(a1, unit, from),
+        })
       }
       cursor = Math.max(cursor, to)
     }
     if (length - cursor > EPSILON) {
-      walls.push({ spaceId: space.id, start: along(a1, unit, cursor), end: along(a1, unit, length) })
+      walls.push({
+        spaceId: space.id,
+        start: along(a1, unit, cursor),
+        end: along(a1, unit, length),
+      })
     }
   }
 
@@ -537,6 +545,27 @@ export function grilleBars(structure: Structure): Polygon[] {
   }
 
   return bars
+}
+
+/**
+ * How much clear air under a solid makes it something you walk under rather
+ * than something you walk around.
+ */
+export const HEADROOM = 2.1
+
+/**
+ * Whether a solid stands on the floor at all.
+ *
+ * A structure's faces are what the visitor collides with, which is right for
+ * everything resting on the deck and wrong for everything hung above it. The
+ * casino's mezzanine runs over the shopfronts it shelters, the theatre's boxes
+ * run down its side walls above the aisles, and a curtain hangs across the top
+ * of the proscenium: colliding with those at floor level fences off the very
+ * places they are drawn over. Anything whose underside clears head height is
+ * therefore drawn and not collided with — you walk under it, as you would.
+ */
+export function blocksTheFloor(structure: Structure): boolean {
+  return structure.base < HEADROOM
 }
 
 /** The faces of a structure, as wall segments the visitor collides with. */

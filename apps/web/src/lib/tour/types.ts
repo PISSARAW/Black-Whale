@@ -173,7 +173,10 @@ export interface Space {
  * A structure is therefore geometry like any other, and carries its own source:
  * the room may rest on one chapter and what stands in it on another. The walls
  * of a structure go into the same list as the walls of the room, so a spring
- * you can see is a spring you have to walk around.
+ * you can see is a spring you have to walk around — unless it is hung clear of
+ * head height, in which case you walk under it. A mezzanine, a theatre box, a
+ * curtain over a proscenium: colliding with those on the floor would fence off
+ * the very ground they are drawn above. `blocksTheFloor` draws that line.
  */
 export interface Structure {
   id: string

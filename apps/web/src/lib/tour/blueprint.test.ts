@@ -230,36 +230,35 @@ describe('what stands in the rooms', () => {
   })
 
   it('sets the ring of coffins the burial chamber is drawn as', () => {
-    const chamber = ship.spaces.get('tier-1-princes-burial-chamber')!
-    const standing = inRoom(chamber.id)
+    const rotunda = ship.spaces.get('tier-1-princes-burial-chamber-rotunda')!
+    const standing = inRoom(rotunda.id)
     expect(standing.filter((structure) => structure.id.includes('coffin'))).toHaveLength(14)
 
     // Every one of them radial, inside the chamber, and clear of its walls.
     for (const coffin of standing) {
       for (const corner of structureFootprint(coffin)) {
-        expect(pointInPolygon(corner, chamber.footprint), `${coffin.id} is in a wall`).toBe(true)
+        expect(pointInPolygon(corner, rotunda.footprint), `${coffin.id} is in a wall`).toBe(true)
       }
     }
   })
 
   it('leaves the way into the burial chamber open', () => {
-    const plan = ship.plans.get('tier-1')!
-    const door = plan.doorways.find(
-      (candidate) =>
-        [candidate.a, candidate.b].includes('tier-1-princes-burial-chamber') &&
-        [candidate.a, candidate.b].includes('tier-1-burial-passage'),
+    const way = ship.links.find(
+      (link) => link.to === 'tier-1-princes-burial-chamber-rotunda' && link.kind === 'door',
     )
-    expect(door, 'the burial chamber has no doorway').toBeDefined()
+    expect(way, 'the burial chamber cannot be entered').toBeDefined()
 
-    // Walk in from the threshold: a coffin set on the axis of the door would
-    // seal the room the derived doorway says is open.
-    const from: Vec2 = [(door!.start[0] + door!.end[0]) / 2, (door!.start[1] + door!.end[1]) / 2]
-    const inside: Vec2 = [from[0], from[1] - 4]
-    for (const coffin of inRoom('tier-1-princes-burial-chamber')) {
-      expect(
-        pointInPolygon(inside, structureFootprint(coffin)),
-        `${coffin.id} blocks the doorway`,
-      ).toBe(false)
+    // Step in from where the door puts you: a coffin on that axis would seal
+    // the room nothing else can be reached through.
+    const arrival = way!.atTo!
+    for (const step of [0, 1.5, 3]) {
+      const inside: Vec2 = [arrival[0], arrival[1] - step]
+      for (const coffin of inRoom('tier-1-princes-burial-chamber-rotunda')) {
+        expect(
+          pointInPolygon(inside, structureFootprint(coffin)),
+          `${coffin.id} blocks the way in`,
+        ).toBe(false)
+      }
     }
   })
 

@@ -33,9 +33,9 @@ Five tiers, 37 hand-drawn SVG deck and room maps, and every tracked body placed 
 
 ### Walk it in first person
 
-[`/tour`](https://exploreblackwhale.com/tour) is the same ship as geometry rather than as a drawing: five decks, 265 reconstructed spaces, and a first-person walk through all of them. It carries no passengers and no chapter — it answers _how the ship is built_, where the map answers _who is where_.
+[`/tour`](https://exploreblackwhale.com/tour) is the same ship as geometry rather than as a drawing: five decks, 266 reconstructed spaces, and a first-person walk through all of them. It carries no passengers and no chapter — it answers _how the ship is built_, where the map answers _who is where_.
 
-The deck plans are schematic and the room plans are not, so the tour keeps both rather than distorting either: a deck shows the footprint its plan draws, and a room with an interior of its own — each prince's apartment, the detention block, the Justice Bureau, the hospital, the King's living room, a lifeboat, twenty-five in all — is entered through its door and walked at full size.
+The deck plans are schematic and the room plans are not, so the tour keeps both rather than distorting either: a deck shows the footprint its plan draws, and a room with an interior of its own — each prince's apartment, the detention block, the Justice Bureau, the hospital, the King's living room, the burial chamber, a lifeboat, twenty-six in all — is entered through its door and walked at full size.
 
 The tour does not decorate — it never invents where a chair stood — but it draws what a drawing puts there, and what a panel makes the room. The prince apartment plan gives each suite its beds, sofas, dining table and kitchen; ch. 371 rings the burial chamber with fourteen coffins; ch. 383 gives the banquet hall its stage and the throne on its dais, and the launch bays their pods; ch. 406 the springs the hull holds the ship on. Each carries its own source, and each is solid, so you walk around it.
 

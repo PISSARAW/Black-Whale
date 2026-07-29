@@ -949,23 +949,175 @@
       "sourceFr": "Chap. 349 — cérémonie de départ"
     },
     {
-      "id": "tier-1-vvip-living-quarters",
+      "id": "tier-1-vvip-corridor",
       "tierId": "tier-1",
       "locationId": "tier-1-vvip-living-quarters",
-      "name": "VVIP Living Quarters",
-      "nameFr": "Quartiers VVIP",
-      "category": "residential",
-      "provenance": "plan",
-      "source": "Deck plan, ch. 349",
+      "name": "VVIP Block Corridor",
+      "nameFr": "Couloir du bloc VVIP",
+      "category": "corridor",
+      "provenance": "map",
+      "source": "The /ship plan of the block: a corridor down its length, four suites either side.",
       "ceiling": null,
       "envelope": null,
       "footprint": [
-        [-87.5, 3.5],
-        [-59.5, 3.5],
-        [-59.5, 56],
-        [-87.5, 56]
+        [-74.0, 3.5],
+        [-71.0, 3.5],
+        [-71.0, 56.0],
+        [-74.0, 56.0]
       ],
-      "sourceFr": "Plan des ponts, chap. 349"
+      "sourceFr": "Le plan du bloc sur /ship : un couloir dans sa longueur, quatre suites de chaque côté."
+    },
+    {
+      "id": "tier-1-vvip-restricted-royal-01",
+      "tierId": "tier-1",
+      "locationId": null,
+      "name": "Restricted Royal Suite 1",
+      "nameFr": "Suite royale réservée 1",
+      "category": "quarters",
+      "provenance": "map",
+      "source": "The /ship plan of the block: two rows of four suites either side of a corridor, the two restricted royal suites, the mafia suite and the V5 politician's among them. The plan numbers the two restricted suites 1001 and 1002, numbers the deck plan gives to the princes' rooms elsewhere on this tier, so the tour keeps the role and drops the number.",
+      "ceiling": null,
+      "envelope": "vvip-restricted-royal-01",
+      "footprint": [
+        [-87.5, 3.5],
+        [-74.0, 3.5],
+        [-74.0, 16.625],
+        [-87.5, 16.625]
+      ],
+      "sourceFr": "Le plan du bloc sur /ship : deux rangées de quatre suites de part et d'autre d'un couloir, dont les deux suites royales réservées, la suite mafieuse et celle du politicien V5. Le plan numérote les deux suites réservées 1001 et 1002, numéros que le plan des ponts donne aux chambres des princes ailleurs sur ce pont : la visite garde le rôle et laisse tomber le numéro."
+    },
+    {
+      "id": "tier-1-vvip-restricted-royal-02",
+      "tierId": "tier-1",
+      "locationId": null,
+      "name": "Restricted Royal Suite 2",
+      "nameFr": "Suite royale réservée 2",
+      "category": "quarters",
+      "provenance": "map",
+      "source": "The /ship plan of the block: two rows of four suites either side of a corridor, the two restricted royal suites, the mafia suite and the V5 politician's among them. The plan numbers the two restricted suites 1001 and 1002, numbers the deck plan gives to the princes' rooms elsewhere on this tier, so the tour keeps the role and drops the number.",
+      "ceiling": null,
+      "envelope": "vvip-restricted-royal-02",
+      "footprint": [
+        [-87.5, 16.625],
+        [-74.0, 16.625],
+        [-74.0, 29.75],
+        [-87.5, 29.75]
+      ],
+      "sourceFr": "Le plan du bloc sur /ship : deux rangées de quatre suites de part et d'autre d'un couloir, dont les deux suites royales réservées, la suite mafieuse et celle du politicien V5. Le plan numérote les deux suites réservées 1001 et 1002, numéros que le plan des ponts donne aux chambres des princes ailleurs sur ce pont : la visite garde le rôle et laisse tomber le numéro."
+    },
+    {
+      "id": "tier-1-vvip-suite-01",
+      "tierId": "tier-1",
+      "locationId": null,
+      "name": "VVIP Suite 1",
+      "nameFr": "Suite VVIP 1",
+      "category": "quarters",
+      "provenance": "map",
+      "source": "The /ship plan of the block: two rows of four suites either side of a corridor, the two restricted royal suites, the mafia suite and the V5 politician's among them. The plan numbers the two restricted suites 1001 and 1002, numbers the deck plan gives to the princes' rooms elsewhere on this tier, so the tour keeps the role and drops the number.",
+      "ceiling": null,
+      "envelope": "vvip-suite-01",
+      "footprint": [
+        [-87.5, 29.75],
+        [-74.0, 29.75],
+        [-74.0, 42.875],
+        [-87.5, 42.875]
+      ],
+      "sourceFr": "Le plan du bloc sur /ship : deux rangées de quatre suites de part et d'autre d'un couloir, dont les deux suites royales réservées, la suite mafieuse et celle du politicien V5. Le plan numérote les deux suites réservées 1001 et 1002, numéros que le plan des ponts donne aux chambres des princes ailleurs sur ce pont : la visite garde le rôle et laisse tomber le numéro."
+    },
+    {
+      "id": "tier-1-vvip-suite-02",
+      "tierId": "tier-1",
+      "locationId": null,
+      "name": "VVIP Suite 2",
+      "nameFr": "Suite VVIP 2",
+      "category": "quarters",
+      "provenance": "map",
+      "source": "The /ship plan of the block: two rows of four suites either side of a corridor, the two restricted royal suites, the mafia suite and the V5 politician's among them. The plan numbers the two restricted suites 1001 and 1002, numbers the deck plan gives to the princes' rooms elsewhere on this tier, so the tour keeps the role and drops the number.",
+      "ceiling": null,
+      "envelope": "vvip-suite-02",
+      "footprint": [
+        [-87.5, 42.875],
+        [-74.0, 42.875],
+        [-74.0, 56.0],
+        [-87.5, 56.0]
+      ],
+      "sourceFr": "Le plan du bloc sur /ship : deux rangées de quatre suites de part et d'autre d'un couloir, dont les deux suites royales réservées, la suite mafieuse et celle du politicien V5. Le plan numérote les deux suites réservées 1001 et 1002, numéros que le plan des ponts donne aux chambres des princes ailleurs sur ce pont : la visite garde le rôle et laisse tomber le numéro."
+    },
+    {
+      "id": "tier-1-vvip-suite-03",
+      "tierId": "tier-1",
+      "locationId": null,
+      "name": "VVIP Suite 3",
+      "nameFr": "Suite VVIP 3",
+      "category": "quarters",
+      "provenance": "map",
+      "source": "The /ship plan of the block: two rows of four suites either side of a corridor, the two restricted royal suites, the mafia suite and the V5 politician's among them. The plan numbers the two restricted suites 1001 and 1002, numbers the deck plan gives to the princes' rooms elsewhere on this tier, so the tour keeps the role and drops the number.",
+      "ceiling": null,
+      "envelope": "vvip-suite-03",
+      "footprint": [
+        [-71.0, 3.5],
+        [-59.5, 3.5],
+        [-59.5, 16.625],
+        [-71.0, 16.625]
+      ],
+      "sourceFr": "Le plan du bloc sur /ship : deux rangées de quatre suites de part et d'autre d'un couloir, dont les deux suites royales réservées, la suite mafieuse et celle du politicien V5. Le plan numérote les deux suites réservées 1001 et 1002, numéros que le plan des ponts donne aux chambres des princes ailleurs sur ce pont : la visite garde le rôle et laisse tomber le numéro."
+    },
+    {
+      "id": "tier-1-vvip-suite-04",
+      "tierId": "tier-1",
+      "locationId": null,
+      "name": "VVIP Suite 4",
+      "nameFr": "Suite VVIP 4",
+      "category": "quarters",
+      "provenance": "map",
+      "source": "The /ship plan of the block: two rows of four suites either side of a corridor, the two restricted royal suites, the mafia suite and the V5 politician's among them. The plan numbers the two restricted suites 1001 and 1002, numbers the deck plan gives to the princes' rooms elsewhere on this tier, so the tour keeps the role and drops the number.",
+      "ceiling": null,
+      "envelope": "vvip-suite-04",
+      "footprint": [
+        [-71.0, 16.625],
+        [-59.5, 16.625],
+        [-59.5, 29.75],
+        [-71.0, 29.75]
+      ],
+      "sourceFr": "Le plan du bloc sur /ship : deux rangées de quatre suites de part et d'autre d'un couloir, dont les deux suites royales réservées, la suite mafieuse et celle du politicien V5. Le plan numérote les deux suites réservées 1001 et 1002, numéros que le plan des ponts donne aux chambres des princes ailleurs sur ce pont : la visite garde le rôle et laisse tomber le numéro."
+    },
+    {
+      "id": "tier-1-vvip-mafia-suite",
+      "tierId": "tier-1",
+      "locationId": null,
+      "name": "Mafia VVIP Suite",
+      "nameFr": "Suite VVIP mafieuse",
+      "category": "quarters",
+      "provenance": "map",
+      "source": "The /ship plan of the block: two rows of four suites either side of a corridor, the two restricted royal suites, the mafia suite and the V5 politician's among them. The plan numbers the two restricted suites 1001 and 1002, numbers the deck plan gives to the princes' rooms elsewhere on this tier, so the tour keeps the role and drops the number.",
+      "ceiling": null,
+      "envelope": "vvip-mafia-suite",
+      "footprint": [
+        [-71.0, 29.75],
+        [-59.5, 29.75],
+        [-59.5, 42.875],
+        [-71.0, 42.875]
+      ],
+      "sourceFr": "Le plan du bloc sur /ship : deux rangées de quatre suites de part et d'autre d'un couloir, dont les deux suites royales réservées, la suite mafieuse et celle du politicien V5. Le plan numérote les deux suites réservées 1001 et 1002, numéros que le plan des ponts donne aux chambres des princes ailleurs sur ce pont : la visite garde le rôle et laisse tomber le numéro."
+    },
+    {
+      "id": "tier-1-vvip-v5-suite",
+      "tierId": "tier-1",
+      "locationId": null,
+      "name": "V5 Politician's Suite",
+      "nameFr": "Suite du politicien V5",
+      "category": "quarters",
+      "provenance": "map",
+      "source": "The /ship plan of the block: two rows of four suites either side of a corridor, the two restricted royal suites, the mafia suite and the V5 politician's among them. The plan numbers the two restricted suites 1001 and 1002, numbers the deck plan gives to the princes' rooms elsewhere on this tier, so the tour keeps the role and drops the number.",
+      "ceiling": null,
+      "envelope": "vvip-v5-suite",
+      "footprint": [
+        [-71.0, 42.875],
+        [-59.5, 42.875],
+        [-59.5, 56.0],
+        [-71.0, 56.0]
+      ],
+      "sourceFr": "Le plan du bloc sur /ship : deux rangées de quatre suites de part et d'autre d'un couloir, dont les deux suites royales réservées, la suite mafieuse et celle du politicien V5. Le plan numérote les deux suites réservées 1001 et 1002, numéros que le plan des ponts donne aux chambres des princes ailleurs sur ce pont : la visite garde le rôle et laisse tomber le numéro."
     },
     {
       "id": "tier-1-vip-casino",
@@ -7089,6 +7241,70 @@
   ],
   "doors": [
     {
+      "a": "tier-1-vvip-restricted-royal-01",
+      "b": "tier-1-vvip-corridor",
+      "at": [-74.0, 10.06],
+      "width": 2,
+      "reason": "The suite opens onto the block corridor alone.",
+      "reasonFr": "La suite n'ouvre que sur le couloir du bloc."
+    },
+    {
+      "a": "tier-1-vvip-restricted-royal-02",
+      "b": "tier-1-vvip-corridor",
+      "at": [-74.0, 23.19],
+      "width": 2,
+      "reason": "The suite opens onto the block corridor alone.",
+      "reasonFr": "La suite n'ouvre que sur le couloir du bloc."
+    },
+    {
+      "a": "tier-1-vvip-suite-01",
+      "b": "tier-1-vvip-corridor",
+      "at": [-74.0, 36.31],
+      "width": 2,
+      "reason": "The suite opens onto the block corridor alone.",
+      "reasonFr": "La suite n'ouvre que sur le couloir du bloc."
+    },
+    {
+      "a": "tier-1-vvip-suite-02",
+      "b": "tier-1-vvip-corridor",
+      "at": [-74.0, 49.44],
+      "width": 2,
+      "reason": "The suite opens onto the block corridor alone.",
+      "reasonFr": "La suite n'ouvre que sur le couloir du bloc."
+    },
+    {
+      "a": "tier-1-vvip-suite-03",
+      "b": "tier-1-vvip-corridor",
+      "at": [-71.0, 10.06],
+      "width": 2,
+      "reason": "The suite opens onto the block corridor alone.",
+      "reasonFr": "La suite n'ouvre que sur le couloir du bloc."
+    },
+    {
+      "a": "tier-1-vvip-suite-04",
+      "b": "tier-1-vvip-corridor",
+      "at": [-71.0, 23.19],
+      "width": 2,
+      "reason": "The suite opens onto the block corridor alone.",
+      "reasonFr": "La suite n'ouvre que sur le couloir du bloc."
+    },
+    {
+      "a": "tier-1-vvip-mafia-suite",
+      "b": "tier-1-vvip-corridor",
+      "at": [-71.0, 36.31],
+      "width": 2,
+      "reason": "The suite opens onto the block corridor alone.",
+      "reasonFr": "La suite n'ouvre que sur le couloir du bloc."
+    },
+    {
+      "a": "tier-1-vvip-v5-suite",
+      "b": "tier-1-vvip-corridor",
+      "at": [-71.0, 49.44],
+      "width": 2,
+      "reason": "The suite opens onto the block corridor alone.",
+      "reasonFr": "La suite n'ouvre que sur le couloir du bloc."
+    },
+    {
       "a": "tier-1-queens-living-quarters-room-01",
       "b": "tier-1-queens-corridor",
       "at": [-30.1, 10.06],
@@ -9441,6 +9657,86 @@
       "provenance": "panel",
       "source": "Ch. 382 — the guarded gate to the princes' quarters, its desk and its posted soldiers.",
       "sourceFr": "Chap. 382 — le poste gardé à l'entrée des quartiers princiers, son comptoir et ses soldats en faction."
+    },
+    {
+      "id": "tier-1-supreme-court-bench",
+      "spaceId": "tier-1-supreme-court",
+      "kind": "counter",
+      "name": "Supreme Magistrate's Bench",
+      "nameFr": "Banc du magistrat suprême",
+      "at": [118, 38.5],
+      "size": [2.5, 12],
+      "rotation": 0,
+      "base": 0,
+      "height": 1.2,
+      "sides": null,
+      "provenance": "map",
+      "source": "The /ship courtroom plan: the magistrate's bench at the head, prosecution and defence facing each other across the floor, the dock between them and the public bench at the back.",
+      "sourceFr": "Le plan de salle d'audience de /ship : le banc du magistrat en tête, l'accusation et la défense face à face, le box entre les deux et le banc du public au fond."
+    },
+    {
+      "id": "tier-1-supreme-court-prosecution",
+      "spaceId": "tier-1-supreme-court",
+      "kind": "table",
+      "name": "Prosecution Table",
+      "nameFr": "Table de l’accusation",
+      "at": [108, 31],
+      "size": [2.5, 8],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.8,
+      "sides": null,
+      "provenance": "map",
+      "source": "The /ship courtroom plan: the magistrate's bench at the head, prosecution and defence facing each other across the floor, the dock between them and the public bench at the back.",
+      "sourceFr": "Le plan de salle d'audience de /ship : le banc du magistrat en tête, l'accusation et la défense face à face, le box entre les deux et le banc du public au fond."
+    },
+    {
+      "id": "tier-1-supreme-court-defence",
+      "spaceId": "tier-1-supreme-court",
+      "kind": "table",
+      "name": "Defence Table",
+      "nameFr": "Table de la défense",
+      "at": [108, 46],
+      "size": [2.5, 8],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.8,
+      "sides": null,
+      "provenance": "map",
+      "source": "The /ship courtroom plan: the magistrate's bench at the head, prosecution and defence facing each other across the floor, the dock between them and the public bench at the back.",
+      "sourceFr": "Le plan de salle d'audience de /ship : le banc du magistrat en tête, l'accusation et la défense face à face, le box entre les deux et le banc du public au fond."
+    },
+    {
+      "id": "tier-1-supreme-court-dock",
+      "spaceId": "tier-1-supreme-court",
+      "kind": "counter",
+      "name": "Dock",
+      "nameFr": "Box des accusés",
+      "at": [103, 38.5],
+      "size": [2, 3],
+      "rotation": 0,
+      "base": 0,
+      "height": 1,
+      "sides": null,
+      "provenance": "map",
+      "source": "The /ship courtroom plan: the magistrate's bench at the head, prosecution and defence facing each other across the floor, the dock between them and the public bench at the back.",
+      "sourceFr": "Le plan de salle d'audience de /ship : le banc du magistrat en tête, l'accusation et la défense face à face, le box entre les deux et le banc du public au fond."
+    },
+    {
+      "id": "tier-1-supreme-court-public-bench",
+      "spaceId": "tier-1-supreme-court",
+      "kind": "seat",
+      "name": "Public Bench",
+      "nameFr": "Banc du public",
+      "at": [92, 38.5],
+      "size": [2, 22],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.9,
+      "sides": null,
+      "provenance": "map",
+      "source": "The /ship courtroom plan: the magistrate's bench at the head, prosecution and defence facing each other across the floor, the dock between them and the public bench at the back.",
+      "sourceFr": "Le plan de salle d'audience de /ship : le banc du magistrat en tête, l'accusation et la défense face à face, le box entre les deux et le banc du public au fond."
     },
     {
       "id": "tier-1-vip-casino-mezzanine-port",
@@ -13491,6 +13787,22 @@
       "sourceFr": "Chap. 382 — le salon du Roi : sol à motifs, sièges appariés, tableaux encadrés et la baie du fond."
     },
     {
+      "id": "tier-1-king-living-quarters-living-bier",
+      "spaceId": "tier-1-king-living-quarters-living",
+      "kind": "platform",
+      "name": "Bier",
+      "nameFr": "Catafalque",
+      "at": [0, 6.4],
+      "size": [2.2, 1],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.75,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 413 — Halkenburg laid out in his father's living room, the King standing over him.",
+      "sourceFr": "Chap. 413 — Halkenburg exposé dans le salon de son père, le Roi debout à son chevet."
+    },
+    {
       "id": "tier-1-vip-jail-cell-first-class-bunk",
       "spaceId": "tier-1-vip-jail-cell-first-class",
       "kind": "bed",
@@ -16481,6 +16793,70 @@
       "provenance": "plan",
       "source": "Warehouse plan; the Cha-R-controlled hold, its rows of crates and its one guarded entrance; the plan notes the camera was installed after loading",
       "sourceFr": "Plan de l'entrepôt ; la cale sous contrôle Cha-R, ses rangées de caisses et son unique entrée gardée ; le plan précise que la caméra a été posée après le chargement"
+    },
+    {
+      "id": "tier-5-warehouse-guard-post-01",
+      "spaceId": "tier-5-warehouse",
+      "kind": "counter",
+      "name": "Guard Post 1",
+      "nameFr": "Poste de garde 1",
+      "at": [17, 1.7],
+      "size": [1.4, 0.8],
+      "rotation": 0,
+      "base": 0,
+      "height": 1.1,
+      "sides": null,
+      "provenance": "plan",
+      "source": "Warehouse plan; the Cha-R-controlled hold, its rows of crates and its one guarded entrance",
+      "sourceFr": "Plan de l'entrepôt ; la cale sous contrôle Cha-R, ses rangées de caisses et son unique entrée gardée"
+    },
+    {
+      "id": "tier-5-warehouse-guard-post-02",
+      "spaceId": "tier-5-warehouse",
+      "kind": "counter",
+      "name": "Guard Post 2",
+      "nameFr": "Poste de garde 2",
+      "at": [25, 1.7],
+      "size": [1.4, 0.8],
+      "rotation": 0,
+      "base": 0,
+      "height": 1.1,
+      "sides": null,
+      "provenance": "plan",
+      "source": "Warehouse plan; the Cha-R-controlled hold, its rows of crates and its one guarded entrance",
+      "sourceFr": "Plan de l'entrepôt ; la cale sous contrôle Cha-R, ses rangées de caisses et son unique entrée gardée"
+    },
+    {
+      "id": "tier-5-warehouse-guard-post-03",
+      "spaceId": "tier-5-warehouse",
+      "kind": "counter",
+      "name": "Guard Post 3",
+      "nameFr": "Poste de garde 3",
+      "at": [17, 0.5],
+      "size": [1.4, 0.8],
+      "rotation": 0,
+      "base": 0,
+      "height": 1.1,
+      "sides": null,
+      "provenance": "plan",
+      "source": "Warehouse plan; the Cha-R-controlled hold, its rows of crates and its one guarded entrance",
+      "sourceFr": "Plan de l'entrepôt ; la cale sous contrôle Cha-R, ses rangées de caisses et son unique entrée gardée"
+    },
+    {
+      "id": "tier-5-warehouse-guard-post-04",
+      "spaceId": "tier-5-warehouse",
+      "kind": "counter",
+      "name": "Guard Post 4",
+      "nameFr": "Poste de garde 4",
+      "at": [25, 0.5],
+      "size": [1.4, 0.8],
+      "rotation": 0,
+      "base": 0,
+      "height": 1.1,
+      "sides": null,
+      "provenance": "plan",
+      "source": "Warehouse plan; the Cha-R-controlled hold, its rows of crates and its one guarded entrance",
+      "sourceFr": "Plan de l'entrepôt ; la cale sous contrôle Cha-R, ses rangées de caisses et son unique entrée gardée"
     }
   ]
 }

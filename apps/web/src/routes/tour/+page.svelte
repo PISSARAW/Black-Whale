@@ -15,7 +15,7 @@
   import { link, t } from '$lib/i18n'
   import { locale } from '$lib/i18n'
   import { buildShip, deckOf, entrySpace } from '$lib/tour/blueprint'
-  import type { Link, Space } from '$lib/tour/types'
+  import type { Link, Provenance, Space } from '$lib/tour/types'
 
   const ship = buildShip()
 
@@ -53,12 +53,16 @@
 
   const provenanceLabel = (space: Space) => $t.tour.provenance[space.provenance]
 
-  const provenanceClass = (space: Space) =>
-    space.provenance === 'inferred'
-      ? 'border-[#2b3a4a] bg-[#2b3a4a]/30 text-[#9dc4e0]'
-      : space.provenance === 'panel'
-        ? 'border-[#FFD700]/60 bg-[#FFD700]/10 text-[#FFD700]'
-        : 'border-[#FFFFF0]/30 bg-[#FFFFF0]/5 text-[#FFFFF0]/80'
+  // Four ranks, four readings: gold for a panel, bone for a deck plan, green
+  // for what only the /ship room plan draws, cold blue for what nothing draws.
+  const PROVENANCE_CLASS: Record<Provenance, string> = {
+    panel: 'border-[#FFD700]/60 bg-[#FFD700]/10 text-[#FFD700]',
+    plan: 'border-[#FFFFF0]/30 bg-[#FFFFF0]/5 text-[#FFFFF0]/80',
+    map: 'border-[#5f8f6a] bg-[#5f8f6a]/20 text-[#8fd0a0]',
+    inferred: 'border-[#2b3a4a] bg-[#2b3a4a]/30 text-[#9dc4e0]',
+  }
+
+  const provenanceClass = (space: Space) => PROVENANCE_CLASS[space.provenance]
 
   const linkPrompt = $derived.by(() => {
     if (!availableLink) return null
@@ -273,6 +277,12 @@
               {$t.tour.provenance.plan}
             </span>
             <span class="ml-1">{$t.tour.provenance.planHelp}</span>
+          </li>
+          <li>
+            <span class="rounded border border-[#5f8f6a] bg-[#5f8f6a]/20 px-1 text-[#8fd0a0]">
+              {$t.tour.provenance.map}
+            </span>
+            <span class="ml-1">{$t.tour.provenance.mapHelp}</span>
           </li>
           <li>
             <span class="rounded border border-[#2b3a4a] bg-[#2b3a4a]/30 px-1 text-[#9dc4e0]">

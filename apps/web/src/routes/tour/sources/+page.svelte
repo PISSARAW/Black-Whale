@@ -24,7 +24,7 @@
     'https://github.com/PISSARAW/Black-Whale/blob/main/data/ship/blueprint.json'
 
   /** Strongest claim first: it is also the order the tally reads best in. */
-  const PROVENANCE_ORDER: Provenance[] = ['panel', 'plan', 'inferred']
+  const PROVENANCE_ORDER: Provenance[] = ['panel', 'plan', 'map', 'inferred']
 
   let query = $state('')
   let evidence = $state<Provenance | 'all'>('all')
@@ -61,11 +61,12 @@
   const provenanceLabel = (provenance: Provenance) => $t.tour.provenance[provenance]
 
   const provenanceClass = (provenance: Provenance) =>
-    provenance === 'inferred'
-      ? 'border-[#2b3a4a] bg-[#2b3a4a]/30 text-[#9dc4e0]'
-      : provenance === 'panel'
-        ? 'border-[#FFD700]/60 bg-[#FFD700]/10 text-[#FFD700]'
-        : 'border-[#FFFFF0]/30 bg-[#FFFFF0]/5 text-[#FFFFF0]/80'
+    ({
+      panel: 'border-[#FFD700]/60 bg-[#FFD700]/10 text-[#FFD700]',
+      plan: 'border-[#FFFFF0]/30 bg-[#FFFFF0]/5 text-[#FFFFF0]/80',
+      map: 'border-[#5f8f6a] bg-[#5f8f6a]/20 text-[#8fd0a0]',
+      inferred: 'border-[#2b3a4a] bg-[#2b3a4a]/30 text-[#9dc4e0]',
+    })[provenance]
 
   const tally = $derived(
     PROVENANCE_ORDER.map((provenance) => ({

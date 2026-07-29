@@ -3,10 +3,33 @@
 `blueprint.json` est le vaisseau en tant que **géométrie**, et non en tant que
 dessin. C'est ce que parcourt la visite virtuelle ([`/tour`](../../apps/web/src/routes/tour)).
 
-Il ne remplace pas les plans SVG de `apps/web/src/lib/assets/maps` et ne touche
-pas à la carte `/ship` : celle-ci répond à _qui est où à tel événement_,
-celui-ci à _comment le vaisseau est bâti_. Aucun passager, aucun chapitre,
-aucune chronologie n'entre ici.
+Il ne remplace pas les plans SVG de `apps/web/src/lib/assets/maps` : ceux-ci
+répondent à _qui est où à tel événement_, celui-ci à _comment le vaisseau est
+bâti_. Aucun passager, aucun chapitre, aucune chronologie n'entre ici. Les deux
+ne sont pas indépendants pour autant — la visite doit être ces plans-là, à
+hauteur d'homme, et c'est ce que règle la section suivante.
+
+## L'ordre d'autorité : manga → `/ship` → visite
+
+La visite est censée être la version qu'on parcourt des plans que `/ship`
+dessine. Trois rangs, dans cet ordre :
+
+1. **Le manga tranche.** Une planche ou un plan du vaisseau l'emporte sur tout,
+   y compris sur une carte `/ship` qui dirait le contraire — le pont
+   d'observation était dessiné en terrasse au-dessus d'une mer, le plan le met
+   à tribord du pont 3, c'est le plan qui gagne.
+2. **Là où aucune page ne parle, `/ship` tranche.** Ce que le plan de salle
+   dessine, la pièce le tient : le banc du magistrat de la cour suprême, les
+   huit suites du bloc VVIP. Ces volumes portent la provenance `map`, un rang
+   sous les dessins, parce qu'une carte `/ship` est la lecture de ce dossier et
+   pas le trait de Togashi.
+3. **Là où ni l'un ni l'autre ne dit rien, rien n'est posé.** Les chambrées des
+   soldats restent nues : ni planche ni carte n'y dessine de couchette, et une
+   couchette inventée serait du décor.
+
+Le corollaire vaut dans l'autre sens : quand la visite tient plus que la carte
+parce qu'une planche le montre — la salle de projection et ses quinze volumes
+contre un rectangle — c'est **la carte** qu'il faut refaire.
 
 ## Repère et échelle
 
@@ -124,14 +147,16 @@ bâbord et une moitié tribord pour une seule fiche.
 | ---------- | --------------------------------------------------------------------- |
 | `panel`    | Une planche montre la salle ; sa forme y est relevée.                 |
 | `plan`     | Elle figure sur la coupe du vaisseau, qui n'en donne pas l'intérieur. |
-| `inferred` | Rien ne la montre. Elle existe pour que le pont soit continu.         |
+| `map`      | Aucune page ne la montre ; le plan de salle de `/ship` la dessine.    |
+| `inferred` | Rien ne la montre, pas même la carte. Elle est là pour la continuité. |
 
 C'est la même exigence que `positionProvenance` dans
 [`../CONVENTIONS.md`](../CONVENTIONS.md) : la reconstruction doit avouer ce
 qu'elle invente. Les surfaces `inferred` sont rendues dans une teinte froide et
 portent un badge dans l'interface — un couloir déduit ne doit jamais passer
 pour du canon. `source` est obligatoire dans tous les cas ; pour `inferred`,
-elle dit pourquoi l'espace a été ajouté, et ne doit pas citer de chapitre.
+elle dit pourquoi l'espace a été ajouté, et ne doit pas citer de chapitre. Une
+source `map` non plus : elle nomme le plan `/ship` dont elle sort.
 
 `sourceFr` la double en français, comme `nameFr` double `name` — de même
 `reasonFr` pour les `doors` et les `seals`. Ces phrases ne sont pas des notes

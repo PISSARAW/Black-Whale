@@ -91,11 +91,11 @@
         <!-- Door to corridor -->
 
         {#if i === 0}
-          <text x="100" y="75" class="label text-red-500">Room 1001</text>
-          <text x="100" y="100" class="sublabel text-red-400">Restricted royal suite</text>
+          <text x="100" y="75" class="label text-red-500">Restricted Royal Suite</text>
+          <text x="100" y="100" class="sublabel text-red-400">Confined princes</text>
         {:else if i === 1}
-          <text x="100" y="75" class="label text-purple-500">Room 1002</text>
-          <text x="100" y="100" class="sublabel text-purple-400">Restricted royal suite</text>
+          <text x="100" y="75" class="label text-purple-500">Restricted Royal Suite</text>
+          <text x="100" y="100" class="sublabel text-purple-400">Confined princes</text>
         {:else}
           <text x="100" y="75" class="label text-gray-500">VVIP Suite</text>
         {/if}

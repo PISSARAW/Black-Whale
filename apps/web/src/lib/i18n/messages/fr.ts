@@ -90,9 +90,12 @@ export const fr: Messages = {
       title: 'Ce qui est canon ici',
       panel: 'Montré sur une planche',
       plan: 'Sur le plan des ponts',
+      map: 'Sur le plan /ship',
       inferred: 'Reconstruit',
       panelHelp: 'Un chapitre montre cette salle ; sa forme est relevée sur cette planche.',
       planHelp: "Elle figure sur la coupe du vaisseau, qui n'en donne pas l'intérieur.",
+      mapHelp:
+        "Aucune page du manga ne le montre. Le plan de salle de /ship le dessine, et la visite est ce plan à hauteur d'homme.",
       inferredHelp:
         'Rien ne la montre. Elle existe pour que le pont tienne debout, et sa lumière est froide pour que ça se voie.',
       scaleHelp:

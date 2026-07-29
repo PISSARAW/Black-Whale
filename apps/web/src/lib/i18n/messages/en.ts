@@ -91,9 +91,12 @@ export const en = {
       title: 'What is canon here',
       panel: 'Shown in a panel',
       plan: 'On the deck plan',
+      map: 'On the /ship plan',
       inferred: 'Reconstructed',
       panelHelp: 'A chapter shows this room; its shape is read off that panel.',
       planHelp: 'It appears on the ship’s cross-section, which gives no interior.',
+      mapHelp:
+        'No page of the manga shows it. The room plan on /ship draws it, and the walk is that plan at walking scale.',
       inferredHelp:
         'Nothing shows it. It exists so the deck holds together, and it is lit cold so you can tell.',
       scaleHelp:

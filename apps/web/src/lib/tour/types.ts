@@ -2,10 +2,15 @@
  * The types of the walkable reconstruction of the Black Whale.
  *
  * The tour is a projection of `data/ship/blueprint.json`, which holds the ship
- * as metric geometry rather than as drawings. It is deliberately independent of
- * the deck maps under `$lib/assets/maps` and of the `/ship` page: those show
- * *who is where at a given event*, this one shows *what the ship is built like*.
- * Nothing here reads the timeline, and nothing here places a passenger.
+ * as metric geometry rather than as drawings. It answers *what the ship is
+ * built like*, where `/ship` answers *who is where at a given event*: nothing
+ * here reads the timeline, and nothing here places a passenger.
+ *
+ * The two are not independent, though. The tour is meant to be the walkable
+ * version of the plans `/ship` draws, so the order of authority runs manga →
+ * `/ship` → tour: a page of the manga settles it, and where no page speaks,
+ * what the room plan under `$lib/assets/maps/local` draws is what the room
+ * holds — tagged `map`, so a reader can tell the two apart at a glance.
  */
 
 /** A point on a deck: `[x, z]` in metres, `+x` starboard and `+z` aft. */
@@ -19,14 +24,19 @@ export type Polygon = Vec2[]
  *
  * - `panel` — a panel shows the room; its shape is read off that panel.
  * - `plan`  — it appears on the ship's deck cross-section, without an interior.
- * - `inferred` — nothing shows it. It exists so the deck is contiguous, and the
- *   tour marks it as such rather than passing it off as canon.
+ * - `map`  — no page of the manga shows it; the room plan on `/ship` draws it.
+ *   The tour is meant to be the walkable version of that map, so what the map
+ *   puts in a room belongs in the room — said in the open, one rank below the
+ *   drawings, because the map is this archive's reading and not Togashi's line.
+ * - `inferred` — nothing shows it, not even the map. It exists so the deck is
+ *   contiguous, and the tour marks it as such rather than passing it off as
+ *   canon.
  *
  * The tag says how strong the claim is; the `source` beside it says what backs
  * it, in both languages, because `/tour/sources` publishes the two together and
  * a reader who only reads French is owed the same account as everyone else.
  */
-export type Provenance = 'panel' | 'plan' | 'inferred'
+export type Provenance = 'panel' | 'plan' | 'map' | 'inferred'
 
 export type SpaceCategory =
   | 'room'
@@ -161,9 +171,9 @@ export interface Space {
 /**
  * A solid standing inside a space: seen, and walked around.
  *
- * Rooms are stored as empty outlines, which is enough for most of the ship —
- * furniture is not architecture and the tour does not pretend to know where a
- * chair was. A few panels show something else, though: what a room *is* is the
+ * Rooms are stored as empty outlines wherever nothing is drawn in them: the
+ * tour does not invent furniture. Where something *is* drawn, it stands here.
+ * A panel showing what a room is comes first — what a room *is* is often the
  * thing standing in it. The burial chamber is fourteen coffins set in a ring,
  * the banquet hall is its stage and the throne on its dais, and the space
  * between the hull and the ship is the springs that carry one inside the other.

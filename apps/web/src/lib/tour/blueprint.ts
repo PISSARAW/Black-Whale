@@ -257,7 +257,7 @@ export function entrySpace(plan: TierPlan): Space {
   return largest(plan.spaces)
 }
 
-const PROVENANCES = new Set(['panel', 'plan', 'inferred'])
+const PROVENANCES = new Set(['panel', 'plan', 'map', 'inferred'])
 const LINK_KINDS = new Set(['stair', 'lift', 'bulkhead', 'door'])
 const STRUCTURE_KINDS = new Set([
   'spring',

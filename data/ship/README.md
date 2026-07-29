@@ -62,6 +62,29 @@ haut :
 | 4    | 18 m        | 4,5 m              |
 | 5    | 0 m         | 4,5 m              |
 
+## Les cartes de ponts sont générées
+
+Les cinq cartes de ponts de `/ship` — `apps/web/src/lib/assets/maps/tier-*.svelte`
+— ne se retouchent pas à la main. Elles se régénèrent :
+
+```
+python3 scripts/generate-deck-maps.py
+```
+
+Elles sont dessinées dans le repère ci-dessus, qui est celui du blueprint : une
+pièce atterrit donc sur la carte exactement là où la reconstruction la met, et
+toutes les pièces y atterrissent, pas la douzaine qu'une carte dessinée à la
+main avait la place de nommer. Ce qui reste écrit à la main, c'est
+`apps/web/src/lib/map/mapAssetRegistry.ts` : quelle région ouvre quel plan de
+salle.
+
+C'est ce qui fait que `/ship` et `/tour` ne peuvent plus se contredire — ils
+projettent la même source. Encore faut-il que le fichier généré et commité
+suive : `apps/web/src/lib/assets/maps/deckMaps.test.ts` relit les cinq cartes et
+les confronte au blueprint, coque comprise, coin par coin. Déplacez une emprise
+sans relancer le script et c'est un test qui tombe, pas un lecteur qui s'en
+aperçoit.
+
 ## Structure
 
 - **`tiers`** — un pont : son élévation, sa hauteur sous plafond par défaut et

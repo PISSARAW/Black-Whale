@@ -1,7 +1,8 @@
 <script lang="ts">
   import { page } from '$app/stores'
   import { mapState } from '$lib/state/mapState.svelte'
-  import { toEnglishDisplayName } from '$lib/utils/displayNames'
+  import { displayName } from '$lib/utils/displayNames'
+  import { locale } from '$lib/i18n'
   import { resolveRegionLocationSlug } from '$lib/map/mapAssetRegistry'
 
   let locations = $derived($page.data.worldState?.locations || [])
@@ -50,7 +51,7 @@
         ? [
             {
               id: character.id,
-              name: toEnglishDisplayName(character.canonicalName),
+              name: displayName(character.canonicalName, $locale),
               certainty: presence.certainty,
             },
           ]

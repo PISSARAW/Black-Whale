@@ -1,7 +1,8 @@
 <script lang="ts">
   import { page } from '$app/stores'
   import { mapState } from '$lib/state/mapState.svelte'
-  import { toEnglishDisplayName } from '$lib/utils/displayNames'
+  import { displayName } from '$lib/utils/displayNames'
+  import { locale } from '$lib/i18n'
 
   let unknownCharacters = $derived.by(() => {
     const worldState = $page.data.worldState
@@ -25,7 +26,7 @@
         return {
           id: presence.entityId,
           label: character
-            ? toEnglishDisplayName(character.canonicalName)
+            ? displayName(character.canonicalName, $locale)
             : 'Unidentified individual',
           state: character ? 'known identity' : 'unknown identity',
         }

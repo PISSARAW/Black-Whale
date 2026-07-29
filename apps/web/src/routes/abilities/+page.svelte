@@ -4,21 +4,26 @@
   import { activateHatsu } from '$lib/nen/hatsuState.js'
   import Seo from '$lib/components/Seo.svelte'
   import { breadcrumbSchema } from '$lib/seo/schema'
-  import { link, t } from '$lib/i18n'
+  import { link, locale, t } from '$lib/i18n'
+  import { localizeHatsu } from '$lib/i18n/hatsu'
 
   export let data: PageData
 
   // The checked-in registry is the canonical interaction list; the ability
   // catalogue only enriches it, so a profile that is missing from the
   // catalogue still renders from the registry rather than becoming a hole.
-  $: abilities = HATSU_PROFILES.map((profile) => {
+  $: abilities = HATSU_PROFILES.map((registryProfile) => {
+    const profile = localizeHatsu(registryProfile, $locale)
     const catalogued = data.abilities.find((ability) => ability.id === profile.id)
+    // The catalogue is still English-only, so the registry's own French text is
+    // the better record on the French side.
+    const preferRegistry = $locale !== 'en'
     return {
       id: profile.id,
-      name: catalogued?.name ?? profile.name,
-      owner: catalogued?.owner ?? profile.owner,
+      name: preferRegistry ? profile.name : (catalogued?.name ?? profile.name),
+      owner: preferRegistry ? profile.owner : (catalogued?.owner ?? profile.owner),
       category: catalogued?.category ?? 'nen',
-      description: catalogued?.description ?? profile.rule,
+      description: preferRegistry ? profile.rule : (catalogued?.description ?? profile.rule),
     }
   })
 
@@ -45,7 +50,8 @@
 
   <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
     {#each abilities as ability (ability.id)}
-      {@const profile = hatsuById(ability.id)}
+      {@const registryProfile = hatsuById(ability.id)}
+      {@const profile = registryProfile ? localizeHatsu(registryProfile, $locale) : null}
       <article
         data-hatsu-id={ability.id}
         class="block group relative bg-bw-navy/50 border border-bw-gold/20 rounded-xl p-6 overflow-hidden hover:border-bw-gold/60 transition-colors"

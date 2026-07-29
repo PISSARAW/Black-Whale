@@ -1,5 +1,6 @@
 <script lang="ts">
-  import { t } from '$lib/i18n'
+  import { locale, t } from '$lib/i18n'
+  import { localizeHatsu, localizeHatsuList, manifestationFor } from '$lib/i18n/hatsu'
   import { onMount } from 'svelte'
   import { goto } from '$app/navigation'
   import { page } from '$app/stores'
@@ -149,8 +150,12 @@
     'ROUGE · EXPULSION',
   ]
 
-  $: profile = $activeHatsu
-  $: visualSignature = profile ? visualSignatureFor(profile) : null
+  // The technique is read in the visitor's language; the id, kind and colour
+  // the branches below dispatch on are untouched by the overlay.
+  $: profile = $activeHatsu ? localizeHatsu($activeHatsu, $locale) : null
+  $: visualSignature = profile
+    ? { ...visualSignatureFor(profile), manifestation: manifestationFor(profile, $locale) }
+    : null
   $: if (profile?.id !== previousId) {
     const hadActiveHatsu = previousId !== null
     const releasingHatsu = hadActiveHatsu && !profile
@@ -1392,7 +1397,7 @@
               : profile.kind === 'ability-loan'
                 ? $t.nen.captured.abilityLoan
                 : $t.nen.captured.steal}</span
-        >{#each capturedTechniques as technique (technique.id)}<button
+        >{#each localizeHatsuList(capturedTechniques, $locale) as technique (technique.id)}<button
             type="button"
             onclick={() => activateHatsu(technique)}
             style:--captured={technique.color}

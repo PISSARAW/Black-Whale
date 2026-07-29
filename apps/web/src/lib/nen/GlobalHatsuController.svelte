@@ -10,14 +10,18 @@
     refreshForcedZetsu,
   } from './hatsuState.js'
   import { HATSU_PROFILES, hatsuById } from './hatsuRegistry.js'
-  import { t } from '$lib/i18n'
+  import { locale, t } from '$lib/i18n'
+  import { localizeHatsu, localizeHatsuList } from '$lib/i18n/hatsu'
 
   let query = ''
   let now = Date.now()
 
-  $: filtered = HATSU_PROFILES.filter((profile) =>
+  // Searching the visitor's own names, not the English ones behind them.
+  $: localizedProfiles = localizeHatsuList(HATSU_PROFILES, $locale)
+  $: filtered = localizedProfiles.filter((profile) =>
     `${profile.name} ${profile.owner}`.toLowerCase().includes(query.trim().toLowerCase()),
   )
+  $: activeProfile = $activeHatsu ? localizeHatsu($activeHatsu, $locale) : null
   $: zetsuRemaining = Math.max(0, $forcedZetsuUntil - now)
 
   function formatRemaining(milliseconds: number) {
@@ -59,8 +63,8 @@
         <small>{$t.nen.zetsuCost}</small>
       </div>
     </section>
-  {:else if $activeHatsu}
-    <section class="active-card" style:--hatsu={$activeHatsu.color} aria-live="polite">
+  {:else if activeProfile}
+    <section class="active-card" style:--hatsu={activeProfile.color} aria-live="polite">
       <button
         class="sigil active"
         onclick={() => hatsuPanelOpen.update((open) => !open)}
@@ -70,9 +74,9 @@
         NEN
       </button>
       <div class="active-copy">
-        <span class="eyebrow">{$t.nen.activeHatsu($activeHatsu.owner)}</span>
-        <strong>{$activeHatsu.name}</strong>
-        <span class="instruction">{$activeHatsu.instruction}</span>
+        <span class="eyebrow">{$t.nen.activeHatsu(activeProfile.owner)}</span>
+        <strong>{activeProfile.name}</strong>
+        <span class="instruction">{activeProfile.instruction}</span>
       </div>
       <button type="button" class="release" data-hatsu-release onclick={deactivateHatsu}
         >{$t.nen.release}</button

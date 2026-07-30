@@ -231,3 +231,123 @@ export function impulseResponse(
 
   return buffer
 }
+
+// ── The hull ───────────────────────────────────────
+
+/**
+ * How loud the machinery is, and how much of it gets through, deck by deck.
+ *
+ * There is no sky on the Black Whale — two windows out of 314 spaces, and the
+ * rest of the voyage happens inside a hull. What stands in for the weather is the
+ * ship itself: the engines are in the bottom of it, and everything above them
+ * hears a filtered version of the same noise. Stand on Tier 5 and it is a
+ * presence; stand in the King's living room seventy-two metres up and it is a
+ * suggestion you notice when it changes.
+ *
+ * These five pairs are a mix decision and not a derivation, which is why they are
+ * written out rather than computed: nothing in `blueprint.json` measures a decibel
+ * or a corner frequency, and a formula here would dress a choice up as a
+ * measurement. What they *do* follow is the one figure the blueprint gives — the
+ * elevation of the deck — so a level between two decks is interpolated rather than
+ * guessed, and an interior carries the elevation of the deck it is inside.
+ *
+ * Level is a fraction of `HULL_GAIN` in `$lib/audio/steps`, where it is mixed
+ * against the footsteps; the cutoff is in hertz, and the fall from 260 to 70 is
+ * the mass of four decks of steel between the visitor and the engine room.
+ */
+export const HULL_DECKS: readonly { elevation: number; level: number; cutoff: number }[] = [
+  { elevation: 0, level: 1, cutoff: 260 },
+  { elevation: 18, level: 0.7, cutoff: 190 },
+  { elevation: 36, level: 0.45, cutoff: 140 },
+  { elevation: 54, level: 0.25, cutoff: 100 },
+  { elevation: 72, level: 0.12, cutoff: 70 },
+]
+
+/**
+ * The rumble at an elevation, interpolated between the decks around it.
+ *
+ * Linear in elevation, and flat outside the range: the hold is the loudest place
+ * on the ship because it is the closest to the machinery, and nothing above Tier 1
+ * is quieter than Tier 1 because there is nothing above Tier 1.
+ */
+export function hullRumble(elevation: number): { level: number; cutoff: number } {
+  const first = HULL_DECKS[0]
+  const last = HULL_DECKS[HULL_DECKS.length - 1]
+  if (!(elevation > first.elevation)) return { level: first.level, cutoff: first.cutoff }
+  if (elevation >= last.elevation) return { level: last.level, cutoff: last.cutoff }
+
+  for (let i = 1; i < HULL_DECKS.length; i++) {
+    const above = HULL_DECKS[i]
+    if (elevation > above.elevation) continue
+    const below = HULL_DECKS[i - 1]
+    const t = (elevation - below.elevation) / (above.elevation - below.elevation)
+    return {
+      level: below.level + (above.level - below.level) * t,
+      cutoff: below.cutoff + (above.cutoff - below.cutoff) * t,
+    }
+  }
+  return { level: last.level, cutoff: last.cutoff }
+}
+
+/** The lowest note of the hull, in hertz: the engine, not the room it is heard in. */
+export const HULL_FUNDAMENTAL = 38
+
+/**
+ * The bed of noise under the rumble, as a buffer meant to be looped.
+ *
+ * Pink rather than white — Kellet's three-pole approximation, which is within a
+ * fraction of a decibel of −3 dB an octave across the band that survives the
+ * lowpass this is played through. White noise here would be a hiss with the top
+ * taken off it; pink noise is what a large machine heard through a structure
+ * actually sounds like, because every doubling of frequency carries the same
+ * energy in the source and the hull takes the top off both.
+ *
+ * The last `FOLD` seconds are crossfaded into the first, so the loop point is
+ * continuous in value and in slope. A discontinuity there would be a click once
+ * per pass — the one artefact a listener localises immediately, and the reason a
+ * generated loop is usually longer than it needs to be.
+ *
+ * Seeded, like every other noise in the walk: the ship is a reconstruction and
+ * has to sound the same to two visitors.
+ */
+export function hullNoise(
+  seconds: number,
+  sampleRate: number,
+  seed = 5,
+  // Handed straight to `AudioBuffer.copyToChannel`, which wants a plain buffer.
+): Float32Array<ArrayBuffer> {
+  const FOLD = 0.25
+  const length = Math.max(2, Math.floor(seconds * sampleRate))
+  const fold = Math.min(Math.floor(FOLD * sampleRate), Math.floor(length / 2) - 1)
+  const random = noise(seed)
+
+  const raw = new Float32Array(length + fold)
+  let b0 = 0
+  let b1 = 0
+  let b2 = 0
+  let peak = 0
+  for (let i = 0; i < raw.length; i++) {
+    const white = random()
+    b0 = 0.99765 * b0 + white * 0.099046
+    b1 = 0.963 * b1 + white * 0.2965164
+    b2 = 0.57 * b2 + white * 1.0526913
+    const pink = b0 + b1 + b2 + white * 0.1848
+    raw[i] = pink
+    if (Math.abs(pink) > peak) peak = Math.abs(pink)
+  }
+
+  const buffer = new Float32Array(length)
+  // Normalised so the gain in the graph is the only thing that sets the level.
+  const scale = peak > 0 ? 1 / peak : 1
+  for (let i = 0; i < length; i++) buffer[i] = raw[i] * scale
+
+  // The fold: the tail written past the end of the loop is mixed back over its
+  // head, each fading as the other rises, so playing the buffer end to end has
+  // no seam in it at all.
+  for (let i = 0; i < fold; i++) {
+    const t = i / fold
+    buffer[i] = buffer[i] * t + raw[length + i] * scale * (1 - t)
+  }
+
+  return buffer
+}

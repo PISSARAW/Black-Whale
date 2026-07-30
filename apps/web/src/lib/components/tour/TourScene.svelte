@@ -54,6 +54,7 @@
   import { SEALED_DENSITY, fogDensityOf, reverbTime, settleDensity } from '$lib/tour/atmosphere'
   import { distanceToBoundary } from '$lib/tour/geometry'
   import {
+    enterDeck,
     enterRoom,
     footstep,
     nearWall,
@@ -645,6 +646,11 @@
         }
         camera.position.set(pointer[0], plan.tier.elevation + EYE_HEIGHT, pointer[1])
         report()
+        // How much of the machinery reaches this elevation. An interior carries
+        // the elevation of the deck it is inside, so walking into a prince's
+        // bathroom does not change what the hull sounds like — taking the stairs
+        // down to the hold does, over a couple of seconds.
+        enterDeck(plan.tier.elevation)
       }
 
       /** Moves the visitor to a named space, changing deck if it is elsewhere. */
@@ -1021,6 +1027,9 @@
       function letItSound() {
         if (soundOffered || stepsWereSilenced()) return
         soundOffered = true
+        // The deck was handed to the audio module by `loadTier`, before there was
+        // a graph to hear it; `startSteps` reads it back rather than starting the
+        // hull at the wrong elevation and correcting it at the next stairwell.
         startSteps()
       }
 

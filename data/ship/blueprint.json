@@ -876,6 +876,25 @@
         [-18, 10]
       ],
       "sourceFr": "Plan des cabines standard ; le couloir sert aussi de point de rassemblement"
+    },
+    {
+      "kind": "interior",
+      "parentSpaceId": "tier-4-general-area-east",
+      "id": "interior-general-passenger-block",
+      "locationId": null,
+      "name": "General Passengers' Block",
+      "nameFr": "Bloc des passagers ordinaires",
+      "elevation": 18,
+      "ceiling": 3,
+      "provenance": "panel",
+      "source": "The panel of the general passengers' block: a portal signed SRCL 9041 – 9488, and behind it a corridor with cabin doors down both sides and soldiers posted in it.",
+      "hull": [
+        [-7.5, -4],
+        [7.5, -4],
+        [7.5, 44],
+        [-7.5, 44]
+      ],
+      "sourceFr": "La planche du bloc des passagers ordinaires : un portail portant SRCL 9041 – 9488, et derrière lui une coursive à portes de cabines des deux côtés, avec des soldats postés dedans."
     }
   ],
   "spaces": [
@@ -8025,6 +8044,348 @@
         [8.93, 7.7]
       ],
       "sourceFr": "Plan de la planque Heil-Ly ; les sept portes de la salle de traitement, la buanderie, la salle commune et le bureau du chef"
+    },
+    {
+      "id": "tier-4-general-area-east-portal",
+      "tierId": "interior-general-passenger-block",
+      "locationId": null,
+      "name": "Signed Portal",
+      "nameFr": "Portail signalé",
+      "category": "corridor",
+      "provenance": "panel",
+      "source": "The panel of the general passengers' block: a portal signed SRCL 9041 – 9488, and behind it a corridor with cabin doors down both sides and soldiers posted in it.",
+      "ceiling": 3,
+      "envelope": null,
+      "footprint": [
+        [-2.5, -4],
+        [2.5, -4],
+        [2.5, 0],
+        [-2.5, 0]
+      ],
+      "sourceFr": "La planche du bloc des passagers ordinaires : un portail portant SRCL 9041 – 9488, et derrière lui une coursive à portes de cabines des deux côtés, avec des soldats postés dedans."
+    },
+    {
+      "id": "tier-4-general-area-east-corridor",
+      "tierId": "interior-general-passenger-block",
+      "locationId": null,
+      "name": "Block Corridor",
+      "nameFr": "Coursive du bloc",
+      "category": "corridor",
+      "provenance": "panel",
+      "source": "The panel of the general passengers' block: a portal signed SRCL 9041 – 9488, and behind it a corridor with cabin doors down both sides and soldiers posted in it.",
+      "ceiling": 3,
+      "envelope": null,
+      "footprint": [
+        [-2.5, 0],
+        [2.5, 0],
+        [2.5, 44],
+        [-2.5, 44]
+      ],
+      "sourceFr": "La planche du bloc des passagers ordinaires : un portail portant SRCL 9041 – 9488, et derrière lui une coursive à portes de cabines des deux côtés, avec des soldats postés dedans."
+    },
+    {
+      "id": "tier-4-general-area-east-cabin-port-1",
+      "tierId": "interior-general-passenger-block",
+      "locationId": null,
+      "name": "Passenger Cabin (port 1)",
+      "nameFr": "Cabine de passagers (bâbord 1)",
+      "category": "quarters",
+      "provenance": "inferred",
+      "source": "Nothing draws the inside of this block. The cells are set at the size a cabin has to be to be walked into, so that what the sign stands over leads somewhere rather than ending in shut doors. How many there are is not what the sign counts.",
+      "ceiling": 3,
+      "envelope": "tier-4-general-area-east-cabin-port-1",
+      "footprint": [
+        [-7.5, 2],
+        [-2.5, 2],
+        [-2.5, 7],
+        [-7.5, 7]
+      ],
+      "sourceFr": "Rien ne dessine l'intérieur de ce bloc. Les cellules sont posées à la taille qu'une cabine doit avoir pour être parcourue, pour que ce que le panneau annonce mène quelque part au lieu de s'arrêter à des portes closes. Leur nombre n'est pas celui que le panneau compte."
+    },
+    {
+      "id": "tier-4-general-area-east-cabin-port-2",
+      "tierId": "interior-general-passenger-block",
+      "locationId": null,
+      "name": "Passenger Cabin (port 2)",
+      "nameFr": "Cabine de passagers (bâbord 2)",
+      "category": "quarters",
+      "provenance": "inferred",
+      "source": "Nothing draws the inside of this block. The cells are set at the size a cabin has to be to be walked into, so that what the sign stands over leads somewhere rather than ending in shut doors. How many there are is not what the sign counts.",
+      "ceiling": 3,
+      "envelope": "tier-4-general-area-east-cabin-port-2",
+      "footprint": [
+        [-7.5, 7],
+        [-2.5, 7],
+        [-2.5, 12],
+        [-7.5, 12]
+      ],
+      "sourceFr": "Rien ne dessine l'intérieur de ce bloc. Les cellules sont posées à la taille qu'une cabine doit avoir pour être parcourue, pour que ce que le panneau annonce mène quelque part au lieu de s'arrêter à des portes closes. Leur nombre n'est pas celui que le panneau compte."
+    },
+    {
+      "id": "tier-4-general-area-east-cabin-port-3",
+      "tierId": "interior-general-passenger-block",
+      "locationId": null,
+      "name": "Passenger Cabin (port 3)",
+      "nameFr": "Cabine de passagers (bâbord 3)",
+      "category": "quarters",
+      "provenance": "inferred",
+      "source": "Nothing draws the inside of this block. The cells are set at the size a cabin has to be to be walked into, so that what the sign stands over leads somewhere rather than ending in shut doors. How many there are is not what the sign counts.",
+      "ceiling": 3,
+      "envelope": "tier-4-general-area-east-cabin-port-3",
+      "footprint": [
+        [-7.5, 12],
+        [-2.5, 12],
+        [-2.5, 17],
+        [-7.5, 17]
+      ],
+      "sourceFr": "Rien ne dessine l'intérieur de ce bloc. Les cellules sont posées à la taille qu'une cabine doit avoir pour être parcourue, pour que ce que le panneau annonce mène quelque part au lieu de s'arrêter à des portes closes. Leur nombre n'est pas celui que le panneau compte."
+    },
+    {
+      "id": "tier-4-general-area-east-cabin-port-4",
+      "tierId": "interior-general-passenger-block",
+      "locationId": null,
+      "name": "Passenger Cabin (port 4)",
+      "nameFr": "Cabine de passagers (bâbord 4)",
+      "category": "quarters",
+      "provenance": "inferred",
+      "source": "Nothing draws the inside of this block. The cells are set at the size a cabin has to be to be walked into, so that what the sign stands over leads somewhere rather than ending in shut doors. How many there are is not what the sign counts.",
+      "ceiling": 3,
+      "envelope": "tier-4-general-area-east-cabin-port-4",
+      "footprint": [
+        [-7.5, 17],
+        [-2.5, 17],
+        [-2.5, 22],
+        [-7.5, 22]
+      ],
+      "sourceFr": "Rien ne dessine l'intérieur de ce bloc. Les cellules sont posées à la taille qu'une cabine doit avoir pour être parcourue, pour que ce que le panneau annonce mène quelque part au lieu de s'arrêter à des portes closes. Leur nombre n'est pas celui que le panneau compte."
+    },
+    {
+      "id": "tier-4-general-area-east-cabin-port-5",
+      "tierId": "interior-general-passenger-block",
+      "locationId": null,
+      "name": "Passenger Cabin (port 5)",
+      "nameFr": "Cabine de passagers (bâbord 5)",
+      "category": "quarters",
+      "provenance": "inferred",
+      "source": "Nothing draws the inside of this block. The cells are set at the size a cabin has to be to be walked into, so that what the sign stands over leads somewhere rather than ending in shut doors. How many there are is not what the sign counts.",
+      "ceiling": 3,
+      "envelope": "tier-4-general-area-east-cabin-port-5",
+      "footprint": [
+        [-7.5, 22],
+        [-2.5, 22],
+        [-2.5, 27],
+        [-7.5, 27]
+      ],
+      "sourceFr": "Rien ne dessine l'intérieur de ce bloc. Les cellules sont posées à la taille qu'une cabine doit avoir pour être parcourue, pour que ce que le panneau annonce mène quelque part au lieu de s'arrêter à des portes closes. Leur nombre n'est pas celui que le panneau compte."
+    },
+    {
+      "id": "tier-4-general-area-east-cabin-port-6",
+      "tierId": "interior-general-passenger-block",
+      "locationId": null,
+      "name": "Passenger Cabin (port 6)",
+      "nameFr": "Cabine de passagers (bâbord 6)",
+      "category": "quarters",
+      "provenance": "inferred",
+      "source": "Nothing draws the inside of this block. The cells are set at the size a cabin has to be to be walked into, so that what the sign stands over leads somewhere rather than ending in shut doors. How many there are is not what the sign counts.",
+      "ceiling": 3,
+      "envelope": "tier-4-general-area-east-cabin-port-6",
+      "footprint": [
+        [-7.5, 27],
+        [-2.5, 27],
+        [-2.5, 32],
+        [-7.5, 32]
+      ],
+      "sourceFr": "Rien ne dessine l'intérieur de ce bloc. Les cellules sont posées à la taille qu'une cabine doit avoir pour être parcourue, pour que ce que le panneau annonce mène quelque part au lieu de s'arrêter à des portes closes. Leur nombre n'est pas celui que le panneau compte."
+    },
+    {
+      "id": "tier-4-general-area-east-cabin-port-7",
+      "tierId": "interior-general-passenger-block",
+      "locationId": null,
+      "name": "Passenger Cabin (port 7)",
+      "nameFr": "Cabine de passagers (bâbord 7)",
+      "category": "quarters",
+      "provenance": "inferred",
+      "source": "Nothing draws the inside of this block. The cells are set at the size a cabin has to be to be walked into, so that what the sign stands over leads somewhere rather than ending in shut doors. How many there are is not what the sign counts.",
+      "ceiling": 3,
+      "envelope": "tier-4-general-area-east-cabin-port-7",
+      "footprint": [
+        [-7.5, 32],
+        [-2.5, 32],
+        [-2.5, 37],
+        [-7.5, 37]
+      ],
+      "sourceFr": "Rien ne dessine l'intérieur de ce bloc. Les cellules sont posées à la taille qu'une cabine doit avoir pour être parcourue, pour que ce que le panneau annonce mène quelque part au lieu de s'arrêter à des portes closes. Leur nombre n'est pas celui que le panneau compte."
+    },
+    {
+      "id": "tier-4-general-area-east-cabin-port-8",
+      "tierId": "interior-general-passenger-block",
+      "locationId": null,
+      "name": "Passenger Cabin (port 8)",
+      "nameFr": "Cabine de passagers (bâbord 8)",
+      "category": "quarters",
+      "provenance": "inferred",
+      "source": "Nothing draws the inside of this block. The cells are set at the size a cabin has to be to be walked into, so that what the sign stands over leads somewhere rather than ending in shut doors. How many there are is not what the sign counts.",
+      "ceiling": 3,
+      "envelope": "tier-4-general-area-east-cabin-port-8",
+      "footprint": [
+        [-7.5, 37],
+        [-2.5, 37],
+        [-2.5, 42],
+        [-7.5, 42]
+      ],
+      "sourceFr": "Rien ne dessine l'intérieur de ce bloc. Les cellules sont posées à la taille qu'une cabine doit avoir pour être parcourue, pour que ce que le panneau annonce mène quelque part au lieu de s'arrêter à des portes closes. Leur nombre n'est pas celui que le panneau compte."
+    },
+    {
+      "id": "tier-4-general-area-east-cabin-starboard-1",
+      "tierId": "interior-general-passenger-block",
+      "locationId": null,
+      "name": "Passenger Cabin (starboard 1)",
+      "nameFr": "Cabine de passagers (tribord 1)",
+      "category": "quarters",
+      "provenance": "inferred",
+      "source": "Nothing draws the inside of this block. The cells are set at the size a cabin has to be to be walked into, so that what the sign stands over leads somewhere rather than ending in shut doors. How many there are is not what the sign counts.",
+      "ceiling": 3,
+      "envelope": "tier-4-general-area-east-cabin-starboard-1",
+      "footprint": [
+        [2.5, 2],
+        [7.5, 2],
+        [7.5, 7],
+        [2.5, 7]
+      ],
+      "sourceFr": "Rien ne dessine l'intérieur de ce bloc. Les cellules sont posées à la taille qu'une cabine doit avoir pour être parcourue, pour que ce que le panneau annonce mène quelque part au lieu de s'arrêter à des portes closes. Leur nombre n'est pas celui que le panneau compte."
+    },
+    {
+      "id": "tier-4-general-area-east-cabin-starboard-2",
+      "tierId": "interior-general-passenger-block",
+      "locationId": null,
+      "name": "Passenger Cabin (starboard 2)",
+      "nameFr": "Cabine de passagers (tribord 2)",
+      "category": "quarters",
+      "provenance": "inferred",
+      "source": "Nothing draws the inside of this block. The cells are set at the size a cabin has to be to be walked into, so that what the sign stands over leads somewhere rather than ending in shut doors. How many there are is not what the sign counts.",
+      "ceiling": 3,
+      "envelope": "tier-4-general-area-east-cabin-starboard-2",
+      "footprint": [
+        [2.5, 7],
+        [7.5, 7],
+        [7.5, 12],
+        [2.5, 12]
+      ],
+      "sourceFr": "Rien ne dessine l'intérieur de ce bloc. Les cellules sont posées à la taille qu'une cabine doit avoir pour être parcourue, pour que ce que le panneau annonce mène quelque part au lieu de s'arrêter à des portes closes. Leur nombre n'est pas celui que le panneau compte."
+    },
+    {
+      "id": "tier-4-general-area-east-cabin-starboard-3",
+      "tierId": "interior-general-passenger-block",
+      "locationId": null,
+      "name": "Passenger Cabin (starboard 3)",
+      "nameFr": "Cabine de passagers (tribord 3)",
+      "category": "quarters",
+      "provenance": "inferred",
+      "source": "Nothing draws the inside of this block. The cells are set at the size a cabin has to be to be walked into, so that what the sign stands over leads somewhere rather than ending in shut doors. How many there are is not what the sign counts.",
+      "ceiling": 3,
+      "envelope": "tier-4-general-area-east-cabin-starboard-3",
+      "footprint": [
+        [2.5, 12],
+        [7.5, 12],
+        [7.5, 17],
+        [2.5, 17]
+      ],
+      "sourceFr": "Rien ne dessine l'intérieur de ce bloc. Les cellules sont posées à la taille qu'une cabine doit avoir pour être parcourue, pour que ce que le panneau annonce mène quelque part au lieu de s'arrêter à des portes closes. Leur nombre n'est pas celui que le panneau compte."
+    },
+    {
+      "id": "tier-4-general-area-east-cabin-starboard-4",
+      "tierId": "interior-general-passenger-block",
+      "locationId": null,
+      "name": "Passenger Cabin (starboard 4)",
+      "nameFr": "Cabine de passagers (tribord 4)",
+      "category": "quarters",
+      "provenance": "inferred",
+      "source": "Nothing draws the inside of this block. The cells are set at the size a cabin has to be to be walked into, so that what the sign stands over leads somewhere rather than ending in shut doors. How many there are is not what the sign counts.",
+      "ceiling": 3,
+      "envelope": "tier-4-general-area-east-cabin-starboard-4",
+      "footprint": [
+        [2.5, 17],
+        [7.5, 17],
+        [7.5, 22],
+        [2.5, 22]
+      ],
+      "sourceFr": "Rien ne dessine l'intérieur de ce bloc. Les cellules sont posées à la taille qu'une cabine doit avoir pour être parcourue, pour que ce que le panneau annonce mène quelque part au lieu de s'arrêter à des portes closes. Leur nombre n'est pas celui que le panneau compte."
+    },
+    {
+      "id": "tier-4-general-area-east-cabin-starboard-5",
+      "tierId": "interior-general-passenger-block",
+      "locationId": null,
+      "name": "Passenger Cabin (starboard 5)",
+      "nameFr": "Cabine de passagers (tribord 5)",
+      "category": "quarters",
+      "provenance": "inferred",
+      "source": "Nothing draws the inside of this block. The cells are set at the size a cabin has to be to be walked into, so that what the sign stands over leads somewhere rather than ending in shut doors. How many there are is not what the sign counts.",
+      "ceiling": 3,
+      "envelope": "tier-4-general-area-east-cabin-starboard-5",
+      "footprint": [
+        [2.5, 22],
+        [7.5, 22],
+        [7.5, 27],
+        [2.5, 27]
+      ],
+      "sourceFr": "Rien ne dessine l'intérieur de ce bloc. Les cellules sont posées à la taille qu'une cabine doit avoir pour être parcourue, pour que ce que le panneau annonce mène quelque part au lieu de s'arrêter à des portes closes. Leur nombre n'est pas celui que le panneau compte."
+    },
+    {
+      "id": "tier-4-general-area-east-cabin-starboard-6",
+      "tierId": "interior-general-passenger-block",
+      "locationId": null,
+      "name": "Passenger Cabin (starboard 6)",
+      "nameFr": "Cabine de passagers (tribord 6)",
+      "category": "quarters",
+      "provenance": "inferred",
+      "source": "Nothing draws the inside of this block. The cells are set at the size a cabin has to be to be walked into, so that what the sign stands over leads somewhere rather than ending in shut doors. How many there are is not what the sign counts.",
+      "ceiling": 3,
+      "envelope": "tier-4-general-area-east-cabin-starboard-6",
+      "footprint": [
+        [2.5, 27],
+        [7.5, 27],
+        [7.5, 32],
+        [2.5, 32]
+      ],
+      "sourceFr": "Rien ne dessine l'intérieur de ce bloc. Les cellules sont posées à la taille qu'une cabine doit avoir pour être parcourue, pour que ce que le panneau annonce mène quelque part au lieu de s'arrêter à des portes closes. Leur nombre n'est pas celui que le panneau compte."
+    },
+    {
+      "id": "tier-4-general-area-east-cabin-starboard-7",
+      "tierId": "interior-general-passenger-block",
+      "locationId": null,
+      "name": "Passenger Cabin (starboard 7)",
+      "nameFr": "Cabine de passagers (tribord 7)",
+      "category": "quarters",
+      "provenance": "inferred",
+      "source": "Nothing draws the inside of this block. The cells are set at the size a cabin has to be to be walked into, so that what the sign stands over leads somewhere rather than ending in shut doors. How many there are is not what the sign counts.",
+      "ceiling": 3,
+      "envelope": "tier-4-general-area-east-cabin-starboard-7",
+      "footprint": [
+        [2.5, 32],
+        [7.5, 32],
+        [7.5, 37],
+        [2.5, 37]
+      ],
+      "sourceFr": "Rien ne dessine l'intérieur de ce bloc. Les cellules sont posées à la taille qu'une cabine doit avoir pour être parcourue, pour que ce que le panneau annonce mène quelque part au lieu de s'arrêter à des portes closes. Leur nombre n'est pas celui que le panneau compte."
+    },
+    {
+      "id": "tier-4-general-area-east-cabin-starboard-8",
+      "tierId": "interior-general-passenger-block",
+      "locationId": null,
+      "name": "Passenger Cabin (starboard 8)",
+      "nameFr": "Cabine de passagers (tribord 8)",
+      "category": "quarters",
+      "provenance": "inferred",
+      "source": "Nothing draws the inside of this block. The cells are set at the size a cabin has to be to be walked into, so that what the sign stands over leads somewhere rather than ending in shut doors. How many there are is not what the sign counts.",
+      "ceiling": 3,
+      "envelope": "tier-4-general-area-east-cabin-starboard-8",
+      "footprint": [
+        [2.5, 37],
+        [7.5, 37],
+        [7.5, 42],
+        [2.5, 42]
+      ],
+      "sourceFr": "Rien ne dessine l'intérieur de ce bloc. Les cellules sont posées à la taille qu'une cabine doit avoir pour être parcourue, pour que ce que le panneau annonce mène quelque part au lieu de s'arrêter à des portes closes. Leur nombre n'est pas celui que le panneau compte."
     }
   ],
   "links": [
@@ -8422,6 +8783,16 @@
       "provenance": "plan",
       "source": "High-security cell plan; the Zodiac watch kept in front of the bars, ch. 359",
       "sourceFr": "Plan de la cellule de haute sécurité ; la garde des Zodiaques tenue devant les barreaux, chap. 359"
+    },
+    {
+      "from": "tier-4-general-area-east",
+      "to": "tier-4-general-area-east-portal",
+      "kind": "door",
+      "at": [84, -7],
+      "atTo": [0, -4],
+      "provenance": "panel",
+      "source": "The panel of the general passengers' block: a portal signed SRCL 9041 – 9488, and behind it a corridor with cabin doors down both sides and soldiers posted in it.",
+      "sourceFr": "La planche du bloc des passagers ordinaires : un portail portant SRCL 9041 – 9488, et derrière lui une coursive à portes de cabines des deux côtés, avec des soldats postés dedans."
     }
   ],
   "seals": [
@@ -10254,6 +10625,134 @@
       "width": 1.2,
       "reason": "The plan opens each single cabin on the corridor beside its WC, and nowhere else.",
       "reasonFr": "Le plan ouvre chaque mono-cabine sur la coursive à côté de son WC, et nulle part ailleurs."
+    },
+    {
+      "a": "tier-4-general-area-east-cabin-port-1",
+      "b": "tier-4-general-area-east-corridor",
+      "at": [-2.5, 4.5],
+      "width": 1.2,
+      "reason": "Each cabin opens on the corridor, as the panel draws its doors, and nowhere else.",
+      "reasonFr": "Chaque cabine ouvre sur la coursive, comme la planche en dessine les portes, et nulle part ailleurs."
+    },
+    {
+      "a": "tier-4-general-area-east-cabin-port-2",
+      "b": "tier-4-general-area-east-corridor",
+      "at": [-2.5, 9.5],
+      "width": 1.2,
+      "reason": "Each cabin opens on the corridor, as the panel draws its doors, and nowhere else.",
+      "reasonFr": "Chaque cabine ouvre sur la coursive, comme la planche en dessine les portes, et nulle part ailleurs."
+    },
+    {
+      "a": "tier-4-general-area-east-cabin-port-3",
+      "b": "tier-4-general-area-east-corridor",
+      "at": [-2.5, 14.5],
+      "width": 1.2,
+      "reason": "Each cabin opens on the corridor, as the panel draws its doors, and nowhere else.",
+      "reasonFr": "Chaque cabine ouvre sur la coursive, comme la planche en dessine les portes, et nulle part ailleurs."
+    },
+    {
+      "a": "tier-4-general-area-east-cabin-port-4",
+      "b": "tier-4-general-area-east-corridor",
+      "at": [-2.5, 19.5],
+      "width": 1.2,
+      "reason": "Each cabin opens on the corridor, as the panel draws its doors, and nowhere else.",
+      "reasonFr": "Chaque cabine ouvre sur la coursive, comme la planche en dessine les portes, et nulle part ailleurs."
+    },
+    {
+      "a": "tier-4-general-area-east-cabin-port-5",
+      "b": "tier-4-general-area-east-corridor",
+      "at": [-2.5, 24.5],
+      "width": 1.2,
+      "reason": "Each cabin opens on the corridor, as the panel draws its doors, and nowhere else.",
+      "reasonFr": "Chaque cabine ouvre sur la coursive, comme la planche en dessine les portes, et nulle part ailleurs."
+    },
+    {
+      "a": "tier-4-general-area-east-cabin-port-6",
+      "b": "tier-4-general-area-east-corridor",
+      "at": [-2.5, 29.5],
+      "width": 1.2,
+      "reason": "Each cabin opens on the corridor, as the panel draws its doors, and nowhere else.",
+      "reasonFr": "Chaque cabine ouvre sur la coursive, comme la planche en dessine les portes, et nulle part ailleurs."
+    },
+    {
+      "a": "tier-4-general-area-east-cabin-port-7",
+      "b": "tier-4-general-area-east-corridor",
+      "at": [-2.5, 34.5],
+      "width": 1.2,
+      "reason": "Each cabin opens on the corridor, as the panel draws its doors, and nowhere else.",
+      "reasonFr": "Chaque cabine ouvre sur la coursive, comme la planche en dessine les portes, et nulle part ailleurs."
+    },
+    {
+      "a": "tier-4-general-area-east-cabin-port-8",
+      "b": "tier-4-general-area-east-corridor",
+      "at": [-2.5, 39.5],
+      "width": 1.2,
+      "reason": "Each cabin opens on the corridor, as the panel draws its doors, and nowhere else.",
+      "reasonFr": "Chaque cabine ouvre sur la coursive, comme la planche en dessine les portes, et nulle part ailleurs."
+    },
+    {
+      "a": "tier-4-general-area-east-cabin-starboard-1",
+      "b": "tier-4-general-area-east-corridor",
+      "at": [2.5, 4.5],
+      "width": 1.2,
+      "reason": "Each cabin opens on the corridor, as the panel draws its doors, and nowhere else.",
+      "reasonFr": "Chaque cabine ouvre sur la coursive, comme la planche en dessine les portes, et nulle part ailleurs."
+    },
+    {
+      "a": "tier-4-general-area-east-cabin-starboard-2",
+      "b": "tier-4-general-area-east-corridor",
+      "at": [2.5, 9.5],
+      "width": 1.2,
+      "reason": "Each cabin opens on the corridor, as the panel draws its doors, and nowhere else.",
+      "reasonFr": "Chaque cabine ouvre sur la coursive, comme la planche en dessine les portes, et nulle part ailleurs."
+    },
+    {
+      "a": "tier-4-general-area-east-cabin-starboard-3",
+      "b": "tier-4-general-area-east-corridor",
+      "at": [2.5, 14.5],
+      "width": 1.2,
+      "reason": "Each cabin opens on the corridor, as the panel draws its doors, and nowhere else.",
+      "reasonFr": "Chaque cabine ouvre sur la coursive, comme la planche en dessine les portes, et nulle part ailleurs."
+    },
+    {
+      "a": "tier-4-general-area-east-cabin-starboard-4",
+      "b": "tier-4-general-area-east-corridor",
+      "at": [2.5, 19.5],
+      "width": 1.2,
+      "reason": "Each cabin opens on the corridor, as the panel draws its doors, and nowhere else.",
+      "reasonFr": "Chaque cabine ouvre sur la coursive, comme la planche en dessine les portes, et nulle part ailleurs."
+    },
+    {
+      "a": "tier-4-general-area-east-cabin-starboard-5",
+      "b": "tier-4-general-area-east-corridor",
+      "at": [2.5, 24.5],
+      "width": 1.2,
+      "reason": "Each cabin opens on the corridor, as the panel draws its doors, and nowhere else.",
+      "reasonFr": "Chaque cabine ouvre sur la coursive, comme la planche en dessine les portes, et nulle part ailleurs."
+    },
+    {
+      "a": "tier-4-general-area-east-cabin-starboard-6",
+      "b": "tier-4-general-area-east-corridor",
+      "at": [2.5, 29.5],
+      "width": 1.2,
+      "reason": "Each cabin opens on the corridor, as the panel draws its doors, and nowhere else.",
+      "reasonFr": "Chaque cabine ouvre sur la coursive, comme la planche en dessine les portes, et nulle part ailleurs."
+    },
+    {
+      "a": "tier-4-general-area-east-cabin-starboard-7",
+      "b": "tier-4-general-area-east-corridor",
+      "at": [2.5, 34.5],
+      "width": 1.2,
+      "reason": "Each cabin opens on the corridor, as the panel draws its doors, and nowhere else.",
+      "reasonFr": "Chaque cabine ouvre sur la coursive, comme la planche en dessine les portes, et nulle part ailleurs."
+    },
+    {
+      "a": "tier-4-general-area-east-cabin-starboard-8",
+      "b": "tier-4-general-area-east-corridor",
+      "at": [2.5, 39.5],
+      "width": 1.2,
+      "reason": "Each cabin opens on the corridor, as the panel draws its doors, and nowhere else.",
+      "reasonFr": "Chaque cabine ouvre sur la coursive, comme la planche en dessine les portes, et nulle part ailleurs."
     }
   ],
   "structures": [
@@ -22688,6 +23187,22 @@
       "provenance": "panel",
       "source": "Ch. 405 — the gaming floor, the shopfronts around it and the mezzanine above: the shops run the length of both walls on each level, and a lounge of armchairs stands in the middle of the floor.",
       "sourceFr": "Chap. 405 — la salle de jeu, les devantures autour et la mezzanine au-dessus : les boutiques courent sur toute la longueur des deux murs à chaque niveau, et un salon de fauteuils occupe le milieu de la salle."
+    },
+    {
+      "id": "tier-4-general-area-east-block-sign",
+      "spaceId": "tier-4-general-area-east-portal",
+      "kind": "painting",
+      "name": "Block Sign (SRCL 9041 – 9488)",
+      "nameFr": "Panneau du bloc (SRCL 9041 – 9488)",
+      "at": [0, -3.6],
+      "size": [4, 0.4],
+      "rotation": 0,
+      "base": 2.2,
+      "height": 0.8,
+      "sides": null,
+      "provenance": "panel",
+      "source": "The panel of the general passengers' block: a portal signed SRCL 9041 – 9488, and behind it a corridor with cabin doors down both sides and soldiers posted in it.",
+      "sourceFr": "La planche du bloc des passagers ordinaires : un portail portant SRCL 9041 – 9488, et derrière lui une coursive à portes de cabines des deux côtés, avec des soldats postés dedans."
     }
   ]
 }

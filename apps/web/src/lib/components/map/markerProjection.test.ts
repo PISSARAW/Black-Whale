@@ -391,7 +391,7 @@ describe('packMarkersForZoom', () => {
 
     // The bed the apartment asset draws in the master bedroom.
     expect(placed.x).toBeCloseTo(15)
-    expect(placed.y).toBeCloseTo(84.38)
+    expect(placed.y).toBeCloseTo(85.15)
   })
 
   it('lays the twins side by side on the one bed they share', () => {
@@ -429,7 +429,7 @@ describe('packMarkersForZoom', () => {
     const [longhi, student] = packMarkersForZoom(room, 'LOCAL')
 
     expect(longhi.x).toBeCloseTo(56.25)
-    expect(longhi.y).toBeCloseTo(86.25)
+    expect(longhi.y).toBeCloseTo(87.07)
     // 1014 declares no fallback, so everyone else keeps the centred grid.
     expect(student.x).toBe(50)
     expect(student.y).toBe(50)
@@ -437,9 +437,9 @@ describe('packMarkersForZoom', () => {
 
   it('seats each prince on the fixture his own apartment draws', () => {
     const seats = [
-      ['tier-1-royal-residential-sector-room-1001', 'prince-benjamin', 75, 63.13],
-      ['tier-1-royal-residential-sector-room-1004', 'prince-tserriednich', 74.38, 63.13],
-      ['tier-1-royal-residential-sector-room-1007', 'prince-luzurus', 29.38, 65],
+      ['tier-1-royal-residential-sector-room-1001', 'prince-benjamin', 75, 63.29],
+      ['tier-1-royal-residential-sector-room-1004', 'prince-tserriednich', 74.38, 63.29],
+      ['tier-1-royal-residential-sector-room-1007', 'prince-luzurus', 29.38, 65.21],
     ] as const
 
     for (const [locationId, characterSlug, x, y] of seats) {

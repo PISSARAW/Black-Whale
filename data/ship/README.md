@@ -241,7 +241,7 @@ carte `/ship` et la visite montrent le même pont 1 — et l'intérieur est un
 **niveau à part**, tracé à sa taille réelle, dans lequel on entre par la porte.
 C'est la structure de `/ship` (plan de pont → plan de salle), en volume.
 
-Trente-quatre pièces ont ainsi leur intérieur : les quatorze appartements
+Trente-six pièces ont ainsi leur intérieur : les quatorze appartements
 princiers, les neuf plans de salle qui comptent plus d'une pièce — quartier
 de détention VIP, cellule de haute sécurité, quartiers des soldats, bureau de la
 Justice, hôpital central, cinéplexe, bureau Cha-R, cabines standard, cabines de
@@ -260,13 +260,24 @@ un : la planque des Heil-Ly, dont le plan donne cinq pièces derrière une porte
 que le chap. 356 dit dissimulée sans dire où. S'y ajoute un canot de
 sauvetage : le chap. 383 en montre l'intérieur, et une capsule de cinq mètres
 n'est pas une salle du pont mais un volume posé dessus, dans lequel on entre
-par son écoutille. Les 22 autres plans locaux ne dessinent qu'une salle, que le
-pont porte déjà.
+par son écoutille. Le pont 4 en ajoute un dernier, qui ne sort d'aucun plan de
+salle : le bloc des passagers ordinaires, dont une planche signale le portail
+d'un `SRCL 9041 – 9488` et montre derrière lui une coursive à portes des deux
+côtés. Les 22 autres plans locaux ne dessinent qu'une salle, que le pont porte
+déjà.
 
 Chaque plan a **sa propre échelle**, choisie sur ce que ses pièces doivent
-mesurer pour être parcourues — une cabine standard de 6 m, une cellule de 10 —
-c'est-à-dire précisément la mesure que les plans de pont schématiques ne
-portent pas.
+mesurer pour être parcourues — une cabine standard de 6 m — c'est-à-dire
+précisément la mesure que les plans de pont schématiques ne portent pas. Quand
+une planche, elle, donne cette mesure, c'est elle qui l'emporte : la couchette
+de la cellule de première classe occupe la moitié de son mur au chap. 373, ce
+qui donne une cellule de 5,5 × 4,5 m là où le plan lu à sa propre échelle en
+donnait une de 12,5 × 10. Tout le quartier de détention est descendu avec elle.
+
+Le rapport des côtés vient du plan lui aussi, et pas seulement les tailles :
+l'appartement princier est **en portrait**, 21 × 25 m, parce que son plan l'est
+— il a longtemps été carré, ce qui était une affirmation sur l'appartement que
+rien ne soutenait.
 
 Un niveau d'intérieur porte `kind: "interior"` et `parentSpaceId`, la pièce dont
 il est le dedans. Un `link` de type `door` les relie. Ce lien est le seul à

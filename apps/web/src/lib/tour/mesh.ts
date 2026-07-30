@@ -47,10 +47,20 @@ export interface TierMesh {
 
 type Rgb = readonly [number, number, number]
 
+/**
+ * The colours below are written the way a stylesheet writes them — sRGB, the
+ * space the eye and the deck plans agree on. A vertex colour attribute is read
+ * by three.js as already linear, so the transfer function has to be undone here
+ * or every surface arrives about five times too light: `0x4a4038` is an albedo
+ * of 0.058, not of 0.290, and at 0.290 the walls come out a flat grey.
+ */
+const toLinear = (channel: number): number =>
+  channel <= 0.04045 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4
+
 const hex = (value: number): Rgb => [
-  ((value >> 16) & 255) / 255,
-  ((value >> 8) & 255) / 255,
-  (value & 255) / 255,
+  toLinear(((value >> 16) & 255) / 255),
+  toLinear(((value >> 8) & 255) / 255),
+  toLinear((value & 255) / 255),
 ]
 
 /**

@@ -216,6 +216,13 @@
 
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
       renderer.setClearColor(0x050505)
+      // The deck colours are true albedos now that `mesh.ts` hands over linear
+      // values, and a linear render of them clips the headlamp's hot spot to
+      // white while leaving the far end of a corridor as mud. The filmic curve
+      // is what holds both ends: it rolls the lamp off instead of clipping it
+      // and keeps the shadowed steel above black.
+      renderer.toneMapping = THREE.ACESFilmicToneMapping
+      renderer.toneMappingExposure = 1
 
       const scene = new THREE.Scene()
       scene.fog = new THREE.Fog(0x050505, 6, 110)
@@ -226,12 +233,19 @@
       // the image so surfaces keep the colour they were given, and the lamp on
       // the visitor only picks out what is close — a strong lamp washes every
       // room to the same gold and flattens the walls out of existence.
-      scene.add(new THREE.AmbientLight(0xfffff0, 0.75))
-      scene.add(new THREE.HemisphereLight(0x9fb4c8, 0x140d0d, 0.85))
-      const headlamp = new THREE.PointLight(0xffd9a0, 14, 34, 1.4)
+      //
+      // The intensities are set against linear albedos and the filmic curve
+      // above; they are not a free parameter. Correcting the vertex colours
+      // without touching these darkens the ship by about a stop and a half.
+      const AMBIENT = 0.9
+      const HEMISPHERE = 1
+      const HEADLAMP = 18
+      scene.add(new THREE.AmbientLight(0xfffff0, AMBIENT))
+      scene.add(new THREE.HemisphereLight(0x9fb4c8, 0x140d0d, HEMISPHERE))
+      const headlamp = new THREE.PointLight(0xffd9a0, HEADLAMP, 34, 1.4)
       scene.add(headlamp)
       // A raking light so two walls at right angles never take the same value.
-      const raking = new THREE.DirectionalLight(0xfff4e0, 0.55)
+      const raking = new THREE.DirectionalLight(0xfff4e0, 0.7)
       raking.position.set(0.4, 1, 0.25)
       scene.add(raking)
 
@@ -352,6 +366,23 @@
       let pitch = 0
       let currentTierId = ''
 
+      /** How far the visitor has to move or turn before the HUD is told. */
+      const REPORT_STEP = 0.25
+      const REPORT_TURN = 0.02
+      let reported: Vec2 = [0, 0]
+      let reportedYaw = 0
+      /** The shorter way round from `b` to `a`, so ±π never reads as a full turn. */
+      const angleGap = (a: number, b: number) =>
+        ((((a - b) % (Math.PI * 2)) + Math.PI * 3) % (Math.PI * 2)) - Math.PI
+
+      /** Mirrors the visitor out at once, for a step the thresholds would miss. */
+      function report() {
+        reported = pointer
+        reportedYaw = yaw
+        position = pointer
+        heading = yaw
+      }
+
       // Keys held down. A plain record on purpose: the render loop reads it
       // sixty times a second and nothing in the markup depends on it, so it
       // must stay outside Svelte's reactivity rather than drive it.
@@ -387,6 +418,7 @@
           pitch = 0
         }
         camera.position.set(pointer[0], plan.tier.elevation + EYE_HEIGHT, pointer[1])
+        report()
       }
 
       /** Moves the visitor to a named space, changing deck if it is elsewhere. */
@@ -401,6 +433,7 @@
           pointer = at
           const plan = ship.plans.get(currentTierId)!
           camera.position.set(at[0], plan.tier.elevation + EYE_HEIGHT, at[1])
+          report()
         }
         tierId = space.tierId
       }
@@ -504,9 +537,6 @@
        * fog closes to arm's length, so the ship is still there and you cannot
        * see it, which is what the monkeys take.
        */
-      const AMBIENT = 0.75
-      const HEMISPHERE = 0.85
-      const HEADLAMP = 14
       let blinded = false
 
       function syncSight() {
@@ -849,8 +879,20 @@
           ? linkUnderfoot(ship.links, standing?.id ?? null, pointer)
           : null
         if (link?.to !== untrack(() => availableLink)?.to) availableLink = link
-        position = pointer
-        heading = yaw
+        // `position` is a fresh array every frame, so assigning it unguarded
+        // invalidates whatever reads it — the minimap, which redraws a hull, a
+        // few dozen dotted paths and its legends, on the thread that has to get
+        // the next frame out. A quarter of a metre and a degree or so is below
+        // what the minimap can show anyway, and takes it from 60 Hz to a walking
+        // pace of about eight.
+        if (Math.hypot(pointer[0] - reported[0], pointer[1] - reported[1]) >= REPORT_STEP) {
+          reported = pointer
+          position = pointer
+        }
+        if (Math.abs(angleGap(yaw, reportedYaw)) >= REPORT_TURN) {
+          reportedYaw = yaw
+          heading = yaw
+        }
 
         // Setting foot in a room is the event the hideout doors and the paper
         // dolls both wait on. Walking about inside one is not.

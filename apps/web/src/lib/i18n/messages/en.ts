@@ -237,6 +237,7 @@ export const en = {
         cabinet: (count: number) => `${count} ${count === 1 ? 'cabinet' : 'cabinets'}`,
         basin: (count: number) => `${count} ${count === 1 ? 'basin' : 'basins'}`,
         painting: (count: number) => `${count} ${count === 1 ? 'canvas' : 'canvases'}`,
+        window: (count: number) => `${count} ${count === 1 ? 'window' : 'windows'}`,
         lifeboat: (count: number) => `${count} ${count === 1 ? 'lifeboat' : 'lifeboats'}`,
         pillar: (count: number) => `${count} ${count === 1 ? 'pillar' : 'pillars'}`,
         bars: (count: number) => `${count} ${count === 1 ? 'run of bars' : 'runs of bars'}`,

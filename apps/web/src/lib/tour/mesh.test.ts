@@ -21,13 +21,18 @@ import {
 import { VISITOR_RADIUS } from './navigation'
 import {
   PATCH,
+  WINDOW_GLOW,
+  WINDOW_REACH,
+  WINDOW_SAMPLE,
   buildSolidMesh,
   buildTierMesh,
   colourFor,
   fittingHeight,
+  windowSources,
+  type MeshGroup,
   type TierMesh,
 } from './mesh'
-import type { Vec2 } from './types'
+import type { Structure, Vec2 } from './types'
 
 const ship = buildShip()
 
@@ -763,6 +768,29 @@ describe('the depth of a doorway', () => {
 })
 
 /**
+ * Whether the quad starting at vertex `i` of the sources buffer stands up.
+ *
+ * The buffer holds the surfaces that are lights, and there are two sorts: a
+ * fitting, which lies flat under the ceiling, and the pane of a window, which
+ * stands in its wall. Nothing else in it can be at two heights at once, so this is
+ * the whole of the distinction.
+ */
+const standsUp = (fittings: Float32Array, i: number) =>
+  Math.abs(fittings[i + 1] - fittings[i + 4]) > 1e-6 ||
+  Math.abs(fittings[i + 1] - fittings[i + 7]) > 1e-6
+
+/** How many of a room's source triangles lie flat, which is its fittings. */
+function flatTriangles(mesh: TierMesh, group: MeshGroup): number {
+  let flat = 0
+  const from = group.fittingStart * 3
+  const to = (group.fittingStart + group.fittingCount) * 3
+  for (let i = from; i < to; i += 9) {
+    if (!standsUp(mesh.fittings, i)) flat++
+  }
+  return flat
+}
+
+/**
  * The fittings, which are the visible half of what the bake has been reading off
  * `ceilingLamps` since it landed.
  *
@@ -779,9 +807,10 @@ describe('the ceiling fittings', () => {
       for (const group of mesh.groups) {
         const space = plan.spaces.find((entry) => entry.id === group.spaceId)!
         const lamps = ceilingLamps(space.footprint)
-        // Two triangles, six vertices, one fitting.
+        // Two triangles, six vertices, one fitting — and the panes of a window,
+        // which share this buffer because they are sources too, are not fittings.
         expect(
-          group.fittingCount / 6,
+          flatTriangles(mesh, group) / 2,
           `${group.spaceId} draws a different number of fittings than it lights by`,
         ).toBe(lamps.length)
         expect(lamps.length, `${group.spaceId} has no light in it`).toBeGreaterThan(0)
@@ -807,13 +836,18 @@ describe('the ceiling fittings', () => {
 
         const from = group.fittingStart * 3
         const to = (group.fittingStart + group.fittingCount) * 3
-        for (let i = from; i < to; i += 3) {
-          // Four places, not more: the buffer is `Float32Array`, and 78,65 m
-          // comes back out of it as 78,650002.
-          expect(
-            mesh.fittings[i + 1],
-            `${group.spaceId} hangs a fitting off its own light`,
-          ).toBeCloseTo(hang, 4)
+        for (let i = from; i < to; i += 9) {
+          // A window's pane is in this buffer too and is not hung from anything:
+          // it stands in its wall, at the height the blueprint gives it.
+          if (standsUp(mesh.fittings, i)) continue
+          for (let vertex = 0; vertex < 9; vertex += 3) {
+            // Four places, not more: the buffer is `Float32Array`, and 78,65 m
+            // comes back out of it as 78,650002.
+            expect(
+              mesh.fittings[i + vertex + 1],
+              `${group.spaceId} hangs a fitting off its own light`,
+            ).toBeCloseTo(hang, 4)
+          }
         }
       }
     }
@@ -824,6 +858,9 @@ describe('the ceiling fittings', () => {
     for (const plan of ship.plans.values()) {
       const f = buildTierMesh(plan).fittings
       for (let i = 0; i < f.length; i += 9) {
+        // A pane stands in a wall and is faced out of it, not down: see the
+        // windows below.
+        if (standsUp(f, i)) continue
         // The winding has to give a downward normal: the only side of a lamp
         // anyone is ever on is underneath it.
         const ux = f[i + 3] - f[i]
@@ -914,6 +951,194 @@ describe('the ceiling fittings', () => {
         mesh.fittings.length / 3,
       )
     }
+  })
+})
+
+/**
+ * The two windows, which are the only two places on the ship where the outside
+ * exists.
+ *
+ * Every other source on board is a filament on a ceiling grid, derived. These are
+ * declared: `kind: 'window'` in `blueprint.json`, on two structures a panel draws.
+ * So what is worth guarding is what the kind buys — that the pane is drawn as a
+ * light and not as lacquer, that it is drawn where the light is computed from, and
+ * that being the exception costs the other 312 rooms nothing.
+ */
+describe('the two windows', () => {
+  const windows = ship.structures.filter((entry) => entry.kind === 'window')
+
+  /** The room a window stands in, and the deck that room is on. */
+  const roomOf = (structure: Structure) => {
+    for (const plan of ship.plans.values()) {
+      const space = plan.spaces.find((entry) => entry.id === structure.spaceId)
+      if (space) return { plan, space }
+    }
+    throw new Error(`${structure.id} stands in no room`)
+  }
+
+  it('types two of them on the whole ship, and both are drawn by a panel', () => {
+    // The figure is the point of the feature: 314 spaces, 2 ways of seeing out.
+    expect(windows.map((entry) => entry.id).sort()).toEqual([
+      'tier-1-king-living-quarters-living-great-window',
+      'tier-3-observation-deck-window',
+    ])
+    for (const entry of windows) {
+      expect(entry.provenance, `${entry.id} is not drawn`).toBe('panel')
+      // Hung off the floor and taller than a person: this is a bay, not a porthole.
+      expect(entry.base).toBeGreaterThan(0)
+      expect(entry.height).toBeGreaterThan(2)
+    }
+    expect(ship.spaces.size).toBe(314)
+  })
+
+  it('samples the pane along its length, at the height of the glass', () => {
+    for (const structure of windows) {
+      const { plan } = roomOf(structure)
+      const sources = windowSources(structure, plan.tier.elevation)
+      const span = Math.max(...structure.size)
+      // A point source at the middle of 36 m of glass would light the centre of
+      // the observation deck and leave both ends of the same window dark.
+      expect(sources.length, `${structure.id} is lit by too few sources`).toBe(
+        Math.round(span / WINDOW_SAMPLE),
+      )
+      const y = plan.tier.elevation + structure.base + structure.height / 2
+      for (const source of sources) expect(source[1]).toBeCloseTo(y, 6)
+
+      // Spread over the glass rather than piled at one end of it.
+      const spread = Math.hypot(
+        sources[0][0] - sources[sources.length - 1][0],
+        sources[0][2] - sources[sources.length - 1][2],
+      )
+      expect(spread).toBeGreaterThan(span * 0.7)
+      expect(spread).toBeLessThan(span)
+    }
+  })
+
+  it('draws the glass in the buffer that refuses to be lit', () => {
+    for (const structure of windows) {
+      const { plan, space } = roomOf(structure)
+      const mesh = buildTierMesh(plan)
+      const group = mesh.groups.find((entry) => entry.spaceId === space.id)!
+      const bottom = plan.tier.elevation + structure.base
+      const top = bottom + structure.height
+
+      const from = group.fittingStart * 3
+      const to = (group.fittingStart + group.fittingCount) * 3
+      let panes = 0
+      for (let i = from; i < to; i += 9) {
+        if (!standsUp(mesh.fittings, i)) continue
+        panes++
+        for (let vertex = 0; vertex < 9; vertex += 3) {
+          const y = mesh.fittings[i + vertex + 1]
+          // The blueprint's own height for the opening: a pane is not hung from
+          // the ceiling grid and must not be moved to it.
+          expect(Math.min(Math.abs(y - bottom), Math.abs(y - top))).toBeLessThan(1e-4)
+        }
+        // Above white on the blue side, which nothing else in the ship is.
+        const colour = [mesh.fittingColors[i], mesh.fittingColors[i + 1], mesh.fittingColors[i + 2]]
+        for (let channel = 0; channel < 3; channel++) {
+          // Six places: the buffer is `Float32Array`, so 0,62 comes back 0,6200000.
+          expect(colour[channel]).toBeCloseTo(WINDOW_GLOW[channel], 6)
+        }
+        expect(colour[2], 'the pane does not burn above white').toBeGreaterThan(1)
+        expect(colour[2], 'the sky of the Dark Continent is not warm').toBeGreaterThan(colour[0])
+      }
+      // Two faces of glass, two triangles each. The outboard one is never seen,
+      // and deciding which that is costs more than drawing it.
+      expect(panes, `${structure.id} draws no glass`).toBe(4)
+    }
+  })
+
+  it('faces each pane out of the frame it sits in', () => {
+    for (const structure of windows) {
+      const { plan, space } = roomOf(structure)
+      const mesh = buildTierMesh(plan)
+      const group = mesh.groups.find((entry) => entry.spaceId === space.id)!
+      const from = group.fittingStart * 3
+      const to = (group.fittingStart + group.fittingCount) * 3
+
+      for (let i = from; i < to; i += 9) {
+        if (!standsUp(mesh.fittings, i)) continue
+        const ax = mesh.fittings[i]
+        const az = mesh.fittings[i + 2]
+        const u = [
+          mesh.fittings[i + 3] - ax,
+          mesh.fittings[i + 4] - mesh.fittings[i + 1],
+          mesh.fittings[i + 5] - az,
+        ]
+        const v = [
+          mesh.fittings[i + 6] - ax,
+          mesh.fittings[i + 7] - mesh.fittings[i + 1],
+          mesh.fittings[i + 8] - az,
+        ]
+        const normal = [
+          u[1] * v[2] - u[2] * v[1],
+          u[2] * v[0] - u[0] * v[2],
+          u[0] * v[1] - u[1] * v[0],
+        ]
+        const length = Math.hypot(...normal)
+        expect(length).toBeGreaterThan(0)
+        // Vertical glass: whichever way it looks, it does not look up or down.
+        expect(Math.abs(normal[1]) / length).toBeLessThan(1e-6)
+        // And it looks away from the frame's own centre — the material is drawn
+        // `FrontSide`, so a pane wound the other way is not a dark pane, it is a
+        // missing one.
+        const out = normal[0] * (ax - structure.at[0]) + normal[2] * (az - structure.at[1])
+        expect(out, `${structure.id} draws its glass inside out`).toBeGreaterThan(0)
+      }
+    }
+  })
+
+  it('lights the room it stands in, and only that room', () => {
+    for (const structure of windows) {
+      const { plan, space } = roomOf(structure)
+      // The same deck with the glass called a canvas, which is what the two of
+      // them were until now: same geometry, same collision, no daylight.
+      const blinded = {
+        ...plan,
+        structures: plan.structures.map((entry) =>
+          entry.id === structure.id ? { ...entry, kind: 'painting' as const } : entry,
+        ),
+      }
+      const lit = buildTierMesh(plan)
+      const dark = buildTierMesh(blinded)
+
+      const mean = (mesh: TierMesh, group: MeshGroup) => {
+        let total = 0
+        const from = group.start * 3
+        const to = (group.start + group.count) * 3
+        for (let i = from; i < to; i++) total += mesh.colors[i]
+        return total / (to - from)
+      }
+
+      for (const group of lit.groups) {
+        const other = dark.groups.find((entry) => entry.spaceId === group.spaceId)!
+        expect(group.count, `${group.spaceId} changed shape`).toBe(other.count)
+        if (group.spaceId === space.id) continue
+        // Every other room on the deck is lit exactly as it was: the window is a
+        // source in its own room and nowhere else, which is what `WINDOW_REACH`
+        // says and what keeps this affordable at 314 rooms.
+        expect(mean(lit, group), `${group.spaceId} took light from another room`).toBeCloseTo(
+          mean(dark, group),
+          10,
+        )
+      }
+
+      const room = lit.groups.find((entry) => entry.spaceId === space.id)!
+      const blind = dark.groups.find((entry) => entry.spaceId === space.id)!
+      expect(
+        mean(lit, room),
+        `${space.id} is no brighter for having a window in it`,
+      ).toBeGreaterThan(mean(dark, blind))
+      // And not by a rounding error: the daylight is meant to be felt walking in.
+      expect(mean(lit, room) / mean(dark, blind)).toBeGreaterThan(1.01)
+    }
+  })
+
+  it('throws further than a lamp, because the opening is not a lamp', () => {
+    // 6 m of glass over the observation deck stopping at a fitting's 9 m would
+    // read as a lamp hung against the window rather than as the sky behind it.
+    expect(WINDOW_REACH).toBeGreaterThan(9)
   })
 })
 

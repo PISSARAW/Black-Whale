@@ -550,6 +550,13 @@ export const en = {
     footerSections: 'Sections',
     copyright: (year: number) => `© ${year} Black Whale Archive`,
     disclaimer: 'Unofficial fan project · Hunter × Hunter is © Yoshihiro Togashi / Shueisha',
+    // LICENSE-DATA puts the catalogue and the hand-drawn maps under CC BY 4.0
+    // and requires the credit to be visible in the deployed interface, not only
+    // in the source. The three fragments wrap two links, so they are separate
+    // strings rather than one sentence with markup in it.
+    dataCreditPrefix: 'Catalogue and ship maps by Ginks —',
+    dataCreditRepository: 'source repository',
+    dataCreditLicensedUnder: '— licensed under',
     chooseLanguage: 'Choose a language',
   },
 

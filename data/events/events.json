@@ -393,6 +393,16 @@
   {
     "chapter": 380,
     "chapterTitle": "Alarm",
+    "sequence": 0,
+    "title": "A cutaway of the ship places everyone at ten in the morning",
+    "summary": "A double-page section of the hull, captioned fourth day of the crossing, 10:00, puts a name to every post that matters below Tier 2. Third-class observation post: Illumi and Kalluto. Ordinary third-class cabins: Cashew. The Level 3 governmental and political zone — the body that enforces political law, the central police, the local section of the Royal Army — holds Mizaistom, Botobai, Piyon, Cluck and Ginta. The special medical zone, central hospital and general laboratory, holds Cheadle, Leorio and Gel. Luini sits in the Ei-I family office. Chrollo, Bonolenov and Shizuku are in the central passage; Feitan at the hangar entrance; Hinrigh in the Xi-Yu office; Machi in the ordinary fifth-class cabins; Franklin in the fifth-class central canteen; and Ken'i Wang, Nobunaga and Phinks in the Cha-R office.",
+    "legacyTitles": [],
+    "occurredAtLabel": "Day 4 · Wednesday · 10:00",
+    "note": "This is the only time stamp in the arc attached to a map rather than a scene, and the only page that fixes the Zodiacs, the three mafia offices and the whole Troupe at one hour. It is a snapshot of Day 4 and not a standing state: `shipLocation` in the character files holds each figure's latest known post, which for several of them — Bonolenov in the Tier 1 casino, Phinks in the recycling works, Luini dead in the Cha-R hideout — is a later chapter than this one."
+  },
+  {
+    "chapter": 380,
+    "chapterTitle": "Alarm",
     "sequence": 1,
     "title": "Fugetsu emerges alone on Tier 3",
     "summary": "An uncontrolled use of Magical Worm takes Fugetsu to Tier 3, where the Hunters place her under Justice protection.",

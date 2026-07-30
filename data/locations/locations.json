@@ -650,6 +650,26 @@
     "exits": []
   },
   {
+    "id": "tier-4-ei-i-family-office",
+    "name": "Ei-I Family Office",
+    "parentLocationId": "tier-4",
+    "deck": 4,
+    "zoneType": "mafia",
+    "description": "Office of the third of the three mafia families aboard, alongside the Xi-Yu and Cha-R ones. The chapter 380 cutaway is the only thing that places it: a compartment on the fourth deck, above the central passage, with Luini inside it at ten on the morning of the fourth day. Nothing has been drawn of its interior.",
+    "entrances": [],
+    "exits": []
+  },
+  {
+    "id": "tier-5-hangar-entrance",
+    "name": "Hangar Entrance",
+    "parentLocationId": "tier-5",
+    "deck": 5,
+    "zoneType": "service",
+    "description": "Way into the Tier 5 hangar, near the warehouse the Cha-R keep. The chapter 380 cutaway posts Feitan here at ten in the morning of the fourth day; the hangar guard walked away from this door is what let the warehouse theft happen two chapters earlier.",
+    "entrances": [],
+    "exits": []
+  },
+  {
     "id": "tier-5-warehouse",
     "name": "Warehouse",
     "parentLocationId": "tier-5",

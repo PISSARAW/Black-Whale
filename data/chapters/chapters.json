@@ -579,6 +579,35 @@
     "date": "2018-01-22",
     "timeline": [
       {
+        "event": "A cutaway of the whole ship places everyone who matters, captioned fourth day of the crossing, 10 in the morning",
+        "storyDate": "Day 4 · Wednesday · 10:00",
+        "charactersInvolved": [
+          "illumi",
+          "kalluto-zoldyck",
+          "cashew",
+          "mizaistom-nana",
+          "botobai-gigante",
+          "piyon",
+          "cluck",
+          "ginta",
+          "cheadle-yorkshire",
+          "leorio-paradinight",
+          "gel",
+          "luini",
+          "chrollo-lucilfer",
+          "bonolenov-ndongo",
+          "shizuku-murasaki",
+          "feitan-portor",
+          "hinrigh-biganduffno",
+          "machi-komacine",
+          "franklin-bordeau",
+          "keni-wang",
+          "nobunaga-hazama",
+          "phinks-magcub"
+        ],
+        "location": "Black Whale - cutaway of Tiers 3 to 5"
+      },
+      {
         "event": "Hisoka arrives in Tier 5 and begins his hunt",
         "storyDate": "≈ Day 4",
         "charactersInvolved": ["hisoka", "illumi", "chrollo-lucilfer", "nobunaga-hazama"],
@@ -605,6 +634,8 @@
     ],
     "location": "Tiers 2, 4, 5",
     "keyEvents": [
+      "The fifth time stamp of the voyage: fourth day of the crossing, 10:00 — and the only one attached to a map",
+      "A full cutaway names where twenty-two people stand at that hour, from the third-class observation post down to the fifth-class canteen",
       "Arrival of Hisoka and start of his hunt by the Phantom Troupe",
       "Installation of mafia factions on lower thirds",
       "Kurapika begins his Nen teaching",

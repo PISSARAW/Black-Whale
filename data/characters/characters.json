@@ -1265,6 +1265,12 @@
         "title": "Friends",
         "status": "absent"
       }
+    ],
+    "mapTrajectory": [
+      {
+        "location": "tier-3-observation-deck",
+        "fromChapterId": "ch-380"
+      }
     ]
   },
   {
@@ -9314,6 +9320,10 @@
         "fromChapterId": "ch-360"
       },
       {
+        "location": "tier-3-political-ward",
+        "fromChapterId": "ch-380"
+      },
+      {
         "location": "tier-4-royal-army-conference-room",
         "fromChapterId": "ch-380.2"
       },
@@ -9722,6 +9732,10 @@
       {
         "location": "tier-3-central-courthouse",
         "fromChapterId": "ch-358"
+      },
+      {
+        "location": "tier-3-political-ward",
+        "fromChapterId": "ch-380"
       },
       {
         "location": "tier-4-royal-army-conference-room",
@@ -10134,7 +10148,13 @@
       "overview": "Gel is a highly proficient Nen user and former sparring partner of Isaac Netero. She has shown a partial bodily transformation, while the rest of her abilities remain undisclosed.",
       "techniques": ["Hatsu"],
       "abilityIds": ["snake-arm"]
-    }
+    },
+    "mapTrajectory": [
+      {
+        "location": "tier-3-central-hospital",
+        "fromChapterId": "ch-380"
+      }
+    ]
   },
   {
     "id": "melody",
@@ -13472,6 +13492,10 @@
         "certainty": "PROBABLE"
       },
       {
+        "location": "tier-4-xi-yu-family-office",
+        "fromChapterId": "ch-380"
+      },
+      {
         "location": "tier-3-residential-standard",
         "fromChapterId": "ch-390",
         "certainty": "PROBABLE"
@@ -13890,6 +13914,10 @@
         "location": "tier-5-cha-r-family-office",
         "fromChapterId": "ch-371",
         "certainty": "PROBABLE"
+      },
+      {
+        "location": "tier-5-cha-r-family-office",
+        "fromChapterId": "ch-380"
       },
       {
         "location": "tier-3-residential-room-3101",
@@ -14753,6 +14781,10 @@
         "fromChapterId": "ch-378.2"
       },
       {
+        "location": "tier-4-ei-i-family-office",
+        "fromChapterId": "ch-380"
+      },
+      {
         "location": "tier-5-cha-r-family-office",
         "fromChapterId": "ch-384",
         "untilChapterId": "ch-393"
@@ -15210,6 +15242,10 @@
         "fromChapterId": "ch-366"
       },
       {
+        "location": "tier-4-central-passage",
+        "fromChapterId": "ch-380"
+      },
+      {
         "location": "tier-1-princes-burial-chamber",
         "fromChapterId": "ch-405.3"
       },
@@ -15643,9 +15679,8 @@
         "fromChapterId": "ch-378.2"
       },
       {
-        "location": "tier-5-standard-cabins",
-        "fromChapterId": "ch-380",
-        "certainty": "PROBABLE"
+        "location": "tier-5-cha-r-family-office",
+        "fromChapterId": "ch-380"
       },
       {
         "location": "tier-3-residential-room-3101",
@@ -16861,6 +16896,12 @@
     "biography": [
       "As chairwoman of the Hunter Association, Cheadle organizes the expedition's medical and scientific personnel and recruits Leorio. She supervises the Tier 3 clinic aboard the Black Whale.",
       "On the eleventh day, her team receives the poisoned Halkenburg. Benjamin's royal medical unit removes the patient from her care, preventing the Hunters from determining the true cause of his collapse."
+    ],
+    "mapTrajectory": [
+      {
+        "location": "tier-3-central-hospital",
+        "fromChapterId": "ch-380"
+      }
     ]
   },
   {
@@ -17266,7 +17307,13 @@
       "techniques": ["Hatsu"],
       "abilityIds": ["bird-manipulation"]
     },
-    "mapLocationCorrection": true
+    "mapLocationCorrection": true,
+    "mapTrajectory": [
+      {
+        "location": "tier-3-political-ward",
+        "fromChapterId": "ch-380"
+      }
+    ]
   },
   {
     "id": "ginta",
@@ -17663,7 +17710,34 @@
       "Ginta joins the expedition's flora and fauna team and helps supervise Illumi and Kalluto after Mizaistom relocates them to Tier 3 residential units.",
       "At the departure he is in the first-class compartment with Pyon, Gel, Cluck and three Hunters, which is what puts him on Tier 3 by observation rather than by assumption."
     ],
-    "mapLocationCorrection": true
+    "mapLocationCorrection": true,
+    "mapTrajectory": [
+      {
+        "location": "tier-3-political-ward",
+        "fromChapterId": "ch-380"
+      }
+    ]
+  },
+  {
+    "id": "piyon",
+    "canonicalName": "Piyon",
+    "aliases": ["Boar"],
+    "description": "Zodiac. The archive holds her from the chapter 380 cutaway, which posts her in the Level 3 governmental and political zone at ten on the morning of the fourth day, with Mizaistom, Botobai, Cluck and Ginta; her earlier appearances in the arc have not been catalogued.",
+    "factionId": "zodiacs",
+    "firstAppearanceChapterId": "ch-380",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": 3,
+      "room": "Political Ward",
+      "status": "actif",
+      "role": "zodiaque"
+    },
+    "mapTrajectory": [
+      {
+        "location": "tier-3-political-ward",
+        "fromChapterId": "ch-380"
+      }
+    ]
   },
   {
     "id": "kanzai",
@@ -18476,7 +18550,13 @@
       "techniques": ["Ten", "Hatsu"],
       "combatProficiency": "Remote Punch travels along a surface and emerges at a chosen point, allowing force to bypass the space between Leorio and his target.",
       "abilityIds": ["leorio-remote-punch"]
-    }
+    },
+    "mapTrajectory": [
+      {
+        "location": "tier-3-central-hospital",
+        "fromChapterId": "ch-380"
+      }
+    ]
   },
   {
     "id": "pyon",
@@ -39138,6 +39218,10 @@
         "certainty": "PROBABLE"
       },
       {
+        "location": "tier-4-central-passage",
+        "fromChapterId": "ch-380"
+      },
+      {
         "location": "tier-3-cineplex",
         "fromChapterId": "ch-392"
       },
@@ -39984,6 +40068,12 @@
     ],
     "battles": [
       "Franklin Bordeau, Phinks Magcub, Nobunaga Hazama and Feitan Portor vs. men of the Buor family"
+    ],
+    "mapTrajectory": [
+      {
+        "location": "tier-5-central-dining-hall",
+        "fromChapterId": "ch-380"
+      }
     ]
   },
   {
@@ -40412,9 +40502,8 @@
         "fromChapterId": "ch-378.2"
       },
       {
-        "location": "tier-5-standard-cabins",
-        "fromChapterId": "ch-380",
-        "certainty": "PROBABLE"
+        "location": "tier-5-cha-r-family-office",
+        "fromChapterId": "ch-380"
       },
       {
         "location": "tier-3-residential-room-3101",
@@ -40840,6 +40929,12 @@
         "title": "Friends",
         "status": "absent"
       }
+    ],
+    "mapTrajectory": [
+      {
+        "location": "tier-3-observation-deck",
+        "fromChapterId": "ch-380"
+      }
     ]
   },
   {
@@ -41253,7 +41348,13 @@
         "status": "absent"
       }
     ],
-    "battles": ["Machi Komacine vs. Hisoka Morow"]
+    "battles": ["Machi Komacine vs. Hisoka Morow"],
+    "mapTrajectory": [
+      {
+        "location": "tier-5-standard-cabins",
+        "fromChapterId": "ch-380"
+      }
+    ]
   },
   {
     "id": "anesuto",
@@ -41553,9 +41654,8 @@
         "fromChapterId": "ch-379"
       },
       {
-        "location": "black-whale-unknown",
-        "fromChapterId": "ch-380",
-        "certainty": "PROBABLE"
+        "location": "tier-3-residential-standard",
+        "fromChapterId": "ch-380"
       }
     ]
   },
@@ -41798,9 +41898,8 @@
         "fromChapterId": "ch-378.2"
       },
       {
-        "location": "tier-5-standard-cabins",
-        "fromChapterId": "ch-380",
-        "certainty": "PROBABLE"
+        "location": "tier-5-hangar-entrance",
+        "fromChapterId": "ch-380"
       },
       {
         "location": "tier-3-residential-room-3101",

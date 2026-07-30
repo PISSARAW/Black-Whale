@@ -441,27 +441,6 @@
       })
 
       /**
-       * The columns of light under the lamps of a tall room.
-       *
-       * Additive and never written to the depth buffer, which together are what
-       * make a cone of triangles read as light: it can only ever brighten what is
-       * behind it, it cannot occlude anything, and two of them crossing are
-       * brighter where they cross. `FrontSide` is enough because `mesh.ts` winds
-       * each triangle both ways — a visitor standing inside a beam has to see it.
-       *
-       * Fog on, like the fittings: a beam eighty metres down the banquet hall must
-       * fade with everything else around it or it is the one thing in the room that
-       * does not know how far away it is.
-       */
-      const beamMaterial = new THREE.MeshBasicMaterial({
-        vertexColors: true,
-        transparent: true,
-        blending: THREE.AdditiveBlending,
-        depthWrite: false,
-        side: THREE.FrontSide,
-      })
-
-      /**
        * The dust of the ten great voids.
        *
        * Warm grey rather than white, because the only thing lighting it is the
@@ -510,8 +489,6 @@
         seams: import('three').LineSegments
         /** The room's ceiling fittings, in the one material that is not lit. */
         fittings: import('three').Mesh
-        /** The columns of light under them, in a tall room. Additive. */
-        beams: import('three').Mesh
         /** The dust hanging in one of the ten great voids, or nothing. */
         motes: import('three').Points | null
         dust: Dust | null
@@ -576,8 +553,6 @@
         const seamPosition = new THREE.BufferAttribute(mesh.seams, 3)
         const fittingPosition = new THREE.BufferAttribute(mesh.fittings, 3)
         const fittingColor = new THREE.BufferAttribute(mesh.fittingColors, 3)
-        const beamPosition = new THREE.BufferAttribute(mesh.beams, 3)
-        const beamColor = new THREE.BufferAttribute(mesh.beamColors, 3)
 
         const root = new THREE.Group()
         const rooms: Room[] = []
@@ -616,15 +591,6 @@
           fittingGeometry.setDrawRange(group.fittingStart, group.fittingCount)
           fittingGeometry.boundingSphere = new THREE.Sphere(centre.clone(), group.radius)
 
-          // The columns of light, on the room's own sphere and range like the
-          // fittings they hang from — a beam drawn while its room is culled is a
-          // shaft of light standing in the void where the room should be.
-          const beamGeometry = new THREE.BufferGeometry()
-          beamGeometry.setAttribute('position', beamPosition)
-          beamGeometry.setAttribute('color', beamColor)
-          beamGeometry.setDrawRange(group.beamStart, group.beamCount)
-          beamGeometry.boundingSphere = new THREE.Sphere(centre.clone(), group.radius)
-
           /**
            * The dust of a great void, where the room is one.
            *
@@ -635,7 +601,7 @@
            */
           const space = ship.spaces.get(group.spaceId)
           const deck = ship.plans.get(nextTierId)
-          // Not under the reveal, for the reason the lamps and the beams are not:
+          // Not under the reveal, for the reason the lamps are not:
           // there every surface has to say what it is worth as evidence, and dust
           // is derived — it answers nothing about the sources.
           const dust = space && deck && !reveal ? dustOf(space, deck.tier) : null
@@ -657,12 +623,10 @@
           const roomEdges = new THREE.LineSegments(edgeGeometry, edgeMaterial)
           const roomSeams = new THREE.LineSegments(seamGeometry, seamMaterial)
           const roomFittings = new THREE.Mesh(fittingGeometry, fittingMaterial)
-          const roomBeams = new THREE.Mesh(beamGeometry, beamMaterial)
           root.add(roomMesh)
           root.add(roomEdges)
           root.add(roomSeams)
           root.add(roomFittings)
-          root.add(roomBeams)
           if (motes) root.add(motes)
           rooms.push({
             spaceId: group.spaceId,
@@ -670,7 +634,6 @@
             edges: roomEdges,
             seams: roomSeams,
             fittings: roomFittings,
-            beams: roomBeams,
             motes,
             dust,
           })
@@ -685,7 +648,6 @@
           room.edges.geometry.dispose()
           room.seams.geometry.dispose()
           room.fittings.geometry.dispose()
-          room.beams.geometry.dispose()
           room.motes?.geometry.dispose()
         }
       }
@@ -999,7 +961,6 @@
             room.edges.visible = on
             room.seams.visible = on
             room.fittings.visible = on
-            room.beams.visible = on
             if (room.motes) room.motes.visible = on
           }
         }

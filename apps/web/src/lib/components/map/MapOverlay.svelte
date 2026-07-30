@@ -74,7 +74,7 @@
     const projected = next.presences
       .map((presence) => projectFutureMarker(presence, next, world.locations, $locale))
       .filter((marker): marker is MapMarker => marker !== null)
-      .filter((marker) => withinMapScope(marker, locationsById))
+      .filter((marker) => withinMapScope(marker, locationsById) && matchesLineage(marker))
 
     return packMarkersForZoom(projected, mapState.currentZoomLevel, $locale)
   })
@@ -90,6 +90,18 @@
     return true
   }
 
+  /**
+   * The lineage axis, applied to the present and the parallel future alike: a
+   * reader asking where Beyond's children are should not have half of them
+   * reappear unfiltered when the next-chapter overlay comes up.
+   */
+  function matchesLineage(marker: MapMarker) {
+    const filter = mapState.filters.beyondLineage
+    if (filter === 'all') return true
+    if (filter === 'any') return Boolean(marker.beyondLineage)
+    return marker.beyondLineage === filter
+  }
+
   let visibleCharacters = $derived.by(() => {
     const locationsById = new Map<string, Location>(
       world.locations.map((location) => [location.id, location]),
@@ -103,6 +115,7 @@
     const filtered = dynamicCharacters.filter((marker) => {
       if (visibleBodyIds && !visibleBodyIds.has(marker.id)) return false
       if (!withinMapScope(marker, locationsById)) return false
+      if (!matchesLineage(marker)) return false
       return (
         selectedFactions.length === 0 ||
         selectedFactions.some((faction) => marker.factionTags?.includes(faction))

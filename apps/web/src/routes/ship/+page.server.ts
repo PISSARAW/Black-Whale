@@ -11,6 +11,7 @@ import {
   TimelineEngine,
 } from '@black-whale/timeline-engine'
 import {
+  beyondLineageStatusFor,
   buildCatalogIndex,
   buildHatsuIndex,
   hatsuIdsFor,
@@ -105,16 +106,26 @@ export const load: PageServerLoad = async ({ url, cookies }) => {
         })
       : []
   const activeFactionTypesByCharacter = activeFactionTypesAt(memberships, selectedEvent)
-  visibleCharacters = visibleCharacters.map((character: any) => ({
-    ...character,
-    factionTags: resolveFactionTags(
+  visibleCharacters = visibleCharacters.map((character: any) => {
+    // Absent rather than null when the reader is capped below the reveal: the
+    // map filter reads this field, and an explicit null is still an answer.
+    const beyondLineage = beyondLineageStatusFor(
       character,
-      activeFactionTypesByCharacter.get(character.id) || [],
       catalogIndex,
-    ),
-    hatsuNames: hatsuNamesFor(character, catalogIndex, hatsuIndex),
-    hatsuIds: hatsuIdsFor(character, catalogIndex, hatsuIndex),
-  }))
+      spoilerProfile?.maxChapter,
+    )
+    return {
+      ...character,
+      factionTags: resolveFactionTags(
+        character,
+        activeFactionTypesByCharacter.get(character.id) || [],
+        catalogIndex,
+      ),
+      hatsuNames: hatsuNamesFor(character, catalogIndex, hatsuIndex),
+      hatsuIds: hatsuIdsFor(character, catalogIndex, hatsuIndex),
+      ...(beyondLineage ? { beyondLineage } : {}),
+    }
+  })
 
   const perspectiveIsAvailable =
     requestedPerspectiveId === 'reader' ||
@@ -173,11 +184,19 @@ export const load: PageServerLoad = async ({ url, cookies }) => {
     nextChapterState: nextChapterWorldState
       ? {
           chapterNumber: nextChapterNumber,
-          characters: nextChapterWorldState.characters.map((character: any) => ({
-            ...character,
-            hatsuNames: hatsuNamesFor(character, catalogIndex, hatsuIndex),
-            hatsuIds: hatsuIdsFor(character, catalogIndex, hatsuIndex),
-          })),
+          characters: nextChapterWorldState.characters.map((character: any) => {
+            const beyondLineage = beyondLineageStatusFor(
+              character,
+              catalogIndex,
+              spoilerProfile?.maxChapter,
+            )
+            return {
+              ...character,
+              hatsuNames: hatsuNamesFor(character, catalogIndex, hatsuIndex),
+              hatsuIds: hatsuIdsFor(character, catalogIndex, hatsuIndex),
+              ...(beyondLineage ? { beyondLineage } : {}),
+            }
+          }),
           bodies: nextChapterWorldState.bodies,
           consciousnesses: nextChapterWorldState.consciousnesses,
           presences: nextChapterWorldState.presences,

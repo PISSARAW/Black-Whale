@@ -157,8 +157,7 @@ export const fr: Messages = {
         watching: (room) => `Une poupée de papier est dans ${room} et compte chaque arrivée`,
         isolatedInside: (room) =>
           `${room} est isolée autour de vous · vous pouvez sortir, et vous ne pourrez plus rentrer`,
-        isolatedOutside: (room) =>
-          `${room} est isolée · d'ici vous n'atteindrez qu'une copie vide`,
+        isolatedOutside: (room) => `${room} est isolée · d'ici vous n'atteindrez qu'une copie vide`,
         stripped: (room, count) =>
           count
             ? `${count} emprise${count > 1 ? 's' : ''} soufflée${count > 1 ? 's' : ''} sur ${room} · rien n'a été déplacé`
@@ -176,27 +175,31 @@ export const fr: Messages = {
         nothingToSteal: (room) => `Rien ne retient ${room} : il n'y a rien à y prendre`,
         takenIntoTheBook: (room, technique) =>
           `${technique} est dans le livre · ${room} est lâchée, car son propriétaire ne peut s'en servir tant qu'elle est tenue`,
-        needsTwoPages: 'Une page ne fait pas deux · prenez-en une seconde avant d\'en marquer une',
+        needsTwoPages: "Une page ne fait pas deux · prenez-en une seconde avant d'en marquer une",
         bookmarked: (technique) => `${technique} maintenue vive à côté de la page ouverte`,
         acquisitionFailed: (room) =>
           `${room} est passée sous la flèche · on n'y acquiert plus rien`,
         carded: (room, technique) =>
           `${technique} acquise en carte · ${room} la garde aussi, et la carte se dépense en la jouant`,
-        notEligible: (room) => `${room} n'est pas morte · seul ce qui a été tué transmet quelque chose`,
+        notEligible: (room) =>
+          `${room} n'est pas morte · seul ce qui a été tué transmet quelque chose`,
         inherited: (room, technique) =>
           `${room} a été tuée par ${technique}, et c'est cela qu'elle transmet`,
         drained: (room, technique) =>
           `${technique} arrachée à ${room} · plus rien n'atteint cette pièce tant que le livre ne la rend pas`,
         needsEmperorTime: "Le dauphin n'existe que pendant Emperor Time",
-        nothingToLend: "Le livre est vide · rien à expliquer, rien à prêter",
-        lent: (technique) => `${technique} expliquée et ouverte · le prochain lancer consomme le prêt`,
+        nothingToLend: 'Le livre est vide · rien à expliquer, rien à prêter',
+        lent: (technique) =>
+          `${technique} expliquée et ouverte · le prochain lancer consomme le prêt`,
         pageSpent: (technique) => `${technique} est dépensée`,
         inZetsu: (room) => `${room} n'a plus d'aura à offrir · la chaîne l'a drainée`,
         owlAttached: (rooms) =>
           `Le hibou vous suit · ${rooms} pièce${rooms === 1 ? '' : 's'} déjà sur le fil, et il les garde`,
-        owlRecalled: (rooms) => `Le hibou est rappelé · ${rooms} gardées quand même, comme toujours`,
+        owlRecalled: (rooms) =>
+          `Le hibou est rappelé · ${rooms} gardées quand même, comme toujours`,
         foreseen: (room) => `Dix secondes plus tard : ${room} · la vision ne se corrige pas`,
-        diverged: (room, went) => `La prédiction dit toujours ${room} ; vous êtes allé dans ${went}`,
+        diverged: (room, went) =>
+          `La prédiction dit toujours ${room} ; vous êtes allé dans ${went}`,
         written: (room) => `La plume a écrit ${room}`,
         lineTaken: (room, lines) => `${room} retenue · vers ${lines} sur 3`,
         poemRead: (strength) =>
@@ -207,7 +210,7 @@ export const fr: Messages = {
         dialRead: (room, reading) => `${room} · relevé ${reading}`,
         dropletSent: (room, metres) =>
           `Une goutte a trouvé ${room}, à ${metres} m — là où la visite n'est jamais allée`,
-        dropletsDry: "Chaque pièce a été foulée · il ne reste rien à chercher",
+        dropletsDry: 'Chaque pièce a été foulée · il ne reste rien à chercher',
         dropletExpired: (room) => `La goutte sur ${room} s'est asséchée`,
         nameTaken: (room) => `${room} porte le nom du chat · tuez-la et elle répond`,
         counterattack: (room, released) =>
@@ -217,7 +220,8 @@ export const fr: Messages = {
         sacrificeFound: (room) => `Le sacrifice est dans ${room}`,
         curseFell: (victim, sacrifice) =>
           `Le sacrifice a été consommé dans ${sacrifice} · ${victim} s'en va avec lui`,
-        soulsSwapped: (a, b) => `${a} et ${b} se sont réveillées l'une dans l'autre · les deux murs sont restés`,
+        soulsSwapped: (a, b) =>
+          `${a} et ${b} se sont réveillées l'une dans l'autre · les deux murs sont restés`,
         arrowDrawn: (room) => `L'arc est bandé sur ${room} · frappez-en une seconde`,
         reinforced: (committed) =>
           `Aura engagée · ${committed} sur 6 · vous allez plus loin et plus vite`,
@@ -230,8 +234,7 @@ export const fr: Messages = {
         returned: (room) => `De retour dans le corps, dans ${room}`,
         bodyDisturbed: (room) =>
           `Quelque chose a atteint le corps dans ${room} · vous y êtes rappelé`,
-        reshaped: (metres) =>
-          `Yeux à ${metres.toFixed(2)} m · la forme a changé, et rien dessous`,
+        reshaped: (metres) => `Yeux à ${metres.toFixed(2)} m · la forme a changé, et rien dessous`,
         rested: (hours) => `${hours} heures de repos en un soin court · la fatigue est tombée`,
         mended: (room, solids) =>
           solids
@@ -246,19 +249,21 @@ export const fr: Messages = {
         deduced: (what, strength) =>
           `Condition lue — ${what} · ${strength} nommées, et plus fort à chacune`,
         nothingToDeduce: 'Plus rien à lire : chaque emprise a été nommée',
-        jailed: (room, doors) =>
-          `${room} est enchaînée · ${doors} accès, et aucun qui s'ouvre`,
+        jailed: (room, doors) => `${room} est enchaînée · ${doors} accès, et aucun qui s'ouvre`,
         jailRefused: (room) =>
           `Rien ne retient ${room} · la chaîne est pour ce que le Nen habite déjà`,
-        fishLoosed: (room) => `Les poissons sont dans ${room} · rien ne se verra tant que vous y êtes`,
-        fishFed: (room, solid) => `${solid} n'était plus là quand vous avez regardé ${room} en repartant`,
+        fishLoosed: (room) =>
+          `Les poissons sont dans ${room} · rien ne se verra tant que vous y êtes`,
+        fishFed: (room, solid) =>
+          `${solid} n'était plus là quand vous avez regardé ${room} en repartant`,
         guardsPosted: (room) => `Gardes sur ${room} · un intrus est mis dehors, pas blessé`,
         expelled: (room, back) => `Mis dehors de ${room}, renvoyé dans ${back}`,
         cardBlue: (room) => `Bleu : ${room} est admise, et avertie`,
         cardYellow: (room) => `Jaune : ${room} vous retient où vous êtes`,
         cardRed: (room) => `Rouge : ${room} est congédiée et close derrière vous`,
         vowDeclared: (room) => `La règle est posée : vous n'entrerez pas dans ${room}`,
-        vowBroken: (room) => `Vous êtes entré dans ${room} en le sachant · la chaîne prend l'aura pour cela`,
+        vowBroken: (room) =>
+          `Vous êtes entré dans ${room} en le sachant · la chaîne prend l'aura pour cela`,
         pactTaken: (room) => `Les termes sont pris : atteindre ${room}`,
         pactMet: (room, released) =>
           released
@@ -267,11 +272,13 @@ export const fr: Messages = {
         baitSet: (room) => `Ce que vous vouliez se dresse dans ${room}`,
         trapped: (room) => `Vous l'avez pris · ${room} ne vous laisse plus ressortir`,
         heldFast: (room) => `${room} ne vous laisse pas partir`,
-        snakesLoosed: (rooms) => `Quatre serpents, ${rooms} pièces à portée · il faut entrer dans l'une d'elles`,
+        snakesLoosed: (rooms) =>
+          `Quatre serpents, ${rooms} pièces à portée · il faut entrer dans l'une d'elles`,
         snakesFed: (room) => `La malédiction a trouvé sa victime dans ${room}`,
         snakesRebound: "Congédiée sans victime · la malédiction revient sur qui l'a posée",
         wormSet: (room) => `Une extrémité du tunnel dans ${room} · désignez l'autre`,
-        wormOpen: (a, b) => `${a} et ${b} font une route d'une nuit, et elle est faite pour être prise une fois`,
+        wormOpen: (a, b) =>
+          `${a} et ${b} font une route d'une nuit, et elle est faite pour être prise une fois`,
         wormCrossed: (room, crossings) =>
           `Ressorti dans ${room} · passage ${crossings} sur 3, et le ver s'épuise`,
         wormSpent: "Le tunnel s'effondre · il n'était pas fait pour être demandé trois fois",
@@ -294,7 +301,8 @@ export const fr: Messages = {
         crushed: (solid) => `${solid} est aplati sous la masse`,
         volley: (solid, hits) => `${solid} repoussé · rafale ${hits} sur 3`,
         shattered: (solid) => `${solid} ne tient plus debout`,
-        woundUp: (turns) => `${turns} rotation${turns > 1 ? 's' : ''} enroulée${turns > 1 ? 's' : ''} dans le prochain coup`,
+        woundUp: (turns) =>
+          `${turns} rotation${turns > 1 ? 's' : ''} enroulée${turns > 1 ? 's' : ''} dans le prochain coup`,
         launched: (solid, metres) =>
           metres ? `${solid} projeté à ${metres} m` : `${solid} n'avait nulle part où aller`,
         struck: (solid) => `Le bâton s'abat sur ${solid} et le fait pivoter`,
@@ -305,18 +313,21 @@ export const fr: Messages = {
         stitched: (solid) => `${solid} est revenu tel que le plan le donne`,
         nothingToStitch: (solid) => `Rien n'avait été fait à ${solid}`,
         animated: (solid) => `${solid} s'est éveillé, et n'en est pas moins solide`,
-        shredStuck: (solid) => `Le confetti se fiche dans ${solid} · toutes les volées y convergeront`,
+        shredStuck: (solid) =>
+          `Le confetti se fiche dans ${solid} · toutes les volées y convergeront`,
         shredCut: (solid, left) => `${solid} est taillé à ${left} % de lui-même`,
         grown: (solid) => `${solid} a grossi hors de toute proportion`,
         growthRefused: (solid) => `${solid} bouge à peine · du Nen l'habite déjà`,
         marked: (solid, sun) => `${sun ? '☀' : '☾'} sur ${solid}`,
-        detonated: (solid, other) => `${solid} et ${other} se sont rejoints, il ne reste ni l'un ni l'autre`,
-        swapped: (solid, other) => `${solid} et ${other} ont échangé leur apparence, et rien d'autre`,
+        detonated: (solid, other) =>
+          `${solid} et ${other} se sont rejoints, il ne reste ni l'un ni l'autre`,
+        swapped: (solid, other) =>
+          `${solid} et ${other} ont échangé leur apparence, et rien d'autre`,
         cargoTaken: (solid) => `${solid} est chargé · désignez le relais de sortie`,
         cargoLanded: (solid, room) => `${solid} se dresse dans ${room}`,
       },
       body: {
-        reach: "Elle agit sur vous, où que vous soyez dans le vaisseau",
+        reach: 'Elle agit sur vous, où que vous soyez dans le vaisseau',
         castHint: 'F, ou un clic n’importe où dans la visite',
         noTarget: 'Rien à viser : la cible, c’est vous',
       },
@@ -334,26 +345,26 @@ export const fr: Messages = {
       },
       verse: {
         provenance: [
-          "Une planche la soutient, et la planche ne cille pas.",
+          'Une planche la soutient, et la planche ne cille pas.',
           "La coupe en atteste, et n'en montre pas l'intérieur.",
-          "Seule la main de cette archive la dessine.",
-          "Rien ne la dessine. Elle tient pour que le pont tienne.",
+          'Seule la main de cette archive la dessine.',
+          'Rien ne la dessine. Elle tient pour que le pont tienne.',
         ],
         ways: [
           "Aucun chemin n'y mène. Elle attend qu'on l'atteigne.",
-          "Un seuil, et tout passe par lui.",
-          "Peu de portes, et chacune choisie.",
+          'Un seuil, et tout passe par lui.',
+          'Peu de portes, et chacune choisie.',
           "Beaucoup d'accès, et aucun qui soit calme.",
         ],
         standing: [
           "Rien ne s'y dresse. C'est cela, l'affirmation.",
           "Peu s'y dresse, et c'est ce que la pièce est.",
           "Ce qui s'y dresse la remplit avant vous.",
-          "Vous contournerez plus que vous ne traverserez.",
+          'Vous contournerez plus que vous ne traverserez.',
         ],
         level: [
           "Au-dessus, quelqu'un dort encore.",
-          "En dessous, les ressorts portent la masse.",
+          'En dessous, les ressorts portent la masse.',
           "La coque est plus proche qu'il n'y paraît.",
           "Ce n'est pas le pont qui décide de celle-ci.",
         ],
@@ -387,7 +398,7 @@ export const fr: Messages = {
         eyes: 'Yeux à',
         projected: 'Le corps est dans',
         dance: 'Le prologue',
-        mimic: "Sous la forme de",
+        mimic: 'Sous la forme de',
         soothed: 'La musique tient',
         deduced: 'Conditions lues',
         shut: 'Enchaînée',
@@ -404,7 +415,8 @@ export const fr: Messages = {
         crossings: (n) => `${n} passages sur 3`,
         solid: 'Volumes retenus',
         wound: 'Le confetti est dans',
-        windup: (turns) => `${turns} rotation${turns === 1 ? '' : 's'} enroulée${turns === 1 ? '' : 's'}`,
+        windup: (turns) =>
+          `${turns} rotation${turns === 1 ? '' : 's'} enroulée${turns === 1 ? '' : 's'}`,
         laidOpen: 'Tout le vaisseau, ouvert',
         isolated: 'Pièce isolée',
         doors: 'Portes de la planque',

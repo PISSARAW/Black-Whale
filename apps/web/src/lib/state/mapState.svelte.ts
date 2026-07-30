@@ -1,6 +1,16 @@
+import type { BeyondLineageStatus } from '$lib/beyondLineage'
 import type { FollowMode, PerspectiveKind } from '$lib/components/perspective/types'
 
 export type ZoomLevel = 'OVERVIEW' | 'TIER' | 'LOCAL'
+
+/**
+ * Beyond's lineage cuts across every faction chip — a marked guard and a
+ * suspected prince never share one — so it filters on its own axis, and the two
+ * intersect: a reader can ask for the guards who are also his children.
+ * `any` takes both claims together; the statuses separate the birthmark the
+ * manga shows from the paternity hypothesis Longhi only argues for.
+ */
+export type BeyondLineageFilter = 'all' | 'any' | BeyondLineageStatus
 
 export const mapState = $state({
   currentZoomLevel: 'OVERVIEW' as ZoomLevel,
@@ -34,6 +44,7 @@ export const mapState = $state({
   currentEventIndex: 0,
   filters: {
     factions: [] as string[],
+    beyondLineage: 'all' as BeyondLineageFilter,
     spoilersEnabled: false,
     showUnknownPositions: false,
   },
@@ -101,6 +112,10 @@ export const mapState = $state({
   closeExplainPanel() {
     this.explainPanelOpen = false
     this.explainTarget = null
+  },
+
+  setBeyondLineageFilter(filter: BeyondLineageFilter) {
+    this.filters.beyondLineage = filter
   },
 
   toggleFactionFilter(factionId: string) {

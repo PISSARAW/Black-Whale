@@ -1,3 +1,5 @@
+import type { BeyondLineageStatus } from '$lib/beyondLineage'
+
 export type PerspectiveKind = 'reader' | 'character'
 export type FollowMode = 'consciousness' | 'body' | 'appearance'
 
@@ -55,6 +57,12 @@ export interface MarkerIdentityState {
   temporalLabel?: string
   temporalDetail?: string
   factionTags?: string[]
+  /**
+   * Set only for a body whose owner the reader may already know descends from
+   * Beyond. The loader strips it past the spoiler cap, so its absence means
+   * "not one of them, as far as this reader knows" — never "hidden for now".
+   */
+  beyondLineage?: BeyondLineageStatus
   isFollowTarget?: boolean
   originalCharacterId?: string
   hatsuNames?: string[]

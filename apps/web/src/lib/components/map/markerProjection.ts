@@ -16,6 +16,7 @@ import type {
   KnowledgeVisualState,
   MarkerIdentityState,
 } from '$lib/components/perspective/types'
+import type { BeyondLineageStatus } from '$lib/beyondLineage'
 import { displayName } from '$lib/utils/displayNames'
 import { DEFAULT_LOCALE, type Locale } from '$lib/i18n/config'
 import { messagesFor } from '$lib/i18n'
@@ -33,6 +34,7 @@ import { messagesFor } from '$lib/i18n'
 /** A character as the ship loader hands it over: the domain row plus roster tags. */
 export type MapCharacter = Character & {
   factionTags?: string[]
+  beyondLineage?: BeyondLineageStatus
   hatsuNames?: string[]
   hatsuIds?: string[]
 }
@@ -1013,6 +1015,7 @@ export function projectPresenceMarker(
     temporalLabel: temporalVisual.label,
     temporalDetail: temporalVisual.detail,
     factionTags: ownerCharacter.factionTags || [],
+    beyondLineage: ownerCharacter.beyondLineage,
     isFollowTarget: knowledge.isObserverBody,
     originalCharacterId: followedCharacter?.id || ownerCharacter.id,
     hatsuNames: ownerCharacter.hatsuNames || [],
@@ -1068,6 +1071,7 @@ export function projectFutureMarker(
     location: loc,
     overviewX: 50,
     overviewY: (tierId ? tierOverviewY[tierId] : undefined) ?? 46,
+    beyondLineage: character.beyondLineage,
     hatsuNames: character.hatsuNames || [],
     hatsuIds: character.hatsuIds || [],
   }

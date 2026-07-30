@@ -1,3 +1,4 @@
+import { visibleLineage, type BeyondLineageStatus } from '$lib/beyondLineage'
 import type { CatalogCharacter } from '$lib/server/data-files'
 
 /**
@@ -107,6 +108,24 @@ export function resolveFactionTags(
   if (GUARD_ROLE.test(roleText)) tags.add('guards')
 
   return [...tags]
+}
+
+/**
+ * Whether a character is one of Beyond's children, as far as this reader knows.
+ *
+ * Only the status travels to the map: a marker has room for a chip, not for the
+ * evidence behind it, and the registry is where that argument belongs. The
+ * spoiler cap is applied here rather than in the browser, so a capped reader
+ * receives no lineage field at all — hiding the chip client-side would still
+ * ship the answer in the page payload.
+ */
+export function beyondLineageStatusFor(
+  subject: FactionSubject,
+  catalogIndex: Map<string, CatalogCharacter>,
+  spoilerLimit?: number,
+): BeyondLineageStatus | undefined {
+  const catalogued = catalogIndex.get(subject.canonicalName)
+  return visibleLineage(catalogued?.beyondLineage, spoilerLimit)?.status
 }
 
 /** The Hatsu attributed to a character, resolved through the catalogue. */

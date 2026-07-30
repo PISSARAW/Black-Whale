@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import type { CatalogCharacter } from '$lib/server/data-files'
 import {
+  beyondLineageStatusFor,
   buildCatalogIndex,
   buildHatsuIndex,
   factionTagsForMembershipType,
@@ -8,6 +9,10 @@ import {
   hatsuNamesFor,
   resolveFactionTags,
 } from './roster'
+import {
+  BEYOND_LINEAGE_CONFIRMED_CHAPTER,
+  BEYOND_LINEAGE_SUSPECTED_CHAPTER,
+} from './beyondLineage'
 
 const CATALOG: CatalogCharacter[] = [
   { id: 'prince-benjamin', canonicalName: 'Benjamin Hui Guo Rou', factionId: 'prince-benjamin' },
@@ -78,6 +83,59 @@ describe('resolveFactionTags', () => {
 
   it('ignores a null faction rather than matching the mafia prefix', () => {
     expect(tags('Unknown Passenger')).toEqual([])
+  })
+})
+
+describe('beyondLineageStatusFor', () => {
+  const lineageIndex = buildCatalogIndex([
+    ...CATALOG.map((character) =>
+      character.id === 'prince-benjamin'
+        ? {
+            ...character,
+            beyondLineage: {
+              status: 'suspected' as const,
+              revealedInChapterId: 'ch-401',
+              evidence: 'Longhi puts the paternity to Kurapika.',
+            },
+          }
+        : character,
+    ),
+    {
+      id: 'furykov',
+      canonicalName: 'Furykov',
+      factionId: 'prince-benjamin',
+      beyondLineage: {
+        status: 'confirmed' as const,
+        revealedInChapterId: 'ch-415',
+        evidence: 'He carries the birthmark and says so.',
+      },
+    },
+  ])
+  const statusOf = (name: string, spoilerLimit?: number) =>
+    beyondLineageStatusFor({ canonicalName: name }, lineageIndex, spoilerLimit)
+
+  it('reports the catalogued status when the reader is past the reveal', () => {
+    expect(statusOf('Furykov', BEYOND_LINEAGE_CONFIRMED_CHAPTER)).toBe('confirmed')
+    expect(statusOf('Benjamin Hui Guo Rou', BEYOND_LINEAGE_SUSPECTED_CHAPTER)).toBe('suspected')
+  })
+
+  it('withholds the status from a reader capped below its reveal', () => {
+    expect(statusOf('Furykov', BEYOND_LINEAGE_CONFIRMED_CHAPTER - 1)).toBeUndefined()
+    expect(statusOf('Benjamin Hui Guo Rou', BEYOND_LINEAGE_SUSPECTED_CHAPTER - 1)).toBeUndefined()
+  })
+
+  it('gates the two claims separately, since they land in different chapters', () => {
+    // The paternity hypothesis is argued long before the birthmarks are read.
+    expect(statusOf('Benjamin Hui Guo Rou', BEYOND_LINEAGE_SUSPECTED_CHAPTER)).toBe('suspected')
+    expect(statusOf('Furykov', BEYOND_LINEAGE_SUSPECTED_CHAPTER)).toBeUndefined()
+  })
+
+  it('reports nothing for a passenger with no recorded lineage', () => {
+    expect(statusOf('Kurapika')).toBeUndefined()
+  })
+
+  it('reports nothing for a character the catalogue does not know', () => {
+    expect(statusOf('Someone Entirely New')).toBeUndefined()
   })
 })
 

@@ -150,8 +150,7 @@ export const en = {
         doorArmed: (room: string) => `First frame installed in ${room} · arm a second to join them`,
         doorsPaired: (a: string, b: string) =>
           `${a} and ${b} are one threshold now · step into either and come out at the other`,
-        doorsRearmed: (room: string) =>
-          `The old pair is down · first frame installed in ${room}`,
+        doorsRearmed: (room: string) => `The old pair is down · first frame installed in ${room}`,
         phasingOn: 'Walls stopped being walls · walk through the ship',
         phasingOff: 'Back inside the geometry · the walls hold again',
         eyeSent: (room: string) => `The eye is parked in ${room} · its feed is in the corner`,
@@ -185,7 +184,8 @@ export const en = {
 
         // On the solids. A room is a place and a solid is a thing: these all
         // say what happened to a thing, and never what happened to a page.
-        nothingToSteal: (room: string) => `Nothing is holding ${room}, so there is nothing in it to take`,
+        nothingToSteal: (room: string) =>
+          `Nothing is holding ${room}, so there is nothing in it to take`,
         takenIntoTheBook: (room: string, technique: string) =>
           `${technique} is in the book · ${room} is let go of, because its owner cannot use it while it is held`,
         needsTwoPages: 'One page is not two · take a second before marking one',
@@ -194,21 +194,25 @@ export const en = {
           `${room} has been through the arrow · nothing acquires anything from it`,
         carded: (room: string, technique: string) =>
           `${technique} acquired as a card · ${room} keeps it too, and the card is spent by playing it`,
-        notEligible: (room: string) => `${room} is not dead · only what was killed passes anything on`,
+        notEligible: (room: string) =>
+          `${room} is not dead · only what was killed passes anything on`,
         inherited: (room: string, technique: string) =>
           `${room} was killed by ${technique}, and that is what it hands over`,
         drained: (room: string, technique: string) =>
           `${technique} pulled out of ${room} · nothing reaches that room until the book returns it`,
         needsEmperorTime: 'The dolphin exists during Emperor Time and not otherwise',
         nothingToLend: 'The book is empty · there is nothing to explain and nothing to lend',
-        lent: (technique: string) => `${technique} explained and opened · the next cast consumes the loan`,
+        lent: (technique: string) =>
+          `${technique} explained and opened · the next cast consumes the loan`,
         pageSpent: (technique: string) => `${technique} is spent`,
         inZetsu: (room: string) => `${room} has no aura left to reach · the chain drained it`,
         owlAttached: (rooms: number) =>
           `The owl is with you · ${rooms} room${rooms === 1 ? '' : 's'} already on the trail, and it keeps them`,
-        owlRecalled: (rooms: number) => `The owl is off · ${rooms} kept anyway, as the walk always does`,
+        owlRecalled: (rooms: number) =>
+          `The owl is off · ${rooms} kept anyway, as the walk always does`,
         foreseen: (room: string) => `Ten seconds on: ${room} · the vision does not revise itself`,
-        diverged: (room: string, went: string) => `The prediction still reads ${room}; you went to ${went}`,
+        diverged: (room: string, went: string) =>
+          `The prediction still reads ${room}; you went to ${went}`,
         written: (room: string) => `The pen has written ${room} down`,
         lineTaken: (room: string, lines: number) => `${room} taken · line ${lines} of 3`,
         poemRead: (strength: number) =>
@@ -229,7 +233,8 @@ export const en = {
         sacrificeFound: (room: string) => `The sacrifice is in ${room}`,
         curseFell: (victim: string, sacrifice: string) =>
           `The sacrifice was spent in ${sacrifice} · ${victim} is gone with it`,
-        soulsSwapped: (a: string, b: string) => `${a} and ${b} woke as each other · both walls stand where they stood`,
+        soulsSwapped: (a: string, b: string) =>
+          `${a} and ${b} woke as each other · both walls stand where they stood`,
         arrowDrawn: (room: string) => `The bow is drawn on ${room} · strike a second`,
         reinforced: (committed: number) =>
           `Aura committed · ${committed} of 6 · you go further and faster for it`,
@@ -246,12 +251,14 @@ export const en = {
           `Something reached the body in ${room} · you are pulled back into it`,
         reshaped: (metres: number) =>
           `Eyes at ${metres.toFixed(2)} m · the shape changed and nothing underneath did`,
-        rested: (hours: number) => `${hours} hours of rest in a short treatment · the strain is gone`,
+        rested: (hours: number) =>
+          `${hours} hours of rest in a short treatment · the strain is gone`,
         mended: (room: string, solids: number) =>
           solids
             ? `${solids} mended${room ? ` in ${room}` : ' across the whole ship'}`
             : `Nothing here was hurt`,
-        dancePlayed: (bars: number) => `The prologue, bar ${bars} · the music is what the rest runs on`,
+        dancePlayed: (bars: number) =>
+          `The prologue, bar ${bars} · the music is what the rest runs on`,
         danceNeeded: 'No music yet · play the prologue first',
         mimicked: (solid: string) => `You are ${solid}, to the eye`,
         unmimicked: 'Your own shape again',
@@ -265,14 +272,16 @@ export const en = {
         jailRefused: (room: string) =>
           `Nothing is holding ${room} · the chain is for what Nen is already in`,
         fishLoosed: (room: string) => `The fish are in ${room} · nothing will show while you are`,
-        fishFed: (room: string, solid: string) => `${solid} was not there when you looked back into ${room}`,
+        fishFed: (room: string, solid: string) =>
+          `${solid} was not there when you looked back into ${room}`,
         guardsPosted: (room: string) => `Guards on ${room} · an intruder is put out, not hurt`,
         expelled: (room: string, back: string) => `Put out of ${room}, back into ${back}`,
         cardBlue: (room: string) => `Blue: ${room} is admitted, and warned`,
         cardYellow: (room: string) => `Yellow: ${room} holds you where you stand`,
         cardRed: (room: string) => `Red: ${room} is dismissed and shut behind you`,
         vowDeclared: (room: string) => `The rule is set: you will not enter ${room}`,
-        vowBroken: (room: string) => `You entered ${room} knowing · the chain takes the aura for it`,
+        vowBroken: (room: string) =>
+          `You entered ${room} knowing · the chain takes the aura for it`,
         pactTaken: (room: string) => `The terms are taken: reach ${room}`,
         pactMet: (room: string, released: number) =>
           released
@@ -281,11 +290,13 @@ export const en = {
         baitSet: (room: string) => `What you wanted is standing in ${room}`,
         trapped: (room: string) => `You took it · ${room} does not let you back out`,
         heldFast: (room: string) => `${room} will not let you leave`,
-        snakesLoosed: (rooms: number) => `Four snakes, ${rooms} rooms in range · one of them has to be entered`,
+        snakesLoosed: (rooms: number) =>
+          `Four snakes, ${rooms} rooms in range · one of them has to be entered`,
         snakesFed: (room: string) => `The curse found its victim in ${room}`,
         snakesRebound: 'Dismissed with no victim · the curse comes back on the one who set it',
         wormSet: (room: string) => `One end of the tunnel in ${room} · name the other`,
-        wormOpen: (a: string, b: string) => `${a} and ${b} are a night's route, and it is meant to be walked once`,
+        wormOpen: (a: string, b: string) =>
+          `${a} and ${b} are a night's route, and it is meant to be walked once`,
         wormCrossed: (room: string, crossings: number) =>
           `Out in ${room} · crossing ${crossings} of 3, and the worm is tiring`,
         wormSpent: 'The tunnel collapses · it was never meant to be asked three times',
@@ -293,7 +304,8 @@ export const en = {
         doubleSpent: (room: string) => `The double took it in your place, and is gone from ${room}`,
         noSolid: 'Nothing solid down the reticle',
         boundFast: (solid: string) => `${solid} is held fast · nothing but the chain gets it back`,
-        gumSet: (solid: string) => `Gum on ${solid} · take hold of a second thing to pull them together`,
+        gumSet: (solid: string) =>
+          `Gum on ${solid} · take hold of a second thing to pull them together`,
         gumPulled: (solid: string, other: string) => `${solid} snapped across to ${other}`,
         forged: (solid: string) =>
           `${solid} is wearing another surface · what it is, and what it stops, are unchanged`,
@@ -308,7 +320,8 @@ export const en = {
         crushed: (solid: string) => `${solid} is flat under the weight`,
         volley: (solid: string, hits: number) => `${solid} driven back · volley ${hits} of 3`,
         shattered: (solid: string) => `${solid} does not stand any more`,
-        woundUp: (turns: number) => `${turns} rotation${turns > 1 ? 's' : ''} wound into the next punch`,
+        woundUp: (turns: number) =>
+          `${turns} rotation${turns > 1 ? 's' : ''} wound into the next punch`,
         launched: (solid: string, metres: number) =>
           metres ? `${solid} sent ${metres} m across the room` : `${solid} had nowhere to go`,
         struck: (solid: string) => `The staff comes down on ${solid} and turns it`,
@@ -319,12 +332,14 @@ export const en = {
         stitched: (solid: string) => `${solid} is back as the blueprint has it`,
         nothingToStitch: (solid: string) => `Nothing was done to ${solid} to undo`,
         animated: (solid: string) => `${solid} is awake, and no less solid for it`,
-        shredStuck: (solid: string) => `The confetti sticks in ${solid} · every volley now goes there`,
+        shredStuck: (solid: string) =>
+          `The confetti sticks in ${solid} · every volley now goes there`,
         shredCut: (solid: string, left: number) => `${solid} is cut down to ${left}% of itself`,
         grown: (solid: string) => `${solid} has grown out of all proportion`,
         growthRefused: (solid: string) => `${solid} barely stirs · Nen is already in it`,
         marked: (solid: string, sun: boolean) => `${sun ? '☀' : '☾'} on ${solid}`,
-        detonated: (solid: string, other: string) => `${solid} and ${other} met, and neither is left`,
+        detonated: (solid: string, other: string) =>
+          `${solid} and ${other} met, and neither is left`,
         swapped: (solid: string, other: string) =>
           `${solid} and ${other} have exchanged appearances, and nothing else`,
         cargoTaken: (solid: string) => `${solid} is loaded · name the relay it comes out at`,
@@ -354,28 +369,28 @@ export const en = {
        */
       verse: {
         provenance: [
-          "A page holds it up, and the page does not blink.",
-          "The cross-section swears to it, and shows no inside.",
+          'A page holds it up, and the page does not blink.',
+          'The cross-section swears to it, and shows no inside.',
           "Only this archive's own hand draws it.",
-          "Nothing draws it. It stands so the deck can.",
+          'Nothing draws it. It stands so the deck can.',
         ],
         ways: [
-          "No way leads in. It waits to be reached.",
-          "One threshold, and everything passes through it.",
-          "Few doors, and each of them chosen.",
-          "Many ways in, and none of them quiet.",
+          'No way leads in. It waits to be reached.',
+          'One threshold, and everything passes through it.',
+          'Few doors, and each of them chosen.',
+          'Many ways in, and none of them quiet.',
         ],
         standing: [
-          "Nothing stands here. That is the claim.",
-          "A little stands, and it is what the room is.",
-          "What stands here fills it before you do.",
-          "You will walk around more than you walk through.",
+          'Nothing stands here. That is the claim.',
+          'A little stands, and it is what the room is.',
+          'What stands here fills it before you do.',
+          'You will walk around more than you walk through.',
         ],
         level: [
-          "Above, someone is still asleep.",
-          "Below, the springs take the weight.",
-          "The hull is closer than it looks.",
-          "It is not the deck that decides this one.",
+          'Above, someone is still asleep.',
+          'Below, the springs take the weight.',
+          'The hull is closer than it looks.',
+          'It is not the deck that decides this one.',
         ],
       },
       /** The pages the visitor can cast from, which is the whole of wave five. */

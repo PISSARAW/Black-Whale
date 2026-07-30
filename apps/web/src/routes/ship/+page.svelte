@@ -19,6 +19,8 @@
   } from '$lib/components/perspective/types'
   import { displayName } from '$lib/utils/displayNames'
   import { link, locale, t } from '$lib/i18n'
+  import type { BeyondLineageStatus } from '$lib/beyondLineage'
+  import type { BeyondLineageFilter } from '$lib/state/mapState.svelte'
 
   let { data }: { data: PageData } = $props()
 
@@ -198,6 +200,33 @@
   })
 
   let trackedPresenceCount = $derived(data.worldState?.presences?.length || 0)
+
+  // Beyond's lineage is a second filter axis rather than a sixth faction chip:
+  // it crosses every faction, and it intersects with them instead of replacing
+  // them. The loader strips the field past the reader's spoiler cap, so the
+  // whole control disappears rather than sitting there empty — an always-on
+  // chip would tell a capped reader that there is something left to reveal.
+  let lineageStatuses = $derived(
+    (['confirmed', 'suspected'] as BeyondLineageStatus[]).filter((status) =>
+      (data.worldState?.characters || []).some((char: any) => char.beyondLineage === status),
+    ),
+  )
+  let lineageFilters = $derived(
+    lineageStatuses.length
+      ? (['all', 'any', ...lineageStatuses] as BeyondLineageFilter[])
+      : ([] as BeyondLineageFilter[]),
+  )
+  let lineageLabel = $derived((filter: BeyondLineageFilter) => $t.ship.beyondLineage[filter])
+  // Counted over characters, not presences: a passenger the archive puts in two
+  // places is still one child of Beyond.
+  let lineageMatchCount = $derived(
+    (data.worldState?.characters || []).filter((char: any) =>
+      mapState.filters.beyondLineage === 'suspected' ||
+      mapState.filters.beyondLineage === 'confirmed'
+        ? char.beyondLineage === mapState.filters.beyondLineage
+        : Boolean(char.beyondLineage),
+    ).length,
+  )
   let activeClearance = $derived(deckClearance[mapState.selectedTier || 'overview'])
   let activeTierProfile = $derived(tierProfiles[mapState.selectedTier || 'overview'])
   let activeTierKey = $derived(mapState.selectedTier || 'overview')
@@ -383,6 +412,28 @@
           >
         {/if}
       </div>
+
+      {#if lineageFilters.length}
+        <div class="filter-section">
+          <div class="section-label">
+            <span>{$t.ship.beyondLineage.label}</span><small
+              >{$t.ship.beyondLineage.aboard(lineageMatchCount)}</small
+            >
+          </div>
+          <div class="lineage-filter" role="group" aria-label={$t.ship.beyondLineage.filterLabel}>
+            {#each lineageFilters as filter (filter)}
+              <button
+                type="button"
+                class:active={mapState.filters.beyondLineage === filter}
+                aria-pressed={mapState.filters.beyondLineage === filter}
+                onclick={() => mapState.setBeyondLineageFilter(filter)}
+                >{lineageLabel(filter)}</button
+              >
+            {/each}
+          </div>
+          <p class="lineage-note">{$t.ship.beyondLineage.note}</p>
+        </div>
+      {/if}
 
       <div class="deck-signal" aria-label={$t.ship.intelligenceLabel}>
         <span>{$t.ship.currentSignal}</span>
@@ -932,6 +983,40 @@
     color: color-mix(in srgb, var(--faction) 65%, #5d6b6b);
     font: 0.45rem/1 var(--font-mono);
     letter-spacing: 0.08em;
+  }
+  /* The lineage axis reads as chips rather than checkboxes: the four states are
+     exclusive, unlike the faction marks a reader stacks. */
+  .lineage-filter {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+  }
+  .lineage-filter button {
+    padding: 0.32rem 0.5rem;
+    border: 1px solid #33303f;
+    border-radius: 0.35rem;
+    background: linear-gradient(90deg, rgba(128, 92, 153, 0.08), #0c151c 60%);
+    color: #8a8496;
+    font-size: 0.6rem;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    transition: 0.18s ease;
+  }
+  .lineage-filter button:hover {
+    color: #b9a4d0;
+    border-color: rgba(155, 120, 191, 0.5);
+  }
+  .lineage-filter button.active {
+    border-color: rgba(155, 120, 191, 0.7);
+    color: #d8c6ec;
+    background: linear-gradient(90deg, rgba(128, 92, 153, 0.3), #0c151c 78%);
+    box-shadow: inset 2px 0 #9b78bf;
+  }
+  .lineage-note {
+    margin-top: 0.55rem;
+    color: #536260;
+    font-size: 0.58rem;
+    line-height: 1.5;
   }
   .clear-filters {
     margin-top: 0.65rem;

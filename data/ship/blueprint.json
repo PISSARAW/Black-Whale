@@ -6005,10 +6005,10 @@
       "ceiling": null,
       "envelope": null,
       "footprint": [
-        [77, -52.5],
-        [105, -52.5],
-        [105, 42],
-        [77, 42]
+        [77.0, -38.0],
+        [105.0, -38.0],
+        [105.0, 42.0],
+        [77.0, 42.0]
       ],
       "sourceFr": "Reconstruit pour rendre le pont continu ; aucune planche ne le montre."
     },
@@ -8643,6 +8643,44 @@
         [-15.75, 3.5],
         [-15.75, 56.0],
         [-38.5, 56.0]
+      ]
+    },
+    {
+      "id": "tier-4-ei-i-family-office",
+      "tierId": "tier-4",
+      "locationId": "tier-4-ei-i-family-office",
+      "name": "Ei-I Family Office",
+      "nameFr": "Bureau de la famille Ei-I",
+      "category": "mafia",
+      "provenance": "plan",
+      "source": "Cutaway, ch. 380 — the compartment is on the page and its inside is not.",
+      "sourceFr": "Coupe du vaisseau, chap. 380 — la planche pose la pièce et n’en donne pas le dedans.",
+      "ceiling": null,
+      "envelope": null,
+      "footprint": [
+        [-7.0, -10.5],
+        [54.2, -10.5],
+        [54.2, 10.5],
+        [-7.0, 10.5]
+      ]
+    },
+    {
+      "id": "tier-5-hangar-entrance",
+      "tierId": "tier-5",
+      "locationId": "tier-5-hangar-entrance",
+      "name": "Hangar Entrance",
+      "nameFr": "Entrée du hangar",
+      "category": "infrastructure",
+      "provenance": "plan",
+      "source": "Cutaway, ch. 380 — the compartment is on the page and its inside is not.",
+      "sourceFr": "Coupe du vaisseau, chap. 380 — la planche pose la pièce et n’en donne pas le dedans.",
+      "ceiling": null,
+      "envelope": null,
+      "footprint": [
+        [77.0, -52.5],
+        [105.0, -52.5],
+        [105.0, -38.0],
+        [77.0, -38.0]
       ]
     }
   ],

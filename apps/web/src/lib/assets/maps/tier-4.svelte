@@ -215,6 +215,17 @@
       through: false,
       inferred: false,
     },
+    {
+      id: 'tier-4-ei-i-family-office',
+      region: 'tier-4-ei-i-family-office',
+      points: '480.0,270.0 654.86,270.0 654.86,330.0 480.0,330.0',
+      label: 'Ei-I Family Office',
+      size: 12,
+      at: [567.4, 304.0],
+      turned: false,
+      through: false,
+      inferred: false,
+    },
   ]
 
   function select(regionId: string | null) {

@@ -52,6 +52,7 @@
     wayOutOfInterior,
   } from '$lib/tour/navigation'
   import { SEALED_DENSITY, fogDensityOf, reverbTime, settleDensity } from '$lib/tour/atmosphere'
+  import { driftDust, dustOf, type Dust } from '$lib/tour/dust'
   import { distanceToBoundary } from '$lib/tour/geometry'
   import {
     enterDeck,
@@ -390,6 +391,46 @@
       })
 
       /**
+       * The columns of light under the lamps of a tall room.
+       *
+       * Additive and never written to the depth buffer, which together are what
+       * make a cone of triangles read as light: it can only ever brighten what is
+       * behind it, it cannot occlude anything, and two of them crossing are
+       * brighter where they cross. `FrontSide` is enough because `mesh.ts` winds
+       * each triangle both ways — a visitor standing inside a beam has to see it.
+       *
+       * Fog on, like the fittings: a beam eighty metres down the banquet hall must
+       * fade with everything else around it or it is the one thing in the room that
+       * does not know how far away it is.
+       */
+      const beamMaterial = new THREE.MeshBasicMaterial({
+        vertexColors: true,
+        transparent: true,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false,
+        side: THREE.FrontSide,
+      })
+
+      /**
+       * The dust of the ten great voids.
+       *
+       * Warm grey rather than white, because the only thing lighting it is the
+       * ship's own filaments, and additive at a low opacity so a mote is a
+       * suggestion of a mote. `sizeAttenuation` is the whole point: the motes near
+       * the visitor are specks and the ones fifty metres off are barely there, and
+       * that gradient is what says how deep the room is.
+       */
+      const dustMaterial = new THREE.PointsMaterial({
+        color: 0xb9a88f,
+        size: 0.07,
+        sizeAttenuation: true,
+        transparent: true,
+        opacity: 0.55,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false,
+      })
+
+      /**
        * The decks already extruded, kept so a staircase taken twice does not
        * pay for the same geometry twice.
        *
@@ -419,6 +460,11 @@
         seams: import('three').LineSegments
         /** The room's ceiling fittings, in the one material that is not lit. */
         fittings: import('three').Mesh
+        /** The columns of light under them, in a tall room. Additive. */
+        beams: import('three').Mesh
+        /** The dust hanging in one of the ten great voids, or nothing. */
+        motes: import('three').Points | null
+        dust: Dust | null
       }
       /** A deck, as one group holding a mesh and an edge run per room. */
       type Built = { root: import('three').Group; rooms: Room[] }
@@ -480,6 +526,8 @@
         const seamPosition = new THREE.BufferAttribute(mesh.seams, 3)
         const fittingPosition = new THREE.BufferAttribute(mesh.fittings, 3)
         const fittingColor = new THREE.BufferAttribute(mesh.fittingColors, 3)
+        const beamPosition = new THREE.BufferAttribute(mesh.beams, 3)
+        const beamColor = new THREE.BufferAttribute(mesh.beamColors, 3)
 
         const root = new THREE.Group()
         const rooms: Room[] = []
@@ -518,20 +566,63 @@
           fittingGeometry.setDrawRange(group.fittingStart, group.fittingCount)
           fittingGeometry.boundingSphere = new THREE.Sphere(centre.clone(), group.radius)
 
+          // The columns of light, on the room's own sphere and range like the
+          // fittings they hang from — a beam drawn while its room is culled is a
+          // shaft of light standing in the void where the room should be.
+          const beamGeometry = new THREE.BufferGeometry()
+          beamGeometry.setAttribute('position', beamPosition)
+          beamGeometry.setAttribute('color', beamColor)
+          beamGeometry.setDrawRange(group.beamStart, group.beamCount)
+          beamGeometry.boundingSphere = new THREE.Sphere(centre.clone(), group.radius)
+
+          /**
+           * The dust of a great void, where the room is one.
+           *
+           * Its own geometry rather than a slice of the deck's: the positions
+           * change every frame, and the deck's buffers are uploaded once and never
+           * touched again. Ten rooms on the ship have one — see `dustOf` — and the
+           * cloud is only advanced while it is being drawn.
+           */
+          const space = ship.spaces.get(group.spaceId)
+          const deck = ship.plans.get(nextTierId)
+          // Not under the reveal, for the reason the lamps and the beams are not:
+          // there every surface has to say what it is worth as evidence, and dust
+          // is derived — it answers nothing about the sources.
+          const dust = space && deck && !reveal ? dustOf(space, deck.tier) : null
+          let motes: import('three').Points | null = null
+          if (dust) {
+            const moteGeometry = new THREE.BufferGeometry()
+            moteGeometry.setAttribute('position', new THREE.BufferAttribute(dust.positions, 3))
+            moteGeometry.boundingSphere = new THREE.Sphere(
+              new THREE.Vector3(dust.centre[0], dust.centre[1], dust.centre[2]),
+              dust.radius,
+            )
+            motes = new THREE.Points(moteGeometry, dustMaterial)
+            // The cloud is written to every frame it is drawn, so three.js must
+            // not be allowed to assume otherwise.
+            moteGeometry.attributes.position.needsUpdate = true
+          }
+
           const roomMesh = new THREE.Mesh(geometry, material)
           const roomEdges = new THREE.LineSegments(edgeGeometry, edgeMaterial)
           const roomSeams = new THREE.LineSegments(seamGeometry, seamMaterial)
           const roomFittings = new THREE.Mesh(fittingGeometry, fittingMaterial)
+          const roomBeams = new THREE.Mesh(beamGeometry, beamMaterial)
           root.add(roomMesh)
           root.add(roomEdges)
           root.add(roomSeams)
           root.add(roomFittings)
+          root.add(roomBeams)
+          if (motes) root.add(motes)
           rooms.push({
             spaceId: group.spaceId,
             mesh: roomMesh,
             edges: roomEdges,
             seams: roomSeams,
             fittings: roomFittings,
+            beams: roomBeams,
+            motes,
+            dust,
           })
         }
 
@@ -544,6 +635,8 @@
           room.edges.geometry.dispose()
           room.seams.geometry.dispose()
           room.fittings.geometry.dispose()
+          room.beams.geometry.dispose()
+          room.motes?.geometry.dispose()
         }
       }
 
@@ -852,6 +945,8 @@
             room.edges.visible = on
             room.seams.visible = on
             room.fittings.visible = on
+            room.beams.visible = on
+            if (room.motes) room.motes.visible = on
           }
         }
       }
@@ -934,6 +1029,26 @@
        * that decides where they are, so the picture cannot drift from what the
        * collision test reads.
        */
+      /**
+       * Moves the dust of whichever great void is on screen.
+       *
+       * Only the clouds actually being drawn: `syncVisible` has already switched
+       * the rooms the visitor cannot see off, and a cloud nobody is looking at does
+       * not need to have drifted while they were away — dust has no state anyone
+       * can check. At most a few hundred motes in one room, which is a sine and a
+       * cosine each.
+       */
+      function driftMotes(delta: number, seconds: number) {
+        for (const deck of [visible, eyeDeck]) {
+          if (!deck) continue
+          for (const room of deck.rooms) {
+            if (!room.motes || !room.dust || !room.motes.visible) continue
+            driftDust(room.dust, delta, seconds)
+            room.motes.geometry.attributes.position.needsUpdate = true
+          }
+        }
+      }
+
       function driftSolids(seconds: number) {
         const moving = world.body.passengers.length
           ? new Map(
@@ -1243,6 +1358,7 @@
         syncSight()
         sweepStale()
         driftSolids(now / 1000)
+        driftMotes(delta, now / 1000)
         const walked = activePlan ?? plan
         // What the aura is holding is out of the deck's own wall list, so it
         // has to be put back for the collision test — where the technique left

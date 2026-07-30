@@ -46,6 +46,16 @@
     'tier-5': 96,
   }
 
+  /**
+   * The decks of the nav, in the order the section stacks them.
+   *
+   * Not `[1, 2, 3, 4, 5]` any more: tier 1 is a liner and carries three decks,
+   * and two of them had no way in at all — a reader who clicked Pont 1 got the
+   * royal deck and no sign that the casino, the cells and the queens' block
+   * were a flight up.
+   */
+  const decks = ['tier-1', 'tier-1-b', 'tier-1-c', 'tier-2', 'tier-3', 'tier-4', 'tier-5']
+
   const tierNumber: Record<string, string> = {
     overview: '00',
     'tier-1': '01',
@@ -367,18 +377,18 @@
           <span class="tier-arrow">↗</span>
         </button>
 
-        {#each [1, 2, 3, 4, 5] as tierNum (tierNum)}
+        {#each decks as deckId (deckId)}
           <button
-            class:active={mapState.selectedTier === `tier-${tierNum}`}
-            aria-current={mapState.selectedTier === `tier-${tierNum}` ? 'page' : undefined}
-            onclick={() => mapState.selectTier(`tier-${tierNum}`)}
+            class:active={mapState.selectedTier === deckId}
+            class:sub-deck={deckId.length > 6}
+            aria-current={mapState.selectedTier === deckId ? 'page' : undefined}
+            onclick={() => mapState.selectTier(deckId)}
           >
-            <span class="tier-number">0{tierNum}</span>
+            <span class="tier-number">{tierNumber[deckId]}</span>
             <span
-              ><strong>{$t.ship.tierLabel(tierNum)}</strong><small
-                >{$t.ship.tierSummaries[tierNum - 1]}</small
-              ><i class="density-line"
-                ><b style={`width:${tierProfiles[`tier-${tierNum}`].density}%`}></b></i
+              ><strong>{tierProfiles[deckId].title}</strong><small
+                >{tierProfiles[deckId].subtitle}</small
+              ><i class="density-line"><b style={`width:${tierProfiles[deckId].density}%`}></b></i
               ></span
             >
             <span class="tier-arrow">→</span>
@@ -864,6 +874,14 @@
     text-align: left;
     cursor: pointer;
     transition: 0.18s ease;
+  }
+  /* A deck of the tier 1 liner is indented under the tier it belongs to: three
+     buttons reading Pont 1 at the same margin would look like three tiers. */
+  .tier-nav button.sub-deck {
+    padding-left: 1.5rem;
+  }
+  .tier-nav button.sub-deck .tier-number {
+    font-size: 0.58rem;
   }
   .tier-nav button:hover {
     color: #e4e8df;

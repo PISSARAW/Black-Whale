@@ -101,15 +101,6 @@ const locationCoordinates: Record<string, Record<string, TierAnchor>> = {
     'tier-1-king-living-quarters': { x: 475.0, y: 160.0 },
     'tier-1-lifeboats': { x: 135.0, y: 300.0, small: true },
     'tier-1-princes-burial-chamber': { x: 475.0, y: 83.4, small: true },
-    'tier-1-queens-living-quarters': { x: 422.5, y: 385.0, small: true },
-    'tier-1-queens-living-quarters-room-01': { x: 402.0, y: 328.8, small: true },
-    'tier-1-queens-living-quarters-room-02': { x: 443.0, y: 328.8, small: true },
-    'tier-1-queens-living-quarters-room-03': { x: 402.0, y: 366.3, small: true },
-    'tier-1-queens-living-quarters-room-04': { x: 443.0, y: 366.3, small: true },
-    'tier-1-queens-living-quarters-room-05': { x: 402.0, y: 403.8, small: true },
-    'tier-1-queens-living-quarters-room-06': { x: 443.0, y: 403.8, small: true },
-    'tier-1-queens-living-quarters-room-07': { x: 402.0, y: 441.3, small: true },
-    'tier-1-queens-living-quarters-room-08': { x: 443.0, y: 441.3, small: true },
     'tier-1-royal-residential-sector': { x: 530.0, y: 385.0 },
     'tier-1-royal-residential-sector-room-1001': { x: 558.6, y: 322.1, small: true },
     'tier-1-royal-residential-sector-room-1002': { x: 501.4, y: 322.1, small: true },
@@ -125,12 +116,35 @@ const locationCoordinates: Record<string, Record<string, TierAnchor>> = {
     'tier-1-royal-residential-sector-room-1012': { x: 501.4, y: 418.6, small: true },
     'tier-1-royal-residential-sector-room-1013': { x: 558.6, y: 437.9, small: true },
     'tier-1-royal-residential-sector-room-1014': { x: 501.4, y: 437.9, small: true },
+    'tier-1-vvip-living-quarters': { x: 292.9, y: 385.0, small: true },
+  },
+  /**
+   * The garrison deck of the tier 1 liner. Its rooms are drawn on
+   * `tier-1-b.svelte`, so its markers are filed here and not with the royal
+   * deck: on the royal deck those coordinates are now the floor these blocks
+   * left behind, and a queen standing on a floor she vacated is exactly the
+   * kind of wrong this table exists to prevent.
+   */
+  'tier-1-b': {
+    'tier-1-b': { x: 690.0, y: 300.0 },
     'tier-1-soldiers-living-quarters': { x: 652.5, y: 385.0 },
     'tier-1-supreme-court': { x: 790.0, y: 410.0 },
-    'tier-1-vip-casino': { x: 360.0, y: 385.0 },
     'tier-1-vip-jail': { x: 790.0, y: 320.0, small: true },
-    'tier-1-vvip-living-quarters': { x: 292.9, y: 385.0, small: true },
     'tier-1-vvip-prison-beyond': { x: 790.0, y: 270.0, small: true },
+  },
+  /** The guest deck of the tier 1 liner, drawn on `tier-1-c.svelte`. */
+  'tier-1-c': {
+    'tier-1-c': { x: 425.0, y: 385.0 },
+    'tier-1-queens-living-quarters': { x: 422.5, y: 385.0, small: true },
+    'tier-1-queens-living-quarters-room-01': { x: 402.0, y: 328.8, small: true },
+    'tier-1-queens-living-quarters-room-02': { x: 443.0, y: 328.8, small: true },
+    'tier-1-queens-living-quarters-room-03': { x: 402.0, y: 366.3, small: true },
+    'tier-1-queens-living-quarters-room-04': { x: 443.0, y: 366.3, small: true },
+    'tier-1-queens-living-quarters-room-05': { x: 402.0, y: 403.8, small: true },
+    'tier-1-queens-living-quarters-room-06': { x: 443.0, y: 403.8, small: true },
+    'tier-1-queens-living-quarters-room-07': { x: 402.0, y: 441.3, small: true },
+    'tier-1-queens-living-quarters-room-08': { x: 443.0, y: 441.3, small: true },
+    'tier-1-vip-casino': { x: 360.0, y: 385.0 },
   },
   'tier-2': {
     'tier-2': { x: 517.0, y: 394.2 },
@@ -156,6 +170,7 @@ const locationCoordinates: Record<string, Record<string, TierAnchor>> = {
   'tier-4': {
     'tier-4': { x: 481.2, y: 336.1 },
     'tier-4-central-passage': { x: 407.5, y: 250.0, small: true },
+    'tier-4-ei-i-family-office': { x: 567.4, y: 300.0 },
     'tier-4-recycling-sewage-facilities': { x: 485.0, y: 522.5 },
     'tier-4-royal-army-conference-room': { x: 575.0, y: 155.0 },
     'tier-4-xi-yu-family-office': { x: 400.0, y: 300.0 },
@@ -165,6 +180,7 @@ const locationCoordinates: Record<string, Record<string, TierAnchor>> = {
     'tier-4-recycling-sewage-facilities': { x: 450.0, y: 125.0 },
     'tier-5-area-37564': { x: 270.0, y: 355.0, small: true },
     'tier-5-central-dining-hall': { x: 585.0, y: 375.0 },
+    'tier-5-hangar-entrance': { x: 760.0, y: 170.7 },
     'tier-5-cha-r-family-office': { x: 460.0, y: 375.0 },
     'tier-5-medical-clinic': { x: 685.0, y: 375.0 },
     'tier-5-standard-cabins': { x: 270.0, y: 252.5 },
@@ -496,6 +512,8 @@ function spotNoteFor(
  */
 export const tierOverviewY: Record<string, number> = {
   'tier-1': 23.5,
+  'tier-1-b': 16.4,
+  'tier-1-c': 13.6,
   'tier-2': 38.3,
   'tier-3': 52.6,
   'tier-4': 68,
@@ -513,15 +531,40 @@ export const tierOverviewY: Record<string, number> = {
  */
 export const tierOverviewBand: Record<string, number> = {
   'tier-1': 4.1,
+  'tier-1-b': 2.5,
+  'tier-1-c': 2.5,
   'tier-2': 4.1,
   'tier-3': 4.9,
   'tier-4': 3.7,
   'tier-5': 3.7,
 }
 
+/**
+ * A deck of the tier 1 liner is still tier 1 to a reader: `tier-1-c` labels as
+ * Tier 1, not as Tier 1-c. The split is geometry, and the badge on a marker
+ * answers which tier someone is on.
+ */
 export function tierLabelFor(tierId: string, locale: Locale = DEFAULT_LOCALE): string {
-  const number = tierId.replace('tier-', '')
+  const number = tierId.match(/^tier-([1-5])/)?.[1] ?? tierId.replace('tier-', '')
   return messagesFor(locale).ship.tierLabel(number)
+}
+
+/**
+ * Which deck map draws a room, read off the table that positions it there.
+ *
+ * Only a deck that shares its tier's prefix can be told apart this way, which
+ * is the only case there is: no other tier of the ship has more than one deck.
+ */
+/** The anchor a deck holds for one room, or `null` where it holds none. */
+export function anchorFor(deckId: string, slug: string): TierAnchor | null {
+  return locationCoordinates[deckId]?.[slug] ?? null
+}
+
+function deckDrawing(slug: string): string | null {
+  for (const [deckId, anchors] of Object.entries(locationCoordinates)) {
+    if (slug in anchors) return deckId
+  }
+  return null
 }
 
 export function resolveTierSlug(
@@ -530,6 +573,13 @@ export function resolveTierSlug(
 ): string | null {
   let current = location
   let depth = 0
+
+  // The deck that draws the room comes first. Tier 1 is a liner of three decks
+  // and the slug of every room on it still begins `tier-1-`, so the prefix
+  // below would file the casino with the royal deck — which stopped drawing it
+  // when the casino moved two decks up.
+  const drawnOn = location?.slug ? deckDrawing(location.slug) : null
+  if (drawnOn) return drawnOn
 
   while (current && depth < 8) {
     if (current.type === 'TIER') {

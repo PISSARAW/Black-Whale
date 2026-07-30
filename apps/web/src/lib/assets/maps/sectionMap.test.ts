@@ -238,14 +238,13 @@ describe('the decks of the section', () => {
    * section without moving them and a passenger floats between two decks.
    */
   /**
-   * Only a tier of its own: a marker resolves its deck from the `tier-1-*`
-   * prefix of a location slug, so every passenger of the liner reads tier 1 and
-   * belongs on the one deck of it that is drawn from above. The decks stacked
-   * over that one carry no marker of their own and want no anchor.
+   * Every deck, not only every tier. A marker is filed on the deck that draws
+   * its room, so the decks of the liner carry markers of their own and need a
+   * band of their own to sit in — the first split gave them none, and the
+   * queens' block ended up on the royal deck's floor.
    */
   it('is where markerProjection thinks each deck is, and as tall', () => {
-    const tiers = new Set(decks.filter((deck) => !deck.parentTierId).map((deck) => deck.id))
-    for (const deck of drawnDecks.filter((deck) => tiers.has(deck.id))) {
+    for (const deck of drawnDecks) {
       const middle = ((deck.floor + deck.ceiling) / 2 / VIEW_H) * 100
       const band = ((deck.floor - deck.ceiling) / VIEW_H) * 100
       expect(tierOverviewY[deck.id], deck.id).toBeCloseTo(middle, 1)

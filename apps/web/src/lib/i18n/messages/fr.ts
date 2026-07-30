@@ -97,6 +97,15 @@ export const fr: Messages = {
       touchKeys:
         'Le manche en bas à gauche fait marcher, poussé à fond il fait courir ; glissez sur la vue pour regarder ; les boutons franchissent une porte et lancent',
     },
+    /**
+     * Le bouton qui fait taire la visite. La visite a sa propre voix — les pas, et
+     * la salle qui leur répond — et l'intitulé dit ce que le bouton va faire,
+     * non l'état dans lequel il se trouve.
+     */
+    sound: {
+      silence: 'Couper le son de la visite',
+      restore: 'Écouter la visite : les pas, et la salle qui leur répond',
+    },
     touch: {
       hint: 'Glissez pour regarder · manche pour marcher',
       move: 'Manche de marche',

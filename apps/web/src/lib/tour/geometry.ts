@@ -717,6 +717,51 @@ export function plateSeams(polygon: Polygon, pitch = PLATE_PITCH): [Vec2, Vec2][
 }
 
 /**
+ * Centre-to-centre spacing of the ceiling fittings, in metres.
+ *
+ * A ship this size is lit, and the reconstruction drew not one lamp: every room
+ * took the same flat wash, so a corridor and a ballroom were the same
+ * illumination over different footprints. Fittings on a grid are what the deck
+ * plans imply and never draw — the same standing the columns have — and eight
+ * metres is the span one bulkhead-mounted lamp of the period covers.
+ *
+ * Laid on the ship's grid rather than each room's, like the plating: the lamps of
+ * a corridor line up with the lamps of the hall it opens into, because the
+ * wiring ran before the partitions.
+ */
+export const LAMP_SPACING = 8
+
+/**
+ * Where a room's ceiling fittings hang.
+ *
+ * Nothing is drawn for them — see `mesh.ts`, which bakes their light into the
+ * vertex colours the deck already carries — so this is a list of positions, not
+ * of geometry, and it costs no triangle and no draw call. A room too small to
+ * hold a grid point still gets one: a cabin has a light.
+ */
+export function ceilingLamps(footprint: Polygon, spacing = LAMP_SPACING): Vec2[] {
+  if (spacing < EPSILON || footprint.length < 3) return []
+
+  const xs = footprint.map((point) => point[0])
+  const zs = footprint.map((point) => point[1])
+  const lamps: Vec2[] = []
+
+  // Cell centres, so a corridor as wide as one cell is lit down its middle
+  // rather than along the wall.
+  const first = (values: number[]) => Math.floor(Math.min(...values) / spacing) - 1
+  const last = (values: number[]) => Math.ceil(Math.max(...values) / spacing) + 1
+
+  for (let i = first(xs); i <= last(xs); i++) {
+    for (let j = first(zs); j <= last(zs); j++) {
+      const point: Vec2 = [(i + 0.5) * spacing, (j + 0.5) * spacing]
+      if (pointInPolygon(point, footprint)) lamps.push(point)
+    }
+  }
+
+  return lamps.length ? lamps : [interiorPoint(footprint)]
+}
+
+/**
  * The triangle cut into smaller ones until no edge is longer than `maxEdge`.
  *
  * The deck is lit by point lights and shaded per vertex, so a floor drawn as two

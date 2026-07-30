@@ -35,18 +35,35 @@
     wanderOffset,
     type TourWorld,
   } from '$lib/tour/hatsu'
-  import { comfort, type Comfort } from '$lib/tour/comfort'
+  import { comfort, prefersReducedMotion, type Comfort } from '$lib/tour/comfort'
   import { buildSolidMesh, buildTierMesh } from '$lib/tour/mesh'
   import {
+    SPRINT_SPEED,
     STICK_RADIUS,
     STICK_RIM,
+    WALK_SPEED,
+    bobOf,
     linkUnderfoot,
     resolveMovement,
+    stepsIn,
     stickVector,
     walkInput,
     wallsNear,
     wayOutOfInterior,
   } from '$lib/tour/navigation'
+  import { SEALED_DENSITY, fogDensityOf, reverbTime, settleDensity } from '$lib/tour/atmosphere'
+  import { distanceToBoundary } from '$lib/tour/geometry'
+  import {
+    enterRoom,
+    footstep,
+    nearWall,
+    setStepsMuffled,
+    startSteps,
+    stepsPlaying,
+    stepsWereSilenced,
+    stopSteps,
+    toggleSteps,
+  } from '$lib/audio/steps'
   import { visibleSpaces } from '$lib/tour/visibility'
   import type { Link, Space, Structure, Vec2 } from '$lib/tour/types'
 
@@ -70,6 +87,13 @@
     touch?: boolean
     /** Labels for the on-screen controls a touchscreen gets. */
     touchLabels: { move: string; cast: string }
+    /**
+     * What the button that silences the walk is called, in both states.
+     *
+     * The walk makes a noise — its own footsteps, and the room answering them —
+     * so it has to be possible to stop it without leaving the page.
+     */
+    soundLabels: { silence: string; restore: string }
     /**
      * What the door or stairwell within reach is called, worded for a button
      * rather than for a key. `null` when there is nothing to take.
@@ -124,6 +148,7 @@
     engaged = $bindable(false),
     touch = $bindable(false),
     touchLabels,
+    soundLabels,
     touchUseLabel = null,
     position = $bindable([0, 0]),
     heading = $bindable(0),
@@ -139,8 +164,6 @@
   }: Props = $props()
 
   const EYE_HEIGHT = 1.7
-  const WALK_SPEED = 6
-  const SPRINT_SPEED = 16
   /** Radians of yaw per pixel of pointer movement, before the visitor's own multiplier. */
   const LOOK_SENSITIVITY = 0.0022
   const MAX_PITCH = Math.PI / 2 - 0.05
@@ -258,7 +281,20 @@
       renderer.toneMappingExposure = 1
 
       const scene = new THREE.Scene()
-      scene.fog = new THREE.Fog(0x050505, 6, 110)
+      /**
+       * The air, which is a different air in every room.
+       *
+       * `FogExp2` rather than a near and a far plane: what the reconstruction
+       * knows about a room is its size, and a density read off that size says the
+       * same thing at every distance instead of drawing a hard band where the
+       * linear ramp begins. One setting used to stand for a twelve-square-metre
+       * office entrance and a six-thousand-square-metre promenade; now the
+       * density comes off the longest chord of the footprint the visitor is
+       * standing in, and eases over `SETTLE` when they cross a threshold — see
+       * `$lib/tour/atmosphere`. Crossing a doorway is felt: the air opens.
+       */
+      const fog = new THREE.FogExp2(0x050505, 0.02)
+      scene.fog = fog
 
       // The field of view is the visitor's to set: 72° is a wide-angle lens, and
       // on a laptop held at arm's length it is a fisheye that makes people ill.
@@ -298,6 +334,21 @@
       })
 
       /**
+       * The seams between the deck plates: dim steel, not the gold of the plans.
+       *
+       * This is the one thing a bare floor cannot tell the visitor — how fast they
+       * are crossing it. A hundred-and-fifty-metre hall drawn as an unbroken sheet
+       * reads the same at a walk as at a run, and the courses passing underfoot at
+       * `PLATE_PITCH` are what turn the published measurement into something felt.
+       * Faint on purpose: it is a texture to walk over, not a grid to read.
+       */
+      const seamMaterial = new THREE.LineBasicMaterial({
+        color: 0x6f6256,
+        transparent: true,
+        opacity: 0.22,
+      })
+
+      /**
        * The decks already extruded, kept so a staircase taken twice does not
        * pay for the same geometry twice.
        *
@@ -323,6 +374,8 @@
         spaceId: string
         mesh: import('three').Mesh
         edges: import('three').LineSegments
+        /** The deck plating of this room, in its own dim material. */
+        seams: import('three').LineSegments
       }
       /** A deck, as one group holding a mesh and an edge run per room. */
       type Built = { root: import('three').Group; rooms: Room[] }
@@ -381,6 +434,7 @@
         const normal = new THREE.BufferAttribute(mesh.normals, 3)
         const color = new THREE.BufferAttribute(mesh.colors, 3)
         const edgePosition = new THREE.BufferAttribute(mesh.edges, 3)
+        const seamPosition = new THREE.BufferAttribute(mesh.seams, 3)
 
         const root = new THREE.Group()
         const rooms: Room[] = []
@@ -403,11 +457,25 @@
           edgeGeometry.setDrawRange(group.edgeStart, group.edgeCount)
           edgeGeometry.boundingSphere = new THREE.Sphere(centre.clone(), group.radius)
 
+          // The plating shares the room's sphere and its draw range, so it is
+          // culled with the room rather than being a deck-wide grid.
+          const seamGeometry = new THREE.BufferGeometry()
+          seamGeometry.setAttribute('position', seamPosition)
+          seamGeometry.setDrawRange(group.seamStart, group.seamCount)
+          seamGeometry.boundingSphere = new THREE.Sphere(centre.clone(), group.radius)
+
           const roomMesh = new THREE.Mesh(geometry, material)
           const roomEdges = new THREE.LineSegments(edgeGeometry, edgeMaterial)
+          const roomSeams = new THREE.LineSegments(seamGeometry, seamMaterial)
           root.add(roomMesh)
           root.add(roomEdges)
-          rooms.push({ spaceId: group.spaceId, mesh: roomMesh, edges: roomEdges })
+          root.add(roomSeams)
+          rooms.push({
+            spaceId: group.spaceId,
+            mesh: roomMesh,
+            edges: roomEdges,
+            seams: roomSeams,
+          })
         }
 
         return { root, rooms }
@@ -417,6 +485,7 @@
         for (const room of built.rooms) {
           room.mesh.geometry.dispose()
           room.edges.geometry.dispose()
+          room.seams.geometry.dispose()
         }
       }
 
@@ -634,10 +703,16 @@
       let blinded = false
 
       function syncSight() {
+        // Hearing is sealed one strike after sight, and the deck goes underwater
+        // with the theme rather than falling silent: the ship is still making its
+        // noises, the visitor has stopped receiving them.
+        setStepsMuffled(world.sealed >= 2)
+
         const sealed = world.sealed >= 1
         if (sealed === blinded) return
         blinded = sealed
-        scene.fog = new THREE.Fog(0x050505, sealed ? 0.1 : 6, sealed ? 1.6 : 110)
+        // The density itself is eased in the frame loop, so the air closing to
+        // arm's length is felt closing rather than cut to.
         headlamp.intensity = sealed ? 0 : HEADLAMP
         for (const light of scene.children) {
           if ((light as import('three').AmbientLight).isAmbientLight) {
@@ -706,6 +781,7 @@
             const on = ids.has(room.spaceId)
             room.mesh.visible = on
             room.edges.visible = on
+            room.seams.visible = on
           }
         }
       }
@@ -863,6 +939,20 @@
         if (found) goTo(found.to)
       }
 
+      /**
+       * Starts the walk's own sound, once, if the visitor has not silenced it.
+       *
+       * Kept here rather than in the audio module because the *permission* is the
+       * gesture: a browser hands back a suspended context until the visitor has
+       * done something, and engaging the walk is that something.
+       */
+      let soundOffered = false
+      function letItSound() {
+        if (soundOffered || stepsWereSilenced()) return
+        soundOffered = true
+        startSteps()
+      }
+
       let dragging = false
       /**
        * Yaw the mouse or the finger has asked for and the snap has not yet paid
@@ -921,6 +1011,11 @@
       const onPointerLockChange = () => {
         engaged = document.pointerLockElement === canvas
         if (!engaged) for (const code of Object.keys(pressed)) delete pressed[code]
+        // Taking the pointer is the visitor's own gesture, which is both the
+        // browser's condition for making a sound and the right moment to start:
+        // nothing is heard from a page being scrolled past. Unless they have
+        // silenced the walk before, in which case it stays silent until asked.
+        if (engaged) letItSound()
       }
 
       // Touch: dragging the view looks around, the stick in the corner walks,
@@ -942,6 +1037,8 @@
         // Whatever the browser says about its pointer, a finger settles it.
         touch = true
         touchedAt = performance.now()
+        // A phone has no pointer to lock, so the finger is the gesture.
+        letItSound()
         if (lookFinger !== null) return
         const finger = Array.from(event.changedTouches).find(
           (candidate) => candidate.identifier !== stickFinger,
@@ -1017,6 +1114,32 @@
       /** Reused so the frame loop does not allocate a vector for the viewport. */
       const size = new THREE.Vector2()
 
+      /**
+       * How far the visitor has walked, in metres, ever.
+       *
+       * The gait and the footsteps are both counted off this rather than off the
+       * clock, which is what keeps them on the ground: see `bobOf`.
+       */
+      let travelledOnFoot = 0
+      let lastPace = 0
+      /**
+       * How much of the head's movement this visitor has asked for. Read once, on
+       * the system's setting, rather than every frame.
+       */
+      const gaitAmplitude = prefersReducedMotion() ? 0 : 1
+
+      /**
+       * The air the current room wants, and the densities already measured.
+       *
+       * A plain record rather than a Map, like the rest of the render loop's own
+       * state: the loop reads this sixty times a second and nothing in the markup
+       * depends on it, so it must stay out of Svelte's reactivity rather than
+       * drive it. Measured once per room — the longest chord of a sixty-corner
+       * promenade is not worth walking every frame.
+       */
+      let fogTarget = 0.02
+      const airOf: Record<string, number | undefined> = {}
+
       /** The room the door pair last delivered the visitor to. */
       let arrivedFrom: string | null = null
       /** The end of Fugetsu's tunnel the visitor was last delivered to. */
@@ -1063,33 +1186,77 @@
         // Jump-only mode leaves the ship where it is and takes away the moving
         // camera: the plan and the index still put the visitor in any room, and
         // nothing walks them there.
+        // A camera at yaw looks along (-sin, -cos) and has (cos, -sin) to its
+        // right, which is what three.js does to (0, 0, -1) and (1, 0, 0). Wanted
+        // whether or not the visitor is moving: the lamp hangs off the same pair.
+        const sin = Math.sin(yaw)
+        const cos = Math.cos(yaw)
+
         if (moving && !$comfort.jumpOnly) {
           const speed = (running ? SPRINT_SPEED : WALK_SPEED) * paceOf(world.body) * delta
-          // A camera at yaw looks along (-sin, -cos) and has (cos, -sin) to its
-          // right, which is what three.js does to (0, 0, -1) and (1, 0, 0).
-          const sin = Math.sin(yaw)
-          const cos = Math.cos(yaw)
           const target: Vec2 = [
             pointer[0] + (advance * -sin + strafe * cos) * speed,
             pointer[1] + (advance * -cos + strafe * -sin) * speed,
           ]
           // Luini walks through the walls rather than around them, so the move
           // is taken whole and the collision pass is simply not run.
+          const from = pointer
           pointer = walksThroughWalls(world)
             ? target
             : resolveMovement(pointer, target, wallsNear([...walked.walls, ...loose], pointer, 6))
+          // Ground actually covered, which is not what was asked for: a visitor
+          // pushing into a bulkhead has stopped walking, and their gait and their
+          // footsteps both have to know it.
+          travelledOnFoot += Math.hypot(pointer[0] - from[0], pointer[1] - from[1])
         }
 
         const standing = spaceAt(plan, pointer)
         applyVisibility(standing?.id ?? null)
-        const eye = plan.tier.elevation + eyesOf(world.body, EYE_HEIGHT)
+
+        /**
+         * The head's rise and fall, off the distance walked rather than the clock.
+         *
+         * A visitor who has asked their system for less movement gets none of it:
+         * a view that swings while the body does not is the thing that actually
+         * makes people ill, and `$lib/tour/comfort` is where that is argued.
+         */
+        const bob = bobOf(travelledOnFoot, gaitAmplitude * (running ? 1.5 : 1))
+        const eye = plan.tier.elevation + eyesOf(world.body, EYE_HEIGHT) + bob.rise
         camera.position.set(pointer[0], eye, pointer[1])
         camera.rotation.set(0, 0, 0)
         camera.rotateY(yaw)
         camera.rotateX(pitch)
+        camera.rotateZ(bob.roll)
 
-        headlamp.position.set(pointer[0], eye + 0.4, pointer[1])
+        // One pace, one footstep, on the same counter the head is dipping to — so
+        // the sound lands with the foot at every speed and never drifts off it.
+        const paces = stepsIn(travelledOnFoot)
+        if (paces !== lastPace) {
+          lastPace = paces
+          footstep(paces, { running })
+        }
+
+        // The lamp is worn, not held at the eye: thirty centimetres to the left of
+        // the visitor's head and thirty below it. At the viewpoint, N·L is N·V on
+        // every surface at once — the light lands wherever the eye is already
+        // looking, which is the one place it cannot model anything, and every wall
+        // came out flat for it. Off to one side, the same wall has a lit edge and a
+        // shaded one, and a corridor has corners again.
+        headlamp.position.set(pointer[0] - cos * 0.3, eye - 0.3, pointer[1] + sin * 0.3)
         if (standing) headlamp.distance = Math.max(22, ceilingOf(standing, plan.tier) * 4)
+
+        // The air of the room, and the room's answer to a footstep. Both are read
+        // off the size of the space the visitor is standing in, both are eased
+        // rather than cut, and neither costs a triangle or a byte of new data.
+        if (standing) {
+          let density = airOf[standing.id]
+          if (density === undefined) {
+            density = fogDensityOf(standing)
+            airOf[standing.id] = density
+          }
+          fogTarget = density
+        }
+        fog.density = settleDensity(fog.density, blinded ? SEALED_DENSITY : fogTarget, delta)
 
         // Mirror the loop's state out for the HUD, without re-rendering on
         // every frame: these only change when they actually change.
@@ -1112,6 +1279,11 @@
         if (Math.hypot(pointer[0] - reported[0], pointer[1] - reported[1]) >= REPORT_STEP) {
           reported = pointer
           position = pointer
+          // The reverberation belongs to the room, but the first reflection is a
+          // distance: crossing a hall, the near wall goes from arm's length to
+          // fifty metres, and the ear hears the room open around it. Moved on the
+          // same quarter-metre threshold the minimap is, not every frame.
+          if (standing) nearWall(distanceToBoundary(pointer, standing.footprint))
         }
         if (Math.abs(angleGap(yaw, reportedYaw)) >= REPORT_TURN) {
           reportedYaw = yaw
@@ -1123,6 +1295,15 @@
         const standingId = standing?.id ?? null
         if (standingId !== lastSpaceId) {
           lastSpaceId = standingId
+          // Sabine on the volume the blueprint already gives, crossfaded over the
+          // threshold: a cabin rings for half a second and the promenade for four.
+          if (standing) {
+            enterRoom(
+              standing.id,
+              reverbTime(standing, plan.tier),
+              distanceToBoundary(pointer, standing.footprint),
+            )
+          }
           const exit = doorExit(world, standingId, arrivedFrom)
           arrivedFrom = exit
           onArrive?.(standingId)
@@ -1246,10 +1427,13 @@
         eyeDeck = null
         eyeCamera = null
         for (const id of Object.keys(solids)) dropSolid(id)
+        // The walk is over: no more footsteps, and the audio graph goes with it.
+        stopSteps()
         shells?.geometry.dispose()
         shells = null
         shellMaterial.dispose()
         edgeMaterial.dispose()
+        seamMaterial.dispose()
         material.dispose()
         renderer.dispose()
         // `dispose` frees what three.js allocated; the drawing buffer and the
@@ -1312,6 +1496,39 @@
     <div class="absolute inset-0 grid place-items-center p-8 text-center text-[#FFFFF0]/70">
       {unsupportedLabel}
     </div>
+  {/if}
+
+  <!-- The walk has a voice — its footsteps, and the room answering them — so it
+       needs a way to be quietened without leaving the page. Top left, because the
+       remote eye's feed is inset in the top right and the read-outs are along the
+       bottom. Nothing sounds before the visitor engages the walk, and this
+       remembers their answer for the next visit. -->
+  {#if ready && !failure}
+    <button
+      type="button"
+      onclick={() => toggleSteps()}
+      aria-pressed={$stepsPlaying}
+      title={$stepsPlaying ? soundLabels.silence : soundLabels.restore}
+      class="absolute left-3 top-3 flex h-9 w-9 items-center justify-center rounded-full border border-[#FFD700]/40 bg-[#050505]/80 text-[#FFD700]/80 transition-colors hover:border-[#FFD700]/80 hover:text-[#FFD700]"
+    >
+      <span class="sr-only">{$stepsPlaying ? soundLabels.silence : soundLabels.restore}</span>
+      <!-- A speaker, with the waves struck through when the walk is silent. -->
+      <svg
+        viewBox="0 0 24 24"
+        class="h-4 w-4"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.6"
+        aria-hidden="true"
+      >
+        <path d="M4 9.5h3L11 6v12l-4-3.5H4z" stroke-linejoin="round" />
+        {#if $stepsPlaying}
+          <path d="M15 9a4 4 0 0 1 0 6M17.5 6.5a7.5 7.5 0 0 1 0 11" stroke-linecap="round" />
+        {:else}
+          <path d="M15 9.5l5 5M20 9.5l-5 5" stroke-linecap="round" />
+        {/if}
+      </svg>
+    </button>
   {/if}
 
   <!-- The touchscreen's keyboard: a stick to walk with, and buttons for the two

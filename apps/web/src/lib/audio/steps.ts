@@ -1,10 +1,5 @@
 import { writable } from 'svelte/store'
-import {
-  MAX_REVERB,
-  MIN_REVERB,
-  impulseResponse,
-  slapDelay,
-} from '$lib/tour/atmosphere'
+import { MAX_REVERB, MIN_REVERB, impulseResponse, slapDelay } from '$lib/tour/atmosphere'
 
 /**
  * The sound of the walk: footsteps, and the room answering them.

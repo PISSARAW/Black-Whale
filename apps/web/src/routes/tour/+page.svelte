@@ -601,6 +601,7 @@
         onWorm={crossWorm}
         {touchUseLabel}
         touchLabels={{ move: $t.tour.touch.move, cast: $t.tour.touch.cast }}
+        soundLabels={{ silence: $t.tour.sound.silence, restore: $t.tour.sound.restore }}
         loadingLabel={$t.tour.loading}
         unsupportedLabel={$t.tour.unsupported}
       />

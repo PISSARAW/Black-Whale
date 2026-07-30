@@ -303,15 +303,44 @@
         "location": "Tier 1 - Room 1014"
       },
       {
+        "event": "The princes send sixteen guards and servants to the class, each with orders of their own",
+        "storyDate": "Day 2 · 09:00",
+        "charactersInvolved": [
+          "satobi",
+          "mushaho",
+          "longhi",
+          "maor",
+          "danjin",
+          "myuhan",
+          "furykov",
+          "tenftory",
+          "belerainte",
+          "barrigen",
+          "yuri",
+          "loberry",
+          "ladiolus",
+          "illardia",
+          "yuhirai",
+          "shedule"
+        ],
+        "location": "Tier 1 - Royal Residential Sector"
+      },
+      {
+        "event": "Kurapika sets the rules: a white line nobody crosses, force without warning, exclusion for anyone who breaks it",
+        "storyDate": "Day 2 · 09:00",
+        "charactersInvolved": ["kurapika"],
+        "location": "Tier 1 - Royal Residential Sector"
+      },
+      {
         "event": "Silent Majority possesses Loberry during Kurapika's first Nen class",
         "storyDate": "Day 2 · 09:00",
         "charactersInvolved": ["loberry", "kurapika"],
         "location": "Tier 1 - Royal Residential Sector"
       },
       {
-        "event": "Silent Majority kills Barrigen",
+        "event": "Asked who already knows Nen, only Furykov and Belerainte raise a hand",
         "storyDate": "Day 2 · 09:00",
-        "charactersInvolved": ["barrigen", "loberry", "kurapika"],
+        "charactersInvolved": ["kurapika", "furykov", "belerainte"],
         "location": "Tier 1 - Royal Residential Sector"
       }
     ],
@@ -321,10 +350,47 @@
       "A second caption puts the first Nen class at 09:00 on Day 2",
       "Kurapika was out for about nine hours; the others were told he was on a mission",
       "Emperor Time held past three hours costs a black-out of three times the time spent, and takes down whoever shares the ability",
+      "Each prince briefs his own envoys before the class, and the orders contradict one another — spy, recruit, learn, or kill",
+      "Exclusion from the class is the sanction that binds them, since none of them can afford to be sent back empty-handed",
       "Loberry is the only witness to the masked doll watching the Nen class",
-      "Barrigen is exsanguinated by four conjured snakes"
+      "Two of the sixteen admit to knowing Nen; the hidden assassin counts four more who say nothing"
     ],
-    "description": "The opening panel puts the Black Whale alone on the water and dates it: second day, eighteen hours since departure — which sets the morning of Day 2, given the noon departure of chapter 340. Kurapika wakes there from about nine hours of black-out, the price of holding Emperor Time past its three-hour ceiling: the penalty is three times the time spent, and Oito, who shared the ability, went down at the same moment. Bill has covered for him by telling the others he was on a mission. A second caption, three hours later, dates the rest: second day, nine in the morning, the guards assembled for the first Nen class outside room 1014 — which is when Loberry is taken and Barrigen dies."
+    "description": "The opening panel puts the Black Whale alone on the water and dates it: second day, eighteen hours since departure — which sets the morning of Day 2, given the noon departure of chapter 340. Kurapika wakes there from about nine hours of black-out, the price of holding Emperor Time past its three-hour ceiling: the penalty is three times the time spent, and Oito, who shared the ability, went down at the same moment. Bill has covered for him by telling the others he was on a mission. A second caption, three hours later, dates the rest: second day, nine in the morning, the guards assembled for the first Nen class outside room 1014. The chapter then goes down the line of envoys prince by prince — the orders are to spy, to recruit, to learn on pain of death — before Kurapika draws his white line and asks who among them already knows Nen. Two hands go up. The doll is already in the room, and only Loberry can see it."
+  },
+  {
+    "id": "ch-370",
+    "number": 370,
+    "publicationOrder": 370,
+    "title": "Observation",
+    "timeline": [
+      {
+        "event": "Loberry points at the masked doll nobody else can see and panics",
+        "storyDate": "Day 2 · 09:00",
+        "charactersInvolved": ["loberry", "yuri", "kurapika", "belerainte"],
+        "location": "Tier 1 - Royal Residential Sector"
+      },
+      {
+        "event": "Four tsuchibokko fasten onto Barrigen and drain him in front of the class",
+        "storyDate": "Day 2 · 09:00",
+        "charactersInvolved": ["barrigen", "loberry", "kurapika", "belerainte"],
+        "location": "Tier 1 - Royal Residential Sector"
+      },
+      {
+        "event": "Silent Majority kills Myuhan",
+        "storyDate": "Day 2",
+        "charactersInvolved": ["myuhan"],
+        "location": "Tier 1 - Royal Residential Sector"
+      }
+    ],
+    "location": "Tier 1 - Royal Residential Sector",
+    "keyEvents": [
+      "Loberry, the only one the doll is visible to, is made to point at it in front of everyone",
+      "The guards see nothing but something white around Barrigen's neck and try to tear it off",
+      "One tsuchibokko needs 44 seconds to drain a body; the four together take barely 11",
+      "Barrigen dies among sixteen witnesses and a Nen teacher, none of whom can see the weapon",
+      "Myuhan is found exsanguinated after the assassin activates the ability again"
+    ],
+    "description": "The murder happens in the open. The assassin's rule was stated a chapter earlier — only the user and the possessed Loberry can see the decorative doll — and this is what it is for: Loberry cries out at a girl in a strange mask that no one else can find, and while the room is looking for a witness's hallucination, four conjured tsuchibokko take Barrigen by the neck. The guards see a white thing they cannot pull off; a single doll would need 44 seconds to empty a body, four working together need about 11. Myuhan follows, exsanguinated in the same fashion. The class Kurapika convened at 09:00 becomes an investigation before he has taught anything, and the ability's whole design is on display: a weapon invisible to every witness, operated through the one witness who can see it."
   },
   {
     "id": "ch-377",

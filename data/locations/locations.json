@@ -155,7 +155,7 @@
     "parentLocationId": "tier-1",
     "deck": 1,
     "zoneType": "ceremonial",
-    "description": "Funerary hall where the princes killed during the voyage are laid out. Halkenburg's burial is held there, and Chrollo works the mourners with Love Dial 6700 under cover of the procession.",
+    "description": "Funerary hall where the princes killed during the voyage are laid out. The hall is round, with fourteen coffins set radially about a central spire — one per prince, prepared before anyone has died. Momoze is the first to occupy hers: chapter 371 puts the king at her open coffin, refusing to mourn a daughter he calls part of the foundations of Kakin. Halkenburg's burial is held there later, and Chrollo works the mourners with Love Dial 6700 under cover of the procession.",
     "entrances": [],
     "exits": ["tier-1-banquet-hall"]
   },

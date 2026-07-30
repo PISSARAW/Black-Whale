@@ -264,26 +264,63 @@
   {
     "chapter": 369,
     "chapterTitle": "Limits",
-    "sequence": 4,
-    "title": "Silent Majority kills Barrigen",
-    "summary": "Four conjured snakes drain Barrigen's blood during Kurapika's first Nen class while the hidden user observes through Loberry.",
-    "legacyTitles": []
+    "sequence": 3,
+    "title": "The princes send their guards to the first Nen class",
+    "summary": "Sixteen guards and servants are sent to room 1014 with orders of their own: Satobi (Luzurus) warns his side that one bodyguard is manipulating everyone, Mushaho (Salé-salé) reads the class as a chance to spy on the other details and open negotiations, Longhi and Maor (Tubeppa) fall back on letters since coded traffic can be intercepted and give themselves two weeks to win Kurapika over, Danjin and Myuhan (Tserriednich) carry a threat to kill them all if they fail to acquire Nen in two weeks, Furykov (Benjamin) is told to catalogue Kurapika's Nen, tics and abilities, Tenftory (Chôrai) is to watch everyone who approaches him and the numbers 1, 4 and 5 above all, Belerainte and Barrigen (Marayam) are to report back in detail, Yuri and Loberry (Kacho) and Ladiolus and Illardia (Fugetsu) come as non-combatant servants sent in place of the bodyguards, and Yuhirai and Shedule (Halkenburg) are to investigate the mark Kurapika spoke of and trade every finding.",
+    "legacyTitles": [],
+    "occurredAtLabel": "Day 2 · 09:00",
+    "occursAfterTitle": "The limits of Emperor Time are spelled out",
+    "note": "The princes' orders contradict one another — spy, recruit, learn, kill — which is why the room holds militiamen, soldiers and servants at once rather than one detail per prince."
   },
   {
     "chapter": 369,
     "chapterTitle": "Limits",
-    "sequence": 3,
+    "sequence": 4,
+    "title": "Kurapika lays down the rules of the Nen class",
+    "summary": "Facing the assembled guards in room 1014, Kurapika draws a white line nobody is to cross, warns that he will use force without warning if he judges it necessary and that anyone breaking the rule can be excluded, and promises that in two weeks everyone will have Nen even if some learn more slowly than others.",
+    "legacyTitles": [],
+    "occurredAtLabel": "Day 2 · 09:00",
+    "occursAfterTitle": "The princes send their guards to the first Nen class",
+    "note": "Exclusion is the only sanction that bites: given what their princes sent them to do, none of them can afford to be thrown out."
+  },
+  {
+    "chapter": 369,
+    "chapterTitle": "Limits",
+    "sequence": 5,
     "title": "Silent Majority possesses Loberry",
-    "summary": "The hidden assassin uses Loberry as the only witness to the masked doll observing Kurapika's Nen class.",
-    "legacyTitles": ["Début du chapitre 369"]
+    "summary": "The hidden assassin uses Loberry as the only witness to the masked doll observing Kurapika's Nen class. The user states the rule of the ability out loud: only two people can see the decorative doll — Loberry, on whom it is fixed, and the user who activated it.",
+    "legacyTitles": ["Début du chapitre 369"],
+    "occursAfterTitle": "Kurapika lays down the rules of the Nen class"
+  },
+  {
+    "chapter": 369,
+    "chapterTitle": "Limits",
+    "sequence": 6,
+    "title": "Kurapika asks who already knows Nen",
+    "summary": "Before teaching, Kurapika asks the users among them to raise their hands. Furykov and Belerainte alone answer; Kurapika reads Furykov as an observer sent to grade his teaching, and Belerainte says he is glad to give a frank opinion. The hidden assassin counts four more who keep quiet and reckons nobody but them will notice.",
+    "legacyTitles": [],
+    "occursAfterTitle": "Silent Majority possesses Loberry",
+    "note": "Six Nen users are in the room by the assassin's count, two declared and four hidden — the assassin among the four."
   },
   {
     "chapter": 370,
     "chapterTitle": "Observation",
     "sequence": 1,
+    "title": "Silent Majority kills Barrigen",
+    "summary": "Loberry, the only one who can see the masked doll, points at it and panics; the room sees nobody. The doll attacks on the user's order and four conjured tsuchibokko fasten onto Barrigen — the guards see only something white around his neck and try to tear it off. One doll needs 44 seconds to drain a body, the four together barely 11, and Barrigen is dead before anyone can reach him.",
+    "legacyTitles": [],
+    "occurredAtLabel": "Day 2 · 09:00",
+    "occursAfterTitle": "Kurapika asks who already knows Nen",
+    "note": "The murder is committed in front of sixteen witnesses and one Nen teacher, and none of them can see the weapon — that is the point of the ability, and the reason the class turns into an investigation."
+  },
+  {
+    "chapter": 370,
+    "chapterTitle": "Observation",
+    "sequence": 2,
     "title": "Silent Majority kills Myuhan",
     "summary": "Myuhan is found exsanguinated in a bathroom after the unresolved assassin activates Silent Majority again.",
-    "legacyTitles": []
+    "legacyTitles": [],
+    "occursAfterTitle": "Silent Majority kills Barrigen"
   },
   {
     "chapter": 372,
@@ -291,6 +328,14 @@
     "sequence": 1,
     "title": "Hanzo avenges Momoze",
     "summary": "Hanzo identifies Tuffdy, obtains his confession in detention and kills him with Hanzo Skill 4.",
+    "legacyTitles": []
+  },
+  {
+    "chapter": 371,
+    "chapterTitle": "Mission",
+    "sequence": 3,
+    "title": "Momoze is laid out in the princes' burial chamber",
+    "summary": "The king stands over Momoze's open coffin in the funerary hall and is offered condolences. He refuses mourning: his daughter's radiance is only stronger now, she is part of the foundations of Kakin, she is still alive. The panel that pulls back is what settles the room — a round chamber, the fourteen coffins set radially around a central spire, one of them Momoze's.",
     "legacyTitles": []
   },
   {

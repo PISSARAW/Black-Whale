@@ -10,15 +10,21 @@ import {
   BAR_RAIL,
   COLUMN_HALF_WIDTH,
   DOOR_HEIGHT,
+  LAMP_SPACING,
+  ceilingLamps,
+  distanceToBoundary,
   grilleBars,
   iterateEdges,
+  plateSeams,
   structureFootprint,
+  subdivideTriangle,
   triangulate,
 } from './geometry'
 import { ceilingOf } from './blueprint'
 import type { TierPlan } from './blueprint'
 import type {
   Doorway,
+  Polygon,
   Provenance,
   Space,
   SpaceCategory,
@@ -48,6 +54,9 @@ export interface MeshGroup {
   count: number
   edgeStart: number
   edgeCount: number
+  /** The room's stretch of the plating, in line-segment endpoints. */
+  seamStart: number
+  seamCount: number
   /** The room's own bounding sphere, so the renderer never scans the buffer. */
   centre: readonly [number, number, number]
   radius: number
@@ -67,6 +76,15 @@ export interface TierMesh {
    * plans are drawn in.
    */
   edges: Float32Array
+  /**
+   * The seams between the deck plates, as line-segment pairs.
+   *
+   * Its own buffer rather than more entries in `edges`, because it is not the
+   * gold outline of the plans: it is riveted steel, and it is drawn in the dim
+   * material `TourScene` gives it. See `PLATE_PITCH` in `geometry.ts` for why a
+   * bare floor needs it at all.
+   */
+  seams: Float32Array
   /** Triangle count, for a sanity check and for the debug read-out. */
   triangles: number
   /** Where each room's geometry sits in the buffers above, in plan order. */
@@ -163,6 +181,246 @@ export function colourFor(base: Rgb, provenance: Provenance): Rgb {
   return base
 }
 
+/**
+ * How far apart the baked light is sampled, in metres.
+ *
+ * A floor drawn as two enormous triangles can only be flat: the light is
+ * computed per vertex and there is nowhere between the corners to put a value.
+ * Cutting every surface into patches this size gives the bake somewhere to live,
+ * and two metres is about the size of the softest thing it has to describe — the
+ * pool a ceiling fitting throws on the deck under it.
+ *
+ * It is not free, and the deck is deliberately not tessellated evenly, because
+ * the three surfaces do not carry the same information:
+ *
+ * - The **floor** is sampled at `PATCH`. It is the surface the visitor looks at
+ *   most, the one the fittings pool on, and the one whose corners tell them the
+ *   shape of the room.
+ * - The **ceiling** is not sampled at all: it takes one value per triangle at the
+ *   corners it already has. Its albedo is `0x0b0909`, which is 0,004 linear — a
+ *   fitting's pool multiplied into that is a change of a thousandth of nothing,
+ *   and forty thousand square metres of lattice over black steel is a fifth of
+ *   the ship's triangles spent on something no display can show. What the
+ *   ceiling gets instead is the fittings' own lift on the *walls* under them,
+ *   which is where it can be seen.
+ * - A **wall** is sampled at `PATCH` up its height, where the creases at the deck
+ *   and at the ceiling are, and at twice that along its run, where nothing
+ *   changes faster than the fitting in front of it.
+ *
+ * What bounds an edge is the diagonal of a lattice cell rather than its side. The
+ * recursion in `subdivideTriangle` splits until *every* edge fits, and asking a
+ * right triangle's hypotenuse to fit inside the bound on its legs costs two
+ * further levels and three times the triangles for no more light.
+ */
+export const PATCH = 2
+
+/** The diagonal of one cell of the lattice, which is what bounds an edge. */
+const PATCH_EDGE = PATCH * 1.45
+
+/** The ceiling and the length of a wall are sampled half as finely. */
+const COARSE = 2
+
+/**
+ * How the baked light is put together.
+ *
+ * All of it multiplies the albedo the surface already carries, so the deck keeps
+ * the colours the categories and the provenances give it and only gains the
+ * variation those cannot express. The mean shade over a room comes out near 1,
+ * which is deliberate: the ambient, hemisphere and headlamp intensities in
+ * `TourScene` were tuned against unshaded albedos, and a bake that averaged 0,6
+ * would quietly darken the whole ship by half a stop.
+ */
+const LIGHT = {
+  /** What every surface gets before a single fitting is counted. */
+  fill: 0.72,
+  /** How far a fitting throws, in metres. Just past the grid it hangs on. */
+  reach: 9,
+  /** How much of a fitting's pool reaches the floor, the ceiling, a wall. */
+  floor: 0.85,
+  ceiling: 0.55,
+  wall: 0.7,
+  /** How far from a wall a floor is fully open, and how dark the crease is. */
+  openReach: 2.4,
+  openFloor: 0.42,
+  /** The band at the foot and head of a wall where it meets another surface. */
+  crease: 1.1,
+  creaseFloor: 0.5,
+  /**
+   * What an inferred room gets of all that.
+   *
+   * The fill is barely touched, because a surface the reconstruction invented is
+   * still a surface and has to be walkable. The fittings very nearly are: the
+   * plans do not put a lamp in a corridor nobody drew, and the walk should not
+   * pretend otherwise. The effect is that provenance stops being a tint you have
+   * to know the legend for and becomes something you feel — the invented parts of
+   * the ship are the unlit parts, and you notice walking into one.
+   */
+  inferredFill: 0.86,
+  inferredLamps: 0.22,
+} as const
+
+const clamp01 = (value: number) => (value < 0 ? 0 : value > 1 ? 1 : value)
+
+/** Two grid indices in one number, so the fittings are not keyed by strings. */
+const cellKey = (i: number, j: number) => i * 4096 + j
+
+/**
+ * The light of one room, baked rather than lit.
+ *
+ * There is no second light in the scene and no shadow map: what a fitting does
+ * to a floor, and what a corner does to the light reaching it, are computed here
+ * once per vertex and multiplied into the `color` attribute the deck already
+ * uploads. That is why it costs nothing to draw — it is the same buffer, the same
+ * material and the same draw call as before — and why it varies room by room,
+ * which a scene light of any number could not do at 314 rooms.
+ */
+class RoomLight {
+  /** The fittings, bucketed by the grid cell they hang in. */
+  private readonly cells = new Map<number, [number, number, number][]>()
+  private readonly fill: number
+  private readonly lamps: number
+  /**
+   * The floor and the ceiling already shaded, keyed to a decimetre of plan.
+   *
+   * The lattice is shared: an interior vertex is written once for each triangle
+   * that meets there, which is six times on a regular grid, and every one of
+   * those writes would otherwise walk all the walls of the room and sum all the
+   * fittings over it again. The floor and the ceiling are each at one height, so
+   * two coordinates settle the answer — the walls, where the height is the whole
+   * point, are not cached and do not need to be, being a tenth of the vertices.
+   *
+   * Rounding to a decimetre is far below anything the eye can find in a gradient,
+   * and this is most of the difference between a deck that builds in half a
+   * second and one that builds in well under a tenth.
+   */
+  private readonly shaded: [Map<number, number>, Map<number, number>] = [new Map(), new Map()]
+  private readonly floorY: number
+  private readonly ceilingY: number
+
+  constructor(
+    private readonly footprint: Polygon,
+    floorY: number,
+    ceilingY: number,
+    provenance: Provenance,
+  ) {
+    const inferred = provenance === 'inferred'
+    this.fill = LIGHT.fill * (inferred ? LIGHT.inferredFill : 1)
+    this.lamps = inferred ? LIGHT.inferredLamps : 1
+    this.floorY = floorY
+    this.ceilingY = ceilingY
+
+    // Hung a little under the ceiling, and never below head height in a room
+    // whose ceiling is low.
+    const hang = Math.max(floorY + 2, ceilingY - 0.35)
+    for (const [x, z] of ceilingLamps(footprint)) {
+      const key = cellKey(Math.round(x / LAMP_SPACING), Math.round(z / LAMP_SPACING))
+      const held = this.cells.get(key)
+      if (held) held.push([x, hang, z])
+      else this.cells.set(key, [[x, hang, z]])
+    }
+  }
+
+  /**
+   * How much fitting-light reaches a point.
+   *
+   * Only the cells around the point are looked in, so a promenade with two
+   * hundred fittings costs a vertex no more than a cabin with one: the grid is
+   * regular, and a lamp more than one cell away is out of reach by construction.
+   */
+  private pool(x: number, y: number, z: number): number {
+    let total = 0
+    const gx = Math.round(x / LAMP_SPACING)
+    const gz = Math.round(z / LAMP_SPACING)
+
+    // A fitting in cell `i` is keyed `i + 1` — the cells are indexed by their
+    // centres — and one can be in reach from two cells away on that side and one
+    // on the other. Anything outside that window is beyond `LIGHT.reach` by
+    // arithmetic, so the window is a shortcut and not an approximation.
+    for (let i = gx - 1; i <= gx + 2; i++) {
+      for (let j = gz - 1; j <= gz + 2; j++) {
+        const held = this.cells.get(cellKey(i, j))
+        if (!held) continue
+        for (const [lx, ly, lz] of held) {
+          const distance = Math.hypot(x - lx, y - ly, z - lz)
+          if (distance >= LIGHT.reach) continue
+          // Squared falloff, cut off at the reach rather than trailing to zero:
+          // a lamp two rooms down a corridor must not light this floor at all.
+          const fall = 1 - distance / LIGHT.reach
+          total += fall * fall
+        }
+      }
+    }
+    return total
+  }
+
+  /** The albedo multiplier at a point, given how open to the room it is. */
+  private lit(openness: number, gain: number, x: number, y: number, z: number): number {
+    return openness * (this.fill + gain * this.lamps * this.pool(x, y, z))
+  }
+
+  /**
+   * How much of the room a point on the floor or the ceiling can see.
+   *
+   * Ambient occlusion, from the one measurement a footprint can give cheaply: the
+   * distance to the nearest wall. It is not a hemisphere integral and does not
+   * pretend to be — but the thing it gets right is the thing that matters, which
+   * is that corners are darker than the middle of the room, and that is what tells
+   * the eye a room has a shape.
+   */
+  private openness(x: number, z: number): number {
+    const reach = clamp01(distanceToBoundary([x, z], this.footprint) / LIGHT.openReach)
+    return LIGHT.openFloor + (1 - LIGHT.openFloor) * reach ** 0.7
+  }
+
+  /**
+   * A horizontal surface, off the cache when it is at the height the cache is
+   * for. The cap of a coffin is horizontal too and stands at its own height, so
+   * it is measured rather than looked up.
+   */
+  private flat(which: 0 | 1, gain: number, x: number, y: number, z: number): number {
+    const cacheable = y === (which === 0 ? this.floorY : this.ceilingY)
+    // Two rounded coordinates in one number: the ship is 175 m long and its
+    // rooms sit within a few hundred metres of the origin, so a decimetre grid
+    // is nowhere near the precision a double gives up.
+    const key = Math.round(x * 10) * 100000 + Math.round(z * 10)
+    if (cacheable) {
+      const held = this.shaded[which].get(key)
+      if (held !== undefined) return held
+    }
+
+    const shade = this.lit(this.openness(x, z), gain, x, y, z)
+    if (cacheable) this.shaded[which].set(key, shade)
+    return shade
+  }
+
+  floor(x: number, y: number, z: number): number {
+    return this.flat(0, LIGHT.floor, x, y, z)
+  }
+
+  ceiling(x: number, y: number, z: number): number {
+    return this.flat(1, LIGHT.ceiling, x, y, z)
+  }
+
+  /**
+   * A vertical surface: a wall, a lintel, the side of a solid.
+   *
+   * `from` and `to` are the surface's own bottom and top, so the crease is at the
+   * foot of a coffin as well as at the foot of a bulkhead, and `endDistance` is
+   * how far along the run the point is from the nearer end of it — the jamb of a
+   * doorway and the corner of a room both darken by it.
+   */
+  wall(x: number, y: number, z: number, from: number, to: number, endDistance = Infinity): number {
+    const low = clamp01((y - from) / LIGHT.crease)
+    const high = clamp01((to - y) / LIGHT.crease)
+    const ends = clamp01(endDistance / LIGHT.crease)
+    const shade = Math.min(low, high, ends) ** 0.8
+    return this.lit(LIGHT.creaseFloor + (1 - LIGHT.creaseFloor) * shade, LIGHT.wall, x, y, z)
+  }
+}
+
+/** What a vertex of a surface is multiplied by. Baked once, per `RoomLight`. */
+type Shade = (x: number, y: number, z: number) => number
+
 class MeshBuilder {
   readonly positions: number[] = []
   readonly normals: number[] = []
@@ -173,6 +431,7 @@ class MeshBuilder {
     b: readonly [number, number, number],
     c: readonly [number, number, number],
     colour: Rgb,
+    shade?: Shade,
   ): void {
     const ux = b[0] - a[0]
     const uy = b[1] - a[1]
@@ -192,18 +451,70 @@ class MeshBuilder {
     for (const vertex of [a, b, c]) {
       this.positions.push(vertex[0], vertex[1], vertex[2])
       this.normals.push(nx, ny, nz)
-      this.colors.push(colour[0], colour[1], colour[2])
+      const light = shade ? shade(vertex[0], vertex[1], vertex[2]) : 1
+      this.colors.push(colour[0] * light, colour[1] * light, colour[2] * light)
     }
   }
 
-  /** A vertical quad, wound so it faces both ways once the material says so. */
-  quad(start: Vec2, end: Vec2, bottom: number, top: number, colour: Rgb): void {
-    const a: [number, number, number] = [start[0], bottom, start[1]]
-    const b: [number, number, number] = [end[0], bottom, end[1]]
-    const c: [number, number, number] = [end[0], top, end[1]]
-    const d: [number, number, number] = [start[0], top, start[1]]
-    this.triangle(a, b, c, colour)
-    this.triangle(a, c, d, colour)
+  /**
+   * A horizontal triangle — a piece of floor or of ceiling — cut to the patch
+   * size before it is written, so the bake has vertices to vary over.
+   *
+   * `up` picks which way it faces: the floor and the ceiling of a room are the
+   * same triangulated footprint at two heights, wound opposite ways.
+   */
+  patch(
+    a: Vec2,
+    b: Vec2,
+    c: Vec2,
+    y: number,
+    up: boolean,
+    colour: Rgb,
+    shade?: Shade,
+    spacing = PATCH_EDGE,
+  ): void {
+    for (const [p, q, r] of subdivideTriangle(a, b, c, spacing)) {
+      const first: [number, number, number] = [p[0], y, p[1]]
+      const second: [number, number, number] = up ? [r[0], y, r[1]] : [q[0], y, q[1]]
+      const third: [number, number, number] = up ? [q[0], y, q[1]] : [r[0], y, r[1]]
+      this.triangle(first, second, third, colour, shade)
+    }
+  }
+
+  /**
+   * A vertical quad, wound so it faces both ways once the material says so, and
+   * cut into a grid of patches on the way.
+   *
+   * A nine-metre bulkhead written as two triangles cannot show the crease where it
+   * meets the deck, nor the pool of the fitting hanging in front of it. Cut into
+   * roughly two-metre cells, it shows both.
+   */
+  quad(start: Vec2, end: Vec2, bottom: number, top: number, colour: Rgb, shade?: Shade): void {
+    const run = Math.hypot(end[0] - start[0], end[1] - start[1])
+    const rise = top - bottom
+    const across = Math.max(1, Math.ceil(run / (PATCH * COARSE)))
+    const up = Math.max(1, Math.ceil(Math.abs(rise) / PATCH))
+
+    const at = (u: number, v: number): [number, number, number] => [
+      start[0] + (end[0] - start[0]) * u,
+      bottom + rise * v,
+      start[1] + (end[1] - start[1]) * u,
+    ]
+
+    for (let i = 0; i < across; i++) {
+      for (let j = 0; j < up; j++) {
+        const u0 = i / across
+        const u1 = (i + 1) / across
+        const v0 = j / up
+        const v1 = (j + 1) / up
+        const a = at(u0, v0)
+        const b = at(u1, v0)
+        const c = at(u1, v1)
+        const d = at(u0, v1)
+        this.triangle(a, b, c, colour, shade)
+        this.triangle(a, c, d, colour, shade)
+      }
+    }
   }
 }
 
@@ -221,6 +532,7 @@ function extrudeSolid(
   structure: Structure,
   room: Space,
   tier: Tier,
+  light: RoomLight,
 ): void {
   const OFFSET = 0.03
   const horizontal = (a: Vec2, b: Vec2, y: number) => edges.push(a[0], y, a[1], b[0], y, b[1])
@@ -232,20 +544,27 @@ function extrudeSolid(
   const bottom = tier.elevation + structure.base
   const top = Math.min(bottom + structure.height, tier.elevation + ceilingOf(room, tier))
 
+  // The solid takes the light of the room it stands in, from its own foot to its
+  // own top: the lacquer of a coffin and the steel of a spring are lit by the
+  // fittings over them and creased where they meet the deck, which is the whole
+  // of what tells one from the other without a second material.
+  const sides = (x: number, y: number, z: number) => light.wall(x, y, z, bottom, top)
+  const facing = (x: number, y: number, z: number) => light.floor(x, y, z)
+
   // A run of bars is one solid to walk around and a row of uprights to see
   // through: drawn as a slab it would be the wall the cell fronts are not.
   if (structure.kind === 'bars') {
     const railBottom = Math.max(bottom, top - BAR_RAIL)
     for (const bar of grilleBars(structure)) {
       for (const [start, end] of iterateEdges(bar)) {
-        builder.quad(start, end, bottom, railBottom, colour)
+        builder.quad(start, end, bottom, railBottom, colour, sides)
       }
     }
 
     // The rail closes the tops of the uprights and gives the run a line to
     // read at a distance, the way a lintel does over a door.
     for (const [start, end] of iterateEdges(outline)) {
-      builder.quad(start, end, railBottom, top, colour)
+      builder.quad(start, end, railBottom, top, colour, sides)
       horizontal(start, end, railBottom + OFFSET)
       horizontal(start, end, top - OFFSET)
     }
@@ -254,14 +573,14 @@ function extrudeSolid(
       const a = outline[railCap[i]]
       const b = outline[railCap[i + 1]]
       const c = outline[railCap[i + 2]]
-      builder.triangle([a[0], top, a[1]], [b[0], top, b[1]], [c[0], top, c[1]], colour)
+      builder.patch(a, b, c, top, true, colour, facing)
     }
     for (const corner of outline) vertical(corner, bottom, top)
     return
   }
 
   for (const [start, end] of iterateEdges(outline)) {
-    builder.quad(start, end, bottom, top, colour)
+    builder.quad(start, end, bottom, top, colour, sides)
     vertical(start, bottom, top)
     horizontal(start, end, top - OFFSET)
   }
@@ -271,10 +590,11 @@ function extrudeSolid(
     const a = outline[cap[i]]
     const b = outline[cap[i + 1]]
     const c = outline[cap[i + 2]]
-    builder.triangle([a[0], top, a[1]], [b[0], top, b[1]], [c[0], top, c[1]], colour)
-    // Hung off the floor, so it is closed underneath as well as on top.
+    builder.patch(a, b, c, top, true, colour, facing)
+    // Hung off the floor, so it is closed underneath as well as on top. Its
+    // underside is in shadow, which the crease at its own base already says.
     if (structure.base > 0) {
-      builder.triangle([a[0], bottom, a[1]], [c[0], bottom, c[1]], [b[0], bottom, b[1]], colour)
+      builder.patch(a, b, c, bottom, false, colour, sides)
     }
   }
 }
@@ -328,11 +648,25 @@ function boundsOf(
   }
 }
 
+/** The baked light of one room, as both the deck and a loose solid read it. */
+function lightOf(space: Space, tier: Tier): RoomLight {
+  return new RoomLight(
+    space.footprint,
+    tier.elevation,
+    tier.elevation + ceilingOf(space, tier),
+    space.provenance,
+  )
+}
+
 /** That same solid on its own, for the Hatsu layer to draw and move. */
 export function buildSolidMesh(structure: Structure, room: Space, tier: Tier): TierMesh {
   const builder = new MeshBuilder()
   const edges: number[] = []
-  extrudeSolid(builder, edges, structure, room, tier)
+  // The same light the deck baked into it, rebuilt for the room it was lifted
+  // out of: a coffin carried across the burial chamber keeps the chamber's
+  // fittings on it rather than turning into a flat silhouette the moment a
+  // technique picks it up.
+  extrudeSolid(builder, edges, structure, room, tier, lightOf(room, tier))
   const count = builder.positions.length / 3
   const edgeCount = edges.length / 3
   return {
@@ -340,6 +674,7 @@ export function buildSolidMesh(structure: Structure, room: Space, tier: Tier): T
     normals: new Float32Array(builder.normals),
     colors: new Float32Array(builder.colors),
     edges: new Float32Array(edges),
+    seams: new Float32Array(0),
     triangles: builder.positions.length / 9,
     groups: [
       {
@@ -348,6 +683,8 @@ export function buildSolidMesh(structure: Structure, room: Space, tier: Tier): T
         count,
         edgeStart: 0,
         edgeCount,
+        seamStart: 0,
+        seamCount: 0,
         ...boundsOf(builder.positions, 0, count, edges, 0, edgeCount),
       },
     ],
@@ -369,11 +706,11 @@ export function buildTierMesh(plan: TierPlan): TierMesh {
   const heightOf = (space: Space) => tier.elevation + ceilingOf(space, tier)
 
   const edges: number[] = []
+  const seams: number[] = []
   // Pulled a hair off the surface so the line is not fighting the polygon it
   // sits on for the same depth value.
   const OFFSET = 0.03
-  const horizontal = (a: Vec2, b: Vec2, y: number) =>
-    edges.push(a[0], y, a[1], b[0], y, b[1])
+  const horizontal = (a: Vec2, b: Vec2, y: number) => edges.push(a[0], y, a[1], b[0], y, b[1])
   const vertical = (point: Vec2, bottom: number, top: number) =>
     edges.push(point[0], bottom, point[1], point[0], top, point[1])
 
@@ -412,11 +749,16 @@ export function buildTierMesh(plan: TierPlan): TierMesh {
   for (const space of plan.spaces) {
     const start = builder.positions.length / 3
     const edgeStart = edges.length / 3
+    const seamStart = seams.length / 3
 
     const floorColour = colourFor(hex(CATEGORY_COLOURS[space.category]), space.provenance)
     const ceilingColour = colourFor(CEILING_COLOUR, space.provenance)
     const top = heightOf(space)
     const indices = triangulate(space.footprint)
+    // Every surface of this room is shaded by this one object: the fittings of
+    // the room, the corners of the room, and how much light a room the
+    // reconstruction invented is allowed to claim.
+    const light = lightOf(space, tier)
 
     for (let i = 0; i < indices.length; i += 3) {
       const a = space.footprint[indices[i]]
@@ -424,22 +766,41 @@ export function buildTierMesh(plan: TierPlan): TierMesh {
       const c = space.footprint[indices[i + 2]]
 
       // Floor faces up, ceiling faces down: the winding is simply reversed.
-      builder.triangle(
-        [a[0], tier.elevation, a[1]],
-        [c[0], tier.elevation, c[1]],
-        [b[0], tier.elevation, b[1]],
-        floorColour,
+      builder.patch(a, b, c, tier.elevation, true, floorColour, (x, y, z) => light.floor(x, y, z))
+      builder.patch(
+        a,
+        b,
+        c,
+        top,
+        false,
+        ceilingColour,
+        (x, y, z) => light.ceiling(x, y, z),
+        // Left whole: see `PATCH` for why a lattice up here buys nothing.
+        Infinity,
       )
-      builder.triangle([a[0], top, a[1]], [b[0], top, b[1]], [c[0], top, c[1]], ceilingColour)
+    }
+
+    // The plating, laid on the ship's grid and clipped to this room. Lifted off
+    // the floor by the same hair the wall lines are, so it is not fighting the
+    // deck for the same depth value.
+    for (const [from, to] of plateSeams(space.footprint)) {
+      seams.push(from[0], tier.elevation + OFFSET, from[1], to[0], tier.elevation + OFFSET, to[1])
     }
 
     for (const wall of wallsOf.get(space.id) ?? []) {
+      // How far along the run a point is from the nearer end of it, so a corner
+      // and a door jamb both darken.
+      const run = Math.hypot(wall.end[0] - wall.start[0], wall.end[1] - wall.start[1])
       builder.quad(
         wall.start,
         wall.end,
         tier.elevation,
         top,
         colourFor(WALL_COLOUR, space.provenance),
+        (x, y, z) => {
+          const along = Math.hypot(x - wall.start[0], z - wall.start[1])
+          return light.wall(x, y, z, tier.elevation, top, Math.min(along, run - along))
+        },
       )
       horizontal(wall.start, wall.end, tier.elevation + OFFSET)
       horizontal(wall.start, wall.end, top - OFFSET)
@@ -456,18 +817,11 @@ export function buildTierMesh(plan: TierPlan): TierMesh {
         [centre[0] + h, centre[1] + h],
         [centre[0] - h, centre[1] + h],
       ]
-      builder.triangle(
-        [corners[0][0], top, corners[0][1]],
-        [corners[1][0], top, corners[1][1]],
-        [corners[2][0], top, corners[2][1]],
-        colour,
-      )
-      builder.triangle(
-        [corners[0][0], top, corners[0][1]],
-        [corners[2][0], top, corners[2][1]],
-        [corners[3][0], top, corners[3][1]],
-        colour,
-      )
+      const cap = (x: number, y: number, z: number) => light.ceiling(x, y, z)
+      builder.patch(corners[0], corners[1], corners[2], top, false, colour, cap)
+      builder.patch(corners[0], corners[2], corners[3], top, false, colour, cap)
+      // A column's faces are in the wall list, so they are drawn by the pass
+      // above; what is left is the cap and the arrises.
       for (const corner of corners) vertical(corner, tier.elevation, top)
     }
 
@@ -475,7 +829,7 @@ export function buildTierMesh(plan: TierPlan): TierMesh {
     // only has to raise them: the same outline, extruded to its own height and
     // capped, and never taller than the room it stands in.
     for (const structure of standingIn.get(space.id) ?? []) {
-      extrudeSolid(builder, edges, structure, space, tier)
+      extrudeSolid(builder, edges, structure, space, tier, light)
     }
 
     // Above each opening the wall carries on to the ceiling, so a doorway reads
@@ -491,11 +845,19 @@ export function buildTierMesh(plan: TierPlan): TierMesh {
         space.provenance === 'inferred' || other.provenance === 'inferred'
           ? 'inferred'
           : space.provenance
-      builder.quad(door.start, door.end, lintelBottom, lintelTop, colourFor(WALL_COLOUR, provenance))
+      builder.quad(
+        door.start,
+        door.end,
+        lintelBottom,
+        lintelTop,
+        colourFor(WALL_COLOUR, provenance),
+        (x, y, z) => light.wall(x, y, z, lintelBottom, lintelTop),
+      )
     }
 
     const count = builder.positions.length / 3 - start
     const edgeCount = edges.length / 3 - edgeStart
+    const seamCount = seams.length / 3 - seamStart
     if (!count && !edgeCount) continue
     groups.push({
       spaceId: space.id,
@@ -503,6 +865,8 @@ export function buildTierMesh(plan: TierPlan): TierMesh {
       count,
       edgeStart,
       edgeCount,
+      seamStart,
+      seamCount,
       ...boundsOf(builder.positions, start, count, edges, edgeStart, edgeCount),
     })
   }
@@ -512,6 +876,7 @@ export function buildTierMesh(plan: TierPlan): TierMesh {
     normals: new Float32Array(builder.normals),
     colors: new Float32Array(builder.colors),
     edges: new Float32Array(edges),
+    seams: new Float32Array(seams),
     triangles: builder.positions.length / 9,
     groups,
   }

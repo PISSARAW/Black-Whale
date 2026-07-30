@@ -97,6 +97,15 @@ export const en = {
      * button label carries the destination, so it says what E would have said
      * without naming a key the phone has not got.
      */
+    /**
+     * The button that silences the walk. The walk has a voice of its own —
+     * footsteps, and the room answering them — and it says what pressing it will
+     * do rather than what the state is.
+     */
+    sound: {
+      silence: 'Silence the walk',
+      restore: 'Hear the walk: footsteps, and the room answering them',
+    },
     touch: {
       hint: 'Drag to look · stick to walk',
       move: 'Walking stick',

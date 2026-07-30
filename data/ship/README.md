@@ -53,6 +53,17 @@ z = (svg.y - 300) × 0,35     +z vers la poupe
 y = elevation                +y vers le haut
 ```
 
+Le corollaire est **la vitesse de marche**, et il est dans
+`apps/web/src/lib/tour/navigation.ts` : `WALK_SPEED = 2,1 m/s`, la course à
+6 m/s. L'échelle a été choisie pour que ces pièces soient des pièces qu'on
+parcourt à pied ; un visiteur qui traverse à 6 m/s — quatre fois la marche
+humaine — rend à la salle de banquet la taille que le facteur 0,35 lui refusait,
+et les 157 m publiés ici ne veulent plus rien dire à l'écran. La foulée
+(`STRIDE`) est la même constante qui compte les pas et le tangage de la tête,
+tous deux comptés sur la **distance parcourue** et non sur l'horloge, et la trame
+de tôles du pont (`PLATE_PITCH`) passe sous le pied une fois par foulée : c'est
+elle qui donne à l'œil de quoi mesurer une halle.
+
 Les ponts s'empilent dans l'ordre de la coupe du chapitre 349, le Tier 1 en
 haut :
 
@@ -103,6 +114,28 @@ grille dans tout espace de plus de 420 m², parce qu'une salle de cette portée
 serait bâtie sur poteaux et qu'un volume vide ne donne au visiteur aucun repère
 de distance. Le rendu et les collisions lisent la même fonction : un pilier
 qu'on voit est un pilier qu'on contourne.
+
+Deux dérivations de plus, du même ordre et déclarées ici pour la même raison —
+elles sont vraies du **vaisseau** et non de la donnée :
+
+- **Les luminaires** (`ceilingLamps`, écart de 8 m). Rien dans le blueprint ne
+  dit qu'un couloir est éclairé, pas plus qu'il ne dit qu'une halle a des
+  poteaux. Aucune géométrie n'est ajoutée : `mesh.ts` cuit leur éclairement dans
+  l'attribut de couleur que le pont téléverse déjà. Une pièce `inferred` n'en
+  reçoit presque rien — les plans n'ont jamais posé de lampe dans un couloir que
+  personne n'a dessiné —, ce qui rend la provenance sensible en marchant plutôt
+  que lisible dans une légende.
+- **La trame de tôles** (`plateSeams`, `PLATE_PITCH` de 1,2 m), posée sur la
+  grille du vaisseau et non sur celle de la pièce, pour que les cours traversent
+  une porte au lieu de recommencer à chaque seuil : le bordé a été posé avant les
+  cloisons.
+
+L'**air** et l'**acoustique** de chaque pièce se dérivent aussi, dans
+`apps/web/src/lib/tour/atmosphere.ts` : la densité du brouillard vient de la plus
+longue corde du contour, le RT60 de l'équation de Sabine sur le volume et la
+surface que le blueprint donne déjà. Là encore, aucun champ nouveau — un cabinet
+de 12 m² sonne à 0,5 s et une coursive de 6 500 m² à 4 s, et c'est la donnée
+existante qui le dit.
 
 Il en va de même des **structures** : leurs faces rejoignent les murs de la
 pièce, sauf pour ce qui est suspendu au-dessus de la tête. Un solide dont le

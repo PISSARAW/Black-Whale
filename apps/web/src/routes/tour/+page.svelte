@@ -121,7 +121,9 @@
         ? words.enterInterior(nameOf(tier))
         : words.leaveInterior(nameOf(destination))
     }
-    return availableLink.link.kind === 'bulkhead' ? words.takeBulkhead(label) : words.takeLink(label)
+    return availableLink.link.kind === 'bulkhead'
+      ? words.takeBulkhead(label)
+      : words.takeLink(label)
   }
 
   const linkPrompt = $derived(promptFor($t.tour))
@@ -370,6 +372,7 @@
         onWorm={crossWorm}
         {touchUseLabel}
         touchLabels={{ move: $t.tour.touch.move, cast: $t.tour.touch.cast }}
+        soundLabels={{ silence: $t.tour.sound.silence, restore: $t.tour.sound.restore }}
         loadingLabel={$t.tour.loading}
         unsupportedLabel={$t.tour.unsupported}
       />
@@ -529,7 +532,9 @@
           {/if}
         </p>
         {#if onBody}
-          <p class="rounded border border-[#333] px-2.5 py-2 text-xs leading-snug text-[#FFFFF0]/50">
+          <p
+            class="rounded border border-[#333] px-2.5 py-2 text-xs leading-snug text-[#FFFFF0]/50"
+          >
             {$t.tour.hatsu.body.castHint}
           </p>
         {:else if onSolids}

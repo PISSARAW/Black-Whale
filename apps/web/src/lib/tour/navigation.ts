@@ -15,6 +15,66 @@ export const VISITOR_RADIUS = 0.4
 /** How close to a stairwell you have to stand for it to offer the other deck. */
 export const LINK_REACH = 6
 
+/**
+ * How fast the visitor walks and runs, in metres per second.
+ *
+ * These are the same argument as the scale in `data/ship/README.md`. The plans
+ * are read at 0,35 m per unit rather than at 1 m because a banquet hall 450 m
+ * long is a volume nobody can cross — the case for the scale is that these are
+ * rooms a person walks. A visitor moving at 6 m/s is covering ground four times
+ * faster than a person does, and a sprint at 16 m/s is 58 km/h: at those speeds
+ * the hall shrinks back to the size the scale was chosen to deny, and every
+ * measurement the reconstruction publishes stops meaning anything on screen.
+ *
+ * So: 2,1 m/s, a brisk walk, and 6 m/s for the run, which is a hard run and
+ * still the pace the whole ship can be crossed at in a couple of minutes.
+ */
+export const WALK_SPEED = 2.1
+export const SPRINT_SPEED = 6
+
+/**
+ * Length of one pace, in metres.
+ *
+ * At `WALK_SPEED` this is a cadence of about 2,7 steps a second, which is what
+ * a person walking briskly does. It is also what the head's rise and fall and
+ * the footsteps are both counted in, so the two cannot drift apart: they are
+ * the same number read twice.
+ */
+export const STRIDE = 0.78
+
+/** How far the eye rises and falls over one pace, in metres. */
+export const BOB_RISE = 0.022
+
+/** How far the head leans at the far end of a pace, in radians. */
+export const BOB_ROLL = 0.006
+
+/**
+ * Where the head is within the pace, given the distance walked.
+ *
+ * Keyed to distance and not to time, which is the whole point: a camera that
+ * bobs on a clock keeps bobbing when the visitor walks into a wall, and slides
+ * out of step with the ground the moment anything changes the pace — the aura
+ * that quickens it, a stick pushed half way. Read off the metres covered, the
+ * dip lands where the foot lands, at every speed, and stops when the walking
+ * stops because the distance stops growing.
+ *
+ * The rise is lowest on the whole paces, so `stepsIn` counting a step and the
+ * camera reaching the bottom of its dip are the same instant. The lean has
+ * twice the period, because a person leans on alternate feet.
+ */
+export function bobOf(walked: number, amplitude = 1): { rise: number; roll: number } {
+  const pace = walked / STRIDE
+  return {
+    rise: -BOB_RISE * amplitude * Math.cos(2 * Math.PI * pace),
+    roll: BOB_ROLL * amplitude * Math.sin(Math.PI * pace),
+  }
+}
+
+/** How many paces the given distance is, for the footstep the last one made. */
+export function stepsIn(walked: number): number {
+  return Math.floor(walked / STRIDE)
+}
+
 const sub = (a: Vec2, b: Vec2): Vec2 => [a[0] - b[0], a[1] - b[1]]
 const len = (a: Vec2) => Math.hypot(a[0], a[1])
 

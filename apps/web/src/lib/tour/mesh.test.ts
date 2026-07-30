@@ -3,15 +3,22 @@ import { buildShip, ceilingOf } from './blueprint'
 import {
   COLUMN_HALF_WIDTH,
   DOOR_HEIGHT,
+  JAMB_DEPTH,
   PLATE_PITCH,
   ceilingLamps,
   columnWalls,
   distanceToBoundary,
+  doorJambs,
+  doorSoffit,
   grilleBars,
   pointInPolygon,
+  polygonArea,
+  sealKey,
+  signedArea,
   structureFootprint,
   toClockwise,
 } from './geometry'
+import { VISITOR_RADIUS } from './navigation'
 import {
   PATCH,
   buildSolidMesh,
@@ -341,7 +348,9 @@ describe('which way the surfaces face', () => {
       const spaces = new Map(plan.spaces.map((space) => [space.id, space]))
       const columns = plan.columns
       for (const wall of plan.walls) {
-        if (wall.structureId) continue
+        // A doorway's cheek faces across the opening rather than into either room
+        // — it is checked on its own terms below.
+        if (wall.structureId || wall.jambOf) continue
         const space = spaces.get(wall.spaceId)
         if (!space) continue
         // A column's four faces come down this same list and want the opposite
@@ -613,6 +622,143 @@ describe('the deck plating', () => {
     // A 157 m hall, plated both ways at PLATE_PITCH, is a great many courses —
     // and the point of them is that a visitor crossing it counts them.
     expect(group.seamCount / 2).toBeGreaterThan(157 / PLATE_PITCH)
+  })
+})
+
+/**
+ * The depth of an opening, which is the one place on the ship a partition is
+ * allowed to have any.
+ *
+ * The invariant that matters is the repo's own — what stops you is what is drawn.
+ * The cheeks live in `plan.walls`, which is what collision reads, and `mesh.ts`
+ * raises those very objects rather than recomputing them; so the way to break
+ * this is not to draw a cheek in the wrong place but to let one list have a cheek
+ * the other does not.
+ */
+describe('the depth of a doorway', () => {
+  it('gives every opening two cheeks, in the list collision reads', () => {
+    let doors = 0
+    let cheeks = 0
+    for (const plan of ship.plans.values()) {
+      doors += plan.doorways.length
+      const found = new Map<string, number>()
+      for (const wall of plan.walls) {
+        if (!wall.jambOf) continue
+        cheeks++
+        found.set(wall.jambOf, (found.get(wall.jambOf) ?? 0) + 1)
+      }
+      for (const door of plan.doorways) {
+        expect(
+          found.get(sealKey(door.a, door.b)),
+          `${door.a}|${door.b} has no cheeks`,
+        ).toBeGreaterThanOrEqual(2)
+      }
+    }
+    expect(doors).toBe(368)
+    expect(cheeks).toBe(doors * 2)
+  })
+
+  it('faces the cheeks at each other, across the opening', () => {
+    for (const plan of ship.plans.values()) {
+      for (const door of plan.doorways) {
+        const dx = door.end[0] - door.start[0]
+        const dz = door.end[1] - door.start[1]
+        const length = Math.hypot(dx, dz)
+        if (length < 0.5) continue
+        // The cheek at `start` must look towards `end`, and the one at `end` back
+        // towards `start`: they are what you walk between.
+        const [first, second] = doorJambs(door)
+        const facing = (cheek: { start: Vec2; end: Vec2 }) => {
+          const jx = cheek.end[0] - cheek.start[0]
+          const jz = cheek.end[1] - cheek.start[1]
+          const j = Math.hypot(jx, jz) || 1
+          // The quad's normal, as `MeshBuilder.quad` winds it.
+          return [(-jz / j) * (dx / length) + (jx / j) * (dz / length)] as const
+        }
+        expect(facing(first)[0], 'the near cheek looks out of the opening').toBeCloseTo(1, 6)
+        expect(facing(second)[0], 'the far cheek looks out of the opening').toBeCloseTo(-1, 6)
+      }
+    }
+  })
+
+  it('keeps the full width of the opening walkable', () => {
+    // The cheeks sit at the ends of the gap rather than inside it, so a doorway
+    // stays `DOOR_WIDTH` across — the visitor is 0,8 m and a 1,2 m opening is the
+    // narrowest the ship derives.
+    for (const plan of ship.plans.values()) {
+      for (const door of plan.doorways) {
+        const [first, second] = doorJambs(door)
+        // The two cheeks are wound against each other so they face across the
+        // opening, so it is `first.start` to `second.end` that are the same side
+        // of the partition. Pairing them the other way measures the diagonal.
+        const gap = Math.min(
+          Math.hypot(first.start[0] - second.end[0], first.start[1] - second.end[1]),
+          Math.hypot(first.end[0] - second.start[0], first.end[1] - second.start[1]),
+        )
+        expect(gap, `${door.a}|${door.b} was narrowed`).toBeCloseTo(door.width, 6)
+        expect(gap).toBeGreaterThan(VISITOR_RADIUS * 2)
+      }
+    }
+  })
+
+  it('runs each cheek across the thickness of the partition, and no further', () => {
+    for (const plan of ship.plans.values()) {
+      for (const door of plan.doorways) {
+        for (const cheek of doorJambs(door)) {
+          const run = Math.hypot(cheek.end[0] - cheek.start[0], cheek.end[1] - cheek.start[1])
+          expect(run).toBeCloseTo(JAMB_DEPTH, 6)
+        }
+      }
+    }
+  })
+
+  it('faces every soffit down at the floor', () => {
+    for (const plan of ship.plans.values()) {
+      for (const door of plan.doorways) {
+        const soffit = doorSoffit(door)
+        expect(soffit.length).toBe(4)
+        // Counter-clockwise in [x, z], which is what `patch(…, up = false)` turns
+        // downward — the only side of a soffit anyone stands on.
+        expect(signedArea(soffit)).toBeGreaterThan(0)
+        expect(polygonArea(soffit)).toBeCloseTo(door.width * JAMB_DEPTH, 5)
+      }
+    }
+  })
+
+  it('draws each cheek, and stops it at head height', () => {
+    // Extruded to the ceiling along with the room's own walls a cheek would brick
+    // the opening up, which is the whole reason `jambOf` exists. So this looks for
+    // the geometry itself: triangles standing on the cheek's line, and none of
+    // them above the door.
+    const plan = ship.plans.get('tier-1')!
+    const mesh = buildTierMesh(plan)
+    const head = plan.tier.elevation + DOOR_HEIGHT
+    const missing: string[] = []
+
+    for (const door of plan.doorways) {
+      for (const cheek of doorJambs(door)) {
+        const mid: Vec2 = [(cheek.start[0] + cheek.end[0]) / 2, (cheek.start[1] + cheek.end[1]) / 2]
+        let standing = 0
+        let above = 0
+        for (let i = 0; i < mesh.positions.length; i += 9) {
+          const cx = (mesh.positions[i] + mesh.positions[i + 3] + mesh.positions[i + 6]) / 3
+          const cz = (mesh.positions[i + 2] + mesh.positions[i + 5] + mesh.positions[i + 8]) / 3
+          if (Math.hypot(cx - mid[0], cz - mid[1]) > JAMB_DEPTH) continue
+          if (Math.abs(mesh.normals[i + 1]) > 1e-6) continue
+          standing++
+          const top = Math.max(mesh.positions[i + 1], mesh.positions[i + 4], mesh.positions[i + 7])
+          // A wall of the room passes through here too, and it does go to the
+          // ceiling; what must not is anything standing on the cheek's own line.
+          const onTheCheek =
+            Math.abs(mesh.normals[i] * (cheek.end[0] - cheek.start[0])) < 1e-3 &&
+            Math.abs(mesh.normals[i + 2] * (cheek.end[1] - cheek.start[1])) < 1e-3
+          if (onTheCheek && top > head + 0.001) above++
+        }
+        if (!standing) missing.push(`${door.a}|${door.b}`)
+        expect(above, `${door.a}|${door.b} has a cheek past the door`).toBe(0)
+      }
+    }
+    expect(missing, `${missing.length} cheeks are collided with and not drawn`).toEqual([])
   })
 })
 

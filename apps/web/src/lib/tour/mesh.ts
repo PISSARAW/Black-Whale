@@ -14,6 +14,7 @@ import {
   LAMP_SPACING,
   ceilingLamps,
   distanceToBoundary,
+  doorSoffit,
   grilleBars,
   iterateEdges,
   plateSeams,
@@ -887,7 +888,10 @@ export function buildTierMesh(plan: TierPlan, options: { reveal?: boolean } = {}
   // same builder. Reordering this list would turn a wall inside out.
   const wallsOf = new Map<string, WallSegment[]>()
   for (const wall of plan.walls) {
-    if (wall.structureId) continue
+    // A solid's face is raised by the structure pass and a doorway's cheek by the
+    // doorway pass; extruded to the ceiling here, the first would be a partition
+    // and the second would wall the opening up.
+    if (wall.structureId || wall.jambOf) continue
     const held = wallsOf.get(wall.spaceId)
     if (held) held.push(wall)
     else wallsOf.set(wall.spaceId, [wall])
@@ -908,6 +912,16 @@ export function buildTierMesh(plan: TierPlan, options: { reveal?: boolean } = {}
     const held = lintelsOf.get(door.a)
     if (held) held.push(door)
     else lintelsOf.set(door.a, [door])
+  }
+
+  // The cheeks, taken back out of the collision list rather than recomputed, so
+  // the segments drawn are the very objects the visitor is stopped by.
+  const jambsOf = new Map<string, WallSegment[]>()
+  for (const wall of plan.walls) {
+    if (!wall.jambOf) continue
+    const held = jambsOf.get(wall.jambOf)
+    if (held) held.push(wall)
+    else jambsOf.set(wall.jambOf, [wall])
   }
 
   const groups: MeshGroup[] = []
@@ -1072,7 +1086,6 @@ export function buildTierMesh(plan: TierPlan, options: { reveal?: boolean } = {}
       if (!other) continue
       const lintelTop = Math.max(top, heightOf(other))
       const lintelBottom = tier.elevation + DOOR_HEIGHT
-      if (lintelTop <= lintelBottom) continue
 
       const provenance: Provenance =
         space.provenance === 'inferred' || other.provenance === 'inferred'
@@ -1094,17 +1107,63 @@ export function buildTierMesh(plan: TierPlan, options: { reveal?: boolean } = {}
       // `door.a` alone, and drawn once it would be a hole in the ceiling of
       // `door.b`. Three hundred and sixty-eight openings at three triangles
       // each: 1 168 on the whole ship, against the 288 045 it already drew.
-      const lintel = (from: Vec2, to: Vec2) =>
+      if (lintelTop > lintelBottom) {
+        const lintel = (from: Vec2, to: Vec2) =>
+          builder.quad(
+            from,
+            to,
+            lintelBottom,
+            lintelTop,
+            lintelColour,
+            bake((x, y, z) => light.wall(x, y, z, lintelBottom, lintelTop)),
+          )
+        lintel(door.start, door.end)
+        lintel(door.end, door.start)
+      }
+
+      /**
+       * The depth of the opening: two cheeks and a soffit.
+       *
+       * Until now a doorway was a hole in a plane of no thickness — you crossed a
+       * sheet of paper, and the one moment in the walk that ought to say "steel"
+       * said nothing at all. The cheeks are already in `plan.walls`, so this pass
+       * only has to raise them to head height, and what you collide with is by
+       * construction what is drawn.
+       *
+       * The soffit closes the top. It is only drawn where there is a lintel over
+       * it — in a room whose ceiling is exactly `DOOR_HEIGHT` the two would be
+       * coplanar, and the opening runs the full height of the wall there anyway.
+       */
+      for (const cheek of jambsOf.get(sealKey(door.a, door.b)) ?? []) {
         builder.quad(
-          from,
-          to,
+          cheek.start,
+          cheek.end,
+          tier.elevation,
           lintelBottom,
-          lintelTop,
           lintelColour,
-          bake((x, y, z) => light.wall(x, y, z, lintelBottom, lintelTop)),
+          bake((x, y, z) => light.wall(x, y, z, tier.elevation, lintelBottom)),
         )
-      lintel(door.start, door.end)
-      lintel(door.end, door.start)
+        vertical(cheek.start, tier.elevation, lintelBottom)
+        vertical(cheek.end, tier.elevation, lintelBottom)
+      }
+
+      if (lintelTop > lintelBottom) {
+        const soffit = doorSoffit(door)
+        const under = bake((x: number, y: number, z: number) => light.ceiling(x, y, z))
+        for (let i = 1; i + 1 < soffit.length; i++) {
+          builder.patch(
+            soffit[0],
+            soffit[i],
+            soffit[i + 1],
+            lintelBottom,
+            false,
+            lintelColour,
+            under,
+            Infinity,
+          )
+        }
+        horizontal(door.start, door.end, lintelBottom + OFFSET)
+      }
     }
 
     const count = builder.positions.length / 3 - start

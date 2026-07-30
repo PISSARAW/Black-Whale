@@ -20,6 +20,29 @@ export const MIN_DOOR_WIDTH = 1.2
 /** Head height of an opening. Above it, the wall carries on to the ceiling. */
 export const DOOR_HEIGHT = 2.6
 
+/**
+ * How deep a doorway is, in metres.
+ *
+ * The blueprint gives partitions no thickness, and a wall of no thickness is a
+ * claim about the ship in its own right — the same kind of claim as a
+ * seven-thousand-square-metre hall with no pillars in it, and just as false. You
+ * do not cut an opening through a sheet of paper in a hull. So the depth is
+ * derived, like `columnPositions` and `ceilingLamps` before it.
+ *
+ * What is derived is deliberately *local*. The two faces of a shared bulkhead
+ * stay where they are, coplanar on the wall line — moving them apart would touch
+ * all 29 333 metres of partition on the ship and undo the one thing that lets
+ * each room light its own side. What gets thickness is the opening: a 30 cm frame
+ * of cheek and soffit, drawn inside the gap the wall already leaves. It is the
+ * only place thickness can be seen, so it is the only place it is claimed, and
+ * the honest way to read the result is that the ship has thick doorways in thin
+ * walls rather than that it has thick walls.
+ *
+ * 30 cm is a bulkhead door of the period, and it leaves the full `DOOR_WIDTH` to
+ * walk through: the cheeks sit at the ends of the opening rather than inside it.
+ */
+export const JAMB_DEPTH = 0.3
+
 const sub = (a: Vec2, b: Vec2): Vec2 => [a[0] - b[0], a[1] - b[1]]
 const len = (a: Vec2) => Math.hypot(a[0], a[1])
 const dot = (a: Vec2, b: Vec2) => a[0] * b[0] + a[1] * b[1]
@@ -267,6 +290,73 @@ export function wallSegments(space: Space, doorways: Doorway[]): WallSegment[] {
   }
 
   return walls
+}
+
+/**
+ * The two cheeks of one doorway, as the wall segments the visitor collides with.
+ *
+ * A cheek runs across the thickness of the partition — `JAMB_DEPTH`, half of it
+ * either side of the wall line — at each end of the opening, and it faces *into*
+ * the opening: the pair of them are what you walk between. Wound so that
+ * `MeshBuilder.quad` faces them that way, which for the cheek at `start` means
+ * running it against the opening's own direction and for the one at `end` with it.
+ *
+ * They go in `plan.walls` because collision has to have them. The gap the opening
+ * leaves is `DOOR_WIDTH` wide and the visitor is 0,8 m across, so these take
+ * nothing away from getting through — what they take away is cutting the corner,
+ * which is the one thing a doorframe of no depth let you do.
+ */
+export function doorJambs(door: Doorway): WallSegment[] {
+  const dx = door.end[0] - door.start[0]
+  const dz = door.end[1] - door.start[1]
+  const length = len([dx, dz])
+  if (length < EPSILON) return []
+
+  const unit: Vec2 = [dx / length, dz / length]
+  // Across the partition: the wall's own normal in plan, half the depth each way.
+  const half = JAMB_DEPTH / 2
+  const out: Vec2 = [-unit[1] * half, unit[0] * half]
+  const id = sealKey(door.a, door.b)
+
+  return [
+    {
+      spaceId: door.a,
+      jambOf: id,
+      start: [door.start[0] + out[0], door.start[1] + out[1]],
+      end: [door.start[0] - out[0], door.start[1] - out[1]],
+    },
+    {
+      spaceId: door.a,
+      jambOf: id,
+      start: [door.end[0] - out[0], door.end[1] - out[1]],
+      end: [door.end[0] + out[0], door.end[1] + out[1]],
+    },
+  ]
+}
+
+/**
+ * The soffit of one doorway: the underside of the lintel, as a polygon in plan.
+ *
+ * Closes the top of the opening, so a doorway is a way through something rather
+ * than a hole in a plane. Returned wound counter-clockwise in `[x, z]`, which is
+ * what `MeshBuilder.patch` turns downward — the only side of it anyone stands on.
+ */
+export function doorSoffit(door: Doorway): Polygon {
+  const dx = door.end[0] - door.start[0]
+  const dz = door.end[1] - door.start[1]
+  const length = len([dx, dz])
+  if (length < EPSILON) return []
+
+  const unit: Vec2 = [dx / length, dz / length]
+  const half = JAMB_DEPTH / 2
+  const out: Vec2 = [-unit[1] * half, unit[0] * half]
+
+  return toCounterClockwise([
+    [door.start[0] + out[0], door.start[1] + out[1]],
+    [door.end[0] + out[0], door.end[1] + out[1]],
+    [door.end[0] - out[0], door.end[1] - out[1]],
+    [door.start[0] - out[0], door.start[1] - out[1]],
+  ])
 }
 
 /**

@@ -15,6 +15,7 @@ import {
   columnPositions,
   columnWalls,
   deriveDoorways,
+  doorJambs,
   interiorPoint,
   longestSharedWall,
   MIN_DOOR_WIDTH,
@@ -125,6 +126,11 @@ export function buildShip(source: Blueprint = blueprint): Ship {
     const onThisTier = new Set(tierSpaces.map((space) => space.id))
     const doorways = deriveDoorways(tierSpaces, { sealed, overrides })
     const walls = tierSpaces.flatMap((space) => wallSegments(space, doorways))
+
+    // The cheeks of every opening. `wallSegments` has just cut the gaps; this is
+    // what stands in them, and it is in the collision list for the same reason a
+    // coffin's faces are — the doorway pass in `mesh.ts` draws exactly these.
+    for (const door of doorways) walls.push(...doorJambs(door))
 
     const columns = new Map<string, Vec2[]>()
     for (const space of tierSpaces) {

@@ -324,4 +324,14 @@ export interface WallSegment {
    * raises these to their own height instead.
    */
   structureId?: string
+  /**
+   * Set when the segment is the cheek of a doorway rather than a wall, keyed by
+   * the pair of rooms the opening joins.
+   *
+   * The same bargain as `structureId`, for the same reason: collision has to know
+   * about it — you cannot cut the corner of a doorframe — and the renderer must
+   * not extrude it to the ceiling, because a jamb stops at head height and the
+   * doorway pass draws it there. See `doorJambs`.
+   */
+  jambOf?: string
 }

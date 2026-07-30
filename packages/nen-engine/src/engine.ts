@@ -464,6 +464,20 @@ export class NenEngine implements INenEngine {
     this.modules.set(module.manifest.id, module)
   }
 
+  /** Whether an ability can actually be planned and executed, not merely listed. */
+  hasModule(abilityId: string): boolean {
+    return this.modules.has(abilityId)
+  }
+
+  /**
+   * The actions of one ability in one context — the wheel of a single module,
+   * without the base Nen actions `buildActionWheel` merges in. A caller offering
+   * "which action of this ability?" needs exactly this list.
+   */
+  abilityActionWheel(context: AbilityContext): NenActionWheelEntry[] {
+    return this.modules.get(context.abilityId)?.getActionWheel(context) ?? []
+  }
+
   async plan(context: AbilityContext): Promise<AbilityActionPlan> {
     const module = this.modules.get(context.abilityId)
     if (!module) {

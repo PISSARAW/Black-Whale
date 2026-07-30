@@ -1,61 +1,79 @@
 <script lang="ts">
   import Seo from '$lib/components/Seo.svelte'
-  import { page } from '$app/stores'
-  import { t } from '$lib/i18n'
+  import ContinuityList from '$lib/components/identity/ContinuityList.svelte'
+  import { link, t } from '$lib/i18n'
+  import type { PageData } from './$types'
 
-  let id = $derived(
-    ($page.params as Record<string, string | undefined>).id ||
-      ($page.params as Record<string, string | undefined>).slug ||
-      'unknown',
-  )
-
-  let transfers = $derived([
-    {
-      event: '389-12',
-      from: $t.consciousnessDetail.bodyA,
-      to: $t.consciousnessDetail.bodyB,
-      confidence: $t.consciousnessDetail.confidence.confirmed,
-    },
-    {
-      event: '389-18',
-      from: $t.consciousnessDetail.bodyB,
-      to: $t.consciousnessDetail.bodyB,
-      confidence: $t.consciousnessDetail.confidence.stable,
-    },
-    {
-      event: '390-03',
-      from: $t.consciousnessDetail.bodyB,
-      to: $t.consciousnessDetail.unknownBody,
-      confidence: $t.consciousnessDetail.confidence.uncertain,
-    },
-  ])
+  let { data }: { data: PageData } = $props()
+  let record = $derived(data.record)
 </script>
 
 <Seo
-  title={$t.consciousnessDetail.seoTitle(id)}
-  description={$t.consciousnessDetail.seoDescription(id)}
+  title={$t.consciousnessDetail.seoTitle(record.label)}
+  description={$t.consciousnessDetail.seoDescription(record.label)}
   noindex
 />
 
 <div class="max-w-4xl mx-auto p-6 space-y-4">
   <header class="bw-panel p-5">
-    <h1 class="font-condensed text-3xl text-[#e5c57a]">{$t.consciousnessDetail.title(id)}</h1>
+    <h1 class="font-condensed text-3xl text-[#e5c57a]">
+      {$t.consciousnessDetail.title(record.label)}
+    </h1>
     <p class="text-sm text-slate-300 mt-2">{$t.consciousnessDetail.intro}</p>
+
+    <dl class="mt-4 grid sm:grid-cols-3 gap-3 text-sm">
+      <div>
+        <dt class="text-xs uppercase tracking-wider text-slate-400">
+          {$t.consciousnessDetail.consciousnessType}
+        </dt>
+        <dd class="text-slate-100">
+          {$t.identity.enums.consciousnessType[record.consciousnessType] ??
+            record.consciousnessType}
+        </dd>
+      </div>
+      <div>
+        <dt class="text-xs uppercase tracking-wider text-slate-400">
+          {$t.consciousnessDetail.origin}
+        </dt>
+        <dd class="text-slate-100">
+          {#if record.originCharacter?.href}
+            <a class="text-[#e5c57a]" href={$link(record.originCharacter.href)}
+              >{record.originCharacter.label}</a
+            >
+          {:else}
+            {$t.common.unknown}
+          {/if}
+        </dd>
+      </div>
+      <div>
+        <dt class="text-xs uppercase tracking-wider text-slate-400">{$t.identity.firstVisible}</dt>
+        <dd class="text-slate-100">{$t.common.chapterShort(record.firstVisible.chapter)}</dd>
+      </div>
+    </dl>
   </header>
 
+  {#if record.bodies.length}
+    <section class="bw-panel p-4">
+      <h2 class="text-sm uppercase tracking-widest text-slate-400 mb-3">
+        {$t.consciousnessDetail.bodiesOccupied}
+      </h2>
+      <ul class="flex flex-wrap gap-2 text-sm">
+        {#each record.bodies as body (body.id)}
+          <li>
+            <a
+              class="border border-slate-700 rounded px-3 py-1 hover:border-[#e5c57a]"
+              href={$link(body.href ?? '#')}>{body.label}</a
+            >
+          </li>
+        {/each}
+      </ul>
+    </section>
+  {/if}
+
   <section class="bw-panel p-4">
-    <ol class="space-y-3">
-      {#each transfers as step, stepIndex (stepIndex)}
-        <li class="border border-slate-700 rounded p-3">
-          <p class="text-xs uppercase tracking-wider text-slate-400">
-            {$t.consciousnessDetail.event(step.event)}
-          </p>
-          <p class="text-sm text-slate-100">{step.from} -> {step.to}</p>
-          <p class="text-xs text-slate-400 mt-1">
-            {$t.consciousnessDetail.certainty(step.confidence)}
-          </p>
-        </li>
-      {/each}
-    </ol>
+    <h2 class="text-sm uppercase tracking-widest text-slate-400 mb-3">
+      {$t.identity.continuityTitle}
+    </h2>
+    <ContinuityList entries={record.entries} />
   </section>
 </div>

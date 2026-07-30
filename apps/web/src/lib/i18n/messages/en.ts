@@ -1431,14 +1431,26 @@ export const en = {
     currentCursor: 'Current cursor',
     entities: 'Entities',
     activeEffects: 'Active effects',
-    executeTitle: 'Execute Bungee Gum',
+    executeTitle: 'Execute an ability',
     executeCopy:
-      "Selecting a target plans the action against this branch. The conditions and effects below are the module's own — the same ones the server runs on activation.",
+      "Pick an ability, one of its actions and a target to plan against this branch. The conditions and effects below are the module's own — the same ones the server runs on activation.",
+    ability: 'Ability',
+    action: 'Action',
+    noActions: 'No action available',
     actorReference: 'Actor reference',
     targetEntity: 'Target entity',
-    selectTarget: 'Select target',
+    selectTarget: 'No target',
     planAction: 'Plan action',
-    attachAura: 'Attach aura',
+    runAction: (label: string) => `Run: ${label}`,
+    moveTitle: 'Move an entity',
+    moveCopy:
+      "The kernel's other branch action: putting someone somewhere canon does not. The move is applied to this branch only.",
+    moveEntity: 'Entity',
+    moveDestination: 'Destination',
+    moveSubmit: 'Move in this branch',
+    noMarkers: 'This branch places no entity on the deck plans.',
+    markersElsewhere: (count: number) =>
+      count === 1 ? '1 entity stands on another deck.' : `${count} entities stand on other decks.`,
     sceneTitle: 'Projected MapScene',
     markers: 'markers',
     effectLinks: 'effect links',
@@ -1498,23 +1510,19 @@ export const en = {
     intro:
       'Subjective map and timeline: what this character knows, believes, suspects, or ignores.',
     subjectiveMap: 'Subjective map',
-    subjectiveMapCopy:
-      'The same SVG geometry, with knowledge layers adapted to the selected perspective.',
     confirmedPosition: 'Confirmed position',
     likelyPosition: 'Likely position',
     lastKnownPosition: 'Last known position',
     activeKnowledge: 'Active knowledge',
-    rows: {
-      position: { label: 'Position', details: 'room 1014 (direct observation)' },
-      shikaku: { label: 'Shikaku identity', details: 'unusual behavior' },
-      kacho: { label: 'Kacho status', details: 'unconfirmed for 8 events' },
-    },
-    points: {
-      reality: 'Canonical event',
-      body: 'Body movement',
-      consciousness: 'Transfer detected',
-      knowledge: 'Information acquired',
-    },
+    apparentIdentity: 'Apparent identity',
+    dissonant: 'identity dissonance',
+    cursor: 'Point in time',
+    apply: 'Apply',
+    noEvents: 'No canonical event is available at your spoiler limit.',
+    noKnowledge: 'The archive records no knowledge for this character at this point.',
+    noPositions: 'The archive places no body this character could see at this point.',
+    markersElsewhere: (count: number) =>
+      count === 1 ? '1 body seen on another deck.' : `${count} bodies seen on other decks.`,
   },
 
   knowledgeDetail: {
@@ -1524,45 +1532,152 @@ export const en = {
     title: (character: string) => `Knowledge Map: ${character}`,
     intro: 'An archive of knowledge, suspicions, rumors, and outdated information.',
     informationState: 'Information state',
-    graphTitle: 'Knowledge graph (optional)',
-    entries: {
-      kacho: { label: 'Kacho', details: 'visible identity appears alive' },
-      shikaku: { label: 'Shikaku anomaly', details: 'behavioral evidence' },
-      tier3: { label: 'Tier 3', details: 'report received from Melody' },
-      target: { label: 'Target status', details: 'outdated information' },
-    },
+    graphTitle: 'Knowledge graph',
+    since: (chapter: number) => `since ch. ${chapter}`,
+    between: (from: number, until: number) => `ch. ${from} → ch. ${until}`,
+    toldBy: (source: string) => `told by ${source}`,
+    confidence: (percent: number) => `${percent}% confidence`,
+    noKnowledge: (character: string) =>
+      `The archive records no fact or belief held by ${character} within your spoiler limit.`,
+    openPerspective: 'Open perspective',
+    openProfile: 'Open profile',
   },
 
   bodyDetail: {
-    seoTitle: (id: string) => `Body ${id}`,
-    seoDescription: (id: string) =>
-      `Continuity record for body ${id}: observed positions, reported states and suspected identity swaps aboard the Black Whale.`,
-    title: (id: string) => `Body history: ${id}`,
+    seoTitle: (label: string) => `Body — ${label}`,
+    seoDescription: (label: string) =>
+      `Continuity record for ${label}: observed positions, reported states and consciousness occupancy aboard the Black Whale.`,
+    title: (label: string) => `Body history: ${label}`,
     intro: 'Biological timeline, consciousness occupancy, and public appearance.',
-    event: (id: string) => `Event ${id}`,
-    state: (state: string) => `State: ${state}`,
-    history: {
-      observed: { label: 'Body observed on Tier 1', status: 'active' },
-      anomaly: { label: 'Behavioral anomaly reported', status: 'suspected' },
-      recalculated: { label: 'Recalculated consciousness occupancy', status: 'transfer' },
-    },
+    bodyType: 'Body type',
+    owner: 'Original owner',
+    occupants: 'Consciousnesses recorded inside',
   },
 
   consciousnessDetail: {
-    seoTitle: (id: string) => `Consciousness ${id}`,
-    seoDescription: (id: string) =>
-      `Transfer record for consciousness ${id}: which body it occupies, when it moved, and how confident each observation is.`,
-    title: (id: string) => `Consciousness history: ${id}`,
+    seoTitle: (label: string) => `Consciousness — ${label}`,
+    seoDescription: (label: string) =>
+      `Transfer record for ${label}: which body it occupies, when it moved, and how certain each observation is.`,
+    title: (label: string) => `Consciousness history: ${label}`,
     intro: 'Tracking transfers, suppressions, and mental anchors.',
-    event: (id: string) => `Event ${id}`,
-    certainty: (level: string) => `Certainty: ${level}`,
-    bodyA: 'Body A',
-    bodyB: 'Body B',
-    unknownBody: 'Unknown',
-    confidence: {
-      confirmed: 'confirmed',
-      stable: 'stable',
-      uncertain: 'uncertain',
+    consciousnessType: 'Consciousness type',
+    origin: 'Origin character',
+    bodiesOccupied: 'Bodies occupied',
+  },
+
+  /**
+   * Wording for the identity archive: the enum values the schema stores, and the
+   * few sentences the continuity list needs around them. Each dictionary is a
+   * `Record<string, string>` so a value the catalogue has no wording for can fall
+   * back to the stored one instead of rendering blank.
+   */
+  identity: {
+    continuityTitle: 'Continuity record',
+    noEntries: 'The archive holds no record for this entity within your spoiler limit.',
+    firstVisible: 'First visible',
+    interval: (
+      fromChapter: number,
+      fromSequence: number,
+      untilChapter: number,
+      untilSequence: number,
+    ) => `ch. ${fromChapter}·${fromSequence} → ch. ${untilChapter}·${untilSequence}`,
+    intervalOpen: (chapter: number, sequence: number) => `from ch. ${chapter}·${sequence}`,
+    fromEvent: (title: string) => `Event: ${title}`,
+    certaintyLabel: (certainty: string) => `Certainty: ${certainty}`,
+    entryKind: {
+      OCCUPANCY: 'Occupancy',
+      BODY_STATE: 'Body state',
+      PRESENCE: 'Position',
+      APPEARANCE: 'Appearance',
+      CONSCIOUSNESS_STATE: 'Consciousness state',
+    } as Record<string, string>,
+    enums: {
+      bodyType: {
+        ORIGINAL: 'Original body',
+        CLONE: 'Clone',
+        COPY: 'Copy',
+        CONSTRUCT: 'Nen construct',
+        UNKNOWN: 'Unknown',
+      } as Record<string, string>,
+      consciousnessType: {
+        ORIGINAL: 'Original consciousness',
+        COPIED: 'Copied consciousness',
+        ARTIFICIAL: 'Artificial consciousness',
+        NEN_ENTITY: 'Nen entity',
+        UNKNOWN: 'Unknown',
+      } as Record<string, string>,
+      occupancyType: {
+        ORIGINAL: 'Occupies its own body',
+        TRANSFERRED: 'Transferred into this body',
+        POSSESSED: 'Possessing this body',
+        CONTROLLED: 'Controlling this body',
+        EMPTY: 'Body left empty',
+        UNKNOWN: 'Occupancy unknown',
+      } as Record<string, string>,
+      certainty: {
+        CONFIRMED: 'confirmed',
+        PROBABLE: 'probable',
+        UNKNOWN: 'unknown',
+      } as Record<string, string>,
+      bodyState: {
+        ALIVE: 'Alive',
+        INJURED: 'Injured',
+        UNCONSCIOUS: 'Unconscious',
+        DEAD: 'Dead',
+        DESTROYED: 'Destroyed',
+        PRESERVED: 'Preserved',
+        UNKNOWN: 'State unknown',
+      } as Record<string, string>,
+      consciousnessState: {
+        ACTIVE: 'Active',
+        UNCONSCIOUS: 'Unconscious',
+        TRANSFERRED: 'Transferred',
+        SUPPRESSED: 'Suppressed',
+        DORMANT: 'Dormant',
+        DISCONNECTED: 'Disconnected',
+        DESTROYED: 'Destroyed',
+        UNKNOWN: 'State unknown',
+      } as Record<string, string>,
+      presencePrecision: {
+        EXACT_ROOM: 'Located in a room',
+        ZONE: 'Located in a zone',
+        TIER: 'Located on a deck',
+        UNKNOWN: 'Position unknown',
+      } as Record<string, string>,
+      presenceCertainty: {
+        CONFIRMED: 'confirmed',
+        PROBABLE: 'probable',
+        LAST_KNOWN: 'last known',
+      } as Record<string, string>,
+      appearanceCause: {
+        NATURAL: 'Natural appearance',
+        TRANSFORMATION: 'Transformed appearance',
+        DISGUISE: 'Disguise',
+        NEN_ABILITY: 'Appearance changed by Nen',
+        UNKNOWN: 'Cause unknown',
+      } as Record<string, string>,
+      acquisitionMethod: {
+        DIRECT_OBSERVATION: 'seen first-hand',
+        TOLD_BY_OTHER: 'told by someone',
+        DEDUCTION: 'deduced',
+        NEN_ABILITY: 'learned through Nen',
+        DOCUMENT: 'read in a document',
+        RUMOR: 'heard as a rumour',
+        UNKNOWN: 'source unknown',
+      } as Record<string, string>,
+      /** Graph edge labels: the visual state a knowledge row resolves to. */
+      epistemicRelation: {
+        known: 'knows',
+        confirmed: 'confirms',
+        reported: 'was told',
+        believed: 'believes',
+        suspected: 'suspects',
+        rumor: 'has heard',
+        rejected: 'rejects',
+        outdated: 'knew',
+        contradicted: 'doubts',
+        unknown: 'ignores',
+      } as Record<string, string>,
     },
   },
 }

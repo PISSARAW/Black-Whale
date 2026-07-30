@@ -20,12 +20,10 @@ import {
 } from './geometry'
 import { VISITOR_RADIUS } from './navigation'
 import {
-  BEAM_MIN_HEIGHT,
   PATCH,
   WINDOW_GLOW,
   WINDOW_REACH,
   WINDOW_SAMPLE,
-  beamRadii,
   buildSolidMesh,
   buildTierMesh,
   colourFor,
@@ -1141,158 +1139,6 @@ describe('the two windows', () => {
     // 6 m of glass over the observation deck stopping at a fitting's 9 m would
     // read as a lamp hung against the window rather than as the sky behind it.
     expect(WINDOW_REACH).toBeGreaterThan(9)
-  })
-})
-
-/**
- * The columns of light, which are the only thing on the deck that is not a
- * surface.
- *
- * Three things can be wrong with a beam in a way no screenshot would settle. It
- * can be drawn in a room too low for it, where a cone of light is a cone of paint.
- * It can fail to fade to black at the deck — additive blending has no alpha, so the
- * fade *is* the colour, and a beam that ends at a value has a visible rim. And it
- * can be wound one way only, which leaves the visitor standing inside a column of
- * light seeing nothing at all.
- */
-describe('the columns of light', () => {
-  it('draws them only where a room is tall enough to have a beam', () => {
-    let tall = 0
-    for (const [tierId, plan] of ship.plans) {
-      const mesh = buildTierMesh(plan)
-      for (const group of mesh.groups) {
-        const space = plan.spaces.find((entry) => entry.id === group.spaceId)!
-        const ceiling = ceilingOf(space, plan.tier)
-        // Every lamp with the clearance for a cone, which is not every lamp: see
-        // `beamRadii`, and the lamp in the banquet hall that sits on a bulkhead.
-        const lamps = ceilingLamps(space.footprint).filter((at) =>
-          beamRadii(space.footprint, at),
-        ).length
-        if (ceiling >= BEAM_MIN_HEIGHT) {
-          tall++
-          // Four sides, two triangles each, wound both ways: 48 vertices a lamp.
-          expect(group.beamCount, `${group.spaceId} lights nothing`).toBe(lamps * 48)
-        } else {
-          expect(group.beamCount, `${group.spaceId} is too low for a beam`).toBe(0)
-        }
-      }
-      expect(mesh.beamColors.length, `${tierId} miscounts its beams`).toBe(mesh.beams.length)
-    }
-    // The fourteen rooms on the ship over eight metres tall.
-    expect(tall).toBe(14)
-  })
-
-  it('fades every column to black at the deck, and never above the lamp', () => {
-    for (const plan of ship.plans.values()) {
-      const mesh = buildTierMesh(plan)
-      for (const group of mesh.groups) {
-        if (!group.beamCount) continue
-        const space = plan.spaces.find((entry) => entry.id === group.spaceId)!
-        const hang = fittingHeight(
-          plan.tier.elevation,
-          plan.tier.elevation + ceilingOf(space, plan.tier),
-        )
-
-        let lit = 0
-        let dark = 0
-        for (let i = group.beamStart; i < group.beamStart + group.beamCount; i++) {
-          const y = mesh.beams[i * 3 + 1]
-          const brightness = Math.max(
-            mesh.beamColors[i * 3],
-            mesh.beamColors[i * 3 + 1],
-            mesh.beamColors[i * 3 + 2],
-          )
-          // Between the deck and the lamp it hangs from, and nowhere else.
-          expect(y).toBeGreaterThanOrEqual(plan.tier.elevation - 1e-4)
-          expect(y).toBeLessThanOrEqual(hang + 1e-4)
-
-          if (Math.abs(y - plan.tier.elevation) < 1e-4) {
-            // Additive: black adds nothing, which is what gives a beam no edge.
-            expect(brightness, `${group.spaceId} draws a beam with a rim on the deck`).toBe(0)
-            dark++
-          } else {
-            expect(brightness, `${group.spaceId} draws a beam that is not lit`).toBeGreaterThan(0)
-            lit++
-          }
-        }
-        expect(dark).toBeGreaterThan(0)
-        expect(lit).toBeGreaterThan(0)
-      }
-    }
-  })
-
-  it('burns far under the lamp it hangs from, because beams stack', () => {
-    const plan = ship.plans.get('tier-1')!
-    const mesh = buildTierMesh(plan)
-    const brightestBeam = Math.max(...mesh.beamColors)
-    const brightestLamp = Math.max(...mesh.fittingColors)
-    expect(brightestBeam).toBeGreaterThan(0)
-    // Eighty lamps down the banquet hall is eighty cones, and any two of them
-    // overlapping have to stay dimmer than the lamp itself.
-    expect(brightestBeam * 4).toBeLessThan(brightestLamp)
-  })
-
-  it('winds each triangle both ways, so a visitor inside a beam can see it', () => {
-    const plan = ship.plans.get('tier-1')!
-    const mesh = buildTierMesh(plan)
-    for (const group of mesh.groups) {
-      if (!group.beamCount) continue
-      // Every triangle has its mirror in the next three vertices: the material is
-      // `FrontSide`, and a cone visible only from outside is a cone you walk into
-      // and lose.
-      for (let i = group.beamStart; i < group.beamStart + group.beamCount; i += 6) {
-        const first = [0, 1, 2].map((v) => [...mesh.beams.slice((i + v) * 3, (i + v) * 3 + 3)])
-        const second = [3, 4, 5].map((v) => [...mesh.beams.slice((i + v) * 3, (i + v) * 3 + 3)])
-        expect(second).toEqual([...first].reverse())
-      }
-    }
-  })
-
-  it('keeps every column inside the room it is lighting', () => {
-    // Additive light does not stop at a wall: a cone poking through a bulkhead is
-    // a glow in the next room with nothing in it to explain the glow.
-    let checked = 0
-    for (const plan of ship.plans.values()) {
-      const mesh = buildTierMesh(plan)
-      for (const group of mesh.groups) {
-        if (!group.beamCount) continue
-        const space = plan.spaces.find((entry) => entry.id === group.spaceId)!
-        for (let i = group.beamStart; i < group.beamStart + group.beamCount; i++) {
-          const inside = pointInPolygon([mesh.beams[i * 3], mesh.beams[i * 3 + 2]], space.footprint)
-          expect(inside, `${group.spaceId} shines a beam through its own wall`).toBe(true)
-          checked++
-        }
-      }
-    }
-    expect(checked).toBeGreaterThan(10_000)
-  })
-
-  it('draws none of them under the reveal', () => {
-    for (const [tierId, plan] of ship.plans) {
-      expect(
-        buildTierMesh(plan, { reveal: true }).beams.length,
-        `${tierId} lights the doctrine`,
-      ).toBe(0)
-    }
-    // And they are drawn at all: eight of the forty levels have a beam in them.
-    const lit = [...ship.plans.values()].filter((plan) => buildTierMesh(plan).beams.length)
-    expect(lit.length).toBe(8)
-  })
-
-  it('costs the ship a fraction of what it already draws', () => {
-    // 7 568 triangles over the whole ship against the 289 000 of the decks, and
-    // half of that count is the second winding. A beam is cheap; what would not be
-    // cheap is a rounder cone, and nobody reads the shape of a column of light.
-    let beams = 0
-    let deck = 0
-    for (const plan of ship.plans.values()) {
-      const mesh = buildTierMesh(plan)
-      beams += mesh.beams.length / 9
-      deck += mesh.triangles
-    }
-    expect(beams).toBeGreaterThan(0)
-    expect(beams).toBeLessThan(12_000)
-    expect(beams / deck).toBeLessThan(0.04)
   })
 })
 

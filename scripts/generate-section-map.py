@@ -143,7 +143,7 @@ decks_out = []
 for tier in sorted(DECKS, key=lambda t: -t['elevation']):
     z0, z1 = hull_span(tier)
     decks_out.append({
-        'id': tier['id'], 'name': tier['nameFr'],
+        'id': tier['id'], 'name': tier['name'], 'nameFr': tier['nameFr'],
         'child': bool(tier.get('parentTierId')),
         'x0': px(z0), 'x1': px(z1),
         'floor': py(tier['elevation']), 'ceiling': py(tier['elevation'] + tier['ceiling']),
@@ -195,7 +195,7 @@ def ts(rows_, fields):
 ROOM_FIELDS = [('id', 's'), ('tier', 's'), ('region', 'n?'), ('x', 'n'), ('y', 'n'),
                ('w', 'n'), ('h', 'n'), ('label', 's'), ('name', 's'), ('size', 'n'),
                ('at', 'a'), ('cut', 'b'), ('through', 'b'), ('inferred', 'b')]
-DECK_FIELDS = [('id', 's'), ('name', 's'), ('child', 'b'), ('x0', 'n'), ('x1', 'n'),
+DECK_FIELDS = [('id', 's'), ('name', 's'), ('nameFr', 's'), ('child', 'b'), ('x0', 'n'), ('x1', 'n'),
                ('floor', 'n'), ('ceiling', 'n'), ('elevation', 'n')]
 GAP_FIELDS = [('id', 's'), ('x', 'n'), ('y', 'n'), ('w', 'n'), ('h', 'n'), ('metres', 'n')]
 
@@ -230,7 +230,7 @@ src = f'''<script lang="ts">
    * Do not hand-edit — regenerate from the blueprint.
    */
   import {{ mapState }} from '$lib/state/mapState.svelte'
-  import {{ t }} from '$lib/i18n'
+  import {{ locale, t }} from '$lib/i18n'
 
   type Room = {{
     id: string
@@ -261,6 +261,14 @@ src = f'''<script lang="ts">
   const decks = [
 {ts(decks_out, DECK_FIELDS)},
   ]
+
+  /**
+   * A deck carries both of its names, because the tabs are the only labels on
+   * the section that come from the ship's own data rather than the dictionary,
+   * and a single name means one of the two languages reads the other's.
+   */
+  const deckName = (deck: {{ name: string; nameFr: string }}) =>
+    $locale === 'fr' ? deck.nameFr : deck.name
 
   const gaps = [
 {ts(gaps, GAP_FIELDS)},
@@ -481,16 +489,16 @@ src = f'''<script lang="ts">
       class="deck-tab"
       role="button"
       tabindex="0"
-      aria-label={{deck.name}}
+      aria-label={{deckName(deck)}}
       onclick={{() => openDeck(deck.id)}}
       onkeydown={{(event) => openDeckWithKeyboard(event, deck.id)}}
     >
       {{#if deck.child}}
         <text x="{int(VIEW_W)}" y={{deck.ceiling + 11}} text-anchor="end" font-size="10"
-          >{{deck.name}} · {{deck.elevation}} m</text
+          >{{deckName(deck)}} · {{deck.elevation}} m</text
         >
       {{:else}}
-        <text x="6" y={{deck.ceiling + 12}}>{{deck.name}}</text>
+        <text x="6" y={{deck.ceiling + 12}}>{{deckName(deck)}}</text>
         <text x="6" y={{deck.ceiling + 25}} font-size="9" fill-opacity="0.55"
           >{{deck.elevation}} m</text
         >

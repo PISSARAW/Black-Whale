@@ -108,15 +108,17 @@ const rooms: Room[] = [...between('const rooms: Room[] = [', '\n  ]').matchAll(R
 }))
 
 const DECK =
-  /\{\s*id:\s*'([^']+)',\s*name:\s*(?:'[^']*'|"[^"]*"),\s*child:\s*(true|false),\s*x0:\s*(-?[\d.]+),\s*x1:\s*(-?[\d.]+),\s*floor:\s*(-?[\d.]+),\s*ceiling:\s*(-?[\d.]+),\s*elevation:\s*(-?[\d.]+),\s*\}/g
+  /\{\s*id:\s*'([^']+)',\s*name:\s*'((?:[^'\\]|\\.)*)',\s*nameFr:\s*'((?:[^'\\]|\\.)*)',\s*child:\s*(true|false),\s*x0:\s*(-?[\d.]+),\s*x1:\s*(-?[\d.]+),\s*floor:\s*(-?[\d.]+),\s*ceiling:\s*(-?[\d.]+),\s*elevation:\s*(-?[\d.]+),\s*\}/g
 const drawnDecks = [...between('const decks = [', '\n  ]').matchAll(DECK)].map((m) => ({
   id: m[1],
-  child: m[2] === 'true',
-  x0: Number(m[3]),
-  x1: Number(m[4]),
-  floor: Number(m[5]),
-  ceiling: Number(m[6]),
-  elevation: Number(m[7]),
+  name: m[2].replace(/\\'/g, "'"),
+  nameFr: m[3].replace(/\\'/g, "'"),
+  child: m[4] === 'true',
+  x0: Number(m[5]),
+  x1: Number(m[6]),
+  floor: Number(m[7]),
+  ceiling: Number(m[8]),
+  elevation: Number(m[9]),
 }))
 
 const GAP =
@@ -221,6 +223,20 @@ describe('the decks of the section', () => {
       expect(deck.child, deck.id).toBe(Boolean(tierOf.get(deck.id)!.parentTierId))
     }
     expect(drawnDecks.filter((deck) => deck.child).length).toBeGreaterThan(0)
+  })
+
+  /**
+   * The tabs are the only labels on the section drawn from the blueprint rather
+   * than from the dictionary, so both of a deck's names have to travel with it.
+   * One name on the drawing is one language reading the other's ship, which is
+   * what the first cut did: an English reader was told to click `Pont 1`.
+   */
+  it('carries each deck name in both languages, as the blueprint gives them', () => {
+    for (const deck of drawnDecks) {
+      const tier = tierOf.get(deck.id) as Tier
+      expect(deck.name, `${deck.id} name`).toBe(tier.name)
+      expect(deck.nameFr, `${deck.id} nameFr`).toBe(tier.nameFr)
+    }
   })
 
   it('puts each at its own elevation and its own length', () => {

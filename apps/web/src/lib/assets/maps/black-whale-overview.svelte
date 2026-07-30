@@ -27,7 +27,7 @@
    * Do not hand-edit — regenerate from the blueprint.
    */
   import { mapState } from '$lib/state/mapState.svelte'
-  import { t } from '$lib/i18n'
+  import { locale, t } from '$lib/i18n'
 
   type Room = {
     id: string
@@ -2601,7 +2601,8 @@
   const decks = [
     {
       id: 'tier-1-c',
-      name: 'Pont 1 · Pont des hôtes',
+      name: 'Tier 1 · Guest Deck',
+      nameFr: 'Pont 1 · Pont des hôtes',
       child: true,
       x0: 477.51,
       x1: 795.25,
@@ -2611,7 +2612,8 @@
     },
     {
       id: 'tier-1-b',
-      name: 'Pont 1 · Pont de la garnison',
+      name: 'Tier 1 · Garrison Deck',
+      nameFr: 'Pont 1 · Pont de la garnison',
       child: true,
       x0: 322.33,
       x1: 795.25,
@@ -2621,7 +2623,8 @@
     },
     {
       id: 'tier-1',
-      name: 'Pont 1',
+      name: 'Tier 1',
+      nameFr: 'Pont 1',
       child: false,
       x0: 130.21,
       x1: 819.88,
@@ -2631,7 +2634,8 @@
     },
     {
       id: 'tier-2',
-      name: 'Pont 2',
+      name: 'Tier 2',
+      nameFr: 'Pont 2',
       child: false,
       x0: 95.73,
       x1: 854.36,
@@ -2641,7 +2645,8 @@
     },
     {
       id: 'tier-3',
-      name: 'Pont 3',
+      name: 'Tier 3',
+      nameFr: 'Pont 3',
       child: false,
       x0: 44.0,
       x1: 906.09,
@@ -2651,7 +2656,8 @@
     },
     {
       id: 'tier-4',
-      name: 'Pont 4',
+      name: 'Tier 4',
+      nameFr: 'Pont 4',
       child: false,
       x0: 44.0,
       x1: 906.09,
@@ -2661,7 +2667,8 @@
     },
     {
       id: 'tier-5',
-      name: 'Pont 5',
+      name: 'Tier 5',
+      nameFr: 'Pont 5',
       child: false,
       x0: 130.21,
       x1: 733.67,
@@ -2670,6 +2677,14 @@
       elevation: 0,
     },
   ]
+
+  /**
+   * A deck carries both of its names, because the tabs are the only labels on
+   * the section that come from the ship's own data rather than the dictionary,
+   * and a single name means one of the two languages reads the other's.
+   */
+  const deckName = (deck: { name: string; nameFr: string }) =>
+    $locale === 'fr' ? deck.nameFr : deck.name
 
   const gaps = [
     {
@@ -2946,16 +2961,16 @@
       class="deck-tab"
       role="button"
       tabindex="0"
-      aria-label={deck.name}
+      aria-label={deckName(deck)}
       onclick={() => openDeck(deck.id)}
       onkeydown={(event) => openDeckWithKeyboard(event, deck.id)}
     >
       {#if deck.child}
         <text x="1000" y={deck.ceiling + 11} text-anchor="end" font-size="10"
-          >{deck.name} · {deck.elevation} m</text
+          >{deckName(deck)} · {deck.elevation} m</text
         >
       {:else}
-        <text x="6" y={deck.ceiling + 12}>{deck.name}</text>
+        <text x="6" y={deck.ceiling + 12}>{deckName(deck)}</text>
         <text x="6" y={deck.ceiling + 25} font-size="9" fill-opacity="0.55">{deck.elevation} m</text
         >
       {/if}

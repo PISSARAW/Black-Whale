@@ -8,7 +8,7 @@
     "timeline": [
       {
         "event": "Departure of the Black Whale from the port of Kakin",
-        "storyDate": "Day 1 · 12:00",
+        "storyDate": "Day 1 · Sunday · 12:00",
         "charactersInvolved": [
           "nasubi-hui-guo-rou",
           "beyond-netero",
@@ -23,7 +23,7 @@
       },
       {
         "event": "Beyond Netero is imprisoned in Tier 1 VVIP prison",
-        "storyDate": "Day 1",
+        "storyDate": "Day 1 · Sunday",
         "charactersInvolved": [
           "beyond-netero",
           "cheadle-yorkshire",
@@ -35,7 +35,7 @@
       },
       {
         "event": "Kurapika and Leorio join the Zodiacs on board",
-        "storyDate": "Day 1",
+        "storyDate": "Day 1 · Sunday",
         "charactersInvolved": [
           "kurapika",
           "leorio-paradinight",
@@ -62,7 +62,7 @@
     "timeline": [
       {
         "event": "Meeting of the princes on Tier 1 - Official announcement of the War of Succession",
-        "storyDate": "Day 1",
+        "storyDate": "Day 1 · Sunday",
         "charactersInvolved": [
           "nasubi-hui-guo-rou",
           "prince-benjamin",
@@ -85,7 +85,7 @@
       },
       {
         "event": "Explanation of the rules: the Urn of the Seed will choose the successor",
-        "storyDate": "Day 1",
+        "storyDate": "Day 1 · Sunday",
         "charactersInvolved": [
           "nasubi-hui-guo-rou",
           "prince-benjamin",
@@ -143,19 +143,19 @@
     "timeline": [
       {
         "event": "The Black Whale leaves the port of Kakin for the New Continent",
-        "storyDate": "Day 1 · 12:00",
+        "storyDate": "Day 1 · Sunday · 12:00",
         "charactersInvolved": ["nasubi-hui-guo-rou", "kurapika", "queen-oito", "prince-woble"],
         "location": "Port of Kakin / Tier 1"
       },
       {
         "event": "Woody is found exsanguinated on the bathroom floor of room 1014",
-        "storyDate": "Day 1 · 12:15-12:30",
+        "storyDate": "Day 1 · Sunday · 12:15-12:30",
         "charactersInvolved": ["woody", "kurapika", "bill", "kurton", "sayird"],
         "location": "Tier 1 - Room 1014"
       },
       {
         "event": "The inaugural banquet gathers the royal family",
-        "storyDate": "Day 1 · evening",
+        "storyDate": "Day 1 · Sunday · evening",
         "charactersInvolved": [
           "nasubi-hui-guo-rou",
           "prince-benjamin",
@@ -175,13 +175,13 @@
       },
       {
         "event": "Kacho proposes an alliance to Fugetsu during the banquet",
-        "storyDate": "Day 1 · evening",
+        "storyDate": "Day 1 · Sunday · evening",
         "charactersInvolved": ["prince-kacho", "prince-fugetsu"],
         "location": "Tier 1 - Banquet Hall"
       },
       {
         "event": "Four more bodyguards are found drained of blood in a corridor",
-        "storyDate": "Day 1 · after the banquet",
+        "storyDate": "Day 1 · Sunday · after the banquet",
         "charactersInvolved": ["kurapika", "queen-oito", "bill"],
         "location": "Tier 1 - Royal Residential Sector"
       }
@@ -204,7 +204,7 @@
     "timeline": [
       {
         "event": "Benjamin posts his private soldiers in every prince's quarters, on Balsamilco's counsel",
-        "storyDate": "Day 2",
+        "storyDate": "Day 2 · Monday",
         "charactersInvolved": ["prince-benjamin", "balsamilco-might", "rihan", "musse"],
         "location": "Tier 1"
       },
@@ -240,31 +240,31 @@
     "timeline": [
       {
         "event": "Oito watches room 1012 through Little Eye as Momoze is strangled",
-        "storyDate": "Day 1 · night",
+        "storyDate": "Day 1 · Sunday · night",
         "charactersInvolved": ["queen-oito", "kurapika", "prince-momoze"],
         "location": "Tier 1 - Room 1014"
       },
       {
         "event": "Momoze is assassinated in her own room",
-        "storyDate": "Day 1 · night",
+        "storyDate": "Day 1 · Sunday · night",
         "charactersInvolved": ["prince-momoze", "tuffdy"],
         "location": "Tier 1 - Room 1012"
       },
       {
         "event": "Hanzo and Biscuit read the killing as the work of an off-duty guard",
-        "storyDate": "Day 1 · night",
+        "storyDate": "Day 1 · Sunday · night",
         "charactersInvolved": ["hanzo", "biscuit-krueger"],
         "location": "Tier 1 - Royal Residential Sector"
       },
       {
         "event": "Emperor Time collapses Kurapika after nearly three hours",
-        "storyDate": "Day 1 · night",
+        "storyDate": "Day 1 · Sunday · night",
         "charactersInvolved": ["kurapika", "queen-oito", "bill"],
         "location": "Tier 1 - Room 1014"
       },
       {
         "event": "Tserriednich asks Theta how long learning Nen takes",
-        "storyDate": "Day 1 · night",
+        "storyDate": "Day 1 · Sunday · night",
         "charactersInvolved": ["prince-tserriednich", "theta"],
         "location": "Tier 1 - Room 1004"
       }
@@ -286,25 +286,25 @@
     "timeline": [
       {
         "event": "Eighteen hours have passed since the departure horn",
-        "storyDate": "Day 2 · 06:00",
+        "storyDate": "Day 2 · Monday · 06:00",
         "charactersInvolved": [],
         "location": "Black Whale - open sea"
       },
       {
         "event": "Kurapika wakes after about nine hours unconscious, Oito having gone down with him",
-        "storyDate": "Day 2 · 06:00",
+        "storyDate": "Day 2 · Monday · 06:00",
         "charactersInvolved": ["kurapika", "bill", "queen-oito"],
         "location": "Tier 1 - Room 1014"
       },
       {
         "event": "Continuous Emperor Time is capped at three hours, and going past it costs a black-out three times as long",
-        "storyDate": "Day 2 · 06:00",
+        "storyDate": "Day 2 · Monday · 06:00",
         "charactersInvolved": ["kurapika", "bill"],
         "location": "Tier 1 - Room 1014"
       },
       {
         "event": "The princes send sixteen guards and servants to the class, each with orders of their own",
-        "storyDate": "Day 2 · 09:00",
+        "storyDate": "Day 2 · Monday · 09:00",
         "charactersInvolved": [
           "satobi",
           "mushaho",
@@ -327,19 +327,19 @@
       },
       {
         "event": "Kurapika sets the rules: a white line nobody crosses, force without warning, exclusion for anyone who breaks it",
-        "storyDate": "Day 2 · 09:00",
+        "storyDate": "Day 2 · Monday · 09:00",
         "charactersInvolved": ["kurapika"],
         "location": "Tier 1 - Royal Residential Sector"
       },
       {
         "event": "Silent Majority possesses Loberry during Kurapika's first Nen class",
-        "storyDate": "Day 2 · 09:00",
+        "storyDate": "Day 2 · Monday · 09:00",
         "charactersInvolved": ["loberry", "kurapika"],
         "location": "Tier 1 - Royal Residential Sector"
       },
       {
         "event": "Asked who already knows Nen, only Furykov and Belerainte raise a hand",
-        "storyDate": "Day 2 · 09:00",
+        "storyDate": "Day 2 · Monday · 09:00",
         "charactersInvolved": ["kurapika", "furykov", "belerainte"],
         "location": "Tier 1 - Royal Residential Sector"
       }
@@ -365,20 +365,20 @@
     "timeline": [
       {
         "event": "Loberry points at the masked doll nobody else can see and panics",
-        "storyDate": "Day 2 · 09:00",
+        "storyDate": "Day 2 · Monday · 09:00",
         "charactersInvolved": ["loberry", "yuri", "kurapika", "belerainte"],
         "location": "Tier 1 - Royal Residential Sector"
       },
       {
         "event": "Four tsuchibokko fasten onto Barrigen and drain him in front of the class",
-        "storyDate": "Day 2 · 09:00",
+        "storyDate": "Day 2 · Monday · 09:00",
         "charactersInvolved": ["barrigen", "loberry", "kurapika", "belerainte"],
         "location": "Tier 1 - Royal Residential Sector"
       },
       {
-        "event": "Silent Majority kills Myuhan",
-        "storyDate": "Day 2",
-        "charactersInvolved": ["myuhan"],
+        "event": "The class is left with a body it never saw attacked",
+        "storyDate": "Day 2 · Monday · 09:00",
+        "charactersInvolved": ["kurapika", "loberry", "belerainte"],
         "location": "Tier 1 - Royal Residential Sector"
       }
     ],
@@ -387,10 +387,9 @@
       "Loberry, the only one the doll is visible to, is made to point at it in front of everyone",
       "The guards see nothing but something white around Barrigen's neck and try to tear it off",
       "One tsuchibokko needs 44 seconds to drain a body; the four together take barely 11",
-      "Barrigen dies among sixteen witnesses and a Nen teacher, none of whom can see the weapon",
-      "Myuhan is found exsanguinated after the assassin activates the ability again"
+      "Barrigen dies among sixteen witnesses and a Nen teacher, none of whom can see the weapon"
     ],
-    "description": "The murder happens in the open. The assassin's rule was stated a chapter earlier — only the user and the possessed Loberry can see the decorative doll — and this is what it is for: Loberry cries out at a girl in a strange mask that no one else can find, and while the room is looking for a witness's hallucination, four conjured tsuchibokko take Barrigen by the neck. The guards see a white thing they cannot pull off; a single doll would need 44 seconds to empty a body, four working together need about 11. Myuhan follows, exsanguinated in the same fashion. The class Kurapika convened at 09:00 becomes an investigation before he has taught anything, and the ability's whole design is on display: a weapon invisible to every witness, operated through the one witness who can see it."
+    "description": "The murder happens in the open. The assassin's rule was stated a chapter earlier — only the user and the possessed Loberry can see the decorative doll — and this is what it is for: Loberry cries out at a girl in a strange mask that no one else can find, and while the room is looking for a witness's hallucination, four conjured tsuchibokko take Barrigen by the neck. The guards see a white thing they cannot pull off; a single doll would need 44 seconds to empty a body, four working together need about 11. The class Kurapika convened at 09:00 becomes an investigation before he has taught anything, and the ability's whole design is on display: a weapon invisible to every witness, operated through the one witness who can see it. Myuhan dies the same way, but a day later — chapter 376, not here."
   },
   {
     "id": "ch-374",
@@ -400,19 +399,25 @@
     "timeline": [
       {
         "event": "A caption gives the elapsed time since the ship put to sea: 37 h 30 min",
-        "storyDate": "Day 3 · 01:30",
+        "storyDate": "Day 3 · Tuesday · 01:30",
         "charactersInvolved": [],
         "location": "Black Whale - open sea"
       },
       {
         "event": "The Woble camp takes stock: Hanzo's disappearance is read as a defence by Marayam's Nen beast, and keeping a line to him open is called essential",
-        "storyDate": "Day 3 · 01:30",
+        "storyDate": "Day 3 · Tuesday · 01:30",
         "charactersInvolved": ["kurapika", "queen-oito", "prince-woble"],
         "location": "Tier 1 - Room 1014"
       },
       {
+        "event": "Fugetsu wakes in her bed; the clock at her bedside reads TUESDAY 01:27 AM",
+        "storyDate": "Day 3 · Tuesday · 01:27",
+        "charactersInvolved": ["prince-fugetsu"],
+        "location": "Tier 1 - Royal Residential Sector"
+      },
+      {
         "event": "Fugetsu's Magical Worm opens a passage between her room and Kacho's",
-        "storyDate": "Day 3",
+        "storyDate": "Day 3 · Tuesday · 01:27",
         "charactersInvolved": ["prince-fugetsu", "prince-kacho"],
         "location": "Tier 1 - Royal Residential Sector"
       }
@@ -420,10 +425,74 @@
     "location": "Tier 1 - Royal Residential Sector",
     "keyEvents": [
       "The third time stamp of the voyage: 37 h 30 min out of port, so 01:30 on Day 3",
+      "A bedside clock reads TUESDAY 01:27 AM — the only weekday the arc ever shows, which makes the noon departure a Sunday",
       "Hanzo, gone into Marayam's quarters, is treated as alive and reachable rather than dead",
-      "Fugetsu's beast turns out to open a passage rather than defend her"
+      "Fugetsu's beast turns out to open a passage rather than defend her, and its door is the entrance of the Magic Warm ride she played on with Kacho as a child"
     ],
-    "description": "A caption over the water counts 37 h 30 min since departure — 01:30 of the third day against the noon sailing of chapter 340, the small hours after the class that cost Barrigen his life. The chapter spends them quietly: the galley works, Oito holds Woble, and the Woble camp sorts what it knows, reading Hanzo's disappearance inside Marayam's quarters as a defensive act of the thirteenth prince's beast and treating the line to him as the thing to keep open. Fugetsu's beast, meanwhile, opens onto her sister's room."
+    "description": "A caption over the water counts 37 h 30 min since departure — 01:30 of the third day against the noon sailing of chapter 340, the small hours after the class that cost Barrigen his life. The chapter spends them quietly: the galley works, Oito holds Woble, and the Woble camp sorts what it knows, reading Hanzo's disappearance inside Marayam's quarters as a defensive act of the thirteenth prince's beast and treating the line to him as the thing to keep open. Fugetsu, woken three minutes earlier by a clock reading TUESDAY 01:27 AM, watches a door rise out of her wall — the entrance of the Magic Warm ride she and Kacho played on as children — and it opens onto her sister's room. The clock and the caption agree to within three minutes, and the weekday is the one the arc never gives anywhere else: counted back, the Black Whale sailed at noon on a Sunday, which is what the banquet hall's Sunday schedule assumes."
+  },
+  {
+    "id": "ch-376",
+    "number": 376,
+    "publicationOrder": 376,
+    "title": "Determination",
+    "timeline": [
+      {
+        "event": "A caption dates the session: third day, 10:05 in the morning",
+        "storyDate": "Day 3 · Tuesday · 10:05",
+        "charactersInvolved": [],
+        "location": "Tier 1 - Supreme Court"
+      },
+      {
+        "event": "Camilla's camp pleads self-defence and demands Musse be handed over, charging Benjamin with ordering the killing",
+        "storyDate": "Day 3 · Tuesday · 10:05",
+        "charactersInvolved": ["prince-camilla", "prince-benjamin", "musse", "cleapatro"],
+        "location": "Tier 1 - Supreme Court"
+      },
+      {
+        "event": "Benjamin's camp objects that ten rounds at an unarmed prince is disproportionate, and disowns Musse",
+        "storyDate": "Day 3 · Tuesday · 10:05",
+        "charactersInvolved": ["prince-benjamin", "balsamilco-might", "cleapatro"],
+        "location": "Tier 1 - Supreme Court"
+      },
+      {
+        "event": "Cleapatro confines both princes to the VIP zone under escort and has the Royal Army search every residence",
+        "storyDate": "Day 3 · Tuesday · 10:05",
+        "charactersInvolved": ["cleapatro", "prince-benjamin", "prince-camilla"],
+        "location": "Tier 1 - Supreme Court"
+      },
+      {
+        "event": "Myuhan is attacked the moment he enters the toilets and is dry ten seconds later",
+        "storyDate": "Day 3 · Tuesday",
+        "charactersInvolved": ["myuhan", "kurapika", "bill"],
+        "location": "Tier 1 - Room 1014"
+      },
+      {
+        "event": "Kurapika seals the salon and the bedroom and reads the killer's pattern: only people without Nen",
+        "storyDate": "Day 3 · Tuesday",
+        "charactersInvolved": ["kurapika", "bill", "queen-oito"],
+        "location": "Tier 1 - Room 1014"
+      },
+      {
+        "event": "The class demands the Royal Army be called and calls the Nen lesson a fabrication",
+        "storyDate": "Day 3 · Tuesday",
+        "charactersInvolved": ["kurapika", "belerainte", "danjin"],
+        "location": "Tier 1 - Room 1014"
+      }
+    ],
+    "location": "Tier 1 - Supreme Court",
+    "keyEvents": [
+      "The fourth time stamp of the voyage: third day, 10:05 in the morning",
+      "The contest is argued in a courtroom rather than settled by Nen — the ship has a jurisdiction and the princes use it",
+      "Both princes are confined to the VIP zone until Musse is caught, escorted by supervisors answering to the magistrate",
+      "One demanded search becomes a search of every residence on the deck",
+      "Benjamin's camp is unbothered: whatever Camilla does, wherever she goes, they will know",
+      "Myuhan dies in the toilets of room 1014, drained in about ten seconds",
+      "Three of the dolls are shot down and one is reported still inside; the killer's doll then vanishes, too big to have left by the pipes",
+      "The victims are always people without Nen, which makes Kurapika's presence the only shelter the class has",
+      "The envoys threaten to call the army, which would put the queen, the prince and the detail in separate detention"
+    ],
+    "description": "The morning after the night of 01:27, at 10:05, the attack of chapter 373 comes before Cleapatro. Camilla's counsel tells it as self-defence: her militia-borne attacker was Benjamin's man Musse, she saw a weapon on her and fired, then went after him and met two more armed men — Hyurikofu, of Benjamin's militia, and Vorufu, of the first queen's guard. Her side wants Musse surrendered for attempted murder and Benjamin charged with ordering it. His side calls ten rounds on an unarmed prince disproportionate and disowns Musse outright. What the court cannot know is that chapter 373 already showed the truth beneath both accounts: Musse killed Camilla, and the beast that survives her killed him and rebuilt her. The magistrate confines both princes to the VIP zone until Musse is found, leaves their protection details in place but attaches a court supervisor to every outing, and turns the two camps' demands for a search into a search of every residence on Tier 1. Benjamin's camp leaves unworried — detention keeps Camilla out of reach, and Secret Window means they will know what she does anyway. The same day, in room 1014, the killer takes Myuhan: attacked the instant he enters the toilets, screaming once and dry ten seconds later. Kurapika shuts the salon and has Bill hold the bedroom door, and states what the deaths have in common — the killer only takes people with no Nen, so nobody is at risk while he is in the room. The class does not hear a protection; it hears an extermination it was lured into, and demands the Royal Army. That is the one thing his camp cannot afford: with the court already ordering every residence searched, the army would separate Oito and Woble from their detail, and the guards have to be talked into staying for a lesson whose premise they no longer believe."
   },
   {
     "id": "ch-377",
@@ -440,7 +509,7 @@
       },
       {
         "event": "The Cha-R family (Ken'i Wang) tactically allies with the Phantom Troupe",
-        "storyDate": "Day 7",
+        "storyDate": "Day 7 · Saturday",
         "charactersInvolved": ["keni-wang", "chrollo-lucilfer", "nobunaga-hazama"],
         "location": "Tier 5"
       },
@@ -520,7 +589,7 @@
       },
       {
         "event": "Kurapika begins teaching Nen to Queen Oito and training Woble's guards",
-        "storyDate": "Day 2",
+        "storyDate": "Day 2 · Monday",
         "charactersInvolved": ["kurapika", "queen-oito", "prince-woble", "bill"],
         "location": "Tier 2 - Woble's Chamber"
       }
@@ -588,25 +657,25 @@
     "timeline": [
       {
         "event": "Melody plays a three-minute flute solo that holds the banquet",
-        "storyDate": "Day 8 · 20:00",
+        "storyDate": "Day 8 · Sunday · 20:00",
         "charactersInvolved": ["melody", "prince-kacho", "prince-fugetsu"],
         "location": "Tier 1 - Banquet Hall"
       },
       {
         "event": "Kacho and Fugetsu leave the ship by lifeboat",
-        "storyDate": "Day 8 · during the banquet",
+        "storyDate": "Day 8 · Sunday · during the banquet",
         "charactersInvolved": ["prince-kacho", "prince-fugetsu", "keeney"],
         "location": "Black Whale 1 - lifeboat"
       },
       {
         "event": "Hands close around the lifeboat and the twins turn back",
-        "storyDate": "Day 8 · during the banquet",
+        "storyDate": "Day 8 · Sunday · during the banquet",
         "charactersInvolved": ["prince-kacho", "prince-fugetsu"],
         "location": "Black Whale 1 - lifeboat"
       },
       {
         "event": "Kacho dies on the drifting lifeboat and Without You takes her shape",
-        "storyDate": "Day 8 · during the banquet",
+        "storyDate": "Day 8 · Sunday · during the banquet",
         "charactersInvolved": ["prince-kacho", "prince-fugetsu"],
         "location": "Black Whale 1 - lifeboat"
       }
@@ -629,7 +698,7 @@
     "timeline": [
       {
         "event": "Assassination of Momoze (12th Princess) in room 1012",
-        "storyDate": "Day 1 (night)",
+        "storyDate": "Day 1 · Sunday (night)",
         "charactersInvolved": ["prince-momoze", "hanzo", "biscuit-krueger", "luini"],
         "location": "Tier 2 - Room 1012"
       },
@@ -641,7 +710,7 @@
       },
       {
         "event": "Benjamin (1st Prince) imposes Martial Law from room 1001",
-        "storyDate": "Day 2",
+        "storyDate": "Day 2 · Monday",
         "charactersInvolved": ["prince-benjamin", "balsamilco-might", "musse", "rihan"],
         "location": "Tier 1 - Room 1001"
       },
@@ -659,7 +728,7 @@
       },
       {
         "event": "Kacho (10th Princess) and Fugetsu (11th Princess) try to escape with Melody",
-        "storyDate": "Day 8 (night) · banquet",
+        "storyDate": "Day 8 · Sunday (night) · banquet",
         "charactersInvolved": ["prince-kacho", "prince-fugetsu", "melody"],
         "location": "Tier 1 - Banquet dominical"
       },

@@ -101,7 +101,7 @@
     "sequence": 3,
     "title": "Woody is found dead",
     "summary": "Woody dies between 12:15 and 12:30, minutes after the Black Whale leaves port, and is found exsanguinated on the bathroom floor of room 1014. Kurapika reaches the bathroom shortly afterwards with Bill, Kurton, Sayird and two more of the detail.",
-    "occurredAtLabel": "Day 1 · 12:15-12:30",
+    "occurredAtLabel": "Day 1 · Sunday · 12:15-12:30",
     "legacyTitles": [],
     "occursAfterTitle": "Ship Departs",
     "note": "The ship sails at noon and Woody dies between 12:15 and 12:30, so the death belongs to the departure chapter, not to the eve: chapter 358 is before the ship exists as a place, and the on-ship rule in the backfill turns every event under 359 off-ship. Filed at 358 the death was dropped from the ship timeline entirely, and the bathroom-floor spot `localSpotAnchors` reserves for the body could never be reached. `occursAfterTitle` is what keeps it ordered after the departure: the event already held an ordinal from when it sat at 358.2, and curated ordinals are preserved."
@@ -268,7 +268,7 @@
     "title": "The princes send their guards to the first Nen class",
     "summary": "Sixteen guards and servants are sent to room 1014 with orders of their own: Satobi (Luzurus) warns his side that one bodyguard is manipulating everyone, Mushaho (Salé-salé) reads the class as a chance to spy on the other details and open negotiations, Longhi and Maor (Tubeppa) fall back on letters since coded traffic can be intercepted and give themselves two weeks to win Kurapika over, Danjin and Myuhan (Tserriednich) carry a threat to kill them all if they fail to acquire Nen in two weeks, Furykov (Benjamin) is told to catalogue Kurapika's Nen, tics and abilities, Tenftory (Chôrai) is to watch everyone who approaches him and the numbers 1, 4 and 5 above all, Belerainte and Barrigen (Marayam) are to report back in detail, Yuri and Loberry (Kacho) and Ladiolus and Illardia (Fugetsu) come as non-combatant servants sent in place of the bodyguards, and Yuhirai and Shedule (Halkenburg) are to investigate the mark Kurapika spoke of and trade every finding.",
     "legacyTitles": [],
-    "occurredAtLabel": "Day 2 · 09:00",
+    "occurredAtLabel": "Day 2 · Monday · 09:00",
     "occursAfterTitle": "The limits of Emperor Time are spelled out",
     "note": "The princes' orders contradict one another — spy, recruit, learn, kill — which is why the room holds militiamen, soldiers and servants at once rather than one detail per prince."
   },
@@ -279,7 +279,7 @@
     "title": "Kurapika lays down the rules of the Nen class",
     "summary": "Facing the assembled guards in room 1014, Kurapika draws a white line nobody is to cross, warns that he will use force without warning if he judges it necessary and that anyone breaking the rule can be excluded, and promises that in two weeks everyone will have Nen even if some learn more slowly than others.",
     "legacyTitles": [],
-    "occurredAtLabel": "Day 2 · 09:00",
+    "occurredAtLabel": "Day 2 · Monday · 09:00",
     "occursAfterTitle": "The princes send their guards to the first Nen class",
     "note": "Exclusion is the only sanction that bites: given what their princes sent them to do, none of them can afford to be thrown out."
   },
@@ -309,18 +309,30 @@
     "title": "Silent Majority kills Barrigen",
     "summary": "Loberry, the only one who can see the masked doll, points at it and panics; the room sees nobody. The doll attacks on the user's order and four conjured tsuchibokko fasten onto Barrigen — the guards see only something white around his neck and try to tear it off. One doll needs 44 seconds to drain a body, the four together barely 11, and Barrigen is dead before anyone can reach him.",
     "legacyTitles": [],
-    "occurredAtLabel": "Day 2 · 09:00",
+    "occurredAtLabel": "Day 2 · Monday · 09:00",
     "occursAfterTitle": "Kurapika asks who already knows Nen",
     "note": "The murder is committed in front of sixteen witnesses and one Nen teacher, and none of them can see the weapon — that is the point of the ability, and the reason the class turns into an investigation."
   },
   {
-    "chapter": 370,
-    "chapterTitle": "Observation",
-    "sequence": 2,
+    "chapter": 376,
+    "chapterTitle": "Determination",
+    "sequence": 3,
     "title": "Silent Majority kills Myuhan",
-    "summary": "Myuhan is found exsanguinated in a bathroom after the unresolved assassin activates Silent Majority again.",
+    "summary": "The assassin strikes the moment Myuhan steps into the toilets: he screams, and ten seconds later he is dry. A Nen user among the guards puts three of the dolls down and reports that one is still inside. Kurapika seals the scene — the salon door shut with nobody moving, Bill holding the bedroom door until he arrives — and reads the pattern out loud: the killer only takes people without Nen, the attack is unstoppable in a moment of inattention if you have none, and nobody is at risk while he is present. The user has evidently unlocked their own Nen; the doll has vanished where it cannot have gone, being far too big for the pipes.",
     "legacyTitles": [],
-    "occursAfterTitle": "Silent Majority kills Barrigen"
+    "occurredAtLabel": "Day 3 · Tuesday",
+    "note": "Kurapika mentions having had a run-in with Myuhan the day before, which places the murder a day after the first Nen class of chapter 369."
+  },
+  {
+    "chapter": 376,
+    "chapterTitle": "Determination",
+    "sequence": 4,
+    "title": "The class turns on Kurapika and calls for the army",
+    "summary": "The surviving envoys read the deaths as an extermination: they are being picked off one by one and were lured in with the promise of Nen, which several of them now call a fabrication with no proof behind it. One demands the Royal Army be called and says he knows exactly whose side the magistrate will take. Kurapika's camp cannot allow it — with the court already having every residence searched, calling the army would see the queen, the prince and the detail placed in separate detention — so the class has to be talked into continuing, and the lie kept standing rests on the same guards staying in the room.",
+    "legacyTitles": [],
+    "occurredAtLabel": "Day 3 · Tuesday",
+    "occursAfterTitle": "Silent Majority kills Myuhan",
+    "note": "The assassin's leverage is procedural rather than lethal: each killing pushes the class closer to summoning the army, and the army is what would separate Oito and Woble from Kurapika."
   },
   {
     "chapter": 372,
@@ -393,16 +405,18 @@
     "title": "Thirty-seven and a half hours out of port",
     "summary": "A caption over the sea gives the elapsed time since the ship put out: 37 h 30 min. Against the noon departure of chapter 340 that lands at 01:30 on the third day, in the small hours of the night after the first Nen class. The panels around it are quiet: the galley at work, Oito holding Woble in her room, and the Woble camp taking stock — Hanzo's disappearance inside Marayam's quarters is read as a defensive act of the thirteenth prince's Nen beast, keeping a line open to him is called essential, and the results are to be reported back.",
     "legacyTitles": [],
-    "occurredAtLabel": "Day 3 · 01:30"
+    "occurredAtLabel": "Day 3 · Tuesday · 01:30"
   },
   {
     "chapter": 374,
     "chapterTitle": "Ability",
     "sequence": 2,
     "title": "Fugetsu's Magical Worm opens",
-    "summary": "Fugetsu's Guardian Spirit Beast creates a passage connecting her room to Kacho's.",
+    "summary": "Fugetsu wakes in her bed — the clock beside her reads TUESDAY 01:27 AM, the only weekday the arc ever puts on the page — and a door rises out of her wall: the entrance of the Magic Warm ride she and Kacho played on as small children. It opens onto Kacho's room, where her sister is awake with her phone. Her Guardian Spirit Beast turns out to make passages rather than defend her.",
     "legacyTitles": [],
-    "occursAfterTitle": "Thirty-seven and a half hours out of port"
+    "occurredAtLabel": "Day 3 · Tuesday · 01:27",
+    "occursAfterTitle": "Thirty-seven and a half hours out of port",
+    "note": "The clock and the chapter's 37 h 30 min caption agree to within three minutes, which fixes both against the noon departure — and makes the sailing day a Sunday, the weekday the banquet hall's Sunday schedule already assumed."
   },
   {
     "chapter": 375,
@@ -843,9 +857,21 @@
     "chapter": 376,
     "chapterTitle": "Determination",
     "sequence": 1,
-    "title": "Benjamin and Camilla are placed under judicial surveillance",
-    "summary": "Their competing accounts leave both princes confined under Justice supervision while the court investigates the attack.",
-    "legacyTitles": []
+    "title": "The two camps plead before the Supreme Court",
+    "summary": "A caption dates the session: third day, 10:05 in the morning. Camilla's counsel tells it as self-defence — the second prince was attacked by Musse, a militiaman of the first prince, saw a weapon trained on her, felt herself in danger and opened fire; she then went after Musse and ran into Hyurikofu, another of Benjamin's militiamen, and Vorufu, a guard of the first queen. Her side demands that Benjamin and his militia hand Musse over for attempted murder on the second prince, and charges the first prince with having ordered the killing. Benjamin's side objects: ten rounds fired at an unarmed prince is out of all proportion, and they cover Musse in no way whatsoever. Both camps then demand a search of the other's residence.",
+    "legacyTitles": [],
+    "occurredAtLabel": "Day 3 · Tuesday · 10:05",
+    "note": "The court hears the surface version. Chapter 373 has already shown what happened — Musse killed Camilla and her post-mortem beast killed him and rebuilt her — so the self-defence account is true only of the shots she fired after coming back."
+  },
+  {
+    "chapter": 376,
+    "chapterTitle": "Determination",
+    "sequence": 2,
+    "title": "Cleapatro confines both princes and orders every residence searched",
+    "summary": "The magistrate puts Benjamin and Camilla under supervised detention in the VIP zone until Musse is caught. Their protection details stay as they are, but every time either prince leaves the zone a supervisor answering to the court goes with them, and rather than search one residence the magistrate asks the Royal Army to search them all. Benjamin's camp takes the ruling as a nuisance rather than a check: Musse's Mimizuku knows everything, detention puts Camilla out of their reach — but whatever she does and wherever she goes, they will know.",
+    "legacyTitles": ["Benjamin and Camilla are placed under judicial surveillance"],
+    "occurredAtLabel": "Day 3 · Tuesday · 10:05",
+    "occursAfterTitle": "The two camps plead before the Supreme Court"
   },
   {
     "chapter": 379,

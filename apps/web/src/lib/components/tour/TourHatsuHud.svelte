@@ -434,10 +434,12 @@
       })
     }
     const book = world.book
-    if (book.pages.length) rows.push({ label: held.book, value: book.pages.map(pageName).join(', ') })
+    if (book.pages.length)
+      rows.push({ label: held.book, value: book.pages.map(pageName).join(', ') })
     if (book.open) rows.push({ label: held.openPage, value: pageName(book.open) })
     if (book.bookmark) rows.push({ label: held.bookmark, value: pageName(book.bookmark) })
-    if (book.cards.length) rows.push({ label: held.hand, value: book.cards.map(pageName).join(', ') })
+    if (book.cards.length)
+      rows.push({ label: held.hand, value: book.cards.map(pageName).join(', ') })
     for (const id of book.zetsu) rows.push({ label: held.zetsu, value: roomName(id) })
     if (book.loan) rows.push({ label: held.loan, value: pageName(book.loan) })
     if (world.owl) rows.push({ label: held.owl, value: `${world.trail.length}` })
@@ -462,10 +464,14 @@
     const body = world.body
     if (body.enhance) rows.push({ label: held.enhance, value: `${body.enhance} / 6` })
     if (body.riding) {
-      rows.push({ label: held.riding, value: `${body.passengers.map(solidName).join(', ') || '—'}` })
+      rows.push({
+        label: held.riding,
+        value: `${body.passengers.map(solidName).join(', ') || '—'}`,
+      })
     }
     if (body.eyes !== null) rows.push({ label: held.eyes, value: `${body.eyes.toFixed(2)} m` })
-    if (body.projected) rows.push({ label: held.projected, value: roomName(body.projected.spaceId) })
+    if (body.projected)
+      rows.push({ label: held.projected, value: roomName(body.projected.spaceId) })
     if (body.dance) rows.push({ label: held.dance, value: `${body.dance}` })
     if (body.mimic) rows.push({ label: held.mimic, value: solidName(body.mimic) })
     if (body.soothed) rows.push({ label: held.soothed, value: '♪' })
@@ -497,7 +503,10 @@
       })
     }
     if (world.pairing) {
-      rows.push({ label: held.solid, value: $t.tour.hatsu.solids.pairing(solidName(world.pairing)) })
+      rows.push({
+        label: held.solid,
+        value: $t.tour.hatsu.solids.pairing(solidName(world.pairing)),
+      })
     }
     if (world.wound) rows.push({ label: held.wound, value: solidName(world.wound) })
     if (world.windup) rows.push({ label: held.solid, value: held.windup(world.windup) })

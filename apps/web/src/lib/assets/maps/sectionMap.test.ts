@@ -19,9 +19,10 @@ import type { Space, Tier } from '../../tour/types'
  * the only place the reconstruction says what is *above* what.
  *
  * It matters more here than on a deck plan, because the section is the drawing
- * that makes a claim nobody can check by eye: that the ship has thirteen metres
- * of unreconstructed deck between each pair of the five it walks. Get that band
- * wrong and the page quietly asserts a solid ship, or a hollow one.
+ * that makes the claims nobody can check by eye: six unreconstructed decks
+ * between each pair of the five it walks, and a liner of nine more standing over
+ * tier 1. Get those wrong and the page quietly asserts a solid ship, a hollow
+ * one, or a Black Whale of whatever height the drawing found convenient.
  */
 
 const VIEW_W = 1000
@@ -30,11 +31,29 @@ const PAD_X = 44
 const TOP_ROOM = 74
 const SEA_ROOM = 92
 
+// The ship's own deck count, and what a deck of her is worth. Between them they
+// say how tall the liner over tier 1 stands: see the liner's own describe block.
+const SHIP_DECKS = 41
+const SHIP_DECK = 4.5
+const LINER_TOP_SHARE = 1 / 3
+
 const decks = blueprint.tiers.filter((tier) => tier.kind === 'deck')
 const xOf = (polygon: readonly (readonly [number, number])[]) => polygon.map(([x]) => x)
 const X_MIN = Math.min(...decks.flatMap((tier) => xOf(tier.hull)))
 const X_MAX = Math.max(...decks.flatMap((tier) => xOf(tier.hull)))
-const TOP = Math.max(...decks.map((tier) => tier.elevation + tier.ceiling))
+
+const stacked = [...decks].sort((a, b) => a.elevation - b.elevation)
+const BANDED = stacked
+  .slice(0, -1)
+  .reduce(
+    (total, lower, i) =>
+      total +
+      Math.round((stacked[i + 1].elevation - (lower.elevation + lower.ceiling)) / SHIP_DECK),
+    0,
+  )
+const LINER_DECKS = SHIP_DECKS - decks.length - BANDED
+const HELD_TOP = Math.max(...decks.map((tier) => tier.elevation + tier.ceiling))
+const TOP = HELD_TOP + LINER_DECKS * SHIP_DECK
 
 const SCALE = Math.min((VIEW_W - 2 * PAD_X) / (X_MAX - X_MIN), (VIEW_H - TOP_ROOM - SEA_ROOM) / TOP)
 const BASE = VIEW_H - SEA_ROOM
@@ -334,29 +353,50 @@ describe('the decks the reconstruction does not hold', () => {
   })
 
   /**
-   * Tier 1 is a liner — the ch. 369 exterior shows a dozen terraced levels over
-   * the one floor of it anyone has drawn a plan for. Its band therefore runs to
-   * the top edge of the drawing instead of closing at a height: closing it would
-   * be a claim about how tall the liner is, which no page makes.
+   * Tier 1 is a liner — the ch. 369 exterior shows it terraced over the one
+   * floor of it anyone has drawn a plan for — and the drawing stands those
+   * terraces up rather than fading a rectangle out at the top edge.
+   *
+   * How many of them there are is the ship's own arithmetic and is checked here
+   * as arithmetic: 41 decks, seven held, the rest spent in the bands between
+   * the tiers, and what is left over is the liner. Get it wrong in the
+   * generator and the drawing quietly says how tall the Black Whale is on no
+   * authority at all.
    */
-  it('leaves the liner over tier 1 open at the top', () => {
-    const band = source.match(
-      /const superstructure = \{\s*x:\s*(-?[\d.]+),\s*y:\s*(-?[\d.]+),\s*w:\s*(-?[\d.]+),\s*h:\s*(-?[\d.]+),\s*\}/,
-    )
-    expect(band, 'the section draws no superstructure over tier 1').not.toBeNull()
-    const [, x, y, w, h] = band!.map(Number)
+  it('stands the liner over tier 1 up as the decks it is, and no more', () => {
+    const steps = [
+      ...between('const terraces = [', '\n  ]').matchAll(
+        /\{\s*x:\s*(-?[\d.]+),\s*y:\s*(-?[\d.]+),\s*w:\s*(-?[\d.]+),\s*h:\s*(-?[\d.]+),\s*\}/g,
+      ),
+    ].map((m) => ({ x: Number(m[1]), y: Number(m[2]), w: Number(m[3]), h: Number(m[4]) }))
+
+    expect(LINER_DECKS, 'the ship has no decks left over for the liner').toBeGreaterThan(0)
+    expect(steps, 'the section draws no liner over tier 1').toHaveLength(LINER_DECKS)
 
     const top = [...decks].sort((a, b) => b.elevation - a.elevation)[0]
-    expect(y, 'the band stops short of the top edge').toBe(0)
-    expect(y + h, 'the band starts at the top deck’s ceiling').toBeCloseTo(
-      py(top.elevation + top.ceiling),
-      1,
+    const [fore, aft] = hullSpan(top)
+    const middle = (px(fore) + px(aft)) / 2
+
+    steps.forEach((step, i) => {
+      // Stacked on the last deck anyone has drawn, one ship's deck at a time.
+      expect(step.y + step.h, `terrace ${i} floor`).toBeCloseTo(py(HELD_TOP + i * SHIP_DECK), 1)
+      expect(step.h, `terrace ${i} headroom`).toBeCloseTo(SHIP_DECK * SCALE, 1)
+      // Receding evenly, and centred on the deck they stand on: the taper is
+      // the reconstruction's, so it is at least required to be regular.
+      const share = 1 - (1 - LINER_TOP_SHARE) * ((i + 1) / LINER_DECKS)
+      expect(step.w, `terrace ${i} length`).toBeCloseTo((px(aft) - px(fore)) * share, 1)
+      expect(step.x + step.w / 2, `terrace ${i} centre`).toBeCloseTo(middle, 1)
+    })
+
+    // Closed at the count, and inside the frame it is drawn in.
+    expect(steps[steps.length - 1].y, 'the liner runs off the top of the drawing').toBeGreaterThan(
+      0,
     )
-    const xs = xOf(top.hull)
-    expect(x).toBeCloseTo(px(Math.min(...xs)), 1)
-    expect(x + w).toBeCloseTo(px(Math.max(...xs)), 1)
-    // Open means faded out, not cut off.
-    expect(source).toMatch(/mask="url\(#fade-up\)"/)
+    // Hatched like every other deck the reconstruction does not hold.
+    expect(source).toMatch(/<rect class="gap" x=\{terrace\.x\}/)
+    // And it says how many it is, rather than leaving a reader to count steps.
+    expect(source).toMatch(/superstructure\(superstructure\.decks\)/)
+    expect(source).toMatch(new RegExp(`decks: ${LINER_DECKS},`))
   })
 
   it('sits between the decks it separates and never over one', () => {

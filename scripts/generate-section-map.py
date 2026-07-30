@@ -30,9 +30,10 @@ Three things are drawn, and the difference between them is the whole point:
     behind and dim. They are the strips of texture the ch. 349 page is filled
     with, and they are real rooms rather than hatching;
   * the decks the reconstruction does **not** hold — the band between one tier's
-    ceiling and the next tier's floor. The ship has 41 decks and the tour walks
-    five, so roughly thirteen metres of ship sit between each pair of them. That
-    space was always in the elevations; nothing drew it, so nothing said it.
+    ceiling and the next tier's floor, and the terraced liner over tier 1. The
+    ship has 41 decks and this holds seven, so six of them sit in each band and
+    nine stand above the last one anyone has drawn. Nothing is put inside them:
+    the drawing says the space is full and not a word about what fills it.
 
 Scale is isotropic and derived, and the figure is printed when this runs. It
 lands within a millimetre of the deck plans' 0.35 m per unit, which is no
@@ -81,18 +82,39 @@ EYE_R = 5.0
 # vessel, since no terrace runs the full length. Everything above it is ship this
 # reconstruction does not hold.
 #
-# So the band over tier 1 is drawn open at the top rather than closed at a
-# height. A closed band would be a claim about how tall the liner is, and the
-# page gives its shape, not its scale.
+# That band used to be drawn open at the top, on the argument that closing it
+# would claim a height no page gives. The ship's own deck count gives it. The
+# Black Whale has 41 decks; this reconstruction holds seven of them, and the
+# elevations spend the rest in the bands between the tiers — six decks to each
+# of the four, one between the royal deck and the first deck of the liner. What
+# is left over stands above the topmost deck anyone has drawn, and it is the
+# liner: nine decks of it, 4.5 m each.
+#
+# So the liner is drawn as the page draws it — terraces stepping back as they
+# rise — and closed at the count. The number of steps is the ship's own; how far
+# each one steps back is not. Nothing gives the plan of a terrace nobody has
+# drawn, so they recede evenly from the topmost held deck to a top block a third
+# of its length, they carry the same hatch as every other deck the
+# reconstruction does not hold, and the drawing says so in as many words.
+SHIP_DECKS = 41                 # the catalogue's figure for the whole vessel
+SHIP_DECK = 4.5                 # metres: the headroom of the two lowest tiers
+LINER_TOP_SHARE = 1 / 3         # what is left of the base block at the top
 SUPERSTRUCTURE_SOURCE = (
     'Extérieur de nuit, chap. 369 — la superstructure du paquebot du pont 1, '
-    'étagée en gradins au-dessus du pont royal.'
+    'étagée en gradins au-dessus du pont royal ; le nombre de ponts vient des '
+    '41 ponts du navire, leur longueur est celle de la reconstruction.'
 )
 
 KEEL = 0.0
-TOP = max(t['elevation'] + t['ceiling'] for t in DECKS)
 X_MIN = min(x_extent(t['hull'])[0] for t in DECKS)
 X_MAX = max(x_extent(t['hull'])[1] for t in DECKS)
+
+_order = sorted(DECKS, key=lambda t: t['elevation'])
+_banded = sum(round((upper['elevation'] - (lower['elevation'] + lower['ceiling'])) / SHIP_DECK)
+              for lower, upper in zip(_order, _order[1:]))
+LINER_DECKS = SHIP_DECKS - len(DECKS) - _banded
+HELD_TOP = max(t['elevation'] + t['ceiling'] for t in DECKS)
+TOP = HELD_TOP + LINER_DECKS * SHIP_DECK
 
 SCALE = min((VIEW_W - 2 * PAD_X) / (X_MAX - X_MIN), (VIEW_H - TOP_ROOM - SEA_ROOM) / (TOP - KEEL))
 BASE = VIEW_H - SEA_ROOM          # where the keel line lands
@@ -107,18 +129,44 @@ def hull_span(tier):
     return span_along(tier['hull']) or x_extent(tier['hull'])
 
 
+def liner_terraces():
+    """The decks of the liner nobody has drawn, as the steps the page shows.
+
+    One entry per deck, lowest first: `(elevation, fore, aft)` in metres. They
+    stand on the topmost deck the reconstruction holds and recede evenly from
+    its length to a third of it, which is the reconstruction's doing — the count
+    is the ship's, the taper is not.
+    """
+    base_fore, base_aft = hull_span(max(DECKS, key=lambda t: t['elevation']))
+    middle, half = (base_fore + base_aft) / 2, (base_aft - base_fore) / 2
+    out = []
+    for i in range(LINER_DECKS):
+        share = 1 - (1 - LINER_TOP_SHARE) * (i + 1) / LINER_DECKS
+        out.append((HELD_TOP + i * SHIP_DECK, middle - half * share, middle + half * share))
+    return out
+
+
+TERRACES = liner_terraces()
+
+
 def hull_profile():
-    """The whale in profile, sampled at the five decks and straight between them.
+    """The whale in profile, sampled at every deck and straight between them.
 
     The blueprint holds a hull outline per deck and nothing in between, so the
-    profile is the honest thing to draw: five measured widths and a straight run
-    from each to the next. It is not a curve anyone has drawn, and it does not
-    pretend to be one.
+    profile is the honest thing to draw: measured lengths and a straight run from
+    each to the next. It is not a curve anyone has drawn, and it does not pretend
+    to be one. Above the last of them the outline steps up the liner's terraces,
+    which is the one part of this silhouette that is reconstruction rather than
+    relevé — see SUPERSTRUCTURE_SOURCE.
     """
     bow, stern = [], []
     for tier in sorted(DECKS, key=lambda t: t['elevation']):
         fore, aft = hull_span(tier)
         for y in (tier['elevation'], tier['elevation'] + tier['ceiling']):
+            bow.append((px(fore), py(y)))
+            stern.append((px(aft), py(y)))
+    for elevation, fore, aft in TERRACES:
+        for y in (elevation, elevation + SHIP_DECK):
             bow.append((px(fore), py(y)))
             stern.append((px(aft), py(y)))
     return bow + stern[::-1]
@@ -185,13 +233,21 @@ for lower, upper in zip(order, order[1:]):
         'metres': round(upper['elevation'] - top_of_lower, 1),
     })
 
-# The liner over the topmost deck, open at the top: see SUPERSTRUCTURE_SOURCE.
-top_deck = max(DECKS, key=lambda t: t['elevation'])
-s_fore, s_aft = hull_span(top_deck)
+# The liner over the topmost deck, terraced and closed at the ship's own deck
+# count: see SUPERSTRUCTURE_SOURCE.
+terraces = [{
+    'x': px(fore), 'y': py(elevation + SHIP_DECK),
+    'w': round(px(aft) - px(fore), 2),
+    'h': round(py(elevation) - py(elevation + SHIP_DECK), 2),
+} for elevation, fore, aft in TERRACES]
+
+# Where the note about them sits: over the top step, centred on the widest one.
+# A step is 4.5 m and about ten units tall here, which is no room for a caption.
 superstructure = {
-    'x': px(s_fore), 'y': 0.0,
-    'w': round(px(s_aft) - px(s_fore), 2),
-    'h': py(top_deck['elevation'] + top_deck['ceiling']),
+    'x': terraces[0]['x'], 'y': terraces[-1]['y'],
+    'w': terraces[0]['w'],
+    'h': round(sum(t['h'] for t in terraces), 2),
+    'decks': LINER_DECKS,
 }
 
 
@@ -216,6 +272,7 @@ ROOM_FIELDS = [('id', 's'), ('tier', 's'), ('region', 'n?'), ('x', 'n'), ('y', '
 DECK_FIELDS = [('id', 's'), ('name', 's'), ('nameFr', 's'), ('child', 'b'), ('x0', 'n'), ('x1', 'n'),
                ('floor', 'n'), ('ceiling', 'n'), ('elevation', 'n')]
 GAP_FIELDS = [('id', 's'), ('x', 'n'), ('y', 'n'), ('w', 'n'), ('h', 'n'), ('metres', 'n')]
+TERRACE_FIELDS = [('x', 'n'), ('y', 'n'), ('w', 'n'), ('h', 'n')]
 
 hull = ' '.join(f'{x},{y}' for x, y in hull_profile())
 
@@ -293,15 +350,26 @@ src = f'''<script lang="ts">
   ]
 
   /**
-   * The liner over tier 1, open at the top edge of the drawing rather than
-   * closed at a height. It is the only band here that says how far up the ship
-   * goes by refusing to say it.
+   * The liner over tier 1: the decks of it the reconstruction does not hold,
+   * stepping back as they rise the way the ch. 369 exterior shows them.
+   *
+   * How many there are is the ship's own arithmetic — 41 decks, seven held,
+   * the rest spent in the bands between the tiers, and what is left over stands
+   * up here. How far each one steps back is not: nothing draws the plan of a
+   * terrace, so they recede evenly to a third of the deck below them and carry
+   * the same hatch as every other deck nobody has drawn.
    */
+  const terraces = [
+{ts(terraces, TERRACE_FIELDS)},
+  ]
+
+  /** Where the note about the liner sits: on its widest, lowest step. */
   const superstructure = {{
     x: {superstructure['x']},
     y: {superstructure['y']},
     w: {superstructure['w']},
     h: {superstructure['h']},
+    decks: {superstructure['decks']},
   }}
 
   const waterline = {py(WATERLINE)}
@@ -423,15 +491,6 @@ src = f'''<script lang="ts">
         stroke-dasharray: 8 6;
       }}
     </style>
-    <!-- The liner fades out toward the top edge rather than stopping at a line:
-         the drawing does not know how tall it is, and says so. -->
-    <linearGradient id="open-top" x1="0" y1="1" x2="0" y2="0">
-      <stop offset="0" stop-color="#fff" stop-opacity="1" />
-      <stop offset="1" stop-color="#fff" stop-opacity="0" />
-    </linearGradient>
-    <mask id="fade-up">
-      <rect x="{superstructure['x']}" y="{superstructure['y']}" width="{superstructure['w']}" height="{superstructure['h']}" fill="url(#open-top)" />
-    </mask>
     <pattern id="unbuilt" width="6" height="6" patternTransform="rotate(45)" patternUnits="userSpaceOnUse">
       <rect width="6" height="6" fill="#140d0d" />
       <line x1="0" y1="0" x2="0" y2="6" stroke="#ffd700" stroke-opacity="0.13" stroke-width="1.5" />
@@ -442,14 +501,9 @@ src = f'''<script lang="ts">
 
   <polygon class="hull" points="{hull}" />
 
-  <rect
-    class="gap"
-    mask="url(#fade-up)"
-    x={{superstructure.x}}
-    y={{superstructure.y}}
-    width={{superstructure.w}}
-    height={{superstructure.h}}
-  />
+  {{#each terraces as terrace, i (i)}}
+    <rect class="gap" x={{terrace.x}} y={{terrace.y}} width={{terrace.w}} height={{terrace.h}} />
+  {{/each}}
 
   {{#each gaps as gap (gap.id)}}
     <rect class="gap" x={{gap.x}} y={{gap.y}} width={{gap.w}} height={{gap.h}} />
@@ -535,8 +589,8 @@ src = f'''<script lang="ts">
   <text
     class="note"
     x={{superstructure.x + superstructure.w / 2}}
-    y={{superstructure.y + superstructure.h - 12}}
-    text-anchor="middle">{{$t.ship.superstructure}}</text
+    y={{superstructure.y - 8}}
+    text-anchor="middle">{{$t.ship.superstructure(superstructure.decks)}}</text
   >
 </svg>
 '''

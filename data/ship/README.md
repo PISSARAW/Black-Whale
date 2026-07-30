@@ -103,14 +103,17 @@ cinq tiers s'empilent, jamais de combien. Le compte se pose une fois :
 
 - la reconstruction tient **7 planchers** : les cinq tiers, plus les deux ponts
   du paquebot (`tier-1-b`, `tier-1-c`) ;
-- **10 restent au-dessus** du dernier, dans la superstructure que le chap. 369
-  montre étagée d'une douzaine de niveaux et dont on tient trois ;
 - **24 se répartissent dans les quatre bandes** entre les tiers, soit **six
-  ponts par bande**.
+  ponts par bande**, et **un** s'intercale entre le pont royal et le premier
+  pont du paquebot ;
+- **9 restent au-dessus** du dernier, et ce sont les gradins du paquebot que le
+  chap. 369 dessine — la douzaine de niveaux de son bloc le plus haut, moins les
+  trois que la reconstruction tient.
 
 Un pont du navire vaut **4,5 m**, la hauteur sous plafond des deux ponts bas du
 blueprint. Six ponts font donc **27 m** entre le plafond d'un tier et le
-plancher du suivant, et la coque monte à **144 m** pour 318 m de long.
+plancher du suivant, la coque tenue monte à **144 m**, et le paquebot la porte à
+**184,6 m** pour 318 m de long.
 
 Le pas de 18 m que ce dossier a longtemps porté ne tenait pas ce compte : il
 laissait 12 à 13 m entre deux tiers, c'est-à-dire trois ponts là où il en fallait
@@ -226,10 +229,22 @@ vertical entre eux. Deux choses la contredisent déjà de l'intérieur : la
 chambre funéraire dépasse de 13,6 m la coque de son propre pont, par le travers,
 et quatre pièces y réclament 7 à 9 m de plafond sur un pont qui en annonce 5.
 
-La coupe dit donc ce qu'elle sait et pas plus : la bande au-dessus du dernier
-pont du paquebot est **ouverte en haut**, dégradée jusqu'au bord du dessin. La
-fermer à une hauteur serait affirmer la taille du paquebot, et la page en donne
-la forme, pas l'échelle.
+La coupe a longtemps laissé cette bande **ouverte en haut**, dégradée jusqu'au
+bord du dessin : la fermer à une hauteur, disait-elle, serait affirmer la taille
+du paquebot, et la page en donne la forme et pas l'échelle. Le compte des 41
+ponts la donne. Sept ponts tenus, vingt-cinq dans les bandes entre les tiers, il
+en reste **neuf**, et ils ne peuvent être ailleurs qu'au-dessus du dernier pont
+dessiné : c'est le paquebot. À 4,5 m le pont, il monte de 40,5 m au-dessus du
+pont des hôtes.
+
+La coupe les dresse donc **en gradins**, comme le chap. 369 les montre, et se
+ferme sur ce compte. Ce qui est dérivé et ce qui ne l'est pas se sépare
+proprement, et le dessin le dit en toutes lettres : **le nombre de marches est
+celui du navire, leur longueur est celle de la reconstruction.** Aucune page ne
+donne le plan d'un gradin, donc ils se retirent régulièrement de la longueur du
+pont des hôtes jusqu'au tiers de celle-ci, et ils portent la même trame que
+toutes les autres bandes non reconstruites — un lecteur voit un paquebot, et il
+voit qu'on n'y est pas entré.
 
 ### Les ponts du paquebot
 

@@ -1348,7 +1348,7 @@ export const en = {
      * liner and the reconstruction holds one floor of it, so the label has to
      * say the ship goes on rather than let the drawing stop.
      */
-    superstructure: 'Liner superstructure — decks not reconstructed',
+    superstructure: (decks: number) => `Liner superstructure — ${decks} decks not reconstructed`,
     tierSummaries: [
       'Royalty & VVIP',
       'VIP & amenities',

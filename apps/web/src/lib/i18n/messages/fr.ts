@@ -1261,7 +1261,8 @@ export const fr: Messages = {
     shipStructure: 'Coupe longitudinale',
     tierLabel: (tier) => `Pont ${tier}`,
     unmodelledDecks: (metres) => `${metres} m de ponts non reconstruits`,
-    superstructure: 'Superstructure du paquebot — ponts non reconstruits',
+    superstructure: (decks: number) =>
+      `Superstructure du paquebot — ${decks} ponts non reconstruits`,
     tierSummaries: [
       'Famille royale et VVIP',
       'VIP et services',

@@ -4,6 +4,7 @@ import {
   blueprint,
   buildShip,
   ceilingOf,
+  floorOf,
   spaceAt,
   spaceForLocation,
   spawnFacing,
@@ -610,6 +611,55 @@ describe('what stands in the rooms', () => {
     // Hung clear of the head, it is a canopy over the door rather than a wall
     // across it — the same exemption the mezzanine over the casino shops has.
     expect(validateBlueprint(sandbox([solid({ base: 2.4, height: 0.6 })]))).toEqual([])
+  })
+
+  // ── The levels within a level ────────────────────────────────────────────
+  //
+  // A deck is one plane wherever nothing says otherwise, and that is almost
+  // everywhere. These are the two exceptions the panels force: a floor drawn at
+  // two heights, and a ceiling drawn open over the middle of a room.
+
+  const levelled = (floor: number, lantern?: Space['lantern']) => {
+    const source = sandbox([])
+    source.spaces[1].floor = floor
+    if (lantern) source.spaces[0].lantern = lantern
+    return validateBlueprint(source)
+  }
+
+  it('takes a step between two floors, and refuses a climb', () => {
+    expect(levelled(-0.6)).toEqual([])
+    // Past a stride it is a fall dressed as a door: that is what a stair is for.
+    expect(levelled(-1.2)).toContain('doorway west | east: 1.2 m is a climb, not a step')
+  })
+
+  it('refuses a floor a storey off the deck rather than a step', () => {
+    expect(levelled(-4)).toContain('space east: a floor -4 m off the deck is a storey, not a step')
+  })
+
+  it('hangs a lantern inside the room it is cut out of, and nowhere else', () => {
+    expect(levelled(0, { at: [-5, 0], size: [4, 4], rise: 1 })).toEqual([])
+    expect(levelled(0, { at: [-5, 0], size: [4, 4], rise: 0 })).toContain(
+      'space west: a lantern rising 0 m is a flat ceiling',
+    )
+    expect(levelled(0, { at: [-9, 0], size: [6, 4], rise: 1 })).toContain(
+      'space west: its lantern hangs outside the room',
+    )
+  })
+
+  it('holds the two rooms the ship actually draws them in', () => {
+    const end = ship.spaces.get('tier-1-banquet-hall-service-end')!
+    const tier = ship.tiers.find((candidate) => candidate.id === end.tierId)!
+    // The buffet end is a step down, and its ceiling is raised by as much so the
+    // ceiling runs level over both halves — which is what the panel draws.
+    expect(end.floor).toBeLessThan(0)
+    expect(floorOf(end, tier) + ceilingOf(end, tier)).toBeCloseTo(
+      floorOf(ship.spaces.get('tier-1-banquet-hall')!, tier) +
+        ceilingOf(ship.spaces.get('tier-1-banquet-hall')!, tier),
+      5,
+    )
+
+    const atrium = ship.spaces.get('tier-3-central-police-station-atrium')!
+    expect(atrium.lantern?.rise).toBeGreaterThan(0)
   })
 
   it('hangs a painting off the floor, and refuses one hung through the ceiling', () => {

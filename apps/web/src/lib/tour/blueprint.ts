@@ -19,6 +19,8 @@ import {
   interiorPoint,
   longestSharedWall,
   MIN_DOOR_WIDTH,
+  STEP_UP,
+  lanternRect,
   sealKey,
   polygonArea,
   polygonContains,
@@ -101,6 +103,19 @@ export interface Ship {
 /** The height of a space, falling back to its tier's default. */
 export function ceilingOf(space: Space, tier: Tier): number {
   return space.ceiling ?? tier.ceiling
+}
+
+/**
+ * Where the floor of a space actually is, in world metres.
+ *
+ * A deck is one plane wherever nothing says otherwise, so this is the tier's
+ * elevation for all but a handful of rooms. Where a panel draws a room in two
+ * levels, the lower one carries the step in `floor` and everything that reads a
+ * floor — the geometry, the light, the visitor's own eyes — reads it from here
+ * rather than from the deck.
+ */
+export function floorOf(space: Space, tier: Tier): number {
+  return tier.elevation + (space.floor ?? 0)
 }
 
 export function buildShip(source: Blueprint = blueprint): Ship {
@@ -499,6 +514,28 @@ export function validateBlueprint(source: Blueprint = blueprint): string[] {
     if (!space.source.trim()) issues.push(`space ${space.id}: missing source`)
     if (!space.sourceFr.trim()) issues.push(`space ${space.id}: missing French source`)
     if (!space.nameFr.trim()) issues.push(`space ${space.id}: missing French name`)
+
+    // A step is a step. A floor the visitor would have to climb to reach is a
+    // storey, and a storey is a link with a stair on it.
+    if (space.floor !== undefined && Math.abs(space.floor) > 3) {
+      issues.push(
+        `space ${space.id}: a floor ${space.floor} m off the deck is a storey, not a step`,
+      )
+    }
+
+    if (space.lantern) {
+      if (space.lantern.rise <= 0) {
+        issues.push(`space ${space.id}: a lantern rising ${space.lantern.rise} m is a flat ceiling`)
+      }
+      // The ceiling is cut into a border and a panel, which wants the room to be
+      // the rectangle a lantern is drawn in.
+      if (space.footprint.length !== 4) {
+        issues.push(`space ${space.id}: a lantern needs a rectangular ceiling to be cut out of`)
+      }
+      if (!lanternRect(space.lantern).every((corner) => pointInPolygon(corner, space.footprint))) {
+        issues.push(`space ${space.id}: its lantern hangs outside the room`)
+      }
+    }
   }
 
   // No two spaces on a deck may share floor: an overlap means the visitor can
@@ -681,6 +718,20 @@ export function validateBlueprint(source: Blueprint = blueprint): string[] {
       }
     }
   }
+  // Two floors at different heights may share a doorway, so long as the
+  // difference is one the visitor takes in stride. Past that it is a fall
+  // dressed as a door.
+  for (const plan of ship.plans.values()) {
+    for (const doorway of plan.doorways) {
+      const a = ship.spaces.get(doorway.a)!
+      const b = ship.spaces.get(doorway.b)!
+      const rise = Math.abs((a.floor ?? 0) - (b.floor ?? 0))
+      if (rise > STEP_UP + EPSILON) {
+        issues.push(`doorway ${doorway.a} | ${doorway.b}: ${rise} m is a climb, not a step`)
+      }
+    }
+  }
+
   const start = source.spaces[0]
   if (start) {
     const reached = new Set<string>([start.id])

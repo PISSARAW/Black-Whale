@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { buildShip, ceilingOf } from './blueprint'
+import { buildShip, ceilingOf, floorOf } from './blueprint'
 import {
   COLUMN_HALF_WIDTH,
   DOOR_HEIGHT,
@@ -115,17 +115,25 @@ describe('buildTierMesh', () => {
     }
   })
 
-  it('keeps every vertex between the deck floor and its tallest ceiling', () => {
+  it('keeps every vertex between the lowest floor and the tallest ceiling', () => {
     for (const [tierId, plan] of ship.plans) {
       const mesh = buildTierMesh(plan)
-      const tallest = Math.max(...plan.spaces.map((space) => ceilingOf(space, plan.tier)))
+      // Not the deck's own plane any more: a room a panel draws a step into
+      // sits below it, and a lantern lifts a panel of ceiling above the rest.
+      const lowest = Math.min(...plan.spaces.map((space) => floorOf(space, plan.tier)))
+      const tallest = Math.max(
+        ...plan.spaces.map(
+          (space) =>
+            floorOf(space, plan.tier) + ceilingOf(space, plan.tier) + (space.lantern?.rise ?? 0),
+        ),
+      )
 
       let below = 0
       let above = 0
       for (let i = 1; i < mesh.positions.length; i += 3) {
         const y = mesh.positions[i]
-        if (y < plan.tier.elevation - 0.001) below++
-        if (y > plan.tier.elevation + tallest + 0.001) above++
+        if (y < lowest - 0.001) below++
+        if (y > tallest + 0.001) above++
       }
       expect(below, `${tierId} has geometry below its floor`).toBe(0)
       expect(above, `${tierId} has geometry above its ceiling`).toBe(0)
@@ -600,11 +608,51 @@ describe('the deck plating', () => {
     const plan = ship.plans.get('tier-1')!
     const mesh = buildTierMesh(plan)
     expect(mesh.seams.length).toBeGreaterThan(0)
-    // Six floats to a segment, and every one of them at the deck.
+    // Six floats to a segment, and every one of them on the floor of the room
+    // it is clipped to — the deck itself for all but the rooms drawn with a step.
     expect(mesh.seams.length % 6).toBe(0)
+    const floors = new Set(
+      plan.spaces.map((space) => Number((floorOf(space, plan.tier) + 0.03).toFixed(5))),
+    )
     for (let i = 1; i < mesh.seams.length; i += 3) {
-      expect(mesh.seams[i]).toBeCloseTo(plan.tier.elevation + 0.03, 5)
+      expect(floors.has(Number(mesh.seams[i].toFixed(5)))).toBe(true)
     }
+  })
+
+  it('cuts a lantern out of the ceiling and lifts its panel clear', () => {
+    const plan = ship.plans.get('interior-police-station')!
+    const atrium = plan.spaces.find((space) => space.lantern)!
+    const mesh = buildTierMesh(plan)
+    const top = floorOf(atrium, plan.tier) + ceilingOf(atrium, plan.tier)
+    const group = mesh.groups.find((entry) => entry.spaceId === atrium.id)!
+
+    let border = 0
+    let panel = 0
+    for (let i = group.start * 3; i < (group.start + group.count) * 3; i += 3) {
+      const y = mesh.positions[i + 1]
+      if (Math.abs(y - top) < 0.001) border++
+      if (Math.abs(y - top - atrium.lantern!.rise) < 0.001) panel++
+    }
+    // Both, or it is not a lantern: a ceiling with nothing lifted out of it, or
+    // a panel floating over a ceiling that was never cut.
+    expect(border).toBeGreaterThan(0)
+    expect(panel).toBeGreaterThan(0)
+  })
+
+  it('draws the riser where one room steps down to the next', () => {
+    const plan = ship.plans.get('tier-1')!
+    const end = plan.spaces.find((space) => space.id === 'tier-1-banquet-hall-service-end')!
+    const mesh = buildTierMesh(plan)
+    const lower = floorOf(end, plan.tier)
+    const hall = mesh.groups.find((entry) => entry.spaceId === 'tier-1-banquet-hall')!
+
+    // The step is drawn from the higher side, so the hall itself carries the
+    // geometry that reaches down to the floor of the room below it.
+    let reaches = 0
+    for (let i = hall.start * 3; i < (hall.start + hall.count) * 3; i += 3) {
+      if (Math.abs(mesh.positions[i + 1] - lower) < 0.001) reaches++
+    }
+    expect(reaches).toBeGreaterThan(0)
   })
 
   it('cuts the plating into the same rooms as the geometry', () => {
@@ -659,7 +707,7 @@ describe('the depth of a doorway', () => {
         ).toBeGreaterThanOrEqual(2)
       }
     }
-    expect(doors).toBe(466)
+    expect(doors).toBe(469)
     expect(cheeks).toBe(doors * 2)
   })
 
@@ -842,12 +890,13 @@ describe('the ceiling fittings', () => {
       const mesh = buildTierMesh(plan)
       for (const group of mesh.groups) {
         const space = plan.spaces.find((entry) => entry.id === group.spaceId)!
-        const top = plan.tier.elevation + ceilingOf(space, plan.tier)
-        const hang = fittingHeight(plan.tier.elevation, top)
+        const base = floorOf(space, plan.tier)
+        const top = base + ceilingOf(space, plan.tier)
+        const hang = fittingHeight(base, top)
         // Below the ceiling — a quad coplanar with it would fight for the depth
         // buffer — and above the head of anyone walking under it.
         expect(hang).toBeLessThan(top)
-        expect(hang).toBeGreaterThanOrEqual(plan.tier.elevation + 2)
+        expect(hang).toBeGreaterThanOrEqual(base + 2)
 
         const from = group.fittingStart * 3
         const to = (group.fittingStart + group.fittingCount) * 3
@@ -992,7 +1041,7 @@ describe('the two windows', () => {
   }
 
   it('types two of them on the whole ship, and both are drawn by a panel', () => {
-    // The figure is the point of the feature: 386 spaces, 2 ways of seeing out.
+    // The figure is the point of the feature: 387 spaces, 2 ways of seeing out.
     expect(windows.map((entry) => entry.id).sort()).toEqual([
       'tier-1-king-living-quarters-living-great-window',
       'tier-3-observation-deck-window',
@@ -1003,7 +1052,7 @@ describe('the two windows', () => {
       expect(entry.base).toBeGreaterThan(0)
       expect(entry.height).toBeGreaterThan(2)
     }
-    expect(ship.spaces.size).toBe(386)
+    expect(ship.spaces.size).toBe(387)
   })
 
   it('samples the pane along its length, at the height of the glass', () => {

@@ -13,7 +13,14 @@
    */
   import { onMount, untrack } from 'svelte'
   import type { Ship, TierPlan } from '$lib/tour/blueprint'
-  import { ceilingOf, entrySpace, spaceAt, spawnFacing, spawnPoint } from '$lib/tour/blueprint'
+  import {
+    ceilingOf,
+    entrySpace,
+    floorOf,
+    spaceAt,
+    spawnFacing,
+    spawnPoint,
+  } from '$lib/tour/blueprint'
   import {
     EMPTY_WORLD,
     aimedSolid,
@@ -698,6 +705,8 @@
 
       /** State the render loop owns; Svelte state is only mirrored out of it. */
       let pointer: Vec2 = [0, 0]
+      /** The floor the visitor is standing on, eased between rooms at a step. */
+      let ground = 0
       let yaw = 0
       let pitch = 0
       let currentTierId = ''
@@ -749,7 +758,8 @@
           yaw = spawnFacing(entry, pointer)
           pitch = 0
         }
-        camera.position.set(pointer[0], plan.tier.elevation + EYE_HEIGHT, pointer[1])
+        ground = floorOf(spaceAt(plan, pointer) ?? entry, plan.tier)
+        camera.position.set(pointer[0], ground + EYE_HEIGHT, pointer[1])
         report()
         // How much of the machinery reaches this elevation. An interior carries
         // the elevation of the deck it is inside, so walking into a prince's
@@ -769,7 +779,8 @@
         else {
           pointer = at
           const plan = ship.plans.get(currentTierId)!
-          camera.position.set(at[0], plan.tier.elevation + EYE_HEIGHT, at[1])
+          ground = floorOf(space, plan.tier)
+          camera.position.set(at[0], ground + EYE_HEIGHT, at[1])
           report()
         }
         tierId = space.tierId
@@ -822,8 +833,8 @@
           const space = ship.spaces.get(id)
           const tier = space ? ship.tiers.find((candidate) => candidate.id === space.tierId) : null
           if (!space || !tier) continue
-          const floor = tier.elevation + 0.05
-          const top = tier.elevation + ceilingOf(space, tier) - 0.05
+          const floor = floorOf(space, tier) + 0.05
+          const top = floorOf(space, tier) + ceilingOf(space, tier) - 0.05
           const corners = space.footprint
           for (let i = 0; i < corners.length; i++) {
             const a = corners[i]
@@ -1432,7 +1443,19 @@
          * makes people ill, and `$lib/tour/comfort` is where that is argued.
          */
         const bob = bobOf(travelledOnFoot, gaitAmplitude * (running ? 1.5 : 1))
-        const eye = plan.tier.elevation + eyesOf(world.body, EYE_HEIGHT) + bob.rise
+        /**
+         * The floor under the visitor, eased onto rather than snapped to.
+         *
+         * Almost every room on the ship is the deck itself, so this is a constant
+         * for all but a handful of steps. Where a panel does draw one — the
+         * service end of the banquet hall — a hard cut of half a metre reads as
+         * the view jumping, which is the one thing `$lib/tour/comfort` exists to
+         * refuse. Ten per cent of the remaining rise per frame at 60 Hz settles
+         * it in about a fifth of a second: the length of a stride onto a step.
+         */
+        const groundTarget = floorOf(standing ?? entrySpace(plan), plan.tier)
+        ground += (groundTarget - ground) * Math.min(1, delta * 6)
+        const eye = ground + eyesOf(world.body, EYE_HEIGHT) + bob.rise
         camera.position.set(pointer[0], eye, pointer[1])
         camera.rotation.set(0, 0, 0)
         camera.rotateY(yaw)

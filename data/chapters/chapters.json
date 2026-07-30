@@ -279,6 +279,39 @@
     "description": "Oito's Little Eye reaches room 1012 in time to watch Momoze suffocate and too late to stop it. The six guards on her door are detained, though Hanzo and Biscuit read the killing as the work of an off-duty guard operating a copy of himself. Kurapika, who has held Emperor Time for nearly three hours and paid some 450 days of his life for it, collapses after setting the first Nen lesson for the next day."
   },
   {
+    "id": "ch-369",
+    "number": 369,
+    "publicationOrder": 369,
+    "title": "Limits",
+    "timeline": [
+      {
+        "event": "Eighteen hours have passed since the departure horn",
+        "storyDate": "Day 2 · 06:00",
+        "charactersInvolved": [],
+        "location": "Black Whale - open sea"
+      },
+      {
+        "event": "Silent Majority possesses Loberry during Kurapika's first Nen class",
+        "storyDate": "Day 2 · morning",
+        "charactersInvolved": ["loberry", "kurapika"],
+        "location": "Tier 1 - Royal Residential Sector"
+      },
+      {
+        "event": "Silent Majority kills Barrigen",
+        "storyDate": "Day 2 · morning",
+        "charactersInvolved": ["barrigen", "loberry", "kurapika"],
+        "location": "Tier 1 - Royal Residential Sector"
+      }
+    ],
+    "location": "Tier 1 - Royal Residential Sector",
+    "keyEvents": [
+      "The chapter opens on the ship at sea, eighteen hours out of Kakin — the second day",
+      "Loberry is the only witness to the masked doll watching the Nen class",
+      "Barrigen is exsanguinated by four conjured snakes"
+    ],
+    "description": "The opening panel puts the Black Whale alone on the water and dates it: second day, eighteen hours since departure — which sets the first Nen class, and Barrigen's death during it, on the morning of Day 2 given the noon departure of chapter 340."
+  },
+  {
     "id": "ch-377",
     "number": 377,
     "publicationOrder": 377,

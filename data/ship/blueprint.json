@@ -980,11 +980,31 @@
       "envelope": null,
       "footprint": [
         [-87.5, -28],
-        [70, -28],
-        [70, -3.5],
+        [46, -28],
+        [46, -3.5],
         [-87.5, -3.5]
       ],
       "sourceFr": "Chap. 349 — cérémonie de départ"
+    },
+    {
+      "id": "tier-1-banquet-hall-service-end",
+      "tierId": "tier-1",
+      "locationId": "tier-1-banquet-hall",
+      "name": "Banquet Hall (service end)",
+      "nameFr": "Salle du banquet (bout du service)",
+      "category": "public",
+      "provenance": "panel",
+      "source": "Ch. 383 — the end of the hall the buffet is laid in, a step down from the floor the tables stand on, with the ceiling running level over both.",
+      "ceiling": 9.6,
+      "envelope": null,
+      "floor": -0.6,
+      "footprint": [
+        [46, -28],
+        [70, -28],
+        [70, -3.5],
+        [46, -3.5]
+      ],
+      "sourceFr": "Chap. 383 — le bout de la halle où le buffet est dressé, une marche en contrebas du sol où se tiennent les tables, le plafond filant de niveau au-dessus des deux."
     },
     {
       "id": "tier-1-vvip-corridor",
@@ -7844,7 +7864,7 @@
       "nameFr": "Atrium principal",
       "category": "administrative",
       "provenance": "panel",
-      "source": "The double-page panel of the police-station atrium: four levels of gallery down each side wall, the colonnade standing under them, the tiered fountain on the floor and the entrance front at the far end, its doors under a marquee between two hanging signs.",
+      "source": "The double-page panel of the police-station atrium: four levels of gallery down each side wall, the colonnade standing under them, the tiered fountain on the floor and the entrance front at the far end, its doors under a marquee between two hanging signs, and the lantern raised over the middle of the ceiling.",
       "ceiling": 16,
       "envelope": null,
       "footprint": [
@@ -7853,7 +7873,12 @@
         [11, 5],
         [-11, 5]
       ],
-      "sourceFr": "La double page de l'atrium du poste de police : quatre niveaux de galerie le long de chaque mur latéral, la colonnade qui se dresse dessous, la fontaine à gradins au sol et la façade d'entrée au fond, ses portes sous une marquise entre deux enseignes suspendues."
+      "lantern": {
+        "at": [0, -2.5],
+        "size": [12, 8],
+        "rise": 2.5
+      },
+      "sourceFr": "La double page de l'atrium du poste de police : quatre niveaux de galerie le long de chaque mur latéral, la colonnade qui se dresse dessous, la fontaine à gradins au sol et la façade d'entrée au fond, ses portes sous une marquise entre deux enseignes suspendues, et le lanternon soulevé au milieu du plafond."
     },
     {
       "id": "tier-3-central-police-station-entrance",
@@ -10753,6 +10778,14 @@
       "width": 1.2,
       "reason": "Each cabin opens on the corridor, as the panel draws its doors, and nowhere else.",
       "reasonFr": "Chaque cabine ouvre sur la coursive, comme la planche en dessine les portes, et nulle part ailleurs."
+    },
+    {
+      "a": "tier-1-banquet-hall",
+      "b": "tier-1-banquet-hall-service-end",
+      "at": [46, -15.75],
+      "width": 24.5,
+      "reason": "The floor steps down here and no wall is drawn: the opening is the full depth of the hall, and what is at it is the step itself.",
+      "reasonFr": "Le sol descend d'une marche ici et aucun mur n'y est dessiné : l'ouverture fait toute la profondeur de la halle, et ce qui s'y tient est la marche elle-même."
     }
   ],
   "structures": [
@@ -10886,7 +10919,7 @@
     },
     {
       "id": "tier-1-banquet-hall-buffet-01",
-      "spaceId": "tier-1-banquet-hall",
+      "spaceId": "tier-1-banquet-hall-service-end",
       "kind": "counter",
       "name": "Buffet Counter 1",
       "nameFr": "Comptoir de buffet 1",
@@ -10902,7 +10935,7 @@
     },
     {
       "id": "tier-1-banquet-hall-buffet-02",
-      "spaceId": "tier-1-banquet-hall",
+      "spaceId": "tier-1-banquet-hall-service-end",
       "kind": "counter",
       "name": "Buffet Counter 2",
       "nameFr": "Comptoir de buffet 2",
@@ -17825,8 +17858,8 @@
       "height": 0.9,
       "sides": 8,
       "provenance": "panel",
-      "source": "The double-page panel of the police-station atrium: four levels of gallery down each side wall, the colonnade standing under them, the tiered fountain on the floor and the entrance front at the far end, its doors under a marquee between two hanging signs.",
-      "sourceFr": "La double page de l'atrium du poste de police : quatre niveaux de galerie le long de chaque mur latéral, la colonnade qui se dresse dessous, la fontaine à gradins au sol et la façade d'entrée au fond, ses portes sous une marquise entre deux enseignes suspendues."
+      "source": "The double-page panel of the police-station atrium: four levels of gallery down each side wall, the colonnade standing under them, the tiered fountain on the floor and the entrance front at the far end, its doors under a marquee between two hanging signs, and the lantern raised over the middle of the ceiling.",
+      "sourceFr": "La double page de l'atrium du poste de police : quatre niveaux de galerie le long de chaque mur latéral, la colonnade qui se dresse dessous, la fontaine à gradins au sol et la façade d'entrée au fond, ses portes sous une marquise entre deux enseignes suspendues, et le lanternon soulevé au milieu du plafond."
     },
     {
       "id": "tier-3-central-police-station-front-desk",
@@ -21681,8 +21714,8 @@
       "height": 0.4,
       "sides": null,
       "provenance": "panel",
-      "source": "The double-page panel of the police-station atrium: four levels of gallery down each side wall, the colonnade standing under them, the tiered fountain on the floor and the entrance front at the far end, its doors under a marquee between two hanging signs.",
-      "sourceFr": "La double page de l'atrium du poste de police : quatre niveaux de galerie le long de chaque mur latéral, la colonnade qui se dresse dessous, la fontaine à gradins au sol et la façade d'entrée au fond, ses portes sous une marquise entre deux enseignes suspendues."
+      "source": "The double-page panel of the police-station atrium: four levels of gallery down each side wall, the colonnade standing under them, the tiered fountain on the floor and the entrance front at the far end, its doors under a marquee between two hanging signs, and the lantern raised over the middle of the ceiling.",
+      "sourceFr": "La double page de l'atrium du poste de police : quatre niveaux de galerie le long de chaque mur latéral, la colonnade qui se dresse dessous, la fontaine à gradins au sol et la façade d'entrée au fond, ses portes sous une marquise entre deux enseignes suspendues, et le lanternon soulevé au milieu du plafond."
     },
     {
       "id": "tier-3-central-police-station-column-port-1",
@@ -21697,8 +21730,8 @@
       "height": 16,
       "sides": null,
       "provenance": "panel",
-      "source": "The double-page panel of the police-station atrium: four levels of gallery down each side wall, the colonnade standing under them, the tiered fountain on the floor and the entrance front at the far end, its doors under a marquee between two hanging signs.",
-      "sourceFr": "La double page de l'atrium du poste de police : quatre niveaux de galerie le long de chaque mur latéral, la colonnade qui se dresse dessous, la fontaine à gradins au sol et la façade d'entrée au fond, ses portes sous une marquise entre deux enseignes suspendues."
+      "source": "The double-page panel of the police-station atrium: four levels of gallery down each side wall, the colonnade standing under them, the tiered fountain on the floor and the entrance front at the far end, its doors under a marquee between two hanging signs, and the lantern raised over the middle of the ceiling.",
+      "sourceFr": "La double page de l'atrium du poste de police : quatre niveaux de galerie le long de chaque mur latéral, la colonnade qui se dresse dessous, la fontaine à gradins au sol et la façade d'entrée au fond, ses portes sous une marquise entre deux enseignes suspendues, et le lanternon soulevé au milieu du plafond."
     },
     {
       "id": "tier-3-central-police-station-column-port-2",
@@ -21713,8 +21746,8 @@
       "height": 16,
       "sides": null,
       "provenance": "panel",
-      "source": "The double-page panel of the police-station atrium: four levels of gallery down each side wall, the colonnade standing under them, the tiered fountain on the floor and the entrance front at the far end, its doors under a marquee between two hanging signs.",
-      "sourceFr": "La double page de l'atrium du poste de police : quatre niveaux de galerie le long de chaque mur latéral, la colonnade qui se dresse dessous, la fontaine à gradins au sol et la façade d'entrée au fond, ses portes sous une marquise entre deux enseignes suspendues."
+      "source": "The double-page panel of the police-station atrium: four levels of gallery down each side wall, the colonnade standing under them, the tiered fountain on the floor and the entrance front at the far end, its doors under a marquee between two hanging signs, and the lantern raised over the middle of the ceiling.",
+      "sourceFr": "La double page de l'atrium du poste de police : quatre niveaux de galerie le long de chaque mur latéral, la colonnade qui se dresse dessous, la fontaine à gradins au sol et la façade d'entrée au fond, ses portes sous une marquise entre deux enseignes suspendues, et le lanternon soulevé au milieu du plafond."
     },
     {
       "id": "tier-3-central-police-station-column-port-3",
@@ -21729,8 +21762,8 @@
       "height": 16,
       "sides": null,
       "provenance": "panel",
-      "source": "The double-page panel of the police-station atrium: four levels of gallery down each side wall, the colonnade standing under them, the tiered fountain on the floor and the entrance front at the far end, its doors under a marquee between two hanging signs.",
-      "sourceFr": "La double page de l'atrium du poste de police : quatre niveaux de galerie le long de chaque mur latéral, la colonnade qui se dresse dessous, la fontaine à gradins au sol et la façade d'entrée au fond, ses portes sous une marquise entre deux enseignes suspendues."
+      "source": "The double-page panel of the police-station atrium: four levels of gallery down each side wall, the colonnade standing under them, the tiered fountain on the floor and the entrance front at the far end, its doors under a marquee between two hanging signs, and the lantern raised over the middle of the ceiling.",
+      "sourceFr": "La double page de l'atrium du poste de police : quatre niveaux de galerie le long de chaque mur latéral, la colonnade qui se dresse dessous, la fontaine à gradins au sol et la façade d'entrée au fond, ses portes sous une marquise entre deux enseignes suspendues, et le lanternon soulevé au milieu du plafond."
     },
     {
       "id": "tier-3-central-police-station-column-port-4",
@@ -21745,8 +21778,8 @@
       "height": 16,
       "sides": null,
       "provenance": "panel",
-      "source": "The double-page panel of the police-station atrium: four levels of gallery down each side wall, the colonnade standing under them, the tiered fountain on the floor and the entrance front at the far end, its doors under a marquee between two hanging signs.",
-      "sourceFr": "La double page de l'atrium du poste de police : quatre niveaux de galerie le long de chaque mur latéral, la colonnade qui se dresse dessous, la fontaine à gradins au sol et la façade d'entrée au fond, ses portes sous une marquise entre deux enseignes suspendues."
+      "source": "The double-page panel of the police-station atrium: four levels of gallery down each side wall, the colonnade standing under them, the tiered fountain on the floor and the entrance front at the far end, its doors under a marquee between two hanging signs, and the lantern raised over the middle of the ceiling.",
+      "sourceFr": "La double page de l'atrium du poste de police : quatre niveaux de galerie le long de chaque mur latéral, la colonnade qui se dresse dessous, la fontaine à gradins au sol et la façade d'entrée au fond, ses portes sous une marquise entre deux enseignes suspendues, et le lanternon soulevé au milieu du plafond."
     },
     {
       "id": "tier-3-central-police-station-gallery-starboard",
@@ -21761,8 +21794,8 @@
       "height": 0.4,
       "sides": null,
       "provenance": "panel",
-      "source": "The double-page panel of the police-station atrium: four levels of gallery down each side wall, the colonnade standing under them, the tiered fountain on the floor and the entrance front at the far end, its doors under a marquee between two hanging signs.",
-      "sourceFr": "La double page de l'atrium du poste de police : quatre niveaux de galerie le long de chaque mur latéral, la colonnade qui se dresse dessous, la fontaine à gradins au sol et la façade d'entrée au fond, ses portes sous une marquise entre deux enseignes suspendues."
+      "source": "The double-page panel of the police-station atrium: four levels of gallery down each side wall, the colonnade standing under them, the tiered fountain on the floor and the entrance front at the far end, its doors under a marquee between two hanging signs, and the lantern raised over the middle of the ceiling.",
+      "sourceFr": "La double page de l'atrium du poste de police : quatre niveaux de galerie le long de chaque mur latéral, la colonnade qui se dresse dessous, la fontaine à gradins au sol et la façade d'entrée au fond, ses portes sous une marquise entre deux enseignes suspendues, et le lanternon soulevé au milieu du plafond."
     },
     {
       "id": "tier-3-central-police-station-column-starboard-1",
@@ -21777,8 +21810,8 @@
       "height": 16,
       "sides": null,
       "provenance": "panel",
-      "source": "The double-page panel of the police-station atrium: four levels of gallery down each side wall, the colonnade standing under them, the tiered fountain on the floor and the entrance front at the far end, its doors under a marquee between two hanging signs.",
-      "sourceFr": "La double page de l'atrium du poste de police : quatre niveaux de galerie le long de chaque mur latéral, la colonnade qui se dresse dessous, la fontaine à gradins au sol et la façade d'entrée au fond, ses portes sous une marquise entre deux enseignes suspendues."
+      "source": "The double-page panel of the police-station atrium: four levels of gallery down each side wall, the colonnade standing under them, the tiered fountain on the floor and the entrance front at the far end, its doors under a marquee between two hanging signs, and the lantern raised over the middle of the ceiling.",
+      "sourceFr": "La double page de l'atrium du poste de police : quatre niveaux de galerie le long de chaque mur latéral, la colonnade qui se dresse dessous, la fontaine à gradins au sol et la façade d'entrée au fond, ses portes sous une marquise entre deux enseignes suspendues, et le lanternon soulevé au milieu du plafond."
     },
     {
       "id": "tier-3-central-police-station-column-starboard-2",
@@ -21793,8 +21826,8 @@
       "height": 16,
       "sides": null,
       "provenance": "panel",
-      "source": "The double-page panel of the police-station atrium: four levels of gallery down each side wall, the colonnade standing under them, the tiered fountain on the floor and the entrance front at the far end, its doors under a marquee between two hanging signs.",
-      "sourceFr": "La double page de l'atrium du poste de police : quatre niveaux de galerie le long de chaque mur latéral, la colonnade qui se dresse dessous, la fontaine à gradins au sol et la façade d'entrée au fond, ses portes sous une marquise entre deux enseignes suspendues."
+      "source": "The double-page panel of the police-station atrium: four levels of gallery down each side wall, the colonnade standing under them, the tiered fountain on the floor and the entrance front at the far end, its doors under a marquee between two hanging signs, and the lantern raised over the middle of the ceiling.",
+      "sourceFr": "La double page de l'atrium du poste de police : quatre niveaux de galerie le long de chaque mur latéral, la colonnade qui se dresse dessous, la fontaine à gradins au sol et la façade d'entrée au fond, ses portes sous une marquise entre deux enseignes suspendues, et le lanternon soulevé au milieu du plafond."
     },
     {
       "id": "tier-3-central-police-station-column-starboard-3",
@@ -21809,8 +21842,8 @@
       "height": 16,
       "sides": null,
       "provenance": "panel",
-      "source": "The double-page panel of the police-station atrium: four levels of gallery down each side wall, the colonnade standing under them, the tiered fountain on the floor and the entrance front at the far end, its doors under a marquee between two hanging signs.",
-      "sourceFr": "La double page de l'atrium du poste de police : quatre niveaux de galerie le long de chaque mur latéral, la colonnade qui se dresse dessous, la fontaine à gradins au sol et la façade d'entrée au fond, ses portes sous une marquise entre deux enseignes suspendues."
+      "source": "The double-page panel of the police-station atrium: four levels of gallery down each side wall, the colonnade standing under them, the tiered fountain on the floor and the entrance front at the far end, its doors under a marquee between two hanging signs, and the lantern raised over the middle of the ceiling.",
+      "sourceFr": "La double page de l'atrium du poste de police : quatre niveaux de galerie le long de chaque mur latéral, la colonnade qui se dresse dessous, la fontaine à gradins au sol et la façade d'entrée au fond, ses portes sous une marquise entre deux enseignes suspendues, et le lanternon soulevé au milieu du plafond."
     },
     {
       "id": "tier-3-central-police-station-column-starboard-4",
@@ -21825,8 +21858,8 @@
       "height": 16,
       "sides": null,
       "provenance": "panel",
-      "source": "The double-page panel of the police-station atrium: four levels of gallery down each side wall, the colonnade standing under them, the tiered fountain on the floor and the entrance front at the far end, its doors under a marquee between two hanging signs.",
-      "sourceFr": "La double page de l'atrium du poste de police : quatre niveaux de galerie le long de chaque mur latéral, la colonnade qui se dresse dessous, la fontaine à gradins au sol et la façade d'entrée au fond, ses portes sous une marquise entre deux enseignes suspendues."
+      "source": "The double-page panel of the police-station atrium: four levels of gallery down each side wall, the colonnade standing under them, the tiered fountain on the floor and the entrance front at the far end, its doors under a marquee between two hanging signs, and the lantern raised over the middle of the ceiling.",
+      "sourceFr": "La double page de l'atrium du poste de police : quatre niveaux de galerie le long de chaque mur latéral, la colonnade qui se dresse dessous, la fontaine à gradins au sol et la façade d'entrée au fond, ses portes sous une marquise entre deux enseignes suspendues, et le lanternon soulevé au milieu du plafond."
     },
     {
       "id": "tier-1-lifeboats-port-pod-seat-1",
@@ -22417,8 +22450,8 @@
       "height": 0.4,
       "sides": null,
       "provenance": "panel",
-      "source": "The double-page panel of the police-station atrium: four levels of gallery down each side wall, the colonnade standing under them, the tiered fountain on the floor and the entrance front at the far end, its doors under a marquee between two hanging signs.",
-      "sourceFr": "La double page de l'atrium du poste de police : quatre niveaux de galerie le long de chaque mur latéral, la colonnade qui se dresse dessous, la fontaine à gradins au sol et la façade d'entrée au fond, ses portes sous une marquise entre deux enseignes suspendues."
+      "source": "The double-page panel of the police-station atrium: four levels of gallery down each side wall, the colonnade standing under them, the tiered fountain on the floor and the entrance front at the far end, its doors under a marquee between two hanging signs, and the lantern raised over the middle of the ceiling.",
+      "sourceFr": "La double page de l'atrium du poste de police : quatre niveaux de galerie le long de chaque mur latéral, la colonnade qui se dresse dessous, la fontaine à gradins au sol et la façade d'entrée au fond, ses portes sous une marquise entre deux enseignes suspendues, et le lanternon soulevé au milieu du plafond."
     },
     {
       "id": "tier-3-central-police-station-gallery-port-3",
@@ -22433,8 +22466,8 @@
       "height": 0.4,
       "sides": null,
       "provenance": "panel",
-      "source": "The double-page panel of the police-station atrium: four levels of gallery down each side wall, the colonnade standing under them, the tiered fountain on the floor and the entrance front at the far end, its doors under a marquee between two hanging signs.",
-      "sourceFr": "La double page de l'atrium du poste de police : quatre niveaux de galerie le long de chaque mur latéral, la colonnade qui se dresse dessous, la fontaine à gradins au sol et la façade d'entrée au fond, ses portes sous une marquise entre deux enseignes suspendues."
+      "source": "The double-page panel of the police-station atrium: four levels of gallery down each side wall, the colonnade standing under them, the tiered fountain on the floor and the entrance front at the far end, its doors under a marquee between two hanging signs, and the lantern raised over the middle of the ceiling.",
+      "sourceFr": "La double page de l'atrium du poste de police : quatre niveaux de galerie le long de chaque mur latéral, la colonnade qui se dresse dessous, la fontaine à gradins au sol et la façade d'entrée au fond, ses portes sous une marquise entre deux enseignes suspendues, et le lanternon soulevé au milieu du plafond."
     },
     {
       "id": "tier-3-central-police-station-gallery-port-4",
@@ -22449,8 +22482,8 @@
       "height": 0.4,
       "sides": null,
       "provenance": "panel",
-      "source": "The double-page panel of the police-station atrium: four levels of gallery down each side wall, the colonnade standing under them, the tiered fountain on the floor and the entrance front at the far end, its doors under a marquee between two hanging signs.",
-      "sourceFr": "La double page de l'atrium du poste de police : quatre niveaux de galerie le long de chaque mur latéral, la colonnade qui se dresse dessous, la fontaine à gradins au sol et la façade d'entrée au fond, ses portes sous une marquise entre deux enseignes suspendues."
+      "source": "The double-page panel of the police-station atrium: four levels of gallery down each side wall, the colonnade standing under them, the tiered fountain on the floor and the entrance front at the far end, its doors under a marquee between two hanging signs, and the lantern raised over the middle of the ceiling.",
+      "sourceFr": "La double page de l'atrium du poste de police : quatre niveaux de galerie le long de chaque mur latéral, la colonnade qui se dresse dessous, la fontaine à gradins au sol et la façade d'entrée au fond, ses portes sous une marquise entre deux enseignes suspendues, et le lanternon soulevé au milieu du plafond."
     },
     {
       "id": "tier-3-central-police-station-gallery-starboard-2",
@@ -22465,8 +22498,8 @@
       "height": 0.4,
       "sides": null,
       "provenance": "panel",
-      "source": "The double-page panel of the police-station atrium: four levels of gallery down each side wall, the colonnade standing under them, the tiered fountain on the floor and the entrance front at the far end, its doors under a marquee between two hanging signs.",
-      "sourceFr": "La double page de l'atrium du poste de police : quatre niveaux de galerie le long de chaque mur latéral, la colonnade qui se dresse dessous, la fontaine à gradins au sol et la façade d'entrée au fond, ses portes sous une marquise entre deux enseignes suspendues."
+      "source": "The double-page panel of the police-station atrium: four levels of gallery down each side wall, the colonnade standing under them, the tiered fountain on the floor and the entrance front at the far end, its doors under a marquee between two hanging signs, and the lantern raised over the middle of the ceiling.",
+      "sourceFr": "La double page de l'atrium du poste de police : quatre niveaux de galerie le long de chaque mur latéral, la colonnade qui se dresse dessous, la fontaine à gradins au sol et la façade d'entrée au fond, ses portes sous une marquise entre deux enseignes suspendues, et le lanternon soulevé au milieu du plafond."
     },
     {
       "id": "tier-3-central-police-station-gallery-starboard-3",
@@ -22481,8 +22514,8 @@
       "height": 0.4,
       "sides": null,
       "provenance": "panel",
-      "source": "The double-page panel of the police-station atrium: four levels of gallery down each side wall, the colonnade standing under them, the tiered fountain on the floor and the entrance front at the far end, its doors under a marquee between two hanging signs.",
-      "sourceFr": "La double page de l'atrium du poste de police : quatre niveaux de galerie le long de chaque mur latéral, la colonnade qui se dresse dessous, la fontaine à gradins au sol et la façade d'entrée au fond, ses portes sous une marquise entre deux enseignes suspendues."
+      "source": "The double-page panel of the police-station atrium: four levels of gallery down each side wall, the colonnade standing under them, the tiered fountain on the floor and the entrance front at the far end, its doors under a marquee between two hanging signs, and the lantern raised over the middle of the ceiling.",
+      "sourceFr": "La double page de l'atrium du poste de police : quatre niveaux de galerie le long de chaque mur latéral, la colonnade qui se dresse dessous, la fontaine à gradins au sol et la façade d'entrée au fond, ses portes sous une marquise entre deux enseignes suspendues, et le lanternon soulevé au milieu du plafond."
     },
     {
       "id": "tier-3-central-police-station-gallery-starboard-4",
@@ -22497,8 +22530,8 @@
       "height": 0.4,
       "sides": null,
       "provenance": "panel",
-      "source": "The double-page panel of the police-station atrium: four levels of gallery down each side wall, the colonnade standing under them, the tiered fountain on the floor and the entrance front at the far end, its doors under a marquee between two hanging signs.",
-      "sourceFr": "La double page de l'atrium du poste de police : quatre niveaux de galerie le long de chaque mur latéral, la colonnade qui se dresse dessous, la fontaine à gradins au sol et la façade d'entrée au fond, ses portes sous une marquise entre deux enseignes suspendues."
+      "source": "The double-page panel of the police-station atrium: four levels of gallery down each side wall, the colonnade standing under them, the tiered fountain on the floor and the entrance front at the far end, its doors under a marquee between two hanging signs, and the lantern raised over the middle of the ceiling.",
+      "sourceFr": "La double page de l'atrium du poste de police : quatre niveaux de galerie le long de chaque mur latéral, la colonnade qui se dresse dessous, la fontaine à gradins au sol et la façade d'entrée au fond, ses portes sous une marquise entre deux enseignes suspendues, et le lanternon soulevé au milieu du plafond."
     },
     {
       "id": "tier-3-central-police-station-marquee",
@@ -22513,8 +22546,8 @@
       "height": 0.7,
       "sides": null,
       "provenance": "panel",
-      "source": "The double-page panel of the police-station atrium: four levels of gallery down each side wall, the colonnade standing under them, the tiered fountain on the floor and the entrance front at the far end, its doors under a marquee between two hanging signs.",
-      "sourceFr": "La double page de l'atrium du poste de police : quatre niveaux de galerie le long de chaque mur latéral, la colonnade qui se dresse dessous, la fontaine à gradins au sol et la façade d'entrée au fond, ses portes sous une marquise entre deux enseignes suspendues."
+      "source": "The double-page panel of the police-station atrium: four levels of gallery down each side wall, the colonnade standing under them, the tiered fountain on the floor and the entrance front at the far end, its doors under a marquee between two hanging signs, and the lantern raised over the middle of the ceiling.",
+      "sourceFr": "La double page de l'atrium du poste de police : quatre niveaux de galerie le long de chaque mur latéral, la colonnade qui se dresse dessous, la fontaine à gradins au sol et la façade d'entrée au fond, ses portes sous une marquise entre deux enseignes suspendues, et le lanternon soulevé au milieu du plafond."
     },
     {
       "id": "tier-3-central-police-station-sign-port",
@@ -22529,8 +22562,8 @@
       "height": 4.5,
       "sides": null,
       "provenance": "panel",
-      "source": "The double-page panel of the police-station atrium: four levels of gallery down each side wall, the colonnade standing under them, the tiered fountain on the floor and the entrance front at the far end, its doors under a marquee between two hanging signs.",
-      "sourceFr": "La double page de l'atrium du poste de police : quatre niveaux de galerie le long de chaque mur latéral, la colonnade qui se dresse dessous, la fontaine à gradins au sol et la façade d'entrée au fond, ses portes sous une marquise entre deux enseignes suspendues."
+      "source": "The double-page panel of the police-station atrium: four levels of gallery down each side wall, the colonnade standing under them, the tiered fountain on the floor and the entrance front at the far end, its doors under a marquee between two hanging signs, and the lantern raised over the middle of the ceiling.",
+      "sourceFr": "La double page de l'atrium du poste de police : quatre niveaux de galerie le long de chaque mur latéral, la colonnade qui se dresse dessous, la fontaine à gradins au sol et la façade d'entrée au fond, ses portes sous une marquise entre deux enseignes suspendues, et le lanternon soulevé au milieu du plafond."
     },
     {
       "id": "tier-3-central-police-station-sign-starboard",
@@ -22545,8 +22578,8 @@
       "height": 4.5,
       "sides": null,
       "provenance": "panel",
-      "source": "The double-page panel of the police-station atrium: four levels of gallery down each side wall, the colonnade standing under them, the tiered fountain on the floor and the entrance front at the far end, its doors under a marquee between two hanging signs.",
-      "sourceFr": "La double page de l'atrium du poste de police : quatre niveaux de galerie le long de chaque mur latéral, la colonnade qui se dresse dessous, la fontaine à gradins au sol et la façade d'entrée au fond, ses portes sous une marquise entre deux enseignes suspendues."
+      "source": "The double-page panel of the police-station atrium: four levels of gallery down each side wall, the colonnade standing under them, the tiered fountain on the floor and the entrance front at the far end, its doors under a marquee between two hanging signs, and the lantern raised over the middle of the ceiling.",
+      "sourceFr": "La double page de l'atrium du poste de police : quatre niveaux de galerie le long de chaque mur latéral, la colonnade qui se dresse dessous, la fontaine à gradins au sol et la façade d'entrée au fond, ses portes sous une marquise entre deux enseignes suspendues, et le lanternon soulevé au milieu du plafond."
     },
     {
       "id": "tier-3-residential-first-class-upper-cabin-1-bed",
@@ -22645,102 +22678,6 @@
       "sourceFr": "Plan de la première classe, chap. 393"
     },
     {
-      "id": "tier-1-banquet-hall-gallery-forward-1",
-      "spaceId": "tier-1-banquet-hall",
-      "kind": "platform",
-      "name": "Side Gallery (forward wall, 1)",
-      "nameFr": "Galerie latérale (mur avant, 1)",
-      "at": [-65.12, -4.55],
-      "size": [21.75, 2.0],
-      "rotation": 0,
-      "base": 0,
-      "height": 1.0,
-      "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 359 — the inaugural banquet seen down the hall: the raised galleries running the length of both side walls, the proscenium piers and the curtain framing the stage, and the panel hung over the port gallery.",
-      "sourceFr": "Chap. 359 — le banquet inaugural vu dans l'axe de la halle : les galeries surélevées qui courent le long des deux murs latéraux, les piles et le rideau qui encadrent la scène, et le panneau suspendu au-dessus de la galerie bâbord."
-    },
-    {
-      "id": "tier-1-banquet-hall-gallery-forward-2",
-      "spaceId": "tier-1-banquet-hall",
-      "kind": "platform",
-      "name": "Side Gallery (forward wall, 2)",
-      "nameFr": "Galerie latérale (mur avant, 2)",
-      "at": [-20.12, -4.55],
-      "size": [54.25, 2.0],
-      "rotation": 0,
-      "base": 0,
-      "height": 1.0,
-      "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 359 — the inaugural banquet seen down the hall: the raised galleries running the length of both side walls, the proscenium piers and the curtain framing the stage, and the panel hung over the port gallery.",
-      "sourceFr": "Chap. 359 — le banquet inaugural vu dans l'axe de la halle : les galeries surélevées qui courent le long des deux murs latéraux, les piles et le rideau qui encadrent la scène, et le panneau suspendu au-dessus de la galerie bâbord."
-    },
-    {
-      "id": "tier-1-banquet-hall-gallery-forward-3",
-      "spaceId": "tier-1-banquet-hall",
-      "kind": "platform",
-      "name": "Side Gallery (forward wall, 3)",
-      "nameFr": "Galerie latérale (mur avant, 3)",
-      "at": [31.5, -4.55],
-      "size": [35, 2.0],
-      "rotation": 0,
-      "base": 0,
-      "height": 1.0,
-      "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 359 — the inaugural banquet seen down the hall: the raised galleries running the length of both side walls, the proscenium piers and the curtain framing the stage, and the panel hung over the port gallery.",
-      "sourceFr": "Chap. 359 — le banquet inaugural vu dans l'axe de la halle : les galeries surélevées qui courent le long des deux murs latéraux, les piles et le rideau qui encadrent la scène, et le panneau suspendu au-dessus de la galerie bâbord."
-    },
-    {
-      "id": "tier-1-banquet-hall-gallery-forward-4",
-      "spaceId": "tier-1-banquet-hall",
-      "kind": "platform",
-      "name": "Side Gallery (forward wall, 4)",
-      "nameFr": "Galerie latérale (mur avant, 4)",
-      "at": [62.0, -4.55],
-      "size": [12, 2.0],
-      "rotation": 0,
-      "base": 0,
-      "height": 1.0,
-      "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 359 — the inaugural banquet seen down the hall: the raised galleries running the length of both side walls, the proscenium piers and the curtain framing the stage, and the panel hung over the port gallery.",
-      "sourceFr": "Chap. 359 — le banquet inaugural vu dans l'axe de la halle : les galeries surélevées qui courent le long des deux murs latéraux, les piles et le rideau qui encadrent la scène, et le panneau suspendu au-dessus de la galerie bâbord."
-    },
-    {
-      "id": "tier-1-banquet-hall-gallery-aft-1",
-      "spaceId": "tier-1-banquet-hall",
-      "kind": "platform",
-      "name": "Side Gallery (aft wall, 1)",
-      "nameFr": "Galerie latérale (mur arrière, 1)",
-      "at": [-44.12, -26.95],
-      "size": [63.75, 2.0],
-      "rotation": 0,
-      "base": 0,
-      "height": 1.0,
-      "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 359 — the inaugural banquet seen down the hall: the raised galleries running the length of both side walls, the proscenium piers and the curtain framing the stage, and the panel hung over the port gallery.",
-      "sourceFr": "Chap. 359 — le banquet inaugural vu dans l'axe de la halle : les galeries surélevées qui courent le long des deux murs latéraux, les piles et le rideau qui encadrent la scène, et le panneau suspendu au-dessus de la galerie bâbord."
-    },
-    {
-      "id": "tier-1-banquet-hall-gallery-aft-2",
-      "spaceId": "tier-1-banquet-hall",
-      "kind": "platform",
-      "name": "Side Gallery (aft wall, 2)",
-      "nameFr": "Galerie latérale (mur arrière, 2)",
-      "at": [31.38, -26.95],
-      "size": [73.25, 2.0],
-      "rotation": 0,
-      "base": 0,
-      "height": 1.0,
-      "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 359 — the inaugural banquet seen down the hall: the raised galleries running the length of both side walls, the proscenium piers and the curtain framing the stage, and the panel hung over the port gallery.",
-      "sourceFr": "Chap. 359 — le banquet inaugural vu dans l'axe de la halle : les galeries surélevées qui courent le long des deux murs latéraux, les piles et le rideau qui encadrent la scène, et le panneau suspendu au-dessus de la galerie bâbord."
-    },
-    {
       "id": "tier-1-banquet-hall-proscenium-port",
       "spaceId": "tier-1-banquet-hall",
       "kind": "pillar",
@@ -22826,8 +22763,8 @@
       "kind": "platform",
       "name": "Throne Steps",
       "nameFr": "Emmarchement du trône",
-      "at": [-65.2, -15.75],
-      "size": [2, 10],
+      "at": [-65.72, -15.75],
+      "size": [0.95, 10],
       "rotation": 0,
       "base": 0,
       "height": 0.5,
@@ -22838,7 +22775,7 @@
     },
     {
       "id": "tier-1-banquet-hall-service-line-1",
-      "spaceId": "tier-1-banquet-hall",
+      "spaceId": "tier-1-banquet-hall-service-end",
       "kind": "counter",
       "name": "Service Line 1",
       "nameFr": "Ligne de service 1",
@@ -22854,7 +22791,7 @@
     },
     {
       "id": "tier-1-banquet-hall-service-line-2",
-      "spaceId": "tier-1-banquet-hall",
+      "spaceId": "tier-1-banquet-hall-service-end",
       "kind": "counter",
       "name": "Service Line 2",
       "nameFr": "Ligne de service 2",
@@ -22870,7 +22807,7 @@
     },
     {
       "id": "tier-1-banquet-hall-dispensers",
-      "spaceId": "tier-1-banquet-hall",
+      "spaceId": "tier-1-banquet-hall-service-end",
       "kind": "cabinet",
       "name": "Dispenser Shelving",
       "nameFr": "Meuble à distributeurs",
@@ -23203,6 +23140,86 @@
       "provenance": "panel",
       "source": "The panel of the general passengers' block: a portal signed SRCL 9041 – 9488, and behind it a corridor with cabin doors down both sides and soldiers posted in it.",
       "sourceFr": "La planche du bloc des passagers ordinaires : un portail portant SRCL 9041 – 9488, et derrière lui une coursive à portes de cabines des deux côtés, avec des soldats postés dedans."
+    },
+    {
+      "id": "tier-1-banquet-hall-gallery-forward-1",
+      "spaceId": "tier-1-banquet-hall",
+      "kind": "platform",
+      "name": "Side Gallery (forward wall, 1)",
+      "nameFr": "Galerie latérale (mur avant, 1)",
+      "at": [-65.12, -4.55],
+      "size": [21.75, 2.0],
+      "rotation": 0,
+      "base": 0,
+      "height": 1.0,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 359 — the inaugural banquet seen down the hall: the raised galleries running the length of both side walls, the proscenium piers and the curtain framing the stage, and the panel hung over the port gallery.",
+      "sourceFr": "Chap. 359 — le banquet inaugural vu dans l'axe de la halle : les galeries surélevées qui courent le long des deux murs latéraux, les piles et le rideau qui encadrent la scène, et le panneau suspendu au-dessus de la galerie bâbord."
+    },
+    {
+      "id": "tier-1-banquet-hall-gallery-forward-2",
+      "spaceId": "tier-1-banquet-hall",
+      "kind": "platform",
+      "name": "Side Gallery (forward wall, 2)",
+      "nameFr": "Galerie latérale (mur avant, 2)",
+      "at": [-20.12, -4.55],
+      "size": [54.25, 2.0],
+      "rotation": 0,
+      "base": 0,
+      "height": 1.0,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 359 — the inaugural banquet seen down the hall: the raised galleries running the length of both side walls, the proscenium piers and the curtain framing the stage, and the panel hung over the port gallery.",
+      "sourceFr": "Chap. 359 — le banquet inaugural vu dans l'axe de la halle : les galeries surélevées qui courent le long des deux murs latéraux, les piles et le rideau qui encadrent la scène, et le panneau suspendu au-dessus de la galerie bâbord."
+    },
+    {
+      "id": "tier-1-banquet-hall-gallery-forward-3",
+      "spaceId": "tier-1-banquet-hall",
+      "kind": "platform",
+      "name": "Side Gallery (forward wall, 3)",
+      "nameFr": "Galerie latérale (mur avant, 3)",
+      "at": [25.5, -4.55],
+      "size": [23.0, 2.0],
+      "rotation": 0,
+      "base": 0,
+      "height": 1.0,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 359 — the inaugural banquet seen down the hall: the raised galleries running the length of both side walls, the proscenium piers and the curtain framing the stage, and the panel hung over the port gallery.",
+      "sourceFr": "Chap. 359 — le banquet inaugural vu dans l'axe de la halle : les galeries surélevées qui courent le long des deux murs latéraux, les piles et le rideau qui encadrent la scène, et le panneau suspendu au-dessus de la galerie bâbord."
+    },
+    {
+      "id": "tier-1-banquet-hall-gallery-aft-1",
+      "spaceId": "tier-1-banquet-hall",
+      "kind": "platform",
+      "name": "Side Gallery (aft wall, 1)",
+      "nameFr": "Galerie latérale (mur arrière, 1)",
+      "at": [-50.12, -26.95],
+      "size": [51.75, 2.0],
+      "rotation": 0,
+      "base": 0,
+      "height": 1.0,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 359 — the inaugural banquet seen down the hall: the raised galleries running the length of both side walls, the proscenium piers and the curtain framing the stage, and the panel hung over the port gallery.",
+      "sourceFr": "Chap. 359 — le banquet inaugural vu dans l'axe de la halle : les galeries surélevées qui courent le long des deux murs latéraux, les piles et le rideau qui encadrent la scène, et le panneau suspendu au-dessus de la galerie bâbord."
+    },
+    {
+      "id": "tier-1-banquet-hall-gallery-aft-2",
+      "spaceId": "tier-1-banquet-hall",
+      "kind": "platform",
+      "name": "Side Gallery (aft wall, 2)",
+      "nameFr": "Galerie latérale (mur arrière, 2)",
+      "at": [14.32, -26.95],
+      "size": [63.15, 2.0],
+      "rotation": 0,
+      "base": 0,
+      "height": 1.0,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 359 — the inaugural banquet seen down the hall: the raised galleries running the length of both side walls, the proscenium piers and the curtain framing the stage, and the panel hung over the port gallery.",
+      "sourceFr": "Chap. 359 — le banquet inaugural vu dans l'axe de la halle : les galeries surélevées qui courent le long des deux murs latéraux, les piles et le rideau qui encadrent la scène, et le panneau suspendu au-dessus de la galerie bâbord."
     }
   ]
 }

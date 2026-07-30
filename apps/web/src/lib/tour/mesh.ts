@@ -17,6 +17,7 @@ import {
   doorSoffit,
   grilleBars,
   iterateEdges,
+  lanternRect,
   plateSeams,
   sealKey,
   structureFootprint,
@@ -24,7 +25,7 @@ import {
   toClockwise,
   triangulate,
 } from './geometry'
-import { ceilingOf } from './blueprint'
+import { ceilingOf, floorOf } from './blueprint'
 import type { BlindWall, TierPlan } from './blueprint'
 import type {
   Doorway,
@@ -780,8 +781,8 @@ function extrudeSolid(
   // visitor bumps into is still the outline that gets drawn.
   const outline = toClockwise(structureFootprint(structure))
   const colour = colourFor(hex(STRUCTURE_COLOURS[structure.kind]), structure.provenance)
-  const bottom = tier.elevation + structure.base
-  const top = Math.min(bottom + structure.height, tier.elevation + ceilingOf(room, tier))
+  const bottom = floorOf(room, tier) + structure.base
+  const top = Math.min(bottom + structure.height, floorOf(room, tier) + ceilingOf(room, tier))
 
   // The solid takes the light of the room it stands in, from its own foot to its
   // own top: the lacquer of a coffin and the steel of a spring are lit by the
@@ -899,12 +900,12 @@ function boundsOf(
 function lightOf(space: Space, tier: Tier, standing: readonly Structure[] = []): RoomLight {
   const sky: [number, number, number][] = []
   for (const structure of standing) {
-    if (structure.kind === 'window') sky.push(...windowSources(structure, tier.elevation))
+    if (structure.kind === 'window') sky.push(...windowSources(structure, floorOf(space, tier)))
   }
   return new RoomLight(
     space.footprint,
-    tier.elevation,
-    tier.elevation + ceilingOf(space, tier),
+    floorOf(space, tier),
+    floorOf(space, tier) + ceilingOf(space, tier),
     space.provenance,
     sky,
   )
@@ -975,7 +976,7 @@ export function buildTierMesh(plan: TierPlan, options: { reveal?: boolean } = {}
   const { tier } = plan
   const reveal = options.reveal ?? false
   const spaces = new Map(plan.spaces.map((space) => [space.id, space]))
-  const heightOf = (space: Space) => tier.elevation + ceilingOf(space, tier)
+  const heightOf = (space: Space) => floorOf(space, tier) + ceilingOf(space, tier)
 
   const edges: number[] = []
   const seams: number[] = []
@@ -1121,6 +1122,9 @@ export function buildTierMesh(plan: TierPlan, options: { reveal?: boolean } = {}
   const groups: MeshGroup[] = []
 
   for (const space of plan.spaces) {
+    // Everything in this pass hangs off the floor of this room, which is the
+    // deck everywhere but the handful of rooms a panel draws a step into.
+    const base = floorOf(space, tier)
     const start = builder.positions.length / 3
     const edgeStart = edges.length / 3
     const seamStart = seams.length / 3
@@ -1159,11 +1163,14 @@ export function buildTierMesh(plan: TierPlan, options: { reveal?: boolean } = {}
         a,
         b,
         c,
-        tier.elevation,
+        base,
         true,
         floorColour,
         bake((x, y, z) => light.floor(x, y, z)),
       )
+      // A lantern replaces this pass with the border-and-panel one below: the
+      // ceiling is cut open over the middle of the room rather than closed.
+      if (space.lantern) continue
       builder.patch(
         a,
         b,
@@ -1177,11 +1184,53 @@ export function buildTierMesh(plan: TierPlan, options: { reveal?: boolean } = {}
       )
     }
 
+    /**
+     * The lantern: the ceiling cut open over the middle of the room and lifted.
+     *
+     * The border stays where the ceiling was, the panel goes up by its rise, and
+     * the four sides between them are the whole point — they are what the eye
+     * measures the room against from underneath. Drawn here rather than derived
+     * as a solid because it is a *void*: nothing is added to the collision list,
+     * and a visitor walks under it exactly as they walked under a flat ceiling.
+     */
+    if (space.lantern) {
+      const shade = bake((x: number, y: number, z: number) => light.ceiling(x, y, z))
+      const xs = space.footprint.map((corner) => corner[0])
+      const zs = space.footprint.map((corner) => corner[1])
+      const [x0, x1] = [Math.min(...xs), Math.max(...xs)]
+      const [z0, z1] = [Math.min(...zs), Math.max(...zs)]
+      const rect = lanternRect(space.lantern)
+      const [lx0, lz0] = rect[0]
+      const [lx1, lz1] = rect[2]
+      const panelTop = top + space.lantern.rise
+
+      const band = (a: Vec2, c: Vec2, y: number) => {
+        if (Math.abs(c[0] - a[0]) < EPSILON || Math.abs(c[1] - a[1]) < EPSILON) return
+        const b: Vec2 = [c[0], a[1]]
+        const d: Vec2 = [a[0], c[1]]
+        builder.patch(a, b, c, y, false, ceilingColour, shade, Infinity)
+        builder.patch(a, c, d, y, false, ceilingColour, shade, Infinity)
+      }
+      band([x0, z0], [x1, lz0], top)
+      band([x0, lz1], [x1, z1], top)
+      band([x0, lz0], [lx0, lz1], top)
+      band([lx1, lz0], [x1, lz1], top)
+      band([lx0, lz0], [lx1, lz1], panelTop)
+
+      // Wound like a room's walls rather than like a column's: the sides of a
+      // coffer are seen from inside it.
+      for (const [start, end] of iterateEdges(rect)) {
+        builder.quad(start, end, top, panelTop, ceilingColour, shade)
+        horizontal(start, end, top + OFFSET)
+        horizontal(start, end, panelTop - OFFSET)
+      }
+    }
+
     // The plating, laid on the ship's grid and clipped to this room. Lifted off
     // the floor by the same hair the wall lines are, so it is not fighting the
     // deck for the same depth value.
     for (const [from, to] of plateSeams(space.footprint)) {
-      seams.push(from[0], tier.elevation + OFFSET, from[1], to[0], tier.elevation + OFFSET, to[1])
+      seams.push(from[0], base + OFFSET, from[1], to[0], base + OFFSET, to[1])
     }
 
     /**
@@ -1202,7 +1251,7 @@ export function buildTierMesh(plan: TierPlan, options: { reveal?: boolean } = {}
      * doctrine.
      */
     if (!reveal) {
-      const hang = fittingHeight(tier.elevation, top)
+      const hang = fittingHeight(base, top)
       // Dimmed by exactly what dims the pools: a corridor nobody drew gets both
       // its lamps and its lamplight at `LIGHT.inferredLamps`, so walking into an
       // invented part of the ship stays the one thing you can feel rather than a
@@ -1240,15 +1289,15 @@ export function buildTierMesh(plan: TierPlan, options: { reveal?: boolean } = {}
       builder.quad(
         wall.start,
         wall.end,
-        tier.elevation,
+        base,
         top,
         wallColour,
         bake((x, y, z) => {
           const along = Math.hypot(x - wall.start[0], z - wall.start[1])
-          return light.wall(x, y, z, tier.elevation, top, Math.min(along, run - along))
+          return light.wall(x, y, z, base, top, Math.min(along, run - along))
         }),
       )
-      horizontal(wall.start, wall.end, tier.elevation + OFFSET)
+      horizontal(wall.start, wall.end, base + OFFSET)
       horizontal(wall.start, wall.end, top - OFFSET)
     }
 
@@ -1270,7 +1319,7 @@ export function buildTierMesh(plan: TierPlan, options: { reveal?: boolean } = {}
       builder.patch(corners[0], corners[2], corners[3], top, false, colour, cap)
       // A column's faces are in the wall list, so they are drawn by the pass
       // above; what is left is the cap and the arrises.
-      for (const corner of corners) vertical(corner, tier.elevation, top)
+      for (const corner of corners) vertical(corner, base, top)
     }
 
     // What stands in the room. Its sides are already in `plan.walls`, so this
@@ -1286,7 +1335,28 @@ export function buildTierMesh(plan: TierPlan, options: { reveal?: boolean } = {}
       const other = spaces.get(door.b)
       if (!other) continue
       const lintelTop = Math.max(top, heightOf(other))
-      const lintelBottom = tier.elevation + DOOR_HEIGHT
+      const lintelBottom = base + DOOR_HEIGHT
+
+      /**
+       * The riser, where the two rooms are at different heights.
+       *
+       * An opening between two floors is otherwise the one place a step cannot
+       * be seen: the wall is cut away, and the higher floor would end in mid-air
+       * over the lower one. Drawn from the higher side only, so it is drawn once,
+       * and wound to face the room you climb it from.
+       */
+      const otherBase = floorOf(other, tier)
+      if (base > otherBase + EPSILON) {
+        builder.quad(
+          door.end,
+          door.start,
+          otherBase,
+          base,
+          colourFor(WALL_COLOUR, space.provenance),
+          bake((x, y, z) => light.wall(x, y, z, otherBase, base)),
+        )
+        horizontal(door.start, door.end, base + OFFSET)
+      }
 
       const provenance: Provenance =
         space.provenance === 'inferred' || other.provenance === 'inferred'
@@ -1339,13 +1409,13 @@ export function buildTierMesh(plan: TierPlan, options: { reveal?: boolean } = {}
         builder.quad(
           cheek.start,
           cheek.end,
-          tier.elevation,
+          base,
           lintelBottom,
           lintelColour,
-          bake((x, y, z) => light.wall(x, y, z, tier.elevation, lintelBottom)),
+          bake((x, y, z) => light.wall(x, y, z, base, lintelBottom)),
         )
-        vertical(cheek.start, tier.elevation, lintelBottom)
-        vertical(cheek.end, tier.elevation, lintelBottom)
+        vertical(cheek.start, base, lintelBottom)
+        vertical(cheek.end, base, lintelBottom)
       }
 
       if (lintelTop > lintelBottom) {

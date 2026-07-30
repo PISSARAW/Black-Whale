@@ -145,6 +145,40 @@ loges de la salle de projection barreraient les allées latérales qu'elles
 surplombent, et le rideau de scène serait un mur en travers de l'avant-scène.
 C'est `blocksTheFloor` qui tranche, et un test vérifie les deux sens.
 
+### Les deux niveaux d'une pièce
+
+Un pont est un plan, partout où rien ne dit le contraire — et rien ne le dit
+presque partout. Deux planches le disent pourtant, et elles ne parlaient jusqu'ici
+à aucun champ du dossier.
+
+**`floor`** est la marche. La salle de banquet est entrée par le bout du service,
+et le sol des tables est une marche plus haut : ça ne se dit pas d'un polygone,
+une empreinte n'a qu'une hauteur. Les deux niveaux sont donc deux espaces, et
+`floor` est ce qui en fait deux niveaux plutôt que deux salles côte à côte. Le
+bout du service porte `-0,6` et un plafond relevé d'autant, pour que le plafond
+file de niveau au-dessus des deux — c'est ce que la planche dessine. Ce qui suit
+en découle et n'est écrit nulle part ailleurs :
+
+- la **contremarche** est dessinée dans l'ouverture, depuis le côté haut : sans
+  elle le sol des tables finirait en l'air au-dessus de l'autre ;
+- le visiteur **monte** dessus au lieu d'y être téléporté — la hauteur d'œil
+  rejoint le sol de la pièce où il se tient en un cinquième de seconde, la durée
+  d'une foulée sur une marche, parce qu'une vue qui saute d'un demi-mètre est
+  exactement ce que `$lib/tour/comfort` refuse ;
+- au-delà de `STEP_UP` (0,60 m) entre deux pièces qui partagent une porte,
+  `validateBlueprint` refuse : ce n'est plus une marche mais une chute déguisée
+  en porte, et ce qu'il faut alors est un `link` avec un escalier dessus.
+
+**`lantern`** est le même argument une surface plus haut. L'atrium du poste de
+police n'a pas un plafond plus haut : il a un **lanternon** au milieu, et lire sa
+hauteur comme celle de la pièce perd à la fois le caisson et l'échelle qu'il donne
+à tout ce qui est dessous. Un lanternon est un rectangle du plafond soulevé de sa
+`rise` : la bordure reste où le plafond était, le panneau monte, et les quatre
+côtés entre les deux sont ce que l'œil mesure d'en bas. C'est un **vide** : rien
+n'entre dans la liste des collisions, on marche dessous comme sous un plafond
+plat. La pièce doit être rectangulaire — c'est ce dans quoi une planche en dessine
+un, et c'est ce que la découpe du plafond sait faire.
+
 ### Les enveloppes
 
 Un appartement princier, ce sont sept pièces derrière **une seule** porte.

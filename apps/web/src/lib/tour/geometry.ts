@@ -6,7 +6,16 @@
  * renderer, the collision test and the validation suite, so a wall the player
  * bumps into is by construction the wall that was drawn.
  */
-import type { DoorOverride, Doorway, Polygon, Space, Structure, Vec2, WallSegment } from './types'
+import type {
+  DoorOverride,
+  Doorway,
+  Lantern,
+  Polygon,
+  Space,
+  Structure,
+  Vec2,
+  WallSegment,
+} from './types'
 
 /** Below this, two coordinates are the same point. Footprints are in metres. */
 export const EPSILON = 0.05
@@ -19,6 +28,16 @@ export const MIN_DOOR_WIDTH = 1.2
 
 /** Head height of an opening. Above it, the wall carries on to the ceiling. */
 export const DOOR_HEIGHT = 2.6
+
+/**
+ * The tallest rise the visitor takes in stride, in metres.
+ *
+ * Two levels of one room are a step; a step you cannot take is a storey, and a
+ * storey is a `link` with a stair on it. Three risers of twenty centimetres is
+ * what the banquet hall's service end is drawn as, and it is about the limit of
+ * what a floor can do to another floor without becoming a different deck.
+ */
+export const STEP_UP = 0.6
 
 /**
  * How deep a doorway is, in metres.
@@ -684,6 +703,18 @@ export const HEADROOM = 2.1
  */
 export function blocksTheFloor(structure: Structure): boolean {
   return structure.base < HEADROOM
+}
+
+/** The four corners of a lantern, in the level's own frame. */
+export function lanternRect(lantern: Lantern): Polygon {
+  const [x, z] = lantern.at
+  const [w, l] = lantern.size
+  return [
+    [x - w / 2, z - l / 2],
+    [x + w / 2, z - l / 2],
+    [x + w / 2, z + l / 2],
+    [x - w / 2, z + l / 2],
+  ]
 }
 
 /** The faces of a structure, as wall segments the visitor collides with. */

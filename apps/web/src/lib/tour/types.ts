@@ -184,6 +184,38 @@ export interface Space {
    */
   envelope: string | null
   footprint: Polygon
+  /**
+   * How far this floor sits above the deck's own, in metres. Omitted is level.
+   *
+   * A deck is one plane everywhere the plans are silent, and they are silent
+   * almost everywhere. Where a panel draws a room in two levels, it is drawing
+   * a *step*, not a storey: the banquet hall is entered at the service end and
+   * goes up a flight to the floor the tables stand on. That cannot be said of a
+   * single polygon — a footprint has one height — so the two levels are two
+   * spaces, and this is what makes them two levels rather than two rooms side
+   * by side. A difference big enough to climb rather than step is not this: it
+   * is a `link`, and `validateBlueprint` says so.
+   */
+  floor?: number
+  /**
+   * A rectangle of this ceiling lifted clear of the rest, or omitted for a flat
+   * one.
+   *
+   * The same argument as `floor`, one surface up. A hall drawn with a raised
+   * lantern over its middle is not a hall with a higher ceiling: the height is
+   * the point of the *centre*, and reading it as the height of the room loses
+   * both the coffer and the scale it gives everything under it. `at` and `size`
+   * are in the level's own frame, like a structure's.
+   */
+  lantern?: Lantern | null
+}
+
+/** A raised panel in a ceiling: where it is, how big, and how far it lifts. */
+export interface Lantern {
+  at: Vec2
+  size: Vec2
+  /** How far above the ceiling the panel sits. */
+  rise: number
 }
 
 /**

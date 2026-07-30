@@ -30,7 +30,12 @@
   const y = (metres: number) => (metres + 35) * SCALE + 96
 
   // The hall and the vestibule, as the footprints give them.
-  const hall = { x0: -87.5, x1: 70, y0: -28, y1: -3.5 }
+  const hall = { x0: -87.5, x1: 46, y0: -28, y1: -3.5 }
+  // The end the buffet is laid in is a step down from the floor the tables
+  // stand on, ch. 383, and a room of its own for that reason: a footprint has
+  // one height. Its ceiling is raised by the depth of the step, so the ceiling
+  // runs level over both.
+  const serviceEnd = { x0: 46, x1: 70, step: -0.6 }
   const vestibule = { y0: -35, y1: -28 }
 
   // The four table rows, an aisle between the second and the third, and the
@@ -47,25 +52,26 @@
       runs: [
         [-76, -54.25],
         [-47.25, 7],
-        [14, 49],
-        [56, 68],
+        [14, 37],
       ],
     },
     {
       at: -26.95,
       runs: [
-        [-76, -12.25],
-        [-5.25, 68],
+        [-76, -24.24],
+        [-17.25, 45.89],
       ],
     },
   ]
 
   /** Openings the tour derives from the shared walls, at their own width. */
   const doors = [
-    { id: 'vestibule-doors', axis: 'y' as const, at: -28, from: -10.25, to: -7.25 },
+    { id: 'vestibule-doors', axis: 'y' as const, at: -28, from: -22.25, to: -19.25 },
+    { id: 'vestibule-doors-service', axis: 'y' as const, at: -28, from: 56.5, to: 59.5 },
     { id: 'main-corridor', axis: 'y' as const, at: -3.5, from: -52.25, to: -49.25 },
     { id: 'princes-gate', axis: 'y' as const, at: -3.5, from: 9, to: 12 },
-    { id: 'main-corridor-starboard', axis: 'y' as const, at: -3.5, from: 51, to: 54 },
+    { id: 'main-corridor-starboard', axis: 'y' as const, at: -3.5, from: 39, to: 42 },
+    { id: 'main-corridor-starboard-service', axis: 'y' as const, at: -3.5, from: 56.5, to: 59.5 },
     { id: 'starboard-corridor', axis: 'x' as const, at: 70, from: -17.25, to: -14.25 },
   ]
 </script>
@@ -161,7 +167,7 @@
     Banquet Hall
   </text>
   <text x="500" y="48" class="label" font-size="10" fill="#FFFFF0" opacity="0.55">
-    157.5 m × 24.5 m — Tier 1, ch. 349 deck plan
+    133.5 m × 24.5 m, plus its service end — Tier 1, ch. 349 deck plan
   </text>
 
   <!-- The guarded vestibule the hall is entered from, ch. 383 -->
@@ -185,6 +191,33 @@
     height={(hall.y1 - hall.y0) * SCALE}
     class="room wall"
   />
+
+  <!-- The service end, a step below the floor the tables stand on -->
+  <rect
+    role="button"
+    tabindex="0"
+    aria-label="Inspect map area"
+    onkeydown={activate}
+    class="room wall interactive"
+    x={x(serviceEnd.x0)}
+    y={y(hall.y0)}
+    width={(serviceEnd.x1 - serviceEnd.x0) * SCALE}
+    height={(hall.y1 - hall.y0) * SCALE}
+    onclick={() => handleElementClick('service-end')}
+  />
+  <text x={x(58)} y={y(-30.5)} class="sublabel">−0,6 m</text>
+  <!-- The step itself: the whole depth of the hall is open across it -->
+  {#each [0, 0.5, 1] as offset (offset)}
+    <line
+      x1={x(serviceEnd.x0 + offset)}
+      y1={y(hall.y0)}
+      x2={x(serviceEnd.x0 + offset)}
+      y2={y(hall.y1)}
+      class="gallery"
+      stroke="#FFFFF0"
+      stroke-opacity="0.35"
+    />
+  {/each}
 
   <!-- The openings, cut out of the walls they are derived from -->
   {#each doors as door (door.id)}
@@ -265,7 +298,7 @@
     height={7.6 * SCALE}
     class="throne-platform"
   />
-  <rect x={x(-66.2)} y={y(-20.75)} width={2 * SCALE} height={10 * SCALE} class="gallery" />
+  <rect x={x(-66.2)} y={y(-20.75)} width={0.95 * SCALE} height={10 * SCALE} class="gallery" />
   <text x={x(-69.25)} y={y(-21)} class="sublabel">King's Throne</text>
 
   <!-- The tables, four rows with the throne's axis left open between them -->

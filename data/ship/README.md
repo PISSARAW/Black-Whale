@@ -356,14 +356,25 @@ alors qu'elle dessine des volumes séparés. Les quatorze appartements sont le
 même plan : le jeu de meubles est authoré une fois, dans le repère de
 l'appartement, et répété pour chaque prince.
 
-Trois en portent davantage, et c'est l'ordre d'autorité qui le veut : là où une
-planche entre dans une pièce, elle l'emporte sur le plan, et ce qu'elle montre
-s'ajoute au jeu commun pour ce seul appartement.
+Quelques-uns en portent davantage, et c'est l'ordre d'autorité qui le veut : là
+où une planche entre dans une pièce, elle l'emporte sur le plan, et ce qu'elle
+montre s'ajoute au jeu commun pour ce seul appartement.
 
 - Le **1014**, celui de Woble : le chap. 360 montre son salon tel que Kurapika
   le trouve — le téléphone mural par lequel il appelle Biscuit, l'armoire et la
   table de présentation le long du mur tribord, le fauteuil canné, les deux
-  sellettes à sculpture, les tableaux encadrés du mur lambrissé.
+  sellettes à sculpture, les tableaux encadrés du mur lambrissé. Le chap. 367
+  descend dans sa cuisine — le plan de travail sous ses éléments hauts vitrés,
+  et un plancher là où le reste de l'appartement est carrelé — et le chap. 371
+  se tient dans sa salle à manger pendant que Kurapika y arrête une servante :
+  deux longues tables couvertes de plateaux-repas, et non la petite table du
+  plan. Là aussi la planche **corrige** au lieu d'ajouter.
+- Le **1010**, celui de Kacho : le chap. 376 dessine sa cuisine deux fois — les
+  éléments hauts au-dessus du plan, la plaque et son four encastré, le retour de
+  plan le long du mur tribord — et son salon, où on la fait asseoir sur ses
+  devoirs devant un mur lambrissé à tableaux. La rangée de placards bas n'est
+  pas du décor : le morse de Senritsu en désigne un, cuisine, à gauche, en bas,
+  au fond.
 - Le **1003**, celui de Zhang Lei : le chap. 365 montre sa salle à manger, où
   il reçoit la reine Oito. Le jeu commun y posait une table de 1,6 × 2,4 ; la
   planche en donne une longue table sculptée avec un fauteuil à haut dossier à
@@ -413,7 +424,12 @@ Le second : **ce qu'une planche montre est ce que la pièce est** —
   soixante-douze tables sont posées en quatre rangées, l'allée du trône laissée
   libre entre la deuxième et la troisième — la planche montre des rangées de
   tables rondes, la reconstruction leur donne un pas de six mètres ;
-- le réfectoire du pont 5 est ses longues tables en rangées (chap. 377) et sa
+- le réfectoire du pont 5 est ses longues **planches basses** en rangées
+  (chap. 377), et pas un banc autour : la vue d'ensemble montre les convives
+  assis à même le pont le long d'elles, et l'estrade de la Brigade au milieu est
+  basse pour la même raison. La reconstruction leur avait donné des tables à
+  0,75 m et des bancs à 0,45 — c'était meubler une cantine, pas lire la planche ;
+  les bancs sont retirés et les tables descendues à 0,35 m. La salle est aussi sa
   **charpente** (chap. 371) : fermes, passerelles et gaines si haut au-dessus de
   la foule que les 4,5 m du pont ne peuvent pas les porter — la salle reçoit 9 m,
   au même titre que la mezzanine vaut ses 8 m au casino, et la poussière qui

@@ -97,7 +97,6 @@ black-whale/
 │
 ├── packages/
 │   ├── domain/              # Shared TypeScript models & domain events
-│   ├── contracts/           # Shared API and projection contracts
 │   ├── database/            # Prisma schema and PostgreSQL client
 │   ├── world-engine/        # Pure event reducer, invariants, cursors & projections
 │   ├── timeline-engine/     # Reconstructs world state at any event
@@ -109,9 +108,7 @@ black-whale/
 │   ├── simulation-engine/   # Non-canonical branch timelines
 │   ├── map-engine/          # Ship map layers and entity positions
 │   ├── ability-sdk/         # DSL for defining Nen ability modules
-│   ├── ability-modules/     # Concrete ability implementations
-│   ├── ui/                  # Shared Svelte components
-│   └── config/              # Shared environment config
+│   └── ability-modules/     # Concrete ability implementations
 │
 ├── data/                    # The catalogue: chapters, characters, abilities, locations,
 │                            # plus ship/blueprint.json, the metric reconstruction

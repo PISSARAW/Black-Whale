@@ -26,9 +26,7 @@ export const load: LayoutServerLoad = async ({ cookies }) => {
       limit: readSpoilerLimit(cookies) ?? null,
       // Bounds for the chapter field. The catalogue is the only thing that knows
       // how far the archive goes, so the control cannot hard-code them.
-      chapters: numbers.length
-        ? { first: Math.min(...numbers), last: Math.max(...numbers) }
-        : null,
+      chapters: numbers.length ? { first: Math.min(...numbers), last: Math.max(...numbers) } : null,
     },
   }
 }

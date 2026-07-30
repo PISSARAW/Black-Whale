@@ -29,6 +29,7 @@
   import { crossingsOn, deckOf, entrySpace, theShip, type Crossing } from '$lib/tour/blueprint'
   import {
     FOV_RANGE,
+    NIGHT_LIGHT_RANGE,
     SENSITIVITY_RANGE,
     SNAP_ANGLE_RANGE,
     comfort,
@@ -1014,6 +1015,29 @@
               step="0.05"
               value={$comfort.sensitivity}
               oninput={(event) => setComfort({ sensitivity: Number(event.currentTarget.value) })}
+              class="mt-1 w-full accent-[#FFD700]"
+            />
+          </label>
+
+          <!-- The one light aboard that is not the ship's: see `nightLight` in
+               `$lib/tour/comfort`. Off is a real position on this slider, and the
+               label says what off means rather than reading zero. -->
+          <label class="block">
+            <span class="flex items-baseline justify-between">
+              <span>{$t.tour.comfort.nightLight}</span>
+              <span class="text-[#FFD700]/80">
+                {$comfort.nightLight > 0
+                  ? $t.tour.comfort.metres($comfort.nightLight)
+                  : $t.tour.comfort.nightLightOff}
+              </span>
+            </span>
+            <input
+              type="range"
+              min={NIGHT_LIGHT_RANGE[0]}
+              max={NIGHT_LIGHT_RANGE[1]}
+              step="1"
+              value={$comfort.nightLight}
+              oninput={(event) => setComfort({ nightLight: Number(event.currentTarget.value) })}
               class="mt-1 w-full accent-[#FFD700]"
             />
           </label>

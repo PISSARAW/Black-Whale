@@ -184,9 +184,12 @@ export const fr: Messages = {
       snapTurn: 'Tourner par crans',
       snapAngle: 'Cran',
       jumpOnly: 'Ne pas marcher — sauter de pièce en pièce',
+      nightLight: 'Lumière que vous portez',
+      nightLightOff: 'Éteinte — le vaisseau tel qu’il est éclairé',
       reset: 'Revenir aux réglages du système',
       calm: 'Votre système demande moins de mouvement : tout démarre en douceur.',
       degrees: (angle) => `${angle}°`,
+      metres: (distance) => `${distance} m`,
       times: (factor) => `×${factor.toFixed(2)}`,
     },
 

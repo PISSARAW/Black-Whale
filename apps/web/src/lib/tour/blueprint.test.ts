@@ -503,12 +503,20 @@ describe('what stands in the rooms', () => {
     }
   })
 
-  it('never drops the visitor inside a solid', () => {
+  it('never drops the visitor inside a solid, and is happy to drop them under one', () => {
+    let underSomething = 0
     for (const plan of ship.plans.values()) {
       for (const space of plan.spaces) {
         const at = spawnPoint(space, plan.structures)
         for (const structure of plan.structures) {
           if (structure.spaceId !== space.id) continue
+          // What hangs clear of the head is something you arrive under: the
+          // service run crosses the princes' court over the very point the
+          // visitor lands on, and that is not a room you cannot be put in.
+          if (!blocksTheFloor(structure)) {
+            if (pointInPolygon(at, structureFootprint(structure))) underSomething++
+            continue
+          }
           expect(
             pointInPolygon(at, structureFootprint(structure)),
             `${space.id} spawns inside ${structure.id}`,
@@ -516,6 +524,7 @@ describe('what stands in the rooms', () => {
         }
       }
     }
+    expect(underSomething).toBeGreaterThan(0)
   })
 
   /** Two rooms sharing a wall, under a four-metre ceiling. */

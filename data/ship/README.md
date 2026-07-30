@@ -442,6 +442,17 @@ Le second : **ce qu'une planche montre est ce que la pièce est** —
   passagers s'assoient dessus. Le vide de cette salle n'est plus un silence du
   dossier, c'est une planche qui l'affirme — et c'est pour ça qu'il est écrit
   ici plutôt que laissé à deviner ;
+- la cour des princes est aussi ce qui court **au-dessus** d'elle : le réseau de
+  service que le cafard de Bill parcourt de suite en suite du chap. 367 au 369,
+  et par une grille duquel le chap. 368 fait regarder la reine Oito. Il est posé
+  sur le tracé que la feuille du chap. 369 dessine — une collectrice dans l'axe
+  du bloc, une antenne en travers de la cour entre deux rangées, une dérivation
+  par appartement — à la hauteur exacte où les grilles sont percées, pour qu'il
+  arrive où elles sont. Ce n'est **pas** un niveau qu'on parcourt : la gaine est
+  dessinée du point de vue d'un cafard, sa section est celle d'un cafard, et lui
+  donner deux mètres sous plafond pour que la visite puisse y entrer serait
+  inventer une coursive que rien ne montre. On marche dessous, comme sous les
+  gaines du 37564 ;
 - le casino VIP est sa salle de jeu, les devantures autour et la mezzanine
   au-dessus (chap. 405) — c'est la mezzanine qui lui donne ses 8 m sous
   plafond, aucune salle à galerie ne tenant sous les 5 m du pont ;

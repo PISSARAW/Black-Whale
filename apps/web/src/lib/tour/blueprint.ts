@@ -675,6 +675,11 @@ export function validateBlueprint(source: Blueprint = blueprint): string[] {
 
     const arrival = spawnPoint(room, standing)
     for (const structure of standing) {
+      // Hung clear of the head, it is something you arrive *under*: the service
+      // run crossing the princes' court passes over the point the visitor lands
+      // on, and standing under a duct is not standing inside one. Same rule as
+      // the doorway pass above, and the same one `spawnPoint` itself applies.
+      if (!blocksTheFloor(structure)) continue
       if (pointInPolygon(arrival, structureFootprint(structure))) {
         issues.push(`structure ${structure.id}: the visitor arrives inside it`)
       }

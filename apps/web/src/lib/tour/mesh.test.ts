@@ -4,6 +4,7 @@ import {
   COLUMN_HALF_WIDTH,
   DOOR_HEIGHT,
   PLATE_PITCH,
+  ceilingLamps,
   columnWalls,
   distanceToBoundary,
   grilleBars,
@@ -11,7 +12,14 @@ import {
   structureFootprint,
   toClockwise,
 } from './geometry'
-import { PATCH, buildSolidMesh, buildTierMesh, colourFor, type TierMesh } from './mesh'
+import {
+  PATCH,
+  buildSolidMesh,
+  buildTierMesh,
+  colourFor,
+  fittingHeight,
+  type TierMesh,
+} from './mesh'
 import type { Vec2 } from './types'
 
 const ship = buildShip()
@@ -85,6 +93,13 @@ describe('buildTierMesh', () => {
       const mesh = buildTierMesh(plan)
       expect(mesh.positions.every(Number.isFinite)).toBe(true)
       expect(mesh.normals.every(Number.isFinite)).toBe(true)
+      // Every buffer, not just the two the deck is built from: a NaN in a
+      // position is a triangle the driver rasterises to anything it likes, and
+      // one in the fittings would be a lamp that fills the screen.
+      expect(mesh.edges.every(Number.isFinite)).toBe(true)
+      expect(mesh.seams.every(Number.isFinite)).toBe(true)
+      expect(mesh.fittings.every(Number.isFinite)).toBe(true)
+      expect(mesh.fittingColors.every(Number.isFinite)).toBe(true)
     }
   })
 
@@ -598,6 +613,161 @@ describe('the deck plating', () => {
     // A 157 m hall, plated both ways at PLATE_PITCH, is a great many courses —
     // and the point of them is that a visitor crossing it counts them.
     expect(group.seamCount / 2).toBeGreaterThan(157 / PLATE_PITCH)
+  })
+})
+
+/**
+ * The fittings, which are the visible half of what the bake has been reading off
+ * `ceilingLamps` since it landed.
+ *
+ * The one thing worth guarding here is not the geometry — it is two triangles —
+ * but the agreement: a fitting the visitor can see has to be the fitting that is
+ * lighting the floor under it. Derive the two heights separately and the ship
+ * gets lamps that glow where nothing brightens, and no picture would show it.
+ */
+describe('the ceiling fittings', () => {
+  it('hangs one over every room, on the grid the bake pools from', () => {
+    let total = 0
+    for (const [tierId, plan] of ship.plans) {
+      const mesh = buildTierMesh(plan)
+      for (const group of mesh.groups) {
+        const space = plan.spaces.find((entry) => entry.id === group.spaceId)!
+        const lamps = ceilingLamps(space.footprint)
+        // Two triangles, six vertices, one fitting.
+        expect(
+          group.fittingCount / 6,
+          `${group.spaceId} draws a different number of fittings than it lights by`,
+        ).toBe(lamps.length)
+        expect(lamps.length, `${group.spaceId} has no light in it`).toBeGreaterThan(0)
+        total += lamps.length
+      }
+      expect(mesh.fittings.length % 18, `${tierId} has a fitting that is not a quad`).toBe(0)
+    }
+    // 3 065 fittings on the ship: 6 130 triangles against the 289 000 it draws.
+    expect(total).toBeGreaterThan(3000)
+  })
+
+  it('hangs each one at the height its own light comes from', () => {
+    for (const plan of ship.plans.values()) {
+      const mesh = buildTierMesh(plan)
+      for (const group of mesh.groups) {
+        const space = plan.spaces.find((entry) => entry.id === group.spaceId)!
+        const top = plan.tier.elevation + ceilingOf(space, plan.tier)
+        const hang = fittingHeight(plan.tier.elevation, top)
+        // Below the ceiling — a quad coplanar with it would fight for the depth
+        // buffer — and above the head of anyone walking under it.
+        expect(hang).toBeLessThan(top)
+        expect(hang).toBeGreaterThanOrEqual(plan.tier.elevation + 2)
+
+        const from = group.fittingStart * 3
+        const to = (group.fittingStart + group.fittingCount) * 3
+        for (let i = from; i < to; i += 3) {
+          // Four places, not more: the buffer is `Float32Array`, and 78,65 m
+          // comes back out of it as 78,650002.
+          expect(
+            mesh.fittings[i + 1],
+            `${group.spaceId} hangs a fitting off its own light`,
+          ).toBeCloseTo(hang, 4)
+        }
+      }
+    }
+  })
+
+  it('faces every fitting at the floor', () => {
+    let checked = 0
+    for (const plan of ship.plans.values()) {
+      const f = buildTierMesh(plan).fittings
+      for (let i = 0; i < f.length; i += 9) {
+        // The winding has to give a downward normal: the only side of a lamp
+        // anyone is ever on is underneath it.
+        const ux = f[i + 3] - f[i]
+        const uz = f[i + 5] - f[i + 2]
+        const vx = f[i + 6] - f[i]
+        const vz = f[i + 8] - f[i + 2]
+        // For a flat quad, u × v is (0, uz·vx − ux·vz, 0) — the negative of the
+        // plan-view cross product, which is why a counter-clockwise square in
+        // [x, z] comes out facing *down*. See `MeshBuilder.quad`.
+        expect(uz * vx - ux * vz).toBeLessThan(0)
+        checked++
+      }
+    }
+    expect(checked).toBeGreaterThan(6000)
+  })
+
+  it('sits each one inside the room that hangs it', () => {
+    const plan = ship.plans.get('tier-1')!
+    const mesh = buildTierMesh(plan)
+    for (const group of mesh.groups) {
+      const space = plan.spaces.find((entry) => entry.id === group.spaceId)!
+      for (const [x, z] of ceilingLamps(space.footprint)) {
+        expect(
+          pointInPolygon([x, z], space.footprint),
+          `${group.spaceId} hangs a fitting outside itself`,
+        ).toBe(true)
+      }
+    }
+  })
+
+  it('burns above white, so a fitting reads as a source and not a pale square', () => {
+    const mesh = buildTierMesh(ship.plans.get('tier-1')!)
+    expect(mesh.fittingColors.length).toBe(mesh.fittings.length)
+    // The brightest fitting on the deck is over 1 — nothing else in the ship's
+    // buffers is, and that is what makes it clip while the steel around it does
+    // not. A vertex attribute is a float and carries it; the albedos, which are
+    // checked for the 0…1 range elsewhere, are a different buffer.
+    expect(Math.max(...mesh.fittingColors)).toBeGreaterThan(1)
+  })
+
+  it('dims the lamps of an invented room by what dims its lamplight', () => {
+    const plan = ship.plans.get('tier-1')!
+    const mesh = buildTierMesh(plan)
+
+    const brightest = (provenance: string) => {
+      let best = 0
+      for (const group of mesh.groups) {
+        const space = plan.spaces.find((entry) => entry.id === group.spaceId)!
+        if (space.provenance !== provenance) continue
+        const from = group.fittingStart * 3
+        const to = (group.fittingStart + group.fittingCount) * 3
+        for (let i = from; i < to; i++) best = Math.max(best, mesh.fittingColors[i])
+      }
+      return best
+    }
+
+    const drawn = brightest('panel')
+    const invented = brightest('inferred')
+    expect(drawn, 'no panel-sourced room on Tier 1').toBeGreaterThan(0)
+    expect(invented, 'no invented room on Tier 1').toBeGreaterThan(0)
+    // Not merely dimmer: dimmer by the one constant the pools are dimmed by, so
+    // the lamp and the light under it cannot drift apart.
+    expect(invented / drawn).toBeCloseTo(0.22, 5)
+  })
+
+  it('draws none of them under the reveal', () => {
+    // The doctrine view asks every surface what it is worth as evidence, and a
+    // quad drawn as a light answers nothing: the fittings are derived, like the
+    // columns, and they belong to the walk rather than to the sources.
+    for (const [tierId, plan] of ship.plans) {
+      expect(buildTierMesh(plan).fittings.length, `${tierId} lights nothing`).toBeGreaterThan(0)
+      expect(
+        buildTierMesh(plan, { reveal: true }).fittings.length,
+        `${tierId} lights the doctrine`,
+      ).toBe(0)
+    }
+  })
+
+  it('cuts the fittings into the same rooms as the geometry', () => {
+    for (const [tierId, plan] of ship.plans) {
+      const mesh = buildTierMesh(plan)
+      let vertices = 0
+      for (const group of mesh.groups) {
+        expect(group.fittingStart, `${group.spaceId} fittings are out of order`).toBe(vertices)
+        vertices += group.fittingCount
+      }
+      expect(vertices, `${tierId} has a fitting belonging to no room`).toBe(
+        mesh.fittings.length / 3,
+      )
+    }
   })
 })
 

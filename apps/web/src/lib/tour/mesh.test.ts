@@ -41,6 +41,93 @@ describe('buildTierMesh', () => {
     }
   })
 
+  /**
+   * The blueprint is hand-edited, and nothing in it is bounded: a room given
+   * eight hundred solids, or a grille run the length of a deck, arrives as
+   * geometry with no complaint from anywhere. These are the ceilings — set at
+   * roughly twice what the ship currently draws, so ordinary additions pass and
+   * an order of magnitude does not.
+   */
+  const MAX_DECK_TRIANGLES = 15_000
+  const MAX_DECK_BYTES = 1_600_000
+  /**
+   * One room, which is now one draw call and one bounding sphere. The banquet
+   * hall — its columns, its stage, its dais and its tables — is the largest at
+   * about 3,500.
+   */
+  const MAX_ROOM_TRIANGLES = 8_000
+
+  it('keeps every deck within the budget the walk is built for', () => {
+    for (const [tierId, plan] of ship.plans) {
+      const mesh = buildTierMesh(plan)
+      const bytes =
+        mesh.positions.byteLength +
+        mesh.normals.byteLength +
+        mesh.colors.byteLength +
+        mesh.edges.byteLength
+
+      expect(mesh.triangles, `${tierId} extrudes too much`).toBeLessThanOrEqual(MAX_DECK_TRIANGLES)
+      expect(bytes, `${tierId} is too many bytes of buffer`).toBeLessThanOrEqual(MAX_DECK_BYTES)
+
+      for (const group of mesh.groups) {
+        expect(
+          group.count / 3,
+          `${group.spaceId} is too much geometry for one room`,
+        ).toBeLessThanOrEqual(MAX_ROOM_TRIANGLES)
+      }
+    }
+  })
+
+  it('cuts every deck into rooms that tile its buffers exactly', () => {
+    for (const [tierId, plan] of ship.plans) {
+      const mesh = buildTierMesh(plan)
+      const ids = new Set(plan.spaces.map((space) => space.id))
+
+      let vertices = 0
+      let edgePoints = 0
+      for (const group of mesh.groups) {
+        expect(ids, `${tierId} groups geometry under an unknown room`).toContain(group.spaceId)
+        // Contiguous and in order: a room drawn by a draw range cannot have its
+        // triangles scattered through the buffer.
+        expect(group.start, `${group.spaceId} does not follow the room before it`).toBe(vertices)
+        expect(group.edgeStart).toBe(edgePoints)
+        vertices += group.count
+        edgePoints += group.edgeCount
+      }
+      expect(vertices, `${tierId} has geometry belonging to no room`).toBe(
+        mesh.positions.length / 3,
+      )
+      expect(edgePoints).toBe(mesh.edges.length / 3)
+    }
+  })
+
+  it('measures each room its own bounding sphere rather than the whole deck', () => {
+    const plan = ship.plans.get('tier-1')!
+    const mesh = buildTierMesh(plan)
+
+    for (const group of mesh.groups) {
+      // Every vertex of the room is inside the sphere the renderer culls with.
+      for (let i = group.start * 3; i < (group.start + group.count) * 3; i += 3) {
+        const distance = Math.hypot(
+          mesh.positions[i] - group.centre[0],
+          mesh.positions[i + 1] - group.centre[1],
+          mesh.positions[i + 2] - group.centre[2],
+        )
+        expect(distance, `${group.spaceId} has geometry outside its own sphere`).toBeLessThanOrEqual(
+          group.radius + 0.001,
+        )
+      }
+    }
+
+    // And no room's sphere is the deck's: a bounding sphere around all of Tier 1
+    // is what could not be culled in the first place.
+    const deckRadius = Math.max(...mesh.groups.map((group) => group.radius))
+    const median = [...mesh.groups.map((group) => group.radius)].sort((a, b) => a - b)[
+      Math.floor(mesh.groups.length / 2)
+    ]
+    expect(median).toBeLessThan(deckRadius / 2)
+  })
+
   it('gives the tallest hall on Tier 1 a ceiling above the corridors', () => {
     const plan = ship.plans.get('tier-1')!
     const mesh = buildTierMesh(plan)

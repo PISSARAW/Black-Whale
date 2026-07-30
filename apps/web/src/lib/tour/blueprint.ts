@@ -146,6 +146,27 @@ export function buildShip(source: Blueprint = blueprint): Ship {
   }
 }
 
+/**
+ * The ship, built once and handed out.
+ *
+ * `buildShip` derives every doorway on every level from the walls the rooms
+ * share, cuts the openings out of those walls, lays the column grids and folds
+ * in what stands in the rooms: some eighteen milliseconds warm, and four to six
+ * times that on a phone. It was being called from the top of two page
+ * components, and a Svelte component's script runs once per instance — so the
+ * ship was derived again on the server for every request, again in the browser
+ * on hydration, and again every time the visitor navigated back to `/tour`.
+ *
+ * Nothing mutates a `Ship`: the techniques in `$lib/tour/hatsu` return new
+ * plans rather than editing these, which is what makes sharing one safe.
+ */
+let shared: Ship | null = null
+
+export function theShip(): Ship {
+  shared ??= buildShip()
+  return shared
+}
+
 /** The deck a level belongs to: itself, or the deck its room stands on. */
 export function deckOf(ship: Ship, tierId: string): Tier | null {
   const tier = ship.tiers.find((candidate) => candidate.id === tierId)
@@ -153,6 +174,52 @@ export function deckOf(ship: Ship, tierId: string): Tier | null {
   if (tier.kind === 'deck') return tier
   const parent = tier.parentSpaceId ? ship.spaces.get(tier.parentSpaceId) : null
   return parent ? (ship.tiers.find((candidate) => candidate.id === parent.tierId) ?? null) : null
+}
+
+/**
+ * A vertical join as it appears on one level: where it is in that level's
+ * coordinates, where it leads, and how far up or down.
+ *
+ * The blueprint stores a link once, from one end, and a stairwell's `at` is read
+ * in the coordinates of whichever end you are standing on. Anything that has to
+ * *draw* the joins on a level — the plan, and eventually the geometry — needs
+ * them the other way round: all the crossings that touch this level, already
+ * resolved. Four stairwells and one bulkhead serve a hundred and seventeen deck
+ * spaces, and until they are drawn the only way to find one is to walk into it.
+ */
+export interface Crossing {
+  link: Link
+  /** Where it is, in this level's coordinates. */
+  at: Vec2
+  /** The space it leads to from here. */
+  to: string
+  /** Metres gained by taking it: up is positive, and a door across is zero. */
+  rise: number
+}
+
+export function crossingsOn(ship: Ship, tierId: string): Crossing[] {
+  const elevationOf = (id: string) =>
+    ship.tiers.find((candidate) => candidate.id === id)?.elevation ?? 0
+  const here = elevationOf(tierId)
+  const crossings: Crossing[] = []
+
+  for (const link of ship.links) {
+    const from = ship.spaces.get(link.from)
+    const to = ship.spaces.get(link.to)
+    if (!from || !to) continue
+    if (from.tierId === tierId) {
+      crossings.push({ link, at: link.at, to: link.to, rise: elevationOf(to.tierId) - here })
+    } else if (to.tierId === tierId) {
+      crossings.push({
+        link,
+        at: link.atTo ?? link.at,
+        to: link.from,
+        rise: elevationOf(from.tierId) - here,
+      })
+    }
+  }
+
+  return crossings
 }
 
 /** The space a point falls in on a given tier, or `null` out in the hull. */

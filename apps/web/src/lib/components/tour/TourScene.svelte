@@ -35,6 +35,7 @@
     wanderOffset,
     type TourWorld,
   } from '$lib/tour/hatsu'
+  import { comfort, type Comfort } from '$lib/tour/comfort'
   import { buildSolidMesh, buildTierMesh } from '$lib/tour/mesh'
   import {
     STICK_RADIUS,
@@ -44,7 +45,9 @@
     stickVector,
     walkInput,
     wallsNear,
+    wayOutOfInterior,
   } from '$lib/tour/navigation'
+  import { visibleSpaces } from '$lib/tour/visibility'
   import type { Link, Space, Structure, Vec2 } from '$lib/tour/types'
 
   interface Props {
@@ -131,8 +134,20 @@
   const EYE_HEIGHT = 1.7
   const WALK_SPEED = 6
   const SPRINT_SPEED = 16
+  /** Radians of yaw per pixel of pointer movement, before the visitor's own multiplier. */
   const LOOK_SENSITIVITY = 0.0022
   const MAX_PITCH = Math.PI / 2 - 0.05
+
+  /**
+   * How far the camera sees, in metres.
+   *
+   * The fog closes to the clear colour at 110 m and the two are the same
+   * near-black, so anything past that is already invisible — the far plane was
+   * at 600 m, which is four times the length of the ship and cost a depth range
+   * spent on geometry nobody can see. Twenty metres of margin over the fog so
+   * the plane itself never becomes a visible edge.
+   */
+  const VIEW_DISTANCE = 130
 
   /** A finger that moved less than this, in pixels, was a tap and not a drag. */
   const TAP_SLOP = 12
@@ -206,15 +221,26 @@
       }
       if (disposed || !canvas || !container) return
 
+      // The same query `touch` is settled by, asked again here because the
+      // renderer is made before the first finger can land on the glass.
+      const coarse = window.matchMedia?.('(hover: none) and (pointer: coarse)').matches ?? false
+
       let renderer: import('three').WebGLRenderer
       try {
-        renderer = new THREE.WebGLRenderer({ canvas, antialias: true })
+        // Multisampling on a phone is paid for at every one of a lot of pixels,
+        // and on a display this dense it is buying an edge nobody can see. The
+        // gold outlines are lines rather than geometry, so what it was mostly
+        // smoothing is not there to be smoothed.
+        renderer = new THREE.WebGLRenderer({ canvas, antialias: !coarse })
       } catch {
         failure = 'webgl'
         return
       }
 
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+      // A 3× display was rendering nine times the pixels of a 1× one for a walk
+      // whose surfaces are flat colour. Capping at 1.5 costs about a percent of
+      // apparent sharpness and 44% of the fragments.
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5))
       renderer.setClearColor(0x050505)
       // The deck colours are true albedos now that `mesh.ts` hands over linear
       // values, and a linear render of them clips the headlamp's hot spot to
@@ -227,7 +253,9 @@
       const scene = new THREE.Scene()
       scene.fog = new THREE.Fog(0x050505, 6, 110)
 
-      const camera = new THREE.PerspectiveCamera(72, 1, 0.1, 600)
+      // The field of view is the visitor's to set: 72° is a wide-angle lens, and
+      // on a laptop held at arm's length it is a fisheye that makes people ill.
+      const camera = new THREE.PerspectiveCamera($comfort.fov, 1, 0.1, VIEW_DISTANCE)
 
       // The decks are unlit steel. Ambient and hemisphere light carry most of
       // the image so surfaces keep the colour they were given, and the lamp on
@@ -274,11 +302,26 @@
       // A plain record rather than a Map: the render loop owns this cache and
       // nothing in the markup reads it, so it must stay out of Svelte's
       // reactivity instead of driving it.
-      const decks: Record<
-        string,
-        { deck: import('three').Mesh; edges: import('three').LineSegments } | undefined
-      > = {}
-      let visible: { deck: import('three').Mesh; edges: import('three').LineSegments } | null = null
+
+      /**
+       * One room of a deck: its slice of the deck's buffers, drawn on its own.
+       *
+       * The deck is still one upload — every room's mesh points at the same
+       * three `BufferAttribute`s and differs only in its draw range — but it is
+       * no longer one thing to draw. That is what lets `visibleSpaces` switch
+       * rooms off, and what gives the GPU a bounding sphere per room to frustum
+       * cull against instead of a 145-metre sphere around the whole deck.
+       */
+      type Room = {
+        spaceId: string
+        mesh: import('three').Mesh
+        edges: import('three').LineSegments
+      }
+      /** A deck, as one group holding a mesh and an edge run per room. */
+      type Built = { root: import('three').Group; rooms: Room[] }
+
+      const decks: Record<string, Built | undefined> = {}
+      let visible: Built | null = null
 
       /**
        * The remote eye: a second camera parked in a room, and the deck it is
@@ -287,7 +330,7 @@
        * before that block and has to know not to take the eye's deck away.
        */
       let eyeCamera: import('three').PerspectiveCamera | null = null
-      let eyeDeck: { deck: import('three').Mesh; edges: import('three').LineSegments } | null = null
+      let eyeDeck: Built | null = null
       let eyeKey = ''
 
       /** The plan as Nen leaves it: what is drawn, and what still stops you. */
@@ -310,37 +353,60 @@
        * variant of a deck is disposed as soon as a new one replaces it, or a
        * long enough session would hold a copy of the ship per cast.
        */
-      const variants: Record<
-        string,
-        | {
-            key: string
-            built: { deck: import('three').Mesh; edges: import('three').LineSegments }
-          }
-        | undefined
-      > = {}
+      const variants: Record<string, { key: string; built: Built } | undefined> = {}
 
-      function extrude(nextTierId: string) {
+      /**
+       * One deck, extruded once and cut into rooms.
+       *
+       * The three vertex attributes and the edge attribute are made once and
+       * handed to every room's geometry: three.js keys its GPU buffers by the
+       * `BufferAttribute` object, so sharing them means one upload for the deck
+       * however many rooms it has. Each room then differs only in its draw range
+       * and in the bounding sphere `buildTierMesh` measured for it.
+       */
+      function extrude(nextTierId: string): Built {
         const mesh = buildTierMesh(walkedPlan(ship, world, nextTierId))
-        const geometry = new THREE.BufferGeometry()
-        geometry.setAttribute('position', new THREE.BufferAttribute(mesh.positions, 3))
-        geometry.setAttribute('normal', new THREE.BufferAttribute(mesh.normals, 3))
-        geometry.setAttribute('color', new THREE.BufferAttribute(mesh.colors, 3))
+        const position = new THREE.BufferAttribute(mesh.positions, 3)
+        const normal = new THREE.BufferAttribute(mesh.normals, 3)
+        const color = new THREE.BufferAttribute(mesh.colors, 3)
+        const edgePosition = new THREE.BufferAttribute(mesh.edges, 3)
 
-        const edgeGeometry = new THREE.BufferGeometry()
-        edgeGeometry.setAttribute('position', new THREE.BufferAttribute(mesh.edges, 3))
+        const root = new THREE.Group()
+        const rooms: Room[] = []
 
-        return {
-          deck: new THREE.Mesh(geometry, material),
-          edges: new THREE.LineSegments(edgeGeometry, edgeMaterial),
+        for (const group of mesh.groups) {
+          const centre = new THREE.Vector3(group.centre[0], group.centre[1], group.centre[2])
+
+          const geometry = new THREE.BufferGeometry()
+          geometry.setAttribute('position', position)
+          geometry.setAttribute('normal', normal)
+          geometry.setAttribute('color', color)
+          geometry.setDrawRange(group.start, group.count)
+          // Set by hand: `computeBoundingSphere` reads the whole attribute, so
+          // every room would come back with the sphere of the entire deck and
+          // nothing would ever be culled.
+          geometry.boundingSphere = new THREE.Sphere(centre.clone(), group.radius)
+
+          const edgeGeometry = new THREE.BufferGeometry()
+          edgeGeometry.setAttribute('position', edgePosition)
+          edgeGeometry.setDrawRange(group.edgeStart, group.edgeCount)
+          edgeGeometry.boundingSphere = new THREE.Sphere(centre.clone(), group.radius)
+
+          const roomMesh = new THREE.Mesh(geometry, material)
+          const roomEdges = new THREE.LineSegments(edgeGeometry, edgeMaterial)
+          root.add(roomMesh)
+          root.add(roomEdges)
+          rooms.push({ spaceId: group.spaceId, mesh: roomMesh, edges: roomEdges })
         }
+
+        return { root, rooms }
       }
 
-      const dispose = (built: {
-        deck: import('three').Mesh
-        edges: import('three').LineSegments
-      }) => {
-        built.deck.geometry.dispose()
-        built.edges.geometry.dispose()
+      const dispose = (built: Built) => {
+        for (const room of built.rooms) {
+          room.mesh.geometry.dispose()
+          room.edges.geometry.dispose()
+        }
       }
 
       /**
@@ -353,14 +419,13 @@
        * buffers in the driver with nothing left pointing at them. They wait here
        * instead, and `sweepStale` frees them the frame nothing is drawing them.
        */
-      const stale: { deck: import('three').Mesh; edges: import('three').LineSegments }[] = []
+      const stale: Built[] = []
 
       function sweepStale() {
         for (let i = stale.length - 1; i >= 0; i--) {
           const built = stale[i]
           if (built === visible || built === eyeDeck) continue
-          scene.remove(built.deck)
-          scene.remove(built.edges)
+          scene.remove(built.root)
           dispose(built)
           stale.splice(i, 1)
         }
@@ -422,17 +487,13 @@
 
         // The deck the eye is watching stays in the scene whether or not the
         // visitor is still standing on it: that is the whole of the remote feed.
-        if (visible && visible !== eyeDeck) {
-          scene.remove(visible.deck)
-          scene.remove(visible.edges)
-        }
+        if (visible && visible !== eyeDeck) scene.remove(visible.root)
         // Off the screen and out of the way, so a variant it was holding open
         // can be freed the moment a new one takes its place.
         visible = null
 
         const { built, key } = buildDeck(nextTierId)
-        scene.add(built.deck)
-        scene.add(built.edges)
+        scene.add(built.root)
         visible = built
         activeKey = key
         activePlan = walkedPlan(ship, world, nextTierId)
@@ -536,10 +597,7 @@
         if (eyeDeck) {
           // The deck the eye was watching goes back out of the scene unless the
           // visitor is standing on it.
-          if (eyeDeck !== visible) {
-            scene.remove(eyeDeck.deck)
-            scene.remove(eyeDeck.edges)
-          }
+          if (eyeDeck !== visible) scene.remove(eyeDeck.root)
           eyeDeck = null
         }
         if (!space) {
@@ -548,14 +606,11 @@
         }
 
         const at = centroid(space)
-        eyeCamera = new THREE.PerspectiveCamera(64, 1, 0.1, 600)
+        eyeCamera = new THREE.PerspectiveCamera(64, 1, 0.1, VIEW_DISTANCE)
         eyeCamera.position.set(at[0], eyeHeightIn(space, ship), at[1])
 
         const built = buildDeck(space.tierId).built
-        if (built !== visible) {
-          scene.add(built.deck)
-          scene.add(built.edges)
-        }
+        if (built !== visible) scene.add(built.root)
         eyeDeck = built
       }
 
@@ -589,19 +644,58 @@
         const plan = ship.plans.get(currentTierId)
         if (!plan) return
 
-        if (visible && visible !== eyeDeck) {
-          scene.remove(visible.deck)
-          scene.remove(visible.edges)
-        }
+        if (visible && visible !== eyeDeck) scene.remove(visible.root)
         visible = null
         const built = buildDeck(currentTierId).built
-        if (built !== eyeDeck) {
-          scene.add(built.deck)
-          scene.add(built.edges)
-        }
+        if (built !== eyeDeck) scene.add(built.root)
         visible = built
         activeKey = key
         activePlan = walkedPlan(ship, world, currentTierId)
+      }
+
+      /**
+       * Portal culling: which rooms of the decks in the scene are drawn.
+       *
+       * `$lib/tour/visibility` decides it, off the doorways the reconstruction
+       * already derives. All this does is switch the meshes.
+       *
+       * The remote eye complicates it by exactly one case: it is a second camera
+       * rendering the same scene from a room the visitor may be nowhere near, so
+       * what it can see has to be switched on too. When it happens to be
+       * watching the deck underfoot, the two sets are unioned rather than one
+       * overwriting the other.
+       */
+      let shownKey = ''
+
+      function applyVisibility(standingId: string | null) {
+        const eyeSpace = world.eye ? ship.spaces.get(world.eye) : null
+        const key = `${standingId ?? ''}::${activeKey}::${eyeKey}`
+        if (key === shownKey) return
+        shownKey = key
+
+        // A list rather than a Map: there are at most two decks in the scene,
+        // and the render loop owns this outright — nothing in the markup reads
+        // it, so it must stay out of Svelte's reactivity rather than drive it.
+        const wanted: { deck: Built; ids: Set<string> }[] = []
+        const want = (deck: Built, ids: Set<string>) => {
+          const held = wanted.find((entry) => entry.deck === deck)
+          if (held) for (const id of ids) held.ids.add(id)
+          else wanted.push({ deck, ids: new Set(ids) })
+        }
+
+        if (visible && activePlan) want(visible, visibleSpaces(activePlan, standingId))
+        if (eyeDeck && eyeSpace) {
+          const eyePlan = ship.plans.get(eyeSpace.tierId)
+          if (eyePlan) want(eyeDeck, visibleSpaces(eyePlan, eyeSpace.id))
+        }
+
+        for (const { deck, ids } of wanted) {
+          for (const room of deck.rooms) {
+            const on = ids.has(room.spaceId)
+            room.mesh.visible = on
+            room.edges.visible = on
+          }
+        }
       }
 
       /**
@@ -726,8 +820,8 @@
           target.closest('a, button, input, textarea, select, [role="button"], [tabindex]') !==
             null)
 
-      /** A quarter-turn to the side, for the visitor who has no mouse to look with. */
-      const SNAP_TURN = Math.PI / 4
+      /** One step to the side, in radians, as the visitor has set it. */
+      const snapStep = () => ($comfort.snapAngle * Math.PI) / 180
 
       const onKeyDown = (event: KeyboardEvent) => {
         if (typingElsewhere(event.target)) return
@@ -743,7 +837,7 @@
         // because a view that jumps is easier on the stomach than one that
         // swings. `repeat` is dropped so a held key does not spin the camera.
         if (!event.repeat && (event.code === 'ArrowLeft' || event.code === 'ArrowRight')) {
-          yaw += event.code === 'ArrowLeft' ? SNAP_TURN : -SNAP_TURN
+          yaw += event.code === 'ArrowLeft' ? snapStep() : -snapStep()
         }
         if (event.code === 'KeyE' || event.code === 'Enter') takeLink()
         if (event.code === 'KeyF' && aiming) cast()
@@ -758,9 +852,29 @@
       }
 
       let dragging = false
+      /**
+       * Yaw the mouse or the finger has asked for and the snap has not yet paid
+       * out. Held across calls so a slow drag still turns: the movement is
+       * accumulated and spent a step at a time, rather than each frame's couple
+       * of pixels being rounded away to nothing.
+       */
+      let swung = 0
       const look = (dx: number, dy: number) => {
-        yaw -= dx * LOOK_SENSITIVITY
-        pitch = Math.max(-MAX_PITCH, Math.min(MAX_PITCH, pitch - dy * LOOK_SENSITIVITY))
+        const sensitivity = LOOK_SENSITIVITY * $comfort.sensitivity
+        // Snap turning is the one thing that reliably settles a stomach: the view
+        // is either still or already somewhere else, never swinging.
+        if ($comfort.snapTurn) {
+          swung -= dx * sensitivity
+          const step = snapStep()
+          while (Math.abs(swung) >= step) {
+            const turn = Math.sign(swung) * step
+            yaw += turn
+            swung -= turn
+          }
+        } else {
+          yaw -= dx * sensitivity
+        }
+        pitch = Math.max(-MAX_PITCH, Math.min(MAX_PITCH, pitch - dy * sensitivity))
       }
 
       /**
@@ -860,19 +974,33 @@
       window.addEventListener('keyup', onKeyUp)
       document.addEventListener('pointerlockchange', onPointerLockChange)
 
-      const resize = new ResizeObserver(() => {
+      /**
+       * Resizing is deferred to the next frame.
+       *
+       * A dragged window edge fires the observer on every pixel, and each call
+       * reallocates the drawing buffer — the one thing in this component that
+       * makes the driver stall. Collapsing a burst of them into one resize per
+       * frame is the whole of it; `pendingResize` is the handle, so a resize
+       * still in the queue when the scene is torn down can be dropped.
+       */
+      let pendingResize = 0
+      const applyResize = () => {
+        pendingResize = 0
         if (!container) return
         const { clientWidth, clientHeight } = container
         if (!clientWidth || !clientHeight) return
         renderer.setSize(clientWidth, clientHeight, false)
         camera.aspect = clientWidth / clientHeight
         camera.updateProjectionMatrix()
+      }
+      const resize = new ResizeObserver(() => {
+        if (pendingResize) return
+        pendingResize = requestAnimationFrame(applyResize)
       })
       resize.observe(container)
 
       // ── Frame ────────────────────────────────────
       let previous = performance.now()
-      let frame = 0
 
       /** Reused so the frame loop does not allocate a vector for the viewport. */
       const size = new THREE.Vector2()
@@ -887,7 +1015,6 @@
       let sinceAim = 0
 
       const tick = (now: number) => {
-        frame = requestAnimationFrame(tick)
         const delta = Math.min((now - previous) / 1000, 0.1)
         previous = now
 
@@ -921,7 +1048,10 @@
           },
           stick,
         )
-        if (moving) {
+        // Jump-only mode leaves the ship where it is and takes away the moving
+        // camera: the plan and the index still put the visitor in any room, and
+        // nothing walks them there.
+        if (moving && !$comfort.jumpOnly) {
           const speed = (running ? SPRINT_SPEED : WALK_SPEED) * paceOf(world.body) * delta
           // A camera at yaw looks along (-sin, -cos) and has (cos, -sin) to its
           // right, which is what three.js does to (0, 0, -1) and (1, 0, 0).
@@ -939,6 +1069,7 @@
         }
 
         const standing = spaceAt(plan, pointer)
+        applyVisibility(standing?.id ?? null)
         const eye = plan.tier.elevation + eyesOf(world.body, EYE_HEIGHT)
         camera.position.set(pointer[0], eye, pointer[1])
         camera.rotation.set(0, 0, 0)
@@ -951,8 +1082,13 @@
         // Mirror the loop's state out for the HUD, without re-rendering on
         // every frame: these only change when they actually change.
         if (standing?.id !== untrack(() => currentSpace)?.id) currentSpace = standing
+        // Standing on a stairwell offers it; standing anywhere inside an interior
+        // offers the way out of it, because a seven-room apartment does not mark
+        // which room the front door is in and a visitor who jumped straight to
+        // the bedroom never passed the vestibule.
         const link = linkIsOpen(world, standing?.id ?? null)
-          ? linkUnderfoot(ship.links, standing?.id ?? null, pointer)
+          ? (linkUnderfoot(ship.links, standing?.id ?? null, pointer) ??
+            (standing ? wayOutOfInterior(ship.links, plan.tier) : null))
           : null
         if (link?.to !== untrack(() => availableLink)?.to) availableLink = link
         // `position` is a fresh array every frame, so assigning it unguarded
@@ -1044,11 +1180,39 @@
         }
       }
 
-      frame = requestAnimationFrame(tick)
+      /**
+       * The walk only runs while it is on screen.
+       *
+       * The scene sits above a page of prose — the index of rooms, the sources,
+       * the Hatsu bar — and scrolling past it used to leave a first-person
+       * renderer running at sixty frames a second on a canvas nobody was
+       * looking at. `setAnimationLoop` rather than a hand-rolled
+       * `requestAnimationFrame` chain because it is the one three.js can also
+       * hand to a headset, and because stopping it is one call rather than a
+       * cancelled handle and a flag.
+       */
+      const watching = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) {
+            // The clock is reset, or the first frame back charges the walk for
+            // however long the visitor spent reading further down the page.
+            previous = performance.now()
+            renderer.setAnimationLoop(tick)
+          } else {
+            renderer.setAnimationLoop(null)
+          }
+        },
+        { threshold: 0 },
+      )
+      watching.observe(container)
+
+      renderer.setAnimationLoop(tick)
       ready = true
 
       cleanup = () => {
-        cancelAnimationFrame(frame)
+        renderer.setAnimationLoop(null)
+        watching.disconnect()
+        if (pendingResize) cancelAnimationFrame(pendingResize)
         resize.disconnect()
         canvas?.removeEventListener('mousedown', onMouseDown)
         canvas?.removeEventListener('touchstart', onTouchStart)
@@ -1086,6 +1250,12 @@
       // The page asks for a jump by setting `jumpTo`; honour it and clear it so
       // asking twice for the same space works.
       jump = (spaceId: string) => goTo(spaceId)
+      // The camera is in this closure, so a field of view changed from the panel
+      // has to be handed in rather than read out.
+      relens = (settings: Comfort) => {
+        camera.fov = settings.fov
+        camera.updateProjectionMatrix()
+      }
       // What E and F do, handed to the buttons a touchscreen gets instead.
       take = takeLink
       castNow = cast
@@ -1102,6 +1272,12 @@
   /** The same, for the two things the on-screen buttons stand in for. */
   let take = $state<(() => void) | null>(null)
   let castNow = $state<(() => void) | null>(null)
+  /** The same, for the one comfort setting the camera holds rather than reads. */
+  let relens = $state<((settings: Comfort) => void) | null>(null)
+
+  $effect(() => {
+    relens?.($comfort)
+  })
 
   $effect(() => {
     const requested = jumpTo
@@ -1130,25 +1306,30 @@
        keys — E and F — that a phone has no way of pressing. Everything here is
        what the keys already do, routed through the same functions. -->
   {#if touch && ready && !failure}
-    <div
-      bind:this={stickBase}
-      role="application"
-      aria-label={touchLabels.move}
-      ontouchstart={gripStick}
-      ontouchmove={dragStick}
-      ontouchend={dropStick}
-      ontouchcancel={dropStick}
-      class="absolute bottom-4 left-4 h-28 w-28 touch-none rounded-full border bg-[#050505]/40 transition-colors"
-      style:border-color={push > STICK_RIM ? 'rgb(255 215 0 / 0.9)' : 'rgb(255 215 0 / 0.35)'}
-    >
-      <!-- The knob is 44px across, so half of it is the offset that centres it. -->
-      <span
-        class="pointer-events-none absolute left-1/2 top-1/2 block h-11 w-11 rounded-full border border-[#FFD700]/70 bg-[#FFD700]/25"
-        style:transform="translate({(stick?.[0] ?? 0) * STICK_RADIUS - 22}px, {-(stick?.[1] ?? 0) *
-          STICK_RADIUS -
-          22}px)"
-      ></span>
-    </div>
+    <!-- Jump-only mode has nothing for the stick to do, so it is not offered. -->
+    {#if !$comfort.jumpOnly}
+      <div
+        bind:this={stickBase}
+        role="application"
+        aria-label={touchLabels.move}
+        ontouchstart={gripStick}
+        ontouchmove={dragStick}
+        ontouchend={dropStick}
+        ontouchcancel={dropStick}
+        class="absolute bottom-4 left-4 h-28 w-28 touch-none rounded-full border bg-[#050505]/40 transition-colors"
+        style:border-color={push > STICK_RIM ? 'rgb(255 215 0 / 0.9)' : 'rgb(255 215 0 / 0.35)'}
+      >
+        <!-- The knob is 44px across, so half of it is the offset that centres it. -->
+        <span
+          class="pointer-events-none absolute left-1/2 top-1/2 block h-11 w-11 rounded-full border border-[#FFD700]/70 bg-[#FFD700]/25"
+          style:transform="translate({(stick?.[0] ?? 0) * STICK_RADIUS - 22}px, {-(
+            stick?.[1] ?? 0
+          ) *
+            STICK_RADIUS -
+            22}px)"
+        ></span>
+      </div>
+    {/if}
 
     <!-- Clear of the page's own read-out, which sits in the bottom corner. -->
     <div class="absolute bottom-14 right-4 flex flex-col items-end gap-2">

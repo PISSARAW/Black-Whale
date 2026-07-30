@@ -18,7 +18,7 @@ import {
   sealKey,
   structureFootprint,
 } from './geometry'
-import type { Blueprint, Space, Structure, Vec2 } from './types'
+import type { Blueprint, Provenance, Space, Structure, Vec2 } from './types'
 
 const ship = buildShip()
 
@@ -575,6 +575,95 @@ describe('the link back to the catalogue', () => {
     for (const space of blueprint.spaces) {
       if (space.provenance !== 'inferred') continue
       expect(space.source, `${space.id} claims a source it should not have`).not.toMatch(/^Ch\./)
+    }
+  })
+
+  /**
+   * What the reconstruction invented may not lean on evidence.
+   *
+   * `inferred` means nothing draws it, so an inferred source that cites a
+   * chapter or a plan is citing evidence for a space that has none — and the
+   * badge and the source then say opposite things about the same room. The
+   * rule is checked in both languages and across all four sourced
+   * collections, because a claim is a claim wherever it is stored.
+   */
+  it('never cites a chapter or a plan in anything it calls reconstructed', () => {
+    const chapter = /\bch(?:ap)?\.\s*\d/i
+    // `plan` reads the same in both languages, which is what makes the rule
+    // cheap: an inferred source says what nothing shows, in other words.
+    const plan = /\bplans?\b/i
+    const claims: string[] = []
+
+    const check = (id: string, source: string, sourceFr: string) => {
+      for (const [language, text] of [
+        ['en', source],
+        ['fr', sourceFr],
+      ] as const) {
+        if (chapter.test(text)) claims.push(`${id} (${language}) cites a chapter`)
+        if (plan.test(text)) claims.push(`${id} (${language}) cites a plan`)
+      }
+    }
+
+    for (const tier of blueprint.tiers) {
+      if (tier.provenance === 'inferred') check(`tier ${tier.id}`, tier.source, tier.sourceFr)
+    }
+    for (const space of blueprint.spaces) {
+      if (space.provenance === 'inferred') check(space.id, space.source, space.sourceFr)
+    }
+    for (const structure of blueprint.structures) {
+      if (structure.provenance === 'inferred') {
+        check(`structure ${structure.id}`, structure.source, structure.sourceFr)
+      }
+    }
+    for (const connection of blueprint.links) {
+      if (connection.provenance === 'inferred') {
+        check(`${connection.from} → ${connection.to}`, connection.source, connection.sourceFr)
+      }
+    }
+
+    expect(claims).toEqual([])
+  })
+
+  /**
+   * A bed a plan draws cannot stand in a room no plan draws.
+   *
+   * The rooms and the solids in them are sourced separately, which is right —
+   * a panel furnishes a room the cross-section only boxes. But it runs one way
+   * only: evidence for what is *in* a room is evidence the room is there, so a
+   * solid better sourced than its room means one of the two badges is wrong.
+   * The one exception is a panel standing something in a room a plan draws,
+   * which is the ordinary case the split exists for.
+   */
+  it('never stands a solid on better evidence than the room it stands in', () => {
+    const rank: Record<Provenance, number> = { inferred: 0, map: 1, plan: 2, panel: 3 }
+    const contradictions: string[] = []
+
+    for (const structure of blueprint.structures) {
+      const room = blueprint.spaces.find((space) => space.id === structure.spaceId)!
+      if (rank[structure.provenance] <= rank[room.provenance]) continue
+      // A panel furnishing a room the plans draw is the split working.
+      if (structure.provenance === 'panel' && room.provenance === 'plan') continue
+      contradictions.push(
+        `${structure.id} is ${structure.provenance} in ${room.id}, which is ${room.provenance}`,
+      )
+    }
+
+    expect(contradictions).toEqual([])
+  })
+
+  /**
+   * An interior is the inside of one room, so it is on that room's deck.
+   *
+   * The elevation is what the crossing between the two is measured from, and a
+   * lifeboat filed at sea level while its bay is seventy-two metres up turns
+   * stepping through a door into a four-deck fall on the read-out.
+   */
+  it('stands every interior at the elevation of the deck its room is on', () => {
+    for (const tier of blueprint.tiers) {
+      if (tier.kind !== 'interior') continue
+      const room = blueprint.spaces.find((space) => space.id === tier.parentSpaceId)!
+      const deck = blueprint.tiers.find((candidate) => candidate.id === room.tierId)!
+      expect(tier.elevation, `${tier.id} is not on the level of ${room.id}`).toBe(deck.elevation)
     }
   })
 

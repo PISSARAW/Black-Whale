@@ -30,18 +30,19 @@ import {
   structureWalls,
   wallSegments,
 } from './geometry'
-import type { Space, Structure, StructureKind, Vec2, WallSegment } from './types'
+import type { Polygon, Space, Structure, StructureKind, Vec2, WallSegment } from './types'
 import type { HatsuInteractionKind, HatsuProfile } from '$lib/nen/hatsuRegistry'
 
 /**
  * The techniques that have something to take hold of in a reconstruction.
  *
- * The archive holds eighty-two, and most of them work on what a page *says*:
+ * The archive holds eighty-three, and most of them work on what a page *says*:
  * they seal a control, forge a heading, read a chapter that has not happened
- * yet. The walk has none of that — it has rooms, walls, doors and distance —
- * so only the techniques that are about space are carried across. The rest stay
- * inert here and say so, which is honest: a technique that quietly did nothing
- * would be worse than one that tells you the walk is the wrong ground for it.
+ * yet. The walk has none of that — it has rooms, walls, doors, distance, a
+ * visitor and the punishments it deals them — so a technique is carried across
+ * only when one of those is what it is actually about. The rest stay inert here
+ * and say so, which is honest: a technique that quietly did nothing would be
+ * worse than one that tells you the walk is the wrong ground for it.
  */
 export const TOUR_HATSU_KINDS = [
   // On the rooms.
@@ -98,6 +99,8 @@ export const TOUR_HATSU_KINDS = [
   'mimicry',
   'melody',
   'predator',
+  'pain-armour',
+  'sun-flare',
   // On the record the walk keeps of itself.
   'surveillance',
   'future',
@@ -136,6 +139,11 @@ export const BODY_HATSU_KINDS = new Set<HatsuInteractionKind>([
   'mimicry',
   'melody',
   'predator',
+  // Feitan's pair is on this side of the eye too: the wrapping is worn, and the
+  // sun is the visitor. Neither is aimed — the burst goes out from where they
+  // stand, which is the only place the heat could come from.
+  'pain-armour',
+  'sun-flare',
 ])
 
 export const worksOnTheBody = (profile: HatsuProfile | null) =>
@@ -359,6 +367,17 @@ export interface TourBody {
   soothed: boolean
   /** The holds Predator has correctly named, which is what makes it stronger. */
   deduced: string[]
+
+  /**
+   * What Pain Packer has packed away, or `null` while the wrapping is off.
+   *
+   * The walk cannot injure anyone, but it does punish: a guard puts an intruder
+   * back, a room refuses to let go, a declared rule is broken. Those are the
+   * only blows it deals, so they are what the wrapping takes — and it takes
+   * them by keeping them rather than by cancelling them, which is why the count
+   * matters and nothing is given back until the sun rises on it.
+   */
+  packed: number | null
 }
 
 export const RESTING_BODY: TourBody = {
@@ -371,6 +390,7 @@ export const RESTING_BODY: TourBody = {
   mimic: null,
   soothed: false,
   deduced: [],
+  packed: null,
 }
 
 /**
@@ -461,7 +481,8 @@ export const bodyIsRested = (body: TourBody): boolean =>
   !body.dance &&
   !body.mimic &&
   !body.soothed &&
-  !body.deduced.length
+  !body.deduced.length &&
+  body.packed === null
 
 /** Nothing in the world is being held by aura. */
 export const worldIsQuiet = (world: TourWorld): boolean =>
@@ -602,6 +623,11 @@ export type TourReport =
   | { kind: 'soothed'; opened: boolean }
   | { kind: 'deduced'; what: string; strength: number }
   | { kind: 'nothing-to-deduce' }
+  | { kind: 'armour-worn' }
+  | { kind: 'armour-holding'; packed: number }
+  | { kind: 'packed-away'; spaceId: string; packed: number }
+  | { kind: 'nothing-packed' }
+  | { kind: 'sun-risen'; metres: number; solids: number }
   // On the record.
   | { kind: 'owl-attached'; rooms: number }
   | { kind: 'owl-recalled'; rooms: number }
@@ -1143,6 +1169,16 @@ export const reachOf = (body: TourBody): number => 90 * (1 + body.enhance * 0.4)
 export const CAPACITY = 5
 
 /**
+ * How far the sun reaches per punishment packed away.
+ *
+ * Zazan's burst was answered by the damage taken first, so the walk keeps that
+ * relation rather than a figure of its own: four metres is a stride or two, and
+ * an armour that took one blow clears the furniture beside the visitor rather
+ * than the deck.
+ */
+export const SUN_FLARE_METRES_PER_HIT = 4
+
+/**
  * Whether the visitor goes through walls rather than around them.
  *
  * Two techniques ask for it and mean different things by it — Luini steps
@@ -1339,6 +1375,46 @@ function castOnBody(
       return {
         world: withBody({ deduced, enhance: Math.min(6, body.enhance + 1) }),
         report: { kind: 'deduced', what: unnamed, strength: deduced.length },
+      }
+    }
+
+    // The wrapping neither heals nor deflects: while it is on, what the walk
+    // would have done to the visitor is packed away inside it and stays there.
+    // Cast on an armour already worn, it reads out what it is holding — taking
+    // it off is not offered, because the damage in it has to go somewhere.
+    case 'pain-armour': {
+      if (body.packed === null) {
+        return { world: withBody({ packed: 0 }), report: { kind: 'armour-worn' } }
+      }
+      return { world, report: { kind: 'armour-holding', packed: body.packed } }
+    }
+
+    // The sun rises on what the armour kept and on nothing else, so an empty
+    // wrapping is a refusal rather than a weak burst. It goes out from where the
+    // visitor stands, on their own deck, and it does not pick what it catches:
+    // a solid Snake Arm was holding fast burns with the rest.
+    case 'sun-flare': {
+      const packed = body.packed ?? 0
+      if (!packed) return { world, report: { kind: 'nothing-packed' } }
+      const room = standingIn ? ship.spaces.get(standingIn) : null
+      if (!room) return { world, report: { kind: 'no-target' } }
+
+      const metres = packed * SUN_FLARE_METRES_PER_HIT
+      const solids = { ...world.solids }
+      let burnt = 0
+      for (const structure of [...ship.structures, ...world.copies]) {
+        const space = ship.spaces.get(structure.spaceId)
+        if (!space || space.tierId !== room.tierId) continue
+        const hold = solids[structure.id]
+        if (hold?.gone) continue
+        const standing = solidNow(structure, hold)
+        if (Math.hypot(standing.at[0] - at[0], standing.at[1] - at[1]) > metres) continue
+        solids[structure.id] = { ...hold, gone: true, bound: false }
+        burnt++
+      }
+      return {
+        world: { ...world, solids, body: { ...body, packed: null } },
+        report: { kind: 'sun-risen', metres, solids: burnt },
       }
     }
 
@@ -2254,23 +2330,141 @@ export function aimedSolid(
   const dx = -Math.sin(heading)
   const dz = -Math.cos(heading)
 
-  const standing = planWithout(plan, emptiedOn(world, plan.tier.id, ship), heldSolidIds(world))
-  const candidates = [
-    ...standing.structures,
-    ...detachedOn(ship, world, plan.tier.id).map((held) => held.structure),
-  ]
-  const outlines = candidates.map(
-    (structure) => [structure, structureFootprint(structure)] as const,
+  // What Nen is holding moves every frame, so its outline is never cached.
+  // There are a handful of those at most, against the hundred and twenty-odd
+  // the deck itself stands.
+  const targets = bakedTargets(ship, world, plan).concat(
+    detachedOn(ship, world, plan.tier.id).map((held) => targetOf(held.structure)),
   )
 
-  const STEP = 0.4
-  for (let travelled = STEP; travelled <= range; travelled += STEP) {
-    const point: Vec2 = [at[0] + dx * travelled, at[1] + dz * travelled]
-    for (const [structure, outline] of outlines) {
-      if (pointInPolygon(point, outline)) return structure
-    }
+  let nearest: Structure | null = null
+  let distance = Infinity
+  for (const target of targets) {
+    // Each hit tightens the ray for the ones after it: past the nearest solid
+    // found so far, nothing can win.
+    const hit = rayReaches(target, at, dx, dz, Math.min(range, distance))
+    if (hit === null || hit >= distance) continue
+    distance = hit
+    nearest = target.structure
   }
-  return null
+  return nearest
+}
+
+/**
+ * A solid's outline with the box around it, so the reticle can dismiss it in
+ * four comparisons instead of walking its edges.
+ */
+interface SolidTarget {
+  structure: Structure
+  outline: Polygon
+  minX: number
+  minZ: number
+  maxX: number
+  maxZ: number
+}
+
+function targetOf(structure: Structure): SolidTarget {
+  const outline = structureFootprint(structure)
+  let minX = Infinity
+  let minZ = Infinity
+  let maxX = -Infinity
+  let maxZ = -Infinity
+  for (const [x, z] of outline) {
+    if (x < minX) minX = x
+    if (x > maxX) maxX = x
+    if (z < minZ) minZ = z
+    if (z > maxZ) maxZ = z
+  }
+  return { structure, outline, minX, minZ, maxX, maxZ }
+}
+
+/**
+ * The outlines of everything standing on a deck, kept between frames.
+ *
+ * `structureFootprint` turns a centre, a size and a rotation into a polygon,
+ * and the deck stands a hundred and twenty-four of them. Rebuilding all of them
+ * for every poll of the reticle — six times a second, for as long as a
+ * technique is up — was the single most expensive thing in the walk. They only
+ * change when a technique empties a room or lifts a solid out of the deck, so
+ * that is what the key is. Keyed by the plan object as well, so a deck rebuilt
+ * from different data never reads a previous deck's outlines.
+ */
+const bakedTargets = (() => {
+  const cache = new WeakMap<TierPlan, { key: string; targets: SolidTarget[] }>()
+
+  return (ship: Ship, world: TourWorld, plan: TierPlan): SolidTarget[] => {
+    const emptied = emptiedOn(world, plan.tier.id, ship).slice().sort()
+    const held = heldSolidIds(world).slice().sort()
+    const key = `${emptied.join(',')}::${held.join(',')}`
+
+    const kept = cache.get(plan)
+    if (kept?.key === key) return kept.targets
+
+    const gone = new Set(emptied)
+    const lifted = new Set(held)
+    const targets = plan.structures
+      .filter((structure) => !gone.has(structure.spaceId) && !lifted.has(structure.id))
+      .map(targetOf)
+    cache.set(plan, { key, targets })
+    return targets
+  }
+})()
+
+/**
+ * How far along the ray the solid is, or `null` if the ray misses it.
+ *
+ * The reticle used to be marched out in steps of 0.4 m and tested against every
+ * outline at every step — fourteen thousand point-in-polygon tests for one
+ * poll, and a solid narrower than the step could still be walked straight past.
+ * This is the segment-against-polygon test that was meant all along: the box
+ * rejects nearly everything, and what survives is one crossing test per edge.
+ */
+function rayReaches(
+  target: SolidTarget,
+  at: Vec2,
+  dx: number,
+  dz: number,
+  range: number,
+): number | null {
+  let near = 0
+  let far = range
+
+  // Slab test, one axis at a time. A ray running parallel to a pair of sides
+  // either starts between them or never meets them.
+  const slab = (origin: number, direction: number, low: number, high: number) => {
+    if (Math.abs(direction) < 1e-9) return origin >= low && origin <= high
+    const first = (low - origin) / direction
+    const second = (high - origin) / direction
+    near = Math.max(near, Math.min(first, second))
+    far = Math.min(far, Math.max(first, second))
+    return near <= far
+  }
+  if (!slab(at[0], dx, target.minX, target.maxX)) return null
+  if (!slab(at[1], dz, target.minZ, target.maxZ)) return null
+
+  // Standing inside it — under a mezzanine, under a run of ducting — is aiming
+  // at it, which is what marching from the first step out already did.
+  if (pointInPolygon(at, target.outline)) return 0
+
+  let nearest: number | null = null
+  const outline = target.outline
+  for (let i = 0; i < outline.length; i++) {
+    const a = outline[i]
+    const b = outline[(i + 1) % outline.length]
+    const ex = b[0] - a[0]
+    const ez = b[1] - a[1]
+    const denominator = dx * ez - dz * ex
+    if (Math.abs(denominator) < 1e-9) continue
+
+    const px = a[0] - at[0]
+    const pz = a[1] - at[1]
+    const along = (px * ez - pz * ex) / denominator
+    if (along < 0 || along > range || (nearest !== null && along >= nearest)) continue
+    const across = (px * dz - pz * dx) / denominator
+    if (across < 0 || across > 1) continue
+    nearest = along
+  }
+  return nearest
 }
 
 /**
@@ -2387,6 +2581,25 @@ export function arriveInTour(world: TourWorld, ship: Ship, spaceId: string | nul
     return true
   }
 
+  /**
+   * Pain Packer keeps what would have landed instead of cancelling it: the
+   * punishment does not happen, and the count of what it is holding goes up.
+   */
+  const pack = (spaceId: string) => {
+    if (next.body.packed === null) return false
+    const packed = next.body.packed + 1
+    next = { ...next, body: { ...next.body, packed } }
+    report = { kind: 'packed-away', spaceId, packed }
+    return true
+  }
+
+  /**
+   * Who takes the blow, in the order the canon puts them: Kacho's double is a
+   * body of its own standing in the way, so it is hit before the wrapping the
+   * visitor is wearing ever sees anything.
+   */
+  const absorb = (spaceId: string) => intercept() || pack(spaceId)
+
   // What was left behind, before what was entered.
   if (leaving && next.devouring.includes(leaving)) {
     const eaten = ship.structures.find(
@@ -2400,7 +2613,7 @@ export function arriveInTour(world: TourWorld, ship: Ship, spaceId: string | nul
 
   // Held fast: the yellow card, and the trap that has already closed.
   const heldIn = next.pinned ?? (leaving && next.cards[leaving] === 2 ? leaving : null)
-  if (heldIn && leaving === heldIn && spaceId !== heldIn && !intercept()) {
+  if (heldIn && leaving === heldIn && spaceId !== heldIn && !absorb(heldIn)) {
     return {
       world: { ...world, cameFrom: heldIn },
       travelTo: heldIn,
@@ -2479,7 +2692,7 @@ export function arriveInTour(world: TourWorld, ship: Ship, spaceId: string | nul
   // The guards expel an intruder without injuring them: back where they came
   // from, and no further.
   if (next.guarded.includes(spaceId) && leaving && leaving !== spaceId) {
-    if (!intercept()) {
+    if (!absorb(spaceId)) {
       return {
         world: { ...next, cameFrom: leaving },
         travelTo: leaving,
@@ -2490,7 +2703,7 @@ export function arriveInTour(world: TourWorld, ship: Ship, spaceId: string | nul
 
   // The chain only ever punishes a rule that was knowingly broken.
   if (next.vow === spaceId) {
-    if (!intercept()) {
+    if (!absorb(spaceId)) {
       punished = true
       report = { kind: 'vow-broken', spaceId }
     }

@@ -18,6 +18,7 @@ import {
 import { ceilingOf } from './blueprint'
 import type { TierPlan } from './blueprint'
 import type {
+  Doorway,
   Provenance,
   Space,
   SpaceCategory,
@@ -25,7 +26,32 @@ import type {
   StructureKind,
   Tier,
   Vec2,
+  WallSegment,
 } from './types'
+
+/**
+ * One room's stretch of the deck's buffers.
+ *
+ * The deck is still extruded into a single pair of typed arrays — one upload,
+ * one material — but it is no longer a single indivisible thing to draw. Each
+ * room's triangles are contiguous, so the renderer can hand the same buffer to
+ * one mesh per room with its own draw range and its own bounding sphere, and
+ * then draw only the rooms `$lib/tour/visibility` names. Without this the whole
+ * of Tier 1 is rasterised from inside a broom cupboard.
+ *
+ * `start` and `count` are in vertices, `edgeStart` and `edgeCount` in
+ * line-segment endpoints: both index the arrays in units of three floats.
+ */
+export interface MeshGroup {
+  spaceId: string
+  start: number
+  count: number
+  edgeStart: number
+  edgeCount: number
+  /** The room's own bounding sphere, so the renderer never scans the buffer. */
+  centre: readonly [number, number, number]
+  radius: number
+}
 
 export interface TierMesh {
   positions: Float32Array
@@ -43,6 +69,8 @@ export interface TierMesh {
   edges: Float32Array
   /** Triangle count, for a sanity check and for the debug read-out. */
   triangles: number
+  /** Where each room's geometry sits in the buffers above, in plan order. */
+  groups: MeshGroup[]
 }
 
 type Rgb = readonly [number, number, number]
@@ -251,21 +279,89 @@ function extrudeSolid(
   }
 }
 
+/**
+ * The bounding sphere of one room's slice of the buffers.
+ *
+ * Computed here rather than by three.js, because `computeBoundingSphere` reads
+ * the whole attribute: every room sharing one buffer would come back with the
+ * bounding sphere of the entire deck, and a per-room mesh with the deck's
+ * sphere is the same thing that could not be culled before.
+ */
+function boundsOf(
+  positions: number[],
+  start: number,
+  count: number,
+  edges: number[],
+  edgeStart: number,
+  edgeCount: number,
+): { centre: readonly [number, number, number]; radius: number } {
+  let minX = Infinity
+  let minY = Infinity
+  let minZ = Infinity
+  let maxX = -Infinity
+  let maxY = -Infinity
+  let maxZ = -Infinity
+
+  const stretch = (source: number[], from: number, points: number) => {
+    for (let i = from * 3; i < (from + points) * 3; i += 3) {
+      if (source[i] < minX) minX = source[i]
+      if (source[i] > maxX) maxX = source[i]
+      if (source[i + 1] < minY) minY = source[i + 1]
+      if (source[i + 1] > maxY) maxY = source[i + 1]
+      if (source[i + 2] < minZ) minZ = source[i + 2]
+      if (source[i + 2] > maxZ) maxZ = source[i + 2]
+    }
+  }
+  stretch(positions, start, count)
+  stretch(edges, edgeStart, edgeCount)
+
+  if (minX > maxX) return { centre: [0, 0, 0], radius: 0 }
+  const centre: readonly [number, number, number] = [
+    (minX + maxX) / 2,
+    (minY + maxY) / 2,
+    (minZ + maxZ) / 2,
+  ]
+  // The half-diagonal of the box, which encloses it whatever shape it is.
+  return {
+    centre,
+    radius: Math.hypot(maxX - centre[0], maxY - centre[1], maxZ - centre[2]),
+  }
+}
+
 /** That same solid on its own, for the Hatsu layer to draw and move. */
 export function buildSolidMesh(structure: Structure, room: Space, tier: Tier): TierMesh {
   const builder = new MeshBuilder()
   const edges: number[] = []
   extrudeSolid(builder, edges, structure, room, tier)
+  const count = builder.positions.length / 3
+  const edgeCount = edges.length / 3
   return {
     positions: new Float32Array(builder.positions),
     normals: new Float32Array(builder.normals),
     colors: new Float32Array(builder.colors),
     edges: new Float32Array(edges),
     triangles: builder.positions.length / 9,
+    groups: [
+      {
+        spaceId: room.id,
+        start: 0,
+        count,
+        edgeStart: 0,
+        edgeCount,
+        ...boundsOf(builder.positions, 0, count, edges, 0, edgeCount),
+      },
+    ],
   }
 }
 
-/** Builds every triangle of one deck. */
+/**
+ * Builds every triangle of one deck, room by room.
+ *
+ * The passes used to run over the whole deck at a time — every floor, then
+ * every wall, then every column — which put one room's geometry in half a dozen
+ * places in the buffer. Grouping by room instead costs nothing at build time
+ * and is what makes each room drawable on its own: see `MeshGroup`.
+ */
 export function buildTierMesh(plan: TierPlan): TierMesh {
   const builder = new MeshBuilder()
   const { tier } = plan
@@ -281,7 +377,42 @@ export function buildTierMesh(plan: TierPlan): TierMesh {
   const vertical = (point: Vec2, bottom: number, top: number) =>
     edges.push(point[0], bottom, point[1], point[0], top, point[1])
 
+  // Room walls and column faces arrive in the same list, which is the point:
+  // the visitor collides with exactly what is drawn here. The faces of a solid
+  // standing in a room are in that list too, for the same reason, but they are
+  // raised by the structure pass below: extruded to the ceiling like a wall, a
+  // bed would be a partition.
+  const wallsOf = new Map<string, WallSegment[]>()
+  for (const wall of plan.walls) {
+    if (wall.structureId) continue
+    const held = wallsOf.get(wall.spaceId)
+    if (held) held.push(wall)
+    else wallsOf.set(wall.spaceId, [wall])
+  }
+
+  const standingIn = new Map<string, Structure[]>()
+  for (const structure of plan.structures) {
+    const held = standingIn.get(structure.spaceId)
+    if (held) held.push(structure)
+    else standingIn.set(structure.spaceId, [structure])
+  }
+
+  // A lintel belongs to one of the two rooms it spans, and either would do: the
+  // rooms are adjacent by construction, so a visibility set that holds one
+  // holds the other.
+  const lintelsOf = new Map<string, Doorway[]>()
+  for (const door of plan.doorways) {
+    const held = lintelsOf.get(door.a)
+    if (held) held.push(door)
+    else lintelsOf.set(door.a, [door])
+  }
+
+  const groups: MeshGroup[] = []
+
   for (const space of plan.spaces) {
+    const start = builder.positions.length / 3
+    const edgeStart = edges.length / 3
+
     const floorColour = colourFor(hex(CATEGORY_COLOURS[space.category]), space.provenance)
     const ceilingColour = colourFor(CEILING_COLOUR, space.provenance)
     const top = heightOf(space)
@@ -301,39 +432,24 @@ export function buildTierMesh(plan: TierPlan): TierMesh {
       )
       builder.triangle([a[0], top, a[1]], [b[0], top, b[1]], [c[0], top, c[1]], ceilingColour)
     }
-  }
 
-  // Room walls and column faces arrive in the same list, which is the point:
-  // the visitor collides with exactly what is drawn here. The faces of a solid
-  // standing in a room are in that list too, for the same reason, but they are
-  // raised by the structure pass below: extruded to the ceiling like a wall, a
-  // bed would be a partition.
-  for (const wall of plan.walls) {
-    if (wall.structureId) continue
-    const space = spaces.get(wall.spaceId)
-    if (!space) continue
-    const top = heightOf(space)
-    builder.quad(
-      wall.start,
-      wall.end,
-      tier.elevation,
-      top,
-      colourFor(WALL_COLOUR, space.provenance),
-    )
-    horizontal(wall.start, wall.end, tier.elevation + OFFSET)
-    horizontal(wall.start, wall.end, top - OFFSET)
-  }
+    for (const wall of wallsOf.get(space.id) ?? []) {
+      builder.quad(
+        wall.start,
+        wall.end,
+        tier.elevation,
+        top,
+        colourFor(WALL_COLOUR, space.provenance),
+      )
+      horizontal(wall.start, wall.end, tier.elevation + OFFSET)
+      horizontal(wall.start, wall.end, top - OFFSET)
+    }
 
-  // Columns get a cap so you are not looking up an open shaft, and a brighter
-  // face than the walls so they read as structure at a distance.
-  for (const [spaceId, centres] of plan.columns) {
-    const space = spaces.get(spaceId)
-    if (!space) continue
-    const top = heightOf(space)
+    // Columns get a cap so you are not looking up an open shaft, and a brighter
+    // face than the walls so they read as structure at a distance.
     const colour = colourFor(COLUMN_COLOUR, space.provenance)
     const h = COLUMN_HALF_WIDTH
-
-    for (const centre of centres) {
+    for (const centre of plan.columns.get(space.id) ?? []) {
       const corners: Vec2[] = [
         [centre[0] - h, centre[1] - h],
         [centre[0] + h, centre[1] - h],
@@ -354,29 +470,41 @@ export function buildTierMesh(plan: TierPlan): TierMesh {
       )
       for (const corner of corners) vertical(corner, tier.elevation, top)
     }
-  }
 
-  // What stands in the rooms. Its sides are already in `plan.walls`, so this
-  // only has to raise them: the same outline, extruded to its own height and
-  // capped, and never taller than the room it stands in.
-  for (const structure of plan.structures) {
-    const room = spaces.get(structure.spaceId)
-    if (room) extrudeSolid(builder, edges, structure, room, tier)
-  }
+    // What stands in the room. Its sides are already in `plan.walls`, so this
+    // only has to raise them: the same outline, extruded to its own height and
+    // capped, and never taller than the room it stands in.
+    for (const structure of standingIn.get(space.id) ?? []) {
+      extrudeSolid(builder, edges, structure, space, tier)
+    }
 
-  // Above each opening the wall carries on to the ceiling, so a doorway reads
-  // as a door and not as a room with a side missing.
-  for (const door of plan.doorways) {
-    const a = spaces.get(door.a)
-    const b = spaces.get(door.b)
-    if (!a || !b) continue
-    const lintelTop = Math.max(heightOf(a), heightOf(b))
-    const lintelBottom = tier.elevation + DOOR_HEIGHT
-    if (lintelTop <= lintelBottom) continue
+    // Above each opening the wall carries on to the ceiling, so a doorway reads
+    // as a door and not as a room with a side missing.
+    for (const door of lintelsOf.get(space.id) ?? []) {
+      const other = spaces.get(door.b)
+      if (!other) continue
+      const lintelTop = Math.max(top, heightOf(other))
+      const lintelBottom = tier.elevation + DOOR_HEIGHT
+      if (lintelTop <= lintelBottom) continue
 
-    const provenance: Provenance =
-      a.provenance === 'inferred' || b.provenance === 'inferred' ? 'inferred' : a.provenance
-    builder.quad(door.start, door.end, lintelBottom, lintelTop, colourFor(WALL_COLOUR, provenance))
+      const provenance: Provenance =
+        space.provenance === 'inferred' || other.provenance === 'inferred'
+          ? 'inferred'
+          : space.provenance
+      builder.quad(door.start, door.end, lintelBottom, lintelTop, colourFor(WALL_COLOUR, provenance))
+    }
+
+    const count = builder.positions.length / 3 - start
+    const edgeCount = edges.length / 3 - edgeStart
+    if (!count && !edgeCount) continue
+    groups.push({
+      spaceId: space.id,
+      start,
+      count,
+      edgeStart,
+      edgeCount,
+      ...boundsOf(builder.positions, start, count, edges, edgeStart, edgeCount),
+    })
   }
 
   return {
@@ -385,5 +513,6 @@ export function buildTierMesh(plan: TierPlan): TierMesh {
     colors: new Float32Array(builder.colors),
     edges: new Float32Array(edges),
     triangles: builder.positions.length / 9,
+    groups,
   }
 }

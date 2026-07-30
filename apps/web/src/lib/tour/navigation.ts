@@ -7,7 +7,7 @@
  * through an opening, you can walk through it.
  */
 import { EPSILON, closestPointOnSegment } from './geometry'
-import type { Link, Vec2, WallSegment } from './types'
+import type { Link, Tier, Vec2, WallSegment } from './types'
 
 /** Shoulder width of the visitor, in metres. */
 export const VISITOR_RADIUS = 0.4
@@ -41,10 +41,7 @@ export function resolveMovement(
   let position = from
 
   for (let step = 0; step < steps; step++) {
-    const target: Vec2 = [
-      position[0] + (delta[0] / steps),
-      position[1] + (delta[1] / steps),
-    ]
+    const target: Vec2 = [position[0] + delta[0] / steps, position[1] + delta[1] / steps]
     position = pushOutOfWalls(target, position, walls, radius)
   }
 
@@ -179,4 +176,34 @@ export function linkUnderfoot(
     return { link, to: link.from === spaceId ? link.to : link.from }
   }
   return null
+}
+
+/**
+ * The way out of an interior, offered from anywhere inside it.
+ *
+ * An interior is a level of its own, reached by one door from the room it is the
+ * inside of. `linkUnderfoot` finds that door from the space it lands in — the
+ * entrance hall — and from nowhere else, which is fine for an apartment you
+ * walked into and hopeless everywhere else: a prince's suite is seven rooms and
+ * the cineplex is fourteen, nothing marks which of them the way out is in, and a
+ * visitor who jumped straight to the master bedroom never saw the vestibule at
+ * all. So the whole interior is the threshold, the same concession the door into
+ * one already makes at the deck end.
+ *
+ * The destination is the room on the deck, not the vestibule: stepping out of an
+ * apartment puts you in the corridor, whichever of its rooms you were standing
+ * in.
+ */
+export function wayOutOfInterior(
+  links: Link[],
+  tier: Pick<Tier, 'kind' | 'parentSpaceId'>,
+): { link: Link; to: string } | null {
+  const parentSpaceId = tier.parentSpaceId
+  if (tier.kind !== 'interior' || !parentSpaceId) return null
+  const link = links.find(
+    (candidate) =>
+      candidate.kind === 'door' &&
+      (candidate.from === parentSpaceId || candidate.to === parentSpaceId),
+  )
+  return link ? { link, to: parentSpaceId } : null
 }

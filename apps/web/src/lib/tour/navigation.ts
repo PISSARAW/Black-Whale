@@ -100,6 +100,59 @@ export function wallsNear(walls: WallSegment[], point: Vec2, reach: number): Wal
   })
 }
 
+/** How far the on-screen stick's knob travels from the middle of its base, in px. */
+export const STICK_RADIUS = 46
+
+/** Past this much of a push, the stick is running rather than walking. */
+export const STICK_RIM = 0.94
+
+/**
+ * A finger on the on-screen stick, as a vector inside the unit circle: `x` to
+ * the right, `z` forward, which is the screen's `y` the other way up.
+ *
+ * Past the rim the push saturates, so the stick reads as a direction and a pace
+ * rather than as however far the finger happens to have slid across the glass.
+ */
+export function stickVector(dx: number, dy: number, radius = STICK_RADIUS): Vec2 {
+  const distance = Math.hypot(dx, dy)
+  const clamp = distance > radius ? radius / distance : 1
+  return [(dx * clamp) / radius, (-dy * clamp) / radius]
+}
+
+/** What is being held down, on a keyboard or on the glass or on both at once. */
+export interface WalkKeys {
+  forward: boolean
+  back: boolean
+  left: boolean
+  right: boolean
+  sprint: boolean
+}
+
+/**
+ * One walking intent out of the keyboard and the stick together — a tablet with
+ * a keyboard attached should not have to choose between them.
+ *
+ * Only an over-long vector is brought back to the unit circle: the keys are on
+ * or off, so their diagonals still come out normalised, while a half push of the
+ * stick stays a half pace.
+ */
+export function walkInput(
+  keys: WalkKeys,
+  stick: Vec2 | null,
+): { strafe: number; advance: number; moving: boolean; running: boolean } {
+  const push = stick ? Math.hypot(stick[0], stick[1]) : 0
+  const strafe = Number(keys.right) - Number(keys.left) + (stick?.[0] ?? 0)
+  const advance = Number(keys.forward) - Number(keys.back) + (stick?.[1] ?? 0)
+  const magnitude = Math.hypot(strafe, advance)
+  const scale = Math.max(magnitude, 1)
+  return {
+    strafe: strafe / scale,
+    advance: advance / scale,
+    moving: magnitude > EPSILON,
+    running: keys.sprint || push > STICK_RIM,
+  }
+}
+
 /**
  * The vertical link the visitor is standing on, if any, together with the space
  * it leads to from where they are.

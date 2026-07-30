@@ -87,6 +87,18 @@ export const fr: Messages = {
       useKeys: 'E, sur une cage d’escalier ou devant une porte',
       nen: 'Lancer le Hatsu actif',
       nenKeys: 'F, ou un clic, sur la pièce ou le volume que vous regardez',
+      touch: 'Sur écran tactile',
+      touchKeys:
+        'Le manche en bas à gauche fait marcher, poussé à fond il fait courir ; glissez sur la vue pour regarder ; les boutons franchissent une porte et lancent',
+    },
+    touch: {
+      hint: 'Glissez pour regarder · manche pour marcher',
+      move: 'Manche de marche',
+      cast: 'Lancer',
+      takeLink: (destination) => `Rejoindre ${destination} par l'escalier`,
+      takeBulkhead: (destination) => `Franchir la cloison vers ${destination}`,
+      enterInterior: (destination) => `Entrer dans ${destination}`,
+      leaveInterior: (destination) => `Ressortir vers ${destination}`,
     },
     provenance: {
       title: 'Ce qui est canon ici',
@@ -1049,6 +1061,16 @@ export const fr: Messages = {
     factionsLabel: 'Factions',
     factionsActive: (count) => `${count} active${count === 1 ? '' : 's'}`,
     clearFactionFilters: 'Effacer les filtres de faction',
+    beyondLineage: {
+      label: 'Lignée de Beyond',
+      filterLabel: 'Filtrer la carte par la lignée de Beyond',
+      aboard: (count) => `${count} à bord`,
+      all: 'Tout le monde',
+      any: 'Ses enfants',
+      confirmed: 'Marqués',
+      suspected: 'Soupçonnés',
+      note: 'Se croise avec les filtres de faction : les marqués portent la tache de naissance, les soupçonnés n’en ont que la rumeur.',
+    },
     factions: {
       princes: 'Maisons royales',
       guards: 'Garde royale',

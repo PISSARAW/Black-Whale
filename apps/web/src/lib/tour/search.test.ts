@@ -51,7 +51,7 @@ describe('matchesTerms', () => {
 describe('placeOf', () => {
   it('gives the deck for a space on a deck', () => {
     const space = ship.blueprint.spaces.find((candidate) => candidate.tierId === 'tier-1')!
-    expect(placeOf(ship, space, english)).toBe('Tier 1')
+    expect(placeOf(ship, space, english)).toBe('Tier 1-A')
   })
 
   it('gives the deck and the room for a space inside an interior', () => {

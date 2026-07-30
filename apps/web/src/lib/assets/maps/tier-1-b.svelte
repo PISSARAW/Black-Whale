@@ -1,6 +1,6 @@
 <script lang="ts">
   /**
-   * Tier 1 · Garrison Deck, generated from `data/ship/blueprint.json`.
+   * Tier 1-B, generated from `data/ship/blueprint.json`.
    *
    * One unit of this 1000 x 600 viewBox is 0.35 m and the ship's midpoint is
    * (500, 300) — the frame the reconstruction is authored in. So every room is
@@ -165,7 +165,7 @@
     </style>
   </defs>
 
-  <polygon class="hull" points="596.43,211.43 850.0,211.43 850.0,485.71 596.43,485.71" />
+  <polygon class="hull" points="326.43,211.43 850.0,211.43 850.0,485.71 326.43,485.71" />
 
   <g id="tier-1-b-zones">
     {#each regions as zone (zone.id)}

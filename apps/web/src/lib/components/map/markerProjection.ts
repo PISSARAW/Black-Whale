@@ -544,7 +544,7 @@ export const tierOverviewY: Record<string, number> = {
  */
 export const tierOverviewSpan: Record<string, [number, number]> = {
   'tier-1': [12.6, 71.3],
-  'tier-1-b': [50.4, 71.3],
+  'tier-1-b': [28.2, 71.3],
   'tier-1-c': [28.2, 62.1],
   'tier-2': [8.5, 75.4],
   'tier-3': [4.4, 79.3],

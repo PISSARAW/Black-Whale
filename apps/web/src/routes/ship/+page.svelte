@@ -58,7 +58,7 @@
 
   const tierNumber: Record<string, string> = {
     overview: '00',
-    'tier-1': '01',
+    'tier-1': '01·A',
     'tier-1-b': '01·B',
     'tier-1-c': '01·C',
     'tier-2': '02',

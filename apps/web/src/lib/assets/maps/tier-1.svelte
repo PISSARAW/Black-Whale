@@ -1,6 +1,6 @@
 <script lang="ts">
   /**
-   * Tier 1, generated from `data/ship/blueprint.json`.
+   * Tier 1-A, generated from `data/ship/blueprint.json`.
    *
    * One unit of this 1000 x 600 viewBox is 0.35 m and the ship's midpoint is
    * (500, 300) — the frame the reconstruction is authored in. So every room is

@@ -105,7 +105,7 @@ describe('solidsIn', () => {
 describe('describeSpace', () => {
   it('says what a room is, where it is, how big and what is in it', () => {
     const said = describeSpace(ship, banquet, words)
-    expect(said.startsWith('Banquet Hall, Tier 1, ')).toBe(true)
+    expect(said.startsWith('Banquet Hall, Tier 1-A, ')).toBe(true)
     expect(said).toContain('134 × 25 m under 9 m')
     expect(said).toContain(`${exitsFrom(ship, banquet)} exits`)
     expect(said).toContain('72 table')

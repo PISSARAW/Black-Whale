@@ -101,8 +101,8 @@ Ces élévations viennent des **41 ponts** du navire, et c'est le seul chiffre d
 dossier qui puisse les donner : la coupe du chap. 349 dit dans quel ordre les
 cinq tiers s'empilent, jamais de combien. Le compte se pose une fois :
 
-- la reconstruction tient **7 planchers** : les cinq tiers, plus les deux ponts
-  du paquebot (`tier-1-b`, `tier-1-c`) ;
+- la reconstruction tient **7 planchers** : les cinq tiers, dont le pont 1 en
+  compte trois à lui seul (1-A, 1-B, 1-C) ;
 - **24 se répartissent dans les quatre bandes** entre les tiers, soit **six
   ponts par bande**, et **un** s'intercale entre le pont royal et le premier
   pont du paquebot ;
@@ -246,18 +246,28 @@ pont des hôtes jusqu'au tiers de celle-ci, et ils portent la même trame que
 toutes les autres bandes non reconstruites — un lecteur voit un paquebot, et il
 voit qu'on n'y est pas entré.
 
-### Les ponts du paquebot
+### Les ponts du paquebot : 1-A, 1-B, 1-C
 
-Le pont 1 est donc découpé. `parentTierId` dit lesquels de ces ponts sont un
-seul tier : `tier-1` est le pont royal, `tier-1-b` et `tier-1-c` sont deux ponts
-au-dessus de lui, et tous les autres ponts du navire sont un tier à eux seuls et
-portent `null`.
+Le pont 1 est donc découpé en **trois ponts égaux**, et ce sont trois étages
+d'un même bâtiment — pas un pont principal flanqué de deux annexes.
 
-| Pont       | Élévation | Ce qu'il porte                                     |
-| ---------- | --------- | -------------------------------------------------- |
-| `tier-1-c` | 141,1 m   | casino, bloc des reines                            |
-| `tier-1-b` | 137,6 m   | chambrées, quartier de détention, Cour suprême     |
-| `tier-1`   | 128 m     | la chaîne royale, les canots, la chambre funéraire |
+| Pont       | Nom      | Élévation | Ce qu'il porte                                     |
+| ---------- | -------- | --------- | -------------------------------------------------- |
+| `tier-1-c` | Pont 1-C | 141,1 m   | casino, bloc des reines                            |
+| `tier-1-b` | Pont 1-B | 137,6 m   | chambrées, quartier de détention, Cour suprême     |
+| `tier-1`   | Pont 1-A | 128 m     | la chaîne royale, les canots, la chambre funéraire |
+
+Les **identifiants ne suivent pas les noms** : `tier-1` reste `tier-1` et non
+`tier-1-a`. Ce n'est pas un oubli — trente-quatre lieux du catalogue, et avec
+eux les événements et les passagers qui s'y rattachent, tiennent leur pont du
+préfixe `tier-1-` de leur slug. L'identifiant est une clé d'archive, le nom est
+ce que le lecteur voit, et c'est le nom qui devait changer.
+
+La coupe les présente en conséquence : un **crochet** sur la marge arrière, une
+encoche par pont, une lettre — A, B, C. Trois onglets dans la marge à 3,5 m
+d'écart, c'est-à-dire huit unités du dessin, seraient trois libellés écrits l'un
+sur l'autre ; trois onglets de tailles différentes seraient une hiérarchie que
+rien ne soutient.
 
 Trois règles, et elles se lisent dans l'ordre :
 
@@ -279,10 +289,21 @@ arrangement : c'est la raison pour laquelle un paquebot met ses volumes à doubl
 hauteur en bas de sa pile.
 
 La **coque de chaque pont dérive de ce qu'il porte** — son emprise plus une
-marge de circulation, écrêtée à celle du pont 1. Les gradins sortent donc du
-contenu et non d'un profil relevé au décimètre sur un tramé : un pont qui porte
-deux blocs est plus court que celui qui porte quatorze appartements, et c'est
-tout ce que la silhouette du chap. 369 est en mesure de soutenir.
+marge de circulation, écrêtée à celle du pont en dessous. Les gradins sortent
+donc du contenu et non d'un profil relevé au décimètre sur un tramé : un pont
+qui porte deux blocs est plus court que celui qui porte quatorze appartements,
+et c'est tout ce que la silhouette du chap. 369 est en mesure de soutenir.
+
+Le mot important est **écrêtée à celle du pont en dessous**, et il est récent.
+Chaque pont recevait auparavant une emprise à la taille de son seul contenu,
+posée là où ce contenu se trouve : le casino étant à l'avant et les chambrées à
+l'arrière, le pont 1-C débordait de 94,6 m devant le pont 1-B, et le 1-B de 39 m
+derrière le 1-C. Deux planchers se croisaient en l'air, chacun en porte-à-faux
+au-dessus de huit mètres de vide, et la coupe le montrait sans le dire. Un
+plancher doit exister sous le plancher qui le surmonte : l'emprise d'un pont est
+donc celle de ce qu'il porte **et** de ce que porte le pont au-dessus. Le pont
+1-B a gagné ses 94,6 m avant, où rien n'est posé — le pont existe, il ne porte
+rien, et c'est ce que la carte montre.
 
 Trois choses ont dû être **inventées**, et portent toutes `inferred` :
 

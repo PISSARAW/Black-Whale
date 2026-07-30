@@ -2594,16 +2594,23 @@
   ]
 
   /**
-   * A deck of the tier-1 liner is labelled to starboard and on one line: three
-   * tiers-worth of tab on the port margin, three and a half metres apart, is
-   * three labels written over each other.
+   * The decks, and how each one is labelled.
+   *
+   * A deck that stands alone carries its name in the bow margin. The three
+   * decks of tier 1 do not stand alone — they are three floors of one liner,
+   * 3.5 m apart, which is eight units of this drawing. Named in the margin they
+   * would be three labels written over each other; named in three different
+   * sizes they would read as one deck with two annexes. They are bracketed
+   * instead, and lettered.
    */
   const decks = [
     {
       id: 'tier-1-c',
-      name: 'Tier 1 · Guest Deck',
-      nameFr: 'Pont 1 · Pont des hôtes',
+      name: 'Tier 1-C',
+      nameFr: 'Pont 1-C',
       child: true,
+      grouped: true,
+      letter: 'C',
       x0: 281.74,
       x1: 620.87,
       floor: 176.27,
@@ -2612,10 +2619,12 @@
     },
     {
       id: 'tier-1-b',
-      name: 'Tier 1 · Garrison Deck',
-      nameFr: 'Pont 1 · Pont de la garnison',
+      name: 'Tier 1-B',
+      nameFr: 'Pont 1-B',
       child: true,
-      x0: 503.91,
+      grouped: true,
+      letter: 'B',
+      x0: 281.74,
       x1: 712.56,
       floor: 184.5,
       ceiling: 177.45,
@@ -2623,9 +2632,11 @@
     },
     {
       id: 'tier-1',
-      name: 'Tier 1',
-      nameFr: 'Pont 1',
+      name: 'Tier 1-A',
+      nameFr: 'Pont 1-A',
       child: false,
+      grouped: true,
+      letter: 'A',
       x0: 126.29,
       x1: 712.56,
       floor: 207.07,
@@ -2637,6 +2648,8 @@
       name: 'Tier 2',
       nameFr: 'Pont 2',
       child: false,
+      grouped: false,
+      letter: '',
       x0: 85.14,
       x1: 753.71,
       floor: 282.3,
@@ -2648,6 +2661,8 @@
       name: 'Tier 3',
       nameFr: 'Pont 3',
       child: false,
+      grouped: false,
+      letter: '',
       x0: 44.0,
       x1: 792.8,
       floor: 359.89,
@@ -2659,6 +2674,8 @@
       name: 'Tier 4',
       nameFr: 'Pont 4',
       child: false,
+      grouped: false,
+      letter: '',
       x0: 50.16,
       x1: 786.62,
       floor: 433.94,
@@ -2670,6 +2687,8 @@
       name: 'Tier 5',
       nameFr: 'Pont 5',
       child: false,
+      grouped: false,
+      letter: '',
       x0: 76.04,
       x1: 690.8,
       floor: 508.0,
@@ -2685,6 +2704,13 @@
    */
   const deckName = (deck: { name: string; nameFr: string }) =>
     $locale === 'fr' ? deck.nameFr : deck.name
+
+  /** The bracket that says the three lettered decks are one tier. */
+  const liner = {
+    x: 974.0,
+    top: 169.22,
+    bottom: 207.07,
+  }
 
   const gaps = [
     {
@@ -2721,9 +2747,9 @@
     },
     {
       id: 'tier-1-tier-1-b',
-      x: 503.91,
+      x: 281.74,
       y: 184.5,
-      w: 208.65,
+      w: 430.82,
       h: 10.81,
       metres: 4.6,
     },
@@ -2917,6 +2943,24 @@
         font-size: 10px;
         pointer-events: none;
       }
+      .liner-rail {
+        stroke: #ffd700;
+        stroke-opacity: 0.5;
+        stroke-width: 1;
+      }
+      .liner-tick {
+        stroke: #ffd700;
+        stroke-opacity: 0.5;
+        stroke-width: 1;
+      }
+      .liner-name {
+        fill: #ffd700;
+        fill-opacity: 0.75;
+        font-family: sans-serif;
+        font-size: 10px;
+        letter-spacing: 1px;
+        pointer-events: none;
+      }
       .waterline {
         stroke: #9dc4e0;
         stroke-opacity: 0.55;
@@ -2940,7 +2984,7 @@
 
   <polygon
     class="hull"
-    points="76.04,508.0 76.04,497.42 50.16,433.94 50.16,423.36 44.0,359.89 44.0,345.78 85.14,282.3 85.14,270.55 126.29,207.07 126.29,195.31 503.91,184.5 503.91,177.45 281.74,176.27 281.74,169.22 294.3,169.22 294.3,158.64 306.86,158.64 306.86,148.06 319.42,148.06 319.42,137.48 331.98,137.48 331.98,126.9 344.54,126.9 344.54,116.32 357.1,116.32 357.1,105.74 369.66,105.74 369.66,95.16 382.22,95.16 382.22,84.58 394.78,84.58 394.78,74.0 507.83,74.0 507.83,84.58 520.39,84.58 520.39,95.16 532.95,95.16 532.95,105.74 545.51,105.74 545.51,116.32 558.07,116.32 558.07,126.9 570.63,126.9 570.63,137.48 583.19,137.48 583.19,148.06 595.75,148.06 595.75,158.64 608.31,158.64 608.31,169.22 620.87,169.22 620.87,176.27 712.56,177.45 712.56,184.5 712.56,195.31 712.56,207.07 753.71,270.55 753.71,282.3 792.8,345.78 792.8,359.89 786.62,423.36 786.62,433.94 690.8,497.42 690.8,508.0"
+    points="76.04,508.0 76.04,497.42 50.16,433.94 50.16,423.36 44.0,359.89 44.0,345.78 85.14,282.3 85.14,270.55 126.29,207.07 126.29,195.31 281.74,184.5 281.74,177.45 281.74,176.27 281.74,169.22 294.3,169.22 294.3,158.64 306.86,158.64 306.86,148.06 319.42,148.06 319.42,137.48 331.98,137.48 331.98,126.9 344.54,126.9 344.54,116.32 357.1,116.32 357.1,105.74 369.66,105.74 369.66,95.16 382.22,95.16 382.22,84.58 394.78,84.58 394.78,74.0 507.83,74.0 507.83,84.58 520.39,84.58 520.39,95.16 532.95,95.16 532.95,105.74 545.51,105.74 545.51,116.32 558.07,116.32 558.07,126.9 570.63,126.9 570.63,137.48 583.19,137.48 583.19,148.06 595.75,148.06 595.75,158.64 608.31,158.64 608.31,169.22 620.87,169.22 620.87,176.27 712.56,177.45 712.56,184.5 712.56,195.31 712.56,207.07 753.71,270.55 753.71,282.3 792.8,345.78 792.8,359.89 786.62,423.36 786.62,433.94 690.8,497.42 690.8,508.0"
   />
 
   {#each terraces as terrace, i (i)}
@@ -3005,6 +3049,10 @@
   />
   <circle cx="118.93" cy="378.69" r="4.5" fill="#fffff0" pointer-events="none" />
 
+  <!-- One tier, three floors: the bracket says it, the letters place them. -->
+  <line class="liner-rail" x1={liner.x} y1={liner.top} x2={liner.x} y2={liner.bottom} />
+  <text class="liner-name" x={liner.x + 6} y={liner.top - 8}>{$t.ship.tierLabel('1')}</text>
+
   {#each decks as deck (deck.id)}
     <line class="deck-rule" x1={deck.x0} y1={deck.floor} x2={deck.x1} y2={deck.floor} />
     <g
@@ -3015,10 +3063,9 @@
       onclick={() => openDeck(deck.id)}
       onkeydown={(event) => openDeckWithKeyboard(event, deck.id)}
     >
-      {#if deck.child}
-        <text x="1000" y={deck.ceiling + 11} text-anchor="end" font-size="10"
-          >{deckName(deck)} · {deck.elevation} m</text
-        >
+      {#if deck.grouped}
+        <line class="liner-tick" x1={liner.x} y1={deck.floor} x2={liner.x + 7} y2={deck.floor} />
+        <text x={liner.x + 11} y={deck.floor + 3} font-size="10">{deck.letter}</text>
       {:else}
         <text x="6" y={deck.ceiling + 12}>{deckName(deck)}</text>
         <text x="6" y={deck.ceiling + 25} font-size="9" fill-opacity="0.55">{deck.elevation} m</text

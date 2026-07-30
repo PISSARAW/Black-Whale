@@ -137,17 +137,19 @@ const rooms: Room[] = [...between('const rooms: Room[] = [', '\n  ]').matchAll(R
 }))
 
 const DECK =
-  /\{\s*id:\s*'([^']+)',\s*name:\s*'((?:[^'\\]|\\.)*)',\s*nameFr:\s*'((?:[^'\\]|\\.)*)',\s*child:\s*(true|false),\s*x0:\s*(-?[\d.]+),\s*x1:\s*(-?[\d.]+),\s*floor:\s*(-?[\d.]+),\s*ceiling:\s*(-?[\d.]+),\s*elevation:\s*(-?[\d.]+),\s*\}/g
+  /\{\s*id:\s*'([^']+)',\s*name:\s*'((?:[^'\\]|\\.)*)',\s*nameFr:\s*'((?:[^'\\]|\\.)*)',\s*child:\s*(true|false),\s*grouped:\s*(true|false),\s*letter:\s*'([^']*)',\s*x0:\s*(-?[\d.]+),\s*x1:\s*(-?[\d.]+),\s*floor:\s*(-?[\d.]+),\s*ceiling:\s*(-?[\d.]+),\s*elevation:\s*(-?[\d.]+),\s*\}/g
 const drawnDecks = [...between('const decks = [', '\n  ]').matchAll(DECK)].map((m) => ({
   id: m[1],
   name: m[2].replace(/\\'/g, "'"),
   nameFr: m[3].replace(/\\'/g, "'"),
   child: m[4] === 'true',
-  x0: Number(m[5]),
-  x1: Number(m[6]),
-  floor: Number(m[7]),
-  ceiling: Number(m[8]),
-  elevation: Number(m[9]),
+  grouped: m[5] === 'true',
+  letter: m[6],
+  x0: Number(m[7]),
+  x1: Number(m[8]),
+  floor: Number(m[9]),
+  ceiling: Number(m[10]),
+  elevation: Number(m[11]),
 }))
 
 const GAP =
@@ -246,15 +248,56 @@ describe('the decks of the section', () => {
   })
 
   /**
-   * A deck of the liner is labelled to starboard, on one line. Three tabs on
-   * the port margin three and a half metres apart is three labels written over
-   * each other, which is what the first drawing of the split did.
+   * Tier 1 is three decks, and they are three floors of one liner rather than
+   * one deck with two annexes. The drawing brackets and letters them: A, B, C,
+   * one tick each on a rail of their own. Three tabs in the margin three and a
+   * half metres apart — eight units here — is three labels written over each
+   * other, and three tabs of different sizes is a hierarchy nothing supports.
    */
-  it('says which decks belong to a tier rather than being one', () => {
-    for (const deck of drawnDecks) {
-      expect(deck.child, deck.id).toBe(Boolean(tierOf.get(deck.id)!.parentTierId))
+  it('letters the decks of a tier instead of ranking them', () => {
+    const grouped = drawnDecks.filter((deck) => deck.grouped)
+    const tierIds = new Set(
+      decks.filter((tier) => tier.parentTierId).flatMap((tier) => [tier.id, tier.parentTierId!]),
+    )
+    expect(new Set(grouped.map((deck) => deck.id))).toEqual(tierIds)
+    expect(grouped.length).toBeGreaterThan(1)
+
+    // A letter each, in the order they stand, and none anywhere else.
+    expect(grouped.map((deck) => deck.letter)).toEqual(
+      [...grouped].sort((a, b) => b.elevation - a.elevation).map((deck) => deck.letter),
+    )
+    expect(new Set(grouped.map((deck) => deck.letter)).size).toBe(grouped.length)
+    for (const deck of grouped) {
+      expect(deck.letter, `${deck.id} has no letter`).toMatch(/^[A-Z]$/)
+      expect(deck.name.endsWith(`-${deck.letter}`), `${deck.name} does not end in its letter`).toBe(
+        true,
+      )
     }
-    expect(drawnDecks.filter((deck) => deck.child).length).toBeGreaterThan(0)
+    for (const deck of drawnDecks.filter((deck) => !deck.grouped)) {
+      expect(deck.letter, `${deck.id} is lettered but stands alone`).toBe('')
+    }
+    expect(source).toMatch(/class="liner-rail"/)
+  })
+
+  /**
+   * And they stand on each other. A deck of a liner is a floor of it: one that
+   * reaches past the floor below it is standing on air, which is what the first
+   * split drew — the guest deck overhung the garrison deck by 94 m.
+   */
+  it('stacks the decks of a tier, each one inside the deck under it', () => {
+    const grouped = [...drawnDecks.filter((deck) => deck.grouped)].sort(
+      (a, b) => a.elevation - b.elevation,
+    )
+    for (let i = 1; i < grouped.length; i++) {
+      const under = tierOf.get(grouped[i - 1].id) as Tier
+      const over = tierOf.get(grouped[i].id) as Tier
+      const [underFore, underAft] = [Math.min(...xOf(under.hull)), Math.max(...xOf(under.hull))]
+      const [overFore, overAft] = [Math.min(...xOf(over.hull)), Math.max(...xOf(over.hull))]
+      expect(overFore, `${over.id} reaches forward of ${under.id}`).toBeGreaterThanOrEqual(
+        underFore,
+      )
+      expect(overAft, `${over.id} reaches aft of ${under.id}`).toBeLessThanOrEqual(underAft)
+    }
   })
 
   /**

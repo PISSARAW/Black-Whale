@@ -205,16 +205,36 @@ for tier in DECKS:
 # Behind first, so the cut is drawn over the ship it is cut out of.
 rows.sort(key=lambda r: (r['cut'], -r['w'] * r['h']))
 
+# Tier 1 is one tier of three decks, and the drawing has to say so. They stand
+# 3.5 m apart, which is eight units here: three tabs in the margin is three
+# labels written over each other, and three tabs of different sizes reads as one
+# deck with two annexes. So the group gets a bracket of its own on the stern
+# margin, ticked at each deck and lettered A, B, C — one tier, three floors.
+GROUPED = {t['id'] for t in DECKS if t.get('parentTierId')}
+GROUPED |= {t['parentTierId'] for t in DECKS if t.get('parentTierId')}
+
 decks_out = []
 for tier in sorted(DECKS, key=lambda t: -t['elevation']):
     fore, aft = hull_span(tier)
+    letter = tier['name'].rsplit('-', 1)[-1] if tier['id'] in GROUPED else ''
     decks_out.append({
         'id': tier['id'], 'name': tier['name'], 'nameFr': tier['nameFr'],
         'child': bool(tier.get('parentTierId')),
+        'grouped': tier['id'] in GROUPED,
+        'letter': letter,
         'x0': px(fore), 'x1': px(aft),
         'floor': py(tier['elevation']), 'ceiling': py(tier['elevation'] + tier['ceiling']),
         'elevation': tier['elevation'],
     })
+
+# The bracket itself: from the top of the highest deck of the group to the floor
+# of the lowest, on the margin the ship's stern leaves free.
+_grouped = [d for d in decks_out if d['grouped']]
+liner = {
+    'x': round(VIEW_W - 26, 2),
+    'top': min(d['ceiling'] for d in _grouped),
+    'bottom': max(d['floor'] for d in _grouped),
+}
 
 # The ship the reconstruction does not hold: between one tier's ceiling and the
 # floor of the tier above it. Drawn as a band rather than as invented decks —
@@ -269,8 +289,9 @@ def ts(rows_, fields):
 ROOM_FIELDS = [('id', 's'), ('tier', 's'), ('region', 'n?'), ('x', 'n'), ('y', 'n'),
                ('w', 'n'), ('h', 'n'), ('label', 's'), ('name', 's'), ('size', 'n'),
                ('at', 'a'), ('cut', 'b'), ('through', 'b'), ('inferred', 'b')]
-DECK_FIELDS = [('id', 's'), ('name', 's'), ('nameFr', 's'), ('child', 'b'), ('x0', 'n'), ('x1', 'n'),
-               ('floor', 'n'), ('ceiling', 'n'), ('elevation', 'n')]
+DECK_FIELDS = [('id', 's'), ('name', 's'), ('nameFr', 's'), ('child', 'b'), ('grouped', 'b'),
+               ('letter', 's'), ('x0', 'n'), ('x1', 'n'), ('floor', 'n'), ('ceiling', 'n'),
+               ('elevation', 'n')]
 GAP_FIELDS = [('id', 's'), ('x', 'n'), ('y', 'n'), ('w', 'n'), ('h', 'n'), ('metres', 'n')]
 TERRACE_FIELDS = [('x', 'n'), ('y', 'n'), ('w', 'n'), ('h', 'n')]
 
@@ -329,9 +350,14 @@ src = f'''<script lang="ts">
   ]
 
   /**
-   * A deck of the tier-1 liner is labelled to starboard and on one line: three
-   * tiers-worth of tab on the port margin, three and a half metres apart, is
-   * three labels written over each other.
+   * The decks, and how each one is labelled.
+   *
+   * A deck that stands alone carries its name in the bow margin. The three
+   * decks of tier 1 do not stand alone — they are three floors of one liner,
+   * 3.5 m apart, which is eight units of this drawing. Named in the margin they
+   * would be three labels written over each other; named in three different
+   * sizes they would read as one deck with two annexes. They are bracketed
+   * instead, and lettered.
    */
   const decks = [
 {ts(decks_out, DECK_FIELDS)},
@@ -344,6 +370,13 @@ src = f'''<script lang="ts">
    */
   const deckName = (deck: {{ name: string; nameFr: string }}) =>
     $locale === 'fr' ? deck.nameFr : deck.name
+
+  /** The bracket that says the three lettered decks are one tier. */
+  const liner = {{
+    x: {liner['x']},
+    top: {liner['top']},
+    bottom: {liner['bottom']},
+  }}
 
   const gaps = [
 {ts(gaps, GAP_FIELDS)},
@@ -484,6 +517,24 @@ src = f'''<script lang="ts">
         font-size: 10px;
         pointer-events: none;
       }}
+      .liner-rail {{
+        stroke: #ffd700;
+        stroke-opacity: 0.5;
+        stroke-width: 1;
+      }}
+      .liner-tick {{
+        stroke: #ffd700;
+        stroke-opacity: 0.5;
+        stroke-width: 1;
+      }}
+      .liner-name {{
+        fill: #ffd700;
+        fill-opacity: 0.75;
+        font-family: sans-serif;
+        font-size: 10px;
+        letter-spacing: 1px;
+        pointer-events: none;
+      }}
       .waterline {{
         stroke: #9dc4e0;
         stroke-opacity: 0.55;
@@ -555,6 +606,10 @@ src = f'''<script lang="ts">
   <circle cx="{px(EYE_AT[0])}" cy="{py(EYE_AT[1])}" r="{round(EYE_R * SCALE, 1)}" fill="#050505" stroke="#ffd700" stroke-width="2" pointer-events="none" />
   <circle cx="{px(EYE_AT[0])}" cy="{py(EYE_AT[1])}" r="{round(EYE_R * SCALE / 2.6, 1)}" fill="#fffff0" pointer-events="none" />
 
+  <!-- One tier, three floors: the bracket says it, the letters place them. -->
+  <line class="liner-rail" x1={{liner.x}} y1={{liner.top}} x2={{liner.x}} y2={{liner.bottom}} />
+  <text class="liner-name" x={{liner.x + 6}} y={{liner.top - 8}}>{{$t.ship.tierLabel('1')}}</text>
+
   {{#each decks as deck (deck.id)}}
     <line class="deck-rule" x1={{deck.x0}} y1={{deck.floor}} x2={{deck.x1}} y2={{deck.floor}} />
     <g
@@ -565,10 +620,9 @@ src = f'''<script lang="ts">
       onclick={{() => openDeck(deck.id)}}
       onkeydown={{(event) => openDeckWithKeyboard(event, deck.id)}}
     >
-      {{#if deck.child}}
-        <text x="{int(VIEW_W)}" y={{deck.ceiling + 11}} text-anchor="end" font-size="10"
-          >{{deckName(deck)}} · {{deck.elevation}} m</text
-        >
+      {{#if deck.grouped}}
+        <line class="liner-tick" x1={{liner.x}} y1={{deck.floor}} x2={{liner.x + 7}} y2={{deck.floor}} />
+        <text x={{liner.x + 11}} y={{deck.floor + 3}} font-size="10">{{deck.letter}}</text>
       {{:else}}
         <text x="6" y={{deck.ceiling + 12}}>{{deckName(deck)}}</text>
         <text x="6" y={{deck.ceiling + 25}} font-size="9" fill-opacity="0.55"

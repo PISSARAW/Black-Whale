@@ -195,7 +195,7 @@
     "parentLocationId": "tier-1",
     "deck": 1,
     "zoneType": "administrative",
-    "description": "Highest jurisdiction on the ship, managed by Supreme Magistrate Cleapatro.",
+    "description": "Highest jurisdiction on the ship, managed by Supreme Magistrate Cleapatro. Chapter 376 shows it in session on the morning of the third day: bench, stand and public benches, the two princes' camps pleading Camilla's attack on Benjamin. It is the one place aboard where the contest is fought with counsel rather than Nen, and its rulings bind princes — confinement to the VIP zone, court supervisors on every outing, a search of every residence on Tier 1.",
     "entrances": [],
     "exits": []
   },
@@ -205,7 +205,7 @@
     "parentLocationId": "tier-1",
     "deck": 1,
     "zoneType": "prison",
-    "description": "Supreme Court high security VVIP incarceration area. Camilla was confined there.",
+    "description": "Supreme Court high security VVIP incarceration area. Camilla and Benjamin are both confined here from the morning of the third day, by Cleapatro's ruling, until Musse is caught: their own protection details stay with them, and a supervisor answering to the court accompanies either prince whenever they leave the zone.",
     "entrances": [],
     "exits": []
   },
@@ -515,7 +515,7 @@
     "parentLocationId": "tier-3",
     "deck": 3,
     "zoneType": "residential",
-    "description": "Ordinary Tier 3 cabins, and the hunting ground of Morena's Contagion carriers: Luini alone kills twenty people here before teleporting out, and the resulting panic is what pushes Mizaistom to redeploy the Royal Army.",
+    "description": "Ordinary Tier 3 cabins, and the hunting ground of Morena's Contagion carriers: Luini alone kills twenty people here before teleporting out, and the resulting panic is what pushes Mizaistom to redeploy the Royal Army. Room 302, where Morena infects the twenty-three Heil-Ly in chapter 378, is one of these cabins; the panel gives its door plate but nothing that would place it on the deck plan, so it has no entry of its own.",
     "entrances": [],
     "exits": ["tier-3-residential-room-3101"]
   },
@@ -645,7 +645,7 @@
     "parentLocationId": "tier-5",
     "deck": 5,
     "zoneType": "mafia",
-    "description": "Cha-R office beside the propeller, protected by a smart steel door and two cameras; it contains an office, bedroom, and surveillance monitor room.",
+    "description": "Cha-R office beside the propeller, protected by a smart steel door and two cameras; it contains an office, bedroom, and surveillance monitor room. Chapter 380 shows the reception room the family calls its headquarters: the clan emblem framed on the wall between two doors, a desk, facing sofas around a low table, ceiling cameras of its own, and the monitor room next door from which the family records and watches the places that matter to it on Tier 5. The back door of the warehouse is kept locked, so the footage of the theft shows the intruder leaving by the way he came in; the cameras cover the entrance and nothing else.",
     "entrances": [],
     "exits": []
   },

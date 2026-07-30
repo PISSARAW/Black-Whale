@@ -35,6 +35,28 @@ Si une affiliation précise n'est pas connue mais qu'un camp est évident :
 
 Toujours utiliser des UUID (générés automatiquement par la DB).
 
+## Dates de récit
+
+`storyDate` (chapitres) et `occurredAtLabel` (événements) se lisent
+`Day N · Jour · heure`, du plus large au plus fin, chaque cran séparé par ` · ` :
+
+- `Day 1 · Sunday · 12:00`
+- `Day 2 · Monday · 09:00`
+- `Day 3 · Tuesday · 01:27`
+
+Le jour 1 est le jour de l'appareillage, midi. Le nom du jour de la semaine
+n'est pas une convention d'affichage : il est déduit d'un seul panneau, le
+réveil de Fugetsu au chapitre 374 qui affiche `TUESDAY 01:27 AM` alors que la
+légende du même chapitre compte 37 h 30 depuis le départ. Les deux concordent à
+trois minutes près et font du départ un dimanche — ce que supposait déjà la
+salle des banquets avec ses banquets dominicaux, et que confirme le second
+banquet du jour 8, dimanche lui aussi.
+
+Le jour de la semaine ne s'écrit donc que sur un jour ferme. Une date approchée
+(`≈ Day 12`), un intervalle (`≈ Day 2-3`) ou une borne (`Martial law, after Day
+12`) reste sans jour : le compte des jours y est déjà une estimation, et lui
+coller un mardi lui donnerait une précision que le canon ne donne pas.
+
 ## Lieux
 
 Les slugs des lieux suivent la hiérarchie pour plus de clarté, mais sans le nom du vaisseau :

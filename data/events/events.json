@@ -379,7 +379,7 @@
     "chapterTitle": "Balance",
     "sequence": 1,
     "title": "Morena unleashes Contagion",
-    "summary": "Morena infects the Heil-Ly members, assigns levels for murder and sends them out to destroy Kakin and the world.",
+    "summary": "In room 302 on Tier 3, Morena addresses the twenty-three people present — the ones who stayed at her side after she ordered them to kill one another — and thanks them for it. She admits she is young and inexperienced to have taken the head of the clan, says she cares nothing for this world any more than for herself, and that this is exactly why she is destroying it. She then calls them forward one at a time to have their faculties examined: the kiss that carries Contagion. Levels are earned by murder, and the family leaves the room as Nen users pointed at Kakin.",
     "legacyTitles": ["Appearance of Morena Prudo"]
   },
   {
@@ -458,6 +458,16 @@
     "summary": "At a conference with Kakin military officials, Mizaistom argues the Tier 3 killings serve the Succession Contest rather than stress, and has the soldiers redistributed so that more stand on the third deck and below.",
     "occursAfterTitle": "Fugetsu emerges alone on Tier 3",
     "legacyTitles": []
+  },
+  {
+    "chapter": 380,
+    "chapterTitle": "Alarm",
+    "sequence": 3,
+    "title": "The Cha-R show the Troupe their surveillance",
+    "summary": "The three Troupe members are taken into the family's headquarters on Tier 5 — the clan emblem framed between two doors, sofas around a low table, a monitor room next door from which the Cha-R record the places that matter to them on the deck, the reception room included. The footage of the theft is played back: the man walks the hangar guard away, moves too much for his face to be readable, tries the back door in his panic, finds it locked and leaves the way he came. There are cameras at the warehouse entrance only, and apart from the family's own comings and goings the tape shows nobody but the three of them. They ask for a list of every non-mafia passenger going back to the previous day, on the reading that the thief came to scout the place first.",
+    "legacyTitles": [],
+    "occursAfterTitle": "Luini empties the Tier 5 warehouse guardpost",
+    "note": "The Cha-R surveillance is what makes the lower decks legible at all: the Royal Army holds Tiers 1 and 2, and on Tier 5 it is a mafia family that keeps the cameras and the tapes."
   },
   {
     "chapter": 378,

@@ -536,6 +536,12 @@
     "date": "2018-09-24",
     "timeline": [
       {
+        "event": "Morena gathers the twenty-three surviving Heil-Ly in room 302 and infects them one by one",
+        "storyDate": "≈ Day 4",
+        "charactersInvolved": ["morena-prudo"],
+        "location": "Tier 3 - Room 302"
+      },
+      {
         "event": "Morena Prudo activates 'Et tu, Juliet' on the ship",
         "storyDate": "≈ Day 4 onwards",
         "charactersInvolved": ["morena-prudo", "luini", "prince-tserriednich"],
@@ -556,11 +562,14 @@
     ],
     "location": "Tiers 3-5",
     "keyEvents": [
+      "Room 302 is where the Heil-Ly become Nen users: twenty-three present, examined one at a time",
+      "Morena took the head of the clan by ordering its members to kill one another; those who stayed are the ones she thanks",
+      "She states her goal plainly — she cares nothing for this world or for herself, which is why she destroys it",
       "Activation d'Et tu, Juliet par Morena",
       "Luini crosses the armored structures",
       "Tserriednich uses Heil-Lys as weapons"
     ],
-    "description": "The Heil-Ly family deploys their Nen infection strategy. Morena Prudo activates her kill-rewarding ability, while Luini uses her dimensional powers to infiltrate secure areas."
+    "description": "The Heil-Ly family deploys their Nen infection strategy. It starts in room 302 on Tier 3, where Morena thanks the twenty-three people who chose to stay with her after she ordered them to kill one another, and calls them forward one at a time to have their faculties examined — the kiss that carries Contagion. Morena Prudo activates her kill-rewarding ability, while Luini uses her dimensional powers to infiltrate secure areas."
   },
   {
     "id": "ch-380",

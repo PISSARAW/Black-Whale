@@ -274,11 +274,12 @@
       // apparent sharpness and 44% of the fragments.
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5))
       renderer.setClearColor(0x050505)
-      // The deck colours are true albedos now that `mesh.ts` hands over linear
-      // values, and a linear render of them clips the headlamp's hot spot to
-      // white while leaving the far end of a corridor as mud. The filmic curve
-      // is what holds both ends: it rolls the lamp off instead of clipping it
-      // and keeps the shadowed steel above black.
+      // The deck colours are true albedos, and the emissive surfaces are written
+      // above white on purpose — a fitting at 2,4 and a window pane at 1,28. A
+      // linear render clips all of that to flat white and leaves the far end of a
+      // corridor as mud. The filmic curve is what holds both ends: it rolls a lamp
+      // off instead of clipping it and keeps shadowed steel above black. It is also
+      // what `syncSight` closes when the monkeys take sight.
       renderer.toneMapping = THREE.ACESFilmicToneMapping
       renderer.toneMappingExposure = 1
 
@@ -302,25 +303,66 @@
       // on a laptop held at arm's length it is a fisheye that makes people ill.
       const camera = new THREE.PerspectiveCamera($comfort.fov, 1, 0.1, VIEW_DISTANCE)
 
-      // The decks are unlit steel. Ambient and hemisphere light carry most of
-      // the image so surfaces keep the colour they were given, and the lamp on
-      // the visitor only picks out what is close — a strong lamp washes every
-      // room to the same gold and flattens the walls out of existence.
-      //
-      // The intensities are set against linear albedos and the filmic curve
-      // above; they are not a free parameter. Correcting the vertex colours
-      // without touching these darkens the ship by about a stop and a half.
-      const AMBIENT = 0.9
-      const HEMISPHERE = 1
-      const HEADLAMP = 18
-      scene.add(new THREE.AmbientLight(0xfffff0, AMBIENT))
-      scene.add(new THREE.HemisphereLight(0x9fb4c8, 0x140d0d, HEMISPHERE))
-      const headlamp = new THREE.PointLight(0xffd9a0, HEADLAMP, 34, 1.4)
-      scene.add(headlamp)
-      // A raking light so two walls at right angles never take the same value.
-      const raking = new THREE.DirectionalLight(0xfff4e0, 0.7)
-      raking.position.set(0.4, 1, 0.25)
-      scene.add(raking)
+      /**
+       * The ship lights itself now, and the visitor is no longer a lamp.
+       *
+       * Everything that used to carry the image is gone: an ambient, a hemisphere,
+       * a raking directional, and an eighteen-unit point light screwed to the
+       * visitor's head. That headlamp was the reason five decks looked like one
+       * deck — every room was lit by the same source, which was you, so no room was
+       * lit by itself. What replaces it is what `mesh.ts` has been baking into the
+       * vertices all along: the fittings of each room, its corners and creases, and
+       * the two windows.
+       *
+       * The single `AmbientLight` that remains is not lighting, it is exposure. A
+       * Lambert surface shows `albedo × (ambient + Σ lights)`, so one flat white
+       * ambient shows the baked colour multiplied by a constant and nothing else —
+       * the bake *is* the image, and the two lights below add to it rather than
+       * standing in for it. The material stays Lambert rather than becoming Basic
+       * for exactly that reason: Basic takes no lights at all, and both of those
+       * have to exist.
+       *
+       * `AMBIENT` is 2,2 because that is what the four lights it replaces averaged
+       * over a surface — 0,9 of ambient, about 1 of hemisphere and about 0,35 of the
+       * raking directional. It is deliberately not 1: `RoomLight` in `mesh.ts` was
+       * built so its mean shade comes out near unity *against those intensities*, so
+       * a unity ambient here would not be a purer statement, it would be the whole
+       * ship a stop and a half darker than anything was tuned for. What this change
+       * takes away is the visitor as a light source, which is what flattened the five
+       * decks into one; what it deliberately does not touch is the exposure.
+       *
+       * Going darker still — the plan's "black is black" — is a second change and a
+       * separate argument: it means lowering `LIGHT.fill`, the floor the bake gives
+       * every surface before a single fitting is counted, and that is a number to
+       * settle by looking at the ship on a real screen rather than by reasoning.
+       *
+       * What is left dynamic:
+       *
+       * - the night-light, a couple of metres of reach on the visitor. Not a
+       *   headlamp: it is the safety net for a stairwell with no fitting over it,
+       *   and at this intensity it cannot flatten a room it is standing in.
+       * - the Nen aura, when a technique is up: see `syncShells`. It becomes the
+       *   only coloured light on the ship, so a technique *lights* the deck rather
+       *   than drawing an outline on it.
+       */
+      const AMBIENT = 2.2
+      const NIGHT_LIGHT = 1.2
+      scene.add(new THREE.AmbientLight(0xffffff, AMBIENT))
+      const nightLight = new THREE.PointLight(0xffd9a0, NIGHT_LIGHT, 8, 2)
+      scene.add(nightLight)
+
+      /**
+       * The aura as a light, not as an outline.
+       *
+       * Parked at zero intensity and moved with the visitor: the shells already
+       * draw the reach of a technique in its own colour, and this makes that colour
+       * fall on the steel. It is the only light on the ship that is not white or a
+       * filament, which is the point — Nen is the one thing aboard that is not the
+       * ship.
+       */
+      const AURA_LIGHT = 2.4
+      const auraLight = new THREE.PointLight(0xffffff, 0, 14, 2)
+      scene.add(auraLight)
 
       /**
        * One face per surface, and it is the face that looks at the room.
@@ -372,7 +414,7 @@
        * The ceiling fittings: the one surface on the deck that is a light.
        *
        * `MeshBasicMaterial`, because a lamp must not be lit — run through the
-       * Lambert material it would take the headlamp and the ambient like any other
+       * Lambert material it would take the night-light and the ambient like any other
        * steel and come out as a pale square, which is a vent, not a lamp.
        *
        * What they burn at comes from the buffer rather than from here — see
@@ -798,6 +840,11 @@
           shells = null
         }
         if (auraColour) shellMaterial.color.set(auraColour)
+        // The same colour, as light rather than as line. Raised only while a
+        // technique is up, and dropped the moment it ends, so the deck goes back to
+        // being lit by its own fittings.
+        if (auraColour) auraLight.color.set(auraColour)
+        auraLight.intensity = ids.length ? AURA_LIGHT : 0
         if (!ids.length) return
 
         const points: number[] = []
@@ -869,15 +916,13 @@
         blinded = sealed
         // The density itself is eased in the frame loop, so the air closing to
         // arm's length is felt closing rather than cut to.
-        headlamp.intensity = sealed ? 0 : HEADLAMP
-        for (const light of scene.children) {
-          if ((light as import('three').AmbientLight).isAmbientLight) {
-            ;(light as import('three').AmbientLight).intensity = sealed ? 0 : AMBIENT
-          }
-          if ((light as import('three').HemisphereLight).isHemisphereLight) {
-            ;(light as import('three').HemisphereLight).intensity = sealed ? 0 : HEMISPHERE
-          }
-        }
+        //
+        // The light is taken at the eye rather than at the source: the ship stays
+        // lit — the bake is in the vertices and cannot be switched off, which is
+        // the honest way round — and the exposure goes to nothing. What the monkeys
+        // take is sight, so what closes is the aperture and the air.
+        renderer.toneMappingExposure = sealed ? 0.02 : 1
+        nightLight.intensity = sealed ? 0 : NIGHT_LIGHT
         // The fittings are not lit, so putting the lights out does nothing to
         // them: blinded, the visitor would be left staring at three thousand
         // lamps in a ship they cannot otherwise see. They are hidden instead,
@@ -1432,14 +1477,18 @@
           footstep(paces, { running })
         }
 
-        // The lamp is worn, not held at the eye: thirty centimetres to the left of
-        // the visitor's head and thirty below it. At the viewpoint, N·L is N·V on
-        // every surface at once — the light lands wherever the eye is already
-        // looking, which is the one place it cannot model anything, and every wall
-        // came out flat for it. Off to one side, the same wall has a lit edge and a
-        // shaded one, and a corridor has corners again.
-        headlamp.position.set(pointer[0] - cos * 0.3, eye - 0.3, pointer[1] + sin * 0.3)
-        if (standing) headlamp.distance = Math.max(22, ceilingOf(standing, plan.tier) * 4)
+        // Worn, not held at the eye: thirty centimetres to the left of the
+        // visitor's head and thirty below it. At the viewpoint, N·L is N·V on every
+        // surface at once — the light lands wherever the eye is already looking,
+        // which is the one place it cannot model anything. It mattered more when
+        // this lamp carried the picture; it is kept because it costs nothing and a
+        // stairwell lit from slightly off-axis still has corners.
+        nightLight.position.set(pointer[0] - cos * 0.3, eye - 0.3, pointer[1] + sin * 0.3)
+        // The aura is carried by the visitor, because the visitor is the one
+        // emitting it. Positioned whether or not it is lit: `syncShells` raises the
+        // intensity, and a light at the wrong end of the deck the frame a technique
+        // goes up would be a flash in another room.
+        auraLight.position.copy(nightLight.position)
 
         // The air of the room, and the room's answer to a footstep. Both are read
         // off the size of the space the visitor is standing in, both are eased

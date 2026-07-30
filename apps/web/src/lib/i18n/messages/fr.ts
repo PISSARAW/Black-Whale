@@ -565,6 +565,7 @@ export const fr: Messages = {
     sections: {
       chapters: 'Chapitres',
       method: 'Méthode',
+      departures: 'Écarts',
       rooms: 'Pièces',
       levels: 'Niveaux',
       solids: 'Solides',
@@ -604,6 +605,34 @@ export const fr: Messages = {
         'Une unité des plans de ponts vaut 0,35 m, un facteur fixé par la taille des pièces et non par la coque. Lus au pied de la lettre, les plans donnent une salle de banquet de 450 m que personne ne pourrait traverser. Les 175 m auxquels la reconstruction aboutit sont une propriété de la reconstruction, pas une mesure du Black Whale.',
       doorways:
         'Les portes ne sont pas écrites. Deux espaces qui partagent une portion de mur communiquent, dérivé de la seule géométrie : une cloison déplacée de deux mètres ne peut donc pas laisser une porte en suspens — c’est une salle devenue inaccessible qui fait échouer les tests.',
+    },
+
+    departures: {
+      title: 'Ce que la coupe dit et que la visite ne prend pas',
+      help: 'L’ordre d’autorité met le manga au-dessus de tout, cette page comprise : là où un dessin et la reconstruction divergent, le dessin l’emporte et c’est la reconstruction qu’il faut refaire. Quatre endroits s’écartent malgré tout de la coupe du chap. 349, parce qu’un vaisseau qu’on parcourt ne peut pas tenir tout ce que ce dessin tient. C’est le seul motif recevable pour s’en écarter, et chacun est déclaré ici plutôt que laissé à découvrir.',
+      drawn: 'La coupe dessine',
+      kept: 'La visite tient',
+      items: [
+        {
+          drawn:
+            'Chacun des cinq ponts comme un empilement de niveaux intermédiaires. Un pont y est une tranche de coque, pas un étage.',
+          kept: 'Un seul niveau parcouru par pont. Un pont a 4,5 à 6 m sous plafond et les ponts sont empilés tous les 18 m : une douzaine de mètres sépare donc un plafond du plancher au-dessus, et c’est là que sont ces niveaux intermédiaires. La visite ne les parcourt pas et ne les nie pas. Un plan par pont est ce qui fait de /ship et de la visite le même vaisseau, et cette correspondance est toute la raison d’être de la reconstruction. Le pas de 18 m, lui, appartient à la reconstruction : la coupe ne dessine pas les cinq ponts d’égale hauteur.',
+        },
+        {
+          drawn:
+            'Une superstructure au-dessus du pont 1 — la passerelle et sa cheminée, dégagées de la coque.',
+          kept: 'Rien. Aucun dessin n’en donne l’intérieur, et une coque vide où l’on n’entre pas serait du décor. Le vaisseau que la visite tient s’arrête au pont des appartements.',
+        },
+        {
+          drawn:
+            'La coque en élévation : le profil de l’étrave et de la poupe, et le bulbe dans lequel le pont 5 se loge.',
+          kept: 'Un contour fermé par pont, échantillonné sur les courbes des plans de ponts de /ship, qui sont dessinés vus de dessus. Le vaisseau reconstruit se resserre donc de pont en pont, mais le mur de chaque pont monte à la verticale. Une coque incurvée à travers le plancher déplacerait un mur de plusieurs mètres au seul endroit où les plans de ponts ne disent rien.',
+        },
+        {
+          drawn: 'Une ligne de flottaison, les ponts 4 et 5 en dessous.',
+          kept: 'Aucun champ : rien de la marche n’en dépend. Elle est consignée ici parce qu’elle touche à l’affirmation la plus forte du plan — sur 314 espaces, exactement deux voient dehors. Deux ponts sous l’eau, c’est la raison pour laquelle les 312 autres sont éclairés par ce que quelqu’un a allumé.',
+        },
+      ],
     },
 
     controls: {

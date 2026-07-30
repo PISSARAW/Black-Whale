@@ -172,6 +172,7 @@
   const SECTIONS = [
     'chapters',
     'method',
+    'departures',
     'rooms',
     'levels',
     'solids',
@@ -400,6 +401,38 @@
       <p>{$t.tourSources.method.scale}</p>
       <p>{$t.tourSources.method.doorways}</p>
     </div>
+  </section>
+
+  <!-- The debts the method leaves. The order of authority puts the manga first,
+       so every place the reconstruction departs from ch. 349 is owed a reason —
+       and a departure nobody wrote down is indistinguishable from an oversight.
+       Prose rather than a count off the blueprint: what a file leaves out is
+       precisely what that file cannot be made to report. -->
+  <section id="departures" class="mb-8 scroll-mt-4">
+    <h2 class="text-xs uppercase tracking-widest text-[#FFD700]/70">
+      {$t.tourSources.departures.title}
+    </h2>
+    <p class="mt-2 max-w-3xl text-sm leading-relaxed text-[#FFFFF0]/60">
+      {$t.tourSources.departures.help}
+    </p>
+    <ul class="mt-3 space-y-3">
+      {#each $t.tourSources.departures.items as departure (departure.drawn)}
+        <li class="overflow-hidden rounded-lg border border-[#333]">
+          <p class="border-b border-[#333] p-3 text-xs leading-relaxed text-[#FFFFF0]/85">
+            <span class="mr-2 text-[10px] uppercase tracking-wider text-[#FFD700]/70">
+              {$t.tourSources.departures.drawn}
+            </span>
+            {departure.drawn}
+          </p>
+          <p class="p-3 text-xs leading-relaxed text-[#FFFFF0]/70">
+            <span class="mr-2 text-[10px] uppercase tracking-wider text-[#FFFFF0]/45">
+              {$t.tourSources.departures.kept}
+            </span>
+            {departure.kept}
+          </p>
+        </li>
+      {/each}
+    </ul>
   </section>
 
   <!-- The room-by-room account -->

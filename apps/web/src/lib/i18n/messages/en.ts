@@ -620,6 +620,7 @@ export const en = {
     sections: {
       chapters: 'Chapters',
       method: 'Method',
+      departures: 'Departures',
       rooms: 'Rooms',
       levels: 'Levels',
       solids: 'Solids',
@@ -659,6 +660,41 @@ export const en = {
         'One unit of the deck plans is read as 0.35 m, a factor set by the size of the rooms and not by the hull. Read at face value the plans give a 450 m banquet hall nobody could cross. The 175 m the reconstruction comes out at is a property of the reconstruction, not a measurement of the Black Whale.',
       doorways:
         'Doorways are not authored. Two spaces that share a stretch of wall open onto each other, derived from the geometry alone, so a footprint nudged by two metres cannot leave a door hanging in mid-air — a room that becomes unreachable fails the test suite instead.',
+    },
+
+    /**
+     * The other half of the method: where the reconstruction departs from the
+     * drawing it rests on. The order of authority puts the manga first, so a
+     * departure is a debt — and an undeclared one reads as an oversight rather
+     * than a decision. Written here rather than counted off the blueprint,
+     * because what is missing from a file is exactly what the file cannot say.
+     */
+    departures: {
+      title: 'What the cross-section says and the tour does not take',
+      help: 'The order of authority puts the manga above everything, this page included: where a drawing and the reconstruction disagree, the drawing wins and it is the reconstruction that has to be redone. Four places depart from ch. 349 anyway, because a ship you walk cannot hold everything that drawing holds. That is the only ground a departure can stand on, and each one is declared here rather than left to be caught.',
+      drawn: 'The cross-section draws',
+      kept: 'The tour keeps',
+      items: [
+        {
+          drawn:
+            'Each of the five tiers as a stack of thin intermediate floors. A tier is a band of the hull in that drawing, not a storey.',
+          kept: 'One walked floor per tier. A deck has 4.5 to 6 m of headroom and the decks are stacked 18 m apart, so about twelve metres separate a ceiling from the floor above it: that gap is where those intermediate floors are. The tour does not visit them and does not deny them. One plan per tier is what keeps /ship and the tour the same ship, and that correspondence is the whole point of the reconstruction. The 18 m pitch itself is the reconstruction’s: the cross-section does not draw the five tiers equally deep.',
+        },
+        {
+          drawn:
+            'A superstructure above tier 1 — the bridge and its funnel, standing clear of the hull.',
+          kept: 'Nothing. No drawing gives its inside, and a shell that cannot be entered would be scenery. The ship the tour holds stops at the deck the apartments are on.',
+        },
+        {
+          drawn:
+            'The hull in elevation: the profile of the bow and the stern, and the bulb tier 5 sits inside.',
+          kept: 'One closed outline per deck, sampled from the curves of the /ship deck plans, which are drawn from above. The reconstructed ship narrows deck by deck, but the wall of each deck rises vertical. A hull curving through the floor would move a wall by metres at the one place the deck plans say nothing.',
+        },
+        {
+          drawn: 'A waterline, with tiers 4 and 5 below it.',
+          kept: 'No field: nothing in the walk changes with it. It is recorded here because it bears on the strongest claim the blueprint makes — that of 314 spaces exactly two can see out. Two decks under water is why the other 312 are lit by what somebody switched on.',
+        },
+      ],
     },
 
     controls: {

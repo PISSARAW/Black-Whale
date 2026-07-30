@@ -1,8 +1,17 @@
 import { writable } from 'svelte/store'
-import { MAX_REVERB, MIN_REVERB, impulseResponse, slapDelay } from '$lib/tour/atmosphere'
+import {
+  HULL_FUNDAMENTAL,
+  MAX_REVERB,
+  MIN_REVERB,
+  hullNoise,
+  hullRumble,
+  impulseResponse,
+  slapDelay,
+} from '$lib/tour/atmosphere'
 
 /**
- * The sound of the walk: footsteps, and the room answering them.
+ * The sound of the walk: footsteps, the room answering them, and the hull under
+ * all of it.
  *
  * Nothing here is a recording. The steps are synthesised the way the voyage
  * theme is — see `$lib/audio/ambient` — and the room is a convolution
@@ -16,6 +25,13 @@ import { MAX_REVERB, MIN_REVERB, impulseResponse, slapDelay } from '$lib/tour/at
  * the first reflection off the walls, and it does it in one footstep. A cabin and
  * the hold differ here by a factor of about six in reverberation time, which is
  * not a subtlety — it is the difference between a slap and a rumble.
+ *
+ * The hull is here rather than in `$lib/audio/ambient` for the same reason the
+ * footsteps are. The voyage theme is a soundtrack over the archive, off until
+ * someone asks for it; the machinery is a thing aboard the ship, and it belongs to
+ * whatever else the walk makes audible — one `AudioContext`, one toggle, and the
+ * same lowpass when a technique seals hearing. See `hullRumble` for what it is
+ * keyed to, which is the deck's own elevation.
  */
 
 const ENABLED_KEY = 'black-whale:tour-sound'
@@ -25,6 +41,31 @@ export const stepsPlaying = writable(false)
 
 /** How long a change of room takes to be heard, in seconds. */
 const CROSSFADE = 0.4
+
+/**
+ * What the loudest deck of the ship mixes the hull at.
+ *
+ * Under the footsteps by design: at Tier 5 the rumble is the floor of the mix and
+ * a boot on the plate still lands on top of it. `hullRumble` gives the fraction of
+ * this each elevation gets, from 1 in the hold to 0,12 in the King's rooms.
+ */
+const HULL_GAIN = 0.16
+
+/**
+ * Seconds of pink noise in the loop.
+ *
+ * Long enough that the ear cannot find the period — under two seconds a noise
+ * loop is heard as a texture repeating — and short enough that the buffer is a few
+ * hundred kilobytes rather than a few megabytes. `hullNoise` folds its ends
+ * together, so the length is a question of period and not of the seam.
+ */
+const HULL_LOOP = 4
+
+/** The deck the damping starts at, before the walk says where the visitor is. */
+const HULL_DECK_DEFAULT = hullRumble(0)
+
+/** How long the hull takes to change when the visitor changes deck, in seconds. */
+const HULL_SETTLE = 2.5
 
 type Room = {
   convolver: ConvolverNode
@@ -49,12 +90,18 @@ type Graph = {
   current: 0 | 1
   /** A second of noise, made once and re-read by every step. */
   grit: AudioBuffer
+  /** How loud the machinery is where the visitor is standing. */
+  hull: GainNode
+  /** How much of it the decks between here and the engines let through. */
+  hullDamp: BiquadFilterNode
 }
 
 let graph: Graph | null = null
 let muffled = false
 /** The room last handed to `enterRoom`, so an unchanged room is not rebuilt. */
 let roomKey = ''
+/** The deck last handed to `enterDeck`, so a graph built later still knows it. */
+let deckElevation = 0
 
 function buildGraph(): Graph {
   const Ctor =
@@ -110,6 +157,59 @@ function buildGraph(): Graph {
   const channel = grit.getChannelData(0)
   for (let i = 0; i < channel.length; i++) channel[i] = Math.random() * 2 - 1
 
+  /**
+   * The hull: the engines, heard through however many decks are between.
+   *
+   * Two voices into one gain. The sine at `HULL_FUNDAMENTAL` is the machinery
+   * itself — a single very low note, more felt than heard, and the thing that
+   * makes a pair of headphones say "ship" — and the pink bed around it is
+   * everything the note drives: plate, ducting, the four thousand rooms it is
+   * transmitted through. Both are shaped by one lowpass, because what changes
+   * with elevation is not the engine but how much of it survives the steel.
+   *
+   * Outside the convolvers on purpose. The reverberation is what a *room* does to
+   * a sound made in it; the rumble is not made in the room, it arrives through
+   * its walls, and running it through the hold's four-second tail would smear a
+   * continuous noise into a continuous noise at more cost. It goes through
+   * `muffle`, so sealing hearing seals the ship too.
+   *
+   * Started silent: the level is set the moment the walk knows which deck the
+   * visitor is standing on. See `enterDeck`.
+   */
+  const hullDamp = context.createBiquadFilter()
+  hullDamp.type = 'lowpass'
+  hullDamp.frequency.value = HULL_DECK_DEFAULT.cutoff
+  hullDamp.Q.value = 0.7
+
+  const hull = context.createGain()
+  hull.gain.value = 0
+  hullDamp.connect(hull)
+  hull.connect(muffle)
+
+  const bed = context.createBufferSource()
+  const pink = context.createBuffer(
+    1,
+    Math.floor(HULL_LOOP * context.sampleRate),
+    context.sampleRate,
+  )
+  pink.copyToChannel(hullNoise(HULL_LOOP, context.sampleRate), 0)
+  bed.buffer = pink
+  bed.loop = true
+  const bedLevel = context.createGain()
+  bedLevel.gain.value = 0.6
+  bed.connect(bedLevel)
+  bedLevel.connect(hullDamp)
+  bed.start()
+
+  const engine = context.createOscillator()
+  engine.type = 'sine'
+  engine.frequency.value = HULL_FUNDAMENTAL
+  const engineLevel = context.createGain()
+  engineLevel.gain.value = 0.5
+  engine.connect(engineLevel)
+  engineLevel.connect(hullDamp)
+  engine.start()
+
   return {
     context,
     muffle,
@@ -121,6 +221,8 @@ function buildGraph(): Graph {
     rooms: [makeRoom(), makeRoom()],
     current: 0,
     grit,
+    hull,
+    hullDamp,
   }
 }
 
@@ -177,6 +279,37 @@ export function enterRoom(id: string, reverb: number, wallDistance: number) {
 
   g.slap.delayTime.cancelScheduledValues(now)
   g.slap.delayTime.setTargetAtTime(slapDelay(wallDistance), now, CROSSFADE / 3)
+}
+
+/**
+ * Puts the visitor on a deck: how much of the machinery reaches this elevation.
+ *
+ * Called with the elevation of the level being walked, which for an interior is
+ * the elevation of the deck it is inside — a prince's bathroom is seventy-two
+ * metres up whatever the room plan is drawn at.
+ *
+ * Eased over `HULL_SETTLE`, which is slow on purpose and much slower than the
+ * crossfade between two rooms. A lift or a stairwell is the one place on the ship
+ * where a visitor changes deck, and the rumble coming up to meet them over a
+ * couple of seconds is the whole cue: you hear that you are descending. Cut
+ * instantly it would read as a bug in the audio, which is what every abrupt gain
+ * change reads as.
+ */
+export function enterDeck(elevation: number) {
+  // Remembered whether or not there is a graph to tell: the visitor can silence
+  // the walk on Tier 5, cross half the ship, and turn it back on from a button in
+  // the markup that has no idea which deck they are standing on. `startSteps`
+  // reads this back, so the deck the rumble describes is the deck they are on.
+  deckElevation = elevation
+  const g = graph
+  if (!g) return
+  const { level, cutoff } = hullRumble(elevation)
+  const now = g.context.currentTime
+
+  g.hull.gain.cancelScheduledValues(now)
+  g.hull.gain.setTargetAtTime(level * HULL_GAIN, now, HULL_SETTLE / 3)
+  g.hullDamp.frequency.cancelScheduledValues(now)
+  g.hullDamp.frequency.setTargetAtTime(cutoff, now, HULL_SETTLE / 3)
 }
 
 /**
@@ -281,6 +414,9 @@ export function startSteps() {
     applyMuffle(graph, muffled, 0.05)
   }
   if (graph.context.state === 'suspended') void graph.context.resume()
+  // The hull swells in from silence over `HULL_SETTLE` on the deck the visitor is
+  // actually standing on, which nothing but this module remembers.
+  enterDeck(deckElevation)
   stepsPlaying.set(true)
   if (typeof localStorage !== 'undefined') localStorage.setItem(ENABLED_KEY, 'on')
 }

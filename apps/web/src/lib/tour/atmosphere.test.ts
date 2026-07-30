@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest'
 import {
   ABSORPTION,
+  HULL_DECKS,
+  HULL_FUNDAMENTAL,
   MAX_DENSITY,
   MAX_REVERB,
   MAX_TAIL,
@@ -11,6 +13,8 @@ import {
   SPEED_OF_SOUND,
   fogDensityFor,
   fogDensityOf,
+  hullNoise,
+  hullRumble,
   impulseResponse,
   reverbTime,
   roomSurface,
@@ -239,5 +243,108 @@ describe('the pace the ship is walked at', () => {
     // The whole reason the gait is keyed to distance: two visitors covering the
     // same hundred metres take the same number of steps.
     expect(stepsIn(100)).toBe(Math.floor(100 / STRIDE))
+  })
+})
+
+/**
+ * The hull, which is what the ship has instead of weather.
+ *
+ * Two of these are worth guarding. The rumble has to be monotone in elevation —
+ * the whole cue is that descending is audible, and a deck that broke the order
+ * would say the engines are upstairs. And the noise bed is looped for as long as
+ * the walk lasts, so its ends have to meet: a discontinuity there is a click every
+ * four seconds, which is the one artefact an ear places instantly.
+ */
+describe('the rumble of the hull', () => {
+  it('gives each deck the level and the cutoff it is written for', () => {
+    for (const deck of HULL_DECKS) {
+      const heard = hullRumble(deck.elevation)
+      expect(heard.level, `${deck.elevation} m is mixed wrong`).toBeCloseTo(deck.level, 10)
+      expect(heard.cutoff, `${deck.elevation} m is filtered wrong`).toBeCloseTo(deck.cutoff, 10)
+    }
+    // The machinery is in the bottom of the hull: the hold is the loud end.
+    expect(HULL_DECKS[0].level).toBe(1)
+    expect(hullRumble(0).level).toBeGreaterThan(hullRumble(72).level * 5)
+  })
+
+  it('gets quieter and duller with every deck climbed, without exception', () => {
+    let last = hullRumble(-10)
+    for (let elevation = -10; elevation <= 90; elevation += 0.5) {
+      const heard = hullRumble(elevation)
+      expect(heard.level, `${elevation} m is louder than the deck below it`).toBeLessThanOrEqual(
+        last.level + 1e-12,
+      )
+      expect(heard.cutoff, `${elevation} m is brighter than the deck below it`).toBeLessThanOrEqual(
+        last.cutoff + 1e-12,
+      )
+      last = heard
+    }
+  })
+
+  it('interpolates between decks, and stops at the top and the bottom of the ship', () => {
+    // Nothing in the reconstruction stands between two decks — but a lift does
+    // travel there, and an elevation off the table must not fall to zero.
+    const between = hullRumble(9)
+    expect(between.level).toBeCloseTo((1 + 0.7) / 2, 10)
+    expect(between.cutoff).toBeCloseTo((260 + 190) / 2, 10)
+
+    // Flat outside the hull: there is nothing under Tier 5 and nothing over Tier 1.
+    expect(hullRumble(-40)).toEqual(hullRumble(0))
+    expect(hullRumble(400)).toEqual(hullRumble(72))
+  })
+
+  it('meets its own ends, so the loop has no click in it', () => {
+    const rate = 8000
+    const bed = hullNoise(2, rate)
+    expect(bed.length).toBe(2 * rate)
+
+    // The seam is the joint between the last sample and the first. It has to be no
+    // bigger a step than the noise takes anywhere else in the buffer, or the loop
+    // is heard ticking.
+    let biggest = 0
+    for (let i = 1; i < bed.length; i++) {
+      biggest = Math.max(biggest, Math.abs(bed[i] - bed[i - 1]))
+    }
+    const seam = Math.abs(bed[0] - bed[bed.length - 1])
+    expect(seam, 'the loop point steps further than the noise ever does').toBeLessThanOrEqual(
+      biggest,
+    )
+  })
+
+  it('stays inside the range an audio buffer takes, and is pink rather than white', () => {
+    const rate = 8000
+    const bed = hullNoise(2, rate)
+    for (const sample of bed) expect(Math.abs(sample)).toBeLessThanOrEqual(1)
+
+    // Pink noise carries equal energy per octave, so it is dominated by its low
+    // end: the difference between neighbouring samples — a crude high-pass — holds
+    // far less energy than the samples themselves. For white noise the two are
+    // uncorrelated and the ratio is √2; this bed measures about 0,64, less than
+    // half of that. It is the difference between a hiss with the top taken off and
+    // a machine heard through a deck.
+    let signal = 0
+    let difference = 0
+    for (let i = 1; i < bed.length; i++) {
+      signal += bed[i] * bed[i]
+      difference += (bed[i] - bed[i - 1]) ** 2
+    }
+    expect(Math.sqrt(difference / signal), 'the bed is a hiss, not a rumble').toBeLessThan(
+      Math.SQRT2 / 2,
+    )
+  })
+
+  it('sounds the same to two visitors, and different in two ships', () => {
+    // Seeded like every other noise in the walk: a reconstruction that publishes
+    // its sources cannot answer differently on a second visit.
+    expect([...hullNoise(0.2, 8000)]).toEqual([...hullNoise(0.2, 8000)])
+    expect([...hullNoise(0.2, 8000, 5)]).not.toEqual([...hullNoise(0.2, 8000, 6)])
+  })
+
+  it('sits below the fundamental of a footstep, because it is not a footstep', () => {
+    // The plate under a boot rings from about 104 Hz down to 58 — see `footstep`.
+    // The hull is under all of it, and every deck's cutoff is low enough that what
+    // is left of it is felt rather than heard as a pitch.
+    expect(HULL_FUNDAMENTAL).toBeLessThan(58)
+    for (const deck of HULL_DECKS) expect(deck.cutoff).toBeGreaterThan(HULL_FUNDAMENTAL)
   })
 })

@@ -24,7 +24,13 @@
       {
         "event": "Beyond Netero is imprisoned in Tier 1 VVIP prison",
         "storyDate": "Day 1",
-        "charactersInvolved": ["beyond-netero", "zodiaques"],
+        "charactersInvolved": [
+          "beyond-netero",
+          "cheadle-yorkshire",
+          "mizaistom-nana",
+          "botobai-gigante",
+          "gel"
+        ],
         "location": "Tier 1 - Prison VVIP"
       },
       {
@@ -64,7 +70,7 @@
           "prince-zhanglei",
           "prince-tserriednich",
           "prince-tubeppa",
-          "prince tyson",
+          "prince-tyson",
           "prince-luzurus",
           "prince-salesale",
           "prince-halkenburg",
@@ -80,13 +86,44 @@
       {
         "event": "Explanation of the rules: the Urn of the Seed will choose the successor",
         "storyDate": "Day 1",
-        "charactersInvolved": ["nasubi-hui-guo-rou", "all the princes"],
+        "charactersInvolved": [
+          "nasubi-hui-guo-rou",
+          "prince-benjamin",
+          "prince-camilla",
+          "prince-zhanglei",
+          "prince-tserriednich",
+          "prince-tubeppa",
+          "prince-tyson",
+          "prince-luzurus",
+          "prince-salesale",
+          "prince-halkenburg",
+          "prince-kacho",
+          "prince-fugetsu",
+          "prince-momoze",
+          "prince-marayam",
+          "prince-woble"
+        ],
         "location": "Tier 1"
       },
       {
         "event": "The factions begin to organize themselves in their respective chambers",
         "storyDate": "≈ Day 1-2",
-        "charactersInvolved": ["all the princes", "leurs gardes et allies"],
+        "charactersInvolved": [
+          "prince-benjamin",
+          "prince-camilla",
+          "prince-zhanglei",
+          "prince-tserriednich",
+          "prince-tubeppa",
+          "prince-tyson",
+          "prince-luzurus",
+          "prince-salesale",
+          "prince-halkenburg",
+          "prince-kacho",
+          "prince-fugetsu",
+          "prince-momoze",
+          "prince-marayam",
+          "prince-woble"
+        ],
         "location": "Tiers 1-2 - Chambers of the princes"
       }
     ],
@@ -97,6 +134,217 @@
       "Distribution of rooms in Tiers 1 and 2"
     ],
     "description": "King Nasubi Hui Guo Rou officially announces the start of the War of Succession. The 14 princes (and Princess Woble) divide up into their respective districts on Tiers 1 and 2. Each prince begins to implement his strategy to survive and be chosen by the Urn of the Seed."
+  },
+  {
+    "id": "ch-359",
+    "number": 359,
+    "publicationOrder": 359,
+    "title": "Departure",
+    "timeline": [
+      {
+        "event": "The Black Whale leaves the port of Kakin for the New Continent",
+        "storyDate": "Day 1 · 12:00",
+        "charactersInvolved": ["nasubi-hui-guo-rou", "kurapika", "queen-oito", "prince-woble"],
+        "location": "Port of Kakin / Tier 1"
+      },
+      {
+        "event": "Woody is found exsanguinated on the bathroom floor of room 1014",
+        "storyDate": "Day 1 · 12:15-12:30",
+        "charactersInvolved": ["woody", "kurapika", "bill", "kurton", "sayird"],
+        "location": "Tier 1 - Room 1014"
+      },
+      {
+        "event": "The inaugural banquet gathers the royal family",
+        "storyDate": "Day 1 · evening",
+        "charactersInvolved": [
+          "nasubi-hui-guo-rou",
+          "prince-benjamin",
+          "prince-camilla",
+          "prince-zhanglei",
+          "prince-tserriednich",
+          "prince-tubeppa",
+          "prince-halkenburg",
+          "prince-kacho",
+          "prince-fugetsu",
+          "prince-momoze",
+          "prince-marayam",
+          "sevanti-hui-guo-rou",
+          "queen-oito"
+        ],
+        "location": "Tier 1 - Banquet Hall"
+      },
+      {
+        "event": "Kacho proposes an alliance to Fugetsu during the banquet",
+        "storyDate": "Day 1 · evening",
+        "charactersInvolved": ["prince-kacho", "prince-fugetsu"],
+        "location": "Tier 1 - Banquet Hall"
+      },
+      {
+        "event": "Four more bodyguards are found drained of blood in a corridor",
+        "storyDate": "Day 1 · after the banquet",
+        "charactersInvolved": ["kurapika", "queen-oito", "bill"],
+        "location": "Tier 1 - Royal Residential Sector"
+      }
+    ],
+    "location": "Port of Kakin / Tier 1",
+    "keyEvents": [
+      "The Black Whale sails and the Succession Contest opens",
+      "Woody is the first of the five drained guards",
+      "The inaugural banquet seats the fourteen princes",
+      "Kurapika reads the five deaths as parasitic Nen"
+    ],
+    "description": "The ship sails at noon on a two-month crossing — three weeks of charted water, then five of open passage — while the Zodiacs prepare to break off for the Gate. Within half an hour Woody dies exsanguinated in room 1014, and four more guards are found the same way after the inaugural banquet. Five deaths in an afternoon is what tells Kurapika the contest has already started."
+  },
+  {
+    "id": "ch-363",
+    "number": 363,
+    "publicationOrder": 363,
+    "title": "Nen Beasts",
+    "date": "2017-04-18",
+    "timeline": [
+      {
+        "event": "Benjamin posts his private soldiers in every prince's quarters, on Balsamilco's counsel",
+        "storyDate": "Day 2",
+        "charactersInvolved": ["prince-benjamin", "balsamilco-might", "rihan", "musse"],
+        "location": "Tier 1"
+      },
+      {
+        "event": "Rihan is transferred from Benjamin to Sale-sale then to Tubeppa",
+        "storyDate": "≈ Day 3-4",
+        "charactersInvolved": ["rihan", "prince-benjamin", "prince-salesale", "prince-tubeppa"],
+        "location": "Tiers 1-2"
+      },
+      {
+        "event": "Tubeppa (5th Princess) transforms her room 1005 into a laboratory",
+        "storyDate": "≈ Day 2-3",
+        "charactersInvolved": ["prince-tubeppa", "rihan"],
+        "location": "Tier 1 - Room 1005"
+      }
+    ],
+    "location": "Tier 1-2",
+    "keyEvents": [
+      "Camilla asks the king to confirm that only biological death drops a prince from the contest",
+      "Balsamilco tells Benjamin every prince carries a beast he cannot see",
+      "Benjamin posts his soldiers in the princes' quarters",
+      "Vincent stabs a servant in room 1014",
+      "Transfert de Rihan entre factions",
+      "Tubeppa etablit son laboratoire"
+    ],
+    "description": "The princes take the measure of their Guardian Spirit Beasts. Zhang Lei reads the massacre of Woble's detail as the key to them, Camilla presses the king on the rules, and Benjamin — who cannot see his own beast — posts his private soldiers in every prince's quarters, which is how Vincent walks into room 1014. The two later entries below, Rihan's transfers and Tubeppa's laboratory, belong to chapters this catalogue has not separated out yet."
+  },
+  {
+    "id": "ch-368",
+    "number": 368,
+    "publicationOrder": 368,
+    "title": "Foul Play",
+    "timeline": [
+      {
+        "event": "Oito watches room 1012 through Little Eye as Momoze is strangled",
+        "storyDate": "Day 1 · night",
+        "charactersInvolved": ["queen-oito", "kurapika", "prince-momoze"],
+        "location": "Tier 1 - Room 1014"
+      },
+      {
+        "event": "Momoze is assassinated in her own room",
+        "storyDate": "Day 1 · night",
+        "charactersInvolved": ["prince-momoze", "tuffdy"],
+        "location": "Tier 1 - Room 1012"
+      },
+      {
+        "event": "Hanzo and Biscuit read the killing as the work of an off-duty guard",
+        "storyDate": "Day 1 · night",
+        "charactersInvolved": ["hanzo", "biscuit-krueger"],
+        "location": "Tier 1 - Royal Residential Sector"
+      },
+      {
+        "event": "Emperor Time collapses Kurapika after nearly three hours",
+        "storyDate": "Day 1 · night",
+        "charactersInvolved": ["kurapika", "queen-oito", "bill"],
+        "location": "Tier 1 - Room 1014"
+      },
+      {
+        "event": "Tserriednich asks Theta how long learning Nen takes",
+        "storyDate": "Day 1 · night",
+        "charactersInvolved": ["prince-tserriednich", "theta"],
+        "location": "Tier 1 - Room 1004"
+      }
+    ],
+    "location": "Tier 1 - Royal Residential Sector",
+    "keyEvents": [
+      "Momoze is the first prince killed aboard",
+      "Kurapika loses about 450 days of life to Emperor Time",
+      "The princes agree to send two guards each to the Nen class",
+      "Tserriednich turns on Theta"
+    ],
+    "description": "Oito's Little Eye reaches room 1012 in time to watch Momoze suffocate and too late to stop it. The six guards on her door are detained, though Hanzo and Biscuit read the killing as the work of an off-duty guard operating a copy of himself. Kurapika, who has held Emperor Time for nearly three hours and paid some 450 days of his life for it, collapses after setting the first Nen lesson for the next day."
+  },
+  {
+    "id": "ch-377",
+    "number": 377,
+    "publicationOrder": 377,
+    "title": "Mafia Wars",
+    "date": "2018-06-25",
+    "timeline": [
+      {
+        "event": "The Xi-Yu (Hinrigh) family operates on the lower thirds",
+        "storyDate": "≈ Day 3",
+        "charactersInvolved": ["hinrigh-biganduffno", "hisoka"],
+        "location": "Tiers 4-5"
+      },
+      {
+        "event": "The Cha-R family (Ken'i Wang) tactically allies with the Phantom Troupe",
+        "storyDate": "Day 7",
+        "charactersInvolved": ["keni-wang", "chrollo-lucilfer", "nobunaga-hazama"],
+        "location": "Tier 5"
+      },
+      {
+        "event": "Hisoka negotiates with the Xi-Yu mafia",
+        "storyDate": "≈ Day 10",
+        "charactersInvolved": ["hisoka", "hinrigh-biganduffno"],
+        "location": "Tier 4"
+      }
+    ],
+    "location": "Tiers 4-5",
+    "keyEvents": [
+      "Activities of the Xi-Yu mafia",
+      "Alliance Cha-R / Brigade Fantome",
+      "Negociations Hisoka / Xi-Yu"
+    ],
+    "description": "Mafia factions become major players in the conflict. The Phantom Troupe allies with the Cha-R against Hisoka, while the latter negotiates with the Xi-Yu."
+  },
+  {
+    "id": "ch-378",
+    "number": 378,
+    "publicationOrder": 378,
+    "title": "Heil-Ly's Gambit",
+    "date": "2018-09-24",
+    "timeline": [
+      {
+        "event": "Morena Prudo activates 'Et tu, Juliet' on the ship",
+        "storyDate": "≈ Day 4 onwards",
+        "charactersInvolved": ["morena-prudo", "luini", "prince-tserriednich"],
+        "location": "Tiers 3-5"
+      },
+      {
+        "event": "Luini uses his dimensional ability to pass through armored walls",
+        "storyDate": "≈ Day 10",
+        "charactersInvolved": ["luini", "morena-prudo"],
+        "location": "Tier 4"
+      },
+      {
+        "event": "Tserriednich uses the Heil-Ly to sow chaos",
+        "storyDate": "≈ Day 4 onwards",
+        "charactersInvolved": ["prince-tserriednich", "theta", "morena-prudo"],
+        "location": "All third parties"
+      }
+    ],
+    "location": "Tiers 3-5",
+    "keyEvents": [
+      "Activation d'Et tu, Juliet par Morena",
+      "Luini crosses the armored structures",
+      "Tserriednich uses Heil-Lys as weapons"
+    ],
+    "description": "The Heil-Ly family deploys their Nen infection strategy. Morena Prudo activates her kill-rewarding ability, while Luini uses her dimensional powers to infiltrate secure areas."
   },
   {
     "id": "ch-380",
@@ -138,6 +386,92 @@
       "Premieres alliances et tensions entre factions"
     ],
     "description": "Hisoka arrives on the Black Whale and immediately begins his hunt. The Phantom Troupe, with Chrollo and Nobunaga, settles in Tier 5 to organize the hunt. Meanwhile, Kurapika begins training Queen Oito and Prince Woble's guards in Nen, while monitoring the movements of the other factions."
+  },
+  {
+    "id": "ch-382",
+    "number": 382,
+    "publicationOrder": 382,
+    "title": "Awakening",
+    "timeline": [
+      {
+        "event": "Halkenburg confronts Nasubi and fires on him",
+        "storyDate": "≈ Day 8",
+        "charactersInvolved": ["prince-halkenburg", "nasubi-hui-guo-rou"],
+        "location": "Tier 1 - King's Quarters"
+      },
+      {
+        "event": "The king's Guardian Spirit Beast stops the bullet",
+        "storyDate": "≈ Day 8",
+        "charactersInvolved": ["nasubi-hui-guo-rou", "prince-halkenburg"],
+        "location": "Tier 1 - King's Quarters"
+      },
+      {
+        "event": "Halkenburg looses his first arrow at Shikaku",
+        "storyDate": "≈ Day 8",
+        "charactersInvolved": ["prince-halkenburg", "shikaku"],
+        "location": "Tier 1 - Royal Residential Sector"
+      },
+      {
+        "event": "Salé-salé is assassinated by Yushohi on Benjamin's order",
+        "storyDate": "≈ Day 8",
+        "charactersInvolved": ["prince-salesale", "yushohi", "prince-benjamin"],
+        "location": "Tier 1 - Room 1008"
+      },
+      {
+        "event": "Kurapika reads the second major aura disturbance of the voyage",
+        "storyDate": "≈ Day 8",
+        "charactersInvolved": ["kurapika", "queen-oito"],
+        "location": "Tier 1 - Room 1014"
+      }
+    ],
+    "location": "Tier 1 - Royal Residential Sector",
+    "keyEvents": [
+      "Halkenburg enters the contest he had withdrawn from",
+      "The king's beast proves no participant can die before the ritual ends",
+      "Salé-salé is the second prince killed aboard",
+      "The Sunday banquet is set for 20:00 on the eighth day"
+    ],
+    "description": "Halkenburg waits four days for the audience, then puts a bullet toward his father — and the king's Guardian Spirit Beast takes it, proof that no participant dies before the ritual closes. Nasubi answers with the prisoner's trolley problem: a king weighs the nation, not his siblings. Halkenburg leaves the room a participant, and his first arrow, paid for with one of his own men, cannot be blocked once drawn. In room 1008 Yushohi kills Salé-salé on Benjamin's order."
+  },
+  {
+    "id": "ch-383",
+    "number": 383,
+    "publicationOrder": 383,
+    "title": "Escape",
+    "timeline": [
+      {
+        "event": "Melody plays a three-minute flute solo that holds the banquet",
+        "storyDate": "Day 8 · 20:00",
+        "charactersInvolved": ["melody", "prince-kacho", "prince-fugetsu"],
+        "location": "Tier 1 - Banquet Hall"
+      },
+      {
+        "event": "Kacho and Fugetsu leave the ship by lifeboat",
+        "storyDate": "Day 8 · during the banquet",
+        "charactersInvolved": ["prince-kacho", "prince-fugetsu", "keeney"],
+        "location": "Black Whale 1 - lifeboat"
+      },
+      {
+        "event": "Hands close around the lifeboat and the twins turn back",
+        "storyDate": "Day 8 · during the banquet",
+        "charactersInvolved": ["prince-kacho", "prince-fugetsu"],
+        "location": "Black Whale 1 - lifeboat"
+      },
+      {
+        "event": "Kacho dies on the drifting lifeboat and Without You takes her shape",
+        "storyDate": "Day 8 · during the banquet",
+        "charactersInvolved": ["prince-kacho", "prince-fugetsu"],
+        "location": "Black Whale 1 - lifeboat"
+      }
+    ],
+    "location": "Tier 1 - Banquet Hall / Black Whale 1 - lifeboat",
+    "keyEvents": [
+      "Melody covers the escape from the banquet stage",
+      "Leaving the ship is shown to be a death sentence for a prince",
+      "Magical Worm and Without You are named",
+      "Kacho dies so Fugetsu can go on"
+    ],
+    "description": "Melody's solo holds the banquet for three minutes while Keeney puts the twins in a lifeboat. Hands rise around the boat and Kacho understands that a prince who runs only finds death; the sisters go back to their room and change the plan. Fugetsu's Magical Worm opens the tunnels out, Kacho's return leg brings them home — and Without You, formless, takes whichever twin dies. Kacho stays on the boat."
   },
   {
     "id": "ch-390",
@@ -208,109 +542,166 @@
     "description": "The war intensifies with the first killings and the first major strategies. Benjamin takes military control, Hisoka takes action, and Kurapika activates his spy network. Mafia factions begin to play an active role in the conflict, manipulating the princes and their guards."
   },
   {
-    "id": "ch-363",
-    "number": 363,
-    "publicationOrder": 363,
-    "title": "Nen Beasts",
-    "date": "2017-04-18",
+    "id": "ch-404",
+    "number": 404,
+    "publicationOrder": 404,
+    "title": "Speculation",
     "timeline": [
       {
-        "event": "Benjamin posts his private soldiers in every prince's quarters, on Balsamilco's counsel",
-        "storyDate": "Day 2",
-        "charactersInvolved": ["prince-benjamin", "balsamilco-might", "rihan", "musse"],
-        "location": "Tier 1"
+        "event": "Kurapika models the cumulative conjuration in Zhang Lei's coins",
+        "storyDate": "≈ Day 12",
+        "charactersInvolved": ["kurapika", "prince-zhanglei"],
+        "location": "Tier 1 - Room 1014"
       },
       {
-        "event": "Rihan is transferred from Benjamin to Sale-sale then to Tubeppa",
-        "storyDate": "≈ Day 3-4",
-        "charactersInvolved": ["rihan", "prince-benjamin", "prince-salesale", "prince-tubeppa"],
-        "location": "Tiers 1-2"
+        "event": "Halkenburg forces a mind swap into Balsamilco's body",
+        "storyDate": "≈ Day 12",
+        "charactersInvolved": ["prince-halkenburg", "balsamilco-might"],
+        "location": "Tier 1 - Room 1001"
       },
       {
-        "event": "Tubeppa (5th Princess) transforms her room 1005 into a laboratory",
-        "storyDate": "≈ Day 2-3",
-        "charactersInvolved": ["prince-tubeppa", "rihan"],
-        "location": "Tier 1 - Room 1005"
+        "event": "Benjamin prepares Halkenburg's funeral procession",
+        "storyDate": "≈ Day 12",
+        "charactersInvolved": ["prince-benjamin", "prince-halkenburg"],
+        "location": "Tier 1 - Room 1001"
       }
     ],
-    "location": "Tier 1-2",
+    "location": "Tier 1",
     "keyEvents": [
-      "Camilla asks the king to confirm that only biological death drops a prince from the contest",
-      "Balsamilco tells Benjamin every prince carries a beast he cannot see",
-      "Benjamin posts his soldiers in the princes' quarters",
-      "Vincent stabs a servant in room 1014",
-      "Transfert de Rihan entre factions",
-      "Tubeppa etablit son laboratoire"
+      "Zhang Lei's coins are read as an ability handed out without training",
+      "Halkenburg is shown to swap minds by force",
+      "The second Nen class is set for Thursday morning"
     ],
-    "description": "The princes take the measure of their Guardian Spirit Beasts. Zhang Lei reads the massacre of Woble's detail as the key to them, Camilla presses the king on the rules, and Benjamin — who cannot see his own beast — posts his private soldiers in every prince's quarters, which is how Vincent walks into room 1014. The two later entries below, Rihan's transfers and Tubeppa's laboratory, belong to chapters this catalogue has not separated out yet."
+    "description": "Kurapika works out that Zhang Lei's coins carry a cumulative conjuration: held long enough, they would give their owners working abilities with no training at all. In the other camp Halkenburg's power is revealed for what it is — a forced mind swap, already used on Balsamilco, with only one of the two minds awake at a time and priority to the side staking its life. He means to die in Balsamilco's body and keep the ten hours that follow."
   },
   {
-    "id": "ch-377",
-    "number": 377,
-    "publicationOrder": 377,
-    "title": "Mafia Wars",
-    "date": "2018-06-25",
+    "id": "ch-405",
+    "number": 405,
+    "publicationOrder": 405,
+    "title": "Performance",
     "timeline": [
       {
-        "event": "The Xi-Yu (Hinrigh) family operates on the lower thirds",
-        "storyDate": "≈ Day 3",
-        "charactersInvolved": ["hinrigh-biganduffno", "hisoka"],
-        "location": "Tiers 4-5"
+        "event": "The real Hisoka gambles at the Tier 1 casino",
+        "storyDate": "≈ Day 12",
+        "charactersInvolved": ["hisoka"],
+        "location": "Tier 1 - VIP Casino"
       },
       {
-        "event": "The Cha-R family (Ken'i Wang) tactically allies with the Phantom Troupe",
-        "storyDate": "Day 7",
-        "charactersInvolved": ["keni-wang", "chrollo-lucilfer", "nobunaga-hazama"],
+        "event": "Bonolenov, wearing Hisoka, meets the real one",
+        "storyDate": "≈ Day 12",
+        "charactersInvolved": ["bonolenov-ndongo", "hisoka", "chrollo-lucilfer"],
+        "location": "Tier 1 - VIP Casino"
+      },
+      {
+        "event": "Bonolenov kills Lynch Fullbokko and works Zakuro upward through the tiers",
+        "storyDate": "≈ Day 12",
+        "charactersInvolved": ["bonolenov-ndongo", "lynch-fullbokko", "zakuro-custard"],
+        "location": "Tier 4"
+      },
+      {
+        "event": "The Spiders read the Heil-Ly as a faction out to destroy everything",
+        "storyDate": "≈ Day 12",
+        "charactersInvolved": ["nobunaga-hazama", "phinks-magcub", "feitan-portor"],
         "location": "Tier 5"
       },
       {
-        "event": "Hisoka negotiates with the Xi-Yu mafia",
-        "storyDate": "≈ Day 10",
-        "charactersInvolved": ["hisoka", "hinrigh-biganduffno"],
+        "event": "Morena's people prepare to work Halkenburg's funeral",
+        "storyDate": "≈ Day 12",
+        "charactersInvolved": ["morena-prudo", "dogman", "borksen"],
         "location": "Tier 4"
       }
     ],
-    "location": "Tiers 4-5",
+    "location": "Tiers 1 to 5",
     "keyEvents": [
-      "Activities of the Xi-Yu mafia",
-      "Alliance Cha-R / Brigade Fantome",
-      "Negociations Hisoka / Xi-Yu"
+      "Hisoka returns to the page after chapter 357",
+      "Chrollo's decoy is revealed as Bonolenov",
+      "The Heil-Ly turn the funeral into a hunting ground"
     ],
-    "description": "Mafia factions become major players in the conflict. The Phantom Troupe allies with the Cha-R against Hisoka, while the latter negotiates with the Xi-Yu."
+    "description": "Hisoka is at a Tier 1 table when the man wearing his face walks in: Chrollo put Bonolenov in the disguise to keep the Mafia looking the wrong way while the Troupe works. Lower down, Nobunaga, Phinks and Feitan sit with the Cha-R and conclude the Heil-Ly are not after money but after ruin, paid for in lives. Morena's people, meanwhile, are getting ready for Halkenburg's funeral, where Dogman's nose can pick a Nen user out of a crowd."
   },
   {
-    "id": "ch-378",
-    "number": 378,
-    "publicationOrder": 378,
-    "title": "Heil-Ly's Gambit",
-    "date": "2018-09-24",
+    "id": "ch-406",
+    "number": 406,
+    "publicationOrder": 406,
+    "title": "Regalia",
     "timeline": [
       {
-        "event": "Morena Prudo activates 'Et tu, Juliet' on the ship",
-        "storyDate": "≈ Day 4 onwards",
-        "charactersInvolved": ["morena-prudo", "luini", "prince-tserriednich"],
-        "location": "Tiers 3-5"
+        "event": "Halkenburg's first body dies",
+        "storyDate": "≈ Day 12",
+        "charactersInvolved": ["prince-halkenburg"],
+        "location": "Tier 3 - Central Hospital"
       },
       {
-        "event": "Luini uses his dimensional ability to pass through armored walls",
-        "storyDate": "≈ Day 10",
-        "charactersInvolved": ["luini", "morena-prudo"],
+        "event": "Tajao guides the Spiders through the lower decks",
+        "storyDate": "≈ Day 12",
+        "charactersInvolved": ["tajao", "nobunaga-hazama"],
         "location": "Tier 4"
       },
       {
-        "event": "Tserriednich uses the Heil-Ly to sow chaos",
-        "storyDate": "≈ Day 4 onwards",
-        "charactersInvolved": ["prince-tserriednich", "theta", "morena-prudo"],
-        "location": "All third parties"
+        "event": "The Xi-Yu find Lynch Fullbokko with a broken neck",
+        "storyDate": "≈ Day 12",
+        "charactersInvolved": ["hinrigh-biganduffno", "lynch-fullbokko"],
+        "location": "Tier 4"
+      },
+      {
+        "event": "Chrollo names the three Kakin regalia as his target",
+        "storyDate": "≈ Day 12",
+        "charactersInvolved": ["chrollo-lucilfer"],
+        "location": "Tier 3"
       }
     ],
-    "location": "Tiers 3-5",
+    "location": "Tiers 1 to 5",
     "keyEvents": [
-      "Activation d'Et tu, Juliet par Morena",
-      "Luini crosses the armored structures",
-      "Tserriednich uses Heil-Lys as weapons"
+      "The Heil-Ly hold the waste route between Tiers 4 and 5",
+      "Hinrigh reads the double deception around Hisoka's location",
+      "Chrollo is after the Seed Urn, the Lotus Anchorite and the Sword of Good Omens"
     ],
-    "description": "The Heil-Ly family deploys their Nen infection strategy. Morena Prudo activates her kill-rewarding ability, while Luini uses her dimensional powers to infiltrate secure areas."
+    "description": "Nobunaga learns that the Heil-Ly control the waste processing running between Tiers 4 and 5 — a way to move as contractors and take people off the ship one at a time. The Xi-Yu find Lynch dead, and Hinrigh reads the layered trick behind it: someone wearing Hisoka manipulated a woman already manipulated, so that Hisoka would be looked for where he is not. In the crowd at Halkenburg's funeral procession, Chrollo says what he came for — the three sacred treasures of Kakin, kept on Tier 1 and tied to the machinery of the contest."
+  },
+  {
+    "id": "ch-413",
+    "number": 413,
+    "publicationOrder": 413,
+    "title": "Loyalty",
+    "timeline": [
+      {
+        "event": "Nasubi sees Halkenburg's flame unlit at the burial",
+        "storyDate": "≈ Day 12",
+        "charactersInvolved": ["nasubi-hui-guo-rou", "prince-halkenburg"],
+        "location": "Tier 1"
+      },
+      {
+        "event": "Halkenburg works his ability from Balsamilco's body out of room 1009",
+        "storyDate": "≈ Day 12",
+        "charactersInvolved": ["prince-halkenburg", "balsamilco-might"],
+        "location": "Tier 1 - Room 1009"
+      },
+      {
+        "event": "Benjamin finds he carries TSK-17 and traces it back to his own mother",
+        "storyDate": "≈ Day 12",
+        "charactersInvolved": ["prince-benjamin", "furykov", "unma-hui-guo-rou"],
+        "location": "Tier 1 - Room 1001"
+      },
+      {
+        "event": "Furykov explains the mark under his tongue",
+        "storyDate": "≈ Day 12",
+        "charactersInvolved": ["furykov", "prince-benjamin", "beyond-netero"],
+        "location": "Tier 1 - Room 1001"
+      },
+      {
+        "event": "Benjamin proclaims special martial law at 14:15",
+        "storyDate": "≈ Day 12 · 14:15",
+        "charactersInvolved": ["prince-benjamin"],
+        "location": "Tier 1 - Room 1001"
+      }
+    ],
+    "location": "Tier 1 - Royal Residential Sector",
+    "keyEvents": [
+      "An unlit flame proves a soul without its body still holds succession rights",
+      "Benjamin's poisoning is traced to Unma through Furykov",
+      "Martial law puts every prince under summons to room 1001"
+    ],
+    "description": "Nasubi reads the unlit flame at the burial: Halkenburg's rights stand as long as his soul sits in a body, and it sits in Balsamilco's, working the marked followers out of room 1009. Benjamin, finding TSK-17 in his own blood, suspects Balsamilco and lands on his mother — Unma bought Halkenburg's victory by having Furykov infect him, holding the curse Beyond set under his tongue at birth over his head. At 14:15 Benjamin proclaims special martial law, orders the rival guards executed and summons the princes to room 1001."
   },
   {
     "id": "ch-415",

@@ -525,6 +525,9 @@ export const fr: Messages = {
     footerSections: 'Sections',
     copyright: (year) => `© ${year} Archives du Black Whale`,
     disclaimer: 'Projet de fans non officiel · Hunter × Hunter est © Yoshihiro Togashi / Shueisha',
+    dataCreditPrefix: 'Catalogue et cartes du navire par Ginks —',
+    dataCreditRepository: 'dépôt source',
+    dataCreditLicensedUnder: '— sous licence',
     chooseLanguage: 'Choisir une langue',
   },
 

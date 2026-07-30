@@ -43,6 +43,9 @@
   // UTC keeps the year identical between the server render and hydration.
   const copyrightYear = new Date().getUTCFullYear()
 
+  const REPOSITORY_URL = 'https://github.com/PISSARAW/Black-Whale'
+  const LICENSE_URL = 'https://creativecommons.org/licenses/by/4.0/'
+
   function closeMenu() {
     menuOpen = false
   }
@@ -224,6 +227,17 @@
     <div class="footer-legal">
       <span>{$t.layout.copyright(copyrightYear)}</span>
       <span>{$t.layout.disclaimer}</span>
+      <!-- The catalogue and the hand-drawn maps are CC BY 4.0 (LICENSE-DATA),
+           which asks for the credit wherever the material is displayed — every
+           route shows one or the other, so it belongs in the shared footer. -->
+      <span class="footer-credit">
+        {$t.layout.dataCreditPrefix}
+        <a href={REPOSITORY_URL} rel="noreferrer" target="_blank"
+          >{$t.layout.dataCreditRepository}</a
+        >
+        {$t.layout.dataCreditLicensedUnder}
+        <a href={LICENSE_URL} rel="license noreferrer" target="_blank">CC BY 4.0</a>
+      </span>
     </div>
   </footer>
 
@@ -604,6 +618,17 @@
     font-family: var(--font-mono);
     font-size: 0.54rem;
     letter-spacing: 0.1em;
+  }
+
+  .footer-credit a {
+    color: var(--text-secondary);
+    text-decoration: underline;
+    text-decoration-color: var(--line-strong);
+    text-underline-offset: 0.2em;
+    transition: color var(--duration-fast) var(--ease-out);
+  }
+  .footer-credit a:hover {
+    color: var(--accent-gold-bright);
   }
 
   .route-shell {

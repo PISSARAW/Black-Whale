@@ -64,6 +64,9 @@ export interface MeshGroup {
   /** The room's stretch of the ceiling fittings, in vertices. */
   fittingStart: number
   fittingCount: number
+  /** The room's stretch of the light columns, in vertices. Zero in most rooms. */
+  beamStart: number
+  beamCount: number
   /** The room's own bounding sphere, so the renderer never scans the buffer. */
   centre: readonly [number, number, number]
   radius: number
@@ -114,6 +117,25 @@ export interface TierMesh {
    * lights nothing, which is exactly the claim the bake refuses to make.
    */
   fittingColors: Float32Array
+  /**
+   * The columns of light under the fittings of a tall room, as cone walls.
+   *
+   * Its own buffer and its own additive material, because this is the one thing on
+   * the deck that is not a surface: it is the light between the lamp and the floor,
+   * made visible by the dust in the ten rooms that hold any. Drawn where a room is
+   * tall enough for a beam to have length — see `BEAM_MIN_HEIGHT` — and nowhere
+   * else, because a column of light in a cabin is a cone of paint.
+   */
+  beams: Float32Array
+  /**
+   * What each vertex of a column burns at, fading to nothing at the floor.
+   *
+   * Additive blending has no alpha to fade, so the fade *is* the colour: bright at
+   * the fitting, black at the deck, and black adds nothing. That is also what makes
+   * the cone read as light rather than as a solid — a shape with an edge you can
+   * find is a shape, and light has no edge.
+   */
+  beamColors: Float32Array
   /** Triangle count, for a sanity check and for the debug read-out. */
   triangles: number
   /** Where each room's geometry sits in the buffers above, in plan order. */
@@ -390,6 +412,63 @@ export const FITTING_GLOW: Rgb = [2.4, 2.0, 1.55]
  * reconstruction by two orders of area.
  */
 export const WINDOW_GLOW: Rgb = [0.62, 0.86, 1.28]
+
+/**
+ * How tall a room has to be before its lamps are given a visible beam.
+ *
+ * The same figure the dust uses for height, and deliberately so: a column of light
+ * is only visible because there is something in the air to catch it, so drawing one
+ * in a room `$lib/tour/dust` has left dry would be light hanging in a vacuum. Ten
+ * rooms hold dust; fourteen are this tall, and the four that are tall without being
+ * large — a lift trunk, a stair well — get a beam that is honest anyway: they are
+ * shafts, and a shaft is where a beam is most obviously true.
+ */
+export const BEAM_MIN_HEIGHT = 8
+
+/**
+ * How wide a column of light is at the deck, in metres, and how many sides it has.
+ *
+ * Eight triangles for a four-sided cone: the four walls of it, two triangles each.
+ * A rounder cone would be smoother and would also be a cone — the shape is not what
+ * anyone reads here, the fade is, and four sides means the whole feature costs the
+ * ship under four thousand triangles.
+ */
+export const BEAM_FOOT = 2.4
+const BEAM_SIDES = 4
+
+/** Thinner than this at the deck and a column is not worth the triangles. */
+const BEAM_MIN_FOOT = 0.15
+
+/**
+ * How wide one column of light is, at the lamp and at the deck — or `null` where
+ * there is no room for one.
+ *
+ * `BEAM_FOOT` is what a beam wants; the wall is what it gets. A lamp on the ceiling
+ * grid can sit hard against a bulkhead — one in the banquet hall sits exactly on it
+ * — and a cone of additive light poking a metre through a partition is a glow in the
+ * next room with no source in it, which is worse than no beam at all. So the radius
+ * is the clearance, and a lamp with no clearance gets nothing.
+ *
+ * Exported because the tests measure the same thing the mesh draws: the rule that
+ * keeps light inside a room is not a rule anyone can see in a screenshot.
+ */
+export function beamRadii(footprint: Polygon, at: Vec2): { head: number; foot: number } | null {
+  const clear = Math.max(0, distanceToBoundary(at, footprint) - 0.05)
+  const foot = Math.min(BEAM_FOOT / 2, clear)
+  if (foot < BEAM_MIN_FOOT) return null
+  // Never wider at the lamp than at the deck: a beam is a cone, not an hourglass.
+  return { head: Math.min(FITTING_SIZE / 2, foot), foot }
+}
+
+/**
+ * What the top of a column burns at, as a fraction of the fitting above it.
+ *
+ * Very low. Additive light stacks: eighty fittings down the banquet hall means
+ * eighty cones, and any two of them overlapping at this value are still dimmer than
+ * the lamp itself. It is meant to be the thing you notice when you look up at a
+ * lamp across a hall, not a haze over the room.
+ */
+const BEAM_GLOW = 0.055
 
 /**
  * How far a window throws, and how finely its pane is sampled as a source.
@@ -944,6 +1023,9 @@ export function buildSolidMesh(
     // it, not the room's lamps: the fittings stay on the ceiling they hang from.
     fittings: new Float32Array(0),
     fittingColors: new Float32Array(0),
+    // Nor its lamps' beams, for the same reason: the light stays in the room.
+    beams: new Float32Array(0),
+    beamColors: new Float32Array(0),
     triangles: builder.positions.length / 9,
     groups: [
       {
@@ -956,6 +1038,8 @@ export function buildSolidMesh(
         seamCount: 0,
         fittingStart: 0,
         fittingCount: 0,
+        beamStart: 0,
+        beamCount: 0,
         ...boundsOf(builder.positions, 0, count, edges, 0, edgeCount),
       },
     ],
@@ -981,6 +1065,8 @@ export function buildTierMesh(plan: TierPlan, options: { reveal?: boolean } = {}
   const seams: number[] = []
   const fittings: number[] = []
   const fittingColors: number[] = []
+  const beams: number[] = []
+  const beamColors: number[] = []
   // Pulled a hair off the surface so the line is not fighting the polygon it
   // sits on for the same depth value.
   const OFFSET = 0.03
@@ -1012,6 +1098,62 @@ export function buildTierMesh(plan: TierPlan, options: { reveal?: boolean } = {}
       fittings.push(a[0], y, a[1], b[0], y, b[1], c[0], y, c[1])
       for (let vertex = 0; vertex < 3; vertex++) {
         fittingColors.push(glow[0], glow[1], glow[2])
+      }
+    }
+  }
+
+  /**
+   * One column of light: the walls of a cone from a fitting down to the deck.
+   *
+   * Open at both ends — no cap at the lamp, no disc on the floor — because a beam
+   * seen from underneath must not have a lid, and the pool on the deck is already
+   * drawn by the bake. Wound both ways round the cone, which costs nothing here and
+   * saves the material from needing `DoubleSide`: a visitor inside a column of light
+   * has to see it from within.
+   */
+  const beam = (
+    x: number,
+    top: number,
+    z: number,
+    floorY: number,
+    glow: Rgb,
+    radii: { head: number; foot: number },
+  ) => {
+    const half = radii.head
+    const foot = radii.foot
+    for (let side = 0; side < BEAM_SIDES; side++) {
+      const a = (side / BEAM_SIDES) * Math.PI * 2
+      const b = ((side + 1) / BEAM_SIDES) * Math.PI * 2
+      // The lamp end is the fitting's own square, so the cone starts exactly where
+      // the quad the visitor can see ends.
+      const topA: Vec2 = [x + Math.cos(a) * half, z + Math.sin(a) * half]
+      const topB: Vec2 = [x + Math.cos(b) * half, z + Math.sin(b) * half]
+      const footA: Vec2 = [x + Math.cos(a) * foot, z + Math.sin(a) * foot]
+      const footB: Vec2 = [x + Math.cos(b) * foot, z + Math.sin(b) * foot]
+
+      const wall: [Vec2, number][][] = [
+        [
+          [topA, top],
+          [topB, top],
+          [footB, floorY],
+        ],
+        [
+          [topA, top],
+          [footB, floorY],
+          [footA, floorY],
+        ],
+      ]
+      for (const triangle of wall) {
+        // Once each way round, so the cone is visible from inside and outside.
+        for (const corners of [triangle, [...triangle].reverse()]) {
+          for (const [point, y] of corners) {
+            beams.push(point[0], y, point[1])
+            // Black at the deck: additive, so the foot of the beam adds nothing at
+            // all and the column has no edge to find.
+            const lit = y === top ? 1 : 0
+            beamColors.push(glow[0] * lit, glow[1] * lit, glow[2] * lit)
+          }
+        }
       }
     }
   }
@@ -1125,6 +1267,7 @@ export function buildTierMesh(plan: TierPlan, options: { reveal?: boolean } = {}
     const edgeStart = edges.length / 3
     const seamStart = seams.length / 3
     const fittingStart = fittings.length / 3
+    const beamStart = beams.length / 3
 
     const floorColour = reveal
       ? revealed(space.provenance, 0.62)
@@ -1210,6 +1353,17 @@ export function buildTierMesh(plan: TierPlan, options: { reveal?: boolean } = {}
       const burn = space.provenance === 'inferred' ? LIGHT.inferredLamps : 1
       const glow: Rgb = [FITTING_GLOW[0] * burn, FITTING_GLOW[1] * burn, FITTING_GLOW[2] * burn]
       for (const [x, z] of ceilingLamps(space.footprint)) fitting(x, hang, z, glow)
+
+      // And a column of light under each of them, where the room is tall enough
+      // for a beam to have a length. Additive, faded to nothing at the deck, and
+      // the only thing on the deck that is not a surface.
+      if (ceilingOf(space, tier) >= BEAM_MIN_HEIGHT) {
+        const lit: Rgb = [glow[0] * BEAM_GLOW, glow[1] * BEAM_GLOW, glow[2] * BEAM_GLOW]
+        for (const [x, z] of ceilingLamps(space.footprint)) {
+          const radii = beamRadii(space.footprint, [x, z])
+          if (radii) beam(x, hang, z, tier.elevation, lit, radii)
+        }
+      }
 
       // And the sky, in the two rooms that have any. Undimmed by provenance —
       // see `RoomLight.daylight` — and in the same buffer as the fittings,
@@ -1371,6 +1525,7 @@ export function buildTierMesh(plan: TierPlan, options: { reveal?: boolean } = {}
     const edgeCount = edges.length / 3 - edgeStart
     const seamCount = seams.length / 3 - seamStart
     const fittingCount = fittings.length / 3 - fittingStart
+    const beamCount = beams.length / 3 - beamStart
     if (!count && !edgeCount) continue
     groups.push({
       spaceId: space.id,
@@ -1382,6 +1537,8 @@ export function buildTierMesh(plan: TierPlan, options: { reveal?: boolean } = {}
       seamCount,
       fittingStart,
       fittingCount,
+      beamStart,
+      beamCount,
       ...boundsOf(builder.positions, start, count, edges, edgeStart, edgeCount),
     })
   }
@@ -1394,6 +1551,8 @@ export function buildTierMesh(plan: TierPlan, options: { reveal?: boolean } = {}
     seams: new Float32Array(seams),
     fittings: new Float32Array(fittings),
     fittingColors: new Float32Array(fittingColors),
+    beams: new Float32Array(beams),
+    beamColors: new Float32Array(beamColors),
     triangles: builder.positions.length / 9,
     groups,
   }

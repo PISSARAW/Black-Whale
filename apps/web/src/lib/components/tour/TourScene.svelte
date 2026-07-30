@@ -320,9 +320,27 @@
       raking.position.set(0.4, 1, 0.25)
       scene.add(raking)
 
+      /**
+       * One face per surface, and it is the face that looks at the room.
+       *
+       * `DoubleSide` was hiding a real defect and paying for it twice. Eight
+       * hundred and three pairs of walls on this ship are coplanar — 8 489 of the
+       * 29 333 metres of partition, 28,9 % — because `wallSegments` runs per room
+       * and two rooms either side of a bulkhead each emit their own face on the
+       * same line at the same depth. Drawn both ways round, those two faces fight
+       * for the depth buffer, which is the shimmer you get walking a corridor.
+       * Culled to the front, the far room's face is simply not drawn: the shimmer
+       * cannot happen, and every stretch of partition still has a face on each
+       * side, each one lit by its own room. That is the whole reason the bake can
+       * make a corridor and the cabin behind it two different places.
+       *
+       * It also halves the fragments, and it makes an inside-out surface visible
+       * as a hole instead of leaving it to pass as ordinary steel — see
+       * `MeshBuilder.quad` in `$lib/tour/mesh` for what has to hold for that.
+       */
       const material = new THREE.MeshLambertMaterial({
         vertexColors: true,
-        side: THREE.DoubleSide,
+        side: THREE.FrontSide,
       })
 
       // The gold outline the deck plans are drawn in, carried into three

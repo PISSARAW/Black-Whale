@@ -43,6 +43,17 @@ export function toCounterClockwise(polygon: Polygon): Polygon {
   return signedArea(polygon) < 0 ? [...polygon].reverse() : polygon
 }
 
+/**
+ * Returns the polygon wound clockwise, copying only when needed.
+ *
+ * The mirror of `toCounterClockwise`, and what a *solid* is wound by: a room is
+ * drawn from the inside and a coffin from the outside, so the two want opposite
+ * windings out of the same builder. See `MeshBuilder.quad` in `mesh.ts`.
+ */
+export function toClockwise(polygon: Polygon): Polygon {
+  return signedArea(polygon) > 0 ? [...polygon].reverse() : polygon
+}
+
 /** Ray casting. Points exactly on an edge are not guaranteed either way. */
 export function pointInPolygon(point: Vec2, polygon: Polygon): boolean {
   let inside = false
@@ -209,12 +220,20 @@ export function deriveDoorways(spaces: Space[], rules: DoorwayRules = {}): Doorw
  * Each edge is walked as an interval, the openings that fall on it are removed,
  * and what is left comes back as wall. An edge fully spanned by an opening
  * yields nothing.
+ *
+ * Walked counter-clockwise rather than in the order the blueprint happens to
+ * list the corners in, because a wall segment is not only something to collide
+ * with: `mesh.ts` raises these very segments into the quads the visitor sees, and
+ * it faces a quad by the way round its segment runs — see `MeshBuilder.quad`.
+ * Three of the ship's three hundred and fourteen footprints are written
+ * clockwise, and their fifty-seven walls used to be built inside out, which no
+ * amount of care in the renderer could have told from the wall next to it.
  */
 export function wallSegments(space: Space, doorways: Doorway[]): WallSegment[] {
   const mine = doorways.filter((door) => door.a === space.id || door.b === space.id)
   const walls: WallSegment[] = []
 
-  for (const [a1, a2] of iterateEdges(space.footprint)) {
+  for (const [a1, a2] of iterateEdges(toCounterClockwise(space.footprint))) {
     const dir = sub(a2, a1)
     const length = len(dir)
     if (length < EPSILON) continue
@@ -436,14 +455,22 @@ export function columnPositions(footprint: Polygon): Vec2[] {
   return columns
 }
 
-/** The four faces of a column, as wall segments the visitor collides with. */
+/**
+ * The four faces of a column, as wall segments the visitor collides with.
+ *
+ * Wound clockwise, which is the opposite of a room and the same as a solid: a
+ * column is a thing you walk around rather than a thing you stand in, so its
+ * faces have to look out at the hall and not in at the pillar. `mesh.ts` draws
+ * these from the same list as the room's own walls — see `MeshBuilder.quad` — so
+ * the way round is the only thing telling it which of the two it has.
+ */
 export function columnWalls(spaceId: string, centre: Vec2): WallSegment[] {
   const h = COLUMN_HALF_WIDTH
   const corners: Vec2[] = [
     [centre[0] - h, centre[1] - h],
-    [centre[0] + h, centre[1] - h],
-    [centre[0] + h, centre[1] + h],
     [centre[0] - h, centre[1] + h],
+    [centre[0] + h, centre[1] + h],
+    [centre[0] + h, centre[1] - h],
   ]
   return corners.map((corner, index) => ({
     spaceId,

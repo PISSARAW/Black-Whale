@@ -41,6 +41,12 @@ The tour does not decorate — it never invents where a chair stood — but it d
 
 Every surface declares what it is worth as evidence. A room a panel shows is lit warm, a room that only appears on the deck cross-section is left plain, and a corridor the reconstruction had to invent to make the deck contiguous is lit cold and badged as such. Doorways are not authored: two rooms that share a stretch of wall open onto each other, so an unreachable room fails the test suite rather than the visit.
 
+What no plan can draw is derived rather than invented, and each derivation is local, small and stated. A seven-thousand-square-metre hall with nothing holding its roof up is a false claim about the ship, so pillars go up on an 11 m grid clear of the walls. A deck is steel plate, so seams run a 1.2 m course laid in the ship's coordinates and carry on through a doorway instead of restarting at every threshold. A partition of no thickness is a claim too, so each of the 368 openings gets a 30 cm frame of cheeks and soffit — thickness is claimed at the one place it can be seen, and nowhere else. The frame is in the same list collision reads, so what stops you is what is drawn.
+
+The ship also models what it already measures: light, air, sound and a pace. Fittings hang on an 8 m ceiling grid and their light is baked into every vertex, so each room is lit by the lamps you can look up at. The haze is scaled to the longest sight line a room offers, rather than one fog setting standing in for both a twelve-square-metre cabin and a five-and-a-half-thousand-square-metre hold. And the walk is audible: footsteps synthesised rather than sampled, run through a convolution reverberation whose impulse response is computed from the room's own volume by Sabine's equation — a cabin and the hold differ by about a factor of six in reverberation time, which the ear reads in a single step. It adds no asset to the page and no field to the blueprint. The pace is the same kind of fact: you walk at 2.1 m/s because that is what the scale of the reconstruction makes a walk, and the length of the banquet hall is something you spend time on rather than something the minimap asserts.
+
+The reconstruction dossier — the scale factor, the order of authority (manga → `/ship` → tour) and what each derived detail is allowed to assert — is [`data/ship/README.md`](data/ship/README.md).
+
 ### Replay the voyage event by event
 
 Every confrontation, alliance and consciousness transfer in story order or in chronological order — the two disagree, and the arc depends on it. A spoiler filter caps the archive at the last chapter you have read.
@@ -180,14 +186,14 @@ The full [Hetzner runbook](infrastructure/hetzner/README.md) covers server sizin
 
 ## Roadmap
 
-| Version | Scope                                                              | Status                                      |
-| ------- | ------------------------------------------------------------------ | ------------------------------------------- |
-| **v1**  | Ship map, characters, positions, timeline, spoiler filter          | ✅ Released                                 |
-| **v2**  | Body/consciousness split, knowledge engine, perspective comparison | ✅ Foundation shipped                       |
-| **v3**  | Nen action plans, explainable conditions, typed effects            | ✅ Shipped — surfaced in `/simulations`     |
-| **v4**  | Ability modules migrated to the shared runtime                     | ✅ All 83 catalogue abilities have a module |
-| **v5**  | Persistent branches and map projections                            | 🏗️ First vertical shipped                   |
-| **v6**  | Metric reconstruction of the ship and a first-person walk          | ✅ Shipped — [`/tour`](https://exploreblackwhale.com/tour) |
+| Version | Scope                                                                                      | Status                                                     |
+| ------- | ------------------------------------------------------------------------------------------ | ---------------------------------------------------------- |
+| **v1**  | Ship map, characters, positions, timeline, spoiler filter                                  | ✅ Released                                                |
+| **v2**  | Body/consciousness split, knowledge engine, perspective comparison                         | ✅ Foundation shipped                                      |
+| **v3**  | Nen action plans, explainable conditions, typed effects                                    | ✅ Shipped — surfaced in `/simulations`                    |
+| **v4**  | Ability modules migrated to the shared runtime                                             | ✅ All 83 catalogue abilities have a module                |
+| **v5**  | Persistent branches and map projections                                                    | 🏗️ First vertical shipped                                  |
+| **v6**  | Metric reconstruction of the ship, a first-person walk, and the light, air and sound of it | ✅ Shipped — [`/tour`](https://exploreblackwhale.com/tour) |
 
 A v3 plan is built by the ability module itself: its conditions are predicates over the world state, and its projected effects are obtained by running its own effect builders. The archive therefore cannot describe an ability doing one thing and execute another — [`/simulations`](https://exploreblackwhale.com/simulations) shows the plan before you run it.
 

@@ -9,12 +9,12 @@
 
 ## Verdict global
 
-| Axe | Note | Résumé en une ligne |
-| --- | --- | --- |
-| Couverture du canon | **6 / 10** | Le catalogue des entités est solide (83 abilities, 223 personnages, 301 spaces) ; la **narration** ne l'est pas — 105 événements pour 62 chapitres, 8 fiches de chapitre sur 76, 11 arêtes de relations. |
-| Complétude fonctionnelle | **6,5 / 10** | Les moteurs sont réels, pas des façades. Mais **4 routes sont entièrement en dur**, le graphe de relations est un littéral TypeScript, `/simulations` ne projette rien sur une carte et 3 écrans admin renvoient 405. |
-| Complétude technique | **6 / 10** | Dette déclarée quasi nulle (2 TODO, 0 `@ts-ignore`), 11 packages > 44 % de ratio de test — mais le catalogue des hatsu existe **en 5 exemplaires** et la couche visible du site n'utilise pas le moteur qui fait autorité. |
-| UX / éditorial | **5 / 10** | Socle a11y et SEO sérieux, i18n FR/EN à 100 % de parité — mais **le filtre à spoilers est inactivable**, le crédit CC BY obligatoire est absent de l'interface, et il n'existe aucun `+error.svelte`. |
+| Axe                      | Note         | Résumé en une ligne                                                                                                                                                                                                        |
+| ------------------------ | ------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Couverture du canon      | **6 / 10**   | Le catalogue des entités est solide (83 abilities, 223 personnages, 301 spaces) ; la **narration** ne l'est pas — 105 événements pour 62 chapitres, 8 fiches de chapitre sur 76, 11 arêtes de relations.                   |
+| Complétude fonctionnelle | **6,5 / 10** | Les moteurs sont réels, pas des façades. Mais **4 routes sont entièrement en dur**, le graphe de relations est un littéral TypeScript, `/simulations` ne projette rien sur une carte et 3 écrans admin renvoient 405.      |
+| Complétude technique     | **6 / 10**   | Dette déclarée quasi nulle (2 TODO, 0 `@ts-ignore`), 11 packages > 44 % de ratio de test — mais le catalogue des hatsu existe **en 5 exemplaires** et la couche visible du site n'utilise pas le moteur qui fait autorité. |
+| UX / éditorial           | **5 / 10**   | Socle a11y et SEO sérieux, i18n FR/EN à 100 % de parité — mais **le filtre à spoilers est inactivable**, le crédit CC BY obligatoire est absent de l'interface, et il n'existe aucun `+error.svelte`.                      |
 
 **Le projet n'est pas un README-fiction.** Les branches de simulation sont réellement persistées en
 PostgreSQL, l'auth admin est correctement faite (HMAC + binding mot de passe + TTL + rate limit), la
@@ -32,7 +32,7 @@ feature :
    (`lib/server/spoiler.ts`, 6 loaders qui le consomment, bandeaux traduits), mais **aucun contrôle
    de l'UI publique ne pose le cookie `userSpoilerLimit`** — le seul écrivain de cookie du projet
    est `apps/admin/src/routes/+layout.svelte:13`, et il écrit `adminSpoilerLimit`, un cookie
-   *différent*. Le bouton « Spoilers » visible sur `/ship` (`ship/+page.svelte:607`) bascule un flag
+   _différent_. Le bouton « Spoilers » visible sur `/ship` (`ship/+page.svelte:607`) bascule un flag
    qui ne filtre rien.
 
 ---
@@ -43,17 +43,17 @@ feature :
 
 Complétude = cellules non vides / (nb enregistrements × union des champs observés).
 
-| Dataset | Fichier | Volume | Champs creux | Complétude |
-| --- | --- | --- | --- | --- |
-| Abilities | `data/abilities/abilities.json` | 83 | `cards` 1/83, `userIds` 4/83, `inheritedFrom` 8/83, `secondaryCategories` 24/83. **Aucun champ chapitre.** Conditions et coût vivent dans les modules, pas dans le JSON — voir §1.3 | **71 %** |
-| Chapters | `data/chapters/chapters.json` | **16** | — | 100 % du fichier, **21 % des chapitres** |
-| Characters | `data/characters/characters.json` | 223 | `aliases` vide 172/223, `mangaAppearances` absent 113/223, `biography` 104/223, `nen` 48/223 | **39 %** |
-| Factions | `data/factions/factions.json` | 22 | — | 100 % |
-| Locations | `data/locations/locations.json` | 67 | `entrances` 2/67, `exits` 5/67 | **75 %** |
-| Prophecies | `data/prophecies/prophecies.json` | 78 | 1 poème vide (documenté) | **91 %** |
-| Ship blueprint | `data/ship/blueprint.json` | 39 tiers · 301 spaces · 144 doors · 59 seals · 697 structures | champs optionnels typés | **88–100 %** selon la table |
-| **Log d'événements** | `data/events/events.json` | **118** | `occurredAtLabel` 2/118, `isFlashback` 1/118 | **54 %** |
-| **Relations** | `apps/web/src/routes/relationships/+page.server.ts:15` (littéral) | **11 arêtes** | — | voir §2 |
+| Dataset              | Fichier                                                           | Volume                                                        | Champs creux                                                                                                                                                                        | Complétude                               |
+| -------------------- | ----------------------------------------------------------------- | ------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------- |
+| Abilities            | `data/abilities/abilities.json`                                   | 83                                                            | `cards` 1/83, `userIds` 4/83, `inheritedFrom` 8/83, `secondaryCategories` 24/83. **Aucun champ chapitre.** Conditions et coût vivent dans les modules, pas dans le JSON — voir §1.3 | **71 %**                                 |
+| Chapters             | `data/chapters/chapters.json`                                     | **16**                                                        | —                                                                                                                                                                                   | 100 % du fichier, **21 % des chapitres** |
+| Characters           | `data/characters/characters.json`                                 | 223                                                           | `aliases` vide 172/223, `mangaAppearances` absent 113/223, `biography` 104/223, `nen` 48/223                                                                                        | **39 %**                                 |
+| Factions             | `data/factions/factions.json`                                     | 22                                                            | —                                                                                                                                                                                   | 100 %                                    |
+| Locations            | `data/locations/locations.json`                                   | 67                                                            | `entrances` 2/67, `exits` 5/67                                                                                                                                                      | **75 %**                                 |
+| Prophecies           | `data/prophecies/prophecies.json`                                 | 78                                                            | 1 poème vide (documenté)                                                                                                                                                            | **91 %**                                 |
+| Ship blueprint       | `data/ship/blueprint.json`                                        | 39 tiers · 301 spaces · 144 doors · 59 seals · 697 structures | champs optionnels typés                                                                                                                                                             | **88–100 %** selon la table              |
+| **Log d'événements** | `data/events/events.json`                                         | **118**                                                       | `occurredAtLabel` 2/118, `isFlashback` 1/118                                                                                                                                        | **54 %**                                 |
+| **Relations**        | `apps/web/src/routes/relationships/+page.server.ts:15` (littéral) | **11 arêtes**                                                 | —                                                                                                                                                                                   | voir §2                                  |
 
 ### 1.2 Le trou principal : la narration, pas le catalogue
 
@@ -162,13 +162,13 @@ Ce qui reste ouvert :
 
 ### 1.4 Dérives README ↔ données
 
-| README | Données |
-| --- | --- |
-| « 282 reconstructed spaces » | **301** |
-| « thirty-three [interiors] in all » | **34** |
-| « 37 hand-drawn SVG maps » | ✅ exact (5 + 32) |
-| « 223 passengers » | ✅ exact |
-| « 83 abilities across 54 users » | 83 ✅ ; 54 `ownerId`, tous résolvables (les 2 morts sont corrigés) |
+| README                              | Données                                                            |
+| ----------------------------------- | ------------------------------------------------------------------ |
+| « 282 reconstructed spaces »        | **301**                                                            |
+| « thirty-three [interiors] in all » | **34**                                                             |
+| « 37 hand-drawn SVG maps »          | ✅ exact (5 + 32)                                                  |
+| « 223 passengers »                  | ✅ exact                                                           |
+| « 83 abilities across 54 users »    | 83 ✅ ; 54 `ownerId`, tous résolvables (les 2 morts sont corrigés) |
 
 ---
 
@@ -176,25 +176,25 @@ Ce qui reste ouvert :
 
 ### 2.1 Route par route
 
-| Route | Promesse README | État réel | Verdict |
-| --- | --- | --- | --- |
-| `/` | vitrine + métriques | comptage à la volée depuis `data/` | ✅ complet |
-| `/ship` | 5 tiers, 37 cartes, corps placés au curseur | Prisma + `TimelineEngine`, spoiler, perspective, 38 SVG montés | ✅ complet |
-| `/tour` | 5 ponts, 282 spaces, marche à la 1ʳᵉ personne | 695 l, blueprint validé, three.js | ✅ complet |
-| `/tour/sources` | provenance de chaque surface | 503 l, ~15 blocs méthodologiques | ✅ complet |
-| `/timeline` | ordre récit vs chronologique + spoiler | les deux ordres implémentés via `ordinal` | ✅ complet |
-| `/characters` | 223 passagers | 223 ✅ mais **le spoiler ne masque que `beyondLineage`** | ⚠️ partiel |
-| `/characters/[slug]` | — | JSON + Prisma, 404 correct au-delà du cap | ✅ complet |
-| `/compare` | deux POV côte à côte, désaccords marqués | `comparePerspectives` réel, 1 074 l | ✅ complet |
-| `/relationships` | « alliances, rivalries, patronages and proxy wars » | **11 arêtes littérales dans le fichier serveur**, 0 faction de Hunters, 7 princes sur 14 sans relation | 🔴 en dur |
-| `/abilities` | 81 exécutables contre l'archive | la page itère `HATSU_PROFILES` (registre client), le bouton déclenche un effet visuel — **pas le `nen-engine`**. Aucun filtre spoiler. | ⚠️ partiel |
-| `/perspectives` | carte confirmé / probable / dernier connu | moteurs réels mais l'UI affiche des **IDs bruts** et une liste de faits | ⚠️ partiel |
-| `/simulations` | « projects the outcome on the same map » | branches persistées ✅, mais **une seule action exposée** (`bungee-gum/attach` par `hisoka`) et la « carte » = **trois compteurs numériques** | ⚠️ partiel |
-| `/perspectives/[character]` | cité nommément au README | **76 l, données `$derived([...])` en dur** | 🔴 maquette |
-| `/knowledge/[character]` | — | 53 l en dur + graphe ASCII littéral | 🔴 maquette |
-| `/bodies/[id]` | — | 40 l en dur, **0 lien entrant** | 🔴 maquette |
-| `/consciousness/[id]` | — | 61 l en dur, **0 lien entrant** | 🔴 maquette |
-| `/health` (web) | — | `{status:'ok'}` statique, **ne teste pas la DB** (l'admin, lui, fait `SELECT 1`) | ⚠️ partiel |
+| Route                       | Promesse README                                     | État réel                                                                                                                                     | Verdict     |
+| --------------------------- | --------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
+| `/`                         | vitrine + métriques                                 | comptage à la volée depuis `data/`                                                                                                            | ✅ complet  |
+| `/ship`                     | 5 tiers, 37 cartes, corps placés au curseur         | Prisma + `TimelineEngine`, spoiler, perspective, 38 SVG montés                                                                                | ✅ complet  |
+| `/tour`                     | 5 ponts, 282 spaces, marche à la 1ʳᵉ personne       | 695 l, blueprint validé, three.js                                                                                                             | ✅ complet  |
+| `/tour/sources`             | provenance de chaque surface                        | 503 l, ~15 blocs méthodologiques                                                                                                              | ✅ complet  |
+| `/timeline`                 | ordre récit vs chronologique + spoiler              | les deux ordres implémentés via `ordinal`                                                                                                     | ✅ complet  |
+| `/characters`               | 223 passagers                                       | 223 ✅ mais **le spoiler ne masque que `beyondLineage`**                                                                                      | ⚠️ partiel  |
+| `/characters/[slug]`        | —                                                   | JSON + Prisma, 404 correct au-delà du cap                                                                                                     | ✅ complet  |
+| `/compare`                  | deux POV côte à côte, désaccords marqués            | `comparePerspectives` réel, 1 074 l                                                                                                           | ✅ complet  |
+| `/relationships`            | « alliances, rivalries, patronages and proxy wars » | **11 arêtes littérales dans le fichier serveur**, 0 faction de Hunters, 7 princes sur 14 sans relation                                        | 🔴 en dur   |
+| `/abilities`                | 81 exécutables contre l'archive                     | la page itère `HATSU_PROFILES` (registre client), le bouton déclenche un effet visuel — **pas le `nen-engine`**. Aucun filtre spoiler.        | ⚠️ partiel  |
+| `/perspectives`             | carte confirmé / probable / dernier connu           | moteurs réels mais l'UI affiche des **IDs bruts** et une liste de faits                                                                       | ⚠️ partiel  |
+| `/simulations`              | « projects the outcome on the same map »            | branches persistées ✅, mais **une seule action exposée** (`bungee-gum/attach` par `hisoka`) et la « carte » = **trois compteurs numériques** | ⚠️ partiel  |
+| `/perspectives/[character]` | cité nommément au README                            | **76 l, données `$derived([...])` en dur**                                                                                                    | 🔴 maquette |
+| `/knowledge/[character]`    | —                                                   | 53 l en dur + graphe ASCII littéral                                                                                                           | 🔴 maquette |
+| `/bodies/[id]`              | —                                                   | 40 l en dur, **0 lien entrant**                                                                                                               | 🔴 maquette |
+| `/consciousness/[id]`       | —                                                   | 61 l en dur, **0 lien entrant**                                                                                                               | 🔴 maquette |
+| `/health` (web)             | —                                                   | `{status:'ok'}` statique, **ne teste pas la DB** (l'admin, lui, fait `SELECT 1`)                                                              | ⚠️ partiel  |
 
 Circonstance atténuante réelle : `robots.txt` **documente lui-même** les maquettes (« the placeholder
 body/consciousness/knowledge detail pages carry no canon content yet »). Mais deux d'entre elles sont
@@ -212,17 +212,17 @@ seule écriture fonctionnelle**.
 
 ### 2.3 Packages annoncés sans consommateur
 
-| Package | Imports app | Verdict |
-| --- | --- | --- |
-| `timeline-engine`, `nen-engine`, `domain`, `ability-modules`, `simulation-engine`, `database` | 2 à 4 | ✅ utilisés |
-| `identity-engine`, `knowledge-engine`, `perspective-engine` | 1 | ✅ utilisés |
-| `world-engine`, `ability-sdk` | 0 direct | ✅ transitifs légitimes |
-| `spoiler-engine` | 2 | ⚠️ 3 de ses 4 exports ne sont appelés que par leur propre test |
-| **`map-engine`** | **0** | 🔴 **code mort** — 294 l + 11 tests, fonction reprise par `apps/web/src/lib/components/map/markerProjection.ts` (1 195 l) |
-| **`config`** | **0** | 🔴 code mort — 12 l |
-| **`contracts`** | — | 🔴 **répertoire vide**, décrit au README comme « Shared API and projection contracts » |
-| **`ui`** | — | 🔴 **répertoire vide**, décrit comme « Shared Svelte components » |
-| `apps/worker` | — | 🔴 **répertoire vide** (pas même un `package.json`) |
+| Package                                                                                       | Imports app | Verdict                                                                                                                   |
+| --------------------------------------------------------------------------------------------- | ----------- | ------------------------------------------------------------------------------------------------------------------------- |
+| `timeline-engine`, `nen-engine`, `domain`, `ability-modules`, `simulation-engine`, `database` | 2 à 4       | ✅ utilisés                                                                                                               |
+| `identity-engine`, `knowledge-engine`, `perspective-engine`                                   | 1           | ✅ utilisés                                                                                                               |
+| `world-engine`, `ability-sdk`                                                                 | 0 direct    | ✅ transitifs légitimes                                                                                                   |
+| `spoiler-engine`                                                                              | 2           | ⚠️ 3 de ses 4 exports ne sont appelés que par leur propre test                                                            |
+| **`map-engine`**                                                                              | **0**       | 🔴 **code mort** — 294 l + 11 tests, fonction reprise par `apps/web/src/lib/components/map/markerProjection.ts` (1 195 l) |
+| **`config`**                                                                                  | **0**       | 🔴 code mort — 12 l                                                                                                       |
+| **`contracts`**                                                                               | —           | 🔴 **répertoire vide**, décrit au README comme « Shared API and projection contracts »                                    |
+| **`ui`**                                                                                      | —           | 🔴 **répertoire vide**, décrit comme « Shared Svelte components »                                                         |
+| `apps/worker`                                                                                 | —           | 🔴 **répertoire vide** (pas même un `package.json`)                                                                       |
 
 Bonus : `@tanstack/svelte-query` figure au tableau « Layer / Tech » du README et **n'est importé nulle
 part**.
@@ -251,17 +251,17 @@ projection carte, qui n'existe pas.
 
 ### 3.1 Le problème central : le catalogue des hatsu existe cinq fois
 
-| # | Source | Entrées | LOC |
-| --- | --- | --- | --- |
-| 1 | `data/abilities/abilities.json` | 81 | 54 Ko |
-| 2 | `packages/ability-modules/src/*/module.ts` | 81 | 6 899 |
-| 3 | `apps/web/src/lib/nen/hatsuRegistry.ts` | 81 | 1 478 |
-| 4 | `apps/web/src/lib/i18n/messages/hatsu-fr.ts` | 81 | 852 |
-| 5 | `apps/web/src/lib/i18n/messages/hatsu-status/{en,fr}.ts` | 76 + 76 | 1 544 |
+| #   | Source                                                   | Entrées | LOC   |
+| --- | -------------------------------------------------------- | ------- | ----- |
+| 1   | `data/abilities/abilities.json`                          | 81      | 54 Ko |
+| 2   | `packages/ability-modules/src/*/module.ts`               | 81      | 6 899 |
+| 3   | `apps/web/src/lib/nen/hatsuRegistry.ts`                  | 81      | 1 478 |
+| 4   | `apps/web/src/lib/i18n/messages/hatsu-fr.ts`             | 81      | 852   |
+| 5   | `apps/web/src/lib/i18n/messages/hatsu-status/{en,fr}.ts` | 76 + 76 | 1 544 |
 
 Intersection des identifiants entre (2) et (3) : **81/81**, aucun d'un seul côté. Deux déclarations
 rigoureusement parallèles du même catalogue — **et elles ont déjà divergé** : **27 `name`
-différents** (`benjamin-aura` : *Aura Manipulation* vs *Aura de Benjamin*) et **48 `owner` de format
+différents** (`benjamin-aura` : _Aura Manipulation_ vs _Aura de Benjamin_) et **48 `owner` de format
 incompatible** (libellé `'Chrollo'` d'un côté, slug `'chrollo-lucilfer'` de l'autre).
 
 **Et la couche visible du site n'importe jamais le moteur.** Vérifié :
@@ -289,20 +289,20 @@ l'une des deux (le DOM) a **0 test comportemental**.
 
 ### 3.2 Tests
 
-| Workspace | LOC src | LOC test | `it(` | Ratio |
-| --- | --- | --- | --- | --- |
-| `apps/web` | 44 734 | 4 242 | 319 | 9,5 % |
-| **`apps/admin`** | **2 151** | **0** | **0** | **0 %** |
-| **`packages/database`** | **4 336** | **0** | **0** | **0 %** |
-| `ability-modules` | 6 899 | 975 | 29 | 14 % |
-| `identity-engine` | 201 | 212 | 13 | **105 %** |
-| `knowledge-engine` | 152 | 143 | 8 | 94 % |
-| `perspective-engine` | 264 | 206 | 15 | 78 % |
-| `timeline-engine` | 631 | 451 | 40 | 72 % |
-| `spoiler-engine` | 76 | 53 | 3 | 70 % |
-| `world-engine` | 818 | 438 | 16 | 54 % |
-| `nen-engine` | 873 | 409 | 26 | 47 % |
-| **TOTAL** | **63 706** | **7 844** | **528** | **12,3 %** |
+| Workspace               | LOC src    | LOC test  | `it(`   | Ratio      |
+| ----------------------- | ---------- | --------- | ------- | ---------- |
+| `apps/web`              | 44 734     | 4 242     | 319     | 9,5 %      |
+| **`apps/admin`**        | **2 151**  | **0**     | **0**   | **0 %**    |
+| **`packages/database`** | **4 336**  | **0**     | **0**   | **0 %**    |
+| `ability-modules`       | 6 899      | 975       | 29      | 14 %       |
+| `identity-engine`       | 201        | 212       | 13      | **105 %**  |
+| `knowledge-engine`      | 152        | 143       | 8       | 94 %       |
+| `perspective-engine`    | 264        | 206       | 15      | 78 %       |
+| `timeline-engine`       | 631        | 451       | 40      | 72 %       |
+| `spoiler-engine`        | 76         | 53        | 3       | 70 %       |
+| `world-engine`          | 818        | 438       | 16      | 54 %       |
+| `nen-engine`            | 873        | 409       | 26      | 47 %       |
+| **TOTAL**               | **63 706** | **7 844** | **528** | **12,3 %** |
 
 - **0 test e2e, 0 test de composant, 0 mesure de couverture.** Aucun `jsdom`/`happy-dom`/
   `testing-library` déclaré → les **96 fichiers `.svelte` (27 649 LOC) sont hors couverture par
@@ -324,13 +324,13 @@ l'une des deux (le DOM) a **0 test comportemental**.
 
 Le niveau de dette **déclarée** est exceptionnellement bas :
 
-| Marqueur | Occurrences |
-| --- | --- |
-| `TODO` | **2** |
-| `FIXME` / `HACK` / `XXX` / `@deprecated` | **0** |
-| `@ts-ignore` / `@ts-expect-error` | **0** |
-| `console.log` hors `packages/database` | **0** |
-| `eslint-disable` | 10, tous justifiés en commentaire |
+| Marqueur                                 | Occurrences                       |
+| ---------------------------------------- | --------------------------------- |
+| `TODO`                                   | **2**                             |
+| `FIXME` / `HACK` / `XXX` / `@deprecated` | **0**                             |
+| `@ts-ignore` / `@ts-expect-error`        | **0**                             |
+| `console.log` hors `packages/database`   | **0**                             |
+| `eslint-disable`                         | 10, tous justifiés en commentaire |
 
 `strict: true` effectif partout, `no-explicit-any` en **erreur** dans `packages/**` (2 occurrences
 sur 12 489 LOC). Mais **166 `any` dans les apps** (140 web + 26 admin), concentrés sur
@@ -370,7 +370,7 @@ passe par `db push`.
 `backup.sh` qui **valide son propre dump avant rotation**. Manques : les Dockerfiles font
 `COPY --from=builder /app /app` (l'image de prod embarque sources + devDependencies + toolchain), les
 **sauvegardes ne quittent jamais l'hôte** (volume Docker local — perdre le serveur Hetzner perd la
-base *et* ses 14 jours de dumps), **la restauration n'est jamais testée automatiquement**, et il n'y
+base _et_ ses 14 jours de dumps), **la restauration n'est jamais testée automatiquement**, et il n'y
 a **ni rollback ni tag d'image**, ni supervision (Sentry figure dans `packages/config`, package mort).
 
 ---
@@ -399,7 +399,7 @@ Le seul bouton « Spoilers » visible (`ship/+page.svelte:607`) bascule
 `mapState.filters.spoilersEnabled`, champ lu uniquement par `GlobalHatsuEffects.svelte` pour
 sauvegarder un snapshot d'état. **Il ne filtre rien**, et il est stylé `class="danger"` avec un `!`.
 
-Effet composé : si le cookie *était* posé, une fiche au-delà de la limite déclenche
+Effet composé : si le cookie _était_ posé, une fiche au-delà de la limite déclenche
 `throw error(404)` — et il n'existe **aucun `+error.svelte` dans tout le projet** (`find` → 0), donc
 page SvelteKit brute, en anglais, hors layout, hors i18n.
 
@@ -410,12 +410,12 @@ existe déjà et n'est simplement pas appelé.
 
 ### 4.3 État par route
 
-| Route | Nav | `+error` | Empty | Responsive | SEO |
-| --- | --- | --- | --- | --- | --- |
-| `/`, `/ship`, `/timeline`, `/characters`, `/characters/[slug]`, `/compare`, `/relationships`, `/simulations` | ✓ | ✗ | ✓ (sauf `/compare`, `/simulations`) | ✓ `@media` + `clamp` | ✓ |
-| `/perspectives`, `/abilities`, `/tour`, `/tour/sources` | ✓ | ✗ | ✓ | ⚠️ Tailwind seul, **0 `@media`** | ✓ |
-| `/perspectives/[character]`, `/knowledge/[character]` | orphelines (liées depuis `/perspectives`) | ✗ | ✗ | ⚠️ 1 breakpoint | `noindex` |
-| `/bodies/[id]`, `/consciousness/[id]` | **0 lien entrant** | ✗ | ✗ | 🔴 **0 breakpoint** | `noindex` |
+| Route                                                                                                        | Nav                                       | `+error` | Empty                               | Responsive                       | SEO       |
+| ------------------------------------------------------------------------------------------------------------ | ----------------------------------------- | -------- | ----------------------------------- | -------------------------------- | --------- |
+| `/`, `/ship`, `/timeline`, `/characters`, `/characters/[slug]`, `/compare`, `/relationships`, `/simulations` | ✓                                         | ✗        | ✓ (sauf `/compare`, `/simulations`) | ✓ `@media` + `clamp`             | ✓         |
+| `/perspectives`, `/abilities`, `/tour`, `/tour/sources`                                                      | ✓                                         | ✗        | ✓                                   | ⚠️ Tailwind seul, **0 `@media`** | ✓         |
+| `/perspectives/[character]`, `/knowledge/[character]`                                                        | orphelines (liées depuis `/perspectives`) | ✗        | ✗                                   | ⚠️ 1 breakpoint                  | `noindex` |
+| `/bodies/[id]`, `/consciousness/[id]`                                                                        | **0 lien entrant**                        | ✗        | ✗                                   | 🔴 **0 breakpoint**              | `noindex` |
 
 Le SEO est le volet le plus abouti : `canonical`, `og:*`, `twitter:*`, JSON-LD (`websiteSchema`,
 `breadcrumbSchema`, `characterSchema`, `collectionSchema`), `site.webmanifest`, `lang` injecté
@@ -434,15 +434,15 @@ liste que 8 destinations — `/tour` et `/tour/sources` en sont absents.
 
 Diff programmatique par import réel des modules :
 
-| Catalogue | Clés EN | Clés FR | Manquantes |
-| --- | --- | --- | --- |
-| `messages/{en,fr}.ts` | **1 152** | **1 152** | **0** |
-| `messages/hatsu-status/{en,fr}.ts` | 315 | 315 | **0** |
-| `hatsuRegistry.ts` ↔ `hatsu-fr.ts` | 81 | 81 | **0** |
+| Catalogue                          | Clés EN   | Clés FR   | Manquantes |
+| ---------------------------------- | --------- | --------- | ---------- |
+| `messages/{en,fr}.ts`              | **1 152** | **1 152** | **0**      |
+| `messages/hatsu-status/{en,fr}.ts` | 315       | 315       | **0**      |
+| `hatsuRegistry.ts` ↔ `hatsu-fr.ts` | 81        | 81        | **0**      |
 
 Parité **parfaite**, y compris sur les 227 valeurs-fonctions (pluriels/interpolations). Aucun
 français détecté dans `en.ts`. L'absence de `hatsu-en.ts` n'est pas un trou : `hatsuRegistry.ts`
-*est* la source anglaise, `hatsu-fr.ts` un overlay par id — architecture documentée.
+_est_ la source anglaise, `hatsu-fr.ts` un overlay par id — architecture documentée.
 
 **Le trou est ailleurs : les 38 cartes SVG ne sont jamais internationalisées.**
 **231 `<text>` + 67 `aria-label` littéraux**, tous en anglais — dont
@@ -497,50 +497,50 @@ du projet (« every record belongs to a time, a source, and a point of view »).
 
 ### P0 — à faire avant tout (≈ 1 journée)
 
-| # | Action | Fichiers |
-| --- | --- | --- |
-| 1 | **Ajouter le crédit CC BY 4.0 + lien dépôt dans le footer** | `+layout.svelte:225`, `en.ts`/`fr.ts` |
-| 2 | **Brancher un sélecteur de limite de spoilers** qui pose `userSpoilerLimit` (le backend est prêt) | nouveau composant + `+layout.svelte` |
-| 3 | **Supprimer ou brancher le bouton « Spoilers » de `/ship`** — il ne filtre rien aujourd'hui | `ship/+page.svelte:607` |
-| 4 | **Créer `+error.svelte`** (web + admin) — 404 et 429 sortent en page brute | `apps/web/src/routes/+error.svelte` |
-| 5 | **Retirer les 2 liens vers les maquettes** depuis `/perspectives`, ou dépublier les 4 routes stub | `perspectives/+page.svelte:69,73` |
-| 6 | **Appliquer le spoiler à `/abilities` et à la liste `/characters`** (`isVisibleAtSpoilerLimit` existe déjà) | 2 `+page.server.ts` |
+| #   | Action                                                                                                      | Fichiers                              |
+| --- | ----------------------------------------------------------------------------------------------------------- | ------------------------------------- |
+| 1   | **Ajouter le crédit CC BY 4.0 + lien dépôt dans le footer**                                                 | `+layout.svelte:225`, `en.ts`/`fr.ts` |
+| 2   | **Brancher un sélecteur de limite de spoilers** qui pose `userSpoilerLimit` (le backend est prêt)           | nouveau composant + `+layout.svelte`  |
+| 3   | **Supprimer ou brancher le bouton « Spoilers » de `/ship`** — il ne filtre rien aujourd'hui                 | `ship/+page.svelte:607`               |
+| 4   | **Créer `+error.svelte`** (web + admin) — 404 et 429 sortent en page brute                                  | `apps/web/src/routes/+error.svelte`   |
+| 5   | **Retirer les 2 liens vers les maquettes** depuis `/perspectives`, ou dépublier les 4 routes stub           | `perspectives/+page.svelte:69,73`     |
+| 6   | **Appliquer le spoiler à `/abilities` et à la liste `/characters`** (`isVisibleAtSpoilerLimit` existe déjà) | 2 `+page.server.ts`                   |
 
 ### P1 — écarts README ↔ réalité (≈ 1 semaine)
 
-| # | Action |
-| --- | --- |
-| 7 | **Sortir les 11 arêtes de relations du fichier serveur** vers `data/relations.json`, et les étendre (7 princes sur 14 n'ont aucune relation, 0 faction de Hunters) |
-| 8 | **Brancher les 3 formulaires admin** (`export const actions` manquant sur `characters`, `facts`, `abilities`) — ou retirer les modales |
-| 9 | **Rendre la `MapScene` de `/simulations` sur une vraie carte** — elle est déjà calculée, elle est réduite à trois `.length` |
-| 10 | **Exposer plus d'une action de simulation** (aujourd'hui : `bungee-gum/attach` par `hisoka` en dur) |
-| 11 | **Corriger le README** : 301 spaces (pas 282), 34 intérieurs (pas 33) ; retirer `@tanstack/svelte-query` du tableau Tech ; retirer `contracts` et `ui` de l'arborescence tant qu'ils sont vides |
-| 12 | Supprimer `packages/map-engine`, `packages/config`, `apps/worker`, `packages/contracts`, `packages/ui`, l'override eslint `tools/**`, `packages/database/package-lock.json` |
+| #   | Action                                                                                                                                                                                          |
+| --- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 7   | **Sortir les 11 arêtes de relations du fichier serveur** vers `data/relations.json`, et les étendre (7 princes sur 14 n'ont aucune relation, 0 faction de Hunters)                              |
+| 8   | **Brancher les 3 formulaires admin** (`export const actions` manquant sur `characters`, `facts`, `abilities`) — ou retirer les modales                                                          |
+| 9   | **Rendre la `MapScene` de `/simulations` sur une vraie carte** — elle est déjà calculée, elle est réduite à trois `.length`                                                                     |
+| 10  | **Exposer plus d'une action de simulation** (aujourd'hui : `bungee-gum/attach` par `hisoka` en dur)                                                                                             |
+| 11  | **Corriger le README** : 301 spaces (pas 282), 34 intérieurs (pas 33) ; retirer `@tanstack/svelte-query` du tableau Tech ; retirer `contracts` et `ui` de l'arborescence tant qu'ils sont vides |
+| 12  | Supprimer `packages/map-engine`, `packages/config`, `apps/worker`, `packages/contracts`, `packages/ui`, l'override eslint `tools/**`, `packages/database/package-lock.json`                     |
 
 ### P2 — dette structurelle (le vrai chantier)
 
-| # | Action |
-| --- | --- |
-| 13 | **Unifier le catalogue des hatsu.** Faire de `apps/web/src/lib/nen/hatsuRegistry.ts` une **projection** de `packages/ability-modules`, pas une seconde déclaration. 27 `name` et 48 `owner` divergent déjà. Les modules exposent `interactionManifest` / `componentKey` écrits pour ça, avec 0 consommateur. |
-| 14 | **Réconcilier les deux implémentations DOM (2 462 l) et 3D (2 554 l)** — 61 des 81 techniques sont écrites deux fois, dont une sans test comportemental |
-| 15 | **Tests pour `apps/admin`** (2 151 l, 0 test, dont toute l'auth) et ajout d'un script `test` pour ne plus être sauté par `turbo test` |
-| 16 | **Faire entrer `packages/database/prisma/*.mjs`** (4 332 l rejouées en prod à chaque déploiement) dans le typecheck et les tests |
-| 17 | Ajouter jsdom/testing-library + au moins un parcours e2e (activation d'un hatsu, login admin) |
-| 18 | Activer `noUncheckedIndexedAccess` ; ajouter couverture, `pnpm audit`, `prisma migrate diff --exit-code` en CI ; supprimer le service postgres inutile de la CI |
-| 19 | **Exfiltrer les sauvegardes hors de l'hôte** et tester la restauration automatiquement |
+| #   | Action                                                                                                                                                                                                                                                                                                       |
+| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 13  | **Unifier le catalogue des hatsu.** Faire de `apps/web/src/lib/nen/hatsuRegistry.ts` une **projection** de `packages/ability-modules`, pas une seconde déclaration. 27 `name` et 48 `owner` divergent déjà. Les modules exposent `interactionManifest` / `componentKey` écrits pour ça, avec 0 consommateur. |
+| 14  | **Réconcilier les deux implémentations DOM (2 462 l) et 3D (2 554 l)** — 61 des 81 techniques sont écrites deux fois, dont une sans test comportemental                                                                                                                                                      |
+| 15  | **Tests pour `apps/admin`** (2 151 l, 0 test, dont toute l'auth) et ajout d'un script `test` pour ne plus être sauté par `turbo test`                                                                                                                                                                        |
+| 16  | **Faire entrer `packages/database/prisma/*.mjs`** (4 332 l rejouées en prod à chaque déploiement) dans le typecheck et les tests                                                                                                                                                                             |
+| 17  | Ajouter jsdom/testing-library + au moins un parcours e2e (activation d'un hatsu, login admin)                                                                                                                                                                                                                |
+| 18  | Activer `noUncheckedIndexedAccess` ; ajouter couverture, `pnpm audit`, `prisma migrate diff --exit-code` en CI ; supprimer le service postgres inutile de la CI                                                                                                                                              |
+| 19  | **Exfiltrer les sauvegardes hors de l'hôte** et tester la restauration automatiquement                                                                                                                                                                                                                       |
 
 ### P3 — densification du canon
 
-| # | Action |
-| --- | --- |
-| 20 | **Passer les événements de `backfill_timeline.mjs` à `data/events.json`** — la donnée narrative est aujourd'hui du code, hors licence CC BY et hors portée des contributions |
-| 21 | **Densifier : 46 des 62 chapitres de l'arc n'ont qu'un seul événement**, 68 chapitres sur 76 n'ont pas de fiche |
-| 22 | ~~Corriger les 2 `ownerId` cassés (`benjamin-hui-guo-rou`, `oito-hui-guo-rou`)~~ (fait), ~~ajouter `justice-bureau` à `factions.json`~~ (fait), ajouter Kortopi et Shalnark, donner des gardes à Salé-salé |
-| 23 | ~~Renseigner les 47 `cost` manquants (le README les promet)~~ (fait — dans les modules), ajouter un champ chapitre aux abilities |
-| 24 | Reconstruire `tier-3-political-ward` (seule pièce du catalogue sans géométrie) |
-| 25 | i18n des 38 cartes SVG (231 `<text>` + 67 `aria-label`), corriger les 4 libellés français égarés |
-| 26 | Créer `/about` + `/sources` global ; corriger « 05 SECTIONS » → 06 ; ajouter `/tour` à la CommandPalette |
-| 27 | a11y : `role="img"` + `aria-label` sur les 46 SVG, remonter `text-gray-500`/`600`, brancher ou retirer les ~97 cibles tabulables inertes des cartes |
+| #   | Action                                                                                                                                                                                                     |
+| --- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 20  | **Passer les événements de `backfill_timeline.mjs` à `data/events.json`** — la donnée narrative est aujourd'hui du code, hors licence CC BY et hors portée des contributions                               |
+| 21  | **Densifier : 46 des 62 chapitres de l'arc n'ont qu'un seul événement**, 68 chapitres sur 76 n'ont pas de fiche                                                                                            |
+| 22  | ~~Corriger les 2 `ownerId` cassés (`benjamin-hui-guo-rou`, `oito-hui-guo-rou`)~~ (fait), ~~ajouter `justice-bureau` à `factions.json`~~ (fait), ajouter Kortopi et Shalnark, donner des gardes à Salé-salé |
+| 23  | ~~Renseigner les 47 `cost` manquants (le README les promet)~~ (fait — dans les modules), ajouter un champ chapitre aux abilities                                                                           |
+| 24  | Reconstruire `tier-3-political-ward` (seule pièce du catalogue sans géométrie)                                                                                                                             |
+| 25  | i18n des 38 cartes SVG (231 `<text>` + 67 `aria-label`), corriger les 4 libellés français égarés                                                                                                           |
+| 26  | Créer `/about` + `/sources` global ; corriger « 05 SECTIONS » → 06 ; ajouter `/tour` à la CommandPalette                                                                                                   |
+| 27  | a11y : `role="img"` + `aria-label` sur les 46 SVG, remonter `text-gray-500`/`600`, brancher ou retirer les ~97 cibles tabulables inertes des cartes                                                        |
 
 ---
 
@@ -554,7 +554,7 @@ du projet (« every record belongs to a time, a source, and a point of view »).
 - **Parité i18n parfaite** sur 1 152 + 315 clés, valeurs-fonctions incluses.
 - **Cohérence schéma ↔ migration parfaite** et lockfile pnpm sain (17 importers).
 - **Le SEO est complet** : JSON-LD, hreflang, sitemap dynamique sur 223 fiches.
-- **Les commentaires du dépôt expliquent systématiquement le *pourquoi*** (le bug corrigé dans
+- **Les commentaires du dépôt expliquent systématiquement le _pourquoi_** (le bug corrigé dans
   `backup.sh`, l'absence de `version:` dans `pnpm/action-setup`, la génération Prisma avant
   typecheck). C'est rare — à préserver.
 
@@ -571,7 +571,7 @@ packages sans consommateur, `+error.svelte`, volumétrie du blueprint).
 
 - **Aucun test n'a été exécuté** (`node_modules` absent). La connexité du navire a été revalidée par
   une réimplémentation Python de `deriveDoorways`, pas par `blueprint.test.ts`.
-- **Aucune base PostgreSQL** : le nombre d'événements *réellement en base après seed + backfills* et
+- **Aucune base PostgreSQL** : le nombre d'événements _réellement en base après seed + backfills_ et
   la synchronisation des 223 slugs `Character` n'ont pas pu être observés. Les chiffres portent sur
   les définitions statiques.
 - Le **405 des formulaires admin** est déduit du contrat SvelteKit (page sans `actions` + POST),

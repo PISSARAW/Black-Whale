@@ -9,10 +9,7 @@ import {
   hatsuNamesFor,
   resolveFactionTags,
 } from './roster'
-import {
-  BEYOND_LINEAGE_CONFIRMED_CHAPTER,
-  BEYOND_LINEAGE_SUSPECTED_CHAPTER,
-} from './beyondLineage'
+import { BEYOND_LINEAGE_CONFIRMED_CHAPTER, BEYOND_LINEAGE_SUSPECTED_CHAPTER } from './beyondLineage'
 
 const CATALOG: CatalogCharacter[] = [
   { id: 'prince-benjamin', canonicalName: 'Benjamin Hui Guo Rou', factionId: 'prince-benjamin' },

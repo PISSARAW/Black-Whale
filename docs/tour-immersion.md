@@ -12,22 +12,22 @@ comment. Les prototypes ont tourné sur `data/ship/blueprint.json` réel via le 
 
 ## 0. Où en est le rendu, en chiffres
 
-| | valeur mesurée |
-|---|---|
-| Niveaux | 40 (5 ponts + 35 intérieurs) |
-| Espaces | 314 |
-| Structures | 721 |
-| **Triangles, vaisseau entier** | **24 592** |
-| Triangles, pont le plus lourd (tier-1) | 6 492 |
-| Buffers, vaisseau entier | 3,1 Mo |
-| Surface bâtie | 192 039 m² de sol, 157 842 m² de mur, 29 333 m de mur |
-| Volume : min → max | 48 m³ → 65 856 m³ — entrepôt Cha-R (rapport **1 372×**) |
-| Espaces avec une fenêtre | **2 sur 314** |
+|                                        | valeur mesurée                                          |
+| -------------------------------------- | ------------------------------------------------------- |
+| Niveaux                                | 40 (5 ponts + 35 intérieurs)                            |
+| Espaces                                | 314                                                     |
+| Structures                             | 721                                                     |
+| **Triangles, vaisseau entier**         | **24 592**                                              |
+| Triangles, pont le plus lourd (tier-1) | 6 492                                                   |
+| Buffers, vaisseau entier               | 3,1 Mo                                                  |
+| Surface bâtie                          | 192 039 m² de sol, 157 842 m² de mur, 29 333 m de mur   |
+| Volume : min → max                     | 48 m³ → 65 856 m³ — entrepôt Cha-R (rapport **1 372×**) |
+| Espaces avec une fenêtre               | **2 sur 314**                                           |
 
 Le premier chiffre commande tout le reste. **Le vaisseau entier fait 24 592
 triangles.** Un GPU d'entrée de gamme en avale deux millions par frame sans
 transpirer. Il n'y a pas de problème de puissance à résoudre : il y a un problème
-d'information. Chaque pièce du Black Whale reçoit aujourd'hui *exactement* la même
+d'information. Chaque pièce du Black Whale reçoit aujourd'hui _exactement_ la même
 lumière que toutes les autres — un ambient, un hémisphérique, une lampe frontale
 attachée au visiteur — donc chaque pièce ressemble à toutes les autres. Le cachot du
 pont 5 et le salon du Roi sont éclairés par la même source, qui est vous.
@@ -48,19 +48,19 @@ lumière vient du plafond, elle compte pour tout.
 Trois défauts vérifiés en exécutant `buildTierMesh` / `buildSolidMesh` sur le
 blueprint réel :
 
-| défaut | mesure | conséquence sous une lumière zénithale |
-|---|---|---|
+| défaut                                   | mesure                                      | conséquence sous une lumière zénithale                                                                   |
+| ---------------------------------------- | ------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
 | Chapeaux de solides orientés vers le bas | **2 734 triangles, sur les 721 structures** | tous les dessus de table, de lit, de cercueil, la scène du banquet et l'estrade du trône passent au noir |
-| Chapeaux de colonnes vers le bas | 328 triangles | invisible (à ras du plafond), mais faux |
-| Murs dont la normale sort de la pièce | 57 sur 4 131 (1,4 %) | 57 pans éclairés par l'arrière |
-| Sols / plafonds | corrects (715 / 715) | — |
+| Chapeaux de colonnes vers le bas         | 328 triangles                               | invisible (à ras du plafond), mais faux                                                                  |
+| Murs dont la normale sort de la pièce    | 57 sur 4 131 (1,4 %)                        | 57 pans éclairés par l'arrière                                                                           |
+| Sols / plafonds                          | corrects (715 / 715)                        | —                                                                                                        |
 
 Et un quatrième, plus gros, qui est déjà visible :
 
 > **803 paires de murs coplanaires, soit 8 489 m — 28,9 % de la longueur de cloison
 > du vaisseau — sont dessinées deux fois.**
 
-`wallSegments(space, doorways)` tourne par espace et parcourt les arêtes du *propre*
+`wallSegments(space, doorways)` tourne par espace et parcourt les arêtes du _propre_
 contour de la pièce. Deux pièces mitoyennes émettent donc chacune leur pan sur la
 même ligne, à la même profondeur. En `DoubleSide`, c'est du z-fighting sur près d'un
 tiers des cloisons — le scintillement qu'on voit en longeant un couloir.
@@ -108,8 +108,8 @@ const material = new THREE.MeshBasicMaterial({
 **Ce que ça achète, tout de suite, avant toute lumière :**
 
 - le z-fighting sur 8 489 m de cloison disparaît ;
-- chaque face de cloison appartient désormais à *une* pièce, donc peut prendre la
-  couleur et la lumière *de cette pièce* — un couloir éclairé côté couloir, la cabine
+- chaque face de cloison appartient désormais à _une_ pièce, donc peut prendre la
+  couleur et la lumière _de cette pièce_ — un couloir éclairé côté couloir, la cabine
   derrière éclairée par sa propre applique. C'est la condition matérielle de toute la
   vague 1 : sans elle, une cloison ne peut pas être deux choses à la fois ;
 - moitié moins de fragments rastérisés.
@@ -142,7 +142,7 @@ système de classes.** Le pont 1 loge le Roi et ses princes, le pont 3 les passa
 ordinaires, le pont 5 la soute et les ressorts. Aujourd'hui les cinq ponts sont
 éclairés à l'identique, ce qui est une affirmation fausse sur le vaisseau — au même
 titre qu'un mur sans épaisseur. Le précédent écrit est `columnPositions`
-(`data/ship/README.md:101-106`) : les piliers ne sont pas stockés, ils sont *dérivés*,
+(`data/ship/README.md:101-106`) : les piliers ne sont pas stockés, ils sont _dérivés_,
 parce qu'une halle de cette portée serait bâtie sur piliers. Une coursive de cent
 mètres serait éclairée. On la dérive de la même manière.
 
@@ -183,32 +183,32 @@ reste du pipeline le fait déjà.
 
 Le seul tableau qui compte. `spacing` en mètres, `temp` en kelvins, `power` relatif :
 
-| pont | qui | écart | température | puissance | tenue |
-|---|---|---|---|---|---|
-| tier-1 (72 m) | Roi, princes | 7 m | 2 700 K `0xffd2a0` | 1,15 | stable |
-| tier-2 (54 m) | VIP | 8 m | 3 000 K `0xffdcb8` | 1,05 | stable |
-| tier-3 (36 m) | passagers | 11 m | 4 000 K `0xf0f0e8` | 0,85 | stable |
-| tier-4 (18 m) | passagers bas | 13 m | 5 000 K `0xe4ecf4` | 0,70 | léger battement |
-| tier-5 (0 m) | soute, machines | 16 m | 6 500 K `0xd8e4f0` | 0,55 | battement + une lampe morte sur douze |
+| pont          | qui             | écart | température        | puissance | tenue                                 |
+| ------------- | --------------- | ----- | ------------------ | --------- | ------------------------------------- |
+| tier-1 (72 m) | Roi, princes    | 7 m   | 2 700 K `0xffd2a0` | 1,15      | stable                                |
+| tier-2 (54 m) | VIP             | 8 m   | 3 000 K `0xffdcb8` | 1,05      | stable                                |
+| tier-3 (36 m) | passagers       | 11 m  | 4 000 K `0xf0f0e8` | 0,85      | stable                                |
+| tier-4 (18 m) | passagers bas   | 13 m  | 5 000 K `0xe4ecf4` | 0,70      | léger battement                       |
+| tier-5 (0 m)  | soute, machines | 16 m  | 6 500 K `0xd8e4f0` | 0,55      | battement + une lampe morte sur douze |
 
 Modulé ensuite par catégorie d'espace, sur la même échelle :
 
 ```ts
 const LIGHT: Record<SpaceCategory, { spacing: number; hue: number; power: number }> = {
-  quarters:       { spacing: 0.8, hue: 0xffd0a0, power: 1.1 },  // dense et chaud
-  ceremonial:     { spacing: 1.6, hue: 0xffe0a8, power: 0.5 },  // une seule source, le reste dans le noir
-  public:         { spacing: 0.9, hue: 0xffc98a, power: 1.3 },  // le casino, le cinéplexe : on éclaire pour éblouir
-  medical:        { spacing: 0.7, hue: 0xe8f4ee, power: 1.2 },  // froid, uniforme, sans ombre — c'est le pire
-  prison:         { spacing: 1.4, hue: 0xcfd8e0, power: 0.9 },  // des flaques dures, du noir entre
-  mafia:          { spacing: 1.5, hue: 0xd8a464, power: 0.5 },
-  corridor:       { spacing: 1.0, hue: 0xdfe8f0, power: 0.8 },
-  infrastructure: { spacing: 1.5, hue: 0xffb050, power: 0.7 },  // sodium, plafonds hauts, colonnes de lumière
-  storage:        { spacing: 1.7, hue: 0xffb050, power: 0.6 },
-  evacuation:     { spacing: 1.2, hue: 0xff8040, power: 0.8 },  // le rouge de secours
-  military:       { spacing: 1.0, hue: 0xf2f4f0, power: 0.9 },
+  quarters: { spacing: 0.8, hue: 0xffd0a0, power: 1.1 }, // dense et chaud
+  ceremonial: { spacing: 1.6, hue: 0xffe0a8, power: 0.5 }, // une seule source, le reste dans le noir
+  public: { spacing: 0.9, hue: 0xffc98a, power: 1.3 }, // le casino, le cinéplexe : on éclaire pour éblouir
+  medical: { spacing: 0.7, hue: 0xe8f4ee, power: 1.2 }, // froid, uniforme, sans ombre — c'est le pire
+  prison: { spacing: 1.4, hue: 0xcfd8e0, power: 0.9 }, // des flaques dures, du noir entre
+  mafia: { spacing: 1.5, hue: 0xd8a464, power: 0.5 },
+  corridor: { spacing: 1.0, hue: 0xdfe8f0, power: 0.8 },
+  infrastructure: { spacing: 1.5, hue: 0xffb050, power: 0.7 }, // sodium, plafonds hauts, colonnes de lumière
+  storage: { spacing: 1.7, hue: 0xffb050, power: 0.6 },
+  evacuation: { spacing: 1.2, hue: 0xff8040, power: 0.8 }, // le rouge de secours
+  military: { spacing: 1.0, hue: 0xf2f4f0, power: 0.9 },
   administrative: { spacing: 1.0, hue: 0xf2f4f0, power: 0.9 },
-  residential:    { spacing: 1.2, hue: 0xf0e8dc, power: 0.8 },
-  room:           { spacing: 1.1, hue: 0xf0e8dc, power: 0.9 },
+  residential: { spacing: 1.2, hue: 0xf0e8dc, power: 0.8 },
+  room: { spacing: 1.1, hue: 0xf0e8dc, power: 0.9 },
 }
 ```
 
@@ -220,7 +220,12 @@ littéralement l'argument du Contest de succession, et il ne coûte rien.
 Nouveau fichier `lib/tour/light.ts`, pur, testable :
 
 ```ts
-export interface Lamp { at: Vec2; y: number; power: number; colour: Rgb }
+export interface Lamp {
+  at: Vec2
+  y: number
+  power: number
+  colour: Rgb
+}
 
 /** Les luminaires d'une pièce, dérivés de son contour, de son pont, de sa catégorie. */
 export function lampsIn(space: Space, tier: Tier): Lamp[]
@@ -256,7 +261,7 @@ Et dans `mesh.ts`, la couleur devient par **sommet** au lieu de par triangle :
 (0,015) qui empêche une cloison sans applique en face d'elle d'être un trou noir
 absolu.
 
-### 1.4 — Les luminaires sont *visibles*
+### 1.4 — Les luminaires sont _visibles_
 
 Le détail qui rend tout le reste lisible et qui coûte 2 triangles pièce : chaque
 luminaire dérivé est aussi un **quad émissif** collé au plafond, dessiné en couleur
@@ -276,15 +281,16 @@ quatre. Prototype mesuré, avec découpe des sols par **découpage de grille**
 plafonds restent grossiers, parce qu'un plafond est presque parallèle à ses propres
 lampes et ne reçoit rien — c'est le quad émissif qui le raconte.
 
-| grille | triangles vaisseau | pire pont | Mo / pire pont | build / pire pont |
-|---|---|---|---|---|
-| aujourd'hui | 24 592 | 6 492 | 0,70 | ~4 ms |
-| 3,5 m | 85 282 | 17 068 | 1,23 | 40–70 ms |
-| **3,0 m** | **105 774** | **21 344** | **1,54** | **47–103 ms** |
-| 2,5 m | 141 299 | 29 904 | 2,15 | 90–180 ms |
+| grille      | triangles vaisseau | pire pont  | Mo / pire pont | build / pire pont |
+| ----------- | ------------------ | ---------- | -------------- | ----------------- |
+| aujourd'hui | 24 592             | 6 492      | 0,70           | ~4 ms             |
+| 3,5 m       | 85 282             | 17 068     | 1,23           | 40–70 ms          |
+| **3,0 m**   | **105 774**        | **21 344** | **1,54**       | **47–103 ms**     |
+| 2,5 m       | 141 299            | 29 904     | 2,15           | 90–180 ms         |
 
 *(mesuré sur ce conteneur, monothread, sans indexation des sommets ; Mo = position
-+ couleur seules, l'attribut `normal` étant supprimé — voir juste en dessous)*
+
+- couleur seules, l'attribut `normal` étant supprimé — voir juste en dessous)*
 
 **Recommandation : 3,0 m.** ×4,3 en triangles, on reste 20× sous tout seuil qui
 compte, et le pire pont se construit en ~100 ms — une seule fois, mis en cache par
@@ -301,7 +307,7 @@ Deux économies à prendre en même temps :
 1. **Supprimer l'attribut `normal`.** Avec `MeshBasicMaterial`, three.js ne le lit
    pas. −33 % de buffer et d'upload : le pire pont pèse **1,54 Mo** de position et de
    couleur, plus ~50 Ko d'arêtes — soit, à peu de chose près, le budget en octets
-   déjà écrit dans `mesh.test.ts`. Le bake a besoin des normales *pendant* la
+   déjà écrit dans `mesh.test.ts`. Le bake a besoin des normales _pendant_ la
    construction, pas après : elles restent locales à `mesh.ts`.
 2. **Indexer** sols et murs (les sommets d'une grille sont partagés) : ~−60 % de
    sommets. Optionnel, à faire seulement si le premier chargement gêne.
@@ -310,7 +316,7 @@ Deux économies à prendre en même temps :
 
 ```ts
 // TourScene.svelte
-renderer.toneMapping = THREE.ACESFilmicToneMapping   // conservé, indispensable ici
+renderer.toneMapping = THREE.ACESFilmicToneMapping // conservé, indispensable ici
 renderer.toneMappingExposure = 1
 
 const material = new THREE.MeshBasicMaterial({ vertexColors: true, side: THREE.FrontSide })
@@ -331,7 +337,7 @@ Ce qui reste de dynamique, et rien d'autre :
   jusqu'à zéro dans le panneau de confort ;
 - **l'aura Nen** : quand une technique est levée, une `PointLight` de la couleur de la
   technique. Elle devient alors la seule lumière colorée du vaisseau, et le Nen
-  *éclaire* au lieu de dessiner un contour. Gratuit — le mécanisme des shells existe
+  _éclaire_ au lieu de dessiner un contour. Gratuit — le mécanisme des shells existe
   déjà (`syncShells`), il suffit d'y accrocher une lumière.
 
 `syncSight` (l'aveuglement des Trois Singes) devient plus simple et plus fort : au
@@ -345,10 +351,10 @@ exactement ce que les singes prennent.
 vaisseau dessine) :
 
 ```ts
-const MAX_DECK_TRIANGLES = 45_000   // était 15 000 ; pire pont mesuré 21 344
-const MAX_DECK_BYTES = 3_600_000    // était 1 600 000 ; ~1,6 Mo sans les normales, marge ×2
-const MAX_ROOM_TRIANGLES = 12_000   // était 8 000 ; pire pièce mesurée : l'entrepôt
-                                    // Cha-R, 3 142 hors solides
+const MAX_DECK_TRIANGLES = 45_000 // était 15 000 ; pire pont mesuré 21 344
+const MAX_DECK_BYTES = 3_600_000 // était 1 600 000 ; ~1,6 Mo sans les normales, marge ×2
+const MAX_ROOM_TRIANGLES = 12_000 // était 8 000 ; pire pièce mesurée : l'entrepôt
+// Cha-R, 3 142 hors solides
 ```
 
 **Coût vague 1 :** 2–3 jours. C'est l'essentiel du travail et l'essentiel du résultat.
@@ -364,15 +370,15 @@ c'est 57,6 km/h — une fois et demie Usain Bolt. Tant que le visiteur traverse 
 du Roi en 32 secondes, le vaisseau ne peut pas être grand.
 
 ```ts
-const WALK_SPEED = 1.5     // marche soutenue
-const SPRINT_SPEED = 4.8   // course tenable
+const WALK_SPEED = 1.5 // marche soutenue
+const SPRINT_SPEED = 4.8 // course tenable
 ```
 
-| pièce | portée | à 6 m/s | à 1,5 m/s |
-|---|---|---|---|
-| Salon du Roi | 193 m | 32 s | 129 s |
-| Coursive tribord (pont 4) | 140 m | 23 s | 93 s |
-| Entrepôt Cha-R | 112 m | 19 s | 75 s |
+| pièce                     | portée | à 6 m/s | à 1,5 m/s |
+| ------------------------- | ------ | ------- | --------- |
+| Salon du Roi              | 193 m  | 32 s    | 129 s     |
+| Coursive tribord (pont 4) | 140 m  | 23 s    | 93 s      |
+| Entrepôt Cha-R            | 112 m  | 19 s    | 75 s      |
 
 **L'objection est déjà réglée par le produit :** la visite a un voyage rapide — l'index
 des pièces et le plan posent le visiteur où il veut par `jumpTo`. La marche n'a donc
@@ -387,8 +393,8 @@ s'arrête à l'instant. Un corps a une masse.
 
 ```ts
 let velocity: Vec2 = [0, 0]
-const ACCEL = 9      // m/s², ~0,17 s pour atteindre la marche
-const FRICTION = 12  // m/s², l'arrêt est plus net que le départ
+const ACCEL = 9 // m/s², ~0,17 s pour atteindre la marche
+const FRICTION = 12 // m/s², l'arrêt est plus net que le départ
 
 // dans tick()
 const wanted: Vec2 = moving ? [dirX * speed, dirZ * speed] : [0, 0]
@@ -412,19 +418,19 @@ visiteur, et à 1,5 m/s il n'y a plus rien à traverser.
  * amplitudes sont volontairement petites : c'est en dessous du seuil conscient que
  * ça marche, au-dessus c'est du mal de mer.
  */
-const STRIDE = 0.78          // m par pas
-const BOB_VERTICAL = 0.042   // m
-const BOB_LATERAL = 0.028    // m
-const BOB_ROLL = 0.011       // rad, ~0,63°
+const STRIDE = 0.78 // m par pas
+const BOB_VERTICAL = 0.042 // m
+const BOB_LATERAL = 0.028 // m
+const BOB_ROLL = 0.011 // rad, ~0,63°
 
 phase += (Math.hypot(velocity[0], velocity[1]) / STRIDE) * Math.PI * delta
 const gait = Math.min(1, Math.hypot(velocity[0], velocity[1]) / WALK_SPEED)
 const bobY = Math.sin(phase * 2) * BOB_VERTICAL * gait * $comfort.headBob
 const bobX = Math.sin(phase) * BOB_LATERAL * gait * $comfort.headBob
-const roll  = Math.sin(phase - Math.PI / 2) * BOB_ROLL * gait * $comfort.headBob
+const roll = Math.sin(phase - Math.PI / 2) * BOB_ROLL * gait * $comfort.headBob
 
 // À l'arrêt, la respiration prend le relais : 0,22 Hz, 8 mm.
-const breath = Math.sin(now / 1000 * 1.4) * 0.008 * (1 - gait) * $comfort.headBob
+const breath = Math.sin((now / 1000) * 1.4) * 0.008 * (1 - gait) * $comfort.headBob
 ```
 
 Appliqué **après** `eyesOf(world.body, EYE_HEIGHT)`, pas à la place : Kurton et les
@@ -446,13 +452,13 @@ déjà. Un pas, c'est une enveloppe très courte sur du bruit filtré :
 export function playFootstep(surface: SpaceCategory, volume: number, running: boolean)
 ```
 
-| catégorie | timbre | pourquoi |
-|---|---|---|
+| catégorie                                 | timbre                                | pourquoi    |
+| ----------------------------------------- | ------------------------------------- | ----------- |
 | `infrastructure`, `storage`, `evacuation` | tôle, passe-haut 900 Hz, attaque dure | caillebotis |
-| `quarters`, `residential` (ponts 1–2) | mat, passe-bas 400 Hz, très court | moquette |
-| `ceremonial`, `administrative` | pierre, médium, longue queue | dalle |
-| `corridor` | intermédiaire, queue selon le volume | — |
-| `prison`, `military` | béton dur, sec | — |
+| `quarters`, `residential` (ponts 1–2)     | mat, passe-bas 400 Hz, très court     | moquette    |
+| `ceremonial`, `administrative`            | pierre, médium, longue queue          | dalle       |
+| `corridor`                                | intermédiaire, queue selon le volume  | —           |
+| `prison`, `military`                      | béton dur, sec                        | —           |
 
 L'envoi de réverbération est réglé par le **volume de la pièce** (voir 3.2). Le même
 pas dans une cabine de 48 m³ et dans la salle de banquet de 34 700 m³ n'est pas le
@@ -464,9 +470,9 @@ Trois clés nouvelles dans `Comfort`, avec la même discipline que l'existant (b
 relues champ par champ, valeurs par défaut prises sur `prefers-reduced-motion`) :
 
 ```ts
-headBob: number    // 0…1, LIVELY 0.7, CALM 0
-walkSpeed: number  // 0.75…2.5 ×, pour qui trouve 1,5 m/s trop lent
-torch: number      // 0…1, la veilleuse ; LIVELY 0.35, CALM 1
+headBob: number // 0…1, LIVELY 0.7, CALM 0
+walkSpeed: number // 0.75…2.5 ×, pour qui trouve 1,5 m/s trop lent
+torch: number // 0…1, la veilleuse ; LIVELY 0.35, CALM 1
 ```
 
 `jumpOnly` continue de tout court-circuiter.
@@ -481,14 +487,14 @@ torch: number      // 0…1, la veilleuse ; LIVELY 0.35, CALM 1
 
 Un seul `Fog(0x050505, 6, 110)` pour des volumes qui vont de 48 à 65 856 m³. Dans une
 cabine, un brouillard qui démarre à 6 m ne fait rien ; dans la salle de banquet, un
-brouillard qui ferme à 110 m efface l'autre bout — ce qui est *exactement à l'envers*
+brouillard qui ferme à 110 m efface l'autre bout — ce qui est _exactement à l'envers_
 de ce qu'il faut. Une petite pièce doit avoir de l'air (une brume proche dit
 « confinement »), une grande doit garder sa profondeur.
 
 ```ts
 /** Le brouillard que cette pièce mérite, de sa propre étendue. */
 function airOf(space: Space, tier: Tier): { near: number; far: number } {
-  const { long } = extentOf(space.footprint)   // describe.ts l'a déjà
+  const { long } = extentOf(space.footprint) // describe.ts l'a déjà
   return { near: Math.max(0.6, long * 0.06), far: Math.max(18, long * 1.5) }
 }
 // interpolé sur ~0,7 s au franchissement d'un seuil, jamais commuté sec
@@ -504,7 +510,7 @@ passe-bas d'amortissement. Deux paramètres à piloter :
 
 ```ts
 export function setRoomAcoustics(volume: number) {
-  const size = Math.cbrt(volume)                       // 3,6 m → 40 m
+  const size = Math.cbrt(volume) // 3,6 m → 40 m
   delay.delayTime.setTargetAtTime(clamp(size / 260, 0.014, 0.16), now, 0.3)
   feedback.gain.setTargetAtTime(clamp(size / 90, 0.08, 0.62), now, 0.3)
   damp.frequency.setTargetAtTime(1400 + size * 90, now, 0.3)
@@ -520,7 +526,7 @@ l'œil.
 Au-dessus de ~8 000 m³ : un nuage de `Points` additifs, ~500 particules dérivant
 lentement dans le volume de la pièce, taille atténuée par la distance. Coût : un
 `BufferGeometry` de 500 sommets et une mise à jour de position par frame. C'est le
-seul indice qui rende visible l'*air* d'une salle de 22 m sous plafond — et les deux
+seul indice qui rende visible l'_air_ d'une salle de 22 m sous plafond — et les deux
 espaces les plus hauts du vaisseau, la Baie des ressorts et sa passerelle (niveau
 `interior-hull-suspension`, à l'intérieur du Niveau technique du pont 5), font
 précisément 22 m.
@@ -573,10 +579,10 @@ qu'on dessine ») est préservé par construction, donc testable.
 
 Le chiffre le plus fort du blueprint : **314 espaces, 2 fenêtres.**
 
-| | pièce | pont | taille | source |
-|---|---|---|---|---|
-| `tier-3-observation-deck-window` | Pont d'observation | tier-3 | 6 m de haut | ch. 380, `panel` |
-| `tier-1-king-living-quarters-living-great-window` | Salon royal | tier-1 | 3,2 m | ch. 382, `panel` |
+|                                                   | pièce              | pont   | taille      | source           |
+| ------------------------------------------------- | ------------------ | ------ | ----------- | ---------------- |
+| `tier-3-observation-deck-window`                  | Pont d'observation | tier-3 | 6 m de haut | ch. 380, `panel` |
+| `tier-1-king-living-quarters-living-great-window` | Salon royal        | tier-1 | 3,2 m       | ch. 382, `panel` |
 
 Les deux sont sourcées `panel` — Togashi les dessine. Et toutes deux sont aujourd'hui
 typées `painting`, donc rendues en laque noire `0x1d1a16` : la même chose qu'un tableau
@@ -604,16 +610,16 @@ JSON plus une branche dans `extrudeSolid`.
 Un lit très grave dans `ambient.ts` : une sinusoïde à 38 Hz plus du bruit rose
 passe-bas, dont le niveau et la coupure suivent l'altitude du pont.
 
-| pont | élévation | niveau | coupure |
-|---|---|---|---|
-| tier-5 | 0 m | 1,0 | 260 Hz |
-| tier-4 | 18 m | 0,7 | 190 Hz |
-| tier-3 | 36 m | 0,45 | 140 Hz |
-| tier-2 | 54 m | 0,25 | 100 Hz |
-| tier-1 | 72 m | 0,12 | 70 Hz |
+| pont   | élévation | niveau | coupure |
+| ------ | --------- | ------ | ------- |
+| tier-5 | 0 m       | 1,0    | 260 Hz  |
+| tier-4 | 18 m      | 0,7    | 190 Hz  |
+| tier-3 | 36 m      | 0,45   | 140 Hz  |
+| tier-2 | 54 m      | 0,25   | 100 Hz  |
+| tier-1 | 72 m      | 0,12   | 70 Hz   |
 
 C'est la réponse à « il n'y a pas de ciel » : ce qu'on entend à la place, c'est la
-machine. Et ça donne au visiteur un sens de la profondeur — on *entend* qu'on descend.
+machine. Et ça donne au visiteur un sens de la profondeur — on _entend_ qu'on descend.
 
 ### 4.4 — Le noir est noir
 
@@ -645,25 +651,25 @@ valeur — un couloir qui s'enfonce est un couloir dont on ne voit pas le bout.
 - **Des passagers.** Écarté par la question de départ, et à raison : deux cent mille
   silhouettes qui ne sont pas dans le manga seraient la plus grosse invention du site.
 - **Le rendu encre / trame manga.** Écarté par la direction retenue. Reste sur la
-  table pour plus tard ; il se poserait *par-dessus* la vague 1 sans la contredire.
+  table pour plus tard ; il se poserait _par-dessus_ la vague 1 sans la contredire.
 
 ---
 
 ## Ordre d'attaque
 
-| | vague | coût | ce qu'on voit à l'écran |
-|---|---|---|---|
-| 1 | **0 — normales & FrontSide** | 1 h | le scintillement sur 8 489 m de cloison disparaît ; rien d'autre |
-| 2 | **1.1–1.3 — luminaires dérivés + bake** | 1,5 j | chaque pièce s'éclaire elle-même ; les cinq ponts cessent de se ressembler |
-| 3 | **1.4 — quads émissifs** | 2 h | ⭐ le meilleur rapport du plan : les rangées de lampes donnent sa longueur au vaisseau |
-| 4 | **1.5–1.7 — tessellation, matériau, budgets** | 1 j | dégradés propres sur les murs, noirs vrais |
-| 5 | **2.1–2.2 — vitesse & inertie** | 2 h | ⭐ le vaisseau devient immense, en deux constantes |
-| 6 | **4.1 — ébrasements** | 4 h | ⭐ on franchit de la matière |
-| 7 | **2.3–2.4 — roulis, respiration, FOV** | 4 h | on a un corps |
-| 8 | **3.1 — brouillard par pièce** | 2 h | l'air change de pièce en pièce |
-| 9 | **4.2 — les deux fenêtres** | 3 h | ⭐ le huis clos a deux exceptions, et on les sent |
-| 10 | **2.5 + 3.2 + 4.3 — pas, réverbération, rumeur** | 1 j | ⭐ le canal le plus rentable pour l'échelle |
-| 11 | **3.3 — poussière & colonnes de lumière** | 4 h | les grands vides ont de l'air |
+|     | vague                                            | coût  | ce qu'on voit à l'écran                                                                |
+| --- | ------------------------------------------------ | ----- | -------------------------------------------------------------------------------------- |
+| 1   | **0 — normales & FrontSide**                     | 1 h   | le scintillement sur 8 489 m de cloison disparaît ; rien d'autre                       |
+| 2   | **1.1–1.3 — luminaires dérivés + bake**          | 1,5 j | chaque pièce s'éclaire elle-même ; les cinq ponts cessent de se ressembler             |
+| 3   | **1.4 — quads émissifs**                         | 2 h   | ⭐ le meilleur rapport du plan : les rangées de lampes donnent sa longueur au vaisseau |
+| 4   | **1.5–1.7 — tessellation, matériau, budgets**    | 1 j   | dégradés propres sur les murs, noirs vrais                                             |
+| 5   | **2.1–2.2 — vitesse & inertie**                  | 2 h   | ⭐ le vaisseau devient immense, en deux constantes                                     |
+| 6   | **4.1 — ébrasements**                            | 4 h   | ⭐ on franchit de la matière                                                           |
+| 7   | **2.3–2.4 — roulis, respiration, FOV**           | 4 h   | on a un corps                                                                          |
+| 8   | **3.1 — brouillard par pièce**                   | 2 h   | l'air change de pièce en pièce                                                         |
+| 9   | **4.2 — les deux fenêtres**                      | 3 h   | ⭐ le huis clos a deux exceptions, et on les sent                                      |
+| 10  | **2.5 + 3.2 + 4.3 — pas, réverbération, rumeur** | 1 j   | ⭐ le canal le plus rentable pour l'échelle                                            |
+| 11  | **3.3 — poussière & colonnes de lumière**        | 4 h   | les grands vides ont de l'air                                                          |
 
 Total : **6 à 7 jours**. Les cinq lignes ⭐ font ~70 % de l'effet ressenti pour ~2
 jours : si tu ne veux qu'une chose, c'est 3 + 5 + 6 + 9 + 10.

@@ -1,7 +1,18 @@
 import { describe, expect, it } from 'vitest'
 import { buildShip, ceilingOf } from './blueprint'
-import { PLATE_PITCH, distanceToBoundary, structureFootprint } from './geometry'
-import { PATCH, buildTierMesh, colourFor, type TierMesh } from './mesh'
+import {
+  COLUMN_HALF_WIDTH,
+  DOOR_HEIGHT,
+  PLATE_PITCH,
+  columnWalls,
+  distanceToBoundary,
+  grilleBars,
+  pointInPolygon,
+  structureFootprint,
+  toClockwise,
+} from './geometry'
+import { PATCH, buildSolidMesh, buildTierMesh, colourFor, type TierMesh } from './mesh'
+import type { Vec2 } from './types'
 
 const ship = buildShip()
 
@@ -104,7 +115,7 @@ describe('buildTierMesh', () => {
    * They were raised an order of magnitude when the deck started carrying its own
    * baked light: a lattice fine enough to hold a shadow in a corner is what costs
    * this, and `PATCH` in `mesh.ts` is the one number that moves it. The ship draws
-   * about 287,000 triangles now against 24,000 before, the largest deck 57,000, and
+   * about 289,000 triangles now against 24,000 before, the largest deck 57,000, and
    * a deck is built in about an eighth of a second. What did *not* change is the
    * work per frame: one material, one upload per deck, and `visibleSpaces` drawing
    * only the rooms you can see from where you stand.
@@ -283,6 +294,169 @@ describe('the solids standing in the rooms', () => {
       structures: [],
     }).triangles
     expect(withCoffins).toBeGreaterThan(empty)
+  })
+})
+
+/**
+ * Which way every surface faces, now that the deck is drawn `FrontSide`.
+ *
+ * Under `DoubleSide` this could not be tested and did not need to be: a quad
+ * wound backwards was drawn anyway, with its normal flipped for the light, and
+ * looked exactly like the quad beside it. Culled to the front it is a hole, so
+ * the winding is load-bearing and belongs in a test.
+ *
+ * Note what is *not* tested here, having been tried and found worthless: that
+ * every triangle's centroid nudged along its normal lands inside some room. It
+ * passes with every solid on the ship inside out, because a bed's faces turned
+ * inward still point into the room the bed stands in. The probe has to be against
+ * the outline the surface belongs to, which is what these three do.
+ */
+describe('which way the surfaces face', () => {
+  /** The point 2 cm off the middle of `a`→`b`, along the face's own normal. */
+  const probe = (a: Vec2, b: Vec2): Vec2 => {
+    const dx = b[0] - a[0]
+    const dz = b[1] - a[1]
+    const length = Math.hypot(dx, dz) || 1
+    return [(a[0] + b[0]) / 2 - (dz / length) * 0.02, (a[1] + b[1]) / 2 + (dx / length) * 0.02]
+  }
+
+  it('faces every wall of a room into the room it belongs to', () => {
+    const wrong: string[] = []
+    for (const plan of ship.plans.values()) {
+      const spaces = new Map(plan.spaces.map((space) => [space.id, space]))
+      const columns = plan.columns
+      for (const wall of plan.walls) {
+        if (wall.structureId) continue
+        const space = spaces.get(wall.spaceId)
+        if (!space) continue
+        // A column's four faces come down this same list and want the opposite
+        // answer; they are checked below, and told apart by sitting on one.
+        const middle: Vec2 = [(wall.start[0] + wall.end[0]) / 2, (wall.start[1] + wall.end[1]) / 2]
+        const onAColumn = (columns.get(space.id) ?? []).some(
+          (centre) =>
+            Math.abs(centre[0] - middle[0]) <= COLUMN_HALF_WIDTH + 1e-6 &&
+            Math.abs(centre[1] - middle[1]) <= COLUMN_HALF_WIDTH + 1e-6,
+        )
+        if (onAColumn) continue
+        if (!pointInPolygon(probe(wall.start, wall.end), space.footprint)) wrong.push(space.id)
+      }
+    }
+    // Three of the ship's footprints are written clockwise, and their walls were
+    // built inside out until `wallSegments` started walking them the other way.
+    expect(wrong, `${wrong.length} walls turn their back on their own room`).toEqual([])
+  })
+
+  it('faces a column out at the hall rather than in at itself', () => {
+    let faces = 0
+    const wrong: string[] = []
+    for (const plan of ship.plans.values()) {
+      for (const [spaceId, centres] of plan.columns) {
+        for (const centre of centres) {
+          for (const face of columnWalls(spaceId, centre)) {
+            faces++
+            const [x, z] = probe(face.start, face.end)
+            const inside =
+              Math.abs(x - centre[0]) < COLUMN_HALF_WIDTH - 1e-3 &&
+              Math.abs(z - centre[1]) < COLUMN_HALF_WIDTH - 1e-3
+            if (inside) wrong.push(spaceId)
+          }
+        }
+      }
+    }
+    expect(faces, 'no level lays a column grid').toBeGreaterThan(0)
+    expect(wrong, `${wrong.length} column faces look inward`).toEqual([])
+  })
+
+  it('faces every side of a solid away from the solid, and caps it upward', () => {
+    const inward: string[] = []
+    let sides = 0
+    let capped = 0
+
+    for (const plan of ship.plans.values()) {
+      const spaces = new Map(plan.spaces.map((space) => [space.id, space]))
+      for (const structure of plan.structures) {
+        const room = spaces.get(structure.spaceId)
+        if (!room) continue
+        // A run of bars is a row of uprights inside one outline, so each upright
+        // is probed against itself: 2 cm out of a 6 cm bar is still inside the
+        // 14 cm run, and probing against the run would clear a backwards bar.
+        const outlines =
+          structure.kind === 'bars'
+            ? grilleBars(structure).map(toClockwise)
+            : [toClockwise(structureFootprint(structure))]
+
+        const mesh = buildSolidMesh(structure, room, plan.tier)
+        for (let i = 0; i < mesh.positions.length; i += 9) {
+          const x =
+            (mesh.positions[i] + mesh.positions[i + 3] + mesh.positions[i + 6]) / 3 +
+            mesh.normals[i] * 0.02
+          const z =
+            (mesh.positions[i + 2] + mesh.positions[i + 5] + mesh.positions[i + 8]) / 3 +
+            mesh.normals[i + 2] * 0.02
+
+          if (Math.abs(mesh.normals[i + 1]) < 1e-6) {
+            sides++
+            // Outside every one of its own outlines: the rail over a grille is
+            // drawn from the run, the uprights under it from their own bars.
+            if (outlines.every((outline) => pointInPolygon([x, z], outline))) {
+              inward.push(structure.id)
+            }
+          } else if (mesh.normals[i + 1] > 0.9) {
+            capped++
+          }
+        }
+      }
+    }
+
+    expect(sides, 'no solid has a side').toBeGreaterThan(0)
+    expect(capped, 'nothing on the ship has a top you can see').toBeGreaterThan(0)
+    expect(inward, `${inward.length} solid faces look into the solid`).toEqual([])
+  })
+
+  it('gives a lintel a face in both of the rooms it spans', () => {
+    // A wall is emitted twice over, once by each of the two rooms that share it,
+    // so both of its sides exist without anyone arranging it. A lintel belongs to
+    // `door.a` alone, and drawn once it is a hole in the ceiling of `door.b`.
+    let checked = 0
+    const missing: string[] = []
+
+    for (const plan of ship.plans.values()) {
+      const mesh = buildTierMesh(plan)
+
+      for (const door of plan.doorways) {
+        const dx = door.end[0] - door.start[0]
+        const dz = door.end[1] - door.start[1]
+        const length = Math.hypot(dx, dz)
+        if (length < 0.5) continue
+        // The two faces a lintel over this opening must have, either way round.
+        const nx = -dz / length
+        const nz = dx / length
+        const middle = [(door.start[0] + door.end[0]) / 2, (door.start[1] + door.end[1]) / 2]
+
+        let front = false
+        let back = false
+        for (let i = 0; i < mesh.positions.length; i += 9) {
+          if (Math.abs(mesh.normals[i + 1]) > 1e-6) continue
+          const cy = (mesh.positions[i + 1] + mesh.positions[i + 4] + mesh.positions[i + 7]) / 3
+          if (cy < DOOR_HEIGHT + plan.tier.elevation) continue
+          const cx = (mesh.positions[i] + mesh.positions[i + 3] + mesh.positions[i + 6]) / 3
+          const cz = (mesh.positions[i + 2] + mesh.positions[i + 5] + mesh.positions[i + 8]) / 3
+          // On the opening's own line, within its own span.
+          if (Math.abs((cx - middle[0]) * nx + (cz - middle[1]) * nz) > 0.05) continue
+          if (Math.abs((cx - middle[0]) * -nz + (cz - middle[1]) * nx) > length / 2) continue
+
+          const facing = mesh.normals[i] * nx + mesh.normals[i + 2] * nz
+          if (facing > 0.99) front = true
+          if (facing < -0.99) back = true
+        }
+
+        checked++
+        if (!(front && back)) missing.push(`${door.a}|${door.b}`)
+      }
+    }
+
+    expect(checked, 'no opening was checked').toBeGreaterThan(300)
+    expect(missing, `${missing.length} openings have a lintel on one side only`).toEqual([])
   })
 })
 

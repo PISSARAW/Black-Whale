@@ -20,6 +20,7 @@ import {
   sealKey,
   structureFootprint,
   subdivideTriangle,
+  toClockwise,
   triangulate,
 } from './geometry'
 import { ceilingOf } from './blueprint'
@@ -529,12 +530,21 @@ class MeshBuilder {
   }
 
   /**
-   * A vertical quad, wound so it faces both ways once the material says so, and
-   * cut into a grid of patches on the way.
+   * A vertical quad, cut into a grid of patches on the way.
    *
    * A nine-metre bulkhead written as two triangles cannot show the crease where it
    * meets the deck, nor the pool of the fitting hanging in front of it. Cut into
    * roughly two-metre cells, it shows both.
+   *
+   * **Which way it faces is the argument order.** Wound `start`→`end` and
+   * bottom-up, the face normal comes out `(-dz, 0, dx)`: for a polygon wound
+   * counter-clockwise in `[x, z]` that points *into* the polygon, and for one
+   * wound clockwise, out of it. So a room hands over its walls counter-clockwise
+   * — `wallSegments` guarantees it — and a solid, a column and a run of bars hand
+   * theirs over clockwise, because the face of a bed has to look away from the
+   * bed. There is no material setting that can recover this: the deck is drawn
+   * `FrontSide`, and a quad wound the wrong way is not a dark quad, it is a
+   * missing one, which is the only way an error here can be seen at all.
    */
   quad(start: Vec2, end: Vec2, bottom: number, top: number, colour: Rgb, shade?: Shade): void {
     const run = Math.hypot(end[0] - start[0], end[1] - start[1])
@@ -586,7 +596,12 @@ function extrudeSolid(
   const vertical = (point: Vec2, bottom: number, top: number) =>
     edges.push(point[0], bottom, point[1], point[0], top, point[1])
 
-  const outline = structureFootprint(structure)
+  // Clockwise, so every face looks out at the room rather than in at the solid:
+  // see `MeshBuilder.quad`. `structureWalls` is left alone — collision reads a
+  // segment as a line and does not care which end is which — so this is a
+  // rendering decision made where the rendering happens, and the outline the
+  // visitor bumps into is still the outline that gets drawn.
+  const outline = toClockwise(structureFootprint(structure))
   const colour = colourFor(hex(STRUCTURE_COLOURS[structure.kind]), structure.provenance)
   const bottom = tier.elevation + structure.base
   const top = Math.min(bottom + structure.height, tier.elevation + ceilingOf(room, tier))
@@ -603,7 +618,8 @@ function extrudeSolid(
   if (structure.kind === 'bars') {
     const railBottom = Math.max(bottom, top - BAR_RAIL)
     for (const bar of grilleBars(structure)) {
-      for (const [start, end] of iterateEdges(bar)) {
+      // Each upright is a little solid of its own, and wants the same way round.
+      for (const [start, end] of iterateEdges(toClockwise(bar))) {
         builder.quad(start, end, bottom, railBottom, colour, sides)
       }
     }
@@ -767,6 +783,11 @@ export function buildTierMesh(plan: TierPlan, options: { reveal?: boolean } = {}
   // standing in a room are in that list too, for the same reason, but they are
   // raised by the structure pass below: extruded to the ceiling like a wall, a
   // bed would be a partition.
+  //
+  // They are taken exactly as they come, ends included: `wallSegments` hands a
+  // room's walls over counter-clockwise and `columnWalls` hands a pillar's faces
+  // over clockwise, which is what makes both of them face the hall out of the
+  // same builder. Reordering this list would turn a wall inside out.
   const wallsOf = new Map<string, WallSegment[]>()
   for (const wall of plan.walls) {
     if (wall.structureId) continue
@@ -940,14 +961,24 @@ export function buildTierMesh(plan: TierPlan, options: { reveal?: boolean } = {}
           : reveal
             ? revealed(provenance, 0.45)
             : colourFor(WALL_COLOUR, provenance)
-      builder.quad(
-        door.start,
-        door.end,
-        lintelBottom,
-        lintelTop,
-        lintelColour,
-        bake((x, y, z) => light.wall(x, y, z, lintelBottom, lintelTop)),
-      )
+      // Both ways round, because a lintel is the one surface on the deck with a
+      // room on either side of it and only one entry in the buffers. A wall is
+      // drawn twice over — once by each of the two rooms that share it, which is
+      // what lets each take its own room's light — but a lintel belongs to
+      // `door.a` alone, and drawn once it would be a hole in the ceiling of
+      // `door.b`. Three hundred and sixty-eight openings at three triangles
+      // each: 1 168 on the whole ship, against the 288 045 it already drew.
+      const lintel = (from: Vec2, to: Vec2) =>
+        builder.quad(
+          from,
+          to,
+          lintelBottom,
+          lintelTop,
+          lintelColour,
+          bake((x, y, z) => light.wall(x, y, z, lintelBottom, lintelTop)),
+        )
+      lintel(door.start, door.end)
+      lintel(door.end, door.start)
     }
 
     const count = builder.positions.length / 3 - start

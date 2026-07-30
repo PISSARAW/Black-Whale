@@ -126,25 +126,6 @@ export const load: PageServerLoad = async ({ cookies }) => {
     isVisibleAtSpoilerLimit(character, spoilerLimit),
   )
 
-  // Some recently catalogued affiliations do not yet exist in the legacy faction file.
-  const catalogueFactionIds = new Set(
-    characters
-      .map((character) => character.factionId)
-      .filter((factionId): factionId is string => Boolean(factionId)),
-  )
-  for (const factionId of catalogueFactionIds) {
-    if (!factions.some((faction) => faction.id === factionId)) {
-      factions.push({
-        id: factionId,
-        name: factionId === 'justice-bureau' ? 'Justice Bureau' : factionId.replaceAll('-', ' '),
-        description:
-          factionId === 'justice-bureau'
-            ? 'Judicial and investigative authority maintaining legal order aboard the Black Whale.'
-            : 'Affiliation recorded in the passenger intelligence catalogue.',
-      })
-    }
-  }
-
   return {
     factions,
     characters,

@@ -20,6 +20,11 @@
     "description": "Military force of the Empire (2,000 soldiers on board), responsible for martial law and the security of Tiers 1 and 2."
   },
   {
+    "id": "justice-bureau",
+    "name": "Justice Bureau",
+    "description": "Kakin's Office of Justice, the judicial and investigative authority on board. Handles the voyage's legal proceedings from the Tier 1 Supreme Court and keeps operating after the declaration of special martial law."
+  },
+  {
     "id": "phantom-troupe",
     "name": "Phantom Troupe",
     "description": "Also known as the Phantom (Spider) Squad. Criminal organization infiltrated Tier 5 to hunt down Hisoka."

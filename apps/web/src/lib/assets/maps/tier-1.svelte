@@ -302,7 +302,7 @@
       at: [402.0, 328.8],
       turned: false,
       through: false,
-      inferred: true,
+      inferred: false,
     },
     {
       id: 'tier-1-queens-living-quarters-room-02',
@@ -313,7 +313,7 @@
       at: [443.0, 328.8],
       turned: false,
       through: false,
-      inferred: true,
+      inferred: false,
     },
     {
       id: 'tier-1-queens-living-quarters-room-03',
@@ -324,7 +324,7 @@
       at: [402.0, 366.3],
       turned: false,
       through: false,
-      inferred: true,
+      inferred: false,
     },
     {
       id: 'tier-1-queens-living-quarters-room-04',
@@ -335,7 +335,7 @@
       at: [443.0, 366.3],
       turned: false,
       through: false,
-      inferred: true,
+      inferred: false,
     },
     {
       id: 'tier-1-queens-living-quarters-room-05',
@@ -346,7 +346,7 @@
       at: [402.0, 403.8],
       turned: false,
       through: false,
-      inferred: true,
+      inferred: false,
     },
     {
       id: 'tier-1-queens-living-quarters-room-06',
@@ -357,7 +357,7 @@
       at: [443.0, 403.8],
       turned: false,
       through: false,
-      inferred: true,
+      inferred: false,
     },
     {
       id: 'tier-1-queens-living-quarters-room-07',
@@ -368,7 +368,7 @@
       at: [402.0, 441.3],
       turned: false,
       through: false,
-      inferred: true,
+      inferred: false,
     },
     {
       id: 'tier-1-queens-living-quarters-room-08',
@@ -379,7 +379,7 @@
       at: [443.0, 441.3],
       turned: false,
       through: false,
-      inferred: true,
+      inferred: false,
     },
     {
       id: 'tier-1-royal-residential-sector-room-1001',

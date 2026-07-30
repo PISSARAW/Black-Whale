@@ -88,6 +88,12 @@
     auraColour?: string | null
     /** Whether a technique the walk answers to is active, so aiming is live. */
     aiming?: boolean
+    /**
+     * Paint the deck in what it is worth as evidence rather than in what its
+     * rooms are for: the reveal. It changes nothing about the ship — the same
+     * walls, the same solids — only what the surfaces say about themselves.
+     */
+    reveal?: boolean
     /** The room down the reticle, mirrored out for the read-out. */
     aimedAt?: Space | null
     /** The solid down the reticle, for the techniques that work on solids. */
@@ -124,6 +130,7 @@
     world = EMPTY_WORLD,
     auraColour = null,
     aiming = false,
+    reveal = false,
     aimedAt = $bindable(null),
     aimedSolidAt = $bindable(null),
     onCast,
@@ -321,6 +328,9 @@
       type Built = { root: import('three').Group; rooms: Room[] }
 
       const decks: Record<string, Built | undefined> = {}
+      // The reveal is a second painting of the same geometry, so it is cached
+      // apart rather than evicting the deck it was turned on from.
+      const revealedDecks: Record<string, Built | undefined> = {}
       let visible: Built | null = null
 
       /**
@@ -342,7 +352,8 @@
        */
       const worldKey = (nextTierId: string) =>
         `${nextTierId}::${emptiedOn(world, nextTierId, ship).sort().join(',')}` +
-        `::${heldSolidIds(world).sort().join(',')}::${world.shut.slice().sort().join(',')}`
+        `::${heldSolidIds(world).sort().join(',')}::${world.shut.slice().sort().join(',')}` +
+        (reveal ? '::reveal' : '')
 
       /**
        * A deck Nen has taken a room out of, at most one per deck.
@@ -365,7 +376,7 @@
        * and in the bounding sphere `buildTierMesh` measured for it.
        */
       function extrude(nextTierId: string): Built {
-        const mesh = buildTierMesh(walkedPlan(ship, world, nextTierId))
+        const mesh = buildTierMesh(walkedPlan(ship, world, nextTierId), { reveal })
         const position = new THREE.BufferAttribute(mesh.positions, 3)
         const normal = new THREE.BufferAttribute(mesh.normals, 3)
         const color = new THREE.BufferAttribute(mesh.colors, 3)
@@ -434,9 +445,10 @@
       function buildDeck(nextTierId: string) {
         const key = worldKey(nextTierId)
 
-        if (key === `${nextTierId}::::::`) {
-          const built = decks[nextTierId] ?? extrude(nextTierId)
-          decks[nextTierId] = built
+        if (key === `${nextTierId}::::::${reveal ? '::reveal' : ''}`) {
+          const held = reveal ? revealedDecks : decks
+          const built = held[nextTierId] ?? extrude(nextTierId)
+          held[nextTierId] = built
           return { built, key }
         }
 

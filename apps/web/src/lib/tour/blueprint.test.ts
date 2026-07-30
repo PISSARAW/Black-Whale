@@ -5,6 +5,7 @@ import {
   buildShip,
   ceilingOf,
   spaceAt,
+  spaceForLocation,
   spawnFacing,
   spawnPoint,
   validateBlueprint,
@@ -21,6 +22,24 @@ import {
 import type { Blueprint, Provenance, Space, Structure, Vec2 } from './types'
 
 const ship = buildShip()
+
+/**
+ * Catalogue entries that are not rooms: the ship, the tiers, the zones that
+ * hold rooms rather than being one, and the one location that is not aboard.
+ * Nothing here is something the visitor walks into.
+ */
+const CONTAINERS = new Set([
+  'black-whale-1',
+  'zodiac-hq',
+  'tier-1',
+  'tier-2',
+  'tier-3',
+  'tier-4',
+  'tier-5',
+  'tier-1-queens-living-quarters',
+  'tier-1-royal-residential-sector',
+  'tier-3-political-ward',
+])
 
 describe('the ship blueprint', () => {
   it('satisfies every reconstruction invariant', () => {
@@ -547,20 +566,7 @@ describe('the link back to the catalogue', () => {
   })
 
   it('reconstructs every room the catalogue places aboard the ship', () => {
-    // Tiers and the ship itself are containers, not rooms, and Zodiac HQ is
-    // not aboard at all — none of them is something the visitor walks into.
-    const containers = new Set([
-      'black-whale-1',
-      'zodiac-hq',
-      'tier-1',
-      'tier-2',
-      'tier-3',
-      'tier-4',
-      'tier-5',
-      'tier-1-queens-living-quarters',
-      'tier-1-royal-residential-sector',
-      'tier-3-political-ward',
-    ])
+    const containers = CONTAINERS
     const reconstructed = new Set(
       blueprint.spaces.map((space) => space.locationId).filter(Boolean) as string[],
     )
@@ -713,6 +719,35 @@ describe('the link back to the catalogue', () => {
         `"${english}" is translated ${translations.size} ways`,
       ).toHaveLength(1)
     }
+  })
+})
+
+/**
+ * `/ship` offers to walk the room it has selected. The offer is only honest if
+ * every room the map can select resolves to a space the walk can open at, so
+ * the bridge is tested rather than hoped for.
+ */
+describe('walking there from the map', () => {
+  it('finds a space for every location the map can select', () => {
+    const dangling = (locationCatalog as Array<{ id: string }>)
+      .map((entry) => entry.id)
+      .filter((id) => !CONTAINERS.has(id))
+      .filter((id) => spaceForLocation(ship, id) === null)
+    expect(dangling).toEqual([])
+  })
+
+  it('opens at the room on the deck rather than inside its interior', () => {
+    // The apartment claims its box on the deck and all seven rooms behind the
+    // door. The box is the one you would come to.
+    expect(spaceForLocation(ship, 'tier-1-royal-residential-sector-room-1004')?.id).toBe(
+      'tier-1-royal-residential-sector-room-1004',
+    )
+    expect(spaceForLocation(ship, 'tier-5-standard-cabins')?.tierId).toBe('tier-5')
+  })
+
+  it('offers nothing for a location the reconstruction does not hold', () => {
+    expect(spaceForLocation(ship, 'zodiac-hq')).toBeNull()
+    expect(spaceForLocation(ship, null)).toBeNull()
   })
 })
 

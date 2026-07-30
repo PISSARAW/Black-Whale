@@ -18,7 +18,7 @@
    * `/ship` plan unit in this view. A wall then reads at the same weight on a
    * deck and in a bedroom.
    */
-  import type { TierPlan } from '$lib/tour/blueprint'
+  import type { Crossing, TierPlan } from '$lib/tour/blueprint'
   import type { Space, Vec2 } from '$lib/tour/types'
 
   interface Props {
@@ -28,9 +28,29 @@
     heading: number
     currentSpaceId: string | null
     label: string
+    /**
+     * The stairs, lifts, bulkheads and interior doors that touch this level,
+     * already placed in its coordinates by `crossingsOn`.
+     */
+    crossings?: Crossing[]
     /** The name to write on a room, in the language being read. */
     nameOf?: (space: Space) => string
     onSelect?: (space: Space) => void
+    /**
+     * What clicking a room does, in words: the plan travels while the visitor is
+     * empty-handed and aims while a technique is up, and the two must not read
+     * the same. One verb per widget.
+     */
+    selectLabel?: (room: string) => string
+    /** What a crossing is called, for the marker's tooltip and its label. */
+    crossingLabel?: (crossing: Crossing) => string
+    /** Whether a technique is up, so the plan says it is aiming rather than going. */
+    aiming?: boolean
+    /**
+     * Take the height offered rather than the one the drawing implies. The plan
+     * in the column sizes itself; the full-screen one fills the dialog.
+     */
+    fill?: boolean
   }
 
   let {
@@ -39,8 +59,13 @@
     heading,
     currentSpaceId,
     label,
+    crossings = [],
     nameOf = (space) => space.name,
     onSelect,
+    selectLabel = (room) => room,
+    crossingLabel = () => '',
+    aiming = false,
+    fill = false,
   }: Props = $props()
 
   const PADDING = 20
@@ -140,6 +165,22 @@
     }, []),
   )
 
+  /**
+   * How far up or down a crossing has to go before it is drawn as going up or
+   * down. An interior sits at its deck's elevation, so its door is level.
+   */
+  const RISE = 0.5
+
+  /**
+   * The marker a crossing gets: up, down, or a threshold on the level.
+   *
+   * Three glyphs and no words, because the marker is 16 plan units across and
+   * has to survive being drawn at a third of a millimetre in the column and at
+   * a centimetre in the full-screen plan.
+   */
+  const glyphOf = (crossing: Crossing) =>
+    crossing.rise > RISE ? '▲' : crossing.rise < -RISE ? '▼' : '◈'
+
   // The camera looks along (-sin, -cos); the cone on the map has to agree.
   const cone = $derived.by(() => {
     const spread = 0.5
@@ -152,13 +193,16 @@
   })
 </script>
 
-<figure class="rounded-lg border border-[#333] bg-[#050505]/90 p-2">
+<figure
+  class="rounded-lg border border-[#333] bg-[#050505]/90 p-2 {fill ? 'flex h-full flex-col' : ''}"
+>
   <figcaption class="px-1 pb-1 text-[10px] uppercase tracking-widest text-[#FFD700]/70">
     {label}
   </figcaption>
   <svg
     viewBox="{bounds.minX} {bounds.minZ} {bounds.width} {bounds.height}"
-    class="h-full w-full"
+    class="w-full {fill ? 'min-h-0 flex-1' : 'h-full'}"
+    class:aiming
     style="--unit: {unit}"
     role="img"
     aria-label={label}
@@ -175,7 +219,7 @@
           class:selected={space.id === currentSpaceId}
           role="button"
           tabindex="0"
-          aria-label={nameOf(space)}
+          aria-label={selectLabel(nameOf(space))}
           onclick={() => onSelect?.(space)}
           onkeydown={(event) => {
             if (event.key === 'Enter' || event.key === ' ') {
@@ -195,6 +239,20 @@
       {/if}
     {/each}
 
+    <!-- The openings, drawn over the walls they were cut out of. A doorway is
+         derived from a shared wall and so exists nowhere in the blueprint to
+         read off; the plan is where it becomes visible, and "where is the door"
+         is the question a plan is for. -->
+    {#each plan.doorways as door (`${door.a}|${door.b}|${door.start[0]}|${door.start[1]}`)}
+      <line
+        class="doorway"
+        x1={door.start[0]}
+        y1={door.start[1]}
+        x2={door.end[0]}
+        y2={door.end[1]}
+      />
+    {/each}
+
     {#each captions as caption (caption.id)}
       <text
         class="label"
@@ -204,6 +262,19 @@
         transform={caption.turned ? `rotate(-90 ${caption.at[0]} ${caption.at[1]})` : ''}
         >{caption.text}</text
       >
+    {/each}
+
+    <!-- The four stairwells, the bulkhead and the doors into the interiors. Over
+         the legends on purpose: a name you cannot read is worth less than the
+         only way off the deck. -->
+    {#each crossings as crossing (`${crossing.link.from}|${crossing.link.to}`)}
+      <g class="crossing">
+        <title>{crossingLabel(crossing)}</title>
+        <circle cx={crossing.at[0]} cy={crossing.at[1]} r={unit * 9} />
+        <text x={crossing.at[0]} y={crossing.at[1] + unit * 4} font-size={unit * 12}>
+          {glyphOf(crossing)}
+        </text>
+      </g>
     {/each}
 
     <path d={cone} fill="#FFFFF0" opacity="0.55" />
@@ -230,6 +301,11 @@
   .zone.clickable:hover {
     fill: #3d1c1c;
   }
+  /* Aiming is not travelling, so the plan does not glow gold for it. */
+  .aiming .zone.clickable:hover {
+    fill: #2a2536;
+    stroke: #c6b3ff;
+  }
   .zone.through {
     fill: #150b0b;
     stroke: #ffd700;
@@ -254,6 +330,27 @@
     fill: #fffff0;
     font-family: sans-serif;
     pointer-events: none;
+    text-anchor: middle;
+  }
+  /* An opening reads as a gap in the wall: gold, and thicker than the wall it
+     interrupts, which is how the deck maps of `/ship` mark the hull. */
+  .doorway {
+    stroke: #ffd700;
+    stroke-width: calc(var(--unit) * 3);
+    stroke-linecap: round;
+    pointer-events: none;
+  }
+  .crossing {
+    pointer-events: none;
+  }
+  .crossing circle {
+    fill: #0b0b0b;
+    stroke: #ffd700;
+    stroke-width: calc(var(--unit) * 1.5);
+  }
+  .crossing text {
+    fill: #ffd700;
+    font-family: sans-serif;
     text-anchor: middle;
   }
 </style>

@@ -756,7 +756,7 @@ export const heldSolidIds = (world: TourWorld): string[] => Object.keys(world.so
 export function wanderOffset(id: string, seconds: number): Vec2 {
   let phase = 0
   for (let i = 0; i < id.length; i++) phase = (phase * 31 + id.charCodeAt(i)) % 360
-  const angle = (seconds * 0.6) + (phase * Math.PI) / 180
+  const angle = seconds * 0.6 + (phase * Math.PI) / 180
   return [Math.cos(angle) * 1.4, Math.sin(angle) * 1.4]
 }
 
@@ -891,7 +891,8 @@ function castOnSolid(
   if (kind === 'shred' && world.wound) {
     const wounded = solidById(ship, world, world.wound)
     const hold = world.solids[world.wound]
-    if (!wounded || hold?.gone) return { world: { ...world, wound: null }, report: { kind: 'no-solid' } }
+    if (!wounded || hold?.gone)
+      return { world: { ...world, wound: null }, report: { kind: 'no-solid' } }
     const left = (hold?.scale ?? 1) * 0.7
     if (left < 0.2) {
       return {
@@ -953,7 +954,8 @@ function castOnSolid(
         return { world: { ...world, pairing: id }, report: { kind: 'gum-set', solidId: id } }
       }
       const anchor = solidById(ship, world, world.pairing)
-      if (!anchor) return { world: { ...world, pairing: id }, report: { kind: 'gum-set', solidId: id } }
+      if (!anchor)
+        return { world: { ...world, pairing: id }, report: { kind: 'gum-set', solidId: id } }
       const anchorNow = solidNow(anchor, world.solids[world.pairing])
       const now = solidNow(structure, hold)
       const dx = now.at[0] - anchorNow.at[0]
@@ -978,13 +980,19 @@ function castOnSolid(
     case 'disguise': {
       const current = hold?.kind ?? structure.kind
       const next = FORGERIES[(FORGERIES.indexOf(current) + 1) % FORGERIES.length]
-      return { world: withHold(world, id, { kind: next }), report: { kind: 'forged', solidId: id, as: next } }
+      return {
+        world: withHold(world, id, { kind: next }),
+        report: { kind: 'forged', solidId: id, as: next },
+      }
     }
 
     case 'pocket': {
       const wrapped = (hold?.scale ?? 1) < 0.5
       return wrapped
-        ? { world: withHold(world, id, { scale: 1, squash: 1 }), report: { kind: 'unwrapped', solidId: id } }
+        ? {
+            world: withHold(world, id, { scale: 1, squash: 1 }),
+            report: { kind: 'unwrapped', solidId: id },
+          }
         : {
             world: withHold(world, id, { scale: 0.25, squash: 0.25 }),
             report: { kind: 'wrapped', solidId: id },
@@ -997,7 +1005,10 @@ function castOnSolid(
       const push: Vec2 = [-Math.sin(heading) * 3, -Math.cos(heading) * 3]
       const landing = shove(ship, world, structure, hold, push)
       return landing
-        ? { world: withHold(world, id, { at: landing }), report: { kind: 'pushed', solidId: id, metres: 3 } }
+        ? {
+            world: withHold(world, id, { at: landing }),
+            report: { kind: 'pushed', solidId: id, metres: 3 },
+          }
         : { world, report: { kind: 'pushed', solidId: id, metres: 0 } }
     }
 
@@ -1017,14 +1028,20 @@ function castOnSolid(
     }
 
     case 'impact':
-      return { world: withHold(world, id, { squash: 0.12 }), report: { kind: 'crushed', solidId: id } }
+      return {
+        world: withHold(world, id, { squash: 0.12 }),
+        report: { kind: 'crushed', solidId: id },
+      }
 
     // A sustained volley: the thing is driven back, and the third burst is the
     // one that ends it.
     case 'barrage': {
       const hits = (hold?.hits ?? 0) + 1
       if (hits >= 3) {
-        return { world: withHold(world, id, { hits, gone: true }), report: { kind: 'shattered', solidId: id } }
+        return {
+          world: withHold(world, id, { hits, gone: true }),
+          report: { kind: 'shattered', solidId: id },
+        }
       }
       const landing = shove(ship, world, structure, hold, away(2))
       return {
@@ -1046,14 +1063,20 @@ function castOnSolid(
       const now = solidNow(structure, hold)
       const landing = shove(ship, world, structure, hold, away(1.5))
       return {
-        world: withHold(world, id, { rotation: now.rotation + 25, ...(landing ? { at: landing } : {}) }),
+        world: withHold(world, id, {
+          rotation: now.rotation + 25,
+          ...(landing ? { at: landing } : {}),
+        }),
         report: { kind: 'struck', solidId: id },
       }
     }
 
     case 'serpent':
       return hold?.bound
-        ? { world: withHold(world, id, { bound: false }), report: { kind: 'released', solidId: id } }
+        ? {
+            world: withHold(world, id, { bound: false }),
+            report: { kind: 'released', solidId: id },
+          }
         : { world: withHold(world, id, { bound: true }), report: { kind: 'bound', solidId: id } }
 
     // The aura runs along the floor and comes up under something else in the
@@ -1122,7 +1145,8 @@ function castOnSolid(
         return { world: { ...world, pairing: id }, report: { kind: 'gum-set', solidId: id } }
       }
       const other = solidById(ship, world, world.pairing)
-      if (!other) return { world: { ...world, pairing: id }, report: { kind: 'gum-set', solidId: id } }
+      if (!other)
+        return { world: { ...world, pairing: id }, report: { kind: 'gum-set', solidId: id } }
       const mine = solidNow(structure, hold)
       const theirs = solidNow(other, world.solids[other.id])
       return {
@@ -1345,7 +1369,8 @@ function castOnBody(
     // change shape with.
     case 'mimicry': {
       if (!body.dance) return { world, report: { kind: 'dance-needed' } }
-      if (body.mimic) return { world: withBody({ mimic: null, eyes: null }), report: { kind: 'unmimicked' } }
+      if (body.mimic)
+        return { world: withBody({ mimic: null, eyes: null }), report: { kind: 'unmimicked' } }
       const shape = solidById(ship, world, targetSolidId ?? null)
       if (!shape) return { world, report: { kind: 'no-solid' } }
       const worn = solidNow(shape, world.solids[shape.id])
@@ -1829,7 +1854,8 @@ function runCast(
     const random = input.random ?? Math.random
     const elsewhere = [...ship.spaces.keys()].filter((id) => id !== standingIn)
     if (!elsewhere.length) return { world, report: { kind: 'no-target' } }
-    const spaceId = elsewhere[Math.min(elsewhere.length - 1, Math.floor(random() * elsewhere.length))]
+    const spaceId =
+      elsewhere[Math.min(elsewhere.length - 1, Math.floor(random() * elsewhere.length))]
     return { world, report: { kind: 'teleported', spaceId }, travelTo: spaceId }
   }
 
@@ -1848,7 +1874,10 @@ function runCast(
       // Two frames and no more. Arming a third starts a new pair rather than
       // opening a network onto everywhere, which is the rule the hideout keeps.
       if (world.doors.length >= 2) {
-        return { world: { ...world, doors: [target.id] }, report: { kind: 'doors-rearmed', spaceId: target.id } }
+        return {
+          world: { ...world, doors: [target.id] },
+          report: { kind: 'doors-rearmed', spaceId: target.id },
+        }
       }
       if (world.doors.includes(target.id)) {
         return { world, report: { kind: 'door-armed', spaceId: target.id } }
@@ -1864,15 +1893,24 @@ function runCast(
     }
 
     case 'scout': {
-      if (world.eye === target.id) return { world: { ...world, eye: null }, report: { kind: 'eye-recalled' } }
-      return { world: { ...world, eye: target.id }, report: { kind: 'eye-sent', spaceId: target.id } }
+      if (world.eye === target.id)
+        return { world: { ...world, eye: null }, report: { kind: 'eye-recalled' } }
+      return {
+        world: { ...world, eye: target.id },
+        report: { kind: 'eye-sent', spaceId: target.id },
+      }
     }
 
     case 'dowsing': {
       const distance = distanceTo(ship, target, at, standingIn)
       return {
         world: { ...world, dowsing: target.id },
-        report: { kind: 'dowsed', spaceId: target.id, distance: distance.metres, decks: distance.decks },
+        report: {
+          kind: 'dowsed',
+          spaceId: target.id,
+          distance: distance.metres,
+          decks: distance.decks,
+        },
       }
     }
 
@@ -1999,7 +2037,8 @@ function runCast(
     case 'tribunal': {
       const card = Math.min(3, (world.cards[target.id] ?? 0) + 1)
       const cards = { ...world.cards, [target.id]: card }
-      if (card === 1) return { world: { ...world, cards }, report: { kind: 'card-blue', spaceId: target.id } }
+      if (card === 1)
+        return { world: { ...world, cards }, report: { kind: 'card-blue', spaceId: target.id } }
       if (card === 2) {
         return {
           world: { ...world, cards, pinned: standingIn === target.id ? target.id : world.pinned },
@@ -2021,10 +2060,16 @@ function runCast(
     // The chain through the heart does nothing at all until the rule it names
     // is knowingly broken. Declaring it is the whole of the cast.
     case 'heart-vow':
-      return { world: { ...world, vow: target.id }, report: { kind: 'vow-declared', spaceId: target.id } }
+      return {
+        world: { ...world, vow: target.id },
+        report: { kind: 'vow-declared', spaceId: target.id },
+      }
 
     case 'contract':
-      return { world: { ...world, pact: target.id }, report: { kind: 'pact-taken', spaceId: target.id } }
+      return {
+        world: { ...world, pact: target.id },
+        report: { kind: 'pact-taken', spaceId: target.id },
+      }
 
     // The bait is what the victim wanted: a copy of something out of the room
     // they are standing in, stood in the trap. Coercion comes after it is taken.
@@ -2069,17 +2114,26 @@ function runCast(
     // The tunnel works once a night. Asking it again is what exhausts it.
     case 'portal': {
       if (!world.worm) {
-        return { world: { ...world, worm: { a: target.id, b: '', crossings: 0 } }, report: { kind: 'worm-set', spaceId: target.id } }
+        return {
+          world: { ...world, worm: { a: target.id, b: '', crossings: 0 } },
+          report: { kind: 'worm-set', spaceId: target.id },
+        }
       }
       if (!world.worm.b) {
         const worm = { ...world.worm, b: target.id }
         return { world: { ...world, worm }, report: { kind: 'worm-open', a: worm.a, b: worm.b } }
       }
-      return { world: { ...world, worm: { a: target.id, b: '', crossings: 0 } }, report: { kind: 'worm-set', spaceId: target.id } }
+      return {
+        world: { ...world, worm: { a: target.id, b: '', crossings: 0 } },
+        report: { kind: 'worm-set', spaceId: target.id },
+      }
     }
 
     case 'guardian':
-      return { world: { ...world, double: target.id }, report: { kind: 'double-posted', spaceId: target.id } }
+      return {
+        world: { ...world, double: target.id },
+        report: { kind: 'double-posted', spaceId: target.id },
+      }
 
     // ── The record ───────────────────────────────────────────────────────
 
@@ -2088,15 +2142,24 @@ function runCast(
     // and that it holds the rooms open through the hull while it does.
     case 'surveillance':
       return world.owl
-        ? { world: { ...world, owl: false }, report: { kind: 'owl-recalled', rooms: world.trail.length } }
-        : { world: { ...world, owl: true }, report: { kind: 'owl-attached', rooms: world.trail.length } }
+        ? {
+            world: { ...world, owl: false },
+            report: { kind: 'owl-recalled', rooms: world.trail.length },
+          }
+        : {
+            world: { ...world, owl: true },
+            report: { kind: 'owl-attached', rooms: world.trail.length },
+          }
 
     // Ten seconds on, taken once. The vision does not revise itself: that is
     // what makes diverging from it worth anything.
     case 'future': {
       const seen = tenSecondsOn(ship, world, target.tierId, at, input.heading ?? 0)
       if (!seen) return { world, report: { kind: 'no-target' } }
-      return { world: { ...world, foreseen: seen }, report: { kind: 'foreseen', spaceId: seen.spaceId } }
+      return {
+        world: { ...world, foreseen: seen },
+        report: { kind: 'foreseen', spaceId: seen.spaceId },
+      }
     }
 
     case 'prophecy': {
@@ -2111,11 +2174,17 @@ function runCast(
     // read together: rooms that actually adjoin carry it.
     case 'poetry': {
       if (world.poem.length >= 3) {
-        return { world: { ...world, poem: [target.id] }, report: { kind: 'line-taken', spaceId: target.id, lines: 1 } }
+        return {
+          world: { ...world, poem: [target.id] },
+          report: { kind: 'line-taken', spaceId: target.id, lines: 1 },
+        }
       }
       const poem = [...new Set([...world.poem, target.id])]
       if (poem.length < 3) {
-        return { world: { ...world, poem }, report: { kind: 'line-taken', spaceId: target.id, lines: poem.length } }
+        return {
+          world: { ...world, poem },
+          report: { kind: 'line-taken', spaceId: target.id, lines: poem.length },
+        }
       }
       const strength = poem.reduce(
         (total, room, index) =>
@@ -2171,7 +2240,10 @@ function runCast(
     // isolated room, and what it exchanges is what a room is.
     case 'arrow': {
       if (!world.pairing) {
-        return { world: { ...world, pairing: target.id }, report: { kind: 'arrow-drawn', spaceId: target.id } }
+        return {
+          world: { ...world, pairing: target.id },
+          report: { kind: 'arrow-drawn', spaceId: target.id },
+        }
       }
       const first = world.pairing
       if (first === target.id) return { world, report: { kind: 'arrow-drawn', spaceId: target.id } }
@@ -2182,7 +2254,10 @@ function runCast(
     }
 
     case 'flock': {
-      const dispatches = [target.id, ...without(world.dispatches, (id) => id === target.id)].slice(0, 8)
+      const dispatches = [target.id, ...without(world.dispatches, (id) => id === target.id)].slice(
+        0,
+        8,
+      )
       return { world: { ...world, dispatches }, report: { kind: 'dispatched', spaceId: target.id } }
     }
 
@@ -2606,7 +2681,10 @@ export function arriveInTour(world: TourWorld, ship: Ship, spaceId: string | nul
       (solid) => solid.spaceId === leaving && !next.solids[solid.id]?.gone,
     )
     if (eaten) {
-      next = { ...next, solids: { ...next.solids, [eaten.id]: { ...next.solids[eaten.id], gone: true } } }
+      next = {
+        ...next,
+        solids: { ...next.solids, [eaten.id]: { ...next.solids[eaten.id], gone: true } },
+      }
       report = { kind: 'fish-fed', spaceId: leaving, solidId: eaten.id }
     }
   }

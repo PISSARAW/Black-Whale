@@ -10,13 +10,15 @@ import {
   BAR_RAIL,
   COLUMN_HALF_WIDTH,
   DOOR_HEIGHT,
+  EPSILON,
   grilleBars,
   iterateEdges,
+  sealKey,
   structureFootprint,
   triangulate,
 } from './geometry'
 import { ceilingOf } from './blueprint'
-import type { TierPlan } from './blueprint'
+import type { BlindWall, TierPlan } from './blueprint'
 import type {
   Doorway,
   Provenance,
@@ -161,6 +163,51 @@ export function colourFor(base: Rgb, provenance: Provenance): Rgb {
   if (provenance === 'inferred') return blend(base, INFERRED_TINT, 0.55)
   if (provenance === 'panel') return blend(base, [1, 1, 1], 0.12)
   return base
+}
+
+/**
+ * The reveal: the ship painted in what it is worth as evidence, and nothing
+ * else.
+ *
+ * Ordinarily a room is coloured by what it is for and only tinted by its
+ * provenance, which is right — a walk should look like a ship. Turn the reveal
+ * on and the categories drop out: every surface takes the colour of its badge,
+ * the walls the reconstruction declared blind go red, and the openings it
+ * placed by hand go blue. The doctrine stops being a legend in the margin and
+ * becomes what you are looking at.
+ */
+const REVEAL_COLOURS: Record<Provenance, Rgb> = {
+  panel: hex(0xffd700),
+  plan: hex(0xfffff0),
+  map: hex(0x5f8f6a),
+  inferred: hex(0x2b3a4a),
+}
+/** A wall two rooms share with nothing through it, declared and reasoned. */
+const BLIND_COLOUR = hex(0xef3340)
+/** An opening the blueprint places rather than derives from the shared wall. */
+const DECLARED_COLOUR = hex(0x7095d6)
+
+/** Room colours are lit; floors and ceilings need to stay walkable-dark. */
+const revealed = (provenance: Provenance, darken: number): Rgb =>
+  blend(REVEAL_COLOURS[provenance], [0, 0, 0], darken)
+
+/** Whether a wall segment runs along the stretch a seal keeps blind. */
+function runsAlong(wall: WallSegment, blind: BlindWall): boolean {
+  const dx = blind.end[0] - blind.start[0]
+  const dz = blind.end[1] - blind.start[1]
+  const length = Math.hypot(dx, dz)
+  if (length < EPSILON) return false
+  const unit: Vec2 = [dx / length, dz / length]
+
+  for (const point of [wall.start, wall.end]) {
+    const ox = point[0] - blind.start[0]
+    const oz = point[1] - blind.start[1]
+    // Off the seal's line, or past either of its ends: a different wall.
+    if (Math.abs(ox * unit[1] - oz * unit[0]) > 0.05) return false
+    const t = ox * unit[0] + oz * unit[1]
+    if (t < -0.05 || t > length + 0.05) return false
+  }
+  return true
 }
 
 class MeshBuilder {
@@ -362,9 +409,10 @@ export function buildSolidMesh(structure: Structure, room: Space, tier: Tier): T
  * places in the buffer. Grouping by room instead costs nothing at build time
  * and is what makes each room drawable on its own: see `MeshGroup`.
  */
-export function buildTierMesh(plan: TierPlan): TierMesh {
+export function buildTierMesh(plan: TierPlan, options: { reveal?: boolean } = {}): TierMesh {
   const builder = new MeshBuilder()
   const { tier } = plan
+  const reveal = options.reveal ?? false
   const spaces = new Map(plan.spaces.map((space) => [space.id, space]))
   const heightOf = (space: Space) => tier.elevation + ceilingOf(space, tier)
 
@@ -372,8 +420,7 @@ export function buildTierMesh(plan: TierPlan): TierMesh {
   // Pulled a hair off the surface so the line is not fighting the polygon it
   // sits on for the same depth value.
   const OFFSET = 0.03
-  const horizontal = (a: Vec2, b: Vec2, y: number) =>
-    edges.push(a[0], y, a[1], b[0], y, b[1])
+  const horizontal = (a: Vec2, b: Vec2, y: number) => edges.push(a[0], y, a[1], b[0], y, b[1])
   const vertical = (point: Vec2, bottom: number, top: number) =>
     edges.push(point[0], bottom, point[1], point[0], top, point[1])
 
@@ -413,8 +460,12 @@ export function buildTierMesh(plan: TierPlan): TierMesh {
     const start = builder.positions.length / 3
     const edgeStart = edges.length / 3
 
-    const floorColour = colourFor(hex(CATEGORY_COLOURS[space.category]), space.provenance)
-    const ceilingColour = colourFor(CEILING_COLOUR, space.provenance)
+    const floorColour = reveal
+      ? revealed(space.provenance, 0.62)
+      : colourFor(hex(CATEGORY_COLOURS[space.category]), space.provenance)
+    const ceilingColour = reveal
+      ? revealed(space.provenance, 0.82)
+      : colourFor(CEILING_COLOUR, space.provenance)
     const top = heightOf(space)
     const indices = triangulate(space.footprint)
 
@@ -434,20 +485,25 @@ export function buildTierMesh(plan: TierPlan): TierMesh {
     }
 
     for (const wall of wallsOf.get(space.id) ?? []) {
-      builder.quad(
-        wall.start,
-        wall.end,
-        tier.elevation,
-        top,
-        colourFor(WALL_COLOUR, space.provenance),
-      )
+      // Under the reveal a wall says one of two things: what the room is worth
+      // as evidence, or — where the blueprint declared it blind — that the walk
+      // shut it on purpose, which is a claim about the ship in its own right.
+      const declaredBlind = reveal && plan.blind.some((seal) => runsAlong(wall, seal))
+      const wallColour = declaredBlind
+        ? BLIND_COLOUR
+        : reveal
+          ? revealed(space.provenance, 0.45)
+          : colourFor(WALL_COLOUR, space.provenance)
+      builder.quad(wall.start, wall.end, tier.elevation, top, wallColour)
       horizontal(wall.start, wall.end, tier.elevation + OFFSET)
       horizontal(wall.start, wall.end, top - OFFSET)
     }
 
     // Columns get a cap so you are not looking up an open shaft, and a brighter
     // face than the walls so they read as structure at a distance.
-    const colour = colourFor(COLUMN_COLOUR, space.provenance)
+    const colour = reveal
+      ? revealed(space.provenance, 0.3)
+      : colourFor(COLUMN_COLOUR, space.provenance)
     const h = COLUMN_HALF_WIDTH
     for (const centre of plan.columns.get(space.id) ?? []) {
       const corners: Vec2[] = [
@@ -491,7 +547,16 @@ export function buildTierMesh(plan: TierPlan): TierMesh {
         space.provenance === 'inferred' || other.provenance === 'inferred'
           ? 'inferred'
           : space.provenance
-      builder.quad(door.start, door.end, lintelBottom, lintelTop, colourFor(WALL_COLOUR, provenance))
+      // The one hundred and fifty-six openings the blueprint places by hand are
+      // the only doorways nothing derives, so the reveal marks them: everything
+      // else in the ship opened because two footprints touch.
+      const lintelColour =
+        reveal && plan.declared.has(sealKey(door.a, door.b))
+          ? DECLARED_COLOUR
+          : reveal
+            ? revealed(provenance, 0.45)
+            : colourFor(WALL_COLOUR, provenance)
+      builder.quad(door.start, door.end, lintelBottom, lintelTop, lintelColour)
     }
 
     const count = builder.positions.length / 3 - start

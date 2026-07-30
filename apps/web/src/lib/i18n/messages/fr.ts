@@ -84,7 +84,13 @@ export const fr: Messages = {
       sprint: 'Courir',
       sprintKeys: 'Maj',
       use: 'Changer de pont, entrer dans une pièce',
-      useKeys: 'E, sur une cage d’escalier ou devant une porte',
+      useKeys: 'E, sur une cage d’escalier ou n’importe où dans un intérieur',
+      plan: 'Plan plein écran',
+      planKeys: 'M',
+      find: 'Chercher une pièce',
+      findKeys: '⌘K, ou Ctrl K',
+      reveal: 'Montrer les preuves',
+      revealKeys: 'G',
       nen: 'Lancer le Hatsu actif',
       nenKeys: 'F, ou un clic, sur la pièce ou le volume que vous regardez',
       touch: 'Sur écran tactile',
@@ -115,7 +121,90 @@ export const fr: Messages = {
       scaleHelp:
         "Les plans des ponts sont schématiques. La reconstruction les met à l'échelle pour que les pièces fassent la taille que les planches impliquent — ce n'est pas une mesure du vaisseau.",
     },
+    reveal: {
+      toggle: 'Preuves',
+      help: 'Peindre le pont selon ce que chaque surface vaut comme preuve, et montrer les cloisons et les portes que la reconstruction a déclarées.',
+      blind: 'Cloison aveugle',
+      blindHelp:
+        'Deux pièces partagent ce mur et rien n’y passe. Le plan doit le dire, et dire pourquoi.',
+      declared: 'Porte placée à la main',
+      declaredHelp:
+        'Toute autre ouverture du vaisseau découle de deux empreintes qui se touchent. Pas celles-ci.',
+      none: 'Aucune à ce niveau.',
+    },
+
     sourcesLink: "D'où vient chaque pièce",
+
+    plan: {
+      open: 'Plan plein écran',
+      close: 'Fermer',
+      crossingUp: (destination) => `Monter vers ${destination}`,
+      crossingDown: (destination) => `Descendre vers ${destination}`,
+      crossingAcross: (destination) => `Passer vers ${destination}`,
+      legend: 'Sur le plan',
+      doorway: 'Ouverture',
+      up: 'Escalier montant',
+      down: 'Escalier descendant',
+      across: 'Porte de plain-pied',
+    },
+
+    find: {
+      open: 'Chercher une pièce',
+      title: 'Chercher une pièce ou un niveau',
+      placeholder: 'Salle du banquet, 1004, cuisine, cellule…',
+      showing: (shown, total) => `${shown} affichés sur ${total}`,
+      noMatch: 'Rien de ce nom dans le vaisseau',
+      level: 'Niveau',
+      close: 'Échap',
+      hint: '↑ ↓ pour choisir · Entrée pour y aller · Échap pour fermer',
+    },
+
+    goTo: (room) => `Rejoindre ${room}`,
+    aimAt: (room) => `Viser ${room}`,
+
+    viewpoint: {
+      copy: 'Copier ce point de vue',
+      copied: 'Lien copié',
+      failed: "Impossible d'accéder au presse-papiers",
+    },
+
+    comfort: {
+      title: 'Confort',
+      fov: 'Champ de vision',
+      sensitivity: 'Vitesse du regard',
+      snapTurn: 'Tourner par crans',
+      snapAngle: 'Cran',
+      jumpOnly: 'Ne pas marcher — sauter de pièce en pièce',
+      reset: 'Revenir aux réglages du système',
+      calm: 'Votre système demande moins de mouvement : tout démarre en douceur.',
+      degrees: (angle) => `${angle}°`,
+      times: (factor) => `×${factor.toFixed(2)}`,
+    },
+
+    room: {
+      size: (long, wide, ceiling) => `${long} × ${wide} m sous ${ceiling} m`,
+      exits: (count) => `${count} ${count === 1 ? 'sortie' : 'sorties'}`,
+      bare: 'rien de dessiné dedans',
+      solids: {
+        spring: (count) => `${count} ${count === 1 ? 'ressort' : 'ressorts'}`,
+        casket: (count) => `${count} ${count === 1 ? 'cercueil' : 'cercueils'}`,
+        platform: (count) => `${count} ${count === 1 ? 'estrade' : 'estrades'}`,
+        counter: (count) => `${count} ${count === 1 ? 'comptoir' : 'comptoirs'}`,
+        table: (count) => `${count} ${count === 1 ? 'table' : 'tables'}`,
+        bed: (count) => `${count} ${count === 1 ? 'lit' : 'lits'}`,
+        seat: (count) => `${count} ${count === 1 ? 'siège' : 'sièges'}`,
+        cabinet: (count) => `${count} ${count === 1 ? 'meuble' : 'meubles'}`,
+        basin: (count) => `${count} ${count === 1 ? 'vasque' : 'vasques'}`,
+        painting: (count) => `${count} ${count === 1 ? 'toile' : 'toiles'}`,
+        lifeboat: (count) => `${count} ${count === 1 ? 'canot' : 'canots'}`,
+        pillar: (count) => `${count} ${count === 1 ? 'pilier' : 'piliers'}`,
+        bars: (count) => `${count} ${count === 1 ? 'grille' : 'grilles'}`,
+        manacle: (count) => `${count} ${count === 1 ? 'entrave' : 'entraves'}`,
+        camera: (count) => `${count} ${count === 1 ? 'caméra' : 'caméras'}`,
+        telephone: (count) => `${count} ${count === 1 ? 'téléphone' : 'téléphones'}`,
+        duct: (count) => `${count} ${count === 1 ? 'gaine' : 'gaines'}`,
+      },
+    },
 
     hatsu: {
       title: 'Le Nen dans la visite',
@@ -450,13 +539,50 @@ export const fr: Messages = {
   tourSources: {
     seoTitle: 'Sources — D’où vient chaque pièce du Black Whale',
     seoDescription:
-      'Les preuves derrière le Black Whale reconstruit, pièce par pièce : le chapitre ou le plan sur lequel repose chacun des 282 espaces, les couloirs que la reconstruction a inventés, et les cloisons murées à dessein.',
+      'Les preuves derrière le Black Whale reconstruit, pièce par pièce : le chapitre ou le plan sur lequel repose chacun des 314 espaces, les couloirs que la reconstruction a inventés, et les cloisons murées à dessein.',
     breadcrumb: 'Sources',
     title: 'D’où vient chaque pièce',
     intro:
       'La reconstruction affirme quelque chose du vaisseau à chaque surface qu’elle dessine : elle publie donc la preuve de chacune. Rien ici n’est un résumé — c’est tout ce sur quoi la visite est bâtie, pièce par pièce, et chaque espace que le manga ne montre pas est déclaré comme inventé.',
     counts: (spaces, sources) => `${spaces} espaces, appuyés sur ${sources} sources distinctes`,
     tally: (label, count) => `${count} ${label.toLowerCase()}`,
+
+    nothingInvented: (solids, invented) =>
+      invented === 0
+        ? `Aucun des ${solids} solides que la visite dresse dans le vaisseau n’est inventé. Chaque lit, cercueil, ressort et grille est dessiné sur un plan ou montré sur une planche, et porte sa source. Ce que la reconstruction invente, c’est la circulation — les couloirs qui rendent un pont continu — et elle le dit sur le mur.`
+        : `${invented} des ${solids} solides que la visite dresse dans le vaisseau ne reposent sur aucun dessin, et sont signalés comme tels.`,
+    onThisPage: 'Sur cette page',
+    sections: {
+      chapters: 'Chapitres',
+      method: 'Méthode',
+      rooms: 'Pièces',
+      levels: 'Niveaux',
+      solids: 'Solides',
+      unfurnished: 'Laissé nu',
+      joins: 'Liaisons',
+      walls: 'Cloisons',
+    },
+
+    chapters: {
+      title: 'Les chapitres d’où le vaisseau est lu',
+      help: (count) =>
+        `${count} chapitres portent toute la reconstruction. Le nombre est celui des affirmations — une pièce, un niveau, un solide, un escalier — qui citent ce chapitre comme source. Choisissez-en un pour voir ce qui repose dessus.`,
+      chapter: (chapter) => `Chap. ${chapter}`,
+      filter: (chapter) => `Montrer ce qui repose sur le chap. ${chapter}`,
+    },
+
+    levels: {
+      title: 'Les niveaux sur lesquels les pièces se dressent',
+      help: (decks, interiors) =>
+        `${decks} ponts et ${interiors} intérieurs dessinés à leur propre échelle. Ce sont les affirmations sur lesquelles tout le reste repose : une pièce est sur un pont parce qu’une coupe l’y met, et un intérieur est le dedans d’une pièce parce qu’un plan ou une planche le dessine.`,
+    },
+
+    unfurnished: {
+      title: 'Ce que la reconstruction ne meuble pas',
+      help: (count) =>
+        `${count} pièces dont les murs sont attestés et le contenu non sont laissées vides. C’est la même règle que le reste de cette page, prise dans l’autre sens : les huit suites VVIP, le sol nu de la 37564, les salles que le plan du cinéplexe nomme sans dessiner un fauteuil. Un siège inventé pour les remplir affirmerait quelque chose de l’histoire, non du vaisseau.`,
+      bare: (count) => `${count} ${count === 1 ? 'pièce laissée nue' : 'pièces laissées nues'}`,
+    },
 
     method: {
       title: 'Ce que les dessins donnent vraiment',
@@ -961,6 +1087,7 @@ export const fr: Messages = {
     closeLocationDetails: 'Fermer les détails du lieu',
     charactersHere: 'Personnages présents à cet endroit',
     noCharacterHere: 'Aucun personnage suivi n’est présent à l’événement sélectionné.',
+    walkThere: 'Y aller à pied',
     derivedFrom: 'Établi à partir des relevés de présence de l’événement sélectionné.',
     unknownLocationTitle: 'Position inconnue',
     closeUnknownPositions: 'Fermer les positions inconnues',

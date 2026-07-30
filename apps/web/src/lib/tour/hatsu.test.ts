@@ -121,7 +121,11 @@ describe('the hideout doors', () => {
   })
 
   it('starts a new pair rather than growing a network', () => {
-    const paired = cast(cast(EMPTY_WORLD, 'door-network', furnished.id).world, 'door-network', elsewhere.id)
+    const paired = cast(
+      cast(EMPTY_WORLD, 'door-network', furnished.id).world,
+      'door-network',
+      elsewhere.id,
+    )
     const third = cast(paired.world, 'door-network', [...ship.spaces.keys()][3])
     expect(third.world.doors).toHaveLength(1)
   })
@@ -512,7 +516,11 @@ describe('shutting a room', () => {
     const run = (walls: typeof plan.walls) =>
       walls
         .filter((wall) => wall.spaceId === roomA.id && !wall.structureId)
-        .reduce((total, wall) => total + Math.hypot(wall.end[0] - wall.start[0], wall.end[1] - wall.start[1]), 0)
+        .reduce(
+          (total, wall) =>
+            total + Math.hypot(wall.end[0] - wall.start[0], wall.end[1] - wall.start[1]),
+          0,
+        )
     expect(run(shut.walls)).toBeGreaterThan(run(plan.walls))
   })
 
@@ -646,7 +654,9 @@ describe("Fugetsu's tunnel", () => {
     const world = { ...EMPTY_WORLD, worm: { a: roomA.id, b: roomB.id, crossings: 0 } }
     expect(wormExit(world, roomA.id, roomA.id)).toBeNull()
     expect(wormExit(world, busiest.space.id, null)).toBeNull()
-    expect(wormExit({ ...EMPTY_WORLD, worm: { a: roomA.id, b: '', crossings: 0 } }, roomA.id, null)).toBeNull()
+    expect(
+      wormExit({ ...EMPTY_WORLD, worm: { a: roomA.id, b: '', crossings: 0 } }, roomA.id, null),
+    ).toBeNull()
   })
 })
 

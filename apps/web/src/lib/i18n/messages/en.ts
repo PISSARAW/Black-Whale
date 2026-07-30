@@ -85,7 +85,13 @@ export const en = {
       sprint: 'Run',
       sprintKeys: 'Shift',
       use: 'Change deck, enter a room',
-      useKeys: 'E, on a stairwell or at a door',
+      useKeys: 'E, on a stairwell or anywhere inside a room’s interior',
+      plan: 'Full-screen plan',
+      planKeys: 'M',
+      find: 'Find a room',
+      findKeys: '⌘K, or Ctrl K',
+      reveal: 'Show the evidence',
+      revealKeys: 'G',
       nen: 'Cast the active Hatsu',
       nenKeys: 'F, or click, on the room or the solid you are facing',
       touch: 'On a touchscreen',
@@ -121,7 +127,116 @@ export const en = {
       scaleHelp:
         'The deck plans are schematic. The reconstruction scales them so the rooms come out the size the panels imply, which is not a measurement of the ship.',
     },
+    /**
+     * The reveal. The walk already tints a surface by its provenance, which is
+     * enough to notice and not enough to read; this drops the categories and
+     * paints the deck in its badges alone, and names the two things the
+     * reconstruction authored rather than derived.
+     */
+    reveal: {
+      toggle: 'Evidence',
+      help: 'Paint the deck in what each surface is worth as evidence, and show the walls and doors the reconstruction declared.',
+      blind: 'Blind wall',
+      blindHelp:
+        'Two rooms share this wall and nothing goes through it. The blueprint has to say so, and say why.',
+      declared: 'Door placed by hand',
+      declaredHelp:
+        'Every other opening in the ship follows from two footprints touching. These do not.',
+      none: 'None on this level.',
+    },
+
     sourcesLink: 'Where every room comes from',
+
+    /**
+     * The plan, and what it marks. Four stairwells and one bulkhead serve a
+     * hundred and seventeen deck spaces, so the plan is where they are found —
+     * and at 320 px a room's name is under four pixels tall, so the plan also
+     * has a size at which it can actually be read.
+     */
+    plan: {
+      open: 'Full-screen plan',
+      close: 'Close',
+      crossingUp: (destination: string) => `Up to ${destination}`,
+      crossingDown: (destination: string) => `Down to ${destination}`,
+      crossingAcross: (destination: string) => `Through to ${destination}`,
+      legend: 'On the plan',
+      doorway: 'Doorway',
+      up: 'Stairs up',
+      down: 'Stairs down',
+      across: 'Door on this level',
+    },
+
+    /** Finding a place by name, across every level at once. */
+    find: {
+      open: 'Find a room',
+      title: 'Find a room or a level',
+      placeholder: 'Banquet hall, 1004, kitchen, cell…',
+      showing: (shown: number, total: number) => `Showing ${shown} of ${total}`,
+      noMatch: 'Nothing of that name in the ship',
+      level: 'Level',
+      close: 'Esc',
+      hint: '↑ ↓ to choose · Enter to go · Esc to close',
+    },
+
+    /** The two verbs a room can be clicked with, so no widget has both. */
+    goTo: (room: string) => `Walk to ${room}`,
+    aimAt: (room: string) => `Aim at ${room}`,
+
+    viewpoint: {
+      copy: 'Copy this viewpoint',
+      copied: 'Link copied',
+      failed: 'Could not reach the clipboard',
+    },
+
+    /**
+     * How the walk is driven. None of it has a right answer, so all of it is the
+     * visitor's — and `prefers-reduced-motion` sets where it starts rather than
+     * overriding what they choose.
+     */
+    comfort: {
+      title: 'Comfort',
+      fov: 'Field of view',
+      sensitivity: 'Look speed',
+      snapTurn: 'Turn in steps',
+      snapAngle: 'Step',
+      jumpOnly: 'Do not walk — jump between rooms',
+      reset: 'Back to this system’s defaults',
+      calm: 'Your system asks for reduced motion, so this starts calm.',
+      degrees: (angle: number) => `${angle}°`,
+      times: (factor: number) => `×${factor.toFixed(2)}`,
+    },
+
+    /**
+     * A room said in words, for whoever is not looking at it. Everything here is
+     * read off the blueprint: the footprint, the ceiling, the ways out, and what
+     * the panels put in the room.
+     */
+    room: {
+      size: (long: number, wide: number, ceiling: number) =>
+        `${long} × ${wide} m under ${ceiling} m`,
+      exits: (count: number) => `${count} ${count === 1 ? 'exit' : 'exits'}`,
+      bare: 'nothing drawn in it',
+      /** What is standing in the room, by kind, once there are more than two. */
+      solids: {
+        spring: (count: number) => `${count} ${count === 1 ? 'spring' : 'springs'}`,
+        casket: (count: number) => `${count} ${count === 1 ? 'coffin' : 'coffins'}`,
+        platform: (count: number) => `${count} ${count === 1 ? 'platform' : 'platforms'}`,
+        counter: (count: number) => `${count} ${count === 1 ? 'counter' : 'counters'}`,
+        table: (count: number) => `${count} ${count === 1 ? 'table' : 'tables'}`,
+        bed: (count: number) => `${count} ${count === 1 ? 'bed' : 'beds'}`,
+        seat: (count: number) => `${count} ${count === 1 ? 'seat' : 'seats'}`,
+        cabinet: (count: number) => `${count} ${count === 1 ? 'cabinet' : 'cabinets'}`,
+        basin: (count: number) => `${count} ${count === 1 ? 'basin' : 'basins'}`,
+        painting: (count: number) => `${count} ${count === 1 ? 'canvas' : 'canvases'}`,
+        lifeboat: (count: number) => `${count} ${count === 1 ? 'lifeboat' : 'lifeboats'}`,
+        pillar: (count: number) => `${count} ${count === 1 ? 'pillar' : 'pillars'}`,
+        bars: (count: number) => `${count} ${count === 1 ? 'run of bars' : 'runs of bars'}`,
+        manacle: (count: number) => `${count} ${count === 1 ? 'manacle' : 'manacles'}`,
+        camera: (count: number) => `${count} ${count === 1 ? 'camera' : 'cameras'}`,
+        telephone: (count: number) => `${count} ${count === 1 ? 'telephone' : 'telephones'}`,
+        duct: (count: number) => `${count} ${count === 1 ? 'run of ducting' : 'runs of ducting'}`,
+      },
+    },
 
     /**
      * Nen in the walk. The archive's other pages let a technique work on what is
@@ -473,7 +588,7 @@ export const en = {
   tourSources: {
     seoTitle: 'Sources — Where every room of the Black Whale comes from',
     seoDescription:
-      'The evidence behind the reconstructed Black Whale, room by room: which chapter or plan each of the 282 spaces rests on, which corridors the reconstruction invented, and which walls were sealed on purpose.',
+      'The evidence behind the reconstructed Black Whale, room by room: which chapter or plan each of the 314 spaces rests on, which corridors the reconstruction invented, and which walls were sealed on purpose.',
     breadcrumb: 'Sources',
     title: 'Where every room comes from',
     intro:
@@ -481,6 +596,48 @@ export const en = {
     counts: (spaces: number, sources: number) =>
       `${spaces} spaces, resting on ${sources} distinct sources`,
     tally: (label: string, count: number) => `${count} ${label.toLowerCase()}`,
+
+    /**
+     * The figure the page leads with. Counted off the blueprint rather than
+     * written down, so it cannot go stale: a room may be reconstructed, but
+     * nothing standing in a room ever is.
+     */
+    nothingInvented: (solids: number, invented: number) =>
+      invented === 0
+        ? `Not one of the ${solids} solids the tour stands in the ship is invented. Every bed, coffin, spring and grille is drawn on a plan or shown in a panel, and carries the source it comes from. What the reconstruction does invent is circulation — corridors that make a deck contiguous — and it says so on the wall.`
+        : `${invented} of the ${solids} solids the tour stands in the ship rest on nothing drawn, and are marked as such.`,
+    onThisPage: 'On this page',
+    sections: {
+      chapters: 'Chapters',
+      method: 'Method',
+      rooms: 'Rooms',
+      levels: 'Levels',
+      solids: 'Solids',
+      unfurnished: 'Left bare',
+      joins: 'Joins',
+      walls: 'Walls',
+    },
+
+    chapters: {
+      title: 'Which chapters the ship is read out of',
+      help: (count: number) =>
+        `${count} chapters carry the whole reconstruction. The count is the number of claims — a room, a level, a solid, a stairwell — that name that chapter as their source. Pick one to see what rests on it.`,
+      chapter: (chapter: number) => `Ch. ${chapter}`,
+      filter: (chapter: number) => `Show what rests on ch. ${chapter}`,
+    },
+
+    levels: {
+      title: 'The levels the rooms stand on',
+      help: (decks: number, interiors: number) =>
+        `${decks} decks and ${interiors} interiors drawn at their own scale. These are the claims everything else rests on: a room is on a deck because one cross-section puts it there, and an interior is the inside of one room because a plan or a panel draws it.`,
+    },
+
+    unfurnished: {
+      title: 'What the reconstruction does not furnish',
+      help: (count: number) =>
+        `${count} rooms whose walls are attested and whose contents are not are left empty. That is the same rule as the rest of this page, running the other way: the eight VVIP suites, the bare floor of 37564, the auditoriums the cineplex plan names without drawing a seat. A chair invented to fill them would be a claim about the story rather than about the ship.`,
+      bare: (count: number) => `${count} ${count === 1 ? 'room left bare' : 'rooms left bare'}`,
+    },
 
     method: {
       title: 'What the drawings actually give',
@@ -991,6 +1148,7 @@ export const en = {
     closeLocationDetails: 'Close location details',
     charactersHere: 'Characters at this location',
     noCharacterHere: 'No tracked character is present at the selected event.',
+    walkThere: 'Walk this room',
     derivedFrom: 'Derived from presence records for the selected event.',
     unknownLocationTitle: 'Unknown location',
     closeUnknownPositions: 'Close unknown positions',

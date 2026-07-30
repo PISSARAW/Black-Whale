@@ -54,6 +54,31 @@ export interface TierPlan {
   columns: Map<string, Vec2[]>
   /** The solids standing on this level: springs, coffins, stages. */
   structures: Structure[]
+  /**
+   * The pairs on this level whose opening is placed by hand rather than derived
+   * from the shared wall, keyed by `sealKey`.
+   *
+   * Everything else about a doorway follows from geometry, which is what makes
+   * an unreachable room a test failure. These are the exceptions, and an
+   * exception is a claim about the ship — so the walk can show which openings
+   * it authored instead of leaving them indistinguishable from the derived ones.
+   */
+  declared: Set<string>
+  /**
+   * The stretch of wall each seal keeps blind, resolved on this level.
+   *
+   * A seal is stored as a pair of rooms; the wall it applies to is derived, the
+   * same way a doorway is. Resolving it here is what lets a blind wall be shown
+   * as one, with the reason it was declared for.
+   */
+  blind: BlindWall[]
+}
+
+/** A wall two rooms share with nothing through it, and why. */
+export interface BlindWall {
+  seal: Seal
+  start: Vec2
+  end: Vec2
 }
 
 export interface Ship {
@@ -118,7 +143,38 @@ export function buildShip(source: Blueprint = blueprint): Ship {
       if (blocksTheFloor(structure)) walls.push(...structureWalls(structure))
     }
 
-    plans.set(tier.id, { tier, spaces: tierSpaces, doorways, walls, columns, structures })
+    // What the walk authored on this level, resolved once so it can be shown
+    // rather than merely obeyed: the openings placed by hand, and the stretch
+    // of wall each seal keeps blind.
+    const declared = new Set(
+      doorways.map((door) => sealKey(door.a, door.b)).filter((key) => overrides.has(key)),
+    )
+
+    const blind: BlindWall[] = []
+    for (const seal of source.seals ?? []) {
+      const a = spaces.get(seal.a)
+      const b = spaces.get(seal.b)
+      if (!a || !b || a.tierId !== tier.id) continue
+      const shared = longestSharedWall(a.footprint, b.footprint)
+      if (!shared) continue
+      const { a1, unit, from, to } = shared
+      blind.push({
+        seal,
+        start: [a1[0] + unit[0] * from, a1[1] + unit[1] * from],
+        end: [a1[0] + unit[0] * to, a1[1] + unit[1] * to],
+      })
+    }
+
+    plans.set(tier.id, {
+      tier,
+      spaces: tierSpaces,
+      doorways,
+      walls,
+      columns,
+      structures,
+      declared,
+      blind,
+    })
 
     for (const space of tierSpaces) if (!adjacency.has(space.id)) adjacency.set(space.id, [])
     for (const door of doorways) {
@@ -322,6 +378,41 @@ export function entrySpace(plan: TierPlan): Space {
   if (shown.length) return largest(shown)
 
   return largest(plan.spaces)
+}
+
+/**
+ * The room to walk into for a catalogued location — the bridge from `/ship` to
+ * `/tour`.
+ *
+ * The map answers who is where and the walk answers how the ship is built, and
+ * the two have deliberately never shared state: nothing about a chapter or a
+ * passenger gets into the reconstruction. A link is not shared state, though.
+ * This is the whole of it — a location id in, the space to open the walk at out
+ * — so `/ship` can offer to go there on foot without the walk learning anything.
+ *
+ * A location may claim several spaces: the apartment claims its box on the deck
+ * and all seven rooms of its interior. The one to arrive in is the box, because
+ * that is the door you would come to; failing that, the largest.
+ */
+export function spaceForLocation(ship: Ship, locationId: string | null): Space | null {
+  if (!locationId) return null
+  const kindOf = (space: Space) =>
+    ship.tiers.find((tier) => tier.id === space.tierId)?.kind ?? 'interior'
+
+  const exact = ship.blueprint.spaces.filter((space) => space.locationId === locationId)
+  // The deck SVGs name their regions in their own vocabulary, and `/ship`
+  // resolves those to catalogue ids; a suffix match is the last resort for the
+  // handful the two spellings still disagree about.
+  const claimed = exact.length
+    ? exact
+    : ship.blueprint.spaces.filter((space) => space.locationId?.endsWith(`-${locationId}`))
+  if (!claimed.length) return null
+
+  const onDeck = claimed.filter((space) => kindOf(space) === 'deck')
+  const pool = onDeck.length ? onDeck : claimed
+  return pool.reduce((best, space) =>
+    polygonArea(space.footprint) > polygonArea(best.footprint) ? space : best,
+  )
 }
 
 const PROVENANCES = new Set(['panel', 'plan', 'map', 'inferred'])

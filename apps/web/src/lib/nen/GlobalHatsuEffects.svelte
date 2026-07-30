@@ -81,7 +81,6 @@
       explainTarget: typeof mapState.explainTarget
       currentEventIndex: number
       factions: string[]
-      spoilersEnabled: boolean
       showUnknownPositions: boolean
     }
   }
@@ -212,7 +211,6 @@
         explainTarget: mapState.explainTarget ? { ...mapState.explainTarget } : null,
         currentEventIndex: mapState.currentEventIndex,
         factions: [...mapState.filters.factions],
-        spoilersEnabled: mapState.filters.spoilersEnabled,
         showUnknownPositions: mapState.filters.showUnknownPositions,
       },
     }
@@ -231,7 +229,6 @@
     mapState.explainTarget = snapshot.explainTarget ? { ...snapshot.explainTarget } : null
     mapState.currentEventIndex = snapshot.currentEventIndex
     mapState.filters.factions = [...snapshot.factions]
-    mapState.filters.spoilersEnabled = snapshot.spoilersEnabled
     mapState.filters.showUnknownPositions = snapshot.showUnknownPositions
   }
 

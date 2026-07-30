@@ -69,7 +69,14 @@ export type LinkKind = 'stair' | 'lift' | 'bulkhead' | 'door'
  * - `seat` — a sofa or an armchair.
  * - `cabinet` — a wardrobe, a sideboard, a bedside table.
  * - `basin` — a bath or a washstand.
- * - `painting` — a framed canvas or a window: a solid hung off the floor.
+ * - `painting` — a framed canvas: a solid hung off the floor.
+ * - `window` — an opening onto the outside, of which the ship has two. It is a
+ *   kind of its own and not a `painting` for the reason the two of them looked
+ *   alike in the first place: hung off the floor, thin, rectangular, and the
+ *   difference between them is the only thing about it that matters. Two hundred
+ *   thousand people are carried to the Dark Continent behind 314 spaces, and
+ *   exactly two of them can see out. That is a claim about the ship, so it is
+ *   data — the kind is declared in `blueprint.json` and not derived from a size.
  * - `lifeboat` — an escape pod on its cradle in the launch bay.
  * - `pillar` — a post a panel draws, as opposed to the grid `columnPositions`
  *   lays under a hall too wide to roof without one.
@@ -101,6 +108,7 @@ export type StructureKind =
   | 'cabinet'
   | 'basin'
   | 'painting'
+  | 'window'
   | 'lifeboat'
   | 'pillar'
   | 'bars'

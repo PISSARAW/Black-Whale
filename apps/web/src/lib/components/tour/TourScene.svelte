@@ -894,7 +894,14 @@
           if (solids[structure.id]?.key === key) continue
           dropSolid(structure.id)
 
-          const built = buildSolidMesh(structure, room, plan.tier)
+          // The rest of the room comes with it so the solid keeps the room's
+          // light: in the two rooms with a window, that includes the daylight.
+          const built = buildSolidMesh(
+            structure,
+            room,
+            plan.tier,
+            plan.structures.filter((entry) => entry.spaceId === room.id),
+          )
           const geometry = new THREE.BufferGeometry()
           geometry.setAttribute('position', new THREE.BufferAttribute(built.positions, 3))
           geometry.setAttribute('normal', new THREE.BufferAttribute(built.normals, 3))

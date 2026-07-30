@@ -33,6 +33,7 @@ const solids = Object.fromEntries(
       'cabinet',
       'basin',
       'painting',
+      'window',
       'lifeboat',
       'pillar',
       'bars',

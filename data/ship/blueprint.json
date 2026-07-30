@@ -10972,7 +10972,7 @@
     {
       "id": "tier-3-observation-deck-window",
       "spaceId": "tier-3-observation-deck",
-      "kind": "painting",
+      "kind": "window",
       "name": "Observation Window",
       "nameFr": "Baie du pont d’observation",
       "at": [108.17, -1.63],
@@ -14156,7 +14156,7 @@
     {
       "id": "tier-1-king-living-quarters-living-great-window",
       "spaceId": "tier-1-king-living-quarters-living",
-      "kind": "painting",
+      "kind": "window",
       "name": "Great Window",
       "nameFr": "Grande baie",
       "at": [0, -8.18],

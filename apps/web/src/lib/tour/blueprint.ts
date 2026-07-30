@@ -434,6 +434,7 @@ const STRUCTURE_KINDS = new Set([
   'cabinet',
   'basin',
   'painting',
+  'window',
   'lifeboat',
   'pillar',
   'bars',

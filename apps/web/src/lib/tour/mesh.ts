@@ -175,6 +175,9 @@ const STRUCTURE_COLOURS: Record<StructureKind, number> = {
   cabinet: 0x2e251d,
   basin: 0x3f4246,
   painting: 0x1d1a16,
+  // The frame, not the glass. What is seen through the opening is the emissive
+  // pane the room draws in front of this — see `WINDOW_GLOW`.
+  window: 0x14181e,
   lifeboat: 0x8a8f96,
   pillar: 0x6a5a4a,
   bars: 0x7f868e,
@@ -371,7 +374,88 @@ export const FITTING_SIZE = 0.7
  */
 export const FITTING_GLOW: Rgb = [2.4, 2.0, 1.55]
 
+/**
+ * What a window burns at: the sky of the Dark Continent, and it is cold.
+ *
+ * Every other source on the ship is a filament — `FITTING_GLOW` is warm because
+ * a lamp of the period is warm, and the whole interior is lit by nothing else.
+ * The two windows are the exception, so they are the exception here too: the same
+ * trick of sitting above white, in the opposite direction on the spectrum. Walk
+ * into one of those two rooms and the light is a different colour from the light
+ * everywhere else on board, which is the entire point of drawing them at all.
+ *
+ * Lower than a fitting, and by a good margin. A window is not a lamp — it is a
+ * grey daylight the ship is carrying towards a continent nobody comes back from —
+ * and 36 m of pane at a fitting's intensity would be the brightest thing in the
+ * reconstruction by two orders of area.
+ */
+export const WINDOW_GLOW: Rgb = [0.62, 0.86, 1.28]
+
+/**
+ * How far a window throws, and how finely its pane is sampled as a source.
+ *
+ * A fitting is a point and reaches `LIGHT.reach`; a window is a surface up to
+ * 36 m long, and a point source at its middle would light the centre of the
+ * observation deck and leave both ends of the same glass dark. So the pane is cut
+ * into sources every `WINDOW_SAMPLE` metres and each one throws its own pool —
+ * which is what a surface light is, done in the only place this bake can afford
+ * it: two rooms out of 314.
+ *
+ * The reach is twice a fitting's because the opening is: 6 m of glass over the
+ * observation deck is not a lamp on a ceiling grid, and daylight that stopped 9 m
+ * in would read as a lamp hung against the glass.
+ */
+export const WINDOW_REACH = 18
+export const WINDOW_SAMPLE = 2.5
+
+/**
+ * What one sample of pane is worth against one fitting.
+ *
+ * A run of samples sums, so the weight is per sample and not per window: at this
+ * value a floor two metres inside the great window takes about what two fittings
+ * would give it, and the far end of the observation deck takes nothing. The sky
+ * is dim, there is a great deal of it, and it falls off — all three are true of
+ * the thing being modelled.
+ */
+const WINDOW_WEIGHT = 0.4
+
 const clamp01 = (value: number) => (value < 0 ? 0 : value > 1 ? 1 : value)
+
+/**
+ * A window's pane, cut into the point sources the bake reads.
+ *
+ * The long faces of the solid are the glass — a window is a thin rectangle laid
+ * along the wall it is in — so the sources run along the longer axis of the
+ * footprint, at the middle of the opening's height. Its own function rather than
+ * a loop inside `RoomLight`, because the mesh has to draw the pane in exactly the
+ * places the light comes from, which is the same bargain `fittingHeight` settles
+ * for the ceiling fittings.
+ */
+export function windowSources(structure: Structure, floorY: number): [number, number, number][] {
+  const outline = structureFootprint(structure)
+  let longest: [Vec2, Vec2] | null = null
+  let span = 0
+  for (const [a, b] of iterateEdges(outline)) {
+    const run = Math.hypot(b[0] - a[0], b[1] - a[1])
+    if (run > span) {
+      span = run
+      longest = [a, b]
+    }
+  }
+  if (!longest || span < EPSILON) return []
+
+  const [a, b] = longest
+  const y = floorY + structure.base + structure.height / 2
+  const steps = Math.max(1, Math.round(span / WINDOW_SAMPLE))
+  const sources: [number, number, number][] = []
+  // Sampled at the middle of each step rather than at its ends, so a 9 m pane
+  // gives four sources spread over it and not five with two on the corners.
+  for (let i = 0; i < steps; i++) {
+    const t = (i + 0.5) / steps
+    sources.push([a[0] + (b[0] - a[0]) * t, y, a[1] + (b[1] - a[1]) * t])
+  }
+  return sources
+}
 
 /** Two grid indices in one number, so the fittings are not keyed by strings. */
 const cellKey = (i: number, j: number) => i * 4096 + j
@@ -414,6 +498,15 @@ class RoomLight {
     floorY: number,
     ceilingY: number,
     provenance: Provenance,
+    /**
+     * The sky, where the room has any: `windowSources` of every window in it.
+     *
+     * Empty for 312 of the 314 spaces, which is why it is a plain array walked in
+     * full rather than bucketed on the fitting grid — the two rooms that do have
+     * one have a single window each, and the cost of the loop is the cost of the
+     * two of them.
+     */
+    private readonly sky: readonly [number, number, number][] = [],
   ) {
     const inferred = provenance === 'inferred'
     this.fill = LIGHT.fill * (inferred ? LIGHT.inferredFill : 1)
@@ -463,9 +556,31 @@ class RoomLight {
     return total
   }
 
+  /**
+   * How much daylight reaches a point, summed over the pane.
+   *
+   * Outside `this.lamps` on purpose: a room the reconstruction invented gets a
+   * fifth of its lamplight because the plans put no lamp there, and that argument
+   * says nothing about a window — a window is declared in the blueprint, and the
+   * two that exist stand in rooms a panel draws. Nothing invented has one, and if
+   * anything ever did, the sky would still not be dimmed by our not having drawn
+   * the corridor it shines down.
+   */
+  private daylight(x: number, y: number, z: number): number {
+    let total = 0
+    for (const [sx, sy, sz] of this.sky) {
+      const distance = Math.hypot(x - sx, y - sy, z - sz)
+      if (distance >= WINDOW_REACH) continue
+      const fall = 1 - distance / WINDOW_REACH
+      total += fall * fall
+    }
+    return total * WINDOW_WEIGHT
+  }
+
   /** The albedo multiplier at a point, given how open to the room it is. */
   private lit(openness: number, gain: number, x: number, y: number, z: number): number {
-    return openness * (this.fill + gain * this.lamps * this.pool(x, y, z))
+    const sources = this.lamps * this.pool(x, y, z) + this.daylight(x, y, z)
+    return openness * (this.fill + gain * sources)
   }
 
   /**
@@ -773,25 +888,50 @@ function boundsOf(
   }
 }
 
-/** The baked light of one room, as both the deck and a loose solid read it. */
-function lightOf(space: Space, tier: Tier): RoomLight {
+/**
+ * The baked light of one room, as both the deck and a loose solid read it.
+ *
+ * `standing` is what the room holds, and it is here for one reason: the two
+ * windows of the ship are sources, so a room's light cannot be built from its
+ * footprint alone any more. Defaulted to nothing, because 312 rooms are lit by
+ * their fittings and by nothing else.
+ */
+function lightOf(space: Space, tier: Tier, standing: readonly Structure[] = []): RoomLight {
+  const sky: [number, number, number][] = []
+  for (const structure of standing) {
+    if (structure.kind === 'window') sky.push(...windowSources(structure, tier.elevation))
+  }
   return new RoomLight(
     space.footprint,
     tier.elevation,
     tier.elevation + ceilingOf(space, tier),
     space.provenance,
+    sky,
   )
 }
 
-/** That same solid on its own, for the Hatsu layer to draw and move. */
-export function buildSolidMesh(structure: Structure, room: Space, tier: Tier): TierMesh {
+/**
+ * That same solid on its own, for the Hatsu layer to draw and move.
+ *
+ * `standing` is the rest of what is in the room, and it is optional for the same
+ * reason it is on `lightOf`: it only changes the answer in the two rooms with a
+ * window in them. Pass the room's structures and a coffin carried across the
+ * King's living room keeps the daylight on it; pass nothing and it is lit by the
+ * fittings alone, which is right everywhere else on the ship.
+ */
+export function buildSolidMesh(
+  structure: Structure,
+  room: Space,
+  tier: Tier,
+  standing: readonly Structure[] = [],
+): TierMesh {
   const builder = new MeshBuilder()
   const edges: number[] = []
   // The same light the deck baked into it, rebuilt for the room it was lifted
   // out of: a coffin carried across the burial chamber keeps the chamber's
   // fittings on it rather than turning into a flat silhouette the moment a
   // technique picks it up.
-  extrudeSolid(builder, edges, structure, room, tier, lightOf(room, tier))
+  extrudeSolid(builder, edges, structure, room, tier, lightOf(room, tier, standing))
   const count = builder.positions.length / 3
   const edgeCount = edges.length / 3
   return {
@@ -876,6 +1016,60 @@ export function buildTierMesh(plan: TierPlan, options: { reveal?: boolean } = {}
     }
   }
 
+  /**
+   * The glass of one window: its long faces, drawn as light rather than as steel.
+   *
+   * In the `fittings` buffer, which is the one material on the deck that refuses
+   * to be lit — the same reason a lamp is there. A pane run through the Lambert
+   * material would take the headlamp like any other surface and come out as a pale
+   * rectangle, which is a wall, and the ship has 157 842 m² of those.
+   *
+   * Both long faces, and the outboard one is never seen — you cannot get outside
+   * the hull. Eight triangles for the two of them on the whole ship, which is
+   * cheaper than deciding which side of the glass the room is on.
+   *
+   * Wound and offset the way `extrudeSolid` winds a solid: `toClockwise`, so each
+   * face looks out of the frame, and lifted 2 cm off it so the pane is not fighting
+   * the frame it sits in for the same depth value.
+   */
+  const pane = (structure: Structure, glow: Rgb) => {
+    const outline = toClockwise(structureFootprint(structure))
+    const bottom = tier.elevation + structure.base
+    const top = bottom + structure.height
+    const edgesOf = [...iterateEdges(outline)]
+    const runs = edgesOf.map(([a, b]) => Math.hypot(b[0] - a[0], b[1] - a[1]))
+    const longest = Math.max(...runs)
+
+    for (const [index, [start, end]] of edgesOf.entries()) {
+      // The glass, not the reveal of the frame: a window is a thin rectangle laid
+      // along its wall, so only the faces that run its length are panes.
+      if (runs[index] < longest - EPSILON) continue
+      const run = runs[index]
+      const nx = -(end[1] - start[1]) / run
+      const nz = (end[0] - start[0]) / run
+      const a: Vec2 = [start[0] + nx * 0.02, start[1] + nz * 0.02]
+      const b: Vec2 = [end[0] + nx * 0.02, end[1] + nz * 0.02]
+
+      for (const [p, q, r] of [
+        [
+          [a, bottom],
+          [b, bottom],
+          [b, top],
+        ],
+        [
+          [a, bottom],
+          [b, top],
+          [a, top],
+        ],
+      ] as [[Vec2, number], [Vec2, number], [Vec2, number]][]) {
+        fittings.push(p[0][0], p[1], p[0][1], q[0][0], q[1], q[0][1], r[0][0], r[1], r[0][1])
+        for (let vertex = 0; vertex < 3; vertex++) {
+          fittingColors.push(glow[0], glow[1], glow[2])
+        }
+      }
+    }
+  }
+
   // Room walls and column faces arrive in the same list, which is the point:
   // the visitor collides with exactly what is drawn here. The faces of a solid
   // standing in a room are in that list too, for the same reason, but they are
@@ -943,7 +1137,7 @@ export function buildTierMesh(plan: TierPlan, options: { reveal?: boolean } = {}
     // Every surface of this room is shaded by this one object: the fittings of
     // the room, the corners of the room, and how much light a room the
     // reconstruction invented is allowed to claim.
-    const light = lightOf(space, tier)
+    const light = lightOf(space, tier, standingIn.get(space.id))
     /**
      * The bake, unless the reveal is on.
      *
@@ -1016,6 +1210,13 @@ export function buildTierMesh(plan: TierPlan, options: { reveal?: boolean } = {}
       const burn = space.provenance === 'inferred' ? LIGHT.inferredLamps : 1
       const glow: Rgb = [FITTING_GLOW[0] * burn, FITTING_GLOW[1] * burn, FITTING_GLOW[2] * burn]
       for (const [x, z] of ceilingLamps(space.footprint)) fitting(x, hang, z, glow)
+
+      // And the sky, in the two rooms that have any. Undimmed by provenance —
+      // see `RoomLight.daylight` — and in the same buffer as the fittings,
+      // because the question that buffer answers is which surfaces are sources.
+      for (const structure of standingIn.get(space.id) ?? []) {
+        if (structure.kind === 'window') pane(structure, WINDOW_GLOW)
+      }
     }
 
     for (const wall of wallsOf.get(space.id) ?? []) {

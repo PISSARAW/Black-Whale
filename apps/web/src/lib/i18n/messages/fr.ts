@@ -205,6 +205,7 @@ export const fr: Messages = {
         cabinet: (count) => `${count} ${count === 1 ? 'meuble' : 'meubles'}`,
         basin: (count) => `${count} ${count === 1 ? 'vasque' : 'vasques'}`,
         painting: (count) => `${count} ${count === 1 ? 'toile' : 'toiles'}`,
+        window: (count) => `${count} ${count === 1 ? 'baie' : 'baies'}`,
         lifeboat: (count) => `${count} ${count === 1 ? 'canot' : 'canots'}`,
         pillar: (count) => `${count} ${count === 1 ? 'pilier' : 'piliers'}`,
         bars: (count) => `${count} ${count === 1 ? 'grille' : 'grilles'}`,

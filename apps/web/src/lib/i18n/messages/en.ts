@@ -1335,8 +1335,20 @@ export const en = {
     shipDecks: 'Ship decks',
     decksNavLabel: 'Black Whale decks',
     overview: 'Overview',
-    shipStructure: 'Ship structure',
+    shipStructure: 'Longitudinal section',
     tierLabel: (tier: number | string) => `Tier ${tier}`,
+    /**
+     * The band between two modelled decks on the section. The ship has 41
+     * decks and the reconstruction walks 5, so this says what the gap is
+     * rather than letting it read as empty ship.
+     */
+    unmodelledDecks: (metres: number) => `${metres} m of decks not reconstructed`,
+    /**
+     * The band over tier 1 on the section, open at the top edge. Tier 1 is a
+     * liner and the reconstruction holds one floor of it, so the label has to
+     * say the ship goes on rather than let the drawing stop.
+     */
+    superstructure: 'Liner superstructure — decks not reconstructed',
     tierSummaries: [
       'Royalty & VVIP',
       'VIP & amenities',
@@ -1442,6 +1454,8 @@ export const en = {
     deckClearance: {
       overview: 'Global scan',
       'tier-1': 'Royal clearance',
+      'tier-1-b': 'Royal clearance',
+      'tier-1-c': 'Royal clearance',
       'tier-2': 'VIP clearance',
       'tier-3': 'Public access',
       'tier-4': 'Crew clearance',
@@ -1467,6 +1481,26 @@ export const en = {
         signal: 'Private armies monitoring all corridors',
         anomaly: 'Multiple guardian entities inferred · direct observation impossible',
         report: 'Four deaths in Room 1014. Cause redacted by royal authority.',
+      },
+      'tier-1-b': {
+        title: 'Garrison Deck',
+        subtitle: 'Quarters, cells and the court · one deck above the royal deck',
+        clearance: 'KAKIN / ROYAL',
+        pressure: 'Standing garrison',
+        danger: 'SEVERE',
+        signal: 'Watch relieved between the cells and the barracks',
+        anomaly: 'Which deck holds these blocks is the reconstruction’s, no page gives it',
+        report: 'The high-security prisoner remains under permanent Zodiac guard.',
+      },
+      'tier-1-c': {
+        title: 'Guest Deck',
+        subtitle: 'Casino and the queens’ block · two decks above the royal deck',
+        clearance: 'KAKIN / ROYAL',
+        pressure: 'Watched leisure',
+        danger: 'HIGH',
+        signal: 'Listening reported around the gaming tables',
+        anomaly: 'Which deck holds these blocks is the reconstruction’s, no page gives it',
+        report: 'No plan assigns any of the eight rooms of the queens’ block.',
       },
       'tier-2': {
         title: 'VVIP district',

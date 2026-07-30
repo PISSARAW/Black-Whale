@@ -50,7 +50,7 @@ describe('the ship blueprint', () => {
   })
 
   it('reconstructs all five tiers', () => {
-    expect(ship.decks.map((tier) => tier.id)).toEqual([
+    expect(ship.decks.filter((deck) => !deck.parentTierId).map((tier) => tier.id)).toEqual([
       'tier-1',
       'tier-2',
       'tier-3',
@@ -59,8 +59,28 @@ describe('the ship blueprint', () => {
     ])
   })
 
+  /**
+   * Tier 1 is a liner and the rest of the ship is not.
+   *
+   * Only one deck of that liner is drawn from above — the chain of the King's
+   * quarters, the reception hall and the princes' block — so what the
+   * cross-section merely lists under tier 1 stands on decks of its own, stacked
+   * over the one it does show. Those decks belong to tier 1 and say so; every
+   * other deck of the ship is a tier in its own right and carries no parent.
+   */
+  it('gives tier 1 the decks of a liner, and no other tier any', () => {
+    const children = ship.decks.filter((deck) => deck.parentTierId)
+    expect(new Set(children.map((deck) => deck.parentTierId))).toEqual(new Set(['tier-1']))
+    for (const deck of children) {
+      // A child deck stands over its tier's floor, never under it.
+      expect(deck.elevation, deck.id).toBeGreaterThan(
+        ship.decks.find((candidate) => candidate.id === deck.parentTierId)!.elevation,
+      )
+    }
+  })
+
   it('stacks the tiers in the order the cross-section gives them', () => {
-    const elevations = ship.decks.map((tier) => tier.elevation)
+    const elevations = ship.decks.filter((deck) => !deck.parentTierId).map((tier) => tier.elevation)
     expect([...elevations].sort((a, b) => b - a)).toEqual(elevations)
   })
 
@@ -550,6 +570,7 @@ describe('what stands in the rooms', () => {
         {
           id: 'tier',
           kind: 'deck',
+          parentTierId: null,
           parentSpaceId: null,
           locationId: null,
           name: 'Tier',

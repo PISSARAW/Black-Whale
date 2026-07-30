@@ -75,10 +75,14 @@ haut :
 | 4    | 18 m        | 4,5 m              |
 | 5    | 0 m         | 4,5 m              |
 
+Le pont 1 n'est pas un plancher mais un paquebot, et il porte trois ponts à lui
+seul : voir [Les ponts du paquebot](#les-ponts-du-paquebot).
+
 ## Les cartes de ponts sont générées
 
-Les cinq cartes de ponts de `/ship` — `apps/web/src/lib/assets/maps/tier-*.svelte`
-— ne se retouchent pas à la main. Elles se régénèrent :
+Les cartes de ponts de `/ship` — `apps/web/src/lib/assets/maps/tier-*.svelte`,
+une par pont et non par tier — ne se retouchent pas à la main. Elles se
+régénèrent :
 
 ```
 python3 scripts/generate-deck-maps.py
@@ -93,10 +97,148 @@ salle.
 
 C'est ce qui fait que `/ship` et `/tour` ne peuvent plus se contredire — ils
 projettent la même source. Encore faut-il que le fichier généré et commité
-suive : `apps/web/src/lib/assets/maps/deckMaps.test.ts` relit les cinq cartes et
-les confronte au blueprint, coque comprise, coin par coin. Déplacez une emprise
+suive : `apps/web/src/lib/assets/maps/deckMaps.test.ts` relit chaque carte et la
+confronte au blueprint, coque comprise, coin par coin. Déplacez une emprise
 sans relancer le script et c'est un test qui tombe, pas un lecteur qui s'en
 aperçoit.
+
+## La coupe longitudinale
+
+La vue d'ensemble de `/ship` est elle aussi générée, et depuis le même fichier :
+
+```
+python3 scripts/generate-section-map.py
+npx prettier --write apps/web/src/lib/assets/maps/black-whale-overview.svelte
+```
+
+C'est le dessin que les plans de pont ne savent pas faire. Un plan de pont dit
+ce qui jouxte quoi sur un étage ; la coupe du chap. 349 dit ce qui est **au-dessus
+de quoi**, et la reconstruction n'avait rien qui l'énonçait. La vue d'ensemble
+qu'elle remplace était cinq dalles dessinées à la main : elle ne nommait aucune
+pièce, elle ne sortait d'aucune donnée, et sa baleine était une silhouette.
+
+La coupe est prise dans l'axe, `x = 0`, regard vers tribord, proue à gauche.
+Elle a **son échelle** — 175 m de long sur 77 m de haut n'entrent pas dans le
+0,35 m par unité des plans de pont — et le script l'imprime en tournant. Elle
+distingue trois choses, et c'est toute la question :
+
+- les pièces que la coupe **traverse** : pleines, libellées là où le libellé
+  tient, et cliquables ;
+- les pièces qu'elle **longe**, à bâbord ou à tribord : dessinées derrière et
+  en sourdine. Ce sont elles, les bandes de texture dont la double page du
+  chap. 349 est remplie — de vraies pièces, et non une trame ;
+- les ponts que la reconstruction **ne tient pas** : la bande entre le plafond
+  d'un pont et le plancher du suivant. Le vaisseau en compte 41 et la visite en
+  parcourt cinq, donc une quinzaine de mètres de navire dorment entre chacun
+  d'eux. Cette place était déjà dans les élévations ; rien ne la dessinait, donc
+  rien ne la disait. Rien n'y est posé non plus : la coupe montre que la place
+  est pleine, et ne dit pas un mot de ce qui la remplit.
+
+Une pièce qui **pose un mur** dans l'axe n'est pas coupée par lui. Le tribunal
+et le poste de police partagent ce mur-là, un de chaque côté : compter le
+contact pour une coupe les mettait tous les deux dans la coupe, et l'un sur
+l'autre.
+
+Deux traits ne sortent pas du blueprint et sont écrits dans le script avec leur
+source : la **flottaison**, relevée sur la page du chap. 349, qui est un fait du
+navire et non d'une pièce ; et l'**œil**, que la même page place bas et à
+l'avant, et qui n'ouvre rien.
+
+### Le pont 1 est un paquebot, et on en tient un étage
+
+L'extérieur de nuit du **chap. 369** montre le vaisseau du pont 1 du dehors :
+une coque percée de deux ou trois rangs de hublots, et par-dessus une
+superstructure étagée en gradins, une dizaine de niveaux sur le bloc le plus
+haut. Le pont 1 n'est donc pas un plancher, c'est un navire à ponts multiples.
+
+Un seul de ses étages a un plan de sol dessiné, et c'est la chaîne
+ininterrompue **Quartiers du Roi → Salle de réception → Quartiers princiers**,
+avec son vestibule (chap. 383) et son poste gardé (chap. 382 / 363) entre les
+blocs. Elle court sur 115 m des 140 m de la coque du pont 1 : aucun gradin ne
+fait cette longueur, donc **le pont royal est un pont bas du paquebot**, au
+niveau de la coque ou juste au-dessus. Ça se pose comme fait et ça contraint
+l'empilement.
+
+Tout le reste de ce que le blueprint met sur le pont 1 — casino, bloc VVIP,
+chambrées, quartier de détention, Cour suprême, canots, chambre funéraire — ne
+sort d'aucun plan de sol : soit de la coupe du chap. 349, qui nomme le **tier**
+et pas l'étage, soit d'une planche qui montre la **pièce** et pas son plancher,
+soit du plan `/ship` lui-même. Les poser au niveau de la salle de banquet est
+une affirmation que personne n'a dessinée, et c'est le blueprint qui la fait
+aujourd'hui, en donnant `elevation: 72` à ses 85 espaces sans un seul lien
+vertical entre eux. Deux choses la contredisent déjà de l'intérieur : la
+chambre funéraire dépasse de 13,6 m la coque de son propre pont vers la proue,
+et quatre pièces y réclament 7 à 9 m de plafond sur un pont qui en annonce 5.
+
+La coupe dit donc ce qu'elle sait et pas plus : la bande au-dessus du dernier
+pont du paquebot est **ouverte en haut**, dégradée jusqu'au bord du dessin. La
+fermer à une hauteur serait affirmer la taille du paquebot, et la page en donne
+la forme, pas l'échelle.
+
+### Les ponts du paquebot
+
+Le pont 1 est donc découpé. `parentTierId` dit lesquels de ces ponts sont un
+seul tier : `tier-1` est le pont royal, `tier-1-b` et `tier-1-c` sont deux ponts
+au-dessus de lui, et tous les autres ponts du navire sont un tier à eux seuls et
+portent `null`.
+
+| Pont       | Élévation | Ce qu'il porte                                     |
+| ---------- | --------- | -------------------------------------------------- |
+| `tier-1-c` | 85,1 m    | casino, bloc des reines                            |
+| `tier-1-b` | 81,6 m    | chambrées, quartier de détention, Cour suprême     |
+| `tier-1`   | 72 m      | la chaîne royale, les canots, la chambre funéraire |
+
+Trois règles, et elles se lisent dans l'ordre :
+
+1. **Ce qu'un dessin met sur un plancher y reste.** La chaîne royale est un seul
+   pont parce qu'une page la dessine ainsi, d'un bout à l'autre.
+2. **Le reste est empilé par taille**, le plus grand au plus bas. Aucune page ne
+   dit lequel de ces blocs est à quel étage : ce classement est le fait de la
+   reconstruction, et la `source` de chaque pont le dit en toutes lettres, sans
+   citer de chapitre — un pont `inferred` qui citerait une planche prétendrait à
+   une preuve qu'il n'a pas.
+3. **Ce qui touche le bordé ne monte pas.** Les canots sont à `x ±133`, hors de
+   la coque, et la chambre funéraire à `z −83,6` quand le pont 1 s'arrête à
+   `−70`. Un pont en gradin est plus court par définition : ils restent en bas.
+
+Le premier pont au-dessus du pont royal ne commence pas 3,5 m plus haut mais à
+**81,6 m**, au-dessus des 9 m de la salle de banquet. Ce n'est pas un
+arrangement : c'est la raison pour laquelle un paquebot met ses volumes à double
+hauteur en bas de sa pile.
+
+La **coque de chaque pont dérive de ce qu'il porte** — son emprise plus une
+marge de circulation, écrêtée à celle du pont 1. Les gradins sortent donc du
+contenu et non d'un profil relevé au décimètre sur un tramé : un pont qui porte
+deux blocs est plus court que celui qui porte quatorze appartements, et c'est
+tout ce que la silhouette du chap. 369 est en mesure de soutenir.
+
+Trois choses ont dû être **inventées**, et portent toutes `inferred` :
+
+- **les planchers laissés vides** sur le pont royal. Un bloc qui monte
+  n'emporte pas son sol : `/tour` tire ses portes des murs partagés, et le trou
+  couperait la promenade bâbord du reste du navire ;
+- **une coursive par pont**, sans laquelle un pont n'est pas un plancher mais
+  des salles qui ne se rencontrent jamais. Elles se tiennent au-dessus de la
+  coursive tribord que le pont royal porte déjà, pour que les escaliers tombent
+  d'aplomb ;
+- **deux escaliers**. Un pont que personne n'atteint est un décor, et
+  `validateBlueprint` le refuse.
+
+La traverse du pont des hôtes passe **derrière** le bloc des reines et non le
+long de ses chambres : une chambre de reine n'ouvre que sur son couloir, donc
+une coursive posée contre son mur extérieur atteint un mur et pas une porte.
+
+Rien de tout ceci ne touche `data/locations` : un passager tient son pont du
+préfixe `tier-1-` de son slug de lieu, jamais du blueprint. `deck: 1`,
+`shipLocation.tier: 1` et les cinq boutons de `/ship` sont inchangés — le
+découpage est de la géométrie.
+
+`sectionMap.test.ts` tient ce dessin au blueprint comme `deckMaps.test.ts` tient
+les plans de pont, bande de ponts non reconstruits comprise. Il tient aussi
+`tierOverviewY` et `tierOverviewBand` de
+`apps/web/src/lib/components/map/markerProjection.ts` : en coupe, un pont a la
+hauteur qu'il a vraiment, et une foule qui s'étale sans le savoir met des
+passagers dans un pont où ils ne sont pas.
 
 ## Structure
 

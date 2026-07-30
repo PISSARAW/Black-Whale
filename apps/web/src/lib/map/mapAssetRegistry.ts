@@ -1,5 +1,7 @@
 import BlackWhaleOverview from '$lib/assets/maps/black-whale-overview.svelte'
 import Tier1 from '$lib/assets/maps/tier-1.svelte'
+import Tier1B from '$lib/assets/maps/tier-1-b.svelte'
+import Tier1C from '$lib/assets/maps/tier-1-c.svelte'
 import Tier2 from '$lib/assets/maps/tier-2.svelte'
 import Tier3 from '$lib/assets/maps/tier-3.svelte'
 import Tier4 from '$lib/assets/maps/tier-4.svelte'
@@ -40,6 +42,8 @@ import ScreeningRoom from '$lib/assets/maps/local/screening-room.svelte'
 export const MAP_ASSETS = {
   'black-whale-overview': BlackWhaleOverview,
   'tier-1': Tier1,
+  'tier-1-b': Tier1B,
+  'tier-1-c': Tier1C,
   'tier-2': Tier2,
   'tier-3': Tier3,
   'tier-4': Tier4,

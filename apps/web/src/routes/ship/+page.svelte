@@ -38,6 +38,8 @@
   const tierDensity: Record<string, number> = {
     overview: 42,
     'tier-1': 18,
+    'tier-1-b': 24,
+    'tier-1-c': 11,
     'tier-2': 34,
     'tier-3': 61,
     'tier-4': 79,
@@ -47,6 +49,8 @@
   const tierNumber: Record<string, string> = {
     overview: '00',
     'tier-1': '01',
+    'tier-1-b': '01·B',
+    'tier-1-c': '01·C',
     'tier-2': '02',
     'tier-3': '03',
     'tier-4': '04',

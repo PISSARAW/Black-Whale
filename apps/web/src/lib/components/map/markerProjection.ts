@@ -484,13 +484,39 @@ function spotNoteFor(
   return spot.inferred ? m.spotInferred : undefined
 }
 
-/** Where each deck sits in the overview; the label is built from the catalogue. */
+/**
+ * Where each deck sits in the overview, as a percentage of its height; the
+ * label is built from the catalogue.
+ *
+ * The overview is the ship in longitudinal section now, so these are the mid
+ * height of each deck in that drawing rather than five numbers eyeballed
+ * against five hand-drawn slabs — a marker on tier 4 lands between tier 4's
+ * floor and its ceiling. `scripts/generate-section-map.py` prints them when it
+ * runs; `sectionMap.test.ts` fails if they drift from what it draws.
+ */
 export const tierOverviewY: Record<string, number> = {
-  'tier-1': 21,
-  'tier-2': 31,
-  'tier-3': 46,
-  'tier-4': 63,
-  'tier-5': 78,
+  'tier-1': 23.5,
+  'tier-2': 38.3,
+  'tier-3': 52.6,
+  'tier-4': 68,
+  'tier-5': 82.8,
+}
+
+/**
+ * How tall each deck is drawn in the overview, as a percentage of its height.
+ *
+ * A deck used to be a hand-drawn slab a seventh of the picture tall, and a
+ * crowd on it could fan out freely. In section a deck is its own five metres
+ * and no more, so a fan-out that ignores this puts tier 1's hundred passengers
+ * across tiers 2 and 3 as well — people standing in a deck they are not on,
+ * which is the one thing this map exists to answer.
+ */
+export const tierOverviewBand: Record<string, number> = {
+  'tier-1': 4.1,
+  'tier-2': 4.1,
+  'tier-3': 4.9,
+  'tier-4': 3.7,
+  'tier-5': 3.7,
 }
 
 export function tierLabelFor(tierId: string, locale: Locale = DEFAULT_LOCALE): string {
@@ -1184,12 +1210,17 @@ export function packMarkersForZoom<T extends MapMarker>(
       0,
       group.findIndex((candidate) => candidate.id === marker.id),
     )
-    const columns = Math.min(12, group.length)
+    // Wide rather than tall: the section gives a deck the height it really has,
+    // so a crowd spreads along the ship and is packed tighter down until it
+    // fits between that deck's floor and its ceiling.
+    const columns = Math.min(24, group.length)
     const rows = Math.ceil(group.length / columns)
+    const band = tierOverviewBand[marker.tierId ?? ''] ?? 4
+    const pitch = Math.min(1.8, band / Math.max(rows, 1))
     return {
       ...marker,
-      x: 38 + ((index % columns) + 0.5) * (24 / columns),
-      y: marker.overviewY + (Math.floor(index / columns) - (rows - 1) / 2) * 1.8,
+      x: 16 + ((index % columns) + 0.5) * (68 / columns),
+      y: marker.overviewY + (Math.floor(index / columns) - (rows - 1) / 2) * pitch,
     }
   })
 }

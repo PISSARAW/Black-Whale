@@ -707,7 +707,7 @@ describe('the depth of a doorway', () => {
         ).toBeGreaterThanOrEqual(2)
       }
     }
-    expect(doors).toBe(469)
+    expect(doors).toBe(476)
     expect(cheeks).toBe(doors * 2)
   })
 
@@ -1041,7 +1041,7 @@ describe('the two windows', () => {
   }
 
   it('types two of them on the whole ship, and both are drawn by a panel', () => {
-    // The figure is the point of the feature: 387 spaces, 2 ways of seeing out.
+    // The figure is the point of the feature: 395 spaces, 2 ways of seeing out.
     expect(windows.map((entry) => entry.id).sort()).toEqual([
       'tier-1-king-living-quarters-living-great-window',
       'tier-3-observation-deck-window',
@@ -1052,7 +1052,7 @@ describe('the two windows', () => {
       expect(entry.base).toBeGreaterThan(0)
       expect(entry.height).toBeGreaterThan(2)
     }
-    expect(ship.spaces.size).toBe(387)
+    expect(ship.spaces.size).toBe(395)
   })
 
   it('samples the pane along its length, at the height of the glass', () => {

@@ -12,54 +12,12 @@ the blueprint and rerun this. What stays hand-written is which rooms zoom into
 their own local plan, in apps/web/src/lib/map/mapAssetRegistry.ts, which this
 reads to decide what a region click should open.
 """
-import json, re
+from blueprint_common import THROUGH, centroid, load_blueprint, region_for
 
-BP = json.load(open('data/ship/blueprint.json', encoding='utf-8'))
-REG = open('apps/web/src/lib/map/mapAssetRegistry.ts', encoding='utf-8').read()
-body = REG[REG.index('const REGION_LOCATION_SLUGS'):REG.index('/// Prince apartments')]
-REGION_OF = {}
-for k, v in re.findall(r"^\s*'?([\w-]+)'?:\s*('[\w-]+'|null),", body, re.M):
-    if v != 'null':
-        REGION_OF.setdefault(v.strip("'"), k)
+BP = load_blueprint()
 
 def sx(x): return round(x / 0.35 + 500, 2)
 def sy(z): return round(z / 0.35 + 300, 2)
-
-def centroid(fp):
-    a = cx = cy = 0.0
-    for i in range(len(fp)):
-        x0, y0 = fp[i]; x1, y1 = fp[(i + 1) % len(fp)]
-        f = x0 * y1 - x1 * y0
-        a += f; cx += (x0 + x1) * f; cy += (y0 + y1) * f
-    a *= 0.5
-    return (cx / (6 * a), cy / (6 * a)) if a else (fp[0][0], fp[0][1])
-
-# Categories that read as circulation rather than as a room you enter.
-THROUGH = {'corridor'}
-
-LOCATIONS = {l['id']: l for l in json.load(open('data/locations/locations.json', encoding='utf-8'))}
-ASSET_KEYS = set(re.findall(r"^\s*'?([\w-]+)'?:\s*'[\w-]+',",
-                            REG[REG.index('const LOCATION_ASSETS'):REG.index('const REGION_LOCATION_SLUGS')], re.M))
-
-def region_for(space):
-    """The region id to click: the one whose local plan actually opens.
-
-    A room the registry knows by name gives that name. A room it does not —
-    a queen's room, one of the princes' fourteen — gives its own location id
-    if something zooms into it, and otherwise the nearest parent that does, so
-    clicking a queen's room still opens the block plan rather than nothing.
-    """
-    loc = space['locationId']
-    if not loc: return None
-    named = REGION_OF.get(loc)
-    if named: return named
-    if 'royal-residential-sector-room-10' in loc: return loc   # the shared apartment plan
-    walk, depth = loc, 0
-    while walk and depth < 6:
-        if walk in ASSET_KEYS or REGION_OF.get(walk): return REGION_OF.get(walk, walk)
-        walk = (LOCATIONS.get(walk) or {}).get('parentLocationId')
-        depth += 1
-    return loc
 
 for tier in [t for t in BP['tiers'] if t['kind'] == 'deck']:
     tid = tier['id']

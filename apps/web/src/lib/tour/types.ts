@@ -148,6 +148,22 @@ export interface Tier {
    * showing that room as the plan draws it; this is what is behind the door.
    */
   parentSpaceId: string | null
+  /**
+   * For a deck of a tier that is more than one deck: the tier it belongs to.
+   *
+   * Tier 1 is not a floor, it is a liner sitting on the whale's back, and the
+   * ch. 369 exterior shows it terraced a dozen levels. Only one of them has a
+   * floor plan anyone has drawn — the chain of the King's quarters, the
+   * reception hall and the princes' block — so the rest of what the ch. 349
+   * cross-section merely *lists* under tier 1 stands on decks of its own.
+   *
+   * The catalogue is untouched by that: a passenger's deck is resolved from the
+   * `tier-1-*` prefix of a location slug, not from here, so every recorded
+   * position still reads tier 1. This says which decks are one tier when the
+   * two drawings need to agree — the section groups them, and a tier that is a
+   * deck in its own right leaves it `null`.
+   */
+  parentTierId: string | null
   /** The matching `data/locations` id, so the tour and the catalogue agree. */
   locationId: string | null
   name: string

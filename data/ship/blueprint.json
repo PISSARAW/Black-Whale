@@ -42,7 +42,48 @@
         [88.9, -66.08],
         [70, -70]
       ],
-      "sourceFr": "Coupe des ponts, chap. 349"
+      "sourceFr": "Coupe des ponts, chap. 349",
+      "parentTierId": null
+    },
+    {
+      "id": "tier-1-b",
+      "kind": "deck",
+      "parentTierId": "tier-1",
+      "parentSpaceId": null,
+      "locationId": "tier-1",
+      "name": "Tier 1 · Garrison Deck",
+      "nameFr": "Pont 1 · Pont de la garnison",
+      "elevation": 81.6,
+      "ceiling": 3.0,
+      "provenance": "inferred",
+      "source": "Nothing draws this deck. Tier 1 is a liner of many decks and only one of them is drawn from above; the blocks left out of that drawing cannot all be standing on it, so they are stacked by size over the deck it does show. Which deck holds which block is the reconstruction's doing and not a reading.",
+      "sourceFr": "Aucun dessin ne pose ce pont. Le pont 1 est un paquebot à ponts multiples dont un seul est dessiné vu de dessus ; les blocs que ce dessin laisse de côté ne peuvent pas tous se tenir dessus, ils sont donc empilés par taille au-dessus du pont qu’il montre. Quel pont porte quel bloc est le fait de la reconstruction, pas une lecture.",
+      "hull": [
+        [33.75, -31.0],
+        [122.5, -31.0],
+        [122.5, 65.0],
+        [33.75, 65.0]
+      ]
+    },
+    {
+      "id": "tier-1-c",
+      "kind": "deck",
+      "parentTierId": "tier-1",
+      "parentSpaceId": null,
+      "locationId": "tier-1",
+      "name": "Tier 1 · Guest Deck",
+      "nameFr": "Pont 1 · Pont des hôtes",
+      "elevation": 85.1,
+      "ceiling": 3.0,
+      "provenance": "inferred",
+      "source": "Nothing draws this deck. Tier 1 is a liner of many decks and only one of them is drawn from above; the blocks left out of that drawing cannot all be standing on it, so they are stacked by size over the deck it does show. Which deck holds which block is the reconstruction's doing and not a reading.",
+      "sourceFr": "Aucun dessin ne pose ce pont. Le pont 1 est un paquebot à ponts multiples dont un seul est dessiné vu de dessus ; les blocs que ce dessin laisse de côté ne peuvent pas tous se tenir dessus, ils sont donc empilés par taille au-dessus du pont qu’il montre. Quel pont porte quel bloc est le fait de la reconstruction, pas une lecture.",
+      "hull": [
+        [-60.75, 0.5],
+        [83.5, 0.5],
+        [83.5, 65.0],
+        [-60.75, 65.0]
+      ]
     },
     {
       "kind": "deck",
@@ -79,7 +120,8 @@
         [106.4, -72.69],
         [87.5, -77]
       ],
-      "sourceFr": "Coupe des ponts, chap. 349"
+      "sourceFr": "Coupe des ponts, chap. 349",
+      "parentTierId": null
     },
     {
       "kind": "deck",
@@ -116,7 +158,8 @@
         [134.79, -82.6],
         [122.5, -87.5]
       ],
-      "sourceFr": "Coupe des ponts, chap. 349"
+      "sourceFr": "Coupe des ponts, chap. 349",
+      "parentTierId": null
     },
     {
       "kind": "deck",
@@ -153,7 +196,8 @@
         [133.84, -82.6],
         [122.5, -87.5]
       ],
-      "sourceFr": "Coupe des ponts, chap. 349"
+      "sourceFr": "Coupe des ponts, chap. 349",
+      "parentTierId": null
     },
     {
       "kind": "deck",
@@ -190,7 +234,8 @@
         [96.95, -66.57],
         [87.5, -70]
       ],
-      "sourceFr": "Coupe des ponts, chap. 349"
+      "sourceFr": "Coupe des ponts, chap. 349",
+      "parentTierId": null
     },
     {
       "id": "interior-room-1001",
@@ -209,7 +254,8 @@
         [10.5, 10.2],
         [-10.5, 10.2]
       ],
-      "sourceFr": "Chap. 363 — le plan d'un appartement princier, encarté sur la double page de la zone d'habitation : salle du personnel, cuisine, salle à manger, salon, chambre du prince et salle d'eau derrière une seule porte, et les pièces montrées pour Benjamin, Tserriednich et Luzurus à partir du chap. 362."
+      "sourceFr": "Chap. 363 — le plan d'un appartement princier, encarté sur la double page de la zone d'habitation : salle du personnel, cuisine, salle à manger, salon, chambre du prince et salle d'eau derrière une seule porte, et les pièces montrées pour Benjamin, Tserriednich et Luzurus à partir du chap. 362.",
+      "parentTierId": null
     },
     {
       "id": "interior-room-1002",
@@ -228,7 +274,8 @@
         [10.5, 10.2],
         [-10.5, 10.2]
       ],
-      "sourceFr": "Chap. 363 — le plan d'un appartement princier, encarté sur la double page de la zone d'habitation : salle du personnel, cuisine, salle à manger, salon, chambre du prince et salle d'eau derrière une seule porte, et les pièces montrées pour Benjamin, Tserriednich et Luzurus à partir du chap. 362."
+      "sourceFr": "Chap. 363 — le plan d'un appartement princier, encarté sur la double page de la zone d'habitation : salle du personnel, cuisine, salle à manger, salon, chambre du prince et salle d'eau derrière une seule porte, et les pièces montrées pour Benjamin, Tserriednich et Luzurus à partir du chap. 362.",
+      "parentTierId": null
     },
     {
       "id": "interior-room-1003",
@@ -247,7 +294,8 @@
         [10.5, 10.2],
         [-10.5, 10.2]
       ],
-      "sourceFr": "Chap. 363 — le plan d'un appartement princier, encarté sur la double page de la zone d'habitation : salle du personnel, cuisine, salle à manger, salon, chambre du prince et salle d'eau derrière une seule porte, et les pièces montrées pour Benjamin, Tserriednich et Luzurus à partir du chap. 362."
+      "sourceFr": "Chap. 363 — le plan d'un appartement princier, encarté sur la double page de la zone d'habitation : salle du personnel, cuisine, salle à manger, salon, chambre du prince et salle d'eau derrière une seule porte, et les pièces montrées pour Benjamin, Tserriednich et Luzurus à partir du chap. 362.",
+      "parentTierId": null
     },
     {
       "id": "interior-room-1004",
@@ -266,7 +314,8 @@
         [10.5, 10.2],
         [-10.5, 10.2]
       ],
-      "sourceFr": "Chap. 363 — le plan d'un appartement princier, encarté sur la double page de la zone d'habitation : salle du personnel, cuisine, salle à manger, salon, chambre du prince et salle d'eau derrière une seule porte, et les pièces montrées pour Benjamin, Tserriednich et Luzurus à partir du chap. 362."
+      "sourceFr": "Chap. 363 — le plan d'un appartement princier, encarté sur la double page de la zone d'habitation : salle du personnel, cuisine, salle à manger, salon, chambre du prince et salle d'eau derrière une seule porte, et les pièces montrées pour Benjamin, Tserriednich et Luzurus à partir du chap. 362.",
+      "parentTierId": null
     },
     {
       "id": "interior-room-1005",
@@ -285,7 +334,8 @@
         [10.5, 10.2],
         [-10.5, 10.2]
       ],
-      "sourceFr": "Chap. 363 — le plan d'un appartement princier, encarté sur la double page de la zone d'habitation : salle du personnel, cuisine, salle à manger, salon, chambre du prince et salle d'eau derrière une seule porte, et les pièces montrées pour Benjamin, Tserriednich et Luzurus à partir du chap. 362."
+      "sourceFr": "Chap. 363 — le plan d'un appartement princier, encarté sur la double page de la zone d'habitation : salle du personnel, cuisine, salle à manger, salon, chambre du prince et salle d'eau derrière une seule porte, et les pièces montrées pour Benjamin, Tserriednich et Luzurus à partir du chap. 362.",
+      "parentTierId": null
     },
     {
       "id": "interior-room-1006",
@@ -304,7 +354,8 @@
         [10.5, 10.2],
         [-10.5, 10.2]
       ],
-      "sourceFr": "Chap. 363 — le plan d'un appartement princier, encarté sur la double page de la zone d'habitation : salle du personnel, cuisine, salle à manger, salon, chambre du prince et salle d'eau derrière une seule porte, et les pièces montrées pour Benjamin, Tserriednich et Luzurus à partir du chap. 362."
+      "sourceFr": "Chap. 363 — le plan d'un appartement princier, encarté sur la double page de la zone d'habitation : salle du personnel, cuisine, salle à manger, salon, chambre du prince et salle d'eau derrière une seule porte, et les pièces montrées pour Benjamin, Tserriednich et Luzurus à partir du chap. 362.",
+      "parentTierId": null
     },
     {
       "id": "interior-room-1007",
@@ -323,7 +374,8 @@
         [10.5, 10.2],
         [-10.5, 10.2]
       ],
-      "sourceFr": "Chap. 363 — le plan d'un appartement princier, encarté sur la double page de la zone d'habitation : salle du personnel, cuisine, salle à manger, salon, chambre du prince et salle d'eau derrière une seule porte, et les pièces montrées pour Benjamin, Tserriednich et Luzurus à partir du chap. 362."
+      "sourceFr": "Chap. 363 — le plan d'un appartement princier, encarté sur la double page de la zone d'habitation : salle du personnel, cuisine, salle à manger, salon, chambre du prince et salle d'eau derrière une seule porte, et les pièces montrées pour Benjamin, Tserriednich et Luzurus à partir du chap. 362.",
+      "parentTierId": null
     },
     {
       "id": "interior-room-1008",
@@ -342,7 +394,8 @@
         [10.5, 10.2],
         [-10.5, 10.2]
       ],
-      "sourceFr": "Chap. 363 — le plan d'un appartement princier, encarté sur la double page de la zone d'habitation : salle du personnel, cuisine, salle à manger, salon, chambre du prince et salle d'eau derrière une seule porte, et les pièces montrées pour Benjamin, Tserriednich et Luzurus à partir du chap. 362."
+      "sourceFr": "Chap. 363 — le plan d'un appartement princier, encarté sur la double page de la zone d'habitation : salle du personnel, cuisine, salle à manger, salon, chambre du prince et salle d'eau derrière une seule porte, et les pièces montrées pour Benjamin, Tserriednich et Luzurus à partir du chap. 362.",
+      "parentTierId": null
     },
     {
       "id": "interior-room-1009",
@@ -361,7 +414,8 @@
         [10.5, 10.2],
         [-10.5, 10.2]
       ],
-      "sourceFr": "Chap. 363 — le plan d'un appartement princier, encarté sur la double page de la zone d'habitation : salle du personnel, cuisine, salle à manger, salon, chambre du prince et salle d'eau derrière une seule porte, et les pièces montrées pour Benjamin, Tserriednich et Luzurus à partir du chap. 362."
+      "sourceFr": "Chap. 363 — le plan d'un appartement princier, encarté sur la double page de la zone d'habitation : salle du personnel, cuisine, salle à manger, salon, chambre du prince et salle d'eau derrière une seule porte, et les pièces montrées pour Benjamin, Tserriednich et Luzurus à partir du chap. 362.",
+      "parentTierId": null
     },
     {
       "id": "interior-room-1010",
@@ -380,7 +434,8 @@
         [10.5, 10.2],
         [-10.5, 10.2]
       ],
-      "sourceFr": "Chap. 363 — le plan d'un appartement princier, encarté sur la double page de la zone d'habitation : salle du personnel, cuisine, salle à manger, salon, chambre du prince et salle d'eau derrière une seule porte, et les pièces montrées pour Benjamin, Tserriednich et Luzurus à partir du chap. 362."
+      "sourceFr": "Chap. 363 — le plan d'un appartement princier, encarté sur la double page de la zone d'habitation : salle du personnel, cuisine, salle à manger, salon, chambre du prince et salle d'eau derrière une seule porte, et les pièces montrées pour Benjamin, Tserriednich et Luzurus à partir du chap. 362.",
+      "parentTierId": null
     },
     {
       "id": "interior-room-1011",
@@ -399,7 +454,8 @@
         [10.5, 10.2],
         [-10.5, 10.2]
       ],
-      "sourceFr": "Chap. 363 — le plan d'un appartement princier, encarté sur la double page de la zone d'habitation : salle du personnel, cuisine, salle à manger, salon, chambre du prince et salle d'eau derrière une seule porte, et les pièces montrées pour Benjamin, Tserriednich et Luzurus à partir du chap. 362."
+      "sourceFr": "Chap. 363 — le plan d'un appartement princier, encarté sur la double page de la zone d'habitation : salle du personnel, cuisine, salle à manger, salon, chambre du prince et salle d'eau derrière une seule porte, et les pièces montrées pour Benjamin, Tserriednich et Luzurus à partir du chap. 362.",
+      "parentTierId": null
     },
     {
       "id": "interior-room-1012",
@@ -418,7 +474,8 @@
         [10.5, 10.2],
         [-10.5, 10.2]
       ],
-      "sourceFr": "Chap. 363 — le plan d'un appartement princier, encarté sur la double page de la zone d'habitation : salle du personnel, cuisine, salle à manger, salon, chambre du prince et salle d'eau derrière une seule porte, et les pièces montrées pour Benjamin, Tserriednich et Luzurus à partir du chap. 362."
+      "sourceFr": "Chap. 363 — le plan d'un appartement princier, encarté sur la double page de la zone d'habitation : salle du personnel, cuisine, salle à manger, salon, chambre du prince et salle d'eau derrière une seule porte, et les pièces montrées pour Benjamin, Tserriednich et Luzurus à partir du chap. 362.",
+      "parentTierId": null
     },
     {
       "id": "interior-room-1013",
@@ -437,7 +494,8 @@
         [10.5, 10.2],
         [-10.5, 10.2]
       ],
-      "sourceFr": "Chap. 363 — le plan d'un appartement princier, encarté sur la double page de la zone d'habitation : salle du personnel, cuisine, salle à manger, salon, chambre du prince et salle d'eau derrière une seule porte, et les pièces montrées pour Benjamin, Tserriednich et Luzurus à partir du chap. 362."
+      "sourceFr": "Chap. 363 — le plan d'un appartement princier, encarté sur la double page de la zone d'habitation : salle du personnel, cuisine, salle à manger, salon, chambre du prince et salle d'eau derrière une seule porte, et les pièces montrées pour Benjamin, Tserriednich et Luzurus à partir du chap. 362.",
+      "parentTierId": null
     },
     {
       "id": "interior-room-1014",
@@ -456,7 +514,8 @@
         [10.5, 10.2],
         [-10.5, 10.2]
       ],
-      "sourceFr": "Chap. 363 — le plan d'un appartement princier, encarté sur la double page de la zone d'habitation : salle du personnel, cuisine, salle à manger, salon, chambre du prince et salle d'eau derrière une seule porte, et les pièces montrées pour Benjamin, Tserriednich et Luzurus à partir du chap. 362."
+      "sourceFr": "Chap. 363 — le plan d'un appartement princier, encarté sur la double page de la zone d'habitation : salle du personnel, cuisine, salle à manger, salon, chambre du prince et salle d'eau derrière une seule porte, et les pièces montrées pour Benjamin, Tserriednich et Luzurus à partir du chap. 362.",
+      "parentTierId": null
     },
     {
       "id": "interior-vip-detention",
@@ -465,7 +524,7 @@
       "locationId": "tier-1-vip-jail",
       "name": "V.I.P. Detention Area",
       "nameFr": "Quartier de détention VIP",
-      "elevation": 72,
+      "elevation": 81.6,
       "ceiling": 3.5,
       "provenance": "plan",
       "source": "V.I.P. detention plan; the block shown in ch. 350",
@@ -475,7 +534,8 @@
         [10, 5.6],
         [-10, 5.6]
       ],
-      "sourceFr": "Plan du quartier de détention VIP ; le bloc montré au chap. 350"
+      "sourceFr": "Plan du quartier de détention VIP ; le bloc montré au chap. 350",
+      "parentTierId": null
     },
     {
       "id": "interior-soldiers-quarters",
@@ -484,7 +544,7 @@
       "locationId": "tier-1-soldiers-living-quarters",
       "name": "Soldiers' Living Quarters",
       "nameFr": "Quartiers des soldats",
-      "elevation": 72,
+      "elevation": 81.6,
       "ceiling": 3.5,
       "provenance": "plan",
       "source": "Soldiers' quarters plan; Kakin soldiers and some 150 Provisional Hunters",
@@ -494,7 +554,8 @@
         [22.5, 12.25],
         [-22.5, 12.25]
       ],
-      "sourceFr": "Plan des quartiers des soldats ; soldats de Kakin et quelque 150 Hunters provisoires"
+      "sourceFr": "Plan des quartiers des soldats ; soldats de Kakin et quelque 150 Hunters provisoires",
+      "parentTierId": null
     },
     {
       "id": "interior-justice-bureau",
@@ -513,7 +574,8 @@
         [22, 13.75],
         [-22, 13.75]
       ],
-      "sourceFr": "Plan du bureau de la Justice ; une institution de cinq étages, schématisée à partir des pièces confirmées"
+      "sourceFr": "Plan du bureau de la Justice ; une institution de cinq étages, schématisée à partir des pièces confirmées",
+      "parentTierId": null
     },
     {
       "id": "interior-central-hospital",
@@ -532,7 +594,8 @@
         [22, 13],
         [-22, 13]
       ],
-      "sourceFr": "Plan de l'hôpital central ; le quartier médical compte trois cliniques"
+      "sourceFr": "Plan de l'hôpital central ; le quartier médical compte trois cliniques",
+      "parentTierId": null
     },
     {
       "id": "interior-cineplex",
@@ -551,7 +614,8 @@
         [28, 37.5],
         [-28, 37.5]
       ],
-      "sourceFr": "Chap. 393 — le hall : le stand de restauration, les guichets et l'allée qui descend vers les salles."
+      "sourceFr": "Chap. 393 — le hall : le stand de restauration, les guichets et l'allée qui descend vers les salles.",
+      "parentTierId": null
     },
     {
       "id": "interior-cha-r-office",
@@ -570,7 +634,8 @@
         [21.5, 13],
         [-21.5, 13]
       ],
-      "sourceFr": "Plan du bureau Cha-R ; la section centrale, près de l’hélice"
+      "sourceFr": "Plan du bureau Cha-R ; la section centrale, près de l’hélice",
+      "parentTierId": null
     },
     {
       "id": "interior-general-cabins",
@@ -589,7 +654,8 @@
         [18, 10],
         [-18, 10]
       ],
-      "sourceFr": "Plan des cabines standard ; le couloir sert aussi de point de rassemblement"
+      "sourceFr": "Plan des cabines standard ; le couloir sert aussi de point de rassemblement",
+      "parentTierId": null
     },
     {
       "id": "interior-tier3-cabins",
@@ -608,7 +674,8 @@
         [22.5, 14.25],
         [-22.5, 14.25]
       ],
-      "sourceFr": "Plan de la première classe, chap. 393"
+      "sourceFr": "Plan de la première classe, chap. 393",
+      "parentTierId": null
     },
     {
       "id": "interior-king-quarters",
@@ -627,7 +694,8 @@
         [14, 14.5],
         [-14, 14.5]
       ],
-      "sourceFr": "Chap. 382 — le salon du Roi : sol à motifs, sièges appariés, tableaux encadrés et la baie du fond."
+      "sourceFr": "Chap. 382 — le salon du Roi : sol à motifs, sièges appariés, tableaux encadrés et la baie du fond.",
+      "parentTierId": null
     },
     {
       "id": "interior-hull-suspension",
@@ -646,7 +714,8 @@
         [22, 6],
         [-22, 6]
       ],
-      "sourceFr": "Chap. 406 — les suspensions à ressort sur lesquelles la coque porte le vaisseau, avec des passerelles entre elles."
+      "sourceFr": "Chap. 406 — les suspensions à ressort sur lesquelles la coque porte le vaisseau, avec des passerelles entre elles.",
+      "parentTierId": null
     },
     {
       "id": "interior-lifeboat",
@@ -665,7 +734,8 @@
         [3.2, 3.2],
         [-3.2, 3.2]
       ],
-      "sourceFr": "Chap. 383 — l'intérieur d'une capsule : une couronne de sièges autour du mât central, sous l'écoutille."
+      "sourceFr": "Chap. 383 — l'intérieur d'une capsule : une couronne de sièges autour du mât central, sous l'écoutille.",
+      "parentTierId": null
     },
     {
       "id": "interior-burial-chamber",
@@ -704,7 +774,8 @@
         [-5.89, 10.19],
         [-3.05, 11.37]
       ],
-      "sourceFr": "Le chap. 358 montre la chambre ; le chap. 371 la dessine ronde, les quatorze cercueils disposés en rayons autour de son centre."
+      "sourceFr": "Le chap. 358 montre la chambre ; le chap. 371 la dessine ronde, les quatorze cercueils disposés en rayons autour de son centre.",
+      "parentTierId": null
     },
     {
       "id": "interior-royal-army-conference",
@@ -723,7 +794,8 @@
         [11.5, 9],
         [-11.5, 9]
       ],
-      "sourceFr": "Plan de la salle de conférence ; le briefing que Mizaistom tient au chap. 350"
+      "sourceFr": "Plan de la salle de conférence ; le briefing que Mizaistom tient au chap. 350",
+      "parentTierId": null
     },
     {
       "id": "interior-xi-yu-office",
@@ -742,7 +814,8 @@
         [9.5, 7.5],
         [-9.5, 7.5]
       ],
-      "sourceFr": "Plan du bureau Xi-Yu ; la section avant, dans les « dents » du Black Whale"
+      "sourceFr": "Plan du bureau Xi-Yu ; la section avant, dans les « dents » du Black Whale",
+      "parentTierId": null
     },
     {
       "id": "interior-room-3101",
@@ -761,7 +834,8 @@
         [8, 6],
         [-8, 6]
       ],
-      "sourceFr": "Chap. 361 — la chambre-piège des Heil-Ly : la cabine, et la salle de bains taillée dans l'espace technique derrière"
+      "sourceFr": "Chap. 361 — la chambre-piège des Heil-Ly : la cabine, et la salle de bains taillée dans l'espace technique derrière",
+      "parentTierId": null
     },
     {
       "id": "interior-police-station",
@@ -780,7 +854,8 @@
         [13, 13],
         [-13, 13]
       ],
-      "sourceFr": "Plan du poste de police ; l'atrium et sa fontaine, le guichet de sécurité publique"
+      "sourceFr": "Plan du poste de police ; l'atrium et sa fontaine, le guichet de sécurité publique",
+      "parentTierId": null
     },
     {
       "id": "interior-courthouse",
@@ -799,7 +874,8 @@
         [13.5, 10.5],
         [-13.5, 10.5]
       ],
-      "sourceFr": "Plan du tribunal ; le siège du magistrat, les greffiers, le parquet et la défense"
+      "sourceFr": "Plan du tribunal ; le siège du magistrat, les greffiers, le parquet et la défense",
+      "parentTierId": null
     },
     {
       "id": "interior-heilly-office",
@@ -818,7 +894,8 @@
         [10, 8],
         [-10, 8]
       ],
-      "sourceFr": "Plan du bureau Heil-Ly ; les locaux déclarés et l'entrée fouillée par les soldats kakinois"
+      "sourceFr": "Plan du bureau Heil-Ly ; les locaux déclarés et l'entrée fouillée par les soldats kakinois",
+      "parentTierId": null
     },
     {
       "id": "interior-heilly-hideout",
@@ -837,7 +914,8 @@
         [17, 9.5],
         [-20, 9.5]
       ],
-      "sourceFr": "Plan de la planque Heil-Ly ; les sept portes de la salle de traitement, la buanderie, la salle commune et le bureau du chef"
+      "sourceFr": "Plan de la planque Heil-Ly ; les sept portes de la salle de traitement, la buanderie, la salle commune et le bureau du chef",
+      "parentTierId": null
     },
     {
       "id": "interior-beyond-cell",
@@ -846,7 +924,7 @@
       "locationId": "tier-1-vvip-prison-beyond",
       "name": "High-Security Holding Cell",
       "nameFr": "Cellule de haute sécurité",
-      "elevation": 72,
+      "elevation": 81.6,
       "ceiling": 3.5,
       "provenance": "panel",
       "source": "Ch. 350 shows the high-security cell and its manacles; ch. 359 the barred front and the watch kept in front of it.",
@@ -856,7 +934,8 @@
         [7.5, 5],
         [-7.5, 5]
       ],
-      "sourceFr": "Le chap. 350 montre la cellule de haute sécurité et ses entraves ; le chap. 359, la façade à barreaux et la garde tenue devant."
+      "sourceFr": "Le chap. 350 montre la cellule de haute sécurité et ses entraves ; le chap. 359, la façade à barreaux et la garde tenue devant.",
+      "parentTierId": null
     },
     {
       "id": "interior-tier5-standard-cabins",
@@ -875,7 +954,8 @@
         [18, 10],
         [-18, 10]
       ],
-      "sourceFr": "Plan des cabines standard ; le couloir sert aussi de point de rassemblement"
+      "sourceFr": "Plan des cabines standard ; le couloir sert aussi de point de rassemblement",
+      "parentTierId": null
     },
     {
       "kind": "interior",
@@ -894,7 +974,8 @@
         [7.5, 44],
         [-7.5, 44]
       ],
-      "sourceFr": "La planche du bloc des passagers ordinaires : un portail portant SRCL 9041 – 9488, et derrière lui une coursive à portes de cabines des deux côtés, avec des soldats postés dedans."
+      "sourceFr": "La planche du bloc des passagers ordinaires : un portail portant SRCL 9041 – 9488, et derrière lui une coursive à portes de cabines des deux côtés, avec des soldats postés dedans.",
+      "parentTierId": null
     }
   ],
   "spaces": [
@@ -1179,7 +1260,7 @@
     },
     {
       "id": "tier-1-vip-casino",
-      "tierId": "tier-1",
+      "tierId": "tier-1-c",
       "locationId": "tier-1-vip-casino",
       "name": "VIP Casino",
       "nameFr": "Casino VIP",
@@ -1198,7 +1279,7 @@
     },
     {
       "id": "tier-1-queens-corridor",
-      "tierId": "tier-1",
+      "tierId": "tier-1-c",
       "locationId": "tier-1-queens-living-quarters",
       "name": "Queens' Quarters Corridor",
       "nameFr": "Couloir des quartiers des reines",
@@ -1217,7 +1298,7 @@
     },
     {
       "id": "tier-1-queens-living-quarters-room-01",
-      "tierId": "tier-1",
+      "tierId": "tier-1-c",
       "locationId": "tier-1-queens-living-quarters-room-01",
       "name": "Queen's Room 01",
       "nameFr": "Chambre de reine 01",
@@ -1236,7 +1317,7 @@
     },
     {
       "id": "tier-1-queens-living-quarters-room-02",
-      "tierId": "tier-1",
+      "tierId": "tier-1-c",
       "locationId": "tier-1-queens-living-quarters-room-02",
       "name": "Queen's Room 02",
       "nameFr": "Chambre de reine 02",
@@ -1255,7 +1336,7 @@
     },
     {
       "id": "tier-1-queens-living-quarters-room-03",
-      "tierId": "tier-1",
+      "tierId": "tier-1-c",
       "locationId": "tier-1-queens-living-quarters-room-03",
       "name": "Queen's Room 03",
       "nameFr": "Chambre de reine 03",
@@ -1274,7 +1355,7 @@
     },
     {
       "id": "tier-1-queens-living-quarters-room-04",
-      "tierId": "tier-1",
+      "tierId": "tier-1-c",
       "locationId": "tier-1-queens-living-quarters-room-04",
       "name": "Queen's Room 04",
       "nameFr": "Chambre de reine 04",
@@ -1293,7 +1374,7 @@
     },
     {
       "id": "tier-1-queens-living-quarters-room-05",
-      "tierId": "tier-1",
+      "tierId": "tier-1-c",
       "locationId": "tier-1-queens-living-quarters-room-05",
       "name": "Queen's Room 05",
       "nameFr": "Chambre de reine 05",
@@ -1312,7 +1393,7 @@
     },
     {
       "id": "tier-1-queens-living-quarters-room-06",
-      "tierId": "tier-1",
+      "tierId": "tier-1-c",
       "locationId": "tier-1-queens-living-quarters-room-06",
       "name": "Queen's Room 06",
       "nameFr": "Chambre de reine 06",
@@ -1331,7 +1412,7 @@
     },
     {
       "id": "tier-1-queens-living-quarters-room-07",
-      "tierId": "tier-1",
+      "tierId": "tier-1-c",
       "locationId": "tier-1-queens-living-quarters-room-07",
       "name": "Queen's Room 07",
       "nameFr": "Chambre de reine 07",
@@ -1350,7 +1431,7 @@
     },
     {
       "id": "tier-1-queens-living-quarters-room-08",
-      "tierId": "tier-1",
+      "tierId": "tier-1-c",
       "locationId": "tier-1-queens-living-quarters-room-08",
       "name": "Queen's Room 08",
       "nameFr": "Chambre de reine 08",
@@ -4455,7 +4536,7 @@
     },
     {
       "id": "tier-1-soldiers-living-quarters",
-      "tierId": "tier-1",
+      "tierId": "tier-1-b",
       "locationId": "tier-1-soldiers-living-quarters",
       "name": "Soldiers' Living Quarters",
       "nameFr": "Quartiers des soldats",
@@ -4474,7 +4555,7 @@
     },
     {
       "id": "tier-1-vvip-prison-beyond",
-      "tierId": "tier-1",
+      "tierId": "tier-1-b",
       "locationId": "tier-1-vvip-prison-beyond",
       "name": "Beyond Netero's Holding Cell",
       "nameFr": "Cellule de Beyond Netero",
@@ -4493,7 +4574,7 @@
     },
     {
       "id": "tier-1-vip-jail",
-      "tierId": "tier-1",
+      "tierId": "tier-1-b",
       "locationId": "tier-1-vip-jail",
       "name": "VIP Jail",
       "nameFr": "Prison VIP",
@@ -4512,7 +4593,7 @@
     },
     {
       "id": "tier-1-jail-block-walkway",
-      "tierId": "tier-1",
+      "tierId": "tier-1-b",
       "locationId": null,
       "name": "Jail Block Walkway",
       "nameFr": "Coursive du bloc pénitentiaire",
@@ -4531,7 +4612,7 @@
     },
     {
       "id": "tier-1-jail-block-hall",
-      "tierId": "tier-1",
+      "tierId": "tier-1-b",
       "locationId": null,
       "name": "Jail Block Hall",
       "nameFr": "Hall du bloc pénitentiaire",
@@ -4552,7 +4633,7 @@
     },
     {
       "id": "tier-1-supreme-court",
-      "tierId": "tier-1",
+      "tierId": "tier-1-b",
       "locationId": "tier-1-supreme-court",
       "name": "Supreme Court",
       "nameFr": "Cour suprême",
@@ -8411,6 +8492,158 @@
         [2.5, 42]
       ],
       "sourceFr": "Rien ne dessine l'intérieur de ce bloc. Les cellules sont posées à la taille qu'une cabine doit avoir pour être parcourue, pour que ce que le panneau annonce mène quelque part au lieu de s'arrêter à des portes closes. Leur nombre n'est pas celui que le panneau compte."
+    },
+    {
+      "id": "tier-1-b-starboard-corridor",
+      "tierId": "tier-1-b",
+      "locationId": null,
+      "name": "Starboard Corridor",
+      "nameFr": "Coursive tribord",
+      "category": "corridor",
+      "provenance": "inferred",
+      "source": "Nothing draws a corridor here. It is what makes this deck one floor rather than rooms that never meet, and it stands over the corridor the royal deck already runs, so the stair between them is plumb.",
+      "sourceFr": "Aucun dessin ne pose de coursive ici. C’est elle qui fait de ce pont un plancher unique plutôt que des salles qui ne se rencontrent jamais, et elle se tient au-dessus de la coursive que le pont royal porte déjà, pour que l’escalier entre les deux tombe d’aplomb.",
+      "ceiling": null,
+      "envelope": null,
+      "footprint": [
+        [70.0, -28.0],
+        [80.5, -28.0],
+        [80.5, 62.0],
+        [70.0, 62.0]
+      ]
+    },
+    {
+      "id": "tier-1-c-port-corridor",
+      "tierId": "tier-1-c",
+      "locationId": null,
+      "name": "Port Corridor",
+      "nameFr": "Coursive bâbord",
+      "category": "corridor",
+      "provenance": "inferred",
+      "source": "Nothing draws a corridor here. It is what makes this deck one floor rather than rooms that never meet, and it stands over the corridor the royal deck already runs, so the stair between them is plumb.",
+      "sourceFr": "Aucun dessin ne pose de coursive ici. C’est elle qui fait de ce pont un plancher unique plutôt que des salles qui ne se rencontrent jamais, et elle se tient au-dessus de la coursive que le pont royal porte déjà, pour que l’escalier entre les deux tombe d’aplomb.",
+      "ceiling": null,
+      "envelope": null,
+      "footprint": [
+        [-40.25, 3.5],
+        [-38.5, 3.5],
+        [-38.5, 56.0],
+        [-40.25, 56.0]
+      ]
+    },
+    {
+      "id": "tier-1-c-aft-passage",
+      "tierId": "tier-1-c",
+      "locationId": null,
+      "name": "Aft Passage",
+      "nameFr": "Traverse arrière",
+      "category": "corridor",
+      "provenance": "inferred",
+      "source": "Nothing draws a corridor here. It is what makes this deck one floor rather than rooms that never meet, and it stands over the corridor the royal deck already runs, so the stair between them is plumb.",
+      "sourceFr": "Aucun dessin ne pose de coursive ici. C’est elle qui fait de ce pont un plancher unique plutôt que des salles qui ne se rencontrent jamais, et elle se tient au-dessus de la coursive que le pont royal porte déjà, pour que l’escalier entre les deux tombe d’aplomb.",
+      "ceiling": null,
+      "envelope": null,
+      "footprint": [
+        [-57.75, 56.0],
+        [80.5, 56.0],
+        [80.5, 62.0],
+        [-57.75, 62.0]
+      ]
+    },
+    {
+      "id": "tier-1-garrison-void",
+      "tierId": "tier-1",
+      "locationId": null,
+      "name": "Starboard Quarters Floor",
+      "nameFr": "Plancher des quartiers tribord",
+      "category": "infrastructure",
+      "provenance": "inferred",
+      "source": "Nothing is drawn on this floor. The block that used to be reconstructed here now stands on a deck of its own, and this is the floor it left: a deck derives its doorways from shared walls, so the hole would cut the promenade off from the ship.",
+      "sourceFr": "Rien n’est dessiné sur ce plancher. Le bloc qu’on reconstruisait ici occupe désormais un pont à lui, et voici le sol qu’il a quitté : un pont tire ses portes des murs partagés, et le trou couperait la promenade du reste du navire.",
+      "ceiling": null,
+      "envelope": null,
+      "footprint": [
+        [36.75, 3.5],
+        [70.0, 3.5],
+        [70.0, 56.0],
+        [36.75, 56.0]
+      ]
+    },
+    {
+      "id": "tier-1-detention-void",
+      "tierId": "tier-1",
+      "locationId": null,
+      "name": "Starboard Forward Floor",
+      "nameFr": "Plancher tribord avant",
+      "category": "infrastructure",
+      "provenance": "inferred",
+      "source": "Nothing is drawn on this floor. The block that used to be reconstructed here now stands on a deck of its own, and this is the floor it left: a deck derives its doorways from shared walls, so the hole would cut the promenade off from the ship.",
+      "sourceFr": "Rien n’est dessiné sur ce plancher. Le bloc qu’on reconstruisait ici occupe désormais un pont à lui, et voici le sol qu’il a quitté : un pont tire ses portes des murs partagés, et le trou couperait la promenade du reste du navire.",
+      "ceiling": null,
+      "envelope": null,
+      "footprint": [
+        [80.5, -28.0],
+        [122.5, -28.0],
+        [122.5, 17.5],
+        [80.5, 17.5]
+      ]
+    },
+    {
+      "id": "tier-1-court-void",
+      "tierId": "tier-1",
+      "locationId": null,
+      "name": "Starboard Aft Floor",
+      "nameFr": "Plancher tribord arrière",
+      "category": "infrastructure",
+      "provenance": "inferred",
+      "source": "Nothing is drawn on this floor. The block that used to be reconstructed here now stands on a deck of its own, and this is the floor it left: a deck derives its doorways from shared walls, so the hole would cut the promenade off from the ship.",
+      "sourceFr": "Rien n’est dessiné sur ce plancher. Le bloc qu’on reconstruisait ici occupe désormais un pont à lui, et voici le sol qu’il a quitté : un pont tire ses portes des murs partagés, et le trou couperait la promenade du reste du navire.",
+      "ceiling": null,
+      "envelope": null,
+      "footprint": [
+        [80.5, 24.5],
+        [122.5, 24.5],
+        [122.5, 52.5],
+        [80.5, 52.5]
+      ]
+    },
+    {
+      "id": "tier-1-casino-void",
+      "tierId": "tier-1",
+      "locationId": null,
+      "name": "Port Inner Floor",
+      "nameFr": "Plancher bâbord intérieur",
+      "category": "infrastructure",
+      "provenance": "inferred",
+      "source": "Nothing is drawn on this floor. The block that used to be reconstructed here now stands on a deck of its own, and this is the floor it left: a deck derives its doorways from shared walls, so the hole would cut the promenade off from the ship.",
+      "sourceFr": "Rien n’est dessiné sur ce plancher. Le bloc qu’on reconstruisait ici occupe désormais un pont à lui, et voici le sol qu’il a quitté : un pont tire ses portes des murs partagés, et le trou couperait la promenade du reste du navire.",
+      "ceiling": null,
+      "envelope": null,
+      "footprint": [
+        [-57.75, 3.5],
+        [-40.25, 3.5],
+        [-40.25, 56.0],
+        [-57.75, 56.0]
+      ]
+    },
+    {
+      "id": "tier-1-queens-void",
+      "tierId": "tier-1",
+      "locationId": null,
+      "name": "Port Central Floor",
+      "nameFr": "Plancher bâbord central",
+      "category": "infrastructure",
+      "provenance": "inferred",
+      "source": "Nothing is drawn on this floor. The block that used to be reconstructed here now stands on a deck of its own, and this is the floor it left: a deck derives its doorways from shared walls, so the hole would cut the promenade off from the ship.",
+      "sourceFr": "Rien n’est dessiné sur ce plancher. Le bloc qu’on reconstruisait ici occupe désormais un pont à lui, et voici le sol qu’il a quitté : un pont tire ses portes des murs partagés, et le trou couperait la promenade du reste du navire.",
+      "ceiling": null,
+      "envelope": null,
+      "footprint": [
+        [-38.5, 3.5],
+        [-15.75, 3.5],
+        [-15.75, 56.0],
+        [-38.5, 56.0]
+      ]
     }
   ],
   "links": [
@@ -8818,6 +9051,24 @@
       "provenance": "panel",
       "source": "The panel of the general passengers' block: a portal signed SRCL 9041 – 9488, and behind it a corridor with cabin doors down both sides and soldiers posted in it.",
       "sourceFr": "La planche du bloc des passagers ordinaires : un portail portant SRCL 9041 – 9488, et derrière lui une coursive à portes de cabines des deux côtés, avec des soldats postés dedans."
+    },
+    {
+      "from": "tier-1-starboard-corridor",
+      "to": "tier-1-b-starboard-corridor",
+      "kind": "stair",
+      "at": [75.25, -20.0],
+      "provenance": "inferred",
+      "source": "No page draws a stair between these decks. A deck nobody can reach is scenery, and the liner is one ship: the flight is put where both decks run a corridor.",
+      "sourceFr": "Aucune page ne dessine d’escalier entre ces ponts. Un pont que personne n’atteint est un décor, et le paquebot est un seul navire : la volée est posée là où les deux ponts portent une coursive."
+    },
+    {
+      "from": "tier-1-b-starboard-corridor",
+      "to": "tier-1-c-aft-passage",
+      "kind": "stair",
+      "at": [75.25, 59.0],
+      "provenance": "inferred",
+      "source": "No page draws a stair between these decks. A deck nobody can reach is scenery, and the liner is one ship: the flight is put where both decks run a corridor.",
+      "sourceFr": "Aucune page ne dessine d’escalier entre ces ponts. Un pont que personne n’atteint est un décor, et le paquebot est un seul navire : la volée est posée là où les deux ponts portent une coursive."
     }
   ],
   "seals": [

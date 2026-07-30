@@ -2,7 +2,11 @@ import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
 import { blueprint } from '../../tour/blueprint'
 import { resolveRegionLocationSlug } from '../../map/mapAssetRegistry'
-import { tierOverviewBand, tierOverviewY } from '../../components/map/markerProjection'
+import {
+  tierOverviewBand,
+  tierOverviewSpan,
+  tierOverviewY,
+} from '../../components/map/markerProjection'
 import locations from '../../../../../../data/locations/locations.json'
 import type { Space, Tier } from '../../tour/types'
 
@@ -249,6 +253,19 @@ describe('the decks of the section', () => {
       const band = ((deck.floor - deck.ceiling) / VIEW_H) * 100
       expect(tierOverviewY[deck.id], deck.id).toBeCloseTo(middle, 1)
       expect(tierOverviewBand[deck.id], deck.id).toBeCloseTo(band, 0)
+    }
+  })
+
+  /**
+   * And as long. The whale tapers, so a fixed fan-out ran the short decks'
+   * passengers out past their own stern and into the sea the section draws.
+   */
+  it('is as long as markerProjection lets a crowd spread', () => {
+    for (const deck of drawnDecks) {
+      const [fore, aft] = tierOverviewSpan[deck.id] ?? []
+      expect(fore, `${deck.id} has no span`).toBeDefined()
+      expect(fore, `${deck.id} bow`).toBeCloseTo((deck.x0 / VIEW_W) * 100, 1)
+      expect(aft, `${deck.id} stern`).toBeCloseTo((deck.x1 / VIEW_W) * 100, 1)
     }
   })
 })

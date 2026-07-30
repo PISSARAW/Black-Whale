@@ -528,3 +528,6 @@ print('tierOverviewY (%) : ' + ', '.join(
     f"{d['id']} {round((d['floor'] + d['ceiling']) / 2 / VIEW_H * 100, 1)}" for d in decks_out))
 print('tierOverviewBand (%) : ' + ', '.join(
     f"{d['id']} {round((d['floor'] - d['ceiling']) / VIEW_H * 100, 1)}" for d in decks_out))
+print('tierOverviewSpan (%) : ' + ', '.join(
+    f"{d['id']} [{round(d['x0'] / VIEW_W * 100, 1)}, {round(d['x1'] / VIEW_W * 100, 1)}]"
+    for d in decks_out))

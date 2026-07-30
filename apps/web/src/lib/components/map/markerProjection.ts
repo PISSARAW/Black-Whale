@@ -529,6 +529,29 @@ export const tierOverviewY: Record<string, number> = {
  * across tiers 2 and 3 as well — people standing in a deck they are not on,
  * which is the one thing this map exists to answer.
  */
+/**
+ * How far each deck reaches fore and aft in the overview, as percentages of the
+ * width.
+ *
+ * The whale tapers, so no two decks are the same length: tier 5 stops at 73 %
+ * where tier 3 runs to 91 %, and the liner's guest deck does not begin until
+ * 48 %. A crowd fanned out across one fixed band therefore hung people off both
+ * ends of the ship — Tajao, in the Cha-R office on tier 5, was drawn swimming
+ * astern of it.
+ *
+ * `scripts/generate-section-map.py` prints these when it runs, and
+ * `sectionMap.test.ts` fails if they drift from the hull it draws.
+ */
+export const tierOverviewSpan: Record<string, [number, number]> = {
+  'tier-1': [13, 82],
+  'tier-1-b': [32.2, 79.5],
+  'tier-1-c': [47.8, 79.5],
+  'tier-2': [9.6, 85.4],
+  'tier-3': [4.4, 90.6],
+  'tier-4': [4.4, 90.6],
+  'tier-5': [13, 73.4],
+}
+
 export const tierOverviewBand: Record<string, number> = {
   'tier-1': 4.1,
   'tier-1-b': 2.5,
@@ -1260,16 +1283,19 @@ export function packMarkersForZoom<T extends MapMarker>(
       0,
       group.findIndex((candidate) => candidate.id === marker.id),
     )
-    // Wide rather than tall: the section gives a deck the height it really has,
-    // so a crowd spreads along the ship and is packed tighter down until it
-    // fits between that deck's floor and its ceiling.
+    // Wide rather than tall: the section gives a deck the length and the height
+    // it really has, so a crowd spreads along that deck and is packed tighter
+    // down until it fits between its own floor and its own ceiling. Both bounds
+    // are the deck's own — a fixed band put tier 5 in the water astern.
     const columns = Math.min(24, group.length)
     const rows = Math.ceil(group.length / columns)
+    const [fore, aft] = tierOverviewSpan[marker.tierId ?? ''] ?? [16, 84]
+    const inset = (aft - fore) * 0.06
     const band = tierOverviewBand[marker.tierId ?? ''] ?? 4
     const pitch = Math.min(1.8, band / Math.max(rows, 1))
     return {
       ...marker,
-      x: 16 + ((index % columns) + 0.5) * (68 / columns),
+      x: fore + inset + ((index % columns) + 0.5) * ((aft - fore - 2 * inset) / columns),
       y: marker.overviewY + (Math.floor(index / columns) - (rows - 1) / 2) * pitch,
     }
   })

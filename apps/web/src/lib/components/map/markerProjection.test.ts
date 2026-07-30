@@ -5,6 +5,8 @@ import { blueprint, buildShip, spaceForLocation } from '$lib/tour/blueprint'
 import {
   anchorFor,
   resolveTierSlug,
+  tierOverviewSpan,
+  tierOverviewY,
   packMarkersForZoom,
   projectFutureMarker,
   projectPresenceMarker,
@@ -584,9 +586,39 @@ describe('packMarkersForZoom', () => {
     const packed = packMarkersForZoom(markers, 'OVERVIEW')
     const [first, second, third] = packed
 
-    // Two markers share tier-1 and split its columns; tier-2 keeps a single one.
+    // Two markers share tier-1 and split its columns; tier-2 keeps a single one,
+    // which lands in the middle of the length tier 2 actually has.
     expect(first.x).not.toBe(second.x)
-    expect(third.x).toBe(38 + 0.5 * 24)
+    const [fore, aft] = tierOverviewSpan['tier-2']
+    expect(third.x).toBeCloseTo((fore + aft) / 2, 6)
+  })
+
+  /**
+   * And nobody hangs off either end of the ship.
+   *
+   * The whale tapers, so the decks are not the same length: tier 5 stops at
+   * 73 % of the width where tier 3 runs to 91 %. Fanning every crowd across one
+   * fixed band drew the short decks' passengers past their own stern — Tajao,
+   * in the Cha-R office, was swimming behind the ship.
+   */
+  it('keeps every marker between the bow and the stern of its own deck', () => {
+    const crowd: MapMarker[] = []
+    for (const [deck] of Object.entries(tierOverviewSpan)) {
+      for (let n = 0; n < 40; n++) {
+        crowd.push({
+          ...markers[0],
+          id: `${deck}-${n}`,
+          tierId: deck,
+          overviewY: tierOverviewY[deck],
+        })
+      }
+    }
+
+    for (const packed of packMarkersForZoom(crowd, 'OVERVIEW')) {
+      const [fore, aft] = tierOverviewSpan[packed.tierId!]
+      expect(packed.x, `${packed.id} is forward of its own bow`).toBeGreaterThan(fore)
+      expect(packed.x, `${packed.id} is astern of its own stern`).toBeLessThan(aft)
+    }
   })
 
   it('is stable regardless of input order', () => {

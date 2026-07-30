@@ -226,6 +226,17 @@
       through: false,
       inferred: false,
     },
+    {
+      id: 'tier-4-shu-u-family-office',
+      region: null,
+      points: '65.71,214.29 130.0,214.29 130.0,385.71 65.71,385.71',
+      label: 'Shu-U Family Office',
+      size: 12,
+      at: [97.9, 304.0],
+      turned: true,
+      through: false,
+      inferred: false,
+    },
   ]
 
   function select(regionId: string | null) {

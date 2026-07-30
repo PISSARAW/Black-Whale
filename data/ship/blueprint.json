@@ -5085,17 +5085,17 @@
       "name": "Central Hospital",
       "nameFr": "Hôpital central",
       "category": "medical",
-      "provenance": "plan",
-      "source": "Deck plan, ch. 349 — medical ward (Ikagaku Tokku), three clinics",
+      "provenance": "panel",
+      "source": "Ch. 358 — the annotated cutaway of the fourth day, which points at this room and so says where along the ship it is. The reconstruction had it amidships, forward of where the page puts it.",
       "ceiling": null,
       "envelope": null,
       "footprint": [
-        [-35, -70],
-        [35, -70],
-        [35, -7],
-        [-35, -7]
+        [49, -28],
+        [101.5, -28],
+        [101.5, 24.5],
+        [49, 24.5]
       ],
-      "sourceFr": "Plan des ponts, chap. 349 — quartier médical (Ikagaku Tokku), trois cliniques"
+      "sourceFr": "Chap. 358 — la coupe annotée du quatrième jour, qui pointe cette pièce et dit donc où elle se trouve sur la longueur du navire. La reconstruction la mettait au milieu, en avant de ce que donne la page."
     },
     {
       "id": "tier-3-central-police-station",
@@ -5181,16 +5181,19 @@
       "nameFr": "Pont d'observation",
       "category": "public",
       "provenance": "panel",
-      "source": "Ch. 380 — the observation deck: the curved window, and the container city under it.",
+      "source": "Ch. 358 — the annotated cutaway of the fourth day, which points at this room and so says where along the ship it is. The reconstruction had it aft, on the deck plan read with the axes crossed.",
       "ceiling": 9,
       "envelope": null,
       "footprint": [
-        [49, -21],
-        [101.5, -21],
-        [115.5, 17.5],
-        [49, 17.5]
+        [-140, -70],
+        [-140, 59.5],
+        [-148, 52],
+        [-154, 30],
+        [-157, 0],
+        [-154, -30],
+        [-148, -52]
       ],
-      "sourceFr": "Chap. 380 — le pont d'observation : la baie incurvée, et la ville de conteneurs en dessous."
+      "sourceFr": "Chap. 358 — la coupe annotée du quatrième jour, qui pointe cette pièce et dit donc où elle se trouve sur la longueur du navire. La reconstruction la mettait à l'arrière, sur un plan lu avec les axes croisés."
     },
     {
       "id": "tier-3-heilly-family-office",
@@ -5798,7 +5801,13 @@
       "footprint": [
         [-35, -45.5],
         [77, -45.5],
-        [77, 3.5],
+        [77, -3.0],
+        [45, -3.0],
+        [45, 3.5],
+        [14, 3.5],
+        [14, -3.0],
+        [-14, -3.0],
+        [-14, 3.5],
         [-35, 3.5]
       ],
       "sourceFr": "Plan de l'entrepôt ; la cale sous contrôle Cha-R, ses rangées de caisses et son unique entrée gardée"
@@ -6005,10 +6014,10 @@
       "ceiling": null,
       "envelope": null,
       "footprint": [
-        [77.0, -38.0],
-        [105.0, -38.0],
-        [105.0, 42.0],
-        [77.0, 42.0]
+        [77, -52.5],
+        [105, -52.5],
+        [105, 42],
+        [77, 42]
       ],
       "sourceFr": "Reconstruit pour rendre le pont continu ; aucune planche ne le montre."
     },
@@ -8671,17 +8680,93 @@
       "name": "Hangar Entrance",
       "nameFr": "Entrée du hangar",
       "category": "infrastructure",
-      "provenance": "plan",
-      "source": "Cutaway, ch. 380 — the compartment is on the page and its inside is not.",
-      "sourceFr": "Coupe du vaisseau, chap. 380 — la planche pose la pièce et n’en donne pas le dedans.",
+      "provenance": "panel",
+      "source": "Ch. 358 — the annotated cutaway of the fourth day, which points at this room and so says where along the ship it is. The reconstruction had it in the aft starboard corner.",
+      "sourceFr": "Chap. 358 — la coupe annotée du quatrième jour, qui pointe cette pièce et dit donc où elle se trouve sur la longueur du navire. La reconstruction la mettait dans le coin arrière tribord.",
       "ceiling": null,
       "envelope": null,
       "footprint": [
-        [77.0, -52.5],
-        [105.0, -52.5],
-        [105.0, -38.0],
-        [77.0, -38.0]
+        [-14, -3.0],
+        [14, -3.0],
+        [14, 3.5],
+        [-14, 3.5]
       ]
+    },
+    {
+      "id": "tier-3-royal-army-local-section",
+      "tierId": "tier-3",
+      "locationId": null,
+      "name": "Royal Army Local Section",
+      "nameFr": "Section locale de l’armée royale",
+      "category": "military",
+      "provenance": "panel",
+      "source": "Ch. 358 — the annotated cutaway files a local section of the royal army under the level 3 government zone, beside the political law-enforcement body and the central police. The page names it and points at it; no plan draws it, so it takes the berth the medical zone leaves and the size of the court beside it.",
+      "ceiling": null,
+      "envelope": null,
+      "footprint": [
+        [-35, -45],
+        [35, -45],
+        [35, -7],
+        [-35, -7]
+      ],
+      "sourceFr": "Chap. 358 — la coupe annotée range une section locale de l’armée royale dans la zone gouvernementale du niveau 3, à côté de l’organisme d’application des lois politiques et de la police centrale. La page la nomme et la pointe ; aucun plan ne la dessine, elle prend donc la place que la zone médicale libère et la taille du tribunal voisin."
+    },
+    {
+      "id": "tier-3-forward-port-floor",
+      "tierId": "tier-3",
+      "locationId": null,
+      "name": "Forward Port Floor",
+      "nameFr": "Plancher avant bâbord",
+      "category": "public",
+      "provenance": "inferred",
+      "source": "Nothing is drawn on this floor. The block that used to be reconstructed here stands elsewhere now, and a deck is a floor: the walk needs one where a block leaves.",
+      "ceiling": null,
+      "envelope": null,
+      "footprint": [
+        [-35, -70],
+        [35, -70],
+        [35, -45],
+        [-35, -45]
+      ],
+      "sourceFr": "Rien n’est dessiné sur ce plancher. Le bloc qu’on y reconstruisait se tient ailleurs désormais, et un pont est un plancher : la promenade en réclame un là où un bloc s’en va."
+    },
+    {
+      "id": "tier-5-sha-a-family-office",
+      "tierId": "tier-5",
+      "locationId": null,
+      "name": "Sha-A Family Office",
+      "nameFr": "Bureau de la famille Sha-A",
+      "category": "mafia",
+      "provenance": "panel",
+      "source": "Ch. 358 — the annotated cutaway names a Sha-A family office abaft of amidships on the lowest walked deck and points at it. Nothing draws its plan, so it stands where the page points, in the strip the hold’s crate rows leave free against the transverse corridor — the page gives its place along the ship, and a longitudinal section cannot give its place across her.",
+      "ceiling": null,
+      "envelope": null,
+      "footprint": [
+        [45, -3.0],
+        [77, -3.0],
+        [77, 3.5],
+        [45, 3.5]
+      ],
+      "sourceFr": "Chap. 358 — la coupe annotée nomme un bureau de la famille Sha-A en arrière du milieu, sur le pont le plus bas que la visite parcourt, et le pointe. Aucun plan ne le dessine : il se tient où la page pointe, dans la bande que les rangées de caisses de la cale laissent libre le long de la coursive transversale — la page donne sa place sur la longueur du navire, et une coupe longitudinale ne peut rien dire de sa place en travers."
+    },
+    {
+      "id": "tier-4-shu-u-family-office",
+      "tierId": "tier-4",
+      "locationId": null,
+      "name": "Shu-U Family Office",
+      "nameFr": "Bureau de la famille Shû-U",
+      "category": "mafia",
+      "provenance": "panel",
+      "source": "Ch. 358 — the annotated cutaway names a Shu-U family office in the bow, low, and points at it. Nothing draws its plan, so it is the size of the other family offices and stands where the page points, on the deck’s forward corridor.",
+      "ceiling": null,
+      "envelope": null,
+      "footprint": [
+        [-152, -30],
+        [-129.5, -30],
+        [-129.5, 30],
+        [-152, 30]
+      ],
+      "sourceFr": "Chap. 358 — la coupe annotée nomme un bureau de la famille Shû-U à l’avant et bas, et le pointe. Aucun plan ne le dessine : il a donc la taille des autres bureaux de famille et se tient où la page pointe, sur la coursive avant du pont."
     }
   ],
   "links": [
@@ -13052,15 +13137,15 @@
       "kind": "window",
       "name": "Observation Window",
       "nameFr": "Baie du pont d’observation",
-      "at": [108.17, -1.63],
-      "size": [0.3, 36],
-      "rotation": -19.98,
+      "at": [-154.5, 0],
+      "size": [0.3, 30],
+      "rotation": 0,
       "base": 1,
       "height": 6,
       "sides": null,
       "provenance": "panel",
-      "source": "Ch. 380 — the window the observation deck looks out of. The panel draws it curved; it runs the whole outboard wall, which the deck plan draws slanted across the deck.",
-      "sourceFr": "Chap. 380 — la baie par laquelle le pont d'observation regarde dehors. La planche la dessine incurvée ; elle occupe tout le mur extérieur, que le plan des ponts dessine en biais à travers le pont."
+      "source": "Ch. 380 — the window the observation deck looks out of. The panel draws it curved; it runs the outboard wall, which is the bow face since ch. 358 puts the deck in the bow.",
+      "sourceFr": "Chap. 380 — la baie par laquelle le pont d’observation regarde dehors. La planche la dessine courbe ; elle court le long du mur extérieur, c’est-à-dire la face avant depuis que le chap. 358 met le pont à la proue."
     },
     {
       "id": "tier-3-cineplex-ticket-windows",

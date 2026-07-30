@@ -33,6 +33,46 @@ Le corollaire vaut dans l'autre sens : quand la visite tient plus que la carte
 parce qu'une planche le montre — la salle de projection et ses quinze volumes
 contre un rectangle — c'est **la carte** qu'il faut refaire.
 
+### Le chap. 358 dit _où_
+
+La coupe annotée du quatrième jour de traversée est la seule page qui **situe**
+des pièces : elle en nomme onze et pointe chacune d'un trait. Un plan de pont
+dit ce qui jouxte quoi, cette page-là dit à quelle hauteur du navire c'est, et
+c'est ce qui règle les superpositions. Cinq de ses légendes confirment le
+dossier — cabines de 5ᵉ classe, cantine centrale, couloir de passage central,
+zone gouvernementale du niveau 3. Quatre le contredisaient :
+
+| La page situe                       | où                | la reconstruction mettait |
+| ----------------------------------- | ----------------- | ------------------------- |
+| Poste d'observation de la 3ᵉ classe | l'extrême avant   | l'arrière du pont 3       |
+| Zone spéciale médicale              | arrière du milieu | le milieu du pont 3       |
+| Entrée du hangar                    | le milieu         | le coin arrière du pont 5 |
+| Section locale de l'armée royale    | le niveau 3       | (absente)                 |
+
+Et elle nomme deux bureaux de famille que le dossier ne tenait pas : **Shû-U** à
+l'avant bas, **Sha-A** en arrière du milieu, sur le pont le plus bas parcouru.
+
+Le poste d'observation est le cas qui vaut d'être lu deux fois. Ce README notait
+qu'« il était dessiné en terrasse au-dessus d'une mer » et qu'on l'avait rangé
+selon le plan, « à tribord du pont 3 ». Le plan avait été lu avec les axes
+croisés : ce « tribord » était l'arrière. La page 358 le met à la proue,
+c'est-à-dire à l'endroit exact d'où une terrasse voit la mer. Les deux erreurs
+n'en étaient qu'une.
+
+**Ce qu'une coupe longitudinale ne peut pas dire**, c'est la place d'une pièce
+_en travers_ du navire : elle donne un `x` et jamais un `z`. Les pièces
+déplacées gardent donc leur position en travers, et les deux bureaux nouveaux
+prennent la bande que les rangées de caisses de la cale laissent libre le long
+de la coursive transversale. La taille suit la place disponible, et c'est dit
+dans la `source` de chacune.
+
+Une pièce n'a pas été déplacée bien que la page semble l'appeler : la **salle de
+conférence de l'armée royale** du pont 4. Son plan à elle est le briefing que
+Mizaistom donne au chap. 350, son slug de catalogue porte `tier-4-` et
+quatre-vingt-cinq enregistrements s'y accrochent, et rien ne dit que la pièce que
+la page nomme est celle-là. La page nomme un **lieu** sur le niveau 3 : la
+reconstruction gagne le lieu, elle ne déménage pas la pièce.
+
 ## Repère et échelle
 
 Les plans de ponts sont dessinés dans un `viewBox` de 1000 × 600. Une unité de

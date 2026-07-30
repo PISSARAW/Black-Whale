@@ -291,14 +291,26 @@
         "location": "Black Whale - open sea"
       },
       {
+        "event": "Kurapika wakes after about nine hours unconscious, Oito having gone down with him",
+        "storyDate": "Day 2 · 06:00",
+        "charactersInvolved": ["kurapika", "bill", "queen-oito"],
+        "location": "Tier 1 - Room 1014"
+      },
+      {
+        "event": "Continuous Emperor Time is capped at three hours, and going past it costs a black-out three times as long",
+        "storyDate": "Day 2 · 06:00",
+        "charactersInvolved": ["kurapika", "bill"],
+        "location": "Tier 1 - Room 1014"
+      },
+      {
         "event": "Silent Majority possesses Loberry during Kurapika's first Nen class",
-        "storyDate": "Day 2 · morning",
+        "storyDate": "Day 2 · 09:00",
         "charactersInvolved": ["loberry", "kurapika"],
         "location": "Tier 1 - Royal Residential Sector"
       },
       {
         "event": "Silent Majority kills Barrigen",
-        "storyDate": "Day 2 · morning",
+        "storyDate": "Day 2 · 09:00",
         "charactersInvolved": ["barrigen", "loberry", "kurapika"],
         "location": "Tier 1 - Royal Residential Sector"
       }
@@ -306,10 +318,13 @@
     "location": "Tier 1 - Royal Residential Sector",
     "keyEvents": [
       "The chapter opens on the ship at sea, eighteen hours out of Kakin — the second day",
+      "A second caption puts the first Nen class at 09:00 on Day 2",
+      "Kurapika was out for about nine hours; the others were told he was on a mission",
+      "Emperor Time held past three hours costs a black-out of three times the time spent, and takes down whoever shares the ability",
       "Loberry is the only witness to the masked doll watching the Nen class",
       "Barrigen is exsanguinated by four conjured snakes"
     ],
-    "description": "The opening panel puts the Black Whale alone on the water and dates it: second day, eighteen hours since departure — which sets the first Nen class, and Barrigen's death during it, on the morning of Day 2 given the noon departure of chapter 340."
+    "description": "The opening panel puts the Black Whale alone on the water and dates it: second day, eighteen hours since departure — which sets the morning of Day 2, given the noon departure of chapter 340. Kurapika wakes there from about nine hours of black-out, the price of holding Emperor Time past its three-hour ceiling: the penalty is three times the time spent, and Oito, who shared the ability, went down at the same moment. Bill has covered for him by telling the others he was on a mission. A second caption, three hours later, dates the rest: second day, nine in the morning, the guards assembled for the first Nen class outside room 1014 — which is when Loberry is taken and Barrigen dies."
   },
   {
     "id": "ch-377",

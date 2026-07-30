@@ -27,7 +27,7 @@
     "ownerId": "kurapika",
     "name": "Emperor Time",
     "category": "specialist",
-    "description": "When Kurapika's eyes turn scarlet, he gains 100% proficiency in all Nen categories at the cost of one hour of his lifespan per second.",
+    "description": "When Kurapika's eyes turn scarlet, he gains 100% proficiency in all Nen categories at the cost of one hour of his lifespan per second. Chapter 369 sets the ceiling: continuous use is capped at three hours, and going past it costs a black-out three times as long as the time spent — nine hours after the roughly three-hour count of chapter 368. Whoever is sharing the borrowed ability at the time, Oito in this case, goes down with him. Kurapika suspects the strength of the stolen ability may itself move the allotted time.",
     "canonStatus": "canon",
     "moduleKey": "emperor-time"
   },

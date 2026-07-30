@@ -246,7 +246,25 @@
   {
     "chapter": 369,
     "chapterTitle": "Limits",
+    "sequence": 1,
+    "title": "Kurapika wakes from a nine-hour black-out",
+    "summary": "Bill tells Kurapika he was unconscious for about nine hours and that the others were told he was on a mission. Oito went down at almost the same moment, since she was holding the borrowed ability with him.",
+    "legacyTitles": [],
+    "occursAfterTitle": "Emperor Time runs out on Kurapika"
+  },
+  {
+    "chapter": 369,
+    "chapterTitle": "Limits",
     "sequence": 2,
+    "title": "The limits of Emperor Time are spelled out",
+    "summary": "Continuous use of Emperor Time is capped at three hours; past that the user blacks out for three times the time spent — nine hours here — and whoever shares the ability blacks out with him. Kurapika suspects the power of the stolen ability moves the allotted time.",
+    "legacyTitles": [],
+    "occursAfterTitle": "Kurapika wakes from a nine-hour black-out"
+  },
+  {
+    "chapter": 369,
+    "chapterTitle": "Limits",
+    "sequence": 4,
     "title": "Silent Majority kills Barrigen",
     "summary": "Four conjured snakes drain Barrigen's blood during Kurapika's first Nen class while the hidden user observes through Loberry.",
     "legacyTitles": []
@@ -254,7 +272,7 @@
   {
     "chapter": 369,
     "chapterTitle": "Limits",
-    "sequence": 1,
+    "sequence": 3,
     "title": "Silent Majority possesses Loberry",
     "summary": "The hidden assassin uses Loberry as the only witness to the masked doll observing Kurapika's Nen class.",
     "legacyTitles": ["Début du chapitre 369"]

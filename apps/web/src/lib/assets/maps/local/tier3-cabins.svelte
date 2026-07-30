@@ -144,9 +144,10 @@
       <line class="door" x1="100" y1="0" x2="120" y2="30" />
 
       <!-- The Zodiacs work the expedition maps here in ch. 359. -->
-      <rect x="110" y="70" width="80" height="100" class="furniture" />
-      <text x="150" y="115" class="sublabel text-xs">STRATEGY</text>
-      <text x="150" y="130" class="sublabel text-xs">TABLE</text>
+      <!-- The plan draws bed and storage and nothing else: the table that
+           used to stand here had no drawing behind it. One of three such
+           cabins off the upper-floor corridor. -->
+      <text x="100" y="245" class="sublabel text-xs">one of three off the upper corridor</text>
     </g>
   </g>
 </svg>

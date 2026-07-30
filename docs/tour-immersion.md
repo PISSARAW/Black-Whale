@@ -15,14 +15,14 @@ comment. Les prototypes ont tourné sur `data/ship/blueprint.json` réel via le 
 |                                        | valeur mesurée                                          |
 | -------------------------------------- | ------------------------------------------------------- |
 | Niveaux                                | 40 (5 ponts + 35 intérieurs)                            |
-| Espaces                                | 314                                                     |
+| Espaces                                | 368                                                     |
 | Structures                             | 721                                                     |
 | **Triangles, vaisseau entier**         | **24 592**                                              |
 | Triangles, pont le plus lourd (tier-1) | 6 492                                                   |
 | Buffers, vaisseau entier               | 3,1 Mo                                                  |
 | Surface bâtie                          | 192 039 m² de sol, 157 842 m² de mur, 29 333 m de mur   |
 | Volume : min → max                     | 48 m³ → 65 856 m³ — entrepôt Cha-R (rapport **1 372×**) |
-| Espaces avec une fenêtre               | **2 sur 314**                                           |
+| Espaces avec une fenêtre               | **2 sur 368**                                           |
 
 Le premier chiffre commande tout le reste. **Le vaisseau entier fait 24 592
 triangles.** Un GPU d'entrée de gamme en avale deux millions par frame sans
@@ -577,7 +577,7 @@ qu'on dessine ») est préservé par construction, donc testable.
 
 ### 4.2 — Les deux fenêtres
 
-Le chiffre le plus fort du blueprint : **314 espaces, 2 fenêtres.**
+Le chiffre le plus fort du blueprint : **368 espaces, 2 fenêtres.**
 
 |                                                   | pièce              | pont   | taille      | source           |
 | ------------------------------------------------- | ------------------ | ------ | ----------- | ---------------- |
@@ -601,7 +601,7 @@ Proposition :
 - et **elle entre dans le bake** comme une source surfacique. Les deux seules lumières
   du vaisseau qui ne sortent pas d'un luminaire.
 
-Effet : sur 314 pièces, il y a deux endroits où l'extérieur existe, et on les sent en
+Effet : sur 368 pièces, il y a deux endroits où l'extérieur existe, et on les sent en
 y entrant. C'est l'asymétrie la plus rentable disponible, et elle coûte deux lignes de
 JSON plus une branche dans `extrudeSolid`.
 
@@ -694,5 +694,5 @@ jours : si tu ne veux qu'une chose, c'est 3 + 5 + 6 + 9 + 10.
 2. **2 734 dessus de solides** regardent vers le bas — à corriger avant toute lumière.
 3. **28,9 % de la longueur de cloison** est dessinée deux fois, coplanaire.
 4. **1 372×** entre le plus petit et le plus grand volume — et une seule acoustique.
-5. **2 fenêtres sur 314 espaces** — le huis clos est déjà dans la donnée, il n'est
+5. **2 fenêtres sur 368 espaces** — le huis clos est déjà dans la donnée, il n'est
    simplement pas rendu.

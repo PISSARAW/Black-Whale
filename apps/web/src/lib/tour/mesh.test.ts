@@ -659,7 +659,7 @@ describe('the depth of a doorway', () => {
         ).toBeGreaterThanOrEqual(2)
       }
     }
-    expect(doors).toBe(368)
+    expect(doors).toBe(449)
     expect(cheeks).toBe(doors * 2)
   })
 
@@ -740,9 +740,22 @@ describe('the depth of a doorway', () => {
     const head = plan.tier.elevation + DOOR_HEIGHT
     const missing: string[] = []
 
+    // Where an opening runs a wall from one corner to the other — the front of a
+    // cell, the ground between two spaces the plan draws no wall between at all —
+    // its cheek falls on the corner itself, and the wall that turns there does go
+    // to the ceiling, as it must. That wall is collinear with the cheek, so no
+    // amount of looking at the geometry tells the two apart: the corner is
+    // therefore left to the walls' own invariants.
+    const corners = new Set(
+      plan.spaces.flatMap((space) =>
+        space.footprint.map(([x, z]) => `${x.toFixed(3)}|${z.toFixed(3)}`),
+      ),
+    )
+
     for (const door of plan.doorways) {
       for (const cheek of doorJambs(door)) {
         const mid: Vec2 = [(cheek.start[0] + cheek.end[0]) / 2, (cheek.start[1] + cheek.end[1]) / 2]
+        const onACorner = corners.has(`${mid[0].toFixed(3)}|${mid[1].toFixed(3)}`)
         let standing = 0
         let above = 0
         for (let i = 0; i < mesh.positions.length; i += 9) {
@@ -760,7 +773,9 @@ describe('the depth of a doorway', () => {
           if (onTheCheek && top > head + 0.001) above++
         }
         if (!standing) missing.push(`${door.a}|${door.b}`)
-        expect(above, `${door.a}|${door.b} has a cheek past the door`).toBe(0)
+        if (!onACorner) {
+          expect(above, `${door.a}|${door.b} has a cheek past the door`).toBe(0)
+        }
       }
     }
     expect(missing, `${missing.length} cheeks are collided with and not drawn`).toEqual([])
@@ -977,7 +992,7 @@ describe('the two windows', () => {
   }
 
   it('types two of them on the whole ship, and both are drawn by a panel', () => {
-    // The figure is the point of the feature: 314 spaces, 2 ways of seeing out.
+    // The figure is the point of the feature: 368 spaces, 2 ways of seeing out.
     expect(windows.map((entry) => entry.id).sort()).toEqual([
       'tier-1-king-living-quarters-living-great-window',
       'tier-3-observation-deck-window',
@@ -988,7 +1003,7 @@ describe('the two windows', () => {
       expect(entry.base).toBeGreaterThan(0)
       expect(entry.height).toBeGreaterThan(2)
     }
-    expect(ship.spaces.size).toBe(314)
+    expect(ship.spaces.size).toBe(368)
   })
 
   it('samples the pane along its length, at the height of the glass', () => {

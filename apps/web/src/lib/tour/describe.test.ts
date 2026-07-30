@@ -85,9 +85,12 @@ describe('solidsIn', () => {
   })
 
   it('names a short run one by one, because that is what is interesting', () => {
-    const platforms = solidsIn(ship, banquet).filter((tally) => tally.kind === 'platform')
-    expect(platforms.length).toBe(2)
-    expect(platforms.every((tally) => tally.name !== null)).toBe(true)
+    // The two counters of the supreme court: the banquet hall's own platforms
+    // are a long run now that the galleries down both its side walls are in.
+    const court = ship.spaces.get('tier-1-supreme-court')!
+    const counters = solidsIn(ship, court).filter((tally) => tally.kind === 'counter')
+    expect(counters.length).toBe(2)
+    expect(counters.every((tally) => tally.name !== null)).toBe(true)
   })
 
   it('leaves out what is hung clear of head height', () => {
@@ -105,7 +108,7 @@ describe('describeSpace', () => {
     expect(said).toContain('158 × 25 m under 9 m')
     expect(said).toContain(`${exitsFrom(ship, banquet)} exits`)
     expect(said).toContain('72 table')
-    expect(said).toContain('Stage')
+    expect(said).toContain('Proscenium Pier')
     expect(said.endsWith('.')).toBe(true)
   })
 

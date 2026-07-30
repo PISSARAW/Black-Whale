@@ -174,12 +174,13 @@ export interface Space {
    * The self-contained unit this space belongs to, or `null` if it stands on
    * its own.
    *
-   * A prince's apartment is seven rooms behind one door. Its rooms abut the
-   * neighbouring apartment's rooms all the way down the party wall, and none of
-   * those walls has a door in it — a prince reaches his suite from the guarded
-   * corridor and nowhere else. Naming the envelope says that once, instead of
-   * sealing thirty walls one at a time: spaces in different envelopes never
-   * open onto each other unless a door in `doors` says otherwise.
+   * A prince's apartment is seven rooms behind one door. The apartment itself
+   * stands free in the court the inner bulkhead encloses, so every wall of it
+   * faces ground that is walked, and not one of those walls opens — a prince
+   * reaches his suite through the numbered door assigned to him and nowhere
+   * else. Naming the envelope says that once, instead of sealing thirty walls
+   * one at a time: spaces in different envelopes never open onto each other
+   * unless a door in `doors` says otherwise.
    */
   envelope: string | null
   footprint: Polygon
@@ -272,9 +273,10 @@ export interface Link {
 /**
  * A party wall two spaces share without a door through it.
  *
- * Princes' apartments sit side by side down the guarded corridor and open only
- * onto it; the same holds for the queens' rooms. Since the tour derives its
- * doorways from shared walls, that has to be stated, and stating it is the
+ * The queens' rooms sit side by side down their corridor and open only onto it;
+ * the princes' sector is closed by a wall at its aft end, where the guards'
+ * round runs up against the promenade. Since the tour derives its doorways from
+ * shared walls, that has to be stated, and stating it is the
  * point: a blind wall between two rooms is a claim about the ship, so it
  * carries a reason like everything else here.
  */

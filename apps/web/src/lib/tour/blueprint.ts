@@ -665,6 +665,10 @@ export function validateBlueprint(source: Blueprint = blueprint): string[] {
 
       for (const structure of plan.structures) {
         if (structure.spaceId !== doorway.a && structure.spaceId !== doorway.b) continue
+        // Only what stands on the floor can shut a door. A solid hung clear of
+        // the head is the case `blocksTheFloor` already exists for: the casino
+        // mezzanine over its shops, the marquee over the police-station doors.
+        if (!blocksTheFloor(structure)) continue
         const outline = structureFootprint(structure)
         for (const step of [-1.2, 1.2]) {
           const at: Vec2 = [middle[0] + normal[0] * step, middle[1] + normal[1] * step]

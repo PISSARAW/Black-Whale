@@ -39,12 +39,33 @@
   const columns = Array.from({ length: 18 }, (_, index) => -58 + index * 6)
   const TABLE_RADIUS = 1.3
 
+  // The raised galleries down both side walls, ch. 359, broken where the doors
+  // of the hall are: the same runs the blueprint stands.
+  const galleries = [
+    {
+      at: -4.55,
+      runs: [
+        [-76, -54.25],
+        [-47.25, 7],
+        [14, 49],
+        [56, 68],
+      ],
+    },
+    {
+      at: -26.95,
+      runs: [
+        [-76, -12.25],
+        [-5.25, 68],
+      ],
+    },
+  ]
+
   /** Openings the tour derives from the shared walls, at their own width. */
   const doors = [
     { id: 'vestibule-doors', axis: 'y' as const, at: -28, from: -10.25, to: -7.25 },
-    { id: 'main-corridor', axis: 'y' as const, at: -3.5, from: -46.15, to: -43.15 },
+    { id: 'main-corridor', axis: 'y' as const, at: -3.5, from: -52.25, to: -49.25 },
     { id: 'princes-gate', axis: 'y' as const, at: -3.5, from: 9, to: 12 },
-    { id: 'main-corridor-starboard', axis: 'y' as const, at: -3.5, from: 44.9, to: 47.9 },
+    { id: 'main-corridor-starboard', axis: 'y' as const, at: -3.5, from: 51, to: 54 },
     { id: 'starboard-corridor', axis: 'x' as const, at: 70, from: -17.25, to: -14.25 },
   ]
 </script>
@@ -78,6 +99,17 @@
         fill: rgba(255, 215, 0, 0.12);
         stroke: #ffd700;
         stroke-width: 2;
+      }
+      .gallery {
+        fill: rgba(255, 255, 240, 0.07);
+        stroke: #fffff0;
+        stroke-width: 1.5;
+        stroke-opacity: 0.6;
+      }
+      .pier {
+        fill: rgba(139, 69, 19, 0.35);
+        stroke: #8b4513;
+        stroke-width: 1.5;
       }
       .buffet {
         fill: rgba(200, 200, 200, 0.15);
@@ -187,6 +219,22 @@
     >Stage</text
   >
 
+  <!-- The galleries down both side walls, and the piers framing the stage -->
+  {#each galleries as gallery (gallery.at)}
+    {#each gallery.runs as run (run[0])}
+      <rect
+        x={x(run[0])}
+        y={y(gallery.at - 1)}
+        width={(run[1] - run[0]) * SCALE}
+        height={2 * SCALE}
+        class="gallery"
+      />
+    {/each}
+  {/each}
+  {#each [-23.75, -7.75] as pier (pier)}
+    <rect x={x(-78.7)} y={y(pier - 2)} width={2.4 * SCALE} height={4 * SCALE} class="pier" />
+  {/each}
+
   <!-- The throne on its dais, facing the hall -->
   <rect
     role="button"
@@ -209,6 +257,15 @@
     stroke="#FFD700"
     stroke-width="1.5"
   />
+  <!-- Its draped parapet, and the steps down from it into the hall -->
+  <rect
+    x={x(-66.7)}
+    y={y(-19.55)}
+    width={0.4 * SCALE}
+    height={7.6 * SCALE}
+    class="throne-platform"
+  />
+  <rect x={x(-66.2)} y={y(-20.75)} width={2 * SCALE} height={10 * SCALE} class="gallery" />
   <text x={x(-69.25)} y={y(-21)} class="sublabel">King's Throne</text>
 
   <!-- The tables, four rows with the throne's axis left open between them -->
@@ -245,5 +302,10 @@
       onclick={() => handleElementClick(`buffet-${index + 1}`)}
     />
   {/each}
+  <!-- The line the buffet is dressed from, behind each counter -->
+  {#each [-25.2, -7.2] as line (line)}
+    <rect x={x(49)} y={y(line - 0.6)} width={14 * SCALE} height={1.2 * SCALE} class="buffet" />
+  {/each}
+  <rect x={x(68.7)} y={y(-25)} width={0.6 * SCALE} height={6 * SCALE} class="buffet" />
   <text x={x(56)} y={y(-15)} class="label" font-size="10">Buffet</text>
 </svg>

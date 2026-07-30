@@ -109,15 +109,84 @@ describe('party walls and apartment envelopes', () => {
     expect(undeclared).toEqual([])
   })
 
-  it("gives every prince's room on the deck one door, onto the guarded corridor", () => {
+  it("gives every prince's room one door, facing the numbered door of its own", () => {
     for (let n = 1; n <= 14; n++) {
       const number = String(1000 + n)
       const doors = boundaryDoors(`apartment-${number}`)
       expect(doors, `room ${number} has ${doors.length} ways in`).toHaveLength(1)
 
+      // Ch. 363 stands the apartments free inside the inner bulkhead: the one
+      // door of each is on the face that looks straight at the numbered door
+      // assigned to it, with the approach between the two.
       const [door] = doors
-      expect([door.a, door.b]).toContain('tier-1-royal-residential-corridor')
+      expect([door.a, door.b]).toContain(`tier-1-royal-residential-approach-${number}`)
       expect([door.a, door.b]).toContain(`tier-1-royal-residential-sector-room-${number}`)
+    }
+  })
+
+  // The double page draws the apartments as fourteen boxes with air on every
+  // side of them, not as two terraces: nothing an apartment stands against can
+  // be another apartment or the bulkhead, only the ground that is walked.
+  it('stands the fourteen apartments free of each other and of the bulkhead', () => {
+    const rooms = [...ship.spaces.values()].filter((space) =>
+      /^tier-1-royal-residential-sector-room-\d{4}$/.test(space.id),
+    )
+    expect(rooms).toHaveLength(14)
+
+    for (const room of rooms) {
+      const touching = [...ship.spaces.values()].filter(
+        (other) =>
+          other.id !== room.id &&
+          other.tierId === room.tierId &&
+          longestSharedWall(room.footprint, other.footprint),
+      )
+      expect(touching.length, `${room.id} touches nothing at all`).toBeGreaterThan(0)
+      for (const other of touching) {
+        expect(other.envelope, `${room.id} is built against ${other.id}`).toBe(
+          'princes-inner-court',
+        )
+      }
+    }
+  })
+
+  // The second bulkhead: the fourteen numbered doors are the only way off the
+  // guards' round and into the court the apartments stand in, and each of them
+  // opens on one approach and one only — odd to starboard, even to port.
+  it('opens the inner bulkhead by its fourteen numbered doors and nothing else', () => {
+    const court = (id: string) => ship.spaces.get(id)!.envelope === 'princes-inner-court'
+    const fromOutside = [...ship.plans.values()]
+      .flatMap((plan) => plan.doorways)
+      .filter((door) => court(door.a) !== court(door.b))
+      .filter((door) => !door.a.includes('-sector-room-10') && !door.b.includes('-sector-room-10'))
+
+    expect(fromOutside).toHaveLength(14)
+    for (let n = 1; n <= 14; n++) {
+      const side = n % 2 ? 'starboard' : 'port'
+      const numbered = fromOutside.filter((door) =>
+        [door.a, door.b].includes(`tier-1-royal-residential-approach-${1000 + n}`),
+      )
+      expect(numbered, `door n° ${n} is not in the inner bulkhead`).toHaveLength(1)
+      expect([numbered[0].a, numbered[0].b]).toContain(`tier-1-royal-residential-corridor-${side}`)
+    }
+  })
+
+  // The first bulkhead: the round the guards walk runs all the way round the
+  // block and stops at the aft wall, so the shared-wall rule opened it onto the
+  // aft promenade — a way in that walks past the gate the panels post soldiers on.
+  it("lets nothing onto the guards' round but the guarded gate", () => {
+    const sector = new Set([
+      'tier-1-royal-residential-corridor-port',
+      'tier-1-royal-residential-corridor-starboard',
+      'tier-1-royal-residential-corridor-aft',
+    ])
+    const fromOutside = [...ship.plans.values()]
+      .flatMap((plan) => plan.doorways)
+      .filter((door) => sector.has(door.a) !== sector.has(door.b))
+      .filter((door) => !door.a.includes('-approach-10') && !door.b.includes('-approach-10'))
+
+    expect(fromOutside).toHaveLength(2)
+    for (const door of fromOutside) {
+      expect([door.a, door.b]).toContain('tier-1-princes-quarters-gate')
     }
   })
 
@@ -197,10 +266,16 @@ describe('interiors', () => {
     }
   })
 
-  it('gives the apartment the seven rooms its plan draws', () => {
+  // Six rooms the plan names, the entrance hall it draws between them, and the
+  // closet it partitions off the staff room — which the `/ship` plan has always
+  // drawn and the walk used to leave out.
+  it('gives the apartment the eight rooms its plan draws', () => {
     for (let n = 1; n <= 14; n++) {
       const plan = ship.plans.get(`interior-room-${1000 + n}`)!
-      expect(plan.spaces).toHaveLength(7)
+      expect(plan.spaces).toHaveLength(8)
+      expect(plan.spaces.map((space) => space.id)).toContain(
+        `tier-1-royal-residential-sector-room-${1000 + n}-servants-wc`,
+      )
     }
   })
 
@@ -531,6 +606,10 @@ describe('what stands in the rooms', () => {
 
     // Slid off the axis of the door, the same counter is fine.
     expect(validateBlueprint(sandbox([solid({ at: [2, 2.5] })]))).toEqual([])
+
+    // Hung clear of the head, it is a canopy over the door rather than a wall
+    // across it — the same exemption the mezzanine over the casino shops has.
+    expect(validateBlueprint(sandbox([solid({ base: 2.4, height: 0.6 })]))).toEqual([])
   })
 
   it('hangs a painting off the floor, and refuses one hung through the ceiling', () => {

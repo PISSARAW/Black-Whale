@@ -172,9 +172,10 @@ export function longestSharedWall(
  * that does not is shut off — which is why an unreachable space is a data error
  * the validator can state plainly.
  *
- * Adjacency alone is not *sufficient*, though. Two princes' apartments share a
- * party wall and no door: you reach either one from the guarded corridor, never
- * from your neighbour. `sealed` names those pairs, and the blueprint has to say
+ * Adjacency alone is not *sufficient*, though. The guards' round meets the aft
+ * promenade along the whole aft end of the princes' sector, and nothing goes
+ * through: the sector is walled there, and the gate forward is the only way in.
+ * `sealed` names those pairs, and the blueprint has to say
  * so explicitly — a blind wall is a claim about the ship, so it is recorded
  * rather than guessed from the category of the rooms.
  */

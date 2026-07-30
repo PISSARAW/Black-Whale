@@ -42,7 +42,7 @@ Ce facteur est fixé par la **taille des pièces**, pas par la longueur du
 vaisseau : les plans sont schématiques, ils disent ce qui jouxte quoi, pas
 combien ça mesure. Lus au pied de la lettre à 1 m par unité, ils donnent une
 salle de banquet de 450 m de long — un volume que personne ne peut parcourir. À
-0,35, on obtient un appartement princier de 12 × 7 m et une salle de banquet de
+0,35, on obtient un appartement princier de 16,6 × 7,5 m et une salle de banquet de
 157 × 25 m sous 9 m de plafond, et les proportions des plans sont conservées
 exactement. La coque reconstruite fait alors 175 m : c'est la longueur de la
 reconstruction, pas une mesure du Black Whale.
@@ -147,10 +147,12 @@ C'est `blocksTheFloor` qui tranche, et un test vérifie les deux sens.
 
 ### Les enveloppes
 
-Un appartement princier, ce sont sept pièces derrière **une seule** porte. Ses
-pièces jouxtent celles du voisin sur toute la cloison mitoyenne, et aucune de
-ces cloisons n'est percée : un prince rejoint sa suite par le couloir gardé et
-par nulle part ailleurs.
+Un appartement princier, ce sont sept pièces derrière **une seule** porte.
+L'appartement lui-même est posé isolé dans la cour que ferme la cloison
+intérieure : toutes ses faces donnent sur un sol qu'on parcourt, et aucune ne
+s'ouvre — un prince rejoint sa suite par la porte numérotée qui lui est
+assignée et par nulle part ailleurs. Le secteur est fermé par un mur à
+l'arrière pour que le poste de garde de l'avant en reste la seule entrée.
 
 `envelope` dit ça une fois pour toutes. Deux espaces d'enveloppes différentes ne
 communiquent jamais — sauf si une entrée de `doors` l'énonce. Sans cette
@@ -230,7 +232,7 @@ deux façons.
 Le plan des ponts dessine les chambres des princes comme une colonne de petites
 boîtes. C'est un diagramme de voisinage, pas un relevé : le plan d'appartement
 donne sept pièces à chaque prince, et sept pièces n'entrent pas dans une boîte
-de 12 × 7 m. Les deux dessins ne sont pas à la même échelle, et ils ne l'ont
+de 17 × 5 m. Les deux dessins ne sont pas à la même échelle, et ils ne l'ont
 jamais été.
 
 Plutôt que d'en déformer un pour le faire entrer dans l'autre, la visite garde
@@ -293,11 +295,21 @@ coupe, avec ses sept pièces nommées : salle du personnel, cuisine, salle à
 manger, salon, chambre du prince, salle d'eau. C'est donc une planche, et la
 provenance est `panel` — elle a longtemps porté `plan` par excès de prudence,
 ce qui revenait à ranger un dessin de Togashi au rang de la coupe qui n'entre
-dans aucune pièce. La même page range les quatorze appartements en deux
-rangées de sept de part et d'autre du couloir gardé, impairs à tribord, et
-c'est la disposition que le pont 1 tient. Les quatorze appartements sont le
-même plan : le jeu de meubles est
-authoré une fois, dans le repère de l'appartement, et répété pour chaque prince.
+dans aucune pièce. La même page dessine **deux cloisons**, et c'est la
+disposition que le pont 1 tient maintenant. La première, extérieure, est celle
+que les gardes longent : leur chemin de ronde fait le tour du bloc, et le poste
+gardé de l'avant en est la seule entrée. La seconde, intérieure, porte les
+quatorze **portes numérotées**, impairs à tribord et pairs à bâbord. Derrière
+elle, les quatorze appartements ne se touchent pas : ce sont quatorze boîtes
+posées dans une cour, avec un écart entre elles qu'on parcourt, un dégagement
+de 3 m entre chaque porte numérotée et la porte de l'appartement qui lui fait
+face, et un couloir au dos des deux rangées. C'est ce qui donne à chaque
+appartement **une seule** entrée : ses trois autres faces regardent la cour.
+La reconstruction a longtemps rangé ces boîtes en deux terrasses accolées le
+long de deux coursives, ce qui faisait de la page un diagramme de voisinage
+alors qu'elle dessine des volumes séparés. Les quatorze appartements sont le
+même plan : le jeu de meubles est authoré une fois, dans le repère de
+l'appartement, et répété pour chaque prince.
 
 Trois en portent davantage, et c'est l'ordre d'autorité qui le veut : là où une
 planche entre dans une pièce, elle l'emporte sur le plan, et ce qu'elle montre

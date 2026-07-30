@@ -83,7 +83,7 @@
     <line class="door" x1="400" y1="0" x2="350" y2="30" />
 
     <!-- Living Room (Center, massive) -->
-    <rect
+    <polygon
       role="button"
       tabindex="0"
       aria-label="Inspect map area"
@@ -94,10 +94,7 @@
         }
       }}
       class="zone"
-      x="0"
-      y="250"
-      width="700"
-      height="280"
+      points="0,250 400,250 400,350 700,350 700,530 0,530"
       onclick={() => handleElementClick('living')}
     />
     <text x="250" y="390" class="label" font-size="24">Living</text>

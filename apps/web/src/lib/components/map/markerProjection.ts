@@ -90,7 +90,7 @@ export type MapMarker = MarkerIdentityState & {
  * on the tier and nowhere finer.
  *
  * `small` marks a room too tight for the wide fan-out: co-located markers in a
- * prince's room close up rather than spilling through the party wall.
+ * prince's room close up rather than spilling out into the court around it.
  */
 type TierAnchor = { x: number; y: number; small?: true }
 
@@ -111,20 +111,20 @@ const locationCoordinates: Record<string, Record<string, TierAnchor>> = {
     'tier-1-queens-living-quarters-room-07': { x: 402.0, y: 441.3, small: true },
     'tier-1-queens-living-quarters-room-08': { x: 443.0, y: 441.3, small: true },
     'tier-1-royal-residential-sector': { x: 530.0, y: 385.0 },
-    'tier-1-royal-residential-sector-room-1001': { x: 582.5, y: 320.7, small: true },
-    'tier-1-royal-residential-sector-room-1002': { x: 477.5, y: 320.7, small: true },
-    'tier-1-royal-residential-sector-room-1003': { x: 582.5, y: 342.1, small: true },
-    'tier-1-royal-residential-sector-room-1004': { x: 477.5, y: 342.1, small: true },
-    'tier-1-royal-residential-sector-room-1005': { x: 582.5, y: 363.5, small: true },
-    'tier-1-royal-residential-sector-room-1006': { x: 477.5, y: 363.5, small: true },
-    'tier-1-royal-residential-sector-room-1007': { x: 582.5, y: 384.9, small: true },
-    'tier-1-royal-residential-sector-room-1008': { x: 477.5, y: 384.9, small: true },
-    'tier-1-royal-residential-sector-room-1009': { x: 582.5, y: 406.3, small: true },
-    'tier-1-royal-residential-sector-room-1010': { x: 477.5, y: 406.3, small: true },
-    'tier-1-royal-residential-sector-room-1011': { x: 582.5, y: 427.7, small: true },
-    'tier-1-royal-residential-sector-room-1012': { x: 477.5, y: 427.7, small: true },
-    'tier-1-royal-residential-sector-room-1013': { x: 582.5, y: 449.2, small: true },
-    'tier-1-royal-residential-sector-room-1014': { x: 477.5, y: 449.2, small: true },
+    'tier-1-royal-residential-sector-room-1001': { x: 558.6, y: 322.1, small: true },
+    'tier-1-royal-residential-sector-room-1002': { x: 501.4, y: 322.1, small: true },
+    'tier-1-royal-residential-sector-room-1003': { x: 558.6, y: 341.4, small: true },
+    'tier-1-royal-residential-sector-room-1004': { x: 501.4, y: 341.4, small: true },
+    'tier-1-royal-residential-sector-room-1005': { x: 558.6, y: 360.7, small: true },
+    'tier-1-royal-residential-sector-room-1006': { x: 501.4, y: 360.7, small: true },
+    'tier-1-royal-residential-sector-room-1007': { x: 558.6, y: 380.0, small: true },
+    'tier-1-royal-residential-sector-room-1008': { x: 501.4, y: 380.0, small: true },
+    'tier-1-royal-residential-sector-room-1009': { x: 558.6, y: 399.3, small: true },
+    'tier-1-royal-residential-sector-room-1010': { x: 501.4, y: 399.3, small: true },
+    'tier-1-royal-residential-sector-room-1011': { x: 558.6, y: 418.6, small: true },
+    'tier-1-royal-residential-sector-room-1012': { x: 501.4, y: 418.6, small: true },
+    'tier-1-royal-residential-sector-room-1013': { x: 558.6, y: 437.9, small: true },
+    'tier-1-royal-residential-sector-room-1014': { x: 501.4, y: 437.9, small: true },
     'tier-1-soldiers-living-quarters': { x: 652.5, y: 385.0 },
     'tier-1-supreme-court': { x: 790.0, y: 410.0 },
     'tier-1-vip-casino': { x: 360.0, y: 385.0 },

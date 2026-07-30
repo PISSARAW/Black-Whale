@@ -3,9 +3,11 @@ import { buildShip, crossingsOn, spaceAt, spawnPoint } from './blueprint'
 import { pointInPolygon } from './geometry'
 import {
   LINK_REACH,
+  SPRINT_SPEED,
   STICK_RADIUS,
   STICK_RIM,
   VISITOR_RADIUS,
+  WALK_SPEED,
   linkUnderfoot,
   resolveMovement,
   stickVector,
@@ -350,6 +352,64 @@ describe('walking the reconstruction itself', () => {
         expect(pointInPolygon(start, space.footprint)).toBe(true)
         expect(resolveMovement(start, start, plan.walls)).toEqual(start)
       }
+    }
+  })
+})
+
+describe('a single frame of walking', () => {
+  /**
+   * The bug this guards is the one that took walking away entirely.
+   *
+   * `resolveMovement` used to discard any move shorter than `EPSILON`, which is
+   * the 5 cm tolerance for two coordinates being the same point. A frame of
+   * walking is not that kind of quantity: at `WALK_SPEED` it is 3,5 cm at 60 Hz,
+   * so every frame was thrown away and the visitor could only look around. The
+   * old 6 m/s cleared the tolerance by luck.
+   *
+   * So the frame rates go up to the ones a display actually runs at, and both
+   * paces have to arrive somewhere: a walk that is only felt on a slow monitor is
+   * not a walk.
+   */
+  const RATES = [30, 60, 90, 120, 144, 240]
+
+  for (const rate of RATES) {
+    for (const [pace, speed] of [
+      ['a walk', WALK_SPEED],
+      ['a run', SPRINT_SPEED],
+    ] as const) {
+      it(`moves the visitor on one frame of ${pace} at ${rate} Hz`, () => {
+        const step = speed / rate
+        const from: Vec2 = [5, 0]
+        const to: Vec2 = [5 + step, 0]
+        // Clear of the wall, so nothing but the guard can stop the move.
+        const after = resolveMovement(from, to, wall)
+        expect(after[0] - from[0]).toBeCloseTo(step, 6)
+      })
+    }
+  }
+
+  it('covers the ground it was asked for, frame by frame', () => {
+    // A second of walking down a clear corridor is a second of walking: the
+    // per-frame moves have to accumulate, not round away.
+    let at: Vec2 = [5, 0]
+    for (let frame = 0; frame < 60; frame++) {
+      at = resolveMovement(at, [at[0] + WALK_SPEED / 60, at[1]], wall)
+    }
+    expect(at[0] - 5).toBeCloseTo(WALK_SPEED, 3)
+  })
+
+  it('still refuses a move of nothing at all', () => {
+    const from: Vec2 = [5, 0]
+    expect(resolveMovement(from, [5, 0], wall)).toBe(from)
+  })
+
+  it('still stops a frame of either pace at a wall', () => {
+    for (const speed of [WALK_SPEED, SPRINT_SPEED]) {
+      const step = speed / 60
+      // Walking into the wall at x = 0 from the visitor's own radius away.
+      const from: Vec2 = [VISITOR_RADIUS, 0]
+      const after = resolveMovement(from, [from[0] - step, 0], wall)
+      expect(after[0]).toBeGreaterThanOrEqual(VISITOR_RADIUS - 0.001)
     }
   })
 })

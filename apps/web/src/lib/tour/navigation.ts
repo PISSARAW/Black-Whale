@@ -79,6 +79,20 @@ const sub = (a: Vec2, b: Vec2): Vec2 => [a[0] - b[0], a[1] - b[1]]
 const len = (a: Vec2) => Math.hypot(a[0], a[1])
 
 /**
+ * Below this, in metres, the visitor asked for no move at all.
+ *
+ * Its own threshold, and a hair rather than a tolerance, because a *frame* of
+ * walking is not the same kind of quantity as a coordinate. `EPSILON` is 5 cm and
+ * means "these two points are the same point", which is the right tolerance for
+ * deciding whether two footprints share a wall. Used here it silently ate the
+ * whole of walking: at `WALK_SPEED` a frame covers 3,5 cm at 60 Hz, so every
+ * frame was discarded as no move and the visitor could only look around. It was
+ * hidden before only because the old 6 m/s cleared 5 cm by luck, and it would
+ * have come back for a sprint on a 144 Hz display.
+ */
+const STILL = 1e-6
+
+/**
  * Slides the visitor from `from` towards `to` without letting them through a
  * wall.
  *
@@ -95,7 +109,7 @@ export function resolveMovement(
 ): Vec2 {
   const delta = sub(to, from)
   const distance = len(delta)
-  if (distance < EPSILON) return from
+  if (distance < STILL) return from
 
   const steps = Math.max(1, Math.ceil(distance / radius))
   let position = from

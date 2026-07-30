@@ -183,13 +183,13 @@ reste du pipeline le fait déjà.
 
 Le seul tableau qui compte. `spacing` en mètres, `temp` en kelvins, `power` relatif :
 
-| pont          | qui             | écart | température        | puissance | tenue                                 |
-| ------------- | --------------- | ----- | ------------------ | --------- | ------------------------------------- |
-| tier-1 (72 m) | Roi, princes    | 7 m   | 2 700 K `0xffd2a0` | 1,15      | stable                                |
-| tier-2 (54 m) | VIP             | 8 m   | 3 000 K `0xffdcb8` | 1,05      | stable                                |
-| tier-3 (36 m) | passagers       | 11 m  | 4 000 K `0xf0f0e8` | 0,85      | stable                                |
-| tier-4 (18 m) | passagers bas   | 13 m  | 5 000 K `0xe4ecf4` | 0,70      | léger battement                       |
-| tier-5 (0 m)  | soute, machines | 16 m  | 6 500 K `0xd8e4f0` | 0,55      | battement + une lampe morte sur douze |
+| pont            | qui             | écart | température        | puissance | tenue                                 |
+| --------------- | --------------- | ----- | ------------------ | --------- | ------------------------------------- |
+| tier-1 (128 m)  | Roi, princes    | 7 m   | 2 700 K `0xffd2a0` | 1,15      | stable                                |
+| tier-2 (96 m)   | VIP             | 8 m   | 3 000 K `0xffdcb8` | 1,05      | stable                                |
+| tier-3 (63 m)   | passagers       | 11 m  | 4 000 K `0xf0f0e8` | 0,85      | stable                                |
+| tier-4 (31,5 m) | passagers bas   | 13 m  | 5 000 K `0xe4ecf4` | 0,70      | léger battement                       |
+| tier-5 (0 m)    | soute, machines | 16 m  | 6 500 K `0xd8e4f0` | 0,55      | battement + une lampe morte sur douze |
 
 Modulé ensuite par catégorie d'espace, sur la même échelle :
 
@@ -613,10 +613,10 @@ passe-bas, dont le niveau et la coupure suivent l'altitude du pont.
 | pont   | élévation | niveau | coupure |
 | ------ | --------- | ------ | ------- |
 | tier-5 | 0 m       | 1,0    | 260 Hz  |
-| tier-4 | 18 m      | 0,7    | 190 Hz  |
-| tier-3 | 36 m      | 0,45   | 140 Hz  |
-| tier-2 | 54 m      | 0,25   | 100 Hz  |
-| tier-1 | 72 m      | 0,12   | 70 Hz   |
+| tier-4 | 31,5 m    | 0,7    | 190 Hz  |
+| tier-3 | 63 m      | 0,45   | 140 Hz  |
+| tier-2 | 96 m      | 0,25   | 100 Hz  |
+| tier-1 | 128 m     | 0,12   | 70 Hz   |
 
 C'est la réponse à « il n'y a pas de ciel » : ce qu'on entend à la place, c'est la
 machine. Et ça donne au visiteur un sens de la profondeur — on _entend_ qu'on descend.

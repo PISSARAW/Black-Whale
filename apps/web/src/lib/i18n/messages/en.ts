@@ -687,7 +687,7 @@ export const en = {
         {
           drawn:
             'Each of the five tiers as a stack of thin intermediate floors. A tier is a band of the hull in that drawing, not a storey.',
-          kept: 'One walked floor per tier. A deck has 4.5 to 6 m of headroom and the decks are stacked 18 m apart, so about twelve metres separate a ceiling from the floor above it: that gap is where those intermediate floors are. The tour does not visit them and does not deny them. One plan per tier is what keeps /ship and the tour the same ship, and that correspondence is the whole point of the reconstruction. The 18 m pitch itself is the reconstruction’s: the cross-section does not draw the five tiers equally deep.',
+          kept: 'One walked floor per tier. A deck has 4.5 to 6 m of headroom and the tiers stand 27 m of ship apart, so six decks separate a ceiling from the floor above it: that gap is where those intermediate floors are. The tour does not visit them and does not deny them. One plan per tier is what keeps /ship and the tour the same ship, and that correspondence is the whole point of the reconstruction. The spacing is counted rather than chosen: the ship has 41 decks, the reconstruction holds seven of them and the liner carries ten above, which leaves six to a gap at 4.5 m each. The cross-section gives the order the tiers stack in, never the distance.',
         },
         {
           drawn:

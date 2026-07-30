@@ -9,8 +9,21 @@ answers *what is above what*, and the reconstruction had nothing that said it.
 The overview it replaces was five hand-drawn slabs: it named no room, it was
 traced from no data, and its whale was a shape rather than a hull.
 
-The section is cut on the centreline, `x = 0`, looking to starboard, bow to the
-left. Three things are drawn, and the difference between them is the whole point:
+The section is cut on the centreline, `z = 0`, looking to starboard, bow to the
+left.
+
+Which plane that is, is not a detail: this drawing was first cut on `x = 0`,
+which is a *transverse* section — it showed the 175 m of the whale's beam where
+the page shows the 318 m of her length. The hulls say which axis is which and
+say it twice over. Each one is a parallel midbody between two caps at the
+extremes of `x`, and each cap is symmetric about `z = 0`: flat sides and two
+rounded ends, which is a bow and a stern. And the two caps differ from each
+other — 28.9 m of taper forward of tier 3, 34.1 m aft — where a hull symmetric
+about her centreline cannot tell one side from the other. Several room names
+still read the short axis as fore and aft (`Forward Corridor`, `Aft
+Promenade`); the hull is the older reading and the drawn one, and it wins.
+
+Three things are drawn, and the difference between them is the whole point:
 
   * the rooms the cut passes **through** — solid, labelled, clickable;
   * the rooms it passes **beside** — port or starboard of the centreline, drawn
@@ -21,14 +34,17 @@ left. Three things are drawn, and the difference between them is the whole point
     five, so roughly thirteen metres of ship sit between each pair of them. That
     space was always in the elevations; nothing drew it, so nothing said it.
 
-Scale is isotropic and its own — a section 175 m long and 77 m tall does not fit
-the deck plans' 0.35 m per unit — and the figure is printed when this runs.
+Scale is isotropic and derived, and the figure is printed when this runs. It
+lands within a millimetre of the deck plans' 0.35 m per unit, which is no
+coincidence and no constraint either: the hull fills the width of a deck plan
+much as it fills the width of this one, so the two drawings ended up at the same
+scale by drawing the same 318 m across the same 1000 units.
 
 Do not hand-edit the output; regenerate, then run prettier over it the way the
 deck maps are.
 """
 from blueprint_common import (
-    THROUGH, load_blueprint, region_for, span_across, svelte_string, z_extent,
+    THROUGH, load_blueprint, region_for, span_along, svelte_string, x_extent,
 )
 
 BP = load_blueprint()
@@ -41,16 +57,18 @@ TOP_ROOM = 74.0        # the title strip above the ship
 SEA_ROOM = 92.0        # the water the hull sits in, below the keel
 
 # Read off the ch. 349 cross-section: the sea cuts the hull at about a third of
-# its height, which on these elevations falls inside tier 4. The blueprint holds
-# no waterline — it is a fact about the ship rather than about a room — so it is
-# stated here, with its source, and drawn as the one line that is measured off
-# the page rather than derived.
-WATERLINE = 24.0
+# its height, which on these elevations falls inside the band of tier 4. The
+# blueprint holds no waterline — it is a fact about the ship rather than about a
+# room — so it is stated here, with its source, and drawn as the one line that is
+# measured off the page rather than derived.
+WATERLINE = 48.0
 WATERLINE_SOURCE = 'Coupe des ponts, chap. 349 — la flottaison y coupe la coque au niveau du pont 4.'
 
 # Likewise the eye: the page draws it low and forward, on the flank the tour
-# never sees from outside. It carries no room and opens nothing.
-EYE_AT = (-56.0, 28.0)
+# never sees from outside. It carries no room and opens nothing. Forward is the
+# bow cap, `-x`: the one room anyone has placed in the whale's teeth — the Xi-Yu
+# family office, called the forward section — is at `x -63 … -7`.
+EYE_AT = (-130.0, 55.0)
 EYE_R = 5.0
 
 # Tier 1 is a liner, and the reconstruction holds one floor of it.
@@ -59,7 +77,7 @@ EYE_R = 5.0
 # two or three rows of lit portholes, and above it a superstructure stepped back
 # in terraces, a dozen levels at its tallest block. The one floor plan anyone has
 # drawn of it — the King's quarters, the reception hall and the princes' block in
-# an unbroken chain, 115 m of the 140 m hull — has to be a *low* deck of that
+# an unbroken chain, 192 m of the 249 m hull — has to be a *low* deck of that
 # vessel, since no terrace runs the full length. Everything above it is ship this
 # reconstruction does not hold.
 #
@@ -73,20 +91,20 @@ SUPERSTRUCTURE_SOURCE = (
 
 KEEL = 0.0
 TOP = max(t['elevation'] + t['ceiling'] for t in DECKS)
-Z_MIN = min(z_extent(t['hull'])[0] for t in DECKS)
-Z_MAX = max(z_extent(t['hull'])[1] for t in DECKS)
+X_MIN = min(x_extent(t['hull'])[0] for t in DECKS)
+X_MAX = max(x_extent(t['hull'])[1] for t in DECKS)
 
-SCALE = min((VIEW_W - 2 * PAD_X) / (Z_MAX - Z_MIN), (VIEW_H - TOP_ROOM - SEA_ROOM) / (TOP - KEEL))
+SCALE = min((VIEW_W - 2 * PAD_X) / (X_MAX - X_MIN), (VIEW_H - TOP_ROOM - SEA_ROOM) / (TOP - KEEL))
 BASE = VIEW_H - SEA_ROOM          # where the keel line lands
 
 
-def px(z): return round(PAD_X + (z - Z_MIN) * SCALE, 2)
+def px(x): return round(PAD_X + (x - X_MIN) * SCALE, 2)
 def py(y): return round(BASE - (y - KEEL) * SCALE, 2)
 
 
 def hull_span(tier):
     """How long the ship is at this deck, measured where the cut crosses it."""
-    return span_across(tier['hull']) or z_extent(tier['hull'])
+    return span_along(tier['hull']) or x_extent(tier['hull'])
 
 
 def hull_profile():
@@ -99,10 +117,10 @@ def hull_profile():
     """
     bow, stern = [], []
     for tier in sorted(DECKS, key=lambda t: t['elevation']):
-        z0, z1 = hull_span(tier)
+        fore, aft = hull_span(tier)
         for y in (tier['elevation'], tier['elevation'] + tier['ceiling']):
-            bow.append((px(z0), py(y)))
-            stern.append((px(z1), py(y)))
+            bow.append((px(fore), py(y)))
+            stern.append((px(aft), py(y)))
     return bow + stern[::-1]
 
 
@@ -110,11 +128,11 @@ rows = []
 for tier in DECKS:
     default_ceiling = tier['ceiling']
     for space in [s for s in BP['spaces'] if s['tierId'] == tier['id']]:
-        cut = span_across(space['footprint'])
-        z0, z1 = cut if cut else z_extent(space['footprint'])
+        cut = span_along(space['footprint'])
+        fore, aft = cut if cut else x_extent(space['footprint'])
         floor = tier['elevation'] + (space.get('floor') or 0.0)
         head = space['ceiling'] if space['ceiling'] is not None else default_ceiling
-        x0, x1 = px(z0), px(z1)
+        x0, x1 = px(fore), px(aft)
         y1, y0 = py(floor), py(floor + head)
         w, h = x1 - x0, y1 - y0
         label = space['name']
@@ -141,11 +159,11 @@ rows.sort(key=lambda r: (r['cut'], -r['w'] * r['h']))
 
 decks_out = []
 for tier in sorted(DECKS, key=lambda t: -t['elevation']):
-    z0, z1 = hull_span(tier)
+    fore, aft = hull_span(tier)
     decks_out.append({
         'id': tier['id'], 'name': tier['name'], 'nameFr': tier['nameFr'],
         'child': bool(tier.get('parentTierId')),
-        'x0': px(z0), 'x1': px(z1),
+        'x0': px(fore), 'x1': px(aft),
         'floor': py(tier['elevation']), 'ceiling': py(tier['elevation'] + tier['ceiling']),
         'elevation': tier['elevation'],
     })
@@ -158,21 +176,21 @@ order = sorted(DECKS, key=lambda t: t['elevation'])
 for lower, upper in zip(order, order[1:]):
     top_of_lower = lower['elevation'] + lower['ceiling']
     if upper['elevation'] - top_of_lower < 1: continue
-    z0 = max(hull_span(lower)[0], hull_span(upper)[0])
-    z1 = min(hull_span(lower)[1], hull_span(upper)[1])
+    fore = max(hull_span(lower)[0], hull_span(upper)[0])
+    aft = min(hull_span(lower)[1], hull_span(upper)[1])
     gaps.append({
         'id': f"{lower['id']}-{upper['id']}",
-        'x': px(z0), 'y': py(upper['elevation']),
-        'w': round(px(z1) - px(z0), 2), 'h': round(py(top_of_lower) - py(upper['elevation']), 2),
+        'x': px(fore), 'y': py(upper['elevation']),
+        'w': round(px(aft) - px(fore), 2), 'h': round(py(top_of_lower) - py(upper['elevation']), 2),
         'metres': round(upper['elevation'] - top_of_lower, 1),
     })
 
 # The liner over the topmost deck, open at the top: see SUPERSTRUCTURE_SOURCE.
 top_deck = max(DECKS, key=lambda t: t['elevation'])
-sz0, sz1 = hull_span(top_deck)
+s_fore, s_aft = hull_span(top_deck)
 superstructure = {
-    'x': px(sz0), 'y': 0.0,
-    'w': round(px(sz1) - px(sz0), 2),
+    'x': px(s_fore), 'y': 0.0,
+    'w': round(px(s_aft) - px(s_fore), 2),
     'h': py(top_deck['elevation'] + top_deck['ceiling']),
 }
 

@@ -44,14 +44,34 @@ combien ça mesure. Lus au pied de la lettre à 1 m par unité, ils donnent une
 salle de banquet de 450 m de long — un volume que personne ne peut parcourir. À
 0,35, on obtient un appartement princier de 16,6 × 7,5 m et une salle de banquet de
 157 × 25 m sous 9 m de plafond, et les proportions des plans sont conservées
-exactement. La coque reconstruite fait alors 175 m : c'est la longueur de la
-reconstruction, pas une mesure du Black Whale.
+exactement. La coque reconstruite fait alors **318 m de long sur 175 m de large**
+au pont 3, le plus étendu des cinq : c'est la taille de la reconstruction, pas
+une mesure du Black Whale.
 
 ```
-x = (svg.x - 500) × 0,35     +x vers tribord
-z = (svg.y - 300) × 0,35     +z vers la poupe
+x = (svg.x - 500) × 0,35     x d'avant en arrière, proue en -x
+z = (svg.y - 300) × 0,35     z en travers, z = 0 est l'axe du navire
 y = elevation                +y vers le haut
 ```
+
+**Quel axe est lequel, ce sont les coques qui le disent**, et elles le disent
+deux fois. Chacune est un corps parallèle entre deux calottes arrondies aux
+extrémités de `x`, et chaque calotte est symétrique par rapport à `z = 0` : des
+flancs droits et deux bouts ronds, c'est-à-dire une proue et une poupe. Et les
+deux calottes diffèrent l'une de l'autre — 28,9 m d'effilement à l'avant du pont
+3, 34,1 m à l'arrière — là où une coque symétrique par rapport à son axe ne
+saurait distinguer un bord de l'autre. Quant au sens, le seul local que quelqu'un
+ait placé dans les dents de la baleine, le bureau de la famille Xi-Yu « section
+avant », est en `x −63 … −7` : la proue est en `−x`.
+
+Ce dossier a longtemps lu ces axes à l'envers, et plusieurs **noms de pièces le
+portent encore** : `Forward Corridor`, `Aft Promenade`, `Starboard Forward
+Floor` désignent l'axe court comme s'il allait de la proue à la poupe. Rien
+n'est déplacé pour autant — la géométrie est le relevé des plans et elle est
+juste ; ce sont les noms qui parlent d'un navire tourné d'un quart de tour. La
+seule chose que l'erreur avait réellement faussée, c'est la coupe d'ensemble,
+qui était prise en travers du navire : voir [La coupe
+longitudinale](#la-coupe-longitudinale).
 
 Le corollaire est **la vitesse de marche**, et il est dans
 `apps/web/src/lib/tour/navigation.ts` : `WALK_SPEED = 2,1 m/s`, la course à
@@ -69,11 +89,35 @@ haut :
 
 | Pont | `elevation` | Plafond par défaut |
 | ---- | ----------- | ------------------ |
-| 1    | 72 m        | 5 m                |
-| 2    | 54 m        | 5 m                |
-| 3    | 36 m        | 6 m                |
-| 4    | 18 m        | 4,5 m              |
+| 1    | 128 m       | 5 m                |
+| 2    | 96 m        | 5 m                |
+| 3    | 63 m        | 6 m                |
+| 4    | 31,5 m      | 4,5 m              |
 | 5    | 0 m         | 4,5 m              |
+
+### L'écart entre deux ponts est compté, pas choisi
+
+Ces élévations viennent des **41 ponts** du navire, et c'est le seul chiffre du
+dossier qui puisse les donner : la coupe du chap. 349 dit dans quel ordre les
+cinq tiers s'empilent, jamais de combien. Le compte se pose une fois :
+
+- la reconstruction tient **7 planchers** : les cinq tiers, plus les deux ponts
+  du paquebot (`tier-1-b`, `tier-1-c`) ;
+- **10 restent au-dessus** du dernier, dans la superstructure que le chap. 369
+  montre étagée d'une douzaine de niveaux et dont on tient trois ;
+- **24 se répartissent dans les quatre bandes** entre les tiers, soit **six
+  ponts par bande**.
+
+Un pont du navire vaut **4,5 m**, la hauteur sous plafond des deux ponts bas du
+blueprint. Six ponts font donc **27 m** entre le plafond d'un tier et le
+plancher du suivant, et la coque monte à **144 m** pour 318 m de long.
+
+Le pas de 18 m que ce dossier a longtemps porté ne tenait pas ce compte : il
+laissait 12 à 13 m entre deux tiers, c'est-à-dire trois ponts là où il en fallait
+six, et une coque de 88 m — un navire trois fois et demie plus long que haut,
+quand la page en dessine un deux fois. La proportion de la page et le nombre de
+ponts du manga disaient donc la même chose, contre le pas de 18 m ; c'est la
+coupe reprise dans le bon axe qui a rendu le désaccord visible.
 
 Le pont 1 n'est pas un plancher mais un paquebot, et il porte trois ponts à lui
 seul : voir [Les ponts du paquebot](#les-ponts-du-paquebot).
@@ -117,10 +161,22 @@ de quoi**, et la reconstruction n'avait rien qui l'énonçait. La vue d'ensemble
 qu'elle remplace était cinq dalles dessinées à la main : elle ne nommait aucune
 pièce, elle ne sortait d'aucune donnée, et sa baleine était une silhouette.
 
-La coupe est prise dans l'axe, `x = 0`, regard vers tribord, proue à gauche.
-Elle a **son échelle** — 175 m de long sur 77 m de haut n'entrent pas dans le
-0,35 m par unité des plans de pont — et le script l'imprime en tournant. Elle
-distingue trois choses, et c'est toute la question :
+La coupe est prise dans l'axe, `z = 0`, regard vers tribord, proue à gauche.
+Elle a **son échelle**, dérivée, et le script l'imprime en tournant : 0,349 m
+par unité, à un millimètre de celle des plans de pont, parce que la coque
+remplit la largeur de ce dessin comme elle remplit la leur.
+
+Ce plan-là n'est pas un détail. La coupe a d'abord été prise sur `x = 0`, qui
+est une **coupe au maître-couple** : elle montrait les 175 m de large de la
+baleine là où la page montre ses 318 m de long, et personne ne l'a vue parce que
+les deux axes se rétrécissent de la même façon vers les ponts extrêmes. Ce sont
+les coques qui tranchent, et l'argument est dans [Repère et
+échelle](#repère-et-échelle). Ce qui a changé en la reprenant dans le bon axe :
+la proue s'effile au lieu d'être un chanfrein, la poupe porte le décrochement du
+pont 5 que la page dessine près du gouvernail, et le navire est trois fois et
+demie plus long que haut au lieu de deux.
+
+Elle distingue trois choses, et c'est toute la question :
 
 - les pièces que la coupe **traverse** : pleines, libellées là où le libellé
   tient, et cliquables ;
@@ -129,9 +185,9 @@ distingue trois choses, et c'est toute la question :
   chap. 349 est remplie — de vraies pièces, et non une trame ;
 - les ponts que la reconstruction **ne tient pas** : la bande entre le plafond
   d'un pont et le plancher du suivant. Le vaisseau en compte 41 et la visite en
-  parcourt cinq, donc une quinzaine de mètres de navire dorment entre chacun
-  d'eux. Cette place était déjà dans les élévations ; rien ne la dessinait, donc
-  rien ne la disait. Rien n'y est posé non plus : la coupe montre que la place
+  parcourt cinq, donc six ponts — 27 m de navire — dorment entre chacun d'eux.
+  Cette bande est ce qui fixe les élévations plutôt que l'inverse ; rien ne la
+  dessinait, donc rien ne la disait. Rien n'y est posé non plus : la coupe montre que la place
   est pleine, et ne dit pas un mot de ce qui la remplit.
 
 Une pièce qui **pose un mur** dans l'axe n'est pas coupée par lui. Le tribunal
@@ -154,7 +210,7 @@ haut. Le pont 1 n'est donc pas un plancher, c'est un navire à ponts multiples.
 Un seul de ses étages a un plan de sol dessiné, et c'est la chaîne
 ininterrompue **Quartiers du Roi → Salle de réception → Quartiers princiers**,
 avec son vestibule (chap. 383) et son poste gardé (chap. 382 / 363) entre les
-blocs. Elle court sur 115 m des 140 m de la coque du pont 1 : aucun gradin ne
+blocs. Elle court sur 192 m des 249 m de la coque du pont 1 : aucun gradin ne
 fait cette longueur, donc **le pont royal est un pont bas du paquebot**, au
 niveau de la coque ou juste au-dessus. Ça se pose comme fait et ça contraint
 l'empilement.
@@ -167,7 +223,7 @@ soit du plan `/ship` lui-même. Les poser au niveau de la salle de banquet est
 une affirmation que personne n'a dessinée, et c'est le blueprint qui la fait
 aujourd'hui, en donnant `elevation: 72` à ses 85 espaces sans un seul lien
 vertical entre eux. Deux choses la contredisent déjà de l'intérieur : la
-chambre funéraire dépasse de 13,6 m la coque de son propre pont vers la proue,
+chambre funéraire dépasse de 13,6 m la coque de son propre pont, par le travers,
 et quatre pièces y réclament 7 à 9 m de plafond sur un pont qui en annonce 5.
 
 La coupe dit donc ce qu'elle sait et pas plus : la bande au-dessus du dernier
@@ -184,9 +240,9 @@ portent `null`.
 
 | Pont       | Élévation | Ce qu'il porte                                     |
 | ---------- | --------- | -------------------------------------------------- |
-| `tier-1-c` | 85,1 m    | casino, bloc des reines                            |
-| `tier-1-b` | 81,6 m    | chambrées, quartier de détention, Cour suprême     |
-| `tier-1`   | 72 m      | la chaîne royale, les canots, la chambre funéraire |
+| `tier-1-c` | 141,1 m   | casino, bloc des reines                            |
+| `tier-1-b` | 137,6 m   | chambrées, quartier de détention, Cour suprême     |
+| `tier-1`   | 128 m     | la chaîne royale, les canots, la chambre funéraire |
 
 Trois règles, et elles se lisent dans l'ordre :
 
@@ -197,12 +253,13 @@ Trois règles, et elles se lisent dans l'ordre :
    reconstruction, et la `source` de chaque pont le dit en toutes lettres, sans
    citer de chapitre — un pont `inferred` qui citerait une planche prétendrait à
    une preuve qu'il n'a pas.
-3. **Ce qui touche le bordé ne monte pas.** Les canots sont à `x ±133`, hors de
-   la coque, et la chambre funéraire à `z −83,6` quand le pont 1 s'arrête à
-   `−70`. Un pont en gradin est plus court par définition : ils restent en bas.
+3. **Ce qui touche le bordé ne monte pas.** Les canots sont à `x ±133`, au-delà
+   de la proue et de la poupe du pont 1 (`−126,87 … 122,5`), et la chambre
+   funéraire à `z −83,6` quand le pont 1 s'arrête à `−70` par le travers. Un
+   pont en gradin est plus court par définition : ils restent en bas.
 
 Le premier pont au-dessus du pont royal ne commence pas 3,5 m plus haut mais à
-**81,6 m**, au-dessus des 9 m de la salle de banquet. Ce n'est pas un
+**137,6 m**, au-dessus des 9 m de la salle de banquet. Ce n'est pas un
 arrangement : c'est la raison pour laquelle un paquebot met ses volumes à double
 hauteur en bas de sa pile.
 

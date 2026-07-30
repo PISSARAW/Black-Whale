@@ -257,10 +257,10 @@ export function impulseResponse(
  */
 export const HULL_DECKS: readonly { elevation: number; level: number; cutoff: number }[] = [
   { elevation: 0, level: 1, cutoff: 260 },
-  { elevation: 18, level: 0.7, cutoff: 190 },
-  { elevation: 36, level: 0.45, cutoff: 140 },
-  { elevation: 54, level: 0.25, cutoff: 100 },
-  { elevation: 72, level: 0.12, cutoff: 70 },
+  { elevation: 31.5, level: 0.7, cutoff: 190 },
+  { elevation: 63, level: 0.45, cutoff: 140 },
+  { elevation: 96, level: 0.25, cutoff: 100 },
+  { elevation: 128, level: 0.12, cutoff: 70 },
 ]
 
 /**

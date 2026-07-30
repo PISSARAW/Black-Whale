@@ -31,36 +31,46 @@ const TOP_ROOM = 74
 const SEA_ROOM = 92
 
 const decks = blueprint.tiers.filter((tier) => tier.kind === 'deck')
-const zOf = (polygon: readonly (readonly [number, number])[]) => polygon.map(([, z]) => z)
-const Z_MIN = Math.min(...decks.flatMap((tier) => zOf(tier.hull)))
-const Z_MAX = Math.max(...decks.flatMap((tier) => zOf(tier.hull)))
+const xOf = (polygon: readonly (readonly [number, number])[]) => polygon.map(([x]) => x)
+const X_MIN = Math.min(...decks.flatMap((tier) => xOf(tier.hull)))
+const X_MAX = Math.max(...decks.flatMap((tier) => xOf(tier.hull)))
 const TOP = Math.max(...decks.map((tier) => tier.elevation + tier.ceiling))
 
-const SCALE = Math.min((VIEW_W - 2 * PAD_X) / (Z_MAX - Z_MIN), (VIEW_H - TOP_ROOM - SEA_ROOM) / TOP)
+const SCALE = Math.min((VIEW_W - 2 * PAD_X) / (X_MAX - X_MIN), (VIEW_H - TOP_ROOM - SEA_ROOM) / TOP)
 const BASE = VIEW_H - SEA_ROOM
 
-const px = (z: number) => PAD_X + (z - Z_MIN) * SCALE
+const px = (x: number) => PAD_X + (x - X_MIN) * SCALE
 const py = (y: number) => BASE - y * SCALE
 
 /**
  * Where the cut crosses a footprint, or `null` where it passes beside it —
- * the same reading `span_across` makes in the generator, and the thing `cut`
+ * the same reading `span_along` makes in the generator, and the thing `cut`
  * on every room is supposed to record.
+ *
+ * The plane is `z = 0` and the span is measured in `x`, because `x` is the
+ * axis the ship is long on: every deck hull is a parallel midbody between two
+ * caps at the extremes of `x`, each cap symmetric about `z = 0`. Cut the other
+ * way — as this drawing once was — and the section is a transverse one wearing
+ * a longitudinal caption, 175 m of beam where the page shows 318 m of ship.
  */
-function spanAcross(polygon: readonly (readonly [number, number])[]) {
-  const xs = polygon.map(([x]) => x)
+function spanAlong(polygon: readonly (readonly [number, number])[]) {
+  const zs = polygon.map(([, z]) => z)
   // A wall resting on the centreline is not a cut through the room: the
   // courthouse and the police station share that wall, one to each side.
-  if (!(Math.min(...xs) < 0 && 0 < Math.max(...xs))) return null
-  const zs: number[] = []
+  if (!(Math.min(...zs) < 0 && 0 < Math.max(...zs))) return null
+  const xs: number[] = []
   for (let i = 0; i < polygon.length; i++) {
     const [x1, z1] = polygon[i]
     const [x2, z2] = polygon[(i + 1) % polygon.length]
-    if (x1 * x2 < 0) zs.push(z1 + ((z2 - z1) * (0 - x1)) / (x2 - x1))
-    else if (x1 === 0) zs.push(z1)
+    if (z1 * z2 < 0) xs.push(x1 + ((x2 - x1) * (0 - z1)) / (z2 - z1))
+    else if (z1 === 0) xs.push(x1)
   }
-  return zs.length ? ([Math.min(...zs), Math.max(...zs)] as const) : null
+  return xs.length ? ([Math.min(...xs), Math.max(...xs)] as const) : null
 }
+
+/** How long the ship is at a deck, measured where the cut crosses its hull. */
+const hullSpan = (tier: Tier) =>
+  spanAlong(tier.hull) ?? ([Math.min(...xOf(tier.hull)), Math.max(...xOf(tier.hull))] as const)
 
 interface Room {
   id: string
@@ -148,13 +158,16 @@ describe('the longitudinal section', () => {
     for (const space of deckSpaces) {
       const room = byId.get(space.id)!
       const tier = tierOf.get(space.tierId) as Tier
-      const cut = spanAcross(space.footprint)
-      const [z0, z1] = cut ?? [Math.min(...zOf(space.footprint)), Math.max(...zOf(space.footprint))]
+      const cut = spanAlong(space.footprint)
+      const [fore, aft] = cut ?? [
+        Math.min(...xOf(space.footprint)),
+        Math.max(...xOf(space.footprint)),
+      ]
       const floor = tier.elevation + (space.floor ?? 0)
       const head = space.ceiling ?? tier.ceiling
 
-      expect(room.x, `${space.id} fore`).toBeCloseTo(px(z0), 1)
-      expect(room.x + room.w, `${space.id} aft`).toBeCloseTo(px(z1), 1)
+      expect(room.x, `${space.id} fore`).toBeCloseTo(px(fore), 1)
+      expect(room.x + room.w, `${space.id} aft`).toBeCloseTo(px(aft), 1)
       expect(room.y + room.h, `${space.id} floor`).toBeCloseTo(py(floor), 1)
       expect(room.y, `${space.id} ceiling`).toBeCloseTo(py(floor + head), 1)
     }
@@ -168,7 +181,7 @@ describe('the longitudinal section', () => {
   it('marks a room as cut exactly when the centreline crosses it', () => {
     const byId = new Map(rooms.map((room) => [room.id, room] as const))
     for (const space of deckSpaces) {
-      expect(byId.get(space.id)!.cut, space.id).toBe(spanAcross(space.footprint) !== null)
+      expect(byId.get(space.id)!.cut, space.id).toBe(spanAlong(space.footprint) !== null)
     }
     expect(rooms.some((room) => room.cut)).toBe(true)
     expect(rooms.some((room) => !room.cut)).toBe(true)
@@ -245,9 +258,12 @@ describe('the decks of the section', () => {
       expect(deck.elevation).toBe(tier.elevation)
       expect(deck.floor, `${deck.id} floor`).toBeCloseTo(py(tier.elevation), 1)
       expect(deck.ceiling, `${deck.id} ceiling`).toBeCloseTo(py(tier.elevation + tier.ceiling), 1)
-      const zs = zOf(tier.hull)
-      expect(deck.x0, `${deck.id} bow`).toBeCloseTo(px(Math.min(...zs)), 1)
-      expect(deck.x1, `${deck.id} stern`).toBeCloseTo(px(Math.max(...zs)), 1)
+      // Where the cut crosses the hull, not the hull's widest point: tier 5 is
+      // the one deck whose outline is not symmetric about the centreline, and
+      // its bow reaches half a metre further out to port than on the cut.
+      const [fore, aft] = hullSpan(tier)
+      expect(deck.x0, `${deck.id} bow`).toBeCloseTo(px(fore), 1)
+      expect(deck.x1, `${deck.id} stern`).toBeCloseTo(px(aft), 1)
     }
   })
 
@@ -336,9 +352,9 @@ describe('the decks the reconstruction does not hold', () => {
       py(top.elevation + top.ceiling),
       1,
     )
-    const zs = zOf(top.hull)
-    expect(x).toBeCloseTo(px(Math.min(...zs)), 1)
-    expect(x + w).toBeCloseTo(px(Math.max(...zs)), 1)
+    const xs = xOf(top.hull)
+    expect(x).toBeCloseTo(px(Math.min(...xs)), 1)
+    expect(x + w).toBeCloseTo(px(Math.max(...xs)), 1)
     // Open means faded out, not cut off.
     expect(source).toMatch(/mask="url\(#fade-up\)"/)
   })

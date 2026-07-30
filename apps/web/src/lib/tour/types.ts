@@ -13,7 +13,13 @@
  * holds — tagged `map`, so a reader can tell the two apart at a glance.
  */
 
-/** A point on a deck: `[x, z]` in metres, `+x` starboard and `+z` aft. */
+/**
+ * A point on a deck: `[x, z]` in metres. `x` runs fore and aft with the bow at
+ * `-x`, `z` is athwartships and `z = 0` is the centreline — the hulls are
+ * parallel midbodies capped at the extremes of `x` and symmetric about `z = 0`,
+ * which is what says so. Some room names still read the axes the other way
+ * round; `data/ship/README.md` says why they were left alone.
+ */
 export type Vec2 = readonly [number, number]
 
 /** A closed simple polygon. The last point is not repeated. */

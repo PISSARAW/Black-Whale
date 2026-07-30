@@ -255,6 +255,8 @@ describe('the pace the ship is walked at', () => {
  * the walk lasts, so its ends have to meet: a discontinuity there is a click every
  * four seconds, which is the one artefact an ear places instantly.
  */
+const TOP_DECK = HULL_DECKS[HULL_DECKS.length - 1]
+
 describe('the rumble of the hull', () => {
   it('gives each deck the level and the cutoff it is written for', () => {
     for (const deck of HULL_DECKS) {
@@ -264,12 +266,12 @@ describe('the rumble of the hull', () => {
     }
     // The machinery is in the bottom of the hull: the hold is the loud end.
     expect(HULL_DECKS[0].level).toBe(1)
-    expect(hullRumble(0).level).toBeGreaterThan(hullRumble(72).level * 5)
+    expect(hullRumble(0).level).toBeGreaterThan(hullRumble(TOP_DECK.elevation).level * 5)
   })
 
   it('gets quieter and duller with every deck climbed, without exception', () => {
     let last = hullRumble(-10)
-    for (let elevation = -10; elevation <= 90; elevation += 0.5) {
+    for (let elevation = -10; elevation <= TOP_DECK.elevation + 20; elevation += 0.5) {
       const heard = hullRumble(elevation)
       expect(heard.level, `${elevation} m is louder than the deck below it`).toBeLessThanOrEqual(
         last.level + 1e-12,
@@ -284,13 +286,15 @@ describe('the rumble of the hull', () => {
   it('interpolates between decks, and stops at the top and the bottom of the ship', () => {
     // Nothing in the reconstruction stands between two decks — but a lift does
     // travel there, and an elevation off the table must not fall to zero.
-    const between = hullRumble(9)
-    expect(between.level).toBeCloseTo((1 + 0.7) / 2, 10)
-    expect(between.cutoff).toBeCloseTo((260 + 190) / 2, 10)
+    // Halfway from the hold to the deck above it, whatever the deck pitch is:
+    // the elevations are the blueprint's and they have moved once already.
+    const between = hullRumble((HULL_DECKS[0].elevation + HULL_DECKS[1].elevation) / 2)
+    expect(between.level).toBeCloseTo((HULL_DECKS[0].level + HULL_DECKS[1].level) / 2, 10)
+    expect(between.cutoff).toBeCloseTo((HULL_DECKS[0].cutoff + HULL_DECKS[1].cutoff) / 2, 10)
 
     // Flat outside the hull: there is nothing under Tier 5 and nothing over Tier 1.
     expect(hullRumble(-40)).toEqual(hullRumble(0))
-    expect(hullRumble(400)).toEqual(hullRumble(72))
+    expect(hullRumble(4 * TOP_DECK.elevation)).toEqual(hullRumble(TOP_DECK.elevation))
   })
 
   it('meets its own ends, so the loop has no click in it', () => {

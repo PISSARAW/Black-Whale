@@ -67,8 +67,14 @@ def centroid(fp):
     return (cx / (6 * a), cy / (6 * a)) if a else (fp[0][0], fp[0][1])
 
 
-def span_across(polygon, at=0.0):
-    """Where the plane `x = at` cuts a footprint, as a (min z, max z).
+def span_along(polygon, at=0.0):
+    """Where the plane `z = at` cuts a footprint, as a (bow x, stern x).
+
+    `z = 0` is the centreline, and the ship is long in `x`: every deck hull is
+    a parallel midbody between two caps at the extremes of `x`, and each cap is
+    symmetric about `z = 0`. That is a bow and a stern, so a section cut on
+    `z = 0` runs the length of the ship and a section cut on `x = 0` runs across
+    her beam. This one is cut the long way.
 
     `None` when the plane does not cut it: the room is wholly to port or wholly
     to starboard, so the section passes beside it rather than through it, and
@@ -81,24 +87,25 @@ def span_across(polygon, at=0.0):
     straddle is therefore tested first, on the corners, and only then are the
     crossings measured.
     """
-    xs = [p[0] for p in polygon]
-    if not (min(xs) < at < max(xs)):
+    zs = [p[1] for p in polygon]
+    if not (min(zs) < at < max(zs)):
         return None
-    zs = []
+    xs = []
     n = len(polygon)
     for i in range(n):
         x1, z1 = polygon[i]
         x2, z2 = polygon[(i + 1) % n]
-        if (x1 - at) * (x2 - at) < 0:
-            zs.append(z1 + (z2 - z1) * (at - x1) / (x2 - x1))
-        elif x1 == at:
-            zs.append(z1)
-    return (min(zs), max(zs)) if zs else None
+        if (z1 - at) * (z2 - at) < 0:
+            xs.append(x1 + (x2 - x1) * (at - z1) / (z2 - z1))
+        elif z1 == at:
+            xs.append(x1)
+    return (min(xs), max(xs)) if xs else None
 
 
-def z_extent(polygon):
-    zs = [p[1] for p in polygon]
-    return min(zs), max(zs)
+def x_extent(polygon):
+    """How far a footprint reaches fore and aft: the bow end first."""
+    xs = [p[0] for p in polygon]
+    return min(xs), max(xs)
 
 
 def svelte_string(value):

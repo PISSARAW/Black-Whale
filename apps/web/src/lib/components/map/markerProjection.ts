@@ -511,13 +511,13 @@ function spotNoteFor(
  * runs; `sectionMap.test.ts` fails if they drift from what it draws.
  */
 export const tierOverviewY: Record<string, number> = {
-  'tier-1': 23.5,
-  'tier-1-b': 16.4,
-  'tier-1-c': 13.6,
-  'tier-2': 38.3,
-  'tier-3': 52.6,
-  'tier-4': 68,
-  'tier-5': 82.8,
+  'tier-1': 22.4,
+  'tier-1-b': 18.3,
+  'tier-1-c': 16.6,
+  'tier-2': 37.7,
+  'tier-3': 53.2,
+  'tier-4': 68.6,
+  'tier-5': 83.6,
 }
 
 /**
@@ -533,9 +533,9 @@ export const tierOverviewY: Record<string, number> = {
  * How far each deck reaches fore and aft in the overview, as percentages of the
  * width.
  *
- * The whale tapers, so no two decks are the same length: tier 5 stops at 73 %
- * where tier 3 runs to 91 %, and the liner's guest deck does not begin until
- * 48 %. A crowd fanned out across one fixed band therefore hung people off both
+ * The whale tapers, so no two decks are the same length: tier 5 stops at 83 %
+ * where tier 3 runs to 96 %, and the liner's guest deck does not begin until
+ * 33 %. A crowd fanned out across one fixed band therefore hung people off both
  * ends of the ship — Tajao, in the Cha-R office on tier 5, was drawn swimming
  * astern of it.
  *
@@ -543,23 +543,23 @@ export const tierOverviewY: Record<string, number> = {
  * `sectionMap.test.ts` fails if they drift from the hull it draws.
  */
 export const tierOverviewSpan: Record<string, [number, number]> = {
-  'tier-1': [13, 82],
-  'tier-1-b': [32.2, 79.5],
-  'tier-1-c': [47.8, 79.5],
-  'tier-2': [9.6, 85.4],
-  'tier-3': [4.4, 90.6],
-  'tier-4': [4.4, 90.6],
-  'tier-5': [13, 73.4],
+  'tier-1': [14.4, 85.8],
+  'tier-1-b': [60.4, 85.8],
+  'tier-1-c': [33.4, 74.7],
+  'tier-2': [9.4, 90.8],
+  'tier-3': [4.4, 95.6],
+  'tier-4': [5.1, 94.8],
+  'tier-5': [8.3, 83.2],
 }
 
 export const tierOverviewBand: Record<string, number> = {
-  'tier-1': 4.1,
-  'tier-1-b': 2.5,
-  'tier-1-c': 2.5,
-  'tier-2': 4.1,
-  'tier-3': 4.9,
-  'tier-4': 3.7,
-  'tier-5': 3.7,
+  'tier-1': 2.4,
+  'tier-1-b': 1.4,
+  'tier-1-c': 1.4,
+  'tier-2': 2.4,
+  'tier-3': 2.9,
+  'tier-4': 2.1,
+  'tier-5': 2.1,
 }
 
 /**

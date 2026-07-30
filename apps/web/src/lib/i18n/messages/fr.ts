@@ -620,7 +620,7 @@ export const fr: Messages = {
         {
           drawn:
             'Chacun des cinq ponts comme un empilement de niveaux intermédiaires. Un pont y est une tranche de coque, pas un étage.',
-          kept: 'Un seul niveau parcouru par pont. Un pont a 4,5 à 6 m sous plafond et les ponts sont empilés tous les 18 m : une douzaine de mètres sépare donc un plafond du plancher au-dessus, et c’est là que sont ces niveaux intermédiaires. La visite ne les parcourt pas et ne les nie pas. Un plan par pont est ce qui fait de /ship et de la visite le même vaisseau, et cette correspondance est toute la raison d’être de la reconstruction. Le pas de 18 m, lui, appartient à la reconstruction : la coupe ne dessine pas les cinq ponts d’égale hauteur.',
+          kept: 'Un seul niveau parcouru par pont. Un pont a 4,5 à 6 m sous plafond et les tiers sont espacés de 27 m de navire : six ponts séparent donc un plafond du plancher au-dessus, et c’est là que sont ces niveaux intermédiaires. La visite ne les parcourt pas et ne les nie pas. Un plan par pont est ce qui fait de /ship et de la visite le même vaisseau, et cette correspondance est toute la raison d’être de la reconstruction. L’écart, lui, se compte au lieu de se choisir : le vaisseau a 41 ponts, la reconstruction en tient sept et le paquebot en porte dix au-dessus, ce qui en laisse six par bande à 4,5 m pièce. La coupe donne l’ordre de l’empilement, jamais la distance.',
         },
         {
           drawn:

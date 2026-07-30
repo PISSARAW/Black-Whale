@@ -558,6 +558,17 @@ export const en = {
     dataCreditRepository: 'source repository',
     dataCreditLicensedUnder: '— licensed under',
     chooseLanguage: 'Choose a language',
+    spoiler: {
+      label: 'Spoiler filter',
+      summaryFull: 'Spoilers · full canon',
+      summaryLimited: (chapter: number | string) => `Spoilers · to ch. ${chapter}`,
+      intro: 'Set the last chapter you have read. The archive hides everything after it.',
+      chapterField: 'Last chapter read',
+      rangeHint: (first: number | string, last: number | string) =>
+        `Indexed chapters ${first}–${last}`,
+      apply: 'Apply',
+      clear: 'Show full canon',
+    },
   },
 
   home: {
@@ -1177,7 +1188,6 @@ export const en = {
       unknown: 'Unknown',
     },
     unknownPositions: (count: number) => `Unknown positions (${count})`,
-    spoilers: 'Spoilers',
     timeline: 'Timeline',
     currentState: 'Current state',
     flashbackBadge: '↶ FLASHBACK ·',

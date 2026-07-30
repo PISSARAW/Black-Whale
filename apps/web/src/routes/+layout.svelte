@@ -6,8 +6,12 @@
   import CommandPalette from '$lib/components/CommandPalette.svelte'
   import AmbientToggle from '$lib/audio/AmbientToggle.svelte'
   import LanguageSwitcher from '$lib/i18n/LanguageSwitcher.svelte'
+  import SpoilerFilter from '$lib/components/SpoilerFilter.svelte'
   import { link, routePath, t } from '$lib/i18n'
   import { tick } from 'svelte'
+  import type { LayoutData } from './$types'
+
+  export let data: LayoutData
 
   let menuOpen = false
   let paletteOpen = false
@@ -119,6 +123,9 @@
       <button type="button" onclick={openPalette} aria-label={$t.layout.openQuickNavigation}>
         <span>{$t.layout.quickFind}</span><kbd>⌘K</kbd>
       </button>
+      <span class="spoiler-slot">
+        <SpoilerFilter limit={data.spoilerFilter.limit} chapters={data.spoilerFilter.chapters} />
+      </span>
       <span class="language-slot"><LanguageSwitcher /></span>
     </div>
 
@@ -182,6 +189,18 @@
           <span aria-hidden="true">⌕</span>
           <span>{$t.layout.quickFind}</span>
         </button>
+
+        <!-- The spoiler filter rides in the drawer at every width: the header
+             row that carries it drops the chip on narrow desktops and is hidden
+             outright on mobile, and the one control that decides what the whole
+             archive shows must never be unreachable. -->
+        <div class="menu-spoiler">
+          <SpoilerFilter
+            compact
+            limit={data.spoilerFilter.limit}
+            chapters={data.spoilerFilter.chapters}
+          />
+        </div>
 
         <!-- The header meta row is hidden on mobile, so the theme toggle and the
              language switcher ride here. -->
@@ -418,6 +437,14 @@
     border-left: 1px solid var(--line-subtle);
   }
 
+  /* The chip states the active cap, so it needs its label; below this width the
+     header cannot hold four items and the drawer copy takes over. */
+  @media (max-width: 1120px) {
+    .spoiler-slot {
+      display: none;
+    }
+  }
+
   .menu-toggle {
     display: grid;
     min-width: 3rem;
@@ -505,6 +532,16 @@
   .menu-search,
   .menu-audio {
     display: none;
+  }
+
+  .menu-spoiler {
+    display: grid;
+    padding-top: 1rem;
+    border-top: 1px solid var(--line-subtle);
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.12em;
   }
 
   .menu-sections a {

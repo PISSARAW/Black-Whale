@@ -529,6 +529,16 @@ export const fr: Messages = {
     dataCreditRepository: 'dépôt source',
     dataCreditLicensedUnder: '— sous licence',
     chooseLanguage: 'Choisir une langue',
+    spoiler: {
+      label: 'Filtre à spoilers',
+      summaryFull: 'Spoilers · canon complet',
+      summaryLimited: (chapter) => `Spoilers · jusqu'au ch. ${chapter}`,
+      intro: "Indiquez le dernier chapitre lu : l'archive masque tout ce qui vient après.",
+      chapterField: 'Dernier chapitre lu',
+      rangeHint: (first, last) => `Chapitres indexés ${first}–${last}`,
+      apply: 'Appliquer',
+      clear: 'Afficher tout le canon',
+    },
   },
 
   home: {
@@ -1142,7 +1152,6 @@ export const fr: Messages = {
       unknown: 'Inconnue',
     },
     unknownPositions: (count) => `Positions inconnues (${count})`,
-    spoilers: 'Spoilers',
     timeline: 'Chronologie',
     currentState: 'État actuel',
     flashbackBadge: '↶ FLASH-BACK ·',

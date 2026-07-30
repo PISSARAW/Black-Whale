@@ -249,6 +249,18 @@ export const fr: Messages = {
         deduced: (what, strength) =>
           `Condition lue — ${what} · ${strength} nommées, et plus fort à chacune`,
         nothingToDeduce: 'Plus rien à lire : chaque emprise a été nommée',
+        armourWorn:
+          "L'emballage est en place · ce que le vaisseau vous fera désormais y sera gardé, pas annulé",
+        armourHolding: (packed) =>
+          packed
+            ? `L'emballage garde ${packed} coup${packed === 1 ? '' : 's'} · rien ne revient avant que le soleil ne se lève dessus`
+            : "L'emballage ne garde encore rien · allez au-devant de ce que l'aura a dressé contre vous",
+        packedAway: (room, packed) =>
+          `${room} ne vous a rien fait : c'est parti dans l'emballage · ${packed} coup${packed === 1 ? '' : 's'} gardé${packed === 1 ? '' : 's'}`,
+        nothingPacked:
+          "Rien n'a été encaissé, donc rien à dépenser · le soleil se lève sur des dégâts",
+        sunRisen: (metres, solids) =>
+          `Le soleil s'est levé là où vous êtes · ${metres} m de rayon, et ${solids} élément${solids === 1 ? '' : 's'} carbonisé${solids === 1 ? '' : 's'} sans égard pour à qui ils étaient`,
         jailed: (room, doors) => `${room} est enchaînée · ${doors} accès, et aucun qui s'ouvre`,
         jailRefused: (room) =>
           `Rien ne retient ${room} · la chaîne est pour ce que le Nen habite déjà`,
@@ -401,6 +413,8 @@ export const fr: Messages = {
         mimic: 'Sous la forme de',
         soothed: 'La musique tient',
         deduced: 'Conditions lues',
+        packed: "L'emballage garde",
+        packedHits: (packed) => `${packed} coup${packed === 1 ? '' : 's'}`,
         shut: 'Enchaînée',
         guarded: 'Gardée',
         pinned: 'Retenu dans',

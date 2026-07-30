@@ -9,7 +9,11 @@ Exemples :
 
 - `kurapika`
 - `chrollo-lucilfer`
-- `benjamin-hui-guo-rou`
+- `prince-benjamin`
+
+Les princes et les reines portent leur rang en préfixe plutôt que leur nom de
+famille : `prince-benjamin`, `queen-oito`. Un `ownerId` d'ability ou un
+`factionId` doit citer ce slug-là, jamais `benjamin-hui-guo-rou`.
 
 ### Personnages anonymes
 

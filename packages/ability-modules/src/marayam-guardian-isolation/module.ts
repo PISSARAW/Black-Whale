@@ -33,6 +33,8 @@ export const marayamGuardianIsolation = defineAbility({
 
   targets: [zone()],
 
+  cost: { label: 'Une seule pièce protégée à la fois', amount: 1, unit: 'pièce' },
+
   actions: {
     isolate: {
       label: 'Isoler la pièce',

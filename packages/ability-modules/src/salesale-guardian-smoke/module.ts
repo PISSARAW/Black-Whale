@@ -34,6 +34,11 @@ export const salesaleGuardianSmoke = defineAbility({
 
   targets: [zone()],
 
+  cost: {
+    label: 'Exposition prolongée à la fumée — échoue si la cible retient son souffle',
+    unit: 'heures',
+  },
+
   actions: {
     diffuse: {
       label: 'Diffuser la fumée',

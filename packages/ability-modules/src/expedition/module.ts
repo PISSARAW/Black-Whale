@@ -113,6 +113,8 @@ export const transportPortals = defineAbility({
 
   targets: [zone()],
 
+  cost: { label: 'Cargaison limitée, transportée par étapes entre relais', unit: 'trajets' },
+
   actions: {
     'open-relay': {
       label: 'Ouvrir un relais',
@@ -162,6 +164,8 @@ export const thetaAuraProjectile = defineAbility({
   conditions: [canUseNen(), isConscious()],
 
   targets: [person()],
+
+  cost: { label: 'Trois secondes de concentration sans faille', amount: 3, unit: 'secondes' },
 
   actions: {
     test: {

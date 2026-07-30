@@ -36,6 +36,8 @@ export const benjaminBaton = defineAbility({
 
   targets: [person()],
 
+  cost: { label: 'La mort du soldat et une loyauté militaire jurée', unit: 'vie' },
+
   actions: {
     'muster-army': {
       label: 'Constituer l’armée',

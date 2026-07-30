@@ -1738,7 +1738,7 @@
       "overview": "Benjamin masters Nen. His physical resistance suggests an affinity with Reinforcement, and his Ken allows him to escape several shots that would have injured Furykov unscathed.",
       "techniques": ["Ten", "Ren", "Ken", "Hatsu"],
       "combatProficiency": "His Ken blocks several bullets at point blank range without the slightest injury. He considers himself clearly superior to Furykov even after the first symptoms of TSK-17 appeared.",
-      "abilityIds": ["benjamin-baton", "air-blow", "secret-window", "culdcept"]
+      "abilityIds": ["benjamin-aura", "benjamin-baton", "air-blow", "secret-window", "culdcept"]
     },
     "guardianSpiritBeast": {
       "type": "Nen parasitaire",
@@ -8068,7 +8068,7 @@
       "typeLabel": "Unknown type",
       "overview": "Kurapika forcibly opened Oito's aura nodes. She can see and sense aura and briefly used Little Eye through Stealth Dolphin, though Bill considers her a slow learner.",
       "techniques": ["Aura perception", "Ten training", "Borrowed Hatsu"],
-      "abilityIds": ["little-eye"]
+      "abilityIds": ["oito-hatsu", "little-eye"]
     },
     "mangaAppearances": [
       {
@@ -41760,6 +41760,15 @@
     },
     "mapPresenceFromChapterId": "ch-71",
     "mapPresenceUntilChapterId": null,
+    "abilitiesAndPowers": "Feitan is the Phantom Troupe's torturer and one of its fastest close-range fighters, with a blade hidden in an umbrella and an interrogation method he applies methodically. He speaks little, and what he knows of a prisoner he obtained himself.",
+    "nen": {
+      "type": "transmuter",
+      "typeLabel": "Transmutation",
+      "overview": "Feitan transmutes his aura into heat and light. The pair of abilities is a single mechanism read in two directions: Pain Packer stores the damage he has taken, Rising Sun spends it, so his output is a function of how badly the fight has already gone for him.",
+      "techniques": ["Ten", "Zetsu", "Ren", "Ken", "Hatsu"],
+      "combatProficiency": "Against Zazan he took heavy damage before donning Pain Packer, then released Rising Sun: the evolved Chimera Ant was reduced to ash and the ground scorched around her. The burst spares nobody nearby, so the Troupe treats it as a last resort rather than an opening move.",
+      "abilityIds": ["pain-packer", "rising-sun"]
+    },
     "mangaAppearances": [
       {
         "chapter": 371,

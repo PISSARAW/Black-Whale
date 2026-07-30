@@ -27,6 +27,8 @@ export const holyChain = defineAbility({
 
   targets: [person(), self()],
 
+  cost: { label: 'Aura de soin — pleine efficacité seulement sous Emperor Time', unit: 'aura' },
+
   effects: [bodyState({ state: 'ALIVE' })],
 
   ui: { componentKey: 'ChainInteraction' },

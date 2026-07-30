@@ -635,6 +635,22 @@ export const hatsuStatusFr: HatsuStatusMessages = {
       `${a0} a voulu rejoindre la pièce et est entré dans une copie vide · ${a1} choses qui devraient y être n’y sont pas`,
   },
 
+  'pain-armour': {
+    packed: (a0: string, a1: number, a2: number) =>
+      a1
+        ? `${a0} encaissé et empaqueté · ${a1} commande${a1 > 1 ? 's' : ''} scellée${a1 > 1 ? 's' : ''} à l’intérieur · ${a2} coup${a2 > 1 ? 's' : ''} gardé${a2 > 1 ? 's' : ''}, et rien n’est rendu`
+        : `${a0} encaissé et empaqueté · rien n’y fonctionnait de toute façon · ${a2} coup${a2 > 1 ? 's' : ''} gardé${a2 > 1 ? 's' : ''}`,
+    alreadyPacked: (a0: string) =>
+      `${a0} est déjà dans l’emballage · on n’encaisse pas deux fois le même coup`,
+  },
+
+  'sun-flare': {
+    risen: (a0: string, a1: number, a2: number, a3: number) =>
+      `Le soleil s’est levé sur ${a0} · ${a1} coup${a1 > 1 ? 's' : ''} empaqueté${a1 > 1 ? 's' : ''} dépensé${a1 > 1 ? 's' : ''}, ${a2} élément${a2 === 1 ? '' : 's'} pris dans le rayon et ${a3} rouverts`,
+    nothingPacked: (a0: string) =>
+      `Rien n’a été empaqueté, donc rien à dépenser sur ${a0} · encaissez d’abord les coups`,
+  },
+
   'postmortem-curse': {
     target: (a0: string) =>
       `${a0} est la cible · trouvez maintenant quelque chose à lui, à garder et à brûler`,
@@ -767,5 +783,9 @@ export const hatsuStatusFr: HatsuStatusMessages = {
     target: (a0: string) => `CIBLE · ${a0}`,
     relic: (a0: string) => `RELIQUE · ${a0}`,
     rite: (a0: number) => `RITE ${a0}`,
+    packedHits: (a0: number) => `EMPAQUETÉS ×${a0}`,
+    nothingPacked: 'RIEN D’EMPAQUETÉ',
+    carbonised: (a0: number) => `CARBONISÉS ×${a0}`,
+    noDiscrimination: 'Les alliés pris dans le rayon brûlent avec la cible',
   },
 }

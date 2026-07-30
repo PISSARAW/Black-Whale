@@ -80,6 +80,8 @@ export type HatsuInteractionKind =
   | 'diffusive-smoke'
   | 'solicitation'
   | 'room-isolation'
+  | 'pain-armour'
+  | 'sun-flare'
 
 export interface HatsuProfile {
   id: string
@@ -190,6 +192,8 @@ export const HATSU_SITE_IMPACT_BY_KIND = {
   'diffusive-smoke': 'control',
   solicitation: 'control',
   'room-isolation': 'content-access',
+  'pain-armour': 'storage',
+  'sun-flare': 'content-access',
 } satisfies Record<HatsuInteractionKind, HatsuSiteImpact>
 
 export const siteImpactFor = (profile: HatsuProfile) => HATSU_SITE_IMPACT_BY_KIND[profile.kind]
@@ -489,6 +493,13 @@ export const HATSU_VISUAL_SIGNATURE_BY_KIND = {
     form: 'field',
     motion: 'flicker',
   },
+  'pain-armour': {
+    glyph: '⛨',
+    manifestation: 'Pain Packer wrapping',
+    form: 'construct',
+    motion: 'pulse',
+  },
+  'sun-flare': { glyph: '☀', manifestation: 'Rising Sun sphere', form: 'field', motion: 'bloom' },
 } satisfies Record<HatsuInteractionKind, HatsuVisualSignature>
 
 export const visualSignatureFor = (profile: HatsuProfile) =>
@@ -1123,6 +1134,30 @@ export const HATSU_PROFILES: HatsuProfile[] = [
     cost: 'Visible wind-up time',
     color: '#f2c34f',
     action: 'Choose a target and wind up',
+  },
+  {
+    id: 'pain-packer',
+    name: 'Pain Packer',
+    owner: 'Feitan',
+    kind: 'pain-armour',
+    instruction:
+      'Click anything that still works to take the hit: the wrapping seals its controls and keeps them, and nothing comes back until Rising Sun opens it.',
+    rule: 'The armour packs away the damage Feitan has already taken instead of healing it; the more it holds, the more the released form has to spend.',
+    cost: 'Damage already taken · nothing returned before the wrapping is opened',
+    color: '#b4603c',
+    action: 'Pack a hit away',
+  },
+  {
+    id: 'rising-sun',
+    name: 'Rising Sun',
+    owner: 'Feitan',
+    kind: 'sun-flare',
+    instruction:
+      'Click where the sphere should rise: its radius is however much Pain Packer had packed away, and everything caught inside it is opened.',
+    rule: 'The heat is proportional to the stored damage and does not discriminate: whatever stands near the target burns with it.',
+    cost: 'Every packed hit, spent at once',
+    color: '#f2a63b',
+    action: 'Release the stored heat',
   },
   {
     id: 'rihan-predator',

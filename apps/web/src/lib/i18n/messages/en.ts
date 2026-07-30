@@ -267,6 +267,17 @@ export const en = {
         deduced: (what: string, strength: number) =>
           `Condition read — ${what} · ${strength} named, and stronger for each`,
         nothingToDeduce: 'Nothing left to read: every hold has been named',
+        armourWorn:
+          'The wrapping is on · what the ship would do to you from here is kept in it, not undone',
+        armourHolding: (packed: number) =>
+          packed
+            ? `The wrapping holds ${packed} blow${packed === 1 ? '' : 's'} · nothing comes back until the sun rises on them`
+            : 'The wrapping holds nothing yet · walk into what the aura has set against you',
+        packedAway: (room: string, packed: number) =>
+          `${room} did nothing to you: it went into the wrapping · ${packed} packed away`,
+        nothingPacked: 'Nothing was taken, so there is nothing to spend · the sun rises on damage',
+        sunRisen: (metres: number, solids: number) =>
+          `The sun rose where you stand · ${metres} m of it, and ${solids} thing${solids === 1 ? '' : 's'} burnt with no regard for whose they were`,
         jailed: (room: string, doors: number) =>
           `${room} is chained shut · ${doors} way${doors === 1 ? '' : 's'} in, and none of them open`,
         jailRefused: (room: string) =>
@@ -426,6 +437,8 @@ export const en = {
         mimic: 'Wearing',
         soothed: 'The music holds',
         deduced: 'Conditions read',
+        packed: 'The wrapping holds',
+        packedHits: (packed: number) => `${packed} blow${packed === 1 ? '' : 's'}`,
         shut: 'Chained shut',
         guarded: 'Guarded',
         pinned: 'Held in',

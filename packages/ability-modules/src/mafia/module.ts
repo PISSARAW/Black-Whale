@@ -35,6 +35,8 @@ export const biohazardHinrigh = defineAbility({
 
   targets: [object()],
 
+  cost: { label: 'Contact direct avec chaque objet transformé', unit: 'contact' },
+
   actions: {
     animate: {
       label: 'Changer un objet en animal',
@@ -150,6 +152,12 @@ export const damageSweetHome = defineAbility({
   conditions: [canUseNen(), isConscious()],
 
   targets: [person(), object()],
+
+  cost: {
+    label: 'Contact préalable avec la source et le destinataire',
+    amount: 2,
+    unit: 'contacts',
+  },
 
   actions: {
     link: {

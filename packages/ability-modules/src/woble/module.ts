@@ -97,7 +97,7 @@ export const erigeron = defineAbility({
 export const oitoHatsu = defineAbility({
   id: 'oito-hatsu',
   name: 'Oito — commandement',
-  owner: 'oito-hui-guo-rou',
+  owner: 'queen-oito',
   category: 'manipulator',
 
   conditions: [canUseNen()],
@@ -110,6 +110,8 @@ export const oitoHatsu = defineAbility({
   ],
 
   targets: [person()],
+
+  cost: { label: 'De l’aura par garde relié au réseau', amount: 1, unit: 'aura/garde' },
 
   actions: {
     command: {

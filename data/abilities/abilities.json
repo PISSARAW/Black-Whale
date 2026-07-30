@@ -60,7 +60,7 @@
   },
   {
     "id": "benjamin-aura",
-    "ownerId": "benjamin-hui-guo-rou",
+    "ownerId": "prince-benjamin",
     "name": "Aura Manipulation",
     "category": "enhancer",
     "description": "Benjamin's powerful aura manipulation allows him to enhance his physical abilities significantly.",
@@ -69,7 +69,7 @@
   },
   {
     "id": "oito-hatsu",
-    "ownerId": "oito-hui-guo-rou",
+    "ownerId": "queen-oito",
     "name": "Royal Guard Hatsu",
     "category": "manipulator",
     "description": "Oito's ability to control and manipulate her royal guards with precision.",
@@ -538,6 +538,28 @@
     "description": "Phinks rotates his arm clockwise and with each rotation increases the amount of aura concentrated in his fist. The power builds up until the next blow: fifteen turns of his right arm were enough to pulverize the resistant body of a Chimera Ant in a single impact. However, he felt that around seven rounds would have been enough and admits to having difficulty calibrating his strikes precisely.",
     "canonStatus": "canon",
     "moduleKey": "ripper-cyclotron"
+  },
+  {
+    "id": "pain-packer",
+    "ownerId": "feitan-portor",
+    "name": "Pain Packer",
+    "alternateNames": ["ペインパッカー", "Pein Pakkā", "Wrapping Paper of Pain"],
+    "category": "transmuter",
+    "abilityType": "damage-stored-armour",
+    "description": "Feitan wraps himself in a conjured armour with a pointed helmet and a wide cape, which packs away the damage he has already taken instead of healing it. Nothing is returned until the wrapping is opened: the more he was hurt before putting it on, the more the released form has to spend. He activates it himself, and only when a fight has gone badly enough to be worth it.",
+    "canonStatus": "canon",
+    "moduleKey": "pain-packer"
+  },
+  {
+    "id": "rising-sun",
+    "ownerId": "feitan-portor",
+    "name": "Rising Sun",
+    "alternateNames": ["ライジングサン", "Raijingu San"],
+    "category": "transmuter",
+    "abilityType": "radiant-heat-burst",
+    "description": "The armour opens and Feitan becomes a small sun: a sphere of light whose heat carbonises everything around him, proportionally to the damage Pain Packer had packed away. Zazan's evolved body was reduced to ash and the ground itself was scorched in a wide radius. The burst does not discriminate — his own companions had to take cover — and it ends the fight rather than continuing it.",
+    "canonStatus": "canon",
+    "moduleKey": "rising-sun"
   },
   {
     "id": "surveillance-paper-dolls",

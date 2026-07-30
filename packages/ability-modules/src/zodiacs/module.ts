@@ -38,6 +38,8 @@ export const saiyuPriestStaff = defineAbility({
 
   targets: [person()],
 
+  cost: { label: 'Un seul bâton tenu et contrôlé', amount: 1, unit: 'bâton' },
+
   actions: {
     conjure: {
       label: 'Matérialiser le bâton',
@@ -110,6 +112,8 @@ export const saiyuThreeMonkeys = defineAbility({
 
   targets: [person()],
 
+  cost: { label: 'Une frappe réussie par sens retiré', amount: 3, unit: 'frappes' },
+
   actions: Object.fromEntries(
     MONKEYS.map((monkey) => [
       `send-${monkey.id}`,
@@ -170,6 +174,8 @@ export const greatHaiku = defineAbility({
 
   targets: [zone(), person()],
 
+  cost: { label: 'Trois vers — leur qualité fixe la puissance', amount: 3, unit: 'vers' },
+
   actions: {
     compose: {
       label: 'Écrire un haïku',
@@ -229,6 +235,8 @@ export const birdManipulation = defineAbility({
 
   targets: [zone()],
 
+  cost: { label: 'Un lien d’aura par oiseau contrôlé', amount: 1, unit: 'lien/oiseau' },
+
   actions: {
     'gather-flock': {
       label: 'Rassembler la volée',
@@ -287,6 +295,8 @@ export const leorioRemotePunch = defineAbility({
   conditions: [canUseNen(), isConscious()],
 
   targets: [person(), self()],
+
+  cost: { label: 'Une surface continue et l’aura émise à travers elle', unit: 'aura' },
 
   actions: {
     punch: {

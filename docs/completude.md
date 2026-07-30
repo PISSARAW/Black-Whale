@@ -11,14 +11,14 @@
 
 | Axe | Note | Résumé en une ligne |
 | --- | --- | --- |
-| Couverture du canon | **6 / 10** | Le catalogue des entités est solide (81 abilities, 223 personnages, 301 spaces) ; la **narration** ne l'est pas — 105 événements pour 62 chapitres, 8 fiches de chapitre sur 76, 11 arêtes de relations. |
+| Couverture du canon | **6 / 10** | Le catalogue des entités est solide (83 abilities, 223 personnages, 301 spaces) ; la **narration** ne l'est pas — 105 événements pour 62 chapitres, 8 fiches de chapitre sur 76, 11 arêtes de relations. |
 | Complétude fonctionnelle | **6,5 / 10** | Les moteurs sont réels, pas des façades. Mais **4 routes sont entièrement en dur**, le graphe de relations est un littéral TypeScript, `/simulations` ne projette rien sur une carte et 3 écrans admin renvoient 405. |
 | Complétude technique | **6 / 10** | Dette déclarée quasi nulle (2 TODO, 0 `@ts-ignore`), 11 packages > 44 % de ratio de test — mais le catalogue des hatsu existe **en 5 exemplaires** et la couche visible du site n'utilise pas le moteur qui fait autorité. |
 | UX / éditorial | **5 / 10** | Socle a11y et SEO sérieux, i18n FR/EN à 100 % de parité — mais **le filtre à spoilers est inactivable**, le crédit CC BY obligatoire est absent de l'interface, et il n'existe aucun `+error.svelte`. |
 
 **Le projet n'est pas un README-fiction.** Les branches de simulation sont réellement persistées en
 PostgreSQL, l'auth admin est correctement faite (HMAC + binding mot de passe + TTL + rate limit), la
-reconstruction métrique du navire est connexe et vérifiée, les 81 abilities ont toutes un module.
+reconstruction métrique du navire est connexe et vérifiée, les 83 abilities ont toutes un module.
 C'est au-dessus de la moyenne du genre.
 
 **Les deux problèmes qui doivent passer avant tout le reste** ne sont ni de la donnée ni de la
@@ -45,7 +45,7 @@ Complétude = cellules non vides / (nb enregistrements × union des champs obser
 
 | Dataset | Fichier | Volume | Champs creux | Complétude |
 | --- | --- | --- | --- | --- |
-| Abilities | `data/abilities/abilities.json` | 81 | `cards` 1/81, `userIds` 4/81, `inheritedFrom` 8/81, `secondaryCategories` 24/81. **Aucun champ chapitre, ni `conditions`, ni `cost`** | **71 %** |
+| Abilities | `data/abilities/abilities.json` | 83 | `cards` 1/83, `userIds` 4/83, `inheritedFrom` 8/83, `secondaryCategories` 24/83. **Aucun champ chapitre.** Conditions et coût vivent dans les modules, pas dans le JSON — voir §1.3 | **71 %** |
 | Chapters | `data/chapters/chapters.json` | **16** | — | 100 % du fichier, **21 % des chapitres** |
 | Characters | `data/characters/characters.json` | 223 | `aliases` vide 172/223, `mangaAppearances` absent 113/223, `biography` 104/223, `nen` 48/223 | **39 %** |
 | Factions | `data/factions/factions.json` | 22 | — | 100 % |
@@ -119,16 +119,28 @@ Ce qui reste ouvert :
 
 **Abilities**
 
-- **81 abilities ↔ 81 modules, 0 orphelin dans les deux sens.** Le garde-fou
+- **83 abilities ↔ 83 modules, 0 orphelin dans les deux sens.** Le garde-fou
   (`packages/ability-modules/src/index.ts`) est réel. Les 8 vagues de `docs/hatsu-potentiel.md` sont
-  toutes livrées — 23 + 20 + 38 = 81.
-- **2 `ownerId` cassés** : `benjamin-hui-guo-rou` et `oito-hui-guo-rou` n'existent pas dans
-  `characters.json` (les vrais ids sont `prince-benjamin` et `queen-oito`). Les abilities
-  `benjamin-aura` et `oito-hatsu` ne sont rattachables à aucune fiche.
-- **47 modules sur 81 n'ont pas de `cost`**, alors que le README promet « its category, conditions
-  and cost » pour chacune. Le champ n'existe même pas dans `abilities.json`.
-- **Feitan Portor** est présent comme personnage mais n'a ni bloc `nen` ni ability (Pain Packer /
-  Rising Sun absents), alors que le catalogue inclut d'autres capacités hors-arc.
+  toutes livrées — 23 + 20 + 38 = 81, plus les 2 capacités de Feitan.
+- ~~**2 `ownerId` cassés** : `benjamin-hui-guo-rou` et `oito-hui-guo-rou` n'existent pas dans
+  `characters.json`.~~ **Corrigé** : `benjamin-aura` appartient à `prince-benjamin` et
+  `oito-hatsu` à `queen-oito`, dans le catalogue comme dans le manifest des deux modules, et les
+  deux fiches les listent dans `nen.abilityIds`. Un test refuse désormais tout `ownerId` que le
+  registre des passagers ne porte pas (`nen-registry.test.ts`), et `data/CONVENTIONS.md` énonce la
+  règle de slug (`prince-*`, `queen-*`) qui avait produit les deux fantômes.
+- ~~**47 modules sur 81 n'ont pas de `cost`**~~ **Corrigé** : les 83 modules en déclarent un, et le
+  plan le porte donc pour chaque capacité. Le coût reste dans le module plutôt que dans
+  `abilities.json` : c'est le moteur qui fait autorité, et §3 reproche déjà au projet de tenir le
+  catalogue des hatsu en cinq exemplaires — un sixième champ dupliqué aurait aggravé exactement ce
+  défaut. Un test échoue si un module ne facture rien, ni sur la capacité ni sur aucune de ses
+  actions.
+- ~~**Feitan Portor** est présent comme personnage mais n'a ni bloc `nen` ni ability.~~
+  **Corrigé** : Pain Packer et Rising Sun sont au catalogue avec leurs deux modules — l'armure
+  empaquette les dégâts subis, le soleil les dépense —, Feitan a son bloc `nen`, et les deux
+  capacités ont leur interaction sur le site (`pain-armour`, `sun-flare`) **et dans la visite** :
+  l'emballage garde les punitions que la visite infligerait — expulsion par un garde, pièce qui ne
+  laisse pas partir, règle rompue — et le soleil les dépense en rayon autour du visiteur, quatre
+  mètres par coup gardé, sans distinguer ce qu'il attrape.
 - Aucune ability ne porte de chapitre → impossible de mesurer la couverture des hatsu par chapitre.
 
 **Intégrité référentielle**
@@ -156,7 +168,7 @@ Ce qui reste ouvert :
 | « thirty-three [interiors] in all » | **34** |
 | « 37 hand-drawn SVG maps » | ✅ exact (5 + 32) |
 | « 223 passengers » | ✅ exact |
-| « 81 abilities across 54 users » | 81 ✅ ; 54 `ownerId` dont **2 morts → 52 résolvables** |
+| « 83 abilities across 54 users » | 83 ✅ ; 54 `ownerId`, tous résolvables (les 2 morts sont corrigés) |
 
 ---
 
@@ -223,7 +235,7 @@ le code, pas même dans un seed. `LocationEdge` est précisément ce que `/tour`
 `lib/map/mapAssetRegistry.ts`.
 
 À l'inverse — features **sans** persistance : le graphe de relations, toute la géométrie du navire
-(301 spaces, 697 structures, importés au build depuis JSON), et le registre client des 81 hatsu.
+(301 spaces, 697 structures, importés au build depuis JSON), et le registre client des 83 hatsu.
 
 ### 2.5 Roadmap v5 : honnête
 
@@ -271,8 +283,8 @@ Exemple sur `chain-jail` : le module déclare `vow(...)`, `targetHasAffiliation(
 `rule: 'usable only against Spiders…'` en texte libre, et **réimplémente la contrainte
 impérativement** dans `hatsuInteractions.ts`.
 
-**Troisième implémentation** : `lib/tour/hatsu.ts` (2 554 l) réimplémente les hatsu pour la visite 3D
-sur les mêmes clés `kind`. **61 des 81 techniques ont donc deux implémentations indépendantes** — et
+**Troisième implémentation** : `lib/tour/hatsu.ts` réimplémente les hatsu pour la visite 3D
+sur les mêmes clés `kind`. **67 des 83 techniques ont donc deux implémentations indépendantes** — et
 l'une des deux (le DOM) a **0 test comportemental**.
 
 ### 3.2 Tests
@@ -523,8 +535,8 @@ du projet (« every record belongs to a time, a source, and a point of view »).
 | --- | --- |
 | 20 | **Passer les événements de `backfill_timeline.mjs` à `data/events.json`** — la donnée narrative est aujourd'hui du code, hors licence CC BY et hors portée des contributions |
 | 21 | **Densifier : 46 des 62 chapitres de l'arc n'ont qu'un seul événement**, 68 chapitres sur 76 n'ont pas de fiche |
-| 22 | Corriger les 2 `ownerId` cassés (`benjamin-hui-guo-rou`, `oito-hui-guo-rou`), ~~ajouter `justice-bureau` à `factions.json`~~ (fait), ajouter Kortopi et Shalnark, donner des gardes à Salé-salé |
-| 23 | Renseigner les 47 `cost` manquants (le README les promet), ajouter un champ chapitre aux abilities |
+| 22 | ~~Corriger les 2 `ownerId` cassés (`benjamin-hui-guo-rou`, `oito-hui-guo-rou`)~~ (fait), ~~ajouter `justice-bureau` à `factions.json`~~ (fait), ajouter Kortopi et Shalnark, donner des gardes à Salé-salé |
+| 23 | ~~Renseigner les 47 `cost` manquants (le README les promet)~~ (fait — dans les modules), ajouter un champ chapitre aux abilities |
 | 24 | Reconstruire `tier-3-political-ward` (seule pièce du catalogue sans géométrie) |
 | 25 | i18n des 38 cartes SVG (231 `<text>` + 67 `aria-label`), corriger les 4 libellés français égarés |
 | 26 | Créer `/about` + `/sources` global ; corriger « 05 SECTIONS » → 06 ; ajouter `/tour` à la CommandPalette |

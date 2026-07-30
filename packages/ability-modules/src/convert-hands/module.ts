@@ -28,6 +28,8 @@ export const convertHands = defineAbility({
 
   targets: [person()],
 
+  cost: { label: 'Deux identités marquées, une par main', amount: 2, unit: 'marques' },
+
   actions: {
     swap: {
       label: 'Échanger les apparences',

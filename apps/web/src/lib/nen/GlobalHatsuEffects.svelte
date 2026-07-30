@@ -2609,6 +2609,15 @@
       0 0 0 3px #7095d6,
       0 0 40px #7095d655 !important;
   }
+  /* Wrapped, not healed: the damage is visibly held rather than cleared. */
+  :global(.hatsu-pain-packer) {
+    filter: brightness(0.72) saturate(0.7) !important;
+    box-shadow: inset 0 0 0 2px #b4603c99 !important;
+  }
+  :global(.hatsu-carbonised) {
+    filter: contrast(1.35) sepia(0.35) !important;
+    box-shadow: 0 0 30px #f2a63b66 !important;
+  }
 
   /*
    * The states the techniques gained when each was rewritten against its own

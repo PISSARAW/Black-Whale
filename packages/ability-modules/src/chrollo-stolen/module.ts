@@ -47,6 +47,8 @@ export const indoorFish = defineAbility({
 
   targets: [zone()],
 
+  cost: { label: 'Une pièce close, la page ouverte et maintenue', amount: 1, unit: 'pièce close' },
+
   actions: {
     release: {
       label: 'Lâcher les poissons',
@@ -113,6 +115,8 @@ export const funFunCloth = defineAbility({
 
   targets: [person(), object()],
 
+  cost: { label: 'Les cibles rangées restent prisonnières du tissu', unit: 'aura' },
+
   actions: {
     wrap: {
       label: 'Envelopper',
@@ -172,6 +176,12 @@ export const chrolloTeleportation = defineAbility({
 
   targets: [person()],
 
+  cost: {
+    label: 'Deux destinations valides et la page volée en main',
+    amount: 2,
+    unit: 'destinations',
+  },
+
   actions: {
     displace: {
       label: 'Déplacer une personne',
@@ -214,6 +224,8 @@ export const orderStamp = defineAbility({
   conditions: [canUseNen(), isConscious()],
 
   targets: [object()],
+
+  cost: { label: 'Uniquement des corps que son porteur tient pour inanimés', unit: 'pantin' },
 
   actions: {
     animate: {
@@ -351,6 +363,8 @@ export const blackVoice = defineAbility({
 
   targets: [person()],
 
+  cost: { label: 'Une antenne implantée par cible contrôlée', amount: 1, unit: 'antenne' },
+
   actions: {
     'plant-antenna': {
       label: 'Planter une antenne',
@@ -417,6 +431,8 @@ export const lovelyGhostwriter = defineAbility({
   ],
 
   targets: [person()],
+
+  cost: { label: 'Des informations sur la cible et un support écrit', unit: 'page' },
 
   actions: {
     predict: {

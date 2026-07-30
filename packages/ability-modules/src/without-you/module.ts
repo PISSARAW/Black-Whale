@@ -33,6 +33,8 @@ export const withoutYou = defineAbility({
 
   targets: [person()],
 
+  cost: { label: 'La mort d’une jumelle, puis une aura post-mortem entretenue', unit: 'vie' },
+
   actions: {
     manifest: {
       label: 'Faire apparaître la jumelle',

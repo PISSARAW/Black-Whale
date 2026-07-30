@@ -631,6 +631,22 @@ export const hatsuStatusEn = {
       `${a0} went for the room and walked into an empty copy of it · ${a1} things that should be there are not`,
   },
 
+  'pain-armour': {
+    packed: (a0: string, a1: number, a2: number) =>
+      a1
+        ? `${a0} taken and wrapped · ${a1} control${a1 > 1 ? 's' : ''} sealed inside it · ${a2} hit${a2 > 1 ? 's' : ''} packed and none given back`
+        : `${a0} taken and wrapped · nothing of it worked anyway · ${a2} hit${a2 > 1 ? 's' : ''} packed`,
+    alreadyPacked: (a0: string) =>
+      `${a0} is already in the wrapping · the same damage is not taken twice`,
+  },
+
+  'sun-flare': {
+    risen: (a0: string, a1: number, a2: number, a3: number) =>
+      `The sphere rose on ${a0} · ${a1} packed hit${a1 > 1 ? 's' : ''} spent, ${a2} thing${a2 === 1 ? '' : 's'} caught in the radius and ${a3} of them opened`,
+    nothingPacked: (a0: string) =>
+      `Nothing was packed, so there is nothing to spend on ${a0} · take the damage first`,
+  },
+
   'postmortem-curse': {
     target: (a0: string) =>
       `${a0} is the target · now find something of theirs to keep, and to burn`,
@@ -769,5 +785,9 @@ export const hatsuStatusEn = {
     target: (a0: string) => `TARGET · ${a0}`,
     relic: (a0: string) => `RELIC · ${a0}`,
     rite: (a0: number) => `RITE ${a0}`,
+    packedHits: (a0: number) => `PACKED ×${a0}`,
+    nothingPacked: 'NOTHING PACKED',
+    carbonised: (a0: number) => `BURNT ×${a0}`,
+    noDiscrimination: 'Allies inside the radius burn with the target',
   },
 }

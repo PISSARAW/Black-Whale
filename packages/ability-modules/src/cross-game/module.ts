@@ -30,6 +30,8 @@ export const crossGame = defineAbility({
 
   targets: [person()],
 
+  cost: { label: 'Un avertissement ignoré avant chaque entrave', amount: 1, unit: 'avertissement' },
+
   actions: {
     'blue-card': {
       label: 'Carte bleue — admission',

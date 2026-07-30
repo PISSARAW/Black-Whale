@@ -316,6 +316,16 @@
         return say.deduced(report.what, report.strength)
       case 'nothing-to-deduce':
         return say.nothingToDeduce
+      case 'armour-worn':
+        return say.armourWorn
+      case 'armour-holding':
+        return say.armourHolding(report.packed)
+      case 'packed-away':
+        return say.packedAway(roomName(report.spaceId), report.packed)
+      case 'nothing-packed':
+        return say.nothingPacked
+      case 'sun-risen':
+        return say.sunRisen(report.metres, report.solids)
 
       case 'owl-attached':
         return say.owlAttached(report.rooms)
@@ -460,6 +470,7 @@
     if (body.mimic) rows.push({ label: held.mimic, value: solidName(body.mimic) })
     if (body.soothed) rows.push({ label: held.soothed, value: '♪' })
     if (body.deduced.length) rows.push({ label: held.deduced, value: `${body.deduced.length}` })
+    if (body.packed !== null) rows.push({ label: held.packed, value: held.packedHits(body.packed) })
     for (const id of world.shut) rows.push({ label: held.shut, value: roomName(id) })
     for (const id of world.guarded) rows.push({ label: held.guarded, value: roomName(id) })
     if (world.pinned) rows.push({ label: held.pinned, value: roomName(world.pinned) })

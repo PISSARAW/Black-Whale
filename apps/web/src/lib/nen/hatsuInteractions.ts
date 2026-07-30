@@ -264,6 +264,20 @@ const isNenMade = (element: HTMLElement) =>
 const SMALL_HOST_AREA = 26000
 
 /**
+ * Marks what Pain Packer has packed away. It is a class rather than a counter
+ * held in the technique's state because the two halves of Feitan's kit are cast
+ * separately: Rising Sun has to be able to read what the armour stored, and the
+ * page is the only thing both of them see.
+ */
+export const PAIN_PACKER_CLASS = 'hatsu-pain-packer'
+
+const packedHits = () => Array.from(document.querySelectorAll<HTMLElement>(`.${PAIN_PACKER_CLASS}`))
+
+/** Zazan's radius came from the damage taken first; so does this one, in pixels. */
+const SUN_FLARE_BASE_RADIUS = 140
+const SUN_FLARE_RADIUS_PER_HIT = 90
+
+/**
  * One entry per technique, replacing the `else if (profile.kind === …)` chain
  * that used to carry all of them in a single function. The kind is the key, so
  * a technique is added by adding a row rather than by editing a branch.
@@ -2385,6 +2399,66 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
     }
     ctx.status = ctx.m['room-isolation'].emptyCopy(label, emptied)
     ctx.addPoint(x, y, ctx.m.tokens.emptyCopy)
+    return true
+  },
+  'pain-armour': (ctx, { target, x, y, label }) => {
+    // The wrapping neither heals nor deflects: what the click costs the page is
+    // sealed inside it and kept. Nothing is handed back until Rising Sun opens
+    // it, so the packed elements stay on the page, marked and inert, and are
+    // the charge that technique reads.
+    const wrapped = ctx.remember(target)
+    if (wrapped.classList.contains(PAIN_PACKER_CLASS)) {
+      ctx.status = ctx.m['pain-armour'].alreadyPacked(label)
+      return true
+    }
+    const sealed = controlsOf(wrapped).filter((control) => !isRestricted(control))
+    for (const control of sealed) {
+      ctx.remember(control).setAttribute('aria-disabled', 'true')
+      if ('disabled' in control) (control as HTMLButtonElement).disabled = true
+      control.style.pointerEvents = 'none'
+    }
+    wrapped.classList.add(PAIN_PACKER_CLASS)
+    const packed = packedHits().length
+    ctx.status = ctx.m['pain-armour'].packed(label, sealed.length, packed)
+    ctx.addPoint(x, y, ctx.m.tokens.packedHits(packed))
+    return true
+  },
+  'sun-flare': (ctx, { x, y, label }) => {
+    // The sphere rises on damage already taken, so with nothing packed there is
+    // nothing to spend. What it does spend, it spends at once.
+    const packed = packedHits()
+    if (packed.length === 0) {
+      ctx.status = ctx.m['sun-flare'].nothingPacked(label)
+      ctx.addPoint(x, y, ctx.m.tokens.nothingPacked, { alert: true })
+      return true
+    }
+    const radius = SUN_FLARE_BASE_RADIUS + packed.length * SUN_FLARE_RADIUS_PER_HIT
+    const caught = Array.from(
+      document.querySelectorAll<HTMLElement>('main p, main li, main a, main h2, main h3, main img'),
+    ).filter((candidate) => {
+      const rect = candidate.getBoundingClientRect()
+      if (!rect.width || !rect.height) return false
+      return Math.hypot(rect.left + rect.width / 2 - x, rect.top + rect.height / 2 - y) < radius
+    })
+    let opened = 0
+    for (const burnt of caught) {
+      ctx.remember(burnt).classList.add('hatsu-carbonised')
+      if (!isRestricted(burnt)) continue
+      liftRestriction(burnt)
+      opened += 1
+    }
+    // The armour is opened wherever it hangs: it is Feitan's own damage, not the
+    // page's, so distance from the click has nothing to say about it.
+    for (const hit of packed) {
+      ctx.remember(hit).classList.remove(PAIN_PACKER_CLASS)
+      for (const control of controlsOf(hit)) liftRestriction(ctx.remember(control))
+      opened += 1
+    }
+    ctx.status = ctx.m['sun-flare'].risen(label, packed.length, caught.length, opened)
+    ctx.addPoint(x, y, ctx.m.tokens.carbonised(caught.length), {
+      alert: caught.length > packed.length,
+      details: [ctx.m.tokens.noDiscrimination],
+    })
     return true
   },
   'postmortem-curse': (ctx, { target, x, y, label }) => {

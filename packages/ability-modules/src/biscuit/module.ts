@@ -99,6 +99,8 @@ export const biscuitBodyTransformation = defineAbility({
 
   targets: [self()],
 
+  cost: { label: 'Transformation maintenue en continu', unit: 'aura' },
+
   actions: {
     'maintain-youthful-form': {
       label: 'Maintenir la forme juvénile',

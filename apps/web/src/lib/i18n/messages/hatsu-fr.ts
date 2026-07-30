@@ -503,6 +503,24 @@ export const hatsuFr: Record<string, HatsuTextOverride> = {
     rule: 'Chaque tour complet du bras augmente l’aura concentrée dans le coup suivant.',
     cost: 'Temps d’armement visible',
   },
+  'pain-packer': {
+    name: 'Pain Packer',
+    owner: 'Feitan',
+    action: 'Empaqueter un coup',
+    instruction:
+      'Cliquez sur ce qui fonctionne encore pour encaisser le coup : l’emballage scelle ses commandes et les garde, et rien ne revient avant que Rising Sun ne l’ouvre.',
+    rule: 'L’armure empaquette les dégâts que Feitan a déjà subis au lieu de les soigner ; plus elle en garde, plus la forme libérée a à dépenser.',
+    cost: 'Les dégâts déjà subis · rien n’est rendu avant l’ouverture',
+  },
+  'rising-sun': {
+    name: 'Rising Sun',
+    owner: 'Feitan',
+    action: 'Libérer la chaleur gardée',
+    instruction:
+      'Cliquez là où le soleil doit se lever : son rayon vaut ce que Pain Packer avait empaqueté, et tout ce qu’il attrape est rouvert.',
+    rule: 'La chaleur est proportionnelle aux dégâts gardés et ne distingue personne : ce qui se tient près de la cible brûle avec elle.',
+    cost: 'Tous les coups empaquetés, dépensés d’un coup',
+  },
   'rihan-predator': {
     name: 'Prédateur',
     owner: 'Rihan',
@@ -849,4 +867,6 @@ export const hatsuManifestationFr: Record<HatsuInteractionKind, string> = {
   'diffusive-smoke': 'Fumée d’aura de Salé-salé',
   solicitation: 'Souris solliciteuse de Momoze',
   'room-isolation': 'Pièce dupliquée de Marayam',
+  'pain-armour': 'Emballage de Pain Packer',
+  'sun-flare': 'Sphère de Rising Sun',
 }

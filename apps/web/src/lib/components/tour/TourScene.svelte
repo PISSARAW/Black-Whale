@@ -367,6 +367,28 @@
       })
 
       /**
+       * The ceiling fittings: the one surface on the deck that is a light.
+       *
+       * `MeshBasicMaterial`, because a lamp must not be lit — run through the
+       * Lambert material it would take the headlamp and the ambient like any other
+       * steel and come out as a pale square, which is a vent, not a lamp.
+       *
+       * What they burn at comes from the buffer rather than from here — see
+       * `FITTING_GLOW` and `fittingColors` in `$lib/tour/mesh`, which is also
+       * where the values above 1 and the dimming of an invented room's lamps are
+       * argued. The material only has to agree not to light them.
+       *
+       * Fog is left on. A row of fittings running away down a hundred and forty
+       * metres of corridor, each one dimmer than the last, is the whole point of
+       * drawing them: it is the only thing in the walk that makes the length of
+       * this ship countable.
+       */
+      const fittingMaterial = new THREE.MeshBasicMaterial({
+        vertexColors: true,
+        side: THREE.FrontSide,
+      })
+
+      /**
        * The decks already extruded, kept so a staircase taken twice does not
        * pay for the same geometry twice.
        *
@@ -394,6 +416,8 @@
         edges: import('three').LineSegments
         /** The deck plating of this room, in its own dim material. */
         seams: import('three').LineSegments
+        /** The room's ceiling fittings, in the one material that is not lit. */
+        fittings: import('three').Mesh
       }
       /** A deck, as one group holding a mesh and an edge run per room. */
       type Built = { root: import('three').Group; rooms: Room[] }
@@ -453,6 +477,8 @@
         const color = new THREE.BufferAttribute(mesh.colors, 3)
         const edgePosition = new THREE.BufferAttribute(mesh.edges, 3)
         const seamPosition = new THREE.BufferAttribute(mesh.seams, 3)
+        const fittingPosition = new THREE.BufferAttribute(mesh.fittings, 3)
+        const fittingColor = new THREE.BufferAttribute(mesh.fittingColors, 3)
 
         const root = new THREE.Group()
         const rooms: Room[] = []
@@ -482,17 +508,29 @@
           seamGeometry.setDrawRange(group.seamStart, group.seamCount)
           seamGeometry.boundingSphere = new THREE.Sphere(centre.clone(), group.radius)
 
+          // The fittings share the room's sphere and range for the same reason
+          // the plating does: a lamp drawn while its room is culled is a light
+          // hanging in the void where the room should be.
+          const fittingGeometry = new THREE.BufferGeometry()
+          fittingGeometry.setAttribute('position', fittingPosition)
+          fittingGeometry.setAttribute('color', fittingColor)
+          fittingGeometry.setDrawRange(group.fittingStart, group.fittingCount)
+          fittingGeometry.boundingSphere = new THREE.Sphere(centre.clone(), group.radius)
+
           const roomMesh = new THREE.Mesh(geometry, material)
           const roomEdges = new THREE.LineSegments(edgeGeometry, edgeMaterial)
           const roomSeams = new THREE.LineSegments(seamGeometry, seamMaterial)
+          const roomFittings = new THREE.Mesh(fittingGeometry, fittingMaterial)
           root.add(roomMesh)
           root.add(roomEdges)
           root.add(roomSeams)
+          root.add(roomFittings)
           rooms.push({
             spaceId: group.spaceId,
             mesh: roomMesh,
             edges: roomEdges,
             seams: roomSeams,
+            fittings: roomFittings,
           })
         }
 
@@ -504,6 +542,7 @@
           room.mesh.geometry.dispose()
           room.edges.geometry.dispose()
           room.seams.geometry.dispose()
+          room.fittings.geometry.dispose()
         }
       }
 
@@ -740,6 +779,12 @@
             ;(light as import('three').HemisphereLight).intensity = sealed ? 0 : HEMISPHERE
           }
         }
+        // The fittings are not lit, so putting the lights out does nothing to
+        // them: blinded, the visitor would be left staring at three thousand
+        // lamps in a ship they cannot otherwise see. They are hidden instead,
+        // which is the same statement — the seal is on the eye, and an eye that
+        // takes nothing in takes the lamps in too.
+        fittingMaterial.visible = !sealed
       }
 
       /** Rebuilds the deck under the visitor when Nen has changed what is in it. */
@@ -800,6 +845,7 @@
             room.mesh.visible = on
             room.edges.visible = on
             room.seams.visible = on
+            room.fittings.visible = on
           }
         }
       }

@@ -60,6 +60,9 @@ export interface MeshGroup {
   /** The room's stretch of the plating, in line-segment endpoints. */
   seamStart: number
   seamCount: number
+  /** The room's stretch of the ceiling fittings, in vertices. */
+  fittingStart: number
+  fittingCount: number
   /** The room's own bounding sphere, so the renderer never scans the buffer. */
   centre: readonly [number, number, number]
   radius: number
@@ -88,6 +91,28 @@ export interface TierMesh {
    * bare floor needs it at all.
    */
   seams: Float32Array
+  /**
+   * The ceiling fittings, as downward-facing quads.
+   *
+   * Its own buffer and its own material, for the reason the plating has one: it
+   * is not steel, and it must not take the light. A fitting is the one surface on
+   * the deck that *is* a light, and `MeshLambertMaterial` has no per-vertex way
+   * to say so — an emissive is a uniform, not an attribute. So these go up in a
+   * `MeshBasicMaterial` whose colour sits above 1 and let the filmic curve roll
+   * it off, which is what a lamp looks like and what no lit quad can imitate.
+   */
+  fittings: Float32Array
+  /**
+   * What each fitting burns at, per vertex.
+   *
+   * Above 1 on purpose — see `FITTING_GLOW` — and per vertex rather than a
+   * uniform on the material because a fitting has to say the same thing about
+   * provenance that the pool under it does. `RoomLight` gives a room the
+   * reconstruction invented `LIGHT.inferredLamps` of its lamplight; a fitting
+   * drawn at full strength over that dim floor would be a lamp that glows and
+   * lights nothing, which is exactly the claim the bake refuses to make.
+   */
+  fittingColors: Float32Array
   /** Triangle count, for a sanity check and for the debug read-out. */
   triangles: number
   /** Where each room's geometry sits in the buffers above, in plan order. */
@@ -307,6 +332,44 @@ const LIGHT = {
   inferredLamps: 0.22,
 } as const
 
+/**
+ * How high a room's fittings hang, in world Y.
+ *
+ * Shared rather than computed twice, and that sharing is the whole point: this is
+ * the height `RoomLight` throws its pools from *and* the height the quads in
+ * `fittings` are drawn at, so a fitting you can see is the fitting that is
+ * lighting the floor under it. Derive them separately and the ship gets lamps
+ * that glow where nothing brightens, which is worse than no lamps at all.
+ *
+ * A little under the ceiling, and never below head height in a room whose
+ * ceiling is low — the lowest on the ship is 2,6 m, which leaves 35 cm.
+ */
+export function fittingHeight(floorY: number, ceilingY: number): number {
+  return Math.max(floorY + 2, ceilingY - 0.35)
+}
+
+/**
+ * How wide a fitting is drawn, in metres.
+ *
+ * Nothing in the blueprint gives a size, so this is the smallest that still
+ * reads: at the 140 m of the Tier 4 starboard corridor a 70 cm fitting is about
+ * five pixels, which is a dot — and a receding row of dots is exactly the point.
+ * A row of lamps running away from you is what makes the length of this ship
+ * countable, in a way no measurement in the caption does.
+ */
+export const FITTING_SIZE = 0.7
+
+/**
+ * What a fitting burns at, in the renderer's working linear space.
+ *
+ * Above 1, and that is the whole trick. Nothing on a display is brighter than
+ * white, so what makes a surface read as a *source* rather than as a pale square
+ * is that it saturates before its surroundings do. With the filmic curve already
+ * in `TourScene` these values do not clip, they roll off — which is what a lamp
+ * looks like — and they carry the warm cast the pools underneath already have.
+ */
+export const FITTING_GLOW: Rgb = [2.4, 2.0, 1.55]
+
 const clamp01 = (value: number) => (value < 0 ? 0 : value > 1 ? 1 : value)
 
 /** Two grid indices in one number, so the fittings are not keyed by strings. */
@@ -357,9 +420,7 @@ class RoomLight {
     this.floorY = floorY
     this.ceilingY = ceilingY
 
-    // Hung a little under the ceiling, and never below head height in a room
-    // whose ceiling is low.
-    const hang = Math.max(floorY + 2, ceilingY - 0.35)
+    const hang = fittingHeight(floorY, ceilingY)
     for (const [x, z] of ceilingLamps(footprint)) {
       const key = cellKey(Math.round(x / LAMP_SPACING), Math.round(z / LAMP_SPACING))
       const held = this.cells.get(key)
@@ -738,6 +799,10 @@ export function buildSolidMesh(structure: Structure, room: Space, tier: Tier): T
     colors: new Float32Array(builder.colors),
     edges: new Float32Array(edges),
     seams: new Float32Array(0),
+    // A solid lifted out of its deck by a technique takes the room's light with
+    // it, not the room's lamps: the fittings stay on the ceiling they hang from.
+    fittings: new Float32Array(0),
+    fittingColors: new Float32Array(0),
     triangles: builder.positions.length / 9,
     groups: [
       {
@@ -748,6 +813,8 @@ export function buildSolidMesh(structure: Structure, room: Space, tier: Tier): T
         edgeCount,
         seamStart: 0,
         seamCount: 0,
+        fittingStart: 0,
+        fittingCount: 0,
         ...boundsOf(builder.positions, 0, count, edges, 0, edgeCount),
       },
     ],
@@ -771,12 +838,42 @@ export function buildTierMesh(plan: TierPlan, options: { reveal?: boolean } = {}
 
   const edges: number[] = []
   const seams: number[] = []
+  const fittings: number[] = []
+  const fittingColors: number[] = []
   // Pulled a hair off the surface so the line is not fighting the polygon it
   // sits on for the same depth value.
   const OFFSET = 0.03
   const horizontal = (a: Vec2, b: Vec2, y: number) => edges.push(a[0], y, a[1], b[0], y, b[1])
   const vertical = (point: Vec2, bottom: number, top: number) =>
     edges.push(point[0], bottom, point[1], point[0], top, point[1])
+
+  /**
+   * One fitting: a square hung flat, facing the floor.
+   *
+   * Wound so the normal comes out downward, because that is the only side of it
+   * anyone stands on. The 35 cm `fittingHeight` leaves under the ceiling is what
+   * keeps this off the ceiling plane — a quad coplanar with the surface above it
+   * would fight for the depth buffer, which is the thing `FrontSide` was brought
+   * in to stop.
+   */
+  const fitting = (x: number, y: number, z: number, glow: Rgb) => {
+    const h = FITTING_SIZE / 2
+    const corners: Vec2[] = [
+      [x - h, z - h],
+      [x + h, z - h],
+      [x + h, z + h],
+      [x - h, z + h],
+    ]
+    for (const [a, b, c] of [
+      [corners[0], corners[1], corners[2]],
+      [corners[0], corners[2], corners[3]],
+    ]) {
+      fittings.push(a[0], y, a[1], b[0], y, b[1], c[0], y, c[1])
+      for (let vertex = 0; vertex < 3; vertex++) {
+        fittingColors.push(glow[0], glow[1], glow[2])
+      }
+    }
+  }
 
   // Room walls and column faces arrive in the same list, which is the point:
   // the visitor collides with exactly what is drawn here. The faces of a solid
@@ -819,6 +916,7 @@ export function buildTierMesh(plan: TierPlan, options: { reveal?: boolean } = {}
     const start = builder.positions.length / 3
     const edgeStart = edges.length / 3
     const seamStart = seams.length / 3
+    const fittingStart = fittings.length / 3
 
     const floorColour = reveal
       ? revealed(space.provenance, 0.62)
@@ -876,6 +974,34 @@ export function buildTierMesh(plan: TierPlan, options: { reveal?: boolean } = {}
     // deck for the same depth value.
     for (const [from, to] of plateSeams(space.footprint)) {
       seams.push(from[0], tier.elevation + OFFSET, from[1], to[0], tier.elevation + OFFSET, to[1])
+    }
+
+    /**
+     * The fittings, which the bake has been reading off the same grid all along
+     * and which nothing has drawn until now.
+     *
+     * A lit room with no visible lamp is a box that happens to be bright: the
+     * pool on the floor says *that* there is light and never *where from*, and
+     * the eye has nothing to measure the room against. Two triangles a fitting
+     * fixes that, and it is the cheapest thing on this list by a long way — 3 065
+     * fittings on the whole ship, 6 130 triangles against the 289 213 it already
+     * draws, and one more draw call per room.
+     *
+     * Not under the reveal, for the reason the bake is not: there, every surface
+     * has to say what it is worth as evidence, and a quad drawn as a light says
+     * nothing about the sources. The fittings are derived — the plans no more draw
+     * a lamp than they draw a pillar — so they belong to the walk, not the
+     * doctrine.
+     */
+    if (!reveal) {
+      const hang = fittingHeight(tier.elevation, top)
+      // Dimmed by exactly what dims the pools: a corridor nobody drew gets both
+      // its lamps and its lamplight at `LIGHT.inferredLamps`, so walking into an
+      // invented part of the ship stays the one thing you can feel rather than a
+      // legend you have to know.
+      const burn = space.provenance === 'inferred' ? LIGHT.inferredLamps : 1
+      const glow: Rgb = [FITTING_GLOW[0] * burn, FITTING_GLOW[1] * burn, FITTING_GLOW[2] * burn]
+      for (const [x, z] of ceilingLamps(space.footprint)) fitting(x, hang, z, glow)
     }
 
     for (const wall of wallsOf.get(space.id) ?? []) {
@@ -984,6 +1110,7 @@ export function buildTierMesh(plan: TierPlan, options: { reveal?: boolean } = {}
     const count = builder.positions.length / 3 - start
     const edgeCount = edges.length / 3 - edgeStart
     const seamCount = seams.length / 3 - seamStart
+    const fittingCount = fittings.length / 3 - fittingStart
     if (!count && !edgeCount) continue
     groups.push({
       spaceId: space.id,
@@ -993,6 +1120,8 @@ export function buildTierMesh(plan: TierPlan, options: { reveal?: boolean } = {}
       edgeCount,
       seamStart,
       seamCount,
+      fittingStart,
+      fittingCount,
       ...boundsOf(builder.positions, start, count, edges, edgeStart, edgeCount),
     })
   }
@@ -1003,6 +1132,8 @@ export function buildTierMesh(plan: TierPlan, options: { reveal?: boolean } = {}
     colors: new Float32Array(builder.colors),
     edges: new Float32Array(edges),
     seams: new Float32Array(seams),
+    fittings: new Float32Array(fittings),
+    fittingColors: new Float32Array(fittingColors),
     triangles: builder.positions.length / 9,
     groups,
   }

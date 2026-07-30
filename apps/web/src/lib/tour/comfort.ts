@@ -36,11 +36,27 @@ export interface Comfort {
    * index, which removes the moving camera without removing the ship.
    */
   jumpOnly: boolean
+  /**
+   * How far the light the visitor carries reaches, in metres. Zero puts it out.
+   *
+   * The ship lights itself — every room by its own fittings, baked into the deck
+   * — and this is the one light left that is not the ship's. It exists because a
+   * stairwell the deck plans put no lamp over is genuinely dark, and being unable
+   * to see the step in front of you is not atmosphere, it is a wall.
+   *
+   * A setting rather than a constant, and one that goes all the way to nothing,
+   * because the two visitors who want it are asking for opposite things: one
+   * wants to see the steps, and one wants the ship exactly as lit as the ship is.
+   * Neither is wrong, and the reconstruction has no business deciding for them.
+   */
+  nightLight: number
 }
 
 export const FOV_RANGE = [55, 100] as const
 export const SENSITIVITY_RANGE = [0.25, 2.5] as const
 export const SNAP_ANGLE_RANGE = [15, 90] as const
+/** Out, to a couple of paces of floor. Never a torch: see `nightLight`. */
+export const NIGHT_LIGHT_RANGE = [0, 12] as const
 
 const LIVELY: Comfort = {
   fov: 72,
@@ -48,6 +64,7 @@ const LIVELY: Comfort = {
   snapTurn: false,
   snapAngle: 45,
   jumpOnly: false,
+  nightLight: 8,
 }
 
 const CALM: Comfort = {
@@ -56,6 +73,10 @@ const CALM: Comfort = {
   snapTurn: true,
   snapAngle: 30,
   jumpOnly: true,
+  // A visitor who has asked their system for less movement is not asking for a
+  // darker ship, and jumping from room to room does not make a dark stairwell
+  // easier to read. Left where the walk leaves it.
+  nightLight: 8,
 }
 
 /** Whether the system has been asked for less movement. */
@@ -101,6 +122,10 @@ export function readComfort(raw: string | null, reduced = prefersReducedMotion()
         ? clamp(stored.snapAngle, SNAP_ANGLE_RANGE)
         : defaults.snapAngle,
     jumpOnly: typeof stored.jumpOnly === 'boolean' ? stored.jumpOnly : defaults.jumpOnly,
+    nightLight:
+      typeof stored.nightLight === 'number'
+        ? clamp(stored.nightLight, NIGHT_LIGHT_RANGE)
+        : defaults.nightLight,
   }
 }
 

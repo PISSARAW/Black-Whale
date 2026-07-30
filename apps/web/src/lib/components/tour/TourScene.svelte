@@ -338,9 +338,10 @@
        *
        * What is left dynamic:
        *
-       * - the night-light, a couple of metres of reach on the visitor. Not a
-       *   headlamp: it is the safety net for a stairwell with no fitting over it,
-       *   and at this intensity it cannot flatten a room it is standing in.
+       * - the night-light, a few metres of reach on the visitor, and the visitor's
+       *   to turn off entirely from the comfort panel. Not a headlamp: it is the
+       *   safety net for a stairwell the plans put no lamp over, and at this
+       *   intensity it cannot flatten the room it is standing in.
        * - the Nen aura, when a technique is up: see `syncShells`. It becomes the
        *   only coloured light on the ship, so a technique *lights* the deck rather
        *   than drawing an outline on it.
@@ -348,7 +349,14 @@
       const AMBIENT = 2.2
       const NIGHT_LIGHT = 1.2
       scene.add(new THREE.AmbientLight(0xffffff, AMBIENT))
-      const nightLight = new THREE.PointLight(0xffd9a0, NIGHT_LIGHT, 8, 2)
+      // Its reach is the visitor's to set, down to nothing: see `nightLight` in
+      // `$lib/tour/comfort` for why that is a setting and not a constant.
+      const nightLight = new THREE.PointLight(
+        0xffd9a0,
+        $comfort.nightLight > 0 ? NIGHT_LIGHT : 0,
+        $comfort.nightLight,
+        2,
+      )
       scene.add(nightLight)
 
       /**
@@ -922,7 +930,8 @@
         // the honest way round — and the exposure goes to nothing. What the monkeys
         // take is sight, so what closes is the aperture and the air.
         renderer.toneMappingExposure = sealed ? 0.02 : 1
-        nightLight.intensity = sealed ? 0 : NIGHT_LIGHT
+        // Restored to what the visitor asked for, which may be nothing at all.
+        nightLight.intensity = sealed || $comfort.nightLight <= 0 ? 0 : NIGHT_LIGHT
         // The fittings are not lit, so putting the lights out does nothing to
         // them: blinded, the visitor would be left staring at three thousand
         // lamps in a ship they cannot otherwise see. They are hidden instead,
@@ -1691,11 +1700,15 @@
       // The page asks for a jump by setting `jumpTo`; honour it and clear it so
       // asking twice for the same space works.
       jump = (spaceId: string) => goTo(spaceId)
-      // The camera is in this closure, so a field of view changed from the panel
-      // has to be handed in rather than read out.
+      // The camera and the lights are in this closure, so anything the panel
+      // changes has to be handed in rather than read out.
       relens = (settings: Comfort) => {
         camera.fov = settings.fov
         camera.updateProjectionMatrix()
+        // The reach the visitor asked for, unless sight is sealed — in which case
+        // it stays out, and comes back at what they asked for when it is restored.
+        nightLight.distance = settings.nightLight
+        nightLight.intensity = blinded || settings.nightLight <= 0 ? 0 : NIGHT_LIGHT
       }
       // What E and F do, handed to the buttons a touchscreen gets instead.
       take = takeLink

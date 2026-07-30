@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import {
   FOV_RANGE,
+  NIGHT_LIGHT_RANGE,
   SENSITIVITY_RANGE,
   SNAP_ANGLE_RANGE,
   comfortDefaults,
@@ -62,5 +63,34 @@ describe('readComfort', () => {
     const stored = readComfort(JSON.stringify({ fov: 'wide', snapTurn: 'yes' }), false)
     expect(stored.fov).toBe(comfortDefaults(false).fov)
     expect(stored.snapTurn).toBe(false)
+  })
+
+  /**
+   * The light the visitor carries, which is the only setting whose interesting
+   * value is zero: a visitor who wants the ship exactly as lit as the ship is has
+   * asked for nothing, and nothing must not be read as "unset".
+   */
+  it('keeps the light put out, rather than treating off as unset', () => {
+    const stored = readComfort(JSON.stringify({ nightLight: 0 }), false)
+    expect(stored.nightLight).toBe(0)
+    expect(comfortDefaults(false).nightLight).toBeGreaterThan(0)
+  })
+
+  it('clamps the light to a reach and never to a torch', () => {
+    expect(readComfort(JSON.stringify({ nightLight: 900 }), false).nightLight).toBe(
+      NIGHT_LIGHT_RANGE[1],
+    )
+    expect(readComfort(JSON.stringify({ nightLight: -4 }), false).nightLight).toBe(
+      NIGHT_LIGHT_RANGE[0],
+    )
+    expect(readComfort(JSON.stringify({ nightLight: 'bright' }), false).nightLight).toBe(
+      comfortDefaults(false).nightLight,
+    )
+  })
+
+  it('leaves the light alone for a visitor who asked for less movement', () => {
+    // Reduced motion is a request about movement. A darker ship is not implied by
+    // it, and a dark stairwell is no easier to read for jumping into it.
+    expect(comfortDefaults(true).nightLight).toBe(comfortDefaults(false).nightLight)
   })
 })

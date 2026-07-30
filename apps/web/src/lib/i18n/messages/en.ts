@@ -209,9 +209,17 @@ export const en = {
       snapTurn: 'Turn in steps',
       snapAngle: 'Step',
       jumpOnly: 'Do not walk — jump between rooms',
+      /**
+       * The one light aboard that is not the ship's. The ship lights itself; this
+       * is for the stairwell no plan puts a lamp over, and it goes to nothing for
+       * the visitor who would rather have the ship exactly as lit as it is.
+       */
+      nightLight: 'Light you carry',
+      nightLightOff: 'Off — the ship as it is lit',
       reset: 'Back to this system’s defaults',
       calm: 'Your system asks for reduced motion, so this starts calm.',
       degrees: (angle: number) => `${angle}°`,
+      metres: (distance: number) => `${distance} m`,
       times: (factor: number) => `×${factor.toFixed(2)}`,
     },
 

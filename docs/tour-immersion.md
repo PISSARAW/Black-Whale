@@ -629,6 +629,19 @@ d'ambiance à bord d'un vaisseau, il n'y a que ce qui est allumé. Le brouillard
 `0x050505` et la couleur de fond aussi, donc le lointain se dissout dans la même
 valeur — un couloir qui s'enfonce est un couloir dont on ne voit pas le bout.
 
+> **Vérifié le 2026-07-30, et rien à changer.** Cette section supposait qu'il
+> faudrait ensuite baisser `LIGHT.fill` — le plancher de 0,72 que le bake donne à
+> chaque surface. Captures prises avec `scripts/tour-shots.mjs` dans cinq pièces
+> (coursive arrière du pont 5, promenade bâbord du pont 3, salle de projection,
+> cellule de Beyond Netero, entrepôt Cha-R) : le retrait du gréement de lumières
+> suffit. Les coursives reconstruites sont déjà noires hormis leur file de lampes,
+> une cellule n'a qu'une applique et ses angles tombent dans le noir, et l'entrepôt
+> du pont 5 est à la limite du lisible **en l'état**. Baisser le plancher
+> maintenant ne rendrait pas les pièces dessinées plus sombres sans rendre les
+> pièces inventées impraticables — ce que la doctrine du bake refuse explicitement
+> (« une surface que la reconstruction a inventée reste une surface, et doit
+> pouvoir être parcourue »).
+
 **Coût vague 4 :** 1 jour.
 
 ---

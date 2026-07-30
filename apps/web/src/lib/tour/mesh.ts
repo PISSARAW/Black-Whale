@@ -17,7 +17,15 @@ import {
 } from './geometry'
 import { ceilingOf } from './blueprint'
 import type { TierPlan } from './blueprint'
-import type { Provenance, Space, SpaceCategory, StructureKind, Vec2 } from './types'
+import type {
+  Provenance,
+  Space,
+  SpaceCategory,
+  Structure,
+  StructureKind,
+  Tier,
+  Vec2,
+} from './types'
 
 export interface TierMesh {
   positions: Float32Array
@@ -161,6 +169,92 @@ class MeshBuilder {
   }
 }
 
+/**
+ * One solid, raised off the outline the collision list already knows about.
+ *
+ * Kept apart from `buildTierMesh` because a solid is not always part of its
+ * deck: a Hatsu that moves, shrinks or animates one lifts it out of the baked
+ * deck and draws it on its own, so that pushing a coffin across the burial
+ * chamber does not mean re-extruding the burial chamber.
+ */
+function extrudeSolid(
+  builder: MeshBuilder,
+  edges: number[],
+  structure: Structure,
+  room: Space,
+  tier: Tier,
+): void {
+  const OFFSET = 0.03
+  const horizontal = (a: Vec2, b: Vec2, y: number) => edges.push(a[0], y, a[1], b[0], y, b[1])
+  const vertical = (point: Vec2, bottom: number, top: number) =>
+    edges.push(point[0], bottom, point[1], point[0], top, point[1])
+
+  const outline = structureFootprint(structure)
+  const colour = colourFor(hex(STRUCTURE_COLOURS[structure.kind]), structure.provenance)
+  const bottom = tier.elevation + structure.base
+  const top = Math.min(bottom + structure.height, tier.elevation + ceilingOf(room, tier))
+
+  // A run of bars is one solid to walk around and a row of uprights to see
+  // through: drawn as a slab it would be the wall the cell fronts are not.
+  if (structure.kind === 'bars') {
+    const railBottom = Math.max(bottom, top - BAR_RAIL)
+    for (const bar of grilleBars(structure)) {
+      for (const [start, end] of iterateEdges(bar)) {
+        builder.quad(start, end, bottom, railBottom, colour)
+      }
+    }
+
+    // The rail closes the tops of the uprights and gives the run a line to
+    // read at a distance, the way a lintel does over a door.
+    for (const [start, end] of iterateEdges(outline)) {
+      builder.quad(start, end, railBottom, top, colour)
+      horizontal(start, end, railBottom + OFFSET)
+      horizontal(start, end, top - OFFSET)
+    }
+    const railCap = triangulate(outline)
+    for (let i = 0; i < railCap.length; i += 3) {
+      const a = outline[railCap[i]]
+      const b = outline[railCap[i + 1]]
+      const c = outline[railCap[i + 2]]
+      builder.triangle([a[0], top, a[1]], [b[0], top, b[1]], [c[0], top, c[1]], colour)
+    }
+    for (const corner of outline) vertical(corner, bottom, top)
+    return
+  }
+
+  for (const [start, end] of iterateEdges(outline)) {
+    builder.quad(start, end, bottom, top, colour)
+    vertical(start, bottom, top)
+    horizontal(start, end, top - OFFSET)
+  }
+
+  const cap = triangulate(outline)
+  for (let i = 0; i < cap.length; i += 3) {
+    const a = outline[cap[i]]
+    const b = outline[cap[i + 1]]
+    const c = outline[cap[i + 2]]
+    builder.triangle([a[0], top, a[1]], [b[0], top, b[1]], [c[0], top, c[1]], colour)
+    // Hung off the floor, so it is closed underneath as well as on top.
+    if (structure.base > 0) {
+      builder.triangle([a[0], bottom, a[1]], [c[0], bottom, c[1]], [b[0], bottom, b[1]], colour)
+    }
+  }
+}
+
+/** That same solid on its own, for the Hatsu layer to draw and move. */
+export function buildSolidMesh(structure: Structure, room: Space, tier: Tier): TierMesh {
+  const builder = new MeshBuilder()
+  const edges: number[] = []
+  extrudeSolid(builder, edges, structure, room, tier)
+  return {
+    positions: new Float32Array(builder.positions),
+    normals: new Float32Array(builder.normals),
+    colors: new Float32Array(builder.colors),
+    edges: new Float32Array(edges),
+    triangles: builder.positions.length / 9,
+  }
+}
+
 /** Builds every triangle of one deck. */
 export function buildTierMesh(plan: TierPlan): TierMesh {
   const builder = new MeshBuilder()
@@ -257,62 +351,7 @@ export function buildTierMesh(plan: TierPlan): TierMesh {
   // capped, and never taller than the room it stands in.
   for (const structure of plan.structures) {
     const room = spaces.get(structure.spaceId)
-    if (!room) continue
-    const outline = structureFootprint(structure)
-    const colour = colourFor(hex(STRUCTURE_COLOURS[structure.kind]), structure.provenance)
-    const bottom = tier.elevation + structure.base
-    const top = Math.min(bottom + structure.height, heightOf(room))
-
-    // A run of bars is one solid to walk around and a row of uprights to see
-    // through: drawn as a slab it would be the wall the cell fronts are not.
-    if (structure.kind === 'bars') {
-      const railBottom = Math.max(bottom, top - BAR_RAIL)
-      for (const bar of grilleBars(structure)) {
-        for (const [start, end] of iterateEdges(bar)) {
-          builder.quad(start, end, bottom, railBottom, colour)
-        }
-      }
-
-      // The rail closes the tops of the uprights and gives the run a line to
-      // read at a distance, the way a lintel does over a door.
-      for (const [start, end] of iterateEdges(outline)) {
-        builder.quad(start, end, railBottom, top, colour)
-        horizontal(start, end, railBottom + OFFSET)
-        horizontal(start, end, top - OFFSET)
-      }
-      const railCap = triangulate(outline)
-      for (let i = 0; i < railCap.length; i += 3) {
-        const a = outline[railCap[i]]
-        const b = outline[railCap[i + 1]]
-        const c = outline[railCap[i + 2]]
-        builder.triangle([a[0], top, a[1]], [b[0], top, b[1]], [c[0], top, c[1]], colour)
-      }
-      for (const corner of outline) vertical(corner, bottom, top)
-      continue
-    }
-
-    for (const [start, end] of iterateEdges(outline)) {
-      builder.quad(start, end, bottom, top, colour)
-      vertical(start, bottom, top)
-      horizontal(start, end, top - OFFSET)
-    }
-
-    const cap = triangulate(outline)
-    for (let i = 0; i < cap.length; i += 3) {
-      const a = outline[cap[i]]
-      const b = outline[cap[i + 1]]
-      const c = outline[cap[i + 2]]
-      builder.triangle([a[0], top, a[1]], [b[0], top, b[1]], [c[0], top, c[1]], colour)
-      // Hung off the floor, so it is closed underneath as well as on top.
-      if (structure.base > 0) {
-        builder.triangle(
-          [a[0], bottom, a[1]],
-          [c[0], bottom, c[1]],
-          [b[0], bottom, b[1]],
-          colour,
-        )
-      }
-    }
+    if (room) extrudeSolid(builder, edges, structure, room, tier)
   }
 
   // Above each opening the wall carries on to the ceiling, so a doorway reads

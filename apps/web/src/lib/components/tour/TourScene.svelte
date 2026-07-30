@@ -12,11 +12,32 @@
    * module so the server never has to evaluate a WebGL library to render a page.
    */
   import { onMount, untrack } from 'svelte'
-  import type { Ship } from '$lib/tour/blueprint'
+  import type { Ship, TierPlan } from '$lib/tour/blueprint'
   import { ceilingOf, entrySpace, spaceAt, spawnFacing, spawnPoint } from '$lib/tour/blueprint'
-  import { buildTierMesh } from '$lib/tour/mesh'
+  import {
+    EMPTY_WORLD,
+    aimedSolid,
+    aimedSpace,
+    centroid,
+    detachedOn,
+    doorExit,
+    emptiedOn,
+    eyeHeightIn,
+    heldSolidIds,
+    eyesOf,
+    linkIsOpen,
+    paceOf,
+    reachOf,
+    shellsFor,
+    solidWalls,
+    walkedPlan,
+    walksThroughWalls,
+    wanderOffset,
+    type TourWorld,
+  } from '$lib/tour/hatsu'
+  import { buildSolidMesh, buildTierMesh } from '$lib/tour/mesh'
   import { linkUnderfoot, resolveMovement, wallsNear } from '$lib/tour/navigation'
-  import type { Link, Space, Vec2 } from '$lib/tour/types'
+  import type { Link, Space, Structure, Vec2 } from '$lib/tour/types'
 
   interface Props {
     ship: Ship
@@ -34,6 +55,28 @@
     position?: Vec2
     /** Which way they face, in radians, for the mini-map cone. */
     heading?: number
+    /**
+     * What Nen is currently doing to the ship. The scene is the only thing that
+     * draws it; `$lib/tour/hatsu` is the only thing that decides it.
+     */
+    world?: TourWorld
+    /** The colour of the technique holding the ship, for the aura shells. */
+    auraColour?: string | null
+    /** Whether a technique the walk answers to is active, so aiming is live. */
+    aiming?: boolean
+    /** The room down the reticle, mirrored out for the read-out. */
+    aimedAt?: Space | null
+    /** The solid down the reticle, for the techniques that work on solids. */
+    aimedSolidAt?: Structure | null
+    /** Fired when the visitor casts on what they are facing. */
+    onCast?: (spaceId: string | null, solidId: string | null) => void
+    /** Fired whenever the visitor sets foot in a different space. */
+    onArrive?: (spaceId: string | null) => void
+    /**
+     * Asked, on the same arrival, where Fugetsu's tunnel comes out — or `null`
+     * when the visitor did not step into either of its ends.
+     */
+    onWorm?: (spaceId: string | null, arrivedFrom: string | null) => string | null
     /** Shown while three.js and the first deck are being prepared. */
     loadingLabel: string
     /** Shown instead of the walk when the browser cannot give us WebGL. */
@@ -51,6 +94,14 @@
     engaged = $bindable(false),
     position = $bindable([0, 0]),
     heading = $bindable(0),
+    world = EMPTY_WORLD,
+    auraColour = null,
+    aiming = false,
+    aimedAt = $bindable(null),
+    aimedSolidAt = $bindable(null),
+    onCast,
+    onArrive,
+    onWorm,
   }: Props = $props()
 
   const EYE_HEIGHT = 1.7
@@ -138,6 +189,86 @@
       > = {}
       let visible: { deck: import('three').Mesh; edges: import('three').LineSegments } | null = null
 
+      /**
+       * The remote eye: a second camera parked in a room, and the deck it is
+       * looking at, which stays in the scene even when the visitor walks off it.
+       * Declared here rather than beside `syncEye` because `loadTier` runs
+       * before that block and has to know not to take the eye's deck away.
+       */
+      let eyeCamera: import('three').PerspectiveCamera | null = null
+      let eyeDeck: { deck: import('three').Mesh; edges: import('three').LineSegments } | null = null
+      let eyeKey = ''
+
+      /** The plan as Nen leaves it: what is drawn, and what still stops you. */
+      let activePlan: TierPlan | null = null
+      let activeKey = ''
+
+      /**
+       * A deck as Nen currently leaves it. The empty suffix is the deck whole.
+       */
+      const worldKey = (nextTierId: string) =>
+        `${nextTierId}::${emptiedOn(world, nextTierId, ship).sort().join(',')}` +
+        `::${heldSolidIds(world).sort().join(',')}::${world.shut.slice().sort().join(',')}`
+
+      /**
+       * A deck Nen has taken a room out of, at most one per deck.
+       *
+       * The untouched decks are cached for the whole visit — five of them, and
+       * a staircase taken twice should not pay twice. A deck with a room
+       * swallowed out of it is not: every cast makes another one, so the last
+       * variant of a deck is disposed as soon as a new one replaces it, or a
+       * long enough session would hold a copy of the ship per cast.
+       */
+      const variants: Record<
+        string,
+        | {
+            key: string
+            built: { deck: import('three').Mesh; edges: import('three').LineSegments }
+          }
+        | undefined
+      > = {}
+
+      function extrude(nextTierId: string) {
+        const mesh = buildTierMesh(walkedPlan(ship, world, nextTierId))
+        const geometry = new THREE.BufferGeometry()
+        geometry.setAttribute('position', new THREE.BufferAttribute(mesh.positions, 3))
+        geometry.setAttribute('normal', new THREE.BufferAttribute(mesh.normals, 3))
+        geometry.setAttribute('color', new THREE.BufferAttribute(mesh.colors, 3))
+
+        const edgeGeometry = new THREE.BufferGeometry()
+        edgeGeometry.setAttribute('position', new THREE.BufferAttribute(mesh.edges, 3))
+
+        return {
+          deck: new THREE.Mesh(geometry, material),
+          edges: new THREE.LineSegments(edgeGeometry, edgeMaterial),
+        }
+      }
+
+      const dispose = (built: { deck: import('three').Mesh; edges: import('three').LineSegments }) => {
+        built.deck.geometry.dispose()
+        built.edges.geometry.dispose()
+      }
+
+      function buildDeck(nextTierId: string) {
+        const key = worldKey(nextTierId)
+
+        if (key === `${nextTierId}::::::`) {
+          const built = decks[nextTierId] ?? extrude(nextTierId)
+          decks[nextTierId] = built
+          return { built, key }
+        }
+
+        const held = variants[nextTierId]
+        if (held?.key === key) return { built: held.built, key }
+        // Whatever is still on screen — the deck under the visitor, the deck the
+        // eye is watching — is never the thing being freed.
+        if (held && held.built !== visible && held.built !== eyeDeck) dispose(held.built)
+
+        const built = extrude(nextTierId)
+        variants[nextTierId] = { key, built }
+        return { built, key }
+      }
+
       /** State the render loop owns; Svelte state is only mirrored out of it. */
       let pointer: Vec2 = [0, 0]
       let yaw = 0
@@ -154,32 +285,22 @@
         const plan = ship.plans.get(nextTierId)
         if (!plan) return
 
-        if (visible) {
+        // The deck the eye is watching stays in the scene whether or not the
+        // visitor is still standing on it: that is the whole of the remote feed.
+        if (visible && visible !== eyeDeck) {
           scene.remove(visible.deck)
           scene.remove(visible.edges)
         }
+        // Off the screen and out of the way, so a variant it was holding open
+        // can be freed the moment a new one takes its place.
+        visible = null
 
-        let built = decks[nextTierId]
-        if (!built) {
-          const mesh = buildTierMesh(plan)
-          const geometry = new THREE.BufferGeometry()
-          geometry.setAttribute('position', new THREE.BufferAttribute(mesh.positions, 3))
-          geometry.setAttribute('normal', new THREE.BufferAttribute(mesh.normals, 3))
-          geometry.setAttribute('color', new THREE.BufferAttribute(mesh.colors, 3))
-
-          const edgeGeometry = new THREE.BufferGeometry()
-          edgeGeometry.setAttribute('position', new THREE.BufferAttribute(mesh.edges, 3))
-
-          built = {
-            deck: new THREE.Mesh(geometry, material),
-            edges: new THREE.LineSegments(edgeGeometry, edgeMaterial),
-          }
-          decks[nextTierId] = built
-        }
-
+        const { built, key } = buildDeck(nextTierId)
         scene.add(built.deck)
         scene.add(built.edges)
         visible = built
+        activeKey = key
+        activePlan = walkedPlan(ship, world, nextTierId)
 
         currentTierId = nextTierId
         const entry = entrySpace(plan)
@@ -209,6 +330,252 @@
 
       loadTier(tierId)
 
+      // ── Nen ──────────────────────────────────────
+      // Everything below draws what `$lib/tour/hatsu` decided. No branch here
+      // knows what a technique is called: it reads the world and renders it.
+
+      /** The outlines the aura holds open, drawn over the hull rather than in it. */
+      const shellMaterial = new THREE.LineBasicMaterial({
+        color: 0xd8b85e,
+        transparent: true,
+        opacity: 0.85,
+        depthTest: false,
+      })
+      let shells: import('three').LineSegments | null = null
+      let shellKey = ''
+
+      /**
+       * One buffer for every room the aura is holding, wherever it is.
+       *
+       * Depth testing is off on purpose: a doll four decks down has to keep its
+       * outline through four decks of steel, or "no matter where I am" would be
+       * a claim the picture contradicts.
+       */
+      function syncShells() {
+        const ids = shellsFor(world, ship)
+        const key = `${auraColour ?? ''}|${ids.slice().sort().join(',')}`
+        if (key === shellKey) return
+        shellKey = key
+
+        if (shells) {
+          scene.remove(shells)
+          shells.geometry.dispose()
+          shells = null
+        }
+        if (auraColour) shellMaterial.color.set(auraColour)
+        if (!ids.length) return
+
+        const points: number[] = []
+        for (const id of ids) {
+          const space = ship.spaces.get(id)
+          const tier = space ? ship.tiers.find((candidate) => candidate.id === space.tierId) : null
+          if (!space || !tier) continue
+          const floor = tier.elevation + 0.05
+          const top = tier.elevation + ceilingOf(space, tier) - 0.05
+          const corners = space.footprint
+          for (let i = 0; i < corners.length; i++) {
+            const a = corners[i]
+            const b = corners[(i + 1) % corners.length]
+            points.push(a[0], floor, a[1], b[0], floor, b[1])
+            points.push(a[0], top, a[1], b[0], top, b[1])
+            points.push(a[0], floor, a[1], a[0], top, a[1])
+          }
+        }
+
+        const geometry = new THREE.BufferGeometry()
+        geometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(points), 3))
+        shells = new THREE.LineSegments(geometry, shellMaterial)
+        shells.renderOrder = 2
+        scene.add(shells)
+      }
+
+      /** Parks the eye, or brings it home. It turns on the spot in `tick`. */
+      function syncEye() {
+        const space = world.eye ? ship.spaces.get(world.eye) : null
+        const key = space ? `${space.id}|${worldKey(space.tierId)}` : ''
+        if (key === eyeKey) return
+        eyeKey = key
+
+        if (eyeDeck) {
+          // The deck the eye was watching goes back out of the scene unless the
+          // visitor is standing on it.
+          if (eyeDeck !== visible) {
+            scene.remove(eyeDeck.deck)
+            scene.remove(eyeDeck.edges)
+          }
+          eyeDeck = null
+        }
+        if (!space) {
+          eyeCamera = null
+          return
+        }
+
+        const at = centroid(space)
+        eyeCamera = new THREE.PerspectiveCamera(64, 1, 0.1, 600)
+        eyeCamera.position.set(at[0], eyeHeightIn(space, ship), at[1])
+
+        const built = buildDeck(space.tierId).built
+        if (built !== visible) {
+          scene.add(built.deck)
+          scene.add(built.edges)
+        }
+        eyeDeck = built
+      }
+
+      /**
+       * Sight sealed is not a filter over the picture: the lights go out and the
+       * fog closes to arm's length, so the ship is still there and you cannot
+       * see it, which is what the monkeys take.
+       */
+      const AMBIENT = 0.75
+      const HEMISPHERE = 0.85
+      const HEADLAMP = 14
+      let blinded = false
+
+      function syncSight() {
+        const sealed = world.sealed >= 1
+        if (sealed === blinded) return
+        blinded = sealed
+        scene.fog = new THREE.Fog(0x050505, sealed ? 0.1 : 6, sealed ? 1.6 : 110)
+        headlamp.intensity = sealed ? 0 : HEADLAMP
+        for (const light of scene.children) {
+          if ((light as import('three').AmbientLight).isAmbientLight) {
+            ;(light as import('three').AmbientLight).intensity = sealed ? 0 : AMBIENT
+          }
+          if ((light as import('three').HemisphereLight).isHemisphereLight) {
+            ;(light as import('three').HemisphereLight).intensity = sealed ? 0 : HEMISPHERE
+          }
+        }
+      }
+
+      /** Rebuilds the deck under the visitor when Nen has changed what is in it. */
+      function syncDeck() {
+        const key = worldKey(currentTierId)
+        if (key === activeKey) return
+        const plan = ship.plans.get(currentTierId)
+        if (!plan) return
+
+        if (visible && visible !== eyeDeck) {
+          scene.remove(visible.deck)
+          scene.remove(visible.edges)
+        }
+        visible = null
+        const built = buildDeck(currentTierId).built
+        if (built !== eyeDeck) {
+          scene.add(built.deck)
+          scene.add(built.edges)
+        }
+        visible = built
+        activeKey = key
+        activePlan = walkedPlan(ship, world, currentTierId)
+      }
+
+      /**
+       * The solids the aura is holding, drawn one by one.
+       *
+       * They are out of the baked deck — `planWithout` drops them — so a solid
+       * that is pushed, crushed or grown costs its own few dozen triangles and
+       * not a re-extrusion of the deck it stands on. A solid Biohazard woke up
+       * keeps its geometry and is moved by its object position instead, since
+       * it changes place sixty times a second.
+       */
+      const solids: Record<
+        string,
+        | {
+            key: string
+            mesh: import('three').Mesh
+            edges: import('three').LineSegments
+            /** Where its geometry was baked, so it can be offset from there. */
+            at: Vec2
+          }
+        | undefined
+      > = {}
+
+      function dropSolid(id: string) {
+        const held = solids[id]
+        if (!held) return
+        scene.remove(held.mesh)
+        scene.remove(held.edges)
+        held.mesh.geometry.dispose()
+        held.edges.geometry.dispose()
+        delete solids[id]
+      }
+
+      function syncSolids() {
+        const plan = ship.plans.get(currentTierId)
+        if (!plan) return
+        // A plain record rather than a Set: the render loop owns it and nothing
+        // in the markup reads it, so it must stay out of Svelte's reactivity.
+        const standing: Record<string, true> = {}
+
+        for (const { structure, room } of detachedOn(ship, world, currentTierId)) {
+          standing[structure.id] = true
+          const key = JSON.stringify(structure)
+          if (solids[structure.id]?.key === key) continue
+          dropSolid(structure.id)
+
+          const built = buildSolidMesh(structure, room, plan.tier)
+          const geometry = new THREE.BufferGeometry()
+          geometry.setAttribute('position', new THREE.BufferAttribute(built.positions, 3))
+          geometry.setAttribute('normal', new THREE.BufferAttribute(built.normals, 3))
+          geometry.setAttribute('color', new THREE.BufferAttribute(built.colors, 3))
+          const edgeGeometry = new THREE.BufferGeometry()
+          edgeGeometry.setAttribute('position', new THREE.BufferAttribute(built.edges, 3))
+
+          const mesh = new THREE.Mesh(geometry, material)
+          const edges = new THREE.LineSegments(edgeGeometry, edgeMaterial)
+          scene.add(mesh)
+          scene.add(edges)
+          solids[structure.id] = { key, mesh, edges, at: structure.at }
+        }
+
+        for (const id of Object.keys(solids)) if (!standing[id]) dropSolid(id)
+      }
+
+      /**
+       * Where a solid is this instant, as against where its geometry was baked.
+       *
+       * A solid that wanders and one that is being carried both move every
+       * frame, and neither is worth re-extruding for it: the same few dozen
+       * triangles are drawn at an offset instead. `detachedOn` is the one place
+       * that decides where they are, so the picture cannot drift from what the
+       * collision test reads.
+       */
+      function driftSolids(seconds: number) {
+        const moving = world.body.passengers.length
+          ? new Map(
+              detachedOn(ship, world, currentTierId, seconds, pointer).map((held) => [
+                held.structure.id,
+                held.structure.at,
+              ]),
+            )
+          : null
+
+        for (const [id, held] of Object.entries(solids)) {
+          if (!held) continue
+          const carried = moving?.get(id)
+          const drift = carried
+            ? ([carried[0] - held.at[0], carried[1] - held.at[1]] as Vec2)
+            : world.solids[id]?.alive
+              ? wanderOffset(id, seconds)
+              : null
+          held.mesh.position.set(drift ? drift[0] : 0, 0, drift ? drift[1] : 0)
+          held.edges.position.copy(held.mesh.position)
+        }
+      }
+
+      /** The room and the solid down the reticle, and the cast that lands on them. */
+      const facing = () =>
+        activePlan ? aimedSpace(activePlan, pointer, yaw, reachOf(world.body)) : null
+      const facingSolid = () => {
+        const plan = ship.plans.get(currentTierId)
+        return plan ? aimedSolid(ship, world, plan, pointer, yaw, reachOf(world.body) / 2) : null
+      }
+
+      function cast() {
+        onCast?.(facing()?.id ?? null, facingSolid()?.id ?? null)
+      }
+
       // ── Input ────────────────────────────────────
       const onKeyDown = (event: KeyboardEvent) => {
         pressed[event.code] = true
@@ -217,6 +584,7 @@
           event.preventDefault()
         }
         if (event.code === 'KeyE' || event.code === 'Enter') takeLink()
+        if (event.code === 'KeyF' && aiming) cast()
       }
       const onKeyUp = (event: KeyboardEvent) => {
         delete pressed[event.code]
@@ -238,6 +606,13 @@
         else if (dragging) look(event.movementX, event.movementY)
       }
       const onMouseDown = () => {
+        // With the pointer already captured, the click is the cast: the walk is
+        // in first person and the reticle is where the aura goes. Before that,
+        // the first click still has to be the one that takes the pointer.
+        if (aiming && document.pointerLockElement === canvas) {
+          cast()
+          return
+        }
         dragging = true
         canvas?.requestPointerLock?.()
       }
@@ -291,6 +666,18 @@
       let previous = performance.now()
       let frame = 0
 
+      /** Reused so the frame loop does not allocate a vector for the viewport. */
+      const size = new THREE.Vector2()
+
+      /** The room the door pair last delivered the visitor to. */
+      let arrivedFrom: string | null = null
+      /** The end of Fugetsu's tunnel the visitor was last delivered to. */
+      let wormFrom: string | null = null
+      let lastSpaceId: string | null = null
+      let aimedId: string | null = null
+      let aimedSolidId: string | null = null
+      let sinceAim = 0
+
       const tick = (now: number) => {
         frame = requestAnimationFrame(tick)
         const delta = Math.min((now - previous) / 1000, 0.1)
@@ -298,6 +685,18 @@
 
         const plan = ship.plans.get(currentTierId)
         if (!plan) return
+
+        syncDeck()
+        syncSolids()
+        syncShells()
+        syncEye()
+        syncSight()
+        driftSolids(now / 1000)
+        const walked = activePlan ?? plan
+        // What the aura is holding is out of the deck's own wall list, so it
+        // has to be put back for the collision test — where the technique left
+        // it, and where the drift has it this instant.
+        const loose = solidWalls(ship, world, currentTierId, now / 1000)
 
         // `code` is the physical key, so W A S D covers ZQSD on an AZERTY
         // layout without a second binding.
@@ -312,7 +711,10 @@
         if (magnitude > 0) {
           strafe /= magnitude
           advance /= magnitude
-          const speed = (holding('ShiftLeft', 'ShiftRight') ? SPRINT_SPEED : WALK_SPEED) * delta
+          const speed =
+            (holding('ShiftLeft', 'ShiftRight') ? SPRINT_SPEED : WALK_SPEED) *
+            paceOf(world.body) *
+            delta
           // A camera at yaw looks along (-sin, -cos) and has (cos, -sin) to its
           // right, which is what three.js does to (0, 0, -1) and (1, 0, 0).
           const sin = Math.sin(yaw)
@@ -321,11 +723,19 @@
             pointer[0] + (advance * -sin + strafe * cos) * speed,
             pointer[1] + (advance * -cos + strafe * -sin) * speed,
           ]
-          pointer = resolveMovement(pointer, target, wallsNear(plan.walls, pointer, 6))
+          // Luini walks through the walls rather than around them, so the move
+          // is taken whole and the collision pass is simply not run.
+          pointer = walksThroughWalls(world)
+            ? target
+            : resolveMovement(
+                pointer,
+                target,
+                wallsNear([...walked.walls, ...loose], pointer, 6),
+              )
         }
 
         const standing = spaceAt(plan, pointer)
-        const eye = plan.tier.elevation + EYE_HEIGHT
+        const eye = plan.tier.elevation + eyesOf(world.body, EYE_HEIGHT)
         camera.position.set(pointer[0], eye, pointer[1])
         camera.rotation.set(0, 0, 0)
         camera.rotateY(yaw)
@@ -337,12 +747,85 @@
         // Mirror the loop's state out for the HUD, without re-rendering on
         // every frame: these only change when they actually change.
         if (standing?.id !== untrack(() => currentSpace)?.id) currentSpace = standing
-        const link = linkUnderfoot(ship.links, standing?.id ?? null, pointer)
+        const link = linkIsOpen(world, standing?.id ?? null)
+          ? linkUnderfoot(ship.links, standing?.id ?? null, pointer)
+          : null
         if (link?.to !== untrack(() => availableLink)?.to) availableLink = link
         position = pointer
         heading = yaw
 
+        // Setting foot in a room is the event the hideout doors and the paper
+        // dolls both wait on. Walking about inside one is not.
+        const standingId = standing?.id ?? null
+        if (standingId !== lastSpaceId) {
+          lastSpaceId = standingId
+          const exit = doorExit(world, standingId, arrivedFrom)
+          arrivedFrom = exit
+          onArrive?.(standingId)
+          if (exit) {
+            goTo(exit)
+            return
+          }
+          const tunnel = onWorm?.(standingId, wormFrom)
+          if (tunnel) {
+            wormFrom = tunnel
+            goTo(tunnel)
+            return
+          }
+          wormFrom = null
+        }
+
+        // The reticle is polled rather than traced every frame: it walks the
+        // floor plan, and nothing about it changes in a sixtieth of a second.
+        if (aiming && ++sinceAim >= 6) {
+          sinceAim = 0
+          const faced = facing()
+          if ((faced?.id ?? null) !== aimedId) {
+            aimedId = faced?.id ?? null
+            aimedAt = faced
+          }
+          const solid = facingSolid()
+          if ((solid?.id ?? null) !== aimedSolidId) {
+            aimedSolidId = solid?.id ?? null
+            aimedSolidAt = solid
+          }
+        } else if (!aiming && aimedId !== null) {
+          aimedId = null
+          aimedAt = null
+          aimedSolidId = null
+          aimedSolidAt = null
+        }
+
+        const { width, height } = renderer.getSize(size)
+        renderer.setScissorTest(false)
+        renderer.setViewport(0, 0, width, height)
         renderer.render(scene, camera)
+
+        // The eye's feed, inset in the corner: the same scene from where the eye
+        // was left, however many decks away that is.
+        if (eyeCamera) {
+          eyeCamera.rotation.set(0, 0, 0)
+          eyeCamera.rotateY(now / 6000)
+          const feedWidth = Math.round(Math.min(320, width * 0.3))
+          const feedHeight = Math.round(feedWidth * 0.62)
+          const pad = 12
+          const box: [number, number, number, number] = [
+            width - feedWidth - pad,
+            height - feedHeight - pad,
+            feedWidth,
+            feedHeight,
+          ]
+          eyeCamera.aspect = feedWidth / feedHeight
+          eyeCamera.updateProjectionMatrix()
+          renderer.setViewport(...box)
+          renderer.setScissor(...box)
+          renderer.setScissorTest(true)
+          renderer.autoClear = false
+          renderer.clear(true, true, false)
+          renderer.render(scene, eyeCamera)
+          renderer.autoClear = true
+          renderer.setScissorTest(false)
+        }
       }
 
       frame = requestAnimationFrame(tick)
@@ -360,12 +843,17 @@
         window.removeEventListener('keydown', onKeyDown)
         window.removeEventListener('keyup', onKeyUp)
         document.removeEventListener('pointerlockchange', onPointerLockChange)
-        for (const built of Object.values(decks)) {
-          built?.deck.geometry.dispose()
-          built?.edges.geometry.dispose()
-        }
+        for (const built of Object.values(decks)) if (built) dispose(built)
+        for (const held of Object.values(variants)) if (held) dispose(held.built)
         for (const key of Object.keys(decks)) delete decks[key]
+        for (const key of Object.keys(variants)) delete variants[key]
         visible = null
+        eyeDeck = null
+        eyeCamera = null
+        for (const id of Object.keys(solids)) dropSolid(id)
+        shells?.geometry.dispose()
+        shells = null
+        shellMaterial.dispose()
         edgeMaterial.dispose()
         material.dispose()
         renderer.dispose()

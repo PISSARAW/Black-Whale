@@ -85,6 +85,8 @@ export const fr: Messages = {
       sprintKeys: 'Maj',
       use: 'Changer de pont, entrer dans une pièce',
       useKeys: 'E, sur une cage d’escalier ou devant une porte',
+      nen: 'Lancer le Hatsu actif',
+      nenKeys: 'F, ou un clic, sur la pièce ou le volume que vous regardez',
     },
     provenance: {
       title: 'Ce qui est canon ici',
@@ -102,6 +104,309 @@ export const fr: Messages = {
         "Les plans des ponts sont schématiques. La reconstruction les met à l'échelle pour que les pièces fassent la taille que les planches impliquent — ce n'est pas une mesure du vaisseau.",
     },
     sourcesLink: "D'où vient chaque pièce",
+
+    hatsu: {
+      title: 'Le Nen dans la visite',
+      reach: "N'importe quelle pièce du vaisseau, depuis n'importe où dans le vaisseau",
+      aiming: (room) => `Face à ${room}`,
+      aimingNothing: "Face à rien que l'aura puisse saisir",
+      castHint:
+        'F, ou un clic, pour lancer dessus — ou choisissez ci-dessous une pièce du vaisseau',
+      inert: (name, carried) =>
+        `${name} agit sur ce qu'une page dit, et la visite n'a que des pièces : il ne fait rien ici. ${carried} techniques répondent au vaisseau — Emperor Time, Blinky, les Portes de la planque et les autres.`,
+      inertShort: 'Sans prise dans la visite',
+      targets: 'Lancer sur une pièce',
+      allDecks: 'Tout le vaisseau',
+      holding: "Ce que l'aura retient",
+      release: 'Rendre le vaisseau',
+      nothingHeld: 'Rien pour l’instant',
+      copy: 'Copie vide',
+      copySource: "Un double vide de la pièce. Rien de ce qu'il contient n'est le vaisseau.",
+      reports: {
+        noTarget: 'Rien à portée sur quoi lancer',
+        teleported: (room) => `Envoyé dans ${room} — vous n'avez pas choisi où vous tombiez`,
+        doorArmed: (room) =>
+          `Premier cadre installé dans ${room} · armez-en un second pour les relier`,
+        doorsPaired: (a, b) =>
+          `${a} et ${b} ne font plus qu'un seuil · entrez par l'un, ressortez par l'autre`,
+        doorsRearmed: (room) => `L'ancienne paire est tombée · premier cadre installé dans ${room}`,
+        phasingOn: 'Les murs ont cessé d’être des murs · traversez le vaisseau',
+        phasingOff: 'De retour dans la géométrie · les murs tiennent à nouveau',
+        eyeSent: (room) => `L'œil est posé dans ${room} · son flux est dans le coin`,
+        eyeRecalled: "L'œil est revenu près de vous",
+        sealedSight: 'Vue scellée · les ponts sont toujours là et vous ne les voyez plus',
+        sealedHearing: "Ouïe scellée à son tour · le vaisseau s'est tu",
+        sealedSpeech: 'Parole scellée aussi · la visite ne dira plus dans quelle pièce vous êtes',
+        sealedReleased: 'Les trois libérés · la vue, l’ouïe et la parole reviennent',
+        dowsed: (room, metres, decks) =>
+          decks
+            ? `${room} · à ${metres} m, ${decks} niveau${decks > 1 ? 'x' : ''} d'écart`
+            : `${room} · à ${metres} m, sur ce niveau`,
+        watching: (room) => `Une poupée de papier est dans ${room} et compte chaque arrivée`,
+        isolatedInside: (room) =>
+          `${room} est isolée autour de vous · vous pouvez sortir, et vous ne pourrez plus rentrer`,
+        isolatedOutside: (room) =>
+          `${room} est isolée · d'ici vous n'atteindrez qu'une copie vide`,
+        stripped: (room, count) =>
+          count
+            ? `${count} emprise${count > 1 ? 's' : ''} soufflée${count > 1 ? 's' : ''} sur ${room} · rien n'a été déplacé`
+            : `Rien ne retenait ${room}`,
+        laidOpen: (spaces, decks) =>
+          `Toutes les catégories à 100 % · ${spaces} pièces sur ${decks} niveaux ouvertes d'un coup`,
+        emptied: (room, structures) =>
+          structures
+            ? `${structures} volume${structures > 1 ? 's' : ''} aspiré${structures > 1 ? 's' : ''} hors de ${room}`
+            : `${room} était déjà nue`,
+        refused: (room) =>
+          `Blinky refuse ${room} · du Nen la retient, et c'est ainsi que le piège se voit`,
+        dispatched: (room) => `Un oiseau revient de ${room} avec ce sur quoi la pièce repose`,
+
+        nothingToSteal: (room) => `Rien ne retient ${room} : il n'y a rien à y prendre`,
+        takenIntoTheBook: (room, technique) =>
+          `${technique} est dans le livre · ${room} est lâchée, car son propriétaire ne peut s'en servir tant qu'elle est tenue`,
+        needsTwoPages: 'Une page ne fait pas deux · prenez-en une seconde avant d\'en marquer une',
+        bookmarked: (technique) => `${technique} maintenue vive à côté de la page ouverte`,
+        acquisitionFailed: (room) =>
+          `${room} est passée sous la flèche · on n'y acquiert plus rien`,
+        carded: (room, technique) =>
+          `${technique} acquise en carte · ${room} la garde aussi, et la carte se dépense en la jouant`,
+        notEligible: (room) => `${room} n'est pas morte · seul ce qui a été tué transmet quelque chose`,
+        inherited: (room, technique) =>
+          `${room} a été tuée par ${technique}, et c'est cela qu'elle transmet`,
+        drained: (room, technique) =>
+          `${technique} arrachée à ${room} · plus rien n'atteint cette pièce tant que le livre ne la rend pas`,
+        needsEmperorTime: "Le dauphin n'existe que pendant Emperor Time",
+        nothingToLend: "Le livre est vide · rien à expliquer, rien à prêter",
+        lent: (technique) => `${technique} expliquée et ouverte · le prochain lancer consomme le prêt`,
+        pageSpent: (technique) => `${technique} est dépensée`,
+        inZetsu: (room) => `${room} n'a plus d'aura à offrir · la chaîne l'a drainée`,
+        owlAttached: (rooms) =>
+          `Le hibou vous suit · ${rooms} pièce${rooms === 1 ? '' : 's'} déjà sur le fil, et il les garde`,
+        owlRecalled: (rooms) => `Le hibou est rappelé · ${rooms} gardées quand même, comme toujours`,
+        foreseen: (room) => `Dix secondes plus tard : ${room} · la vision ne se corrige pas`,
+        diverged: (room, went) => `La prédiction dit toujours ${room} ; vous êtes allé dans ${went}`,
+        written: (room) => `La plume a écrit ${room}`,
+        lineTaken: (room, lines) => `${room} retenue · vers ${lines} sur 3`,
+        poemRead: (strength) =>
+          strength
+            ? `Les trois se lisent comme une route · ${strength} d'entre elles se touchent vraiment, et ça porte`
+            : `Trois vers qui ne se rejoignent pas · ça vous portera, et mal`,
+        dialSet: (room) => `Le cadran est réglé sur ${room}`,
+        dialRead: (room, reading) => `${room} · relevé ${reading}`,
+        dropletSent: (room, metres) =>
+          `Une goutte a trouvé ${room}, à ${metres} m — là où la visite n'est jamais allée`,
+        dropletsDry: "Chaque pièce a été foulée · il ne reste rien à chercher",
+        dropletExpired: (room) => `La goutte sur ${room} s'est asséchée`,
+        nameTaken: (room) => `${room} porte le nom du chat · tuez-la et elle répond`,
+        counterattack: (room, released) =>
+          `${room} a été tuée, et a répondu · ${released} emprise${released === 1 ? '' : 's'} arrachée${released === 1 ? '' : 's'} à qui l'a fait`,
+        markedVictim: (room) =>
+          `${room} est marquée · le sacrifice a été choisi parmi les siens et vous est caché`,
+        sacrificeFound: (room) => `Le sacrifice est dans ${room}`,
+        curseFell: (victim, sacrifice) =>
+          `Le sacrifice a été consommé dans ${sacrifice} · ${victim} s'en va avec lui`,
+        soulsSwapped: (a, b) => `${a} et ${b} se sont réveillées l'une dans l'autre · les deux murs sont restés`,
+        arrowDrawn: (room) => `L'arc est bandé sur ${room} · frappez-en une seconde`,
+        reinforced: (committed) =>
+          `Aura engagée · ${committed} sur 6 · vous allez plus loin et plus vite`,
+        boarded: 'Embarqué · chargez-en cinq, et ce sont eux le carburant',
+        alighted: (room, passengers) =>
+          passengers ? `Posé dans ${room} · ${passengers} déposés avec vous` : `Posé dans ${room}`,
+        loaded: (solid, passengers) => `${solid} à bord · ${passengers} sur 5`,
+        holdFull: 'La soute en prend cinq, et elle en a cinq',
+        projected: (room) => `Le corps reste dans ${room} · le double continue sans lui`,
+        returned: (room) => `De retour dans le corps, dans ${room}`,
+        bodyDisturbed: (room) =>
+          `Quelque chose a atteint le corps dans ${room} · vous y êtes rappelé`,
+        reshaped: (metres) =>
+          `Yeux à ${metres.toFixed(2)} m · la forme a changé, et rien dessous`,
+        rested: (hours) => `${hours} heures de repos en un soin court · la fatigue est tombée`,
+        mended: (room, solids) =>
+          solids
+            ? `${solids} réparé${solids > 1 ? 's' : ''}${room ? ` dans ${room}` : ' dans tout le vaisseau'}`
+            : `Rien n'était abîmé ici`,
+        dancePlayed: (bars) => `Le prologue, mesure ${bars} · la musique porte tout le reste`,
+        danceNeeded: 'Pas encore de musique · jouez d’abord le prologue',
+        mimicked: (solid) => `Vous êtes ${solid}, pour l'œil`,
+        unmimicked: 'Votre propre forme à nouveau',
+        soothed: (opened) =>
+          opened ? 'Les trois se rouvrent, et la musique les tient ouverts' : 'La musique continue',
+        deduced: (what, strength) =>
+          `Condition lue — ${what} · ${strength} nommées, et plus fort à chacune`,
+        nothingToDeduce: 'Plus rien à lire : chaque emprise a été nommée',
+        jailed: (room, doors) =>
+          `${room} est enchaînée · ${doors} accès, et aucun qui s'ouvre`,
+        jailRefused: (room) =>
+          `Rien ne retient ${room} · la chaîne est pour ce que le Nen habite déjà`,
+        fishLoosed: (room) => `Les poissons sont dans ${room} · rien ne se verra tant que vous y êtes`,
+        fishFed: (room, solid) => `${solid} n'était plus là quand vous avez regardé ${room} en repartant`,
+        guardsPosted: (room) => `Gardes sur ${room} · un intrus est mis dehors, pas blessé`,
+        expelled: (room, back) => `Mis dehors de ${room}, renvoyé dans ${back}`,
+        cardBlue: (room) => `Bleu : ${room} est admise, et avertie`,
+        cardYellow: (room) => `Jaune : ${room} vous retient où vous êtes`,
+        cardRed: (room) => `Rouge : ${room} est congédiée et close derrière vous`,
+        vowDeclared: (room) => `La règle est posée : vous n'entrerez pas dans ${room}`,
+        vowBroken: (room) => `Vous êtes entré dans ${room} en le sachant · la chaîne prend l'aura pour cela`,
+        pactTaken: (room) => `Les termes sont pris : atteindre ${room}`,
+        pactMet: (room, released) =>
+          released
+            ? `${room} atteinte · le contrat se referme et lâche ${released} emprise${released === 1 ? '' : 's'}`
+            : `${room} atteinte · le contrat se referme sans rien devoir`,
+        baitSet: (room) => `Ce que vous vouliez se dresse dans ${room}`,
+        trapped: (room) => `Vous l'avez pris · ${room} ne vous laisse plus ressortir`,
+        heldFast: (room) => `${room} ne vous laisse pas partir`,
+        snakesLoosed: (rooms) => `Quatre serpents, ${rooms} pièces à portée · il faut entrer dans l'une d'elles`,
+        snakesFed: (room) => `La malédiction a trouvé sa victime dans ${room}`,
+        snakesRebound: "Congédiée sans victime · la malédiction revient sur qui l'a posée",
+        wormSet: (room) => `Une extrémité du tunnel dans ${room} · désignez l'autre`,
+        wormOpen: (a, b) => `${a} et ${b} font une route d'une nuit, et elle est faite pour être prise une fois`,
+        wormCrossed: (room, crossings) =>
+          `Ressorti dans ${room} · passage ${crossings} sur 3, et le ver s'épuise`,
+        wormSpent: "Le tunnel s'effondre · il n'était pas fait pour être demandé trois fois",
+        doublePosted: (room) => `Le double se tient dans ${room}, auprès de qui reste`,
+        doubleSpent: (room) => `Le double a pris le coup à votre place, et a quitté ${room}`,
+        noSolid: 'Rien de solide dans le réticule',
+        boundFast: (solid) => `${solid} est tenu ferme · seule la couture le rend`,
+        gumSet: (solid) => `Gomme sur ${solid} · saisissez un second volume pour les rapprocher`,
+        gumPulled: (solid, other) => `${solid} a claqué jusqu'à ${other}`,
+        forged: (solid) =>
+          `${solid} porte une autre surface · ce qu'il est, et ce qu'il arrête, n'ont pas changé`,
+        wrapped: (solid) => `${solid} emballé, réduit · rien n'y est abîmé`,
+        unwrapped: (solid) => `${solid} ressort du tissu, à sa taille`,
+        pushed: (solid, metres) =>
+          metres
+            ? `${solid} poussé de ${metres} m · c'est une chose, elle se déplace comme telle`
+            : `${solid} bute contre le mur de sa pièce et n'ira pas plus loin`,
+        copied: (solid) =>
+          `Une copie de ${solid} se dresse à côté · elle est froide, car aucune planche ne la soutient`,
+        crushed: (solid) => `${solid} est aplati sous la masse`,
+        volley: (solid, hits) => `${solid} repoussé · rafale ${hits} sur 3`,
+        shattered: (solid) => `${solid} ne tient plus debout`,
+        woundUp: (turns) => `${turns} rotation${turns > 1 ? 's' : ''} enroulée${turns > 1 ? 's' : ''} dans le prochain coup`,
+        launched: (solid, metres) =>
+          metres ? `${solid} projeté à ${metres} m` : `${solid} n'avait nulle part où aller`,
+        struck: (solid) => `Le bâton s'abat sur ${solid} et le fait pivoter`,
+        bound: (solid) => `Le serpent tient ${solid} · plus rien d'autre ne le bouge`,
+        released: (solid) => `${solid} est relâché`,
+        cameUpUnder: (solid, other) =>
+          `L'aura a couru depuis ${solid} le long du sol et a resurgi sous ${other}`,
+        stitched: (solid) => `${solid} est revenu tel que le plan le donne`,
+        nothingToStitch: (solid) => `Rien n'avait été fait à ${solid}`,
+        animated: (solid) => `${solid} s'est éveillé, et n'en est pas moins solide`,
+        shredStuck: (solid) => `Le confetti se fiche dans ${solid} · toutes les volées y convergeront`,
+        shredCut: (solid, left) => `${solid} est taillé à ${left} % de lui-même`,
+        grown: (solid) => `${solid} a grossi hors de toute proportion`,
+        growthRefused: (solid) => `${solid} bouge à peine · du Nen l'habite déjà`,
+        marked: (solid, sun) => `${sun ? '☀' : '☾'} sur ${solid}`,
+        detonated: (solid, other) => `${solid} et ${other} se sont rejoints, il ne reste ni l'un ni l'autre`,
+        swapped: (solid, other) => `${solid} et ${other} ont échangé leur apparence, et rien d'autre`,
+        cargoTaken: (solid) => `${solid} est chargé · désignez le relais de sortie`,
+        cargoLanded: (solid, room) => `${solid} se dresse dans ${room}`,
+      },
+      body: {
+        reach: "Elle agit sur vous, où que vous soyez dans le vaisseau",
+        castHint: 'F, ou un clic n’importe où dans la visite',
+        noTarget: 'Rien à viser : la cible, c’est vous',
+      },
+      solids: {
+        reach: "N'importe quel volume du vaisseau, depuis n'importe où dans le vaisseau",
+        castHint:
+          'F, ou un clic, pour lancer dessus — ou choisissez ci-dessous un volume du vaisseau',
+        aiming: (solid) => `Face à ${solid}`,
+        aimingNothing: 'Rien de solide devant vous',
+        targets: 'Lancer sur un volume',
+        relayTargets: 'Désignez le relais de sortie',
+        pairing: (solid) => `Tient ${solid}`,
+        of: (solid, room) => `${solid} — ${room}`,
+        copy: 'copie',
+      },
+      verse: {
+        provenance: [
+          "Une planche la soutient, et la planche ne cille pas.",
+          "La coupe en atteste, et n'en montre pas l'intérieur.",
+          "Seule la main de cette archive la dessine.",
+          "Rien ne la dessine. Elle tient pour que le pont tienne.",
+        ],
+        ways: [
+          "Aucun chemin n'y mène. Elle attend qu'on l'atteigne.",
+          "Un seuil, et tout passe par lui.",
+          "Peu de portes, et chacune choisie.",
+          "Beaucoup d'accès, et aucun qui soit calme.",
+        ],
+        standing: [
+          "Rien ne s'y dresse. C'est cela, l'affirmation.",
+          "Peu s'y dresse, et c'est ce que la pièce est.",
+          "Ce qui s'y dresse la remplit avant vous.",
+          "Vous contournerez plus que vous ne traverserez.",
+        ],
+        level: [
+          "Au-dessus, quelqu'un dort encore.",
+          "En dessous, les ressorts portent la masse.",
+          "La coque est plus proche qu'il n'y paraît.",
+          "Ce n'est pas le pont qui décide de celle-ci.",
+        ],
+      },
+      book: {
+        title: 'Le livre',
+        cast: 'Lancer cette page',
+        hint: 'Une page se lance là où vous visez, comme le reste',
+        card: 'carte',
+        loan: 'prêt',
+      },
+      holds: {
+        book: 'Dans le livre',
+        openPage: 'Ouvert sur',
+        bookmark: 'Tenue à côté',
+        hand: 'Cartes en main',
+        zetsu: 'Drainée',
+        loan: 'Prêtée',
+        trail: 'Le fil',
+        owl: 'Le hibou garde',
+        foreseen: 'Dix secondes plus tard',
+        verses: 'Écrites',
+        poem: 'Le poème',
+        dial: 'Le cadran lit',
+        droplets: 'Gouttes en chasse',
+        ninelives: 'Le nom du chat sur',
+        curse: 'Marquée',
+        souls: 'Réveillée en',
+        enhance: 'Aura engagée',
+        riding: 'À bord',
+        eyes: 'Yeux à',
+        projected: 'Le corps est dans',
+        dance: 'Le prologue',
+        mimic: "Sous la forme de",
+        soothed: 'La musique tient',
+        deduced: 'Conditions lues',
+        shut: 'Enchaînée',
+        guarded: 'Gardée',
+        pinned: 'Retenu dans',
+        vow: 'La règle',
+        pact: 'Les termes',
+        devouring: 'Les poissons sont dans',
+        cards: 'Cartes posées',
+        double: 'Le double',
+        worm: 'Le tunnel',
+        snakes: 'Serpents lâchés dans',
+        trap: "L'appât est dans",
+        crossings: (n) => `${n} passages sur 3`,
+        solid: 'Volumes retenus',
+        wound: 'Le confetti est dans',
+        windup: (turns) => `${turns} rotation${turns === 1 ? '' : 's'} enroulée${turns === 1 ? '' : 's'}`,
+        laidOpen: 'Tout le vaisseau, ouvert',
+        isolated: 'Pièce isolée',
+        doors: 'Portes de la planque',
+        eye: 'Œil déporté',
+        watched: 'Poupées de papier',
+        emptied: 'Aspiré',
+        dowsing: 'Le pendule désigne',
+        phasing: 'Traversée des murs',
+        sealed: 'Sens scellés',
+        dispatches: 'Dépêches',
+        visits: (count) => `${count} arrivée${count === 1 ? '' : 's'}`,
+        armed: 'armé',
+      },
+    },
   },
 
   tourSources: {

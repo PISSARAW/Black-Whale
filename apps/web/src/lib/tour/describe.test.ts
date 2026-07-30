@@ -41,6 +41,7 @@ const solids = Object.fromEntries(
       'camera',
       'telephone',
       'duct',
+      'vent',
     ] as StructureKind[]
   ).map((kind) => [kind, (count: number) => `${count} ${kind}`]),
 ) as RoomWords['solids']

@@ -253,6 +253,7 @@ export const en = {
         camera: (count: number) => `${count} ${count === 1 ? 'camera' : 'cameras'}`,
         telephone: (count: number) => `${count} ${count === 1 ? 'telephone' : 'telephones'}`,
         duct: (count: number) => `${count} ${count === 1 ? 'run of ducting' : 'runs of ducting'}`,
+        vent: (count: number) => `${count} ${count === 1 ? 'vent' : 'vents'}`,
       },
     },
 

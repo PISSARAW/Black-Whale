@@ -3794,7 +3794,7 @@
       "nameFr": "Cuisine — 1014 (Woble)",
       "category": "quarters",
       "provenance": "panel",
-      "source": "Ch. 363 — the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
+      "source": "Ch. 363 — the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on. Ch. 367 stands in this one: the counter against the forward wall under its glazed wall cabinets, and a boarded floor rather than the tiling the rest of the apartment is drawn with.",
       "ceiling": 4,
       "envelope": null,
       "footprint": [
@@ -3803,7 +3803,7 @@
         [10.5, -5.7],
         [1.5, -5.7]
       ],
-      "sourceFr": "Chap. 363 — le plan d'un appartement princier, encarté sur la double page de la zone d'habitation : salle du personnel, cuisine, salle à manger, salon, chambre du prince et salle d'eau derrière une seule porte, et les pièces montrées pour Benjamin, Tserriednich et Luzurus à partir du chap. 362."
+      "sourceFr": "Chap. 363 — le plan d'un appartement princier, encarté sur la double page de la zone d'habitation : salle du personnel, cuisine, salle à manger, salon, chambre du prince et salle d'eau derrière une seule porte, et les pièces montrées pour Benjamin, Tserriednich et Luzurus à partir du chap. 362. Le chap. 367 se tient dedans : le plan de travail contre la cloison avant sous ses éléments hauts vitrés, et un plancher là où le reste de l'appartement est dessiné carrelé."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1014-dining",
@@ -15686,6 +15686,22 @@
       "sourceFr": "Chap. 363 — le plan d'un appartement princier, encarté sur la double page de la zone d'habitation : salle du personnel, cuisine, salle à manger, salon, chambre du prince et salle d'eau derrière une seule porte, et les pièces montrées pour Benjamin, Tserriednich et Luzurus à partir du chap. 362."
     },
     {
+      "id": "tier-1-royal-residential-sector-room-1012-bedroom-vent-15",
+      "spaceId": "tier-1-royal-residential-sector-room-1012-bedroom",
+      "kind": "vent",
+      "name": "Ventilation Grille",
+      "nameFr": "Grille d'aération",
+      "at": [-3, 10.03],
+      "size": [0.9, 0.3],
+      "rotation": 0,
+      "base": 3.1,
+      "height": 0.45,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 367 — the same network, one apartment further: the cockroach leaves the sewers by the grille of Prince Momoze's great bedroom and looks down on the bed from it. It is through this grille that Queen Oito watches Momoze be killed in ch. 368.",
+      "sourceFr": "Chap. 367 — le même réseau, un appartement plus loin : le cafard sort des égouts par la grille de la grande chambre du prince Momoze et surplombe le lit. C'est par cette grille que la reine Oito assiste au meurtre de Momoze au chap. 368."
+    },
+    {
       "id": "tier-1-royal-residential-sector-room-1013-bedroom-bed-01",
       "spaceId": "tier-1-royal-residential-sector-room-1013-bedroom",
       "kind": "bed",
@@ -15924,6 +15940,22 @@
       "provenance": "panel",
       "source": "Ch. 363 — the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
       "sourceFr": "Chap. 363 — le plan d'un appartement princier, encarté sur la double page de la zone d'habitation : salle du personnel, cuisine, salle à manger, salon, chambre du prince et salle d'eau derrière une seule porte, et les pièces montrées pour Benjamin, Tserriednich et Luzurus à partir du chap. 362."
+    },
+    {
+      "id": "tier-1-royal-residential-sector-room-1013-living-vent-15",
+      "spaceId": "tier-1-royal-residential-sector-room-1013-living",
+      "kind": "vent",
+      "name": "Ventilation Grille",
+      "nameFr": "Grille d'aération",
+      "at": [-10.33, -1],
+      "size": [0.3, 0.9],
+      "rotation": 0,
+      "base": 3.1,
+      "height": 0.45,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 367 — the sewer network under the residential sector and the louvred grilles it opens into the apartments through: Bill's cockroach is put into the sewers and reaches prince after prince by them. Prince Marayam's rooms are the first it looks down into, from just under the ceiling.",
+      "sourceFr": "Chap. 367 — le réseau d'égouts sous la zone d'habitation et les grilles à persiennes par lesquelles il débouche dans les appartements : le cafard de Bill est lâché dans les égouts et gagne ainsi un prince après l'autre. Les pièces du prince Marayam sont les premières qu'il observe d'en haut, juste sous le plafond."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1014-bedroom-bed-01",
@@ -22132,6 +22164,22 @@
       "provenance": "panel",
       "source": "Ch. 360 — Prince Woble's rooms as Kurapika finds them: the wall telephone he calls Biscuit on, the armoire and the curio table down the starboard wall, the cane armchair, the pair of sculpture stands, and the framed pictures along the panelled wall.",
       "sourceFr": "Chap. 360 — les appartements du prince Woble tels que Kurapika les trouve : le téléphone mural par lequel il appelle Biscuit, l'armoire et la table de présentation le long du mur tribord, le fauteuil canné, les deux sellettes à sculpture, et les tableaux encadrés le long du mur lambrissé."
+    },
+    {
+      "id": "tier-1-royal-residential-sector-room-1014-kitchen-cabinet-24",
+      "spaceId": "tier-1-royal-residential-sector-room-1014-kitchen",
+      "kind": "cabinet",
+      "name": "Wall Cabinets",
+      "nameFr": "Éléments hauts",
+      "at": [6, -9.95],
+      "size": [6.8, 0.35],
+      "rotation": 0,
+      "base": 1.45,
+      "height": 1,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 367 — Prince Woble's kitchen seen from the floor: the counter run against the forward wall, the glazed wall cabinets carried above it, the bottles standing on the worktop, and the boarded floor the bodyguards wait on.",
+      "sourceFr": "Chap. 367 — la cuisine du prince Woble vue depuis le sol : le plan de travail contre la cloison avant, les éléments hauts vitrés portés au-dessus, les bouteilles posées sur le plan, et le plancher où attendent les gardes du corps."
     },
     {
       "id": "tier-1-vvip-prison-beyond-side-table",

@@ -216,6 +216,7 @@ export const fr: Messages = {
         camera: (count) => `${count} ${count === 1 ? 'caméra' : 'caméras'}`,
         telephone: (count) => `${count} ${count === 1 ? 'téléphone' : 'téléphones'}`,
         duct: (count) => `${count} ${count === 1 ? 'gaine' : 'gaines'}`,
+        vent: (count) => `${count} ${count === 1 ? "bouche d'aération" : "bouches d'aération"}`,
       },
     },
 

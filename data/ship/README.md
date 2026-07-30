@@ -453,6 +453,19 @@ bandeau : une cellule dans laquelle on ne voit pas est une réserve. Les deux ne
 peuvent pas diverger, `grilleBars` posant chaque montant à l'intérieur du
 contour que les collisions lisent déjà.
 
+Une bouche d'aération (`kind: "vent"`) est stockée comme le reste des services,
+accrochée bien au-dessus des têtes : on ne la contourne pas, et elle n'ôte rien
+au sol de la pièce. Elle est pourtant ce que la zone d'habitation **est**. Le
+chap. 367 lâche le cafard de Bill dans les égouts qui courent sous le secteur,
+et chaque prince sur lequel il renseigne ensuite est vu par une de ces grilles,
+juste sous le plafond. Quatorze appartements ferment par quatorze portes qui
+n'ouvrent nulle part ailleurs — c'est ce que dit `envelope` — et la grille est
+le trou dans ce raisonnement : c'est par celle de la grande chambre du prince
+Momoze que la reine Oito assiste à son meurtre au chap. 368. Le réseau lui-même
+n'est pas un espace : rien ne le dessine à l'échelle d'un homme, et personne n'y
+marche. Ce qui est dessiné, ce sont ses ouvertures, et ce sont elles qui sont
+posées.
+
 Les laisser de côté aurait dessiné un tambour vide, une halle vide et un hangar
 vide — et affirmé en creux que les planches ne montrent rien.
 

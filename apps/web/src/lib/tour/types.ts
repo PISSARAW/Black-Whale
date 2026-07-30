@@ -93,6 +93,15 @@ export type LinkKind = 'stair' | 'lift' | 'bulkhead' | 'door'
  *   head height, so it is walked under rather than round. Ch. 366 draws the
  *   deckhead of bay 37564 bare: the services are what tells you the place is a
  *   hold with people in it and not a deck built to be lived on.
+ * - `vent` — a louvred grille high on a wall, where the service run behind it
+ *   comes out. Hung well clear of head height, like the ducting, and kept for
+ *   the reason the manacle and the telephone are: ch. 367 puts Bill's cockroach
+ *   into the sewers under the residential sector, and every prince it goes on to
+ *   report on is seen through one of these, from just under the ceiling. The
+ *   sector is fourteen suites behind fourteen doors that open nowhere else —
+ *   `envelope` says exactly that — and the grille is the hole in that argument.
+ *   It is what a room is in the same sense a cell is its bars: through the one
+ *   in Prince Momoze's bedroom, ch. 368 has Queen Oito watch him be killed.
  * - `telephone` — the wall set a room is reached on. Small, and kept for the
  *   reason the manacle is: ch. 360 hangs one in Prince Woble's rooms, and it is
  *   standing at it that Kurapika calls Biscuit and learns what the beasts are.
@@ -116,6 +125,7 @@ export type StructureKind =
   | 'camera'
   | 'telephone'
   | 'duct'
+  | 'vent'
 
 /**
  * What a level is: a deck of the ship, or the inside of a single room drawn at

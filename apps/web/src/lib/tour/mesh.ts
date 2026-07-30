@@ -186,6 +186,8 @@ const STRUCTURE_COLOURS: Record<StructureKind, number> = {
   camera: 0x22262a,
   telephone: 0x2a2622,
   duct: 0x3a3d42,
+  // Darker than the ducting it belongs to: a grille is mostly the gaps in it.
+  vent: 0x24272b,
 }
 
 const WALL_COLOUR = hex(0x4a4038)

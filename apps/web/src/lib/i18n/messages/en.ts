@@ -88,6 +88,23 @@ export const en = {
       useKeys: 'E, on a stairwell or at a door',
       nen: 'Cast the active Hatsu',
       nenKeys: 'F, or click, on the room or the solid you are facing',
+      touch: 'On a touchscreen',
+      touchKeys:
+        'The stick at bottom left walks, pushed to the rim it runs; drag the view to look; the buttons take a door and cast',
+    },
+    /**
+     * The on-screen controls a touchscreen gets instead of the keyboard. The
+     * button label carries the destination, so it says what E would have said
+     * without naming a key the phone has not got.
+     */
+    touch: {
+      hint: 'Drag to look · stick to walk',
+      move: 'Walking stick',
+      cast: 'Cast',
+      takeLink: (destination: string) => `Take the stairs to ${destination}`,
+      takeBulkhead: (destination: string) => `Pass through to ${destination}`,
+      enterInterior: (destination: string) => `Step inside ${destination}`,
+      leaveInterior: (destination: string) => `Step back out to ${destination}`,
     },
     provenance: {
       title: 'What is canon here',
@@ -1071,6 +1088,16 @@ export const en = {
     factionsLabel: 'Factions',
     factionsActive: (count: number) => `${count} active`,
     clearFactionFilters: 'Clear faction filters',
+    beyondLineage: {
+      label: 'Beyond’s lineage',
+      filterLabel: 'Filter the map by Beyond’s lineage',
+      aboard: (count: number) => `${count} aboard`,
+      all: 'Everyone',
+      any: 'His children',
+      confirmed: 'Marked',
+      suspected: 'Suspected',
+      note: 'Crosses the faction filters: marked carry the birthmark, suspected are only claimed to.',
+    },
     factions: {
       princes: 'Royal houses',
       guards: 'Royal guard',

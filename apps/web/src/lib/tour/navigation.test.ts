@@ -1,7 +1,18 @@
 import { describe, expect, it } from 'vitest'
 import { buildShip, spaceAt, spawnPoint } from './blueprint'
 import { pointInPolygon } from './geometry'
-import { LINK_REACH, VISITOR_RADIUS, linkUnderfoot, resolveMovement, wallsNear } from './navigation'
+import {
+  LINK_REACH,
+  STICK_RADIUS,
+  STICK_RIM,
+  VISITOR_RADIUS,
+  linkUnderfoot,
+  resolveMovement,
+  stickVector,
+  walkInput,
+  wallsNear,
+  type WalkKeys,
+} from './navigation'
 import type { Link, Vec2, WallSegment } from './types'
 
 /** A wall running along x = 0, from z = -10 to z = 10. */
@@ -104,6 +115,77 @@ describe('linkUnderfoot', () => {
 
   it('offers nothing from a space the link does not touch', () => {
     expect(linkUnderfoot(links, 'c', [0, 0])).toBeNull()
+  })
+})
+
+describe('the on-screen stick', () => {
+  it('reads the middle of its base as standing still', () => {
+    const [x, z] = stickVector(0, 0)
+    expect(x).toBeCloseTo(0)
+    expect(z).toBeCloseTo(0)
+  })
+
+  it('reads a push up the screen as forward', () => {
+    const [x, z] = stickVector(0, -STICK_RADIUS)
+    expect(x).toBeCloseTo(0)
+    expect(z).toBeCloseTo(1)
+  })
+
+  it('reads half a push as half a pace', () => {
+    expect(stickVector(STICK_RADIUS / 2, 0)[0]).toBeCloseTo(0.5)
+  })
+
+  it('saturates at the rim however far the finger slides past it', () => {
+    const near = stickVector(STICK_RADIUS * 2, 0)
+    const far = stickVector(STICK_RADIUS * 40, 0)
+    expect(Math.hypot(...near)).toBeCloseTo(1)
+    expect(far).toEqual(near)
+  })
+})
+
+describe('walkInput', () => {
+  const still: WalkKeys = {
+    forward: false,
+    back: false,
+    left: false,
+    right: false,
+    sprint: false,
+  }
+
+  it('stands still with nothing held and no finger on the stick', () => {
+    expect(walkInput(still, null).moving).toBe(false)
+  })
+
+  it('normalises the keyboard diagonals, as it did before the stick existed', () => {
+    const diagonal = walkInput({ ...still, forward: true, right: true }, null)
+    expect(Math.hypot(diagonal.strafe, diagonal.advance)).toBeCloseTo(1)
+    expect(diagonal.advance).toBeCloseTo(Math.SQRT1_2)
+  })
+
+  it('leaves a single key at full pace', () => {
+    expect(walkInput({ ...still, forward: true }, null).advance).toBeCloseTo(1)
+  })
+
+  it('keeps a half push of the stick a half pace', () => {
+    const half = walkInput(still, [0, 0.5])
+    expect(half.moving).toBe(true)
+    expect(half.advance).toBeCloseTo(0.5)
+    expect(half.running).toBe(false)
+  })
+
+  it('runs when the stick is at its rim, and not before', () => {
+    expect(walkInput(still, [0, STICK_RIM - 0.05]).running).toBe(false)
+    expect(walkInput(still, [0, 1]).running).toBe(true)
+  })
+
+  it('does not let a key held down count as a run', () => {
+    expect(walkInput({ ...still, forward: true }, null).running).toBe(false)
+    expect(walkInput({ ...still, forward: true, sprint: true }, null).running).toBe(true)
+  })
+
+  it('adds the stick to the keys without ever leaving the unit circle', () => {
+    const both = walkInput({ ...still, forward: true, right: true }, [1, 1])
+    expect(Math.hypot(both.strafe, both.advance)).toBeLessThanOrEqual(1 + 1e-9)
   })
 })
 

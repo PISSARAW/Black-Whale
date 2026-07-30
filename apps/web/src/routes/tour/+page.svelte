@@ -57,6 +57,8 @@
   let availableLink = $state<{ link: Link; to: string } | null>(null)
   let jumpTo = $state<string | null>(requestedSpace?.id ?? null)
   let engaged = $state(false)
+  /** Set by the scene once it knows it is being walked with a finger. */
+  let touch = $state(false)
   let position = $state<[number, number]>([0, 0])
   let heading = $state(0)
 
@@ -98,22 +100,32 @@
 
   const provenanceClass = (space: Space) => PROVENANCE_CLASS[space.provenance]
 
-  const linkPrompt = $derived.by(() => {
+  /**
+   * The stairwell or door within reach, named — read out of one wording or the
+   * other, because the same crossing is a key to press on a keyboard and a
+   * button to tap on a phone, which has no E.
+   */
+  const promptFor = (words: {
+    takeLink: (destination: string) => string
+    takeBulkhead: (destination: string) => string
+    enterInterior: (destination: string) => string
+    leaveInterior: (destination: string) => string
+  }) => {
     if (!availableLink) return null
     const destination = ship.spaces.get(availableLink.to)
     if (!destination) return null
     const tier = ship.tiers.find((candidate) => candidate.id === destination.tierId)
     const label = `${nameOf(destination)}${tier ? ` — ${nameOf(tier)}` : ''}`
     if (availableLink.link.kind === 'door') {
-      const target = ship.tiers.find((candidate) => candidate.id === destination.tierId)
-      return target?.kind === 'interior'
-        ? $t.tour.enterInterior(nameOf(target))
-        : $t.tour.leaveInterior(nameOf(destination))
+      return tier?.kind === 'interior'
+        ? words.enterInterior(nameOf(tier))
+        : words.leaveInterior(nameOf(destination))
     }
-    return availableLink.link.kind === 'bulkhead'
-      ? $t.tour.takeBulkhead(label)
-      : $t.tour.takeLink(label)
-  })
+    return availableLink.link.kind === 'bulkhead' ? words.takeBulkhead(label) : words.takeLink(label)
+  }
+
+  const linkPrompt = $derived(promptFor($t.tour))
+  const touchUseLabel = $derived(promptFor($t.tour.touch))
 
   /** Bow-to-stern length of the ship, read off the widest deck. */
   const shipLength = Math.round(
@@ -345,6 +357,7 @@
         bind:availableLink
         bind:jumpTo
         bind:engaged
+        bind:touch
         bind:position
         bind:heading
         bind:aimedAt
@@ -355,6 +368,8 @@
         onCast={castOn}
         onArrive={arrived}
         onWorm={crossWorm}
+        {touchUseLabel}
+        touchLabels={{ move: $t.tour.touch.move, cast: $t.tour.touch.cast }}
         loadingLabel={$t.tour.loading}
         unsupportedLabel={$t.tour.unsupported}
       />
@@ -431,10 +446,18 @@
       <p
         class="pointer-events-none absolute bottom-3 left-1/2 -translate-x-1/2 rounded bg-[#050505]/80 px-3 py-1 text-xs text-[#FFFFF0]/70"
       >
-        {engaged ? $t.tour.engaged : $t.tour.enter}
+        {#if engaged}
+          {$t.tour.engaged}
+        {:else if touch}
+          {$t.tour.touch.hint}
+        {:else}
+          {$t.tour.enter}
+        {/if}
       </p>
 
-      {#if linkPrompt}
+      <!-- On a touchscreen the crossing is a button in the scene, which says the
+           same thing without naming a key. -->
+      {#if linkPrompt && !touch}
         <p
           class="pointer-events-none absolute bottom-12 left-1/2 -translate-x-1/2 rounded border border-[#FFD700]/50 bg-[#050505]/90 px-3 py-1 text-xs text-[#FFD700]"
         >
@@ -617,6 +640,10 @@
           {#if technique}
             <dt class="text-[#FFFFF0]">{$t.tour.controls.nen}</dt>
             <dd>{$t.tour.controls.nenKeys}</dd>
+          {/if}
+          {#if touch}
+            <dt class="text-[#FFFFF0]">{$t.tour.controls.touch}</dt>
+            <dd>{$t.tour.controls.touchKeys}</dd>
           {/if}
         </dl>
       </section>

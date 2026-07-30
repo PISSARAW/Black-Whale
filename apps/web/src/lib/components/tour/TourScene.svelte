@@ -36,7 +36,15 @@
     type TourWorld,
   } from '$lib/tour/hatsu'
   import { buildSolidMesh, buildTierMesh } from '$lib/tour/mesh'
-  import { linkUnderfoot, resolveMovement, wallsNear } from '$lib/tour/navigation'
+  import {
+    STICK_RADIUS,
+    STICK_RIM,
+    linkUnderfoot,
+    resolveMovement,
+    stickVector,
+    walkInput,
+    wallsNear,
+  } from '$lib/tour/navigation'
   import type { Link, Space, Structure, Vec2 } from '$lib/tour/types'
 
   interface Props {
@@ -51,6 +59,19 @@
     jumpTo?: string | null
     /** Whether the pointer is captured, so the page can say how to get out. */
     engaged?: boolean
+    /**
+     * Whether the walk is being driven by touch. Two-way: the scene decides it,
+     * from the pointer the browser reports and from the first finger to land,
+     * and the page reads it to stop telling a phone to click.
+     */
+    touch?: boolean
+    /** Labels for the on-screen controls a touchscreen gets. */
+    touchLabels: { move: string; cast: string }
+    /**
+     * What the door or stairwell within reach is called, worded for a button
+     * rather than for a key. `null` when there is nothing to take.
+     */
+    touchUseLabel?: string | null
     /** Where the visitor stands, for the mini-map. */
     position?: Vec2
     /** Which way they face, in radians, for the mini-map cone. */
@@ -92,6 +113,9 @@
     availableLink = $bindable(null),
     jumpTo = $bindable(null),
     engaged = $bindable(false),
+    touch = $bindable(false),
+    touchLabels,
+    touchUseLabel = null,
     position = $bindable([0, 0]),
     heading = $bindable(0),
     world = EMPTY_WORLD,
@@ -110,10 +134,63 @@
   const LOOK_SENSITIVITY = 0.0022
   const MAX_PITCH = Math.PI / 2 - 0.05
 
+  /** A finger that moved less than this, in pixels, was a tap and not a drag. */
+  const TAP_SLOP = 12
+
   let canvas = $state<HTMLCanvasElement | null>(null)
   let container = $state<HTMLDivElement | null>(null)
   let ready = $state(false)
   let failure = $state<string | null>(null)
+
+  /**
+   * The virtual joystick, as a vector inside the unit circle: `x` to the right,
+   * `z` forward. The keyboard's held keys deliberately stay out of Svelte's
+   * reactivity; this one cannot, because the knob is drawn from it.
+   */
+  let stick = $state<Vec2 | null>(null)
+  let stickBase = $state<HTMLDivElement | null>(null)
+  /** Which finger has the stick, so a second one looking around cannot steal it. */
+  let stickFinger: number | null = null
+
+  /** How hard the stick is being pushed, for the ring that says it is running. */
+  const push = $derived(stick ? Math.hypot(stick[0], stick[1]) : 0)
+
+  const setStick = (finger: Touch) => {
+    const base = stickBase?.getBoundingClientRect()
+    if (!base) return
+    stick = stickVector(
+      finger.clientX - (base.left + base.width / 2),
+      finger.clientY - (base.top + base.height / 2),
+    )
+  }
+
+  const gripStick = (event: TouchEvent) => {
+    const finger = event.changedTouches[0]
+    if (!finger || stickFinger !== null) return
+    stickFinger = finger.identifier
+    setStick(finger)
+  }
+
+  const dragStick = (event: TouchEvent) => {
+    for (const finger of Array.from(event.changedTouches)) {
+      if (finger.identifier === stickFinger) setStick(finger)
+    }
+  }
+
+  const dropStick = (event: TouchEvent) => {
+    for (const finger of Array.from(event.changedTouches)) {
+      if (finger.identifier !== stickFinger) continue
+      stickFinger = null
+      stick = null
+    }
+  }
+
+  onMount(() => {
+    // A phone reports a coarse pointer and no hover, so the controls are there
+    // before the first tap. Anything the query is unsure about — a hybrid
+    // laptop, an old browser — waits for a finger to land instead.
+    touch = window.matchMedia?.('(hover: none) and (pointer: coarse)').matches ?? false
+  })
 
   onMount(() => {
     let disposed = false
@@ -601,11 +678,22 @@
         pitch = Math.max(-MAX_PITCH, Math.min(MAX_PITCH, pitch - dy * LOOK_SENSITIVITY))
       }
 
+      /**
+       * When a finger was last on the glass. A tap is followed by a synthetic
+       * mouse pair, and its movement deltas are undefined — taken as read they
+       * would put NaN in the yaw. Timing it rather than reading `touch` keeps
+       * the mouse working on a screen that has both.
+       */
+      let touchedAt = -Infinity
+      const behindATap = () => performance.now() - touchedAt < 700
+
       const onMouseMove = (event: MouseEvent) => {
+        if (behindATap() || !Number.isFinite(event.movementX)) return
         if (document.pointerLockElement === canvas) look(event.movementX, event.movementY)
         else if (dragging) look(event.movementX, event.movementY)
       }
       const onMouseDown = () => {
+        if (behindATap()) return
         // With the pointer already captured, the click is the cast: the walk is
         // in first person and the reticle is where the aura goes. Before that,
         // the first click still has to be the one that takes the pointer.
@@ -624,21 +712,32 @@
         if (!engaged) for (const code of Object.keys(pressed)) delete pressed[code]
       }
 
-      // Touch: dragging looks around. Walking is keyboard-only for now, so a
-      // touchscreen visitor turns on the spot and travels through the space
-      // index in the sidebar rather than on foot.
+      // Touch: dragging the view looks around, the stick in the corner walks,
+      // and a tap that went nowhere is the cast — a phone has no pointer to
+      // lock, so the click-to-cast path is closed to it.
       let lastTouch: { x: number; y: number } | null = null
+      let travelled = 0
       const onTouchStart = (event: TouchEvent) => {
-        const touch = event.touches[0]
-        lastTouch = { x: touch.clientX, y: touch.clientY }
+        // Whatever the browser says about its pointer, a finger settles it.
+        touch = true
+        touchedAt = performance.now()
+        const finger = event.touches[0]
+        lastTouch = { x: finger.clientX, y: finger.clientY }
+        travelled = 0
       }
       const onTouchMove = (event: TouchEvent) => {
-        const touch = event.touches[0]
+        const finger = event.touches[0]
+        touchedAt = performance.now()
         if (!lastTouch) return
-        look((touch.clientX - lastTouch.x) * 1.6, (touch.clientY - lastTouch.y) * 1.6)
-        lastTouch = { x: touch.clientX, y: touch.clientY }
+        const dx = finger.clientX - lastTouch.x
+        const dy = finger.clientY - lastTouch.y
+        travelled += Math.hypot(dx, dy)
+        look(dx * 1.6, dy * 1.6)
+        lastTouch = { x: finger.clientX, y: finger.clientY }
       }
       const onTouchEnd = () => {
+        touchedAt = performance.now()
+        if (lastTouch && travelled < TAP_SLOP && aiming) cast()
         lastTouch = null
       }
 
@@ -699,22 +798,21 @@
         const loose = solidWalls(ship, world, currentTierId, now / 1000)
 
         // `code` is the physical key, so W A S D covers ZQSD on an AZERTY
-        // layout without a second binding.
-        const forward = Number(holding('KeyW', 'KeyZ', 'ArrowUp'))
-        const back = Number(holding('KeyS', 'ArrowDown'))
-        const left = Number(holding('KeyA', 'KeyQ', 'ArrowLeft'))
-        const right = Number(holding('KeyD', 'ArrowRight'))
-
-        let strafe = right - left
-        let advance = forward - back
-        const magnitude = Math.hypot(strafe, advance)
-        if (magnitude > 0) {
-          strafe /= magnitude
-          advance /= magnitude
-          const speed =
-            (holding('ShiftLeft', 'ShiftRight') ? SPRINT_SPEED : WALK_SPEED) *
-            paceOf(world.body) *
-            delta
+        // layout without a second binding. The stick in the corner is added to
+        // whatever the keys say rather than replacing it: a tablet with a
+        // keyboard attached should not have to choose.
+        const { strafe, advance, moving, running } = walkInput(
+          {
+            forward: holding('KeyW', 'KeyZ', 'ArrowUp'),
+            back: holding('KeyS', 'ArrowDown'),
+            left: holding('KeyA', 'KeyQ', 'ArrowLeft'),
+            right: holding('KeyD', 'ArrowRight'),
+            sprint: holding('ShiftLeft', 'ShiftRight'),
+          },
+          stick,
+        )
+        if (moving) {
+          const speed = (running ? SPRINT_SPEED : WALK_SPEED) * paceOf(world.body) * delta
           // A camera at yaw looks along (-sin, -cos) and has (cos, -sin) to its
           // right, which is what three.js does to (0, 0, -1) and (1, 0, 0).
           const sin = Math.sin(yaw)
@@ -862,6 +960,9 @@
       // The page asks for a jump by setting `jumpTo`; honour it and clear it so
       // asking twice for the same space works.
       jump = (spaceId: string) => goTo(spaceId)
+      // What E and F do, handed to the buttons a touchscreen gets instead.
+      take = takeLink
+      castNow = cast
     })()
 
     return () => {
@@ -872,6 +973,9 @@
 
   /** Assigned once the scene is live; the effect below waits for it. */
   let jump = $state<((spaceId: string) => void) | null>(null)
+  /** The same, for the two things the on-screen buttons stand in for. */
+  let take = $state<(() => void) | null>(null)
+  let castNow = $state<(() => void) | null>(null)
 
   $effect(() => {
     const requested = jumpTo
@@ -893,6 +997,55 @@
   {#if failure}
     <div class="absolute inset-0 grid place-items-center p-8 text-center text-[#FFFFF0]/70">
       {unsupportedLabel}
+    </div>
+  {/if}
+
+  <!-- The touchscreen's keyboard: a stick to walk with, and buttons for the two
+       keys — E and F — that a phone has no way of pressing. Everything here is
+       what the keys already do, routed through the same functions. -->
+  {#if touch && ready && !failure}
+    <div
+      bind:this={stickBase}
+      role="application"
+      aria-label={touchLabels.move}
+      ontouchstart={gripStick}
+      ontouchmove={dragStick}
+      ontouchend={dropStick}
+      ontouchcancel={dropStick}
+      class="absolute bottom-4 left-4 h-28 w-28 touch-none rounded-full border bg-[#050505]/40 transition-colors"
+      style:border-color={push > STICK_RIM ? 'rgb(255 215 0 / 0.9)' : 'rgb(255 215 0 / 0.35)'}
+    >
+      <!-- The knob is 44px across, so half of it is the offset that centres it. -->
+      <span
+        class="pointer-events-none absolute left-1/2 top-1/2 block h-11 w-11 rounded-full border border-[#FFD700]/70 bg-[#FFD700]/25"
+        style:transform="translate({(stick?.[0] ?? 0) * STICK_RADIUS - 22}px, {-(stick?.[1] ?? 0) *
+          STICK_RADIUS -
+          22}px)"
+      ></span>
+    </div>
+
+    <!-- Clear of the page's own read-out, which sits in the bottom corner. -->
+    <div class="absolute bottom-14 right-4 flex flex-col items-end gap-2">
+      {#if touchUseLabel}
+        <button
+          type="button"
+          onclick={() => take?.()}
+          class="max-w-[13rem] touch-none rounded border border-[#FFD700]/60 bg-[#050505]/90 px-3 py-2 text-left text-xs leading-snug text-[#FFD700]"
+        >
+          {touchUseLabel}
+        </button>
+      {/if}
+      {#if aiming}
+        <button
+          type="button"
+          onclick={() => castNow?.()}
+          class="touch-none rounded border bg-[#050505]/90 px-4 py-2 text-xs uppercase tracking-widest"
+          style:border-color={auraColour ? `color-mix(in srgb, ${auraColour} 70%, transparent)` : ''}
+          style:color={auraColour ?? '#FFFFF0'}
+        >
+          {touchLabels.cast}
+        </button>
+      {/if}
     </div>
   {/if}
 </div>

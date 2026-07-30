@@ -393,6 +393,39 @@
     "description": "The murder happens in the open. The assassin's rule was stated a chapter earlier — only the user and the possessed Loberry can see the decorative doll — and this is what it is for: Loberry cries out at a girl in a strange mask that no one else can find, and while the room is looking for a witness's hallucination, four conjured tsuchibokko take Barrigen by the neck. The guards see a white thing they cannot pull off; a single doll would need 44 seconds to empty a body, four working together need about 11. Myuhan follows, exsanguinated in the same fashion. The class Kurapika convened at 09:00 becomes an investigation before he has taught anything, and the ability's whole design is on display: a weapon invisible to every witness, operated through the one witness who can see it."
   },
   {
+    "id": "ch-374",
+    "number": 374,
+    "publicationOrder": 374,
+    "title": "Ability",
+    "timeline": [
+      {
+        "event": "A caption gives the elapsed time since the ship put to sea: 37 h 30 min",
+        "storyDate": "Day 3 · 01:30",
+        "charactersInvolved": [],
+        "location": "Black Whale - open sea"
+      },
+      {
+        "event": "The Woble camp takes stock: Hanzo's disappearance is read as a defence by Marayam's Nen beast, and keeping a line to him open is called essential",
+        "storyDate": "Day 3 · 01:30",
+        "charactersInvolved": ["kurapika", "queen-oito", "prince-woble"],
+        "location": "Tier 1 - Room 1014"
+      },
+      {
+        "event": "Fugetsu's Magical Worm opens a passage between her room and Kacho's",
+        "storyDate": "Day 3",
+        "charactersInvolved": ["prince-fugetsu", "prince-kacho"],
+        "location": "Tier 1 - Royal Residential Sector"
+      }
+    ],
+    "location": "Tier 1 - Royal Residential Sector",
+    "keyEvents": [
+      "The third time stamp of the voyage: 37 h 30 min out of port, so 01:30 on Day 3",
+      "Hanzo, gone into Marayam's quarters, is treated as alive and reachable rather than dead",
+      "Fugetsu's beast turns out to open a passage rather than defend her"
+    ],
+    "description": "A caption over the water counts 37 h 30 min since departure — 01:30 of the third day against the noon sailing of chapter 340, the small hours after the class that cost Barrigen his life. The chapter spends them quietly: the galley works, Oito holds Woble, and the Woble camp sorts what it knows, reading Hanzo's disappearance inside Marayam's quarters as a defensive act of the thirteenth prince's beast and treating the line to him as the thing to keep open. Fugetsu's beast, meanwhile, opens onto her sister's room."
+  },
+  {
     "id": "ch-377",
     "number": 377,
     "publicationOrder": 377,

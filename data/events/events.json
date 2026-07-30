@@ -390,9 +390,19 @@
     "chapter": 374,
     "chapterTitle": "Ability",
     "sequence": 1,
+    "title": "Thirty-seven and a half hours out of port",
+    "summary": "A caption over the sea gives the elapsed time since the ship put out: 37 h 30 min. Against the noon departure of chapter 340 that lands at 01:30 on the third day, in the small hours of the night after the first Nen class. The panels around it are quiet: the galley at work, Oito holding Woble in her room, and the Woble camp taking stock — Hanzo's disappearance inside Marayam's quarters is read as a defensive act of the thirteenth prince's Nen beast, keeping a line open to him is called essential, and the results are to be reported back.",
+    "legacyTitles": [],
+    "occurredAtLabel": "Day 3 · 01:30"
+  },
+  {
+    "chapter": 374,
+    "chapterTitle": "Ability",
+    "sequence": 2,
     "title": "Fugetsu's Magical Worm opens",
     "summary": "Fugetsu's Guardian Spirit Beast creates a passage connecting her room to Kacho's.",
-    "legacyTitles": []
+    "legacyTitles": [],
+    "occursAfterTitle": "Thirty-seven and a half hours out of port"
   },
   {
     "chapter": 375,

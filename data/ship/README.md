@@ -413,7 +413,16 @@ Le second : **ce qu'une planche montre est ce que la pièce est** —
   soixante-douze tables sont posées en quatre rangées, l'allée du trône laissée
   libre entre la deuxième et la troisième — la planche montre des rangées de
   tables rondes, la reconstruction leur donne un pas de six mètres ;
-- le réfectoire du pont 5 est ses longues tables en rangées (chap. 377) ;
+- le réfectoire du pont 5 est ses longues tables en rangées (chap. 377) et sa
+  **charpente** (chap. 371) : fermes, passerelles et gaines si haut au-dessus de
+  la foule que les 4,5 m du pont ne peuvent pas les porter — la salle reçoit 9 m,
+  au même titre que la mezzanine vaut ses 8 m au casino, et la poussière qui
+  flotte dans les grands vides du vaisseau y descend avec. Le couloir qui y mène
+  n'est plus déduit : le chap. 371 le légende « couloir de passage vers le grand
+  réfectoire », et y dessine l'échafaudage qu'une bande a mis en travers pour
+  faire payer le passage, l'étal du clan Buor à côté, et les passagers campant le
+  long des parois. La légende ne dit pas lequel des deux bouts de la salle elle
+  désigne ; la reconstruction le place à l'avant et l'écrit ;
 - le pont des canots est les capsules alignées sur leurs berceaux (chap. 383) ;
 - la salle de projection est sa scène à cadre sous rideau, ses loges et son
   parterre (chap. 359) ;

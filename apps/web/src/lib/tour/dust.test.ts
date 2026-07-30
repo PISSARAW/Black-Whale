@@ -23,10 +23,12 @@ const rooms = [...ship.plans.values()].flatMap((plan) =>
 describe('which rooms hold dust', () => {
   it('asks for height and room, not one or the other', () => {
     const holding = rooms.filter(({ space, tier }) => holdsDust(space, tier))
-    // The ten great voids of the ship, and they are the ten you would name: the
-    // banquet hall, the screening room, the observation deck, the supreme court,
-    // the central courthouse, the cineplex, both recycling plants, the Cha-R
-    // warehouse and the suspension bay. 3 129 motes over all of them.
+    // The eleven great voids of the ship, and they are the eleven you would
+    // name: the banquet hall, the screening room, the observation deck, the
+    // supreme court, the central courthouse, the cineplex, both recycling
+    // plants, the Cha-R warehouse, the suspension bay — and the central dining
+    // hall, which joined them when ch. 371 drew its roof and the deck's 4,5 m
+    // stopped being able to hold it. 3 183 motes over all of them.
     expect(holding.map(({ space }) => space.id).sort()).toEqual([
       'tier-1-banquet-hall',
       'tier-1-supreme-court',
@@ -35,6 +37,7 @@ describe('which rooms hold dust', () => {
       'tier-3-cineplex',
       'tier-3-observation-deck',
       'tier-4-recycling-sewage-facilities',
+      'tier-5-central-dining-hall',
       'tier-5-hull-suspension-bay',
       'tier-5-technical-recycling',
       'tier-5-warehouse',

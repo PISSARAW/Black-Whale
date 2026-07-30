@@ -92,7 +92,7 @@
       at: [530.0, 375.0],
       turned: false,
       through: true,
-      inferred: true,
+      inferred: false,
     },
     {
       id: 'tier-5-service-corridor-aft',

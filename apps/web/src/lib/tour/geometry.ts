@@ -601,3 +601,153 @@ function centroid(polygon: Polygon): Vec2 {
   const sum = polygon.reduce<[number, number]>((acc, p) => [acc[0] + p[0], acc[1] + p[1]], [0, 0])
   return [sum[0] / polygon.length, sum[1] / polygon.length]
 }
+
+/** The total length of a footprint's outline, for a room's wall area. */
+export function perimeter(polygon: Polygon): number {
+  let total = 0
+  for (const [a, b] of iterateEdges(polygon)) total += len(sub(b, a))
+  return total
+}
+
+/**
+ * The longest straight line the footprint holds between two of its corners.
+ *
+ * This is the sight line a room can offer, and it is what the fog and the
+ * reverberation are both scaled by: a cabin measures a couple of metres across
+ * and the banquet hall a hundred and sixty, and one setting cannot be right for
+ * both. Corner to corner rather than through the middle of the polygon, because
+ * an L-shaped hall is still a hall — the visitor walks the bend.
+ */
+export function longestChord(polygon: Polygon): number {
+  let longest = 0
+  for (let i = 0; i < polygon.length; i++) {
+    for (let j = i + 1; j < polygon.length; j++) {
+      const span = len(sub(polygon[j], polygon[i]))
+      if (span > longest) longest = span
+    }
+  }
+  return longest
+}
+
+/** How far a point stands from the nearest wall of its room. */
+export function distanceToBoundary(point: Vec2, polygon: Polygon): number {
+  let nearest = Infinity
+  for (const [a, b] of iterateEdges(polygon)) {
+    const distance = len(sub(point, closestPointOnSegment(point, a, b)))
+    if (distance < nearest) nearest = distance
+  }
+  return Number.isFinite(nearest) ? nearest : 0
+}
+
+/**
+ * The stretches of the segment `a`→`b` that lie inside the polygon.
+ *
+ * Every crossing of the outline is collected, sorted along the segment, and each
+ * span between two crossings is kept or dropped on whether its middle is inside.
+ * That handles a footprint with a bite out of it — an L, a ring of cabins around
+ * a stairwell — without assuming the outline is convex.
+ */
+export function clipSegment(polygon: Polygon, a: Vec2, b: Vec2): [Vec2, Vec2][] {
+  const dir = sub(b, a)
+  const length = len(dir)
+  if (length < EPSILON) return []
+  const unit: Vec2 = [dir[0] / length, dir[1] / length]
+
+  const crossings = [0, length]
+  for (const [p, q] of iterateEdges(polygon)) {
+    const edge = sub(q, p)
+    const denominator = cross(unit, edge)
+    if (Math.abs(denominator) < 1e-9) continue
+    const offset = sub(p, a)
+    const t = cross(offset, edge) / denominator
+    const u = cross(offset, unit) / denominator
+    if (t < 0 || t > length || u < 0 || u > 1) continue
+    crossings.push(t)
+  }
+  crossings.sort((x, y) => x - y)
+
+  const spans: [Vec2, Vec2][] = []
+  for (let i = 0; i < crossings.length - 1; i++) {
+    const from = crossings[i]
+    const to = crossings[i + 1]
+    if (to - from < EPSILON) continue
+    if (!pointInPolygon(along(a, unit, (from + to) / 2), polygon)) continue
+    spans.push([along(a, unit, from), along(a, unit, to)])
+  }
+  return spans
+}
+
+/**
+ * Centre-to-centre spacing of the deck plates, in metres.
+ *
+ * The one thing a bare floor withholds is how fast you are crossing it. A
+ * hundred-and-fifty-seven-metre hall drawn as an unbroken sheet reads the same
+ * at a walk as at a sprint, and the reconstruction's own case for its scale —
+ * that these are rooms a person walks, not a diagram — is the case for giving
+ * the eye something to count. A plate this size is what a hull of this period is
+ * riveted from, and it passes underfoot about once per stride.
+ */
+export const PLATE_PITCH = 1.2
+
+/**
+ * Where the seams between deck plates fall inside a footprint.
+ *
+ * Laid on a grid in the ship's own coordinates rather than the room's, so the
+ * courses run on through a doorway instead of restarting at every threshold —
+ * the plating was laid before the partitions.
+ */
+export function plateSeams(polygon: Polygon, pitch = PLATE_PITCH): [Vec2, Vec2][] {
+  if (pitch < EPSILON || polygon.length < 3) return []
+
+  const xs = polygon.map((point) => point[0])
+  const zs = polygon.map((point) => point[1])
+  const minX = Math.min(...xs)
+  const maxX = Math.max(...xs)
+  const minZ = Math.min(...zs)
+  const maxZ = Math.max(...zs)
+
+  const seams: [Vec2, Vec2][] = []
+  for (let x = Math.ceil(minX / pitch) * pitch; x <= maxX; x += pitch) {
+    seams.push(...clipSegment(polygon, [x, minZ - 1], [x, maxZ + 1]))
+  }
+  for (let z = Math.ceil(minZ / pitch) * pitch; z <= maxZ; z += pitch) {
+    seams.push(...clipSegment(polygon, [minX - 1, z], [maxX + 1, z]))
+  }
+  return seams
+}
+
+/**
+ * The triangle cut into smaller ones until no edge is longer than `maxEdge`.
+ *
+ * The deck is lit by point lights and shaded per vertex, so a floor drawn as two
+ * enormous triangles can only be flat: there is nowhere between its corners to
+ * put a value. Splitting the longest edge in half and recursing gives every
+ * surface interior vertices to hold light in, and keeps the split at the middle
+ * of an edge so neighbouring triangles agree on it and no crack opens up.
+ */
+export function subdivideTriangle(
+  a: Vec2,
+  b: Vec2,
+  c: Vec2,
+  maxEdge: number,
+): [Vec2, Vec2, Vec2][] {
+  const ab = len(sub(b, a))
+  const bc = len(sub(c, b))
+  const ca = len(sub(a, c))
+  const longest = Math.max(ab, bc, ca)
+  if (!(maxEdge > 0) || longest <= maxEdge) return [[a, b, c]]
+
+  const mid = (p: Vec2, q: Vec2): Vec2 => [(p[0] + q[0]) / 2, (p[1] + q[1]) / 2]
+  // Split the longest edge, so the pieces stay as near equilateral as the
+  // original was rather than growing ever thinner slivers.
+  if (longest === ab) {
+    const m = mid(a, b)
+    return [...subdivideTriangle(a, m, c, maxEdge), ...subdivideTriangle(m, b, c, maxEdge)]
+  }
+  if (longest === bc) {
+    const m = mid(b, c)
+    return [...subdivideTriangle(a, b, m, maxEdge), ...subdivideTriangle(a, m, c, maxEdge)]
+  }
+  const m = mid(c, a)
+  return [...subdivideTriangle(a, b, m, maxEdge), ...subdivideTriangle(m, b, c, maxEdge)]
+}

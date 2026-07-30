@@ -38,6 +38,8 @@ export const littleEye = defineAbility({
 
   targets: [person()],
 
+  cost: { label: 'Très peu d’aura, mais un hôte animal vulnérable', amount: 1, unit: 'hôte' },
+
   actions: {
     attach: {
       label: 'Poser la sphère sur un animal',

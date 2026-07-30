@@ -32,6 +32,8 @@ export const nenStitches = defineAbility({
 
   targets: [person(), object()],
 
+  cost: { label: 'Fil d’aura proportionnel à la plaie recousue', unit: 'fil' },
+
   actions: {
     thread: {
       label: 'Tendre un fil',

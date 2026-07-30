@@ -85,7 +85,13 @@ export const en = {
       sprint: 'Run',
       sprintKeys: 'Shift',
       use: 'Change deck, enter a room',
-      useKeys: 'E, on a stairwell or at a door',
+      useKeys: 'E, on a stairwell or anywhere inside a room’s interior',
+      plan: 'Full-screen plan',
+      planKeys: 'M',
+      find: 'Find a room',
+      findKeys: '⌘K, or Ctrl K',
+      reveal: 'Show the evidence',
+      revealKeys: 'G',
       nen: 'Cast the active Hatsu',
       nenKeys: 'F, or click, on the room or the solid you are facing',
       touch: 'On a touchscreen',
@@ -121,7 +127,116 @@ export const en = {
       scaleHelp:
         'The deck plans are schematic. The reconstruction scales them so the rooms come out the size the panels imply, which is not a measurement of the ship.',
     },
+    /**
+     * The reveal. The walk already tints a surface by its provenance, which is
+     * enough to notice and not enough to read; this drops the categories and
+     * paints the deck in its badges alone, and names the two things the
+     * reconstruction authored rather than derived.
+     */
+    reveal: {
+      toggle: 'Evidence',
+      help: 'Paint the deck in what each surface is worth as evidence, and show the walls and doors the reconstruction declared.',
+      blind: 'Blind wall',
+      blindHelp:
+        'Two rooms share this wall and nothing goes through it. The blueprint has to say so, and say why.',
+      declared: 'Door placed by hand',
+      declaredHelp:
+        'Every other opening in the ship follows from two footprints touching. These do not.',
+      none: 'None on this level.',
+    },
+
     sourcesLink: 'Where every room comes from',
+
+    /**
+     * The plan, and what it marks. Four stairwells and one bulkhead serve a
+     * hundred and seventeen deck spaces, so the plan is where they are found —
+     * and at 320 px a room's name is under four pixels tall, so the plan also
+     * has a size at which it can actually be read.
+     */
+    plan: {
+      open: 'Full-screen plan',
+      close: 'Close',
+      crossingUp: (destination: string) => `Up to ${destination}`,
+      crossingDown: (destination: string) => `Down to ${destination}`,
+      crossingAcross: (destination: string) => `Through to ${destination}`,
+      legend: 'On the plan',
+      doorway: 'Doorway',
+      up: 'Stairs up',
+      down: 'Stairs down',
+      across: 'Door on this level',
+    },
+
+    /** Finding a place by name, across every level at once. */
+    find: {
+      open: 'Find a room',
+      title: 'Find a room or a level',
+      placeholder: 'Banquet hall, 1004, kitchen, cell…',
+      showing: (shown: number, total: number) => `Showing ${shown} of ${total}`,
+      noMatch: 'Nothing of that name in the ship',
+      level: 'Level',
+      close: 'Esc',
+      hint: '↑ ↓ to choose · Enter to go · Esc to close',
+    },
+
+    /** The two verbs a room can be clicked with, so no widget has both. */
+    goTo: (room: string) => `Walk to ${room}`,
+    aimAt: (room: string) => `Aim at ${room}`,
+
+    viewpoint: {
+      copy: 'Copy this viewpoint',
+      copied: 'Link copied',
+      failed: 'Could not reach the clipboard',
+    },
+
+    /**
+     * How the walk is driven. None of it has a right answer, so all of it is the
+     * visitor's — and `prefers-reduced-motion` sets where it starts rather than
+     * overriding what they choose.
+     */
+    comfort: {
+      title: 'Comfort',
+      fov: 'Field of view',
+      sensitivity: 'Look speed',
+      snapTurn: 'Turn in steps',
+      snapAngle: 'Step',
+      jumpOnly: 'Do not walk — jump between rooms',
+      reset: 'Back to this system’s defaults',
+      calm: 'Your system asks for reduced motion, so this starts calm.',
+      degrees: (angle: number) => `${angle}°`,
+      times: (factor: number) => `×${factor.toFixed(2)}`,
+    },
+
+    /**
+     * A room said in words, for whoever is not looking at it. Everything here is
+     * read off the blueprint: the footprint, the ceiling, the ways out, and what
+     * the panels put in the room.
+     */
+    room: {
+      size: (long: number, wide: number, ceiling: number) =>
+        `${long} × ${wide} m under ${ceiling} m`,
+      exits: (count: number) => `${count} ${count === 1 ? 'exit' : 'exits'}`,
+      bare: 'nothing drawn in it',
+      /** What is standing in the room, by kind, once there are more than two. */
+      solids: {
+        spring: (count: number) => `${count} ${count === 1 ? 'spring' : 'springs'}`,
+        casket: (count: number) => `${count} ${count === 1 ? 'coffin' : 'coffins'}`,
+        platform: (count: number) => `${count} ${count === 1 ? 'platform' : 'platforms'}`,
+        counter: (count: number) => `${count} ${count === 1 ? 'counter' : 'counters'}`,
+        table: (count: number) => `${count} ${count === 1 ? 'table' : 'tables'}`,
+        bed: (count: number) => `${count} ${count === 1 ? 'bed' : 'beds'}`,
+        seat: (count: number) => `${count} ${count === 1 ? 'seat' : 'seats'}`,
+        cabinet: (count: number) => `${count} ${count === 1 ? 'cabinet' : 'cabinets'}`,
+        basin: (count: number) => `${count} ${count === 1 ? 'basin' : 'basins'}`,
+        painting: (count: number) => `${count} ${count === 1 ? 'canvas' : 'canvases'}`,
+        lifeboat: (count: number) => `${count} ${count === 1 ? 'lifeboat' : 'lifeboats'}`,
+        pillar: (count: number) => `${count} ${count === 1 ? 'pillar' : 'pillars'}`,
+        bars: (count: number) => `${count} ${count === 1 ? 'run of bars' : 'runs of bars'}`,
+        manacle: (count: number) => `${count} ${count === 1 ? 'manacle' : 'manacles'}`,
+        camera: (count: number) => `${count} ${count === 1 ? 'camera' : 'cameras'}`,
+        telephone: (count: number) => `${count} ${count === 1 ? 'telephone' : 'telephones'}`,
+        duct: (count: number) => `${count} ${count === 1 ? 'run of ducting' : 'runs of ducting'}`,
+      },
+    },
 
     /**
      * Nen in the walk. The archive's other pages let a technique work on what is
@@ -267,6 +382,17 @@ export const en = {
         deduced: (what: string, strength: number) =>
           `Condition read — ${what} · ${strength} named, and stronger for each`,
         nothingToDeduce: 'Nothing left to read: every hold has been named',
+        armourWorn:
+          'The wrapping is on · what the ship would do to you from here is kept in it, not undone',
+        armourHolding: (packed: number) =>
+          packed
+            ? `The wrapping holds ${packed} blow${packed === 1 ? '' : 's'} · nothing comes back until the sun rises on them`
+            : 'The wrapping holds nothing yet · walk into what the aura has set against you',
+        packedAway: (room: string, packed: number) =>
+          `${room} did nothing to you: it went into the wrapping · ${packed} packed away`,
+        nothingPacked: 'Nothing was taken, so there is nothing to spend · the sun rises on damage',
+        sunRisen: (metres: number, solids: number) =>
+          `The sun rose where you stand · ${metres} m of it, and ${solids} thing${solids === 1 ? '' : 's'} burnt with no regard for whose they were`,
         jailed: (room: string, doors: number) =>
           `${room} is chained shut · ${doors} way${doors === 1 ? '' : 's'} in, and none of them open`,
         jailRefused: (room: string) =>
@@ -426,6 +552,8 @@ export const en = {
         mimic: 'Wearing',
         soothed: 'The music holds',
         deduced: 'Conditions read',
+        packed: 'The wrapping holds',
+        packedHits: (packed: number) => `${packed} blow${packed === 1 ? '' : 's'}`,
         shut: 'Chained shut',
         guarded: 'Guarded',
         pinned: 'Held in',
@@ -460,7 +588,7 @@ export const en = {
   tourSources: {
     seoTitle: 'Sources — Where every room of the Black Whale comes from',
     seoDescription:
-      'The evidence behind the reconstructed Black Whale, room by room: which chapter or plan each of the 282 spaces rests on, which corridors the reconstruction invented, and which walls were sealed on purpose.',
+      'The evidence behind the reconstructed Black Whale, room by room: which chapter or plan each of the 314 spaces rests on, which corridors the reconstruction invented, and which walls were sealed on purpose.',
     breadcrumb: 'Sources',
     title: 'Where every room comes from',
     intro:
@@ -468,6 +596,48 @@ export const en = {
     counts: (spaces: number, sources: number) =>
       `${spaces} spaces, resting on ${sources} distinct sources`,
     tally: (label: string, count: number) => `${count} ${label.toLowerCase()}`,
+
+    /**
+     * The figure the page leads with. Counted off the blueprint rather than
+     * written down, so it cannot go stale: a room may be reconstructed, but
+     * nothing standing in a room ever is.
+     */
+    nothingInvented: (solids: number, invented: number) =>
+      invented === 0
+        ? `Not one of the ${solids} solids the tour stands in the ship is invented. Every bed, coffin, spring and grille is drawn on a plan or shown in a panel, and carries the source it comes from. What the reconstruction does invent is circulation — corridors that make a deck contiguous — and it says so on the wall.`
+        : `${invented} of the ${solids} solids the tour stands in the ship rest on nothing drawn, and are marked as such.`,
+    onThisPage: 'On this page',
+    sections: {
+      chapters: 'Chapters',
+      method: 'Method',
+      rooms: 'Rooms',
+      levels: 'Levels',
+      solids: 'Solids',
+      unfurnished: 'Left bare',
+      joins: 'Joins',
+      walls: 'Walls',
+    },
+
+    chapters: {
+      title: 'Which chapters the ship is read out of',
+      help: (count: number) =>
+        `${count} chapters carry the whole reconstruction. The count is the number of claims — a room, a level, a solid, a stairwell — that name that chapter as their source. Pick one to see what rests on it.`,
+      chapter: (chapter: number) => `Ch. ${chapter}`,
+      filter: (chapter: number) => `Show what rests on ch. ${chapter}`,
+    },
+
+    levels: {
+      title: 'The levels the rooms stand on',
+      help: (decks: number, interiors: number) =>
+        `${decks} decks and ${interiors} interiors drawn at their own scale. These are the claims everything else rests on: a room is on a deck because one cross-section puts it there, and an interior is the inside of one room because a plan or a panel draws it.`,
+    },
+
+    unfurnished: {
+      title: 'What the reconstruction does not furnish',
+      help: (count: number) =>
+        `${count} rooms whose walls are attested and whose contents are not are left empty. That is the same rule as the rest of this page, running the other way: the eight VVIP suites, the bare floor of 37564, the auditoriums the cineplex plan names without drawing a seat. A chair invented to fill them would be a claim about the story rather than about the ship.`,
+      bare: (count: number) => `${count} ${count === 1 ? 'room left bare' : 'rooms left bare'}`,
+    },
 
     method: {
       title: 'What the drawings actually give',
@@ -558,6 +728,17 @@ export const en = {
     dataCreditRepository: 'source repository',
     dataCreditLicensedUnder: '— licensed under',
     chooseLanguage: 'Choose a language',
+    spoiler: {
+      label: 'Spoiler filter',
+      summaryFull: 'Spoilers · full canon',
+      summaryLimited: (chapter: number | string) => `Spoilers · to ch. ${chapter}`,
+      intro: 'Set the last chapter you have read. The archive hides everything after it.',
+      chapterField: 'Last chapter read',
+      rangeHint: (first: number | string, last: number | string) =>
+        `Indexed chapters ${first}–${last}`,
+      apply: 'Apply',
+      clear: 'Show full canon',
+    },
   },
 
   home: {
@@ -967,6 +1148,7 @@ export const en = {
     closeLocationDetails: 'Close location details',
     charactersHere: 'Characters at this location',
     noCharacterHere: 'No tracked character is present at the selected event.',
+    walkThere: 'Walk this room',
     derivedFrom: 'Derived from presence records for the selected event.',
     unknownLocationTitle: 'Unknown location',
     closeUnknownPositions: 'Close unknown positions',
@@ -1177,7 +1359,6 @@ export const en = {
       unknown: 'Unknown',
     },
     unknownPositions: (count: number) => `Unknown positions (${count})`,
-    spoilers: 'Spoilers',
     timeline: 'Timeline',
     currentState: 'Current state',
     flashbackBadge: '↶ FLASHBACK ·',
@@ -1421,14 +1602,26 @@ export const en = {
     currentCursor: 'Current cursor',
     entities: 'Entities',
     activeEffects: 'Active effects',
-    executeTitle: 'Execute Bungee Gum',
+    executeTitle: 'Execute an ability',
     executeCopy:
-      "Selecting a target plans the action against this branch. The conditions and effects below are the module's own — the same ones the server runs on activation.",
+      "Pick an ability, one of its actions and a target to plan against this branch. The conditions and effects below are the module's own — the same ones the server runs on activation.",
+    ability: 'Ability',
+    action: 'Action',
+    noActions: 'No action available',
     actorReference: 'Actor reference',
     targetEntity: 'Target entity',
-    selectTarget: 'Select target',
+    selectTarget: 'No target',
     planAction: 'Plan action',
-    attachAura: 'Attach aura',
+    runAction: (label: string) => `Run: ${label}`,
+    moveTitle: 'Move an entity',
+    moveCopy:
+      "The kernel's other branch action: putting someone somewhere canon does not. The move is applied to this branch only.",
+    moveEntity: 'Entity',
+    moveDestination: 'Destination',
+    moveSubmit: 'Move in this branch',
+    noMarkers: 'This branch places no entity on the deck plans.',
+    markersElsewhere: (count: number) =>
+      count === 1 ? '1 entity stands on another deck.' : `${count} entities stand on other decks.`,
     sceneTitle: 'Projected MapScene',
     markers: 'markers',
     effectLinks: 'effect links',
@@ -1488,23 +1681,19 @@ export const en = {
     intro:
       'Subjective map and timeline: what this character knows, believes, suspects, or ignores.',
     subjectiveMap: 'Subjective map',
-    subjectiveMapCopy:
-      'The same SVG geometry, with knowledge layers adapted to the selected perspective.',
     confirmedPosition: 'Confirmed position',
     likelyPosition: 'Likely position',
     lastKnownPosition: 'Last known position',
     activeKnowledge: 'Active knowledge',
-    rows: {
-      position: { label: 'Position', details: 'room 1014 (direct observation)' },
-      shikaku: { label: 'Shikaku identity', details: 'unusual behavior' },
-      kacho: { label: 'Kacho status', details: 'unconfirmed for 8 events' },
-    },
-    points: {
-      reality: 'Canonical event',
-      body: 'Body movement',
-      consciousness: 'Transfer detected',
-      knowledge: 'Information acquired',
-    },
+    apparentIdentity: 'Apparent identity',
+    dissonant: 'identity dissonance',
+    cursor: 'Point in time',
+    apply: 'Apply',
+    noEvents: 'No canonical event is available at your spoiler limit.',
+    noKnowledge: 'The archive records no knowledge for this character at this point.',
+    noPositions: 'The archive places no body this character could see at this point.',
+    markersElsewhere: (count: number) =>
+      count === 1 ? '1 body seen on another deck.' : `${count} bodies seen on other decks.`,
   },
 
   knowledgeDetail: {
@@ -1514,45 +1703,152 @@ export const en = {
     title: (character: string) => `Knowledge Map: ${character}`,
     intro: 'An archive of knowledge, suspicions, rumors, and outdated information.',
     informationState: 'Information state',
-    graphTitle: 'Knowledge graph (optional)',
-    entries: {
-      kacho: { label: 'Kacho', details: 'visible identity appears alive' },
-      shikaku: { label: 'Shikaku anomaly', details: 'behavioral evidence' },
-      tier3: { label: 'Tier 3', details: 'report received from Melody' },
-      target: { label: 'Target status', details: 'outdated information' },
-    },
+    graphTitle: 'Knowledge graph',
+    since: (chapter: number) => `since ch. ${chapter}`,
+    between: (from: number, until: number) => `ch. ${from} → ch. ${until}`,
+    toldBy: (source: string) => `told by ${source}`,
+    confidence: (percent: number) => `${percent}% confidence`,
+    noKnowledge: (character: string) =>
+      `The archive records no fact or belief held by ${character} within your spoiler limit.`,
+    openPerspective: 'Open perspective',
+    openProfile: 'Open profile',
   },
 
   bodyDetail: {
-    seoTitle: (id: string) => `Body ${id}`,
-    seoDescription: (id: string) =>
-      `Continuity record for body ${id}: observed positions, reported states and suspected identity swaps aboard the Black Whale.`,
-    title: (id: string) => `Body history: ${id}`,
+    seoTitle: (label: string) => `Body — ${label}`,
+    seoDescription: (label: string) =>
+      `Continuity record for ${label}: observed positions, reported states and consciousness occupancy aboard the Black Whale.`,
+    title: (label: string) => `Body history: ${label}`,
     intro: 'Biological timeline, consciousness occupancy, and public appearance.',
-    event: (id: string) => `Event ${id}`,
-    state: (state: string) => `State: ${state}`,
-    history: {
-      observed: { label: 'Body observed on Tier 1', status: 'active' },
-      anomaly: { label: 'Behavioral anomaly reported', status: 'suspected' },
-      recalculated: { label: 'Recalculated consciousness occupancy', status: 'transfer' },
-    },
+    bodyType: 'Body type',
+    owner: 'Original owner',
+    occupants: 'Consciousnesses recorded inside',
   },
 
   consciousnessDetail: {
-    seoTitle: (id: string) => `Consciousness ${id}`,
-    seoDescription: (id: string) =>
-      `Transfer record for consciousness ${id}: which body it occupies, when it moved, and how confident each observation is.`,
-    title: (id: string) => `Consciousness history: ${id}`,
+    seoTitle: (label: string) => `Consciousness — ${label}`,
+    seoDescription: (label: string) =>
+      `Transfer record for ${label}: which body it occupies, when it moved, and how certain each observation is.`,
+    title: (label: string) => `Consciousness history: ${label}`,
     intro: 'Tracking transfers, suppressions, and mental anchors.',
-    event: (id: string) => `Event ${id}`,
-    certainty: (level: string) => `Certainty: ${level}`,
-    bodyA: 'Body A',
-    bodyB: 'Body B',
-    unknownBody: 'Unknown',
-    confidence: {
-      confirmed: 'confirmed',
-      stable: 'stable',
-      uncertain: 'uncertain',
+    consciousnessType: 'Consciousness type',
+    origin: 'Origin character',
+    bodiesOccupied: 'Bodies occupied',
+  },
+
+  /**
+   * Wording for the identity archive: the enum values the schema stores, and the
+   * few sentences the continuity list needs around them. Each dictionary is a
+   * `Record<string, string>` so a value the catalogue has no wording for can fall
+   * back to the stored one instead of rendering blank.
+   */
+  identity: {
+    continuityTitle: 'Continuity record',
+    noEntries: 'The archive holds no record for this entity within your spoiler limit.',
+    firstVisible: 'First visible',
+    interval: (
+      fromChapter: number,
+      fromSequence: number,
+      untilChapter: number,
+      untilSequence: number,
+    ) => `ch. ${fromChapter}·${fromSequence} → ch. ${untilChapter}·${untilSequence}`,
+    intervalOpen: (chapter: number, sequence: number) => `from ch. ${chapter}·${sequence}`,
+    fromEvent: (title: string) => `Event: ${title}`,
+    certaintyLabel: (certainty: string) => `Certainty: ${certainty}`,
+    entryKind: {
+      OCCUPANCY: 'Occupancy',
+      BODY_STATE: 'Body state',
+      PRESENCE: 'Position',
+      APPEARANCE: 'Appearance',
+      CONSCIOUSNESS_STATE: 'Consciousness state',
+    } as Record<string, string>,
+    enums: {
+      bodyType: {
+        ORIGINAL: 'Original body',
+        CLONE: 'Clone',
+        COPY: 'Copy',
+        CONSTRUCT: 'Nen construct',
+        UNKNOWN: 'Unknown',
+      } as Record<string, string>,
+      consciousnessType: {
+        ORIGINAL: 'Original consciousness',
+        COPIED: 'Copied consciousness',
+        ARTIFICIAL: 'Artificial consciousness',
+        NEN_ENTITY: 'Nen entity',
+        UNKNOWN: 'Unknown',
+      } as Record<string, string>,
+      occupancyType: {
+        ORIGINAL: 'Occupies its own body',
+        TRANSFERRED: 'Transferred into this body',
+        POSSESSED: 'Possessing this body',
+        CONTROLLED: 'Controlling this body',
+        EMPTY: 'Body left empty',
+        UNKNOWN: 'Occupancy unknown',
+      } as Record<string, string>,
+      certainty: {
+        CONFIRMED: 'confirmed',
+        PROBABLE: 'probable',
+        UNKNOWN: 'unknown',
+      } as Record<string, string>,
+      bodyState: {
+        ALIVE: 'Alive',
+        INJURED: 'Injured',
+        UNCONSCIOUS: 'Unconscious',
+        DEAD: 'Dead',
+        DESTROYED: 'Destroyed',
+        PRESERVED: 'Preserved',
+        UNKNOWN: 'State unknown',
+      } as Record<string, string>,
+      consciousnessState: {
+        ACTIVE: 'Active',
+        UNCONSCIOUS: 'Unconscious',
+        TRANSFERRED: 'Transferred',
+        SUPPRESSED: 'Suppressed',
+        DORMANT: 'Dormant',
+        DISCONNECTED: 'Disconnected',
+        DESTROYED: 'Destroyed',
+        UNKNOWN: 'State unknown',
+      } as Record<string, string>,
+      presencePrecision: {
+        EXACT_ROOM: 'Located in a room',
+        ZONE: 'Located in a zone',
+        TIER: 'Located on a deck',
+        UNKNOWN: 'Position unknown',
+      } as Record<string, string>,
+      presenceCertainty: {
+        CONFIRMED: 'confirmed',
+        PROBABLE: 'probable',
+        LAST_KNOWN: 'last known',
+      } as Record<string, string>,
+      appearanceCause: {
+        NATURAL: 'Natural appearance',
+        TRANSFORMATION: 'Transformed appearance',
+        DISGUISE: 'Disguise',
+        NEN_ABILITY: 'Appearance changed by Nen',
+        UNKNOWN: 'Cause unknown',
+      } as Record<string, string>,
+      acquisitionMethod: {
+        DIRECT_OBSERVATION: 'seen first-hand',
+        TOLD_BY_OTHER: 'told by someone',
+        DEDUCTION: 'deduced',
+        NEN_ABILITY: 'learned through Nen',
+        DOCUMENT: 'read in a document',
+        RUMOR: 'heard as a rumour',
+        UNKNOWN: 'source unknown',
+      } as Record<string, string>,
+      /** Graph edge labels: the visual state a knowledge row resolves to. */
+      epistemicRelation: {
+        known: 'knows',
+        confirmed: 'confirms',
+        reported: 'was told',
+        believed: 'believes',
+        suspected: 'suspects',
+        rumor: 'has heard',
+        rejected: 'rejects',
+        outdated: 'knew',
+        contradicted: 'doubts',
+        unknown: 'ignores',
+      } as Record<string, string>,
     },
   },
 }

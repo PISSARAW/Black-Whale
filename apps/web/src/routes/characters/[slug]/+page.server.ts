@@ -2,6 +2,7 @@ import { prisma } from '$lib/server/db'
 import { error } from '@sveltejs/kit'
 import type { PageServerLoad } from './$types'
 import { readDataFile } from '$lib/server/data-files'
+import { readSpoilerLimit } from '$lib/server/spoiler'
 
 import {
   buildAffiliations,
@@ -63,8 +64,7 @@ const characterInclude = {
 } as const
 
 export const load: PageServerLoad = async ({ params, cookies }) => {
-  const spoilerLimitCookie = cookies.get('userSpoilerLimit')
-  const spoilerLimit = spoilerLimitCookie ? Number.parseInt(spoilerLimitCookie) : null
+  const spoilerLimit = readSpoilerLimit(cookies) ?? null
   const [characters, chapters, locations, abilities, prophecies] = await Promise.all([
     readDataFile<any[]>('characters/characters.json'),
     readDataFile<any[]>('chapters/chapters.json'),

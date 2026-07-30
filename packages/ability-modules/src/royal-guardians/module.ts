@@ -48,6 +48,8 @@ export const camillaGuardianCoercion = defineAbility({
 
   targets: [person()],
 
+  cost: { label: 'Conditions d’activation inconnues du canon', unit: 'inconnu' },
+
   actions: {
     arm: {
       label: 'Préparer la coercition',
@@ -94,6 +96,12 @@ export const tubeppaGuardianSynthesis = defineAbility({
   conditions: [canUseNen()],
 
   targets: [person()],
+
+  cost: {
+    label: 'Deux composants coopérants et une alliance active',
+    amount: 2,
+    unit: 'composants',
+  },
 
   actions: {
     synthesise: {
@@ -213,6 +221,8 @@ export const luzurusGuardianDesireTrap = defineAbility({
   conditions: [canUseNen()],
 
   targets: [person()],
+
+  cost: { label: 'Un désir connu et un appât accepté volontairement', unit: 'appât' },
 
   actions: {
     bait: {

@@ -25,3 +25,29 @@ export function readSpoilerProfile(cookies: Cookies): { maxChapter: number } | u
   const maxChapter = readSpoilerLimit(cookies)
   return maxChapter === undefined ? undefined : { maxChapter }
 }
+
+/** A year: the cap is a reading position, not a session preference. */
+const SPOILER_COOKIE_MAX_AGE = 60 * 60 * 24 * 365
+
+/**
+ * Store the reader's cap. Only the server reads it, so it is set `httpOnly` and
+ * surfaced to the interface through the root layout's load rather than by
+ * letting the page parse `document.cookie`.
+ */
+export function writeSpoilerLimit(cookies: Cookies, maxChapter: number): void {
+  cookies.set(SPOILER_COOKIE, String(maxChapter), {
+    path: '/',
+    httpOnly: true,
+    sameSite: 'lax',
+    maxAge: SPOILER_COOKIE_MAX_AGE,
+  })
+  // A stale legacy cookie is never read while the current one is set, but it
+  // would come back into force the moment the reader clears their cap.
+  cookies.delete(LEGACY_SPOILER_COOKIE, { path: '/' })
+}
+
+/** Drop the cap: the reader asks for the whole canon again. */
+export function clearSpoilerLimit(cookies: Cookies): void {
+  cookies.delete(SPOILER_COOKIE, { path: '/' })
+  cookies.delete(LEGACY_SPOILER_COOKIE, { path: '/' })
+}

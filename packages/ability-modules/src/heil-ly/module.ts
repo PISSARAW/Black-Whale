@@ -39,6 +39,8 @@ export const voconteHideoutDoors = defineAbility({
 
   targets: [zone()],
 
+  cost: { label: 'Deux murs préparés dans la planque Heil-Ly', amount: 2, unit: 'portes' },
+
   actions: {
     'open-door': {
       label: 'Créer une porte',
@@ -157,6 +159,8 @@ export const padailleWeaponTransformation = defineAbility({
 
   targets: [self()],
 
+  cost: { label: 'Une partie du corps transformée par arme', amount: 1, unit: 'membre' },
+
   actions: {
     transform: {
       label: 'Transformer un membre',
@@ -209,6 +213,8 @@ export const snakeArm = defineAbility({
   conditions: [canUseNen(), isConscious()],
 
   targets: [person(), self()],
+
+  cost: { label: 'Transformation partielle du bras maintenue', unit: 'aura' },
 
   actions: {
     transform: {

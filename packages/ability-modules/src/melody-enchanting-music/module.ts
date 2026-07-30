@@ -31,6 +31,8 @@ export const melodyEnchantingMusic = defineAbility({
 
   targets: [zone()],
 
+  cost: { label: 'Interprétation continue — l’auditeur doit entendre', unit: 'souffle' },
+
   actions: {
     play: {
       label: 'Jouer de la flûte',

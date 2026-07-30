@@ -180,6 +180,26 @@ export class NenRuntime {
     }))
   }
 
+  /**
+   * The abilities a caller can actually run: a catalogue entry is not enough,
+   * a registered module has to back it. A simulation lab that offers the whole
+   * catalogue offers hundreds of abilities that would all answer FORBIDDEN.
+   */
+  listRunnableAbilities() {
+    return this.listAbilities().filter((ability) => this.engine.hasModule(ability.id))
+  }
+
+  /**
+   * The actions one ability offers inside a state the caller already holds, with
+   * the visibility the module gives each of them. The state is cloned: listing
+   * actions must not grant the actor anything.
+   */
+  async actionsInState(abilityId: string, request: NenActionRequest, worldState: WorldState) {
+    return this.engine.abilityActionWheel(
+      await this.buildContext(abilityId, request, cloneWorld(worldState)),
+    )
+  }
+
   async getActiveState(abilityId: string, eventId: string) {
     return this.getActiveStateIn(abilityId, eventId, await this.ports.loadWorldState(eventId))
   }

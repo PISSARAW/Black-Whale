@@ -28,6 +28,8 @@ export const dowsingChain = defineAbility({
 
   targets: [person()],
 
+  cost: { label: 'Concentration soutenue et indices de contexte', unit: 'concentration' },
+
   actions: {
     dowse: {
       label: 'Sonder une position',

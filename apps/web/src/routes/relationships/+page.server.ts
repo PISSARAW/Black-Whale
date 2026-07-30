@@ -1,5 +1,6 @@
 import { isVisibleAtSpoilerLimit } from '$lib/server/character-profile'
 import { readDataFile, type CatalogCharacter, type CatalogFaction } from '$lib/server/data-files'
+import { readSpoilerLimit } from '$lib/server/spoiler'
 import type { PageServerLoad } from './$types'
 
 type NetworkRelation = {
@@ -119,9 +120,7 @@ export const load: PageServerLoad = async ({ cookies }) => {
     readDataFile<CatalogCharacter[]>('characters/characters.json'),
   ])
 
-  const spoilerCookie = cookies.get('userSpoilerLimit')
-  const parsedLimit = spoilerCookie ? Number.parseInt(spoilerCookie, 10) : Number.NaN
-  const spoilerLimit = Number.isFinite(parsedLimit) ? parsedLimit : undefined
+  const spoilerLimit = readSpoilerLimit(cookies)
   const characters = allCharacters.filter((character) =>
     isVisibleAtSpoilerLimit(character, spoilerLimit),
   )

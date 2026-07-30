@@ -34,6 +34,8 @@ export const secretWindow = defineAbility({
 
   targets: [zone()],
 
+  cost: { label: 'Une chouette attachée par cible surveillée', amount: 1, unit: 'chouette' },
+
   actions: {
     deploy: {
       label: 'Déployer les hiboux',

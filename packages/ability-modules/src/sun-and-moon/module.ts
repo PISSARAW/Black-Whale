@@ -32,6 +32,8 @@ export const sunAndMoon = defineAbility({
 
   targets: [person(), object()],
 
+  cost: { label: 'Une marque de Soleil et une marque de Lune', amount: 2, unit: 'marques' },
+
   actions: {
     'mark-sun': {
       label: 'Poser une marque solaire',

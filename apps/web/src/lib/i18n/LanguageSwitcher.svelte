@@ -6,8 +6,8 @@
   let { compact = false }: { compact?: boolean } = $props()
 
   // Plain links rather than a <select>: they work with JavaScript off and give
-  // crawlers a real path to each locale. View state in the query string (spoiler
-  // limit, selected character) survives the switch.
+  // crawlers a real path to each locale. View state in the query string (the
+  // selected event, the open character) survives the switch.
   //
   // The switch reloads instead of navigating client-side: `<html lang>` is
   // stamped by the server hook, so a soft navigation would leave the document

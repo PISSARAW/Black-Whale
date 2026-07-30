@@ -36,6 +36,8 @@ export const surveillancePaperDolls = defineAbility({
 
   targets: [person()],
 
+  cost: { label: 'Une figurine de papier par zone écoutée', amount: 1, unit: 'figurine/zone' },
+
   actions: {
     plant: {
       label: 'Poser une poupée',
@@ -106,6 +108,8 @@ export const danceOfTheSerpentsBite = defineAbility({
   conditions: [canUseNen(), isConscious()],
 
   targets: [person()],
+
+  cost: { label: 'Essaim de papier maintenu à l’éventail', unit: 'aura' },
 
   actions: {
     mark: {

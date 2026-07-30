@@ -7,6 +7,7 @@
   import UnknownPositions from '$lib/components/map/UnknownPositions.svelte'
   import { mapState } from '$lib/state/mapState.svelte'
   import Seo from '$lib/components/Seo.svelte'
+  import SpoilerFilter from '$lib/components/SpoilerFilter.svelte'
   import { breadcrumbSchema } from '$lib/seo/schema'
   import PerspectiveSelector from '$lib/components/perspective/PerspectiveSelector.svelte'
   import PerspectiveTimeline from '$lib/components/perspective/PerspectiveTimeline.svelte'
@@ -604,14 +605,15 @@
           <span>{mapState.filters.showUnknownPositions ? '✓' : '+'}</span>
           {$t.ship.unknownPositions(unknownPositionCount)}
         </button>
-        <button
-          class="danger"
-          class:active={mapState.filters.spoilersEnabled}
-          onclick={() => (mapState.filters.spoilersEnabled = !mapState.filters.spoilersEnabled)}
-        >
-          <span>{mapState.filters.spoilersEnabled ? '!' : '×'}</span>
-          {$t.ship.spoilers}
-        </button>
+      </div>
+      <!-- The map is filtered by the reader's cap on the server, so the toolbar
+           edits that cap rather than a local flag of its own. -->
+      <div class="spoiler-toggle">
+        <SpoilerFilter
+          compact
+          limit={data.spoilerLimit ?? null}
+          chapters={data.spoilerFilter.chapters}
+        />
       </div>
     </div>
   </section>
@@ -1632,10 +1634,11 @@
     border-color: rgba(114, 195, 168, 0.42);
     color: #b6d3c9;
   }
-  .display-toggles button.danger.active {
-    border-color: rgba(201, 94, 84, 0.45);
-    color: #e5a09a;
-    background: rgba(76, 29, 27, 0.26);
+  .spoiler-toggle {
+    margin-top: 0.4rem;
+    color: #849492;
+    font-size: 0.62rem;
+    letter-spacing: 0.1em;
   }
   :global(.perspective-panel .selector) {
     padding: 0;

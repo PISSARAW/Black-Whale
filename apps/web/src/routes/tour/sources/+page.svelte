@@ -15,10 +15,11 @@
   import Seo from '$lib/components/Seo.svelte'
   import { breadcrumbSchema } from '$lib/seo/schema'
   import { link, locale, t } from '$lib/i18n'
-  import { buildShip } from '$lib/tour/blueprint'
+  import { deckOf, theShip } from '$lib/tour/blueprint'
+  import { filterSpaces, placeOf, textOfSpace, type Naming } from '$lib/tour/search'
   import type { Provenance, Space, Tier } from '$lib/tour/types'
 
-  const ship = buildShip()
+  const ship = theShip()
 
   const REPOSITORY_FILE =
     'https://github.com/PISSARAW/Black-Whale/blob/main/data/ship/blueprint.json'
@@ -43,20 +44,18 @@
 
   /** The deck a space is on — through its parent room, when it is an interior. */
   function deckOfSpace(space: Space): Tier {
-    const tier = tierById.get(space.tierId)!
-    if (tier.kind !== 'interior') return tier
-    const parent = ship.spaces.get(tier.parentSpaceId ?? '')
-    return parent ? tierById.get(parent.tierId)! : tier
+    return deckOf(ship, space.tierId) ?? tierById.get(space.tierId)!
   }
 
-  /** Where a space is, said in one line: the deck, and the room it is inside. */
-  const placeOf = $derived((space: Space) => {
-    const tier = tierById.get(space.tierId)!
-    const deck = deckOfSpace(space)
-    return tier.kind === 'interior'
-      ? `${nameOf(deck)} · ${$t.tourSources.insideOf(nameOf(tier))}`
-      : nameOf(deck)
+  /** How places are named here, for the shared search in `$lib/tour/search`. */
+  const naming = $derived<Naming>({
+    nameOf,
+    sourceOf,
+    insideOf: (room: string) => $t.tourSources.insideOf(room),
   })
+
+  /** Where a space is, said in one line: the deck, and the room it is inside. */
+  const place = $derived((space: Space) => placeOf(ship, space, naming))
 
   const provenanceLabel = (provenance: Provenance) => $t.tour.provenance[provenance]
 
@@ -77,16 +76,116 @@
 
   const distinctSources = new Set(ship.blueprint.spaces.map((space) => space.source)).size
 
-  const normalized = $derived(query.trim().toLowerCase())
+  /**
+   * The one number that answers the objection before it is made: not one solid
+   * in the ship is invented. A room the reconstruction had to add to make a
+   * deck contiguous is a claim about circulation; a chair nobody drew would be
+   * a claim about the story, and the tour never makes one. Counted rather than
+   * asserted, so the sentence cannot outlive the blueprint.
+   */
+  const invented = ship.structures.filter((solid) => solid.provenance === 'inferred').length
 
+  /**
+   * Every chapter the reconstruction reads the ship out of, and how many claims
+   * rest on each — the question this page is titled with, answered as an index.
+   *
+   * Counted off the English sources alone: the French say the same thing, and
+   * counting both would report every claim twice.
+   */
+  const chapters = (() => {
+    // A plain record rather than a Map: this is counted once, off data that
+    // never changes, so it must not become reactive state of its own.
+    const counted: Record<number, number | undefined> = {}
+    const cite = (text: string) => {
+      for (const match of text.matchAll(/\bch\.\s*(\d+)/gi)) {
+        const chapter = Number(match[1])
+        counted[chapter] = (counted[chapter] ?? 0) + 1
+      }
+    }
+    for (const tier of ship.tiers) cite(tier.source)
+    for (const space of ship.blueprint.spaces) cite(space.source)
+    for (const solid of ship.structures) cite(solid.source)
+    for (const connection of ship.links) cite(connection.source)
+    return Object.entries(counted)
+      .map(([chapter, count]) => ({ chapter: Number(chapter), count: count! }))
+      .sort((a, b) => a.chapter - b.chapter)
+  })()
+
+  /** How a chapter is written in the source the reader is being shown. */
+  const chapterQuery = $derived((chapter: number) =>
+    french ? `chap. ${chapter}` : `ch. ${chapter}`,
+  )
+
+  /**
+   * The levels themselves, which nothing published so far.
+   *
+   * The five decks rest on one cross-section and the interiors each on a plan
+   * or a chapter of their own, and those are the strongest claims in the file:
+   * they are what puts a room on a deck at all.
+   */
+  const levels = $derived(
+    ship.tiers.map((tier) => ({
+      tier,
+      /** The room it is the inside of, for an interior. */
+      inside: tier.parentSpaceId ? (ship.spaces.get(tier.parentSpaceId) ?? null) : null,
+    })),
+  )
+
+  /**
+   * What the reconstruction does not furnish.
+   *
+   * A room whose walls are attested and whose contents are not is left empty,
+   * and that is the doctrine working rather than a gap in it: the eight VVIP
+   * suites, the bare floor of 37564, the auditoriums the cineplex plan names
+   * without drawing a seat. Published for the same reason the sources are —
+   * the only fair objection to the tour is that its rooms are empty, and this
+   * is the answer to it.
+   */
+  const furnished = new Set(ship.structures.map((solid) => solid.spaceId))
+
+  const unfurnished = $derived.by(() => {
+    const collected: Record<string, { label: string; provenance: Provenance; spaces: Space[] }> = {}
+    for (const space of ship.blueprint.spaces) {
+      if (space.provenance === 'inferred' || furnished.has(space.id)) continue
+      const existing = collected[space.source]
+      if (existing) existing.spaces.push(space)
+      else {
+        collected[space.source] = {
+          label: sourceOf(space),
+          provenance: space.provenance,
+          spaces: [space],
+        }
+      }
+    }
+    return Object.values(collected).sort(
+      (a, b) =>
+        PROVENANCE_ORDER.indexOf(a.provenance) - PROVENANCE_ORDER.indexOf(b.provenance) ||
+        b.spaces.length - a.spaces.length,
+    )
+  })
+
+  const unfurnishedCount = $derived(
+    unfurnished.reduce((total, entry) => total + entry.spaces.length, 0),
+  )
+
+  /** The page has to be citable, so every section it publishes is an anchor. */
+  const SECTIONS = [
+    'chapters',
+    'method',
+    'rooms',
+    'levels',
+    'solids',
+    'unfurnished',
+    'joins',
+    'walls',
+  ] as const
+
+  // The same matching the walk's finder uses, so a query that finds a room here
+  // finds it there. It lives in `$lib/tour/search` and is tested on its own.
   const matches = $derived(
-    ship.blueprint.spaces.filter((space) => {
-      if (evidence !== 'all' && space.provenance !== evidence) return false
-      if (!normalized) return true
-      return `${nameOf(space)} ${sourceOf(space)} ${placeOf(space)}`
-        .toLowerCase()
-        .includes(normalized)
-    }),
+    filterSpaces(ship.blueprint.spaces, { query, evidence }, (space) =>
+      textOfSpace(ship, space, naming),
+    ),
   )
 
   interface Group {
@@ -227,6 +326,14 @@
     </h1>
     <p class="mt-3 max-w-3xl text-sm leading-relaxed text-[#FFFFF0]/70">{$t.tourSources.intro}</p>
 
+    <!-- The figure that answers the objection before it is made, and the only
+         one strong enough to lead with: nothing standing in the ship is made up. -->
+    <p
+      class="mt-4 max-w-3xl border-l-2 border-[#FFD700]/60 pl-3 text-sm leading-relaxed text-[#FFFFF0]/85"
+    >
+      {$t.tourSources.nothingInvented(ship.structures.length, invented)}
+    </p>
+
     <dl class="mt-5 flex flex-wrap gap-2 text-xs">
       <div class="rounded border border-[#333] px-2.5 py-1 text-[#FFFFF0]/80">
         {$t.tourSources.counts(ship.blueprint.spaces.length, distinctSources)}
@@ -237,10 +344,53 @@
         </div>
       {/each}
     </dl>
+
+    <!-- Nothing on this page could be cited before: it had no anchors. -->
+    <nav class="mt-5 flex flex-wrap gap-x-3 gap-y-1 text-xs" aria-label={$t.tourSources.onThisPage}>
+      <span class="text-[10px] uppercase tracking-widest text-[#FFD700]/70">
+        {$t.tourSources.onThisPage}
+      </span>
+      {#each SECTIONS as section (section)}
+        <a
+          href="#{section}"
+          class="text-[#FFFFF0]/60 underline underline-offset-2 transition-colors hover:text-[#FFD700]"
+        >
+          {$t.tourSources.sections[section]}
+        </a>
+      {/each}
+    </nav>
   </header>
 
+  <!-- The index the page is titled after: which chapters the ship is read out of -->
+  <section id="chapters" class="mb-8 scroll-mt-4">
+    <h2 class="text-xs uppercase tracking-widest text-[#FFD700]/70">
+      {$t.tourSources.chapters.title}
+    </h2>
+    <p class="mt-2 max-w-3xl text-sm leading-relaxed text-[#FFFFF0]/60">
+      {$t.tourSources.chapters.help(chapters.length)}
+    </p>
+    <ul class="mt-3 flex flex-wrap gap-1.5">
+      {#each chapters as entry (entry.chapter)}
+        <li>
+          <button
+            type="button"
+            onclick={() => {
+              query = chapterQuery(entry.chapter)
+              evidence = 'all'
+            }}
+            title={$t.tourSources.chapters.filter(entry.chapter)}
+            class="rounded border border-[#333] px-2 py-1 text-xs text-[#FFFFF0]/80 transition-colors hover:border-[#FFD700]/60 hover:text-[#FFD700]"
+          >
+            {$t.tourSources.chapters.chapter(entry.chapter)}
+            <span class="ml-1 text-[10px] text-[#FFFFF0]/45">{entry.count}</span>
+          </button>
+        </li>
+      {/each}
+    </ul>
+  </section>
+
   <!-- What the drawings can and cannot support, before the room-by-room list -->
-  <section class="mb-8 rounded-lg border border-[#333] p-4 sm:p-5">
+  <section id="method" class="mb-8 scroll-mt-4 rounded-lg border border-[#333] p-4 sm:p-5">
     <h2 class="text-xs uppercase tracking-widest text-[#FFD700]/70">
       {$t.tourSources.method.title}
     </h2>
@@ -253,7 +403,7 @@
   </section>
 
   <!-- The room-by-room account -->
-  <section>
+  <section id="rooms" class="scroll-mt-4">
     <div class="flex flex-wrap items-end gap-4">
       <label class="min-w-[16rem] flex-1">
         <span class="mb-1 block text-[10px] uppercase tracking-widest text-[#FFD700]/70">
@@ -365,7 +515,7 @@
                 >
                   <span class="font-medium text-[#FFFFF0]/90">{nameOf(space)}</span>
                   {#if grouping === 'source'}
-                    <span class="text-[#FFFFF0]/50">{placeOf(space)}</span>
+                    <span class="text-[#FFFFF0]/50">{place(space)}</span>
                   {:else}
                     <span class="flex items-baseline gap-2 text-[#FFFFF0]/50">
                       <span
@@ -387,9 +537,44 @@
     </ul>
   </section>
 
+  <!-- The levels themselves. These were the only claims in the blueprint the
+       page did not publish, and they are the ones everything else rests on: a
+       room is on a deck because one cross-section says so. -->
+  <section id="levels" class="mt-10 scroll-mt-4">
+    <h2 class="text-xs uppercase tracking-widest text-[#FFD700]/70">
+      {$t.tourSources.levels.title}
+    </h2>
+    <p class="mt-2 max-w-3xl text-sm leading-relaxed text-[#FFFFF0]/60">
+      {$t.tourSources.levels.help(ship.decks.length, ship.tiers.length - ship.decks.length)}
+    </p>
+    <ul class="mt-3 divide-y divide-[#222] rounded-lg border border-[#333]">
+      {#each levels as entry (entry.tier.id)}
+        <li class="flex flex-wrap items-baseline gap-x-3 gap-y-1 p-3 text-xs">
+          <span
+            class="shrink-0 rounded border px-1.5 py-0.5 text-[10px] uppercase tracking-wider {provenanceClass(
+              entry.tier.provenance,
+            )}"
+          >
+            {provenanceLabel(entry.tier.provenance)}
+          </span>
+          <span class="font-medium text-[#FFFFF0]/90">{nameOf(entry.tier)}</span>
+          {#if entry.inside}
+            <a
+              href={spaceUrl(entry.inside)}
+              class="text-[#FFFFF0]/45 underline underline-offset-2 transition-colors hover:text-[#FFD700]"
+            >
+              {$t.tourSources.insideOf(nameOf(entry.inside))}
+            </a>
+          {/if}
+          <span class="flex-1 text-right text-[#FFFFF0]/50">{sourceOf(entry.tier)}</span>
+        </li>
+      {/each}
+    </ul>
+  </section>
+
   <!-- What a panel shows standing in a room is a claim like any other -->
   {#if solids.length}
-    <section class="mt-10">
+    <section id="solids" class="mt-10 scroll-mt-4">
       <h2 class="text-xs uppercase tracking-widest text-[#FFD700]/70">
         {$t.tourSources.structures.title}
       </h2>
@@ -416,8 +601,52 @@
     </section>
   {/if}
 
+  <!-- The other half of the same doctrine: rooms whose walls are attested and
+       whose contents are not are left bare. The only fair objection to the
+       tour is that its rooms are empty, and this is the answer to it. -->
+  <section id="unfurnished" class="mt-10 scroll-mt-4">
+    <h2 class="text-xs uppercase tracking-widest text-[#FFD700]/70">
+      {$t.tourSources.unfurnished.title}
+    </h2>
+    <p class="mt-2 max-w-3xl text-sm leading-relaxed text-[#FFFFF0]/60">
+      {$t.tourSources.unfurnished.help(unfurnishedCount)}
+    </p>
+    <ul class="mt-3 space-y-3">
+      {#each unfurnished as entry (entry.label)}
+        <li class="overflow-hidden rounded-lg border border-[#333]">
+          <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1 border-b border-[#333] p-3">
+            <span
+              class="shrink-0 rounded border px-1.5 py-0.5 text-[10px] uppercase tracking-wider {provenanceClass(
+                entry.provenance,
+              )}"
+            >
+              {provenanceLabel(entry.provenance)}
+            </span>
+            <h3 class="flex-1 text-sm font-medium leading-snug text-[#FFFFF0]">{entry.label}</h3>
+            <span class="text-xs text-[#FFFFF0]/50">
+              {$t.tourSources.unfurnished.bare(entry.spaces.length)}
+            </span>
+          </div>
+          <ul class="flex flex-wrap gap-x-3 gap-y-1 p-3 text-xs">
+            {#each entry.spaces as space (space.id)}
+              <li>
+                <a
+                  href={spaceUrl(space)}
+                  title={$t.tourSources.walkThere(nameOf(space))}
+                  class="text-[#FFFFF0]/70 underline underline-offset-2 transition-colors hover:text-[#FFD700]"
+                >
+                  {nameOf(space)}
+                </a>
+              </li>
+            {/each}
+          </ul>
+        </li>
+      {/each}
+    </ul>
+  </section>
+
   <!-- The joins, the blind walls and the hand-placed doors: claims too -->
-  <section class="mt-10">
+  <section id="joins" class="mt-10 scroll-mt-4">
     <h2 class="text-xs uppercase tracking-widest text-[#FFD700]/70">
       {$t.tourSources.links.title}
     </h2>
@@ -446,7 +675,7 @@
     </ul>
   </section>
 
-  <div class="mt-10 grid gap-6 sm:grid-cols-2">
+  <div id="walls" class="mt-10 grid scroll-mt-4 gap-6 sm:grid-cols-2">
     <section>
       <h2 class="text-xs uppercase tracking-widest text-[#FFD700]/70">
         {$t.tourSources.seals.title}

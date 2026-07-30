@@ -6,6 +6,7 @@ import {
   EMPTY_WORLD,
   RESTING_BODY,
   SOLID_HATSU_KINDS,
+  SUN_FLARE_METRES_PER_HIT,
   TOUR_HATSU_KINDS,
   aimedSolid,
   aimedSpace,
@@ -120,7 +121,11 @@ describe('the hideout doors', () => {
   })
 
   it('starts a new pair rather than growing a network', () => {
-    const paired = cast(cast(EMPTY_WORLD, 'door-network', furnished.id).world, 'door-network', elsewhere.id)
+    const paired = cast(
+      cast(EMPTY_WORLD, 'door-network', furnished.id).world,
+      'door-network',
+      elsewhere.id,
+    )
     const third = cast(paired.world, 'door-network', [...ship.spaces.keys()][3])
     expect(third.world.doors).toHaveLength(1)
   })
@@ -511,7 +516,11 @@ describe('shutting a room', () => {
     const run = (walls: typeof plan.walls) =>
       walls
         .filter((wall) => wall.spaceId === roomA.id && !wall.structureId)
-        .reduce((total, wall) => total + Math.hypot(wall.end[0] - wall.start[0], wall.end[1] - wall.start[1]), 0)
+        .reduce(
+          (total, wall) =>
+            total + Math.hypot(wall.end[0] - wall.start[0], wall.end[1] - wall.start[1]),
+          0,
+        )
     expect(run(shut.walls)).toBeGreaterThan(run(plan.walls))
   })
 
@@ -645,7 +654,9 @@ describe("Fugetsu's tunnel", () => {
     const world = { ...EMPTY_WORLD, worm: { a: roomA.id, b: roomB.id, crossings: 0 } }
     expect(wormExit(world, roomA.id, roomA.id)).toBeNull()
     expect(wormExit(world, busiest.space.id, null)).toBeNull()
-    expect(wormExit({ ...EMPTY_WORLD, worm: { a: roomA.id, b: '', crossings: 0 } }, roomA.id, null)).toBeNull()
+    expect(
+      wormExit({ ...EMPTY_WORLD, worm: { a: roomA.id, b: '', crossings: 0 } }, roomA.id, null),
+    ).toBeNull()
   })
 })
 
@@ -741,6 +752,89 @@ describe('what the techniques make of the visitor', () => {
     const parked = detachedOn(ship, world, busiest.space.tierId)[0].structure.at
     const carried = detachedOn(ship, world, busiest.space.tierId, 0, [999, 999])[0].structure.at
     expect(parked).not.toEqual(carried)
+  })
+})
+
+describe('the wrapping and the sun', () => {
+  it('packs the punishment away instead of taking it, and keeps the count', () => {
+    // The wrapping is worn first, then the walk is given something to do to the
+    // visitor: guards on a room they then walk into.
+    let world = on(EMPTY_WORLD, 'pain-armour').world
+    expect(world.body.packed).toBe(0)
+    world = door(world, 'legal-defense', roomA.id).world
+
+    const arrival = arriveInTour({ ...world, cameFrom: roomB.id }, ship, roomA.id)
+    // Not expelled, not injured, and not undone either: it went into the armour.
+    expect(arrival.travelTo).toBeUndefined()
+    expect(arrival.report).toMatchObject({ kind: 'packed-away', packed: 1 })
+    expect(arrival.world.body.packed).toBe(1)
+  })
+
+  it('lets the double take the blow before the wrapping ever sees it', () => {
+    let world = on(EMPTY_WORLD, 'pain-armour').world
+    world = door(world, 'legal-defense', roomA.id).world
+    world = door(world, 'guardian', roomB.id).world
+
+    const first = arriveInTour({ ...world, cameFrom: roomB.id }, ship, roomA.id)
+    expect(first.report).toMatchObject({ kind: 'double-spent' })
+    expect(first.world.body.packed).toBe(0)
+
+    // With the double spent, the next one is the wrapping's.
+    const second = arriveInTour({ ...first.world, cameFrom: roomB.id }, ship, roomA.id)
+    expect(second.report).toMatchObject({ kind: 'packed-away', packed: 1 })
+  })
+
+  it('spares the visitor the forced Zetsu a broken rule would have cost', () => {
+    const armoured = on(EMPTY_WORLD, 'pain-armour').world
+    const world = door(armoured, 'heart-vow', roomA.id).world
+    const broken = arriveInTour({ ...world, cameFrom: roomB.id }, ship, roomA.id)
+    expect(broken.punished).toBeFalsy()
+    expect(broken.world.body.packed).toBe(1)
+  })
+
+  it('refuses to rise on an empty wrapping, and says which half is missing', () => {
+    expect(on(EMPTY_WORLD, 'sun-flare').report).toEqual({ kind: 'nothing-packed' })
+    const worn = on(EMPTY_WORLD, 'pain-armour').world
+    expect(on(worn, 'sun-flare').report).toEqual({ kind: 'nothing-packed' })
+    expect(on(worn, 'pain-armour').report).toEqual({ kind: 'armour-holding', packed: 0 })
+  })
+
+  it('burns outward from where the visitor stands, as far as it was hurt', () => {
+    // Two packed blows, and a solid Snake Arm is holding fast beside them: the
+    // burst does not pick what it catches.
+    let world = { ...on(EMPTY_WORLD, 'pain-armour').world }
+    world = { ...world, body: { ...world.body, packed: 2 } }
+    world = on(world, 'serpent', { targetSolidId: solidA.id }).world
+    expect(world.solids[solidA.id]?.bound).toBe(true)
+
+    const risen = on(world, 'sun-flare', { at: solidA.at })
+    if (risen.report?.kind !== 'sun-risen') throw new Error('unreachable')
+    expect(risen.report.metres).toBe(2 * SUN_FLARE_METRES_PER_HIT)
+    expect(risen.report.solids).toBeGreaterThan(0)
+    expect(risen.world.solids[solidA.id]?.gone).toBe(true)
+    // The armour is opened by it, so the same damage is never spent twice.
+    expect(risen.world.body.packed).toBeNull()
+    expect(on(risen.world, 'sun-flare').report).toEqual({ kind: 'nothing-packed' })
+  })
+
+  it('reaches only the deck the visitor is standing on', () => {
+    const world = {
+      ...EMPTY_WORLD,
+      body: { ...RESTING_BODY, packed: 40 },
+    }
+    const risen = on(world, 'sun-flare', { at: solidA.at })
+    const burnt = Object.keys(risen.world.solids)
+    const decks = new Set(
+      burnt.map((id) => ship.spaces.get(ship.structures.find((s) => s.id === id)!.spaceId)!.tierId),
+    )
+    expect(burnt.length).toBeGreaterThan(0)
+    expect([...decks]).toEqual([busiest.space.tierId])
+  })
+
+  it('leaves nothing behind: the walk is quiet again once the aura is released', () => {
+    const packed = { ...EMPTY_WORLD, body: { ...RESTING_BODY, packed: 3 } }
+    expect(worldIsQuiet(packed)).toBe(false)
+    expect(worldIsQuiet(EMPTY_WORLD)).toBe(true)
   })
 })
 

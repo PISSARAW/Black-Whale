@@ -31,6 +31,8 @@ export const moonlightAct = defineAbility({
 
   targets: [person()],
 
+  cost: { label: 'Un accord volontaire, aux termes et à la sanction déclarés', unit: 'contrat' },
+
   actions: {
     sign: {
       label: 'Signer le contrat',

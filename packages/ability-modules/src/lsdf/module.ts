@@ -32,6 +32,11 @@ export const lsdf = defineAbility({
 
   targets: [zone()],
 
+  cost: {
+    label: 'Morena présente, dans la planque, pour une infraction déclarée',
+    unit: 'juridiction',
+  },
+
   actions: {
     arm: {
       label: 'Armer la zone',

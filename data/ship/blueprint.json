@@ -617,7 +617,7 @@
       "locationId": "tier-1-king-living-quarters",
       "name": "King's Living Quarters",
       "nameFr": "Quartiers du Roi",
-      "elevation": 0,
+      "elevation": 72,
       "ceiling": 7,
       "provenance": "panel",
       "source": "Ch. 382 — the King's living room: patterned floor, paired seating, framed paintings and the window at the far end.",
@@ -655,7 +655,7 @@
       "locationId": "tier-1-lifeboats",
       "name": "Lifeboat",
       "nameFr": "Canot de sauvetage",
-      "elevation": 0,
+      "elevation": 72,
       "ceiling": 2.6,
       "provenance": "panel",
       "source": "Ch. 383 — the inside of a pod: a ring of seats about the central post, under the hatch.",
@@ -674,7 +674,7 @@
       "locationId": "tier-1-princes-burial-chamber",
       "name": "Princes' Burial Chamber",
       "nameFr": "Chambre funéraire des princes",
-      "elevation": 0,
+      "elevation": 72,
       "ceiling": 8,
       "provenance": "panel",
       "source": "Ch. 358 shows the chamber; ch. 371 draws it round, the fourteen coffins set radially about its centre.",
@@ -857,6 +857,25 @@
         [-7.5, 5]
       ],
       "sourceFr": "Le chap. 350 montre la cellule de haute sécurité et ses entraves ; le chap. 359, la façade à barreaux et la garde tenue devant."
+    },
+    {
+      "id": "interior-tier5-standard-cabins",
+      "kind": "interior",
+      "parentSpaceId": "tier-5-standard-cabins",
+      "locationId": "tier-5-standard-cabins",
+      "name": "Tier 5 Standard Cabins",
+      "nameFr": "Cabines standard du pont 5",
+      "elevation": 0,
+      "ceiling": 3,
+      "provenance": "plan",
+      "source": "General cabins plan; the corridor doubles as an assembly point",
+      "hull": [
+        [-18, -10],
+        [18, -10],
+        [18, 10],
+        [-18, 10]
+      ],
+      "sourceFr": "Plan des cabines standard ; le couloir sert aussi de point de rassemblement"
     }
   ],
   "spaces": [
@@ -1164,8 +1183,8 @@
       "name": "Queen's Room 01",
       "nameFr": "Chambre de reine 01",
       "category": "quarters",
-      "provenance": "inferred",
-      "source": "The plan gives the block eight rooms; it does not lay them out.",
+      "provenance": "map",
+      "source": "The queens’ quarters plan on /ship draws the block as eight rooms; their order along the corridor is the reconstruction’s.",
       "ceiling": null,
       "envelope": "queen-room-01",
       "footprint": [
@@ -1174,7 +1193,7 @@
         [-30.1, 16.63],
         [-38.5, 16.63]
       ],
-      "sourceFr": "Le plan donne huit chambres au bloc ; il n’en donne pas la disposition."
+      "sourceFr": "Le plan des quartiers des reines sur /ship dessine le bloc en huit chambres ; leur ordre le long du couloir est celui de la reconstruction."
     },
     {
       "id": "tier-1-queens-living-quarters-room-02",
@@ -1183,8 +1202,8 @@
       "name": "Queen's Room 02",
       "nameFr": "Chambre de reine 02",
       "category": "quarters",
-      "provenance": "inferred",
-      "source": "The plan gives the block eight rooms; it does not lay them out.",
+      "provenance": "map",
+      "source": "The queens’ quarters plan on /ship draws the block as eight rooms; their order along the corridor is the reconstruction’s.",
       "ceiling": null,
       "envelope": "queen-room-02",
       "footprint": [
@@ -1193,7 +1212,7 @@
         [-15.75, 16.63],
         [-24.15, 16.63]
       ],
-      "sourceFr": "Le plan donne huit chambres au bloc ; il n’en donne pas la disposition."
+      "sourceFr": "Le plan des quartiers des reines sur /ship dessine le bloc en huit chambres ; leur ordre le long du couloir est celui de la reconstruction."
     },
     {
       "id": "tier-1-queens-living-quarters-room-03",
@@ -1202,8 +1221,8 @@
       "name": "Queen's Room 03",
       "nameFr": "Chambre de reine 03",
       "category": "quarters",
-      "provenance": "inferred",
-      "source": "The plan gives the block eight rooms; it does not lay them out.",
+      "provenance": "map",
+      "source": "The queens’ quarters plan on /ship draws the block as eight rooms; their order along the corridor is the reconstruction’s.",
       "ceiling": null,
       "envelope": "queen-room-03",
       "footprint": [
@@ -1212,7 +1231,7 @@
         [-30.1, 29.75],
         [-38.5, 29.75]
       ],
-      "sourceFr": "Le plan donne huit chambres au bloc ; il n’en donne pas la disposition."
+      "sourceFr": "Le plan des quartiers des reines sur /ship dessine le bloc en huit chambres ; leur ordre le long du couloir est celui de la reconstruction."
     },
     {
       "id": "tier-1-queens-living-quarters-room-04",
@@ -1221,8 +1240,8 @@
       "name": "Queen's Room 04",
       "nameFr": "Chambre de reine 04",
       "category": "quarters",
-      "provenance": "inferred",
-      "source": "The plan gives the block eight rooms; it does not lay them out.",
+      "provenance": "map",
+      "source": "The queens’ quarters plan on /ship draws the block as eight rooms; their order along the corridor is the reconstruction’s.",
       "ceiling": null,
       "envelope": "queen-room-04",
       "footprint": [
@@ -1231,7 +1250,7 @@
         [-15.75, 29.75],
         [-24.15, 29.75]
       ],
-      "sourceFr": "Le plan donne huit chambres au bloc ; il n’en donne pas la disposition."
+      "sourceFr": "Le plan des quartiers des reines sur /ship dessine le bloc en huit chambres ; leur ordre le long du couloir est celui de la reconstruction."
     },
     {
       "id": "tier-1-queens-living-quarters-room-05",
@@ -1240,8 +1259,8 @@
       "name": "Queen's Room 05",
       "nameFr": "Chambre de reine 05",
       "category": "quarters",
-      "provenance": "inferred",
-      "source": "The plan gives the block eight rooms; it does not lay them out.",
+      "provenance": "map",
+      "source": "The queens’ quarters plan on /ship draws the block as eight rooms; their order along the corridor is the reconstruction’s.",
       "ceiling": null,
       "envelope": "queen-room-05",
       "footprint": [
@@ -1250,7 +1269,7 @@
         [-30.1, 42.88],
         [-38.5, 42.88]
       ],
-      "sourceFr": "Le plan donne huit chambres au bloc ; il n’en donne pas la disposition."
+      "sourceFr": "Le plan des quartiers des reines sur /ship dessine le bloc en huit chambres ; leur ordre le long du couloir est celui de la reconstruction."
     },
     {
       "id": "tier-1-queens-living-quarters-room-06",
@@ -1259,8 +1278,8 @@
       "name": "Queen's Room 06",
       "nameFr": "Chambre de reine 06",
       "category": "quarters",
-      "provenance": "inferred",
-      "source": "The plan gives the block eight rooms; it does not lay them out.",
+      "provenance": "map",
+      "source": "The queens’ quarters plan on /ship draws the block as eight rooms; their order along the corridor is the reconstruction’s.",
       "ceiling": null,
       "envelope": "queen-room-06",
       "footprint": [
@@ -1269,7 +1288,7 @@
         [-15.75, 42.88],
         [-24.15, 42.88]
       ],
-      "sourceFr": "Le plan donne huit chambres au bloc ; il n’en donne pas la disposition."
+      "sourceFr": "Le plan des quartiers des reines sur /ship dessine le bloc en huit chambres ; leur ordre le long du couloir est celui de la reconstruction."
     },
     {
       "id": "tier-1-queens-living-quarters-room-07",
@@ -1278,8 +1297,8 @@
       "name": "Queen's Room 07",
       "nameFr": "Chambre de reine 07",
       "category": "quarters",
-      "provenance": "inferred",
-      "source": "The plan gives the block eight rooms; it does not lay them out.",
+      "provenance": "map",
+      "source": "The queens’ quarters plan on /ship draws the block as eight rooms; their order along the corridor is the reconstruction’s.",
       "ceiling": null,
       "envelope": "queen-room-07",
       "footprint": [
@@ -1288,7 +1307,7 @@
         [-30.1, 56],
         [-38.5, 56]
       ],
-      "sourceFr": "Le plan donne huit chambres au bloc ; il n’en donne pas la disposition."
+      "sourceFr": "Le plan des quartiers des reines sur /ship dessine le bloc en huit chambres ; leur ordre le long du couloir est celui de la reconstruction."
     },
     {
       "id": "tier-1-queens-living-quarters-room-08",
@@ -1297,8 +1316,8 @@
       "name": "Queen's Room 08",
       "nameFr": "Chambre de reine 08",
       "category": "quarters",
-      "provenance": "inferred",
-      "source": "The plan gives the block eight rooms; it does not lay them out.",
+      "provenance": "map",
+      "source": "The queens’ quarters plan on /ship draws the block as eight rooms; their order along the corridor is the reconstruction’s.",
       "ceiling": null,
       "envelope": "queen-room-08",
       "footprint": [
@@ -1307,7 +1326,7 @@
         [-15.75, 56],
         [-24.15, 56]
       ],
-      "sourceFr": "Le plan donne huit chambres au bloc ; il n’en donne pas la disposition."
+      "sourceFr": "Le plan des quartiers des reines sur /ship dessine le bloc en huit chambres ; leur ordre le long du couloir est celui de la reconstruction."
     },
     {
       "id": "tier-1-royal-residential-corridor",
@@ -4074,7 +4093,7 @@
       "nameFr": "Dortoir du commissariat central",
       "category": "quarters",
       "provenance": "inferred",
-      "source": "The catalogue puts the dorm inside the station; the plan does not place it.",
+      "source": "The catalogue puts the dorm inside the station; nothing draws where it stands.",
       "ceiling": null,
       "envelope": null,
       "footprint": [
@@ -4083,7 +4102,7 @@
         [0, 59.5],
         [-35, 59.5]
       ],
-      "sourceFr": "Le catalogue situe le dortoir dans le commissariat ; le plan ne le place pas."
+      "sourceFr": "Le catalogue situe le dortoir dans le commissariat ; rien n'en dessine la place."
     },
     {
       "id": "tier-3-central-courthouse",
@@ -5369,7 +5388,7 @@
       "nameFr": "Couloir du bureau",
       "category": "corridor",
       "provenance": "inferred",
-      "source": "The room plan draws the rooms but no way between them; this passage is reconstructed.",
+      "source": "The rooms are drawn, the way between them is not; this passage is reconstructed.",
       "ceiling": 4,
       "envelope": null,
       "footprint": [
@@ -5378,7 +5397,7 @@
         [20.75, -1.25],
         [-20.75, -1.25]
       ],
-      "sourceFr": "Le plan dessine les pièces mais aucun passage entre elles ; cette circulation est reconstruite."
+      "sourceFr": "Les pièces sont dessinées, aucun passage entre elles ne l'est ; cette circulation est reconstruite."
     },
     {
       "id": "tier-3-central-hospital-clinic",
@@ -5464,7 +5483,7 @@
       "nameFr": "Couloir du service",
       "category": "corridor",
       "provenance": "inferred",
-      "source": "The room plan draws the rooms but no way between them; this passage is reconstructed.",
+      "source": "The rooms are drawn, the way between them is not; this passage is reconstructed.",
       "ceiling": 4,
       "envelope": null,
       "footprint": [
@@ -5473,7 +5492,7 @@
         [5.75, 4.75],
         [4.25, 4.75]
       ],
-      "sourceFr": "Le plan dessine les pièces mais aucun passage entre elles ; cette circulation est reconstruite."
+      "sourceFr": "Les pièces sont dessinées, aucun passage entre elles ne l'est ; cette circulation est reconstruite."
     },
     {
       "id": "tier-3-cineplex-concession",
@@ -5502,7 +5521,7 @@
       "nameFr": "Foyer (bâbord)",
       "category": "corridor",
       "provenance": "inferred",
-      "source": "The room plan draws the rooms but no way between them; this passage is reconstructed.",
+      "source": "The rooms are drawn, the way between them is not; this passage is reconstructed.",
       "ceiling": 6,
       "envelope": null,
       "footprint": [
@@ -5511,7 +5530,7 @@
         [-7.5, 7.5],
         [-12.5, 7.5]
       ],
-      "sourceFr": "Le plan dessine les pièces mais aucun passage entre elles ; cette circulation est reconstruite."
+      "sourceFr": "Les pièces sont dessinées, aucun passage entre elles ne l'est ; cette circulation est reconstruite."
     },
     {
       "id": "tier-3-cineplex-screen-corridor",
@@ -5540,7 +5559,7 @@
       "nameFr": "Foyer (tribord)",
       "category": "corridor",
       "provenance": "inferred",
-      "source": "The room plan draws the rooms but no way between them; this passage is reconstructed.",
+      "source": "The rooms are drawn, the way between them is not; this passage is reconstructed.",
       "ceiling": 6,
       "envelope": null,
       "footprint": [
@@ -5549,7 +5568,7 @@
         [12.5, 7.5],
         [7.5, 7.5]
       ],
-      "sourceFr": "Le plan dessine les pièces mais aucun passage entre elles ; cette circulation est reconstruite."
+      "sourceFr": "Les pièces sont dessinées, aucun passage entre elles ne l'est ; cette circulation est reconstruite."
     },
     {
       "id": "tier-3-cineplex-ticket-desk",
@@ -5578,7 +5597,7 @@
       "nameFr": "Hall des salles",
       "category": "corridor",
       "provenance": "inferred",
-      "source": "Reconstructed so the eight screens the plan names are reached from the concourse.",
+      "source": "Reconstructed so the eight named auditoriums are reached from the concourse; no drawing shows this hall.",
       "ceiling": null,
       "envelope": null,
       "footprint": [
@@ -5587,7 +5606,7 @@
         [28, 17.5],
         [-28, 17.5]
       ],
-      "sourceFr": "Reconstruit pour que les huit salles nommées par le plan se rejoignent depuis le hall."
+      "sourceFr": "Reconstruit pour desservir les huit salles nommées depuis le hall ; aucun dessin ne le montre."
     },
     {
       "id": "tier-3-cineplex-screen-1",
@@ -5596,8 +5615,8 @@
       "name": "Screen 1",
       "nameFr": "Salle 1",
       "category": "public",
-      "provenance": "inferred",
-      "source": "The cineplex plan names eight screens; it does not draw them.",
+      "provenance": "map",
+      "source": "The cineplex plan on /ship names eight auditoriums; their order off the hall is the reconstruction’s.",
       "ceiling": null,
       "envelope": "cineplex-screen-1",
       "footprint": [
@@ -5606,7 +5625,7 @@
         [-21, 37.5],
         [-28, 37.5]
       ],
-      "sourceFr": "Le plan du cinéplexe nomme huit salles ; il n'en donne pas la disposition."
+      "sourceFr": "Le plan du cinéplexe sur /ship nomme huit salles ; leur ordre depuis le hall est celui de la reconstruction."
     },
     {
       "id": "tier-3-cineplex-screen-2",
@@ -5615,8 +5634,8 @@
       "name": "Screen 2",
       "nameFr": "Salle 2",
       "category": "public",
-      "provenance": "inferred",
-      "source": "The cineplex plan names eight screens; it does not draw them.",
+      "provenance": "map",
+      "source": "The cineplex plan on /ship names eight auditoriums; their order off the hall is the reconstruction’s.",
       "ceiling": null,
       "envelope": "cineplex-screen-2",
       "footprint": [
@@ -5625,7 +5644,7 @@
         [-14, 37.5],
         [-21, 37.5]
       ],
-      "sourceFr": "Le plan du cinéplexe nomme huit salles ; il n'en donne pas la disposition."
+      "sourceFr": "Le plan du cinéplexe sur /ship nomme huit salles ; leur ordre depuis le hall est celui de la reconstruction."
     },
     {
       "id": "tier-3-cineplex-screen-3",
@@ -5634,8 +5653,8 @@
       "name": "Screen 3",
       "nameFr": "Salle 3",
       "category": "public",
-      "provenance": "inferred",
-      "source": "The cineplex plan names eight screens; it does not draw them.",
+      "provenance": "map",
+      "source": "The cineplex plan on /ship names eight auditoriums; their order off the hall is the reconstruction’s.",
       "ceiling": null,
       "envelope": "cineplex-screen-3",
       "footprint": [
@@ -5644,7 +5663,7 @@
         [-7, 37.5],
         [-14, 37.5]
       ],
-      "sourceFr": "Le plan du cinéplexe nomme huit salles ; il n'en donne pas la disposition."
+      "sourceFr": "Le plan du cinéplexe sur /ship nomme huit salles ; leur ordre depuis le hall est celui de la reconstruction."
     },
     {
       "id": "tier-3-cineplex-screen-4",
@@ -5653,8 +5672,8 @@
       "name": "Screen 4",
       "nameFr": "Salle 4",
       "category": "public",
-      "provenance": "inferred",
-      "source": "The cineplex plan names eight screens; it does not draw them.",
+      "provenance": "map",
+      "source": "The cineplex plan on /ship names eight auditoriums; their order off the hall is the reconstruction’s.",
       "ceiling": null,
       "envelope": "cineplex-screen-4",
       "footprint": [
@@ -5663,7 +5682,7 @@
         [0, 37.5],
         [-7, 37.5]
       ],
-      "sourceFr": "Le plan du cinéplexe nomme huit salles ; il n'en donne pas la disposition."
+      "sourceFr": "Le plan du cinéplexe sur /ship nomme huit salles ; leur ordre depuis le hall est celui de la reconstruction."
     },
     {
       "id": "tier-3-cineplex-screen-5",
@@ -5672,8 +5691,8 @@
       "name": "Screen 5",
       "nameFr": "Salle 5",
       "category": "public",
-      "provenance": "inferred",
-      "source": "The cineplex plan names eight screens; it does not draw them.",
+      "provenance": "map",
+      "source": "The cineplex plan on /ship names eight auditoriums; their order off the hall is the reconstruction’s.",
       "ceiling": null,
       "envelope": "cineplex-screen-5",
       "footprint": [
@@ -5682,7 +5701,7 @@
         [7, 37.5],
         [0, 37.5]
       ],
-      "sourceFr": "Le plan du cinéplexe nomme huit salles ; il n'en donne pas la disposition."
+      "sourceFr": "Le plan du cinéplexe sur /ship nomme huit salles ; leur ordre depuis le hall est celui de la reconstruction."
     },
     {
       "id": "tier-3-cineplex-screen-6",
@@ -5691,8 +5710,8 @@
       "name": "Screen 6",
       "nameFr": "Salle 6",
       "category": "public",
-      "provenance": "inferred",
-      "source": "The cineplex plan names eight screens; it does not draw them.",
+      "provenance": "map",
+      "source": "The cineplex plan on /ship names eight auditoriums; their order off the hall is the reconstruction’s.",
       "ceiling": null,
       "envelope": "cineplex-screen-6",
       "footprint": [
@@ -5701,7 +5720,7 @@
         [14, 37.5],
         [7, 37.5]
       ],
-      "sourceFr": "Le plan du cinéplexe nomme huit salles ; il n'en donne pas la disposition."
+      "sourceFr": "Le plan du cinéplexe sur /ship nomme huit salles ; leur ordre depuis le hall est celui de la reconstruction."
     },
     {
       "id": "tier-3-cineplex-screen-7",
@@ -5710,8 +5729,8 @@
       "name": "Screen 7",
       "nameFr": "Salle 7",
       "category": "public",
-      "provenance": "inferred",
-      "source": "The cineplex plan names eight screens; it does not draw them.",
+      "provenance": "map",
+      "source": "The cineplex plan on /ship names eight auditoriums; their order off the hall is the reconstruction’s.",
       "ceiling": null,
       "envelope": "cineplex-screen-7",
       "footprint": [
@@ -5720,7 +5739,7 @@
         [21, 37.5],
         [14, 37.5]
       ],
-      "sourceFr": "Le plan du cinéplexe nomme huit salles ; il n'en donne pas la disposition."
+      "sourceFr": "Le plan du cinéplexe sur /ship nomme huit salles ; leur ordre depuis le hall est celui de la reconstruction."
     },
     {
       "id": "tier-3-cineplex-screen-8",
@@ -5729,8 +5748,8 @@
       "name": "Screen 8",
       "nameFr": "Salle 8",
       "category": "public",
-      "provenance": "inferred",
-      "source": "The cineplex plan names eight screens; it does not draw them.",
+      "provenance": "map",
+      "source": "The cineplex plan on /ship names eight auditoriums; their order off the hall is the reconstruction’s.",
       "ceiling": null,
       "envelope": "cineplex-screen-8",
       "footprint": [
@@ -5739,7 +5758,7 @@
         [28, 37.5],
         [21, 37.5]
       ],
-      "sourceFr": "Le plan du cinéplexe nomme huit salles ; il n'en donne pas la disposition."
+      "sourceFr": "Le plan du cinéplexe sur /ship nomme huit salles ; leur ordre depuis le hall est celui de la reconstruction."
     },
     {
       "id": "tier-5-cha-r-family-office-main-office",
@@ -5806,7 +5825,7 @@
       "nameFr": "Couloir du bureau",
       "category": "corridor",
       "provenance": "inferred",
-      "source": "The room plan draws the rooms but no way between them; this passage is reconstructed. The entrance is the steel smart-lock door the plan draws, watched by two cameras.",
+      "source": "The rooms are drawn, the way between them is not; this passage is reconstructed. The entrance is the steel smart-lock door drawn there, watched by two cameras.",
       "ceiling": 4,
       "envelope": null,
       "footprint": [
@@ -5815,7 +5834,7 @@
         [-0.75, 11.75],
         [-2.25, 11.75]
       ],
-      "sourceFr": "Le plan dessine les pièces mais aucun passage entre elles ; cette circulation est reconstruite. L’entrée est la porte blindée à serrure électronique que le plan dessine, surveillée par deux caméras."
+      "sourceFr": "Les pièces sont dessinées, aucun passage entre elles ne l'est ; cette circulation est reconstruite. L’entrée est la porte blindée à serrure électronique qui y est dessinée, surveillée par deux caméras."
     },
     {
       "id": "tier-3-residential-standard-corridor",
@@ -6065,6 +6084,253 @@
       "sourceFr": "Plan des cabines standard ; le couloir sert aussi de point de rassemblement"
     },
     {
+      "id": "tier-5-standard-cabins-corridor",
+      "tierId": "interior-tier5-standard-cabins",
+      "locationId": "tier-5-standard-cabins",
+      "name": "Assembly Corridor (forward)",
+      "nameFr": "Couloir de rassemblement (avant)",
+      "category": "corridor",
+      "provenance": "plan",
+      "source": "General cabins plan; the corridor doubles as an assembly point",
+      "ceiling": 3,
+      "envelope": null,
+      "footprint": [
+        [-18, -4],
+        [18, -4],
+        [18, 4],
+        [-18, 4]
+      ],
+      "sourceFr": "Plan des cabines standard ; le couloir sert aussi de point de rassemblement"
+    },
+    {
+      "id": "tier-5-standard-cabins-cabin-1",
+      "tierId": "interior-tier5-standard-cabins",
+      "locationId": "tier-5-standard-cabins",
+      "name": "Forward Cabin 1",
+      "nameFr": "Cabine avant 1",
+      "category": "quarters",
+      "provenance": "plan",
+      "source": "General cabins plan; the corridor doubles as an assembly point",
+      "ceiling": 3,
+      "envelope": "tier-5-standard-cabins-cabin-1",
+      "footprint": [
+        [-18, -10],
+        [-12, -10],
+        [-12, -4],
+        [-18, -4]
+      ],
+      "sourceFr": "Plan des cabines standard ; le couloir sert aussi de point de rassemblement"
+    },
+    {
+      "id": "tier-5-standard-cabins-cabin-2",
+      "tierId": "interior-tier5-standard-cabins",
+      "locationId": "tier-5-standard-cabins",
+      "name": "Forward Cabin 2",
+      "nameFr": "Cabine avant 2",
+      "category": "quarters",
+      "provenance": "plan",
+      "source": "General cabins plan; the corridor doubles as an assembly point",
+      "ceiling": 3,
+      "envelope": "tier-5-standard-cabins-cabin-2",
+      "footprint": [
+        [-12, -10],
+        [-6, -10],
+        [-6, -4],
+        [-12, -4]
+      ],
+      "sourceFr": "Plan des cabines standard ; le couloir sert aussi de point de rassemblement"
+    },
+    {
+      "id": "tier-5-standard-cabins-cabin-3",
+      "tierId": "interior-tier5-standard-cabins",
+      "locationId": "tier-5-standard-cabins",
+      "name": "Forward Cabin 3",
+      "nameFr": "Cabine avant 3",
+      "category": "quarters",
+      "provenance": "plan",
+      "source": "General cabins plan; the corridor doubles as an assembly point",
+      "ceiling": 3,
+      "envelope": "tier-5-standard-cabins-cabin-3",
+      "footprint": [
+        [-6, -10],
+        [0, -10],
+        [0, -4],
+        [-6, -4]
+      ],
+      "sourceFr": "Plan des cabines standard ; le couloir sert aussi de point de rassemblement"
+    },
+    {
+      "id": "tier-5-standard-cabins-cabin-4",
+      "tierId": "interior-tier5-standard-cabins",
+      "locationId": "tier-5-standard-cabins",
+      "name": "Forward Cabin 4",
+      "nameFr": "Cabine avant 4",
+      "category": "quarters",
+      "provenance": "plan",
+      "source": "General cabins plan; the corridor doubles as an assembly point",
+      "ceiling": 3,
+      "envelope": "tier-5-standard-cabins-cabin-4",
+      "footprint": [
+        [0, -10],
+        [6, -10],
+        [6, -4],
+        [0, -4]
+      ],
+      "sourceFr": "Plan des cabines standard ; le couloir sert aussi de point de rassemblement"
+    },
+    {
+      "id": "tier-5-standard-cabins-cabin-5",
+      "tierId": "interior-tier5-standard-cabins",
+      "locationId": "tier-5-standard-cabins",
+      "name": "Forward Cabin 5",
+      "nameFr": "Cabine avant 5",
+      "category": "quarters",
+      "provenance": "plan",
+      "source": "General cabins plan; the corridor doubles as an assembly point",
+      "ceiling": 3,
+      "envelope": "tier-5-standard-cabins-cabin-5",
+      "footprint": [
+        [6, -10],
+        [12, -10],
+        [12, -4],
+        [6, -4]
+      ],
+      "sourceFr": "Plan des cabines standard ; le couloir sert aussi de point de rassemblement"
+    },
+    {
+      "id": "tier-5-standard-cabins-cabin-6",
+      "tierId": "interior-tier5-standard-cabins",
+      "locationId": "tier-5-standard-cabins",
+      "name": "Forward Cabin 6",
+      "nameFr": "Cabine avant 6",
+      "category": "quarters",
+      "provenance": "plan",
+      "source": "General cabins plan; the corridor doubles as an assembly point",
+      "ceiling": 3,
+      "envelope": "tier-5-standard-cabins-cabin-6",
+      "footprint": [
+        [12, -10],
+        [18, -10],
+        [18, -4],
+        [12, -4]
+      ],
+      "sourceFr": "Plan des cabines standard ; le couloir sert aussi de point de rassemblement"
+    },
+    {
+      "id": "tier-5-standard-cabins-cabin-7",
+      "tierId": "interior-tier5-standard-cabins",
+      "locationId": "tier-5-standard-cabins",
+      "name": "Forward Cabin 7",
+      "nameFr": "Cabine avant 7",
+      "category": "quarters",
+      "provenance": "plan",
+      "source": "General cabins plan; the corridor doubles as an assembly point",
+      "ceiling": 3,
+      "envelope": "tier-5-standard-cabins-cabin-7",
+      "footprint": [
+        [-18, 4],
+        [-12, 4],
+        [-12, 10],
+        [-18, 10]
+      ],
+      "sourceFr": "Plan des cabines standard ; le couloir sert aussi de point de rassemblement"
+    },
+    {
+      "id": "tier-5-standard-cabins-cabin-8",
+      "tierId": "interior-tier5-standard-cabins",
+      "locationId": "tier-5-standard-cabins",
+      "name": "Forward Cabin 8",
+      "nameFr": "Cabine avant 8",
+      "category": "quarters",
+      "provenance": "plan",
+      "source": "General cabins plan; the corridor doubles as an assembly point",
+      "ceiling": 3,
+      "envelope": "tier-5-standard-cabins-cabin-8",
+      "footprint": [
+        [-12, 4],
+        [-6, 4],
+        [-6, 10],
+        [-12, 10]
+      ],
+      "sourceFr": "Plan des cabines standard ; le couloir sert aussi de point de rassemblement"
+    },
+    {
+      "id": "tier-5-standard-cabins-cabin-9",
+      "tierId": "interior-tier5-standard-cabins",
+      "locationId": "tier-5-standard-cabins",
+      "name": "Forward Cabin 9",
+      "nameFr": "Cabine avant 9",
+      "category": "quarters",
+      "provenance": "plan",
+      "source": "General cabins plan; the corridor doubles as an assembly point",
+      "ceiling": 3,
+      "envelope": "tier-5-standard-cabins-cabin-9",
+      "footprint": [
+        [-6, 4],
+        [0, 4],
+        [0, 10],
+        [-6, 10]
+      ],
+      "sourceFr": "Plan des cabines standard ; le couloir sert aussi de point de rassemblement"
+    },
+    {
+      "id": "tier-5-standard-cabins-cabin-10",
+      "tierId": "interior-tier5-standard-cabins",
+      "locationId": "tier-5-standard-cabins",
+      "name": "Forward Cabin 10",
+      "nameFr": "Cabine avant 10",
+      "category": "quarters",
+      "provenance": "plan",
+      "source": "General cabins plan; the corridor doubles as an assembly point",
+      "ceiling": 3,
+      "envelope": "tier-5-standard-cabins-cabin-10",
+      "footprint": [
+        [0, 4],
+        [6, 4],
+        [6, 10],
+        [0, 10]
+      ],
+      "sourceFr": "Plan des cabines standard ; le couloir sert aussi de point de rassemblement"
+    },
+    {
+      "id": "tier-5-standard-cabins-cabin-11",
+      "tierId": "interior-tier5-standard-cabins",
+      "locationId": "tier-5-standard-cabins",
+      "name": "Forward Cabin 11",
+      "nameFr": "Cabine avant 11",
+      "category": "quarters",
+      "provenance": "plan",
+      "source": "General cabins plan; the corridor doubles as an assembly point",
+      "ceiling": 3,
+      "envelope": "tier-5-standard-cabins-cabin-11",
+      "footprint": [
+        [6, 4],
+        [12, 4],
+        [12, 10],
+        [6, 10]
+      ],
+      "sourceFr": "Plan des cabines standard ; le couloir sert aussi de point de rassemblement"
+    },
+    {
+      "id": "tier-5-standard-cabins-cabin-12",
+      "tierId": "interior-tier5-standard-cabins",
+      "locationId": "tier-5-standard-cabins",
+      "name": "Forward Cabin 12",
+      "nameFr": "Cabine avant 12",
+      "category": "quarters",
+      "provenance": "plan",
+      "source": "General cabins plan; the corridor doubles as an assembly point",
+      "ceiling": 3,
+      "envelope": "tier-5-standard-cabins-cabin-12",
+      "footprint": [
+        [12, 4],
+        [18, 4],
+        [18, 10],
+        [12, 10]
+      ],
+      "sourceFr": "Plan des cabines standard ; le couloir sert aussi de point de rassemblement"
+    },
+    {
       "id": "tier-3-residential-first-class-hallway",
       "tierId": "interior-tier3-cabins",
       "locationId": "tier-3-residential-first-class",
@@ -6148,7 +6414,7 @@
       "nameFr": "Escalier vers l’étage",
       "category": "corridor",
       "provenance": "inferred",
-      "source": "The room plan draws the rooms but no way between them; this passage is reconstructed. The plan puts the single cabin on the floor above without drawing the stair.",
+      "source": "The rooms are drawn, the way between them is not; this passage is reconstructed. The single cabin sits on the floor above, and no stair up to it is drawn.",
       "ceiling": 3.5,
       "envelope": null,
       "footprint": [
@@ -6157,7 +6423,7 @@
         [5, 3.25],
         [-5, 3.25]
       ],
-      "sourceFr": "Le plan dessine les pièces mais aucun passage entre elles ; cette circulation est reconstruite. Le plan place la cabine simple à l’étage sans dessiner l’escalier."
+      "sourceFr": "Les pièces sont dessinées, aucun passage entre elles ne l'est ; cette circulation est reconstruite. La cabine simple est à l’étage, et aucun escalier n’y monte sur le dessin."
     },
     {
       "id": "tier-3-residential-first-class-single-cabin",
@@ -6598,7 +6864,7 @@
       "nameFr": "Couloir de bunker",
       "category": "corridor",
       "provenance": "inferred",
-      "source": "Reconstructed so the rooms of the plan connect; the plan draws a bunker-like corridor but not where it runs.",
+      "source": "Reconstructed so the drawn rooms connect; a bunker-like corridor is drawn, but not where it runs.",
       "ceiling": 4,
       "envelope": null,
       "footprint": [
@@ -6607,7 +6873,7 @@
         [15.23, -0.35],
         [-18.4, -0.35]
       ],
-      "sourceFr": "Reconstruit pour que les pièces du plan communiquent ; le plan dessine un couloir de bunker, pas son tracé."
+      "sourceFr": "Reconstruit pour que les pièces dessinées communiquent ; un couloir de bunker est dessiné, mais pas son tracé."
     },
     {
       "id": "tier-2-heilly-secret-hideout-laundry",
@@ -6879,6 +7145,16 @@
       "sourceFr": "Plan des cabines standard ; le couloir sert aussi de point de rassemblement"
     },
     {
+      "from": "tier-5-standard-cabins",
+      "to": "tier-5-standard-cabins-corridor",
+      "kind": "door",
+      "at": [-80.5, -16.6],
+      "atTo": [0, 0],
+      "provenance": "plan",
+      "source": "General cabins plan; the corridor doubles as an assembly point",
+      "sourceFr": "Plan des cabines standard ; le couloir sert aussi de point de rassemblement"
+    },
+    {
       "from": "tier-3-residential-first-class",
       "to": "tier-3-residential-first-class-hallway",
       "kind": "door",
@@ -6970,8 +7246,8 @@
       "at": [-8.75, -70],
       "atTo": [0, 9],
       "provenance": "inferred",
-      "source": "Reconstructed as the way from the passage into the chamber; the plan draws the chamber but no threshold.",
-      "sourceFr": "Reconstruit comme le passage vers la chambre ; le plan dessine la chambre, pas son seuil."
+      "source": "Reconstructed as the way from the passage into the chamber; the chamber is drawn, its threshold is not.",
+      "sourceFr": "Reconstruit comme le passage vers la chambre ; la chambre est dessinée, pas son seuil."
     },
     {
       "from": "tier-4-royal-army-conference-room",
@@ -8478,6 +8754,102 @@
     {
       "a": "tier-3-residential-standard-cabin-12",
       "b": "tier-3-residential-standard-corridor",
+      "at": [15, 4],
+      "width": 2.4,
+      "reason": "Door placed where the room plan draws it.",
+      "reasonFr": "Porte placée là où le plan de la salle la dessine."
+    },
+    {
+      "a": "tier-5-standard-cabins-cabin-1",
+      "b": "tier-5-standard-cabins-corridor",
+      "at": [-15, -4],
+      "width": 2.4,
+      "reason": "Door placed where the room plan draws it.",
+      "reasonFr": "Porte placée là où le plan de la salle la dessine."
+    },
+    {
+      "a": "tier-5-standard-cabins-cabin-2",
+      "b": "tier-5-standard-cabins-corridor",
+      "at": [-9, -4],
+      "width": 2.4,
+      "reason": "Door placed where the room plan draws it.",
+      "reasonFr": "Porte placée là où le plan de la salle la dessine."
+    },
+    {
+      "a": "tier-5-standard-cabins-cabin-3",
+      "b": "tier-5-standard-cabins-corridor",
+      "at": [-3, -4],
+      "width": 2.4,
+      "reason": "Door placed where the room plan draws it.",
+      "reasonFr": "Porte placée là où le plan de la salle la dessine."
+    },
+    {
+      "a": "tier-5-standard-cabins-cabin-4",
+      "b": "tier-5-standard-cabins-corridor",
+      "at": [3, -4],
+      "width": 2.4,
+      "reason": "Door placed where the room plan draws it.",
+      "reasonFr": "Porte placée là où le plan de la salle la dessine."
+    },
+    {
+      "a": "tier-5-standard-cabins-cabin-5",
+      "b": "tier-5-standard-cabins-corridor",
+      "at": [9, -4],
+      "width": 2.4,
+      "reason": "Door placed where the room plan draws it.",
+      "reasonFr": "Porte placée là où le plan de la salle la dessine."
+    },
+    {
+      "a": "tier-5-standard-cabins-cabin-6",
+      "b": "tier-5-standard-cabins-corridor",
+      "at": [15, -4],
+      "width": 2.4,
+      "reason": "Door placed where the room plan draws it.",
+      "reasonFr": "Porte placée là où le plan de la salle la dessine."
+    },
+    {
+      "a": "tier-5-standard-cabins-cabin-7",
+      "b": "tier-5-standard-cabins-corridor",
+      "at": [-15, 4],
+      "width": 2.4,
+      "reason": "Door placed where the room plan draws it.",
+      "reasonFr": "Porte placée là où le plan de la salle la dessine."
+    },
+    {
+      "a": "tier-5-standard-cabins-cabin-8",
+      "b": "tier-5-standard-cabins-corridor",
+      "at": [-9, 4],
+      "width": 2.4,
+      "reason": "Door placed where the room plan draws it.",
+      "reasonFr": "Porte placée là où le plan de la salle la dessine."
+    },
+    {
+      "a": "tier-5-standard-cabins-cabin-9",
+      "b": "tier-5-standard-cabins-corridor",
+      "at": [-3, 4],
+      "width": 2.4,
+      "reason": "Door placed where the room plan draws it.",
+      "reasonFr": "Porte placée là où le plan de la salle la dessine."
+    },
+    {
+      "a": "tier-5-standard-cabins-cabin-10",
+      "b": "tier-5-standard-cabins-corridor",
+      "at": [3, 4],
+      "width": 2.4,
+      "reason": "Door placed where the room plan draws it.",
+      "reasonFr": "Porte placée là où le plan de la salle la dessine."
+    },
+    {
+      "a": "tier-5-standard-cabins-cabin-11",
+      "b": "tier-5-standard-cabins-corridor",
+      "at": [9, 4],
+      "width": 2.4,
+      "reason": "Door placed where the room plan draws it.",
+      "reasonFr": "Porte placée là où le plan de la salle la dessine."
+    },
+    {
+      "a": "tier-5-standard-cabins-cabin-12",
+      "b": "tier-5-standard-cabins-corridor",
       "at": [15, 4],
       "width": 2.4,
       "reason": "Door placed where the room plan draws it.",
@@ -16136,6 +16508,390 @@
     {
       "id": "tier-3-residential-standard-cabin-12-cupboard",
       "spaceId": "tier-3-residential-standard-cabin-12",
+      "kind": "cabinet",
+      "name": "Cupboards",
+      "nameFr": "Placards",
+      "at": [16.6, 9.55],
+      "size": [1.6, 0.6],
+      "rotation": 0,
+      "base": 0,
+      "height": 2,
+      "sides": null,
+      "provenance": "plan",
+      "source": "General cabins plan; the corridor doubles as an assembly point",
+      "sourceFr": "Plan des cabines standard ; le couloir sert aussi de point de rassemblement"
+    },
+    {
+      "id": "tier-5-standard-cabins-cabin-1-bed",
+      "spaceId": "tier-5-standard-cabins-cabin-1",
+      "kind": "bed",
+      "name": "Bed",
+      "nameFr": "Lit",
+      "at": [-16.3, -8.75],
+      "size": [1, 2.1],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.5,
+      "sides": null,
+      "provenance": "plan",
+      "source": "General cabins plan; the corridor doubles as an assembly point",
+      "sourceFr": "Plan des cabines standard ; le couloir sert aussi de point de rassemblement"
+    },
+    {
+      "id": "tier-5-standard-cabins-cabin-1-cupboard",
+      "spaceId": "tier-5-standard-cabins-cabin-1",
+      "kind": "cabinet",
+      "name": "Cupboards",
+      "nameFr": "Placards",
+      "at": [-13.4, -9.55],
+      "size": [1.6, 0.6],
+      "rotation": 0,
+      "base": 0,
+      "height": 2,
+      "sides": null,
+      "provenance": "plan",
+      "source": "General cabins plan; the corridor doubles as an assembly point",
+      "sourceFr": "Plan des cabines standard ; le couloir sert aussi de point de rassemblement"
+    },
+    {
+      "id": "tier-5-standard-cabins-cabin-2-bed",
+      "spaceId": "tier-5-standard-cabins-cabin-2",
+      "kind": "bed",
+      "name": "Bed",
+      "nameFr": "Lit",
+      "at": [-10.3, -8.75],
+      "size": [1, 2.1],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.5,
+      "sides": null,
+      "provenance": "plan",
+      "source": "General cabins plan; the corridor doubles as an assembly point",
+      "sourceFr": "Plan des cabines standard ; le couloir sert aussi de point de rassemblement"
+    },
+    {
+      "id": "tier-5-standard-cabins-cabin-2-cupboard",
+      "spaceId": "tier-5-standard-cabins-cabin-2",
+      "kind": "cabinet",
+      "name": "Cupboards",
+      "nameFr": "Placards",
+      "at": [-7.4, -9.55],
+      "size": [1.6, 0.6],
+      "rotation": 0,
+      "base": 0,
+      "height": 2,
+      "sides": null,
+      "provenance": "plan",
+      "source": "General cabins plan; the corridor doubles as an assembly point",
+      "sourceFr": "Plan des cabines standard ; le couloir sert aussi de point de rassemblement"
+    },
+    {
+      "id": "tier-5-standard-cabins-cabin-3-bed",
+      "spaceId": "tier-5-standard-cabins-cabin-3",
+      "kind": "bed",
+      "name": "Bed",
+      "nameFr": "Lit",
+      "at": [-4.3, -8.75],
+      "size": [1, 2.1],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.5,
+      "sides": null,
+      "provenance": "plan",
+      "source": "General cabins plan; the corridor doubles as an assembly point",
+      "sourceFr": "Plan des cabines standard ; le couloir sert aussi de point de rassemblement"
+    },
+    {
+      "id": "tier-5-standard-cabins-cabin-3-cupboard",
+      "spaceId": "tier-5-standard-cabins-cabin-3",
+      "kind": "cabinet",
+      "name": "Cupboards",
+      "nameFr": "Placards",
+      "at": [-1.4, -9.55],
+      "size": [1.6, 0.6],
+      "rotation": 0,
+      "base": 0,
+      "height": 2,
+      "sides": null,
+      "provenance": "plan",
+      "source": "General cabins plan; the corridor doubles as an assembly point",
+      "sourceFr": "Plan des cabines standard ; le couloir sert aussi de point de rassemblement"
+    },
+    {
+      "id": "tier-5-standard-cabins-cabin-4-bed",
+      "spaceId": "tier-5-standard-cabins-cabin-4",
+      "kind": "bed",
+      "name": "Bed",
+      "nameFr": "Lit",
+      "at": [1.7, -8.75],
+      "size": [1, 2.1],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.5,
+      "sides": null,
+      "provenance": "plan",
+      "source": "General cabins plan; the corridor doubles as an assembly point",
+      "sourceFr": "Plan des cabines standard ; le couloir sert aussi de point de rassemblement"
+    },
+    {
+      "id": "tier-5-standard-cabins-cabin-4-cupboard",
+      "spaceId": "tier-5-standard-cabins-cabin-4",
+      "kind": "cabinet",
+      "name": "Cupboards",
+      "nameFr": "Placards",
+      "at": [4.6, -9.55],
+      "size": [1.6, 0.6],
+      "rotation": 0,
+      "base": 0,
+      "height": 2,
+      "sides": null,
+      "provenance": "plan",
+      "source": "General cabins plan; the corridor doubles as an assembly point",
+      "sourceFr": "Plan des cabines standard ; le couloir sert aussi de point de rassemblement"
+    },
+    {
+      "id": "tier-5-standard-cabins-cabin-5-bed",
+      "spaceId": "tier-5-standard-cabins-cabin-5",
+      "kind": "bed",
+      "name": "Bed",
+      "nameFr": "Lit",
+      "at": [7.7, -8.75],
+      "size": [1, 2.1],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.5,
+      "sides": null,
+      "provenance": "plan",
+      "source": "General cabins plan; the corridor doubles as an assembly point",
+      "sourceFr": "Plan des cabines standard ; le couloir sert aussi de point de rassemblement"
+    },
+    {
+      "id": "tier-5-standard-cabins-cabin-5-cupboard",
+      "spaceId": "tier-5-standard-cabins-cabin-5",
+      "kind": "cabinet",
+      "name": "Cupboards",
+      "nameFr": "Placards",
+      "at": [10.6, -9.55],
+      "size": [1.6, 0.6],
+      "rotation": 0,
+      "base": 0,
+      "height": 2,
+      "sides": null,
+      "provenance": "plan",
+      "source": "General cabins plan; the corridor doubles as an assembly point",
+      "sourceFr": "Plan des cabines standard ; le couloir sert aussi de point de rassemblement"
+    },
+    {
+      "id": "tier-5-standard-cabins-cabin-6-bed",
+      "spaceId": "tier-5-standard-cabins-cabin-6",
+      "kind": "bed",
+      "name": "Bed",
+      "nameFr": "Lit",
+      "at": [13.7, -8.75],
+      "size": [1, 2.1],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.5,
+      "sides": null,
+      "provenance": "plan",
+      "source": "General cabins plan; the corridor doubles as an assembly point",
+      "sourceFr": "Plan des cabines standard ; le couloir sert aussi de point de rassemblement"
+    },
+    {
+      "id": "tier-5-standard-cabins-cabin-6-cupboard",
+      "spaceId": "tier-5-standard-cabins-cabin-6",
+      "kind": "cabinet",
+      "name": "Cupboards",
+      "nameFr": "Placards",
+      "at": [16.6, -9.55],
+      "size": [1.6, 0.6],
+      "rotation": 0,
+      "base": 0,
+      "height": 2,
+      "sides": null,
+      "provenance": "plan",
+      "source": "General cabins plan; the corridor doubles as an assembly point",
+      "sourceFr": "Plan des cabines standard ; le couloir sert aussi de point de rassemblement"
+    },
+    {
+      "id": "tier-5-standard-cabins-cabin-7-bed",
+      "spaceId": "tier-5-standard-cabins-cabin-7",
+      "kind": "bed",
+      "name": "Bed",
+      "nameFr": "Lit",
+      "at": [-16.3, 8.75],
+      "size": [1, 2.1],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.5,
+      "sides": null,
+      "provenance": "plan",
+      "source": "General cabins plan; the corridor doubles as an assembly point",
+      "sourceFr": "Plan des cabines standard ; le couloir sert aussi de point de rassemblement"
+    },
+    {
+      "id": "tier-5-standard-cabins-cabin-7-cupboard",
+      "spaceId": "tier-5-standard-cabins-cabin-7",
+      "kind": "cabinet",
+      "name": "Cupboards",
+      "nameFr": "Placards",
+      "at": [-13.4, 9.55],
+      "size": [1.6, 0.6],
+      "rotation": 0,
+      "base": 0,
+      "height": 2,
+      "sides": null,
+      "provenance": "plan",
+      "source": "General cabins plan; the corridor doubles as an assembly point",
+      "sourceFr": "Plan des cabines standard ; le couloir sert aussi de point de rassemblement"
+    },
+    {
+      "id": "tier-5-standard-cabins-cabin-8-bed",
+      "spaceId": "tier-5-standard-cabins-cabin-8",
+      "kind": "bed",
+      "name": "Bed",
+      "nameFr": "Lit",
+      "at": [-10.3, 8.75],
+      "size": [1, 2.1],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.5,
+      "sides": null,
+      "provenance": "plan",
+      "source": "General cabins plan; the corridor doubles as an assembly point",
+      "sourceFr": "Plan des cabines standard ; le couloir sert aussi de point de rassemblement"
+    },
+    {
+      "id": "tier-5-standard-cabins-cabin-8-cupboard",
+      "spaceId": "tier-5-standard-cabins-cabin-8",
+      "kind": "cabinet",
+      "name": "Cupboards",
+      "nameFr": "Placards",
+      "at": [-7.4, 9.55],
+      "size": [1.6, 0.6],
+      "rotation": 0,
+      "base": 0,
+      "height": 2,
+      "sides": null,
+      "provenance": "plan",
+      "source": "General cabins plan; the corridor doubles as an assembly point",
+      "sourceFr": "Plan des cabines standard ; le couloir sert aussi de point de rassemblement"
+    },
+    {
+      "id": "tier-5-standard-cabins-cabin-9-bed",
+      "spaceId": "tier-5-standard-cabins-cabin-9",
+      "kind": "bed",
+      "name": "Bed",
+      "nameFr": "Lit",
+      "at": [-4.3, 8.75],
+      "size": [1, 2.1],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.5,
+      "sides": null,
+      "provenance": "plan",
+      "source": "General cabins plan; the corridor doubles as an assembly point",
+      "sourceFr": "Plan des cabines standard ; le couloir sert aussi de point de rassemblement"
+    },
+    {
+      "id": "tier-5-standard-cabins-cabin-9-cupboard",
+      "spaceId": "tier-5-standard-cabins-cabin-9",
+      "kind": "cabinet",
+      "name": "Cupboards",
+      "nameFr": "Placards",
+      "at": [-1.4, 9.55],
+      "size": [1.6, 0.6],
+      "rotation": 0,
+      "base": 0,
+      "height": 2,
+      "sides": null,
+      "provenance": "plan",
+      "source": "General cabins plan; the corridor doubles as an assembly point",
+      "sourceFr": "Plan des cabines standard ; le couloir sert aussi de point de rassemblement"
+    },
+    {
+      "id": "tier-5-standard-cabins-cabin-10-bed",
+      "spaceId": "tier-5-standard-cabins-cabin-10",
+      "kind": "bed",
+      "name": "Bed",
+      "nameFr": "Lit",
+      "at": [1.7, 8.75],
+      "size": [1, 2.1],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.5,
+      "sides": null,
+      "provenance": "plan",
+      "source": "General cabins plan; the corridor doubles as an assembly point",
+      "sourceFr": "Plan des cabines standard ; le couloir sert aussi de point de rassemblement"
+    },
+    {
+      "id": "tier-5-standard-cabins-cabin-10-cupboard",
+      "spaceId": "tier-5-standard-cabins-cabin-10",
+      "kind": "cabinet",
+      "name": "Cupboards",
+      "nameFr": "Placards",
+      "at": [4.6, 9.55],
+      "size": [1.6, 0.6],
+      "rotation": 0,
+      "base": 0,
+      "height": 2,
+      "sides": null,
+      "provenance": "plan",
+      "source": "General cabins plan; the corridor doubles as an assembly point",
+      "sourceFr": "Plan des cabines standard ; le couloir sert aussi de point de rassemblement"
+    },
+    {
+      "id": "tier-5-standard-cabins-cabin-11-bed",
+      "spaceId": "tier-5-standard-cabins-cabin-11",
+      "kind": "bed",
+      "name": "Bed",
+      "nameFr": "Lit",
+      "at": [7.7, 8.75],
+      "size": [1, 2.1],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.5,
+      "sides": null,
+      "provenance": "plan",
+      "source": "General cabins plan; the corridor doubles as an assembly point",
+      "sourceFr": "Plan des cabines standard ; le couloir sert aussi de point de rassemblement"
+    },
+    {
+      "id": "tier-5-standard-cabins-cabin-11-cupboard",
+      "spaceId": "tier-5-standard-cabins-cabin-11",
+      "kind": "cabinet",
+      "name": "Cupboards",
+      "nameFr": "Placards",
+      "at": [10.6, 9.55],
+      "size": [1.6, 0.6],
+      "rotation": 0,
+      "base": 0,
+      "height": 2,
+      "sides": null,
+      "provenance": "plan",
+      "source": "General cabins plan; the corridor doubles as an assembly point",
+      "sourceFr": "Plan des cabines standard ; le couloir sert aussi de point de rassemblement"
+    },
+    {
+      "id": "tier-5-standard-cabins-cabin-12-bed",
+      "spaceId": "tier-5-standard-cabins-cabin-12",
+      "kind": "bed",
+      "name": "Bed",
+      "nameFr": "Lit",
+      "at": [13.7, 8.75],
+      "size": [1, 2.1],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.5,
+      "sides": null,
+      "provenance": "plan",
+      "source": "General cabins plan; the corridor doubles as an assembly point",
+      "sourceFr": "Plan des cabines standard ; le couloir sert aussi de point de rassemblement"
+    },
+    {
+      "id": "tier-5-standard-cabins-cabin-12-cupboard",
+      "spaceId": "tier-5-standard-cabins-cabin-12",
       "kind": "cabinet",
       "name": "Cupboards",
       "nameFr": "Placards",

@@ -3,10 +3,16 @@ import {
   BAR_PITCH,
   BAR_THICKNESS,
   DOOR_WIDTH,
+  PLATE_PITCH,
+  clipSegment,
   collinearOverlap,
+  distanceToBoundary,
   deriveDoorways,
   grilleBars,
   interiorPoint,
+  longestChord,
+  perimeter,
+  plateSeams,
   pointInPolygon,
   polygonArea,
   polygonsOverlap,
@@ -14,6 +20,7 @@ import {
   signedArea,
   structureFootprint,
   structureWalls,
+  subdivideTriangle,
   triangulate,
   wallSegments,
 } from './geometry'
@@ -456,3 +463,164 @@ function areaOfTriangles(polygon: Polygon, triangles: number[]): number {
   }
   return total
 }
+
+describe('the measurements the fog and the reverberation are read from', () => {
+  const square: Polygon = [
+    [0, 0],
+    [10, 0],
+    [10, 10],
+    [0, 10],
+  ]
+
+  it('measures the perimeter a room presents to sound', () => {
+    expect(perimeter(square)).toBeCloseTo(40)
+  })
+
+  it('takes the longest chord corner to corner, not the longest side', () => {
+    expect(longestChord(square)).toBeCloseTo(Math.hypot(10, 10))
+  })
+
+  it('reads a corridor as long even when it bends', () => {
+    // The visitor walks the bend, so an L-shaped hall is still a long hall.
+    expect(longestChord(ell)).toBeGreaterThan(10)
+  })
+
+  it('measures how far a point stands from the nearest wall', () => {
+    expect(distanceToBoundary([5, 5], square)).toBeCloseTo(5)
+    expect(distanceToBoundary([0.5, 5], square)).toBeCloseTo(0.5)
+    expect(distanceToBoundary([0, 0], square)).toBeCloseTo(0)
+  })
+})
+
+describe('clipSegment', () => {
+  const square: Polygon = [
+    [0, 0],
+    [10, 0],
+    [10, 10],
+    [0, 10],
+  ]
+
+  it('keeps the stretch that crosses the room and drops the rest', () => {
+    const spans = clipSegment(square, [-5, 5], [15, 5])
+    expect(spans).toHaveLength(1)
+    expect(spans[0][0][0]).toBeCloseTo(0)
+    expect(spans[0][1][0]).toBeCloseTo(10)
+  })
+
+  it('returns nothing for a line that misses the room', () => {
+    expect(clipSegment(square, [-5, 20], [15, 20])).toHaveLength(0)
+  })
+
+  it('returns both stretches when a concave room takes a bite out of the line', () => {
+    // Two arms of an L that a line can cross with a gap between them.
+    const horseshoe: Polygon = [
+      [0, 0],
+      [10, 0],
+      [10, 10],
+      [7, 10],
+      [7, 3],
+      [3, 3],
+      [3, 10],
+      [0, 10],
+    ]
+    const spans = clipSegment(horseshoe, [-1, 6], [11, 6])
+    expect(spans).toHaveLength(2)
+  })
+})
+
+describe('plateSeams', () => {
+  const hall: Polygon = [
+    [0, 0],
+    [24, 0],
+    [24, 12],
+    [0, 12],
+  ]
+
+  it('lays a course about every stride, both ways across the deck', () => {
+    const seams = plateSeams(hall)
+    expect(seams.length).toBeGreaterThan(((24 + 12) / PLATE_PITCH) * 0.8)
+    for (const [a, b] of seams) {
+      const length = Math.hypot(b[0] - a[0], b[1] - a[1])
+      expect(length).toBeGreaterThan(0)
+      // Every seam is a straight run across the room, not a stub in a corner.
+      expect(length).toBeLessThanOrEqual(24.001)
+    }
+  })
+
+  it('lays the plating on the ship rather than on the room', () => {
+    // Two rooms side by side share the courses that run through both, so the
+    // plating carries on through a doorway instead of restarting at it.
+    const shifted: Polygon = hall.map(([x, z]) => [x + PLATE_PITCH * 3, z] as Vec2)
+    const xs = (polygon: Polygon) =>
+      plateSeams(polygon)
+        .filter(([a, b]) => Math.abs(a[0] - b[0]) < 0.001)
+        .map(([a]) => Math.round((a[0] / PLATE_PITCH) * 1000) / 1000)
+    for (const x of xs(shifted)) expect(Number.isInteger(x)).toBe(true)
+    for (const x of xs(hall)) expect(Number.isInteger(x)).toBe(true)
+  })
+
+  it('keeps every seam inside the room it plates', () => {
+    for (const [a, b] of plateSeams(ell)) {
+      const middle: Vec2 = [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2]
+      expect(pointInPolygon(middle, ell)).toBe(true)
+    }
+  })
+
+  it('draws nothing for a pitch that would never terminate', () => {
+    expect(plateSeams(hall, 0)).toHaveLength(0)
+  })
+})
+
+describe('subdivideTriangle', () => {
+  const long: [Vec2, Vec2, Vec2] = [
+    [0, 0],
+    [30, 0],
+    [0, 18],
+  ]
+
+  it('leaves a small triangle alone', () => {
+    expect(subdivideTriangle([0, 0], [1, 0], [0, 1], 2)).toHaveLength(1)
+  })
+
+  it('cuts every edge down to the patch size', () => {
+    const pieces = subdivideTriangle(...long, 2)
+    for (const [a, b, c] of pieces) {
+      for (const [p, q] of [
+        [a, b],
+        [b, c],
+        [c, a],
+      ]) {
+        expect(Math.hypot(q[0] - p[0], q[1] - p[1])).toBeLessThanOrEqual(2.0001)
+      }
+    }
+  })
+
+  it('covers exactly the triangle it was given', () => {
+    const whole = Math.abs((30 - 0) * (18 - 0)) / 2
+    const pieces = subdivideTriangle(...long, 2)
+    const total = pieces.reduce(
+      (sum, [a, b, c]) =>
+        sum + Math.abs((b[0] - a[0]) * (c[1] - a[1]) - (c[0] - a[0]) * (b[1] - a[1])) / 2,
+      0,
+    )
+    expect(total).toBeCloseTo(whole, 6)
+  })
+
+  it('splits at the middle of an edge, so neighbours agree and no crack opens', () => {
+    // Two triangles sharing the long edge must produce the same points along it.
+    const left = subdivideTriangle([0, 0], [8, 0], [0, 6], 2)
+    const right = subdivideTriangle([8, 0], [0, 0], [8, -6], 2)
+    const onEdge = (pieces: [Vec2, Vec2, Vec2][]) =>
+      new Set(
+        pieces
+          .flat()
+          .filter((point) => Math.abs(point[1]) < 0.0001)
+          .map((point) => point[0].toFixed(4)),
+      )
+    expect([...onEdge(left)].sort()).toEqual([...onEdge(right)].sort())
+  })
+
+  it('is left alone by a patch size of zero rather than recursing forever', () => {
+    expect(subdivideTriangle(...long, 0)).toHaveLength(1)
+  })
+})

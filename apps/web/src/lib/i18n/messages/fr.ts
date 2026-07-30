@@ -84,7 +84,13 @@ export const fr: Messages = {
       sprint: 'Courir',
       sprintKeys: 'Maj',
       use: 'Changer de pont, entrer dans une pièce',
-      useKeys: 'E, sur une cage d’escalier ou devant une porte',
+      useKeys: 'E, sur une cage d’escalier ou n’importe où dans un intérieur',
+      plan: 'Plan plein écran',
+      planKeys: 'M',
+      find: 'Chercher une pièce',
+      findKeys: '⌘K, ou Ctrl K',
+      reveal: 'Montrer les preuves',
+      revealKeys: 'G',
       nen: 'Lancer le Hatsu actif',
       nenKeys: 'F, ou un clic, sur la pièce ou le volume que vous regardez',
       touch: 'Sur écran tactile',
@@ -115,7 +121,90 @@ export const fr: Messages = {
       scaleHelp:
         "Les plans des ponts sont schématiques. La reconstruction les met à l'échelle pour que les pièces fassent la taille que les planches impliquent — ce n'est pas une mesure du vaisseau.",
     },
+    reveal: {
+      toggle: 'Preuves',
+      help: 'Peindre le pont selon ce que chaque surface vaut comme preuve, et montrer les cloisons et les portes que la reconstruction a déclarées.',
+      blind: 'Cloison aveugle',
+      blindHelp:
+        'Deux pièces partagent ce mur et rien n’y passe. Le plan doit le dire, et dire pourquoi.',
+      declared: 'Porte placée à la main',
+      declaredHelp:
+        'Toute autre ouverture du vaisseau découle de deux empreintes qui se touchent. Pas celles-ci.',
+      none: 'Aucune à ce niveau.',
+    },
+
     sourcesLink: "D'où vient chaque pièce",
+
+    plan: {
+      open: 'Plan plein écran',
+      close: 'Fermer',
+      crossingUp: (destination) => `Monter vers ${destination}`,
+      crossingDown: (destination) => `Descendre vers ${destination}`,
+      crossingAcross: (destination) => `Passer vers ${destination}`,
+      legend: 'Sur le plan',
+      doorway: 'Ouverture',
+      up: 'Escalier montant',
+      down: 'Escalier descendant',
+      across: 'Porte de plain-pied',
+    },
+
+    find: {
+      open: 'Chercher une pièce',
+      title: 'Chercher une pièce ou un niveau',
+      placeholder: 'Salle du banquet, 1004, cuisine, cellule…',
+      showing: (shown, total) => `${shown} affichés sur ${total}`,
+      noMatch: 'Rien de ce nom dans le vaisseau',
+      level: 'Niveau',
+      close: 'Échap',
+      hint: '↑ ↓ pour choisir · Entrée pour y aller · Échap pour fermer',
+    },
+
+    goTo: (room) => `Rejoindre ${room}`,
+    aimAt: (room) => `Viser ${room}`,
+
+    viewpoint: {
+      copy: 'Copier ce point de vue',
+      copied: 'Lien copié',
+      failed: "Impossible d'accéder au presse-papiers",
+    },
+
+    comfort: {
+      title: 'Confort',
+      fov: 'Champ de vision',
+      sensitivity: 'Vitesse du regard',
+      snapTurn: 'Tourner par crans',
+      snapAngle: 'Cran',
+      jumpOnly: 'Ne pas marcher — sauter de pièce en pièce',
+      reset: 'Revenir aux réglages du système',
+      calm: 'Votre système demande moins de mouvement : tout démarre en douceur.',
+      degrees: (angle) => `${angle}°`,
+      times: (factor) => `×${factor.toFixed(2)}`,
+    },
+
+    room: {
+      size: (long, wide, ceiling) => `${long} × ${wide} m sous ${ceiling} m`,
+      exits: (count) => `${count} ${count === 1 ? 'sortie' : 'sorties'}`,
+      bare: 'rien de dessiné dedans',
+      solids: {
+        spring: (count) => `${count} ${count === 1 ? 'ressort' : 'ressorts'}`,
+        casket: (count) => `${count} ${count === 1 ? 'cercueil' : 'cercueils'}`,
+        platform: (count) => `${count} ${count === 1 ? 'estrade' : 'estrades'}`,
+        counter: (count) => `${count} ${count === 1 ? 'comptoir' : 'comptoirs'}`,
+        table: (count) => `${count} ${count === 1 ? 'table' : 'tables'}`,
+        bed: (count) => `${count} ${count === 1 ? 'lit' : 'lits'}`,
+        seat: (count) => `${count} ${count === 1 ? 'siège' : 'sièges'}`,
+        cabinet: (count) => `${count} ${count === 1 ? 'meuble' : 'meubles'}`,
+        basin: (count) => `${count} ${count === 1 ? 'vasque' : 'vasques'}`,
+        painting: (count) => `${count} ${count === 1 ? 'toile' : 'toiles'}`,
+        lifeboat: (count) => `${count} ${count === 1 ? 'canot' : 'canots'}`,
+        pillar: (count) => `${count} ${count === 1 ? 'pilier' : 'piliers'}`,
+        bars: (count) => `${count} ${count === 1 ? 'grille' : 'grilles'}`,
+        manacle: (count) => `${count} ${count === 1 ? 'entrave' : 'entraves'}`,
+        camera: (count) => `${count} ${count === 1 ? 'caméra' : 'caméras'}`,
+        telephone: (count) => `${count} ${count === 1 ? 'téléphone' : 'téléphones'}`,
+        duct: (count) => `${count} ${count === 1 ? 'gaine' : 'gaines'}`,
+      },
+    },
 
     hatsu: {
       title: 'Le Nen dans la visite',
@@ -249,6 +338,18 @@ export const fr: Messages = {
         deduced: (what, strength) =>
           `Condition lue — ${what} · ${strength} nommées, et plus fort à chacune`,
         nothingToDeduce: 'Plus rien à lire : chaque emprise a été nommée',
+        armourWorn:
+          "L'emballage est en place · ce que le vaisseau vous fera désormais y sera gardé, pas annulé",
+        armourHolding: (packed) =>
+          packed
+            ? `L'emballage garde ${packed} coup${packed === 1 ? '' : 's'} · rien ne revient avant que le soleil ne se lève dessus`
+            : "L'emballage ne garde encore rien · allez au-devant de ce que l'aura a dressé contre vous",
+        packedAway: (room, packed) =>
+          `${room} ne vous a rien fait : c'est parti dans l'emballage · ${packed} coup${packed === 1 ? '' : 's'} gardé${packed === 1 ? '' : 's'}`,
+        nothingPacked:
+          "Rien n'a été encaissé, donc rien à dépenser · le soleil se lève sur des dégâts",
+        sunRisen: (metres, solids) =>
+          `Le soleil s'est levé là où vous êtes · ${metres} m de rayon, et ${solids} élément${solids === 1 ? '' : 's'} carbonisé${solids === 1 ? '' : 's'} sans égard pour à qui ils étaient`,
         jailed: (room, doors) => `${room} est enchaînée · ${doors} accès, et aucun qui s'ouvre`,
         jailRefused: (room) =>
           `Rien ne retient ${room} · la chaîne est pour ce que le Nen habite déjà`,
@@ -401,6 +502,8 @@ export const fr: Messages = {
         mimic: 'Sous la forme de',
         soothed: 'La musique tient',
         deduced: 'Conditions lues',
+        packed: "L'emballage garde",
+        packedHits: (packed) => `${packed} coup${packed === 1 ? '' : 's'}`,
         shut: 'Enchaînée',
         guarded: 'Gardée',
         pinned: 'Retenu dans',
@@ -436,13 +539,50 @@ export const fr: Messages = {
   tourSources: {
     seoTitle: 'Sources — D’où vient chaque pièce du Black Whale',
     seoDescription:
-      'Les preuves derrière le Black Whale reconstruit, pièce par pièce : le chapitre ou le plan sur lequel repose chacun des 282 espaces, les couloirs que la reconstruction a inventés, et les cloisons murées à dessein.',
+      'Les preuves derrière le Black Whale reconstruit, pièce par pièce : le chapitre ou le plan sur lequel repose chacun des 314 espaces, les couloirs que la reconstruction a inventés, et les cloisons murées à dessein.',
     breadcrumb: 'Sources',
     title: 'D’où vient chaque pièce',
     intro:
       'La reconstruction affirme quelque chose du vaisseau à chaque surface qu’elle dessine : elle publie donc la preuve de chacune. Rien ici n’est un résumé — c’est tout ce sur quoi la visite est bâtie, pièce par pièce, et chaque espace que le manga ne montre pas est déclaré comme inventé.',
     counts: (spaces, sources) => `${spaces} espaces, appuyés sur ${sources} sources distinctes`,
     tally: (label, count) => `${count} ${label.toLowerCase()}`,
+
+    nothingInvented: (solids, invented) =>
+      invented === 0
+        ? `Aucun des ${solids} solides que la visite dresse dans le vaisseau n’est inventé. Chaque lit, cercueil, ressort et grille est dessiné sur un plan ou montré sur une planche, et porte sa source. Ce que la reconstruction invente, c’est la circulation — les couloirs qui rendent un pont continu — et elle le dit sur le mur.`
+        : `${invented} des ${solids} solides que la visite dresse dans le vaisseau ne reposent sur aucun dessin, et sont signalés comme tels.`,
+    onThisPage: 'Sur cette page',
+    sections: {
+      chapters: 'Chapitres',
+      method: 'Méthode',
+      rooms: 'Pièces',
+      levels: 'Niveaux',
+      solids: 'Solides',
+      unfurnished: 'Laissé nu',
+      joins: 'Liaisons',
+      walls: 'Cloisons',
+    },
+
+    chapters: {
+      title: 'Les chapitres d’où le vaisseau est lu',
+      help: (count) =>
+        `${count} chapitres portent toute la reconstruction. Le nombre est celui des affirmations — une pièce, un niveau, un solide, un escalier — qui citent ce chapitre comme source. Choisissez-en un pour voir ce qui repose dessus.`,
+      chapter: (chapter) => `Chap. ${chapter}`,
+      filter: (chapter) => `Montrer ce qui repose sur le chap. ${chapter}`,
+    },
+
+    levels: {
+      title: 'Les niveaux sur lesquels les pièces se dressent',
+      help: (decks, interiors) =>
+        `${decks} ponts et ${interiors} intérieurs dessinés à leur propre échelle. Ce sont les affirmations sur lesquelles tout le reste repose : une pièce est sur un pont parce qu’une coupe l’y met, et un intérieur est le dedans d’une pièce parce qu’un plan ou une planche le dessine.`,
+    },
+
+    unfurnished: {
+      title: 'Ce que la reconstruction ne meuble pas',
+      help: (count) =>
+        `${count} pièces dont les murs sont attestés et le contenu non sont laissées vides. C’est la même règle que le reste de cette page, prise dans l’autre sens : les huit suites VVIP, le sol nu de la 37564, les salles que le plan du cinéplexe nomme sans dessiner un fauteuil. Un siège inventé pour les remplir affirmerait quelque chose de l’histoire, non du vaisseau.`,
+      bare: (count) => `${count} ${count === 1 ? 'pièce laissée nue' : 'pièces laissées nues'}`,
+    },
 
     method: {
       title: 'Ce que les dessins donnent vraiment',
@@ -529,6 +669,16 @@ export const fr: Messages = {
     dataCreditRepository: 'dépôt source',
     dataCreditLicensedUnder: '— sous licence',
     chooseLanguage: 'Choisir une langue',
+    spoiler: {
+      label: 'Filtre à spoilers',
+      summaryFull: 'Spoilers · canon complet',
+      summaryLimited: (chapter) => `Spoilers · jusqu'au ch. ${chapter}`,
+      intro: "Indiquez le dernier chapitre lu : l'archive masque tout ce qui vient après.",
+      chapterField: 'Dernier chapitre lu',
+      rangeHint: (first, last) => `Chapitres indexés ${first}–${last}`,
+      apply: 'Appliquer',
+      clear: 'Afficher tout le canon',
+    },
   },
 
   home: {
@@ -937,6 +1087,7 @@ export const fr: Messages = {
     closeLocationDetails: 'Fermer les détails du lieu',
     charactersHere: 'Personnages présents à cet endroit',
     noCharacterHere: 'Aucun personnage suivi n’est présent à l’événement sélectionné.',
+    walkThere: 'Y aller à pied',
     derivedFrom: 'Établi à partir des relevés de présence de l’événement sélectionné.',
     unknownLocationTitle: 'Position inconnue',
     closeUnknownPositions: 'Fermer les positions inconnues',
@@ -1142,7 +1293,6 @@ export const fr: Messages = {
       unknown: 'Inconnue',
     },
     unknownPositions: (count) => `Positions inconnues (${count})`,
-    spoilers: 'Spoilers',
     timeline: 'Chronologie',
     currentState: 'État actuel',
     flashbackBadge: '↶ FLASH-BACK ·',
@@ -1386,14 +1536,28 @@ export const fr: Messages = {
     currentCursor: 'Curseur actuel',
     entities: 'Entités',
     activeEffects: 'Effets actifs',
-    executeTitle: 'Exécuter Bungee Gum',
+    executeTitle: 'Exécuter une capacité',
     executeCopy:
-      'Choisir une cible planifie l’action sur cette branche. Les conditions et les effets ci-dessous sont ceux du module — exactement ceux que le serveur applique à l’activation.',
+      'Choisir une capacité, une de ses actions et une cible planifie l’action sur cette branche. Les conditions et les effets ci-dessous sont ceux du module — exactement ceux que le serveur applique à l’activation.',
+    ability: 'Capacité',
+    action: 'Action',
+    noActions: 'Aucune action disponible',
     actorReference: 'Référence de l’acteur',
     targetEntity: 'Entité cible',
-    selectTarget: 'Choisir une cible',
+    selectTarget: 'Aucune cible',
     planAction: 'Planifier l’action',
-    attachAura: 'Attacher l’aura',
+    runAction: (label) => `Exécuter : ${label}`,
+    moveTitle: 'Déplacer une entité',
+    moveCopy:
+      'L’autre action de branche du noyau : mettre quelqu’un là où le canon ne le met pas. Le déplacement ne vaut que pour cette branche.',
+    moveEntity: 'Entité',
+    moveDestination: 'Destination',
+    moveSubmit: 'Déplacer dans cette branche',
+    noMarkers: 'Cette branche ne place aucune entité sur les plans de pont.',
+    markersElsewhere: (count) =>
+      count === 1
+        ? '1 entité se tient sur un autre pont.'
+        : `${count} entités se tiennent sur d’autres ponts.`,
     sceneTitle: 'MapScene projetée',
     markers: 'marqueurs',
     effectLinks: 'liens d’effet',
@@ -1453,23 +1617,21 @@ export const fr: Messages = {
     intro:
       'Carte et chronologie subjectives : ce que ce personnage sait, croit, soupçonne ou ignore.',
     subjectiveMap: 'Carte subjective',
-    subjectiveMapCopy:
-      'La même géométrie SVG, avec des couches de savoir adaptées au point de vue choisi.',
     confirmedPosition: 'Position confirmée',
     likelyPosition: 'Position probable',
     lastKnownPosition: 'Dernière position connue',
     activeKnowledge: 'Savoirs actifs',
-    rows: {
-      position: { label: 'Position', details: 'salle 1014 (observation directe)' },
-      shikaku: { label: 'Identité de Shikaku', details: 'comportement inhabituel' },
-      kacho: { label: 'Statut de Kacho', details: 'non confirmé depuis 8 événements' },
-    },
-    points: {
-      reality: 'Événement canonique',
-      body: 'Déplacement du corps',
-      consciousness: 'Transfert détecté',
-      knowledge: 'Information acquise',
-    },
+    apparentIdentity: 'Identité apparente',
+    dissonant: 'dissonance d’identité',
+    cursor: 'Instant',
+    apply: 'Appliquer',
+    noEvents: 'Aucun événement canonique n’est disponible à votre limite de spoiler.',
+    noKnowledge: 'L’archive ne consigne aucun savoir pour ce personnage à cet instant.',
+    noPositions: 'L’archive ne place aucun corps visible par ce personnage à cet instant.',
+    markersElsewhere: (count) =>
+      count === 1
+        ? '1 corps observé sur un autre pont.'
+        : `${count} corps observés sur d’autres ponts.`,
   },
 
   knowledgeDetail: {
@@ -1479,45 +1641,141 @@ export const fr: Messages = {
     title: (character) => `Carte des savoirs : ${character}`,
     intro: 'Une archive des savoirs, des soupçons, des rumeurs et des informations périmées.',
     informationState: 'État de l’information',
-    graphTitle: 'Graphe des savoirs (facultatif)',
-    entries: {
-      kacho: { label: 'Kacho', details: 'l’identité visible semble en vie' },
-      shikaku: { label: 'Anomalie Shikaku', details: 'indices comportementaux' },
-      tier3: { label: 'Pont 3', details: 'rapport reçu de Melody' },
-      target: { label: 'Statut de la cible', details: 'information périmée' },
-    },
+    graphTitle: 'Graphe des savoirs',
+    since: (chapter) => `depuis le ch. ${chapter}`,
+    between: (from, until) => `ch. ${from} → ch. ${until}`,
+    toldBy: (source) => `rapporté par ${source}`,
+    confidence: (percent) => `${percent} % de confiance`,
+    noKnowledge: (character) =>
+      `L’archive ne consigne aucun fait ni croyance de ${character} dans votre limite de spoiler.`,
+    openPerspective: 'Ouvrir le point de vue',
+    openProfile: 'Ouvrir la fiche',
   },
 
   bodyDetail: {
-    seoTitle: (id) => `Corps ${id}`,
-    seoDescription: (id) =>
-      `Relevé de continuité du corps ${id} : positions observées, états signalés et échanges d’identité suspectés à bord du Black Whale.`,
-    title: (id) => `Historique du corps : ${id}`,
+    seoTitle: (label) => `Corps — ${label}`,
+    seoDescription: (label) =>
+      `Relevé de continuité de ${label} : positions observées, états signalés et occupation par une conscience à bord du Black Whale.`,
+    title: (label) => `Historique du corps : ${label}`,
     intro: 'Chronologie biologique, occupation par une conscience et apparence publique.',
-    event: (id) => `Événement ${id}`,
-    state: (state) => `État : ${state}`,
-    history: {
-      observed: { label: 'Corps observé sur le pont 1', status: 'actif' },
-      anomaly: { label: 'Anomalie comportementale signalée', status: 'soupçonné' },
-      recalculated: { label: 'Occupation de conscience recalculée', status: 'transfert' },
-    },
+    bodyType: 'Type de corps',
+    owner: 'Propriétaire d’origine',
+    occupants: 'Consciences consignées à l’intérieur',
   },
 
   consciousnessDetail: {
-    seoTitle: (id) => `Conscience ${id}`,
-    seoDescription: (id) =>
-      `Relevé des transferts de la conscience ${id} : le corps qu’elle occupe, le moment de chaque déplacement et le degré de certitude de chaque observation.`,
-    title: (id) => `Historique de la conscience : ${id}`,
+    seoTitle: (label) => `Conscience — ${label}`,
+    seoDescription: (label) =>
+      `Relevé des transferts de ${label} : le corps qu’elle occupe, le moment de chaque déplacement et le degré de certitude de chaque observation.`,
+    title: (label) => `Historique de la conscience : ${label}`,
     intro: 'Suivi des transferts, des suppressions et des ancrages mentaux.',
-    event: (id) => `Événement ${id}`,
-    certainty: (level) => `Certitude : ${level}`,
-    bodyA: 'Corps A',
-    bodyB: 'Corps B',
-    unknownBody: 'Inconnu',
-    confidence: {
-      confirmed: 'confirmé',
-      stable: 'stable',
-      uncertain: 'incertain',
+    consciousnessType: 'Type de conscience',
+    origin: 'Personnage d’origine',
+    bodiesOccupied: 'Corps occupés',
+  },
+
+  identity: {
+    continuityTitle: 'Relevé de continuité',
+    noEntries: 'L’archive ne consigne rien pour cette entité dans votre limite de spoiler.',
+    firstVisible: 'Première apparition',
+    interval: (fromChapter, fromSequence, untilChapter, untilSequence) =>
+      `ch. ${fromChapter}·${fromSequence} → ch. ${untilChapter}·${untilSequence}`,
+    intervalOpen: (chapter, sequence) => `depuis le ch. ${chapter}·${sequence}`,
+    fromEvent: (title) => `Événement : ${title}`,
+    certaintyLabel: (certainty) => `Certitude : ${certainty}`,
+    entryKind: {
+      OCCUPANCY: 'Occupation',
+      BODY_STATE: 'État du corps',
+      PRESENCE: 'Position',
+      APPEARANCE: 'Apparence',
+      CONSCIOUSNESS_STATE: 'État de la conscience',
+    },
+    enums: {
+      bodyType: {
+        ORIGINAL: 'Corps d’origine',
+        CLONE: 'Clone',
+        COPY: 'Copie',
+        CONSTRUCT: 'Construction de Nen',
+        UNKNOWN: 'Inconnu',
+      },
+      consciousnessType: {
+        ORIGINAL: 'Conscience d’origine',
+        COPIED: 'Conscience copiée',
+        ARTIFICIAL: 'Conscience artificielle',
+        NEN_ENTITY: 'Entité de Nen',
+        UNKNOWN: 'Inconnu',
+      },
+      occupancyType: {
+        ORIGINAL: 'Occupe son propre corps',
+        TRANSFERRED: 'Transférée dans ce corps',
+        POSSESSED: 'Possède ce corps',
+        CONTROLLED: 'Contrôle ce corps',
+        EMPTY: 'Corps laissé vide',
+        UNKNOWN: 'Occupation inconnue',
+      },
+      certainty: {
+        CONFIRMED: 'confirmée',
+        PROBABLE: 'probable',
+        UNKNOWN: 'inconnue',
+      },
+      bodyState: {
+        ALIVE: 'Vivant',
+        INJURED: 'Blessé',
+        UNCONSCIOUS: 'Inconscient',
+        DEAD: 'Mort',
+        DESTROYED: 'Détruit',
+        PRESERVED: 'Conservé',
+        UNKNOWN: 'État inconnu',
+      },
+      consciousnessState: {
+        ACTIVE: 'Active',
+        UNCONSCIOUS: 'Inconsciente',
+        TRANSFERRED: 'Transférée',
+        SUPPRESSED: 'Supprimée',
+        DORMANT: 'En sommeil',
+        DISCONNECTED: 'Déconnectée',
+        DESTROYED: 'Détruite',
+        UNKNOWN: 'État inconnu',
+      },
+      presencePrecision: {
+        EXACT_ROOM: 'Située dans une salle',
+        ZONE: 'Située dans une zone',
+        TIER: 'Située sur un pont',
+        UNKNOWN: 'Position inconnue',
+      },
+      presenceCertainty: {
+        CONFIRMED: 'confirmée',
+        PROBABLE: 'probable',
+        LAST_KNOWN: 'dernière connue',
+      },
+      appearanceCause: {
+        NATURAL: 'Apparence naturelle',
+        TRANSFORMATION: 'Apparence transformée',
+        DISGUISE: 'Déguisement',
+        NEN_ABILITY: 'Apparence modifiée par le Nen',
+        UNKNOWN: 'Cause inconnue',
+      },
+      acquisitionMethod: {
+        DIRECT_OBSERVATION: 'vu de ses yeux',
+        TOLD_BY_OTHER: 'rapporté par quelqu’un',
+        DEDUCTION: 'déduit',
+        NEN_ABILITY: 'appris par le Nen',
+        DOCUMENT: 'lu dans un document',
+        RUMOR: 'entendu comme rumeur',
+        UNKNOWN: 'source inconnue',
+      },
+      epistemicRelation: {
+        known: 'sait',
+        confirmed: 'confirme',
+        reported: 's’est fait dire',
+        believed: 'croit',
+        suspected: 'soupçonne',
+        rumor: 'a entendu',
+        rejected: 'rejette',
+        outdated: 'savait',
+        contradicted: 'doute de',
+        unknown: 'ignore',
+      },
     },
   },
 }

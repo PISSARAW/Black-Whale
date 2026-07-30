@@ -84,6 +84,7 @@ import {
   transportPortals,
 } from './expedition/module.js'
 import { biohazardHinrigh, bodyAndSoul, damageSweetHome } from './mafia/module.js'
+import { painPacker, risingSun } from './feitan/module.js'
 import { erigeron, oitoHatsu } from './woble/module.js'
 
 export { bungeeGum } from './bungee-gum/module.js'
@@ -178,6 +179,7 @@ export {
   transportPortals,
 } from './expedition/module.js'
 export { biohazardHinrigh, bodyAndSoul, damageSweetHome } from './mafia/module.js'
+export { painPacker, risingSun } from './feitan/module.js'
 export { erigeron, oitoHatsu } from './woble/module.js'
 
 /**
@@ -265,6 +267,8 @@ export const abilityModules: NenAbilityModule[] = [
   biohazardHinrigh,
   bodyAndSoul,
   damageSweetHome,
+  painPacker,
+  risingSun,
   erigeron,
   oitoHatsu,
 ]

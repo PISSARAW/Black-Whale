@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { PageData, ActionData } from './$types'
   import Seo from '$lib/components/Seo.svelte'
+  import PlanMap from '$lib/components/map/PlanMap.svelte'
   import { NenWhyPanel } from '$lib/nen'
   import { breadcrumbSchema } from '$lib/seo/schema'
   import { link, t } from '$lib/i18n'
@@ -8,6 +9,9 @@
   let { data, form }: { data: PageData; form: ActionData } = $props()
   let entities = $derived(Object.values(data.branch?.snapshot?.entities || {}) as any[])
   let effects = $derived(Object.values(data.branch?.snapshot?.effects || {}) as any[])
+  let selectedAction = $derived(
+    data.actions.find((action) => action.id === data.selection.actionId) ?? null,
+  )
 </script>
 
 <Seo
@@ -116,6 +120,31 @@
              server-side and the panel works without any client-side JavaScript. -->
         <form method="GET" action={$link('/simulations')}>
           <input type="hidden" name="branch" value={data.branch.branch.id} />
+          <label>
+            {$t.simulations.ability}
+            <select name="ability">
+              {#each data.abilities as ability (ability.id)}
+                <option value={ability.id} selected={ability.id === data.selection.abilityId}
+                  >{ability.name}{ability.owner ? ` · ${ability.owner}` : ''}</option
+                >
+              {/each}
+            </select>
+          </label>
+          <label>
+            {$t.simulations.action}
+            <select name="action">
+              {#each data.actions as action (action.id)}
+                <option value={action.id} selected={action.id === data.selection.actionId}
+                  >{action.label}{action.visibility === 'available'
+                    ? ''
+                    : ` · ${action.visibility}`}</option
+                >
+              {/each}
+              {#if data.actions.length === 0}
+                <option value="">{$t.simulations.noActions}</option>
+              {/if}
+            </select>
+          </label>
           <label
             >{$t.simulations.actorReference}<input
               name="actor"
@@ -125,7 +154,7 @@
           >
           <label>
             {$t.simulations.targetEntity}
-            <select name="target" required>
+            <select name="target">
               <option value="">{$t.simulations.selectTarget}</option>
               {#each entities.filter((entity) => entity.id !== data.selection.actorId) as entity (entity.id)}
                 <option value={entity.id} selected={entity.id === data.selection.targetId}
@@ -137,26 +166,70 @@
           <button type="submit">{$t.simulations.planAction}</button>
         </form>
 
+        {#if selectedAction?.hint}
+          <p class="hint">{selectedAction.hint}</p>
+        {/if}
+
         {#if data.plan}
           <NenWhyPanel plan={data.plan} />
         {/if}
 
-        <form method="POST" action="?/activateBungee">
+        <form method="POST" action="?/activate">
           <input type="hidden" name="branchId" value={data.branch.branch.id} />
+          <input type="hidden" name="abilityId" value={data.selection.abilityId} />
+          <input type="hidden" name="actionId" value={data.selection.actionId ?? ''} />
           <input type="hidden" name="actorId" value={data.selection.actorId} />
           <input type="hidden" name="targetId" value={data.selection.targetId ?? ''} />
           <button type="submit" disabled={data.plan?.status !== 'AVAILABLE'}
-            >{$t.simulations.attachAura}</button
+            >{selectedAction
+              ? $t.simulations.runAction(selectedAction.label)
+              : $t.simulations.planAction}</button
           >
         </form>
       </article>
     </section>
 
-    <section class="panel scene-panel">
+    <section class="panel move-panel">
       <div class="heading">
         <small>04</small>
+        <h2>{$t.simulations.moveTitle}</h2>
+      </div>
+      <p>{$t.simulations.moveCopy}</p>
+      <form method="POST" action="?/move">
+        <input type="hidden" name="branchId" value={data.branch.branch.id} />
+        <label>
+          {$t.simulations.moveEntity}
+          <select name="entityId" required>
+            {#each entities as entity (entity.id)}
+              <option value={entity.id}>{entity.label} · {entity.kind}</option>
+            {/each}
+          </select>
+        </label>
+        <label>
+          {$t.simulations.moveDestination}
+          <select name="locationId" required>
+            {#each data.locations as location (location.id)}
+              <option value={location.id}>{location.name}</option>
+            {/each}
+          </select>
+        </label>
+        <button type="submit" disabled={!entities.length}>{$t.simulations.moveSubmit}</button>
+      </form>
+    </section>
+
+    <section class="panel scene-panel">
+      <div class="heading">
+        <small>05</small>
         <h2>{$t.simulations.sceneTitle}</h2>
       </div>
+
+      <PlanMap
+        markers={data.markers}
+        tier={data.tier}
+        emptyLabel={$t.simulations.noMarkers}
+        elsewhereLabel={$t.simulations.markersElsewhere}
+      />
+
       <div class="metrics">
         <span>{data.scene?.markers?.length || 0}<small>{$t.simulations.markers}</small></span>
         <span
@@ -302,7 +375,19 @@
     flex-direction: column;
     gap: 0.4rem;
   }
-  .scene-panel {
+  .scene-panel,
+  .move-panel {
+    margin-top: 1rem;
+  }
+  .move-panel > p,
+  .hint {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+  }
+  .hint {
+    margin: 0.2rem 0 0;
+  }
+  .metrics {
     margin-top: 1rem;
   }
   .metrics {

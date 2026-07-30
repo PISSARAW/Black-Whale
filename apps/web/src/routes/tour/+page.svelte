@@ -13,9 +13,10 @@
    * the ship, through `$lib/tour/hatsu`, and on nothing else — not the deck
    * buttons, not the index, not the minimap. Those become how you aim it.
    */
-  import { onDestroy } from 'svelte'
+  import { onDestroy, onMount, untrack } from 'svelte'
   import { page } from '$app/stores'
   import Seo from '$lib/components/Seo.svelte'
+  import TourFinder from '$lib/components/tour/TourFinder.svelte'
   import TourHatsuHud from '$lib/components/tour/TourHatsuHud.svelte'
   import TourMinimap from '$lib/components/tour/TourMinimap.svelte'
   import TourScene from '$lib/components/tour/TourScene.svelte'
@@ -25,7 +26,19 @@
   import { breadcrumbSchema } from '$lib/seo/schema'
   import { link, t } from '$lib/i18n'
   import { locale } from '$lib/i18n'
-  import { buildShip, deckOf, entrySpace } from '$lib/tour/blueprint'
+  import { crossingsOn, deckOf, entrySpace, theShip, type Crossing } from '$lib/tour/blueprint'
+  import {
+    FOV_RANGE,
+    SENSITIVITY_RANGE,
+    SNAP_ANGLE_RANGE,
+    comfort,
+    loadComfort,
+    prefersReducedMotion,
+    resetComfort,
+    setComfort,
+  } from '$lib/tour/comfort'
+  import { describeSpace } from '$lib/tour/describe'
+  import { placeOf, type Naming } from '$lib/tour/search'
   import {
     EMPTY_WORLD,
     aimsAtSolids,
@@ -41,26 +54,49 @@
   } from '$lib/tour/hatsu'
   import type { Link, Provenance, Space, Structure } from '$lib/tour/types'
 
-  const ship = buildShip()
+  const ship = theShip()
 
-  // `?space=` names a space to open in, `?deck=` a deck. Read once, on the way
-  // in: the walk does not rewrite the URL as the visitor moves, so a shared
-  // link keeps pointing at the room it was copied from.
-  const requestedSpace = ship.spaces.get($page.url.searchParams.get('space') ?? '')
-  const requestedDeck = $page.url.searchParams.get('deck')
-  const initialTierId =
-    requestedSpace?.tierId ??
-    (requestedDeck && ship.plans.has(requestedDeck) ? requestedDeck : ship.tiers[0].id)
+  // `?space=` names a space to open in, `?deck=` a deck. `/tour/sources` links to
+  // three hundred and one of them, so the walk does not read them once and forget
+  // them: the request is derived from the URL and honoured whenever it changes,
+  // which is what makes a second link, and the back button, do anything at all.
+  //
+  // The walk still does not *write* the URL as the visitor moves — a shared link
+  // has to keep pointing at the room it was copied from, and "copy this
+  // viewpoint" is how a new one is made.
+  const requestedSpace = $derived(
+    ship.spaces.get($page.url.searchParams.get('space') ?? '') ?? null,
+  )
+  const requestedDeck = $derived($page.url.searchParams.get('deck'))
+  // Read once, deliberately: the level the walk opens on. Every later change of
+  // URL goes through the effect below instead.
+  const initialTierId = untrack(
+    () =>
+      requestedSpace?.tierId ??
+      (requestedDeck && ship.plans.has(requestedDeck) ? requestedDeck : ship.tiers[0].id),
+  )
 
   let tierId = $state(initialTierId)
   let currentSpace = $state<Space | null>(null)
   let availableLink = $state<{ link: Link; to: string } | null>(null)
-  let jumpTo = $state<string | null>(requestedSpace?.id ?? null)
+  let jumpTo = $state<string | null>(null)
   let engaged = $state(false)
   /** Set by the scene once it knows it is being walked with a finger. */
   let touch = $state(false)
   let position = $state<[number, number]>([0, 0])
   let heading = $state(0)
+  /**
+   * The reveal, on G.
+   *
+   * The walk already tints a surface by what it is worth as evidence, which is
+   * enough to notice and not enough to read. Turned on, the categories drop out
+   * and the deck is painted in its badges alone — and the two things the
+   * reconstruction authored rather than derived, the walls it declared blind and
+   * the openings it placed by hand, are shown with the reason each was declared
+   * for. It changes nothing about the ship, only what the ship says about
+   * itself.
+   */
+  let reveal = $state(false)
 
   const plan = $derived(ship.plans.get(tierId)!)
   const deck = $derived(deckOf(ship, tierId))
@@ -87,7 +123,13 @@
    */
   const named = (space: Space) => identityOf(ship, world, space)
 
-  const provenanceLabel = (space: Space) => $t.tour.provenance[space.provenance]
+  /**
+   * A room and a solid are sourced the same way and read the same way — the
+   * coffin carries ch. 371 whatever the chamber around it carries — so the
+   * badge takes anything with a provenance rather than a space.
+   */
+  const provenanceLabel = (thing: { provenance: Provenance }) =>
+    $t.tour.provenance[thing.provenance]
 
   // Four ranks, four readings: gold for a panel, bone for a deck plan, green
   // for what only the /ship room plan draws, cold blue for what nothing draws.
@@ -98,7 +140,7 @@
     inferred: 'border-[#2b3a4a] bg-[#2b3a4a]/30 text-[#9dc4e0]',
   }
 
-  const provenanceClass = (space: Space) => PROVENANCE_CLASS[space.provenance]
+  const provenanceClass = (thing: { provenance: Provenance }) => PROVENANCE_CLASS[thing.provenance]
 
   /**
    * The stairwell or door within reach, named — read out of one wording or the
@@ -121,7 +163,9 @@
         ? words.enterInterior(nameOf(tier))
         : words.leaveInterior(nameOf(destination))
     }
-    return availableLink.link.kind === 'bulkhead' ? words.takeBulkhead(label) : words.takeLink(label)
+    return availableLink.link.kind === 'bulkhead'
+      ? words.takeBulkhead(label)
+      : words.takeLink(label)
   }
 
   const linkPrompt = $derived(promptFor($t.tour))
@@ -147,6 +191,111 @@
     const plan = ship.plans.get(id)
     if (plan) goToSpace(entrySpace(plan))
   }
+
+  /**
+   * Honour whatever the URL currently asks for. `untrack` because `selectTier`
+   * reads the deck it is leaving: without it the walk would answer its own move
+   * and jump back to the linked room every time the visitor took a stairwell.
+   */
+  $effect(() => {
+    const space = requestedSpace
+    const deck = requestedDeck
+    untrack(() => {
+      if (space) goToSpace(space)
+      else if (deck && ship.plans.has(deck)) selectTier(deck)
+    })
+  })
+
+  /**
+   * A link back to where the visitor is standing.
+   *
+   * The walk deliberately does not rewrite the URL as it is walked, so this is
+   * how a viewpoint is shared: the room under the visitor's feet, or the deck
+   * they are on when they are out between rooms.
+   */
+  let copied = $state<'idle' | 'done' | 'failed'>('idle')
+  let copyTimer: ReturnType<typeof setTimeout> | null = null
+
+  async function copyViewpoint() {
+    const url = new URL($page.url)
+    url.searchParams.delete('deck')
+    url.searchParams.delete('space')
+    if (currentSpace) url.searchParams.set('space', currentSpace.id)
+    else url.searchParams.set('deck', tierId)
+
+    try {
+      await navigator.clipboard.writeText(url.toString())
+      copied = 'done'
+    } catch {
+      copied = 'failed'
+    }
+    if (copyTimer) clearTimeout(copyTimer)
+    copyTimer = setTimeout(() => (copied = 'idle'), 2500)
+  }
+
+  // ── The plan, and the finder ───────────────────
+  let planOpen = $state(false)
+  let planDialog = $state<HTMLDialogElement | null>(null)
+  let findOpen = $state(false)
+
+  $effect(() => {
+    if (!planDialog) return
+    if (planOpen && !planDialog.open) planDialog.showModal()
+    else if (!planOpen && planDialog.open) planDialog.close()
+  })
+
+  /** The stairs, the bulkhead and the interior doors that touch this level. */
+  const crossings = $derived(crossingsOn(ship, tierId))
+
+  const crossingLabel = (crossing: Crossing) => {
+    const destination = ship.spaces.get(crossing.to)
+    const tier = destination
+      ? ship.tiers.find((candidate) => candidate.id === destination.tierId)
+      : null
+    const label = destination
+      ? `${nameOf(named(destination))}${tier ? ` — ${nameOf(tier)}` : ''}`
+      : crossing.to
+    if (crossing.rise > 0.5) return $t.tour.plan.crossingUp(label)
+    if (crossing.rise < -0.5) return $t.tour.plan.crossingDown(label)
+    return $t.tour.plan.crossingAcross(label)
+  }
+
+  /**
+   * M opens the plan at a size it can be read at. In the 320-pixel column a
+   * room's legend comes out under four pixels tall, which is a cost paid for
+   * nothing; full screen, the same drawing is legible, and it is the same
+   * component rather than a second plan to keep in step.
+   */
+  function onWindowKeydown(event: KeyboardEvent) {
+    if (event.metaKey || event.ctrlKey || event.altKey) return
+    const key = event.key.toLowerCase()
+    if (key !== 'm' && key !== 'g') return
+    const target = event.target
+    if (
+      target instanceof HTMLElement &&
+      (target.isContentEditable || target.closest('input, textarea, select') !== null)
+    ) {
+      return
+    }
+    event.preventDefault()
+    if (key === 'g') reveal = !reveal
+    else planOpen = !planOpen
+  }
+
+  /**
+   * Whether this system asks for less movement — read on mount rather than at
+   * init, because the server has no media query to ask and would render the
+   * hint one way and hydrate it the other.
+   */
+  let calm = $state(false)
+  onMount(() => {
+    loadComfort()
+    calm = prefersReducedMotion()
+  })
+
+  onDestroy(() => {
+    if (copyTimer) clearTimeout(copyTimer)
+  })
 
   // ── Nen ────────────────────────────────────────
   let world = $state<TourWorld>(EMPTY_WORLD)
@@ -315,6 +464,85 @@
   /** Speech sealed: the walk stops naming the room the visitor is standing in. */
   const mute = $derived(world.sealed >= 3)
 
+  // ── What the walk says out loud ────────────────
+  /** How a place is named and situated, for the finder and the read-out alike. */
+  const naming = $derived<Naming>({
+    nameOf,
+    sourceOf,
+    insideOf: (room: string) => $t.tour.insideOf(room),
+  })
+
+  /**
+   * The room the visitor is standing in, in one sentence.
+   *
+   * A canvas and an SVG are, to a screen reader, two rectangles that never
+   * change. Everything needed to say what a room actually is has been in the
+   * blueprint all along, so arriving somewhere is announced rather than merely
+   * drawn — and it is announced under the name the walk currently gives the
+   * room, which a technique may have swapped.
+   */
+  const spoken = $derived(
+    currentSpace && !mute
+      ? describeSpace(ship, named(currentSpace), {
+          nameOf,
+          placeOf: (space: Space) => placeOf(ship, space, naming),
+          size: $t.tour.room.size,
+          exits: $t.tour.room.exits,
+          solids: $t.tour.room.solids,
+          bare: $t.tour.room.bare,
+        })
+      : '',
+  )
+
+  /**
+   * One verb per widget. With a technique up the index casts rather than
+   * travels, and the plan has to agree with it: the same drawing that teleports
+   * empty-handed and aims with an aura up is two behaviours wearing one face.
+   */
+  const selectOnPlan = $derived(
+    technique ? (space: Space) => castOn(space.id) : (space: Space) => goToSpace(space),
+  )
+  const planVerb = $derived(technique ? $t.tour.aimAt : $t.tour.goTo)
+
+  /**
+   * What the reveal shows in words: the walls this level keeps blind, and the
+   * openings on it the blueprint places rather than derives — each under the
+   * reason it was declared for, because a declaration is a claim about the ship.
+   */
+  const blindWalls = $derived(
+    reveal
+      ? [
+          ...plan.blind
+            .reduce((counted, wall) => {
+              const reason = french ? wall.seal.reasonFr : wall.seal.reason
+              counted.set(reason, (counted.get(reason) ?? 0) + 1)
+              return counted
+            }, new Map<string, number>())
+            .entries(),
+        ].sort((a, b) => b[1] - a[1])
+      : [],
+  )
+
+  const handPlacedDoors = $derived(
+    reveal
+      ? [
+          ...plan.doorways
+            .reduce((counted, door) => {
+              const declared = ship.doors.find(
+                (candidate) =>
+                  (candidate.a === door.a && candidate.b === door.b) ||
+                  (candidate.a === door.b && candidate.b === door.a),
+              )
+              if (!declared) return counted
+              const reason = french ? declared.reasonFr : declared.reason
+              counted.set(reason, (counted.get(reason) ?? 0) + 1)
+              return counted
+            }, new Map<string, number>())
+            .entries(),
+        ].sort((a, b) => b[1] - a[1])
+      : [],
+  )
+
   /** Standing in the isolated room as an outsider: the copy, not the room. */
   const inEmptyCopy = $derived(
     Boolean(
@@ -322,6 +550,8 @@
     ),
   )
 </script>
+
+<svelte:window onkeydown={onWindowKeydown} />
 
 <Seo
   title={$t.tour.seoTitle}
@@ -365,6 +595,7 @@
         {world}
         auraColour={technique?.color ?? null}
         aiming={Boolean(technique)}
+        {reveal}
         onCast={castOn}
         onArrive={arrived}
         onWorm={crossWorm}
@@ -381,6 +612,13 @@
         style:background={technique ? technique.color : 'rgb(255 255 240 / 0.6)'}
         style:box-shadow={technique ? `0 0 10px ${technique.color}` : 'none'}
       ></div>
+
+      <!-- The walk, said out loud. The canvas is one unchanging rectangle to a
+           screen reader, and everything needed to describe a room — its size, its
+           height, its ways out, what the panels put in it — is in the blueprint
+           already. Announced on arrival, and only then: it is polite, so it waits
+           for a pause rather than interrupting. -->
+      <p class="sr-only" aria-live="polite" aria-atomic="true">{spoken}</p>
 
       <!-- Where the visitor stands, and what it is worth as evidence -->
       {#if !mute}
@@ -426,21 +664,44 @@
         </p>
       {/if}
 
-      <!-- Bottom right: the top right of the canvas is the remote eye's feed. -->
+      <!-- Bottom right: the top right of the canvas is the remote eye's feed.
+
+           A solid is a claim about the ship in its own right — the coffin rests
+           on ch. 371 whether or not the chamber around it does — so what is
+           under the reticle says where it comes from, exactly as the room the
+           visitor is standing in does. -->
       {#if technique && !mute}
-        <p
-          class="pointer-events-none absolute bottom-3 right-3 rounded border bg-[#050505]/80 px-2 py-1 text-[11px]"
-          style:border-color="color-mix(in srgb, {technique.color} 55%, transparent)"
-          style:color={technique.color}
-        >
-          {#if onSolids}
-            {aimedSolidAt
-              ? $t.tour.hatsu.solids.aiming(nameOf(aimedSolidAt))
-              : $t.tour.hatsu.solids.aimingNothing}
-          {:else}
-            {aimedAt ? $t.tour.hatsu.aiming(nameOf(named(aimedAt))) : $t.tour.hatsu.aimingNothing}
+        <div class="pointer-events-none absolute bottom-3 right-3 max-w-xs text-right">
+          <p
+            class="inline-block rounded border bg-[#050505]/80 px-2 py-1 text-[11px]"
+            style:border-color="color-mix(in srgb, {technique.color} 55%, transparent)"
+            style:color={technique.color}
+          >
+            {#if onSolids}
+              {aimedSolidAt
+                ? $t.tour.hatsu.solids.aiming(nameOf(aimedSolidAt))
+                : $t.tour.hatsu.solids.aimingNothing}
+            {:else}
+              {aimedAt ? $t.tour.hatsu.aiming(nameOf(named(aimedAt))) : $t.tour.hatsu.aimingNothing}
+            {/if}
+          </p>
+          {#if onSolids && aimedSolidAt}
+            <p class="mt-1">
+              <span
+                class="inline-block rounded border bg-[#050505]/80 px-1.5 py-0.5 text-[10px] uppercase tracking-wider {provenanceClass(
+                  aimedSolidAt,
+                )}"
+              >
+                {provenanceLabel(aimedSolidAt)}
+              </span>
+            </p>
+            <p
+              class="mt-1 rounded bg-[#050505]/80 px-1.5 py-0.5 text-[11px] leading-snug text-[#FFFFF0]/60"
+            >
+              {sourceOf(aimedSolidAt) || $t.tour.noSource}
+            </p>
           {/if}
-        </p>
+        </div>
       {/if}
 
       <p
@@ -490,11 +751,57 @@
         {plan}
         {position}
         {heading}
+        {crossings}
+        {crossingLabel}
         currentSpaceId={currentSpace?.id ?? null}
         label={$t.tour.minimap(nameOf(plan.tier))}
-        {nameOf}
-        onSelect={goToSpace}
+        nameOf={(space) => nameOf(named(space))}
+        onSelect={selectOnPlan}
+        selectLabel={planVerb}
+        aiming={Boolean(technique)}
       />
+
+      <!-- What the plan cannot do in 320 pixels, and where a viewpoint is copied -->
+      <div class="flex flex-wrap gap-1.5">
+        <button
+          type="button"
+          onclick={() => (planOpen = true)}
+          class="rounded border border-[#333] px-2.5 py-1 text-xs text-[#FFFFF0]/70 transition-colors hover:border-[#FFD700]/50 hover:text-[#FFFFF0]"
+        >
+          {$t.tour.plan.open} <kbd class="ml-1 text-[10px] text-[#FFD700]/70">M</kbd>
+        </button>
+        <button
+          type="button"
+          onclick={() => (findOpen = true)}
+          class="rounded border border-[#333] px-2.5 py-1 text-xs text-[#FFFFF0]/70 transition-colors hover:border-[#FFD700]/50 hover:text-[#FFFFF0]"
+        >
+          {$t.tour.find.open} <kbd class="ml-1 text-[10px] text-[#FFD700]/70">⌘K</kbd>
+        </button>
+        <button
+          type="button"
+          onclick={() => (reveal = !reveal)}
+          aria-pressed={reveal}
+          title={$t.tour.reveal.help}
+          class="rounded border px-2.5 py-1 text-xs transition-colors {reveal
+            ? 'border-[#FFD700] bg-[#FFD700]/15 text-[#FFD700]'
+            : 'border-[#333] text-[#FFFFF0]/70 hover:border-[#FFD700]/50 hover:text-[#FFFFF0]'}"
+        >
+          {$t.tour.reveal.toggle} <kbd class="ml-1 text-[10px] text-[#FFD700]/70">G</kbd>
+        </button>
+        <button
+          type="button"
+          onclick={copyViewpoint}
+          class="rounded border px-2.5 py-1 text-xs transition-colors {copied === 'done'
+            ? 'border-[#FFD700] text-[#FFD700]'
+            : 'border-[#333] text-[#FFFFF0]/70 hover:border-[#FFD700]/50 hover:text-[#FFFFF0]'}"
+        >
+          {copied === 'done'
+            ? $t.tour.viewpoint.copied
+            : copied === 'failed'
+              ? $t.tour.viewpoint.failed
+              : $t.tour.viewpoint.copy}
+        </button>
+      </div>
 
       {#if $activeHatsu}
         <TourHatsuHud
@@ -529,7 +836,9 @@
           {/if}
         </p>
         {#if onBody}
-          <p class="rounded border border-[#333] px-2.5 py-2 text-xs leading-snug text-[#FFFFF0]/50">
+          <p
+            class="rounded border border-[#333] px-2.5 py-2 text-xs leading-snug text-[#FFFFF0]/50"
+          >
             {$t.tour.hatsu.body.castHint}
           </p>
         {:else if onSolids}
@@ -553,8 +862,17 @@
                       : undefined}
                   >
                     <span class="truncate">{nameOf(solid)}</span>
-                    <span class="shrink-0 truncate text-[9px] text-[#FFFFF0]/40">
-                      {nameOf(ship.spaces.get(solid.spaceId) ?? solid)}
+                    <span class="flex shrink-0 items-baseline gap-1.5">
+                      <span class="truncate text-[9px] text-[#FFFFF0]/40">
+                        {nameOf(ship.spaces.get(solid.spaceId) ?? solid)}
+                      </span>
+                      <span
+                        class="shrink-0 rounded border px-1 py-px text-[9px] uppercase {provenanceClass(
+                          solid,
+                        )}"
+                      >
+                        {provenanceLabel(solid)}
+                      </span>
                     </span>
                   </button>
                 </li>
@@ -637,6 +955,12 @@
           <dd>{$t.tour.controls.sprintKeys}</dd>
           <dt class="text-[#FFFFF0]">{$t.tour.controls.use}</dt>
           <dd>{$t.tour.controls.useKeys}</dd>
+          <dt class="text-[#FFFFF0]">{$t.tour.controls.plan}</dt>
+          <dd>{$t.tour.controls.planKeys}</dd>
+          <dt class="text-[#FFFFF0]">{$t.tour.controls.find}</dt>
+          <dd>{$t.tour.controls.findKeys}</dd>
+          <dt class="text-[#FFFFF0]">{$t.tour.controls.reveal}</dt>
+          <dd>{$t.tour.controls.revealKeys}</dd>
           {#if technique}
             <dt class="text-[#FFFFF0]">{$t.tour.controls.nen}</dt>
             <dd>{$t.tour.controls.nenKeys}</dd>
@@ -646,6 +970,101 @@
             <dd>{$t.tour.controls.touchKeys}</dd>
           {/if}
         </dl>
+      </section>
+
+      <!-- How the walk is driven. A first-person camera is not a neutral thing to
+           put in front of someone, and none of these has a right answer, so all of
+           them are the visitor's — kept in localStorage, because being made to dial
+           them in again on every visit is the same as not having them. -->
+      <section class="rounded border border-[#333] p-3">
+        <p class="mb-2 text-[10px] uppercase tracking-widest text-[#FFD700]/70">
+          {$t.tour.comfort.title}
+        </p>
+        {#if calm}
+          <p class="mb-2 text-xs leading-snug text-[#FFFFF0]/50">{$t.tour.comfort.calm}</p>
+        {/if}
+
+        <div class="space-y-2.5 text-xs text-[#FFFFF0]/70">
+          <label class="block">
+            <span class="flex items-baseline justify-between">
+              <span>{$t.tour.comfort.fov}</span>
+              <span class="text-[#FFD700]/80">{$t.tour.comfort.degrees($comfort.fov)}</span>
+            </span>
+            <input
+              type="range"
+              min={FOV_RANGE[0]}
+              max={FOV_RANGE[1]}
+              step="1"
+              value={$comfort.fov}
+              oninput={(event) => setComfort({ fov: Number(event.currentTarget.value) })}
+              class="mt-1 w-full accent-[#FFD700]"
+            />
+          </label>
+
+          <label class="block">
+            <span class="flex items-baseline justify-between">
+              <span>{$t.tour.comfort.sensitivity}</span>
+              <span class="text-[#FFD700]/80">{$t.tour.comfort.times($comfort.sensitivity)}</span>
+            </span>
+            <input
+              type="range"
+              min={SENSITIVITY_RANGE[0]}
+              max={SENSITIVITY_RANGE[1]}
+              step="0.05"
+              value={$comfort.sensitivity}
+              oninput={(event) => setComfort({ sensitivity: Number(event.currentTarget.value) })}
+              class="mt-1 w-full accent-[#FFD700]"
+            />
+          </label>
+
+          <label class="flex items-center gap-2">
+            <input
+              type="checkbox"
+              checked={$comfort.snapTurn}
+              onchange={(event) => setComfort({ snapTurn: event.currentTarget.checked })}
+              class="accent-[#FFD700]"
+            />
+            <span>{$t.tour.comfort.snapTurn}</span>
+          </label>
+
+          {#if $comfort.snapTurn}
+            <label class="block">
+              <span class="flex items-baseline justify-between">
+                <span>{$t.tour.comfort.snapAngle}</span>
+                <span class="text-[#FFD700]/80">
+                  {$t.tour.comfort.degrees($comfort.snapAngle)}
+                </span>
+              </span>
+              <input
+                type="range"
+                min={SNAP_ANGLE_RANGE[0]}
+                max={SNAP_ANGLE_RANGE[1]}
+                step="5"
+                value={$comfort.snapAngle}
+                oninput={(event) => setComfort({ snapAngle: Number(event.currentTarget.value) })}
+                class="mt-1 w-full accent-[#FFD700]"
+              />
+            </label>
+          {/if}
+
+          <label class="flex items-center gap-2">
+            <input
+              type="checkbox"
+              checked={$comfort.jumpOnly}
+              onchange={(event) => setComfort({ jumpOnly: event.currentTarget.checked })}
+              class="accent-[#FFD700]"
+            />
+            <span>{$t.tour.comfort.jumpOnly}</span>
+          </label>
+
+          <button
+            type="button"
+            onclick={resetComfort}
+            class="rounded border border-[#333] px-2 py-1 text-[11px] text-[#FFFFF0]/60 transition-colors hover:border-[#FFD700]/50 hover:text-[#FFFFF0]"
+          >
+            {$t.tour.comfort.reset}
+          </button>
+        </div>
       </section>
 
       <section class="rounded border border-[#333] p-3">
@@ -677,6 +1096,38 @@
             </span>
             <span class="ml-1">{$t.tour.provenance.inferredHelp}</span>
           </li>
+          {#if reveal}
+            <!-- The two things on this deck the reconstruction authored rather
+                 than derived, each with the reason it was declared for. -->
+            <li class="border-t border-[#333] pt-1.5">
+              <span class="rounded border border-[#ef3340]/70 bg-[#ef3340]/15 px-1 text-[#ef8a90]">
+                {$t.tour.reveal.blind}
+              </span>
+              <span class="ml-1">{$t.tour.reveal.blindHelp}</span>
+              <ul class="mt-1 space-y-1 text-[#FFFFF0]/50">
+                {#each blindWalls as [reason, count] (reason)}
+                  <li>{reason} <span class="text-[#FFFFF0]/35">· {count}</span></li>
+                {/each}
+                {#if !blindWalls.length}
+                  <li class="text-[#FFFFF0]/35">{$t.tour.reveal.none}</li>
+                {/if}
+              </ul>
+            </li>
+            <li class="pt-1">
+              <span class="rounded border border-[#7095d6]/70 bg-[#7095d6]/15 px-1 text-[#a8c2ea]">
+                {$t.tour.reveal.declared}
+              </span>
+              <span class="ml-1">{$t.tour.reveal.declaredHelp}</span>
+              <ul class="mt-1 space-y-1 text-[#FFFFF0]/50">
+                {#each handPlacedDoors as [reason, count] (reason)}
+                  <li>{reason} <span class="text-[#FFFFF0]/35">· {count}</span></li>
+                {/each}
+                {#if !handPlacedDoors.length}
+                  <li class="text-[#FFFFF0]/35">{$t.tour.reveal.none}</li>
+                {/if}
+              </ul>
+            </li>
+          {/if}
           <li class="border-t border-[#333] pt-1.5 text-[#FFFFF0]/50">
             {$t.tour.provenance.scaleHelp}
           </li>
@@ -693,3 +1144,87 @@
     </aside>
   </div>
 </div>
+
+<!-- The same plan, at a size it can be read at: the legends are drawn in plan
+     units, so the drawing that gives four-pixel type in the column gives
+     readable type here without a second code path. -->
+<dialog
+  bind:this={planDialog}
+  aria-label={$t.tour.minimap(nameOf(plan.tier))}
+  onclose={() => (planOpen = false)}
+  onclick={(event) => {
+    if (event.target === planDialog) planOpen = false
+  }}
+  class="mx-auto my-[4vh] h-[92vh] w-[96vw] max-w-none border-0 bg-transparent p-0 backdrop:bg-[#050505]/85"
+>
+  <div class="flex h-full flex-col gap-2">
+    <div class="flex flex-wrap items-center justify-between gap-2">
+      <p class="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-[#FFFFF0]/60">
+        <span class="text-[10px] uppercase tracking-widest text-[#FFD700]/70">
+          {$t.tour.plan.legend}
+        </span>
+        <span><span class="text-[#FFD700]">—</span> {$t.tour.plan.doorway}</span>
+        <span><span class="text-[#FFD700]">▲</span> {$t.tour.plan.up}</span>
+        <span><span class="text-[#FFD700]">▼</span> {$t.tour.plan.down}</span>
+        <span><span class="text-[#FFD700]">◈</span> {$t.tour.plan.across}</span>
+      </p>
+      <button
+        type="button"
+        onclick={() => (planOpen = false)}
+        class="rounded border border-[#FFD700]/50 px-2.5 py-1 text-xs text-[#FFD700] transition-colors hover:bg-[#FFD700]/10"
+      >
+        {$t.tour.plan.close}
+      </button>
+    </div>
+
+    {#if spoken}
+      <p class="text-xs leading-snug text-[#FFFFF0]/70">{spoken}</p>
+    {/if}
+
+    <div class="min-h-0 flex-1">
+      <TourMinimap
+        {plan}
+        {position}
+        {heading}
+        {crossings}
+        {crossingLabel}
+        fill
+        currentSpaceId={currentSpace?.id ?? null}
+        label={$t.tour.minimap(nameOf(plan.tier))}
+        nameOf={(space) => nameOf(named(space))}
+        onSelect={(space) => {
+          selectOnPlan(space)
+          planOpen = false
+        }}
+        selectLabel={planVerb}
+        aiming={Boolean(technique)}
+      />
+    </div>
+  </div>
+</dialog>
+
+<TourFinder
+  {ship}
+  bind:open={findOpen}
+  words={naming}
+  labels={{
+    title: $t.tour.find.title,
+    placeholder: $t.tour.find.placeholder,
+    showing: $t.tour.find.showing,
+    noMatch: $t.tour.find.noMatch,
+    action: technique ? $t.tour.hatsu.targets : $t.tour.jumpTo,
+    level: $t.tour.find.level,
+    close: $t.tour.find.close,
+    hint: $t.tour.find.hint,
+  }}
+  provenanceLabel={(provenance) => $t.tour.provenance[provenance]}
+  provenanceClass={(provenance) => PROVENANCE_CLASS[provenance]}
+  onPick={(spaceId) => {
+    const space = ship.spaces.get(spaceId)
+    if (!space) return
+    // The finder reaches the whole ship, and so does a technique: with an aura up
+    // it aims rather than travels, like the index and the plan.
+    if (technique) castOn(space.id)
+    else goToSpace(space)
+  }}
+/>

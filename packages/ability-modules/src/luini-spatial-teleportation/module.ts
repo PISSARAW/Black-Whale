@@ -33,6 +33,8 @@ export const luiniSpatialTeleportation = defineAbility({
 
   targets: [zone()],
 
+  cost: { label: 'Une frontière marquée à l’avance et un itinéraire de retour', unit: 'frontière' },
+
   actions: {
     anchor: {
       label: 'Ancrer la pièce',

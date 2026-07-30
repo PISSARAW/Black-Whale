@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { abilityModules } from '@black-whale/ability-modules'
 import abilityCatalog from '../../../../../data/abilities/abilities.json'
+import characterCatalog from '../../../../../data/characters/characters.json'
 
 interface CatalogEntry {
   id: string
@@ -9,6 +10,7 @@ interface CatalogEntry {
 }
 
 const catalog = abilityCatalog as CatalogEntry[]
+const characterIds = new Set((characterCatalog as { id: string }[]).map((entry) => entry.id))
 
 describe('ability module registry', () => {
   it('registers exactly the abilities whose moduleKey is filled in', () => {
@@ -44,5 +46,42 @@ describe('ability module registry', () => {
   it('does not register the same ability twice', () => {
     const ids = abilityModules.map((module) => module.manifest.id)
     expect(new Set(ids).size).toBe(ids.length)
+  })
+
+  /**
+   * `benjamin-aura` and `oito-hatsu` shipped owned by `benjamin-hui-guo-rou` and
+   * `oito-hui-guo-rou`, slugs no fiche carries: the module and the catalogue
+   * agreed with each other and with nothing else, so both abilities were
+   * unreachable from the character page that attaches them by `ownerId`.
+   */
+  it('names an owner the passenger registry actually holds', () => {
+    const unknown = catalog
+      .filter((ability) => !ability.ownerId || !characterIds.has(ability.ownerId))
+      .map((ability) => `${ability.id} → ${ability.ownerId}`)
+    expect(unknown).toEqual([])
+  })
+
+  /**
+   * The README promises a category, conditions and a cost for every ability, and
+   * the plan is where the site reads them. A module with no cost anywhere — not
+   * on the ability, not on any of its actions — silently drops the third of
+   * those three, so it is a test failure rather than a blank line in the panel.
+   */
+  it('prices every ability: the plan carries a cost', () => {
+    const free = abilityModules
+      .filter((module) => {
+        const context = {
+          abilityId: module.manifest.id,
+          actorId: module.manifest.ownerId,
+          targets: [],
+          eventId: 'nen-registry-test',
+        }
+        if (module.plan(context).cost) return false
+        return module
+          .getActionWheel(context)
+          .every((entry) => !module.plan({ ...context, actionId: entry.id }).cost)
+      })
+      .map((module) => module.manifest.id)
+    expect(free).toEqual([])
   })
 })

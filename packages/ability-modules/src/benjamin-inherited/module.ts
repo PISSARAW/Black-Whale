@@ -37,6 +37,8 @@ export const airBlow = defineAbility({
 
   targets: [person()],
 
+  cost: { label: 'Aura émise — le canon n’en donne pas la mesure', unit: 'aura' },
+
   actions: {
     fire: {
       label: 'Émettre depuis la paume gauche',
@@ -82,6 +84,8 @@ export const culdcept = defineAbility({
   ],
 
   targets: [person()],
+
+  cost: { label: 'Mains jointes et rectangle d’aura chargé jusqu’au bout', unit: 'aura' },
 
   actions: {
     capture: {
@@ -146,12 +150,14 @@ export const culdcept = defineAbility({
 export const benjaminAura = defineAbility({
   id: 'benjamin-aura',
   name: 'Aura de Benjamin',
-  owner: 'benjamin-hui-guo-rou',
+  owner: 'prince-benjamin',
   category: 'enhancer',
 
   conditions: [canUseNen(), isConscious()],
 
   targets: [self()],
+
+  cost: { label: 'Aura croissante à chaque couche de renfort', unit: 'aura' },
 
   actions: {
     reinforce: {

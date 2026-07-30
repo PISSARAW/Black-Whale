@@ -2,8 +2,9 @@
   import { page } from '$app/stores'
   import { mapState } from '$lib/state/mapState.svelte'
   import { displayName } from '$lib/utils/displayNames'
-  import { locale, t } from '$lib/i18n'
+  import { link, locale, t } from '$lib/i18n'
   import { resolveRegionLocationSlug } from '$lib/map/mapAssetRegistry'
+  import { spaceForLocation, theShip } from '$lib/tour/blueprint'
 
   let locations = $derived($page.data.worldState?.locations || [])
   let presences = $derived($page.data.worldState?.presences || [])
@@ -66,6 +67,19 @@
     }
   })
 
+  /**
+   * The same room, on foot.
+   *
+   * `/tour` reads the blueprint and nothing else — no passenger, no chapter, no
+   * spoiler cap — and this does not change that: it is an outgoing link, so the
+   * walk learns nothing from the map by being linked to. The reconstruction has
+   * a space for every room the catalogue puts aboard, which is what makes the
+   * offer honest rather than a dead end.
+   */
+  let walkTo = $derived(
+    spaceForLocation(theShip(), resolveRegionLocationSlug(mapState.selectedLocationId)),
+  )
+
   function closePanel() {
     mapState.selectLocation(null)
   }
@@ -114,6 +128,15 @@
         <p class="text-sm text-gray-400">{$t.mapUi.noCharacterHere}</p>
       {/if}
     </section>
+
+    {#if walkTo}
+      <a
+        href={`${$link('/tour')}?space=${walkTo.id}`}
+        class="mt-6 inline-block rounded border border-[#FFD700]/60 px-3 py-1.5 text-center text-xs tracking-wider text-[#FFD700] uppercase transition-colors hover:bg-[#FFD700]/10"
+      >
+        {$t.mapUi.walkThere} →
+      </a>
+    {/if}
 
     <p class="mt-auto pt-8 text-xs text-gray-500">
       {$t.mapUi.derivedFrom}

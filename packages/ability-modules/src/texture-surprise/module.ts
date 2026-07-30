@@ -35,6 +35,8 @@ export const textureSurprise = defineAbility({
 
   targets: [person(), object(), surface()],
 
+  cost: { label: 'Peu d’aura, mais une surface plane et limitée par masque', unit: 'aura' },
+
   actions: {
     apply: {
       label: 'Appliquer un masque',

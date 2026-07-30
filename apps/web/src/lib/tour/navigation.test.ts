@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { buildShip, spaceAt, spawnPoint } from './blueprint'
+import { buildShip, crossingsOn, spaceAt, spawnPoint } from './blueprint'
 import { pointInPolygon } from './geometry'
 import {
   LINK_REACH,
@@ -11,6 +11,7 @@ import {
   stickVector,
   walkInput,
   wallsNear,
+  wayOutOfInterior,
   type WalkKeys,
 } from './navigation'
 import type { Link, Vec2, WallSegment } from './types'
@@ -115,6 +116,83 @@ describe('linkUnderfoot', () => {
 
   it('offers nothing from a space the link does not touch', () => {
     expect(linkUnderfoot(links, 'c', [0, 0])).toBeNull()
+  })
+})
+
+describe('wayOutOfInterior', () => {
+  const ship = buildShip()
+  const interior = ship.tiers.find((tier) => tier.kind === 'interior')!
+
+  it('offers the way out from every room of an interior, not only its vestibule', () => {
+    const rooms = ship.blueprint.spaces.filter((space) => space.tierId === interior.id)
+    expect(rooms.length).toBeGreaterThan(1)
+    for (const room of rooms) {
+      const out = wayOutOfInterior(ship.links, interior)
+      expect(out).not.toBeNull()
+      // And it comes out on the deck, whichever room you were standing in.
+      expect(out!.to).toBe(interior.parentSpaceId)
+      expect(ship.spaces.get(out!.to)?.tierId).not.toBe(room.tierId)
+    }
+  })
+
+  it('offers nothing on a deck, where the stairwells have to be stood on', () => {
+    const deck = ship.decks[0]
+    expect(wayOutOfInterior(ship.links, deck)).toBeNull()
+  })
+
+  it('offers nothing for an interior no door joins', () => {
+    expect(wayOutOfInterior([], interior)).toBeNull()
+    expect(wayOutOfInterior(ship.links, { kind: 'interior', parentSpaceId: null })).toBeNull()
+  })
+
+  it('agrees with the door the vestibule itself offers', () => {
+    const entrance = ship.links.find(
+      (link) => link.kind === 'door' && link.from === interior.parentSpaceId,
+    )!
+    const fromVestibule = linkUnderfoot(ship.links, entrance.to, [0, 0])
+    expect(fromVestibule?.to).toBe(wayOutOfInterior(ship.links, interior)?.to)
+  })
+})
+
+describe('crossingsOn', () => {
+  const ship = buildShip()
+
+  it('places a stairwell on both of the levels it joins', () => {
+    const stair = ship.links.find((link) => link.kind === 'stair')!
+    const lower = ship.spaces.get(stair.from)!
+    const upper = ship.spaces.get(stair.to)!
+    const fromBelow = crossingsOn(ship, lower.tierId).find((crossing) => crossing.link === stair)
+    const fromAbove = crossingsOn(ship, upper.tierId).find((crossing) => crossing.link === stair)
+    expect(fromBelow?.to).toBe(stair.to)
+    expect(fromAbove?.to).toBe(stair.from)
+  })
+
+  it('says which way a stairwell goes, so the plan can draw an arrow', () => {
+    const stair = ship.links.find((link) => link.kind === 'stair')!
+    const lower = ship.spaces.get(stair.from)!
+    const upper = ship.spaces.get(stair.to)!
+    const fromBelow = crossingsOn(ship, lower.tierId).find((crossing) => crossing.link === stair)!
+    const fromAbove = crossingsOn(ship, upper.tierId).find((crossing) => crossing.link === stair)!
+    expect(Math.sign(fromBelow.rise)).toBe(-Math.sign(fromAbove.rise))
+    expect(Math.abs(fromBelow.rise)).toBeGreaterThan(1)
+  })
+
+  it('reads a door into an interior in the coordinates of the level asked for', () => {
+    const door = ship.links.find((link) => link.kind === 'door' && link.atTo)!
+    const inside = ship.spaces.get(door.to)!
+    const fromInside = crossingsOn(ship, inside.tierId).find((crossing) => crossing.link === door)!
+    expect(fromInside.at).toEqual(door.atTo)
+    // An interior sits at its deck's elevation, so its door is level.
+    expect(fromInside.rise).toBe(0)
+  })
+
+  it('accounts for every link, once per level it touches', () => {
+    const counted = ship.tiers.flatMap((tier) => crossingsOn(ship, tier.id))
+    expect(counted.length).toBe(ship.links.length * 2)
+  })
+
+  it('gives nothing for a level nothing joins', () => {
+    expect(crossingsOn(ship, 'no-such-level')).toEqual([])
   })
 })
 

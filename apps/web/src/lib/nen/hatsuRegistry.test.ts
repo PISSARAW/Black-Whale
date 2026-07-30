@@ -77,7 +77,7 @@ describe('global Hatsu interaction registry', () => {
   })
 
   it('keeps every Hatsu found by the extended Black Whale audit', () => {
-    expect(HATSU_PROFILES).toHaveLength(81)
+    expect(HATSU_PROFILES).toHaveLength(83)
     expect(auditedMissingHatsu.filter((id) => !hatsuById(id))).toEqual([])
   })
 

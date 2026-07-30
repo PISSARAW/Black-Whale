@@ -45,7 +45,6 @@ export const mapState = $state({
   filters: {
     factions: [] as string[],
     beyondLineage: 'all' as BeyondLineageFilter,
-    spoilersEnabled: false,
     showUnknownPositions: false,
   },
 

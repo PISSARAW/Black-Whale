@@ -36,6 +36,8 @@ export const battleCantabilePrologue = defineAbility({
 
   targets: [self()],
 
+  cost: { label: 'Mouvement et rythme continus', unit: 'souffle' },
+
   actions: {
     perform: {
       label: 'Danser et jouer',
@@ -134,6 +136,12 @@ export const blinky = defineAbility({
   conditions: [canUseNen(), isConscious()],
 
   targets: [object()],
+
+  cost: {
+    label: 'Une cible déclarée non vivante — le Nen refuse d’entrer',
+    amount: 1,
+    unit: 'cible',
+  },
 
   actions: {
     absorb: {

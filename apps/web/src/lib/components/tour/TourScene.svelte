@@ -272,8 +272,8 @@
        * the others sit here detached, uploaded to the GPU but not drawn.
        */
       // A plain record rather than a Map: the render loop owns this cache and
-       // nothing in the markup reads it, so it must stay out of Svelte's
-       // reactivity instead of driving it.
+      // nothing in the markup reads it, so it must stay out of Svelte's
+      // reactivity instead of driving it.
       const decks: Record<
         string,
         { deck: import('three').Mesh; edges: import('three').LineSegments } | undefined
@@ -335,9 +335,35 @@
         }
       }
 
-      const dispose = (built: { deck: import('three').Mesh; edges: import('three').LineSegments }) => {
+      const dispose = (built: {
+        deck: import('three').Mesh
+        edges: import('three').LineSegments
+      }) => {
         built.deck.geometry.dispose()
         built.edges.geometry.dispose()
+      }
+
+      /**
+       * Variants replaced while they were still being drawn.
+       *
+       * Whatever is on screen — the deck under the visitor, the deck the eye is
+       * watching — cannot be freed on the spot, and it cannot simply be dropped
+       * either: `syncEye` rebuilds a deck without first letting go of `visible`,
+       * so a cast on the deck the visitor is standing on would leave the old
+       * buffers in the driver with nothing left pointing at them. They wait here
+       * instead, and `sweepStale` frees them the frame nothing is drawing them.
+       */
+      const stale: { deck: import('three').Mesh; edges: import('three').LineSegments }[] = []
+
+      function sweepStale() {
+        for (let i = stale.length - 1; i >= 0; i--) {
+          const built = stale[i]
+          if (built === visible || built === eyeDeck) continue
+          scene.remove(built.deck)
+          scene.remove(built.edges)
+          dispose(built)
+          stale.splice(i, 1)
+        }
       }
 
       function buildDeck(nextTierId: string) {
@@ -351,9 +377,10 @@
 
         const held = variants[nextTierId]
         if (held?.key === key) return { built: held.built, key }
-        // Whatever is still on screen — the deck under the visitor, the deck the
-        // eye is watching — is never the thing being freed.
-        if (held && held.built !== visible && held.built !== eyeDeck) dispose(held.built)
+        if (held) {
+          if (held.built === visible || held.built === eyeDeck) stale.push(held.built)
+          else dispose(held.built)
+        }
 
         const built = extrude(nextTierId)
         variants[nextTierId] = { key, built }
@@ -684,11 +711,39 @@
       }
 
       // ── Input ────────────────────────────────────
+      /**
+       * Whether the key belongs to the page rather than to the walk.
+       *
+       * The listener is on `window`, so it hears every key pressed anywhere on
+       * the page — including the five gangway buttons, the index of rooms and
+       * the Hatsu bar. Space is how a focused button is pressed and the arrows
+       * are how a list is walked; swallowing them there would leave a keyboard
+       * visitor unable to work the page at all.
+       */
+      const typingElsewhere = (target: EventTarget | null) =>
+        target instanceof HTMLElement &&
+        (target.isContentEditable ||
+          target.closest('a, button, input, textarea, select, [role="button"], [tabindex]') !==
+            null)
+
+      /** A quarter-turn to the side, for the visitor who has no mouse to look with. */
+      const SNAP_TURN = Math.PI / 4
+
       const onKeyDown = (event: KeyboardEvent) => {
+        if (typingElsewhere(event.target)) return
         pressed[event.code] = true
         // Space and the arrows scroll the page underneath an engaged pointer.
         if (['Space', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(event.code)) {
           event.preventDefault()
+        }
+        // The arrows turn rather than sidestep: A and D already sidestep, and
+        // without this there is no way to look around without a mouse — you
+        // would walk the deck facing whichever way you spawned. A snap rather
+        // than a glide because a keyboard has no small movement to give, and
+        // because a view that jumps is easier on the stomach than one that
+        // swings. `repeat` is dropped so a held key does not spin the camera.
+        if (!event.repeat && (event.code === 'ArrowLeft' || event.code === 'ArrowRight')) {
+          yaw += event.code === 'ArrowLeft' ? SNAP_TURN : -SNAP_TURN
         }
         if (event.code === 'KeyE' || event.code === 'Enter') takeLink()
         if (event.code === 'KeyF' && aiming) cast()
@@ -746,35 +801,59 @@
       // and a tap that went nowhere is the cast — a phone has no pointer to
       // lock, so the click-to-cast path is closed to it.
       let lastTouch: { x: number; y: number } | null = null
+      /**
+       * Which finger is looking around, the way `stickFinger` names the one
+       * walking. `touches` is every finger on the glass, so a thumb parked on
+       * the stick is `touches[0]` and taking that one would freeze the camera
+       * for as long as the visitor is walking — and, having gone nowhere,
+       * would read as a tap and cast on its own at the end of it.
+       */
+      let lookFinger: number | null = null
+      const named = (list: TouchList, identifier: number | null) =>
+        Array.from(list).find((finger) => finger.identifier === identifier) ?? null
       let travelled = 0
       const onTouchStart = (event: TouchEvent) => {
         // Whatever the browser says about its pointer, a finger settles it.
         touch = true
         touchedAt = performance.now()
-        const finger = event.touches[0]
+        if (lookFinger !== null) return
+        const finger = Array.from(event.changedTouches).find(
+          (candidate) => candidate.identifier !== stickFinger,
+        )
+        if (!finger) return
+        lookFinger = finger.identifier
         lastTouch = { x: finger.clientX, y: finger.clientY }
         travelled = 0
       }
       const onTouchMove = (event: TouchEvent) => {
-        const finger = event.touches[0]
         touchedAt = performance.now()
-        if (!lastTouch) return
+        const finger = named(event.changedTouches, lookFinger)
+        if (!finger || !lastTouch) return
         const dx = finger.clientX - lastTouch.x
         const dy = finger.clientY - lastTouch.y
         travelled += Math.hypot(dx, dy)
         look(dx * 1.6, dy * 1.6)
         lastTouch = { x: finger.clientX, y: finger.clientY }
       }
-      const onTouchEnd = () => {
+      const onTouchEnd = (event: TouchEvent) => {
         touchedAt = performance.now()
+        if (!named(event.changedTouches, lookFinger)) return
         if (lastTouch && travelled < TAP_SLOP && aiming) cast()
         lastTouch = null
+        lookFinger = null
+      }
+      /** A finger the system took away never meant to cast. */
+      const onTouchCancel = (event: TouchEvent) => {
+        if (!named(event.changedTouches, lookFinger)) return
+        lastTouch = null
+        lookFinger = null
       }
 
       canvas.addEventListener('mousedown', onMouseDown)
       canvas.addEventListener('touchstart', onTouchStart, { passive: true })
       canvas.addEventListener('touchmove', onTouchMove, { passive: true })
       canvas.addEventListener('touchend', onTouchEnd)
+      canvas.addEventListener('touchcancel', onTouchCancel)
       window.addEventListener('mousemove', onMouseMove)
       window.addEventListener('mouseup', onMouseUp)
       window.addEventListener('keydown', onKeyDown)
@@ -820,6 +899,7 @@
         syncShells()
         syncEye()
         syncSight()
+        sweepStale()
         driftSolids(now / 1000)
         const walked = activePlan ?? plan
         // What the aura is holding is out of the deck's own wall list, so it
@@ -835,8 +915,8 @@
           {
             forward: holding('KeyW', 'KeyZ', 'ArrowUp'),
             back: holding('KeyS', 'ArrowDown'),
-            left: holding('KeyA', 'KeyQ', 'ArrowLeft'),
-            right: holding('KeyD', 'ArrowRight'),
+            left: holding('KeyA', 'KeyQ'),
+            right: holding('KeyD'),
             sprint: holding('ShiftLeft', 'ShiftRight'),
           },
           stick,
@@ -855,11 +935,7 @@
           // is taken whole and the collision pass is simply not run.
           pointer = walksThroughWalls(world)
             ? target
-            : resolveMovement(
-                pointer,
-                target,
-                wallsNear([...walked.walls, ...loose], pointer, 6),
-              )
+            : resolveMovement(pointer, target, wallsNear([...walked.walls, ...loose], pointer, 6))
         }
 
         const standing = spaceAt(plan, pointer)
@@ -978,6 +1054,7 @@
         canvas?.removeEventListener('touchstart', onTouchStart)
         canvas?.removeEventListener('touchmove', onTouchMove)
         canvas?.removeEventListener('touchend', onTouchEnd)
+        canvas?.removeEventListener('touchcancel', onTouchCancel)
         window.removeEventListener('mousemove', onMouseMove)
         window.removeEventListener('mouseup', onMouseUp)
         window.removeEventListener('keydown', onKeyDown)
@@ -985,8 +1062,10 @@
         document.removeEventListener('pointerlockchange', onPointerLockChange)
         for (const built of Object.values(decks)) if (built) dispose(built)
         for (const held of Object.values(variants)) if (held) dispose(held.built)
+        for (const built of stale) dispose(built)
         for (const key of Object.keys(decks)) delete decks[key]
         for (const key of Object.keys(variants)) delete variants[key]
+        stale.length = 0
         visible = null
         eyeDeck = null
         eyeCamera = null
@@ -997,6 +1076,11 @@
         edgeMaterial.dispose()
         material.dispose()
         renderer.dispose()
+        // `dispose` frees what three.js allocated; the drawing buffer and the
+        // context itself are the browser's, and a visitor who walks in and out
+        // of the tour a few times would otherwise collect one of each until the
+        // driver drops the oldest and takes a live canvas down with it.
+        renderer.forceContextLoss()
       }
 
       // The page asks for a jump by setting `jumpTo`; honour it and clear it so
@@ -1082,7 +1166,9 @@
           type="button"
           onclick={() => castNow?.()}
           class="touch-none rounded border bg-[#050505]/90 px-4 py-2 text-xs uppercase tracking-widest"
-          style:border-color={auraColour ? `color-mix(in srgb, ${auraColour} 70%, transparent)` : ''}
+          style:border-color={auraColour
+            ? `color-mix(in srgb, ${auraColour} 70%, transparent)`
+            : ''}
           style:color={auraColour ?? '#FFFFF0'}
         >
           {touchLabels.cast}

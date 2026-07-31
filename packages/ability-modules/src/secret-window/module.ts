@@ -12,9 +12,10 @@ import {
   requiresParameter,
   spawnNenEntity,
   zone,
+  belowCapacity,
 } from '@black-whale/ability-sdk'
 
-const OWL_IDS = ['secret-window-owl-1', 'secret-window-owl-2', 'secret-window-owl-3']
+const OWL_IDS = ['secret-window-owl']
 
 /**
  * Secret Window — Musse, then Benjamin
@@ -34,37 +35,74 @@ export const secretWindow = defineAbility({
 
   targets: [zone()],
 
-  cost: { label: 'Une chouette attachée par cible surveillée', amount: 1, unit: 'chouette' },
-
-  actions: {
-    deploy: {
-      label: 'Déployer les hiboux',
+    'deploy-wandering': {
+      label: 'Hibou Libre',
+      conditions: [belowCapacity('secret-window-owls', 1, 'Un seul hibou autorisé à la fois')],
       effects: [
-        ...OWL_IDS.map((owlId, index) =>
-          spawnNenEntity({
-            id: owlId,
-            kind: 'NEN_ENTITY',
-            label: `Hibou ${index + 1}`,
-            metadata: { hearsThroughWalls: true, records: true },
-          }),
-        ),
+        spawnNenEntity({
+          id: OWL_IDS[0]!,
+          kind: 'NEN_ENTITY',
+          label: `Hibou (Libre)`,
+          metadata: { hearsThroughWalls: true, records: true, duration: 20, type: 'wandering' },
+        }),
         controlLink({
           vector: 'owl',
           mode: 'listen',
-          targets: () => OWL_IDS.map((id) => ({ id, kind: 'NEN_ENTITY' as const })),
+          targets: () => [{ id: OWL_IDS[0]!, kind: 'NEN_ENTITY' }],
         }),
       ],
+      cost: { label: 'Hibou libre', amount: 1, unit: 'capacité' },
+      hint: 'Se balade librement dans tout le bateau (disparaît après 20s)',
+    },
+
+    'deploy-shoulder': {
+      label: 'Hibou d\'Épaule',
+      conditions: [belowCapacity('secret-window-owls', 1, 'Un seul hibou autorisé à la fois')],
+      effects: [
+        spawnNenEntity({
+          id: OWL_IDS[0]!,
+          kind: 'NEN_ENTITY',
+          label: `Hibou (Épaule)`,
+          metadata: { hearsThroughWalls: true, records: true, duration: 20, type: 'shoulder' },
+        }),
+        controlLink({
+          vector: 'owl',
+          mode: 'listen',
+          targets: () => [{ id: OWL_IDS[0]!, kind: 'NEN_ENTITY' }],
+        }),
+      ],
+      cost: { label: 'Hibou sur épaule', amount: 1, unit: 'capacité' },
+      hint: 'Se pose sur l\'épaule de l\'utilisateur (disparaît après 20s)',
+    },
+
+    'deploy-random': {
+      label: 'Hibou Aléatoire',
+      conditions: [belowCapacity('secret-window-owls', 1, 'Un seul hibou autorisé à la fois')],
+      effects: [
+        spawnNenEntity({
+          id: OWL_IDS[0]!,
+          kind: 'NEN_ENTITY',
+          label: `Hibou (Aléatoire)`,
+          metadata: { hearsThroughWalls: true, records: true, duration: 20, type: 'random' },
+        }),
+        controlLink({
+          vector: 'owl',
+          mode: 'listen',
+          targets: () => [{ id: OWL_IDS[0]!, kind: 'NEN_ENTITY' }],
+        }),
+      ],
+      cost: { label: 'Hibou aléatoire', amount: 1, unit: 'capacité' },
+      hint: 'Apparaît dans un lieu aléatoire (disparaît après 20s)',
     },
 
     perch: {
-      label: 'Poster un hibou',
+      label: 'Poster le hibou',
       conditions: [
-        requiresParameter('owlId', 'Un hibou est choisi'),
         requiresParameter('locationId', 'Une pièce est choisie'),
       ],
       effects: [
         moveEntity({
-          entity: (ctx) => ({ id: param(ctx, 'owlId') ?? OWL_IDS[0]!, kind: 'NEN_ENTITY' }),
+          entity: () => ({ id: OWL_IDS[0]!, kind: 'NEN_ENTITY' }),
         }),
       ],
     },
@@ -73,19 +111,20 @@ export const secretWindow = defineAbility({
       label: 'Revoir les enregistrements',
       conditions: [requiresParameter('owlId', 'Un hibou est choisi')],
       effects: [
-        // The replay grants what the owl observed, dated to when it observed it:
+        // The replay grants what the owl observed (limited to last 10 seconds), dated to when it observed it:
         // the timeline engine does the rest.
         (ctx) =>
           listParam(ctx, 'recordedFactIds').flatMap((factId) =>
             knowledgeGrant({ factId, state: 'KNOWN' })(ctx).map((event) => ({
               ...event,
-              sourceIds: [param(ctx, 'owlId') ?? OWL_IDS[0]!],
+              sourceIds: [OWL_IDS[0]!],
               ...(numberParam(ctx, 'recordedAtChapter') === undefined
                 ? {}
                 : { revealedAtChapter: numberParam(ctx, 'recordedAtChapter') }),
             })),
           ),
       ],
+      hint: 'Récupère uniquement les 10 dernières secondes d\'enregistrement avant disparition',
     },
   },
 
@@ -95,7 +134,7 @@ export const secretWindow = defineAbility({
     inputMode: 'TARGET_SELECTION',
     allowedTargets: ['LOCATION', 'EVENT'],
     overlays: ['CONTROL_LINK', 'RANGE'],
-    entryActions: ['deploy'],
+    entryActions: ['deploy-wandering', 'deploy-shoulder', 'deploy-random'],
     requiredState: ['isConscious', 'canUseNen'],
     perspectiveTransition: {
       canChangeBody: false,

@@ -42,7 +42,7 @@ export const littleEye = defineAbility({
 
   actions: {
     attach: {
-      label: 'Poser la sphère sur un animal',
+      label: 'Poser la sphère sur un insecte volant (ou petit animal)',
       conditions: [
         isConscious(),
         requiresParameter('animalId', 'Un petit animal est choisi (hamster au maximum)'),
@@ -51,16 +51,18 @@ export const littleEye = defineAbility({
         spawnNenEntity({
           id: (ctx) => scoutId(param(ctx, 'animalId') ?? 'animal'),
           kind: 'NEN_ENTITY',
-          label: 'Éclaireur Little Eye',
+          label: 'Éclaireur Little Eye (Insecte volant)',
           metadata: (ctx) => ({
             animalId: param(ctx, 'animalId'),
             maxSize: 'hamster',
             survivesUserUnconsciousness: true,
+            auraColor: 'blue',
+            capabilities: ['film', 'fly', 'remote-control'],
           }),
         }),
         controlLink({
           vector: 'aura-sphere',
-          mode: 'listen',
+          mode: 'control',
           targets: (ctx) => [
             { id: scoutId(param(ctx, 'animalId') ?? 'animal'), kind: 'NEN_ENTITY' },
           ],
@@ -70,7 +72,7 @@ export const littleEye = defineAbility({
     },
 
     scout: {
-      label: 'Faire avancer l’éclaireur',
+      label: 'Faire avancer l’éclaireur (Vol)',
       // Deliberately no isConscious: the sphere keeps reporting even if its
       // holder passes out.
       conditions: [
@@ -96,6 +98,43 @@ export const littleEye = defineAbility({
               sourceIds: [scoutId(param(ctx, 'animalId') ?? 'animal')],
             })),
           ),
+      ],
+    },
+
+    film: {
+      label: 'Filmer les environs',
+      conditions: [
+        effectIsLive('effectId', 'La sphère est encore posée'),
+        requiresParameter('locationId', 'Une pièce est choisie'),
+      ],
+      effects: [
+        (ctx) =>
+          listParam(ctx, 'observedEntityIds').flatMap((observedId) =>
+            knowledgeGrant({
+              factId: `recorded:${observedId}:${param(ctx, 'locationId') ?? 'room'}`,
+              state: 'KNOWN',
+            })(ctx).map((event) => ({
+              ...event,
+              sourceIds: [scoutId(param(ctx, 'animalId') ?? 'animal')],
+            })),
+          ),
+      ],
+    },
+
+    pilot: {
+      label: 'Contrôler à distance',
+      conditions: [
+        effectIsLive('effectId', 'La sphère est encore posée'),
+        requiresParameter('locationId', 'Une direction ou pièce cible'),
+        isConscious(),
+      ],
+      effects: [
+        moveEntity({
+          entity: (ctx) => ({
+            id: scoutId(param(ctx, 'animalId') ?? 'animal'),
+            kind: 'NEN_ENTITY',
+          }),
+        }),
       ],
     },
 

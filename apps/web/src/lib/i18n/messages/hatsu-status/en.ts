@@ -91,10 +91,12 @@ export const hatsuStatusEn = {
   curse: {
     victim: (a0: string) =>
       `${a0} was named the victim · a sacrifice among its own was chosen at the same moment and marked where nothing shows`,
+    noKin: (a0: string) =>
+      `${a0} has nobody of its own aboard · there is no one for the mark to have been put on`,
     searched: (a0: boolean, a1: string) =>
       a0
-        ? `Gyo a0 the birthmark somewhere inside ${a1} · touch the sacrifice itself to spend it`
-        : `Gyo a0 nothing on ${a1} · whoever cast this masked their own aura in it`,
+        ? `Gyo catches the birthmark burning close to ${a1} · the carrier is one of the passengers around it`
+        : `Gyo finds nothing on ${a1} · whoever cast this masked their own aura in it`,
     spent: (a0: string) =>
       `The sacrifice died · the curse crossed the whole page and took ${a0}, and nothing on it says who cast it`,
   },
@@ -138,8 +140,10 @@ export const hatsuStatusEn = {
   },
 
   restoration: {
-    restored: (a0: string) =>
-      `${a0} restored · chapter filters, map depth and event position returned to their rested baseline`,
+    restored: (a0: number, a1: string) =>
+      a0
+        ? `${a1} rested · ${a0} thing${a0 > 1 ? 's it' : ' it'} could no longer do ${a0 > 1 ? 'are' : 'is'} back, and the map is at its baseline`
+        : `${a1} was not tired · the treatment still returned the map to its baseline`,
   },
 
   transformation: {
@@ -157,7 +161,7 @@ export const hatsuStatusEn = {
   impact: {
     escaped: (a0: string) => `${a0} got out of earshot before the sphere closed on it`,
     caught: (a0: string) => `Jupiter caught ${a0} and closed`,
-    chasing: (a0: string, a1: number) => `Jupiter is still chasing ${a0} · a1 ${a1}/4`,
+    chasing: (a0: string, a1: number) => `Jupiter is still chasing ${a0} · pass ${a1}/4`,
     conjured: (a0: string) =>
       `Jupiter conjured over ${a0} · the dance is done, so it will not stop now`,
   },
@@ -227,6 +231,7 @@ export const hatsuStatusEn = {
     noHead: (a0: string) => `${a0} has no head · there is nothing on it to stamp`,
     alive: (a0: string) =>
       `${a0} is not an object · the stamp refuses it, though a Nen copy of it would do`,
+    alreadyStamped: (a0: string) => `${a0} already carries a 人 · stamp a different body`,
     stamped: (a0: number, a1: number, a2: string) =>
       `人 on ${a2}'s head · ${a0} puppet${a1 ? 's' : ''} · take a head off and that one stops`,
     order: (a0: string, a1: number) =>
@@ -684,6 +689,7 @@ export const hatsuStatusEn = {
     tooBig: 'TOO BIG',
     markFound: 'MARK FOUND',
     noTrace: 'NO TRACE',
+    rested: (a0: number) => `RESTED ×${a0}`,
     guardsBroken: (a0: number) => `GUARD ×${a0}`,
     noGuard: 'NO GUARD',
     light: 'LIGHT',

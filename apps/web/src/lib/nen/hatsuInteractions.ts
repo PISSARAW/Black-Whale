@@ -253,6 +253,28 @@ const distanceBetween = (first: HTMLElement, second: HTMLElement) => {
 }
 
 /**
+ * The other passengers of a marker's own camp, on the map as it stands.
+ *
+ * The map tags every marker with the faction chips it belongs to, so "among its
+ * own" can be read off the page instead of guessed. A passenger with no chip at
+ * all falls back to the rest of the manifest — a curse still has to land on
+ * somebody.
+ */
+function kinOf(target: HTMLElement) {
+  const own = (target.dataset.hatsuFactions || '').split('|').filter(Boolean)
+  const manifest = Array.from(
+    document.querySelectorAll<HTMLElement>('[data-hatsu-character]'),
+  ).filter((candidate) => candidate !== target && !target.contains(candidate))
+  if (!own.length) return manifest
+  const kin = manifest.filter((candidate) =>
+    (candidate.dataset.hatsuFactions || '')
+      .split('|')
+      .some((faction) => faction && own.includes(faction)),
+  )
+  return kin.length ? kin : manifest
+}
+
+/**
  * Whether a technique made this. Little Eye refuses conjured creatures, Blinky
  * refuses Nen outright, Voconte's door will not move it and Double Machine Gun
  * tears through it — so they all need the same question answered.
@@ -593,6 +615,9 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
     ctx.remember(sacrifice).classList.add('hatsu-sacrifice-dead')
     ctx.remember(victim).classList.add('hatsu-curse-triggered')
     victim.style.pointerEvents = 'none'
+    // The victim is somewhere else on the ship, which is the whole point of the
+    // technique: it has to be shown dying at that distance.
+    victim.scrollIntoView({ behavior: 'smooth', block: 'center' })
     ctx.status = ctx.m['curse'].spent(ctx.targetLabel(victim))
     ctx.addPoint(x, y, 'POST-MORTEM', { alert: true })
     return true
@@ -699,6 +724,30 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
     return true
   },
   restoration: (ctx, { target, x, y, label }) => {
+    // A massage, not a reset button: Cookie works on the thing under her hands
+    // and what it can no longer do. Whatever the section holds shut — a control
+    // that answers to nothing, a fold nobody opened, a body kept out of reach —
+    // is what hours of rest would have given back, so that is what she gives.
+    const scope = target.closest<HTMLElement>('article, section, main') ?? target
+    // Only what the section can no longer *do* counts as tired: a control that
+    // answers to nothing, a fold nobody opened. Decorative `aria-hidden` markup
+    // is not exhaustion — counting it reported hundreds of things restored.
+    const tiredControls = Array.from(
+      scope.querySelectorAll<HTMLElement>(`${CONTROL_SELECTOR},details`),
+    )
+    let relieved = 0
+    for (const tired of tiredControls) {
+      if (tired.hasAttribute('hidden') || tired.matches('[disabled],[aria-disabled="true"]')) {
+        ctx.remember(tired)
+        liftRestriction(tired)
+        relieved += 1
+      }
+      if (tired instanceof HTMLDetailsElement && !tired.open) {
+        ctx.remember(tired)
+        tired.open = true
+        relieved += 1
+      }
+    }
     ctx.remember(target).classList.add('hatsu-restored')
     mapState.currentZoomLevel = 'OVERVIEW'
     mapState.selectedTier = null
@@ -708,8 +757,8 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
     if (ctx.page.url.search)
       void goto(cleanUrl, { replaceState: true, noScroll: true, keepFocus: true })
     target.scrollIntoView({ behavior: 'smooth', block: 'center' })
-    ctx.status = ctx.m['restoration'].restored(label)
-    ctx.addPoint(x, y, label)
+    ctx.status = ctx.m['restoration'].restored(relieved, label)
+    ctx.addPoint(x, y, relieved ? ctx.m.tokens.rested(relieved) : label)
     return true
   },
   transformation: (ctx, { target, x, y, label }) => {
@@ -804,19 +853,39 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
     }
     const budget = Number(model.dataset.hatsuLevel || 1) * 2000
     const source = getComputedStyle(model)
+    const shape = model.getBoundingClientRect()
     const transformed = ctx.remember(target)
-    transformed.style.background = source.background
+    // Copying the model's colours changed nothing: everything in the archive is
+    // already the same colour. What tells two things apart here is their size
+    // and what they say, so that is what the form takes — the target ends up the
+    // model's shape, wearing the model's name.
+    transformed.style.width = `${Math.round(shape.width)}px`
+    transformed.style.height = `${Math.round(shape.height)}px`
+    transformed.style.overflow = 'hidden'
+    transformed.style.boxSizing = 'border-box'
+    transformed.style.transition = 'width .4s ease, height .4s ease'
+    transformed.style.background = source.backgroundColor
     transformed.style.color = source.color
-    transformed.style.border = source.border
     transformed.style.borderRadius = source.borderRadius
     transformed.style.fontFamily = source.fontFamily
+    transformed.dataset.hatsuForgery = ctx.targetLabel(model).slice(0, 24)
     transformed.classList.add('hatsu-metamorphosen')
     ctx.selectedElements = [model, transformed]
     ctx.status = ctx.m['mimicry'].copied(ctx.targetLabel(model), label, budget / 1000)
     ctx.addPoint(x, y, label)
     ctx.schedule(() => {
       transformed.classList.remove('hatsu-metamorphosen')
-      for (const property of ['background', 'color', 'border', 'border-radius', 'font-family'])
+      delete transformed.dataset.hatsuForgery
+      for (const property of [
+        'background',
+        'color',
+        'border-radius',
+        'font-family',
+        'width',
+        'height',
+        'overflow',
+        'box-sizing',
+      ])
         transformed.style.removeProperty(property)
       ctx.status = ctx.m['mimicry'].expired(ctx.targetLabel(model), label)
     }, budget)
@@ -970,10 +1039,21 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
     // line, a heading — and none of those carry a head of their own. The puppet
     // is the block that owns them, which is the body the stamp is put on.
     const HEADS = 'h1,h2,h3,h4,h5,h6,summary,legend,dt'
-    const puppet =
-      target.closest<HTMLElement>('article, section, li, details, figure, aside, blockquote') ??
-      target
-    const head = target.matches(HEADS) ? target : puppet.querySelector<HTMLElement>(HEADS)
+    const BODIES = 'article, section, li, details, figure, aside, blockquote'
+    // Climb until a block with a head is found: the first block above a line of
+    // prose is often a bare wrapper, and stopping there refused everything.
+    let puppet = target.matches(HEADS) ? (target.parentElement ?? target) : target
+    let head = target.matches(HEADS) ? target : null
+    while (!head) {
+      const body = puppet.closest<HTMLElement>(BODIES)
+      if (!body) break
+      head = body.querySelector<HTMLElement>(HEADS)
+      puppet = body
+      if (head) break
+      if (!body.parentElement) break
+      puppet = body.parentElement
+    }
+    if (!head) puppet = target.closest<HTMLElement>(BODIES) ?? target
     const stamped = ctx.selectedElements.filter((body) => body.isConnected)
     if (stamped.length < 3) {
       if (!head) {
@@ -986,11 +1066,10 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
         return true
       }
       const conjured = isNenMade(puppet) || Boolean(puppet.dataset.hatsuFake)
-      // Alive means a passenger, not a control. Chrollo puppeteers objects, and
-      // a block of the archive is an object however many links hang off it.
-      const living =
-        puppet.matches('[data-hatsu-character]') ||
-        Boolean(puppet.querySelector('[data-hatsu-character]'))
+      // Alive means a passenger, not a control and not a room with people in
+      // it. Chrollo puppeteers objects, and a block of the archive is an object
+      // however many links hang off it or passengers stand inside it.
+      const living = puppet.matches('[data-hatsu-character]')
       if (living && !conjured) {
         ctx.status = ctx.m['command'].alive(label)
         ctx.addPoint(x, y, ctx.m.tokens.alive, { alert: true })
@@ -1238,15 +1317,28 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
     const direction = event.clientX < innerWidth / 2 ? 1 : -1
     let pierced = 0
     for (const [index, hit] of line.entries()) {
+      // Read what the bullets are going through before the volley marks it:
+      // asking afterwards counted the technique's own mark as a Nen construct,
+      // so every wall the gun hit was reported as torn through and erased.
+      const conjured = isNenMade(hit) || Boolean(hit.dataset.hatsuFake)
       const element = ctx.remember(hit)
       element.style.transition = 'transform .18s ease-out'
       ctx.applyTransform(element, `translate(${direction * force}px, ${((index % 3) - 1) * 10}px)`)
       element.classList.add('hatsu-bullet-hit')
-      if (!isNenMade(hit) && !hit.dataset.hatsuFake) continue
+      if (!conjured) continue
       pierced += 1
       element.style.opacity = '.2'
       element.style.pointerEvents = 'none'
     }
+    // The volley is sustained, not a single shove: everything it caught rides
+    // back down once the burst is over, and the recoil is what is seen of it.
+    ctx.schedule(() => {
+      for (const hit of line) {
+        if (!hit.isConnected) continue
+        hit.style.transition = 'transform .5s cubic-bezier(.2,.9,.3,1)'
+        ctx.applyTransform(hit, `translate(${direction * Math.round(force / 4)}px, 0)`)
+      }
+    }, 220)
     // Conjured cards are no protection either.
     ctx.floatingCards = []
     ctx.status = ctx.m['barrage'].fired(line.length * 2, label, pierced)
@@ -1267,6 +1359,25 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
       return true
     }
     if (body?.isConnected) {
+      // Passing through was a status line and nothing else. The double is out
+      // walking: it moves to where it was sent, the matter it crossed opens for
+      // the length of the crossing, and a door it walks into is a door it can
+      // take — the body it left behind still cannot touch any of it.
+      const crossed = ctx.remember(target)
+      crossed.classList.add('hatsu-phased-through')
+      ctx.schedule(() => crossed.classList.remove('hatsu-phased-through'), 900)
+      const door =
+        target.closest<HTMLAnchorElement>('a') || target.querySelector<HTMLAnchorElement>('a')
+      ctx.floatingCards = [
+        {
+          id: ++ctx.sequence,
+          x: Math.max(16, Math.min(innerWidth - 320, x)),
+          y: Math.max(80, Math.min(innerHeight - 220, y)),
+          label,
+          kind: 'projection',
+          href: door?.href || null,
+        },
+      ]
       ctx.status = ctx.m['projection'].passedThrough(label)
       ctx.addPoint(x, y, label)
       return true

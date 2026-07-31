@@ -88,10 +88,12 @@ export const hatsuStatusFr: HatsuStatusMessages = {
   curse: {
     victim: (a0: string) =>
       `${a0} a été désigné victime · un sacrifié parmi les siens a été choisi au même instant et marqué là où rien ne se voit`,
+    noKin: (a0: string) =>
+      `${a0} n’a personne des siens à bord · il n’y a personne sur qui la marque aurait été posée`,
     searched: (a0: boolean, a1: string) =>
       a0
-        ? `Le Gyo a trouvé la tache de naissance quelque part dans ${a1} · touchez le sacrifié lui-même pour la dépenser`
-        : `Le Gyo n’a rien trouvé sur ${a1} · celui qui a lancé ceci y a masqué sa propre aura`,
+        ? `Le Gyo sent la tache de naissance brûler tout près de ${a1} · le porteur est l’un des passagers autour`
+        : `Le Gyo ne trouve rien sur ${a1} · celui qui a lancé ceci y a masqué sa propre aura`,
     spent: (a0: string) =>
       `Le sacrifié est mort · la malédiction a traversé toute la page et emporté ${a0}, et rien sur elle ne dit qui l’a lancée`,
   },
@@ -135,8 +137,10 @@ export const hatsuStatusFr: HatsuStatusMessages = {
   },
 
   restoration: {
-    restored: (a0: string) =>
-      `${a0} restauré · filtres de chapitre, profondeur de carte et position d’événement ramenés à leur état reposé`,
+    restored: (a0: number, a1: string) =>
+      a0
+        ? `${a1} reposé · ${a0} chose${a0 > 1 ? 's' : ''} qu’il ne pouvait plus faire ${a0 > 1 ? 'sont revenues' : 'est revenue'}, et la carte est à son état de repos`
+        : `${a1} n’était pas fatigué · le soin a tout de même ramené la carte à son état de repos`,
   },
 
   transformation: {
@@ -226,6 +230,7 @@ export const hatsuStatusFr: HatsuStatusMessages = {
     noHead: (a0: string) => `${a0} n’a pas de tête · il n’y a rien à tamponner dessus`,
     alive: (a0: string) =>
       `${a0} n’est pas un objet · le tampon le refuse, alors qu’une copie de Nen ferait l’affaire`,
+    alreadyStamped: (a0: string) => `${a0} porte déjà un 人 · tamponnez un autre corps`,
     stamped: (a0: number, a1: number, a2: string) =>
       `人 sur la tête de ${a2} · ${a0} pantin${a1 ? 's' : ''} · retirez une tête et celui-là s’arrête`,
     order: (a0: string, a1: number) =>
@@ -682,6 +687,7 @@ export const hatsuStatusFr: HatsuStatusMessages = {
     tooBig: 'TROP GROS',
     markFound: 'MARQUE TROUVÉE',
     noTrace: 'AUCUNE TRACE',
+    rested: (a0: number) => `REPOSÉ ×${a0}`,
     guardsBroken: (a0: number) => `PROTECTION ×${a0}`,
     noGuard: 'AUCUNE PROTECTION',
     light: 'LUMIÈRE',

@@ -254,6 +254,8 @@ export const hatsuStatusFr: HatsuStatusMessages = {
     ownFuture: () => 'Lovely Ghostwriter ne peut pas écrire l’avenir de celui qui tient la plume',
     incomplete: (a0: string, a1: string) =>
       `${a0} n’a pas noté ${a1} · la plume ne bouge pas sur une fiche incomplète`,
+    consulting: (a0: string) =>
+      `La plume court encore sur la fiche de ${a0} · la transe n’est pas terminée`,
     guideTitle: () => 'Lovely Ghostwriter · chemins annoncés',
     written: (a0: string, a1: number) =>
       `Quatre quatrains écrits pour ${a0} en transe · le premier est le passé, les ${a1} routes qui suivent ne le sont pas`,

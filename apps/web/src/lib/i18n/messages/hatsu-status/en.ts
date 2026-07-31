@@ -254,6 +254,8 @@ export const hatsuStatusEn = {
     ownFuture: () => 'Lovely Ghostwriter cannot write the fortune of whoever is holding the pen',
     incomplete: (a0: string, a1: string) =>
       `${a0} did not write down ${a1} · the quill will not move on an incomplete slip`,
+    consulting: (a0: string) =>
+      `The quill is still moving over ${a0}'s slip · the trance has not broken yet`,
     guideTitle: () => 'Lovely Ghostwriter · foretold paths',
     written: (a0: string, a1: number) =>
       `Four quatrains written for ${a0} in a trance · the first one is the past, the ${a1} routes after it are not`,

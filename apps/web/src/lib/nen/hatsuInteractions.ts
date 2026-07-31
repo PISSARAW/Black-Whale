@@ -4,6 +4,7 @@ import type { Page } from '@sveltejs/kit'
 import { playHatsuNote, setAmbientMuffled } from '$lib/audio/ambient.js'
 import { mapState } from '$lib/state/mapState.svelte'
 import { deactivateHatsu } from './hatsuState.js'
+import { loadProphecySheets, prophecySheetsReady, prophecySubjectFor } from './prophecySheets.js'
 import type { HatsuInteractionKind, HatsuProfile } from './hatsuRegistry.js'
 import type { HatsuStatusMessages } from '$lib/i18n/hatsuStatus'
 
@@ -561,9 +562,19 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
     // the same moment. Nobody picks the carrier, the mark cannot be seen without
     // Gyo, and he left no signature on it that points back at him.
     if (!ctx.selectedElements.length) {
-      const born = Array.from(target.querySelectorAll<HTMLElement>('[data-hatsu-character], li, p'))
-      const sacrifice = born[born.length - 1] || target
+      // "Among its own": the sacrifice is a different passenger of the victim's
+      // own camp, chosen at the same moment and left somewhere else entirely.
+      // Hiding it inside the victim, as this did, left Gyo nothing to search.
+      const kin = kinOf(target)
+      if (!kin.length) {
+        ctx.status = ctx.m['curse'].noKin(label)
+        ctx.addPoint(x, y, ctx.m.tokens.noTrace, { alert: true })
+        return true
+      }
+      const sacrifice = kin[label.length % kin.length]
       ctx.selectedElements = [target, sacrifice]
+      ctx.remember(target).classList.add('hatsu-curse-victim')
+      // The mark shows nothing: no class, only the bookkeeping Gyo answers to.
       ctx.remember(sacrifice).dataset.hatsuLevel = 'cursed'
       ctx.status = ctx.m['curse'].victim(label)
       ctx.addPoint(x, y, ctx.m.tokens.victim(label))
@@ -571,11 +582,12 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
     }
     const [victim, sacrifice] = ctx.selectedElements
     if (target !== sacrifice) {
-      // Gyo: looking hard at the right place is the only way to find the mark.
-      const found = target.contains(sacrifice)
-      ctx.remember(target).classList.add(found ? 'hatsu-beyond-cursed' : 'hatsu-gyo-empty')
-      ctx.status = ctx.m['curse'].searched(found, label)
-      ctx.addPoint(x, y, found ? ctx.m.tokens.markFound : ctx.m.tokens.noTrace, { alert: !found })
+      // Gyo: the mark is invisible, so all the search returns is how close the
+      // aura felt — which is what makes finding it worth doing.
+      const near = distanceBetween(target, sacrifice) < 160
+      ctx.remember(target).classList.add(near ? 'hatsu-beyond-cursed' : 'hatsu-gyo-empty')
+      ctx.status = ctx.m['curse'].searched(near, label)
+      ctx.addPoint(x, y, near ? ctx.m.tokens.markFound : ctx.m.tokens.noTrace, { alert: !near })
       return true
     }
     ctx.remember(sacrifice).classList.add('hatsu-sacrifice-dead')
@@ -953,29 +965,47 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
   command: (ctx, { target, x, y, label }) => {
     // A puppet has to have a head and has to be lifeless. Corpses are refused
     // outright; Nen copies of them are not. And the orders stay simple.
-    const head = target.querySelector<HTMLElement>('h1,h2,h3,h4,h5,h6,summary,legend,dt')
-    const stamped = ctx.selectedElements.filter((puppet) => puppet.isConnected)
+    //
+    // The click lands on the innermost thing under the pointer — a paragraph, a
+    // line, a heading — and none of those carry a head of their own. The puppet
+    // is the block that owns them, which is the body the stamp is put on.
+    const HEADS = 'h1,h2,h3,h4,h5,h6,summary,legend,dt'
+    const puppet =
+      target.closest<HTMLElement>('article, section, li, details, figure, aside, blockquote') ??
+      target
+    const head = target.matches(HEADS) ? target : puppet.querySelector<HTMLElement>(HEADS)
+    const stamped = ctx.selectedElements.filter((body) => body.isConnected)
     if (stamped.length < 3) {
       if (!head) {
         ctx.status = ctx.m['command'].noHead(label)
         ctx.addPoint(x, y, ctx.m.tokens.noHead, { alert: true })
         return true
       }
-      const conjured = isNenMade(target) || Boolean(target.dataset.hatsuFake)
+      if (stamped.includes(puppet)) {
+        ctx.status = ctx.m['command'].alreadyStamped(ctx.targetLabel(puppet))
+        return true
+      }
+      const conjured = isNenMade(puppet) || Boolean(puppet.dataset.hatsuFake)
+      // Alive means a passenger, not a control. Chrollo puppeteers objects, and
+      // a block of the archive is an object however many links hang off it.
       const living =
-        target.matches('a,button,[role="button"],[data-hatsu-character]') ||
-        Boolean(target.querySelector('[data-hatsu-character]'))
+        puppet.matches('[data-hatsu-character]') ||
+        Boolean(puppet.querySelector('[data-hatsu-character]'))
       if (living && !conjured) {
         ctx.status = ctx.m['command'].alive(label)
         ctx.addPoint(x, y, ctx.m.tokens.alive, { alert: true })
         return true
       }
-      ctx.selectedElements = [...stamped, target]
+      ctx.selectedElements = [...stamped, puppet]
       ctx.remember(head).classList.add('hatsu-stamped-head')
       head.dataset.hatsuForgery = '人'
-      ctx.remember(target).classList.add('hatsu-stamped')
-      ctx.status = ctx.m['command'].stamped(stamped.length + 1, stamped.length, label)
-      ctx.addPoint(x, y, label)
+      ctx.remember(puppet).classList.add('hatsu-stamped')
+      ctx.status = ctx.m['command'].stamped(
+        stamped.length + 1,
+        stamped.length,
+        ctx.targetLabel(puppet),
+      )
+      ctx.addPoint(x, y, ctx.targetLabel(puppet))
       return true
     }
     const destination = target.getBoundingClientRect()
@@ -1066,32 +1096,66 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
     ctx.addPoint(x, y, `${affinity}%`, { details: [digits, band] })
     return true
   },
-  prophecy: (ctx, { target, x, y, label }) => {
+  prophecy: (ctx, args) => {
     // Neon needed a full name, a date of birth and a blood type before the quill
     // would move, she could never write her own, and the first verse is always
     // about something that has already happened.
+    //
+    // When the quill lands on a passenger it writes that passenger's sheet from
+    // data/prophecies — the same poem the character page prints. Everything else
+    // on the ship gets an improvised page.
+    const { target, x, y, label } = args
     if (target.closest('[data-hatsu-ui]')) {
       ctx.status = ctx.m['prophecy'].ownFuture()
       ctx.addPoint(x, y, ctx.m.tokens.noOwnFuture, { alert: true })
       return true
     }
     const name = target.dataset.hatsuCharacterName || label
-    const text = (target.textContent || '').trim()
-    const born = /\d/.test(text) || Boolean(target.querySelector('time'))
-    const type = Boolean(
-      target.dataset.hatsuCharacter ||
-      target.dataset.hatsuList ||
-      target.closest('[data-hatsu-character]'),
-    )
-    if (!born || !type) {
-      const missing = [!born && 'a date of birth', !type && 'a blood type']
-        .filter(Boolean)
-        .join(' or ')
-      ctx.status = ctx.m['prophecy'].incomplete(name, missing)
-      ctx.addPoint(x, y, ctx.m.tokens.incomplete, { alert: true })
+    const links = Array.from(target.querySelectorAll<HTMLAnchorElement>('a')).slice(0, 4)
+    if (!prophecySheetsReady()) {
+      // The catalogue is fetched when the technique is selected; a click that
+      // beats it waits for the page rather than improvising over it.
+      ctx.status = ctx.m['prophecy'].consulting(name)
+      void loadProphecySheets().then(() => {
+        if (ctx.profile.kind === 'prophecy' && target.isConnected)
+          HATSU_INTERACTION_BY_KIND['prophecy']?.(ctx, args)
+      })
       return true
     }
-    const links = Array.from(target.querySelectorAll<HTMLAnchorElement>('a')).slice(0, 4)
+    // A passenger the archive can name is a slip with nothing missing on it. The
+    // date of birth and the blood type are only asked of whatever the archive
+    // cannot identify, which is where the quill has to guess.
+    const sheet = prophecySubjectFor(target, ctx.page.url.pathname)
+    if (!sheet) {
+      const text = (target.textContent || '').trim()
+      const born = /\d/.test(text) || Boolean(target.querySelector('time'))
+      const type = Boolean(
+        target.dataset.hatsuCharacter ||
+        target.dataset.hatsuList ||
+        target.closest('[data-hatsu-character]'),
+      )
+      if (!born || !type) {
+        const missing = [!born && 'a date of birth', !type && 'a blood type']
+          .filter(Boolean)
+          .join(' or ')
+        ctx.status = ctx.m['prophecy'].incomplete(name, missing)
+        ctx.addPoint(x, y, ctx.m.tokens.incomplete, { alert: true })
+        return true
+      }
+    }
+    if (sheet?.blank) {
+      ctx.status = ctx.m['prophecy'].ownFuture()
+      ctx.addPoint(x, y, ctx.m.tokens.noOwnFuture, { alert: true })
+      return true
+    }
+    if (sheet) {
+      ctx.prophecyLines = sheet.poem
+      ctx.guideTitle = ctx.m['prophecy'].guideTitle()
+      ctx.guideItems = links.map((link) => ctx.guideItemFor(link, ctx.targetLabel(link)))
+      ctx.status = ctx.m['prophecy'].written(sheet.subjectName, ctx.guideItems.length)
+      ctx.addPoint(x, y, sheet.subjectName, { details: [sheet.foretells] })
+      return true
+    }
     const already = ctx.points[0]?.label
     ctx.prophecyLines = [
       already

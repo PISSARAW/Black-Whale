@@ -30,6 +30,7 @@
     type Point,
     type StoredItem,
   } from './hatsuInteractions.js'
+  import { loadProphecySheets } from './prophecySheets.js'
 
   type CaptureZone = { left: number; top: number; width: number; height: number }
   type RecordedEvent = { x: number; y: number; label: string }
@@ -157,6 +158,9 @@
     cleanupTechniqueState(releasingHatsu)
     if (profile && !hadActiveHatsu) siteSnapshot = captureSiteState()
     previousId = profile?.id ?? null
+    // The sheets are a lazy chunk, fetched while the visitor is still choosing a
+    // target so the first click can be answered with the real poem.
+    if (profile?.kind === 'prophecy') void loadProphecySheets()
     points = []
     seconds = 0
     cardIndex = 0
@@ -291,7 +295,12 @@
     trainingTarget = null
     observerReports = []
     birdDispatches = []
-    capturedTechniques = []
+    // What Steal Chain took stays taken until the aura is released: the only way
+    // to reach Stealth Dolphin — which reads out what the chain captured and
+    // lends it on — is to change technique, and clearing this here left the
+    // dolphin with nothing to read, always. Same for Benjamin Baton's inherited
+    // abilities and what Predator counters.
+    if (restoreSite) capturedTechniques = []
     dowsingSignal = 0
     portalCrossings = 0
     guardianShield = 1

@@ -104,7 +104,12 @@
     "occurredAtLabel": "Day 1 · Sunday · 12:15-12:30",
     "legacyTitles": [],
     "occursAfterTitle": "Ship Departs",
-    "note": "The ship sails at noon and Woody dies between 12:15 and 12:30, so the death belongs to the departure chapter, not to the eve: chapter 358 is before the ship exists as a place, and the on-ship rule in the backfill turns every event under 359 off-ship. Filed at 358 the death was dropped from the ship timeline entirely, and the bathroom-floor spot `localSpotAnchors` reserves for the body could never be reached. `occursAfterTitle` is what keeps it ordered after the departure: the event already held an ordinal from when it sat at 358.2, and curated ordinals are preserved."
+    "note": "The ship sails at noon and Woody dies between 12:15 and 12:30, so the death belongs to the departure chapter, not to the eve: chapter 358 is before the ship exists as a place, and the on-ship rule in the backfill turns every event under 359 off-ship. Filed at 358 the death was dropped from the ship timeline entirely, and the bathroom-floor spot `localSpotAnchors` reserves for the body could never be reached. `occursAfterTitle` is what keeps it ordered after the departure: the event already held an ordinal from when it sat at 358.2, and curated ordinals are preserved.",
+    "occurredAt": {
+      "basis": "stated",
+      "hours": 0.25,
+      "hoursUntil": 0.5
+    }
   },
   {
     "chapter": 359,
@@ -182,7 +187,12 @@
     "title": "The fourteen suites, one by one",
     "summary": "The chapter walks every room of the royal residential sector. Marayam eats under three servants and three guards, Biscuit among them; Nipaper, Bladge, Laroc and a fourth guard the archive has not identified hold Momoze's door while she sleeps, Nagmum and Tuffdy off duty in the guards' beds; Fugetsu looks through photographs in bed under two; Kacho takes her meal with Melody in the room; Halkenburg wakes to find his eleven bodyguards unharmed; Salé-salé lies in with two women, three guards and his mother Swinko-swinko; Luzurus talks with his lead Hunter; Tyson plays with a guard under Izunavi's eye; Butch reports to Tubeppa in her office; Theta and Tserriednich work the training floor; Zhang Lei holds his dining table with Oito, the child and a standing Kurapika at the far end; Camilla eats with her mother while Musse sits alone at a desk down the passage; and Balsamilco keeps the telephone by Benjamin's door, Furykov in the room. Kurapika's party then goes home to 1014, where Babimyna has taken Vincent's post. Six decks down, Chrollo sits in Area 37564.",
     "legacyTitles": [],
-    "occursAfterTitle": "Chrollo orders the hunt for Hisoka"
+    "occursAfterTitle": "Chrollo orders the hunt for Hisoka",
+    "occurredAt": {
+      "basis": "stated",
+      "hours": 4
+    },
+    "occurredAtLabel": "Day 1 · Sunday · 16:00"
   },
   {
     "chapter": 366,
@@ -191,7 +201,12 @@
     "title": "Kurapika brings the Woble camp home",
     "summary": "Kurapika, Oito and the child leave Zhang Lei's table and return to room 1014, where Babimyna now stands in Vincent's place among the guards already posted there.",
     "legacyTitles": [],
-    "occursAfterTitle": "The fourteen suites, one by one"
+    "occursAfterTitle": "The fourteen suites, one by one",
+    "occurredAt": {
+      "basis": "derived",
+      "hours": 4
+    },
+    "occurredAtLabel": "≈ Day 1 · 16:00"
   },
   {
     "chapter": 366,
@@ -199,7 +214,12 @@
     "sequence": 1,
     "title": "The princes respond to the Nen stalemate",
     "summary": "Tyson promotes her Book, Luzurus sends a guard to learn Nen, and the royal factions adapt to Kurapika's announcement.",
-    "legacyTitles": []
+    "legacyTitles": [],
+    "occurredAt": {
+      "basis": "derived",
+      "hours": 4
+    },
+    "occurredAtLabel": "≈ Day 1 · 16:00"
   },
   {
     "chapter": 366,
@@ -207,7 +227,12 @@
     "sequence": 2,
     "title": "Chrollo orders the hunt for Hisoka",
     "summary": "The Phantom Troupe gathers aboard the Black Whale, accepts Illumi as a member and begins searching the lower tiers for Hisoka.",
-    "legacyTitles": []
+    "legacyTitles": [],
+    "occurredAt": {
+      "basis": "derived",
+      "hours": 4
+    },
+    "occurredAtLabel": "≈ Day 1 · 16:00"
   },
   {
     "chapter": 373,
@@ -232,7 +257,12 @@
     "title": "Emperor Time runs out on Kurapika",
     "summary": "Emperor Time has been held for nearly three hours by the time the team reaches Momoze. The count costs Kurapika about 450 days of his life and he collapses from it.",
     "legacyTitles": [],
-    "occursAfterTitle": "Momoze is assassinated"
+    "occursAfterTitle": "Momoze is assassinated",
+    "occurredAt": {
+      "basis": "derived",
+      "hours": 9
+    },
+    "occurredAtLabel": "≈ Day 1 · 21:00"
   },
   {
     "chapter": 368,
@@ -250,7 +280,12 @@
     "title": "Kurapika wakes from a nine-hour black-out",
     "summary": "Bill tells Kurapika he was unconscious for about nine hours and that the others were told he was on a mission. Oito went down at almost the same moment, since she was holding the borrowed ability with him.",
     "legacyTitles": [],
-    "occursAfterTitle": "Emperor Time runs out on Kurapika"
+    "occursAfterTitle": "Emperor Time runs out on Kurapika",
+    "occurredAt": {
+      "basis": "stated",
+      "hours": 18
+    },
+    "occurredAtLabel": "Day 2 · Monday · 06:00"
   },
   {
     "chapter": 369,
@@ -259,7 +294,12 @@
     "title": "The limits of Emperor Time are spelled out",
     "summary": "Continuous use of Emperor Time is capped at three hours; past that the user blacks out for three times the time spent — nine hours here — and whoever shares the ability blacks out with him. Kurapika suspects the power of the stolen ability moves the allotted time.",
     "legacyTitles": [],
-    "occursAfterTitle": "Kurapika wakes from a nine-hour black-out"
+    "occursAfterTitle": "Kurapika wakes from a nine-hour black-out",
+    "occurredAt": {
+      "basis": "stated",
+      "hours": 18
+    },
+    "occurredAtLabel": "Day 2 · Monday · 06:00"
   },
   {
     "chapter": 369,
@@ -270,7 +310,11 @@
     "legacyTitles": [],
     "occurredAtLabel": "Day 2 · Monday · 09:00",
     "occursAfterTitle": "The limits of Emperor Time are spelled out",
-    "note": "The princes' orders contradict one another — spy, recruit, learn, kill — which is why the room holds militiamen, soldiers and servants at once rather than one detail per prince."
+    "note": "The princes' orders contradict one another — spy, recruit, learn, kill — which is why the room holds militiamen, soldiers and servants at once rather than one detail per prince.",
+    "occurredAt": {
+      "basis": "stated",
+      "hours": 21
+    }
   },
   {
     "chapter": 369,
@@ -281,7 +325,11 @@
     "legacyTitles": [],
     "occurredAtLabel": "Day 2 · Monday · 09:00",
     "occursAfterTitle": "The princes send their guards to the first Nen class",
-    "note": "Exclusion is the only sanction that bites: given what their princes sent them to do, none of them can afford to be thrown out."
+    "note": "Exclusion is the only sanction that bites: given what their princes sent them to do, none of them can afford to be thrown out.",
+    "occurredAt": {
+      "basis": "stated",
+      "hours": 21
+    }
   },
   {
     "chapter": 369,
@@ -290,7 +338,12 @@
     "title": "Silent Majority possesses Loberry",
     "summary": "The hidden assassin uses Loberry as the only witness to the masked doll observing Kurapika's Nen class. The user states the rule of the ability out loud: only two people can see the decorative doll — Loberry, on whom it is fixed, and the user who activated it.",
     "legacyTitles": ["Début du chapitre 369"],
-    "occursAfterTitle": "Kurapika lays down the rules of the Nen class"
+    "occursAfterTitle": "Kurapika lays down the rules of the Nen class",
+    "occurredAt": {
+      "basis": "stated",
+      "hours": 21
+    },
+    "occurredAtLabel": "Day 2 · Monday · 09:00"
   },
   {
     "chapter": 369,
@@ -300,7 +353,12 @@
     "summary": "Before teaching, Kurapika asks the users among them to raise their hands. Furykov and Belerainte alone answer; Kurapika reads Furykov as an observer sent to grade his teaching, and Belerainte says he is glad to give a frank opinion. The hidden assassin counts four more who keep quiet and reckons nobody but them will notice.",
     "legacyTitles": [],
     "occursAfterTitle": "Silent Majority possesses Loberry",
-    "note": "Six Nen users are in the room by the assassin's count, two declared and four hidden — the assassin among the four."
+    "note": "Six Nen users are in the room by the assassin's count, two declared and four hidden — the assassin among the four.",
+    "occurredAt": {
+      "basis": "stated",
+      "hours": 21
+    },
+    "occurredAtLabel": "Day 2 · Monday · 09:00"
   },
   {
     "chapter": 370,
@@ -311,7 +369,11 @@
     "legacyTitles": [],
     "occurredAtLabel": "Day 2 · Monday · 09:00",
     "occursAfterTitle": "Kurapika asks who already knows Nen",
-    "note": "The murder is committed in front of sixteen witnesses and one Nen teacher, and none of them can see the weapon — that is the point of the ability, and the reason the class turns into an investigation."
+    "note": "The murder is committed in front of sixteen witnesses and one Nen teacher, and none of them can see the weapon — that is the point of the ability, and the reason the class turns into an investigation.",
+    "occurredAt": {
+      "basis": "stated",
+      "hours": 21
+    }
   },
   {
     "chapter": 376,
@@ -320,8 +382,12 @@
     "title": "Silent Majority kills Myuhan",
     "summary": "The assassin strikes the moment Myuhan steps into the toilets: he screams, and ten seconds later he is dry. A Nen user among the guards puts three of the dolls down and reports that one is still inside. Kurapika seals the scene — the salon door shut with nobody moving, Bill holding the bedroom door until he arrives — and reads the pattern out loud: the killer only takes people without Nen, the attack is unstoppable in a moment of inattention if you have none, and nobody is at risk while he is present. The user has evidently unlocked their own Nen; the doll has vanished where it cannot have gone, being far too big for the pipes.",
     "legacyTitles": [],
-    "occurredAtLabel": "Day 3 · Tuesday",
-    "note": "Kurapika mentions having had a run-in with Myuhan the day before, which places the murder a day after the first Nen class of chapter 369."
+    "occurredAtLabel": "≈ Day 3",
+    "note": "Kurapika mentions having had a run-in with Myuhan the day before, which places the murder a day after the first Nen class of chapter 369.",
+    "occurredAt": {
+      "basis": "derived",
+      "day": 3
+    }
   },
   {
     "chapter": 376,
@@ -330,9 +396,13 @@
     "title": "The class turns on Kurapika and calls for the army",
     "summary": "The surviving envoys read the deaths as an extermination: they are being picked off one by one and were lured in with the promise of Nen, which several of them now call a fabrication with no proof behind it. One demands the Royal Army be called and says he knows exactly whose side the magistrate will take. Kurapika's camp cannot allow it — with the court already having every residence searched, calling the army would see the queen, the prince and the detail placed in separate detention — so the class has to be talked into continuing, and the lie kept standing rests on the same guards staying in the room.",
     "legacyTitles": [],
-    "occurredAtLabel": "Day 3 · Tuesday",
+    "occurredAtLabel": "≈ Day 3",
     "occursAfterTitle": "Silent Majority kills Myuhan",
-    "note": "The assassin's leverage is procedural rather than lethal: each killing pushes the class closer to summoning the army, and the army is what would separate Oito and Woble from Kurapika."
+    "note": "The assassin's leverage is procedural rather than lethal: each killing pushes the class closer to summoning the army, and the army is what would separate Oito and Woble from Kurapika.",
+    "occurredAt": {
+      "basis": "derived",
+      "day": 3
+    }
   },
   {
     "chapter": 372,
@@ -380,7 +450,12 @@
     "sequence": 1,
     "title": "Morena unleashes Contagion",
     "summary": "In room 302 on Tier 3, Morena addresses the twenty-three people present — the ones who stayed at her side after she ordered them to kill one another — and thanks them for it. She admits she is young and inexperienced to have taken the head of the clan, says she cares nothing for this world any more than for herself, and that this is exactly why she is destroying it. She then calls them forward one at a time to have their faculties examined: the kiss that carries Contagion. Levels are earned by murder, and the family leaves the room as Nen users pointed at Kakin.",
-    "legacyTitles": ["Appearance of Morena Prudo"]
+    "legacyTitles": ["Appearance of Morena Prudo"],
+    "occurredAt": {
+      "basis": "derived",
+      "day": 4
+    },
+    "occurredAtLabel": "≈ Day 4"
   },
   {
     "chapter": 384,
@@ -398,7 +473,11 @@
     "summary": "A double-page section of the hull, captioned fourth day of the crossing, 10:00, puts a name to every post that matters below Tier 2. Third-class observation post: Illumi and Kalluto. Ordinary third-class cabins: Cashew. The Level 3 governmental and political zone — the body that enforces political law, the central police, the local section of the Royal Army — holds Mizaistom, Botobai, Piyon, Cluck and Ginta. The special medical zone, central hospital and general laboratory, holds Cheadle, Leorio and Gel. Luini sits in the Ei-I family office. Chrollo, Bonolenov and Shizuku are in the central passage; Feitan at the hangar entrance; Hinrigh in the Xi-Yu office; Machi in the ordinary fifth-class cabins; Franklin in the fifth-class central canteen; and Ken'i Wang, Nobunaga and Phinks in the Cha-R office.",
     "legacyTitles": [],
     "occurredAtLabel": "Day 4 · Wednesday · 10:00",
-    "note": "This is the only time stamp in the arc attached to a map rather than a scene, and the only page that fixes the Zodiacs, the three mafia offices and the whole Troupe at one hour. It is a snapshot of Day 4 and not a standing state: `shipLocation` in the character files holds each figure's latest known post, which for several of them — Bonolenov in the Tier 1 casino, Phinks in the recycling works, Luini dead in the Cha-R hideout — is a later chapter than this one."
+    "note": "This is the only time stamp in the arc attached to a map rather than a scene, and the only page that fixes the Zodiacs, the three mafia offices and the whole Troupe at one hour. It is a snapshot of Day 4 and not a standing state: `shipLocation` in the character files holds each figure's latest known post, which for several of them — Bonolenov in the Tier 1 casino, Phinks in the recycling works, Luini dead in the Cha-R hideout — is a later chapter than this one.",
+    "occurredAt": {
+      "basis": "stated",
+      "hours": 70
+    }
   },
   {
     "chapter": 380,
@@ -406,7 +485,12 @@
     "sequence": 1,
     "title": "Fugetsu emerges alone on Tier 3",
     "summary": "An uncontrolled use of Magical Worm takes Fugetsu to Tier 3, where the Hunters place her under Justice protection.",
-    "legacyTitles": ["Début du chapitre 380"]
+    "legacyTitles": ["Début du chapitre 380"],
+    "occurredAt": {
+      "basis": "derived",
+      "day": 4
+    },
+    "occurredAtLabel": "≈ Day 4"
   },
   {
     "chapter": 374,
@@ -415,7 +499,11 @@
     "title": "Thirty-seven and a half hours out of port",
     "summary": "A caption over the sea gives the elapsed time since the ship put out: 37 h 30 min. Against the noon departure of chapter 340 that lands at 01:30 on the third day, in the small hours of the night after the first Nen class. The panels around it are quiet: the galley at work, Oito holding Woble in her room, and the Woble camp taking stock — Hanzo's disappearance inside Marayam's quarters is read as a defensive act of the thirteenth prince's Nen beast, keeping a line open to him is called essential, and the results are to be reported back.",
     "legacyTitles": [],
-    "occurredAtLabel": "Day 3 · Tuesday · 01:30"
+    "occurredAtLabel": "Day 3 · Tuesday · 01:27",
+    "occurredAt": {
+      "basis": "stated",
+      "hours": 37.45
+    }
   },
   {
     "chapter": 374,
@@ -426,7 +514,11 @@
     "legacyTitles": [],
     "occurredAtLabel": "Day 3 · Tuesday · 01:27",
     "occursAfterTitle": "Thirty-seven and a half hours out of port",
-    "note": "The clock and the chapter's 37 h 30 min caption agree to within three minutes, which fixes both against the noon departure — and makes the sailing day a Sunday, the weekday the banquet hall's Sunday schedule already assumed."
+    "note": "The clock and the chapter's 37 h 30 min caption agree to within three minutes, which fixes both against the noon departure — and makes the sailing day a Sunday, the weekday the banquet hall's Sunday schedule already assumed.",
+    "occurredAt": {
+      "basis": "stated",
+      "hours": 37.45
+    }
   },
   {
     "chapter": 375,
@@ -450,7 +542,12 @@
     "sequence": 1,
     "title": "Predator devours Salé-salé's Guardian Spirit Beast",
     "summary": "After studying its conditions, Rihan's Predator neutralizes Salé-salé's manipulative Guardian Spirit Beast.",
-    "legacyTitles": []
+    "legacyTitles": [],
+    "occurredAt": {
+      "basis": "stated",
+      "hours": 104
+    },
+    "occurredAtLabel": "Day 5 · Thursday · 20:00"
   },
   {
     "chapter": 382,
@@ -458,7 +555,12 @@
     "sequence": 1,
     "title": "Salé-salé is assassinated",
     "summary": "Yushohi kills Salé-salé with Stand by Me; the death is concealed and attributed publicly to illness.",
-    "legacyTitles": []
+    "legacyTitles": [],
+    "occurredAt": {
+      "basis": "stated",
+      "day": 8
+    },
+    "occurredAtLabel": "Day 8 · Sunday"
   },
   {
     "chapter": 380,
@@ -467,7 +569,12 @@
     "title": "Mizaistom redistributes the Royal Army",
     "summary": "At a conference with Kakin military officials, Mizaistom argues the Tier 3 killings serve the Succession Contest rather than stress, and has the soldiers redistributed so that more stand on the third deck and below.",
     "occursAfterTitle": "Fugetsu emerges alone on Tier 3",
-    "legacyTitles": []
+    "legacyTitles": [],
+    "occurredAt": {
+      "basis": "derived",
+      "day": 4
+    },
+    "occurredAtLabel": "≈ Day 4"
   },
   {
     "chapter": 380,
@@ -477,7 +584,12 @@
     "summary": "The three Troupe members are taken into the family's headquarters on Tier 5 — the clan emblem framed between two doors, sofas around a low table, a monitor room next door from which the Cha-R record the places that matter to them on the deck, the reception room included. The footage of the theft is played back: the man walks the hangar guard away, moves too much for his face to be readable, tries the back door in his panic, finds it locked and leaves the way he came. There are cameras at the warehouse entrance only, and apart from the family's own comings and goings the tape shows nobody but the three of them. They ask for a list of every non-mafia passenger going back to the previous day, on the reading that the thief came to scout the place first.",
     "legacyTitles": [],
     "occursAfterTitle": "Luini empties the Tier 5 warehouse guardpost",
-    "note": "The Cha-R surveillance is what makes the lower decks legible at all: the Royal Army holds Tiers 1 and 2, and on Tier 5 it is a mafia family that keeps the cameras and the tapes."
+    "note": "The Cha-R surveillance is what makes the lower decks legible at all: the Royal Army holds Tiers 1 and 2, and on Tier 5 it is a mafia family that keeps the cameras and the tapes.",
+    "occurredAt": {
+      "basis": "derived",
+      "day": 4
+    },
+    "occurredAtLabel": "≈ Day 4"
   },
   {
     "chapter": 378,
@@ -494,7 +606,12 @@
     "sequence": 2,
     "title": "Halkenburg commits to the Succession Contest",
     "summary": "After failing to shoot Nasubi or himself, Halkenburg accepts the fight and awakens his collective Nen ability.",
-    "legacyTitles": ["Halkenburg Collapse"]
+    "legacyTitles": ["Halkenburg Collapse"],
+    "occurredAt": {
+      "basis": "derived",
+      "day": 8
+    },
+    "occurredAtLabel": "≈ Day 8"
   },
   {
     "chapter": 383,
@@ -503,7 +620,12 @@
     "title": "Kacho and Fugetsu attempt to escape",
     "summary": "The twins leave the Black Whale in a lifeboat, triggering the succession ceremony trap.",
     "occursOnBlackWhale": false,
-    "legacyTitles": []
+    "legacyTitles": [],
+    "occurredAt": {
+      "basis": "stated",
+      "hours": 176
+    },
+    "occurredAtLabel": "Day 8 · Sunday · 20:00"
   },
   {
     "chapter": 383,
@@ -512,7 +634,12 @@
     "title": "Kacho dies and Without You awakens",
     "summary": "Kacho dies outside the ship and her Guardian Spirit Beast activates in her image.",
     "occursOnBlackWhale": false,
-    "legacyTitles": []
+    "legacyTitles": [],
+    "occurredAt": {
+      "basis": "derived",
+      "day": 8
+    },
+    "occurredAtLabel": "≈ Day 8"
   },
   {
     "chapter": 383,
@@ -529,7 +656,12 @@
     "sequence": 1,
     "title": "Tserriednich survives Theta's execution attempt",
     "summary": "Parallel Future lets Tserriednich foresee the gunshot, evade it and conceal the outcome from his guards.",
-    "legacyTitles": []
+    "legacyTitles": [],
+    "occurredAt": {
+      "basis": "stated",
+      "day": 9
+    },
+    "occurredAtLabel": "Day 9 · Monday"
   },
   {
     "chapter": 389,
@@ -585,7 +717,12 @@
     "sequence": 1,
     "title": "Dogman abducts Borksen",
     "summary": "Using Halkenburg's funeral procession as cover, Dogman identifies and abducts the Specialist sought by Morena.",
-    "legacyTitles": []
+    "legacyTitles": [],
+    "occurredAt": {
+      "basis": "derived",
+      "hours": 264.5
+    },
+    "occurredAtLabel": "≈ Day 12 · 12:30"
   },
   {
     "chapter": 405,
@@ -593,7 +730,12 @@
     "sequence": 3,
     "title": "Chrollo searches the funeral procession",
     "summary": "Chrollo uses Love Dial 6700 among Halkenburg's mourners and concludes that the target he needs is on an upper tier.",
-    "legacyTitles": ["Début du chapitre 405"]
+    "legacyTitles": ["Début du chapitre 405"],
+    "occurredAt": {
+      "basis": "derived",
+      "day": 12
+    },
+    "occurredAtLabel": "≈ Day 12"
   },
   {
     "chapter": 405,
@@ -601,7 +743,12 @@
     "sequence": 2,
     "title": "The real Hisoka appears at the Tier 1 casino",
     "summary": "Hisoka plays SQ-X while Bonolenov, still disguised as him, spots him and immediately changes form to avoid detection.",
-    "legacyTitles": []
+    "legacyTitles": [],
+    "occurredAt": {
+      "basis": "derived",
+      "day": 12
+    },
+    "occurredAtLabel": "≈ Day 12"
   },
   {
     "chapter": 406,
@@ -609,7 +756,12 @@
     "sequence": 1,
     "title": "Halkenburg's body dies",
     "summary": "Halkenburg's original body dies while his consciousness continues operating from Balsamilco's body.",
-    "legacyTitles": []
+    "legacyTitles": [],
+    "occurredAt": {
+      "basis": "derived",
+      "day": 12
+    },
+    "occurredAtLabel": "≈ Day 12"
   },
   {
     "chapter": 406,
@@ -617,7 +769,12 @@
     "sequence": 2,
     "title": "Chrollo targets the Kakin regalia",
     "summary": "Chrollo identifies the three royal treasures as the key to strengthening Skill Hunter before his next fight with Hisoka.",
-    "legacyTitles": []
+    "legacyTitles": [],
+    "occurredAt": {
+      "basis": "derived",
+      "day": 12
+    },
+    "occurredAtLabel": "≈ Day 12"
   },
   {
     "chapter": 406,
@@ -625,7 +782,12 @@
     "sequence": 3,
     "title": "The Spiders find the waste route between the tiers",
     "summary": "Guided by Tajao through the lower decks, Nobunaga learns that the Heil-Ly hold the waste processing that runs between Tiers 4 and 5 — a way to move as disposal contractors and take targets off the ship one at a time. Elsewhere the Xi-Yu find Lynch Fullbokko with a broken neck, and Hinrigh reads the double deception: someone wearing Hisoka manipulated a woman already manipulated, to put Hisoka where he is not.",
-    "legacyTitles": []
+    "legacyTitles": [],
+    "occurredAt": {
+      "basis": "derived",
+      "day": 12
+    },
+    "occurredAtLabel": "≈ Day 12"
   },
   {
     "chapter": 407,
@@ -633,7 +795,12 @@
     "sequence": 1,
     "title": "Morena begins her negotiation game with Borksen",
     "summary": "Morena asks Borksen to join Heil-Ly and uses a card game that forces both sides to reveal information and narrow the answer.",
-    "legacyTitles": []
+    "legacyTitles": [],
+    "occurredAt": {
+      "basis": "stated",
+      "day": 12
+    },
+    "occurredAtLabel": "Day 12 · Thursday"
   },
   {
     "chapter": 408,
@@ -657,7 +824,12 @@
     "sequence": 2,
     "title": "Benjamin discovers the body swap and his infection",
     "summary": "Benjamin realizes that Halkenburg controls Balsamilco and learns that he has been infected with TSK-17.",
-    "legacyTitles": []
+    "legacyTitles": [],
+    "occurredAt": {
+      "basis": "derived",
+      "day": 12
+    },
+    "occurredAtLabel": "≈ Day 12"
   },
   {
     "chapter": 410,
@@ -690,7 +862,12 @@
     "sequence": 3,
     "title": "Benjamin proclaims martial law",
     "summary": "Benjamin orders the capture of the princes and moves his command centre to the Justice Bureau on Tier 2.",
-    "legacyTitles": []
+    "legacyTitles": [],
+    "occurredAt": {
+      "basis": "derived",
+      "hours": 266.25
+    },
+    "occurredAtLabel": "≈ Day 12 · 14:15"
   },
   {
     "chapter": 412,
@@ -698,7 +875,12 @@
     "sequence": 1,
     "title": "Oito reveals that the baby is not Woble",
     "summary": "Confronted by Kurapika and Bill, Oito admits that the child in room 1014 is her nephew; the real Woble remains missing.",
-    "legacyTitles": []
+    "legacyTitles": [],
+    "occurredAt": {
+      "basis": "stated",
+      "day": 12
+    },
+    "occurredAtLabel": "Day 12 · Thursday"
   },
   {
     "chapter": 340,
@@ -802,7 +984,12 @@
     "sequence": 1,
     "title": "Kurapika steals Sayird's ability",
     "summary": "Kurapika subdues Sayird and uses Steal Chain, revealing the Emperor Time condition needed to control the stolen power.",
-    "legacyTitles": []
+    "legacyTitles": [],
+    "occurredAt": {
+      "basis": "stated",
+      "hours": 2
+    },
+    "occurredAtLabel": "Day 1 · Sunday · 14:00"
   },
   {
     "chapter": 362,
@@ -881,7 +1068,11 @@
     "summary": "A caption dates the session: third day, 10:05 in the morning. Camilla's counsel tells it as self-defence — the second prince was attacked by Musse, a militiaman of the first prince, saw a weapon trained on her, felt herself in danger and opened fire; she then went after Musse and ran into Hyurikofu, another of Benjamin's militiamen, and Vorufu, a guard of the first queen. Her side demands that Benjamin and his militia hand Musse over for attempted murder on the second prince, and charges the first prince with having ordered the killing. Benjamin's side objects: ten rounds fired at an unarmed prince is out of all proportion, and they cover Musse in no way whatsoever. Both camps then demand a search of the other's residence.",
     "legacyTitles": [],
     "occurredAtLabel": "Day 3 · Tuesday · 10:05",
-    "note": "The court hears the surface version. Chapter 373 has already shown what happened — Musse killed Camilla and her post-mortem beast killed him and rebuilt her — so the self-defence account is true only of the shots she fired after coming back."
+    "note": "The court hears the surface version. Chapter 373 has already shown what happened — Musse killed Camilla and her post-mortem beast killed him and rebuilt her — so the self-defence account is true only of the shots she fired after coming back.",
+    "occurredAt": {
+      "basis": "stated",
+      "hours": 46.0833
+    }
   },
   {
     "chapter": 376,
@@ -891,7 +1082,11 @@
     "summary": "The magistrate puts Benjamin and Camilla under supervised detention in the VIP zone until Musse is caught. Their protection details stay as they are, but every time either prince leaves the zone a supervisor answering to the court goes with them, and rather than search one residence the magistrate asks the Royal Army to search them all. Benjamin's camp takes the ruling as a nuisance rather than a check: Musse's Mimizuku knows everything, detention puts Camilla out of their reach — but whatever she does and wherever she goes, they will know.",
     "legacyTitles": ["Benjamin and Camilla are placed under judicial surveillance"],
     "occurredAtLabel": "Day 3 · Tuesday · 10:05",
-    "occursAfterTitle": "The two camps plead before the Supreme Court"
+    "occursAfterTitle": "The two camps plead before the Supreme Court",
+    "occurredAt": {
+      "basis": "stated",
+      "hours": 46.0833
+    }
   },
   {
     "chapter": 379,
@@ -923,7 +1118,12 @@
     "sequence": 1,
     "title": "Kurapika rapidly awakens the Nen students",
     "summary": "Kurapika lends abilities through Stealth Dolphin to open the students' aura nodes while Bill demonstrates Water Divination.",
-    "legacyTitles": []
+    "legacyTitles": [],
+    "occurredAt": {
+      "basis": "stated",
+      "hours": 215.5
+    },
+    "occurredAtLabel": "Day 10 · Tuesday · 11:30"
   },
   {
     "chapter": 390,
@@ -995,7 +1195,12 @@
     "sequence": 1,
     "title": "Longhi offers Kurapika a binding alliance",
     "summary": "Longhi reveals Moonlight Act, her connection to Beyond and the plan to identify which prince may be his child.",
-    "legacyTitles": []
+    "legacyTitles": [],
+    "occurredAt": {
+      "basis": "stated",
+      "hours": 215.75
+    },
+    "occurredAtLabel": "Day 10 · Tuesday · 11:45"
   },
   {
     "chapter": 403,
@@ -1003,7 +1208,12 @@
     "sequence": 1,
     "title": "Balsamilco begins the TSK-17 assassination plan",
     "summary": "Balsamilco enters the Justice Bureau intending to infect Halkenburg during questioning, as Kacho's letter reveals Unma is Halkenburg's mother.",
-    "legacyTitles": []
+    "legacyTitles": [],
+    "occurredAt": {
+      "basis": "stated",
+      "hours": 234.75
+    },
+    "occurredAtLabel": "Day 11 · Wednesday · 06:45"
   },
   {
     "chapter": 404,
@@ -1011,7 +1221,12 @@
     "sequence": 1,
     "title": "Halkenburg takes Balsamilco's body",
     "summary": "Halkenburg fires through the courthouse wall and transfers his consciousness into Balsamilco before his original body succumbs.",
-    "legacyTitles": []
+    "legacyTitles": [],
+    "occurredAt": {
+      "basis": "derived",
+      "day": 11
+    },
+    "occurredAtLabel": "≈ Day 11"
   },
   {
     "chapter": 411,
@@ -1019,7 +1234,12 @@
     "sequence": 1,
     "title": "Kurapika opens the second Nen class",
     "summary": "Kurapika expands the lessons, explains how the succession ritual can fail and announces that Woble is not an eligible participant.",
-    "legacyTitles": []
+    "legacyTitles": [],
+    "occurredAt": {
+      "basis": "stated",
+      "day": 12
+    },
+    "occurredAtLabel": "Day 12 · Thursday"
   },
   {
     "chapter": 412,
@@ -1027,7 +1247,12 @@
     "sequence": 2,
     "title": "Beyond meets Judge Cleapatro",
     "summary": "Cleapatro visits Beyond in his VVIP cell to review the more than one thousand lawsuits he filed against Kakin.",
-    "legacyTitles": []
+    "legacyTitles": [],
+    "occurredAt": {
+      "basis": "stated",
+      "day": 12
+    },
+    "occurredAtLabel": "Day 12 · Thursday"
   },
   {
     "chapter": 413,
@@ -1035,7 +1260,12 @@
     "sequence": 1,
     "title": "Halkenburg's burial confirms his soul survives",
     "summary": "Nasubi observes that Halkenburg's flame is unlit and confirms that his succession rights remain while his soul inhabits another body.",
-    "legacyTitles": []
+    "legacyTitles": [],
+    "occurredAt": {
+      "basis": "derived",
+      "day": 12
+    },
+    "occurredAtLabel": "≈ Day 12"
   },
   {
     "chapter": 414,
@@ -1071,7 +1301,13 @@
     "sequence": 2,
     "title": "Kurapika and Oito prepare a message for the mainland",
     "summary": "Kurapika and Oito discuss a letter intended for Oito's sister through a delivery service before the declaration of martial law interrupts them.",
-    "legacyTitles": ["Furykov identifies the structure of Beyond's curse"]
+    "legacyTitles": ["Furykov identifies the structure of Beyond's curse"],
+    "occurredAt": {
+      "basis": "stated",
+      "hours": 265.8333333333333
+    },
+    "occurredAtLabel": "Day 12 · Thursday · 13:50",
+    "occursAfterTitle": "Benjamin discovers the body swap and his infection"
   },
   {
     "chapter": 415,
@@ -1080,7 +1316,12 @@
     "title": "The royal camps respond to special martial law",
     "summary": "The princes and their guards receive conflicting movement, escort and disarmament orders as Benjamin summons the heirs and tightens control of Tier 1.",
     "legacyTitles": [],
-    "occursAfterTitle": "Kurapika and Oito prepare a message for the mainland"
+    "occursAfterTitle": "Kurapika and Oito prepare a message for the mainland",
+    "occurredAt": {
+      "basis": "derived",
+      "day": 12
+    },
+    "occurredAtLabel": "≈ Day 12"
   },
   {
     "chapter": 415,
@@ -1088,6 +1329,11 @@
     "sequence": 4,
     "title": "Ridge subdues Kanjidol during martial law",
     "summary": "After Kanjidol arms part of Luzurus's guard detail, Hunter Ridge defeats, injures and detains him in the royal residential sector.",
-    "legacyTitles": []
+    "legacyTitles": [],
+    "occurredAt": {
+      "basis": "derived",
+      "day": 12
+    },
+    "occurredAtLabel": "≈ Day 12"
   }
 ]

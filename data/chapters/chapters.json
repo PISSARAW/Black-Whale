@@ -669,7 +669,7 @@
       },
       {
         "event": "Salé-salé is assassinated by Yushohi on Benjamin's order",
-        "storyDate": "≈ Day 8",
+        "storyDate": "Day 8 · Sunday",
         "charactersInvolved": ["prince-salesale", "yushohi", "prince-benjamin"],
         "location": "Tier 1 - Room 1008"
       },
@@ -805,19 +805,19 @@
     "timeline": [
       {
         "event": "Kurapika models the cumulative conjuration in Zhang Lei's coins",
-        "storyDate": "≈ Day 12",
+        "storyDate": "Day 11 · Wednesday",
         "charactersInvolved": ["kurapika", "prince-zhanglei"],
         "location": "Tier 1 - Room 1014"
       },
       {
         "event": "Halkenburg forces a mind swap into Balsamilco's body",
-        "storyDate": "≈ Day 12",
+        "storyDate": "≈ Day 11",
         "charactersInvolved": ["prince-halkenburg", "balsamilco-might"],
         "location": "Tier 1 - Room 1001"
       },
       {
         "event": "Benjamin prepares Halkenburg's funeral procession",
-        "storyDate": "≈ Day 12",
+        "storyDate": "Day 11 · Wednesday · 12:00",
         "charactersInvolved": ["prince-benjamin", "prince-halkenburg"],
         "location": "Tier 1 - Room 1001"
       }
@@ -946,7 +946,7 @@
       },
       {
         "event": "Benjamin proclaims special martial law at 14:15",
-        "storyDate": "≈ Day 12 · 14:15",
+        "storyDate": "Day 12 · Thursday · 14:15",
         "charactersInvolved": ["prince-benjamin"],
         "location": "Tier 1 - Room 1001"
       }
@@ -975,13 +975,13 @@
       },
       {
         "event": "Kurapika and Oito prepare a message for the mainland",
-        "storyDate": "Martial law, after Day 12",
+        "storyDate": "Day 12 · Thursday · 13:50",
         "charactersInvolved": ["kurapika", "queen-oito", "bill", "babimyna"],
         "location": "Black Whale 1 - Tier 1"
       },
       {
         "event": "The royal camps respond to special martial law",
-        "storyDate": "Martial law, after Day 12",
+        "storyDate": "≈ Day 12",
         "charactersInvolved": [
           "prince-zhanglei",
           "coventoba",
@@ -1000,7 +1000,7 @@
       },
       {
         "event": "Ridge subdues Kanjidol during martial law",
-        "storyDate": "Martial law, after Day 12",
+        "storyDate": "≈ Day 12",
         "charactersInvolved": ["ridge", "kanjidol", "prince-luzurus"],
         "location": "Black Whale 1 - Tier 1 Royal Residential Sector"
       }

@@ -82,6 +82,73 @@ function applyPostMortemInvariant(state: WorldState, bodyId: string): void {
   }
 }
 
+/** The payload of one member of the event union, named for the handlers below. */
+type PayloadOf<T extends WorldEvent['type']> = Extract<WorldEvent, { type: T }>['payload']
+
+/** The effect an event names, refusing anything that has already ended. */
+function liveEffect(state: WorldState, effectId: string, what: string): EffectInstance {
+  const effect = state.effects[effectId]
+  if (!effect) throw new Error(`Unknown effect: ${effectId}`)
+  if (effect.state === 'ENDED') throw new Error(`Effect ${effect.id} has ended and cannot ${what}`)
+  return effect
+}
+
+/**
+ * A consciousness leaves one vessel and takes another.
+ *
+ * The vessel it left is only emptied if it still held *this* mind: a transfer
+ * recorded out of order must not blank a body someone else has since moved into.
+ */
+function transferConsciousness(state: WorldState, payload: PayloadOf<'CONSCIOUSNESS_TRANSFERRED'>) {
+  requireEntity(state, payload.consciousnessId, 'CONSCIOUSNESS')
+  requireVessel(state, payload.toBodyId)
+  if (payload.fromBodyId) {
+    requireVessel(state, payload.fromBodyId)
+    if (state.consciousnessByBody[payload.fromBodyId] === payload.consciousnessId) {
+      state.consciousnessByBody[payload.fromBodyId] = null
+    }
+  }
+  state.consciousnessByBody[payload.toBodyId] = payload.consciousnessId
+}
+
+/**
+ * The three ways an attribute changes: set outright, counted up, or appended to.
+ *
+ * A counter that is not a number and a list that is not a list are refused
+ * rather than coerced — an ability whose bookkeeping has drifted is a bug in the
+ * timeline, not a value to be rounded off.
+ */
+function changeEffectAttributes(state: WorldState, payload: PayloadOf<'EFFECT_ATTRIBUTE_CHANGED'>) {
+  const effect = liveEffect(state, payload.effectId, 'change attributes')
+  if (payload.attributes) Object.assign(effect.attributes, payload.attributes)
+
+  for (const [key, amount] of Object.entries(payload.increments ?? {})) {
+    const current = effect.attributes[key]
+    if (current !== undefined && typeof current !== 'number') {
+      throw new Error(`Attribute ${key} of effect ${effect.id} is not a counter`)
+    }
+    effect.attributes[key] = (current ?? 0) + amount
+  }
+
+  for (const [key, values] of Object.entries(payload.append ?? {})) {
+    const current = effect.attributes[key]
+    if (current !== undefined && !Array.isArray(current)) {
+      throw new Error(`Attribute ${key} of effect ${effect.id} is not a list`)
+    }
+    const list = [...((current as unknown[]) ?? [])]
+    for (const value of values) if (!list.includes(value)) list.push(value)
+    effect.attributes[key] = list
+  }
+}
+
+/** A body reaching a state it does not come back from tears down what it held. */
+function applyDeathInvariants(state: WorldState, bodyId: string): void {
+  // Inheritance first: the heir collects what the dead owned before the
+  // effects that owner was sustaining are torn down.
+  applyInheritanceInvariant(state, bodyId)
+  applyPostMortemInvariant(state, bodyId)
+}
+
 export function reduceWorld(previous: WorldState, event: WorldEvent): WorldState {
   assertCursorProgression(previous.cursor, event.cursor)
   if (event.branchId !== event.cursor.branchId) {
@@ -109,23 +176,12 @@ export function reduceWorld(previous: WorldState, event: WorldEvent): WorldState
       requireEntity(next, event.payload.bodyId, 'BODY')
       next.bodyStates[event.payload.bodyId] = event.payload.state
       if (DEAD_BODY_STATES.has(event.payload.state)) {
-        // Inheritance first: the heir collects what the dead owned before the
-        // effects that owner was sustaining are torn down.
-        applyInheritanceInvariant(next, event.payload.bodyId)
-        applyPostMortemInvariant(next, event.payload.bodyId)
+        applyDeathInvariants(next, event.payload.bodyId)
       }
       return next
     }
     case 'CONSCIOUSNESS_TRANSFERRED': {
-      requireEntity(next, event.payload.consciousnessId, 'CONSCIOUSNESS')
-      requireVessel(next, event.payload.toBodyId)
-      if (event.payload.fromBodyId) {
-        requireVessel(next, event.payload.fromBodyId)
-        if (next.consciousnessByBody[event.payload.fromBodyId] === event.payload.consciousnessId) {
-          next.consciousnessByBody[event.payload.fromBodyId] = null
-        }
-      }
-      next.consciousnessByBody[event.payload.toBodyId] = event.payload.consciousnessId
+      transferConsciousness(next, event.payload)
       return next
     }
     case 'EFFECT_CREATED': {
@@ -144,11 +200,7 @@ export function reduceWorld(previous: WorldState, event: WorldEvent): WorldState
       return next
     }
     case 'EFFECT_STATE_CHANGED': {
-      const effect = next.effects[event.payload.effectId]
-      if (!effect) throw new Error(`Unknown effect: ${event.payload.effectId}`)
-      if (effect.state === 'ENDED') {
-        throw new Error(`Effect ${effect.id} has ended and cannot change state`)
-      }
+      const effect = liveEffect(next, event.payload.effectId, 'change state')
       effect.state = event.payload.state
       if (event.payload.attributes) {
         Object.assign(effect.attributes, event.payload.attributes)
@@ -157,28 +209,7 @@ export function reduceWorld(previous: WorldState, event: WorldEvent): WorldState
       return next
     }
     case 'EFFECT_ATTRIBUTE_CHANGED': {
-      const effect = next.effects[event.payload.effectId]
-      if (!effect) throw new Error(`Unknown effect: ${event.payload.effectId}`)
-      if (effect.state === 'ENDED') {
-        throw new Error(`Effect ${effect.id} has ended and cannot change attributes`)
-      }
-      if (event.payload.attributes) Object.assign(effect.attributes, event.payload.attributes)
-      for (const [key, amount] of Object.entries(event.payload.increments ?? {})) {
-        const current = effect.attributes[key]
-        if (current !== undefined && typeof current !== 'number') {
-          throw new Error(`Attribute ${key} of effect ${effect.id} is not a counter`)
-        }
-        effect.attributes[key] = (current ?? 0) + amount
-      }
-      for (const [key, values] of Object.entries(event.payload.append ?? {})) {
-        const current = effect.attributes[key]
-        if (current !== undefined && !Array.isArray(current)) {
-          throw new Error(`Attribute ${key} of effect ${effect.id} is not a list`)
-        }
-        const list = [...((current as unknown[]) ?? [])]
-        for (const value of values) if (!list.includes(value)) list.push(value)
-        effect.attributes[key] = list
-      }
+      changeEffectAttributes(next, event.payload)
       return next
     }
     case 'KNOWLEDGE_GRANTED': {

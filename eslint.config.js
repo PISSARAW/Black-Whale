@@ -86,6 +86,22 @@ export default tseslint.config(
   },
 
   {
+    // A ratchet, not a style rule. Twenty-five is where the packages sit today
+    // with nothing to fix — the widest function in them is `reduceWorld`, and
+    // what makes it wide is one case per event type, which is the shape a
+    // reducer is supposed to have. So this bounds what can be *added*: a new
+    // function past twenty-five is one that grew a second job, and splitting it
+    // while it is being written costs nothing. Deliberately not applied to the
+    // apps, where the widest functions are flat `switch`es over a translation
+    // key and would only be answered with disable comments.
+    files: ['packages/**/*.ts'],
+    ignores: ['packages/database/**'],
+    rules: {
+      complexity: ['error', 25],
+    },
+  },
+
+  {
     // Seed, backfill and migration scripts are operator tools: they log by
     // design and run outside the type-checked build.
     files: ['packages/database/**/*.{ts,mjs}', 'tools/**/*.{ts,mjs}'],

@@ -849,65 +849,285 @@ function shove(
 }
 
 /**
- * One cast against a solid.
+ * Everything one cast against a solid works with.
  *
- * Split out of `castInTour` because the two halves share nothing but the world:
- * a room is a place and a solid is a thing, and the rules that bind them —
- * Snake Arm holding one fast, Nen Stitches putting one back — are all here.
+ * Gathered once by `castOnSolid` so the roster below can be flat: every entry
+ * takes the same shape, and none of them has to find its target again.
  */
-function castOnSolid(
+type SolidCastContext = {
+  world: TourWorld
+  ship: Ship
+  /** The solid as the blueprint has it, before anything the aura did to it. */
+  structure: Structure
+  /** What the aura has already done to it, if anything. */
+  hold: SolidHold | undefined
+  id: string
+  heading: number
+  /** A push of `metres` straight away from where the visitor stands. */
+  away: (metres: number) => Vec2
+}
+
+type SolidCast = (ctx: SolidCastContext) => TourCastResult
+
+/**
+ * What each technique does to a solid, one entry per kind.
+ *
+ * A table rather than one long switch: these eighteen share a target and
+ * nothing else, so there is no order between them to read and no state carried
+ * from one to the next. A kind with no entry here is inert on a solid.
+ */
+const SOLID_CASTS: Partial<Record<HatsuInteractionKind, SolidCast>> = {
+  // Bungee Gum: the first cast sets the strand, the second brings the other
+  // end to it. Tension is what the technique is, so the pull is towards the
+  // thing already stuck rather than towards the visitor.
+  elastic: ({ world, ship, structure, hold, id }) => {
+    if (!world.pairing || world.pairing === id) {
+      return { world: { ...world, pairing: id }, report: { kind: 'gum-set', solidId: id } }
+    }
+    const anchor = solidById(ship, world, world.pairing)
+    if (!anchor)
+      return { world: { ...world, pairing: id }, report: { kind: 'gum-set', solidId: id } }
+    const anchorNow = solidNow(anchor, world.solids[world.pairing])
+    const now = solidNow(structure, hold)
+    const dx = now.at[0] - anchorNow.at[0]
+    const dz = now.at[1] - anchorNow.at[1]
+    const length = Math.hypot(dx, dz) || 1
+    const gap = clearanceOf(anchorNow) + clearanceOf(now)
+    const landing: Vec2 = [
+      anchorNow.at[0] + (dx / length) * gap,
+      anchorNow.at[1] + (dz / length) * gap,
+    ]
+    const room = ship.spaces.get(structure.spaceId)
+    const outline = structureFootprint({ ...now, at: landing })
+    const fits = room && outline.every((corner) => pointInPolygon(corner, room.footprint))
+    return {
+      world: { ...withHold(world, id, fits ? { at: landing } : {}), pairing: null },
+      report: { kind: 'gum-pulled', solidId: id, otherId: world.pairing },
+    }
+  },
+
+  // Only the look changes; the thing underneath goes on being what it was,
+  // and goes on stopping you exactly where it did.
+  disguise: ({ world, structure, hold, id }) => {
+    const current = hold?.kind ?? structure.kind
+    const next = FORGERIES[(FORGERIES.indexOf(current) + 1) % FORGERIES.length]
+    return {
+      world: withHold(world, id, { kind: next }),
+      report: { kind: 'forged', solidId: id, as: next },
+    }
+  },
+
+  pocket: ({ world, hold, id }) =>
+    (hold?.scale ?? 1) < 0.5
+      ? {
+          world: withHold(world, id, { scale: 1, squash: 1 }),
+          report: { kind: 'unwrapped', solidId: id },
+        }
+      : {
+          world: withHold(world, id, { scale: 0.25, squash: 0.25 }),
+          report: { kind: 'wrapped', solidId: id },
+        },
+
+  // The stamp moves a thing as a thing, which is all the walk has: it is
+  // pushed the way the visitor is looking.
+  command: ({ world, ship, structure, hold, id, heading }) => {
+    const push: Vec2 = [-Math.sin(heading) * 3, -Math.cos(heading) * 3]
+    const landing = shove(ship, world, structure, hold, push)
+    return landing
+      ? {
+          world: withHold(world, id, { at: landing }),
+          report: { kind: 'pushed', solidId: id, metres: 3 },
+        }
+      : { world, report: { kind: 'pushed', solidId: id, metres: 0 } }
+  },
+
+  clone: ({ world, ship, structure, hold, id }) => {
+    const now = solidNow(structure, hold)
+    const beside = shove(ship, world, structure, hold, [clearanceOf(now) * 2, 0]) ?? now.at
+    const copyId = `${id}::fake${world.copies.length + 1}`
+    const copy: Structure = { ...now, id: copyId, at: beside }
+    return {
+      world: {
+        ...world,
+        copies: [...world.copies, copy],
+        solids: { ...world.solids, [copyId]: { copyOf: id } },
+      },
+      report: { kind: 'copied', solidId: id },
+    }
+  },
+
+  impact: ({ world, id }) => ({
+    world: withHold(world, id, { squash: 0.12 }),
+    report: { kind: 'crushed', solidId: id },
+  }),
+
+  // A sustained volley: the thing is driven back, and the third burst is the
+  // one that ends it.
+  barrage: ({ world, ship, structure, hold, id, away }) => {
+    const hits = (hold?.hits ?? 0) + 1
+    if (hits >= 3) {
+      return {
+        world: withHold(world, id, { hits, gone: true }),
+        report: { kind: 'shattered', solidId: id },
+      }
+    }
+    const landing = shove(ship, world, structure, hold, away(2))
+    return {
+      world: withHold(world, id, landing ? { hits, at: landing } : { hits }),
+      report: { kind: 'volley', solidId: id, hits },
+    }
+  },
+
+  windup: ({ world, ship, structure, hold, id, away }) => {
+    const metres = 3 + world.windup * 4
+    const landing = shove(ship, world, structure, hold, away(metres))
+    return {
+      world: { ...withHold(world, id, landing ? { at: landing } : {}), windup: 0 },
+      report: { kind: 'launched', solidId: id, metres: landing ? metres : 0 },
+    }
+  },
+
+  staff: ({ world, ship, structure, hold, id, away }) => {
+    const now = solidNow(structure, hold)
+    const landing = shove(ship, world, structure, hold, away(1.5))
+    return {
+      world: withHold(world, id, {
+        rotation: now.rotation + 25,
+        ...(landing ? { at: landing } : {}),
+      }),
+      report: { kind: 'struck', solidId: id },
+    }
+  },
+
+  serpent: ({ world, hold, id }) =>
+    hold?.bound
+      ? { world: withHold(world, id, { bound: false }), report: { kind: 'released', solidId: id } }
+      : { world: withHold(world, id, { bound: true }), report: { kind: 'bound', solidId: id } },
+
+  // The aura runs along the floor and comes up under something else in the
+  // same room: you strike here and the room is hit there.
+  'remote-strike': ({ world, ship, structure, id, away }) => {
+    const neighbour = ship.structures.find(
+      (candidate) => candidate.spaceId === structure.spaceId && candidate.id !== id,
+    )
+    if (!neighbour) return { world, report: { kind: 'no-solid' } }
+    const landing = shove(ship, world, neighbour, world.solids[neighbour.id], away(2.5))
+    return {
+      world: withHold(world, neighbour.id, landing ? { at: landing } : { hits: 1 }),
+      report: { kind: 'came-up-under', solidId: id, otherId: neighbour.id },
+    }
+  },
+
+  // The thread that puts things back: the blueprint's own record, whatever
+  // was done to it — crushed, shredded, swallowed, moved.
+  stitch: ({ world, hold, id }) =>
+    hold
+      ? { world: dropHold(world, id), report: { kind: 'stitched', solidId: id } }
+      : { world, report: { kind: 'nothing-to-stitch', solidId: id } },
+
+  animate: ({ world, hold, id }) => ({
+    world: withHold(world, id, { alive: !hold?.alive }),
+    report: { kind: 'animated', solidId: id },
+  }),
+
+  shred: ({ world, id }) => ({
+    world: { ...world, wound: id },
+    report: { kind: 'shred-stuck', solidId: id },
+  }),
+
+  // Dramatic on a thing, and weak on anything Nen is already holding.
+  growth: ({ world, hold, id }) => {
+    if (hold?.bound || hold?.alive || hold?.copyOf) {
+      return { world, report: { kind: 'growth-refused', solidId: id } }
+    }
+    return {
+      world: withHold(world, id, { scale: Math.min(3, (hold?.scale ?? 1) * 1.8) }),
+      report: { kind: 'grown', solidId: id },
+    }
+  },
+
+  // Opposite marks, and the pair goes off when they meet.
+  polarity: ({ world, id }) => {
+    if (!world.pairing || world.pairing === id) {
+      return {
+        world: { ...withHold(world, id, { mark: 'sun' }), pairing: id },
+        report: { kind: 'marked', solidId: id, mark: 'sun' },
+      }
+    }
+    const other = world.pairing
+    return {
+      world: {
+        ...withHold(withHold(world, id, { mark: 'moon', gone: true }), other, { gone: true }),
+        pairing: null,
+      },
+      report: { kind: 'detonated', solidId: id, otherId: other },
+    }
+  },
+
+  // The two exchange appearances, and nothing else: each stays where it is
+  // and stays what it is.
+  'identity-swap': ({ world, ship, structure, hold, id }) => {
+    if (!world.pairing || world.pairing === id) {
+      return { world: { ...world, pairing: id }, report: { kind: 'gum-set', solidId: id } }
+    }
+    const other = solidById(ship, world, world.pairing)
+    if (!other)
+      return { world: { ...world, pairing: id }, report: { kind: 'gum-set', solidId: id } }
+    const mine = solidNow(structure, hold)
+    const theirs = solidNow(other, world.solids[other.id])
+    return {
+      world: {
+        ...withHold(withHold(world, id, { kind: theirs.kind }), other.id, { kind: mine.kind }),
+        pairing: null,
+      },
+      report: { kind: 'swapped', solidId: id, otherId: other.id },
+    }
+  },
+
+  relay: ({ world, id }) => ({
+    world: { ...world, pairing: id },
+    report: { kind: 'cargo-taken', solidId: id },
+  }),
+}
+
+/**
+ * Anything aimed at a solid while Kurton is being ridden loads it instead, up
+ * to the five he carries: a vehicle passes what it is given to its hold.
+ */
+function loadIntoHold(world: TourWorld, structure: Structure | null): TourCastResult | null {
+  if (!world.body.riding || !structure) return null
+  if (world.body.passengers.includes(structure.id)) return null
+  if (world.body.passengers.length >= CAPACITY) return { world, report: { kind: 'hold-full' } }
+
+  const passengers = [...world.body.passengers, structure.id]
+  return {
+    world: { ...withHold(world, structure.id, {}), body: { ...world.body, passengers } },
+    report: { kind: 'loaded', solidId: structure.id, passengers: passengers.length },
+  }
+}
+
+/**
+ * The three casts that do not go to the solid the visitor is aiming at.
+ *
+ * Winding up needs nothing to hit, the confetti goes wherever it first stuck,
+ * and Transport Portals asks for a room second. Each is answered before the
+ * target is looked up, because for these the target is not where the cast goes.
+ */
+function castPastTheTarget(
   world: TourWorld,
   kind: HatsuInteractionKind,
   input: TourCastInput,
-): TourCastResult {
-  const { ship, targetSolidId, at, heading = 0 } = input
-  const structure = solidById(ship, world, targetSolidId ?? null)
+  structure: Structure | null,
+): TourCastResult | null {
+  const { ship } = input
 
-  // Anything aimed at a solid while Kurton is being ridden loads it instead,
-  // up to the five he carries: a vehicle passes what it is given to its hold.
-  if (world.body.riding && structure && !world.body.passengers.includes(structure.id)) {
-    if (world.body.passengers.length >= CAPACITY) {
-      return { world, report: { kind: 'hold-full' } }
-    }
-    const passengers = [...world.body.passengers, structure.id]
-    return {
-      world: {
-        ...withHold(world, structure.id, {}),
-        body: { ...world.body, passengers },
-      },
-      report: { kind: 'loaded', solidId: structure.id, passengers: passengers.length },
-    }
-  }
-
-  // Winding up needs nothing to hit: the turns are the whole of the technique
-  // until there is something to spend them on.
   if (kind === 'windup' && !structure) {
     const turns = world.windup + 1
     return { world: { ...world, windup: turns }, report: { kind: 'wound-up', turns } }
   }
 
-  // The confetti has already stuck somewhere: every later volley goes there,
-  // wherever you aim. That is the ability, so it is checked before the target.
-  if (kind === 'shred' && world.wound) {
-    const wounded = solidById(ship, world, world.wound)
-    const hold = world.solids[world.wound]
-    if (!wounded || hold?.gone)
-      return { world: { ...world, wound: null }, report: { kind: 'no-solid' } }
-    const left = (hold?.scale ?? 1) * 0.7
-    if (left < 0.2) {
-      return {
-        world: { ...withHold(world, world.wound, { gone: true }), wound: null },
-        report: { kind: 'shattered', solidId: world.wound },
-      }
-    }
-    return {
-      world: withHold(world, world.wound, { scale: left }),
-      report: { kind: 'shred-cut', solidId: world.wound, left: Math.round(left * 100) },
-    }
-  }
+  if (kind === 'shred' && world.wound) return shredTheWound(world, ship, world.wound)
 
-  // Transport Portals is the one technique whose second pick is a room: the
-  // cargo first, then the relay it comes out at.
   if (kind === 'relay' && world.pairing) {
     const cargoId = world.pairing
     const cargo = solidById(ship, world, cargoId)
@@ -925,6 +1145,48 @@ function castOnSolid(
       report: { kind: 'cargo-landed', solidId: cargoId, spaceId: room.id },
     }
   }
+
+  return null
+}
+
+/** One more volley into whatever the confetti is already stuck to. */
+function shredTheWound(world: TourWorld, ship: Ship, woundId: string): TourCastResult {
+  const wounded = solidById(ship, world, woundId)
+  const hold = world.solids[woundId]
+  if (!wounded || hold?.gone) {
+    return { world: { ...world, wound: null }, report: { kind: 'no-solid' } }
+  }
+  const left = (hold?.scale ?? 1) * 0.7
+  if (left < 0.2) {
+    return {
+      world: { ...withHold(world, woundId, { gone: true }), wound: null },
+      report: { kind: 'shattered', solidId: woundId },
+    }
+  }
+  return {
+    world: withHold(world, woundId, { scale: left }),
+    report: { kind: 'shred-cut', solidId: woundId, left: Math.round(left * 100) },
+  }
+}
+
+/**
+ * One cast against a solid.
+ *
+ * Split out of `castInTour` because the two halves share nothing but the world:
+ * a room is a place and a solid is a thing, and the rules that bind them —
+ * Snake Arm holding one fast, Nen Stitches putting one back — are all here.
+ */
+function castOnSolid(
+  world: TourWorld,
+  kind: HatsuInteractionKind,
+  input: TourCastInput,
+): TourCastResult {
+  const { ship, targetSolidId, at, heading = 0 } = input
+  const structure = solidById(ship, world, targetSolidId ?? null)
+
+  const elsewhere =
+    loadIntoHold(world, structure) ?? castPastTheTarget(world, kind, input, structure)
+  if (elsewhere) return elsewhere
 
   if (!structure) return { world, report: { kind: 'no-solid' } }
   const id = structure.id
@@ -945,225 +1207,10 @@ function castOnSolid(
     return [(dx / length) * metres, (dz / length) * metres]
   }
 
-  switch (kind) {
-    // Bungee Gum: the first cast sets the strand, the second brings the other
-    // end to it. Tension is what the technique is, so the pull is towards the
-    // thing already stuck rather than towards the visitor.
-    case 'elastic': {
-      if (!world.pairing || world.pairing === id) {
-        return { world: { ...world, pairing: id }, report: { kind: 'gum-set', solidId: id } }
-      }
-      const anchor = solidById(ship, world, world.pairing)
-      if (!anchor)
-        return { world: { ...world, pairing: id }, report: { kind: 'gum-set', solidId: id } }
-      const anchorNow = solidNow(anchor, world.solids[world.pairing])
-      const now = solidNow(structure, hold)
-      const dx = now.at[0] - anchorNow.at[0]
-      const dz = now.at[1] - anchorNow.at[1]
-      const length = Math.hypot(dx, dz) || 1
-      const gap = clearanceOf(anchorNow) + clearanceOf(now)
-      const landing: Vec2 = [
-        anchorNow.at[0] + (dx / length) * gap,
-        anchorNow.at[1] + (dz / length) * gap,
-      ]
-      const room = ship.spaces.get(structure.spaceId)
-      const outline = structureFootprint({ ...now, at: landing })
-      const fits = room && outline.every((corner) => pointInPolygon(corner, room.footprint))
-      return {
-        world: { ...withHold(world, id, fits ? { at: landing } : {}), pairing: null },
-        report: { kind: 'gum-pulled', solidId: id, otherId: world.pairing },
-      }
-    }
-
-    // Only the look changes; the thing underneath goes on being what it was,
-    // and goes on stopping you exactly where it did.
-    case 'disguise': {
-      const current = hold?.kind ?? structure.kind
-      const next = FORGERIES[(FORGERIES.indexOf(current) + 1) % FORGERIES.length]
-      return {
-        world: withHold(world, id, { kind: next }),
-        report: { kind: 'forged', solidId: id, as: next },
-      }
-    }
-
-    case 'pocket': {
-      const wrapped = (hold?.scale ?? 1) < 0.5
-      return wrapped
-        ? {
-            world: withHold(world, id, { scale: 1, squash: 1 }),
-            report: { kind: 'unwrapped', solidId: id },
-          }
-        : {
-            world: withHold(world, id, { scale: 0.25, squash: 0.25 }),
-            report: { kind: 'wrapped', solidId: id },
-          }
-    }
-
-    // The stamp moves a thing as a thing, which is all the walk has: it is
-    // pushed the way the visitor is looking.
-    case 'command': {
-      const push: Vec2 = [-Math.sin(heading) * 3, -Math.cos(heading) * 3]
-      const landing = shove(ship, world, structure, hold, push)
-      return landing
-        ? {
-            world: withHold(world, id, { at: landing }),
-            report: { kind: 'pushed', solidId: id, metres: 3 },
-          }
-        : { world, report: { kind: 'pushed', solidId: id, metres: 0 } }
-    }
-
-    case 'clone': {
-      const now = solidNow(structure, hold)
-      const beside = shove(ship, world, structure, hold, [clearanceOf(now) * 2, 0]) ?? now.at
-      const copyId = `${id}::fake${world.copies.length + 1}`
-      const copy: Structure = { ...now, id: copyId, at: beside }
-      return {
-        world: {
-          ...world,
-          copies: [...world.copies, copy],
-          solids: { ...world.solids, [copyId]: { copyOf: id } },
-        },
-        report: { kind: 'copied', solidId: id },
-      }
-    }
-
-    case 'impact':
-      return {
-        world: withHold(world, id, { squash: 0.12 }),
-        report: { kind: 'crushed', solidId: id },
-      }
-
-    // A sustained volley: the thing is driven back, and the third burst is the
-    // one that ends it.
-    case 'barrage': {
-      const hits = (hold?.hits ?? 0) + 1
-      if (hits >= 3) {
-        return {
-          world: withHold(world, id, { hits, gone: true }),
-          report: { kind: 'shattered', solidId: id },
-        }
-      }
-      const landing = shove(ship, world, structure, hold, away(2))
-      return {
-        world: withHold(world, id, landing ? { hits, at: landing } : { hits }),
-        report: { kind: 'volley', solidId: id, hits },
-      }
-    }
-
-    case 'windup': {
-      const metres = 3 + world.windup * 4
-      const landing = shove(ship, world, structure, hold, away(metres))
-      return {
-        world: { ...withHold(world, id, landing ? { at: landing } : {}), windup: 0 },
-        report: { kind: 'launched', solidId: id, metres: landing ? metres : 0 },
-      }
-    }
-
-    case 'staff': {
-      const now = solidNow(structure, hold)
-      const landing = shove(ship, world, structure, hold, away(1.5))
-      return {
-        world: withHold(world, id, {
-          rotation: now.rotation + 25,
-          ...(landing ? { at: landing } : {}),
-        }),
-        report: { kind: 'struck', solidId: id },
-      }
-    }
-
-    case 'serpent':
-      return hold?.bound
-        ? {
-            world: withHold(world, id, { bound: false }),
-            report: { kind: 'released', solidId: id },
-          }
-        : { world: withHold(world, id, { bound: true }), report: { kind: 'bound', solidId: id } }
-
-    // The aura runs along the floor and comes up under something else in the
-    // same room: you strike here and the room is hit there.
-    case 'remote-strike': {
-      const neighbour = ship.structures.find(
-        (candidate) => candidate.spaceId === structure.spaceId && candidate.id !== id,
-      )
-      if (!neighbour) return { world, report: { kind: 'no-solid' } }
-      const landing = shove(ship, world, neighbour, world.solids[neighbour.id], away(2.5))
-      return {
-        world: withHold(world, neighbour.id, landing ? { at: landing } : { hits: 1 }),
-        report: { kind: 'came-up-under', solidId: id, otherId: neighbour.id },
-      }
-    }
-
-    // The thread that puts things back: the blueprint's own record, whatever
-    // was done to it — crushed, shredded, swallowed, moved.
-    case 'stitch':
-      return hold
-        ? { world: dropHold(world, id), report: { kind: 'stitched', solidId: id } }
-        : { world, report: { kind: 'nothing-to-stitch', solidId: id } }
-
-    case 'animate':
-      return {
-        world: withHold(world, id, { alive: !hold?.alive }),
-        report: { kind: 'animated', solidId: id },
-      }
-
-    case 'shred':
-      return { world: { ...world, wound: id }, report: { kind: 'shred-stuck', solidId: id } }
-
-    // Dramatic on a thing, and weak on anything Nen is already holding.
-    case 'growth': {
-      if (hold?.bound || hold?.alive || hold?.copyOf) {
-        return { world, report: { kind: 'growth-refused', solidId: id } }
-      }
-      return {
-        world: withHold(world, id, { scale: Math.min(3, (hold?.scale ?? 1) * 1.8) }),
-        report: { kind: 'grown', solidId: id },
-      }
-    }
-
-    // Opposite marks, and the pair goes off when they meet.
-    case 'polarity': {
-      if (!world.pairing || world.pairing === id) {
-        return {
-          world: { ...withHold(world, id, { mark: 'sun' }), pairing: id },
-          report: { kind: 'marked', solidId: id, mark: 'sun' },
-        }
-      }
-      const other = world.pairing
-      return {
-        world: {
-          ...withHold(withHold(world, id, { mark: 'moon', gone: true }), other, { gone: true }),
-          pairing: null,
-        },
-        report: { kind: 'detonated', solidId: id, otherId: other },
-      }
-    }
-
-    // The two exchange appearances, and nothing else: each stays where it is
-    // and stays what it is.
-    case 'identity-swap': {
-      if (!world.pairing || world.pairing === id) {
-        return { world: { ...world, pairing: id }, report: { kind: 'gum-set', solidId: id } }
-      }
-      const other = solidById(ship, world, world.pairing)
-      if (!other)
-        return { world: { ...world, pairing: id }, report: { kind: 'gum-set', solidId: id } }
-      const mine = solidNow(structure, hold)
-      const theirs = solidNow(other, world.solids[other.id])
-      return {
-        world: {
-          ...withHold(withHold(world, id, { kind: theirs.kind }), other.id, { kind: mine.kind }),
-          pairing: null,
-        },
-        report: { kind: 'swapped', solidId: id, otherId: other.id },
-      }
-    }
-
-    case 'relay':
-      return { world: { ...world, pairing: id }, report: { kind: 'cargo-taken', solidId: id } }
-
-    default:
-      return { world, report: { kind: 'inert' } }
-  }
+  const cast = SOLID_CASTS[kind]
+  return cast
+    ? cast({ world, ship, structure, hold, id, heading, away })
+    : { world, report: { kind: 'inert' } }
 }
 
 // ── The body ──────────────────────────────────────────────────────────────
@@ -1246,206 +1293,239 @@ export function holdsInWorld(world: TourWorld): string[] {
  * loads a solid while he is being ridden, and Metamorphosen needs a thing to
  * take the shape of.
  */
+/** Everything one cast on the visitor works with, gathered once by `castOnBody`. */
+type BodyCastContext = {
+  world: TourWorld
+  ship: Ship
+  body: TourBody
+  /** The cast as it came in — the two that take a target read it from here. */
+  kind: HatsuInteractionKind
+  input: TourCastInput
+  /** The same world with the visitor changed and nothing else. */
+  withBody: (patch: Partial<TourBody>) => TourWorld
+}
+
+type BodyCast = (ctx: BodyCastContext) => TourCastResult
+
+/**
+ * Kurton carries five, and what he carries is what fuels him.
+ *
+ * Boarding takes the room's own solids up; alighting sets them down where the
+ * visitor stops. Aimed at something he is not already carrying, he loads it.
+ */
+function boardOrAlight({
+  world,
+  ship,
+  body,
+  kind,
+  input,
+  withBody,
+}: BodyCastContext): TourCastResult {
+  if (!body.riding) {
+    return { world: withBody({ riding: true }), report: { kind: 'boarded', passengers: 0 } }
+  }
+
+  const aimed = solidById(ship, world, input.targetSolidId ?? null)
+  if (aimed && !body.passengers.includes(aimed.id)) return castOnSolid(world, kind, input)
+
+  const room = input.standingIn ? ship.spaces.get(input.standingIn) : null
+  const solids = { ...world.solids }
+  for (const id of body.passengers) {
+    const carried = solidById(ship, world, id)
+    if (!carried || !room) continue
+    solids[id] = { ...solids[id], at: spawnPointNear(room, input.at) }
+  }
+  return {
+    world: {
+      ...world,
+      solids,
+      copies: world.copies.map((copy) =>
+        body.passengers.includes(copy.id) && room ? { ...copy, spaceId: room.id } : copy,
+      ),
+      body: { ...body, riding: false, passengers: [] },
+    },
+    report: { kind: 'alighted', spaceId: input.standingIn, passengers: body.passengers.length },
+  }
+}
+
+/**
+ * The chain that heals: what has been crushed, shredded or swallowed in one
+ * room is mended, and under Emperor Time the whole ship is.
+ */
+function mendWhatWasHurt({ world, ship, input }: BodyCastContext): TourCastResult {
+  const whole = world.laidOpen
+  const solids = { ...world.solids }
+  let mended = 0
+  for (const id of Object.keys(solids)) {
+    const hurt = solids[id]
+    if (hurt.copyOf) continue
+    const room = solidById(ship, world, id)?.spaceId
+    if (!whole && room !== input.standingIn) continue
+    if (!hurt.gone && !hurt.squash && !hurt.scale) continue
+    delete solids[id]
+    mended++
+  }
+  return {
+    world: { ...world, solids },
+    report: { kind: 'mended', spaceId: whole ? null : input.standingIn, solids: mended },
+  }
+}
+
+/**
+ * The sun rises on what the armour kept and on nothing else, so an empty
+ * wrapping is a refusal rather than a weak burst.
+ *
+ * It goes out from where the visitor stands, on their own deck, and it does not
+ * pick what it catches: a solid Snake Arm was holding fast burns with the rest.
+ */
+function raiseTheSun({ world, ship, body, input }: BodyCastContext): TourCastResult {
+  const packed = body.packed ?? 0
+  if (!packed) return { world, report: { kind: 'nothing-packed' } }
+  const room = input.standingIn ? ship.spaces.get(input.standingIn) : null
+  if (!room) return { world, report: { kind: 'no-target' } }
+
+  const metres = packed * SUN_FLARE_METRES_PER_HIT
+  const solids = { ...world.solids }
+  let burnt = 0
+  for (const structure of [...ship.structures, ...world.copies]) {
+    const space = ship.spaces.get(structure.spaceId)
+    if (!space || space.tierId !== room.tierId) continue
+    const hold = solids[structure.id]
+    if (hold?.gone) continue
+    const standing = solidNow(structure, hold)
+    if (Math.hypot(standing.at[0] - input.at[0], standing.at[1] - input.at[1]) > metres) continue
+    solids[structure.id] = { ...hold, gone: true, bound: false }
+    burnt++
+  }
+  return {
+    world: { ...world, solids, body: { ...body, packed: null } },
+    report: { kind: 'sun-risen', metres, solids: burnt },
+  }
+}
+
+/** What each technique does to the visitor, one entry per kind. */
+const BODY_CASTS: Partial<Record<HatsuInteractionKind, BodyCast>> = {
+  // Reinforcement in proportion to the aura committed, and it is committed a
+  // handful at a time.
+  enhance: ({ body, withBody }) => {
+    const committed = Math.min(6, body.enhance + 1)
+    return { world: withBody({ enhance: committed }), report: { kind: 'reinforced', committed } }
+  },
+
+  vehicle: boardOrAlight,
+
+  // Hanzo leaves the body where it is and goes on without it. The double
+  // walks through the ship; the body is a place you have to come back to.
+  projection: ({ world, body, input, withBody }) => {
+    if (body.projected) {
+      return {
+        world: withBody({ projected: null }),
+        report: { kind: 'returned', spaceId: body.projected.spaceId },
+      }
+    }
+    if (!input.standingIn) return { world, report: { kind: 'no-target' } }
+    return {
+      world: withBody({ projected: { spaceId: input.standingIn, at: input.at } }),
+      report: { kind: 'projected', spaceId: input.standingIn },
+    }
+  },
+
+  // The body changes radically and the identity underneath does not: a child's
+  // eyes, the walk's own, and something that sees over the bulkheads.
+  transformation: ({ body, withBody }) => {
+    // The walk's own eyes, the girl she goes about as, and what she actually
+    // is. Cycling from `null` rather than from a height keeps the visitor's
+    // ordinary body first in the ring, where it belongs.
+    const cycle: (number | null)[] = [null, 0.95, 3.4]
+    const eyes = cycle[(cycle.indexOf(body.eyes) + 1) % cycle.length]
+    return { world: withBody({ eyes }), report: { kind: 'reshaped', metres: eyes ?? 1.7 } }
+  },
+
+  // Cookie compresses hours of rest into a short treatment. What the walk has
+  // to be rested of is the exhaustion its own techniques wrote down: the
+  // tunnel that has been asked too often, and the aura committed to force.
+  restoration: ({ world, body }) => ({
+    world: {
+      ...world,
+      worm: world.worm ? { ...world.worm, crossings: 0 } : null,
+      body: { ...body, enhance: 0, dance: 0 },
+    },
+    report: { kind: 'rested', hours: 24 },
+  }),
+
+  healing: mendWhatWasHurt,
+
+  rhythm: ({ body, withBody }) => {
+    const bars = body.dance + 1
+    return { world: withBody({ dance: bars }), report: { kind: 'dance-played', bars } }
+  },
+
+  // Metamorphosen runs on the prologue: without the music there is nothing to
+  // change shape with.
+  mimicry: ({ world, ship, body, input, withBody }) => {
+    if (!body.dance) return { world, report: { kind: 'dance-needed' } }
+    if (body.mimic) {
+      return { world: withBody({ mimic: null, eyes: null }), report: { kind: 'unmimicked' } }
+    }
+    const shape = solidById(ship, world, input.targetSolidId ?? null)
+    if (!shape) return { world, report: { kind: 'no-solid' } }
+    const worn = solidNow(shape, world.solids[shape.id])
+    return {
+      world: withBody({ mimic: shape.id, eyes: Math.max(0.4, worn.base + worn.height) }),
+      report: { kind: 'mimicked', solidId: shape.id },
+    }
+  },
+
+  // Music carried straight into the listener. What it soothes here is the
+  // only thing in the walk that can be done to a sense: it opens the three
+  // the monkeys sealed, and holds them open.
+  melody: ({ world, body }) => {
+    const opened = world.sealed > 0
+    return {
+      world: { ...world, sealed: 0, body: { ...body, soothed: !body.soothed || opened } },
+      report: { kind: 'soothed', opened },
+    }
+  },
+
+  // Predator gets stronger by correctly naming what it is up against. There
+  // is exactly one thing in the walk to be up against: the aura's own holds.
+  predator: ({ world, body, withBody }) => {
+    const unnamed = holdsInWorld(world).find((hold) => !body.deduced.includes(hold))
+    if (!unnamed) return { world, report: { kind: 'nothing-to-deduce' } }
+    const deduced = [...body.deduced, unnamed]
+    return {
+      world: withBody({ deduced, enhance: Math.min(6, body.enhance + 1) }),
+      report: { kind: 'deduced', what: unnamed, strength: deduced.length },
+    }
+  },
+
+  // The wrapping neither heals nor deflects: while it is on, what the walk
+  // would have done to the visitor is packed away inside it and stays there.
+  // Cast on an armour already worn, it reads out what it is holding — taking
+  // it off is not offered, because the damage in it has to go somewhere.
+  'pain-armour': ({ world, body, withBody }) =>
+    body.packed === null
+      ? { world: withBody({ packed: 0 }), report: { kind: 'armour-worn' } }
+      : { world, report: { kind: 'armour-holding', packed: body.packed } },
+
+  'sun-flare': raiseTheSun,
+}
+
 function castOnBody(
   world: TourWorld,
   kind: HatsuInteractionKind,
   input: TourCastInput,
 ): TourCastResult {
-  const { ship, targetSolidId, standingIn, at } = input
   const body = world.body
   const withBody = (patch: Partial<TourBody>): TourWorld => ({
     ...world,
     body: { ...body, ...patch },
   })
 
-  switch (kind) {
-    // Reinforcement in proportion to the aura committed, and it is committed a
-    // handful at a time.
-    case 'enhance': {
-      const committed = Math.min(6, body.enhance + 1)
-      return { world: withBody({ enhance: committed }), report: { kind: 'reinforced', committed } }
-    }
-
-    // Kurton carries five, and what he carries is what fuels him. Boarding
-    // takes the room's own solids up; alighting sets them down where you stop.
-    case 'vehicle': {
-      if (body.riding) {
-        // Aimed at something he is not already carrying, Kurton loads it; aimed
-        // at nothing, he sets down what he has and lets the visitor off.
-        const aimed = solidById(ship, world, targetSolidId ?? null)
-        if (aimed && !body.passengers.includes(aimed.id)) return castOnSolid(world, kind, input)
-
-        const room = standingIn ? ship.spaces.get(standingIn) : null
-        const solids = { ...world.solids }
-        for (const id of body.passengers) {
-          const carried = solidById(ship, world, id)
-          if (!carried || !room) continue
-          solids[id] = { ...solids[id], at: spawnPointNear(room, at) }
-        }
-        return {
-          world: {
-            ...world,
-            solids,
-            copies: world.copies.map((copy) =>
-              body.passengers.includes(copy.id) && room ? { ...copy, spaceId: room.id } : copy,
-            ),
-            body: { ...body, riding: false, passengers: [] },
-          },
-          report: { kind: 'alighted', spaceId: standingIn, passengers: body.passengers.length },
-        }
-      }
-      return { world: withBody({ riding: true }), report: { kind: 'boarded', passengers: 0 } }
-    }
-
-    // Hanzo leaves the body where it is and goes on without it. The double
-    // walks through the ship; the body is a place you have to come back to.
-    case 'projection': {
-      if (body.projected) {
-        return {
-          world: withBody({ projected: null }),
-          report: { kind: 'returned', spaceId: body.projected.spaceId },
-        }
-      }
-      if (!standingIn) return { world, report: { kind: 'no-target' } }
-      return {
-        world: withBody({ projected: { spaceId: standingIn, at } }),
-        report: { kind: 'projected', spaceId: standingIn },
-      }
-    }
-
-    // The body changes radically and the identity underneath does not: a child's
-    // eyes, the walk's own, and something that sees over the bulkheads.
-    case 'transformation': {
-      // The walk's own eyes, the girl she goes about as, and what she actually
-      // is. Cycling from `null` rather than from a height keeps the visitor's
-      // ordinary body first in the ring, where it belongs.
-      const cycle: (number | null)[] = [null, 0.95, 3.4]
-      const eyes = cycle[(cycle.indexOf(body.eyes) + 1) % cycle.length]
-      return { world: withBody({ eyes }), report: { kind: 'reshaped', metres: eyes ?? 1.7 } }
-    }
-
-    // Cookie compresses hours of rest into a short treatment. What the walk has
-    // to be rested of is the exhaustion its own techniques wrote down: the
-    // tunnel that has been asked too often, and the aura committed to force.
-    case 'restoration': {
-      const hours = 24
-      return {
-        world: {
-          ...world,
-          worm: world.worm ? { ...world.worm, crossings: 0 } : null,
-          body: { ...body, enhance: 0, dance: 0 },
-        },
-        report: { kind: 'rested', hours },
-      }
-    }
-
-    // The chain that heals: what has been crushed, shredded or swallowed in one
-    // room is mended, and under Emperor Time the whole ship is.
-    case 'healing': {
-      const whole = world.laidOpen
-      const solids = { ...world.solids }
-      let mended = 0
-      for (const id of Object.keys(solids)) {
-        const hurt = solids[id]
-        if (hurt.copyOf) continue
-        const room = solidById(ship, world, id)?.spaceId
-        if (!whole && room !== standingIn) continue
-        if (!hurt.gone && !hurt.squash && !hurt.scale) continue
-        delete solids[id]
-        mended++
-      }
-      return {
-        world: { ...world, solids },
-        report: { kind: 'mended', spaceId: whole ? null : standingIn, solids: mended },
-      }
-    }
-
-    case 'rhythm': {
-      const bars = body.dance + 1
-      return { world: withBody({ dance: bars }), report: { kind: 'dance-played', bars } }
-    }
-
-    // Metamorphosen runs on the prologue: without the music there is nothing to
-    // change shape with.
-    case 'mimicry': {
-      if (!body.dance) return { world, report: { kind: 'dance-needed' } }
-      if (body.mimic)
-        return { world: withBody({ mimic: null, eyes: null }), report: { kind: 'unmimicked' } }
-      const shape = solidById(ship, world, targetSolidId ?? null)
-      if (!shape) return { world, report: { kind: 'no-solid' } }
-      const worn = solidNow(shape, world.solids[shape.id])
-      return {
-        world: withBody({ mimic: shape.id, eyes: Math.max(0.4, worn.base + worn.height) }),
-        report: { kind: 'mimicked', solidId: shape.id },
-      }
-    }
-
-    // Music carried straight into the listener. What it soothes here is the
-    // only thing in the walk that can be done to a sense: it opens the three
-    // the monkeys sealed, and holds them open.
-    case 'melody': {
-      const opened = world.sealed > 0
-      return {
-        world: { ...world, sealed: 0, body: { ...body, soothed: !body.soothed || opened } },
-        report: { kind: 'soothed', opened },
-      }
-    }
-
-    // Predator gets stronger by correctly naming what it is up against. There
-    // is exactly one thing in the walk to be up against: the aura's own holds.
-    case 'predator': {
-      const unnamed = holdsInWorld(world).find((hold) => !body.deduced.includes(hold))
-      if (!unnamed) return { world, report: { kind: 'nothing-to-deduce' } }
-      const deduced = [...body.deduced, unnamed]
-      return {
-        world: withBody({ deduced, enhance: Math.min(6, body.enhance + 1) }),
-        report: { kind: 'deduced', what: unnamed, strength: deduced.length },
-      }
-    }
-
-    // The wrapping neither heals nor deflects: while it is on, what the walk
-    // would have done to the visitor is packed away inside it and stays there.
-    // Cast on an armour already worn, it reads out what it is holding — taking
-    // it off is not offered, because the damage in it has to go somewhere.
-    case 'pain-armour': {
-      if (body.packed === null) {
-        return { world: withBody({ packed: 0 }), report: { kind: 'armour-worn' } }
-      }
-      return { world, report: { kind: 'armour-holding', packed: body.packed } }
-    }
-
-    // The sun rises on what the armour kept and on nothing else, so an empty
-    // wrapping is a refusal rather than a weak burst. It goes out from where the
-    // visitor stands, on their own deck, and it does not pick what it catches:
-    // a solid Snake Arm was holding fast burns with the rest.
-    case 'sun-flare': {
-      const packed = body.packed ?? 0
-      if (!packed) return { world, report: { kind: 'nothing-packed' } }
-      const room = standingIn ? ship.spaces.get(standingIn) : null
-      if (!room) return { world, report: { kind: 'no-target' } }
-
-      const metres = packed * SUN_FLARE_METRES_PER_HIT
-      const solids = { ...world.solids }
-      let burnt = 0
-      for (const structure of [...ship.structures, ...world.copies]) {
-        const space = ship.spaces.get(structure.spaceId)
-        if (!space || space.tierId !== room.tierId) continue
-        const hold = solids[structure.id]
-        if (hold?.gone) continue
-        const standing = solidNow(structure, hold)
-        if (Math.hypot(standing.at[0] - at[0], standing.at[1] - at[1]) > metres) continue
-        solids[structure.id] = { ...hold, gone: true, bound: false }
-        burnt++
-      }
-      return {
-        world: { ...world, solids, body: { ...body, packed: null } },
-        report: { kind: 'sun-risen', metres, solids: burnt },
-      }
-    }
-
-    default:
-      return { world, report: { kind: 'inert' } }
-  }
+  const cast = BODY_CASTS[kind]
+  return cast
+    ? cast({ world, ship: input.ship, body, kind, input, withBody })
+    : { world, report: { kind: 'inert' } }
 }
 
 /** A clear spot in a room to set something down, near where the visitor is. */
@@ -1801,36 +1881,39 @@ function answerForTheCat(before: TourWorld, result: TourCastResult): TourCastRes
   }
 }
 
-function runCast(
+/**
+ * The sleeping body has to be somewhere the walk still leaves alone.
+ *
+ * Shut it, guard it or empty it and Hanzo is pulled back into it, whatever he
+ * was in the middle of — so this is answered before the cast is even read.
+ */
+function pullBackTheBody(world: TourWorld): TourCastResult | null {
+  if (!world.body.projected) return null
+  const where = world.body.projected.spaceId
+  const disturbed =
+    world.shut.includes(where) || world.guarded.includes(where) || world.emptied.includes(where)
+  if (!disturbed) return null
+  return {
+    world: { ...world, body: { ...world.body, projected: null } },
+    travelTo: where,
+    report: { kind: 'body-disturbed', spaceId: where },
+  }
+}
+
+/**
+ * The four casts that need nothing to aim at.
+ *
+ * Emperor Time sweeps the whole ship, the monkeys work on the visitor's own
+ * senses, phasing is a state rather than a place, and Chrollo's teleport draws
+ * its destination rather than being pointed at one.
+ */
+function castWithoutARoom(
   world: TourWorld,
   kind: HatsuInteractionKind,
   input: TourCastInput,
-): TourCastResult {
-  const { ship, targetId, standingIn, at } = input
+): TourCastResult | null {
+  const { ship, standingIn } = input
 
-  // The sleeping body has to be somewhere the walk still leaves alone. Shut it,
-  // guard it or empty it and Hanzo is pulled back into it, whatever he was in
-  // the middle of.
-  if (world.body.projected) {
-    const where = world.body.projected.spaceId
-    const disturbed =
-      world.shut.includes(where) || world.guarded.includes(where) || world.emptied.includes(where)
-    if (disturbed) {
-      return {
-        world: { ...world, body: { ...world.body, projected: null } },
-        travelTo: where,
-        report: { kind: 'body-disturbed', spaceId: where },
-      }
-    }
-  }
-
-  if (BODY_HATSU_KINDS.has(kind)) return castOnBody(world, kind, input)
-  if (SOLID_HATSU_KINDS.has(kind)) return castOnSolid(world, kind, input)
-
-  const target = targetId ? (ship.spaces.get(targetId) ?? null) : null
-
-  // Emperor Time sweeps the whole ship and needs nothing to aim at; every other
-  // technique here works on a room.
   if (kind === 'scarlet') {
     return {
       world: { ...world, laidOpen: true },
@@ -1848,8 +1931,6 @@ function runCast(
     return { world: { ...world, phasing }, report: { kind: 'phasing', on: phasing } }
   }
 
-  // Chrollo does not choose where the target lands, and neither do you: the
-  // destination is drawn from the whole ship, decks included.
   if (kind === 'teleport') {
     const random = input.random ?? Math.random
     const elsewhere = [...ship.spaces.keys()].filter((id) => id !== standingIn)
@@ -1859,6 +1940,427 @@ function runCast(
     return { world, report: { kind: 'teleported', spaceId }, travelTo: spaceId }
   }
 
+  return null
+}
+
+/** Everything one cast against a room works with, gathered once by `runCast`. */
+type RoomCastContext = {
+  world: TourWorld
+  ship: Ship
+  /** The room aimed at, already resolved and known to exist. */
+  target: Space
+  input: TourCastInput
+  at: Vec2
+  standingIn: string | null
+}
+
+type RoomCast = (ctx: RoomCastContext) => TourCastResult
+
+/**
+ * Air Blow strips what another technique put on a room, from any distance, and
+ * moves nothing: the room comes back as the blueprint has it.
+ */
+function stripTheRoom({ world, ship, target }: RoomCastContext): TourCastResult {
+  let count = 0
+  const next = { ...world }
+  if (next.isolated?.spaceId === target.id) {
+    next.isolated = null
+    count++
+  }
+  if (next.doors.includes(target.id)) {
+    next.doors = without(next.doors, (id) => id === target.id)
+    count++
+  }
+  if (next.emptied.includes(target.id)) {
+    next.emptied = without(next.emptied, (id) => id === target.id)
+    count++
+  }
+  if (next.watched.some((doll) => doll.spaceId === target.id)) {
+    next.watched = without(next.watched, (doll) => doll.spaceId === target.id)
+    count++
+  }
+  if (next.eye === target.id) {
+    next.eye = null
+    count++
+  }
+  if (next.dowsing === target.id) {
+    next.dowsing = null
+    count++
+  }
+  // And every solid in the room that another technique was holding: the
+  // blast is what puts a crushed coffin or a bound bed back where it was.
+  const inside = Object.keys(next.solids).filter(
+    (id) => solidById(ship, next, id)?.spaceId === target.id,
+  )
+  if (inside.length) {
+    const solids = { ...next.solids }
+    for (const id of inside) delete solids[id]
+    next.solids = solids
+    next.copies = next.copies.filter((copy) => !inside.includes(copy.id))
+    count += inside.length
+  }
+  return { world: next, report: { kind: 'stripped', spaceId: target.id, count } }
+}
+
+/**
+ * What each technique does to a room, one entry per kind.
+ *
+ * A table rather than one long switch: twenty-seven techniques that share a
+ * target and nothing else. The order they are written in is the order the panel
+ * lists them, which is the only order they have.
+ */
+const ROOM_CASTS: Partial<Record<HatsuInteractionKind, RoomCast>> = {
+  'door-network': ({ world, target }) => {
+    // Two frames and no more. Arming a third starts a new pair rather than
+    // opening a network onto everywhere, which is the rule the hideout keeps.
+    if (world.doors.length >= 2) {
+      return {
+        world: { ...world, doors: [target.id] },
+        report: { kind: 'doors-rearmed', spaceId: target.id },
+      }
+    }
+    if (world.doors.includes(target.id)) {
+      return { world, report: { kind: 'door-armed', spaceId: target.id } }
+    }
+    const doors = [...world.doors, target.id]
+    return {
+      world: { ...world, doors },
+      report:
+        doors.length === 2
+          ? { kind: 'doors-paired', spaceId: doors[0], otherId: doors[1] }
+          : { kind: 'door-armed', spaceId: target.id },
+    }
+  },
+
+  scout: ({ world, target }) =>
+    world.eye === target.id
+      ? { world: { ...world, eye: null }, report: { kind: 'eye-recalled' } }
+      : { world: { ...world, eye: target.id }, report: { kind: 'eye-sent', spaceId: target.id } },
+
+  dowsing: ({ world, ship, target, at, standingIn }) => {
+    const distance = distanceTo(ship, target, at, standingIn)
+    return {
+      world: { ...world, dowsing: target.id },
+      report: {
+        kind: 'dowsed',
+        spaceId: target.id,
+        distance: distance.metres,
+        decks: distance.decks,
+      },
+    }
+  },
+
+  'paper-spy': ({ world, target }) => {
+    if (world.watched.some((doll) => doll.spaceId === target.id)) {
+      return { world, report: { kind: 'watching', spaceId: target.id } }
+    }
+    return {
+      world: { ...world, watched: [...world.watched, { spaceId: target.id, visits: 0 }] },
+      report: { kind: 'watching', spaceId: target.id },
+    }
+  },
+
+  'room-isolation': ({ world, target, standingIn }) => {
+    const occupant = standingIn === target.id
+    return {
+      world: { ...world, isolated: { spaceId: target.id, occupant } },
+      report: { kind: 'isolated', spaceId: target.id, occupant },
+    }
+  },
+
+  blast: stripTheRoom,
+
+  // Blinky swallows what is not alive and not Nen. A room another technique
+  // is holding refuses to go in, and the refusal is the reading: it is how
+  // Shizuku finds the trap.
+  vacuum: ({ world, ship, target }) => {
+    if (nenHeld(world).includes(target.id)) {
+      return { world, report: { kind: 'refused', spaceId: target.id } }
+    }
+    if (world.emptied.includes(target.id)) {
+      return { world, report: { kind: 'emptied', spaceId: target.id, structures: 0 } }
+    }
+    const structures = ship.structures.filter((solid) => solid.spaceId === target.id).length
+    return {
+      world: { ...world, emptied: [...world.emptied, target.id] },
+      report: { kind: 'emptied', spaceId: target.id, structures },
+    }
+  },
+
+  // ── The doors ────────────────────────────────────────────────────────
+  //
+  // A shut room is not a room with a locked door drawn on it: the deck's
+  // doorways are derived from the walls its rooms share, and these tell the
+  // derivation to treat those walls as blind. The opening stops being drawn
+  // and stops being walkable in the same pass.
+
+  // Chain Jail is absolute, and it is only ever used on a Spider. In the
+  // walk the Spider is the technique: a room nothing is holding is a room
+  // Kurapika has no business chaining, and the chain refuses it.
+  'chain-bind': ({ world, ship, target }) => {
+    if (!nenHeld(world).includes(target.id) && !world.emptied.includes(target.id)) {
+      return { world, report: { kind: 'jail-refused', spaceId: target.id } }
+    }
+    const doors = ship.adjacency.get(target.id)?.length ?? 0
+    return {
+      world: { ...world, shut: [...new Set([...world.shut, target.id])] },
+      report: { kind: 'jailed', spaceId: target.id, doors },
+    }
+  },
+
+  // The fish only eat inside a closed room, and the victim feels nothing
+  // while it lasts: nothing is taken until the visitor walks out again.
+  devour: ({ world, target }) =>
+    world.shut.includes(target.id)
+      ? {
+          world: { ...world, devouring: [...new Set([...world.devouring, target.id])] },
+          report: { kind: 'fish-loosed', spaceId: target.id },
+        }
+      : { world, report: { kind: 'jail-refused', spaceId: target.id } },
+
+  'legal-defense': ({ world, target }) => ({
+    world: { ...world, guarded: [...new Set([...world.guarded, target.id])] },
+    report: { kind: 'guards-posted', spaceId: target.id },
+  }),
+
+  // Blue admits, yellow restrains — and the restraint is only ever applied
+  // to someone already warned — red dismisses and shuts the room behind them.
+  tribunal: ({ world, target, standingIn }) => {
+    const card = Math.min(3, (world.cards[target.id] ?? 0) + 1)
+    const cards = { ...world.cards, [target.id]: card }
+    if (card === 1) {
+      return { world: { ...world, cards }, report: { kind: 'card-blue', spaceId: target.id } }
+    }
+    if (card === 2) {
+      return {
+        world: { ...world, cards, pinned: standingIn === target.id ? target.id : world.pinned },
+        report: { kind: 'card-yellow', spaceId: target.id },
+      }
+    }
+    return {
+      world: {
+        ...world,
+        cards,
+        pinned: world.pinned === target.id ? null : world.pinned,
+        shut: [...new Set([...world.shut, target.id])],
+        guarded: [...new Set([...world.guarded, target.id])],
+      },
+      report: { kind: 'card-red', spaceId: target.id },
+    }
+  },
+
+  // The chain through the heart does nothing at all until the rule it names
+  // is knowingly broken. Declaring it is the whole of the cast.
+  'heart-vow': ({ world, target }) => ({
+    world: { ...world, vow: target.id },
+    report: { kind: 'vow-declared', spaceId: target.id },
+  }),
+
+  contract: ({ world, target }) => ({
+    world: { ...world, pact: target.id },
+    report: { kind: 'pact-taken', spaceId: target.id },
+  }),
+
+  // The bait is what the victim wanted: a copy of something out of the room
+  // they are standing in, stood in the trap. Coercion comes after it is taken.
+  'desire-trap': ({ world, ship, target, standingIn }) => {
+    const wanted = ship.structures.find((solid) => solid.spaceId === standingIn)
+    const copies = wanted
+      ? [
+          ...world.copies,
+          {
+            ...wanted,
+            id: `${wanted.id}::bait${world.copies.length + 1}`,
+            spaceId: target.id,
+            at: centroid(target),
+          },
+        ]
+      : world.copies
+    const solids = wanted
+      ? { ...world.solids, [copies[copies.length - 1].id]: { copyOf: wanted.id } }
+      : world.solids
+    return {
+      world: { ...world, copies, solids, trap: target.id },
+      report: { kind: 'bait-set', spaceId: target.id },
+    }
+  },
+
+  // Ten rooms in range, four snakes, and a curse that comes back on the user
+  // if it is dismissed without a victim.
+  snakes: ({ world, ship, target, at, standingIn }) => {
+    const here = standingIn ? ship.spaces.get(standingIn) : null
+    const rooms = [...ship.spaces.values()]
+      .filter((space) => space.tierId === (here?.tierId ?? target.tierId))
+      .map((space) => ({ space, distance: distanceTo(ship, space, at, standingIn).metres }))
+      .sort((a, b) => a.distance - b.distance)
+      .slice(0, 10)
+      .map((near) => near.space.id)
+    return {
+      world: { ...world, snakes: { rooms, fed: false } },
+      report: { kind: 'snakes-loosed', rooms: rooms.length },
+    }
+  },
+
+  // The tunnel works once a night. Asking it again is what exhausts it.
+  portal: ({ world, target }) => {
+    if (world.worm && !world.worm.b) {
+      const worm = { ...world.worm, b: target.id }
+      return { world: { ...world, worm }, report: { kind: 'worm-open', a: worm.a, b: worm.b } }
+    }
+    return {
+      world: { ...world, worm: { a: target.id, b: '', crossings: 0 } },
+      report: { kind: 'worm-set', spaceId: target.id },
+    }
+  },
+
+  guardian: ({ world, target }) => ({
+    world: { ...world, double: target.id },
+    report: { kind: 'double-posted', spaceId: target.id },
+  }),
+
+  // ── The record ─────────────────────────────────────────────────────────
+
+  // The owl retains what was recorded earlier, for later review. The trail
+  // is kept either way; what the owl adds is that you can look back at it,
+  // and that it holds the rooms open through the hull while it does.
+  surveillance: ({ world }) =>
+    world.owl
+      ? {
+          world: { ...world, owl: false },
+          report: { kind: 'owl-recalled', rooms: world.trail.length },
+        }
+      : {
+          world: { ...world, owl: true },
+          report: { kind: 'owl-attached', rooms: world.trail.length },
+        },
+
+  // Ten seconds on, taken once. The vision does not revise itself: that is
+  // what makes diverging from it worth anything.
+  future: ({ world, ship, target, at, input }) => {
+    const seen = tenSecondsOn(ship, world, target.tierId, at, input.heading ?? 0)
+    if (!seen) return { world, report: { kind: 'no-target' } }
+    return {
+      world: { ...world, foreseen: seen },
+      report: { kind: 'foreseen', spaceId: seen.spaceId },
+    }
+  },
+
+  prophecy: ({ world, ship, target }) => {
+    const verses = [
+      { spaceId: target.id, lines: verseFor(ship, identityOf(ship, world, target)) },
+      ...world.verses.filter((verse) => verse.spaceId !== target.id),
+    ].slice(0, 6)
+    return { world: { ...world, verses }, report: { kind: 'written', spaceId: target.id } }
+  },
+
+  // Three lines make the poem, and the poem is only as strong as the three
+  // read together: rooms that actually adjoin carry it.
+  poetry: ({ world, ship, target }) => {
+    if (world.poem.length >= 3) {
+      return {
+        world: { ...world, poem: [target.id] },
+        report: { kind: 'line-taken', spaceId: target.id, lines: 1 },
+      }
+    }
+    const poem = [...new Set([...world.poem, target.id])]
+    if (poem.length < 3) {
+      return {
+        world: { ...world, poem },
+        report: { kind: 'line-taken', spaceId: target.id, lines: poem.length },
+      }
+    }
+    const strength = poem.reduce(
+      (total, room, index) =>
+        total + (ship.adjacency.get(room)?.includes(poem[(index + 1) % poem.length]) ? 1 : 0),
+      0,
+    )
+    return { world: { ...world, poem }, report: { kind: 'poem-read', strength } }
+  },
+
+  divination: ({ world, ship, target, at, standingIn }) => {
+    const reading = dialReading(ship, { ...world, dial: target.id }, at, standingIn)
+    return {
+      world: { ...world, dial: target.id },
+      report: reading
+        ? { kind: 'dial-read', spaceId: target.id, reading: reading.reading }
+        : { kind: 'dial-set', spaceId: target.id },
+    }
+  },
+
+  // Her own blood and nothing else: each droplet goes and finds the nearest
+  // room the walk has never set foot in, and expires a few arrivals later.
+  'blood-search': ({ world, ship, at, standingIn }) => {
+    const found = unwalked(ship, world, at, standingIn)[0]
+    if (!found) return { world, report: { kind: 'droplets-dry' } }
+    const droplets = [
+      { spaceId: found.space.id, life: 3 },
+      ...world.droplets.filter((drop) => drop.spaceId !== found.space.id),
+    ].slice(0, 4)
+    return {
+      world: { ...world, droplets },
+      report: { kind: 'droplet-sent', spaceId: found.space.id, left: found.metres },
+    }
+  },
+
+  resurrection: ({ world, target }) => ({
+    world: { ...world, ninelives: [...new Set([...world.ninelives, target.id])] },
+    report: { kind: 'name-taken', spaceId: target.id },
+  }),
+
+  // The victim is chosen openly and the sacrifice is chosen among its own and
+  // hidden. Emperor Time is the Gyo that finds it.
+  curse: ({ world, ship, target }) => {
+    const own = ship.adjacency.get(target.id) ?? []
+    const sacrifice = own[target.id.length % Math.max(1, own.length)] ?? target.id
+    return {
+      world: { ...world, curse: { victim: target.id, sacrifice } },
+      report: { kind: 'marked-victim', spaceId: target.id },
+    }
+  },
+
+  // The arrow pierces every defence, so it is not refused by a shut or an
+  // isolated room, and what it exchanges is what a room is.
+  arrow: ({ world, target }) => {
+    if (!world.pairing) {
+      return {
+        world: { ...world, pairing: target.id },
+        report: { kind: 'arrow-drawn', spaceId: target.id },
+      }
+    }
+    const first = world.pairing
+    if (first === target.id) return { world, report: { kind: 'arrow-drawn', spaceId: target.id } }
+    return {
+      world: { ...world, pairing: null, souls: [...world.souls, [first, target.id]] },
+      report: { kind: 'souls-swapped', a: first, b: target.id },
+    }
+  },
+
+  flock: ({ world, target }) => {
+    const dispatches = [target.id, ...without(world.dispatches, (id) => id === target.id)].slice(
+      0,
+      8,
+    )
+    return { world: { ...world, dispatches }, report: { kind: 'dispatched', spaceId: target.id } }
+  },
+}
+
+function runCast(
+  world: TourWorld,
+  kind: HatsuInteractionKind,
+  input: TourCastInput,
+): TourCastResult {
+  const { ship, targetId, standingIn, at } = input
+
+  const pulledBack = pullBackTheBody(world)
+  if (pulledBack) return pulledBack
+
+  if (BODY_HATSU_KINDS.has(kind)) return castOnBody(world, kind, input)
+  if (SOLID_HATSU_KINDS.has(kind)) return castOnSolid(world, kind, input)
+
+  const untargeted = castWithoutARoom(world, kind, input)
+  if (untargeted) return untargeted
+
+  const target = targetId ? (ship.spaces.get(targetId) ?? null) : null
   if (!target) return { world, report: { kind: 'no-target' } }
 
   // Steal Chain leaves the room it drained with no aura to reach: nothing
@@ -1869,401 +2371,10 @@ function runCast(
 
   if (BOOK_HATSU_KINDS.has(kind)) return castOnTechniques(world, kind, target)
 
-  switch (kind) {
-    case 'door-network': {
-      // Two frames and no more. Arming a third starts a new pair rather than
-      // opening a network onto everywhere, which is the rule the hideout keeps.
-      if (world.doors.length >= 2) {
-        return {
-          world: { ...world, doors: [target.id] },
-          report: { kind: 'doors-rearmed', spaceId: target.id },
-        }
-      }
-      if (world.doors.includes(target.id)) {
-        return { world, report: { kind: 'door-armed', spaceId: target.id } }
-      }
-      const doors = [...world.doors, target.id]
-      return {
-        world: { ...world, doors },
-        report:
-          doors.length === 2
-            ? { kind: 'doors-paired', spaceId: doors[0], otherId: doors[1] }
-            : { kind: 'door-armed', spaceId: target.id },
-      }
-    }
-
-    case 'scout': {
-      if (world.eye === target.id)
-        return { world: { ...world, eye: null }, report: { kind: 'eye-recalled' } }
-      return {
-        world: { ...world, eye: target.id },
-        report: { kind: 'eye-sent', spaceId: target.id },
-      }
-    }
-
-    case 'dowsing': {
-      const distance = distanceTo(ship, target, at, standingIn)
-      return {
-        world: { ...world, dowsing: target.id },
-        report: {
-          kind: 'dowsed',
-          spaceId: target.id,
-          distance: distance.metres,
-          decks: distance.decks,
-        },
-      }
-    }
-
-    case 'paper-spy': {
-      if (world.watched.some((doll) => doll.spaceId === target.id)) {
-        return { world, report: { kind: 'watching', spaceId: target.id } }
-      }
-      return {
-        world: { ...world, watched: [...world.watched, { spaceId: target.id, visits: 0 }] },
-        report: { kind: 'watching', spaceId: target.id },
-      }
-    }
-
-    case 'room-isolation': {
-      const occupant = standingIn === target.id
-      return {
-        world: { ...world, isolated: { spaceId: target.id, occupant } },
-        report: { kind: 'isolated', spaceId: target.id, occupant },
-      }
-    }
-
-    // Air Blow strips what another technique put on a room, from any distance,
-    // and moves nothing: the room comes back as the blueprint has it.
-    case 'blast': {
-      let count = 0
-      const next = { ...world }
-      if (next.isolated?.spaceId === target.id) {
-        next.isolated = null
-        count++
-      }
-      if (next.doors.includes(target.id)) {
-        next.doors = without(next.doors, (id) => id === target.id)
-        count++
-      }
-      if (next.emptied.includes(target.id)) {
-        next.emptied = without(next.emptied, (id) => id === target.id)
-        count++
-      }
-      if (next.watched.some((doll) => doll.spaceId === target.id)) {
-        next.watched = without(next.watched, (doll) => doll.spaceId === target.id)
-        count++
-      }
-      if (next.eye === target.id) {
-        next.eye = null
-        count++
-      }
-      if (next.dowsing === target.id) {
-        next.dowsing = null
-        count++
-      }
-      // And every solid in the room that another technique was holding: the
-      // blast is what puts a crushed coffin or a bound bed back where it was.
-      const inside = Object.keys(next.solids).filter(
-        (id) => solidById(ship, next, id)?.spaceId === target.id,
-      )
-      if (inside.length) {
-        const solids = { ...next.solids }
-        for (const id of inside) delete solids[id]
-        next.solids = solids
-        next.copies = next.copies.filter((copy) => !inside.includes(copy.id))
-        count += inside.length
-      }
-      return { world: next, report: { kind: 'stripped', spaceId: target.id, count } }
-    }
-
-    // Blinky swallows what is not alive and not Nen. A room another technique
-    // is holding refuses to go in, and the refusal is the reading: it is how
-    // Shizuku finds the trap.
-    case 'vacuum': {
-      if (nenHeld(world).includes(target.id)) {
-        return { world, report: { kind: 'refused', spaceId: target.id } }
-      }
-      if (world.emptied.includes(target.id)) {
-        return { world, report: { kind: 'emptied', spaceId: target.id, structures: 0 } }
-      }
-      const structures = ship.structures.filter((solid) => solid.spaceId === target.id).length
-      return {
-        world: { ...world, emptied: [...world.emptied, target.id] },
-        report: { kind: 'emptied', spaceId: target.id, structures },
-      }
-    }
-
-    // ── The doors ────────────────────────────────────────────────────────
-    //
-    // A shut room is not a room with a locked door drawn on it: the deck's
-    // doorways are derived from the walls its rooms share, and these tell the
-    // derivation to treat those walls as blind. The opening stops being drawn
-    // and stops being walkable in the same pass.
-
-    // Chain Jail is absolute, and it is only ever used on a Spider. In the
-    // walk the Spider is the technique: a room nothing is holding is a room
-    // Kurapika has no business chaining, and the chain refuses it.
-    case 'chain-bind': {
-      if (!nenHeld(world).includes(target.id) && !world.emptied.includes(target.id)) {
-        return { world, report: { kind: 'jail-refused', spaceId: target.id } }
-      }
-      const doors = ship.adjacency.get(target.id)?.length ?? 0
-      return {
-        world: { ...world, shut: [...new Set([...world.shut, target.id])] },
-        report: { kind: 'jailed', spaceId: target.id, doors },
-      }
-    }
-
-    // The fish only eat inside a closed room, and the victim feels nothing
-    // while it lasts: nothing is taken until the visitor walks out again.
-    case 'devour': {
-      if (!world.shut.includes(target.id)) {
-        return { world, report: { kind: 'jail-refused', spaceId: target.id } }
-      }
-      return {
-        world: { ...world, devouring: [...new Set([...world.devouring, target.id])] },
-        report: { kind: 'fish-loosed', spaceId: target.id },
-      }
-    }
-
-    case 'legal-defense':
-      return {
-        world: { ...world, guarded: [...new Set([...world.guarded, target.id])] },
-        report: { kind: 'guards-posted', spaceId: target.id },
-      }
-
-    // Blue admits, yellow restrains — and the restraint is only ever applied
-    // to someone already warned — red dismisses and shuts the room behind them.
-    case 'tribunal': {
-      const card = Math.min(3, (world.cards[target.id] ?? 0) + 1)
-      const cards = { ...world.cards, [target.id]: card }
-      if (card === 1)
-        return { world: { ...world, cards }, report: { kind: 'card-blue', spaceId: target.id } }
-      if (card === 2) {
-        return {
-          world: { ...world, cards, pinned: standingIn === target.id ? target.id : world.pinned },
-          report: { kind: 'card-yellow', spaceId: target.id },
-        }
-      }
-      return {
-        world: {
-          ...world,
-          cards,
-          pinned: world.pinned === target.id ? null : world.pinned,
-          shut: [...new Set([...world.shut, target.id])],
-          guarded: [...new Set([...world.guarded, target.id])],
-        },
-        report: { kind: 'card-red', spaceId: target.id },
-      }
-    }
-
-    // The chain through the heart does nothing at all until the rule it names
-    // is knowingly broken. Declaring it is the whole of the cast.
-    case 'heart-vow':
-      return {
-        world: { ...world, vow: target.id },
-        report: { kind: 'vow-declared', spaceId: target.id },
-      }
-
-    case 'contract':
-      return {
-        world: { ...world, pact: target.id },
-        report: { kind: 'pact-taken', spaceId: target.id },
-      }
-
-    // The bait is what the victim wanted: a copy of something out of the room
-    // they are standing in, stood in the trap. Coercion comes after it is taken.
-    case 'desire-trap': {
-      const wanted = ship.structures.find((solid) => solid.spaceId === standingIn)
-      const copies = wanted
-        ? [
-            ...world.copies,
-            {
-              ...wanted,
-              id: `${wanted.id}::bait${world.copies.length + 1}`,
-              spaceId: target.id,
-              at: centroid(target),
-            },
-          ]
-        : world.copies
-      const solids = wanted
-        ? { ...world.solids, [copies[copies.length - 1].id]: { copyOf: wanted.id } }
-        : world.solids
-      return {
-        world: { ...world, copies, solids, trap: target.id },
-        report: { kind: 'bait-set', spaceId: target.id },
-      }
-    }
-
-    // Ten rooms in range, four snakes, and a curse that comes back on the user
-    // if it is dismissed without a victim.
-    case 'snakes': {
-      const here = standingIn ? ship.spaces.get(standingIn) : null
-      const rooms = [...ship.spaces.values()]
-        .filter((space) => space.tierId === (here?.tierId ?? target.tierId))
-        .map((space) => ({ space, distance: distanceTo(ship, space, at, standingIn).metres }))
-        .sort((a, b) => a.distance - b.distance)
-        .slice(0, 10)
-        .map((near) => near.space.id)
-      return {
-        world: { ...world, snakes: { rooms, fed: false } },
-        report: { kind: 'snakes-loosed', rooms: rooms.length },
-      }
-    }
-
-    // The tunnel works once a night. Asking it again is what exhausts it.
-    case 'portal': {
-      if (!world.worm) {
-        return {
-          world: { ...world, worm: { a: target.id, b: '', crossings: 0 } },
-          report: { kind: 'worm-set', spaceId: target.id },
-        }
-      }
-      if (!world.worm.b) {
-        const worm = { ...world.worm, b: target.id }
-        return { world: { ...world, worm }, report: { kind: 'worm-open', a: worm.a, b: worm.b } }
-      }
-      return {
-        world: { ...world, worm: { a: target.id, b: '', crossings: 0 } },
-        report: { kind: 'worm-set', spaceId: target.id },
-      }
-    }
-
-    case 'guardian':
-      return {
-        world: { ...world, double: target.id },
-        report: { kind: 'double-posted', spaceId: target.id },
-      }
-
-    // ── The record ───────────────────────────────────────────────────────
-
-    // The owl retains what was recorded earlier, for later review. The trail
-    // is kept either way; what the owl adds is that you can look back at it,
-    // and that it holds the rooms open through the hull while it does.
-    case 'surveillance':
-      return world.owl
-        ? {
-            world: { ...world, owl: false },
-            report: { kind: 'owl-recalled', rooms: world.trail.length },
-          }
-        : {
-            world: { ...world, owl: true },
-            report: { kind: 'owl-attached', rooms: world.trail.length },
-          }
-
-    // Ten seconds on, taken once. The vision does not revise itself: that is
-    // what makes diverging from it worth anything.
-    case 'future': {
-      const seen = tenSecondsOn(ship, world, target.tierId, at, input.heading ?? 0)
-      if (!seen) return { world, report: { kind: 'no-target' } }
-      return {
-        world: { ...world, foreseen: seen },
-        report: { kind: 'foreseen', spaceId: seen.spaceId },
-      }
-    }
-
-    case 'prophecy': {
-      const verses = [
-        { spaceId: target.id, lines: verseFor(ship, identityOf(ship, world, target)) },
-        ...world.verses.filter((verse) => verse.spaceId !== target.id),
-      ].slice(0, 6)
-      return { world: { ...world, verses }, report: { kind: 'written', spaceId: target.id } }
-    }
-
-    // Three lines make the poem, and the poem is only as strong as the three
-    // read together: rooms that actually adjoin carry it.
-    case 'poetry': {
-      if (world.poem.length >= 3) {
-        return {
-          world: { ...world, poem: [target.id] },
-          report: { kind: 'line-taken', spaceId: target.id, lines: 1 },
-        }
-      }
-      const poem = [...new Set([...world.poem, target.id])]
-      if (poem.length < 3) {
-        return {
-          world: { ...world, poem },
-          report: { kind: 'line-taken', spaceId: target.id, lines: poem.length },
-        }
-      }
-      const strength = poem.reduce(
-        (total, room, index) =>
-          total + (ship.adjacency.get(room)?.includes(poem[(index + 1) % poem.length]) ? 1 : 0),
-        0,
-      )
-      return { world: { ...world, poem }, report: { kind: 'poem-read', strength } }
-    }
-
-    case 'divination': {
-      const reading = dialReading(ship, { ...world, dial: target.id }, at, standingIn)
-      return {
-        world: { ...world, dial: target.id },
-        report: reading
-          ? { kind: 'dial-read', spaceId: target.id, reading: reading.reading }
-          : { kind: 'dial-set', spaceId: target.id },
-      }
-    }
-
-    // Her own blood and nothing else: each droplet goes and finds the nearest
-    // room the walk has never set foot in, and expires a few arrivals later.
-    case 'blood-search': {
-      const found = unwalked(ship, world, at, standingIn)[0]
-      if (!found) return { world, report: { kind: 'droplets-dry' } }
-      const droplets = [
-        { spaceId: found.space.id, life: 3 },
-        ...world.droplets.filter((drop) => drop.spaceId !== found.space.id),
-      ].slice(0, 4)
-      return {
-        world: { ...world, droplets },
-        report: { kind: 'droplet-sent', spaceId: found.space.id, left: found.metres },
-      }
-    }
-
-    case 'resurrection':
-      return {
-        world: { ...world, ninelives: [...new Set([...world.ninelives, target.id])] },
-        report: { kind: 'name-taken', spaceId: target.id },
-      }
-
-    // The victim is chosen openly and the sacrifice is chosen among its own and
-    // hidden. Emperor Time is the Gyo that finds it.
-    case 'curse': {
-      const own = ship.adjacency.get(target.id) ?? []
-      const sacrifice = own[target.id.length % Math.max(1, own.length)] ?? target.id
-      return {
-        world: { ...world, curse: { victim: target.id, sacrifice } },
-        report: { kind: 'marked-victim', spaceId: target.id },
-      }
-    }
-
-    // The arrow pierces every defence, so it is not refused by a shut or an
-    // isolated room, and what it exchanges is what a room is.
-    case 'arrow': {
-      if (!world.pairing) {
-        return {
-          world: { ...world, pairing: target.id },
-          report: { kind: 'arrow-drawn', spaceId: target.id },
-        }
-      }
-      const first = world.pairing
-      if (first === target.id) return { world, report: { kind: 'arrow-drawn', spaceId: target.id } }
-      return {
-        world: { ...world, pairing: null, souls: [...world.souls, [first, target.id]] },
-        report: { kind: 'souls-swapped', a: first, b: target.id },
-      }
-    }
-
-    case 'flock': {
-      const dispatches = [target.id, ...without(world.dispatches, (id) => id === target.id)].slice(
-        0,
-        8,
-      )
-      return { world: { ...world, dispatches }, report: { kind: 'dispatched', spaceId: target.id } }
-    }
-
-    default:
-      return { world, report: { kind: 'inert' } }
-  }
+  const cast = ROOM_CASTS[kind]
+  return cast
+    ? cast({ world, ship, target, input, at, standingIn })
+    : { world, report: { kind: 'inert' } }
 }
 
 /**

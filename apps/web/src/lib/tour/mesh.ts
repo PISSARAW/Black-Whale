@@ -395,6 +395,40 @@ export const FITTING_GLOW: Rgb = [2.4, 2.0, 1.55]
 export const WINDOW_GLOW: Rgb = [0.62, 0.86, 1.28]
 
 /**
+ * What the bottom of a window burns at, because the bottom of it is the sea.
+ *
+ * The Black Whale sails. The panel of the observation deck draws the bay full of
+ * cloud with the water under it and the container city of the lower tiers between
+ * the two, and a pane painted one flat value from sill to head says the ship is
+ * flying through an even sky — which is the one thing the panel does not show.
+ *
+ * Derived from `WINDOW_GLOW` rather than picked, because that is the honest
+ * relation: what is below the horizon is the same sky, reflected off a surface
+ * that swallows most of it. So the hue is the sky's and only the value falls, and
+ * it falls below white — the water is bright against the steel of the room and it
+ * does not burn the way the cloud above it does.
+ */
+export const SEA_GLOW: Rgb = [WINDOW_GLOW[0] * 0.45, WINDOW_GLOW[1] * 0.45, WINDOW_GLOW[2] * 0.45]
+
+/**
+ * Where the horizon crosses the glass: the visitor's own eye, and no higher.
+ *
+ * The horizon is at infinity, so it meets a pane at the height of the eye looking
+ * through it and at no other height — a metre from the glass or thirty, standing
+ * on Tier 3 or in the King's living room sixty-five metres above it, the water
+ * ends on the level of your eyes. The Earth's curve would put it a quarter of a
+ * degree lower from this high up, which is nine millimetres on a pane two metres
+ * away, and the pane is not drawn to nine millimetres.
+ *
+ * So this is `EYE_HEIGHT` in `TourScene`, and it is a constant here for the
+ * reason the pane is static geometry: the mesh is baked once, and a visitor who
+ * takes a shorter body — see `eyesOf` — moves their eye without moving the sea.
+ * That error is centimetres on a band that is 0,7 m of a 6 m opening, and the
+ * alternative is rebuilding the deck every time someone changes bodies.
+ */
+export const HORIZON = 1.7
+
+/**
  * How far a window throws, and how finely its pane is sampled as a source.
  *
  * A fitting is a point and reaches `LIGHT.reach`; a window is a surface up to
@@ -1028,17 +1062,27 @@ export function buildTierMesh(plan: TierPlan, options: { reveal?: boolean } = {}
    * rectangle, which is a wall, and the ship has 157 842 m² of those.
    *
    * Both long faces, and the outboard one is never seen — you cannot get outside
-   * the hull. Eight triangles for the two of them on the whole ship, which is
-   * cheaper than deciding which side of the glass the room is on.
+   * the hull. Cheaper than deciding which side of the glass the room is on.
+   *
+   * Each face is cut at the horizon and drawn twice: the sky above it and the sea
+   * below it — see `SEA_GLOW` and `HORIZON`. A window on this ship looks at water,
+   * and the one thing a view of water has that a view of nothing has is a line
+   * across it. Where the horizon falls outside the opening — a sill above your eye,
+   * a head below it — the cut does not happen and the pane is one value, which is
+   * also what you would see.
    *
    * Wound and offset the way `extrudeSolid` winds a solid: `toClockwise`, so each
    * face looks out of the frame, and lifted 2 cm off it so the pane is not fighting
    * the frame it sits in for the same depth value.
    */
-  const pane = (structure: Structure, glow: Rgb) => {
+  const pane = (structure: Structure, floorY: number) => {
     const outline = toClockwise(structureFootprint(structure))
     const bottom = tier.elevation + structure.base
     const top = bottom + structure.height
+    // Clamped into the opening, so a window whose sill is already above the eye
+    // is all sky and one whose head is below it is all water, without a band of
+    // either being drawn outside the frame it belongs to.
+    const horizon = Math.min(Math.max(floorY + HORIZON, bottom), top)
     const edgesOf = [...iterateEdges(outline)]
     const runs = edgesOf.map(([a, b]) => Math.hypot(b[0] - a[0], b[1] - a[1]))
     const longest = Math.max(...runs)
@@ -1053,23 +1097,29 @@ export function buildTierMesh(plan: TierPlan, options: { reveal?: boolean } = {}
       const a: Vec2 = [start[0] + nx * 0.02, start[1] + nz * 0.02]
       const b: Vec2 = [end[0] + nx * 0.02, end[1] + nz * 0.02]
 
-      for (const [p, q, r] of [
-        [
-          [a, bottom],
-          [b, bottom],
-          [b, top],
-        ],
-        [
-          [a, bottom],
-          [b, top],
-          [a, top],
-        ],
-      ] as [[Vec2, number], [Vec2, number], [Vec2, number]][]) {
-        fittings.push(p[0][0], p[1], p[0][1], q[0][0], q[1], q[0][1], r[0][0], r[1], r[0][1])
-        for (let vertex = 0; vertex < 3; vertex++) {
-          fittingColors.push(glow[0], glow[1], glow[2])
+      const band = (low: number, high: number, glow: Rgb) => {
+        if (high - low < EPSILON) return
+        for (const [p, q, r] of [
+          [
+            [a, low],
+            [b, low],
+            [b, high],
+          ],
+          [
+            [a, low],
+            [b, high],
+            [a, high],
+          ],
+        ] as [[Vec2, number], [Vec2, number], [Vec2, number]][]) {
+          fittings.push(p[0][0], p[1], p[0][1], q[0][0], q[1], q[0][1], r[0][0], r[1], r[0][1])
+          for (let vertex = 0; vertex < 3; vertex++) {
+            fittingColors.push(glow[0], glow[1], glow[2])
+          }
         }
       }
+
+      band(bottom, horizon, SEA_GLOW)
+      band(horizon, top, WINDOW_GLOW)
     }
   }
 
@@ -1266,7 +1316,7 @@ export function buildTierMesh(plan: TierPlan, options: { reveal?: boolean } = {}
       // see `RoomLight.daylight` — and in the same buffer as the fittings,
       // because the question that buffer answers is which surfaces are sources.
       for (const structure of standingIn.get(space.id) ?? []) {
-        if (structure.kind === 'window') pane(structure, WINDOW_GLOW)
+        if (structure.kind === 'window') pane(structure, floorOf(space, tier))
       }
     }
 

@@ -172,6 +172,13 @@
     onWorm,
   }: Props = $props()
 
+  /**
+   * How high the visitor's eye is off the floor.
+   *
+   * `HORIZON` in `$lib/tour/mesh` is the same number and has to stay it: the sea
+   * is cut into the two panes at the height the eye looking through them meets
+   * the horizon, and the pane is baked once while this is read every frame.
+   */
   const EYE_HEIGHT = 1.7
   /** Radians of yaw per pixel of pointer movement, before the visitor's own multiplier. */
   const LOOK_SENSITIVITY = 0.0022

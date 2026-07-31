@@ -3,14 +3,22 @@
    * The observation deck, drawn from `data/ship/blueprint.json`.
    *
    * It used to be drawn as an open-air platform at the bow, over a sea with
-   * waves on it. The Black Whale crosses to the Dark Continent through the
-   * sky, and the deck plan puts this room inboard on Tier 3, starboard of the
-   * corridor, with one wall slanted across the deck. What it looks out of is
-   * the window ch. 380 draws curved, and what lies under it is the container
-   * city on the tiers below — not water.
+   * waves on it. It is not open air: the room stands inboard on Tier 3 behind a
+   * window ch. 380 draws curved. But the sea was right. The panel puts the
+   * container city of the lower tiers under the glass and the water beyond it,
+   * out to the horizon and the cloud over it — the Black Whale sails to the Dark
+   * Continent, it does not fly there.
    *
-   * So this is a plan like the others: the room at its footprint, the window
-   * along the outboard wall, and the two ways in.
+   * The footprint below is the blueprint's, corner for corner, and it is a
+   * different room from the one this file used to draw: ch. 358's annotated
+   * cutaway put the deck at the bow, and the drawing kept the aft footprint it
+   * had been given by a deck plan read with the axes crossed. What that leaves
+   * is not a square room off a corridor but a crescent 129,5 m across the whole
+   * bow and 17 m deep, with the cap of the hull curving away in front of it.
+   *
+   * `deckMaps.test.ts` holds the five generated deck plans to the blueprint;
+   * this one is drawn by hand, which is how it drifted, so `localMaps.test.ts`
+   * now holds it to the same corners.
    */
 
   // Room interactions are not wired up yet. The elements keep their click
@@ -24,28 +32,56 @@
     ;(event.currentTarget as Element).dispatchEvent(new MouseEvent('click', { bubbles: true }))
   }
 
-  /** Thirteen pixels to the metre, in the coordinates of the Tier 3 plan. */
-  const SCALE = 13
-  const x = (metres: number) => (metres - 49) * SCALE + 70
-  const y = (metres: number) => (metres + 21) * SCALE + 70
+  /**
+   * The plan, turned a quarter to the right.
+   *
+   * The deck plans of `/ship` put the bow at the left and +z down the page. A
+   * room 129,5 m wide and 17 m deep drawn that way is a ribbon eight times taller
+   * than it is broad, and unreadable in the frame it is given. So this is that
+   * same drawing rotated 90° clockwise — bow at the top, +z to the left — which
+   * is a rotation and not a mirror: what is to your left standing in the room is
+   * to the left on the page.
+   *
+   * 6,6 px to the metre, which is what puts 129,5 m of bow inside the viewBox.
+   */
+  const SCALE = 6.6
+  /** Athwartships, across the page: +z to the left, so the drawing is not flipped. */
+  const px = (z: number) => (59.5 - z) * SCALE + 70
+  /** Fore and aft, down the page: the bow is at -x, so the bow is at the top. */
+  const py = (x: number) => (x + 157) * SCALE + 150
 
-  /** The footprint, corner for corner. */
+  /** The footprint, corner for corner: the aft wall, then the cap of the bow. */
   const footprint: [number, number][] = [
-    [49, -21],
-    [101.5, -21],
-    [115.5, 17.5],
-    [49, 17.5],
+    [-140, -70],
+    [-140, 59.5],
+    [-148, 52],
+    [-154, 30],
+    [-157, 0],
+    [-154, -30],
+    [-148, -52],
   ]
-  const outline = footprint.map(([mx, my]) => `${x(mx)},${y(my)}`).join(' ')
+  const outline = footprint.map(([mx, mz]) => `${px(mz)},${py(mx)}`).join(' ')
 
-  // The window stands just inside the slanted outboard wall, the way the
-  // blueprint places it: offset 0.35 m in, and 36 of the wall's 41 m long.
-  // These are the ends of that solid, not an eyeballed line along the wall.
-  const bay = { from: [102.02, -18.54], to: [114.32, 15.28] }
+  /**
+   * The bay: 30 m of glass on the centreline, 0,3 m thick, at x = -154,5.
+   *
+   * The blueprint's own solid, not a line eyeballed along the wall — the same
+   * rectangle `$lib/tour/mesh` cuts at the horizon and lights the room with.
+   */
+  const bay = { at: [-154.5, 0], size: [0.3, 30] }
+  const bayFrom = bay.at[1] - bay.size[1] / 2
+  const bayTo = bay.at[1] + bay.size[1] / 2
+
+  /**
+   * The one way in, and the walk derives it rather than declaring it: a 3 m
+   * doorway in the middle of the wall the deck shares with the promenade behind
+   * it. Nothing else on Tier 3 touches this room.
+   */
+  const door = { from: [-140, -6.75], to: [-140, -3.75] }
 </script>
 
 <svg
-  viewBox="0 0 1000 620"
+  viewBox="0 0 1000 330"
   class="w-full h-full text-[#FFFFF0] bg-[#050505] rounded-lg border border-[#333]"
 >
   <defs>
@@ -72,6 +108,12 @@
       .door:hover {
         stroke: #fff;
       }
+      .centreline {
+        stroke: #fffff0;
+        stroke-width: 1;
+        stroke-dasharray: 4 6;
+        opacity: 0.35;
+      }
       .label {
         fill: #fffff0;
         font-family: sans-serif;
@@ -93,54 +135,49 @@
     Observation Deck — Tier 3
   </text>
   <text x="500" y="50" class="label" font-size="10" opacity="0.55">
-    66.5 m × 38.5 m, 9 m under the deckhead — ch. 380
+    129,5 m across the bow, 17 m deep, 1 516 m² under a 9 m deckhead — ch. 358 for where it stands,
+    ch. 380 for the bay
+  </text>
+
+  <!-- What is on the other side of the glass, which is the reason for the room -->
+  <text x="500" y="90" class="sublabel" font-size="11">
+    Bow ↑ — the container city on the tiers below, then the sea out to the horizon
   </text>
 
   <polygon points={outline} class="room" />
 
-  <!-- The window, along the outboard wall the plan slants -->
+  <!-- z = 0, the one line of the ship's own frame that can be drawn here -->
+  <line x1={px(0)} y1={py(-157) - 8} x2={px(0)} y2={py(-140) + 8} class="centreline" />
+
+  <!-- The bay, across the cap of the bow -->
   <line
     role="button"
     tabindex="0"
     aria-label="Inspect the observation window"
     onkeydown={activate}
     class="window"
-    x1={x(bay.from[0])}
-    y1={y(bay.from[1])}
-    x2={x(bay.to[0])}
-    y2={y(bay.to[1])}
+    x1={px(bayFrom)}
+    y1={py(bay.at[0])}
+    x2={px(bayTo)}
+    y2={py(bay.at[0])}
     onclick={() => handleElementClick('observation-window')}
   />
-  <text x={x(101)} y={y(3)} class="sublabel" transform="rotate(70 {x(101)} {y(3)})">
-    Observation window
-  </text>
-  <text x={x(78)} y={y(-2)} class="label" font-size="11" opacity="0.6">
-    The container city lies on the tiers below
-  </text>
+  <text x={px(0)} y={py(bay.at[0]) + 24} class="sublabel">Observation window — 30 m of glass</text>
 
-  <!-- The two ways in: the starboard corridor, and the promenade aft -->
+  <!-- The one way in: the promenade behind the deck -->
   <line
     role="button"
     tabindex="0"
     aria-label="Open the doors"
     onkeydown={activate}
     class="door"
-    x1={x(49)}
-    y1={y(-3.25)}
-    x2={x(49)}
-    y2={y(-0.25)}
-    onclick={() => handleElementClick('starboard-corridor')}
+    x1={px(door.from[1])}
+    y1={py(door.from[0])}
+    x2={px(door.to[1])}
+    y2={py(door.to[0])}
+    onclick={() => handleElementClick('port-promenade')}
   />
-  <line
-    role="button"
-    tabindex="0"
-    aria-label="Open the doors"
-    onkeydown={activate}
-    class="door"
-    x1={x(107)}
-    y1={y(17.5)}
-    x2={x(110)}
-    y2={y(17.5)}
-    onclick={() => handleElementClick('starboard-promenade')}
-  />
+  <text x={px(-5.25)} y={py(-140) + 22} class="label" font-size="11" opacity="0.6">
+    To the promenade — reconstructed to make the deck contiguous, no panel draws it
+  </text>
 </svg>

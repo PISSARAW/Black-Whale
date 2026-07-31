@@ -20,7 +20,9 @@ import {
 } from './geometry'
 import { VISITOR_RADIUS } from './navigation'
 import {
+  HORIZON,
   PATCH,
+  SEA_GLOW,
   WINDOW_GLOW,
   WINDOW_REACH,
   WINDOW_SAMPLE,
@@ -1086,30 +1088,75 @@ describe('the two windows', () => {
       const bottom = plan.tier.elevation + structure.base
       const top = bottom + structure.height
 
+      const horizon = floorOf(space, plan.tier) + HORIZON
+      expect(horizon, `${structure.id} has its horizon outside the glass`).toBeGreaterThan(bottom)
+      expect(horizon).toBeLessThan(top)
+
       const from = group.fittingStart * 3
       const to = (group.fittingStart + group.fittingCount) * 3
       let panes = 0
       for (let i = from; i < to; i += 9) {
         if (!standsUp(mesh.fittings, i)) continue
         panes++
+        let above = 0
         for (let vertex = 0; vertex < 9; vertex += 3) {
           const y = mesh.fittings[i + vertex + 1]
-          // The blueprint's own height for the opening: a pane is not hung from
-          // the ceiling grid and must not be moved to it.
-          expect(Math.min(Math.abs(y - bottom), Math.abs(y - top))).toBeLessThan(1e-4)
+          // The blueprint's own height for the opening, or the cut across it: a
+          // pane is not hung from the ceiling grid and must not be moved to it,
+          // and nothing but the horizon may divide it.
+          expect(
+            Math.min(Math.abs(y - bottom), Math.abs(y - horizon), Math.abs(y - top)),
+          ).toBeLessThan(1e-4)
+          if (y > horizon + 1e-4) above++
         }
         // Above white on the blue side, which nothing else in the ship is.
         const colour = [mesh.fittingColors[i], mesh.fittingColors[i + 1], mesh.fittingColors[i + 2]]
+        // A triangle is wholly on one side of the cut or the other, and it takes
+        // the value of the side it is on: cloud over the line, water under it.
+        const band = above > 0 ? WINDOW_GLOW : SEA_GLOW
         for (let channel = 0; channel < 3; channel++) {
           // Six places: the buffer is `Float32Array`, so 0,62 comes back 0,6200000.
-          expect(colour[channel]).toBeCloseTo(WINDOW_GLOW[channel], 6)
+          expect(colour[channel]).toBeCloseTo(band[channel], 6)
         }
-        expect(colour[2], 'the pane does not burn above white').toBeGreaterThan(1)
         expect(colour[2], 'the sky of the Dark Continent is not warm').toBeGreaterThan(colour[0])
+        if (above > 0) expect(colour[2], 'the sky does not burn above white').toBeGreaterThan(1)
+        // The sea is bright against the steel of the room and dark against the
+        // cloud over it, which is the whole reason there is a line to see.
+        else expect(colour[2], 'the water burns like the sky').toBeLessThan(1)
       }
-      // Two faces of glass, two triangles each. The outboard one is never seen,
-      // and deciding which that is costs more than drawing it.
-      expect(panes, `${structure.id} draws no glass`).toBe(4)
+      // Two faces of glass, two bands each, two triangles a band. The outboard
+      // face is never seen, and deciding which that is costs more than drawing it.
+      expect(panes, `${structure.id} draws no glass`).toBe(8)
+    }
+  })
+
+  it('puts the sea under the horizon and keeps it the colour of the sky', () => {
+    // The water is the sky reflected off something that swallows most of it, so
+    // the hue is the sky's — the ratios hold to a rounding error — and only the
+    // value falls. A sea drawn in its own colour would be a green rectangle in
+    // the one part of the ship that is not the ship.
+    for (let channel = 0; channel < 3; channel++) {
+      expect(SEA_GLOW[channel]).toBeLessThan(WINDOW_GLOW[channel])
+      expect(SEA_GLOW[channel] / WINDOW_GLOW[channel]).toBeCloseTo(SEA_GLOW[2] / WINDOW_GLOW[2], 6)
+    }
+    // Below white, where the sky is above it: the line across the glass is the
+    // difference between the two, and it is the whole feature.
+    expect(Math.max(...SEA_GLOW)).toBeLessThan(1)
+    expect(Math.max(...WINDOW_GLOW)).toBeGreaterThan(1)
+
+    // The horizon meets the pane at the eye and nowhere else, so it is the walk's
+    // own eye height. `TourScene` holds the other copy of this number.
+    expect(HORIZON).toBe(1.7)
+
+    // And it falls inside both openings, which is what makes them views rather
+    // than lamps: a sill above the eye would draw all sky, a head below it all
+    // water, and the blueprint puts neither window there.
+    for (const structure of windows) {
+      const { plan, space } = roomOf(structure)
+      const sill = plan.tier.elevation + structure.base
+      const horizon = floorOf(space, plan.tier) + HORIZON
+      expect(horizon, `${structure.id} sees no water`).toBeGreaterThan(sill)
+      expect(horizon, `${structure.id} sees no sky`).toBeLessThan(sill + structure.height)
     }
   })
 

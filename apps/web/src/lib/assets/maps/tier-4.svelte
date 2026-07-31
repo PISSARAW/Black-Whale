@@ -1,6 +1,6 @@
 <script lang="ts">
   /**
-   * Tier 4, generated from `data/ship/blueprint.json`.
+   * Tier 4-A, generated from `data/ship/blueprint.json`.
    *
    * One unit of this 1000 x 600 viewBox is 0.35 m and the ship's midpoint is
    * (500, 300) — the frame the reconstruction is authored in. So every room is
@@ -216,17 +216,6 @@
       inferred: false,
     },
     {
-      id: 'tier-4-ei-i-family-office',
-      region: 'tier-4-ei-i-family-office',
-      points: '480.0,270.0 654.86,270.0 654.86,330.0 480.0,330.0',
-      label: 'Ei-I Family Office',
-      size: 12,
-      at: [567.4, 304.0],
-      turned: false,
-      through: false,
-      inferred: false,
-    },
-    {
       id: 'tier-4-shu-u-family-office',
       region: null,
       points: '65.71,214.29 130.0,214.29 130.0,385.71 65.71,385.71',
@@ -236,6 +225,17 @@
       turned: true,
       through: false,
       inferred: false,
+    },
+    {
+      id: 'tier-4-ei-i-void',
+      region: null,
+      points: '480.0,270.0 655.0,270.0 655.0,330.0 480.0,330.0',
+      label: 'Central Aft Floor',
+      size: 12,
+      at: [567.5, 304.0],
+      turned: false,
+      through: false,
+      inferred: true,
     },
   ]
 

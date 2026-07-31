@@ -79,8 +79,37 @@ describe('what is drawn from where the visitor stands', () => {
     return shares.reduce((sum, share) => sum + share, 0) / shares.length
   }
 
+  /** How many doorways apart the two furthest rooms of a deck are. */
+  const spread = (plan: (typeof decks)[number]) => {
+    const graph = doorGraph(plan)
+    let worst = 0
+    for (const start of graph.keys()) {
+      const depth = new Map([[start, 0]])
+      const queue = [start]
+      while (queue.length) {
+        const here = queue.shift()!
+        for (const next of graph.get(here) ?? []) {
+          if (depth.has(next)) continue
+          depth.set(next, depth.get(here)! + 1)
+          queue.push(next)
+        }
+      }
+      worst = Math.max(worst, ...depth.values())
+    }
+    return worst
+  }
+
+  /**
+   * A deck narrower than the view is exempt, and that is not the culling
+   * failing. Tier 4-B is one office and the passage that reaches it; tier 5-B
+   * is a spine with the cabins off it. Every room on such a deck is within
+   * `VIEW_DEPTH` doorways of every other by construction, so there is nothing
+   * there to hide and a ceiling would be a ceiling on the data rather than on
+   * what the renderer does with it.
+   */
   it('never draws a whole deck from inside one of its rooms', () => {
     for (const plan of decks) {
+      if (spread(plan) <= VIEW_DEPTH) continue
       expect(drawnShare(plan), `${plan.tier.id} is drawn whole from anywhere on it`).toBeLessThan(1)
     }
   })

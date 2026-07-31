@@ -60,17 +60,23 @@ describe('the ship blueprint', () => {
   })
 
   /**
-   * Tier 1 is a liner and the rest of the ship is not.
+   * A tier is a band of the ship, not a floor of it, and four of the five are
+   * more than one floor.
    *
-   * Only one deck of that liner is drawn from above — the chain of the King's
-   * quarters, the reception hall and the princes' block — so what the
-   * cross-section merely lists under tier 1 stands on decks of its own, stacked
-   * over the one it does show. Those decks belong to tier 1 and say so; every
-   * other deck of the ship is a tier in its own right and carries no parent.
+   * Tier 1 is a liner: one deck of it is drawn from above — the chain of the
+   * King's quarters, the reception hall and the princes' block — and what the
+   * cross-section merely lists under the tier stands on decks of its own over
+   * that one. Tiers 3, 4 and 5 are split for the opposite reason: the
+   * cross-section hangs their blocks at several heights inside one band, so the
+   * ordinary cabins of tier 3 are not on the floor the courts are on. Only
+   * tier 2 is a single deck. A child deck names its tier and stands over that
+   * tier's own floor.
    */
-  it('gives tier 1 the decks of a liner, and no other tier any', () => {
+  it('splits the tiers the cross-section stacks, and no others', () => {
     const children = ship.decks.filter((deck) => deck.parentTierId)
-    expect(new Set(children.map((deck) => deck.parentTierId))).toEqual(new Set(['tier-1']))
+    expect(new Set(children.map((deck) => deck.parentTierId))).toEqual(
+      new Set(['tier-1', 'tier-3', 'tier-4', 'tier-5']),
+    )
     for (const deck of children) {
       // A child deck stands over its tier's floor, never under it.
       expect(deck.elevation, deck.id).toBeGreaterThan(
@@ -901,7 +907,9 @@ describe('walking there from the map', () => {
     expect(spaceForLocation(ship, 'tier-1-royal-residential-sector-room-1004')?.id).toBe(
       'tier-1-royal-residential-sector-room-1004',
     )
-    expect(spaceForLocation(ship, 'tier-5-standard-cabins')?.tierId).toBe('tier-5')
+    // And on the deck of the tier that carries it: the fifth-class cabins are
+    // a floor above the dining hall and the hangar door, not beside them.
+    expect(spaceForLocation(ship, 'tier-5-standard-cabins')?.tierId).toBe('tier-5-b')
   })
 
   it('offers nothing for a location the reconstruction does not hold', () => {

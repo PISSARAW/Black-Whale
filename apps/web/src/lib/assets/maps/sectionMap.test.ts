@@ -19,9 +19,9 @@ import type { Space, Tier } from '../../tour/types'
  * the only place the reconstruction says what is *above* what.
  *
  * It matters more here than on a deck plan, because the section is the drawing
- * that makes the claims nobody can check by eye: six unreconstructed decks
- * between each pair of the five it walks, and a liner of nine more standing over
- * tier 1. Get those wrong and the page quietly asserts a solid ship, a hollow
+ * that makes the claims nobody can check by eye: the unreconstructed decks
+ * between each pair of the eleven it walks, and a liner of eight more standing
+ * over tier 1. Get those wrong and the page quietly asserts a solid ship, a hollow
  * one, or a Black Whale of whatever height the drawing found convenient.
  */
 
@@ -137,19 +137,20 @@ const rooms: Room[] = [...between('const rooms: Room[] = [', '\n  ]').matchAll(R
 }))
 
 const DECK =
-  /\{\s*id:\s*'([^']+)',\s*name:\s*'((?:[^'\\]|\\.)*)',\s*nameFr:\s*'((?:[^'\\]|\\.)*)',\s*child:\s*(true|false),\s*grouped:\s*(true|false),\s*letter:\s*'([^']*)',\s*x0:\s*(-?[\d.]+),\s*x1:\s*(-?[\d.]+),\s*floor:\s*(-?[\d.]+),\s*ceiling:\s*(-?[\d.]+),\s*elevation:\s*(-?[\d.]+),\s*\}/g
+  /\{\s*id:\s*'([^']+)',\s*name:\s*'((?:[^'\\]|\\.)*)',\s*nameFr:\s*'((?:[^'\\]|\\.)*)',\s*child:\s*(true|false),\s*grouped:\s*(true|false),\s*group:\s*'([^']*)',\s*letter:\s*'([^']*)',\s*x0:\s*(-?[\d.]+),\s*x1:\s*(-?[\d.]+),\s*floor:\s*(-?[\d.]+),\s*ceiling:\s*(-?[\d.]+),\s*elevation:\s*(-?[\d.]+),\s*\}/g
 const drawnDecks = [...between('const decks = [', '\n  ]').matchAll(DECK)].map((m) => ({
   id: m[1],
   name: m[2].replace(/\\'/g, "'"),
   nameFr: m[3].replace(/\\'/g, "'"),
   child: m[4] === 'true',
   grouped: m[5] === 'true',
-  letter: m[6],
-  x0: Number(m[7]),
-  x1: Number(m[8]),
-  floor: Number(m[9]),
-  ceiling: Number(m[10]),
-  elevation: Number(m[11]),
+  group: m[6],
+  letter: m[7],
+  x0: Number(m[8]),
+  x1: Number(m[9]),
+  floor: Number(m[10]),
+  ceiling: Number(m[11]),
+  elevation: Number(m[12]),
 }))
 
 const GAP =
@@ -248,11 +249,14 @@ describe('the decks of the section', () => {
   })
 
   /**
-   * Tier 1 is three decks, and they are three floors of one liner rather than
-   * one deck with two annexes. The drawing brackets and letters them: A, B, C,
-   * one tick each on a rail of their own. Three tabs in the margin three and a
-   * half metres apart — eight units here — is three labels written over each
-   * other, and three tabs of different sizes is a hierarchy nothing supports.
+   * Four of the five tiers are more than one deck, and their decks are the
+   * floors of one band of the ship rather than a deck with annexes. The drawing
+   * brackets and letters each run: A, B, C, one tick a deck on a rail of its
+   * own. Tabs in the margin a few metres apart are labels written over each
+   * other, and tabs of different sizes are a hierarchy nothing supports.
+   *
+   * Per group, not across all of them: every run starts again at A, so the
+   * letters are unique inside a tier and repeat between tiers.
    */
   it('letters the decks of a tier instead of ranking them', () => {
     const grouped = drawnDecks.filter((deck) => deck.grouped)
@@ -262,33 +266,43 @@ describe('the decks of the section', () => {
     expect(new Set(grouped.map((deck) => deck.id))).toEqual(tierIds)
     expect(grouped.length).toBeGreaterThan(1)
 
-    // A letter each, in the order they stand, and none anywhere else.
-    expect(grouped.map((deck) => deck.letter)).toEqual(
-      [...grouped].sort((a, b) => b.elevation - a.elevation).map((deck) => deck.letter),
-    )
-    expect(new Set(grouped.map((deck) => deck.letter)).size).toBe(grouped.length)
+    for (const group of new Set(grouped.map((deck) => deck.group))) {
+      const run = grouped.filter((deck) => deck.group === group)
+      expect(run.length, `${group} is bracketed alone`).toBeGreaterThan(1)
+      // A letter each, in the order they stand, and none repeated in the tier.
+      expect(run.map((deck) => deck.letter)).toEqual(
+        [...run].sort((a, b) => b.elevation - a.elevation).map((deck) => deck.letter),
+      )
+      expect(new Set(run.map((deck) => deck.letter)).size).toBe(run.length)
+    }
     for (const deck of grouped) {
       expect(deck.letter, `${deck.id} has no letter`).toMatch(/^[A-Z]$/)
       expect(deck.name.endsWith(`-${deck.letter}`), `${deck.name} does not end in its letter`).toBe(
         true,
       )
+      expect(deck.group, `${deck.id} is bracketed under no tier`).toBe(
+        (tierOf.get(deck.id) as Tier).parentTierId ?? deck.id,
+      )
     }
     for (const deck of drawnDecks.filter((deck) => !deck.grouped)) {
       expect(deck.letter, `${deck.id} is lettered but stands alone`).toBe('')
+      expect(deck.group, `${deck.id} is bracketed but stands alone`).toBe('')
     }
     expect(source).toMatch(/class="liner-rail"/)
   })
 
   /**
-   * And they stand on each other. A deck of a liner is a floor of it: one that
+   * And they stand on each other. A deck of a tier is a floor of it: one that
    * reaches past the floor below it is standing on air, which is what the first
-   * split drew — the guest deck overhung the garrison deck by 94 m.
+   * split drew — the guest deck overhung the garrison deck by 94 m. Within a
+   * group, again: tier 4-B stands on tier 4 and owes tier 5-B nothing.
    */
   it('stacks the decks of a tier, each one inside the deck under it', () => {
     const grouped = [...drawnDecks.filter((deck) => deck.grouped)].sort(
       (a, b) => a.elevation - b.elevation,
     )
     for (let i = 1; i < grouped.length; i++) {
+      if (grouped[i].group !== grouped[i - 1].group) continue
       const under = tierOf.get(grouped[i - 1].id) as Tier
       const over = tierOf.get(grouped[i].id) as Tier
       const [underFore, underAft] = [Math.min(...xOf(under.hull)), Math.max(...xOf(under.hull))]
@@ -384,8 +398,8 @@ describe('the decks the reconstruction does not hold', () => {
   })
 
   /**
-   * The ship has 41 decks and this walks 5. The band is what stands for the
-   * other 36, so it must be the taller part of the ship: a section that showed
+   * The ship has 41 decks and this walks 11. The band is what stands for the
+   * other 30, so it must be the taller part of the ship: a section that showed
    * the five as most of the hull would be claiming the reconstruction is nearly
    * complete.
    */
@@ -401,7 +415,7 @@ describe('the decks the reconstruction does not hold', () => {
    * terraces up rather than fading a rectangle out at the top edge.
    *
    * How many of them there are is the ship's own arithmetic and is checked here
-   * as arithmetic: 41 decks, seven held, the rest spent in the bands between
+   * as arithmetic: 41 decks, eleven held, the rest spent in the bands between
    * the tiers, and what is left over is the liner. Get it wrong in the
    * generator and the drawing quietly says how tall the Black Whale is on no
    * authority at all.

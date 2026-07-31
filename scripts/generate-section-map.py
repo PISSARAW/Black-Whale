@@ -31,8 +31,8 @@ Three things are drawn, and the difference between them is the whole point:
     with, and they are real rooms rather than hatching;
   * the decks the reconstruction does **not** hold — the band between one tier's
     ceiling and the next tier's floor, and the terraced liner over tier 1. The
-    ship has 41 decks and this holds seven, so six of them sit in each band and
-    nine stand above the last one anyone has drawn. Nothing is put inside them:
+    ship has 41 decks and this holds eleven, so a handful sit in each band and
+    eight stand above the last one anyone has drawn. Nothing is put inside them:
     the drawing says the space is full and not a word about what fills it.
 
 Scale is isotropic and derived, and the figure is printed when this runs. It
@@ -84,11 +84,11 @@ EYE_R = 5.0
 #
 # That band used to be drawn open at the top, on the argument that closing it
 # would claim a height no page gives. The ship's own deck count gives it. The
-# Black Whale has 41 decks; this reconstruction holds seven of them, and the
-# elevations spend the rest in the bands between the tiers — six decks to each
-# of the four, one between the royal deck and the first deck of the liner. What
-# is left over stands above the topmost deck anyone has drawn, and it is the
-# liner: nine decks of it, 4.5 m each.
+# Black Whale has 41 decks; this reconstruction holds eleven of them, and the
+# elevations spend twenty-two more in the bands between them — the band above a
+# tier is shorter now that the tier's own upper decks stand in it. What is left
+# over stands above the topmost deck anyone has drawn, and it is the liner:
+# eight decks of it, 4.5 m each.
 #
 # So the liner is drawn as the page draws it — terraces stepping back as they
 # rise — and closed at the count. The number of steps is the ship's own; how far
@@ -205,13 +205,15 @@ for tier in DECKS:
 # Behind first, so the cut is drawn over the ship it is cut out of.
 rows.sort(key=lambda r: (r['cut'], -r['w'] * r['h']))
 
-# Tier 1 is one tier of three decks, and the drawing has to say so. They stand
-# 3.5 m apart, which is eight units here: three tabs in the margin is three
-# labels written over each other, and three tabs of different sizes reads as one
-# deck with two annexes. So the group gets a bracket of its own on the stern
-# margin, ticked at each deck and lettered A, B, C — one tier, three floors.
+# Four of the five tiers are more than one deck, and the drawing has to say so.
+# The decks of a tier stand a few metres apart, which is a handful of units
+# here: tabs in the margin would be labels written over each other, and tabs of
+# different sizes would read as one deck with annexes. So each tier that carries
+# more than one deck gets a bracket of its own on the stern margin, ticked at
+# each deck and lettered A, B, C — one tier, several floors.
 GROUPED = {t['id'] for t in DECKS if t.get('parentTierId')}
 GROUPED |= {t['parentTierId'] for t in DECKS if t.get('parentTierId')}
+GROUP_OF = {t['id']: (t.get('parentTierId') or t['id']) for t in DECKS if t['id'] in GROUPED}
 
 decks_out = []
 for tier in sorted(DECKS, key=lambda t: -t['elevation']):
@@ -221,20 +223,29 @@ for tier in sorted(DECKS, key=lambda t: -t['elevation']):
         'id': tier['id'], 'name': tier['name'], 'nameFr': tier['nameFr'],
         'child': bool(tier.get('parentTierId')),
         'grouped': tier['id'] in GROUPED,
+        'group': GROUP_OF.get(tier['id'], ''),
         'letter': letter,
         'x0': px(fore), 'x1': px(aft),
         'floor': py(tier['elevation']), 'ceiling': py(tier['elevation'] + tier['ceiling']),
         'elevation': tier['elevation'],
     })
 
-# The bracket itself: from the top of the highest deck of the group to the floor
-# of the lowest, on the margin the ship's stern leaves free.
-_grouped = [d for d in decks_out if d['grouped']]
-liner = {
-    'x': round(VIEW_W - 26, 2),
-    'top': min(d['ceiling'] for d in _grouped),
-    'bottom': max(d['floor'] for d in _grouped),
-}
+# The brackets themselves: one per tier that carries more than one deck, from
+# the top of its highest deck to the floor of its lowest, on the margin the
+# ship's stern leaves free. They share one abscissa because they never overlap —
+# a tier is a band of the ship, and no two of them are at the same height.
+BRACKET_X = round(VIEW_W - 26, 2)
+brackets = []
+for group in sorted({d['group'] for d in decks_out if d['grouped']},
+                    key=lambda g: -BY_ID[g]['elevation']):
+    of_group = [d for d in decks_out if d['group'] == group]
+    brackets.append({
+        'id': group,
+        'tier': group.replace('tier-', ''),
+        'x': BRACKET_X,
+        'top': min(d['ceiling'] for d in of_group),
+        'bottom': max(d['floor'] for d in of_group),
+    })
 
 # The ship the reconstruction does not hold: between one tier's ceiling and the
 # floor of the tier above it. Drawn as a band rather than as invented decks —
@@ -290,8 +301,9 @@ ROOM_FIELDS = [('id', 's'), ('tier', 's'), ('region', 'n?'), ('x', 'n'), ('y', '
                ('w', 'n'), ('h', 'n'), ('label', 's'), ('name', 's'), ('size', 'n'),
                ('at', 'a'), ('cut', 'b'), ('through', 'b'), ('inferred', 'b')]
 DECK_FIELDS = [('id', 's'), ('name', 's'), ('nameFr', 's'), ('child', 'b'), ('grouped', 'b'),
-               ('letter', 's'), ('x0', 'n'), ('x1', 'n'), ('floor', 'n'), ('ceiling', 'n'),
-               ('elevation', 'n')]
+               ('group', 's'), ('letter', 's'), ('x0', 'n'), ('x1', 'n'), ('floor', 'n'),
+               ('ceiling', 'n'), ('elevation', 'n')]
+BRACKET_FIELDS = [('id', 's'), ('tier', 's'), ('x', 'n'), ('top', 'n'), ('bottom', 'n')]
 GAP_FIELDS = [('id', 's'), ('x', 'n'), ('y', 'n'), ('w', 'n'), ('h', 'n'), ('metres', 'n')]
 TERRACE_FIELDS = [('x', 'n'), ('y', 'n'), ('w', 'n'), ('h', 'n')]
 
@@ -313,9 +325,9 @@ src = f'''<script lang="ts">
    * page they are the strips of texture between the labelled callouts.
    *
    * The banded gaps are the decks this reconstruction does not hold. The ship
-   * has 41 of them and the tour walks 5, so about thirteen metres of ship sit
-   * between each pair. Nothing is drawn inside them, because nothing is known
-   * to be.
+   * has 41 of them and the tour walks 11, so between four and twenty-seven
+   * metres of ship sit between each pair. Nothing is drawn inside them, because
+   * nothing is known to be.
    *
    * The band over tier 1 is the same admission, and it is open at the top: the
    * ch. 369 exterior shows a liner terraced a dozen levels above the one floor
@@ -352,12 +364,12 @@ src = f'''<script lang="ts">
   /**
    * The decks, and how each one is labelled.
    *
-   * A deck that stands alone carries its name in the bow margin. The three
-   * decks of tier 1 do not stand alone — they are three floors of one liner,
-   * 3.5 m apart, which is eight units of this drawing. Named in the margin they
-   * would be three labels written over each other; named in three different
-   * sizes they would read as one deck with two annexes. They are bracketed
-   * instead, and lettered.
+   * A deck that stands alone carries its name in the bow margin — tier 2 is the
+   * only one. The decks of the other four tiers do not stand alone: they are
+   * the floors of one band of the ship, a few metres apart, which is a handful
+   * of units of this drawing. Named in the margin they would be labels written
+   * over each other; named in different sizes they would read as one deck with
+   * annexes. They are bracketed instead, one bracket a tier, and lettered.
    */
   const decks = [
 {ts(decks_out, DECK_FIELDS)},
@@ -371,12 +383,13 @@ src = f'''<script lang="ts">
   const deckName = (deck: {{ name: string; nameFr: string }}) =>
     $locale === 'fr' ? deck.nameFr : deck.name
 
-  /** The bracket that says the three lettered decks are one tier. */
-  const liner = {{
-    x: {liner['x']},
-    top: {liner['top']},
-    bottom: {liner['bottom']},
-  }}
+  /** The brackets that say a run of lettered decks is one tier. */
+  const brackets = [
+{ts(brackets, BRACKET_FIELDS)},
+  ]
+
+  /** Where the ticks and the letters hang, the same for every bracket. */
+  const bracketX = {BRACKET_X}
 
   const gaps = [
 {ts(gaps, GAP_FIELDS)},
@@ -386,7 +399,7 @@ src = f'''<script lang="ts">
    * The liner over tier 1: the decks of it the reconstruction does not hold,
    * stepping back as they rise the way the ch. 369 exterior shows them.
    *
-   * How many there are is the ship's own arithmetic — 41 decks, seven held,
+   * How many there are is the ship's own arithmetic — 41 decks, eleven held,
    * the rest spent in the bands between the tiers, and what is left over stands
    * up here. How far each one steps back is not: nothing draws the plan of a
    * terrace, so they recede evenly to a third of the deck below them and carry
@@ -606,9 +619,19 @@ src = f'''<script lang="ts">
   <circle cx="{px(EYE_AT[0])}" cy="{py(EYE_AT[1])}" r="{round(EYE_R * SCALE, 1)}" fill="#050505" stroke="#ffd700" stroke-width="2" pointer-events="none" />
   <circle cx="{px(EYE_AT[0])}" cy="{py(EYE_AT[1])}" r="{round(EYE_R * SCALE / 2.6, 1)}" fill="#fffff0" pointer-events="none" />
 
-  <!-- One tier, three floors: the bracket says it, the letters place them. -->
-  <line class="liner-rail" x1={{liner.x}} y1={{liner.top}} x2={{liner.x}} y2={{liner.bottom}} />
-  <text class="liner-name" x={{liner.x + 6}} y={{liner.top - 8}}>{{$t.ship.tierLabel('1')}}</text>
+  <!-- One tier, several floors: the bracket says it, the letters place them. -->
+  {{#each brackets as bracket (bracket.id)}}
+    <line
+      class="liner-rail"
+      x1={{bracket.x}}
+      y1={{bracket.top}}
+      x2={{bracket.x}}
+      y2={{bracket.bottom}}
+    />
+    <text class="liner-name" x={{bracket.x + 6}} y={{bracket.top - 8}}
+      >{{$t.ship.tierLabel(bracket.tier)}}</text
+    >
+  {{/each}}
 
   {{#each decks as deck (deck.id)}}
     <line class="deck-rule" x1={{deck.x0}} y1={{deck.floor}} x2={{deck.x1}} y2={{deck.floor}} />
@@ -621,8 +644,8 @@ src = f'''<script lang="ts">
       onkeydown={{(event) => openDeckWithKeyboard(event, deck.id)}}
     >
       {{#if deck.grouped}}
-        <line class="liner-tick" x1={{liner.x}} y1={{deck.floor}} x2={{liner.x + 7}} y2={{deck.floor}} />
-        <text x={{liner.x + 11}} y={{deck.floor + 3}} font-size="10">{{deck.letter}}</text>
+        <line class="liner-tick" x1={{bracketX}} y1={{deck.floor}} x2={{bracketX + 7}} y2={{deck.floor}} />
+        <text x={{bracketX + 11}} y={{deck.floor + 3}} font-size="10">{{deck.letter}}</text>
       {{:else}}
         <text x="6" y={{deck.ceiling + 12}}>{{deckName(deck)}}</text>
         <text x="6" y={{deck.ceiling + 25}} font-size="9" fill-opacity="0.55"

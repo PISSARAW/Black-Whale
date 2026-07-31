@@ -1371,8 +1371,12 @@ export const fr: Messages = {
       'tier-1-c': 'Habilitation royale',
       'tier-2': 'Habilitation VIP',
       'tier-3': 'Accès public',
+      'tier-3-b': 'Accès public',
+      'tier-3-c': 'Accès public',
       'tier-4': 'Habilitation équipage',
+      'tier-4-b': 'Habilitation équipage',
       'tier-5': 'Systèmes réservés',
+      'tier-5-b': 'Systèmes réservés',
     },
     tiers: {
       overview: {
@@ -1436,6 +1440,26 @@ export const fr: Messages = {
         anomaly: 'Activité de Nen non attribuée signalée par des canaux civils',
         report: 'Les témoignages se contredisent après une disparition près du quartier médical.',
       },
+      'tier-3-b': {
+        title: 'Pont de première classe',
+        subtitle: 'Cabines et une chambre-piège · un étage au-dessus du pont civique',
+        clearance: 'CIVIL / AMBRE',
+        pressure: 'Calme payant',
+        danger: 'SOUS GARDE',
+        signal: 'Ronde de coursive plus rare que le manifeste ne l’exige',
+        anomaly: 'L’étage de ces cabines se lit sur la coupe, aucune page ne le dessine',
+        report: 'La chambre 3101 répond à une réservation qu’aucune ligne du registre ne porte.',
+      },
+      'tier-3-c': {
+        title: 'Pont des cabines ordinaires',
+        subtitle: 'Les cabines de niveau 3 · l’étage le plus haut du pont',
+        clearance: 'CIVIL / AMBRE',
+        pressure: 'Promiscuité',
+        danger: 'INSTABLE',
+        signal: 'Couloir de rassemblement annoncé deux fois par jour',
+        anomaly: 'L’étage de ces cabines se lit sur la coupe, aucune page ne le dessine',
+        report: 'Les comptages de cabines dépassent les couchettes que le bloc dessine.',
+      },
       'tier-4': {
         title: 'Passage industriel',
         subtitle: 'Routes de fret disputées par trois familles',
@@ -1447,6 +1471,16 @@ export const fr: Messages = {
         report:
           'Trois transmissions interceptées utilisent des codes de position mutuellement exclusifs.',
       },
+      'tier-4-b': {
+        title: 'Étage Ei-I',
+        subtitle: 'Un bureau de famille, et un pont qui ne porte rien d’autre',
+        clearance: 'ÉQUIPAGE / ROUGE',
+        pressure: 'Frictions entre clans',
+        danger: 'CRITIQUE',
+        signal: 'Trafic de relais sans terminal déclaré',
+        anomaly: 'La hauteur de ce bureau se lit sur la coupe, aucune page ne la dessine',
+        report: 'Le bureau est déclaré à une adresse que le plan du pont ne recense pas.',
+      },
       'tier-5': {
         title: 'Machinerie inférieure',
         subtitle: 'Surpopulation, pénurie et contrôle défaillant',
@@ -1457,6 +1491,16 @@ export const fr: Messages = {
         anomaly: 'Éclosion d’aura hostile · classification indisponible',
         report:
           'Registre des victimes scellé. Dix-sept identifiants de passagers ne résolvent plus.',
+      },
+      'tier-5-b': {
+        title: 'Pont des cabines de 5e classe',
+        subtitle: 'Les cabines ordinaires et la baie 37564 · un étage au-dessus du hangar',
+        clearance: 'RÉSERVÉ / NOIR',
+        pressure: 'Promiscuité sans contrôle',
+        danger: 'EXTRÊME',
+        signal: 'Aucune patrouille consignée à cet étage depuis l’appareillage',
+        anomaly: 'L’étage de ces cabines se lit sur la coupe, aucune page ne le dessine',
+        report: 'Une baie du couloir des cabines est numérotée et ne figure sur aucune liste.',
       },
     },
   },

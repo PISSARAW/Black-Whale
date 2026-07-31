@@ -1,6 +1,6 @@
 <script lang="ts">
   /**
-   * Tier 3, generated from `data/ship/blueprint.json`.
+   * Tier 3-A, generated from `data/ship/blueprint.json`.
    *
    * One unit of this 1000 x 600 viewBox is 0.35 m and the ship's midpoint is
    * (500, 300) — the frame the reconstruction is authored in. So every room is
@@ -106,40 +106,6 @@
       inferred: true,
     },
     {
-      id: 'tier-3-residential-first-class',
-      region: 't3-residential-1st',
-      points:
-        '180.0,100.0 360.0,100.0 360.0,250.0 180.0,250.0 180.0,210.0 240.0,210.0 240.0,180.0 180.0,180.0',
-      label: 'First-Class Residential Block',
-      size: 9,
-      at: [274.3, 176.6],
-      turned: false,
-      through: false,
-      inferred: false,
-    },
-    {
-      id: 'tier-3-residential-room-3101',
-      region: 'room-3101',
-      points: '180.0,180.0 240.0,180.0 240.0,210.0 180.0,210.0',
-      label: '',
-      size: 0,
-      at: [210.0, 195.0],
-      turned: false,
-      through: false,
-      inferred: false,
-    },
-    {
-      id: 'tier-3-residential-standard',
-      region: 't3-residential-ord',
-      points: '180.0,270.0 360.0,270.0 360.0,470.0 180.0,470.0',
-      label: 'Standard Residential Block',
-      size: 12,
-      at: [270.0, 374.0],
-      turned: false,
-      through: false,
-      inferred: false,
-    },
-    {
       id: 'tier-3-central-hospital',
       region: 't3-hospital',
       points: '640.0,220.0 790.0,220.0 790.0,370.0 640.0,370.0',
@@ -235,6 +201,28 @@
       label: 'Forward Port Floor',
       size: 12,
       at: [500.0, 139.7],
+      turned: false,
+      through: false,
+      inferred: true,
+    },
+    {
+      id: 'tier-3-first-class-void',
+      region: null,
+      points: '180.0,100.0 360.0,100.0 360.0,250.0 180.0,250.0',
+      label: 'Port Forward Floor',
+      size: 12,
+      at: [270.0, 179.0],
+      turned: false,
+      through: false,
+      inferred: true,
+    },
+    {
+      id: 'tier-3-standard-void',
+      region: null,
+      points: '180.0,270.0 360.0,270.0 360.0,470.0 180.0,470.0',
+      label: 'Port Aft Floor',
+      size: 12,
+      at: [270.0, 374.0],
       turned: false,
       through: false,
       inferred: true,

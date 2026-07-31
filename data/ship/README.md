@@ -127,13 +127,19 @@ elle qui donne à l'œil de quoi mesurer une halle.
 Les ponts s'empilent dans l'ordre de la coupe du chapitre 349, le Tier 1 en
 haut :
 
-| Pont | `elevation` | Plafond par défaut |
-| ---- | ----------- | ------------------ |
-| 1    | 128 m       | 5 m                |
-| 2    | 96 m        | 5 m                |
-| 3    | 63 m        | 6 m                |
-| 4    | 31,5 m      | 4,5 m              |
-| 5    | 0 m         | 4,5 m              |
+| Tier | `elevation` du pont bas | Plafond par défaut | Ponts         |
+| ---- | ----------------------- | ------------------ | ------------- |
+| 1    | 128 m                   | 5 m                | 1-A, 1-B, 1-C |
+| 2    | 96 m                    | 5 m                | 2             |
+| 3    | 63 m                    | 6 m                | 3-A, 3-B, 3-C |
+| 4    | 31,5 m                  | 4,5 m              | 4-A, 4-B      |
+| 5    | 0 m                     | 4,5 m              | 5-A, 5-B      |
+
+Un tier est une bande du navire et non un plancher : quatre des cinq portent
+plusieurs ponts, et le détail est plus bas — [Les ponts du
+paquebot](#les-ponts-du-paquebot--1-a-1-b-1-c) pour le pont 1, [Les ponts 3, 4
+et 5](#les-ponts-3-4-et-5--ce-que-la-coupe-accroche-à-quelle-hauteur) pour les
+autres.
 
 ### L'écart entre deux ponts est compté, pas choisi
 
@@ -141,19 +147,24 @@ Ces élévations viennent des **41 ponts** du navire, et c'est le seul chiffre d
 dossier qui puisse les donner : la coupe du chap. 349 dit dans quel ordre les
 cinq tiers s'empilent, jamais de combien. Le compte se pose une fois :
 
-- la reconstruction tient **7 planchers** : les cinq tiers, dont le pont 1 en
-  compte trois à lui seul (1-A, 1-B, 1-C) ;
-- **24 se répartissent dans les quatre bandes** entre les tiers, soit **six
-  ponts par bande**, et **un** s'intercale entre le pont royal et le premier
-  pont du paquebot ;
-- **9 restent au-dessus** du dernier, et ce sont les gradins du paquebot que le
+- la reconstruction tient **11 planchers** : les cinq tiers, dont quatre
+  comptent plusieurs ponts à eux seuls — 1-A/B/C, 3-A/B/C, 4-A/B, 5-A/B ;
+- **22 se répartissent dans les bandes** qui les séparent. Elles ne sont plus
+  égales : six ponts dorment entre le pont 2 et le pont royal, quatre entre le
+  4-B et le pont 3 comme entre le 3-C et le pont 2, trois entre le 5-B et le
+  pont 4, et un seul là où un pont porte l'étage suivant du même tier ;
+- **8 restent au-dessus** du dernier, et ce sont les gradins du paquebot que le
   chap. 369 dessine — la douzaine de niveaux de son bloc le plus haut, moins les
   trois que la reconstruction tient.
 
 Un pont du navire vaut **4,5 m**, la hauteur sous plafond des deux ponts bas du
-blueprint. Six ponts font donc **27 m** entre le plafond d'un tier et le
-plancher du suivant, la coque tenue monte à **144 m**, et le paquebot la porte à
-**184,6 m** pour 318 m de long.
+blueprint. La bande la plus épaisse en fait donc **27 m**, la coque tenue monte
+à **144 m**, et le paquebot la porte à **180 m** pour 318 m de long.
+
+Découper les tiers 3, 4 et 5 n'a rien ajouté au navire et n'aurait pas pu : un
+pont posé dans la bande d'un tier est un pont que la bande perd. C'est le même
+41 des deux côtés de l'égalité, et c'est ce qui rend le compte vérifiable —
+`sectionMap.test.ts` le refait à chaque exécution.
 
 Le pas de 18 m que ce dossier a longtemps porté ne tenait pas ce compte : il
 laissait 12 à 13 m entre deux tiers, c'est-à-dire trois ponts là où il en fallait
@@ -228,10 +239,11 @@ Elle distingue trois choses, et c'est toute la question :
   chap. 349 est remplie — de vraies pièces, et non une trame ;
 - les ponts que la reconstruction **ne tient pas** : la bande entre le plafond
   d'un pont et le plancher du suivant. Le vaisseau en compte 41 et la visite en
-  parcourt cinq, donc six ponts — 27 m de navire — dorment entre chacun d'eux.
-  Cette bande est ce qui fixe les élévations plutôt que l'inverse ; rien ne la
-  dessinait, donc rien ne la disait. Rien n'y est posé non plus : la coupe montre que la place
-  est pleine, et ne dit pas un mot de ce qui la remplit.
+  tient onze, donc vingt-deux ponts — de 4 à 27 m de navire selon la bande —
+  dorment entre eux. Cette bande est ce qui fixe les élévations plutôt que
+  l'inverse ; rien ne la dessinait, donc rien ne la disait. Rien n'y est posé
+  non plus : la coupe montre que la place est pleine, et ne dit pas un mot de ce
+  qui la remplit.
 
 Une pièce qui **pose un mur** dans l'axe n'est pas coupée par lui. Le tribunal
 et le poste de police partagent ce mur-là, un de chaque côté : compter le
@@ -272,9 +284,9 @@ et quatre pièces y réclament 7 à 9 m de plafond sur un pont qui en annonce 5.
 La coupe a longtemps laissé cette bande **ouverte en haut**, dégradée jusqu'au
 bord du dessin : la fermer à une hauteur, disait-elle, serait affirmer la taille
 du paquebot, et la page en donne la forme et pas l'échelle. Le compte des 41
-ponts la donne. Sept ponts tenus, vingt-cinq dans les bandes entre les tiers, il
-en reste **neuf**, et ils ne peuvent être ailleurs qu'au-dessus du dernier pont
-dessiné : c'est le paquebot. À 4,5 m le pont, il monte de 40,5 m au-dessus du
+ponts la donne. Onze ponts tenus, vingt-deux dans les bandes entre eux, il en
+reste **huit**, et ils ne peuvent être ailleurs qu'au-dessus du dernier pont
+dessiné : c'est le paquebot. À 4,5 m le pont, il monte de 36 m au-dessus du
 pont des hôtes.
 
 La coupe les dresse donc **en gradins**, comme le chap. 369 les montre, et se
@@ -362,9 +374,9 @@ long de ses chambres : une chambre de reine n'ouvre que sur son couloir, donc
 une coursive posée contre son mur extérieur atteint un mur et pas une porte.
 
 Rien de tout ceci ne touche `data/locations` : un passager tient son pont du
-préfixe `tier-1-` de son slug de lieu, jamais du blueprint. `deck: 1`,
-`shipLocation.tier: 1` et les cinq boutons de `/ship` sont inchangés — le
-découpage est de la géométrie.
+préfixe `tier-1-` de son slug de lieu, jamais du blueprint. `deck: 1` et
+`shipLocation.tier: 1` sont inchangés — le découpage est de la géométrie. Seuls
+les boutons de `/ship` ont suivi, et ils sont onze.
 
 `sectionMap.test.ts` tient ce dessin au blueprint comme `deckMaps.test.ts` tient
 les plans de pont, bande de ponts non reconstruits comprise. Il tient aussi
@@ -372,6 +384,79 @@ les plans de pont, bande de ponts non reconstruits comprise. Il tient aussi
 `apps/web/src/lib/components/map/markerProjection.ts` : en coupe, un pont a la
 hauteur qu'il a vraiment, et une foule qui s'étale sans le savoir met des
 passagers dans un pont où ils ne sont pas.
+
+### Les ponts 3, 4 et 5 : ce que la coupe accroche à quelle hauteur
+
+Le pont 1 est découpé parce qu'aucun étage ne pouvait porter tout ce qu'on lui
+mettait. Les ponts 3, 4 et 5 le sont pour une raison qui est écrite sur une page
+et non déduite : **la coupe annotée du chap. 358 n'accroche pas ses onze encarts
+sur une rangée**. C'est la page dont [Le chap. 358 dit _où_](#le-chap-358-dit-où)
+tire déjà quatre déplacements et deux bureaux ; ce qu'on ne lui avait pas encore
+demandé, c'est la hauteur _à l'intérieur d'un tier_.
+
+Dans la bande du pont 3, les cabines ordinaires de niveau 3 pendent au-dessus du
+poste d'observation, de la zone gouvernementale et de la zone médicale ; dans
+celle du pont 4, le bureau du clan Ei-I pend plus haut que le passage central et
+que le bureau Shû-U de la proue ; dans celle du pont 5, les cabines ordinaires
+de 5e classe pendent au-dessus de la cantine centrale, de l'entrée du hangar et
+du bureau Sha-A. Un tier est une **bande** du navire, pas un plancher, et la
+reconstruction en faisait un plancher.
+
+| Pont       | Nom      | Élévation | Ce qu'il porte                                           |
+| ---------- | -------- | --------- | -------------------------------------------------------- |
+| `tier-3-c` | Pont 3-C | 76,1 m    | les cabines ordinaires de niveau 3                       |
+| `tier-3-b` | Pont 3-B | 72,6 m    | la première classe et la chambre 3101                    |
+| `tier-3`   | Pont 3-A | 63 m      | le pont d'observation, la police, le tribunal, l'hôpital |
+| `tier-4-b` | Pont 4-B | 40,1 m    | le bureau du clan Ei-I, et rien d'autre                  |
+| `tier-4`   | Pont 4-A | 31,5 m    | les blocs de passagers, les passages, le bureau Shû-U    |
+| `tier-5-b` | Pont 5-B | 12,6 m    | les cabines de 5e classe et la baie 37564                |
+| `tier-5`   | Pont 5-A | 0 m       | l'entrepôt, la cantine, le hangar, le bureau Sha-A       |
+
+Comme pour le pont 1, **les identifiants ne suivent pas les noms** : `tier-3`
+reste `tier-3` et non `tier-3-a`, parce que les lieux du catalogue tiennent leur
+pont du préfixe de leur slug. Et comme pour le pont 1, chaque pont ajouté prend
+une **lettre** sur un crochet de la marge arrière — un crochet par tier, quatre
+en tout, jamais deux à la même hauteur puisqu'un tier est une bande.
+
+Trois choses règlent ce découpage, et la troisième est la plus importante :
+
+1. **Le plancher d'un pont commence au-dessus du plus haut volume de celui d'en
+   dessous.** Le pont 3-B part à 72,6 m parce que le pont d'observation en
+   réclame 9, le 4-B à 40,1 m par-dessus les 8 m du recyclage, le 5-B à 12,6 m
+   par-dessus les 12 m de l'entrepôt. C'est la même raison qu'au pont 1 : un
+   navire met ses volumes à double hauteur en bas de sa pile.
+2. **Un bloc qui monte laisse son plancher.** Quatre planchers `inferred`
+   remplacent les emprises libérées, sans quoi un pont perd les portes qu'il
+   tire de ses murs partagés et la promenade se retrouve coupée du navire.
+3. **La coque d'un sous-pont est celle de son tier, pas l'enveloppe de ce qu'on
+   y pose.** C'est la différence avec les ponts du paquebot, qui sont des
+   gradins au-dessus de la coque et dont l'emprise sort de leur contenu. Les
+   ponts 3-B, 3-C, 4-B et 5-B sont des **étages à l'intérieur de la baleine** :
+   le navire a la même longueur et la même largeur à leur hauteur qu'au pont
+   d'en dessous. Tailler leur coque sur les trois blocs qu'on leur connaît
+   creuserait une encoche dans la silhouette pour dire que la reconstruction y
+   est mince — or on **suppose** que le reste du plancher est plein, de pièces
+   que personne n'a dessinées. La carte de pont le montre telle quelle : une
+   coque entière, deux ou trois salles dedans, et tout le reste vide.
+
+Une **coursive par pont** et un **escalier par pont** s'ajoutent pour la même
+raison qu'au pont 1, et au même endroit : d'aplomb sur la coursive que le pont
+d'en dessous porte déjà. Le pont 5-B garde 4,5 m sous plafond et non 3, parce
+que la baie 37564 est la seule pièce de cet étage dont une planche donne le
+plafond, et qu'un pont plus bas lui couperait ses piliers.
+
+La Brigade se répartit toute seule, et c'est le contrôle de lecture du
+découpage : Machi est un étage au-dessus de Franklin, de Feitan et des trois du
+bureau Sha-A, et Kuroro, Bonorenof et Shizuku restent au pont 4-A pendant que
+le bureau Ei-I monte au 4-B. Ce n'est pas une contrainte qu'on a posée ; c'est
+ce que la page dit quand on la lit à la hauteur des encarts.
+
+Ce que ce découpage **ne dit pas** est aussi net : rien n'est affirmé de l'étage
+d'un bloc que la page n'accroche pas. Le tribunal, l'entrepôt, le recyclage et
+les blocs de passagers restent au pont bas de leur tier parce que c'est là
+qu'ils étaient, pas parce qu'une lecture les y met, et la `source` de chaque
+pont ajouté le dit en toutes lettres sans citer de chapitre — un pont `inferred`
+qui citerait une planche prétendrait à une preuve qu'il n'a pas.
 
 ## Structure
 

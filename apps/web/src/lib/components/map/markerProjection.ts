@@ -162,29 +162,62 @@ const locationCoordinates: Record<string, Record<string, TierAnchor>> = {
     'tier-3-cineplex': { x: 715.0, y: 160.0 },
     'tier-3-heilly-family-office': { x: 715.0, y: 420.0 },
     'tier-3-observation-deck': { x: 75.1, y: 295.7 },
+    'tier-3-residential-units': { x: 450.0, y: 450.0, small: true },
+  },
+  /**
+   * The first-class deck of tier 3, drawn on `tier-3-b.svelte`.
+   *
+   * The cabins hang above the civic blocks on the cross-section rather than
+   * beside them, so they are a floor of their own now and their markers are
+   * filed with it: on the civic deck those coordinates are the floor the block
+   * left behind.
+   */
+  'tier-3-b': {
+    'tier-3-b': { x: 482.8, y: 285.4 },
     'tier-3-residential-first-class': { x: 274.3, y: 173.6 },
     'tier-3-residential-room-3101': { x: 210.0, y: 195.0, small: true },
+  },
+  /** The ordinary cabins of tier 3, the top floor of the tier: `tier-3-c.svelte`. */
+  'tier-3-c': {
+    'tier-3-c': { x: 482.8, y: 285.4 },
     'tier-3-residential-standard': { x: 270.0, y: 370.0 },
-    'tier-3-residential-units': { x: 450.0, y: 450.0, small: true },
   },
   'tier-4': {
     'tier-4': { x: 481.2, y: 336.1 },
     'tier-4-central-passage': { x: 407.5, y: 250.0, small: true },
-    'tier-4-ei-i-family-office': { x: 567.4, y: 300.0 },
     'tier-4-recycling-sewage-facilities': { x: 485.0, y: 522.5 },
     'tier-4-royal-army-conference-room': { x: 575.0, y: 155.0 },
     'tier-4-xi-yu-family-office': { x: 400.0, y: 300.0 },
   },
+  /**
+   * The upper floor of tier 4, drawn on `tier-4-b.svelte`: the Ei-I office and
+   * the passage that reaches it. The cross-section hangs that one block above
+   * the passage Kuroro's group walks, and nothing else with it.
+   */
+  'tier-4-b': {
+    'tier-4-b': { x: 481.2, y: 336.1 },
+    'tier-4-ei-i-family-office': { x: 567.4, y: 300.0 },
+  },
   'tier-5': {
     'tier-5': { x: 451.6, y: 254.0 },
     'tier-4-recycling-sewage-facilities': { x: 450.0, y: 125.0 },
-    'tier-5-area-37564': { x: 270.0, y: 355.0, small: true },
     'tier-5-central-dining-hall': { x: 585.0, y: 375.0 },
     'tier-5-hangar-entrance': { x: 500.0, y: 285.0 },
     'tier-5-cha-r-family-office': { x: 460.0, y: 375.0 },
     'tier-5-medical-clinic': { x: 685.0, y: 375.0 },
-    'tier-5-standard-cabins': { x: 270.0, y: 252.5 },
     'tier-5-warehouse': { x: 560.0, y: 240.0 },
+  },
+  /**
+   * The cabin deck of tier 5, drawn on `tier-5-b.svelte`.
+   *
+   * The cross-section hangs the fifth-class cabins over the dining hall, the
+   * hangar door and the Sha-A office, so Machi is a floor above Franklin,
+   * Feitan and the three in the office rather than across the deck from them.
+   */
+  'tier-5-b': {
+    'tier-5-b': { x: 451.6, y: 254.0 },
+    'tier-5-area-37564': { x: 270.0, y: 355.0, small: true },
+    'tier-5-standard-cabins': { x: 270.0, y: 252.5 },
   },
 }
 
@@ -511,13 +544,17 @@ function spotNoteFor(
  * runs; `sectionMap.test.ts` fails if they drift from what it draws.
  */
 export const tierOverviewY: Record<string, number> = {
-  'tier-1': 33.5,
-  'tier-1-b': 30.2,
-  'tier-1-c': 28.8,
-  'tier-2': 46.1,
-  'tier-3': 58.8,
-  'tier-4': 71.4,
+  'tier-1': 32.3,
+  'tier-1-b': 28.8,
+  'tier-1-c': 27.4,
+  'tier-2': 45.1,
+  'tier-3': 58.2,
+  'tier-3-b': 54.9,
+  'tier-3-c': 53.5,
+  'tier-4': 71.1,
+  'tier-4-b': 68.0,
   'tier-5': 83.8,
+  'tier-5-b': 78.7,
 }
 
 /**
@@ -543,13 +580,17 @@ export const tierOverviewY: Record<string, number> = {
  * `sectionMap.test.ts` fails if they drift from the hull it draws.
  */
 export const tierOverviewSpan: Record<string, [number, number]> = {
-  'tier-1': [12.6, 71.3],
-  'tier-1-b': [28.2, 71.3],
-  'tier-1-c': [28.2, 62.1],
-  'tier-2': [8.5, 75.4],
-  'tier-3': [4.4, 79.3],
-  'tier-4': [5, 78.7],
-  'tier-5': [7.6, 69.1],
+  'tier-1': [12.8, 72.9],
+  'tier-1-b': [28.8, 72.9],
+  'tier-1-c': [28.8, 63.5],
+  'tier-2': [8.6, 77.1],
+  'tier-3': [4.4, 81.2],
+  'tier-3-b': [4.4, 81.2],
+  'tier-3-c': [4.4, 81.2],
+  'tier-4': [5, 80.5],
+  'tier-4-b': [5, 80.5],
+  'tier-5': [7.7, 70.7],
+  'tier-5-b': [7.7, 70.7],
 }
 
 export const tierOverviewBand: Record<string, number> = {
@@ -558,8 +599,12 @@ export const tierOverviewBand: Record<string, number> = {
   'tier-1-c': 1.2,
   'tier-2': 2,
   'tier-3': 2.4,
+  'tier-3-b': 1.2,
+  'tier-3-c': 1.2,
   'tier-4': 1.8,
+  'tier-4-b': 1.2,
   'tier-5': 1.8,
+  'tier-5-b': 1.8,
 }
 
 /**

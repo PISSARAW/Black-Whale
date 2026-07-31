@@ -4,8 +4,12 @@ import Tier1B from '$lib/assets/maps/tier-1-b.svelte'
 import Tier1C from '$lib/assets/maps/tier-1-c.svelte'
 import Tier2 from '$lib/assets/maps/tier-2.svelte'
 import Tier3 from '$lib/assets/maps/tier-3.svelte'
+import Tier3B from '$lib/assets/maps/tier-3-b.svelte'
+import Tier3C from '$lib/assets/maps/tier-3-c.svelte'
 import Tier4 from '$lib/assets/maps/tier-4.svelte'
+import Tier4B from '$lib/assets/maps/tier-4-b.svelte'
 import Tier5 from '$lib/assets/maps/tier-5.svelte'
+import Tier5B from '$lib/assets/maps/tier-5-b.svelte'
 import PrinceApartment from '$lib/assets/maps/local/prince-apartment.svelte'
 import Room3101 from '$lib/assets/maps/local/room-3101.svelte'
 import HeillyProcessing from '$lib/assets/maps/local/heilly-processing.svelte'
@@ -46,8 +50,12 @@ export const MAP_ASSETS = {
   'tier-1-c': Tier1C,
   'tier-2': Tier2,
   'tier-3': Tier3,
+  'tier-3-b': Tier3B,
+  'tier-3-c': Tier3C,
   'tier-4': Tier4,
+  'tier-4-b': Tier4B,
   'tier-5': Tier5,
+  'tier-5-b': Tier5B,
   'prince-apartment': PrinceApartment,
   'room-3101': Room3101,
   'heilly-processing': HeillyProcessing,

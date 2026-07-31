@@ -42,19 +42,37 @@
     'tier-1-c': 11,
     'tier-2': 34,
     'tier-3': 61,
+    'tier-3-b': 47,
+    'tier-3-c': 68,
     'tier-4': 79,
+    'tier-4-b': 31,
     'tier-5': 96,
+    'tier-5-b': 91,
   }
 
   /**
    * The decks of the nav, in the order the section stacks them.
    *
-   * Not `[1, 2, 3, 4, 5]` any more: tier 1 is a liner and carries three decks,
-   * and two of them had no way in at all — a reader who clicked Pont 1 got the
-   * royal deck and no sign that the casino, the cells and the queens' block
-   * were a flight up.
+   * Not `[1, 2, 3, 4, 5]` any more. A tier is a band of the ship and four of the
+   * five are more than one floor: tier 1 is a liner of three decks, and the
+   * cross-section hangs the blocks of tiers 3, 4 and 5 at several heights inside
+   * one band rather than in a row. A reader who clicked Pont 5 got the dining
+   * hall and the hangar door with no sign that the fifth-class cabins were a
+   * flight up.
    */
-  const decks = ['tier-1', 'tier-1-b', 'tier-1-c', 'tier-2', 'tier-3', 'tier-4', 'tier-5']
+  const decks = [
+    'tier-1',
+    'tier-1-b',
+    'tier-1-c',
+    'tier-2',
+    'tier-3',
+    'tier-3-b',
+    'tier-3-c',
+    'tier-4',
+    'tier-4-b',
+    'tier-5',
+    'tier-5-b',
+  ]
 
   const tierNumber: Record<string, string> = {
     overview: '00',
@@ -62,9 +80,13 @@
     'tier-1-b': '01·B',
     'tier-1-c': '01·C',
     'tier-2': '02',
-    'tier-3': '03',
-    'tier-4': '04',
-    'tier-5': '05',
+    'tier-3': '03·A',
+    'tier-3-b': '03·B',
+    'tier-3-c': '03·C',
+    'tier-4': '04·A',
+    'tier-4-b': '04·B',
+    'tier-5': '05·A',
+    'tier-5-b': '05·B',
   }
 
   let tierProfiles = $derived(

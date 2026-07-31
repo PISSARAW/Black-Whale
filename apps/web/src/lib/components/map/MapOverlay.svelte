@@ -140,7 +140,7 @@
     const alignWithSvg = () => {
       const svg = parent.querySelector(':scope > svg') as SVGSVGElement | null
       if (!svg?.viewBox?.baseVal?.width || !svg.viewBox.baseVal.height) {
-        layerStyle = 'inset: 0;'
+        layerStyle = 'inset: 0; --map-scale: 1;'
         return
       }
 
@@ -152,7 +152,12 @@
       const renderedHeight = viewBox.height * scale
       const left = (width - renderedWidth) / 2
       const top = (height - renderedHeight) / 2
-      layerStyle = `left:${left}px;top:${top}px;width:${renderedWidth}px;height:${renderedHeight}px;`
+      // A marker's position is a percentage of this layer, so it follows the
+      // drawing down to a phone on its own. Its *size* is not: at 950 px a dot
+      // sits inside the room it marks, and at 359 px the same dot is three
+      // rooms wide, so the overview's 184 of them close over the hull and the
+      // ship is gone. Hand the scale down and let the markers read it.
+      layerStyle = `left:${left}px;top:${top}px;width:${renderedWidth}px;height:${renderedHeight}px;--map-scale:${scale.toFixed(3)};`
     }
 
     alignWithSvg()

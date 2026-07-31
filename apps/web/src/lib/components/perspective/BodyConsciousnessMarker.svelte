@@ -70,8 +70,8 @@
   .subjective-marker {
     position: absolute;
     z-index: 6;
-    width: 1.05rem;
-    height: 1.05rem;
+    width: calc(1.05rem * clamp(0.5, var(--map-scale, 1), 1));
+    height: calc(1.05rem * clamp(0.5, var(--map-scale, 1), 1));
     border: 0;
     border-radius: 50%;
     padding: 0;
@@ -81,9 +81,29 @@
     filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.8));
   }
 
+  /*
+   * Compact is the overview, and the overview is the one view that draws every
+   * deck's markers at once — 184 of them, inside a container panzoom keeps
+   * under a CSS transform. A `filter` forces each of those into its own
+   * rasterised layer, re-rasterised at every pan and every zoom step, which is
+   * a cost that scales with the crowd and shows up nowhere else. The same
+   * shadow, cast by the circle that is actually visible, composites for free.
+   */
   .subjective-marker.compact {
-    width: 0.9rem;
-    height: 0.9rem;
+    /*
+     * Scaled by how small the drawing had to become to fit — never below half,
+     * or the dot stops being something a finger can find. `--map-scale` is set
+     * by the overlay that positions these; without it, nothing changes.
+     */
+    width: calc(0.9rem * clamp(0.5, var(--map-scale, 1), 1));
+    height: calc(0.9rem * clamp(0.5, var(--map-scale, 1), 1));
+    filter: none;
+  }
+
+  .subjective-marker.compact .core {
+    box-shadow:
+      0 0 0 1px color-mix(in srgb, var(--marker-color) 80%, white 20%),
+      0 2px 5px rgba(0, 0, 0, 0.8);
   }
 
   .core {
@@ -193,6 +213,18 @@
     opacity: 1;
     visibility: visible;
     transform: translate(-50%, 0);
+  }
+
+  /*
+   * A touch screen has no hover, so this tooltip can never be read there — a
+   * tap opens the explain panel instead. Hidden is not free: `visibility`
+   * still lays every one of them out, and the overview carries one per marker.
+   * On a phone they are laid out, measured, and never seen.
+   */
+  @media (hover: none) {
+    .tooltip {
+      display: none;
+    }
   }
   .tooltip-topline {
     display: flex;

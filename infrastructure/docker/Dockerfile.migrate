@@ -7,6 +7,13 @@ COPY . .
 # to happen before NODE_ENV is pinned to production.
 RUN pnpm install --frozen-lockfile
 RUN pnpm --filter @black-whale/database generate
+# The backfills read the domain rules rather than restating them — the voyage
+# clock formats its hours there — and a workspace package resolves to its built
+# `dist/`, which nothing else in this image produces. Without this the timeline
+# backfill dies on a missing module *after* `migrate:deploy` has moved the
+# schema, which leaves the deploy half-applied and the site behind a gate that
+# never opens.
+RUN pnpm --filter @black-whale/domain build
 ENV NODE_ENV=production
 USER node
 # `migrate:deploy` only moves the schema. Everything the archive actually shows —

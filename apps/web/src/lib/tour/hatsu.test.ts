@@ -1211,6 +1211,34 @@ describe('taking a technique off the ship', () => {
     expect(worldIsQuiet(world)).toBe(false)
     expect(worldIsQuiet({ ...world, book: CLOSED_BOOK })).toBe(true)
   })
+
+  describe('Bungee Gum (elastic)', () => {
+    it('increases walking pace when cast on the body without damage', () => {
+      const cast = castInTour(EMPTY_WORLD, 'elastic', { ship, targetSolidId: undefined, targetId: undefined, standingIn: roomA.id, at: [0, 0] })
+      expect(cast.report).toMatchObject({ kind: 'gum-propulsion' })
+      expect(cast.world.body.enhance).toBeGreaterThan(0)
+    })
+
+    it('heals damage when cast on the body if pain packer has packed damage', () => {
+      const wounded = { ...EMPTY_WORLD, body: { ...RESTING_BODY, packed: 2 } }
+      const cast = castInTour(wounded, 'elastic', { ship, targetSolidId: undefined, targetId: undefined, standingIn: roomA.id, at: [0, 0] })
+      expect(cast.report).toMatchObject({ kind: 'gum-healed', healed: 1 })
+      expect(cast.world.body.packed).toBe(1)
+    })
+
+    it('sets a trap when cast on a room', () => {
+      const cast = castInTour(EMPTY_WORLD, 'elastic', { ship, targetId: roomA.id, targetSolidId: undefined, standingIn: roomB.id, at: [0, 0] })
+      expect(cast.report).toMatchObject({ kind: 'gum-trap-set', spaceId: roomA.id })
+      expect(cast.world.gumTraps).toContain(roomA.id)
+    })
+
+    it('rebounds a visitor who steps into a trapped room', () => {
+      const trapped = { ...EMPTY_WORLD, gumTraps: [roomA.id] }
+      const arrival = arriveInTour({ ...trapped, cameFrom: roomB.id }, ship, roomA.id)
+      expect(arrival.report).toMatchObject({ kind: 'gum-rebound', spaceId: roomA.id })
+      expect(arrival.travelTo).toBe(roomB.id)
+    })
+  })
 })
 
 function centreOf(space: { footprint: readonly (readonly [number, number])[] }): [number, number] {

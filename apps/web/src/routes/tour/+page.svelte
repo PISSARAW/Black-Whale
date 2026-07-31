@@ -567,7 +567,15 @@
     // passive abilities are decided by `$lib/tour/hatsu`, and it has to be able
     // to tell Voconte's doors from anyone else's.
     const kind = worksInTour($activeHatsu) ? $activeHatsu.kind : null
-    if (untrack(() => world).holding !== kind) world = { ...untrack(() => world), holding: kind }
+    const currentWorld = untrack(() => world)
+    if (currentWorld.holding !== kind) {
+      const nextWorld = { ...currentWorld, holding: kind }
+      if (kind === 'guardian' || kind === 'guardian-wander' || kind === 'guardian-scout') {
+        nextWorld.double = currentSpace?.id ?? null
+        nextWorld.doubleMode = kind === 'guardian' ? 'follow' : kind === 'guardian-wander' ? 'wander' : 'scout'
+      }
+      world = nextWorld
+    }
   })
 
   /**

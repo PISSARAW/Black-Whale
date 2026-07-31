@@ -146,6 +146,7 @@ export const BODY_HATSU_KINDS = new Set<HatsuInteractionKind>([
   // stand, which is the only place the heat could come from.
   'pain-armour',
   'sun-flare',
+  'elastic', // Cast without target acts as Propulsion or Faux Tissu
 ])
 
 export const worksOnTheBody = (profile: HatsuProfile | null) =>
@@ -1650,6 +1651,20 @@ const BODY_CASTS: Partial<Record<HatsuInteractionKind, BodyCast>> = {
       : { world, report: { kind: 'armour-holding', packed: body.packed } },
 
   'sun-flare': raiseTheSun,
+
+  // Bungee Gum on the body (no target):
+  // Faux Tissu heals the punishment if any is packed.
+  // Otherwise, Propulsion increases the walking pace.
+  elastic: ({ body, withBody }) => {
+    if (body.packed !== null && body.packed > 0) {
+      return {
+        world: withBody({ packed: body.packed - 1 }),
+        report: { kind: 'gum-healed', healed: 1 },
+      }
+    }
+    const committed = Math.min(6, body.enhance + 1)
+    return { world: withBody({ enhance: committed }), report: { kind: 'gum-propulsion' } }
+  },
 }
 
 function castOnBody(
@@ -2520,6 +2535,11 @@ const ROOM_CASTS: Partial<Record<HatsuInteractionKind, RoomCast>> = {
     )
     return { world: { ...world, dispatches }, report: { kind: 'dispatched', spaceId: target.id } }
   },
+
+  elastic: ({ world, target }) => ({
+    world: { ...world, gumTraps: [...new Set([...world.gumTraps, target.id])] },
+    report: { kind: 'gum-trap-set', spaceId: target.id },
+  }),
 }
 
 function runCast(
@@ -2532,8 +2552,12 @@ function runCast(
   const pulledBack = pullBackTheBody(world)
   if (pulledBack) return pulledBack
 
-  if (BODY_HATSU_KINDS.has(kind)) return castOnBody(world, kind, input)
-  if (SOLID_HATSU_KINDS.has(kind)) return castOnSolid(world, kind, input)
+  if (BODY_HATSU_KINDS.has(kind) && (kind !== 'elastic' || (!input.targetSolidId && !input.targetId))) {
+    return castOnBody(world, kind, input)
+  }
+  if (SOLID_HATSU_KINDS.has(kind) && (kind !== 'elastic' || input.targetSolidId)) {
+    return castOnSolid(world, kind, input)
+  }
 
   const untargeted = castWithoutARoom(world, kind, input)
   if (untargeted) return untargeted
@@ -3095,6 +3119,17 @@ export function arriveInTour(world: TourWorld, ship: Ship, spaceId: string | nul
   if (next.snakes && !next.snakes.fed && next.snakes.rooms.includes(spaceId)) {
     next = { ...next, snakes: { ...next.snakes, fed: true } }
     report = { kind: 'snakes-fed', spaceId }
+  }
+
+  // Bungee Gum trap causes a Rebound: the visitor is snapped back to where they came from.
+  if (next.gumTraps.includes(spaceId) && leaving && leaving !== spaceId) {
+    if (!absorb(spaceId)) {
+      return {
+        world: { ...next, cameFrom: leaving },
+        travelTo: leaving,
+        report: { kind: 'gum-rebound', spaceId },
+      }
+    }
   }
 
   // The guards expel an intruder without injuring them: back where they came

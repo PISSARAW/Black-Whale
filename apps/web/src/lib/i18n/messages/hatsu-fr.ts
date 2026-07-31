@@ -128,11 +128,11 @@ export const hatsuFr: Record<string, HatsuTextOverride> = {
   'little-eye': {
     name: 'Little Eye',
     owner: 'Sayird',
-    action: 'Trouver un petit hôte',
+    action: 'Piloter l’insecte',
     instruction:
-      'Déplacez l’œil à distance pour détecter l’aura, puis cliquez une cible pas plus grosse qu’un hamster pour ouvrir son flux visuel et sonore.',
-    rule: 'Seule une véritable petite créature peut être possédée ; les personnes et la vie matérialisée par le Nen ne sont pas des hôtes valides.',
-    cost: 'Très peu d’aura · hôte animal vulnérable',
+      'Pilotez l’insecte volant pour détecter l’aura et enregistrer (filmer) son flux visuel et sonore, puis contrôlez-le à distance.',
+    rule: 'L’objet possédé est un insecte volant enveloppé d’une aura bleue de Nen qui peut être contrôlé à distance pour filmer.',
+    cost: 'Très peu d’aura · hôte insecte volant',
   },
   'cross-game': {
     name: 'Cross Game',
@@ -814,7 +814,7 @@ export const hatsuManifestationFr: Record<HatsuInteractionKind, string> = {
   control: 'Fils de commandement royaux',
   growth: 'Pousse d’erigeron',
   vehicle: 'Coque transformée à cinq places',
-  scout: 'Familier Little Eye',
+  scout: 'Insecte volant (Aura bleue)',
   tribunal: 'Carton de pénalité Cross Game',
   curse: 'Tache de naissance sacrificielle',
   inherit: 'Paume à quatre étoiles',

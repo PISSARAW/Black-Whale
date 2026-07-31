@@ -299,7 +299,11 @@ export function apparitionsOn(
         stage: 0,
         hidden: false,
       })
-    } else place(`double:${guarded.id}`, 'double', guarded, 0.9, 0.9, DOUBLE)
+    } else {
+      place(`double:${guarded.id}`, 'double', guarded, 0.9, 0.9, DOUBLE, {
+        wander: mode === 'wander' ? 2.5 : 0,
+      })
+    }
   }
 
   // Everything standing in a room, as the aura currently leaves it: the dolls

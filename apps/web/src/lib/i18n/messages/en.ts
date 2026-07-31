@@ -92,6 +92,8 @@ export const en = {
       findKeys: '⌘K, or Ctrl K',
       reveal: 'Show the evidence',
       revealKeys: 'G',
+      fullscreen: 'Full screen, panel and all',
+      fullscreenKeys: 'V',
       nen: 'Cast the active Hatsu',
       nenKeys: 'F, or click, on the room or the solid you are facing',
       touch: 'On a touchscreen',
@@ -195,6 +197,21 @@ export const en = {
       copy: 'Copy this viewpoint',
       copied: 'Link copied',
       failed: 'Could not reach the clipboard',
+    },
+
+    /**
+     * The walk at the size of the screen.
+     *
+     * Full screen here is not the walk with its page taken away: the decks, the
+     * plan, the index, the Hatsu panel and the comfort dials all come with it,
+     * over the ship rather than beside it. What the panel costs is a strip of
+     * the view, so it folds away — and the ship is what stays.
+     */
+    fullscreen: {
+      enter: 'Full screen',
+      exit: 'Leave full screen',
+      hidePanel: 'Fold the panel away',
+      showPanel: 'Bring the panel back',
     },
 
     /**

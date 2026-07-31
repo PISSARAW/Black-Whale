@@ -261,16 +261,88 @@
     return $t.tour.plan.crossingAcross(label)
   }
 
+  // ── The walk at the size of the screen ─────────
+  /**
+   * Full screen is not the walk with its page taken away.
+   *
+   * Two things make that true. The layout: the walk takes the screen and the
+   * column comes with it — the decks, the plan, the index, the Hatsu panel, the
+   * comfort dials, the legend — folded away on a keypress when the ship is what
+   * you came to look at, and never gone. And the element: what is handed to the
+   * browser is the document rather than this page, because the Nen dock is the
+   * archive's and hangs outside the route. Full screen on the grid would take
+   * the walk and leave the aura at the door.
+   */
+  let immersive = $state(false)
+  let panelOpen = $state(true)
+  /**
+   * Whether the browser actually took the element. A phone has no element full
+   * screen to give, so the same layout stands on `position: fixed` instead —
+   * which is also what has to be undone by hand, since there is no
+   * `fullscreenchange` coming for it.
+   */
+  let native = false
+
+  /**
+   * The archive's chrome stands down for the walk.
+   *
+   * Not decoration: the route is drawn inside a transformed shell, which is a
+   * stacking context of its own, so no z-index this page can name will ever put
+   * the walk over the site header. The header goes instead — and the Nen dock,
+   * which hangs outside the route entirely, deliberately stays.
+   */
+  $effect(() => {
+    const root = document.documentElement
+    root.classList.toggle('tour-immersive', immersive)
+    return () => root.classList.remove('tour-immersive')
+  })
+
+  async function toggleFullscreen() {
+    if (immersive) {
+      if (native && document.fullscreenElement) {
+        try {
+          await document.exitFullscreen()
+        } catch {
+          // Refused: fall through and drop the layout ourselves.
+        }
+      }
+      native = false
+      immersive = false
+      return
+    }
+
+    immersive = true
+    // `requestFullscreen` is missing on iOS Safari altogether. The fixed layout
+    // is the same layout, so the walk still fills the phone — it just keeps the
+    // browser's chrome, which is the browser's call rather than ours.
+    if (document.fullscreenEnabled && document.documentElement.requestFullscreen) {
+      try {
+        await document.documentElement.requestFullscreen()
+        native = true
+      } catch {
+        native = false
+      }
+    }
+  }
+
   /**
    * M opens the plan at a size it can be read at. In the 320-pixel column a
    * room's legend comes out under four pixels tall, which is a cost paid for
    * nothing; full screen, the same drawing is legible, and it is the same
    * component rather than a second plan to keep in step.
+   *
+   * V gives the walk the screen, and Esc gives it back — but only when the
+   * pointer is not engaged, because there Esc already means "let go of my
+   * mouse", and one key cannot mean two things in the same breath.
    */
   function onWindowKeydown(event: KeyboardEvent) {
     if (event.metaKey || event.ctrlKey || event.altKey) return
     const key = event.key.toLowerCase()
-    if (key !== 'm' && key !== 'g') return
+    if (key !== 'm' && key !== 'g' && key !== 'v' && key !== 'escape') return
+    // Esc leaves full screen only where nothing else has a claim on it: the
+    // browser answers it in native full screen, an engaged pointer answers it
+    // with "let go of my mouse", and an open dialog closes on it first.
+    if (key === 'escape' && !(immersive && !native && !engaged && !planOpen && !findOpen)) return
     const target = event.target
     if (
       target instanceof HTMLElement &&
@@ -280,6 +352,7 @@
     }
     event.preventDefault()
     if (key === 'g') reveal = !reveal
+    else if (key === 'v' || key === 'escape') void toggleFullscreen()
     else planOpen = !planOpen
   }
 
@@ -292,10 +365,24 @@
   onMount(() => {
     loadComfort()
     calm = prefersReducedMotion()
+
+    // Esc, F11 and the window chrome all leave full screen without asking the
+    // page, so the browser is the authority on whether we are still in it.
+    const sync = () => {
+      if (native && !document.fullscreenElement) {
+        native = false
+        immersive = false
+      }
+    }
+    document.addEventListener('fullscreenchange', sync)
+    return () => document.removeEventListener('fullscreenchange', sync)
   })
 
   onDestroy(() => {
     if (copyTimer) clearTimeout(copyTimer)
+    // Leaving the route leaves full screen with it: the walk asked for the
+    // screen, and no other page of the archive did.
+    if (native && document.fullscreenElement) void document.exitFullscreen()
   })
 
   // ── Nen ────────────────────────────────────────
@@ -576,10 +663,24 @@
     </p>
   </header>
 
-  <div class="grid gap-4 lg:grid-cols-[1fr_320px]">
+  <!-- Full screen is this grid over everything else, not the canvas alone:
+       everything in the column has to come with the ship, or it would be a walk
+       with no way to change deck, aim a technique or read the plan. -->
+  <div
+    class="grid {immersive
+      ? // Over the archive's own sticky header (80) and under its Nen dock
+        // (100), which is the one thing that has to stay reachable above the
+        // walk: full screen must not be where the aura cannot be picked up.
+        `fixed inset-0 z-[90] h-[100dvh] w-screen overflow-hidden bg-[#050505] ${
+          panelOpen ? 'grid-cols-[1fr_min(22rem,50vw)]' : 'grid-cols-1'
+        }`
+      : 'gap-4 lg:grid-cols-[1fr_320px]'}"
+  >
     <!-- The walk -->
     <section
-      class="relative min-h-[420px] overflow-hidden rounded-lg border border-[#333] lg:h-[70vh]"
+      class="relative overflow-hidden {immersive
+        ? 'h-full min-h-0'
+        : 'min-h-[420px] rounded-lg border border-[#333] lg:h-[70vh]'}"
     >
       <TourScene
         {ship}
@@ -729,8 +830,50 @@
       {/if}
     </section>
 
+    <!-- The way back into the panel, once it is folded. Halfway down the right
+         edge because the walk has already spoken for the corners: the eye's feed
+         is inset top right, the read-outs run along the bottom. -->
+    {#if immersive && !panelOpen}
+      <button
+        type="button"
+        onclick={() => (panelOpen = true)}
+        aria-expanded="false"
+        class="absolute right-0 top-1/2 z-30 -translate-y-1/2 rounded-l border border-r-0 border-[#333] bg-[#050505]/90 px-2 py-3 text-xs text-[#FFFFF0]/70 transition-colors hover:border-[#FFD700]/50 hover:text-[#FFFFF0]"
+      >
+        {$t.tour.fullscreen.showPanel}
+      </button>
+    {/if}
+
     <!-- Deck selector, plan and index -->
-    <aside class="flex flex-col gap-4">
+    <aside
+      class="flex flex-col gap-4 {immersive
+        ? `min-h-0 overflow-y-auto border-l border-[#333] p-3 ${panelOpen ? '' : 'hidden'}`
+        : ''}"
+    >
+      <!-- Full screen has two buttons of its own, and they ride at the head of
+           the panel rather than over the walk, where the feed and the read-outs
+           already are. Sticky, because a way out that scrolls off is not one. -->
+      {#if immersive}
+        <div class="sticky top-0 z-10 -m-3 mb-0 flex gap-1.5 bg-[#050505] p-3">
+          <button
+            type="button"
+            onclick={() => (panelOpen = false)}
+            aria-expanded="true"
+            class="rounded border border-[#333] px-2.5 py-1 text-xs text-[#FFFFF0]/70 transition-colors hover:border-[#FFD700]/50 hover:text-[#FFFFF0]"
+          >
+            {$t.tour.fullscreen.hidePanel}
+          </button>
+          <button
+            type="button"
+            onclick={toggleFullscreen}
+            class="rounded border border-[#FFD700]/50 px-2.5 py-1 text-xs text-[#FFD700] transition-colors hover:bg-[#FFD700]/10"
+          >
+            {$t.tour.fullscreen.exit}
+            <kbd class="ml-1 text-[10px] text-[#FFD700]/70">V</kbd>
+          </button>
+        </div>
+      {/if}
+
       <nav aria-label={$t.tour.decks}>
         <p class="mb-2 text-[10px] uppercase tracking-widest text-[#FFD700]/70">{$t.tour.decks}</p>
         <div class="flex flex-wrap gap-1.5">
@@ -789,6 +932,17 @@
             : 'border-[#333] text-[#FFFFF0]/70 hover:border-[#FFD700]/50 hover:text-[#FFFFF0]'}"
         >
           {$t.tour.reveal.toggle} <kbd class="ml-1 text-[10px] text-[#FFD700]/70">G</kbd>
+        </button>
+        <button
+          type="button"
+          onclick={toggleFullscreen}
+          aria-pressed={immersive}
+          class="rounded border px-2.5 py-1 text-xs transition-colors {immersive
+            ? 'border-[#FFD700] bg-[#FFD700]/15 text-[#FFD700]'
+            : 'border-[#333] text-[#FFFFF0]/70 hover:border-[#FFD700]/50 hover:text-[#FFFFF0]'}"
+        >
+          {immersive ? $t.tour.fullscreen.exit : $t.tour.fullscreen.enter}
+          <kbd class="ml-1 text-[10px] text-[#FFD700]/70">V</kbd>
         </button>
         <button
           type="button"
@@ -963,6 +1117,8 @@
           <dd>{$t.tour.controls.findKeys}</dd>
           <dt class="text-[#FFFFF0]">{$t.tour.controls.reveal}</dt>
           <dd>{$t.tour.controls.revealKeys}</dd>
+          <dt class="text-[#FFFFF0]">{$t.tour.controls.fullscreen}</dt>
+          <dd>{$t.tour.controls.fullscreenKeys}</dd>
           {#if technique}
             <dt class="text-[#FFFFF0]">{$t.tour.controls.nen}</dt>
             <dd>{$t.tour.controls.nenKeys}</dd>
@@ -1253,3 +1409,31 @@
     else goToSpace(space)
   }}
 />
+
+<style>
+  /* What full screen takes away, and what it keeps. The header and the footer
+     belong to the archive rather than to the ship, and the walk is the whole
+     screen or it is not full screen. The Nen dock is left standing: it is the
+     one control the walk cannot supply for itself, since the aura is picked up
+     outside the route. */
+  :global(html.tour-immersive .app-header),
+  :global(html.tour-immersive .app-footer) {
+    display: none;
+  }
+
+  /* And the route's entry animation stands down with them — not for the motion,
+     which is over in half a second, but because it is filled `both` and leaves a
+     `transform` on the shell for good. A transformed ancestor is the containing
+     block for everything fixed inside it, so `inset: 0` would measure the route
+     rather than the screen: the walk would start under the header and run off
+     the bottom of the window, taking the read-outs with it. `animation: none`
+     is what lifts it — a plain `transform: none` loses to a running fill. */
+  :global(html.tour-immersive .route-shell) {
+    animation: none;
+  }
+
+  /* Nothing scrolls behind the walk. */
+  :global(html.tour-immersive body) {
+    overflow: hidden;
+  }
+</style>

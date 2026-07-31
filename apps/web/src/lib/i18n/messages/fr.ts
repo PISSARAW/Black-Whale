@@ -91,6 +91,8 @@ export const fr: Messages = {
       findKeys: '⌘K, ou Ctrl K',
       reveal: 'Montrer les preuves',
       revealKeys: 'G',
+      fullscreen: 'Plein écran, panneau compris',
+      fullscreenKeys: 'V',
       nen: 'Lancer le Hatsu actif',
       nenKeys: 'F, ou un clic, sur la pièce ou le volume que vous regardez',
       touch: 'Sur écran tactile',
@@ -175,6 +177,13 @@ export const fr: Messages = {
       copy: 'Copier ce point de vue',
       copied: 'Lien copié',
       failed: "Impossible d'accéder au presse-papiers",
+    },
+
+    fullscreen: {
+      enter: 'Plein écran',
+      exit: 'Quitter le plein écran',
+      hidePanel: 'Replier le panneau',
+      showPanel: 'Rouvrir le panneau',
     },
 
     comfort: {

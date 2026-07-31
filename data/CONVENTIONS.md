@@ -61,11 +61,11 @@ elle ne s'écrit jamais à la main — l'inventer reviendrait à faire passer un
 intervalle pour une heure.
 
 `source` dit qui l'affirme, `manga` par défaut. Une bonne part de la seconde
-moitié de l'arc est datée par Hunterpedia : ces dates valent d'être gardées, et
-portent `"source": "community"`. Une source communautaire ne peut pas être
-`stated` — impossible de savoir de l'extérieur si la fiche transcrit une
-légende ou reflète la lecture d'un contributeur, et `stated` est réservé à une
-planche lue ici. Un test échoue sur toute déclaration qui l'oublie.
+moitié de l'arc est datée par Hunterpedia, et fait foi : ces entrées portent
+`"source": "community"` et gardent le `basis` qu'elles rapportent — une heure
+transcrite reste `stated`. Le champ ne dévalue pas la date, il la rend
+traçable : ce sont les entrées à confronter à la planche en lisant, et à
+corriger si la fiche se trompe.
 
 `occurredAtLabel` est **rendu**, pas rédigé : `backfill_timeline.mjs` l'écrit
 depuis `occurredAt`, et un test échoue si le libellé du fichier ne correspond

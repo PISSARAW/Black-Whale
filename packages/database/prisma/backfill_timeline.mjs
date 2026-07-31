@@ -2,7 +2,7 @@ import { readFileSync } from 'fs'
 import { dirname, join, parse } from 'path'
 import { fileURLToPath } from 'url'
 import { PrismaClient } from '@prisma/client'
-import { bracket, formatVoyageTime, hasVoyageTime } from '@black-whale/domain'
+import { bracket, curatedChronology, formatVoyageTime, hasVoyageTime } from '@black-whale/domain'
 
 const prisma = new PrismaClient()
 
@@ -72,6 +72,47 @@ async function syncEvent(definition) {
 }
 
 /**
+ * Number the events in the order they happened, from the log rather than from
+ * what the column already held.
+ *
+ * The ordinals used to be kept and only extended: a run assigned one to every
+ * event that lacked it, appended after the highest in use, then moved the
+ * `occursAfterTitle` ones beside their anchor. That treated the column as the
+ * curated record — but the record is `data/events/events.json`, and every event
+ * added to it since landed at the end of the timeline whatever its chapter. The
+ * chronological view ended on chapters 376, 380, 406 and 410, and the clock,
+ * which brackets in this order, inherited the mistake.
+ *
+ * So the order is recomputed whole, by the same `curatedChronology` the data
+ * tests use. Seeded events carry no `occursAfterTitle` and fall in by chapter
+ * and sequence, as they did before. Ordinals are cleared first because the
+ * column is unique and any renumbering passes through collisions.
+ */
+async function renumberChronology() {
+  const declared = new Map(knownEvents.map((definition) => [definition.title, definition]))
+  const events = await prisma.narrativeEvent.findMany({
+    include: { chapter: { select: { number: true } } },
+  })
+
+  const ordered = curatedChronology(
+    events.map((event) => ({
+      id: event.id,
+      chapter: event.chapter.number,
+      sequence: event.sequence,
+      title: event.title,
+      occursAfterTitle: declared.get(event.title)?.occursAfterTitle,
+    })),
+  )
+
+  await prisma.$transaction([
+    prisma.narrativeEvent.updateMany({ data: { ordinal: null } }),
+    ...ordered.map((event, ordinal) =>
+      prisma.narrativeEvent.update({ where: { id: event.id }, data: { ordinal } }),
+    ),
+  ])
+}
+
+/**
  * Put every event on the voyage clock, in the order the ordinals just settled.
  *
  * The hours themselves are canon data and live in the log; what the database
@@ -126,56 +167,7 @@ async function main() {
     results[result] += 1
   }
 
-  // Preserve curated occurrence order (including flashbacks). Only events that
-  // do not have a chronological position yet are appended in publication order.
-  await prisma.$executeRawUnsafe(`
-		WITH cursor_end AS (
-			SELECT COALESCE(MAX("ordinal"), -1) AS "lastOrdinal" FROM "NarrativeEvent"
-		), ordered_events AS (
-			SELECT event."id", cursor_end."lastOrdinal" + ROW_NUMBER() OVER (
-				ORDER BY chapter."number", event."sequence", event."id"
-			) AS "ordinal"
-			FROM "NarrativeEvent" event
-			JOIN "Chapter" chapter ON chapter."id" = event."chapterId"
-			CROSS JOIN cursor_end
-			WHERE event."ordinal" IS NULL
-		)
-		UPDATE "NarrativeEvent" event
-		SET "ordinal" = ordered_events."ordinal"
-		FROM ordered_events
-		WHERE event."id" = ordered_events."id"
-	`)
-
-  // A late chapter can reveal an event from much earlier. Reinsert those
-  // declared events beside their chronological anchor without disturbing the
-  // relative order of the rest of the curated timeline.
-  const anchoredDefinitions = knownEvents.filter((definition) => definition.occursAfterTitle)
-  if (anchoredDefinitions.length > 0) {
-    const orderedEvents = await prisma.narrativeEvent.findMany({
-      orderBy: [{ ordinal: 'asc' }, { chapter: { number: 'asc' } }, { sequence: 'asc' }],
-    })
-
-    for (const definition of anchoredDefinitions) {
-      const eventIndex = orderedEvents.findIndex((event) => event.title === definition.title)
-      if (eventIndex === -1) continue
-      const [event] = orderedEvents.splice(eventIndex, 1)
-      const anchorIndex = orderedEvents.findIndex(
-        (candidate) => candidate.title === definition.occursAfterTitle,
-      )
-      if (anchorIndex === -1) {
-        orderedEvents.splice(eventIndex, 0, event)
-        continue
-      }
-      orderedEvents.splice(anchorIndex + 1, 0, event)
-    }
-
-    await prisma.$transaction([
-      prisma.narrativeEvent.updateMany({ data: { ordinal: null } }),
-      ...orderedEvents.map((event, ordinal) =>
-        prisma.narrativeEvent.update({ where: { id: event.id }, data: { ordinal } }),
-      ),
-    ])
-  }
+  await renumberChronology()
 
   await prisma.$executeRawUnsafe(`
 		UPDATE "NarrativeEvent" event

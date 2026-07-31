@@ -82,8 +82,8 @@
       basis && basis in precisionHint
         ? precisionHint[basis as keyof typeof precisionHint]
         : $t.timeline.timeOnEvent
-    // Provenance is a separate line of the same tooltip: a Hunterpedia dating
-    // is worth showing, and worth showing as theirs.
+    // Provenance rides along in the same tooltip. It does not discount the
+    // time — it says which entries a reader can check against the page.
     return event.occurredAtSource === 'community'
       ? `${claim} · ${$t.timeline.communitySourced}`
       : claim
@@ -720,8 +720,8 @@
     background: rgba(112, 189, 193, 0.16);
     color: #b6e6e7;
   }
-  /* Dated by Hunterpedia rather than by a panel: the chip keeps its colour and
-     loses its outline, so the difference reads without shouting. */
+  /* Dated by Hunterpedia rather than read here: same colour, dashed outline,
+     so the provenance reads without demoting the time. */
   .event-time.sourced {
     border-style: dashed;
   }

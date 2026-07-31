@@ -59,10 +59,11 @@ export interface DeclaredTime {
    * Who told us, `manga` when omitted.
    *
    * `basis` says how strong the claim is, `source` says whose claim it is, and
-   * the two are not the same axis: a fan wiki dating a chapter to day 12 may be
-   * transcribing a caption or may be an editor's reading, and from outside we
-   * cannot tell which. So a `community` time is never `stated` — that basis is
-   * reserved for a panel someone here has actually read.
+   * the two are separate axes on purpose. Hunterpedia dates a good part of the
+   * second half of the arc and is taken at its word here, so a `community`
+   * time carries the basis it reports — a clock it transcribes is `stated`.
+   * Recording the source is not a discount on the claim: it says which entries
+   * a reader can check against the page, and where to correct one that is wrong.
    */
   source?: SourceType
 }

@@ -929,7 +929,7 @@ export const en = {
     timeOnEvent: 'Time recorded on the event itself',
     undated: 'Undated',
     undatedHint: 'Happens off the voyage, so the ship’s clock says nothing about it',
-    communitySourced: 'Dated by Hunterpedia, not read off a panel',
+    communitySourced: 'Dated by Hunterpedia',
     precision: {
       stated: 'Time stated by the manga',
       derived: 'Time worked out from a stated one',

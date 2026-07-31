@@ -856,7 +856,7 @@ export const fr: Messages = {
     timeOnEvent: 'Heure consignée sur l’événement lui-même',
     undated: 'Non daté',
     undatedHint: 'Se passe hors du voyage : l’horloge du navire n’en dit rien',
-    communitySourced: 'Daté par Hunterpedia, pas lu sur une planche',
+    communitySourced: 'Daté par Hunterpedia',
     precision: {
       stated: 'Heure indiquée par le manga',
       derived: 'Heure déduite d’une heure indiquée',

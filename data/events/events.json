@@ -203,11 +203,11 @@
     "legacyTitles": [],
     "occursAfterTitle": "Chrollo orders the hunt for Hisoka",
     "occurredAt": {
-      "basis": "derived",
+      "basis": "stated",
       "hours": 4,
       "source": "community"
     },
-    "occurredAtLabel": "≈ Day 1 · 16:00"
+    "occurredAtLabel": "Day 1 · Sunday · 16:00"
   },
   {
     "chapter": 366,
@@ -676,11 +676,11 @@
     "summary": "Parallel Future lets Tserriednich foresee the gunshot, evade it and conceal the outcome from his guards.",
     "legacyTitles": [],
     "occurredAt": {
-      "basis": "derived",
+      "basis": "stated",
       "day": 9,
       "source": "community"
     },
-    "occurredAtLabel": "≈ Day 9"
+    "occurredAtLabel": "Day 9 · Monday"
   },
   {
     "chapter": 389,
@@ -816,11 +816,11 @@
     "summary": "Morena asks Borksen to join Heil-Ly and uses a card game that forces both sides to reveal information and narrow the answer.",
     "legacyTitles": [],
     "occurredAt": {
-      "basis": "derived",
+      "basis": "stated",
       "day": 12,
       "source": "community"
     },
-    "occurredAtLabel": "≈ Day 12"
+    "occurredAtLabel": "Day 12 · Thursday"
   },
   {
     "chapter": 408,
@@ -897,11 +897,11 @@
     "summary": "Confronted by Kurapika and Bill, Oito admits that the child in room 1014 is her nephew; the real Woble remains missing.",
     "legacyTitles": [],
     "occurredAt": {
-      "basis": "derived",
+      "basis": "stated",
       "day": 12,
       "source": "community"
     },
-    "occurredAtLabel": "≈ Day 12"
+    "occurredAtLabel": "Day 12 · Thursday"
   },
   {
     "chapter": 340,
@@ -1007,11 +1007,11 @@
     "summary": "Kurapika subdues Sayird and uses Steal Chain, revealing the Emperor Time condition needed to control the stolen power.",
     "legacyTitles": [],
     "occurredAt": {
-      "basis": "derived",
+      "basis": "stated",
       "hours": 2,
       "source": "community"
     },
-    "occurredAtLabel": "≈ Day 1 · 14:00"
+    "occurredAtLabel": "Day 1 · Sunday · 14:00"
   },
   {
     "chapter": 362,
@@ -1142,11 +1142,11 @@
     "summary": "Kurapika lends abilities through Stealth Dolphin to open the students' aura nodes while Bill demonstrates Water Divination.",
     "legacyTitles": [],
     "occurredAt": {
-      "basis": "derived",
+      "basis": "stated",
       "hours": 215.5,
       "source": "community"
     },
-    "occurredAtLabel": "≈ Day 10 · 11:30"
+    "occurredAtLabel": "Day 10 · Tuesday · 11:30"
   },
   {
     "chapter": 390,
@@ -1220,11 +1220,11 @@
     "summary": "Longhi reveals Moonlight Act, her connection to Beyond and the plan to identify which prince may be his child.",
     "legacyTitles": [],
     "occurredAt": {
-      "basis": "derived",
+      "basis": "stated",
       "hours": 215.75,
       "source": "community"
     },
-    "occurredAtLabel": "≈ Day 10 · 11:45"
+    "occurredAtLabel": "Day 10 · Tuesday · 11:45"
   },
   {
     "chapter": 403,
@@ -1234,11 +1234,11 @@
     "summary": "Balsamilco enters the Justice Bureau intending to infect Halkenburg during questioning, as Kacho's letter reveals Unma is Halkenburg's mother.",
     "legacyTitles": [],
     "occurredAt": {
-      "basis": "derived",
+      "basis": "stated",
       "hours": 234.75,
       "source": "community"
     },
-    "occurredAtLabel": "≈ Day 11 · 06:45"
+    "occurredAtLabel": "Day 11 · Wednesday · 06:45"
   },
   {
     "chapter": 404,
@@ -1261,11 +1261,11 @@
     "summary": "Kurapika expands the lessons, explains how the succession ritual can fail and announces that Woble is not an eligible participant.",
     "legacyTitles": [],
     "occurredAt": {
-      "basis": "derived",
+      "basis": "stated",
       "day": 12,
       "source": "community"
     },
-    "occurredAtLabel": "≈ Day 12"
+    "occurredAtLabel": "Day 12 · Thursday"
   },
   {
     "chapter": 412,
@@ -1275,11 +1275,11 @@
     "summary": "Cleapatro visits Beyond in his VVIP cell to review the more than one thousand lawsuits he filed against Kakin.",
     "legacyTitles": [],
     "occurredAt": {
-      "basis": "derived",
+      "basis": "stated",
       "day": 12,
       "source": "community"
     },
-    "occurredAtLabel": "≈ Day 12"
+    "occurredAtLabel": "Day 12 · Thursday"
   },
   {
     "chapter": 413,
@@ -1330,11 +1330,11 @@
     "summary": "Kurapika and Oito discuss a letter intended for Oito's sister through a delivery service before the declaration of martial law interrupts them.",
     "legacyTitles": ["Furykov identifies the structure of Beyond's curse"],
     "occurredAt": {
-      "basis": "derived",
+      "basis": "stated",
       "hours": 265.8333333333333,
       "source": "community"
     },
-    "occurredAtLabel": "≈ Day 12 · 13:50",
+    "occurredAtLabel": "Day 12 · Thursday · 13:50",
     "occursAfterTitle": "Benjamin discovers the body swap and his infection"
   },
   {

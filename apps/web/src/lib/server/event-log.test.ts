@@ -150,17 +150,17 @@ describe('data/events/events.json', () => {
     })
 
     /**
-     * Hunterpedia dates a good part of the second half of the arc, and those
-     * datings are worth keeping — but a wiki page is not a panel. Whether an
-     * entry transcribes a caption or reflects an editor's reading cannot be
-     * told from outside, so `stated` stays for what someone here has read.
+     * Hunterpedia dates a good part of the second half of the arc and is taken
+     * at its word, so what it reports keeps the basis it reports. What the
+     * source field buys is traceability: these are the entries to check against
+     * the page while reading, and the ones to correct if the page is wrong.
      */
-    it('never lets a source outside the manga state a time', () => {
-      const overclaimed = events
-        .filter((event) => event.occurredAt?.basis === 'stated')
-        .filter((event) => event.occurredAt!.source && event.occurredAt!.source !== 'manga')
+    it('names a source it recognises', () => {
+      const known = new Set(['manga', 'anime', 'databook', 'interview', 'community'])
+      const unknown = events
+        .filter((event) => event.occurredAt?.source && !known.has(event.occurredAt.source))
         .map((event) => `${event.title} (${event.occurredAt!.source})`)
-      expect(overclaimed).toEqual([])
+      expect(unknown).toEqual([])
     })
 
     it('gives every declared time either an hour or a day', () => {

@@ -2,6 +2,7 @@ import { prisma } from '$lib/server/db'
 import type { CatalogCharacter } from '$lib/server/data-files'
 import { buildPerspective } from '$lib/server/perspectives'
 import { readSpoilerProfile } from '$lib/server/spoiler'
+import { trimWorldStateForMap } from '$lib/server/mapPayload'
 import {
   activeFactionTypesAt,
   filterPresencesByBodies,
@@ -171,7 +172,10 @@ export const load: PageServerLoad = async ({ url, cookies }) => {
     followMode,
     selectedEventId: selectedEvent?.id || null,
     perspective,
-    worldState: {
+    // Trimmed on the way out, not on the way in: everything above still reads
+    // the joins the engine attached. What crosses to the browser is only what
+    // the map reads there.
+    worldState: trimWorldStateForMap({
       characters: visibleCharacters,
       bodies: rawWorldState.bodies,
       consciousnesses: rawWorldState.consciousnesses,
@@ -180,9 +184,9 @@ export const load: PageServerLoad = async ({ url, cookies }) => {
       appearances: rawWorldState.appearances,
       bodyStates: rawWorldState.bodyStates,
       locations: visibleLocations,
-    },
+    }),
     nextChapterState: nextChapterWorldState
-      ? {
+      ? trimWorldStateForMap({
           chapterNumber: nextChapterNumber,
           characters: nextChapterWorldState.characters.map((character: any) => {
             const beyondLineage = beyondLineageStatusFor(
@@ -204,7 +208,7 @@ export const load: PageServerLoad = async ({ url, cookies }) => {
           appearances: nextChapterWorldState.appearances,
           bodyStates: nextChapterWorldState.bodyStates,
           locations: visibleLocations,
-        }
+        })
       : null,
     spoilerLimit: spoilerProfile?.maxChapter,
   }

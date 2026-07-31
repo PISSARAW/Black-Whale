@@ -29,7 +29,9 @@ Generate a different random value for every secret. Use `openssl rand -hex 32` f
 ./infrastructure/hetzner/deploy.sh
 ```
 
-The deployment validates the configuration, builds immutable images, runs `prisma migrate deploy`, waits for application healthchecks, and then exposes the stack through Caddy. Caddy obtains and renews TLS certificates automatically.
+The deployment validates the configuration, builds immutable images, runs `prisma migrate deploy` and the data backfills, waits for application healthchecks, and then exposes the stack through Caddy. Caddy obtains and renews TLS certificates automatically.
+
+The migration step runs on its own, before any running container is replaced. If it fails the script stops there and the previous release keeps serving — nothing is torn down, and the failure costs no downtime. Fix what the output reports and run the script again.
 
 For upgrades, pull the reviewed commit and run the same command. Check state with:
 

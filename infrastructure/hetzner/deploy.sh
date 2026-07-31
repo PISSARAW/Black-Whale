@@ -16,8 +16,25 @@ if grep -q 'replace-with-' "$env_file"; then
   exit 1
 fi
 
+compose() {
+  docker compose --env-file "$env_file" -f "$compose_file" "$@"
+}
+
 chmod 600 "$env_file"
-docker compose --env-file "$env_file" -f "$compose_file" config --quiet
-docker compose --env-file "$env_file" -f "$compose_file" build --pull
-docker compose --env-file "$env_file" -f "$compose_file" up -d --remove-orphans
-docker compose --env-file "$env_file" -f "$compose_file" ps
+compose config --quiet
+compose build --pull
+
+# The schema and the backfills run here, on their own, before anything that is
+# currently serving is touched. Inside `up` they are a gate: compose stops web
+# and admin to recreate them, then waits for the migration to complete, and a
+# backfill that fails leaves that gate shut for as long as the fix takes — the
+# site answers 502 in the meantime. Failing here costs nothing: the previous
+# containers are still up and still serving the previous release.
+if ! compose run --rm migrate; then
+  echo "Migration or backfill failed. The running stack was left untouched." >&2
+  echo "Read the output above, fix it, and run this script again." >&2
+  exit 1
+fi
+
+compose up -d --remove-orphans
+compose ps

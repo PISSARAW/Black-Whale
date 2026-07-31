@@ -426,7 +426,6 @@ export const en = {
             : 'The wrapping holds nothing yet · walk into what the aura has set against you',
         packedAway: (room: string, packed: number) =>
           `${room} did nothing to you: it went into the wrapping · ${packed} packed away`,
-        nothingPacked: 'Nothing was taken, so there is nothing to spend · the sun rises on damage',
         sunRisen: (metres: number, solids: number) =>
           `The sun rose where you stand · ${metres} m of it, and ${solids} thing${solids === 1 ? '' : 's'} burnt with no regard for whose they were`,
         jailed: (room: string, doors: number) =>
@@ -491,6 +490,8 @@ export const en = {
         released: (solid: string) => `${solid} is let go`,
         cameUpUnder: (solid: string, other: string) =>
           `The aura ran out of ${solid} along the floor and came up under ${other}`,
+        cameUpEmpty: (room: string) =>
+          `The aura ran along the floor and came up out of the deck in ${room}`,
         stitched: (solid: string) => `${solid} is back as the blueprint has it`,
         nothingToStitch: (solid: string) => `Nothing was done to ${solid} to undo`,
         animated: (solid: string) => `${solid} is awake, and no less solid for it`,

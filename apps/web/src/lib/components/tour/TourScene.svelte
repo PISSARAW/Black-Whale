@@ -68,7 +68,7 @@
   } from '$lib/tour/navigation'
   import { SEALED_DENSITY, fogDensityOf, reverbTime, settleDensity } from '$lib/tour/atmosphere'
   import { driftDust, dustOf, type Dust } from '$lib/tour/dust'
-  import { distanceToBoundary } from '$lib/tour/geometry'
+  import { distanceToBoundary, pointInPolygon } from '$lib/tour/geometry'
   import {
     enterDeck,
     enterRoom,
@@ -94,6 +94,11 @@
     availableLink?: { link: Link; to: string } | null
     /** Set to jump the visitor somewhere; cleared once honoured. */
     jumpTo?: string | null
+    /**
+     * Where in that space to land, for the one arrival that has a point rather
+     * than a room: Halkenburg's arrow puts the visitor where it fell.
+     */
+    jumpAt?: Vec2 | null
     /** Whether the pointer is captured, so the page can say how to get out. */
     engaged?: boolean
     /**
@@ -191,6 +196,7 @@
     currentSpace = $bindable(null),
     availableLink = $bindable(null),
     jumpTo = $bindable(null),
+    jumpAt = $bindable(null),
     engaged = $bindable(false),
     touch = $bindable(false),
     touchLabels,
@@ -1508,7 +1514,8 @@
 
       /** Puts what the world says is standing into the scene, and takes out the rest. */
       function syncApparitions() {
-        const wanted = apparitionsOn(ship, world)
+        // Where the walk is, for the one apparition that follows it.
+        const wanted = apparitionsOn(ship, world, { at: pointer, tierId: currentTierId })
         const standing: Record<string, true> = {}
 
         for (const seen of wanted) {
@@ -1716,7 +1723,10 @@
       const GUST_SECONDS = 1.1
       const PUNCH_SECONDS = 1
       const SUN_SECONDS = 2.4
+      const ARROW_SECONDS = 0.9
       let playing = 0
+      /** How hard the sun is burning, which the exposure is read off. */
+      let burning = 0
       let playedSeq = -1
       let played: (TourFlash & { seq: number }) | null = null
 
@@ -1773,6 +1783,35 @@
       const sunLight = new THREE.PointLight(0xffb14a, 0, 60, 2)
       scene.add(sunLight)
 
+      /**
+       * The arrow, which is only ever seen going past.
+       *
+       * A shaft and a head, flown from where it was loosed to where it fell —
+       * the exchange it makes has already happened, so what the walk draws is
+       * the trace of it, in the gold of the aura that made it.
+       */
+      const arrowMaterial = new THREE.MeshBasicMaterial({
+        color: 0xf7e27d,
+        transparent: true,
+        opacity: 0.95,
+        depthTest: false,
+      })
+      const shaft = new THREE.Group()
+      const arrowShaft = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.05, 0.05, 1.6, 6),
+        arrowMaterial,
+      )
+      arrowShaft.rotation.x = Math.PI / 2
+      shaft.add(arrowShaft)
+      const arrowHead = new THREE.Mesh(new THREE.ConeGeometry(0.13, 0.4, 6), arrowMaterial)
+      arrowHead.rotation.x = -Math.PI / 2
+      arrowHead.position.z = -1
+      shaft.add(arrowHead)
+      shaft.visible = false
+      shaft.frustumCulled = false
+      shaft.renderOrder = 3
+      scene.add(shaft)
+
       /** A fist: a block of knuckles, a thumb, and the forearm behind it. */
       const fist = new THREE.Group()
       const fistMaterial = new THREE.MeshBasicMaterial({
@@ -1824,15 +1863,39 @@
             ? GUST_SECONDS
             : played.kind === 'sun'
               ? SUN_SECONDS
-              : PUNCH_SECONDS
+              : played.kind === 'arrow'
+                ? ARROW_SECONDS
+                : PUNCH_SECONDS
         const through = playing / span
         if (through >= 1) {
           gust.visible = false
           gustRing.visible = false
           fist.visible = false
+          shaft.visible = false
           sun.visible = false
           sunLight.intensity = 0
+          if (burning) {
+            burning = 0
+            renderer.toneMappingExposure = blinded ? 0.02 : 1
+            fog.color.setHex(0x050505)
+          }
           played = null
+          return
+        }
+
+        if (played.kind === 'arrow') {
+          // Loosed and gone: a quarter of a second across whatever it crossed,
+          // and the shaft points the way it is travelling.
+          const from = played.from ?? played.at
+          const flown = Math.min(1, through * 3)
+          shaft.visible = true
+          shaft.position.set(
+            from[0] + (played.at[0] - from[0]) * flown,
+            played.y + Math.sin(flown * Math.PI) * 1.2,
+            from[1] + (played.at[1] - from[1]) * flown,
+          )
+          shaft.lookAt(played.at[0], played.y, played.at[1])
+          arrowMaterial.opacity = 0.95 * (1 - Math.max(0, (through - 0.5) * 2))
           return
         }
 
@@ -1849,6 +1912,13 @@
           sunLight.position.copy(camera.position)
           sunLight.distance = metres * 2.5
           sunLight.intensity = 26 * risen * (1 - through)
+          // And the whole picture burns with it. A sphere the visitor is
+          // standing inside is a wash of colour over the room; the exposure and
+          // the air are what make it a sun — the deck blows out white the way it
+          // does looking into one, and comes back as it goes out.
+          burning = risen * (1 - through * through)
+          renderer.toneMappingExposure = 1 + burning * 2.6
+          fog.color.setHex(0xf2a63b)
           return
         }
 
@@ -1928,11 +1998,26 @@
         const space = facing()
         const plan = ship.plans.get(currentTierId)
         if (!plan) return
-        const to = solid
-          ? solidNow(solid, world.solids[solid.id]).at
-          : space
-            ? centroid(space)
-            : null
+        // The far end of the reticle rather than the middle of the room: a
+        // thread thrown down a hundred and forty metres of promenade takes hold
+        // at the far end of it, and one thrown at the room you are standing in
+        // has to take hold somewhere you are not already standing — which the
+        // centroid, once you had swung to it, never was. That was the whole of
+        // "it only works once".
+        const anchor = () => {
+          if (solid) return solidNow(solid, world.solids[solid.id]).at
+          if (!space) return null
+          const sin = Math.sin(yaw)
+          const cos = Math.cos(yaw)
+          let furthest: Vec2 | null = null
+          for (let metres = 2; metres <= reachOf(world.body); metres += 1.5) {
+            const point: Vec2 = [pointer[0] - sin * metres, pointer[1] - cos * metres]
+            if (pointInPolygon(point, space.footprint)) furthest = point
+          }
+          return furthest
+        }
+
+        const to = anchor()
         if (!to) return
         const reach = Math.hypot(to[0] - pointer[0], to[1] - pointer[1])
         // Nothing to swing to: a thread thrown at your own feet is a thread.
@@ -2628,7 +2713,7 @@
 
       // The page asks for a jump by setting `jumpTo`; honour it and clear it so
       // asking twice for the same space works.
-      jump = (spaceId: string) => goTo(spaceId)
+      jump = (spaceId: string, landing?: Vec2) => goTo(spaceId, landing)
       // The camera and the lights are in this closure, so anything the panel
       // changes has to be handed in rather than read out.
       relens = (settings: Comfort) => {
@@ -2651,7 +2736,7 @@
   })
 
   /** Assigned once the scene is live; the effect below waits for it. */
-  let jump = $state<((spaceId: string) => void) | null>(null)
+  let jump = $state<((spaceId: string, landing?: Vec2) => void) | null>(null)
   /** The same, for the two things the on-screen buttons stand in for. */
   let take = $state<(() => void) | null>(null)
   let castNow = $state<(() => void) | null>(null)
@@ -2665,8 +2750,9 @@
   $effect(() => {
     const requested = jumpTo
     if (!requested || !jump) return
-    jump(requested)
+    jump(requested, jumpAt ?? undefined)
     jumpTo = null
+    jumpAt = null
   })
 </script>
 

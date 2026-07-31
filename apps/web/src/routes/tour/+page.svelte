@@ -55,7 +55,7 @@
     type TourReport,
     type TourWorld,
   } from '$lib/tour/hatsu'
-  import type { Link, Provenance, Space, Structure } from '$lib/tour/types'
+  import type { Link, Provenance, Space, Structure, Vec2 } from '$lib/tour/types'
 
   const ship = theShip()
 
@@ -83,6 +83,8 @@
   let currentSpace = $state<Space | null>(null)
   let availableLink = $state<{ link: Link; to: string } | null>(null)
   let jumpTo = $state<string | null>(null)
+  /** Where in that room, for the arrow — which lands where it fell, not at the door. */
+  let jumpAt = $state<Vec2 | null>(null)
   let engaged = $state(false)
   /** Set by the scene once it knows it is being walked with a finger. */
   let touch = $state(false)
@@ -184,8 +186,9 @@
     ),
   )
 
-  function goToSpace(space: Space) {
+  function goToSpace(space: Space, landing: Vec2 | null = null) {
     if (space.tierId !== tierId) tierId = space.tierId
+    jumpAt = landing
     jumpTo = space.id
   }
 
@@ -476,7 +479,12 @@
     world = result.world
     report = result.report
     show(result.report)
-    if (result.travelTo) goToSpace(ship.spaces.get(result.travelTo)!)
+    if (result.travelTo) {
+      // Where the aura came down in that room, for the technique that carries
+      // the visitor to it rather than merely reaching it.
+      const landing = result.world.landed[result.travelTo] ?? null
+      goToSpace(ship.spaces.get(result.travelTo)!, landing)
+    }
   }
 
   /**
@@ -736,6 +744,7 @@
         bind:currentSpace
         bind:availableLink
         bind:jumpTo
+        bind:jumpAt
         bind:engaged
         bind:touch
         bind:position

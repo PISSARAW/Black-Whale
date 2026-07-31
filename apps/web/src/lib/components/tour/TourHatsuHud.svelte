@@ -204,6 +204,8 @@
         return say.released(solidName(report.solidId))
       case 'came-up-under':
         return say.cameUpUnder(solidName(report.solidId), solidName(report.otherId))
+      case 'came-up-empty':
+        return say.cameUpEmpty(roomName(report.spaceId))
       case 'stitched':
         return say.stitched(solidName(report.solidId))
       case 'nothing-to-stitch':
@@ -322,8 +324,6 @@
         return say.armourHolding(report.packed)
       case 'packed-away':
         return say.packedAway(roomName(report.spaceId), report.packed)
-      case 'nothing-packed':
-        return say.nothingPacked
       case 'sun-risen':
         return say.sunRisen(report.metres, report.solids)
 

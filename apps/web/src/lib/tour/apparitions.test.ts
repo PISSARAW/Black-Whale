@@ -36,7 +36,8 @@ describe('the owl', () => {
     expect(world.owl).toBe(elsewhere.id)
     const [owl] = of(world, 'owl')
     expect(owl.spaceId).toBe(elsewhere.id)
-    expect(owl.at).toEqual(centroid(elsewhere))
+    // Where the aura came down, which the cast remembered.
+    expect(owl.at).toEqual(world.landed[elsewhere.id])
   })
 
   it('moves rather than multiplying, and is recalled from where it sits', () => {
@@ -147,8 +148,10 @@ describe('the fish', () => {
     // Every fish is given the room's own reach to swim, and it is a room's.
     expect(shoal.every((fish) => (fish.spread ?? 0) > 0)).toBe(true)
 
-    const refused = cast(EMPTY_WORLD, 'devour', elsewhere.id).world
-    expect(of(refused, 'fish')).toEqual([])
+    // The cast shuts the room itself, so a room that was open is loosed in too.
+    const alone = cast(EMPTY_WORLD, 'devour', elsewhere.id).world
+    expect(alone.shut).toContain(elsewhere.id)
+    expect(of(alone, 'fish')).toHaveLength(SHOAL)
   })
 
   it('eats one thing at a time, and stops when the room is bare', () => {

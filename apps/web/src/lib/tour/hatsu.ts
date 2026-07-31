@@ -273,6 +273,14 @@ export interface TourWorld {
   trap: string | null
   /** Where the visitor was standing before the room they are in now. */
   cameFrom: string | null
+  /**
+   * Where the aura came down in each room it was cast on.
+   *
+   * Not a hold and not spent: it is the walk remembering that a card laid on
+   * the promenade was laid *there*, twelve metres down the reticle, rather than
+   * at the point a hundred-and-forty-metre room happens to average out to.
+   */
+  landed: Record<string, Vec2>
 
   /**
    * The technique the visitor currently has up, or `null` in Zetsu.
@@ -479,6 +487,7 @@ export const EMPTY_WORLD: TourWorld = {
   snakes: null,
   trap: null,
   cameFrom: null,
+  landed: {},
   holding: null,
   trail: [],
   owl: null,
@@ -595,6 +604,7 @@ export type TourReport =
   | { kind: 'bound'; solidId: string }
   | { kind: 'released'; solidId: string }
   | { kind: 'came-up-under'; solidId: string; otherId: string }
+  | { kind: 'came-up-empty'; spaceId: string }
   | { kind: 'stitched'; solidId: string }
   | { kind: 'nothing-to-stitch'; solidId: string }
   | { kind: 'animated'; solidId: string }
@@ -655,7 +665,6 @@ export type TourReport =
   | { kind: 'armour-worn' }
   | { kind: 'armour-holding'; packed: number }
   | { kind: 'packed-away'; spaceId: string; packed: number }
-  | { kind: 'nothing-packed' }
   | { kind: 'sun-risen'; metres: number; solids: number }
   // On the record.
   | { kind: 'owl-attached'; rooms: number }
@@ -1035,11 +1044,19 @@ const SOLID_CASTS: Partial<Record<HatsuInteractionKind, SolidCast>> = {
 
   // The aura runs along the floor and comes up under something else in the
   // same room: you strike here and the room is hit there.
+  // Somewhere else in the room by preference — that is the whole of the trick.
+  // A room with one thing in it has nowhere else to come up, and the fist comes
+  // up under the thing itself rather than the cast being refused: what the
+  // technique promises is that you strike here and the floor answers there, not
+  // that a room must be furnished twice over before it answers at all.
   'remote-strike': ({ world, ship, structure, id, away }) => {
-    const neighbour = ship.structures.find(
-      (candidate) => candidate.spaceId === structure.spaceId && candidate.id !== id,
-    )
-    if (!neighbour) return { world, report: { kind: 'no-solid' } }
+    const neighbour =
+      [...ship.structures, ...world.copies].find(
+        (candidate) =>
+          candidate.spaceId === structure.spaceId &&
+          candidate.id !== id &&
+          !world.solids[candidate.id]?.gone,
+      ) ?? structure
     const landing = shove(ship, world, neighbour, world.solids[neighbour.id], away(2.5))
     return {
       world: withHold(world, neighbour.id, landing ? { at: landing } : { hits: 1 }),
@@ -1156,6 +1173,18 @@ function castPastTheTarget(
   }
 
   if (kind === 'shred' && world.wound) return shredTheWound(world, ship, world.wound)
+
+  // The aura runs along the floor and comes up wherever it was sent, and a
+  // stretch of empty deck is somewhere it can be sent: the technique was
+  // refusing every room the reticle happened to cross without a solid in it,
+  // which from inside the walk was a punch that did nothing four casts in five.
+  // Nothing is struck and nothing is moved — the floor answers, and that is the
+  // whole of the report.
+  if (kind === 'remote-strike' && !structure) {
+    const room = input.targetId ? ship.spaces.get(input.targetId) : null
+    if (!room) return { world, report: { kind: 'no-target' } }
+    return { world, report: { kind: 'came-up-empty', spaceId: room.id } }
+  }
 
   if (kind === 'relay' && world.pairing) {
     const cargoId = world.pairing
@@ -1409,11 +1438,14 @@ function mendWhatWasHurt({ world, ship, input }: BodyCastContext): TourCastResul
  */
 function raiseTheSun({ world, ship, body, input }: BodyCastContext): TourCastResult {
   const packed = body.packed ?? 0
-  if (!packed) return { world, report: { kind: 'nothing-packed' } }
   const room = input.standingIn ? ship.spaces.get(input.standingIn) : null
   if (!room) return { world, report: { kind: 'no-target' } }
 
-  const metres = packed * SUN_FLARE_METRES_PER_HIT
+  // The sun rises whether or not the wrapping had anything in it. What Pain
+  // Packer buys is how far it reaches — the technique used to refuse outright
+  // without it, which in a walk that hands out one aura at a time meant Feitan
+  // could never raise it at all.
+  const metres = Math.max(SUN_FLARE_METRES_PER_HIT, packed * SUN_FLARE_METRES_PER_HIT)
   const solids = { ...world.solids }
   let burnt = 0
   for (const structure of [...ship.structures, ...world.copies]) {
@@ -2175,15 +2207,20 @@ const ROOM_CASTS: Partial<Record<HatsuInteractionKind, RoomCast>> = {
     }
   },
 
-  // The fish only eat inside a closed room, and the victim feels nothing
-  // while it lasts: nothing is taken until the visitor walks out again.
-  devour: ({ world, target }) =>
-    world.shut.includes(target.id)
-      ? {
-          world: { ...world, devouring: [...new Set([...world.devouring, target.id])] },
-          report: { kind: 'fish-loosed', spaceId: target.id },
-        }
-      : { world, report: { kind: 'jail-refused', spaceId: target.id } },
+  // The fish only eat inside a closed room — so the cast closes it. It used to
+  // refuse any room that was not already shut, which in a walk that hands out
+  // one aura at a time meant the fish could only ever be loosed by someone who
+  // had first gone and fetched Kurapika's chain: the rule was being kept by
+  // making the technique unusable. Chrollo seals the room and looses them, and
+  // that is one cast.
+  devour: ({ world, target }) => ({
+    world: {
+      ...world,
+      shut: [...new Set([...world.shut, target.id])],
+      devouring: [...new Set([...world.devouring, target.id])],
+    },
+    report: { kind: 'fish-loosed', spaceId: target.id },
+  }),
 
   'legal-defense': ({ world, target }) => ({
     world: { ...world, guarded: [...new Set([...world.guarded, target.id])] },
@@ -2389,20 +2426,21 @@ const ROOM_CASTS: Partial<Record<HatsuInteractionKind, RoomCast>> = {
     }
   },
 
-  // The arrow pierces every defence, so it is not refused by a shut or an
-  // isolated room, and what it exchanges is what a room is.
-  arrow: ({ world, target }) => {
-    if (!world.pairing) {
-      return {
-        world: { ...world, pairing: target.id },
-        report: { kind: 'arrow-drawn', spaceId: target.id },
-      }
+  // The bow is drawn, the arrow is loosed, and the two bodies it names exchange
+  // places: the one that shot it and the one it fell on. So the visitor goes
+  // where the arrow went, which is what the exchange looks like from inside the
+  // head that made it. It pierces every defence, so a shut or isolated room is
+  // no reason for it to be refused — and it needs no second cast to pair
+  // anything, because the first of the two rooms is wherever the archer stands.
+  arrow: ({ world, target, standingIn }) => {
+    const from = standingIn ?? world.cameFrom
+    if (!from || from === target.id) {
+      return { world, report: { kind: 'arrow-drawn', spaceId: target.id } }
     }
-    const first = world.pairing
-    if (first === target.id) return { world, report: { kind: 'arrow-drawn', spaceId: target.id } }
     return {
-      world: { ...world, pairing: null, souls: [...world.souls, [first, target.id]] },
-      report: { kind: 'souls-swapped', a: first, b: target.id },
+      world: { ...world, pairing: null, souls: [...world.souls, [from, target.id]] },
+      report: { kind: 'souls-swapped', a: from, b: target.id },
+      travelTo: target.id,
     }
   },
 
@@ -2443,9 +2481,50 @@ function runCast(
   if (BOOK_HATSU_KINDS.has(kind)) return castOnTechniques(world, kind, target)
 
   const cast = ROOM_CASTS[kind]
-  return cast
-    ? cast({ world, ship, target, input, at, standingIn })
-    : { world, report: { kind: 'inert' } }
+  if (!cast) return { world, report: { kind: 'inert' } }
+
+  const result = cast({ world, ship, target, input, at, standingIn })
+  // Where the aura actually landed in the room, remembered for whatever the
+  // technique leaves standing there.
+  //
+  // A room is a hundred and forty metres of promenade as readily as it is a
+  // cabin, and everything the walk hangs in one used to hang at its centroid —
+  // which from where the cast was made was as often as not behind a bulkhead,
+  // sixty metres off and forty centimetres wide. The technique landed and
+  // nothing appeared to have happened. What is kept here is the point down the
+  // reticle, so the card is laid where it was aimed.
+  return {
+    ...result,
+    world: {
+      ...result.world,
+      landed: landingIn(target, at, input.heading, result.world.landed),
+    },
+  }
+}
+
+/**
+ * The point in a room the aura came down on.
+ *
+ * Walked along the aim ray rather than measured: the first step that is inside
+ * the room's own footprint is where it landed. A cast made from inside the room
+ * lands a few paces ahead of the visitor, which is where they were looking; one
+ * made from outside it lands at the near edge, which is the part of the room
+ * they can see. Falls back to the middle when the ray does not reach — an
+ * unaimed cast from the index of rooms has no reticle to read.
+ */
+function landingIn(
+  target: Space,
+  at: Vec2,
+  heading = 0,
+  landed: Record<string, Vec2> = {},
+): Record<string, Vec2> {
+  const sin = Math.sin(heading)
+  const cos = Math.cos(heading)
+  for (let metres = 1.5; metres <= 120; metres += 1.5) {
+    const point: Vec2 = [at[0] - sin * metres, at[1] - cos * metres]
+    if (pointInPolygon(point, target.footprint)) return { ...landed, [target.id]: point }
+  }
+  return { ...landed, [target.id]: centroid(target) }
 }
 
 /**

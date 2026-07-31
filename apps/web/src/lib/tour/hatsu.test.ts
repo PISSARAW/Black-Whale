@@ -643,8 +643,14 @@ describe('what waits at a threshold', () => {
     expect(Object.values(out.world.solids).filter((hold) => hold.gone)).toHaveLength(1)
   })
 
-  it('refuses to loose the fish anywhere but a closed room', () => {
-    expect(door(EMPTY_WORLD, 'devour', roomA.id).report).toMatchObject({ kind: 'jail-refused' })
+  it('shuts the room it looses the fish in, since they only eat in a closed one', () => {
+    // The rule is kept by the cast rather than by refusing it: the walk hands
+    // out one aura at a time, and a technique that first needed Kurapika's
+    // chain could never be used at all.
+    const loosed = door(EMPTY_WORLD, 'devour', roomA.id)
+    expect(loosed.report).toMatchObject({ kind: 'fish-loosed', spaceId: roomA.id })
+    expect(loosed.world.shut).toContain(roomA.id)
+    expect(loosed.world.devouring).toContain(roomA.id)
   })
 })
 
@@ -807,10 +813,12 @@ describe('the wrapping and the sun', () => {
     expect(broken.world.body.packed).toBe(1)
   })
 
-  it('refuses to rise on an empty wrapping, and says which half is missing', () => {
-    expect(on(EMPTY_WORLD, 'sun-flare').report).toEqual({ kind: 'nothing-packed' })
+  it('rises on an empty wrapping at its own least radius', () => {
+    // What Pain Packer buys is reach. Without it the sun is still a sun, or
+    // Feitan could never raise one in a walk that gives out a single aura.
+    const bare = on(EMPTY_WORLD, 'sun-flare').report
+    expect(bare).toMatchObject({ kind: 'sun-risen', metres: SUN_FLARE_METRES_PER_HIT })
     const worn = on(EMPTY_WORLD, 'pain-armour').world
-    expect(on(worn, 'sun-flare').report).toEqual({ kind: 'nothing-packed' })
     expect(on(worn, 'pain-armour').report).toEqual({ kind: 'armour-holding', packed: 0 })
   })
 
@@ -827,9 +835,13 @@ describe('the wrapping and the sun', () => {
     expect(risen.report.metres).toBe(2 * SUN_FLARE_METRES_PER_HIT)
     expect(risen.report.solids).toBeGreaterThan(0)
     expect(risen.world.solids[solidA.id]?.gone).toBe(true)
-    // The armour is opened by it, so the same damage is never spent twice.
+    // The armour is opened by it, so the same damage is never spent twice: the
+    // next sun is the least one again.
     expect(risen.world.body.packed).toBeNull()
-    expect(on(risen.world, 'sun-flare').report).toEqual({ kind: 'nothing-packed' })
+    expect(on(risen.world, 'sun-flare').report).toMatchObject({
+      kind: 'sun-risen',
+      metres: SUN_FLARE_METRES_PER_HIT,
+    })
   })
 
   it('reaches only the deck the visitor is standing on', () => {
@@ -1014,11 +1026,15 @@ describe('what the walk remembers of itself', () => {
 })
 
 describe('the arrow, the cat and the curse', () => {
-  it('exchanges what two rooms are, and leaves both walls where they stood', () => {
-    const drawn = door(EMPTY_WORLD, 'arrow', roomA.id)
-    expect(drawn.report).toMatchObject({ kind: 'arrow-drawn' })
-    const swapped = door(drawn.world, 'arrow', roomB.id)
-    expect(swapped.report).toMatchObject({ kind: 'souls-swapped' })
+  it('exchanges the archer and what it fell on, and carries the archer there', () => {
+    // Loosed from nowhere in particular, there is nobody to exchange with: the
+    // bow is drawn and nothing is shot.
+    expect(door(EMPTY_WORLD, 'arrow', roomB.id).report).toMatchObject({ kind: 'arrow-drawn' })
+
+    const swapped = door(EMPTY_WORLD, 'arrow', roomB.id, roomA.id)
+    expect(swapped.report).toMatchObject({ kind: 'souls-swapped', a: roomA.id, b: roomB.id })
+    // Where the arrow fell is where the archer ends up.
+    expect(swapped.travelTo).toBe(roomB.id)
 
     const worn = identityOf(ship, swapped.world, roomA)
     expect(worn.name).toBe(roomB.name)

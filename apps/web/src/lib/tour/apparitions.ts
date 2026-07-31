@@ -15,6 +15,7 @@
  * a canvas.
  */
 import { ceilingOf, floorOf, type Ship } from './blueprint'
+import { distanceToBoundary, pointInPolygon } from './geometry'
 import { centroid, solidById, solidNow, type TourReport, type TourWorld } from './hatsu'
 import type { Space, Vec2 } from './types'
 
@@ -90,6 +91,8 @@ const PORTAL = 0x80edc7
 const FISH = 0x78b6c9
 const PAPER = 0xefb9c8
 const CARGO = 0xe2b86e
+/** Halkenburg's collective aura, which is the gold of the whole ship's will. */
+export const ARROW = 0xf7e27d
 /** Rising Sun is the one technique whose colour is a temperature. */
 export const SUN = 0xf2a63b
 
@@ -115,17 +118,42 @@ export const PORTAL_RADIUS = 1.15
 export const PORTAL_REACH = PORTAL_RADIUS + 0.35
 
 /**
- * How far from the middle of a room something loose in it may get.
+ * Stations spread over the whole of a room, each with its own stretch of water.
  *
- * The short side of the footprint's box, halved and pulled in: a shoal that
- * swims the long axis of the promenade and comes out through the bulkhead is
- * not swimming the room. Floored, so the smallest cabin still has an aquarium.
+ * A grid over the footprint's box, kept where it falls inside the room itself —
+ * which is what makes this work on the L-shaped rooms and the ones whose middle
+ * is outside them. `water` is how far that station is from the nearest wall,
+ * less a margin, so whatever swims about it stays in the room. Deterministic:
+ * the same room gives the same stations every time it is asked, or the shoal
+ * would be somewhere else on every frame.
  */
-function roamOf(space: Space): number {
+function stationsIn(space: Space, wanted: number): { index: number; at: Vec2; water: number }[] {
   const xs = space.footprint.map((corner) => corner[0])
   const zs = space.footprint.map((corner) => corner[1])
-  const short = Math.min(Math.max(...xs) - Math.min(...xs), Math.max(...zs) - Math.min(...zs))
-  return Math.max(1.2, Math.min(9, short * 0.35))
+  const minX = Math.min(...xs)
+  const maxX = Math.max(...xs)
+  const minZ = Math.min(...zs)
+  const maxZ = Math.max(...zs)
+
+  // Enough of a grid to have somewhere to put everyone even when half of it
+  // falls outside an awkward footprint, and laid along the room's long axis.
+  const across = Math.max(2, Math.round(Math.sqrt(wanted * 2)))
+  const found: { index: number; at: Vec2; water: number }[] = []
+  for (let i = 0; i < across && found.length < wanted; i++) {
+    for (let j = 0; j < across && found.length < wanted; j++) {
+      // Offset rows, so the shoal is not a lattice.
+      const u = (i + 0.5 + (j % 2) * 0.25) / across
+      const v = (j + 0.5) / across
+      const at: Vec2 = [minX + (maxX - minX) * u, minZ + (maxZ - minZ) * v]
+      if (!pointInPolygon(at, space.footprint)) continue
+      const water = Math.min(4, distanceToBoundary(at, space.footprint) - 0.6)
+      if (water <= 0.3) continue
+      found.push({ index: found.length, at, water })
+    }
+  }
+  // A room too narrow for a single station still gets one fish, on the spot.
+  if (!found.length) found.push({ index: 0, at: centroid(space), water: 0.4 })
+  return found
 }
 
 /** The floor and the headroom of a room, both in metres above sea level. */
@@ -143,9 +171,23 @@ function room(ship: Ship, space: Space) {
  * four decks down, and the scene culls these against the geometry it has in it
  * rather than against a list of rooms. Order is stable, which is what lets the
  * scene diff frame to frame.
+ *
+ * `visitor` is where the walk currently is, and only one thing reads it: Kacho's
+ * double, which does not stand in a room at all — it stays beside the person it
+ * is protecting, and follows them off the deck it was raised on.
  */
-export function apparitionsOn(ship: Ship, world: TourWorld): Apparition[] {
+export function apparitionsOn(
+  ship: Ship,
+  world: TourWorld,
+  visitor?: { at: Vec2; tierId: string },
+): Apparition[] {
   const found: Apparition[] = []
+
+  /**
+   * Where in a room a thing stands: where the aura came down, if the cast
+   * remembered, and the middle of the room otherwise.
+   */
+  const landing = (space: Space) => world.landed[space.id] ?? centroid(space)
 
   const place = (
     id: string,
@@ -163,7 +205,7 @@ export function apparitionsOn(ship: Ship, world: TourWorld): Apparition[] {
       kind,
       spaceId: space.id,
       tierId: space.tierId,
-      at: measured.at,
+      at: landing(space),
       // Never through the deckhead: a cabin with 2,2 m of headroom gets its owl
       // under the beam rather than in the deck above it.
       y: Math.min(measured.floor + height, measured.ceiling - 0.25),
@@ -180,34 +222,60 @@ export function apparitionsOn(ship: Ship, world: TourWorld): Apparition[] {
   // The bird, perched as high as the room allows: it is eavesdropping through
   // the ceiling, so it sits where it would have to sit to do that.
   const perch = spaceOf(world.owl)
-  if (perch) place(`owl:${perch.id}`, 'owl', perch, 2.6, 0.34, OWL)
+  if (perch) place(`owl:${perch.id}`, 'owl', perch, 2.4, 0.5, OWL)
 
   // The cards, one apparition that carries how far the tribunal has got: blue
   // admitted, yellow restrained, red dismissed.
   for (const [spaceId, stage] of Object.entries(world.cards)) {
     const space = spaceOf(spaceId)
     if (!space || !stage) continue
-    place(`card:${spaceId}`, 'card', space, 1.5, 0.42, CARDS[Math.min(2, stage - 1)], { stage })
+    place(`card:${spaceId}`, 'card', space, 1.6, 0.75, CARDS[Math.min(2, stage - 1)], { stage })
   }
 
   // The victim wears its mark openly. The sacrifice among its own wears one
   // too, and only Emperor Time shows it — which is the whole cruelty of it.
   const victim = spaceOf(world.curse?.victim)
-  if (victim) place(`mark:${victim.id}`, 'mark', victim, 2, 0.55, CURSE)
+  if (victim) place(`mark:${victim.id}`, 'mark', victim, 2, 0.95, CURSE)
   const sacrifice = spaceOf(world.curse?.sacrifice)
   if (sacrifice && sacrifice.id !== victim?.id) {
-    place(`mark:${sacrifice.id}`, 'mark', sacrifice, 2, 0.4, CURSE, { hidden: !world.laidOpen })
+    place(`mark:${sacrifice.id}`, 'mark', sacrifice, 2, 0.7, CURSE, { hidden: !world.laidOpen })
   }
 
   for (const spaceId of world.stars) {
     const space = spaceOf(spaceId)
-    if (space) place(`star:${spaceId}`, 'star', space, 2.4, 0.45, STAR)
+    if (space) place(`star:${spaceId}`, 'star', space, 2.4, 0.8, STAR)
   }
 
   // Kacho stands rather than floats: she is a person, and the one apparition
   // in the walk whose height is a person's height.
+  //
+  // And she does not stay where she was raised. The whole of the ability is
+  // that the double remains beside the surviving twin — so she walks with the
+  // visitor, two paces off, and the room she is recorded in is only where she
+  // waits when the walk is somewhere she cannot follow.
   const guarded = spaceOf(world.double)
-  if (guarded) place(`double:${guarded.id}`, 'double', guarded, 0.9, 0.9, DOUBLE)
+  if (guarded) {
+    const beside = visitor?.at
+    const measured = room(ship, guarded)
+    if (beside && measured) {
+      const here = ship.spaces.get(world.cameFrom ?? '') ?? null
+      const floor = here && visitor ? (room(ship, here)?.floor ?? measured.floor) : measured.floor
+      found.push({
+        id: `double:${guarded.id}`,
+        kind: 'double',
+        spaceId: here?.id ?? guarded.id,
+        tierId: visitor?.tierId ?? guarded.tierId,
+        // Beside and a little behind: a guardian walks at your shoulder, and
+        // one standing in front of you is in the way of the walk.
+        at: [beside[0] + 1.4, beside[1] + 1.4],
+        y: floor + 0.9,
+        size: 0.9,
+        colour: DOUBLE,
+        stage: 0,
+        hidden: false,
+      })
+    } else place(`double:${guarded.id}`, 'double', guarded, 0.9, 0.9, DOUBLE)
+  }
 
   // Everything standing in a room, as the aura currently leaves it: the dolls
   // stick to it and the fish eat it, so both have to see what is actually there
@@ -217,17 +285,28 @@ export function apparitionsOn(ship: Ship, world: TourWorld): Apparition[] {
       .filter((solid) => solid.spaceId === spaceId && !world.solids[solid.id]?.gone)
       .map((solid) => solidNow(solid, world.solids[solid.id]))
 
-  // The fish swim the room rather than sitting in it, so what they are given is
-  // the room's own reach and an index each; the scene does the swimming.
+  // The fish swim the room rather than sitting in it — the whole room, and not
+  // through its walls. Each one is given a station of its own somewhere inside
+  // the footprint and only as much water as there is between that station and
+  // the nearest bulkhead, so a shoal spreads over a promenade instead of
+  // circling its centre, and none of them swims into the steel.
   for (const spaceId of world.devouring) {
     const space = spaceOf(spaceId)
     const measured = space ? room(ship, space) : null
     if (!space || !measured) continue
-    const reach = roamOf(space)
-    for (let i = 0; i < SHOAL; i++) {
-      place(`fish:${spaceId}:${i}`, 'fish', space, 1.5 + (i % 3) * 0.45, 0.4, FISH, {
-        stage: i,
-        spread: reach,
+    for (const station of stationsIn(space, SHOAL)) {
+      found.push({
+        id: `fish:${spaceId}:${station.index}`,
+        kind: 'fish',
+        spaceId: space.id,
+        tierId: space.tierId,
+        at: station.at,
+        y: Math.min(measured.floor + 1.5 + (station.index % 3) * 0.45, measured.ceiling - 0.4),
+        size: 0.4,
+        colour: FISH,
+        stage: station.index,
+        hidden: false,
+        spread: station.water,
       })
     }
   }
@@ -253,19 +332,17 @@ export function apparitionsOn(ship: Ship, world: TourWorld): Apparition[] {
         hidden: false,
       })
     })
-    const reach = roamOf(space)
-    for (let i = 0; i < LOOSE_DOLLS; i++) {
-      // Fanned around the middle of the room on a fixed spiral: a fistful of
-      // paper thrown twice lands the same way, because the walk has to be able
-      // to draw the same room twice.
-      const angle = (i / LOOSE_DOLLS) * Math.PI * 2
-      const radius = reach * (0.3 + (i % 3) * 0.22)
+    const loose = stationsIn(space, LOOSE_DOLLS)
+    for (let i = 0; i < loose.length; i++) {
+      // Thrown over the room rather than fanned about its middle: a fistful of
+      // paper lands where it lands, and the same room lands it the same way
+      // twice, because the walk has to be able to draw the same room twice.
       found.push({
         id: `paper:${space.id}:loose${i}`,
         kind: 'paper',
         spaceId: space.id,
         tierId: space.tierId,
-        at: [measured.at[0] + Math.cos(angle) * radius, measured.at[1] + Math.sin(angle) * radius],
+        at: loose[i].at,
         y: Math.min(measured.floor + 1.4 + (i % 2) * 0.5, measured.ceiling - 0.3),
         size: 0.16,
         colour: PAPER,
@@ -332,7 +409,11 @@ export function wormMouths(
     mouths.push({
       spaceId: space.id,
       tierId: space.tierId,
-      at: measured.at,
+      // Where the door was put, which is where the aura came down — the same
+      // point the ring is drawn at. Read off the middle of the room instead and
+      // the doorway you can see and the doorway you can walk into are two
+      // different places, which is a tunnel that cannot be entered.
+      at: world.landed[space.id] ?? measured.at,
       y: Math.min(measured.floor + PORTAL_RADIUS + 0.1, measured.ceiling - 0.3),
     })
   }
@@ -365,7 +446,7 @@ export function wormMouthAt(ship: Ship, world: TourWorld, tierId: string, at: Ve
  * direction to travel in.
  */
 export interface TourFlash {
-  kind: 'gust' | 'punch' | 'sun'
+  kind: 'gust' | 'punch' | 'sun' | 'arrow'
   tierId: string
   at: Vec2
   /** The floor it comes out of, or the height it lands at, in metres. */
@@ -405,6 +486,24 @@ export function flashFor(
     }
   }
 
+  // Halkenburg's arrow, drawn from where it was loosed to where it fell. The
+  // exchange has already happened by the time this is read — the walk is
+  // standing in the far room — so the streak is the archive showing what just
+  // went past, which is the only way anyone ever sees an arrow.
+  if (report.kind === 'souls-swapped') {
+    const space = ship.spaces.get(report.b)
+    const measured = space ? room(ship, space) : null
+    if (!space || !measured) return null
+    return {
+      kind: 'arrow',
+      tierId: space.tierId,
+      at: world.landed[space.id] ?? measured.at,
+      y: Math.min(measured.floor + 1.5, measured.ceiling - 0.3),
+      from,
+      colour: ARROW,
+    }
+  }
+
   // The sun rises on the visitor rather than on a room: Feitan does not throw
   // it, he becomes it, so it is centred where they are standing and its radius
   // is whatever the wrapping had taken.
@@ -416,6 +515,21 @@ export function flashFor(
       y: 0,
       colour: SUN,
       metres: report.metres,
+    }
+  }
+
+  // The same fist, out of bare deck: nothing was struck, so where it comes up
+  // is the middle of the room it was sent to.
+  if (report.kind === 'came-up-empty') {
+    const space = ship.spaces.get(report.spaceId)
+    const measured = space ? room(ship, space) : null
+    if (!space || !measured) return null
+    return {
+      kind: 'punch',
+      tierId: space.tierId,
+      at: measured.at,
+      y: measured.floor,
+      colour: PUNCH,
     }
   }
 

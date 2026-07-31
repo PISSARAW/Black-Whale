@@ -369,8 +369,6 @@ export const fr: Messages = {
             : "L'emballage ne garde encore rien · allez au-devant de ce que l'aura a dressé contre vous",
         packedAway: (room, packed) =>
           `${room} ne vous a rien fait : c'est parti dans l'emballage · ${packed} coup${packed === 1 ? '' : 's'} gardé${packed === 1 ? '' : 's'}`,
-        nothingPacked:
-          "Rien n'a été encaissé, donc rien à dépenser · le soleil se lève sur des dégâts",
         sunRisen: (metres, solids) =>
           `Le soleil s'est levé là où vous êtes · ${metres} m de rayon, et ${solids} élément${solids === 1 ? '' : 's'} carbonisé${solids === 1 ? '' : 's'} sans égard pour à qui ils étaient`,
         jailed: (room, doors) => `${room} est enchaînée · ${doors} accès, et aucun qui s'ouvre`,
@@ -434,6 +432,7 @@ export const fr: Messages = {
         released: (solid) => `${solid} est relâché`,
         cameUpUnder: (solid, other) =>
           `L'aura a couru depuis ${solid} le long du sol et a resurgi sous ${other}`,
+        cameUpEmpty: (room) => `L'aura a couru le long du sol et a jailli du pont dans ${room}`,
         stitched: (solid) => `${solid} est revenu tel que le plan le donne`,
         nothingToStitch: (solid) => `Rien n'avait été fait à ${solid}`,
         animated: (solid) => `${solid} s'est éveillé, et n'en est pas moins solide`,

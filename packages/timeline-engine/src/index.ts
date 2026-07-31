@@ -78,6 +78,8 @@ import {
   type TemporalRecord,
 } from '@black-whale/domain'
 
+import { latestPresencePerEntity, type EntityPresenceRow } from './presence.js'
+
 // Re-exported so callers that already reach for the timeline engine do not need
 // to know these live in the domain package.
 export { compareEventOrder, isRevealed }
@@ -158,7 +160,12 @@ export class TimelineEngine implements ITimelineEngine {
     const characters = allCharacters.filter(startedBefore)
     const bodies = allBodies.filter(startedBefore)
     const consciousnesses = allConsciousnesses.filter(startedBefore)
-    const activePresences = presences.filter(active)
+    // One place per body: the cutaway leaves rows that hold at points later
+    // chapters have already moved past, and the snapshot has to answer with a
+    // single position or its readers draw the same body twice.
+    const activePresences = latestPresencePerEntity(
+      presences.filter(active) as unknown as EntityPresenceRow[],
+    )
     const activeStates = states.filter(active)
     const activeOccupancies = occupancies.filter(active)
     const activeAppearances = appearances.filter(active)

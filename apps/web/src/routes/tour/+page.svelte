@@ -38,6 +38,7 @@
     resetComfort,
     setComfort,
   } from '$lib/tour/comfort'
+  import { flashFor, type TourFlash } from '$lib/tour/apparitions'
   import { describeSpace } from '$lib/tour/describe'
   import { placeOf, type Naming } from '$lib/tour/search'
   import {
@@ -45,6 +46,7 @@
     aimsAtSolids,
     arriveInTour,
     castInTour,
+    fishBite,
     identityOf,
     spendPage,
     worksInTour,
@@ -388,6 +390,22 @@
   // ── Nen ────────────────────────────────────────
   let world = $state<TourWorld>(EMPTY_WORLD)
   let report = $state<TourReport | null>(null)
+  /**
+   * The blast and the punch, which are gone by the time the read-out is read.
+   *
+   * Everything else a technique does is in the world and can simply be drawn
+   * from it. These two are events: the page hands the walk one and counts it,
+   * because casting the same blast at the same room twice is two gusts of air
+   * and an unchanged value would only ever be one.
+   */
+  let flash = $state<(TourFlash & { seq: number }) | null>(null)
+  let flashes = 0
+
+  /** Hands the walk whatever the cast that just happened has to show. */
+  function show(shown: TourReport) {
+    const seen = flashFor(shown, ship, world, position)
+    if (seen) flash = { ...seen, seq: ++flashes }
+  }
   let aimedAt = $state<Space | null>(null)
   let aimedSolidAt = $state<Structure | null>(null)
 
@@ -411,6 +429,11 @@
     }
     // Taking an aura up again is what clears the last penalty off the walk.
     penalty = null
+    // What is being held, in the world rather than only in the dock: the
+    // passive abilities are decided by `$lib/tour/hatsu`, and it has to be able
+    // to tell Voconte's doors from anyone else's.
+    const kind = worksInTour($activeHatsu) ? $activeHatsu.kind : null
+    if (untrack(() => world).holding !== kind) world = { ...untrack(() => world), holding: kind }
   })
 
   /**
@@ -420,7 +443,9 @@
    */
   function release() {
     const rebound = Boolean(world.snakes && !world.snakes.fed)
-    world = EMPTY_WORLD
+    // Everything the aura was holding is handed back — but the aura itself is
+    // still up, and what is held is not a hold.
+    world = { ...EMPTY_WORLD, holding: world.holding }
     report = null
     if (rebound) punish($t.tour.hatsu.reports.snakesRebound)
   }
@@ -450,6 +475,7 @@
     })
     world = result.world
     report = result.report
+    show(result.report)
     if (result.travelTo) goToSpace(ship.spaces.get(result.travelTo)!)
   }
 
@@ -470,6 +496,7 @@
     })
     world = spendPage(result.world, kind)
     report = result.report
+    show(result.report)
     if (result.travelTo) goToSpace(ship.spaces.get(result.travelTo)!)
   }
 
@@ -492,6 +519,27 @@
     if (arrival.punished && spaceId) {
       punish($t.tour.hatsu.reports.vowBroken(nameOf(ship.spaces.get(spaceId)!)))
     }
+  }
+
+  /**
+   * One mouthful, in every room the fish are loose in.
+   *
+   * The walk's clock decides when; `fishBite` decides what. A room they have
+   * already emptied gives them nothing and says nothing, which is why the
+   * read-out goes quiet rather than repeating itself.
+   */
+  function fishEat() {
+    let next = world
+    let last: TourReport | null = null
+    for (const spaceId of world.devouring) {
+      const bite = fishBite(next, ship, spaceId)
+      if (!bite) continue
+      next = bite.world
+      last = bite.report
+    }
+    if (!last) return
+    world = next
+    report = last
   }
 
   /** Fugetsu's tunnel, asked on the same arrival the doors are asked on. */
@@ -695,12 +743,15 @@
         bind:aimedAt
         bind:aimedSolidAt
         {world}
+        {flash}
         auraColour={technique?.color ?? null}
         aiming={Boolean(technique)}
         {reveal}
         onCast={castOn}
         onArrive={arrived}
         onWorm={crossWorm}
+        onFish={fishEat}
+        swings={technique?.kind === 'stitch'}
         {touchUseLabel}
         touchLabels={{ move: $t.tour.touch.move, cast: $t.tour.touch.cast }}
         soundLabels={{ silence: $t.tour.sound.silence, restore: $t.tour.sound.restore }}

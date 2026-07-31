@@ -137,6 +137,21 @@ describe('the hideout doors', () => {
     expect(doorExit(world, 'c', null)).toBeNull()
     expect(doorExit({ ...EMPTY_WORLD, doors: ['a'] }, 'a', null)).toBeNull()
   })
+
+  it('sends the visitor somewhere else through every frame while no route is armed', () => {
+    // Passive: nothing has been aimed and nothing has been cast, and the whole
+    // hideout is wired. Only for the technique whose hideout it is.
+    const wired: TourWorld = { ...EMPTY_WORLD, holding: 'door-network' }
+    const out = doorExit(wired, furnished.id, null, ship, () => 0)
+    expect(out).not.toBeNull()
+    expect(out).not.toBe(furnished.id)
+    // Arriving where it just put you is not a second crossing.
+    expect(doorExit(wired, furnished.id, furnished.id, ship, () => 0)).toBeNull()
+    // And any other aura leaves the doors as doors.
+    expect(doorExit(EMPTY_WORLD, furnished.id, null, ship, () => 0)).toBeNull()
+    // A prepared pair is still a prepared pair rather than a lottery.
+    expect(doorExit({ ...wired, doors: ['a', 'b'] }, 'a', null, ship, () => 0)).toBe('b')
+  })
 })
 
 describe('Blinky and what refuses to be swallowed', () => {

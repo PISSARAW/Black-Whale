@@ -275,6 +275,18 @@ export interface TourWorld {
   cameFrom: string | null
 
   /**
+   * The technique the visitor currently has up, or `null` in Zetsu.
+   *
+   * Every other field here is something a cast *did*. This one is what is
+   * being held, and it exists for the abilities that are passive: Voconte's
+   * doors do not have to be aimed at anything to send someone somewhere — the
+   * hideout is wired, and walking through a frame is the whole of the
+   * activation. Without this the walk would have to ask the page what aura is
+   * up, and the page would have to keep a rule of its own.
+   */
+  holding: HatsuInteractionKind | null
+
+  /**
    * The walk's record of itself: every room set foot in, in order.
    *
    * The last noun, and the only one that is not in the ship at all. The walk
@@ -284,8 +296,22 @@ export interface TourWorld {
    * them are about being able to look back.
    */
   trail: string[]
-  /** The owl, which keeps what the trail would otherwise let go. */
-  owl: boolean
+  /**
+   * The room the owl is perched in, which keeps what the trail would otherwise
+   * let go.
+   *
+   * A bird has to be somewhere. It was a flag when all it did was hold the
+   * record open; now that the walk draws it, the technique has to say where it
+   * was attached, and the answer is the room it was cast on.
+   */
+  owl: string | null
+  /**
+   * Rooms whose Hatsu Benjamin's baton has taken, which wear his palm star.
+   *
+   * The book already holds what was inherited; this is where it was inherited
+   * from, which is the only part of it there is anything to see.
+   */
+  stars: string[]
   /** Where the ten-second vision says the visitor will be. It does not update. */
   foreseen: { spaceId: string; at: Vec2 } | null
   /** What the automatic writing has set down, newest first. */
@@ -453,8 +479,10 @@ export const EMPTY_WORLD: TourWorld = {
   snakes: null,
   trap: null,
   cameFrom: null,
+  holding: null,
   trail: [],
-  owl: false,
+  owl: null,
+  stars: [],
   foreseen: null,
   verses: [],
   poem: [],
@@ -513,6 +541,7 @@ export const worldIsQuiet = (world: TourWorld): boolean =>
   !world.snakes &&
   !world.trap &&
   !world.owl &&
+  !world.stars.length &&
   !world.foreseen &&
   !world.verses.length &&
   !world.poem.length &&
@@ -1652,6 +1681,7 @@ export function techniqueHolding(world: TourWorld, spaceId: string): HatsuIntera
   if (world.eye === spaceId) return 'scout'
   if (world.watched.some((doll) => doll.spaceId === spaceId)) return 'paper-spy'
   if (world.double === spaceId) return 'guardian'
+  if (world.owl === spaceId) return 'surveillance'
   if (world.worm?.a === spaceId || world.worm?.b === spaceId) return 'portal'
   if (world.trap === spaceId) return 'desire-trap'
   if (world.ninelives.includes(spaceId)) return 'resurrection'
@@ -1686,6 +1716,7 @@ export function releaseHold(world: TourWorld, spaceId: string): TourWorld {
     eye: world.eye === spaceId ? null : world.eye,
     watched: world.watched.filter((doll) => doll.spaceId !== spaceId),
     double: world.double === spaceId ? null : world.double,
+    owl: world.owl === spaceId ? null : world.owl,
     worm: world.worm?.a === spaceId || world.worm?.b === spaceId ? null : world.worm,
     trap: world.trap === spaceId ? null : world.trap,
     ninelives: world.ninelives.filter((id) => id !== spaceId),
@@ -1789,7 +1820,12 @@ function castOnTechniques(
       if (!killed) return { world, report: { kind: 'not-eligible', spaceId: target.id } }
       const pages = [...new Set([...book.pages, killed])]
       return {
-        world: withBook({ pages, open: book.open ?? killed }),
+        world: {
+          ...withBook({ pages, open: book.open ?? killed }),
+          // The star is what the baton leaves behind: the room it was taken
+          // from wears it, so the inheritance is somewhere other than the book.
+          stars: [...new Set([...world.stars, target.id])],
+        },
         report: { kind: 'inherited', spaceId: target.id, technique: killed },
       }
     }
@@ -1985,6 +2021,37 @@ function stripTheRoom({ world, ship, target }: RoomCastContext): TourCastResult 
   }
   if (next.dowsing === target.id) {
     next.dowsing = null
+    count++
+  }
+  // What the later waves hung in a room is hung on it just as much as a doll
+  // is: the bird is blown off its perch, the cards off the table, the star off
+  // the ceiling, the double out of the corner, the mark off the victim and the
+  // near mouth of the tunnel shut.
+  if (next.owl === target.id) {
+    next.owl = null
+    count++
+  }
+  if (next.stars.includes(target.id)) {
+    next.stars = without(next.stars, (id) => id === target.id)
+    count++
+  }
+  if (next.cards[target.id]) {
+    const cards = { ...next.cards }
+    delete cards[target.id]
+    next.cards = cards
+    next.pinned = next.pinned === target.id ? null : next.pinned
+    count++
+  }
+  if (next.double === target.id) {
+    next.double = null
+    count++
+  }
+  if (next.curse?.victim === target.id) {
+    next.curse = null
+    count++
+  }
+  if (next.worm && (next.worm.a === target.id || next.worm.b === target.id)) {
+    next.worm = null
     count++
   }
   // And every solid in the room that another technique was holding: the
@@ -2223,14 +2290,18 @@ const ROOM_CASTS: Partial<Record<HatsuInteractionKind, RoomCast>> = {
   // The owl retains what was recorded earlier, for later review. The trail
   // is kept either way; what the owl adds is that you can look back at it,
   // and that it holds the rooms open through the hull while it does.
-  surveillance: ({ world }) =>
-    world.owl
+  //
+  // It perches where it was sent, and it is one bird: attaching it somewhere
+  // else moves it rather than making a second. Called back by aiming at the
+  // room it is already in, which is the only place it can be recalled from.
+  surveillance: ({ world, target }) =>
+    world.owl === target.id
       ? {
-          world: { ...world, owl: false },
+          world: { ...world, owl: null },
           report: { kind: 'owl-recalled', rooms: world.trail.length },
         }
       : {
-          world: { ...world, owl: true },
+          world: { ...world, owl: target.id },
           report: { kind: 'owl-attached', rooms: world.trail.length },
         },
 
@@ -2947,10 +3018,58 @@ export const linkIsOpen = (world: TourWorld, spaceId: string | null): boolean =>
  * either. `arrivedFrom` is the room the last crossing delivered them to, so
  * stepping out of one door does not immediately fall back through the other.
  */
-export function doorExit(world: TourWorld, spaceId: string | null, arrivedFrom: string | null) {
-  if (world.doors.length !== 2 || !spaceId || spaceId === arrivedFrom) return null
-  const [a, b] = world.doors
-  if (spaceId === a) return b
-  if (spaceId === b) return a
-  return null
+export function doorExit(
+  world: TourWorld,
+  spaceId: string | null,
+  arrivedFrom: string | null,
+  ship?: Ship,
+  random: () => number = Math.random,
+) {
+  if (!spaceId || spaceId === arrivedFrom) return null
+  if (world.doors.length === 2) {
+    const [a, b] = world.doors
+    if (spaceId === a) return b
+    if (spaceId === b) return a
+    return null
+  }
+
+  // The hideout is wired whether or not a route has been prepared in it: with
+  // the aura up and no pair armed, every frame in the ship is one of Voconte's,
+  // and what is on the other side of it is not where you were going. Passive by
+  // construction — nothing is aimed and nothing is cast, so the only way to
+  // stop coming out somewhere else is to put the technique down.
+  if (world.holding !== 'door-network' || !ship) return null
+  const elsewhere = [...ship.spaces.keys()].filter((id) => id !== spaceId)
+  if (!elsewhere.length) return null
+  return elsewhere[Math.min(elsewhere.length - 1, Math.floor(random() * elsewhere.length))]
+}
+
+/**
+ * One bite. The fish eat what is in the room, a thing at a time.
+ *
+ * The technique's own rule is that the victim feels nothing while it lasts, so
+ * for a long time nothing was taken until the visitor walked out — which from
+ * inside the room meant a sealed room and no fish. They are drawn now, and a
+ * fish that swims through a coffin and leaves it standing is not eating: this
+ * is the walk letting them feed while you watch, on whatever the scene's clock
+ * says. Everything else about them is unchanged, including that they only ever
+ * eat inside a room that has been shut.
+ */
+export function fishBite(
+  world: TourWorld,
+  ship: Ship,
+  spaceId: string | null,
+): TourCastResult | null {
+  if (!spaceId || !world.devouring.includes(spaceId)) return null
+  const eaten = [...ship.structures, ...world.copies].find(
+    (solid) => solid.spaceId === spaceId && !world.solids[solid.id]?.gone,
+  )
+  if (!eaten) return null
+  return {
+    world: {
+      ...world,
+      solids: { ...world.solids, [eaten.id]: { ...world.solids[eaten.id], gone: true } },
+    },
+    report: { kind: 'fish-fed', spaceId, solidId: eaten.id },
+  }
 }

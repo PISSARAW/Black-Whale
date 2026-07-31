@@ -35,6 +35,7 @@
     linkIsOpen,
     paceOf,
     reachOf,
+    solidNow,
     shellsFor,
     solidWalls,
     walkedPlan,
@@ -42,6 +43,13 @@
     wanderOffset,
     type TourWorld,
   } from '$lib/tour/hatsu'
+  import {
+    apparitionsOn,
+    wormMouthAt,
+    wormMouths,
+    type Apparition,
+    type TourFlash,
+  } from '$lib/tour/apparitions'
   import { comfort, prefersReducedMotion, type Comfort } from '$lib/tour/comfort'
   import { buildSolidMesh, buildTierMesh } from '$lib/tour/mesh'
   import {
@@ -119,6 +127,17 @@
     world?: TourWorld
     /** The colour of the technique holding the ship, for the aura shells. */
     auraColour?: string | null
+    /**
+     * The one technique that is an event rather than a thing, and the count of
+     * how many have been cast.
+     *
+     * A blast and a punch leave nothing standing, so they are not in the world:
+     * the page hands one over, the walk plays it out and forgets it. The
+     * sequence number is what makes casting the same blast at the same room
+     * twice two events rather than one — the value is otherwise identical, and
+     * an unchanged prop is not a second cast.
+     */
+    flash?: (TourFlash & { seq: number }) | null
     /** Whether a technique the walk answers to is active, so aiming is live. */
     aiming?: boolean
     /**
@@ -135,6 +154,24 @@
     onCast?: (spaceId: string | null, solidId: string | null) => void
     /** Fired whenever the visitor sets foot in a different space. */
     onArrive?: (spaceId: string | null) => void
+    /**
+     * Asked every couple of seconds while Chrollo's fish are loose.
+     *
+     * They eat what they touch, and what they touch is a matter of how long
+     * they have been swimming — which is the scene's clock and nobody else's.
+     * What they take is still the pure layer's decision.
+     */
+    onFish?: () => void
+    /**
+     * Whether the technique in hand is one that throws a thread.
+     *
+     * Machi's stitches mend, and the walk has nothing torn in it that a visitor
+     * can reach on foot — so what the thread is for here is reaching it: it
+     * takes hold of whatever is down the reticle and pulls. The cast itself
+     * goes through `onCast` exactly as every other one does; this only says
+     * that the walk should also swing.
+     */
+    swings?: boolean
     /**
      * Asked, on the same arrival, where Fugetsu's tunnel comes out — or `null`
      * when the visitor did not step into either of its ends.
@@ -163,6 +200,7 @@
     heading = $bindable(0),
     world = EMPTY_WORLD,
     auraColour = null,
+    flash = null,
     aiming = false,
     reveal = false,
     aimedAt = $bindable(null),
@@ -170,6 +208,8 @@
     onCast,
     onArrive,
     onWorm,
+    onFish,
+    swings = false,
   }: Props = $props()
 
   /**
@@ -526,6 +566,25 @@
       let eyeDeck: Built | null = null
       let eyeKey = ''
 
+      /**
+       * The decks the far ends of Fugetsu's tunnel are looking at.
+       *
+       * The same arrangement as the eye's deck and for the same reason: a mouth
+       * of the tunnel shows the room at the other end, and that room has to be
+       * in the scene to be rendered, however many decks away it is.
+       */
+      const portalDecks: Built[] = []
+
+      /**
+       * Whether a deck is being drawn by something other than the visitor.
+       *
+       * The visitor's own deck is taken out of the scene the moment they leave
+       * it — unless the eye is watching it, or a tunnel is looking through it,
+       * in which case it stays.
+       */
+      const heldElsewhere = (built: Built | null) =>
+        Boolean(built) && (built === eyeDeck || portalDecks.includes(built!))
+
       /** The plan as Nen leaves it: what is drawn, and what still stops you. */
       let activePlan: TierPlan | null = null
       let activeKey = ''
@@ -681,7 +740,7 @@
       function sweepStale() {
         for (let i = stale.length - 1; i >= 0; i--) {
           const built = stale[i]
-          if (built === visible || built === eyeDeck) continue
+          if (built === visible || heldElsewhere(built)) continue
           scene.remove(built.root)
           dispose(built)
           stale.splice(i, 1)
@@ -701,7 +760,7 @@
         const held = variants[nextTierId]
         if (held?.key === key) return { built: held.built, key }
         if (held) {
-          if (held.built === visible || held.built === eyeDeck) stale.push(held.built)
+          if (held.built === visible || heldElsewhere(held.built)) stale.push(held.built)
           else dispose(held.built)
         }
 
@@ -747,7 +806,7 @@
 
         // The deck the eye is watching stays in the scene whether or not the
         // visitor is still standing on it: that is the whole of the remote feed.
-        if (visible && visible !== eyeDeck) scene.remove(visible.root)
+        if (visible && !heldElsewhere(visible)) scene.remove(visible.root)
         // Off the screen and out of the way, so a variant it was holding open
         // can be freed the moment a new one takes its place.
         visible = null
@@ -775,11 +834,16 @@
         enterDeck(plan.tier.elevation)
       }
 
-      /** Moves the visitor to a named space, changing deck if it is elsewhere. */
-      function goTo(spaceId: string) {
+      /**
+       * Moves the visitor to a named space, changing deck if it is elsewhere.
+       *
+       * `landing` is for the one arrival that is not the room's own door: a
+       * tunnel puts you where its far mouth stands, not where the stairs would.
+       */
+      function goTo(spaceId: string, landing?: Vec2) {
         const space = ship.spaces.get(spaceId)
         if (!space) return
-        const at = spawnPoint(space, ship.plans.get(space.tierId)?.structures ?? [])
+        const at = landing ?? spawnPoint(space, ship.plans.get(space.tierId)?.structures ?? [])
         yaw = spawnFacing(space, at)
         pitch = 0
         if (space.tierId !== currentTierId) loadTier(space.tierId, at)
@@ -869,7 +933,7 @@
         if (eyeDeck) {
           // The deck the eye was watching goes back out of the scene unless the
           // visitor is standing on it.
-          if (eyeDeck !== visible) scene.remove(eyeDeck.root)
+          if (eyeDeck !== visible && !portalDecks.includes(eyeDeck)) scene.remove(eyeDeck.root)
           eyeDeck = null
         }
         if (!space) {
@@ -920,6 +984,27 @@
         fittingMaterial.visible = !sealed
       }
 
+      /**
+       * Luini's walls, which the visitor is about to walk through.
+       *
+       * Phasing was a collision test that stopped being run: from inside the
+       * visitor's own head, the ship looked exactly as it always had until they
+       * happened to lean on a bulkhead. The steel goes half-transparent instead
+       * — the hull is still drawn, still lit, still there, and it has stopped
+       * being a boundary, which is the one thing the technique says.
+       */
+      let phased = false
+
+      function syncPhasing() {
+        if (world.phasing === phased) return
+        phased = world.phasing
+        material.transparent = phased
+        material.opacity = phased ? 0.42 : 1
+        material.depthWrite = !phased
+        material.needsUpdate = true
+        edgeMaterial.opacity = phased ? 0.7 : 0.32
+      }
+
       /** Rebuilds the deck under the visitor when Nen has changed what is in it. */
       function syncDeck() {
         const key = worldKey(currentTierId)
@@ -927,10 +1012,10 @@
         const plan = ship.plans.get(currentTierId)
         if (!plan) return
 
-        if (visible && visible !== eyeDeck) scene.remove(visible.root)
+        if (visible && !heldElsewhere(visible)) scene.remove(visible.root)
         visible = null
         const built = buildDeck(currentTierId).built
-        if (built !== eyeDeck) scene.add(built.root)
+        if (!heldElsewhere(built)) scene.add(built.root)
         visible = built
         activeKey = key
         activePlan = walkedPlan(ship, world, currentTierId)
@@ -952,7 +1037,10 @@
 
       function applyVisibility(standingId: string | null) {
         const eyeSpace = world.eye ? ship.spaces.get(world.eye) : null
-        const key = `${standingId ?? ''}::${activeKey}::${eyeKey}`
+        const mouths = wormMouths(ship, world)
+        const key = `${standingId ?? ''}::${activeKey}::${eyeKey}::${mouths
+          .map((mouth) => mouth.spaceId)
+          .join(',')}`
         if (key === shownKey) return
         shownKey = key
 
@@ -970,6 +1058,16 @@
         if (eyeDeck && eyeSpace) {
           const eyePlan = ship.plans.get(eyeSpace.tierId)
           if (eyePlan) want(eyeDeck, visibleSpaces(eyePlan, eyeSpace.id))
+        }
+        // What a mouth of the tunnel looks out on: the far room and whatever
+        // can be seen from it, on whichever deck that is.
+        for (const mouth of mouths) {
+          const mouthPlan = ship.plans.get(mouth.tierId)
+          const deck =
+            portalDecks.find((built) =>
+              built.rooms.some((room) => room.spaceId === mouth.spaceId),
+            ) ?? null
+          if (mouthPlan && deck) want(deck, visibleSpaces(mouthPlan, mouth.spaceId))
         }
 
         for (const { deck, ids } of wanted) {
@@ -1105,6 +1203,689 @@
         }
       }
 
+      // ── What Nen leaves standing ─────────────────
+      //
+      // `$lib/tour/apparitions` says what is in the ship and where; everything
+      // from here to the flash below is how it is made of triangles. The rule
+      // the rest of this block keeps is the rule the shells keep: nothing here
+      // knows a technique by name — it is handed a kind, a colour and a size.
+
+      /**
+       * One apparition on screen: the group it hangs in, and the key it was
+       * built from, so a card that turns from blue to red is rebuilt and an
+       * owl that has not changed is left alone.
+       */
+      type Shown = {
+        key: string
+        kind: Apparition['kind']
+        root: import('three').Group
+        /** The part that turns: a head, a card, a sigil. */
+        turns: import('three').Object3D | null
+        /** Where it hangs, before the hover is added to it. */
+        y: number
+        /** The middle of the room it swims, for the ones that do not stay put. */
+        at: Vec2
+        /** Its place in the shoal, so seven fish are not one fish drawn seven times. */
+        stage: number
+        /** How far it may get from `at`, in metres. */
+        spread: number
+        /** The far end, for a mouth of the tunnel. */
+        pair: Apparition['pair']
+        /** The disc the other end is rendered onto. */
+        pane: import('three').Mesh | null
+      }
+
+      // A plain record for the same reason the solids are one: the render loop
+      // owns it and nothing in the markup reads it.
+      const apparitions: Record<string, Shown | undefined> = {}
+
+      /** Materials are shared by colour: a fleet of stars is one upload. */
+      const glowMaterials: Record<string, import('three').MeshBasicMaterial | undefined> = {}
+      const glow = (colour: number, opacity: number) => {
+        const key = `${colour}|${opacity}`
+        const held = glowMaterials[key]
+        if (held) return held
+        const made = new THREE.MeshBasicMaterial({
+          color: colour,
+          transparent: true,
+          opacity,
+          depthWrite: opacity > 0.9,
+          side: THREE.DoubleSide,
+        })
+        glowMaterials[key] = made
+        return made
+      }
+
+      /**
+       * The pane a mouth of the tunnel is filled with.
+       *
+       * Not a texture mapped onto a disc: the far end is rendered from where
+       * the visitor's own head would be if it were standing at the other mouth,
+       * so what fills the ring has to be sampled where it lands on the screen
+       * rather than where it lands on the geometry. That is the whole of the
+       * shader — clip space in, screen space out — and it is what makes the
+       * ring read as a hole in the room instead of a picture hung in it.
+       */
+      const portalShader = (texture: import('three').Texture) =>
+        new THREE.ShaderMaterial({
+          uniforms: { pane: { value: texture } },
+          vertexShader: `
+            varying vec4 vClip;
+            void main() {
+              vClip = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+              gl_Position = vClip;
+            }
+          `,
+          fragmentShader: `
+            uniform sampler2D pane;
+            varying vec4 vClip;
+            void main() {
+              vec2 uv = (vClip.xy / vClip.w) * 0.5 + 0.5;
+              gl_FragColor = texture2D(pane, uv);
+            }
+          `,
+          side: THREE.DoubleSide,
+        })
+
+      /** The render target each mouth draws the far end into, by apparition. */
+      const portalTargets: Record<string, import('three').WebGLRenderTarget | undefined> = {}
+      const portalCamera = new THREE.PerspectiveCamera($comfort.fov, 1, 0.1, VIEW_DISTANCE)
+
+      function portalTarget(id: string) {
+        const held = portalTargets[id]
+        if (held) return held
+        const { width, height } = renderer.getSize(new THREE.Vector2())
+        // The pane is sampled in screen space, so the target has to be the
+        // shape of the screen or the far room comes back stretched.
+        const made = new THREE.WebGLRenderTarget(
+          Math.max(2, Math.round(width)),
+          Math.max(2, Math.round(height)),
+        )
+        portalTargets[id] = made
+        return made
+      }
+
+      /** A five-pointed star, flat, in the plane it is drawn facing. */
+      function starShape(size: number) {
+        const shape = new THREE.Shape()
+        for (let i = 0; i < 10; i++) {
+          const angle = (Math.PI / 5) * i - Math.PI / 2
+          const radius = i % 2 === 0 ? size : size * 0.42
+          const x = Math.cos(angle) * radius
+          const y = Math.sin(angle) * radius
+          if (i === 0) shape.moveTo(x, y)
+          else shape.lineTo(x, y)
+        }
+        shape.closePath()
+        return new THREE.ShapeGeometry(shape)
+      }
+
+      /**
+       * One apparition, built out of primitives.
+       *
+       * Deliberately crude: the ship is flat colour and hard edges, and a
+       * modelled owl would be the only thing aboard that was not. What each of
+       * these has to do is be recognisable across a promenade at a glance —
+       * a bird, a card, a sigil, a star, a person, a door.
+       */
+      function buildApparition(seen: Apparition): Shown {
+        const root = new THREE.Group()
+        const skin = glow(seen.colour, seen.hidden ? 0.18 : 0.92)
+        let turns: import('three').Object3D | null = null
+        let pane: import('three').Mesh | null = null
+
+        if (seen.kind === 'owl') {
+          const body = new THREE.Mesh(new THREE.SphereGeometry(seen.size, 10, 8), skin)
+          body.scale.set(1, 1.3, 0.85)
+          root.add(body)
+          // The head turns on its own, which is the one thing everyone knows an
+          // owl does, and it is what says the bird is watching rather than sitting.
+          const head = new THREE.Group()
+          head.position.y = seen.size * 1.35
+          const skull = new THREE.Mesh(new THREE.SphereGeometry(seen.size * 0.62, 10, 8), skin)
+          head.add(skull)
+          const eyes = glow(0xffe9a8, 1)
+          for (const side of [-1, 1]) {
+            const eye = new THREE.Mesh(new THREE.SphereGeometry(seen.size * 0.2, 8, 6), eyes)
+            eye.position.set(side * seen.size * 0.26, seen.size * 0.08, -seen.size * 0.5)
+            head.add(eye)
+            const ear = new THREE.Mesh(
+              new THREE.ConeGeometry(seen.size * 0.16, seen.size * 0.4, 4),
+              skin,
+            )
+            ear.position.set(side * seen.size * 0.34, seen.size * 0.55, 0)
+            head.add(ear)
+          }
+          root.add(head)
+          turns = head
+        }
+
+        if (seen.kind === 'card') {
+          // One card per stage, fanned: the blue admission is still on the table
+          // when the yellow restraint is laid over it.
+          for (let i = 0; i < Math.max(1, seen.stage); i++) {
+            const face = new THREE.Mesh(
+              new THREE.PlaneGeometry(seen.size, seen.size * 1.5),
+              glow([0x4d8ff0, 0xf0c94d, 0xe5484d][Math.min(2, i)], 0.9),
+            )
+            face.position.set(i * seen.size * 0.28, i * seen.size * 0.12, i * 0.01)
+            face.rotation.z = (i - 1) * 0.16
+            root.add(face)
+          }
+          turns = root
+        }
+
+        if (seen.kind === 'mark') {
+          const ring = new THREE.Mesh(
+            new THREE.TorusGeometry(seen.size, seen.size * 0.12, 6, 20),
+            skin,
+          )
+          root.add(ring)
+          // Three bars across it: a sigil rather than a hoop, and unmistakably
+          // something put on the room rather than part of it.
+          for (let i = 0; i < 3; i++) {
+            const bar = new THREE.Mesh(
+              new THREE.BoxGeometry(seen.size * 1.8, seen.size * 0.09, seen.size * 0.09),
+              skin,
+            )
+            bar.rotation.z = (Math.PI / 3) * i
+            root.add(bar)
+          }
+          turns = root
+        }
+
+        if (seen.kind === 'star') {
+          const star = new THREE.Mesh(starShape(seen.size), skin)
+          root.add(star)
+          turns = star
+        }
+
+        if (seen.kind === 'double') {
+          const body = new THREE.Mesh(
+            new THREE.CapsuleGeometry(seen.size * 0.3, seen.size * 1.1, 4, 8),
+            glow(seen.colour, 0.42),
+          )
+          body.position.y = seen.size * 0.15
+          root.add(body)
+          const head = new THREE.Mesh(
+            new THREE.SphereGeometry(seen.size * 0.26, 10, 8),
+            glow(seen.colour, 0.42),
+          )
+          head.position.y = seen.size * 1.05
+          root.add(head)
+          turns = root
+        }
+
+        if (seen.kind === 'fish') {
+          // A body and a tail, and that is a fish: the walk is flat colour and
+          // hard edges, and a modelled carp would be the only thing aboard that
+          // was not. What it has to be is unmistakably swimming.
+          const body = new THREE.Mesh(new THREE.SphereGeometry(seen.size, 8, 6), skin)
+          body.scale.set(1.7, 0.75, 0.75)
+          root.add(body)
+          const tail = new THREE.Mesh(new THREE.ConeGeometry(seen.size * 0.55, seen.size, 4), skin)
+          tail.rotation.z = Math.PI / 2
+          tail.position.x = seen.size * 1.7
+          root.add(tail)
+          const eye = new THREE.Mesh(
+            new THREE.SphereGeometry(seen.size * 0.16, 6, 5),
+            glow(0xfff3d0, 1),
+          )
+          eye.position.set(-seen.size * 1.1, seen.size * 0.2, seen.size * 0.35)
+          root.add(eye)
+          turns = root
+        }
+
+        if (seen.kind === 'paper') {
+          const scrap = new THREE.Mesh(new THREE.PlaneGeometry(seen.size, seen.size * 1.4), skin)
+          root.add(scrap)
+          // The head and the two arms of a cut-out figure, which is what makes
+          // it a doll rather than a stuck note.
+          const head = new THREE.Mesh(new THREE.CircleGeometry(seen.size * 0.3, 8), skin)
+          head.position.y = seen.size * 0.85
+          root.add(head)
+          turns = root
+        }
+
+        if (seen.kind === 'cargo') {
+          const crate = new THREE.Mesh(
+            new THREE.BoxGeometry(seen.size, seen.size, seen.size),
+            glow(seen.colour, 0.7),
+          )
+          root.add(crate)
+          const bands = new THREE.Mesh(
+            new THREE.TorusGeometry(seen.size * 0.85, seen.size * 0.06, 4, 12),
+            glow(seen.colour, 1),
+          )
+          bands.rotation.x = Math.PI / 2
+          root.add(bands)
+          turns = root
+        }
+
+        if (seen.kind === 'portal') {
+          const rim = new THREE.Mesh(
+            new THREE.TorusGeometry(seen.size, seen.size * 0.09, 8, 32),
+            glow(seen.colour, 1),
+          )
+          root.add(rim)
+          // The far end, or — while only one mouth has been placed — the
+          // technique's own colour, so an unpaired door still reads as a door.
+          pane = new THREE.Mesh(
+            new THREE.CircleGeometry(seen.size, 32),
+            seen.pair ? portalShader(portalTarget(seen.id).texture) : glow(seen.colour, 0.22),
+          )
+          pane.renderOrder = 1
+          root.add(pane)
+          turns = root
+        }
+
+        return {
+          key: '',
+          kind: seen.kind,
+          root,
+          turns,
+          y: seen.y,
+          at: seen.at,
+          stage: seen.stage,
+          spread: seen.spread ?? 0,
+          pair: seen.pair,
+          pane,
+        }
+      }
+
+      function dropApparition(id: string) {
+        const held = apparitions[id]
+        if (!held) return
+        scene.remove(held.root)
+        portalTargets[id]?.dispose()
+        delete portalTargets[id]
+        held.root.traverse((part) => {
+          const mesh = part as import('three').Mesh
+          if (mesh.geometry) mesh.geometry.dispose()
+        })
+        delete apparitions[id]
+      }
+
+      /** Puts what the world says is standing into the scene, and takes out the rest. */
+      function syncApparitions() {
+        const wanted = apparitionsOn(ship, world)
+        const standing: Record<string, true> = {}
+
+        for (const seen of wanted) {
+          standing[seen.id] = true
+          // Everything the geometry depends on. Position is not in it: a thing
+          // that moved is moved, not rebuilt.
+          const key = `${seen.kind}|${seen.stage}|${seen.colour}|${seen.size}|${seen.hidden}|${seen.pair?.spaceId ?? ''}`
+          let held = apparitions[seen.id]
+          if (held && held.key !== key) {
+            dropApparition(seen.id)
+            held = undefined
+          }
+          if (!held) {
+            held = buildApparition(seen)
+            held.key = key
+            apparitions[seen.id] = held
+            scene.add(held.root)
+          }
+          held.y = seen.y
+          held.at = seen.at
+          held.stage = seen.stage
+          held.spread = seen.spread ?? 0
+          held.pair = seen.pair
+          held.root.position.set(seen.at[0], seen.y, seen.at[1])
+        }
+
+        for (const id of Object.keys(apparitions)) if (!standing[id]) dropApparition(id)
+      }
+
+      /**
+       * The decks the far ends of the tunnel are on, kept in the scene.
+       *
+       * A mouth showing a room five decks down is showing a deck that is not
+       * otherwise built, so it is built here and held for as long as the tunnel
+       * stands. The visitor's own deck is never added twice.
+       */
+      let portalDeckKey = ''
+
+      function syncPortalDecks() {
+        const mouths = wormMouths(ship, world)
+        const key = mouths.map((mouth) => `${mouth.spaceId}:${worldKey(mouth.tierId)}`).join('|')
+        if (key === portalDeckKey) return
+        portalDeckKey = key
+
+        for (const built of portalDecks) {
+          if (built !== visible && built !== eyeDeck) scene.remove(built.root)
+        }
+        portalDecks.length = 0
+        for (const mouth of mouths) {
+          const built = buildDeck(mouth.tierId).built
+          if (portalDecks.includes(built)) continue
+          portalDecks.push(built)
+          scene.add(built.root)
+        }
+        // A deck that has just come into the scene has every room switched off
+        // from the last time it was culled; the next pass decides again.
+        shownKey = ''
+      }
+
+      /**
+       * The two mouths, rendered into each other.
+       *
+       * The camera is put where the visitor's head would be if it were standing
+       * at the *other* end, looking the same way: what you see through a door in
+       * this room is what you would see standing in that one. The panes are
+       * hidden while it runs, because a mirror drawn into a mirror is either an
+       * infinite regress or a black disc, and neither is a door.
+       */
+      function renderPortals() {
+        const mouths = Object.entries(apparitions).filter(([, held]) => held?.kind === 'portal')
+        if (!mouths.length) return
+
+        for (const [, held] of mouths) if (held?.pane) held.pane.visible = false
+
+        for (const [id, held] of mouths) {
+          if (!held?.pair || !held.pane) continue
+          const target = portalTarget(id)
+          portalCamera.fov = camera.fov
+          portalCamera.aspect = camera.aspect
+          portalCamera.updateProjectionMatrix()
+          portalCamera.position.set(held.pair.at[0], held.pair.y, held.pair.at[1])
+          portalCamera.quaternion.copy(camera.quaternion)
+          renderer.setRenderTarget(target)
+          renderer.clear()
+          renderer.render(scene, portalCamera)
+          renderer.setRenderTarget(null)
+        }
+
+        for (const [, held] of mouths) if (held?.pane) held.pane.visible = true
+      }
+
+      /**
+       * What the apparitions do while nobody is casting anything.
+       *
+       * All of it is a sine: an owl's head turning, a card riding on the air, a
+       * sigil rotating, a double breathing. It costs nothing, and without it the
+       * technique reads as a prop left in the room rather than as aura.
+       */
+      function driftApparitions(seconds: number) {
+        for (const [id, held] of Object.entries(apparitions)) {
+          if (!held) continue
+          const phase = seconds + id.length
+
+          if (held.kind === 'fish') {
+            // An aquarium: each fish on its own ellipse about the middle of the
+            // room, at its own speed and its own depth, nose first.
+            const turn = phase * (0.25 + (held.stage % 4) * 0.06) + held.stage
+            const reach = held.spread * (0.45 + (held.stage % 3) * 0.22)
+            const x = held.at[0] + Math.cos(turn) * reach
+            const z = held.at[1] + Math.sin(turn) * reach * 0.7
+            held.root.position.set(x, held.y + Math.sin(phase * 0.7 + held.stage) * 0.35, z)
+            // Nose along the way it is going: the tail is on +x, so the body
+            // points the other way round.
+            held.root.rotation.y = -turn + Math.PI / 2
+            continue
+          }
+
+          held.root.position.y = held.y + Math.sin(phase * 0.9) * 0.06
+          if (!held.turns) continue
+
+          if (held.kind === 'paper') {
+            // Stuck, not floating: it flutters on whatever it is stuck to and
+            // keeps its face to the room.
+            held.turns.rotation.y =
+              Math.atan2(
+                camera.position.x - held.root.position.x,
+                camera.position.z - held.root.position.z,
+              ) +
+              Math.sin(phase * 2.4) * 0.25
+            continue
+          }
+          if (held.kind === 'owl') {
+            // Not a spin: a head that turns, stops, and turns back.
+            held.turns.rotation.y = Math.sin(phase * 0.35) * 1.9
+          } else if (held.kind === 'double' || held.kind === 'card' || held.kind === 'portal') {
+            // The three that are meant to be looked at face whoever is looking:
+            // a person turns to you, a card is dealt to you, and a door you
+            // cannot see through the edge of is a door you can walk into.
+            held.turns.rotation.y = Math.atan2(
+              camera.position.x - held.root.position.x,
+              camera.position.z - held.root.position.z,
+            )
+          } else {
+            held.turns.rotation.y = phase * 0.6
+            held.turns.rotation.z = Math.sin(phase * 0.4) * 0.3
+          }
+        }
+      }
+
+      // ── Kurton ───────────────────────────────────
+      /**
+       * The visitor as a vehicle.
+       *
+       * Riding used to be a number: a pace multiplier and ninety centimetres of
+       * extra height, which from inside the visitor's own head is indistinguishable
+       * from walking fast on a box. What was missing is the vehicle — so here it
+       * is, carried in front of the eye where a bonnet would be, with the two
+       * lamps a thing that moves at that speed through a dark ship would need.
+       */
+      const chassis = new THREE.Group()
+      chassis.visible = false
+      const chassisSkin = new THREE.MeshLambertMaterial({ color: 0xf2a65a })
+      const bonnet = new THREE.Mesh(new THREE.BoxGeometry(2.1, 0.35, 2.6), chassisSkin)
+      bonnet.position.set(0, -0.95, -1.5)
+      chassis.add(bonnet)
+      for (const side of [-1, 1]) {
+        const wing = new THREE.Mesh(new THREE.BoxGeometry(0.35, 0.5, 3.4), chassisSkin)
+        wing.position.set(side * 1.05, -0.85, -0.9)
+        chassis.add(wing)
+        const lamp = new THREE.Mesh(
+          new THREE.SphereGeometry(0.22, 10, 8),
+          new THREE.MeshBasicMaterial({ color: 0xfff0c0 }),
+        )
+        lamp.position.set(side * 0.75, -0.85, -2.75)
+        chassis.add(lamp)
+      }
+      scene.add(chassis)
+      /** The road the lamps throw, which is the whole reason to be one. */
+      const headlamp = new THREE.PointLight(0xffe0a0, 0, 22, 2)
+      scene.add(headlamp)
+
+      function syncVehicle(eye: number) {
+        const riding = world.body.riding
+        chassis.visible = riding
+        headlamp.intensity = riding ? 3.2 : 0
+        if (!riding) return
+        chassis.position.set(pointer[0], eye, pointer[1])
+        chassis.rotation.set(0, yaw, 0)
+        headlamp.position.set(
+          pointer[0] - Math.sin(yaw) * 4,
+          eye - 0.8,
+          pointer[1] - Math.cos(yaw) * 4,
+        )
+      }
+
+      // ── The blast and the punch ──────────────────
+      /**
+       * The two techniques that happen rather than stand.
+       *
+       * One group, built once and reused: a gust of air blown across the ship,
+       * and a fist of aura that comes up out of the deck. `playing` is how far
+       * through it is, in seconds, and the whole thing is hidden at the end of
+       * it rather than rebuilt every cast.
+       */
+      const GUST_SECONDS = 1.1
+      const PUNCH_SECONDS = 1
+      const SUN_SECONDS = 2.4
+      let playing = 0
+      let playedSeq = -1
+      let played: (TourFlash & { seq: number }) | null = null
+
+      const gustCount = 90
+      const gustPositions = new Float32Array(gustCount * 3)
+      const gustGeometry = new THREE.BufferGeometry()
+      gustGeometry.setAttribute('position', new THREE.BufferAttribute(gustPositions, 3))
+      const gustMaterial = new THREE.PointsMaterial({
+        color: 0xc6f1ff,
+        size: 0.22,
+        sizeAttenuation: true,
+        transparent: true,
+        opacity: 0.8,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false,
+      })
+      const gust = new THREE.Points(gustGeometry, gustMaterial)
+      gust.visible = false
+      gust.frustumCulled = false
+      scene.add(gust)
+
+      /** The ring the blast lands in, which is what says it arrived. */
+      const gustRingMaterial = new THREE.MeshBasicMaterial({
+        color: 0xc6f1ff,
+        transparent: true,
+        opacity: 0.5,
+        side: THREE.DoubleSide,
+        depthWrite: false,
+      })
+      const gustRing = new THREE.Mesh(new THREE.TorusGeometry(1, 0.06, 6, 28), gustRingMaterial)
+      gustRing.visible = false
+      scene.add(gustRing)
+
+      /**
+       * The sun the visitor becomes.
+       *
+       * Not thrown: Feitan rises inside it, so it is centred on the head and
+       * everything the walk can see is inside it while it burns. The sphere is
+       * drawn from the inside as well as the outside — the visitor is in it —
+       * and the light it casts is the only one on the ship that outshines the
+       * fittings.
+       */
+      const sunMaterial = new THREE.MeshBasicMaterial({
+        color: 0xf2a63b,
+        transparent: true,
+        opacity: 0.3,
+        side: THREE.DoubleSide,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false,
+      })
+      const sun = new THREE.Mesh(new THREE.SphereGeometry(1, 20, 16), sunMaterial)
+      sun.visible = false
+      scene.add(sun)
+      const sunLight = new THREE.PointLight(0xffb14a, 0, 60, 2)
+      scene.add(sunLight)
+
+      /** A fist: a block of knuckles, a thumb, and the forearm behind it. */
+      const fist = new THREE.Group()
+      const fistMaterial = new THREE.MeshBasicMaterial({
+        color: 0x55a7ff,
+        transparent: true,
+        opacity: 0.72,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false,
+      })
+      const knuckles = new THREE.Mesh(new THREE.BoxGeometry(0.95, 0.75, 0.8), fistMaterial)
+      knuckles.position.y = 1.2
+      fist.add(knuckles)
+      const thumb = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.3, 0.55), fistMaterial)
+      thumb.position.set(0.55, 1.15, 0.1)
+      fist.add(thumb)
+      const forearm = new THREE.Mesh(new THREE.CylinderGeometry(0.32, 0.36, 1.6, 10), fistMaterial)
+      forearm.position.y = 0.2
+      fist.add(forearm)
+      fist.visible = false
+      scene.add(fist)
+
+      /** Starts whichever of the two the page has just handed over. */
+      function syncFlash() {
+        if (!flash || flash.seq === playedSeq) return
+        playedSeq = flash.seq
+        played = flash
+        playing = 0
+
+        if (flash.kind === 'gust') {
+          const from = flash.from ?? flash.at
+          // Every mote gets its own place along the line and its own spread, so
+          // the blast reads as air moving rather than as a bead on a string.
+          for (let i = 0; i < gustCount; i++) {
+            const along = i / gustCount
+            gustPositions[i * 3] = from[0] + (flash.at[0] - from[0]) * along
+            gustPositions[i * 3 + 1] = flash.y
+            gustPositions[i * 3 + 2] = from[1] + (flash.at[1] - from[1]) * along
+          }
+          gustGeometry.attributes.position.needsUpdate = true
+        }
+      }
+
+      /** Plays the blast or the punch out, and puts it away when it is over. */
+      function driftFlash(delta: number) {
+        if (!played) return
+        playing += delta
+        const span =
+          played.kind === 'gust'
+            ? GUST_SECONDS
+            : played.kind === 'sun'
+              ? SUN_SECONDS
+              : PUNCH_SECONDS
+        const through = playing / span
+        if (through >= 1) {
+          gust.visible = false
+          gustRing.visible = false
+          fist.visible = false
+          sun.visible = false
+          sunLight.intensity = 0
+          played = null
+          return
+        }
+
+        if (played.kind === 'sun') {
+          // Out to its full radius in the first third, and burning down for the
+          // rest of it. The visitor is inside it the whole time, which is the
+          // difference between rising as the sun and throwing one.
+          const risen = Math.min(1, through * 3)
+          const metres = Math.max(2, played.metres ?? 4)
+          sun.visible = true
+          sun.position.copy(camera.position)
+          sun.scale.setScalar(metres * risen)
+          sunMaterial.opacity = 0.34 * (1 - through * through)
+          sunLight.position.copy(camera.position)
+          sunLight.distance = metres * 2.5
+          sunLight.intensity = 26 * risen * (1 - through)
+          return
+        }
+
+        if (played.kind === 'gust') {
+          const from = played.from ?? played.at
+          const reach = Math.hypot(played.at[0] - from[0], played.at[1] - from[1]) || 1
+          gust.visible = true
+          for (let i = 0; i < gustCount; i++) {
+            // Each mote runs the length of the throw, wraps, and swirls about
+            // the line it is running along: a gust has width.
+            const along = (i / gustCount + through * 1.6) % 1
+            const swirl = (i % 7) - 3
+            gustPositions[i * 3] = from[0] + (played.at[0] - from[0]) * along + swirl * 0.12
+            gustPositions[i * 3 + 1] = played.y + Math.sin(along * 9 + i) * 0.5
+            gustPositions[i * 3 + 2] = from[1] + (played.at[1] - from[1]) * along + swirl * 0.12
+          }
+          gustGeometry.attributes.position.needsUpdate = true
+          gustMaterial.opacity = 0.8 * (1 - through)
+          // The ring opens where it lands, once the air has had time to get there.
+          const landed = Math.max(0, (through - 0.45) / 0.55)
+          gustRing.visible = landed > 0
+          gustRing.position.set(played.at[0], played.y, played.at[1])
+          gustRing.rotation.set(Math.PI / 2, 0, 0)
+          gustRing.scale.setScalar(0.4 + landed * Math.min(6, reach * 0.35))
+          gustRingMaterial.opacity = 0.5 * (1 - landed)
+          return
+        }
+
+        // Out of the deck fast, held for a beat, and back down: the floor is
+        // where it comes from, so it is never drawn below where it started.
+        const rise = through < 0.25 ? through / 0.25 : Math.max(0, 1 - (through - 0.25) / 0.75)
+        fist.visible = true
+        fist.position.set(played.at[0], played.y - 2 + rise * 3.1, played.at[1])
+        fist.rotation.y = playedSeq
+        fistMaterial.opacity = 0.72 * (1 - through * 0.6)
+      }
+
       /** The room and the solid down the reticle, and the cast that lands on them. */
       const facing = () =>
         activePlan ? aimedSpace(activePlan, pointer, yaw, reachOf(world.body)) : null
@@ -1113,8 +1894,89 @@
         return plan ? aimedSolid(ship, world, plan, pointer, yaw, reachOf(world.body) / 2) : null
       }
 
+      // ── Machi's thread ───────────────────────────
+      /**
+       * The thread, and the swing on the end of it.
+       *
+       * `arc` is where it took hold and how far through the swing the visitor
+       * is. The line is drawn from the hand to the anchor for as long as it
+       * holds; the walk arcs along it and lets go on arrival. Collisions are not
+       * run while it is holding, because a swing that stopped at the first
+       * bulkhead would be a rope, not a thread.
+       */
+      const threadMaterial = new THREE.LineBasicMaterial({
+        color: 0xdd77b7,
+        transparent: true,
+        opacity: 0.9,
+        depthTest: false,
+      })
+      const threadGeometry = new THREE.BufferGeometry()
+      threadGeometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(6), 3))
+      const thread = new THREE.Line(threadGeometry, threadMaterial)
+      thread.visible = false
+      thread.frustumCulled = false
+      thread.renderOrder = 3
+      scene.add(thread)
+
+      let arc: { to: Vec2; height: number; from: Vec2; span: number; through: number } | null = null
+      /** How much of the arc the visitor is riding, added to the eye this frame. */
+      let swingRise = 0
+
+      /** Throws the thread at whatever is down the reticle, and takes hold. */
+      function throwThread() {
+        const solid = facingSolid()
+        const space = facing()
+        const plan = ship.plans.get(currentTierId)
+        if (!plan) return
+        const to = solid
+          ? solidNow(solid, world.solids[solid.id]).at
+          : space
+            ? centroid(space)
+            : null
+        if (!to) return
+        const reach = Math.hypot(to[0] - pointer[0], to[1] - pointer[1])
+        // Nothing to swing to: a thread thrown at your own feet is a thread.
+        if (reach < 2) return
+        const target = space ?? spaceAt(plan, to)
+        arc = {
+          to,
+          height: (target ? floorOf(target, plan.tier) : ground) + 1.4,
+          from: pointer,
+          // A swing is a swing whatever the distance: about six metres a second
+          // of ground, which crosses the promenade in a couple of arcs.
+          span: Math.max(0.35, reach / 16),
+          through: 0,
+        }
+      }
+
+      /** Rides the arc, and drops the thread at the end of it. */
+      function ridTheThread(delta: number) {
+        swingRise = 0
+        if (!arc) {
+          thread.visible = false
+          return
+        }
+        arc.through = Math.min(1, arc.through + delta / arc.span)
+        const eased = 1 - (1 - arc.through) ** 2
+        pointer = [
+          arc.from[0] + (arc.to[0] - arc.from[0]) * eased,
+          arc.from[1] + (arc.to[1] - arc.from[1]) * eased,
+        ]
+        // Up and over: the rise is what makes it a swing rather than a winch.
+        swingRise = Math.sin(arc.through * Math.PI) * 2.2
+
+        const line = threadGeometry.attributes.position as import('three').BufferAttribute
+        line.setXYZ(0, camera.position.x, camera.position.y - 0.4, camera.position.z)
+        line.setXYZ(1, arc.to[0], arc.height, arc.to[1])
+        line.needsUpdate = true
+        thread.visible = true
+
+        if (arc.through >= 1) arc = null
+      }
+
       function cast() {
         onCast?.(facing()?.id ?? null, facingSolid()?.id ?? null)
+        if (swings) throwThread()
       }
 
       // ── Input ────────────────────────────────────
@@ -1329,6 +2191,12 @@
         renderer.setSize(clientWidth, clientHeight, false)
         camera.aspect = clientWidth / clientHeight
         camera.updateProjectionMatrix()
+        // The panes are sampled in screen space, so they are the size of the
+        // screen: a target left at the old size shows the far room stretched.
+        const { width, height } = renderer.getSize(new THREE.Vector2())
+        for (const target of Object.values(portalTargets)) {
+          target?.setSize(Math.max(2, Math.round(width)), Math.max(2, Math.round(height)))
+        }
       }
       const resize = new ResizeObserver(() => {
         if (pendingResize) return
@@ -1373,6 +2241,10 @@
       /** The end of Fugetsu's tunnel the visitor was last delivered to. */
       let wormFrom: string | null = null
       let lastSpaceId: string | null = null
+      /** How long since the fish last took something, in seconds. */
+      let sinceBite = 0
+      /** A couple of seconds a mouthful: an aquarium, not a wood chipper. */
+      const BITE_SECONDS = 2.4
       let aimedId: string | null = null
       let aimedSolidId: string | null = null
       let sinceAim = 0
@@ -1389,9 +2261,28 @@
         syncShells()
         syncEye()
         syncSight()
+        syncPhasing()
+        // The far deck first, so a mouth built this frame already has a room to
+        // look at rather than a frame of void.
+        syncPortalDecks()
+        syncApparitions()
+        syncFlash()
         sweepStale()
         driftSolids(now / 1000)
         driftMotes(delta, now / 1000)
+        driftApparitions(now / 1000)
+        driftFlash(delta)
+
+        // The fish feed on the clock rather than on a threshold: they are drawn
+        // now, and a fish that swims through a coffin and leaves it standing is
+        // not eating. What they take is still the pure layer's to decide.
+        if (world.devouring.length) {
+          sinceBite += delta
+          if (sinceBite >= BITE_SECONDS) {
+            sinceBite = 0
+            onFish?.()
+          }
+        } else sinceBite = 0
         const walked = activePlan ?? plan
         // What the aura is holding is out of the deck's own wall list, so it
         // has to be put back for the collision test — where the technique left
@@ -1421,7 +2312,10 @@
         const sin = Math.sin(yaw)
         const cos = Math.cos(yaw)
 
-        if (moving && !$comfort.jumpOnly) {
+        // The thread has the visitor: the legs are not what is moving them.
+        ridTheThread(delta)
+
+        if (moving && !arc && !$comfort.jumpOnly) {
           const speed = (running ? SPRINT_SPEED : WALK_SPEED) * paceOf(world.body) * delta
           const target: Vec2 = [
             pointer[0] + (advance * -sin + strafe * cos) * speed,
@@ -1462,12 +2356,15 @@
          */
         const groundTarget = floorOf(standing ?? entrySpace(plan), plan.tier)
         ground += (groundTarget - ground) * Math.min(1, delta * 6)
-        const eye = ground + eyesOf(world.body, EYE_HEIGHT) + bob.rise
+        const eye = ground + eyesOf(world.body, EYE_HEIGHT) + bob.rise + swingRise
         camera.position.set(pointer[0], eye, pointer[1])
         camera.rotation.set(0, 0, 0)
         camera.rotateY(yaw)
         camera.rotateX(pitch)
         camera.rotateZ(bob.roll)
+        // Kurton is worn rather than stood in: the chassis goes where the
+        // visitor is, facing where they face, every frame.
+        syncVehicle(eye)
 
         // One pace, one footstep, on the same counter the head is dipping to — so
         // the sound lands with the foot at every speed and never drifts off it.
@@ -1549,20 +2446,36 @@
               distanceToBoundary(pointer, standing.footprint),
             )
           }
-          const exit = doorExit(world, standingId, arrivedFrom)
+          // The ship is handed in because the doors may be passive: with the
+          // aura up and no route prepared, every threshold is one of Voconte's
+          // and comes out somewhere in the hideout that is not where you meant.
+          const exit = doorExit(world, standingId, arrivedFrom, ship)
           arrivedFrom = exit
           onArrive?.(standingId)
           if (exit) {
             goTo(exit)
             return
           }
-          const tunnel = onWorm?.(standingId, wormFrom)
+        }
+
+        // Fugetsu's tunnel is a door rather than a room: it is crossed by
+        // walking into the mouth, not by setting foot on the deck it stands on.
+        // `wormFrom` is the end the last crossing put the visitor in, held until
+        // they step out of it, or arriving would immediately send them back.
+        const mouth = wormMouthAt(ship, world, currentTierId, pointer)
+        if (!mouth) wormFrom = null
+        else if (mouth !== wormFrom) {
+          // Read before the crossing: the third one collapses the pair behind
+          // it, and the visitor still has to come out somewhere.
+          const ends = wormMouths(ship, world)
+          const tunnel = onWorm?.(mouth, wormFrom)
           if (tunnel) {
             wormFrom = tunnel
-            goTo(tunnel)
+            // Out of the far mouth rather than at the far room's door: a tunnel
+            // whose exit was across the room would be a tunnel you fall out of.
+            goTo(tunnel, ends.find((end) => end.spaceId === tunnel)?.at)
             return
           }
-          wormFrom = null
         }
 
         // The reticle is polled rather than traced every frame: it walks the
@@ -1589,6 +2502,9 @@
         const { width, height } = renderer.getSize(size)
         renderer.setScissorTest(false)
         renderer.setViewport(0, 0, width, height)
+        // The far ends of the tunnel are drawn into their panes first, from
+        // where the visitor's head would be if it were standing at the other one.
+        renderPortals()
         renderer.render(scene, camera)
 
         // The eye's feed, inset in the corner: the same scene from where the eye
@@ -1672,6 +2588,28 @@
         eyeDeck = null
         eyeCamera = null
         for (const id of Object.keys(solids)) dropSolid(id)
+        for (const id of Object.keys(apparitions)) dropApparition(id)
+        for (const material of Object.values(glowMaterials)) material?.dispose()
+        portalDecks.length = 0
+        gustGeometry.dispose()
+        gustMaterial.dispose()
+        gustRing.geometry.dispose()
+        gustRingMaterial.dispose()
+        fist.traverse((part) => {
+          const mesh = part as import('three').Mesh
+          if (mesh.geometry) mesh.geometry.dispose()
+        })
+        fistMaterial.dispose()
+        sun.geometry.dispose()
+        sunMaterial.dispose()
+        threadGeometry.dispose()
+        threadMaterial.dispose()
+        for (const target of Object.values(portalTargets)) target?.dispose()
+        chassis.traverse((part) => {
+          const mesh = part as import('three').Mesh
+          if (mesh.geometry) mesh.geometry.dispose()
+        })
+        chassisSkin.dispose()
         // The walk is over: no more footsteps, and the audio graph goes with it.
         stopSteps()
         shells?.geometry.dispose()

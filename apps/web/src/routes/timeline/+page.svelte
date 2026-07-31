@@ -1,7 +1,6 @@
 <script lang="ts">
   import type { PageData } from './$types'
   import VoyageProgress from '$lib/components/VoyageProgress.svelte'
-  import { LAST_DATED_CHAPTER, formatVoyageTime, voyageTimeForEvent } from '$lib/voyageTime'
   import Seo from '$lib/components/Seo.svelte'
   import { breadcrumbSchema } from '$lib/seo/schema'
   import { link, t } from '$lib/i18n'
@@ -74,7 +73,21 @@
   )
 
   // What the chip above an event title actually claims, spelled out on hover.
+  // A label with no basis is the one time chapter dates itself outside the
+  // voyage, so it keeps the older wording rather than claiming a precision.
   let precisionHint = $derived($t.timeline.precision)
+  function timeHint(event: Event) {
+    const basis = event.occurredAtBasis
+    const claim =
+      basis && basis in precisionHint
+        ? precisionHint[basis as keyof typeof precisionHint]
+        : $t.timeline.timeOnEvent
+    // Provenance is a separate line of the same tooltip: a Hunterpedia dating
+    // is worth showing, and worth showing as theirs.
+    return event.occurredAtSource === 'community'
+      ? `${claim} · ${$t.timeline.communitySourced}`
+      : claim
+  }
 
   let eventCount = $derived(
     data.chapters.reduce((total, chapter) => total + chapter.events.length, 0),
@@ -97,30 +110,26 @@
   ])}
 />
 
-{#snippet eventTime(chapterNumber: number, event: Event, flashbackLabel: string)}
+{#snippet eventTime(event: Event, flashbackLabel: string)}
   {#if event.isFlashback}
     <span class="event-time flashback">{flashbackLabel}</span>
   {/if}
 
+  <!-- The label is rendered from the voyage clock by the timeline backfill, and
+       the basis beside it says what kind of claim it is: an hour the manga
+       prints, an hour that follows from one, or the interval between the two
+       anchors around an event nobody dated. Only what happens off the voyage
+       comes through with no time at all. -->
   {#if event.occurredAtLabel}
-    <span class="event-time" title={$t.timeline.timeOnEvent}>{event.occurredAtLabel}</span>
-  {:else if event.isFlashback}
-    <!-- A flashback happened before the chapter that reveals it: the chapter's
-         voyage day would be plainly wrong here, so we claim nothing. -->
-  {:else}
-    {@const voyageTime = voyageTimeForEvent(chapterNumber, event.title)}
-    {#if voyageTime}
-      <span
-        class="event-time"
-        class:approximate={voyageTime.precision === 'approximate'}
-        class:anchored={voyageTime.precision === 'exact'}
-        title={precisionHint[voyageTime.precision]}>{formatVoyageTime(voyageTime)}</span
-      >
-    {:else if chapterNumber > LAST_DATED_CHAPTER}
-      <span class="event-time undated" title={$t.timeline.undatedHint(LAST_DATED_CHAPTER)}
-        >{$t.timeline.undated}</span
-      >
-    {/if}
+    <span
+      class="event-time"
+      class:approximate={event.occurredAtBasis === 'bracketed'}
+      class:anchored={event.occurredAtBasis === 'stated'}
+      class:sourced={event.occurredAtSource === 'community'}
+      title={timeHint(event)}>{event.occurredAtLabel}</span
+    >
+  {:else if !event.isFlashback}
+    <span class="event-time undated" title={$t.timeline.undatedHint}>{$t.timeline.undated}</span>
   {/if}
 {/snippet}
 
@@ -247,11 +256,7 @@
                   >
                     <span class="event-index">{event.ordinal ?? '—'}</span>
                     <span class="event-copy">
-                      {@render eventTime(
-                        chapter.number,
-                        event,
-                        $t.timeline.revealedIn(chapter.number),
-                      )}
+                      {@render eventTime(event, $t.timeline.revealedIn(chapter.number))}
                       <span class="event-title">{event.title}</span>
                       <span class="event-summary">{event.summary}</span>
                     </span>
@@ -294,11 +299,7 @@
                   >
                     <span class="event-index">{String(eventIndex + 1).padStart(2, '0')}</span>
                     <span class="event-copy">
-                      {@render eventTime(
-                        chapter.number,
-                        event,
-                        $t.timeline.flashbackOccurrence(event.ordinal),
-                      )}
+                      {@render eventTime(event, $t.timeline.flashbackOccurrence(event.ordinal))}
                       <span class="event-title">{event.title}</span>
                       <span class="event-summary">{event.summary}</span>
                     </span>
@@ -718,6 +719,11 @@
     border-color: rgba(112, 189, 193, 0.55);
     background: rgba(112, 189, 193, 0.16);
     color: #b6e6e7;
+  }
+  /* Dated by Hunterpedia rather than by a panel: the chip keeps its colour and
+     loses its outline, so the difference reads without shouting. */
+  .event-time.sourced {
+    border-style: dashed;
   }
   .event-time.undated {
     border-color: rgba(148, 163, 184, 0.22);

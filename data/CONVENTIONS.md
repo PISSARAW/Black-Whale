@@ -37,8 +37,52 @@ Toujours utiliser des UUID (générés automatiquement par la DB).
 
 ## Dates de récit
 
+### L'horloge du voyage
+
+Un événement porte `occurredAt`, et rien d'autre ne le date. Le champ dit ce
+que le canon donne, pas ce qu'on aimerait afficher :
+
+```json
+"occurredAt": { "basis": "stated", "hours": 21 }
+"occurredAt": { "basis": "derived", "day": 4 }
+```
+
+`hours` compte les heures depuis la corne de départ — heure zéro, dimanche
+midi du jour 1. `basis` vaut `stated` quand le manga imprime l'heure, une
+légende d'heures écoulées ou une horloge dans le décor ; `derived` quand elle
+se déduit d'une heure imprimée par une relation énoncée (« neuf heures
+d'inconscience », « la veille »). Un `day` sans `hours` est un jour connu dont
+l'heure ne l'est pas : il vaut pour la journée entière, de minuit à minuit.
+
+Ce qui n'a pas de `occurredAt` n'est pas pour autant sans date : la cascade de
+`@black-whale/domain` l'encadre entre l'ancre qui le précède et celle qui le
+suit, et le résultat porte `basis: "bracketed"`. C'est la troisième valeur, et
+elle ne s'écrit jamais à la main — l'inventer reviendrait à faire passer un
+intervalle pour une heure.
+
+`source` dit qui l'affirme, `manga` par défaut. Une bonne part de la seconde
+moitié de l'arc est datée par Hunterpedia : ces dates valent d'être gardées, et
+portent `"source": "community"`. Une source communautaire ne peut pas être
+`stated` — impossible de savoir de l'extérieur si la fiche transcrit une
+légende ou reflète la lecture d'un contributeur, et `stated` est réservé à une
+planche lue ici. Un test échoue sur toute déclaration qui l'oublie.
+
+`occurredAtLabel` est **rendu**, pas rédigé : `backfill_timeline.mjs` l'écrit
+depuis `occurredAt`, et un test échoue si le libellé du fichier ne correspond
+plus à ce que le formateur produit. La seule exception est ce que l'horloge du
+navire ne peut pas tenir — le flash-back du chapitre 415, daté « deux mois
+avant le départ ».
+
+Enfin, l'ordre compte : la cascade lit les événements dans l'ordre
+chronologique, celui que donnent le chapitre, la séquence et `occursAfterTitle`.
+Une heure déclarée qui tombe hors de l'intervalle que ses voisins autorisent
+fait échouer les tests — c'est ainsi qu'on a vu que le chapitre 415 s'ouvre
+vingt-cinq minutes avant la scène du chapitre 413 qui le précède à la lecture.
+
+### Forme des libellés
+
 `storyDate` (chapitres) et `occurredAtLabel` (événements) se lisent
-`Day N · Jour · heure`, du plus large au plus fin, chaque cran séparé par ` · ` :
+`Day N · Jour · heure`, du plus large au plus fin, chaque cran séparé par `·` :
 
 - `Day 1 · Sunday · 12:00`
 - `Day 2 · Monday · 09:00`

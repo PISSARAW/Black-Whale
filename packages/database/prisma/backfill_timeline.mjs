@@ -2,6 +2,7 @@ import { readFileSync } from 'fs'
 import { dirname, join, parse } from 'path'
 import { fileURLToPath } from 'url'
 import { PrismaClient } from '@prisma/client'
+import { bracket, formatVoyageTime, hasVoyageTime } from '@black-whale/domain'
 
 const prisma = new PrismaClient()
 
@@ -49,9 +50,6 @@ async function syncEvent(definition) {
         title: definition.title,
         summary: definition.summary,
         ...(definition.isFlashback === undefined ? {} : { isFlashback: definition.isFlashback }),
-        ...(definition.occurredAtLabel === undefined
-          ? {}
-          : { occurredAtLabel: definition.occurredAtLabel }),
         ...(definition.occursOnBlackWhale === undefined
           ? {}
           : { occursOnBlackWhale: definition.occursOnBlackWhale }),
@@ -67,11 +65,58 @@ async function syncEvent(definition) {
       title: definition.title,
       summary: definition.summary,
       isFlashback: definition.isFlashback ?? false,
-      occurredAtLabel: definition.occurredAtLabel ?? null,
       occursOnBlackWhale: definition.occursOnBlackWhale ?? true,
     },
   })
   return 'created'
+}
+
+/**
+ * Put every event on the voyage clock, in the order the ordinals just settled.
+ *
+ * The hours themselves are canon data and live in the log; what the database
+ * stores is the result of running the cascade over them, so that a query can
+ * order by time and a page can render one without recomputing anything. The
+ * label goes the same way: it used to be typed by hand next to the event, which
+ * let it disagree with the number the engines sort by. It is rendered here now.
+ */
+async function stampVoyageClock() {
+  const declared = new Map(knownEvents.map((definition) => [definition.title, definition]))
+  const events = await prisma.narrativeEvent.findMany({
+    orderBy: [{ ordinal: 'asc' }, { chapter: { number: 'asc' } }, { sequence: 'asc' }],
+    include: { chapter: { select: { number: true } } },
+  })
+
+  const times = bracket(
+    events.map((event) => ({
+      onVoyage: hasVoyageTime({ chapter: event.chapter.number, isFlashback: event.isFlashback }),
+      occurredAt: declared.get(event.title)?.occurredAt,
+    })),
+  )
+
+  await prisma.$transaction(
+    events.map((event, index) => {
+      const time = times[index]
+      return prisma.narrativeEvent.update({
+        where: { id: event.id },
+        data: {
+          occurredAtBasis: time?.basis ?? null,
+          occurredAtHours: time?.hours ?? null,
+          occurredAtEarliest: time?.earliest ?? null,
+          occurredAtLatest: time?.latest ?? null,
+          occurredAtSource: time?.source ?? null,
+          // Off the clock, the log's own label is all there is — chapter 415
+          // dates its flashback two months before a departure that has no hour.
+          occurredAtLabel: time
+            ? formatVoyageTime(time)
+            : (declared.get(event.title)?.occurredAtLabel ?? null),
+        },
+      })
+    }),
+  )
+
+  const dated = times.filter((time) => time && time.basis !== 'bracketed').length
+  return { dated, bracketed: times.filter((time) => time?.basis === 'bracketed').length }
 }
 
 async function main() {
@@ -148,8 +193,13 @@ async function main() {
 			)
 		END
 	`)
+  const clock = await stampVoyageClock()
+
   console.log(
     `Timeline synchronisée : ${results.created} créations, ${results.updated} mises à jour.`,
+  )
+  console.log(
+    `Horloge du voyage : ${clock.dated} événements datés, ${clock.bracketed} encadrés entre deux ancres.`,
   )
 }
 

@@ -928,12 +928,12 @@ export const en = {
     sequenceShort: (sequence: number | string) => `Seq. ${sequence}`,
     timeOnEvent: 'Time recorded on the event itself',
     undated: 'Undated',
-    undatedHint: (lastDated: number) =>
-      `Canon does not anchor a voyage day past chapter ${lastDated} yet`,
+    undatedHint: 'Happens off the voyage, so the ship’s clock says nothing about it',
+    communitySourced: 'Dated by Hunterpedia, not read off a panel',
     precision: {
-      exact: 'Hour stated by the manga',
-      day: 'Day stated by the manga, no hour given',
-      approximate: 'Day inferred from the surrounding chapters',
+      stated: 'Time stated by the manga',
+      derived: 'Time worked out from a stated one',
+      bracketed: 'Undated: the interval between the anchors around it',
     },
     emptyTitle: 'No events found',
     emptyCopy: 'Try another title, chapter number, or keyword.',

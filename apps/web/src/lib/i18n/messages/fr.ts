@@ -855,12 +855,12 @@ export const fr: Messages = {
     sequenceShort: (sequence) => `Séq. ${sequence}`,
     timeOnEvent: 'Heure consignée sur l’événement lui-même',
     undated: 'Non daté',
-    undatedHint: (lastDated) =>
-      `Le canon ne fixe encore aucun jour de voyage au-delà du chapitre ${lastDated}`,
+    undatedHint: 'Se passe hors du voyage : l’horloge du navire n’en dit rien',
+    communitySourced: 'Daté par Hunterpedia, pas lu sur une planche',
     precision: {
-      exact: 'Heure indiquée par le manga',
-      day: 'Jour indiqué par le manga, sans heure précise',
-      approximate: 'Jour déduit des chapitres environnants',
+      stated: 'Heure indiquée par le manga',
+      derived: 'Heure déduite d’une heure indiquée',
+      bracketed: 'Non daté : l’intervalle entre les deux ancres qui l’encadrent',
     },
     emptyTitle: 'Aucun événement trouvé',
     emptyCopy: 'Essayez un autre titre, un autre numéro de chapitre ou un autre mot-clé.',

@@ -98,6 +98,20 @@
   {
     "chapter": 359,
     "chapterTitle": "Departure",
+    "sequence": 2,
+    "occurredAt": {
+      "basis": "stated",
+      "hours": 0
+    },
+    "occurredAtLabel": "Day 1 · Sunday · 12:00",
+    "title": "Ship Departs",
+    "summary": "The Black Whale sounds its horn and leaves the port of Kakin for the New Continent, at noon on a Sunday. The blast is what opens the Succession Contest: the rules read out at the urn ceremony hold that the contest begins with it, and that a potential heir dying before it would call the whole thing off.",
+    "legacyTitles": [],
+    "note": "Hour zero of the voyage clock, and the reason any other hour can be named. The event was seeded by prisma/seed.ts rather than curated, which left the arc's one fixed point outside the file everything else is dated from. It is matched on its title, so it keeps the seeded row and the anchors that already point at it."
+  },
+  {
+    "chapter": 359,
+    "chapterTitle": "Departure",
     "sequence": 3,
     "title": "Woody is found dead",
     "summary": "Woody dies between 12:15 and 12:30, minutes after the Black Whale leaves port, and is found exsanguinated on the bathroom floor of room 1014. Kurapika reaches the bathroom shortly afterwards with Bill, Kurton, Sayird and two more of the detail.",
@@ -189,10 +203,11 @@
     "legacyTitles": [],
     "occursAfterTitle": "Chrollo orders the hunt for Hisoka",
     "occurredAt": {
-      "basis": "stated",
-      "hours": 4
+      "basis": "derived",
+      "hours": 4,
+      "source": "community"
     },
-    "occurredAtLabel": "Day 1 · Sunday · 16:00"
+    "occurredAtLabel": "≈ Day 1 · 16:00"
   },
   {
     "chapter": 366,
@@ -204,7 +219,8 @@
     "occursAfterTitle": "The fourteen suites, one by one",
     "occurredAt": {
       "basis": "derived",
-      "hours": 4
+      "hours": 4,
+      "source": "community"
     },
     "occurredAtLabel": "≈ Day 1 · 16:00"
   },
@@ -217,7 +233,8 @@
     "legacyTitles": [],
     "occurredAt": {
       "basis": "derived",
-      "hours": 4
+      "hours": 4,
+      "source": "community"
     },
     "occurredAtLabel": "≈ Day 1 · 16:00"
   },
@@ -230,7 +247,8 @@
     "legacyTitles": [],
     "occurredAt": {
       "basis": "derived",
-      "hours": 4
+      "hours": 4,
+      "source": "community"
     },
     "occurredAtLabel": "≈ Day 1 · 16:00"
   },
@@ -658,10 +676,11 @@
     "summary": "Parallel Future lets Tserriednich foresee the gunshot, evade it and conceal the outcome from his guards.",
     "legacyTitles": [],
     "occurredAt": {
-      "basis": "stated",
-      "day": 9
+      "basis": "derived",
+      "day": 9,
+      "source": "community"
     },
-    "occurredAtLabel": "Day 9 · Monday"
+    "occurredAtLabel": "≈ Day 9"
   },
   {
     "chapter": 389,
@@ -797,10 +816,11 @@
     "summary": "Morena asks Borksen to join Heil-Ly and uses a card game that forces both sides to reveal information and narrow the answer.",
     "legacyTitles": [],
     "occurredAt": {
-      "basis": "stated",
-      "day": 12
+      "basis": "derived",
+      "day": 12,
+      "source": "community"
     },
-    "occurredAtLabel": "Day 12 · Thursday"
+    "occurredAtLabel": "≈ Day 12"
   },
   {
     "chapter": 408,
@@ -877,10 +897,11 @@
     "summary": "Confronted by Kurapika and Bill, Oito admits that the child in room 1014 is her nephew; the real Woble remains missing.",
     "legacyTitles": [],
     "occurredAt": {
-      "basis": "stated",
-      "day": 12
+      "basis": "derived",
+      "day": 12,
+      "source": "community"
     },
-    "occurredAtLabel": "Day 12 · Thursday"
+    "occurredAtLabel": "≈ Day 12"
   },
   {
     "chapter": 340,
@@ -986,10 +1007,11 @@
     "summary": "Kurapika subdues Sayird and uses Steal Chain, revealing the Emperor Time condition needed to control the stolen power.",
     "legacyTitles": [],
     "occurredAt": {
-      "basis": "stated",
-      "hours": 2
+      "basis": "derived",
+      "hours": 2,
+      "source": "community"
     },
-    "occurredAtLabel": "Day 1 · Sunday · 14:00"
+    "occurredAtLabel": "≈ Day 1 · 14:00"
   },
   {
     "chapter": 362,
@@ -1120,10 +1142,11 @@
     "summary": "Kurapika lends abilities through Stealth Dolphin to open the students' aura nodes while Bill demonstrates Water Divination.",
     "legacyTitles": [],
     "occurredAt": {
-      "basis": "stated",
-      "hours": 215.5
+      "basis": "derived",
+      "hours": 215.5,
+      "source": "community"
     },
-    "occurredAtLabel": "Day 10 · Tuesday · 11:30"
+    "occurredAtLabel": "≈ Day 10 · 11:30"
   },
   {
     "chapter": 390,
@@ -1197,10 +1220,11 @@
     "summary": "Longhi reveals Moonlight Act, her connection to Beyond and the plan to identify which prince may be his child.",
     "legacyTitles": [],
     "occurredAt": {
-      "basis": "stated",
-      "hours": 215.75
+      "basis": "derived",
+      "hours": 215.75,
+      "source": "community"
     },
-    "occurredAtLabel": "Day 10 · Tuesday · 11:45"
+    "occurredAtLabel": "≈ Day 10 · 11:45"
   },
   {
     "chapter": 403,
@@ -1210,10 +1234,11 @@
     "summary": "Balsamilco enters the Justice Bureau intending to infect Halkenburg during questioning, as Kacho's letter reveals Unma is Halkenburg's mother.",
     "legacyTitles": [],
     "occurredAt": {
-      "basis": "stated",
-      "hours": 234.75
+      "basis": "derived",
+      "hours": 234.75,
+      "source": "community"
     },
-    "occurredAtLabel": "Day 11 · Wednesday · 06:45"
+    "occurredAtLabel": "≈ Day 11 · 06:45"
   },
   {
     "chapter": 404,
@@ -1236,10 +1261,11 @@
     "summary": "Kurapika expands the lessons, explains how the succession ritual can fail and announces that Woble is not an eligible participant.",
     "legacyTitles": [],
     "occurredAt": {
-      "basis": "stated",
-      "day": 12
+      "basis": "derived",
+      "day": 12,
+      "source": "community"
     },
-    "occurredAtLabel": "Day 12 · Thursday"
+    "occurredAtLabel": "≈ Day 12"
   },
   {
     "chapter": 412,
@@ -1249,10 +1275,11 @@
     "summary": "Cleapatro visits Beyond in his VVIP cell to review the more than one thousand lawsuits he filed against Kakin.",
     "legacyTitles": [],
     "occurredAt": {
-      "basis": "stated",
-      "day": 12
+      "basis": "derived",
+      "day": 12,
+      "source": "community"
     },
-    "occurredAtLabel": "Day 12 · Thursday"
+    "occurredAtLabel": "≈ Day 12"
   },
   {
     "chapter": 413,
@@ -1303,10 +1330,11 @@
     "summary": "Kurapika and Oito discuss a letter intended for Oito's sister through a delivery service before the declaration of martial law interrupts them.",
     "legacyTitles": ["Furykov identifies the structure of Beyond's curse"],
     "occurredAt": {
-      "basis": "stated",
-      "hours": 265.8333333333333
+      "basis": "derived",
+      "hours": 265.8333333333333,
+      "source": "community"
     },
-    "occurredAtLabel": "Day 12 · Thursday · 13:50",
+    "occurredAtLabel": "≈ Day 12 · 13:50",
     "occursAfterTitle": "Benjamin discovers the body swap and his infection"
   },
   {
@@ -1316,12 +1344,14 @@
     "title": "The royal camps respond to special martial law",
     "summary": "The princes and their guards receive conflicting movement, escort and disarmament orders as Benjamin summons the heirs and tightens control of Tier 1.",
     "legacyTitles": [],
-    "occursAfterTitle": "Kurapika and Oito prepare a message for the mainland",
+    "occursAfterTitle": "Benjamin proclaims martial law",
     "occurredAt": {
       "basis": "derived",
-      "day": 12
+      "day": 12,
+      "source": "community"
     },
-    "occurredAtLabel": "≈ Day 12"
+    "occurredAtLabel": "≈ Day 12",
+    "note": "The camps answer a proclamation, so they cannot precede it. Chapter 415 opens on the 13:50 message, twenty-five minutes before the 14:15 proclamation of chapter 413, and the rest of the chapter falls after it: following the reading order here would have the reaction come first."
   },
   {
     "chapter": 415,
@@ -1332,7 +1362,8 @@
     "legacyTitles": [],
     "occurredAt": {
       "basis": "derived",
-      "day": 12
+      "day": 12,
+      "source": "community"
     },
     "occurredAtLabel": "≈ Day 12"
   }

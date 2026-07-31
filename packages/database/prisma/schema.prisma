@@ -312,9 +312,23 @@ model NarrativeEvent {
   ordinal    Int?    @unique
   /// True when the source chapter narrates an event that happened earlier.
   isFlashback Boolean @default(false)
-  /// Human-readable in-world time when canon gives one (for example "Day 8 · 20:00",
-  /// the first weekly banquet). Leave empty rather than inventing a time.
+  /// Human-readable in-world time, rendered from the fields below by the timeline
+  /// backfill (for example "Day 8 · Sunday · 20:00", the first weekly banquet).
   occurredAtLabel String?
+  /// How much canon actually says about when this happened: "stated" when the
+  /// manga prints a time, "derived" when it follows from one by a stated relation,
+  /// "bracketed" when only the neighbouring anchors bound it.
+  occurredAtBasis String?
+  /// Hours since the departure horn. Set only for stated and derived times: an
+  /// event nobody dated has bounds, not an hour.
+  occurredAtHours Float?
+  /// Bounds in the same unit. `occurredAtLatest` stays null past the last anchor,
+  /// where the only truthful upper bound is the end of the voyage.
+  occurredAtEarliest Float?
+  occurredAtLatest   Float?
+  /// Who dated it, when that is not the manga itself — "community" for a time
+  /// taken from Hunterpedia rather than read off a panel.
+  occurredAtSource   String?
   /// Whether the event belongs to the voyage timeline shown in the Black Whale UI.
   occursOnBlackWhale Boolean @default(true)
   title      String

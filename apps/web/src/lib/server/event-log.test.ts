@@ -1,4 +1,12 @@
 import { describe, expect, it } from 'vitest'
+import {
+  bracket,
+  curatedChronology,
+  dayOf,
+  formatVoyageTime,
+  hasVoyageTime,
+  type DeclaredTime,
+} from '@black-whale/domain'
 import { readDataFile, type CatalogCharacter } from './data-files'
 
 /**
@@ -17,6 +25,7 @@ interface CuratedEvent {
   summary: string
   legacyTitles: string[]
   occursAfterTitle?: string
+  occurredAt?: DeclaredTime
   occurredAtLabel?: string
   isFlashback?: boolean
   occursOnBlackWhale?: boolean
@@ -32,8 +41,11 @@ interface CatalogChapter {
 /**
  * Seeded by `prisma/seed.ts` rather than by the log, so an anchor pointing at it
  * resolves at backfill time even though no entry in the file carries the title.
+ *
+ * The departure used to sit here too. It is curated now: hour zero of the voyage
+ * clock could not stay outside the file every other hour is measured from.
  */
-const SEEDED_TITLES = ['Zodiacs Assemble', 'Boarding the Black Whale', 'Ship Departs']
+const SEEDED_TITLES = ['Zodiacs Assemble', 'Boarding the Black Whale']
 
 /** The chapter the arc opens on: the urn ceremony that starts the contest. */
 const FIRST_ARC_CHAPTER = 349
@@ -104,6 +116,114 @@ describe('data/events/events.json', () => {
       titles.set(event.chapter, event.chapterTitle)
     }
     expect(conflicts).toEqual([])
+  })
+
+  /**
+   * The voyage clock, checked against the log it dates.
+   *
+   * Canon times the arc nine times. Everything else is bracketed between the
+   * anchor before it and the anchor after it, which is only sound if the
+   * declared hours themselves are consistent with the order the log puts the
+   * events in: an anchor that lands before the one preceding it does not
+   * narrow the timeline, it breaks it, and it breaks it silently.
+   */
+  describe('the voyage clock', () => {
+    const chronological = curatedChronology(events)
+    const times = bracket(
+      chronological.map((event) => ({
+        onVoyage: hasVoyageTime(event),
+        occurredAt: event.occurredAt,
+      })),
+    )
+    const dated = chronological.map((event, index) => ({ event, time: times[index] }))
+
+    it('dates nothing that happens before the horn', () => {
+      const misdated = dated
+        .filter(({ event, time }) => !hasVoyageTime(event) && (time || event.occurredAt))
+        .map(({ event }) => event.title)
+      expect(misdated).toEqual([])
+    })
+
+    it('never states a time it only worked out', () => {
+      const bases = new Set(events.map((event) => event.occurredAt?.basis).filter(Boolean))
+      expect([...bases].sort()).toEqual(['derived', 'stated'])
+    })
+
+    /**
+     * Hunterpedia dates a good part of the second half of the arc, and those
+     * datings are worth keeping — but a wiki page is not a panel. Whether an
+     * entry transcribes a caption or reflects an editor's reading cannot be
+     * told from outside, so `stated` stays for what someone here has read.
+     */
+    it('never lets a source outside the manga state a time', () => {
+      const overclaimed = events
+        .filter((event) => event.occurredAt?.basis === 'stated')
+        .filter((event) => event.occurredAt!.source && event.occurredAt!.source !== 'manga')
+        .map((event) => `${event.title} (${event.occurredAt!.source})`)
+      expect(overclaimed).toEqual([])
+    })
+
+    it('gives every declared time either an hour or a day', () => {
+      const empty = events
+        .filter((event) => event.occurredAt && event.occurredAt.hours === undefined)
+        .filter((event) => event.occurredAt!.day === undefined)
+        .map((event) => event.title)
+      expect(empty).toEqual([])
+    })
+
+    it('keeps every declared time inside the bracket its neighbours allow', () => {
+      const contradictions = dated
+        .filter(({ event, time }) => {
+          const hours = event.occurredAt?.hours
+          if (hours === undefined || !time) return false
+          return hours < time.earliest || (time.latest !== null && hours > time.latest)
+        })
+        .map(
+          ({ event, time }) =>
+            `${event.title}: ${event.occurredAt!.hours} ∉ [${time!.earliest}, ${time!.latest}]`,
+        )
+      expect(contradictions).toEqual([])
+    })
+
+    it('keeps a declared day on the day it was declared', () => {
+      const drifted = dated
+        .filter(
+          ({ event, time }) =>
+            event.occurredAt?.day && dayOf(time!.earliest) !== event.occurredAt.day,
+        )
+        .map(({ event }) => event.title)
+      expect(drifted).toEqual([])
+    })
+
+    it('never opens a bracket that closes before it starts', () => {
+      const inverted = dated
+        .filter(({ time }) => time && time.latest !== null && time.latest < time.earliest)
+        .map(({ event }) => event.title)
+      expect(inverted).toEqual([])
+    })
+
+    // The label is what the reader sees; if it can drift from the number the
+    // engines order by, the timeline eventually shows two different times.
+    it('renders every label from the time it declares', () => {
+      const drifted = dated
+        .filter(({ event }) => event.occurredAt)
+        .filter(({ event, time }) => event.occurredAtLabel !== formatVoyageTime(time!))
+        .map(
+          ({ event, time }) =>
+            `${event.title}: ${event.occurredAtLabel} ≠ ${formatVoyageTime(time!)}`,
+        )
+      expect(drifted).toEqual([])
+    })
+
+    // A label without a declared time is a time nobody can order by, and the
+    // one exception earns it: chapter 415 dates itself against the departure
+    // from two months out, which is not voyage time at all.
+    it('writes a free label only on what the clock cannot hold', () => {
+      const loose = events
+        .filter((event) => event.occurredAtLabel && !event.occurredAt)
+        .map((event) => event.title)
+      expect(loose).toEqual(['Furykov confronts Beyond about his sacrificial curse'])
+    })
   })
 
   it('writes a summary for every event', () => {

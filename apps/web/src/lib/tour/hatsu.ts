@@ -1067,23 +1067,23 @@ const SOLID_CASTS: Partial<Record<HatsuInteractionKind, SolidCast>> = {
 
   // The aura runs along the floor and comes up under something else in the
   // same room: you strike here and the room is hit there.
-  // Somewhere else in the room by preference — that is the whole of the trick.
-  // A room with one thing in it has nowhere else to come up, and the fist comes
-  // up under the thing itself rather than the cast being refused: what the
-  // technique promises is that you strike here and the floor answers there, not
-  // that a room must be furnished twice over before it answers at all.
-  'remote-strike': ({ world, ship, structure, id, away }) => {
-    const neighbour =
+  // The aura goes into the floor somewhere else in the room and comes up under
+  // what the reticle is on — that way round, because the fist has to appear
+  // where the visitor is looking. Where it went *in* is the flavour; where it
+  // comes *out* is the technique. A room with one thing in it is a room where
+  // it went in under the same thing, rather than a cast refused.
+  'remote-strike': ({ world, ship, structure, hold, id, away }) => {
+    const source =
       [...ship.structures, ...world.copies].find(
         (candidate) =>
           candidate.spaceId === structure.spaceId &&
           candidate.id !== id &&
           !world.solids[candidate.id]?.gone,
       ) ?? structure
-    const landing = shove(ship, world, neighbour, world.solids[neighbour.id], away(2.5))
+    const landing = shove(ship, world, structure, hold, away(2.5))
     return {
-      world: withHold(world, neighbour.id, landing ? { at: landing } : { hits: 1 }),
-      report: { kind: 'came-up-under', solidId: id, otherId: neighbour.id },
+      world: withHold(world, id, landing ? { at: landing } : { hits: (hold?.hits ?? 0) + 1 }),
+      report: { kind: 'came-up-under', solidId: source.id, otherId: id },
     }
   },
 
@@ -2264,18 +2264,15 @@ const ROOM_CASTS: Partial<Record<HatsuInteractionKind, RoomCast>> = {
     }
   },
 
-  // The fish only eat inside a closed room — so the cast closes it. It used to
-  // refuse any room that was not already shut, which in a walk that hands out
-  // one aura at a time meant the fish could only ever be loosed by someone who
-  // had first gone and fetched Kurapika's chain: the rule was being kept by
-  // making the technique unusable. Chrollo seals the room and looses them, and
-  // that is one cast.
+  // The fish only eat inside a closed room, and the room they are loosed in is
+  // the room they stay in — which is how the walk keeps that rule. It is not
+  // kept by chaining the doorways shut: that takes the openings out of the
+  // geometry, and a shoal that arrives and the doors that leave with it reads
+  // as fish eating the doors. It is not kept by refusing the cast either, which
+  // is what it used to do — in a walk that hands out one aura at a time, a
+  // technique that first needs Kurapika's chain can never be used at all.
   devour: ({ world, target }) => ({
-    world: {
-      ...world,
-      shut: [...new Set([...world.shut, target.id])],
-      devouring: [...new Set([...world.devouring, target.id])],
-    },
+    world: { ...world, devouring: [...new Set([...world.devouring, target.id])] },
     report: { kind: 'fish-loosed', spaceId: target.id },
   }),
 

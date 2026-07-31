@@ -40,6 +40,8 @@ export type ApparitionKind =
   | 'cargo'
   /** Blinky himself: the vacuum, carried at the visitor's side. */
   | 'hoover'
+  /** Kalluto, stood in a room the snakes are loose in. */
+  | 'puppet'
 
 /**
  * One thing Nen has left standing in the ship.
@@ -94,6 +96,8 @@ const FISH = 0x78b6c9
 const PAPER = 0xefb9c8
 const CARGO = 0xe2b86e
 const HOOVER = 0x9fb3c8
+/** Kalluto is drawn in ink: a black kimono, a bob, and a painted face. */
+const PUPPET = 0x1b1b22
 /** Halkenburg's collective aura, which is the gold of the whole ship's will. */
 export const ARROW = 0xf7e27d
 /** Rising Sun is the one technique whose colour is a temperature. */
@@ -130,7 +134,11 @@ export const PORTAL_REACH = PORTAL_RADIUS + 0.35
  * the same room gives the same stations every time it is asked, or the shoal
  * would be somewhere else on every frame.
  */
-function stationsIn(space: Space, wanted: number): { index: number; at: Vec2; water: number }[] {
+function stationsIn(
+  space: Space,
+  wanted: number,
+  near?: Vec2,
+): { index: number; at: Vec2; water: number }[] {
   const xs = space.footprint.map((corner) => corner[0])
   const zs = space.footprint.map((corner) => corner[1])
   const minX = Math.min(...xs)
@@ -140,10 +148,14 @@ function stationsIn(space: Space, wanted: number): { index: number; at: Vec2; wa
 
   // Enough of a grid to have somewhere to put everyone even when half of it
   // falls outside an awkward footprint, and laid along the room's long axis.
-  const across = Math.max(2, Math.round(Math.sqrt(wanted * 2)))
+  // A grid fine enough to have somewhere to put everyone even when half of it
+  // falls outside an awkward footprint — and, on a room the size of a
+  // promenade, fine enough that the nearest of them is somewhere the visitor
+  // can actually see from where they cast.
+  const across = Math.max(4, Math.round(Math.sqrt(wanted * 6)))
   const found: { index: number; at: Vec2; water: number }[] = []
-  for (let i = 0; i < across && found.length < wanted; i++) {
-    for (let j = 0; j < across && found.length < wanted; j++) {
+  for (let i = 0; i < across; i++) {
+    for (let j = 0; j < across; j++) {
       // Offset rows, so the shoal is not a lattice.
       const u = (i + 0.5 + (j % 2) * 0.25) / across
       const v = (j + 0.5) / across
@@ -155,8 +167,17 @@ function stationsIn(space: Space, wanted: number): { index: number; at: Vec2; wa
     }
   }
   // A room too narrow for a single station still gets one fish, on the spot.
-  if (!found.length) found.push({ index: 0, at: centroid(space), water: 0.4 })
-  return found
+  if (!found.length) return [{ index: 0, at: centroid(space), water: 0.4 }]
+  // The ones nearest where the aura came down: a shoal loosed at the far end of
+  // a hundred and forty metres of promenade is a shoal nobody ever sees.
+  const sorted = near
+    ? [...found].sort(
+        (a, b) =>
+          Math.hypot(a.at[0] - near[0], a.at[1] - near[1]) -
+          Math.hypot(b.at[0] - near[0], b.at[1] - near[1]),
+      )
+    : found
+  return sorted.slice(0, wanted).map((station, index) => ({ ...station, index }))
 }
 
 /** The floor and the headroom of a room, both in metres above sea level. */
@@ -297,7 +318,7 @@ export function apparitionsOn(
     const space = spaceOf(spaceId)
     const measured = space ? room(ship, space) : null
     if (!space || !measured) continue
-    for (const station of stationsIn(space, SHOAL)) {
+    for (const station of stationsIn(space, SHOAL, landing(space))) {
       found.push({
         id: `fish:${spaceId}:${station.index}`,
         kind: 'fish',
@@ -305,7 +326,7 @@ export function apparitionsOn(
         tierId: space.tierId,
         at: station.at,
         y: Math.min(measured.floor + 1.5 + (station.index % 3) * 0.45, measured.ceiling - 0.4),
-        size: 0.4,
+        size: 0.55,
         colour: FISH,
         stage: station.index,
         hidden: false,
@@ -335,7 +356,7 @@ export function apparitionsOn(
         hidden: false,
       })
     })
-    const loose = stationsIn(space, LOOSE_DOLLS)
+    const loose = stationsIn(space, LOOSE_DOLLS, landing(space))
     for (let i = 0; i < loose.length; i++) {
       // Thrown over the room rather than fanned about its middle: a fistful of
       // paper lands where it lands, and the same room lands it the same way
@@ -353,6 +374,30 @@ export function apparitionsOn(
         hidden: false,
       })
     }
+  }
+
+  // Kalluto, once in each room the snakes are loose in. Not an effect on the
+  // room: a person standing in it, who does not stay standing in one place —
+  // the scene moves her about, takes her away and puts her back. `spread` is
+  // how much of the room she has to move in without leaving it.
+  for (const spaceId of world.snakes?.rooms ?? []) {
+    const space = spaceOf(spaceId)
+    const measured = space ? room(ship, space) : null
+    if (!space || !measured) continue
+    const [station] = stationsIn(space, 1, landing(space))
+    found.push({
+      id: `puppet:${spaceId}`,
+      kind: 'puppet',
+      spaceId: space.id,
+      tierId: space.tierId,
+      at: station.at,
+      y: measured.floor,
+      size: 0.85,
+      colour: PUPPET,
+      stage: 0,
+      hidden: false,
+      spread: station.water,
+    })
   }
 
   // Blinky, who is a thing rather than an effect: the vacuum is out for as long
@@ -468,7 +513,7 @@ export function wormMouthAt(ship: Ship, world: TourWorld, tierId: string, at: Ve
  * direction to travel in.
  */
 export interface TourFlash {
-  kind: 'gust' | 'punch' | 'sun' | 'arrow'
+  kind: 'gust' | 'punch' | 'sun' | 'arrow' | 'rewind'
   tierId: string
   at: Vec2
   /** The floor it comes out of, or the height it lands at, in metres. */
@@ -501,11 +546,19 @@ export function flashFor(
     return {
       kind: 'gust',
       tierId: space.tierId,
-      at: measured.at,
+      at: world.landed[space.id] ?? measured.at,
       y: Math.min(measured.floor + 1.4, measured.ceiling - 0.3),
       from,
       colour: GUST,
     }
+  }
+
+  // Ten seconds, taken back. Nothing is drawn for it and nothing is placed:
+  // what the walk does with this is rewind its own clock, which is the scene's
+  // business and nobody else's — see `TourScene`. It is here because it is an
+  // event rather than a thing, like the blast and the punch.
+  if (report.kind === 'foreseen') {
+    return { kind: 'rewind', tierId: '', at: from, y: 0, colour: SUN }
   }
 
   // Halkenburg's arrow, drawn from where it was loosed to where it fell. The
@@ -549,7 +602,7 @@ export function flashFor(
     return {
       kind: 'punch',
       tierId: space.tierId,
-      at: measured.at,
+      at: world.landed[space.id] ?? measured.at,
       y: measured.floor,
       colour: PUNCH,
     }

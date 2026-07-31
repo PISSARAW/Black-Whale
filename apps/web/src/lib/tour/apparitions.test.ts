@@ -139,24 +139,22 @@ describe('the tunnel', () => {
 })
 
 describe('the fish', () => {
-  it('swims a shoal in every room they were loosed in, and none in a room that was not shut', () => {
-    const shut = { ...EMPTY_WORLD, shut: [elsewhere.id] }
-    const loosed = cast(shut, 'devour', elsewhere.id).world
+  it('swims a shoal in the room it was loosed in, spread over the room itself', () => {
+    const loosed = cast(EMPTY_WORLD, 'devour', elsewhere.id).world
     const shoal = of(loosed, 'fish')
     expect(shoal).toHaveLength(SHOAL)
     expect(new Set(shoal.map((fish) => fish.stage)).size).toBe(SHOAL)
     // Every fish is given the room's own reach to swim, and it is a room's.
     expect(shoal.every((fish) => (fish.spread ?? 0) > 0)).toBe(true)
 
-    // The cast shuts the room itself, so a room that was open is loosed in too.
+    // An open room is loosed in too, and keeps its doorways.
     const alone = cast(EMPTY_WORLD, 'devour', elsewhere.id).world
-    expect(alone.shut).toContain(elsewhere.id)
+    expect(alone.shut).toEqual([])
     expect(of(alone, 'fish')).toHaveLength(SHOAL)
   })
 
   it('eats one thing at a time, and stops when the room is bare', () => {
-    const shut = { ...EMPTY_WORLD, shut: [furnished.id] }
-    let world = cast(shut, 'devour', furnished.id).world
+    let world = cast(EMPTY_WORLD, 'devour', furnished.id).world
     const there = ship.structures.filter((solid) => solid.spaceId === furnished.id).length
 
     for (let i = 0; i < there; i++) {

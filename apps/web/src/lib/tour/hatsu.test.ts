@@ -677,14 +677,14 @@ describe('what waits at a threshold', () => {
     expect(Object.values(out.world.solids).filter((hold) => hold.gone)).toHaveLength(1)
   })
 
-  it('shuts the room it looses the fish in, since they only eat in a closed one', () => {
-    // The rule is kept by the cast rather than by refusing it: the walk hands
-    // out one aura at a time, and a technique that first needed Kurapika's
-    // chain could never be used at all.
+  it('looses the fish without taking the doorways with them', () => {
+    // The room they are loosed in is the room they stay in, and that is how the
+    // closed-room rule is kept: chaining the doorways shut takes the openings
+    // out of the geometry, which reads as fish eating the doors.
     const loosed = door(EMPTY_WORLD, 'devour', roomA.id)
     expect(loosed.report).toMatchObject({ kind: 'fish-loosed', spaceId: roomA.id })
-    expect(loosed.world.shut).toContain(roomA.id)
     expect(loosed.world.devouring).toContain(roomA.id)
+    expect(loosed.world.shut).toEqual([])
   })
 })
 

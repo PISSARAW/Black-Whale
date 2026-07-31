@@ -35,6 +35,7 @@
     linkIsOpen,
     paceOf,
     reachOf,
+    solidById,
     solidNow,
     shellsFor,
     solidWalls,
@@ -68,7 +69,7 @@
   } from '$lib/tour/navigation'
   import { SEALED_DENSITY, fogDensityOf, reverbTime, settleDensity } from '$lib/tour/atmosphere'
   import { driftDust, dustOf, type Dust } from '$lib/tour/dust'
-  import { distanceToBoundary, pointInPolygon } from '$lib/tour/geometry'
+  import { distanceToBoundary } from '$lib/tour/geometry'
   import {
     enterDeck,
     enterRoom,
@@ -77,6 +78,7 @@
     setStepsMuffled,
     startSteps,
     stepsPlaying,
+    rewindSound,
     stepsWereSilenced,
     stopSteps,
     toggleSteps,
@@ -1453,6 +1455,87 @@
           turns = root
         }
 
+        if (seen.kind === 'puppet') {
+          // Ink and paper: a black kimono that falls to the floor, sleeves,
+          // a bob, and the painted face that is the only pale thing on her.
+          const ink = glow(seen.colour, 1)
+          const pale = glow(0xefe7dd, 1)
+
+          const kimono = new THREE.Mesh(
+            new THREE.CylinderGeometry(seen.size * 0.34, seen.size * 0.62, seen.size * 1.35, 8),
+            ink,
+          )
+          kimono.position.y = seen.size * 0.68
+          root.add(kimono)
+
+          // White obi belt
+          const obi = new THREE.Mesh(
+            new THREE.CylinderGeometry(seen.size * 0.38, seen.size * 0.41, seen.size * 0.22, 10),
+            pale,
+          )
+          obi.position.y = seen.size * 0.85
+          root.add(obi)
+
+          // White crossed collar
+          for (const side of [-1, 1]) {
+            const lapel = new THREE.Mesh(
+              new THREE.BoxGeometry(seen.size * 0.1, seen.size * 0.45, seen.size * 0.05),
+              pale,
+            )
+            lapel.rotation.z = side * 0.5
+            lapel.position.set(0, seen.size * 1.15, seen.size * (0.31 + side * 0.01))
+            root.add(lapel)
+          }
+
+          for (const side of [-1, 1]) {
+            const sleeve = new THREE.Mesh(
+              new THREE.BoxGeometry(seen.size * 0.3, seen.size * 0.62, seen.size * 0.3),
+              ink,
+            )
+            sleeve.position.set(side * seen.size * 0.45, seen.size * 0.95, 0)
+            root.add(sleeve)
+          }
+
+          const face = new THREE.Mesh(new THREE.SphereGeometry(seen.size * 0.24, 10, 8), pale)
+          face.position.y = seen.size * 1.6
+          root.add(face)
+
+          // Zipper on the face
+          const zipper = new THREE.Mesh(
+            new THREE.BoxGeometry(seen.size * 0.03, seen.size * 0.28, seen.size * 0.02),
+            ink,
+          )
+          zipper.position.set(0, seen.size * 1.57, seen.size * 0.235)
+          root.add(zipper)
+
+          // Crosses on the cheeks
+          for (const side of [-1, 1]) {
+            const crossV = new THREE.Mesh(
+              new THREE.BoxGeometry(seen.size * 0.03, seen.size * 0.15, seen.size * 0.02),
+              ink,
+            )
+            crossV.position.set(side * seen.size * 0.12, seen.size * 1.58, seen.size * 0.21)
+            root.add(crossV)
+
+            const crossH = new THREE.Mesh(
+              new THREE.BoxGeometry(seen.size * 0.1, seen.size * 0.03, seen.size * 0.02),
+              ink,
+            )
+            crossH.position.set(side * seen.size * 0.12, seen.size * 1.6, seen.size * 0.21)
+            root.add(crossH)
+          }
+
+          // The bob: the hair is the silhouette, and the silhouette is how she
+          // is recognised across a room she has just appeared in the far side of.
+          const hair = new THREE.Mesh(
+            new THREE.CylinderGeometry(seen.size * 0.28, seen.size * 0.3, seen.size * 0.42, 10),
+            ink,
+          )
+          hair.position.y = seen.size * 1.68
+          root.add(hair)
+          turns = root
+        }
+
         if (seen.kind === 'hoover') {
           // A canister, a hose and a nozzle: the one apparition in the walk
           // that is a machine. It is carried rather than placed, so the group
@@ -1665,6 +1748,38 @@
               camera.position.z - sin * 0.55 - cos * 0.5,
             )
             held.root.rotation.y = yaw
+            continue
+          }
+
+          if (held.kind === 'puppet') {
+            // Standing, gone, standing again somewhere else in the same room.
+            // The clock is hers: a station is held for a few seconds, and the
+            // going and the coming back are the same second of it.
+            const beat = 5.5
+            const step = Math.floor(phase / beat)
+            const through = (phase % beat) / beat
+            // Where she is this time round: a fixed wander about her station,
+            // inside the water the room gave her, so she never stands in steel.
+            const angle = step * 2.399963
+            const reach = held.spread * (0.35 + ((step * 7) % 5) * 0.13)
+            held.root.position.set(
+              held.at[0] + Math.cos(angle) * reach,
+              held.y,
+              held.at[1] + Math.sin(angle) * reach,
+            )
+            // Gone for the last fifth of the beat, and back for the first: she
+            // is not seen arriving or leaving, which is the whole of her.
+            const there = through > 0.08 && through < 0.82
+            held.root.visible = there
+            // And now and then she turns and looks at you. Every third station,
+            // which is often enough to notice and seldom enough to be a look.
+            const watching = step % 3 === 0
+            held.root.rotation.y = watching
+              ? Math.atan2(
+                  camera.position.x - held.root.position.x,
+                  camera.position.z - held.root.position.z,
+                )
+              : angle * 1.7
             continue
           }
 
@@ -1882,12 +1997,133 @@
       fist.visible = false
       scene.add(fist)
 
+      // ── Ten seconds, taken back ──────────────────
+      /**
+       * What the walk did lately, and what it does with it.
+       *
+       * Everything the reconstruction animates — the wandering solids, the
+       * dust, the shoal, Kalluto — is a function of one clock, so ten seconds
+       * can be given back by moving the clock rather than by recording anything
+       * about them: run it back ten and they do again, exactly, what they did.
+       * That is Tserriednich's vision as the walk can honour it — the room
+       * repeats itself and you do not have to.
+       *
+       * The one thing that is not a function of the clock is the visitor, so
+       * that *is* recorded: a sample every tenth of a second, kept for twelve.
+       * It is spooled back through the camera when the technique is cast, and
+       * then walked forward again by the afterimage — the visitor as they were
+       * predicted, going where they were going to go while you go elsewhere.
+       */
+      const REWIND_SECONDS = 10
+      /** How long the spooling itself takes. Fast, but not a cut. */
+      const REEL_SECONDS = 1.2
+      const TRACK_STEP = 0.1
+
+      const track: { at: number; where: Vec2; yaw: number }[] = []
+      let sinceSample = 0
+
+      /** Seconds taken off the clock everything animated is read from. */
+      let rewound = 0
+      /** The spool, while it is running: how far through, and from where. */
+      let reeling: { through: number } | null = null
+      /** The afterimage, and the clock it walks its recorded track against. */
+      let after: { from: number } | null = null
+
+      /** The visitor as they were, `seconds` ago — interpolated, not snapped. */
+      function trackAt(seconds: number) {
+        if (!track.length) return null
+        const wanted = track[track.length - 1].at - seconds
+        if (wanted <= track[0].at) return track[0]
+        for (let i = track.length - 1; i > 0; i--) {
+          const later = track[i]
+          const earlier = track[i - 1]
+          if (later.at < wanted) continue
+          const span = later.at - earlier.at || 1
+          const along = Math.min(1, Math.max(0, (wanted - earlier.at) / span))
+          return {
+            at: wanted,
+            where: [
+              earlier.where[0] + (later.where[0] - earlier.where[0]) * along,
+              earlier.where[1] + (later.where[1] - earlier.where[1]) * along,
+            ] as Vec2,
+            yaw: earlier.yaw + angleGap(later.yaw, earlier.yaw) * along,
+          }
+        }
+        return track[track.length - 1]
+      }
+
+      /**
+       * The afterimage: the visitor as the prediction has them.
+       *
+       * Pale, and not solid — everyone else goes on perceiving the ten seconds
+       * that were foreseen, so what the walk draws is the version of you they
+       * are still watching, walking the path you have just been given back.
+       */
+      const afterMaterial = new THREE.MeshBasicMaterial({
+        color: 0x7dd3fc,
+        transparent: true,
+        opacity: 0.3,
+        depthWrite: false,
+      })
+      const afterimage = new THREE.Group()
+      const afterBody = new THREE.Mesh(new THREE.CapsuleGeometry(0.28, 1.05, 4, 8), afterMaterial)
+      afterBody.position.y = 0.95
+      afterimage.add(afterBody)
+      const afterHead = new THREE.Mesh(new THREE.SphereGeometry(0.24, 10, 8), afterMaterial)
+      afterHead.position.y = 1.72
+      afterimage.add(afterHead)
+      afterimage.visible = false
+      scene.add(afterimage)
+
+      /** Takes the ten seconds back: the spool, the clock, and the afterimage. */
+      function startRewind() {
+        if (!track.length) return
+        rewindSound(REEL_SECONDS)
+        reeling = { through: 0 }
+      }
+
+      /** Runs the spool, and hands the walk back when it has finished. */
+      function reelBack(delta: number) {
+        if (reeling) {
+          reeling.through = Math.min(1, reeling.through + delta / REEL_SECONDS)
+          if (reeling.through >= 1) {
+            reeling = null
+            // The clock goes back without the visitor, so the room does again what
+            // it was doing — and the afterimage sets off from where they were.
+            rewound += REWIND_SECONDS
+            after = { from: 0 }
+          }
+          return
+        }
+
+        if (!after) {
+          afterimage.visible = false
+          return
+        }
+        after.from += delta
+        if (after.from >= REWIND_SECONDS) {
+          after = null
+          afterimage.visible = false
+          return
+        }
+        const seen = trackAt(REWIND_SECONDS - after.from)
+        if (!seen) return
+        afterimage.visible = true
+        afterimage.position.set(seen.where[0], ground, seen.where[1])
+        afterimage.rotation.y = seen.yaw
+        // It fades as the ten seconds it was given run out.
+        afterMaterial.opacity = 0.3 * (1 - (after.from / REWIND_SECONDS) ** 2)
+      }
+
       /** Starts whichever of the two the page has just handed over. */
       function syncFlash() {
         if (!flash || flash.seq === playedSeq) return
         playedSeq = flash.seq
         played = flash
         playing = 0
+
+        // The vision is not drawn: it is ten seconds of the walk, given back.
+        if (flash.kind === 'rewind') startRewind()
 
         if (flash.kind === 'gust') {
           const from = flash.from ?? flash.at
@@ -2038,46 +2274,123 @@
       scene.add(thread)
 
       let arc: { to: Vec2; height: number; from: Vec2; span: number; through: number } | null = null
+
+      /**
+       * Bungee Gum, which is the one technique that is visibly attached to you.
+       *
+       * Rubber and gum: what Hisoka sets on a thing stays joined to his hand
+       * until he pulls it in, so the walk draws the join — a pink strand out of
+       * the visitor to whatever the gum is stuck to, slack, and wobbling the way
+       * an elastic does. Twenty segments, because a straight line is a wire.
+       */
+      const GUM_SEGMENTS = 24
+      const gumMaterial = new THREE.LineBasicMaterial({
+        color: 0xff7ec8,
+        transparent: true,
+        opacity: 0.9,
+        depthTest: false,
+      })
+      const gumGeometry = new THREE.BufferGeometry()
+      gumGeometry.setAttribute(
+        'position',
+        new THREE.BufferAttribute(new Float32Array(GUM_SEGMENTS * 3), 3),
+      )
+      const gum = new THREE.Line(gumGeometry, gumMaterial)
+      gum.visible = false
+      gum.frustumCulled = false
+      gum.renderOrder = 3
+      scene.add(gum)
+
+      /** Draws the gum where it is stuck, or takes it off the screen. */
+      function syncGum(seconds: number) {
+        const stuck =
+          world.holding === 'elastic' && world.pairing
+            ? solidById(ship, world, world.pairing)
+            : null
+        const room = stuck ? ship.spaces.get(stuck.spaceId) : null
+        const plan = room ? ship.plans.get(room.tierId) : null
+        if (!stuck || !room || !plan) {
+          gum.visible = false
+          return
+        }
+        const at = solidNow(stuck, world.solids[stuck.id]).at
+        const end = new THREE.Vector3(at[0], floorOf(room, plan.tier) + 0.9, at[1])
+        // Out of the hand rather than out of the eye: thirty centimetres down
+        // and to the right, the way the night-light is worn.
+        const start = new THREE.Vector3(
+          camera.position.x + Math.cos(yaw) * 0.35,
+          camera.position.y - 0.45,
+          camera.position.z - Math.sin(yaw) * 0.35,
+        )
+        const line = gumGeometry.attributes.position as import('three').BufferAttribute
+        const sag = Math.min(1.6, start.distanceTo(end) * 0.12)
+        for (let i = 0; i < GUM_SEGMENTS; i++) {
+          const along = i / (GUM_SEGMENTS - 1)
+          // A catenary to hang it, and a standing wave along it so the strand
+          // reads as rubber under tension rather than as a rope.
+          const wobble = Math.sin(along * 7 + seconds * 5) * 0.12 * Math.sin(along * Math.PI)
+          line.setXYZ(
+            i,
+            start.x + (end.x - start.x) * along + wobble,
+            start.y + (end.y - start.y) * along - Math.sin(along * Math.PI) * sag,
+            start.z + (end.z - start.z) * along + wobble,
+          )
+        }
+        line.needsUpdate = true
+        gum.visible = true
+      }
       /** How much of the arc the visitor is riding, added to the eye this frame. */
       let swingRise = 0
 
-      /** Throws the thread at whatever is down the reticle, and takes hold. */
+      /**
+       * Throws the thread down the reticle and takes hold as far along it as
+       * the ship allows.
+       *
+       * Not at the middle of a room, and not even at the end of the room being
+       * looked at: at the last walkable point of the ray, wherever that is and
+       * through however many doorways. This is what makes it a way of getting
+       * about rather than a single trick — swung to the far end of a room, the
+       * next throw goes out through its door and down the corridor, because the
+       * ray is followed until the floor under it runs out. A thread that took
+       * hold of the room you had just landed in the middle of was a thread with
+       * nowhere left to pull you, which is why it only ever worked once.
+       */
       function throwThread() {
-        const solid = facingSolid()
-        const space = facing()
         const plan = ship.plans.get(currentTierId)
         if (!plan) return
-        // The far end of the reticle rather than the middle of the room: a
-        // thread thrown down a hundred and forty metres of promenade takes hold
-        // at the far end of it, and one thrown at the room you are standing in
-        // has to take hold somewhere you are not already standing — which the
-        // centroid, once you had swung to it, never was. That was the whole of
-        // "it only works once".
-        const anchor = () => {
-          if (solid) return solidNow(solid, world.solids[solid.id]).at
-          if (!space) return null
-          const sin = Math.sin(yaw)
-          const cos = Math.cos(yaw)
-          let furthest: Vec2 | null = null
-          for (let metres = 2; metres <= reachOf(world.body); metres += 1.5) {
-            const point: Vec2 = [pointer[0] - sin * metres, pointer[1] - cos * metres]
-            if (pointInPolygon(point, space.footprint)) furthest = point
-          }
-          return furthest
-        }
+        const sin = Math.sin(yaw)
+        const cos = Math.cos(yaw)
 
-        const to = anchor()
+        // Walked along the ray a step at a time, through whatever doorways it
+        // passes: the first step standing on no floor at all is the wall the
+        // thread would have hit, and the one before it is where it takes hold.
+        //
+        // What is down the reticle is deliberately not consulted. A thread that
+        // took hold of the nearest thing was a thread that, having pulled you to
+        // it, had nothing left to pull you to — you landed beside a table, the
+        // table was two metres off, and the throw was refused. That, and not the
+        // room's middle, was the last of "it only works once".
+        let to: Vec2 | null = null
+        let landing: Space | null = null
+        for (let metres = 1.5; metres <= reachOf(world.body); metres += 1.5) {
+          const point: Vec2 = [pointer[0] - sin * metres, pointer[1] - cos * metres]
+          const room = spaceAt(plan, point)
+          if (!room) break
+          to = point
+          landing = room
+        }
         if (!to) return
+
         const reach = Math.hypot(to[0] - pointer[0], to[1] - pointer[1])
-        // Nothing to swing to: a thread thrown at your own feet is a thread.
+        // A thread thrown at your own feet is a thread, and nothing else.
         if (reach < 2) return
-        const target = space ?? spaceAt(plan, to)
+        const target = landing ?? spaceAt(plan, to)
         arc = {
           to,
           height: (target ? floorOf(target, plan.tier) : ground) + 1.4,
           from: pointer,
-          // A swing is a swing whatever the distance: about six metres a second
-          // of ground, which crosses the promenade in a couple of arcs.
+          // A swing is a swing whatever the distance: about sixteen metres a
+          // second of ground, which crosses the promenade in a couple of arcs.
           span: Math.max(0.35, reach / 16),
           through: 0,
         }
@@ -2402,10 +2715,27 @@
         syncApparitions()
         syncFlash()
         sweepStale()
-        driftSolids(now / 1000)
-        driftMotes(delta, now / 1000)
-        driftApparitions(now / 1000)
+        // One clock for everything the walk animates, and it is not the wall's:
+        // Parallel Future moves it back ten seconds, and the room does again
+        // exactly what it did — see `startRewind`.
+        // During the spooling, the clock is pulled back smoothly.
+        const rewinding = reeling ? REWIND_SECONDS * reeling.through : 0
+        const clock = now / 1000 - rewound - rewinding
+        driftSolids(clock)
+        driftMotes(delta, clock)
+        driftApparitions(clock)
         driftFlash(delta)
+        syncGum(clock)
+        reelBack(delta)
+
+        // The last twelve seconds of the visitor's own walk, which is the one
+        // thing aboard that is not a function of the clock.
+        sinceSample += delta
+        if (sinceSample >= TRACK_STEP) {
+          sinceSample = 0
+          track.push({ at: clock, where: pointer, yaw })
+          while (track.length && track[0].at < clock - (REWIND_SECONDS + 2)) track.shift()
+        }
 
         // The fish feed on the clock rather than on a threshold: they are drawn
         // now, and a fish that swims through a coffin and leaves it standing is
@@ -2421,7 +2751,7 @@
         // What the aura is holding is out of the deck's own wall list, so it
         // has to be put back for the collision test — where the technique left
         // it, and where the drift has it this instant.
-        const loose = solidWalls(ship, world, currentTierId, now / 1000)
+        const loose = solidWalls(ship, world, currentTierId, now / 1000 - rewound)
 
         // `code` is the physical key, so W A S D covers ZQSD on an AZERTY
         // layout without a second binding. The stick in the corner is added to
@@ -2738,6 +3068,11 @@
         sunMaterial.dispose()
         threadGeometry.dispose()
         threadMaterial.dispose()
+        gumGeometry.dispose()
+        gumMaterial.dispose()
+        afterBody.geometry.dispose()
+        afterHead.geometry.dispose()
+        afterMaterial.dispose()
         for (const target of Object.values(portalTargets)) target?.dispose()
         chassis.traverse((part) => {
           const mesh = part as import('three').Mesh

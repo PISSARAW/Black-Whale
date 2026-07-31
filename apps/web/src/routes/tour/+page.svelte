@@ -21,6 +21,32 @@
   import TourMinimap from '$lib/components/tour/TourMinimap.svelte'
   import TourScene from '$lib/components/tour/TourScene.svelte'
   import { setAmbientMuffled } from '$lib/audio/ambient'
+  import {
+    blowAGust,
+    fireABurst,
+    foldPaper,
+    grindThroughSpace,
+    hootAnOwl,
+    landAPunch,
+    loostAnArrow,
+    openAWormhole,
+    raiseTheSun,
+    selectACard,
+    skipThroughTime,
+    startEngine,
+    startFly,
+    startRequiem,
+    startVacuum,
+    stopEngine,
+    stopEveryHatsuLoop,
+    stopFly,
+    stopRequiem,
+    stopVacuum,
+    stretchTheGum,
+    strikeAGong,
+    unspoolWire,
+    wakeTheMachine,
+  } from '$lib/audio/hatsuSounds'
   import { activeHatsu, enterForcedZetsu } from '$lib/nen/hatsuState'
   import type { HatsuInteractionKind } from '$lib/nen/hatsuRegistry'
   import { breadcrumbSchema } from '$lib/seo/schema'
@@ -408,6 +434,84 @@
   function show(shown: TourReport) {
     const seen = flashFor(shown, ship, world, position)
     if (seen) flash = { ...seen, seq: ++flashes }
+    sound(shown)
+  }
+
+  /**
+   * And whatever it has to be heard as.
+   *
+   * Nineteen of the techniques have a sound of their own, in
+   * `$lib/audio/hatsuSounds`; the rest are silent and should be, because a walk
+   * where every cast made a noise would be a slot machine. The switch is on the
+   * report rather than on the technique for the reason the flash is: a cast that
+   * came up empty is a different event from one that landed, and the ear is
+   * better than the read-out at telling a visitor which of the two happened.
+   */
+  function sound(shown: TourReport) {
+    switch (shown.kind) {
+      // Secret Window.
+      case 'owl-attached':
+      case 'owl-recalled':
+        return hootAnOwl()
+      // Cross Game, and Culdcept, which is the other technique made of cards.
+      case 'card-blue':
+        return selectACard(1)
+      case 'card-yellow':
+        return selectACard(2)
+      case 'card-red':
+        return selectACard(3)
+      case 'carded':
+      case 'acquisition-failed':
+        return selectACard(1)
+      // Magical Worm: both mouths are the same hole being cut.
+      case 'worm-set':
+      case 'worm-open':
+      case 'worm-crossed':
+        return openAWormhole()
+      // Chrollo's teleport.
+      case 'teleported':
+        return skipThroughTime()
+      // Surveillance Paper Dolls.
+      case 'watching':
+        return foldPaper()
+      // Air Blow.
+      case 'stripped':
+        return blowAGust()
+      // Remote Punch, whether it found something or bare deck.
+      case 'came-up-under':
+      case 'came-up-empty':
+        return landAPunch()
+      // Rising Sun, at whatever radius the wrapping had taken.
+      case 'sun-risen':
+        return raiseTheSun(shown.metres)
+      // Grimmel the Dissonance.
+      case 'souls-swapped':
+      case 'arrow-drawn':
+        return loostAnArrow()
+      // Nen Stitches. The thread is thrown on the same click, so this is also
+      // the sound of the swing the scene is about to take.
+      case 'stitched':
+      case 'nothing-to-stitch':
+        return unspoolWire()
+      // Double Machine Gun.
+      case 'volley':
+        return fireABurst(shown.hits)
+      // Three Monkeys: one gong per seal, and one for lifting all three.
+      case 'sealed':
+        return strikeAGong(shown.stage)
+      // Bungee Gum.
+      case 'gum-set':
+      case 'gum-pulled':
+        return stretchTheGum()
+      // Spatial Teleportation, which grinds one way going and the other coming.
+      case 'phasing':
+        return grindThroughSpace(shown.on)
+      // Biohazard.
+      case 'animated':
+        return wakeTheMachine()
+      default:
+        return
+    }
   }
   let aimedAt = $state<Space | null>(null)
   let aimedSolidAt = $state<Structure | null>(null)
@@ -417,6 +521,33 @@
   /** Sight is the scene's business; hearing is the archive's ambience. */
   $effect(() => {
     setAmbientMuffled(world.sealed >= 2)
+  })
+
+  /**
+   * The four techniques that make a noise for as long as they are up.
+   *
+   * A motor, an engine, an insect and a mass for the dead are states rather
+   * than events, so they are driven off the world exactly as the apparitions
+   * are, and not off the report that started them. Each is keyed to the same
+   * value the scene draws from — Blinky's is `holding`, which is when the
+   * hoover appears at the visitor's side — so what is heard and what is on
+   * screen can never disagree.
+   */
+  $effect(() => {
+    if (world.holding === 'vacuum') startVacuum()
+    else stopVacuum()
+  })
+  $effect(() => {
+    if (world.body.riding) startEngine()
+    else stopEngine()
+  })
+  $effect(() => {
+    if (world.eye) startFly()
+    else stopFly()
+  })
+  $effect(() => {
+    if (world.devouring.length) startRequiem()
+    else stopRequiem()
   })
 
   // Dropping the aura hands the ship back; swapping one technique for another
@@ -464,7 +595,12 @@
     enterForcedZetsu()
   }
 
-  onDestroy(() => setAmbientMuffled(false))
+  onDestroy(() => {
+    setAmbientMuffled(false)
+    // Leaving the walk stops the walk's noises. An engine that kept running on
+    // the sources page would be the archive talking over itself.
+    stopEveryHatsuLoop()
+  })
 
   function castOn(spaceId: string | null, solidId: string | null = null) {
     if (!technique) return

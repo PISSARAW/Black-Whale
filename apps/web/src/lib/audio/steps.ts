@@ -389,6 +389,67 @@ export function footstep(index: number, options: { running?: boolean } = {}) {
   plate.stop(at + 0.2)
 }
 
+/**
+ * The sound of ten seconds being taken back.
+ *
+ * Tape, not a chime: a band of the same grit the footsteps are cut from, played
+ * fast and backwards, over a tone that falls the way a spool does when it is
+ * let go. It is synthesised like everything else the walk makes — the archive
+ * ships no audio, and a rewind that arrived as an .mp3 would be the only sound
+ * aboard that was not the ship's own.
+ */
+export function rewindSound(seconds = 1.1) {
+  const g = graph
+  if (!g) return
+  const { context } = g
+  if (context.state === 'suspended') return
+  const at = context.currentTime + 0.005
+
+  // The spool: noise run backwards through a filter that opens as it goes, so
+  // the ear hears the tape being pulled rather than a hiss.
+  const spool = context.createBufferSource()
+  spool.buffer = g.grit
+  spool.playbackRate.setValueAtTime(-2.4, at)
+  spool.loop = true
+  const band = context.createBiquadFilter()
+  band.type = 'bandpass'
+  band.frequency.setValueAtTime(600, at)
+  band.frequency.exponentialRampToValueAtTime(3200, at + seconds * 0.8)
+  band.Q.value = 3
+  const level = context.createGain()
+  level.gain.setValueAtTime(0.0001, at)
+  level.gain.exponentialRampToValueAtTime(0.22, at + 0.05)
+  level.gain.exponentialRampToValueAtTime(0.0001, at + seconds)
+  spool.connect(band)
+  band.connect(level)
+  level.connect(g.dry)
+  level.connect(g.send)
+  // A negative rate needs somewhere to play back *from*, so it starts at the
+  // end of the buffer. Browsers that refuse it simply play it forward, which is
+  // still a spool.
+  try {
+    spool.start(at, Math.max(0, g.grit.duration - 0.05))
+  } catch {
+    spool.playbackRate.setValueAtTime(2.4, at)
+    spool.start(at)
+  }
+  spool.stop(at + seconds)
+
+  // And the machine under it, falling away as the reel runs back.
+  const motor = context.createOscillator()
+  motor.type = 'sawtooth'
+  motor.frequency.setValueAtTime(320, at)
+  motor.frequency.exponentialRampToValueAtTime(70, at + seconds)
+  const hum = context.createGain()
+  hum.gain.setValueAtTime(0.0001, at)
+  hum.gain.exponentialRampToValueAtTime(0.06, at + 0.04)
+  hum.gain.exponentialRampToValueAtTime(0.0001, at + seconds)
+  motor.connect(hum)
+  hum.connect(g.dry)
+  motor.start(at)
+  motor.stop(at + seconds)
+}
+
 function applyMuffle(g: Graph, on: boolean, seconds: number) {
   const now = g.context.currentTime
   g.muffle.frequency.cancelScheduledValues(now)

@@ -88,6 +88,8 @@ export const TOUR_HATSU_KINDS = [
   'snakes',
   'portal',
   'guardian',
+  'guardian-wander',
+  'guardian-scout',
   // On the visitor walking through them.
   'enhance',
   'vehicle',
@@ -275,6 +277,8 @@ export interface TourWorld {
   cards: Record<string, number>
   /** The double standing in a room, which takes one punishment and is spent. */
   double: string | null
+  /** The mode the double is operating in */
+  doubleMode: 'follow' | 'wander' | 'scout'
   /** Fugetsu's tunnel: a pair, and how much it has been asked for. */
   worm: { a: string; b: string; crossings: number } | null
   /** The rooms the snakes are loose in, and whether they have had a victim. */
@@ -347,26 +351,14 @@ export interface TourWorld {
   /** Pairs of rooms whose identities the arrow exchanged. */
   souls: [string, string][]
 
-  /**
-   * The book, and what is in it.
-   *
-   * The last wave needs no new noun in the ship: what it needs is to be able
-   * to hold more than one technique at once. The dock still gives the walk
-   * exactly one aura; these six take a second — off the ship itself, from
-   * whatever technique is currently holding a room — and put it somewhere it
-   * can be cast from.
-   */
+  /** The book, and what is in it. */
   book: TourBook
 
-  /**
-   * What the techniques have made of the visitor themselves.
-   *
-   * The walk had two nouns — the room and the thing standing in it — and both
-   * are out there in the ship. This is the third, and it is the only one on
-   * this side of the eye: how fast you go, how tall you stand, how far the
-   * aura carries, and whether you are still in your body at all.
-   */
+  /** What the techniques have made of the visitor themselves. */
   body: TourBody
+
+  /** Rooms where a Bungee Gum trap is set. */
+  gumTraps: string[]
 }
 
 export interface TourBook {
@@ -496,6 +488,7 @@ export const EMPTY_WORLD: TourWorld = {
   devouring: [],
   cards: {},
   double: null,
+  doubleMode: 'follow',
   worm: null,
   snakes: null,
   trap: null,
@@ -515,6 +508,7 @@ export const EMPTY_WORLD: TourWorld = {
   souls: [],
   book: CLOSED_BOOK,
   body: RESTING_BODY,
+  gumTraps: [],
 }
 
 /** Nothing taken, nothing open, nothing drained. */
@@ -718,6 +712,11 @@ export type TourReport =
   | { kind: 'lent'; technique: HatsuInteractionKind }
   | { kind: 'page-spent'; technique: HatsuInteractionKind }
   | { kind: 'in-zetsu'; spaceId: string }
+  // Bungee Gum
+  | { kind: 'gum-trap-set'; spaceId: string }
+  | { kind: 'gum-rebound'; spaceId: string }
+  | { kind: 'gum-propulsion' }
+  | { kind: 'gum-healed'; healed: number }
 
 export interface TourCastResult {
   world: TourWorld
@@ -2380,7 +2379,15 @@ const ROOM_CASTS: Partial<Record<HatsuInteractionKind, RoomCast>> = {
   },
 
   guardian: ({ world, target }) => ({
-    world: { ...world, double: target.id },
+    world: { ...world, double: target.id, doubleMode: 'follow' },
+    report: { kind: 'double-posted', spaceId: target.id },
+  }),
+  'guardian-wander': ({ world, target }) => ({
+    world: { ...world, double: target.id, doubleMode: 'wander' },
+    report: { kind: 'double-posted', spaceId: target.id },
+  }),
+  'guardian-scout': ({ world, target }) => ({
+    world: { ...world, double: target.id, doubleMode: 'scout' },
     report: { kind: 'double-posted', spaceId: target.id },
   }),
 

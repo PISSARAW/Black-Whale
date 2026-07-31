@@ -13,6 +13,7 @@ import {
   spawnNenEntity,
   zone,
   belowCapacity,
+  wheelEntry,
 } from '@black-whale/ability-sdk'
 
 const OWL_IDS = ['secret-window-owl']
@@ -35,6 +36,7 @@ export const secretWindow = defineAbility({
 
   targets: [zone()],
 
+  actions: {
     'deploy-wandering': {
       label: 'Hibou Libre',
       conditions: [belowCapacity('secret-window-owls', 1, 'Un seul hibou autorisé à la fois')],
@@ -143,6 +145,44 @@ export const secretWindow = defineAbility({
     },
     customComponent: 'OwlScreenWall',
   }),
+
+  actionWheel: [
+    wheelEntry({
+      id: 'deploy-wandering',
+      label: 'Hibou Libre',
+      abilityId: 'secret-window',
+      visibility: 'available',
+      hint: 'Se balade librement dans tout le bateau (disparaît après 20s)',
+    }),
+    wheelEntry({
+      id: 'deploy-shoulder',
+      label: 'Hibou d\'Épaule',
+      abilityId: 'secret-window',
+      visibility: 'available',
+      hint: 'Se pose sur l\'épaule de l\'utilisateur (disparaît après 20s)',
+    }),
+    wheelEntry({
+      id: 'deploy-random',
+      label: 'Hibou Aléatoire',
+      abilityId: 'secret-window',
+      visibility: 'available',
+      hint: 'Apparaît dans un lieu aléatoire (disparaît après 20s)',
+    }),
+    wheelEntry({
+      id: 'perch',
+      label: 'Poster le hibou',
+      abilityId: 'secret-window',
+      visibility: 'available',
+      hint: 'Déplacer le hibou dans une pièce',
+    }),
+    wheelEntry({
+      id: 'replay',
+      label: 'Revoir les enregistrements',
+      abilityId: 'secret-window',
+      visibility: 'available',
+      hint: 'Récupère uniquement les 10 dernières secondes d\'enregistrement',
+    }),
+  ],
 })
 
 export const SECRET_WINDOW_OWL_IDS = OWL_IDS

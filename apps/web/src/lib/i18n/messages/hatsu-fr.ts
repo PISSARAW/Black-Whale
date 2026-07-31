@@ -207,12 +207,30 @@ export const hatsuFr: Record<string, HatsuTextOverride> = {
     cost: 'Partisans unis · un porteur risque son âme',
   },
   'without-you': {
-    name: 'Without You',
+    name: 'Without You (Suivre)',
     owner: 'Kacho',
-    action: 'Rester auprès de la survivante',
+    action: 'Suivre la survivante',
     instruction:
       'La gardienne mémorise cinq interactions, intercepte un événement mortel détecté et peut rejouer la trace mémorisée qu’elle protège.',
     rule: 'Le double post-mortem de Kacho reste auprès de sa jumelle survivante, indiscernable d’elle et tout entier dévoué à sa protection.',
+    cost: 'La mort d’une jumelle · persistance post-mortem',
+  },
+  'without-you-wander': {
+    name: 'Without You (Balade)',
+    owner: 'Kacho',
+    action: 'Se balader librement',
+    instruction:
+      'La gardienne se balade de manière autonome, mémorise cinq interactions, intercepte un événement mortel détecté et peut rejouer la trace mémorisée.',
+    rule: 'Le double post-mortem de Kacho agit de manière indépendante dans la zone assignée.',
+    cost: 'La mort d’une jumelle · persistance post-mortem',
+  },
+  'without-you-scout': {
+    name: 'Without You (Éclaireur)',
+    owner: 'Kacho',
+    action: 'Faire l\'éclaireur',
+    instruction:
+      'La gardienne explore en éclaireur, mémorise cinq interactions, intercepte un événement mortel détecté et peut rejouer la trace mémorisée.',
+    rule: 'Le double post-mortem de Kacho repère les menaces dans la zone assignée.',
     cost: 'La mort d’une jumelle · persistance post-mortem',
   },
   'magical-worm': {

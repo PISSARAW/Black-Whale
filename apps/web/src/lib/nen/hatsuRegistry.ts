@@ -237,7 +237,7 @@ export const HATSU_VISUAL_SIGNATURE_BY_KIND = {
     form: 'construct',
     motion: 'drift',
   },
-  scout: { glyph: '◉', manifestation: 'Little Eye familiar', form: 'beast', motion: 'scan' },
+  scout: { glyph: '◉', manifestation: 'Blue aura flying insect', form: 'beast', motion: 'drift' },
   tribunal: {
     glyph: '■',
     manifestation: 'Cross Game penalty card',
@@ -637,11 +637,11 @@ export const HATSU_PROFILES: HatsuProfile[] = [
     owner: 'Sayird',
     kind: 'scout',
     instruction:
-      'Move the remote eye to detect aura, then click a target no bigger than a hamster to open its visual and auditory feed.',
-    rule: 'Only a real small creature can be possessed; people and materialized Nen life are invalid hosts.',
-    cost: 'Very low aura · vulnerable animal host',
+      'Pilot the flying insect to detect aura and record its visual/auditory feed, then control it remotely.',
+    rule: 'The possessed object is a flying insect enveloped in a blue Nen aura that can be remotely controlled to film.',
+    cost: 'Very low aura · flying insect host',
     color: '#55c2ff',
-    action: 'Find a small host',
+    action: 'Pilot the insect',
   },
   {
     id: 'cross-game',
@@ -741,7 +741,7 @@ export const HATSU_PROFILES: HatsuProfile[] = [
   },
   {
     id: 'without-you',
-    name: 'Without You',
+    name: 'Without You (Follow)',
     owner: 'Kacho',
     kind: 'guardian',
     instruction:
@@ -749,7 +749,31 @@ export const HATSU_PROFILES: HatsuProfile[] = [
     rule: 'Kacho’s post-mortem double remains beside the surviving twin, indistinguishable from her and dedicated to protection.',
     cost: 'Death of one twin · post-mortem persistence',
     color: '#f6b8d1',
-    action: 'Remain beside the survivor',
+    action: 'Follow the survivor',
+  },
+  {
+    id: 'without-you-wander',
+    name: 'Without You (Wander)',
+    owner: 'Kacho',
+    kind: 'guardian-wander',
+    instruction:
+      'The guardian wanders independently, memorizes five interactions, intercepts one detected lethal event and can replay its protected memory trail.',
+    rule: 'Kacho’s post-mortem double acts independently in the assigned area.',
+    cost: 'Death of one twin · post-mortem persistence',
+    color: '#f6b8d1',
+    action: 'Wander independently',
+  },
+  {
+    id: 'without-you-scout',
+    name: 'Without You (Scout)',
+    owner: 'Kacho',
+    kind: 'guardian-scout',
+    instruction:
+      'The guardian acts as a scout, memorizes five interactions, intercepts one detected lethal event and can replay its protected memory trail.',
+    rule: 'Kacho’s post-mortem double investigates the assigned area for threats.',
+    cost: 'Death of one twin · post-mortem persistence',
+    color: '#f6b8d1',
+    action: 'Scout ahead',
   },
   {
     id: 'magical-worm',

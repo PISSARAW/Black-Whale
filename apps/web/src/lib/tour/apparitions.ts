@@ -281,7 +281,8 @@ export function apparitionsOn(
   if (guarded) {
     const beside = visitor?.at
     const measured = room(ship, guarded)
-    if (beside && measured) {
+    const mode = world.doubleMode ?? 'follow'
+    if (mode === 'follow' && beside && measured) {
       const here = ship.spaces.get(world.cameFrom ?? '') ?? null
       const floor = here && visitor ? (room(ship, here)?.floor ?? measured.floor) : measured.floor
       found.push({

@@ -90,6 +90,7 @@
   }
   let points: Point[] = []
   let cursor = { x: -100, y: -100 }
+  let userOrigin: { x: number; y: number } | null = null
   let sequence = 0
   let seconds = 0
   let cardIndex = 0
@@ -1149,6 +1150,20 @@
   onMount(() => {
     const move = (event: PointerEvent) => {
       cursor = { x: event.clientX, y: event.clientY }
+      if (profile && ['elastic', 'chain-rule', 'chain-bind', 'control', 'arrow', 'stitch'].includes(profile.kind)) {
+        if (points.length === 0) {
+          const ownerSlug = profile.owner.toLowerCase().replace(/\s+/g, '-')
+          const userElement = document.querySelector(`[data-hatsu-character="${ownerSlug}"]`) || document.querySelector(`[data-hatsu-character-name="${profile.owner}"]`)
+          if (userElement) {
+            const rect = userElement.getBoundingClientRect()
+            userOrigin = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 }
+          } else {
+            userOrigin = null
+          }
+        } else {
+          userOrigin = null
+        }
+      }
       if (profile?.kind === 'dowsing' && points.length === 0) {
         const nearby = document
           .elementFromPoint(event.clientX, event.clientY)
@@ -1216,7 +1231,7 @@
     }
   })
 
-  $: anchor = points.length ? points[points.length - 1] : null
+  $: anchor = points.length ? points[points.length - 1] : userOrigin
   $: chainPairs = points.slice(1).map((point, index) => ({ from: points[index], to: point }))
 </script>
 
@@ -1692,6 +1707,7 @@
     stroke-width: 3;
     stroke-dasharray: none;
     animation: elastic 0.7s ease-in-out infinite alternate;
+    filter: drop-shadow(0 0 6px var(--hatsu)) drop-shadow(0 0 12px var(--hatsu));
   }
   :global(body.bungee-gum-filtered [data-hatsu-character]:not([data-bungee-selected='true'])) {
     opacity: 0 !important;
@@ -2348,8 +2364,9 @@
   }
   :global(.hatsu-secret-window) {
     box-shadow:
-      0 0 0 2px #a8b7d8,
-      0 0 25px #a8b7d844 !important;
+      0 0 0 2px #ffffff,
+      0 0 15px #ffffff,
+      0 0 30px #ffffffaa !important;
   }
   :global(.hatsu-future-afterimage) {
     box-shadow:
@@ -2864,6 +2881,7 @@
   @keyframes elastic {
     to {
       stroke-width: 5;
+      filter: drop-shadow(0 0 10px var(--hatsu)) drop-shadow(0 0 20px var(--hatsu)) drop-shadow(0 0 30px var(--hatsu));
     }
   }
   @keyframes scarlet {

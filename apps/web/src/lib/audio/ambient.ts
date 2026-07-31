@@ -90,7 +90,7 @@ const sparkles: Array<Array<[number, number]>> = [
 
 const LOOP_BARS = melody.length
 
-type Graph = {
+export type Graph = {
   context: AudioContext
   master: GainNode
   muffle: BiquadFilterNode
@@ -104,7 +104,7 @@ let nextBar = 0
 let barIndex = 0
 let muffled = false
 
-const midiToHz = (midi: number) => 440 * Math.pow(2, (midi - 69) / 12)
+export const midiToHz = (midi: number) => 440 * Math.pow(2, (midi - 69) / 12)
 
 function buildGraph(): Graph {
   const Ctor =
@@ -152,7 +152,7 @@ function buildGraph(): Graph {
   return { context, master, muffle, air, reverbSend }
 }
 
-function voice(
+export function voice(
   g: Graph,
   at: number,
   hz: number,
@@ -267,7 +267,16 @@ const SOLFEGE = [0, 2, 3, 5, 7, 8, 10]
 /** Kept only while the theme is off — otherwise notes go through its mixer. */
 let fluteGraph: Graph | null = null
 
-function fluteTarget(): Graph | null {
+/**
+ * The mixer anything the Hatsu layer plays should go through.
+ *
+ * The theme's own graph when the theme is on, and a stand-in built on first use
+ * when it is off — either way it is behind `muffle`, which is what lets Three
+ * Monkeys take the visitor's hearing without every caller knowing about it.
+ * `$lib/audio/hatsuSounds` is the other user of this; it is exported rather
+ * than duplicated so a technique never opens a second AudioContext.
+ */
+export function hatsuAudioGraph(): Graph | null {
   if (graph) return graph
   if (typeof window === 'undefined') return null
   if (!fluteGraph) {
@@ -291,7 +300,7 @@ function fluteTarget(): Graph | null {
  * as the scale it is written as.
  */
 export function playHatsuNote(degree: number, options: { velocity?: number } = {}) {
-  const g = fluteTarget()
+  const g = hatsuAudioGraph()
   if (!g) return
   const step = ((Math.round(degree) % SOLFEGE.length) + SOLFEGE.length) % SOLFEGE.length
   // Every wrap climbs an octave, so a long score rises instead of circling.
@@ -429,7 +438,7 @@ function scheduleBattleBar(g: Graph, bar: number, at: number) {
 }
 
 function battleTick() {
-  const g = fluteTarget()
+  const g = hatsuAudioGraph()
   if (!g) return
   while (battleNextBar < g.context.currentTime + BATTLE_BAR * 1.5) {
     scheduleBattleBar(g, battleBarIndex, Math.max(battleNextBar, g.context.currentTime + 0.05))
@@ -441,7 +450,7 @@ function battleTick() {
 /** Start the dance. Calling it while it is already playing changes nothing. */
 export function startBattleMusic() {
   if (battleScheduler) return
-  const g = fluteTarget()
+  const g = hatsuAudioGraph()
   if (!g) return
   battleBarIndex = 0
   battleNextBar = g.context.currentTime + 0.08

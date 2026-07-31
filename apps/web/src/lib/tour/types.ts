@@ -296,6 +296,7 @@ export interface Structure {
   provenance: Provenance
   source: string
   sourceFr: string
+  aura?: string
 }
 
 /**

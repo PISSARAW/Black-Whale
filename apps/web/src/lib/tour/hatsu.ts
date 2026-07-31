@@ -467,6 +467,8 @@ export interface SolidHold {
   hits?: number
   /** A Gallery Fake copy, and the solid it is a copy of. */
   copyOf?: string
+  /** Aura color applied by a hatsu, such as pink for Texture Surprise */
+  aura?: string
 }
 
 export const EMPTY_WORLD: TourWorld = {
@@ -760,7 +762,12 @@ export function nenHeld(world: TourWorld): string[] {
 // renderer that knows nothing but how to draw what it is handed.
 
 /** Appearances Texture Surprise cycles a surface through. */
-const FORGERIES: StructureKind[] = ['painting', 'cabinet', 'bars', 'basin', 'casket']
+const FORGERIES: StructureKind[] = [
+  'painting', 'cabinet', 'bars', 'basin', 'casket',
+  'bed', 'seat', 'table', 'spring', 'platform',
+  'counter', 'window', 'pillar', 'manacle', 'camera',
+  'telephone', 'duct', 'vent'
+]
 
 /** The blueprint's record for a solid, or the Gallery Fake copy standing in for one. */
 export function solidById(ship: Ship, world: TourWorld, id: string | null): Structure | null {
@@ -792,6 +799,7 @@ export function solidNow(structure: Structure, hold: SolidHold | undefined): Str
     // A copy has none of the original's standing: it is drawn cold, like every
     // other thing in the walk that no page supports.
     provenance: hold.copyOf ? 'inferred' : structure.provenance,
+    aura: hold.aura ?? structure.aura,
   }
 }
 
@@ -973,7 +981,7 @@ const SOLID_CASTS: Partial<Record<HatsuInteractionKind, SolidCast>> = {
     const current = hold?.kind ?? structure.kind
     const next = FORGERIES[(FORGERIES.indexOf(current) + 1) % FORGERIES.length]
     return {
-      world: withHold(world, id, { kind: next }),
+      world: withHold(world, id, { kind: next, aura: 'pink' }),
       report: { kind: 'forged', solidId: id, as: next },
     }
   },

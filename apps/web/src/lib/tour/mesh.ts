@@ -816,7 +816,9 @@ function extrudeSolid(
   // rendering decision made where the rendering happens, and the outline the
   // visitor bumps into is still the outline that gets drawn.
   const outline = toClockwise(structureFootprint(structure))
-  const colour = colourFor(hex(STRUCTURE_COLOURS[structure.kind]), structure.provenance)
+  const colour = structure.aura === 'pink' 
+    ? colourFor([1, 0.4, 0.7], structure.provenance) 
+    : colourFor(hex(STRUCTURE_COLOURS[structure.kind]), structure.provenance)
   const bottom = floorOf(room, tier) + structure.base
   const top = Math.min(bottom + structure.height, floorOf(room, tier) + ceilingOf(room, tier))
 

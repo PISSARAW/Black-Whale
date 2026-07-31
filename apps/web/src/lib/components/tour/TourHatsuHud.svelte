@@ -161,6 +161,12 @@
         return say.stripped(roomName(report.spaceId), report.count)
       case 'laid-open':
         return say.laidOpen(report.spaces, report.decks)
+      case 'swallowed':
+        return say.swallowed(solidName(report.solidId), report.held)
+      case 'coughed-up':
+        return say.coughedUp(solidName(report.solidId), roomName(report.spaceId), report.held)
+      case 'bag-empty':
+        return say.bagEmpty
       case 'emptied':
         return say.emptied(roomName(report.spaceId), report.structures)
       case 'refused':

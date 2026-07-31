@@ -158,6 +158,7 @@ export const worksOnTheBody = (profile: HatsuProfile | null) =>
  * what decides which one a cast reads.
  */
 export const SOLID_HATSU_KINDS = new Set<HatsuInteractionKind>([
+  'vacuum',
   'elastic',
   'disguise',
   'pocket',
@@ -211,6 +212,15 @@ export interface TourWorld {
   doors: string[]
   /** Rooms Blinky has swallowed the contents of. */
   emptied: string[]
+  /**
+   * What Blinky is holding, newest last.
+   *
+   * The vacuum is the one technique in the walk that gives anything back: what
+   * goes into it comes out of it, and it comes out in the order a bag empties —
+   * the last thing swallowed first. A stack, therefore, and not a set: the
+   * order is the ability.
+   */
+  hoover: string[]
   /** Where the remote eye is parked, or `null` while it rides the visitor. */
   eye: string | null
   /** 0 nothing · 1 sight · 2 sight and hearing · 3 all three. */
@@ -464,6 +474,7 @@ export const EMPTY_WORLD: TourWorld = {
   isolated: null,
   doors: [],
   emptied: [],
+  hoover: [],
   eye: null,
   sealed: 0,
   phasing: false,
@@ -527,6 +538,7 @@ export const worldIsQuiet = (world: TourWorld): boolean =>
   !world.isolated &&
   !world.doors.length &&
   !world.emptied.length &&
+  !world.hoover.length &&
   !world.eye &&
   !world.sealed &&
   !world.phasing &&
@@ -583,6 +595,9 @@ export type TourReport =
   | { kind: 'stripped'; spaceId: string; count: number }
   | { kind: 'laid-open'; spaces: number; decks: number }
   | { kind: 'emptied'; spaceId: string; structures: number }
+  | { kind: 'swallowed'; solidId: string; held: number }
+  | { kind: 'coughed-up'; solidId: string; spaceId: string; held: number }
+  | { kind: 'bag-empty' }
   | { kind: 'refused'; spaceId: string }
   | { kind: 'dispatched'; spaceId: string }
   // On the solids.
@@ -858,7 +873,15 @@ const withHold = (world: TourWorld, id: string, patch: SolidHold): TourWorld => 
 const dropHold = (world: TourWorld, id: string): TourWorld => {
   const solids = { ...world.solids }
   delete solids[id]
-  return { ...world, solids, copies: world.copies.filter((copy) => copy.id !== id) }
+  return {
+    ...world,
+    solids,
+    copies: world.copies.filter((copy) => copy.id !== id),
+    // A thing put back is a thing out of the bag: Nen Stitches undoes being
+    // swallowed like it undoes everything else, and Blinky cannot then be asked
+    // for something that is standing in the room again.
+    hoover: world.hoover.filter((held) => held !== id),
+  }
 }
 
 /** Half the diagonal of a solid: how far off its centre you have to stand. */
@@ -1134,6 +1157,18 @@ const SOLID_CASTS: Partial<Record<HatsuInteractionKind, SolidCast>> = {
     world: { ...world, pairing: id },
     report: { kind: 'cargo-taken', solidId: id },
   }),
+
+  // Into the bag, and the bag remembers the order. Blinky swallows what is not
+  // alive and not Nen — a solid another technique has hold of is refused before
+  // this is ever reached — and what he swallows is gone from the room until he
+  // is asked for it back.
+  vacuum: ({ world, id }) => ({
+    world: {
+      ...withHold(world, id, { gone: true }),
+      hoover: [...world.hoover.filter((held) => held !== id), id],
+    },
+    report: { kind: 'swallowed', solidId: id, held: world.hoover.length + 1 },
+  }),
 }
 
 /**
@@ -1180,6 +1215,44 @@ function castPastTheTarget(
   // which from inside the walk was a punch that did nothing four casts in five.
   // Nothing is struck and nothing is moved — the floor answers, and that is the
   // whole of the report.
+  // Nothing down the reticle, and something in the bag: the last thing in is
+  // the first thing out, set down where the aura came down. An empty bag falls
+  // back to what Blinky did before he had one — the room, swallowed whole.
+  if (kind === 'vacuum' && !structure) {
+    const room = input.targetId ? ship.spaces.get(input.targetId) : null
+    if (!room) return { world, report: { kind: 'no-target' } }
+    const last = world.hoover[world.hoover.length - 1]
+    const coughed = solidById(ship, world, last ?? null)
+    if (!coughed) {
+      if (nenHeld(world).includes(room.id)) {
+        return { world, report: { kind: 'refused', spaceId: room.id } }
+      }
+      if (world.emptied.includes(room.id)) {
+        return { world, report: { kind: 'emptied', spaceId: room.id, structures: 0 } }
+      }
+      const structures = ship.structures.filter((solid) => solid.spaceId === room.id).length
+      return {
+        world: { ...world, emptied: [...world.emptied, room.id] },
+        report: { kind: 'emptied', spaceId: room.id, structures },
+      }
+    }
+    const hoover = world.hoover.slice(0, -1)
+    return {
+      world: {
+        ...withHold(world, coughed.id, {
+          gone: false,
+          at: landingIn(room, input.at, input.heading)[room.id],
+        }),
+        hoover,
+        // It comes out where it was put down, so it belongs to that room now.
+        copies: world.copies.map((copy) =>
+          copy.id === coughed.id ? { ...copy, spaceId: room.id } : copy,
+        ),
+      },
+      report: { kind: 'coughed-up', solidId: coughed.id, spaceId: room.id, held: hoover.length },
+    }
+  }
+
   if (kind === 'remote-strike' && !structure) {
     const room = input.targetId ? ship.spaces.get(input.targetId) : null
     if (!room) return { world, report: { kind: 'no-target' } }
@@ -2095,6 +2168,7 @@ function stripTheRoom({ world, ship, target }: RoomCastContext): TourCastResult 
     const solids = { ...next.solids }
     for (const id of inside) delete solids[id]
     next.solids = solids
+    next.hoover = next.hoover.filter((held) => !inside.includes(held))
     next.copies = next.copies.filter((copy) => !inside.includes(copy.id))
     count += inside.length
   }
@@ -2168,23 +2242,6 @@ const ROOM_CASTS: Partial<Record<HatsuInteractionKind, RoomCast>> = {
   },
 
   blast: stripTheRoom,
-
-  // Blinky swallows what is not alive and not Nen. A room another technique
-  // is holding refuses to go in, and the refusal is the reading: it is how
-  // Shizuku finds the trap.
-  vacuum: ({ world, ship, target }) => {
-    if (nenHeld(world).includes(target.id)) {
-      return { world, report: { kind: 'refused', spaceId: target.id } }
-    }
-    if (world.emptied.includes(target.id)) {
-      return { world, report: { kind: 'emptied', spaceId: target.id, structures: 0 } }
-    }
-    const structures = ship.structures.filter((solid) => solid.spaceId === target.id).length
-    return {
-      world: { ...world, emptied: [...world.emptied, target.id] },
-      report: { kind: 'emptied', spaceId: target.id, structures },
-    }
-  },
 
   // ── The doors ────────────────────────────────────────────────────────
   //

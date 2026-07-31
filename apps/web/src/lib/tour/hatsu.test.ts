@@ -168,6 +168,37 @@ describe('Blinky and what refuses to be swallowed', () => {
     expect(result.report).toEqual({ kind: 'refused', spaceId: furnished.id })
     expect(result.world.emptied).toEqual([])
   })
+
+  it('swallows a thing at a time, and gives them back last in first out', () => {
+    const there = ship.structures.filter((solid) => solid.spaceId === furnished.id).slice(0, 2)
+    expect(there.length).toBe(2)
+
+    let world = EMPTY_WORLD
+    for (const solid of there) {
+      const swallowed = castInTour(world, 'vacuum', {
+        ship,
+        targetId: furnished.id,
+        targetSolidId: solid.id,
+        standingIn: furnished.id,
+        at: [0, 0],
+      })
+      expect(swallowed.report).toMatchObject({ kind: 'swallowed', solidId: solid.id })
+      world = swallowed.world
+      expect(world.solids[solid.id]?.gone).toBe(true)
+    }
+    expect(world.hoover).toEqual(there.map((solid) => solid.id))
+
+    // Aimed at no thing, the bag gives back what went in last.
+    const first = cast(world, 'vacuum', elsewhere.id)
+    expect(first.report).toMatchObject({ kind: 'coughed-up', solidId: there[1].id, held: 1 })
+    expect(first.world.solids[there[1].id]?.gone).toBe(false)
+    const second = cast(first.world, 'vacuum', elsewhere.id)
+    expect(second.report).toMatchObject({ kind: 'coughed-up', solidId: there[0].id, held: 0 })
+    expect(second.world.hoover).toEqual([])
+
+    // And an empty bag is Blinky as he was: the room, swallowed whole.
+    expect(cast(second.world, 'vacuum', elsewhere.id).report).toMatchObject({ kind: 'emptied' })
+  })
 })
 
 describe('the isolated room', () => {
@@ -302,7 +333,10 @@ const hit = (
 describe('aiming at a solid', () => {
   it('routes the solid techniques to a solid and leaves the rest on the rooms', () => {
     expect(SOLID_HATSU_KINDS.has('impact')).toBe(true)
-    expect(SOLID_HATSU_KINDS.has('vacuum')).toBe(false)
+    // Blinky aims at a thing now — the bag takes objects, and only falls back
+    // to the room when the reticle is on nothing.
+    expect(SOLID_HATSU_KINDS.has('impact')).toBe(true)
+    expect(SOLID_HATSU_KINDS.has('room-isolation')).toBe(false)
     for (const kind of SOLID_HATSU_KINDS) expect(TOUR_HATSU_KINDS).toContain(kind)
   })
 

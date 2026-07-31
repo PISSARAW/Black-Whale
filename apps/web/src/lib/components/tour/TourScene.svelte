@@ -1453,6 +1453,41 @@
           turns = root
         }
 
+        if (seen.kind === 'hoover') {
+          // A canister, a hose and a nozzle: the one apparition in the walk
+          // that is a machine. It is carried rather than placed, so the group
+          // is built facing forward and `driftApparitions` puts it at the hip.
+          const canister = new THREE.Mesh(
+            new THREE.CylinderGeometry(seen.size * 0.55, seen.size * 0.6, seen.size * 1.1, 12),
+            glow(seen.colour, 1),
+          )
+          root.add(canister)
+          const hose = new THREE.Mesh(
+            new THREE.CylinderGeometry(seen.size * 0.12, seen.size * 0.12, seen.size * 1.6, 6),
+            glow(seen.colour, 0.9),
+          )
+          hose.rotation.z = Math.PI / 2.6
+          hose.position.set(seen.size * 0.7, seen.size * 0.5, -seen.size * 0.4)
+          root.add(hose)
+          const nozzle = new THREE.Mesh(
+            new THREE.ConeGeometry(seen.size * 0.34, seen.size * 0.6, 8),
+            glow(seen.colour, 1),
+          )
+          nozzle.rotation.x = -Math.PI / 2
+          nozzle.position.set(seen.size * 1.25, seen.size * 0.95, -seen.size * 0.9)
+          root.add(nozzle)
+          // What is in the bag, as light through the canister: an empty Blinky
+          // is dark, and one holding five is lit.
+          if (seen.stage) {
+            const full = new THREE.Mesh(
+              new THREE.SphereGeometry(seen.size * 0.42, 10, 8),
+              glow(0x9be8ff, Math.min(0.85, 0.25 + seen.stage * 0.14)),
+            )
+            root.add(full)
+          }
+          turns = null
+        }
+
         if (seen.kind === 'cargo') {
           const crate = new THREE.Mesh(
             new THREE.BoxGeometry(seen.size, seen.size, seen.size),
@@ -1618,6 +1653,20 @@
         for (const [id, held] of Object.entries(apparitions)) {
           if (!held) continue
           const phase = seconds + id.length
+
+          if (held.kind === 'hoover') {
+            // Worn at the hip, on the visitor's right, pointing where they are:
+            // it is a thing they are carrying, not a thing in the room.
+            const sin = Math.sin(yaw)
+            const cos = Math.cos(yaw)
+            held.root.position.set(
+              camera.position.x + cos * 0.55 - sin * 0.5,
+              camera.position.y - 0.85 + Math.sin(phase * 2) * 0.03,
+              camera.position.z - sin * 0.55 - cos * 0.5,
+            )
+            held.root.rotation.y = yaw
+            continue
+          }
 
           if (held.kind === 'fish') {
             // An aquarium: each fish on its own ellipse about the middle of the

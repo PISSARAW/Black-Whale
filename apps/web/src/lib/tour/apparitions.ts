@@ -38,6 +38,8 @@ export type ApparitionKind =
   | 'paper'
   /** Cargo a relay is holding, waiting to be advanced to the next one. */
   | 'cargo'
+  /** Blinky himself: the vacuum, carried at the visitor's side. */
+  | 'hoover'
 
 /**
  * One thing Nen has left standing in the ship.
@@ -91,6 +93,7 @@ const PORTAL = 0x80edc7
 const FISH = 0x78b6c9
 const PAPER = 0xefb9c8
 const CARGO = 0xe2b86e
+const HOOVER = 0x9fb3c8
 /** Halkenburg's collective aura, which is the gold of the whole ship's will. */
 export const ARROW = 0xf7e27d
 /** Rising Sun is the one technique whose colour is a temperature. */
@@ -350,6 +353,25 @@ export function apparitionsOn(
         hidden: false,
       })
     }
+  }
+
+  // Blinky, who is a thing rather than an effect: the vacuum is out for as long
+  // as the aura is up, carried at the visitor's side, and how full it is is
+  // written on it. `stage` is what it is holding, so the scene can show the bag.
+  if (world.holding === 'vacuum' && visitor) {
+    found.push({
+      id: 'hoover',
+      kind: 'hoover',
+      spaceId: world.cameFrom ?? '',
+      tierId: visitor.tierId,
+      at: [visitor.at[0], visitor.at[1]],
+      // Carried, so its height is the visitor's rather than the room's.
+      y: 0,
+      size: 0.5,
+      colour: HOOVER,
+      stage: world.hoover.length,
+      hidden: false,
+    })
   }
 
   // Cargo a relay has taken and not yet advanced. `pairing` is shared by every

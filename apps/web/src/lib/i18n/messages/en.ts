@@ -329,6 +329,10 @@ export const en = {
           structures
             ? `${structures} solid${structures > 1 ? 's' : ''} swallowed out of ${room}`
             : `${room} was already bare`,
+        swallowed: (solid: string, held: number) => `${solid} goes into the bag · ${held} held`,
+        coughedUp: (solid: string, room: string, held: number) =>
+          `${solid} comes back out in ${room} · ${held} left in the bag`,
+        bagEmpty: 'The bag is empty · aim at something to swallow it',
         refused: (room: string) =>
           `Blinky refuses ${room} · Nen is holding it, which is how the trap shows`,
         dispatched: (room: string) => `A bird is back from ${room} with what the room rests on`,

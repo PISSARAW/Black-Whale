@@ -280,6 +280,11 @@ export const fr: Messages = {
           structures
             ? `${structures} volume${structures > 1 ? 's' : ''} aspiré${structures > 1 ? 's' : ''} hors de ${room}`
             : `${room} était déjà nue`,
+        swallowed: (solid, held) =>
+          `${solid} passe dans le sac · ${held} gardé${held === 1 ? '' : 's'}`,
+        coughedUp: (solid, room, held) =>
+          `${solid} ressort dans ${room} · ${held} restant${held === 1 ? '' : 's'} dans le sac`,
+        bagEmpty: 'Le sac est vide · visez quelque chose pour l’aspirer',
         refused: (room) =>
           `Blinky refuse ${room} · du Nen la retient, et c'est ainsi que le piège se voit`,
         dispatched: (room) => `Un oiseau revient de ${room} avec ce sur quoi la pièce repose`,

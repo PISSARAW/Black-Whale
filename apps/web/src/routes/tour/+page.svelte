@@ -435,6 +435,25 @@
 
   // ── Nen ────────────────────────────────────────
   let world = $state<TourWorld>(EMPTY_WORLD)
+
+  let now = $state(Date.now())
+  let lastAutopilotMove = 0
+  $effect(() => {
+    const i = setInterval(() => {
+      now = Date.now()
+      if (isAutopilot && currentSpace && now - lastAutopilotMove > 1500) {
+        lastAutopilotMove = now
+        const doors = ship.links.filter((l) => l.from === currentSpace || l.to === currentSpace)
+        if (doors.length > 0) {
+          const targetLink = doors[Math.floor(Math.random() * doors.length)]
+          const targetId = targetLink.from === currentSpace ? targetLink.to : targetLink.from
+          arrived(targetId)
+        }
+      }
+    }, 100)
+    return () => clearInterval(i)
+  })
+  const isAutopilot = $derived(world.body.autopilotUntil !== null && world.body.autopilotUntil > now)
   let report = $state<TourReport | null>(null)
   /**
    * The blast and the punch, which are gone by the time the read-out is read.
@@ -502,6 +521,11 @@
       // Air Blow.
       case 'stripped':
         return blowAGust()
+      // Black Voice.
+      case 'puppeted':
+      case 'puppet-released':
+      case 'autopilot-started':
+        return unspoolWire()
       // Order Stamp: the seal coming down, the lock turning on a head that
       // already wears one, and the puppets moving when they are finally told.
       // An order with nothing locked is deliberately silent — it is spoken to
@@ -1079,6 +1103,10 @@
         loadingLabel={$t.tour.loading}
         unsupportedLabel={$t.tour.unsupported}
       />
+
+      {#if isAutopilot}
+        <div class="pointer-events-auto absolute inset-0 z-50 bg-black"></div>
+      {/if}
 
       <!-- Reticle. It takes the technique's colour while one is up, because it
            has stopped being a crosshair and become where the aura goes. -->

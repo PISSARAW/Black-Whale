@@ -429,6 +429,9 @@ export const fr: Messages = {
           `Quatre serpents, ${rooms} pièces à portée · il faut entrer dans l'une d'elles`,
         snakesFed: (room) => `La malédiction a trouvé sa victime dans ${room}`,
         snakesRebound: "Congédiée sans victime · la malédiction revient sur qui l'a posée",
+        puppeted: (solid) => `L'antenne est plantée · ${solid} est maintenant sous contrôle`,
+        puppetReleased: (solid) => `L'antenne est retirée · ${solid} n'est plus contrôlé`,
+        autopilotStarted: "Pilote automatique activé · le corps avance seul pour accomplir la tâche",
         wormSet: (room) => `Une extrémité du tunnel dans ${room} · désignez l'autre`,
         wormOpen: (a, b) =>
           `${a} et ${b} font une route d'une nuit, et elle est faite pour être prise une fois`,

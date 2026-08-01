@@ -77,10 +77,15 @@ describe('the technique roster', () => {
 
   it('carries a technique across only when the walk can honour it', () => {
     const teleport = HATSU_PROFILES.find((profile) => profile.kind === 'teleport')!
-    // Black Voice needs a mind to take over, and the walk has none by design.
+    // Black Voice takes a mind, and the walk has none — but it has things, and
+    // it has the visitor, and the needle goes into either of those.
     const puppet = HATSU_PROFILES.find((profile) => profile.kind === 'puppet')!
+    const unheld = HATSU_PROFILES.find(
+      (profile) => !new Set<string>(TOUR_HATSU_KINDS).has(profile.kind),
+    )!
     expect(worksInTour(teleport)).toBe(true)
-    expect(worksInTour(puppet)).toBe(false)
+    expect(worksInTour(puppet)).toBe(true)
+    expect(worksInTour(unheld)).toBe(false)
     expect(worksInTour(null)).toBe(false)
   })
 })
@@ -444,6 +449,25 @@ describe('what a technique does to a solid', () => {
     expect(solidNow(solidB, told.world.solids[solidB.id]).at).toEqual(before)
     // Obeying does not use the stamp up: the crowd is still there to be told again.
     expect(lockedPuppets(told.world)).toEqual([solidA.id])
+  })
+
+  // Black Voice is on both sides of the line, so the reticle is what decides
+  // which of its two halves runs: a thing under it takes the needle, and with
+  // nothing under it the needle goes into the visitor.
+  it('puts the needle in the thing under the reticle, and pulls it back out', () => {
+    const stuck = hit(EMPTY_WORLD, 'puppet', solidA.id)
+    expect(stuck.report).toEqual({ kind: 'puppeted', solidId: solidA.id })
+    expect(stuck.world.puppet).toBe(solidA.id)
+    const freed = hit(stuck.world, 'puppet', solidA.id)
+    expect(freed.report).toEqual({ kind: 'puppet-released', solidId: solidA.id })
+    expect(freed.world.puppet).toBeNull()
+  })
+
+  it('puts the needle in the visitor when the reticle holds no solid', () => {
+    const self = hit(EMPTY_WORLD, 'puppet', null)
+    expect(self.report).toEqual({ kind: 'autopilot-started' })
+    expect(self.world.body.autopilotUntil).toBeGreaterThan(0)
+    expect(self.world.puppet).toBeNull()
   })
 
   it('speaks an order with nothing locked to nobody', () => {

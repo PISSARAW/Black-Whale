@@ -490,6 +490,9 @@ export const en = {
           `Four snakes, ${rooms} rooms in range · one of them has to be entered`,
         snakesFed: (room: string) => `The curse found its victim in ${room}`,
         snakesRebound: 'Dismissed with no victim · the curse comes back on the one who set it',
+        puppeted: (solid: string) => `The antenna is planted · ${solid} is now under control`,
+        puppetReleased: (solid: string) => `The antenna is withdrawn · ${solid} is no longer controlled`,
+        autopilotStarted: 'Autopilot engaged · the body moves on its own to complete the task',
         wormSet: (room: string) => `One end of the tunnel in ${room} · name the other`,
         wormOpen: (a: string, b: string) =>
           `${a} and ${b} are a night's route, and it is meant to be walked once`,

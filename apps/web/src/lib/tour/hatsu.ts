@@ -64,6 +64,7 @@ export const TOUR_HATSU_KINDS = [
   'pocket',
   'command',
   'clone',
+  'puppet',
   'impact',
   'barrage',
   'windup',
@@ -139,6 +140,7 @@ export const BODY_HATSU_KINDS = new Set<HatsuInteractionKind>([
   'mimicry',
   'melody',
   'predator',
+  'puppet',
   // Feitan's pair is on this side of the eye too: the wrapping is worn, and the
   // sun is the visitor. Neither is aimed — the burst goes out from where they
   // stand, which is the only place the heat could come from.
@@ -165,6 +167,7 @@ export const SOLID_HATSU_KINDS = new Set<HatsuInteractionKind>([
   'pocket',
   'command',
   'clone',
+  'puppet',
   'impact',
   'barrage',
   'windup',
@@ -185,14 +188,16 @@ export const SOLID_HATSU_KINDS = new Set<HatsuInteractionKind>([
 ])
 
 /**
- * The two that are on both sides of the line, and let the reticle decide.
+ * The three that are on both sides of the line, and let the reticle decide.
  *
  * Elastic Love is worn until something is aimed at, and the Dowsing Chain
  * strikes whatever is down the reticle and falls back to pointing at the room
- * when there is nothing there to strike. Everything else in `SOLID_HATSU_KINDS`
- * takes a thing and only a thing.
+ * when there is nothing there to strike. Black Voice is the needle: put it in a
+ * thing and the visitor walks as that thing; put it in themselves and they walk
+ * blind for ten seconds. Everything else in `SOLID_HATSU_KINDS` takes a thing
+ * and only a thing.
  */
-const EITHER_TARGET = new Set<HatsuInteractionKind>(['elastic', 'dowsing'])
+const EITHER_TARGET = new Set<HatsuInteractionKind>(['elastic', 'dowsing', 'puppet'])
 
 export const aimsAtSolids = (profile: HatsuProfile | null) =>
   Boolean(profile) && SOLID_HATSU_KINDS.has(profile!.kind)
@@ -268,6 +273,8 @@ export interface TourWorld {
   doors: string[]
   /** Rooms Blinky has swallowed the contents of. */
   emptied: string[]
+  /** The solid Black Voice is currently controlling. */
+  puppet: string | null
   /**
    * What Blinky is holding, newest last.
    *
@@ -520,6 +527,10 @@ export interface TourBody {
    * matters and nothing is given back until the sun rises on it.
    */
   packed: number | null
+  /**
+   * The timestamp when the automatic pilot (Black Voice self-cast) ends, or null if not active.
+   */
+  autopilotUntil: number | null
 }
 
 export const RESTING_BODY: TourBody = {
@@ -533,6 +544,7 @@ export const RESTING_BODY: TourBody = {
   soothed: false,
   deduced: [],
   packed: null,
+  autopilotUntil: null,
 }
 
 /**
@@ -584,6 +596,7 @@ export const EMPTY_WORLD: TourWorld = {
   isolated: null,
   doors: [],
   emptied: [],
+  puppet: null,
   hoover: [],
   eye: null,
   eyeMode: 'pilot',
@@ -765,6 +778,9 @@ export type TourReport =
   | { kind: 'swapped'; solidId: string; otherId: string }
   | { kind: 'cargo-taken'; solidId: string }
   | { kind: 'cargo-landed'; solidId: string; spaceId: string }
+  | { kind: 'puppeted'; solidId: string }
+  | { kind: 'puppet-released'; solidId: string }
+  | { kind: 'autopilot-started' }
   // On the doors.
   | { kind: 'jailed'; spaceId: string; doors: number }
   | { kind: 'jail-refused'; spaceId: string }
@@ -1261,6 +1277,19 @@ const SOLID_CASTS: Partial<Record<HatsuInteractionKind, SolidCast>> = {
         solids: { ...world.solids, [copyId]: { copyOf: id } },
       },
       report: { kind: 'copied', solidId: id },
+    }
+  },
+
+  puppet: ({ world, id }) => {
+    if (world.puppet === id) {
+      return {
+        world: { ...world, puppet: null },
+        report: { kind: 'puppet-released', solidId: id },
+      }
+    }
+    return {
+      world: { ...world, puppet: id },
+      report: { kind: 'puppeted', solidId: id },
     }
   },
 
@@ -1820,6 +1849,13 @@ const BODY_CASTS: Partial<Record<HatsuInteractionKind, BodyCast>> = {
   enhance: ({ body, withBody }) => {
     const committed = Math.min(6, body.enhance + 1)
     return { world: withBody({ enhance: committed }), report: { kind: 'reinforced', committed } }
+  },
+
+  puppet: ({ withBody }) => {
+    return {
+      world: withBody({ autopilotUntil: Date.now() + 10000 }),
+      report: { kind: 'autopilot-started' },
+    }
   },
 
   vehicle: boardOrAlight,
@@ -2870,9 +2906,12 @@ function runCast(
   const pulledBack = pullBackTheBody(world)
   if (pulledBack) return pulledBack
 
+  // The body goes first, because most of what is worn is only ever worn. The
+  // ones in `EITHER_TARGET` are the exception: a thing under the reticle takes
+  // the cast instead, and the body only gets it when the reticle is empty.
   if (
     BODY_HATSU_KINDS.has(kind) &&
-    (kind !== 'elastic' || (!input.targetSolidId && !input.targetId))
+    (!EITHER_TARGET.has(kind) || (!input.targetSolidId && (kind !== 'elastic' || !input.targetId)))
   ) {
     return castOnBody(world, kind, input)
   }

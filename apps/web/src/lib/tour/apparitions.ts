@@ -48,6 +48,8 @@ export type ApparitionKind =
   | 'gum'
   /** Sayird's insect, flying the room the sphere was sent to. */
   | 'insect'
+  /** Shalnark's antenna, stuck into a solid. */
+  | 'antenna'
   /** The Dowsing Chain: links off the visitor's hand, with the ball on the end. */
   | 'chain'
 
@@ -572,6 +574,26 @@ export function apparitionsOn(
       y: mouth.y,
       pair: other,
     })
+  }
+
+  // Black Voice's antenna, stuck into a solid.
+  if (world.puppet) {
+    const puppetSolid = solidById(ship, world, world.puppet)
+    const space = puppetSolid ? spaceOf(puppetSolid.spaceId) : null
+    if (puppetSolid && space) {
+      found.push({
+        id: `antenna:${world.puppet}`,
+        kind: 'antenna',
+        spaceId: space.id,
+        tierId: space.tierId,
+        at: solidNow(puppetSolid, world.solids[puppetSolid.id]).at,
+        y: 0,
+        size: 0.15,
+        colour: PUPPET,
+        stage: 0,
+        hidden: false,
+      })
+    }
   }
 
   return found

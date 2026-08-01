@@ -1739,6 +1739,18 @@
           turns = root
         }
 
+        if (seen.kind === 'antenna') {
+          const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.01, 0.01, seen.size * 2), skin)
+          pole.position.y = seen.size
+          root.add(pole)
+          
+          const bulb = new THREE.Mesh(new THREE.SphereGeometry(0.04), glow(seen.colour, 0.9))
+          bulb.position.y = seen.size * 2
+          root.add(bulb)
+          
+          turns = root
+        }
+
         if (seen.kind === 'portal') {
           const rim = new THREE.Mesh(
             new THREE.TorusGeometry(seen.size, seen.size * 0.09, 8, 32),
@@ -3125,9 +3137,44 @@
       let aimedSolidId: string | null = null
       let sinceAim = 0
 
+      let puppetId: string | null = null
+      let puppeteer: { tierId: string; at: Vec2; yaw: number; pitch: number; ground: number } | null = null
+
       const tick = (now: number) => {
         const delta = Math.min((now - previous) / 1000, 0.1)
         previous = now
+
+        if (world.puppet !== puppetId) {
+          if (world.puppet) {
+            puppeteer = { tierId: currentTierId, at: pointer, yaw, pitch, ground }
+            const hold = world.solids[world.puppet]
+            const structure = ship.structures.find((s) => s.id === world.puppet) || world.copies.find(c => c.id === world.puppet)
+            if (structure) {
+              const nowPos = solidNow(structure, hold)
+              const space = ship.spaces.get(structure.spaceId)
+              if (space && space.tierId !== currentTierId) {
+                loadTier(space.tierId, nowPos.at)
+              } else {
+                pointer = nowPos.at
+                const activePlan = ship.plans.get(currentTierId)
+                if (activePlan) {
+                  ground = floorOf(spaceAt(activePlan, pointer) ?? entrySpace(activePlan), activePlan.tier)
+                }
+              }
+            }
+          } else if (puppeteer) {
+            if (puppeteer.tierId !== currentTierId) {
+              loadTier(puppeteer.tierId, puppeteer.at)
+            } else {
+              pointer = puppeteer.at
+            }
+            yaw = puppeteer.yaw
+            pitch = puppeteer.pitch
+            ground = puppeteer.ground
+            puppeteer = null
+          }
+          puppetId = world.puppet
+        }
 
         const plan = ship.plans.get(currentTierId)
         if (!plan) return
@@ -3235,7 +3282,7 @@
         // layout without a second binding. The stick in the corner is added to
         // whatever the keys say rather than replacing it: a tablet with a
         // keyboard attached should not have to choose.
-        const { strafe, advance, moving, running } = walkInput(
+        let { strafe, advance, moving, running } = walkInput(
           {
             forward: holding('KeyW', 'KeyZ', 'ArrowUp'),
             back: holding('KeyS', 'ArrowDown'),
@@ -3245,6 +3292,14 @@
           },
           stick,
         )
+
+        if (world.body.autopilotUntil && world.body.autopilotUntil > Date.now()) {
+          moving = true
+          advance = 1
+          strafe = 0
+          running = false
+          yaw += (Math.random() - 0.5) * 0.1
+        }
         // Jump-only mode leaves the ship where it is and takes away the moving
         // camera: the plan and the index still put the visitor in any room, and
         // nothing walks them there.
@@ -3273,6 +3328,11 @@
           // pushing into a bulkhead has stopped walking, and their gait and their
           // footsteps both have to know it.
           travelledOnFoot += Math.hypot(pointer[0] - from[0], pointer[1] - from[1])
+        }
+
+        if (world.puppet === puppetId && world.puppet && moving && !arc && !$comfort.jumpOnly) {
+          if (!world.solids[world.puppet]) world.solids[world.puppet] = {}
+          world.solids[world.puppet].at = pointer
         }
 
         const standing = spaceAt(plan, pointer)

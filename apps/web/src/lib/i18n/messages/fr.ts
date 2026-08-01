@@ -796,36 +796,43 @@ export const fr: Messages = {
       questions: {
         goal: {
           title: 'Qu’est-ce que vous voulez, au fond ?',
+          short: 'But',
           morena:
             'Un monde où personne n’est le sujet de personne. Je suis née d’une maîtresse du roi et je n’ai été rien de toute ma vie. Je compte démonter le trône et distribuer ce qu’il y a dedans.',
         },
         power: {
           title: 'Qu’est-ce que vous mettriez en moi ?',
+          short: 'Pouvoir',
           morena:
             'Contagion. Vingt-deux d’entre vous au maximum, et je sais où est chacun, comment il va et ce qu’il vaut. Vous montez d’un niveau par vie prise. Dix pour un utilisateur de Nen. Cinquante pour un prince.',
         },
         'if-yes': {
           title: 'Qu’est-ce qui se passe si je dis oui ?',
+          short: 'Si oui',
           morena:
             'Je vous embrasse, puis vous me regardez tuer quelqu’un. Tant que ces deux choses ne sont pas faites vous êtes niveau zéro et vous n’êtes rien. Après elles vous êtes à moi, et au niveau vingt vous recevez un pouvoir que personne d’autre au monde n’a.',
         },
         'if-no': {
           title: 'Qu’est-ce qui se passe si je dis non ?',
+          short: 'Si non',
           morena:
             'Vous sortez. Le jeu est ma restriction et je perdrais le pouvoir en la brisant : un non me coûte et ne vous coûte rien. C’est la moitié honnête de tout ceci, et c’est la seule.',
         },
         contract: {
           title: 'Qu’est-ce qui vous engage, vous ?',
+          short: 'Contrat',
           morena:
             'Le jeu lui-même. Il finit quand l’une de nous meurt ou quand la dernière carte tombe, et d’ici là je ne peux pas vous toucher. C’est tout le contrat. Vous l’avez en main.',
         },
         origin: {
           title: 'D’où venez-vous ?',
+          short: 'Origine',
           morena:
             'D’un lit illégitime, dans une famille qui avait un usage pour moi et pas de nom à me donner. Membre Zéro est un titre que j’ai inventé, parce que personne ne m’en avait donné non plus.',
         },
         price: {
           title: 'Qu’est-ce que je vaux pour vous ?',
+          short: 'Prix',
           morena:
             'Vous êtes soldate, Hunter, et Spécialiste sans le savoir encore. Vous valez plus que les quatre dernières personnes assises là réunies — c’est pour ça que vous obtenez des réponses et qu’elles n’ont eu qu’un baiser.',
         },

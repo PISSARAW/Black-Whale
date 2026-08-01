@@ -640,6 +640,22 @@ réagir.
   suivi de caméra s'arrête. Le cap est conservé dans `Shown.facing` d'un rebuild à l'autre :
   une tête qui claquerait au nord se lirait comme un bug, pas comme une femme qui a perdu
   quelqu'un.
+- **Elle a un visage.** La femme d'en face était dessinée sans traits, au motif que l'archive
+  ne prête aucun caractère à personne. L'argument vaut pour une technique croisée dans une
+  coursive ; il ne vaut pas ici, où la marche vous _assied_ à un mètre cinquante d'elle pour la
+  durée d'une négociation, sans rien d'autre dans le cadre — à cette distance, une tête sans
+  visage n'est pas de la retenue, c'est un manque que le lecteur doit s'expliquer à chaque
+  tour. `$lib/tour/dealer.ts` la dessine donc telle qu'elle est publiée : blonde, cheveux longs
+  partagés au milieu, yeux étroits sous des paupières lourdes, bouche fermée — et les sutures,
+  qui sont tout ce qui fait que ce visage est le sien. Une couronne de points à la naissance
+  des cheveux, une couture en pointillé qui en descend le long d'un côté du visage jusqu'à la
+  mâchoire, et le même surjet autour de l'oreille de ce côté-là. Rien n'y est ombré : c'est
+  dessiné comme le navire l'est, en aplats et en arêtes dures, pour que le seul visage à bord
+  ne soit pas aussi la seule surface éclairée autrement que tout ce qui l'entoure. Un fichier
+  à part, parce qu'un visage est un sujet — et parce que `TourScene` est déjà le plus long
+  fichier de l'application.
+- **Les yeux se vident quand on lui prend la vue.** Même règle du retrait : au stage 4, les
+  iris ne sont pas dessinés. Les yeux restent ouverts et il n'y a plus personne derrière.
 - **La prescience a un corps.** La carte que `foreseen` désigne se tient à quatre centimètres du
   bois avec un liseré bleu (`stage: 4`). Trois techniques achètent cette phrase — `dowsing`,
   `future`, `divination` — et aucune n'avait rien à regarder.

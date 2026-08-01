@@ -887,36 +887,43 @@ export const en = {
       questions: {
         goal: {
           title: 'What do you actually want?',
+          short: 'Aim',
           morena:
             'A world where nobody is anybody’s subject. I was born to a mistress of the King and I have been nothing my whole life. I intend to take the throne apart and hand out what is inside it.',
         },
         power: {
           title: 'What is it you would put in me?',
+          short: 'Power',
           morena:
             'Contagion. Twenty-two of you at most, and I know where each one is, how they are, and what they are worth. You go up a level for a life you take. Ten for a Nen user. Fifty for a prince.',
         },
         'if-yes': {
           title: 'What happens if I say yes?',
+          short: 'If yes',
           morena:
             'I kiss you, and then you watch me kill somebody. Until both of those are done you are level zero and you are nothing. After them you are mine, and at level twenty you get an ability nobody else in the world has.',
         },
         'if-no': {
           title: 'What happens if I say no?',
+          short: 'If no',
           morena:
             'You walk out. The game is my restriction and I would lose the ability if I broke it, so a no costs me and costs you nothing. That is the honest half of this, and it is the only honest half.',
         },
         contract: {
           title: 'What binds you to any of it?',
+          short: 'Contract',
           morena:
             'The game itself. It ends when one of us dies or when the last card is played, and until then I cannot touch you. That is the whole contract. You are holding it.',
         },
         origin: {
           title: 'Where did you come from?',
+          short: 'Origin',
           morena:
             'Out of wedlock, into a family that had a use for me and no name to give me. Member Zero is a title I made up because nobody had given me one of those either.',
         },
         price: {
           title: 'What am I worth to you?',
+          short: 'Price',
           morena:
             'You are a soldier, a Hunter, and a Specialist who does not know it yet. You are worth more to me than the last four people who sat there put together — which is why you are getting answers and they got a kiss.',
         },

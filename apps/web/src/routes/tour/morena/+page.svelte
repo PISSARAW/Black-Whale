@@ -21,6 +21,8 @@
   import { onDestroy } from 'svelte'
   import Seo from '$lib/components/Seo.svelte'
   import TourScene from '$lib/components/tour/TourScene.svelte'
+  import MorenaCard from '$lib/components/tour/MorenaCard.svelte'
+  import MorenaPiles from '$lib/components/tour/MorenaPiles.svelte'
   import ContagionDashboard from '$lib/nen/ContagionDashboard.svelte'
   import { breadcrumbSchema } from '$lib/seo/schema'
   import { link, locale, t } from '$lib/i18n'
@@ -30,13 +32,14 @@
   import { floorOf, theShip } from '$lib/tour/blueprint'
   import { Fullscreen } from '$lib/tour/fullscreen.svelte'
   import {
-    ANSWER_CARDS,
+    CARD_COLOURS,
     DEALER_AT,
+    DEALER_COLOUR,
     GUEST_AT,
     HIDEOUT_OFFICE,
     HIDEOUT_TIER,
-    QUESTION_CARDS,
     SEATED_EYE,
+    cssInk,
     askMorena,
     dealTheGame,
     infectionAfter,
@@ -497,13 +500,18 @@
             <p class="mt-3 text-[10px] uppercase tracking-widest text-[#FFFFF0]/40">
               {copy.deal.pick}
             </p>
-            <div class="mt-2 flex flex-wrap gap-2">
+            <div class="mt-2 flex flex-wrap items-end gap-2">
               {#each game.graveyard as card (card)}
                 <button
-                  class="rounded border border-[#d94f68] px-3 py-1.5 text-xs font-semibold text-[#FFFFF0] hover:bg-[#d94f68]/30"
+                  class="rounded border border-[#d94f68] p-1.5 hover:bg-[#d94f68]/30"
                   onclick={() => (game = takeTheDeal(game, card))}
+                  title="{copy.deal.take} · {nameOfCard(card)}"
                 >
-                  {copy.deal.take} · {nameOfCard(card)}
+                  <MorenaCard
+                    face={card}
+                    label={nameOfCard(card)}
+                    ink={cssInk(CARD_COLOURS[card])}
+                  />
                 </button>
               {/each}
               <button
@@ -517,14 +525,22 @@
         {:else if game.phase === 'asking'}
           <h2 class="mt-4 text-sm font-semibold text-[#FFFFF0]">{copy.askTitle}</h2>
           <p class="mt-1 text-xs leading-snug text-[#FFFFF0]/55">{copy.askHint}</p>
+          <!-- Her fan, from the side of the table that has to pay for it: the
+               card is drawn, and the question written beside it, which is the
+               layout of the panel itself. -->
           <ul class="mt-2 space-y-1.5">
             {#each questionsLeft as question (question)}
               <li>
                 <button
-                  class="w-full rounded border border-[#333] px-3 py-2 text-left text-sm text-[#FFFFF0]/85 hover:border-[#d94f68] hover:text-[#FFFFF0]"
+                  class="flex w-full items-center gap-3 rounded border border-[#333] p-2 text-left text-sm text-[#FFFFF0]/85 hover:border-[#d94f68] hover:text-[#FFFFF0]"
                   onclick={() => ask(question)}
                 >
-                  {copy.questions[question].title}
+                  <MorenaCard
+                    face={question}
+                    label={copy.questions[question].short}
+                    ink={cssInk(DEALER_COLOUR)}
+                  />
+                  <span>{copy.questions[question].title}</span>
                 </button>
               </li>
             {/each}
@@ -534,34 +550,38 @@
           {#if settlement === 'joker'}
             <p class="mt-1 text-xs leading-snug text-[#FFFFF0]/55">{copy.settle.jokerHint}</p>
             <div class="mt-2 flex gap-2">
-              <button
-                class="rounded border px-3 py-1.5 text-xs font-semibold {choice === 'yes'
-                  ? 'border-[#FFD700] text-[#FFD700]'
-                  : 'border-[#444] text-[#FFFFF0]'}"
-                onclick={() => (choice = 'yes')}
-              >
-                {nameOfCard('yes')}
-              </button>
-              <button
-                class="rounded border px-3 py-1.5 text-xs font-semibold {choice === 'no'
-                  ? 'border-[#FFD700] text-[#FFD700]'
-                  : 'border-[#444] text-[#FFFFF0]'}"
-                onclick={() => (choice = 'no')}
-              >
-                {nameOfCard('no')}
-              </button>
+              {#each ['yes', 'no'] as const as side (side)}
+                <button
+                  class="rounded border p-1.5 {choice === side
+                    ? 'border-[#FFD700] bg-[#FFD700]/10'
+                    : 'border-[#444] hover:border-[#FFD700]/60'}"
+                  onclick={() => (choice = side)}
+                  title={nameOfCard(side)}
+                >
+                  <MorenaCard
+                    face={side}
+                    label={nameOfCard(side)}
+                    ink={cssInk(CARD_COLOURS[side])}
+                  />
+                </button>
+              {/each}
             </div>
           {:else if settlement === 'back'}
             <p class="mt-1 text-xs leading-snug text-[#FFFFF0]/55">{copy.settle.backHint}</p>
             <div class="mt-2 flex flex-wrap gap-2">
               {#each game.graveyard as card (card)}
                 <button
-                  class="rounded border px-3 py-1.5 text-xs font-semibold {choice === card
-                    ? 'border-[#FFD700] text-[#FFD700]'
-                    : 'border-[#444] text-[#FFFFF0]'}"
+                  class="rounded border p-1.5 {choice === card
+                    ? 'border-[#FFD700] bg-[#FFD700]/10'
+                    : 'border-[#444] hover:border-[#FFD700]/60'}"
                   onclick={() => (choice = card)}
+                  title={nameOfCard(card)}
                 >
-                  {nameOfCard(card)}
+                  <MorenaCard
+                    face={card}
+                    label={nameOfCard(card)}
+                    ink={cssInk(CARD_COLOURS[card])}
+                  />
                 </button>
               {/each}
             </div>
@@ -698,39 +718,10 @@
           </div>
         {/if}
 
-        <!-- What is on the table, in the same three piles the scene lays out. -->
+        <!-- What is on the table, in the same three piles the scene lays out —
+             and as cards, because that is how the chapters show them. -->
         <div class="mt-5 border-t border-[#222] pt-4">
-          <h3 class="text-[10px] uppercase tracking-widest text-[#FFFFF0]/40">{copy.table.hand}</h3>
-          <ul class="mt-2 space-y-1.5">
-            {#each ANSWER_CARDS.filter((card) => game.hand.includes(card)) as card (card)}
-              <li class="flex items-baseline gap-2 text-xs">
-                <span class="font-semibold text-[#FFFFF0]">{nameOfCard(card)}</span>
-                {#if game.marked === card && game.phase === 'over'}
-                  <span class="rounded border border-[#d94f68] px-1 text-[10px] text-[#d94f68]">
-                    {copy.table.markedCard}
-                  </span>
-                {/if}
-                <span class="text-[#FFFFF0]/50">{copy.cards[card].rule}</span>
-              </li>
-            {/each}
-            {#if game.hand.length === 0}
-              <li class="text-xs text-[#FFFFF0]/35">{copy.table.empty}</li>
-            {/if}
-          </ul>
-
-          <h3 class="mt-4 text-[10px] uppercase tracking-widest text-[#FFFFF0]/40">
-            {copy.table.graveyard}
-          </h3>
-          <p class="mt-1 text-xs text-[#FFFFF0]/50">
-            {game.graveyard.length ? game.graveyard.map(nameOfCard).join(' · ') : copy.table.empty}
-          </p>
-
-          <h3 class="mt-4 text-[10px] uppercase tracking-widest text-[#FFFFF0]/40">
-            {copy.table.fan}
-          </h3>
-          <p class="mt-1 text-xs text-[#FFFFF0]/50">
-            {QUESTION_CARDS.filter((question) => game.questions.includes(question)).length} / {QUESTION_CARDS.length}
-          </p>
+          <MorenaPiles {game} {copy} />
         </div>
 
         <!-- Contagion, read rather than cast: the network, the negotiation and

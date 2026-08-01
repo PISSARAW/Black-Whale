@@ -189,8 +189,15 @@ const STAMP_LOCKED = 0xff2d2d
 const PUPPET = 0x1b1b22
 /** Bungee Gum is Hisoka's own pink, the same the web draws his filament in. */
 const GUM = 0xf06bb5
-/** Little Eye's blue, which is the sphere rather than the animal inside it. */
-const INSECT = 0x55c2ff
+/**
+ * Little Eye's blue, which is the sphere rather than the animal inside it.
+ *
+ * Exported because the walk is not the only room the insect is flown in:
+ * `$lib/tour/morena` sends the same one over a card table, and a sphere that
+ * was one blue in the corridors and another over the wood would read as two
+ * techniques.
+ */
+export const INSECT = 0x55c2ff
 /** The Dowsing Chain is steel: the pale blue the dock already publishes it in. */
 const CHAIN = 0x8ecae6
 /** Double Face's violet, the one the registry publishes the bookmark in. */

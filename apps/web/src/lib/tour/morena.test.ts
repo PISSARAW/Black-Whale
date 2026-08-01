@@ -4,6 +4,8 @@ import { floorOf } from './blueprint'
 import {
   ANSWER_CARDS,
   DEALER_AT,
+  EYE_HOLD,
+  EYE_RANGE,
   GUEST_AT,
   HIDEOUT_OFFICE,
   HIDEOUT_TIER,
@@ -416,6 +418,48 @@ describe('what the walk lays on the table', () => {
     expect(lifted.y).toBeGreaterThan(flat.y)
     // One card is picked out, and it is the one she is reaching for.
     expect(seen.filter((thing) => thing.stage === 4)).toHaveLength(1)
+  })
+
+  it('gives the forged card the aura that made it, until a touch finds it', () => {
+    const forged = playTechnique(withTechnique('disguise'), { random: clean })
+    const made = tableauOf(forged, floor).find((thing) => thing.id === `hand-${forged.forged}`)!
+    expect(made.stage).toBe(5)
+    // The aura is on the forged face and on nothing else: a hand can hold two
+    // of the same card once a copy has been made of one, and both of those are
+    // the forgery as far as this table is concerned.
+    for (const thing of tableauOf(forged, floor)) {
+      if (thing.stage !== 5) continue
+      expect(thing.id).toBe(`hand-${forged.forged}`)
+    }
+
+    // Once the kiss has given it away it is a card somebody has read, which is
+    // the nick — the same one Morena's marked card wears.
+    const exposed: MorenaGame = { ...forged, manipulated: true }
+    const seen = tableauOf(exposed, floor).find((thing) => thing.id === `hand-${forged.forged}`)!
+    expect(seen.stage).toBe(3)
+  })
+
+  it('flies the insect in the room from the moment somebody sits down with it', () => {
+    expect(tableauOf(dealTheGame(), floor).some((thing) => thing.kind === 'insect')).toBe(false)
+
+    const carried = tableauOf(withTechnique('scout'), floor).find(
+      (thing) => thing.kind === 'insect',
+    )!
+    // Up out of the way, and working the room rather than anything on the table.
+    expect(carried.y).toBeGreaterThan(floor + 2)
+    expect(carried.spread).toBe(EYE_RANGE)
+  })
+
+  it('brings it down onto her fan once it has been told to film', () => {
+    const filming = playTechnique(withTechnique('scout'), { random: clean })
+    const seen = tableauOf(filming, floor).find((thing) => thing.kind === 'insect')!
+    // Over her cards, close enough to read one and clear of the wood.
+    expect(seen.y).toBeGreaterThan(floor + TABLE_HEIGHT)
+    expect(seen.y).toBeLessThan(floor + TABLE_HEIGHT + 0.4)
+    expect(seen.at[1]).toBeLessThan(TABLE_AT[1])
+    expect(seen.spread).toBe(EYE_HOLD)
+    // And it is one insect flown down, not a second one built beside the first.
+    expect(tableauOf(filming, floor).filter((thing) => thing.kind === 'insect')).toHaveLength(1)
   })
 
   it('leaves the nick showing rather than the foresight when a card is both', () => {

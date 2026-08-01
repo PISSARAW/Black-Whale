@@ -15,7 +15,8 @@
  */
 import type { HatsuInteractionKind } from '$lib/nen/hatsuRegistry'
 import { TABLE_KINDS } from '@black-whale/ability-modules'
-import type { MorenaGame, AnswerCard } from '@black-whale/ability-modules'
+import type { MorenaGame, AnswerCard, QuestionCard } from '@black-whale/ability-modules'
+import { INSECT } from './apparitions'
 import type { Apparition } from './apparitions'
 import type { Vec2 } from './types'
 
@@ -98,6 +99,24 @@ export const CARD_COLOURS: Record<AnswerCard, number> = {
   joker: 0xf0c94d,
   x: 0x9d65d0,
 }
+/**
+ * Every face the table can show: her seven questions, and your five answers.
+ *
+ * The panel draws cards and the scene lays them on the wood, and both need to
+ * name a face without either owning the list — so it is named here, where the
+ * colours already are.
+ */
+export type CardFace = AnswerCard | QuestionCard
+
+/**
+ * A table colour as CSS rather than as a number.
+ *
+ * The scene wants `0xe5484d` because that is what a material takes; a border
+ * wants `#e5484d`. One conversion, so the two can never be separately edited
+ * into disagreeing about what colour a Yes is.
+ */
+export const cssInk = (colour: number): string => `#${colour.toString(16).padStart(6, '0')}`
+
 /** Morena's own red, the one the registry publishes Contagion in. */
 export const DEALER_COLOUR = 0xd94f68
 /** The back of a question card: nothing on it until it is spent. */
@@ -119,6 +138,32 @@ export const VOW_MARK = 0xd8b85e
  * card wherever it is shown.
  */
 export const TRIBUNAL_CARDS = [0x4d8ff0, 0xf0c94d, 0xe5484d]
+/**
+ * Texture Surprise's pink, the one the registry publishes Hisoka's layer in.
+ *
+ * What the technique makes is a surface and nothing else — the card underneath
+ * is whatever it was — so the forged card wears the aura that made it rather
+ * than a mark cut into it. It is drawn for the person who forged it, which is
+ * the truth of the technique too: the layer is yours, and the only thing that
+ * takes it off you is a touch.
+ */
+export const FORGED_AURA = 0xd98fc4
+
+// ── Little Eye, over the table ─────────────────────────────────────
+/**
+ * How high the insect holds while it has nothing to film, in metres above the
+ * deck. The office's deckhead is four metres up, so this is the top of the
+ * room without being inside it: a thing in the ceiling corner, which is where
+ * a fly nobody is looking for stays.
+ */
+export const EYE_PERCH = 3.4
+/** How much of the room it works from up there, and how tight it holds once
+ *  it is filming: the sphere is piloted, and a camera does not wander. */
+export const EYE_RANGE = 1.6
+export const EYE_HOLD = 0.09
+/** How far over her fan it films from: close enough to read a card, and just
+ *  clear of the wood once the drift's own bob is taken off it. */
+export const EYE_FILMING = 0.3
 
 /**
  * What the woman opposite is doing, as the one number the scene is given.
@@ -250,13 +295,18 @@ export function tableauOf(game: MorenaGame, floor: number): Apparition[] {
     // seen from a seated eye, and it costs the rule nothing: it is still a card
     // that is not moving. It is where it was *put*, and something put it there.
     const foreseen = !nicked && game.foreseen === card
+    // And the card that is not a card: Texture Surprise adds a face to the
+    // hand, and the aura that is holding that face together is the whole of
+    // what it is. It is drawn until the kiss finds it, and then it is nicked
+    // like any other card somebody has already read.
+    const forged = !nicked && game.forged === card
     lay({
       id: `hand-${card}`,
       index,
       count: game.hand.length,
       depth: 0.3,
       colour: CARD_COLOURS[card],
-      stage: nicked ? 3 : foreseen ? 4 : 1,
+      stage: nicked ? 3 : forged ? 5 : foreseen ? 4 : 1,
       lift: foreseen ? 0.045 : game.phase === 'settling' || game.phase === 'over' ? 0.02 : 0,
     })
   })
@@ -311,6 +361,33 @@ export function tableauOf(game: MorenaGame, floor: number): Apparition[] {
       size: 0.16,
       colour: TRIBUNAL_CARDS[stage - 1],
       stage,
+    })
+  }
+
+  // Little Eye's insect, which is at this table before it is used and is the
+  // only technique here that is *somewhere* rather than merely held.
+  //
+  // Sayird's sphere is a camera on a fly: nobody casts it at a person, they
+  // send it into a room and then tell it what to look at. So it is in the room
+  // from the moment somebody sits down carrying it — up in the ceiling corner,
+  // working the office over, which is a thing a reader can see and not yet
+  // read anything into — and the cast is it coming down onto her fan and
+  // holding there. That descent is the read: what the panel says in a line of
+  // text, the room says by putting the camera on the cards.
+  if (game.technique === 'scout') {
+    const filming = game.spent > 0
+    seen.push({
+      ...common,
+      id: 'scout-insect',
+      kind: 'insect',
+      at: filming ? [TABLE_AT[0], TABLE_AT[1] - EYE_FILMING] : TABLE_AT,
+      y: filming ? top + 0.28 : floor + EYE_PERCH,
+      // Small: this one is looked at from a metre and a half rather than
+      // across a promenade, and a thumb-sized fly over a card table is a fly.
+      size: 0.05,
+      colour: INSECT,
+      stage: 0,
+      spread: filming ? EYE_HOLD : EYE_RANGE,
     })
   }
 

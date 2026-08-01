@@ -63,6 +63,8 @@
   } from '$lib/tour/apparitions'
   import { comfort, prefersReducedMotion, type Comfort } from '$lib/tour/comfort'
   import { buildSolidMesh, buildTierMesh } from '$lib/tour/mesh'
+  import { buildDealer } from '$lib/tour/dealer'
+  import { FORGED_AURA } from '$lib/tour/morena'
   import {
     SPRINT_SPEED,
     STICK_RADIUS,
@@ -1494,6 +1496,16 @@
          * dealer in `driftApparitions`.
          */
         facing?: number
+        /**
+         * The middle it is actually working, for the one that is flown there.
+         *
+         * Everything else in this list is *put* somewhere: a mark goes up over
+         * a room and a card is laid on a table, and both are where they are the
+         * frame they are given. The insect is not put anywhere — it is sent,
+         * and being told to look at something else is an order it has to cross
+         * the room to obey. So it chases `at` rather than sitting on it.
+         */
+        flown?: import('three').Vector3
       }
 
       // A plain record for the same reason the solids are one: the render loop
@@ -3016,70 +3028,11 @@
 
         if (seen.kind === 'dealer') {
           // Seated, arms on the table, and unmistakably a person rather than an
-          // apparition: she is the only thing aboard that is simply there. The
-          // face is left blank on purpose — the archive draws no character, and
-          // what a reader brings to the chair opposite is better than a guess.
-          const cloth = glow(seen.colour, 0.95)
-          const pale = glow(0xf0dfe2, 0.95)
-          const dark = glow(0x241820, 1)
-
-          const torso = new THREE.Mesh(
-            new THREE.CylinderGeometry(seen.size * 0.62, seen.size * 0.78, seen.size * 1.5, 12),
-            cloth,
-          )
-          root.add(torso)
-
-          // Forearms laid along the table top, which is where a dealer's hands
-          // are and the first thing you look at across one. The height is not
-          // free: `TABLE_HEIGHT` above the deck is where the wood is, and an arm
-          // a hand's breadth under it is an arm inside the table.
-          for (const side of [-1, 1]) {
-            const arm = new THREE.Mesh(
-              new THREE.CapsuleGeometry(seen.size * 0.15, seen.size * 0.75, 4, 8),
-              cloth,
-            )
-            arm.rotation.x = Math.PI / 2
-            arm.rotation.z = side * 0.3
-            arm.position.set(side * seen.size * 0.58, seen.size * 0.18, seen.size * 0.6)
-            root.add(arm)
-            const hand = new THREE.Mesh(new THREE.SphereGeometry(seen.size * 0.16, 8, 6), pale)
-            hand.position.set(side * seen.size * 0.76, seen.size * 0.18, seen.size * 1.05)
-            root.add(hand)
-          }
-
-          const neck = new THREE.Mesh(
-            new THREE.CylinderGeometry(seen.size * 0.15, seen.size * 0.19, seen.size * 0.24, 8),
-            pale,
-          )
-          neck.position.y = seen.size * 0.86
-          root.add(neck)
-
-          const head = new THREE.Mesh(new THREE.SphereGeometry(seen.size * 0.33, 12, 10), pale)
-          head.position.y = seen.size * 1.18
-          root.add(head)
-
-          // The long hair is the silhouette, and the silhouette is the whole of
-          // how she reads from the far side of a table in a dark room. Kept
-          // behind the face rather than around it: a head with no face at all is
-          // a hood, and she is not wearing one.
-          const hair = new THREE.Mesh(
-            new THREE.CylinderGeometry(seen.size * 0.34, seen.size * 0.42, seen.size * 0.8, 12),
-            dark,
-          )
-          hair.position.set(0, seen.size * 0.82, -seen.size * 0.2)
-          root.add(hair)
-          const crown = new THREE.Mesh(new THREE.SphereGeometry(seen.size * 0.37, 12, 10), dark)
-          crown.position.set(0, seen.size * 1.24, -seen.size * 0.09)
-          crown.scale.set(1, 0.85, 1)
-          root.add(crown)
-
-          // She leans in when she offers the kiss, and sits back when the hand
-          // is played out. `stage` is the only thing the game tells the scene.
-          if (seen.stage === 1) root.rotation.x = -0.14
-          if (seen.stage === 2) root.rotation.x = 0.1
-          // Caught: she straightens off the cards. The rest of that reaction is
-          // in the drift, and it is a subtraction — see there.
-          if (seen.stage === 3) root.rotation.x = 0.17
+          // apparition: she is the only thing aboard that is simply there — and
+          // the only one drawn with a face, because she is the only one the
+          // walk puts you a metre and a half away from for a quarter of an
+          // hour. See `$lib/tour/dealer`, which is all of her.
+          root.add(buildDealer({ THREE, glow, seen }))
           turns = null
         }
 
@@ -3099,11 +3052,33 @@
           // being told looks like from the chair.
           const rim = new THREE.Mesh(
             new THREE.PlaneGeometry(seen.size * 1.12, seen.size * 1.62),
-            glow(seen.stage === 0 ? 0x6b4c58 : seen.stage === 4 ? 0x8ecae6 : 0xf5efe6, 0.7),
+            glow(
+              seen.stage === 0
+                ? 0x6b4c58
+                : seen.stage === 4
+                  ? 0x8ecae6
+                  : seen.stage === 5
+                    ? FORGED_AURA
+                    : 0xf5efe6,
+              0.7,
+            ),
           )
           rim.rotation.x = -Math.PI / 2
           rim.position.y = -0.001
           root.add(rim)
+          // The forged card, which is a face with nothing under it: the pink is
+          // the aura holding it together, so it is drawn as aura — a wash lying
+          // on the wood around the card, wider and fainter than the card's own
+          // rim, rather than as anything printed on the face.
+          if (seen.stage === 5) {
+            const aura = new THREE.Mesh(
+              new THREE.PlaneGeometry(seen.size * 1.9, seen.size * 2.5),
+              glow(FORGED_AURA, 0.22),
+            )
+            aura.rotation.x = -Math.PI / 2
+            aura.position.y = -0.002
+            root.add(aura)
+          }
           // The card Morena marked carries the mark: a nick in one corner, which
           // is exactly as much as a reader is meant to be able to see of it.
           if (seen.stage === 3) {
@@ -3213,9 +3188,11 @@
           // that moved is moved, not rebuilt.
           const key = `${seen.kind}|${seen.stage}|${seen.colour}|${seen.size}|${seen.hidden}|${seen.pair?.spaceId ?? ''}|${seen.climb ?? ''}`
           let held = apparitions[seen.id]
-          // The one thing about a thing that outlives the thing: which way it
-          // was looking. Everything else a mesh knows is rebuilt with it.
+          // The two things about a thing that outlive the thing: which way it
+          // was looking, and where it had got to. Everything else a mesh knows
+          // is rebuilt with it.
           const facing = held?.facing
+          const flown = held?.flown
           if (held && held.key !== key) {
             dropApparition(seen.id)
             held = undefined
@@ -3224,6 +3201,7 @@
             held = buildApparition(seen)
             held.key = key
             held.facing = facing
+            held.flown = flown
             apparitions[seen.id] = held
             scene.add(held.root)
           }
@@ -3581,7 +3559,10 @@
        * sigil rotating, a double breathing. It costs nothing, and without it the
        * technique reads as a prop left in the room rather than as aura.
        */
-      function driftApparitions(seconds: number) {
+      /** Where the insect has been told to be, held once rather than per frame. */
+      const FLY_TO = new THREE.Vector3()
+
+      function driftApparitions(seconds: number, delta: number) {
         for (const [id, held] of Object.entries(apparitions)) {
           if (!held) continue
           const phase = seconds + id.length
@@ -4016,13 +3997,22 @@
           }
 
           if (held.kind === 'insect') {
+            // Where it is working, which is not always where it has been told
+            // to work: an order to go and film something else is a flight
+            // across the room, and the walk has always shown that flight —
+            // over Morena's table it is the whole of what a cast looks like,
+            // the camera coming down off the deckhead onto her fan. Two
+            // seconds or so to cross, which is a fly crossing a room.
+            const told = held.flown ?? new THREE.Vector3(held.at[0], held.y, held.at[1])
+            told.lerp(FLY_TO.set(held.at[0], held.y, held.at[1]), 1 - Math.exp(-delta * 1.6))
+            held.flown = told
             // Not a ring: a fly does not orbit. Two sines that do not divide
             // into each other, so it never comes back round the same way, and
             // a fast one on the height because that is what reads as wings.
             held.root.position.set(
-              held.at[0] + Math.sin(phase * 1.7) * held.spread,
-              held.y + Math.sin(phase * 2.6) * 0.18,
-              held.at[1] + Math.sin(phase * 1.1 + 1.3) * held.spread,
+              told.x + Math.sin(phase * 1.7) * held.spread,
+              told.y + Math.sin(phase * 2.6) * 0.18,
+              told.z + Math.sin(phase * 1.1 + 1.3) * held.spread,
             )
             // Nose along the way it is going, which for two sines is where it
             // was a breath ago compared with where it is now.
@@ -5311,7 +5301,7 @@
         sweepStale()
         driftSolids(clock)
         driftMotes(delta, clock)
-        driftApparitions(clock)
+        driftApparitions(clock, delta)
         driftLeavingCards(delta)
         driftFlash(delta)
         runLash(delta)

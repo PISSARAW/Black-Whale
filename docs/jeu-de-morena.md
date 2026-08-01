@@ -708,6 +708,23 @@ réagir.
   sous la plume. Ce que le quatrain dit est `theLosingBranch()` : la carte marquée, ou le Oui
   sur une donne propre. En vers, pas en nom de carte — une ligne annonçant « elle a marqué le
   Retour » serait la page en train de jouer la partie à la place du lecteur.
+- **Parallel Future rembobine la table, pas l'horloge.** Le `rewind` de la marche avait été
+  écarté ici : l'après-image se dessine à la position du visiteur et rien, à cette table, n'est
+  fonction de l'horloge. Mais la règle canonique n'est pas une après-image — c'est que _tout le
+  monde sauf son porteur_ continue de percevoir la prédiction. Dix secondes, à cette table,
+  valent un échange : elle répond, elle plonge la main, et c'est passé. `previous` garde donc
+  l'état d'il y a un échange (jamais imbriqué : un pas d'annulation, pas une bande), et jouer
+  la technique le restaure — question rendue à l'éventail, carte rendue à la main — en gardant
+  tout ce que l'aura sait : `read`, la dépense, le transcript, qui conserve les deux passages.
+  L'ordre du `unspool` est délibéré : on part de la partie courante et l'on écrase les champs
+  _de table_ depuis l'instantané, si bien qu'un champ ajouté plus tard survivra par défaut au
+  rembobinage — ce qui est le bon défaut, la connaissance survit. `forced` retient ce qu'elle a
+  tiré pendant les secondes effacées et `askMorena` le lui fait reprendre, avant même la
+  prescience : une technique qui annonce ce qu'elle va faire ne peut pas primer sur ce qu'elle
+  a déjà fait. Tant que `forced` n'est pas vide, `TourScene` reçoit `tint` et la pièce entière
+  passe au bleu de Tserriednich — l'ambiante _est_ l'exposition ici, donc la teinter teinte tout
+  ce dont la pièce est faite, brouillard et fond compris. Une marque posée sur la table serait
+  une annonce ; la lumière qui n'est pas la bonne est la chose même.
 - **Une carte face visible porte enfin sa figure.** Un rectangle coloré se lit comme _une
   carte_ et ne dit pas laquelle : tolérable tant que le seul regard posé sur la table était
   celui d'un visiteur qui avait le panneau ouvert à côté, plus du tout dès qu'une caméra est

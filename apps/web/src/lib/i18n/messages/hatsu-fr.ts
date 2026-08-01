@@ -98,15 +98,6 @@ export const hatsuFr: Record<string, HatsuTextOverride> = {
     rule: 'L’aura immense de Benjamin renforce la puissance physique et la défense proportionnellement à l’aura engagée.',
     cost: 'Aura croissante à chaque couche de renfort',
   },
-  'oito-hatsu': {
-    name: 'Hatsu de la garde royale',
-    owner: 'Oito',
-    action: 'Recruter le premier garde',
-    instruction:
-      'Sélectionnez des personnages de la carte pour les réunir dans un même réseau de commandement ; chaque nouveau garde est attiré vers le premier commandant.',
-    rule: 'Le contrôle exige des cibles acquises et des liens d’aura maintenus sur tout le réseau de gardes.',
-    cost: 'De l’aura par garde relié',
-  },
   erigeron: {
     name: 'Erigeron',
     owner: 'Bill',
@@ -793,7 +784,6 @@ export const hatsuManifestationFr: Record<HatsuInteractionKind, string> = {
   'chain-bind': 'Chaîne d’entrave du majeur',
   dowsing: 'Pendule de divination',
   enhance: 'Manteau de Ren royal',
-  control: 'Fils de commandement royaux',
   growth: 'Pousse d’erigeron',
   vehicle: 'Coque transformée à cinq places',
   scout: 'Insecte volant (Aura bleue)',

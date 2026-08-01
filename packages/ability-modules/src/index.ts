@@ -85,7 +85,7 @@ import {
 } from './expedition/module.js'
 import { biohazardHinrigh, bodyAndSoul, damageSweetHome } from './mafia/module.js'
 import { painPacker, risingSun } from './feitan/module.js'
-import { erigeron, oitoHatsu } from './woble/module.js'
+import { erigeron } from './woble/module.js'
 
 export { bungeeGum } from './bungee-gum/module.js'
 export { chainJail } from './chain-jail/module.js'
@@ -180,7 +180,7 @@ export {
 } from './expedition/module.js'
 export { biohazardHinrigh, bodyAndSoul, damageSweetHome } from './mafia/module.js'
 export { painPacker, risingSun } from './feitan/module.js'
-export { erigeron, oitoHatsu } from './woble/module.js'
+export { erigeron } from './woble/module.js'
 
 /**
  * Every implemented module. Registering this array rather than a hand-kept list
@@ -270,5 +270,4 @@ export const abilityModules: NenAbilityModule[] = [
   painPacker,
   risingSun,
   erigeron,
-  oitoHatsu,
 ]

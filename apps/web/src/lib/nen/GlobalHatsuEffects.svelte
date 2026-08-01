@@ -2316,9 +2316,6 @@
       0 0 0 calc(1px * var(--reinforcement)) #f0b42955 !important;
     transform: scale(calc(1 + var(--reinforcement) * 0.012)) !important;
   }
-  :global(.hatsu-royal-controlled) {
-    outline: 1px solid #70d6b288 !important;
-  }
   :global(.hatsu-erigeron-grown) {
     transform-origin: center !important;
     transition:
@@ -2757,12 +2754,6 @@
    */
   :global(.hatsu-reinforced-spill) {
     box-shadow: inset 0 0 22px #f0b42933 !important;
-  }
-  :global(.hatsu-royal-commander) {
-    box-shadow: 0 0 0 2px #70d6b2 !important;
-  }
-  :global(.hatsu-royal-answered) {
-    box-shadow: 0 0 22px #70d6b288 !important;
   }
   :global(.hatsu-gyo-empty) {
     outline: 1px dotted #6d7482 !important;

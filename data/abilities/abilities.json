@@ -68,15 +68,6 @@
     "moduleKey": "benjamin-aura"
   },
   {
-    "id": "oito-hatsu",
-    "ownerId": "queen-oito",
-    "name": "Royal Guard Hatsu",
-    "category": "manipulator",
-    "description": "Oito's ability to control and manipulate her royal guards with precision.",
-    "canonStatus": "canon",
-    "moduleKey": "oito-hatsu"
-  },
-  {
     "id": "erigeron",
     "ownerId": "bill",
     "name": "Erigeron",

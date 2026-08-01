@@ -41,14 +41,6 @@ export const hatsuStatusFr: HatsuStatusMessages = {
         : `${a1} renforcé · puissance d’aura ${a2}/5`,
   },
 
-  control: {
-    guarded: (a0: string) => `${a0} est celui qu’on protège · chaque lien part d’ici et y revient`,
-    answered: (a0: string, a1: number) =>
-      `${a0} a été touché et les ${a1} ont répondu d’un seul coup · c’est tout le réseau`,
-    network: (a0: string, a1: number) =>
-      `${a1} garde${a1 > 1 ? 's' : ''} autour de ${a0} · ils mettent en commun le peu que chacun possède`,
-  },
-
   growth: {
     grown: (a0: boolean, a1: string, a2: number) =>
       a0

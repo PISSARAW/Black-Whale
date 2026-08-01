@@ -432,37 +432,6 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
     ctx.addPoint(x, y, ctx.m.tokens.ren(level))
     return true
   },
-  control: (ctx, { target, x, y, label }) => {
-    // Oito has nothing of her own: what she has is guards, and their aura is
-    // pooled. So the network answers as one body rather than marching anywhere.
-    const network = ctx.selectedElements.filter((element) => element.isConnected)
-    if (!network.length) {
-      ctx.selectedElements = [target]
-      ctx.remember(target).classList.add('hatsu-royal-commander')
-      ctx.status = ctx.m['control'].guarded(label)
-      ctx.addPoint(x, y, ctx.m.tokens.charge(label))
-      return true
-    }
-    const commander = network[0]
-    if (network.includes(target)) {
-      for (const guard of network) ctx.remember(guard).classList.add('hatsu-royal-answered')
-      ctx.status = ctx.m['control'].answered(label, network.length)
-      ctx.addPoint(x, y, ctx.m.tokens.answered(network.length))
-      return true
-    }
-    ctx.selectedElements = [...network, target]
-    ctx.remember(target).classList.add('hatsu-royal-controlled')
-    const origin = commander.getBoundingClientRect()
-    const rect = target.getBoundingClientRect()
-    target.style.transition = 'transform .45s ease'
-    ctx.applyTransform(
-      target,
-      `translate(${(origin.left - rect.left) * 0.18}px, ${(origin.top - rect.top) * 0.18}px)`,
-    )
-    ctx.status = ctx.m['control'].network(ctx.targetLabel(commander), network.length)
-    ctx.addPoint(x, y, label)
-    return true
-  },
   growth: (ctx, { target, x, y, label }) => {
     const element = ctx.remember(target)
     const living = Boolean(target.closest('[data-hatsu-character]'))

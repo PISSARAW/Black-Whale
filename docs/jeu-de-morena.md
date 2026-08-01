@@ -684,6 +684,19 @@ réagir.
   `owlSaw()` rend l'éventail _tel qu'il était_ : lu dans le transcript plutôt que stocké, il
   garde les questions qu'elle a dépensées depuis. Un flux est périmé dès qu'une carte tombe ;
   un enregistrement, non — c'est la seule chose que la chouette ait de plus que la mouche.
+- **Double Face s'assoit à deux places.** Le signet n'est pas un coup et n'avait donc pas de
+  siège : `worksAtTheTable` répondait non, ce qui est juste et laissait Chrollo dehors alors
+  qu'il est précisément celui qui apporte le plus à cette table. Ce qu'il apporte, ce sont
+  _deux_ des sièges existants. La donne tire donc au hasard deux pages parmi
+  `DOUBLE_FACE_PAGES` filtrées par `worksAtTheTable` — la même liste que la marche, jamais deux
+  fois la même page — et le jeu gagne un second emplacement, `bookmark: { kind, spent }`. Deux
+  compteurs séparés, parce que deux coups uniques volés sont deux coups uniques : les dépenser
+  d'une seule bourse ferait du ruban une façon de diviser par deux ce que Chrollo a pris. F joue
+  la page ouverte, R celle du signet, exactement comme dans la marche — `playTechnique` prend
+  `page`, et `TourScene` sait déjà que R est la seconde main. Tout ce qui interrogeait
+  `game.technique === 'scout'` demande maintenant `spentOn(game, 'scout')` : une technique posée
+  sous le ruban doit dessiner sa mouche comme n'importe quelle autre, sans quoi la table
+  dessinerait le registre au lieu de la pièce.
 - **Une carte face visible porte enfin sa figure.** Un rectangle coloré se lit comme _une
   carte_ et ne dit pas laquelle : tolérable tant que le seul regard posé sur la table était
   celui d'un visiteur qui avait le panneau ouvert à côté, plus du tout dès qu'une caméra est

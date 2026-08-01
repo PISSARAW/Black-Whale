@@ -347,3 +347,35 @@ describe('the game on the action wheel', () => {
     }
   })
 })
+
+describe('the seats that pay out after the last card', () => {
+  /** A hand one card from the end, with whatever is being tested seated at it. */
+  const settling = (game: Partial<MorenaGame>): MorenaGame => ({
+    ...dealTheGame({ marked: null }),
+    phase: 'settling',
+    hand: ['yes'],
+    ...game,
+  })
+
+  it('kills Morena when the vow kills the guest and the cat is in the corner', () => {
+    const struck = settle(settling({ riders: ['sworn'], technique: 'resurrection' }))
+    expect(struck.aftermath).toContain('sworn-struck')
+    expect(struck.aftermath).toContain('avenged')
+  })
+
+  it('leaves the cat nothing to do where nobody died', () => {
+    const alive = settle(settling({ technique: 'resurrection' }))
+    expect(alive.aftermath).not.toContain('avenged')
+    // And a death with no cat at the table is a death and nothing else.
+    const unavenged = settle(settling({ riders: ['sworn'] }))
+    expect(unavenged.aftermath).toContain('sworn-struck')
+    expect(unavenged.aftermath).not.toContain('avenged')
+  })
+
+  it('pays the pestering beast whatever this table did with its own Yes', () => {
+    for (const hand of [['yes'], ['no'], ['x']] as const) {
+      const played = settle(settling({ hand: [...hand], riders: ['solicited'] }))
+      expect(played.aftermath).toContain('solicited')
+    }
+  })
+})

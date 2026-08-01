@@ -697,6 +697,17 @@ réagir.
   `game.technique === 'scout'` demande maintenant `spentOn(game, 'scout')` : une technique posée
   sous le ruban doit dessiner sa mouche comme n'importe quelle autre, sans quoi la table
   dessinerait le registre au lieu de la pièce.
+- **Lovely Ghostwriter écrit sans qu'on le lui demande.** L'écriture automatique n'est pas un
+  coup : la bête écrit quand elle écrit, et l'on ne montre jamais sa propre prophétie à son
+  sujet. La technique quitte donc le bouton. Elle est la seule entrée de `UNBIDDEN`, et
+  `askMorena` la déclenche au premier tirage — le premier moment où quelque chose arrive au
+  joueur, c'est-à-dire la main de Morena qui se referme sur une de ses cinq cartes. Une seule
+  fois : une prophétie qui se corrige ne vaut rien. La bête, elle, est là depuis la donne, du
+  côté du joueur et à son coude — la seule manifestation de cette table qui appartienne à la
+  personne assise et non à la pièce — et `stage` passe de l'attente à la page écrite, posée
+  sous la plume. Ce que le quatrain dit est `theLosingBranch()` : la carte marquée, ou le Oui
+  sur une donne propre. En vers, pas en nom de carte — une ligne annonçant « elle a marqué le
+  Retour » serait la page en train de jouer la partie à la place du lecteur.
 - **Une carte face visible porte enfin sa figure.** Un rectangle coloré se lit comme _une
   carte_ et ne dit pas laquelle : tolérable tant que le seul regard posé sur la table était
   celui d'un visiteur qui avait le panneau ouvert à côté, plus du tout dès qu'une caméra est

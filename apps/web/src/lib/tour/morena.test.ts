@@ -13,9 +13,15 @@ import {
   TABLE_AT,
   TABLE_HEIGHT,
   TABLE_KINDS,
+  BOOK_AT,
+  CAT_AT,
+  CAT_ON_HER,
+  CHIMERA_AT,
+  SPRITE_AT,
   TABLE_PAGES,
   TABLE_TECHNIQUES,
   askMorena,
+  castsItself,
   dealerStage,
   eyeFeed,
   exposureNow,
@@ -36,6 +42,7 @@ import {
   sitsAtTheTable,
   tableauOf,
   takeTheDeal,
+  theLosingBranch,
   worksAtTheTable,
   type AnswerCard,
   type MorenaGame,
@@ -726,6 +733,59 @@ describe('Double Face, which is two seats rather than one', () => {
   })
 })
 
+describe('Lovely Ghostwriter, which nobody plays', () => {
+  const floor = floorOf(ship.spaces.get(HIDEOUT_OFFICE)!, ship.plans.get(HIDEOUT_TIER)!.tier)
+  const beastIn = (game: MorenaGame) =>
+    tableauOf(game, floor).find((thing) => thing.kind === 'ghost')
+
+  it('sits the beast at the guest’s elbow from the deal', () => {
+    expect(beastIn(dealTheGame())).toBeUndefined()
+    const waiting = beastIn(withTechnique('prophecy'))!
+    // The guest's side of the wood, and over it rather than on it.
+    expect(waiting.at[1]).toBeGreaterThan(TABLE_AT[1])
+    expect(waiting.y).toBeGreaterThan(floor + TABLE_HEIGHT)
+    expect(waiting.stage).toBe(0)
+  })
+
+  it('writes the moment Morena reaches, without being asked', () => {
+    expect(castsItself('prophecy')).toBe(true)
+    expect(castsItself('scout')).toBe(false)
+
+    const written = askMorena(withTechnique('prophecy'), 'goal', { random: first })
+    expect(written.spent).toBe(1)
+    expect(
+      written.log.some((beat) => beat.kind === 'played' && beat.technique === 'prophecy'),
+    ).toBe(true)
+    expect(written.read).toBe(true)
+    expect(beastIn(written)!.stage).toBe(1)
+
+    // Once. A prophecy that revised itself would be worth nothing.
+    const again = askMorena(written, 'power', { random: first })
+    expect(again.spent).toBe(1)
+    expect(again.log.filter((beat) => beat.kind === 'played')).toHaveLength(1)
+  })
+
+  it('writes about the branch the deal already decided', () => {
+    // Nothing until it has written, and then the marked card: the branch that
+    // loses was chosen before anybody sat down.
+    expect(theLosingBranch(withTechnique('prophecy'))).toBeNull()
+    const marked: MorenaGame = { ...dealTheGame({ technique: 'prophecy' }) }
+    expect(theLosingBranch(askMorena(marked, 'goal', { random: last }))).toBe('back')
+    // And on a clean deal, the plain one: a Yes is an infection freely given.
+    const clean = askMorena(withTechnique('prophecy'), 'goal', { random: first })
+    expect(clean.marked).toBeNull()
+    expect(theLosingBranch(clean)).toBe('yes')
+  })
+
+  it('writes from under the ribbon as readily as from the open page', () => {
+    const ribboned = dealTheGame({ marked: null, technique: 'dowsing', bookmark: 'prophecy' })
+    const written = askMorena(ribboned, 'goal', { random: first })
+    expect(written.spent).toBe(0)
+    expect(written.bookmark).toEqual({ kind: 'prophecy', spent: 1 })
+    expect(theLosingBranch(written)).toBe('yes')
+  })
+})
+
 describe('the Manipulation, which is the only sanction the game has', () => {
   it('takes Back, Joker and X off the table and leaves Yes and No', () => {
     const narrowed = narrowTheAnswer(dealTheGame({ marked: null }), 'cheating')
@@ -1070,5 +1130,101 @@ describe('the five seats the table opened last', () => {
     expect(projected.proxied).toBe(true)
     const over = settle({ ...projected, hand: ['yes'], phase: 'settling', kissed: true })
     expect(infectionAfter(over)).toMatchObject({ said: true, kissed: false, level: null })
+  })
+})
+
+describe('the seats that are simply in the room', () => {
+  const floor = floorOf(ship.spaces.get(HIDEOUT_OFFICE)!, ship.plans.get(HIDEOUT_TIER)!.tier)
+  const carried = (kind: TableKind) => withTechnique(kind)
+  const shown = (game: MorenaGame, kind: string) =>
+    tableauOf(game, floor).find((thing) => thing.kind === kind)
+
+  /** A hand played out to a Yes, with whatever is under test seated at it. */
+  const played = (kind: TableKind, over: Partial<MorenaGame> = {}) =>
+    settle({ ...withTechnique(kind), phase: 'settling', hand: ['yes'], ...over })
+
+  it('puts nothing in the room for a guest carrying none of them', () => {
+    for (const kind of ['cat', 'chimera', 'sprite', 'book', 'contract', 'vow-heart']) {
+      expect(shown(dealTheGame(), kind), kind).toBeUndefined()
+    }
+  })
+
+  it('sits the cat in the corner, and sends it across the room when it collects', () => {
+    const sitting = shown(carried('resurrection'), 'cat')!
+    // In a corner, on the deck, and looking at nobody: nothing has been said.
+    expect(sitting.stage).toBe(0)
+    expect(sitting.at).toEqual(CAT_AT)
+    expect(sitting.y).toBe(floor)
+
+    // Playing it is telling her it is there, which is the only part of a
+    // posthumous counterattack anybody can perform.
+    expect(shown(playTechnique(carried('resurrection'), { random: clean }), 'cat')!.stage).toBe(1)
+
+    // And the one death this game contains: the vow struck, and the cat moved.
+    const struck = played('resurrection', { riders: ['sworn'] })
+    expect(struck.aftermath).toContain('avenged')
+    const collected = shown(struck, 'cat')!
+    expect(collected.stage).toBe(2)
+    expect(collected.at).toEqual(CAT_ON_HER)
+    // And the woman it collected from, drawn the way this room draws anything
+    // final about a body: the thing that was moving has stopped.
+    expect(dealerStage(struck)).toBe(3)
+  })
+
+  it('stands the lie-marks beast at the table and never moves it', () => {
+    const stood = shown(carried('lie-marks'), 'chimera')!
+    expect(stood.at).toEqual(CHIMERA_AT)
+    expect(stood.y).toBe(floor)
+    const after = shown(playTechnique(carried('lie-marks'), { random: clean }), 'chimera')!
+    expect(after.at).toEqual(stood.at)
+    expect(after.y).toBe(stood.y)
+  })
+
+  it('hangs the pestering beast at the guest, where it wanders and comes back', () => {
+    const asking = shown(carried('solicitation'), 'sprite')!
+    expect(asking.at).toEqual(SPRITE_AT)
+    expect(asking.y).toBeGreaterThan(floor + 1)
+    expect(asking.spread).toBeGreaterThan(0)
+  })
+
+  it('opens the hunter book blank, and writes in it when the theft goes through', () => {
+    expect(shown(carried('theft'), 'book')!.stage).toBe(0)
+    expect(shown(carried('theft'), 'book')!.at).toEqual(BOOK_AT)
+
+    // The three conditions: seen in action, questioned and answered, touched.
+    const stolen = played('theft', {
+      riders: ['stolen'],
+      kissed: true,
+      asked: ['goal'],
+    })
+    expect(stolen.aftermath).toContain('stolen')
+    expect(shown(stolen, 'book')!.stage).toBe(1)
+  })
+
+  it('holds the sheet up blank and lays it signed in the corner', () => {
+    const blank = shown(carried('contract'), 'contract')!
+    expect(blank.stage).toBe(0)
+    // Between the two of them, which is where a sheet being read out is.
+    expect(blank.at[1]).toBeGreaterThan(DEALER_AT[1])
+    expect(blank.at[1]).toBeLessThan(GUEST_AT[1])
+    // Up in the air between the two of them: a contract being read out.
+    expect(blank.y).toBeGreaterThan(floor + TABLE_HEIGHT + 0.2)
+
+    const signed = shown(playTechnique(carried('contract'), { random: clean }), 'contract')!
+    expect(signed.stage).toBe(1)
+    expect(signed.at[0]).toBeGreaterThan(blank.at[0])
+    // Lying on the wood, where a signed thing is left.
+    expect(signed.y).toBeLessThan(floor + TABLE_HEIGHT + 0.05)
+  })
+
+  it('wears the vow in the chest, closes it on the cast, and stops it when it is paid', () => {
+    expect(shown(carried('heart-vow'), 'vow-heart')!.stage).toBe(0)
+    const sworn = playTechnique(carried('heart-vow'), { random: clean })
+    expect(sworn.shielded).toBe(true)
+    expect(shown(sworn, 'vow-heart')!.stage).toBe(1)
+
+    const struck = played('heart-vow', { riders: ['sworn'] })
+    expect(struck.aftermath).toContain('sworn-struck')
+    expect(shown(struck, 'vow-heart')!.stage).toBe(2)
   })
 })

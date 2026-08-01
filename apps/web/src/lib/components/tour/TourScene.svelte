@@ -54,6 +54,7 @@
     SNAKE_BOW,
     SNAKE_HEAD,
     TENTACLES,
+    VOW_CHAIN,
     apparitionsOn,
     coinAt,
     wormMouthAt,
@@ -3221,6 +3222,283 @@
           turns = null
         }
 
+        if (seen.kind === 'ghost') {
+          // Neon's beast: a pale animal hanging in the air with its mouth open
+          // and a pen in one hand. Drawn crudely like everything else aboard,
+          // and recognisable by the two things everyone remembers of it — the
+          // long jaw wide open, and the fact that it is holding your pen.
+          const body = new THREE.Mesh(new THREE.SphereGeometry(seen.size, 10, 8), skin)
+          body.scale.set(0.9, 1, 1.25)
+          root.add(body)
+          const head = new THREE.Group()
+          head.position.set(0, seen.size * 0.9, -seen.size * 0.35)
+          const skull = new THREE.Mesh(new THREE.SphereGeometry(seen.size * 0.66, 10, 8), skin)
+          skull.scale.set(1, 0.8, 1.5)
+          head.add(skull)
+          // The mouth, which is the whole of the face: open, dark, and turned
+          // down at the table it is writing on.
+          const mouth = new THREE.Mesh(
+            new THREE.ConeGeometry(seen.size * 0.42, seen.size * 0.9, 8, 1, true),
+            glow(0x2a1f33, 0.95),
+          )
+          mouth.rotation.x = -Math.PI / 2.2
+          mouth.position.set(0, -seen.size * 0.12, -seen.size * 0.7)
+          head.add(mouth)
+          for (const side of [-1, 1]) {
+            const eye = new THREE.Mesh(
+              new THREE.SphereGeometry(seen.size * 0.12, 8, 6),
+              glow(0xfdfbff, 1),
+            )
+            eye.position.set(side * seen.size * 0.26, seen.size * 0.3, -seen.size * 0.5)
+            head.add(eye)
+          }
+          root.add(head)
+          // The arm and the pen, held down at the wood. Once the quatrain is
+          // written the nib is at the table rather than over it, which is the
+          // only difference between a beast waiting and a beast that has
+          // already said what is going to happen to you.
+          const arm = new THREE.Mesh(
+            new THREE.CylinderGeometry(seen.size * 0.07, seen.size * 0.07, seen.size * 1.1, 6),
+            skin,
+          )
+          arm.position.set(-seen.size * 0.5, -seen.size * 0.3, -seen.size * 0.3)
+          arm.rotation.z = 0.6
+          root.add(arm)
+          const pen = new THREE.Mesh(
+            new THREE.CylinderGeometry(seen.size * 0.035, seen.size * 0.01, seen.size * 0.8, 6),
+            glow(0xfff4d6, 1),
+          )
+          pen.position.set(
+            -seen.size * 0.85,
+            seen.size * (seen.stage > 0 ? -1.05 : -0.7),
+            -seen.size * 0.5,
+          )
+          pen.rotation.z = seen.stage > 0 ? 0.15 : 0.5
+          root.add(pen)
+          // The page, laid on the wood under the nib, and only once there is
+          // something on it: a poem is a thing in the room after it is written.
+          if (seen.stage > 0) {
+            const page = new THREE.Mesh(
+              new THREE.PlaneGeometry(seen.size * 1.5, seen.size * 2),
+              glow(0xf6f3ec, 0.85),
+            )
+            page.rotation.x = -Math.PI / 2
+            page.position.set(-seen.size * 0.9, -seen.size * 1.6, -seen.size * 0.2)
+            root.add(page)
+          }
+          turns = null
+        }
+
+        if (seen.kind === 'vow-heart') {
+          // The vow, where it is actually sworn.
+          //
+          // Every other technique in the walk is put somewhere — over a room, on
+          // a bulkhead, at an elbow. Judgment Chain is put *in* somebody, and the
+          // only body the walk has is the one the reader is looking out of. So
+          // this is worn at the sternum and seen by looking down, and there is
+          // nothing to aim it at: the chain is already round it.
+          //
+          // Built in three parts, because the whole reading is the difference
+          // between them: meat, which beats; links, which do not; and a lock,
+          // which is the moment the thing stopped being reversible. The flesh is
+          // its own group so the drift can swell it without the chain giving —
+          // a heart pressing against a chain that will not move is the entire
+          // argument of the technique in one gesture.
+          const meat = glow(seen.colour, seen.stage === 2 ? 0.4 : 0.95)
+          const flesh = new THREE.Group()
+          for (const side of [-1, 1]) {
+            const lobe = new THREE.Mesh(new THREE.SphereGeometry(seen.size * 0.58, 12, 10), meat)
+            lobe.position.set(side * seen.size * 0.42, seen.size * 0.34, 0)
+            flesh.add(lobe)
+          }
+          const point = new THREE.Mesh(
+            new THREE.ConeGeometry(seen.size * 0.95, seen.size * 1.7, 14),
+            meat,
+          )
+          // A cone stands on its base; a heart hangs from its lobes and comes to
+          // a point underneath, so it is turned over.
+          point.rotation.x = Math.PI
+          point.position.y = -seen.size * 0.5
+          flesh.add(point)
+          root.add(flesh)
+
+          if (seen.stage > 0) {
+            // Wound, not draped: three bands crossing at angles that have
+            // nothing to do with each other, which is how a thing is bound by
+            // somebody who means it rather than wrapped by somebody tidying.
+            const steel = glow(VOW_CHAIN, 1)
+            const linkGeometry = new THREE.TorusGeometry(seen.size * 0.17, seen.size * 0.055, 4, 8)
+            const band = (tilt: Vec2, radius: number) => {
+              const ring = new THREE.Group()
+              for (let i = 0; i < CHAIN_LINKS; i++) {
+                const along = (i / CHAIN_LINKS) * Math.PI * 2
+                const link = new THREE.Mesh(linkGeometry, steel)
+                link.position.set(Math.cos(along) * radius, 0, Math.sin(along) * radius)
+                // A ring lies in its own plane, so it is turned to stand across
+                // the circle it is running round — and every other one is given
+                // a quarter turn on top of that, which is the only thing that
+                // makes a row of rings read as a chain.
+                link.rotation.y = Math.PI / 2 - along
+                if (i % 2) link.rotateX(Math.PI / 2)
+                ring.add(link)
+              }
+              ring.rotation.set(tilt[0], tilt[1], 0)
+              return ring
+            }
+            root.add(band([0.28, 0], seen.size * 1.02))
+            root.add(band([1.15, 0.9], seen.size * 0.98))
+            root.add(band([-0.75, 2.1], seen.size * 0.94))
+
+            // And the lock, hanging where the bands cross in front. It is the
+            // small part and it is the whole of what a vow is: the difference
+            // between a chain lying on something and a chain that has been shut.
+            const body = new THREE.Mesh(
+              new THREE.BoxGeometry(seen.size * 0.3, seen.size * 0.26, seen.size * 0.12),
+              steel,
+            )
+            const shackle = new THREE.Mesh(
+              new THREE.TorusGeometry(seen.size * 0.12, seen.size * 0.035, 4, 10, Math.PI),
+              steel,
+            )
+            shackle.position.y = seen.size * 0.13
+            body.add(shackle)
+            body.position.set(0, seen.size * 0.1, seen.size * 1.05)
+            root.add(body)
+          }
+
+          // The flesh, for the drift: children[0], the way the chain's ball is.
+          turns = flesh
+        }
+
+        if (seen.kind === 'cat') {
+          // Camilla's cat, which is drawn sitting because that is all it ever
+          // does until somebody kills its owner. `size` is the shoulder height,
+          // so the animal is built at the scale of a cat rather than at the
+          // scale of the room it is in.
+          //
+          // Three stages, and they are three postures: sitting and looking away
+          // (nobody has been told about it), sitting and looking at the woman
+          // opposite (they have), and standing where she was (it collected).
+          const fur = glow(seen.colour, seen.stage === 2 ? 1 : 0.85)
+          const body = new THREE.Mesh(
+            new THREE.CapsuleGeometry(seen.size * 0.36, seen.size * 0.5, 4, 10),
+            fur,
+          )
+          // Sitting: the trunk is upright and the animal is short. Standing, it
+          // is a quadruped, which is the same capsule tipped onto its side.
+          if (seen.stage === 2) {
+            body.rotation.x = Math.PI / 2
+            body.position.y = seen.size * 0.72
+          } else {
+            body.position.y = seen.size * 0.5
+          }
+          root.add(body)
+
+          const head = new THREE.Mesh(new THREE.SphereGeometry(seen.size * 0.3, 10, 8), fur)
+          head.position.set(0, seen.size * (seen.stage === 2 ? 1.02 : 1.12), seen.size * 0.34)
+          root.add(head)
+          for (const side of [-1, 1]) {
+            const ear = new THREE.Mesh(new THREE.ConeGeometry(seen.size * 0.12, seen.size * 0.22, 4), fur)
+            ear.position.set(side * seen.size * 0.16, seen.size * 0.24, -seen.size * 0.04)
+            head.add(ear)
+            // The eyes are the only part of it that is not fur, and they are
+            // what a cat in a dark corner actually is: two points, and they are
+            // pointed at you. Brighter once it has done what it is for.
+            const eye = new THREE.Mesh(
+              new THREE.SphereGeometry(seen.size * 0.05, 6, 5),
+              glow(0xfff2a8, seen.stage === 2 ? 1 : 0.8),
+            )
+            eye.position.set(side * seen.size * 0.12, seen.size * 0.04, seen.size * 0.26)
+            head.add(eye)
+          }
+
+          // And the tail, which is the only thing about a sitting cat that
+          // moves. Four beads, curled round the front of it, strung by the
+          // drift the way the chain's links are.
+          const tail = new THREE.Group()
+          for (let i = 0; i < 4; i++) {
+            const bead = new THREE.Mesh(
+              new THREE.SphereGeometry(seen.size * (0.11 - i * 0.015), 6, 5),
+              fur,
+            )
+            bead.position.set(0, seen.size * 0.16, -seen.size * (0.36 + i * 0.2))
+            tail.add(bead)
+          }
+          root.add(tail)
+          turns = tail
+        }
+
+        if (seen.kind === 'contract') {
+          // A sheet and a pen, both made of the same aura, and the whole of the
+          // technique is what is written on the one with the other. Two stages,
+          // and they are the two states a contract has ever had: blank, standing
+          // up between the parties while the terms are read out; and signed,
+          // lying on the wood with the pen across it.
+          const aura = glow(seen.colour, seen.stage === 0 ? 0.55 : 0.8)
+          const ink = glow(0x2b3a5c, 0.9)
+          const long = seen.size
+          const tall = seen.size * 0.72
+
+          const sheet = new THREE.Mesh(new THREE.PlaneGeometry(long, tall), aura)
+          // Standing it up is the difference between a document being read and
+          // one that has been filed. Flat, it faces the deckhead; upright, it
+          // faces whoever is being asked to sign it.
+          if (seen.stage > 0) sheet.rotation.x = -Math.PI / 2
+          root.add(sheet)
+
+          // What is on it. Ruled lines rather than words, because a contract
+          // legible from a chair would be a contract the room had written for
+          // you — the terms are the panel's to state, and the sheet's part is
+          // to be a thing with terms on it. Only once it is signed: an unsigned
+          // sheet of aura is blank, which is the state the manga draws.
+          if (seen.stage > 0) {
+            for (let line = 0; line < 5; line++) {
+              const ruled = new THREE.Mesh(
+                new THREE.PlaneGeometry(long * (line === 4 ? 0.34 : 0.66), tall * 0.045),
+                ink,
+              )
+              ruled.rotation.x = -Math.PI / 2
+              // The last one is the signature: short, off to the right, and
+              // sitting under a gap the way a name on a line does.
+              ruled.position.set(
+                line === 4 ? long * 0.24 : -long * 0.1,
+                0.001,
+                tall * (-0.3 + line * 0.13 + (line === 4 ? 0.06 : 0)),
+              )
+              root.add(ruled)
+            }
+          }
+
+          // And the pen. Alongside the sheet while it is being read, across the
+          // corner of it once it is not needed any more.
+          const pen = new THREE.Group()
+          const barrel = new THREE.Mesh(
+            new THREE.CylinderGeometry(seen.size * 0.022, seen.size * 0.022, seen.size * 0.5, 6),
+            aura,
+          )
+          const nib = new THREE.Mesh(
+            new THREE.ConeGeometry(seen.size * 0.024, seen.size * 0.09, 6),
+            ink,
+          )
+          nib.position.y = -seen.size * 0.29
+          nib.rotation.x = Math.PI
+          pen.add(barrel)
+          pen.add(nib)
+          if (seen.stage > 0) {
+            // Laid down: across the sheet, tipped off the horizontal the way a
+            // pen that was put down rather than placed lies.
+            pen.rotation.set(Math.PI / 2, 0, 0)
+            pen.rotateY(0.6)
+            pen.position.set(long * 0.12, seen.size * 0.03, -tall * 0.1)
+          } else {
+            // Held: upright beside the sheet, on the side the person signing is.
+            pen.rotation.z = -0.35
+            pen.position.set(long * 0.62, -tall * 0.1, 0)
+          }
+          root.add(pen)
+          turns = null
+        }
+
         if (seen.kind === 'cargo') {
           const crate = new THREE.Mesh(
             new THREE.BoxGeometry(seen.size, seen.size, seen.size),
@@ -3718,6 +3996,38 @@
             continue
           }
 
+          if (held.kind === 'vow-heart') {
+            // Worn at the sternum, a little to the left of it, the way the organ
+            // is. Nothing about it is aimed and nothing about it swings: it is
+            // carried the way the book and the ball are, and it is the only one
+            // of the three that is not in a hand.
+            const sin = Math.sin(yaw)
+            const cos = Math.cos(yaw)
+            held.root.position.set(
+              camera.position.x - cos * 0.26 - sin * 0.34,
+              camera.position.y - 0.4,
+              camera.position.z + sin * 0.26 - cos * 0.34,
+            )
+            // Tipped back towards the face, for the same reason the open book
+            // is: a thing worn on the chest is looked at from above, and a
+            // heart seen from directly overhead is a shape nobody recognises.
+            held.root.rotation.set(0, yaw, 0)
+            held.root.rotateX(-0.95)
+            // And it beats — twice, the way a heart does, a systole and the
+            // smaller one behind it. Struck, it does not: `sworn-struck` is the
+            // vow being collected, and the one thing the walk can say about that
+            // is the thing that was moving stopping. It is the same sentence the
+            // woman opposite is drawn with, and it is deliberate.
+            if (held.turns) {
+              const beat = (seconds * 1.15) % 1
+              const thump = (at: number, width: number) => Math.exp(-((beat - at) ** 2) / width)
+              const swell =
+                held.stage === 2 ? 0 : (thump(0.06, 0.0025) + thump(0.24, 0.004) * 0.55) * 0.085
+              held.turns.scale.setScalar(1 + swell)
+            }
+            continue
+          }
+
           // A card lies where it was put. Nothing else in this list holds
           // perfectly still — everything Nen leaves standing is riding on the
           // air — and that is exactly why a card must: a card that bobbed would
@@ -3730,6 +4040,17 @@
             // reticle leaves, because nothing was played.
             const lifted = held.pick && id === aimedExtra ? 0.012 : 0
             held.root.position.set(held.at[0], held.y + lifted, held.at[1])
+            continue
+          }
+
+          // And the contract, which obeys the same rule for the same reason: a
+          // signed one lies in the corner and does not move, because a document
+          // that drifted would be a document nobody had put down. Unsigned, it
+          // is still aura being held up between two people, so it breathes the
+          // way everything else in this list does.
+          if (held.kind === 'contract') {
+            const air = held.stage > 0 ? 0 : Math.sin(phase * 0.7) * 0.008
+            held.root.position.set(held.at[0], held.y + air, held.at[1])
             continue
           }
 

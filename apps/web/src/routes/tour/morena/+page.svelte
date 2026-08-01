@@ -58,8 +58,10 @@
     refuseTheDeal,
     settle,
     sitsAtTheTable,
+    castsItself,
     tableauOf,
     takeTheDeal,
+    theLosingBranch,
     worksAtTheTable,
     type AnswerCard,
     type MorenaGame,
@@ -179,6 +181,8 @@
   const record = $derived(owlFilm(game, floor))
   /** Her fan as that recording has it, which is not her fan as it is now. */
   const filmed = $derived(owlSaw(game))
+  /** Which quatrain the beast wrote, or nothing while it has written none. */
+  const losing = $derived(theLosingBranch(game))
 
   const nameOfCard = (card: AnswerCard) => copy.cards[card].name
   const questionsLeft = $derived(game.questions)
@@ -230,12 +234,27 @@
   const seats = $derived(
     livePages(game).map((seat) => {
       const move = moveFor(seat.kind)
-      return { ...seat, move, name: nameOfTechnique(seat.kind), usedUp: seat.spent >= move.uses }
+      return {
+        ...seat,
+        move,
+        name: nameOfTechnique(seat.kind),
+        usedUp: seat.spent >= move.uses,
+        unbidden: castsItself(seat.kind),
+      }
     }),
   )
+  /**
+   * The seats a key can play, in the order the keys play them.
+   *
+   * Not every live technique is one you press for. Lovely Ghostwriter writes by
+   * itself the moment Morena reaches into your hand — that is what automatic
+   * writing *is* — so it has a panel of its own and no key, and the book's
+   * other page keeps the one it would otherwise have shared.
+   */
+  const keyed = $derived(seats.filter((seat) => !seat.unbidden))
   /** The two names the two keys play, when there are two. `null` otherwise. */
   const hands = $derived(
-    seats.length === 2 ? { first: seats[0].name, second: seats[1].name } : null,
+    keyed.length === 2 ? { first: keyed[0].name, second: keyed[1].name } : null,
   )
 
   function deal() {
@@ -269,7 +288,7 @@
     _solidId?: string | null,
     hand?: 'first' | 'second' | 'third',
   ) {
-    const seat = seats[hand === 'second' ? 1 : 0]
+    const seat = keyed[hand === 'second' ? 1 : 0]
     if (!seat || seat.usedUp) return
     game = playTechnique(game, { page: seat.page })
   }
@@ -341,7 +360,7 @@
    * this table is an instrument with three airs.
    */
   const castable = $derived(
-    view === 'table' && game.phase !== 'over' && seats.some((seat) => !seat.usedUp),
+    view === 'table' && game.phase !== 'over' && keyed.some((seat) => !seat.usedUp),
   )
 
   // Nothing is pointed at from the menu, and a card left lifted by a hand that
@@ -437,7 +456,7 @@
         castOnClick={false}
         touchLabels={{
           move: $t.tour.touch.move,
-          cast: seats.length === 1 ? copy.hatsu.effects[seats[0].move.effect] : $t.tour.touch.cast,
+          cast: keyed.length === 1 ? copy.hatsu.effects[keyed[0].move.effect] : $t.tour.touch.cast,
         }}
         soundLabels={{ silence: $t.tour.sound.silence, restore: $t.tour.sound.restore }}
         loadingLabel={copy.loading}
@@ -498,7 +517,7 @@
                live page, because two pages are two different moves and a single
                line naming one of them would be lying about the other. -->
           {#if castable}
-            {#each seats as seat, index (seat.page)}
+            {#each keyed as seat, index (seat.page)}
               {#if !seat.usedUp}
                 <p
                   class="rounded bg-[#050505]/70 px-3 py-1 text-center text-xs"
@@ -713,6 +732,23 @@
             {#if game.shielded}<li class="text-[#FFD700]">{copy.hatsu.shielded}</li>{/if}
             {#if game.proxied}<li>{copy.hatsu.proxied}</li>{/if}
           </ul>
+        {/if}
+
+        <!-- The quatrain, once the beast has written it. Printed as a poem and
+             not as a read-out: the technique is cryptic verse, and a line
+             saying "she marked the Back" would be the page playing the game
+             for the reader. Kept for the rest of the hand, and after it — a
+             prophecy that came true is still what was written. -->
+        {#if losing}
+          <div class="mt-3 rounded border border-[#d8c7ed]/40 bg-[#d8c7ed]/5 p-3">
+            <p class="text-[10px] uppercase tracking-widest text-[#d8c7ed]">
+              {copy.hatsu.ghost.title}
+            </p>
+            <p class="mt-2 whitespace-pre-line text-xs italic leading-relaxed text-[#FFFFF0]/80">
+              {copy.hatsu.ghost.verse[losing].join('\n')}
+            </p>
+            <p class="mt-2 text-[11px] leading-snug text-[#FFFFF0]/45">{copy.hatsu.ghost.body}</p>
+          </div>
         {/if}
 
         <!-- The owl's recording, which is the one thing at this table that does
@@ -946,8 +982,8 @@
             >
               <div class="flex items-baseline justify-between gap-2">
                 <p class="text-sm font-semibold" style:color={carried?.color}>
-                  {#if seats.length > 1}<span class="text-[#FFFFF0]/40"
-                      >{index === 0 ? 'F' : 'R'} ·
+                  {#if keyed.length > 1 && !seat.unbidden}<span class="text-[#FFFFF0]/40"
+                      >{keyed.indexOf(seat) === 0 ? 'F' : 'R'} ·
                     </span>{/if}{seat.name}
                 </p>
                 <span
@@ -968,14 +1004,23 @@
                 </p>
               {/if}
               <div class="mt-3 flex flex-wrap items-center gap-2">
-                <button
-                  class="rounded px-3 py-1.5 text-xs font-semibold text-[#0b0b0d] disabled:opacity-30"
-                  style:background={carried?.color ?? '#d94f68'}
-                  disabled={seat.usedUp}
-                  onclick={() => cast(null, null, index === 0 ? 'first' : 'second')}
-                >
-                  {copy.hatsu.effects[seat.move.effect]}
-                </button>
+                <!-- A technique that fires on its own gets no button. Offering
+                     one would be asking for automatic writing, which is the one
+                     thing nobody does: the beast writes when Morena reaches. -->
+                {#if seat.unbidden}
+                  <span class="text-[11px] leading-snug text-[#d8c7ed]">
+                    {copy.hatsu.unbidden}
+                  </span>
+                {:else}
+                  <button
+                    class="rounded px-3 py-1.5 text-xs font-semibold text-[#0b0b0d] disabled:opacity-30"
+                    style:background={carried?.color ?? '#d94f68'}
+                    disabled={seat.usedUp}
+                    onclick={() => cast(null, null, keyed.indexOf(seat) === 0 ? 'first' : 'second')}
+                  >
+                    {copy.hatsu.effects[seat.move.effect]}
+                  </button>
+                {/if}
                 <span class="text-[10px] uppercase tracking-wider text-[#FFFFF0]/40">
                   {seat.usedUp
                     ? copy.hatsu.exhausted

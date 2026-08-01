@@ -126,7 +126,16 @@ export type TableEffect =
  * direction.
  */
 export type Rider =
-  'bound' | 'moon' | 'stolen' | 'sworn' | 'smoke' | 'taxed' | 'trapped' | 'deterred'
+  | 'bound'
+  | 'moon'
+  | 'stolen'
+  | 'sworn'
+  | 'smoke'
+  | 'taxed'
+  | 'trapped'
+  | 'deterred'
+  /** A yes was pestered out of somebody, and it was not the one on the table. */
+  | 'solicited'
 
 /** What a rider actually did, once the last card is down. */
 export type Aftermath =
@@ -138,9 +147,19 @@ export type Aftermath =
   | 'taxed'
   | 'trapped'
   | 'deterred'
+  | 'solicited'
   | 'proxied'
   /** Morena was taken out of her own chair, and the game died with her in it. */
   | 'evicted'
+  /**
+   * The guest died at the table, and something of theirs killed her for it.
+   *
+   * Cat's Name is posthumous by definition: it does nothing at all until its
+   * owner is dead, and then it crushes whoever killed them. It is the only
+   * thing in this game that happens *after* the last card, and the only one
+   * that can be paid out to a corpse.
+   */
+  | 'avenged'
 
 /** One line of what happened, in the order it happened. */
 export type Beat =
@@ -409,6 +428,30 @@ export const TABLE_TECHNIQUES = {
     fraud: false,
     uses: 1,
   },
+  /**
+   * Cat's Name, which is the dissuasive family's third seat and its strangest.
+   *
+   * The other two make your death expensive by making it useless. This one
+   * makes it expensive by making it fatal — Camilla's cat is posthumous, and
+   * what it does is kill whoever killed her. Playing it is telling the other
+   * side that it is there, because a deterrent nobody has been told about
+   * deters nobody; the cat itself needs no telling and no casting, and avenges
+   * the guest whether or not they ever mentioned it. See `payTheRiders`.
+   *
+   * Its canon flaw is what makes it the right card at *this* table and a bad
+   * one everywhere else: it answers a direct killer and nothing else, and
+   * Morena does not kill her candidates. She recruits them. So it is aimed
+   * exactly at the clause the game already leaves open, and at nothing she was
+   * ever going to do.
+   */
+  resurrection: {
+    hatsuId: 'cats-name',
+    effect: 'rider',
+    rider: 'deterred',
+    exposure: 0,
+    fraud: false,
+    uses: 1,
+  },
   'desire-trap': {
     hatsuId: 'luzurus-guardian-desire-trap',
     effect: 'read',
@@ -423,6 +466,29 @@ export const TABLE_TECHNIQUES = {
     rider: 'taxed',
     exposure: 0,
     fraud: false,
+    uses: 1,
+  },
+  /**
+   * «Are You Free?», which is this whole game with the negotiation taken out.
+   *
+   * Momoze's beast asks, and asks again, and a yes lets it into the ear and
+   * hands it the controls. It is a Yes-extractor with no cards, no questions,
+   * no kiss and no murder — so seated at this table it is not a move, it is a
+   * comparison: the thing in the room that already has what Morena is spending
+   * a hand of twelve cards to get, and gets it from anyone, endlessly.
+   *
+   * It is priced as the parody it is. What it takes is worth nothing here — a
+   * yes pestered out of somebody is not the Yes this game is about, which is
+   * precisely why Morena asks for the kiss and the murder on top of hers, and
+   * why her network stops at twenty-two while this one would not stop at all.
+   * The rider says so when the last card comes down, and it changes no card.
+   */
+  solicitation: {
+    hatsuId: 'momoze-guardian-solicitation',
+    effect: 'rider',
+    rider: 'solicited',
+    exposure: 0.3,
+    fraud: true,
     uses: 1,
   },
 
@@ -519,6 +585,27 @@ export function worksAtTheTable(kind: string | null | undefined): kind is TableK
 
 export function moveFor(kind: TableKind): TableMove {
   return TABLE_TECHNIQUES[kind]
+}
+
+/**
+ * The techniques nobody plays.
+ *
+ * Automatic writing is not a move: Lovely Ghostwriter's beast writes when it
+ * writes, and its subject is not consulted and is not shown their own. So this
+ * one is fired by the table — at the first card Morena takes out of the guest's
+ * hand — rather than offered on a key beside the rest.
+ *
+ * A list rather than a flag on the move, because it is a fact about how a
+ * capability reaches the table rather than about what it buys once it is there,
+ * and because there is exactly one of them: a `castsItself: true` on every
+ * other entry in `TABLE_TECHNIQUES` would be thirty falsehoods keeping one
+ * truth company.
+ */
+export const UNBIDDEN: readonly TableKind[] = ['prophecy']
+
+/** Whether this one fires on its own rather than on a key. */
+export function castsItself(kind: TableKind): boolean {
+  return UNBIDDEN.includes(kind)
 }
 
 /**
@@ -913,11 +1000,29 @@ export function askMorena(
     next.dealt = true
     next.phase = 'deal'
     next.log = [...log, { kind: 'offered', round: next.round }]
-    return next
+    return writeTheProphecy(next, random)
   }
 
   next.phase = next.hand.length <= 1 ? 'settling' : 'asking'
-  return next
+  return writeTheProphecy(next, random)
+}
+
+/**
+ * The one technique at this table that nobody plays.
+ *
+ * Lovely Ghostwriter is automatic writing: the beast writes, and what it writes
+ * is not asked for. So it is not on the panel's button with the rest of them —
+ * it fires on the first thing that happens to the guest, which in this game is
+ * Morena's hand closing on one of their five cards. Nothing is spent, nothing
+ * is chosen, and the quatrain is simply there afterwards.
+ *
+ * Written once. The prophecy does not revise itself, which is the whole reason
+ * a prophecy is worth anything: it was set down before the branch was taken.
+ */
+function writeTheProphecy(game: MorenaGame, random: () => number): MorenaGame {
+  const seat = livePages(game).find((page) => page.kind === 'prophecy')
+  if (!seat || seat.spent > 0) return game
+  return playTechnique(game, { random, page: seat.page })
 }
 
 /**
@@ -1031,6 +1136,17 @@ function payTheRiders(game: MorenaGame, verdict: Verdict): Aftermath[] {
   // true immunity to the Manipulation, and it is priced at a life.
   if (game.riders.includes('sworn') && said) paid.push('sworn-struck')
 
+  // And Cat's Name, which is the only thing here that is paid to a corpse.
+  //
+  // It is not on the rider list, because a rider is something the guest hung on
+  // the outcome and this is not: the cat does not care whether it was declared,
+  // whether the room saw it, or whether anybody at the table believed in it. It
+  // cares that its owner is dead. The one death this game contains is the vow
+  // collecting itself — so the two seats of the dissuasive family and the one
+  // that kills you meet here, and the guest who swore on their heart and lost
+  // takes Morena with them.
+  if (paid.includes('sworn-struck') && spentOn(game, 'resurrection') !== null) paid.push('avenged')
+
   // Gallery Fake: the copy is inert and gone inside a day. The fraud is not
   // detected at the table, it is detected the morning after — when the game is
   // closed and Morena has been paid in something that no longer exists.
@@ -1048,6 +1164,12 @@ function payTheRiders(game: MorenaGame, verdict: Verdict): Aftermath[] {
   // that the game ends at the death of the target — and Morena does not kill her
   // candidates in any case, she recruits them.
   if (game.riders.includes('deterred')) paid.push('deterred')
+
+  // «Are You Free?», which collected its yes whatever this table did with its
+  // own. It is paid out unconditionally, because that is the entire point being
+  // made: nothing about the hand, the kiss or the marking makes any difference
+  // to a creature that simply asks until somebody agrees.
+  if (game.riders.includes('solicited')) paid.push('solicited')
 
   // Somebody else was in the chair. A puppet has no desire to be named and
   // nothing of its own to stake, so a Yes taken off one is a Yes taken off

@@ -22,7 +22,7 @@ import {
   worksAtTheTable,
 } from '@black-whale/ability-modules'
 import type { MorenaGame, AnswerCard, QuestionCard, TableKind } from '@black-whale/ability-modules'
-import { INSECT, OWL } from './apparitions'
+import { BOOK, CHIMERA, HEART, INSECT, OWL, SPRITES } from './apparitions'
 import type { Apparition } from './apparitions'
 import { DOUBLE_FACE_PAGES } from './hatsu'
 import { AIM_AT, withinReach } from './morenaHands'
@@ -36,6 +36,7 @@ export {
   TABLE_KINDS,
   TABLE_TECHNIQUES,
   askMorena,
+  castsItself,
   dealTheGame,
   exposureNow,
   infectionAfter,
@@ -139,8 +140,15 @@ export const ASKED_COLOUR = 0xb0a0a8
 export const BURIED_COLOUR = 0x4a4a52
 /** The Sun and Moon's cold half, in the colour the walk already draws it. */
 export const MOON_MARK = 0xbcd2f5
-/** Judgment Chain's own gold, for the one mark worn by the guest. */
-export const VOW_MARK = 0xd8b85e
+/**
+ * Moonlight Act's own moonlight, the one the registry publishes Longhi in.
+ *
+ * The pen and the paper are aura and nothing else — she transmutes them, writes
+ * the terms with them and has them signed — so the sheet on this table is drawn
+ * in the ability's published colour rather than in paper white. A contract you
+ * can see through is the correct drawing of a contract made of aura.
+ */
+export const ACT_PAPER = 0xc6ddff
 /**
  * Cross Game's three, in the order it plays them.
  *
@@ -208,6 +216,96 @@ export function openTheBookHere(random: () => number = Math.random): [TableKind,
   const open = TABLE_PAGES[Math.floor(random() * TABLE_PAGES.length)]
   const rest = TABLE_PAGES.filter((page) => page !== open)
   return [open, rest[Math.floor(random() * rest.length)]]
+}
+
+// ── Lovely Ghostwriter, at the guest's elbow ───────────────────────
+/**
+ * Where the beast sits, and how big it is.
+ *
+ * On the guest's side of the wood and to their left, which is where a thing
+ * doing your writing for you sits: the cards are in front of you and the hand
+ * that is not playing them is the one it works over. Close enough to be
+ * unmistakably *yours* — this is the one technique at the table whose
+ * manifestation faces the same way the guest does.
+ */
+export const GHOST_AT: Vec2 = [TABLE_AT[0] - 0.52, TABLE_AT[1] + 0.36]
+export const GHOST_SIZE = 0.15
+/** How high it floats over the wood, which is a hand's height and no more. */
+export const GHOST_HOVER = 0.26
+/** Neon's own pale violet, the one the registry publishes the writing in. */
+export const GHOST_INK = 0xd8c7ed
+
+// ── The three that are simply in the room ──────────────────────────
+/**
+ * Where Camilla's cat sits, and where it goes.
+ *
+ * The far corner on the guest's left, on the deck: a cat in a room is in a
+ * corner of it, and this one has no business at the table — it is not a move,
+ * it is a consequence, and it does not come near the cards until there is
+ * something to collect. Then it is beside Morena's chair, which is the whole
+ * of what Cat's Name does and the only thing it ever does.
+ */
+export const CAT_AT: Vec2 = [9.7, 0.25]
+export const CAT_ON_HER: Vec2 = [DEALER_AT[0] - 0.55, DEALER_AT[1] - 0.12]
+export const CAT_SIZE = 0.32
+/**
+ * Cat's Name's own pink, which is not the pink the walk draws Camilla in.
+ *
+ * She has two beasts in this archive — the Guardian Spirit Beast that takes a
+ * room apart, and the posthumous cat — and they are two abilities with two
+ * entries in the registry. So the table uses the one the registry publishes
+ * *this* one in, and the corridors keep theirs.
+ */
+export const CAT_FUR = 0xff8fab
+/**
+ * Where Tserriednich's stands, which is where a quadruped stands.
+ *
+ * On the deck to the guest's right, clear of the wood and close enough to be
+ * unmistakably at this table rather than in this room. It is drawn at the
+ * walk's own height for it: the beast is a beast wherever it is standing.
+ */
+export const CHIMERA_AT: Vec2 = [13.2, 1.5]
+export const CHIMERA_SIZE = 0.95
+/**
+ * And where Momoze's hangs, which is wherever it likes.
+ *
+ * At the guest's shoulder, drifting — it is the one manifestation here that is
+ * *asking* rather than watching, and a thing that keeps asking does not hold
+ * still. `spread` is what makes it come back: it wanders half a metre and is
+ * still there, which is the whole of the technique.
+ */
+export const SPRITE_AT: Vec2 = [TABLE_AT[0] + 0.7, TABLE_AT[1] - 0.1]
+export const SPRITE_SIZE = 0.26
+export const SPRITE_ROAM = 0.45
+/**
+ * And where Skill Hunter's book lies: open on the wood, at the guest's right.
+ *
+ * The one thing at this table that is *stationery on the table* rather than a
+ * creature in the room, and it is drawn open from the moment somebody sits down
+ * carrying it, because that is what a hunter does with it. What changes when
+ * the three conditions fall is what is on the page.
+ */
+export const BOOK_AT: Vec2 = [TABLE_AT[0] + 0.5, TABLE_AT[1] + 0.06]
+export const BOOK_SIZE = 0.13
+
+/**
+ * The branch that loses, which is what the quatrain is about.
+ *
+ * Not a reading of the hand: a reading of the *deal*. Morena marks a card
+ * before she deals it and ending on that card is a Yes the guest never gave —
+ * so the branch that loses was decided before anybody sat down, which is
+ * exactly the sort of thing automatic writing is for. On a clean deal, where
+ * she has marked nothing, the branch that loses is the plain one: a Yes is
+ * still an infection when it is given freely.
+ *
+ * `null` until the beast has written, and it never changes afterwards. The
+ * page it is printed on says it in verse rather than in a card name — the
+ * canon rule is that the writing is cryptic and that its subject cannot read
+ * their own — so what this answers is which quatrain, not which card.
+ */
+export function theLosingBranch(game: MorenaGame): AnswerCard | null {
+  if (!spentOn(game, 'prophecy')) return null
+  return game.marked ?? 'yes'
 }
 
 // ── Little Eye, over the table ─────────────────────────────────────
@@ -403,6 +501,12 @@ export function owlSaw(game: MorenaGame): QuestionCard[] | null {
  * - `4` — sight, hearing and voice taken. She stops turning to you.
  */
 export function dealerStage(game: MorenaGame): number {
+  // The cat collected. She is still in her chair and she is not breathing —
+  // which is the same drawing as being caught, and is meant to be: this
+  // vocabulary is built out of removals, and there is no larger one to make.
+  // Ahead of everything, because nothing that happens to a body afterwards
+  // happens to that one.
+  if (game.aftermath.includes('avenged')) return 3
   // Three Monkeys outlasts the hand it ended: the game is over the moment it is
   // cast, and she is still sitting there, unable to find the person opposite.
   if (spentOn(game, 'senses')) return 4
@@ -697,18 +801,190 @@ export function tableauOf(game: MorenaGame, floor: number): Apparition[] {
     })
   }
 
-  // And the vow, over the guest: the one thing at this table that cannot be
-  // narrowed, and the only one drawn on the person rather than on the cards.
-  if (game.shielded) {
+  // Lovely Ghostwriter's beast, over the guest's own end of the wood.
+  //
+  // The other manifestations at this table belong to the room — a fly in the
+  // ceiling corner, a bird on the bulkhead — and this one belongs to the
+  // person sitting down. It is at their elbow from the deal, and it writes at
+  // the first thing that happens to them: Morena's hand closing on one of
+  // their cards. `stage` is which of those two it is doing, and the second is
+  // permanent, because a poem that has been written stays written.
+  const writing = spentOn(game, 'prophecy')
+  if (writing !== null) {
+    seen.push({
+      ...common,
+      id: 'ghost-writer',
+      kind: 'ghost',
+      at: GHOST_AT,
+      y: top + GHOST_HOVER,
+      size: GHOST_SIZE,
+      colour: GHOST_INK,
+      stage: writing > 0 ? 1 : 0,
+    })
+  }
+
+  // Cat's Name, in the corner, doing nothing. Which is the technique.
+  //
+  // It is at the table from the moment somebody sits down carrying it and it is
+  // not a move: a posthumous counterattack needs no casting, and the cat does
+  // not care whether anybody knows it is there. Playing it is *telling her* —
+  // a deterrent nobody has been told about deters nobody — and that is the
+  // difference between the first two stages: a cat looking away, and a cat
+  // looking at the woman opposite.
+  //
+  // The third is the only thing in this game that happens after the last card.
+  // The one death at this table is the vow collecting itself, and if the guest
+  // dies with this in the corner the cat crosses the room. Where it ends up is
+  // the answer to what Cat's Name is worth here: beside her chair.
+  const avenging = spentOn(game, 'resurrection')
+  if (avenging !== null) {
+    const collected = game.aftermath.includes('avenged')
+    seen.push({
+      ...common,
+      id: 'names-cat',
+      kind: 'cat',
+      at: collected ? CAT_ON_HER : CAT_AT,
+      y: floor,
+      size: CAT_SIZE,
+      colour: CAT_FUR,
+      stage: collected ? 2 : avenging > 0 ? 1 : 0,
+    })
+  }
+
+  // Three-Lie Transformation, stood at the guest's right.
+  //
+  // The beast that taxes the bluff, and the one seat here that is worth as much
+  // to the woman opposite as to the person who brought it: a first lie cuts, a
+  // second infects, a third stops you being a person. It is drawn from the deal
+  // because that is what makes it work — a tax nobody can see is a tax nobody
+  // is paying. Nothing about it changes when it is played, for the same reason.
+  if (spentOn(game, 'lie-marks') !== null) {
+    seen.push({
+      ...common,
+      id: 'lie-beast',
+      kind: 'chimera',
+      at: CHIMERA_AT,
+      y: floor,
+      size: CHIMERA_SIZE,
+      colour: CHIMERA,
+      stage: 0,
+    })
+  }
+
+  // Momoze's, at the guest's shoulder, asking.
+  //
+  // The parody of the room it is standing in: a creature that asks whether you
+  // are free and keeps asking until you say yes, and saying yes hands it the
+  // controls. Everything Morena spends four hundred pages and twelve cards
+  // extracting, this thing gets by pestering — which is exactly why it is here,
+  // and why it is drawn as a thing hovering at your elbow rather than as
+  // anything on the table. What she asks for on top is the whole difference,
+  // and the aftermath is where the table says so.
+  const asking = spentOn(game, 'solicitation')
+  if (asking !== null) {
+    seen.push({
+      ...common,
+      id: 'free-sprite',
+      kind: 'sprite',
+      at: SPRITE_AT,
+      y: floor + 1.3,
+      size: SPRITE_SIZE,
+      colour: SPRITES[asking > 0 ? 4 : 0],
+      // Which of the flock's shapes it is. The walk gives each sprite its own,
+      // and this one keeps the same one for the length of a hand.
+      stage: 2,
+      spread: SPRITE_ROAM,
+    })
+  }
+
+  // Skill Hunter's book, open on the wood at the guest's right.
+  //
+  // The three conditions of the theft — see the ability in action, question its
+  // owner and be answered, touch the imprint — are not a checklist somebody
+  // wrote for this table. They are Chrollo's own, and a negotiation game in a
+  // closed room is the one place in the canon where all three fall out of the
+  // furniture: she deals it, she answers, and the kiss is the touch. So the
+  // book is open from the start and the page is blank, and what fills it is the
+  // hand being played to the end.
+  const hunting = spentOn(game, 'theft')
+  if (hunting !== null) {
+    seen.push({
+      ...common,
+      id: 'hunter-book',
+      kind: 'book',
+      at: BOOK_AT,
+      y: top + 0.02,
+      size: BOOK_SIZE,
+      colour: BOOK,
+      // A page in it, once the theft has actually gone through. Until then it is
+      // an open book with nothing written in it, which is the honest drawing of
+      // three conditions that have not all been met.
+      stage: game.aftermath.includes('stolen') ? 1 : 0,
+    })
+  }
+
+  // Moonlight Act: the pen, the paper, and the corner they end up in.
+  //
+  // Longhi's technique is not a thing that happens to somebody — it is two
+  // people agreeing in writing, and the writing is the ability: she transmutes
+  // her aura into a pen and a sheet, states the terms aloud, and both parties
+  // sign. So the two of them are on the table from the moment somebody sits
+  // down carrying it, the way the owl is on its bulkhead: a blank sheet held up
+  // between the two chairs, and a pen lying beside it. Nothing has been agreed
+  // and the room says so by having nothing written on it.
+  //
+  // Signing is the cast. The sheet comes down out of the air, the terms are on
+  // it, and it stays in the corner of the wood between them for the rest of the
+  // hand with the pen across it — which is what a signed contract does at a
+  // table, and it is the only thing at this one that outlives the game: this is
+  // the technique that turns a won Yes into something anybody can be held to.
+  const signed = spentOn(game, 'contract')
+  if (signed !== null) {
+    seen.push({
+      ...common,
+      id: 'act-contract',
+      kind: 'contract',
+      at: signed > 0
+        ? [TABLE_AT[0] + 0.62, TABLE_AT[1] - 0.3]
+        : [TABLE_AT[0], TABLE_AT[1] + 0.22],
+      // Held up between them while it is blank, and lying on the wood once it
+      // has been signed. A contract in the air is a contract being read out.
+      y: signed > 0 ? top + 0.006 : top + 0.26,
+      // The width of the sheet, in metres. Everything else is drawn off it.
+      size: 0.2,
+      colour: ACT_PAPER,
+      stage: signed > 0 ? 1 : 0,
+    })
+  }
+
+  // And the vow, in the guest's own chest.
+  //
+  // It was a mark hanging over the chair, which was the one thing at this table
+  // nobody could see: the visitor *is* the chair, and a sigil above your own
+  // head is a sigil for other people. Judgment Chain is not for other people —
+  // Kurapika sets it in a heart, and setting it in your own is the whole of what
+  // makes it the only true immunity here. So it is worn, and looking down at
+  // yourself is how it is read.
+  //
+  // Passive, in the strict sense the owl on the bulkhead is: the heart is there
+  // from the moment somebody sits down carrying the chain, beating, in the
+  // clear. Swearing is the chain closing on it — that is the cast — and the
+  // last stage is the vow being collected, which the walk says the way it says
+  // everything final about a body: the thing that was moving stops.
+  const vowed = spentOn(game, 'heart-vow')
+  if (vowed !== null) {
     seen.push({
       ...common,
       id: 'guest-vow',
-      kind: 'mark',
-      at: [GUEST_AT[0], GUEST_AT[1] - 0.35],
-      y: floor + 1.55,
-      size: 0.16,
-      colour: VOW_MARK,
-      stage: 0,
+      kind: 'vow-heart',
+      // Where the chair is, so it belongs to this deck and this room. Worn
+      // rather than placed, so the scene puts it at the sternum every frame and
+      // neither of these is what is finally drawn.
+      at: GUEST_AT,
+      y: floor + 1.0,
+      size: 0.055,
+      colour: HEART,
+      stage: game.aftermath.includes('sworn-struck') ? 2 : vowed > 0 ? 1 : 0,
     })
   }
 

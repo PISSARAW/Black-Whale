@@ -110,6 +110,15 @@ export type ApparitionKind =
   /** Camilla's other one, taking apart the room that wears her name. */
   | 'cat'
   /**
+   * Lovely Ghostwriter's beast, at the elbow of whoever it is writing for.
+   *
+   * Neon's, and Chrollo's since he took it: a pale animal with its mouth open
+   * and a pen in one hand, which does the writing while its owner does not.
+   * The only manifestation in the archive that belongs to the person rather
+   * than to the room they are standing in.
+   */
+  | 'ghost'
+  /**
    * Morena Prudo, seated behind her fan in the hideout's office.
    *
    * The only apparition in the walk that is a person rather than a technique —
@@ -121,6 +130,27 @@ export type ApparitionKind =
   | 'dealer'
   /** One card of that game, face up or face down on the table between them. */
   | 'game-card'
+  /**
+   * The visitor's own heart, worn where it is, with the vow wound round it.
+   *
+   * Judgment Chain is the one capability in the archive that is not aimed at
+   * the room: Kurapika's chain goes into a chest, and the chest it goes into
+   * here is the reader's. So this is the only apparition in the walk that is
+   * *inside* the person carrying it — worn like the Dowsing Chain and the open
+   * book, but at the sternum rather than in a hand, and visible by looking
+   * down at yourself, which is the only direction the vow points.
+   */
+  | 'vow-heart'
+  /**
+   * Moonlight Act's pen and paper, and the contract they become.
+   *
+   * The one ability in the archive whose manifestation is stationery: Longhi
+   * transmutes her aura into a pen and a sheet, and what the technique does is
+   * done by writing on the one with the other. Blank and held up between the
+   * two parties while the terms are being stated; signed, and lying in the
+   * corner of the table, once they have agreed to them.
+   */
+  | 'contract'
 
 /**
  * One thing Nen has left standing in the ship.
@@ -232,8 +262,26 @@ const GUM = 0xf06bb5
 export const INSECT = 0x55c2ff
 /** The Dowsing Chain is steel: the pale blue the dock already publishes it in. */
 const CHAIN = 0x8ecae6
-/** Double Face's violet, the one the registry publishes the bookmark in. */
-const BOOK = 0x9c7ac4
+/**
+ * The heart the vow is sworn on, and the links wound round it.
+ *
+ * Two colours rather than one, because the whole of this manifestation is the
+ * difference between them: meat, and the thing holding it. The flesh is the
+ * dark red the source draws it in and the chain is white — not the Dowsing
+ * Chain's steel blue, which is a tool, but the light Kurapika's chains are
+ * drawn in when one of them is a judgment. Exported for the same reason the
+ * insect's blue is: `$lib/tour/morena` swears the same vow over a card table.
+ */
+export const HEART = 0x7d2338
+export const VOW_CHAIN = 0xf4f4ff
+/**
+ * Double Face's violet, the one the registry publishes the bookmark in.
+ *
+ * Exported because the same boards are opened at Morena's table: Skill Hunter
+ * lies on the wood there, and a book that was one colour in the corridors and
+ * another on a card table would read as two books.
+ */
+export const BOOK = 0x9c7ac4
 /** And the ribbon, which has to be the one thing in the book that is not violet. */
 export const BOOKMARK_RIBBON = 0xffd166
 /**
@@ -290,7 +338,15 @@ const NOTE = 0xd7c6f7
  * and it has to be told from the wheel that produced it at a glance.
  */
 const MEDUSA = 0xd98cae
-const CHIMERA = 0x9e6d89
+/**
+ * Tserriednich's, in the violet the walk has always stood it in.
+ *
+ * Exported for the reason the owl's grey-blue and the insect's blue are: the
+ * same beast stands in the hideout's office when somebody sits down at Morena's
+ * table carrying Three-Lie Transformation, and a Guardian Spirit Beast that was
+ * one colour in the corridors and another over the wood would read as two.
+ */
+export const CHIMERA = 0x9e6d89
 /** What a third lie leaves standing: the same violet, gone bad. */
 const MONSTER = 0x6f3f66
 const TOAD = 0x7fb08a

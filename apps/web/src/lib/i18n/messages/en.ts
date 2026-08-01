@@ -1028,6 +1028,8 @@ export const en = {
         watching: 'LSDF is standing in this room. What it sees, she is told.',
         unwatched: 'Nothing in this room is watching any more.',
         buys: 'Buys',
+        /** The one that is not pressed for: it writes when the table moves. */
+        unbidden: 'Nobody plays this one. It writes when she reaches into your hand.',
         costs: 'Costs',
         seen: 'She saw that.',
         unseen: 'Nobody saw that.',
@@ -1051,6 +1053,51 @@ export const en = {
         book: {
           title: 'The book, open at two pages',
           body: 'Double Face is not a move. It holds two of what Chrollo has stolen live at once — these two, drawn when the cards were — and each is played on its own key and spent out of its own purse.',
+        },
+
+        /**
+         * The quatrain the beast writes, and what it is about.
+         *
+         * Automatic writing: nobody asks for it and its subject is never shown
+         * their own, so what the page can honestly print is a poem rather than
+         * a card name. It is about the branch that loses — which at this table
+         * was decided before the deal, by whichever card she marked.
+         */
+        ghost: {
+          title: 'The quatrain the beast wrote',
+          body: 'It was writing while Morena reached into your hand. Nobody asked it to, and it will not write again — a prophecy that revised itself would be worth nothing. What it is about is the branch that loses.',
+          verse: {
+            yes: [
+              'The small red word costs nothing to say',
+              'and cannot be unsaid afterwards.',
+              'The hand that comes down to it comes down',
+              'on a mouth that has already agreed.',
+            ],
+            no: [
+              'The blue one is honoured. She says so,',
+              'and she is made of the promises she keeps.',
+              'Watch, then, the card she never reaches for:',
+              'a door left open was left open on purpose.',
+            ],
+            back: [
+              'One card fetches the others back,',
+              'and this one was opened before it was dealt.',
+              'The green is not the way out of the hand.',
+              'It is the hand, waiting for your arm.',
+            ],
+            joker: [
+              'The yellow one wears either face',
+              'and is told which at the last moment.',
+              'Ask whose mouth does the telling',
+              'once everything else has left the table.',
+            ],
+            x: [
+              'The violet one ends the negotiation',
+              'and leaves nothing signed on either side.',
+              'It is the branch she cannot spend —',
+              'so it is the branch she prepared.',
+            ],
+          },
         },
 
         /**
@@ -1184,6 +1231,16 @@ export const en = {
             costs:
               'It answers a clause she was never going to use. She does not kill her candidates, she recruits them.',
           },
+          resurrection: {
+            buys: 'A cat in the corner that does nothing at all — until you die, and then it kills whoever did it.',
+            costs:
+              'It answers a direct killer and nothing else, and she does not kill her candidates. Telling her is the only part of it you can play.',
+          },
+          solicitation: {
+            buys: 'The beast at your shoulder asks, and asks again, and a yes hands it the controls. This whole game, with the negotiation taken out.',
+            costs:
+              'What it collects is not the Yes on this table. It is a manifestation in a small room, and she can see it asking.',
+          },
           'desire-trap': {
             buys: 'Her own opening, played back at her: what she wants, named out loud and set down as bait.',
             costs:
@@ -1271,6 +1328,10 @@ export const en = {
           trapped: 'She was made to answer her own opening. Nobody has done that to her before.',
           deterred:
             'Killing you costs her one of her own. She was never going to, but now she cannot afford to have been going to.',
+          solicited:
+            'The beast got its yes. Nobody was infected by it, nobody was kissed, and nobody had to watch a murder — which is exactly what it is worth, and exactly why she asks for all three.',
+          avenged:
+            'You died at this table, and the cat crossed the room. Cat’s Name does not need to be told, believed or cast: it needed you dead, and she is the one who made that happen.',
           evicted:
             'She was taken out of her own chair before the last card came down. Nobody said Yes, so nobody was recruited — and a negotiation she did not finish is the one thing the canon has no answer for.',
           proxied:

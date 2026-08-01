@@ -933,6 +933,7 @@ export const fr: Messages = {
         watching: 'LSDF se tient dans cette pièce. Ce qu’elle voit, Morena l’apprend.',
         unwatched: 'Plus rien ici ne regarde.',
         buys: 'Achète',
+        unbidden: 'Personne ne la joue. Elle écrit quand Morena plonge la main dans votre jeu.',
         costs: 'Coûte',
         seen: 'Elle a vu.',
         unseen: 'Personne n’a rien vu.',
@@ -948,6 +949,43 @@ export const fr: Messages = {
         book: {
           title: 'Le livre, ouvert à deux pages',
           body: 'Double Face n’est pas un coup. Il tient vivantes deux des techniques volées par Chrollo — ces deux-là, tirées au moment de la donne — et chacune se joue sur sa propre touche et se dépense sur son propre compte.',
+        },
+
+        ghost: {
+          title: 'Le quatrain que la bête a écrit',
+          body: 'Elle écrivait pendant que Morena plongeait la main dans votre jeu. Personne ne le lui a demandé, et elle n’écrira pas une seconde fois — une prophétie qui se corrige ne vaut rien. Ce qu’elle dit porte sur la branche perdante.',
+          verse: {
+            yes: [
+              'Le petit mot rouge ne coûte rien à dire',
+              'et ne se reprend pas.',
+              'La main qui finit sur lui finit',
+              'sur une bouche qui a déjà consenti.',
+            ],
+            no: [
+              'Le bleu est honoré : elle l’a dit,',
+              'et elle est faite des promesses qu’elle tient.',
+              'Regardez alors la carte qu’elle ne prend jamais :',
+              'une porte laissée ouverte l’a été exprès.',
+            ],
+            back: [
+              'Une carte va rechercher les autres,',
+              'et celle-ci était ouverte avant d’être donnée.',
+              'Le vert n’est pas la sortie de la main.',
+              'C’est la main, qui attend votre bras.',
+            ],
+            joker: [
+              'Le jaune porte les deux visages',
+              'et l’on ne lui dit lequel qu’au dernier instant.',
+              'Demandez quelle bouche le lui dira',
+              'quand tout le reste aura quitté la table.',
+            ],
+            x: [
+              'Le violet annule la négociation',
+              'et ne laisse rien de signé de part ni d’autre.',
+              'C’est la branche qu’elle ne peut pas dépenser —',
+              'donc c’est la branche qu’elle a préparée.',
+            ],
+          },
         },
 
         owl: {
@@ -1074,6 +1112,16 @@ export const fr: Messages = {
             costs:
               'Cela répond à une clause qu’elle n’allait jamais utiliser. Elle ne tue pas ses candidats, elle les recrute.',
           },
+          resurrection: {
+            buys: 'Un chat dans le coin qui ne fait rien du tout — jusqu’à ce que vous mouriez, et alors il tue celle qui l’a fait.',
+            costs:
+              'Il ne répond qu’à un tueur direct, et elle ne tue pas ses candidats. Le lui dire est la seule part que vous pouvez jouer.',
+          },
+          solicitation: {
+            buys: 'La bête à votre épaule demande, redemande, et un oui lui donne les commandes. Toute cette partie, la négociation en moins.',
+            costs:
+              'Ce qu’elle récolte n’est pas le Oui de cette table. C’est une manifestation dans une petite pièce, et elle la voit demander.',
+          },
           'desire-trap': {
             buys: 'Son ouverture à elle, rejouée contre elle : ce qu’elle veut, nommé à voix haute et posé comme appât.',
             costs:
@@ -1162,6 +1210,10 @@ export const fr: Messages = {
             'On l’a forcée à répondre à sa propre ouverture. Personne ne lui avait encore fait ça.',
           deterred:
             'Vous tuer lui coûte quelqu’un des siens. Elle n’allait pas le faire, mais maintenant elle ne peut plus se permettre d’y avoir pensé.',
+          solicited:
+            'La bête a eu son oui. Personne n’en a été infecté, personne n’a été embrassé, personne n’a eu à regarder un meurtre — ce qui est exactement ce qu’il vaut, et exactement pourquoi elle exige les trois.',
+          avenged:
+            'Vous êtes mort à cette table, et le chat a traversé la pièce. Le Nom du chat n’a besoin ni d’être annoncé, ni d’être cru, ni d’être lancé : il avait besoin que vous soyez mort, et c’est elle qui s’en est chargée.',
           evicted:
             'Elle a été sortie de sa propre chaise avant que la dernière carte ne tombe. Personne n’a dit Oui, donc personne n’a été recruté — et une négociation qu’elle n’a pas finie est la seule chose à laquelle le canon n’a pas de réponse.',
           proxied:

@@ -686,11 +686,11 @@ export const hatsuFr: Record<string, HatsuTextOverride> = {
   'padaille-weapon-transformation': {
     name: 'Je viens te chercher',
     owner: 'Padaille',
-    action: 'Choisir une fonction d’arme',
+    action: 'Frapper avec ce que le bras est devenu',
     instruction:
-      'Faites défiler la main entre marteau, perceuse et hache : l’un aplatit la cible, l’autre perce ce qu’elle gardait fermé, le dernier lui retire une partie.',
-    rule: 'Padaille change son propre corps en armes et en outils familiers, plutôt que d’invoquer un équipement indépendant.',
-    cost: 'Forme d’arme connue · partie du corps transformée',
+      'Frappez une cible et voyez ce qu’est devenu le bras : un marteau l’enfonce dans le sol, une perceuse y perce un trou, une hache la coupe en deux.',
+    rule: 'Le bras prend l’une des trois formes au hasard — Padaille change son propre corps en outils qu’il connaît plutôt que d’invoquer un équipement, mais il ne choisit pas laquelle répond.',
+    cost: 'Membre transformé · aucun mot à dire sur la forme',
   },
   'camilla-guardian-coercion': {
     name: 'Coercition de la bête gardienne de Camilla',

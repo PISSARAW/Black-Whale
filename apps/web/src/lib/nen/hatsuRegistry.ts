@@ -1378,11 +1378,11 @@ export const HATSU_PROFILES: HatsuProfile[] = [
     owner: 'Padaille',
     kind: 'weapon-body',
     instruction:
-      'Cycle the hand through hammer, drill and axe: one flattens the target, one bores open what it kept shut, one takes a part off it.',
-    rule: 'Padaille changes his own body into familiar weapons and tools rather than conjuring independent equipment.',
-    cost: 'Known weapon shape · transformed body part',
+      'Strike a target and see what the arm became: a hammer drives it into the floor, a drill bores a hole through it, an axe cuts it in two.',
+    rule: 'The arm takes one of the three shapes at random — Padaille transforms his own body into tools he knows rather than conjuring equipment, but he does not pick which one answers.',
+    cost: 'Transformed limb · no say in the shape',
     color: '#c6925e',
-    action: 'Choose a weapon function',
+    action: 'Swing whatever the arm became',
   },
   {
     id: 'camilla-guardian-coercion',

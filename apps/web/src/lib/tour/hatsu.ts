@@ -36,7 +36,7 @@ import type { HatsuInteractionKind, HatsuProfile } from '$lib/nen/hatsuRegistry'
 /**
  * The techniques that have something to take hold of in a reconstruction.
  *
- * The archive holds eighty-three, and most of them work on what a page *says*:
+ * The archive holds eighty-two, and most of them work on what a page *says*:
  * they seal a control, forge a heading, read a chapter that has not happened
  * yet. The walk has none of that — it has rooms, walls, doors, distance, a
  * visitor and the punishments it deals them — so a technique is carried across
@@ -74,6 +74,7 @@ export const TOUR_HATSU_KINDS = [
   'stitch',
   'animate',
   'shred',
+  'weapon-body',
   'growth',
   'polarity',
   'identity-swap',
@@ -89,6 +90,21 @@ export const TOUR_HATSU_KINDS = [
   'snakes',
   'portal',
   'guardian',
+  // The Guardian Spirit Beasts, which are a body in the room rather than an
+  // effect on it. Everything else in this list is something done to the ship;
+  // these two are something that turns up in it and then does something — so
+  // what the walk had to learn for them is how to put an animal in a room and
+  // let it act on its own. Camilla's raises everything standing there off the
+  // deck; Zhang Lei's mints a coin and waits to see whether anyone takes it;
+  // Tserriednich's marks one thing three times, and the third is the one there
+  // is no coming back from; Tubeppa's fills the room with what it synthesized.
+  'coercive-beast',
+  'coin-growth',
+  'lie-marks',
+  'drug-synthesis',
+  'aura-levy',
+  'diffusive-smoke',
+  'solicitation',
   // On the visitor walking through them.
   'enhance',
   'vehicle',
@@ -146,6 +162,12 @@ export const BODY_HATSU_KINDS = new Set<HatsuInteractionKind>([
   // stand, which is the only place the heat could come from.
   'pain-armour',
   'sun-flare',
+  // Tyson's eye-wog attaches to a reader, not to a room: it comes up in front
+  // of whoever is walking, takes what they have committed, and gives it back as
+  // light. What it lights is the room they happen to be standing in, which is
+  // read rather than aimed at — an eye-wog does not have to be pointed at the
+  // dark to know it is in it.
+  'aura-levy',
   'elastic', // Cast without target acts as Propulsion or Faux Tissu
 ])
 
@@ -177,6 +199,7 @@ export const SOLID_HATSU_KINDS = new Set<HatsuInteractionKind>([
   'stitch',
   'animate',
   'shred',
+  'weapon-body',
   'growth',
   'polarity',
   'identity-swap',
@@ -185,6 +208,10 @@ export const SOLID_HATSU_KINDS = new Set<HatsuInteractionKind>([
   // aimed at is a thing, and the room it points at is what it does with a
   // reticle that has nothing in it.
   'dowsing',
+  // Tserriednich's beast is sent at one thing and marks that thing: a curse
+  // that escalates on a target has to have a target to escalate on, and a room
+  // cannot be caught in a second lie.
+  'lie-marks',
 ])
 
 /**
@@ -271,6 +298,97 @@ export const OWL_SECONDS = 20
 export const OWL_FILM_SECONDS = 10
 
 /**
+ * Where the visitor is standing: the point, and the room that point falls in.
+ *
+ * The pair is named because nothing here can use one without the other — a
+ * distance needs the point, and the deck it is measured across needs the room —
+ * and because passing them apart is how they get passed the wrong way round.
+ */
+export interface Stood {
+  at: Vec2
+  standingIn: string | null
+}
+
+/** Where the visitor is standing and what they are pointing at from there. */
+export interface Aim {
+  at: Vec2
+  /** Bearing in radians, as the walk's own movement code has it. */
+  heading: number
+  /** How far down the line to look, in metres. Each caller has its own reach. */
+  range?: number
+}
+
+/** A deck at a moment of the walk's clock. */
+export interface DeckMoment {
+  tierId: string
+  seconds?: number
+}
+
+/** That same deck, plus the visitor, so anything carried rides along. */
+export interface LoadedDeck extends DeckMoment {
+  /** Where the visitor is, so anything Kurton is carrying moves with them. */
+  carrier?: Vec2
+}
+
+/** A deck, a point on it, and the way the visitor is facing. */
+export interface Heading {
+  tierId: string
+  at: Vec2
+  heading: number
+}
+
+/** The reconstruction, and what the techniques have done to it. */
+export interface Scene {
+  ship: Ship
+  world: TourWorld
+}
+
+/** One solid and the hold a technique currently has on it. */
+export interface HeldSolid {
+  structure: Structure
+  hold: SolidHold | undefined
+}
+
+/** A ray cast across a deck: where it starts, and the way it runs. */
+export interface Ray {
+  at: Vec2
+  dx: number
+  dz: number
+}
+
+/** A tune, and the room it is played in. */
+export interface Played {
+  tune: TourTune
+  spaceId: string
+}
+
+/** The pair of doors a step is taken between. */
+export interface Doors {
+  spaceId: string | null
+  arrivedFrom: string | null
+}
+
+/** What the paired doors need beyond themselves, when they need anything. */
+export interface DoorOptions {
+  ship?: Ship
+  random?: () => number
+}
+
+/** Which room the owl is sent to, and how one is picked when it is at random. */
+export interface Perch {
+  targetId: string
+  standingIn: string | null
+  random: () => number
+}
+
+/** One marked solid, read at a moment of the walk's clock. */
+export interface Mark {
+  id: string
+  hold: SolidHold
+  seconds: number
+}
+
+/**
  * What Nen is currently doing to the ship.
  *
  * One flat value rather than a store per technique: the scene rebuilds from it,
@@ -352,6 +470,16 @@ export interface TourWorld {
   wound: string | null
   /** Rotations wound into the next punch. */
   windup: number
+  /**
+   * How many times Padaille's arm has come down.
+   *
+   * A tally rather than a hold — nothing is being held, the count is only what
+   * the next draw is read off — so `worldIsQuiet` does not consult it and Nen
+   * Stitches has nothing here to put back. It exists because a technique whose
+   * whole character is that you do not know what you will get has to give a
+   * different answer to the same target twice.
+   */
+  swings: number
 
   /**
    * Rooms whose doorways are shut.
@@ -501,6 +629,140 @@ export interface TourWorld {
 
   /** Rooms where a Bungee Gum trap is set. */
   gumTraps: string[]
+
+  /**
+   * The room Camilla's Guardian Spirit Beast is hanging in, or `null`.
+   *
+   * One room and one beast: the ability is a single animal, so raising it
+   * somewhere else is that same animal moving rather than a second one. What it
+   * does to the room it is in is written on the solids — see `adrift` — because
+   * the beast is a body and the levitation is a hold, and the walk has always
+   * kept those two apart.
+   */
+  medusa: string | null
+
+  /**
+   * The room Tserriednich's Guardian Spirit Beast is standing in, or `null`.
+   *
+   * It goes where it was last asked to touch something: the beast is what
+   * delivers each of the three contacts, so it has to be beside the thing it is
+   * marking. What the contacts did is on the solids themselves — see `lies` —
+   * and this is only where the animal is.
+   */
+  chimera: string | null
+
+  /**
+   * Zhang Lei's Guardian Spirit Beast: where it hangs, and what is in its mouth.
+   *
+   * `coin` is the value of the coin currently hanging at the wheel's mouth,
+   * which is the whole of the ability — one is produced, it is worth ten times
+   * the last, and it is worth nothing to anyone until somebody takes it. There
+   * is always one: the wheel mints the next the instant the last is taken, so
+   * this is a number rather than a number-or-nothing.
+   */
+  wheel: { spaceId: string; coin: number } | null
+
+  /**
+   * The room Tubeppa's Guardian Spirit Beast is squatting in, or `null`.
+   *
+   * What it is doing there is on the solids — see `melting` — and it goes on
+   * doing it after the cast: the gas is the one technique in the walk that
+   * keeps working while nobody touches anything, so the scene ticks it the way
+   * it ticks the fish. Move the beast and the room it left stops melting where
+   * it had got to, which is what a gas that has stopped being made does.
+   */
+  toad: string | null
+
+  /**
+   * Rooms Tyson's eye-wogs have lit, which had no daylight of their own.
+   *
+   * The levy gives back in proportion to what it took, and what the walk has to
+   * give back with is light: a room the blueprint put no window in is a room
+   * lit by whatever the reconstruction hangs in it, and this is the list of the
+   * ones an eye-wog has improved on. The bubble the visitor carries is the
+   * other half of the same answer — see `TourBody.halo`.
+   */
+  lit: string[]
+
+  /**
+   * The room Luzurus's Guardian Spirit Beast is coiled in, or `null`.
+   *
+   * The bait was always the visible half of Desire Trap — see `trap` — and this
+   * is the half that closes: the beast is what secretes over everything in the
+   * room, what reels in what the secretion caught, and what eats it when it
+   * arrives. The reeling is on the walk's clock rather than on a cast, like the
+   * gas, because a trap that only worked while you kept pressing a key would be
+   * a trap you could stand still and win.
+   */
+  centipede: string | null
+
+  /**
+   * Salé-salé's Guardian Spirit Beast: the room it is filling, and how full.
+   *
+   * `filled` is a count of the steps it has taken rather than a fraction,
+   * because the walk has no continuous quantity in it anywhere — see the melt,
+   * which keeps the same rule. It counts up to `SMOKE_FULL` on the walk's clock
+   * and stops there, and stopping is the visible part: a beast whose mouths are
+   * still open is a room that is still filling, and a room that is full is a
+   * beast that has shut them.
+   */
+  smoke: { spaceId: string; filled: number } | null
+
+  /**
+   * The rooms Momoze's Guardian Spirit Beasts are loose in.
+   *
+   * The only one of the eight that is a crowd rather than an animal: what the
+   * ability puts in the ship is a great many of them, of every size and shape,
+   * and they do not keep to the room they were called into — they go through
+   * the walls and carry on. So this is a list of rooms rather than one, and
+   * what it means is "the flock is somewhere in here", which is as precise as
+   * the ability ever gets.
+   */
+  menagerie: string[]
+
+  /**
+   * The room Marayam's Guardian Spirit Beast is standing in the doorway of.
+   *
+   * The isolation is already carried by `isolated` and the refusal to let
+   * anyone out by `pinned`; this is the animal that is doing both, and it is
+   * kept separately because it is a thing in the room rather than a rule about
+   * one — the walk has to know where to draw it, and what to make roar at
+   * somebody trying the door.
+   */
+  dragon: string | null
+
+  /**
+   * The room Camilla's other beast is in, breaking it up.
+   *
+   * Cat's Name was the one ability in the walk that was entirely a promise: a
+   * room wore the name, and unless somebody killed it nothing was ever seen.
+   * The cat is what makes the promise visible — it comes when the name is put
+   * on a room and it takes that room apart while it waits, one thing at a time,
+   * on the same clock the other beasts work on.
+   */
+  cat: string | null
+
+  /**
+   * Where the visitor was standing when a Guardian Spirit Beast was called up.
+   *
+   * Six of the ten are a body that turns up *with* you rather than one that
+   * appears wherever you happened to be looking: the wheel puts a coin out
+   * where you can reach it, the cat comes to the room you are in, the jellyfish
+   * hangs over your head. Drawn at the reticle instead, they came up in the far
+   * end of a hundred-and-forty-metre promenade, or in a bulkhead — which is a
+   * beast nobody ever sees and a beast standing in the steel.
+   *
+   * So the walk remembers the caster's own spot, once, at the moment of the
+   * cast. Not the visitor's live position: a beast that walked around after you
+   * would be a familiar, and none of these is one. One field rather than one
+   * per beast, because the walk hands out one aura at a time.
+   *
+   * The way they were facing is kept with the spot, because a point on its own
+   * is not enough to put a beast where they can see it: stepped off along the
+   * ship's own axes it came up behind the visitor as often as in front, and a
+   * beast at your back is a beast that never appeared.
+   */
+  summoned: { spaceId: string; at: Vec2; heading: number } | null
 }
 
 export interface TourBook {
@@ -569,6 +831,27 @@ export interface TourBody {
    * The timestamp when the automatic pilot (Black Voice self-cast) ends, or null if not active.
    */
   autopilotUntil: number | null
+
+  /**
+   * What the visitor has taken off Zhang Lei's wheel, as one number.
+   *
+   * The coin accumulates Nen and the Nen is the whole of what it is worth, so
+   * what a coin in the pocket looks like is aura: nought while nothing has been
+   * taken, and the value of everything taken once something has. The scene
+   * reads it as a light around the visitor and the panel reads it as a figure;
+   * neither of them has to know that a coin was involved.
+   */
+  gilded: number
+
+  /**
+   * How bright the bubble Tyson's eye-wog left round the visitor is.
+   *
+   * Nought while there is none. It goes up when the levy has nowhere dark to
+   * spend itself — a room with daylight in it, or one an eye-wog has already
+   * been through — because the happiness is returned either way, and if it
+   * cannot go into the room it goes onto the reader.
+   */
+  halo: number
 }
 
 export const RESTING_BODY: TourBody = {
@@ -584,6 +867,8 @@ export const RESTING_BODY: TourBody = {
   deduced: [],
   packed: null,
   autopilotUntil: null,
+  gilded: 0,
+  halo: 0,
 }
 
 /**
@@ -610,6 +895,16 @@ export interface SolidHold {
   bound?: boolean
   /** Biohazard: it wanders its room, still as solid as it was. */
   alive?: boolean
+  /**
+   * Padaille's drill went through it.
+   *
+   * The walk bakes a solid as a box and has nowhere to put a hole in one, so
+   * what it draws is not the bore but the consequence of it: a thing with a
+   * hole through it stops being a thing you have to walk around. It stands
+   * exactly where it stood and the visitor goes straight through where the
+   * drill was, which is the only part of a bore the ship can actually feel.
+   */
+  bored?: boolean
   /** The Sun and Moon's two marks. */
   mark?: 'sun' | 'moon'
   /**
@@ -621,6 +916,45 @@ export interface SolidHold {
    * them, and every other technique still finds it exactly where it was.
    */
   dancing?: boolean
+  /**
+   * Camilla's beast has it: it is off the deck, turning over in the air.
+   *
+   * Unlike the lively air's hold, this one changes something — a thing in the
+   * air is not a thing you walk into, so `solidWalls` drops it and the room's
+   * floor is clear for as long as the beast is up. That is the difference
+   * between a table dancing on the spot and a table two metres over your head.
+   */
+  adrift?: boolean
+  /**
+   * How many times Tserriednich's beast has touched this one: 1, 2 or 3.
+   *
+   * The escalation is the ability, so it is a count rather than three flags:
+   * the first contact shoves the thing, the second leaves the green on it, and
+   * the third is the one there is no fourth after — the solid is `gone` and a
+   * `monster` stands where it was.
+   */
+  lies?: number
+  /** The third contact landed: what is here now is not what was here. */
+  monster?: boolean
+  /**
+   * How far Tubeppa's gas has got through this one: 1, 2, 3, and then nothing.
+   *
+   * A stage rather than a rate, because the walk has no continuous quantity in
+   * it anywhere else: each tick of the gas takes every solid in the room one
+   * step further down, `squash` carries what that looks like, and the fourth
+   * step is `gone`. Nothing is given back — a thing that has melted has melted,
+   * and only Nen Stitches argues with that.
+   */
+  melting?: number
+  /**
+   * Luzurus's secretion is on this one: it is being reeled in, and then eaten.
+   *
+   * The number is how many steps it has taken towards whoever set the trap, and
+   * the reason it is a count rather than a flag is that it is the only hold in
+   * the walk that has somewhere to arrive: at the end of it the thing is not
+   * moved, it is `gone`, because the beast has closed on it.
+   */
+  glued?: number
   /** Order Stamp has put its 人 on this one: it is a puppet now. */
   stamped?: boolean
   /**
@@ -659,6 +993,7 @@ export const EMPTY_WORLD: TourWorld = {
   pairing: null,
   wound: null,
   windup: 0,
+  swings: 0,
   shut: [],
   guarded: [],
   pinned: null,
@@ -693,6 +1028,17 @@ export const EMPTY_WORLD: TourWorld = {
   book: CLOSED_BOOK,
   body: RESTING_BODY,
   gumTraps: [],
+  medusa: null,
+  chimera: null,
+  wheel: null,
+  toad: null,
+  lit: [],
+  centipede: null,
+  smoke: null,
+  menagerie: [],
+  dragon: null,
+  cat: null,
+  summoned: null,
 }
 
 /** Nothing taken, nothing open, nothing drained. */
@@ -711,7 +1057,9 @@ export const bodyIsRested = (body: TourBody): boolean =>
   !body.soothed &&
   !body.playing &&
   !body.deduced.length &&
-  body.packed === null
+  body.packed === null &&
+  !body.gilded &&
+  !body.halo
 
 /** Nothing in the world is being held by aura. */
 export const worldIsQuiet = (world: TourWorld): boolean =>
@@ -755,6 +1103,17 @@ export const worldIsQuiet = (world: TourWorld): boolean =>
   !world.gumTraps.length &&
   !world.flowered.length &&
   !world.scattered.length &&
+  !world.medusa &&
+  !world.chimera &&
+  !world.wheel &&
+  !world.toad &&
+  !world.lit.length &&
+  !world.centipede &&
+  !world.smoke &&
+  !world.menagerie.length &&
+  !world.dragon &&
+  !world.cat &&
+  !world.summoned &&
   bookIsShut(world.book) &&
   bodyIsRested(world.body)
 
@@ -826,6 +1185,12 @@ export type TourReport =
   | { kind: 'animated'; solidId: string }
   | { kind: 'shred-stuck'; solidId: string }
   | { kind: 'shred-cut'; solidId: string; left: number }
+  // Padaille's three, which are three reports rather than one with a tool on
+  // it: what the visitor wants to read is what happened, and finding out which
+  // tool it was is the same sentence.
+  | { kind: 'hammered'; solidId: string }
+  | { kind: 'bored'; solidId: string }
+  | { kind: 'halved'; solidId: string; apart: boolean }
   | { kind: 'grown'; solidId: string }
   | { kind: 'growth-refused'; solidId: string }
   | { kind: 'marked'; solidId: string; mark: 'sun' | 'moon' }
@@ -862,6 +1227,28 @@ export type TourReport =
   | { kind: 'worm-spent' }
   | { kind: 'double-posted'; spaceId: string }
   | { kind: 'double-spent'; spaceId: string }
+  // The Guardian Spirit Beasts.
+  | { kind: 'beast-raised'; spaceId: string; solids: number }
+  | { kind: 'beast-dismissed'; spaceId: string; solids: number }
+  | { kind: 'wheel-raised'; spaceId: string; coin: number }
+  | { kind: 'wheel-dismissed'; spaceId: string }
+  | { kind: 'coin-taken'; spaceId: string; value: number; gilded: number }
+  | { kind: 'lie-pushed'; solidId: string; metres: number }
+  | { kind: 'lie-greened'; solidId: string }
+  | { kind: 'lie-transformed'; solidId: string }
+  | { kind: 'gas-loosed'; spaceId: string; solids: number }
+  | { kind: 'gas-lifted'; spaceId: string }
+  | { kind: 'melted'; spaceId: string; melting: number; gone: number }
+  | { kind: 'room-brightened'; spaceId: string; levied: number }
+  | { kind: 'halo-raised'; spaceId: string; levied: number; halo: number }
+  | { kind: 'reeled'; spaceId: string; pulled: number; eaten: number }
+  | { kind: 'smoke-loosed'; spaceId: string }
+  | { kind: 'smoke-lifted'; spaceId: string; filled: number }
+  | { kind: 'smoke-spread'; spaceId: string; filled: number; full: boolean }
+  | { kind: 'flock-loosed'; rooms: number; beasts: number }
+  | { kind: 'flock-called-in'; rooms: number }
+  | { kind: 'isolation-lifted'; spaceId: string }
+  | { kind: 'crushed-one'; spaceId: string; solidId: string; left: number }
   // On the visitor.
   | { kind: 'reinforced'; committed: number }
   | { kind: 'boarded'; passengers: number }
@@ -1110,6 +1497,347 @@ export function danceOffset(id: string, seconds: number): [number, number, numbe
   return [Math.sin(beat * 0.5) * 0.12, Math.abs(Math.sin(beat)) * 0.24, Math.cos(beat * 0.5) * 0.12]
 }
 
+/**
+ * Where a thing the jellyfish has off the deck is, this instant.
+ *
+ * Nothing like the dance, which is a hop on the spot: this is a thing with no
+ * floor under it any more, so it climbs, drifts and turns, and the three are on
+ * periods that do not divide into each other — a room the beast has hold of
+ * never comes back round to the arrangement it started in.
+ *
+ * The rise is the tell. A quarter of a metre of hop reads as dancing; a metre
+ * and a half of it, with the thing turning as it goes, reads as a room whose
+ * contents have stopped obeying the deck. The phase is off the id, as
+ * everywhere else here, so twenty things in one room go up in their own time
+ * and the same room lifts the same way twice.
+ *
+ * The fourth number is the turn, in radians: `driftSolids` needs it, and a
+ * levitating table that kept its bearing would be a table on an invisible lift.
+ */
+export function driftOffset(id: string, seconds: number): [number, number, number, number] {
+  let phase = 0
+  for (let i = 0; i < id.length; i++) phase = (phase * 31 + id.charCodeAt(i)) % 360
+  const own = (phase * Math.PI) / 180
+  // Up and held up: the rise is an offset sine about a metre off the deck
+  // rather than one that touches down, because a thing that came back to the
+  // floor every few seconds is a thing being bounced rather than one adrift.
+  const rise = 1.05 + Math.sin(seconds * 0.5 + own) * 0.45
+  return [
+    Math.sin(seconds * 0.37 + own) * 0.9,
+    rise,
+    Math.sin(seconds * 0.29 + own * 1.7) * 0.9,
+    seconds * 0.33 + own,
+  ]
+}
+
+/**
+ * The three things Padaille's arm can turn out to be.
+ *
+ * Ordered as the swing finds them rather than by what they do: the visitor
+ * does not choose, so there is nothing here for them to walk round. Every
+ * other three-way technique in the walk — the flute's airs, the owl's watches,
+ * the eye's orders — is a manner the visitor sets and can set back. This one
+ * is the opposite of that, and the list exists only so the draw has something
+ * to land on.
+ */
+export const PADAILLE_TOOLS = ['hammer', 'drill', 'axe'] as const
+export type PadailleTool = (typeof PADAILLE_TOOLS)[number]
+
+/**
+ * Which of the three the arm became, this swing.
+ *
+ * Off the hash of the target and the tally, for the reason the wander and the
+ * dance are: the walk has no die in it anywhere, and a technique that rolled
+ * `Math.random` would be the one thing in here that answered differently on a
+ * replay of the same walk. Reading the tally as well as the id is what stops
+ * the same cupboard from being hammered forever — hit it twice and the second
+ * swing is drawn again, not remembered.
+ */
+export function toolFor(id: string, swings: number): PadailleTool {
+  let phase = 0
+  for (let i = 0; i < id.length; i++) phase = (phase * 31 + id.charCodeAt(i)) % 997
+  return PADAILLE_TOOLS[(phase + swings * 7) % PADAILLE_TOOLS.length]
+}
+
+/** How flat the hammer leaves a thing it has driven into the deck. */
+export const HAMMERED_SQUASH = 0.16
+
+/** Everything the beast has off the deck, which is what the panel counts. */
+export const adriftSolidIds = (world: TourWorld): string[] =>
+  Object.entries(world.solids)
+    .filter(([, hold]) => hold.adrift && !hold.gone)
+    .map(([id]) => id)
+
+/**
+ * Momoze's flock, out over the rooms nearest wherever the visitor is.
+ *
+ * Not a cast. Everything else in the walk that puts something in the ship is
+ * aimed at a room, and this one has nothing to aim: what the ability does is
+ * ask, endlessly, wherever it happens to be, and the beasts are the asking. So
+ * the page looses them the moment the aura goes up — see the passive branch in
+ * `/tour` — and this is what it calls.
+ *
+ * They are loosed over the ten rooms nearest the visitor, which is the snakes'
+ * own reach and deliberately the same number: it is the walk's established
+ * answer to "near where you are standing", and a flock spread over three
+ * hundred rooms is a flock nobody ever meets. `null` when they are already out,
+ * so raising the aura twice does not re-roll where they are.
+ */
+export function looseTheFlock(world: TourWorld, ship: Ship, from: Stood): TourCastResult | null {
+  const { at, standingIn } = from
+  if (world.menagerie.length) return null
+  const here = standingIn ? ship.spaces.get(standingIn) : null
+  const rooms = [...ship.spaces.values()]
+    .filter((space) => space.tierId === (here?.tierId ?? ship.tiers[0].id))
+    .map((space) => ({ space, distance: distanceTo(ship, space, { at, standingIn }).metres }))
+    .sort((a, b) => a.distance - b.distance)
+    .slice(0, FLOCK_ROOMS)
+    .map((near) => near.space.id)
+  return {
+    world: { ...world, menagerie: rooms },
+    report: { kind: 'flock-loosed', rooms: rooms.length, beasts: rooms.length * FLOCK_PER_ROOM },
+  }
+}
+
+/**
+ * Where a Guardian Spirit Beast comes up: in front of the visitor, or nowhere.
+ *
+ * The spot and the way they were facing together, because the apparition layer
+ * needs both to put the body where it will be seen.
+ *
+ * `null` when the walk does not know what room the caster is in — cast from the
+ * index rather than from the deck — and the apparition layer then falls back to
+ * the room the beast was sent to, which is the only other honest answer.
+ */
+const calledUp = (spaceId: string | null, at: Vec2, heading = 0) =>
+  spaceId ? { spaceId, at, heading } : null
+
+/**
+ * Everything actually standing in a room, the aura's own copies included.
+ *
+ * What "in the room" means to a technique that works on a whole room at once:
+ * the blueprint's fittings and Gallery Fake's copies together, less whatever
+ * has already been swallowed, shredded or transformed out of existence.
+ */
+export const standingIn = (ship: Ship, world: TourWorld, spaceId: string): Structure[] =>
+  [...ship.structures, ...world.copies].filter(
+    (solid) => solid.spaceId === spaceId && !world.solids[solid.id]?.gone,
+  )
+
+/**
+ * A room the jellyfish has let go of: everything in it back on its own floor.
+ *
+ * Only the levitation is taken off. A thing that was pushed, grown or stamped
+ * before the beast got hold of it keeps all of that — the beast lifted it, it
+ * did not repair it — and a thing the walk was holding *only* because it was in
+ * the air is let go of entirely, or the empty hold would keep it out of the
+ * deck's own mesh for good.
+ */
+export function settleTheRoom(world: TourWorld, ship: Ship, spaceId: string): TourWorld {
+  const solids = { ...world.solids }
+  for (const solid of standingIn(ship, world, spaceId)) {
+    const hold: SolidHold = { ...solids[solid.id] }
+    delete hold.adrift
+    if (Object.keys(hold).length) solids[solid.id] = hold
+    else delete solids[solid.id]
+  }
+  return { ...world, solids }
+}
+
+/**
+ * How many steps of the gas a thing survives, and how far down each one takes it.
+ *
+ * Four stages counting the one the cast starts them at: gas in the room and
+ * nothing showing yet, then two-thirds of its own height, then a third, then a
+ * puddle, and then it is not there. The numbers are `squash` multipliers, so
+ * the melt costs the walk nothing it was not already able to draw.
+ */
+export const MELT_STAGES = [1, 0.62, 0.3, 0.12]
+
+/**
+ * One tick of Tubeppa's gas, on the walk's clock rather than on a cast.
+ *
+ * The scene asks for this every couple of seconds while the beast is up, the
+ * way it asks for the fish. Everything in the beast's room that has not
+ * finished melting goes down one stage; anything that has reached the bottom is
+ * gone. Rooms the beast has left are not touched — the gas stopped being made
+ * the moment it walked out, and what it had already taken it keeps.
+ */
+export function gasStep(world: TourWorld, ship: Ship): TourCastResult | null {
+  if (!world.toad) return null
+  const solids = { ...world.solids }
+  let melting = 0
+  let gone = 0
+  for (const solid of standingIn(ship, world, world.toad)) {
+    const hold = solids[solid.id]
+    if (hold?.melting === undefined) continue
+    const stage = hold.melting + 1
+    if (stage >= MELT_STAGES.length) {
+      solids[solid.id] = { ...hold, melting: stage, gone: true }
+      gone++
+      continue
+    }
+    solids[solid.id] = { ...hold, melting: stage, squash: MELT_STAGES[stage] }
+    melting++
+  }
+  if (!melting && !gone) return null
+  return {
+    world: { ...world, solids },
+    report: { kind: 'melted', spaceId: world.toad, melting, gone },
+  }
+}
+
+/**
+ * How many steps Salé-salé's beast takes to fill a room.
+ *
+ * Six, which at the walk's own tick is somewhere near a quarter of a minute:
+ * long enough that the filling is something you stand and watch happen, short
+ * enough that nobody has to wait for the mouths to close.
+ */
+export const SMOKE_FULL = 6
+
+/**
+ * How far Momoze's flock spreads, and how thick it is where it has spread.
+ *
+ * Ten rooms is the snakes' own reach and is kept deliberately: it is the walk's
+ * established answer to "near where you are standing" and a second number for
+ * the same idea would be a second rule. Four to a room is a crowd without being
+ * a census — forty beasts across a deck is plenty to walk into one, and the
+ * fortieth says nothing the fourth did not.
+ */
+export const FLOCK_ROOMS = 10
+export const FLOCK_PER_ROOM = 4
+
+/**
+ * One step of the smoke, on the walk's clock rather than on a cast.
+ *
+ * The room takes one more part of what is coming out of the mouths, and when it
+ * has taken the last one the beast shuts them: that is the whole of the
+ * technique's shape, and it is the reason this counts up rather than simply
+ * being on — a room that filled instantly would have no moment of being full.
+ */
+export function smokeStep(world: TourWorld): TourCastResult | null {
+  const smoke = world.smoke
+  if (!smoke || smoke.filled >= SMOKE_FULL) return null
+  const filled = smoke.filled + 1
+  return {
+    world: { ...world, smoke: { ...smoke, filled } },
+    report: {
+      kind: 'smoke-spread',
+      spaceId: smoke.spaceId,
+      filled,
+      full: filled >= SMOKE_FULL,
+    },
+  }
+}
+
+/**
+ * How far one step of Luzurus's secretion drags a thing, and how close is eaten.
+ *
+ * A metre and a half a step is a thing being pulled rather than a thing sliding
+ * — you can watch it come — and a metre and a half of clearance is where the
+ * beast takes it: near enough to be at the visitor, far enough that the walk
+ * never has to draw a table inside their head.
+ */
+export const REEL_METRES = 1.5
+export const REEL_REACH = 1.5
+
+/**
+ * One step of the reeling, on the walk's clock rather than on a cast.
+ *
+ * Everything the secretion caught comes a step nearer whoever set the trap, and
+ * what arrives is eaten. Only things in the beast's own room move: the reach of
+ * a secretion is the room it was spat over, and a trap that pulled the whole
+ * ship towards you would be a different ability.
+ *
+ * `at` is where the visitor is standing, which is what they are pulled towards.
+ * Nothing here reads the room's walls — a thing being dragged to somebody by an
+ * animal that has hold of it does not stop at the furniture.
+ */
+export function reelStep(world: TourWorld, ship: Ship, at: Vec2): TourCastResult | null {
+  if (!world.centipede) return null
+  const solids = { ...world.solids }
+  let pulled = 0
+  let eaten = 0
+  for (const solid of standingIn(ship, world, world.centipede)) {
+    const hold = solids[solid.id]
+    if (hold?.glued === undefined) continue
+    const now = solidNow(solid, hold)
+    const dx = at[0] - now.at[0]
+    const dz = at[1] - now.at[1]
+    const gap = Math.hypot(dx, dz)
+    if (gap <= REEL_REACH) {
+      solids[solid.id] = { ...hold, glued: hold.glued + 1, gone: true }
+      eaten++
+      continue
+    }
+    const step = Math.min(REEL_METRES, gap - REEL_REACH)
+    solids[solid.id] = {
+      ...hold,
+      glued: hold.glued + 1,
+      at: [now.at[0] + (dx / gap) * step, now.at[1] + (dz / gap) * step],
+    }
+    pulled++
+  }
+  if (!pulled && !eaten) return null
+  return {
+    world: { ...world, solids },
+    report: { kind: 'reeled', spaceId: world.centipede, pulled, eaten },
+  }
+}
+
+/**
+ * One thing broken up by Camilla's cat, on the walk's clock.
+ *
+ * One at a time and never more: the whole of what makes it read as an animal
+ * with a room to get through rather than as a blast is that you can watch it
+ * work. Its own room only, and it stops when there is nothing left standing —
+ * a cat with an empty room sits in it, which is what the ability is doing
+ * anyway. What it takes is `gone`, because a thing a cat that size has had its
+ * paws on is not a thing anybody puts back.
+ */
+export function catStep(world: TourWorld, ship: Ship): TourCastResult | null {
+  if (!world.cat) return null
+  const standing = standingIn(ship, world, world.cat)
+  const next = standing[0]
+  if (!next) return null
+  return {
+    world: {
+      ...world,
+      solids: { ...world.solids, [next.id]: { ...world.solids[next.id], gone: true } },
+    },
+    report: {
+      kind: 'crushed-one',
+      spaceId: world.cat,
+      solidId: next.id,
+      left: standing.length - 1,
+    },
+  }
+}
+
+/**
+ * The coin off Zhang Lei's wheel, taken by walking into it.
+ *
+ * Not a cast: the coin is a thing hanging in a room, and what the ability asks
+ * is whether anybody goes and picks it up. What it is worth goes onto the
+ * visitor as aura, and the wheel immediately has the next one at its mouth,
+ * worth ten times this one — which is the ability's own arithmetic, and the
+ * reason the second coin is worth going back for.
+ */
+export function takeTheCoin(world: TourWorld): TourCastResult | null {
+  const wheel = world.wheel
+  if (!wheel) return null
+  const gilded = world.body.gilded + wheel.coin
+  return {
+    world: {
+      ...world,
+      wheel: { ...wheel, coin: wheel.coin * 10 },
+      body: { ...world.body, gilded },
+    },
+    report: { kind: 'coin-taken', spaceId: wheel.spaceId, value: wheel.coin, gilded },
+  }
+}
+
 /** Everything one air took hold of, which is what the panel counts. */
 export const dancingSolidIds = (world: TourWorld): string[] =>
   Object.entries(world.solids)
@@ -1120,11 +1848,9 @@ export const dancingSolidIds = (world: TourWorld): string[] =>
 export function detachedOn(
   ship: Ship,
   world: TourWorld,
-  tierId: string,
-  seconds = 0,
-  /** Where the visitor is, so anything Kurton is carrying rides along. */
-  carrier?: Vec2,
+  on: LoadedDeck,
 ): { structure: Structure; room: Space }[] {
+  const { tierId, seconds = 0, carrier } = on
   const emptied = new Set(emptiedOn(world, tierId, ship))
   const out: { structure: Structure; room: Space }[] = []
 
@@ -1155,17 +1881,22 @@ export function detachedOn(
 }
 
 /** What those solids stop the visitor with, since they are no longer in the deck. */
-export function solidWalls(
-  ship: Ship,
-  world: TourWorld,
-  tierId: string,
-  seconds = 0,
-): WallSegment[] {
+export function solidWalls(ship: Ship, world: TourWorld, on: DeckMoment): WallSegment[] {
+  const { tierId, seconds = 0 } = on
   // What is being carried is not something to walk around: it moves with you.
-  return detachedOn(ship, world, tierId, seconds)
-    .filter(({ structure }) => !world.body.passengers.includes(structure.id))
-    .filter(({ structure }) => blocksTheFloor(structure))
-    .flatMap(({ structure }) => structureWalls(structure))
+  // Nor is what is over your head — a room Camilla's beast has hold of has
+  // nothing on its floor, and that is most of what the technique feels like
+  // from inside it.
+  return (
+    detachedOn(ship, world, { tierId, seconds })
+      .filter(({ structure }) => !world.body.passengers.includes(structure.id))
+      .filter(({ structure }) => !world.solids[structure.id]?.adrift)
+      // And what the drill went through is not either: the hole is the whole of
+      // what the walk can show of a bore, so it has to be a hole you can use.
+      .filter(({ structure }) => !world.solids[structure.id]?.bored)
+      .filter(({ structure }) => blocksTheFloor(structure))
+      .flatMap(({ structure }) => structureWalls(structure))
+  )
 }
 
 const withHold = (world: TourWorld, id: string, patch: SolidHold): TourWorld => ({
@@ -1197,13 +1928,8 @@ const clearanceOf = (structure: Structure) => Math.hypot(structure.size[0], stru
  * than about the technique, so a push that would leave the room is spent
  * against it and the solid stays where it is.
  */
-function shove(
-  ship: Ship,
-  world: TourWorld,
-  structure: Structure,
-  hold: SolidHold | undefined,
-  delta: Vec2,
-): Vec2 | null {
+function shove(ship: Ship, solid: HeldSolid, delta: Vec2): Vec2 | null {
+  const { structure, hold } = solid
   const now = solidNow(structure, hold)
   const room = ship.spaces.get(structure.spaceId)
   if (!room) return null
@@ -1291,6 +2017,9 @@ type SolidCastContext = {
   away: (metres: number) => Vec2
   /** Which of The Sun and Moon's two hands cast. Only that one reads it. */
   mark: 'sun' | 'moon'
+  /** Where the visitor stands, and in what: the beasts come up beside them. */
+  at: Vec2
+  standingIn: string | null
 }
 
 type SolidCast = (ctx: SolidCastContext) => TourCastResult
@@ -1397,7 +2126,7 @@ const SOLID_CASTS: Partial<Record<HatsuInteractionKind, SolidCast>> = {
 
   clone: ({ world, ship, structure, hold, id }) => {
     const now = solidNow(structure, hold)
-    const beside = shove(ship, world, structure, hold, [clearanceOf(now) * 2, 0]) ?? now.at
+    const beside = shove(ship, { structure, hold }, [clearanceOf(now) * 2, 0]) ?? now.at
     const copyId = `${id}::fake${world.copies.length + 1}`
     const copy: Structure = { ...now, id: copyId, at: beside }
     return {
@@ -1438,7 +2167,7 @@ const SOLID_CASTS: Partial<Record<HatsuInteractionKind, SolidCast>> = {
         report: { kind: 'shattered', solidId: id },
       }
     }
-    const landing = shove(ship, world, structure, hold, away(2))
+    const landing = shove(ship, { structure, hold }, away(2))
     return {
       world: withHold(world, id, landing ? { hits, at: landing } : { hits }),
       report: { kind: 'volley', solidId: id, hits },
@@ -1447,7 +2176,7 @@ const SOLID_CASTS: Partial<Record<HatsuInteractionKind, SolidCast>> = {
 
   windup: ({ world, ship, structure, hold, id, away }) => {
     const metres = 3 + world.windup * 4
-    const landing = shove(ship, world, structure, hold, away(metres))
+    const landing = shove(ship, { structure, hold }, away(metres))
     return {
       world: { ...withHold(world, id, landing ? { at: landing } : {}), windup: 0 },
       report: { kind: 'launched', solidId: id, metres: landing ? metres : 0 },
@@ -1456,7 +2185,7 @@ const SOLID_CASTS: Partial<Record<HatsuInteractionKind, SolidCast>> = {
 
   staff: ({ world, ship, structure, hold, id, away }) => {
     const now = solidNow(structure, hold)
-    const landing = shove(ship, world, structure, hold, away(1.5))
+    const landing = shove(ship, { structure, hold }, away(1.5))
     return {
       world: withHold(world, id, {
         rotation: now.rotation + 25,
@@ -1473,7 +2202,7 @@ const SOLID_CASTS: Partial<Record<HatsuInteractionKind, SolidCast>> = {
   // only so the read-out can say this is the fourth time you have hit it.
   dowsing: ({ world, ship, structure, hold, id, away }) => {
     const now = solidNow(structure, hold)
-    const landing = shove(ship, world, structure, hold, away(2))
+    const landing = shove(ship, { structure, hold }, away(2))
     return {
       world: withHold(world, id, {
         hits: (hold?.hits ?? 0) + 1,
@@ -1516,7 +2245,7 @@ const SOLID_CASTS: Partial<Record<HatsuInteractionKind, SolidCast>> = {
           candidate.id !== id &&
           !world.solids[candidate.id]?.gone,
       ) ?? structure
-    const landing = shove(ship, world, structure, hold, away(2.5))
+    const landing = shove(ship, { structure, hold }, away(2.5))
     return {
       world: withHold(world, id, landing ? { at: landing } : { hits: (hold?.hits ?? 0) + 1 }),
       report: { kind: 'came-up-under', solidId: source.id, otherId: id },
@@ -1540,6 +2269,64 @@ const SOLID_CASTS: Partial<Record<HatsuInteractionKind, SolidCast>> = {
     report: { kind: 'shred-stuck', solidId: id },
   }),
 
+  // Padaille: swing, and find out what the arm was.
+  //
+  // The one technique in the walk whose result the visitor has no say in. Every
+  // other cast here is a decision — which room, which thing, which of two
+  // hands, which of three airs — and this one is a decision to swing and
+  // nothing more. So the tool is drawn before anything is read off the target,
+  // and the three outcomes are three different things rather than three
+  // strengths of one: driven into the deck, holed through, or in two pieces.
+  //
+  // The swing lands whatever it draws, including on something already dealt
+  // with: a cupboard the hammer flattened can still be halved, and the halves
+  // are half of what is left rather than half of what the blueprint had.
+  'weapon-body': ({ world, ship, structure, hold, id }) => {
+    const tool = toolFor(id, world.swings)
+    const swung = { ...world, swings: world.swings + 1 }
+
+    if (tool === 'hammer') {
+      return {
+        world: withHold(swung, id, { squash: HAMMERED_SQUASH }),
+        report: { kind: 'hammered', solidId: id },
+      }
+    }
+
+    if (tool === 'drill') {
+      return {
+        world: withHold(swung, id, { bored: true }),
+        report: { kind: 'bored', solidId: id },
+      }
+    }
+
+    // The axe. Two pieces where there was one, so the half that keeps the
+    // blueprint's id stays put and the other is a copy set down beside it —
+    // the same machinery Gallery Fake's forgery uses, because a half is a
+    // solid the ship never had either. If the room has no space to lay the
+    // second half in, the cut still happens and the halves stand in the same
+    // place: an axe stopped by the width of a cabin would be an axe that
+    // failed, and this one did not.
+    const halved = Math.max(0.05, (hold?.scale ?? 1) * 0.5)
+    const now = solidNow(structure, { ...hold, scale: halved })
+    const beside = shove(ship, { structure, hold: { ...hold, scale: halved } }, [
+      clearanceOf(now) * 1.2,
+      0,
+    ])
+    const offcutId = `${id}::half${world.copies.length + 1}`
+    const offcut: Structure = { ...now, id: offcutId, at: beside ?? now.at }
+    return {
+      world: {
+        ...withHold(swung, id, { scale: halved }),
+        copies: [...world.copies, offcut],
+        solids: {
+          ...withHold(swung, id, { scale: halved }).solids,
+          [offcutId]: { copyOf: id },
+        },
+      },
+      report: { kind: 'halved', solidId: id, apart: beside !== null },
+    }
+  },
+
   // Dramatic on a thing, and weak on anything Nen is already holding.
   growth: ({ world, hold, id }) => {
     if (hold?.bound || hold?.alive || hold?.copyOf) {
@@ -1548,6 +2335,47 @@ const SOLID_CASTS: Partial<Record<HatsuInteractionKind, SolidCast>> = {
     return {
       world: withHold(world, id, { scale: Math.min(3, (hold?.scale ?? 1) * 1.8) }),
       report: { kind: 'grown', solidId: id },
+    }
+  },
+
+  // Tserriednich's Guardian Spirit Beast, which is sent at a thing rather than
+  // cast on one: it walks over, touches it, and what the touch does depends
+  // only on how many have come before.
+  //
+  //   first   it shoves the thing, and that is all it does
+  //   second  the green is on it, and stays on it
+  //   third   whatever this was, it is not that any more
+  //
+  // The escalation is the ability, so the count is on the solid and not on the
+  // world: the beast can be walked round a room marking three separate things
+  // once each, and none of them is any nearer its third for the others. The
+  // room the beast is standing in is wherever it last touched something.
+  'lie-marks': ({ world, ship, structure, hold, id, away, at, heading, standingIn: here }) => {
+    const lies = (hold?.lies ?? 0) + 1
+    const beside = { ...world, chimera: structure.spaceId, summoned: calledUp(here, at, heading) }
+
+    if (lies === 1) {
+      const landing = shove(ship, { structure, hold }, away(1.4))
+      return {
+        world: withHold(beside, id, { lies, ...(landing ? { at: landing } : {}) }),
+        report: { kind: 'lie-pushed', solidId: id, metres: landing ? 1.4 : 0 },
+      }
+    }
+
+    if (lies === 2) {
+      return {
+        world: withHold(beside, id, { lies, aura: 'green' }),
+        report: { kind: 'lie-greened', solidId: id },
+      }
+    }
+
+    // The third, which takes the thing away and leaves the thing it became.
+    // `gone` rather than a third appearance, because what stands there
+    // afterwards is not a fitting of the ship at all: the deck stops drawing
+    // it and `$lib/tour/apparitions` puts a beast where it was.
+    return {
+      world: withHold(beside, id, { lies, monster: true, gone: true }),
+      report: { kind: 'lie-transformed', solidId: id },
     }
   },
 
@@ -1624,9 +2452,9 @@ function loadIntoHold(world: TourWorld, structure: Structure | null): TourCastRe
 function castPastTheTarget(
   world: TourWorld,
   kind: HatsuInteractionKind,
-  input: TourCastInput,
-  structure: Structure | null,
+  aimedAt: { input: TourCastInput; structure: Structure | null },
 ): TourCastResult | null {
+  const { input, structure } = aimedAt
   const { ship } = input
 
   if (kind === 'windup' && !structure) {
@@ -1668,7 +2496,7 @@ function castPastTheTarget(
       world: {
         ...withHold(world, coughed.id, {
           gone: false,
-          at: landingIn(room, input.at, input.heading)[room.id],
+          at: landingIn(room, { at: input.at, heading: input.heading })[room.id],
         }),
         hoover,
         // It comes out where it was put down, so it belongs to that room now.
@@ -1687,7 +2515,11 @@ function castPastTheTarget(
   if (kind === 'command' && !structure) {
     const room = input.targetId ? ship.spaces.get(input.targetId) : null
     if (!room) return { world, report: { kind: 'no-target' } }
-    return orderThePuppets(world, room, landingIn(room, input.at, input.heading)[room.id])
+    return orderThePuppets(
+      world,
+      room,
+      landingIn(room, { at: input.at, heading: input.heading })[room.id],
+    )
   }
 
   if (kind === 'remote-strike' && !structure) {
@@ -1753,7 +2585,7 @@ function castOnSolid(
   const structure = solidById(ship, world, targetSolidId ?? null)
 
   const elsewhere =
-    loadIntoHold(world, structure) ?? castPastTheTarget(world, kind, input, structure)
+    loadIntoHold(world, structure) ?? castPastTheTarget(world, kind, { input, structure })
   if (elsewhere) return elsewhere
 
   if (!structure) return { world, report: { kind: 'no-solid' } }
@@ -1777,7 +2609,18 @@ function castOnSolid(
 
   const cast = SOLID_CASTS[kind]
   return cast
-    ? cast({ world, ship, structure, hold, id, heading, away, mark: input.mark ?? 'sun' })
+    ? cast({
+        world,
+        ship,
+        structure,
+        hold,
+        id,
+        heading,
+        away,
+        mark: input.mark ?? 'sun',
+        at,
+        standingIn: input.standingIn,
+      })
     : { world, report: { kind: 'inert' } }
 }
 
@@ -1854,6 +2697,19 @@ export function holdsInWorld(world: TourWorld): string[] {
     ...world.gumTraps.map((id) => `gum:${id}`),
     ...world.flowered.map((id) => `flowered:${id}`),
     ...world.scattered.map((id) => `scattered:${id}`),
+    // The Guardian Spirit Beasts. Each is a hold like any other: something the
+    // aura is doing to the ship that would stop if it were let go of — which is
+    // what this list answers, and what Predator names one at a time.
+    ...(world.medusa ? [`beast:${world.medusa}`] : []),
+    ...(world.chimera ? [`chimera:${world.chimera}`] : []),
+    ...(world.toad ? [`gas:${world.toad}`] : []),
+    ...(world.centipede ? [`secretion:${world.centipede}`] : []),
+    ...(world.cat ? [`cat:${world.cat}`] : []),
+    ...(world.dragon ? [`dragon:${world.dragon}`] : []),
+    ...(world.wheel ? [`wheel:${world.wheel.spaceId}`] : []),
+    ...(world.smoke ? [`smoke:${world.smoke.spaceId}`] : []),
+    ...world.menagerie.map((id) => `flock:${id}`),
+    ...world.lit.map((id) => `lit:${id}`),
   ]
 }
 
@@ -1990,12 +2846,8 @@ function raiseTheSun({ world, ship, body, input }: BodyCastContext): TourCastRes
  * are written down and nothing here is drawn: `$lib/tour/apparitions` decides
  * what a room in flower looks like, exactly as it does for a room with fish in.
  */
-function playTheTune(
-  world: TourWorld,
-  ship: Ship,
-  tune: TourTune,
-  spaceId: string,
-): TourCastResult {
+function playTheTune(world: TourWorld, ship: Ship, played: Played): TourCastResult {
+  const { tune, spaceId } = played
   if (tune === 'dance') {
     // Everything the room has in it, the aura's own copies included: a room
     // dances with what is standing in it, whoever put it there.
@@ -2134,7 +2986,39 @@ const BODY_CASTS: Partial<Record<HatsuInteractionKind, BodyCast>> = {
     // A flute is heard where it is played: the reticle is never consulted, and
     // a piece with nowhere to land is a piece nobody was in the room for.
     if (!input.standingIn) return { world: heard, report: { kind: 'no-target' } }
-    return playTheTune(heard, ship, input.tune, input.standingIn)
+    return playTheTune(heard, ship, { tune: input.tune, spaceId: input.standingIn })
+  },
+
+  // Tyson's eye-wog, which is the one Guardian Spirit Beast in the walk that
+  // comes up in front of its own user rather than being sent anywhere. It takes
+  // what they have committed — the levy is the whole of the cost, and it takes
+  // it whether or not there was any — and gives it back as light, in proportion
+  // to what it got. Where the light goes is not a choice:
+  //
+  //   the room is dark    it goes into the room, and stays there
+  //   the room is not     it goes onto the reader, as a bubble they carry
+  //
+  // Dark means what the blueprint says it means: a room the ship put no window
+  // in. Nothing else aboard has an opinion about brightness, and inventing a
+  // second one would be the walk making a claim it cannot support.
+  'aura-levy': ({ world, ship, body, input }) => {
+    const here = input.standingIn ? ship.spaces.get(input.standingIn) : null
+    if (!here) return { world, report: { kind: 'no-target' } }
+    const levied = body.enhance
+    const daylight = ship.structures.some(
+      (solid) => solid.spaceId === here.id && solid.kind === 'window',
+    )
+    if (!daylight && !world.lit.includes(here.id)) {
+      return {
+        world: { ...world, lit: [...world.lit, here.id], body: { ...body, enhance: 0 } },
+        report: { kind: 'room-brightened', spaceId: here.id, levied },
+      }
+    }
+    const halo = body.halo + 1 + levied
+    return {
+      world: { ...world, body: { ...body, enhance: 0, halo } },
+      report: { kind: 'halo-raised', spaceId: here.id, levied, halo },
+    }
   },
 
   // Predator gets stronger by correctly naming what it is up against. There
@@ -2232,11 +3116,12 @@ export function identityOf(ship: Ship, world: TourWorld, space: Space): Space {
 }
 
 /** How the dial reads, from a hundred at the door to nothing across the ship. */
-export function dialReading(ship: Ship, world: TourWorld, at: Vec2, standingIn: string | null) {
+export function dialReading(ship: Ship, world: TourWorld, from: Stood) {
+  const { at, standingIn } = from
   const wanted = world.dial ? ship.spaces.get(world.dial) : null
   if (!wanted) return null
   if (standingIn === wanted.id) return { spaceId: wanted.id, reading: 100 }
-  const { metres, decks } = distanceTo(ship, wanted, at, standingIn)
+  const { metres, decks } = distanceTo(ship, wanted, { at, standingIn })
   const reading = Math.max(0, Math.round(100 - metres / 1.6 - decks * 12))
   return { spaceId: wanted.id, reading }
 }
@@ -2261,10 +3146,10 @@ export function verseFor(ship: Ship, space: Space): number[] {
 }
 
 /** The rooms the walk has not set foot in, nearest first. */
-export function unwalked(ship: Ship, world: TourWorld, at: Vec2, standingIn: string | null) {
+export function unwalked(ship: Ship, world: TourWorld, from: Stood) {
   return [...ship.spaces.values()]
     .filter((space) => !world.trail.includes(space.id))
-    .map((space) => ({ space, ...distanceTo(ship, space, at, standingIn) }))
+    .map((space) => ({ space, ...distanceTo(ship, space, from) }))
     .sort((a, b) => a.metres + a.decks * 40 - (b.metres + b.decks * 40))
 }
 
@@ -2277,10 +3162,9 @@ export function unwalked(ship: Ship, world: TourWorld, at: Vec2, standingIn: str
 export function tenSecondsOn(
   ship: Ship,
   world: TourWorld,
-  tierId: string,
-  at: Vec2,
-  heading: number,
+  from: Heading,
 ): { spaceId: string; at: Vec2 } | null {
+  const { tierId, at, heading } = from
   const plan = ship.plans.get(tierId)
   if (!plan) return null
   const reach = 6 * paceOf(world.body) * 10
@@ -2456,6 +3340,106 @@ export const TWO_HANDED_KINDS = new Set<HatsuInteractionKind>(['polarity'])
 
 /** The other hand. */
 export const otherHand = (mark: 'sun' | 'moon'): 'sun' | 'moon' => (mark === 'sun' ? 'moon' : 'sun')
+
+/**
+ * The three techniques that are given an order rather than only cast.
+ *
+ * A double, a bird and an insect all keep doing something after the cast, and
+ * what they are doing is a choice the visitor goes on making — so R walks each
+ * of them on to its next watch instead of meaning what it means everywhere
+ * else.
+ */
+export const TAKES_ORDERS = new Set<HatsuInteractionKind>(['guardian', 'surveillance', 'scout'])
+
+/** What one key does under the technique in hand. */
+export type HatsuKeyAction =
+  | 'cast'
+  | 'castSolid'
+  | 'castSelf'
+  | 'castOnSelfInstead'
+  | 'sun'
+  | 'moon'
+  | 'alternate'
+  | 'openPage'
+  | 'markedPage'
+  | 'airDance'
+  | 'airBloom'
+  | 'airScatter'
+  | 'doubleWatch'
+  | 'owlFlight'
+  | 'insectOrders'
+
+export interface HatsuKey {
+  /** The key as it is printed on a keyboard. */
+  key: 'F' | 'R' | 'C'
+  action: HatsuKeyAction
+  /** Whether a click does the same thing, which only the casting hand has. */
+  click: boolean
+}
+
+/**
+ * Every key the technique in hand answers to, and what each one does.
+ *
+ * The walk casts with three keys at most and no technique uses all three, but
+ * which ones it uses — and what R means when it has one — changes from aura to
+ * aura: a page, an air, an order to a double, or the cast turned on the visitor
+ * themselves. A visitor who has just picked a technique out of the dock has no
+ * way of knowing which of those they are holding, so the panel says it, and
+ * this is the one place that decides. It mirrors the key handler in
+ * `TourScene`, and the tests hold the two together.
+ */
+export function hatsuKeys(profile: HatsuProfile | null, book: TourBook): HatsuKey[] {
+  if (!worksInTour(profile)) return []
+  // Double Face is not cast itself: the two keys play the two live pages, and
+  // a page that is cast with two hands has to alternate on the key it was given.
+  const pages = profile.kind === 'bookmark' ? twoPages(book) : null
+  if (pages) {
+    return [
+      { key: 'F', action: pages[0] === 'polarity' ? 'alternate' : 'openPage', click: true },
+      { key: 'R', action: pages[1] === 'polarity' ? 'alternate' : 'markedPage', click: false },
+    ]
+  }
+  if (TWO_HANDED_KINDS.has(profile.kind)) {
+    return [
+      { key: 'F', action: 'sun', click: true },
+      { key: 'R', action: 'moon', click: false },
+    ]
+  }
+  // The one instrument aboard: three airs, so three keys, and the key is the
+  // playing rather than a choice made before it.
+  if (profile.kind === 'melody') {
+    return [
+      { key: 'F', action: 'airDance', click: true },
+      { key: 'R', action: 'airBloom', click: false },
+      { key: 'C', action: 'airScatter', click: false },
+    ]
+  }
+  const onSolids = aimsAtSolids(profile) || profile.kind === 'mimicry'
+  const keys: HatsuKey[] = [
+    {
+      key: 'F',
+      action: onSolids ? 'castSolid' : worksOnTheBody(profile) ? 'castSelf' : 'cast',
+      click: true,
+    },
+  ]
+  if (TAKES_ORDERS.has(profile.kind)) {
+    keys.push({
+      key: 'R',
+      action:
+        profile.kind === 'guardian'
+          ? 'doubleWatch'
+          : profile.kind === 'surveillance'
+            ? 'owlFlight'
+            : 'insectOrders',
+      click: false,
+    })
+  } else if (worksOnTheBody(profile) && aimsAtSolids(profile)) {
+    // The ones on both sides of the line: the reticle decides, and R is how the
+    // visitor says *me* rather than what is in front of them.
+    keys.push({ key: 'R', action: 'castOnSelfInstead', click: false })
+  }
+  return keys
+}
 
 /**
  * One cast on the techniques rather than on the ship.
@@ -2752,6 +3736,51 @@ function stripTheRoom({ world, ship, target }: RoomCastContext): TourCastResult 
     next.worm = null
     count++
   }
+  // And any Guardian Spirit Beast standing in it. A blast that put out a beast
+  // and left the room floating would be a blast that had not finished: the
+  // solids below are cleared wholesale, which takes the levitation and the melt
+  // off with everything else.
+  if (next.medusa === target.id) {
+    next.medusa = null
+    count++
+  }
+  if (next.chimera === target.id) {
+    next.chimera = null
+    count++
+  }
+  if (next.toad === target.id) {
+    next.toad = null
+    count++
+  }
+  if (next.centipede === target.id) {
+    next.centipede = null
+    count++
+  }
+  if (next.smoke?.spaceId === target.id) {
+    next.smoke = null
+    count++
+  }
+  if (next.cat === target.id) {
+    next.cat = null
+    count++
+  }
+  if (next.dragon === target.id) {
+    next.dragon = null
+    next.pinned = next.pinned === target.id ? null : next.pinned
+    count++
+  }
+  if (next.menagerie.includes(target.id)) {
+    next.menagerie = without(next.menagerie, (id) => id === target.id)
+    count++
+  }
+  if (next.wheel?.spaceId === target.id) {
+    next.wheel = null
+    count++
+  }
+  if (next.lit.includes(target.id)) {
+    next.lit = without(next.lit, (id) => id === target.id)
+    count++
+  }
   // And every solid in the room that another technique was holding: the
   // blast is what puts a crushed coffin or a bound bed back where it was.
   const inside = Object.keys(next.solids).filter(
@@ -2839,7 +3868,7 @@ const ROOM_CASTS: Partial<Record<HatsuInteractionKind, RoomCast>> = {
   // settles is a room and how far off it is. Aim it at a thing instead and it
   // is the whip it also is — see `SOLID_CASTS`.
   dowsing: ({ world, ship, target, at, standingIn }) => {
-    const distance = distanceTo(ship, target, at, standingIn)
+    const distance = distanceTo(ship, target, { at, standingIn })
     return {
       world: { ...world, dowsing: target.id },
       report: {
@@ -2861,11 +3890,33 @@ const ROOM_CASTS: Partial<Record<HatsuInteractionKind, RoomCast>> = {
     }
   },
 
-  'room-isolation': ({ world, target, standingIn }) => {
-    const occupant = standingIn === target.id
+  // Marayam's, which used to be a boundary and nothing else: the room went
+  // behind a wall nobody could see and the visitor was left standing outside
+  // it. The beast is what actually does that, and it does it the way the
+  // drawing has it — it takes you into the room and then it is between you and
+  // the door.
+  //
+  // So the cast delivers rather than describes. The visitor is put inside, which
+  // makes them the occupant whatever they were before, and `pinned` is what
+  // holds them: the walk's own answer to a room that will not let go, already
+  // enforced by `arriveInTour`. Cast again on the room you are shut in and the
+  // beast stands down.
+  'room-isolation': ({ world, target }) => {
+    if (world.dragon === target.id) {
+      return {
+        world: { ...world, dragon: null, isolated: null, pinned: null },
+        report: { kind: 'isolation-lifted', spaceId: target.id },
+      }
+    }
     return {
-      world: { ...world, isolated: { spaceId: target.id, occupant } },
-      report: { kind: 'isolated', spaceId: target.id, occupant },
+      world: {
+        ...world,
+        isolated: { spaceId: target.id, occupant: true },
+        dragon: target.id,
+        pinned: target.id,
+      },
+      travelTo: target.id,
+      report: { kind: 'isolated', spaceId: target.id, occupant: true },
     }
   },
 
@@ -2949,7 +4000,7 @@ const ROOM_CASTS: Partial<Record<HatsuInteractionKind, RoomCast>> = {
 
   // The bait is what the victim wanted: a copy of something out of the room
   // they are standing in, stood in the trap. Coercion comes after it is taken.
-  'desire-trap': ({ world, ship, target, standingIn }) => {
+  'desire-trap': ({ world, ship, target, at, input, standingIn }) => {
     const wanted = ship.structures.find((solid) => solid.spaceId === standingIn)
     const copies = wanted
       ? [
@@ -2965,8 +4016,25 @@ const ROOM_CASTS: Partial<Record<HatsuInteractionKind, RoomCast>> = {
     const solids = wanted
       ? { ...world.solids, [copies[copies.length - 1].id]: { copyOf: wanted.id } }
       : world.solids
+    // And the beast that closes it. The bait was always the visible half of the
+    // technique; this is the half that was missing — it coils in the room it
+    // baited and secretes over everything standing there, the copy included,
+    // because a trap that spares the bait is a trap with a way out of it.
+    for (const solid of [...ship.structures, ...copies]) {
+      if (solid.spaceId !== target.id || solids[solid.id]?.gone) continue
+      if (solids[solid.id]?.glued === undefined) {
+        solids[solid.id] = { ...solids[solid.id], glued: 0 }
+      }
+    }
     return {
-      world: { ...world, copies, solids, trap: target.id },
+      world: {
+        ...world,
+        copies,
+        solids,
+        trap: target.id,
+        centipede: target.id,
+        summoned: calledUp(standingIn, at, input.heading),
+      },
       report: { kind: 'bait-set', spaceId: target.id },
     }
   },
@@ -2977,7 +4045,7 @@ const ROOM_CASTS: Partial<Record<HatsuInteractionKind, RoomCast>> = {
     const here = standingIn ? ship.spaces.get(standingIn) : null
     const rooms = [...ship.spaces.values()]
       .filter((space) => space.tierId === (here?.tierId ?? target.tierId))
-      .map((space) => ({ space, distance: distanceTo(ship, space, at, standingIn).metres }))
+      .map((space) => ({ space, distance: distanceTo(ship, space, { at, standingIn }).metres }))
       .sort((a, b) => a.distance - b.distance)
       .slice(0, 10)
       .map((near) => near.space.id)
@@ -3003,6 +4071,128 @@ const ROOM_CASTS: Partial<Record<HatsuInteractionKind, RoomCast>> = {
     world: { ...world, double: target.id, doubleMode: world.doubleMode ?? 'follow' },
     report: { kind: 'double-posted', spaceId: target.id },
   }),
+
+  // ── The Guardian Spirit Beasts ─────────────────────────────────────────
+  //
+  // Three animals, and one rule between them: there is one of each, so a cast
+  // on the room it is already in puts it down, and a cast anywhere else is that
+  // same animal walking there. What each of them does to the room it arrives in
+  // is written on the solids standing in it, and what it leaves behind when it
+  // goes is exactly as much as the ability says it leaves.
+
+  // Camilla's, which is the whole room at once: it hangs under the deckhead,
+  // works its tentacles, and everything standing on the floor stops standing on
+  // it. Dismissed, the room settles — the floating was the beast's doing and
+  // there is nothing left of it once the beast is not there.
+  'coercive-beast': ({ world, ship, target, at, input, standingIn: here }) => {
+    const lifted = standingIn(ship, world, target.id).length
+
+    if (world.medusa === target.id) {
+      return {
+        world: { ...settleTheRoom(world, ship, target.id), medusa: null, summoned: null },
+        report: { kind: 'beast-dismissed', spaceId: target.id, solids: lifted },
+      }
+    }
+
+    // Raised somewhere new: whatever the last room had in the air comes down,
+    // because there is one beast and it has left.
+    const settled = world.medusa ? settleTheRoom(world, ship, world.medusa) : world
+    const solids = { ...settled.solids }
+    for (const solid of standingIn(ship, settled, target.id)) {
+      solids[solid.id] = { ...solids[solid.id], adrift: true }
+    }
+    return {
+      world: { ...settled, solids, medusa: target.id, summoned: calledUp(here, at, input.heading) },
+      report: { kind: 'beast-raised', spaceId: target.id, solids: lifted },
+    }
+  },
+
+  // Zhang Lei's, which does nothing to the room at all: it hangs there and puts
+  // a coin out of its mouth, and whether that is worth anything is entirely a
+  // question of whether somebody walks up and takes it. Taking is not a cast —
+  // see `takeTheCoin` — so the only two things a cast can do here are raise it
+  // and put it down.
+  'coin-growth': ({ world, target, at, input, standingIn: here }) => {
+    if (world.wheel?.spaceId === target.id) {
+      return {
+        world: { ...world, wheel: null, summoned: null },
+        report: { kind: 'wheel-dismissed', spaceId: target.id },
+      }
+    }
+    // Moved rather than minted afresh: the coin at its mouth is worth what it
+    // was worth in the last room, because it is the same wheel and the same
+    // day's coin. Only taking one advances the value.
+    const coin = world.wheel?.coin ?? 1
+    return {
+      world: {
+        ...world,
+        wheel: { spaceId: target.id, coin },
+        summoned: calledUp(here, at, input.heading),
+      },
+      report: { kind: 'wheel-raised', spaceId: target.id, coin },
+    }
+  },
+
+  // Tubeppa's, which synthesizes and then simply lets it out: the gas fills the
+  // room and what is standing in the room goes down in it. The cast only opens
+  // the tap — `gasStep` is what actually melts anything, on the walk's clock,
+  // so a room left with the beast in it goes on melting after you have walked
+  // out of it.
+  'drug-synthesis': ({ world, ship, target }) => {
+    if (world.toad === target.id) {
+      return { world: { ...world, toad: null }, report: { kind: 'gas-lifted', spaceId: target.id } }
+    }
+    const standing = standingIn(ship, world, target.id)
+    const solids = { ...world.solids }
+    // Nothing is melted by the cast itself: what it does is start them at
+    // stage nought, which is the room having gas in it and nothing yet showing.
+    for (const solid of standing) {
+      if (!solids[solid.id]?.melting) solids[solid.id] = { ...solids[solid.id], melting: 0 }
+    }
+    return {
+      world: { ...world, solids, toad: target.id },
+      report: { kind: 'gas-loosed', spaceId: target.id, solids: standing.length },
+    }
+  },
+
+  // Salé-salé's, which does nothing to the things in the room and everything to
+  // the room: every mouth on it opens, each with its own colour coming out, and
+  // the room takes them a part at a time until there is no part of it left to
+  // take. Then the mouths close — `smokeStep` is what actually fills it, on the
+  // walk's clock, so being full is something that arrives rather than something
+  // the cast declares.
+  'diffusive-smoke': ({ world, target, at, input, standingIn: here }) => {
+    if (world.smoke?.spaceId === target.id) {
+      return {
+        world: { ...world, smoke: null, summoned: null },
+        report: { kind: 'smoke-lifted', spaceId: target.id, filled: world.smoke.filled },
+      }
+    }
+    // One beast: sent to a second room, it starts that room empty. What it had
+    // already put into the last one goes with it, because what was filling that
+    // room was the mouths and the mouths have left.
+    return {
+      world: {
+        ...world,
+        smoke: { spaceId: target.id, filled: 0 },
+        summoned: calledUp(here, at, input.heading),
+      },
+      report: { kind: 'smoke-loosed', spaceId: target.id },
+    }
+  },
+
+  // Momoze's, which is the odd one of the eight: not an animal but a great
+  // many, of every size and shape, and none of them stays where it was put.
+  // They are loosed over the rooms nearest the cast — the same reach the snakes
+  // take, and for the same reason: a flock spread over three hundred rooms is a
+  // flock nobody ever meets — and from there they go through the walls, which
+  // is the one thing about them the walk has to be careful to actually draw.
+  // Cast again anywhere in their range and they are called back in.
+  solicitation: ({ world, ship, at, standingIn }) =>
+    looseTheFlock(world, ship, { at, standingIn }) ?? {
+      world: { ...world, menagerie: [] },
+      report: { kind: 'flock-called-in', rooms: world.menagerie.length },
+    },
 
   // ── The record ─────────────────────────────────────────────────────────
 
@@ -3033,7 +4223,11 @@ const ROOM_CASTS: Partial<Record<HatsuInteractionKind, RoomCast>> = {
         report: { kind: 'owl-recalled', rooms: world.trail.length },
       }
     }
-    const perch = perchFor(world, ship, target.id, standingIn, input.random ?? Math.random)
+    const perch = perchFor(world, ship, {
+      targetId: target.id,
+      standingIn,
+      random: input.random ?? Math.random,
+    })
     return {
       world: {
         ...world,
@@ -3050,7 +4244,11 @@ const ROOM_CASTS: Partial<Record<HatsuInteractionKind, RoomCast>> = {
   // Ten seconds on, taken once. The vision does not revise itself: that is
   // what makes diverging from it worth anything.
   future: ({ world, ship, target, at, input }) => {
-    const seen = tenSecondsOn(ship, world, target.tierId, at, input.heading ?? 0)
+    const seen = tenSecondsOn(ship, world, {
+      tierId: target.tierId,
+      at,
+      heading: input.heading ?? 0,
+    })
     if (!seen) return { world, report: { kind: 'no-target' } }
     return {
       world: { ...world, foreseen: seen },
@@ -3091,7 +4289,7 @@ const ROOM_CASTS: Partial<Record<HatsuInteractionKind, RoomCast>> = {
   },
 
   divination: ({ world, ship, target, at, standingIn }) => {
-    const reading = dialReading(ship, { ...world, dial: target.id }, at, standingIn)
+    const reading = dialReading(ship, { ...world, dial: target.id }, { at, standingIn })
     return {
       world: { ...world, dial: target.id },
       report: reading
@@ -3103,7 +4301,7 @@ const ROOM_CASTS: Partial<Record<HatsuInteractionKind, RoomCast>> = {
   // Her own blood and nothing else: each droplet goes and finds the nearest
   // room the walk has never set foot in, and expires a few arrivals later.
   'blood-search': ({ world, ship, at, standingIn }) => {
-    const found = unwalked(ship, world, at, standingIn)[0]
+    const found = unwalked(ship, world, { at, standingIn })[0]
     if (!found) return { world, report: { kind: 'droplets-dry' } }
     const droplets = [
       { spaceId: found.space.id, life: 3 },
@@ -3115,8 +4313,18 @@ const ROOM_CASTS: Partial<Record<HatsuInteractionKind, RoomCast>> = {
     }
   },
 
-  resurrection: ({ world, target }) => ({
-    world: { ...world, ninelives: [...new Set([...world.ninelives, target.id])] },
+  // The name goes on the room, and the cat comes with it. The counterattack is
+  // unchanged — kill a room wearing the name and `answerForTheCat` answers —
+  // but the waiting is no longer invisible: the animal is in the room, and it
+  // breaks the room up a piece at a time while it waits. `catStep` does that,
+  // on the walk's clock.
+  resurrection: ({ world, target, at, input, standingIn: here }) => ({
+    world: {
+      ...world,
+      ninelives: [...new Set([...world.ninelives, target.id])],
+      cat: target.id,
+      summoned: calledUp(here, at, input.heading),
+    },
     report: { kind: 'name-taken', spaceId: target.id },
   }),
 
@@ -3217,7 +4425,7 @@ function runCast(
     ...result,
     world: {
       ...result.world,
-      landed: landingIn(target, at, input.heading, result.world.landed),
+      landed: landingIn(target, { at, heading: input.heading }, result.world.landed),
     },
   }
 }
@@ -3234,10 +4442,10 @@ function runCast(
  */
 function landingIn(
   target: Space,
-  at: Vec2,
-  heading = 0,
+  aim: { at: Vec2; heading?: number },
   landed: Record<string, Vec2> = {},
 ): Record<string, Vec2> {
+  const { at, heading = 0 } = aim
   const sin = Math.sin(heading)
   const cos = Math.cos(heading)
   for (let metres = 1.5; metres <= 120; metres += 1.5) {
@@ -3257,9 +4465,9 @@ function landingIn(
 export function distanceTo(
   ship: Ship,
   target: Space,
-  at: Vec2,
-  standingIn: string | null,
+  from: Stood,
 ): { metres: number; decks: number } {
+  const { at, standingIn } = from
   const centre = centroid(target)
   const here = standingIn ? ship.spaces.get(standingIn) : null
   const fromTier = here ? ship.tiers.findIndex((tier) => tier.id === here.tierId) : -1
@@ -3291,7 +4499,8 @@ export function centroid(space: Space): Vec2 {
  * The first room that is not the one underfoot wins; if the ray only ever
  * crosses the room the visitor is standing in, that room is the target.
  */
-export function aimedSpace(plan: TierPlan, at: Vec2, heading: number, range = 90): Space | null {
+export function aimedSpace(plan: TierPlan, aim: Aim): Space | null {
+  const { at, heading, range = 90 } = aim
   // The camera looks along (-sin yaw, -cos yaw), as the walk's own movement
   // code has it.
   const dx = -Math.sin(heading)
@@ -3375,14 +4584,9 @@ export function walkedPlan(ship: Ship, world: TourWorld, tierId: string): TierPl
  * current outline is what is tested, so a solid Nen has moved is where the
  * technique put it and not where the blueprint drew it.
  */
-export function aimedSolid(
-  ship: Ship,
-  world: TourWorld,
-  plan: TierPlan,
-  at: Vec2,
-  heading: number,
-  range = 40,
-): Structure | null {
+export function aimedSolid(scene: Scene, plan: TierPlan, aim: Aim): Structure | null {
+  const { ship, world } = scene
+  const { at, heading, range = 40 } = aim
   const dx = -Math.sin(heading)
   const dz = -Math.cos(heading)
 
@@ -3390,7 +4594,7 @@ export function aimedSolid(
   // There are a handful of those at most, against the hundred and twenty-odd
   // the deck itself stands.
   const targets = bakedTargets(ship, world, plan).concat(
-    detachedOn(ship, world, plan.tier.id).map((held) => targetOf(held.structure)),
+    detachedOn(ship, world, { tierId: plan.tier.id }).map((held) => targetOf(held.structure)),
   )
 
   let nearest: Structure | null = null
@@ -3398,7 +4602,7 @@ export function aimedSolid(
   for (const target of targets) {
     // Each hit tightens the ray for the ones after it: past the nearest solid
     // found so far, nothing can win.
-    const hit = rayReaches(target, at, dx, dz, Math.min(range, distance))
+    const hit = rayReaches(target, { at, dx, dz }, Math.min(range, distance))
     if (hit === null || hit >= distance) continue
     distance = hit
     nearest = target.structure
@@ -3475,19 +4679,14 @@ const bakedTargets = (() => {
  * This is the segment-against-polygon test that was meant all along: the box
  * rejects nearly everything, and what survives is one crossing test per edge.
  */
-function rayReaches(
-  target: SolidTarget,
-  at: Vec2,
-  dx: number,
-  dz: number,
-  range: number,
-): number | null {
+function rayReaches(target: SolidTarget, ray: Ray, range: number): number | null {
+  const { at, dx, dz } = ray
   let near = 0
   let far = range
 
   // Slab test, one axis at a time. A ray running parallel to a pair of sides
   // either starts between them or never meets them.
-  const slab = (origin: number, direction: number, low: number, high: number) => {
+  const slab = (origin: number, direction: number, [low, high]: readonly [number, number]) => {
     if (Math.abs(direction) < 1e-9) return origin >= low && origin <= high
     const first = (low - origin) / direction
     const second = (high - origin) / direction
@@ -3495,8 +4694,8 @@ function rayReaches(
     far = Math.min(far, Math.max(first, second))
     return near <= far
   }
-  if (!slab(at[0], dx, target.minX, target.maxX)) return null
-  if (!slab(at[1], dz, target.minZ, target.maxZ)) return null
+  if (!slab(at[0], dx, [target.minX, target.maxX])) return null
+  if (!slab(at[1], dz, [target.minZ, target.maxZ])) return null
 
   // Standing inside it — under a mezzanine, under a run of ducting — is aiming
   // at it, which is what marching from the first step out already did.
@@ -3836,13 +5035,9 @@ export const linkIsOpen = (world: TourWorld, spaceId: string | null): boolean =>
  * either. `arrivedFrom` is the room the last crossing delivered them to, so
  * stepping out of one door does not immediately fall back through the other.
  */
-export function doorExit(
-  world: TourWorld,
-  spaceId: string | null,
-  arrivedFrom: string | null,
-  ship?: Ship,
-  random: () => number = Math.random,
-) {
+export function doorExit(world: TourWorld, through: Doors, options: DoorOptions = {}) {
+  const { spaceId, arrivedFrom } = through
+  const { ship, random = Math.random } = options
   if (!spaceId || spaceId === arrivedFrom) return null
   if (world.doors.length === 2) {
     const [a, b] = world.doors
@@ -3901,13 +5096,8 @@ export function fishBite(
  * with it up sends it no further than your own shoulder. The third is thrown
  * without looking, so it is given the ship and not the target.
  */
-function perchFor(
-  world: TourWorld,
-  ship: Ship,
-  targetId: string,
-  standingIn: string | null,
-  random: () => number,
-): string {
+function perchFor(world: TourWorld, ship: Ship, choice: Perch): string {
+  const { targetId, standingIn, random } = choice
   if (world.owlMode === 'shoulder') return standingIn ?? targetId
   if (world.owlMode === 'random') {
     const rooms = [...ship.spaces.keys()]
@@ -4050,10 +5240,9 @@ export const POLARITY_CONTACT = 1.2
 function markedAt(
   ship: Ship,
   world: TourWorld,
-  id: string,
-  hold: SolidHold,
-  seconds: number,
+  mark: Mark,
 ): { spaceId: string; base: Vec2; at: Vec2 } | null {
+  const { id, hold, seconds } = mark
   const original = solidById(ship, world, id)
   if (!original) return null
   const base = solidNow(original, hold).at
@@ -4078,9 +5267,9 @@ function markedAt(
 export function polarityStep(
   world: TourWorld,
   ship: Ship,
-  seconds: number,
-  delta: number,
+  step: { seconds: number; delta: number },
 ): { world: TourWorld; report: TourReport | null } | null {
+  const { seconds, delta } = step
   const suns: string[] = []
   const moons: string[] = []
   for (const [id, hold] of Object.entries(world.solids)) {
@@ -4097,7 +5286,7 @@ export function polarityStep(
 
   for (const sunId of suns) {
     if (spent.has(sunId)) continue
-    const sun = markedAt(ship, world, sunId, world.solids[sunId], seconds)
+    const sun = markedAt(ship, world, { id: sunId, hold: world.solids[sunId], seconds })
     if (!sun) continue
     const room = ship.spaces.get(sun.spaceId)
     if (!room) continue
@@ -4108,7 +5297,7 @@ export function polarityStep(
     let nearest: { id: string; base: Vec2; at: Vec2; away: number; apart: number } | null = null
     for (const moonId of moons) {
       if (spent.has(moonId)) continue
-      const moon = markedAt(ship, world, moonId, world.solids[moonId], seconds)
+      const moon = markedAt(ship, world, { id: moonId, hold: world.solids[moonId], seconds })
       if (!moon || moon.spaceId !== sun.spaceId) continue
       const away = Math.hypot(sun.at[0] - moon.at[0], sun.at[1] - moon.at[1])
       const apart = Math.hypot(sun.base[0] - moon.base[0], sun.base[1] - moon.base[1])

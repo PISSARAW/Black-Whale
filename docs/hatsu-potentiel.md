@@ -34,7 +34,9 @@ manifest d'interaction qui change concrètement l'UI, (3) des conditions explici
 dans le panneau « Pourquoi ? », et (4) une empreinte visible dans au moins un des cinq
 « core questions » du README.
 
-> **État au 30/07/2026 — objectif tenu : 83 hatsu sur 83 impactent le site.** Le catalogue a
+> **État au 01/08/2026 — objectif tenu : 82 hatsu sur 82 impactent le site.** Le catalogue a
+> perdu `oito-hatsu` (« Royal Guard Hatsu »), inventé par la vague P3 pour combler un trou : le
+> canon ne prête aucun hatsu propre à Oito. Le catalogue a
 > gagné Pain Packer et Rising Sun, les deux capacités de Feitan, et chacune arrive avec son
 > module, son interaction et son coût. Les sept
 > primitives du §2 existent dans `world-engine`/`ability-sdk`, et chaque capacité du
@@ -757,7 +759,7 @@ en appât ; satisfaction → piège + pseudo-coercition. `CUSTOM` DORMANT → `T
 | 5     | Hisoka (Bungee Gum étendu + Texture Surprise) + Metamorphosen + Convert Hands | Gyo, masques, mode « apparent »                            | ✅                                         |
 | 6     | Skill Hunter + Benjamin Baton + malédiction de Beyond                         | héritage/vol, spoiler-engine ch. 415                       | ✅ + Cat's Name et Little Eye              |
 | 7     | Parallel Future                                                               | merge sélectif de branches, overlay FUTURE                 | ✅ module + `SimulationEngine.mergeBranch` |
-| 8     | P3 : les 38 capacités restantes                                               | complétude catalogue — 83/83                               | ✅                                         |
+| 8     | P3 : les 38 capacités restantes                                               | complétude catalogue — 82/82                               | ✅ (`oito-hatsu` retiré depuis)            |
 
 ### Ce que la vague P1 a effectivement livré
 

@@ -19,7 +19,9 @@ function findDataRoot() {
     try {
       readFileSync(join(candidate, 'events/events.json'))
       return candidate
-    } catch {}
+    } catch {
+      // Not this directory — keep walking up towards the root.
+    }
     if (current === root) break
     current = dirname(current)
   }

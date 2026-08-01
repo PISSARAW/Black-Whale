@@ -88,15 +88,24 @@ function beyond(event: EventRow | null | undefined, limit: number | null): boole
 }
 
 /**
+ * One continuity entry as the caller means it, before the reader's cap is
+ * applied. `certainty` and `link` are optional because most kinds carry
+ * neither: a body state is simply the state it was in.
+ */
+interface EntryDraft {
+  row: TemporalRow
+  kind: ContinuityKind
+  value: string
+  certainty?: string | null
+  link?: RecordLink | null
+}
+
+/**
  * A row turned into an entry, or null when the reader's cap puts its start out
  * of reach. `until` is dropped rather than the row when only the end is capped.
  */
 function toEntry(
-  row: TemporalRow,
-  kind: ContinuityKind,
-  value: string,
-  certainty: string | null,
-  link: RecordLink | null,
+  { row, kind, value, certainty = null, link = null }: EntryDraft,
   limit: number | null,
 ): ContinuityEntry | null {
   if (beyond(row.fromEvent, limit)) return null
@@ -151,35 +160,41 @@ export function buildBodyRecord(row: BodyRow, limit: number | null): BodyRecord 
   const entries = [
     ...row.occupancies.map((occupancy) =>
       toEntry(
-        occupancy,
-        'OCCUPANCY',
-        occupancy.occupancyType,
-        occupancy.certainty,
-        occupancy.consciousness
-          ? {
-              id: occupancy.consciousness.id,
-              label: occupancy.consciousness.label,
-              href: `/consciousness/${occupancy.consciousness.id}`,
-            }
-          : null,
+        {
+          row: occupancy,
+          kind: 'OCCUPANCY',
+          value: occupancy.occupancyType,
+          certainty: occupancy.certainty,
+          link: occupancy.consciousness
+            ? {
+                id: occupancy.consciousness.id,
+                label: occupancy.consciousness.label,
+                href: `/consciousness/${occupancy.consciousness.id}`,
+              }
+            : null,
+        },
         limit,
       ),
     ),
-    ...row.states.map((state) => toEntry(state, 'BODY_STATE', state.state, null, null, limit)),
+    ...row.states.map((state) =>
+      toEntry({ row: state, kind: 'BODY_STATE', value: state.state }, limit),
+    ),
     ...row.presences.map((presence) =>
       toEntry(
-        presence,
-        'PRESENCE',
-        presence.precision,
-        presence.certainty,
-        presence.location
-          ? { id: presence.location.id, label: presence.location.name, href: null }
-          : null,
+        {
+          row: presence,
+          kind: 'PRESENCE',
+          value: presence.precision,
+          certainty: presence.certainty,
+          link: presence.location
+            ? { id: presence.location.id, label: presence.location.name, href: null }
+            : null,
+        },
         limit,
       ),
     ),
     ...row.appearances.map((appearance) =>
-      toEntry(appearance, 'APPEARANCE', appearance.cause, null, null, limit),
+      toEntry({ row: appearance, kind: 'APPEARANCE', value: appearance.cause }, limit),
     ),
   ]
     .filter((entry): entry is ContinuityEntry => entry !== null)
@@ -218,20 +233,22 @@ export function buildConsciousnessRecord(
   const entries = [
     ...row.occupancies.map((occupancy) =>
       toEntry(
-        occupancy,
-        'OCCUPANCY',
-        occupancy.occupancyType,
-        occupancy.certainty,
         {
-          id: occupancy.body.id,
-          label: occupancy.body.label,
-          href: `/bodies/${occupancy.body.id}`,
+          row: occupancy,
+          kind: 'OCCUPANCY',
+          value: occupancy.occupancyType,
+          certainty: occupancy.certainty,
+          link: {
+            id: occupancy.body.id,
+            label: occupancy.body.label,
+            href: `/bodies/${occupancy.body.id}`,
+          },
         },
         limit,
       ),
     ),
     ...row.states.map((state) =>
-      toEntry(state, 'CONSCIOUSNESS_STATE', state.state, null, null, limit),
+      toEntry({ row: state, kind: 'CONSCIOUSNESS_STATE', value: state.state }, limit),
     ),
   ]
     .filter((entry): entry is ContinuityEntry => entry !== null)

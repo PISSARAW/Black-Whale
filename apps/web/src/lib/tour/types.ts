@@ -26,6 +26,19 @@ export type Vec2 = readonly [number, number]
 export type Polygon = Vec2[]
 
 /**
+ * A straight run between two points.
+ *
+ * Named because the pair travels together everywhere and four loose `Vec2`
+ * parameters read as eight numbers in a row: `overlap(a, b)` says which two
+ * things are being compared, where `overlap(a1, a2, b1, b2)` only says it if
+ * you already know.
+ */
+export type Segment = readonly [Vec2, Vec2]
+
+/** Three corners, wound the way the surface they belong to is wound. */
+export type Triangle = readonly [Vec2, Vec2, Vec2]
+
+/**
  * How much of a piece of geometry the manga actually supports.
  *
  * - `panel` — a panel shows the room; its shape is read off that panel.

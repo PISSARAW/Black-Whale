@@ -53,6 +53,8 @@ interface Swept {
   /** Where it ends, if it moves at all. */
   to?: number
   peak: number
+  /** How long the note is held, before the release tail is added to it. */
+  duration: number
   attack?: number
   release?: number
   detune?: number
@@ -63,8 +65,9 @@ interface Swept {
 }
 
 /** One oscillator, optionally bending and optionally wobbling as it goes. */
-function swept(g: Graph, at: number, duration: number, o: Swept) {
+function swept(g: Graph, at: number, o: Swept) {
   const { context } = g
+  const { duration } = o
   const attack = o.attack ?? 0.005
   const release = o.release ?? 0.08
   const ends = at + duration + release
@@ -107,6 +110,8 @@ function swept(g: Graph, at: number, duration: number, o: Swept) {
 
 interface Rush {
   peak: number
+  /** How long the gust lasts, before the release tail is added to it. */
+  duration: number
   attack?: number
   release?: number
   type?: BiquadFilterType
@@ -118,8 +123,9 @@ interface Rush {
 }
 
 /** A gust of noise through one filter: air, paper, sparks, a shot, a motor. */
-function rush(g: Graph, at: number, duration: number, o: Rush) {
+function rush(g: Graph, at: number, o: Rush) {
   const { context } = g
+  const { duration } = o
   const attack = o.attack ?? 0.01
   const release = o.release ?? 0.05
   const ends = at + duration + release
@@ -172,7 +178,8 @@ export function hootAnOwl() {
     [0, 384, 0.34, 0.11],
     [0.44, 352, 0.46, 0.09],
   ]) {
-    swept(g, at + offset, length, {
+    swept(g, at + offset, {
+      duration: length,
       type: 'sine',
       from,
       to: from * 0.9,
@@ -182,7 +189,8 @@ export function hootAnOwl() {
       send: 0.55,
     })
     // The octave above is what stops the sine sounding like a test tone.
-    swept(g, at + offset, length * 0.7, {
+    swept(g, at + offset, {
+      duration: length * 0.7,
       type: 'triangle',
       from: from * 2,
       to: from * 1.8,
@@ -190,7 +198,8 @@ export function hootAnOwl() {
       attack: 0.06,
       release: 0.2,
     })
-    rush(g, at + offset, length * 0.5, {
+    rush(g, at + offset, {
+      duration: length * 0.5,
       peak: 0.02,
       cutoff: from * 2.2,
       q: 2.5,
@@ -215,13 +224,34 @@ export function selectACard(stage = 1) {
   const step = Math.min(2, Math.max(0, stage - 1))
 
   // The card leaving the deck.
-  rush(g, at, 0.075, { peak: 0.07, type: 'highpass', cutoff: 2600, sweepTo: 5200, release: 0.04 })
+  rush(g, at, {
+    duration: 0.075,
+    peak: 0.07,
+    type: 'highpass',
+    cutoff: 2600,
+    sweepTo: 5200,
+    release: 0.04,
+  })
   // And landing on the room.
-  rush(g, at + 0.085, 0.02, { peak: 0.09, type: 'bandpass', cutoff: 2000, q: 0.8, release: 0.05 })
+  rush(g, at + 0.085, {
+    duration: 0.02,
+    peak: 0.09,
+    type: 'bandpass',
+    cutoff: 2000,
+    q: 0.8,
+    release: 0.05,
+  })
 
   const root = 74 + step * 3
-  swept(g, at + 0.085, 0.05, { type: 'square', from: midiToHz(root), peak: 0.05, release: 0.06 })
-  swept(g, at + 0.145, 0.09, {
+  swept(g, at + 0.085, {
+    duration: 0.05,
+    type: 'square',
+    from: midiToHz(root),
+    peak: 0.05,
+    release: 0.06,
+  })
+  swept(g, at + 0.145, {
+    duration: 0.09,
     type: 'square',
     from: midiToHz(root + 7),
     peak: 0.045,
@@ -244,7 +274,8 @@ export function openAWormhole() {
   const at = startsAt(g)
 
   // The air going through the hole, low and rising as it widens.
-  rush(g, at, 0.55, {
+  rush(g, at, {
+    duration: 0.55,
     peak: 0.1,
     type: 'lowpass',
     cutoff: 180,
@@ -257,7 +288,8 @@ export function openAWormhole() {
   // The rim: twenty grains of fire, thrown across the opening.
   for (let i = 0; i < 20; i++) {
     const when = at + 0.05 + Math.random() * 0.5
-    rush(g, when, 0.012 + Math.random() * 0.02, {
+    rush(g, when, {
+      duration: 0.012 + Math.random() * 0.02,
       peak: 0.035 + Math.random() * 0.03,
       type: 'bandpass',
       cutoff: 2400 + Math.random() * 4200,
@@ -273,7 +305,8 @@ export function openAWormhole() {
     [7, 0.04],
     [12, 0.03],
   ]) {
-    swept(g, at + 0.3, 0.7, {
+    swept(g, at + 0.3, {
+      duration: 0.7,
       type: 'triangle',
       from: midiToHz(69 + semitone),
       peak,
@@ -298,7 +331,8 @@ export function skipThroughTime() {
   const at = startsAt(g)
 
   // The swell, climbing to nothing.
-  rush(g, at, 0.34, {
+  rush(g, at, {
+    duration: 0.34,
     peak: 0.11,
     type: 'bandpass',
     cutoff: 220,
@@ -307,7 +341,8 @@ export function skipThroughTime() {
     attack: 0.22,
     release: 0.005,
   })
-  swept(g, at, 0.34, {
+  swept(g, at, {
+    duration: 0.34,
     type: 'sawtooth',
     from: 62,
     to: 210,
@@ -318,7 +353,8 @@ export function skipThroughTime() {
 
   // The cut, and the far side of it.
   const landed = at + 0.36
-  swept(g, landed, 0.24, {
+  swept(g, landed, {
+    duration: 0.24,
     type: 'sine',
     from: 140,
     to: 38,
@@ -327,7 +363,8 @@ export function skipThroughTime() {
     release: 0.3,
     send: 0.3,
   })
-  swept(g, landed, 0.1, {
+  swept(g, landed, {
+    duration: 0.1,
     type: 'square',
     from: 1860,
     to: 620,
@@ -336,7 +373,14 @@ export function skipThroughTime() {
     release: 0.35,
     send: 0.7,
   })
-  rush(g, landed, 0.06, { peak: 0.06, type: 'highpass', cutoff: 3600, release: 0.25, send: 0.6 })
+  rush(g, landed, {
+    duration: 0.06,
+    peak: 0.06,
+    type: 'highpass',
+    cutoff: 3600,
+    release: 0.25,
+    send: 0.6,
+  })
 }
 
 /**
@@ -384,7 +428,8 @@ function scheduleDirgeBar(g: Graph, bar: number, at: number) {
     [5.15, 0.018],
     [8.4, 0.01],
   ]) {
-    swept(g, at, 0.1, {
+    swept(g, at, {
+      duration: 0.1,
       type: 'sine',
       from: midiToHz(DIRGE_ROOT - 12) * ratio,
       peak,
@@ -397,7 +442,8 @@ function scheduleDirgeBar(g: Graph, bar: number, at: number) {
   for (const [offset, semitone, beats] of dirge[bar % dirge.length]) {
     const hz = midiToHz(DIRGE_ROOT + semitone)
     // Two detuned saws and a sine under them: a choir, not a synth pad.
-    swept(g, at + offset * DIRGE_BEAT, beats * DIRGE_BEAT * 0.85, {
+    swept(g, at + offset * DIRGE_BEAT, {
+      duration: beats * DIRGE_BEAT * 0.85,
       type: 'sawtooth',
       from: hz,
       peak: 0.045,
@@ -406,7 +452,8 @@ function scheduleDirgeBar(g: Graph, bar: number, at: number) {
       detune: -7,
       send: 0.7,
     })
-    swept(g, at + offset * DIRGE_BEAT, beats * DIRGE_BEAT * 0.85, {
+    swept(g, at + offset * DIRGE_BEAT, {
+      duration: beats * DIRGE_BEAT * 0.85,
       type: 'sawtooth',
       from: hz,
       peak: 0.04,
@@ -415,7 +462,8 @@ function scheduleDirgeBar(g: Graph, bar: number, at: number) {
       detune: 8,
       send: 0.7,
     })
-    swept(g, at + offset * DIRGE_BEAT, beats * DIRGE_BEAT * 0.9, {
+    swept(g, at + offset * DIRGE_BEAT, {
+      duration: beats * DIRGE_BEAT * 0.9,
       type: 'sine',
       from: hz / 2,
       peak: 0.07,
@@ -466,7 +514,8 @@ export function foldPaper() {
   const at = startsAt(g)
   for (let i = 0; i < 5; i++) {
     const when = at + i * 0.055 + Math.random() * 0.03
-    rush(g, when, 0.05 + Math.random() * 0.05, {
+    rush(g, when, {
+      duration: 0.05 + Math.random() * 0.05,
       peak: 0.05 + Math.random() * 0.025,
       type: 'highpass',
       cutoff: 2600 + Math.random() * 2400,
@@ -478,7 +527,8 @@ export function foldPaper() {
     })
   }
   // The last sheet settling: one flick, lower and slower than the rest.
-  rush(g, at + 0.3, 0.12, {
+  rush(g, at + 0.3, {
+    duration: 0.12,
     peak: 0.04,
     type: 'bandpass',
     cutoff: 1500,
@@ -588,7 +638,8 @@ export function playATune(tune: 'bloom' | 'scatter' | 'dance') {
     const hz = midiToHz(FLUTE_ROOT + step)
     const starts = at + when * air.beat
     const length = held * air.beat
-    swept(g, starts, length, {
+    swept(g, starts, {
+      duration: length,
       type: 'sine',
       from: hz,
       peak: air.peak,
@@ -602,7 +653,8 @@ export function playATune(tune: 'bloom' | 'scatter' | 'dance') {
       send: 0.6,
     })
     // The breath across the lip plate, which is where the instrument is.
-    rush(g, starts, Math.min(length, 0.09), {
+    rush(g, starts, {
+      duration: Math.min(length, 0.09),
       peak: 0.014,
       type: 'bandpass',
       cutoff: hz * 2,
@@ -718,7 +770,8 @@ export function startEngine() {
 
   // The starter: three turns before it catches.
   for (let i = 0; i < 3; i++) {
-    rush(g, at + i * 0.13, 0.1, {
+    rush(g, at + i * 0.13, {
+      duration: 0.1,
       peak: 0.07,
       type: 'lowpass',
       cutoff: 420,
@@ -727,7 +780,14 @@ export function startEngine() {
       attack: 0.01,
       release: 0.05,
     })
-    swept(g, at + i * 0.13, 0.1, { type: 'sawtooth', from: 78, to: 44, peak: 0.08, release: 0.06 })
+    swept(g, at + i * 0.13, {
+      duration: 0.1,
+      type: 'sawtooth',
+      from: 78,
+      to: 44,
+      peak: 0.08,
+      release: 0.06,
+    })
   }
 
   const caught = at + 0.42
@@ -902,7 +962,8 @@ export function blowAGust() {
   const g = hatsuAudioGraph()
   if (!g) return
   const at = startsAt(g)
-  rush(g, at, 1, {
+  rush(g, at, {
+    duration: 1,
     peak: 0.13,
     type: 'bandpass',
     cutoff: 1100,
@@ -913,7 +974,8 @@ export function blowAGust() {
     send: 0.4,
   })
   // A second, thinner band a beat behind: the tail of the same gust.
-  rush(g, at + 0.12, 0.85, {
+  rush(g, at + 0.12, {
+    duration: 0.85,
     peak: 0.05,
     type: 'highpass',
     cutoff: 2400,
@@ -935,7 +997,8 @@ export function landAPunch() {
   const g = hatsuAudioGraph()
   if (!g) return
   const at = startsAt(g)
-  swept(g, at, 0.16, {
+  swept(g, at, {
+    duration: 0.16,
     type: 'sine',
     from: 168,
     to: 42,
@@ -944,7 +1007,8 @@ export function landAPunch() {
     release: 0.18,
     send: 0.25,
   })
-  rush(g, at, 0.05, {
+  rush(g, at, {
+    duration: 0.05,
     peak: 0.12,
     type: 'lowpass',
     cutoff: 1800,
@@ -953,7 +1017,14 @@ export function landAPunch() {
     release: 0.1,
   })
   // The deck it came up through, answering.
-  swept(g, at + 0.02, 0.3, { type: 'triangle', from: 74, to: 52, peak: 0.07, release: 0.35 })
+  swept(g, at + 0.02, {
+    duration: 0.3,
+    type: 'triangle',
+    from: 74,
+    to: 52,
+    peak: 0.07,
+    release: 0.35,
+  })
 }
 
 /**
@@ -970,7 +1041,8 @@ export function raiseTheSun(metres = 12) {
   const reach = Math.min(2, Math.max(0.5, metres / 14))
 
   // The roar.
-  rush(g, at, 1.9, {
+  rush(g, at, {
+    duration: 1.9,
     peak: 0.13 * reach,
     type: 'lowpass',
     cutoff: 90,
@@ -986,7 +1058,8 @@ export function raiseTheSun(metres = 12) {
     [7, 0.035, 6],
     [12, 0.025, 0],
   ]) {
-    swept(g, at + 0.25, 1.7, {
+    swept(g, at + 0.25, {
+      duration: 1.7,
       type: 'sawtooth',
       from: midiToHz(50 + semitone),
       to: midiToHz(50 + semitone) * 2.4,
@@ -998,7 +1071,8 @@ export function raiseTheSun(metres = 12) {
     })
   }
   // And the top of the bloom, where it stops climbing.
-  rush(g, at + 1.4, 0.5, {
+  rush(g, at + 1.4, {
+    duration: 0.5,
     peak: 0.05 * reach,
     type: 'highpass',
     cutoff: 3400,
@@ -1022,7 +1096,8 @@ export function loostAnArrow() {
   const at = startsAt(g)
 
   // The string.
-  swept(g, at, 0.09, {
+  swept(g, at, {
+    duration: 0.09,
     type: 'triangle',
     from: 240,
     to: 132,
@@ -1031,10 +1106,11 @@ export function loostAnArrow() {
     release: 0.12,
     send: 0.4,
   })
-  rush(g, at, 0.04, { peak: 0.07, type: 'highpass', cutoff: 2200, release: 0.06 })
+  rush(g, at, { duration: 0.04, peak: 0.07, type: 'highpass', cutoff: 2200, release: 0.06 })
 
   // The shaft, passing.
-  rush(g, at + 0.06, 0.3, {
+  rush(g, at + 0.06, {
+    duration: 0.3,
     peak: 0.09,
     type: 'bandpass',
     cutoff: 3200,
@@ -1046,7 +1122,8 @@ export function loostAnArrow() {
   })
 
   // The arrival: a soul is not a target, so it lands soft and rings a little.
-  swept(g, at + 0.36, 0.12, {
+  swept(g, at + 0.36, {
+    duration: 0.12,
     type: 'sine',
     from: 320,
     to: 110,
@@ -1069,7 +1146,8 @@ export function unspoolWire() {
   if (!g) return
   const at = startsAt(g)
 
-  rush(g, at, 0.6, {
+  rush(g, at, {
+    duration: 0.6,
     peak: 0.05,
     type: 'highpass',
     cutoff: 1800,
@@ -1083,7 +1161,8 @@ export function unspoolWire() {
   for (let i = 0; i < TICKS; i++) {
     // Quadratic spacing: the drum accelerates as the coil gets lighter.
     const when = at + 0.62 * (1 - (1 - i / TICKS) ** 2)
-    swept(g, when, 0.01, {
+    swept(g, when, {
+      duration: 0.01,
       type: 'square',
       from: 2600 + i * 130,
       peak: 0.035,
@@ -1094,7 +1173,8 @@ export function unspoolWire() {
   }
 
   // The bite.
-  swept(g, at + 0.64, 0.05, {
+  swept(g, at + 0.64, {
+    duration: 0.05,
     type: 'triangle',
     from: 1400,
     to: 520,
@@ -1122,7 +1202,8 @@ export function fireABurst(rounds = 8) {
     const when = at + i * 0.062
     const left = i % 2 === 0
     // The crack.
-    rush(g, when, 0.035, {
+    rush(g, when, {
+      duration: 0.035,
       peak: 0.11,
       type: 'highpass',
       cutoff: left ? 2400 : 3100,
@@ -1132,7 +1213,8 @@ export function fireABurst(rounds = 8) {
       send: 0.55,
     })
     // The charge behind it.
-    swept(g, when, 0.05, {
+    swept(g, when, {
+      duration: 0.05,
       type: 'sine',
       from: left ? 150 : 168,
       to: 48,
@@ -1144,7 +1226,8 @@ export function fireABurst(rounds = 8) {
 
   // Brass on the deck, after the last round.
   for (let i = 0; i < 4; i++) {
-    rush(g, at + shots * 0.062 + 0.1 + i * 0.09 + Math.random() * 0.05, 0.02, {
+    rush(g, at + shots * 0.062 + 0.1 + i * 0.09 + Math.random() * 0.05, {
+      duration: 0.02,
       peak: 0.03,
       type: 'bandpass',
       cutoff: 4200 + Math.random() * 2000,
@@ -1176,7 +1259,8 @@ export function strikeAGong(stage = 1) {
   const root = midiToHz(45 - step * 2) * (stage === 0 ? 2 : 1)
 
   // The mallet.
-  rush(g, at, 0.03, {
+  rush(g, at, {
+    duration: 0.03,
     peak: 0.09,
     type: 'bandpass',
     cutoff: 1800,
@@ -1192,7 +1276,8 @@ export function strikeAGong(stage = 1) {
     [5.9, 0.028, 1.6],
     [8.63, 0.016, 1.1],
   ]) {
-    swept(g, at, 0.12, {
+    swept(g, at, {
+      duration: 0.12,
       type: 'sine',
       from: root * ratio,
       // Metal detunes downward as the strike energy leaves it.
@@ -1218,7 +1303,8 @@ export function stretchTheGum() {
   const at = startsAt(g)
 
   // The stretch.
-  swept(g, at, 0.18, {
+  swept(g, at, {
+    duration: 0.18,
     type: 'triangle',
     from: 190,
     to: 560,
@@ -1228,7 +1314,8 @@ export function stretchTheGum() {
     send: 0.3,
   })
   // And the return, overshooting and wobbling as it goes.
-  swept(g, at + 0.19, 0.34, {
+  swept(g, at + 0.19, {
+    duration: 0.34,
     type: 'triangle',
     from: 560,
     to: 148,
@@ -1239,7 +1326,8 @@ export function stretchTheGum() {
     wobbleHz: 13,
     send: 0.5,
   })
-  swept(g, at + 0.19, 0.3, {
+  swept(g, at + 0.19, {
+    duration: 0.3,
     type: 'sine',
     from: 280,
     to: 74,
@@ -1274,7 +1362,8 @@ export function grindThroughSpace(on = true) {
     const [from, to] = on ? [low, high] : [high, low]
 
     for (const detune of [-11, 9]) {
-      swept(g, when, CYCLE * 0.55, {
+      swept(g, when, {
+        duration: CYCLE * 0.55,
         type: 'sawtooth',
         from,
         to,
@@ -1284,7 +1373,8 @@ export function grindThroughSpace(on = true) {
         detune,
         send: 0.65,
       })
-      swept(g, when + CYCLE * 0.5, CYCLE * 0.45, {
+      swept(g, when + CYCLE * 0.5, {
+        duration: CYCLE * 0.45,
         type: 'sawtooth',
         from: to,
         to: from,
@@ -1296,7 +1386,8 @@ export function grindThroughSpace(on = true) {
       })
     }
     // The friction: a band of noise dragged across each turn.
-    rush(g, when, CYCLE * 0.9, {
+    rush(g, when, {
+      duration: CYCLE * 0.9,
       peak: 0.045,
       type: 'bandpass',
       cutoff: on ? 420 : 1500,
@@ -1309,7 +1400,8 @@ export function grindThroughSpace(on = true) {
   }
 
   // The thump when it has finished arriving, or finished leaving.
-  swept(g, at + CYCLES * CYCLE, 0.2, {
+  swept(g, at + CYCLES * CYCLE, {
+    duration: 0.2,
     type: 'sine',
     from: 96,
     to: 46,
@@ -1333,7 +1425,8 @@ export function wakeTheMachine() {
   const at = startsAt(g)
 
   // The relay.
-  rush(g, at, 0.02, {
+  rush(g, at, {
+    duration: 0.02,
     peak: 0.1,
     type: 'highpass',
     cutoff: 3000,
@@ -1346,7 +1439,8 @@ export function wakeTheMachine() {
   const steps = [196, 262, 233, 330]
   steps.forEach((hz, i) => {
     const when = at + 0.05 + i * 0.085
-    swept(g, when, 0.06, {
+    swept(g, when, {
+      duration: 0.06,
       type: 'square',
       from: hz,
       peak: 0.055,
@@ -1355,7 +1449,8 @@ export function wakeTheMachine() {
       send: 0.3,
     })
     // Gear noise on each move: brief, and the same every time, as a gear is.
-    rush(g, when, 0.045, {
+    rush(g, when, {
+      duration: 0.045,
       peak: 0.035,
       type: 'bandpass',
       cutoff: 1700,
@@ -1366,7 +1461,8 @@ export function wakeTheMachine() {
   })
 
   // The hydraulics taking the weight of whatever just stood up.
-  swept(g, at + 0.4, 0.45, {
+  swept(g, at + 0.4, {
+    duration: 0.45,
     type: 'sawtooth',
     from: 58,
     to: 38,
@@ -1375,7 +1471,8 @@ export function wakeTheMachine() {
     release: 0.4,
     send: 0.35,
   })
-  rush(g, at + 0.4, 0.4, {
+  rush(g, at + 0.4, {
+    duration: 0.4,
     peak: 0.04,
     type: 'lowpass',
     cutoff: 700,
@@ -1401,7 +1498,8 @@ export function crackAWhip() {
   const at = startsAt(g)
 
   // The chain coming round: air, rising as the weight accelerates.
-  rush(g, at, 0.11, {
+  rush(g, at, {
+    duration: 0.11,
     peak: 0.06,
     type: 'bandpass',
     cutoff: 700,
@@ -1412,7 +1510,8 @@ export function crackAWhip() {
   })
 
   // The crack: everything at once, and gone.
-  rush(g, at + 0.11, 0.02, {
+  rush(g, at + 0.11, {
+    duration: 0.02,
     peak: 0.3,
     type: 'highpass',
     cutoff: 1800,
@@ -1424,7 +1523,8 @@ export function crackAWhip() {
 
   // And the steel that made it, which is what says this was a chain rather
   // than a length of leather: a short, hard ring on the ball itself.
-  swept(g, at + 0.115, 0.06, {
+  swept(g, at + 0.115, {
+    duration: 0.06,
     type: 'triangle',
     from: 2100,
     to: 1500,
@@ -1433,7 +1533,8 @@ export function crackAWhip() {
     release: 0.16,
     send: 0.4,
   })
-  swept(g, at + 0.115, 0.05, {
+  swept(g, at + 0.115, {
+    duration: 0.05,
     type: 'sine',
     from: 3160,
     to: 2400,
@@ -1455,7 +1556,8 @@ export function hissLikeASnake() {
   const at = startsAt(g)
 
   // The initial strike/bite (quick and somewhat forceful)
-  rush(g, at, 0.08, {
+  rush(g, at, {
+    duration: 0.08,
     peak: 0.1,
     type: 'bandpass',
     cutoff: 1800,
@@ -1467,7 +1569,8 @@ export function hissLikeASnake() {
   })
 
   // The longer hiss following the bite
-  rush(g, at + 0.04, 0.45, {
+  rush(g, at + 0.04, {
+    duration: 0.45,
     peak: 0.12,
     type: 'highpass',
     cutoff: 2800,
@@ -1475,5 +1578,187 @@ export function hissLikeASnake() {
     attack: 0.04,
     release: 0.35,
     send: 0.5,
+  })
+}
+
+/**
+ * Marayam's Guardian Spirit Beast, roaring at somebody trying the door.
+ *
+ * The one sound in the walk that is a refusal. A roar is three things at once
+ * and it has to be all three or it reads as an engine: a low tone that sags
+ * across its whole length, a second one a fifth off it and deliberately not in
+ * tune with the first, and a great deal of low noise on top — the noise is the
+ * throat, and without it two oscillators are a foghorn. The whole of it is sent
+ * hard to the reverb, because it is being made in a room with a steel deckhead
+ * and that is most of why it is frightening.
+ */
+export function roarLikeADragon() {
+  const g = hatsuAudioGraph()
+  if (!g) return
+  const at = startsAt(g)
+
+  // The throat: a wide band of low noise that opens and closes, which is the
+  // shape of a mouth rather than the shape of a note.
+  rush(g, at, {
+    duration: 1.15,
+    peak: 0.16,
+    type: 'lowpass',
+    cutoff: 320,
+    sweepTo: 900,
+    q: 0.7,
+    attack: 0.09,
+    release: 0.5,
+    send: 0.75,
+  })
+  // And the two tones under it. The detune is the point: exactly a fifth would
+  // be a chord, and an animal does not make a chord.
+  swept(g, at, {
+    duration: 1.1,
+    type: 'sawtooth',
+    from: 62,
+    to: 44,
+    peak: 0.13,
+    attack: 0.07,
+    release: 0.45,
+    wobble: 5,
+    wobbleHz: 17,
+    send: 0.6,
+  })
+  swept(g, at + 0.05, {
+    duration: 1,
+    type: 'sawtooth',
+    from: 93,
+    to: 67,
+    detune: 22,
+    peak: 0.07,
+    attack: 0.1,
+    release: 0.4,
+    wobble: 4,
+    wobbleHz: 11,
+    send: 0.6,
+  })
+  // The catch at the end, which is what stops it sounding like a sample fading
+  // out: the breath runs out before the note does.
+  rush(g, at + 0.95, {
+    duration: 0.22,
+    peak: 0.07,
+    type: 'bandpass',
+    cutoff: 700,
+    sweepTo: 260,
+    q: 1.4,
+    attack: 0.03,
+    release: 0.3,
+    send: 0.5,
+  })
+}
+
+/**
+ * Momoze's flock, let loose.
+ *
+ * A great many small creatures of no particular kind, all making noise at once
+ * — so it is deliberately not one call: eight short chirps scattered over half
+ * a second, each at its own pitch, some of them squeaking up and some down. The
+ * scatter is by hand rather than off an LFO for the reason the wormhole's
+ * sparks are: a crowd on a regular beat is a machine.
+ */
+export function chirpTheFlock() {
+  const g = hatsuAudioGraph()
+  if (!g) return
+  const at = startsAt(g)
+
+  // Pitch, when, how long, and which way it bends. Written out rather than
+  // generated so the flock sounds the same every time it is loosed — the walk
+  // has no random it is allowed to use in a render.
+  const voices: [number, number, number, number][] = [
+    [84, 0, 0.09, 1.5],
+    [72, 0.06, 0.14, 0.7],
+    [91, 0.11, 0.07, 1.8],
+    [66, 0.19, 0.16, 0.6],
+    [88, 0.24, 0.08, 1.3],
+    [79, 0.31, 0.11, 0.75],
+    [96, 0.38, 0.06, 2.1],
+    [74, 0.44, 0.13, 0.65],
+  ]
+  for (const [note, offset, length, bend] of voices) {
+    swept(g, at + offset, {
+      duration: length,
+      type: offset % 0.2 > 0.1 ? 'square' : 'triangle',
+      from: midiToHz(note),
+      to: midiToHz(note) * bend,
+      peak: 0.055,
+      attack: 0.008,
+      release: 0.09,
+      wobble: 9,
+      wobbleHz: 24,
+      send: 0.5,
+    })
+  }
+  // And something large among them, because one of them is: the drawing has a
+  // bear the size of the room in it.
+  swept(g, at + 0.12, {
+    duration: 0.4,
+    type: 'sawtooth',
+    from: 74,
+    to: 58,
+    peak: 0.06,
+    attack: 0.05,
+    release: 0.3,
+    wobble: 6,
+    wobbleHz: 9,
+    send: 0.6,
+  })
+}
+
+/**
+ * Camilla's cat, breaking up the room it is waiting in.
+ *
+ * Two things and both are needed: the sound of a thing going under something
+ * heavy, and the animal making it. The crush is low noise with the bottom
+ * falling out of it; the cat over the top is deliberately not a miaow — a
+ * miaow is domestic, and this one is the size of a room. So it is the low
+ * warning a cat gives before it is one: a hard sine bending down, with a purr
+ * under it that is only a very slow wobble on a low tone.
+ */
+export function crushLikeACat() {
+  const g = hatsuAudioGraph()
+  if (!g) return
+  const at = startsAt(g)
+
+  // The thing going.
+  rush(g, at, {
+    duration: 0.3,
+    peak: 0.13,
+    type: 'lowpass',
+    cutoff: 900,
+    sweepTo: 130,
+    q: 0.6,
+    attack: 0.005,
+    release: 0.25,
+    send: 0.5,
+  })
+  // The cat over it.
+  swept(g, at + 0.1, {
+    duration: 0.5,
+    type: 'triangle',
+    from: 300,
+    to: 168,
+    peak: 0.075,
+    attack: 0.06,
+    release: 0.3,
+    wobble: 12,
+    wobbleHz: 6,
+    send: 0.55,
+  })
+  // And the purr, which is what makes it read as pleased with itself.
+  swept(g, at, {
+    duration: 0.75,
+    type: 'sine',
+    from: 58,
+    to: 52,
+    peak: 0.05,
+    attack: 0.1,
+    release: 0.35,
+    wobble: 14,
+    wobbleHz: 22,
   })
 }

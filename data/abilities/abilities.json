@@ -68,15 +68,6 @@
     "moduleKey": "benjamin-aura"
   },
   {
-    "id": "oito-hatsu",
-    "ownerId": "queen-oito",
-    "name": "Royal Guard Hatsu",
-    "category": "manipulator",
-    "description": "Oito's ability to control and manipulate her royal guards with precision.",
-    "canonStatus": "canon",
-    "moduleKey": "oito-hatsu"
-  },
-  {
     "id": "erigeron",
     "ownerId": "bill",
     "name": "Erigeron",
@@ -899,7 +890,7 @@
     "alternateNames": ["Weapon Transformation"],
     "category": "conjurer",
     "abilityType": "body-part-weapon-transformation",
-    "description": "Padaille transforms parts of his body into weapons and tools he knows. His right arm becomes a demolition hammer while retaining bodily control.",
+    "description": "Padaille transforms parts of his body into weapons and tools he knows, keeping bodily control of them. Which tool answers is not his to choose: the arm becomes a hammer, a drill or an axe at random, and each does one thing to what it meets — the hammer drives it into the ground, the drill bores a hole through it, the axe cuts it in two.",
     "canonStatus": "canon",
     "moduleKey": "padaille-weapon-transformation"
   },

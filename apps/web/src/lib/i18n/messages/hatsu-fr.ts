@@ -98,15 +98,6 @@ export const hatsuFr: Record<string, HatsuTextOverride> = {
     rule: 'L’aura immense de Benjamin renforce la puissance physique et la défense proportionnellement à l’aura engagée.',
     cost: 'Aura croissante à chaque couche de renfort',
   },
-  'oito-hatsu': {
-    name: 'Hatsu de la garde royale',
-    owner: 'Oito',
-    action: 'Recruter le premier garde',
-    instruction:
-      'Sélectionnez des personnages de la carte pour les réunir dans un même réseau de commandement ; chaque nouveau garde est attiré vers le premier commandant.',
-    rule: 'Le contrôle exige des cibles acquises et des liens d’aura maintenus sur tout le réseau de gardes.',
-    cost: 'De l’aura par garde relié',
-  },
   erigeron: {
     name: 'Erigeron',
     owner: 'Bill',
@@ -695,11 +686,11 @@ export const hatsuFr: Record<string, HatsuTextOverride> = {
   'padaille-weapon-transformation': {
     name: 'Je viens te chercher',
     owner: 'Padaille',
-    action: 'Choisir une fonction d’arme',
+    action: 'Frapper avec ce que le bras est devenu',
     instruction:
-      'Faites défiler la main entre marteau, perceuse et hache : l’un aplatit la cible, l’autre perce ce qu’elle gardait fermé, le dernier lui retire une partie.',
-    rule: 'Padaille change son propre corps en armes et en outils familiers, plutôt que d’invoquer un équipement indépendant.',
-    cost: 'Forme d’arme connue · partie du corps transformée',
+      'Frappez une cible et voyez ce qu’est devenu le bras : un marteau l’enfonce dans le sol, une perceuse y perce un trou, une hache la coupe en deux.',
+    rule: 'Le bras prend l’une des trois formes au hasard — Padaille change son propre corps en outils qu’il connaît plutôt que d’invoquer un équipement, mais il ne choisit pas laquelle répond.',
+    cost: 'Membre transformé · aucun mot à dire sur la forme',
   },
   'camilla-guardian-coercion': {
     name: 'Coercition de la bête gardienne de Camilla',
@@ -793,7 +784,6 @@ export const hatsuManifestationFr: Record<HatsuInteractionKind, string> = {
   'chain-bind': 'Chaîne d’entrave du majeur',
   dowsing: 'Pendule de divination',
   enhance: 'Manteau de Ren royal',
-  control: 'Fils de commandement royaux',
   growth: 'Pousse d’erigeron',
   vehicle: 'Coque transformée à cinq places',
   scout: 'Insecte volant (Aura bleue)',

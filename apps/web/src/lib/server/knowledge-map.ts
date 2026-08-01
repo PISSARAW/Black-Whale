@@ -104,8 +104,7 @@ async function resolveSubjects(
   }
 
   const resolved = new Map<string, KnowledgeSubject>()
-  const put = (type: string, id: string, label: string, href: string | null) =>
-    resolved.set(`${type}:${id}`, { type, id, label, href })
+  const put = (subject: KnowledgeSubject) => resolved.set(`${subject.type}:${subject.id}`, subject)
 
   const ids = (type: string) => [...(idsByType.get(type) ?? [])]
 
@@ -118,18 +117,30 @@ async function resolveSubjects(
   ])
 
   for (const row of characters)
-    put('CHARACTER', row.id, row.canonicalName, `/characters/${row.slug}`)
-  for (const row of bodies) put('BODY', row.id, row.label, `/bodies/${row.id}`)
+    put({
+      type: 'CHARACTER',
+      id: row.id,
+      label: row.canonicalName,
+      href: `/characters/${row.slug}`,
+    })
+  for (const row of bodies)
+    put({ type: 'BODY', id: row.id, label: row.label, href: `/bodies/${row.id}` })
   for (const row of consciousnesses)
-    put('CONSCIOUSNESS', row.id, row.label, `/consciousness/${row.id}`)
-  for (const row of locations) put('LOCATION', row.id, row.name, null)
-  for (const row of events) put('EVENT', row.id, row.title, null)
+    put({
+      type: 'CONSCIOUSNESS',
+      id: row.id,
+      label: row.label,
+      href: `/consciousness/${row.id}`,
+    })
+  for (const row of locations) put({ type: 'LOCATION', id: row.id, label: row.name, href: null })
+  for (const row of events) put({ type: 'EVENT', id: row.id, label: row.title, href: null })
 
   // Ability, affiliation and cohort subjects keep their stored id: inventing a
   // label for them would be the mock-up's mistake in a smaller place.
   for (const subject of subjects) {
     const key = `${subject.type}:${subject.id}`
-    if (!resolved.has(key)) put(subject.type, subject.id, subject.id, null)
+    if (!resolved.has(key))
+      put({ type: subject.type, id: subject.id, label: subject.id, href: null })
   }
 
   return resolved

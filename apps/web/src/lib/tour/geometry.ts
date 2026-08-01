@@ -11,8 +11,10 @@ import type {
   Doorway,
   Lantern,
   Polygon,
+  Segment,
   Space,
   Structure,
+  Triangle,
   Vec2,
   WallSegment,
 } from './types'
@@ -131,12 +133,9 @@ export const iterateEdges = function* (polygon: Polygon): Generator<[Vec2, Vec2]
  * the distance along `a1`→`a2`. Returns `null` when they are not collinear or
  * only meet at a point.
  */
-export function collinearOverlap(
-  a1: Vec2,
-  a2: Vec2,
-  b1: Vec2,
-  b2: Vec2,
-): { from: number; to: number } | null {
+export function collinearOverlap(a: Segment, b: Segment): { from: number; to: number } | null {
+  const [a1, a2] = a
+  const [b1, b2] = b
   const dir = sub(a2, a1)
   const length = len(dir)
   if (length < EPSILON) return null
@@ -172,7 +171,7 @@ export function longestSharedWall(
     const unit: Vec2 = [dir[0] / length, dir[1] / length]
 
     for (const [b1, b2] of iterateEdges(b)) {
-      const overlap = collinearOverlap(a1, a2, b1, b2)
+      const overlap = collinearOverlap([a1, a2], [b1, b2])
       if (!overlap) continue
       if (!best || overlap.to - overlap.from > best.to - best.from) {
         best = { ...overlap, a1, unit }
@@ -284,7 +283,7 @@ export function wallSegments(space: Space, doorways: Doorway[]): WallSegment[] {
 
     const gaps: Array<[number, number]> = []
     for (const door of mine) {
-      const overlap = collinearOverlap(a1, a2, door.start, door.end)
+      const overlap = collinearOverlap([a1, a2], [door.start, door.end])
       if (overlap) gaps.push([overlap.from, overlap.to])
     }
     gaps.sort((left, right) => left[0] - right[0])
@@ -414,7 +413,7 @@ export function triangulate(polygon: Polygon): number[] {
       // Nor can a corner with another vertex sitting inside it.
       const contains = remaining.some((index) => {
         if (index === prev || index === current || index === next) return false
-        return pointInTriangle(at(index), a, b, c)
+        return pointInTriangle(at(index), [a, b, c])
       })
       if (contains) continue
 
@@ -432,7 +431,7 @@ export function triangulate(polygon: Polygon): number[] {
   return triangles
 }
 
-function pointInTriangle(p: Vec2, a: Vec2, b: Vec2, c: Vec2): boolean {
+function pointInTriangle(p: Vec2, [a, b, c]: Triangle): boolean {
   const d1 = cross(sub(b, a), sub(p, a))
   const d2 = cross(sub(c, b), sub(p, b))
   const d3 = cross(sub(a, c), sub(p, c))
@@ -466,7 +465,7 @@ export function polygonsOverlap(a: Polygon, b: Polygon): boolean {
 
   for (const [a1, a2] of iterateEdges(a)) {
     for (const [b1, b2] of iterateEdges(b)) {
-      if (segmentsProperlyCross(a1, a2, b1, b2)) return true
+      if (segmentsProperlyCross([a1, a2], [b1, b2])) return true
     }
   }
   return false
@@ -480,7 +479,7 @@ export function polygonContains(outer: Polygon, inner: Polygon): boolean {
   if (!inner.every((point) => pointInPolygon(point, outer))) return false
   for (const [a1, a2] of iterateEdges(outer)) {
     for (const [b1, b2] of iterateEdges(inner)) {
-      if (segmentsProperlyCross(a1, a2, b1, b2)) return false
+      if (segmentsProperlyCross([a1, a2], [b1, b2])) return false
     }
   }
   return true
@@ -499,7 +498,7 @@ function triangleCentroids(polygon: Polygon): Vec2[] {
 }
 
 /** Crossings that pass through each other, ignoring shared walls and corners. */
-function segmentsProperlyCross(a1: Vec2, a2: Vec2, b1: Vec2, b2: Vec2): boolean {
+function segmentsProperlyCross([a1, a2]: Segment, [b1, b2]: Segment): boolean {
   const d1 = cross(sub(a2, a1), sub(b1, a1))
   const d2 = cross(sub(a2, a1), sub(b2, a1))
   const d3 = cross(sub(b2, b1), sub(a1, b1))
@@ -919,29 +918,25 @@ export function ceilingLamps(footprint: Polygon, spacing = LAMP_SPACING): Vec2[]
  * surface interior vertices to hold light in, and keeps the split at the middle
  * of an edge so neighbouring triangles agree on it and no crack opens up.
  */
-export function subdivideTriangle(
-  a: Vec2,
-  b: Vec2,
-  c: Vec2,
-  maxEdge: number,
-): [Vec2, Vec2, Vec2][] {
+export function subdivideTriangle(triangle: Triangle, maxEdge: number): Triangle[] {
+  const [a, b, c] = triangle
   const ab = len(sub(b, a))
   const bc = len(sub(c, b))
   const ca = len(sub(a, c))
   const longest = Math.max(ab, bc, ca)
-  if (!(maxEdge > 0) || longest <= maxEdge) return [[a, b, c]]
+  if (!(maxEdge > 0) || longest <= maxEdge) return [triangle]
 
   const mid = (p: Vec2, q: Vec2): Vec2 => [(p[0] + q[0]) / 2, (p[1] + q[1]) / 2]
   // Split the longest edge, so the pieces stay as near equilateral as the
   // original was rather than growing ever thinner slivers.
   if (longest === ab) {
     const m = mid(a, b)
-    return [...subdivideTriangle(a, m, c, maxEdge), ...subdivideTriangle(m, b, c, maxEdge)]
+    return [...subdivideTriangle([a, m, c], maxEdge), ...subdivideTriangle([m, b, c], maxEdge)]
   }
   if (longest === bc) {
     const m = mid(b, c)
-    return [...subdivideTriangle(a, b, m, maxEdge), ...subdivideTriangle(a, m, c, maxEdge)]
+    return [...subdivideTriangle([a, b, m], maxEdge), ...subdivideTriangle([a, m, c], maxEdge)]
   }
   const m = mid(c, a)
-  return [...subdivideTriangle(a, b, m, maxEdge), ...subdivideTriangle(m, b, c, maxEdge)]
+  return [...subdivideTriangle([a, b, m], maxEdge), ...subdivideTriangle([m, b, c], maxEdge)]
 }

@@ -33,6 +33,9 @@
     loostAnArrow,
     openAWormhole,
     playATune,
+    chirpTheFlock,
+    crushLikeACat,
+    roarLikeADragon,
     raiseTheSun,
     selectACard,
     skipThroughTime,
@@ -77,11 +80,18 @@
     aimsAtSolids,
     arriveInTour,
     castInTour,
+    catStep,
+    gasStep,
+    looseTheFlock,
+    reelStep,
+    smokeStep,
+    takeTheCoin,
     ageTheOwl,
     fishBite,
     polarityStep,
     flyTheEye,
     flyTheOwl,
+    hatsuKeys,
     identityOf,
     nextDoubleMode,
     nextEyeMode,
@@ -89,6 +99,7 @@
     openTheBook,
     otherHand,
     spendPage,
+    TAKES_ORDERS,
     turnTheBook,
     twoPages,
     TWO_HANDED_KINDS,
@@ -394,7 +405,7 @@
   function onWindowKeydown(event: KeyboardEvent) {
     if (event.metaKey || event.ctrlKey || event.altKey) return
     const key = event.key.toLowerCase()
-    if (key === 'r' && !TAKES_ORDERS.includes(technique?.kind ?? null)) return
+    if (key === 'r' && !(technique && TAKES_ORDERS.has(technique.kind))) return
     if (key !== 'm' && key !== 'g' && key !== 'r' && key !== 'v' && key !== 'escape') return
     // Esc leaves full screen only where nothing else has a claim on it: the
     // browser answers it in native full screen, an engaged pointer answers it
@@ -481,7 +492,7 @@
 
   /** Hands the walk whatever the cast that just happened has to show. */
   function show(shown: TourReport) {
-    const seen = flashFor(shown, ship, world, position)
+    const seen = flashFor({ report: shown, from: position }, ship, world)
     if (seen) flash = { ...seen, seq: ++flashes }
     sound(shown)
   }
@@ -595,6 +606,19 @@
       // room or taken back off it, because both are the flute being played.
       case 'tune-played':
         return playATune(shown.tune)
+      // The Guardian Spirit Beasts that have a voice. Not all of them do: a
+      // jellyfish over a room and a wheel turning in one are silent in the
+      // source and are silent here, and inventing a noise for them would be
+      // the walk making something up.
+      case 'crushed-one':
+        return crushLikeACat()
+      case 'flock-loosed':
+        return chirpTheFlock()
+      // Marayam's roars at somebody trying the door — the scene answers that
+      // one, because the door is a keypress rather than a cast — and it roars
+      // once on arriving, which is this.
+      case 'isolated':
+        return roarLikeADragon()
       default:
         return
     }
@@ -612,6 +636,15 @@
    * meant everywhere else.
    */
   const openPages = $derived(technique?.kind === 'bookmark' ? twoPages(world.book) : null)
+
+  /**
+   * Every key the technique in hand answers to, said before it is pressed.
+   *
+   * The walk casts with three keys at most and no aura uses all three: which
+   * ones this one uses — and what R means under it — is decided in one place,
+   * and both the panel and the walk itself read it from there.
+   */
+  const controlKeys = $derived(hatsuKeys(technique, world.book))
 
   /** A page under the name of whoever the book took it from. */
   const pageName = (kind: HatsuInteractionKind) => {
@@ -760,6 +793,19 @@
         // changes it, and taking the aura up again is not R.
         nextWorld.doubleMode = currentWorld.doubleMode ?? 'follow'
       }
+      // Momoze's is not cast at anything: the beasts are simply out. Asking the
+      // visitor to press F at a room to make them appear would be asking them
+      // to aim an ability that has no aim — what it does is ask, over and over,
+      // wherever it is, and the flock is the asking. So it is loosed the moment
+      // the aura goes up, from where the visitor is standing, exactly as
+      // Voconte's doors are simply wired the moment they are held.
+      if (kind === 'solicitation') {
+        const loose = looseTheFlock(nextWorld, ship, {
+          at: position,
+          standingIn: currentSpace?.id ?? null,
+        })
+        if (loose) nextWorld.menagerie = loose.world.menagerie
+      }
       // Double Face is handed over already holding two: a bookmark with one
       // page under it is not an ability, and the walk cannot ask the visitor to
       // steal twice before it does anything. Which two is rolled here and
@@ -808,9 +854,6 @@
   function cycleOwl() {
     turn('surveillance')
   }
-
-  /** The techniques R means anything under, which is what the key is guarded by. */
-  const TAKES_ORDERS: (HatsuInteractionKind | null)[] = ['guardian', 'surveillance', 'scout']
 
   /**
    * R, in one place: the walk asks the technique for its next order and says
@@ -1022,8 +1065,53 @@
    * rather than something to be told about, and the one line the technique has
    * to say is the one it says when neither of them is there any more.
    */
+  /**
+   * One step of every Guardian Spirit Beast that goes on working after the cast.
+   *
+   * Four of them do, and they are asked in one call rather than four because
+   * they share a clock and because only one of them can be up at a time in
+   * practice — the walk hands out one aura. Each answers with a world and a
+   * line or with nothing at all, and the last one that had something to say is
+   * what the read-out shows: a beast that has finished its room goes quiet
+   * rather than repeating itself.
+   */
+  function beastStep() {
+    let next = world
+    let last: TourReport | null = null
+    for (const step of [gasStep(next, ship), reelStep(next, ship, position), catStep(next, ship)]) {
+      if (!step) continue
+      next = step.world
+      last = step.report
+    }
+    // The smoke reads the world the others left, since filling a room is not
+    // affected by what melted in it — but it must not read a stale one.
+    const filling = smokeStep(next)
+    if (filling) {
+      next = filling.world
+      last = filling.report
+    }
+    if (!last) return
+    world = next
+    report = last
+    show(last)
+  }
+
+  /**
+   * The coin off Zhang Lei's wheel, taken by having walked into it.
+   *
+   * The scene says the visitor is standing where it hangs; what that is worth,
+   * and what the wheel puts out next, is the pure layer's.
+   */
+  function takeCoin() {
+    const taken = takeTheCoin(world)
+    if (!taken) return
+    world = taken.world
+    report = taken.report
+    show(taken.report)
+  }
+
   function polarityWalk(seconds: number, delta: number) {
-    const step = polarityStep(world, ship, seconds, delta)
+    const step = polarityStep(world, ship, { seconds, delta })
     if (!step) return
     world = step.world
     if (!step.report) return
@@ -1245,6 +1333,16 @@
         ship.tiers.length - ship.decks.length,
       )} · {$t.tour.scale(shipLength)}
     </p>
+    <!-- The one room of the reconstruction you sit down in rather than walk
+         through, which is the only reason it is a page of its own. -->
+    <p class="mt-3">
+      <a
+        href={$link('/tour/morena')}
+        class="text-sm text-[#d94f68] underline underline-offset-2 transition-colors hover:text-[#e8697f]"
+      >
+        {$t.tour.morena.title} →
+      </a>
+    </p>
   </header>
 
   <!-- Full screen is this grid over everything else, not the canvas alone:
@@ -1292,6 +1390,8 @@
         onOwl={owlFlight}
         onOwlSecond={owlSecond}
         onScout={scoutFlight}
+        onBeast={beastStep}
+        onCoin={takeCoin}
         onPolarity={polarityWalk}
         {hands}
         {tunes}
@@ -1405,6 +1505,27 @@
             </p>
           {/if}
         </div>
+      {/if}
+
+      <!-- The keys the technique in hand answers to, over the walk itself: the
+           panel says the same thing, and the panel is the first thing folded
+           away in full screen — which is exactly when a visitor is walking with
+           an aura up and nothing to remind them what R does under it. Not on a
+           touchscreen, where there are no keys and the casts are the buttons in
+           the corner. -->
+      {#if controlKeys.length && !touch && !mute}
+        <ul
+          class="pointer-events-none absolute bottom-3 left-3 space-y-0.5 rounded bg-[#050505]/80 px-2 py-1"
+        >
+          {#each controlKeys as control (control.key)}
+            <li class="flex items-baseline gap-2 text-[11px]">
+              <kbd class="shrink-0 font-mono text-[10px]" style:color={technique?.color}>
+                {control.click ? `${control.key} / ${$t.tour.hatsu.keys.click}` : control.key}
+              </kbd>
+              <span class="text-[#FFFFF0]/70">{$t.tour.hatsu.keys.actions[control.action]}</span>
+            </li>
+          {/each}
+        </ul>
       {/if}
 
       <p
@@ -1570,6 +1691,7 @@
           {aimedSolidAt}
           at={position}
           standingIn={currentSpace?.id ?? null}
+          {touch}
           {nameOf}
           {sourceOf}
           onRelease={release}

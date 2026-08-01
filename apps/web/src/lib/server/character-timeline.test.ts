@@ -157,7 +157,13 @@ describe('buildChapterTrajectory', () => {
   it('falls back to an explicit unknown position', () => {
     const timeline = [{ chapter: 4, sequence: 1, kind: 'body-state' as const, label: 'WOUNDED' }]
 
-    const [chapter] = buildChapterTrajectory(timeline, null, { id: 'x' }, [], paths)
+    const [chapter] = buildChapterTrajectory({
+      timeline,
+      character: null,
+      jsonCharacter: { id: 'x' },
+      chapters: [],
+      locationPaths: paths,
+    })
 
     expect(chapter.visits).toHaveLength(1)
     expect(chapter.visits[0]).toMatchObject({ subject: 'character', certainty: 'UNKNOWN' })
@@ -175,7 +181,13 @@ describe('buildChapterTrajectory', () => {
       { chapter: 4, sequence: 2, kind: 'body-location' as const, label: 'Deck', location: 'Deck' },
     ]
 
-    const [chapter] = buildChapterTrajectory(timeline, null, { id: 'x' }, [], paths)
+    const [chapter] = buildChapterTrajectory({
+      timeline,
+      character: null,
+      jsonCharacter: { id: 'x' },
+      chapters: [],
+      locationPaths: paths,
+    })
 
     expect(chapter.isMovement).toBe(true)
     expect(chapter.visits.map((visit) => visit.location)).toEqual(['Casino', 'Deck'])
@@ -199,7 +211,13 @@ describe('buildChapterTrajectory', () => {
       },
     ]
 
-    const [chapter] = buildChapterTrajectory(timeline, null, { id: 'x' }, [], paths)
+    const [chapter] = buildChapterTrajectory({
+      timeline,
+      character: null,
+      jsonCharacter: { id: 'x' },
+      chapters: [],
+      locationPaths: paths,
+    })
 
     expect(chapter.visits).toHaveLength(1)
     expect(chapter.isMovement).toBe(false)
@@ -221,7 +239,15 @@ describe('buildChapterTrajectory', () => {
       },
     ]
 
-    expect(buildChapterTrajectory(timeline, null, { id: 'x' }, [], paths)).toEqual([])
+    expect(
+      buildChapterTrajectory({
+        timeline,
+        character: null,
+        jsonCharacter: { id: 'x' },
+        chapters: [],
+        locationPaths: paths,
+      }),
+    ).toEqual([])
   })
 
   it('picks up chapters from the catalogue when the character is involved', () => {
@@ -234,7 +260,13 @@ describe('buildChapterTrajectory', () => {
       },
     ]
 
-    const [chapter] = buildChapterTrajectory([], null, { id: 'x' }, chapters, paths)
+    const [chapter] = buildChapterTrajectory({
+      timeline: [],
+      character: null,
+      jsonCharacter: { id: 'x' },
+      chapters,
+      locationPaths: paths,
+    })
 
     expect(chapter.chapter).toBe(6)
     expect(chapter.visits[0]).toMatchObject({ location: 'Bridge', subject: 'character' })

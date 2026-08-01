@@ -1,9 +1,11 @@
 import { describe, expect, it } from 'vitest'
 import { buildShip, ceilingOf, floorOf } from './blueprint'
+import { pointInPolygon } from './geometry'
 import {
   PORTAL_REACH,
   SHOAL,
   apparitionsOn,
+  coinSpot,
   flashFor,
   wormMouthAt,
   wormMouths,
@@ -46,24 +48,30 @@ describe('the book', () => {
   it('is held open in front of whoever is carrying the bookmark', () => {
     // Carried rather than placed, like the hoover and the chain: the scene puts
     // it under the eye every frame, so what this says is only which deck.
-    const [book] = apparitionsOn(ship, carrying, walking).filter((seen) => seen.kind === 'book')
+    const [book] = apparitionsOn(ship, carrying, { visitor: walking }).filter(
+      (seen) => seen.kind === 'book',
+    )
     expect(book.tierId).toBe(furnished.tierId)
     expect(book.at).toEqual(walking.at)
 
     // And it is the bookmark's own: no aura, no book.
     expect(
-      apparitionsOn(ship, { ...carrying, holding: null }, walking).filter(
+      apparitionsOn(ship, { ...carrying, holding: null }, { visitor: walking }).filter(
         (seen) => seen.kind === 'book',
       ),
     ).toEqual([])
   })
 
   it('puts the ribbon on the page the bookmark is holding, and moves it with it', () => {
-    const [before] = apparitionsOn(ship, carrying, walking).filter((seen) => seen.kind === 'book')
+    const [before] = apparitionsOn(ship, carrying, { visitor: walking }).filter(
+      (seen) => seen.kind === 'book',
+    )
     expect(before.stage).toBe(dealt.pages.indexOf(dealt.bookmark!))
 
     const turned = { ...carrying, book: turnTheBook(dealt) }
-    const [after] = apparitionsOn(ship, turned, walking).filter((seen) => seen.kind === 'book')
+    const [after] = apparitionsOn(ship, turned, { visitor: walking }).filter(
+      (seen) => seen.kind === 'book',
+    )
     expect(after.stage).not.toBe(before.stage)
   })
 })
@@ -167,12 +175,12 @@ describe('the tunnel', () => {
 
   it('is crossed by walking into the doorway rather than into the room', () => {
     const mouth = wormMouths(ship, paired).find((end) => end.spaceId === furnished.id)!
-    expect(wormMouthAt(ship, paired, mouth.tierId, mouth.at)).toBe(furnished.id)
+    expect(wormMouthAt(ship, paired, { at: mouth.at, tierId: mouth.tierId })).toBe(furnished.id)
     // A step past the mouth is still the same room, and is not a crossing.
     const aside: [number, number] = [mouth.at[0] + PORTAL_REACH + 1, mouth.at[1]]
-    expect(wormMouthAt(ship, paired, mouth.tierId, aside)).toBeNull()
+    expect(wormMouthAt(ship, paired, { at: aside, tierId: mouth.tierId })).toBeNull()
     // Nor is standing where the far mouth is, on the wrong deck.
-    expect(wormMouthAt(ship, paired, 'nowhere', mouth.at)).toBeNull()
+    expect(wormMouthAt(ship, paired, { at: mouth.at, tierId: 'nowhere' })).toBeNull()
   })
 })
 
@@ -266,10 +274,10 @@ describe('The Sun and Moon', () => {
 
   it('rides the thing it is on rather than the spot it was put on', () => {
     const { world } = marked('sun')
-    const [still] = apparitionsOn(ship, world, undefined, 0).filter(
+    const [still] = apparitionsOn(ship, world, { seconds: 0 }).filter(
       (seen) => seen.kind === 'sun-mark',
     )
-    const [later] = apparitionsOn(ship, world, undefined, 3).filter(
+    const [later] = apparitionsOn(ship, world, { seconds: 3 }).filter(
       (seen) => seen.kind === 'sun-mark',
     )
     expect(later.at).not.toEqual(still.at)
@@ -280,10 +288,9 @@ describe('the two that happen rather than stand', () => {
   it('blows the gust from the visitor to the room the blast was aimed at', () => {
     const from: [number, number] = [12, 34]
     const seen = flashFor(
-      { kind: 'stripped', spaceId: elsewhere.id, count: 0 },
+      { report: { kind: 'stripped', spaceId: elsewhere.id, count: 0 }, from },
       ship,
       EMPTY_WORLD,
-      from,
     )!
     expect(seen.kind).toBe('gust')
     expect(seen.from).toEqual(from)
@@ -292,7 +299,11 @@ describe('the two that happen rather than stand', () => {
   })
 
   it('rises as a sun on the visitor rather than on a room', () => {
-    const seen = flashFor({ kind: 'sun-risen', metres: 12, solids: 3 }, ship, EMPTY_WORLD, [4, 5])!
+    const seen = flashFor(
+      { report: { kind: 'sun-risen', metres: 12, solids: 3 }, from: [4, 5] },
+      ship,
+      EMPTY_WORLD,
+    )!
     expect(seen.kind).toBe('sun')
     expect(seen.at).toEqual([4, 5])
     expect(seen.metres).toBe(12)
@@ -302,10 +313,9 @@ describe('the two that happen rather than stand', () => {
     const struck = ship.structures.find((structure) => structure.spaceId === furnished.id)!
     const tier = ship.tiers.find((candidate) => candidate.id === furnished.tierId)!
     const seen = flashFor(
-      { kind: 'came-up-under', solidId: 'whoever', otherId: struck.id },
+      { report: { kind: 'came-up-under', solidId: 'whoever', otherId: struck.id }, from: [0, 0] },
       ship,
       EMPTY_WORLD,
-      [0, 0],
     )!
     expect(seen.kind).toBe('punch')
     expect(seen.at).toEqual(struck.at)
@@ -313,8 +323,8 @@ describe('the two that happen rather than stand', () => {
   })
 
   it('says nothing for a report that is neither', () => {
-    expect(flashFor({ kind: 'no-target' }, ship, EMPTY_WORLD, [0, 0])).toBeNull()
-    expect(flashFor(null, ship, EMPTY_WORLD, [0, 0])).toBeNull()
+    expect(flashFor({ report: { kind: 'no-target' }, from: [0, 0] }, ship, EMPTY_WORLD)).toBeNull()
+    expect(flashFor({ report: null, from: [0, 0] }, ship, EMPTY_WORLD)).toBeNull()
   })
 })
 
@@ -341,9 +351,11 @@ describe('Enchanting Music', () => {
     }).world
 
   it('puts the flute in the visitor’s hands for as long as the aura is up', () => {
-    const [flute] = apparitionsOn(ship, { ...EMPTY_WORLD, holding: 'melody' }, walking).filter(
-      (seen) => seen.kind === 'flute',
-    )
+    const [flute] = apparitionsOn(
+      ship,
+      { ...EMPTY_WORLD, holding: 'melody' },
+      { visitor: walking },
+    ).filter((seen) => seen.kind === 'flute')
     // Carried, like the book and the chain: the room and the height say only
     // which deck, and the scene puts it at the hands every frame.
     expect(flute.at).toEqual(walking.at)
@@ -352,7 +364,9 @@ describe('Enchanting Music', () => {
     expect(flute.stage).toBe(0)
 
     const playing = { ...played('bloom'), holding: 'melody' as const }
-    const [raised] = apparitionsOn(ship, playing, walking).filter((seen) => seen.kind === 'flute')
+    const [raised] = apparitionsOn(ship, playing, { visitor: walking }).filter(
+      (seen) => seen.kind === 'flute',
+    )
     expect(raised.stage).toBeGreaterThan(0)
 
     // And no aura, no flute.
@@ -388,5 +402,63 @@ describe('Enchanting Music', () => {
   it('shows nothing at all for the lively air: what it moves is already there', () => {
     const dancing = played('dance')
     expect(apparitionsOn(ship, dancing)).toEqual([])
+  })
+})
+
+describe('what is called up beside the visitor', () => {
+  // A room with three metres of clear deck each way around its middle, so a
+  // body put two metres off in any direction is still in it: what is under
+  // test is the direction, not the fit.
+  const roomy = [...ship.spaces.values()].find((space) => {
+    const middle = centroid(space)
+    return [
+      [3, 0],
+      [-3, 0],
+      [0, 3],
+      [0, -3],
+    ].every((step) => pointInPolygon([middle[0] + step[0], middle[1] + step[1]], space.footprint))
+  })!
+
+  const standing = centroid(roomy)
+
+  const calling = (kind: Parameters<typeof castInTour>[1], heading: number) =>
+    castInTour(EMPTY_WORLD, kind, {
+      ship,
+      targetId: roomy.id,
+      standingIn: roomy.id,
+      at: standing,
+      heading,
+    }).world
+
+  /** How far up the visitor's own line of sight the thing came up. */
+  const ahead = (spot: readonly [number, number], heading: number) =>
+    (spot[0] - standing[0]) * -Math.sin(heading) + (spot[1] - standing[1]) * -Math.cos(heading)
+
+  it('puts Zhang Lei’s coin where the visitor is looking, whichever way that is', () => {
+    for (const heading of [0, Math.PI / 2, Math.PI, -Math.PI / 2, 2.3]) {
+      const spot = coinSpot(ship, calling('coin-growth', heading))!
+      expect(spot.spaceId).toBe(roomy.id)
+      // In front, and far enough off to be seen rather than stood inside — but
+      // near enough that walking on to it takes the coin.
+      expect(ahead(spot.at, heading)).toBeCloseTo(2)
+    }
+  })
+
+  it('brings the Guardian Spirit Beasts up in front of whoever called them', () => {
+    // The ones that come up with the visitor rather than down the reticle.
+    // Camilla's cat is not among them: it is put over whatever it is about to
+    // break, and only stands where it was called when the room is bare.
+    const beasts = [
+      ['coercive-beast', 'medusa'],
+      ['diffusive-smoke', 'mouths'],
+      ['desire-trap', 'centipede'],
+    ] as const
+    for (const [kind, seen] of beasts) {
+      for (const heading of [0, Math.PI]) {
+        const [body] = of(calling(kind, heading), seen)
+        expect(body, `${kind} at ${heading}`).toBeDefined()
+        expect(ahead(body.at, heading), `${kind} at ${heading}`).toBeGreaterThan(1)
+      }
+    }
   })
 })

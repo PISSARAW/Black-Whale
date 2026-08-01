@@ -26,8 +26,11 @@
     type BirdDispatch,
     type FloatingCard,
     type GuideItem,
+    type HatsuInteractionArgs,
     type HatsuInteractionContext,
     type Point,
+    type PointDetail,
+    type ScreenPoint,
     type StoredItem,
   } from './hatsuInteractions.js'
   import { loadProphecySheets } from './prophecySheets.js'
@@ -558,7 +561,7 @@
       .forEach((element) => element.removeAttribute('data-bungee-selected'))
   }
 
-  function selectBungeeCharacter(target: HTMLElement, x: number, y: number, label: string) {
+  function selectBungeeCharacter(target: HTMLElement, { x, y }: ScreenPoint, label: string) {
     const characterId = target.dataset.hatsuCharacter
     if (!characterId) return
     if (bungeeSelected.has(characterId)) {
@@ -593,7 +596,7 @@
     bungeeSelected.add(characterId)
     selectedElements = [...selectedElements, target]
     target.dataset.bungeeSelected = 'true'
-    addPoint(x, y, label)
+    addPoint({ x, y }, label)
     if (bungeeTimer) clearTimeout(bungeeTimer)
 
     if (bungeeSelected.size < 2) {
@@ -617,12 +620,7 @@
       .slice(0, 34)
   }
 
-  function addPoint(
-    x: number,
-    y: number,
-    label: string,
-    extras: Pick<Point, 'alert' | 'details'> = {},
-  ) {
+  function addPoint({ x, y }: ScreenPoint, label: string, extras: PointDetail = {}) {
     points = [...points.slice(-7), { x, y, label, id: ++sequence, ...extras }]
   }
 
@@ -637,7 +635,7 @@
 
     const label = target.dataset.hatsuCharacterName || targetLabel(target)
     if (/halkenburg/i.test(label)) {
-      addPoint(event.clientX, event.clientY, `${label} · FAILED`, { alert: true })
+      addPoint({ x: event.clientX, y: event.clientY }, `${label} · FAILED`, { alert: true })
       status = 'Acquisition failed · Grimmel pierced the aura rectangle and every defence'
       return true
     }
@@ -655,7 +653,7 @@
       height: Math.max(82, rect.height + 56),
     }
     status = `Hands joined · acquiring ${label}'s ability`
-    addPoint(event.clientX, event.clientY, label)
+    addPoint({ x: event.clientX, y: event.clientY }, label)
     captureTimer = setTimeout(() => {
       const acquired = profilesFromTarget(target)[0]
       if (acquired) {
@@ -686,8 +684,7 @@
       guardianShield -= 1
       const rect = target.getBoundingClientRect()
       addPoint(
-        rect.left + rect.width / 2,
-        rect.top + rect.height / 2,
+        { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 },
         `Protected · ${targetLabel(target)}`,
       )
       status = `Without You intercepted a lethal event and remained beside the survivor`
@@ -811,7 +808,7 @@
       if (!eventElement.closest('.map-canvas')) return true
       event.preventDefault()
       event.stopPropagation()
-      addPoint(event.clientX, event.clientY, 'Materialized bow')
+      addPoint({ x: event.clientX, y: event.clientY }, 'Materialized bow')
       status = 'Bow materialized · select a character'
       return true
     }
@@ -827,7 +824,7 @@
       document.querySelectorAll<HTMLElement>('[data-hatsu-character]'),
     ).filter((candidate) => candidate !== target)
     const bearer = allies.length ? allies[sequence % allies.length] : null
-    addPoint(event.clientX, event.clientY, targetLabel(target), {
+    addPoint({ x: event.clientX, y: event.clientY }, targetLabel(target), {
       details: bearer ? [`Soul exchanged with ${targetLabel(bearer)}`] : [],
     })
     if (bearer) {
@@ -1044,15 +1041,9 @@
    * seventy-five branch `else if` chain this function used to be. Kinds absent
    * from the table are the ones handled by the dedicated functions above.
    */
-  function extendedInteraction(
-    event: MouseEvent,
-    target: HTMLElement,
-    x: number,
-    y: number,
-    label: string,
-  ) {
+  function extendedInteraction(args: HatsuInteractionArgs) {
     if (!profile) return false
-    return runHatsuInteraction(interactionContext, { event, target, x, y, label })
+    return runHatsuInteraction(interactionContext, args)
   }
 
   function interact(event: MouseEvent) {
@@ -1099,11 +1090,11 @@
     const y = Math.max(rect.top, Math.min(event.clientY, rect.bottom))
     const label = targetLabel(target)
 
-    if (extendedInteraction(event, target, x, y, label)) return
+    if (extendedInteraction({ event, target, x, y, label })) return
 
     // Only the kinds `extendedInteraction` does not claim reach this point.
     if (profile.kind === 'elastic') {
-      selectBungeeCharacter(target, x, y, label)
+      selectBungeeCharacter(target, { x, y }, label)
       return
     } else if (profile.kind === 'inherit') {
       const characterId = target.dataset.hatsuCharacter
@@ -1133,7 +1124,7 @@
           capturedTechniques = [...capturedTechniques, technique]
       }
       const registered = profilesFromTarget(target)
-      addPoint(x, y, name, {
+      addPoint({ x, y }, name, {
         details: (fallen ? inherited : registered).map((technique) => technique.name),
       })
       remember(target).classList.add('hatsu-baton-inherited')
@@ -1144,16 +1135,21 @@
     }
 
     status = `${profile.action} · ${label || 'target acquired'}`
-    addPoint(x, y, label)
+    addPoint({ x, y }, label)
   }
 
   onMount(() => {
     const move = (event: PointerEvent) => {
       cursor = { x: event.clientX, y: event.clientY }
-      if (profile && ['elastic', 'chain-rule', 'chain-bind', 'control', 'arrow', 'stitch'].includes(profile.kind)) {
+      if (
+        profile &&
+        ['elastic', 'chain-rule', 'chain-bind', 'control', 'arrow', 'stitch'].includes(profile.kind)
+      ) {
         if (points.length === 0) {
           const ownerSlug = profile.owner.toLowerCase().replace(/\s+/g, '-')
-          const userElement = document.querySelector(`[data-hatsu-character="${ownerSlug}"]`) || document.querySelector(`[data-hatsu-character-name="${profile.owner}"]`)
+          const userElement =
+            document.querySelector(`[data-hatsu-character="${ownerSlug}"]`) ||
+            document.querySelector(`[data-hatsu-character-name="${profile.owner}"]`)
           if (userElement) {
             const rect = userElement.getBoundingClientRect()
             userOrigin = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 }
@@ -2316,9 +2312,6 @@
       0 0 0 calc(1px * var(--reinforcement)) #f0b42955 !important;
     transform: scale(calc(1 + var(--reinforcement) * 0.012)) !important;
   }
-  :global(.hatsu-royal-controlled) {
-    outline: 1px solid #70d6b288 !important;
-  }
   :global(.hatsu-erigeron-grown) {
     transform-origin: center !important;
     transition:
@@ -2758,12 +2751,6 @@
   :global(.hatsu-reinforced-spill) {
     box-shadow: inset 0 0 22px #f0b42933 !important;
   }
-  :global(.hatsu-royal-commander) {
-    box-shadow: 0 0 0 2px #70d6b2 !important;
-  }
-  :global(.hatsu-royal-answered) {
-    box-shadow: 0 0 22px #70d6b288 !important;
-  }
   :global(.hatsu-gyo-empty) {
     outline: 1px dotted #6d7482 !important;
   }
@@ -2886,7 +2873,8 @@
   @keyframes elastic {
     to {
       stroke-width: 5;
-      filter: drop-shadow(0 0 10px var(--hatsu)) drop-shadow(0 0 20px var(--hatsu)) drop-shadow(0 0 30px var(--hatsu));
+      filter: drop-shadow(0 0 10px var(--hatsu)) drop-shadow(0 0 20px var(--hatsu))
+        drop-shadow(0 0 30px var(--hatsu));
     }
   }
   @keyframes scarlet {

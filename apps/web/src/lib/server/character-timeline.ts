@@ -224,13 +224,27 @@ export function appendApparentBodyTimeline(
   )
 }
 
-export function buildChapterTrajectory(
-  timeline: TimelineEntry[],
-  character: any,
-  jsonCharacter: any,
-  chapters: any[],
-  locationPaths: Map<string, string>,
-): ChapterTrajectory[] {
+/**
+ * Everything the trajectory is read from: the character under both the names it
+ * is known by — the database row and the catalogue entry — the entries already
+ * gathered for it, the catalogue to search for the ones that were missed, and
+ * the table that turns a location id into a path.
+ */
+export interface TrajectorySources {
+  timeline: TimelineEntry[]
+  character: any
+  jsonCharacter: any
+  chapters: any[]
+  locationPaths: Map<string, string>
+}
+
+export function buildChapterTrajectory({
+  timeline,
+  character,
+  jsonCharacter,
+  chapters,
+  locationPaths,
+}: TrajectorySources): ChapterTrajectory[] {
   // A flashback revealed in a chapter is not a present-time position in that
   // chapter. It stays in the event index but must not move the character there.
   const chapterNumbers = new Set(

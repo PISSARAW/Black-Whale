@@ -5,6 +5,8 @@
     activateHatsu,
     deactivateHatsu,
     forcedZetsuUntil,
+    hatsuGate,
+    hatsuIsBlocked,
     hatsuPanelOpen,
     hydrateHatsuSession,
     refreshForcedZetsu,
@@ -23,6 +25,14 @@
   )
   $: activeProfile = $activeHatsu ? localizeHatsu($activeHatsu, $locale) : null
   $: zetsuRemaining = Math.max(0, $forcedZetsuUntil - now)
+
+  // What the room in charge still admits. The dock does not know what that
+  // room is — it shows the sentence the room handed it and disables the rest.
+  $: blockedIds = new Set(
+    localizedProfiles.filter((profile) => hatsuIsBlocked(profile, $hatsuGate)).map(({ id }) => id),
+  )
+  $: admitted = filtered.filter((profile) => !blockedIds.has(profile.id)).length
+  $: activeIsBlocked = Boolean($activeHatsu) && hatsuIsBlocked($activeHatsu!, $hatsuGate)
 
   function formatRemaining(milliseconds: number) {
     const totalSeconds = Math.ceil(milliseconds / 1000)
@@ -76,7 +86,11 @@
       <div class="active-copy">
         <span class="eyebrow">{$t.nen.activeHatsu(activeProfile.owner)}</span>
         <strong>{activeProfile.name}</strong>
-        <span class="instruction">{activeProfile.instruction}</span>
+        <!-- Still in hand, and still doing nothing: the room said so, and it
+             is better said here than left for the visitor to work out. -->
+        <span class="instruction" class:sealed={activeIsBlocked}>
+          {activeIsBlocked && $hatsuGate ? $hatsuGate.reason : activeProfile.instruction}
+        </span>
       </div>
       <button type="button" class="release" data-hatsu-release onclick={deactivateHatsu}
         >{$t.nen.release}</button
@@ -114,18 +128,30 @@
         {#each filtered as profile (profile.id)}
           <button
             class:current={$activeHatsu?.id === profile.id}
+            class:blocked={blockedIds.has(profile.id)}
+            disabled={blockedIds.has(profile.id)}
+            title={blockedIds.has(profile.id) && $hatsuGate
+              ? $hatsuGate.reason
+              : profile.instruction}
             onclick={() => activateHatsu(profile)}
             style:--hatsu={profile.color}
           >
             <span class="mini-sigil"></span>
             <span
-              ><strong>{profile.name}</strong><small>{profile.owner} · {profile.action}</small
+              ><strong>{profile.name}</strong><small
+                >{profile.owner} · {blockedIds.has(profile.id)
+                  ? $t.nen.gateBadge
+                  : profile.action}</small
               ></span
             >
           </button>
         {/each}
       </div>
-      <footer>{$t.nen.pickerFooter(HATSU_PROFILES.length)}</footer>
+      <footer>
+        {$hatsuGate
+          ? $t.nen.gateFooter(admitted, $hatsuGate.reason)
+          : $t.nen.pickerFooter(HATSU_PROFILES.length)}
+      </footer>
     </section>
   {/if}
 </div>
@@ -361,7 +387,25 @@
     text-align: left;
     cursor: pointer;
   }
-  .ability-list button:hover,
+  /* Turned away rather than hidden: knowing a technique exists and does not
+     work here is worth more than a shorter list. */
+  .ability-list button.blocked {
+    border-color: #1b2530;
+    background: #0a1017;
+    color: #4d585f;
+    cursor: not-allowed;
+  }
+  .ability-list button.blocked .mini-sigil {
+    border-color: #3a464f;
+    background: transparent;
+    box-shadow: none;
+  }
+  .instruction.sealed {
+    color: #7d878c;
+    font-style: italic;
+    white-space: normal;
+  }
+  .ability-list button:hover:not(.blocked),
   .ability-list button.current {
     border-color: var(--hatsu);
     background: color-mix(in srgb, var(--hatsu) 8%, #101b26);

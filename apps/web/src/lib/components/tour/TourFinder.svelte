@@ -57,7 +57,7 @@
   let input = $state<HTMLInputElement | null>(null)
   let dialog = $state<HTMLDialogElement | null>(null)
 
-  const found = $derived(findPlaces(ship, query, words, LIMIT))
+  const found = $derived(findPlaces(ship, words, { text: query, limit: LIMIT }))
 
   /** A new query is a new list; the highlight cannot stay on its ninth row. */
   const retype = () => {

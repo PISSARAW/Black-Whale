@@ -85,7 +85,7 @@ import {
 } from './expedition/module.js'
 import { biohazardHinrigh, bodyAndSoul, damageSweetHome } from './mafia/module.js'
 import { painPacker, risingSun } from './feitan/module.js'
-import { erigeron, oitoHatsu } from './woble/module.js'
+import { erigeron } from './woble/module.js'
 
 export { bungeeGum } from './bungee-gum/module.js'
 export { chainJail } from './chain-jail/module.js'
@@ -99,6 +99,10 @@ export { grimmelTheDissonance, grimmelCohortEffectId } from './grimmel-the-disso
 export { hanzoSkill4 } from './hanzo-skill-4/module.js'
 export { withoutYou } from './without-you/module.js'
 export { contagion, CONTAGION_LIMITS } from './contagion/module.js'
+// The negotiation game itself: the pure reducer the walk and the dashboard
+// both consume, and the first condition of Contagion in code rather than
+// as a checklist step somebody else ticks. See docs/jeu-de-morena.md.
+export * from './contagion/game.js'
 export { magicalWorm } from './magical-worm/module.js'
 export { luiniSpatialTeleportation } from './luini-spatial-teleportation/module.js'
 export { marayamGuardianIsolation } from './marayam-guardian-isolation/module.js'
@@ -180,7 +184,7 @@ export {
 } from './expedition/module.js'
 export { biohazardHinrigh, bodyAndSoul, damageSweetHome } from './mafia/module.js'
 export { painPacker, risingSun } from './feitan/module.js'
-export { erigeron, oitoHatsu } from './woble/module.js'
+export { erigeron } from './woble/module.js'
 
 /**
  * Every implemented module. Registering this array rather than a hand-kept list
@@ -270,5 +274,4 @@ export const abilityModules: NenAbilityModule[] = [
   painPacker,
   risingSun,
   erigeron,
-  oitoHatsu,
 ]

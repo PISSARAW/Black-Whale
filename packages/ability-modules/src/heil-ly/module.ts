@@ -148,7 +148,10 @@ export const bloodyMary = defineAbility({
  * Weapon transformation — Padaille
  *
  * Body parts become tools he actually knows how to use, which is the stated
- * limit: an unfamiliar tool is not an option.
+ * limit: an unfamiliar tool is not an option. Which of the three he gets is
+ * not a limit but a cost — the shape is drawn, not picked, so `tool` records
+ * what the arm became rather than what he asked for. The draw itself is the
+ * caller's: effects here stay replayable, so nothing rolls a die in the SDK.
  */
 export const padailleWeaponTransformation = defineAbility({
   id: 'padaille-weapon-transformation',
@@ -165,7 +168,7 @@ export const padailleWeaponTransformation = defineAbility({
   actions: {
     transform: {
       label: 'Transformer un membre',
-      conditions: [requiresParameter('tool', 'L’outil transformé est choisi')],
+      conditions: [requiresParameter('tool', 'La forme prise par le membre est connue')],
       effects: [
         effect({
           kind: 'CUSTOM',
@@ -173,7 +176,11 @@ export const padailleWeaponTransformation = defineAbility({
           attributes: (ctx) => ({
             tool: param(ctx, 'tool'),
             limb: param(ctx, 'limb') ?? 'right-arm',
-            rules: ['Padaille ne peut transformer un membre qu’en un outil qu’il connaît.'],
+            rules: [
+              'Padaille ne peut transformer un membre qu’en un outil qu’il connaît.',
+              'Marteau, perceuse ou hache : la forme est tirée au sort, Padaille ne la choisit pas.',
+              'Le marteau enfonce la cible dans le sol, la perceuse y perce un trou, la hache la coupe en deux.',
+            ],
           }),
         }),
       ],

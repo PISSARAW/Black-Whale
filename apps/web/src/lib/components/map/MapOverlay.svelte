@@ -72,7 +72,12 @@
     )
 
     const projected = next.presences
-      .map((presence) => projectFutureMarker(presence, next, world.locations, $locale))
+      .map((presence) =>
+        projectFutureMarker(presence, next, {
+          fallbackLocations: world.locations,
+          locale: $locale,
+        }),
+      )
       .filter((marker): marker is MapMarker => marker !== null)
       .filter((marker) => withinMapScope(marker, locationsById) && matchesLineage(marker))
 

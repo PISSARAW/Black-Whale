@@ -3,14 +3,29 @@ import { listParam, numberParam, param } from './context.js'
 
 export type ConditionFn = (ctx: AbilityContext) => AbilityConditionResult
 
+type ConditionStatus = AbilityConditionResult['status']
+
+/**
+ * What an evaluation answers: a bare status when the label already says
+ * everything, or a status carrying the sentence the "Why?" panel should show
+ * next to it.
+ *
+ * The reason rides on the outcome rather than on `condition` itself so that it
+ * can depend on what was found. A fixed reason is just the case where every
+ * branch returns the same one.
+ */
+export type ConditionOutcome = ConditionStatus | { status: ConditionStatus; reason?: string }
+
 export const condition =
   (
     id: string,
     label: string,
-    evaluate: (ctx: AbilityContext) => AbilityConditionResult['status'],
-    reason?: string,
+    evaluate: (ctx: AbilityContext) => ConditionOutcome,
   ): ConditionFn =>
-  (ctx) => ({ id, label, status: evaluate(ctx), reason })
+  (ctx) => {
+    const outcome = evaluate(ctx)
+    return typeof outcome === 'string' ? { id, label, status: outcome } : { id, label, ...outcome }
+  }
 
 export const canUseNen = (): ConditionFn =>
   condition('can-use-nen', 'Actor can use Nen', (ctx) => {
@@ -46,14 +61,20 @@ export const maxDistance = (meters: number): ConditionFn =>
 
 /** A vow the user swore. Unverifiable from the world state, but always displayed. */
 export const vow = (id: string, label: string): ConditionFn =>
-  condition(`vow-${id}`, label, () => 'MET', 'Serment déclaré par l’utilisateur')
+  condition(`vow-${id}`, label, () => ({
+    status: 'MET',
+    reason: 'Serment déclaré par l’utilisateur',
+  }))
 
 /**
  * A restriction the manga states but the model cannot check yet. Shows up as
  * "condition non révélée" in the "Why?" panel instead of being silently assumed.
  */
 export const unrevealed = (id: string, label: string): ConditionFn =>
-  condition(`unknown-${id}`, label, () => 'UNKNOWN', 'Condition non révélée par le canon')
+  condition(`unknown-${id}`, label, () => ({
+    status: 'UNKNOWN',
+    reason: 'Condition non révélée par le canon',
+  }))
 
 export const requiresParameter = (key: string, label: string): ConditionFn =>
   condition(`parameter-${key}`, label, (ctx) => (param(ctx, key) ? 'MET' : 'UNKNOWN'))
@@ -141,16 +162,31 @@ export const effectIsLive = (
     return effect.state === 'ENDED' ? 'UNMET' : 'MET'
   })
 
+/** Which counter, on which effect, has to have reached what. */
+export interface AttributeThreshold {
+  /** The attribute carried by the effect: `level`, `packedDamage`, `lieCount`. */
+  key: string
+  /** The value the counter has to have reached for the condition to be met. */
+  threshold: number
+  /** The sentence the "Why?" panel shows for this condition. */
+  label: string
+  /**
+   * Which context parameter names the effect to read. Abilities that carry more
+   * than one effect say which; everyone else means the one under test.
+   */
+  parameterKey?: string
+}
+
 /**
  * A threshold on a counter carried by an effect: Contagion's level 20, a charge
  * gauge, a daily quota. Reads the live effect rather than trusting the caller.
  */
-export const effectAttributeAtLeast = (
-  key: string,
-  threshold: number,
-  label: string,
+export const effectAttributeAtLeast = ({
+  key,
+  threshold,
+  label,
   parameterKey = 'effectId',
-): ConditionFn =>
+}: AttributeThreshold): ConditionFn =>
   condition(`attribute-${key}-${threshold}`, label, (ctx) => {
     const id = param(ctx, parameterKey)
     if (!ctx.worldState || !id) return 'UNKNOWN'

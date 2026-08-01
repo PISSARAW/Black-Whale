@@ -49,10 +49,10 @@ describe('ability module registry', () => {
   })
 
   /**
-   * `benjamin-aura` and `oito-hatsu` shipped owned by `benjamin-hui-guo-rou` and
-   * `oito-hui-guo-rou`, slugs no fiche carries: the module and the catalogue
-   * agreed with each other and with nothing else, so both abilities were
-   * unreachable from the character page that attaches them by `ownerId`.
+   * `benjamin-aura` shipped owned by `benjamin-hui-guo-rou`, a slug no fiche
+   * carries: the module and the catalogue agreed with each other and with
+   * nothing else, so the ability was unreachable from the character page that
+   * attaches them by `ownerId`.
    */
   it('names an owner the passenger registry actually holds', () => {
     const unknown = catalog

@@ -8,7 +8,6 @@ import {
   listParam,
   moveEntity,
   numberParam,
-  param,
   requiresParameter,
   spawnNenEntity,
   zone,

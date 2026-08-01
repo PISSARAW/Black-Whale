@@ -29,11 +29,16 @@ export const body = (): TargetType => 'body'
 
 export type InteractionBuilder = () => AbilityInteraction
 
+/** What an interaction may be pointed at, and what has to hold before it is. */
+export interface InteractionOptions {
+  targetTypes?: string[]
+  conditions?: string[]
+}
+
 export const interaction = (
   id: string,
   label: string,
-  targetTypes: string[] = [],
-  conditions: string[] = [],
+  { targetTypes = [], conditions = [] }: InteractionOptions = {},
 ): AbilityInteraction => ({ id, label, targetTypes, conditions })
 
 export const attach = (): AbilityInteraction => interaction('attach', 'Attach')

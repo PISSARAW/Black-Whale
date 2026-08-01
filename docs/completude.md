@@ -11,14 +11,14 @@
 
 | Axe                      | Note         | Résumé en une ligne                                                                                                                                                                                                        |
 | ------------------------ | ------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Couverture du canon      | **6 / 10**   | Le catalogue des entités est solide (83 abilities, 223 personnages, 301 spaces) ; la **narration** ne l'est pas — 105 événements pour 62 chapitres, 8 fiches de chapitre sur 76, 11 arêtes de relations.                   |
+| Couverture du canon      | **6 / 10**   | Le catalogue des entités est solide (82 abilities, 223 personnages, 301 spaces) ; la **narration** ne l'est pas — 105 événements pour 62 chapitres, 8 fiches de chapitre sur 76, 11 arêtes de relations.                   |
 | Complétude fonctionnelle | **6,5 / 10** | Les moteurs sont réels, pas des façades. Mais **4 routes sont entièrement en dur**, le graphe de relations est un littéral TypeScript, `/simulations` ne projette rien sur une carte et 3 écrans admin renvoient 405.      |
 | Complétude technique     | **6 / 10**   | Dette déclarée quasi nulle (2 TODO, 0 `@ts-ignore`), 11 packages > 44 % de ratio de test — mais le catalogue des hatsu existe **en 5 exemplaires** et la couche visible du site n'utilise pas le moteur qui fait autorité. |
 | UX / éditorial           | **5 / 10**   | Socle a11y et SEO sérieux, i18n FR/EN à 100 % de parité — mais **le filtre à spoilers est inactivable**, le crédit CC BY obligatoire est absent de l'interface, et il n'existe aucun `+error.svelte`.                      |
 
 **Le projet n'est pas un README-fiction.** Les branches de simulation sont réellement persistées en
 PostgreSQL, l'auth admin est correctement faite (HMAC + binding mot de passe + TTL + rate limit), la
-reconstruction métrique du navire est connexe et vérifiée, les 83 abilities ont toutes un module.
+reconstruction métrique du navire est connexe et vérifiée, les 82 abilities ont toutes un module.
 C'est au-dessus de la moyenne du genre.
 
 **Les deux problèmes qui doivent passer avant tout le reste** ne sont ni de la donnée ni de la
@@ -45,7 +45,7 @@ Complétude = cellules non vides / (nb enregistrements × union des champs obser
 
 | Dataset              | Fichier                                                           | Volume                                                        | Champs creux                                                                                                                                                                        | Complétude                               |
 | -------------------- | ----------------------------------------------------------------- | ------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------- |
-| Abilities            | `data/abilities/abilities.json`                                   | 83                                                            | `cards` 1/83, `userIds` 4/83, `inheritedFrom` 8/83, `secondaryCategories` 24/83. **Aucun champ chapitre.** Conditions et coût vivent dans les modules, pas dans le JSON — voir §1.3 | **71 %**                                 |
+| Abilities            | `data/abilities/abilities.json`                                   | 82                                                            | `cards` 1/82, `userIds` 4/82, `inheritedFrom` 8/82, `secondaryCategories` 24/82. **Aucun champ chapitre.** Conditions et coût vivent dans les modules, pas dans le JSON — voir §1.3 | **71 %**                                 |
 | Chapters             | `data/chapters/chapters.json`                                     | **16**                                                        | —                                                                                                                                                                                   | 100 % du fichier, **21 % des chapitres** |
 | Characters           | `data/characters/characters.json`                                 | 223                                                           | `aliases` vide 172/223, `mangaAppearances` absent 113/223, `biography` 104/223, `nen` 48/223                                                                                        | **39 %**                                 |
 | Factions             | `data/factions/factions.json`                                     | 22                                                            | —                                                                                                                                                                                   | 100 %                                    |
@@ -119,16 +119,20 @@ Ce qui reste ouvert :
 
 **Abilities**
 
-- **83 abilities ↔ 83 modules, 0 orphelin dans les deux sens.** Le garde-fou
+- **82 abilities ↔ 82 modules, 0 orphelin dans les deux sens.** Le garde-fou
   (`packages/ability-modules/src/index.ts`) est réel. Les 8 vagues de `docs/hatsu-potentiel.md` sont
-  toutes livrées — 23 + 20 + 38 = 81, plus les 2 capacités de Feitan.
+  toutes livrées — 23 + 20 + 38 = 81, plus les 2 capacités de Feitan, moins `oito-hatsu` retiré
+  (voir plus bas).
 - ~~**2 `ownerId` cassés** : `benjamin-hui-guo-rou` et `oito-hui-guo-rou` n'existent pas dans
-  `characters.json`.~~ **Corrigé** : `benjamin-aura` appartient à `prince-benjamin` et
-  `oito-hatsu` à `queen-oito`, dans le catalogue comme dans le manifest des deux modules, et les
-  deux fiches les listent dans `nen.abilityIds`. Un test refuse désormais tout `ownerId` que le
+  `characters.json`.~~ **Corrigé** : `benjamin-aura` appartient à `prince-benjamin`, dans le
+  catalogue comme dans le manifest du module, et la fiche le liste dans `nen.abilityIds`.
+  `oito-hatsu` a depuis été retiré : le canon ne prête aucun hatsu propre à Oito — ses nœuds
+  d'aura sont ouverts par Kurapika et elle emprunte Little Eye. L'entrée était une invention de la
+  vague P3 pour ne pas laisser de trou dans le catalogue, et le module lui-même le disait dans son
+  en-tête. Oito ne garde donc que `little-eye`, dont elle est déjà `userIds`. Un test refuse désormais tout `ownerId` que le
   registre des passagers ne porte pas (`nen-registry.test.ts`), et `data/CONVENTIONS.md` énonce la
   règle de slug (`prince-*`, `queen-*`) qui avait produit les deux fantômes.
-- ~~**47 modules sur 81 n'ont pas de `cost`**~~ **Corrigé** : les 83 modules en déclarent un, et le
+- ~~**47 modules sur 81 n'ont pas de `cost`**~~ **Corrigé** : les 82 modules en déclarent un, et le
   plan le porte donc pour chaque capacité. Le coût reste dans le module plutôt que dans
   `abilities.json` : c'est le moteur qui fait autorité, et §3 reproche déjà au projet de tenir le
   catalogue des hatsu en cinq exemplaires — un sixième champ dupliqué aurait aggravé exactement ce
@@ -168,7 +172,7 @@ Ce qui reste ouvert :
 | « thirty-three [interiors] in all » | **34**                                                             |
 | « 37 hand-drawn SVG maps »          | ✅ exact (5 + 32)                                                  |
 | « 223 passengers »                  | ✅ exact                                                           |
-| « 83 abilities across 54 users »    | 83 ✅ ; 54 `ownerId`, tous résolvables (les 2 morts sont corrigés) |
+| « 83 abilities across 54 users »    | 82 (`oito-hatsu` retiré) ; 54 `ownerId`, tous résolvables (les 2 morts sont corrigés) |
 
 ---
 
@@ -235,7 +239,7 @@ le code, pas même dans un seed. `LocationEdge` est précisément ce que `/tour`
 `lib/map/mapAssetRegistry.ts`.
 
 À l'inverse — features **sans** persistance : le graphe de relations, toute la géométrie du navire
-(301 spaces, 697 structures, importés au build depuis JSON), et le registre client des 83 hatsu.
+(301 spaces, 697 structures, importés au build depuis JSON), et le registre client des 82 hatsu.
 
 ### 2.5 Roadmap v5 : honnête
 
@@ -284,7 +288,7 @@ Exemple sur `chain-jail` : le module déclare `vow(...)`, `targetHasAffiliation(
 impérativement** dans `hatsuInteractions.ts`.
 
 **Troisième implémentation** : `lib/tour/hatsu.ts` réimplémente les hatsu pour la visite 3D
-sur les mêmes clés `kind`. **67 des 83 techniques ont donc deux implémentations indépendantes** — et
+sur les mêmes clés `kind`. **67 des 82 techniques ont donc deux implémentations indépendantes** — et
 l'une des deux (le DOM) a **0 test comportemental**.
 
 ### 3.2 Tests

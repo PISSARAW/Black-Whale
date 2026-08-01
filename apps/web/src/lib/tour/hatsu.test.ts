@@ -17,6 +17,19 @@ import {
   arriveInTour,
   castInTour,
   castablePages,
+  hatsuKeys,
+  adriftSolidIds,
+  catStep,
+  driftOffset,
+  gasStep,
+  reelStep,
+  smokeStep,
+  takeTheCoin,
+  standingIn,
+  settleTheRoom,
+  MELT_STAGES,
+  SMOKE_FULL,
+  FLOCK_ROOMS,
   danceOffset,
   dancingSolidIds,
   detachedOn,
@@ -37,6 +50,9 @@ import {
   otherHand,
   OWL_SECONDS,
   paceOf,
+  PADAILLE_TOOLS,
+  toolFor,
+  HAMMERED_SQUASH,
   planSealed,
   polarityStep,
   planWithout,
@@ -57,6 +73,7 @@ import {
   worldIsQuiet,
   holdsInWorld,
   type TourReport,
+  type TourBook,
   type TourWorld,
 } from './hatsu'
 import { apparitionsOn } from './apparitions'
@@ -98,6 +115,71 @@ describe('the technique roster', () => {
     expect(worksInTour(puppet)).toBe(true)
     expect(worksInTour(unheld)).toBe(false)
     expect(worksInTour(null)).toBe(false)
+  })
+})
+
+describe('the keys a technique answers to', () => {
+  const profileFor = (kind: string) => HATSU_PROFILES.find((profile) => profile.kind === kind)!
+  const under = (kind: string, book = CLOSED_BOOK) => hatsuKeys(profileFor(kind), book)
+
+  it('says nothing for a technique the walk cannot honour', () => {
+    const unheld = HATSU_PROFILES.find(
+      (profile) => !new Set<string>(TOUR_HATSU_KINDS).has(profile.kind),
+    )!
+    expect(hatsuKeys(unheld, CLOSED_BOOK)).toEqual([])
+    expect(hatsuKeys(null, CLOSED_BOOK)).toEqual([])
+  })
+
+  it('gives the plain techniques one key, and the click that does the same', () => {
+    expect(under('teleport')).toEqual([{ key: 'F', action: 'cast', click: true }])
+    expect(under('impact')).toEqual([{ key: 'F', action: 'castSolid', click: true }])
+    expect(under('enhance')).toEqual([{ key: 'F', action: 'castSelf', click: true }])
+  })
+
+  it('spends R on the second key wherever the walk has one', () => {
+    // The three that take orders, the two hands, and the ones the reticle
+    // decides for — every technique with more than one key, and no other.
+    expect(under('guardian')[1]).toEqual({ key: 'R', action: 'doubleWatch', click: false })
+    expect(under('surveillance')[1]).toEqual({ key: 'R', action: 'owlFlight', click: false })
+    expect(under('scout')[1]).toEqual({ key: 'R', action: 'insectOrders', click: false })
+    expect(under('polarity')).toEqual([
+      { key: 'F', action: 'sun', click: true },
+      { key: 'R', action: 'moon', click: false },
+    ])
+    expect(under('puppet')[1]).toEqual({ key: 'R', action: 'castOnSelfInstead', click: false })
+    expect(under('elastic')[1]).toEqual({ key: 'R', action: 'castOnSelfInstead', click: false })
+  })
+
+  it('gives the flute three, because three airs need three keys', () => {
+    expect(under('melody').map((control) => control.key)).toEqual(['F', 'R', 'C'])
+    expect(under('melody').map((control) => control.action)).toEqual([
+      'airDance',
+      'airBloom',
+      'airScatter',
+    ])
+  })
+
+  it('reads the book rather than the bookmark, and alternates the two-handed page', () => {
+    const book: TourBook = {
+      ...CLOSED_BOOK,
+      pages: ['teleport', 'polarity'],
+      open: 'teleport',
+      bookmark: 'polarity',
+    }
+    expect(under('bookmark', book)).toEqual([
+      { key: 'F', action: 'openPage', click: true },
+      { key: 'R', action: 'alternate', click: false },
+    ])
+    // Turned the other way, the alternating page is the one under F.
+    const turned: TourBook = { ...book, open: 'polarity', bookmark: 'teleport' }
+    expect(under('bookmark', turned)).toEqual([
+      { key: 'F', action: 'alternate', click: true },
+      { key: 'R', action: 'markedPage', click: false },
+    ])
+  })
+
+  it('falls back to the plain cast while the book holds only one page', () => {
+    expect(under('bookmark')).toEqual([{ key: 'F', action: 'cast', click: true }])
   })
 })
 
@@ -159,25 +241,49 @@ describe('the hideout doors', () => {
 
   it('comes out at the other frame, and does not fall straight back', () => {
     const world: TourWorld = { ...EMPTY_WORLD, doors: ['a', 'b'] }
-    expect(doorExit(world, 'a', null)).toBe('b')
-    expect(doorExit(world, 'b', 'b')).toBeNull()
-    expect(doorExit(world, 'c', null)).toBeNull()
-    expect(doorExit({ ...EMPTY_WORLD, doors: ['a'] }, 'a', null)).toBeNull()
+    expect(doorExit(world, { spaceId: 'a', arrivedFrom: null })).toBe('b')
+    expect(doorExit(world, { spaceId: 'b', arrivedFrom: 'b' })).toBeNull()
+    expect(doorExit(world, { spaceId: 'c', arrivedFrom: null })).toBeNull()
+    expect(
+      doorExit({ ...EMPTY_WORLD, doors: ['a'] }, { spaceId: 'a', arrivedFrom: null }),
+    ).toBeNull()
   })
 
   it('sends the visitor somewhere else through every frame while no route is armed', () => {
     // Passive: nothing has been aimed and nothing has been cast, and the whole
     // hideout is wired. Only for the technique whose hideout it is.
     const wired: TourWorld = { ...EMPTY_WORLD, holding: 'door-network' }
-    const out = doorExit(wired, furnished.id, null, ship, () => 0)
+    const out = doorExit(
+      wired,
+      { spaceId: furnished.id, arrivedFrom: null },
+      { ship, random: () => 0 },
+    )
     expect(out).not.toBeNull()
     expect(out).not.toBe(furnished.id)
     // Arriving where it just put you is not a second crossing.
-    expect(doorExit(wired, furnished.id, furnished.id, ship, () => 0)).toBeNull()
+    expect(
+      doorExit(
+        wired,
+        { spaceId: furnished.id, arrivedFrom: furnished.id },
+        { ship, random: () => 0 },
+      ),
+    ).toBeNull()
     // And any other aura leaves the doors as doors.
-    expect(doorExit(EMPTY_WORLD, furnished.id, null, ship, () => 0)).toBeNull()
+    expect(
+      doorExit(
+        EMPTY_WORLD,
+        { spaceId: furnished.id, arrivedFrom: null },
+        { ship, random: () => 0 },
+      ),
+    ).toBeNull()
     // A prepared pair is still a prepared pair rather than a lottery.
-    expect(doorExit({ ...wired, doors: ['a', 'b'] }, 'a', null, ship, () => 0)).toBe('b')
+    expect(
+      doorExit(
+        { ...wired, doors: ['a', 'b'] },
+        { spaceId: 'a', arrivedFrom: null },
+        { ship, random: () => 0 },
+      ),
+    ).toBe('b')
   })
 })
 
@@ -229,18 +335,34 @@ describe('Blinky and what refuses to be swallowed', () => {
 })
 
 describe('the isolated room', () => {
-  it('lets the occupant keep the real room and the outsider get the copy', () => {
-    const inside = castInTour(EMPTY_WORLD, 'room-isolation', {
-      ship,
-      targetId: furnished.id,
-      standingIn: furnished.id,
-      at: [0, 0],
-    })
-    expect(inside.world.isolated).toEqual({ spaceId: furnished.id, occupant: true })
-    expect(emptiedOn(inside.world, furnished.tierId, ship)).not.toContain(furnished.id)
+  it('is cast from anywhere and leaves you inside it, with the beast in the doorway', () => {
+    // Marayam's beast does not put a boundary up around a room you are looking
+    // at: it takes you into the room and then stands between you and the door.
+    // So the cast delivers — you are the occupant whatever you were before —
+    // and the room you are shut into is never the empty copy.
+    const shut = cast(EMPTY_WORLD, 'room-isolation', furnished.id)
+    expect(shut.world.isolated).toEqual({ spaceId: furnished.id, occupant: true })
+    expect(shut.travelTo).toBe(furnished.id)
+    expect(shut.world.dragon).toBe(furnished.id)
+    expect(shut.world.pinned).toBe(furnished.id)
+    expect(emptiedOn(shut.world, furnished.tierId, ship)).not.toContain(furnished.id)
 
-    const outside = cast(EMPTY_WORLD, 'room-isolation', furnished.id)
-    expect(emptiedOn(outside.world, furnished.tierId, ship)).toContain(furnished.id)
+    // Cast again on the room you are shut in and the beast stands down.
+    const let_out = cast(shut.world, 'room-isolation', furnished.id)
+    expect(let_out.world.dragon).toBeNull()
+    expect(let_out.world.pinned).toBeNull()
+    expect(worldIsQuiet(let_out.world)).toBe(true)
+  })
+
+  it('shows anyone who is not an occupant the empty copy', () => {
+    // The boundary itself is unchanged: what an outsider reaches is a duplicate
+    // with nothing in it. No cast produces this any more — the beast always
+    // takes the caster inside — but it is what the room does to everyone else.
+    const outside = {
+      ...EMPTY_WORLD,
+      isolated: { spaceId: furnished.id, occupant: false },
+    }
+    expect(emptiedOn(outside, furnished.tierId, ship)).toContain(furnished.id)
   })
 
   it('only empties rooms on the deck being drawn', () => {
@@ -258,7 +380,11 @@ describe('Air Blow', () => {
 
     const result = cast(world, 'blast', furnished.id)
     if (result.report.kind !== 'stripped') throw new Error('unreachable')
-    expect(result.report.count).toBe(3)
+    // Four rather than three: the isolation is a boundary and the beast holding
+    // it, and the blast takes both off. The room nobody may leave goes with the
+    // beast without being counted — it is the beast's refusal, not a hold of
+    // its own.
+    expect(result.report.count).toBe(4)
     expect(worldIsQuiet(result.world)).toBe(true)
   })
 
@@ -315,7 +441,7 @@ describe('aiming down the reticle', () => {
     const to = centreOf(b)
     // The camera looks along (-sin yaw, -cos yaw).
     const heading = Math.atan2(-(to[0] - from[0]), -(to[1] - from[1]))
-    const aimed = aimedSpace(plan, from, heading, 400)
+    const aimed = aimedSpace(plan, { at: from, heading, range: 400 })
     expect(aimed).not.toBeNull()
     expect(aimed!.id).not.toBe(a.id)
   })
@@ -323,7 +449,7 @@ describe('aiming down the reticle', () => {
   it('falls back on the room underfoot when the ray leaves the deck', () => {
     const plan = ship.plans.get(ship.decks[0].id)!
     const space = plan.spaces[0]
-    const aimed = aimedSpace(plan, centreOf(space), 0, 0.4)
+    const aimed = aimedSpace(plan, { at: centreOf(space), heading: 0, range: 0.4 })
     expect(aimed?.id).toBe(space.id)
   })
 })
@@ -376,7 +502,9 @@ describe('aiming at a solid', () => {
     const from = centreOf(busiest.space)
     const to = solidA.at
     const heading = Math.atan2(-(to[0] - from[0]), -(to[1] - from[1]))
-    expect(aimedSolid(ship, EMPTY_WORLD, plan, from, heading, 120)).not.toBeNull()
+    expect(
+      aimedSolid({ ship, world: EMPTY_WORLD }, plan, { at: from, heading, range: 120 }),
+    ).not.toBeNull()
   })
 })
 
@@ -591,6 +719,118 @@ describe('the rules solids hold each other to', () => {
     expect(hit(world, 'shred', solidB.id).world.wound).toBe(solidB.id)
   })
 
+  // ── Padaille ──────────────────────────────────────────────────────────
+  //
+  // The visitor swings and finds out. What these check is that the finding out
+  // is real — three different outcomes, drawn rather than chosen, and the same
+  // walk drawing the same way twice.
+
+  it('draws one of the three tools rather than letting the visitor pick', () => {
+    // Every swing lands one of exactly three things, and the report says which.
+    const seen = new Set<string>()
+    let world = EMPTY_WORLD
+    for (let swing = 0; swing < 40; swing++) {
+      const result = hit(world, 'weapon-body', solidA.id)
+      expect(['hammered', 'bored', 'halved']).toContain(result.report.kind)
+      seen.add(result.report.kind)
+      world = result.world
+    }
+    // Forty swings at one cupboard: all three have come up. A technique whose
+    // whole character is that you do not know what you will get would be a lie
+    // if the same target always answered the same way.
+    expect(seen.size).toBe(PADAILLE_TOOLS.length)
+    expect(world.swings).toBe(40)
+  })
+
+  it('draws off the target and the tally, so the same walk replays the same', () => {
+    const once = hit(EMPTY_WORLD, 'weapon-body', solidA.id)
+    const again = hit(EMPTY_WORLD, 'weapon-body', solidA.id)
+    expect(again.report.kind).toBe(once.report.kind)
+    // Not the same answer twice in a row though: the tally moved.
+    const drawn = [0, 1, 2, 3].map((swings) => toolFor(solidA.id, swings))
+    expect(new Set(drawn).size).toBeGreaterThan(1)
+    // And two things in one room are not swung at in step.
+    const apart = PADAILLE_TOOLS.some((_, swing) =>
+      [0, 1, 2].some(() => toolFor(solidA.id, swing) !== toolFor(solidB.id, swing)),
+    )
+    expect(apart).toBe(true)
+  })
+
+  it('drives a thing into the deck, bores through it, or leaves it in two', () => {
+    // Each of the three, forced by walking the tally to where it draws them.
+    const swingsFor = (tool: string) => {
+      for (let swings = 0; swings < 12; swings++) {
+        if (toolFor(solidA.id, swings) === tool) return swings
+      }
+      throw new Error(`the draw never lands on ${tool}`)
+    }
+    const at = (swings: number) => hit({ ...EMPTY_WORLD, swings }, 'weapon-body', solidA.id)
+
+    const hammer = at(swingsFor('hammer'))
+    expect(hammer.report).toMatchObject({ kind: 'hammered', solidId: solidA.id })
+    expect(hammer.world.solids[solidA.id].squash).toBe(HAMMERED_SQUASH)
+
+    const drill = at(swingsFor('drill'))
+    expect(drill.report).toMatchObject({ kind: 'bored', solidId: solidA.id })
+    // The hole is the whole of what the walk can show of a bore, so it has to
+    // be a hole you can use: the thing stands where it stood and stops you no
+    // longer.
+    expect(drill.world.solids[solidA.id].bored).toBe(true)
+    // Against the same thing held by a technique that did not go through it:
+    // a solid the aura has hold of is handed over with its walls, and this one
+    // is handed over with none.
+    const held = hit(EMPTY_WORLD, 'impact', solidA.id).world
+    expect(solidWalls(ship, held, { tierId: busiest.space.tierId }).length).toBeGreaterThan(0)
+    expect(solidWalls(ship, drill.world, { tierId: busiest.space.tierId })).toEqual([])
+
+    const axe = at(swingsFor('axe'))
+    expect(axe.report).toMatchObject({ kind: 'halved', solidId: solidA.id })
+    expect(axe.world.solids[solidA.id].scale).toBe(0.5)
+    // Two pieces where there was one: the half that keeps the blueprint's id
+    // stays, and the offcut is a solid the ship never had.
+    expect(axe.world.copies).toHaveLength(1)
+    const offcut = axe.world.copies[0]
+    expect(axe.world.solids[offcut.id]).toMatchObject({ copyOf: solidA.id })
+  })
+
+  it('swings again on a thing it has already dealt with', () => {
+    // Halving what the hammer flattened takes half of what is left, not half
+    // of what the blueprint had — the swing reads the room as it is now.
+    const swingsFor = (tool: string) => {
+      for (let swings = 0; swings < 12; swings++) {
+        if (toolFor(solidA.id, swings) === tool) return swings
+      }
+      throw new Error(`the draw never lands on ${tool}`)
+    }
+    const flattened = hit({ ...EMPTY_WORLD, swings: swingsFor('hammer') }, 'weapon-body', solidA.id)
+    const halved = hit({ ...flattened.world, swings: swingsFor('axe') }, 'weapon-body', solidA.id)
+    expect(halved.report).toMatchObject({ kind: 'halved' })
+    expect(halved.world.solids[solidA.id]).toMatchObject({
+      squash: HAMMERED_SQUASH,
+      scale: 0.5,
+    })
+  })
+
+  it('counts its swings without that count being something Nen Stitches holds', () => {
+    const swingsFor = (tool: string) => {
+      for (let swings = 0; swings < 12; swings++) {
+        if (toolFor(solidA.id, swings) === tool) return swings
+      }
+      throw new Error(`the draw never lands on ${tool}`)
+    }
+    const swung = hit(
+      { ...EMPTY_WORLD, swings: swingsFor('hammer') },
+      'weapon-body',
+      solidA.id,
+    ).world
+    expect(worldIsQuiet(swung)).toBe(false)
+    const mended = hit(swung, 'stitch', solidA.id).world
+    // The tally is not a hold: nothing is being held by a count of past
+    // swings, so the walk is quiet again with the count still on it.
+    expect(mended.swings).toBe(swingsFor('hammer') + 1)
+    expect(worldIsQuiet(mended)).toBe(true)
+  })
+
   it('marks with the hand that cast, and blows the pair when the two meet', () => {
     const sun = hit(EMPTY_WORLD, 'polarity', solidA.id, { mark: 'sun' })
     expect(sun.report).toMatchObject({ kind: 'marked', mark: 'sun' })
@@ -604,7 +844,7 @@ describe('the rules solids hold each other to', () => {
     let world = moon.world
     let blown: TourReport | null = null
     for (let tick = 0; tick < 1200 && !blown; tick++) {
-      const step = polarityStep(world, ship, tick * 0.1, 0.1)
+      const step = polarityStep(world, ship, { seconds: tick * 0.1, delta: 0.1 })
       if (!step) break
       world = step.world
       blown = step.report
@@ -618,7 +858,7 @@ describe('the rules solids hold each other to', () => {
     const first = hit(EMPTY_WORLD, 'polarity', solidA.id, { mark: 'sun' }).world
     let world = hit(first, 'polarity', solidB.id, { mark: 'sun' }).world
     for (let tick = 0; tick < 300; tick++) {
-      world = polarityStep(world, ship, tick * 0.1, 0.1)?.world ?? world
+      world = polarityStep(world, ship, { seconds: tick * 0.1, delta: 0.1 })?.world ?? world
     }
     expect(world.solids[solidA.id].gone).toBeFalsy()
     expect(world.solids[solidB.id].gone).toBeFalsy()
@@ -654,17 +894,17 @@ describe('the solids as the walk has to draw and collide with them', () => {
 
     expect(baked.structures.some((structure) => structure.id === solidA.id)).toBe(false)
     expect(baked.walls.some((wall) => wall.structureId === solidA.id)).toBe(false)
-    expect(detachedOn(ship, world, busiest.space.tierId).map((held) => held.structure.id)).toEqual([
-      solidA.id,
-    ])
-    expect(solidWalls(ship, world, busiest.space.tierId).length).toBeGreaterThan(0)
+    expect(
+      detachedOn(ship, world, { tierId: busiest.space.tierId }).map((held) => held.structure.id),
+    ).toEqual([solidA.id])
+    expect(solidWalls(ship, world, { tierId: busiest.space.tierId }).length).toBeGreaterThan(0)
   })
 
   it('stops handing over a solid that is gone', () => {
     const world = hit(EMPTY_WORLD, 'impact', solidA.id).world
     const shattered = { ...world, solids: { [solidA.id]: { gone: true } } }
-    expect(detachedOn(ship, shattered, busiest.space.tierId)).toEqual([])
-    expect(solidWalls(ship, shattered, busiest.space.tierId)).toEqual([])
+    expect(detachedOn(ship, shattered, { tierId: busiest.space.tierId })).toEqual([])
+    expect(solidWalls(ship, shattered, { tierId: busiest.space.tierId })).toEqual([])
   })
 
   it('gives an animated solid the same drift to the eye and to the shoulder', () => {
@@ -672,8 +912,10 @@ describe('the solids as the walk has to draw and collide with them', () => {
     expect(wanderOffset(solidA.id, 3)).not.toEqual(wanderOffset(solidB.id, 3))
 
     const world = hit(EMPTY_WORLD, 'animate', solidA.id).world
-    const still = detachedOn(ship, world, busiest.space.tierId, 0)[0].structure.at
-    const later = detachedOn(ship, world, busiest.space.tierId, 4)[0].structure.at
+    const still = detachedOn(ship, world, { tierId: busiest.space.tierId, seconds: 0 })[0].structure
+      .at
+    const later = detachedOn(ship, world, { tierId: busiest.space.tierId, seconds: 4 })[0].structure
+      .at
     expect(later).not.toEqual(still)
   })
 
@@ -948,7 +1190,7 @@ describe('what the techniques make of the visitor', () => {
 
     // Carried is not walked around: a passenger stops being an obstacle.
     expect(
-      solidWalls(ship, world, busiest.space.tierId).some((wall) =>
+      solidWalls(ship, world, { tierId: busiest.space.tierId }).some((wall) =>
         world.body.passengers.includes(wall.structureId ?? ''),
       ),
     ).toBe(false)
@@ -964,8 +1206,12 @@ describe('what the techniques make of the visitor', () => {
     const solid = ship.structures.find((s) => s.spaceId === busiest.space.id)!
     world = on(world, 'impact', { targetSolidId: solid.id }).world
 
-    const parked = detachedOn(ship, world, busiest.space.tierId)[0].structure.at
-    const carried = detachedOn(ship, world, busiest.space.tierId, 0, [999, 999])[0].structure.at
+    const parked = detachedOn(ship, world, { tierId: busiest.space.tierId })[0].structure.at
+    const carried = detachedOn(ship, world, {
+      tierId: busiest.space.tierId,
+      seconds: 0,
+      carrier: [999, 999],
+    })[0].structure.at
     expect(parked).not.toEqual(carried)
   })
 })
@@ -1187,8 +1433,11 @@ describe('the music, the chain and the deduction', () => {
   })
 
   it('gets stronger by naming a hold it has not named before, and runs out', () => {
+    // Two holds, from two techniques that each put exactly one on the ship.
+    // Not the isolation: Marayam's beast puts a boundary *and* a room nobody
+    // may leave on it, which is two, and this test is about running out.
     let world = on(EMPTY_WORLD, 'paper-spy').world
-    world = on(world, 'room-isolation').world
+    world = on(world, 'scout').world
 
     const first = on(world, 'predator')
     if (first.report.kind !== 'deduced') throw new Error('unreachable')
@@ -1486,8 +1735,8 @@ describe('what the walk remembers of itself', () => {
 
   it('reads the dial higher the closer the visitor is', () => {
     const world = door(EMPTY_WORLD, 'divination', roomA.id).world
-    const near = dialReading(ship, world, centreOf(roomA), roomA.id)!
-    const far = dialReading(ship, world, [900, 900], elsewhere.id)!
+    const near = dialReading(ship, world, { at: centreOf(roomA), standingIn: roomA.id })!
+    const far = dialReading(ship, world, { at: [900, 900], standingIn: elsewhere.id })!
     expect(near.reading).toBe(100)
     expect(far.reading).toBeLessThan(near.reading)
   })
@@ -1777,6 +2026,410 @@ describe('taking a technique off the ship', () => {
         (seen) => seen.kind === 'gum',
       )
       expect(open?.hidden).toBe(false)
+    })
+  })
+})
+
+// ── The Guardian Spirit Beasts ───────────────────────────────────────────────
+//
+// Ten abilities that were a sentence in the read-out and nothing in the walk:
+// the beast itself was never there, so what a Guardian Spirit Beast *is* — a
+// body that turns up in a room and then does something — had no expression
+// aboard at all. These are the ten, and what each of them is tested for is the
+// thing you can see it do, because that is the whole of what was added.
+
+describe('the Guardian Spirit Beasts', () => {
+  /** A room with several things standing in it, so a whole-room beast has work. */
+  const busy = [...ship.spaces.values()]
+    .map((space) => ({
+      space,
+      solids: ship.structures.filter((solid) => solid.spaceId === space.id),
+    }))
+    .sort((a, b) => b.solids.length - a.solids.length)[0]
+
+  describe("Camilla's, which takes the floor out of a room", () => {
+    it('lifts everything standing in the room and puts it all back when dismissed', () => {
+      const up = cast(EMPTY_WORLD, 'coercive-beast', busy.space.id)
+      expect(up.world.medusa).toBe(busy.space.id)
+      expect(up.report).toMatchObject({ kind: 'beast-raised', solids: busy.solids.length })
+      expect(adriftSolidIds(up.world).sort()).toEqual(busy.solids.map((s) => s.id).sort())
+
+      const down = cast(up.world, 'coercive-beast', busy.space.id)
+      expect(down.world.medusa).toBeNull()
+      expect(adriftSolidIds(down.world)).toEqual([])
+      // Nothing is left holding the solids: an empty hold would keep them out
+      // of the deck's own mesh for good.
+      expect(worldIsQuiet(down.world)).toBe(true)
+    })
+
+    it('is one beast, so raising it elsewhere sets the last room back down', () => {
+      const first = cast(EMPTY_WORLD, 'coercive-beast', busy.space.id).world
+      const moved = cast(first, 'coercive-beast', elsewhere.id)
+      expect(moved.world.medusa).toBe(elsewhere.id)
+      for (const solid of busy.solids) expect(moved.world.solids[solid.id]?.adrift).toBeUndefined()
+    })
+
+    it('keeps what another technique did to a thing it lifted', () => {
+      // The beast raised it; it did not repair it. A crushed coffin two metres
+      // in the air is still crushed when it comes down.
+      const solid = busy.solids[0]
+      const crushed = { ...EMPTY_WORLD, solids: { [solid.id]: { squash: 0.3 } } }
+      const up = cast(crushed, 'coercive-beast', busy.space.id).world
+      expect(up.solids[solid.id]).toMatchObject({ squash: 0.3, adrift: true })
+      const down = settleTheRoom(up, ship, busy.space.id)
+      expect(down.solids[solid.id]).toEqual({ squash: 0.3 })
+    })
+
+    it('takes the floor out from under the collision test as well', () => {
+      // The whole feel of the technique from inside the room: there is nothing
+      // on the deck to walk into, because none of it is on the deck.
+      // Something in that room blocks the floor before the beast has it, and
+      // nothing of it does afterwards: the walls the aura's own solids
+      // contribute are gone, because none of those solids is on the floor.
+      const pushed = { ...EMPTY_WORLD, solids: { [busy.solids[0].id]: { squash: 0.9 } } }
+      expect(solidWalls(ship, pushed, { tierId: busy.space.tierId }).length).toBeGreaterThan(0)
+      const lifted = cast(pushed, 'coercive-beast', busy.space.id).world
+      expect(solidWalls(ship, lifted, { tierId: busy.space.tierId })).toEqual([])
+    })
+
+    it('climbs, drifts and turns, and the same thing does it the same way twice', () => {
+      const [a, b] = ['solid:one', 'solid:two'].map((id) => driftOffset(id, 2.4))
+      expect(a).not.toEqual(b)
+      expect(driftOffset('solid:one', 2.4)).toEqual(a)
+      // Never back on the deck: a thing that touched down every few seconds is
+      // being bounced rather than held up.
+      for (const seconds of [0, 1, 3.7, 9.2])
+        expect(driftOffset('x', seconds)[1]).toBeGreaterThan(0.5)
+    })
+  })
+
+  describe("Zhang Lei's, which mints a coin and waits", () => {
+    it('hangs a coin at its mouth, worth ten times the last, and only when taken', () => {
+      const up = cast(EMPTY_WORLD, 'coin-growth', furnished.id)
+      expect(up.world.wheel).toEqual({ spaceId: furnished.id, coin: 1 })
+      // Standing next to it is not taking it: nothing is on the visitor yet.
+      expect(up.world.body.gilded).toBe(0)
+
+      const first = takeTheCoin(up.world)!
+      expect(first.report).toMatchObject({ kind: 'coin-taken', value: 1, gilded: 1 })
+      expect(first.world.wheel?.coin).toBe(10)
+
+      const second = takeTheCoin(first.world)!
+      expect(second.report).toMatchObject({ kind: 'coin-taken', value: 10, gilded: 11 })
+      expect(second.world.wheel?.coin).toBe(100)
+    })
+
+    it('carries the coin with it when the wheel is sent somewhere else', () => {
+      const taken = takeTheCoin(cast(EMPTY_WORLD, 'coin-growth', furnished.id).world)!.world
+      const moved = cast(taken, 'coin-growth', elsewhere.id)
+      expect(moved.world.wheel).toEqual({ spaceId: elsewhere.id, coin: 10 })
+    })
+
+    it('has nothing to take once the wheel is put down', () => {
+      const down = cast(
+        cast(EMPTY_WORLD, 'coin-growth', furnished.id).world,
+        'coin-growth',
+        furnished.id,
+      )
+      expect(down.world.wheel).toBeNull()
+      expect(takeTheCoin(down.world)).toBeNull()
+    })
+  })
+
+  describe("Tserriednich's, which escalates on one thing", () => {
+    const solid = busy.solids[0]
+    const at = (world: TourWorld) =>
+      castInTour(world, 'lie-marks', {
+        ship,
+        targetId: busy.space.id,
+        targetSolidId: solid.id,
+        standingIn: null,
+        at: [0, 0],
+      })
+
+    it('shoves, then greens, then transforms, and there is no fourth', () => {
+      const first = at(EMPTY_WORLD)
+      expect(first.report.kind).toBe('lie-pushed')
+      expect(first.world.solids[solid.id]?.lies).toBe(1)
+      expect(first.world.chimera).toBe(busy.space.id)
+
+      const second = at(first.world)
+      expect(second.report.kind).toBe('lie-greened')
+      expect(second.world.solids[solid.id]).toMatchObject({ lies: 2, aura: 'green' })
+
+      const third = at(second.world)
+      expect(third.report.kind).toBe('lie-transformed')
+      expect(third.world.solids[solid.id]).toMatchObject({ lies: 3, monster: true, gone: true })
+
+      // And there is no fourth: the fitting is gone, so the walk has nothing
+      // left to aim the beast at.
+      expect(at(third.world).report).toEqual({ kind: 'no-solid' })
+    })
+
+    it('counts each thing separately, because each is marked separately', () => {
+      const other = busy.solids[1]
+      const once = at(EMPTY_WORLD).world
+      const elsewhereOnce = castInTour(once, 'lie-marks', {
+        ship,
+        targetId: busy.space.id,
+        targetSolidId: other.id,
+        standingIn: null,
+        at: [0, 0],
+      })
+      expect(elsewhereOnce.report.kind).toBe('lie-pushed')
+      expect(elsewhereOnce.world.solids[other.id]?.lies).toBe(1)
+      expect(elsewhereOnce.world.solids[solid.id]?.lies).toBe(1)
+    })
+  })
+
+  describe("Tubeppa's, which fills a room and melts what is in it", () => {
+    it('melts nothing on the cast and everything a stage at a time afterwards', () => {
+      const loosed = cast(EMPTY_WORLD, 'drug-synthesis', busy.space.id)
+      expect(loosed.world.toad).toBe(busy.space.id)
+      // Nothing has gone down yet: the cast opens the tap.
+      for (const solid of busy.solids) {
+        expect(loosed.world.solids[solid.id]).toEqual({ melting: 0 })
+      }
+
+      let world = loosed.world
+      for (let stage = 1; stage < MELT_STAGES.length; stage++) {
+        const step = gasStep(world, ship)!
+        world = step.world
+        expect(world.solids[busy.solids[0].id]).toMatchObject({
+          melting: stage,
+          squash: MELT_STAGES[stage],
+        })
+      }
+      // And the last step takes them entirely.
+      const last = gasStep(world, ship)!
+      expect(last.report).toMatchObject({ kind: 'melted', gone: busy.solids.length })
+      expect(last.world.solids[busy.solids[0].id]?.gone).toBe(true)
+      expect(gasStep(last.world, ship)).toBeNull()
+    })
+
+    it('stops working on a room it has left, and keeps what it took', () => {
+      const half = gasStep(cast(EMPTY_WORLD, 'drug-synthesis', busy.space.id).world, ship)!.world
+      const gone = cast(half, 'drug-synthesis', busy.space.id)
+      expect(gone.world.toad).toBeNull()
+      expect(gasStep(gone.world, ship)).toBeNull()
+      // What it had already taken it keeps: a melted thing is not mended by the
+      // beast walking off.
+      expect(gone.world.solids[busy.solids[0].id]?.melting).toBe(1)
+    })
+  })
+
+  describe("Tyson's, which levies the reader and gives it back as light", () => {
+    const levy = (world: TourWorld, spaceId: string) =>
+      castInTour(world, 'aura-levy', { ship, targetId: null, standingIn: spaceId, at: [0, 0] })
+
+    /** A room the ship put no window in, which is what "dark" means aboard. */
+    const dark = [...ship.spaces.values()].find(
+      (space) => !ship.structures.some((s) => s.spaceId === space.id && s.kind === 'window'),
+    )!
+
+    it('takes what is committed and lights the room with it', () => {
+      const committed = { ...EMPTY_WORLD, body: { ...RESTING_BODY, enhance: 3 } }
+      const lit = levy(committed, dark.id)
+      expect(lit.report).toMatchObject({ kind: 'room-brightened', levied: 3 })
+      expect(lit.world.lit).toEqual([dark.id])
+      expect(lit.world.body.enhance).toBe(0)
+    })
+
+    it('puts it on the reader once the room has nowhere left to take it', () => {
+      const once = levy(EMPTY_WORLD, dark.id).world
+      const twice = levy({ ...once, body: { ...once.body, enhance: 2 } }, dark.id)
+      expect(twice.report).toMatchObject({ kind: 'halo-raised', levied: 2, halo: 3 })
+      expect(twice.world.body.halo).toBe(3)
+      // The room is not lit twice: it was already lit.
+      expect(twice.world.lit).toEqual([dark.id])
+    })
+
+    it('has nowhere to spend the levy when the visitor is in no room at all', () => {
+      expect(levy(EMPTY_WORLD, '').report).toEqual({ kind: 'no-target' })
+    })
+  })
+
+  describe("Luzurus's, which reels in what its secretion caught", () => {
+    it('glues everything in the baited room, the bait included', () => {
+      const set = castInTour(EMPTY_WORLD, 'desire-trap', {
+        ship,
+        targetId: busy.space.id,
+        standingIn: furnished.id,
+        at: [0, 0],
+      })
+      expect(set.world.centipede).toBe(busy.space.id)
+      for (const solid of standingIn(ship, set.world, busy.space.id)) {
+        expect(set.world.solids[solid.id]?.glued).toBe(0)
+      }
+    })
+
+    it('drags what it caught towards the visitor and eats what arrives', () => {
+      const set = castInTour(EMPTY_WORLD, 'desire-trap', {
+        ship,
+        targetId: busy.space.id,
+        standingIn: furnished.id,
+        at: [0, 0],
+      }).world
+      const solid = standingIn(ship, set, busy.space.id)[0]
+      const here = solidNow(solid, set.solids[solid.id]).at
+
+      // Standing on top of it: one step and it is inside the reach, so it is
+      // taken rather than moved.
+      const eaten = reelStep(set, ship, here)!
+      expect(eaten.report).toMatchObject({ kind: 'reeled' })
+      expect(eaten.world.solids[solid.id]?.gone).toBe(true)
+
+      // And from far off it comes a step at a time instead.
+      const far: [number, number] = [here[0] + 40, here[1]]
+      const pulled = reelStep(set, ship, far)!
+      expect(pulled.report).toMatchObject({ kind: 'reeled', eaten: 0 })
+      const moved = solidNow(solid, pulled.world.solids[solid.id]).at
+      expect(moved[0]).toBeGreaterThan(here[0])
+    })
+  })
+
+  describe("Salé-salé's, which fills a room and then shuts its mouths", () => {
+    it('fills a part at a time, and says so on the part that finishes it', () => {
+      let world = cast(EMPTY_WORLD, 'diffusive-smoke', furnished.id).world
+      expect(world.smoke).toEqual({ spaceId: furnished.id, filled: 0 })
+      for (let part = 1; part <= SMOKE_FULL; part++) {
+        const step = smokeStep(world)!
+        world = step.world
+        expect(step.report).toMatchObject({
+          kind: 'smoke-spread',
+          filled: part,
+          full: part === SMOKE_FULL,
+        })
+      }
+      // Full is where it stops: the mouths have closed.
+      expect(smokeStep(world)).toBeNull()
+    })
+
+    it('starts the next room empty, because the mouths went with it', () => {
+      const part = smokeStep(cast(EMPTY_WORLD, 'diffusive-smoke', furnished.id).world)!.world
+      const moved = cast(part, 'diffusive-smoke', elsewhere.id)
+      expect(moved.world.smoke).toEqual({ spaceId: elsewhere.id, filled: 0 })
+    })
+  })
+
+  describe("Momoze's, which is a crowd rather than an animal", () => {
+    it('looses a flock over the rooms nearest the cast, and calls it back in', () => {
+      const loosed = castInTour(EMPTY_WORLD, 'solicitation', {
+        ship,
+        targetId: furnished.id,
+        standingIn: furnished.id,
+        at: [0, 0],
+      })
+      expect(loosed.world.menagerie.length).toBe(FLOCK_ROOMS)
+      // All of them on the deck the visitor is standing on: the flock goes
+      // through bulkheads, not through decks.
+      for (const id of loosed.world.menagerie) {
+        expect(ship.spaces.get(id)!.tierId).toBe(furnished.tierId)
+      }
+
+      const back = castInTour(loosed.world, 'solicitation', {
+        ship,
+        targetId: furnished.id,
+        standingIn: furnished.id,
+        at: [0, 0],
+      })
+      expect(back.world.menagerie).toEqual([])
+      expect(worldIsQuiet(back.world)).toBe(true)
+    })
+
+    it('gives every one of them a size and a shape of its own', () => {
+      const loosed = castInTour(EMPTY_WORLD, 'solicitation', {
+        ship,
+        targetId: furnished.id,
+        standingIn: furnished.id,
+        at: [0, 0],
+      }).world
+      const flock = apparitionsOn(ship, loosed).filter((seen) => seen.kind === 'sprite')
+      expect(flock.length).toBeGreaterThan(FLOCK_ROOMS)
+      expect(new Set(flock.map((one) => one.size)).size).toBeGreaterThan(1)
+      expect(new Set(flock.map((one) => one.colour)).size).toBeGreaterThan(1)
+      // And they leave the rooms they belong to, which nothing else aboard does.
+      for (const one of flock) expect(one.spread ?? 0).toBeGreaterThan(2)
+    })
+  })
+
+  describe("Camilla's other one, which takes a room apart while it waits", () => {
+    it('comes with the name and breaks one thing per step', () => {
+      const named = cast(EMPTY_WORLD, 'resurrection', busy.space.id)
+      expect(named.world.cat).toBe(busy.space.id)
+      expect(named.world.ninelives).toContain(busy.space.id)
+
+      let world = named.world
+      for (let left = busy.solids.length - 1; left >= 0; left--) {
+        const step = catStep(world, ship)!
+        expect(step.report).toMatchObject({ kind: 'crushed-one', left })
+        world = step.world
+      }
+      // A cat with an empty room sits in it.
+      expect(catStep(world, ship)).toBeNull()
+      expect(standingIn(ship, world, busy.space.id)).toEqual([])
+    })
+  })
+
+  describe('what the walk draws for each of them', () => {
+    it('puts a body in the room for every beast that is up', () => {
+      const all: TourWorld = {
+        ...EMPTY_WORLD,
+        medusa: furnished.id,
+        chimera: furnished.id,
+        toad: furnished.id,
+        centipede: furnished.id,
+        cat: furnished.id,
+        dragon: furnished.id,
+        wheel: { spaceId: furnished.id, coin: 10 },
+        smoke: { spaceId: furnished.id, filled: 2 },
+      }
+      const kinds = new Set(apparitionsOn(ship, all).map((seen) => seen.kind))
+      for (const kind of [
+        'medusa',
+        'chimera',
+        'toad',
+        'cat',
+        'dragon',
+        'wheel',
+        'coin',
+        'mouths',
+      ]) {
+        expect(kinds).toContain(kind)
+      }
+      // And what the two room-filling ones put in the air with them.
+      expect(kinds).toContain('gas')
+      expect(kinds).toContain('fume')
+    })
+
+    it('shows only as much of the smoke as has actually been breathed out', () => {
+      const parts = (filled: number) =>
+        new Set(
+          apparitionsOn(ship, { ...EMPTY_WORLD, smoke: { spaceId: furnished.id, filled } })
+            .filter((seen) => seen.kind === 'fume')
+            .map((seen) => seen.colour),
+        ).size
+      expect(parts(0)).toBe(0)
+      expect(parts(2)).toBe(2)
+      expect(parts(SMOKE_FULL)).toBe(SMOKE_FULL)
+    })
+
+    it('stands the dragon inside the room rather than in its wall', () => {
+      const barred = apparitionsOn(ship, { ...EMPTY_WORLD, dragon: furnished.id }).find(
+        (seen) => seen.kind === 'dragon',
+      )!
+      expect(pointInPolygon(barred.at, furnished.footprint)).toBe(true)
+    })
+
+    it('leaves a monster standing where a third contact took a fitting', () => {
+      const solid = busy.solids[0]
+      const cursed: TourWorld = {
+        ...EMPTY_WORLD,
+        solids: { [solid.id]: { lies: 3, monster: true, gone: true } },
+      }
+      const shown = apparitionsOn(ship, cursed).filter((seen) => seen.kind === 'monster')
+      expect(shown.length).toBe(1)
+      expect(shown[0].spaceId).toBe(solid.spaceId)
     })
   })
 })

@@ -110,13 +110,13 @@ export const load: PageServerLoad = async ({ params, cookies }) => {
   }
   if (spoilerLimit)
     timeline = timeline.filter((entry) => entry.chapter === null || entry.chapter <= spoilerLimit)
-  let chapterTrajectory = buildChapterTrajectory(
+  let chapterTrajectory = buildChapterTrajectory({
     timeline,
     character,
     jsonCharacter,
     chapters,
     locationPaths,
-  )
+  })
   if (spoilerLimit)
     chapterTrajectory = chapterTrajectory.filter((entry) => entry.chapter <= spoilerLimit)
 

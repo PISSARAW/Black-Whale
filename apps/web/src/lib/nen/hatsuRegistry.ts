@@ -6,7 +6,6 @@ export type HatsuInteractionKind =
   | 'chain-bind'
   | 'dowsing'
   | 'enhance'
-  | 'control'
   | 'growth'
   | 'vehicle'
   | 'scout'
@@ -118,7 +117,6 @@ export const HATSU_SITE_IMPACT_BY_KIND = {
   'chain-bind': 'control',
   dowsing: 'navigation',
   enhance: 'control',
-  control: 'layout',
   growth: 'content-access',
   vehicle: 'layout',
   scout: 'data-revelation',
@@ -229,7 +227,6 @@ export const HATSU_VISUAL_SIGNATURE_BY_KIND = {
   },
   dowsing: { glyph: '◇', manifestation: 'Dowsing pendulum', form: 'chain', motion: 'scan' },
   enhance: { glyph: '✦', manifestation: 'Royal Ren mantle', form: 'aura', motion: 'pulse' },
-  control: { glyph: '♛', manifestation: 'Royal command threads', form: 'aura', motion: 'orbit' },
   growth: { glyph: '❧', manifestation: 'Erigeron sprout', form: 'organic', motion: 'bloom' },
   vehicle: {
     glyph: '▰',
@@ -594,18 +591,6 @@ export const HATSU_PROFILES: HatsuProfile[] = [
     cost: 'Increasing aura per reinforcement layer',
     color: '#f0b429',
     action: 'Reinforce with Ren',
-  },
-  {
-    id: 'oito-hatsu',
-    name: 'Royal Guard Hatsu',
-    owner: 'Oito',
-    kind: 'control',
-    instruction:
-      'Select map characters to join one command network; each new guard is pulled toward the first commander.',
-    rule: 'Control requires acquired targets and maintained aura links across the whole guard network.',
-    cost: 'Aura per linked guard',
-    color: '#70d6b2',
-    action: 'Acquire the first guard',
   },
   {
     id: 'erigeron',
@@ -1393,11 +1378,11 @@ export const HATSU_PROFILES: HatsuProfile[] = [
     owner: 'Padaille',
     kind: 'weapon-body',
     instruction:
-      'Cycle the hand through hammer, drill and axe: one flattens the target, one bores open what it kept shut, one takes a part off it.',
-    rule: 'Padaille changes his own body into familiar weapons and tools rather than conjuring independent equipment.',
-    cost: 'Known weapon shape · transformed body part',
+      'Strike a target and see what the arm became: a hammer drives it into the floor, a drill bores a hole through it, an axe cuts it in two.',
+    rule: 'The arm takes one of the three shapes at random — Padaille transforms his own body into tools he knows rather than conjuring equipment, but he does not pick which one answers.',
+    cost: 'Transformed limb · no say in the shape',
     color: '#c6925e',
-    action: 'Choose a weapon function',
+    action: 'Swing whatever the arm became',
   },
   {
     id: 'camilla-guardian-coercion',

@@ -45,15 +45,6 @@ export const hatsuStatusEn = {
         : `${a1} reinforced · aura output ${a2}/5`,
   },
 
-  control: {
-    guarded: (a0: string) =>
-      `${a0} is the one being guarded · every link from here is drawn back to it`,
-    answered: (a0: string, a1: number) =>
-      `${a0} was touched and all ${a1} answered at once · that is the whole of the network`,
-    network: (a0: string, a1: number) =>
-      `${a1} guard${a1 > 1 ? 's' : ''} around ${a0} · they pool what little they each have`,
-  },
-
   growth: {
     grown: (a0: boolean, a1: string, a2: number) =>
       a0

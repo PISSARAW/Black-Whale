@@ -42,6 +42,8 @@ export type ApparitionKind =
   | 'hoover'
   /** Kalluto, stood in a room the snakes are loose in. */
   | 'puppet'
+  /** A strand of Bungee Gum strung across a room, waiting to be walked into. */
+  | 'gum'
 
 /**
  * One thing Nen has left standing in the ship.
@@ -79,8 +81,10 @@ export interface Apparition {
   /**
    * How far from `at` the thing may wander, in metres.
    *
-   * Only the fish have one: everything else in this list is nailed to a point,
-   * and an aquarium is the size of the room it is in.
+   * The fish have one, and so do the two apparitions that were sent somewhere
+   * with instructions to move about once they got there: the free bird and a
+   * double posted to wander. Everything else in this list is nailed to a
+   * point, and an aquarium is the size of the room it is in.
    */
   spread?: number
 }
@@ -98,6 +102,8 @@ const CARGO = 0xe2b86e
 const HOOVER = 0x9fb3c8
 /** Kalluto is drawn in ink: a black kimono, a bob, and a painted face. */
 const PUPPET = 0x1b1b22
+/** Bungee Gum is Hisoka's own pink, the same the web draws his filament in. */
+const GUM = 0xf06bb5
 /** Halkenburg's collective aura, which is the gold of the whole ship's will. */
 export const ARROW = 0xf7e27d
 /** Rising Sun is the one technique whose colour is a temperature. */
@@ -196,9 +202,10 @@ function room(ship: Ship, space: Space) {
  * rather than against a list of rooms. Order is stable, which is what lets the
  * scene diff frame to frame.
  *
- * `visitor` is where the walk currently is, and only one thing reads it: Kacho's
+ * `visitor` is where the walk currently is, and two things read it: Kacho's
  * double, which does not stand in a room at all — it stays beside the person it
- * is protecting, and follows them off the deck it was raised on.
+ * is protecting, and follows them off the deck it was raised on — and Secret
+ * Window's shoulder bird, which does the same at a bird's height.
  */
 export function apparitionsOn(
   ship: Ship,
@@ -245,8 +252,35 @@ export function apparitionsOn(
 
   // The bird, perched as high as the room allows: it is eavesdropping through
   // the ceiling, so it sits where it would have to sit to do that.
+  //
+  // Unless it is the one that was sent to the visitor, which is not perched at
+  // all: it rides the shoulder, at a shoulder's height and a shoulder's width
+  // off, and the room under it is whichever one the walk is in. The free bird
+  // is given room to drift, because it is on its way somewhere.
   const perch = spaceOf(world.owl)
-  if (perch) place(`owl:${perch.id}`, 'owl', perch, 2.4, 0.5, OWL)
+  if (perch) {
+    const mode = world.owlMode ?? 'wander'
+    const beside = visitor?.at
+    const measured = room(ship, perch)
+    if (mode === 'shoulder' && beside && measured) {
+      found.push({
+        id: `owl:${perch.id}`,
+        kind: 'owl',
+        spaceId: perch.id,
+        tierId: visitor?.tierId ?? perch.tierId,
+        at: [beside[0] + 0.5, beside[1] + 0.5],
+        y: Math.min(measured.floor + 1.5, measured.ceiling - 0.25),
+        size: 0.5,
+        colour: OWL,
+        stage: 0,
+        hidden: false,
+      })
+    } else {
+      place(`owl:${perch.id}`, 'owl', perch, 2.4, 0.5, OWL, {
+        spread: mode === 'wander' ? 1.8 : 0,
+      })
+    }
+  }
 
   // The cards, one apparition that carries how far the tribunal has got: blue
   // admitted, yellow restrained, red dismissed.
@@ -268,6 +302,16 @@ export function apparitionsOn(
   for (const spaceId of world.stars) {
     const space = spaceOf(spaceId)
     if (space) place(`star:${spaceId}`, 'star', space, 2.4, 0.8, STAR)
+  }
+
+  // The gum is strung at shin height, which is where a trip-line goes, and it
+  // is the one thing aboard that is meant not to be seen: In hides it from
+  // everything but Gyo, so the walk draws it faintly and only once the ship is
+  // laid open. It stays after the visitor has been thrown back — the strand is
+  // not spent by springing, and the room goes on catching them.
+  for (const spaceId of world.gumTraps) {
+    const space = spaceOf(spaceId)
+    if (space) place(`gum:${spaceId}`, 'gum', space, 0.35, 1.2, GUM, { hidden: !world.laidOpen })
   }
 
   // Kacho stands rather than floats: she is a person, and the one apparition
@@ -301,7 +345,7 @@ export function apparitionsOn(
       })
     } else {
       place(`double:${guarded.id}`, 'double', guarded, 0.9, 0.9, DOUBLE, {
-        wander: mode === 'wander' ? 2.5 : 0,
+        spread: mode === 'wander' ? 2.5 : 0,
       })
     }
   }

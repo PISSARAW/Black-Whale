@@ -697,7 +697,7 @@ export const HATSU_PROFILES: HatsuProfile[] = [
     owner: 'Benjamin / Musse',
     kind: 'surveillance',
     instruction:
-      'Attach one owl to a map character to retain a live feed and expose movement or death recorded in the next chapter.',
+      'Attach one owl to a map character to retain a live feed and expose movement or death recorded in the next chapter. Press R to choose which owl is sent: working the ship, on your shoulder, or let go unaimed.',
     rule: 'The owl eavesdrops through barriers, follows by touch and retains earlier footage for later review.',
     cost: 'One attached surveillance owl',
     color: '#a8b7d8',
@@ -741,39 +741,15 @@ export const HATSU_PROFILES: HatsuProfile[] = [
   },
   {
     id: 'without-you',
-    name: 'Without You (Follow)',
+    name: 'Without You',
     owner: 'Kacho',
     kind: 'guardian',
     instruction:
-      'The guardian memorizes five interactions, intercepts one detected lethal event and can replay its protected memory trail.',
+      'The guardian memorizes five interactions, intercepts one detected lethal event and can replay its protected memory trail. Press R to switch between Follow, Wander, and Scout modes.',
     rule: 'Kacho’s post-mortem double remains beside the surviving twin, indistinguishable from her and dedicated to protection.',
     cost: 'Death of one twin · post-mortem persistence',
     color: '#f6b8d1',
-    action: 'Follow the survivor',
-  },
-  {
-    id: 'without-you-wander',
-    name: 'Without You (Wander)',
-    owner: 'Kacho',
-    kind: 'guardian-wander',
-    instruction:
-      'The guardian wanders independently, memorizes five interactions, intercepts one detected lethal event and can replay its protected memory trail.',
-    rule: 'Kacho’s post-mortem double acts independently in the assigned area.',
-    cost: 'Death of one twin · post-mortem persistence',
-    color: '#f6b8d1',
-    action: 'Wander independently',
-  },
-  {
-    id: 'without-you-scout',
-    name: 'Without You (Scout)',
-    owner: 'Kacho',
-    kind: 'guardian-scout',
-    instruction:
-      'The guardian acts as a scout, memorizes five interactions, intercepts one detected lethal event and can replay its protected memory trail.',
-    rule: 'Kacho’s post-mortem double investigates the assigned area for threats.',
-    cost: 'Death of one twin · post-mortem persistence',
-    color: '#f6b8d1',
-    action: 'Scout ahead',
+    action: 'Command the guardian',
   },
   {
     id: 'magical-worm',

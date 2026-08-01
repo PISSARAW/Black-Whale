@@ -170,6 +170,14 @@
      */
     onFish?: () => void
     /**
+     * Asked every few seconds while Secret Window's free bird is out.
+     *
+     * The bird is the other thing aboard that moves without being cast at: it
+     * works its way through the ship a door at a time, on the same clock the
+     * fish feed on. Which door it takes is the pure layer's decision.
+     */
+    onOwl?: () => void
+    /**
      * Whether the technique in hand is one that throws a thread.
      *
      * Machi's stitches mend, and the walk has nothing torn in it that a visitor
@@ -217,6 +225,7 @@
     onArrive,
     onWorm,
     onFish,
+    onOwl,
     swings = false,
   }: Props = $props()
 
@@ -1408,6 +1417,23 @@
           turns = star
         }
 
+        // Bungee Gum's trap is a strand and a blob: the line is what you walk
+        // into, and the gum at the middle of it is what makes it obvious the
+        // line is not a wire. Nothing about it moves — the point of In is that
+        // there is no tell — so the slow turn the group gets is all it does.
+        if (seen.kind === 'gum') {
+          const strand = new THREE.Mesh(
+            new THREE.CylinderGeometry(seen.size * 0.035, seen.size * 0.035, seen.size * 2, 6),
+            skin,
+          )
+          strand.rotation.z = Math.PI / 2
+          root.add(strand)
+          const blob = new THREE.Mesh(new THREE.SphereGeometry(seen.size * 0.16, 8, 6), skin)
+          blob.scale.set(1, 0.7, 1)
+          root.add(blob)
+          turns = root
+        }
+
         if (seen.kind === 'double') {
           const body = new THREE.Mesh(
             new THREE.CapsuleGeometry(seen.size * 0.3, seen.size * 1.1, 4, 8),
@@ -1794,6 +1820,22 @@
             // Nose along the way it is going: the tail is on +x, so the body
             // points the other way round.
             held.root.rotation.y = -turn + Math.PI / 2
+            continue
+          }
+
+          // What was sent somewhere to move about once it got there: the free
+          // bird and a double posted to wander. Both keep to the water their
+          // room gave them, and the bird takes the wider, faster ring of the
+          // two because it is the one with wings.
+          if (held.spread && (held.kind === 'owl' || held.kind === 'double')) {
+            const flying = held.kind === 'owl'
+            const turn = phase * (flying ? 0.32 : 0.16)
+            held.root.position.set(
+              held.at[0] + Math.cos(turn) * held.spread,
+              held.y + Math.sin(phase * (flying ? 0.8 : 0.5)) * (flying ? 0.25 : 0.04),
+              held.at[1] + Math.sin(turn) * held.spread * 0.8,
+            )
+            if (held.turns) held.turns.rotation.y = -turn + Math.PI / 2
             continue
           }
 
@@ -2692,6 +2734,10 @@
       let sinceBite = 0
       /** A couple of seconds a mouthful: an aquarium, not a wood chipper. */
       const BITE_SECONDS = 2.4
+      /** How long since the free bird last took a door, in seconds. */
+      let sinceFlight = 0
+      /** Long enough to be seen sitting in a room before it leaves it. */
+      const FLIGHT_SECONDS = 6
       let aimedId: string | null = null
       let aimedSolidId: string | null = null
       let sinceAim = 0
@@ -2747,6 +2793,18 @@
             onFish?.()
           }
         } else sinceBite = 0
+
+        // The free bird on the same clock: it sits in a room for a few seconds
+        // and then takes a door out of it. Only that bird — the one on the
+        // shoulder travels with the walk, and the third stays thrown.
+        if (world.owl && world.owlMode === 'wander') {
+          sinceFlight += delta
+          if (sinceFlight >= FLIGHT_SECONDS) {
+            sinceFlight = 0
+            onOwl?.()
+          }
+        } else sinceFlight = 0
+
         const walked = activePlan ?? plan
         // What the aura is holding is out of the deck's own wall list, so it
         // has to be put back for the collision test — where the technique left

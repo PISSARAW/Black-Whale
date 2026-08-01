@@ -19,8 +19,10 @@ import {
   emptiedOn,
   heldSolidIds,
   eyesOf,
+  flyTheOwl,
   identityOf,
   linkIsOpen,
+  nextOwlMode,
   paceOf,
   planSealed,
   planWithout,
@@ -36,8 +38,10 @@ import {
   worksInTour,
   wormExit,
   worldIsQuiet,
+  holdsInWorld,
   type TourWorld,
 } from './hatsu'
+import { apparitionsOn } from './apparitions'
 import { HATSU_PROFILES } from '$lib/nen/hatsuRegistry'
 import { pointInPolygon, structureFootprint } from './geometry'
 
@@ -997,6 +1001,72 @@ describe('what the walk remembers of itself', () => {
     expect(worldIsQuiet(owl.world)).toBe(false)
   })
 
+  describe('the three birds of Secret Window', () => {
+    it('walks R round the three and back to the first', () => {
+      expect(nextOwlMode('wander')).toBe('shoulder')
+      expect(nextOwlMode('shoulder')).toBe('random')
+      expect(nextOwlMode('random')).toBe('wander')
+    })
+
+    it('perches the free bird on the room it was aimed at', () => {
+      const sent = door(EMPTY_WORLD, 'surveillance', roomB.id, roomA.id)
+      expect(sent.world.owl).toBe(roomB.id)
+    })
+
+    it('sends the shoulder bird to the visitor whatever the reticle says', () => {
+      const shouldered: TourWorld = { ...EMPTY_WORLD, owlMode: 'shoulder' }
+      const sent = door(shouldered, 'surveillance', roomB.id, roomA.id)
+      expect(sent.world.owl).toBe(roomA.id)
+
+      // And it goes where the walk goes, room for room.
+      const walked = arriveInTour(sent.world, ship, roomB.id)
+      expect(walked.world.owl).toBe(roomB.id)
+    })
+
+    it('leaves the other two birds where they were put when the walk moves on', () => {
+      const perched = door(EMPTY_WORLD, 'surveillance', roomB.id, roomA.id)
+      expect(arriveInTour(perched.world, ship, roomA.id).world.owl).toBe(roomB.id)
+    })
+
+    it('lets the third bird go into a room nobody aimed at', () => {
+      const loose: TourWorld = { ...EMPTY_WORLD, owlMode: 'random' }
+      const sent = castInTour(loose, 'surveillance', {
+        ship,
+        targetId: roomB.id,
+        standingIn: roomA.id,
+        at: [0, 0],
+        random: () => 0,
+      })
+      expect(sent.report).toMatchObject({ kind: 'owl-attached' })
+      expect(sent.world.owl).toBe([...ship.spaces.keys()][0])
+    })
+
+    it('takes a door with the free bird, and only with the free bird', () => {
+      const perched: TourWorld = { ...EMPTY_WORLD, owl: roomA.id }
+      const flown = flyTheOwl(perched, ship, () => 0)
+      expect(flown?.world.owl).toBe(ship.adjacency.get(roomA.id)![0])
+      expect(flown?.report).toMatchObject({ kind: 'owl-flown' })
+
+      expect(flyTheOwl({ ...perched, owlMode: 'shoulder' }, ship, () => 0)).toBeNull()
+      expect(flyTheOwl({ ...perched, owlMode: 'random' }, ship, () => 0)).toBeNull()
+      // And a bird that was never sent has nowhere to fly from.
+      expect(flyTheOwl(EMPTY_WORLD, ship, () => 0)).toBeNull()
+    })
+
+    it('keeps the free bird out of a room the chain has shut', () => {
+      const ways = ship.adjacency.get(roomA.id)!
+      const shut: TourWorld = { ...EMPTY_WORLD, owl: roomA.id, shut: [...ways] }
+      expect(flyTheOwl(shut, ship, () => 0)).toBeNull()
+    })
+
+    it('recalls the bird from the room it is actually in, whichever bird it is', () => {
+      const shouldered: TourWorld = { ...EMPTY_WORLD, owlMode: 'shoulder', owl: roomA.id }
+      const recalled = door(shouldered, 'surveillance', roomA.id, roomA.id)
+      expect(recalled.report).toMatchObject({ kind: 'owl-recalled' })
+      expect(recalled.world.owl).toBeNull()
+    })
+  })
+
   it('takes the ten seconds once and does not revise them', () => {
     const seen = castInTour(EMPTY_WORLD, 'future', {
       ship,
@@ -1214,20 +1284,38 @@ describe('taking a technique off the ship', () => {
 
   describe('Bungee Gum (elastic)', () => {
     it('increases walking pace when cast on the body without damage', () => {
-      const cast = castInTour(EMPTY_WORLD, 'elastic', { ship, targetSolidId: undefined, targetId: undefined, standingIn: roomA.id, at: [0, 0] })
+      const cast = castInTour(EMPTY_WORLD, 'elastic', {
+        ship,
+        targetSolidId: null,
+        targetId: null,
+        standingIn: roomA.id,
+        at: [0, 0],
+      })
       expect(cast.report).toMatchObject({ kind: 'gum-propulsion' })
       expect(cast.world.body.enhance).toBeGreaterThan(0)
     })
 
     it('heals damage when cast on the body if pain packer has packed damage', () => {
       const wounded = { ...EMPTY_WORLD, body: { ...RESTING_BODY, packed: 2 } }
-      const cast = castInTour(wounded, 'elastic', { ship, targetSolidId: undefined, targetId: undefined, standingIn: roomA.id, at: [0, 0] })
+      const cast = castInTour(wounded, 'elastic', {
+        ship,
+        targetSolidId: null,
+        targetId: null,
+        standingIn: roomA.id,
+        at: [0, 0],
+      })
       expect(cast.report).toMatchObject({ kind: 'gum-healed', healed: 1 })
       expect(cast.world.body.packed).toBe(1)
     })
 
     it('sets a trap when cast on a room', () => {
-      const cast = castInTour(EMPTY_WORLD, 'elastic', { ship, targetId: roomA.id, targetSolidId: undefined, standingIn: roomB.id, at: [0, 0] })
+      const cast = castInTour(EMPTY_WORLD, 'elastic', {
+        ship,
+        targetId: roomA.id,
+        targetSolidId: undefined,
+        standingIn: roomB.id,
+        at: [0, 0],
+      })
       expect(cast.report).toMatchObject({ kind: 'gum-trap-set', spaceId: roomA.id })
       expect(cast.world.gumTraps).toContain(roomA.id)
     })
@@ -1237,6 +1325,27 @@ describe('taking a technique off the ship', () => {
       const arrival = arriveInTour({ ...trapped, cameFrom: roomB.id }, ship, roomA.id)
       expect(arrival.report).toMatchObject({ kind: 'gum-rebound', spaceId: roomA.id })
       expect(arrival.travelTo).toBe(roomB.id)
+    })
+
+    // A trap is aura left standing, so everything that answers "is anything
+    // still up?" has to count it — the panel lists it, and Predator can name it.
+    it('counts a set trap among what the aura is holding', () => {
+      const trapped = { ...EMPTY_WORLD, gumTraps: [roomA.id] }
+      expect(worldIsQuiet(EMPTY_WORLD)).toBe(true)
+      expect(worldIsQuiet(trapped)).toBe(false)
+      expect(holdsInWorld(trapped)).toContain(`gum:${roomA.id}`)
+    })
+
+    // In is what the trap is: the strand is drawn, but faintly and only once
+    // the ship is laid open.
+    it('shows the strand to Gyo and to nothing else', () => {
+      const trapped = { ...EMPTY_WORLD, gumTraps: [roomA.id] }
+      const strand = apparitionsOn(ship, trapped).find((seen) => seen.kind === 'gum')
+      expect(strand).toMatchObject({ spaceId: roomA.id, hidden: true })
+      const open = apparitionsOn(ship, { ...trapped, laidOpen: true }).find(
+        (seen) => seen.kind === 'gum',
+      )
+      expect(open?.hidden).toBe(false)
     })
   })
 })

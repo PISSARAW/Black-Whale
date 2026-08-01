@@ -246,6 +246,18 @@ export const fr: Messages = {
       nothingHeld: 'Rien pour l’instant',
       copy: 'Copie vide',
       copySource: "Un double vide de la pièce. Rien de ce qu'il contient n'est le vaisseau.",
+      double: {
+        watch: 'La garde du double',
+        follow: 'À votre épaule',
+        wander: 'Libre dans la pièce',
+        scout: 'En éclaireur',
+      },
+      owl: {
+        watch: 'Le vol du hibou',
+        wander: 'Il parcourt le vaisseau',
+        shoulder: 'Sur votre épaule',
+        random: 'Lâché sans visée',
+      },
       reports: {
         noTarget: 'Rien à portée sur quoi lancer',
         teleported: (room) => `Envoyé dans ${room} — vous n'avez pas choisi où vous tombiez`,
@@ -411,10 +423,20 @@ export const fr: Messages = {
         wormSpent: "Le tunnel s'effondre · il n'était pas fait pour être demandé trois fois",
         doublePosted: (room) => `Le double se tient dans ${room}, auprès de qui reste`,
         doubleSpent: (room) => `Le double a pris le coup à votre place, et a quitté ${room}`,
+        doubleModeChanged: (watch) => `Le double change de garde · ${watch}`,
+        owlModeChanged: (flight) => `Le hibou est lâché autrement · ${flight}`,
+        owlFlown: (room) => `Le hibou a pris une porte · il est dans ${room} désormais`,
         noSolid: 'Rien de solide dans le réticule',
         boundFast: (solid) => `${solid} est tenu ferme · seule la couture le rend`,
         gumSet: (solid) => `Gomme sur ${solid} · saisissez un second volume pour les rapprocher`,
         gumPulled: (solid, other) => `${solid} a claqué jusqu'à ${other}`,
+        gumTrapSet: (room) =>
+          `Gomme tendue en travers de ${room} · rien ne la montre hors du Gyo, et elle y reste`,
+        gumRebound: (room) =>
+          `${room} vous a renvoyé d'où vous veniez · la gomme a cédé, puis elle a repris`,
+        gumPropulsion: 'La gomme vous tire · vous parcourez le vaisseau plus vite que vos jambes',
+        gumHealed: (healed) =>
+          `La gomme referme ce qui était ouvert · ${healed} coup${healed === 1 ? '' : 's'} sorti${healed === 1 ? '' : 's'} de l'armure`,
         forged: (solid) =>
           `${solid} porte une autre surface · ce qu'il est, et ce qu'il arrête, n'ont pas changé`,
         wrapped: (solid) => `${solid} emballé, réduit · rien n'y est abîmé`,
@@ -542,6 +564,7 @@ export const fr: Messages = {
         worm: 'Le tunnel',
         snakes: 'Serpents lâchés dans',
         trap: "L'appât est dans",
+        gumTrap: 'Gomme tendue en travers de',
         crossings: (n) => `${n} passages sur 3`,
         solid: 'Volumes retenus',
         wound: 'Le confetti est dans',

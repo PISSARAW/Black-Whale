@@ -175,7 +175,7 @@ export const hatsuFr: Record<string, HatsuTextOverride> = {
     owner: 'Benjamin / Musse',
     action: 'Attacher la chouette',
     instruction:
-      'Attachez une chouette à un personnage de la carte pour garder un flux en direct et révéler les déplacements ou la mort consignés au chapitre suivant.',
+      'Attachez une chouette à un personnage de la carte pour garder un flux en direct et révéler les déplacements ou la mort consignés au chapitre suivant. Appuyez sur R pour choisir le hibou envoyé : libre dans le vaisseau, sur votre épaule, ou lâché sans visée.',
     rule: 'La chouette écoute à travers les cloisons, suit sa cible au toucher et conserve les images antérieures pour un examen ultérieur.',
     cost: 'Une chouette de surveillance attachée',
   },
@@ -207,30 +207,12 @@ export const hatsuFr: Record<string, HatsuTextOverride> = {
     cost: 'Partisans unis · un porteur risque son âme',
   },
   'without-you': {
-    name: 'Without You (Suivre)',
+    name: 'Without You',
     owner: 'Kacho',
-    action: 'Suivre la survivante',
+    action: 'Commander la jumelle',
     instruction:
-      'La gardienne mémorise cinq interactions, intercepte un événement mortel détecté et peut rejouer la trace mémorisée qu’elle protège.',
+      'La gardienne mémorise cinq interactions, intercepte un événement mortel détecté et peut rejouer la trace mémorisée qu’elle protège. Appuyez sur R pour changer de mode (Suivre, Balade, Éclaireur).',
     rule: 'Le double post-mortem de Kacho reste auprès de sa jumelle survivante, indiscernable d’elle et tout entier dévoué à sa protection.',
-    cost: 'La mort d’une jumelle · persistance post-mortem',
-  },
-  'without-you-wander': {
-    name: 'Without You (Balade)',
-    owner: 'Kacho',
-    action: 'Se balader librement',
-    instruction:
-      'La gardienne se balade de manière autonome, mémorise cinq interactions, intercepte un événement mortel détecté et peut rejouer la trace mémorisée.',
-    rule: 'Le double post-mortem de Kacho agit de manière indépendante dans la zone assignée.',
-    cost: 'La mort d’une jumelle · persistance post-mortem',
-  },
-  'without-you-scout': {
-    name: 'Without You (Éclaireur)',
-    owner: 'Kacho',
-    action: 'Faire l\'éclaireur',
-    instruction:
-      'La gardienne explore en éclaireur, mémorise cinq interactions, intercepte un événement mortel détecté et peut rejouer la trace mémorisée.',
-    rule: 'Le double post-mortem de Kacho repère les menaces dans la zone assignée.',
     cost: 'La mort d’une jumelle · persistance post-mortem',
   },
   'magical-worm': {

@@ -295,6 +295,21 @@ export const en = {
       nothingHeld: 'Nothing yet',
       copy: 'Empty copy',
       copySource: 'An empty duplicate of the room. Nothing in it is the ship.',
+      // The double takes orders rather than being three abilities: R walks
+      // through them, and the button says the same thing without a keyboard.
+      double: {
+        watch: 'The double’s watch',
+        follow: 'At your shoulder',
+        wander: 'Loose in the room',
+        scout: 'Out ahead',
+      },
+      // Secret Window takes the same key, and sends one of three birds.
+      owl: {
+        watch: 'The owl’s flight',
+        wander: 'Working the ship',
+        shoulder: 'On your shoulder',
+        random: 'Let go unaimed',
+      },
       reports: {
         noTarget: 'Nothing in reach to cast on',
         teleported: (room: string) => `Sent to ${room} — you did not choose where you landed`,
@@ -467,11 +482,21 @@ export const en = {
         wormSpent: 'The tunnel collapses · it was never meant to be asked three times',
         doublePosted: (room: string) => `The double stands in ${room}, beside whoever is left`,
         doubleSpent: (room: string) => `The double took it in your place, and is gone from ${room}`,
+        doubleModeChanged: (watch: string) => `The double changes her watch · ${watch}`,
+        owlModeChanged: (flight: string) => `The owl is sent differently · ${flight}`,
+        owlFlown: (room: string) => `The owl has taken a door · it is in ${room} now`,
         noSolid: 'Nothing solid down the reticle',
         boundFast: (solid: string) => `${solid} is held fast · nothing but the chain gets it back`,
         gumSet: (solid: string) =>
           `Gum on ${solid} · take hold of a second thing to pull them together`,
         gumPulled: (solid: string, other: string) => `${solid} snapped across to ${other}`,
+        gumTrapSet: (room: string) =>
+          `Gum strung across ${room} · nothing shows it but Gyo, and it is still there`,
+        gumRebound: (room: string) =>
+          `${room} threw you back the way you came · the gum gave, and then it took`,
+        gumPropulsion: 'The gum pulls you along · you walk the ship faster than you can',
+        gumHealed: (healed: number) =>
+          `The gum closes what was open · ${healed} blow${healed === 1 ? '' : 's'} out of the armour`,
         forged: (solid: string) =>
           `${solid} is wearing another surface · what it is, and what it stops, are unchanged`,
         wrapped: (solid: string) => `${solid} wrapped small · nothing about it is damaged`,
@@ -606,6 +631,7 @@ export const en = {
         worm: 'The tunnel',
         snakes: 'Snakes loose in',
         trap: 'The bait is in',
+        gumTrap: 'Gum strung across',
         crossings: (n: number) => `${n} of 3 crossings`,
         solid: 'Solids held',
         wound: 'The confetti is in',

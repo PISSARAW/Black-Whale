@@ -50,6 +50,10 @@
     /** What a room rests on, in the visitor's language: the flock brings it back. */
     sourceOf: (entity: { source: string; sourceFr: string }) => string
     onRelease: () => void
+    /** Walks the double on to her next watch — the same thing R does. */
+    onCycleDouble: () => void
+    /** Walks Secret Window on to its next bird — R again, under that aura. */
+    onCycleOwl: () => void
     /** Casts a page of the book at whatever the visitor is aiming at. */
     onCastPage: (kind: HatsuInteractionKind) => void
   }
@@ -67,6 +71,8 @@
     nameOf,
     sourceOf,
     onRelease,
+    onCycleDouble,
+    onCycleOwl,
     onCastPage,
   }: Props = $props()
 
@@ -182,6 +188,14 @@
         return say.gumSet(solidName(report.solidId))
       case 'gum-pulled':
         return say.gumPulled(solidName(report.solidId), solidName(report.otherId))
+      case 'gum-trap-set':
+        return say.gumTrapSet(roomName(report.spaceId))
+      case 'gum-rebound':
+        return say.gumRebound(roomName(report.spaceId))
+      case 'gum-propulsion':
+        return say.gumPropulsion
+      case 'gum-healed':
+        return say.gumHealed(report.healed)
       case 'forged':
         return say.forged(solidName(report.solidId))
       case 'wrapped':
@@ -287,6 +301,10 @@
         return say.doublePosted(roomName(report.spaceId))
       case 'double-spent':
         return say.doubleSpent(roomName(report.spaceId))
+      case 'double-mode-changed':
+        return say.doubleModeChanged($t.tour.hatsu.double[report.mode])
+      case 'owl-mode-changed':
+        return say.owlModeChanged($t.tour.hatsu.owl[report.mode])
 
       case 'reinforced':
         return say.reinforced(report.committed)
@@ -337,6 +355,8 @@
         return say.owlAttached(report.rooms)
       case 'owl-recalled':
         return say.owlRecalled(report.rooms)
+      case 'owl-flown':
+        return say.owlFlown(roomName(report.spaceId))
       case 'foreseen':
         return say.foreseen(roomName(report.spaceId))
       case 'diverged':
@@ -494,6 +514,7 @@
     }
     if (world.double) rows.push({ label: held.double, value: roomName(world.double) })
     if (world.trap) rows.push({ label: held.trap, value: roomName(world.trap) })
+    for (const id of world.gumTraps) rows.push({ label: held.gumTrap, value: roomName(id) })
     if (world.worm) {
       rows.push({
         label: held.worm,
@@ -629,6 +650,48 @@
         {/each}
       </div>
     {/each}
+  {/if}
+
+  <!-- The double's orders. Shown while the guardian is up rather than only once
+       she has been posted, because the watch she will be posted under is a
+       choice the visitor can make before the cast as well as after it. -->
+  {#if profile.kind === 'guardian'}
+    <button
+      type="button"
+      onclick={onCycleDouble}
+      class="mt-3 flex w-full items-center justify-between rounded border border-[#444] px-2 py-1 text-[11px] text-[#FFFFF0]/80 transition-colors hover:border-[#FFD700]/60 hover:text-[#FFFFF0]"
+    >
+      <span
+        >{$t.tour.hatsu.double.watch} · {$t.tour.hatsu.double[world.doubleMode ?? 'follow']}</span
+      >
+      <kbd class="text-[10px] text-[#FFD700]/70">R</kbd>
+    </button>
+  {/if}
+
+  <!-- Which bird Secret Window sends, on the same key and for the same reason:
+       the aim only decides where the free one starts, so the visitor has to be
+       able to say which of the three it is before they press F. -->
+  {#if profile.kind === 'surveillance'}
+    <button
+      type="button"
+      onclick={onCycleOwl}
+      class="mt-3 flex w-full items-center justify-between rounded border border-[#444] px-2 py-1 text-[11px] text-[#FFFFF0]/80 transition-colors hover:border-[#FFD700]/60 hover:text-[#FFFFF0]"
+    >
+      <span>{$t.tour.hatsu.owl.watch} · {$t.tour.hatsu.owl[world.owlMode ?? 'wander']}</span>
+      <kbd class="text-[10px] text-[#FFD700]/70">R</kbd>
+    </button>
+  {/if}
+
+  <!-- Secret Window takes the same key, and the same button under it. -->
+  {#if profile.kind === 'surveillance'}
+    <button
+      type="button"
+      onclick={onCycleOwl}
+      class="mt-3 flex w-full items-center justify-between rounded border border-[#444] px-2 py-1 text-[11px] text-[#FFFFF0]/80 transition-colors hover:border-[#FFD700]/60 hover:text-[#FFFFF0]"
+    >
+      <span>{$t.tour.hatsu.owl.watch} · {$t.tour.hatsu.owl[world.owlMode ?? 'wander']}</span>
+      <kbd class="text-[10px] text-[#FFD700]/70">R</kbd>
+    </button>
   {/if}
 
   <button

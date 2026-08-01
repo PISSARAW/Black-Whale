@@ -73,7 +73,10 @@
     arriveInTour,
     castInTour,
     fishBite,
+    flyTheOwl,
     identityOf,
+    nextDoubleMode,
+    nextOwlMode,
     spendPage,
     worksInTour,
     worksOnTheBody,
@@ -365,11 +368,16 @@
    * V gives the walk the screen, and Esc gives it back — but only when the
    * pointer is not engaged, because there Esc already means "let go of my
    * mouse", and one key cannot mean two things in the same breath.
+   *
+   * R changes the orders of the two techniques that take orders: the double's
+   * watch under Without You, and which of the three birds Secret Window sends.
+   * Under anything else it means nothing and is left to the browser.
    */
   function onWindowKeydown(event: KeyboardEvent) {
     if (event.metaKey || event.ctrlKey || event.altKey) return
     const key = event.key.toLowerCase()
-    if (key !== 'm' && key !== 'g' && key !== 'v' && key !== 'escape') return
+    if (key === 'r' && technique?.kind !== 'guardian' && technique?.kind !== 'surveillance') return
+    if (key !== 'm' && key !== 'g' && key !== 'r' && key !== 'v' && key !== 'escape') return
     // Esc leaves full screen only where nothing else has a claim on it: the
     // browser answers it in native full screen, an engaged pointer answers it
     // with "let go of my mouse", and an open dialog closes on it first.
@@ -383,7 +391,9 @@
     }
     event.preventDefault()
     if (key === 'g') reveal = !reveal
-    else if (key === 'v' || key === 'escape') void toggleFullscreen()
+    else if (key === 'r') {
+      if (technique) turn(technique.kind)
+    } else if (key === 'v' || key === 'escape') void toggleFullscreen()
     else planOpen = !planOpen
   }
 
@@ -499,9 +509,14 @@
       // Three Monkeys: one gong per seal, and one for lifting all three.
       case 'sealed':
         return strikeAGong(shown.stage)
-      // Bungee Gum.
+      // Bungee Gum, all five of its uses: the strand, the pull, the trap laid,
+      // the trap sprung, and the two it works on the visitor themselves.
       case 'gum-set':
       case 'gum-pulled':
+      case 'gum-trap-set':
+      case 'gum-rebound':
+      case 'gum-propulsion':
+      case 'gum-healed':
         return stretchTheGum()
       // Spatial Teleportation, which grinds one way going and the other coming.
       case 'phasing':
@@ -570,13 +585,61 @@
     const currentWorld = untrack(() => world)
     if (currentWorld.holding !== kind) {
       const nextWorld = { ...currentWorld, holding: kind }
-      if (kind === 'guardian' || kind === 'guardian-wander' || kind === 'guardian-scout') {
+      if (kind === 'guardian') {
         nextWorld.double = currentSpace?.id ?? null
-        nextWorld.doubleMode = kind === 'guardian' ? 'follow' : kind === 'guardian-wander' ? 'wander' : 'scout'
+        // The watch she was last set to is kept: R is the only thing that
+        // changes it, and taking the aura up again is not R.
+        nextWorld.doubleMode = currentWorld.doubleMode ?? 'follow'
       }
       world = nextWorld
     }
   })
+
+  /**
+   * The double's next watch: at your shoulder, loose in the room she was posted
+   * in, or out ahead of the walk.
+   *
+   * One ability with three orders rather than three abilities in the dock —
+   * she is the same double whichever of them she is under, and the visitor
+   * changes her orders mid-walk the way they would speak to her.
+   */
+  function cycleDouble() {
+    turn('guardian')
+  }
+
+  /**
+   * The next of Secret Window's three birds: the free one, the one that rides
+   * your shoulder, and the one let go without being aimed.
+   *
+   * Chosen before the cast rather than by it — the bird is what F sends, so the
+   * visitor has to be able to say which bird it is while nothing is out. A bird
+   * already perched is left where it is; what changes is what the next cast
+   * sends, and whether this one is still allowed to move.
+   */
+  function cycleOwl() {
+    turn('surveillance')
+  }
+
+  /**
+   * R, in one place: the walk asks the technique for its next order and says
+   * what came back. A technique with nothing to cycle — or one that is not the
+   * aura being held — answers with nothing, and the key stays inert.
+   */
+  function turn(kind: HatsuInteractionKind) {
+    if (technique?.kind !== kind) return
+    let said: TourReport
+    if (kind === 'guardian') {
+      const mode = nextDoubleMode(world.doubleMode)
+      world = { ...world, doubleMode: mode }
+      said = { kind: 'double-mode-changed', mode }
+    } else if (kind === 'surveillance') {
+      const mode = nextOwlMode(world.owlMode)
+      world = { ...world, owlMode: mode }
+      said = { kind: 'owl-mode-changed', mode }
+    } else return
+    report = said
+    show(said)
+  }
 
   /**
    * Handing the ship back is not always free. Silent Majority is a curse that
@@ -692,6 +755,21 @@
     if (!last) return
     world = next
     report = last
+  }
+
+  /**
+   * One hop of the free bird, on the same clock the fish feed on.
+   *
+   * The read-out says where it went, because a bird that leaves the room you
+   * sent it to without saying so is a bird you have lost. It is not sounded:
+   * one hoot every few seconds for as long as the technique is up would be the
+   * walk talking over itself.
+   */
+  function owlFlight() {
+    const flown = flyTheOwl(world, ship)
+    if (!flown) return
+    world = flown.world
+    report = flown.report
   }
 
   /** Fugetsu's tunnel, asked on the same arrival the doors are asked on. */
@@ -904,6 +982,7 @@
         onArrive={arrived}
         onWorm={crossWorm}
         onFish={fishEat}
+        onOwl={owlFlight}
         swings={technique?.kind === 'stitch'}
         {touchUseLabel}
         touchLabels={{ move: $t.tour.touch.move, cast: $t.tour.touch.cast }}
@@ -1177,6 +1256,8 @@
           {nameOf}
           {sourceOf}
           onRelease={release}
+          onCycleDouble={cycleDouble}
+          onCycleOwl={cycleOwl}
           onCastPage={castPage}
         />
       {/if}

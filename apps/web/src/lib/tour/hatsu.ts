@@ -88,8 +88,6 @@ export const TOUR_HATSU_KINDS = [
   'snakes',
   'portal',
   'guardian',
-  'guardian-wander',
-  'guardian-scout',
   // On the visitor walking through them.
   'enhance',
   'vehicle',
@@ -197,6 +195,27 @@ export function worksInTour(profile: HatsuProfile | null): profile is HatsuProfi
 export type TourAim = 'reticle' | 'index'
 
 /**
+ * The three birds Secret Window can send, and the three watches Kacho's double
+ * can be set to, each in the order R walks through them.
+ *
+ * Both are one technique with a manner rather than three techniques: the dock
+ * hands the walk a single profile, and R cycles what it is doing. They are
+ * listed rather than merely typed so the key has something to walk round.
+ */
+export const OWL_MODES = ['wander', 'shoulder', 'random'] as const
+export const DOUBLE_MODES = ['follow', 'wander', 'scout'] as const
+
+/** Which bird Secret Window sent, and which watch Kacho's double is under. */
+export type TourOwlMode = (typeof OWL_MODES)[number]
+export type TourDoubleMode = (typeof DOUBLE_MODES)[number]
+
+/** The next of each, wrapping — which is all R has to decide. */
+export const nextOwlMode = (mode: TourOwlMode | null): TourOwlMode =>
+  OWL_MODES[(OWL_MODES.indexOf(mode ?? 'wander') + 1) % OWL_MODES.length]
+export const nextDoubleMode = (mode: TourDoubleMode | null): TourDoubleMode =>
+  DOUBLE_MODES[(DOUBLE_MODES.indexOf(mode ?? 'follow') + 1) % DOUBLE_MODES.length]
+
+/**
  * What Nen is currently doing to the ship.
  *
  * One flat value rather than a store per technique: the scene rebuilds from it,
@@ -279,7 +298,7 @@ export interface TourWorld {
   /** The double standing in a room, which takes one punishment and is spent. */
   double: string | null
   /** The mode the double is operating in */
-  doubleMode: 'follow' | 'wander' | 'scout'
+  doubleMode: TourDoubleMode
   /** Fugetsu's tunnel: a pair, and how much it has been asked for. */
   worm: { a: string; b: string; crossings: number } | null
   /** The rooms the snakes are loose in, and whether they have had a victim. */
@@ -328,6 +347,18 @@ export interface TourWorld {
    * was attached, and the answer is the room it was cast on.
    */
   owl: string | null
+  /**
+   * Which of Secret Window's three birds was sent, which is what decides where
+   * "where it was cast" actually is.
+   *
+   * One owl, three ways of sending it: the free bird perches on the room down
+   * the reticle and works its way through the ship on its own, the shoulder
+   * bird stays on the visitor and moves room for room with them, and the third
+   * is let go blind and lands wherever it lands. The mode is kept rather than
+   * the cast because the difference outlives the cast: the room the bird is in
+   * a minute later is a function of which bird it is.
+   */
+  owlMode: TourOwlMode
   /**
    * Rooms whose Hatsu Benjamin's baton has taken, which wear his palm star.
    *
@@ -498,6 +529,7 @@ export const EMPTY_WORLD: TourWorld = {
   holding: null,
   trail: [],
   owl: null,
+  owlMode: 'wander',
   stars: [],
   foreseen: null,
   verses: [],
@@ -568,6 +600,7 @@ export const worldIsQuiet = (world: TourWorld): boolean =>
   !world.ninelives.length &&
   !world.curse &&
   !world.souls.length &&
+  !world.gumTraps.length &&
   bookIsShut(world.book) &&
   bodyIsRested(world.body)
 
@@ -597,6 +630,9 @@ export type TourReport =
   | { kind: 'bag-empty' }
   | { kind: 'refused'; spaceId: string }
   | { kind: 'dispatched'; spaceId: string }
+  | { kind: 'double-mode-changed'; mode: TourDoubleMode }
+  | { kind: 'owl-mode-changed'; mode: TourOwlMode }
+  | { kind: 'owl-flown'; spaceId: string }
   // On the solids.
   | { kind: 'no-solid' }
   | { kind: 'bound-fast'; solidId: string }
@@ -763,10 +799,24 @@ export function nenHeld(world: TourWorld): string[] {
 
 /** Appearances Texture Surprise cycles a surface through. */
 const FORGERIES: StructureKind[] = [
-  'painting', 'cabinet', 'bars', 'basin', 'casket',
-  'bed', 'seat', 'table', 'spring', 'platform',
-  'counter', 'window', 'pillar', 'manacle', 'camera',
-  'telephone', 'duct', 'vent'
+  'painting',
+  'cabinet',
+  'bars',
+  'basin',
+  'casket',
+  'bed',
+  'seat',
+  'table',
+  'spring',
+  'platform',
+  'counter',
+  'window',
+  'pillar',
+  'manacle',
+  'camera',
+  'telephone',
+  'duct',
+  'vent',
 ]
 
 /** The blueprint's record for a solid, or the Gallery Fake copy standing in for one. */
@@ -1422,6 +1472,7 @@ export function holdsInWorld(world: TourWorld): string[] {
     ...(world.worm ? [`worm:${world.worm.a}`] : []),
     ...(world.snakes ? ['snakes'] : []),
     ...(world.trap ? [`trap:${world.trap}`] : []),
+    ...world.gumTraps.map((id) => `gum:${id}`),
   ]
 }
 
@@ -2394,15 +2445,7 @@ const ROOM_CASTS: Partial<Record<HatsuInteractionKind, RoomCast>> = {
   },
 
   guardian: ({ world, target }) => ({
-    world: { ...world, double: target.id, doubleMode: 'follow' },
-    report: { kind: 'double-posted', spaceId: target.id },
-  }),
-  'guardian-wander': ({ world, target }) => ({
-    world: { ...world, double: target.id, doubleMode: 'wander' },
-    report: { kind: 'double-posted', spaceId: target.id },
-  }),
-  'guardian-scout': ({ world, target }) => ({
-    world: { ...world, double: target.id, doubleMode: 'scout' },
+    world: { ...world, double: target.id, doubleMode: world.doubleMode ?? 'follow' },
     report: { kind: 'double-posted', spaceId: target.id },
   }),
 
@@ -2412,17 +2455,24 @@ const ROOM_CASTS: Partial<Record<HatsuInteractionKind, RoomCast>> = {
   // is kept either way; what the owl adds is that you can look back at it,
   // and that it holds the rooms open through the hull while it does.
   //
-  // It perches where it was sent, and it is one bird: attaching it somewhere
-  // else moves it rather than making a second. Called back by aiming at the
-  // room it is already in, which is the only place it can be recalled from.
-  surveillance: ({ world, target }) =>
+  // It is one bird: attaching it somewhere else moves it rather than making a
+  // second. Called back by aiming at the room it is already in, which is the
+  // only place it can be recalled from.
+  //
+  // Where it goes on the way up is the mode's to say, and only the free bird
+  // takes the room down the reticle: the shoulder bird is sent to the visitor
+  // and stays there, and the third is let go without being aimed at all.
+  surveillance: ({ world, ship, target, standingIn, input }) =>
     world.owl === target.id
       ? {
           world: { ...world, owl: null },
           report: { kind: 'owl-recalled', rooms: world.trail.length },
         }
       : {
-          world: { ...world, owl: target.id },
+          world: {
+            ...world,
+            owl: perchFor(world, ship, target.id, standingIn, input.random ?? Math.random),
+          },
           report: { kind: 'owl-attached', rooms: world.trail.length },
         },
 
@@ -2552,7 +2602,10 @@ function runCast(
   const pulledBack = pullBackTheBody(world)
   if (pulledBack) return pulledBack
 
-  if (BODY_HATSU_KINDS.has(kind) && (kind !== 'elastic' || (!input.targetSolidId && !input.targetId))) {
+  if (
+    BODY_HATSU_KINDS.has(kind) &&
+    (kind !== 'elastic' || (!input.targetSolidId && !input.targetId))
+  ) {
     return castOnBody(world, kind, input)
   }
   if (SOLID_HATSU_KINDS.has(kind) && (kind !== 'elastic' || input.targetSolidId)) {
@@ -3058,6 +3111,14 @@ export function arriveInTour(world: TourWorld, ship: Ship, spaceId: string | nul
   // The walk remembers where it has been, watched or not.
   next = { ...next, trail: [...next.trail, spaceId].slice(-200) }
 
+  // The shoulder bird is on the visitor rather than on a room, so the room it
+  // is recorded in is whichever one they have just walked into. It is the only
+  // bird that travels without flying: the free one works its way through the
+  // doors on the clock, and the third stays where it was thrown.
+  if (next.owl && next.owlMode === 'shoulder' && next.owl !== spaceId) {
+    next = { ...next, owl: spaceId }
+  }
+
   // A droplet lasts a few arrivals and then dries up.
   if (next.droplets.length) {
     const aged = next.droplets.map((drop) => ({ ...drop, life: drop.life - 1 }))
@@ -3255,4 +3316,51 @@ export function fishBite(
     },
     report: { kind: 'fish-fed', spaceId, solidId: eaten.id },
   }
+}
+
+/**
+ * Where the bird actually lands, which the technique decides and the reticle
+ * only sometimes.
+ *
+ * The free bird is the one the aim is for. The shoulder bird belongs to the
+ * visitor and is put in the room they are standing in — aiming across the ship
+ * with it up sends it no further than your own shoulder. The third is thrown
+ * without looking, so it is given the ship and not the target.
+ */
+function perchFor(
+  world: TourWorld,
+  ship: Ship,
+  targetId: string,
+  standingIn: string | null,
+  random: () => number,
+): string {
+  if (world.owlMode === 'shoulder') return standingIn ?? targetId
+  if (world.owlMode === 'random') {
+    const rooms = [...ship.spaces.keys()]
+    if (!rooms.length) return targetId
+    return rooms[Math.min(rooms.length - 1, Math.floor(random() * rooms.length))]
+  }
+  return targetId
+}
+
+/**
+ * One hop of the free bird, which is the only one that moves on its own.
+ *
+ * It goes through a door rather than through the hull: the ship's own
+ * adjacency is the list of where it may go next, and a room the chain has shut
+ * is shut to a bird as much as to a visitor. A perch with nothing open off it
+ * keeps the bird where it is, and says nothing.
+ */
+export function flyTheOwl(
+  world: TourWorld,
+  ship: Ship,
+  random: () => number = Math.random,
+): TourCastResult | null {
+  if (!world.owl || world.owlMode !== 'wander') return null
+  const ways = (ship.adjacency.get(world.owl) ?? []).filter(
+    (id) => ship.spaces.has(id) && linkIsOpen(world, id),
+  )
+  if (!ways.length) return null
+  const spaceId = ways[Math.min(ways.length - 1, Math.floor(random() * ways.length))]
+  return { world: { ...world, owl: spaceId }, report: { kind: 'owl-flown', spaceId } }
 }

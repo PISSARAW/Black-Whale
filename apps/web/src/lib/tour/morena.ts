@@ -264,7 +264,7 @@ export const CAT_FUR = 0xff8fab
  * unmistakably at this table rather than in this room. It is drawn at the
  * walk's own height for it: the beast is a beast wherever it is standing.
  */
-export const CHIMERA_AT: Vec2 = [13.2, 1.5]
+export const CHIMERA_AT: Vec2 = [13.6, 1.0]
 export const CHIMERA_SIZE = 0.95
 /**
  * And where Momoze's hangs, which is wherever it likes.
@@ -274,9 +274,9 @@ export const CHIMERA_SIZE = 0.95
  * still. `spread` is what makes it come back: it wanders half a metre and is
  * still there, which is the whole of the technique.
  */
-export const SPRITE_AT: Vec2 = [TABLE_AT[0] + 0.7, TABLE_AT[1] - 0.1]
-export const SPRITE_SIZE = 0.26
-export const SPRITE_ROAM = 0.45
+export const SPRITE_AT: Vec2 = [TABLE_AT[0] + 0.6, TABLE_AT[1] + 0.15]
+export const SPRITE_SIZE = 0.1
+export const SPRITE_ROAM = 0.22
 /**
  * And where Skill Hunter's book lies: open on the wood, at the guest's right.
  *
@@ -890,9 +890,13 @@ export function tableauOf(game: MorenaGame, floor: number): Apparition[] {
       y: floor + 1.3,
       size: SPRITE_SIZE,
       colour: SPRITES[asking > 0 ? 4 : 0],
-      // Which of the flock's shapes it is. The walk gives each sprite its own,
-      // and this one keeps the same one for the length of a hand.
-      stage: 2,
+      // Which of the flock's shapes it is, and — because the walk drives the
+      // dance off the same number — how far it swings while it asks. Nought is
+      // the round-eared one with the grin, and the shortest swing in the flock:
+      // this one is at somebody's shoulder in a small room rather than loose in
+      // a promenade, and a beast that pitched a metre would be flying, not
+      // pestering.
+      stage: 0,
       spread: SPRITE_ROAM,
     })
   }

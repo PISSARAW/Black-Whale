@@ -10,6 +10,7 @@ const staticRoutes: SitemapEntry[] = [
   { path: '/ship', changefreq: 'weekly', priority: '0.9' },
   { path: '/tour', changefreq: 'monthly', priority: '0.8' },
   { path: '/tour/sources', changefreq: 'monthly', priority: '0.6' },
+  { path: '/tour/morena', changefreq: 'monthly', priority: '0.6' },
   { path: '/characters', changefreq: 'weekly', priority: '0.9' },
   { path: '/timeline', changefreq: 'weekly', priority: '0.8' },
   { path: '/perspectives', changefreq: 'weekly', priority: '0.8' },

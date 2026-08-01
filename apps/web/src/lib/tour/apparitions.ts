@@ -104,6 +104,18 @@ export type ApparitionKind =
   | 'dragon'
   /** Camilla's other one, taking apart the room that wears her name. */
   | 'cat'
+  /**
+   * Morena Prudo, seated behind her fan in the hideout's office.
+   *
+   * The only apparition in the walk that is a person rather than a technique —
+   * which is exactly what she is in the manga, a game master who does nothing
+   * at all until you sit down. Laid out by `$lib/tour/morena`, not by
+   * `apparitionsOn`: the negotiation is its own state and is not something the
+   * ship is holding.
+   */
+  | 'dealer'
+  /** One card of that game, face up or face down on the table between them. */
+  | 'game-card'
 
 /**
  * One thing Nen has left standing in the ship.

@@ -970,6 +970,226 @@ export const en = {
         },
       },
 
+      /**
+       * What a Hatsu can do to twelve cards.
+       *
+       * The names come off the registry, so only what each one is worth *at
+       * this table* is written here: one line for what it buys, one for what it
+       * costs. That is the whole argument of the feature — nothing overrules
+       * the canon, and everything plays on the holes the canon leaves.
+       */
+      hatsu: {
+        title: 'The aura in your hands',
+        none: 'Nothing in hand. Pick a technique up from the Nen dock and sit down again — some of them have a great deal to say to twelve cards.',
+        useless: (name: string) =>
+          `${name} has nothing to do at a card table. The dock will hand you something else.`,
+        play: 'Play it',
+        spent: (used: number, of: number) => `${used} of ${of} used`,
+        exhausted: 'Spent',
+        legal: 'Legal',
+        fraud: 'Fraud',
+        exposure: (percent: number) =>
+          percent === 0 ? 'The room cannot see this' : `About ${percent}% chance the room sees it`,
+        watching: 'LSDF is standing in this room. What it sees, she is told.',
+        unwatched: 'Nothing in this room is watching any more.',
+        buys: 'Buys',
+        costs: 'Costs',
+        seen: 'She saw that.',
+        unseen: 'Nobody saw that.',
+
+        /** What the visitor now knows, shown while it is still worth knowing. */
+        read: 'Her fan is face up. You can see what she has left to ask.',
+        foreseen: (card: string) => `She is going to take the ${card} next.`,
+        forged: (card: string) =>
+          `The ${card} in your hand is not yours. Nothing at this table can tell — but the kiss is a touch.`,
+        shielded:
+          'The vow is spoken. Nothing can narrow your answer now, and giving the Yes anyway would kill you.',
+        proxied: 'You are not the person in this chair.',
+
+        leave: 'Walk out',
+        leaveWarning:
+          'The canon puts leaving under the same sanction as cheating: the answer is narrowed to Yes or No. There is no door out of this game that is not through it.',
+
+        narrowed: {
+          title: 'The Manipulation',
+          cheating:
+            'She saw it. The manipulative half of Contagion closes on your hand and takes the wider words out of it: Back, Joker and X leave the table. What you have left is Yes and No, which is what she was always going to accept.',
+          leaving:
+            'You stood up, and standing up is cheating. Back, Joker and X leave the table. You are still sitting here, and the answer is now Yes or No.',
+        },
+
+        effects: {
+          read: 'Read her hand',
+          foresee: 'See the card she takes next',
+          pass: 'Suspend the exchange',
+          recover: 'Take a card back',
+          forge: 'Slip a card in',
+          shield: 'Speak the vow',
+          hide: 'Put the room’s eyes out',
+          proxy: 'Sit somebody else down',
+          blind: 'Take her senses',
+          rider: 'Lay the clause',
+        },
+
+        techniques: {
+          dowsing: {
+            buys: 'A yes-or-no question aimed at the card she is about to take. Every refusal you give afterwards is a refusal you can back.',
+            costs:
+              'The chain is a chain: it hangs off your hand and it does not go into Zetsu. Good for one round, ruinous over five.',
+          },
+          future: {
+            buys: 'Ten seconds of it, lived before anyone else has them. You hear which card goes before you spend the question that lets her take it.',
+            costs:
+              'The ten seconds then happen exactly as predicted, so the table sees a player who changed nothing — and you get one round out of it, ever.',
+          },
+          divination: {
+            buys: 'A number dialled under the table, and an answer that is true.',
+            costs: 'It is a telephone call, and a call is a thing somebody can walk in on.',
+          },
+          prophecy: {
+            buys: 'A quatrain drawn before you sit down, naming the branch that loses.',
+            costs:
+              'It will not read its own bearer’s future: somebody else has to draw for you, which puts a third person in your game.',
+          },
+          surveillance: {
+            buys: 'Owls at the bulkhead. You know the questions before they are asked.',
+            costs:
+              'Nothing at the table — it is all pre-game. Getting them in here is a break-in, and LSDF grades its guards on how serious the offence was.',
+          },
+          scout: {
+            buys: 'A hamster on the table. It costs almost no aura, it survives your going under, and it does not look like Nen at all.',
+            costs: 'It is still an animal nobody invited, and this is a room with eyes.',
+          },
+          'paper-spy': {
+            buys: 'A doll stuck where it can see her hand, reporting everything it sees.',
+            costs: 'Paper on a wall, in a room built to be searched.',
+          },
+          'truth-punch': {
+            buys: 'One blow, one question, one answer out of the body itself — even when the mouth is lying.',
+            costs:
+              'Throwing a punch at the table is leaving the table. Keep it for the last exchange, when the Manipulation has nothing left to narrow.',
+          },
+          disguise: {
+            buys: 'A card that is not yours: the right texture, the right weight, no aura to find.',
+            costs:
+              'The canon undoing of it is touch, and this game ends in a kiss. You win a hand you cannot conclude.',
+          },
+          melody: {
+            buys: 'A round that costs you no answer. Three minutes of held attention, and nobody left the room.',
+            costs:
+              'Nothing at all. It is the only legal pause in the game — which is exactly why it is the only one.',
+          },
+          senses: {
+            buys: 'Her sight, her hearing and her voice. She cannot ask the last question, so no Yes can be taken off you.',
+            costs:
+              'A game she cannot play is a game abandoned, and abandonment is punished on both sides. You buy a draw and you pay full price for it.',
+          },
+          'coin-growth': {
+            buys: 'A card back out of the graveyard, paid for with a coin instead of with a kiss.',
+            costs:
+              'A coin is worth what it has been kept, and spending a year-old one spends the year. Nothing about it is hidden: this is honest money.',
+          },
+          clone: {
+            buys: 'A copy of the stake, close enough that nothing at this table can tell.',
+            costs:
+              'The copy is inert and gone inside a day. She is not paid in smoke until tomorrow — by which time the game is closed and you are not in the room.',
+          },
+          growth: {
+            buys: 'Something grown on the spot and put up as the stake.',
+            costs: 'It grows in front of her.',
+          },
+          'drug-synthesis': {
+            buys: 'A compound worth a card, synthesized and put on the table.',
+            costs:
+              'It cannot be made alone. The stake needs an ally, so the table is two heads against one — and she can see both of them.',
+          },
+          contract: {
+            buys: 'Terms, a duration, penalties, and a Manipulation to enforce them. The answer stops being a word.',
+            costs:
+              'Nothing, and it binds you exactly as hard as it binds her. That is what makes it legal.',
+          },
+          'heart-vow': {
+            buys: '“I will not answer Yes.” The only true immunity to the Manipulation there is.',
+            costs:
+              'You die if you give it anyway. She needs the Yes and has no use for the body, so she is the one who has to give way.',
+          },
+          polarity: {
+            buys: 'The moon, put on her by contact — and the contact is the kiss she is going to ask you for.',
+            costs:
+              'Marking her means hands moving over a table she is watching. And it pays nothing at all unless she takes her second condition.',
+          },
+          curse: {
+            buys: 'Your death made expensive: the mark takes one of her own with it.',
+            costs:
+              'It answers a clause she was never going to use. She does not kill her candidates, she recruits them.',
+          },
+          'desire-trap': {
+            buys: 'Her own opening, played back at her: what she wants, named out loud and set down as bait.',
+            costs:
+              'It is a beast, in a small room, on her floor. Half the time she watches it come up.',
+          },
+          'lie-marks': {
+            buys: 'The bluff taxed, at both ends of the table. The only arrangement here under which playing honestly is strictly better.',
+            costs:
+              'It cuts both ways — and she has answered every question truthfully all game, because the game is her restriction.',
+          },
+          theft: {
+            buys: 'Contagion itself. The ability seen in action, its owner questioned and answering, the imprint touched — inside an hour, and this game is all three at once.',
+            costs:
+              'You have to play the hand to its end and take the kiss to get the touch. Which is, exactly, how Morena loses it.',
+          },
+          puppet: {
+            buys: 'Somebody else in the chair, saying somebody else’s answer.',
+            costs:
+              'A puppet has no desire for her to name and nothing of its own to stake. It cannot lose you the game and it cannot win it: the best-hidden fraud is the one capped at a draw.',
+          },
+          command: {
+            buys: 'A stamped head in the chair, doing what it was told to do.',
+            costs:
+              'A puppet has no desire for her to name and nothing of its own to stake. It cannot lose you the game and it cannot win it: the best-hidden fraud is the one capped at a draw.',
+          },
+          needle: {
+            buys: 'A needled head in the chair, playing the part to the letter.',
+            costs:
+              'A puppet has no desire for her to name and nothing of its own to stake. It cannot lose you the game and it cannot win it: the best-hidden fraud is the one capped at a draw.',
+          },
+          'identity-swap': {
+            buys: 'Somebody else’s hands on your cards, and yours on theirs.',
+            costs:
+              'A swap is a swap: whatever the game does, it does to a body that is not yours — and the answer belongs to whoever is wearing it.',
+          },
+          'room-isolation': {
+            buys: 'The room taken out of the ship. Whatever you do next, there is nothing left that could report it.',
+            costs: 'Being sealed in with her is being sealed in with her.',
+          },
+          'door-network': {
+            buys: 'The doors decide what “leaving” even means, and the room stops being a place with witnesses.',
+            costs:
+              'They are her doors. They were built for this room, by her people, before you got here.',
+          },
+        },
+
+        aftermath: {
+          title: 'What it was worth',
+          bound:
+            'Moonlight Act holds the answer. It is a contract now, with terms and a penalty, and it binds whichever of you tries to walk away from it.',
+          moon: 'She took the kiss, and the moon went on with it. She cannot touch anything wearing the sun again without both of them going off.',
+          stolen:
+            'Seen in action, questioned and answered, and touched — all three, inside the hour. Contagion is in the book. This is how Morena loses it.',
+          'sworn-struck':
+            'You gave the Yes with the chain in your heart. The vow does not negotiate: it was never a threat to her, it was a price on you.',
+          smoke:
+            'Tomorrow the copy is gone and she has been paid in nothing. The game is closed by then, and closed is closed.',
+          taxed:
+            'Every lie told across this table was marked as it was told. Honesty was the better play, and it was the better play for both of you.',
+          trapped: 'She was made to answer her own opening. Nobody has done that to her before.',
+          deterred:
+            'Killing you costs her one of her own. She was never going to, but now she cannot afford to have been going to.',
+          proxied:
+            'It was not you in that chair. Nothing that happened here happened to you — and nothing that happened here could ever have been a win.',
+        },
+      },
+
       conditions: {
         title: 'The three conditions of Contagion',
         said: 'A yes, won at the table',
@@ -993,6 +1213,13 @@ export const en = {
         declined: 'You refuse the deal.',
         recovered: (card: string) => `The ${card} comes back out of the graveyard.`,
         settled: (card: string) => `The last card is the ${card}.`,
+        played: (round: number, technique: string, seen: boolean) =>
+          `Round ${round} — ${technique}. ${seen ? 'She saw it.' : 'Nobody saw it.'}`,
+        narrowed: (because: 'cheating' | 'leaving'): string =>
+          because === 'cheating'
+            ? 'Caught. Back, Joker and X leave the table.'
+            : 'You stood up, which is cheating. Back, Joker and X leave the table.',
+        exposed: (card: string) => `The kiss finds the forged ${card}.`,
       },
 
       again: 'Deal again',

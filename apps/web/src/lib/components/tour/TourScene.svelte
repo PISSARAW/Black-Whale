@@ -210,6 +210,28 @@
      * walls, the same solids — only what the surfaces say about themselves.
      */
     reveal?: boolean
+    /**
+     * Where the visitor has sat down, if they have.
+     *
+     * The walk is a walk, and one thing aboard is not: Morena's game is played
+     * sitting at a table opposite the person dealing it. Sat down, the legs
+     * stop answering — no keys, no stick, no stairs — and the head keeps
+     * looking around, which is the whole of what a seated body still does. The
+     * eye drops to `eye` metres above the deck, because a chair is the reason
+     * the table is at chin height.
+     *
+     * `null` everywhere else, and the walk is unchanged by it.
+     */
+    seated?: { at: Vec2; heading: number; eye: number } | null
+    /**
+     * Things to draw that the ship is not holding.
+     *
+     * `apparitionsOn` answers what Nen has left standing, which is the only
+     * thing the walk itself puts in a room. A page that owns some other state —
+     * a hand of cards on a table — hands its own list in here and gets the same
+     * treatment: built once, keyed on `id`, moved rather than rebuilt.
+     */
+    extras?: Apparition[]
     /** The room down the reticle, mirrored out for the read-out. */
     aimedAt?: Space | null
     /** The solid down the reticle, for the techniques that work on solids. */
@@ -335,6 +357,8 @@
     tunes = null,
     twoHanded = false,
     reveal = false,
+    seated = null,
+    extras = [],
     aimedAt = $bindable(null),
     aimedSolidAt = $bindable(null),
     onCast,
@@ -2977,6 +3001,111 @@
           turns = head
         }
 
+        // ── Morena's table ───────────────────────────
+        //
+        // The two things in the walk that are neither Nen nor ship: the woman
+        // dealing the negotiation game, and the cards she deals it with. Built
+        // the same way as everything else here — primitives and a colour — so
+        // that the one room the walk sits you down in is drawn by the same
+        // machinery as the ninety you walk through.
+
+        if (seen.kind === 'dealer') {
+          // Seated, arms on the table, and unmistakably a person rather than an
+          // apparition: she is the only thing aboard that is simply there. The
+          // face is left blank on purpose — the archive draws no character, and
+          // what a reader brings to the chair opposite is better than a guess.
+          const cloth = glow(seen.colour, 0.95)
+          const pale = glow(0xf0dfe2, 0.95)
+          const dark = glow(0x241820, 1)
+
+          const torso = new THREE.Mesh(
+            new THREE.CylinderGeometry(seen.size * 0.62, seen.size * 0.78, seen.size * 1.5, 12),
+            cloth,
+          )
+          root.add(torso)
+
+          // Forearms laid along the table top, which is where a dealer's hands
+          // are and the first thing you look at across one. The height is not
+          // free: `TABLE_HEIGHT` above the deck is where the wood is, and an arm
+          // a hand's breadth under it is an arm inside the table.
+          for (const side of [-1, 1]) {
+            const arm = new THREE.Mesh(
+              new THREE.CapsuleGeometry(seen.size * 0.15, seen.size * 0.75, 4, 8),
+              cloth,
+            )
+            arm.rotation.x = Math.PI / 2
+            arm.rotation.z = side * 0.3
+            arm.position.set(side * seen.size * 0.58, seen.size * 0.18, seen.size * 0.6)
+            root.add(arm)
+            const hand = new THREE.Mesh(new THREE.SphereGeometry(seen.size * 0.16, 8, 6), pale)
+            hand.position.set(side * seen.size * 0.76, seen.size * 0.18, seen.size * 1.05)
+            root.add(hand)
+          }
+
+          const neck = new THREE.Mesh(
+            new THREE.CylinderGeometry(seen.size * 0.15, seen.size * 0.19, seen.size * 0.24, 8),
+            pale,
+          )
+          neck.position.y = seen.size * 0.86
+          root.add(neck)
+
+          const head = new THREE.Mesh(new THREE.SphereGeometry(seen.size * 0.33, 12, 10), pale)
+          head.position.y = seen.size * 1.18
+          root.add(head)
+
+          // The long hair is the silhouette, and the silhouette is the whole of
+          // how she reads from the far side of a table in a dark room. Kept
+          // behind the face rather than around it: a head with no face at all is
+          // a hood, and she is not wearing one.
+          const hair = new THREE.Mesh(
+            new THREE.CylinderGeometry(seen.size * 0.34, seen.size * 0.42, seen.size * 0.8, 12),
+            dark,
+          )
+          hair.position.set(0, seen.size * 0.82, -seen.size * 0.2)
+          root.add(hair)
+          const crown = new THREE.Mesh(new THREE.SphereGeometry(seen.size * 0.37, 12, 10), dark)
+          crown.position.set(0, seen.size * 1.24, -seen.size * 0.09)
+          crown.scale.set(1, 0.85, 1)
+          root.add(crown)
+
+          // She leans in when she offers the kiss, and sits back when the hand
+          // is played out. `stage` is the only thing the game tells the scene.
+          if (seen.stage === 1) root.rotation.x = -0.14
+          if (seen.stage === 2) root.rotation.x = 0.1
+          turns = null
+        }
+
+        if (seen.kind === 'game-card') {
+          // Lying flat, face up or face down, with a rim so the edge of it is
+          // still legible from the low angle a seated eye has on a table.
+          const face = new THREE.Mesh(
+            new THREE.PlaneGeometry(seen.size, seen.size * 1.5),
+            glow(seen.colour, seen.stage === 2 ? 0.55 : 0.95),
+          )
+          face.rotation.x = -Math.PI / 2
+          root.add(face)
+          const rim = new THREE.Mesh(
+            new THREE.PlaneGeometry(seen.size * 1.12, seen.size * 1.62),
+            glow(seen.stage === 0 ? 0x6b4c58 : 0xf5efe6, 0.7),
+          )
+          rim.rotation.x = -Math.PI / 2
+          rim.position.y = -0.001
+          root.add(rim)
+          // The card Morena marked carries the mark: a nick in one corner, which
+          // is exactly as much as a reader is meant to be able to see of it.
+          if (seen.stage === 3) {
+            const nick = new THREE.Mesh(
+              new THREE.PlaneGeometry(seen.size * 0.22, seen.size * 0.06),
+              glow(0x2b1b22, 1),
+            )
+            nick.rotation.x = -Math.PI / 2
+            nick.rotation.z = Math.PI / 4
+            nick.position.set(seen.size * 0.32, 0.001, -seen.size * 0.6)
+            root.add(nick)
+          }
+          turns = null
+        }
+
         if (seen.kind === 'cargo') {
           const crate = new THREE.Mesh(
             new THREE.BoxGeometry(seen.size, seen.size, seen.size),
@@ -3054,7 +3183,12 @@
       function syncApparitions(seconds: number) {
         // Where the walk is, for the one apparition that follows it — and the
         // clock, for the two that ride something that will not hold still.
-        const wanted = apparitionsOn(ship, world, { at: pointer, tierId: currentTierId }, seconds)
+        const wanted = [
+          ...apparitionsOn(ship, world, { at: pointer, tierId: currentTierId }, seconds),
+          // What the page is holding rather than the ship: the cards on
+          // Morena's table, and the woman dealing them.
+          ...extras,
+        ]
         const standing: Record<string, true> = {}
 
         for (const seen of wanted) {
@@ -3350,6 +3484,25 @@
 
           if (held.kind === 'chain') {
             swingTheChain(held, phase)
+            continue
+          }
+
+          // A card lies where it was put. Nothing else in this list holds
+          // perfectly still — everything Nen leaves standing is riding on the
+          // air — and that is exactly why a card must: a card that bobbed would
+          // be a card nobody had dealt.
+          if (held.kind === 'game-card') {
+            held.root.position.set(held.at[0], held.y, held.at[1])
+            continue
+          }
+
+          // And the woman opposite breathes, and looks at whoever sat down.
+          if (held.kind === 'dealer') {
+            held.root.position.set(held.at[0], held.y + Math.sin(phase * 0.5) * 0.012, held.at[1])
+            held.root.rotation.y = Math.atan2(
+              camera.position.x - held.root.position.x,
+              camera.position.z - held.root.position.z,
+            )
             continue
           }
 
@@ -4565,6 +4718,8 @@
       }
 
       function takeLink() {
+        // Sat at a table, E is not a stairwell: nobody gets up mid-hand.
+        if (seated) return
         // Marayam's beast is in the doorway, and E is the door: a visitor shut
         // into a room by it does not get told they cannot leave, they get
         // roared at. The refusal is the pure layer's — `arriveInTour` puts
@@ -5140,6 +5295,17 @@
           stick,
         )
 
+        // Sat down: the legs stop answering. Whatever the keys and the stick
+        // said this frame is dropped on the floor, and the body is put back on
+        // its chair — a seat is not a place you drift out of.
+        if (seated) {
+          moving = false
+          advance = 0
+          strafe = 0
+          running = false
+          pointer = seated.at
+        }
+
         if (world.body.autopilotUntil && world.body.autopilotUntil > Date.now()) {
           moving = true
           advance = 1
@@ -5205,7 +5371,8 @@
          */
         const groundTarget = floorOf(standing ?? entrySpace(plan), plan.tier)
         ground += (groundTarget - ground) * Math.min(1, delta * 6)
-        const eye = ground + eyesOf(world.body, EYE_HEIGHT) + bob.rise + swingRise
+        const eye =
+          ground + eyesOf(world.body, seated ? seated.eye : EYE_HEIGHT) + bob.rise + swingRise
         camera.position.set(pointer[0], eye, pointer[1])
         camera.rotation.set(0, 0, 0)
         camera.rotateY(yaw)
@@ -5548,6 +5715,21 @@
       // The page asks for a jump by setting `jumpTo`; honour it and clear it so
       // asking twice for the same space works.
       jump = (spaceId: string, landing?: Vec2) => goTo(spaceId, landing)
+      // Sitting down is a jump with a direction. `goTo` puts the visitor where
+      // a room's door would leave them, facing the middle of it; a chair says
+      // both, so neither is derived here.
+      sitDown = (at: Vec2, facing: number) => {
+        const plan = ship.plans.get(currentTierId)
+        if (!plan) return
+        pointer = at
+        const space = spaceAt(plan, at)
+        ground = floorOf(space ?? entrySpace(plan), plan.tier)
+        yaw = facing
+        pitch = 0
+        camera.position.set(at[0], ground + (seated?.eye ?? EYE_HEIGHT), at[1])
+        applyVisibility(space?.id ?? null)
+        report()
+      }
       // The camera and the lights are in this closure, so anything the panel
       // changes has to be handed in rather than read out.
       relens = (settings: Comfort) => {
@@ -5571,6 +5753,8 @@
 
   /** Assigned once the scene is live; the effect below waits for it. */
   let jump = $state<((spaceId: string, landing?: Vec2) => void) | null>(null)
+  /** The same, for the one arrival that is a chair rather than a doorway. */
+  let sitDown = $state<((at: Vec2, facing: number) => void) | null>(null)
   /** The same, for the two things the on-screen buttons stand in for. */
   let take = $state<(() => void) | null>(null)
   let castNow = $state<((hand?: 'first' | 'second' | 'third') => void) | null>(null)
@@ -5579,6 +5763,12 @@
 
   $effect(() => {
     relens?.($comfort)
+  })
+
+  // Taking a seat, once, when the page says there is one to take.
+  $effect(() => {
+    if (!seated || !sitDown) return
+    sitDown(seated.at, seated.heading)
   })
 
   $effect(() => {

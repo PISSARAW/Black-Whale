@@ -888,6 +888,221 @@ export const fr: Messages = {
         },
       },
 
+      hatsu: {
+        title: 'L’aura que vous avez en main',
+        none: 'Rien en main. Prenez une technique dans le dock Nen et rasseyez-vous — certaines ont beaucoup à dire à douze cartes.',
+        useless: (name) =>
+          `${name} n’a rien à faire à une table de cartes. Le dock vous donnera autre chose.`,
+        play: 'La jouer',
+        spent: (used, of) => `${used} sur ${of} utilisée${used === 1 ? '' : 's'}`,
+        exhausted: 'Épuisée',
+        legal: 'Légal',
+        fraud: 'Fraude',
+        exposure: (percent) =>
+          percent === 0
+            ? 'La pièce ne peut pas le voir'
+            : `Environ ${percent} % de chances que la pièce le voie`,
+        watching: 'LSDF se tient dans cette pièce. Ce qu’elle voit, Morena l’apprend.',
+        unwatched: 'Plus rien ici ne regarde.',
+        buys: 'Achète',
+        costs: 'Coûte',
+        seen: 'Elle a vu.',
+        unseen: 'Personne n’a rien vu.',
+
+        read: 'Son éventail est retourné. Vous voyez ce qu’il lui reste à demander.',
+        foreseen: (card) => `Elle va prendre le ${card} au prochain tour.`,
+        forged: (card) =>
+          `Le ${card} dans votre main n’est pas à vous. Rien à cette table ne peut le dire — mais le baiser est un contact.`,
+        shielded:
+          'Le serment est prononcé. Plus rien ne peut réduire votre réponse, et donner le Oui malgré tout vous tuerait.',
+        proxied: 'Ce n’est pas vous qui êtes sur cette chaise.',
+
+        leave: 'Se lever',
+        leaveWarning:
+          'Le canon met l’abandon sous la même sanction que la triche : la réponse est réduite à Oui ou Non. Il n’y a pas de porte de sortie qui ne passe pas par là.',
+
+        narrowed: {
+          title: 'La Manipulation',
+          cheating:
+            'Elle a vu. La composante manipulatrice de Contagion se referme sur votre main et lui retire les mots larges : Retour, Joker et X quittent la table. Il vous reste Oui et Non, c’est-à-dire ce qu’elle attendait depuis le début.',
+          leaving:
+            'Vous vous êtes levé, et se lever c’est tricher. Retour, Joker et X quittent la table. Vous êtes toujours assis là, et la réponse est désormais Oui ou Non.',
+        },
+
+        effects: {
+          read: 'Lire sa main',
+          foresee: 'Voir la carte qu’elle prendra',
+          pass: 'Suspendre l’échange',
+          recover: 'Reprendre une carte',
+          forge: 'Glisser une carte',
+          shield: 'Prononcer le serment',
+          hide: 'Crever les yeux de la pièce',
+          proxy: 'Asseoir quelqu’un d’autre',
+          blind: 'Lui ôter les sens',
+          rider: 'Poser la clause',
+        },
+
+        techniques: {
+          dowsing: {
+            buys: 'Une question par oui ou par non, pointée sur la carte qu’elle s’apprête à prendre. Chaque refus que vous donnez ensuite est un refus que vous pouvez adosser.',
+            costs:
+              'La chaîne est une chaîne : elle pend à votre main et ne passe pas en Zetsu. Bonne pour un tour, ruineuse sur cinq.',
+          },
+          future: {
+            buys: 'Dix secondes vécues avant tout le monde. Vous entendez quelle carte tombe avant de dépenser la question qui la lui donne.',
+            costs:
+              'Les dix secondes se déroulent ensuite exactement comme prévu : la table voit un joueur qui n’a rien changé — et vous n’en tirez jamais qu’un seul tour.',
+          },
+          divination: {
+            buys: 'Un numéro composé sous la table, et une réponse qui est vraie.',
+            costs:
+              'C’est un appel téléphonique, et un appel est une chose sur laquelle on entre sans frapper.',
+          },
+          prophecy: {
+            buys: 'Un quatrain tiré avant de s’asseoir, qui nomme la branche perdante.',
+            costs:
+              'Elle ne lit pas l’avenir de son porteur : quelqu’un d’autre doit tirer pour vous, ce qui met un tiers dans votre partie.',
+          },
+          surveillance: {
+            buys: 'Des chouettes contre la cloison. Vous connaissez les questions avant qu’elles soient posées.',
+            costs:
+              'Rien à la table — tout se joue avant. Les faire entrer ici est une effraction, et LSDF gradue ses gardes sur la gravité du délit.',
+          },
+          scout: {
+            buys: 'Un hamster sur la table. Presque pas d’aura, il survit à votre inconscience, et il ne ressemble pas à du Nen.',
+            costs: 'Cela reste une bête que personne n’a invitée, dans une pièce qui a des yeux.',
+          },
+          'paper-spy': {
+            buys: 'Une poupée collée là où elle voit sa main, et qui rapporte tout.',
+            costs: 'Du papier sur un mur, dans une pièce faite pour être fouillée.',
+          },
+          'truth-punch': {
+            buys: 'Un coup, une question, une réponse sortie du corps lui-même — même quand la bouche ment.',
+            costs:
+              'Frapper à la table, c’est quitter la table. Gardez-le pour le dernier échange, quand la Manipulation n’a plus rien à réduire.',
+          },
+          disguise: {
+            buys: 'Une carte qui n’est pas à vous : la bonne texture, le bon poids, aucune aura à trouver.',
+            costs:
+              'Le canon la défait par le toucher, et cette partie finit par un baiser. Vous gagnez une main que vous ne pouvez pas conclure.',
+          },
+          melody: {
+            buys: 'Un tour qui ne vous coûte aucune réponse. Trois minutes d’attention tenue, et personne n’a quitté la pièce.',
+            costs:
+              'Rien du tout. C’est la seule pause légale du jeu — et c’est exactement pour cela qu’elle est la seule.',
+          },
+          senses: {
+            buys: 'Sa vue, son ouïe et sa voix. Elle ne peut plus poser la dernière question, donc aucun Oui ne peut vous être arraché.',
+            costs:
+              'Une partie qu’elle ne peut plus jouer est une partie abandonnée, et l’abandon est puni des deux côtés. Vous achetez une partie nulle au prix fort.',
+          },
+          'coin-growth': {
+            buys: 'Une carte reprise au cimetière, payée d’une pièce et non d’un baiser.',
+            costs:
+              'Une pièce vaut ce qu’on l’a gardée : en dépenser une d’un an, c’est dépenser l’année. Rien n’est caché — c’est de l’argent honnête.',
+          },
+          clone: {
+            buys: 'Une copie de l’enjeu, assez fidèle pour que rien à cette table ne puisse le dire.',
+            costs:
+              'La copie est inerte et disparaît en un jour. Elle n’est payée en fumée que demain — la partie sera close, et vous ne serez plus dans la pièce.',
+          },
+          growth: {
+            buys: 'Quelque chose poussé sur place et posé comme enjeu.',
+            costs: 'Ça pousse devant elle.',
+          },
+          'drug-synthesis': {
+            buys: 'Un composé qui vaut une carte, synthétisé et posé sur la table.',
+            costs:
+              'On ne le fabrique pas seul. L’enjeu exige un allié : la table devient deux têtes contre une, et elle les voit toutes les deux.',
+          },
+          contract: {
+            buys: 'Des termes, une durée, des pénalités, et une Manipulation pour les exécuter. La réponse cesse d’être un mot.',
+            costs:
+              'Rien, et cela vous lie exactement aussi fort que cela la lie. C’est ce qui le rend légal.',
+          },
+          'heart-vow': {
+            buys: '« Je ne répondrai pas Oui. » La seule immunité véritable à la Manipulation.',
+            costs:
+              'Vous mourez si vous le donnez quand même. Elle a besoin du Oui et n’a que faire du cadavre : c’est donc elle qui doit céder.',
+          },
+          polarity: {
+            buys: 'La lune, posée sur elle par contact — et le contact, c’est le baiser qu’elle va vous demander.',
+            costs:
+              'La marquer, ce sont des mains qui bougent au-dessus d’une table qu’elle regarde. Et cela ne rapporte rien tant qu’elle n’a pas pris sa deuxième condition.',
+          },
+          curse: {
+            buys: 'Votre mort rendue chère : la marque emporte quelqu’un des siens avec elle.',
+            costs:
+              'Cela répond à une clause qu’elle n’allait jamais utiliser. Elle ne tue pas ses candidats, elle les recrute.',
+          },
+          'desire-trap': {
+            buys: 'Son ouverture à elle, rejouée contre elle : ce qu’elle veut, nommé à voix haute et posé comme appât.',
+            costs:
+              'C’est une bête, dans une petite pièce, chez elle. Une fois sur deux elle la regarde monter.',
+          },
+          'lie-marks': {
+            buys: 'Le bluff taxé, aux deux bouts de la table. Le seul dispositif ici sous lequel jouer honnêtement est strictement meilleur.',
+            costs:
+              'Cela coupe des deux côtés — et elle a répondu sans mentir depuis le début, parce que le jeu est sa restriction.',
+          },
+          theft: {
+            buys: 'Contagion elle-même. Le pouvoir vu en action, sa propriétaire interrogée et répondant, l’empreinte touchée — en moins d’une heure, et cette partie est les trois à la fois.',
+            costs:
+              'Il faut mener la main jusqu’au bout et accepter le baiser pour obtenir le contact. C’est très exactement ainsi que Morena le perd.',
+          },
+          puppet: {
+            buys: 'Quelqu’un d’autre sur la chaise, qui dit la réponse de quelqu’un d’autre.',
+            costs:
+              'Un pantin n’a pas de désir qu’elle puisse nommer ni rien à lui à mettre en jeu. Il ne peut pas vous faire perdre la partie et il ne peut pas la gagner : la fraude la mieux cachée est celle qui plafonne au match nul.',
+          },
+          command: {
+            buys: 'Une tête estampillée sur la chaise, qui fait ce qu’on lui a dit de faire.',
+            costs:
+              'Un pantin n’a pas de désir qu’elle puisse nommer ni rien à lui à mettre en jeu. Il ne peut pas vous faire perdre la partie et il ne peut pas la gagner : la fraude la mieux cachée est celle qui plafonne au match nul.',
+          },
+          needle: {
+            buys: 'Une tête aiguillée sur la chaise, qui joue le rôle à la lettre.',
+            costs:
+              'Un pantin n’a pas de désir qu’elle puisse nommer ni rien à lui à mettre en jeu. Il ne peut pas vous faire perdre la partie et il ne peut pas la gagner : la fraude la mieux cachée est celle qui plafonne au match nul.',
+          },
+          'identity-swap': {
+            buys: 'Les mains de quelqu’un d’autre sur vos cartes, et les vôtres sur les siennes.',
+            costs:
+              'Un échange est un échange : ce que la partie fait, elle le fait à un corps qui n’est pas le vôtre — et la réponse appartient à qui le porte.',
+          },
+          'room-isolation': {
+            buys: 'La pièce retirée du vaisseau. Quoi que vous fassiez ensuite, il ne reste rien qui puisse le rapporter.',
+            costs: 'Être enfermé avec elle, c’est être enfermé avec elle.',
+          },
+          'door-network': {
+            buys: 'Les portes décident de ce que « sortir » veut dire, et la pièce cesse d’être un endroit avec des témoins.',
+            costs:
+              'Ce sont ses portes. Elles ont été posées pour cette pièce, par ses gens, avant que vous n’arriviez.',
+          },
+        },
+
+        aftermath: {
+          title: 'Ce que ça valait',
+          bound:
+            'Moonlight Act tient la réponse. C’est un contrat maintenant, avec des termes et une pénalité, et il lie celle des deux qui essaiera de s’en aller.',
+          moon: 'Elle a pris le baiser, et la lune est partie avec. Elle ne pourra plus toucher un porteur du soleil sans que les deux sautent.',
+          stolen:
+            'Vu en action, interrogée et répondant, touchée — les trois, en moins d’une heure. Contagion est dans le livre. C’est ainsi que Morena le perd.',
+          'sworn-struck':
+            'Vous avez donné le Oui avec la chaîne dans le cœur. Le serment ne négocie pas : il n’a jamais été une menace pour elle, c’était un prix sur vous.',
+          smoke:
+            'Demain la copie n’existe plus et elle aura été payée en rien. La partie sera close, et close est close.',
+          taxed:
+            'Chaque mensonge dit à cette table a été marqué au moment où il était dit. L’honnêteté était le meilleur coup, et elle l’était pour vous deux.',
+          trapped:
+            'On l’a forcée à répondre à sa propre ouverture. Personne ne lui avait encore fait ça.',
+          deterred:
+            'Vous tuer lui coûte quelqu’un des siens. Elle n’allait pas le faire, mais maintenant elle ne peut plus se permettre d’y avoir pensé.',
+          proxied:
+            'Ce n’était pas vous sur cette chaise. Rien de ce qui s’est passé ici ne vous est arrivé — et rien de ce qui s’est passé ici ne pouvait être une victoire.',
+        },
+      },
+
       conditions: {
         title: 'Les trois conditions de Contagion',
         said: 'Un oui, gagné à la table',
@@ -911,6 +1126,13 @@ export const fr: Messages = {
         declined: 'Vous refusez le marché.',
         recovered: (card) => `Le ${card} ressort du cimetière.`,
         settled: (card) => `La dernière carte est le ${card}.`,
+        played: (round, technique, seen) =>
+          `Tour ${round} — ${technique}. ${seen ? 'Elle a vu.' : 'Personne n’a rien vu.'}`,
+        narrowed: (because) =>
+          because === 'cheating'
+            ? 'Prise sur le fait. Retour, Joker et X quittent la table.'
+            : 'Vous vous êtes levé, ce qui est tricher. Retour, Joker et X quittent la table.',
+        exposed: (card) => `Le baiser trouve le faux ${card}.`,
       },
 
       again: 'Redistribuer',

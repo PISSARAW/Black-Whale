@@ -44,6 +44,8 @@ export type ApparitionKind =
   | 'puppet'
   /** A strand of Bungee Gum strung across a room, waiting to be walked into. */
   | 'gum'
+  /** Sayird's insect, flying the room the sphere was sent to. */
+  | 'insect'
 
 /**
  * One thing Nen has left standing in the ship.
@@ -81,10 +83,11 @@ export interface Apparition {
   /**
    * How far from `at` the thing may wander, in metres.
    *
-   * The fish have one, and so do the two apparitions that were sent somewhere
-   * with instructions to move about once they got there: the free bird and a
-   * double posted to wander. Everything else in this list is nailed to a
-   * point, and an aquarium is the size of the room it is in.
+   * The fish have one, and so does everything that was sent somewhere with
+   * instructions to move about once it got there: the free bird, a double
+   * posted to wander, and Sayird's insect, which never holds still at all.
+   * Everything else in this list is nailed to a point, and an aquarium is the
+   * size of the room it is in.
    */
   spread?: number
 }
@@ -104,6 +107,8 @@ const HOOVER = 0x9fb3c8
 const PUPPET = 0x1b1b22
 /** Bungee Gum is Hisoka's own pink, the same the web draws his filament in. */
 const GUM = 0xf06bb5
+/** Little Eye's blue, which is the sphere rather than the animal inside it. */
+const INSECT = 0x55c2ff
 /** Halkenburg's collective aura, which is the gold of the whole ship's will. */
 export const ARROW = 0xf7e27d
 /** Rising Sun is the one technique whose colour is a temperature. */
@@ -280,6 +285,17 @@ export function apparitionsOn(
         spread: mode === 'wander' ? 1.8 : 0,
       })
     }
+  }
+
+  // Little Eye's insect, at the height a fly holds and nowhere near still: the
+  // corner of the screen has always shown its feed, and this is the thing the
+  // feed comes from, in the room it is actually in. Piloted it keeps close to
+  // where it was sent; scouting or filming it works the room over.
+  const host = spaceOf(world.eye)
+  if (host) {
+    place(`insect:${host.id}`, 'insect', host, 1.5, 0.16, INSECT, {
+      spread: world.eyeMode === 'pilot' ? 0.7 : 1.9,
+    })
   }
 
   // The cards, one apparition that carries how far the tribunal has got: blue

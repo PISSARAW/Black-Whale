@@ -76,9 +76,11 @@
     castInTour,
     ageTheOwl,
     fishBite,
+    flyTheEye,
     flyTheOwl,
     identityOf,
     nextDoubleMode,
+    nextEyeMode,
     nextOwlMode,
     spendPage,
     worksInTour,
@@ -372,14 +374,15 @@
    * pointer is not engaged, because there Esc already means "let go of my
    * mouse", and one key cannot mean two things in the same breath.
    *
-   * R changes the orders of the two techniques that take orders: the double's
-   * watch under Without You, and which of the three birds Secret Window sends.
-   * Under anything else it means nothing and is left to the browser.
+   * R changes the orders of the three techniques that take orders: the double's
+   * watch under Without You, which of the three birds Secret Window sends, and
+   * what Little Eye's insect is doing where it is. Under anything else it means
+   * nothing and is left to the browser.
    */
   function onWindowKeydown(event: KeyboardEvent) {
     if (event.metaKey || event.ctrlKey || event.altKey) return
     const key = event.key.toLowerCase()
-    if (key === 'r' && technique?.kind !== 'guardian' && technique?.kind !== 'surveillance') return
+    if (key === 'r' && !TAKES_ORDERS.includes(technique?.kind ?? null)) return
     if (key !== 'm' && key !== 'g' && key !== 'r' && key !== 'v' && key !== 'escape') return
     // Esc leaves full screen only where nothing else has a claim on it: the
     // browser answers it in native full screen, an engaged pointer answers it
@@ -616,6 +619,17 @@
   }
 
   /**
+   * The next of Little Eye's three orders: piloted, scouting, filming.
+   *
+   * The sphere is the whole ability and it costs nothing to keep up — what
+   * makes it worth anything is what the insect is told to do with the room it
+   * is in, which is the choice Sayird's module exposes and the walk did not.
+   */
+  function cycleEye() {
+    turn('scout')
+  }
+
+  /**
    * The next of Secret Window's three birds: the free one, the one that rides
    * your shoulder, and the one let go without being aimed.
    *
@@ -627,6 +641,9 @@
   function cycleOwl() {
     turn('surveillance')
   }
+
+  /** The techniques R means anything under, which is what the key is guarded by. */
+  const TAKES_ORDERS: (HatsuInteractionKind | null)[] = ['guardian', 'surveillance', 'scout']
 
   /**
    * R, in one place: the walk asks the technique for its next order and says
@@ -644,6 +661,10 @@
       const mode = nextOwlMode(world.owlMode)
       world = { ...world, owlMode: mode }
       said = { kind: 'owl-mode-changed', mode }
+    } else if (kind === 'scout') {
+      const mode = nextEyeMode(world.eyeMode)
+      world = { ...world, eyeMode: mode }
+      said = { kind: 'eye-mode-changed', mode }
     } else return
     report = said
     show(said)
@@ -787,6 +808,21 @@
    */
   function owlFlight() {
     const flown = flyTheOwl(world, ship)
+    if (!flown) return
+    world = flown.world
+    report = flown.report
+  }
+
+  /**
+   * One room further for the insect, while it is scouting.
+   *
+   * Said and not sounded, for the bird's reason: the walk already has the fly
+   * running under it for as long as the sphere is up, and one line a room is
+   * what makes the feed in the corner readable as a route rather than as a
+   * picture that keeps changing.
+   */
+  function scoutFlight() {
+    const flown = flyTheEye(world, ship)
     if (!flown) return
     world = flown.world
     report = flown.report
@@ -1021,6 +1057,7 @@
         onFish={fishEat}
         onOwl={owlFlight}
         onOwlSecond={owlSecond}
+        onScout={scoutFlight}
         swings={technique?.kind === 'stitch'}
         {touchUseLabel}
         touchLabels={{ move: $t.tour.touch.move, cast: $t.tour.touch.cast }}
@@ -1296,6 +1333,7 @@
           onRelease={release}
           onCycleDouble={cycleDouble}
           onCycleOwl={cycleOwl}
+          onCycleEye={cycleEye}
           onCastPage={castPage}
         />
       {/if}

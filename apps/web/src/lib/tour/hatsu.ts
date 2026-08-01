@@ -195,25 +195,34 @@ export function worksInTour(profile: HatsuProfile | null): profile is HatsuProfi
 export type TourAim = 'reticle' | 'index'
 
 /**
- * The three birds Secret Window can send, and the three watches Kacho's double
- * can be set to, each in the order R walks through them.
+ * The three birds Secret Window can send, the three watches Kacho's double can
+ * be set to, and the three orders Little Eye's insect takes, each in the order
+ * R walks through them.
  *
- * Both are one technique with a manner rather than three techniques: the dock
- * hands the walk a single profile, and R cycles what it is doing. They are
+ * All three are one technique with a manner rather than three techniques: the
+ * dock hands the walk a single profile, and R cycles what it is doing. They are
  * listed rather than merely typed so the key has something to walk round.
+ *
+ * Little Eye's are the module's own verbs — Sayird's sphere is piloted, sent
+ * scouting, or told to film — and they are the whole of the ability: the aura
+ * costs nothing and does nothing except carry what the insect sees back.
  */
 export const OWL_MODES = ['wander', 'shoulder', 'random'] as const
 export const DOUBLE_MODES = ['follow', 'wander', 'scout'] as const
+export const EYE_MODES = ['pilot', 'scout', 'film'] as const
 
-/** Which bird Secret Window sent, and which watch Kacho's double is under. */
+/** Which bird was sent, which watch the double is under, what the insect is told. */
 export type TourOwlMode = (typeof OWL_MODES)[number]
 export type TourDoubleMode = (typeof DOUBLE_MODES)[number]
+export type TourEyeMode = (typeof EYE_MODES)[number]
 
 /** The next of each, wrapping — which is all R has to decide. */
 export const nextOwlMode = (mode: TourOwlMode | null): TourOwlMode =>
   OWL_MODES[(OWL_MODES.indexOf(mode ?? 'wander') + 1) % OWL_MODES.length]
 export const nextDoubleMode = (mode: TourDoubleMode | null): TourDoubleMode =>
   DOUBLE_MODES[(DOUBLE_MODES.indexOf(mode ?? 'follow') + 1) % DOUBLE_MODES.length]
+export const nextEyeMode = (mode: TourEyeMode | null): TourEyeMode =>
+  EYE_MODES[(EYE_MODES.indexOf(mode ?? 'pilot') + 1) % EYE_MODES.length]
 
 /**
  * How long one bird holds, in seconds, and how much of it comes back.
@@ -256,6 +265,28 @@ export interface TourWorld {
   hoover: string[]
   /** Where the remote eye is parked, or `null` while it rides the visitor. */
   eye: string | null
+  /**
+   * What Sayird's insect is currently told to do.
+   *
+   * The eye used to be one switch: a room had it or it did not, and a second
+   * cast on the same room took it home. That is the sphere posted and the
+   * sphere recalled, which is two of the module's five verbs — so the other
+   * three are here. Piloted, it goes where it is sent and stays. Scouting, it
+   * takes a door on its own every few seconds, which is the ability's own
+   * `scout`. Filming, it holds where it is and a cast on its own room records
+   * that room instead of calling the insect in.
+   */
+  eyeMode: TourEyeMode
+  /**
+   * What the feed has recorded, in the order it recorded it.
+   *
+   * The corner already shows the room the insect is in; this is what it has
+   * been through, which is what makes the technique an account of the ship
+   * rather than a second window onto one room of it. Each frame carries what
+   * was standing there when the insect passed, because a room filmed empty and
+   * a room filmed full are not the same intelligence.
+   */
+  eyeFilm: { spaceId: string; seen: number }[]
   /** 0 nothing · 1 sight · 2 sight and hearing · 3 all three. */
   sealed: number
   /** Whether the visitor is passing through walls. */
@@ -531,6 +562,8 @@ export const EMPTY_WORLD: TourWorld = {
   emptied: [],
   hoover: [],
   eye: null,
+  eyeMode: 'pilot',
+  eyeFilm: [],
   sealed: 0,
   phasing: false,
   watched: [],
@@ -648,7 +681,11 @@ export type TourReport =
   | { kind: 'doors-rearmed'; spaceId: string }
   | { kind: 'phasing'; on: boolean }
   | { kind: 'eye-sent'; spaceId: string }
-  | { kind: 'eye-recalled' }
+  | { kind: 'eye-recalled'; rooms: number }
+  | { kind: 'eye-mode-changed'; mode: TourEyeMode }
+  | { kind: 'eye-piloted'; spaceId: string }
+  | { kind: 'eye-flown'; spaceId: string }
+  | { kind: 'eye-filmed'; spaceId: string; seen: number }
   | { kind: 'sealed'; stage: number }
   | { kind: 'dowsed'; spaceId: string; distance: number; decks: number }
   | { kind: 'watching'; spaceId: string }
@@ -2311,10 +2348,42 @@ const ROOM_CASTS: Partial<Record<HatsuInteractionKind, RoomCast>> = {
     }
   },
 
-  scout: ({ world, target }) =>
-    world.eye === target.id
-      ? { world: { ...world, eye: null }, report: { kind: 'eye-recalled' } }
-      : { world: { ...world, eye: target.id }, report: { kind: 'eye-sent', spaceId: target.id } },
+  // Sayird's sphere, which is the one technique in the walk whose whole body is
+  // somewhere else. A cast is read against where the insect already is and what
+  // it was last told:
+  //
+  //   nothing out       → the sphere goes on a host in the room aimed at
+  //   aimed elsewhere   → it is flown there, which is the module's `pilot`
+  //   aimed at its room → it is called in, or, told to film, it records instead
+  //
+  // Every room it reaches goes on the film with what was standing in it. A new
+  // attachment opens a new film: two flights are not one recording, exactly as
+  // the owl has it.
+  scout: ({ world, ship, target }) => {
+    const frame = frameOf(ship, world, target.id)
+    if (world.eye === target.id) {
+      if (world.eyeMode === 'film') {
+        return {
+          world: { ...world, eyeFilm: [...world.eyeFilm, frame] },
+          report: { kind: 'eye-filmed', spaceId: target.id, seen: frame.seen },
+        }
+      }
+      return {
+        world: { ...world, eye: null },
+        report: { kind: 'eye-recalled', rooms: roomsFilmed(world.eyeFilm) },
+      }
+    }
+    if (!world.eye) {
+      return {
+        world: { ...world, eye: target.id, eyeFilm: [frame] },
+        report: { kind: 'eye-sent', spaceId: target.id },
+      }
+    }
+    return {
+      world: { ...world, eye: target.id, eyeFilm: [...world.eyeFilm, frame] },
+      report: { kind: 'eye-piloted', spaceId: target.id },
+    }
+  },
 
   dowsing: ({ world, ship, target, at, standingIn }) => {
     const distance = distanceTo(ship, target, at, standingIn)
@@ -3416,6 +3485,52 @@ export function flyTheOwl(
     report: { kind: 'owl-flown', spaceId },
   }
 }
+
+/**
+ * One hop of the insect, which moves on its own only when it is scouting.
+ *
+ * The same rule as the bird's, and for the same reason: it goes through a door
+ * rather than through the hull, and a room the chain has shut is shut to a
+ * cockroach as much as to a visitor. Piloted or filming, it stays where it was
+ * put — those are the two orders that mean "do not wander off".
+ */
+export function flyTheEye(
+  world: TourWorld,
+  ship: Ship,
+  random: () => number = Math.random,
+): TourCastResult | null {
+  if (!world.eye || world.eyeMode !== 'scout') return null
+  const ways = (ship.adjacency.get(world.eye) ?? []).filter(
+    (id) => ship.spaces.has(id) && linkIsOpen(world, id),
+  )
+  if (!ways.length) return null
+  const spaceId = ways[Math.min(ways.length - 1, Math.floor(random() * ways.length))]
+  return {
+    world: { ...world, eye: spaceId, eyeFilm: [...world.eyeFilm, frameOf(ship, world, spaceId)] },
+    report: { kind: 'eye-flown', spaceId },
+  }
+}
+
+/**
+ * One frame of the feed: a room, and how much was standing in it.
+ *
+ * Counted as the aura currently leaves the room rather than as the blueprint
+ * has it — a coffin Blinky swallowed is not something the insect can film — so
+ * the film says what was actually there to see.
+ */
+function frameOf(ship: Ship, world: TourWorld, spaceId: string): { spaceId: string; seen: number } {
+  // A room Blinky has been through is a room with nothing in it to film,
+  // whatever the blueprint still says stands there.
+  if (world.emptied.includes(spaceId)) return { spaceId, seen: 0 }
+  const seen = [...ship.structures, ...world.copies].filter(
+    (solid) => solid.spaceId === spaceId && !world.solids[solid.id]?.gone,
+  ).length
+  return { spaceId, seen }
+}
+
+/** How many rooms the film covers, however many times it passed through them. */
+const roomsFilmed = (film: TourWorld['eyeFilm']): number =>
+  new Set(film.map((frame) => frame.spaceId)).size
 
 /**
  * The film, with the room the bird has just reached written into it.

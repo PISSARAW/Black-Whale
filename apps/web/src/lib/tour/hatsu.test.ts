@@ -20,9 +20,11 @@ import {
   heldSolidIds,
   eyesOf,
   ageTheOwl,
+  flyTheEye,
   flyTheOwl,
   identityOf,
   linkIsOpen,
+  nextEyeMode,
   nextOwlMode,
   OWL_SECONDS,
   paceOf,
@@ -1150,6 +1152,92 @@ describe('what the walk remembers of itself', () => {
         { spaceId: roomA.id, second: 0 },
         { spaceId: roomB.id, second: 4 },
       ])
+    })
+  })
+
+  describe("Little Eye's three orders", () => {
+    /** How much is standing in a room, as the insect would film it. */
+    const seenIn = (spaceId: string) =>
+      ship.structures.filter((solid) => solid.spaceId === spaceId).length
+
+    it('puts the sphere on a host, and opens a film on the room it landed in', () => {
+      const sent = door(EMPTY_WORLD, 'scout', roomA.id, roomA.id)
+      expect(sent.report).toMatchObject({ kind: 'eye-sent', spaceId: roomA.id })
+      expect(sent.world.eye).toBe(roomA.id)
+      expect(sent.world.eyeFilm).toEqual([{ spaceId: roomA.id, seen: seenIn(roomA.id) }])
+    })
+
+    it('flies the insect on rather than making a second one', () => {
+      const sent = door(EMPTY_WORLD, 'scout', roomA.id, roomA.id).world
+      const flown = door(sent, 'scout', roomB.id, roomA.id)
+      expect(flown.report).toMatchObject({ kind: 'eye-piloted', spaceId: roomB.id })
+      expect(flown.world.eye).toBe(roomB.id)
+      expect(flown.world.eyeFilm).toHaveLength(2)
+    })
+
+    it('calls the insect in from the room it is actually in', () => {
+      const sent = door(EMPTY_WORLD, 'scout', roomA.id, roomA.id).world
+      const recalled = door(sent, 'scout', roomA.id, roomA.id)
+      expect(recalled.report).toMatchObject({ kind: 'eye-recalled', rooms: 1 })
+      expect(recalled.world.eye).toBeNull()
+      // What it filmed is not called in with it.
+      expect(recalled.world.eyeFilm).toHaveLength(1)
+    })
+
+    it('records the room instead of calling the insect in while it is filming', () => {
+      const filming: TourWorld = { ...EMPTY_WORLD, eyeMode: 'film', eye: furnished.id }
+      const recorded = door(filming, 'scout', furnished.id, furnished.id)
+      expect(recorded.report).toMatchObject({
+        kind: 'eye-filmed',
+        spaceId: furnished.id,
+        seen: seenIn(furnished.id),
+      })
+      expect(recorded.world.eye).toBe(furnished.id)
+      expect(recorded.world.eyeFilm).toHaveLength(1)
+    })
+
+    it('films what is left standing rather than what the blueprint had', () => {
+      // Blinky swallows the room first: an insect cannot film what is not there.
+      const emptied = door(EMPTY_WORLD, 'vacuum', furnished.id, furnished.id).world
+      const sent = door({ ...emptied, holding: null }, 'scout', furnished.id, furnished.id)
+      expect(sent.world.eyeFilm[0].seen).toBe(0)
+    })
+
+    it('takes a door on its own only while it is scouting', () => {
+      const scouting: TourWorld = { ...EMPTY_WORLD, eye: roomA.id, eyeMode: 'scout' }
+      const flown = flyTheEye(scouting, ship, () => 0)!
+      expect(flown.world.eye).toBe(ship.adjacency.get(roomA.id)![0])
+      expect(flown.report).toMatchObject({ kind: 'eye-flown' })
+      expect(flown.world.eyeFilm).toHaveLength(1)
+
+      expect(flyTheEye({ ...scouting, eyeMode: 'pilot' }, ship, () => 0)).toBeNull()
+      expect(flyTheEye({ ...scouting, eyeMode: 'film' }, ship, () => 0)).toBeNull()
+      // And an insect that was never sent has nowhere to fly from.
+      expect(flyTheEye(EMPTY_WORLD, ship, () => 0)).toBeNull()
+    })
+
+    it('keeps the insect out of a room the chain has shut', () => {
+      const ways = ship.adjacency.get(roomA.id)!
+      const shut: TourWorld = { ...EMPTY_WORLD, eye: roomA.id, eyeMode: 'scout', shut: [...ways] }
+      expect(flyTheEye(shut, ship, () => 0)).toBeNull()
+    })
+
+    it('walks R round the three orders and back to the first', () => {
+      expect(nextEyeMode('pilot')).toBe('scout')
+      expect(nextEyeMode('scout')).toBe('film')
+      expect(nextEyeMode('film')).toBe('pilot')
+      expect(nextEyeMode(null)).toBe('scout')
+    })
+
+    it('draws the insect in the room the sphere is in', () => {
+      const sent = door(EMPTY_WORLD, 'scout', roomA.id, roomA.id).world
+      const insect = apparitionsOn(ship, sent).find((seen) => seen.kind === 'insect')
+      expect(insect?.spaceId).toBe(roomA.id)
+      // Piloted it keeps close; told to work the room it ranges further.
+      const ranging = apparitionsOn(ship, { ...sent, eyeMode: 'scout' }).find(
+        (seen) => seen.kind === 'insect',
+      )
+      expect(ranging!.spread!).toBeGreaterThan(insect!.spread!)
     })
   })
 

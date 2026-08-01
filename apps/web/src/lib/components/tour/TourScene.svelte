@@ -1492,6 +1492,28 @@
           turns = root
         }
 
+        if (seen.kind === 'insect') {
+          // A body the size of a thumbnail and two wings, inside a sphere of
+          // aura twice its width: what the technique puts in the room is the
+          // sphere, and the animal is only what carries it.
+          const shell = glow(seen.colour, 0.3)
+          const body = new THREE.Mesh(new THREE.SphereGeometry(seen.size, 8, 6), skin)
+          body.scale.set(1.6, 0.8, 0.9)
+          root.add(body)
+          for (const side of [-1, 1]) {
+            const wing = new THREE.Mesh(
+              new THREE.PlaneGeometry(seen.size * 1.5, seen.size * 0.9),
+              shell,
+            )
+            wing.position.set(0, seen.size * 0.5, side * seen.size * 0.7)
+            wing.rotation.x = Math.PI / 2
+            root.add(wing)
+          }
+          const sphere = new THREE.Mesh(new THREE.SphereGeometry(seen.size * 2.1, 10, 8), shell)
+          root.add(sphere)
+          turns = root
+        }
+
         if (seen.kind === 'fish') {
           // A body and a tail, and that is a fish: the walk is flat colour and
           // hard edges, and a modelled carp would be the only thing aboard that
@@ -1862,6 +1884,23 @@
             // Nose along the way it is going: the tail is on +x, so the body
             // points the other way round.
             held.root.rotation.y = -turn + Math.PI / 2
+            continue
+          }
+
+          if (held.kind === 'insect') {
+            // Not a ring: a fly does not orbit. Two sines that do not divide
+            // into each other, so it never comes back round the same way, and
+            // a fast one on the height because that is what reads as wings.
+            held.root.position.set(
+              held.at[0] + Math.sin(phase * 1.7) * held.spread,
+              held.y + Math.sin(phase * 2.6) * 0.18,
+              held.at[1] + Math.sin(phase * 1.1 + 1.3) * held.spread,
+            )
+            // Nose along the way it is going, which for two sines is where it
+            // was a breath ago compared with where it is now.
+            held.root.rotation.y =
+              Math.atan2(Math.cos(phase * 1.7) * 1.7, Math.cos(phase * 1.1 + 1.3) * 1.1) +
+              Math.PI / 2
             continue
           }
 
@@ -2818,6 +2857,15 @@
       let sinceFlight = 0
       /** Long enough to be seen sitting in a room before it leaves it. */
       const FLIGHT_SECONDS = 6
+      /** How long since the insect last took a door, in seconds. */
+      let sinceCrawl = 0
+      /**
+       * An insect covers ground faster than a bird holds still.
+       *
+       * Sayird's roach is what Kurapika reads a whole deck with — room by room,
+       * quickly — where Secret Window's bird is a perch that happens to move.
+       */
+      const CRAWL_SECONDS = 4
       /** How much of the current second of the bird's twenty has gone by. */
       let sinceOwlSecond = 0
       /** How long since the bird's own path was last sampled, in seconds. */
@@ -2983,6 +3031,17 @@
             onOwl?.()
           }
         } else sinceFlight = 0
+
+        // And the insect on a clock of its own, which runs only while it is
+        // scouting: piloted or filming, it is where the visitor put it and
+        // moving it is their business rather than the clock's.
+        if (world.eye && world.eyeMode === 'scout') {
+          sinceCrawl += delta
+          if (sinceCrawl >= CRAWL_SECONDS) {
+            sinceCrawl = 0
+            onScout?.()
+          }
+        } else sinceCrawl = 0
 
         // The twenty seconds, counted where the clock is. What that does to the
         // bird is the pure layer's: the walk only says that a second went by.

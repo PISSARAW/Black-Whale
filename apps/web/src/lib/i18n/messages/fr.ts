@@ -259,6 +259,12 @@ export const fr: Messages = {
         random: 'Lâché sans visée',
         left: (seconds) => `${seconds} s restantes`,
       },
+      insect: {
+        orders: 'L’insecte est',
+        pilot: 'Piloté à la main',
+        scout: 'En reconnaissance',
+        film: 'En train de filmer',
+      },
       reports: {
         noTarget: 'Rien à portée sur quoi lancer',
         teleported: (room) => `Envoyé dans ${room} — vous n'avez pas choisi où vous tombiez`,
@@ -269,8 +275,15 @@ export const fr: Messages = {
         doorsRearmed: (room) => `L'ancienne paire est tombée · premier cadre installé dans ${room}`,
         phasingOn: 'Les murs ont cessé d’être des murs · traversez le vaisseau',
         phasingOff: 'De retour dans la géométrie · les murs tiennent à nouveau',
-        eyeSent: (room) => `L'œil est posé dans ${room} · son flux est dans le coin`,
-        eyeRecalled: "L'œil est revenu près de vous",
+        eyeSent: (room) =>
+          `La sphère est posée sur un hôte dans ${room} · son flux est dans le coin`,
+        eyeRecalled: (rooms) =>
+          `L'insecte est revenu près de vous · ${rooms} pièce${rooms === 1 ? '' : 's'} filmée${rooms === 1 ? '' : 's'}`,
+        eyeModeChanged: (order) => `L'insecte a de nouveaux ordres · ${order}`,
+        eyePiloted: (room) => `Piloté jusqu'à ${room} · le flux le suit`,
+        eyeFlown: (room) => `L'insecte a pris une porte · il est dans ${room} maintenant`,
+        eyeFilmed: (room, seen) =>
+          `${room} enregistrée · ${seen} chose${seen === 1 ? '' : 's'} s'y tient${seen === 1 ? '' : 'nent'}`,
         sealedSight: 'Vue scellée · les ponts sont toujours là et vous ne les voyez plus',
         sealedHearing: "Ouïe scellée à son tour · le vaisseau s'est tu",
         sealedSpeech: 'Parole scellée aussi · la visite ne dira plus dans quelle pièce vous êtes',
@@ -578,6 +591,7 @@ export const fr: Messages = {
         isolated: 'Pièce isolée',
         doors: 'Portes de la planque',
         eye: 'Œil déporté',
+        eyeFilm: "Ce que l'insecte a filmé",
         watched: 'Poupées de papier',
         emptied: 'Aspiré',
         dowsing: 'Le pendule désigne',

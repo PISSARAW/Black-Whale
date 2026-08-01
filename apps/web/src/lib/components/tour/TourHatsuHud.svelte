@@ -54,6 +54,8 @@
     onCycleDouble: () => void
     /** Walks Secret Window on to its next bird — R again, under that aura. */
     onCycleOwl: () => void
+    /** Walks Little Eye's insect on to its next order — R, under that aura. */
+    onCycleEye: () => void
     /** Casts a page of the book at whatever the visitor is aiming at. */
     onCastPage: (kind: HatsuInteractionKind) => void
   }
@@ -73,6 +75,7 @@
     onRelease,
     onCycleDouble,
     onCycleOwl,
+    onCycleEye,
     onCastPage,
   }: Props = $props()
 
@@ -173,7 +176,15 @@
       case 'eye-sent':
         return say.eyeSent(roomName(report.spaceId))
       case 'eye-recalled':
-        return say.eyeRecalled
+        return say.eyeRecalled(report.rooms)
+      case 'eye-mode-changed':
+        return say.eyeModeChanged($t.tour.hatsu.insect[report.mode])
+      case 'eye-piloted':
+        return say.eyePiloted(roomName(report.spaceId))
+      case 'eye-flown':
+        return say.eyeFlown(roomName(report.spaceId))
+      case 'eye-filmed':
+        return say.eyeFilmed(roomName(report.spaceId), report.seen)
       case 'sealed':
         return [say.sealedReleased, say.sealedSight, say.sealedHearing, say.sealedSpeech][
           report.stage
@@ -468,7 +479,21 @@
             : world.doors.map(roomName).join(' ⇄ '),
       })
     }
-    if (world.eye) rows.push({ label: held.eye, value: roomName(world.eye) })
+    // The insect: where it is and what it was told, and under it the route it
+    // has filmed — which is the whole of what the sphere is for, and outlives
+    // the insect being called in.
+    if (world.eye) {
+      rows.push({
+        label: held.eye,
+        value: `${roomName(world.eye)} · ${$t.tour.hatsu.insect[world.eyeMode ?? 'pilot']}`,
+      })
+    }
+    if (world.eyeFilm.length) {
+      rows.push({
+        label: held.eyeFilm,
+        value: [...new Set(world.eyeFilm.map((frame) => frame.spaceId))].map(roomName).join(' → '),
+      })
+    }
     for (const doll of world.watched) {
       rows.push({
         label: held.watched,
@@ -679,9 +704,7 @@
   {/if}
 
   {#if doubleFaceRandoms.length > 0}
-    <p class="mt-3 text-[10px] uppercase tracking-widest text-[#FFFFF0]/45">
-      Double Face
-    </p>
+    <p class="mt-3 text-[10px] uppercase tracking-widest text-[#FFFFF0]/45">Double Face</p>
     <div class="mt-1 flex flex-wrap gap-1">
       {#each doubleFaceRandoms as randomKind, index (`double-face-${randomKind}-${index}`)}
         <button
@@ -740,14 +763,17 @@
     </button>
   {/if}
 
-  <!-- Secret Window takes the same key, and the same button under it. -->
-  {#if profile.kind === 'surveillance'}
+  <!-- Little Eye takes the same key and the same button: piloted, scouting, or
+       filming, which is the difference between a camera left in a room and the
+       roach Kurapika reads a deck with. Shown before the cast as well, because
+       what the insect will be doing when it lands is part of where to send it. -->
+  {#if profile.kind === 'scout'}
     <button
       type="button"
-      onclick={onCycleOwl}
+      onclick={onCycleEye}
       class="mt-3 flex w-full items-center justify-between rounded border border-[#444] px-2 py-1 text-[11px] text-[#FFFFF0]/80 transition-colors hover:border-[#FFD700]/60 hover:text-[#FFFFF0]"
     >
-      <span>{$t.tour.hatsu.owl.watch} · {$t.tour.hatsu.owl[world.owlMode ?? 'wander']}</span>
+      <span>{$t.tour.hatsu.insect.orders} · {$t.tour.hatsu.insect[world.eyeMode ?? 'pilot']}</span>
       <kbd class="text-[10px] text-[#FFD700]/70">R</kbd>
     </button>
   {/if}

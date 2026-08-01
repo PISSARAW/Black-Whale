@@ -637,7 +637,7 @@ export const HATSU_PROFILES: HatsuProfile[] = [
     owner: 'Sayird',
     kind: 'scout',
     instruction:
-      'Pilot the flying insect to detect aura and record its visual/auditory feed, then control it remotely.',
+      'Put the sphere on a host, then fly the insect room by room; aim at the room it is in to call it back. R changes its orders (Flown by hand, Working the deck, Filming): scouting it takes a door on its own, and filming, aiming at its own room records the room instead of recalling it.',
     rule: 'The possessed object is a flying insect enveloped in a blue Nen aura that can be remotely controlled to film.',
     cost: 'Very low aura · flying insect host',
     color: '#55c2ff',

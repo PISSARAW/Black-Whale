@@ -312,6 +312,14 @@ export const en = {
         /** How long the materialized bird has left of its twenty seconds. */
         left: (seconds: number) => `${seconds} s left`,
       },
+      // And Little Eye's insect, which takes the same key and Sayird's own
+      // three verbs: flown by hand, sent on ahead, or left to record.
+      insect: {
+        orders: 'The insect is',
+        pilot: 'Flown by hand',
+        scout: 'Working the deck',
+        film: 'Filming where it is',
+      },
       reports: {
         noTarget: 'Nothing in reach to cast on',
         teleported: (room: string) => `Sent to ${room} — you did not choose where you landed`,
@@ -321,8 +329,14 @@ export const en = {
         doorsRearmed: (room: string) => `The old pair is down · first frame installed in ${room}`,
         phasingOn: 'Walls stopped being walls · walk through the ship',
         phasingOff: 'Back inside the geometry · the walls hold again',
-        eyeSent: (room: string) => `The eye is parked in ${room} · its feed is in the corner`,
-        eyeRecalled: 'The eye is back with you',
+        eyeSent: (room: string) => `The sphere is on a host in ${room} · its feed is in the corner`,
+        eyeRecalled: (rooms: number) =>
+          `The insect is back with you · ${rooms} room${rooms === 1 ? '' : 's'} filmed`,
+        eyeModeChanged: (order: string) => `The insect has new orders · ${order}`,
+        eyePiloted: (room: string) => `Flown through to ${room} · the feed follows it`,
+        eyeFlown: (room: string) => `The insect has taken a door · it is in ${room} now`,
+        eyeFilmed: (room: string, seen: number) =>
+          `${room} recorded · ${seen} thing${seen === 1 ? '' : 's'} standing in it`,
         sealedSight: 'Sight sealed · the decks are still there and you cannot see them',
         sealedHearing: 'Hearing sealed as well · the ship has gone quiet',
         sealedSpeech: 'Speech sealed too · the walk will not say what room you are in',
@@ -645,6 +659,7 @@ export const en = {
         isolated: 'Isolated room',
         doors: 'Hideout doors',
         eye: 'Remote eye',
+        eyeFilm: 'The insect filmed',
         watched: 'Paper dolls',
         emptied: 'Swallowed',
         dowsing: 'The chain points at',

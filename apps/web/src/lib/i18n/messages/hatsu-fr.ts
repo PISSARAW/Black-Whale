@@ -130,7 +130,7 @@ export const hatsuFr: Record<string, HatsuTextOverride> = {
     owner: 'Sayird',
     action: 'Piloter l’insecte',
     instruction:
-      'Pilotez l’insecte volant pour détecter l’aura et enregistrer (filmer) son flux visuel et sonore, puis contrôlez-le à distance.',
+      'Posez la sphère sur un hôte, puis pilotez l’insecte de pièce en pièce ; visez la pièce où il est pour le rappeler. R change ses ordres (Piloté, Reconnaissance, Filmer) : en reconnaissance il prend une porte tout seul, et en mode Filmer viser sa pièce l’enregistre au lieu de le rappeler.',
     rule: 'L’objet possédé est un insecte volant enveloppé d’une aura bleue de Nen qui peut être contrôlé à distance pour filmer.',
     cost: 'Très peu d’aura · hôte insecte volant',
   },

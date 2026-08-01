@@ -85,6 +85,29 @@
   /** The pages of the book the visitor can actually play right now. */
   const pages = $derived(castablePages(world.book))
 
+  const CHROLLO_RANDOM_KINDS: HatsuInteractionKind[] = [
+    'devour',
+    'pocket',
+    'teleport',
+    'polarity',
+    'command',
+    'identity-swap',
+    'divination',
+    'prophecy',
+    'clone',
+  ]
+
+  let doubleFaceRandoms = $state<HatsuInteractionKind[]>([])
+
+  $effect(() => {
+    if (profile.id === 'double-face' && doubleFaceRandoms.length === 0) {
+      const shuffled = [...CHROLLO_RANDOM_KINDS].sort(() => 0.5 - Math.random())
+      doubleFaceRandoms = [shuffled[0], shuffled[1]]
+    } else if (profile.id !== 'double-face') {
+      doubleFaceRandoms = []
+    }
+  })
+
   const roomName = (id: string) => {
     const space = ship.spaces.get(id)
     // Named as the walk names it, so a room the arrow swapped is not called two
@@ -650,6 +673,24 @@
             : world.book.loan === page
               ? ` · ${$t.tour.hatsu.book.loan}`
               : ''}
+        </button>
+      {/each}
+    </div>
+  {/if}
+
+  {#if doubleFaceRandoms.length > 0}
+    <p class="mt-3 text-[10px] uppercase tracking-widest text-[#FFFFF0]/45">
+      Double Face
+    </p>
+    <div class="mt-1 flex flex-wrap gap-1">
+      {#each doubleFaceRandoms as randomKind, index (`double-face-${randomKind}-${index}`)}
+        <button
+          type="button"
+          onclick={() => onCastPage(randomKind)}
+          title="Utiliser la capacité aléatoire"
+          class="rounded border border-[#444] px-1.5 py-0.5 text-[11px] text-[#FFFFF0]/80 transition-colors hover:border-[#FFD700]/60 hover:text-[#FFFFF0]"
+        >
+          {pageName(randomKind)}
         </button>
       {/each}
     </div>

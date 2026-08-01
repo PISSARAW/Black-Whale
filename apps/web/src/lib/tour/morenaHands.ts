@@ -13,7 +13,13 @@
  * publishes. Pure, and keyed on the same `id`s `tableauOf` lays out — the two
  * are one table, and a card that can be pointed at is a card that is drawn.
  */
-import { askMorena, needsAChoice, refuseTheDeal, settle, takeTheDeal } from '@black-whale/ability-modules'
+import {
+  askMorena,
+  needsAChoice,
+  refuseTheDeal,
+  settle,
+  takeTheDeal,
+} from '@black-whale/ability-modules'
 import type { AnswerCard, MorenaGame, QuestionCard } from '@black-whale/ability-modules'
 
 /**
@@ -95,8 +101,7 @@ export function gesturesAt(game: MorenaGame): Record<string, TableGesture> {
 }
 
 /** The same table, as the set the scene wants: what may be taken hold of. */
-export const withinReach = (game: MorenaGame): Set<string> =>
-  new Set(Object.keys(gesturesAt(game)))
+export const withinReach = (game: MorenaGame): Set<string> => new Set(Object.keys(gesturesAt(game)))
 
 /**
  * Play a gesture, which is to say: hand it to the rules.

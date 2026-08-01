@@ -46,21 +46,25 @@
     infectionAfter,
     lastCard,
     leaveTheTable,
+    livePages,
     exposureNow,
     moveFor,
     needsAChoice,
     OWL_COLOUR,
+    openTheBookHere,
     owlFilm,
     owlSaw,
     playTechnique,
     refuseTheDeal,
     settle,
+    sitsAtTheTable,
     tableauOf,
     takeTheDeal,
     worksAtTheTable,
     type AnswerCard,
     type MorenaGame,
     type QuestionCard,
+    type TableKind,
   } from '$lib/tour/morena'
   import { gesturesAt, playGesture, type TableGesture } from '$lib/tour/morenaHands'
 
@@ -192,25 +196,59 @@
   const tableKind = $derived(worksAtTheTable(carried?.kind) ? carried!.kind : null)
   const move = $derived(tableKind ? moveFor(tableKind) : null)
   /**
+   * Whether what the dock is holding is the ribbon rather than a technique.
+   *
+   * Double Face is the one thing in the roster with no seat of its own and a
+   * great deal to say here anyway: it is not a move, it is *two other people's
+   * moves*, and which two is the only question it asks. So it is admitted to
+   * the table beside `worksAtTheTable`, and what it brings is a pair.
+   */
+  const carryingTheBook = $derived(carried?.kind === 'bookmark')
+
+  /**
    * The technique's own published name, in the reader's language.
    *
    * Off the registry rather than out of the message file: the ability already
    * has a name everywhere else on the site, and a second one here would be a
    * second thing to keep true.
    */
-  const techniqueName = $derived(
-    game.technique
-      ? localizeHatsu(
-          HATSU_PROFILES.find((profile) => profile.id === moveFor(game.technique!).hatsuId)!,
-          $locale,
-        ).name
-      : null,
+  const nameOfTechnique = (kind: TableKind) =>
+    localizeHatsu(
+      HATSU_PROFILES.find((profile) => profile.id === moveFor(kind).hatsuId)!,
+      $locale,
+    ).name
+
+  /**
+   * What is live in front of the guest: one technique, or the book's two.
+   *
+   * Everything the panel says about an aura is said once per seat rather than
+   * once per game — the effect it buys, what it risks, how much of it is left —
+   * because a book with two pages open has two of every one of those, and they
+   * are not the same numbers. `livePages` is the rules' own answer to what can
+   * be played; this only dresses it.
+   */
+  const seats = $derived(
+    livePages(game).map((seat) => {
+      const move = moveFor(seat.kind)
+      return { ...seat, move, name: nameOfTechnique(seat.kind), usedUp: seat.spent >= move.uses }
+    }),
   )
-  const seated = $derived(game.technique ? moveFor(game.technique) : null)
-  const usedUp = $derived(Boolean(seated) && game.spent >= seated!.uses)
+  /** The two names the two keys play, when there are two. `null` otherwise. */
+  const hands = $derived(
+    seats.length === 2 ? { first: seats[0].name, second: seats[1].name } : null,
+  )
 
   function deal() {
-    game = dealTheGame({ marked: cheats ? 'back' : null, technique: tableKind })
+    // The book is opened at the table rather than carried open: which two of
+    // Chrollo's pages are live at any moment is exactly the sort of thing no
+    // record of the Black Whale settles, so it is a roll, and it is rolled
+    // again every deal.
+    const pages = carryingTheBook ? openTheBookHere() : null
+    game = dealTheGame({
+      marked: cheats ? 'back' : null,
+      technique: pages ? pages[0] : tableKind,
+      bookmark: pages ? pages[1] : null,
+    })
     choice = null
     view = 'table'
   }
@@ -219,8 +257,21 @@
     game = askMorena(game, question)
   }
 
-  function cast() {
-    game = playTechnique(game)
+  /**
+   * Play a page, which for everybody but Chrollo is *the* page.
+   *
+   * F is the first and R is the second, the same two keys the walk gives the
+   * book — and the scene reports which was pressed without knowing what it
+   * means, so this is where the ribbon is read.
+   */
+  function cast(
+    _spaceId?: string | null,
+    _solidId?: string | null,
+    hand?: 'first' | 'second' | 'third',
+  ) {
+    const seat = seats[hand === 'second' ? 1 : 0]
+    if (!seat || seat.usedUp) return
+    game = playTechnique(game, { page: seat.page })
   }
 
   function walkOut() {
@@ -281,14 +332,17 @@
   }
 
   /**
-   * Whether the technique is live, which is what F answers to.
+   * Whether anything is live, which is what F answers to.
    *
-   * The same key as the walk, for the same reason: the aura is in the visitor's
-   * hand and the room is where it is played. The table has one hand to play —
-   * every seat in `TABLE_TECHNIQUES` is a single effect — so R and C, which the
-   * walk gives to a second page or a third air, have nothing to be here.
+   * The same keys as the walk, for the same reason: the aura is in the
+   * visitor's hand and the room is where it is played. One seat is one key, and
+   * F is it; the book is the only thing here that fills the second, which is
+   * where R goes — a page, exactly as on the walk. C stays unspent: nothing at
+   * this table is an instrument with three airs.
    */
-  const castable = $derived(view === 'table' && Boolean(seated) && !usedUp && game.phase !== 'over')
+  const castable = $derived(
+    view === 'table' && game.phase !== 'over' && seats.some((seat) => !seat.usedUp),
+  )
 
   // Nothing is pointed at from the menu, and a card left lifted by a hand that
   // ended would be a card waiting to be played in a game that is over.
@@ -314,7 +368,7 @@
       closeHatsuGate()
       return
     }
-    openHatsuGate({ admits: worksAtTheTable, reason: copy.hatsu.sealed })
+    openHatsuGate({ admits: sitsAtTheTable, reason: copy.hatsu.sealed })
     return closeHatsuGate
   })
 
@@ -374,6 +428,7 @@
         extras={table}
         {feed}
         {record}
+        {hands}
         bind:aimedExtra
         onPick={view === 'table' ? takeHold : undefined}
         aiming={castable}
@@ -382,7 +437,7 @@
         castOnClick={false}
         touchLabels={{
           move: $t.tour.touch.move,
-          cast: seated ? copy.hatsu.effects[seated.effect] : $t.tour.touch.cast,
+          cast: seats.length === 1 ? copy.hatsu.effects[seats[0].move.effect] : $t.tour.touch.cast,
         }}
         soundLabels={{ silence: $t.tour.sound.silence, restore: $t.tour.sound.restore }}
         loadingLabel={copy.loading}
@@ -438,14 +493,23 @@
               {copy.reach.hint}
             </p>
           {/if}
-          <!-- And the key the aura is played with, which is the walk's own F. -->
-          {#if castable && seated}
-            <p
-              class="rounded bg-[#050505]/70 px-3 py-1 text-center text-xs"
-              style:color={carried?.color ?? '#FFFFF0'}
-            >
-              {copy.reach.cast(copy.hatsu.effects[seated.effect])}
-            </p>
+          <!-- And the keys the aura is played with, which are the walk's own F
+               and — where a book has put a second page up — its R. One line per
+               live page, because two pages are two different moves and a single
+               line naming one of them would be lying about the other. -->
+          {#if castable}
+            {#each seats as seat, index (seat.page)}
+              {#if !seat.usedUp}
+                <p
+                  class="rounded bg-[#050505]/70 px-3 py-1 text-center text-xs"
+                  style:color={carried?.color ?? '#FFFFF0'}
+                >
+                  {index === 0
+                    ? copy.reach.cast(copy.hatsu.effects[seat.move.effect])
+                    : copy.reach.castSecond(copy.hatsu.effects[seat.move.effect])}
+                </p>
+              {/if}
+            {/each}
           {/if}
         </div>
       {/if}
@@ -552,6 +616,19 @@
             <p class="mt-1 text-xs leading-snug text-[#FFFFF0]/55">
               <span class="text-[#FFFFF0]/40">{copy.hatsu.costs} — </span>
               {copy.hatsu.techniques[tableKind].costs}
+            </p>
+          </div>
+        {:else if carryingTheBook}
+          <!-- The one aura that cannot say what it buys until the cards are
+               dealt: which two pages are live is a roll, and it is rolled at
+               the deal. So the menu says what the book *is* and no more. -->
+          <div class="mt-2 rounded border border-[#333] p-3" style:border-color={carried?.color}>
+            <p class="text-sm font-semibold" style:color={carried?.color}>
+              {localizeHatsu(carried!, $locale).name}
+            </p>
+            <p class="mt-1 text-xs leading-snug text-[#FFFFF0]/70">
+              <span class="text-[#FFFFF0]/40">{copy.hatsu.buys} — </span>
+              {copy.hatsu.book.body}
             </p>
           </div>
         {:else if carried}
@@ -850,40 +927,63 @@
              Kept below the hand and above the piles because that is where it
              sits in the fiction too: it is not one of the twelve cards, it is
              the thing you brought into a room that has rules. -->
-        {#if game.technique && seated && game.phase !== 'over'}
-          <div class="mt-5 rounded border border-[#333] p-3" style:border-color={carried?.color}>
-            <div class="flex items-baseline justify-between gap-2">
-              <p class="text-sm font-semibold" style:color={carried?.color}>{techniqueName}</p>
-              <span
-                class="rounded border px-1.5 py-0.5 text-[10px] uppercase tracking-wider {seated.fraud
-                  ? 'border-[#ef3340]/60 text-[#ef8a90]'
-                  : 'border-[#7fc8a0]/60 text-[#7fc8a0]'}"
-              >
-                {seated.fraud ? copy.hatsu.fraud : copy.hatsu.legal}
-              </span>
-            </div>
-            <p class="mt-1 text-xs leading-snug text-[#FFFFF0]/60">
-              {copy.hatsu.techniques[game.technique].buys}
+        {#if seats.length && game.phase !== 'over'}
+          <!-- One block per live page. A book is two of these, and the ribbon
+               between them says which key plays which — the numbers are not
+               shared, because two stolen one-shots are two one-shots. -->
+          {#if seats.length > 1}
+            <p class="mt-5 text-[10px] uppercase tracking-widest text-[#FFD700]/70">
+              {copy.hatsu.book.title}
             </p>
-            {#if seated.fraud}
-              <p class="mt-2 text-[11px] text-[#ef8a90]/80">
-                {copy.hatsu.exposure(Math.round(exposureNow(seated, game) * 100))}
+            <p class="mt-1 text-xs leading-snug text-[#FFFFF0]/55">{copy.hatsu.book.body}</p>
+          {/if}
+          {#each seats as seat, index (seat.page)}
+            <div
+              class="mt-3 rounded border border-[#333] p-3 {index === 0 && seats.length === 1
+                ? 'mt-5'
+                : ''}"
+              style:border-color={carried?.color}
+            >
+              <div class="flex items-baseline justify-between gap-2">
+                <p class="text-sm font-semibold" style:color={carried?.color}>
+                  {#if seats.length > 1}<span class="text-[#FFFFF0]/40"
+                      >{index === 0 ? 'F' : 'R'} ·
+                    </span>{/if}{seat.name}
+                </p>
+                <span
+                  class="rounded border px-1.5 py-0.5 text-[10px] uppercase tracking-wider {seat
+                    .move.fraud
+                    ? 'border-[#ef3340]/60 text-[#ef8a90]'
+                    : 'border-[#7fc8a0]/60 text-[#7fc8a0]'}"
+                >
+                  {seat.move.fraud ? copy.hatsu.fraud : copy.hatsu.legal}
+                </span>
+              </div>
+              <p class="mt-1 text-xs leading-snug text-[#FFFFF0]/60">
+                {copy.hatsu.techniques[seat.kind].buys}
               </p>
-            {/if}
-            <div class="mt-3 flex flex-wrap items-center gap-2">
-              <button
-                class="rounded px-3 py-1.5 text-xs font-semibold text-[#0b0b0d] disabled:opacity-30"
-                style:background={carried?.color ?? '#d94f68'}
-                disabled={usedUp}
-                onclick={cast}
-              >
-                {copy.hatsu.effects[seated.effect]}
-              </button>
-              <span class="text-[10px] uppercase tracking-wider text-[#FFFFF0]/40">
-                {usedUp ? copy.hatsu.exhausted : copy.hatsu.spent(game.spent, seated.uses)}
-              </span>
+              {#if seat.move.fraud}
+                <p class="mt-2 text-[11px] text-[#ef8a90]/80">
+                  {copy.hatsu.exposure(Math.round(exposureNow(seat.move, game) * 100))}
+                </p>
+              {/if}
+              <div class="mt-3 flex flex-wrap items-center gap-2">
+                <button
+                  class="rounded px-3 py-1.5 text-xs font-semibold text-[#0b0b0d] disabled:opacity-30"
+                  style:background={carried?.color ?? '#d94f68'}
+                  disabled={seat.usedUp}
+                  onclick={() => cast(null, null, index === 0 ? 'first' : 'second')}
+                >
+                  {copy.hatsu.effects[seat.move.effect]}
+                </button>
+                <span class="text-[10px] uppercase tracking-wider text-[#FFFFF0]/40">
+                  {seat.usedUp
+                    ? copy.hatsu.exhausted
+                    : copy.hatsu.spent(seat.spent, seat.move.uses)}
+                </span>
+              </div>
             </div>
-          </div>
+          {/each}
         {/if}
 
         <!-- Walking out. Canon puts it under the same sanction as cheating, so

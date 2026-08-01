@@ -803,6 +803,7 @@ export const fr: Messages = {
       reach: {
         hint: 'Visez une carte et cliquez.',
         cast: (effect: string) => `F — ${effect}`,
+        castSecond: (effect: string) => `R — ${effect}`,
         ask: (question: string) => `Demander — ${question}`,
         kiss: (card: string) => `L’embrasser, et reprendre le ${card}`,
         decline: 'Refuser le baiser, et jouer la main que vous avez',
@@ -943,6 +944,11 @@ export const fr: Messages = {
         shielded:
           'Le serment est prononcé. Plus rien ne peut réduire votre réponse, et donner le Oui malgré tout vous tuerait.',
         proxied: 'Ce n’est pas vous qui êtes sur cette chaise.',
+
+        book: {
+          title: 'Le livre, ouvert à deux pages',
+          body: 'Double Face n’est pas un coup. Il tient vivantes deux des techniques volées par Chrollo — ces deux-là, tirées au moment de la donne — et chacune se joue sur sa propre touche et se dépense sur son propre compte.',
+        },
 
         owl: {
           title: 'Ce que le hibou avait déjà filmé',

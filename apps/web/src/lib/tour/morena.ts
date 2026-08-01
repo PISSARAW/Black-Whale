@@ -14,10 +14,17 @@
  * app for a type, so the check is made here, where both are in scope.
  */
 import type { HatsuInteractionKind } from '$lib/nen/hatsuRegistry'
-import { QUESTION_CARDS, TABLE_KINDS, needsAChoice } from '@black-whale/ability-modules'
-import type { MorenaGame, AnswerCard, QuestionCard } from '@black-whale/ability-modules'
+import {
+  QUESTION_CARDS,
+  TABLE_KINDS,
+  needsAChoice,
+  spentOn,
+  worksAtTheTable,
+} from '@black-whale/ability-modules'
+import type { MorenaGame, AnswerCard, QuestionCard, TableKind } from '@black-whale/ability-modules'
 import { INSECT, OWL } from './apparitions'
 import type { Apparition } from './apparitions'
+import { DOUBLE_FACE_PAGES } from './hatsu'
 import { AIM_AT, withinReach } from './morenaHands'
 import type { Vec2 } from './types'
 
@@ -35,12 +42,14 @@ export {
   infectionStepsFrom,
   lastCard,
   leaveTheTable,
+  livePages,
   moveFor,
   narrowTheAnswer,
   needsAChoice,
   playTechnique,
   refuseTheDeal,
   settle,
+  spentOn,
   summariseGame,
   takeTheDeal,
   worksAtTheTable,
@@ -59,6 +68,8 @@ export type {
   TableEffect,
   TableKind,
   TableMove,
+  TablePage,
+  TableSeat,
   Verdict,
 } from '@black-whale/ability-modules'
 
@@ -150,6 +161,55 @@ export const TRIBUNAL_CARDS = [0x4d8ff0, 0xf0c94d, 0xe5484d]
  */
 export const FORGED_AURA = 0xd98fc4
 
+// ── Double Face, opened at the table ───────────────────────────────
+/**
+ * The pages in Chrollo's book that have anything to say to twelve cards.
+ *
+ * Filtered rather than listed: the walk already publishes what he is carrying
+ * when the visitor picks the bookmark up, and a second roster written out here
+ * would be a second thing to keep true. What the table adds is the filter —
+ * a stolen ability that does nothing at a card table is not worth a page here,
+ * and `worksAtTheTable` is the same question every other seat is asked.
+ */
+export const TABLE_PAGES: readonly TableKind[] = DOUBLE_FACE_PAGES.filter(worksAtTheTable)
+
+/**
+ * The registry's own name for the ribbon.
+ *
+ * Double Face is filed under the thing it does rather than under the book it
+ * does it in, and this is that filing. Named here so the one place the table
+ * treats a technique as something other than a seat says which one out loud.
+ */
+export const BOOKMARK_KIND = 'bookmark'
+
+/**
+ * Whether an aura may sit down at all.
+ *
+ * `worksAtTheTable` answers for the thirty-odd seats, and it answers no to the
+ * bookmark — correctly, because the bookmark is not a move. It is still a thing
+ * that belongs at this table: what it brings is two of the seats that do. So
+ * the door asks this rather than that, and the difference between the two
+ * questions is exactly one technique.
+ */
+export function sitsAtTheTable(kind: string | null | undefined): boolean {
+  return worksAtTheTable(kind) || kind === BOOKMARK_KIND
+}
+
+/**
+ * Two of them, drawn when the cards are.
+ *
+ * Which two he has to hand at any given moment is exactly the sort of thing no
+ * record of the Black Whale settles — the book held over a hundred — so it is a
+ * roll, the same roll the walk makes, and it is made again every deal. Never
+ * the same page twice: a ribbon marking the page the book is already open at is
+ * not a second technique, it is a bookmark doing nothing.
+ */
+export function openTheBookHere(random: () => number = Math.random): [TableKind, TableKind] {
+  const open = TABLE_PAGES[Math.floor(random() * TABLE_PAGES.length)]
+  const rest = TABLE_PAGES.filter((page) => page !== open)
+  return [open, rest[Math.floor(random() * rest.length)]]
+}
+
 // ── Little Eye, over the table ─────────────────────────────────────
 /**
  * How high the insect holds while it has nothing to film, in metres above the
@@ -202,13 +262,14 @@ export interface EyeFeed {
 export const EYE_FOV = 96
 
 export function eyeFeed(game: MorenaGame, floor: number): EyeFeed | null {
-  if (game.technique !== 'scout') return null
+  const flown = spentOn(game, 'scout')
+  if (flown === null) return null
   const top = floor + TABLE_HEIGHT
   const fan: Vec2 = [TABLE_AT[0], TABLE_AT[1] - 0.3]
   // Perched: the whole office from the ceiling corner, which is a picture with
   // nothing in it yet — and that is the point. The read is the descent, and a
   // descent is only legible if there was somewhere to descend *from*.
-  if (game.spent === 0) {
+  if (flown === 0) {
     return { at: TABLE_AT, y: floor + EYE_PERCH, look: DEALER_AT, lookY: floor + 1.1 }
   }
   // Filming: over the fan and a hand's width guest-side of it, looking down
@@ -286,7 +347,8 @@ export const OWL_FOV = 46
  * afterwards, not even when the hand is over: footage is a thing you keep.
  */
 export function owlFilm(game: MorenaGame, floor: number): EyeFeed | null {
-  if (game.technique !== 'surveillance' || game.spent === 0) return null
+  const reviewed = spentOn(game, 'surveillance')
+  if (!reviewed) return null
   const top = floor + TABLE_HEIGHT
   return {
     at: OWL_AT,
@@ -313,7 +375,8 @@ export function owlFilm(game: MorenaGame, floor: number): EyeFeed | null {
  * same way whichever order the hand happened to be spent in.
  */
 export function owlSaw(game: MorenaGame): QuestionCard[] | null {
-  if (game.technique !== 'surveillance' || game.spent === 0) return null
+  const reviewed = spentOn(game, 'surveillance')
+  if (!reviewed) return null
   const cast = game.log.findIndex((beat) => beat.kind === 'played')
   const since = game.log
     .slice(cast + 1)
@@ -342,7 +405,7 @@ export function owlSaw(game: MorenaGame): QuestionCard[] | null {
 export function dealerStage(game: MorenaGame): number {
   // Three Monkeys outlasts the hand it ended: the game is over the moment it is
   // cast, and she is still sitting there, unable to find the person opposite.
-  if (game.technique === 'senses' && game.spent > 0) return 4
+  if (spentOn(game, 'senses')) return 4
   // Nothing else in the walk announces the detection roll. The transcript says
   // it in words, and this says it in a body — which is the half a reader who is
   // looking at the table rather than at the panel actually gets.
@@ -566,7 +629,7 @@ export function tableauOf(game: MorenaGame, floor: number): Apparition[] {
   // Mizaistom expels nobody he has not already cautioned — so the fan is shown
   // from the moment somebody sits down carrying it, and turning a card is the
   // warning being given rather than a state being reported.
-  if (game.technique === 'tribunal') {
+  if (spentOn(game, 'tribunal') !== null) {
     const stage = game.aftermath.includes('evicted') ? 3 : game.asked.length >= 2 ? 2 : 1
     seen.push({
       ...common,
@@ -590,8 +653,9 @@ export function tableauOf(game: MorenaGame, floor: number): Apparition[] {
   // read anything into — and the cast is it coming down onto her fan and
   // holding there. That descent is the read: what the panel says in a line of
   // text, the room says by putting the camera on the cards.
-  if (game.technique === 'scout') {
-    const filming = game.spent > 0
+  const flown = spentOn(game, 'scout')
+  if (flown !== null) {
+    const filming = flown > 0
     seen.push({
       ...common,
       id: 'scout-insect',
@@ -619,7 +683,7 @@ export function tableauOf(game: MorenaGame, floor: number): Apparition[] {
   // What the cast changes is on the screen rather than in the room: the
   // recording it has been making all along is put up in the corner. A bird that
   // swooped would be a fly with feathers.
-  if (game.technique === 'surveillance') {
+  if (spentOn(game, 'surveillance') !== null) {
     seen.push({
       ...common,
       id: 'window-owl',

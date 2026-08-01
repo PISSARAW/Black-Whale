@@ -13,6 +13,7 @@ import {
   TABLE_AT,
   TABLE_HEIGHT,
   TABLE_KINDS,
+  TABLE_PAGES,
   TABLE_TECHNIQUES,
   askMorena,
   dealerStage,
@@ -24,12 +25,15 @@ import {
   lastCard,
   leaveTheTable,
   narrowTheAnswer,
+  livePages,
   needsAChoice,
+  openTheBookHere,
   owlFilm,
   owlSaw,
   playTechnique,
   refuseTheDeal,
   settle,
+  sitsAtTheTable,
   tableauOf,
   takeTheDeal,
   worksAtTheTable,
@@ -660,6 +664,65 @@ describe('the roster of what can be played across the table', () => {
       expect(move.uses, `${kind} can be played no times at all`).toBeGreaterThan(0)
       if (!move.fraud) expect(move.exposure, `${kind} is legal and still priced`).toBe(0)
     }
+  })
+})
+
+describe('Double Face, which is two seats rather than one', () => {
+  const floor = floorOf(ship.spaces.get(HIDEOUT_OFFICE)!, ship.plans.get(HIDEOUT_TIER)!.tier)
+
+  /** A book open at Little Eye with Love Dial under the ribbon. */
+  const book = (over: Partial<MorenaGame> = {}): MorenaGame => ({
+    ...dealTheGame({ marked: null, technique: 'scout', bookmark: 'divination' }),
+    ...over,
+  })
+
+  it('draws its two pages from what Chrollo is carrying, and never twice', () => {
+    for (const page of TABLE_PAGES) expect(worksAtTheTable(page)).toBe(true)
+    // A ribbon marking the open page is a bookmark doing nothing.
+    for (const roll of [0, 0.3, 0.6, 0.999]) {
+      const [open, second] = openTheBookHere(() => roll)
+      expect(open).not.toBe(second)
+    }
+  })
+
+  it('lets the ribbon in at the table, where a technique-only door would not', () => {
+    expect(worksAtTheTable('bookmark')).toBe(false)
+    expect(sitsAtTheTable('bookmark')).toBe(true)
+    expect(sitsAtTheTable('scout')).toBe(true)
+    expect(sitsAtTheTable('blast')).toBe(false)
+  })
+
+  it('holds both pages live, each on its own key', () => {
+    expect(livePages(book()).map((seat) => seat.kind)).toEqual(['scout', 'divination'])
+    expect(livePages(dealTheGame()).map((seat) => seat.kind)).toEqual([])
+  })
+
+  it('spends each page out of its own purse', () => {
+    const played = playTechnique(book(), { random: clean, page: 'second' })
+    // Love Dial is the one that went; the open page has spent nothing.
+    expect(played.spent).toBe(0)
+    expect(played.bookmark).toEqual({ kind: 'divination', spent: 1 })
+    expect(played.log.at(-1)).toMatchObject({ kind: 'played', technique: 'divination' })
+
+    // And a page with nothing left refuses, without touching the other one.
+    const twice = playTechnique(played, { random: clean, page: 'second' })
+    const spentOut = playTechnique(twice, { random: clean, page: 'second' })
+    expect(spentOut).toBe(twice)
+    expect(playTechnique(played, { random: clean }).spent).toBe(1)
+  })
+
+  it('puts a bookmarked technique in the room like any other', () => {
+    // The insect is Little Eye's whether Little Eye is the open page or the one
+    // under the ribbon: a table that drew the roster rather than the room would
+    // leave a cast technique with nothing standing anywhere.
+    const ribboned = dealTheGame({ marked: null, technique: 'tribunal', bookmark: 'scout' })
+    expect(tableauOf(ribboned, floor).some((thing) => thing.kind === 'insect')).toBe(true)
+    expect(eyeFeed(ribboned, floor)).not.toBeNull()
+
+    const filming = playTechnique(ribboned, { random: clean, page: 'second' })
+    expect(tableauOf(filming, floor).find((thing) => thing.kind === 'insect')!.spread).toBe(
+      EYE_HOLD,
+    )
   })
 })
 

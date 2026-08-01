@@ -197,6 +197,21 @@ export interface MorenaGame {
   /** How many times each move has been spent, so a one-shot stays one. */
   spent: number
   /**
+   * The other page, when the visitor sat down with Double Face.
+   *
+   * Chrollo's bookmark is the one thing in the roster that is not a technique
+   * at all: it holds a *second* stolen ability live beside the open one, and
+   * both can be played. So a guest carrying it does not sit down with a
+   * technique, they sit down with two — and the second needs its own counter,
+   * because a one-shot on the open page has nothing to do with a one-shot
+   * under the ribbon.
+   *
+   * Kept as a second slot rather than as a list of techniques because that is
+   * what the ability is: a book open at one page with a ribbon in another. Two
+   * is the number, and nothing at this table can make it three.
+   */
+  bookmark: { kind: TableKind; spent: number } | null
+  /**
    * How watchful the room is, from 0 to 1.
    *
    * One at the hideout, and the hideout is where the game is played: LSDF is
@@ -506,6 +521,48 @@ export function moveFor(kind: TableKind): TableMove {
   return TABLE_TECHNIQUES[kind]
 }
 
+/**
+ * Which of the two things in front of the guest is being played.
+ *
+ * `open` for anybody who sat down with one technique, which is everybody but
+ * Chrollo; `second` is the page the ribbon is holding.
+ */
+export type TablePage = 'open' | 'second'
+
+/** One live technique, and what it has already spent. */
+export interface TableSeat {
+  page: TablePage
+  kind: TableKind
+  spent: number
+}
+
+/**
+ * Everything the guest can actually play, in the order the keys play it.
+ *
+ * One entry for an ordinary hand and two for a book, so nothing downstream has
+ * to ask whether Double Face is in play: a table that draws an insect when
+ * Little Eye is `technique` and not when it is the bookmarked page would be
+ * drawing the roster rather than the room.
+ */
+export function livePages(game: MorenaGame): TableSeat[] {
+  const seats: TableSeat[] = []
+  if (game.technique) seats.push({ page: 'open', kind: game.technique, spent: game.spent })
+  if (game.bookmark) {
+    seats.push({ page: 'second', kind: game.bookmark.kind, spent: game.bookmark.spent })
+  }
+  return seats
+}
+
+/**
+ * How much this technique has spent, or `null` where it is not at the table.
+ *
+ * The question almost everything asks: an ability draws its own thing in the
+ * room, and it wants to know whether it is here and whether it has fired yet.
+ */
+export function spentOn(game: MorenaGame, kind: TableKind): number | null {
+  return livePages(game).find((seat) => seat.kind === kind)?.spent ?? null
+}
+
 export interface DealOptions {
   /** Which card Morena marks. Defaults to the one she marks in ch. 410. */
   marked?: AnswerCard | null
@@ -513,6 +570,8 @@ export interface DealOptions {
   random?: () => number
   /** The technique the visitor is carrying as they sit down. */
   technique?: TableKind | null
+  /** And the page under the ribbon, when what they carry is Double Face. */
+  bookmark?: TableKind | null
   /** How watchful the room is. One at the hideout, which is where this is. */
   watch?: number
 }
@@ -540,6 +599,7 @@ export function dealTheGame(options: DealOptions = {}): MorenaGame {
     finalCard: null,
     technique: options.technique ?? null,
     spent: 0,
+    bookmark: options.bookmark ? { kind: options.bookmark, spent: 0 } : null,
     watch: options.watch ?? 1,
     manipulated: false,
     shielded: false,
@@ -737,13 +797,15 @@ function applyToTheHand(
  */
 export function playTechnique(
   game: MorenaGame,
-  options: { random?: () => number } = {},
+  options: { random?: () => number; page?: TablePage } = {},
 ): MorenaGame {
   if (game.phase === 'over') return unchanged(game)
-  const kind = game.technique
+  const second = options.page === 'second'
+  const kind = second ? (game.bookmark?.kind ?? null) : game.technique
   if (!kind) return unchanged(game)
   const move = moveFor(kind)
-  if (game.spent >= move.uses) return unchanged(game)
+  const already = second ? game.bookmark!.spent : game.spent
+  if (already >= move.uses) return unchanged(game)
 
   // The legal eviction is a red card, and a red card comes after a warning:
   // Mizaistom does not expel anybody he has not already cautioned. Two
@@ -753,9 +815,12 @@ export function playTechnique(
   const random = options.random ?? Math.random
   const seen = move.fraud && random() < exposureNow(move, game)
 
+  // The count goes on the page that was played, and on that one only: two live
+  // pages are two separate one-shots, and a book that spent them out of one
+  // purse would make the ribbon a way of halving what Chrollo stole.
   const played: MorenaGame = {
     ...game,
-    spent: game.spent + 1,
+    ...(second ? { bookmark: { kind, spent: already + 1 } } : { spent: already + 1 }),
     log: [...game.log, { kind: 'played', round: game.round, technique: kind, seen }],
   }
 
@@ -1160,6 +1225,7 @@ export function summariseGame(game: MorenaGame): Record<string, unknown> {
     shielded: game.shielded,
     proxied: game.proxied,
     technique: game.technique,
+    bookmark: game.bookmark?.kind ?? null,
     riders: [...game.riders],
     aftermath: [...game.aftermath],
     verdict: game.verdict,

@@ -895,6 +895,8 @@ export const en = {
       reach: {
         hint: 'Look at a card and click it.',
         cast: (effect: string) => `F — ${effect}`,
+        /** The book's other page, on the walk's own second key. */
+        castSecond: (effect: string) => `R — ${effect}`,
         ask: (question: string) => `Ask — ${question}`,
         kiss: (card: string) => `Kiss her, and take the ${card} back`,
         decline: 'Refuse the kiss, and play the hand you have',
@@ -1038,6 +1040,18 @@ export const en = {
         shielded:
           'The vow is spoken. Nothing can narrow your answer now, and giving the Yes anyway would kill you.',
         proxied: 'You are not the person in this chair.',
+
+        /**
+         * Double Face, which is the one thing at this table that is two things.
+         *
+         * Chrollo's ribbon holds a second stolen page live beside the open one,
+         * so what sits down is not a technique — it is a pair of them, drawn
+         * fresh every deal out of what the archive has him carrying.
+         */
+        book: {
+          title: 'The book, open at two pages',
+          body: 'Double Face is not a move. It holds two of what Chrollo has stolen live at once — these two, drawn when the cards were — and each is played on its own key and spent out of its own purse.',
+        },
 
         /**
          * The owl's footage, which is the one thing here that is a past tense.

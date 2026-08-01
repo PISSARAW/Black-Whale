@@ -53,7 +53,8 @@ describe('what the hands can reach', () => {
     const game = playOut(dealTheGame())
     expect(game.phase).toBe('deal')
     const hands = gesturesAt(game)
-    for (const card of game.graveyard) expect(hands[`buried-${card}`]).toEqual({ kind: 'kiss', card })
+    for (const card of game.graveyard)
+      expect(hands[`buried-${card}`]).toEqual({ kind: 'kiss', card })
     for (const card of game.hand) expect(hands[`hand-${card}`]).toEqual({ kind: 'decline' })
   })
 
@@ -129,9 +130,7 @@ describe('the table, marked for a pair of hands', () => {
 
     const offered = playOut(dealTheGame())
     expect(offered.phase).toBe('deal')
-    expect(new Set(buried(offered).map((card) => card.at[1])).size).toBe(
-      offered.graveyard.length,
-    )
+    expect(new Set(buried(offered).map((card) => card.at[1])).size).toBe(offered.graveyard.length)
     expect(buried(offered).every((card) => card.face !== undefined)).toBe(true)
   })
 
@@ -140,7 +139,11 @@ describe('the table, marked for a pair of hands', () => {
       tableauOf(game, floor).filter((thing) => thing.id.startsWith('aim-'))
     expect(aims(dealTheGame())).toHaveLength(0)
     const joker = playDown({ ...dealTheGame({ marked: null }), hand: ['yes', 'no', 'joker'] })
-    expect(aims(joker).map((card) => card.id).sort()).toEqual([AIM_AT.no, AIM_AT.yes].sort())
+    expect(
+      aims(joker)
+        .map((card) => card.id)
+        .sort(),
+    ).toEqual([AIM_AT.no, AIM_AT.yes].sort())
     expect(aims(joker).every((card) => card.pick)).toBe(true)
   })
 

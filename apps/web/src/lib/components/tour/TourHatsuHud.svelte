@@ -12,6 +12,7 @@
     TOUR_HATSU_KINDS,
     aimsAtSolids,
     castablePages,
+    hatsuKeys,
     adriftSolidIds,
     dancingSolidIds,
     SMOKE_FULL,
@@ -50,6 +51,12 @@
     /** Where the visitor stands, which the dial reads a distance off. */
     at: [number, number]
     standingIn: string | null
+    /**
+     * Whether the visitor has no keyboard, which changes what the controls are.
+     * The same casts are there — they are the buttons in the corner of the walk
+     * — so what is listed stays, and the keys come off it.
+     */
+    touch?: boolean
     nameOf: (entity: { name: string; nameFr: string }) => string
     /** What a room rests on, in the visitor's language: the flock brings it back. */
     sourceOf: (entity: { source: string; sourceFr: string }) => string
@@ -83,6 +90,7 @@
     aimedSolidAt,
     at,
     standingIn,
+    touch = false,
     nameOf,
     sourceOf,
     onRelease,
@@ -102,6 +110,8 @@
   const onBody = $derived(worksOnTheBody(profile) && !onSolids)
   /** The pages of the book the visitor can actually play right now. */
   const pages = $derived(castablePages(world.book))
+  /** Every key this technique answers to, which is never the same list twice. */
+  const keys = $derived(hatsuKeys(profile, world.book))
 
   /**
    * Double Face's two live pages, under the keys that play them.
@@ -112,15 +122,6 @@
    * everything else, and under a book that has not been dealt yet.
    */
   const bothPages = $derived(profile.kind === 'bookmark' ? twoPages(world.book) : null)
-  /**
-   * The two-handed technique in reach of a key, and which hint it needs.
-   *
-   * In hand it has both keys — F puts the sun on, R the moon. Held on a page of
-   * the book it has only its own, because R is how the other page is cast, so
-   * that one key alternates instead. Two different things to tell the visitor.
-   */
-  const marksBothHands = $derived(!bothPages && profile.kind === 'polarity')
-  const marksOnOneKey = $derived(Boolean(bothPages?.includes('polarity')))
 
   const roomName = (id: string) => {
     const space = ship.spaces.get(id)
@@ -767,17 +768,36 @@
         {aimedAt ? $t.tour.hatsu.aiming(nameOf(aimedAt)) : $t.tour.hatsu.aimingNothing}
       {/if}
     </p>
-    <p class="text-[11px] text-[#FFFFF0]/45">
-      {marksBothHands
-        ? $t.tour.hatsu.solids.markHint
-        : marksOnOneKey
-          ? $t.tour.hatsu.solids.markPageHint
-          : onBody
-            ? $t.tour.hatsu.body.castHint
-            : onSolids
-              ? $t.tour.hatsu.solids.castHint
-              : $t.tour.hatsu.castHint}
+    <!-- Every key this technique answers to, whether or not it has been cast
+         yet. Which keys a technique uses is not something the visitor can see
+         from the dock — one has three, most have one, and R means a different
+         thing under each of the ones that have two — so taking an aura up is
+         the moment to say all of them. -->
+    <p class="mt-2 text-[10px] uppercase tracking-widest text-[#FFFFF0]/45">
+      {$t.tour.hatsu.keys.title}
     </p>
+    <ul class="mt-1 space-y-0.5">
+      {#each keys as control (control.key)}
+        <li class="flex items-baseline gap-2 text-[11px]">
+          <kbd class="shrink-0 font-mono text-[10px] text-[#FFD700]/70">
+            {touch
+              ? '·'
+              : control.click
+                ? `${control.key} / ${$t.tour.hatsu.keys.click}`
+                : control.key}
+          </kbd>
+          <span class="text-[#FFFFF0]/70">{$t.tour.hatsu.keys.actions[control.action]}</span>
+        </li>
+      {/each}
+    </ul>
+    {#if touch}
+      <p class="mt-1 text-[10px] leading-snug text-[#FFFFF0]/35">{$t.tour.hatsu.keys.touch}</p>
+    {/if}
+    {#if !onBody}
+      <p class="mt-1 text-[11px] text-[#FFFFF0]/45">
+        {onSolids ? $t.tour.hatsu.solids.castHint : $t.tour.hatsu.castHint}
+      </p>
+    {/if}
   {:else}
     <p class="mt-2 text-xs leading-snug text-[#FFFFF0]/60">
       {$t.tour.hatsu.inert(named.name, TOUR_HATSU_KINDS.length)}

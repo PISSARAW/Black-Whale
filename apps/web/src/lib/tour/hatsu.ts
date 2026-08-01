@@ -1806,14 +1806,16 @@ export function solidWalls(
   // Nor is what is over your head — a room Camilla's beast has hold of has
   // nothing on its floor, and that is most of what the technique feels like
   // from inside it.
-  return detachedOn(ship, world, tierId, seconds)
-    .filter(({ structure }) => !world.body.passengers.includes(structure.id))
-    .filter(({ structure }) => !world.solids[structure.id]?.adrift)
-    // And what the drill went through is not either: the hole is the whole of
-    // what the walk can show of a bore, so it has to be a hole you can use.
-    .filter(({ structure }) => !world.solids[structure.id]?.bored)
-    .filter(({ structure }) => blocksTheFloor(structure))
-    .flatMap(({ structure }) => structureWalls(structure))
+  return (
+    detachedOn(ship, world, tierId, seconds)
+      .filter(({ structure }) => !world.body.passengers.includes(structure.id))
+      .filter(({ structure }) => !world.solids[structure.id]?.adrift)
+      // And what the drill went through is not either: the hole is the whole of
+      // what the walk can show of a bore, so it has to be a hole you can use.
+      .filter(({ structure }) => !world.solids[structure.id]?.bored)
+      .filter(({ structure }) => blocksTheFloor(structure))
+      .flatMap(({ structure }) => structureWalls(structure))
+  )
 }
 
 const withHold = (world: TourWorld, id: string, patch: SolidHold): TourWorld => ({
@@ -3262,6 +3264,106 @@ export const TWO_HANDED_KINDS = new Set<HatsuInteractionKind>(['polarity'])
 
 /** The other hand. */
 export const otherHand = (mark: 'sun' | 'moon'): 'sun' | 'moon' => (mark === 'sun' ? 'moon' : 'sun')
+
+/**
+ * The three techniques that are given an order rather than only cast.
+ *
+ * A double, a bird and an insect all keep doing something after the cast, and
+ * what they are doing is a choice the visitor goes on making — so R walks each
+ * of them on to its next watch instead of meaning what it means everywhere
+ * else.
+ */
+export const TAKES_ORDERS = new Set<HatsuInteractionKind>(['guardian', 'surveillance', 'scout'])
+
+/** What one key does under the technique in hand. */
+export type HatsuKeyAction =
+  | 'cast'
+  | 'castSolid'
+  | 'castSelf'
+  | 'castOnSelfInstead'
+  | 'sun'
+  | 'moon'
+  | 'alternate'
+  | 'openPage'
+  | 'markedPage'
+  | 'airDance'
+  | 'airBloom'
+  | 'airScatter'
+  | 'doubleWatch'
+  | 'owlFlight'
+  | 'insectOrders'
+
+export interface HatsuKey {
+  /** The key as it is printed on a keyboard. */
+  key: 'F' | 'R' | 'C'
+  action: HatsuKeyAction
+  /** Whether a click does the same thing, which only the casting hand has. */
+  click: boolean
+}
+
+/**
+ * Every key the technique in hand answers to, and what each one does.
+ *
+ * The walk casts with three keys at most and no technique uses all three, but
+ * which ones it uses — and what R means when it has one — changes from aura to
+ * aura: a page, an air, an order to a double, or the cast turned on the visitor
+ * themselves. A visitor who has just picked a technique out of the dock has no
+ * way of knowing which of those they are holding, so the panel says it, and
+ * this is the one place that decides. It mirrors the key handler in
+ * `TourScene`, and the tests hold the two together.
+ */
+export function hatsuKeys(profile: HatsuProfile | null, book: TourBook): HatsuKey[] {
+  if (!worksInTour(profile)) return []
+  // Double Face is not cast itself: the two keys play the two live pages, and
+  // a page that is cast with two hands has to alternate on the key it was given.
+  const pages = profile.kind === 'bookmark' ? twoPages(book) : null
+  if (pages) {
+    return [
+      { key: 'F', action: pages[0] === 'polarity' ? 'alternate' : 'openPage', click: true },
+      { key: 'R', action: pages[1] === 'polarity' ? 'alternate' : 'markedPage', click: false },
+    ]
+  }
+  if (TWO_HANDED_KINDS.has(profile.kind)) {
+    return [
+      { key: 'F', action: 'sun', click: true },
+      { key: 'R', action: 'moon', click: false },
+    ]
+  }
+  // The one instrument aboard: three airs, so three keys, and the key is the
+  // playing rather than a choice made before it.
+  if (profile.kind === 'melody') {
+    return [
+      { key: 'F', action: 'airDance', click: true },
+      { key: 'R', action: 'airBloom', click: false },
+      { key: 'C', action: 'airScatter', click: false },
+    ]
+  }
+  const onSolids = aimsAtSolids(profile) || profile.kind === 'mimicry'
+  const keys: HatsuKey[] = [
+    {
+      key: 'F',
+      action: onSolids ? 'castSolid' : worksOnTheBody(profile) ? 'castSelf' : 'cast',
+      click: true,
+    },
+  ]
+  if (TAKES_ORDERS.has(profile.kind)) {
+    keys.push({
+      key: 'R',
+      action:
+        profile.kind === 'guardian'
+          ? 'doubleWatch'
+          : profile.kind === 'surveillance'
+            ? 'owlFlight'
+            : 'insectOrders',
+      click: false,
+    })
+  } else if (worksOnTheBody(profile) && aimsAtSolids(profile)) {
+    // The ones on both sides of the line: the reticle decides, and R is how the
+    // visitor says *me* rather than what is in front of them.
+    keys.push({ key: 'R', action: 'castOnSelfInstead', click: false })
+  }
+  return keys
+}
 
 /**
  * One cast on the techniques rather than on the ship.

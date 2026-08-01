@@ -240,8 +240,29 @@ export const fr: Messages = {
       reach: "N'importe quelle pièce du vaisseau, depuis n'importe où dans le vaisseau",
       aiming: (room) => `Face à ${room}`,
       aimingNothing: "Face à rien que l'aura puisse saisir",
-      castHint:
-        'F, ou un clic, pour lancer dessus — ou choisissez ci-dessous une pièce du vaisseau',
+      castHint: 'Ou choisissez ci-dessous une pièce du vaisseau',
+      keys: {
+        title: 'Commandes',
+        click: 'clic',
+        touch: 'Les boutons dans le coin de la visite',
+        actions: {
+          cast: 'Lancer sur la pièce que vous visez',
+          castSolid: 'Lancer sur le volume que vous visez',
+          castSelf: 'Lancer sur vous, où que vous visiez',
+          castOnSelfInstead: 'Lancer sur vous plutôt que sur ce qui est devant vous',
+          sun: 'Poser le soleil ☀',
+          moon: 'Poser la lune ☾',
+          alternate: 'Alterner le soleil ☀ et la lune ☾',
+          openPage: 'Lancer la page ouverte',
+          markedPage: 'Lancer la page que tient le marque-page',
+          airDance: 'Jouer l’air vif',
+          airBloom: 'Jouer l’air doux',
+          airScatter: 'Jouer l’air aigu',
+          doubleWatch: 'Changer la garde du double',
+          owlFlight: 'Changer le hibou envoyé',
+          insectOrders: 'Changer les ordres de l’insecte',
+        },
+      },
       inert: (name, carried) =>
         `${name} agit sur ce qu'une page dit, et la visite n'a que des pièces : il ne fait rien ici. ${carried} techniques répondent au vaisseau — Emperor Time, Blinky, les Portes de la planque et les autres.`,
       inertShort: 'Sans prise dans la visite',
@@ -599,16 +620,12 @@ export const fr: Messages = {
       },
       body: {
         reach: 'Elle agit sur vous, où que vous soyez dans le vaisseau',
-        castHint: 'F, ou un clic n’importe où dans la visite',
+        castHint: 'La cible, c’est vous : il n’y a rien à choisir dans le vaisseau.',
         noTarget: 'Rien à viser : la cible, c’est vous',
       },
       solids: {
         reach: "N'importe quel volume du vaisseau, depuis n'importe où dans le vaisseau",
-        castHint:
-          'F, ou un clic, pour lancer dessus — ou choisissez ci-dessous un volume du vaisseau',
-        markHint: 'F pose le soleil, R la lune · ce qui est marqué part chercher son contraire',
-        markPageHint:
-          'La page n’a qu’une touche, alors elle alterne : une pression le soleil, la suivante la lune',
+        castHint: 'Ou choisissez ci-dessous un volume du vaisseau',
         aiming: (solid) => `Face à ${solid}`,
         aimingNothing: 'Rien de solide devant vous',
         targets: 'Lancer sur un volume',
@@ -727,6 +744,188 @@ export const fr: Messages = {
         dispatches: 'Dépêches',
         visits: (count) => `${count} arrivée${count === 1 ? '' : 's'}`,
         armed: 'armé',
+      },
+    },
+
+    morena: {
+      seoTitle: 'Le jeu de Morena — La table de négociation à bord du Black Whale',
+      seoDescription:
+        'Asseyez-vous en face de Morena Prudo dans la planque des Heil-Ly et jouez la partie de négociation à douze cartes qu’elle impose à Borksen aux chap. 407-410 : sept questions contre cinq réponses, dont une marquée.',
+      breadcrumb: 'Le jeu de Morena',
+      title: 'Le jeu de Morena',
+      intro:
+        'Les chap. 407-410 assoient Borksen dans le bureau du chef de la planque Heil-Ly et étalent douze cartes entre elles. Sept sont des questions, et elles sont à Morena. Cinq sont des réponses, et elles sont à vous. Vous dépensez une question par tour pour savoir à quoi vous consentez ; elle retire une réponse par tour, au hasard. Ce qui reste quand les questions s’épuisent est la réponse que vous avez donnée.',
+      source:
+        'Chap. 407-410 — la partie de négociation, ses douze cartes, le baiser échangé contre une carte du cimetière, et la carte que Morena a marquée avant de distribuer.',
+      seat: 'La pièce est la planque que dessinent les plans de pont. La table, et la chaise de chaque côté, sont ce que les chapitres y mettent.',
+      loading: 'Mise en place de la table…',
+      unsupported:
+        'Cette table demande WebGL, que ce navigateur ne propose pas. Les règles ci-dessous sont tout le jeu et se lisent sans lui.',
+
+      menu: {
+        play: 'S’asseoir',
+        rules: 'Lire les règles',
+        back: 'Revenir à la table',
+        leave: 'Quitter la table',
+        deck: 'La donne',
+        marked: 'Telle qu’elle distribue — une carte marquée',
+        markedNote:
+          'Morena triche. Une de vos cinq réponses est marquée avant de vous parvenir, et y porter la main à la fin est ce qui laisse entrer la composante manipulatrice de Contagion.',
+        clean: 'Une donne propre — rien de marqué',
+        cleanNote:
+          'Les mêmes douze cartes sans le marquage : le jeu tel qu’il serait si la restriction était tenue. Une main qu’elle n’a jamais jouée.',
+        walk: 'Visiter la planque plutôt',
+      },
+
+      table: {
+        fan: 'Ses questions',
+        asked: 'Posées',
+        hand: 'Vos réponses',
+        graveyard: 'Cimetière',
+        empty: 'Rien pour l’instant',
+        markedCard: 'Marquée',
+      },
+
+      round: (spent, left) =>
+        `Tour ${spent + 1} — ${left} réponse${left === 1 ? '' : 's'} encore en main`,
+      askTitle: 'Dépenser une question',
+      askHint: 'Elle y répond, puis elle prend une de vos cartes. Vous ne choisissez pas laquelle.',
+      askedLabel: 'Vous demandez',
+      answerLabel: 'Elle répond',
+
+      questions: {
+        goal: {
+          title: 'Qu’est-ce que vous voulez, au fond ?',
+          morena:
+            'Un monde où personne n’est le sujet de personne. Je suis née d’une maîtresse du roi et je n’ai été rien de toute ma vie. Je compte démonter le trône et distribuer ce qu’il y a dedans.',
+        },
+        power: {
+          title: 'Qu’est-ce que vous mettriez en moi ?',
+          morena:
+            'Contagion. Vingt-deux d’entre vous au maximum, et je sais où est chacun, comment il va et ce qu’il vaut. Vous montez d’un niveau par vie prise. Dix pour un utilisateur de Nen. Cinquante pour un prince.',
+        },
+        'if-yes': {
+          title: 'Qu’est-ce qui se passe si je dis oui ?',
+          morena:
+            'Je vous embrasse, puis vous me regardez tuer quelqu’un. Tant que ces deux choses ne sont pas faites vous êtes niveau zéro et vous n’êtes rien. Après elles vous êtes à moi, et au niveau vingt vous recevez un pouvoir que personne d’autre au monde n’a.',
+        },
+        'if-no': {
+          title: 'Qu’est-ce qui se passe si je dis non ?',
+          morena:
+            'Vous sortez. Le jeu est ma restriction et je perdrais le pouvoir en la brisant : un non me coûte et ne vous coûte rien. C’est la moitié honnête de tout ceci, et c’est la seule.',
+        },
+        contract: {
+          title: 'Qu’est-ce qui vous engage, vous ?',
+          morena:
+            'Le jeu lui-même. Il finit quand l’une de nous meurt ou quand la dernière carte tombe, et d’ici là je ne peux pas vous toucher. C’est tout le contrat. Vous l’avez en main.',
+        },
+        origin: {
+          title: 'D’où venez-vous ?',
+          morena:
+            'D’un lit illégitime, dans une famille qui avait un usage pour moi et pas de nom à me donner. Membre Zéro est un titre que j’ai inventé, parce que personne ne m’en avait donné non plus.',
+        },
+        price: {
+          title: 'Qu’est-ce que je vaux pour vous ?',
+          morena:
+            'Vous êtes soldate, Hunter, et Spécialiste sans le savoir encore. Vous valez plus que les quatre dernières personnes assises là réunies — c’est pour ça que vous obtenez des réponses et qu’elles n’ont eu qu’un baiser.',
+        },
+      },
+
+      cards: {
+        yes: {
+          name: 'Oui',
+          rule: 'Le contrat. Contagion, et niveau zéro tant que vous n’avez pas tué.',
+        },
+        no: {
+          name: 'Non',
+          rule: 'Le refus. Elle l’honore : le jeu est sa propre restriction.',
+        },
+        back: {
+          name: 'Retour',
+          rule: 'Pas une réponse. Va chercher une carte dans le cimetière et la ressort.',
+        },
+        joker: {
+          name: 'Joker',
+          rule: 'Devient Oui ou Non, décidé à l’instant où on le pose.',
+        },
+        x: { name: 'X', rule: 'Annule la négociation. Aucune des deux n’obtient rien.' },
+      },
+
+      deal: {
+        title: 'Elle se penche par-dessus la table',
+        body: 'Un baiser, et vous reprenez la carte de votre choix dans le cimetière. Elle ne précise pas que le baiser est à lui seul l’une des trois conditions de Contagion. Il l’est.',
+        take: 'Accepter le marché',
+        refuse: 'Refuser',
+        pick: 'Et reprendre',
+      },
+
+      settle: {
+        title: 'Une carte restante',
+        play: 'La jouer',
+        joker: 'Orienter le Joker',
+        jokerHint: 'Il est celui des deux que vous dites qu’il est.',
+        back: 'Aller dans le cimetière',
+        backHint: 'Ce que vous en sortez est la réponse que vous avez donnée.',
+        backEmpty: 'Il n’y a rien à reprendre dans le cimetière.',
+      },
+
+      verdicts: {
+        infected: {
+          title: 'Oui',
+          body: 'Vous l’avez dit, et vous l’avez dit en sachant ce que c’était. Contagion, niveau zéro — une sur vingt-deux, et elle vous sent où que vous soyez sur le vaisseau.',
+        },
+        refused: {
+          title: 'Non',
+          body: 'Elle se rassoit et vous laisse vous lever. Le jeu était sa restriction et elle la tient : la briser lui coûterait le pouvoir, et le pouvoir est tout ce qu’elle a.',
+        },
+        cancelled: {
+          title: 'X',
+          body: 'La négociation est annulée. Pas de contrat, pas d’infection, et pas de réponse — le seul résultat que la table ne peut pas lui donner.',
+        },
+        forced: {
+          title: 'Oui — et vous ne l’avez pas dit',
+          body: 'Vous avez porté la main sur la carte qu’elle avait marquée avant de distribuer. Le marquage est la triche, et la triche est ce qui laisse entrer la composante manipulatrice de Contagion : la réponse est réduite à Oui ou Non, et c’est elle qui choisit.',
+        },
+      },
+
+      conditions: {
+        title: 'Les trois conditions de Contagion',
+        said: 'Un oui, gagné à la table',
+        kissed: 'Le baiser',
+        witnessed: 'Un meurtre, vu de ses yeux',
+        met: 'remplie',
+        unmet: 'non remplie',
+        level: (level) => `Niveau ${level}`,
+        none: 'Non infectée',
+        kissedAnyway:
+          'Vous avez pris le baiser et vous êtes tout de même sortie. Une des trois conditions est remplie et les deux autres ne le seront jamais — c’est exactement ce que le marché vous a coûté.',
+      },
+
+      log: {
+        title: 'Ce qui s’est passé',
+        marked: (card) => `Morena marque le ${card} avant de distribuer.`,
+        asked: (round, question) => `Tour ${round} — vous demandez : ${question}`,
+        taken: (round, card) => `Tour ${round} — elle prend le ${card}.`,
+        offered: 'Elle propose le baiser.',
+        kissed: (card) => `Vous acceptez le marché, et le ${card} avec.`,
+        declined: 'Vous refusez le marché.',
+        recovered: (card) => `Le ${card} ressort du cimetière.`,
+        settled: (card) => `La dernière carte est le ${card}.`,
+      },
+
+      again: 'Redistribuer',
+
+      rules: {
+        title: 'Les douze cartes',
+        lines: [
+          'Douze cartes, réparties entre vous deux. Morena tient sept questions ; vous tenez cinq réponses — Oui, Non, Retour, Joker et X.',
+          'À chaque tour vous dépensez une question. Elle y répond sans mentir, parce que le jeu est une restriction sur son propre pouvoir et qu’un mensonge lui coûterait Contagion.',
+          'Puis elle prend une carte au hasard dans votre main. Elle part au cimetière, et vous n’avez pas votre mot à dire sur laquelle.',
+          'Cela fait quatre tours. Quatre questions posées, quatre réponses perdues, et une carte restante. Cette carte est votre réponse.',
+          'Retour n’est pas une réponse : il ressort une carte du cimetière, et ce qui en sort est ce que vous avez dit. Joker est celui de Oui et Non que vous désignez. X met fin à la négociation, un point c’est tout.',
+          'Vers le troisième tour, elle propose un baiser contre une carte du cimetière. Le baiser est à lui seul l’une des trois conditions de Contagion : la carte n’est donc pas gratuite, et elle n’en dit pas le prix.',
+          'Et elle triche. Une de vos cinq réponses était marquée avant de vous parvenir. Y porter la main à la fin lui donne la composante manipulatrice de Contagion, et la réponse cesse d’être la vôtre.',
+        ],
       },
     },
   },

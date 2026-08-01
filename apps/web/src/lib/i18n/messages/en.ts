@@ -290,7 +290,33 @@ export const en = {
       reach: 'Any room in the ship, from anywhere in the ship',
       aiming: (room: string) => `Facing ${room}`,
       aimingNothing: 'Facing nothing the aura can hold',
-      castHint: 'Press F, or click, to cast on it — or pick any room in the ship below',
+      castHint: 'Or pick any room in the ship below',
+      // Every key the technique in hand answers to, listed the moment it is
+      // taken up: which keys a technique uses changes from aura to aura, and a
+      // visitor who has just picked one out of the dock cannot be expected to
+      // press them all to find out.
+      keys: {
+        title: 'Controls',
+        click: 'click',
+        touch: 'The buttons in the corner of the walk',
+        actions: {
+          cast: 'Cast on the room you are facing',
+          castSolid: 'Cast on the solid you are facing',
+          castSelf: 'Cast on yourself, wherever you are aiming',
+          castOnSelfInstead: 'Cast on yourself rather than on what is in front of you',
+          sun: 'Put the sun ☀ on it',
+          moon: 'Put the moon ☾ on it',
+          alternate: 'Alternate the sun ☀ and the moon ☾',
+          openPage: 'Cast the open page',
+          markedPage: 'Cast the page under the ribbon',
+          airDance: 'Play the lively air',
+          airBloom: 'Play the soft air',
+          airScatter: 'Play the sharp air',
+          doubleWatch: 'Change the double’s watch',
+          owlFlight: 'Change which bird is sent',
+          insectOrders: 'Change the insect’s orders',
+        },
+      },
       inert: (name: string, carried: number) =>
         `${name} works on what a page says, and the walk has only rooms: it does nothing here. ${carried} techniques answer to the ship — Emperor Time, Blinky, the Hideout Doors and the rest.`,
       inertShort: 'Inert in the walk',
@@ -670,16 +696,13 @@ export const en = {
       /** The techniques whose target is whoever is walking. */
       body: {
         reach: 'It works on you, wherever in the ship you are',
-        castHint: 'Press F, or click anywhere in the walk',
+        castHint: 'The target is you: there is nothing in the ship to pick.',
         noTarget: 'Nothing to aim at: the target is you',
       },
       /** The read-out over the canvas, and the index, when a solid is the target. */
       solids: {
         reach: 'Any solid in the ship, from anywhere in it',
-        castHint: 'Press F, or click, to cast on it — or pick any solid in the ship below',
-        markHint: 'F puts the sun on it, R the moon · marked things go looking for their opposite',
-        markPageHint:
-          'The page has one key, so it alternates: one press the sun, the next the moon',
+        castHint: 'Or pick any solid in the ship below',
         aiming: (solid: string) => `Facing ${solid}`,
         aimingNothing: 'Nothing solid in front of you',
         targets: 'Cast on a solid',
@@ -808,6 +831,183 @@ export const en = {
         dispatches: 'Dispatches',
         visits: (count: number) => `${count} arrival${count === 1 ? '' : 's'}`,
         armed: 'armed',
+      },
+    },
+
+    /**
+     * The one room of the walk you sit down in: Morena Prudo's negotiation
+     * game, played across the table in the Heil-Ly hideout.
+     */
+    morena: {
+      seoTitle: "Morena's Game — The negotiation table aboard the Black Whale",
+      seoDescription:
+        'Sit down opposite Morena Prudo in the Heil-Ly hideout and play the twelve-card negotiation game she puts Borksen through in ch. 407-410: seven questions against five answers, and one of them marked.',
+      breadcrumb: "Morena's Game",
+      title: "Morena's Game",
+      intro:
+        'Ch. 407-410 sits Borksen down in the leader’s office of the Heil-Ly hideout and deals twelve cards between them. Seven of them are questions, and they are Morena’s. Five are answers, and they are yours. You spend a question a round to learn what you are agreeing to; she takes an answer a round at random. Whatever is left when the questions run out is the answer you gave.',
+      source:
+        'Ch. 407-410 — the negotiation game, its twelve cards, the kiss traded for a card out of the graveyard, and the card Morena marked before dealing.',
+      seat: 'The room is the hideout the deck plans draw. The table, and the chair on each side of it, are what the chapters put in it.',
+      loading: 'Laying out the table…',
+      unsupported:
+        'This table needs WebGL, which this browser is not offering. The rules below are the whole of the game and can be read without it.',
+
+      menu: {
+        play: 'Sit down',
+        rules: 'Read the rules',
+        back: 'Back to the table',
+        leave: 'Leave the table',
+        deck: 'The deal',
+        marked: 'As she deals it — one card marked',
+        markedNote:
+          'Morena cheats. One of your five answers is marked before it reaches you, and reaching for it at the end is what lets the manipulative half of Contagion in.',
+        clean: 'A clean deal — nothing marked',
+        cleanNote:
+          'The same twelve cards with the marking taken out: the game as it would be if the restriction were kept. Not a hand she has ever played.',
+        walk: 'Walk the hideout instead',
+      },
+
+      table: {
+        fan: 'Her questions',
+        asked: 'Asked',
+        hand: 'Your answers',
+        graveyard: 'Graveyard',
+        empty: 'Nothing yet',
+        markedCard: 'Marked',
+      },
+
+      round: (spent: number, left: number) =>
+        `Round ${spent + 1} — ${left} answer${left === 1 ? '' : 's'} still in your hand`,
+      askTitle: 'Spend a question',
+      askHint: 'She answers it, and then she takes one of your cards. You do not choose which.',
+      askedLabel: 'You asked',
+      answerLabel: 'She said',
+
+      questions: {
+        goal: {
+          title: 'What do you actually want?',
+          morena:
+            'A world where nobody is anybody’s subject. I was born to a mistress of the King and I have been nothing my whole life. I intend to take the throne apart and hand out what is inside it.',
+        },
+        power: {
+          title: 'What is it you would put in me?',
+          morena:
+            'Contagion. Twenty-two of you at most, and I know where each one is, how they are, and what they are worth. You go up a level for a life you take. Ten for a Nen user. Fifty for a prince.',
+        },
+        'if-yes': {
+          title: 'What happens if I say yes?',
+          morena:
+            'I kiss you, and then you watch me kill somebody. Until both of those are done you are level zero and you are nothing. After them you are mine, and at level twenty you get an ability nobody else in the world has.',
+        },
+        'if-no': {
+          title: 'What happens if I say no?',
+          morena:
+            'You walk out. The game is my restriction and I would lose the ability if I broke it, so a no costs me and costs you nothing. That is the honest half of this, and it is the only honest half.',
+        },
+        contract: {
+          title: 'What binds you to any of it?',
+          morena:
+            'The game itself. It ends when one of us dies or when the last card is played, and until then I cannot touch you. That is the whole contract. You are holding it.',
+        },
+        origin: {
+          title: 'Where did you come from?',
+          morena:
+            'Out of wedlock, into a family that had a use for me and no name to give me. Member Zero is a title I made up because nobody had given me one of those either.',
+        },
+        price: {
+          title: 'What am I worth to you?',
+          morena:
+            'You are a soldier, a Hunter, and a Specialist who does not know it yet. You are worth more to me than the last four people who sat there put together — which is why you are getting answers and they got a kiss.',
+        },
+      },
+
+      cards: {
+        yes: { name: 'Yes', rule: 'The contract. Contagion, and level zero until you kill.' },
+        no: { name: 'No', rule: 'The refusal. She honours it: the game is her own restriction.' },
+        back: {
+          name: 'Back',
+          rule: 'Not an answer. Reaches into the graveyard and pulls one back out.',
+        },
+        joker: { name: 'Joker', rule: 'Becomes Yes or No, decided the moment it is played.' },
+        x: { name: 'X', rule: 'Cancels the negotiation. Neither of you gets anything.' },
+      },
+
+      deal: {
+        title: 'She leans across the table',
+        body: 'One kiss, and you may take any card back out of the graveyard. She does not say that the kiss is one of the three conditions of Contagion in its own right. It is.',
+        take: 'Take the deal',
+        refuse: 'Refuse it',
+        pick: 'And take back',
+      },
+
+      settle: {
+        title: 'One card left',
+        play: 'Play it',
+        joker: 'Point the Joker',
+        jokerHint: 'It is whichever of the two you say it is.',
+        back: 'Reach into the graveyard',
+        backHint: 'Whatever you pull out is the answer you gave.',
+        backEmpty: 'There is nothing in the graveyard to reach for.',
+      },
+
+      verdicts: {
+        infected: {
+          title: 'Yes',
+          body: 'You said it, and you said it knowing what it was. Contagion, level zero — one of twenty-two, and she can feel exactly where you are from anywhere on the ship.',
+        },
+        refused: {
+          title: 'No',
+          body: 'She sits back and lets you stand up. The game was her restriction and she keeps it: breaking it would cost her the ability, and the ability is the only thing she has.',
+        },
+        cancelled: {
+          title: 'X',
+          body: 'The negotiation is cancelled. No contract, no infection, and no answer — which is the one outcome the table cannot be made to give her.',
+        },
+        forced: {
+          title: 'Yes — and you did not say it',
+          body: 'You reached for the card she marked before she dealt it. The marking is the cheat, and cheating is what lets the manipulative half of Contagion in: the answer is narrowed to Yes or No, and she is the one who picks.',
+        },
+      },
+
+      conditions: {
+        title: 'The three conditions of Contagion',
+        said: 'A yes, won at the table',
+        kissed: 'The kiss',
+        witnessed: 'A murder, witnessed',
+        met: 'met',
+        unmet: 'not met',
+        level: (level: number) => `Level ${level}`,
+        none: 'Not infected',
+        kissedAnyway:
+          'You took the kiss and you still walked out. One of the three conditions is met and the other two never will be — which is the whole of what the deal actually cost you.',
+      },
+
+      log: {
+        title: 'What happened',
+        marked: (card: string) => `Morena marks the ${card} before she deals.`,
+        asked: (round: number, question: string) => `Round ${round} — you ask: ${question}`,
+        taken: (round: number, card: string) => `Round ${round} — she takes the ${card}.`,
+        offered: 'She offers the kiss.',
+        kissed: (card: string) => `You take the deal, and the ${card} back with it.`,
+        declined: 'You refuse the deal.',
+        recovered: (card: string) => `The ${card} comes back out of the graveyard.`,
+        settled: (card: string) => `The last card is the ${card}.`,
+      },
+
+      again: 'Deal again',
+
+      rules: {
+        title: 'The twelve cards',
+        lines: [
+          'Twelve cards, dealt between the two of you. Morena holds seven questions; you hold five answers — Yes, No, Back, Joker and X.',
+          'Each round you spend one question. She answers it truthfully, because the game is a restriction on her own ability and lying in it would cost her Contagion.',
+          'Then she reaches into your hand and takes a card at random. It goes to the graveyard, and you do not get to say which one it was.',
+          'That is four rounds. Four questions asked, four answers gone, and one card left in your hand. That card is your answer.',
+          'Back is not an answer — it pulls a card back out of the graveyard, and whatever comes out is what you said. Joker is whichever of Yes and No you point it at. X ends the negotiation outright.',
+          'Somewhere around the third round she offers a kiss for a card out of the graveyard. The kiss is one of the three conditions of Contagion in its own right, so the card is not free and she does not mention the price.',
+          'And she cheats. One of your five answers was marked before it reached you. Reaching for that one at the end hands her the manipulative half of Contagion, and the answer stops being yours.',
+        ],
       },
     },
   },

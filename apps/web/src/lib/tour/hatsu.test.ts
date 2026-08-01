@@ -17,6 +17,7 @@ import {
   arriveInTour,
   castInTour,
   castablePages,
+  hatsuKeys,
   adriftSolidIds,
   catStep,
   driftOffset,
@@ -72,6 +73,7 @@ import {
   worldIsQuiet,
   holdsInWorld,
   type TourReport,
+  type TourBook,
   type TourWorld,
 } from './hatsu'
 import { apparitionsOn } from './apparitions'
@@ -113,6 +115,71 @@ describe('the technique roster', () => {
     expect(worksInTour(puppet)).toBe(true)
     expect(worksInTour(unheld)).toBe(false)
     expect(worksInTour(null)).toBe(false)
+  })
+})
+
+describe('the keys a technique answers to', () => {
+  const profileFor = (kind: string) => HATSU_PROFILES.find((profile) => profile.kind === kind)!
+  const under = (kind: string, book = CLOSED_BOOK) => hatsuKeys(profileFor(kind), book)
+
+  it('says nothing for a technique the walk cannot honour', () => {
+    const unheld = HATSU_PROFILES.find(
+      (profile) => !new Set<string>(TOUR_HATSU_KINDS).has(profile.kind),
+    )!
+    expect(hatsuKeys(unheld, CLOSED_BOOK)).toEqual([])
+    expect(hatsuKeys(null, CLOSED_BOOK)).toEqual([])
+  })
+
+  it('gives the plain techniques one key, and the click that does the same', () => {
+    expect(under('teleport')).toEqual([{ key: 'F', action: 'cast', click: true }])
+    expect(under('impact')).toEqual([{ key: 'F', action: 'castSolid', click: true }])
+    expect(under('enhance')).toEqual([{ key: 'F', action: 'castSelf', click: true }])
+  })
+
+  it('spends R on the second key wherever the walk has one', () => {
+    // The three that take orders, the two hands, and the ones the reticle
+    // decides for — every technique with more than one key, and no other.
+    expect(under('guardian')[1]).toEqual({ key: 'R', action: 'doubleWatch', click: false })
+    expect(under('surveillance')[1]).toEqual({ key: 'R', action: 'owlFlight', click: false })
+    expect(under('scout')[1]).toEqual({ key: 'R', action: 'insectOrders', click: false })
+    expect(under('polarity')).toEqual([
+      { key: 'F', action: 'sun', click: true },
+      { key: 'R', action: 'moon', click: false },
+    ])
+    expect(under('puppet')[1]).toEqual({ key: 'R', action: 'castOnSelfInstead', click: false })
+    expect(under('elastic')[1]).toEqual({ key: 'R', action: 'castOnSelfInstead', click: false })
+  })
+
+  it('gives the flute three, because three airs need three keys', () => {
+    expect(under('melody').map((control) => control.key)).toEqual(['F', 'R', 'C'])
+    expect(under('melody').map((control) => control.action)).toEqual([
+      'airDance',
+      'airBloom',
+      'airScatter',
+    ])
+  })
+
+  it('reads the book rather than the bookmark, and alternates the two-handed page', () => {
+    const book: TourBook = {
+      ...CLOSED_BOOK,
+      pages: ['teleport', 'polarity'],
+      open: 'teleport',
+      bookmark: 'polarity',
+    }
+    expect(under('bookmark', book)).toEqual([
+      { key: 'F', action: 'openPage', click: true },
+      { key: 'R', action: 'alternate', click: false },
+    ])
+    // Turned the other way, the alternating page is the one under F.
+    const turned: TourBook = { ...book, open: 'polarity', bookmark: 'teleport' }
+    expect(under('bookmark', turned)).toEqual([
+      { key: 'F', action: 'alternate', click: true },
+      { key: 'R', action: 'markedPage', click: false },
+    ])
+  })
+
+  it('falls back to the plain cast while the book holds only one page', () => {
+    expect(under('bookmark')).toEqual([{ key: 'F', action: 'cast', click: true }])
   })
 })
 
@@ -725,8 +792,11 @@ describe('the rules solids hold each other to', () => {
       }
       throw new Error(`the draw never lands on ${tool}`)
     }
-    const swung = hit({ ...EMPTY_WORLD, swings: swingsFor('hammer') }, 'weapon-body', solidA.id)
-      .world
+    const swung = hit(
+      { ...EMPTY_WORLD, swings: swingsFor('hammer') },
+      'weapon-body',
+      solidA.id,
+    ).world
     expect(worldIsQuiet(swung)).toBe(false)
     const mended = hit(swung, 'stitch', solidA.id).world
     // The tally is not a hold: nothing is being held by a count of past

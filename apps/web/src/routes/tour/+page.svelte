@@ -91,6 +91,7 @@
     polarityStep,
     flyTheEye,
     flyTheOwl,
+    hatsuKeys,
     identityOf,
     nextDoubleMode,
     nextEyeMode,
@@ -98,6 +99,7 @@
     openTheBook,
     otherHand,
     spendPage,
+    TAKES_ORDERS,
     turnTheBook,
     twoPages,
     TWO_HANDED_KINDS,
@@ -403,7 +405,7 @@
   function onWindowKeydown(event: KeyboardEvent) {
     if (event.metaKey || event.ctrlKey || event.altKey) return
     const key = event.key.toLowerCase()
-    if (key === 'r' && !TAKES_ORDERS.includes(technique?.kind ?? null)) return
+    if (key === 'r' && !(technique && TAKES_ORDERS.has(technique.kind))) return
     if (key !== 'm' && key !== 'g' && key !== 'r' && key !== 'v' && key !== 'escape') return
     // Esc leaves full screen only where nothing else has a claim on it: the
     // browser answers it in native full screen, an engaged pointer answers it
@@ -635,6 +637,15 @@
    */
   const openPages = $derived(technique?.kind === 'bookmark' ? twoPages(world.book) : null)
 
+  /**
+   * Every key the technique in hand answers to, said before it is pressed.
+   *
+   * The walk casts with three keys at most and no aura uses all three: which
+   * ones this one uses — and what R means under it — is decided in one place,
+   * and both the panel and the walk itself read it from there.
+   */
+  const controlKeys = $derived(hatsuKeys(technique, world.book))
+
   /** A page under the name of whoever the book took it from. */
   const pageName = (kind: HatsuInteractionKind) => {
     const stolen = HATSU_PROFILES.find((candidate) => candidate.kind === kind)
@@ -840,9 +851,6 @@
   function cycleOwl() {
     turn('surveillance')
   }
-
-  /** The techniques R means anything under, which is what the key is guarded by. */
-  const TAKES_ORDERS: (HatsuInteractionKind | null)[] = ['guardian', 'surveillance', 'scout']
 
   /**
    * R, in one place: the walk asks the technique for its next order and says
@@ -1322,6 +1330,16 @@
         ship.tiers.length - ship.decks.length,
       )} · {$t.tour.scale(shipLength)}
     </p>
+    <!-- The one room of the reconstruction you sit down in rather than walk
+         through, which is the only reason it is a page of its own. -->
+    <p class="mt-3">
+      <a
+        href={$link('/tour/morena')}
+        class="text-sm text-[#d94f68] underline underline-offset-2 transition-colors hover:text-[#e8697f]"
+      >
+        {$t.tour.morena.title} →
+      </a>
+    </p>
   </header>
 
   <!-- Full screen is this grid over everything else, not the canvas alone:
@@ -1484,6 +1502,27 @@
             </p>
           {/if}
         </div>
+      {/if}
+
+      <!-- The keys the technique in hand answers to, over the walk itself: the
+           panel says the same thing, and the panel is the first thing folded
+           away in full screen — which is exactly when a visitor is walking with
+           an aura up and nothing to remind them what R does under it. Not on a
+           touchscreen, where there are no keys and the casts are the buttons in
+           the corner. -->
+      {#if controlKeys.length && !touch && !mute}
+        <ul
+          class="pointer-events-none absolute bottom-3 left-3 space-y-0.5 rounded bg-[#050505]/80 px-2 py-1"
+        >
+          {#each controlKeys as control (control.key)}
+            <li class="flex items-baseline gap-2 text-[11px]">
+              <kbd class="shrink-0 font-mono text-[10px]" style:color={technique?.color}>
+                {control.click ? `${control.key} / ${$t.tour.hatsu.keys.click}` : control.key}
+              </kbd>
+              <span class="text-[#FFFFF0]/70">{$t.tour.hatsu.keys.actions[control.action]}</span>
+            </li>
+          {/each}
+        </ul>
       {/if}
 
       <p
@@ -1649,6 +1688,7 @@
           {aimedSolidAt}
           at={position}
           standingIn={currentSpace?.id ?? null}
+          {touch}
           {nameOf}
           {sourceOf}
           onRelease={release}

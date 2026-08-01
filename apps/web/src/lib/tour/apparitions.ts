@@ -507,19 +507,7 @@ export function apparitionsOn(
   const beside = (space: Space): Vec2 => {
     const summoned = world.summoned
     if (!summoned || summoned.spaceId !== space.id) return landing(space)
-    // Just clear of the visitor rather than on top of them: a beast drawn at
-    // the eye is a beast you are inside. Kept in the room, so a visitor
-    // standing against a bulkhead does not put it in the steel.
-    for (const step of [
-      [1.8, 0],
-      [-1.8, 0],
-      [0, 1.8],
-      [0, -1.8],
-    ]) {
-      const spot: Vec2 = [summoned.at[0] + step[0], summoned.at[1] + step[1]]
-      if (pointInPolygon(spot, space.footprint)) return spot
-    }
-    return summoned.at
+    return inFrontOf(summoned, space.footprint, 1.8)
   }
 
   // The bird, perched as high as the room allows: it is eavesdropping through
@@ -1298,6 +1286,40 @@ export function apparitionsOn(
 }
 
 /**
+ * A spot the caster can actually see, a couple of paces off.
+ *
+ * Everything called up beside the visitor used to be stepped off along the
+ * ship's own axes — two metres east, or north if east was in a bulkhead — which
+ * has nothing to do with where the visitor is looking: half the time the beast
+ * came up behind them, and a beast behind you is one you never saw arrive.
+ *
+ * So it is stepped off along the heading the cast was made on, which is the
+ * camera's own axis: it looks along (-sin yaw, -cos yaw), the same reading the
+ * reticle uses. Straight ahead first, then wider and wider off the shoulder,
+ * then shorter — a visitor casting with their nose against a bulkhead still
+ * gets a body in the room rather than one in the steel — and only if the room
+ * refuses every one of those does it land on the visitor's own spot.
+ */
+function inFrontOf(
+  summoned: { at: Vec2; heading: number },
+  footprint: Vec2[],
+  metres: number,
+): Vec2 {
+  const quarter = Math.PI / 2
+  for (const reach of [metres, metres * 0.6]) {
+    for (const turn of [0, quarter / 2, -quarter / 2, quarter, -quarter, Math.PI]) {
+      const angle = summoned.heading + turn
+      const spot: Vec2 = [
+        summoned.at[0] - Math.sin(angle) * reach,
+        summoned.at[1] - Math.cos(angle) * reach,
+      ]
+      if (pointInPolygon(spot, footprint)) return spot
+    }
+  }
+  return summoned.at
+}
+
+/**
  * Where the coin off Zhang Lei's wheel is hanging, or nothing.
  *
  * The same shape and the same reasoning as `wormMouths`: a thing the visitor
@@ -1315,18 +1337,11 @@ export function coinSpot(
   if (!space || !measured) return null
   // Where the wheel was called up, which is where the visitor was standing: the
   // coin is put out where they can reach it rather than wherever they happened
-  // to be pointing. Two metres off, so it is in front of them rather than
-  // through them, and kept inside the room.
-  const summoned = world.summoned?.spaceId === space.id ? world.summoned.at : null
+  // to be pointing. Two metres along their own line of sight, so it is in front
+  // of them rather than through them or at their back, and kept inside the room.
+  const summoned = world.summoned?.spaceId === space.id ? world.summoned : null
   const reach: Vec2 = summoned
-    ? ([
-        [2, 0],
-        [-2, 0],
-        [0, 2],
-        [0, -2],
-      ]
-        .map((step) => [summoned[0] + step[0], summoned[1] + step[1]] as Vec2)
-        .find((spot) => pointInPolygon(spot, space.footprint)) ?? summoned)
+    ? inFrontOf(summoned, space.footprint, 2)
     : (world.landed[space.id] ?? measured.at)
   return {
     spaceId: space.id,

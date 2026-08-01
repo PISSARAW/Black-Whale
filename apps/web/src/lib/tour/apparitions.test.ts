@@ -1,9 +1,11 @@
 import { describe, expect, it } from 'vitest'
 import { buildShip, ceilingOf, floorOf } from './blueprint'
+import { pointInPolygon } from './geometry'
 import {
   PORTAL_REACH,
   SHOAL,
   apparitionsOn,
+  coinSpot,
   flashFor,
   wormMouthAt,
   wormMouths,
@@ -388,5 +390,63 @@ describe('Enchanting Music', () => {
   it('shows nothing at all for the lively air: what it moves is already there', () => {
     const dancing = played('dance')
     expect(apparitionsOn(ship, dancing)).toEqual([])
+  })
+})
+
+describe('what is called up beside the visitor', () => {
+  // A room with three metres of clear deck each way around its middle, so a
+  // body put two metres off in any direction is still in it: what is under
+  // test is the direction, not the fit.
+  const roomy = [...ship.spaces.values()].find((space) => {
+    const middle = centroid(space)
+    return [
+      [3, 0],
+      [-3, 0],
+      [0, 3],
+      [0, -3],
+    ].every((step) => pointInPolygon([middle[0] + step[0], middle[1] + step[1]], space.footprint))
+  })!
+
+  const standing = centroid(roomy)
+
+  const calling = (kind: Parameters<typeof castInTour>[1], heading: number) =>
+    castInTour(EMPTY_WORLD, kind, {
+      ship,
+      targetId: roomy.id,
+      standingIn: roomy.id,
+      at: standing,
+      heading,
+    }).world
+
+  /** How far up the visitor's own line of sight the thing came up. */
+  const ahead = (spot: readonly [number, number], heading: number) =>
+    (spot[0] - standing[0]) * -Math.sin(heading) + (spot[1] - standing[1]) * -Math.cos(heading)
+
+  it('puts Zhang Lei’s coin where the visitor is looking, whichever way that is', () => {
+    for (const heading of [0, Math.PI / 2, Math.PI, -Math.PI / 2, 2.3]) {
+      const spot = coinSpot(ship, calling('coin-growth', heading))!
+      expect(spot.spaceId).toBe(roomy.id)
+      // In front, and far enough off to be seen rather than stood inside — but
+      // near enough that walking on to it takes the coin.
+      expect(ahead(spot.at, heading)).toBeCloseTo(2)
+    }
+  })
+
+  it('brings the Guardian Spirit Beasts up in front of whoever called them', () => {
+    // The ones that come up with the visitor rather than down the reticle.
+    // Camilla's cat is not among them: it is put over whatever it is about to
+    // break, and only stands where it was called when the room is bare.
+    const beasts = [
+      ['coercive-beast', 'medusa'],
+      ['diffusive-smoke', 'mouths'],
+      ['desire-trap', 'centipede'],
+    ] as const
+    for (const [kind, seen] of beasts) {
+      for (const heading of [0, Math.PI]) {
+        const [body] = of(calling(kind, heading), seen)
+        expect(body, `${kind} at ${heading}`).toBeDefined()
+        expect(ahead(body.at, heading), `${kind} at ${heading}`).toBeGreaterThan(1)
+      }
+    }
   })
 })

@@ -665,8 +665,13 @@ export interface TourWorld {
    * cast. Not the visitor's live position: a beast that walked around after you
    * would be a familiar, and none of these is one. One field rather than one
    * per beast, because the walk hands out one aura at a time.
+   *
+   * The way they were facing is kept with the spot, because a point on its own
+   * is not enough to put a beast where they can see it: stepped off along the
+   * ship's own axes it came up behind the visitor as often as in front, and a
+   * beast at your back is a beast that never appeared.
    */
-  summoned: { spaceId: string; at: Vec2 } | null
+  summoned: { spaceId: string; at: Vec2; heading: number } | null
 }
 
 export interface TourBook {
@@ -1508,13 +1513,17 @@ export function looseTheFlock(
 }
 
 /**
- * Where a Guardian Spirit Beast comes up: beside the visitor, or nowhere.
+ * Where a Guardian Spirit Beast comes up: in front of the visitor, or nowhere.
+ *
+ * The spot and the way they were facing together, because the apparition layer
+ * needs both to put the body where it will be seen.
  *
  * `null` when the walk does not know what room the caster is in — cast from the
  * index rather than from the deck — and the apparition layer then falls back to
  * the room the beast was sent to, which is the only other honest answer.
  */
-const calledUp = (spaceId: string | null, at: Vec2) => (spaceId ? { spaceId, at } : null)
+const calledUp = (spaceId: string | null, at: Vec2, heading = 0) =>
+  spaceId ? { spaceId, at, heading } : null
 
 /**
  * Everything actually standing in a room, the aura's own copies included.
@@ -2263,9 +2272,9 @@ const SOLID_CASTS: Partial<Record<HatsuInteractionKind, SolidCast>> = {
   // world: the beast can be walked round a room marking three separate things
   // once each, and none of them is any nearer its third for the others. The
   // room the beast is standing in is wherever it last touched something.
-  'lie-marks': ({ world, ship, structure, hold, id, away, at, standingIn: here }) => {
+  'lie-marks': ({ world, ship, structure, hold, id, away, at, heading, standingIn: here }) => {
     const lies = (hold?.lies ?? 0) + 1
-    const beside = { ...world, chimera: structure.spaceId, summoned: calledUp(here, at) }
+    const beside = { ...world, chimera: structure.spaceId, summoned: calledUp(here, at, heading) }
 
     if (lies === 1) {
       const landing = shove(ship, beside, structure, hold, away(1.4))
@@ -3813,7 +3822,7 @@ const ROOM_CASTS: Partial<Record<HatsuInteractionKind, RoomCast>> = {
 
   // The bait is what the victim wanted: a copy of something out of the room
   // they are standing in, stood in the trap. Coercion comes after it is taken.
-  'desire-trap': ({ world, ship, target, at, standingIn }) => {
+  'desire-trap': ({ world, ship, target, at, input, standingIn }) => {
     const wanted = ship.structures.find((solid) => solid.spaceId === standingIn)
     const copies = wanted
       ? [
@@ -3846,7 +3855,7 @@ const ROOM_CASTS: Partial<Record<HatsuInteractionKind, RoomCast>> = {
         solids,
         trap: target.id,
         centipede: target.id,
-        summoned: calledUp(standingIn, at),
+        summoned: calledUp(standingIn, at, input.heading),
       },
       report: { kind: 'bait-set', spaceId: target.id },
     }
@@ -3897,7 +3906,7 @@ const ROOM_CASTS: Partial<Record<HatsuInteractionKind, RoomCast>> = {
   // works its tentacles, and everything standing on the floor stops standing on
   // it. Dismissed, the room settles — the floating was the beast's doing and
   // there is nothing left of it once the beast is not there.
-  'coercive-beast': ({ world, ship, target, at, standingIn: here }) => {
+  'coercive-beast': ({ world, ship, target, at, input, standingIn: here }) => {
     const lifted = standingIn(ship, world, target.id).length
 
     if (world.medusa === target.id) {
@@ -3915,7 +3924,7 @@ const ROOM_CASTS: Partial<Record<HatsuInteractionKind, RoomCast>> = {
       solids[solid.id] = { ...solids[solid.id], adrift: true }
     }
     return {
-      world: { ...settled, solids, medusa: target.id, summoned: calledUp(here, at) },
+      world: { ...settled, solids, medusa: target.id, summoned: calledUp(here, at, input.heading) },
       report: { kind: 'beast-raised', spaceId: target.id, solids: lifted },
     }
   },
@@ -3925,7 +3934,7 @@ const ROOM_CASTS: Partial<Record<HatsuInteractionKind, RoomCast>> = {
   // question of whether somebody walks up and takes it. Taking is not a cast —
   // see `takeTheCoin` — so the only two things a cast can do here are raise it
   // and put it down.
-  'coin-growth': ({ world, target, at, standingIn: here }) => {
+  'coin-growth': ({ world, target, at, input, standingIn: here }) => {
     if (world.wheel?.spaceId === target.id) {
       return {
         world: { ...world, wheel: null, summoned: null },
@@ -3937,7 +3946,11 @@ const ROOM_CASTS: Partial<Record<HatsuInteractionKind, RoomCast>> = {
     // day's coin. Only taking one advances the value.
     const coin = world.wheel?.coin ?? 1
     return {
-      world: { ...world, wheel: { spaceId: target.id, coin }, summoned: calledUp(here, at) },
+      world: {
+        ...world,
+        wheel: { spaceId: target.id, coin },
+        summoned: calledUp(here, at, input.heading),
+      },
       report: { kind: 'wheel-raised', spaceId: target.id, coin },
     }
   },
@@ -3970,7 +3983,7 @@ const ROOM_CASTS: Partial<Record<HatsuInteractionKind, RoomCast>> = {
   // take. Then the mouths close — `smokeStep` is what actually fills it, on the
   // walk's clock, so being full is something that arrives rather than something
   // the cast declares.
-  'diffusive-smoke': ({ world, target, at, standingIn: here }) => {
+  'diffusive-smoke': ({ world, target, at, input, standingIn: here }) => {
     if (world.smoke?.spaceId === target.id) {
       return {
         world: { ...world, smoke: null, summoned: null },
@@ -3984,7 +3997,7 @@ const ROOM_CASTS: Partial<Record<HatsuInteractionKind, RoomCast>> = {
       world: {
         ...world,
         smoke: { spaceId: target.id, filled: 0 },
-        summoned: calledUp(here, at),
+        summoned: calledUp(here, at, input.heading),
       },
       report: { kind: 'smoke-loosed', spaceId: target.id },
     }
@@ -4119,12 +4132,12 @@ const ROOM_CASTS: Partial<Record<HatsuInteractionKind, RoomCast>> = {
   // but the waiting is no longer invisible: the animal is in the room, and it
   // breaks the room up a piece at a time while it waits. `catStep` does that,
   // on the walk's clock.
-  resurrection: ({ world, target, at, standingIn: here }) => ({
+  resurrection: ({ world, target, at, input, standingIn: here }) => ({
     world: {
       ...world,
       ninelives: [...new Set([...world.ninelives, target.id])],
       cat: target.id,
-      summoned: calledUp(here, at),
+      summoned: calledUp(here, at, input.heading),
     },
     report: { kind: 'name-taken', spaceId: target.id },
   }),

@@ -178,7 +178,21 @@ export const SOLID_HATSU_KINDS = new Set<HatsuInteractionKind>([
   'polarity',
   'identity-swap',
   'relay',
+  // The chain has a ball on the end of it and the ball is swung: what it is
+  // aimed at is a thing, and the room it points at is what it does with a
+  // reticle that has nothing in it.
+  'dowsing',
 ])
+
+/**
+ * The two that are on both sides of the line, and let the reticle decide.
+ *
+ * Elastic Love is worn until something is aimed at, and the Dowsing Chain
+ * strikes whatever is down the reticle and falls back to pointing at the room
+ * when there is nothing there to strike. Everything else in `SOLID_HATSU_KINDS`
+ * takes a thing and only a thing.
+ */
+const EITHER_TARGET = new Set<HatsuInteractionKind>(['elastic', 'dowsing'])
 
 export const aimsAtSolids = (profile: HatsuProfile | null) =>
   Boolean(profile) && SOLID_HATSU_KINDS.has(profile!.kind)
@@ -718,6 +732,8 @@ export type TourReport =
   | { kind: 'wound-up'; turns: number }
   | { kind: 'launched'; solidId: string; metres: number }
   | { kind: 'struck'; solidId: string }
+  /** The ball on the end of the Dowsing Chain, brought down on a thing. */
+  | { kind: 'lashed'; solidId: string; hits: number }
   | { kind: 'bound'; solidId: string }
   | { kind: 'released'; solidId: string }
   | { kind: 'came-up-under'; solidId: string; otherId: string }
@@ -1185,6 +1201,24 @@ const SOLID_CASTS: Partial<Record<HatsuInteractionKind, SolidCast>> = {
         ...(landing ? { at: landing } : {}),
       }),
       report: { kind: 'struck', solidId: id },
+    }
+  },
+
+  // The chain is fixed to the hand and the weight is on the far end of it, so
+  // what it does to a thing is what a whip does: the ball goes through it, it
+  // is knocked back and spun by the blow, and the chain lets go again. Nothing
+  // is held afterwards — a lash is over the moment it lands, and the count is
+  // only so the read-out can say this is the fourth time you have hit it.
+  dowsing: ({ world, ship, structure, hold, id, away }) => {
+    const now = solidNow(structure, hold)
+    const landing = shove(ship, world, structure, hold, away(2))
+    return {
+      world: withHold(world, id, {
+        hits: (hold?.hits ?? 0) + 1,
+        rotation: now.rotation + 40,
+        ...(landing ? { at: landing } : {}),
+      }),
+      report: { kind: 'lashed', solidId: id, hits: (hold?.hits ?? 0) + 1 },
     }
   },
 
@@ -2385,6 +2419,9 @@ const ROOM_CASTS: Partial<Record<HatsuInteractionKind, RoomCast>> = {
     }
   },
 
+  // The chain with nothing down the reticle to hit: it swings, and where it
+  // settles is a room and how far off it is. Aim it at a thing instead and it
+  // is the whip it also is — see `SOLID_CASTS`.
   dowsing: ({ world, ship, target, at, standingIn }) => {
     const distance = distanceTo(ship, target, at, standingIn)
     return {
@@ -2726,7 +2763,7 @@ function runCast(
   ) {
     return castOnBody(world, kind, input)
   }
-  if (SOLID_HATSU_KINDS.has(kind) && (kind !== 'elastic' || input.targetSolidId)) {
+  if (SOLID_HATSU_KINDS.has(kind) && (!EITHER_TARGET.has(kind) || input.targetSolidId)) {
     return castOnSolid(world, kind, input)
   }
 

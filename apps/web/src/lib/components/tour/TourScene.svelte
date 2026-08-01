@@ -1380,6 +1380,18 @@
       }
 
       /**
+       * How many links the Dowsing Chain is drawn with.
+       *
+       * Enough that the run from the hand to the ball reads as chain at a
+       * glance, and few enough that it is still a handful of rings when the
+       * lash puts it across eight metres of promenade.
+       */
+      const CHAIN_LINKS = 14
+      /** How long one lash takes: out fast, back slower, and it is over. */
+      const LASH_OUT = 0.14
+      const LASH_BACK = 0.36
+
+      /**
        * One apparition, built out of primitives.
        *
        * Deliberately crude: the ship is flat colour and hard edges, and a
@@ -1661,6 +1673,31 @@
           turns = null
         }
 
+        if (seen.kind === 'chain') {
+          // A ball on a chain, and the chain is the point of it: the links are
+          // built here and strung between the hand and the ball every frame by
+          // `driftApparitions`, which is the only way a chain that both hangs
+          // and lashes can be one object rather than two.
+          //
+          // The ball is first in the group, because that is how the drift finds
+          // it: children[0] is the weight and everything after it is a link.
+          const steel = glow(seen.colour, 1)
+          const ball = new THREE.Mesh(new THREE.SphereGeometry(seen.size, 12, 10), steel)
+          root.add(ball)
+          for (let i = 0; i < CHAIN_LINKS; i++) {
+            // Rings rather than beads, and turned a quarter turn from each
+            // other as a real chain is — which the drift does, because which
+            // way a link lies depends on which way the chain is running.
+            root.add(
+              new THREE.Mesh(
+                new THREE.TorusGeometry(seen.size * 0.4, seen.size * 0.12, 4, 8),
+                steel,
+              ),
+            )
+          }
+          turns = null
+        }
+
         if (seen.kind === 'cargo') {
           const crate = new THREE.Mesh(
             new THREE.BoxGeometry(seen.size, seen.size, seen.size),
@@ -1816,6 +1853,88 @@
       }
 
       /**
+       * The lash being thrown, if one is: where the ball has to reach, and how
+       * far through the throw it is. Held here rather than in the world because
+       * a blow is over in half a second and the world would still be holding it
+       * a minute later — the same reason the punch and the gust are flashes.
+       */
+      let lashing: { at: Vec2; y: number; through: number } | null = null
+
+      /** One frame of the throw, and it is put away when it has come back. */
+      function runLash(delta: number) {
+        if (!lashing) return
+        lashing.through += delta
+        if (lashing.through >= LASH_OUT + LASH_BACK) lashing = null
+      }
+
+      /**
+       * The Dowsing Chain, hanging off the hand or out at what it just hit.
+       *
+       * The chain is fixed to the visitor: the group sits at their hand and is
+       * never turned, so everything below is worked out in plain metres from
+       * there — which is what lets the ball be sent to a point in the room
+       * rather than to a point in front of the camera. Hanging, it is a
+       * pendulum on two thirds of a metre of chain; struck out, it is the same
+       * chain with the ball at the far end of it and the links strung between.
+       */
+      function swingTheChain(held: Shown, phase: number) {
+        const sin = Math.sin(yaw)
+        const cos = Math.cos(yaw)
+        const hand = new THREE.Vector3(
+          camera.position.x + cos * 0.42 - sin * 0.34,
+          camera.position.y - 0.5,
+          camera.position.z - sin * 0.42 - cos * 0.34,
+        )
+        held.root.position.copy(hand)
+        held.root.rotation.set(0, 0, 0)
+
+        // Where the ball is, in metres from the hand. Idle, it swings.
+        const hang = new THREE.Vector3(
+          Math.sin(phase * 1.7) * 0.15,
+          -0.62,
+          Math.cos(phase * 1.1) * 0.09,
+        )
+        let ball = hang
+        if (lashing) {
+          const reach = new THREE.Vector3(lashing.at[0], lashing.y, lashing.at[1]).sub(hand)
+          // Out fast and back slower: what makes a whip a whip is the return,
+          // and the moment it is furthest out is the moment it lands.
+          const out =
+            lashing.through < LASH_OUT
+              ? (lashing.through / LASH_OUT) ** 0.55
+              : Math.max(0, 1 - (lashing.through - LASH_OUT) / LASH_BACK) ** 1.4
+          ball = hang.clone().lerp(reach, out)
+        }
+
+        const [weight, ...links] = held.root.children
+        weight.position.copy(ball)
+
+        // Which way the chain runs, for the links to lie along — and straight
+        // down for the frame where the ball is in the hand and there is no run.
+        const run = ball.clone()
+        run.normalize()
+        if (!Number.isFinite(run.x) || run.lengthSq() < 0.5) run.set(0, -1, 0)
+        const turn = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 0, 1), run)
+        // A chain thrown across a room is nearly straight; one hanging off a
+        // hand is not, so the sag is taken off however far out it has gone.
+        const sag = Math.min(0.45, Math.hypot(ball.x, ball.z) * 0.16)
+
+        links.forEach((link, i) => {
+          const along = (i + 1) / (links.length + 1)
+          link.position.set(
+            ball.x * along,
+            ball.y * along - Math.sin(along * Math.PI) * sag,
+            ball.z * along,
+          )
+          link.quaternion.copy(turn)
+          // The ring's own axis across the run, so the hole faces along the
+          // chain, and every other link a quarter turn over from its neighbour.
+          link.rotateX(Math.PI / 2)
+          if (i % 2) link.rotateOnWorldAxis(run, Math.PI / 2)
+        })
+      }
+
+      /**
        * What the apparitions do while nobody is casting anything.
        *
        * All of it is a sine: an owl's head turning, a card riding on the air, a
@@ -1838,6 +1957,11 @@
               camera.position.z - sin * 0.55 - cos * 0.5,
             )
             held.root.rotation.y = yaw
+            continue
+          }
+
+          if (held.kind === 'chain') {
+            swingTheChain(held, phase)
             continue
           }
 
@@ -2247,6 +2371,18 @@
 
         // The vision is not drawn: it is ten seconds of the walk, given back.
         if (flash.kind === 'rewind') startRewind()
+
+        // The lash is not drawn either: the chain is already in the room, on
+        // the visitor's hand, so what this starts is the swing of the thing
+        // they are holding. A blow landed on another deck is one the walk
+        // cannot show — the chain would run through the deckhead — so it is
+        // heard and read out and left at that.
+        if (flash.kind === 'lash') {
+          played = null
+          lashing =
+            flash.tierId === currentTierId ? { at: flash.at, y: flash.y, through: 0 } : null
+          return
+        }
 
         if (flash.kind === 'gust') {
           const from = flash.from ?? flash.at
@@ -2992,6 +3128,7 @@
         driftMotes(delta, clock)
         driftApparitions(clock)
         driftFlash(delta)
+        runLash(delta)
         syncGum(clock)
         reelBack(delta)
 

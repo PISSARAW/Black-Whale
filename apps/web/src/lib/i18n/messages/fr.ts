@@ -471,6 +471,10 @@ export const fr: Messages = {
         launched: (solid, metres) =>
           metres ? `${solid} projeté à ${metres} m` : `${solid} n'avait nulle part où aller`,
         struck: (solid) => `Le bâton s'abat sur ${solid} et le fait pivoter`,
+        lashed: (solid, hits) =>
+          hits > 1
+            ? `La chaîne claque sur ${solid} · ${hits} fois maintenant`
+            : `La chaîne claque sur ${solid} et revient`,
         bound: (solid) => `Le serpent tient ${solid} · plus rien d'autre ne le bouge`,
         released: (solid) => `${solid} est relâché`,
         cameUpUnder: (solid, other) =>

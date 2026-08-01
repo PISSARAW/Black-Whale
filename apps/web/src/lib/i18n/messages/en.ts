@@ -533,6 +533,10 @@ export const en = {
         launched: (solid: string, metres: number) =>
           metres ? `${solid} sent ${metres} m across the room` : `${solid} had nowhere to go`,
         struck: (solid: string) => `The staff comes down on ${solid} and turns it`,
+        lashed: (solid: string, hits: number) =>
+          hits > 1
+            ? `The chain cracks across ${solid} · ${hits} times now`
+            : `The chain cracks across ${solid} and comes back`,
         bound: (solid: string) => `The snake has ${solid} · nothing else moves it now`,
         released: (solid: string) => `${solid} is let go`,
         cameUpUnder: (solid: string, other: string) =>

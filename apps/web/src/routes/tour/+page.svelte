@@ -25,6 +25,7 @@
     blowAGust,
     fireABurst,
     foldPaper,
+    crackAWhip,
     grindThroughSpace,
     hissLikeASnake,
     hootAnOwl,
@@ -468,6 +469,9 @@
       // Snake Arm.
       case 'bound':
         return hissLikeASnake()
+      // The Dowsing Chain, used as what it is: a weight on the end of a chain.
+      case 'lashed':
+        return crackAWhip()
       // Secret Window.
       case 'owl-attached':
       case 'owl-recalled':

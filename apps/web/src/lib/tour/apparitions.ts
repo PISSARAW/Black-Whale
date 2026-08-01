@@ -46,6 +46,8 @@ export type ApparitionKind =
   | 'gum'
   /** Sayird's insect, flying the room the sphere was sent to. */
   | 'insect'
+  /** The Dowsing Chain: links off the visitor's hand, with the ball on the end. */
+  | 'chain'
 
 /**
  * One thing Nen has left standing in the ship.
@@ -109,6 +111,8 @@ const PUPPET = 0x1b1b22
 const GUM = 0xf06bb5
 /** Little Eye's blue, which is the sphere rather than the animal inside it. */
 const INSECT = 0x55c2ff
+/** The Dowsing Chain is steel: the pale blue the dock already publishes it in. */
+const CHAIN = 0x8ecae6
 /** Halkenburg's collective aura, which is the gold of the whole ship's will. */
 export const ARROW = 0xf7e27d
 /** Rising Sun is the one technique whose colour is a temperature. */
@@ -484,6 +488,27 @@ export function apparitionsOn(
     })
   }
 
+  // The Dowsing Chain, which is worn rather than placed: it is fixed to the
+  // visitor's hand for as long as the aura is up, and hangs there swinging
+  // until something is struck with it. Like Blinky, it is carried — the scene
+  // puts it at the hand every frame, so the room and the height here are only
+  // what deck it belongs to.
+  if (world.holding === 'dowsing' && visitor) {
+    found.push({
+      id: 'chain',
+      kind: 'chain',
+      spaceId: world.cameFrom ?? '',
+      tierId: visitor.tierId,
+      at: [visitor.at[0], visitor.at[1]],
+      y: 0,
+      // The ball, in metres across. The links are drawn to scale off it.
+      size: 0.13,
+      colour: CHAIN,
+      stage: 0,
+      hidden: false,
+    })
+  }
+
   // Cargo a relay has taken and not yet advanced. `pairing` is shared by every
   // technique that joins two things, so it is only cargo while the relay is the
   // aura being held.
@@ -578,7 +603,7 @@ export function wormMouthAt(ship: Ship, world: TourWorld, tierId: string, at: Ve
  * direction to travel in.
  */
 export interface TourFlash {
-  kind: 'gust' | 'punch' | 'sun' | 'arrow' | 'rewind'
+  kind: 'gust' | 'punch' | 'sun' | 'arrow' | 'rewind' | 'lash'
   tierId: string
   at: Vec2
   /** The floor it comes out of, or the height it lands at, in metres. */
@@ -670,6 +695,27 @@ export function flashFor(
       at: world.landed[space.id] ?? measured.at,
       y: measured.floor,
       colour: PUNCH,
+    }
+  }
+
+  // The lash is an event in the same way the punch is: the chain itself is
+  // standing in the room — it is on the visitor's hand — and what this hands
+  // over is where the ball has to reach and back. Read after the blow, so the
+  // point is where the thing was knocked to, which is where the ball ended up.
+  if (report.kind === 'lashed') {
+    const struck = solidById(ship, world, report.solidId)
+    const space = struck ? ship.spaces.get(struck.spaceId) : null
+    const measured = space ? room(ship, space) : null
+    if (!struck || !space || !measured) return null
+    const now = solidNow(struck, world.solids[struck.id])
+    return {
+      kind: 'lash',
+      tierId: space.tierId,
+      at: now.at,
+      // Halfway up whatever was hit: a whip lands on the body of a thing.
+      y: Math.min(measured.floor + now.base + now.height * 0.6, measured.ceiling - 0.2),
+      from,
+      colour: CHAIN,
     }
   }
 

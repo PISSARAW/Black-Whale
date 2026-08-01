@@ -1261,6 +1261,65 @@ export function wakeTheMachine() {
 }
 
 /**
+ * The Dowsing Chain's ball, brought down on a thing like a whip.
+ *
+ * A whip crack is three things in a fifth of a second and only three: the swish
+ * of the chain coming round, which is a band of noise sweeping up as it gets
+ * faster; the crack itself, which is a tip going supersonic and is therefore
+ * broadband and almost instantaneous; and the ring of steel meeting whatever it
+ * hit, which is the one part of this that is not air. Take away any of them and
+ * it reads as a slap.
+ */
+export function crackAWhip() {
+  const g = hatsuAudioGraph()
+  if (!g) return
+  const at = startsAt(g)
+
+  // The chain coming round: air, rising as the weight accelerates.
+  rush(g, at, 0.11, {
+    peak: 0.06,
+    type: 'bandpass',
+    cutoff: 700,
+    sweepTo: 3200,
+    q: 0.9,
+    attack: 0.05,
+    release: 0.03,
+  })
+
+  // The crack: everything at once, and gone.
+  rush(g, at + 0.11, 0.02, {
+    peak: 0.3,
+    type: 'highpass',
+    cutoff: 1800,
+    sweepTo: 6000,
+    attack: 0.001,
+    release: 0.09,
+    send: 0.55,
+  })
+
+  // And the steel that made it, which is what says this was a chain rather
+  // than a length of leather: a short, hard ring on the ball itself.
+  swept(g, at + 0.115, 0.06, {
+    type: 'triangle',
+    from: 2100,
+    to: 1500,
+    peak: 0.07,
+    attack: 0.002,
+    release: 0.16,
+    send: 0.4,
+  })
+  swept(g, at + 0.115, 0.05, {
+    type: 'sine',
+    from: 3160,
+    to: 2400,
+    peak: 0.035,
+    attack: 0.002,
+    release: 0.12,
+    send: 0.4,
+  })
+}
+
+/**
  * Snake Arm biting a solid.
  *
  * A snake's hiss: a sudden, sharp band of high-frequency noise that decays quickly.

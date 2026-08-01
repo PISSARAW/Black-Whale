@@ -252,6 +252,8 @@
         return say.launched(solidName(report.solidId), report.metres)
       case 'struck':
         return say.struck(solidName(report.solidId))
+      case 'lashed':
+        return say.lashed(solidName(report.solidId), report.hits)
       case 'bound':
         return say.bound(solidName(report.solidId))
       case 'released':

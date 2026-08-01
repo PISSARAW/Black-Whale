@@ -438,6 +438,23 @@ describe('the rules solids hold each other to', () => {
     expect(hit(bound, 'stitch', solidA.id).world.solids[solidA.id]).toBeUndefined()
   })
 
+  it('cracks the chain across a thing, and lets go of it again', () => {
+    const first = hit(EMPTY_WORLD, 'dowsing', solidA.id)
+    expect(first.report).toMatchObject({ kind: 'lashed', solidId: solidA.id, hits: 1 })
+    // Knocked back and turned by the blow, and held by nothing afterwards: a
+    // whip is over the moment it lands.
+    const struck = first.world.solids[solidA.id]
+    expect(struck.rotation).toBe(40)
+    expect(struck.bound).toBeUndefined()
+    expect(hit(first.world, 'dowsing', solidA.id).report).toMatchObject({ hits: 2 })
+  })
+
+  it('points at the room instead when there is nothing down the reticle to hit', () => {
+    const swung = hit(EMPTY_WORLD, 'dowsing', null)
+    expect(swung.report.kind).toBe('dowsed')
+    expect(swung.world.dowsing).toBe(busiest.space.id)
+  })
+
   it('puts back whatever was done, and says when there was nothing to put back', () => {
     const crushed = hit(EMPTY_WORLD, 'impact', solidA.id).world
     const mended = hit(crushed, 'stitch', solidA.id)

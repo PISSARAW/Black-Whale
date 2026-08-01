@@ -54,6 +54,7 @@
     SNAKE_BOW,
     SNAKE_HEAD,
     TENTACLES,
+    VOW_CHAIN,
     apparitionsOn,
     coinAt,
     wormMouthAt,
@@ -63,6 +64,9 @@
   } from '$lib/tour/apparitions'
   import { comfort, prefersReducedMotion, type Comfort } from '$lib/tour/comfort'
   import { buildSolidMesh, buildTierMesh } from '$lib/tour/mesh'
+  import { buildDealer } from '$lib/tour/dealer'
+  import { cardFaceSvg } from '$lib/tour/cardArt'
+  import { EYE_FOV, FORGED_AURA, OWL_FOV, type CardFace, type EyeFeed } from '$lib/tour/morena'
   import {
     SPRINT_SPEED,
     STICK_RADIUS,
@@ -232,6 +236,69 @@
      * treatment: built once, keyed on `id`, moved rather than rebuilt.
      */
     extras?: Apparition[]
+    /**
+     * What a camera the page has put in the room is looking at.
+     *
+     * The walk already insets a second picture in the corner whenever Little
+     * Eye has been sent somewhere — that inset *is* the technique, and an
+     * insect flying a room nobody can see through is a fly. The table plays the
+     * same technique from a hand's width above the cards, so it hands its own
+     * camera in here and gets the same corner: where the eye is, what it is
+     * pointed at, and nothing else. `null` when there is no eye at the table.
+     */
+    feed?: EyeFeed | null
+    /**
+     * And what a camera the page has already *taken* is showing.
+     *
+     * The same shape and the opposite tense. `feed` is live — the picture goes
+     * when the thing making it goes — and this is a recording, so it takes the
+     * corner the walk already keeps for playback: the bird's ten seconds are
+     * inset bottom right, and so is this. Whatever is in it was filmed by
+     * something that is not filming any more.
+     */
+    record?: EyeFeed | null
+    /**
+     * A colour the whole room is standing in, or `null` for the ship's own.
+     *
+     * Not a light and not an overlay: the ambient *is* the exposure here — the
+     * image is baked into the vertices and one flat white constant is what
+     * shows it — so colouring that constant colours everything the room is
+     * made of at once, which is the only honest way to say "the room is not
+     * itself at the moment". The air takes it too, or the far end of a space
+     * would stay the ship's own near-black and give the lie away.
+     *
+     * Parallel Future is what this is for: ten seconds are owed back, and until
+     * they are paid the visitor is somewhere everybody else has already been.
+     */
+    tint?: number | null
+    /**
+     * The `id` of the extra down the reticle, mirrored out.
+     *
+     * The room and the solid are found by walking the floor plan, which is what
+     * a wall is: a line on a deck. A card is not on the deck plan at all — it is
+     * eleven centimetres of table, and the only honest way to ask which one a
+     * seated visitor is looking at is to trace the ray at it. So this is the one
+     * thing in the walk that is picked rather than computed, and only the things
+     * the page marked `pick` are in the running.
+     */
+    aimedExtra?: string | null
+    /**
+     * Fired when the visitor takes hold of what is down the reticle.
+     *
+     * A click, or a tap that went nowhere. What it means is entirely the page's:
+     * the scene knows it was card `hand-joker` and nothing whatever about what
+     * playing a Joker does.
+     */
+    onPick?: (id: string) => void
+    /**
+     * Whether a click with the pointer held is a cast.
+     *
+     * It is, on the walk: the reticle is where the aura goes and the mouse is
+     * the only thing pointing anywhere. At Morena's table it is not — the mouse
+     * is how a card is chosen, and a technique spent by a stray click on the
+     * wood would be the game playing itself. F still casts in both places.
+     */
+    castOnClick?: boolean
     /** The room down the reticle, mirrored out for the read-out. */
     aimedAt?: Space | null
     /** The solid down the reticle, for the techniques that work on solids. */
@@ -359,8 +426,14 @@
     reveal = false,
     seated = null,
     extras = [],
+    feed = null,
+    record = null,
+    tint = null,
     aimedAt = $bindable(null),
     aimedSolidAt = $bindable(null),
+    aimedExtra = $bindable(null),
+    castOnClick = true,
+    onPick,
     onCast,
     onArrive,
     onWorm,
@@ -564,7 +637,12 @@
        */
       const AMBIENT = 2.2
       const NIGHT_LIGHT = 1.2
-      scene.add(new THREE.AmbientLight(0xffffff, AMBIENT))
+      const ambient = new THREE.AmbientLight(0xffffff, AMBIENT)
+      scene.add(ambient)
+      /** The tint in force, and the clear colour the air is closing to. */
+      let tinted: number | null = null
+      const WHITE = new THREE.Color(0xffffff)
+      const baseFog = new THREE.Color(0x050505)
       // Its reach is the visitor's to set, down to nothing: see `nightLight` in
       // `$lib/tour/comfort` for why that is a setting and not a constant.
       const nightLight = new THREE.PointLight(
@@ -774,6 +852,23 @@
       let eyeCamera: import('three').PerspectiveCamera | null = null
       let eyeDeck: Built | null = null
       let eyeKey = ''
+
+      /**
+       * And the same eye at the table, which needs no deck of its own.
+       *
+       * The walk's eye is somewhere else on the ship, so half of what `syncEye`
+       * does is keeping the room it is watching in the scene. This one is in
+       * the room the visitor is sitting in — it is over the cards in front of
+       * them — so it is a camera and nothing else, aimed wherever the page says
+       * the insect is holding.
+       */
+      let tableCamera: import('three').PerspectiveCamera | null = null
+      /**
+       * And the same technique's other half at the same table: the owl's
+       * recording, which is a camera that does not move because the thing that
+       * made the picture is a bird bolted to a bulkhead an hour ago.
+       */
+      let recordCamera: import('three').PerspectiveCamera | null = null
 
       /**
        * Secret Window's film: where the bird was, and the playback of it.
@@ -1485,8 +1580,27 @@
         tierId: string
         /** The far end, for a mouth of the tunnel. */
         pair: Apparition['pair']
+        /** Whether the reticle may take hold of it. See `Apparition.pick`. */
+        pick: boolean
         /** The disc the other end is rendered onto. */
         pane: import('three').Mesh | null
+        /**
+         * The way it was last looking, for the one that can stop looking.
+         *
+         * Survives a rebuild, which nothing else on a mesh does — see the
+         * dealer in `driftApparitions`.
+         */
+        facing?: number
+        /**
+         * The middle it is actually working, for the one that is flown there.
+         *
+         * Everything else in this list is *put* somewhere: a mark goes up over
+         * a room and a card is laid on a table, and both are where they are the
+         * frame they are given. The insect is not put anywhere — it is sent,
+         * and being told to look at something else is an order it has to cross
+         * the room to obey. So it chases `at` rather than sitting on it.
+         */
+        flown?: import('three').Vector3
       }
 
       // A plain record for the same reason the solids are one: the render loop
@@ -1507,6 +1621,45 @@
           side: THREE.DoubleSide,
         })
         glowMaterials[key] = made
+        return made
+      }
+
+      /**
+       * The mark on a card, as a material.
+       *
+       * The panel draws the twelve faces as SVG and the table drew none of
+       * them: a card on the wood was a coloured rectangle, which is legible as
+       * *a card* and says nothing about which one. That was tolerable while the
+       * only thing looking at the table was a visitor who had the panel open
+       * beside it, and it stopped being tolerable the moment a camera was put a
+       * hand's width above her fan — a feed of seven grey rectangles is not a
+       * hand anybody has read.
+       *
+       * So the same drawing is loaded off `$lib/tour/cardArt` as an image and
+       * laid over the card's own colour: ink on a face that is still the colour
+       * it always was, which is what the chapters draw. Cached by face and ink,
+       * because seven cards of the same suit are one upload.
+       */
+      const faceTextures: Record<string, import('three').Texture | undefined> = {}
+      const faceMaterials: Record<string, import('three').MeshBasicMaterial | undefined> = {}
+      const cardFace = (face: CardFace, ink: string) => {
+        const key = `${face}|${ink}`
+        const held = faceMaterials[key]
+        if (held) return held
+        const texture = new THREE.TextureLoader().load(cardFaceSvg(face, ink))
+        texture.colorSpace = THREE.SRGBColorSpace
+        // The bake is flat colour and the drawing is line work at a slant, so
+        // the mark is the one thing aboard that wants filtering rather than
+        // pixels: without it the thin strokes crawl as the head moves.
+        texture.anisotropy = renderer.capabilities.getMaxAnisotropy()
+        faceTextures[key] = texture
+        const made = new THREE.MeshBasicMaterial({
+          map: texture,
+          transparent: true,
+          depthWrite: false,
+          side: THREE.DoubleSide,
+        })
+        faceMaterials[key] = made
         return made
       }
 
@@ -3009,67 +3162,11 @@
 
         if (seen.kind === 'dealer') {
           // Seated, arms on the table, and unmistakably a person rather than an
-          // apparition: she is the only thing aboard that is simply there. The
-          // face is left blank on purpose — the archive draws no character, and
-          // what a reader brings to the chair opposite is better than a guess.
-          const cloth = glow(seen.colour, 0.95)
-          const pale = glow(0xf0dfe2, 0.95)
-          const dark = glow(0x241820, 1)
-
-          const torso = new THREE.Mesh(
-            new THREE.CylinderGeometry(seen.size * 0.62, seen.size * 0.78, seen.size * 1.5, 12),
-            cloth,
-          )
-          root.add(torso)
-
-          // Forearms laid along the table top, which is where a dealer's hands
-          // are and the first thing you look at across one. The height is not
-          // free: `TABLE_HEIGHT` above the deck is where the wood is, and an arm
-          // a hand's breadth under it is an arm inside the table.
-          for (const side of [-1, 1]) {
-            const arm = new THREE.Mesh(
-              new THREE.CapsuleGeometry(seen.size * 0.15, seen.size * 0.75, 4, 8),
-              cloth,
-            )
-            arm.rotation.x = Math.PI / 2
-            arm.rotation.z = side * 0.3
-            arm.position.set(side * seen.size * 0.58, seen.size * 0.18, seen.size * 0.6)
-            root.add(arm)
-            const hand = new THREE.Mesh(new THREE.SphereGeometry(seen.size * 0.16, 8, 6), pale)
-            hand.position.set(side * seen.size * 0.76, seen.size * 0.18, seen.size * 1.05)
-            root.add(hand)
-          }
-
-          const neck = new THREE.Mesh(
-            new THREE.CylinderGeometry(seen.size * 0.15, seen.size * 0.19, seen.size * 0.24, 8),
-            pale,
-          )
-          neck.position.y = seen.size * 0.86
-          root.add(neck)
-
-          const head = new THREE.Mesh(new THREE.SphereGeometry(seen.size * 0.33, 12, 10), pale)
-          head.position.y = seen.size * 1.18
-          root.add(head)
-
-          // The long hair is the silhouette, and the silhouette is the whole of
-          // how she reads from the far side of a table in a dark room. Kept
-          // behind the face rather than around it: a head with no face at all is
-          // a hood, and she is not wearing one.
-          const hair = new THREE.Mesh(
-            new THREE.CylinderGeometry(seen.size * 0.34, seen.size * 0.42, seen.size * 0.8, 12),
-            dark,
-          )
-          hair.position.set(0, seen.size * 0.82, -seen.size * 0.2)
-          root.add(hair)
-          const crown = new THREE.Mesh(new THREE.SphereGeometry(seen.size * 0.37, 12, 10), dark)
-          crown.position.set(0, seen.size * 1.24, -seen.size * 0.09)
-          crown.scale.set(1, 0.85, 1)
-          root.add(crown)
-
-          // She leans in when she offers the kiss, and sits back when the hand
-          // is played out. `stage` is the only thing the game tells the scene.
-          if (seen.stage === 1) root.rotation.x = -0.14
-          if (seen.stage === 2) root.rotation.x = 0.1
+          // apparition: she is the only thing aboard that is simply there — and
+          // the only one drawn with a face, because she is the only one the
+          // walk puts you a metre and a half away from for a quarter of an
+          // hour. See `$lib/tour/dealer`, which is all of her.
+          root.add(buildDealer({ THREE, glow, seen }))
           turns = null
         }
 
@@ -3082,13 +3179,54 @@
           )
           face.rotation.x = -Math.PI / 2
           root.add(face)
+          // The rim says whose card it is and who has read it: dark for a card
+          // still face down, bone for one face up — and cold blue for the one
+          // something has told you she is reaching for next. Foresight has no
+          // other body at this table, and a card picked out of a fan is what
+          // being told looks like from the chair.
           const rim = new THREE.Mesh(
             new THREE.PlaneGeometry(seen.size * 1.12, seen.size * 1.62),
-            glow(seen.stage === 0 ? 0x6b4c58 : 0xf5efe6, 0.7),
+            glow(
+              seen.stage === 0
+                ? 0x6b4c58
+                : seen.stage === 4
+                  ? 0x8ecae6
+                  : seen.stage === 5
+                    ? FORGED_AURA
+                    : 0xf5efe6,
+              0.7,
+            ),
           )
           rim.rotation.x = -Math.PI / 2
           rim.position.y = -0.001
           root.add(rim)
+          // And the mark, on every card that is lying face up. It reads from
+          // the guest's chair — the top of the drawing points across the table
+          // at the woman opposite, which is the way a card is laid down by the
+          // person holding it — and it is drawn in ink rather than in aura,
+          // because it is printed on the card and not cast on it.
+          if (seen.face) {
+            const mark = new THREE.Mesh(
+              new THREE.PlaneGeometry(seen.size * 0.82, seen.size * 1.16),
+              cardFace(seen.face, seen.stage === 2 ? '#6f6f78' : '#20161c'),
+            )
+            mark.rotation.x = -Math.PI / 2
+            mark.position.y = 0.002
+            root.add(mark)
+          }
+          // The forged card, which is a face with nothing under it: the pink is
+          // the aura holding it together, so it is drawn as aura — a wash lying
+          // on the wood around the card, wider and fainter than the card's own
+          // rim, rather than as anything printed on the face.
+          if (seen.stage === 5) {
+            const aura = new THREE.Mesh(
+              new THREE.PlaneGeometry(seen.size * 1.9, seen.size * 2.5),
+              glow(FORGED_AURA, 0.22),
+            )
+            aura.rotation.x = -Math.PI / 2
+            aura.position.y = -0.002
+            root.add(aura)
+          }
           // The card Morena marked carries the mark: a nick in one corner, which
           // is exactly as much as a reader is meant to be able to see of it.
           if (seen.stage === 3) {
@@ -3101,6 +3239,286 @@
             nick.position.set(seen.size * 0.32, 0.001, -seen.size * 0.6)
             root.add(nick)
           }
+          turns = null
+        }
+
+        if (seen.kind === 'ghost') {
+          // Neon's beast: a pale animal hanging in the air with its mouth open
+          // and a pen in one hand. Drawn crudely like everything else aboard,
+          // and recognisable by the two things everyone remembers of it — the
+          // long jaw wide open, and the fact that it is holding your pen.
+          const body = new THREE.Mesh(new THREE.SphereGeometry(seen.size, 10, 8), skin)
+          body.scale.set(0.9, 1, 1.25)
+          root.add(body)
+          const head = new THREE.Group()
+          head.position.set(0, seen.size * 0.9, -seen.size * 0.35)
+          const skull = new THREE.Mesh(new THREE.SphereGeometry(seen.size * 0.66, 10, 8), skin)
+          skull.scale.set(1, 0.8, 1.5)
+          head.add(skull)
+          // The mouth, which is the whole of the face: open, dark, and turned
+          // down at the table it is writing on.
+          const mouth = new THREE.Mesh(
+            new THREE.ConeGeometry(seen.size * 0.42, seen.size * 0.9, 8, 1, true),
+            glow(0x2a1f33, 0.95),
+          )
+          mouth.rotation.x = -Math.PI / 2.2
+          mouth.position.set(0, -seen.size * 0.12, -seen.size * 0.7)
+          head.add(mouth)
+          for (const side of [-1, 1]) {
+            const eye = new THREE.Mesh(
+              new THREE.SphereGeometry(seen.size * 0.12, 8, 6),
+              glow(0xfdfbff, 1),
+            )
+            eye.position.set(side * seen.size * 0.26, seen.size * 0.3, -seen.size * 0.5)
+            head.add(eye)
+          }
+          root.add(head)
+          // The arm and the pen, held down at the wood. Once the quatrain is
+          // written the nib is at the table rather than over it, which is the
+          // only difference between a beast waiting and a beast that has
+          // already said what is going to happen to you.
+          const arm = new THREE.Mesh(
+            new THREE.CylinderGeometry(seen.size * 0.07, seen.size * 0.07, seen.size * 1.1, 6),
+            skin,
+          )
+          arm.position.set(-seen.size * 0.5, -seen.size * 0.3, -seen.size * 0.3)
+          arm.rotation.z = 0.6
+          root.add(arm)
+          const pen = new THREE.Mesh(
+            new THREE.CylinderGeometry(seen.size * 0.035, seen.size * 0.01, seen.size * 0.8, 6),
+            glow(0xfff4d6, 1),
+          )
+          pen.position.set(
+            -seen.size * 0.85,
+            seen.size * (seen.stage > 0 ? -1.05 : -0.7),
+            -seen.size * 0.5,
+          )
+          pen.rotation.z = seen.stage > 0 ? 0.15 : 0.5
+          root.add(pen)
+          // The page, laid on the wood under the nib, and only once there is
+          // something on it: a poem is a thing in the room after it is written.
+          if (seen.stage > 0) {
+            const page = new THREE.Mesh(
+              new THREE.PlaneGeometry(seen.size * 1.5, seen.size * 2),
+              glow(0xf6f3ec, 0.85),
+            )
+            page.rotation.x = -Math.PI / 2
+            page.position.set(-seen.size * 0.9, -seen.size * 1.6, -seen.size * 0.2)
+            root.add(page)
+          }
+          turns = null
+        }
+
+        if (seen.kind === 'vow-heart') {
+          // The vow, where it is actually sworn.
+          //
+          // Every other technique in the walk is put somewhere — over a room, on
+          // a bulkhead, at an elbow. Judgment Chain is put *in* somebody, and the
+          // only body the walk has is the one the reader is looking out of. So
+          // this is worn at the sternum and seen by looking down, and there is
+          // nothing to aim it at: the chain is already round it.
+          //
+          // Built in three parts, because the whole reading is the difference
+          // between them: meat, which beats; links, which do not; and a lock,
+          // which is the moment the thing stopped being reversible. The flesh is
+          // its own group so the drift can swell it without the chain giving —
+          // a heart pressing against a chain that will not move is the entire
+          // argument of the technique in one gesture.
+          const meat = glow(seen.colour, seen.stage === 2 ? 0.4 : 0.95)
+          const flesh = new THREE.Group()
+          for (const side of [-1, 1]) {
+            const lobe = new THREE.Mesh(new THREE.SphereGeometry(seen.size * 0.58, 12, 10), meat)
+            lobe.position.set(side * seen.size * 0.42, seen.size * 0.34, 0)
+            flesh.add(lobe)
+          }
+          const point = new THREE.Mesh(
+            new THREE.ConeGeometry(seen.size * 0.95, seen.size * 1.7, 14),
+            meat,
+          )
+          // A cone stands on its base; a heart hangs from its lobes and comes to
+          // a point underneath, so it is turned over.
+          point.rotation.x = Math.PI
+          point.position.y = -seen.size * 0.5
+          flesh.add(point)
+          root.add(flesh)
+
+          if (seen.stage > 0) {
+            // Wound, not draped: three bands crossing at angles that have
+            // nothing to do with each other, which is how a thing is bound by
+            // somebody who means it rather than wrapped by somebody tidying.
+            const steel = glow(VOW_CHAIN, 1)
+            const linkGeometry = new THREE.TorusGeometry(seen.size * 0.17, seen.size * 0.055, 4, 8)
+            const band = (tilt: Vec2, radius: number) => {
+              const ring = new THREE.Group()
+              for (let i = 0; i < CHAIN_LINKS; i++) {
+                const along = (i / CHAIN_LINKS) * Math.PI * 2
+                const link = new THREE.Mesh(linkGeometry, steel)
+                link.position.set(Math.cos(along) * radius, 0, Math.sin(along) * radius)
+                // A ring lies in its own plane, so it is turned to stand across
+                // the circle it is running round — and every other one is given
+                // a quarter turn on top of that, which is the only thing that
+                // makes a row of rings read as a chain.
+                link.rotation.y = Math.PI / 2 - along
+                if (i % 2) link.rotateX(Math.PI / 2)
+                ring.add(link)
+              }
+              ring.rotation.set(tilt[0], tilt[1], 0)
+              return ring
+            }
+            root.add(band([0.28, 0], seen.size * 1.02))
+            root.add(band([1.15, 0.9], seen.size * 0.98))
+            root.add(band([-0.75, 2.1], seen.size * 0.94))
+
+            // And the lock, hanging where the bands cross in front. It is the
+            // small part and it is the whole of what a vow is: the difference
+            // between a chain lying on something and a chain that has been shut.
+            const body = new THREE.Mesh(
+              new THREE.BoxGeometry(seen.size * 0.3, seen.size * 0.26, seen.size * 0.12),
+              steel,
+            )
+            const shackle = new THREE.Mesh(
+              new THREE.TorusGeometry(seen.size * 0.12, seen.size * 0.035, 4, 10, Math.PI),
+              steel,
+            )
+            shackle.position.y = seen.size * 0.13
+            body.add(shackle)
+            body.position.set(0, seen.size * 0.1, seen.size * 1.05)
+            root.add(body)
+          }
+
+          // The flesh, for the drift: children[0], the way the chain's ball is.
+          turns = flesh
+        }
+
+        if (seen.kind === 'cat') {
+          // Camilla's cat, which is drawn sitting because that is all it ever
+          // does until somebody kills its owner. `size` is the shoulder height,
+          // so the animal is built at the scale of a cat rather than at the
+          // scale of the room it is in.
+          //
+          // Three stages, and they are three postures: sitting and looking away
+          // (nobody has been told about it), sitting and looking at the woman
+          // opposite (they have), and standing where she was (it collected).
+          const fur = glow(seen.colour, seen.stage === 2 ? 1 : 0.85)
+          const body = new THREE.Mesh(
+            new THREE.CapsuleGeometry(seen.size * 0.36, seen.size * 0.5, 4, 10),
+            fur,
+          )
+          // Sitting: the trunk is upright and the animal is short. Standing, it
+          // is a quadruped, which is the same capsule tipped onto its side.
+          if (seen.stage === 2) {
+            body.rotation.x = Math.PI / 2
+            body.position.y = seen.size * 0.72
+          } else {
+            body.position.y = seen.size * 0.5
+          }
+          root.add(body)
+
+          const head = new THREE.Mesh(new THREE.SphereGeometry(seen.size * 0.3, 10, 8), fur)
+          head.position.set(0, seen.size * (seen.stage === 2 ? 1.02 : 1.12), seen.size * 0.34)
+          root.add(head)
+          for (const side of [-1, 1]) {
+            const ear = new THREE.Mesh(
+              new THREE.ConeGeometry(seen.size * 0.12, seen.size * 0.22, 4),
+              fur,
+            )
+            ear.position.set(side * seen.size * 0.16, seen.size * 0.24, -seen.size * 0.04)
+            head.add(ear)
+            // The eyes are the only part of it that is not fur, and they are
+            // what a cat in a dark corner actually is: two points, and they are
+            // pointed at you. Brighter once it has done what it is for.
+            const eye = new THREE.Mesh(
+              new THREE.SphereGeometry(seen.size * 0.05, 6, 5),
+              glow(0xfff2a8, seen.stage === 2 ? 1 : 0.8),
+            )
+            eye.position.set(side * seen.size * 0.12, seen.size * 0.04, seen.size * 0.26)
+            head.add(eye)
+          }
+
+          // And the tail, which is the only thing about a sitting cat that
+          // moves. Four beads, curled round the front of it, strung by the
+          // drift the way the chain's links are.
+          const tail = new THREE.Group()
+          for (let i = 0; i < 4; i++) {
+            const bead = new THREE.Mesh(
+              new THREE.SphereGeometry(seen.size * (0.11 - i * 0.015), 6, 5),
+              fur,
+            )
+            bead.position.set(0, seen.size * 0.16, -seen.size * (0.36 + i * 0.2))
+            tail.add(bead)
+          }
+          root.add(tail)
+          turns = tail
+        }
+
+        if (seen.kind === 'contract') {
+          // A sheet and a pen, both made of the same aura, and the whole of the
+          // technique is what is written on the one with the other. Two stages,
+          // and they are the two states a contract has ever had: blank, standing
+          // up between the parties while the terms are read out; and signed,
+          // lying on the wood with the pen across it.
+          const aura = glow(seen.colour, seen.stage === 0 ? 0.55 : 0.8)
+          const ink = glow(0x2b3a5c, 0.9)
+          const long = seen.size
+          const tall = seen.size * 0.72
+
+          const sheet = new THREE.Mesh(new THREE.PlaneGeometry(long, tall), aura)
+          // Standing it up is the difference between a document being read and
+          // one that has been filed. Flat, it faces the deckhead; upright, it
+          // faces whoever is being asked to sign it.
+          if (seen.stage > 0) sheet.rotation.x = -Math.PI / 2
+          root.add(sheet)
+
+          // What is on it. Ruled lines rather than words, because a contract
+          // legible from a chair would be a contract the room had written for
+          // you — the terms are the panel's to state, and the sheet's part is
+          // to be a thing with terms on it. Only once it is signed: an unsigned
+          // sheet of aura is blank, which is the state the manga draws.
+          if (seen.stage > 0) {
+            for (let line = 0; line < 5; line++) {
+              const ruled = new THREE.Mesh(
+                new THREE.PlaneGeometry(long * (line === 4 ? 0.34 : 0.66), tall * 0.045),
+                ink,
+              )
+              ruled.rotation.x = -Math.PI / 2
+              // The last one is the signature: short, off to the right, and
+              // sitting under a gap the way a name on a line does.
+              ruled.position.set(
+                line === 4 ? long * 0.24 : -long * 0.1,
+                0.001,
+                tall * (-0.3 + line * 0.13 + (line === 4 ? 0.06 : 0)),
+              )
+              root.add(ruled)
+            }
+          }
+
+          // And the pen. Alongside the sheet while it is being read, across the
+          // corner of it once it is not needed any more.
+          const pen = new THREE.Group()
+          const barrel = new THREE.Mesh(
+            new THREE.CylinderGeometry(seen.size * 0.022, seen.size * 0.022, seen.size * 0.5, 6),
+            aura,
+          )
+          const nib = new THREE.Mesh(
+            new THREE.ConeGeometry(seen.size * 0.024, seen.size * 0.09, 6),
+            ink,
+          )
+          nib.position.y = -seen.size * 0.29
+          nib.rotation.x = Math.PI
+          pen.add(barrel)
+          pen.add(nib)
+          if (seen.stage > 0) {
+            // Laid down: across the sheet, tipped off the horizontal the way a
+            // pen that was put down rather than placed lies.
+            pen.rotation.set(Math.PI / 2, 0, 0)
+            pen.rotateY(0.6)
+            pen.position.set(long * 0.12, seen.size * 0.03, -tall * 0.1)
+          } else {
+            // Held: upright beside the sheet, on the side the person signing is.
+            pen.rotation.z = -0.35
+            pen.position.set(long * 0.62, -tall * 0.1, 0)
+          }
+          root.add(pen)
           turns = null
         }
 
@@ -3160,6 +3578,7 @@
           size: seen.size,
           tierId: seen.tierId,
           pair: seen.pair,
+          pick: seen.pick ?? false,
           pane,
         }
       }
@@ -3196,8 +3615,13 @@
           standing[seen.id] = true
           // Everything the geometry depends on. Position is not in it: a thing
           // that moved is moved, not rebuilt.
-          const key = `${seen.kind}|${seen.stage}|${seen.colour}|${seen.size}|${seen.hidden}|${seen.pair?.spaceId ?? ''}|${seen.climb ?? ''}`
+          const key = `${seen.kind}|${seen.stage}|${seen.colour}|${seen.size}|${seen.hidden}|${seen.pair?.spaceId ?? ''}|${seen.climb ?? ''}|${seen.face ?? ''}`
           let held = apparitions[seen.id]
+          // The two things about a thing that outlive the thing: which way it
+          // was looking, and where it had got to. Everything else a mesh knows
+          // is rebuilt with it.
+          const facing = held?.facing
+          const flown = held?.flown
           if (held && held.key !== key) {
             dropApparition(seen.id)
             held = undefined
@@ -3205,6 +3629,8 @@
           if (!held) {
             held = buildApparition(seen)
             held.key = key
+            held.facing = facing
+            held.flown = flown
             apparitions[seen.id] = held
             scene.add(held.root)
           }
@@ -3215,10 +3641,112 @@
           held.size = seen.size
           held.tierId = seen.tierId
           held.pair = seen.pair
+          // Not part of the key: whether a card may be taken hold of changes
+          // every time the phase does, and a hand that rebuilt five meshes each
+          // time it became your turn would be a table that flickers.
+          held.pick = seen.pick ?? false
           held.root.position.set(seen.at[0], seen.y, seen.at[1])
         }
 
-        for (const id of Object.keys(apparitions)) if (!standing[id]) dropApparition(id)
+        for (const id of Object.keys(apparitions)) {
+          if (standing[id]) continue
+          // A card is the one apparition that is taken rather than dispelled,
+          // so it is the one that leaves instead of vanishing. See `sweepCard`.
+          const held = apparitions[id]
+          if (held?.kind === 'game-card') {
+            sweepCard(held)
+            delete apparitions[id]
+            continue
+          }
+          dropApparition(id)
+        }
+      }
+
+      // ── Cards leaving the table ──────────────────
+      //
+      // Everything else in this scene appears and disappears, because a
+      // technique that has ended has left the room. A card has not: somebody
+      // took it. The Manipulation is the whole reason this exists — the canon
+      // sanction of Morena's game is three cards leaving the guest's hand at
+      // once, which is the most violent thing that happens at that table, and
+      // it used to happen between two frames with nothing to see.
+      //
+      // The rule the drift keeps — a card does not move — is kept here too. A
+      // card that is *going* is not a card lying on the table, and it is gone
+      // in under half a second.
+
+      /** How long a card takes to leave, in seconds. */
+      const CARD_EXIT = 0.45
+      /** How far it goes before it is let go of, in metres. */
+      const CARD_REACH = 0.55
+
+      const leaving: {
+        root: import('three').Group
+        from: import('three').Vector3
+        to: import('three').Vector3
+        through: number
+        /** Cloned per card: the glow materials are shared by colour, and a card
+         *  fading out would otherwise take every card of its colour with it. */
+        fades: { material: import('three').MeshBasicMaterial; from: number }[]
+      }[] = []
+
+      /**
+       * Hand a card to whoever took it.
+       *
+       * Away from the visitor, because the person on the other side of this
+       * table is the only one who takes anything off it — that is true of the
+       * card she draws each round and true of the three the Manipulation
+       * removes, and it needs no name to be true.
+       */
+      function sweepCard(held: Shown) {
+        const from = held.root.position.clone()
+        const away = new THREE.Vector3(from.x - camera.position.x, 0, from.z - camera.position.z)
+        if (away.lengthSq() < 1e-6) away.set(0, 0, -1)
+        away.normalize().multiplyScalar(CARD_REACH)
+
+        const fades: { material: import('three').MeshBasicMaterial; from: number }[] = []
+        held.root.traverse((part) => {
+          const mesh = part as import('three').Mesh
+          if (!mesh.material) return
+          const own = (mesh.material as import('three').MeshBasicMaterial).clone()
+          mesh.material = own
+          fades.push({ material: own, from: own.opacity })
+        })
+
+        leaving.push({
+          root: held.root,
+          from,
+          to: new THREE.Vector3(from.x + away.x, from.y + 0.07, from.z + away.z),
+          through: 0,
+          fades,
+        })
+      }
+
+      function driftLeavingCards(delta: number) {
+        for (let i = leaving.length - 1; i >= 0; i--) {
+          const card = leaving[i]
+          card.through += delta / CARD_EXIT
+          if (card.through >= 1) {
+            dropLeavingCard(i)
+            continue
+          }
+          // Out fast and slowing: a card is pulled, and the hand that pulled it
+          // stops. Linear would be a card on a conveyor.
+          const eased = 1 - (1 - card.through) * (1 - card.through)
+          card.root.position.lerpVectors(card.from, card.to, eased)
+          for (const fade of card.fades) fade.material.opacity = fade.from * (1 - card.through)
+        }
+      }
+
+      function dropLeavingCard(index: number) {
+        const card = leaving[index]
+        scene.remove(card.root)
+        card.root.traverse((part) => {
+          const mesh = part as import('three').Mesh
+          if (mesh.geometry) mesh.geometry.dispose()
+        })
+        for (const fade of card.fades) fade.material.dispose()
+        leaving.splice(index, 1)
       }
 
       /**
@@ -3464,7 +3992,10 @@
        * sigil rotating, a double breathing. It costs nothing, and without it the
        * technique reads as a prop left in the room rather than as aura.
        */
-      function driftApparitions(seconds: number) {
+      /** Where the insect has been told to be, held once rather than per frame. */
+      const FLY_TO = new THREE.Vector3()
+
+      function driftApparitions(seconds: number, delta: number) {
         for (const [id, held] of Object.entries(apparitions)) {
           if (!held) continue
           const phase = seconds + id.length
@@ -3488,22 +4019,87 @@
             continue
           }
 
+          if (held.kind === 'vow-heart') {
+            // Worn at the sternum, a little to the left of it, the way the organ
+            // is. Nothing about it is aimed and nothing about it swings: it is
+            // carried the way the book and the ball are, and it is the only one
+            // of the three that is not in a hand.
+            const sin = Math.sin(yaw)
+            const cos = Math.cos(yaw)
+            held.root.position.set(
+              camera.position.x - cos * 0.26 - sin * 0.34,
+              camera.position.y - 0.4,
+              camera.position.z + sin * 0.26 - cos * 0.34,
+            )
+            // Tipped back towards the face, for the same reason the open book
+            // is: a thing worn on the chest is looked at from above, and a
+            // heart seen from directly overhead is a shape nobody recognises.
+            held.root.rotation.set(0, yaw, 0)
+            held.root.rotateX(-0.95)
+            // And it beats — twice, the way a heart does, a systole and the
+            // smaller one behind it. Struck, it does not: `sworn-struck` is the
+            // vow being collected, and the one thing the walk can say about that
+            // is the thing that was moving stopping. It is the same sentence the
+            // woman opposite is drawn with, and it is deliberate.
+            if (held.turns) {
+              const beat = (seconds * 1.15) % 1
+              const thump = (at: number, width: number) => Math.exp(-((beat - at) ** 2) / width)
+              const swell =
+                held.stage === 2 ? 0 : (thump(0.06, 0.0025) + thump(0.24, 0.004) * 0.55) * 0.085
+              held.turns.scale.setScalar(1 + swell)
+            }
+            continue
+          }
+
           // A card lies where it was put. Nothing else in this list holds
           // perfectly still — everything Nen leaves standing is riding on the
           // air — and that is exactly why a card must: a card that bobbed would
           // be a card nobody had dealt.
           if (held.kind === 'game-card') {
-            held.root.position.set(held.at[0], held.y, held.at[1])
+            // Except under a finger. A card the visitor is pointing at stands a
+            // centimetre off the wood — which is not the card moving, it is the
+            // hand about to take it, and it is the only way a table with no
+            // cursor on it can say *this one*. It goes down again the moment the
+            // reticle leaves, because nothing was played.
+            const lifted = held.pick && id === aimedExtra ? 0.012 : 0
+            held.root.position.set(held.at[0], held.y + lifted, held.at[1])
+            continue
+          }
+
+          // And the contract, which obeys the same rule for the same reason: a
+          // signed one lies in the corner and does not move, because a document
+          // that drifted would be a document nobody had put down. Unsigned, it
+          // is still aura being held up between two people, so it breathes the
+          // way everything else in this list does.
+          if (held.kind === 'contract') {
+            const air = held.stage > 0 ? 0 : Math.sin(phase * 0.7) * 0.008
+            held.root.position.set(held.at[0], held.y + air, held.at[1])
             continue
           }
 
           // And the woman opposite breathes, and looks at whoever sat down.
+          //
+          // Both of those are hers to lose, and losing one is the only way a
+          // body that is already moving and already facing you can be seen to
+          // react. Stage 3 is the room having told her something: the one thing
+          // in the room that was moving stops, and a reader who was watching the
+          // table rather than the transcript learns that they were seen. Stage 4
+          // is Three Monkeys: she keeps breathing and stops finding you, which
+          // is a different loss and has to read as one.
           if (held.kind === 'dealer') {
-            held.root.position.set(held.at[0], held.y + Math.sin(phase * 0.5) * 0.012, held.at[1])
-            held.root.rotation.y = Math.atan2(
-              camera.position.x - held.root.position.x,
-              camera.position.z - held.root.position.z,
-            )
+            const breath = held.stage === 3 ? 0 : Math.sin(phase * 0.5) * 0.012
+            held.root.position.set(held.at[0], held.y + breath, held.at[1])
+            if (held.stage !== 4) {
+              held.facing = Math.atan2(
+                camera.position.x - held.root.position.x,
+                camera.position.z - held.root.position.z,
+              )
+            }
+            // Held rather than read back off the mesh: a change of stage rebuilds
+            // her, and a rebuilt dealer whose head snapped to due north the
+            // instant she was blinded would read as a fault rather than as a
+            // woman who has lost you.
+            held.root.rotation.y = held.facing ?? 0
             continue
           }
 
@@ -3883,13 +4479,22 @@
           }
 
           if (held.kind === 'insect') {
+            // Where it is working, which is not always where it has been told
+            // to work: an order to go and film something else is a flight
+            // across the room, and the walk has always shown that flight —
+            // over Morena's table it is the whole of what a cast looks like,
+            // the camera coming down off the deckhead onto her fan. Two
+            // seconds or so to cross, which is a fly crossing a room.
+            const told = held.flown ?? new THREE.Vector3(held.at[0], held.y, held.at[1])
+            told.lerp(FLY_TO.set(held.at[0], held.y, held.at[1]), 1 - Math.exp(-delta * 1.6))
+            held.flown = told
             // Not a ring: a fly does not orbit. Two sines that do not divide
             // into each other, so it never comes back round the same way, and
             // a fast one on the height because that is what reads as wings.
             held.root.position.set(
-              held.at[0] + Math.sin(phase * 1.7) * held.spread,
-              held.y + Math.sin(phase * 2.6) * 0.18,
-              held.at[1] + Math.sin(phase * 1.1 + 1.3) * held.spread,
+              told.x + Math.sin(phase * 1.7) * held.spread,
+              told.y + Math.sin(phase * 2.6) * 0.18,
+              told.z + Math.sin(phase * 1.1 + 1.3) * held.spread,
             )
             // Nose along the way it is going, which for two sines is where it
             // was a breath ago compared with where it is now.
@@ -4326,7 +4931,9 @@
           if (burning) {
             burning = 0
             renderer.toneMappingExposure = blinded ? 0.02 : 1
-            fog.color.setHex(0x050505)
+            // Back to whatever the room's colour actually is, which is not
+            // always the ship's: a technique may have left it standing in one.
+            fog.color.copy(baseFog)
           }
           played = null
           return
@@ -4441,6 +5048,74 @@
               range: reachOf(world.body) / 2,
             })
           : null
+      }
+
+      // ── What the hand can reach ──────────────────
+      //
+      // The one thing in the walk that is picked rather than computed. Every
+      // other question the reticle asks — which room, which solid — is answered
+      // by walking the deck plan, because a room is a polygon on a floor and a
+      // ray is a needlessly exact way of asking. A card is not on any plan: it
+      // is eleven centimetres of table a metre from a seated eye, and half a
+      // degree either way is a different card. So this traces the ray.
+      //
+      // Only what the page marked `pick` is in the running, which is normally
+      // nothing at all: the walk hands nothing over, and the raycaster is handed
+      // an empty list and never runs.
+
+      const picker = new THREE.Raycaster()
+      /** The middle of the screen, where a held pointer is always looking. */
+      const RETICLE = new THREE.Vector2(0, 0)
+      /** And where a free cursor is, in clip space, for a page that has one. */
+      const cursor = new THREE.Vector2()
+
+      /** The cursor, or a finger, in the clip space the raycaster wants. */
+      function aimFrom(clientX: number, clientY: number) {
+        const box = canvas?.getBoundingClientRect()
+        if (!box || !box.width || !box.height) return cursor
+        cursor.set(
+          ((clientX - box.left) / box.width) * 2 - 1,
+          -((clientY - box.top) / box.height) * 2 + 1,
+        )
+        return cursor
+      }
+
+      /** Whether the pointer is the scene's, which decides where it is pointing. */
+      const pointerIsHeld = () => document.pointerLockElement === canvas
+
+      /** The `id` of the pickable thing that ray meets first, if any. */
+      function whatIsUnder(aim: import('three').Vector2): string | null {
+        const roots: import('three').Object3D[] = []
+        const owners: Record<number, string> = {}
+        for (const [id, shown] of Object.entries(apparitions)) {
+          if (!shown?.pick) continue
+          owners[shown.root.id] = id
+          roots.push(shown.root)
+        }
+        if (!roots.length) return null
+        picker.setFromCamera(aim, camera)
+        for (const hit of picker.intersectObjects(roots, true)) {
+          // The hit is on a face or a rim; the card is whichever group above it
+          // was handed in. Walked up rather than read off the mesh, because a
+          // card is several meshes and only the group has a name.
+          let part: import('three').Object3D | null = hit.object
+          while (part) {
+            const owner = owners[part.id]
+            if (owner) return owner
+            part = part.parent
+          }
+        }
+        return null
+      }
+
+      /** Take hold of what is under a gesture, and say whether anything was. */
+      function takeWhatIsUnder(aim: import('three').Vector2): boolean {
+        if (!onPick) return false
+        const picked = whatIsUnder(aim)
+        if (!picked) return false
+        aimedExtra = picked
+        onPick(picked)
+        return true
       }
 
       // ── Machi's thread ───────────────────────────
@@ -4690,6 +5365,23 @@
       const snapStep = () => ($comfort.snapAngle * Math.PI) / 180
 
       const onKeyDown = (event: KeyboardEvent) => {
+        // Giving the pointer back, without giving the screen back with it.
+        //
+        // Esc releases the pointer, and in full screen it also leaves full
+        // screen — the browser answers it before the page does, so a visitor who
+        // touched the walk to look around has to drop out of full screen to get
+        // a cursor for the panel beside it. Tab is the second way out: it means
+        // "hand the keyboard back to the page" everywhere else, it is nothing to
+        // the walk while the pointer is held, and full screen is untouched.
+        //
+        // Ahead of `typingElsewhere` on purpose: a captured pointer belongs to
+        // the scene whatever the page last focused, and that is exactly the case
+        // where the visitor most needs the way out.
+        if (event.code === 'Tab' && document.pointerLockElement === canvas) {
+          event.preventDefault()
+          document.exitPointerLock()
+          return
+        }
         if (typingElsewhere(event.target)) return
         pressed[event.code] = true
         // Space and the arrows scroll the page underneath an engaged pointer.
@@ -4813,15 +5505,26 @@
 
       const onMouseMove = (event: MouseEvent) => {
         if (behindATap() || !Number.isFinite(event.movementX)) return
+        // Where a free cursor is, for the table: a pointer that was never taken
+        // is still pointing at something, and a visitor who has not clicked into
+        // the room should still be able to play a card by clicking it.
+        if (!pointerIsHeld()) aimFrom(event.clientX, event.clientY)
         if (document.pointerLockElement === canvas) look(event.movementX, event.movementY)
         else if (dragging) look(event.movementX, event.movementY)
       }
-      const onMouseDown = () => {
+      const onMouseDown = (event: MouseEvent) => {
         if (behindATap()) return
+        // A thing that can be taken hold of answers the click before anything
+        // else does. This is the table and only the table: on the walk nothing
+        // is pickable, the ray is never traced, and the two branches below are
+        // the whole of what a click has ever done.
+        if (takeWhatIsUnder(pointerIsHeld() ? RETICLE : aimFrom(event.clientX, event.clientY))) {
+          return
+        }
         // With the pointer already captured, the click is the cast: the walk is
         // in first person and the reticle is where the aura goes. Before that,
         // the first click still has to be the one that takes the pointer.
-        if (aiming && document.pointerLockElement === canvas) {
+        if (castOnClick && aiming && document.pointerLockElement === canvas) {
           cast()
           return
         }
@@ -4883,8 +5586,14 @@
       }
       const onTouchEnd = (event: TouchEvent) => {
         touchedAt = performance.now()
-        if (!named(event.changedTouches, lookFinger)) return
-        if (lastTouch && travelled < TAP_SLOP && aiming) cast()
+        const finger = named(event.changedTouches, lookFinger)
+        if (!finger) return
+        if (lastTouch && travelled < TAP_SLOP) {
+          // A tap on a card is that card, and a tap on the wood is the cast. A
+          // phone has no reticle, so where the finger landed is the aim.
+          const took = takeWhatIsUnder(aimFrom(finger.clientX, finger.clientY))
+          if (!took && aiming) cast()
+        }
         lastTouch = null
         lookFinger = null
       }
@@ -5100,6 +5809,8 @@
       let aimedId: string | null = null
       let aimedSolidId: string | null = null
       let sinceAim = 0
+      /** The same throttle, for the ray that finds a card. */
+      let sincePick = 0
 
       let puppetId: string | null = null
       let puppeteer: {
@@ -5178,7 +5889,8 @@
         sweepStale()
         driftSolids(clock)
         driftMotes(delta, clock)
-        driftApparitions(clock)
+        driftApparitions(clock, delta)
+        driftLeavingCards(delta)
         driftFlash(delta)
         runLash(delta)
         syncGum(clock)
@@ -5469,6 +6181,27 @@
         }
         fog.density = settleDensity(fog.density, blinded ? SEALED_DENSITY : fogTarget, delta)
 
+        // And its colour, when a technique has left the room standing in one.
+        // Applied on the change rather than every frame: nothing here moves,
+        // and the whole point of a tint is that it holds.
+        if (tint !== tinted) {
+          tinted = tint ?? null
+          // Halfway to white, because the ambient is the exposure: the pure
+          // aura colour multiplied into the bake reads as a room that has gone
+          // dim, and what is wanted is a room that has gone blue.
+          ambient.color.setHex(tinted ?? 0xffffff)
+          if (tinted !== null) ambient.color.lerp(WHITE, 0.4)
+          // The air and the far clip take the same colour, a long way down:
+          // the ship's own black at the end of a space would say the tint is
+          // something laid over the picture rather than the light in the room.
+          baseFog.setHex(tinted ?? 0x050505)
+          if (tinted !== null) baseFog.multiplyScalar(0.22)
+          if (!burning) {
+            fog.color.copy(baseFog)
+            renderer.setClearColor(baseFog)
+          }
+        }
+
         // Mirror the loop's state out for the HUD, without re-rendering on
         // every frame: these only change when they actually change.
         if (standing?.id !== untrack(() => currentSpace)?.id) currentSpace = standing
@@ -5568,6 +6301,16 @@
           aimedSolidAt = null
         }
 
+        // And the card, on the same slow poll and for the same reason: a hand
+        // lying on a table is not going anywhere between two frames. Traced
+        // rather than walked — see `whatIsUnder` — and skipped outright where
+        // nothing was handed over, which is everywhere but Morena's table.
+        if (onPick && ++sincePick >= 6) {
+          sincePick = 0
+          const picked = whatIsUnder(pointerIsHeld() || touch ? RETICLE : cursor)
+          if (picked !== aimedExtra) aimedExtra = picked
+        }
+
         const { width, height } = renderer.getSize(size)
         renderer.setScissorTest(false)
         renderer.setViewport(0, 0, width, height)
@@ -5581,50 +6324,69 @@
         if (eyeCamera) {
           eyeCamera.rotation.set(0, 0, 0)
           eyeCamera.rotateY(now / 6000)
-          const feedWidth = Math.round(Math.min(320, width * 0.3))
-          const feedHeight = Math.round(feedWidth * 0.62)
-          const pad = 12
-          const box: [number, number, number, number] = [
-            width - feedWidth - pad,
-            height - feedHeight - pad,
-            feedWidth,
-            feedHeight,
-          ]
-          eyeCamera.aspect = feedWidth / feedHeight
-          eyeCamera.updateProjectionMatrix()
-          renderer.setViewport(...box)
-          renderer.setScissor(...box)
-          renderer.setScissorTest(true)
-          renderer.autoClear = false
-          renderer.clear(true, true, false)
-          renderer.render(scene, eyeCamera)
-          renderer.autoClear = true
-          renderer.setScissorTest(false)
+          renderInset(eyeCamera, 'top')
+        }
+
+        // The table's own eye, which is the same technique doing the same thing
+        // a metre away rather than a deck away: Little Eye is over Morena's fan
+        // and this is what it is sending back. The walk's eye and this one are
+        // never up together — one is sent into a room by the dock, the other is
+        // put on the table by the game — so they share the corner.
+        else if (feed) {
+          if (!tableCamera) tableCamera = new THREE.PerspectiveCamera(EYE_FOV, 1, 0.02, 40)
+          tableCamera.position.set(feed.at[0], feed.y, feed.at[1])
+          tableCamera.lookAt(feed.look[0], feed.lookY, feed.look[1])
+          renderInset(tableCamera, 'top')
         }
 
         // The owl's film, inset below the eye's feed: the last ten seconds of
         // a bird that is not there any more, played at the speed it flew them.
-        if (filmCamera && showing) {
-          const filmWidth = Math.round(Math.min(320, width * 0.3))
-          const filmHeight = Math.round(filmWidth * 0.62)
-          const pad = 12
-          const box: [number, number, number, number] = [
-            width - filmWidth - pad,
-            pad,
-            filmWidth,
-            filmHeight,
-          ]
-          filmCamera.aspect = filmWidth / filmHeight
-          filmCamera.updateProjectionMatrix()
-          renderer.setViewport(...box)
-          renderer.setScissor(...box)
-          renderer.setScissorTest(true)
-          renderer.autoClear = false
-          renderer.clear(true, true, false)
-          renderer.render(scene, filmCamera)
-          renderer.autoClear = true
-          renderer.setScissorTest(false)
+        if (filmCamera && showing) renderInset(filmCamera, 'bottom')
+        // And the table's own owl, in the same corner and for the same reason:
+        // this is not a feed, it is what a bird already filmed being looked at
+        // afterwards. It holds still because a recording does, and it stays up
+        // once it is up — the hand can end, and footage does not un-happen.
+        else if (record) {
+          if (!recordCamera) recordCamera = new THREE.PerspectiveCamera(OWL_FOV, 1, 0.02, 40)
+          recordCamera.position.set(record.at[0], record.y, record.at[1])
+          recordCamera.lookAt(record.look[0], record.lookY, record.look[1])
+          renderInset(recordCamera, 'bottom')
         }
+      }
+
+      /**
+       * A second camera, in a box in the corner of the first.
+       *
+       * Three things ask for one — the eye's live feed, the table's, and the
+       * owl's ten seconds of playback — and they differ in nothing but which
+       * corner they take. The scissor dance is fiddly enough (clear the depth,
+       * not the colour; put `autoClear` back, or the next frame draws the walk
+       * into a stale buffer) that three copies of it was two too many.
+       */
+      function renderInset(
+        lens: import('three').PerspectiveCamera,
+        corner: 'top' | 'bottom',
+      ): void {
+        const { width, height } = renderer.getSize(size)
+        const boxWidth = Math.round(Math.min(320, width * 0.3))
+        const boxHeight = Math.round(boxWidth * 0.62)
+        const pad = 12
+        const box: [number, number, number, number] = [
+          width - boxWidth - pad,
+          corner === 'top' ? height - boxHeight - pad : pad,
+          boxWidth,
+          boxHeight,
+        ]
+        lens.aspect = boxWidth / boxHeight
+        lens.updateProjectionMatrix()
+        renderer.setViewport(...box)
+        renderer.setScissor(...box)
+        renderer.setScissorTest(true)
+        renderer.autoClear = false
+        renderer.clear(true, true, false)
+        renderer.render(scene, lens)
+        renderer.autoClear = true
+        renderer.setScissorTest(false)
       }
 
       /**
@@ -5680,9 +6442,14 @@
         visible = null
         eyeDeck = null
         eyeCamera = null
+        tableCamera = null
+        recordCamera = null
         for (const id of Object.keys(solids)) dropSolid(id)
         for (const id of Object.keys(apparitions)) dropApparition(id)
+        while (leaving.length) dropLeavingCard(leaving.length - 1)
         for (const material of Object.values(glowMaterials)) material?.dispose()
+        for (const material of Object.values(faceMaterials)) material?.dispose()
+        for (const texture of Object.values(faceTextures)) texture?.dispose()
         portalDecks.length = 0
         gustGeometry.dispose()
         gustMaterial.dispose()

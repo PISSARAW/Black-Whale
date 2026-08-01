@@ -18,41 +18,69 @@
    * second roster to keep in step, and picking an aura up before walking in
    * here is the whole gesture.
    */
+  import { onDestroy } from 'svelte'
   import Seo from '$lib/components/Seo.svelte'
   import TourScene from '$lib/components/tour/TourScene.svelte'
+  import MorenaCard from '$lib/components/tour/MorenaCard.svelte'
+  import MorenaPiles from '$lib/components/tour/MorenaPiles.svelte'
   import ContagionDashboard from '$lib/nen/ContagionDashboard.svelte'
   import { breadcrumbSchema } from '$lib/seo/schema'
   import { link, locale, t } from '$lib/i18n'
   import { localizeHatsu } from '$lib/i18n/hatsu'
-  import { activeHatsu, closeHatsuGate, openHatsuGate } from '$lib/nen/hatsuState'
+  import { get } from 'svelte/store'
+  import {
+    EMPEROR_TIME_LIFE_LIMIT_HOURS,
+    activeHatsu,
+    closeHatsuGate,
+    emperorTimeLifeHours,
+    openHatsuGate,
+    spendEmperorTimeHours,
+  } from '$lib/nen/hatsuState'
   import { HATSU_PROFILES } from '$lib/nen/hatsuRegistry'
   import { floorOf, theShip } from '$lib/tour/blueprint'
+  import { Fullscreen } from '$lib/tour/fullscreen.svelte'
   import {
-    ANSWER_CARDS,
+    CARD_COLOURS,
     DEALER_AT,
+    DEALER_COLOUR,
     GUEST_AT,
     HIDEOUT_OFFICE,
     HIDEOUT_TIER,
-    QUESTION_CARDS,
     SEATED_EYE,
+    cssInk,
     askMorena,
     dealTheGame,
+    eyeFeed,
     infectionAfter,
     lastCard,
     leaveTheTable,
+    livePages,
     exposureNow,
     moveFor,
     needsAChoice,
+    OWL_COLOUR,
+    REWIND_BLUE,
+    openTheBookHere,
+    owlFilm,
+    owlSaw,
     playTechnique,
     refuseTheDeal,
     settle,
+    sheWillNotPlay,
+    sitsAtTheTable,
+    spentOn,
+    theEyesTakeYou,
+    castsItself,
     tableauOf,
     takeTheDeal,
+    theLosingBranch,
     worksAtTheTable,
     type AnswerCard,
     type MorenaGame,
     type QuestionCard,
+    type TableKind,
   } from '$lib/tour/morena'
+  import { gesturesAt, playGesture, type TableGesture } from '$lib/tour/morenaHands'
 
   const ship = theShip()
   const french = $derived($locale === 'fr')
@@ -82,6 +110,58 @@
 
   let tierId = $state(HIDEOUT_TIER)
 
+  // ── The table at the size of the screen ────────
+  /**
+   * Full screen here is the same bargain the walk makes, for the opposite
+   * reason: on the walk the panel is what you steer with, and at the table it
+   * is where the cards are legible. So the screen takes both — the room on the
+   * left, the hand on the right — and the hand folds away when you want to look
+   * across the table at her instead. It is the one page of the archive where
+   * the panel, not the scene, is the thing you came for; it is also the one
+   * that is a game, and a game is played at the size of the screen.
+   */
+  const screen = new Fullscreen()
+  const immersive = $derived(screen.immersive)
+  let panelOpen = $state(true)
+  /**
+   * Whether the table has the pointer.
+   *
+   * Looking around the room takes the mouse, and the cards are played with it —
+   * so at this table, unlike on the walk, giving the pointer back is a move in
+   * the game and not an aside. Tab is the scene's own way of handing it back;
+   * the hint below says so, because Esc would take the screen with it.
+   */
+  let engaged = $state(false)
+
+  $effect(() => screen.watch())
+
+  const toggleFullscreen = () => void screen.toggle()
+
+  /**
+   * V gives the table the screen, and Esc gives it back — but only where
+   * nothing else has a claim on Esc: in native full screen the browser answers
+   * it first, an engaged pointer answers it with "let go of my mouse", and
+   * either way a keystroke aimed at a radio or a field is not aimed at us.
+   */
+  function onWindowKeydown(event: KeyboardEvent) {
+    if (event.metaKey || event.ctrlKey || event.altKey) return
+    const key = event.key.toLowerCase()
+    if (key !== 'v' && key !== 'escape') return
+    if (key === 'escape' && !(immersive && !screen.native && !engaged)) return
+    const target = event.target
+    if (
+      target instanceof HTMLElement &&
+      (target.isContentEditable || target.closest('input, textarea, select') !== null)
+    ) {
+      return
+    }
+    event.preventDefault()
+    toggleFullscreen()
+  }
+
+  // Leaving the table leaves full screen with it.
+  onDestroy(() => screen.leave())
+
   /**
    * The seat.
    *
@@ -92,6 +172,38 @@
   const seat = { at: GUEST_AT, heading: facing, eye: SEATED_EYE }
 
   const table = $derived(tableauOf(game, floor))
+  /**
+   * What Little Eye is sending back, or nothing if there is no eye here.
+   *
+   * The insect was in the room from the first commit and the picture it was
+   * taking was not: the descent onto her fan read as a fly landing. The walk
+   * has always inset the feed in the corner when the sphere is sent into a room
+   * — this is the same inset, a metre away instead of a deck.
+   */
+  const feed = $derived(eyeFeed(game, floor))
+  /**
+   * And what the owl already filmed, which is the other corner.
+   *
+   * Two techniques read her hand from a camera and they are not the same
+   * gesture: Little Eye is flown in and watched live, Secret Window was stuck
+   * to the bulkhead before anyone sat down and is *reviewed*. So one is a feed
+   * in the top corner and the other is a recording in the bottom one — the same
+   * two corners the walk has always used for the same two things.
+   */
+  const record = $derived(owlFilm(game, floor))
+  /** Her fan as that recording has it, which is not her fan as it is now. */
+  const filmed = $derived(owlSaw(game))
+  /**
+   * The colour the room is standing in, and why.
+   *
+   * One technique changes the light rather than the table: while Morena still
+   * owes the ten seconds back, everybody in this room but the guest is living
+   * a stretch that has already been decided, and the room says so by not being
+   * its own colour. `null` the moment she is choosing again.
+   */
+  const tint = $derived(game.forced.length ? REWIND_BLUE : null)
+  /** Which quatrain the beast wrote, or nothing while it has written none. */
+  const losing = $derived(theLosingBranch(game))
 
   const nameOfCard = (card: AnswerCard) => copy.cards[card].name
   const questionsLeft = $derived(game.questions)
@@ -109,25 +221,74 @@
   const tableKind = $derived(worksAtTheTable(carried?.kind) ? carried!.kind : null)
   const move = $derived(tableKind ? moveFor(tableKind) : null)
   /**
+   * Whether what the dock is holding is the ribbon rather than a technique.
+   *
+   * Double Face is the one thing in the roster with no seat of its own and a
+   * great deal to say here anyway: it is not a move, it is *two other people's
+   * moves*, and which two is the only question it asks. So it is admitted to
+   * the table beside `worksAtTheTable`, and what it brings is a pair.
+   */
+  const carryingTheBook = $derived(carried?.kind === 'bookmark')
+
+  /**
    * The technique's own published name, in the reader's language.
    *
    * Off the registry rather than out of the message file: the ability already
    * has a name everywhere else on the site, and a second one here would be a
    * second thing to keep true.
    */
-  const techniqueName = $derived(
-    game.technique
-      ? localizeHatsu(
-          HATSU_PROFILES.find((profile) => profile.id === moveFor(game.technique!).hatsuId)!,
-          $locale,
-        ).name
-      : null,
+  const nameOfTechnique = (kind: TableKind) =>
+    localizeHatsu(
+      HATSU_PROFILES.find((profile) => profile.id === moveFor(kind).hatsuId)!,
+      $locale,
+    ).name
+
+  /**
+   * What is live in front of the guest: one technique, or the book's two.
+   *
+   * Everything the panel says about an aura is said once per seat rather than
+   * once per game — the effect it buys, what it risks, how much of it is left —
+   * because a book with two pages open has two of every one of those, and they
+   * are not the same numbers. `livePages` is the rules' own answer to what can
+   * be played; this only dresses it.
+   */
+  const seats = $derived(
+    livePages(game).map((seat) => {
+      const move = moveFor(seat.kind)
+      return {
+        ...seat,
+        move,
+        name: nameOfTechnique(seat.kind),
+        usedUp: seat.spent >= move.uses,
+        unbidden: castsItself(seat.kind),
+      }
+    }),
   )
-  const seated = $derived(game.technique ? moveFor(game.technique) : null)
-  const usedUp = $derived(Boolean(seated) && game.spent >= seated!.uses)
+  /**
+   * The seats a key can play, in the order the keys play them.
+   *
+   * Not every live technique is one you press for. Lovely Ghostwriter writes by
+   * itself the moment Morena reaches into your hand — that is what automatic
+   * writing *is* — so it has a panel of its own and no key, and the book's
+   * other page keeps the one it would otherwise have shared.
+   */
+  const keyed = $derived(seats.filter((seat) => !seat.unbidden))
+  /** The two names the two keys play, when there are two. `null` otherwise. */
+  const hands = $derived(
+    keyed.length === 2 ? { first: keyed[0].name, second: keyed[1].name } : null,
+  )
 
   function deal() {
-    game = dealTheGame({ marked: cheats ? 'back' : null, technique: tableKind })
+    // The book is opened at the table rather than carried open: which two of
+    // Chrollo's pages are live at any moment is exactly the sort of thing no
+    // record of the Black Whale settles, so it is a roll, and it is rolled
+    // again every deal.
+    const pages = carryingTheBook ? openTheBookHere() : null
+    game = dealTheGame({
+      marked: cheats ? 'back' : null,
+      technique: pages ? pages[0] : tableKind,
+      bookmark: pages ? pages[1] : null,
+    })
     choice = null
     view = 'table'
   }
@@ -136,8 +297,21 @@
     game = askMorena(game, question)
   }
 
-  function cast() {
-    game = playTechnique(game)
+  /**
+   * Play a page, which for everybody but Chrollo is *the* page.
+   *
+   * F is the first and R is the second, the same two keys the walk gives the
+   * book — and the scene reports which was pressed without knowing what it
+   * means, so this is where the ribbon is read.
+   */
+  function cast(
+    _spaceId?: string | null,
+    _solidId?: string | null,
+    hand?: 'first' | 'second' | 'third',
+  ) {
+    const seat = keyed[hand === 'second' ? 1 : 0]
+    if (!seat || seat.usedUp) return
+    game = playTechnique(game, { page: seat.page })
   }
 
   function walkOut() {
@@ -150,6 +324,118 @@
     game = settle(game, choice ?? undefined)
     choice = null
   }
+
+  // ── The same game, played with the hands ───────
+  /**
+   * The card the visitor is looking at, and what taking it would do.
+   *
+   * The panel is a complete way to play this game and stays one: there is a
+   * button for every move, and a reader who never touches the room can play a
+   * whole hand with them. This is the other pair of hands — the cards are lying
+   * on a table a metre away, and pointing at one and clicking is the move it
+   * already is. Nothing here is a rule; `morenaHands` says which card is which
+   * gesture, and the reducer in the ability module plays it.
+   */
+  let aimedExtra = $state<string | null>(null)
+  const pointedAt = $derived<TableGesture | null>(
+    aimedExtra ? (gesturesAt(game)[aimedExtra] ?? null) : null,
+  )
+
+  /** What the room says the pointed card would do, in the reader's language. */
+  const pointedLabel = $derived.by(() => {
+    const gesture = pointedAt
+    if (!gesture) return null
+    if (gesture.kind === 'ask') return copy.reach.ask(copy.questions[gesture.question].title)
+    if (gesture.kind === 'kiss') return copy.reach.kiss(nameOfCard(gesture.card))
+    if (gesture.kind === 'decline') return copy.reach.decline
+    if (gesture.kind === 'point') return copy.reach.point(nameOfCard(gesture.side))
+    if (gesture.kind === 'reach') return copy.reach.reachFor(nameOfCard(gesture.card))
+    return copy.reach.play(nameOfCard(gesture.card))
+  })
+
+  /**
+   * Take hold of a card.
+   *
+   * The gesture is looked up again rather than read off `pointedAt`: a click is
+   * a frame or two behind the ray that found the card, and the only honest
+   * answer to "what does this card do" is the one the game gives at the moment
+   * the hand closes on it. A card that stopped being a move in between is not
+   * one, and the reducer would refuse it in any case.
+   */
+  function takeHold(id: string) {
+    const gesture = gesturesAt(game)[id]
+    if (!gesture) return
+    game = playGesture(game, gesture)
+    // The panel's half-made choice is spent or void either way: the hand was
+    // settled by hand, or it moved on to a phase that has no use for it.
+    choice = null
+  }
+
+  /**
+   * Whether anything is live, which is what F answers to.
+   *
+   * The same keys as the walk, for the same reason: the aura is in the
+   * visitor's hand and the room is where it is played. One seat is one key, and
+   * F is it; the book is the only thing here that fills the second, which is
+   * where R goes — a page, exactly as on the walk. C stays unspent: nothing at
+   * this table is an instrument with three airs.
+   */
+  const castable = $derived(
+    view === 'table' && game.phase !== 'over' && keyed.some((seat) => !seat.usedUp),
+  )
+
+  // Nothing is pointed at from the menu, and a card left lifted by a hand that
+  // ended would be a card waiting to be played in a game that is over.
+  $effect(() => {
+    if (view !== 'table') aimedExtra = null
+  })
+
+  // ── Emperor Time, which is the only seat with a clock ──
+  /**
+   * How much life a second at this table costs, in hours.
+   *
+   * The walk spends an hour a second, which is the ability's own rate and the
+   * right one for somebody crossing rooms. A negotiation is not crossing a
+   * room: Kurapika's eyes are open for the whole of it, and the canon price of
+   * that is the thing this seat exists to say — a hand of seven questions is
+   * paid for in years, not in afternoons. So the table runs the same clock at
+   * two days a second, which is what makes the bill arrive inside a hand
+   * rather than inside an evening.
+   *
+   * The counter itself is the site's, not the table's: it is the visitor's own
+   * year, they may have spent some of it walking the ship, and a page that kept
+   * its own would let them spend it twice.
+   */
+  const LIFE_PER_SECOND = 48
+  /**
+   * When she stands up: a third of the year, gone in front of her.
+   *
+   * She is a recruiter, and what she is watching is the thing she recruits
+   * being used up. This is the number at which the candidate stops being worth
+   * the hand — not a punishment, a decision, and the only end to this game that
+   * neither player had to earn.
+   */
+  const SHE_STANDS_AT = Math.round(EMPEROR_TIME_LIFE_LIMIT_HOURS / 3)
+
+  /** Whether the eyes are open at this table, which is what starts the clock. */
+  const burning = $derived(
+    view === 'table' && game.phase !== 'over' && spentOn(game, 'scarlet') !== null,
+  )
+  /** How far through the year the visitor is, from nothing to all of it. */
+  const scorch = $derived(Math.min(1, $emperorTimeLifeHours / EMPEROR_TIME_LIFE_LIMIT_HOURS))
+
+  $effect(() => {
+    if (!burning) return
+    const clock = setInterval(() => {
+      // Two things can end the hand here and they are different deaths: the
+      // year running out is the ability collecting, and her standing up is the
+      // candidate having become worthless. The first is checked first because
+      // a corpse has nothing left for anybody to decline.
+      if (spendEmperorTimeHours(LIFE_PER_SECOND)) game = theEyesTakeYou(game)
+      else if (get(emperorTimeLifeHours) >= SHE_STANDS_AT) game = sheWillNotPlay(game)
+    }, 1000)
+    return () => clearInterval(clock)
+  })
 
   /**
    * The dock, while a hand is live.
@@ -169,7 +455,7 @@
       closeHatsuGate()
       return
     }
-    openHatsuGate({ admits: worksAtTheTable, reason: copy.hatsu.sealed })
+    openHatsuGate({ admits: sitsAtTheTable, reason: copy.hatsu.sealed })
     return closeHatsuGate
   })
 
@@ -189,6 +475,8 @@
   ])}
 />
 
+<svelte:window onkeydown={onWindowKeydown} />
+
 <div class="mx-auto max-w-[1600px] px-4 py-8" data-hatsu-pass>
   <header class="mb-6">
     <p class="text-xs uppercase tracking-widest text-[#FFD700]/70">
@@ -200,17 +488,45 @@
     <p class="mt-2 max-w-3xl text-sm leading-relaxed text-[#FFFFF0]/70">{copy.intro}</p>
   </header>
 
-  <div class="grid gap-4 lg:grid-cols-[1fr_380px]">
+  <!-- Full screen is this grid over everything else rather than the canvas
+       alone: a table with no hand beside it is a room with a chair in it, and
+       the game would be somewhere behind the screen it just took. -->
+  <div
+    class="grid {immersive
+      ? // Over the archive's own sticky header (80) and under its Nen dock
+        // (100): the aura is picked up outside the route, and full screen must
+        // not be where it cannot be reached.
+        `fixed inset-0 z-[90] h-[100dvh] w-screen overflow-hidden bg-[#0b0b0d] ${
+          panelOpen ? 'grid-cols-[1fr_min(26rem,55vw)]' : 'grid-cols-1'
+        }`
+      : 'gap-4 lg:grid-cols-[1fr_380px]'}"
+  >
     <!-- The room, drawn by the walk's own engine off the walk's own blueprint. -->
     <section
-      class="relative min-h-[420px] overflow-hidden rounded-lg border border-[#333] lg:h-[70vh]"
+      class="relative overflow-hidden {immersive
+        ? 'h-full min-h-0'
+        : 'min-h-[420px] rounded-lg border border-[#333] lg:h-[70vh]'}"
     >
       <TourScene
         {ship}
         bind:tierId
+        bind:engaged
         seated={seat}
         extras={table}
-        touchLabels={{ move: $t.tour.touch.move, cast: $t.tour.touch.cast }}
+        {feed}
+        {record}
+        {tint}
+        {hands}
+        bind:aimedExtra
+        onPick={view === 'table' ? takeHold : undefined}
+        aiming={castable}
+        onCast={cast}
+        auraColour={carried?.color ?? null}
+        castOnClick={false}
+        touchLabels={{
+          move: $t.tour.touch.move,
+          cast: keyed.length === 1 ? copy.hatsu.effects[keyed[0].move.effect] : $t.tour.touch.cast,
+        }}
         soundLabels={{ silence: $t.tour.sound.silence, restore: $t.tour.sound.restore }}
         loadingLabel={copy.loading}
         unsupportedLabel={copy.unsupported}
@@ -225,12 +541,146 @@
         </p>
         <p class="mt-1 text-xs leading-snug text-[#FFFFF0]/60">{copy.seat}</p>
       </div>
+
+      <!-- Looking around took the mouse, and the cards need it back. Said only
+           while the table is holding it, at the foot of the room where the walk
+           says the same thing: the hand is to the right, and a line over the
+           cards would be covering what it is telling you to go and play. -->
+      {#if engaged}
+        <p
+          class="pointer-events-none absolute bottom-3 left-1/2 z-20 -translate-x-1/2 rounded bg-[#050505]/80 px-3 py-1 text-center text-xs text-[#FFFFF0]/70"
+        >
+          {$t.tour.engaged}
+        </p>
+      {/if}
+
+      <!-- Emperor Time, which is the one seat you look through rather than at.
+           The room goes scarlet the way the eyes do, and it goes further with
+           every second the visitor sits there: what is being spent is not a
+           resource, it is the year, and the only honest way to draw that is to
+           put it over everything. The number is said as well as shown — a tint
+           is a feeling and a year is a quantity, and this ability is the one
+           whose whole argument is the quantity. -->
+      {#if view === 'table' && spentOn(game, 'scarlet') !== null}
+        <div
+          class="pointer-events-none absolute inset-0 z-10"
+          style:background="radial-gradient(ellipse at center, rgba(239,51,64,{scorch * 0.16}) 0%,
+          rgba(239,51,64,{0.1 + scorch * 0.6}) 100%)"
+          style:mix-blend-mode="screen"
+        ></div>
+        <p
+          class="pointer-events-none absolute left-1/2 top-3 z-20 -translate-x-1/2 rounded border border-[#ef3340]/60 bg-[#050505]/85 px-3 py-1 text-center text-[11px] uppercase tracking-widest text-[#ef8a90]"
+        >
+          {$t.nen.lifeConsumed($emperorTimeLifeHours.toLocaleString($locale))}
+          <span class="ml-2 text-[#FFFFF0]/45">{copy.scarlet.watching}</span>
+        </p>
+      {/if}
+
+      <!-- The table, played with the hands.
+           A reticle only while the pointer is held — with a cursor on the glass
+           there is already a thing pointing at the card, and two would be one
+           too many — and, above it, what the card under it would do. The line is
+           the whole of the interface: it is the only thing that says a hand of
+           cards a metre away is something you may reach for. -->
+      {#if view === 'table' && engaged}
+        <span
+          class="pointer-events-none absolute left-1/2 top-1/2 z-20 block h-1.5 w-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full border border-[#050505]/70 bg-[#FFFFF0]/80"
+        ></span>
+      {/if}
+
+      {#if view === 'table'}
+        <div
+          class="pointer-events-none absolute bottom-12 left-1/2 z-20 flex -translate-x-1/2 flex-col items-center gap-1"
+        >
+          {#if pointedLabel}
+            <p
+              class="rounded border border-[#FFD700]/50 bg-[#050505]/85 px-3 py-1 text-center text-xs text-[#FFD700]"
+            >
+              {pointedLabel}
+            </p>
+          {:else if game.phase !== 'over'}
+            <p class="rounded bg-[#050505]/70 px-3 py-1 text-center text-xs text-[#FFFFF0]/55">
+              {copy.reach.hint}
+            </p>
+          {/if}
+          <!-- And the keys the aura is played with, which are the walk's own F
+               and — where a book has put a second page up — its R. One line per
+               live page, because two pages are two different moves and a single
+               line naming one of them would be lying about the other. -->
+          {#if castable}
+            {#each keyed as seat, index (seat.page)}
+              {#if !seat.usedUp}
+                <p
+                  class="rounded bg-[#050505]/70 px-3 py-1 text-center text-xs"
+                  style:color={carried?.color ?? '#FFFFF0'}
+                >
+                  {index === 0
+                    ? copy.reach.cast(copy.hatsu.effects[seat.move.effect])
+                    : copy.reach.castSecond(copy.hatsu.effects[seat.move.effect])}
+                </p>
+              {/if}
+            {/each}
+          {/if}
+        </div>
+      {/if}
+
+      <!-- The way in and out of the screen. Top right of the room, because the
+           left corner already names the deck and the office. -->
+      <button
+        type="button"
+        onclick={toggleFullscreen}
+        aria-pressed={immersive}
+        class="absolute right-3 top-3 z-20 rounded border px-2.5 py-1 text-xs transition-colors {immersive
+          ? 'border-[#FFD700] bg-[#050505]/80 text-[#FFD700]'
+          : 'border-[#333] bg-[#050505]/80 text-[#FFFFF0]/70 hover:border-[#FFD700]/50 hover:text-[#FFFFF0]'}"
+      >
+        {immersive ? $t.tour.fullscreen.exit : $t.tour.fullscreen.enter}
+        <kbd class="ml-1 text-[10px] text-[#FFD700]/70">V</kbd>
+      </button>
     </section>
+
+    <!-- The hand, once it is folded away: the table is still there to be looked
+         at, and the cards are one press from coming back. -->
+    {#if immersive && !panelOpen}
+      <button
+        type="button"
+        onclick={() => (panelOpen = true)}
+        aria-expanded="false"
+        class="absolute right-0 top-1/2 z-30 -translate-y-1/2 rounded-l border border-r-0 border-[#333] bg-[#050505]/90 px-2 py-3 text-xs text-[#FFFFF0]/70 transition-colors hover:border-[#FFD700]/50 hover:text-[#FFFFF0]"
+      >
+        {$t.tour.fullscreen.showPanel}
+      </button>
+    {/if}
 
     <!-- The game, where the cards are legible. -->
     <section
-      class="flex max-h-[70vh] flex-col overflow-y-auto rounded-lg border border-[#333] bg-[#0b0b0d] p-4"
+      class="flex flex-col overflow-y-auto border-[#333] bg-[#0b0b0d] p-4 {immersive
+        ? `min-h-0 border-l ${panelOpen ? '' : 'hidden'}`
+        : 'max-h-[70vh] rounded-lg border'}"
     >
+      <!-- Folding the hand away is offered only where it buys something: full
+           screen, where what it uncovers is the table itself. -->
+      {#if immersive}
+        <div class="sticky top-0 z-10 -m-4 mb-0 flex gap-1.5 bg-[#0b0b0d] p-4 pb-3">
+          <button
+            type="button"
+            onclick={() => (panelOpen = false)}
+            aria-expanded="true"
+            class="rounded border border-[#333] px-2.5 py-1 text-xs text-[#FFFFF0]/70 transition-colors hover:border-[#FFD700]/50 hover:text-[#FFFFF0]"
+          >
+            {$t.tour.fullscreen.hidePanel}
+          </button>
+          <button
+            type="button"
+            onclick={toggleFullscreen}
+            class="rounded border border-[#FFD700]/50 px-2.5 py-1 text-xs text-[#FFD700] transition-colors hover:bg-[#FFD700]/10"
+          >
+            {$t.tour.fullscreen.exit}
+            <kbd class="ml-1 text-[10px] text-[#FFD700]/70">V</kbd>
+          </button>
+        </div>
+      {/if}
+
       {#if view === 'menu'}
         <h2 class="text-lg font-semibold text-[#FFFFF0]">{copy.menu.deck}</h2>
 
@@ -276,6 +726,19 @@
             <p class="mt-1 text-xs leading-snug text-[#FFFFF0]/55">
               <span class="text-[#FFFFF0]/40">{copy.hatsu.costs} — </span>
               {copy.hatsu.techniques[tableKind].costs}
+            </p>
+          </div>
+        {:else if carryingTheBook}
+          <!-- The one aura that cannot say what it buys until the cards are
+               dealt: which two pages are live is a roll, and it is rolled at
+               the deal. So the menu says what the book *is* and no more. -->
+          <div class="mt-2 rounded border border-[#333] p-3" style:border-color={carried?.color}>
+            <p class="text-sm font-semibold" style:color={carried?.color}>
+              {localizeHatsu(carried!, $locale).name}
+            </p>
+            <p class="mt-1 text-xs leading-snug text-[#FFFFF0]/70">
+              <span class="text-[#FFFFF0]/40">{copy.hatsu.buys} — </span>
+              {copy.hatsu.book.body}
             </p>
           </div>
         {:else if carried}
@@ -362,6 +825,62 @@
           </ul>
         {/if}
 
+        <!-- The room, ten seconds behind itself. Said while it is true and not
+             a word afterwards: what the reader can see is that the light is
+             wrong, and this is the sentence that names why. -->
+        {#if game.forced.length}
+          <div class="mt-3 rounded border border-[#7dd3fc]/50 bg-[#7dd3fc]/10 p-3">
+            <p class="text-[10px] uppercase tracking-widest text-[#7dd3fc]">
+              {copy.hatsu.rewound.title}
+            </p>
+            <p class="mt-1 text-xs leading-relaxed text-[#FFFFF0]/80">
+              {copy.hatsu.rewound.body(game.forced.length)}
+            </p>
+          </div>
+        {/if}
+
+        <!-- The quatrain, once the beast has written it. Printed as a poem and
+             not as a read-out: the technique is cryptic verse, and a line
+             saying "she marked the Back" would be the page playing the game
+             for the reader. Kept for the rest of the hand, and after it — a
+             prophecy that came true is still what was written. -->
+        {#if losing}
+          <div class="mt-3 rounded border border-[#d8c7ed]/40 bg-[#d8c7ed]/5 p-3">
+            <p class="text-[10px] uppercase tracking-widest text-[#d8c7ed]">
+              {copy.hatsu.ghost.title}
+            </p>
+            <p class="mt-2 whitespace-pre-line text-xs italic leading-relaxed text-[#FFFFF0]/80">
+              {copy.hatsu.ghost.verse[losing].join('\n')}
+            </p>
+            <p class="mt-2 text-[11px] leading-snug text-[#FFFFF0]/45">{copy.hatsu.ghost.body}</p>
+          </div>
+        {/if}
+
+        <!-- The owl's recording, which is the one thing at this table that does
+             not go out of date because it is already out of date: seven cards
+             as a bird on the bulkhead had them at the moment somebody thought
+             to look. The ones spent since are still in it — that is what a
+             recording is — and the corner of the room is showing the same
+             footage as a picture. -->
+        {#if filmed}
+          <div class="mt-3 rounded border border-[#a8b7d8]/40 bg-[#a8b7d8]/5 p-3">
+            <p class="text-[10px] uppercase tracking-widest text-[#a8b7d8]">
+              {copy.hatsu.owl.title}
+            </p>
+            <p class="mt-1 text-xs leading-snug text-[#FFFFF0]/60">{copy.hatsu.owl.body}</p>
+            <div class="mt-2 flex flex-wrap gap-1">
+              {#each filmed as question (question)}
+                <MorenaCard
+                  face={question}
+                  label={copy.questions[question].short}
+                  ink={cssInk(OWL_COLOUR)}
+                  state={game.questions.includes(question) ? 'live' : 'spent'}
+                />
+              {/each}
+            </div>
+          </div>
+        {/if}
+
         {#if lastAsked}
           <div class="mt-3 rounded border border-[#3a2b33] bg-[#140f13] p-3">
             <p class="text-[10px] uppercase tracking-widest text-[#FFFFF0]/40">
@@ -384,13 +903,18 @@
             <p class="mt-3 text-[10px] uppercase tracking-widest text-[#FFFFF0]/40">
               {copy.deal.pick}
             </p>
-            <div class="mt-2 flex flex-wrap gap-2">
+            <div class="mt-2 flex flex-wrap items-end gap-2">
               {#each game.graveyard as card (card)}
                 <button
-                  class="rounded border border-[#d94f68] px-3 py-1.5 text-xs font-semibold text-[#FFFFF0] hover:bg-[#d94f68]/30"
+                  class="rounded border border-[#d94f68] p-1.5 hover:bg-[#d94f68]/30"
                   onclick={() => (game = takeTheDeal(game, card))}
+                  title="{copy.deal.take} · {nameOfCard(card)}"
                 >
-                  {copy.deal.take} · {nameOfCard(card)}
+                  <MorenaCard
+                    face={card}
+                    label={nameOfCard(card)}
+                    ink={cssInk(CARD_COLOURS[card])}
+                  />
                 </button>
               {/each}
               <button
@@ -404,14 +928,22 @@
         {:else if game.phase === 'asking'}
           <h2 class="mt-4 text-sm font-semibold text-[#FFFFF0]">{copy.askTitle}</h2>
           <p class="mt-1 text-xs leading-snug text-[#FFFFF0]/55">{copy.askHint}</p>
+          <!-- Her fan, from the side of the table that has to pay for it: the
+               card is drawn, and the question written beside it, which is the
+               layout of the panel itself. -->
           <ul class="mt-2 space-y-1.5">
             {#each questionsLeft as question (question)}
               <li>
                 <button
-                  class="w-full rounded border border-[#333] px-3 py-2 text-left text-sm text-[#FFFFF0]/85 hover:border-[#d94f68] hover:text-[#FFFFF0]"
+                  class="flex w-full items-center gap-3 rounded border border-[#333] p-2 text-left text-sm text-[#FFFFF0]/85 hover:border-[#d94f68] hover:text-[#FFFFF0]"
                   onclick={() => ask(question)}
                 >
-                  {copy.questions[question].title}
+                  <MorenaCard
+                    face={question}
+                    label={copy.questions[question].short}
+                    ink={cssInk(DEALER_COLOUR)}
+                  />
+                  <span>{copy.questions[question].title}</span>
                 </button>
               </li>
             {/each}
@@ -421,34 +953,38 @@
           {#if settlement === 'joker'}
             <p class="mt-1 text-xs leading-snug text-[#FFFFF0]/55">{copy.settle.jokerHint}</p>
             <div class="mt-2 flex gap-2">
-              <button
-                class="rounded border px-3 py-1.5 text-xs font-semibold {choice === 'yes'
-                  ? 'border-[#FFD700] text-[#FFD700]'
-                  : 'border-[#444] text-[#FFFFF0]'}"
-                onclick={() => (choice = 'yes')}
-              >
-                {nameOfCard('yes')}
-              </button>
-              <button
-                class="rounded border px-3 py-1.5 text-xs font-semibold {choice === 'no'
-                  ? 'border-[#FFD700] text-[#FFD700]'
-                  : 'border-[#444] text-[#FFFFF0]'}"
-                onclick={() => (choice = 'no')}
-              >
-                {nameOfCard('no')}
-              </button>
+              {#each ['yes', 'no'] as const as side (side)}
+                <button
+                  class="rounded border p-1.5 {choice === side
+                    ? 'border-[#FFD700] bg-[#FFD700]/10'
+                    : 'border-[#444] hover:border-[#FFD700]/60'}"
+                  onclick={() => (choice = side)}
+                  title={nameOfCard(side)}
+                >
+                  <MorenaCard
+                    face={side}
+                    label={nameOfCard(side)}
+                    ink={cssInk(CARD_COLOURS[side])}
+                  />
+                </button>
+              {/each}
             </div>
           {:else if settlement === 'back'}
             <p class="mt-1 text-xs leading-snug text-[#FFFFF0]/55">{copy.settle.backHint}</p>
             <div class="mt-2 flex flex-wrap gap-2">
               {#each game.graveyard as card (card)}
                 <button
-                  class="rounded border px-3 py-1.5 text-xs font-semibold {choice === card
-                    ? 'border-[#FFD700] text-[#FFD700]'
-                    : 'border-[#444] text-[#FFFFF0]'}"
+                  class="rounded border p-1.5 {choice === card
+                    ? 'border-[#FFD700] bg-[#FFD700]/10'
+                    : 'border-[#444] hover:border-[#FFD700]/60'}"
                   onclick={() => (choice = card)}
+                  title={nameOfCard(card)}
                 >
-                  {nameOfCard(card)}
+                  <MorenaCard
+                    face={card}
+                    label={nameOfCard(card)}
+                    ink={cssInk(CARD_COLOURS[card])}
+                  />
                 </button>
               {/each}
             </div>
@@ -532,40 +1068,72 @@
              Kept below the hand and above the piles because that is where it
              sits in the fiction too: it is not one of the twelve cards, it is
              the thing you brought into a room that has rules. -->
-        {#if game.technique && seated && game.phase !== 'over'}
-          <div class="mt-5 rounded border border-[#333] p-3" style:border-color={carried?.color}>
-            <div class="flex items-baseline justify-between gap-2">
-              <p class="text-sm font-semibold" style:color={carried?.color}>{techniqueName}</p>
-              <span
-                class="rounded border px-1.5 py-0.5 text-[10px] uppercase tracking-wider {seated.fraud
-                  ? 'border-[#ef3340]/60 text-[#ef8a90]'
-                  : 'border-[#7fc8a0]/60 text-[#7fc8a0]'}"
-              >
-                {seated.fraud ? copy.hatsu.fraud : copy.hatsu.legal}
-              </span>
-            </div>
-            <p class="mt-1 text-xs leading-snug text-[#FFFFF0]/60">
-              {copy.hatsu.techniques[game.technique].buys}
+        {#if seats.length && game.phase !== 'over'}
+          <!-- One block per live page. A book is two of these, and the ribbon
+               between them says which key plays which — the numbers are not
+               shared, because two stolen one-shots are two one-shots. -->
+          {#if seats.length > 1}
+            <p class="mt-5 text-[10px] uppercase tracking-widest text-[#FFD700]/70">
+              {copy.hatsu.book.title}
             </p>
-            {#if seated.fraud}
-              <p class="mt-2 text-[11px] text-[#ef8a90]/80">
-                {copy.hatsu.exposure(Math.round(exposureNow(seated, game) * 100))}
+            <p class="mt-1 text-xs leading-snug text-[#FFFFF0]/55">{copy.hatsu.book.body}</p>
+          {/if}
+          {#each seats as seat, index (seat.page)}
+            <div
+              class="mt-3 rounded border border-[#333] p-3 {index === 0 && seats.length === 1
+                ? 'mt-5'
+                : ''}"
+              style:border-color={carried?.color}
+            >
+              <div class="flex items-baseline justify-between gap-2">
+                <p class="text-sm font-semibold" style:color={carried?.color}>
+                  {#if keyed.length > 1 && !seat.unbidden}<span class="text-[#FFFFF0]/40"
+                      >{keyed.indexOf(seat) === 0 ? 'F' : 'R'} ·
+                    </span>{/if}{seat.name}
+                </p>
+                <span
+                  class="rounded border px-1.5 py-0.5 text-[10px] uppercase tracking-wider {seat
+                    .move.fraud
+                    ? 'border-[#ef3340]/60 text-[#ef8a90]'
+                    : 'border-[#7fc8a0]/60 text-[#7fc8a0]'}"
+                >
+                  {seat.move.fraud ? copy.hatsu.fraud : copy.hatsu.legal}
+                </span>
+              </div>
+              <p class="mt-1 text-xs leading-snug text-[#FFFFF0]/60">
+                {copy.hatsu.techniques[seat.kind].buys}
               </p>
-            {/if}
-            <div class="mt-3 flex flex-wrap items-center gap-2">
-              <button
-                class="rounded px-3 py-1.5 text-xs font-semibold text-[#0b0b0d] disabled:opacity-30"
-                style:background={carried?.color ?? '#d94f68'}
-                disabled={usedUp}
-                onclick={cast}
-              >
-                {copy.hatsu.effects[seated.effect]}
-              </button>
-              <span class="text-[10px] uppercase tracking-wider text-[#FFFFF0]/40">
-                {usedUp ? copy.hatsu.exhausted : copy.hatsu.spent(game.spent, seated.uses)}
-              </span>
+              {#if seat.move.fraud}
+                <p class="mt-2 text-[11px] text-[#ef8a90]/80">
+                  {copy.hatsu.exposure(Math.round(exposureNow(seat.move, game) * 100))}
+                </p>
+              {/if}
+              <div class="mt-3 flex flex-wrap items-center gap-2">
+                <!-- A technique that fires on its own gets no button. Offering
+                     one would be asking for automatic writing, which is the one
+                     thing nobody does: the beast writes when Morena reaches. -->
+                {#if seat.unbidden}
+                  <span class="text-[11px] leading-snug text-[#d8c7ed]">
+                    {copy.hatsu.unbidden}
+                  </span>
+                {:else}
+                  <button
+                    class="rounded px-3 py-1.5 text-xs font-semibold text-[#0b0b0d] disabled:opacity-30"
+                    style:background={carried?.color ?? '#d94f68'}
+                    disabled={seat.usedUp}
+                    onclick={() => cast(null, null, keyed.indexOf(seat) === 0 ? 'first' : 'second')}
+                  >
+                    {copy.hatsu.effects[seat.move.effect]}
+                  </button>
+                {/if}
+                <span class="text-[10px] uppercase tracking-wider text-[#FFFFF0]/40">
+                  {seat.usedUp
+                    ? copy.hatsu.exhausted
+                    : copy.hatsu.spent(seat.spent, seat.move.uses)}
+                </span>
+              </div>
             </div>
-          </div>
+          {/each}
         {/if}
 
         <!-- Walking out. Canon puts it under the same sanction as cheating, so
@@ -585,39 +1153,10 @@
           </div>
         {/if}
 
-        <!-- What is on the table, in the same three piles the scene lays out. -->
+        <!-- What is on the table, in the same three piles the scene lays out —
+             and as cards, because that is how the chapters show them. -->
         <div class="mt-5 border-t border-[#222] pt-4">
-          <h3 class="text-[10px] uppercase tracking-widest text-[#FFFFF0]/40">{copy.table.hand}</h3>
-          <ul class="mt-2 space-y-1.5">
-            {#each ANSWER_CARDS.filter((card) => game.hand.includes(card)) as card (card)}
-              <li class="flex items-baseline gap-2 text-xs">
-                <span class="font-semibold text-[#FFFFF0]">{nameOfCard(card)}</span>
-                {#if game.marked === card && game.phase === 'over'}
-                  <span class="rounded border border-[#d94f68] px-1 text-[10px] text-[#d94f68]">
-                    {copy.table.markedCard}
-                  </span>
-                {/if}
-                <span class="text-[#FFFFF0]/50">{copy.cards[card].rule}</span>
-              </li>
-            {/each}
-            {#if game.hand.length === 0}
-              <li class="text-xs text-[#FFFFF0]/35">{copy.table.empty}</li>
-            {/if}
-          </ul>
-
-          <h3 class="mt-4 text-[10px] uppercase tracking-widest text-[#FFFFF0]/40">
-            {copy.table.graveyard}
-          </h3>
-          <p class="mt-1 text-xs text-[#FFFFF0]/50">
-            {game.graveyard.length ? game.graveyard.map(nameOfCard).join(' · ') : copy.table.empty}
-          </p>
-
-          <h3 class="mt-4 text-[10px] uppercase tracking-widest text-[#FFFFF0]/40">
-            {copy.table.fan}
-          </h3>
-          <p class="mt-1 text-xs text-[#FFFFF0]/50">
-            {QUESTION_CARDS.filter((question) => game.questions.includes(question)).length} / {QUESTION_CARDS.length}
-          </p>
+          <MorenaPiles {game} {copy} />
         </div>
 
         <!-- Contagion, read rather than cast: the network, the negotiation and
@@ -667,6 +1206,8 @@
                   <span class="text-[#ef8a90]">{copy.log.exposed(nameOfCard(beat.card))}</span>
                 {:else if beat.kind === 'aftermath'}
                   <span class="text-[#8ecae6]">{copy.hatsu.aftermath[beat.what]}</span>
+                {:else if beat.kind === 'rewound'}
+                  <span class="text-[#7dd3fc]">{copy.log.rewound(beat.cards)}</span>
                 {/if}
               </li>
             {/each}

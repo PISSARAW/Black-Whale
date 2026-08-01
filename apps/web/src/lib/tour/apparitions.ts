@@ -28,6 +28,11 @@ import {
   type TourWorld,
 } from './hatsu'
 import type { Space, Vec2 } from './types'
+// A type and nothing else: `morena` reads the insect's colour off this file,
+// and this file needs the name of a card face. An import that is erased before
+// anything runs is not a circle, and the alternative — a second spelling of the
+// twelve faces, here — is how the two would drift.
+import type { CardFace } from './morena'
 
 export type ApparitionKind =
   /** Musse's owl, perched where Secret Window attached it. */
@@ -105,6 +110,15 @@ export type ApparitionKind =
   /** Camilla's other one, taking apart the room that wears her name. */
   | 'cat'
   /**
+   * Lovely Ghostwriter's beast, at the elbow of whoever it is writing for.
+   *
+   * Neon's, and Chrollo's since he took it: a pale animal with its mouth open
+   * and a pen in one hand, which does the writing while its owner does not.
+   * The only manifestation in the archive that belongs to the person rather
+   * than to the room they are standing in.
+   */
+  | 'ghost'
+  /**
    * Morena Prudo, seated behind her fan in the hideout's office.
    *
    * The only apparition in the walk that is a person rather than a technique —
@@ -116,6 +130,27 @@ export type ApparitionKind =
   | 'dealer'
   /** One card of that game, face up or face down on the table between them. */
   | 'game-card'
+  /**
+   * The visitor's own heart, worn where it is, with the vow wound round it.
+   *
+   * Judgment Chain is the one capability in the archive that is not aimed at
+   * the room: Kurapika's chain goes into a chest, and the chest it goes into
+   * here is the reader's. So this is the only apparition in the walk that is
+   * *inside* the person carrying it — worn like the Dowsing Chain and the open
+   * book, but at the sternum rather than in a hand, and visible by looking
+   * down at yourself, which is the only direction the vow points.
+   */
+  | 'vow-heart'
+  /**
+   * Moonlight Act's pen and paper, and the contract they become.
+   *
+   * The one ability in the archive whose manifestation is stationery: Longhi
+   * transmutes her aura into a pen and a sheet, and what the technique does is
+   * done by writing on the one with the other. Blank and held up between the
+   * two parties while the terms are being stated; signed, and lying in the
+   * corner of the table, once they have agreed to them.
+   */
+  | 'contract'
 
 /**
  * One thing Nen has left standing in the ship.
@@ -159,6 +194,25 @@ export interface Apparition {
    */
   climb?: number
   /**
+   * What is printed on it, for the one apparition that has a front and a back.
+   *
+   * Only a game card has one, and only while it is lying face up: the drawing
+   * is the difference between a card somebody has read and a card somebody has
+   * been *told about*, which is the whole of what reading a hand buys. A card
+   * face down has no face here, because it has none on the table either.
+   */
+  face?: CardFace
+  /**
+   * Whether the visitor may take hold of it.
+   *
+   * Nothing the ship or a technique leaves standing is: an aura shell is a
+   * thing to walk past. Morena's table is the exception the walk sits down at,
+   * and there a card is not scenery — it is the move. The scene answers what is
+   * down the reticle and reports the `id`; what taking hold of it *does* is
+   * decided where the game is, which is never here.
+   */
+  pick?: boolean
+  /**
    * How far from `at` the thing may wander, in metres.
    *
    * The fish have one, and so does everything that was sent somewhere with
@@ -170,12 +224,27 @@ export interface Apparition {
   spread?: number
 }
 
-/** The colours the techniques are already published in, as numbers. */
-const OWL = 0xa8b7d8
+// The colours the techniques are already published in, as numbers.
+/**
+ * Musse's owl, in the pale grey-blue the walk has always perched it in.
+ *
+ * Exported for the same reason the insect's blue is: the bird is stuck to a
+ * bulkhead over Morena's table as well as to the ones in the corridors, and a
+ * bird that was one colour on the walk and another in the office would read as
+ * two techniques rather than as one technique in two rooms.
+ */
+export const OWL = 0xa8b7d8
 const CARDS = [0x4d8ff0, 0xf0c94d, 0xe5484d]
 const CURSE = 0x9d65d0
 const STAR = 0xffd166
-const DOUBLE = 0xf6b8d1
+/**
+ * Kacho's double, in the pink the registry publishes Without You in.
+ *
+ * Exported because it sits down at Morena's table as well: it is the one proxy
+ * there that answers a death rather than avoiding one, and it takes the chair
+ * the moment the guest dies in it.
+ */
+export const DOUBLE = 0xf6b8d1
 const PORTAL = 0x80edc7
 const FISH = 0x78b6c9
 const PAPER = 0xefb9c8
@@ -189,12 +258,37 @@ const STAMP_LOCKED = 0xff2d2d
 const PUPPET = 0x1b1b22
 /** Bungee Gum is Hisoka's own pink, the same the web draws his filament in. */
 const GUM = 0xf06bb5
-/** Little Eye's blue, which is the sphere rather than the animal inside it. */
-const INSECT = 0x55c2ff
+/**
+ * Little Eye's blue, which is the sphere rather than the animal inside it.
+ *
+ * Exported because the walk is not the only room the insect is flown in:
+ * `$lib/tour/morena` sends the same one over a card table, and a sphere that
+ * was one blue in the corridors and another over the wood would read as two
+ * techniques.
+ */
+export const INSECT = 0x55c2ff
 /** The Dowsing Chain is steel: the pale blue the dock already publishes it in. */
 const CHAIN = 0x8ecae6
-/** Double Face's violet, the one the registry publishes the bookmark in. */
-const BOOK = 0x9c7ac4
+/**
+ * The heart the vow is sworn on, and the links wound round it.
+ *
+ * Two colours rather than one, because the whole of this manifestation is the
+ * difference between them: meat, and the thing holding it. The flesh is the
+ * dark red the source draws it in and the chain is white — not the Dowsing
+ * Chain's steel blue, which is a tool, but the light Kurapika's chains are
+ * drawn in when one of them is a judgment. Exported for the same reason the
+ * insect's blue is: `$lib/tour/morena` swears the same vow over a card table.
+ */
+export const HEART = 0x7d2338
+export const VOW_CHAIN = 0xf4f4ff
+/**
+ * Double Face's violet, the one the registry publishes the bookmark in.
+ *
+ * Exported because the same boards are opened at Morena's table: Skill Hunter
+ * lies on the wood there, and a book that was one colour in the corridors and
+ * another on a card table would read as two books.
+ */
+export const BOOK = 0x9c7ac4
 /** And the ribbon, which has to be the one thing in the book that is not violet. */
 export const BOOKMARK_RIBBON = 0xffd166
 /**
@@ -251,7 +345,15 @@ const NOTE = 0xd7c6f7
  * and it has to be told from the wheel that produced it at a glance.
  */
 const MEDUSA = 0xd98cae
-const CHIMERA = 0x9e6d89
+/**
+ * Tserriednich's, in the violet the walk has always stood it in.
+ *
+ * Exported for the reason the owl's grey-blue and the insect's blue are: the
+ * same beast stands in the hideout's office when somebody sits down at Morena's
+ * table carrying Three-Lie Transformation, and a Guardian Spirit Beast that was
+ * one colour in the corridors and another over the wood would read as two.
+ */
+export const CHIMERA = 0x9e6d89
 /** What a third lie leaves standing: the same violet, gone bad. */
 const MONSTER = 0x6f3f66
 const TOAD = 0x7fb08a

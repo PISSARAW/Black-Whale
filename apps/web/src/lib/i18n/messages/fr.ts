@@ -52,7 +52,9 @@ export const fr: Messages = {
     intro:
       "Le vaisseau comme architecture, pas comme décor : ni passagers, ni chapitre, ni chronologie. Chaque surface dit d'où elle vient — une planche, le plan des ponts, ou la reconstruction elle-même.",
     enter: 'Cliquez pour marcher',
-    engaged: 'Échap pour libérer le pointeur',
+    // Tab d'abord : c'est celle qui marche en plein écran, là où Échap libère le
+    // pointeur et quitte le plein écran d'une seule touche.
+    engaged: 'Tab pour libérer le pointeur — Échap le libère et quitte le plein écran',
     loading: 'Construction du pont…',
     unsupported:
       'Cette visite exige WebGL, que ce navigateur ne propose pas. Les plans des ponts restent accessibles sur la carte du vaisseau.',
@@ -93,6 +95,8 @@ export const fr: Messages = {
       revealKeys: 'G',
       fullscreen: 'Plein écran, panneau compris',
       fullscreenKeys: 'V',
+      release: 'Rendre le pointeur à la page',
+      releaseKeys: 'Tab — le plein écran est conservé, ce qu’Échap ne fait pas',
       nen: 'Lancer le Hatsu actif',
       nenKeys: 'F, ou un clic, sur la pièce ou le volume que vous regardez',
       nenSelf: 'Retourner le Hatsu actif sur soi',
@@ -793,39 +797,65 @@ export const fr: Messages = {
       askedLabel: 'Vous demandez',
       answerLabel: 'Elle répond',
 
+      // La table jouée à la main : ce que ferait la carte visée si on la
+      // prenait. Chacun de ces gestes est un coup que le panneau propose aussi —
+      // la salle est une seconde paire de mains sur la même partie.
+      scarlet: {
+        watching: 'Elle vous regarde la dépenser',
+      },
+
+      reach: {
+        hint: 'Visez une carte et cliquez.',
+        cast: (effect: string) => `F — ${effect}`,
+        castSecond: (effect: string) => `R — ${effect}`,
+        ask: (question: string) => `Demander — ${question}`,
+        kiss: (card: string) => `L’embrasser, et reprendre le ${card}`,
+        decline: 'Refuser le baiser, et jouer la main que vous avez',
+        point: (card: string) => `Pointer le Joker sur ${card}`,
+        reachFor: (card: string) => `Aller chercher le ${card} dans la défausse`,
+        play: (card: string) => `Poser le ${card}`,
+      },
+
       questions: {
         goal: {
           title: 'Qu’est-ce que vous voulez, au fond ?',
+          short: 'But',
           morena:
             'Un monde où personne n’est le sujet de personne. Je suis née d’une maîtresse du roi et je n’ai été rien de toute ma vie. Je compte démonter le trône et distribuer ce qu’il y a dedans.',
         },
         power: {
           title: 'Qu’est-ce que vous mettriez en moi ?',
+          short: 'Pouvoir',
           morena:
             'Contagion. Vingt-deux d’entre vous au maximum, et je sais où est chacun, comment il va et ce qu’il vaut. Vous montez d’un niveau par vie prise. Dix pour un utilisateur de Nen. Cinquante pour un prince.',
         },
         'if-yes': {
           title: 'Qu’est-ce qui se passe si je dis oui ?',
+          short: 'Si oui',
           morena:
             'Je vous embrasse, puis vous me regardez tuer quelqu’un. Tant que ces deux choses ne sont pas faites vous êtes niveau zéro et vous n’êtes rien. Après elles vous êtes à moi, et au niveau vingt vous recevez un pouvoir que personne d’autre au monde n’a.',
         },
         'if-no': {
           title: 'Qu’est-ce qui se passe si je dis non ?',
+          short: 'Si non',
           morena:
             'Vous sortez. Le jeu est ma restriction et je perdrais le pouvoir en la brisant : un non me coûte et ne vous coûte rien. C’est la moitié honnête de tout ceci, et c’est la seule.',
         },
         contract: {
           title: 'Qu’est-ce qui vous engage, vous ?',
+          short: 'Contrat',
           morena:
             'Le jeu lui-même. Il finit quand l’une de nous meurt ou quand la dernière carte tombe, et d’ici là je ne peux pas vous toucher. C’est tout le contrat. Vous l’avez en main.',
         },
         origin: {
           title: 'D’où venez-vous ?',
+          short: 'Origine',
           morena:
             'D’un lit illégitime, dans une famille qui avait un usage pour moi et pas de nom à me donner. Membre Zéro est un titre que j’ai inventé, parce que personne ne m’en avait donné non plus.',
         },
         price: {
           title: 'Qu’est-ce que je vaux pour vous ?',
+          short: 'Prix',
           morena:
             'Vous êtes soldate, Hunter, et Spécialiste sans le savoir encore. Vous valez plus que les quatre dernières personnes assises là réunies — c’est pour ça que vous obtenez des réponses et qu’elles n’ont eu qu’un baiser.',
         },
@@ -907,6 +937,7 @@ export const fr: Messages = {
         watching: 'LSDF se tient dans cette pièce. Ce qu’elle voit, Morena l’apprend.',
         unwatched: 'Plus rien ici ne regarde.',
         buys: 'Achète',
+        unbidden: 'Personne ne la joue. Elle écrit quand Morena plonge la main dans votre jeu.',
         costs: 'Coûte',
         seen: 'Elle a vu.',
         unseen: 'Personne n’a rien vu.',
@@ -918,6 +949,59 @@ export const fr: Messages = {
         shielded:
           'Le serment est prononcé. Plus rien ne peut réduire votre réponse, et donner le Oui malgré tout vous tuerait.',
         proxied: 'Ce n’est pas vous qui êtes sur cette chaise.',
+
+        book: {
+          title: 'Le livre, ouvert à deux pages',
+          body: 'Double Face n’est pas un coup. Il tient vivantes deux des techniques volées par Chrollo — ces deux-là, tirées au moment de la donne — et chacune se joue sur sa propre touche et se dépense sur son propre compte.',
+        },
+
+        rewound: {
+          title: 'Il y a dix secondes',
+          body: (cards: number) =>
+            `Vous êtes déjà passé par là, et vous êtes le seul à le savoir. Morena dépense ces secondes exactement comme elle les a dépensées la première fois — ${cards === 1 ? 'une carte' : `${cards} cartes`} qu’elle n’a pas le choix de prendre — et votre main, elle, est libre. La pièce reste bleue tant qu’elle n’a pas rattrapé.`,
+        },
+
+        ghost: {
+          title: 'Le quatrain que la bête a écrit',
+          body: 'Elle écrivait pendant que Morena plongeait la main dans votre jeu. Personne ne le lui a demandé, et elle n’écrira pas une seconde fois — une prophétie qui se corrige ne vaut rien. Ce qu’elle dit porte sur la branche perdante.',
+          verse: {
+            yes: [
+              'Le petit mot rouge ne coûte rien à dire',
+              'et ne se reprend pas.',
+              'La main qui finit sur lui finit',
+              'sur une bouche qui a déjà consenti.',
+            ],
+            no: [
+              'Le bleu est honoré : elle l’a dit,',
+              'et elle est faite des promesses qu’elle tient.',
+              'Regardez alors la carte qu’elle ne prend jamais :',
+              'une porte laissée ouverte l’a été exprès.',
+            ],
+            back: [
+              'Une carte va rechercher les autres,',
+              'et celle-ci était ouverte avant d’être donnée.',
+              'Le vert n’est pas la sortie de la main.',
+              'C’est la main, qui attend votre bras.',
+            ],
+            joker: [
+              'Le jaune porte les deux visages',
+              'et l’on ne lui dit lequel qu’au dernier instant.',
+              'Demandez quelle bouche le lui dira',
+              'quand tout le reste aura quitté la table.',
+            ],
+            x: [
+              'Le violet annule la négociation',
+              'et ne laisse rien de signé de part ni d’autre.',
+              'C’est la branche qu’elle ne peut pas dépenser —',
+              'donc c’est la branche qu’elle a préparée.',
+            ],
+          },
+        },
+
+        owl: {
+          title: 'Ce que le hibou avait déjà filmé',
+          body: 'Il était sur la cloison avant que vous vous asseyiez. Voici son éventail à l’instant où vous avez pensé à revoir la bande — grisées, les cartes qu’elle a dépensées depuis.',
+        },
 
         leave: 'Se lever',
         leaveWarning:
@@ -943,6 +1027,7 @@ export const fr: Messages = {
           evict: 'Vider sa chaise',
           blind: 'Lui ôter les sens',
           rider: 'Poser la clause',
+          rewind: 'Reprendre les dix secondes',
         },
 
         techniques: {
@@ -952,9 +1037,9 @@ export const fr: Messages = {
               'La chaîne est une chaîne : elle pend à votre main et ne passe pas en Zetsu. Bonne pour un tour, ruineuse sur cinq.',
           },
           future: {
-            buys: 'Dix secondes vécues avant tout le monde. Vous entendez quelle carte tombe avant de dépenser la question qui la lui donne.',
+            buys: 'Le dernier échange, repris. La question retourne dans son éventail et la carte qu’elle a prise revient dans votre main — et elle devra dépenser ces secondes exactement comme elle les a dépensées, quoi que vous fassiez des vôtres.',
             costs:
-              'Les dix secondes se déroulent ensuite exactement comme prévu : la table voit un joueur qui n’a rien changé — et vous n’en tirez jamais qu’un seul tour.',
+              'Tout le monde dans la pièce sauf vous continue de vivre la prédiction : rien de ce que vous faites pendant ces secondes n’est une chose à laquelle qui que ce soit puisse réagir. Un échange, une fois, et la pièce n’est visiblement plus elle-même tant qu’elle n’a pas rattrapé.',
           },
           divination: {
             buys: 'Un numéro composé sous la table, et une réponse qui est vraie.',
@@ -1037,6 +1122,21 @@ export const fr: Messages = {
             buys: 'Votre mort rendue chère : la marque emporte quelqu’un des siens avec elle.',
             costs:
               'Cela répond à une clause qu’elle n’allait jamais utiliser. Elle ne tue pas ses candidats, elle les recrute.',
+          },
+          scarlet: {
+            buys: 'Son éventail face visible et chaque carte de la pièce comptée. Rien n’échappe à ces yeux, et rien en eux n’est une fraude.',
+            costs:
+              'Une heure de vie par seconde, et une négociation n’est pas courte. Elle regarde se consumer la recrue qu’elle achète, et se lève bien avant la fin de l’année.',
+          },
+          resurrection: {
+            buys: 'Un chat dans le coin qui ne fait rien du tout — jusqu’à ce que vous mouriez, et alors il tue celle qui l’a fait.',
+            costs:
+              'Il ne répond qu’à un tueur direct, et elle ne tue pas ses candidats. Le lui dire est la seule part que vous pouvez jouer.',
+          },
+          solicitation: {
+            buys: 'La bête à votre épaule demande, redemande, et un oui lui donne les commandes. Toute cette partie, la négociation en moins.',
+            costs:
+              'Ce qu’elle récolte n’est pas le Oui de cette table. C’est une manifestation dans une petite pièce, et elle la voit demander.',
           },
           'desire-trap': {
             buys: 'Son ouverture à elle, rejouée contre elle : ce qu’elle veut, nommé à voix haute et posé comme appât.',
@@ -1126,6 +1226,16 @@ export const fr: Messages = {
             'On l’a forcée à répondre à sa propre ouverture. Personne ne lui avait encore fait ça.',
           deterred:
             'Vous tuer lui coûte quelqu’un des siens. Elle n’allait pas le faire, mais maintenant elle ne peut plus se permettre d’y avoir pensé.',
+          unaffordable:
+            'Elle s’est levée. Une recrue qui vaut vingt-deux niveaux ne vaut plus rien s’il ne lui reste pas de vie à dépenser, et elle a regardé le compteur tourner tout du long. Personne n’a dit Oui, et personne n’a eu à le faire.',
+          'burnt-out':
+            'L’année s’est épuisée alors que les cartes étaient encore sur la table. Les yeux sont restés ouverts toute la manche, et ils allaient toujours être payés.',
+          'stood-in':
+            'Quelqu’un était déjà assis là. La double de Kacho prend la chaise à l’instant où l’invité y meurt — indiscernable, et dévouée à une personne qui n’est plus à la table. L’infection n’a plus personne sur qui porter.',
+          solicited:
+            'La bête a eu son oui. Personne n’en a été infecté, personne n’a été embrassé, personne n’a eu à regarder un meurtre — ce qui est exactement ce qu’il vaut, et exactement pourquoi elle exige les trois.',
+          avenged:
+            'Vous êtes mort à cette table, et le chat a traversé la pièce. Le Nom du chat n’a besoin ni d’être annoncé, ni d’être cru, ni d’être lancé : il avait besoin que vous soyez mort, et c’est elle qui s’en est chargée.',
           evicted:
             'Elle a été sortie de sa propre chaise avant que la dernière carte ne tombe. Personne n’a dit Oui, donc personne n’a été recruté — et une négociation qu’elle n’a pas finie est la seule chose à laquelle le canon n’a pas de réponse.',
           proxied:
@@ -1191,6 +1301,8 @@ export const fr: Messages = {
             ? 'Prise sur le fait. Retour, Joker et X quittent la table.'
             : 'Vous vous êtes levé, ce qui est tricher. Retour, Joker et X quittent la table.',
         exposed: (card) => `Le baiser trouve le faux ${card}.`,
+        rewound: (cards: number) =>
+          `La pièce recule de dix secondes. Il lui reste ${cards === 1 ? 'une carte' : `${cards} cartes`} à reprendre, et pas le choix de laquelle.`,
       },
 
       again: 'Redistribuer',

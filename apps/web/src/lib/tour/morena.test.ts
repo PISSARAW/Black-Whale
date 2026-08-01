@@ -4,6 +4,8 @@ import { floorOf } from './blueprint'
 import {
   ANSWER_CARDS,
   DEALER_AT,
+  EYE_HOLD,
+  EYE_RANGE,
   GUEST_AT,
   HIDEOUT_OFFICE,
   HIDEOUT_TIER,
@@ -11,8 +13,17 @@ import {
   TABLE_AT,
   TABLE_HEIGHT,
   TABLE_KINDS,
+  BOOK_AT,
+  CAT_AT,
+  CAT_ON_HER,
+  CHIMERA_AT,
+  SPRITE_AT,
+  TABLE_PAGES,
   TABLE_TECHNIQUES,
   askMorena,
+  castsItself,
+  dealerStage,
+  eyeFeed,
   exposureNow,
   moveFor,
   dealTheGame,
@@ -20,12 +31,18 @@ import {
   lastCard,
   leaveTheTable,
   narrowTheAnswer,
+  livePages,
   needsAChoice,
+  openTheBookHere,
+  owlFilm,
+  owlSaw,
   playTechnique,
   refuseTheDeal,
   settle,
+  sitsAtTheTable,
   tableauOf,
   takeTheDeal,
+  theLosingBranch,
   worksAtTheTable,
   type AnswerCard,
   type MorenaGame,
@@ -402,6 +419,212 @@ describe('what the walk lays on the table', () => {
       expect(thing.tierId).toBe(HIDEOUT_TIER)
     }
   })
+
+  it('stands the foreseen card off the wood, and puts nothing else on it', () => {
+    const dealt = dealTheGame()
+    const flat = tableauOf(dealt, floor).find((thing) => thing.id === 'hand-joker')!
+    expect(flat.stage).toBe(1)
+
+    const told: MorenaGame = { ...dealt, foreseen: 'joker' }
+    const seen = tableauOf(told, floor)
+    const lifted = seen.find((thing) => thing.id === 'hand-joker')!
+    expect(lifted.stage).toBe(4)
+    expect(lifted.y).toBeGreaterThan(flat.y)
+    // One card is picked out, and it is the one she is reaching for.
+    expect(seen.filter((thing) => thing.stage === 4)).toHaveLength(1)
+  })
+
+  it('gives the forged card the aura that made it, until a touch finds it', () => {
+    const forged = playTechnique(withTechnique('disguise'), { random: clean })
+    const made = tableauOf(forged, floor).find((thing) => thing.id === `hand-${forged.forged}`)!
+    expect(made.stage).toBe(5)
+    // The aura is on the forged face and on nothing else: a hand can hold two
+    // of the same card once a copy has been made of one, and both of those are
+    // the forgery as far as this table is concerned.
+    for (const thing of tableauOf(forged, floor)) {
+      if (thing.stage !== 5) continue
+      expect(thing.id).toBe(`hand-${forged.forged}`)
+    }
+
+    // Once the kiss has given it away it is a card somebody has read, which is
+    // the nick — the same one Morena's marked card wears.
+    const exposed: MorenaGame = { ...forged, manipulated: true }
+    const seen = tableauOf(exposed, floor).find((thing) => thing.id === `hand-${forged.forged}`)!
+    expect(seen.stage).toBe(3)
+  })
+
+  it('flies the insect in the room from the moment somebody sits down with it', () => {
+    expect(tableauOf(dealTheGame(), floor).some((thing) => thing.kind === 'insect')).toBe(false)
+
+    const carried = tableauOf(withTechnique('scout'), floor).find(
+      (thing) => thing.kind === 'insect',
+    )!
+    // Up out of the way, and working the room rather than anything on the table.
+    expect(carried.y).toBeGreaterThan(floor + 2)
+    expect(carried.spread).toBe(EYE_RANGE)
+  })
+
+  it('sends a picture back, from wherever the insect is holding', () => {
+    // No eye, no feed: every other technique at this table is held rather than
+    // sent, and there is nothing in the room to look through.
+    expect(eyeFeed(dealTheGame(), floor)).toBeNull()
+    expect(eyeFeed(withTechnique('dowsing'), floor)).toBeNull()
+
+    // Perched, it is watching the room — which means watching her.
+    const perched = eyeFeed(withTechnique('scout'), floor)!
+    expect(perched.y).toBeGreaterThan(floor + 2)
+    expect(perched.look).toEqual(DEALER_AT)
+
+    // Filming, it is over the fan and looking down at it: the descent is the
+    // read, and the picture has to be of what was read.
+    const filming = eyeFeed(playTechnique(withTechnique('scout'), { random: clean }), floor)!
+    expect(filming.y).toBeGreaterThan(floor + TABLE_HEIGHT)
+    expect(filming.y).toBeLessThan(floor + TABLE_HEIGHT + 0.4)
+    expect(filming.lookY).toBeLessThan(filming.y)
+    // Her side of the table, and pointed further into it: a camera looking
+    // straight down has no upright, and the cards would come out on their side.
+    expect(filming.look[1]).toBeLessThan(filming.at[1])
+    expect(filming.at[1]).toBeLessThan(TABLE_AT[1])
+  })
+
+  it('brings it down onto her fan once it has been told to film', () => {
+    const filming = playTechnique(withTechnique('scout'), { random: clean })
+    const seen = tableauOf(filming, floor).find((thing) => thing.kind === 'insect')!
+    // Over her cards, close enough to read one and clear of the wood.
+    expect(seen.y).toBeGreaterThan(floor + TABLE_HEIGHT)
+    expect(seen.y).toBeLessThan(floor + TABLE_HEIGHT + 0.4)
+    expect(seen.at[1]).toBeLessThan(TABLE_AT[1])
+    expect(seen.spread).toBe(EYE_HOLD)
+    // And it is one insect flown down, not a second one built beside the first.
+    expect(tableauOf(filming, floor).filter((thing) => thing.kind === 'insect')).toHaveLength(1)
+  })
+
+  it('leaves the owl on the bulkhead, before the cast and after it', () => {
+    expect(tableauOf(dealTheGame(), floor).some((thing) => thing.kind === 'owl')).toBe(false)
+
+    const bird = (game: MorenaGame) => tableauOf(game, floor).find((thing) => thing.kind === 'owl')!
+    const attached = bird(withTechnique('surveillance'))
+    // High, behind her, and — the whole of the technique — perfectly still.
+    expect(attached.y).toBeGreaterThan(floor + 2)
+    expect(attached.at[1]).toBeLessThan(DEALER_AT[1])
+    expect(attached.spread).toBe(0)
+
+    // Nothing about it moves when the tape is reviewed: what a camera bolted to
+    // a wall does when somebody watches its footage is nothing.
+    const reviewed = bird(playTechnique(withTechnique('surveillance'), { random: clean }))
+    expect(reviewed.at).toEqual(attached.at)
+    expect(reviewed.y).toBe(attached.y)
+  })
+
+  it('hands over a recording rather than a feed, and only once it is asked for', () => {
+    // Attached and not yet reviewed: the bird is filming, and nobody is
+    // watching it. That is the difference between this and the insect.
+    expect(owlFilm(dealTheGame(), floor)).toBeNull()
+    expect(owlFilm(withTechnique('scout'), floor)).toBeNull()
+    expect(owlFilm(withTechnique('surveillance'), floor)).toBeNull()
+
+    const film = owlFilm(playTechnique(withTechnique('surveillance'), { random: clean }), floor)!
+    // From the bulkhead, over her shoulder, pointed down at her fan.
+    expect(film.y).toBeGreaterThan(floor + 2)
+    expect(film.at[1]).toBeLessThan(DEALER_AT[1])
+    expect(film.look[1]).toBeLessThan(TABLE_AT[1])
+    expect(film.lookY).toBeLessThan(film.y)
+  })
+
+  it('keeps in the record the questions she has spent since it was taken', () => {
+    expect(owlSaw(withTechnique('surveillance'))).toBeNull()
+    expect(owlSaw(playTechnique(withTechnique('scout'), { random: clean }))).toBeNull()
+
+    const filmed = playTechnique(withTechnique('surveillance'), { random: clean })
+    expect(owlSaw(filmed)).toEqual([...QUESTION_CARDS])
+
+    // Two questions spent afterwards. Her fan is down to five and the footage
+    // is still seven: a recording does not update, which is the one thing it
+    // has over the live picture at the other end of the table.
+    const later = askMorena(askMorena(filmed, QUESTION_CARDS[0]), QUESTION_CARDS[3])
+    expect(later.questions).toHaveLength(5)
+    expect(owlSaw(later)).toEqual([...QUESTION_CARDS])
+  })
+
+  it('leaves the nick showing rather than the foresight when a card is both', () => {
+    const over: MorenaGame = {
+      ...dealTheGame(),
+      phase: 'over',
+      hand: ['back'],
+      foreseen: 'back',
+      verdict: 'forced',
+    }
+    expect(tableauOf(over, floor).find((thing) => thing.id === 'hand-back')!.stage).toBe(3)
+  })
+})
+
+describe('the woman opposite', () => {
+  it('deals, leans in for the kiss, and sits back when it is played out', () => {
+    expect(dealerStage(dealTheGame())).toBe(0)
+    expect(dealerStage({ ...dealTheGame(), phase: 'deal' })).toBe(1)
+    expect(dealerStage({ ...dealTheGame(), phase: 'over' })).toBe(2)
+  })
+
+  it('reacts to the one thing the table never showed: being seen', () => {
+    const caught = playTechnique(withTechnique('dowsing'), { random: caught_ })
+    expect(caught.log.at(-1)).toMatchObject({ kind: 'narrowed' })
+    // The narrowing is the last beat, so the reaction has to survive it: what
+    // she answers to is having been told, not the sanction that followed.
+    expect(dealerStage({ ...caught, log: caught.log.slice(0, -1) })).toBe(3)
+
+    const unseen = playTechnique(withTechnique('dowsing'), { random: clean })
+    expect(dealerStage(unseen)).toBe(0)
+  })
+
+  it('reacts to a forged card given away by the kiss', () => {
+    const forged = playTechnique(withTechnique('disguise'), { random: clean })
+    // Put the hand at the offer rather than playing to it: what is under test
+    // is the touch, and three rounds of shuffling are three chances for her to
+    // take the forged card back off the table before anybody touches anything.
+    const offered: MorenaGame = {
+      ...forged,
+      phase: 'deal',
+      hand: ['yes', forged.forged!],
+      graveyard: ['joker'],
+    }
+    const exposed = takeTheDeal(offered, 'joker')
+    expect(exposed.log.some((beat) => beat.kind === 'exposed')).toBe(true)
+    const told = exposed.log.slice(0, exposed.log.findIndex((beat) => beat.kind === 'exposed') + 1)
+    expect(dealerStage({ ...exposed, log: told })).toBe(3)
+  })
+
+  it('stops finding whoever sat down once her senses are taken', () => {
+    const blinded = playTechnique(withTechnique('senses'), { random: clean })
+    expect(blinded.phase).toBe('over')
+    // Over, and still not sat back: the loss outlasts the hand it ended.
+    expect(dealerStage(blinded)).toBe(4)
+  })
+})
+
+describe("Cross Game's card, on a table rather than over a room", () => {
+  const office = ship.spaces.get(HIDEOUT_OFFICE)!
+  const floor = floorOf(office, ship.plans.get(HIDEOUT_TIER)!.tier)
+  const cardIn = (game: MorenaGame) =>
+    tableauOf(game, floor).find((thing) => thing.id === 'tribunal-card')
+
+  it('is shown to nobody who did not sit down with it', () => {
+    expect(cardIn(dealTheGame())).toBeUndefined()
+    expect(cardIn(withTechnique('dowsing'))).toBeUndefined()
+  })
+
+  it('turns blue, then yellow, then red', () => {
+    const seated = withTechnique('tribunal')
+    expect(cardIn(seated)!.stage).toBe(1)
+
+    let warned = askMorena(seated, 'goal', { random: first })
+    expect(cardIn(warned)!.stage).toBe(1)
+    warned = askMorena(warned, 'power', { random: first })
+    expect(cardIn(warned)!.stage).toBe(2)
+
+    const expelled = playTechnique(warned, { random: clean })
+    expect(expelled.aftermath).toContain('evicted')
+    expect(cardIn(expelled)!.stage).toBe(3)
+  })
 })
 
 // ── What a Hatsu does to twelve cards ─────────────────────────────
@@ -448,6 +671,171 @@ describe('the roster of what can be played across the table', () => {
       expect(move.uses, `${kind} can be played no times at all`).toBeGreaterThan(0)
       if (!move.fraud) expect(move.exposure, `${kind} is legal and still priced`).toBe(0)
     }
+  })
+})
+
+describe('Double Face, which is two seats rather than one', () => {
+  const floor = floorOf(ship.spaces.get(HIDEOUT_OFFICE)!, ship.plans.get(HIDEOUT_TIER)!.tier)
+
+  /** A book open at Little Eye with Love Dial under the ribbon. */
+  const book = (over: Partial<MorenaGame> = {}): MorenaGame => ({
+    ...dealTheGame({ marked: null, technique: 'scout', bookmark: 'divination' }),
+    ...over,
+  })
+
+  it('draws its two pages from what Chrollo is carrying, and never twice', () => {
+    for (const page of TABLE_PAGES) expect(worksAtTheTable(page)).toBe(true)
+    // A ribbon marking the open page is a bookmark doing nothing.
+    for (const roll of [0, 0.3, 0.6, 0.999]) {
+      const [open, second] = openTheBookHere(() => roll)
+      expect(open).not.toBe(second)
+    }
+  })
+
+  it('lets the ribbon in at the table, where a technique-only door would not', () => {
+    expect(worksAtTheTable('bookmark')).toBe(false)
+    expect(sitsAtTheTable('bookmark')).toBe(true)
+    expect(sitsAtTheTable('scout')).toBe(true)
+    expect(sitsAtTheTable('blast')).toBe(false)
+  })
+
+  it('holds both pages live, each on its own key', () => {
+    expect(livePages(book()).map((seat) => seat.kind)).toEqual(['scout', 'divination'])
+    expect(livePages(dealTheGame()).map((seat) => seat.kind)).toEqual([])
+  })
+
+  it('spends each page out of its own purse', () => {
+    const played = playTechnique(book(), { random: clean, page: 'second' })
+    // Love Dial is the one that went; the open page has spent nothing.
+    expect(played.spent).toBe(0)
+    expect(played.bookmark).toEqual({ kind: 'divination', spent: 1 })
+    expect(played.log.at(-1)).toMatchObject({ kind: 'played', technique: 'divination' })
+
+    // And a page with nothing left refuses, without touching the other one.
+    const twice = playTechnique(played, { random: clean, page: 'second' })
+    const spentOut = playTechnique(twice, { random: clean, page: 'second' })
+    expect(spentOut).toBe(twice)
+    expect(playTechnique(played, { random: clean }).spent).toBe(1)
+  })
+
+  it('puts a bookmarked technique in the room like any other', () => {
+    // The insect is Little Eye's whether Little Eye is the open page or the one
+    // under the ribbon: a table that drew the roster rather than the room would
+    // leave a cast technique with nothing standing anywhere.
+    const ribboned = dealTheGame({ marked: null, technique: 'tribunal', bookmark: 'scout' })
+    expect(tableauOf(ribboned, floor).some((thing) => thing.kind === 'insect')).toBe(true)
+    expect(eyeFeed(ribboned, floor)).not.toBeNull()
+
+    const filming = playTechnique(ribboned, { random: clean, page: 'second' })
+    expect(tableauOf(filming, floor).find((thing) => thing.kind === 'insect')!.spread).toBe(
+      EYE_HOLD,
+    )
+  })
+})
+
+describe('Lovely Ghostwriter, which nobody plays', () => {
+  const floor = floorOf(ship.spaces.get(HIDEOUT_OFFICE)!, ship.plans.get(HIDEOUT_TIER)!.tier)
+  const beastIn = (game: MorenaGame) =>
+    tableauOf(game, floor).find((thing) => thing.kind === 'ghost')
+
+  it('sits the beast at the guest’s elbow from the deal', () => {
+    expect(beastIn(dealTheGame())).toBeUndefined()
+    const waiting = beastIn(withTechnique('prophecy'))!
+    // The guest's side of the wood, and over it rather than on it.
+    expect(waiting.at[1]).toBeGreaterThan(TABLE_AT[1])
+    expect(waiting.y).toBeGreaterThan(floor + TABLE_HEIGHT)
+    expect(waiting.stage).toBe(0)
+  })
+
+  it('writes the moment Morena reaches, without being asked', () => {
+    expect(castsItself('prophecy')).toBe(true)
+    expect(castsItself('scout')).toBe(false)
+
+    const written = askMorena(withTechnique('prophecy'), 'goal', { random: first })
+    expect(written.spent).toBe(1)
+    expect(
+      written.log.some((beat) => beat.kind === 'played' && beat.technique === 'prophecy'),
+    ).toBe(true)
+    expect(written.read).toBe(true)
+    expect(beastIn(written)!.stage).toBe(1)
+
+    // Once. A prophecy that revised itself would be worth nothing.
+    const again = askMorena(written, 'power', { random: first })
+    expect(again.spent).toBe(1)
+    expect(again.log.filter((beat) => beat.kind === 'played')).toHaveLength(1)
+  })
+
+  it('writes about the branch the deal already decided', () => {
+    // Nothing until it has written, and then the marked card: the branch that
+    // loses was chosen before anybody sat down.
+    expect(theLosingBranch(withTechnique('prophecy'))).toBeNull()
+    const marked: MorenaGame = { ...dealTheGame({ technique: 'prophecy' }) }
+    expect(theLosingBranch(askMorena(marked, 'goal', { random: last }))).toBe('back')
+    // And on a clean deal, the plain one: a Yes is an infection freely given.
+    const clean = askMorena(withTechnique('prophecy'), 'goal', { random: first })
+    expect(clean.marked).toBeNull()
+    expect(theLosingBranch(clean)).toBe('yes')
+  })
+
+  it('writes from under the ribbon as readily as from the open page', () => {
+    const ribboned = dealTheGame({ marked: null, technique: 'dowsing', bookmark: 'prophecy' })
+    const written = askMorena(ribboned, 'goal', { random: first })
+    expect(written.spent).toBe(0)
+    expect(written.bookmark).toEqual({ kind: 'prophecy', spent: 1 })
+    expect(theLosingBranch(written)).toBe('yes')
+  })
+})
+
+describe('Parallel Future, which is ten seconds twice', () => {
+  it('has nothing to take back before anything has happened', () => {
+    const fresh = withTechnique('future')
+    expect(playTechnique(fresh, { random: clean })).toBe(fresh)
+  })
+
+  it('puts the table back an exchange and leaves the aura where it was', () => {
+    const played = askMorena(withTechnique('future'), 'goal', { random: last })
+    expect(played.graveyard).toEqual(['x'])
+    expect(played.questions).toHaveLength(6)
+
+    const back = playTechnique(played, { random: clean })
+    // The table, as it was.
+    expect(back.hand).toEqual([...ANSWER_CARDS])
+    expect(back.graveyard).toEqual([])
+    expect(back.questions).toHaveLength(7)
+    expect(back.round).toBe(1)
+    // The aura, as it is: the ten seconds were lived, and they cost a use.
+    expect(back.spent).toBe(1)
+    // And the transcript keeps both passes rather than cutting one out.
+    expect(back.log.filter((beat) => beat.kind === 'asked')).toHaveLength(1)
+    expect(back.log.at(-1)).toMatchObject({ kind: 'rewound', cards: 1 })
+    // One step back, and it has been taken.
+    expect(back.previous).toBeNull()
+    expect(playTechnique(back, { random: clean })).toBe(back)
+  })
+
+  it('makes her spend the seconds again exactly as she spent them', () => {
+    const played = askMorena(withTechnique('future'), 'goal', { random: last })
+    const back = playTechnique(played, { random: clean })
+    expect(back.forced).toEqual(['x'])
+
+    // A different question this time, and a shuffle that would reach the other
+    // end of the hand. She takes the card she took: the prediction is immutable
+    // for everybody except the one person who saw it.
+    const again = askMorena(back, 'price', { random: first })
+    expect(again.graveyard).toEqual(['x'])
+    expect(again.asked).toEqual(['price'])
+    // Caught up. She is choosing again, and the room is its own colour.
+    expect(again.forced).toEqual([])
+    const free = askMorena(again, 'goal', { random: first })
+    expect(free.graveyard).toEqual(['x', 'yes'])
+  })
+
+  it('outranks foresight, which is a technique and not her own hand', () => {
+    const played = askMorena(withTechnique('future'), 'goal', { random: last })
+    const back: MorenaGame = { ...playTechnique(played, { random: clean }), foreseen: 'yes' }
+    // Two techniques disagreeing about what she does next: the one that already
+    // happened wins, because it already happened.
+    expect(askMorena(back, 'price', { random: first }).graveyard).toEqual(['x'])
   })
 })
 
@@ -499,13 +887,39 @@ describe('the Manipulation, which is the only sanction the game has', () => {
 })
 
 describe('reading her hand', () => {
+  const office = ship.spaces.get(HIDEOUT_OFFICE)!
+  const floor = floorOf(office, ship.plans.get(HIDEOUT_TIER)!.tier)
+
   it('turns the fan face up, and the table draws it face up', () => {
     const played = playTechnique(withTechnique('scout'), { random: clean })
     expect(played.read).toBe(true)
-    const office = ship.spaces.get(HIDEOUT_OFFICE)!
-    const floor = floorOf(office, ship.plans.get(HIDEOUT_TIER)!.tier)
     const fan = tableauOf(played, floor).filter((thing) => thing.id.startsWith('question-'))
     expect(fan.every((card) => card.stage === 1)).toBe(true)
+  })
+
+  it('puts the question itself on the card, and only once it has been read', () => {
+    // Face down is a card with nothing on it: a table that prints the question
+    // on a card the guest has not paid for has given the game away.
+    const blind = tableauOf(withTechnique('scout'), floor)
+    expect(blind.filter((thing) => thing.id.startsWith('question-'))).not.toHaveLength(0)
+    for (const card of blind.filter((thing) => thing.id.startsWith('question-'))) {
+      expect(card.face).toBeUndefined()
+    }
+
+    const read = tableauOf(playTechnique(withTechnique('scout'), { random: clean }), floor)
+    for (const card of read.filter((thing) => thing.id.startsWith('question-'))) {
+      expect(card.face).toBe(card.id.slice('question-'.length))
+    }
+  })
+
+  it('draws the guest their own cards, whatever the technique in hand', () => {
+    // They are their own cards and always have been, so a hand is legible
+    // before anything has been spent on anything.
+    for (const card of tableauOf(dealTheGame(), floor).filter((thing) =>
+      thing.id.startsWith('hand-'),
+    )) {
+      expect(card.face).toBe(card.id.slice('hand-'.length))
+    }
   })
 
   it('makes foresight true rather than likely', () => {
@@ -530,13 +944,16 @@ describe('reading her hand', () => {
 
   it('cannot be seen at all when it is lived under Zetsu', () => {
     // Parallel Future is priced at zero exposure, so the roll is irrelevant.
-    const seen = playTechnique(withTechnique('future'), { random: caught_ })
+    // It needs ten seconds to take back, so an exchange is played first.
+    const lived = askMorena(withTechnique('future'), 'goal', { random: last })
+    const seen = playTechnique(lived, { random: caught_ })
     expect(seen.manipulated).toBe(false)
-    expect(seen.foreseen).not.toBeNull()
+    expect(seen.forced).toEqual(['x'])
   })
 
   it('runs out: a one-shot is a one-shot', () => {
-    const game = playTechnique(withTechnique('future'), { random: clean })
+    const lived = askMorena(withTechnique('future'), 'goal', { random: last })
+    const game = playTechnique(lived, { random: clean })
     const again = playTechnique(game, { random: clean })
     expect(again).toBe(game)
     expect(game.spent).toBe(1)
@@ -769,5 +1186,101 @@ describe('the five seats the table opened last', () => {
     expect(projected.proxied).toBe(true)
     const over = settle({ ...projected, hand: ['yes'], phase: 'settling', kissed: true })
     expect(infectionAfter(over)).toMatchObject({ said: true, kissed: false, level: null })
+  })
+})
+
+describe('the seats that are simply in the room', () => {
+  const floor = floorOf(ship.spaces.get(HIDEOUT_OFFICE)!, ship.plans.get(HIDEOUT_TIER)!.tier)
+  const carried = (kind: TableKind) => withTechnique(kind)
+  const shown = (game: MorenaGame, kind: string) =>
+    tableauOf(game, floor).find((thing) => thing.kind === kind)
+
+  /** A hand played out to a Yes, with whatever is under test seated at it. */
+  const played = (kind: TableKind, over: Partial<MorenaGame> = {}) =>
+    settle({ ...withTechnique(kind), phase: 'settling', hand: ['yes'], ...over })
+
+  it('puts nothing in the room for a guest carrying none of them', () => {
+    for (const kind of ['cat', 'chimera', 'sprite', 'book', 'contract', 'vow-heart']) {
+      expect(shown(dealTheGame(), kind), kind).toBeUndefined()
+    }
+  })
+
+  it('sits the cat in the corner, and sends it across the room when it collects', () => {
+    const sitting = shown(carried('resurrection'), 'cat')!
+    // In a corner, on the deck, and looking at nobody: nothing has been said.
+    expect(sitting.stage).toBe(0)
+    expect(sitting.at).toEqual(CAT_AT)
+    expect(sitting.y).toBe(floor)
+
+    // Playing it is telling her it is there, which is the only part of a
+    // posthumous counterattack anybody can perform.
+    expect(shown(playTechnique(carried('resurrection'), { random: clean }), 'cat')!.stage).toBe(1)
+
+    // And the one death this game contains: the vow struck, and the cat moved.
+    const struck = played('resurrection', { riders: ['sworn'] })
+    expect(struck.aftermath).toContain('avenged')
+    const collected = shown(struck, 'cat')!
+    expect(collected.stage).toBe(2)
+    expect(collected.at).toEqual(CAT_ON_HER)
+    // And the woman it collected from, drawn the way this room draws anything
+    // final about a body: the thing that was moving has stopped.
+    expect(dealerStage(struck)).toBe(3)
+  })
+
+  it('stands the lie-marks beast at the table and never moves it', () => {
+    const stood = shown(carried('lie-marks'), 'chimera')!
+    expect(stood.at).toEqual(CHIMERA_AT)
+    expect(stood.y).toBe(floor)
+    const after = shown(playTechnique(carried('lie-marks'), { random: clean }), 'chimera')!
+    expect(after.at).toEqual(stood.at)
+    expect(after.y).toBe(stood.y)
+  })
+
+  it('hangs the pestering beast at the guest, where it wanders and comes back', () => {
+    const asking = shown(carried('solicitation'), 'sprite')!
+    expect(asking.at).toEqual(SPRITE_AT)
+    expect(asking.y).toBeGreaterThan(floor + 1)
+    expect(asking.spread).toBeGreaterThan(0)
+  })
+
+  it('opens the hunter book blank, and writes in it when the theft goes through', () => {
+    expect(shown(carried('theft'), 'book')!.stage).toBe(0)
+    expect(shown(carried('theft'), 'book')!.at).toEqual(BOOK_AT)
+
+    // The three conditions: seen in action, questioned and answered, touched.
+    const stolen = played('theft', {
+      riders: ['stolen'],
+      kissed: true,
+      asked: ['goal'],
+    })
+    expect(stolen.aftermath).toContain('stolen')
+    expect(shown(stolen, 'book')!.stage).toBe(1)
+  })
+
+  it('holds the sheet up blank and lays it signed in the corner', () => {
+    const blank = shown(carried('contract'), 'contract')!
+    expect(blank.stage).toBe(0)
+    // Between the two of them, which is where a sheet being read out is.
+    expect(blank.at[1]).toBeGreaterThan(DEALER_AT[1])
+    expect(blank.at[1]).toBeLessThan(GUEST_AT[1])
+    // Up in the air between the two of them: a contract being read out.
+    expect(blank.y).toBeGreaterThan(floor + TABLE_HEIGHT + 0.2)
+
+    const signed = shown(playTechnique(carried('contract'), { random: clean }), 'contract')!
+    expect(signed.stage).toBe(1)
+    expect(signed.at[0]).toBeGreaterThan(blank.at[0])
+    // Lying on the wood, where a signed thing is left.
+    expect(signed.y).toBeLessThan(floor + TABLE_HEIGHT + 0.05)
+  })
+
+  it('wears the vow in the chest, closes it on the cast, and stops it when it is paid', () => {
+    expect(shown(carried('heart-vow'), 'vow-heart')!.stage).toBe(0)
+    const sworn = playTechnique(carried('heart-vow'), { random: clean })
+    expect(sworn.shielded).toBe(true)
+    expect(shown(sworn, 'vow-heart')!.stage).toBe(1)
+
+    const struck = played('heart-vow', { riders: ['sworn'] })
+    expect(struck.aftermath).toContain('sworn-struck')
+    expect(shown(struck, 'vow-heart')!.stage).toBe(2)
   })
 })

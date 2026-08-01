@@ -117,6 +117,14 @@ export type TableEffect =
   | 'evict'
   | 'blind'
   | 'rider'
+  /**
+   * The last exchange, unspooled and played again.
+   *
+   * The one effect that does not change what is on the table so much as *when*
+   * it is: ten seconds are taken back, and the woman opposite has to spend them
+   * exactly as she spent them the first time while the guest is free not to.
+   */
+  | 'rewind'
 
 /**
  * What a technique hangs on the outcome rather than on the hand.
@@ -126,7 +134,16 @@ export type TableEffect =
  * direction.
  */
 export type Rider =
-  'bound' | 'moon' | 'stolen' | 'sworn' | 'smoke' | 'taxed' | 'trapped' | 'deterred'
+  | 'bound'
+  | 'moon'
+  | 'stolen'
+  | 'sworn'
+  | 'smoke'
+  | 'taxed'
+  | 'trapped'
+  | 'deterred'
+  /** A yes was pestered out of somebody, and it was not the one on the table. */
+  | 'solicited'
 
 /** What a rider actually did, once the last card is down. */
 export type Aftermath =
@@ -138,9 +155,42 @@ export type Aftermath =
   | 'taxed'
   | 'trapped'
   | 'deterred'
+  | 'solicited'
   | 'proxied'
   /** Morena was taken out of her own chair, and the game died with her in it. */
   | 'evicted'
+  /**
+   * The guest died at the table, and something of theirs killed her for it.
+   *
+   * Cat's Name is posthumous by definition: it does nothing at all until its
+   * owner is dead, and then it crushes whoever killed them. It is the only
+   * thing in this game that happens *after* the last card, and the only one
+   * that can be paid out to a corpse.
+   */
+  | 'avenged'
+  /**
+   * The eyes were open too long, and she stood up.
+   *
+   * Emperor Time is priced in life: an hour of it a second, and a negotiation
+   * is not a short thing. Morena does not want a corpse — she wants twenty-two
+   * of the living, each worth a level — so a candidate visibly spending their
+   * own life expectancy in front of her stops being worth the hand. She is the
+   * one who ends it, which is the only exit from this game neither player had
+   * to earn.
+   */
+  | 'unaffordable'
+  /** And the year ran out first. The candidate died in the chair. */
+  | 'burnt-out'
+  /**
+   * Somebody was already sitting there when it happened.
+   *
+   * Kacho's double is post-mortem by definition: it exists because its twin
+   * did not, and it is indistinguishable from her. So the one proxy at this
+   * table that answers a death rather than avoiding one takes the chair when
+   * the guest dies in it — and the infection has nobody to be about, which is
+   * a different thing from a Yes that was worth nothing.
+   */
+  | 'stood-in'
 
 /** One line of what happened, in the order it happened. */
 export type Beat =
@@ -160,6 +210,8 @@ export type Beat =
   | { kind: 'exposed'; round: number; card: AnswerCard }
   /** What a rider did when the last card came down. */
   | { kind: 'aftermath'; round: number; what: Aftermath }
+  /** Ten seconds taken back, and how many of her draws are owed again. */
+  | { kind: 'rewound'; round: number; cards: number }
 
 export interface MorenaGame {
   phase: GamePhase
@@ -197,6 +249,21 @@ export interface MorenaGame {
   /** How many times each move has been spent, so a one-shot stays one. */
   spent: number
   /**
+   * The other page, when the visitor sat down with Double Face.
+   *
+   * Chrollo's bookmark is the one thing in the roster that is not a technique
+   * at all: it holds a *second* stolen ability live beside the open one, and
+   * both can be played. So a guest carrying it does not sit down with a
+   * technique, they sit down with two — and the second needs its own counter,
+   * because a one-shot on the open page has nothing to do with a one-shot
+   * under the ribbon.
+   *
+   * Kept as a second slot rather than as a list of techniques because that is
+   * what the ability is: a book open at one page with a ribbon in another. Two
+   * is the number, and nothing at this table can make it three.
+   */
+  bookmark: { kind: TableKind; spent: number } | null
+  /**
    * How watchful the room is, from 0 to 1.
    *
    * One at the hideout, and the hideout is where the game is played: LSDF is
@@ -230,6 +297,31 @@ export interface MorenaGame {
   aftermath: Aftermath[]
   /** How it closed, when it closed on something other than a card. */
   ending: 'played' | 'abandoned' | null
+
+  /**
+   * The hand as it stood one exchange ago, and nothing further back.
+   *
+   * The only technique here that goes backwards needs somewhere to go back to,
+   * and ten seconds at this table is one exchange: she answers, she reaches,
+   * and it is gone. Held on the game itself rather than by whoever is holding
+   * the game, because going back is a rule and not a piece of interface — the
+   * dashboard replaying a branch has to reach the same state the walk does.
+   *
+   * Never nested: the snapshot carries `previous: null`, so this is one step of
+   * undo and not a tape of the whole negotiation.
+   */
+  previous: MorenaGame | null
+  /**
+   * What Morena has to do again, in the order she did it.
+   *
+   * The canon rule of Parallel Future is that everyone *except* its user goes
+   * on living the prediction: the ten seconds she has already spent are the
+   * ten seconds she is going to spend, whatever the guest does differently.
+   * So these are the cards she took in the erased stretch, and she takes them
+   * again — the shuffle is not consulted until the list is empty, which is
+   * also when the room stops being out of step with itself.
+   */
+  forced: AnswerCard[]
 
   log: Beat[]
 }
@@ -305,7 +397,7 @@ export function exposureNow(move: TableMove, game: MorenaGame): number {
 export const TABLE_TECHNIQUES = {
   // ── Reading her hand ──────────────────────────
   dowsing: { hatsuId: 'dowsing-chain', effect: 'foresee', exposure: 0.55, fraud: true, uses: 3 },
-  future: { hatsuId: 'parallel-future', effect: 'foresee', exposure: 0, fraud: true, uses: 1 },
+  future: { hatsuId: 'parallel-future', effect: 'rewind', exposure: 0, fraud: true, uses: 1 },
   divination: { hatsuId: 'love-dial-6700', effect: 'foresee', exposure: 0.2, fraud: true, uses: 2 },
   prophecy: { hatsuId: 'lovely-ghostwriter', effect: 'read', exposure: 0, fraud: false, uses: 1 },
   surveillance: { hatsuId: 'secret-window', effect: 'read', exposure: 0.15, fraud: true, uses: 1 },
@@ -320,6 +412,25 @@ export const TABLE_TECHNIQUES = {
   // A punch is a truthful answer and a punch. Certain detection, so it is worth
   // exactly one thing: the last exchange, when the Manipulation has nothing
   // left to narrow because you are already holding the card you meant to play.
+  /**
+   * Emperor Time, which is the only seat here priced in something other than
+   * exposure.
+   *
+   * Nothing about it is hidden and nothing about it is a fraud: Kurapika opens
+   * his eyes and knows what he is looking at, and every other technique at this
+   * table would trade its whole exposure for that. What it costs is an hour of
+   * life a second, and a negotiation is not a short thing — which makes it the
+   * one capability in the archive whose price makes this game literally
+   * unaffordable. It is seated so the table can *charge* it. See
+   * `sheWillNotPlay` and `theEyesTakeYou` for the two ways that bill arrives.
+   */
+  scarlet: {
+    hatsuId: 'emperor-time',
+    effect: 'read',
+    exposure: 0,
+    fraud: false,
+    uses: 1,
+  },
   'truth-punch': { hatsuId: 'body-and-soul', effect: 'read', exposure: 1, fraud: true, uses: 1 },
 
   // ── Hiding yours ──────────────────────────────
@@ -394,6 +505,30 @@ export const TABLE_TECHNIQUES = {
     fraud: false,
     uses: 1,
   },
+  /**
+   * Cat's Name, which is the dissuasive family's third seat and its strangest.
+   *
+   * The other two make your death expensive by making it useless. This one
+   * makes it expensive by making it fatal — Camilla's cat is posthumous, and
+   * what it does is kill whoever killed her. Playing it is telling the other
+   * side that it is there, because a deterrent nobody has been told about
+   * deters nobody; the cat itself needs no telling and no casting, and avenges
+   * the guest whether or not they ever mentioned it. See `payTheRiders`.
+   *
+   * Its canon flaw is what makes it the right card at *this* table and a bad
+   * one everywhere else: it answers a direct killer and nothing else, and
+   * Morena does not kill her candidates. She recruits them. So it is aimed
+   * exactly at the clause the game already leaves open, and at nothing she was
+   * ever going to do.
+   */
+  resurrection: {
+    hatsuId: 'cats-name',
+    effect: 'rider',
+    rider: 'deterred',
+    exposure: 0,
+    fraud: false,
+    uses: 1,
+  },
   'desire-trap': {
     hatsuId: 'luzurus-guardian-desire-trap',
     effect: 'read',
@@ -408,6 +543,29 @@ export const TABLE_TECHNIQUES = {
     rider: 'taxed',
     exposure: 0,
     fraud: false,
+    uses: 1,
+  },
+  /**
+   * «Are You Free?», which is this whole game with the negotiation taken out.
+   *
+   * Momoze's beast asks, and asks again, and a yes lets it into the ear and
+   * hands it the controls. It is a Yes-extractor with no cards, no questions,
+   * no kiss and no murder — so seated at this table it is not a move, it is a
+   * comparison: the thing in the room that already has what Morena is spending
+   * a hand of twelve cards to get, and gets it from anyone, endlessly.
+   *
+   * It is priced as the parody it is. What it takes is worth nothing here — a
+   * yes pestered out of somebody is not the Yes this game is about, which is
+   * precisely why Morena asks for the kiss and the murder on top of hers, and
+   * why her network stops at twenty-two while this one would not stop at all.
+   * The rider says so when the last card comes down, and it changes no card.
+   */
+  solicitation: {
+    hatsuId: 'momoze-guardian-solicitation',
+    effect: 'rider',
+    rider: 'solicited',
+    exposure: 0.3,
+    fraud: true,
     uses: 1,
   },
 
@@ -506,6 +664,69 @@ export function moveFor(kind: TableKind): TableMove {
   return TABLE_TECHNIQUES[kind]
 }
 
+/**
+ * The techniques nobody plays.
+ *
+ * Automatic writing is not a move: Lovely Ghostwriter's beast writes when it
+ * writes, and its subject is not consulted and is not shown their own. So this
+ * one is fired by the table — at the first card Morena takes out of the guest's
+ * hand — rather than offered on a key beside the rest.
+ *
+ * A list rather than a flag on the move, because it is a fact about how a
+ * capability reaches the table rather than about what it buys once it is there,
+ * and because there is exactly one of them: a `castsItself: true` on every
+ * other entry in `TABLE_TECHNIQUES` would be thirty falsehoods keeping one
+ * truth company.
+ */
+export const UNBIDDEN: readonly TableKind[] = ['prophecy']
+
+/** Whether this one fires on its own rather than on a key. */
+export function castsItself(kind: TableKind): boolean {
+  return UNBIDDEN.includes(kind)
+}
+
+/**
+ * Which of the two things in front of the guest is being played.
+ *
+ * `open` for anybody who sat down with one technique, which is everybody but
+ * Chrollo; `second` is the page the ribbon is holding.
+ */
+export type TablePage = 'open' | 'second'
+
+/** One live technique, and what it has already spent. */
+export interface TableSeat {
+  page: TablePage
+  kind: TableKind
+  spent: number
+}
+
+/**
+ * Everything the guest can actually play, in the order the keys play it.
+ *
+ * One entry for an ordinary hand and two for a book, so nothing downstream has
+ * to ask whether Double Face is in play: a table that draws an insect when
+ * Little Eye is `technique` and not when it is the bookmarked page would be
+ * drawing the roster rather than the room.
+ */
+export function livePages(game: MorenaGame): TableSeat[] {
+  const seats: TableSeat[] = []
+  if (game.technique) seats.push({ page: 'open', kind: game.technique, spent: game.spent })
+  if (game.bookmark) {
+    seats.push({ page: 'second', kind: game.bookmark.kind, spent: game.bookmark.spent })
+  }
+  return seats
+}
+
+/**
+ * How much this technique has spent, or `null` where it is not at the table.
+ *
+ * The question almost everything asks: an ability draws its own thing in the
+ * room, and it wants to know whether it is here and whether it has fired yet.
+ */
+export function spentOn(game: MorenaGame, kind: TableKind): number | null {
+  return livePages(game).find((seat) => seat.kind === kind)?.spent ?? null
+}
+
 export interface DealOptions {
   /** Which card Morena marks. Defaults to the one she marks in ch. 410. */
   marked?: AnswerCard | null
@@ -513,6 +734,8 @@ export interface DealOptions {
   random?: () => number
   /** The technique the visitor is carrying as they sit down. */
   technique?: TableKind | null
+  /** And the page under the ribbon, when what they carry is Double Face. */
+  bookmark?: TableKind | null
   /** How watchful the room is. One at the hideout, which is where this is. */
   watch?: number
 }
@@ -540,6 +763,7 @@ export function dealTheGame(options: DealOptions = {}): MorenaGame {
     finalCard: null,
     technique: options.technique ?? null,
     spent: 0,
+    bookmark: options.bookmark ? { kind: options.bookmark, spent: 0 } : null,
     watch: options.watch ?? 1,
     manipulated: false,
     shielded: false,
@@ -550,6 +774,8 @@ export function dealTheGame(options: DealOptions = {}): MorenaGame {
     riders: [],
     aftermath: [],
     ending: null,
+    previous: null,
+    forced: [],
     log: marked ? [{ kind: 'marked', round: 0, card: marked }] : [],
   }
 }
@@ -615,6 +841,69 @@ export function leaveTheTable(game: MorenaGame): MorenaGame {
     return { ...game, phase: 'over', verdict: 'cancelled', ending: 'abandoned' }
   }
   return { ...narrowTheAnswer(game, 'leaving'), ending: 'abandoned' }
+}
+
+/**
+ * What a death in the chair is worth, whoever caused it.
+ *
+ * The one thing at this table that pays out without a card being played: the
+ * cat, which needed its owner dead and nothing else, and the double, which is
+ * only ever there because somebody already died once. Shared, because a guest
+ * who burns their year and a guest who swears on their heart and loses are the
+ * same body in the same chair.
+ */
+function payForTheBody(game: MorenaGame): Aftermath[] {
+  const paid: Aftermath[] = []
+  if (spentOn(game, 'resurrection') !== null) paid.push('avenged')
+  if (spentOn(game, 'guardian') !== null) paid.push('stood-in')
+  return paid
+}
+
+/**
+ * She stands up, because the candidate is spending their life in front of her.
+ *
+ * Not a move and not a sanction: Morena is a recruiter, and what she is
+ * watching is the thing she wants to recruit being used up. The hand ends
+ * where it is, nobody says Yes, and nothing is narrowed — she needs the word
+ * and she has decided it will not be worth having.
+ */
+export function sheWillNotPlay(game: MorenaGame): MorenaGame {
+  if (game.phase === 'over') return unchanged(game)
+  const aftermath: Aftermath[] = ['unaffordable']
+  return {
+    ...game,
+    phase: 'over',
+    verdict: 'cancelled',
+    ending: 'abandoned',
+    aftermath: [...game.aftermath, ...aftermath],
+    log: [
+      ...game.log,
+      ...aftermath.map((what): Beat => ({ kind: 'aftermath', round: game.round, what })),
+    ],
+  }
+}
+
+/**
+ * And the other end of the same clock: the year ran out with the hand live.
+ *
+ * Emperor Time's own price, collected. The game does not finish — there is
+ * nobody left to finish it — and whatever the guest brought that answers a
+ * death answers this one.
+ */
+export function theEyesTakeYou(game: MorenaGame): MorenaGame {
+  if (game.phase === 'over') return unchanged(game)
+  const aftermath: Aftermath[] = ['burnt-out', ...payForTheBody(game)]
+  return {
+    ...game,
+    phase: 'over',
+    verdict: 'cancelled',
+    ending: 'abandoned',
+    aftermath: [...game.aftermath, ...aftermath],
+    log: [
+      ...game.log,
+      ...aftermath.map((what): Beat => ({ kind: 'aftermath', round: game.round, what })),
+    ],
+  }
 }
 
 /**
@@ -712,15 +1001,68 @@ function applyToTheHand(
       next = { ...next, proxied: !seen }
       break
 
-    // The two that end the game rather than change it, and the clause that
-    // holds `rider` — all handled by the caller.
+    // The two that end the game rather than change it, the clause that holds
+    // `rider`, and the one that puts the table back where it was — all handled
+    // by the caller.
     case 'blind':
     case 'evict':
     case 'rider':
+    case 'rewind':
       break
   }
 
   return next
+}
+
+/**
+ * The last exchange, unwound — and made to happen again on her side only.
+ *
+ * Tserriednich's ten seconds are lived twice and the canon is exact about who
+ * gets the second go: *everyone except him* goes on perceiving the prediction,
+ * so the room plays out as it already played out while he alone is free to do
+ * something else. At a table that is not a metaphor and it is not a hint — the
+ * question you spent comes back to your hand, the card she took goes back into
+ * yours, and she is going to take that same card again whichever question you
+ * spend this time.
+ *
+ * What does *not* come back is anything the aura knows. Her fan stays face up
+ * if something read it; the technique stays spent; the transcript keeps both
+ * passes, because a record with the ten seconds quietly cut out of it would be
+ * the page pretending the vision never happened. Only the table goes back.
+ *
+ * Which is why this reads the way it does — the current game with the table
+ * fields overwritten out of the snapshot, rather than the snapshot with the
+ * aura's fields patched back in. Anything added to this state later will
+ * default to surviving the rewind, which is the honest default: knowledge does.
+ */
+function unspool(played: MorenaGame): MorenaGame {
+  const back = played.previous!
+  // What she did in the erased stretch, off the transcript rather than off the
+  // graveyard: a card can leave the graveyard again, and a kiss in those ten
+  // seconds would otherwise take her draw out of the record of it.
+  const forced = played.log
+    .slice(back.log.length)
+    .flatMap((beat) => (beat.kind === 'taken' ? [beat.card] : []))
+  return {
+    ...played,
+    phase: back.phase,
+    round: back.round,
+    questions: [...back.questions],
+    asked: [...back.asked],
+    hand: [...back.hand],
+    graveyard: [...back.graveyard],
+    kissed: back.kissed,
+    dealt: back.dealt,
+    foreseen: back.foreseen,
+    forged: back.forged,
+    verdict: back.verdict,
+    finalCard: back.finalCard,
+    ending: back.ending,
+    // One step of undo, and it has been taken: there is no going back twice.
+    previous: null,
+    forced,
+    log: [...played.log, { kind: 'rewound', round: back.round, cards: forced.length }],
+  }
 }
 
 /**
@@ -737,25 +1079,34 @@ function applyToTheHand(
  */
 export function playTechnique(
   game: MorenaGame,
-  options: { random?: () => number } = {},
+  options: { random?: () => number; page?: TablePage } = {},
 ): MorenaGame {
   if (game.phase === 'over') return unchanged(game)
-  const kind = game.technique
+  const second = options.page === 'second'
+  const kind = second ? (game.bookmark?.kind ?? null) : game.technique
   if (!kind) return unchanged(game)
   const move = moveFor(kind)
-  if (game.spent >= move.uses) return unchanged(game)
+  const already = second ? game.bookmark!.spent : game.spent
+  if (already >= move.uses) return unchanged(game)
 
   // The legal eviction is a red card, and a red card comes after a warning:
   // Mizaistom does not expel anybody he has not already cautioned. Two
   // questions asked is that caution, and playing it earlier is not a move.
   if (move.effect === 'evict' && !move.fraud && game.asked.length < 2) return unchanged(game)
 
+  // And there is nothing to take back before anything has happened: ten seconds
+  // of a hand nobody has played yet are ten seconds of two people sitting down.
+  if (move.effect === 'rewind' && !game.previous) return unchanged(game)
+
   const random = options.random ?? Math.random
   const seen = move.fraud && random() < exposureNow(move, game)
 
+  // The count goes on the page that was played, and on that one only: two live
+  // pages are two separate one-shots, and a book that spent them out of one
+  // purse would make the ribbon a way of halving what Chrollo stole.
   const played: MorenaGame = {
     ...game,
-    spent: game.spent + 1,
+    ...(second ? { bookmark: { kind, spent: already + 1 } } : { spent: already + 1 }),
     log: [...game.log, { kind: 'played', round: game.round, technique: kind, seen }],
   }
 
@@ -771,6 +1122,9 @@ export function playTechnique(
       aftermath: ['proxied'],
     }
   }
+
+  // The ten seconds, taken back.
+  if (move.effect === 'rewind') return unspool(played)
 
   // And her chair, emptied. Nobody says Yes, so nobody is infected — the only
   // clean way out of this game the canon leaves standing, and it closes the
@@ -815,12 +1169,20 @@ export function askMorena(
   const random = options.random ?? Math.random
   const log: Beat[] = [...game.log, { kind: 'asked', round: game.round, question }]
 
+  // She is not choosing at all while the ten seconds are being caught up: the
+  // prediction is immutable for everybody but the person who saw it, so the
+  // card she took the first time is the card she takes now — whatever question
+  // it is being spent on this time round. Ahead of foresight, because a
+  // technique that says what she will do next cannot outrank her doing it.
+  const owed = game.forced.length ? game.forced[0] : null
+  const repeats = owed && game.hand.includes(owed) ? owed : null
   // Foresight is foresight: a technique that told you which card she would take
   // is not a hint that turns out to be wrong. She takes the card you were
   // shown, and the shuffle is only consulted when nothing showed you anything.
   const foreseen = game.foreseen && game.hand.includes(game.foreseen) ? game.foreseen : null
-  const reach = foreseen
-    ? game.hand.indexOf(foreseen)
+  const wanted = repeats ?? foreseen
+  const reach = wanted
+    ? game.hand.indexOf(wanted)
     : Math.min(game.hand.length - 1, Math.max(0, Math.floor(random() * game.hand.length)))
   const taken = game.hand[reach]
   const hand = game.hand.filter((_, index) => index !== reach)
@@ -829,6 +1191,13 @@ export function askMorena(
   const next: MorenaGame = {
     ...game,
     round: game.round + 1,
+    // One exchange of undo, taken before this one is applied and holding no
+    // snapshot of its own: this is a step back, not a tape of the hand.
+    previous: { ...game, previous: null },
+    // A second of the ten, spent. It goes whether or not she managed to repeat
+    // herself — a card the guest has since conjured out of the erased stretch
+    // is not a reason for the vision to run long.
+    forced: game.forced.slice(1),
     questions: game.questions.filter((held) => held !== question),
     asked: [...game.asked, question],
     hand,
@@ -848,11 +1217,29 @@ export function askMorena(
     next.dealt = true
     next.phase = 'deal'
     next.log = [...log, { kind: 'offered', round: next.round }]
-    return next
+    return writeTheProphecy(next, random)
   }
 
   next.phase = next.hand.length <= 1 ? 'settling' : 'asking'
-  return next
+  return writeTheProphecy(next, random)
+}
+
+/**
+ * The one technique at this table that nobody plays.
+ *
+ * Lovely Ghostwriter is automatic writing: the beast writes, and what it writes
+ * is not asked for. So it is not on the panel's button with the rest of them —
+ * it fires on the first thing that happens to the guest, which in this game is
+ * Morena's hand closing on one of their five cards. Nothing is spent, nothing
+ * is chosen, and the quatrain is simply there afterwards.
+ *
+ * Written once. The prophecy does not revise itself, which is the whole reason
+ * a prophecy is worth anything: it was set down before the branch was taken.
+ */
+function writeTheProphecy(game: MorenaGame, random: () => number): MorenaGame {
+  const seat = livePages(game).find((page) => page.kind === 'prophecy')
+  if (!seat || seat.spent > 0) return game
+  return playTechnique(game, { random, page: seat.page })
 }
 
 /**
@@ -966,6 +1353,17 @@ function payTheRiders(game: MorenaGame, verdict: Verdict): Aftermath[] {
   // true immunity to the Manipulation, and it is priced at a life.
   if (game.riders.includes('sworn') && said) paid.push('sworn-struck')
 
+  // And Cat's Name, which is the only thing here that is paid to a corpse.
+  //
+  // It is not on the rider list, because a rider is something the guest hung on
+  // the outcome and this is not: the cat does not care whether it was declared,
+  // whether the room saw it, or whether anybody at the table believed in it. It
+  // cares that its owner is dead. The one death this game contains is the vow
+  // collecting itself — so the two seats of the dissuasive family and the one
+  // that kills you meet here, and the guest who swore on their heart and lost
+  // takes Morena with them.
+  if (paid.includes('sworn-struck')) paid.push(...payForTheBody(game))
+
   // Gallery Fake: the copy is inert and gone inside a day. The fraud is not
   // detected at the table, it is detected the morning after — when the game is
   // closed and Morena has been paid in something that no longer exists.
@@ -983,6 +1381,12 @@ function payTheRiders(game: MorenaGame, verdict: Verdict): Aftermath[] {
   // that the game ends at the death of the target — and Morena does not kill her
   // candidates in any case, she recruits them.
   if (game.riders.includes('deterred')) paid.push('deterred')
+
+  // «Are You Free?», which collected its yes whatever this table did with its
+  // own. It is paid out unconditionally, because that is the entire point being
+  // made: nothing about the hand, the kiss or the marking makes any difference
+  // to a creature that simply asks until somebody agrees.
+  if (game.riders.includes('solicited')) paid.push('solicited')
 
   // Somebody else was in the chair. A puppet has no desire to be named and
   // nothing of its own to stake, so a Yes taken off one is a Yes taken off
@@ -1160,6 +1564,7 @@ export function summariseGame(game: MorenaGame): Record<string, unknown> {
     shielded: game.shielded,
     proxied: game.proxied,
     technique: game.technique,
+    bookmark: game.bookmark?.kind ?? null,
     riders: [...game.riders],
     aftermath: [...game.aftermath],
     verdict: game.verdict,

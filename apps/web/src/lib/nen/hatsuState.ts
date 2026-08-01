@@ -118,6 +118,34 @@ export function deactivateHatsu() {
   if (typeof sessionStorage !== 'undefined') sessionStorage.removeItem(ACTIVE_HATSU_KEY)
 }
 
+/**
+ * Spend several hours of life at once, and say whether that was the last of it.
+ *
+ * The walk spends one an on a one-second tick, which is the ability's own rate
+ * and the right one for somebody walking through rooms with their eyes open.
+ * Morena's table needs the same clock at a table's pace — a hand of seven
+ * questions is a long look, and the canon price of that look is years — so it
+ * asks for a block at a time rather than calling the tick in a loop and writing
+ * to session storage forty times a second.
+ *
+ * One counter for both, deliberately: the year is the visitor's year, and a
+ * page that kept its own would let somebody spend it twice.
+ */
+export function spendEmperorTimeHours(hours: number) {
+  const next = get(emperorTimeLifeHours) + Math.max(0, Math.round(hours))
+  if (next < EMPEROR_TIME_LIFE_LIMIT_HOURS) {
+    emperorTimeLifeHours.set(next)
+    if (typeof sessionStorage !== 'undefined')
+      sessionStorage.setItem(EMPEROR_TIME_HOURS_KEY, String(next))
+    return false
+  }
+
+  emperorTimeLifeHours.set(0)
+  if (typeof sessionStorage !== 'undefined') sessionStorage.setItem(EMPEROR_TIME_HOURS_KEY, '0')
+  enterForcedZetsu()
+  return true
+}
+
 export function consumeEmperorTimeHour() {
   const next = get(emperorTimeLifeHours) + 1
   if (next < EMPEROR_TIME_LIFE_LIMIT_HOURS) {

@@ -616,3 +616,127 @@ le joueur assis après avoir tenté de partir, et la main continue.
 
 C'est un mécanisme général et pas un détail de cette route : toute page qui a une raison de
 n'admettre qu'une partie du registre ouvre une grille et la referme en partant.
+
+## 9. Ce que la table montre
+
+Le §6 a livré une partie jouable et muette : tout ce qu'un hatsu faisait à cette table se
+lisait dans le panneau et dans le journal, et rien ne se voyait dans la pièce. Quatre choses
+ont été rendues visibles, et le choix de ces quatre-là suit une seule règle — **on n'ajoute pas
+un geste à un corps qui bouge déjà, on lui en retire un**. Morena respire et se tourne vers
+qui s'est assis depuis le premier jour ; c'est en perdant l'un des deux qu'elle peut être vue
+réagir.
+
+- **La Manipulation part avec les cartes.** Retour, Joker et X quittaient la main entre deux
+  images. Une `game-card` qui disparaît est désormais _emportée_ : elle glisse loin du visiteur,
+  monte de sept centimètres et s'efface en 0,45 s. La direction ne nomme personne — c'est
+  « à l'opposé de qui regarde », et la seule personne de l'autre côté de cette table est celle
+  qui prend. La même sortie sert la prise de chaque tour, ce qui est correct : c'est le même
+  geste. La règle du §6 (« une carte ne bouge pas ») tient — une carte qui s'en va n'est pas une
+  carte posée.
+- **Elle s'immobilise quand la pièce lui a parlé.** `dealerStage()` rend 3 au coup suivant un
+  `played`/`seen` ou un `exposed`, et la respiration tombe à zéro. C'est la seule annonce du jet
+  de détection ailleurs que dans le journal.
+- **Elle cesse de vous trouver quand on lui prend les sens.** Stage 4 pour `senses`, et le
+  suivi de caméra s'arrête. Le cap est conservé dans `Shown.facing` d'un rebuild à l'autre :
+  une tête qui claquerait au nord se lirait comme un bug, pas comme une femme qui a perdu
+  quelqu'un.
+- **Elle a un visage.** La femme d'en face était dessinée sans traits, au motif que l'archive
+  ne prête aucun caractère à personne. L'argument vaut pour une technique croisée dans une
+  coursive ; il ne vaut pas ici, où la marche vous _assied_ à un mètre cinquante d'elle pour la
+  durée d'une négociation, sans rien d'autre dans le cadre — à cette distance, une tête sans
+  visage n'est pas de la retenue, c'est un manque que le lecteur doit s'expliquer à chaque
+  tour. `$lib/tour/dealer.ts` la dessine donc telle qu'elle est publiée : blonde, cheveux longs
+  partagés au milieu, yeux étroits sous des paupières lourdes, bouche fermée — et les sutures,
+  qui sont tout ce qui fait que ce visage est le sien. Une couronne de points à la naissance
+  des cheveux, une couture en pointillé qui en descend le long d'un côté du visage jusqu'à la
+  mâchoire, et le même surjet autour de l'oreille de ce côté-là. Rien n'y est ombré : c'est
+  dessiné comme le navire l'est, en aplats et en arêtes dures, pour que le seul visage à bord
+  ne soit pas aussi la seule surface éclairée autrement que tout ce qui l'entoure. Un fichier
+  à part, parce qu'un visage est un sujet — et parce que `TourScene` est déjà le plus long
+  fichier de l'application.
+- **Les yeux se vident quand on lui prend la vue.** Même règle du retrait : au stage 4, les
+  iris ne sont pas dessinés. Les yeux restent ouverts et il n'y a plus personne derrière.
+- **La prescience a un corps.** La carte que `foreseen` désigne se tient à quatre centimètres du
+  bois avec un liseré bleu (`stage: 4`). Trois techniques achètent cette phrase — `dowsing`,
+  `future`, `divination` — et aucune n'avait rien à regarder.
+- **Le carton de Cross Game** est posé sur la table, bleu, puis jaune aux deux questions, puis
+  rouge à l'expulsion. Le pont le dessine et le colore depuis Mizaistom : la table emprunte
+  l'éventail plutôt que d'en inventer un second.
+- **Little Eye rend son image.** L'insecte descendait sur l'éventail et personne ne voyait ce
+  qu'il filmait : la marche incruste un second cadre dans le coin dès que la sphère est envoyée
+  dans une pièce, et la table avait la mouche sans le cadre — c'est-à-dire la technique sans ce
+  qu'elle est. `eyeFeed()` rend les deux positions que l'insecte a déjà : perché, il regarde la
+  pièce, donc elle ; en train de filmer, il est au-dessus de l'éventail et pointé un peu au-delà
+  des cartes, parce qu'une caméra braquée droit vers le bas n'a plus de haut et rendrait les
+  cartes couchées. `TourScene` prend ce cadre par la prop `feed` et le dessine avec le même
+  `renderInset()` que l'œil de la marche et que le film de la chouette — trois copies de la
+  danse des ciseaux étaient deux de trop.
+- **Secret Window pose un hibou et rend une bande.** La technique était une ligne de texte :
+  `surveillance` retournait l'éventail et rien dans la pièce ne disait d'où. Musse n'envoie
+  pourtant rien et ne pilote rien — elle _attache_ un oiseau, qui écoute à travers la cloison
+  et conserve ce qu'il a vu. Le hibou est donc sur la cloison derrière Morena, au-dessus et
+  décalé sur sa gauche (droit derrière, on filmerait sa nuque), dès que quelqu'un s'assoit avec
+  la technique en main ; `spread: 0`, et il ne bouge ni à la lecture ni à la fin de la partie.
+  C'est toute la différence avec la mouche d'en face : l'insecte est _piloté_ et descend, le
+  hibou est passif et n'a jamais rien fait d'autre que filmer. Ce que la lecture change est à
+  l'écran — `owlFilm()` rend le cadre depuis le perchoir, incrusté en bas à droite, dans le coin
+  que la marche réserve déjà à la relecture, et non en haut où vit le direct de Little Eye. Et
+  `owlSaw()` rend l'éventail _tel qu'il était_ : lu dans le transcript plutôt que stocké, il
+  garde les questions qu'elle a dépensées depuis. Un flux est périmé dès qu'une carte tombe ;
+  un enregistrement, non — c'est la seule chose que la chouette ait de plus que la mouche.
+- **Double Face s'assoit à deux places.** Le signet n'est pas un coup et n'avait donc pas de
+  siège : `worksAtTheTable` répondait non, ce qui est juste et laissait Chrollo dehors alors
+  qu'il est précisément celui qui apporte le plus à cette table. Ce qu'il apporte, ce sont
+  _deux_ des sièges existants. La donne tire donc au hasard deux pages parmi
+  `DOUBLE_FACE_PAGES` filtrées par `worksAtTheTable` — la même liste que la marche, jamais deux
+  fois la même page — et le jeu gagne un second emplacement, `bookmark: { kind, spent }`. Deux
+  compteurs séparés, parce que deux coups uniques volés sont deux coups uniques : les dépenser
+  d'une seule bourse ferait du ruban une façon de diviser par deux ce que Chrollo a pris. F joue
+  la page ouverte, R celle du signet, exactement comme dans la marche — `playTechnique` prend
+  `page`, et `TourScene` sait déjà que R est la seconde main. Tout ce qui interrogeait
+  `game.technique === 'scout'` demande maintenant `spentOn(game, 'scout')` : une technique posée
+  sous le ruban doit dessiner sa mouche comme n'importe quelle autre, sans quoi la table
+  dessinerait le registre au lieu de la pièce.
+- **Lovely Ghostwriter écrit sans qu'on le lui demande.** L'écriture automatique n'est pas un
+  coup : la bête écrit quand elle écrit, et l'on ne montre jamais sa propre prophétie à son
+  sujet. La technique quitte donc le bouton. Elle est la seule entrée de `UNBIDDEN`, et
+  `askMorena` la déclenche au premier tirage — le premier moment où quelque chose arrive au
+  joueur, c'est-à-dire la main de Morena qui se referme sur une de ses cinq cartes. Une seule
+  fois : une prophétie qui se corrige ne vaut rien. La bête, elle, est là depuis la donne, du
+  côté du joueur et à son coude — la seule manifestation de cette table qui appartienne à la
+  personne assise et non à la pièce — et `stage` passe de l'attente à la page écrite, posée
+  sous la plume. Ce que le quatrain dit est `theLosingBranch()` : la carte marquée, ou le Oui
+  sur une donne propre. En vers, pas en nom de carte — une ligne annonçant « elle a marqué le
+  Retour » serait la page en train de jouer la partie à la place du lecteur.
+- **Parallel Future rembobine la table, pas l'horloge.** Le `rewind` de la marche avait été
+  écarté ici : l'après-image se dessine à la position du visiteur et rien, à cette table, n'est
+  fonction de l'horloge. Mais la règle canonique n'est pas une après-image — c'est que _tout le
+  monde sauf son porteur_ continue de percevoir la prédiction. Dix secondes, à cette table,
+  valent un échange : elle répond, elle plonge la main, et c'est passé. `previous` garde donc
+  l'état d'il y a un échange (jamais imbriqué : un pas d'annulation, pas une bande), et jouer
+  la technique le restaure — question rendue à l'éventail, carte rendue à la main — en gardant
+  tout ce que l'aura sait : `read`, la dépense, le transcript, qui conserve les deux passages.
+  L'ordre du `unspool` est délibéré : on part de la partie courante et l'on écrase les champs
+  _de table_ depuis l'instantané, si bien qu'un champ ajouté plus tard survivra par défaut au
+  rembobinage — ce qui est le bon défaut, la connaissance survit. `forced` retient ce qu'elle a
+  tiré pendant les secondes effacées et `askMorena` le lui fait reprendre, avant même la
+  prescience : une technique qui annonce ce qu'elle va faire ne peut pas primer sur ce qu'elle
+  a déjà fait. Tant que `forced` n'est pas vide, `TourScene` reçoit `tint` et la pièce entière
+  passe au bleu de Tserriednich — l'ambiante _est_ l'exposition ici, donc la teinter teinte tout
+  ce dont la pièce est faite, brouillard et fond compris. Une marque posée sur la table serait
+  une annonce ; la lumière qui n'est pas la bonne est la chose même.
+- **Une carte face visible porte enfin sa figure.** Un rectangle coloré se lit comme _une
+  carte_ et ne dit pas laquelle : tolérable tant que le seul regard posé sur la table était
+  celui d'un visiteur qui avait le panneau ouvert à côté, plus du tout dès qu'une caméra est
+  posée à une paume de son éventail — un flux de sept rectangles gris n'est pas une main qu'on
+  a lue. Les douze dessins quittent donc `MorenaCardArt.svelte` pour `$lib/tour/cardArt.ts` et
+  servent les deux consommateurs : le panneau les injecte dans un SVG vivant, la table les
+  charge en `data:` URI et les pose en encre sur la couleur que la carte avait déjà. Une carte
+  face cachée n'a pas de figure ici, parce qu'elle n'en a pas non plus sur le bois : `face`
+  n'est renseigné qu'une fois `read` acquis. Le panneau suit la même règle — `MorenaPiles`
+  retournait sept dos même après lecture, ce qui était une ligne de texte affirmant une chose
+  que la page refusait ensuite de montrer.
+
+Écarté sciemment : le `rewind` de Parallel Future. La marche sait le jouer, mais l'après-image
+se dessine à la position du visiteur et rien à cette table n'est fonction de l'horloge — assis,
+la vision ne montre rien. La carte soulevée dit la même chose et la dit depuis la chaise.

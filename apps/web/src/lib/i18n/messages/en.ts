@@ -53,7 +53,9 @@ export const en = {
     intro:
       'The ship as architecture, not as a stage: no passengers, no chapter, no timeline. Every surface says where it comes from — a panel, the deck plan, or the reconstruction itself.',
     enter: 'Click to walk',
-    engaged: 'Press Esc to release the pointer',
+    // Tab is named first because it is the one that works in full screen: Esc
+    // releases the pointer and leaves full screen in the same press.
+    engaged: 'Press Tab to release the pointer — Esc releases it and full screen with it',
     loading: 'Building the deck…',
     unsupported:
       'This walk needs WebGL, which this browser is not offering. The deck plans on the ship map remain available.',
@@ -94,6 +96,8 @@ export const en = {
       revealKeys: 'G',
       fullscreen: 'Full screen, panel and all',
       fullscreenKeys: 'V',
+      release: 'Give the pointer back to the page',
+      releaseKeys: 'Tab — full screen is kept, which Esc would not do',
       nen: 'Cast the active Hatsu',
       nenKeys: 'F, or click, on the room or the solid you are facing',
       nenSelf: 'Turn the active Hatsu on yourself',
@@ -884,39 +888,68 @@ export const en = {
       askedLabel: 'You asked',
       answerLabel: 'She said',
 
+      // The table played with the hands: what the card under the reticle would
+      // do if it were taken hold of. Every one of these is a move the panel
+      // beside it also offers — the room is a second pair of hands on the same
+      // game, not a second game.
+      // Emperor Time, which is the one seat with a clock on it.
+      scarlet: {
+        watching: 'She is watching you spend it',
+      },
+
+      reach: {
+        hint: 'Look at a card and click it.',
+        cast: (effect: string) => `F — ${effect}`,
+        /** The book's other page, on the walk's own second key. */
+        castSecond: (effect: string) => `R — ${effect}`,
+        ask: (question: string) => `Ask — ${question}`,
+        kiss: (card: string) => `Kiss her, and take the ${card} back`,
+        decline: 'Refuse the kiss, and play the hand you have',
+        point: (card: string) => `Point the Joker at ${card}`,
+        reachFor: (card: string) => `Reach into the graveyard for the ${card}`,
+        play: (card: string) => `Put the ${card} down`,
+      },
+
       questions: {
         goal: {
           title: 'What do you actually want?',
+          short: 'Aim',
           morena:
             'A world where nobody is anybody’s subject. I was born to a mistress of the King and I have been nothing my whole life. I intend to take the throne apart and hand out what is inside it.',
         },
         power: {
           title: 'What is it you would put in me?',
+          short: 'Power',
           morena:
             'Contagion. Twenty-two of you at most, and I know where each one is, how they are, and what they are worth. You go up a level for a life you take. Ten for a Nen user. Fifty for a prince.',
         },
         'if-yes': {
           title: 'What happens if I say yes?',
+          short: 'If yes',
           morena:
             'I kiss you, and then you watch me kill somebody. Until both of those are done you are level zero and you are nothing. After them you are mine, and at level twenty you get an ability nobody else in the world has.',
         },
         'if-no': {
           title: 'What happens if I say no?',
+          short: 'If no',
           morena:
             'You walk out. The game is my restriction and I would lose the ability if I broke it, so a no costs me and costs you nothing. That is the honest half of this, and it is the only honest half.',
         },
         contract: {
           title: 'What binds you to any of it?',
+          short: 'Contract',
           morena:
             'The game itself. It ends when one of us dies or when the last card is played, and until then I cannot touch you. That is the whole contract. You are holding it.',
         },
         origin: {
           title: 'Where did you come from?',
+          short: 'Origin',
           morena:
             'Out of wedlock, into a family that had a use for me and no name to give me. Member Zero is a title I made up because nobody had given me one of those either.',
         },
         price: {
           title: 'What am I worth to you?',
+          short: 'Price',
           morena:
             'You are a soldier, a Hunter, and a Specialist who does not know it yet. You are worth more to me than the last four people who sat there put together — which is why you are getting answers and they got a kiss.',
         },
@@ -1000,6 +1033,8 @@ export const en = {
         watching: 'LSDF is standing in this room. What it sees, she is told.',
         unwatched: 'Nothing in this room is watching any more.',
         buys: 'Buys',
+        /** The one that is not pressed for: it writes when the table moves. */
+        unbidden: 'Nobody plays this one. It writes when she reaches into your hand.',
         costs: 'Costs',
         seen: 'She saw that.',
         unseen: 'Nobody saw that.',
@@ -1012,6 +1047,89 @@ export const en = {
         shielded:
           'The vow is spoken. Nothing can narrow your answer now, and giving the Yes anyway would kill you.',
         proxied: 'You are not the person in this chair.',
+
+        /**
+         * Double Face, which is the one thing at this table that is two things.
+         *
+         * Chrollo's ribbon holds a second stolen page live beside the open one,
+         * so what sits down is not a technique — it is a pair of them, drawn
+         * fresh every deal out of what the archive has him carrying.
+         */
+        book: {
+          title: 'The book, open at two pages',
+          body: 'Double Face is not a move. It holds two of what Chrollo has stolen live at once — these two, drawn when the cards were — and each is played on its own key and spent out of its own purse.',
+        },
+
+        /**
+         * The room while it is behind itself.
+         *
+         * Shown only while it is true. What a reader can see for themselves is
+         * that the light has gone wrong; this is the sentence that says why,
+         * and it goes away the moment the ten seconds are paid back.
+         */
+        rewound: {
+          title: 'Ten seconds ago',
+          body: (cards: number) =>
+            `You have been here before, and only you know it. Morena is spending these seconds exactly as she spent them the first time — ${cards === 1 ? 'one card' : `${cards} cards`} she has no choice about — and your own hand is free. The room is her colour of blue until she has caught up.`,
+        },
+
+        /**
+         * The quatrain the beast writes, and what it is about.
+         *
+         * Automatic writing: nobody asks for it and its subject is never shown
+         * their own, so what the page can honestly print is a poem rather than
+         * a card name. It is about the branch that loses — which at this table
+         * was decided before the deal, by whichever card she marked.
+         */
+        ghost: {
+          title: 'The quatrain the beast wrote',
+          body: 'It was writing while Morena reached into your hand. Nobody asked it to, and it will not write again — a prophecy that revised itself would be worth nothing. What it is about is the branch that loses.',
+          verse: {
+            yes: [
+              'The small red word costs nothing to say',
+              'and cannot be unsaid afterwards.',
+              'The hand that comes down to it comes down',
+              'on a mouth that has already agreed.',
+            ],
+            no: [
+              'The blue one is honoured. She says so,',
+              'and she is made of the promises she keeps.',
+              'Watch, then, the card she never reaches for:',
+              'a door left open was left open on purpose.',
+            ],
+            back: [
+              'One card fetches the others back,',
+              'and this one was opened before it was dealt.',
+              'The green is not the way out of the hand.',
+              'It is the hand, waiting for your arm.',
+            ],
+            joker: [
+              'The yellow one wears either face',
+              'and is told which at the last moment.',
+              'Ask whose mouth does the telling',
+              'once everything else has left the table.',
+            ],
+            x: [
+              'The violet one ends the negotiation',
+              'and leaves nothing signed on either side.',
+              'It is the branch she cannot spend —',
+              'so it is the branch she prepared.',
+            ],
+          },
+        },
+
+        /**
+         * The owl's footage, which is the one thing here that is a past tense.
+         *
+         * Every other read-out on this page says what is true now. This says
+         * what was true when a bird on the bulkhead happened to be looking, and
+         * the difference is the whole technique: the questions she has spent
+         * since are still in the picture.
+         */
+        owl: {
+          title: 'What the owl had already filmed',
+          body: 'It was on the bulkhead before you sat down. This is her fan at the moment you thought to look back at the tape — greyed where she has spent the card since.',
+        },
 
         leave: 'Walk out',
         leaveWarning:
@@ -1037,6 +1155,7 @@ export const en = {
           evict: 'Empty her chair',
           blind: 'Take her senses',
           rider: 'Lay the clause',
+          rewind: 'Take the ten seconds back',
         },
 
         techniques: {
@@ -1046,9 +1165,9 @@ export const en = {
               'The chain is a chain: it hangs off your hand and it does not go into Zetsu. Good for one round, ruinous over five.',
           },
           future: {
-            buys: 'Ten seconds of it, lived before anyone else has them. You hear which card goes before you spend the question that lets her take it.',
+            buys: 'The last exchange, taken back. The question returns to her fan and the card she took returns to your hand — and she has to spend those seconds exactly as she spent them, whatever you do with yours.',
             costs:
-              'The ten seconds then happen exactly as predicted, so the table sees a player who changed nothing — and you get one round out of it, ever.',
+              'Everyone in the room except you goes on living the prediction, so nothing you do in those seconds is a thing anybody can react to. One exchange, once, and the room is visibly not itself until she has caught up.',
           },
           divination: {
             buys: 'A number dialled under the table, and an answer that is true.',
@@ -1130,6 +1249,21 @@ export const en = {
             buys: 'Your death made expensive: the mark takes one of her own with it.',
             costs:
               'It answers a clause she was never going to use. She does not kill her candidates, she recruits them.',
+          },
+          scarlet: {
+            buys: 'Her fan face up and every card in the room accounted for. Nothing is hidden from these eyes and nothing about them is a fraud.',
+            costs:
+              'An hour of your life a second, and a negotiation is not short. She watches the candidate she is buying being spent, and stands up long before the year is out.',
+          },
+          resurrection: {
+            buys: 'A cat in the corner that does nothing at all — until you die, and then it kills whoever did it.',
+            costs:
+              'It answers a direct killer and nothing else, and she does not kill her candidates. Telling her is the only part of it you can play.',
+          },
+          solicitation: {
+            buys: 'The beast at your shoulder asks, and asks again, and a yes hands it the controls. This whole game, with the negotiation taken out.',
+            costs:
+              'What it collects is not the Yes on this table. It is a manifestation in a small room, and she can see it asking.',
           },
           'desire-trap': {
             buys: 'Her own opening, played back at her: what she wants, named out loud and set down as bait.',
@@ -1218,6 +1352,16 @@ export const en = {
           trapped: 'She was made to answer her own opening. Nobody has done that to her before.',
           deterred:
             'Killing you costs her one of her own. She was never going to, but now she cannot afford to have been going to.',
+          unaffordable:
+            'She stood up. A recruit worth twenty-two levels is worth nothing at all if there is no life left in them to spend, and she was watching the meter run the whole time. Nobody said Yes, and nobody had to.',
+          'burnt-out':
+            'The year ran out with the cards still on the table. The eyes were open the whole hand, and they were always going to be paid for.',
+          'stood-in':
+            'Somebody was already sitting there. Kacho’s double takes the chair the moment the guest dies in it — indistinguishable, and dedicated to a person who is no longer at the table. The infection has nobody to be about.',
+          solicited:
+            'The beast got its yes. Nobody was infected by it, nobody was kissed, and nobody had to watch a murder — which is exactly what it is worth, and exactly why she asks for all three.',
+          avenged:
+            'You died at this table, and the cat crossed the room. Cat’s Name does not need to be told, believed or cast: it needed you dead, and she is the one who made that happen.',
           evicted:
             'She was taken out of her own chair before the last card came down. Nobody said Yes, so nobody was recruited — and a negotiation she did not finish is the one thing the canon has no answer for.',
           proxied:
@@ -1290,6 +1434,16 @@ export const en = {
             ? 'Caught. Back, Joker and X leave the table.'
             : 'You stood up, which is cheating. Back, Joker and X leave the table.',
         exposed: (card: string) => `The kiss finds the forged ${card}.`,
+        /**
+         * The ten seconds, taken back.
+         *
+         * Said in the transcript rather than cut out of it: the exchange
+         * happened, and then it happened again. A record with the erased
+         * stretch quietly missing would be the page pretending the vision
+         * never took place.
+         */
+        rewound: (cards: number) =>
+          `The room goes back ten seconds. She still has ${cards === 1 ? 'a card' : `${cards} cards`} to take again, and no choice about which.`,
       },
 
       again: 'Deal again',

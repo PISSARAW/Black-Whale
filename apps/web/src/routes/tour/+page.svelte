@@ -74,6 +74,7 @@
   } from '$lib/tour/comfort'
   import { flashFor, type TourFlash } from '$lib/tour/apparitions'
   import { describeSpace } from '$lib/tour/describe'
+  import { Fullscreen } from '$lib/tour/fullscreen.svelte'
   import { placeOf, type Naming } from '$lib/tour/search'
   import {
     EMPTY_WORLD,
@@ -332,15 +333,9 @@
    * archive's and hangs outside the route. Full screen on the grid would take
    * the walk and leave the aura at the door.
    */
-  let immersive = $state(false)
+  const screen = new Fullscreen()
+  const immersive = $derived(screen.immersive)
   let panelOpen = $state(true)
-  /**
-   * Whether the browser actually took the element. A phone has no element full
-   * screen to give, so the same layout stands on `position: fixed` instead —
-   * which is also what has to be undone by hand, since there is no
-   * `fullscreenchange` coming for it.
-   */
-  let native = false
 
   /**
    * The archive's chrome stands down for the walk.
@@ -350,39 +345,9 @@
    * the walk over the site header. The header goes instead — and the Nen dock,
    * which hangs outside the route entirely, deliberately stays.
    */
-  $effect(() => {
-    const root = document.documentElement
-    root.classList.toggle('tour-immersive', immersive)
-    return () => root.classList.remove('tour-immersive')
-  })
+  $effect(() => screen.watch())
 
-  async function toggleFullscreen() {
-    if (immersive) {
-      if (native && document.fullscreenElement) {
-        try {
-          await document.exitFullscreen()
-        } catch {
-          // Refused: fall through and drop the layout ourselves.
-        }
-      }
-      native = false
-      immersive = false
-      return
-    }
-
-    immersive = true
-    // `requestFullscreen` is missing on iOS Safari altogether. The fixed layout
-    // is the same layout, so the walk still fills the phone — it just keeps the
-    // browser's chrome, which is the browser's call rather than ours.
-    if (document.fullscreenEnabled && document.documentElement.requestFullscreen) {
-      try {
-        await document.documentElement.requestFullscreen()
-        native = true
-      } catch {
-        native = false
-      }
-    }
-  }
+  const toggleFullscreen = () => void screen.toggle()
 
   /**
    * M opens the plan at a size it can be read at. In the 320-pixel column a
@@ -410,7 +375,8 @@
     // Esc leaves full screen only where nothing else has a claim on it: the
     // browser answers it in native full screen, an engaged pointer answers it
     // with "let go of my mouse", and an open dialog closes on it first.
-    if (key === 'escape' && !(immersive && !native && !engaged && !planOpen && !findOpen)) return
+    if (key === 'escape' && !(immersive && !screen.native && !engaged && !planOpen && !findOpen))
+      return
     const target = event.target
     if (
       target instanceof HTMLElement &&
@@ -435,24 +401,11 @@
   onMount(() => {
     loadComfort()
     calm = prefersReducedMotion()
-
-    // Esc, F11 and the window chrome all leave full screen without asking the
-    // page, so the browser is the authority on whether we are still in it.
-    const sync = () => {
-      if (native && !document.fullscreenElement) {
-        native = false
-        immersive = false
-      }
-    }
-    document.addEventListener('fullscreenchange', sync)
-    return () => document.removeEventListener('fullscreenchange', sync)
   })
 
   onDestroy(() => {
     if (copyTimer) clearTimeout(copyTimer)
-    // Leaving the route leaves full screen with it: the walk asked for the
-    // screen, and no other page of the archive did.
-    if (native && document.fullscreenElement) void document.exitFullscreen()
+    screen.leave()
   })
 
   // ── Nen ────────────────────────────────────────
@@ -1846,6 +1799,8 @@
           <dd>{$t.tour.controls.revealKeys}</dd>
           <dt class="text-[#FFFFF0]">{$t.tour.controls.fullscreen}</dt>
           <dd>{$t.tour.controls.fullscreenKeys}</dd>
+          <dt class="text-[#FFFFF0]">{$t.tour.controls.release}</dt>
+          <dd>{$t.tour.controls.releaseKeys}</dd>
           {#if technique}
             <dt class="text-[#FFFFF0]">{$t.tour.controls.nen}</dt>
             <dd>{$t.tour.controls.nenKeys}</dd>
@@ -2146,31 +2101,3 @@
     else goToSpace(space)
   }}
 />
-
-<style>
-  /* What full screen takes away, and what it keeps. The header and the footer
-     belong to the archive rather than to the ship, and the walk is the whole
-     screen or it is not full screen. The Nen dock is left standing: it is the
-     one control the walk cannot supply for itself, since the aura is picked up
-     outside the route. */
-  :global(html.tour-immersive .app-header),
-  :global(html.tour-immersive .app-footer) {
-    display: none;
-  }
-
-  /* And the route's entry animation stands down with them — not for the motion,
-     which is over in half a second, but because it is filled `both` and leaves a
-     `transform` on the shell for good. A transformed ancestor is the containing
-     block for everything fixed inside it, so `inset: 0` would measure the route
-     rather than the screen: the walk would start under the header and run off
-     the bottom of the window, taking the read-outs with it. `animation: none`
-     is what lifts it — a plain `transform: none` loses to a running fill. */
-  :global(html.tour-immersive .route-shell) {
-    animation: none;
-  }
-
-  /* Nothing scrolls behind the walk. */
-  :global(html.tour-immersive body) {
-    overflow: hidden;
-  }
-</style>

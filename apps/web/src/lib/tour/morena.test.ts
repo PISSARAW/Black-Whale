@@ -786,6 +786,59 @@ describe('Lovely Ghostwriter, which nobody plays', () => {
   })
 })
 
+describe('Parallel Future, which is ten seconds twice', () => {
+  it('has nothing to take back before anything has happened', () => {
+    const fresh = withTechnique('future')
+    expect(playTechnique(fresh, { random: clean })).toBe(fresh)
+  })
+
+  it('puts the table back an exchange and leaves the aura where it was', () => {
+    const played = askMorena(withTechnique('future'), 'goal', { random: last })
+    expect(played.graveyard).toEqual(['x'])
+    expect(played.questions).toHaveLength(6)
+
+    const back = playTechnique(played, { random: clean })
+    // The table, as it was.
+    expect(back.hand).toEqual([...ANSWER_CARDS])
+    expect(back.graveyard).toEqual([])
+    expect(back.questions).toHaveLength(7)
+    expect(back.round).toBe(1)
+    // The aura, as it is: the ten seconds were lived, and they cost a use.
+    expect(back.spent).toBe(1)
+    // And the transcript keeps both passes rather than cutting one out.
+    expect(back.log.filter((beat) => beat.kind === 'asked')).toHaveLength(1)
+    expect(back.log.at(-1)).toMatchObject({ kind: 'rewound', cards: 1 })
+    // One step back, and it has been taken.
+    expect(back.previous).toBeNull()
+    expect(playTechnique(back, { random: clean })).toBe(back)
+  })
+
+  it('makes her spend the seconds again exactly as she spent them', () => {
+    const played = askMorena(withTechnique('future'), 'goal', { random: last })
+    const back = playTechnique(played, { random: clean })
+    expect(back.forced).toEqual(['x'])
+
+    // A different question this time, and a shuffle that would reach the other
+    // end of the hand. She takes the card she took: the prediction is immutable
+    // for everybody except the one person who saw it.
+    const again = askMorena(back, 'price', { random: first })
+    expect(again.graveyard).toEqual(['x'])
+    expect(again.asked).toEqual(['price'])
+    // Caught up. She is choosing again, and the room is its own colour.
+    expect(again.forced).toEqual([])
+    const free = askMorena(again, 'goal', { random: first })
+    expect(free.graveyard).toEqual(['x', 'yes'])
+  })
+
+  it('outranks foresight, which is a technique and not her own hand', () => {
+    const played = askMorena(withTechnique('future'), 'goal', { random: last })
+    const back: MorenaGame = { ...playTechnique(played, { random: clean }), foreseen: 'yes' }
+    // Two techniques disagreeing about what she does next: the one that already
+    // happened wins, because it already happened.
+    expect(askMorena(back, 'price', { random: first }).graveyard).toEqual(['x'])
+  })
+})
+
 describe('the Manipulation, which is the only sanction the game has', () => {
   it('takes Back, Joker and X off the table and leaves Yes and No', () => {
     const narrowed = narrowTheAnswer(dealTheGame({ marked: null }), 'cheating')
@@ -891,13 +944,16 @@ describe('reading her hand', () => {
 
   it('cannot be seen at all when it is lived under Zetsu', () => {
     // Parallel Future is priced at zero exposure, so the roll is irrelevant.
-    const seen = playTechnique(withTechnique('future'), { random: caught_ })
+    // It needs ten seconds to take back, so an exchange is played first.
+    const lived = askMorena(withTechnique('future'), 'goal', { random: last })
+    const seen = playTechnique(lived, { random: caught_ })
     expect(seen.manipulated).toBe(false)
-    expect(seen.foreseen).not.toBeNull()
+    expect(seen.forced).toEqual(['x'])
   })
 
   it('runs out: a one-shot is a one-shot', () => {
-    const game = playTechnique(withTechnique('future'), { random: clean })
+    const lived = askMorena(withTechnique('future'), 'goal', { random: last })
+    const game = playTechnique(lived, { random: clean })
     const again = playTechnique(game, { random: clean })
     expect(again).toBe(game)
     expect(game.spent).toBe(1)

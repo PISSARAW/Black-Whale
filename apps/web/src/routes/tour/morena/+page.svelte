@@ -27,7 +27,15 @@
   import { breadcrumbSchema } from '$lib/seo/schema'
   import { link, locale, t } from '$lib/i18n'
   import { localizeHatsu } from '$lib/i18n/hatsu'
-  import { activeHatsu, closeHatsuGate, openHatsuGate } from '$lib/nen/hatsuState'
+  import { get } from 'svelte/store'
+  import {
+    EMPEROR_TIME_LIFE_LIMIT_HOURS,
+    activeHatsu,
+    closeHatsuGate,
+    emperorTimeLifeHours,
+    openHatsuGate,
+    spendEmperorTimeHours,
+  } from '$lib/nen/hatsuState'
   import { HATSU_PROFILES } from '$lib/nen/hatsuRegistry'
   import { floorOf, theShip } from '$lib/tour/blueprint'
   import { Fullscreen } from '$lib/tour/fullscreen.svelte'
@@ -51,13 +59,17 @@
     moveFor,
     needsAChoice,
     OWL_COLOUR,
+    REWIND_BLUE,
     openTheBookHere,
     owlFilm,
     owlSaw,
     playTechnique,
     refuseTheDeal,
     settle,
+    sheWillNotPlay,
     sitsAtTheTable,
+    spentOn,
+    theEyesTakeYou,
     castsItself,
     tableauOf,
     takeTheDeal,
@@ -181,6 +193,15 @@
   const record = $derived(owlFilm(game, floor))
   /** Her fan as that recording has it, which is not her fan as it is now. */
   const filmed = $derived(owlSaw(game))
+  /**
+   * The colour the room is standing in, and why.
+   *
+   * One technique changes the light rather than the table: while Morena still
+   * owes the ten seconds back, everybody in this room but the guest is living
+   * a stretch that has already been decided, and the room says so by not being
+   * its own colour. `null` the moment she is choosing again.
+   */
+  const tint = $derived(game.forced.length ? REWIND_BLUE : null)
   /** Which quatrain the beast wrote, or nothing while it has written none. */
   const losing = $derived(theLosingBranch(game))
 
@@ -369,6 +390,53 @@
     if (view !== 'table') aimedExtra = null
   })
 
+  // ── Emperor Time, which is the only seat with a clock ──
+  /**
+   * How much life a second at this table costs, in hours.
+   *
+   * The walk spends an hour a second, which is the ability's own rate and the
+   * right one for somebody crossing rooms. A negotiation is not crossing a
+   * room: Kurapika's eyes are open for the whole of it, and the canon price of
+   * that is the thing this seat exists to say — a hand of seven questions is
+   * paid for in years, not in afternoons. So the table runs the same clock at
+   * two days a second, which is what makes the bill arrive inside a hand
+   * rather than inside an evening.
+   *
+   * The counter itself is the site's, not the table's: it is the visitor's own
+   * year, they may have spent some of it walking the ship, and a page that kept
+   * its own would let them spend it twice.
+   */
+  const LIFE_PER_SECOND = 48
+  /**
+   * When she stands up: a third of the year, gone in front of her.
+   *
+   * She is a recruiter, and what she is watching is the thing she recruits
+   * being used up. This is the number at which the candidate stops being worth
+   * the hand — not a punishment, a decision, and the only end to this game that
+   * neither player had to earn.
+   */
+  const SHE_STANDS_AT = Math.round(EMPEROR_TIME_LIFE_LIMIT_HOURS / 3)
+
+  /** Whether the eyes are open at this table, which is what starts the clock. */
+  const burning = $derived(
+    view === 'table' && game.phase !== 'over' && spentOn(game, 'scarlet') !== null,
+  )
+  /** How far through the year the visitor is, from nothing to all of it. */
+  const scorch = $derived(Math.min(1, $emperorTimeLifeHours / EMPEROR_TIME_LIFE_LIMIT_HOURS))
+
+  $effect(() => {
+    if (!burning) return
+    const clock = setInterval(() => {
+      // Two things can end the hand here and they are different deaths: the
+      // year running out is the ability collecting, and her standing up is the
+      // candidate having become worthless. The first is checked first because
+      // a corpse has nothing left for anybody to decline.
+      if (spendEmperorTimeHours(LIFE_PER_SECOND)) game = theEyesTakeYou(game)
+      else if (get(emperorTimeLifeHours) >= SHE_STANDS_AT) game = sheWillNotPlay(game)
+    }, 1000)
+    return () => clearInterval(clock)
+  })
+
   /**
    * The dock, while a hand is live.
    *
@@ -447,6 +515,7 @@
         extras={table}
         {feed}
         {record}
+        {tint}
         {hands}
         bind:aimedExtra
         onPick={view === 'table' ? takeHold : undefined}
@@ -482,6 +551,28 @@
           class="pointer-events-none absolute bottom-3 left-1/2 z-20 -translate-x-1/2 rounded bg-[#050505]/80 px-3 py-1 text-center text-xs text-[#FFFFF0]/70"
         >
           {$t.tour.engaged}
+        </p>
+      {/if}
+
+      <!-- Emperor Time, which is the one seat you look through rather than at.
+           The room goes scarlet the way the eyes do, and it goes further with
+           every second the visitor sits there: what is being spent is not a
+           resource, it is the year, and the only honest way to draw that is to
+           put it over everything. The number is said as well as shown — a tint
+           is a feeling and a year is a quantity, and this ability is the one
+           whose whole argument is the quantity. -->
+      {#if view === 'table' && spentOn(game, 'scarlet') !== null}
+        <div
+          class="pointer-events-none absolute inset-0 z-10"
+          style:background="radial-gradient(ellipse at center, rgba(239,51,64,{scorch * 0.16}) 0%,
+          rgba(239,51,64,{0.1 + scorch * 0.6}) 100%)"
+          style:mix-blend-mode="screen"
+        ></div>
+        <p
+          class="pointer-events-none absolute left-1/2 top-3 z-20 -translate-x-1/2 rounded border border-[#ef3340]/60 bg-[#050505]/85 px-3 py-1 text-center text-[11px] uppercase tracking-widest text-[#ef8a90]"
+        >
+          {$t.nen.lifeConsumed($emperorTimeLifeHours.toLocaleString($locale))}
+          <span class="ml-2 text-[#FFFFF0]/45">{copy.scarlet.watching}</span>
         </p>
       {/if}
 
@@ -732,6 +823,20 @@
             {#if game.shielded}<li class="text-[#FFD700]">{copy.hatsu.shielded}</li>{/if}
             {#if game.proxied}<li>{copy.hatsu.proxied}</li>{/if}
           </ul>
+        {/if}
+
+        <!-- The room, ten seconds behind itself. Said while it is true and not
+             a word afterwards: what the reader can see is that the light is
+             wrong, and this is the sentence that names why. -->
+        {#if game.forced.length}
+          <div class="mt-3 rounded border border-[#7dd3fc]/50 bg-[#7dd3fc]/10 p-3">
+            <p class="text-[10px] uppercase tracking-widest text-[#7dd3fc]">
+              {copy.hatsu.rewound.title}
+            </p>
+            <p class="mt-1 text-xs leading-relaxed text-[#FFFFF0]/80">
+              {copy.hatsu.rewound.body(game.forced.length)}
+            </p>
+          </div>
         {/if}
 
         <!-- The quatrain, once the beast has written it. Printed as a poem and
@@ -1101,6 +1206,8 @@
                   <span class="text-[#ef8a90]">{copy.log.exposed(nameOfCard(beat.card))}</span>
                 {:else if beat.kind === 'aftermath'}
                   <span class="text-[#8ecae6]">{copy.hatsu.aftermath[beat.what]}</span>
+                {:else if beat.kind === 'rewound'}
+                  <span class="text-[#7dd3fc]">{copy.log.rewound(beat.cards)}</span>
                 {/if}
               </li>
             {/each}

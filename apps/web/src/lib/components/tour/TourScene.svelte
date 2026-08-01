@@ -258,6 +258,20 @@
      */
     record?: EyeFeed | null
     /**
+     * A colour the whole room is standing in, or `null` for the ship's own.
+     *
+     * Not a light and not an overlay: the ambient *is* the exposure here — the
+     * image is baked into the vertices and one flat white constant is what
+     * shows it — so colouring that constant colours everything the room is
+     * made of at once, which is the only honest way to say "the room is not
+     * itself at the moment". The air takes it too, or the far end of a space
+     * would stay the ship's own near-black and give the lie away.
+     *
+     * Parallel Future is what this is for: ten seconds are owed back, and until
+     * they are paid the visitor is somewhere everybody else has already been.
+     */
+    tint?: number | null
+    /**
      * The `id` of the extra down the reticle, mirrored out.
      *
      * The room and the solid are found by walking the floor plan, which is what
@@ -414,6 +428,7 @@
     extras = [],
     feed = null,
     record = null,
+    tint = null,
     aimedAt = $bindable(null),
     aimedSolidAt = $bindable(null),
     aimedExtra = $bindable(null),
@@ -622,7 +637,12 @@
        */
       const AMBIENT = 2.2
       const NIGHT_LIGHT = 1.2
-      scene.add(new THREE.AmbientLight(0xffffff, AMBIENT))
+      const ambient = new THREE.AmbientLight(0xffffff, AMBIENT)
+      scene.add(ambient)
+      /** The tint in force, and the clear colour the air is closing to. */
+      let tinted: number | null = null
+      const WHITE = new THREE.Color(0xffffff)
+      const baseFog = new THREE.Color(0x050505)
       // Its reach is the visitor's to set, down to nothing: see `nightLight` in
       // `$lib/tour/comfort` for why that is a setting and not a constant.
       const nightLight = new THREE.PointLight(
@@ -3398,7 +3418,10 @@
           head.position.set(0, seen.size * (seen.stage === 2 ? 1.02 : 1.12), seen.size * 0.34)
           root.add(head)
           for (const side of [-1, 1]) {
-            const ear = new THREE.Mesh(new THREE.ConeGeometry(seen.size * 0.12, seen.size * 0.22, 4), fur)
+            const ear = new THREE.Mesh(
+              new THREE.ConeGeometry(seen.size * 0.12, seen.size * 0.22, 4),
+              fur,
+            )
             ear.position.set(side * seen.size * 0.16, seen.size * 0.24, -seen.size * 0.04)
             head.add(ear)
             // The eyes are the only part of it that is not fur, and they are
@@ -4908,7 +4931,9 @@
           if (burning) {
             burning = 0
             renderer.toneMappingExposure = blinded ? 0.02 : 1
-            fog.color.setHex(0x050505)
+            // Back to whatever the room's colour actually is, which is not
+            // always the ship's: a technique may have left it standing in one.
+            fog.color.copy(baseFog)
           }
           played = null
           return
@@ -6155,6 +6180,27 @@
           fogTarget = density
         }
         fog.density = settleDensity(fog.density, blinded ? SEALED_DENSITY : fogTarget, delta)
+
+        // And its colour, when a technique has left the room standing in one.
+        // Applied on the change rather than every frame: nothing here moves,
+        // and the whole point of a tint is that it holds.
+        if (tint !== tinted) {
+          tinted = tint ?? null
+          // Halfway to white, because the ambient is the exposure: the pure
+          // aura colour multiplied into the bake reads as a room that has gone
+          // dim, and what is wanted is a room that has gone blue.
+          ambient.color.setHex(tinted ?? 0xffffff)
+          if (tinted !== null) ambient.color.lerp(WHITE, 0.4)
+          // The air and the far clip take the same colour, a long way down:
+          // the ship's own black at the end of a space would say the tint is
+          // something laid over the picture rather than the light in the room.
+          baseFog.setHex(tinted ?? 0x050505)
+          if (tinted !== null) baseFog.multiplyScalar(0.22)
+          if (!burning) {
+            fog.color.copy(baseFog)
+            renderer.setClearColor(baseFog)
+          }
+        }
 
         // Mirror the loop's state out for the HUD, without re-rendering on
         // every frame: these only change when they actually change.

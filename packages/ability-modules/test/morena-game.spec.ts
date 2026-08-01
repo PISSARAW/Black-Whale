@@ -5,6 +5,8 @@ import {
   contagion,
   CONTAGION_LIMITS,
   dealTheGame,
+  sheWillNotPlay,
+  theEyesTakeYou,
   infectionStepsFrom,
   settle,
   summariseGame,
@@ -370,6 +372,35 @@ describe('the seats that pay out after the last card', () => {
     const unavenged = settle(settling({ riders: ['sworn'] }))
     expect(unavenged.aftermath).toContain('sworn-struck')
     expect(unavenged.aftermath).not.toContain('avenged')
+  })
+
+  it('lets her stand up rather than recruit somebody who is spending their life', () => {
+    const standing = sheWillNotPlay(dealTheGame())
+    expect(standing.phase).toBe('over')
+    expect(standing.verdict).toBe('cancelled')
+    expect(standing.ending).toBe('abandoned')
+    expect(standing.aftermath).toEqual(['unaffordable'])
+    // Nothing was narrowed and nobody said anything: she is the one who left.
+    expect(standing.manipulated).toBe(false)
+    // And a hand that is already over is not stood up from twice.
+    const over = settle(settling({}))
+    expect(sheWillNotPlay(over)).toBe(over)
+  })
+
+  it('collects the year, and pays whatever the guest brought that answers a death', () => {
+    const burnt = theEyesTakeYou(dealTheGame())
+    expect(burnt.aftermath).toEqual(['burnt-out'])
+
+    const covered = theEyesTakeYou(
+      dealTheGame({ marked: null, technique: 'resurrection', bookmark: 'guardian' }),
+    )
+    expect(covered.aftermath).toEqual(['burnt-out', 'avenged', 'stood-in'])
+  })
+
+  it('sits the double in the chair when the vow is what killed the guest', () => {
+    const struck = settle(settling({ riders: ['sworn'], technique: 'guardian' }))
+    expect(struck.aftermath).toContain('sworn-struck')
+    expect(struck.aftermath).toContain('stood-in')
   })
 
   it('pays the pestering beast whatever this table did with its own Yes', () => {

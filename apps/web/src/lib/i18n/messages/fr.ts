@@ -800,6 +800,10 @@ export const fr: Messages = {
       // La table jouée à la main : ce que ferait la carte visée si on la
       // prenait. Chacun de ces gestes est un coup que le panneau propose aussi —
       // la salle est une seconde paire de mains sur la même partie.
+      scarlet: {
+        watching: 'Elle vous regarde la dépenser',
+      },
+
       reach: {
         hint: 'Visez une carte et cliquez.',
         cast: (effect: string) => `F — ${effect}`,
@@ -951,6 +955,12 @@ export const fr: Messages = {
           body: 'Double Face n’est pas un coup. Il tient vivantes deux des techniques volées par Chrollo — ces deux-là, tirées au moment de la donne — et chacune se joue sur sa propre touche et se dépense sur son propre compte.',
         },
 
+        rewound: {
+          title: 'Il y a dix secondes',
+          body: (cards: number) =>
+            `Vous êtes déjà passé par là, et vous êtes le seul à le savoir. Morena dépense ces secondes exactement comme elle les a dépensées la première fois — ${cards === 1 ? 'une carte' : `${cards} cartes`} qu’elle n’a pas le choix de prendre — et votre main, elle, est libre. La pièce reste bleue tant qu’elle n’a pas rattrapé.`,
+        },
+
         ghost: {
           title: 'Le quatrain que la bête a écrit',
           body: 'Elle écrivait pendant que Morena plongeait la main dans votre jeu. Personne ne le lui a demandé, et elle n’écrira pas une seconde fois — une prophétie qui se corrige ne vaut rien. Ce qu’elle dit porte sur la branche perdante.',
@@ -1017,6 +1027,7 @@ export const fr: Messages = {
           evict: 'Vider sa chaise',
           blind: 'Lui ôter les sens',
           rider: 'Poser la clause',
+          rewind: 'Reprendre les dix secondes',
         },
 
         techniques: {
@@ -1026,9 +1037,9 @@ export const fr: Messages = {
               'La chaîne est une chaîne : elle pend à votre main et ne passe pas en Zetsu. Bonne pour un tour, ruineuse sur cinq.',
           },
           future: {
-            buys: 'Dix secondes vécues avant tout le monde. Vous entendez quelle carte tombe avant de dépenser la question qui la lui donne.',
+            buys: 'Le dernier échange, repris. La question retourne dans son éventail et la carte qu’elle a prise revient dans votre main — et elle devra dépenser ces secondes exactement comme elle les a dépensées, quoi que vous fassiez des vôtres.',
             costs:
-              'Les dix secondes se déroulent ensuite exactement comme prévu : la table voit un joueur qui n’a rien changé — et vous n’en tirez jamais qu’un seul tour.',
+              'Tout le monde dans la pièce sauf vous continue de vivre la prédiction : rien de ce que vous faites pendant ces secondes n’est une chose à laquelle qui que ce soit puisse réagir. Un échange, une fois, et la pièce n’est visiblement plus elle-même tant qu’elle n’a pas rattrapé.',
           },
           divination: {
             buys: 'Un numéro composé sous la table, et une réponse qui est vraie.',
@@ -1111,6 +1122,11 @@ export const fr: Messages = {
             buys: 'Votre mort rendue chère : la marque emporte quelqu’un des siens avec elle.',
             costs:
               'Cela répond à une clause qu’elle n’allait jamais utiliser. Elle ne tue pas ses candidats, elle les recrute.',
+          },
+          scarlet: {
+            buys: 'Son éventail face visible et chaque carte de la pièce comptée. Rien n’échappe à ces yeux, et rien en eux n’est une fraude.',
+            costs:
+              'Une heure de vie par seconde, et une négociation n’est pas courte. Elle regarde se consumer la recrue qu’elle achète, et se lève bien avant la fin de l’année.',
           },
           resurrection: {
             buys: 'Un chat dans le coin qui ne fait rien du tout — jusqu’à ce que vous mouriez, et alors il tue celle qui l’a fait.',
@@ -1210,6 +1226,12 @@ export const fr: Messages = {
             'On l’a forcée à répondre à sa propre ouverture. Personne ne lui avait encore fait ça.',
           deterred:
             'Vous tuer lui coûte quelqu’un des siens. Elle n’allait pas le faire, mais maintenant elle ne peut plus se permettre d’y avoir pensé.',
+          unaffordable:
+            'Elle s’est levée. Une recrue qui vaut vingt-deux niveaux ne vaut plus rien s’il ne lui reste pas de vie à dépenser, et elle a regardé le compteur tourner tout du long. Personne n’a dit Oui, et personne n’a eu à le faire.',
+          'burnt-out':
+            'L’année s’est épuisée alors que les cartes étaient encore sur la table. Les yeux sont restés ouverts toute la manche, et ils allaient toujours être payés.',
+          'stood-in':
+            'Quelqu’un était déjà assis là. La double de Kacho prend la chaise à l’instant où l’invité y meurt — indiscernable, et dévouée à une personne qui n’est plus à la table. L’infection n’a plus personne sur qui porter.',
           solicited:
             'La bête a eu son oui. Personne n’en a été infecté, personne n’a été embrassé, personne n’a eu à regarder un meurtre — ce qui est exactement ce qu’il vaut, et exactement pourquoi elle exige les trois.',
           avenged:
@@ -1279,6 +1301,8 @@ export const fr: Messages = {
             ? 'Prise sur le fait. Retour, Joker et X quittent la table.'
             : 'Vous vous êtes levé, ce qui est tricher. Retour, Joker et X quittent la table.',
         exposed: (card) => `Le baiser trouve le faux ${card}.`,
+        rewound: (cards: number) =>
+          `La pièce recule de dix secondes. Il lui reste ${cards === 1 ? 'une carte' : `${cards} cartes`} à reprendre, et pas le choix de laquelle.`,
       },
 
       again: 'Redistribuer',

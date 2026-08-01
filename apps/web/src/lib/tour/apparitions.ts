@@ -237,7 +237,14 @@ export const OWL = 0xa8b7d8
 const CARDS = [0x4d8ff0, 0xf0c94d, 0xe5484d]
 const CURSE = 0x9d65d0
 const STAR = 0xffd166
-const DOUBLE = 0xf6b8d1
+/**
+ * Kacho's double, in the pink the registry publishes Without You in.
+ *
+ * Exported because it sits down at Morena's table as well: it is the one proxy
+ * there that answers a death rather than avoiding one, and it takes the chair
+ * the moment the guest dies in it.
+ */
+export const DOUBLE = 0xf6b8d1
 const PORTAL = 0x80edc7
 const FISH = 0x78b6c9
 const PAPER = 0xefb9c8

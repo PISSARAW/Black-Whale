@@ -892,6 +892,11 @@ export const en = {
       // do if it were taken hold of. Every one of these is a move the panel
       // beside it also offers — the room is a second pair of hands on the same
       // game, not a second game.
+      // Emperor Time, which is the one seat with a clock on it.
+      scarlet: {
+        watching: 'She is watching you spend it',
+      },
+
       reach: {
         hint: 'Look at a card and click it.',
         cast: (effect: string) => `F — ${effect}`,
@@ -1056,6 +1061,19 @@ export const en = {
         },
 
         /**
+         * The room while it is behind itself.
+         *
+         * Shown only while it is true. What a reader can see for themselves is
+         * that the light has gone wrong; this is the sentence that says why,
+         * and it goes away the moment the ten seconds are paid back.
+         */
+        rewound: {
+          title: 'Ten seconds ago',
+          body: (cards: number) =>
+            `You have been here before, and only you know it. Morena is spending these seconds exactly as she spent them the first time — ${cards === 1 ? 'one card' : `${cards} cards`} she has no choice about — and your own hand is free. The room is her colour of blue until she has caught up.`,
+        },
+
+        /**
          * The quatrain the beast writes, and what it is about.
          *
          * Automatic writing: nobody asks for it and its subject is never shown
@@ -1137,6 +1155,7 @@ export const en = {
           evict: 'Empty her chair',
           blind: 'Take her senses',
           rider: 'Lay the clause',
+          rewind: 'Take the ten seconds back',
         },
 
         techniques: {
@@ -1146,9 +1165,9 @@ export const en = {
               'The chain is a chain: it hangs off your hand and it does not go into Zetsu. Good for one round, ruinous over five.',
           },
           future: {
-            buys: 'Ten seconds of it, lived before anyone else has them. You hear which card goes before you spend the question that lets her take it.',
+            buys: 'The last exchange, taken back. The question returns to her fan and the card she took returns to your hand — and she has to spend those seconds exactly as she spent them, whatever you do with yours.',
             costs:
-              'The ten seconds then happen exactly as predicted, so the table sees a player who changed nothing — and you get one round out of it, ever.',
+              'Everyone in the room except you goes on living the prediction, so nothing you do in those seconds is a thing anybody can react to. One exchange, once, and the room is visibly not itself until she has caught up.',
           },
           divination: {
             buys: 'A number dialled under the table, and an answer that is true.',
@@ -1230,6 +1249,11 @@ export const en = {
             buys: 'Your death made expensive: the mark takes one of her own with it.',
             costs:
               'It answers a clause she was never going to use. She does not kill her candidates, she recruits them.',
+          },
+          scarlet: {
+            buys: 'Her fan face up and every card in the room accounted for. Nothing is hidden from these eyes and nothing about them is a fraud.',
+            costs:
+              'An hour of your life a second, and a negotiation is not short. She watches the candidate she is buying being spent, and stands up long before the year is out.',
           },
           resurrection: {
             buys: 'A cat in the corner that does nothing at all — until you die, and then it kills whoever did it.',
@@ -1328,6 +1352,12 @@ export const en = {
           trapped: 'She was made to answer her own opening. Nobody has done that to her before.',
           deterred:
             'Killing you costs her one of her own. She was never going to, but now she cannot afford to have been going to.',
+          unaffordable:
+            'She stood up. A recruit worth twenty-two levels is worth nothing at all if there is no life left in them to spend, and she was watching the meter run the whole time. Nobody said Yes, and nobody had to.',
+          'burnt-out':
+            'The year ran out with the cards still on the table. The eyes were open the whole hand, and they were always going to be paid for.',
+          'stood-in':
+            'Somebody was already sitting there. Kacho’s double takes the chair the moment the guest dies in it — indistinguishable, and dedicated to a person who is no longer at the table. The infection has nobody to be about.',
           solicited:
             'The beast got its yes. Nobody was infected by it, nobody was kissed, and nobody had to watch a murder — which is exactly what it is worth, and exactly why she asks for all three.',
           avenged:
@@ -1404,6 +1434,16 @@ export const en = {
             ? 'Caught. Back, Joker and X leave the table.'
             : 'You stood up, which is cheating. Back, Joker and X leave the table.',
         exposed: (card: string) => `The kiss finds the forged ${card}.`,
+        /**
+         * The ten seconds, taken back.
+         *
+         * Said in the transcript rather than cut out of it: the exchange
+         * happened, and then it happened again. A record with the erased
+         * stretch quietly missing would be the page pretending the vision
+         * never took place.
+         */
+        rewound: (cards: number) =>
+          `The room goes back ten seconds. She still has ${cards === 1 ? 'a card' : `${cards} cards`} to take again, and no choice about which.`,
       },
 
       again: 'Deal again',

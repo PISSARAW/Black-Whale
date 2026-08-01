@@ -22,7 +22,7 @@ import {
   worksAtTheTable,
 } from '@black-whale/ability-modules'
 import type { MorenaGame, AnswerCard, QuestionCard, TableKind } from '@black-whale/ability-modules'
-import { BOOK, CHIMERA, HEART, INSECT, OWL, SPRITES } from './apparitions'
+import { BOOK, CHIMERA, DOUBLE, HEART, INSECT, OWL, SPRITES } from './apparitions'
 import type { Apparition } from './apparitions'
 import { DOUBLE_FACE_PAGES } from './hatsu'
 import { AIM_AT, withinReach } from './morenaHands'
@@ -50,9 +50,11 @@ export {
   playTechnique,
   refuseTheDeal,
   settle,
+  sheWillNotPlay,
   spentOn,
   summariseGame,
   takeTheDeal,
+  theEyesTakeYou,
   worksAtTheTable,
 } from '@black-whale/ability-modules'
 export type {
@@ -307,6 +309,22 @@ export function theLosingBranch(game: MorenaGame): AnswerCard | null {
   if (!spentOn(game, 'prophecy')) return null
   return game.marked ?? 'yes'
 }
+
+// ── Parallel Future, ten seconds back ──────────────────────────────
+/**
+ * The colour the room stands in while it is out of step with itself.
+ *
+ * Tserriednich's own pale blue, the one the registry publishes the vision in.
+ * It goes on the room rather than on an object because that is what the canon
+ * says the technique does to everybody who is not holding it: they are living
+ * a stretch of time that has already been decided, and the person who cast it
+ * is the only one in the room for whom it has not. A mark over the table would
+ * be an announcement; the light being wrong is the thing itself.
+ *
+ * It lifts the moment `forced` empties — the ten seconds are caught up, she is
+ * choosing again, and the room is back in the present tense.
+ */
+export const REWIND_BLUE = 0x7dd3fc
 
 // ── Little Eye, over the table ─────────────────────────────────────
 /**
@@ -948,9 +966,7 @@ export function tableauOf(game: MorenaGame, floor: number): Apparition[] {
       ...common,
       id: 'act-contract',
       kind: 'contract',
-      at: signed > 0
-        ? [TABLE_AT[0] + 0.62, TABLE_AT[1] - 0.3]
-        : [TABLE_AT[0], TABLE_AT[1] + 0.22],
+      at: signed > 0 ? [TABLE_AT[0] + 0.62, TABLE_AT[1] - 0.3] : [TABLE_AT[0], TABLE_AT[1] + 0.22],
       // Held up between them while it is blank, and lying on the wood once it
       // has been signed. A contract in the air is a contract being read out.
       y: signed > 0 ? top + 0.006 : top + 0.26,
@@ -958,6 +974,28 @@ export function tableauOf(game: MorenaGame, floor: number): Apparition[] {
       size: 0.2,
       colour: ACT_PAPER,
       stage: signed > 0 ? 1 : 0,
+    })
+  }
+
+  // And Kacho's double, in the chair the guest was in.
+  //
+  // The one manifestation at this table that appears *after* the person it
+  // belongs to has stopped: Without You is post-mortem by construction — it
+  // exists because a twin did not — so it has nothing to do here until the
+  // guest dies in the chair, and then it is simply sitting in it. Drawn at the
+  // seat rather than beside it, because that is the whole of what it does: it
+  // is indistinguishable from the person who was there, and it is the reason
+  // the infection has nobody left to be about.
+  if (game.aftermath.includes('stood-in')) {
+    seen.push({
+      ...common,
+      id: 'guest-double',
+      kind: 'double',
+      at: GUEST_AT,
+      y: floor + 0.62,
+      size: 0.42,
+      colour: DOUBLE,
+      stage: 0,
     })
   }
 

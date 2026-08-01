@@ -42,12 +42,16 @@
     cssInk,
     askMorena,
     dealTheGame,
+    eyeFeed,
     infectionAfter,
     lastCard,
     leaveTheTable,
     exposureNow,
     moveFor,
     needsAChoice,
+    OWL_COLOUR,
+    owlFilm,
+    owlSaw,
     playTechnique,
     refuseTheDeal,
     settle,
@@ -58,6 +62,7 @@
     type MorenaGame,
     type QuestionCard,
   } from '$lib/tour/morena'
+  import { gesturesAt, playGesture, type TableGesture } from '$lib/tour/morenaHands'
 
   const ship = theShip()
   const french = $derived($locale === 'fr')
@@ -100,6 +105,15 @@
   const screen = new Fullscreen()
   const immersive = $derived(screen.immersive)
   let panelOpen = $state(true)
+  /**
+   * Whether the table has the pointer.
+   *
+   * Looking around the room takes the mouse, and the cards are played with it —
+   * so at this table, unlike on the walk, giving the pointer back is a move in
+   * the game and not an aside. Tab is the scene's own way of handing it back;
+   * the hint below says so, because Esc would take the screen with it.
+   */
+  let engaged = $state(false)
 
   $effect(() => screen.watch())
 
@@ -108,14 +122,14 @@
   /**
    * V gives the table the screen, and Esc gives it back — but only where
    * nothing else has a claim on Esc: in native full screen the browser answers
-   * it first, and either way a keystroke aimed at a radio or a field is not
-   * aimed at us.
+   * it first, an engaged pointer answers it with "let go of my mouse", and
+   * either way a keystroke aimed at a radio or a field is not aimed at us.
    */
   function onWindowKeydown(event: KeyboardEvent) {
     if (event.metaKey || event.ctrlKey || event.altKey) return
     const key = event.key.toLowerCase()
     if (key !== 'v' && key !== 'escape') return
-    if (key === 'escape' && !(immersive && !screen.native)) return
+    if (key === 'escape' && !(immersive && !screen.native && !engaged)) return
     const target = event.target
     if (
       target instanceof HTMLElement &&
@@ -140,6 +154,27 @@
   const seat = { at: GUEST_AT, heading: facing, eye: SEATED_EYE }
 
   const table = $derived(tableauOf(game, floor))
+  /**
+   * What Little Eye is sending back, or nothing if there is no eye here.
+   *
+   * The insect was in the room from the first commit and the picture it was
+   * taking was not: the descent onto her fan read as a fly landing. The walk
+   * has always inset the feed in the corner when the sphere is sent into a room
+   * — this is the same inset, a metre away instead of a deck.
+   */
+  const feed = $derived(eyeFeed(game, floor))
+  /**
+   * And what the owl already filmed, which is the other corner.
+   *
+   * Two techniques read her hand from a camera and they are not the same
+   * gesture: Little Eye is flown in and watched live, Secret Window was stuck
+   * to the bulkhead before anyone sat down and is *reviewed*. So one is a feed
+   * in the top corner and the other is a recording in the bottom one — the same
+   * two corners the walk has always used for the same two things.
+   */
+  const record = $derived(owlFilm(game, floor))
+  /** Her fan as that recording has it, which is not her fan as it is now. */
+  const filmed = $derived(owlSaw(game))
 
   const nameOfCard = (card: AnswerCard) => copy.cards[card].name
   const questionsLeft = $derived(game.questions)
@@ -198,6 +233,68 @@
     game = settle(game, choice ?? undefined)
     choice = null
   }
+
+  // ── The same game, played with the hands ───────
+  /**
+   * The card the visitor is looking at, and what taking it would do.
+   *
+   * The panel is a complete way to play this game and stays one: there is a
+   * button for every move, and a reader who never touches the room can play a
+   * whole hand with them. This is the other pair of hands — the cards are lying
+   * on a table a metre away, and pointing at one and clicking is the move it
+   * already is. Nothing here is a rule; `morenaHands` says which card is which
+   * gesture, and the reducer in the ability module plays it.
+   */
+  let aimedExtra = $state<string | null>(null)
+  const pointedAt = $derived<TableGesture | null>(
+    aimedExtra ? (gesturesAt(game)[aimedExtra] ?? null) : null,
+  )
+
+  /** What the room says the pointed card would do, in the reader's language. */
+  const pointedLabel = $derived.by(() => {
+    const gesture = pointedAt
+    if (!gesture) return null
+    if (gesture.kind === 'ask') return copy.reach.ask(copy.questions[gesture.question].title)
+    if (gesture.kind === 'kiss') return copy.reach.kiss(nameOfCard(gesture.card))
+    if (gesture.kind === 'decline') return copy.reach.decline
+    if (gesture.kind === 'point') return copy.reach.point(nameOfCard(gesture.side))
+    if (gesture.kind === 'reach') return copy.reach.reachFor(nameOfCard(gesture.card))
+    return copy.reach.play(nameOfCard(gesture.card))
+  })
+
+  /**
+   * Take hold of a card.
+   *
+   * The gesture is looked up again rather than read off `pointedAt`: a click is
+   * a frame or two behind the ray that found the card, and the only honest
+   * answer to "what does this card do" is the one the game gives at the moment
+   * the hand closes on it. A card that stopped being a move in between is not
+   * one, and the reducer would refuse it in any case.
+   */
+  function takeHold(id: string) {
+    const gesture = gesturesAt(game)[id]
+    if (!gesture) return
+    game = playGesture(game, gesture)
+    // The panel's half-made choice is spent or void either way: the hand was
+    // settled by hand, or it moved on to a phase that has no use for it.
+    choice = null
+  }
+
+  /**
+   * Whether the technique is live, which is what F answers to.
+   *
+   * The same key as the walk, for the same reason: the aura is in the visitor's
+   * hand and the room is where it is played. The table has one hand to play —
+   * every seat in `TABLE_TECHNIQUES` is a single effect — so R and C, which the
+   * walk gives to a second page or a third air, have nothing to be here.
+   */
+  const castable = $derived(view === 'table' && Boolean(seated) && !usedUp && game.phase !== 'over')
+
+  // Nothing is pointed at from the menu, and a card left lifted by a hand that
+  // ended would be a card waiting to be played in a game that is over.
+  $effect(() => {
+    if (view !== 'table') aimedExtra = null
+  })
 
   /**
    * The dock, while a hand is live.
@@ -272,9 +369,21 @@
       <TourScene
         {ship}
         bind:tierId
+        bind:engaged
         seated={seat}
         extras={table}
-        touchLabels={{ move: $t.tour.touch.move, cast: $t.tour.touch.cast }}
+        {feed}
+        {record}
+        bind:aimedExtra
+        onPick={view === 'table' ? takeHold : undefined}
+        aiming={castable}
+        onCast={cast}
+        auraColour={carried?.color ?? null}
+        castOnClick={false}
+        touchLabels={{
+          move: $t.tour.touch.move,
+          cast: seated ? copy.hatsu.effects[seated.effect] : $t.tour.touch.cast,
+        }}
         soundLabels={{ silence: $t.tour.sound.silence, restore: $t.tour.sound.restore }}
         loadingLabel={copy.loading}
         unsupportedLabel={copy.unsupported}
@@ -289,6 +398,57 @@
         </p>
         <p class="mt-1 text-xs leading-snug text-[#FFFFF0]/60">{copy.seat}</p>
       </div>
+
+      <!-- Looking around took the mouse, and the cards need it back. Said only
+           while the table is holding it, at the foot of the room where the walk
+           says the same thing: the hand is to the right, and a line over the
+           cards would be covering what it is telling you to go and play. -->
+      {#if engaged}
+        <p
+          class="pointer-events-none absolute bottom-3 left-1/2 z-20 -translate-x-1/2 rounded bg-[#050505]/80 px-3 py-1 text-center text-xs text-[#FFFFF0]/70"
+        >
+          {$t.tour.engaged}
+        </p>
+      {/if}
+
+      <!-- The table, played with the hands.
+           A reticle only while the pointer is held — with a cursor on the glass
+           there is already a thing pointing at the card, and two would be one
+           too many — and, above it, what the card under it would do. The line is
+           the whole of the interface: it is the only thing that says a hand of
+           cards a metre away is something you may reach for. -->
+      {#if view === 'table' && engaged}
+        <span
+          class="pointer-events-none absolute left-1/2 top-1/2 z-20 block h-1.5 w-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full border border-[#050505]/70 bg-[#FFFFF0]/80"
+        ></span>
+      {/if}
+
+      {#if view === 'table'}
+        <div
+          class="pointer-events-none absolute bottom-12 left-1/2 z-20 flex -translate-x-1/2 flex-col items-center gap-1"
+        >
+          {#if pointedLabel}
+            <p
+              class="rounded border border-[#FFD700]/50 bg-[#050505]/85 px-3 py-1 text-center text-xs text-[#FFD700]"
+            >
+              {pointedLabel}
+            </p>
+          {:else if game.phase !== 'over'}
+            <p class="rounded bg-[#050505]/70 px-3 py-1 text-center text-xs text-[#FFFFF0]/55">
+              {copy.reach.hint}
+            </p>
+          {/if}
+          <!-- And the key the aura is played with, which is the walk's own F. -->
+          {#if castable && seated}
+            <p
+              class="rounded bg-[#050505]/70 px-3 py-1 text-center text-xs"
+              style:color={carried?.color ?? '#FFFFF0'}
+            >
+              {copy.reach.cast(copy.hatsu.effects[seated.effect])}
+            </p>
+          {/if}
+        </div>
+      {/if}
 
       <!-- The way in and out of the screen. Top right of the room, because the
            left corner already names the deck and the office. -->
@@ -476,6 +636,31 @@
             {#if game.shielded}<li class="text-[#FFD700]">{copy.hatsu.shielded}</li>{/if}
             {#if game.proxied}<li>{copy.hatsu.proxied}</li>{/if}
           </ul>
+        {/if}
+
+        <!-- The owl's recording, which is the one thing at this table that does
+             not go out of date because it is already out of date: seven cards
+             as a bird on the bulkhead had them at the moment somebody thought
+             to look. The ones spent since are still in it — that is what a
+             recording is — and the corner of the room is showing the same
+             footage as a picture. -->
+        {#if filmed}
+          <div class="mt-3 rounded border border-[#a8b7d8]/40 bg-[#a8b7d8]/5 p-3">
+            <p class="text-[10px] uppercase tracking-widest text-[#a8b7d8]">
+              {copy.hatsu.owl.title}
+            </p>
+            <p class="mt-1 text-xs leading-snug text-[#FFFFF0]/60">{copy.hatsu.owl.body}</p>
+            <div class="mt-2 flex flex-wrap gap-1">
+              {#each filmed as question (question)}
+                <MorenaCard
+                  face={question}
+                  label={copy.questions[question].short}
+                  ink={cssInk(OWL_COLOUR)}
+                  state={game.questions.includes(question) ? 'live' : 'spent'}
+                />
+              {/each}
+            </div>
+          </div>
         {/if}
 
         {#if lastAsked}

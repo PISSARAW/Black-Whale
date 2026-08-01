@@ -28,6 +28,11 @@ import {
   type TourWorld,
 } from './hatsu'
 import type { Space, Vec2 } from './types'
+// A type and nothing else: `morena` reads the insect's colour off this file,
+// and this file needs the name of a card face. An import that is erased before
+// anything runs is not a circle, and the alternative — a second spelling of the
+// twelve faces, here — is how the two would drift.
+import type { CardFace } from './morena'
 
 export type ApparitionKind =
   /** Musse's owl, perched where Secret Window attached it. */
@@ -159,6 +164,25 @@ export interface Apparition {
    */
   climb?: number
   /**
+   * What is printed on it, for the one apparition that has a front and a back.
+   *
+   * Only a game card has one, and only while it is lying face up: the drawing
+   * is the difference between a card somebody has read and a card somebody has
+   * been *told about*, which is the whole of what reading a hand buys. A card
+   * face down has no face here, because it has none on the table either.
+   */
+  face?: CardFace
+  /**
+   * Whether the visitor may take hold of it.
+   *
+   * Nothing the ship or a technique leaves standing is: an aura shell is a
+   * thing to walk past. Morena's table is the exception the walk sits down at,
+   * and there a card is not scenery — it is the move. The scene answers what is
+   * down the reticle and reports the `id`; what taking hold of it *does* is
+   * decided where the game is, which is never here.
+   */
+  pick?: boolean
+  /**
    * How far from `at` the thing may wander, in metres.
    *
    * The fish have one, and so does everything that was sent somewhere with
@@ -170,8 +194,16 @@ export interface Apparition {
   spread?: number
 }
 
-/** The colours the techniques are already published in, as numbers. */
-const OWL = 0xa8b7d8
+// The colours the techniques are already published in, as numbers.
+/**
+ * Musse's owl, in the pale grey-blue the walk has always perched it in.
+ *
+ * Exported for the same reason the insect's blue is: the bird is stuck to a
+ * bulkhead over Morena's table as well as to the ones in the corridors, and a
+ * bird that was one colour on the walk and another in the office would read as
+ * two techniques rather than as one technique in two rooms.
+ */
+export const OWL = 0xa8b7d8
 const CARDS = [0x4d8ff0, 0xf0c94d, 0xe5484d]
 const CURSE = 0x9d65d0
 const STAR = 0xffd166

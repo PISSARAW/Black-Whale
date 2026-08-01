@@ -16,6 +16,7 @@ import {
   TABLE_TECHNIQUES,
   askMorena,
   dealerStage,
+  eyeFeed,
   exposureNow,
   moveFor,
   dealTheGame,
@@ -24,6 +25,8 @@ import {
   leaveTheTable,
   narrowTheAnswer,
   needsAChoice,
+  owlFilm,
+  owlSaw,
   playTechnique,
   refuseTheDeal,
   settle,
@@ -450,6 +453,29 @@ describe('what the walk lays on the table', () => {
     expect(carried.spread).toBe(EYE_RANGE)
   })
 
+  it('sends a picture back, from wherever the insect is holding', () => {
+    // No eye, no feed: every other technique at this table is held rather than
+    // sent, and there is nothing in the room to look through.
+    expect(eyeFeed(dealTheGame(), floor)).toBeNull()
+    expect(eyeFeed(withTechnique('dowsing'), floor)).toBeNull()
+
+    // Perched, it is watching the room — which means watching her.
+    const perched = eyeFeed(withTechnique('scout'), floor)!
+    expect(perched.y).toBeGreaterThan(floor + 2)
+    expect(perched.look).toEqual(DEALER_AT)
+
+    // Filming, it is over the fan and looking down at it: the descent is the
+    // read, and the picture has to be of what was read.
+    const filming = eyeFeed(playTechnique(withTechnique('scout'), { random: clean }), floor)!
+    expect(filming.y).toBeGreaterThan(floor + TABLE_HEIGHT)
+    expect(filming.y).toBeLessThan(floor + TABLE_HEIGHT + 0.4)
+    expect(filming.lookY).toBeLessThan(filming.y)
+    // Her side of the table, and pointed further into it: a camera looking
+    // straight down has no upright, and the cards would come out on their side.
+    expect(filming.look[1]).toBeLessThan(filming.at[1])
+    expect(filming.at[1]).toBeLessThan(TABLE_AT[1])
+  })
+
   it('brings it down onto her fan once it has been told to film', () => {
     const filming = playTechnique(withTechnique('scout'), { random: clean })
     const seen = tableauOf(filming, floor).find((thing) => thing.kind === 'insect')!
@@ -460,6 +486,53 @@ describe('what the walk lays on the table', () => {
     expect(seen.spread).toBe(EYE_HOLD)
     // And it is one insect flown down, not a second one built beside the first.
     expect(tableauOf(filming, floor).filter((thing) => thing.kind === 'insect')).toHaveLength(1)
+  })
+
+  it('leaves the owl on the bulkhead, before the cast and after it', () => {
+    expect(tableauOf(dealTheGame(), floor).some((thing) => thing.kind === 'owl')).toBe(false)
+
+    const bird = (game: MorenaGame) => tableauOf(game, floor).find((thing) => thing.kind === 'owl')!
+    const attached = bird(withTechnique('surveillance'))
+    // High, behind her, and — the whole of the technique — perfectly still.
+    expect(attached.y).toBeGreaterThan(floor + 2)
+    expect(attached.at[1]).toBeLessThan(DEALER_AT[1])
+    expect(attached.spread).toBe(0)
+
+    // Nothing about it moves when the tape is reviewed: what a camera bolted to
+    // a wall does when somebody watches its footage is nothing.
+    const reviewed = bird(playTechnique(withTechnique('surveillance'), { random: clean }))
+    expect(reviewed.at).toEqual(attached.at)
+    expect(reviewed.y).toBe(attached.y)
+  })
+
+  it('hands over a recording rather than a feed, and only once it is asked for', () => {
+    // Attached and not yet reviewed: the bird is filming, and nobody is
+    // watching it. That is the difference between this and the insect.
+    expect(owlFilm(dealTheGame(), floor)).toBeNull()
+    expect(owlFilm(withTechnique('scout'), floor)).toBeNull()
+    expect(owlFilm(withTechnique('surveillance'), floor)).toBeNull()
+
+    const film = owlFilm(playTechnique(withTechnique('surveillance'), { random: clean }), floor)!
+    // From the bulkhead, over her shoulder, pointed down at her fan.
+    expect(film.y).toBeGreaterThan(floor + 2)
+    expect(film.at[1]).toBeLessThan(DEALER_AT[1])
+    expect(film.look[1]).toBeLessThan(TABLE_AT[1])
+    expect(film.lookY).toBeLessThan(film.y)
+  })
+
+  it('keeps in the record the questions she has spent since it was taken', () => {
+    expect(owlSaw(withTechnique('surveillance'))).toBeNull()
+    expect(owlSaw(playTechnique(withTechnique('scout'), { random: clean }))).toBeNull()
+
+    const filmed = playTechnique(withTechnique('surveillance'), { random: clean })
+    expect(owlSaw(filmed)).toEqual([...QUESTION_CARDS])
+
+    // Two questions spent afterwards. Her fan is down to five and the footage
+    // is still seven: a recording does not update, which is the one thing it
+    // has over the live picture at the other end of the table.
+    const later = askMorena(askMorena(filmed, QUESTION_CARDS[0]), QUESTION_CARDS[3])
+    expect(later.questions).toHaveLength(5)
+    expect(owlSaw(later)).toEqual([...QUESTION_CARDS])
   })
 
   it('leaves the nick showing rather than the foresight when a card is both', () => {
@@ -638,13 +711,39 @@ describe('the Manipulation, which is the only sanction the game has', () => {
 })
 
 describe('reading her hand', () => {
+  const office = ship.spaces.get(HIDEOUT_OFFICE)!
+  const floor = floorOf(office, ship.plans.get(HIDEOUT_TIER)!.tier)
+
   it('turns the fan face up, and the table draws it face up', () => {
     const played = playTechnique(withTechnique('scout'), { random: clean })
     expect(played.read).toBe(true)
-    const office = ship.spaces.get(HIDEOUT_OFFICE)!
-    const floor = floorOf(office, ship.plans.get(HIDEOUT_TIER)!.tier)
     const fan = tableauOf(played, floor).filter((thing) => thing.id.startsWith('question-'))
     expect(fan.every((card) => card.stage === 1)).toBe(true)
+  })
+
+  it('puts the question itself on the card, and only once it has been read', () => {
+    // Face down is a card with nothing on it: a table that prints the question
+    // on a card the guest has not paid for has given the game away.
+    const blind = tableauOf(withTechnique('scout'), floor)
+    expect(blind.filter((thing) => thing.id.startsWith('question-'))).not.toHaveLength(0)
+    for (const card of blind.filter((thing) => thing.id.startsWith('question-'))) {
+      expect(card.face).toBeUndefined()
+    }
+
+    const read = tableauOf(playTechnique(withTechnique('scout'), { random: clean }), floor)
+    for (const card of read.filter((thing) => thing.id.startsWith('question-'))) {
+      expect(card.face).toBe(card.id.slice('question-'.length))
+    }
+  })
+
+  it('draws the guest their own cards, whatever the technique in hand', () => {
+    // They are their own cards and always have been, so a hand is legible
+    // before anything has been spent on anything.
+    for (const card of tableauOf(dealTheGame(), floor).filter((thing) =>
+      thing.id.startsWith('hand-'),
+    )) {
+      expect(card.face).toBe(card.id.slice('hand-'.length))
+    }
   })
 
   it('makes foresight true rather than likely', () => {

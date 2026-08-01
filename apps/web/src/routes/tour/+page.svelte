@@ -1799,6 +1799,8 @@
           <dd>{$t.tour.controls.revealKeys}</dd>
           <dt class="text-[#FFFFF0]">{$t.tour.controls.fullscreen}</dt>
           <dd>{$t.tour.controls.fullscreenKeys}</dd>
+          <dt class="text-[#FFFFF0]">{$t.tour.controls.release}</dt>
+          <dd>{$t.tour.controls.releaseKeys}</dd>
           {#if technique}
             <dt class="text-[#FFFFF0]">{$t.tour.controls.nen}</dt>
             <dd>{$t.tour.controls.nenKeys}</dd>

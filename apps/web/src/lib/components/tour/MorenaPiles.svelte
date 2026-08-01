@@ -68,13 +68,18 @@
 <h3 class="mt-4 text-[10px] uppercase tracking-widest text-[#FFFFF0]/40">{copy.table.fan}</h3>
 <div class="mt-2 flex flex-wrap gap-1">
   <!-- Face down while they are hers, and face up the moment one is spent —
-       which is the only currency the game has. -->
+       which is the only currency the game has.
+
+       Unless something has read them. A technique that turns her fan over and
+       leaves seven card backs printed here would be a line of text claiming a
+       thing the page then declines to show: the table lays them face up, and
+       this is the same fan. -->
   {#each game.questions as question (question)}
     <MorenaCard
       face={question}
       label={copy.questions[question].short}
-      ink={cssInk(QUESTION_COLOUR)}
-      state="hidden"
+      ink={cssInk(game.read ? ASKED_COLOUR : QUESTION_COLOUR)}
+      state={game.read ? 'live' : 'hidden'}
     />
   {/each}
   {#each game.asked as question (question)}

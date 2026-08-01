@@ -53,7 +53,9 @@ export const en = {
     intro:
       'The ship as architecture, not as a stage: no passengers, no chapter, no timeline. Every surface says where it comes from — a panel, the deck plan, or the reconstruction itself.',
     enter: 'Click to walk',
-    engaged: 'Press Esc to release the pointer',
+    // Tab is named first because it is the one that works in full screen: Esc
+    // releases the pointer and leaves full screen in the same press.
+    engaged: 'Press Tab to release the pointer — Esc releases it and full screen with it',
     loading: 'Building the deck…',
     unsupported:
       'This walk needs WebGL, which this browser is not offering. The deck plans on the ship map remain available.',
@@ -94,6 +96,8 @@ export const en = {
       revealKeys: 'G',
       fullscreen: 'Full screen, panel and all',
       fullscreenKeys: 'V',
+      release: 'Give the pointer back to the page',
+      releaseKeys: 'Tab — full screen is kept, which Esc would not do',
       nen: 'Cast the active Hatsu',
       nenKeys: 'F, or click, on the room or the solid you are facing',
       nenSelf: 'Turn the active Hatsu on yourself',
@@ -884,6 +888,21 @@ export const en = {
       askedLabel: 'You asked',
       answerLabel: 'She said',
 
+      // The table played with the hands: what the card under the reticle would
+      // do if it were taken hold of. Every one of these is a move the panel
+      // beside it also offers — the room is a second pair of hands on the same
+      // game, not a second game.
+      reach: {
+        hint: 'Look at a card and click it.',
+        cast: (effect: string) => `F — ${effect}`,
+        ask: (question: string) => `Ask — ${question}`,
+        kiss: (card: string) => `Kiss her, and take the ${card} back`,
+        decline: 'Refuse the kiss, and play the hand you have',
+        point: (card: string) => `Point the Joker at ${card}`,
+        reachFor: (card: string) => `Reach into the graveyard for the ${card}`,
+        play: (card: string) => `Put the ${card} down`,
+      },
+
       questions: {
         goal: {
           title: 'What do you actually want?',
@@ -1019,6 +1038,19 @@ export const en = {
         shielded:
           'The vow is spoken. Nothing can narrow your answer now, and giving the Yes anyway would kill you.',
         proxied: 'You are not the person in this chair.',
+
+        /**
+         * The owl's footage, which is the one thing here that is a past tense.
+         *
+         * Every other read-out on this page says what is true now. This says
+         * what was true when a bird on the bulkhead happened to be looking, and
+         * the difference is the whole technique: the questions she has spent
+         * since are still in the picture.
+         */
+        owl: {
+          title: 'What the owl had already filmed',
+          body: 'It was on the bulkhead before you sat down. This is her fan at the moment you thought to look back at the tape — greyed where she has spent the card since.',
+        },
 
         leave: 'Walk out',
         leaveWarning:

@@ -14,10 +14,11 @@
  * app for a type, so the check is made here, where both are in scope.
  */
 import type { HatsuInteractionKind } from '$lib/nen/hatsuRegistry'
-import { TABLE_KINDS } from '@black-whale/ability-modules'
+import { QUESTION_CARDS, TABLE_KINDS, needsAChoice } from '@black-whale/ability-modules'
 import type { MorenaGame, AnswerCard, QuestionCard } from '@black-whale/ability-modules'
-import { INSECT } from './apparitions'
+import { INSECT, OWL } from './apparitions'
 import type { Apparition } from './apparitions'
+import { AIM_AT, withinReach } from './morenaHands'
 import type { Vec2 } from './types'
 
 // The rules, re-exported so the route and its tests have one import to make.
@@ -166,6 +167,162 @@ export const EYE_HOLD = 0.09
 export const EYE_FILMING = 0.3
 
 /**
+ * Where the eye is, and what it is pointed at.
+ *
+ * The walk has had this since Sayird's sphere was first sent into a room: a
+ * second camera, inset in the corner, showing the room the insect is in rather
+ * than the one the visitor is standing in. The table had the insect and not the
+ * inset, which is the whole of the technique missing — Little Eye is not a fly,
+ * it is a *feed*, and an insect that comes down onto her fan while the picture
+ * stays on the guest's side of the table is a camera nobody is watching.
+ *
+ * Two positions, and they are the two the insect itself has: up in the ceiling
+ * corner working the office over, and down over her fan reading it. The second
+ * is the one that matters, and it is aimed a hair past the cards rather than
+ * straight down at them — a camera pointing at the floor has no up, and the
+ * cards would come out of it lying on their side.
+ */
+export interface EyeFeed {
+  /** Where the camera is, in the coordinates of the deck. */
+  at: Vec2
+  /** And how high, in metres above the keel, like every other Y in the walk. */
+  y: number
+  /** What it is looking at, and how high that is. */
+  look: Vec2
+  lookY: number
+}
+
+/**
+ * How wide the picture is, in degrees.
+ *
+ * A fly's eye, and the number is doing work rather than decorating: the fan is
+ * three quarters of a metre across and the camera is a hand's width above it,
+ * so anything narrower films two of her seven cards.
+ */
+export const EYE_FOV = 96
+
+export function eyeFeed(game: MorenaGame, floor: number): EyeFeed | null {
+  if (game.technique !== 'scout') return null
+  const top = floor + TABLE_HEIGHT
+  const fan: Vec2 = [TABLE_AT[0], TABLE_AT[1] - 0.3]
+  // Perched: the whole office from the ceiling corner, which is a picture with
+  // nothing in it yet — and that is the point. The read is the descent, and a
+  // descent is only legible if there was somewhere to descend *from*.
+  if (game.spent === 0) {
+    return { at: TABLE_AT, y: floor + EYE_PERCH, look: DEALER_AT, lookY: floor + 1.1 }
+  }
+  // Filming: over the fan and a hand's width guest-side of it, looking down
+  // across the cards rather than straight at the top of them. Two reasons, and
+  // both are about the picture rather than about the fly: a lens pointing
+  // exactly at the floor has no up, so the cards would come out of it at
+  // whatever roll the maths happened to settle on — and a card seen edge-on
+  // from directly above is a rectangle, where the same card seen across is a
+  // card lying on a table with a woman behind it. The insect's own drift is
+  // wider than the offset, so this is still where it is.
+  return {
+    at: [TABLE_AT[0], fan[1] + 0.09],
+    y: top + EYE_FILMING,
+    look: fan,
+    lookY: top,
+  }
+}
+
+// ── Secret Window, at the bulkhead ─────────────────────────────────
+/**
+ * Where the owl is stuck, and how high.
+ *
+ * Musse's bird is not sent anywhere and is not piloted: it is *attached*, and
+ * then it stays attached and films. So it is on the bulkhead behind Morena,
+ * over her shoulder and above her head — the one seat in this room from which
+ * a fan held face down to the guest is face up. Off to her left rather than
+ * straight behind, because straight behind is a picture of the back of her
+ * head with seven cards somewhere underneath it.
+ */
+export const OWL_AT: Vec2 = [TABLE_AT[0] + 1.52, -0.15]
+export const OWL_PERCH = 3.3
+/**
+ * How big, and how still.
+ *
+ * The walk draws this bird at half a metre because it is looked at down a
+ * promenade; here it is two metres away, and a real owl on a beam is a
+ * forearm. `spread` is zero and stays zero, which is the whole difference
+ * between this technique and the one at the other end of the table: the
+ * insect is flown, and the owl does not move at all.
+ */
+export const OWL_SIZE = 0.22
+/**
+ * The bird's own grey-blue, re-published so the panel can ink a card in it.
+ *
+ * Every other colour at this table is named here — the answers, her red, the
+ * graveyard's grey — and the record the owl hands over is a row of cards like
+ * any other row of cards. It is inked in the thing that filmed it.
+ */
+export const OWL_COLOUR = OWL
+
+/**
+ * How wide the bird's picture is, in degrees.
+ *
+ * Narrower than the fly's, and for the opposite reason: the insect is a hand's
+ * width above the cards and needs the angle to hold all seven, while the owl is
+ * two and a half metres off and would otherwise film the room with the fan in
+ * the middle of it, too small to read.
+ */
+export const OWL_FOV = 46
+
+/**
+ * What the owl is filming, or nothing where no owl was brought in.
+ *
+ * The same shape the eye's feed has, and pointed at the same seven cards — but
+ * it is not the same picture, and the corner it is shown in says so. Little Eye
+ * is a live feed: the insect is over the fan *now*, and when it leaves there is
+ * nothing. Secret Window is a recording. The bird was on that bulkhead from the
+ * moment the guest sat down, filming a table nobody had asked it about, and
+ * what the technique buys is not the watching — it is the going back over what
+ * was already watched.
+ *
+ * Which is why this answers nothing until the cast: an owl that hands you its
+ * picture the moment you sit down has not been reviewed, it has been *watched*,
+ * and the two are different techniques. And why it never stops answering
+ * afterwards, not even when the hand is over: footage is a thing you keep.
+ */
+export function owlFilm(game: MorenaGame, floor: number): EyeFeed | null {
+  if (game.technique !== 'surveillance' || game.spent === 0) return null
+  const top = floor + TABLE_HEIGHT
+  return {
+    at: OWL_AT,
+    y: floor + OWL_PERCH,
+    look: [TABLE_AT[0], TABLE_AT[1] - 0.3],
+    lookY: top,
+  }
+}
+
+/**
+ * Her fan, as the owl saw it — which is not her fan as it is now.
+ *
+ * The registry's own line for this ability is that it "retains earlier footage
+ * for later review", and that is the one thing a live feed cannot do: a picture
+ * of the table is out of date the moment she spends a card, and a recording is
+ * not. So the record is taken at the cast and then it stops moving. Questions
+ * asked since are still in it, because they were still in her hand when the
+ * bird filmed them.
+ *
+ * Read off the transcript rather than stored, so nothing here is a rule: the
+ * log already says when the technique was played and which questions went
+ * afterwards, and the fan at that moment is what is left plus what has gone
+ * since. Ordered as the deck is ordered, so a record and a fan lay out the
+ * same way whichever order the hand happened to be spent in.
+ */
+export function owlSaw(game: MorenaGame): QuestionCard[] | null {
+  if (game.technique !== 'surveillance' || game.spent === 0) return null
+  const cast = game.log.findIndex((beat) => beat.kind === 'played')
+  const since = game.log
+    .slice(cast + 1)
+    .flatMap((beat) => (beat.kind === 'asked' ? [beat.question] : []))
+  const filmed = new Set<QuestionCard>([...game.questions, ...since])
+  return QUESTION_CARDS.filter((question) => filmed.has(question))
+}
+
+/**
  * What the woman opposite is doing, as the one number the scene is given.
  *
  * `stage` is the only channel this file has to a mesh, so the whole of her
@@ -211,6 +368,15 @@ export function tableauOf(game: MorenaGame, floor: number): Apparition[] {
   const top = floor + TABLE_HEIGHT
   const seen: Apparition[] = []
   const common = { spaceId: HIDEOUT_OFFICE, tierId: HIDEOUT_TIER, hidden: false, stage: 0 }
+  /**
+   * What the visitor may take hold of this phase.
+   *
+   * Read here rather than decided here: `morenaHands` says which `id`s are
+   * moves, and the layout's whole part in it is marking the cards it was
+   * already drawing. A card that can be played and a card that is on the table
+   * are the same card, and that is the point of asking one file both.
+   */
+  const hands = withinReach(game)
 
   // Morena herself, seated behind her fan.
   seen.push({
@@ -236,6 +402,8 @@ export function tableauOf(game: MorenaGame, floor: number): Apparition[] {
     stage: number
     /** Off the wood, for the one card that is about to be played. */
     lift?: number
+    /** What is printed on it, for a card that is lying face up. */
+    face?: CardFace
   }
 
   const lay = (card: Laid) => {
@@ -250,6 +418,8 @@ export function tableauOf(game: MorenaGame, floor: number): Apparition[] {
       size: 0.11,
       colour: card.colour,
       stage: card.stage,
+      face: card.face,
+      pick: hands.has(card.id),
     })
   }
 
@@ -264,6 +434,10 @@ export function tableauOf(game: MorenaGame, floor: number): Apparition[] {
       depth: -0.3,
       colour: game.read ? ASKED_COLOUR : QUESTION_COLOUR,
       stage: game.read ? 1 : 0,
+      // Face up means a face: a card that has been read and still shows nothing
+      // is a card the reader has been told about rather than shown. This is
+      // what the technique bought, and it is on the table where it was bought.
+      face: game.read ? question : undefined,
     })
   })
   // The questions already spent, face up in the middle where both can read them.
@@ -275,6 +449,7 @@ export function tableauOf(game: MorenaGame, floor: number): Apparition[] {
       depth: -0.06,
       colour: ASKED_COLOUR,
       stage: 1,
+      face: question,
     })
   })
   // The guest's hand, face up: they are their own cards and always have been.
@@ -306,23 +481,64 @@ export function tableauOf(game: MorenaGame, floor: number): Apparition[] {
       count: game.hand.length,
       depth: 0.3,
       colour: CARD_COLOURS[card],
+      face: card,
       stage: nicked ? 3 : forged ? 5 : foreseen ? 4 : 1,
       lift: foreseen ? 0.045 : game.phase === 'settling' || game.phase === 'over' ? 0.02 : 0,
     })
   })
   // And what Morena has taken, stacked off to the guest's left.
+  //
+  // Until it is something to choose from. The kiss buys a card back out of that
+  // stack and a Back reaches into it, and neither is a choice you can make of a
+  // pile: a hand that has to be picked from is a hand that gets spread, which is
+  // what anybody holding cards does the moment somebody else has to point at
+  // one. Spread, they are face up as well — the panel has always listed what she
+  // took, and a card you are being asked to buy that you cannot read is a
+  // shell game rather than a negotiation.
+  const offered = game.graveyard.some((card) => hands.has(`buried-${card}`))
   game.graveyard.forEach((card, index) => {
+    const along = (index - (game.graveyard.length - 1) / 2) * 0.15
     seen.push({
       ...common,
       id: `buried-${card}`,
       kind: 'game-card',
-      at: [TABLE_AT[0] - 0.62, TABLE_AT[1] + 0.14],
-      y: top + 0.01 + index * 0.012,
+      at: offered
+        ? [TABLE_AT[0] - 0.62, TABLE_AT[1] + 0.14 + along]
+        : [TABLE_AT[0] - 0.62, TABLE_AT[1] + 0.14],
+      y: top + 0.01 + (offered ? 0.02 : index * 0.012),
       size: 0.11,
-      colour: BURIED_COLOUR,
-      stage: 2,
+      colour: offered ? CARD_COLOURS[card] : BURIED_COLOUR,
+      stage: offered ? 1 : 2,
+      face: offered ? card : undefined,
+      pick: hands.has(`buried-${card}`),
     })
   })
+
+  // The two directions a Joker can be pointed.
+  //
+  // They are not cards and they are not in the deck — the Joker is the one
+  // answer that means nothing until it is aimed, and aiming it is the only move
+  // in this game with nothing on the table to make it with. So the table lays
+  // the two words down beside your hand, faintly, for exactly as long as the
+  // choice is live: point at one and the Joker goes down as that.
+  if (game.phase === 'settling' && needsAChoice(game) === 'joker') {
+    ;(['yes', 'no'] as const).forEach((side, index) => {
+      seen.push({
+        ...common,
+        id: AIM_AT[side],
+        kind: 'game-card',
+        at: [TABLE_AT[0] + (index === 0 ? -0.34 : 0.34), TABLE_AT[1] + 0.3],
+        y: top + 0.01,
+        size: 0.11,
+        colour: CARD_COLOURS[side],
+        // Dimmed, which is what the walk already draws a card that is not quite
+        // a card in: this is where a Yes would be, not a Yes.
+        stage: 2,
+        face: side,
+        pick: hands.has(AIM_AT[side]),
+      })
+    })
+  }
 
   // What a technique has put in the room, drawn in the kinds the walk already
   // has rather than in new ones: the walk is where these were first published,
@@ -388,6 +604,32 @@ export function tableauOf(game: MorenaGame, floor: number): Apparition[] {
       colour: INSECT,
       stage: 0,
       spread: filming ? EYE_HOLD : EYE_RANGE,
+    })
+  }
+
+  // Secret Window's owl, on the bulkhead behind her, and the other half of the
+  // argument the insect makes.
+  //
+  // Musse attaches a bird and leaves; it eavesdrops through barriers and keeps
+  // what it saw. So this one is passive in the strict sense — it is in the room
+  // from the moment somebody sits down carrying it, it does not move when the
+  // technique is played, and it does not move when the hand ends. Nothing about
+  // it changes at all, which is exactly what a camera bolted to a wall does.
+  //
+  // What the cast changes is on the screen rather than in the room: the
+  // recording it has been making all along is put up in the corner. A bird that
+  // swooped would be a fly with feathers.
+  if (game.technique === 'surveillance') {
+    seen.push({
+      ...common,
+      id: 'window-owl',
+      kind: 'owl',
+      at: OWL_AT,
+      y: floor + OWL_PERCH,
+      size: OWL_SIZE,
+      colour: OWL,
+      stage: 0,
+      spread: 0,
     })
   }
 

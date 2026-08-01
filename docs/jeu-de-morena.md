@@ -662,6 +662,39 @@ réagir.
 - **Le carton de Cross Game** est posé sur la table, bleu, puis jaune aux deux questions, puis
   rouge à l'expulsion. Le pont le dessine et le colore depuis Mizaistom : la table emprunte
   l'éventail plutôt que d'en inventer un second.
+- **Little Eye rend son image.** L'insecte descendait sur l'éventail et personne ne voyait ce
+  qu'il filmait : la marche incruste un second cadre dans le coin dès que la sphère est envoyée
+  dans une pièce, et la table avait la mouche sans le cadre — c'est-à-dire la technique sans ce
+  qu'elle est. `eyeFeed()` rend les deux positions que l'insecte a déjà : perché, il regarde la
+  pièce, donc elle ; en train de filmer, il est au-dessus de l'éventail et pointé un peu au-delà
+  des cartes, parce qu'une caméra braquée droit vers le bas n'a plus de haut et rendrait les
+  cartes couchées. `TourScene` prend ce cadre par la prop `feed` et le dessine avec le même
+  `renderInset()` que l'œil de la marche et que le film de la chouette — trois copies de la
+  danse des ciseaux étaient deux de trop.
+- **Secret Window pose un hibou et rend une bande.** La technique était une ligne de texte :
+  `surveillance` retournait l'éventail et rien dans la pièce ne disait d'où. Musse n'envoie
+  pourtant rien et ne pilote rien — elle _attache_ un oiseau, qui écoute à travers la cloison
+  et conserve ce qu'il a vu. Le hibou est donc sur la cloison derrière Morena, au-dessus et
+  décalé sur sa gauche (droit derrière, on filmerait sa nuque), dès que quelqu'un s'assoit avec
+  la technique en main ; `spread: 0`, et il ne bouge ni à la lecture ni à la fin de la partie.
+  C'est toute la différence avec la mouche d'en face : l'insecte est _piloté_ et descend, le
+  hibou est passif et n'a jamais rien fait d'autre que filmer. Ce que la lecture change est à
+  l'écran — `owlFilm()` rend le cadre depuis le perchoir, incrusté en bas à droite, dans le coin
+  que la marche réserve déjà à la relecture, et non en haut où vit le direct de Little Eye. Et
+  `owlSaw()` rend l'éventail _tel qu'il était_ : lu dans le transcript plutôt que stocké, il
+  garde les questions qu'elle a dépensées depuis. Un flux est périmé dès qu'une carte tombe ;
+  un enregistrement, non — c'est la seule chose que la chouette ait de plus que la mouche.
+- **Une carte face visible porte enfin sa figure.** Un rectangle coloré se lit comme _une
+  carte_ et ne dit pas laquelle : tolérable tant que le seul regard posé sur la table était
+  celui d'un visiteur qui avait le panneau ouvert à côté, plus du tout dès qu'une caméra est
+  posée à une paume de son éventail — un flux de sept rectangles gris n'est pas une main qu'on
+  a lue. Les douze dessins quittent donc `MorenaCardArt.svelte` pour `$lib/tour/cardArt.ts` et
+  servent les deux consommateurs : le panneau les injecte dans un SVG vivant, la table les
+  charge en `data:` URI et les pose en encre sur la couleur que la carte avait déjà. Une carte
+  face cachée n'a pas de figure ici, parce qu'elle n'en a pas non plus sur le bois : `face`
+  n'est renseigné qu'une fois `read` acquis. Le panneau suit la même règle — `MorenaPiles`
+  retournait sept dos même après lecture, ce qui était une ligne de texte affirmant une chose
+  que la page refusait ensuite de montrer.
 
 Écarté sciemment : le `rewind` de Parallel Future. La marche sait le jouer, mais l'après-image
 se dessine à la position du visiteur et rien à cette table n'est fonction de l'horloge — assis,

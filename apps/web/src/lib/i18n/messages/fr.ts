@@ -52,7 +52,9 @@ export const fr: Messages = {
     intro:
       "Le vaisseau comme architecture, pas comme décor : ni passagers, ni chapitre, ni chronologie. Chaque surface dit d'où elle vient — une planche, le plan des ponts, ou la reconstruction elle-même.",
     enter: 'Cliquez pour marcher',
-    engaged: 'Échap pour libérer le pointeur',
+    // Tab d'abord : c'est celle qui marche en plein écran, là où Échap libère le
+    // pointeur et quitte le plein écran d'une seule touche.
+    engaged: 'Tab pour libérer le pointeur — Échap le libère et quitte le plein écran',
     loading: 'Construction du pont…',
     unsupported:
       'Cette visite exige WebGL, que ce navigateur ne propose pas. Les plans des ponts restent accessibles sur la carte du vaisseau.',
@@ -93,6 +95,8 @@ export const fr: Messages = {
       revealKeys: 'G',
       fullscreen: 'Plein écran, panneau compris',
       fullscreenKeys: 'V',
+      release: 'Rendre le pointeur à la page',
+      releaseKeys: 'Tab — le plein écran est conservé, ce qu’Échap ne fait pas',
       nen: 'Lancer le Hatsu actif',
       nenKeys: 'F, ou un clic, sur la pièce ou le volume que vous regardez',
       nenSelf: 'Retourner le Hatsu actif sur soi',
@@ -793,6 +797,20 @@ export const fr: Messages = {
       askedLabel: 'Vous demandez',
       answerLabel: 'Elle répond',
 
+      // La table jouée à la main : ce que ferait la carte visée si on la
+      // prenait. Chacun de ces gestes est un coup que le panneau propose aussi —
+      // la salle est une seconde paire de mains sur la même partie.
+      reach: {
+        hint: 'Visez une carte et cliquez.',
+        cast: (effect: string) => `F — ${effect}`,
+        ask: (question: string) => `Demander — ${question}`,
+        kiss: (card: string) => `L’embrasser, et reprendre le ${card}`,
+        decline: 'Refuser le baiser, et jouer la main que vous avez',
+        point: (card: string) => `Pointer le Joker sur ${card}`,
+        reachFor: (card: string) => `Aller chercher le ${card} dans la défausse`,
+        play: (card: string) => `Poser le ${card}`,
+      },
+
       questions: {
         goal: {
           title: 'Qu’est-ce que vous voulez, au fond ?',
@@ -925,6 +943,11 @@ export const fr: Messages = {
         shielded:
           'Le serment est prononcé. Plus rien ne peut réduire votre réponse, et donner le Oui malgré tout vous tuerait.',
         proxied: 'Ce n’est pas vous qui êtes sur cette chaise.',
+
+        owl: {
+          title: 'Ce que le hibou avait déjà filmé',
+          body: 'Il était sur la cloison avant que vous vous asseyiez. Voici son éventail à l’instant où vous avez pensé à revoir la bande — grisées, les cartes qu’elle a dépensées depuis.',
+        },
 
         leave: 'Se lever',
         leaveWarning:

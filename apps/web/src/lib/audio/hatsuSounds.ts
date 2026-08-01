@@ -1259,3 +1259,37 @@ export function wakeTheMachine() {
     release: 0.3,
   })
 }
+
+/**
+ * Snake Arm biting a solid.
+ *
+ * A snake's hiss: a sudden, sharp band of high-frequency noise that decays quickly.
+ */
+export function hissLikeASnake() {
+  const g = hatsuAudioGraph()
+  if (!g) return
+  const at = startsAt(g)
+  
+  // The initial strike/bite (quick and somewhat forceful)
+  rush(g, at, 0.08, {
+    peak: 0.1,
+    type: 'bandpass',
+    cutoff: 1800,
+    sweepTo: 800,
+    q: 1.2,
+    attack: 0.01,
+    release: 0.05,
+    send: 0.3,
+  })
+
+  // The longer hiss following the bite
+  rush(g, at + 0.04, 0.45, {
+    peak: 0.12,
+    type: 'highpass',
+    cutoff: 2800,
+    sweepTo: 4500,
+    attack: 0.04,
+    release: 0.35,
+    send: 0.5,
+  })
+}

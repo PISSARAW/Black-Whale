@@ -2442,12 +2442,38 @@
         // room's middle, was the last of "it only works once".
         let to: Vec2 | null = null
         let landing: Space | null = null
-        for (let metres = 1.5; metres <= reachOf(world.body); metres += 1.5) {
-          const point: Vec2 = [pointer[0] - sin * metres, pointer[1] - cos * metres]
+
+        let reach = reachOf(world.body)
+        const unitX = -sin
+        const unitY = -cos
+
+        if (!walksThroughWalls(world)) {
+          for (const wall of walked.walls) {
+            const dx = wall.a2[0] - wall.a1[0]
+            const dy = wall.a2[1] - wall.a1[1]
+            const denominator = unitX * dy - unitY * dx
+            if (Math.abs(denominator) < 1e-9) continue
+
+            const ox = wall.a1[0] - pointer[0]
+            const oy = wall.a1[1] - pointer[1]
+            const t = (ox * dy - oy * dx) / denominator
+            const u = (ox * unitY - oy * unitX) / denominator
+
+            if (t > 0 && t < reach && u >= 0 && u <= 1) {
+              reach = t - 0.1
+            }
+          }
+        }
+
+        const step = 1.5
+        for (let metres = step; metres <= reach + step; metres += step) {
+          const d = Math.min(metres, reach)
+          const point: Vec2 = [pointer[0] + unitX * d, pointer[1] + unitY * d]
           const room = spaceAt(plan, point)
           if (!room) break
           to = point
           landing = room
+          if (d === reach) break
         }
         if (!to) return
 
@@ -2467,7 +2493,7 @@
       }
 
       /** Rides the arc, and drops the thread at the end of it. */
-      function ridTheThread(delta: number) {
+      function ridTheThread(delta: number, loose: import('$lib/tour/types').WallSegment[] = []) {
         swingRise = 0
         if (!arc) {
           thread.visible = false
@@ -2475,10 +2501,13 @@
         }
         arc.through = Math.min(1, arc.through + delta / arc.span)
         const eased = 1 - (1 - arc.through) ** 2
-        pointer = [
+        const target: Vec2 = [
           arc.from[0] + (arc.to[0] - arc.from[0]) * eased,
           arc.from[1] + (arc.to[1] - arc.from[1]) * eased,
         ]
+        pointer = walksThroughWalls(world)
+          ? target
+          : resolveMovement(pointer, target, wallsNear([...walked.walls, ...loose], pointer, 6))
         // Up and over: the rise is what makes it a swing rather than a winch.
         swingRise = Math.sin(arc.through * Math.PI) * 2.2
 
@@ -2974,7 +3003,7 @@
         const cos = Math.cos(yaw)
 
         // The thread has the visitor: the legs are not what is moving them.
-        ridTheThread(delta)
+        ridTheThread(delta, loose)
 
         if (moving && !arc && !$comfort.jumpOnly) {
           const speed = (running ? SPRINT_SPEED : WALK_SPEED) * paceOf(world.body) * delta

@@ -26,6 +26,7 @@
     fireABurst,
     foldPaper,
     grindThroughSpace,
+    hissLikeASnake,
     hootAnOwl,
     landAPunch,
     loostAnArrow,
@@ -461,6 +462,9 @@
    */
   function sound(shown: TourReport) {
     switch (shown.kind) {
+      // Snake Arm.
+      case 'bound':
+        return hissLikeASnake()
       // Secret Window.
       case 'owl-attached':
       case 'owl-recalled':

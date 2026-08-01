@@ -450,11 +450,11 @@ export const contagion = defineAbility({
       label: 'Générer la capacité unique (niveau 20)',
       conditions: [
         effectIsLive('effectId', 'Le membre est toujours infecté'),
-        effectAttributeAtLeast(
-          'level',
-          UNIQUE_ABILITY_LEVEL,
-          `Le membre a atteint le niveau ${UNIQUE_ABILITY_LEVEL}`,
-        ),
+        effectAttributeAtLeast({
+          key: 'level',
+          threshold: UNIQUE_ABILITY_LEVEL,
+          label: `Le membre a atteint le niveau ${UNIQUE_ABILITY_LEVEL}`,
+        }),
       ],
       effects: [abilityGrant({ ownerId: (ctx) => param(ctx, 'memberId') ?? ctx.targets[0] })],
       hint: `Requiert le niveau ${UNIQUE_ABILITY_LEVEL}`,

@@ -108,13 +108,18 @@ function rank(label: string, terms: string[]): number {
  * out of how many matched, because "no result past the fortieth" and "forty
  * results" are different answers.
  */
+/** What is being looked for, and how much of the answer the caller can show. */
+export interface PlaceQuery {
+  text: string
+  limit?: number
+}
+
 export function findPlaces(
   ship: Ship,
-  query: string,
   words: Naming,
-  limit = 40,
+  { text, limit = 40 }: PlaceQuery,
 ): { shown: FoundPlace[]; total: number } {
-  const terms = searchTerms(query)
+  const terms = searchTerms(text)
   const found: FoundPlace[] = []
 
   for (const tier of ship.tiers) {

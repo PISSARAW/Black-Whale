@@ -152,21 +152,23 @@ function buildGraph(): Graph {
   return { context, master, muffle, air, reverbSend }
 }
 
-export function voice(
-  g: Graph,
-  at: number,
-  hz: number,
-  duration: number,
-  options: {
-    type: OscillatorType
-    peak: number
-    attack: number
-    release: number
-    detune?: number
-    vibrato?: number
-    send?: number
-  },
-) {
+/** One sung note: its pitch, how long it is held, and how it is coloured. */
+export interface Note {
+  /** The pitch, in hertz. */
+  hz: number
+  /** How long the note is held, before the release tail is added to it. */
+  duration: number
+  type: OscillatorType
+  peak: number
+  attack: number
+  release: number
+  detune?: number
+  vibrato?: number
+  send?: number
+}
+
+export function voice(g: Graph, at: number, options: Note) {
+  const { hz, duration } = options
   const { context } = g
   const gain = context.createGain()
   gain.gain.setValueAtTime(0.0001, at)
@@ -210,7 +212,9 @@ function scheduleBar(g: Graph, index: number, at: number) {
   // Pad: two slightly detuned voices per chord tone, overlapping the next bar.
   for (const tone of chord.tones) {
     const hz = midiToHz(chord.root + tone)
-    voice(g, at, hz, BAR * 0.9, {
+    voice(g, at, {
+      hz,
+      duration: BAR * 0.9,
       type: 'sawtooth',
       peak: 0.035,
       attack: BEAT * 1.2,
@@ -218,7 +222,9 @@ function scheduleBar(g: Graph, index: number, at: number) {
       detune: -6,
       send: 0.25,
     })
-    voice(g, at, hz, BAR * 0.9, {
+    voice(g, at, {
+      hz,
+      duration: BAR * 0.9,
       type: 'sawtooth',
       peak: 0.03,
       attack: BEAT * 1.4,
@@ -228,7 +234,9 @@ function scheduleBar(g: Graph, index: number, at: number) {
   }
 
   // Bass, one long note per bar, an octave below the chord root.
-  voice(g, at, midiToHz(chord.root - 12), BAR * 0.8, {
+  voice(g, at, {
+    hz: midiToHz(chord.root - 12),
+    duration: BAR * 0.8,
     type: 'sine',
     peak: 0.12,
     attack: 0.4,
@@ -236,7 +244,9 @@ function scheduleBar(g: Graph, index: number, at: number) {
   })
 
   for (const [offset, semitone, beats] of melody[bar]) {
-    voice(g, at + offset * BEAT, midiToHz(69 + semitone), beats * BEAT, {
+    voice(g, at + offset * BEAT, {
+      hz: midiToHz(69 + semitone),
+      duration: beats * BEAT,
       type: 'triangle',
       peak: 0.1,
       attack: 0.12,
@@ -247,7 +257,9 @@ function scheduleBar(g: Graph, index: number, at: number) {
   }
 
   for (const [offset, semitone] of sparkles[bar]) {
-    voice(g, at + offset * BEAT, midiToHz(69 + semitone), 0.12, {
+    voice(g, at + offset * BEAT, {
+      hz: midiToHz(69 + semitone),
+      duration: 0.12,
       type: 'sine',
       peak: 0.06,
       attack: 0.01,
@@ -309,7 +321,9 @@ export function playHatsuNote(degree: number, options: { velocity?: number } = {
   const at = g.context.currentTime + 0.02
   const peak = 0.18 * (options.velocity ?? 1)
 
-  voice(g, at, midiToHz(midi), 0.45, {
+  voice(g, at, {
+    hz: midiToHz(midi),
+    duration: 0.45,
     type: 'triangle',
     peak,
     attack: 0.05,
@@ -318,7 +332,9 @@ export function playHatsuNote(degree: number, options: { velocity?: number } = {
     send: 0.6,
   })
   // A quiet octave above gives the triangle the breathy edge of a flute.
-  voice(g, at, midiToHz(midi + 12), 0.3, {
+  voice(g, at, {
+    hz: midiToHz(midi + 12),
+    duration: 0.3,
     type: 'sine',
     peak: peak * 0.35,
     attack: 0.02,
@@ -409,7 +425,9 @@ let battleBarIndex = 0
 
 function scheduleBattleBar(g: Graph, bar: number, at: number) {
   for (const [offset, semitone, beats] of battleFlute[bar % battleFlute.length]) {
-    voice(g, at + offset * BATTLE_BEAT, midiToHz(69 + semitone), beats * BATTLE_BEAT * 0.9, {
+    voice(g, at + offset * BATTLE_BEAT, {
+      hz: midiToHz(69 + semitone),
+      duration: beats * BATTLE_BEAT * 0.9,
       type: 'square',
       peak: 0.05,
       attack: 0.02,
@@ -418,7 +436,9 @@ function scheduleBattleBar(g: Graph, bar: number, at: number) {
       send: 0.35,
     })
     // The breath in the holes: a quiet fifth above, half the length.
-    voice(g, at + offset * BATTLE_BEAT, midiToHz(76 + semitone), beats * BATTLE_BEAT * 0.4, {
+    voice(g, at + offset * BATTLE_BEAT, {
+      hz: midiToHz(76 + semitone),
+      duration: beats * BATTLE_BEAT * 0.4,
       type: 'triangle',
       peak: 0.02,
       attack: 0.01,
@@ -427,7 +447,9 @@ function scheduleBattleBar(g: Graph, bar: number, at: number) {
     })
   }
   for (const [offset, weight] of battleDrums[bar % battleDrums.length]) {
-    voice(g, at + offset * BATTLE_BEAT, weight === 'low' ? 62 : 128, 0.12, {
+    voice(g, at + offset * BATTLE_BEAT, {
+      hz: weight === 'low' ? 62 : 128,
+      duration: 0.12,
       type: 'sine',
       peak: weight === 'low' ? 0.22 : 0.11,
       attack: 0.005,

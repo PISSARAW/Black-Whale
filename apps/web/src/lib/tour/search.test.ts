@@ -102,24 +102,24 @@ describe('filterSpaces', () => {
 describe('findPlaces', () => {
   it('offers every space and every interior when nothing is typed', () => {
     const interiors = ship.tiers.filter((tier) => tier.kind === 'interior').length
-    const { total } = findPlaces(ship, '', english, 10)
+    const { total } = findPlaces(ship, english, { text: '', limit: 10 })
     expect(total).toBe(ship.blueprint.spaces.length + interiors)
   })
 
   it('caps what it shows without hiding how much matched', () => {
-    const { shown, total } = findPlaces(ship, '', english, 10)
+    const { shown, total } = findPlaces(ship, english, { text: '', limit: 10 })
     expect(shown.length).toBe(10)
     expect(total).toBeGreaterThan(10)
   })
 
   it('puts a name that starts with the query first', () => {
-    const { shown } = findPlaces(ship, 'banquet', english)
+    const { shown } = findPlaces(ship, english, { text: 'banquet' })
     expect(shown[0].label.toLowerCase().startsWith('banquet')).toBe(true)
   })
 
   it('finds an interior level in its own right, not only its rooms', () => {
     const interior = ship.tiers.find((tier) => tier.kind === 'interior')!
-    const { shown } = findPlaces(ship, interior.name, english, 200)
+    const { shown } = findPlaces(ship, english, { text: interior.name, limit: 200 })
     const level = shown.find((place) => place.id === `level:${interior.id}`)
     expect(level).toBeDefined()
     // And it is walkable: the level resolves to a room inside itself.
@@ -128,7 +128,7 @@ describe('findPlaces', () => {
 
   it('offers the level before the rooms inside it', () => {
     const interior = ship.tiers.find((tier) => tier.kind === 'interior')!
-    const { shown } = findPlaces(ship, interior.name, english, 200)
+    const { shown } = findPlaces(ship, english, { text: interior.name, limit: 200 })
     const level = shown.findIndex((place) => place.kind === 'level')
     const room = shown.findIndex((place) => place.kind === 'space')
     expect(level).toBeGreaterThanOrEqual(0)
@@ -136,11 +136,11 @@ describe('findPlaces', () => {
   })
 
   it('finds nothing for a name the ship does not hold', () => {
-    expect(findPlaces(ship, 'zzzzz nothing', english).total).toBe(0)
+    expect(findPlaces(ship, english, { text: 'zzzzz nothing' }).total).toBe(0)
   })
 
   it('reaches a room on a level the walk is not on, which is the whole point', () => {
-    const { shown } = findPlaces(ship, 'kitchen', english, 200)
+    const { shown } = findPlaces(ship, english, { text: 'kitchen', limit: 200 })
     expect(shown.length).toBeGreaterThan(0)
     const levels = new Set(shown.map((place) => ship.spaces.get(place.spaceId)?.tierId))
     expect(levels.size).toBeGreaterThan(1)

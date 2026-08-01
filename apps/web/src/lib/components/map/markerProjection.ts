@@ -719,13 +719,12 @@ function spreadAroundAnchor(
 
 /** Entity ids sharing `anchorFilter`, sorted, so co-located markers fan out stably. */
 function spreadAmong(
-  presences: MapPresence[],
+  crowd: { presences: MapPresence[]; matches: (candidate: MapPresence) => boolean },
   entityId: string,
   anchor: { x: number; y: number; isSmallRoom?: boolean },
-  matches: (candidate: MapPresence) => boolean,
 ) {
-  const peers = presences
-    .filter(matches)
+  const peers = crowd.presences
+    .filter(crowd.matches)
     .map((candidate) => candidate.entityId)
     .sort()
   return spreadAroundAnchor(anchor, Math.max(0, peers.indexOf(entityId)), peers.length)
@@ -747,10 +746,12 @@ export function calculatePresencePosition(
   const coords = getExactTierCoordinates(tierId, loc.slug)
   if (coords) {
     const { x, y } = spreadAmong(
-      sourcePresences,
+      {
+        presences: sourcePresences,
+        matches: (candidate) => candidate.locationId === presence.locationId,
+      },
       presence.entityId,
       coords,
-      (candidate) => candidate.locationId === presence.locationId,
     )
     return { x, y, loc, tierId }
   }
@@ -759,32 +760,41 @@ export function calculatePresencePosition(
   const parentCoords = parent ? getExactTierCoordinates(tierId, parent.slug) : undefined
   if (parentCoords) {
     const { x, y } = spreadAmong(
-      sourcePresences,
+      {
+        presences: sourcePresences,
+        matches: (candidate) =>
+          locationsById.get(candidate.locationId ?? '')?.parentLocationId === loc.parentLocationId,
+      },
       presence.entityId,
       parentCoords,
-      (candidate) =>
-        locationsById.get(candidate.locationId ?? '')?.parentLocationId === loc.parentLocationId,
     )
     return { x, y, loc, tierId }
   }
 
   // Neither the room nor its parent is drawn: fall back to the tier anchor.
   const tierAnchor = getExactTierCoordinates(tierId, tierId) || { x: 500, y: 300 }
-  const { x, y } = spreadAmong(sourcePresences, presence.entityId, tierAnchor, (candidate) => {
-    const candidateLocation = locationsById.get(candidate.locationId ?? '')
-    return Boolean(
-      candidateLocation && resolveTierSlug(candidateLocation, locationsById) === tierId,
-    )
-  })
+  const { x, y } = spreadAmong(
+    {
+      presences: sourcePresences,
+      matches: (candidate) => {
+        const candidateLocation = locationsById.get(candidate.locationId ?? '')
+        return Boolean(
+          candidateLocation && resolveTierSlug(candidateLocation, locationsById) === tierId,
+        )
+      },
+    },
+    presence.entityId,
+    tierAnchor,
+  )
   return { x, y, loc, tierId }
 }
 
 export function getTemporalVisual(
   presence: MapPresence,
-  currentEvent: MapEvent | null | undefined,
-  currentSequence: number,
+  now: ReadingMoment,
   locale: Locale = DEFAULT_LOCALE,
 ) {
+  const { currentEvent, currentSequence } = now
   const m = messagesFor(locale).map.temporal
 
   if (presence.certainty === 'PROBABLE') {
@@ -831,6 +841,28 @@ export function getTemporalVisual(
 // ──────────────────────────────────────────────
 // Projection
 // ──────────────────────────────────────────────
+
+/** How far into the story the reader has got: the event, and its sequence. */
+interface ReadingMoment {
+  currentEvent: MapEvent | null | undefined
+  currentSequence: number
+}
+
+/**
+ * Who is looking, and how.
+ *
+ * The four travel together because they answer one question between them —
+ * what this viewer is allowed to be shown, and in which words. Splitting them
+ * across a call means every function that masks an identity takes the same four
+ * arguments in the same order, which is the shape a type is for.
+ */
+interface Viewpoint {
+  perspective: PerspectiveState | null
+  followMode: FollowMode
+  /** The reader sees the archive whole: nothing is masked from them. */
+  perspectiveIsReader: boolean
+  locale: Locale
+}
 
 interface PresenceEntities {
   body?: Body
@@ -883,11 +915,11 @@ interface KnowledgeView {
 
 /** What the current observer knows, believes, or merely suspects about this body. */
 function resolveKnowledge(
-  entityId: string,
-  body: Body,
+  subject: { entityId: string; body: Body },
   world: MapWorldState,
   perspective: PerspectiveState | null,
 ): KnowledgeView {
+  const { entityId, body } = subject
   const observer = perspective?.observer
   const ownerId = body.originalCharacterId
 
@@ -987,12 +1019,12 @@ function observedNames(
  * nothing at all when even that is unknown.
  */
 function perceivedName(
-  followedIdentity: string,
-  appearance: string,
+  seen: { followedIdentity: string; appearance: string },
   knowledge: KnowledgeView,
-  perspectiveIsReader: boolean,
-  locale: Locale,
+  view: Viewpoint,
 ) {
+  const { followedIdentity, appearance } = seen
+  const { perspectiveIsReader, locale } = view
   if (perspectiveIsReader || knowledge.isObserverBody) return followedIdentity
   if (knowledge.hasConfirmedKnowledge) return appearance
   const m = messagesFor(locale).map
@@ -1003,11 +1035,9 @@ function perceivedName(
 function resolveIdentityNames(
   entities: PresenceEntities,
   knowledge: KnowledgeView,
-  perspective: PerspectiveState | null,
-  followMode: FollowMode,
-  perspectiveIsReader: boolean,
-  locale: Locale,
+  view: Viewpoint,
 ): IdentityNames {
+  const { perspective, followMode, locale } = view
   const structural = structuralNames(entities, locale)
   const { consciousness, appearance } = observedNames(structural, knowledge, perspective)
 
@@ -1022,13 +1052,7 @@ function resolveIdentityNames(
     bodyName: structural.bodyName,
     consciousness,
     appearance,
-    perceivedIdentity: perceivedName(
-      followedIdentity,
-      appearance,
-      knowledge,
-      perspectiveIsReader,
-      locale,
-    ),
+    perceivedIdentity: perceivedName({ followedIdentity, appearance }, knowledge, view),
   }
 }
 
@@ -1110,21 +1134,18 @@ export function projectPresenceMarker(
 
   if (!body || !ownerCharacter || !loc || loc.type === 'UNKNOWN') return null
 
-  const knowledge = resolveKnowledge(presence.entityId, body, world, perspective)
-  const names = resolveIdentityNames(
-    entities,
-    knowledge,
+  const knowledge = resolveKnowledge({ entityId: presence.entityId, body }, world, perspective)
+  const names = resolveIdentityNames(entities, knowledge, {
     perspective,
     followMode,
     perspectiveIsReader,
     locale,
-  )
+  })
 
   const messages = messagesFor(locale).map
   const temporalVisual = getTemporalVisual(
     presence,
-    context.currentEvent,
-    context.currentSequence,
+    { currentEvent: context.currentEvent, currentSequence: context.currentSequence },
     locale,
   )
   const followedCharacter = resolveFollowedCharacter(entities, followMode)
@@ -1176,9 +1197,9 @@ export function projectPresenceMarker(
 export function projectFutureMarker(
   presence: MapPresence,
   next: MapNextChapterState,
-  fallbackLocations: Location[],
-  locale: Locale = DEFAULT_LOCALE,
+  options: { fallbackLocations: Location[]; locale?: Locale } = { fallbackLocations: [] },
 ): MapMarker | null {
+  const { fallbackLocations, locale = DEFAULT_LOCALE } = options
   const body = next.bodies.find((candidate) => candidate.id === presence.entityId)
   const character = body
     ? next.characters.find((candidate) => candidate.id === body.originalCharacterId)

@@ -85,7 +85,11 @@ export const rihanPredator = defineAbility({
       label: 'Lâcher la contre-mesure',
       conditions: [
         effectIsLive('effectId', 'Une analyse est en cours'),
-        effectAttributeAtLeast('progress', COMPLETE, 'L’analyse est complète'),
+        effectAttributeAtLeast({
+          key: 'progress',
+          threshold: COMPLETE,
+          label: 'L’analyse est complète',
+        }),
         soleObserverOf('ability-analysis:', 'Rihan est le seul à détenir cette analyse'),
       ],
       effects: [

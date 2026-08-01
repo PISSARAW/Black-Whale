@@ -272,7 +272,7 @@ describe('projectFutureMarker', () => {
   }
 
   it('labels the marker with the chapter it is projected into', () => {
-    const marker = projectFutureMarker(next.presences[0], next, [])
+    const marker = projectFutureMarker(next.presences[0], next, { fallbackLocations: [] })
 
     expect(marker?.perceivedIdentity).toBe('Kurapika · Ch. 400')
     expect(marker?.temporalLabel).toBe('Parallel future')
@@ -281,7 +281,7 @@ describe('projectFutureMarker', () => {
   it('omits a body the next chapter reports as destroyed', () => {
     const dead = { ...next, bodyStates: { 'body-kurapika': 'DEAD' } }
 
-    expect(projectFutureMarker(dead.presences[0], dead, [])).toBeNull()
+    expect(projectFutureMarker(dead.presences[0], dead, { fallbackLocations: [] })).toBeNull()
   })
 })
 

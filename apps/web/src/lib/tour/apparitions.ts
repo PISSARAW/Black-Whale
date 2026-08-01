@@ -438,6 +438,43 @@ function room(ship: Ship, space: Space) {
   return { floor, ceiling: floor + ceilingOf(space, tier), at: centroid(space) }
 }
 
+/** Where the walk is standing: a point on a deck, and which deck it is. */
+export interface Footing {
+  at: Vec2
+  tierId: string
+}
+
+/** The state of the walk that an apparition may depend on. */
+export interface Walk {
+  /**
+   * Where the walk currently is. Two things read it: Kacho's double, which does
+   * not stand in a room at all — it stays beside the person it is protecting,
+   * and follows them off the deck it was raised on — and Secret Window's
+   * shoulder bird, which does the same at a bird's height.
+   */
+  visitor?: Footing
+  /**
+   * The walk's clock, for the marks that ride something that will not hold
+   * still: a bomb drawn where its thing used to stand is a bomb that lies.
+   */
+  seconds?: number
+}
+
+/** What a technique just did, and where it was done from. */
+export interface Cast {
+  report: TourReport | null
+  from: Vec2
+}
+
+/** How one apparition is drawn, over and above where it stands. */
+type Drawn = Partial<Apparition> & {
+  kind: ApparitionKind
+  /** How high off the room's floor it hangs, in metres. */
+  height: number
+  size: number
+  colour: number
+}
+
 /**
  * Every apparition in the ship, wherever it is.
  *
@@ -445,22 +482,9 @@ function room(ship: Ship, space: Space) {
  * four decks down, and the scene culls these against the geometry it has in it
  * rather than against a list of rooms. Order is stable, which is what lets the
  * scene diff frame to frame.
- *
- * `visitor` is where the walk currently is, and two things read it: Kacho's
- * double, which does not stand in a room at all — it stays beside the person it
- * is protecting, and follows them off the deck it was raised on — and Secret
- * Window's shoulder bird, which does the same at a bird's height.
  */
-export function apparitionsOn(
-  ship: Ship,
-  world: TourWorld,
-  visitor?: { at: Vec2; tierId: string },
-  /**
-   * The walk's clock, for the marks that ride something that will not hold
-   * still: a bomb drawn where its thing used to stand is a bomb that lies.
-   */
-  seconds = 0,
-): Apparition[] {
+export function apparitionsOn(ship: Ship, world: TourWorld, walk: Walk = {}): Apparition[] {
+  const { visitor, seconds = 0 } = walk
   const found: Apparition[] = []
 
   /**
@@ -469,15 +493,8 @@ export function apparitionsOn(
    */
   const landing = (space: Space) => world.landed[space.id] ?? centroid(space)
 
-  const place = (
-    id: string,
-    kind: ApparitionKind,
-    space: Space,
-    height: number,
-    size: number,
-    colour: number,
-    extra: Partial<Apparition> = {},
-  ) => {
+  const place = (id: string, space: Space, drawn: Drawn) => {
+    const { kind, height, size, colour, ...extra } = drawn
     const measured = room(ship, space)
     if (!measured) return
     found.push({
@@ -548,7 +565,11 @@ export function apparitionsOn(
         hidden: false,
       })
     } else {
-      place(`owl:${perch.id}`, 'owl', perch, 2.4, 0.5, OWL, {
+      place(`owl:${perch.id}`, perch, {
+        kind: 'owl',
+        height: 2.4,
+        size: 0.5,
+        colour: OWL,
         spread: mode === 'wander' ? 1.8 : 0,
       })
     }
@@ -560,7 +581,11 @@ export function apparitionsOn(
   // where it was sent; scouting or filming it works the room over.
   const host = spaceOf(world.eye)
   if (host) {
-    place(`insect:${host.id}`, 'insect', host, 1.5, 0.16, INSECT, {
+    place(`insect:${host.id}`, host, {
+      kind: 'insect',
+      height: 1.5,
+      size: 0.16,
+      colour: INSECT,
       spread: world.eyeMode === 'pilot' ? 0.7 : 1.9,
     })
   }
@@ -570,21 +595,35 @@ export function apparitionsOn(
   for (const [spaceId, stage] of Object.entries(world.cards)) {
     const space = spaceOf(spaceId)
     if (!space || !stage) continue
-    place(`card:${spaceId}`, 'card', space, 1.6, 0.75, CARDS[Math.min(2, stage - 1)], { stage })
+    place(`card:${spaceId}`, space, {
+      kind: 'card',
+      height: 1.6,
+      size: 0.75,
+      colour: CARDS[Math.min(2, stage - 1)],
+      stage,
+    })
   }
 
   // The victim wears its mark openly. The sacrifice among its own wears one
   // too, and only Emperor Time shows it — which is the whole cruelty of it.
   const victim = spaceOf(world.curse?.victim)
-  if (victim) place(`mark:${victim.id}`, 'mark', victim, 2, 0.95, CURSE)
+  if (victim)
+    place(`mark:${victim.id}`, victim, { kind: 'mark', height: 2, size: 0.95, colour: CURSE })
   const sacrifice = spaceOf(world.curse?.sacrifice)
   if (sacrifice && sacrifice.id !== victim?.id) {
-    place(`mark:${sacrifice.id}`, 'mark', sacrifice, 2, 0.7, CURSE, { hidden: !world.laidOpen })
+    place(`mark:${sacrifice.id}`, sacrifice, {
+      kind: 'mark',
+      height: 2,
+      size: 0.7,
+      colour: CURSE,
+      hidden: !world.laidOpen,
+    })
   }
 
   for (const spaceId of world.stars) {
     const space = spaceOf(spaceId)
-    if (space) place(`star:${spaceId}`, 'star', space, 2.4, 0.8, STAR)
+    if (space)
+      place(`star:${spaceId}`, space, { kind: 'star', height: 2.4, size: 0.8, colour: STAR })
   }
 
   // The gum is strung at shin height, which is where a trip-line goes, and it
@@ -594,7 +633,14 @@ export function apparitionsOn(
   // not spent by springing, and the room goes on catching them.
   for (const spaceId of world.gumTraps) {
     const space = spaceOf(spaceId)
-    if (space) place(`gum:${spaceId}`, 'gum', space, 0.35, 1.2, GUM, { hidden: !world.laidOpen })
+    if (space)
+      place(`gum:${spaceId}`, space, {
+        kind: 'gum',
+        height: 0.35,
+        size: 1.2,
+        colour: GUM,
+        hidden: !world.laidOpen,
+      })
   }
 
   // Kacho stands rather than floats: she is a person, and the one apparition
@@ -627,7 +673,11 @@ export function apparitionsOn(
         hidden: false,
       })
     } else {
-      place(`double:${guarded.id}`, 'double', guarded, 0.9, 0.9, DOUBLE, {
+      place(`double:${guarded.id}`, guarded, {
+        kind: 'double',
+        height: 0.9,
+        size: 0.9,
+        colour: DOUBLE,
         spread: mode === 'wander' ? 2.5 : 0,
       })
     }
@@ -993,7 +1043,11 @@ export function apparitionsOn(
     const other = mouths.find((end) => end.spaceId !== mouth.spaceId)
     const space = spaceOf(mouth.spaceId)
     if (!space) continue
-    place(`worm:${mouth.spaceId}`, 'portal', space, PORTAL_RADIUS + 0.1, PORTAL_RADIUS, PORTAL, {
+    place(`worm:${mouth.spaceId}`, space, {
+      kind: 'portal',
+      height: PORTAL_RADIUS + 0.1,
+      size: PORTAL_RADIUS,
+      colour: PORTAL,
       y: mouth.y,
       pair: other,
     })
@@ -1010,13 +1064,26 @@ export function apparitionsOn(
   // Camilla's, hung as high as the room allows with its tentacles down: it has
   // the whole room off the floor, so it has to be over the whole room.
   const hung = spaceOf(world.medusa)
-  if (hung) place(`medusa:${hung.id}`, 'medusa', hung, 3.6, 1.15, MEDUSA, { at: beside(hung) })
+  if (hung)
+    place(`medusa:${hung.id}`, hung, {
+      kind: 'medusa',
+      height: 3.6,
+      size: 1.15,
+      colour: MEDUSA,
+      at: beside(hung),
+    })
 
   // Tserriednich's, stood on the deck beside the last thing it marked. A
   // quadruped's height, because that is what it is.
   const stood = spaceOf(world.chimera)
   if (stood)
-    place(`chimera:${stood.id}`, 'chimera', stood, 1.05, 0.95, CHIMERA, { at: beside(stood) })
+    place(`chimera:${stood.id}`, stood, {
+      kind: 'chimera',
+      height: 1.05,
+      size: 0.95,
+      colour: CHIMERA,
+      at: beside(stood),
+    })
 
   // And what the third contact left: the fitting is `gone` from the deck and
   // this stands where it stood, at its size, so a coffin becomes something the
@@ -1053,7 +1120,12 @@ export function apparitionsOn(
   // is not a room full of gas.
   const squatting = spaceOf(world.toad)
   if (squatting) {
-    place(`toad:${squatting.id}`, 'toad', squatting, 0.85, 1.35, TOAD)
+    place(`toad:${squatting.id}`, squatting, {
+      kind: 'toad',
+      height: 0.85,
+      size: 1.35,
+      colour: TOAD,
+    })
     const measured = room(ship, squatting)
     if (measured) {
       for (const station of stationsIn(squatting, PUFFS, landing(squatting))) {
@@ -1084,7 +1156,13 @@ export function apparitionsOn(
     const space = spaceOf(world.wheel.spaceId)
     const measured = space ? room(ship, space) : null
     if (space && measured) {
-      place(`wheel:${space.id}`, 'wheel', space, 2.7, 1.25, WHEEL, { at: minted.at })
+      place(`wheel:${space.id}`, space, {
+        kind: 'wheel',
+        height: 2.7,
+        size: 1.25,
+        colour: WHEEL,
+        at: minted.at,
+      })
       found.push({
         id: `coin:${space.id}`,
         kind: 'coin',
@@ -1128,7 +1206,11 @@ export function apparitionsOn(
     const caught = standingIn(coiled.id).filter(
       (solid) => world.solids[solid.id]?.glued !== undefined,
     ).length
-    place(`centipede:${coiled.id}`, 'centipede', coiled, 1.1, 1.05, CENTIPEDE, {
+    place(`centipede:${coiled.id}`, coiled, {
+      kind: 'centipede',
+      height: 1.1,
+      size: 1.05,
+      colour: CENTIPEDE,
       stage: caught,
       at: beside(coiled),
     })
@@ -1144,7 +1226,11 @@ export function apparitionsOn(
     const filled = world.smoke.filled
     // `stage` is whether the mouths are still open: the closing is the one
     // thing the technique does that the room itself does not show.
-    place(`mouths:${breathing.id}`, 'mouths', breathing, 2.2, 1.1, MOUTHS, {
+    place(`mouths:${breathing.id}`, breathing, {
+      kind: 'mouths',
+      height: 2.2,
+      size: 1.1,
+      colour: MOUTHS,
       stage: filled >= FUME_COLOURS.length ? 1 : 0,
       at: beside(breathing),
     })
@@ -1369,7 +1455,8 @@ export function coinSpot(
 export const COIN_REACH = 1.1
 
 /** Whether the visitor is standing near enough the coin to have taken it. */
-export function coinAt(ship: Ship, world: TourWorld, tierId: string, at: Vec2): string | null {
+export function coinAt(ship: Ship, world: TourWorld, standing: Footing): string | null {
+  const { at, tierId } = standing
   const spot = coinSpot(ship, world)
   if (!spot || spot.tierId !== tierId) return null
   return Math.hypot(spot.at[0] - at[0], spot.at[1] - at[1]) <= COIN_REACH ? spot.spaceId : null
@@ -1416,7 +1503,8 @@ export function wormMouths(
  * doorway itself that has to be crossed: the visitor's own position against the
  * mouth on the deck they are on.
  */
-export function wormMouthAt(ship: Ship, world: TourWorld, tierId: string, at: Vec2): string | null {
+export function wormMouthAt(ship: Ship, world: TourWorld, standing: Footing): string | null {
+  const { at, tierId } = standing
   for (const mouth of wormMouths(ship, world)) {
     if (mouth.tierId !== tierId) continue
     if (Math.hypot(mouth.at[0] - at[0], mouth.at[1] - at[1]) <= PORTAL_REACH) return mouth.spaceId
@@ -1452,12 +1540,8 @@ export interface TourFlash {
  * Blow, which strips a room from across the ship and moves nothing, and Remote
  * Punch, whose aura runs along the floor and comes up under something else.
  */
-export function flashFor(
-  report: TourReport | null,
-  ship: Ship,
-  world: TourWorld,
-  from: Vec2,
-): TourFlash | null {
+export function flashFor(cast: Cast, ship: Ship, world: TourWorld): TourFlash | null {
+  const { report, from } = cast
   if (!report) return null
 
   if (report.kind === 'stripped') {

@@ -492,7 +492,7 @@
 
   /** Hands the walk whatever the cast that just happened has to show. */
   function show(shown: TourReport) {
-    const seen = flashFor(shown, ship, world, position)
+    const seen = flashFor({ report: shown, from: position }, ship, world)
     if (seen) flash = { ...seen, seq: ++flashes }
     sound(shown)
   }
@@ -800,7 +800,10 @@
       // the aura goes up, from where the visitor is standing, exactly as
       // Voconte's doors are simply wired the moment they are held.
       if (kind === 'solicitation') {
-        const loose = looseTheFlock(nextWorld, ship, currentSpace?.id ?? null, position)
+        const loose = looseTheFlock(nextWorld, ship, {
+          at: position,
+          standingIn: currentSpace?.id ?? null,
+        })
         if (loose) nextWorld.menagerie = loose.world.menagerie
       }
       // Double Face is handed over already holding two: a bookmark with one
@@ -1108,7 +1111,7 @@
   }
 
   function polarityWalk(seconds: number, delta: number) {
-    const step = polarityStep(world, ship, seconds, delta)
+    const step = polarityStep(world, ship, { seconds, delta })
     if (!step) return
     world = step.world
     if (!step.report) return

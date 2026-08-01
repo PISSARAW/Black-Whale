@@ -241,25 +241,49 @@ describe('the hideout doors', () => {
 
   it('comes out at the other frame, and does not fall straight back', () => {
     const world: TourWorld = { ...EMPTY_WORLD, doors: ['a', 'b'] }
-    expect(doorExit(world, 'a', null)).toBe('b')
-    expect(doorExit(world, 'b', 'b')).toBeNull()
-    expect(doorExit(world, 'c', null)).toBeNull()
-    expect(doorExit({ ...EMPTY_WORLD, doors: ['a'] }, 'a', null)).toBeNull()
+    expect(doorExit(world, { spaceId: 'a', arrivedFrom: null })).toBe('b')
+    expect(doorExit(world, { spaceId: 'b', arrivedFrom: 'b' })).toBeNull()
+    expect(doorExit(world, { spaceId: 'c', arrivedFrom: null })).toBeNull()
+    expect(
+      doorExit({ ...EMPTY_WORLD, doors: ['a'] }, { spaceId: 'a', arrivedFrom: null }),
+    ).toBeNull()
   })
 
   it('sends the visitor somewhere else through every frame while no route is armed', () => {
     // Passive: nothing has been aimed and nothing has been cast, and the whole
     // hideout is wired. Only for the technique whose hideout it is.
     const wired: TourWorld = { ...EMPTY_WORLD, holding: 'door-network' }
-    const out = doorExit(wired, furnished.id, null, ship, () => 0)
+    const out = doorExit(
+      wired,
+      { spaceId: furnished.id, arrivedFrom: null },
+      { ship, random: () => 0 },
+    )
     expect(out).not.toBeNull()
     expect(out).not.toBe(furnished.id)
     // Arriving where it just put you is not a second crossing.
-    expect(doorExit(wired, furnished.id, furnished.id, ship, () => 0)).toBeNull()
+    expect(
+      doorExit(
+        wired,
+        { spaceId: furnished.id, arrivedFrom: furnished.id },
+        { ship, random: () => 0 },
+      ),
+    ).toBeNull()
     // And any other aura leaves the doors as doors.
-    expect(doorExit(EMPTY_WORLD, furnished.id, null, ship, () => 0)).toBeNull()
+    expect(
+      doorExit(
+        EMPTY_WORLD,
+        { spaceId: furnished.id, arrivedFrom: null },
+        { ship, random: () => 0 },
+      ),
+    ).toBeNull()
     // A prepared pair is still a prepared pair rather than a lottery.
-    expect(doorExit({ ...wired, doors: ['a', 'b'] }, 'a', null, ship, () => 0)).toBe('b')
+    expect(
+      doorExit(
+        { ...wired, doors: ['a', 'b'] },
+        { spaceId: 'a', arrivedFrom: null },
+        { ship, random: () => 0 },
+      ),
+    ).toBe('b')
   })
 })
 
@@ -417,7 +441,7 @@ describe('aiming down the reticle', () => {
     const to = centreOf(b)
     // The camera looks along (-sin yaw, -cos yaw).
     const heading = Math.atan2(-(to[0] - from[0]), -(to[1] - from[1]))
-    const aimed = aimedSpace(plan, from, heading, 400)
+    const aimed = aimedSpace(plan, { at: from, heading, range: 400 })
     expect(aimed).not.toBeNull()
     expect(aimed!.id).not.toBe(a.id)
   })
@@ -425,7 +449,7 @@ describe('aiming down the reticle', () => {
   it('falls back on the room underfoot when the ray leaves the deck', () => {
     const plan = ship.plans.get(ship.decks[0].id)!
     const space = plan.spaces[0]
-    const aimed = aimedSpace(plan, centreOf(space), 0, 0.4)
+    const aimed = aimedSpace(plan, { at: centreOf(space), heading: 0, range: 0.4 })
     expect(aimed?.id).toBe(space.id)
   })
 })
@@ -478,7 +502,9 @@ describe('aiming at a solid', () => {
     const from = centreOf(busiest.space)
     const to = solidA.at
     const heading = Math.atan2(-(to[0] - from[0]), -(to[1] - from[1]))
-    expect(aimedSolid(ship, EMPTY_WORLD, plan, from, heading, 120)).not.toBeNull()
+    expect(
+      aimedSolid({ ship, world: EMPTY_WORLD }, plan, { at: from, heading, range: 120 }),
+    ).not.toBeNull()
   })
 })
 
@@ -754,8 +780,8 @@ describe('the rules solids hold each other to', () => {
     // a solid the aura has hold of is handed over with its walls, and this one
     // is handed over with none.
     const held = hit(EMPTY_WORLD, 'impact', solidA.id).world
-    expect(solidWalls(ship, held, busiest.space.tierId).length).toBeGreaterThan(0)
-    expect(solidWalls(ship, drill.world, busiest.space.tierId)).toEqual([])
+    expect(solidWalls(ship, held, { tierId: busiest.space.tierId }).length).toBeGreaterThan(0)
+    expect(solidWalls(ship, drill.world, { tierId: busiest.space.tierId })).toEqual([])
 
     const axe = at(swingsFor('axe'))
     expect(axe.report).toMatchObject({ kind: 'halved', solidId: solidA.id })
@@ -818,7 +844,7 @@ describe('the rules solids hold each other to', () => {
     let world = moon.world
     let blown: TourReport | null = null
     for (let tick = 0; tick < 1200 && !blown; tick++) {
-      const step = polarityStep(world, ship, tick * 0.1, 0.1)
+      const step = polarityStep(world, ship, { seconds: tick * 0.1, delta: 0.1 })
       if (!step) break
       world = step.world
       blown = step.report
@@ -832,7 +858,7 @@ describe('the rules solids hold each other to', () => {
     const first = hit(EMPTY_WORLD, 'polarity', solidA.id, { mark: 'sun' }).world
     let world = hit(first, 'polarity', solidB.id, { mark: 'sun' }).world
     for (let tick = 0; tick < 300; tick++) {
-      world = polarityStep(world, ship, tick * 0.1, 0.1)?.world ?? world
+      world = polarityStep(world, ship, { seconds: tick * 0.1, delta: 0.1 })?.world ?? world
     }
     expect(world.solids[solidA.id].gone).toBeFalsy()
     expect(world.solids[solidB.id].gone).toBeFalsy()
@@ -868,17 +894,17 @@ describe('the solids as the walk has to draw and collide with them', () => {
 
     expect(baked.structures.some((structure) => structure.id === solidA.id)).toBe(false)
     expect(baked.walls.some((wall) => wall.structureId === solidA.id)).toBe(false)
-    expect(detachedOn(ship, world, busiest.space.tierId).map((held) => held.structure.id)).toEqual([
-      solidA.id,
-    ])
-    expect(solidWalls(ship, world, busiest.space.tierId).length).toBeGreaterThan(0)
+    expect(
+      detachedOn(ship, world, { tierId: busiest.space.tierId }).map((held) => held.structure.id),
+    ).toEqual([solidA.id])
+    expect(solidWalls(ship, world, { tierId: busiest.space.tierId }).length).toBeGreaterThan(0)
   })
 
   it('stops handing over a solid that is gone', () => {
     const world = hit(EMPTY_WORLD, 'impact', solidA.id).world
     const shattered = { ...world, solids: { [solidA.id]: { gone: true } } }
-    expect(detachedOn(ship, shattered, busiest.space.tierId)).toEqual([])
-    expect(solidWalls(ship, shattered, busiest.space.tierId)).toEqual([])
+    expect(detachedOn(ship, shattered, { tierId: busiest.space.tierId })).toEqual([])
+    expect(solidWalls(ship, shattered, { tierId: busiest.space.tierId })).toEqual([])
   })
 
   it('gives an animated solid the same drift to the eye and to the shoulder', () => {
@@ -886,8 +912,10 @@ describe('the solids as the walk has to draw and collide with them', () => {
     expect(wanderOffset(solidA.id, 3)).not.toEqual(wanderOffset(solidB.id, 3))
 
     const world = hit(EMPTY_WORLD, 'animate', solidA.id).world
-    const still = detachedOn(ship, world, busiest.space.tierId, 0)[0].structure.at
-    const later = detachedOn(ship, world, busiest.space.tierId, 4)[0].structure.at
+    const still = detachedOn(ship, world, { tierId: busiest.space.tierId, seconds: 0 })[0].structure
+      .at
+    const later = detachedOn(ship, world, { tierId: busiest.space.tierId, seconds: 4 })[0].structure
+      .at
     expect(later).not.toEqual(still)
   })
 
@@ -1162,7 +1190,7 @@ describe('what the techniques make of the visitor', () => {
 
     // Carried is not walked around: a passenger stops being an obstacle.
     expect(
-      solidWalls(ship, world, busiest.space.tierId).some((wall) =>
+      solidWalls(ship, world, { tierId: busiest.space.tierId }).some((wall) =>
         world.body.passengers.includes(wall.structureId ?? ''),
       ),
     ).toBe(false)
@@ -1178,8 +1206,12 @@ describe('what the techniques make of the visitor', () => {
     const solid = ship.structures.find((s) => s.spaceId === busiest.space.id)!
     world = on(world, 'impact', { targetSolidId: solid.id }).world
 
-    const parked = detachedOn(ship, world, busiest.space.tierId)[0].structure.at
-    const carried = detachedOn(ship, world, busiest.space.tierId, 0, [999, 999])[0].structure.at
+    const parked = detachedOn(ship, world, { tierId: busiest.space.tierId })[0].structure.at
+    const carried = detachedOn(ship, world, {
+      tierId: busiest.space.tierId,
+      seconds: 0,
+      carrier: [999, 999],
+    })[0].structure.at
     expect(parked).not.toEqual(carried)
   })
 })
@@ -1703,8 +1735,8 @@ describe('what the walk remembers of itself', () => {
 
   it('reads the dial higher the closer the visitor is', () => {
     const world = door(EMPTY_WORLD, 'divination', roomA.id).world
-    const near = dialReading(ship, world, centreOf(roomA), roomA.id)!
-    const far = dialReading(ship, world, [900, 900], elsewhere.id)!
+    const near = dialReading(ship, world, { at: centreOf(roomA), standingIn: roomA.id })!
+    const far = dialReading(ship, world, { at: [900, 900], standingIn: elsewhere.id })!
     expect(near.reading).toBe(100)
     expect(far.reading).toBeLessThan(near.reading)
   })
@@ -2055,9 +2087,9 @@ describe('the Guardian Spirit Beasts', () => {
       // nothing of it does afterwards: the walls the aura's own solids
       // contribute are gone, because none of those solids is on the floor.
       const pushed = { ...EMPTY_WORLD, solids: { [busy.solids[0].id]: { squash: 0.9 } } }
-      expect(solidWalls(ship, pushed, busy.space.tierId).length).toBeGreaterThan(0)
+      expect(solidWalls(ship, pushed, { tierId: busy.space.tierId }).length).toBeGreaterThan(0)
       const lifted = cast(pushed, 'coercive-beast', busy.space.id).world
-      expect(solidWalls(ship, lifted, busy.space.tierId)).toEqual([])
+      expect(solidWalls(ship, lifted, { tierId: busy.space.tierId })).toEqual([])
     })
 
     it('climbs, drifts and turns, and the same thing does it the same way twice', () => {

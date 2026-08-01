@@ -92,6 +92,24 @@ const len = (a: Vec2) => Math.hypot(a[0], a[1])
  */
 const STILL = 1e-6
 
+/** The walls a mover cannot cross, and how far from them it has to stay. */
+export interface Clearance {
+  walls: WallSegment[]
+  radius: number
+}
+
+/**
+ * What a move happens among: bare walls when the mover is the visitor, whose
+ * radius is the only one the tour has ever needed, or a full clearance when
+ * something narrower or wider has to get through.
+ */
+export type Obstacles = WallSegment[] | (Partial<Clearance> & { walls: WallSegment[] })
+
+const clearance = (obstacles: Obstacles): Clearance =>
+  Array.isArray(obstacles)
+    ? { walls: obstacles, radius: VISITOR_RADIUS }
+    : { walls: obstacles.walls, radius: obstacles.radius ?? VISITOR_RADIUS }
+
 /**
  * Slides the visitor from `from` towards `to` without letting them through a
  * wall.
@@ -101,12 +119,8 @@ const STILL = 1e-6
  * is pushed back out of any wall it ends up inside. Pushing out repeatedly is
  * what makes corners work: the first push frees one wall, the second the other.
  */
-export function resolveMovement(
-  from: Vec2,
-  to: Vec2,
-  walls: WallSegment[],
-  radius = VISITOR_RADIUS,
-): Vec2 {
+export function resolveMovement(from: Vec2, to: Vec2, through: Obstacles): Vec2 {
+  const { walls, radius } = clearance(through)
   const delta = sub(to, from)
   const distance = len(delta)
   if (distance < STILL) return from
@@ -116,18 +130,19 @@ export function resolveMovement(
 
   for (let step = 0; step < steps; step++) {
     const target: Vec2 = [position[0] + delta[0] / steps, position[1] + delta[1] / steps]
-    position = pushOutOfWalls(target, position, walls, radius)
+    position = pushOutOfWalls(target, position, { walls, radius })
   }
 
   return position
 }
 
 /**
- * @param point    where the visitor wants to stand
- * @param fallback the last position known to be clear, used to choose a side
- *                 when the visitor ends up exactly on a wall
+ * @param point     where the visitor wants to stand
+ * @param fallback  the last position known to be clear, used to choose a side
+ *                  when the visitor ends up exactly on a wall
+ * @param clearance the walls to stay out of, and by how much
  */
-function pushOutOfWalls(point: Vec2, fallback: Vec2, walls: WallSegment[], radius: number): Vec2 {
+function pushOutOfWalls(point: Vec2, fallback: Vec2, { walls, radius }: Clearance): Vec2 {
   let position = point
 
   for (let pass = 0; pass < 4; pass++) {

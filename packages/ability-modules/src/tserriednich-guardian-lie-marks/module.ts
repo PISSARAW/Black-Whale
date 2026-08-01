@@ -58,7 +58,11 @@ export const tserriednichGuardianLieMarks = defineAbility({
       label: 'Troisième mensonge',
       conditions: [
         effectIsLive('effectId', 'Une marque est en place'),
-        effectAttributeAtLeast('lieCount', FATAL_LIE_COUNT, `Trois mensonges ont été comptés`),
+        effectAttributeAtLeast({
+          key: 'lieCount',
+          threshold: FATAL_LIE_COUNT,
+          label: `Trois mensonges ont été comptés`,
+        }),
       ],
       effects: [setEffectState({ state: 'TRIGGERED', attributes: { transformed: true } })],
     },

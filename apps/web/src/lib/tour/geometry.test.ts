@@ -24,7 +24,7 @@ import {
   triangulate,
   wallSegments,
 } from './geometry'
-import type { Polygon, Space, Structure, Vec2 } from './types'
+import type { Polygon, Space, Structure, Triangle, Vec2 } from './types'
 
 const square: Polygon = [
   [0, 0],
@@ -94,16 +94,47 @@ describe('polygon basics', () => {
 
 describe('collinearOverlap', () => {
   it('finds the shared stretch of two touching walls', () => {
-    const overlap = collinearOverlap([0, 0], [10, 0], [4, 0], [12, 0])
+    const overlap = collinearOverlap(
+      [
+        [0, 0],
+        [10, 0],
+      ],
+      [
+        [4, 0],
+        [12, 0],
+      ],
+    )
     expect(overlap).toEqual({ from: 4, to: 10 })
   })
 
   it('ignores walls that are merely parallel', () => {
-    expect(collinearOverlap([0, 0], [10, 0], [0, 1], [10, 1])).toBeNull()
+    expect(
+      collinearOverlap(
+        [
+          [0, 0],
+          [10, 0],
+        ],
+        [
+          [0, 1],
+          [10, 1],
+        ],
+      ),
+    ).toBeNull()
   })
 
   it('ignores walls that meet at a single point', () => {
-    expect(collinearOverlap([0, 0], [10, 0], [10, 0], [20, 0])).toBeNull()
+    expect(
+      collinearOverlap(
+        [
+          [0, 0],
+          [10, 0],
+        ],
+        [
+          [10, 0],
+          [20, 0],
+        ],
+      ),
+    ).toBeNull()
   })
 })
 
@@ -579,11 +610,20 @@ describe('subdivideTriangle', () => {
   ]
 
   it('leaves a small triangle alone', () => {
-    expect(subdivideTriangle([0, 0], [1, 0], [0, 1], 2)).toHaveLength(1)
+    expect(
+      subdivideTriangle(
+        [
+          [0, 0],
+          [1, 0],
+          [0, 1],
+        ],
+        2,
+      ),
+    ).toHaveLength(1)
   })
 
   it('cuts every edge down to the patch size', () => {
-    const pieces = subdivideTriangle(...long, 2)
+    const pieces = subdivideTriangle(long, 2)
     for (const [a, b, c] of pieces) {
       for (const [p, q] of [
         [a, b],
@@ -597,7 +637,7 @@ describe('subdivideTriangle', () => {
 
   it('covers exactly the triangle it was given', () => {
     const whole = Math.abs((30 - 0) * (18 - 0)) / 2
-    const pieces = subdivideTriangle(...long, 2)
+    const pieces = subdivideTriangle(long, 2)
     const total = pieces.reduce(
       (sum, [a, b, c]) =>
         sum + Math.abs((b[0] - a[0]) * (c[1] - a[1]) - (c[0] - a[0]) * (b[1] - a[1])) / 2,
@@ -608,9 +648,23 @@ describe('subdivideTriangle', () => {
 
   it('splits at the middle of an edge, so neighbours agree and no crack opens', () => {
     // Two triangles sharing the long edge must produce the same points along it.
-    const left = subdivideTriangle([0, 0], [8, 0], [0, 6], 2)
-    const right = subdivideTriangle([8, 0], [0, 0], [8, -6], 2)
-    const onEdge = (pieces: [Vec2, Vec2, Vec2][]) =>
+    const left = subdivideTriangle(
+      [
+        [0, 0],
+        [8, 0],
+        [0, 6],
+      ],
+      2,
+    )
+    const right = subdivideTriangle(
+      [
+        [8, 0],
+        [0, 0],
+        [8, -6],
+      ],
+      2,
+    )
+    const onEdge = (pieces: Triangle[]) =>
       new Set(
         pieces
           .flat()
@@ -621,6 +675,6 @@ describe('subdivideTriangle', () => {
   })
 
   it('is left alone by a patch size of zero rather than recursing forever', () => {
-    expect(subdivideTriangle(...long, 0)).toHaveLength(1)
+    expect(subdivideTriangle(long, 0)).toHaveLength(1)
   })
 })

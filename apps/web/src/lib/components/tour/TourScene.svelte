@@ -93,10 +93,10 @@
     stopSteps,
     toggleSteps,
   } from '$lib/audio/steps'
-  // The two beasts that make a noise of their own rather than reporting one:
-  // the roar is answered to a keypress and the flock simply arrives, so neither
-  // of them goes through the page's report-to-sound table.
-  import { chirpTheFlock, roarLikeADragon } from '$lib/audio/hatsuSounds'
+  // The roar makes a noise of its own rather than reporting one: it is answered
+  // to a keypress, so it does not go through the page's report-to-sound table.
+  // The flock's chirp is raised by the page itself, where the arrival happens.
+  import { roarLikeADragon } from '$lib/audio/hatsuSounds'
   import { visibleSpaces } from '$lib/tour/visibility'
   import type { Link, Space, Structure, Vec2 } from '$lib/tour/types'
 
@@ -1346,7 +1346,7 @@
         // in the markup reads it, so it must stay out of Svelte's reactivity.
         const standing: Record<string, true> = {}
 
-        for (const { structure, room } of detachedOn(ship, world, currentTierId)) {
+        for (const { structure, room } of detachedOn(ship, world, { tierId: currentTierId })) {
           standing[structure.id] = true
           const key = JSON.stringify(structure)
           if (solids[structure.id]?.key === key) continue
@@ -1354,12 +1354,11 @@
 
           // The rest of the room comes with it so the solid keeps the room's
           // light: in the two rooms with a window, that includes the daylight.
-          const built = buildSolidMesh(
-            structure,
+          const built = buildSolidMesh(structure, {
             room,
-            plan.tier,
-            plan.structures.filter((entry) => entry.spaceId === room.id),
-          )
+            tier: plan.tier,
+            standing: plan.structures.filter((entry) => entry.spaceId === room.id),
+          })
           const geometry = new THREE.BufferGeometry()
           geometry.setAttribute('position', new THREE.BufferAttribute(built.positions, 3))
           geometry.setAttribute('normal', new THREE.BufferAttribute(built.normals, 3))
@@ -1409,10 +1408,9 @@
       function driftSolids(seconds: number) {
         const moving = world.body.passengers.length
           ? new Map(
-              detachedOn(ship, world, currentTierId, seconds, pointer).map((held) => [
-                held.structure.id,
-                held.structure.at,
-              ]),
+              detachedOn(ship, world, { tierId: currentTierId, seconds, carrier: pointer }).map(
+                (held) => [held.structure.id, held.structure.at],
+              ),
             )
           : null
 
@@ -3184,7 +3182,10 @@
         // Where the walk is, for the one apparition that follows it — and the
         // clock, for the two that ride something that will not hold still.
         const wanted = [
-          ...apparitionsOn(ship, world, { at: pointer, tierId: currentTierId }, seconds),
+          ...apparitionsOn(ship, world, {
+            visitor: { at: pointer, tierId: currentTierId },
+            seconds,
+          }),
           // What the page is holding rather than the ship: the cards on
           // Morena's table, and the woman dealing them.
           ...extras,
@@ -4428,10 +4429,18 @@
 
       /** The room and the solid down the reticle, and the cast that lands on them. */
       const facing = () =>
-        activePlan ? aimedSpace(activePlan, pointer, yaw, reachOf(world.body)) : null
+        activePlan
+          ? aimedSpace(activePlan, { at: pointer, heading: yaw, range: reachOf(world.body) })
+          : null
       const facingSolid = () => {
         const plan = ship.plans.get(currentTierId)
-        return plan ? aimedSolid(ship, world, plan, pointer, yaw, reachOf(world.body) / 2) : null
+        return plan
+          ? aimedSolid({ ship, world }, plan, {
+              at: pointer,
+              heading: yaw,
+              range: reachOf(world.body) / 2,
+            })
+          : null
       }
 
       // ── Machi's thread ───────────────────────────
@@ -5215,7 +5224,7 @@
         // crossed by walking into its mouth: `takenCoin` is the coin the last
         // pickup was made on, held until the visitor steps away from where the
         // next one hangs, or standing beside the wheel would empty it.
-        const reached = coinAt(ship, world, currentTierId, pointer)
+        const reached = coinAt(ship, world, { at: pointer, tierId: currentTierId })
         if (!reached) takenCoin = null
         else if (reached !== takenCoin) {
           takenCoin = reached
@@ -5278,7 +5287,10 @@
         // What the aura is holding is out of the deck's own wall list, so it
         // has to be put back for the collision test — where the technique left
         // it, and where the drift has it this instant.
-        const loose = solidWalls(ship, world, currentTierId, now / 1000 - rewound)
+        const loose = solidWalls(ship, world, {
+          tierId: currentTierId,
+          seconds: now / 1000 - rewound,
+        })
 
         // `code` is the physical key, so W A S D covers ZQSD on an AZERTY
         // layout without a second binding. The stick in the corner is added to
@@ -5506,7 +5518,7 @@
           // The ship is handed in because the doors may be passive: with the
           // aura up and no route prepared, every threshold is one of Voconte's
           // and comes out somewhere in the hideout that is not where you meant.
-          const exit = doorExit(world, standingId, arrivedFrom, ship)
+          const exit = doorExit(world, { spaceId: standingId, arrivedFrom }, { ship })
           arrivedFrom = exit
           onArrive?.(standingId)
           if (exit) {
@@ -5519,7 +5531,7 @@
         // walking into the mouth, not by setting foot on the deck it stands on.
         // `wormFrom` is the end the last crossing put the visitor in, held until
         // they step out of it, or arriving would immediately send them back.
-        const mouth = wormMouthAt(ship, world, currentTierId, pointer)
+        const mouth = wormMouthAt(ship, world, { at: pointer, tierId: currentTierId })
         if (!mouth) wormFrom = null
         else if (mouth !== wormFrom) {
           // Read before the crossing: the third one collapses the pair behind

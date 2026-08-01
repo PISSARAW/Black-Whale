@@ -424,7 +424,7 @@ describe('which way the surfaces face', () => {
             ? grilleBars(structure).map(toClockwise)
             : [toClockwise(structureFootprint(structure))]
 
-        const mesh = buildSolidMesh(structure, room, plan.tier)
+        const mesh = buildSolidMesh(structure, { room, tier: plan.tier })
         for (let i = 0; i < mesh.positions.length; i += 9) {
           const x =
             (mesh.positions[i] + mesh.positions[i + 3] + mesh.positions[i + 6]) / 3 +

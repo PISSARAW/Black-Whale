@@ -298,6 +298,97 @@ export const OWL_SECONDS = 20
 export const OWL_FILM_SECONDS = 10
 
 /**
+ * Where the visitor is standing: the point, and the room that point falls in.
+ *
+ * The pair is named because nothing here can use one without the other — a
+ * distance needs the point, and the deck it is measured across needs the room —
+ * and because passing them apart is how they get passed the wrong way round.
+ */
+export interface Stood {
+  at: Vec2
+  standingIn: string | null
+}
+
+/** Where the visitor is standing and what they are pointing at from there. */
+export interface Aim {
+  at: Vec2
+  /** Bearing in radians, as the walk's own movement code has it. */
+  heading: number
+  /** How far down the line to look, in metres. Each caller has its own reach. */
+  range?: number
+}
+
+/** A deck at a moment of the walk's clock. */
+export interface DeckMoment {
+  tierId: string
+  seconds?: number
+}
+
+/** That same deck, plus the visitor, so anything carried rides along. */
+export interface LoadedDeck extends DeckMoment {
+  /** Where the visitor is, so anything Kurton is carrying moves with them. */
+  carrier?: Vec2
+}
+
+/** A deck, a point on it, and the way the visitor is facing. */
+export interface Heading {
+  tierId: string
+  at: Vec2
+  heading: number
+}
+
+/** The reconstruction, and what the techniques have done to it. */
+export interface Scene {
+  ship: Ship
+  world: TourWorld
+}
+
+/** One solid and the hold a technique currently has on it. */
+export interface HeldSolid {
+  structure: Structure
+  hold: SolidHold | undefined
+}
+
+/** A ray cast across a deck: where it starts, and the way it runs. */
+export interface Ray {
+  at: Vec2
+  dx: number
+  dz: number
+}
+
+/** A tune, and the room it is played in. */
+export interface Played {
+  tune: TourTune
+  spaceId: string
+}
+
+/** The pair of doors a step is taken between. */
+export interface Doors {
+  spaceId: string | null
+  arrivedFrom: string | null
+}
+
+/** What the paired doors need beyond themselves, when they need anything. */
+export interface DoorOptions {
+  ship?: Ship
+  random?: () => number
+}
+
+/** Which room the owl is sent to, and how one is picked when it is at random. */
+export interface Perch {
+  targetId: string
+  standingIn: string | null
+  random: () => number
+}
+
+/** One marked solid, read at a moment of the walk's clock. */
+export interface Mark {
+  id: string
+  hold: SolidHold
+  seconds: number
+}
+
+/**
  * What Nen is currently doing to the ship.
  *
  * One flat value rather than a store per technique: the scene rebuilds from it,
@@ -1492,17 +1583,13 @@ export const adriftSolidIds = (world: TourWorld): string[] =>
  * hundred rooms is a flock nobody ever meets. `null` when they are already out,
  * so raising the aura twice does not re-roll where they are.
  */
-export function looseTheFlock(
-  world: TourWorld,
-  ship: Ship,
-  standingIn: string | null,
-  at: Vec2,
-): TourCastResult | null {
+export function looseTheFlock(world: TourWorld, ship: Ship, from: Stood): TourCastResult | null {
+  const { at, standingIn } = from
   if (world.menagerie.length) return null
   const here = standingIn ? ship.spaces.get(standingIn) : null
   const rooms = [...ship.spaces.values()]
     .filter((space) => space.tierId === (here?.tierId ?? ship.tiers[0].id))
-    .map((space) => ({ space, distance: distanceTo(ship, space, at, standingIn).metres }))
+    .map((space) => ({ space, distance: distanceTo(ship, space, { at, standingIn }).metres }))
     .sort((a, b) => a.distance - b.distance)
     .slice(0, FLOCK_ROOMS)
     .map((near) => near.space.id)
@@ -1761,11 +1848,9 @@ export const dancingSolidIds = (world: TourWorld): string[] =>
 export function detachedOn(
   ship: Ship,
   world: TourWorld,
-  tierId: string,
-  seconds = 0,
-  /** Where the visitor is, so anything Kurton is carrying rides along. */
-  carrier?: Vec2,
+  on: LoadedDeck,
 ): { structure: Structure; room: Space }[] {
+  const { tierId, seconds = 0, carrier } = on
   const emptied = new Set(emptiedOn(world, tierId, ship))
   const out: { structure: Structure; room: Space }[] = []
 
@@ -1796,18 +1881,14 @@ export function detachedOn(
 }
 
 /** What those solids stop the visitor with, since they are no longer in the deck. */
-export function solidWalls(
-  ship: Ship,
-  world: TourWorld,
-  tierId: string,
-  seconds = 0,
-): WallSegment[] {
+export function solidWalls(ship: Ship, world: TourWorld, on: DeckMoment): WallSegment[] {
+  const { tierId, seconds = 0 } = on
   // What is being carried is not something to walk around: it moves with you.
   // Nor is what is over your head — a room Camilla's beast has hold of has
   // nothing on its floor, and that is most of what the technique feels like
   // from inside it.
   return (
-    detachedOn(ship, world, tierId, seconds)
+    detachedOn(ship, world, { tierId, seconds })
       .filter(({ structure }) => !world.body.passengers.includes(structure.id))
       .filter(({ structure }) => !world.solids[structure.id]?.adrift)
       // And what the drill went through is not either: the hole is the whole of
@@ -1847,13 +1928,8 @@ const clearanceOf = (structure: Structure) => Math.hypot(structure.size[0], stru
  * than about the technique, so a push that would leave the room is spent
  * against it and the solid stays where it is.
  */
-function shove(
-  ship: Ship,
-  world: TourWorld,
-  structure: Structure,
-  hold: SolidHold | undefined,
-  delta: Vec2,
-): Vec2 | null {
+function shove(ship: Ship, solid: HeldSolid, delta: Vec2): Vec2 | null {
+  const { structure, hold } = solid
   const now = solidNow(structure, hold)
   const room = ship.spaces.get(structure.spaceId)
   if (!room) return null
@@ -2050,7 +2126,7 @@ const SOLID_CASTS: Partial<Record<HatsuInteractionKind, SolidCast>> = {
 
   clone: ({ world, ship, structure, hold, id }) => {
     const now = solidNow(structure, hold)
-    const beside = shove(ship, world, structure, hold, [clearanceOf(now) * 2, 0]) ?? now.at
+    const beside = shove(ship, { structure, hold }, [clearanceOf(now) * 2, 0]) ?? now.at
     const copyId = `${id}::fake${world.copies.length + 1}`
     const copy: Structure = { ...now, id: copyId, at: beside }
     return {
@@ -2091,7 +2167,7 @@ const SOLID_CASTS: Partial<Record<HatsuInteractionKind, SolidCast>> = {
         report: { kind: 'shattered', solidId: id },
       }
     }
-    const landing = shove(ship, world, structure, hold, away(2))
+    const landing = shove(ship, { structure, hold }, away(2))
     return {
       world: withHold(world, id, landing ? { hits, at: landing } : { hits }),
       report: { kind: 'volley', solidId: id, hits },
@@ -2100,7 +2176,7 @@ const SOLID_CASTS: Partial<Record<HatsuInteractionKind, SolidCast>> = {
 
   windup: ({ world, ship, structure, hold, id, away }) => {
     const metres = 3 + world.windup * 4
-    const landing = shove(ship, world, structure, hold, away(metres))
+    const landing = shove(ship, { structure, hold }, away(metres))
     return {
       world: { ...withHold(world, id, landing ? { at: landing } : {}), windup: 0 },
       report: { kind: 'launched', solidId: id, metres: landing ? metres : 0 },
@@ -2109,7 +2185,7 @@ const SOLID_CASTS: Partial<Record<HatsuInteractionKind, SolidCast>> = {
 
   staff: ({ world, ship, structure, hold, id, away }) => {
     const now = solidNow(structure, hold)
-    const landing = shove(ship, world, structure, hold, away(1.5))
+    const landing = shove(ship, { structure, hold }, away(1.5))
     return {
       world: withHold(world, id, {
         rotation: now.rotation + 25,
@@ -2126,7 +2202,7 @@ const SOLID_CASTS: Partial<Record<HatsuInteractionKind, SolidCast>> = {
   // only so the read-out can say this is the fourth time you have hit it.
   dowsing: ({ world, ship, structure, hold, id, away }) => {
     const now = solidNow(structure, hold)
-    const landing = shove(ship, world, structure, hold, away(2))
+    const landing = shove(ship, { structure, hold }, away(2))
     return {
       world: withHold(world, id, {
         hits: (hold?.hits ?? 0) + 1,
@@ -2169,7 +2245,7 @@ const SOLID_CASTS: Partial<Record<HatsuInteractionKind, SolidCast>> = {
           candidate.id !== id &&
           !world.solids[candidate.id]?.gone,
       ) ?? structure
-    const landing = shove(ship, world, structure, hold, away(2.5))
+    const landing = shove(ship, { structure, hold }, away(2.5))
     return {
       world: withHold(world, id, landing ? { at: landing } : { hits: (hold?.hits ?? 0) + 1 }),
       report: { kind: 'came-up-under', solidId: source.id, otherId: id },
@@ -2232,7 +2308,7 @@ const SOLID_CASTS: Partial<Record<HatsuInteractionKind, SolidCast>> = {
     // failed, and this one did not.
     const halved = Math.max(0.05, (hold?.scale ?? 1) * 0.5)
     const now = solidNow(structure, { ...hold, scale: halved })
-    const beside = shove(ship, world, structure, { ...hold, scale: halved }, [
+    const beside = shove(ship, { structure, hold: { ...hold, scale: halved } }, [
       clearanceOf(now) * 1.2,
       0,
     ])
@@ -2279,7 +2355,7 @@ const SOLID_CASTS: Partial<Record<HatsuInteractionKind, SolidCast>> = {
     const beside = { ...world, chimera: structure.spaceId, summoned: calledUp(here, at, heading) }
 
     if (lies === 1) {
-      const landing = shove(ship, beside, structure, hold, away(1.4))
+      const landing = shove(ship, { structure, hold }, away(1.4))
       return {
         world: withHold(beside, id, { lies, ...(landing ? { at: landing } : {}) }),
         report: { kind: 'lie-pushed', solidId: id, metres: landing ? 1.4 : 0 },
@@ -2376,9 +2452,9 @@ function loadIntoHold(world: TourWorld, structure: Structure | null): TourCastRe
 function castPastTheTarget(
   world: TourWorld,
   kind: HatsuInteractionKind,
-  input: TourCastInput,
-  structure: Structure | null,
+  aimedAt: { input: TourCastInput; structure: Structure | null },
 ): TourCastResult | null {
+  const { input, structure } = aimedAt
   const { ship } = input
 
   if (kind === 'windup' && !structure) {
@@ -2420,7 +2496,7 @@ function castPastTheTarget(
       world: {
         ...withHold(world, coughed.id, {
           gone: false,
-          at: landingIn(room, input.at, input.heading)[room.id],
+          at: landingIn(room, { at: input.at, heading: input.heading })[room.id],
         }),
         hoover,
         // It comes out where it was put down, so it belongs to that room now.
@@ -2439,7 +2515,11 @@ function castPastTheTarget(
   if (kind === 'command' && !structure) {
     const room = input.targetId ? ship.spaces.get(input.targetId) : null
     if (!room) return { world, report: { kind: 'no-target' } }
-    return orderThePuppets(world, room, landingIn(room, input.at, input.heading)[room.id])
+    return orderThePuppets(
+      world,
+      room,
+      landingIn(room, { at: input.at, heading: input.heading })[room.id],
+    )
   }
 
   if (kind === 'remote-strike' && !structure) {
@@ -2505,7 +2585,7 @@ function castOnSolid(
   const structure = solidById(ship, world, targetSolidId ?? null)
 
   const elsewhere =
-    loadIntoHold(world, structure) ?? castPastTheTarget(world, kind, input, structure)
+    loadIntoHold(world, structure) ?? castPastTheTarget(world, kind, { input, structure })
   if (elsewhere) return elsewhere
 
   if (!structure) return { world, report: { kind: 'no-solid' } }
@@ -2766,12 +2846,8 @@ function raiseTheSun({ world, ship, body, input }: BodyCastContext): TourCastRes
  * are written down and nothing here is drawn: `$lib/tour/apparitions` decides
  * what a room in flower looks like, exactly as it does for a room with fish in.
  */
-function playTheTune(
-  world: TourWorld,
-  ship: Ship,
-  tune: TourTune,
-  spaceId: string,
-): TourCastResult {
+function playTheTune(world: TourWorld, ship: Ship, played: Played): TourCastResult {
+  const { tune, spaceId } = played
   if (tune === 'dance') {
     // Everything the room has in it, the aura's own copies included: a room
     // dances with what is standing in it, whoever put it there.
@@ -2910,7 +2986,7 @@ const BODY_CASTS: Partial<Record<HatsuInteractionKind, BodyCast>> = {
     // A flute is heard where it is played: the reticle is never consulted, and
     // a piece with nowhere to land is a piece nobody was in the room for.
     if (!input.standingIn) return { world: heard, report: { kind: 'no-target' } }
-    return playTheTune(heard, ship, input.tune, input.standingIn)
+    return playTheTune(heard, ship, { tune: input.tune, spaceId: input.standingIn })
   },
 
   // Tyson's eye-wog, which is the one Guardian Spirit Beast in the walk that
@@ -3040,11 +3116,12 @@ export function identityOf(ship: Ship, world: TourWorld, space: Space): Space {
 }
 
 /** How the dial reads, from a hundred at the door to nothing across the ship. */
-export function dialReading(ship: Ship, world: TourWorld, at: Vec2, standingIn: string | null) {
+export function dialReading(ship: Ship, world: TourWorld, from: Stood) {
+  const { at, standingIn } = from
   const wanted = world.dial ? ship.spaces.get(world.dial) : null
   if (!wanted) return null
   if (standingIn === wanted.id) return { spaceId: wanted.id, reading: 100 }
-  const { metres, decks } = distanceTo(ship, wanted, at, standingIn)
+  const { metres, decks } = distanceTo(ship, wanted, { at, standingIn })
   const reading = Math.max(0, Math.round(100 - metres / 1.6 - decks * 12))
   return { spaceId: wanted.id, reading }
 }
@@ -3069,10 +3146,10 @@ export function verseFor(ship: Ship, space: Space): number[] {
 }
 
 /** The rooms the walk has not set foot in, nearest first. */
-export function unwalked(ship: Ship, world: TourWorld, at: Vec2, standingIn: string | null) {
+export function unwalked(ship: Ship, world: TourWorld, from: Stood) {
   return [...ship.spaces.values()]
     .filter((space) => !world.trail.includes(space.id))
-    .map((space) => ({ space, ...distanceTo(ship, space, at, standingIn) }))
+    .map((space) => ({ space, ...distanceTo(ship, space, from) }))
     .sort((a, b) => a.metres + a.decks * 40 - (b.metres + b.decks * 40))
 }
 
@@ -3085,10 +3162,9 @@ export function unwalked(ship: Ship, world: TourWorld, at: Vec2, standingIn: str
 export function tenSecondsOn(
   ship: Ship,
   world: TourWorld,
-  tierId: string,
-  at: Vec2,
-  heading: number,
+  from: Heading,
 ): { spaceId: string; at: Vec2 } | null {
+  const { tierId, at, heading } = from
   const plan = ship.plans.get(tierId)
   if (!plan) return null
   const reach = 6 * paceOf(world.body) * 10
@@ -3792,7 +3868,7 @@ const ROOM_CASTS: Partial<Record<HatsuInteractionKind, RoomCast>> = {
   // settles is a room and how far off it is. Aim it at a thing instead and it
   // is the whip it also is — see `SOLID_CASTS`.
   dowsing: ({ world, ship, target, at, standingIn }) => {
-    const distance = distanceTo(ship, target, at, standingIn)
+    const distance = distanceTo(ship, target, { at, standingIn })
     return {
       world: { ...world, dowsing: target.id },
       report: {
@@ -3969,7 +4045,7 @@ const ROOM_CASTS: Partial<Record<HatsuInteractionKind, RoomCast>> = {
     const here = standingIn ? ship.spaces.get(standingIn) : null
     const rooms = [...ship.spaces.values()]
       .filter((space) => space.tierId === (here?.tierId ?? target.tierId))
-      .map((space) => ({ space, distance: distanceTo(ship, space, at, standingIn).metres }))
+      .map((space) => ({ space, distance: distanceTo(ship, space, { at, standingIn }).metres }))
       .sort((a, b) => a.distance - b.distance)
       .slice(0, 10)
       .map((near) => near.space.id)
@@ -4113,7 +4189,7 @@ const ROOM_CASTS: Partial<Record<HatsuInteractionKind, RoomCast>> = {
   // is the one thing about them the walk has to be careful to actually draw.
   // Cast again anywhere in their range and they are called back in.
   solicitation: ({ world, ship, at, standingIn }) =>
-    looseTheFlock(world, ship, standingIn, at) ?? {
+    looseTheFlock(world, ship, { at, standingIn }) ?? {
       world: { ...world, menagerie: [] },
       report: { kind: 'flock-called-in', rooms: world.menagerie.length },
     },
@@ -4147,7 +4223,11 @@ const ROOM_CASTS: Partial<Record<HatsuInteractionKind, RoomCast>> = {
         report: { kind: 'owl-recalled', rooms: world.trail.length },
       }
     }
-    const perch = perchFor(world, ship, target.id, standingIn, input.random ?? Math.random)
+    const perch = perchFor(world, ship, {
+      targetId: target.id,
+      standingIn,
+      random: input.random ?? Math.random,
+    })
     return {
       world: {
         ...world,
@@ -4164,7 +4244,11 @@ const ROOM_CASTS: Partial<Record<HatsuInteractionKind, RoomCast>> = {
   // Ten seconds on, taken once. The vision does not revise itself: that is
   // what makes diverging from it worth anything.
   future: ({ world, ship, target, at, input }) => {
-    const seen = tenSecondsOn(ship, world, target.tierId, at, input.heading ?? 0)
+    const seen = tenSecondsOn(ship, world, {
+      tierId: target.tierId,
+      at,
+      heading: input.heading ?? 0,
+    })
     if (!seen) return { world, report: { kind: 'no-target' } }
     return {
       world: { ...world, foreseen: seen },
@@ -4205,7 +4289,7 @@ const ROOM_CASTS: Partial<Record<HatsuInteractionKind, RoomCast>> = {
   },
 
   divination: ({ world, ship, target, at, standingIn }) => {
-    const reading = dialReading(ship, { ...world, dial: target.id }, at, standingIn)
+    const reading = dialReading(ship, { ...world, dial: target.id }, { at, standingIn })
     return {
       world: { ...world, dial: target.id },
       report: reading
@@ -4217,7 +4301,7 @@ const ROOM_CASTS: Partial<Record<HatsuInteractionKind, RoomCast>> = {
   // Her own blood and nothing else: each droplet goes and finds the nearest
   // room the walk has never set foot in, and expires a few arrivals later.
   'blood-search': ({ world, ship, at, standingIn }) => {
-    const found = unwalked(ship, world, at, standingIn)[0]
+    const found = unwalked(ship, world, { at, standingIn })[0]
     if (!found) return { world, report: { kind: 'droplets-dry' } }
     const droplets = [
       { spaceId: found.space.id, life: 3 },
@@ -4341,7 +4425,7 @@ function runCast(
     ...result,
     world: {
       ...result.world,
-      landed: landingIn(target, at, input.heading, result.world.landed),
+      landed: landingIn(target, { at, heading: input.heading }, result.world.landed),
     },
   }
 }
@@ -4358,10 +4442,10 @@ function runCast(
  */
 function landingIn(
   target: Space,
-  at: Vec2,
-  heading = 0,
+  aim: { at: Vec2; heading?: number },
   landed: Record<string, Vec2> = {},
 ): Record<string, Vec2> {
+  const { at, heading = 0 } = aim
   const sin = Math.sin(heading)
   const cos = Math.cos(heading)
   for (let metres = 1.5; metres <= 120; metres += 1.5) {
@@ -4381,9 +4465,9 @@ function landingIn(
 export function distanceTo(
   ship: Ship,
   target: Space,
-  at: Vec2,
-  standingIn: string | null,
+  from: Stood,
 ): { metres: number; decks: number } {
+  const { at, standingIn } = from
   const centre = centroid(target)
   const here = standingIn ? ship.spaces.get(standingIn) : null
   const fromTier = here ? ship.tiers.findIndex((tier) => tier.id === here.tierId) : -1
@@ -4415,7 +4499,8 @@ export function centroid(space: Space): Vec2 {
  * The first room that is not the one underfoot wins; if the ray only ever
  * crosses the room the visitor is standing in, that room is the target.
  */
-export function aimedSpace(plan: TierPlan, at: Vec2, heading: number, range = 90): Space | null {
+export function aimedSpace(plan: TierPlan, aim: Aim): Space | null {
+  const { at, heading, range = 90 } = aim
   // The camera looks along (-sin yaw, -cos yaw), as the walk's own movement
   // code has it.
   const dx = -Math.sin(heading)
@@ -4499,14 +4584,9 @@ export function walkedPlan(ship: Ship, world: TourWorld, tierId: string): TierPl
  * current outline is what is tested, so a solid Nen has moved is where the
  * technique put it and not where the blueprint drew it.
  */
-export function aimedSolid(
-  ship: Ship,
-  world: TourWorld,
-  plan: TierPlan,
-  at: Vec2,
-  heading: number,
-  range = 40,
-): Structure | null {
+export function aimedSolid(scene: Scene, plan: TierPlan, aim: Aim): Structure | null {
+  const { ship, world } = scene
+  const { at, heading, range = 40 } = aim
   const dx = -Math.sin(heading)
   const dz = -Math.cos(heading)
 
@@ -4514,7 +4594,7 @@ export function aimedSolid(
   // There are a handful of those at most, against the hundred and twenty-odd
   // the deck itself stands.
   const targets = bakedTargets(ship, world, plan).concat(
-    detachedOn(ship, world, plan.tier.id).map((held) => targetOf(held.structure)),
+    detachedOn(ship, world, { tierId: plan.tier.id }).map((held) => targetOf(held.structure)),
   )
 
   let nearest: Structure | null = null
@@ -4522,7 +4602,7 @@ export function aimedSolid(
   for (const target of targets) {
     // Each hit tightens the ray for the ones after it: past the nearest solid
     // found so far, nothing can win.
-    const hit = rayReaches(target, at, dx, dz, Math.min(range, distance))
+    const hit = rayReaches(target, { at, dx, dz }, Math.min(range, distance))
     if (hit === null || hit >= distance) continue
     distance = hit
     nearest = target.structure
@@ -4599,19 +4679,14 @@ const bakedTargets = (() => {
  * This is the segment-against-polygon test that was meant all along: the box
  * rejects nearly everything, and what survives is one crossing test per edge.
  */
-function rayReaches(
-  target: SolidTarget,
-  at: Vec2,
-  dx: number,
-  dz: number,
-  range: number,
-): number | null {
+function rayReaches(target: SolidTarget, ray: Ray, range: number): number | null {
+  const { at, dx, dz } = ray
   let near = 0
   let far = range
 
   // Slab test, one axis at a time. A ray running parallel to a pair of sides
   // either starts between them or never meets them.
-  const slab = (origin: number, direction: number, low: number, high: number) => {
+  const slab = (origin: number, direction: number, [low, high]: readonly [number, number]) => {
     if (Math.abs(direction) < 1e-9) return origin >= low && origin <= high
     const first = (low - origin) / direction
     const second = (high - origin) / direction
@@ -4619,8 +4694,8 @@ function rayReaches(
     far = Math.min(far, Math.max(first, second))
     return near <= far
   }
-  if (!slab(at[0], dx, target.minX, target.maxX)) return null
-  if (!slab(at[1], dz, target.minZ, target.maxZ)) return null
+  if (!slab(at[0], dx, [target.minX, target.maxX])) return null
+  if (!slab(at[1], dz, [target.minZ, target.maxZ])) return null
 
   // Standing inside it — under a mezzanine, under a run of ducting — is aiming
   // at it, which is what marching from the first step out already did.
@@ -4960,13 +5035,9 @@ export const linkIsOpen = (world: TourWorld, spaceId: string | null): boolean =>
  * either. `arrivedFrom` is the room the last crossing delivered them to, so
  * stepping out of one door does not immediately fall back through the other.
  */
-export function doorExit(
-  world: TourWorld,
-  spaceId: string | null,
-  arrivedFrom: string | null,
-  ship?: Ship,
-  random: () => number = Math.random,
-) {
+export function doorExit(world: TourWorld, through: Doors, options: DoorOptions = {}) {
+  const { spaceId, arrivedFrom } = through
+  const { ship, random = Math.random } = options
   if (!spaceId || spaceId === arrivedFrom) return null
   if (world.doors.length === 2) {
     const [a, b] = world.doors
@@ -5025,13 +5096,8 @@ export function fishBite(
  * with it up sends it no further than your own shoulder. The third is thrown
  * without looking, so it is given the ship and not the target.
  */
-function perchFor(
-  world: TourWorld,
-  ship: Ship,
-  targetId: string,
-  standingIn: string | null,
-  random: () => number,
-): string {
+function perchFor(world: TourWorld, ship: Ship, choice: Perch): string {
+  const { targetId, standingIn, random } = choice
   if (world.owlMode === 'shoulder') return standingIn ?? targetId
   if (world.owlMode === 'random') {
     const rooms = [...ship.spaces.keys()]
@@ -5174,10 +5240,9 @@ export const POLARITY_CONTACT = 1.2
 function markedAt(
   ship: Ship,
   world: TourWorld,
-  id: string,
-  hold: SolidHold,
-  seconds: number,
+  mark: Mark,
 ): { spaceId: string; base: Vec2; at: Vec2 } | null {
+  const { id, hold, seconds } = mark
   const original = solidById(ship, world, id)
   if (!original) return null
   const base = solidNow(original, hold).at
@@ -5202,9 +5267,9 @@ function markedAt(
 export function polarityStep(
   world: TourWorld,
   ship: Ship,
-  seconds: number,
-  delta: number,
+  step: { seconds: number; delta: number },
 ): { world: TourWorld; report: TourReport | null } | null {
+  const { seconds, delta } = step
   const suns: string[] = []
   const moons: string[] = []
   for (const [id, hold] of Object.entries(world.solids)) {
@@ -5221,7 +5286,7 @@ export function polarityStep(
 
   for (const sunId of suns) {
     if (spent.has(sunId)) continue
-    const sun = markedAt(ship, world, sunId, world.solids[sunId], seconds)
+    const sun = markedAt(ship, world, { id: sunId, hold: world.solids[sunId], seconds })
     if (!sun) continue
     const room = ship.spaces.get(sun.spaceId)
     if (!room) continue
@@ -5232,7 +5297,7 @@ export function polarityStep(
     let nearest: { id: string; base: Vec2; at: Vec2; away: number; apart: number } | null = null
     for (const moonId of moons) {
       if (spent.has(moonId)) continue
-      const moon = markedAt(ship, world, moonId, world.solids[moonId], seconds)
+      const moon = markedAt(ship, world, { id: moonId, hold: world.solids[moonId], seconds })
       if (!moon || moon.spaceId !== sun.spaceId) continue
       const away = Math.hypot(sun.at[0] - moon.at[0], sun.at[1] - moon.at[1])
       const apart = Math.hypot(sun.base[0] - moon.base[0], sun.base[1] - moon.base[1])

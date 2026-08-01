@@ -23,6 +23,11 @@ export default tseslint.config(
       '**/*.tsbuildinfo',
       'apps/*/vite.config.ts.timestamp-*.mjs',
       'packages/database/prisma/migrations/**',
+      // Scratch checkouts and a holding pen for deletions: copies of the tree,
+      // not the tree. Linting them reports every finding twice and holds the
+      // whole repo red on code nobody is editing.
+      '.claude/**',
+      '_to_delete/**',
     ],
   },
 
@@ -48,6 +53,22 @@ export default tseslint.config(
       eqeqeq: ['error', 'always', { null: 'ignore' }],
       'no-var': 'error',
       'prefer-const': 'error',
+
+      // A file past five hundred lines of code is holding more than one
+      // subject; the second one is always easier to find from its own file
+      // than from a heading two thousand lines down. Blanks and comments are
+      // not counted: this bounds how much a file *does*, and the prose that
+      // explains a decision is what makes the remaining lines readable —
+      // charging for it would buy shorter files with worse code in them.
+      'max-lines': ['error', { max: 500, skipBlankLines: true, skipComments: true }],
+
+      // Past three parameters a call site stops being readable at the call
+      // site: `f(a, b, true, null, 3)` says nothing about what those are, and
+      // adding an argument silently changes the meaning of every existing
+      // call. Take an object — named fields at the call site, and a new field
+      // is additive rather than positional. When the object turns out to have
+      // behaviour attached, that object wants to be a class.
+      'max-params': ['error', 3],
     },
   },
 
@@ -104,7 +125,7 @@ export default tseslint.config(
   {
     // Seed, backfill and migration scripts are operator tools: they log by
     // design and run outside the type-checked build.
-    files: ['packages/database/**/*.{ts,mjs}', 'tools/**/*.{ts,mjs}'],
+    files: ['packages/database/**/*.{ts,mjs}', 'scripts/**/*.{ts,mjs}'],
     rules: {
       'no-console': 'off',
       '@typescript-eslint/no-explicit-any': 'off',
@@ -114,5 +135,71 @@ export default tseslint.config(
   {
     files: ['**/*.spec.ts', '**/*.test.ts'],
     languageOptions: { globals: { ...globals.node } },
+  },
+
+  {
+    // Declarations, not logic. A translation catalogue, a hand-drawn map and a
+    // suite of cases are all long for the same harmless reason: they hold many
+    // small independent entries rather than one large idea. Splitting them buys
+    // an index file and a hunt across four files for the string you wanted.
+    //
+    // The width bound goes with it for the same reason: a message function
+    // takes the pieces the sentence needs, and its parameters are already named
+    // by the sentence they land in.
+    files: [
+      'apps/*/src/lib/i18n/messages/**',
+      'apps/*/src/lib/assets/maps/**',
+      '**/*.spec.ts',
+      '**/*.test.ts',
+      'packages/database/prisma/**',
+    ],
+    rules: {
+      'max-lines': 'off',
+      'max-params': 'off',
+    },
+  },
+
+  {
+    // The standing debt, and the only list here meant to get shorter.
+    //
+    // Every file below predates the five-hundred-line bound and is over it. The
+    // bound is an error everywhere else, so new code is held to it from the
+    // first line; these are grandfathered one path at a time, and a path leaves
+    // this list for good once the file is split. Nothing may be added: a new
+    // entry here is a file that was allowed to grow past the limit rather than
+    // be divided, which is the thing the rule exists to prevent.
+    //
+    // Counts are lines of code as ESLint measures them, blanks and comments
+    // excluded, taken when the rule was introduced.
+    files: [
+      'apps/web/src/lib/components/tour/TourScene.svelte', // 3908
+      'apps/web/src/lib/tour/hatsu.ts', // 3198
+      'apps/web/src/lib/nen/GlobalHatsuEffects.svelte', // 3015
+      'apps/web/src/lib/nen/hatsuInteractions.ts', // 2384
+      'apps/web/src/routes/ship/+page.svelte', // 1773
+      'apps/web/src/routes/tour/+page.svelte', // 1583
+      'apps/web/src/lib/nen/hatsuRegistry.ts', // 1478
+      'apps/web/src/lib/audio/hatsuSounds.ts', // 1205
+      // Escaped: an unescaped `[slug]` is a character class to the glob, and
+      // would quietly match nothing at all.
+      'apps/web/src/routes/characters/\\[slug\\]/+page.svelte', // 1171
+      'apps/web/src/routes/compare/+page.svelte', // 998
+      'apps/web/src/lib/tour/apparitions.ts', // 960
+      'apps/web/src/lib/components/map/markerProjection.ts', // 929
+      'apps/web/src/lib/components/tour/TourHatsuHud.svelte', // 872
+      'apps/web/src/lib/tour/mesh.ts', // 821
+      'apps/web/src/routes/timeline/+page.svelte', // 819
+      'apps/web/src/routes/+layout.svelte', // 758
+      'apps/web/src/routes/characters/+page.svelte', // 742
+      'apps/web/src/routes/relationships/+page.svelte', // 741
+      'apps/web/src/routes/tour/sources/+page.svelte', // 641
+      'apps/web/src/routes/tour/morena/+page.svelte', // 556
+      'packages/ability-modules/src/contagion/game.ts', // 565
+      'apps/web/src/lib/tour/geometry.ts', // 561
+      'apps/web/src/lib/tour/blueprint.ts', // 528
+    ],
+    rules: {
+      'max-lines': 'off',
+    },
   },
 )

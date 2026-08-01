@@ -143,7 +143,7 @@
   }
 
   /** What the dial reads from where the visitor is standing, this instant. */
-  const dial = $derived(dialReading(ship, world, at, standingIn))
+  const dial = $derived(dialReading(ship, world, { at, standingIn }))
 
   /** The verses, as lines rather than as indices. */
   const written = $derived(

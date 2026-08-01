@@ -90,11 +90,11 @@ export const painPacker = defineAbility({
       label: 'Ouvrir l’emballage',
       conditions: [
         effectIsLive('effectId', 'L’armure est en place'),
-        effectAttributeAtLeast(
-          'packedDamage',
-          MINIMUM_PACKED_DAMAGE,
-          'L’armure garde au moins un coup',
-        ),
+        effectAttributeAtLeast({
+          key: 'packedDamage',
+          threshold: MINIMUM_PACKED_DAMAGE,
+          label: 'L’armure garde au moins un coup',
+        }),
       ],
       effects: [setEffectState({ state: 'ENDED', attributes: { released: true } })],
       hint: 'Rising Sun dépense ce que l’armure a gardé',
@@ -130,12 +130,12 @@ export const risingSun = defineAbility({
   conditions: [
     canUseNen(),
     isConscious(),
-    effectAttributeAtLeast(
-      'packedDamage',
-      MINIMUM_PACKED_DAMAGE,
-      'Pain Packer a empaqueté des dégâts',
-      'painPackerEffectId',
-    ),
+    effectAttributeAtLeast({
+      key: 'packedDamage',
+      threshold: MINIMUM_PACKED_DAMAGE,
+      label: 'Pain Packer a empaqueté des dégâts',
+      parameterKey: 'painPackerEffectId',
+    }),
   ],
 
   targets: [self(), zone()],

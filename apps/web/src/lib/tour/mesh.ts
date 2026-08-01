@@ -31,11 +31,13 @@ import type {
   Doorway,
   Polygon,
   Provenance,
+  Segment,
   Space,
   SpaceCategory,
   Structure,
   StructureKind,
   Tier,
+  Triangle,
   Vec2,
   WallSegment,
 } from './types'
@@ -497,6 +499,19 @@ export function windowSources(structure: Structure, floorY: number): [number, nu
 /** Two grid indices in one number, so the fittings are not keyed by strings. */
 const cellKey = (i: number, j: number) => i * 4096 + j
 
+/** A point in the world, in metres: `[x, y, z]`, `y` up. */
+type Vec3 = readonly [number, number, number]
+
+/** A room as its light reads it: its outline, its two heights, and its sky. */
+interface LitRoom {
+  footprint: Polygon
+  floorY: number
+  ceilingY: number
+  /** How much light a room the reconstruction invented is allowed to claim. */
+  provenance: Provenance
+  sky?: readonly Vec3[]
+}
+
 /**
  * The light of one room, baked rather than lit.
  *
@@ -530,21 +545,21 @@ class RoomLight {
   private readonly floorY: number
   private readonly ceilingY: number
 
-  constructor(
-    private readonly footprint: Polygon,
-    floorY: number,
-    ceilingY: number,
-    provenance: Provenance,
-    /**
-     * The sky, where the room has any: `windowSources` of every window in it.
-     *
-     * Empty for 312 of the 314 spaces, which is why it is a plain array walked in
-     * full rather than bucketed on the fitting grid — the two rooms that do have
-     * one have a single window each, and the cost of the loop is the cost of the
-     * two of them.
-     */
-    private readonly sky: readonly [number, number, number][] = [],
-  ) {
+  private readonly footprint: Polygon
+  /**
+   * The sky, where the room has any: `windowSources` of every window in it.
+   *
+   * Empty for 312 of the 314 spaces, which is why it is a plain array walked in
+   * full rather than bucketed on the fitting grid — the two rooms that do have
+   * one have a single window each, and the cost of the loop is the cost of the
+   * two of them.
+   */
+  private readonly sky: readonly Vec3[]
+
+  constructor(room: LitRoom) {
+    const { footprint, floorY, ceilingY, provenance, sky = [] } = room
+    this.footprint = footprint
+    this.sky = sky
     const inferred = provenance === 'inferred'
     this.fill = LIGHT.fill * (inferred ? LIGHT.inferredFill : 1)
     this.lamps = inferred ? LIGHT.inferredLamps : 1
@@ -614,10 +629,16 @@ class RoomLight {
     return total * WINDOW_WEIGHT
   }
 
-  /** The albedo multiplier at a point, given how open to the room it is. */
-  private lit(openness: number, gain: number, x: number, y: number, z: number): number {
-    const sources = this.lamps * this.pool(x, y, z) + this.daylight(x, y, z)
-    return openness * (this.fill + gain * sources)
+  /**
+   * How much light of any kind arrives at a point: the fittings, weighted by
+   * what a room the reconstruction invented is allowed to claim, plus the sky.
+   *
+   * Kept apart from the albedo so that the multiplier itself — `openness *
+   * (fill + gain * sources)` — is written where the surface's own `gain` is
+   * already in hand, and no call has to carry both a point and a surface.
+   */
+  private sourcesAt(x: number, y: number, z: number): number {
+    return this.lamps * this.pool(x, y, z) + this.daylight(x, y, z)
   }
 
   /**
@@ -635,66 +656,143 @@ class RoomLight {
   }
 
   /**
-   * A horizontal surface, off the cache when it is at the height the cache is
-   * for. The cap of a coffin is horizontal too and stands at its own height, so
-   * it is measured rather than looked up.
+   * The shader for a horizontal surface — a floor or a ceiling — with its gain
+   * and its cache bound once rather than passed per vertex.
+   *
+   * A shader and not a measurement because the surface's own constants are the
+   * same for every one of its vertices: binding them here is what keeps the
+   * per-vertex call down to the point itself, with nothing allocated to carry
+   * it. Off the cache when the surface is at the height the cache is for — the
+   * cap of a coffin is horizontal too and stands at its own height, so it is
+   * measured rather than looked up.
    */
-  private flat(which: 0 | 1, gain: number, x: number, y: number, z: number): number {
-    const cacheable = y === (which === 0 ? this.floorY : this.ceilingY)
-    // Two rounded coordinates in one number: the ship is 175 m long and its
-    // rooms sit within a few hundred metres of the origin, so a decimetre grid
-    // is nowhere near the precision a double gives up.
-    const key = Math.round(x * 10) * 100000 + Math.round(z * 10)
-    if (cacheable) {
-      const held = this.shaded[which].get(key)
-      if (held !== undefined) return held
+  private horizontal(which: 0 | 1, gain: number): Shade {
+    return (x, y, z) => {
+      const cacheable = y === (which === 0 ? this.floorY : this.ceilingY)
+      // Two rounded coordinates in one number: the ship is 175 m long and its
+      // rooms sit within a few hundred metres of the origin, so a decimetre grid
+      // is nowhere near the precision a double gives up.
+      const key = Math.round(x * 10) * 100000 + Math.round(z * 10)
+      if (cacheable) {
+        const held = this.shaded[which].get(key)
+        if (held !== undefined) return held
+      }
+
+      const shade = this.openness(x, z) * (this.fill + gain * this.sourcesAt(x, y, z))
+      if (cacheable) this.shaded[which].set(key, shade)
+      return shade
     }
-
-    const shade = this.lit(this.openness(x, z), gain, x, y, z)
-    if (cacheable) this.shaded[which].set(key, shade)
-    return shade
   }
 
-  floor(x: number, y: number, z: number): number {
-    return this.flat(0, LIGHT.floor, x, y, z)
-  }
+  readonly floor: Shade = this.horizontal(0, LIGHT.floor)
 
-  ceiling(x: number, y: number, z: number): number {
-    return this.flat(1, LIGHT.ceiling, x, y, z)
-  }
+  readonly ceiling: Shade = this.horizontal(1, LIGHT.ceiling)
 
   /**
-   * A vertical surface: a wall, a lintel, the side of a solid.
+   * The shader for a vertical surface: a wall, a lintel, the side of a solid.
    *
    * `from` and `to` are the surface's own bottom and top, so the crease is at the
-   * foot of a coffin as well as at the foot of a bulkhead, and `endDistance` is
-   * how far along the run the point is from the nearer end of it — the jamb of a
-   * doorway and the corner of a room both darken by it.
+   * foot of a coffin as well as at the foot of a bulkhead. `endFalloff` gives how
+   * far along the run a point is from the nearer end of it — the jamb of a
+   * doorway and the corner of a room both darken by it — and is a function of the
+   * point because, unlike the span, it is the one part that varies across the
+   * surface. Left out, the surface has no ends to darken towards.
    */
-  wall(x: number, y: number, z: number, from: number, to: number, endDistance = Infinity): number {
-    const low = clamp01((y - from) / LIGHT.crease)
-    const high = clamp01((to - y) / LIGHT.crease)
-    const ends = clamp01(endDistance / LIGHT.crease)
-    const shade = Math.min(low, high, ends) ** 0.8
-    return this.lit(LIGHT.creaseFloor + (1 - LIGHT.creaseFloor) * shade, LIGHT.wall, x, y, z)
+  wall(from: number, to: number, endFalloff?: (x: number, z: number) => number): Shade {
+    return (x, y, z) => {
+      const low = clamp01((y - from) / LIGHT.crease)
+      const high = clamp01((to - y) / LIGHT.crease)
+      const ends = clamp01((endFalloff ? endFalloff(x, z) : Infinity) / LIGHT.crease)
+      const shade = Math.min(low, high, ends) ** 0.8
+      const openness = LIGHT.creaseFloor + (1 - LIGHT.creaseFloor) * shade
+      return openness * (this.fill + LIGHT.wall * this.sourcesAt(x, y, z))
+    }
   }
 }
 
 /** What a vertex of a surface is multiplied by. Baked once, per `RoomLight`. */
 type Shade = (x: number, y: number, z: number) => number
 
+/** Three corners of one written triangle, in the order they are wound. */
+type Corners = readonly [Vec3, Vec3, Vec3]
+
+/**
+ * How a surface is coloured: its albedo, and the bake that varies it per
+ * vertex. `shade` is left out under the reveal, where the colour *is* the claim
+ * and a gradient over it would be something to allow for.
+ */
+interface Paint {
+  colour: Rgb
+  shade?: Shade
+}
+
+/** The height a horizontal surface sits at, and which way it faces. */
+interface Plane {
+  y: number
+  /**
+   * Up for a floor, down for a ceiling: the two are the same triangulated
+   * footprint at two heights, wound opposite ways.
+   */
+  up: boolean
+  /** The longest edge a piece may keep. `Infinity` writes it whole. */
+  spacing?: number
+}
+
+/** The bottom and top a vertical surface runs between, in metres. */
+interface Span {
+  bottom: number
+  top: number
+}
+
+/**
+ * The two buffers a solid is written into: the shaded triangles, and the plain
+ * line list that draws its outline over them. They are filled together and by
+ * the same pass, so they travel together.
+ */
+interface Surfaces {
+  builder: MeshBuilder
+  edges: number[]
+}
+
+/** Where a solid stands, and by whose light it is therefore lit. */
+interface Standing {
+  room: Space
+  tier: Tier
+  light: RoomLight
+}
+
+/**
+ * A run of points inside a shared buffer.
+ *
+ * Every room's geometry lives in one array per deck, so a room is a slice of it
+ * rather than an array of its own — and a slice is where it starts and how many
+ * points long it is, which is exactly what has to be said to measure one.
+ */
+interface BufferRun {
+  data: number[]
+  start: number
+  count: number
+}
+
+/**
+ * Where a lifted solid came from.
+ *
+ * `standing` is the rest of what is in the room, and it is optional for the same
+ * reason it is on `lightOf`: it only changes the answer in the two rooms with a
+ * window in them.
+ */
+interface SolidPlacement {
+  room: Space
+  tier: Tier
+  standing?: readonly Structure[]
+}
+
 class MeshBuilder {
   readonly positions: number[] = []
   readonly normals: number[] = []
   readonly colors: number[] = []
 
-  triangle(
-    a: readonly [number, number, number],
-    b: readonly [number, number, number],
-    c: readonly [number, number, number],
-    colour: Rgb,
-    shade?: Shade,
-  ): void {
+  triangle([a, b, c]: Corners, colour: Rgb, shade?: Shade): void {
     const ux = b[0] - a[0]
     const uy = b[1] - a[1]
     const uz = b[2] - a[2]
@@ -725,21 +823,13 @@ class MeshBuilder {
    * `up` picks which way it faces: the floor and the ceiling of a room are the
    * same triangulated footprint at two heights, wound opposite ways.
    */
-  patch(
-    a: Vec2,
-    b: Vec2,
-    c: Vec2,
-    y: number,
-    up: boolean,
-    colour: Rgb,
-    shade?: Shade,
-    spacing = PATCH_EDGE,
-  ): void {
-    for (const [p, q, r] of subdivideTriangle(a, b, c, spacing)) {
-      const first: [number, number, number] = [p[0], y, p[1]]
-      const second: [number, number, number] = up ? [r[0], y, r[1]] : [q[0], y, q[1]]
-      const third: [number, number, number] = up ? [q[0], y, q[1]] : [r[0], y, r[1]]
-      this.triangle(first, second, third, colour, shade)
+  patch(triangle: Triangle, plane: Plane, paint: Paint): void {
+    const { y, up, spacing = PATCH_EDGE } = plane
+    for (const [p, q, r] of subdivideTriangle(triangle, spacing)) {
+      const first: Vec3 = [p[0], y, p[1]]
+      const second: Vec3 = up ? [r[0], y, r[1]] : [q[0], y, q[1]]
+      const third: Vec3 = up ? [q[0], y, q[1]] : [r[0], y, r[1]]
+      this.triangle([first, second, third], paint.colour, paint.shade)
     }
   }
 
@@ -760,13 +850,14 @@ class MeshBuilder {
    * `FrontSide`, and a quad wound the wrong way is not a dark quad, it is a
    * missing one, which is the only way an error here can be seen at all.
    */
-  quad(start: Vec2, end: Vec2, bottom: number, top: number, colour: Rgb, shade?: Shade): void {
+  quad([start, end]: Segment, span: Span, paint: Paint): void {
+    const { bottom, top } = span
     const run = Math.hypot(end[0] - start[0], end[1] - start[1])
     const rise = top - bottom
     const across = Math.max(1, Math.ceil(run / (PATCH * COARSE)))
     const up = Math.max(1, Math.ceil(Math.abs(rise) / PATCH))
 
-    const at = (u: number, v: number): [number, number, number] => [
+    const at = (u: number, v: number): Vec3 => [
       start[0] + (end[0] - start[0]) * u,
       bottom + rise * v,
       start[1] + (end[1] - start[1]) * u,
@@ -782,8 +873,8 @@ class MeshBuilder {
         const b = at(u1, v0)
         const c = at(u1, v1)
         const d = at(u0, v1)
-        this.triangle(a, b, c, colour, shade)
-        this.triangle(a, c, d, colour, shade)
+        this.triangle([a, b, c], paint.colour, paint.shade)
+        this.triangle([a, c, d], paint.colour, paint.shade)
       }
     }
   }
@@ -797,14 +888,9 @@ class MeshBuilder {
  * deck and draws it on its own, so that pushing a coffin across the burial
  * chamber does not mean re-extruding the burial chamber.
  */
-function extrudeSolid(
-  builder: MeshBuilder,
-  edges: number[],
-  structure: Structure,
-  room: Space,
-  tier: Tier,
-  light: RoomLight,
-): void {
+function extrudeSolid(into: Surfaces, structure: Structure, where: Standing): void {
+  const { builder, edges } = into
+  const { room, tier, light } = where
   const OFFSET = 0.03
   const horizontal = (a: Vec2, b: Vec2, y: number) => edges.push(a[0], y, a[1], b[0], y, b[1])
   const vertical = (point: Vec2, bottom: number, top: number) =>
@@ -826,8 +912,8 @@ function extrudeSolid(
   // own top: the lacquer of a coffin and the steel of a spring are lit by the
   // fittings over them and creased where they meet the deck, which is the whole
   // of what tells one from the other without a second material.
-  const sides = (x: number, y: number, z: number) => light.wall(x, y, z, bottom, top)
-  const facing = (x: number, y: number, z: number) => light.floor(x, y, z)
+  const sides = light.wall(bottom, top)
+  const facing = light.floor
 
   // A run of bars is one solid to walk around and a row of uprights to see
   // through: drawn as a slab it would be the wall the cell fronts are not.
@@ -836,14 +922,14 @@ function extrudeSolid(
     for (const bar of grilleBars(structure)) {
       // Each upright is a little solid of its own, and wants the same way round.
       for (const [start, end] of iterateEdges(toClockwise(bar))) {
-        builder.quad(start, end, bottom, railBottom, colour, sides)
+        builder.quad([start, end], { bottom, top: railBottom }, { colour, shade: sides })
       }
     }
 
     // The rail closes the tops of the uprights and gives the run a line to
     // read at a distance, the way a lintel does over a door.
     for (const [start, end] of iterateEdges(outline)) {
-      builder.quad(start, end, railBottom, top, colour, sides)
+      builder.quad([start, end], { bottom: railBottom, top }, { colour, shade: sides })
       horizontal(start, end, railBottom + OFFSET)
       horizontal(start, end, top - OFFSET)
     }
@@ -852,14 +938,14 @@ function extrudeSolid(
       const a = outline[railCap[i]]
       const b = outline[railCap[i + 1]]
       const c = outline[railCap[i + 2]]
-      builder.patch(a, b, c, top, true, colour, facing)
+      builder.patch([a, b, c], { y: top, up: true }, { colour, shade: facing })
     }
     for (const corner of outline) vertical(corner, bottom, top)
     return
   }
 
   for (const [start, end] of iterateEdges(outline)) {
-    builder.quad(start, end, bottom, top, colour, sides)
+    builder.quad([start, end], { bottom, top }, { colour, shade: sides })
     vertical(start, bottom, top)
     horizontal(start, end, top - OFFSET)
   }
@@ -869,11 +955,11 @@ function extrudeSolid(
     const a = outline[cap[i]]
     const b = outline[cap[i + 1]]
     const c = outline[cap[i + 2]]
-    builder.patch(a, b, c, top, true, colour, facing)
+    builder.patch([a, b, c], { y: top, up: true }, { colour, shade: facing })
     // Hung off the floor, so it is closed underneath as well as on top. Its
     // underside is in shadow, which the crease at its own base already says.
     if (structure.base > 0) {
-      builder.patch(a, b, c, bottom, false, colour, sides)
+      builder.patch([a, b, c], { y: bottom, up: false }, { colour, shade: sides })
     }
   }
 }
@@ -886,14 +972,7 @@ function extrudeSolid(
  * bounding sphere of the entire deck, and a per-room mesh with the deck's
  * sphere is the same thing that could not be culled before.
  */
-function boundsOf(
-  positions: number[],
-  start: number,
-  count: number,
-  edges: number[],
-  edgeStart: number,
-  edgeCount: number,
-): { centre: readonly [number, number, number]; radius: number } {
+function boundsOf(vertices: BufferRun, edges: BufferRun): { centre: Vec3; radius: number } {
   let minX = Infinity
   let minY = Infinity
   let minZ = Infinity
@@ -911,8 +990,8 @@ function boundsOf(
       if (source[i + 2] > maxZ) maxZ = source[i + 2]
     }
   }
-  stretch(positions, start, count)
-  stretch(edges, edgeStart, edgeCount)
+  stretch(vertices.data, vertices.start, vertices.count)
+  stretch(edges.data, edges.start, edges.count)
 
   if (minX > maxX) return { centre: [0, 0, 0], radius: 0 }
   const centre: readonly [number, number, number] = [
@@ -936,17 +1015,17 @@ function boundsOf(
  * their fittings and by nothing else.
  */
 function lightOf(space: Space, tier: Tier, standing: readonly Structure[] = []): RoomLight {
-  const sky: [number, number, number][] = []
+  const sky: Vec3[] = []
   for (const structure of standing) {
     if (structure.kind === 'window') sky.push(...windowSources(structure, floorOf(space, tier)))
   }
-  return new RoomLight(
-    space.footprint,
-    floorOf(space, tier),
-    floorOf(space, tier) + ceilingOf(space, tier),
-    space.provenance,
+  return new RoomLight({
+    footprint: space.footprint,
+    floorY: floorOf(space, tier),
+    ceilingY: floorOf(space, tier) + ceilingOf(space, tier),
+    provenance: space.provenance,
     sky,
-  )
+  })
 }
 
 /**
@@ -958,19 +1037,15 @@ function lightOf(space: Space, tier: Tier, standing: readonly Structure[] = []):
  * King's living room keeps the daylight on it; pass nothing and it is lit by the
  * fittings alone, which is right everywhere else on the ship.
  */
-export function buildSolidMesh(
-  structure: Structure,
-  room: Space,
-  tier: Tier,
-  standing: readonly Structure[] = [],
-): TierMesh {
+export function buildSolidMesh(structure: Structure, where: SolidPlacement): TierMesh {
+  const { room, tier, standing = [] } = where
   const builder = new MeshBuilder()
   const edges: number[] = []
   // The same light the deck baked into it, rebuilt for the room it was lifted
   // out of: a coffin carried across the burial chamber keeps the chamber's
   // fittings on it rather than turning into a flat silhouette the moment a
   // technique picks it up.
-  extrudeSolid(builder, edges, structure, room, tier, lightOf(room, tier, standing))
+  extrudeSolid({ builder, edges }, structure, { room, tier, light: lightOf(room, tier, standing) })
   const count = builder.positions.length / 3
   const edgeCount = edges.length / 3
   return {
@@ -995,7 +1070,10 @@ export function buildSolidMesh(
         seamCount: 0,
         fittingStart: 0,
         fittingCount: 0,
-        ...boundsOf(builder.positions, 0, count, edges, 0, edgeCount),
+        ...boundsOf(
+          { data: builder.positions, start: 0, count },
+          { data: edges, start: 0, count: edgeCount },
+        ),
       },
     ],
   }
@@ -1036,7 +1114,7 @@ export function buildTierMesh(plan: TierPlan, options: { reveal?: boolean } = {}
    * would fight for the depth buffer, which is the thing `FrontSide` was brought
    * in to stop.
    */
-  const fitting = (x: number, y: number, z: number, glow: Rgb) => {
+  const fitting = ([x, y, z]: Vec3, glow: Rgb) => {
     const h = FITTING_SIZE / 2
     const corners: Vec2[] = [
       [x - h, z - h],
@@ -1214,27 +1292,18 @@ export function buildTierMesh(plan: TierPlan, options: { reveal?: boolean } = {}
 
       // Floor faces up, ceiling faces down: the winding is simply reversed.
       builder.patch(
-        a,
-        b,
-        c,
-        base,
-        true,
-        floorColour,
-        bake((x, y, z) => light.floor(x, y, z)),
+        [a, b, c],
+        { y: base, up: true },
+        { colour: floorColour, shade: bake(light.floor) },
       )
       // A lantern replaces this pass with the border-and-panel one below: the
       // ceiling is cut open over the middle of the room rather than closed.
       if (space.lantern) continue
       builder.patch(
-        a,
-        b,
-        c,
-        top,
-        false,
-        ceilingColour,
-        bake((x, y, z) => light.ceiling(x, y, z)),
+        [a, b, c],
         // Left whole: see `PATCH` for why a lattice up here buys nothing.
-        Infinity,
+        { y: top, up: false, spacing: Infinity },
+        { colour: ceilingColour, shade: bake(light.ceiling) },
       )
     }
 
@@ -1248,7 +1317,7 @@ export function buildTierMesh(plan: TierPlan, options: { reveal?: boolean } = {}
      * and a visitor walks under it exactly as they walked under a flat ceiling.
      */
     if (space.lantern) {
-      const shade = bake((x: number, y: number, z: number) => light.ceiling(x, y, z))
+      const shade = bake(light.ceiling)
       const xs = space.footprint.map((corner) => corner[0])
       const zs = space.footprint.map((corner) => corner[1])
       const [x0, x1] = [Math.min(...xs), Math.max(...xs)]
@@ -1262,8 +1331,16 @@ export function buildTierMesh(plan: TierPlan, options: { reveal?: boolean } = {}
         if (Math.abs(c[0] - a[0]) < EPSILON || Math.abs(c[1] - a[1]) < EPSILON) return
         const b: Vec2 = [c[0], a[1]]
         const d: Vec2 = [a[0], c[1]]
-        builder.patch(a, b, c, y, false, ceilingColour, shade, Infinity)
-        builder.patch(a, c, d, y, false, ceilingColour, shade, Infinity)
+        builder.patch(
+          [a, b, c],
+          { y, up: false, spacing: Infinity },
+          { colour: ceilingColour, shade },
+        )
+        builder.patch(
+          [a, c, d],
+          { y, up: false, spacing: Infinity },
+          { colour: ceilingColour, shade },
+        )
       }
       band([x0, z0], [x1, lz0], top)
       band([x0, lz1], [x1, z1], top)
@@ -1274,7 +1351,7 @@ export function buildTierMesh(plan: TierPlan, options: { reveal?: boolean } = {}
       // Wound like a room's walls rather than like a column's: the sides of a
       // coffer are seen from inside it.
       for (const [start, end] of iterateEdges(rect)) {
-        builder.quad(start, end, top, panelTop, ceilingColour, shade)
+        builder.quad([start, end], { bottom: top, top: panelTop }, { colour: ceilingColour, shade })
         horizontal(start, end, top + OFFSET)
         horizontal(start, end, panelTop - OFFSET)
       }
@@ -1312,7 +1389,7 @@ export function buildTierMesh(plan: TierPlan, options: { reveal?: boolean } = {}
       // legend you have to know.
       const burn = space.provenance === 'inferred' ? LIGHT.inferredLamps : 1
       const glow: Rgb = [FITTING_GLOW[0] * burn, FITTING_GLOW[1] * burn, FITTING_GLOW[2] * burn]
-      for (const [x, z] of ceilingLamps(space.footprint)) fitting(x, hang, z, glow)
+      for (const [x, z] of ceilingLamps(space.footprint)) fitting([x, hang, z], glow)
 
       // And the sky, in the two rooms that have any. Undimmed by provenance —
       // see `RoomLight.daylight` — and in the same buffer as the fittings,
@@ -1341,15 +1418,17 @@ export function buildTierMesh(plan: TierPlan, options: { reveal?: boolean } = {}
       // a corner and a door jamb both darken.
       const run = Math.hypot(wall.end[0] - wall.start[0], wall.end[1] - wall.start[1])
       builder.quad(
-        wall.start,
-        wall.end,
-        base,
-        top,
-        wallColour,
-        bake((x, y, z) => {
-          const along = Math.hypot(x - wall.start[0], z - wall.start[1])
-          return light.wall(x, y, z, base, top, Math.min(along, run - along))
-        }),
+        [wall.start, wall.end],
+        { bottom: base, top },
+        {
+          colour: wallColour,
+          shade: bake(
+            light.wall(base, top, (x, z) => {
+              const along = Math.hypot(x - wall.start[0], z - wall.start[1])
+              return Math.min(along, run - along)
+            }),
+          ),
+        },
       )
       horizontal(wall.start, wall.end, base + OFFSET)
       horizontal(wall.start, wall.end, top - OFFSET)
@@ -1368,9 +1447,17 @@ export function buildTierMesh(plan: TierPlan, options: { reveal?: boolean } = {}
         [centre[0] + h, centre[1] + h],
         [centre[0] - h, centre[1] + h],
       ]
-      const cap = bake((x: number, y: number, z: number) => light.ceiling(x, y, z))
-      builder.patch(corners[0], corners[1], corners[2], top, false, colour, cap)
-      builder.patch(corners[0], corners[2], corners[3], top, false, colour, cap)
+      const cap = bake(light.ceiling)
+      builder.patch(
+        [corners[0], corners[1], corners[2]],
+        { y: top, up: false },
+        { colour, shade: cap },
+      )
+      builder.patch(
+        [corners[0], corners[2], corners[3]],
+        { y: top, up: false },
+        { colour, shade: cap },
+      )
       // A column's faces are in the wall list, so they are drawn by the pass
       // above; what is left is the cap and the arrises.
       for (const corner of corners) vertical(corner, base, top)
@@ -1380,7 +1467,7 @@ export function buildTierMesh(plan: TierPlan, options: { reveal?: boolean } = {}
     // only has to raise them: the same outline, extruded to its own height and
     // capped, and never taller than the room it stands in.
     for (const structure of standingIn.get(space.id) ?? []) {
-      extrudeSolid(builder, edges, structure, space, tier, light)
+      extrudeSolid({ builder, edges }, structure, { room: space, tier, light })
     }
 
     // Above each opening the wall carries on to the ceiling, so a doorway reads
@@ -1402,12 +1489,12 @@ export function buildTierMesh(plan: TierPlan, options: { reveal?: boolean } = {}
       const otherBase = floorOf(other, tier)
       if (base > otherBase + EPSILON) {
         builder.quad(
-          door.end,
-          door.start,
-          otherBase,
-          base,
-          colourFor(WALL_COLOUR, space.provenance),
-          bake((x, y, z) => light.wall(x, y, z, otherBase, base)),
+          [door.end, door.start],
+          { bottom: otherBase, top: base },
+          {
+            colour: colourFor(WALL_COLOUR, space.provenance),
+            shade: bake(light.wall(otherBase, base)),
+          },
         )
         horizontal(door.start, door.end, base + OFFSET)
       }
@@ -1435,12 +1522,9 @@ export function buildTierMesh(plan: TierPlan, options: { reveal?: boolean } = {}
       if (lintelTop > lintelBottom) {
         const lintel = (from: Vec2, to: Vec2) =>
           builder.quad(
-            from,
-            to,
-            lintelBottom,
-            lintelTop,
-            lintelColour,
-            bake((x, y, z) => light.wall(x, y, z, lintelBottom, lintelTop)),
+            [from, to],
+            { bottom: lintelBottom, top: lintelTop },
+            { colour: lintelColour, shade: bake(light.wall(lintelBottom, lintelTop)) },
           )
         lintel(door.start, door.end)
         lintel(door.end, door.start)
@@ -1461,12 +1545,9 @@ export function buildTierMesh(plan: TierPlan, options: { reveal?: boolean } = {}
        */
       for (const cheek of jambsOf.get(sealKey(door.a, door.b)) ?? []) {
         builder.quad(
-          cheek.start,
-          cheek.end,
-          base,
-          lintelBottom,
-          lintelColour,
-          bake((x, y, z) => light.wall(x, y, z, base, lintelBottom)),
+          [cheek.start, cheek.end],
+          { bottom: base, top: lintelBottom },
+          { colour: lintelColour, shade: bake(light.wall(base, lintelBottom)) },
         )
         vertical(cheek.start, base, lintelBottom)
         vertical(cheek.end, base, lintelBottom)
@@ -1474,17 +1555,12 @@ export function buildTierMesh(plan: TierPlan, options: { reveal?: boolean } = {}
 
       if (lintelTop > lintelBottom) {
         const soffit = doorSoffit(door)
-        const under = bake((x: number, y: number, z: number) => light.ceiling(x, y, z))
+        const under = bake(light.ceiling)
         for (let i = 1; i + 1 < soffit.length; i++) {
           builder.patch(
-            soffit[0],
-            soffit[i],
-            soffit[i + 1],
-            lintelBottom,
-            false,
-            lintelColour,
-            under,
-            Infinity,
+            [soffit[0], soffit[i], soffit[i + 1]],
+            { y: lintelBottom, up: false, spacing: Infinity },
+            { colour: lintelColour, shade: under },
           )
         }
         horizontal(door.start, door.end, lintelBottom + OFFSET)
@@ -1506,7 +1582,10 @@ export function buildTierMesh(plan: TierPlan, options: { reveal?: boolean } = {}
       seamCount,
       fittingStart,
       fittingCount,
-      ...boundsOf(builder.positions, start, count, edges, edgeStart, edgeCount),
+      ...boundsOf(
+        { data: builder.positions, start, count },
+        { data: edges, start: edgeStart, count: edgeCount },
+      ),
     })
   }
 

@@ -233,6 +233,36 @@ h3,
   }
 }
 
+/* What full screen takes away, and what it keeps — for every room of the
+   reconstruction that asks for the screen, which is now more than one, so the
+   rules live with the archive rather than inside one route's scoped styles.
+   See `$lib/tour/fullscreen` for who raises the class.
+
+   The header and the footer belong to the archive rather than to the ship, and
+   a room is the whole screen or it is not full screen. The Nen dock is left
+   standing: it is the one control a route cannot supply for itself, since the
+   aura is picked up outside it. */
+html.tour-immersive .app-header,
+html.tour-immersive .app-footer {
+  display: none;
+}
+
+/* And the route's entry animation stands down with them — not for the motion,
+   which is over in half a second, but because it is filled `both` and leaves a
+   `transform` on the shell for good. A transformed ancestor is the containing
+   block for everything fixed inside it, so `inset: 0` would measure the route
+   rather than the screen: the room would start under the header and run off the
+   bottom of the window, taking its read-outs with it. `animation: none` is what
+   lifts it — a plain `transform: none` loses to a running fill. */
+html.tour-immersive .route-shell {
+  animation: none;
+}
+
+/* Nothing scrolls behind it. */
+html.tour-immersive body {
+  overflow: hidden;
+}
+
 @media (max-width: 800px) {
   :root {
     --header-height: 3.5rem;

@@ -18,6 +18,7 @@
    * second roster to keep in step, and picking an aura up before walking in
    * here is the whole gesture.
    */
+  import { onDestroy } from 'svelte'
   import Seo from '$lib/components/Seo.svelte'
   import TourScene from '$lib/components/tour/TourScene.svelte'
   import ContagionDashboard from '$lib/nen/ContagionDashboard.svelte'
@@ -27,6 +28,7 @@
   import { activeHatsu, closeHatsuGate, openHatsuGate } from '$lib/nen/hatsuState'
   import { HATSU_PROFILES } from '$lib/nen/hatsuRegistry'
   import { floorOf, theShip } from '$lib/tour/blueprint'
+  import { Fullscreen } from '$lib/tour/fullscreen.svelte'
   import {
     ANSWER_CARDS,
     DEALER_AT,
@@ -81,6 +83,49 @@
   let choice = $state<AnswerCard | null>(null)
 
   let tierId = $state(HIDEOUT_TIER)
+
+  // ── The table at the size of the screen ────────
+  /**
+   * Full screen here is the same bargain the walk makes, for the opposite
+   * reason: on the walk the panel is what you steer with, and at the table it
+   * is where the cards are legible. So the screen takes both — the room on the
+   * left, the hand on the right — and the hand folds away when you want to look
+   * across the table at her instead. It is the one page of the archive where
+   * the panel, not the scene, is the thing you came for; it is also the one
+   * that is a game, and a game is played at the size of the screen.
+   */
+  const screen = new Fullscreen()
+  const immersive = $derived(screen.immersive)
+  let panelOpen = $state(true)
+
+  $effect(() => screen.watch())
+
+  const toggleFullscreen = () => void screen.toggle()
+
+  /**
+   * V gives the table the screen, and Esc gives it back — but only where
+   * nothing else has a claim on Esc: in native full screen the browser answers
+   * it first, and either way a keystroke aimed at a radio or a field is not
+   * aimed at us.
+   */
+  function onWindowKeydown(event: KeyboardEvent) {
+    if (event.metaKey || event.ctrlKey || event.altKey) return
+    const key = event.key.toLowerCase()
+    if (key !== 'v' && key !== 'escape') return
+    if (key === 'escape' && !(immersive && !screen.native)) return
+    const target = event.target
+    if (
+      target instanceof HTMLElement &&
+      (target.isContentEditable || target.closest('input, textarea, select') !== null)
+    ) {
+      return
+    }
+    event.preventDefault()
+    toggleFullscreen()
+  }
+
+  // Leaving the table leaves full screen with it.
+  onDestroy(() => screen.leave())
 
   /**
    * The seat.
@@ -189,6 +234,8 @@
   ])}
 />
 
+<svelte:window onkeydown={onWindowKeydown} />
+
 <div class="mx-auto max-w-[1600px] px-4 py-8" data-hatsu-pass>
   <header class="mb-6">
     <p class="text-xs uppercase tracking-widest text-[#FFD700]/70">
@@ -200,10 +247,24 @@
     <p class="mt-2 max-w-3xl text-sm leading-relaxed text-[#FFFFF0]/70">{copy.intro}</p>
   </header>
 
-  <div class="grid gap-4 lg:grid-cols-[1fr_380px]">
+  <!-- Full screen is this grid over everything else rather than the canvas
+       alone: a table with no hand beside it is a room with a chair in it, and
+       the game would be somewhere behind the screen it just took. -->
+  <div
+    class="grid {immersive
+      ? // Over the archive's own sticky header (80) and under its Nen dock
+        // (100): the aura is picked up outside the route, and full screen must
+        // not be where it cannot be reached.
+        `fixed inset-0 z-[90] h-[100dvh] w-screen overflow-hidden bg-[#0b0b0d] ${
+          panelOpen ? 'grid-cols-[1fr_min(26rem,55vw)]' : 'grid-cols-1'
+        }`
+      : 'gap-4 lg:grid-cols-[1fr_380px]'}"
+  >
     <!-- The room, drawn by the walk's own engine off the walk's own blueprint. -->
     <section
-      class="relative min-h-[420px] overflow-hidden rounded-lg border border-[#333] lg:h-[70vh]"
+      class="relative overflow-hidden {immersive
+        ? 'h-full min-h-0'
+        : 'min-h-[420px] rounded-lg border border-[#333] lg:h-[70vh]'}"
     >
       <TourScene
         {ship}
@@ -225,12 +286,64 @@
         </p>
         <p class="mt-1 text-xs leading-snug text-[#FFFFF0]/60">{copy.seat}</p>
       </div>
+
+      <!-- The way in and out of the screen. Top right of the room, because the
+           left corner already names the deck and the office. -->
+      <button
+        type="button"
+        onclick={toggleFullscreen}
+        aria-pressed={immersive}
+        class="absolute right-3 top-3 z-20 rounded border px-2.5 py-1 text-xs transition-colors {immersive
+          ? 'border-[#FFD700] bg-[#050505]/80 text-[#FFD700]'
+          : 'border-[#333] bg-[#050505]/80 text-[#FFFFF0]/70 hover:border-[#FFD700]/50 hover:text-[#FFFFF0]'}"
+      >
+        {immersive ? $t.tour.fullscreen.exit : $t.tour.fullscreen.enter}
+        <kbd class="ml-1 text-[10px] text-[#FFD700]/70">V</kbd>
+      </button>
     </section>
+
+    <!-- The hand, once it is folded away: the table is still there to be looked
+         at, and the cards are one press from coming back. -->
+    {#if immersive && !panelOpen}
+      <button
+        type="button"
+        onclick={() => (panelOpen = true)}
+        aria-expanded="false"
+        class="absolute right-0 top-1/2 z-30 -translate-y-1/2 rounded-l border border-r-0 border-[#333] bg-[#050505]/90 px-2 py-3 text-xs text-[#FFFFF0]/70 transition-colors hover:border-[#FFD700]/50 hover:text-[#FFFFF0]"
+      >
+        {$t.tour.fullscreen.showPanel}
+      </button>
+    {/if}
 
     <!-- The game, where the cards are legible. -->
     <section
-      class="flex max-h-[70vh] flex-col overflow-y-auto rounded-lg border border-[#333] bg-[#0b0b0d] p-4"
+      class="flex flex-col overflow-y-auto border-[#333] bg-[#0b0b0d] p-4 {immersive
+        ? `min-h-0 border-l ${panelOpen ? '' : 'hidden'}`
+        : 'max-h-[70vh] rounded-lg border'}"
     >
+      <!-- Folding the hand away is offered only where it buys something: full
+           screen, where what it uncovers is the table itself. -->
+      {#if immersive}
+        <div class="sticky top-0 z-10 -m-4 mb-0 flex gap-1.5 bg-[#0b0b0d] p-4 pb-3">
+          <button
+            type="button"
+            onclick={() => (panelOpen = false)}
+            aria-expanded="true"
+            class="rounded border border-[#333] px-2.5 py-1 text-xs text-[#FFFFF0]/70 transition-colors hover:border-[#FFD700]/50 hover:text-[#FFFFF0]"
+          >
+            {$t.tour.fullscreen.hidePanel}
+          </button>
+          <button
+            type="button"
+            onclick={toggleFullscreen}
+            class="rounded border border-[#FFD700]/50 px-2.5 py-1 text-xs text-[#FFD700] transition-colors hover:bg-[#FFD700]/10"
+          >
+            {$t.tour.fullscreen.exit}
+            <kbd class="ml-1 text-[10px] text-[#FFD700]/70">V</kbd>
+          </button>
+        </div>
+      {/if}
+
       {#if view === 'menu'}
         <h2 class="text-lg font-semibold text-[#FFFFF0]">{copy.menu.deck}</h2>
 

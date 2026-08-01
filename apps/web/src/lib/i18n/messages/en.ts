@@ -473,6 +473,66 @@ export const en = {
             ? `${air} in ${room} · ${solids} thing${solids === 1 ? '' : 's'} took it up and danced`
             : `${air} in ${room} · the room heard it and kept it`
         },
+        // The Guardian Spirit Beasts. Each says what its animal did, never that
+        // an animal turned up: the visitor is looking at it.
+        beastRaised: (room: string, solids: number) =>
+          solids
+            ? `The beast hangs over ${room} · ${solids} thing${solids === 1 ? '' : 's'} off the deck and turning`
+            : `The beast hangs over ${room} · nothing in it to lift`,
+        beastDismissed: (room: string, solids: number) =>
+          solids
+            ? `The beast lets ${room} go · ${solids} thing${solids === 1 ? '' : 's'} back on the floor`
+            : `The beast lets ${room} go`,
+        wheelRaised: (room: string, coin: number) =>
+          `The wheel is turning over ${room} · a coin worth ${coin} at its mouth, and worth nothing until somebody takes it`,
+        wheelDismissed: (room: string) => `The wheel goes out of ${room}, coin and all`,
+        coinTaken: (value: number, gilded: number) =>
+          `Taken: ${value} · you carry ${gilded} of it now, and the next one out is worth ten times this`,
+        liePushed: (solid: string, metres: number) =>
+          metres
+            ? `First contact · ${solid} is shoved, and marked for a second`
+            : `First contact · ${solid} had nowhere to be shoved to, and is marked anyway`,
+        lieGreened: (solid: string) => `Second contact · the green is in ${solid} and stays there`,
+        lieTransformed: (solid: string) =>
+          `Third contact · whatever is standing there, it is not ${solid} any more`,
+        gasLoosed: (room: string, solids: number) =>
+          solids
+            ? `The beast is squatting in ${room} · ${solids} thing${solids === 1 ? '' : 's'} in the gas with it`
+            : `The beast is squatting in ${room} · nothing in there to take`,
+        gasLifted: (room: string) =>
+          `The beast leaves ${room} · what it had already taken it keeps`,
+        melted: (room: string, melting: number, gone: number) =>
+          gone
+            ? `${gone} gone in ${room}, ${melting} still going down`
+            : `${melting} going down in ${room}`,
+        roomBrightened: (room: string, levied: number) =>
+          levied
+            ? `${levied} taken off you, and ${room} is lit with it`
+            : `${room} is lit · you had nothing committed, and it was returned anyway`,
+        haloRaised: (levied: number, halo: number) =>
+          `The room is already light, so it goes on you: ${levied} taken, ${halo} carried`,
+        reeled: (pulled: number, eaten: number) =>
+          eaten
+            ? `${eaten} reached you and ${eaten === 1 ? 'was' : 'were'} swallowed${pulled ? ` · ${pulled} still coming` : ''}`
+            : `${pulled} thing${pulled === 1 ? '' : 's'} being dragged towards you`,
+        smokeLoosed: (room: string) =>
+          `Every mouth on it opens · ${room} begins to fill, a colour at a time`,
+        smokeLifted: (room: string, filled: number) =>
+          `The beast leaves ${room} · it was ${filled} parts of the way through it`,
+        smokeSpread: (room: string, filled: number, full: boolean) =>
+          full
+            ? `${room} is full · the mouths close`
+            : `${room} takes another part · ${filled} of them in it now`,
+        flockLoosed: (rooms: number, beasts: number) =>
+          `${beasts} of them, over ${rooms} rooms · they do not stay in the rooms`,
+        flockCalledIn: (rooms: number) => `Called back in from ${rooms} rooms · the ship is quiet`,
+        isolationLifted: (room: string) =>
+          `The beast stands out of the doorway · ${room} lets you leave`,
+        crushedOne: (solid: string, left: number) =>
+          left
+            ? `${solid} goes under its paws · ${left} left in the room`
+            : `${solid} goes under its paws · nothing left standing`,
+
         deduced: (what: string, strength: number) =>
           `Condition read — ${what} · ${strength} named, and stronger for each`,
         nothingToDeduce: 'Nothing left to read: every hold has been named',
@@ -694,6 +754,21 @@ export const en = {
         flowered: 'In flower',
         scattered: 'Notes hanging in',
         dancing: 'Dancing to it',
+        // The Guardian Spirit Beasts: where each animal is, and what it has
+        // taken so far. The two that leave something on the visitor are read as
+        // a figure, because that is what they leave.
+        medusa: 'The beast holds',
+        chimera: 'The beast is beside',
+        toad: 'The gas is in',
+        centipede: 'The secretion is in',
+        cat: 'The cat is in',
+        dragon: 'The doorway of',
+        wheel: 'The wheel turns over',
+        smoke: 'Filling',
+        menagerie: 'Rooms they are loose in',
+        lit: 'Lit',
+        gilded: 'Coin carried',
+        halo: 'The bubble',
         deduced: 'Conditions read',
         packed: 'The wrapping holds',
         packedHits: (packed: number) => `${packed} blow${packed === 1 ? '' : 's'}`,

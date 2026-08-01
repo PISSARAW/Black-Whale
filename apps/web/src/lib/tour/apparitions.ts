@@ -22,6 +22,7 @@ import {
   solidById,
   solidNow,
   wanderOffset,
+  FLOCK_PER_ROOM,
   TUNES,
   type TourReport,
   type TourWorld,
@@ -75,6 +76,34 @@ export type ApparitionKind =
   | 'bloom'
   /** One note of the sharp air, loose in the room it was played into. */
   | 'note'
+  /** Camilla's Guardian Spirit Beast, hung under the deckhead of one room. */
+  | 'medusa'
+  /** Tserriednich's, stood beside the last thing it touched. */
+  | 'chimera'
+  /** And what its third contact left standing where a fitting used to be. */
+  | 'monster'
+  /** Tubeppa's, squatting in the room it is filling. */
+  | 'toad'
+  /** One puff of what it is filling the room with. */
+  | 'gas'
+  /** Zhang Lei's, turning over the room it was raised in. */
+  | 'wheel'
+  /** And the coin at its mouth, worth nothing to anybody who does not take it. */
+  | 'coin'
+  /** Tyson's, come up in front of the reader it is levying. */
+  | 'wog'
+  /** Luzurus's, coiled in the room it baited. */
+  | 'centipede'
+  /** Salé-salé's, hanging in the room its mouths are filling. */
+  | 'mouths'
+  /** One part of what those mouths have put into the room. */
+  | 'fume'
+  /** One of Momoze's, wherever it has got to. */
+  | 'sprite'
+  /** Marayam's, filling the doorway of the room it shut you into. */
+  | 'dragon'
+  /** Camilla's other one, taking apart the room that wears her name. */
+  | 'cat'
 
 /**
  * One thing Nen has left standing in the ship.
@@ -196,6 +225,69 @@ export const BLOOM_LEAF = 0x7fc8a0
 const NOTE = 0xd7c6f7
 
 /**
+ * The five Guardian Spirit Beasts, each in the colour the registry already
+ * publishes its ability in.
+ *
+ * They are the one family of apparitions in the walk that are animals rather
+ * than marks, and the walk has no business inventing a palette for them: the
+ * dock draws Camilla's ability in that pink and the archive has done so since
+ * the abilities page was built, so the thing that turns up in the room is that
+ * pink too, and a visitor who has met the technique on the web recognises it
+ * aboard without being told.
+ *
+ * The coin is the exception that is not one: it is gold because it is a coin,
+ * and it has to be told from the wheel that produced it at a glance.
+ */
+const MEDUSA = 0xd98cae
+const CHIMERA = 0x9e6d89
+/** What a third lie leaves standing: the same violet, gone bad. */
+const MONSTER = 0x6f3f66
+const TOAD = 0x7fb08a
+/** The gas, which is the one thing in the walk that is meant to look wrong. */
+const GAS = 0xb9e08f
+const WHEEL = 0xd7b34f
+const COIN = 0xf4d67a
+const WOG = 0xe8c4d8
+const CENTIPEDE = 0xc98a5e
+const DRAGON = 0x8fb8c9
+/** Camilla's cat is drawn in her own pink, like the jellyfish: they are hers. */
+const CAT = 0xd98cae
+const MOUTHS = 0xb9a6d8
+
+/**
+ * The six colours Salé-salé's mouths put out, one per mouth.
+ *
+ * The ability is one influence and the drawing is one head with a dozen mouths
+ * on it, so what tells the parts apart has to be the colour: each mouth is
+ * breathing out something of its own, and the room ends up holding all of them.
+ * Six because that is how many steps the room takes to fill — the nth part of
+ * the room is the nth mouth's, and a visitor watching it fill sees a new colour
+ * arrive each time rather than more of the last one.
+ */
+export const FUME_COLOURS = [0xc9a0e8, 0x8fd5e0, 0xe8c48f, 0x9fe0a8, 0xe89fb8, 0xd8d88f]
+
+/**
+ * The colours Momoze's flock comes in.
+ *
+ * Momoze's ability is drawn as a nursery: a bear the size of a room, a jelly on
+ * the ceiling, a wolf on the floorboards, and nothing about any of them
+ * matching anything else. So the flock is the one thing in the walk with no
+ * single colour — the registry publishes the ability in that first pink, and
+ * the rest are the walk's own, chosen only to be plainly not each other.
+ */
+export const SPRITES = [0xe7a6c4, 0x9fd6e8, 0xf0d79a, 0xa8dfb4, 0xc6b0ea, 0xf0a89a, 0xd9e0a0]
+
+/**
+ * How many puffs of gas a room gets, and how many tentacles the jellyfish has.
+ *
+ * Both are a handful for the shoal's reason: what the visitor has to read
+ * across a promenade is *this room is full of it*, and the twentieth puff says
+ * that no better than the tenth.
+ */
+export const PUFFS = 10
+export const TENTACLES = 12
+
+/**
  * How many flowers a room in bloom gets, and how many notes are left hanging.
  *
  * Both are a handful rather than a census, for the shoal's reason: what the
@@ -283,6 +375,49 @@ function stationsIn(
   return sorted.slice(0, wanted).map((station, index) => ({ ...station, index }))
 }
 
+/**
+ * The way out of a room, as one point on its own boundary.
+ *
+ * The walk does not model the leaf of a door — a doorway is a gap the deck's
+ * derivation leaves in a wall — so "the door" has to be answered from the
+ * footprint alone. The honest answer is the point of the boundary nearest the
+ * middle of the room: on a cabin it is the near wall, on anything long it is
+ * the middle of a side, and on every room it is somewhere a person leaving
+ * would actually have to pass. Deterministic, because a beast that stood
+ * somewhere else on every frame would not be barring anything.
+ */
+export function doorwayOf(space: Space): Vec2 {
+  const middle = centroid(space)
+  let best: Vec2 = middle
+  let nearest = Infinity
+  const corners = space.footprint
+  for (let i = 0; i < corners.length; i++) {
+    const a = corners[i]
+    const b = corners[(i + 1) % corners.length]
+    // The point of this wall nearest the middle: the projection, clamped to
+    // the segment so it never falls off the end of a wall.
+    const dx = b[0] - a[0]
+    const dz = b[1] - a[1]
+    const length = dx * dx + dz * dz
+    const t = length
+      ? Math.max(0, Math.min(1, ((middle[0] - a[0]) * dx + (middle[1] - a[1]) * dz) / length))
+      : 0
+    const on: Vec2 = [a[0] + dx * t, a[1] + dz * t]
+    const gap = Math.hypot(on[0] - middle[0], on[1] - middle[1])
+    if (gap < nearest) {
+      nearest = gap
+      best = on
+    }
+  }
+  // Stood just inside the wall rather than in it: a beast half in the steel is
+  // a beast the room is drawing through.
+  const inward = Math.hypot(middle[0] - best[0], middle[1] - best[1]) || 1
+  return [
+    best[0] + ((middle[0] - best[0]) / inward) * 0.9,
+    best[1] + ((middle[1] - best[1]) / inward) * 0.9,
+  ]
+}
+
 /** The floor and the headroom of a room, both in metres above sea level. */
 function room(ship: Ship, space: Space) {
   const tier = ship.tiers.find((candidate) => candidate.id === space.tierId)
@@ -351,6 +486,41 @@ export function apparitionsOn(
   }
 
   const spaceOf = (id: string | null | undefined) => (id ? (ship.spaces.get(id) ?? null) : null)
+
+  /**
+   * Where a Guardian Spirit Beast that comes up beside the visitor stands.
+   *
+   * Six of the ten do. `world.summoned` is where the caster was standing at the
+   * moment of the cast — not where they are now, and not where they were
+   * pointing — so the beast turns up with them and then stays put, which is
+   * what the drawings show and what the reticle could never give: a beast
+   * placed down the reticle came up at the far end of a promenade, or inside a
+   * bulkhead, depending on what the visitor happened to be looking at.
+   *
+   * The room it belongs to is still the room it was cast *on* — that is where
+   * its effect is — so this answers only the point, and only when the caster's
+   * room is the one being asked about or the walk has nothing better. A beast
+   * whose target room is somewhere else entirely falls back to that room's own
+   * landing point, because standing it beside a visitor three decks away would
+   * put it through a deckhead.
+   */
+  const beside = (space: Space): Vec2 => {
+    const summoned = world.summoned
+    if (!summoned || summoned.spaceId !== space.id) return landing(space)
+    // Just clear of the visitor rather than on top of them: a beast drawn at
+    // the eye is a beast you are inside. Kept in the room, so a visitor
+    // standing against a bulkhead does not put it in the steel.
+    for (const step of [
+      [1.8, 0],
+      [-1.8, 0],
+      [0, 1.8],
+      [0, -1.8],
+    ]) {
+      const spot: Vec2 = [summoned.at[0] + step[0], summoned.at[1] + step[1]]
+      if (pointInPolygon(spot, space.footprint)) return spot
+    }
+    return summoned.at
+  }
 
   // The bird, perched as high as the room allows: it is eavesdropping through
   // the ceiling, so it sits where it would have to sit to do that.
@@ -829,6 +999,281 @@ export function apparitionsOn(
     })
   }
 
+  // ── The Guardian Spirit Beasts ───────────────────────────────────────────
+  //
+  // Five animals, and the only apparitions in the walk with a body: everything
+  // above this is a mark, a card, a doll or a bird. Each is put where the
+  // ability says it stands — under the deckhead, beside what it touched, in the
+  // middle of what it is filling, in front of the reader it is levying — and
+  // what it is doing to the room is drawn elsewhere, on the solids themselves.
+
+  // Camilla's, hung as high as the room allows with its tentacles down: it has
+  // the whole room off the floor, so it has to be over the whole room.
+  const hung = spaceOf(world.medusa)
+  if (hung) place(`medusa:${hung.id}`, 'medusa', hung, 3.6, 1.15, MEDUSA, { at: beside(hung) })
+
+  // Tserriednich's, stood on the deck beside the last thing it marked. A
+  // quadruped's height, because that is what it is.
+  const stood = spaceOf(world.chimera)
+  if (stood)
+    place(`chimera:${stood.id}`, 'chimera', stood, 1.05, 0.95, CHIMERA, { at: beside(stood) })
+
+  // And what the third contact left: the fitting is `gone` from the deck and
+  // this stands where it stood, at its size, so a coffin becomes something the
+  // size of a coffin rather than something the size of a beast.
+  for (const [id, hold] of Object.entries(world.solids)) {
+    if (!hold.monster) continue
+    const was = solidById(ship, world, id)
+    const where = was ? spaceOf(was.spaceId) : null
+    const measured = where ? room(ship, where) : null
+    if (!was || !where || !measured) continue
+    const now = solidNow(was, hold)
+    found.push({
+      id: `monster:${id}`,
+      kind: 'monster',
+      spaceId: where.id,
+      tierId: where.tierId,
+      at: [now.at[0] + wanderOffset(id, seconds)[0], now.at[1] + wanderOffset(id, seconds)[1]],
+      y: measured.floor + now.base,
+      // Half the widest side of what it was, floored: whatever it is now, it
+      // came out of that, and a thing that grew in the changing would be a
+      // claim about the curse the technique does not make.
+      size: Math.max(0.45, Math.max(now.size[0], now.size[1]) / 2),
+      colour: MONSTER,
+      stage: 0,
+      hidden: false,
+      spread: 1.2,
+      climb: Math.max(now.height, 0.6),
+    })
+  }
+
+  // Tubeppa's, squatting where the aura came down, and the room full of what it
+  // is making: the puffs are spread over the whole footprint the way the shoal
+  // and the flowers are, because a cloud gathered at the middle of a promenade
+  // is not a room full of gas.
+  const squatting = spaceOf(world.toad)
+  if (squatting) {
+    place(`toad:${squatting.id}`, 'toad', squatting, 0.85, 1.35, TOAD)
+    const measured = room(ship, squatting)
+    if (measured) {
+      for (const station of stationsIn(squatting, PUFFS, landing(squatting))) {
+        found.push({
+          id: `gas:${squatting.id}:${station.index}`,
+          kind: 'gas',
+          spaceId: squatting.id,
+          tierId: squatting.tierId,
+          at: station.at,
+          y: Math.min(measured.floor + 0.8 + (station.index % 3) * 0.55, measured.ceiling - 0.4),
+          size: 0.7 + (station.index % 3) * 0.25,
+          colour: GAS,
+          stage: station.index,
+          hidden: false,
+          spread: Math.min(station.water, 1.4),
+        })
+      }
+    }
+  }
+
+  // Zhang Lei's, turning over the room, with the coin under its mouth at the
+  // height a hand reaches for one. Both are at the landing point, because the
+  // coin is what the visitor has to be able to walk into and `coinAt` reads the
+  // same spot: put the wheel at the middle of the room instead and the coin you
+  // can see and the coin you can take are two different coins.
+  const minted = coinSpot(ship, world)
+  if (minted && world.wheel) {
+    const space = spaceOf(world.wheel.spaceId)
+    const measured = space ? room(ship, space) : null
+    if (space && measured) {
+      place(`wheel:${space.id}`, 'wheel', space, 2.7, 1.25, WHEEL, { at: minted.at })
+      found.push({
+        id: `coin:${space.id}`,
+        kind: 'coin',
+        spaceId: space.id,
+        tierId: space.tierId,
+        at: minted.at,
+        y: minted.y,
+        size: 0.19,
+        colour: COIN,
+        // What it is worth, which is what the scene draws it thicker for: the
+        // tenth coin is the same disc and unmistakably more of one.
+        stage: world.wheel.coin,
+        hidden: false,
+      })
+    }
+  }
+
+  // Tyson's, which is not in a room at all: it comes up in front of the reader
+  // and stays in front of them, at eye height, for as long as the aura is up.
+  if (world.holding === 'aura-levy' && visitor) {
+    found.push({
+      id: 'wog',
+      kind: 'wog',
+      spaceId: world.cameFrom ?? '',
+      tierId: visitor.tierId,
+      at: [visitor.at[0], visitor.at[1]],
+      // Carried, so the height is the visitor's and the scene sets it.
+      y: 0,
+      size: 0.42,
+      colour: WOG,
+      stage: world.body.halo,
+      hidden: false,
+    })
+  }
+
+  // Luzurus's, coiled where the bait was laid. Its `stage` is how many things
+  // the secretion still has hold of, so the scene can show it closing on the
+  // last of them rather than sitting over an empty room.
+  const coiled = spaceOf(world.centipede)
+  if (coiled) {
+    const caught = standingIn(coiled.id).filter(
+      (solid) => world.solids[solid.id]?.glued !== undefined,
+    ).length
+    place(`centipede:${coiled.id}`, 'centipede', coiled, 1.1, 1.05, CENTIPEDE, {
+      stage: caught,
+      at: beside(coiled),
+    })
+  }
+
+  // Salé-salé's, and what its mouths have put into the room so far. One part of
+  // the room per step taken, each in its own mouth's colour, spread over the
+  // whole footprint — a room fills from everywhere at once, and a cloud at the
+  // middle of a promenade is not a room filling.
+  const breathing = world.smoke ? spaceOf(world.smoke.spaceId) : null
+  if (breathing && world.smoke) {
+    const measured = room(ship, breathing)
+    const filled = world.smoke.filled
+    // `stage` is whether the mouths are still open: the closing is the one
+    // thing the technique does that the room itself does not show.
+    place(`mouths:${breathing.id}`, 'mouths', breathing, 2.2, 1.1, MOUTHS, {
+      stage: filled >= FUME_COLOURS.length ? 1 : 0,
+      at: beside(breathing),
+    })
+    if (measured) {
+      // Every part laid down so far, and each part gets its own handful of
+      // stations: the room does not go from empty to full, it goes from a sixth
+      // of the way there to the whole of it, and that has to be visible.
+      const stations = stationsIn(breathing, FUME_COLOURS.length * 4, landing(breathing))
+      for (const station of stations) {
+        const part = station.index % FUME_COLOURS.length
+        if (part >= filled) continue
+        found.push({
+          id: `fume:${breathing.id}:${station.index}`,
+          kind: 'fume',
+          spaceId: breathing.id,
+          tierId: breathing.tierId,
+          at: station.at,
+          y: Math.min(measured.floor + 0.9 + (station.index % 4) * 0.6, measured.ceiling - 0.4),
+          size: 0.75 + (station.index % 3) * 0.2,
+          colour: FUME_COLOURS[part],
+          stage: station.index,
+          hidden: false,
+          spread: Math.min(station.water, 1.3),
+        })
+      }
+    }
+  }
+
+  // Momoze's flock, four to a room across the ten rooms it was loosed over.
+  //
+  // Two things here are deliberate and both are the ability. The `spread` is
+  // larger than the water the room gave the station, so these are the only
+  // apparitions in the walk that leave the room they belong to — they go
+  // through the bulkhead and come back, which is what the drawing shows and
+  // what nothing else aboard is allowed to do. And the size varies with the
+  // beast rather than with the room: they are of every size and shape, so no
+  // two neighbours are the same one drawn twice.
+  for (const spaceId of world.menagerie) {
+    const space = spaceOf(spaceId)
+    const measured = space ? room(ship, space) : null
+    if (!space || !measured) continue
+    for (const station of stationsIn(space, FLOCK_PER_ROOM, landing(space))) {
+      // A hash off the room and the place in it, so the same room gives the
+      // same four creatures every time it is asked and the deck is not
+      // reshuffled on every frame.
+      let seed = station.index * 7 + 3
+      for (let i = 0; i < spaceId.length; i++) seed = (seed * 31 + spaceId.charCodeAt(i)) % 997
+      found.push({
+        id: `sprite:${spaceId}:${station.index}`,
+        kind: 'sprite',
+        spaceId: space.id,
+        tierId: space.tierId,
+        at: station.at,
+        y: Math.min(measured.floor + 0.6 + (seed % 5) * 0.45, measured.ceiling - 0.5),
+        // From a hand's width to something the size of a person: everything
+        // about this flock is that no two of them are alike.
+        size: 0.22 + (seed % 7) * 0.16,
+        colour: SPRITES[seed % SPRITES.length],
+        // Which shape it is, and its own phase: both come off the same number,
+        // because a beast that flew like its neighbour and looked like its
+        // neighbour is its neighbour.
+        stage: seed,
+        hidden: false,
+        // Wider than the water on purpose: through the wall and back.
+        spread: 2.6 + (seed % 4),
+      })
+    }
+  }
+
+  // Marayam's, which does not stand where the aura came down: it stands in the
+  // way. The door of the room is what it is between you and, so it is put at
+  // the doorway nearest the middle of the room and faced into it — a beast in
+  // the corner would be a beast you could walk round, and the whole of the
+  // technique is that you cannot.
+  const barring = spaceOf(world.dragon)
+  if (barring) {
+    const measured = room(ship, barring)
+    if (measured) {
+      // The nearest point of the room's own boundary to its middle, which is
+      // where a door has to be: the walk does not model the leaf of a door, and
+      // this is the closest honest answer to "the way out".
+      const way = doorwayOf(barring)
+      found.push({
+        id: `dragon:${barring.id}`,
+        kind: 'dragon',
+        spaceId: barring.id,
+        tierId: barring.tierId,
+        at: way,
+        y: measured.floor,
+        size: 1.15,
+        colour: DRAGON,
+        // Which way it is facing, as a bearing into the room, so the scene does
+        // not have to work the geometry out again every frame.
+        stage: Math.round(
+          ((Math.atan2(measured.at[0] - way[0], measured.at[1] - way[1]) + Math.PI * 2) * 180) /
+            Math.PI,
+        ),
+        hidden: false,
+      })
+    }
+  }
+
+  // Camilla's cat, in the room that wears her name. It is put over whatever it
+  // is about to break — `catStep` takes them in the order the ship lists them,
+  // so the next one is the first still standing — and over the middle of the
+  // room once there is nothing left, which is a cat sitting in a bare room.
+  const prowling = spaceOf(world.cat)
+  if (prowling) {
+    const left = standingIn(prowling.id)
+    const over = left.length ? solidNow(left[0], world.solids[left[0].id]).at : beside(prowling)
+    const measured = room(ship, prowling)
+    if (measured) {
+      found.push({
+        id: `cat:${prowling.id}`,
+        kind: 'cat',
+        spaceId: prowling.id,
+        tierId: prowling.tierId,
+        at: over,
+        y: measured.floor,
+        size: 1.3,
+        colour: CAT,
+        // How much of the room is left, so the scene can have it working rather
+        // than sitting: a cat over nothing has finished.
+        stage: left.length,
+        hidden: false,
+      })
+    }
+  }
+
   // Black Voice's antenna, stuck into a solid.
   if (world.puppet) {
     const puppetSolid = solidById(ship, world, world.puppet)
@@ -850,6 +1295,57 @@ export function apparitionsOn(
   }
 
   return found
+}
+
+/**
+ * Where the coin off Zhang Lei's wheel is hanging, or nothing.
+ *
+ * The same shape and the same reasoning as `wormMouths`: a thing the visitor
+ * has to be able to *walk into* cannot be drawn in one place and tested for in
+ * another, so there is one function that says where it is and both the picture
+ * and the pickup read it.
+ */
+export function coinSpot(
+  ship: Ship,
+  world: TourWorld,
+): { spaceId: string; tierId: string; at: Vec2; y: number } | null {
+  const wheel = world.wheel
+  const space = wheel ? (ship.spaces.get(wheel.spaceId) ?? null) : null
+  const measured = space ? room(ship, space) : null
+  if (!space || !measured) return null
+  // Where the wheel was called up, which is where the visitor was standing: the
+  // coin is put out where they can reach it rather than wherever they happened
+  // to be pointing. Two metres off, so it is in front of them rather than
+  // through them, and kept inside the room.
+  const summoned = world.summoned?.spaceId === space.id ? world.summoned.at : null
+  const reach: Vec2 = summoned
+    ? ([
+        [2, 0],
+        [-2, 0],
+        [0, 2],
+        [0, -2],
+      ]
+        .map((step) => [summoned[0] + step[0], summoned[1] + step[1]] as Vec2)
+        .find((spot) => pointInPolygon(spot, space.footprint)) ?? summoned)
+    : (world.landed[space.id] ?? measured.at)
+  return {
+    spaceId: space.id,
+    tierId: space.tierId,
+    at: reach,
+    // Chest height: it came out of the wheel's mouth and it is hanging where a
+    // hand would close on it.
+    y: Math.min(measured.floor + 1.35, measured.ceiling - 0.3),
+  }
+}
+
+/** How close the visitor has to get to have taken it, in metres. */
+export const COIN_REACH = 1.1
+
+/** Whether the visitor is standing near enough the coin to have taken it. */
+export function coinAt(ship: Ship, world: TourWorld, tierId: string, at: Vec2): string | null {
+  const spot = coinSpot(ship, world)
+  if (!spot || spot.tierId !== tierId) return null
+  return Math.hypot(spot.at[0] - at[0], spot.at[1] - at[1]) <= COIN_REACH ? spot.spaceId : null
 }
 
 /**

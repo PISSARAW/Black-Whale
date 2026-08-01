@@ -33,6 +33,9 @@
     loostAnArrow,
     openAWormhole,
     playATune,
+    chirpTheFlock,
+    crushLikeACat,
+    roarLikeADragon,
     raiseTheSun,
     selectACard,
     skipThroughTime,
@@ -77,6 +80,12 @@
     aimsAtSolids,
     arriveInTour,
     castInTour,
+    catStep,
+    gasStep,
+    looseTheFlock,
+    reelStep,
+    smokeStep,
+    takeTheCoin,
     ageTheOwl,
     fishBite,
     polarityStep,
@@ -595,6 +604,19 @@
       // room or taken back off it, because both are the flute being played.
       case 'tune-played':
         return playATune(shown.tune)
+      // The Guardian Spirit Beasts that have a voice. Not all of them do: a
+      // jellyfish over a room and a wheel turning in one are silent in the
+      // source and are silent here, and inventing a noise for them would be
+      // the walk making something up.
+      case 'crushed-one':
+        return crushLikeACat()
+      case 'flock-loosed':
+        return chirpTheFlock()
+      // Marayam's roars at somebody trying the door — the scene answers that
+      // one, because the door is a keypress rather than a cast — and it roars
+      // once on arriving, which is this.
+      case 'isolated':
+        return roarLikeADragon()
       default:
         return
     }
@@ -759,6 +781,16 @@
         // The watch she was last set to is kept: R is the only thing that
         // changes it, and taking the aura up again is not R.
         nextWorld.doubleMode = currentWorld.doubleMode ?? 'follow'
+      }
+      // Momoze's is not cast at anything: the beasts are simply out. Asking the
+      // visitor to press F at a room to make them appear would be asking them
+      // to aim an ability that has no aim — what it does is ask, over and over,
+      // wherever it is, and the flock is the asking. So it is loosed the moment
+      // the aura goes up, from where the visitor is standing, exactly as
+      // Voconte's doors are simply wired the moment they are held.
+      if (kind === 'solicitation') {
+        const loose = looseTheFlock(nextWorld, ship, currentSpace?.id ?? null, position)
+        if (loose) nextWorld.menagerie = loose.world.menagerie
       }
       // Double Face is handed over already holding two: a bookmark with one
       // page under it is not an ability, and the walk cannot ask the visitor to
@@ -1022,6 +1054,51 @@
    * rather than something to be told about, and the one line the technique has
    * to say is the one it says when neither of them is there any more.
    */
+  /**
+   * One step of every Guardian Spirit Beast that goes on working after the cast.
+   *
+   * Four of them do, and they are asked in one call rather than four because
+   * they share a clock and because only one of them can be up at a time in
+   * practice — the walk hands out one aura. Each answers with a world and a
+   * line or with nothing at all, and the last one that had something to say is
+   * what the read-out shows: a beast that has finished its room goes quiet
+   * rather than repeating itself.
+   */
+  function beastStep() {
+    let next = world
+    let last: TourReport | null = null
+    for (const step of [gasStep(next, ship), reelStep(next, ship, position), catStep(next, ship)]) {
+      if (!step) continue
+      next = step.world
+      last = step.report
+    }
+    // The smoke reads the world the others left, since filling a room is not
+    // affected by what melted in it — but it must not read a stale one.
+    const filling = smokeStep(next)
+    if (filling) {
+      next = filling.world
+      last = filling.report
+    }
+    if (!last) return
+    world = next
+    report = last
+    show(last)
+  }
+
+  /**
+   * The coin off Zhang Lei's wheel, taken by having walked into it.
+   *
+   * The scene says the visitor is standing where it hangs; what that is worth,
+   * and what the wheel puts out next, is the pure layer's.
+   */
+  function takeCoin() {
+    const taken = takeTheCoin(world)
+    if (!taken) return
+    world = taken.world
+    report = taken.report
+    show(taken.report)
+  }
+
   function polarityWalk(seconds: number, delta: number) {
     const step = polarityStep(world, ship, seconds, delta)
     if (!step) return
@@ -1292,6 +1369,8 @@
         onOwl={owlFlight}
         onOwlSecond={owlSecond}
         onScout={scoutFlight}
+        onBeast={beastStep}
+        onCoin={takeCoin}
         onPolarity={polarityWalk}
         {hands}
         {tunes}

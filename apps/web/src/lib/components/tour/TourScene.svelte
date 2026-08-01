@@ -29,6 +29,7 @@
     centroid,
     danceOffset,
     detachedOn,
+    driftOffset,
     doorExit,
     emptiedOn,
     eyeHeightIn,
@@ -52,7 +53,9 @@
     BOOKMARK_RIBBON,
     SNAKE_BOW,
     SNAKE_HEAD,
+    TENTACLES,
     apparitionsOn,
+    coinAt,
     wormMouthAt,
     wormMouths,
     type Apparition,
@@ -90,6 +93,10 @@
     stopSteps,
     toggleSteps,
   } from '$lib/audio/steps'
+  // The two beasts that make a noise of their own rather than reporting one:
+  // the roar is answered to a keypress and the flock simply arrives, so neither
+  // of them goes through the page's report-to-sound table.
+  import { chirpTheFlock, roarLikeADragon } from '$lib/audio/hatsuSounds'
   import { visibleSpaces } from '$lib/tour/visibility'
   import type { Link, Space, Structure, Vec2 } from '$lib/tour/types'
 
@@ -265,6 +272,24 @@
      */
     onScout?: () => void
     /**
+     * Asked every couple of seconds while a Guardian Spirit Beast is working.
+     *
+     * Three of them keep going after the cast — Tubeppa's melts what is in the
+     * room, Luzurus's reels in what it caught and eats it, Salé-salé's fills
+     * the room a part at a time — and all three are the same kind of event as
+     * the fish feeding: something that happens on the clock rather than on a
+     * key. What one step of each takes is the pure layer's decision.
+     */
+    onBeast?: () => void
+    /**
+     * Asked when the visitor walks into the coin off Zhang Lei's wheel.
+     *
+     * The same shape as the tunnel: a thing hanging in a room that is taken by
+     * going and standing where it is, rather than by aiming at it. What taking
+     * it is worth is the pure layer's.
+     */
+    onCoin?: (spaceId: string) => void
+    /**
      * Whether the technique in hand is one that throws a thread.
      *
      * Machi's stitches mend, and the walk has nothing torn in it that a visitor
@@ -320,6 +345,8 @@
     onOwlSecond,
     onPolarity,
     onScout,
+    onBeast,
+    onCoin,
     swings = false,
   }: Props = $props()
 
@@ -536,6 +563,53 @@
       const AURA_LIGHT = 2.4
       const auraLight = new THREE.PointLight(0xffffff, 0, 14, 2)
       scene.add(auraLight)
+
+      /**
+       * What the two Guardian Spirit Beasts that give something back leave on
+       * the visitor.
+       *
+       * Both are carried rather than placed, and both are light rather than a
+       * shell, because what they do is the one thing the walk had no way of
+       * showing: Zhang Lei's coin is aura and nothing else — it is worth what it
+       * has accumulated, and a coin in a pocket has to be visible as something —
+       * and Tyson's levy is returned as happiness, which the walk spends as
+       * brightness. Gold for the coin, warm white for the wog, and both scale
+       * with what has actually been taken, so a tenth coin is plainly a tenth
+       * coin.
+       */
+      const gildLight = new THREE.PointLight(0xffd98a, 0, 9, 2)
+      scene.add(gildLight)
+      const haloLight = new THREE.PointLight(0xfff1d8, 0, 12, 2)
+      scene.add(haloLight)
+      /**
+       * And the bubble itself, which is the half of the levy you can see from
+       * inside it: a shell round the visitor, drawn from the inside, so the
+       * whole view warms rather than one wall of it. Carried at the camera and
+       * scaled with the halo; invisible while there is none.
+       */
+      const haloBubble = new THREE.Mesh(
+        new THREE.SphereGeometry(1, 16, 12),
+        new THREE.MeshBasicMaterial({
+          color: 0xfff1d8,
+          transparent: true,
+          opacity: 0.06,
+          side: THREE.BackSide,
+          depthWrite: false,
+        }),
+      )
+      haloBubble.visible = false
+      scene.add(haloBubble)
+
+      /**
+       * A lamp per room an eye-wog has lit, which is the other half of it.
+       *
+       * A room the blueprint put no window in is lit by whatever the
+       * reconstruction hangs in its deckhead, and this is one more light in the
+       * middle of it. Kept in a record and synced against `world.lit` the way
+       * the solids are synced, so a room that has been blown clear of the levy
+       * loses its lamp on the same frame.
+       */
+      const litLights: Record<string, import('three').PointLight | undefined> = {}
 
       /**
        * One face per surface, and it is the face that looks at the room.
@@ -1331,12 +1405,29 @@
           // and hops as it goes. The hop is the only vertical offset any solid
           // in the walk has, which is what makes it read as dancing.
           const hop = world.solids[id]?.dancing ? danceOffset(id, seconds) : null
+          // And Camilla's beast on top of everything else: a thing it has hold
+          // of has left its floor, so it climbs, wanders and turns over.
+          //
+          // The turn is the awkward part. These meshes are baked at the
+          // coordinates the room drew them at rather than about their own
+          // centre, so spinning the object would swing it round the ship's
+          // origin — the correction is to put the group where the centre ends
+          // up after the rotation, which is `c - R·c`, and let the geometry
+          // follow. The rotation is about Y only, so the height needs none of it.
+          const adrift = world.solids[id]?.adrift ? driftOffset(id, seconds) : null
+          const spin = adrift ? adrift[3] : 0
+          const sin = Math.sin(spin)
+          const cos = Math.cos(spin)
+          const pivotX = adrift ? held.at[0] - (cos * held.at[0] + sin * held.at[1]) : 0
+          const pivotZ = adrift ? held.at[1] - (-sin * held.at[0] + cos * held.at[1]) : 0
+          held.mesh.rotation.y = spin
           held.mesh.position.set(
-            (drift ? drift[0] : 0) + (hop ? hop[0] : 0),
-            hop ? hop[1] : 0,
-            (drift ? drift[1] : 0) + (hop ? hop[2] : 0),
+            (drift ? drift[0] : 0) + (hop ? hop[0] : 0) + (adrift ? adrift[0] : 0) + pivotX,
+            (hop ? hop[1] : 0) + (adrift ? adrift[1] : 0),
+            (drift ? drift[1] : 0) + (hop ? hop[2] : 0) + (adrift ? adrift[2] : 0) + pivotZ,
           )
           held.edges.position.copy(held.mesh.position)
+          held.edges.rotation.y = spin
         }
       }
 
@@ -2189,6 +2280,703 @@
           turns = head
         }
 
+        // ── The Guardian Spirit Beasts ─────────────
+        //
+        // The first apparitions in the walk with a body. Everything else in
+        // this function is a mark or a prop; these are animals, and an animal
+        // built out of the same primitives has to earn its silhouette — a bell
+        // with tentacles under it, a quadruped with horns, a burning wheel, a
+        // toad with spines, an eye with wings. Recognisable across a promenade
+        // and nowhere near modelled, which is the rule the whole scene keeps.
+
+        // Camilla's: a bell, the ring of bulbs the drawing hangs round it, and
+        // twelve tentacles under the lot. The tentacles are the point of it —
+        // they are named so `driftApparitions` can find them and work every one
+        // of them on its own phase.
+        if (seen.kind === 'medusa') {
+          const bell = new THREE.Mesh(
+            new THREE.SphereGeometry(seen.size, 16, 10, 0, Math.PI * 2, 0, Math.PI * 0.62),
+            glow(seen.colour, 0.55),
+          )
+          root.add(bell)
+          // The bulbs round the rim, which are what makes it that jellyfish
+          // rather than a jellyfish: eight of them, each half sunk into the
+          // bell so the edge reads as swollen rather than as beaded.
+          for (let i = 0; i < 8; i++) {
+            const angle = (Math.PI / 4) * i
+            const bulb = new THREE.Mesh(
+              new THREE.SphereGeometry(seen.size * 0.34, 8, 6),
+              glow(seen.colour, 0.75),
+            )
+            bulb.position.set(
+              Math.cos(angle) * seen.size * 0.92,
+              -seen.size * 0.35,
+              Math.sin(angle) * seen.size * 0.92,
+            )
+            root.add(bulb)
+          }
+          const arms = new THREE.Group()
+          arms.name = 'tentacles'
+          for (let i = 0; i < TENTACLES; i++) {
+            const angle = (Math.PI * 2 * i) / TENTACLES
+            const arm = new THREE.Group()
+            arm.position.set(
+              Math.cos(angle) * seen.size * 0.72,
+              -seen.size * 0.5,
+              Math.sin(angle) * seen.size * 0.72,
+            )
+            // A tentacle is a run of beads that thin as they go: the animation
+            // moves each bead further than the one above it, which is what
+            // makes the whole length whip rather than swing.
+            for (let bead = 0; bead < 7; bead++) {
+              const knot = new THREE.Mesh(
+                new THREE.SphereGeometry(seen.size * (0.13 - bead * 0.012), 6, 5),
+                glow(seen.colour, 0.85 - bead * 0.07),
+              )
+              knot.position.y = -bead * seen.size * 0.42
+              arm.add(knot)
+            }
+            arms.add(arm)
+          }
+          root.add(arms)
+          turns = arms
+        }
+
+        // Tserriednich's: a horned quadruped with a face at the end of a long
+        // neck. Four legs and a barrel is a horse at this distance, and the
+        // horns and the hanging mane are what say it is not one.
+        if (seen.kind === 'chimera') {
+          const coat = glow(seen.colour, 0.62)
+          const barrel = new THREE.Mesh(
+            new THREE.CapsuleGeometry(seen.size * 0.42, seen.size * 0.95, 4, 10),
+            coat,
+          )
+          barrel.rotation.z = Math.PI / 2
+          root.add(barrel)
+          for (const front of [-1, 1]) {
+            for (const side of [-1, 1]) {
+              const leg = new THREE.Mesh(
+                new THREE.CylinderGeometry(seen.size * 0.09, seen.size * 0.06, seen.size * 0.95, 6),
+                coat,
+              )
+              leg.position.set(front * seen.size * 0.5, -seen.size * 0.78, side * seen.size * 0.28)
+              root.add(leg)
+            }
+          }
+          // The neck and the head, which are the part that moves: it looks at
+          // whoever comes near the thing it has just touched.
+          const head = new THREE.Group()
+          head.position.set(-seen.size * 0.62, seen.size * 0.34, 0)
+          const neck = new THREE.Mesh(
+            new THREE.CylinderGeometry(seen.size * 0.13, seen.size * 0.18, seen.size * 0.8, 6),
+            coat,
+          )
+          neck.rotation.z = 0.5
+          neck.position.set(seen.size * 0.16, -seen.size * 0.3, 0)
+          head.add(neck)
+          const skull = new THREE.Mesh(new THREE.SphereGeometry(seen.size * 0.2, 10, 8), coat)
+          skull.scale.set(1.3, 1, 0.8)
+          head.add(skull)
+          // Two horns, swept back over the neck: the one thing about this
+          // animal nobody mistakes for a horse.
+          for (const side of [-1, 1]) {
+            const horn = new THREE.Mesh(
+              new THREE.ConeGeometry(seen.size * 0.07, seen.size * 0.8, 5),
+              glow(seen.colour, 0.9),
+            )
+            horn.position.set(seen.size * 0.16, seen.size * 0.3, side * seen.size * 0.12)
+            horn.rotation.z = 1.15
+            head.add(horn)
+          }
+          root.add(head)
+          turns = head
+        }
+
+        // And what a third contact leaves: a mass with spines coming out of it,
+        // at the size of whatever it used to be. Nothing about it is a fitting
+        // any more, which is the whole of what has to read.
+        if (seen.kind === 'monster') {
+          const hide = glow(seen.colour, 0.85)
+          const climb = seen.climb ?? seen.size
+          const mass = new THREE.Mesh(new THREE.SphereGeometry(seen.size, 10, 8), hide)
+          mass.scale.set(1, Math.max(0.5, climb / (seen.size * 2)), 0.9)
+          mass.position.y = climb / 2
+          root.add(mass)
+          for (let i = 0; i < 9; i++) {
+            const angle = (Math.PI * 2 * i) / 9
+            const spine = new THREE.Mesh(
+              new THREE.ConeGeometry(seen.size * 0.14, seen.size * 0.9, 4),
+              hide,
+            )
+            spine.position.set(
+              Math.cos(angle) * seen.size * 0.7,
+              climb * (0.45 + (i % 3) * 0.2),
+              Math.sin(angle) * seen.size * 0.7,
+            )
+            spine.rotation.z = -Math.cos(angle) * 1.1
+            spine.rotation.x = Math.sin(angle) * 1.1
+            root.add(spine)
+          }
+          // Two eyes, because the thing it was had none and that is the tell.
+          const glare = glow(0xffe0f0, 1)
+          for (const side of [-1, 1]) {
+            const eye = new THREE.Mesh(new THREE.SphereGeometry(seen.size * 0.13, 8, 6), glare)
+            eye.position.set(seen.size * 0.6, climb * 0.62, side * seen.size * 0.3)
+            root.add(eye)
+          }
+          turns = root
+        }
+
+        // Tubeppa's: squat, wide, spined along the back, and two eyes on top of
+        // the head rather than in front of it. Drawn as it sits in the source —
+        // a thing that fills the space between the deck and your waist.
+        if (seen.kind === 'toad') {
+          const hide = glow(seen.colour, 0.72)
+          const body = new THREE.Mesh(new THREE.SphereGeometry(seen.size, 14, 10), hide)
+          body.scale.set(1.25, 0.78, 1)
+          root.add(body)
+          const jaw = new THREE.Mesh(new THREE.SphereGeometry(seen.size * 0.72, 12, 8), hide)
+          jaw.scale.set(1.2, 0.5, 1)
+          jaw.position.set(0, -seen.size * 0.42, seen.size * 0.5)
+          root.add(jaw)
+          for (let i = 0; i < 11; i++) {
+            const spine = new THREE.Mesh(
+              new THREE.BoxGeometry(seen.size * 0.12, seen.size * 0.5, seen.size * 0.12),
+              glow(seen.colour, 0.95),
+            )
+            const angle = Math.PI * (i / 10)
+            spine.position.set(
+              Math.cos(angle) * seen.size * 1.05,
+              seen.size * 0.6,
+              -Math.sin(angle) * seen.size * 0.4,
+            )
+            spine.rotation.z = Math.cos(angle) * 0.7
+            root.add(spine)
+          }
+          const eyes = new THREE.Group()
+          for (const side of [-1, 1]) {
+            const socket = new THREE.Mesh(
+              new THREE.SphereGeometry(seen.size * 0.22, 10, 8),
+              glow(0xf6ffe8, 0.95),
+            )
+            socket.position.set(side * seen.size * 0.48, seen.size * 0.55, seen.size * 0.5)
+            eyes.add(socket)
+            const pupil = new THREE.Mesh(
+              new THREE.SphereGeometry(seen.size * 0.1, 8, 6),
+              glow(0x1b2418, 1),
+            )
+            pupil.position.set(side * seen.size * 0.48, seen.size * 0.57, seen.size * 0.66)
+            eyes.add(pupil)
+          }
+          root.add(eyes)
+          turns = root
+        }
+
+        // One puff of what it is filling the room with: a lump of nothing, drawn
+        // faint and large. It has no shape of its own on purpose — what the
+        // visitor has to read is that the air of the room has stopped being air.
+        if (seen.kind === 'gas') {
+          const vapour = glow(seen.colour, 0.14)
+          for (let i = 0; i < 3; i++) {
+            const puff = new THREE.Mesh(
+              new THREE.SphereGeometry(seen.size * (1 - i * 0.22), 8, 6),
+              vapour,
+            )
+            puff.position.set(
+              (i - 1) * seen.size * 0.5,
+              ((i % 2) - 0.5) * seen.size * 0.4,
+              ((i + 1) % 2) * seen.size * 0.4,
+            )
+            root.add(puff)
+          }
+          turns = root
+        }
+
+        // Zhang Lei's: the wheel, drawn as the source draws it — a rim with
+        // writing round it, eight spokes, a face at the hub, and the whole
+        // thing burning. The corona is what makes it legible at distance and
+        // the face is what makes it a beast rather than a fitting.
+        if (seen.kind === 'wheel') {
+          const iron = glow(seen.colour, 0.9)
+          const spun = new THREE.Group()
+          spun.add(
+            new THREE.Mesh(new THREE.TorusGeometry(seen.size, seen.size * 0.11, 8, 28), iron),
+          )
+          spun.add(
+            new THREE.Mesh(
+              new THREE.TorusGeometry(seen.size * 0.74, seen.size * 0.05, 6, 24),
+              iron,
+            ),
+          )
+          for (let i = 0; i < 8; i++) {
+            const spoke = new THREE.Mesh(
+              new THREE.BoxGeometry(seen.size * 1.5, seen.size * 0.05, seen.size * 0.05),
+              iron,
+            )
+            spoke.rotation.z = (Math.PI / 8) * i
+            spun.add(spoke)
+            // The studs the drawing puts where each spoke meets the inner ring.
+            const stud = new THREE.Mesh(new THREE.SphereGeometry(seen.size * 0.08, 6, 5), iron)
+            const angle = (Math.PI / 4) * i
+            stud.position.set(
+              Math.cos(angle) * seen.size * 0.74,
+              Math.sin(angle) * seen.size * 0.74,
+              0,
+            )
+            spun.add(stud)
+          }
+          root.add(spun)
+          // The hub, which does not turn with the rim: a face that rotated with
+          // its own wheel would be a face nobody could read.
+          const hub = new THREE.Mesh(new THREE.CircleGeometry(seen.size * 0.34, 18), iron)
+          hub.position.z = 0.01
+          root.add(hub)
+          const ink = glow(0x2a2113, 1)
+          for (const side of [-1, 1]) {
+            const lid = new THREE.Mesh(
+              new THREE.BoxGeometry(seen.size * 0.16, seen.size * 0.03, seen.size * 0.02),
+              ink,
+            )
+            lid.position.set(side * seen.size * 0.13, seen.size * 0.07, 0.02)
+            root.add(lid)
+          }
+          const mouth = new THREE.Mesh(
+            new THREE.BoxGeometry(seen.size * 0.26, seen.size * 0.03, seen.size * 0.02),
+            ink,
+          )
+          mouth.position.set(0, -seen.size * 0.1, 0.02)
+          root.add(mouth)
+          // And the fire round the outside, which is a group of its own so it
+          // can flicker without the rim flickering with it.
+          const fire = new THREE.Group()
+          fire.name = 'corona'
+          for (let i = 0; i < 20; i++) {
+            const angle = (Math.PI * 2 * i) / 20
+            const flame = new THREE.Mesh(
+              new THREE.ConeGeometry(seen.size * 0.1, seen.size * (0.4 + (i % 3) * 0.18), 4),
+              glow(seen.colour, 0.5),
+            )
+            flame.position.set(
+              Math.cos(angle) * seen.size * 1.24,
+              Math.sin(angle) * seen.size * 1.24,
+              0,
+            )
+            flame.rotation.z = angle - Math.PI / 2
+            fire.add(flame)
+          }
+          root.add(fire)
+          turns = root
+        }
+
+        // The coin at its mouth. Thicker the more it is worth, which is the one
+        // thing about it a visitor can see before they take it.
+        if (seen.kind === 'coin') {
+          const worth = Math.min(6, Math.log10(Math.max(1, seen.stage)) + 1)
+          const disc = new THREE.Mesh(
+            new THREE.CylinderGeometry(seen.size, seen.size, seen.size * 0.12 * worth, 20),
+            glow(seen.colour, 1),
+          )
+          disc.rotation.x = Math.PI / 2
+          root.add(disc)
+          const rim = new THREE.Mesh(
+            new THREE.TorusGeometry(seen.size * 0.7, seen.size * 0.06, 6, 18),
+            glow(seen.colour, 0.7),
+          )
+          root.add(rim)
+          turns = root
+        }
+
+        // Tyson's: one eye with a pair of wings on it. Drawn from the front,
+        // because it comes up in front of the reader and looks at them — the
+        // whole ability is being looked at by the thing that is taking from you.
+        if (seen.kind === 'wog') {
+          const flesh = glow(seen.colour, 0.8)
+          const ball = new THREE.Mesh(new THREE.SphereGeometry(seen.size, 16, 12), flesh)
+          root.add(ball)
+          const white = new THREE.Mesh(
+            new THREE.CircleGeometry(seen.size * 0.66, 20),
+            glow(0xfdf6fb, 1),
+          )
+          white.position.z = seen.size * 0.82
+          white.scale.set(1, 0.62, 1)
+          root.add(white)
+          const pupil = new THREE.Mesh(
+            new THREE.CircleGeometry(seen.size * 0.3, 16),
+            glow(0x14101a, 1),
+          )
+          pupil.position.z = seen.size * 0.85
+          root.add(pupil)
+          const wings = new THREE.Group()
+          wings.name = 'wings'
+          for (const side of [-1, 1]) {
+            const wing = new THREE.Group()
+            for (let i = 0; i < 3; i++) {
+              const feather = new THREE.Mesh(
+                new THREE.PlaneGeometry(seen.size * (0.9 - i * 0.15), seen.size * 0.3),
+                glow(0xfdf6fb, 0.8),
+              )
+              feather.position.set(
+                side * seen.size * (0.6 + i * 0.32),
+                seen.size * (0.1 - i * 0.18),
+                0,
+              )
+              feather.rotation.z = side * (0.2 - i * 0.16)
+              wing.add(feather)
+            }
+            wing.position.x = side * seen.size * 0.9
+            wings.add(wing)
+          }
+          root.add(wings)
+          // The fringe under it, which is where the aura it has taken runs out.
+          for (let i = 0; i < 7; i++) {
+            const drip = new THREE.Mesh(
+              new THREE.SphereGeometry(seen.size * 0.09, 6, 5),
+              glow(seen.colour, 0.6),
+            )
+            drip.position.set((i - 3) * seen.size * 0.22, -seen.size * (0.95 + (i % 3) * 0.14), 0)
+            root.add(drip)
+          }
+          turns = wings
+        }
+
+        // Luzurus's: a segmented body running away into the room, and a head at
+        // the near end of it that is mostly mouth. The segments are what makes
+        // it read as long — the drawing is a thing whose far end you cannot see
+        // — and the jaw is where the secretion comes from.
+        if (seen.kind === 'centipede') {
+          const shell = glow(seen.colour, 0.8)
+          const body = new THREE.Group()
+          body.name = 'segments'
+          for (let i = 0; i < 9; i++) {
+            const ring = new THREE.Mesh(
+              new THREE.SphereGeometry(seen.size * (0.62 - i * 0.03), 10, 8),
+              glow(seen.colour, 0.8 - i * 0.05),
+            )
+            ring.position.set(-i * seen.size * 0.72, 0, 0)
+            body.add(ring)
+            // Legs, in pairs, because a thing this long with none is a snake.
+            for (const side of [-1, 1]) {
+              const leg = new THREE.Mesh(
+                new THREE.CylinderGeometry(seen.size * 0.04, seen.size * 0.02, seen.size * 0.8, 4),
+                shell,
+              )
+              leg.position.set(-i * seen.size * 0.72, -seen.size * 0.42, side * seen.size * 0.42)
+              leg.rotation.x = side * 0.6
+              body.add(leg)
+            }
+          }
+          root.add(body)
+          const skull = new THREE.Mesh(new THREE.SphereGeometry(seen.size * 0.68, 12, 9), shell)
+          skull.scale.set(1.1, 0.72, 1.25)
+          skull.position.x = seen.size * 0.62
+          root.add(skull)
+          // Two black eyes and a ring of teeth: the head in the source is read
+          // entirely off those two things.
+          for (const side of [-1, 1]) {
+            const eye = new THREE.Mesh(
+              new THREE.SphereGeometry(seen.size * 0.17, 8, 6),
+              glow(0x120d0a, 1),
+            )
+            eye.position.set(seen.size * 0.85, seen.size * 0.1, side * seen.size * 0.5)
+            root.add(eye)
+          }
+          const jaw = new THREE.Group()
+          jaw.name = 'jaw'
+          for (let i = 0; i < 10; i++) {
+            const tooth = new THREE.Mesh(
+              new THREE.ConeGeometry(seen.size * 0.06, seen.size * 0.24, 3),
+              glow(0xfdf3e6, 1),
+            )
+            const across = (i / 9 - 0.5) * seen.size * 0.9
+            tooth.position.set(seen.size * 0.95, -seen.size * 0.24, across)
+            tooth.rotation.x = Math.PI
+            jaw.add(tooth)
+          }
+          root.add(jaw)
+          turns = jaw
+        }
+
+        // Salé-salé's: a head with mouths all over it. The mouths are the whole
+        // of the drawing, so they are the whole of this — a ball, and a dozen of
+        // them opening and shutting on it. `stage` says whether they have closed
+        // for good, which is what a full room looks like from outside.
+        if (seen.kind === 'mouths') {
+          const flesh = glow(seen.colour, 0.78)
+          root.add(new THREE.Mesh(new THREE.SphereGeometry(seen.size, 16, 12), flesh))
+          const lips = new THREE.Group()
+          lips.name = 'mouths'
+          for (let i = 0; i < 12; i++) {
+            // Spread over the sphere rather than round its equator: the head in
+            // the source has them on every side, including the ones facing away.
+            const around = (Math.PI * 2 * i) / 12
+            const up = Math.asin(((i % 5) - 2) / 2.6)
+            const mouth = new THREE.Group()
+            mouth.position.set(
+              Math.cos(up) * Math.cos(around) * seen.size * 0.98,
+              Math.sin(up) * seen.size * 0.98,
+              Math.cos(up) * Math.sin(around) * seen.size * 0.98,
+            )
+            mouth.lookAt(0, 0, 0)
+            const dark = new THREE.Mesh(
+              new THREE.CircleGeometry(seen.size * 0.2, 12),
+              glow(0x1a1420, 1),
+            )
+            dark.scale.set(1, 0.55, 1)
+            dark.position.z = -0.01
+            mouth.add(dark)
+            for (const lip of [-1, 1]) {
+              const line = new THREE.Mesh(
+                new THREE.BoxGeometry(seen.size * 0.42, seen.size * 0.05, seen.size * 0.05),
+                glow(seen.colour, 1),
+              )
+              line.position.set(0, lip * seen.size * 0.11, -0.02)
+              mouth.add(line)
+            }
+            lips.add(mouth)
+          }
+          root.add(lips)
+          turns = lips
+        }
+
+        // One part of what those mouths put out. Faint and large, like Tubeppa's
+        // — the difference between the two is entirely the colour, which is the
+        // difference between the two abilities as well.
+        if (seen.kind === 'fume') {
+          const vapour = glow(seen.colour, 0.16)
+          for (let i = 0; i < 3; i++) {
+            const puff = new THREE.Mesh(
+              new THREE.SphereGeometry(seen.size * (1 - i * 0.24), 8, 6),
+              vapour,
+            )
+            puff.position.set(
+              (i - 1) * seen.size * 0.45,
+              ((i + 1) % 2) * seen.size * 0.35,
+              ((i % 2) - 0.5) * seen.size * 0.5,
+            )
+            root.add(puff)
+          }
+          turns = root
+        }
+
+        // One of Momoze's, in whichever of four shapes its own number gave it:
+        // a bear, a jelly, a wolf, a lump. They are the only apparitions in the
+        // walk built from a menu rather than to a single drawing, because that
+        // is the ability — no two of them are the same thing.
+        if (seen.kind === 'sprite') {
+          const fur = glow(seen.colour, 0.85)
+          const shape = seen.stage % 4
+          if (shape === 0) {
+            // The bear: a head with two round ears and a mouth full of teeth.
+            root.add(new THREE.Mesh(new THREE.SphereGeometry(seen.size, 12, 9), fur))
+            for (const side of [-1, 1]) {
+              const ear = new THREE.Mesh(new THREE.SphereGeometry(seen.size * 0.46, 10, 8), fur)
+              ear.position.set(side * seen.size * 0.86, seen.size * 0.82, 0)
+              root.add(ear)
+            }
+            const grin = new THREE.Mesh(
+              new THREE.PlaneGeometry(seen.size * 0.7, seen.size * 0.44),
+              glow(0x15121a, 1),
+            )
+            grin.position.set(0, -seen.size * 0.1, seen.size * 0.96)
+            root.add(grin)
+            for (const side of [-1, 1]) {
+              const eye = new THREE.Mesh(
+                new THREE.SphereGeometry(seen.size * 0.12, 8, 6),
+                glow(0x15121a, 1),
+              )
+              eye.position.set(side * seen.size * 0.42, seen.size * 0.42, seen.size * 0.85)
+              root.add(eye)
+            }
+          } else if (shape === 1) {
+            // The jelly on the ceiling: a spotted cap with a fringe under it.
+            const cap = new THREE.Mesh(
+              new THREE.SphereGeometry(seen.size, 12, 8, 0, Math.PI * 2, 0, Math.PI * 0.6),
+              fur,
+            )
+            root.add(cap)
+            for (let i = 0; i < 5; i++) {
+              const spot = new THREE.Mesh(
+                new THREE.CircleGeometry(seen.size * 0.16, 8),
+                glow(0x2a2230, 1),
+              )
+              const angle = (Math.PI * 2 * i) / 5
+              spot.position.set(
+                Math.cos(angle) * seen.size * 0.6,
+                seen.size * 0.6,
+                Math.sin(angle) * seen.size * 0.6,
+              )
+              spot.rotation.x = -Math.PI / 2
+              root.add(spot)
+            }
+            const fringe = new THREE.Group()
+            fringe.name = 'fringe'
+            for (let i = 0; i < 8; i++) {
+              const angle = (Math.PI * 2 * i) / 8
+              const strand = new THREE.Mesh(
+                new THREE.CylinderGeometry(seen.size * 0.04, seen.size * 0.02, seen.size * 1.1, 4),
+                glow(seen.colour, 0.7),
+              )
+              strand.position.set(
+                Math.cos(angle) * seen.size * 0.55,
+                -seen.size * 0.55,
+                Math.sin(angle) * seen.size * 0.55,
+              )
+              fringe.add(strand)
+            }
+            root.add(fringe)
+          } else if (shape === 2) {
+            // The wolf: a snout, ears back, and four legs under it.
+            const body = new THREE.Mesh(
+              new THREE.CapsuleGeometry(seen.size * 0.4, seen.size * 0.9, 4, 8),
+              fur,
+            )
+            body.rotation.z = Math.PI / 2
+            root.add(body)
+            const snout = new THREE.Mesh(
+              new THREE.ConeGeometry(seen.size * 0.3, seen.size * 0.9, 6),
+              fur,
+            )
+            snout.rotation.z = -Math.PI / 2
+            snout.position.x = seen.size * 1.1
+            root.add(snout)
+            for (const side of [-1, 1]) {
+              const ear = new THREE.Mesh(
+                new THREE.ConeGeometry(seen.size * 0.16, seen.size * 0.5, 4),
+                fur,
+              )
+              ear.position.set(seen.size * 0.5, seen.size * 0.5, side * seen.size * 0.22)
+              root.add(ear)
+              for (const front of [-1, 1]) {
+                const leg = new THREE.Mesh(
+                  new THREE.CylinderGeometry(
+                    seen.size * 0.08,
+                    seen.size * 0.05,
+                    seen.size * 0.8,
+                    5,
+                  ),
+                  fur,
+                )
+                leg.position.set(
+                  front * seen.size * 0.45,
+                  -seen.size * 0.62,
+                  side * seen.size * 0.26,
+                )
+                root.add(leg)
+              }
+            }
+          } else {
+            // And a lump with limbs coming out of it, which is what a great
+            // many of them are: nothing in particular, in the shape of nothing
+            // in particular.
+            const blob = new THREE.Mesh(new THREE.SphereGeometry(seen.size, 10, 8), fur)
+            blob.scale.set(1.1, 0.85, 1)
+            root.add(blob)
+            for (let i = 0; i < 5; i++) {
+              const angle = (Math.PI * 2 * i) / 5
+              const limb = new THREE.Mesh(
+                new THREE.CapsuleGeometry(seen.size * 0.11, seen.size * 0.6, 3, 5),
+                glow(seen.colour, 0.7),
+              )
+              limb.position.set(
+                Math.cos(angle) * seen.size * 0.85,
+                -seen.size * 0.3,
+                Math.sin(angle) * seen.size * 0.85,
+              )
+              limb.rotation.z = Math.cos(angle) * 0.8
+              limb.rotation.x = Math.sin(angle) * 0.8
+              root.add(limb)
+            }
+          }
+          turns = root
+        }
+
+        // Marayam's: a long head on a heavy neck, horned, with a mane behind
+        // it, sat in the doorway. Built facing +Z so the whole group can simply
+        // be turned to the bearing the apparition carries, and drawn at the
+        // size of the gap it is filling rather than at the size of a fitting —
+        // the point of it is that there is no way past.
+        if (seen.kind === 'dragon') {
+          const hide = glow(seen.colour, 0.8)
+          const bulk = new THREE.Mesh(
+            new THREE.CapsuleGeometry(seen.size * 0.72, seen.size * 1.1, 5, 12),
+            hide,
+          )
+          bulk.rotation.x = Math.PI / 2
+          bulk.position.set(0, seen.size * 0.9, -seen.size * 0.7)
+          root.add(bulk)
+          const head = new THREE.Group()
+          head.name = 'jaws'
+          head.position.set(0, seen.size * 1.5, seen.size * 0.5)
+          const skull = new THREE.Mesh(new THREE.SphereGeometry(seen.size * 0.42, 12, 9), hide)
+          skull.scale.set(0.9, 0.8, 1.7)
+          head.add(skull)
+          // The snout, and the lower jaw under it as its own piece so it can
+          // open: a roar is a mouth, and a mouth that does not move is a face.
+          const jaw = new THREE.Mesh(
+            new THREE.BoxGeometry(seen.size * 0.5, seen.size * 0.16, seen.size * 0.85),
+            hide,
+          )
+          jaw.name = 'jaw'
+          jaw.position.set(0, -seen.size * 0.26, seen.size * 0.6)
+          head.add(jaw)
+          for (let i = 0; i < 8; i++) {
+            const fang = new THREE.Mesh(
+              new THREE.ConeGeometry(seen.size * 0.05, seen.size * 0.22, 3),
+              glow(0xfdf6ea, 1),
+            )
+            fang.position.set(
+              ((i % 4) / 3 - 0.5) * seen.size * 0.42,
+              -seen.size * 0.14,
+              seen.size * (0.4 + Math.floor(i / 4) * 0.4),
+            )
+            fang.rotation.x = Math.PI
+            head.add(fang)
+          }
+          for (const side of [-1, 1]) {
+            const eye = new THREE.Mesh(
+              new THREE.SphereGeometry(seen.size * 0.1, 8, 6),
+              glow(0xffe9a8, 1),
+            )
+            eye.position.set(side * seen.size * 0.24, seen.size * 0.12, seen.size * 0.5)
+            head.add(eye)
+            const horn = new THREE.Mesh(
+              new THREE.ConeGeometry(seen.size * 0.09, seen.size * 0.75, 5),
+              hide,
+            )
+            horn.position.set(side * seen.size * 0.26, seen.size * 0.4, -seen.size * 0.15)
+            horn.rotation.set(-0.7, 0, side * 0.35)
+            head.add(horn)
+          }
+          root.add(head)
+          // The mane, which is most of what the drawing is: a fan of spines
+          // running back off the skull.
+          for (let i = 0; i < 11; i++) {
+            const spine = new THREE.Mesh(
+              new THREE.ConeGeometry(seen.size * 0.07, seen.size * (0.5 + (i % 3) * 0.28), 4),
+              glow(seen.colour, 0.95),
+            )
+            const across = (i / 10 - 0.5) * Math.PI * 0.9
+            spine.position.set(
+              Math.sin(across) * seen.size * 0.5,
+              seen.size * (1.7 + Math.cos(across) * 0.3),
+              -seen.size * 0.1,
+            )
+            spine.rotation.set(-0.9, 0, -across)
+            root.add(spine)
+          }
+          // Two forelimbs on the deck, because the drawing has them planted:
+          // it is not hovering in the doorway, it is sitting in it.
+          for (const side of [-1, 1]) {
+            const limb = new THREE.Mesh(
+              new THREE.CylinderGeometry(seen.size * 0.16, seen.size * 0.11, seen.size * 1.1, 6),
+              hide,
+            )
+            limb.position.set(side * seen.size * 0.62, seen.size * 0.55, seen.size * 0.2)
+            root.add(limb)
+          }
+          turns = head
+        }
+
         if (seen.kind === 'cargo') {
           const crate = new THREE.Mesh(
             new THREE.BoxGeometry(seen.size, seen.size, seen.size),
@@ -2562,6 +3350,248 @@
 
           if (held.kind === 'chain') {
             swingTheChain(held, phase)
+            continue
+          }
+
+          // ── The Guardian Spirit Beasts ───────────
+          //
+          // These are the apparitions that have to look alive rather than
+          // merely present: everything above them is a mark riding on the air,
+          // and an animal that only bobbed would be a prop of an animal.
+
+          // Camilla's works its tentacles, and it works them in every direction
+          // at once — each arm on its own phase, and each bead of an arm
+          // further round that phase than the one above it, so the length whips
+          // instead of swinging as a rod. The bell breathes on a slower count,
+          // because a jellyfish is a bell that is pumping.
+          if (held.kind === 'medusa') {
+            held.root.position.set(held.at[0], held.y + Math.sin(phase * 0.6) * 0.18, held.at[1])
+            const pump = 1 + Math.sin(phase * 1.1) * 0.08
+            held.root.scale.set(pump, 2 - pump, pump)
+            if (!held.turns) continue
+            held.turns.children.forEach((arm, i) => {
+              const own = phase * 1.3 + (i * Math.PI * 2) / TENTACLES
+              arm.children.forEach((bead, deep) => {
+                const reach = deep * held.size * 0.16
+                bead.position.x = Math.sin(own + deep * 0.7) * reach
+                bead.position.z = Math.cos(own * 0.8 + deep * 0.9) * reach
+                bead.position.y = -deep * held.size * 0.42 + Math.sin(own + deep) * 0.05
+              })
+            })
+            continue
+          }
+
+          // Tserriednich's stands where it last touched something, and looks at
+          // whoever is in the room with it.
+          if (held.kind === 'chimera') {
+            held.root.position.set(held.at[0], held.y + Math.sin(phase * 0.5) * 0.03, held.at[1])
+            held.root.rotation.y = Math.sin(phase * 0.22) * 0.5
+            if (held.turns) {
+              held.turns.rotation.y =
+                Math.atan2(
+                  camera.position.x - held.root.position.x,
+                  camera.position.z - held.root.position.z,
+                ) - held.root.rotation.y
+              held.turns.rotation.z = Math.sin(phase * 0.7) * 0.12
+            }
+            continue
+          }
+
+          // What the third contact left, which does not stay where it was put:
+          // whatever this is now, it is not furniture, and furniture is exactly
+          // what it would read as if it held still.
+          if (held.kind === 'monster') {
+            const turn = phase * 0.3
+            held.root.position.set(
+              held.at[0] + Math.cos(turn) * held.spread,
+              held.y + Math.abs(Math.sin(phase * 1.6)) * 0.14,
+              held.at[1] + Math.sin(turn * 1.3) * held.spread,
+            )
+            held.root.rotation.y = turn * 1.7
+            continue
+          }
+
+          // Tubeppa's sits and breathes. It is the one beast in the walk that
+          // does not have to do anything to be doing something — the gas is
+          // doing it — so all it does is fill and empty.
+          if (held.kind === 'toad') {
+            held.root.position.set(held.at[0], held.y, held.at[1])
+            const breath = 1 + Math.sin(phase * 0.9) * 0.06
+            held.root.scale.set(breath, 2 - breath, breath)
+            held.root.rotation.y = Math.sin(phase * 0.2) * 0.35
+            continue
+          }
+
+          // And the gas it is making: slow, large, going nowhere in particular
+          // and swelling as it goes. Three sines that do not divide into each
+          // other, so the room never settles into a pattern.
+          if (held.kind === 'gas') {
+            held.root.position.set(
+              held.at[0] + Math.sin(phase * 0.23 + held.stage) * held.spread,
+              held.y + Math.sin(phase * 0.31 + held.stage * 1.4) * 0.4,
+              held.at[1] + Math.sin(phase * 0.19 + held.stage * 2.1) * held.spread,
+            )
+            const swell = 1 + Math.sin(phase * 0.4 + held.stage) * 0.22
+            held.root.scale.setScalar(swell)
+            held.root.rotation.y = phase * 0.12 + held.stage
+            continue
+          }
+
+          // Zhang Lei's turns, and burns while it turns. The rim and the fire
+          // are on separate counts — a corona that rotated with its own wheel
+          // would read as a pinwheel rather than as something alight — and the
+          // face stays upright, facing whoever is in front of it.
+          if (held.kind === 'wheel') {
+            held.root.position.set(held.at[0], held.y + Math.sin(phase * 0.5) * 0.1, held.at[1])
+            held.root.rotation.y = Math.atan2(
+              camera.position.x - held.root.position.x,
+              camera.position.z - held.root.position.z,
+            )
+            const spun = held.root.children[0]
+            if (spun) spun.rotation.z = phase * 0.35
+            const fire = held.root.getObjectByName('corona')
+            if (fire) {
+              fire.children.forEach((flame, i) => {
+                const lick = 1 + Math.sin(phase * 4 + i * 1.7) * 0.4
+                flame.scale.set(1, lick, 1)
+              })
+            }
+            continue
+          }
+
+          // The coin at its mouth: turning on the spot, so it is a disc from one
+          // side and an edge from the other, which is what a coin hanging in the
+          // air does and what tells it from a plate.
+          if (held.kind === 'coin') {
+            held.root.position.set(held.at[0], held.y + Math.sin(phase * 1.2) * 0.06, held.at[1])
+            held.root.rotation.y = phase * 1.6
+            continue
+          }
+
+          // Luzurus's crawls on the spot and works its jaw: it has hold of
+          // things across the room and is pulling them in, so what it has to
+          // look like is something eating rather than something waiting.
+          if (held.kind === 'centipede') {
+            held.root.position.set(held.at[0], held.y, held.at[1])
+            held.root.rotation.y = Math.sin(phase * 0.18) * 0.8
+            const segments = held.root.getObjectByName('segments')
+            if (segments) {
+              segments.children.forEach((part, i) => {
+                part.position.y = Math.sin(phase * 2.2 - i * 0.5) * held.size * 0.1
+              })
+            }
+            // The jaw only works when it has something to work on, which is
+            // what `stage` carries: a mouth chewing at nothing reads as idle.
+            if (held.turns) {
+              const bite = held.stage ? Math.abs(Math.sin(phase * 2.6)) : 0.1
+              held.turns.position.y = -bite * held.size * 0.3
+            }
+            continue
+          }
+
+          // Salé-salé's hangs and breathes out of every mouth at once, until
+          // the room is full: then they shut, and that is the one thing about
+          // the technique a visitor is meant to be able to see from outside.
+          if (held.kind === 'mouths') {
+            held.root.position.set(held.at[0], held.y + Math.sin(phase * 0.55) * 0.12, held.at[1])
+            held.root.rotation.y = phase * 0.16
+            if (held.turns) {
+              held.turns.children.forEach((mouth, i) => {
+                const open = held.stage ? 0.06 : 0.55 + Math.sin(phase * 1.8 + i) * 0.45
+                mouth.scale.set(1, Math.max(0.06, open), 1)
+              })
+            }
+            continue
+          }
+
+          if (held.kind === 'fume') {
+            held.root.position.set(
+              held.at[0] + Math.sin(phase * 0.21 + held.stage) * held.spread,
+              held.y + Math.sin(phase * 0.27 + held.stage * 1.3) * 0.45,
+              held.at[1] + Math.sin(phase * 0.17 + held.stage * 1.9) * held.spread,
+            )
+            held.root.scale.setScalar(1 + Math.sin(phase * 0.35 + held.stage) * 0.2)
+            continue
+          }
+
+          // Marayam's does not move: it is sitting in the way, and a beast that
+          // paced would be a beast you could time. It breathes, it follows you
+          // round the room with its head, and it opens its jaws when somebody
+          // tries the door — `roaring` is the clock the walk sets on that, and
+          // it is the only animation in the scene that is triggered rather than
+          // ambient.
+          if (held.kind === 'dragon') {
+            held.root.position.set(held.at[0], held.y, held.at[1])
+            held.root.rotation.y = (held.stage * Math.PI) / 180
+            if (!held.turns) continue
+            // The head turns to whoever is in the room with it, in the group's
+            // own frame, and never further than a neck goes.
+            const toward =
+              Math.atan2(
+                camera.position.x - held.root.position.x,
+                camera.position.z - held.root.position.z,
+              ) - held.root.rotation.y
+            const wrapped = Math.atan2(Math.sin(toward), Math.cos(toward))
+            held.turns.rotation.y = Math.max(-1.1, Math.min(1.1, wrapped))
+            held.turns.rotation.x = Math.sin(phase * 0.6) * 0.05
+            const jaw = held.turns.getObjectByName('jaw')
+            if (jaw) {
+              // Open on the roar, shut the rest of the time. The roar runs
+              // itself down, so nothing has to remember to close it.
+              const open = roaring > 0 ? Math.sin((1 - roaring / ROAR_SECONDS) * Math.PI) : 0
+              jaw.rotation.x = 0.15 + open * 0.7
+              jaw.position.y = -held.size * (0.26 + open * 0.18)
+            }
+            continue
+          }
+
+          // Momoze's flock, which is the one thing in the walk that is allowed
+          // to leave the room it belongs to: the reach is wider than the water
+          // its station was given, so a beast on that arc goes through the
+          // bulkhead, spends a moment in whatever is on the other side of it,
+          // and comes back. Every one of them is playing — a slow ring, a hop
+          // on top of it, a roll and a turn — and no two are on the same count,
+          // because the phase is its own number and its number is its own.
+          if (held.kind === 'sprite') {
+            const own = held.stage
+            const turn = phase * (0.2 + (own % 5) * 0.05) + own
+            const bob = Math.sin(phase * (1.2 + (own % 3) * 0.5) + own)
+            held.root.position.set(
+              held.at[0] + Math.cos(turn) * held.spread,
+              held.y + bob * (0.3 + (own % 4) * 0.18),
+              held.at[1] + Math.sin(turn * 1.3) * held.spread,
+            )
+            // Nose along the way it is going, and rolling as it plays: they
+            // dance and fly, and a creature that stayed upright would be doing
+            // neither.
+            held.root.rotation.set(
+              Math.sin(phase * 0.8 + own) * 0.4,
+              -turn + Math.PI / 2,
+              Math.sin(phase * 0.6 + own * 2) * 0.5,
+            )
+            continue
+          }
+
+          // Tyson's, which is not in the room: it hangs in front of the reader
+          // at eye height, looks straight at them, and beats its wings. Carried
+          // like the flute and the book, so the position is the camera's.
+          if (held.kind === 'wog') {
+            const sin = Math.sin(yaw)
+            const cos = Math.cos(yaw)
+            held.root.position.set(
+              camera.position.x + cos * 1.15,
+              camera.position.y + 0.08 + Math.sin(phase * 1.1) * 0.05,
+              camera.position.z - sin * 1.15,
+            )
+            // Facing back at the visitor: the eye is built looking down +Z, so
+            // it is turned to the camera rather than away with it.
+            held.root.rotation.set(0, yaw + Math.PI / 2, 0)
+            const wings = held.turns
+            if (wings) {
+              wings.children.forEach((wing, i) => {
+                wing.rotation.z = Math.sin(phase * 5 + i * Math.PI) * 0.5
+              })
+            }
             continue
           }
 
@@ -3535,8 +4565,34 @@
       }
 
       function takeLink() {
+        // Marayam's beast is in the doorway, and E is the door: a visitor shut
+        // into a room by it does not get told they cannot leave, they get
+        // roared at. The refusal is the pure layer's — `arriveInTour` puts
+        // anyone who walks out back — and this is the same refusal at the one
+        // place the walk offers a way out with a keypress.
+        if (world.dragon && untrack(() => currentSpace)?.id === world.dragon) {
+          startRoaring()
+          return
+        }
         const found = untrack(() => availableLink)
         if (found) goTo(found.to)
+      }
+
+      /**
+       * How long one roar runs, in seconds, and how much of it is left.
+       *
+       * The only triggered animation in the scene: everything else an
+       * apparition does is a sine that was always running. It is a countdown
+       * rather than a flag because the jaws have to open and shut again on
+       * their own — see the dragon in `driftApparitions` — and because a second
+       * try at the door while the first roar is still going should restart it
+       * rather than stack a second one on top.
+       */
+      const ROAR_SECONDS = 1.6
+      let roaring = 0
+      function startRoaring() {
+        roaring = ROAR_SECONDS
+        roarLikeADragon()
       }
 
       /**
@@ -3771,6 +4827,19 @@
        * quickly — where Secret Window's bird is a perch that happens to move.
        */
       const CRAWL_SECONDS = 4
+      /** How long since a Guardian Spirit Beast last took a step, in seconds. */
+      let sinceBeast = 0
+      /**
+       * The beasts work at the fish's pace, and deliberately the same one.
+       *
+       * A melt, a reel and a room filling are all the same kind of event — a
+       * thing you notice has moved on rather than a thing you watch move — and
+       * the walk already has a number for that. A second number for the same
+       * idea would be a second rule to keep.
+       */
+      const BEAST_SECONDS = 2.4
+      /** The room whose coin the last pickup was made on, held until stepped away from. */
+      let takenCoin: string | null = null
       /** How much of the current second of the bird's twenty has gone by. */
       let sinceOwlSecond = 0
       /** How long since the bird's own path was last sampled, in seconds. */
@@ -3971,6 +5040,33 @@
           }
         } else sinceBite = 0
 
+        // The roar runs itself down. Nothing else reads it: the jaws do.
+        if (roaring > 0) roaring = Math.max(0, roaring - delta)
+
+        // The three Guardian Spirit Beasts that go on working after the cast,
+        // all on the fish's own clock and for the fish's own reason: what they
+        // do is something you stand and watch happen, and a beast that only
+        // acted when a key was pressed would be a beast you could win by
+        // standing still. What each step takes is the pure layer's to decide.
+        if (world.toad || world.centipede || world.smoke) {
+          sinceBeast += delta
+          if (sinceBeast >= BEAST_SECONDS) {
+            sinceBeast = 0
+            onBeast?.()
+          }
+        } else sinceBeast = 0
+
+        // Zhang Lei's coin is taken by walking into it, the way the tunnel is
+        // crossed by walking into its mouth: `takenCoin` is the coin the last
+        // pickup was made on, held until the visitor steps away from where the
+        // next one hangs, or standing beside the wheel would empty it.
+        const reached = coinAt(ship, world, currentTierId, pointer)
+        if (!reached) takenCoin = null
+        else if (reached !== takenCoin) {
+          takenCoin = reached
+          onCoin?.(reached)
+        }
+
         // The marks close on each other on a tenth of a second rather than on
         // the frame: what they do is state, and sixty writes a second to a world
         // the whole page reads is a cost with nothing bought by it. How much of
@@ -4134,6 +5230,47 @@
         // this lamp carried the picture; it is kept because it costs nothing and a
         // stairwell lit from slightly off-axis still has corners.
         nightLight.position.set(pointer[0] - cos * 0.3, eye - 0.3, pointer[1] + sin * 0.3)
+
+        // What the two Guardian Spirit Beasts that give something back have put
+        // on the visitor. Both are carried at the head and both are read
+        // straight off the world every frame, which is what makes taking a
+        // second coin visible as the light going up rather than as a sentence
+        // in the read-out.
+        const gilded = world.body.gilded
+        gildLight.intensity = gilded ? Math.min(4, 1 + Math.log10(gilded)) : 0
+        gildLight.position.set(pointer[0], eye, pointer[1])
+        const halo = world.body.halo
+        haloLight.intensity = halo ? Math.min(4.5, halo * 0.6) : 0
+        haloLight.position.set(pointer[0], eye, pointer[1])
+        haloBubble.visible = halo > 0
+        if (halo > 0) {
+          haloBubble.position.set(pointer[0], eye, pointer[1])
+          haloBubble.scale.setScalar(Math.min(6, 1.8 + halo * 0.5))
+        }
+        // And a lamp in every room an eye-wog lit, on the deck being walked.
+        // Built the first time the room needs one and dropped when the levy is
+        // blown off it, exactly as the solids are.
+        for (const spaceId of world.lit) {
+          if (litLights[spaceId]) continue
+          const space = ship.spaces.get(spaceId)
+          const tier = space ? ship.tiers.find((candidate) => candidate.id === space.tierId) : null
+          if (!space || !tier) continue
+          const middle = centroid(space)
+          const lamp = new THREE.PointLight(0xfff1d8, 2.6, 26, 2)
+          lamp.position.set(
+            middle[0],
+            floorOf(space, tier) + ceilingOf(space, tier) * 0.7,
+            middle[1],
+          )
+          scene.add(lamp)
+          litLights[spaceId] = lamp
+        }
+        for (const spaceId of Object.keys(litLights)) {
+          if (world.lit.includes(spaceId)) continue
+          const lamp = litLights[spaceId]
+          if (lamp) scene.remove(lamp)
+          delete litLights[spaceId]
+        }
         // The aura is carried by the visitor, because the visitor is the one
         // emitting it. Positioned whether or not it is lit: `syncShells` raises the
         // intensity, and a light at the wrong end of the deck the frame a technique

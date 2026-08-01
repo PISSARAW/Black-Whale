@@ -408,6 +408,63 @@ export const fr: Messages = {
             ? `${air} dans ${room} · ${solids} chose${solids === 1 ? '' : 's'} l'ont prise et se sont mises à danser`
             : `${air} dans ${room} · la pièce l'a entendu et l'a gardé`
         },
+        // Les bêtes de Nen gardiennes. Chacune dit ce que son animal a fait,
+        // jamais qu'un animal est apparu : le visiteur l'a sous les yeux.
+        beastRaised: (room, solids) =>
+          solids
+            ? `La bête est suspendue au-dessus de ${room} · ${solids} chose${solids === 1 ? '' : 's'} décollée${solids === 1 ? '' : 's'} du pont et qui tourne${solids === 1 ? '' : 'nt'}`
+            : `La bête est suspendue au-dessus de ${room} · rien à soulever`,
+        beastDismissed: (room, solids) =>
+          solids
+            ? `La bête lâche ${room} · ${solids} chose${solids === 1 ? '' : 's'} de retour au sol`
+            : `La bête lâche ${room}`,
+        wheelRaised: (room, coin) =>
+          `La roue tourne au-dessus de ${room} · une pièce de ${coin} à sa bouche, et qui ne vaut rien tant que personne ne la prend`,
+        wheelDismissed: (room) => `La roue quitte ${room}, la pièce avec`,
+        coinTaken: (value, gilded) =>
+          `Prise : ${value} · vous en portez ${gilded} désormais, et la suivante vaudra dix fois celle-ci`,
+        liePushed: (solid, metres) =>
+          metres
+            ? `Premier contact · ${solid} est poussé, et marqué pour un deuxième`
+            : `Premier contact · ${solid} n'avait nulle part où être poussé, et est marqué quand même`,
+        lieGreened: (solid) => `Deuxième contact · le vert est dans ${solid} et y reste`,
+        lieTransformed: (solid) =>
+          `Troisième contact · quoi que ce soit qui se tienne là, ce n'est plus ${solid}`,
+        gasLoosed: (room, solids) =>
+          solids
+            ? `La bête est accroupie dans ${room} · ${solids} chose${solids === 1 ? '' : 's'} dans le gaz avec elle`
+            : `La bête est accroupie dans ${room} · rien à y prendre`,
+        gasLifted: (room) => `La bête quitte ${room} · ce qu'elle avait déjà pris, elle le garde`,
+        melted: (room, melting, gone) =>
+          gone
+            ? `${gone} disparu${gone === 1 ? '' : 's'} dans ${room}, ${melting} encore en train de fondre`
+            : `${melting} en train de fondre dans ${room}`,
+        roomBrightened: (room, levied) =>
+          levied
+            ? `${levied} prélevés sur vous, et ${room} en est éclairée`
+            : `${room} est éclairée · vous n'aviez rien engagé, et cela vous est rendu quand même`,
+        haloRaised: (levied, halo) =>
+          `La pièce est déjà claire, alors cela va sur vous : ${levied} prélevés, ${halo} portés`,
+        reeled: (pulled, eaten) =>
+          eaten
+            ? `${eaten} vous ${eaten === 1 ? 'a atteint et a' : 'ont atteint et ont'} été avalé${eaten === 1 ? '' : 's'}${pulled ? ` · ${pulled} encore en chemin` : ''}`
+            : `${pulled} chose${pulled === 1 ? '' : 's'} traînée${pulled === 1 ? '' : 's'} vers vous`,
+        smokeLoosed: (room) =>
+          `Toutes ses bouches s'ouvrent · ${room} commence à se remplir, une couleur à la fois`,
+        smokeLifted: (room, filled) => `La bête quitte ${room} · elle en était à ${filled} parts`,
+        smokeSpread: (room, filled, full) =>
+          full
+            ? `${room} est pleine · les bouches se ferment`
+            : `${room} prend une part de plus · ${filled} dedans à présent`,
+        flockLoosed: (rooms, beasts) =>
+          `${beasts} d'entre elles, sur ${rooms} pièces · elles ne restent pas dans les pièces`,
+        flockCalledIn: (rooms) => `Rappelées de ${rooms} pièces · le vaisseau se tait`,
+        isolationLifted: (room) => `La bête s'écarte de la porte · ${room} vous laisse sortir`,
+        crushedOne: (solid, left) =>
+          left
+            ? `${solid} passe sous ses pattes · ${left} restant${left === 1 ? '' : 's'} dans la pièce`
+            : `${solid} passe sous ses pattes · plus rien debout`,
+
         deduced: (what, strength) =>
           `Condition lue — ${what} · ${strength} nommées, et plus fort à chacune`,
         nothingToDeduce: 'Plus rien à lire : chaque emprise a été nommée',
@@ -618,6 +675,18 @@ export const fr: Messages = {
         flowered: 'En fleurs',
         scattered: 'Notes en suspens dans',
         dancing: 'Dansent',
+        medusa: 'La bête tient',
+        chimera: 'La bête est près de',
+        toad: 'Le gaz est dans',
+        centipede: 'La sécrétion est dans',
+        cat: 'Le chat est dans',
+        dragon: 'La porte de',
+        wheel: 'La roue tourne au-dessus de',
+        smoke: 'Se remplit',
+        menagerie: 'Pièces où elles courent',
+        lit: 'Éclairée',
+        gilded: 'Pièces gardées',
+        halo: 'La bulle',
         deduced: 'Conditions lues',
         packed: "L'emballage garde",
         packedHits: (packed) => `${packed} coup${packed === 1 ? '' : 's'}`,

@@ -12,7 +12,9 @@
     TOUR_HATSU_KINDS,
     aimsAtSolids,
     castablePages,
+    adriftSolidIds,
     dancingSolidIds,
+    SMOKE_FULL,
     dialReading,
     identityOf,
     solidById,
@@ -400,6 +402,51 @@
           report.on,
           report.solids,
         )
+      // The Guardian Spirit Beasts. Every one of them says what it did to the
+      // room rather than that it is there: the visitor can see that it is there.
+      case 'beast-raised':
+        return say.beastRaised(roomName(report.spaceId), report.solids)
+      case 'beast-dismissed':
+        return say.beastDismissed(roomName(report.spaceId), report.solids)
+      case 'wheel-raised':
+        return say.wheelRaised(roomName(report.spaceId), report.coin)
+      case 'wheel-dismissed':
+        return say.wheelDismissed(roomName(report.spaceId))
+      case 'coin-taken':
+        return say.coinTaken(report.value, report.gilded)
+      case 'lie-pushed':
+        return say.liePushed(solidName(report.solidId), report.metres)
+      case 'lie-greened':
+        return say.lieGreened(solidName(report.solidId))
+      case 'lie-transformed':
+        return say.lieTransformed(solidName(report.solidId))
+      case 'gas-loosed':
+        return say.gasLoosed(roomName(report.spaceId), report.solids)
+      case 'gas-lifted':
+        return say.gasLifted(roomName(report.spaceId))
+      case 'melted':
+        return say.melted(roomName(report.spaceId), report.melting, report.gone)
+      case 'room-brightened':
+        return say.roomBrightened(roomName(report.spaceId), report.levied)
+      case 'halo-raised':
+        return say.haloRaised(report.levied, report.halo)
+      case 'reeled':
+        return say.reeled(report.pulled, report.eaten)
+      case 'smoke-loosed':
+        return say.smokeLoosed(roomName(report.spaceId))
+      case 'smoke-lifted':
+        return say.smokeLifted(roomName(report.spaceId), report.filled)
+      case 'smoke-spread':
+        return say.smokeSpread(roomName(report.spaceId), report.filled, report.full)
+      case 'flock-loosed':
+        return say.flockLoosed(report.rooms, report.beasts)
+      case 'flock-called-in':
+        return say.flockCalledIn(report.rooms)
+      case 'isolation-lifted':
+        return say.isolationLifted(roomName(report.spaceId))
+      case 'crushed-one':
+        return say.crushedOne(solidName(report.solidId), report.left)
+
       case 'deduced':
         return say.deduced(report.what, report.strength)
       case 'nothing-to-deduce':
@@ -603,6 +650,9 @@
     for (const id of world.scattered) rows.push({ label: held.scattered, value: roomName(id) })
     const dancing = dancingSolidIds(world)
     if (dancing.length) rows.push({ label: held.dancing, value: `${dancing.length}` })
+    // What the two beasts that give something back left on the visitor.
+    if (body.gilded) rows.push({ label: held.gilded, value: `${body.gilded}` })
+    if (body.halo) rows.push({ label: held.halo, value: `${body.halo}` })
     if (body.deduced.length) rows.push({ label: held.deduced, value: `${body.deduced.length}` })
     if (body.packed !== null) rows.push({ label: held.packed, value: held.packedHits(body.packed) })
     for (const id of world.shut) rows.push({ label: held.shut, value: roomName(id) })
@@ -614,6 +664,36 @@
     for (const [id, card] of Object.entries(world.cards)) {
       rows.push({ label: held.cards, value: `${roomName(id)} · ${['', '☐', '☒', '✕'][card]}` })
     }
+    // The Guardian Spirit Beasts: where each of them is, and what it has done
+    // so far. The two that leave something on the visitor rather than on a room
+    // are further up, with the rest of the body.
+    if (world.medusa) {
+      rows.push({
+        label: held.medusa,
+        value: `${roomName(world.medusa)} · ${adriftSolidIds(world).length}`,
+      })
+    }
+    if (world.chimera) rows.push({ label: held.chimera, value: roomName(world.chimera) })
+    if (world.toad) rows.push({ label: held.toad, value: roomName(world.toad) })
+    if (world.centipede) rows.push({ label: held.centipede, value: roomName(world.centipede) })
+    if (world.cat) rows.push({ label: held.cat, value: roomName(world.cat) })
+    if (world.dragon) rows.push({ label: held.dragon, value: roomName(world.dragon) })
+    if (world.wheel) {
+      rows.push({
+        label: held.wheel,
+        value: `${roomName(world.wheel.spaceId)} · ${world.wheel.coin}`,
+      })
+    }
+    if (world.smoke) {
+      rows.push({
+        label: held.smoke,
+        value: `${roomName(world.smoke.spaceId)} · ${world.smoke.filled} / ${SMOKE_FULL}`,
+      })
+    }
+    if (world.menagerie.length) {
+      rows.push({ label: held.menagerie, value: `${world.menagerie.length}` })
+    }
+    for (const id of world.lit) rows.push({ label: held.lit, value: roomName(id) })
     if (world.double) rows.push({ label: held.double, value: roomName(world.double) })
     if (world.trap) rows.push({ label: held.trap, value: roomName(world.trap) })
     for (const id of world.gumTraps) rows.push({ label: held.gumTrap, value: roomName(id) })

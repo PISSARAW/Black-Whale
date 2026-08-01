@@ -188,6 +188,18 @@
      */
     onOwlSecond?: () => void
     /**
+     * Asked every tenth of a second for polarity marks to detonate.
+     */
+    onPolarity?: (seconds: number) => void
+    /**
+     * Asked every few seconds while Little Eye's insect is out scouting.
+     *
+     * The bird is the other thing aboard that moves without being cast at: it
+     * works its way through the ship a door at a time, on the same clock the
+     * fish feed on. Which door it takes is the pure layer's decision.
+     */
+    onScout?: () => void
+    /**
      * Whether the technique in hand is one that throws a thread.
      *
      * Machi's stitches mend, and the walk has nothing torn in it that a visitor
@@ -237,6 +249,8 @@
     onFish,
     onOwl,
     onOwlSecond,
+    onPolarity,
+    onScout,
     swings = false,
   }: Props = $props()
 
@@ -2426,7 +2440,9 @@
        * nowhere left to pull you, which is why it only ever worked once.
        */
       function throwThread() {
-        const plan = ship.plans.get(currentTierId)
+        // The deck as Nen leaves it, which is the one the thread is thrown
+        // across: a room the chain has shut has no doorway to go through.
+        const plan = activePlan ?? ship.plans.get(currentTierId)
         if (!plan) return
         const sin = Math.sin(yaw)
         const cos = Math.cos(yaw)
@@ -2448,14 +2464,14 @@
         const unitY = -cos
 
         if (!walksThroughWalls(world)) {
-          for (const wall of walked.walls) {
-            const dx = wall.a2[0] - wall.a1[0]
-            const dy = wall.a2[1] - wall.a1[1]
+          for (const wall of plan.walls) {
+            const dx = wall.end[0] - wall.start[0]
+            const dy = wall.end[1] - wall.start[1]
             const denominator = unitX * dy - unitY * dx
             if (Math.abs(denominator) < 1e-9) continue
 
-            const ox = wall.a1[0] - pointer[0]
-            const oy = wall.a1[1] - pointer[1]
+            const ox = wall.start[0] - pointer[0]
+            const oy = wall.start[1] - pointer[1]
             const t = (ox * dy - oy * dx) / denominator
             const u = (ox * unitY - oy * unitX) / denominator
 
@@ -2477,9 +2493,11 @@
         }
         if (!to) return
 
-        const reach = Math.hypot(to[0] - pointer[0], to[1] - pointer[1])
+        // How far it actually went, which is not how far it could have: the
+        // wall the ray met, or the floor running out, is what settled it.
+        const thrown = Math.hypot(to[0] - pointer[0], to[1] - pointer[1])
         // A thread thrown at your own feet is a thread, and nothing else.
-        if (reach < 2) return
+        if (thrown < 2) return
         const target = landing ?? spaceAt(plan, to)
         arc = {
           to,
@@ -2487,7 +2505,7 @@
           from: pointer,
           // A swing is a swing whatever the distance: about sixteen metres a
           // second of ground, which crosses the promenade in a couple of arcs.
-          span: Math.max(0.35, reach / 16),
+          span: Math.max(0.35, thrown / 16),
           through: 0,
         }
       }
@@ -2505,9 +2523,14 @@
           arc.from[0] + (arc.to[0] - arc.from[0]) * eased,
           arc.from[1] + (arc.to[1] - arc.from[1]) * eased,
         ]
-        pointer = walksThroughWalls(world)
-          ? target
-          : resolveMovement(pointer, target, wallsNear([...walked.walls, ...loose], pointer, 6))
+        // Ridden through the deck as Nen leaves it, not through it: a swing
+        // ending inside a bulkhead was the one thing the thread could do that
+        // walking could not.
+        const walked = activePlan ?? ship.plans.get(currentTierId)
+        pointer =
+          walksThroughWalls(world) || !walked
+            ? target
+            : resolveMovement(pointer, target, wallsNear([...walked.walls, ...loose], pointer, 6))
         // Up and over: the rise is what makes it a swing rather than a winch.
         swingRise = Math.sin(arc.through * Math.PI) * 2.2
 
@@ -2799,6 +2822,7 @@
       let sinceOwlSecond = 0
       /** How long since the bird's own path was last sampled, in seconds. */
       let sinceFilmSample = 0
+      let sincePolarity = 0
 
       /**
        * Where the bird is this tenth of a second, kept for the last ten.
@@ -2942,6 +2966,12 @@
             onFish?.()
           }
         } else sinceBite = 0
+
+        sincePolarity += delta
+        if (sincePolarity >= 0.1) {
+          sincePolarity -= 0.1
+          onPolarity?.(clock)
+        }
 
         // The free bird on the same clock: it sits in a room for a few seconds
         // and then takes a door out of it. Only that bird — the one on the

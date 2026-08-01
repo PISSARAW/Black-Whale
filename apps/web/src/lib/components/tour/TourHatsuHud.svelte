@@ -105,14 +105,14 @@
    */
   const bothPages = $derived(profile.kind === 'bookmark' ? twoPages(world.book) : null)
   /**
-   * Whether a two-handed technique is in reach of a key, in hand or on a page.
+   * The two-handed technique in reach of a key, and which hint it needs.
    *
-   * It never spends a second key on its second hand — the one key alternates —
-   * so there is one thing to tell the visitor either way.
+   * In hand it has both keys — F puts the sun on, R the moon. Held on a page of
+   * the book it has only its own, because R is how the other page is cast, so
+   * that one key alternates instead. Two different things to tell the visitor.
    */
-  const marksBothHands = $derived(
-    bothPages ? bothPages.includes('polarity') : profile.kind === 'polarity',
-  )
+  const marksBothHands = $derived(!bothPages && profile.kind === 'polarity')
+  const marksOnOneKey = $derived(Boolean(bothPages?.includes('polarity')))
 
   const roomName = (id: string) => {
     const space = ship.spaces.get(id)
@@ -662,11 +662,13 @@
     <p class="text-[11px] text-[#FFFFF0]/45">
       {marksBothHands
         ? $t.tour.hatsu.solids.markHint
-        : onBody
-          ? $t.tour.hatsu.body.castHint
-          : onSolids
-            ? $t.tour.hatsu.solids.castHint
-            : $t.tour.hatsu.castHint}
+        : marksOnOneKey
+          ? $t.tour.hatsu.solids.markPageHint
+          : onBody
+            ? $t.tour.hatsu.body.castHint
+            : onSolids
+              ? $t.tour.hatsu.solids.castHint
+              : $t.tour.hatsu.castHint}
     </p>
   {:else}
     <p class="mt-2 text-xs leading-snug text-[#FFFFF0]/60">

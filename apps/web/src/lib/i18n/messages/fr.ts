@@ -99,8 +99,8 @@ export const fr: Messages = {
       nenSelfKeys: 'R, où que porte le regard',
       nenSecond: 'Lancer la seconde page',
       nenSecondKeys: (name) => `R lance ${name}, celle que tient le marque-page`,
-      nenMoon: 'Poser le soleil, puis la lune',
-      nenMoonKeys: 'La même touche alterne : une pression le soleil, la suivante la lune',
+      nenMoon: 'Poser la lune plutôt que le soleil',
+      nenMoonKeys: 'R marque de la lune, F du soleil',
       touch: 'Sur écran tactile',
       touchKeys:
         'Le manche en bas à gauche fait marcher, poussé à fond il fait courir ; glissez sur la vue pour regarder ; les boutons franchissent une porte et lancent',
@@ -535,7 +535,9 @@ export const fr: Messages = {
         castHint:
           'F, ou un clic, pour lancer dessus — ou choisissez ci-dessous un volume du vaisseau',
         markHint:
-          'La touche alterne : une pression pose le soleil, la suivante la lune · ce qui est marqué part chercher son contraire',
+          'F pose le soleil, R la lune · ce qui est marqué part chercher son contraire',
+        markPageHint:
+          'La page n’a qu’une touche, alors elle alterne : une pression le soleil, la suivante la lune',
         aiming: (solid) => `Face à ${solid}`,
         aimingNothing: 'Rien de solide devant vous',
         targets: 'Lancer sur un volume',

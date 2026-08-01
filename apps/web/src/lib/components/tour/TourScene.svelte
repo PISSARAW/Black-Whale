@@ -188,6 +188,16 @@
      */
     tunes?: { first: string; second: string; third: string } | null
     /**
+     * Whether the technique in hand is cast with two hands rather than one.
+     *
+     * The Sun and Moon is the whole of it: one hand puts the sun on and the
+     * other the moon, and which of the two a thing wears decides what it does
+     * when it meets another. So R stops meaning *cast on me* here as well — it
+     * is the second hand. Unnamed, unlike the book's two pages and the flute's
+     * three airs, because the buttons a phone gets instead are the marks.
+     */
+    twoHanded?: boolean
+    /**
      * Paint the deck in what it is worth as evidence rather than in what its
      * rooms are for: the reveal. It changes nothing about the ship — the same
      * walls, the same solids — only what the surfaces say about themselves.
@@ -298,6 +308,7 @@
     selfCastable = false,
     hands = null,
     tunes = null,
+    twoHanded = false,
     reveal = false,
     aimedAt = $bindable(null),
     aimedSolidAt = $bindable(null),
@@ -3510,7 +3521,7 @@
         // second: its own key alternates, which the page works out.
         if (event.code === 'KeyF' && aiming) cast('first')
         if (event.code === 'KeyR' && !event.repeat && aiming) {
-          if (hands || tunes) cast('second')
+          if (hands || tunes || twoHanded) cast('second')
           else if (selfCastable) castOnSelf()
         }
         // C is the third, and only an instrument has one: three airs need three
@@ -4564,10 +4575,25 @@
             {air.name}
           </button>
         {/each}
+      {:else if aiming && twoHanded}
+        <!-- And two for the two hands, which need no names: the marks are what
+             the technique puts on, and a phone draws them as the walk draws them
+             over the things themselves. -->
+        {#each [{ hand: 'first' as const, glyph: '☀' }, { hand: 'second' as const, glyph: '☾' }] as mark (mark.hand)}
+          <button
+            type="button"
+            onclick={() => castNow?.(mark.hand)}
+            aria-label={`${touchLabels.cast} · ${mark.glyph}`}
+            class="touch-none rounded border bg-[#050505]/90 px-4 py-2 text-sm"
+            style:border-color={auraColour
+              ? `color-mix(in srgb, ${auraColour} 70%, transparent)`
+              : ''}
+            style:color={auraColour ?? '#FFFFF0'}
+          >
+            {mark.glyph}
+          </button>
+        {/each}
       {:else if aiming}
-        <!-- The two hands need no button of their own: the key alternates, so
-             one press is the sun and the next is the moon, and a phone taps the
-             one button twice exactly as a keyboard presses the one key twice. -->
         <button
           type="button"
           onclick={() => castNow?.()}

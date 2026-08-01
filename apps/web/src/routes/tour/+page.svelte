@@ -653,8 +653,20 @@
       : null,
   )
 
-  /** Whether the technique in hand is cast with two hands off the one key. */
-  const twoHanded = $derived(Boolean(technique) && TWO_HANDED_KINDS.has(technique!.kind))
+  /**
+   * Whether the technique in hand is cast with two hands rather than one.
+   *
+   * Genthru puts the sun on with one hand and the moon with the other, and
+   * which of the two a thing wears is the whole decision the technique asks
+   * for — so the walk gives the two hands the two keys it already casts with:
+   * F is the sun and R is the moon. R is free to be that, because the only
+   * other thing it does is turn a technique on its own user and The Sun and
+   * Moon has nothing to do to one. A page of the book is the exception, and
+   * says so at `nextHand`.
+   */
+  const twoHanded = $derived(
+    Boolean(technique) && !openPages && TWO_HANDED_KINDS.has(technique!.kind),
+  )
 
   /**
    * Which hand each key casts with next, for the techniques that have two.
@@ -883,11 +895,17 @@
     // which piece: the walk carries the choice across and `$lib/tour/hatsu`
     // decides what a room that has heard it looks like afterwards.
     const tune = kind === 'melody' ? AIR_KEYS[hand] : undefined
-    // A technique with two hands takes them in turn off its own key rather than
-    // spending a second one: which hand this press is comes from what the last
-    // press of that key left behind. Kept per key, so The Sun and Moon on a page
-    // of the book counts that page's hands and nobody else's.
-    const mark = TWO_HANDED_KINDS.has(kind) ? nextHand[hand] : undefined
+    // The two hands on the two keys: F puts the sun on, R the moon. Held on a
+    // page of the book instead, the technique has only its own key — R is how
+    // the other page is cast — so that one alternates, and which hand this press
+    // is comes from what the last press of that key left behind.
+    const mark = !TWO_HANDED_KINDS.has(kind)
+      ? undefined
+      : openPages
+        ? nextHand[hand === 'third' ? 'first' : hand]
+        : hand === 'second'
+          ? ('moon' as const)
+          : ('sun' as const)
     const result = castInTour(world, kind, {
       ship,
       targetId: spaceId,
@@ -936,10 +954,9 @@
   }
 
   /**
-   * What F and R do, offered to a visitor working the panel instead of the
-   * keyboard: the same cast, at whatever the reticle is on, under the same
-   * hand — so the sun and the moon alternate off a mouse exactly as they do
-   * off a key.
+   * What the cast keys do, offered to a visitor working the panel instead of
+   * the keyboard: the same cast, at whatever the reticle is on, under the same
+   * hand — so the moon goes on off a mouse exactly as it does off R.
    */
   function castHand(hand: 'first' | 'second') {
     castOn(aimedAt?.id ?? currentSpace?.id ?? null, aimedSolidAt?.id ?? null, hand)
@@ -1278,6 +1295,7 @@
         soundLabels={{ silence: $t.tour.sound.silence, restore: $t.tour.sound.restore }}
         loadingLabel={$t.tour.loading}
         unsupportedLabel={$t.tour.unsupported}
+        {twoHanded}
       />
 
       {#if isAutopilot}

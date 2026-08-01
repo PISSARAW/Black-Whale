@@ -100,8 +100,8 @@ export const en = {
       nenSelfKeys: 'R, wherever you are looking',
       nenSecond: 'Cast the second page',
       nenSecondKeys: (name: string) => `R casts ${name}, the one under the ribbon`,
-      nenMoon: 'Put the sun on, then the moon',
-      nenMoonKeys: 'The same key alternates: one press is the sun, the next the moon',
+      nenMoon: 'Put the moon on rather than the sun',
+      nenMoonKeys: 'R marks with the moon, F with the sun',
       touch: 'On a touchscreen',
       touchKeys:
         'The stick at bottom left walks, pushed to the rim it runs; drag the view to look; the buttons take a door and cast',
@@ -601,7 +601,9 @@ export const en = {
         reach: 'Any solid in the ship, from anywhere in it',
         castHint: 'Press F, or click, to cast on it — or pick any solid in the ship below',
         markHint:
-          'The key alternates: one press puts the sun on, the next the moon · marked things go looking for their opposite',
+          'F puts the sun on it, R the moon · marked things go looking for their opposite',
+        markPageHint:
+          'The page has one key, so it alternates: one press the sun, the next the moon',
         aiming: (solid: string) => `Facing ${solid}`,
         aimingNothing: 'Nothing solid in front of you',
         targets: 'Cast on a solid',

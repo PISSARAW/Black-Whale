@@ -32,6 +32,7 @@
     landAPunch,
     loostAnArrow,
     openAWormhole,
+    playATune,
     raiseTheSun,
     selectACard,
     skipThroughTime,
@@ -589,6 +590,11 @@
       // Biohazard.
       case 'animated':
         return wakeTheMachine()
+      // Enchanting Music, which is the one technique in the walk whose whole
+      // substance is a sound: the air is played whether it is being put on the
+      // room or taken back off it, because both are the flute being played.
+      case 'tune-played':
+        return playATune(shown.tune)
       default:
         return
     }
@@ -958,7 +964,7 @@
    * the keyboard: the same cast, at whatever the reticle is on, under the same
    * hand — so the moon goes on off a mouse exactly as it does off R.
    */
-  function castHand(hand: 'first' | 'second') {
+  function castHand(hand: 'first' | 'second' | 'third') {
     castOn(aimedAt?.id ?? currentSpace?.id ?? null, aimedSolidAt?.id ?? null, hand)
   }
 
@@ -1289,13 +1295,13 @@
         onPolarity={polarityWalk}
         {hands}
         {tunes}
+        {twoHanded}
         swings={technique?.kind === 'stitch'}
         {touchUseLabel}
         touchLabels={{ move: $t.tour.touch.move, cast: $t.tour.touch.cast }}
         soundLabels={{ silence: $t.tour.sound.silence, restore: $t.tour.sound.restore }}
         loadingLabel={$t.tour.loading}
         unsupportedLabel={$t.tour.unsupported}
-        {twoHanded}
       />
 
       {#if isAutopilot}

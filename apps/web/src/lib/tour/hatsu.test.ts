@@ -17,6 +17,8 @@ import {
   arriveInTour,
   castInTour,
   castablePages,
+  danceOffset,
+  dancingSolidIds,
   detachedOn,
   dialReading,
   doorExit,
@@ -1096,6 +1098,75 @@ describe('the music, the chain and the deduction', () => {
     expect(soothed.world.sealed).toBe(0)
     expect(soothed.world.body.soothed).toBe(true)
     expect(soothed.report).toEqual({ kind: 'soothed', opened: true })
+  })
+
+  it('puts the room the soft air was played into in flower, and takes it back', () => {
+    const played = on(EMPTY_WORLD, 'melody', { tune: 'bloom' })
+    expect(played.world.flowered).toEqual([busiest.space.id])
+    expect(played.world.body.playing).toBe('bloom')
+    // The music soothes whatever is played: the flute is Melody's either way.
+    expect(played.world.body.soothed).toBe(true)
+    expect(played.report).toMatchObject({ kind: 'tune-played', tune: 'bloom', on: true })
+
+    const ended = on(played.world, 'melody', { tune: 'bloom' })
+    expect(ended.world.flowered).toEqual([])
+    expect(ended.world.body.playing).toBeNull()
+    expect(ended.report).toMatchObject({ kind: 'tune-played', on: false })
+  })
+
+  it('leaves the sharp air’s notes hanging without disturbing the flowers', () => {
+    const flowered = on(EMPTY_WORLD, 'melody', { tune: 'bloom' }).world
+    const scattered = on(flowered, 'melody', { tune: 'scatter' }).world
+    expect(scattered.flowered).toEqual([busiest.space.id])
+    expect(scattered.scattered).toEqual([busiest.space.id])
+    expect(scattered.body.playing).toBe('scatter')
+  })
+
+  it('gets everything standing in the room dancing, and lets go when it stops', () => {
+    const standing = ship.structures.filter((solid) => solid.spaceId === busiest.space.id)
+    expect(standing.length).toBeGreaterThan(0)
+
+    const dancing = on(EMPTY_WORLD, 'melody', { tune: 'dance' })
+    expect(dancingSolidIds(dancing.world)).toEqual(standing.map((solid) => solid.id))
+    expect(dancing.report).toMatchObject({
+      kind: 'tune-played',
+      tune: 'dance',
+      solids: standing.length,
+    })
+    // Dancing is the one hold that changes nothing about the thing: it stands
+    // where it stood, at the size it was.
+    expect(solidNow(standing[0], dancing.world.solids[standing[0].id]).at).toEqual(standing[0].at)
+
+    // And the hold goes with the music, so the deck bakes the room back in.
+    const stopped = on(dancing.world, 'melody', { tune: 'dance' })
+    expect(dancingSolidIds(stopped.world)).toEqual([])
+    expect(Object.keys(stopped.world.solids)).toEqual([])
+  })
+
+  it('keeps a hold the dance did not put there when the music stops', () => {
+    const moved = { ...EMPTY_WORLD }
+    const solid = ship.structures.find((s) => s.spaceId === busiest.space.id)!
+    const shoved = { ...moved, solids: { [solid.id]: { rotation: 40 } } }
+    const dancing = on(shoved, 'melody', { tune: 'dance' }).world
+    const stopped = on(dancing, 'melody', { tune: 'dance' }).world
+    expect(stopped.solids[solid.id]).toEqual({ rotation: 40 })
+  })
+
+  it('hops on its own clock, and never in step with the thing beside it', () => {
+    const [a, b] = ['solid:one', 'solid:two'].map((id) => danceOffset(id, 1.2))
+    expect(a).not.toEqual(b)
+    // Off the floor, never through it, and never far enough to leave the spot
+    // the collision test still stops the visitor at.
+    for (const [x, y, z] of [a, b, danceOffset('solid:one', 3.7)]) {
+      expect(y).toBeGreaterThanOrEqual(0)
+      expect(Math.hypot(x, z)).toBeLessThan(0.2)
+    }
+  })
+
+  it('is not played at all when the flute was never raised', () => {
+    const nowhere = on(EMPTY_WORLD, 'melody', { tune: 'dance', standingIn: null })
+    expect(nowhere.report).toEqual({ kind: 'no-target' })
+    expect(dancingSolidIds(nowhere.world)).toEqual([])
   })
 
   it('mends what was crushed in the room, and the whole ship under Emperor Time', () => {

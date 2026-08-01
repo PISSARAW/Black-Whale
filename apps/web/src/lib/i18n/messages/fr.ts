@@ -272,6 +272,8 @@ export const fr: Messages = {
         film: 'En train de filmer',
       },
       tunes: {
+        title: 'La flûte joue',
+        hint: 'F, R et C · chaque air n’est entendu que par la pièce où vous êtes',
         dance: 'L’air vif',
         bloom: 'L’air doux',
         scatter: 'L’air aigu',
@@ -400,6 +402,12 @@ export const fr: Messages = {
         unmimicked: 'Votre propre forme à nouveau',
         soothed: (opened) =>
           opened ? 'Les trois se rouvrent, et la musique les tient ouverts' : 'La musique continue',
+        tunePlayed: (air, room, on, solids) => {
+          if (!on) return `${air} s'achève · ${room} redevient ce qu'elle était`
+          return solids
+            ? `${air} dans ${room} · ${solids} chose${solids === 1 ? '' : 's'} l'ont prise et se sont mises à danser`
+            : `${air} dans ${room} · la pièce l'a entendu et l'a gardé`
+        },
         deduced: (what, strength) =>
           `Condition lue — ${what} · ${strength} nommées, et plus fort à chacune`,
         nothingToDeduce: 'Plus rien à lire : chaque emprise a été nommée',
@@ -534,8 +542,7 @@ export const fr: Messages = {
         reach: "N'importe quel volume du vaisseau, depuis n'importe où dans le vaisseau",
         castHint:
           'F, ou un clic, pour lancer dessus — ou choisissez ci-dessous un volume du vaisseau',
-        markHint:
-          'F pose le soleil, R la lune · ce qui est marqué part chercher son contraire',
+        markHint: 'F pose le soleil, R la lune · ce qui est marqué part chercher son contraire',
         markPageHint:
           'La page n’a qu’une touche, alors elle alterne : une pression le soleil, la suivante la lune',
         aiming: (solid) => `Face à ${solid}`,
@@ -607,6 +614,10 @@ export const fr: Messages = {
         dance: 'Le prologue',
         mimic: 'Sous la forme de',
         soothed: 'La musique tient',
+        playing: 'La flûte joue',
+        flowered: 'En fleurs',
+        scattered: 'Notes en suspens dans',
+        dancing: 'Dansent',
         deduced: 'Conditions lues',
         packed: "L'emballage garde",
         packedHits: (packed) => `${packed} coup${packed === 1 ? '' : 's'}`,

@@ -328,7 +328,11 @@ export const en = {
       },
       // Enchanting Music's three airs, which are played rather than aimed: the
       // room the visitor is standing in is the only one that can hear them.
+      // Chosen at the moment of playing rather than cycled beforehand, which is
+      // why each has a key of its own.
       tunes: {
+        title: 'The flute plays',
+        hint: 'F, R and C · each air is heard by the room you are standing in',
         dance: 'The lively air',
         bloom: 'The soft air',
         scatter: 'The sharp air',
@@ -463,6 +467,12 @@ export const en = {
         unmimicked: 'Your own shape again',
         soothed: (opened: boolean): string =>
           opened ? 'The three open again, and the music holds them open' : 'The music plays on',
+        tunePlayed: (air: string, room: string, on: boolean, solids: number): string => {
+          if (!on) return `${air} ends · ${room} is as it was`
+          return solids
+            ? `${air} in ${room} · ${solids} thing${solids === 1 ? '' : 's'} took it up and danced`
+            : `${air} in ${room} · the room heard it and kept it`
+        },
         deduced: (what: string, strength: number) =>
           `Condition read — ${what} · ${strength} named, and stronger for each`,
         nothingToDeduce: 'Nothing left to read: every hold has been named',
@@ -600,8 +610,7 @@ export const en = {
       solids: {
         reach: 'Any solid in the ship, from anywhere in it',
         castHint: 'Press F, or click, to cast on it — or pick any solid in the ship below',
-        markHint:
-          'F puts the sun on it, R the moon · marked things go looking for their opposite',
+        markHint: 'F puts the sun on it, R the moon · marked things go looking for their opposite',
         markPageHint:
           'The page has one key, so it alternates: one press the sun, the next the moon',
         aiming: (solid: string) => `Facing ${solid}`,
@@ -681,6 +690,10 @@ export const en = {
         dance: 'The prologue',
         mimic: 'Wearing',
         soothed: 'The music holds',
+        playing: 'The flute is playing',
+        flowered: 'In flower',
+        scattered: 'Notes hanging in',
+        dancing: 'Dancing to it',
         deduced: 'Conditions read',
         packed: 'The wrapping holds',
         packedHits: (packed: number) => `${packed} blow${packed === 1 ? '' : 's'}`,

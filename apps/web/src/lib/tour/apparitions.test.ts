@@ -328,3 +328,65 @@ describe('Air Blow', () => {
     expect(apparitionsOn(ship, blown.world)).toEqual([])
   })
 })
+
+describe('Enchanting Music', () => {
+  const walking = { at: [0, 0] as [number, number], tierId: furnished.tierId }
+  const played = (tune: 'bloom' | 'scatter' | 'dance') =>
+    castInTour(EMPTY_WORLD, 'melody', {
+      ship,
+      targetId: null,
+      standingIn: furnished.id,
+      at: centroid(furnished),
+      tune,
+    }).world
+
+  it('puts the flute in the visitor’s hands for as long as the aura is up', () => {
+    const [flute] = apparitionsOn(ship, { ...EMPTY_WORLD, holding: 'melody' }, walking).filter(
+      (seen) => seen.kind === 'flute',
+    )
+    // Carried, like the book and the chain: the room and the height say only
+    // which deck, and the scene puts it at the hands every frame.
+    expect(flute.at).toEqual(walking.at)
+    expect(flute.tierId).toBe(furnished.tierId)
+    // Down until something is being played, and up while it is.
+    expect(flute.stage).toBe(0)
+
+    const playing = { ...played('bloom'), holding: 'melody' as const }
+    const [raised] = apparitionsOn(ship, playing, walking).filter((seen) => seen.kind === 'flute')
+    expect(raised.stage).toBeGreaterThan(0)
+
+    // And no aura, no flute.
+    expect(of(EMPTY_WORLD, 'flute')).toEqual([])
+  })
+
+  it('plants the soft air’s flowers across the whole room, on its floor', () => {
+    const tier = ship.tiers.find((candidate) => candidate.id === furnished.tierId)!
+    const flowers = of(played('bloom'), 'bloom')
+    expect(flowers.length).toBeGreaterThan(1)
+    for (const flower of flowers) {
+      expect(flower.spaceId).toBe(furnished.id)
+      // Rooted rather than hung: everything else in the walk floats.
+      expect(flower.y).toBe(floorOf(furnished, tier))
+    }
+    // Spread rather than stacked on the one spot the room averages out to.
+    expect(new Set(flowers.map((flower) => flower.at.join(','))).size).toBe(flowers.length)
+  })
+
+  it('hangs the sharp air’s notes in the air, one of each kind', () => {
+    const tier = ship.tiers.find((candidate) => candidate.id === furnished.tierId)!
+    const notes = of(played('scatter'), 'note')
+    expect(notes.length).toBeGreaterThan(2)
+    // A crotchet, a quaver and a semiquaver: the scene reads `stage` round
+    // three, so all three are written into any scatter worth the name.
+    expect(new Set(notes.map((note) => note.stage % 3))).toEqual(new Set([0, 1, 2]))
+    for (const note of notes) {
+      expect(note.y).toBeGreaterThan(floorOf(furnished, tier))
+      expect(note.y).toBeLessThan(floorOf(furnished, tier) + ceilingOf(furnished, tier))
+    }
+  })
+
+  it('shows nothing at all for the lively air: what it moves is already there', () => {
+    const dancing = played('dance')
+    expect(apparitionsOn(ship, dancing)).toEqual([])
+  })
+})

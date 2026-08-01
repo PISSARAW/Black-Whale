@@ -12,6 +12,7 @@
     TOUR_HATSU_KINDS,
     aimsAtSolids,
     castablePages,
+    dancingSolidIds,
     dialReading,
     identityOf,
     solidById,
@@ -59,8 +60,13 @@
     onCycleEye: () => void
     /** Casts a page of the book at whatever the visitor is aiming at. */
     onCastPage: (kind: HatsuInteractionKind) => void
-    /** The cast the two keys make, for a visitor working the panel instead. */
-    onCastHand: (hand: 'first' | 'second') => void
+    /**
+     * The cast the keys make, for a visitor working the panel instead.
+     *
+     * Two of them under Double Face, and three under the flute — where the
+     * third is C, and the hand is which air is played rather than which page.
+     */
+    onCastHand: (hand: 'first' | 'second' | 'third') => void
     /** Moves Double Face's ribbon to the other page, which swaps the two keys. */
     onTurnTheBook: () => void
   }
@@ -387,6 +393,13 @@
         return say.unmimicked
       case 'soothed':
         return say.soothed(report.opened)
+      case 'tune-played':
+        return say.tunePlayed(
+          $t.tour.hatsu.tunes[report.tune],
+          roomName(report.spaceId),
+          report.on,
+          report.solids,
+        )
       case 'deduced':
         return say.deduced(report.what, report.strength)
       case 'nothing-to-deduce':
@@ -581,6 +594,15 @@
     if (body.dance) rows.push({ label: held.dance, value: `${body.dance}` })
     if (body.mimic) rows.push({ label: held.mimic, value: solidName(body.mimic) })
     if (body.soothed) rows.push({ label: held.soothed, value: '♪' })
+    // What the flute has left behind: which air last came out of it, the rooms
+    // still holding a piece, and how much of the ship is dancing to one.
+    if (body.playing) {
+      rows.push({ label: held.playing, value: $t.tour.hatsu.tunes[body.playing] })
+    }
+    for (const id of world.flowered) rows.push({ label: held.flowered, value: roomName(id) })
+    for (const id of world.scattered) rows.push({ label: held.scattered, value: roomName(id) })
+    const dancing = dancingSolidIds(world)
+    if (dancing.length) rows.push({ label: held.dancing, value: `${dancing.length}` })
     if (body.deduced.length) rows.push({ label: held.deduced, value: `${body.deduced.length}` })
     if (body.packed !== null) rows.push({ label: held.packed, value: held.packedHits(body.packed) })
     for (const id of world.shut) rows.push({ label: held.shut, value: roomName(id) })
@@ -782,6 +804,30 @@
       >
       <kbd class="text-[10px] text-[#FFD700]/70">R</kbd>
     </button>
+  {/if}
+
+  <!-- The flute's three airs. Not a cycle like the three above: an instrument
+       is played, so each piece has a key of its own and pressing it is the
+       playing. The row is the same either way — the panel is where a visitor
+       finds out that a technique has more than one thing in it. -->
+  {#if profile.kind === 'melody'}
+    <p class="mt-3 text-[10px] uppercase tracking-widest text-[#FFFFF0]/45">
+      {$t.tour.hatsu.tunes.title}
+    </p>
+    <p class="text-[10px] leading-snug text-[#FFFFF0]/35">{$t.tour.hatsu.tunes.hint}</p>
+    {#each [{ hand: 'first' as const, air: 'dance' as const, key: 'F' }, { hand: 'second' as const, air: 'bloom' as const, key: 'R' }, { hand: 'third' as const, air: 'scatter' as const, key: 'C' }] as piece (piece.air)}
+      <button
+        type="button"
+        onclick={() => onCastHand(piece.hand)}
+        class="mt-1 flex w-full items-center justify-between rounded border px-2 py-1 text-[11px] transition-colors hover:border-[#FFD700]/60 hover:text-[#FFFFF0] {world
+          .body.playing === piece.air
+          ? 'border-[#FFD700]/70 text-[#FFD700]'
+          : 'border-[#444] text-[#FFFFF0]/80'}"
+      >
+        <span>{$t.tour.hatsu.tunes[piece.air]}</span>
+        <kbd class="text-[10px] text-[#FFD700]/70">{piece.key}</kbd>
+      </button>
+    {/each}
   {/if}
 
   <!-- Which bird Secret Window sends, on the same key and for the same reason:

@@ -216,6 +216,17 @@ export const nextDoubleMode = (mode: TourDoubleMode | null): TourDoubleMode =>
   DOUBLE_MODES[(DOUBLE_MODES.indexOf(mode ?? 'follow') + 1) % DOUBLE_MODES.length]
 
 /**
+ * How long one bird holds, in seconds, and how much of it comes back.
+ *
+ * Secret Window materializes an owl rather than lending you one: it is there
+ * for twenty seconds, and what it hands over when it goes is the last ten of
+ * what it saw. Both numbers are the technique's own; the walk's clock is the
+ * only thing aboard that reads them.
+ */
+export const OWL_SECONDS = 20
+export const OWL_FILM_SECONDS = 10
+
+/**
  * What Nen is currently doing to the ship.
  *
  * One flat value rather than a store per technique: the scene rebuilds from it,
@@ -359,6 +370,24 @@ export interface TourWorld {
    * a minute later is a function of which bird it is.
    */
   owlMode: TourOwlMode
+  /**
+   * How much of its twenty seconds the bird has left, in seconds.
+   *
+   * The owl is materialized rather than attached: it holds for twenty seconds
+   * and then it is not there any more. Counted down by the walk's own clock a
+   * second at a time, because the scene is the only thing aboard that has one
+   * — everything else in this world is a function of what was cast.
+   */
+  owlLife: number
+  /**
+   * What the bird brings back: where it was, second by second of its flight.
+   *
+   * Recorded whole while it is up and cut to the last ten seconds when it
+   * goes, which is the whole of the technique's promise — not everything it
+   * saw, the end of it. `second` is how far into the flight the bird arrived
+   * there, so the walk can play the film back at the speed it happened.
+   */
+  owlFilm: { spaceId: string; second: number }[]
   /**
    * Rooms whose Hatsu Benjamin's baton has taken, which wear his palm star.
    *
@@ -530,6 +559,8 @@ export const EMPTY_WORLD: TourWorld = {
   trail: [],
   owl: null,
   owlMode: 'wander',
+  owlLife: 0,
+  owlFilm: [],
   stars: [],
   foreseen: null,
   verses: [],
@@ -633,6 +664,7 @@ export type TourReport =
   | { kind: 'double-mode-changed'; mode: TourDoubleMode }
   | { kind: 'owl-mode-changed'; mode: TourOwlMode }
   | { kind: 'owl-flown'; spaceId: string }
+  | { kind: 'owl-expired'; rooms: number }
   // On the solids.
   | { kind: 'no-solid' }
   | { kind: 'bound-fast'; solidId: string }
@@ -718,6 +750,7 @@ export type TourReport =
   | { kind: 'owl-attached'; rooms: number }
   | { kind: 'owl-recalled'; rooms: number }
   | { kind: 'foreseen'; spaceId: string }
+  | { kind: 'vision-ended' }
   | { kind: 'diverged'; spaceId: string; wentTo: string }
   | { kind: 'written'; spaceId: string }
   | { kind: 'line-taken'; spaceId: string; lines: number }
@@ -2462,19 +2495,35 @@ const ROOM_CASTS: Partial<Record<HatsuInteractionKind, RoomCast>> = {
   // Where it goes on the way up is the mode's to say, and only the free bird
   // takes the room down the reticle: the shoulder bird is sent to the visitor
   // and stays there, and the third is let go without being aimed at all.
-  surveillance: ({ world, ship, target, standingIn, input }) =>
-    world.owl === target.id
-      ? {
-          world: { ...world, owl: null },
-          report: { kind: 'owl-recalled', rooms: world.trail.length },
-        }
-      : {
-          world: {
-            ...world,
-            owl: perchFor(world, ship, target.id, standingIn, input.random ?? Math.random),
-          },
-          report: { kind: 'owl-attached', rooms: world.trail.length },
+  //
+  // Twenty seconds, whichever bird it is, and the last ten of them come back
+  // as a film. Calling it in early is still a disappearance: what it managed
+  // to record is handed over exactly as it would have been at twenty.
+  surveillance: ({ world, ship, target, standingIn, input }) => {
+    if (world.owl === target.id) {
+      return {
+        world: {
+          ...world,
+          owl: null,
+          owlLife: 0,
+          owlFilm: lastTenSeconds(world.owlFilm, OWL_SECONDS - world.owlLife),
         },
+        report: { kind: 'owl-recalled', rooms: world.trail.length },
+      }
+    }
+    const perch = perchFor(world, ship, target.id, standingIn, input.random ?? Math.random)
+    return {
+      world: {
+        ...world,
+        owl: perch,
+        owlLife: OWL_SECONDS,
+        // A new bird opens a new film: what the last one brought back has
+        // been seen, and two flights are not one recording.
+        owlFilm: [{ spaceId: perch, second: 0 }],
+      },
+      report: { kind: 'owl-attached', rooms: world.trail.length },
+    }
+  },
 
   // Ten seconds on, taken once. The vision does not revise itself: that is
   // what makes diverging from it worth anything.
@@ -3116,7 +3165,7 @@ export function arriveInTour(world: TourWorld, ship: Ship, spaceId: string | nul
   // bird that travels without flying: the free one works its way through the
   // doors on the clock, and the third stays where it was thrown.
   if (next.owl && next.owlMode === 'shoulder' && next.owl !== spaceId) {
-    next = { ...next, owl: spaceId }
+    next = { ...next, owl: spaceId, owlFilm: filmed(next, spaceId) }
   }
 
   // A droplet lasts a few arrivals and then dries up.
@@ -3362,5 +3411,61 @@ export function flyTheOwl(
   )
   if (!ways.length) return null
   const spaceId = ways[Math.min(ways.length - 1, Math.floor(random() * ways.length))]
-  return { world: { ...world, owl: spaceId }, report: { kind: 'owl-flown', spaceId } }
+  return {
+    world: { ...world, owl: spaceId, owlFilm: filmed(world, spaceId) },
+    report: { kind: 'owl-flown', spaceId },
+  }
+}
+
+/**
+ * The film, with the room the bird has just reached written into it.
+ *
+ * Stamped with how far into the flight it got there, which is what the walk
+ * plays the ten seconds back against. Kept whole while the bird is up: the cut
+ * is made when it goes, because until then there is no telling which second
+ * will turn out to be the last.
+ */
+function filmed(world: TourWorld, spaceId: string): TourWorld['owlFilm'] {
+  const second = Math.max(0, OWL_SECONDS - world.owlLife)
+  return [...world.owlFilm, { spaceId, second }]
+}
+
+/**
+ * The last ten seconds of a flight, as the bird hands them over.
+ *
+ * Everything from the cut on, and the room it was in *at* the cut — a film
+ * that started in the middle of a corridor would open on nothing, so the
+ * entry that was still running is kept and moved up to the cut itself.
+ */
+function lastTenSeconds(film: TourWorld['owlFilm'], flown: number): TourWorld['owlFilm'] {
+  const cut = Math.max(0, flown - OWL_FILM_SECONDS)
+  const after = film.filter((frame) => frame.second >= cut)
+  const running = [...film].reverse().find((frame) => frame.second < cut)
+  const kept = running ? [{ spaceId: running.spaceId, second: cut }, ...after] : after
+  // Told from zero, so the film is ten seconds long rather than the tail of a
+  // twenty-second one: what is handed back is a recording, not a timestamp.
+  return kept.map((frame) => ({ ...frame, second: frame.second - cut }))
+}
+
+/**
+ * One second of the twenty, and what is left of the bird after it.
+ *
+ * The only part of Secret Window that runs on the walk's clock rather than on
+ * a cast: the owl is materialized for twenty seconds and then it is not there.
+ * What it leaves behind is the last ten, cut to length and handed over — which
+ * is the whole of what the technique promises and all it promises.
+ */
+export function ageTheOwl(
+  world: TourWorld,
+  seconds = 1,
+): { world: TourWorld; report: TourReport | null } | null {
+  if (!world.owl) return null
+  const left = world.owlLife - seconds
+  if (left > 0) return { world: { ...world, owlLife: left }, report: null }
+
+  const film = lastTenSeconds(world.owlFilm, OWL_SECONDS)
+  return {
+    world: { ...world, owl: null, owlLife: 0, owlFilm: film },
+    report: { kind: 'owl-expired', rooms: new Set(film.map((frame) => frame.spaceId)).size },
+  }
 }

@@ -257,6 +257,7 @@ export const fr: Messages = {
         wander: 'Il parcourt le vaisseau',
         shoulder: 'Sur votre épaule',
         random: 'Lâché sans visée',
+        left: (seconds) => `${seconds} s restantes`,
       },
       reports: {
         noTarget: 'Rien à portée sur quoi lancer',
@@ -426,6 +427,8 @@ export const fr: Messages = {
         doubleModeChanged: (watch) => `Le double change de garde · ${watch}`,
         owlModeChanged: (flight) => `Le hibou est lâché autrement · ${flight}`,
         owlFlown: (room) => `Le hibou a pris une porte · il est dans ${room} désormais`,
+        owlExpired: (rooms) =>
+          `Le hibou s'est dématérialisé · ses dix dernières secondes, sur ${rooms} pièce${rooms === 1 ? '' : 's'}, passent dans le coin`,
         noSolid: 'Rien de solide dans le réticule',
         boundFast: (solid) => `${solid} est tenu ferme · seule la couture le rend`,
         gumSet: (solid) => `Gomme sur ${solid} · saisissez un second volume pour les rapprocher`,
@@ -535,6 +538,7 @@ export const fr: Messages = {
         loan: 'Prêtée',
         trail: 'Le fil',
         owl: 'Le hibou garde',
+        film: 'Le film rapporté',
         foreseen: 'Dix secondes plus tard',
         verses: 'Écrites',
         poem: 'Le poème',

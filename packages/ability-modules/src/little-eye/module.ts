@@ -151,7 +151,7 @@ export const littleEye = defineAbility({
     inputMode: 'TARGET_SELECTION',
     allowedTargets: ['CHARACTER', 'OBJECT', 'LOCATION'],
     overlays: ['CONTROL_LINK', 'RANGE'],
-    entryActions: ['attach'],
+    entryActions: ['attach', 'pilot', 'film', 'scout', 'dismiss'],
     requiredState: ['canUseNen'],
     perspectiveTransition: {
       canChangeBody: false,

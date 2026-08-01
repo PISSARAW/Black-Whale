@@ -47,7 +47,8 @@
     unspoolWire,
     wakeTheMachine,
   } from '$lib/audio/hatsuSounds'
-  import { activeHatsu, enterForcedZetsu } from '$lib/nen/hatsuState'
+  import { activeHatsu, enterForcedZetsu, parallelFutureVisible } from '$lib/nen/hatsuState'
+  import { get } from 'svelte/store'
   import type { HatsuInteractionKind } from '$lib/nen/hatsuRegistry'
   import { breadcrumbSchema } from '$lib/seo/schema'
   import { link, t } from '$lib/i18n'
@@ -72,6 +73,7 @@
     aimsAtSolids,
     arriveInTour,
     castInTour,
+    ageTheOwl,
     fishBite,
     flyTheOwl,
     identityOf,
@@ -462,6 +464,8 @@
       // Secret Window.
       case 'owl-attached':
       case 'owl-recalled':
+      // Twenty seconds up, and the bird says so on its way out.
+      case 'owl-expired':
         return hootAnOwl()
       // Cross Game, and Culdcept, which is the other technique made of cards.
       case 'card-blue':
@@ -666,7 +670,19 @@
     enterForcedZetsu()
   }
 
+  let wasFutureVisible = false
+  const unsubFuture = parallelFutureVisible.subscribe((isVisible) => {
+    const active = get(activeHatsu)
+    if (wasFutureVisible && !isVisible && active?.id === 'parallel-future') {
+      const ended: TourReport = { kind: 'vision-ended' }
+      report = ended
+      show(ended)
+    }
+    wasFutureVisible = isVisible
+  })
+
   onDestroy(() => {
+    unsubFuture()
     setAmbientMuffled(false)
     // Leaving the walk stops the walk's noises. An engine that kept running on
     // the sources page would be the archive talking over itself.
@@ -770,6 +786,23 @@
     if (!flown) return
     world = flown.world
     report = flown.report
+  }
+
+  /**
+   * One second of the twenty a bird holds for.
+   *
+   * Silent while it is counting: nineteen lines saying the owl is still there
+   * would bury whatever the walk was actually told. It speaks once, when the
+   * bird goes and hands its ten seconds over — and the scene plays them back
+   * in the corner off the same disappearance.
+   */
+  function owlSecond() {
+    const aged = ageTheOwl(world)
+    if (!aged) return
+    world = aged.world
+    if (!aged.report) return
+    report = aged.report
+    show(aged.report)
   }
 
   /** Fugetsu's tunnel, asked on the same arrival the doors are asked on. */
@@ -983,6 +1016,7 @@
         onWorm={crossWorm}
         onFish={fishEat}
         onOwl={owlFlight}
+        onOwlSecond={owlSecond}
         swings={technique?.kind === 'stitch'}
         {touchUseLabel}
         touchLabels={{ move: $t.tour.touch.move, cast: $t.tour.touch.cast }}

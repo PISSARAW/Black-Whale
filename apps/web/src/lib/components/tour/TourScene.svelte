@@ -23,6 +23,7 @@
   } from '$lib/tour/blueprint'
   import {
     EMPTY_WORLD,
+    OWL_FILM_SECONDS,
     aimedSolid,
     aimedSpace,
     centroid,
@@ -178,6 +179,15 @@
      */
     onOwl?: () => void
     /**
+     * Asked once a second while a bird is materialized.
+     *
+     * Secret Window holds for twenty seconds and then it is gone. The count is
+     * the clock's, so the walk says only that a second went by; what that does
+     * to the bird, and what it hands back when the twenty are up, is the pure
+     * layer's.
+     */
+    onOwlSecond?: () => void
+    /**
      * Whether the technique in hand is one that throws a thread.
      *
      * Machi's stitches mend, and the walk has nothing torn in it that a visitor
@@ -226,6 +236,7 @@
     onWorm,
     onFish,
     onOwl,
+    onOwlSecond,
     swings = false,
   }: Props = $props()
 
@@ -584,6 +595,23 @@
       let eyeKey = ''
 
       /**
+       * Secret Window's film: where the bird was, and the playback of it.
+       *
+       * The owl is materialized for twenty seconds and hands back the last
+       * ten, so what the walk has to keep is the bird's own path — sampled on
+       * the same tenth of a second the visitor's is, and for the same reason:
+       * everything else in the scene is a function of the clock and can simply
+       * be run again, and this is not. The playback is a third camera walking
+       * that path, inset in the corner exactly as the eye's feed is.
+       */
+      let filmCamera: import('three').PerspectiveCamera | null = null
+      let filmDeck: Built | null = null
+      const filmTrack: { at: number; where: Vec2; y: number; tierId: string }[] = []
+      let showing: { through: number; frames: typeof filmTrack } | null = null
+      /** Whether there was a bird last frame, which is how its going is noticed. */
+      let owlWasUp = false
+
+      /**
        * The decks the far ends of Fugetsu's tunnel are looking at.
        *
        * The same arrangement as the eye's deck and for the same reason: a mouth
@@ -600,7 +628,7 @@
        * in which case it stays.
        */
       const heldElsewhere = (built: Built | null) =>
-        Boolean(built) && (built === eyeDeck || portalDecks.includes(built!))
+        Boolean(built) && (built === eyeDeck || built === filmDeck || portalDecks.includes(built!))
 
       /** The plan as Nen leaves it: what is drawn, and what still stops you. */
       let activePlan: TierPlan | null = null
@@ -2738,6 +2766,98 @@
       let sinceFlight = 0
       /** Long enough to be seen sitting in a room before it leaves it. */
       const FLIGHT_SECONDS = 6
+      /** How much of the current second of the bird's twenty has gone by. */
+      let sinceOwlSecond = 0
+      /** How long since the bird's own path was last sampled, in seconds. */
+      let sinceFilmSample = 0
+
+      /**
+       * Where the bird is this tenth of a second, kept for the last ten.
+       *
+       * Read off the apparition rather than off the world, because the world
+       * only knows which room it is in: what the film is worth is the flight,
+       * and the flight is the drift the scene gives it inside that room.
+       */
+      function recordTheOwl(clock: number, delta: number) {
+        sinceFilmSample += delta
+        if (sinceFilmSample < TRACK_STEP) return
+        sinceFilmSample = 0
+        const bird = apparitions[`owl:${world.owl}`]
+        const space = world.owl ? ship.spaces.get(world.owl) : null
+        if (!bird || !space) return
+        filmTrack.push({
+          at: clock,
+          where: [bird.root.position.x, bird.root.position.z],
+          y: bird.root.position.y,
+          tierId: space.tierId,
+        })
+        while (filmTrack.length && filmTrack[0].at < clock - OWL_FILM_SECONDS) filmTrack.shift()
+      }
+
+      /** Takes the film off the bird that has just gone, and starts it running. */
+      function startFilm() {
+        endFilm()
+        if (!filmTrack.length) return
+        const frames = [...filmTrack]
+        filmTrack.length = 0
+
+        filmCamera = new THREE.PerspectiveCamera(64, 1, 0.1, VIEW_DISTANCE)
+        // The deck it was flying over has to be in the scene to be filmed on,
+        // however far from the visitor's own it is — the same arrangement the
+        // eye's feed uses, and it is taken away again when the film ends.
+        const built = buildDeck(frames[frames.length - 1].tierId).built
+        if (built !== visible) {
+          scene.add(built.root)
+          filmDeck = built
+        }
+        showing = { through: 0, frames }
+      }
+
+      /** Puts the film away: the camera, and the deck it was shown against. */
+      function endFilm() {
+        if (filmDeck) {
+          if (filmDeck !== visible && !portalDecks.includes(filmDeck) && filmDeck !== eyeDeck) {
+            scene.remove(filmDeck.root)
+          }
+          filmDeck = null
+        }
+        filmCamera = null
+        showing = null
+      }
+
+      /**
+       * The playback, walked at the speed it was recorded.
+       *
+       * Ten seconds, and then the corner goes back to being the corner. The
+       * camera looks the way the bird was going, which is the nearest the walk
+       * can get to what a bird was looking at.
+       */
+      function runFilm(delta: number) {
+        if (!showing || !filmCamera) return
+        showing.through += delta
+        if (showing.through >= OWL_FILM_SECONDS) {
+          endFilm()
+          return
+        }
+        const frames = showing.frames
+        const wanted = frames[0].at + showing.through
+        let index = frames.findIndex((frame) => frame.at >= wanted)
+        if (index < 0) index = frames.length - 1
+        const later = frames[index]
+        const earlier = frames[Math.max(0, index - 1)]
+        const span = later.at - earlier.at || 1
+        const along = Math.min(1, Math.max(0, (wanted - earlier.at) / span))
+        const x = earlier.where[0] + (later.where[0] - earlier.where[0]) * along
+        const z = earlier.where[1] + (later.where[1] - earlier.where[1]) * along
+        filmCamera.position.set(x, earlier.y + (later.y - earlier.y) * along, z)
+        // Facing the way it was flying, and facing the room when it was still.
+        const ahead = frames[Math.min(frames.length - 1, index + 4)]
+        const dx = ahead.where[0] - x
+        const dz = ahead.where[1] - z
+        filmCamera.rotation.set(0, 0, 0)
+        filmCamera.rotateY(Math.hypot(dx, dz) > 0.15 ? Math.atan2(dx, dz) : showing.through * 0.6)
+      }
+
       let aimedId: string | null = null
       let aimedSolidId: string | null = null
       let sinceAim = 0
@@ -2804,6 +2924,25 @@
             onOwl?.()
           }
         } else sinceFlight = 0
+
+        // The twenty seconds, counted where the clock is. What that does to the
+        // bird is the pure layer's: the walk only says that a second went by.
+        if (world.owl) {
+          sinceOwlSecond += delta
+          if (sinceOwlSecond >= 1) {
+            sinceOwlSecond -= 1
+            onOwlSecond?.()
+          }
+          recordTheOwl(clock, delta)
+        } else sinceOwlSecond = 0
+
+        // And when it is not there any more, what it recorded is played back.
+        // Any disappearance: called in early or run out, the bird hands over
+        // the same ten seconds, so the walk shows them the same way.
+        const owlUp = Boolean(world.owl)
+        if (owlWasUp && !owlUp) startFilm()
+        owlWasUp = owlUp
+        runFilm(delta)
 
         const walked = activePlan ?? plan
         // What the aura is holding is out of the deck's own wall list, so it
@@ -3051,6 +3190,30 @@
           renderer.autoClear = false
           renderer.clear(true, true, false)
           renderer.render(scene, eyeCamera)
+          renderer.autoClear = true
+          renderer.setScissorTest(false)
+        }
+
+        // The owl's film, inset below the eye's feed: the last ten seconds of
+        // a bird that is not there any more, played at the speed it flew them.
+        if (filmCamera && showing) {
+          const filmWidth = Math.round(Math.min(320, width * 0.3))
+          const filmHeight = Math.round(filmWidth * 0.62)
+          const pad = 12
+          const box: [number, number, number, number] = [
+            width - filmWidth - pad,
+            pad,
+            filmWidth,
+            filmHeight,
+          ]
+          filmCamera.aspect = filmWidth / filmHeight
+          filmCamera.updateProjectionMatrix()
+          renderer.setViewport(...box)
+          renderer.setScissor(...box)
+          renderer.setScissorTest(true)
+          renderer.autoClear = false
+          renderer.clear(true, true, false)
+          renderer.render(scene, filmCamera)
           renderer.autoClear = true
           renderer.setScissorTest(false)
         }

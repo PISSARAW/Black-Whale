@@ -357,6 +357,8 @@
         return say.owlRecalled(report.rooms)
       case 'owl-flown':
         return say.owlFlown(roomName(report.spaceId))
+      case 'owl-expired':
+        return say.owlExpired(report.rooms)
       case 'foreseen':
         return say.foreseen(roomName(report.spaceId))
       case 'diverged':
@@ -468,7 +470,22 @@
       rows.push({ label: held.hand, value: book.cards.map(pageName).join(', ') })
     for (const id of book.zetsu) rows.push({ label: held.zetsu, value: roomName(id) })
     if (book.loan) rows.push({ label: held.loan, value: pageName(book.loan) })
-    if (world.owl) rows.push({ label: held.owl, value: `${world.trail.length}` })
+    // A bird that is out is a bird on a clock, so what it is holding is said
+    // with the seconds it has left to hold it.
+    if (world.owl) {
+      rows.push({
+        label: held.owl,
+        value: `${world.trail.length} · ${$t.tour.hatsu.owl.left(Math.ceil(world.owlLife))}`,
+      })
+    }
+    // And what it brought back stays readable after it has gone: the film in
+    // words, for the ten seconds the corner is playing it in pictures.
+    if (!world.owl && world.owlFilm.length) {
+      rows.push({
+        label: held.film,
+        value: [...new Set(world.owlFilm.map((frame) => frame.spaceId))].map(roomName).join(' → '),
+      })
+    }
     if (world.foreseen) rows.push({ label: held.foreseen, value: roomName(world.foreseen.spaceId) })
     if (world.poem.length) {
       rows.push({ label: held.poem, value: world.poem.map(roomName).join(' → ') })

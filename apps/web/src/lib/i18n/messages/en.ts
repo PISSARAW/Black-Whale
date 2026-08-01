@@ -309,6 +309,8 @@ export const en = {
         wander: 'Working the ship',
         shoulder: 'On your shoulder',
         random: 'Let go unaimed',
+        /** How long the materialized bird has left of its twenty seconds. */
+        left: (seconds: number) => `${seconds} s left`,
       },
       reports: {
         noTarget: 'Nothing in reach to cast on',
@@ -485,6 +487,8 @@ export const en = {
         doubleModeChanged: (watch: string) => `The double changes her watch · ${watch}`,
         owlModeChanged: (flight: string) => `The owl is sent differently · ${flight}`,
         owlFlown: (room: string) => `The owl has taken a door · it is in ${room} now`,
+        owlExpired: (rooms: number) =>
+          `The owl is gone · the last ten seconds of it, over ${rooms} room${rooms === 1 ? '' : 's'}, are playing in the corner`,
         noSolid: 'Nothing solid down the reticle',
         boundFast: (solid: string) => `${solid} is held fast · nothing but the chain gets it back`,
         gumSet: (solid: string) =>
@@ -602,6 +606,7 @@ export const en = {
         loan: 'On loan',
         trail: 'The trail',
         owl: 'The owl keeps',
+        film: 'The film it brought back',
         foreseen: 'Ten seconds on',
         verses: 'Written down',
         poem: 'The poem',

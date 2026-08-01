@@ -606,7 +606,7 @@ export function flashFor(
   // what the walk does with this is rewind its own clock, which is the scene's
   // business and nobody else's — see `TourScene`. It is here because it is an
   // event rather than a thing, like the blast and the punch.
-  if (report.kind === 'foreseen') {
+  if (report.kind === 'vision-ended') {
     return { kind: 'rewind', tierId: '', at: from, y: 0, colour: SUN }
   }
 

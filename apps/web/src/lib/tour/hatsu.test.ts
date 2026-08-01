@@ -19,10 +19,12 @@ import {
   emptiedOn,
   heldSolidIds,
   eyesOf,
+  ageTheOwl,
   flyTheOwl,
   identityOf,
   linkIsOpen,
   nextOwlMode,
+  OWL_SECONDS,
   paceOf,
   planSealed,
   planWithout,
@@ -1064,6 +1066,90 @@ describe('what the walk remembers of itself', () => {
       const recalled = door(shouldered, 'surveillance', roomA.id, roomA.id)
       expect(recalled.report).toMatchObject({ kind: 'owl-recalled' })
       expect(recalled.world.owl).toBeNull()
+    })
+  })
+
+  describe('the twenty seconds a bird holds, and the ten it hands back', () => {
+    /** A bird just sent, with its whole life ahead of it. */
+    const sent = door(EMPTY_WORLD, 'surveillance', roomA.id, roomA.id).world
+
+    it('materializes for twenty seconds and opens a film on the room it landed in', () => {
+      expect(sent.owlLife).toBe(OWL_SECONDS)
+      expect(sent.owlFilm).toEqual([{ spaceId: roomA.id, second: 0 }])
+    })
+
+    it('counts the seconds down without saying anything until they run out', () => {
+      let world = sent
+      for (let second = 1; second < OWL_SECONDS; second++) {
+        const aged = ageTheOwl(world)!
+        expect(aged.report).toBeNull()
+        world = aged.world
+      }
+      expect(world.owlLife).toBe(1)
+
+      const gone = ageTheOwl(world)!
+      expect(gone.report).toMatchObject({ kind: 'owl-expired' })
+      expect(gone.world.owl).toBeNull()
+      expect(gone.world.owlLife).toBe(0)
+    })
+
+    it('has nothing to count down when no bird is out', () => {
+      expect(ageTheOwl(EMPTY_WORLD)).toBeNull()
+    })
+
+    it('writes each room it reaches into the film, stamped with the second', () => {
+      // Ten seconds into the flight, the bird takes a door.
+      const halfway: TourWorld = { ...sent, owlLife: OWL_SECONDS - 10 }
+      const flown = flyTheOwl(halfway, ship, () => 0)!
+      expect(flown.world.owlFilm).toEqual([
+        { spaceId: roomA.id, second: 0 },
+        { spaceId: flown.world.owl, second: 10 },
+      ])
+    })
+
+    it('hands back the last ten seconds only, told from zero', () => {
+      // A bird that spent its first half in one room and its second in another.
+      const flown: TourWorld = {
+        ...sent,
+        owlLife: 1,
+        owl: roomB.id,
+        owlFilm: [
+          { spaceId: roomA.id, second: 0 },
+          { spaceId: roomB.id, second: 15 },
+        ],
+      }
+      const gone = ageTheOwl(flown)!
+      // The first room is outside the ten, but it is what the film opens on:
+      // the cut falls while the bird is still standing in it.
+      expect(gone.world.owlFilm).toEqual([
+        { spaceId: roomA.id, second: 0 },
+        { spaceId: roomB.id, second: 5 },
+      ])
+      expect(gone.report).toMatchObject({ kind: 'owl-expired', rooms: 2 })
+    })
+
+    it('hands back what it managed to record when it is called in early', () => {
+      const early: TourWorld = { ...sent, owlLife: OWL_SECONDS - 3 }
+      const recalled = door(early, 'surveillance', roomA.id, roomA.id)
+      expect(recalled.world.owl).toBeNull()
+      // Three seconds in, the whole flight is inside the ten.
+      expect(recalled.world.owlFilm).toEqual([{ spaceId: roomA.id, second: 0 }])
+    })
+
+    it('opens a new film rather than adding to the last bird’s', () => {
+      const gone = ageTheOwl({ ...sent, owlLife: 1 })!
+      const again = door(gone.world, 'surveillance', roomB.id, roomB.id)
+      expect(again.world.owlFilm).toEqual([{ spaceId: roomB.id, second: 0 }])
+      expect(again.world.owlLife).toBe(OWL_SECONDS)
+    })
+
+    it('records the rooms the shoulder bird is carried through', () => {
+      const shouldered: TourWorld = { ...sent, owlMode: 'shoulder', owlLife: OWL_SECONDS - 4 }
+      const walked = arriveInTour(shouldered, ship, roomB.id)
+      expect(walked.world.owlFilm).toEqual([
+        { spaceId: roomA.id, second: 0 },
+        { spaceId: roomB.id, second: 4 },
+      ])
     })
   })
 

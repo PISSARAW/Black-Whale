@@ -11,6 +11,7 @@ import {
   knowledgeGrant,
   listParam,
   moveEntity,
+  object,
   param,
   person,
   portal,
@@ -212,7 +213,7 @@ export const snakeArm = defineAbility({
 
   conditions: [canUseNen(), isConscious()],
 
-  targets: [person(), self()],
+  targets: [person(), object(), self()],
 
   cost: { label: 'Transformation partielle du bras maintenue', unit: 'aura' },
 
@@ -224,7 +225,7 @@ export const snakeArm = defineAbility({
           id: (ctx) => `gel-snake-${ctx.actorId}`,
           kind: 'CONSTRUCT',
           label: 'Bras-serpent',
-          metadata: { markings: 'four-hearts' },
+          metadata: { bodyColor: 'black', headColor: 'purple', markings: 'four-hearts' },
         }),
       ],
     },
@@ -250,7 +251,7 @@ export const snakeArm = defineAbility({
 
   interactionManifest: buildManifest('snake-arm', {
     inputMode: 'TARGET_SELECTION',
-    allowedTargets: ['CHARACTER', 'BODY'],
+    allowedTargets: ['CHARACTER', 'BODY', 'OBJECT'],
     overlays: ['TRAJECTORY', 'RANGE'],
     entryActions: ['transform'],
     requiredState: ['isConscious', 'canUseNen'],

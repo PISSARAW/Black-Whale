@@ -128,11 +128,11 @@ export const hatsuFr: Record<string, HatsuTextOverride> = {
   'little-eye': {
     name: 'Little Eye',
     owner: 'Sayird',
-    action: 'Trouver un petit hôte',
+    action: 'Piloter l’insecte',
     instruction:
-      'Déplacez l’œil à distance pour détecter l’aura, puis cliquez une cible pas plus grosse qu’un hamster pour ouvrir son flux visuel et sonore.',
-    rule: 'Seule une véritable petite créature peut être possédée ; les personnes et la vie matérialisée par le Nen ne sont pas des hôtes valides.',
-    cost: 'Très peu d’aura · hôte animal vulnérable',
+      'Posez la sphère sur un hôte, puis pilotez l’insecte de pièce en pièce ; visez la pièce où il est pour le rappeler. R change ses ordres (Piloté, Reconnaissance, Filmer) : en reconnaissance il prend une porte tout seul, et en mode Filmer viser sa pièce l’enregistre au lieu de le rappeler.',
+    rule: 'L’objet possédé est un insecte volant enveloppé d’une aura bleue de Nen qui peut être contrôlé à distance pour filmer.',
+    cost: 'Très peu d’aura · hôte insecte volant',
   },
   'cross-game': {
     name: 'Cross Game',
@@ -175,7 +175,7 @@ export const hatsuFr: Record<string, HatsuTextOverride> = {
     owner: 'Benjamin / Musse',
     action: 'Attacher la chouette',
     instruction:
-      'Attachez une chouette à un personnage de la carte pour garder un flux en direct et révéler les déplacements ou la mort consignés au chapitre suivant.',
+      'Attachez une chouette à un personnage de la carte pour garder un flux en direct et révéler les déplacements ou la mort consignés au chapitre suivant. Appuyez sur R pour choisir le hibou envoyé : libre dans le vaisseau, sur votre épaule, ou lâché sans visée.',
     rule: 'La chouette écoute à travers les cloisons, suit sa cible au toucher et conserve les images antérieures pour un examen ultérieur.',
     cost: 'Une chouette de surveillance attachée',
   },
@@ -209,9 +209,9 @@ export const hatsuFr: Record<string, HatsuTextOverride> = {
   'without-you': {
     name: 'Without You',
     owner: 'Kacho',
-    action: 'Rester auprès de la survivante',
+    action: 'Commander la jumelle',
     instruction:
-      'La gardienne mémorise cinq interactions, intercepte un événement mortel détecté et peut rejouer la trace mémorisée qu’elle protège.',
+      'La gardienne mémorise cinq interactions, intercepte un événement mortel détecté et peut rejouer la trace mémorisée qu’elle protège. Appuyez sur R pour changer de mode (Suivre, Balade, Éclaireur).',
     rule: 'Le double post-mortem de Kacho reste auprès de sa jumelle survivante, indiscernable d’elle et tout entier dévoué à sa protection.',
     cost: 'La mort d’une jumelle · persistance post-mortem',
   },
@@ -346,7 +346,7 @@ export const hatsuFr: Record<string, HatsuTextOverride> = {
     owner: 'Chrollo',
     action: 'Tamponner les pantins de la page',
     instruction:
-      'Tamponnez des blocs inertes pourvus d’une tête, puis cliquez une destination pour donner aux trois pantins un seul ordre simple.',
+      'Tamponnez jusqu’à 20 blocs inertes pourvus d’une tête ; recliquez sur un bloc marqué pour le verrouiller en rouge, et dès qu’un pantin est verrouillé le clic suivant ailleurs devient l’ordre que les verrouillés exécutent.',
     rule: 'Le tampon contrôle des pantins en tant qu’objets, jamais des êtres que son utilisateur considère vivants.',
     cost: 'Uniquement des corps inanimés de la page',
   },
@@ -796,7 +796,7 @@ export const hatsuManifestationFr: Record<HatsuInteractionKind, string> = {
   control: 'Fils de commandement royaux',
   growth: 'Pousse d’erigeron',
   vehicle: 'Coque transformée à cinq places',
-  scout: 'Familier Little Eye',
+  scout: 'Insecte volant (Aura bleue)',
   tribunal: 'Carton de pénalité Cross Game',
   curse: 'Tache de naissance sacrificielle',
   inherit: 'Paume à quatre étoiles',

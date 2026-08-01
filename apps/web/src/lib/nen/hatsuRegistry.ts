@@ -237,7 +237,7 @@ export const HATSU_VISUAL_SIGNATURE_BY_KIND = {
     form: 'construct',
     motion: 'drift',
   },
-  scout: { glyph: '◉', manifestation: 'Little Eye familiar', form: 'beast', motion: 'scan' },
+  scout: { glyph: '◉', manifestation: 'Blue aura flying insect', form: 'beast', motion: 'drift' },
   tribunal: {
     glyph: '■',
     manifestation: 'Cross Game penalty card',
@@ -637,11 +637,11 @@ export const HATSU_PROFILES: HatsuProfile[] = [
     owner: 'Sayird',
     kind: 'scout',
     instruction:
-      'Move the remote eye to detect aura, then click a target no bigger than a hamster to open its visual and auditory feed.',
-    rule: 'Only a real small creature can be possessed; people and materialized Nen life are invalid hosts.',
-    cost: 'Very low aura · vulnerable animal host',
+      'Put the sphere on a host, then fly the insect room by room; aim at the room it is in to call it back. R changes its orders (Flown by hand, Working the deck, Filming): scouting it takes a door on its own, and filming, aiming at its own room records the room instead of recalling it.',
+    rule: 'The possessed object is a flying insect enveloped in a blue Nen aura that can be remotely controlled to film.',
+    cost: 'Very low aura · flying insect host',
     color: '#55c2ff',
-    action: 'Find a small host',
+    action: 'Pilot the insect',
   },
   {
     id: 'cross-game',
@@ -697,7 +697,7 @@ export const HATSU_PROFILES: HatsuProfile[] = [
     owner: 'Benjamin / Musse',
     kind: 'surveillance',
     instruction:
-      'Attach one owl to a map character to retain a live feed and expose movement or death recorded in the next chapter.',
+      'Attach one owl to a map character to retain a live feed and expose movement or death recorded in the next chapter. Press R to choose which owl is sent: working the ship, on your shoulder, or let go unaimed.',
     rule: 'The owl eavesdrops through barriers, follows by touch and retains earlier footage for later review.',
     cost: 'One attached surveillance owl',
     color: '#a8b7d8',
@@ -745,11 +745,11 @@ export const HATSU_PROFILES: HatsuProfile[] = [
     owner: 'Kacho',
     kind: 'guardian',
     instruction:
-      'The guardian memorizes five interactions, intercepts one detected lethal event and can replay its protected memory trail.',
+      'The guardian memorizes five interactions, intercepts one detected lethal event and can replay its protected memory trail. Press R to switch between Follow, Wander, and Scout modes.',
     rule: 'Kacho’s post-mortem double remains beside the surviving twin, indistinguishable from her and dedicated to protection.',
     cost: 'Death of one twin · post-mortem persistence',
     color: '#f6b8d1',
-    action: 'Remain beside the survivor',
+    action: 'Command the guardian',
   },
   {
     id: 'magical-worm',
@@ -925,7 +925,7 @@ export const HATSU_PROFILES: HatsuProfile[] = [
     owner: 'Chrollo',
     kind: 'command',
     instruction:
-      'Stamp lifeless blocks that have a head, then click a destination to give all three puppets one simple order.',
+      'Stamp up to 20 lifeless blocks that have a head; click a stamped one again to lock it in red, and once anything is locked the next click elsewhere is the order the locked puppets obey.',
     rule: 'The stamp controls puppets as objects, never beings the user considers alive.',
     cost: 'Only inanimate page bodies',
     color: '#cf6d62',

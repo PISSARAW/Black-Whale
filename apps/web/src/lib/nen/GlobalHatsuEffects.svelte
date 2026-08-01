@@ -13,7 +13,7 @@
     emperorTimeLifeHours,
     parallelFutureVisible,
   } from './hatsuState.js'
-  import { setAmbientMuffled } from '$lib/audio/ambient.js'
+  import { setAmbientMuffled, startBattleMusic, stopBattleMusic } from '$lib/audio/ambient.js'
   import {
     hatsuById,
     siteImpactFor,
@@ -30,6 +30,10 @@
     type Point,
     type StoredItem,
   } from './hatsuInteractions.js'
+  import { loadProphecySheets } from './prophecySheets.js'
+
+  /** Prologue, Jupiter and Metamorphosen: the three that are played, not cast. */
+  const BONOLENOV_KINDS = new Set(['rhythm', 'impact', 'mimicry'])
 
   type CaptureZone = { left: number; top: number; width: number; height: number }
   type RecordedEvent = { x: number; y: number; label: string }
@@ -86,6 +90,7 @@
   }
   let points: Point[] = []
   let cursor = { x: -100, y: -100 }
+  let userOrigin: { x: number; y: number } | null = null
   let sequence = 0
   let seconds = 0
   let cardIndex = 0
@@ -157,6 +162,13 @@
     cleanupTechniqueState(releasingHatsu)
     if (profile && !hadActiveHatsu) siteSnapshot = captureSiteState()
     previousId = profile?.id ?? null
+    // The sheets are a lazy chunk, fetched while the visitor is still choosing a
+    // target so the first click can be answered with the real poem.
+    if (profile?.kind === 'prophecy') void loadProphecySheets()
+    // Bonolenov's three techniques are one instrument. The music is the
+    // technique, not decoration on it, so it runs from the moment he is chosen
+    // until the aura is dropped.
+    if (profile && BONOLENOV_KINDS.has(profile.kind)) startBattleMusic()
     points = []
     seconds = 0
     cardIndex = 0
@@ -264,6 +276,7 @@
 
   function cleanupTechniqueState(restoreSite = false) {
     cleanupBungeeSelection()
+    stopBattleMusic()
     if (futureTimer) clearTimeout(futureTimer)
     if (captureTimer) clearTimeout(captureTimer)
     futureTimer = null
@@ -291,7 +304,12 @@
     trainingTarget = null
     observerReports = []
     birdDispatches = []
-    capturedTechniques = []
+    // What Steal Chain took stays taken until the aura is released: the only way
+    // to reach Stealth Dolphin — which reads out what the chain captured and
+    // lends it on — is to change technique, and clearing this here left the
+    // dolphin with nothing to read, always. Same for Benjamin Baton's inherited
+    // abilities and what Predator counters.
+    if (restoreSite) capturedTechniques = []
     dowsingSignal = 0
     portalCrossings = 0
     guardianShield = 1
@@ -725,14 +743,25 @@
   }
 
   function placePortal(event: MouseEvent) {
-    if (profile?.kind !== 'portal' || !(event.target as Element).closest('.map-canvas')) return
+    if (profile?.kind !== 'portal') return
+    // A door goes wherever the archive can be stood in — the map is only the
+    // richest of those states. Refusing everything outside `.map-canvas` made
+    // the technique look broken on every other page, silently.
+    if ((event.target as Element).closest('[data-hatsu-ui]')) return
     event.preventDefault()
     event.stopPropagation()
     if (portalAnchors.length >= 2) portalAnchors = []
-    portalAnchors = [...portalAnchors, currentPortalAnchor(event)]
+    const anchor = currentPortalAnchor(event)
+    // Two doors onto the same room are not a tunnel. Fugetsu's pair links two
+    // places, and placing both here left a crossing that went nowhere.
+    if (portalAnchors.length === 1 && portalIsVisible(portalAnchors[0])) {
+      status = 'Both doors would open on the same place · move the map or the page, then place it'
+      return
+    }
+    portalAnchors = [...portalAnchors, anchor]
     status =
       portalAnchors.length === 1
-        ? 'Entrance placed · right-click the exit location'
+        ? 'Entrance placed · move somewhere else, then right-click the exit'
         : 'Tunnel complete · both doors are now linked'
   }
 
@@ -749,6 +778,10 @@
     const destination = portalAnchors[index === 0 ? 1 : 0]
     if (!destination) {
       status = 'The second door has not been placed yet'
+      return
+    }
+    if (portalIsVisible(destination)) {
+      status = 'That door opens on the room you are standing in'
       return
     }
     const currentUrl = `${$page.url.pathname}${$page.url.search}`
@@ -1077,23 +1110,36 @@
       if (!characterId || inheritedCharacters.has(characterId) || inheritedCharacters.size >= 4)
         return
       const name = target.dataset.hatsuCharacterName || label
-      const eligible =
-        /vincent|musse|shikaku|balsamilco|benjamin.*soldier/i.test(`${characterId} ${name}`) ||
-        target.dataset.hatsuNextChange === 'dead'
-      if (!eligible) {
-        status = `${name} rejected · Benjamin Baton requires a deceased loyal Military Academy graduate`
-        addPoint(x, y, 'INELIGIBLE', { alert: true })
+      // Who may carry a palm star is a question about the manifest, not about
+      // spelling: a soldier of the royal army, which the map already tags. The
+      // name list stays for the men the story names but the roster does not tag.
+      const factions = (target.dataset.hatsuFactions || '').split('|').filter(Boolean)
+      const soldier =
+        factions.includes('guards') ||
+        /vincent|musse|shikaku|balsamilco|benjamin.*soldier/i.test(`${characterId} ${name}`)
+      if (!soldier) {
+        // A refusal is not an inheritance. Stamping a star on it put every
+        // passenger clicked into the list of soldiers, all of them ineligible.
+        status = `${name} rejected · Benjamin Baton registers his own soldiers, not the rest of the ship`
         return
       }
       inheritedCharacters.add(characterId)
-      const inherited = profilesFromTarget(target)
+      // The star is given while the soldier lives; the ability only crosses when
+      // he dies. Registering the living is the technique working, not failing.
+      const fallen = target.dataset.hatsuNextChange === 'dead'
+      const inherited = fallen ? profilesFromTarget(target) : []
       for (const technique of inherited) {
         if (!capturedTechniques.some((candidate) => candidate.id === technique.id))
           capturedTechniques = [...capturedTechniques, technique]
       }
-      addPoint(x, y, label, { details: inherited.map((technique) => technique.name) })
+      const registered = profilesFromTarget(target)
+      addPoint(x, y, name, {
+        details: (fallen ? inherited : registered).map((technique) => technique.name),
+      })
       remember(target).classList.add('hatsu-baton-inherited')
-      status = `${inheritedCharacters.size}/4 loyal abilities inherited · palm star awakened`
+      status = fallen
+        ? `${name}'s palm star awakened · ${inherited.length} ability${inherited.length === 1 ? '' : 'ies'} transferred to Benjamin`
+        : `${name} carries a palm star · ${inheritedCharacters.size}/4 registered · what he knows crosses over when he dies`
       return
     }
 
@@ -1104,6 +1150,20 @@
   onMount(() => {
     const move = (event: PointerEvent) => {
       cursor = { x: event.clientX, y: event.clientY }
+      if (profile && ['elastic', 'chain-rule', 'chain-bind', 'control', 'arrow', 'stitch'].includes(profile.kind)) {
+        if (points.length === 0) {
+          const ownerSlug = profile.owner.toLowerCase().replace(/\s+/g, '-')
+          const userElement = document.querySelector(`[data-hatsu-character="${ownerSlug}"]`) || document.querySelector(`[data-hatsu-character-name="${profile.owner}"]`)
+          if (userElement) {
+            const rect = userElement.getBoundingClientRect()
+            userOrigin = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 }
+          } else {
+            userOrigin = null
+          }
+        } else {
+          userOrigin = null
+        }
+      }
       if (profile?.kind === 'dowsing' && points.length === 0) {
         const nearby = document
           .elementFromPoint(event.clientX, event.clientY)
@@ -1171,7 +1231,7 @@
     }
   })
 
-  $: anchor = points.length ? points[points.length - 1] : null
+  $: anchor = points.length ? points[points.length - 1] : userOrigin
   $: chainPairs = points.slice(1).map((point, index) => ({ from: points[index], to: point }))
 </script>
 
@@ -1262,6 +1322,21 @@
         </div>{/if}
     {/if}
     {#if profile.kind === 'portal'}
+      <!--
+        A door is drawn where it was placed, so it is only on screen in the state
+        it was placed in. Standing anywhere else used to show nothing at all —
+        the pair still exists, and this is how it is reached from outside.
+      -->
+      {#if portalAnchors.length && !portalAnchors.some(portalIsVisible)}
+        <div class="portal-elsewhere">
+          <span>{$t.nen.portalStart}</span>
+          {#each portalAnchors as portal, index (index)}
+            <button type="button" onclick={() => crossPortal(index === 0 ? 1 : 0)}
+              >{portal.label} →</button
+            >
+          {/each}
+        </div>
+      {/if}
       {#each portalAnchors as portal, index (index)}
         {#if portalIsVisible(portal)}
           <button
@@ -1632,6 +1707,7 @@
     stroke-width: 3;
     stroke-dasharray: none;
     animation: elastic 0.7s ease-in-out infinite alternate;
+    filter: drop-shadow(0 0 6px var(--hatsu)) drop-shadow(0 0 12px var(--hatsu));
   }
   :global(body.bungee-gum-filtered [data-hatsu-character]:not([data-bungee-selected='true'])) {
     opacity: 0 !important;
@@ -1906,6 +1982,27 @@
     cursor: pointer;
     pointer-events: auto;
     animation: portal 2s linear infinite;
+  }
+  .portal-elsewhere {
+    position: absolute;
+    top: 5rem;
+    left: 50%;
+    display: grid;
+    gap: 0.3rem;
+    padding: 0.5rem 0.7rem;
+    transform: translateX(-50%);
+    border: 1px solid var(--hatsu);
+    background: #06110ee8;
+    color: var(--hatsu);
+    font: 0.55rem/1.3 monospace;
+    pointer-events: auto;
+  }
+  .portal-elsewhere button {
+    border: 1px solid color-mix(in srgb, var(--hatsu) 45%, transparent);
+    background: none;
+    color: #d5f7e9;
+    cursor: pointer;
+    font: 0.55rem/1.5 monospace;
   }
   .portal-door span {
     font: 700 0.55rem/1 monospace;
@@ -2267,8 +2364,9 @@
   }
   :global(.hatsu-secret-window) {
     box-shadow:
-      0 0 0 2px #a8b7d8,
-      0 0 25px #a8b7d844 !important;
+      0 0 0 2px #ffffff,
+      0 0 15px #ffffff,
+      0 0 30px #ffffffaa !important;
   }
   :global(.hatsu-future-afterimage) {
     box-shadow:
@@ -2332,20 +2430,48 @@
   :global(.hatsu-rhythm-hit) {
     animation: rhythm-hit 0.6s ease-in-out infinite alternate !important;
   }
+  /*
+   * The sphere is conjured, then it chases: four passes, each one heavier than
+   * the last, driven from the technique. This class used to crush the target
+   * flat on the first frame with `transform: … !important`, which both ended
+   * the chase before it started and overrode every pass the chase applied.
+   * Shadow and weight belong here; the descent belongs to the technique.
+   */
   :global(.hatsu-jupiter-impact) {
     position: relative !important;
     transition:
-      max-height 0.7s,
+      max-height 0.45s,
       opacity 0.5s,
-      transform 0.65s !important;
-    transform: scaleY(0.12) translateY(5rem) !important;
-    filter: brightness(0.35) !important;
+      transform 0.45s cubic-bezier(0.3, 0.9, 0.2, 1) !important;
+    box-shadow: 0 -14px 28px -6px #d9935b88 !important;
+    filter: brightness(0.72) !important;
   }
   :global(.hatsu-model) {
     outline: 1px dashed #a889c8 !important;
   }
   :global(.hatsu-metamorphosen) {
+    position: relative !important;
     box-shadow: 0 0 30px #a889c844 !important;
+    outline: 1px solid #a889c8 !important;
+  }
+  /* The form it took, named on it — the copy has to be legible as a copy. */
+  :global(.hatsu-metamorphosen)::after {
+    content: attr(data-hatsu-forgery);
+    position: absolute;
+    z-index: 2;
+    top: 0;
+    right: 0;
+    padding: 0.1rem 0.35rem;
+    background: #a889c8;
+    color: #120c19;
+    font: 700 0.55rem/1.4 monospace;
+  }
+  /* Hanzo's double goes through matter: what it crossed opens for a moment. */
+  :global(.hatsu-phased-through) {
+    animation: phase-through 0.9s ease-out !important;
+  }
+  :global(.hatsu-curse-victim) {
+    box-shadow: 0 0 0 2px #9d65d066 !important;
   }
   :global(.hatsu-stolen) {
     filter: grayscale(1) !important;
@@ -2383,6 +2509,11 @@
     position: absolute;
     color: #cf6d62;
     font: 1rem/1 monospace;
+  }
+  /* The puppets an order will actually reach, and the only tell that says so. */
+  :global(.hatsu-puppet-locked) {
+    outline: 2px solid #e5484d !important;
+    outline-offset: 2px;
   }
   :global(.hatsu-left-hand) {
     outline: 2px solid #f0c0dc !important;
@@ -2755,6 +2886,7 @@
   @keyframes elastic {
     to {
       stroke-width: 5;
+      filter: drop-shadow(0 0 10px var(--hatsu)) drop-shadow(0 0 20px var(--hatsu)) drop-shadow(0 0 30px var(--hatsu));
     }
   }
   @keyframes scarlet {
@@ -2827,6 +2959,16 @@
     from {
       transform: scale(0.96);
       opacity: 0.55;
+    }
+  }
+  @keyframes phase-through {
+    30% {
+      opacity: 0.25;
+      filter: blur(1.5px) brightness(1.6);
+    }
+    60% {
+      opacity: 0.55;
+      filter: blur(0.5px);
     }
   }
   @keyframes site-rhythm {

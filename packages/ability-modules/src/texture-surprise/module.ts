@@ -1,4 +1,5 @@
 import {
+  auraModifier,
   buildManifest,
   canUseNen,
   defineAbility,
@@ -41,7 +42,38 @@ export const textureSurprise = defineAbility({
     apply: {
       label: 'Appliquer un masque',
       conditions: [requiresTarget('Une surface plane est visée')],
-      effects: [perceptionMask({ tactileFail: true, auraDetectable: false })],
+      effects: [
+        perceptionMask({ tactileFail: true, auraDetectable: false }),
+        auraModifier({ color: 'pink' }),
+      ],
+    },
+
+    'camouflage-object': {
+      label: 'Camoufler un objet',
+      conditions: [requiresTarget('Un objet est visé')],
+      effects: [
+        perceptionMask({
+          tactileFail: true,
+          auraDetectable: true,
+          appearsAs: (ctx) => param(ctx, 'appearsAs'),
+          attributes: { surfaceType: 'camouflage' },
+        }),
+        auraModifier({ color: 'pink' }),
+      ],
+    },
+
+    'fake-wound': {
+      label: 'Simuler une blessure',
+      conditions: [requiresTarget('Une personne est visée')],
+      effects: [
+        perceptionMask({
+          tactileFail: true,
+          auraDetectable: true,
+          appearsAs: (ctx) => param(ctx, 'appearsAs'),
+          attributes: { surfaceType: 'wound' },
+        }),
+        auraModifier({ color: 'pink' }),
+      ],
     },
 
     'forge-document': {
@@ -54,6 +86,7 @@ export const textureSurprise = defineAbility({
           appearsAs: (ctx) => param(ctx, 'appearsAs'),
           attributes: { surfaceType: 'document' },
         }),
+        auraModifier({ color: 'pink' }),
       ],
     },
 
@@ -70,6 +103,7 @@ export const textureSurprise = defineAbility({
             attributes: { surfaceType: 'body', prosthetic: true },
           }),
         ),
+        auraModifier({ color: 'pink' }),
       ],
       hint: 'Post-ch. 357 — masques permanents sur le corps reconstruit',
     },
@@ -88,7 +122,7 @@ export const textureSurprise = defineAbility({
     inputMode: 'DRAW',
     allowedTargets: ['CHARACTER', 'BODY', 'OBJECT'],
     overlays: ['AURA'],
-    entryActions: ['apply'],
+    entryActions: ['apply', 'camouflage-object', 'fake-wound', 'forge-document', 'rebuild-body'],
     requiredState: ['isConscious', 'canUseNen'],
     customComponent: 'TextureSurpriseView',
   }),

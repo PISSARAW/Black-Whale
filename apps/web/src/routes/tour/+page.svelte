@@ -21,11 +21,42 @@
   import TourMinimap from '$lib/components/tour/TourMinimap.svelte'
   import TourScene from '$lib/components/tour/TourScene.svelte'
   import { setAmbientMuffled } from '$lib/audio/ambient'
-  import { activeHatsu, enterForcedZetsu } from '$lib/nen/hatsuState'
-  import type { HatsuInteractionKind } from '$lib/nen/hatsuRegistry'
+  import {
+    blowAGust,
+    fireABurst,
+    foldPaper,
+    crackAWhip,
+    grindThroughSpace,
+    hissLikeASnake,
+    hootAnOwl,
+    landAPunch,
+    loostAnArrow,
+    openAWormhole,
+    playATune,
+    raiseTheSun,
+    selectACard,
+    skipThroughTime,
+    startEngine,
+    startFly,
+    startRequiem,
+    startVacuum,
+    stopEngine,
+    stopEveryHatsuLoop,
+    stopFly,
+    stopRequiem,
+    stopVacuum,
+    stretchTheGum,
+    strikeAGong,
+    unspoolWire,
+    wakeTheMachine,
+  } from '$lib/audio/hatsuSounds'
+  import { activeHatsu, enterForcedZetsu, parallelFutureVisible } from '$lib/nen/hatsuState'
+  import { get } from 'svelte/store'
+  import { HATSU_PROFILES, type HatsuInteractionKind } from '$lib/nen/hatsuRegistry'
   import { breadcrumbSchema } from '$lib/seo/schema'
   import { link, t } from '$lib/i18n'
   import { locale } from '$lib/i18n'
+  import { localizeHatsu } from '$lib/i18n/hatsu'
   import { crossingsOn, deckOf, entrySpace, theShip, type Crossing } from '$lib/tour/blueprint'
   import {
     FOV_RANGE,
@@ -38,6 +69,7 @@
     resetComfort,
     setComfort,
   } from '$lib/tour/comfort'
+  import { flashFor, type TourFlash } from '$lib/tour/apparitions'
   import { describeSpace } from '$lib/tour/describe'
   import { placeOf, type Naming } from '$lib/tour/search'
   import {
@@ -45,15 +77,28 @@
     aimsAtSolids,
     arriveInTour,
     castInTour,
+    ageTheOwl,
+    fishBite,
+    polarityStep,
+    flyTheEye,
+    flyTheOwl,
     identityOf,
+    nextDoubleMode,
+    nextEyeMode,
+    nextOwlMode,
+    openTheBook,
+    otherHand,
     spendPage,
+    turnTheBook,
+    twoPages,
+    TWO_HANDED_KINDS,
     worksInTour,
     worksOnTheBody,
     wormExit,
     type TourReport,
     type TourWorld,
   } from '$lib/tour/hatsu'
-  import type { Link, Provenance, Space, Structure } from '$lib/tour/types'
+  import type { Link, Provenance, Space, Structure, Vec2 } from '$lib/tour/types'
 
   const ship = theShip()
 
@@ -81,6 +126,8 @@
   let currentSpace = $state<Space | null>(null)
   let availableLink = $state<{ link: Link; to: string } | null>(null)
   let jumpTo = $state<string | null>(null)
+  /** Where in that room, for the arrow — which lands where it fell, not at the door. */
+  let jumpAt = $state<Vec2 | null>(null)
   let engaged = $state(false)
   /** Set by the scene once it knows it is being walked with a finger. */
   let touch = $state(false)
@@ -182,8 +229,9 @@
     ),
   )
 
-  function goToSpace(space: Space) {
+  function goToSpace(space: Space, landing: Vec2 | null = null) {
     if (space.tierId !== tierId) tierId = space.tierId
+    jumpAt = landing
     jumpTo = space.id
   }
 
@@ -261,16 +309,97 @@
     return $t.tour.plan.crossingAcross(label)
   }
 
+  // ── The walk at the size of the screen ─────────
+  /**
+   * Full screen is not the walk with its page taken away.
+   *
+   * Two things make that true. The layout: the walk takes the screen and the
+   * column comes with it — the decks, the plan, the index, the Hatsu panel, the
+   * comfort dials, the legend — folded away on a keypress when the ship is what
+   * you came to look at, and never gone. And the element: what is handed to the
+   * browser is the document rather than this page, because the Nen dock is the
+   * archive's and hangs outside the route. Full screen on the grid would take
+   * the walk and leave the aura at the door.
+   */
+  let immersive = $state(false)
+  let panelOpen = $state(true)
+  /**
+   * Whether the browser actually took the element. A phone has no element full
+   * screen to give, so the same layout stands on `position: fixed` instead —
+   * which is also what has to be undone by hand, since there is no
+   * `fullscreenchange` coming for it.
+   */
+  let native = false
+
+  /**
+   * The archive's chrome stands down for the walk.
+   *
+   * Not decoration: the route is drawn inside a transformed shell, which is a
+   * stacking context of its own, so no z-index this page can name will ever put
+   * the walk over the site header. The header goes instead — and the Nen dock,
+   * which hangs outside the route entirely, deliberately stays.
+   */
+  $effect(() => {
+    const root = document.documentElement
+    root.classList.toggle('tour-immersive', immersive)
+    return () => root.classList.remove('tour-immersive')
+  })
+
+  async function toggleFullscreen() {
+    if (immersive) {
+      if (native && document.fullscreenElement) {
+        try {
+          await document.exitFullscreen()
+        } catch {
+          // Refused: fall through and drop the layout ourselves.
+        }
+      }
+      native = false
+      immersive = false
+      return
+    }
+
+    immersive = true
+    // `requestFullscreen` is missing on iOS Safari altogether. The fixed layout
+    // is the same layout, so the walk still fills the phone — it just keeps the
+    // browser's chrome, which is the browser's call rather than ours.
+    if (document.fullscreenEnabled && document.documentElement.requestFullscreen) {
+      try {
+        await document.documentElement.requestFullscreen()
+        native = true
+      } catch {
+        native = false
+      }
+    }
+  }
+
   /**
    * M opens the plan at a size it can be read at. In the 320-pixel column a
    * room's legend comes out under four pixels tall, which is a cost paid for
    * nothing; full screen, the same drawing is legible, and it is the same
    * component rather than a second plan to keep in step.
+   *
+   * V gives the walk the screen, and Esc gives it back — but only when the
+   * pointer is not engaged, because there Esc already means "let go of my
+   * mouse", and one key cannot mean two things in the same breath.
+   *
+   * R changes the orders of the three techniques that take orders: the double's
+   * watch under Without You, which of the three birds Secret Window sends, and
+   * what Little Eye's insect is doing where it is. Under a technique that can be
+   * turned on its own user — Black Voice's needle, Elastic Love — the walk takes
+   * it instead and casts with an empty reticle; the two sets do not overlap, so
+   * the key never means two things at once. Under anything else it means nothing
+   * and is left to the browser.
    */
   function onWindowKeydown(event: KeyboardEvent) {
     if (event.metaKey || event.ctrlKey || event.altKey) return
     const key = event.key.toLowerCase()
-    if (key !== 'm' && key !== 'g') return
+    if (key === 'r' && !TAKES_ORDERS.includes(technique?.kind ?? null)) return
+    if (key !== 'm' && key !== 'g' && key !== 'r' && key !== 'v' && key !== 'escape') return
+    // Esc leaves full screen only where nothing else has a claim on it: the
+    // browser answers it in native full screen, an engaged pointer answers it
+    // with "let go of my mouse", and an open dialog closes on it first.
+    if (key === 'escape' && !(immersive && !native && !engaged && !planOpen && !findOpen)) return
     const target = event.target
     if (
       target instanceof HTMLElement &&
@@ -280,6 +409,9 @@
     }
     event.preventDefault()
     if (key === 'g') reveal = !reveal
+    else if (key === 'r') {
+      if (technique) turn(technique.kind)
+    } else if (key === 'v' || key === 'escape') void toggleFullscreen()
     else planOpen = !planOpen
   }
 
@@ -292,23 +424,314 @@
   onMount(() => {
     loadComfort()
     calm = prefersReducedMotion()
+
+    // Esc, F11 and the window chrome all leave full screen without asking the
+    // page, so the browser is the authority on whether we are still in it.
+    const sync = () => {
+      if (native && !document.fullscreenElement) {
+        native = false
+        immersive = false
+      }
+    }
+    document.addEventListener('fullscreenchange', sync)
+    return () => document.removeEventListener('fullscreenchange', sync)
   })
 
   onDestroy(() => {
     if (copyTimer) clearTimeout(copyTimer)
+    // Leaving the route leaves full screen with it: the walk asked for the
+    // screen, and no other page of the archive did.
+    if (native && document.fullscreenElement) void document.exitFullscreen()
   })
 
   // ── Nen ────────────────────────────────────────
   let world = $state<TourWorld>(EMPTY_WORLD)
+
+  /**
+   * The clock the ten blind seconds are read against.
+   *
+   * A deadline in the world is not reactive on its own — nothing changes when
+   * it passes — so the walk has to keep asking what time it is for the screen
+   * to come back. The walking itself is the scene's: it holds the keys down for
+   * the visitor and drifts the heading, which is what wandering looks like.
+   * Nothing here moves them, because a body carried room to room every second
+   * and a half is not a body walking blind.
+   */
+  let now = $state(Date.now())
+  $effect(() => {
+    const i = setInterval(() => {
+      now = Date.now()
+    }, 100)
+    return () => clearInterval(i)
+  })
+  const isAutopilot = $derived(
+    world.body.autopilotUntil !== null && world.body.autopilotUntil > now,
+  )
   let report = $state<TourReport | null>(null)
+  /**
+   * The blast and the punch, which are gone by the time the read-out is read.
+   *
+   * Everything else a technique does is in the world and can simply be drawn
+   * from it. These two are events: the page hands the walk one and counts it,
+   * because casting the same blast at the same room twice is two gusts of air
+   * and an unchanged value would only ever be one.
+   */
+  let flash = $state<(TourFlash & { seq: number }) | null>(null)
+  let flashes = 0
+
+  /** Hands the walk whatever the cast that just happened has to show. */
+  function show(shown: TourReport) {
+    const seen = flashFor(shown, ship, world, position)
+    if (seen) flash = { ...seen, seq: ++flashes }
+    sound(shown)
+  }
+
+  /**
+   * And whatever it has to be heard as.
+   *
+   * Nineteen of the techniques have a sound of their own, in
+   * `$lib/audio/hatsuSounds`; the rest are silent and should be, because a walk
+   * where every cast made a noise would be a slot machine. The switch is on the
+   * report rather than on the technique for the reason the flash is: a cast that
+   * came up empty is a different event from one that landed, and the ear is
+   * better than the read-out at telling a visitor which of the two happened.
+   */
+  function sound(shown: TourReport) {
+    switch (shown.kind) {
+      // Snake Arm.
+      case 'bound':
+        return hissLikeASnake()
+      // The Dowsing Chain, used as what it is: a weight on the end of a chain.
+      case 'lashed':
+        return crackAWhip()
+      // Secret Window. Twenty seconds up, and the bird says so on its way out.
+      case 'owl-attached':
+      case 'owl-recalled':
+      case 'owl-expired':
+        return hootAnOwl()
+      // Cross Game, and Culdcept, which is the other technique made of cards.
+      case 'card-blue':
+        return selectACard(1)
+      case 'card-yellow':
+        return selectACard(2)
+      case 'card-red':
+        return selectACard(3)
+      case 'carded':
+      case 'acquisition-failed':
+        return selectACard(1)
+      // Magical Worm: both mouths are the same hole being cut.
+      case 'worm-set':
+      case 'worm-open':
+      case 'worm-crossed':
+        return openAWormhole()
+      // Chrollo's teleport.
+      case 'teleported':
+        return skipThroughTime()
+      // Surveillance Paper Dolls.
+      case 'watching':
+        return foldPaper()
+      // Air Blow.
+      case 'stripped':
+        return blowAGust()
+      // Black Voice.
+      case 'puppeted':
+      case 'puppet-released':
+      case 'autopilot-started':
+        return unspoolWire()
+      // Order Stamp: the seal coming down, the lock turning on a head that
+      // already wears one, and the puppets moving when they are finally told.
+      // An order with nothing locked is deliberately silent — it is spoken to
+      // nobody, and nobody is what it sounds like.
+      case 'stamped':
+        return strikeAGong(1)
+      case 'stamp-locked':
+        return selectACard(shown.locked ? 2 : 1)
+      case 'ordered':
+        return wakeTheMachine()
+      // The Sun and Moon.
+      case 'marked':
+        return openAWormhole() // TODO: specialized sound
+      case 'detonated':
+        return strikeAGong(3) // TODO: specialized explosion sound
+      // Remote Punch, whether it found something or bare deck.
+      case 'came-up-under':
+      case 'came-up-empty':
+        return landAPunch()
+      // Rising Sun, at whatever radius the wrapping had taken.
+      case 'sun-risen':
+        return raiseTheSun(shown.metres)
+      // Grimmel the Dissonance.
+      case 'souls-swapped':
+      case 'arrow-drawn':
+        return loostAnArrow()
+      // Nen Stitches. The thread is thrown on the same click, so this is also
+      // the sound of the swing the scene is about to take.
+      case 'stitched':
+      case 'nothing-to-stitch':
+        return unspoolWire()
+      // Double Machine Gun.
+      case 'volley':
+        return fireABurst(shown.hits)
+      // Three Monkeys: one gong per seal, and one for lifting all three.
+      case 'sealed':
+        return strikeAGong(shown.stage)
+      // Bungee Gum, all five of its uses: the strand, the pull, the trap laid,
+      // the trap sprung, and the two it works on the visitor themselves.
+      case 'gum-set':
+      case 'gum-pulled':
+      case 'gum-trap-set':
+      case 'gum-rebound':
+      case 'gum-propulsion':
+      case 'gum-healed':
+        return stretchTheGum()
+      // Spatial Teleportation, which grinds one way going and the other coming.
+      case 'phasing':
+        return grindThroughSpace(shown.on)
+      // Biohazard.
+      case 'animated':
+        return wakeTheMachine()
+      // Enchanting Music, which is the one technique in the walk whose whole
+      // substance is a sound: the air is played whether it is being put on the
+      // room or taken back off it, because both are the flute being played.
+      case 'tune-played':
+        return playATune(shown.tune)
+      default:
+        return
+    }
+  }
   let aimedAt = $state<Space | null>(null)
   let aimedSolidAt = $state<Structure | null>(null)
 
   const technique = $derived(worksInTour($activeHatsu) ? $activeHatsu : null)
 
+  /**
+   * The two pages Double Face has live, in the order the two keys play them:
+   * the open one under F, the one the ribbon is holding under R.
+   *
+   * `null` under everything else, which is what makes R mean what it has always
+   * meant everywhere else.
+   */
+  const openPages = $derived(technique?.kind === 'bookmark' ? twoPages(world.book) : null)
+
+  /** A page under the name of whoever the book took it from. */
+  const pageName = (kind: HatsuInteractionKind) => {
+    const stolen = HATSU_PROFILES.find((candidate) => candidate.kind === kind)
+    return stolen ? localizeHatsu(stolen, $locale).name : kind
+  }
+
+  /** The two pages as the two buttons a touchscreen gets instead of F and R. */
+  const hands = $derived(
+    openPages ? { first: pageName(openPages[0]), second: pageName(openPages[1]) } : null,
+  )
+
+  /**
+   * What a cast would actually run, which is not always the technique in hand.
+   *
+   * Double Face is not cast at all — it is a bookmark, and what a bookmark does
+   * is keep a second page live. So the key decides: F runs the open page and R
+   * runs the marked one, and the walk answers to whichever came back.
+   */
+  const castingKind = (hand: 'first' | 'second' | 'third'): HatsuInteractionKind | null => {
+    if (!technique) return null
+    if (!openPages) return technique.kind
+    return hand === 'second' ? openPages[1] : openPages[0]
+  }
+
+  /**
+   * Which of Enchanting Music's three airs each key plays.
+   *
+   * The lively one is on F because F is the key everything is cast with and the
+   * dance is what the technique is remembered for; the soft one is on R, which
+   * an instrument has no other use for; and the sharp one is on C. Nothing else
+   * in the walk reads this — the flute is the only thing aboard that is played
+   * rather than aimed.
+   */
+  const AIR_KEYS = { first: 'dance', second: 'bloom', third: 'scatter' } as const
+
+  /** The three airs as the three buttons a touchscreen gets instead of the keys. */
+  const tunes = $derived(
+    technique?.kind === 'melody' && !openPages
+      ? {
+          first: $t.tour.hatsu.tunes[AIR_KEYS.first],
+          second: $t.tour.hatsu.tunes[AIR_KEYS.second],
+          third: $t.tour.hatsu.tunes[AIR_KEYS.third],
+        }
+      : null,
+  )
+
+  /**
+   * Whether the technique in hand is cast with two hands rather than one.
+   *
+   * Genthru puts the sun on with one hand and the moon with the other, and
+   * which of the two a thing wears is the whole decision the technique asks
+   * for — so the walk gives the two hands the two keys it already casts with:
+   * F is the sun and R is the moon. R is free to be that, because the only
+   * other thing it does is turn a technique on its own user and The Sun and
+   * Moon has nothing to do to one. A page of the book is the exception, and
+   * says so at `nextHand`.
+   */
+  const twoHanded = $derived(
+    Boolean(technique) && !openPages && TWO_HANDED_KINDS.has(technique!.kind),
+  )
+
+  /**
+   * Which hand each key casts with next, for the techniques that have two.
+   *
+   * The Sun and Moon is the whole of it: Genthru puts the sun on with one hand
+   * and the moon with the other, and the pair does nothing until both are out.
+   * Spending a second key on the second hand would collide with everything else
+   * a key already means — R is Double Face's other page, and C is the flute's
+   * third air — so the key alternates instead. Press it once for the sun and
+   * again for the moon, and the pair is two presses of the same key. Kept per
+   * key, so a book holding it on one page counts that page's hands alone.
+   */
+  let nextHand = $state<Record<'first' | 'second' | 'third', 'sun' | 'moon'>>({
+    first: 'sun',
+    second: 'sun',
+    third: 'sun',
+  })
+
+  /**
+   * Whether R has anything to do: the technique is on both sides of the line.
+   *
+   * A technique that only ever works on the visitor takes F wherever the
+   * reticle happens to be pointing, so it needs no second key. The ones in both
+   * sets — Black Voice's needle, Elastic Love — are the ones the reticle
+   * decides for, and on a walk the reticle is nearly always on something. R is
+   * how the visitor says *me*.
+   */
+  const selfCastable = $derived(worksOnTheBody(technique) && aimsAtSolids(technique))
+
   /** Sight is the scene's business; hearing is the archive's ambience. */
   $effect(() => {
     setAmbientMuffled(world.sealed >= 2)
+  })
+
+  /**
+   * The four techniques that make a noise for as long as they are up.
+   *
+   * A motor, an engine, an insect and a mass for the dead are states rather
+   * than events, so they are driven off the world exactly as the apparitions
+   * are, and not off the report that started them. Each is keyed to the same
+   * value the scene draws from — Blinky's is `holding`, which is when the
+   * hoover appears at the visitor's side — so what is heard and what is on
+   * screen can never disagree.
+   */
+  $effect(() => {
+    if (world.holding === 'vacuum') startVacuum()
+    else stopVacuum()
+  })
+  $effect(() => {
+    if (world.body.riding) startEngine()
+    else stopEngine()
+  })
+  $effect(() => {
+    if (world.eye) startFly()
+    else stopFly()
+  })
+  $effect(() => {
+    if (world.devouring.length) startRequiem()
+    else stopRequiem()
   })
 
   // Dropping the aura hands the ship back; swapping one technique for another
@@ -324,7 +747,95 @@
     }
     // Taking an aura up again is what clears the last penalty off the walk.
     penalty = null
+    // What is being held, in the world rather than only in the dock: the
+    // passive abilities are decided by `$lib/tour/hatsu`, and it has to be able
+    // to tell Voconte's doors from anyone else's.
+    const kind = worksInTour($activeHatsu) ? $activeHatsu.kind : null
+    const currentWorld = untrack(() => world)
+    if (currentWorld.holding !== kind) {
+      const nextWorld = { ...currentWorld, holding: kind }
+      if (kind === 'guardian') {
+        nextWorld.double = currentSpace?.id ?? null
+        // The watch she was last set to is kept: R is the only thing that
+        // changes it, and taking the aura up again is not R.
+        nextWorld.doubleMode = currentWorld.doubleMode ?? 'follow'
+      }
+      // Double Face is handed over already holding two: a bookmark with one
+      // page under it is not an ability, and the walk cannot ask the visitor to
+      // steal twice before it does anything. Which two is rolled here and
+      // stands until the aura is put down.
+      if (kind === 'bookmark' && !twoPages(currentWorld.book)) {
+        nextWorld.book = openTheBook()
+      }
+      // Both hands begin with the sun, whatever the last aura left them on.
+      nextHand = { first: 'sun', second: 'sun', third: 'sun' }
+      world = nextWorld
+    }
   })
+
+  /**
+   * The double's next watch: at your shoulder, loose in the room she was posted
+   * in, or out ahead of the walk.
+   *
+   * One ability with three orders rather than three abilities in the dock —
+   * she is the same double whichever of them she is under, and the visitor
+   * changes her orders mid-walk the way they would speak to her.
+   */
+  function cycleDouble() {
+    turn('guardian')
+  }
+
+  /**
+   * The next of Little Eye's three orders: piloted, scouting, filming.
+   *
+   * The sphere is the whole ability and it costs nothing to keep up — what
+   * makes it worth anything is what the insect is told to do with the room it
+   * is in, which is the choice Sayird's module exposes and the walk did not.
+   */
+  function cycleEye() {
+    turn('scout')
+  }
+
+  /**
+   * The next of Secret Window's three birds: the free one, the one that rides
+   * your shoulder, and the one let go without being aimed.
+   *
+   * Chosen before the cast rather than by it — the bird is what F sends, so the
+   * visitor has to be able to say which bird it is while nothing is out. A bird
+   * already perched is left where it is; what changes is what the next cast
+   * sends, and whether this one is still allowed to move.
+   */
+  function cycleOwl() {
+    turn('surveillance')
+  }
+
+  /** The techniques R means anything under, which is what the key is guarded by. */
+  const TAKES_ORDERS: (HatsuInteractionKind | null)[] = ['guardian', 'surveillance', 'scout']
+
+  /**
+   * R, in one place: the walk asks the technique for its next order and says
+   * what came back. A technique with nothing to cycle — or one that is not the
+   * aura being held — answers with nothing, and the key stays inert.
+   */
+  function turn(kind: HatsuInteractionKind) {
+    if (technique?.kind !== kind) return
+    let said: TourReport
+    if (kind === 'guardian') {
+      const mode = nextDoubleMode(world.doubleMode)
+      world = { ...world, doubleMode: mode }
+      said = { kind: 'double-mode-changed', mode }
+    } else if (kind === 'surveillance') {
+      const mode = nextOwlMode(world.owlMode)
+      world = { ...world, owlMode: mode }
+      said = { kind: 'owl-mode-changed', mode }
+    } else if (kind === 'scout') {
+      const mode = nextEyeMode(world.eyeMode)
+      world = { ...world, eyeMode: mode }
+      said = { kind: 'eye-mode-changed', mode }
+    } else return
+    report = said
+    show(said)
+  }
 
   /**
    * Handing the ship back is not always free. Silent Majority is a curse that
@@ -333,7 +844,16 @@
    */
   function release() {
     const rebound = Boolean(world.snakes && !world.snakes.fed)
-    world = EMPTY_WORLD
+    // Everything the aura was holding is handed back — but the aura itself is
+    // still up, and what is held is not a hold. The book is the exception the
+    // other way round: it is not something Double Face did to the ship, it is
+    // Double Face, so letting go of the ship deals a fresh pair rather than
+    // leaving the visitor holding a bookmark with nothing under it.
+    world = {
+      ...EMPTY_WORLD,
+      holding: world.holding,
+      book: world.holding === 'bookmark' ? openTheBook() : EMPTY_WORLD.book,
+    }
     report = null
     if (rebound) punish($t.tour.hatsu.reports.snakesRebound)
   }
@@ -349,21 +869,73 @@
     enterForcedZetsu()
   }
 
-  onDestroy(() => setAmbientMuffled(false))
+  let wasFutureVisible = false
+  const unsubFuture = parallelFutureVisible.subscribe((isVisible) => {
+    const active = get(activeHatsu)
+    if (wasFutureVisible && !isVisible && active?.id === 'parallel-future') {
+      const ended: TourReport = { kind: 'vision-ended' }
+      report = ended
+      show(ended)
+    }
+    wasFutureVisible = isVisible
+  })
 
-  function castOn(spaceId: string | null, solidId: string | null = null) {
+  onDestroy(() => {
+    unsubFuture()
+    setAmbientMuffled(false)
+    // Leaving the walk stops the walk's noises. An engine that kept running on
+    // the sources page would be the archive talking over itself.
+    stopEveryHatsuLoop()
+  })
+
+  function castOn(
+    spaceId: string | null,
+    solidId: string | null = null,
+    /** Which key cast: F is the first hand, R the second, C the third. */
+    hand: 'first' | 'second' | 'third' = 'first',
+  ) {
     if (!technique) return
-    const result = castInTour(world, technique.kind, {
+    const kind = castingKind(hand)
+    if (!kind) return
+    // An instrument is played rather than cast, and which key was pressed is
+    // which piece: the walk carries the choice across and `$lib/tour/hatsu`
+    // decides what a room that has heard it looks like afterwards.
+    const tune = kind === 'melody' ? AIR_KEYS[hand] : undefined
+    // The two hands on the two keys: F puts the sun on, R the moon. Held on a
+    // page of the book instead, the technique has only its own key — R is how
+    // the other page is cast — so that one alternates, and which hand this press
+    // is comes from what the last press of that key left behind.
+    const mark = !TWO_HANDED_KINDS.has(kind)
+      ? undefined
+      : openPages
+        ? nextHand[hand === 'third' ? 'first' : hand]
+        : hand === 'second'
+          ? ('moon' as const)
+          : ('sun' as const)
+    const result = castInTour(world, kind, {
       ship,
       targetId: spaceId,
       targetSolidId: solidId,
       standingIn: currentSpace?.id ?? null,
       at: position,
       heading,
+      mark,
+      tune,
     })
     world = result.world
     report = result.report
-    if (result.travelTo) goToSpace(ship.spaces.get(result.travelTo)!)
+    show(result.report)
+    // The turn is only taken when a hand actually went out: a cast that found
+    // nothing to mark has not used one up, and the next press is still the sun.
+    if (mark && result.report?.kind === 'marked') {
+      nextHand = { ...nextHand, [hand]: otherHand(mark) }
+    }
+    if (result.travelTo) {
+      // Where the aura came down in that room, for the technique that carries
+      // the visitor to it rather than merely reaching it.
+      const landing = result.world.landed[result.travelTo] ?? null
+      goToSpace(ship.spaces.get(result.travelTo)!, landing)
+    }
   }
 
   /**
@@ -383,7 +955,22 @@
     })
     world = spendPage(result.world, kind)
     report = result.report
+    show(result.report)
     if (result.travelTo) goToSpace(ship.spaces.get(result.travelTo)!)
+  }
+
+  /**
+   * What the cast keys do, offered to a visitor working the panel instead of
+   * the keyboard: the same cast, at whatever the reticle is on, under the same
+   * hand — so the moon goes on off a mouse exactly as it does off R.
+   */
+  function castHand(hand: 'first' | 'second' | 'third') {
+    castOn(aimedAt?.id ?? currentSpace?.id ?? null, aimedSolidAt?.id ?? null, hand)
+  }
+
+  /** The ribbon moved to the other page, which swaps what the two keys play. */
+  function turnTheRibbon() {
+    world = { ...world, book: turnTheBook(world.book) }
   }
 
   /**
@@ -405,6 +992,90 @@
     if (arrival.punished && spaceId) {
       punish($t.tour.hatsu.reports.vowBroken(nameOf(ship.spaces.get(spaceId)!)))
     }
+  }
+
+  /**
+   * One mouthful, in every room the fish are loose in.
+   *
+   * The walk's clock decides when; `fishBite` decides what. A room they have
+   * already emptied gives them nothing and says nothing, which is why the
+   * read-out goes quiet rather than repeating itself.
+   */
+  function fishEat() {
+    let next = world
+    let last: TourReport | null = null
+    for (const spaceId of world.devouring) {
+      const bite = fishBite(next, ship, spaceId)
+      if (!bite) continue
+      next = bite.world
+      last = bite.report
+    }
+    if (!last) return
+    world = next
+    report = last
+  }
+
+  /**
+   * The sun and the moon closing on each other, on the walk's own clock.
+   *
+   * Silent until they touch: two things crossing a room are something to watch
+   * rather than something to be told about, and the one line the technique has
+   * to say is the one it says when neither of them is there any more.
+   */
+  function polarityWalk(seconds: number, delta: number) {
+    const step = polarityStep(world, ship, seconds, delta)
+    if (!step) return
+    world = step.world
+    if (!step.report) return
+    report = step.report
+    show(step.report)
+  }
+
+  /**
+   * One hop of the free bird, on the same clock the fish feed on.
+   *
+   * The read-out says where it went, because a bird that leaves the room you
+   * sent it to without saying so is a bird you have lost. It is not sounded:
+   * one hoot every few seconds for as long as the technique is up would be the
+   * walk talking over itself.
+   */
+  function owlFlight() {
+    const flown = flyTheOwl(world, ship)
+    if (!flown) return
+    world = flown.world
+    report = flown.report
+  }
+
+  /**
+   * One room further for the insect, while it is scouting.
+   *
+   * Said and not sounded, for the bird's reason: the walk already has the fly
+   * running under it for as long as the sphere is up, and one line a room is
+   * what makes the feed in the corner readable as a route rather than as a
+   * picture that keeps changing.
+   */
+  function scoutFlight() {
+    const flown = flyTheEye(world, ship)
+    if (!flown) return
+    world = flown.world
+    report = flown.report
+  }
+
+  /**
+   * One second of the twenty a bird holds for.
+   *
+   * Silent while it is counting: nineteen lines saying the owl is still there
+   * would bury whatever the walk was actually told. It speaks once, when the
+   * bird goes and hands its ten seconds over — and the scene plays them back
+   * in the corner off the same disappearance.
+   */
+  function owlSecond() {
+    const aged = ageTheOwl(world)
+    if (!aged) return
+    world = aged.world
+    if (!aged.report) return
+    report = aged.report
+    show(aged.report)
   }
 
   /** Fugetsu's tunnel, asked on the same arrival the doors are asked on. */
@@ -576,10 +1247,24 @@
     </p>
   </header>
 
-  <div class="grid gap-4 lg:grid-cols-[1fr_320px]">
+  <!-- Full screen is this grid over everything else, not the canvas alone:
+       everything in the column has to come with the ship, or it would be a walk
+       with no way to change deck, aim a technique or read the plan. -->
+  <div
+    class="grid {immersive
+      ? // Over the archive's own sticky header (80) and under its Nen dock
+        // (100), which is the one thing that has to stay reachable above the
+        // walk: full screen must not be where the aura cannot be picked up.
+        `fixed inset-0 z-[90] h-[100dvh] w-screen overflow-hidden bg-[#050505] ${
+          panelOpen ? 'grid-cols-[1fr_min(22rem,50vw)]' : 'grid-cols-1'
+        }`
+      : 'gap-4 lg:grid-cols-[1fr_320px]'}"
+  >
     <!-- The walk -->
     <section
-      class="relative min-h-[420px] overflow-hidden rounded-lg border border-[#333] lg:h-[70vh]"
+      class="relative overflow-hidden {immersive
+        ? 'h-full min-h-0'
+        : 'min-h-[420px] rounded-lg border border-[#333] lg:h-[70vh]'}"
     >
       <TourScene
         {ship}
@@ -587,6 +1272,7 @@
         bind:currentSpace
         bind:availableLink
         bind:jumpTo
+        bind:jumpAt
         bind:engaged
         bind:touch
         bind:position
@@ -594,18 +1280,33 @@
         bind:aimedAt
         bind:aimedSolidAt
         {world}
+        {flash}
         auraColour={technique?.color ?? null}
         aiming={Boolean(technique)}
+        {selfCastable}
         {reveal}
         onCast={castOn}
         onArrive={arrived}
         onWorm={crossWorm}
+        onFish={fishEat}
+        onOwl={owlFlight}
+        onOwlSecond={owlSecond}
+        onScout={scoutFlight}
+        onPolarity={polarityWalk}
+        {hands}
+        {tunes}
+        {twoHanded}
+        swings={technique?.kind === 'stitch'}
         {touchUseLabel}
         touchLabels={{ move: $t.tour.touch.move, cast: $t.tour.touch.cast }}
         soundLabels={{ silence: $t.tour.sound.silence, restore: $t.tour.sound.restore }}
         loadingLabel={$t.tour.loading}
         unsupportedLabel={$t.tour.unsupported}
       />
+
+      {#if isAutopilot}
+        <div class="pointer-events-auto absolute inset-0 z-50 bg-black"></div>
+      {/if}
 
       <!-- Reticle. It takes the technique's colour while one is up, because it
            has stopped being a crosshair and become where the aura goes. -->
@@ -729,8 +1430,50 @@
       {/if}
     </section>
 
+    <!-- The way back into the panel, once it is folded. Halfway down the right
+         edge because the walk has already spoken for the corners: the eye's feed
+         is inset top right, the read-outs run along the bottom. -->
+    {#if immersive && !panelOpen}
+      <button
+        type="button"
+        onclick={() => (panelOpen = true)}
+        aria-expanded="false"
+        class="absolute right-0 top-1/2 z-30 -translate-y-1/2 rounded-l border border-r-0 border-[#333] bg-[#050505]/90 px-2 py-3 text-xs text-[#FFFFF0]/70 transition-colors hover:border-[#FFD700]/50 hover:text-[#FFFFF0]"
+      >
+        {$t.tour.fullscreen.showPanel}
+      </button>
+    {/if}
+
     <!-- Deck selector, plan and index -->
-    <aside class="flex flex-col gap-4">
+    <aside
+      class="flex flex-col gap-4 {immersive
+        ? `min-h-0 overflow-y-auto border-l border-[#333] p-3 ${panelOpen ? '' : 'hidden'}`
+        : ''}"
+    >
+      <!-- Full screen has two buttons of its own, and they ride at the head of
+           the panel rather than over the walk, where the feed and the read-outs
+           already are. Sticky, because a way out that scrolls off is not one. -->
+      {#if immersive}
+        <div class="sticky top-0 z-10 -m-3 mb-0 flex gap-1.5 bg-[#050505] p-3">
+          <button
+            type="button"
+            onclick={() => (panelOpen = false)}
+            aria-expanded="true"
+            class="rounded border border-[#333] px-2.5 py-1 text-xs text-[#FFFFF0]/70 transition-colors hover:border-[#FFD700]/50 hover:text-[#FFFFF0]"
+          >
+            {$t.tour.fullscreen.hidePanel}
+          </button>
+          <button
+            type="button"
+            onclick={toggleFullscreen}
+            class="rounded border border-[#FFD700]/50 px-2.5 py-1 text-xs text-[#FFD700] transition-colors hover:bg-[#FFD700]/10"
+          >
+            {$t.tour.fullscreen.exit}
+            <kbd class="ml-1 text-[10px] text-[#FFD700]/70">V</kbd>
+          </button>
+        </div>
+      {/if}
+
       <nav aria-label={$t.tour.decks}>
         <p class="mb-2 text-[10px] uppercase tracking-widest text-[#FFD700]/70">{$t.tour.decks}</p>
         <div class="flex flex-wrap gap-1.5">
@@ -792,6 +1535,17 @@
         </button>
         <button
           type="button"
+          onclick={toggleFullscreen}
+          aria-pressed={immersive}
+          class="rounded border px-2.5 py-1 text-xs transition-colors {immersive
+            ? 'border-[#FFD700] bg-[#FFD700]/15 text-[#FFD700]'
+            : 'border-[#333] text-[#FFFFF0]/70 hover:border-[#FFD700]/50 hover:text-[#FFFFF0]'}"
+        >
+          {immersive ? $t.tour.fullscreen.exit : $t.tour.fullscreen.enter}
+          <kbd class="ml-1 text-[10px] text-[#FFD700]/70">V</kbd>
+        </button>
+        <button
+          type="button"
           onclick={copyViewpoint}
           class="rounded border px-2.5 py-1 text-xs transition-colors {copied === 'done'
             ? 'border-[#FFD700] text-[#FFD700]'
@@ -819,7 +1573,12 @@
           {nameOf}
           {sourceOf}
           onRelease={release}
+          onCycleDouble={cycleDouble}
+          onCycleOwl={cycleOwl}
+          onCycleEye={cycleEye}
           onCastPage={castPage}
+          onCastHand={castHand}
+          onTurnTheBook={turnTheRibbon}
         />
       {/if}
 
@@ -963,9 +1722,21 @@
           <dd>{$t.tour.controls.findKeys}</dd>
           <dt class="text-[#FFFFF0]">{$t.tour.controls.reveal}</dt>
           <dd>{$t.tour.controls.revealKeys}</dd>
+          <dt class="text-[#FFFFF0]">{$t.tour.controls.fullscreen}</dt>
+          <dd>{$t.tour.controls.fullscreenKeys}</dd>
           {#if technique}
             <dt class="text-[#FFFFF0]">{$t.tour.controls.nen}</dt>
             <dd>{$t.tour.controls.nenKeys}</dd>
+          {/if}
+          {#if hands}
+            <dt class="text-[#FFFFF0]">{$t.tour.controls.nenSecond}</dt>
+            <dd>{$t.tour.controls.nenSecondKeys(hands.second)}</dd>
+          {:else if twoHanded}
+            <dt class="text-[#FFFFF0]">{$t.tour.controls.nenMoon}</dt>
+            <dd>{$t.tour.controls.nenMoonKeys}</dd>
+          {:else if selfCastable}
+            <dt class="text-[#FFFFF0]">{$t.tour.controls.nenSelf}</dt>
+            <dd>{$t.tour.controls.nenSelfKeys}</dd>
           {/if}
           {#if touch}
             <dt class="text-[#FFFFF0]">{$t.tour.controls.touch}</dt>
@@ -1253,3 +2024,31 @@
     else goToSpace(space)
   }}
 />
+
+<style>
+  /* What full screen takes away, and what it keeps. The header and the footer
+     belong to the archive rather than to the ship, and the walk is the whole
+     screen or it is not full screen. The Nen dock is left standing: it is the
+     one control the walk cannot supply for itself, since the aura is picked up
+     outside the route. */
+  :global(html.tour-immersive .app-header),
+  :global(html.tour-immersive .app-footer) {
+    display: none;
+  }
+
+  /* And the route's entry animation stands down with them — not for the motion,
+     which is over in half a second, but because it is filled `both` and leaves a
+     `transform` on the shell for good. A transformed ancestor is the containing
+     block for everything fixed inside it, so `inset: 0` would measure the route
+     rather than the screen: the walk would start under the header and run off
+     the bottom of the window, taking the read-outs with it. `animation: none`
+     is what lifts it — a plain `transform: none` loses to a running fill. */
+  :global(html.tour-immersive .route-shell) {
+    animation: none;
+  }
+
+  /* Nothing scrolls behind the walk. */
+  :global(html.tour-immersive body) {
+    overflow: hidden;
+  }
+</style>

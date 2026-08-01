@@ -91,8 +91,16 @@ export const fr: Messages = {
       findKeys: '⌘K, ou Ctrl K',
       reveal: 'Montrer les preuves',
       revealKeys: 'G',
+      fullscreen: 'Plein écran, panneau compris',
+      fullscreenKeys: 'V',
       nen: 'Lancer le Hatsu actif',
       nenKeys: 'F, ou un clic, sur la pièce ou le volume que vous regardez',
+      nenSelf: 'Retourner le Hatsu actif sur soi',
+      nenSelfKeys: 'R, où que porte le regard',
+      nenSecond: 'Lancer la seconde page',
+      nenSecondKeys: (name) => `R lance ${name}, celle que tient le marque-page`,
+      nenMoon: 'Poser la lune plutôt que le soleil',
+      nenMoonKeys: 'R marque de la lune, F du soleil',
       touch: 'Sur écran tactile',
       touchKeys:
         'Le manche en bas à gauche fait marcher, poussé à fond il fait courir ; glissez sur la vue pour regarder ; les boutons franchissent une porte et lancent',
@@ -177,6 +185,13 @@ export const fr: Messages = {
       failed: "Impossible d'accéder au presse-papiers",
     },
 
+    fullscreen: {
+      enter: 'Plein écran',
+      exit: 'Quitter le plein écran',
+      hidePanel: 'Replier le panneau',
+      showPanel: 'Rouvrir le panneau',
+    },
+
     comfort: {
       title: 'Confort',
       fov: 'Champ de vision',
@@ -237,6 +252,32 @@ export const fr: Messages = {
       nothingHeld: 'Rien pour l’instant',
       copy: 'Copie vide',
       copySource: "Un double vide de la pièce. Rien de ce qu'il contient n'est le vaisseau.",
+      double: {
+        watch: 'La garde du double',
+        follow: 'À votre épaule',
+        wander: 'Libre dans la pièce',
+        scout: 'En éclaireur',
+      },
+      owl: {
+        watch: 'Le vol du hibou',
+        wander: 'Il parcourt le vaisseau',
+        shoulder: 'Sur votre épaule',
+        random: 'Lâché sans visée',
+        left: (seconds) => `${seconds} s restantes`,
+      },
+      insect: {
+        orders: 'L’insecte est',
+        pilot: 'Piloté à la main',
+        scout: 'En reconnaissance',
+        film: 'En train de filmer',
+      },
+      tunes: {
+        title: 'La flûte joue',
+        hint: 'F, R et C · chaque air n’est entendu que par la pièce où vous êtes',
+        dance: 'L’air vif',
+        bloom: 'L’air doux',
+        scatter: 'L’air aigu',
+      },
       reports: {
         noTarget: 'Rien à portée sur quoi lancer',
         teleported: (room) => `Envoyé dans ${room} — vous n'avez pas choisi où vous tombiez`,
@@ -247,8 +288,15 @@ export const fr: Messages = {
         doorsRearmed: (room) => `L'ancienne paire est tombée · premier cadre installé dans ${room}`,
         phasingOn: 'Les murs ont cessé d’être des murs · traversez le vaisseau',
         phasingOff: 'De retour dans la géométrie · les murs tiennent à nouveau',
-        eyeSent: (room) => `L'œil est posé dans ${room} · son flux est dans le coin`,
-        eyeRecalled: "L'œil est revenu près de vous",
+        eyeSent: (room) =>
+          `La sphère est posée sur un hôte dans ${room} · son flux est dans le coin`,
+        eyeRecalled: (rooms) =>
+          `L'insecte est revenu près de vous · ${rooms} pièce${rooms === 1 ? '' : 's'} filmée${rooms === 1 ? '' : 's'}`,
+        eyeModeChanged: (order) => `L'insecte a de nouveaux ordres · ${order}`,
+        eyePiloted: (room) => `Piloté jusqu'à ${room} · le flux le suit`,
+        eyeFlown: (room) => `L'insecte a pris une porte · il est dans ${room} maintenant`,
+        eyeFilmed: (room, seen) =>
+          `${room} enregistrée · ${seen} chose${seen === 1 ? '' : 's'} s'y tient${seen === 1 ? '' : 'nent'}`,
         sealedSight: 'Vue scellée · les ponts sont toujours là et vous ne les voyez plus',
         sealedHearing: "Ouïe scellée à son tour · le vaisseau s'est tu",
         sealedSpeech: 'Parole scellée aussi · la visite ne dira plus dans quelle pièce vous êtes',
@@ -271,6 +319,11 @@ export const fr: Messages = {
           structures
             ? `${structures} volume${structures > 1 ? 's' : ''} aspiré${structures > 1 ? 's' : ''} hors de ${room}`
             : `${room} était déjà nue`,
+        swallowed: (solid, held) =>
+          `${solid} passe dans le sac · ${held} gardé${held === 1 ? '' : 's'}`,
+        coughedUp: (solid, room, held) =>
+          `${solid} ressort dans ${room} · ${held} restant${held === 1 ? '' : 's'} dans le sac`,
+        bagEmpty: 'Le sac est vide · visez quelque chose pour l’aspirer',
         refused: (room) =>
           `Blinky refuse ${room} · du Nen la retient, et c'est ainsi que le piège se voit`,
         dispatched: (room) => `Un oiseau revient de ${room} avec ce sur quoi la pièce repose`,
@@ -349,6 +402,12 @@ export const fr: Messages = {
         unmimicked: 'Votre propre forme à nouveau',
         soothed: (opened) =>
           opened ? 'Les trois se rouvrent, et la musique les tient ouverts' : 'La musique continue',
+        tunePlayed: (air, room, on, solids) => {
+          if (!on) return `${air} s'achève · ${room} redevient ce qu'elle était`
+          return solids
+            ? `${air} dans ${room} · ${solids} chose${solids === 1 ? '' : 's'} l'ont prise et se sont mises à danser`
+            : `${air} dans ${room} · la pièce l'a entendu et l'a gardé`
+        },
         deduced: (what, strength) =>
           `Condition lue — ${what} · ${strength} nommées, et plus fort à chacune`,
         nothingToDeduce: 'Plus rien à lire : chaque emprise a été nommée',
@@ -360,8 +419,6 @@ export const fr: Messages = {
             : "L'emballage ne garde encore rien · allez au-devant de ce que l'aura a dressé contre vous",
         packedAway: (room, packed) =>
           `${room} ne vous a rien fait : c'est parti dans l'emballage · ${packed} coup${packed === 1 ? '' : 's'} gardé${packed === 1 ? '' : 's'}`,
-        nothingPacked:
-          "Rien n'a été encaissé, donc rien à dépenser · le soleil se lève sur des dégâts",
         sunRisen: (metres, solids) =>
           `Le soleil s'est levé là où vous êtes · ${metres} m de rayon, et ${solids} élément${solids === 1 ? '' : 's'} carbonisé${solids === 1 ? '' : 's'} sans égard pour à qui ils étaient`,
         jailed: (room, doors) => `${room} est enchaînée · ${doors} accès, et aucun qui s'ouvre`,
@@ -391,6 +448,10 @@ export const fr: Messages = {
           `Quatre serpents, ${rooms} pièces à portée · il faut entrer dans l'une d'elles`,
         snakesFed: (room) => `La malédiction a trouvé sa victime dans ${room}`,
         snakesRebound: "Congédiée sans victime · la malédiction revient sur qui l'a posée",
+        puppeted: (solid) => `L'antenne est plantée · ${solid} est maintenant sous contrôle`,
+        puppetReleased: (solid) => `L'antenne est retirée · ${solid} n'est plus contrôlé`,
+        autopilotStarted:
+          'Pilote automatique activé · le corps avance seul pour accomplir la tâche',
         wormSet: (room) => `Une extrémité du tunnel dans ${room} · désignez l'autre`,
         wormOpen: (a, b) =>
           `${a} et ${b} font une route d'une nuit, et elle est faite pour être prise une fois`,
@@ -399,10 +460,22 @@ export const fr: Messages = {
         wormSpent: "Le tunnel s'effondre · il n'était pas fait pour être demandé trois fois",
         doublePosted: (room) => `Le double se tient dans ${room}, auprès de qui reste`,
         doubleSpent: (room) => `Le double a pris le coup à votre place, et a quitté ${room}`,
+        doubleModeChanged: (watch) => `Le double change de garde · ${watch}`,
+        owlModeChanged: (flight) => `Le hibou est lâché autrement · ${flight}`,
+        owlFlown: (room) => `Le hibou a pris une porte · il est dans ${room} désormais`,
+        owlExpired: (rooms) =>
+          `Le hibou s'est dématérialisé · ses dix dernières secondes, sur ${rooms} pièce${rooms === 1 ? '' : 's'}, passent dans le coin`,
         noSolid: 'Rien de solide dans le réticule',
         boundFast: (solid) => `${solid} est tenu ferme · seule la couture le rend`,
         gumSet: (solid) => `Gomme sur ${solid} · saisissez un second volume pour les rapprocher`,
         gumPulled: (solid, other) => `${solid} a claqué jusqu'à ${other}`,
+        gumTrapSet: (room) =>
+          `Gomme tendue en travers de ${room} · rien ne la montre hors du Gyo, et elle y reste`,
+        gumRebound: (room) =>
+          `${room} vous a renvoyé d'où vous veniez · la gomme a cédé, puis elle a repris`,
+        gumPropulsion: 'La gomme vous tire · vous parcourez le vaisseau plus vite que vos jambes',
+        gumHealed: (healed) =>
+          `La gomme referme ce qui était ouvert · ${healed} coup${healed === 1 ? '' : 's'} sorti${healed === 1 ? '' : 's'} de l'armure`,
         forged: (solid) =>
           `${solid} porte une autre surface · ce qu'il est, et ce qu'il arrête, n'ont pas changé`,
         wrapped: (solid) => `${solid} emballé, réduit · rien n'y est abîmé`,
@@ -411,6 +484,18 @@ export const fr: Messages = {
           metres
             ? `${solid} poussé de ${metres} m · c'est une chose, elle se déplace comme telle`
             : `${solid} bute contre le mur de sa pièce et n'ira pas plus loin`,
+        stamped: (solid, puppets) =>
+          `人 sur ${solid} · ${puppets}/20 pantins · reclique dessus pour le verrouiller`,
+        stampLocked: (solid, locked, locks) =>
+          locked
+            ? `${solid} verrouillé · ${locks} pantin${locks === 1 ? '' : 's'} entendra le prochain ordre`
+            : `${solid} déverrouillé · il n'entend plus rien jusqu'à ce qu'on le reverrouille`,
+        ordered: (room, puppets) =>
+          `« Allez en ${room} » · assez simple pour que les ${puppets} pantin${puppets === 1 ? '' : 's'} verrouillé${puppets === 1 ? '' : 's'} le suive${puppets === 1 ? '' : 'nt'}`,
+        noLock: (stamped) =>
+          stamped
+            ? `Aucun des ${stamped} pantins n'est verrouillé · l'ordre n'est adressé à personne`
+            : `Rien n'est marqué · l'ordre n'est adressé à personne`,
         copied: (solid) =>
           `Une copie de ${solid} se dresse à côté · elle est froide, car aucune planche ne la soutient`,
         crushed: (solid) => `${solid} est aplati sous la masse`,
@@ -421,10 +506,17 @@ export const fr: Messages = {
         launched: (solid, metres) =>
           metres ? `${solid} projeté à ${metres} m` : `${solid} n'avait nulle part où aller`,
         struck: (solid) => `Le bâton s'abat sur ${solid} et le fait pivoter`,
+        lashed: (solid, hits) =>
+          hits > 1
+            ? `La chaîne claque sur ${solid} · ${hits} fois maintenant`
+            : `La chaîne claque sur ${solid} et revient`,
         bound: (solid) => `Le serpent tient ${solid} · plus rien d'autre ne le bouge`,
         released: (solid) => `${solid} est relâché`,
+        armsFull: (solids) =>
+          `Les deux serpents sont sortis · ils tiennent ${solids}, et vous n'avez que deux bras`,
         cameUpUnder: (solid, other) =>
           `L'aura a couru depuis ${solid} le long du sol et a resurgi sous ${other}`,
+        cameUpEmpty: (room) => `L'aura a couru le long du sol et a jailli du pont dans ${room}`,
         stitched: (solid) => `${solid} est revenu tel que le plan le donne`,
         nothingToStitch: (solid) => `Rien n'avait été fait à ${solid}`,
         animated: (solid) => `${solid} s'est éveillé, et n'en est pas moins solide`,
@@ -450,6 +542,9 @@ export const fr: Messages = {
         reach: "N'importe quel volume du vaisseau, depuis n'importe où dans le vaisseau",
         castHint:
           'F, ou un clic, pour lancer dessus — ou choisissez ci-dessous un volume du vaisseau',
+        markHint: 'F pose le soleil, R la lune · ce qui est marqué part chercher son contraire',
+        markPageHint:
+          'La page n’a qu’une touche, alors elle alterne : une pression le soleil, la suivante la lune',
         aiming: (solid) => `Face à ${solid}`,
         aimingNothing: 'Rien de solide devant vous',
         targets: 'Lancer sur un volume',
@@ -490,6 +585,9 @@ export const fr: Messages = {
         hint: 'Une page se lance là où vous visez, comme le reste',
         card: 'carte',
         loan: 'prêt',
+        bothLive: 'Le livre est ouvert sur deux',
+        bothHint: 'F lance la page ouverte · R celle que tient le marque-page',
+        turn: 'Déplacer le marque-page',
       },
       holds: {
         book: 'Dans le livre',
@@ -500,6 +598,7 @@ export const fr: Messages = {
         loan: 'Prêtée',
         trail: 'Le fil',
         owl: 'Le hibou garde',
+        film: 'Le film rapporté',
         foreseen: 'Dix secondes plus tard',
         verses: 'Écrites',
         poem: 'Le poème',
@@ -515,6 +614,10 @@ export const fr: Messages = {
         dance: 'Le prologue',
         mimic: 'Sous la forme de',
         soothed: 'La musique tient',
+        playing: 'La flûte joue',
+        flowered: 'En fleurs',
+        scattered: 'Notes en suspens dans',
+        dancing: 'Dansent',
         deduced: 'Conditions lues',
         packed: "L'emballage garde",
         packedHits: (packed) => `${packed} coup${packed === 1 ? '' : 's'}`,
@@ -529,6 +632,7 @@ export const fr: Messages = {
         worm: 'Le tunnel',
         snakes: 'Serpents lâchés dans',
         trap: "L'appât est dans",
+        gumTrap: 'Gomme tendue en travers de',
         crossings: (n) => `${n} passages sur 3`,
         solid: 'Volumes retenus',
         wound: 'Le confetti est dans',
@@ -538,6 +642,7 @@ export const fr: Messages = {
         isolated: 'Pièce isolée',
         doors: 'Portes de la planque',
         eye: 'Œil déporté',
+        eyeFilm: "Ce que l'insecte a filmé",
         watched: 'Poupées de papier',
         emptied: 'Aspiré',
         dowsing: 'Le pendule désigne',

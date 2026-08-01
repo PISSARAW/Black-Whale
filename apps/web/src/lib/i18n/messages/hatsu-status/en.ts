@@ -15,8 +15,8 @@ export const hatsuStatusEn = {
   scarlet: {
     swept: (a0: string, a1: number, a2: number) =>
       a1
-        ? `${a0} at 100% in every category · ${a1} sealed element${a1 > 1 ? 's' : ''} answered · ${a2} hours of a2 spent`
-        : `${a0} was already running at full efficiency · ${a2} hours of a2 spent for nothing`,
+        ? `${a0} at 100% in every category · ${a1} sealed element${a1 > 1 ? 's' : ''} answered · ${a2} hours of life spent`
+        : `${a0} was already running at full efficiency · ${a2} hours of life spent for nothing`,
   },
 
   'chain-rule': {
@@ -33,7 +33,9 @@ export const hatsuStatusEn = {
 
   dowsing: {
     probed: (a0: boolean, a1: string, a2: number) =>
-      a0 ? `${a1} · pendulum detects a0 or deception (${a2}%)` : `${a1} located · signal ${a2}%`,
+      a0
+        ? `${a1} · pendulum detects uncertainty or deception (${a2}%)`
+        : `${a1} located · signal ${a2}%`,
   },
 
   enhance: {
@@ -91,10 +93,12 @@ export const hatsuStatusEn = {
   curse: {
     victim: (a0: string) =>
       `${a0} was named the victim · a sacrifice among its own was chosen at the same moment and marked where nothing shows`,
+    noKin: (a0: string) =>
+      `${a0} has nobody of its own aboard · there is no one for the mark to have been put on`,
     searched: (a0: boolean, a1: string) =>
       a0
-        ? `Gyo a0 the birthmark somewhere inside ${a1} · touch the sacrifice itself to spend it`
-        : `Gyo a0 nothing on ${a1} · whoever cast this masked their own aura in it`,
+        ? `Gyo catches the birthmark burning close to ${a1} · the carrier is one of the passengers around it`
+        : `Gyo finds nothing on ${a1} · whoever cast this masked their own aura in it`,
     spent: (a0: string) =>
       `The sacrifice died · the curse crossed the whole page and took ${a0}, and nothing on it says who cast it`,
   },
@@ -138,8 +142,10 @@ export const hatsuStatusEn = {
   },
 
   restoration: {
-    restored: (a0: string) =>
-      `${a0} restored · chapter filters, map depth and event position returned to their rested baseline`,
+    restored: (a0: number, a1: string) =>
+      a0
+        ? `${a1} rested · ${a0} thing${a0 > 1 ? 's it' : ' it'} could no longer do ${a0 > 1 ? 'are' : 'is'} back, and the map is at its baseline`
+        : `${a1} was not tired · the treatment still returned the map to its baseline`,
   },
 
   transformation: {
@@ -157,7 +163,7 @@ export const hatsuStatusEn = {
   impact: {
     escaped: (a0: string) => `${a0} got out of earshot before the sphere closed on it`,
     caught: (a0: string) => `Jupiter caught ${a0} and closed`,
-    chasing: (a0: string, a1: number) => `Jupiter is still chasing ${a0} · a1 ${a1}/4`,
+    chasing: (a0: string, a1: number) => `Jupiter is still chasing ${a0} · pass ${a1}/4`,
     conjured: (a0: string) =>
       `Jupiter conjured over ${a0} · the dance is done, so it will not stop now`,
   },
@@ -197,7 +203,7 @@ export const hatsuStatusEn = {
   pocket: {
     wrapped: (a0: boolean, a1: string) =>
       a0
-        ? `${a1} a0 up · it fits in a palm now, and nothing about it is damaged`
+        ? `${a1} wrapped up · it fits in a palm now, and nothing about it is damaged`
         : `${a1} let back out of the cloth at its original size`,
   },
 
@@ -214,23 +220,33 @@ export const hatsuStatusEn = {
         ? `Sun and plus pressed onto ${a1} · touch it again to hold the contact, or place the Moon`
         : `Moon and minus pressed onto ${a1} · the pair is placed but nothing has touched yet`,
     charging: (a0: number, a1: string) =>
-      `Contact held on ${a1} for ${a0} second${a0 > 1 ? 's' : ''} · ${a0 >= 4 ? 'fully a0d' : 'three to five is full power'}`,
+      `Contact held on ${a1} for ${a0} second${a0 > 1 ? 's' : ''} · ${a0 >= 4 ? 'fully charged' : 'three to five is full power'}`,
     closing: (a0: number) =>
       `${a0}px between the two marks · they were carried together and have still not met`,
     detonated: (a0: boolean, a1: number, a2: number) =>
       a0
-        ? `Fully a2d marks met · ${a1} bodies went up, not just the two bearing them`
-        : `The marks touched at a2 ${a2} · only the two bearers went up`,
+        ? `Fully charged marks met · ${a1} bodies went up, not just the two bearing them`
+        : `The marks touched at charge ${a2} · only the two bearers went up`,
   },
 
   command: {
     noHead: (a0: string) => `${a0} has no head · there is nothing on it to stamp`,
     alive: (a0: string) =>
       `${a0} is not an object · the stamp refuses it, though a Nen copy of it would do`,
-    stamped: (a0: number, a1: number, a2: string) =>
-      `人 on ${a2}'s head · ${a0} puppet${a1 ? 's' : ''} · take a head off and that one stops`,
+    stamped: (a0: number, a1: string) =>
+      `人 on ${a1}'s head · ${a0}/20 puppets · click a stamped one again to lock it`,
+    lockedToggle: (a0: string, a1: boolean, a2: number) =>
+      a1
+        ? `${a0} locked · ${a2} puppet${a2 === 1 ? '' : 's'} listening · click anywhere else to order them`
+        : a2
+          ? `${a0} unlocked · ${a2} puppet${a2 === 1 ? '' : 's'} still listening`
+          : `${a0} unlocked · nothing is listening, so clicks stamp heads again`,
+    noPuppetsLocked: (a0: number) =>
+      a0
+        ? `None of the ${a0} puppets is locked · the order is spoken to nobody`
+        : `Nothing is stamped · the order is spoken to nobody`,
     order: (a0: string, a1: number) =>
-      `“Go to ${a0}” · simple enough for all ${a1} of them to follow it`,
+      `“Go to ${a0}” · simple enough for all ${a1} locked puppet${a1 === 1 ? '' : 's'} to follow it`,
   },
 
   'identity-swap': {
@@ -254,6 +270,8 @@ export const hatsuStatusEn = {
     ownFuture: () => 'Lovely Ghostwriter cannot write the fortune of whoever is holding the pen',
     incomplete: (a0: string, a1: string) =>
       `${a0} did not write down ${a1} · the quill will not move on an incomplete slip`,
+    consulting: (a0: string) =>
+      `The quill is still moving over ${a0}'s slip · the trance has not broken yet`,
     guideTitle: () => 'Lovely Ghostwriter · foretold paths',
     written: (a0: string, a1: number) =>
       `Four quatrains written for ${a0} in a trance · the first one is the past, the ${a1} routes after it are not`,
@@ -294,10 +312,10 @@ export const hatsuStatusEn = {
 
   animate: {
     noAura: (a0: string, a1: boolean) =>
-      `${a0} refused · there is no aura left today for ${a1 ? 'a third a1 body' : 'an eleventh small one'}`,
+      `${a0} refused · there is no aura left today for ${a1 ? 'a third large body' : 'an eleventh small one'}`,
     touched: (a0: string) => `${a0} touched · the change takes a few seconds to come through`,
     alive: (a0: string, a1: boolean) =>
-      `${a0} is alive and still doing its job · ${a1 ? 'a a1 body, so' : 'small, so'} its aura will not last long`,
+      `${a0} is alive and still doing its job · ${a1 ? 'a large body, so' : 'small, so'} its aura will not last long`,
     spent: (a0: string) => `${a0} used up its aura and is an object again`,
   },
 
@@ -348,7 +366,7 @@ export const hatsuStatusEn = {
     strong: (a0: string, a1: number, a2: string) =>
       `${a1}px of thread · short enough to hold ${a0} and ${a2} together as one body`,
     slack: (a0: number) =>
-      `${a0}px of thread · at that a0 it is cotton, and the seam does not hold`,
+      `${a0}px of thread · at that length it is cotton, and the seam does not hold`,
   },
 
   melody: {
@@ -365,7 +383,7 @@ export const hatsuStatusEn = {
     kissed: (a0: string) =>
       `${a0} kissed into the group · level 0, and it stays there until it kills something`,
     killed: (a0: string, a1: string, a2: number, a3: number, a4: string) =>
-      `${a0} killed ${a1} for ${a2} · a3 ${a3}${a4}`,
+      `${a0} killed ${a1} for ${a2} · level ${a3}${a4}`,
   },
 
   windup: {
@@ -439,7 +457,7 @@ export const hatsuStatusEn = {
     released: (a0: string) => `${a0} released · the arm uncoils all at once`,
     coiling: (a0: boolean, a1: boolean, a2: number, a3: string) =>
       a0
-        ? `${a3} fully constricted · nothing gets through the a2 now`
+        ? `${a3} fully constricted · nothing gets through the coils now`
         : `Coil ${a2}/3 around ${a3} · ${a1 ? 'its controls are pinned' : 'it can still move'}`,
   },
 
@@ -449,7 +467,7 @@ export const hatsuStatusEn = {
 
   relay: {
     staged: (a0: string, a1: boolean, a2: number) =>
-      `Cargo ${a0} · relay a2 ${a2}/3${a1 ? ' · delivered into relay storage without teleportation' : ''}`,
+      `Cargo ${a0} · relay leg ${a2}/3${a1 ? ' · delivered into relay storage without teleportation' : ''}`,
   },
 
   healing: {
@@ -512,7 +530,7 @@ export const hatsuStatusEn = {
     outside: (a0: string) =>
       `${a0} is outside the hideout · Yokotani has no standing there and nothing happens`,
     guarded: (a0: number, a1: string) =>
-      `A a0 ${a0} guard is standing on ${a1} · it cannot act, and nothing can reach it either`,
+      `A level ${a0} guard is standing on ${a1} · it cannot act, and nothing can reach it either`,
   },
 
   'damage-transfer': {
@@ -540,8 +558,8 @@ export const hatsuStatusEn = {
     hammer: (a0: string) => `Hammer · ${a0} flattened where it stood`,
     drill: (a0: unknown, a1: string) =>
       a0
-        ? `Drill · ${a1} bored through, and what it was keeping a0 is open`
-        : `Drill · there was nothing a0 inside ${a1} to get at`,
+        ? `Drill · ${a1} bored through, and what it was keeping shut is open`
+        : `Drill · there was nothing shut inside ${a1} to get at`,
     axe: (a0: boolean, a1: string, a2: string) =>
       a0 ? `Axe · ${a1} taken off ${a2}` : `Axe · ${a2} has nothing left on it to cut off`,
   },
@@ -560,7 +578,7 @@ export const hatsuStatusEn = {
     awakened: (a0: string) =>
       `${a0} has held the same coin long enough to be awakened by it · what was dormant in it is open`,
     kept: (a0: string, a1: number) =>
-      `${a0} kept the coin another ten days · a1 ${a1}, and it keeps climbing while nobody moves it`,
+      `${a0} kept the coin another ten days · value ${a1}, and it keeps climbing while nobody moves it`,
     transferred: (a0: unknown, a1: string, a2: string) =>
       a0
         ? `The coin was given to ${a2} · its back changed, its value fell to 1, and ${a1} kept none of it`
@@ -596,7 +614,7 @@ export const hatsuStatusEn = {
       `${a0} came back for a second helping · that is the doctrine's one taboo, and the punishment for it is not gentle`,
     guideTitle: () => 'Tyson · happiness in return',
     read: (a0: string, a1: number, a2: number) =>
-      `${a0} a1 ${a1} characters of the Book · ${a2}% a2 back, and one control taken as the levy`,
+      `${a0} read ${a1} characters of the Book · ${a2}% happiness back, and one control taken as the levy`,
   },
 
   'desire-trap': {
@@ -682,6 +700,7 @@ export const hatsuStatusEn = {
     tooBig: 'TOO BIG',
     markFound: 'MARK FOUND',
     noTrace: 'NO TRACE',
+    rested: (a0: number) => `RESTED ×${a0}`,
     guardsBroken: (a0: number) => `GUARD ×${a0}`,
     noGuard: 'NO GUARD',
     light: 'LIGHT',
@@ -694,6 +713,9 @@ export const hatsuStatusEn = {
     closing: 'CLOSING',
     detonation: 'DETONATION',
     noHead: 'NO HEAD',
+    locked: 'LOCKED',
+    unlocked: 'UNLOCKED',
+    noLock: 'NO LOCK',
     alive: 'ALIVE',
     refused: 'REFUSED',
     noCalls: 'NO CALLS',

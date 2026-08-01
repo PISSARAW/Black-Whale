@@ -20,6 +20,7 @@ import {
   surface,
   attach,
   wheelEntry,
+  bodyState,
 } from '@black-whale/ability-sdk'
 
 /**
@@ -108,6 +109,28 @@ export const bungeeGum = defineAbility({
       hint: 'Cœur, poumons, prothèses — actif après la mort de Hisoka (ch. 357)',
     },
 
+    rebound: {
+      label: 'Renvoi',
+      conditions: [requiresTarget('Un projectile ou attaque physique est visé')],
+      effects: [elasticConnection()],
+      hint: "Utilise l'élasticité pour renvoyer une attaque",
+    },
+
+    propulsion: {
+      label: 'Propulsion',
+      conditions: [requiresTarget('Un point d’ancrage solide')],
+      effects: [elasticConnection()],
+      hint: 'Se propulser à grande vitesse',
+    },
+
+    'false-tissue': {
+      label: 'Faux tissu',
+      // Worked on himself, so there is nothing to require of a target: `self()`
+      // is one of the ability's targets, not a condition on this mode.
+      effects: [bodyState({ state: 'STABILIZED' })],
+      hint: "Stoppe l'hémorragie et referme les blessures",
+    },
+
     release: {
       label: 'Relâcher',
       effects: [setEffectState({ state: 'ENDED' })],
@@ -171,6 +194,27 @@ export const bungeeGum = defineAbility({
       abilityId: 'bungee-gum',
       visibility: 'warning',
       hint: 'Survit à la mort de Hisoka',
+    }),
+    wheelEntry({
+      id: 'rebound',
+      label: 'Renvoi',
+      abilityId: 'bungee-gum',
+      visibility: 'available',
+      hint: "Renvoie projectiles ou attaques",
+    }),
+    wheelEntry({
+      id: 'propulsion',
+      label: 'Propulsion',
+      abilityId: 'bungee-gum',
+      visibility: 'available',
+      hint: 'Déplacement à grande vitesse',
+    }),
+    wheelEntry({
+      id: 'false-tissue',
+      label: 'Faux tissu',
+      abilityId: 'bungee-gum',
+      visibility: 'available',
+      hint: 'Stoppe les saignements',
     }),
     wheelEntry({
       id: 'release',

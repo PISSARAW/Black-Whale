@@ -12,9 +12,11 @@
     TOUR_HATSU_KINDS,
     aimsAtSolids,
     castablePages,
+    dancingSolidIds,
     dialReading,
     identityOf,
     solidById,
+    twoPages,
     worksOnTheBody,
     type TourReport,
     type TourWorld,
@@ -50,11 +52,26 @@
     /** What a room rests on, in the visitor's language: the flock brings it back. */
     sourceOf: (entity: { source: string; sourceFr: string }) => string
     onRelease: () => void
+    /** Walks the double on to her next watch — the same thing R does. */
+    onCycleDouble: () => void
+    /** Walks Secret Window on to its next bird — R again, under that aura. */
+    onCycleOwl: () => void
+    /** Walks Little Eye's insect on to its next order — R, under that aura. */
+    onCycleEye: () => void
     /** Casts a page of the book at whatever the visitor is aiming at. */
     onCastPage: (kind: HatsuInteractionKind) => void
+    /**
+     * The cast the keys make, for a visitor working the panel instead.
+     *
+     * Two of them under Double Face, and three under the flute — where the
+     * third is C, and the hand is which air is played rather than which page.
+     */
+    onCastHand: (hand: 'first' | 'second' | 'third') => void
+    /** Moves Double Face's ribbon to the other page, which swaps the two keys. */
+    onTurnTheBook: () => void
   }
 
-  const {
+  let {
     ship,
     profile,
     castable,
@@ -67,7 +84,12 @@
     nameOf,
     sourceOf,
     onRelease,
+    onCycleDouble,
+    onCycleOwl,
+    onCycleEye,
     onCastPage,
+    onCastHand,
+    onTurnTheBook,
   }: Props = $props()
 
   // The technique under the visitor's own name for it, as the dock names it.
@@ -78,6 +100,25 @@
   const onBody = $derived(worksOnTheBody(profile) && !onSolids)
   /** The pages of the book the visitor can actually play right now. */
   const pages = $derived(castablePages(world.book))
+
+  /**
+   * Double Face's two live pages, under the keys that play them.
+   *
+   * The bookmark is not cast at anything itself — it is what keeps a second
+   * page alive beside the open one — so the panel does not offer one thing to
+   * cast, it offers two, and says which key each is under. `null` under
+   * everything else, and under a book that has not been dealt yet.
+   */
+  const bothPages = $derived(profile.kind === 'bookmark' ? twoPages(world.book) : null)
+  /**
+   * The two-handed technique in reach of a key, and which hint it needs.
+   *
+   * In hand it has both keys — F puts the sun on, R the moon. Held on a page of
+   * the book it has only its own, because R is how the other page is cast, so
+   * that one key alternates instead. Two different things to tell the visitor.
+   */
+  const marksBothHands = $derived(!bothPages && profile.kind === 'polarity')
+  const marksOnOneKey = $derived(Boolean(bothPages?.includes('polarity')))
 
   const roomName = (id: string) => {
     const space = ship.spaces.get(id)
@@ -144,7 +185,15 @@
       case 'eye-sent':
         return say.eyeSent(roomName(report.spaceId))
       case 'eye-recalled':
-        return say.eyeRecalled
+        return say.eyeRecalled(report.rooms)
+      case 'eye-mode-changed':
+        return say.eyeModeChanged($t.tour.hatsu.insect[report.mode])
+      case 'eye-piloted':
+        return say.eyePiloted(roomName(report.spaceId))
+      case 'eye-flown':
+        return say.eyeFlown(roomName(report.spaceId))
+      case 'eye-filmed':
+        return say.eyeFilmed(roomName(report.spaceId), report.seen)
       case 'sealed':
         return [say.sealedReleased, say.sealedSight, say.sealedHearing, say.sealedSpeech][
           report.stage
@@ -161,6 +210,12 @@
         return say.stripped(roomName(report.spaceId), report.count)
       case 'laid-open':
         return say.laidOpen(report.spaces, report.decks)
+      case 'swallowed':
+        return say.swallowed(solidName(report.solidId), report.held)
+      case 'coughed-up':
+        return say.coughedUp(solidName(report.solidId), roomName(report.spaceId), report.held)
+      case 'bag-empty':
+        return say.bagEmpty
       case 'emptied':
         return say.emptied(roomName(report.spaceId), report.structures)
       case 'refused':
@@ -176,6 +231,14 @@
         return say.gumSet(solidName(report.solidId))
       case 'gum-pulled':
         return say.gumPulled(solidName(report.solidId), solidName(report.otherId))
+      case 'gum-trap-set':
+        return say.gumTrapSet(roomName(report.spaceId))
+      case 'gum-rebound':
+        return say.gumRebound(roomName(report.spaceId))
+      case 'gum-propulsion':
+        return say.gumPropulsion
+      case 'gum-healed':
+        return say.gumHealed(report.healed)
       case 'forged':
         return say.forged(solidName(report.solidId))
       case 'wrapped':
@@ -184,6 +247,14 @@
         return say.unwrapped(solidName(report.solidId))
       case 'pushed':
         return say.pushed(solidName(report.solidId), report.metres)
+      case 'stamped':
+        return say.stamped(solidName(report.solidId), report.puppets)
+      case 'stamp-locked':
+        return say.stampLocked(solidName(report.solidId), report.locked, report.locks)
+      case 'ordered':
+        return say.ordered(roomName(report.spaceId), report.puppets)
+      case 'no-lock':
+        return say.noLock(report.stamped)
       case 'copied':
         return say.copied(solidName(report.solidId))
       case 'crushed':
@@ -198,12 +269,18 @@
         return say.launched(solidName(report.solidId), report.metres)
       case 'struck':
         return say.struck(solidName(report.solidId))
+      case 'lashed':
+        return say.lashed(solidName(report.solidId), report.hits)
       case 'bound':
         return say.bound(solidName(report.solidId))
       case 'released':
         return say.released(solidName(report.solidId))
+      case 'arms-full':
+        return say.armsFull(report.solidIds.map(solidName).join(', '))
       case 'came-up-under':
         return say.cameUpUnder(solidName(report.solidId), solidName(report.otherId))
+      case 'came-up-empty':
+        return say.cameUpEmpty(roomName(report.spaceId))
       case 'stitched':
         return say.stitched(solidName(report.solidId))
       case 'nothing-to-stitch':
@@ -279,6 +356,10 @@
         return say.doublePosted(roomName(report.spaceId))
       case 'double-spent':
         return say.doubleSpent(roomName(report.spaceId))
+      case 'double-mode-changed':
+        return say.doubleModeChanged($t.tour.hatsu.double[report.mode])
+      case 'owl-mode-changed':
+        return say.owlModeChanged($t.tour.hatsu.owl[report.mode])
 
       case 'reinforced':
         return say.reinforced(report.committed)
@@ -312,6 +393,13 @@
         return say.unmimicked
       case 'soothed':
         return say.soothed(report.opened)
+      case 'tune-played':
+        return say.tunePlayed(
+          $t.tour.hatsu.tunes[report.tune],
+          roomName(report.spaceId),
+          report.on,
+          report.solids,
+        )
       case 'deduced':
         return say.deduced(report.what, report.strength)
       case 'nothing-to-deduce':
@@ -322,8 +410,6 @@
         return say.armourHolding(report.packed)
       case 'packed-away':
         return say.packedAway(roomName(report.spaceId), report.packed)
-      case 'nothing-packed':
-        return say.nothingPacked
       case 'sun-risen':
         return say.sunRisen(report.metres, report.solids)
 
@@ -331,6 +417,10 @@
         return say.owlAttached(report.rooms)
       case 'owl-recalled':
         return say.owlRecalled(report.rooms)
+      case 'owl-flown':
+        return say.owlFlown(roomName(report.spaceId))
+      case 'owl-expired':
+        return say.owlExpired(report.rooms)
       case 'foreseen':
         return say.foreseen(roomName(report.spaceId))
       case 'diverged':
@@ -417,7 +507,21 @@
             : world.doors.map(roomName).join(' ⇄ '),
       })
     }
-    if (world.eye) rows.push({ label: held.eye, value: roomName(world.eye) })
+    // The insect: where it is and what it was told, and under it the route it
+    // has filmed — which is the whole of what the sphere is for, and outlives
+    // the insect being called in.
+    if (world.eye) {
+      rows.push({
+        label: held.eye,
+        value: `${roomName(world.eye)} · ${$t.tour.hatsu.insect[world.eyeMode ?? 'pilot']}`,
+      })
+    }
+    if (world.eyeFilm.length) {
+      rows.push({
+        label: held.eyeFilm,
+        value: [...new Set(world.eyeFilm.map((frame) => frame.spaceId))].map(roomName).join(' → '),
+      })
+    }
     for (const doll of world.watched) {
       rows.push({
         label: held.watched,
@@ -442,7 +546,22 @@
       rows.push({ label: held.hand, value: book.cards.map(pageName).join(', ') })
     for (const id of book.zetsu) rows.push({ label: held.zetsu, value: roomName(id) })
     if (book.loan) rows.push({ label: held.loan, value: pageName(book.loan) })
-    if (world.owl) rows.push({ label: held.owl, value: `${world.trail.length}` })
+    // A bird that is out is a bird on a clock, so what it is holding is said
+    // with the seconds it has left to hold it.
+    if (world.owl) {
+      rows.push({
+        label: held.owl,
+        value: `${world.trail.length} · ${$t.tour.hatsu.owl.left(Math.ceil(world.owlLife))}`,
+      })
+    }
+    // And what it brought back stays readable after it has gone: the film in
+    // words, for the ten seconds the corner is playing it in pictures.
+    if (!world.owl && world.owlFilm.length) {
+      rows.push({
+        label: held.film,
+        value: [...new Set(world.owlFilm.map((frame) => frame.spaceId))].map(roomName).join(' → '),
+      })
+    }
     if (world.foreseen) rows.push({ label: held.foreseen, value: roomName(world.foreseen.spaceId) })
     if (world.poem.length) {
       rows.push({ label: held.poem, value: world.poem.map(roomName).join(' → ') })
@@ -475,6 +594,15 @@
     if (body.dance) rows.push({ label: held.dance, value: `${body.dance}` })
     if (body.mimic) rows.push({ label: held.mimic, value: solidName(body.mimic) })
     if (body.soothed) rows.push({ label: held.soothed, value: '♪' })
+    // What the flute has left behind: which air last came out of it, the rooms
+    // still holding a piece, and how much of the ship is dancing to one.
+    if (body.playing) {
+      rows.push({ label: held.playing, value: $t.tour.hatsu.tunes[body.playing] })
+    }
+    for (const id of world.flowered) rows.push({ label: held.flowered, value: roomName(id) })
+    for (const id of world.scattered) rows.push({ label: held.scattered, value: roomName(id) })
+    const dancing = dancingSolidIds(world)
+    if (dancing.length) rows.push({ label: held.dancing, value: `${dancing.length}` })
     if (body.deduced.length) rows.push({ label: held.deduced, value: `${body.deduced.length}` })
     if (body.packed !== null) rows.push({ label: held.packed, value: held.packedHits(body.packed) })
     for (const id of world.shut) rows.push({ label: held.shut, value: roomName(id) })
@@ -488,6 +616,7 @@
     }
     if (world.double) rows.push({ label: held.double, value: roomName(world.double) })
     if (world.trap) rows.push({ label: held.trap, value: roomName(world.trap) })
+    for (const id of world.gumTraps) rows.push({ label: held.gumTrap, value: roomName(id) })
     if (world.worm) {
       rows.push({
         label: held.worm,
@@ -553,11 +682,15 @@
       {/if}
     </p>
     <p class="text-[11px] text-[#FFFFF0]/45">
-      {onBody
-        ? $t.tour.hatsu.body.castHint
-        : onSolids
-          ? $t.tour.hatsu.solids.castHint
-          : $t.tour.hatsu.castHint}
+      {marksBothHands
+        ? $t.tour.hatsu.solids.markHint
+        : marksOnOneKey
+          ? $t.tour.hatsu.solids.markPageHint
+          : onBody
+            ? $t.tour.hatsu.body.castHint
+            : onSolids
+              ? $t.tour.hatsu.solids.castHint
+              : $t.tour.hatsu.castHint}
     </p>
   {:else}
     <p class="mt-2 text-xs leading-snug text-[#FFFFF0]/60">
@@ -588,7 +721,10 @@
     <p class="mt-1 text-[11px] text-[#FFFFF0]/40">{$t.tour.hatsu.nothingHeld}</p>
   {/if}
 
-  {#if pages.length}
+  <!-- Double Face has a panel of its own below, which says the same two pages
+       under the keys that play them: listing them twice would be the walk
+       offering the visitor a choice it has already made for them. -->
+  {#if pages.length && !bothPages}
     <p class="mt-3 text-[10px] uppercase tracking-widest text-[#FFFFF0]/45">
       {$t.tour.hatsu.book.title}
     </p>
@@ -611,6 +747,35 @@
     </div>
   {/if}
 
+  {#if bothPages}
+    <p class="mt-3 text-[10px] uppercase tracking-widest text-[#FFFFF0]/45">
+      {$t.tour.hatsu.book.bothLive}
+    </p>
+    <p class="text-[10px] leading-snug text-[#FFFFF0]/35">{$t.tour.hatsu.book.bothHint}</p>
+    <div class="mt-1 flex flex-wrap gap-1">
+      {#each [{ key: 'F', hand: 'first' as const, page: bothPages[0], ribbon: false }, { key: 'R', hand: 'second' as const, page: bothPages[1], ribbon: true }] as live (live.key)}
+        <button
+          type="button"
+          onclick={() => onCastHand(live.hand)}
+          title={$t.tour.hatsu.book.cast}
+          class="rounded border px-1.5 py-0.5 text-[11px] transition-colors {live.ribbon
+            ? 'border-[#FFD700]/60 text-[#FFD700]'
+            : 'border-[#444] text-[#FFFFF0]/80'} hover:border-[#FFD700] hover:text-[#FFFFF0]"
+        >
+          <span class="font-mono text-[#FFFFF0]/50">{live.key}</span>
+          {pageName(live.page)}
+        </button>
+      {/each}
+      <button
+        type="button"
+        onclick={onTurnTheBook}
+        class="rounded border border-[#444] px-1.5 py-0.5 text-[11px] text-[#FFFFF0]/60 transition-colors hover:border-[#FFD700]/60 hover:text-[#FFFFF0]"
+      >
+        {$t.tour.hatsu.book.turn}
+      </button>
+    </div>
+  {/if}
+
   {#if written.length}
     <p class="mt-3 text-[10px] uppercase tracking-widest text-[#FFFFF0]/45">
       {$t.tour.hatsu.holds.verses}
@@ -623,6 +788,75 @@
         {/each}
       </div>
     {/each}
+  {/if}
+
+  <!-- The double's orders. Shown while the guardian is up rather than only once
+       she has been posted, because the watch she will be posted under is a
+       choice the visitor can make before the cast as well as after it. -->
+  {#if profile.kind === 'guardian'}
+    <button
+      type="button"
+      onclick={onCycleDouble}
+      class="mt-3 flex w-full items-center justify-between rounded border border-[#444] px-2 py-1 text-[11px] text-[#FFFFF0]/80 transition-colors hover:border-[#FFD700]/60 hover:text-[#FFFFF0]"
+    >
+      <span
+        >{$t.tour.hatsu.double.watch} · {$t.tour.hatsu.double[world.doubleMode ?? 'follow']}</span
+      >
+      <kbd class="text-[10px] text-[#FFD700]/70">R</kbd>
+    </button>
+  {/if}
+
+  <!-- The flute's three airs. Not a cycle like the three above: an instrument
+       is played, so each piece has a key of its own and pressing it is the
+       playing. The row is the same either way — the panel is where a visitor
+       finds out that a technique has more than one thing in it. -->
+  {#if profile.kind === 'melody'}
+    <p class="mt-3 text-[10px] uppercase tracking-widest text-[#FFFFF0]/45">
+      {$t.tour.hatsu.tunes.title}
+    </p>
+    <p class="text-[10px] leading-snug text-[#FFFFF0]/35">{$t.tour.hatsu.tunes.hint}</p>
+    {#each [{ hand: 'first' as const, air: 'dance' as const, key: 'F' }, { hand: 'second' as const, air: 'bloom' as const, key: 'R' }, { hand: 'third' as const, air: 'scatter' as const, key: 'C' }] as piece (piece.air)}
+      <button
+        type="button"
+        onclick={() => onCastHand(piece.hand)}
+        class="mt-1 flex w-full items-center justify-between rounded border px-2 py-1 text-[11px] transition-colors hover:border-[#FFD700]/60 hover:text-[#FFFFF0] {world
+          .body.playing === piece.air
+          ? 'border-[#FFD700]/70 text-[#FFD700]'
+          : 'border-[#444] text-[#FFFFF0]/80'}"
+      >
+        <span>{$t.tour.hatsu.tunes[piece.air]}</span>
+        <kbd class="text-[10px] text-[#FFD700]/70">{piece.key}</kbd>
+      </button>
+    {/each}
+  {/if}
+
+  <!-- Which bird Secret Window sends, on the same key and for the same reason:
+       the aim only decides where the free one starts, so the visitor has to be
+       able to say which of the three it is before they press F. -->
+  {#if profile.kind === 'surveillance'}
+    <button
+      type="button"
+      onclick={onCycleOwl}
+      class="mt-3 flex w-full items-center justify-between rounded border border-[#444] px-2 py-1 text-[11px] text-[#FFFFF0]/80 transition-colors hover:border-[#FFD700]/60 hover:text-[#FFFFF0]"
+    >
+      <span>{$t.tour.hatsu.owl.watch} · {$t.tour.hatsu.owl[world.owlMode ?? 'wander']}</span>
+      <kbd class="text-[10px] text-[#FFD700]/70">R</kbd>
+    </button>
+  {/if}
+
+  <!-- Little Eye takes the same key and the same button: piloted, scouting, or
+       filming, which is the difference between a camera left in a room and the
+       roach Kurapika reads a deck with. Shown before the cast as well, because
+       what the insect will be doing when it lands is part of where to send it. -->
+  {#if profile.kind === 'scout'}
+    <button
+      type="button"
+      onclick={onCycleEye}
+      class="mt-3 flex w-full items-center justify-between rounded border border-[#444] px-2 py-1 text-[11px] text-[#FFFFF0]/80 transition-colors hover:border-[#FFD700]/60 hover:text-[#FFFFF0]"
+    >
+      <span>{$t.tour.hatsu.insect.orders} · {$t.tour.hatsu.insect[world.eyeMode ?? 'pilot']}</span>
+      <kbd class="text-[10px] text-[#FFD700]/70">R</kbd>
+    </button>
   {/if}
 
   <button

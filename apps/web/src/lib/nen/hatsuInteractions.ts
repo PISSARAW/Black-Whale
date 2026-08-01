@@ -4,6 +4,7 @@ import type { Page } from '@sveltejs/kit'
 import { playHatsuNote, setAmbientMuffled } from '$lib/audio/ambient.js'
 import { mapState } from '$lib/state/mapState.svelte'
 import { deactivateHatsu } from './hatsuState.js'
+import { loadProphecySheets, prophecySheetsReady, prophecySubjectFor } from './prophecySheets.js'
 import type { HatsuInteractionKind, HatsuProfile } from './hatsuRegistry.js'
 import type { HatsuStatusMessages } from '$lib/i18n/hatsuStatus'
 
@@ -252,6 +253,28 @@ const distanceBetween = (first: HTMLElement, second: HTMLElement) => {
 }
 
 /**
+ * The other passengers of a marker's own camp, on the map as it stands.
+ *
+ * The map tags every marker with the faction chips it belongs to, so "among its
+ * own" can be read off the page instead of guessed. A passenger with no chip at
+ * all falls back to the rest of the manifest — a curse still has to land on
+ * somebody.
+ */
+function kinOf(target: HTMLElement) {
+  const own = (target.dataset.hatsuFactions || '').split('|').filter(Boolean)
+  const manifest = Array.from(
+    document.querySelectorAll<HTMLElement>('[data-hatsu-character]'),
+  ).filter((candidate) => candidate !== target && !target.contains(candidate))
+  if (!own.length) return manifest
+  const kin = manifest.filter((candidate) =>
+    (candidate.dataset.hatsuFactions || '')
+      .split('|')
+      .some((faction) => faction && own.includes(faction)),
+  )
+  return kin.length ? kin : manifest
+}
+
+/**
  * Whether a technique made this. Little Eye refuses conjured creatures, Blinky
  * refuses Nen outright, Voconte's door will not move it and Double Machine Gun
  * tears through it — so they all need the same question answered.
@@ -272,6 +295,15 @@ const SMALL_HOST_AREA = 26000
 export const PAIN_PACKER_CLASS = 'hatsu-pain-packer'
 
 const packedHits = () => Array.from(document.querySelectorAll<HTMLElement>(`.${PAIN_PACKER_CLASS}`))
+
+/**
+ * How many heads Order Stamp's 人 can be on at once.
+ *
+ * The walk keeps a count of its own under the same figure — see `STAMP_LIMIT`
+ * in `$lib/tour/hatsu` — because nothing pure may reach into this file, which
+ * is a page's worth of DOM from end to end.
+ */
+const STAMP_LIMIT = 20
 
 /** Zazan's radius came from the damage taken first; so does this one, in pixels. */
 const SUN_FLARE_BASE_RADIUS = 140
@@ -561,9 +593,19 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
     // the same moment. Nobody picks the carrier, the mark cannot be seen without
     // Gyo, and he left no signature on it that points back at him.
     if (!ctx.selectedElements.length) {
-      const born = Array.from(target.querySelectorAll<HTMLElement>('[data-hatsu-character], li, p'))
-      const sacrifice = born[born.length - 1] || target
+      // "Among its own": the sacrifice is a different passenger of the victim's
+      // own camp, chosen at the same moment and left somewhere else entirely.
+      // Hiding it inside the victim, as this did, left Gyo nothing to search.
+      const kin = kinOf(target)
+      if (!kin.length) {
+        ctx.status = ctx.m['curse'].noKin(label)
+        ctx.addPoint(x, y, ctx.m.tokens.noTrace, { alert: true })
+        return true
+      }
+      const sacrifice = kin[label.length % kin.length]
       ctx.selectedElements = [target, sacrifice]
+      ctx.remember(target).classList.add('hatsu-curse-victim')
+      // The mark shows nothing: no class, only the bookkeeping Gyo answers to.
       ctx.remember(sacrifice).dataset.hatsuLevel = 'cursed'
       ctx.status = ctx.m['curse'].victim(label)
       ctx.addPoint(x, y, ctx.m.tokens.victim(label))
@@ -571,16 +613,20 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
     }
     const [victim, sacrifice] = ctx.selectedElements
     if (target !== sacrifice) {
-      // Gyo: looking hard at the right place is the only way to find the mark.
-      const found = target.contains(sacrifice)
-      ctx.remember(target).classList.add(found ? 'hatsu-beyond-cursed' : 'hatsu-gyo-empty')
-      ctx.status = ctx.m['curse'].searched(found, label)
-      ctx.addPoint(x, y, found ? ctx.m.tokens.markFound : ctx.m.tokens.noTrace, { alert: !found })
+      // Gyo: the mark is invisible, so all the search returns is how close the
+      // aura felt — which is what makes finding it worth doing.
+      const near = distanceBetween(target, sacrifice) < 160
+      ctx.remember(target).classList.add(near ? 'hatsu-beyond-cursed' : 'hatsu-gyo-empty')
+      ctx.status = ctx.m['curse'].searched(near, label)
+      ctx.addPoint(x, y, near ? ctx.m.tokens.markFound : ctx.m.tokens.noTrace, { alert: !near })
       return true
     }
     ctx.remember(sacrifice).classList.add('hatsu-sacrifice-dead')
     ctx.remember(victim).classList.add('hatsu-curse-triggered')
     victim.style.pointerEvents = 'none'
+    // The victim is somewhere else on the ship, which is the whole point of the
+    // technique: it has to be shown dying at that distance.
+    victim.scrollIntoView({ behavior: 'smooth', block: 'center' })
     ctx.status = ctx.m['curse'].spent(ctx.targetLabel(victim))
     ctx.addPoint(x, y, 'POST-MORTEM', { alert: true })
     return true
@@ -687,6 +733,30 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
     return true
   },
   restoration: (ctx, { target, x, y, label }) => {
+    // A massage, not a reset button: Cookie works on the thing under her hands
+    // and what it can no longer do. Whatever the section holds shut — a control
+    // that answers to nothing, a fold nobody opened, a body kept out of reach —
+    // is what hours of rest would have given back, so that is what she gives.
+    const scope = target.closest<HTMLElement>('article, section, main') ?? target
+    // Only what the section can no longer *do* counts as tired: a control that
+    // answers to nothing, a fold nobody opened. Decorative `aria-hidden` markup
+    // is not exhaustion — counting it reported hundreds of things restored.
+    const tiredControls = Array.from(
+      scope.querySelectorAll<HTMLElement>(`${CONTROL_SELECTOR},details`),
+    )
+    let relieved = 0
+    for (const tired of tiredControls) {
+      if (tired.hasAttribute('hidden') || tired.matches('[disabled],[aria-disabled="true"]')) {
+        ctx.remember(tired)
+        liftRestriction(tired)
+        relieved += 1
+      }
+      if (tired instanceof HTMLDetailsElement && !tired.open) {
+        ctx.remember(tired)
+        tired.open = true
+        relieved += 1
+      }
+    }
     ctx.remember(target).classList.add('hatsu-restored')
     mapState.currentZoomLevel = 'OVERVIEW'
     mapState.selectedTier = null
@@ -696,8 +766,8 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
     if (ctx.page.url.search)
       void goto(cleanUrl, { replaceState: true, noScroll: true, keepFocus: true })
     target.scrollIntoView({ behavior: 'smooth', block: 'center' })
-    ctx.status = ctx.m['restoration'].restored(label)
-    ctx.addPoint(x, y, label)
+    ctx.status = ctx.m['restoration'].restored(relieved, label)
+    ctx.addPoint(x, y, relieved ? ctx.m.tokens.rested(relieved) : label)
     return true
   },
   transformation: (ctx, { target, x, y, label }) => {
@@ -792,19 +862,39 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
     }
     const budget = Number(model.dataset.hatsuLevel || 1) * 2000
     const source = getComputedStyle(model)
+    const shape = model.getBoundingClientRect()
     const transformed = ctx.remember(target)
-    transformed.style.background = source.background
+    // Copying the model's colours changed nothing: everything in the archive is
+    // already the same colour. What tells two things apart here is their size
+    // and what they say, so that is what the form takes — the target ends up the
+    // model's shape, wearing the model's name.
+    transformed.style.width = `${Math.round(shape.width)}px`
+    transformed.style.height = `${Math.round(shape.height)}px`
+    transformed.style.overflow = 'hidden'
+    transformed.style.boxSizing = 'border-box'
+    transformed.style.transition = 'width .4s ease, height .4s ease'
+    transformed.style.background = source.backgroundColor
     transformed.style.color = source.color
-    transformed.style.border = source.border
     transformed.style.borderRadius = source.borderRadius
     transformed.style.fontFamily = source.fontFamily
+    transformed.dataset.hatsuForgery = ctx.targetLabel(model).slice(0, 24)
     transformed.classList.add('hatsu-metamorphosen')
     ctx.selectedElements = [model, transformed]
     ctx.status = ctx.m['mimicry'].copied(ctx.targetLabel(model), label, budget / 1000)
     ctx.addPoint(x, y, label)
     ctx.schedule(() => {
       transformed.classList.remove('hatsu-metamorphosen')
-      for (const property of ['background', 'color', 'border', 'border-radius', 'font-family'])
+      delete transformed.dataset.hatsuForgery
+      for (const property of [
+        'background',
+        'color',
+        'border-radius',
+        'font-family',
+        'width',
+        'height',
+        'overflow',
+        'box-sizing',
+      ])
         transformed.style.removeProperty(property)
       ctx.status = ctx.m['mimicry'].expired(ctx.targetLabel(model), label)
     }, budget)
@@ -953,42 +1043,113 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
   command: (ctx, { target, x, y, label }) => {
     // A puppet has to have a head and has to be lifeless. Corpses are refused
     // outright; Nen copies of them are not. And the orders stay simple.
-    const head = target.querySelector<HTMLElement>('h1,h2,h3,h4,h5,h6,summary,legend,dt')
-    const stamped = ctx.selectedElements.filter((puppet) => puppet.isConnected)
-    if (stamped.length < 3) {
-      if (!head) {
-        ctx.status = ctx.m['command'].noHead(label)
-        ctx.addPoint(x, y, ctx.m.tokens.noHead, { alert: true })
-        return true
-      }
-      const conjured = isNenMade(target) || Boolean(target.dataset.hatsuFake)
-      const living =
-        target.matches('a,button,[role="button"],[data-hatsu-character]') ||
-        Boolean(target.querySelector('[data-hatsu-character]'))
+    //
+    // The click lands on the innermost thing under the pointer — a paragraph, a
+    // line, a heading — and none of those carry a head of their own. The puppet
+    // is the block that owns them, which is the body the stamp is put on.
+    const HEADS = 'h1,h2,h3,h4,h5,h6,summary,legend,dt'
+    const BODIES = 'article, section, li, details, figure, aside, blockquote'
+    // Climb until a block with a head is found: the first block above a line of
+    // prose is often a bare wrapper, and stopping there refused everything.
+    let puppet = target.matches(HEADS) ? (target.parentElement ?? target) : target
+    let head = target.matches(HEADS) ? target : null
+    while (!head) {
+      const body = puppet.closest<HTMLElement>(BODIES)
+      if (!body) break
+      head = body.querySelector<HTMLElement>(HEADS)
+      puppet = body
+      if (head) break
+      if (!body.parentElement) break
+      puppet = body.parentElement
+    }
+    if (!head) puppet = target.closest<HTMLElement>(BODIES) ?? target
+    const stamped = ctx.selectedElements.filter((body) => body.isConnected)
+    const lockedOf = (bodies: HTMLElement[]) =>
+      bodies.filter((body) => body.classList.contains('hatsu-puppet-locked'))
+
+    // Twenty puppets is far too many to speak to as a crowd, so a second click
+    // on a head that already wears the 人 locks it instead of stamping it
+    // again: the lock is who the next order is addressed to, and nothing else.
+    //
+    // Anywhere inside a puppet counts as that puppet. Blocks nest — a list
+    // inside a section, a figure inside an article — so the climb above lands
+    // on a different body depending on which line was under the pointer, and a
+    // visitor clicking the same thing twice was stamping something new the
+    // second time rather than locking what they had just stamped.
+    const already =
+      stamped.find((body) => body === puppet) ??
+      stamped
+        .filter((body) => body.contains(target))
+        .sort((a, b) => (a.contains(b) ? 1 : -1))[0]
+    if (already) {
+      const locked = already.classList.toggle('hatsu-puppet-locked')
+      ctx.status = ctx.m['command'].lockedToggle(
+        ctx.targetLabel(already),
+        locked,
+        lockedOf(stamped).length,
+      )
+      ctx.addPoint(x, y, locked ? ctx.m.tokens.locked : ctx.m.tokens.unlocked)
+      return true
+    }
+
+    // The lock is what tells stamping from ordering, because nothing else can.
+    //
+    // A page is blocks inside blocks: click a line of prose and the body that
+    // owns it nearly always has a heading, so every click looks like one more
+    // puppet and the order never comes. So the lock does double duty — turn one
+    // and the crowd is closed: the next click on anything else is where they are
+    // being sent. Unlock them all and the stamp goes back to taking heads.
+    const locked = lockedOf(stamped)
+
+    // A head nobody has stamped yet, and room left on the stamp: this is one
+    // more puppet rather than a place to send the ones already standing.
+    if (!locked.length && head && stamped.length < STAMP_LIMIT) {
+      const conjured = isNenMade(puppet) || Boolean(puppet.dataset.hatsuFake)
+      // Alive means a passenger, not a control and not a room with people in
+      // it. Chrollo puppeteers objects, and a block of the archive is an object
+      // however many links hang off it or passengers stand inside it.
+      const living = puppet.matches('[data-hatsu-character]')
       if (living && !conjured) {
         ctx.status = ctx.m['command'].alive(label)
         ctx.addPoint(x, y, ctx.m.tokens.alive, { alert: true })
         return true
       }
-      ctx.selectedElements = [...stamped, target]
+      ctx.selectedElements = [...stamped, puppet]
       ctx.remember(head).classList.add('hatsu-stamped-head')
       head.dataset.hatsuForgery = '人'
-      ctx.remember(target).classList.add('hatsu-stamped')
-      ctx.status = ctx.m['command'].stamped(stamped.length + 1, stamped.length, label)
-      ctx.addPoint(x, y, label)
+      ctx.remember(puppet).classList.add('hatsu-stamped')
+      ctx.status = ctx.m['command'].stamped(stamped.length + 1, ctx.targetLabel(puppet))
+      ctx.addPoint(x, y, ctx.targetLabel(puppet))
       return true
     }
+
+    // Nothing stamped yet and nothing here to stamp: the stamp has not started.
+    if (!head && stamped.length === 0) {
+      ctx.status = ctx.m['command'].noHead(label)
+      ctx.addPoint(x, y, ctx.m.tokens.noHead, { alert: true })
+      return true
+    }
+
+    // Everything left is the order, and the order goes to the locked ones only.
+    // Given with none locked it is spoken to nobody, which is the whole point
+    // of the lock: twenty puppets do not all move because one click missed.
+    if (!locked.length) {
+      ctx.status = ctx.m['command'].noPuppetsLocked(stamped.length)
+      ctx.addPoint(x, y, ctx.m.tokens.noLock, { alert: true })
+      return true
+    }
+
     const destination = target.getBoundingClientRect()
-    for (const puppet of stamped) {
-      const rect = puppet.getBoundingClientRect()
-      ctx.remember(puppet)
-      puppet.style.transition = 'transform .7s ease'
+    for (const obedient of locked) {
+      const rect = obedient.getBoundingClientRect()
+      ctx.remember(obedient)
+      obedient.style.transition = 'transform .7s ease'
       ctx.applyTransform(
-        puppet,
+        obedient,
         `translate(${destination.left - rect.left}px, ${destination.top - rect.top}px) scale(.72)`,
       )
     }
-    ctx.status = ctx.m['command'].order(label, stamped.length)
+    ctx.status = ctx.m['command'].order(label, locked.length)
     ctx.addPoint(x, y, ctx.m.tokens.order(label))
     return true
   },
@@ -1066,32 +1227,66 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
     ctx.addPoint(x, y, `${affinity}%`, { details: [digits, band] })
     return true
   },
-  prophecy: (ctx, { target, x, y, label }) => {
+  prophecy: (ctx, args) => {
     // Neon needed a full name, a date of birth and a blood type before the quill
     // would move, she could never write her own, and the first verse is always
     // about something that has already happened.
+    //
+    // When the quill lands on a passenger it writes that passenger's sheet from
+    // data/prophecies — the same poem the character page prints. Everything else
+    // on the ship gets an improvised page.
+    const { target, x, y, label } = args
     if (target.closest('[data-hatsu-ui]')) {
       ctx.status = ctx.m['prophecy'].ownFuture()
       ctx.addPoint(x, y, ctx.m.tokens.noOwnFuture, { alert: true })
       return true
     }
     const name = target.dataset.hatsuCharacterName || label
-    const text = (target.textContent || '').trim()
-    const born = /\d/.test(text) || Boolean(target.querySelector('time'))
-    const type = Boolean(
-      target.dataset.hatsuCharacter ||
-      target.dataset.hatsuList ||
-      target.closest('[data-hatsu-character]'),
-    )
-    if (!born || !type) {
-      const missing = [!born && 'a date of birth', !type && 'a blood type']
-        .filter(Boolean)
-        .join(' or ')
-      ctx.status = ctx.m['prophecy'].incomplete(name, missing)
-      ctx.addPoint(x, y, ctx.m.tokens.incomplete, { alert: true })
+    const links = Array.from(target.querySelectorAll<HTMLAnchorElement>('a')).slice(0, 4)
+    if (!prophecySheetsReady()) {
+      // The catalogue is fetched when the technique is selected; a click that
+      // beats it waits for the page rather than improvising over it.
+      ctx.status = ctx.m['prophecy'].consulting(name)
+      void loadProphecySheets().then(() => {
+        if (ctx.profile.kind === 'prophecy' && target.isConnected)
+          HATSU_INTERACTION_BY_KIND['prophecy']?.(ctx, args)
+      })
       return true
     }
-    const links = Array.from(target.querySelectorAll<HTMLAnchorElement>('a')).slice(0, 4)
+    // A passenger the archive can name is a slip with nothing missing on it. The
+    // date of birth and the blood type are only asked of whatever the archive
+    // cannot identify, which is where the quill has to guess.
+    const sheet = prophecySubjectFor(target, ctx.page.url.pathname)
+    if (!sheet) {
+      const text = (target.textContent || '').trim()
+      const born = /\d/.test(text) || Boolean(target.querySelector('time'))
+      const type = Boolean(
+        target.dataset.hatsuCharacter ||
+        target.dataset.hatsuList ||
+        target.closest('[data-hatsu-character]'),
+      )
+      if (!born || !type) {
+        const missing = [!born && 'a date of birth', !type && 'a blood type']
+          .filter(Boolean)
+          .join(' or ')
+        ctx.status = ctx.m['prophecy'].incomplete(name, missing)
+        ctx.addPoint(x, y, ctx.m.tokens.incomplete, { alert: true })
+        return true
+      }
+    }
+    if (sheet?.blank) {
+      ctx.status = ctx.m['prophecy'].ownFuture()
+      ctx.addPoint(x, y, ctx.m.tokens.noOwnFuture, { alert: true })
+      return true
+    }
+    if (sheet) {
+      ctx.prophecyLines = sheet.poem
+      ctx.guideTitle = ctx.m['prophecy'].guideTitle()
+      ctx.guideItems = links.map((link) => ctx.guideItemFor(link, ctx.targetLabel(link)))
+      ctx.status = ctx.m['prophecy'].written(sheet.subjectName, ctx.guideItems.length)
+      ctx.addPoint(x, y, sheet.subjectName, { details: [sheet.foretells] })
+      return true
+    }
     const already = ctx.points[0]?.label
     ctx.prophecyLines = [
       already
@@ -1174,15 +1369,28 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
     const direction = event.clientX < innerWidth / 2 ? 1 : -1
     let pierced = 0
     for (const [index, hit] of line.entries()) {
+      // Read what the bullets are going through before the volley marks it:
+      // asking afterwards counted the technique's own mark as a Nen construct,
+      // so every wall the gun hit was reported as torn through and erased.
+      const conjured = isNenMade(hit) || Boolean(hit.dataset.hatsuFake)
       const element = ctx.remember(hit)
       element.style.transition = 'transform .18s ease-out'
       ctx.applyTransform(element, `translate(${direction * force}px, ${((index % 3) - 1) * 10}px)`)
       element.classList.add('hatsu-bullet-hit')
-      if (!isNenMade(hit) && !hit.dataset.hatsuFake) continue
+      if (!conjured) continue
       pierced += 1
       element.style.opacity = '.2'
       element.style.pointerEvents = 'none'
     }
+    // The volley is sustained, not a single shove: everything it caught rides
+    // back down once the burst is over, and the recoil is what is seen of it.
+    ctx.schedule(() => {
+      for (const hit of line) {
+        if (!hit.isConnected) continue
+        hit.style.transition = 'transform .5s cubic-bezier(.2,.9,.3,1)'
+        ctx.applyTransform(hit, `translate(${direction * Math.round(force / 4)}px, 0)`)
+      }
+    }, 220)
     // Conjured cards are no protection either.
     ctx.floatingCards = []
     ctx.status = ctx.m['barrage'].fired(line.length * 2, label, pierced)
@@ -1203,6 +1411,25 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
       return true
     }
     if (body?.isConnected) {
+      // Passing through was a status line and nothing else. The double is out
+      // walking: it moves to where it was sent, the matter it crossed opens for
+      // the length of the crossing, and a door it walks into is a door it can
+      // take — the body it left behind still cannot touch any of it.
+      const crossed = ctx.remember(target)
+      crossed.classList.add('hatsu-phased-through')
+      ctx.schedule(() => crossed.classList.remove('hatsu-phased-through'), 900)
+      const door =
+        target.closest<HTMLAnchorElement>('a') || target.querySelector<HTMLAnchorElement>('a')
+      ctx.floatingCards = [
+        {
+          id: ++ctx.sequence,
+          x: Math.max(16, Math.min(innerWidth - 320, x)),
+          y: Math.max(80, Math.min(innerHeight - 220, y)),
+          label,
+          kind: 'projection',
+          href: door?.href || null,
+        },
+      ]
       ctx.status = ctx.m['projection'].passedThrough(label)
       ctx.addPoint(x, y, label)
       return true

@@ -92,8 +92,16 @@ export const en = {
       findKeys: '⌘K, or Ctrl K',
       reveal: 'Show the evidence',
       revealKeys: 'G',
+      fullscreen: 'Full screen, panel and all',
+      fullscreenKeys: 'V',
       nen: 'Cast the active Hatsu',
       nenKeys: 'F, or click, on the room or the solid you are facing',
+      nenSelf: 'Turn the active Hatsu on yourself',
+      nenSelfKeys: 'R, wherever you are looking',
+      nenSecond: 'Cast the second page',
+      nenSecondKeys: (name: string) => `R casts ${name}, the one under the ribbon`,
+      nenMoon: 'Put the moon on rather than the sun',
+      nenMoonKeys: 'R marks with the moon, F with the sun',
       touch: 'On a touchscreen',
       touchKeys:
         'The stick at bottom left walks, pushed to the rim it runs; drag the view to look; the buttons take a door and cast',
@@ -198,6 +206,21 @@ export const en = {
     },
 
     /**
+     * The walk at the size of the screen.
+     *
+     * Full screen here is not the walk with its page taken away: the decks, the
+     * plan, the index, the Hatsu panel and the comfort dials all come with it,
+     * over the ship rather than beside it. What the panel costs is a strip of
+     * the view, so it folds away — and the ship is what stays.
+     */
+    fullscreen: {
+      enter: 'Full screen',
+      exit: 'Leave full screen',
+      hidePanel: 'Fold the panel away',
+      showPanel: 'Bring the panel back',
+    },
+
+    /**
      * How the walk is driven. None of it has a right answer, so all of it is the
      * visitor's — and `prefers-reduced-motion` sets where it starts rather than
      * overriding what they choose.
@@ -278,6 +301,42 @@ export const en = {
       nothingHeld: 'Nothing yet',
       copy: 'Empty copy',
       copySource: 'An empty duplicate of the room. Nothing in it is the ship.',
+      // The double takes orders rather than being three abilities: R walks
+      // through them, and the button says the same thing without a keyboard.
+      double: {
+        watch: 'The double’s watch',
+        follow: 'At your shoulder',
+        wander: 'Loose in the room',
+        scout: 'Out ahead',
+      },
+      // Secret Window takes the same key, and sends one of three birds.
+      owl: {
+        watch: 'The owl’s flight',
+        wander: 'Working the ship',
+        shoulder: 'On your shoulder',
+        random: 'Let go unaimed',
+        /** How long the materialized bird has left of its twenty seconds. */
+        left: (seconds: number) => `${seconds} s left`,
+      },
+      // And Little Eye's insect, which takes the same key and Sayird's own
+      // three verbs: flown by hand, sent on ahead, or left to record.
+      insect: {
+        orders: 'The insect is',
+        pilot: 'Flown by hand',
+        scout: 'Working the deck',
+        film: 'Filming where it is',
+      },
+      // Enchanting Music's three airs, which are played rather than aimed: the
+      // room the visitor is standing in is the only one that can hear them.
+      // Chosen at the moment of playing rather than cycled beforehand, which is
+      // why each has a key of its own.
+      tunes: {
+        title: 'The flute plays',
+        hint: 'F, R and C · each air is heard by the room you are standing in',
+        dance: 'The lively air',
+        bloom: 'The soft air',
+        scatter: 'The sharp air',
+      },
       reports: {
         noTarget: 'Nothing in reach to cast on',
         teleported: (room: string) => `Sent to ${room} — you did not choose where you landed`,
@@ -287,8 +346,14 @@ export const en = {
         doorsRearmed: (room: string) => `The old pair is down · first frame installed in ${room}`,
         phasingOn: 'Walls stopped being walls · walk through the ship',
         phasingOff: 'Back inside the geometry · the walls hold again',
-        eyeSent: (room: string) => `The eye is parked in ${room} · its feed is in the corner`,
-        eyeRecalled: 'The eye is back with you',
+        eyeSent: (room: string) => `The sphere is on a host in ${room} · its feed is in the corner`,
+        eyeRecalled: (rooms: number) =>
+          `The insect is back with you · ${rooms} room${rooms === 1 ? '' : 's'} filmed`,
+        eyeModeChanged: (order: string) => `The insect has new orders · ${order}`,
+        eyePiloted: (room: string) => `Flown through to ${room} · the feed follows it`,
+        eyeFlown: (room: string) => `The insect has taken a door · it is in ${room} now`,
+        eyeFilmed: (room: string, seen: number) =>
+          `${room} recorded · ${seen} thing${seen === 1 ? '' : 's'} standing in it`,
         sealedSight: 'Sight sealed · the decks are still there and you cannot see them',
         sealedHearing: 'Hearing sealed as well · the ship has gone quiet',
         sealedSpeech: 'Speech sealed too · the walk will not say what room you are in',
@@ -312,6 +377,10 @@ export const en = {
           structures
             ? `${structures} solid${structures > 1 ? 's' : ''} swallowed out of ${room}`
             : `${room} was already bare`,
+        swallowed: (solid: string, held: number) => `${solid} goes into the bag · ${held} held`,
+        coughedUp: (solid: string, room: string, held: number) =>
+          `${solid} comes back out in ${room} · ${held} left in the bag`,
+        bagEmpty: 'The bag is empty · aim at something to swallow it',
         refused: (room: string) =>
           `Blinky refuses ${room} · Nen is holding it, which is how the trap shows`,
         dispatched: (room: string) => `A bird is back from ${room} with what the room rests on`,
@@ -398,6 +467,12 @@ export const en = {
         unmimicked: 'Your own shape again',
         soothed: (opened: boolean): string =>
           opened ? 'The three open again, and the music holds them open' : 'The music plays on',
+        tunePlayed: (air: string, room: string, on: boolean, solids: number): string => {
+          if (!on) return `${air} ends · ${room} is as it was`
+          return solids
+            ? `${air} in ${room} · ${solids} thing${solids === 1 ? '' : 's'} took it up and danced`
+            : `${air} in ${room} · the room heard it and kept it`
+        },
         deduced: (what: string, strength: number) =>
           `Condition read — ${what} · ${strength} named, and stronger for each`,
         nothingToDeduce: 'Nothing left to read: every hold has been named',
@@ -409,7 +484,6 @@ export const en = {
             : 'The wrapping holds nothing yet · walk into what the aura has set against you',
         packedAway: (room: string, packed: number) =>
           `${room} did nothing to you: it went into the wrapping · ${packed} packed away`,
-        nothingPacked: 'Nothing was taken, so there is nothing to spend · the sun rises on damage',
         sunRisen: (metres: number, solids: number) =>
           `The sun rose where you stand · ${metres} m of it, and ${solids} thing${solids === 1 ? '' : 's'} burnt with no regard for whose they were`,
         jailed: (room: string, doors: number) =>
@@ -439,6 +513,10 @@ export const en = {
           `Four snakes, ${rooms} rooms in range · one of them has to be entered`,
         snakesFed: (room: string) => `The curse found its victim in ${room}`,
         snakesRebound: 'Dismissed with no victim · the curse comes back on the one who set it',
+        puppeted: (solid: string) => `The antenna is planted · ${solid} is now under control`,
+        puppetReleased: (solid: string) =>
+          `The antenna is withdrawn · ${solid} is no longer controlled`,
+        autopilotStarted: 'Autopilot engaged · the body moves on its own to complete the task',
         wormSet: (room: string) => `One end of the tunnel in ${room} · name the other`,
         wormOpen: (a: string, b: string) =>
           `${a} and ${b} are a night's route, and it is meant to be walked once`,
@@ -447,11 +525,23 @@ export const en = {
         wormSpent: 'The tunnel collapses · it was never meant to be asked three times',
         doublePosted: (room: string) => `The double stands in ${room}, beside whoever is left`,
         doubleSpent: (room: string) => `The double took it in your place, and is gone from ${room}`,
+        doubleModeChanged: (watch: string) => `The double changes her watch · ${watch}`,
+        owlModeChanged: (flight: string) => `The owl is sent differently · ${flight}`,
+        owlFlown: (room: string) => `The owl has taken a door · it is in ${room} now`,
+        owlExpired: (rooms: number) =>
+          `The owl is gone · the last ten seconds of it, over ${rooms} room${rooms === 1 ? '' : 's'}, are playing in the corner`,
         noSolid: 'Nothing solid down the reticle',
         boundFast: (solid: string) => `${solid} is held fast · nothing but the chain gets it back`,
         gumSet: (solid: string) =>
           `Gum on ${solid} · take hold of a second thing to pull them together`,
         gumPulled: (solid: string, other: string) => `${solid} snapped across to ${other}`,
+        gumTrapSet: (room: string) =>
+          `Gum strung across ${room} · nothing shows it but Gyo, and it is still there`,
+        gumRebound: (room: string) =>
+          `${room} threw you back the way you came · the gum gave, and then it took`,
+        gumPropulsion: 'The gum pulls you along · you walk the ship faster than you can',
+        gumHealed: (healed: number) =>
+          `The gum closes what was open · ${healed} blow${healed === 1 ? '' : 's'} out of the armour`,
         forged: (solid: string) =>
           `${solid} is wearing another surface · what it is, and what it stops, are unchanged`,
         wrapped: (solid: string) => `${solid} wrapped small · nothing about it is damaged`,
@@ -460,6 +550,18 @@ export const en = {
           metres
             ? `${solid} pushed ${metres} m · it is a thing, so it moves like one`
             : `${solid} is against the wall of its room and goes no further`,
+        stamped: (solid: string, puppets: number) =>
+          `人 on ${solid} · ${puppets}/20 puppets · click it again to lock it`,
+        stampLocked: (solid: string, locked: boolean, locks: number) =>
+          locked
+            ? `${solid} locked · ${locks} puppet${locks === 1 ? '' : 's'} will hear the next order`
+            : `${solid} unlocked · it hears nothing until it is locked again`,
+        ordered: (room: string, puppets: number) =>
+          `“Go to ${room}” · simple enough for all ${puppets} locked puppet${puppets === 1 ? '' : 's'} to follow it`,
+        noLock: (stamped: number) =>
+          stamped
+            ? `None of the ${stamped} puppets is locked · the order is spoken to nobody`
+            : `Nothing is stamped · the order is spoken to nobody`,
         copied: (solid: string) =>
           `A copy of ${solid} stands beside it · it is drawn cold, because no page supports it`,
         crushed: (solid: string) => `${solid} is flat under the weight`,
@@ -470,10 +572,18 @@ export const en = {
         launched: (solid: string, metres: number) =>
           metres ? `${solid} sent ${metres} m across the room` : `${solid} had nowhere to go`,
         struck: (solid: string) => `The staff comes down on ${solid} and turns it`,
+        lashed: (solid: string, hits: number) =>
+          hits > 1
+            ? `The chain cracks across ${solid} · ${hits} times now`
+            : `The chain cracks across ${solid} and comes back`,
         bound: (solid: string) => `The snake has ${solid} · nothing else moves it now`,
         released: (solid: string) => `${solid} is let go`,
+        armsFull: (solids: string) =>
+          `Both snakes are out · they have ${solids}, and you have two arms`,
         cameUpUnder: (solid: string, other: string) =>
           `The aura ran out of ${solid} along the floor and came up under ${other}`,
+        cameUpEmpty: (room: string) =>
+          `The aura ran along the floor and came up out of the deck in ${room}`,
         stitched: (solid: string) => `${solid} is back as the blueprint has it`,
         nothingToStitch: (solid: string) => `Nothing was done to ${solid} to undo`,
         animated: (solid: string) => `${solid} is awake, and no less solid for it`,
@@ -500,6 +610,9 @@ export const en = {
       solids: {
         reach: 'Any solid in the ship, from anywhere in it',
         castHint: 'Press F, or click, to cast on it — or pick any solid in the ship below',
+        markHint: 'F puts the sun on it, R the moon · marked things go looking for their opposite',
+        markPageHint:
+          'The page has one key, so it alternates: one press the sun, the next the moon',
         aiming: (solid: string) => `Facing ${solid}`,
         aimingNothing: 'Nothing solid in front of you',
         targets: 'Cast on a solid',
@@ -545,6 +658,12 @@ export const en = {
         hint: 'A page is cast where you are aiming, like anything else',
         card: 'card',
         loan: 'loan',
+        // Double Face: the bookmark is not cast at anything, it is what keeps a
+        // second page live beside the open one — so the panel offers two things
+        // rather than one, and says which key plays each.
+        bothLive: 'The book is open at two',
+        bothHint: 'F casts the open page · R casts the one under the ribbon',
+        turn: 'Move the ribbon',
       },
       holds: {
         book: 'In the book',
@@ -555,6 +674,7 @@ export const en = {
         loan: 'On loan',
         trail: 'The trail',
         owl: 'The owl keeps',
+        film: 'The film it brought back',
         foreseen: 'Ten seconds on',
         verses: 'Written down',
         poem: 'The poem',
@@ -570,6 +690,10 @@ export const en = {
         dance: 'The prologue',
         mimic: 'Wearing',
         soothed: 'The music holds',
+        playing: 'The flute is playing',
+        flowered: 'In flower',
+        scattered: 'Notes hanging in',
+        dancing: 'Dancing to it',
         deduced: 'Conditions read',
         packed: 'The wrapping holds',
         packedHits: (packed: number) => `${packed} blow${packed === 1 ? '' : 's'}`,
@@ -584,6 +708,7 @@ export const en = {
         worm: 'The tunnel',
         snakes: 'Snakes loose in',
         trap: 'The bait is in',
+        gumTrap: 'Gum strung across',
         crossings: (n: number) => `${n} of 3 crossings`,
         solid: 'Solids held',
         wound: 'The confetti is in',
@@ -592,6 +717,7 @@ export const en = {
         isolated: 'Isolated room',
         doors: 'Hideout doors',
         eye: 'Remote eye',
+        eyeFilm: 'The insect filmed',
         watched: 'Paper dolls',
         emptied: 'Swallowed',
         dowsing: 'The chain points at',

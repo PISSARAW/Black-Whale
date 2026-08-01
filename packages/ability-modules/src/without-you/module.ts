@@ -11,6 +11,7 @@ import {
   postMortem,
   requiresParameter,
   spawnNenEntity,
+  effect,
 } from '@black-whale/ability-sdk'
 
 const nenTwinId = (twinId: string): string => `${twinId}-without-you`
@@ -80,6 +81,50 @@ export const withoutYou = defineAbility({
         }),
       ],
     },
+    follow: {
+      label: 'Demander à la jumelle de nous suivre',
+      effects: [
+        effect({
+          kind: 'CUSTOM',
+          discriminator: 'behavior-follow',
+          attributes: { command: 'follow', description: 'La jumelle vous suit de près.' },
+        }),
+        moveEntity({
+          entity: (ctx) => ({ id: nenTwinId(param(ctx, 'deceasedTwinId') ?? 'twin'), kind: 'NEN_ENTITY' }),
+          locationId: (ctx) => ctx.worldState?.presences[ctx.actorId]?.locationId,
+        }),
+      ],
+    },
+    wander: {
+      label: 'Laisser la jumelle se balader',
+      conditions: [requiresParameter('locationId', 'Une destination est choisie')],
+      effects: [
+        effect({
+          kind: 'CUSTOM',
+          discriminator: 'behavior-wander',
+          attributes: { command: 'wander', description: 'La jumelle se balade de son côté.' },
+        }),
+        moveEntity({
+          entity: (ctx) => ({ id: nenTwinId(param(ctx, 'deceasedTwinId') ?? 'twin'), kind: 'NEN_ENTITY' }),
+          locationId: (ctx) => param(ctx, 'locationId'),
+        }),
+      ],
+    },
+    scout: {
+      label: 'Envoyer la jumelle en éclaireur',
+      conditions: [requiresParameter('locationId', 'Une destination est choisie')],
+      effects: [
+        effect({
+          kind: 'CUSTOM',
+          discriminator: 'behavior-scout',
+          attributes: { command: 'scout', description: 'La jumelle part en reconnaissance.' },
+        }),
+        moveEntity({
+          entity: (ctx) => ({ id: nenTwinId(param(ctx, 'deceasedTwinId') ?? 'twin'), kind: 'NEN_ENTITY' }),
+          locationId: (ctx) => param(ctx, 'locationId'),
+        }),
+      ],
+    },
   },
 
   ui: { componentKey: 'WithoutYouView' },
@@ -88,7 +133,7 @@ export const withoutYou = defineAbility({
     inputMode: 'CUSTOM',
     allowedTargets: ['CHARACTER', 'LOCATION'],
     overlays: ['AURA'],
-    entryActions: ['manifest'],
+    entryActions: ['manifest', 'follow', 'wander', 'scout'],
     requiredState: ['canUseNen'],
     perspectiveTransition: {
       canChangeBody: false,

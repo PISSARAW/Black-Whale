@@ -36,6 +36,7 @@
   data-hatsu-character-name={marker.perceivedIdentity}
   data-hatsu-perspective-id={marker.originalCharacterId}
   data-hatsu-next-change={marker.futureChange}
+  data-hatsu-factions={marker.factionTags?.join('|')}
   data-hatsu-list={marker.hatsuIds?.join('|')}
   style={styleString}
   style:transform="translate(-50%, -50%)"

@@ -88,10 +88,12 @@ export const hatsuStatusFr: HatsuStatusMessages = {
   curse: {
     victim: (a0: string) =>
       `${a0} a été désigné victime · un sacrifié parmi les siens a été choisi au même instant et marqué là où rien ne se voit`,
+    noKin: (a0: string) =>
+      `${a0} n’a personne des siens à bord · il n’y a personne sur qui la marque aurait été posée`,
     searched: (a0: boolean, a1: string) =>
       a0
-        ? `Le Gyo a trouvé la tache de naissance quelque part dans ${a1} · touchez le sacrifié lui-même pour la dépenser`
-        : `Le Gyo n’a rien trouvé sur ${a1} · celui qui a lancé ceci y a masqué sa propre aura`,
+        ? `Le Gyo sent la tache de naissance brûler tout près de ${a1} · le porteur est l’un des passagers autour`
+        : `Le Gyo ne trouve rien sur ${a1} · celui qui a lancé ceci y a masqué sa propre aura`,
     spent: (a0: string) =>
       `Le sacrifié est mort · la malédiction a traversé toute la page et emporté ${a0}, et rien sur elle ne dit qui l’a lancée`,
   },
@@ -135,8 +137,10 @@ export const hatsuStatusFr: HatsuStatusMessages = {
   },
 
   restoration: {
-    restored: (a0: string) =>
-      `${a0} restauré · filtres de chapitre, profondeur de carte et position d’événement ramenés à leur état reposé`,
+    restored: (a0: number, a1: string) =>
+      a0
+        ? `${a1} reposé · ${a0} chose${a0 > 1 ? 's' : ''} qu’il ne pouvait plus faire ${a0 > 1 ? 'sont revenues' : 'est revenue'}, et la carte est à son état de repos`
+        : `${a1} n’était pas fatigué · le soin a tout de même ramené la carte à son état de repos`,
   },
 
   transformation: {
@@ -226,10 +230,20 @@ export const hatsuStatusFr: HatsuStatusMessages = {
     noHead: (a0: string) => `${a0} n’a pas de tête · il n’y a rien à tamponner dessus`,
     alive: (a0: string) =>
       `${a0} n’est pas un objet · le tampon le refuse, alors qu’une copie de Nen ferait l’affaire`,
-    stamped: (a0: number, a1: number, a2: string) =>
-      `人 sur la tête de ${a2} · ${a0} pantin${a1 ? 's' : ''} · retirez une tête et celui-là s’arrête`,
+    stamped: (a0: number, a1: string) =>
+      `人 sur la tête de ${a1} · ${a0}/20 pantins · recliquez sur un marqué pour le verrouiller`,
+    lockedToggle: (a0: string, a1: boolean, a2: number) =>
+      a1
+        ? `${a0} verrouillé · ${a2} pantin${a2 === 1 ? '' : 's'} à l’écoute · cliquez ailleurs pour donner l’ordre`
+        : a2
+          ? `${a0} déverrouillé · ${a2} pantin${a2 === 1 ? '' : 's'} encore à l’écoute`
+          : `${a0} déverrouillé · plus personne n’écoute, les clics remarquent des têtes`,
+    noPuppetsLocked: (a0: number) =>
+      a0
+        ? `Aucun des ${a0} pantins n’est verrouillé · l’ordre n’est adressé à personne`
+        : `Rien n’est marqué · l’ordre n’est adressé à personne`,
     order: (a0: string, a1: number) =>
-      `« Va vers ${a0} » · assez simple pour que tous les ${a1} le suivent`,
+      `« Va vers ${a0} » · assez simple pour que le${a1 > 1 ? 's' : ''} ${a1} pantin${a1 > 1 ? 's' : ''} verrouillé${a1 > 1 ? 's' : ''} le suive${a1 > 1 ? 'nt' : ''}`,
   },
 
   'identity-swap': {
@@ -254,6 +268,8 @@ export const hatsuStatusFr: HatsuStatusMessages = {
     ownFuture: () => 'Lovely Ghostwriter ne peut pas écrire l’avenir de celui qui tient la plume',
     incomplete: (a0: string, a1: string) =>
       `${a0} n’a pas noté ${a1} · la plume ne bouge pas sur une fiche incomplète`,
+    consulting: (a0: string) =>
+      `La plume court encore sur la fiche de ${a0} · la transe n’est pas terminée`,
     guideTitle: () => 'Lovely Ghostwriter · chemins annoncés',
     written: (a0: string, a1: number) =>
       `Quatre quatrains écrits pour ${a0} en transe · le premier est le passé, les ${a1} routes qui suivent ne le sont pas`,
@@ -680,6 +696,7 @@ export const hatsuStatusFr: HatsuStatusMessages = {
     tooBig: 'TROP GROS',
     markFound: 'MARQUE TROUVÉE',
     noTrace: 'AUCUNE TRACE',
+    rested: (a0: number) => `REPOSÉ ×${a0}`,
     guardsBroken: (a0: number) => `PROTECTION ×${a0}`,
     noGuard: 'AUCUNE PROTECTION',
     light: 'LUMIÈRE',
@@ -692,6 +709,9 @@ export const hatsuStatusFr: HatsuStatusMessages = {
     closing: 'RAPPROCHEMENT',
     detonation: 'DÉTONATION',
     noHead: 'AUCUNE TÊTE',
+    locked: 'VERROUILLÉ',
+    unlocked: 'DÉVERROUILLÉ',
+    noLock: 'AUCUN VERROU',
     alive: 'VIVANT',
     refused: 'REFUSÉ',
     noCalls: 'PLUS D’APPELS',

@@ -502,6 +502,16 @@
       // Air Blow.
       case 'stripped':
         return blowAGust()
+      // Order Stamp: the seal coming down, the lock turning on a head that
+      // already wears one, and the puppets moving when they are finally told.
+      // An order with nothing locked is deliberately silent — it is spoken to
+      // nobody, and nobody is what it sounds like.
+      case 'stamped':
+        return strikeAGong(1)
+      case 'stamp-locked':
+        return selectACard(shown.locked ? 2 : 1)
+      case 'ordered':
+        return wakeTheMachine()
       // Remote Punch, whether it found something or bare deck.
       case 'came-up-under':
       case 'came-up-empty':

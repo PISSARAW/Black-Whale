@@ -523,6 +523,18 @@ export const en = {
           metres
             ? `${solid} pushed ${metres} m · it is a thing, so it moves like one`
             : `${solid} is against the wall of its room and goes no further`,
+        stamped: (solid: string, puppets: number) =>
+          `人 on ${solid} · ${puppets}/20 puppets · click it again to lock it`,
+        stampLocked: (solid: string, locked: boolean, locks: number) =>
+          locked
+            ? `${solid} locked · ${locks} puppet${locks === 1 ? '' : 's'} will hear the next order`
+            : `${solid} unlocked · it hears nothing until it is locked again`,
+        ordered: (room: string, puppets: number) =>
+          `“Go to ${room}” · simple enough for all ${puppets} locked puppet${puppets === 1 ? '' : 's'} to follow it`,
+        noLock: (stamped: number) =>
+          stamped
+            ? `None of the ${stamped} puppets is locked · the order is spoken to nobody`
+            : `Nothing is stamped · the order is spoken to nobody`,
         copied: (solid: string) =>
           `A copy of ${solid} stands beside it · it is drawn cold, because no page supports it`,
         crushed: (solid: string) => `${solid} is flat under the weight`,

@@ -461,6 +461,18 @@ export const fr: Messages = {
           metres
             ? `${solid} poussé de ${metres} m · c'est une chose, elle se déplace comme telle`
             : `${solid} bute contre le mur de sa pièce et n'ira pas plus loin`,
+        stamped: (solid, puppets) =>
+          `人 sur ${solid} · ${puppets}/20 pantins · reclique dessus pour le verrouiller`,
+        stampLocked: (solid, locked, locks) =>
+          locked
+            ? `${solid} verrouillé · ${locks} pantin${locks === 1 ? '' : 's'} entendra le prochain ordre`
+            : `${solid} déverrouillé · il n'entend plus rien jusqu'à ce qu'on le reverrouille`,
+        ordered: (room, puppets) =>
+          `« Allez en ${room} » · assez simple pour que les ${puppets} pantin${puppets === 1 ? '' : 's'} verrouillé${puppets === 1 ? '' : 's'} le suive${puppets === 1 ? '' : 'nt'}`,
+        noLock: (stamped) =>
+          stamped
+            ? `Aucun des ${stamped} pantins n'est verrouillé · l'ordre n'est adressé à personne`
+            : `Rien n'est marqué · l'ordre n'est adressé à personne`,
         copied: (solid) =>
           `Une copie de ${solid} se dresse à côté · elle est froide, car aucune planche ne la soutient`,
         crushed: (solid) => `${solid} est aplati sous la masse`,

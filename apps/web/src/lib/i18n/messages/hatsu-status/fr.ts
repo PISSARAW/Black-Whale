@@ -230,11 +230,20 @@ export const hatsuStatusFr: HatsuStatusMessages = {
     noHead: (a0: string) => `${a0} n’a pas de tête · il n’y a rien à tamponner dessus`,
     alive: (a0: string) =>
       `${a0} n’est pas un objet · le tampon le refuse, alors qu’une copie de Nen ferait l’affaire`,
-    alreadyStamped: (a0: string) => `${a0} porte déjà un 人 · tamponnez un autre corps`,
-    stamped: (a0: number, a1: number, a2: string) =>
-      `人 sur la tête de ${a2} · ${a0} pantin${a1 ? 's' : ''} · retirez une tête et celui-là s’arrête`,
+    stamped: (a0: number, a1: string) =>
+      `人 sur la tête de ${a1} · ${a0}/20 pantins · recliquez sur un marqué pour le verrouiller`,
+    lockedToggle: (a0: string, a1: boolean, a2: number) =>
+      a1
+        ? `${a0} verrouillé · ${a2} pantin${a2 === 1 ? '' : 's'} à l’écoute · cliquez ailleurs pour donner l’ordre`
+        : a2
+          ? `${a0} déverrouillé · ${a2} pantin${a2 === 1 ? '' : 's'} encore à l’écoute`
+          : `${a0} déverrouillé · plus personne n’écoute, les clics remarquent des têtes`,
+    noPuppetsLocked: (a0: number) =>
+      a0
+        ? `Aucun des ${a0} pantins n’est verrouillé · l’ordre n’est adressé à personne`
+        : `Rien n’est marqué · l’ordre n’est adressé à personne`,
     order: (a0: string, a1: number) =>
-      `« Va vers ${a0} » · assez simple pour que tous les ${a1} le suivent`,
+      `« Va vers ${a0} » · assez simple pour que le${a1 > 1 ? 's' : ''} ${a1} pantin${a1 > 1 ? 's' : ''} verrouillé${a1 > 1 ? 's' : ''} le suive${a1 > 1 ? 'nt' : ''}`,
   },
 
   'identity-swap': {
@@ -700,6 +709,9 @@ export const hatsuStatusFr: HatsuStatusMessages = {
     closing: 'RAPPROCHEMENT',
     detonation: 'DÉTONATION',
     noHead: 'AUCUNE TÊTE',
+    locked: 'VERROUILLÉ',
+    unlocked: 'DÉVERROUILLÉ',
+    noLock: 'AUCUN VERROU',
     alive: 'VIVANT',
     refused: 'REFUSÉ',
     noCalls: 'PLUS D’APPELS',

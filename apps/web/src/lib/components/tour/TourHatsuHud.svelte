@@ -238,6 +238,14 @@
         return say.unwrapped(solidName(report.solidId))
       case 'pushed':
         return say.pushed(solidName(report.solidId), report.metres)
+      case 'stamped':
+        return say.stamped(solidName(report.solidId), report.puppets)
+      case 'stamp-locked':
+        return say.stampLocked(solidName(report.solidId), report.locked, report.locks)
+      case 'ordered':
+        return say.ordered(roomName(report.spaceId), report.puppets)
+      case 'no-lock':
+        return say.noLock(report.stamped)
       case 'copied':
         return say.copied(solidName(report.solidId))
       case 'crushed':

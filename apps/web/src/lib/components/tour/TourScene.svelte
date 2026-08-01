@@ -1465,6 +1465,32 @@
           turns = root
         }
 
+        // Order Stamp's seal: the two strokes of 人, cut out of a small plate
+        // and turning slowly over the head of whatever is wearing it. A locked
+        // puppet gets a ring around the seal — that is the walk's red outline,
+        // and it is the only tell that says which ones an order will reach.
+        if (seen.kind === 'stamp') {
+          const stroke = (lean: number, offset: number) => {
+            const bar = new THREE.Mesh(
+              new THREE.BoxGeometry(seen.size * 0.16, seen.size * 1.1, seen.size * 0.16),
+              skin,
+            )
+            bar.rotation.z = lean
+            bar.position.set(offset, 0, 0)
+            return bar
+          }
+          root.add(stroke(0.42, -seen.size * 0.2))
+          root.add(stroke(-0.42, seen.size * 0.2))
+          if (seen.stage) {
+            const ring = new THREE.Mesh(
+              new THREE.TorusGeometry(seen.size * 0.95, seen.size * 0.09, 6, 18),
+              skin,
+            )
+            root.add(ring)
+          }
+          turns = root
+        }
+
         if (seen.kind === 'star') {
           const star = new THREE.Mesh(starShape(seen.size), skin)
           root.add(star)

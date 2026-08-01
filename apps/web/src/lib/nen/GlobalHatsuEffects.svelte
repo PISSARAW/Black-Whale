@@ -2510,6 +2510,11 @@
     color: #cf6d62;
     font: 1rem/1 monospace;
   }
+  /* The puppets an order will actually reach, and the only tell that says so. */
+  :global(.hatsu-puppet-locked) {
+    outline: 2px solid #e5484d !important;
+    outline-offset: 2px;
+  }
   :global(.hatsu-left-hand) {
     outline: 2px solid #f0c0dc !important;
   }

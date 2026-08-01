@@ -36,6 +36,8 @@ export type ApparitionKind =
   | 'fish'
   /** One of Kalluto's dolls, stuck to something in the room it watches. */
   | 'paper'
+  /** Order Stamp's 人, on the head of a thing it has made a puppet of. */
+  | 'stamp'
   /** Cargo a relay is holding, waiting to be advanced to the next one. */
   | 'cargo'
   /** Blinky himself: the vacuum, carried at the visitor's side. */
@@ -105,6 +107,10 @@ const FISH = 0x78b6c9
 const PAPER = 0xefb9c8
 const CARGO = 0xe2b86e
 const HOOVER = 0x9fb3c8
+/** Order Stamp's own red, the one the technique is published in. */
+const STAMP = 0xcf6d62
+/** And the red a locked puppet wears, which is the red of the web's outline. */
+const STAMP_LOCKED = 0xff2d2d
 /** Kalluto is drawn in ink: a black kimono, a bob, and a painted face. */
 const PUPPET = 0x1b1b22
 /** Bungee Gum is Hisoka's own pink, the same the web draws his filament in. */
@@ -526,6 +532,33 @@ export function apparitionsOn(
       size: 0.4,
       colour: CARGO,
       stage: 0,
+      hidden: false,
+    })
+  }
+
+  // Order Stamp's 人, one over every head it is on. A stamped puppet is drawn
+  // in the technique's own red; a locked one — the one an order will actually
+  // reach — is drawn in the bright red the web draws its outline in, so the
+  // crowd is readable at a glance before anything is said to it.
+  for (const [id, hold] of Object.entries(world.solids)) {
+    if (!hold.stamped || hold.gone) continue
+    const puppet = solidById(ship, world, id)
+    const stampRoom = puppet ? spaceOf(puppet.spaceId) : null
+    const measured = stampRoom ? room(ship, stampRoom) : null
+    if (!puppet || !stampRoom || !measured) continue
+    const now = solidNow(puppet, hold)
+    found.push({
+      id: `stamp:${id}`,
+      kind: 'stamp',
+      spaceId: stampRoom.id,
+      tierId: stampRoom.tierId,
+      at: now.at,
+      // On the head of the thing, which is where the stamp goes: just clear of
+      // whatever it stands on, and never through the deckhead.
+      y: Math.min(measured.floor + now.base + now.height + 0.35, measured.ceiling - 0.2),
+      size: 0.34,
+      colour: hold.locked ? STAMP_LOCKED : STAMP,
+      stage: hold.locked ? 1 : 0,
       hidden: false,
     })
   }

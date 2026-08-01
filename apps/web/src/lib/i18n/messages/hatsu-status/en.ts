@@ -233,11 +233,20 @@ export const hatsuStatusEn = {
     noHead: (a0: string) => `${a0} has no head · there is nothing on it to stamp`,
     alive: (a0: string) =>
       `${a0} is not an object · the stamp refuses it, though a Nen copy of it would do`,
-    alreadyStamped: (a0: string) => `${a0} already carries a 人 · stamp a different body`,
-    stamped: (a0: number, a1: number, a2: string) =>
-      `人 on ${a2}'s head · ${a0} puppet${a1 ? 's' : ''} · take a head off and that one stops`,
+    stamped: (a0: number, a1: string) =>
+      `人 on ${a1}'s head · ${a0}/20 puppets · click a stamped one again to lock it`,
+    lockedToggle: (a0: string, a1: boolean, a2: number) =>
+      a1
+        ? `${a0} locked · ${a2} puppet${a2 === 1 ? '' : 's'} listening · click anywhere else to order them`
+        : a2
+          ? `${a0} unlocked · ${a2} puppet${a2 === 1 ? '' : 's'} still listening`
+          : `${a0} unlocked · nothing is listening, so clicks stamp heads again`,
+    noPuppetsLocked: (a0: number) =>
+      a0
+        ? `None of the ${a0} puppets is locked · the order is spoken to nobody`
+        : `Nothing is stamped · the order is spoken to nobody`,
     order: (a0: string, a1: number) =>
-      `“Go to ${a0}” · simple enough for all ${a1} of them to follow it`,
+      `“Go to ${a0}” · simple enough for all ${a1} locked puppet${a1 === 1 ? '' : 's'} to follow it`,
   },
 
   'identity-swap': {
@@ -704,6 +713,9 @@ export const hatsuStatusEn = {
     closing: 'CLOSING',
     detonation: 'DETONATION',
     noHead: 'NO HEAD',
+    locked: 'LOCKED',
+    unlocked: 'UNLOCKED',
+    noLock: 'NO LOCK',
     alive: 'ALIVE',
     refused: 'REFUSED',
     noCalls: 'NO CALLS',

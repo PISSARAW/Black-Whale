@@ -6,6 +6,7 @@ import {
   EMPTY_WORLD,
   RESTING_BODY,
   SOLID_HATSU_KINDS,
+  STAMP_LIMIT,
   SUN_FLARE_METRES_PER_HIT,
   TOUR_HATSU_KINDS,
   aimedSolid,
@@ -24,6 +25,7 @@ import {
   flyTheOwl,
   identityOf,
   linkIsOpen,
+  lockedPuppets,
   nextEyeMode,
   nextOwlMode,
   OWL_SECONDS,
@@ -33,6 +35,7 @@ import {
   shellsFor,
   solidNow,
   solidWalls,
+  stampedPuppets,
   spendPage,
   techniqueHolding,
   reachOf,
@@ -47,7 +50,7 @@ import {
 } from './hatsu'
 import { apparitionsOn } from './apparitions'
 import { HATSU_PROFILES } from '$lib/nen/hatsuRegistry'
-import { pointInPolygon, structureFootprint } from './geometry'
+import { pointInPolygon } from './geometry'
 
 const ship = buildShip()
 
@@ -384,16 +387,70 @@ describe('what a technique does to a solid', () => {
     expect(forged.name).toBe(solidA.name)
   })
 
-  it('never shoves a solid out through the wall of its room', () => {
+  it('stamps twenty heads and no more', () => {
     let world = EMPTY_WORLD
-    // Twenty pushes in one direction: the room is what stops it, not a counter.
-    for (let push = 0; push < 20; push++) world = hit(world, 'command', solidA.id).world
-    const moved = solidNow(solidA, world.solids[solidA.id])
-    const room = ship.spaces.get(solidA.spaceId)!
-    const inside = structureFootprint(moved).every((corner) =>
-      pointInPolygon(corner, room.footprint),
-    )
-    expect(inside).toBe(true)
+    const heads = ship.structures.slice(0, STAMP_LIMIT)
+    heads.forEach((head, index) => {
+      const stamped = hit(world, 'command', head.id)
+      expect(stamped.report).toMatchObject({ kind: 'stamped', puppets: index + 1 })
+      world = stamped.world
+    })
+    expect(stampedPuppets(world)).toHaveLength(STAMP_LIMIT)
+
+    // The twenty-first click is not a twenty-first stamp: the stamp is full, so
+    // the thing under it is a place to send the crowd rather than a puppet.
+    const full = hit(world, 'command', ship.structures[STAMP_LIMIT].id)
+    expect(full.report.kind).not.toBe('stamped')
+    expect(stampedPuppets(full.world)).toHaveLength(STAMP_LIMIT)
+  })
+
+  it('locks and unlocks a head that already wears the stamp', () => {
+    const stamped = hit(EMPTY_WORLD, 'command', solidA.id)
+    expect(lockedPuppets(stamped.world)).toEqual([])
+
+    const locked = hit(stamped.world, 'command', solidA.id)
+    expect(locked.report).toMatchObject({ kind: 'stamp-locked', locked: true, locks: 1 })
+    expect(lockedPuppets(locked.world)).toEqual([solidA.id])
+
+    const unlocked = hit(locked.world, 'command', solidA.id)
+    expect(unlocked.report).toMatchObject({ kind: 'stamp-locked', locked: false, locks: 0 })
+    expect(lockedPuppets(unlocked.world)).toEqual([])
+  })
+
+  it('takes a lock as the end of the marking and the start of the ordering', () => {
+    // Stamped but with nothing locked, a cast at a fresh solid is one more
+    // puppet; with something locked, the same cast is where they are sent.
+    let world = hit(EMPTY_WORLD, 'command', solidA.id).world
+    expect(hit(world, 'command', solidB.id).report).toMatchObject({ kind: 'stamped' })
+
+    world = hit(world, 'command', solidA.id).world
+    const told = hit(world, 'command', solidB.id)
+    expect(told.report).toMatchObject({ kind: 'ordered', puppets: 1 })
+    expect(stampedPuppets(told.world)).toEqual([solidA.id])
+  })
+
+  it('sends the locked puppets and leaves the rest where they stand', () => {
+    let world = hit(EMPTY_WORLD, 'command', solidA.id).world
+    world = hit(world, 'command', solidB.id).world
+    world = hit(world, 'command', solidA.id).world
+
+    const before = solidNow(solidB, world.solids[solidB.id]).at
+    const told = hit(world, 'command', null, { targetId: busiest.space.id })
+    expect(told.report).toMatchObject({ kind: 'ordered', spaceId: busiest.space.id, puppets: 1 })
+    // The one that was locked went, and went somewhere inside the room it was
+    // sent to; the one that was only stamped did not move at all.
+    const sent = solidNow(solidA, told.world.solids[solidA.id])
+    expect(pointInPolygon(sent.at, busiest.space.footprint)).toBe(true)
+    expect(solidNow(solidB, told.world.solids[solidB.id]).at).toEqual(before)
+    // Obeying does not use the stamp up: the crowd is still there to be told again.
+    expect(lockedPuppets(told.world)).toEqual([solidA.id])
+  })
+
+  it('speaks an order with nothing locked to nobody', () => {
+    const stamped = hit(EMPTY_WORLD, 'command', solidA.id).world
+    const told = hit(stamped, 'command', null, { targetId: busiest.space.id })
+    expect(told.report).toMatchObject({ kind: 'no-lock', stamped: 1 })
+    expect(told.world.solids[solidA.id].at).toBeUndefined()
   })
 
   it('lets the third volley finish it', () => {

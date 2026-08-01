@@ -296,6 +296,15 @@ export const PAIN_PACKER_CLASS = 'hatsu-pain-packer'
 
 const packedHits = () => Array.from(document.querySelectorAll<HTMLElement>(`.${PAIN_PACKER_CLASS}`))
 
+/**
+ * How many heads Order Stamp's 人 can be on at once.
+ *
+ * The walk keeps a count of its own under the same figure — see `STAMP_LIMIT`
+ * in `$lib/tour/hatsu` — because nothing pure may reach into this file, which
+ * is a page's worth of DOM from end to end.
+ */
+const STAMP_LIMIT = 20
+
 /** Zazan's radius came from the damage taken first; so does this one, in pixels. */
 const SUN_FLARE_BASE_RADIUS = 140
 const SUN_FLARE_RADIUS_PER_HIT = 90
@@ -1055,16 +1064,46 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
     }
     if (!head) puppet = target.closest<HTMLElement>(BODIES) ?? target
     const stamped = ctx.selectedElements.filter((body) => body.isConnected)
-    if (stamped.length < 3) {
-      if (!head) {
-        ctx.status = ctx.m['command'].noHead(label)
-        ctx.addPoint(x, y, ctx.m.tokens.noHead, { alert: true })
-        return true
-      }
-      if (stamped.includes(puppet)) {
-        ctx.status = ctx.m['command'].alreadyStamped(ctx.targetLabel(puppet))
-        return true
-      }
+    const lockedOf = (bodies: HTMLElement[]) =>
+      bodies.filter((body) => body.classList.contains('hatsu-puppet-locked'))
+
+    // Twenty puppets is far too many to speak to as a crowd, so a second click
+    // on a head that already wears the 人 locks it instead of stamping it
+    // again: the lock is who the next order is addressed to, and nothing else.
+    //
+    // Anywhere inside a puppet counts as that puppet. Blocks nest — a list
+    // inside a section, a figure inside an article — so the climb above lands
+    // on a different body depending on which line was under the pointer, and a
+    // visitor clicking the same thing twice was stamping something new the
+    // second time rather than locking what they had just stamped.
+    const already =
+      stamped.find((body) => body === puppet) ??
+      stamped
+        .filter((body) => body.contains(target))
+        .sort((a, b) => (a.contains(b) ? 1 : -1))[0]
+    if (already) {
+      const locked = already.classList.toggle('hatsu-puppet-locked')
+      ctx.status = ctx.m['command'].lockedToggle(
+        ctx.targetLabel(already),
+        locked,
+        lockedOf(stamped).length,
+      )
+      ctx.addPoint(x, y, locked ? ctx.m.tokens.locked : ctx.m.tokens.unlocked)
+      return true
+    }
+
+    // The lock is what tells stamping from ordering, because nothing else can.
+    //
+    // A page is blocks inside blocks: click a line of prose and the body that
+    // owns it nearly always has a heading, so every click looks like one more
+    // puppet and the order never comes. So the lock does double duty — turn one
+    // and the crowd is closed: the next click on anything else is where they are
+    // being sent. Unlock them all and the stamp goes back to taking heads.
+    const locked = lockedOf(stamped)
+
+    // A head nobody has stamped yet, and room left on the stamp: this is one
+    // more puppet rather than a place to send the ones already standing.
+    if (!locked.length && head && stamped.length < STAMP_LIMIT) {
       const conjured = isNenMade(puppet) || Boolean(puppet.dataset.hatsuFake)
       // Alive means a passenger, not a control and not a room with people in
       // it. Chrollo puppeteers objects, and a block of the archive is an object
@@ -1079,25 +1118,38 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
       ctx.remember(head).classList.add('hatsu-stamped-head')
       head.dataset.hatsuForgery = '人'
       ctx.remember(puppet).classList.add('hatsu-stamped')
-      ctx.status = ctx.m['command'].stamped(
-        stamped.length + 1,
-        stamped.length,
-        ctx.targetLabel(puppet),
-      )
+      ctx.status = ctx.m['command'].stamped(stamped.length + 1, ctx.targetLabel(puppet))
       ctx.addPoint(x, y, ctx.targetLabel(puppet))
       return true
     }
+
+    // Nothing stamped yet and nothing here to stamp: the stamp has not started.
+    if (!head && stamped.length === 0) {
+      ctx.status = ctx.m['command'].noHead(label)
+      ctx.addPoint(x, y, ctx.m.tokens.noHead, { alert: true })
+      return true
+    }
+
+    // Everything left is the order, and the order goes to the locked ones only.
+    // Given with none locked it is spoken to nobody, which is the whole point
+    // of the lock: twenty puppets do not all move because one click missed.
+    if (!locked.length) {
+      ctx.status = ctx.m['command'].noPuppetsLocked(stamped.length)
+      ctx.addPoint(x, y, ctx.m.tokens.noLock, { alert: true })
+      return true
+    }
+
     const destination = target.getBoundingClientRect()
-    for (const puppet of stamped) {
-      const rect = puppet.getBoundingClientRect()
-      ctx.remember(puppet)
-      puppet.style.transition = 'transform .7s ease'
+    for (const obedient of locked) {
+      const rect = obedient.getBoundingClientRect()
+      ctx.remember(obedient)
+      obedient.style.transition = 'transform .7s ease'
       ctx.applyTransform(
-        puppet,
+        obedient,
         `translate(${destination.left - rect.left}px, ${destination.top - rect.top}px) scale(.72)`,
       )
     }
-    ctx.status = ctx.m['command'].order(label, stamped.length)
+    ctx.status = ctx.m['command'].order(label, locked.length)
     ctx.addPoint(x, y, ctx.m.tokens.order(label))
     return true
   },

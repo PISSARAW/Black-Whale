@@ -925,7 +925,7 @@ export const HATSU_PROFILES: HatsuProfile[] = [
     owner: 'Chrollo',
     kind: 'command',
     instruction:
-      'Stamp lifeless blocks that have a head, then click a destination to give all three puppets one simple order.',
+      'Stamp up to 20 lifeless blocks that have a head; click a stamped one again to lock it in red, and once anything is locked the next click elsewhere is the order the locked puppets obey.',
     rule: 'The stamp controls puppets as objects, never beings the user considers alive.',
     cost: 'Only inanimate page bodies',
     color: '#cf6d62',

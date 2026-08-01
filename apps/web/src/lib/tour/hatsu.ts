@@ -561,6 +561,16 @@ export interface SolidHold {
   alive?: boolean
   /** The Sun and Moon's two marks. */
   mark?: 'sun' | 'moon'
+  /** Order Stamp has put its 人 on this one: it is a puppet now. */
+  stamped?: boolean
+  /**
+   * The puppet is locked, and locked is what an order is addressed to.
+   *
+   * Twenty can wear the stamp at once, which is far too many to speak to as a
+   * crowd, so the stamp keeps a second state on top of it: an order goes to the
+   * locked ones only, and an order given with none locked is spoken to nobody.
+   */
+  locked?: boolean
   /** Volleys landed, for the techniques that reward commitment. */
   hits?: number
   /** A Gallery Fake copy, and the solid it is a copy of. */
@@ -725,6 +735,11 @@ export type TourReport =
   | { kind: 'wrapped'; solidId: string }
   | { kind: 'unwrapped'; solidId: string }
   | { kind: 'pushed'; solidId: string; metres: number }
+  // Order Stamp, which is three states rather than one: stamped, locked, told.
+  | { kind: 'stamped'; solidId: string; puppets: number }
+  | { kind: 'stamp-locked'; solidId: string; locked: boolean; locks: number }
+  | { kind: 'ordered'; spaceId: string; puppets: number }
+  | { kind: 'no-lock'; stamped: number }
   | { kind: 'copied'; solidId: string }
   | { kind: 'crushed'; solidId: string }
   | { kind: 'volley'; solidId: string; hits: number }
@@ -1053,6 +1068,66 @@ function shove(
   return outline.every((corner) => pointInPolygon(corner, room.footprint)) ? target : null
 }
 
+// ── Order Stamp ───────────────────────────────────────────────────────────
+//
+// The one technique in the walk that keeps a crowd rather than a target, so
+// its three pieces of bookkeeping live together here rather than inside the
+// roster below.
+
+/** How many heads the stamp can be on at once. */
+export const STAMP_LIMIT = 20
+
+/** Everything wearing the 人, whether or not it is being spoken to. */
+export const stampedPuppets = (world: TourWorld): string[] =>
+  Object.entries(world.solids)
+    .filter(([, hold]) => hold.stamped && !hold.gone)
+    .map(([id]) => id)
+
+/** The puppets an order would actually reach. */
+export const lockedPuppets = (world: TourWorld): string[] =>
+  Object.entries(world.solids)
+    .filter(([, hold]) => hold.stamped && hold.locked && !hold.gone)
+    .map(([id]) => id)
+
+/**
+ * The order itself: one simple instruction, and it goes to the locked only.
+ *
+ * They are set down in a ring around the point that was pointed at, because
+ * twenty puppets sent to one spot would be twenty puppets inside each other.
+ * The stamp is not spent by being obeyed — they stay stamped and stay locked,
+ * so the next order finds the same crowd.
+ */
+function orderThePuppets(world: TourWorld, room: Space, to: Vec2): TourCastResult {
+  const locked = lockedPuppets(world)
+  if (!locked.length) {
+    return { world, report: { kind: 'no-lock', stamped: stampedPuppets(world).length } }
+  }
+
+  const solids = { ...world.solids }
+  locked.forEach((id, index) => {
+    const angle = (index * Math.PI * 2) / locked.length
+    const ring = locked.length > 1 ? 1.4 : 0
+    const stood: Vec2 = [to[0] + Math.cos(angle) * ring, to[1] + Math.sin(angle) * ring]
+    // A puppet told to go somewhere goes somewhere inside the room: a ring wide
+    // enough to keep twenty apart is wide enough to put one through a bulkhead,
+    // and a solid standing in the steel is a wall the visitor cannot get past.
+    solids[id] = { ...solids[id], at: pointInPolygon(stood, room.footprint) ? stood : to }
+  })
+
+  return {
+    world: {
+      ...world,
+      solids,
+      // A puppet that walked into another room stands in that room now, the
+      // same way a relay's cargo does.
+      copies: world.copies.map((copy) =>
+        locked.includes(copy.id) ? { ...copy, spaceId: room.id } : copy,
+      ),
+    },
+    report: { kind: 'ordered', spaceId: room.id, puppets: locked.length },
+  }
+}
+
 /**
  * Everything one cast against a solid works with.
  *
@@ -1133,17 +1208,45 @@ const SOLID_CASTS: Partial<Record<HatsuInteractionKind, SolidCast>> = {
           report: { kind: 'wrapped', solidId: id },
         },
 
-  // The stamp moves a thing as a thing, which is all the walk has: it is
-  // pushed the way the visitor is looking.
-  command: ({ world, ship, structure, hold, id, heading }) => {
-    const push: Vec2 = [-Math.sin(heading) * 3, -Math.cos(heading) * 3]
-    const landing = shove(ship, world, structure, hold, push)
-    return landing
-      ? {
-          world: withHold(world, id, { at: landing }),
-          report: { kind: 'pushed', solidId: id, metres: 3 },
-        }
-      : { world, report: { kind: 'pushed', solidId: id, metres: 0 } }
+  // The stamp is not a push: it is a 人 put on a head, and the thing wearing it
+  // does what it is told afterwards. Three clicks, three states — stamp a solid
+  // that has none, lock or unlock one that has, and once twenty are wearing it
+  // a click on anything else is the order rather than a twenty-first stamp.
+  command: ({ world, ship, structure, hold, id }) => {
+    if (hold?.stamped) {
+      const locked = !hold.locked
+      const after = withHold(world, id, { locked })
+      return {
+        world: after,
+        report: {
+          kind: 'stamp-locked',
+          solidId: id,
+          locked,
+          locks: lockedPuppets(after).length,
+        },
+      }
+    }
+
+    // The lock is what tells stamping from ordering: turn one and the crowd is
+    // closed, so the next cast at anything else is where they are being sent
+    // rather than a twenty-first head. Unlock them all and the stamp goes back
+    // to taking heads. The walk holds to the web's rule here, because a visitor
+    // who has learnt the technique on the archive has learnt it aboard as well.
+    if (!lockedPuppets(world).length && stampedPuppets(world).length < STAMP_LIMIT) {
+      const after = withHold(world, id, { stamped: true, locked: false })
+      return {
+        world: after,
+        report: { kind: 'stamped', solidId: id, puppets: stampedPuppets(after).length },
+      }
+    }
+
+    // Otherwise this cast is a place to send them, and the solid under the
+    // reticle is the place. It is told the way a room is told.
+    const room = ship.spaces.get(structure.spaceId)
+    const to = solidNow(structure, hold).at
+    return room
+      ? orderThePuppets(world, room, to)
+      : { world, report: { kind: 'no-lock', stamped: stampedPuppets(world).length } }
   },
 
   clone: ({ world, ship, structure, hold, id }) => {
@@ -1413,6 +1516,16 @@ function castPastTheTarget(
       },
       report: { kind: 'coughed-up', solidId: coughed.id, spaceId: room.id, held: hoover.length },
     }
+  }
+
+  // Order Stamp aimed at no solid is the order: the stamp is already on the
+  // heads that matter, and this is the click that tells the locked ones where
+  // to go. Nothing locked and the order is spoken into the room and ignored,
+  // which is the whole point of the lock.
+  if (kind === 'command' && !structure) {
+    const room = input.targetId ? ship.spaces.get(input.targetId) : null
+    if (!room) return { world, report: { kind: 'no-target' } }
+    return orderThePuppets(world, room, landingIn(room, input.at, input.heading)[room.id])
   }
 
   if (kind === 'remote-strike' && !structure) {

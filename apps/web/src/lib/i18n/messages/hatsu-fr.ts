@@ -346,7 +346,7 @@ export const hatsuFr: Record<string, HatsuTextOverride> = {
     owner: 'Chrollo',
     action: 'Tamponner les pantins de la page',
     instruction:
-      'Tamponnez des blocs inertes pourvus d’une tête, puis cliquez une destination pour donner aux trois pantins un seul ordre simple.',
+      'Tamponnez jusqu’à 20 blocs inertes pourvus d’une tête ; recliquez sur un bloc marqué pour le verrouiller en rouge, et dès qu’un pantin est verrouillé le clic suivant ailleurs devient l’ordre que les verrouillés exécutent.',
     rule: 'Le tampon contrôle des pantins en tant qu’objets, jamais des êtres que son utilisateur considère vivants.',
     cost: 'Uniquement des corps inanimés de la page',
   },

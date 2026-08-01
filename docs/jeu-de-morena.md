@@ -409,12 +409,37 @@ Testé sur 89 cas : 68 sur le réducteur (`apps/web/src/lib/tour/morena.test.ts`
 branchement moteur (`packages/ability-modules/test/morena-game.spec.ts`), dont une négociation
 complète appendue à une vraie `InMemoryBranchEngine` et relue dans l'état réduit.
 
-### 6.4 Ce qui reste
+### 6.4 Le §4.3, fait — et la clé qui ne servait à rien
 
-Le §4.3 : `ContagionDashboard` n'existe toujours pas — le `ui.componentKey` du manifeste pointe
-sur un composant qui n'est pas écrit. L'onglet **Partie** et la **frise des fraudes** qu'il
-décrit sont désormais entièrement lisibles depuis l'état (`riders`, `aftermath`, les beats
-`played` avec leur `seen`), donc c'est du rendu et plus de la conception.
+`ContagionDashboard` existait comme _nom_ depuis l'écriture du module (`ui.componentKey`, et
+`customComponent` dans le manifeste d'interaction) et comme rien d'autre : rien dans l'app ne
+lisait `getUIComponent()`. Une clé que personne ne résout est une promesse que personne ne
+tient, donc il a fallu écrire les deux moitiés.
+
+- [`lib/nen/abilityComponents.ts`](../apps/web/src/lib/nen/abilityComponents.ts) — la table
+  `componentKey → composant`, et `componentFor()` qui rend `null` pour tout le reste : la
+  plupart des capacités n'ont rien à montrer au-delà du panneau « Pourquoi ? », et elles
+  n'apparaissent pas. La table est volontairement presque vide, et un test le dit à voix haute
+  pour que le jour où elle ne l'est plus, quelqu'un ait à le justifier.
+- [`lib/nen/ContagionDashboard.svelte`](../apps/web/src/lib/nen/ContagionDashboard.svelte) —
+  les vingt-deux emplacements avec leurs niveaux, la négociation en cours (tour, mains,
+  cimetière, surveillance, verdict), les trois conditions, et la **frise des fraudes** : une
+  ligne par coup joué sous aura, avec ce qu'il achetait et `VUE` / `RATÉE` en bout de ligne. La
+  frise est lue depuis `game.log` plutôt que tenue à part — une frise qui pourrait contredire
+  le journal serait une frise incitable.
+
+Le garde-fou du §5 est dans le composant : sous `spoilerLimit < 407`, il n'affiche rien d'autre
+que « procédure de recrutement inconnue ».
+
+Monté sur `/tour/morena`, où une vraie partie existe. Le composant ne décide rien : on lui
+passe un `MorenaGame` et une liste de membres, tous deux au format que le moteur écrit.
+
+### 6.5 Ce qui reste
+
+Rien de la spec. Le seul manque est un endroit du site où une partie de Morena existe _dans une
+branche_ plutôt que dans la marche — `/simulations` est le candidat naturel, puisque
+`data.branch.snapshot.effects` y est déjà en portée et que `componentFor()` sait désormais quoi
+en faire.
 
 ---
 
@@ -533,3 +558,27 @@ de ligne.
 `evict` est le seul verbe qui manque, et il n'ajoute pas d'exception : il applique
 `leaveTheTable()` à l'autre siège. Deux capacités le partagent d'emblée, l'une frauduleuse et
 l'autre non — ce qui est la bonne forme pour ce jeu.
+
+### 7.6 Les cinq sièges, ouverts
+
+Fait. `TABLE_TECHNIQUES` compte trente-trois entrées, et le verbe `evict` existe. Trois
+décisions ont dû être prises que le tableau ne tranchait pas :
+
+- **Une fraude de procuration vue annule la procuration.** `proxy` remet `proxied` à `false`
+  quand la pièce voit le coup : ce qui portait le visage tombe, et la personne assise est celle
+  qui l'avait envoyé. C'est ce qui rend les quatre proxys chers (`guardian`, `mimicry`,
+  `projection`, `identity-swap`) réellement risqués, là où les quatre gratuits sont chiffrés à
+  zéro exposition parce que le canon ne donne aucun moyen de les voir.
+- **Metamorphosen s'use.** Le canon fixe sa durée sur le temps passé avec la personne copiée, et
+  sept questions dans une pièce close sont exactement ce budget qui se dépense. D'où
+  `wearsOff: true` et `exposureNow(move, game)`, qui ajoute douze points d'exposition par tour.
+  C'est une règle partagée sur le mouvement, pas une fonction par capacité : une exception avec
+  des étapes en plus n'aurait pas été mieux qu'une exception.
+- **Le carton rouge s'obtient.** `evict` légal exige deux questions déjà posées — Mizaistom
+  n'expulse personne qu'il n'a pas averti. Joué plus tôt, ce n'est simplement pas un coup.
+
+`evict` fait ce que le tableau annonçait : la partie se clôt en `cancelled`, `ending:
+'abandoned'`, `aftermath: ['evicted']`, et **la main n'est pas réduite** — c'est la seule sortie
+de ce jeu qui ne passe pas par la Manipulation, puisque celle qui est partie n'est pas vous. Vu
+en train de le faire, en revanche, c'est vous le tricheur et la partie continue sans le tour de
+passe-passe.

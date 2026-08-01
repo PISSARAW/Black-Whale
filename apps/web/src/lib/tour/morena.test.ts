@@ -13,6 +13,8 @@ import {
   TABLE_KINDS,
   TABLE_TECHNIQUES,
   askMorena,
+  exposureNow,
+  moveFor,
   dealTheGame,
   infectionAfter,
   lastCard,
@@ -405,7 +407,7 @@ describe('what the walk lays on the table', () => {
 // ── What a Hatsu does to twelve cards ─────────────────────────────
 
 /** Always caught, and never caught, so detection is never the thing under test. */
-const caught = () => 0
+const caught_ = () => 0
 const clean = () => 0.999
 
 /** A game with a technique in hand and the room as watchful as it really is. */
@@ -520,7 +522,7 @@ describe('reading her hand', () => {
   })
 
   it('costs the wider words when the chain is seen, which it usually is', () => {
-    const seen = playTechnique(withTechnique('dowsing'), { random: caught })
+    const seen = playTechnique(withTechnique('dowsing'), { random: caught_ })
     expect(seen.manipulated).toBe(true)
     expect(seen.hand).toEqual(['yes', 'no'])
     expect(seen.log.some((beat) => beat.kind === 'played' && beat.seen)).toBe(true)
@@ -528,7 +530,7 @@ describe('reading her hand', () => {
 
   it('cannot be seen at all when it is lived under Zetsu', () => {
     // Parallel Future is priced at zero exposure, so the roll is irrelevant.
-    const seen = playTechnique(withTechnique('future'), { random: caught })
+    const seen = playTechnique(withTechnique('future'), { random: caught_ })
     expect(seen.manipulated).toBe(false)
     expect(seen.foreseen).not.toBeNull()
   })
@@ -544,7 +546,7 @@ describe('reading her hand', () => {
 describe('hiding your own', () => {
   it('suspends an exchange without it counting as walking out', () => {
     const before = withTechnique('melody')
-    const passed = playTechnique(before, { random: caught })
+    const passed = playTechnique(before, { random: caught_ })
     expect(passed.manipulated).toBe(false)
     expect(passed.ending).toBeNull()
     expect(passed.round).toBe(before.round + 1)
@@ -589,7 +591,7 @@ describe('making stakes', () => {
       hand: ['no'] as AnswerCard[],
       graveyard: ['yes'] as AnswerCard[],
     }
-    const minted = playTechnique(spent, { random: caught })
+    const minted = playTechnique(spent, { random: caught_ })
     expect(minted.hand).toContain('yes')
     expect(minted.graveyard).toEqual([])
     expect(minted.kissed).toBe(false)
@@ -612,7 +614,7 @@ describe('making stakes', () => {
 
 describe('changing what the answer is worth', () => {
   it('binds the verdict rather than changing it', () => {
-    const bound = playTechnique(withTechnique('contract'), { random: caught })
+    const bound = playTechnique(withTechnique('contract'), { random: caught_ })
     expect(bound.hand).toEqual([...ANSWER_CARDS])
     const over = settle({ ...bound, hand: ['yes'], phase: 'settling' })
     expect(over.verdict).toBe('infected')
@@ -620,7 +622,7 @@ describe('changing what the answer is worth', () => {
   })
 
   it('makes the vow the one thing the Manipulation cannot narrow', () => {
-    const sworn = playTechnique(withTechnique('heart-vow'), { random: caught })
+    const sworn = playTechnique(withTechnique('heart-vow'), { random: caught_ })
     expect(sworn.shielded).toBe(true)
     const pressed = narrowTheAnswer(sworn, 'cheating')
     expect(pressed).toBe(sworn)
@@ -655,7 +657,7 @@ describe('changing what the answer is worth', () => {
 
 describe('not being the person sitting', () => {
   it('caps the game at a draw and keeps the answer off you', () => {
-    const proxied = playTechnique(withTechnique('puppet'), { random: caught })
+    const proxied = playTechnique(withTechnique('puppet'), { random: caught_ })
     expect(proxied.proxied).toBe(true)
     const over = settle({ ...proxied, hand: ['yes'], phase: 'settling', kissed: true })
     expect(over.verdict).toBe('infected')
@@ -690,12 +692,82 @@ describe('the room, which is the thing that catches you', () => {
 
   it('cannot catch what an unwatched room cannot see', () => {
     const unwatched: MorenaGame = { ...withTechnique('dowsing'), watch: 0 }
-    expect(playTechnique(unwatched, { random: caught }).manipulated).toBe(false)
+    expect(playTechnique(unwatched, { random: caught_ }).manipulated).toBe(false)
   })
 
   it('leaves an honest hand exactly as it was', () => {
     const honest = dealTheGame({ marked: null })
-    expect(playTechnique(honest, { random: caught })).toBe(honest)
+    expect(playTechnique(honest, { random: caught_ })).toBe(honest)
     expect(honest.technique).toBeNull()
+  })
+})
+
+describe('the five seats the table opened last', () => {
+  it('empties her chair rather than yours, and does not narrow you for it', () => {
+    // The one exit that is not through the Manipulation: she is the one who
+    // left, so the sanction has nobody to fall on.
+    const evicted = playTechnique(withTechnique('teleport'), { random: clean })
+    expect(evicted.phase).toBe('over')
+    expect(evicted.verdict).toBe('cancelled')
+    expect(evicted.ending).toBe('abandoned')
+    expect(evicted.manipulated).toBe(false)
+    expect(evicted.aftermath).toContain('evicted')
+    expect(infectionAfter(evicted).said).toBe(false)
+  })
+
+  it('leaves you at the table, narrowed, when the theft is seen', () => {
+    const seen = playTechnique(withTechnique('teleport'), { random: caught_ })
+    expect(seen.phase).not.toBe('over')
+    expect(seen.manipulated).toBe(true)
+    expect(seen.aftermath).toEqual([])
+  })
+
+  it('will not play the red card before there is anything to expel her over', () => {
+    // Mizaistom does not expel anybody he has not already cautioned, and two
+    // questions asked is the caution.
+    const early = withTechnique('tribunal')
+    expect(playTechnique(early, { random: clean })).toBe(early)
+
+    const warned = { ...early, asked: ['goal' as const, 'power' as const] }
+    const shown = playTechnique(warned, { random: caught_ })
+    expect(shown.phase).toBe('over')
+    expect(shown.aftermath).toContain('evicted')
+    // Legal, so being watched costs it nothing.
+    expect(shown.manipulated).toBe(false)
+  })
+
+  it('seats a beast wearing a dead woman, and drops it the moment it is seen', () => {
+    const held = playTechnique(withTechnique('guardian'), { random: clean })
+    expect(held.proxied).toBe(true)
+
+    const seen = playTechnique(withTechnique('guardian'), { random: caught_ })
+    expect(seen.proxied).toBe(false)
+    expect(seen.manipulated).toBe(true)
+  })
+
+  it('wears the borrowed face thinner every round', () => {
+    const fresh = withTechnique('mimicry')
+    const late = { ...fresh, round: 5 }
+    expect(exposureNow(moveFor('mimicry'), late)).toBeGreaterThan(
+      exposureNow(moveFor('mimicry'), fresh),
+    )
+    // And an unwatched room costs it nothing, however long it has been on.
+    expect(exposureNow(moveFor('mimicry'), { ...late, watch: 0 })).toBe(0)
+  })
+
+  it('never prices a move outside the unit interval, however long the hand runs', () => {
+    for (const kind of TABLE_KINDS) {
+      const late = { ...withTechnique(kind), round: 40 }
+      const now = exposureNow(moveFor(kind), late)
+      expect(now, `${kind} is priced at ${now}`).toBeGreaterThanOrEqual(0)
+      expect(now).toBeLessThanOrEqual(1)
+    }
+  })
+
+  it('sits a sleeping body in the chair, and the kiss reaches nothing', () => {
+    const projected = playTechnique(withTechnique('projection'), { random: clean })
+    expect(projected.proxied).toBe(true)
+    const over = settle({ ...projected, hand: ['yes'], phase: 'settling', kissed: true })
+    expect(infectionAfter(over)).toMatchObject({ said: true, kissed: false, level: null })
   })
 })

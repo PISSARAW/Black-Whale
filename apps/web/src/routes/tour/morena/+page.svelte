@@ -20,6 +20,7 @@
    */
   import Seo from '$lib/components/Seo.svelte'
   import TourScene from '$lib/components/tour/TourScene.svelte'
+  import ContagionDashboard from '$lib/nen/ContagionDashboard.svelte'
   import { breadcrumbSchema } from '$lib/seo/schema'
   import { link, locale, t } from '$lib/i18n'
   import { localizeHatsu } from '$lib/i18n/hatsu'
@@ -39,6 +40,7 @@
     infectionAfter,
     lastCard,
     leaveTheTable,
+    exposureNow,
     moveFor,
     needsAChoice,
     playTechnique,
@@ -525,7 +527,7 @@
             </p>
             {#if seated.fraud}
               <p class="mt-2 text-[11px] text-[#ef8a90]/80">
-                {copy.hatsu.exposure(Math.round(seated.exposure * game.watch * 100))}
+                {copy.hatsu.exposure(Math.round(exposureNow(seated, game) * 100))}
               </p>
             {/if}
             <div class="mt-3 flex flex-wrap items-center gap-2">
@@ -594,6 +596,14 @@
           <p class="mt-1 text-xs text-[#FFFFF0]/50">
             {QUESTION_CARDS.filter((question) => game.questions.includes(question)).length} / {QUESTION_CARDS.length}
           </p>
+        </div>
+
+        <!-- Contagion, read rather than cast: the network, the negotiation and
+             the frieze of what was played under an aura to get there. The
+             ability module has declared this component key since it was
+             written; `$lib/nen/abilityComponents` is what finally resolves it. -->
+        <div class="mt-5">
+          <ContagionDashboard {game} />
         </div>
 
         <!-- The transcript, which is the only record of a hand once it is over. -->

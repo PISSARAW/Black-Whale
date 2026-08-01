@@ -938,6 +938,7 @@ export const fr: Messages = {
           shield: 'Prononcer le serment',
           hide: 'Crever les yeux de la pièce',
           proxy: 'Asseoir quelqu’un d’autre',
+          evict: 'Vider sa chaise',
           blind: 'Lui ôter les sens',
           rider: 'Poser la clause',
         },
@@ -1070,6 +1071,31 @@ export const fr: Messages = {
             costs:
               'Un échange est un échange : ce que la partie fait, elle le fait à un corps qui n’est pas le vôtre — et la réponse appartient à qui le porte.',
           },
+          guardian: {
+            buys: 'Une bête sans forme propre, portant l’identité d’une morte, sa mémoire et ses manières. Elle peut s’asseoir, jouer, et dire Oui.',
+            costs:
+              'Celle au nom de qui elle le dit n’existe plus : l’infection n’a personne sur qui tomber. Mais si on la démasque, ce qui est sur la chaise, c’est vous.',
+          },
+          mimicry: {
+            buys: 'Un visage et une voix empruntés à quelqu’un à qui vous avez parlé.',
+            costs:
+              'Cela tient aussi longtemps que le temps passé avec cette personne, pas une minute de plus — et sept questions dans une pièce close, c’est exactement ce budget qui se dépense. Chaque tour rend la chute plus probable.',
+          },
+          projection: {
+            buys: 'Un corps sur la chaise qui n’est pas celui où vous êtes. Le baiser n’atteint rien du tout.',
+            costs:
+              'Le vôtre dort ailleurs dans ce vaisseau, et un mot prononcé à son oreille met fin à tout. C’est une planque pleine de gens qui pourraient aller le dire.',
+          },
+          teleport: {
+            buys: 'Sa chaise, vidée. Elle ne s’en va pas : on la sort — et une négociation qu’elle n’a pas finie est une négociation à laquelle personne n’a à répondre.',
+            costs:
+              'La seule sortie de ce jeu qui ne passe pas par la Manipulation, et c’est un vol commis dans sa propre planque. Vu en train de le faire, c’est vous le tricheur, et la partie continue sans le tour de passe-passe.',
+          },
+          tribunal: {
+            buys: 'Le carton rouge. Il expulse, il est légal, et il vient après un avertissement qu’elle ne peut pas nier avoir reçu.',
+            costs:
+              'Un carton rouge se mérite. Il faut deux questions posées avant d’avoir de quoi l’expulser — et l’expulser met fin à la négociation sans réponse : c’est une partie nulle, pas une victoire.',
+          },
           'room-isolation': {
             buys: 'La pièce retirée du vaisseau. Quoi que vous fassiez ensuite, il ne reste rien qui puisse le rapporter.',
             costs: 'Être enfermé avec elle, c’est être enfermé avec elle.',
@@ -1098,8 +1124,38 @@ export const fr: Messages = {
             'On l’a forcée à répondre à sa propre ouverture. Personne ne lui avait encore fait ça.',
           deterred:
             'Vous tuer lui coûte quelqu’un des siens. Elle n’allait pas le faire, mais maintenant elle ne peut plus se permettre d’y avoir pensé.',
+          evicted:
+            'Elle a été sortie de sa propre chaise avant que la dernière carte ne tombe. Personne n’a dit Oui, donc personne n’a été recruté — et une négociation qu’elle n’a pas finie est la seule chose à laquelle le canon n’a pas de réponse.',
           proxied:
             'Ce n’était pas vous sur cette chaise. Rien de ce qui s’est passé ici ne vous est arrivé — et rien de ce qui s’est passé ici ne pouvait être une victoire.',
+        },
+      },
+
+      dashboard: {
+        title: 'Heil-Ly — recrutement',
+        unrevealed:
+          'Procédure de recrutement inconnue. Personne hors de la planque n’a vu comment un candidat est retourné, et l’archive ne devine pas devant un lecteur qui n’y est pas encore.',
+        network: 'Le réseau',
+        empty: 'Place libre',
+        noMembers: 'Personne d’infecté pour l’instant. Vingt-deux est le plafond, et il est dur.',
+        level: (level) => `Niveau ${level}`,
+        game: 'La négociation',
+        noGame: 'Aucune partie en cours.',
+        round: 'Tour',
+        questions: 'Ses questions',
+        answers: 'Vos réponses',
+        watch: 'Surveillance',
+        verdict: 'Réponse',
+        narrowed: 'Retour, Joker et X ont quitté la table.',
+        frieze: 'La frise des fraudes',
+        noFrauds: 'Rien d’autre que des cartes n’a été joué à cette table.',
+        caught: 'Vue',
+        unseen: 'Ratée',
+        at: (round) => `T${round}`,
+        steps: {
+          'game-won-yes': 'Un oui, gagné à la table',
+          kiss: 'Le baiser',
+          'witnessed-murder': 'Un meurtre, vu de ses yeux',
         },
       },
 

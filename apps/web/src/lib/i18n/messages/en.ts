@@ -1027,6 +1027,7 @@ export const en = {
           shield: 'Speak the vow',
           hide: 'Put the room’s eyes out',
           proxy: 'Sit somebody else down',
+          evict: 'Empty her chair',
           blind: 'Take her senses',
           rider: 'Lay the clause',
         },
@@ -1158,6 +1159,31 @@ export const en = {
             costs:
               'A swap is a swap: whatever the game does, it does to a body that is not yours — and the answer belongs to whoever is wearing it.',
           },
+          guardian: {
+            buys: 'A beast with no shape of its own, wearing a dead woman’s identity, her memory and her manner. It can sit, it can play, and it can say Yes.',
+            costs:
+              'Whoever it says it as does not exist, so there is nobody for the infection to land on. Catch it, though, and what is in the chair is you.',
+          },
+          mimicry: {
+            buys: 'A borrowed face and a borrowed voice, taken from somebody you have spoken to.',
+            costs:
+              'It holds for as long as you spent with them and not a minute more — and seven questions in a closed room is exactly that budget being spent. Every round makes it likelier to slip.',
+          },
+          projection: {
+            buys: 'A body in the chair that is not the one you are in. The kiss reaches nothing at all.',
+            costs:
+              'Yours is asleep somewhere else in this ship, and one word spoken to it ends the whole thing. This is a hideout full of people who could go and speak it.',
+          },
+          teleport: {
+            buys: 'Her chair, emptied. She is not walking out — she is taken out, and a negotiation she did not finish is one nobody has to answer.',
+            costs:
+              'The only exit from this game that is not through the Manipulation, and it is theft in her own hideout. Seen doing it, you are the one who cheated and the game goes on without the trick.',
+          },
+          tribunal: {
+            buys: 'The red card. It expels, it is legal, and it comes after a warning she cannot pretend she did not get.',
+            costs:
+              'A red card is earned. Two questions have to have been asked before there is anything to expel her over — and expelling her ends the negotiation without an answer, which is a draw and not a win.',
+          },
           'room-isolation': {
             buys: 'The room taken out of the ship. Whatever you do next, there is nothing left that could report it.',
             costs: 'Being sealed in with her is being sealed in with her.',
@@ -1185,8 +1211,45 @@ export const en = {
           trapped: 'She was made to answer her own opening. Nobody has done that to her before.',
           deterred:
             'Killing you costs her one of her own. She was never going to, but now she cannot afford to have been going to.',
+          evicted:
+            'She was taken out of her own chair before the last card came down. Nobody said Yes, so nobody was recruited — and a negotiation she did not finish is the one thing the canon has no answer for.',
           proxied:
             'It was not you in that chair. Nothing that happened here happened to you — and nothing that happened here could ever have been a win.',
+        },
+      },
+
+      /**
+       * The Heil-Ly dashboard: `docs/jeu-de-morena.md` §4.3.
+       *
+       * Under `tour.morena` rather than beside it because everything it names is
+       * this game — the network it fills, the rounds it counts, and the frieze
+       * of what was played under an aura to get there.
+       */
+      dashboard: {
+        title: 'Heil-Ly — recruitment',
+        unrevealed:
+          'Recruitment procedure unknown. Nobody outside the hideout has seen how a candidate is turned, and the archive does not guess in front of a reader who has not got there yet.',
+        network: 'The network',
+        empty: 'Empty slot',
+        noMembers: 'Nobody infected yet. Twenty-two is the ceiling, and it is a hard one.',
+        level: (level: number) => `Level ${level}`,
+        game: 'The negotiation',
+        noGame: 'No game running.',
+        round: 'Round',
+        questions: 'Her questions',
+        answers: 'Your answers',
+        watch: 'Watched',
+        verdict: 'Answer',
+        narrowed: 'Back, Joker and X are off the table.',
+        frieze: 'The frieze of frauds',
+        noFrauds: 'Nothing was played across this table but cards.',
+        caught: 'Seen',
+        unseen: 'Missed',
+        at: (round: number) => `R${round}`,
+        steps: {
+          'game-won-yes': 'A yes, won at the table',
+          kiss: 'The kiss',
+          'witnessed-murder': 'A murder, witnessed',
         },
       },
 

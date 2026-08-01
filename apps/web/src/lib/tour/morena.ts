@@ -28,6 +28,7 @@ export {
   TABLE_TECHNIQUES,
   askMorena,
   dealTheGame,
+  exposureNow,
   infectionAfter,
   infectionStepsFrom,
   lastCard,

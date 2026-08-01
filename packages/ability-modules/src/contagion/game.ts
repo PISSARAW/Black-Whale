@@ -100,6 +100,8 @@ export type Verdict = 'infected' | 'refused' | 'cancelled' | 'forced'
  * - `shield` — the Manipulation cannot narrow you.
  * - `hide` — the room stops watching, so what you do next is not seen.
  * - `proxy` — you are not the person in the chair.
+ * - `evict` — she is not in hers. The one exit from this game that does not go
+ *   through the Manipulation, because the person who left is not you.
  * - `rider` — nothing to the hand at all; everything to what the verdict turns
  *   out to be worth.
  */
@@ -112,6 +114,7 @@ export type TableEffect =
   | 'shield'
   | 'hide'
   | 'proxy'
+  | 'evict'
   | 'blind'
   | 'rider'
 
@@ -136,6 +139,8 @@ export type Aftermath =
   | 'trapped'
   | 'deterred'
   | 'proxied'
+  /** Morena was taken out of her own chair, and the game died with her in it. */
+  | 'evicted'
 
 /** One line of what happened, in the order it happened. */
 export type Beat =
@@ -248,6 +253,38 @@ export interface TableMove {
   fraud: boolean
   /** How many times it may be played in one game. */
   uses: number
+  /**
+   * Whether the thing wears off as the hand goes on.
+   *
+   * One capability at this table is priced on time rather than on visibility:
+   * Metamorphosen holds a borrowed face for at most as long as its wearer spent
+   * with the person it borrowed, and seven questions in a closed room is
+   * exactly that budget being spent. So its exposure is not a constant — it is
+   * a constant plus however many rounds have gone by, which is what a face
+   * slipping looks like from the other side of a table.
+   *
+   * Kept as a flag on the move rather than as a function per move: one shared
+   * rule is a rule, and a callback per capability would be an exception with
+   * extra steps.
+   */
+  wearsOff?: boolean
+}
+
+/** How much of a round it costs a borrowed face to hold. */
+const WEAR_PER_ROUND = 0.12
+
+/**
+ * What this move is actually risking, right now.
+ *
+ * `exposure` on its own is the technique's own visibility; this is that, times
+ * how watchful the room is, plus whatever the hand has cost it. Exported
+ * because the panel has to be able to tell a reader what they are about to bet
+ * before they bet it — a hidden number would make every fraud a coin toss with
+ * no coin.
+ */
+export function exposureNow(move: TableMove, game: MorenaGame): number {
+  const worn = move.wearsOff ? (game.round - 1) * WEAR_PER_ROUND : 0
+  return Math.max(0, Math.min(1, (move.exposure + worn) * game.watch))
 }
 
 /**
@@ -393,6 +430,43 @@ export const TABLE_TECHNIQUES = {
     fraud: true,
     uses: 1,
   },
+  // A beast with no shape of its own, wearing a dead woman's identity, memory
+  // and personality. It can sit, play and say Yes — and the infection would
+  // land on somebody who does not exist. The only proxy that makes Contagion
+  // pointless rather than merely capped, and it is canon.
+  guardian: { hatsuId: 'without-you', effect: 'proxy', exposure: 0.1, fraud: true, uses: 1 },
+  // A borrowed face, held at most as long as its wearer spent with the person
+  // it was borrowed from. Seven questions in a closed room is that budget being
+  // spent, so this is the one seat priced on the clock: see `wearsOff`.
+  mimicry: {
+    hatsuId: 'battle-cantabile-metamorphosen',
+    effect: 'proxy',
+    exposure: 0.1,
+    fraud: true,
+    uses: 1,
+    wearsOff: true,
+  },
+  // The body is asleep somewhere else, so the kiss reaches nothing. The canon
+  // flaw is the price: a word spoken to the sleeping body ends the projection,
+  // and this room is full of people who could go and speak it.
+  projection: { hatsuId: 'hanzo-skill-4', effect: 'proxy', exposure: 0.35, fraud: true, uses: 1 },
+
+  // ── Emptying the other chair ──────────────────
+  //
+  // The one exit from this game that does not go through the Manipulation,
+  // because the person who left is not you. It is not a way to win — nobody
+  // says Yes — but a negotiation Morena walked out of is a negotiation she does
+  // not get to finish, and the canon has no answer for that.
+  teleport: {
+    hatsuId: 'chrollo-teleportation',
+    effect: 'evict',
+    exposure: 0.4,
+    fraud: true,
+    uses: 1,
+  },
+  // And the legal version of the same move: the red card expels, and it expels
+  // after a warning nobody can pretend not to have had.
+  tribunal: { hatsuId: 'cross-game', effect: 'evict', exposure: 0, fraud: false, uses: 1 },
 
   // ── The room itself ───────────────────────────
   'room-isolation': {
@@ -544,35 +618,21 @@ export function leaveTheTable(game: MorenaGame): MorenaGame {
 }
 
 /**
- * Play the technique in hand across the table.
+ * What one of the eight verbs does to the hand.
  *
- * One call does the whole of it: what the move buys, and whether the room saw
- * it. The room is the Heil-Ly hideout and LSDF is standing in it, so seeing is
- * the default and not the exception — a capability used here is a bet that the
- * thing it buys is worth more than the three cards it may cost.
- *
- * A move that is not a fraud is played in the open and costs nothing when it is
- * seen. That is not generosity: a contract signed at the table, a coin minted a
- * year ago, a vow taken out loud are all things the game has no rule against.
+ * The two that *end* the game are not here — see `playTechnique` — because a
+ * verb that returns a finished game and a verb that returns a changed one are
+ * two different things, and running them through one switch was how this got
+ * hard to read in the first place.
  */
-export function playTechnique(
+function applyToTheHand(
+  move: TableMove,
   game: MorenaGame,
-  options: { random?: () => number } = {},
+  /** Whether the room saw it, and the shuffle two of the verbs draw on. */
+  table: { seen: boolean; random: () => number },
 ): MorenaGame {
-  if (game.phase === 'over') return unchanged(game)
-  const kind = game.technique
-  if (!kind) return unchanged(game)
-  const move = moveFor(kind)
-  if (game.spent >= move.uses) return unchanged(game)
-
-  const random = options.random ?? Math.random
-  const seen = move.fraud && random() < move.exposure * game.watch
-
-  let next: MorenaGame = {
-    ...game,
-    spent: game.spent + 1,
-    log: [...game.log, { kind: 'played', round: game.round, technique: kind, seen }],
-  }
+  const { seen, random } = table
+  let next = game
 
   switch (move.effect) {
     case 'read':
@@ -643,25 +703,89 @@ export function playTechnique(
     // Somebody else in the chair. They have no desire for Morena to name and
     // nothing of their own to stake, so the game cannot be won through them —
     // it can only be survived. See `settle`.
+    //
+    // A proxy that is seen is not a proxy. Whatever was wearing the face falls
+    // away and the person who sent it is the person sitting there, which is why
+    // the four cheapest ones are priced at zero exposure and the four that can
+    // be caught are worth catching.
     case 'proxy':
-      next = { ...next, proxied: true }
+      next = { ...next, proxied: !seen }
       break
 
-    // She cannot see, hear or speak, so she cannot ask the last question. A
-    // game she cannot play is a game abandoned, and abandonment is punished on
-    // both sides: this buys a draw and pays the full price for it.
+    // The two that end the game rather than change it, and the clause that
+    // holds `rider` — all handled by the caller.
     case 'blind':
-      return {
-        ...leaveTheTable(next),
-        phase: 'over',
-        verdict: 'cancelled',
-        ending: 'abandoned',
-        aftermath: ['proxied'],
-      }
-
+    case 'evict':
     case 'rider':
       break
   }
+
+  return next
+}
+
+/**
+ * Play the technique in hand across the table.
+ *
+ * One call does the whole of it: what the move buys, and whether the room saw
+ * it. The room is the Heil-Ly hideout and LSDF is standing in it, so seeing is
+ * the default and not the exception — a capability used here is a bet that the
+ * thing it buys is worth more than the three cards it may cost.
+ *
+ * A move that is not a fraud is played in the open and costs nothing when it is
+ * seen. That is not generosity: a contract signed at the table, a coin minted a
+ * year ago, a vow taken out loud are all things the game has no rule against.
+ */
+export function playTechnique(
+  game: MorenaGame,
+  options: { random?: () => number } = {},
+): MorenaGame {
+  if (game.phase === 'over') return unchanged(game)
+  const kind = game.technique
+  if (!kind) return unchanged(game)
+  const move = moveFor(kind)
+  if (game.spent >= move.uses) return unchanged(game)
+
+  // The legal eviction is a red card, and a red card comes after a warning:
+  // Mizaistom does not expel anybody he has not already cautioned. Two
+  // questions asked is that caution, and playing it earlier is not a move.
+  if (move.effect === 'evict' && !move.fraud && game.asked.length < 2) return unchanged(game)
+
+  const random = options.random ?? Math.random
+  const seen = move.fraud && random() < exposureNow(move, game)
+
+  const played: MorenaGame = {
+    ...game,
+    spent: game.spent + 1,
+    log: [...game.log, { kind: 'played', round: game.round, technique: kind, seen }],
+  }
+
+  // She cannot see, hear or speak, so she cannot ask the last question. A game
+  // she cannot play is a game abandoned, and abandonment is punished on both
+  // sides: this buys a draw and pays the full price for it.
+  if (move.effect === 'blind') {
+    return {
+      ...leaveTheTable(played),
+      phase: 'over',
+      verdict: 'cancelled',
+      ending: 'abandoned',
+      aftermath: ['proxied'],
+    }
+  }
+
+  // And her chair, emptied. Nobody says Yes, so nobody is infected — the only
+  // clean way out of this game the canon leaves standing, and it closes the
+  // hand rather than changing it. Seen doing it, you are simply the cheat.
+  if (move.effect === 'evict' && !seen) {
+    return {
+      ...played,
+      phase: 'over',
+      verdict: 'cancelled',
+      ending: 'abandoned',
+      aftermath: ['evicted'],
+    }
+  }
+
+  let next = applyToTheHand(move, played, { seen, random })
 
   if (move.rider && !next.riders.includes(move.rider)) {
     next = { ...next, riders: [...next.riders, move.rider] }

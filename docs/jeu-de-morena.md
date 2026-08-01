@@ -616,3 +616,37 @@ le joueur assis après avoir tenté de partir, et la main continue.
 
 C'est un mécanisme général et pas un détail de cette route : toute page qui a une raison de
 n'admettre qu'une partie du registre ouvre une grille et la referme en partant.
+
+## 9. Ce que la table montre
+
+Le §6 a livré une partie jouable et muette : tout ce qu'un hatsu faisait à cette table se
+lisait dans le panneau et dans le journal, et rien ne se voyait dans la pièce. Quatre choses
+ont été rendues visibles, et le choix de ces quatre-là suit une seule règle — **on n'ajoute pas
+un geste à un corps qui bouge déjà, on lui en retire un**. Morena respire et se tourne vers
+qui s'est assis depuis le premier jour ; c'est en perdant l'un des deux qu'elle peut être vue
+réagir.
+
+- **La Manipulation part avec les cartes.** Retour, Joker et X quittaient la main entre deux
+  images. Une `game-card` qui disparaît est désormais _emportée_ : elle glisse loin du visiteur,
+  monte de sept centimètres et s'efface en 0,45 s. La direction ne nomme personne — c'est
+  « à l'opposé de qui regarde », et la seule personne de l'autre côté de cette table est celle
+  qui prend. La même sortie sert la prise de chaque tour, ce qui est correct : c'est le même
+  geste. La règle du §6 (« une carte ne bouge pas ») tient — une carte qui s'en va n'est pas une
+  carte posée.
+- **Elle s'immobilise quand la pièce lui a parlé.** `dealerStage()` rend 3 au coup suivant un
+  `played`/`seen` ou un `exposed`, et la respiration tombe à zéro. C'est la seule annonce du jet
+  de détection ailleurs que dans le journal.
+- **Elle cesse de vous trouver quand on lui prend les sens.** Stage 4 pour `senses`, et le
+  suivi de caméra s'arrête. Le cap est conservé dans `Shown.facing` d'un rebuild à l'autre :
+  une tête qui claquerait au nord se lirait comme un bug, pas comme une femme qui a perdu
+  quelqu'un.
+- **La prescience a un corps.** La carte que `foreseen` désigne se tient à quatre centimètres du
+  bois avec un liseré bleu (`stage: 4`). Trois techniques achètent cette phrase — `dowsing`,
+  `future`, `divination` — et aucune n'avait rien à regarder.
+- **Le carton de Cross Game** est posé sur la table, bleu, puis jaune aux deux questions, puis
+  rouge à l'expulsion. Le pont le dessine et le colore depuis Mizaistom : la table emprunte
+  l'éventail plutôt que d'en inventer un second.
+
+Écarté sciemment : le `rewind` de Parallel Future. La marche sait le jouer, mais l'après-image
+se dessine à la position du visiteur et rien à cette table n'est fonction de l'horloge — assis,
+la vision ne montre rien. La carte soulevée dit la même chose et la dit depuis la chaise.

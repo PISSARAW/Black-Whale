@@ -110,6 +110,46 @@ export const BURIED_COLOUR = 0x4a4a52
 export const MOON_MARK = 0xbcd2f5
 /** Judgment Chain's own gold, for the one mark worn by the guest. */
 export const VOW_MARK = 0xd8b85e
+/**
+ * Cross Game's three, in the order it plays them.
+ *
+ * The walk already fans and already colours this card — `apparitions.ts` has
+ * held the same three since Mizaistom was first drawn into a room — so the
+ * table borrows the fan rather than inventing a second one. A red card is a red
+ * card wherever it is shown.
+ */
+export const TRIBUNAL_CARDS = [0x4d8ff0, 0xf0c94d, 0xe5484d]
+
+/**
+ * What the woman opposite is doing, as the one number the scene is given.
+ *
+ * `stage` is the only channel this file has to a mesh, so the whole of her
+ * reaction to a hand goes through this vocabulary — and two of the five are
+ * *removals*. She already breathes and already turns to whoever sat down, so
+ * the way to show that something has changed in her is to take one of those
+ * away: caught, she goes still; blinded, she stops finding you. Adding a
+ * gesture to a body that is already moving reads as noise. Taking one away
+ * reads as news.
+ *
+ * - `0` — dealing.
+ * - `1` — leaning in with the kiss.
+ * - `2` — sat back, the hand played out.
+ * - `3` — the room has just told her something. She stops breathing.
+ * - `4` — sight, hearing and voice taken. She stops turning to you.
+ */
+export function dealerStage(game: MorenaGame): number {
+  // Three Monkeys outlasts the hand it ended: the game is over the moment it is
+  // cast, and she is still sitting there, unable to find the person opposite.
+  if (game.technique === 'senses' && game.spent > 0) return 4
+  // Nothing else in the walk announces the detection roll. The transcript says
+  // it in words, and this says it in a body — which is the half a reader who is
+  // looking at the table rather than at the panel actually gets.
+  const last = game.log[game.log.length - 1]
+  if (last && ((last.kind === 'played' && last.seen) || last.kind === 'exposed')) return 3
+  if (game.phase === 'deal') return 1
+  if (game.phase === 'over') return 2
+  return 0
+}
 
 /**
  * What stands on and around the table, given a game.
@@ -136,7 +176,7 @@ export function tableauOf(game: MorenaGame, floor: number): Apparition[] {
     y: floor + 0.72,
     size: 0.42,
     colour: DEALER_COLOUR,
-    stage: game.phase === 'over' ? 2 : game.phase === 'deal' ? 1 : 0,
+    stage: dealerStage(game),
   })
 
   /** One card, laid flat and fanned about the middle of one side of the table. */
@@ -201,14 +241,23 @@ export function tableauOf(game: MorenaGame, floor: number): Apparition[] {
     // the table they are the same thing: a card somebody had already read.
     const nicked =
       (game.phase === 'over' && game.marked === card) || (game.manipulated && game.forged === card)
+    // And the card foresight has picked out, standing off the wood.
+    //
+    // Three techniques buy the same sentence — the Dowsing Chain, Parallel
+    // Future and a phone call — and none of them had anything to look at: the
+    // read-out said which card she would take and the table said nothing at
+    // all. A card lifted a finger's width is the smallest thing that can be
+    // seen from a seated eye, and it costs the rule nothing: it is still a card
+    // that is not moving. It is where it was *put*, and something put it there.
+    const foreseen = !nicked && game.foreseen === card
     lay({
       id: `hand-${card}`,
       index,
       count: game.hand.length,
       depth: 0.3,
       colour: CARD_COLOURS[card],
-      stage: nicked ? 3 : 1,
-      lift: game.phase === 'settling' || game.phase === 'over' ? 0.02 : 0,
+      stage: nicked ? 3 : foreseen ? 4 : 1,
+      lift: foreseen ? 0.045 : game.phase === 'settling' || game.phase === 'over' ? 0.02 : 0,
     })
   })
   // And what Morena has taken, stacked off to the guest's left.
@@ -242,6 +291,26 @@ export function tableauOf(game: MorenaGame, floor: number): Apparition[] {
       size: 0.24,
       colour: MOON_MARK,
       stage: game.kissed ? 1 : 0,
+    })
+  }
+
+  // Cross Game's card, laid on the table rather than over a room: blue while
+  // she is merely seated, yellow once two questions have made an expulsion
+  // possible, red when it has been used. The escalation is the capability —
+  // Mizaistom expels nobody he has not already cautioned — so the fan is shown
+  // from the moment somebody sits down carrying it, and turning a card is the
+  // warning being given rather than a state being reported.
+  if (game.technique === 'tribunal') {
+    const stage = game.aftermath.includes('evicted') ? 3 : game.asked.length >= 2 ? 2 : 1
+    seen.push({
+      ...common,
+      id: 'tribunal-card',
+      kind: 'card',
+      at: [TABLE_AT[0] + 0.62, TABLE_AT[1]],
+      y: top + 0.2,
+      size: 0.16,
+      colour: TRIBUNAL_CARDS[stage - 1],
+      stage,
     })
   }
 

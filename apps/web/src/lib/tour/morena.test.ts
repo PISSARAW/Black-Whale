@@ -13,6 +13,7 @@ import {
   TABLE_KINDS,
   TABLE_TECHNIQUES,
   askMorena,
+  dealerStage,
   exposureNow,
   moveFor,
   dealTheGame,
@@ -401,6 +402,100 @@ describe('what the walk lays on the table', () => {
       expect(thing.spaceId).toBe(HIDEOUT_OFFICE)
       expect(thing.tierId).toBe(HIDEOUT_TIER)
     }
+  })
+
+  it('stands the foreseen card off the wood, and puts nothing else on it', () => {
+    const dealt = dealTheGame()
+    const flat = tableauOf(dealt, floor).find((thing) => thing.id === 'hand-joker')!
+    expect(flat.stage).toBe(1)
+
+    const told: MorenaGame = { ...dealt, foreseen: 'joker' }
+    const seen = tableauOf(told, floor)
+    const lifted = seen.find((thing) => thing.id === 'hand-joker')!
+    expect(lifted.stage).toBe(4)
+    expect(lifted.y).toBeGreaterThan(flat.y)
+    // One card is picked out, and it is the one she is reaching for.
+    expect(seen.filter((thing) => thing.stage === 4)).toHaveLength(1)
+  })
+
+  it('leaves the nick showing rather than the foresight when a card is both', () => {
+    const over: MorenaGame = {
+      ...dealTheGame(),
+      phase: 'over',
+      hand: ['back'],
+      foreseen: 'back',
+      verdict: 'forced',
+    }
+    expect(tableauOf(over, floor).find((thing) => thing.id === 'hand-back')!.stage).toBe(3)
+  })
+})
+
+describe('the woman opposite', () => {
+  it('deals, leans in for the kiss, and sits back when it is played out', () => {
+    expect(dealerStage(dealTheGame())).toBe(0)
+    expect(dealerStage({ ...dealTheGame(), phase: 'deal' })).toBe(1)
+    expect(dealerStage({ ...dealTheGame(), phase: 'over' })).toBe(2)
+  })
+
+  it('reacts to the one thing the table never showed: being seen', () => {
+    const caught = playTechnique(withTechnique('dowsing'), { random: caught_ })
+    expect(caught.log.at(-1)).toMatchObject({ kind: 'narrowed' })
+    // The narrowing is the last beat, so the reaction has to survive it: what
+    // she answers to is having been told, not the sanction that followed.
+    expect(dealerStage({ ...caught, log: caught.log.slice(0, -1) })).toBe(3)
+
+    const unseen = playTechnique(withTechnique('dowsing'), { random: clean })
+    expect(dealerStage(unseen)).toBe(0)
+  })
+
+  it('reacts to a forged card given away by the kiss', () => {
+    const forged = playTechnique(withTechnique('disguise'), { random: clean })
+    // Put the hand at the offer rather than playing to it: what is under test
+    // is the touch, and three rounds of shuffling are three chances for her to
+    // take the forged card back off the table before anybody touches anything.
+    const offered: MorenaGame = {
+      ...forged,
+      phase: 'deal',
+      hand: ['yes', forged.forged!],
+      graveyard: ['joker'],
+    }
+    const exposed = takeTheDeal(offered, 'joker')
+    expect(exposed.log.some((beat) => beat.kind === 'exposed')).toBe(true)
+    const told = exposed.log.slice(0, exposed.log.findIndex((beat) => beat.kind === 'exposed') + 1)
+    expect(dealerStage({ ...exposed, log: told })).toBe(3)
+  })
+
+  it('stops finding whoever sat down once her senses are taken', () => {
+    const blinded = playTechnique(withTechnique('senses'), { random: clean })
+    expect(blinded.phase).toBe('over')
+    // Over, and still not sat back: the loss outlasts the hand it ended.
+    expect(dealerStage(blinded)).toBe(4)
+  })
+})
+
+describe("Cross Game's card, on a table rather than over a room", () => {
+  const office = ship.spaces.get(HIDEOUT_OFFICE)!
+  const floor = floorOf(office, ship.plans.get(HIDEOUT_TIER)!.tier)
+  const cardIn = (game: MorenaGame) =>
+    tableauOf(game, floor).find((thing) => thing.id === 'tribunal-card')
+
+  it('is shown to nobody who did not sit down with it', () => {
+    expect(cardIn(dealTheGame())).toBeUndefined()
+    expect(cardIn(withTechnique('dowsing'))).toBeUndefined()
+  })
+
+  it('turns blue, then yellow, then red', () => {
+    const seated = withTechnique('tribunal')
+    expect(cardIn(seated)!.stage).toBe(1)
+
+    let warned = askMorena(seated, 'goal', { random: first })
+    expect(cardIn(warned)!.stage).toBe(1)
+    warned = askMorena(warned, 'power', { random: first })
+    expect(cardIn(warned)!.stage).toBe(2)
+
+    const expelled = playTechnique(warned, { random: clean })
+    expect(expelled.aftermath).toContain('evicted')
+    expect(cardIn(expelled)!.stage).toBe(3)
   })
 })
 

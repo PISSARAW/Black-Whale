@@ -1487,6 +1487,13 @@
         pair: Apparition['pair']
         /** The disc the other end is rendered onto. */
         pane: import('three').Mesh | null
+        /**
+         * The way it was last looking, for the one that can stop looking.
+         *
+         * Survives a rebuild, which nothing else on a mesh does — see the
+         * dealer in `driftApparitions`.
+         */
+        facing?: number
       }
 
       // A plain record for the same reason the solids are one: the render loop
@@ -3070,6 +3077,9 @@
           // is played out. `stage` is the only thing the game tells the scene.
           if (seen.stage === 1) root.rotation.x = -0.14
           if (seen.stage === 2) root.rotation.x = 0.1
+          // Caught: she straightens off the cards. The rest of that reaction is
+          // in the drift, and it is a subtraction — see there.
+          if (seen.stage === 3) root.rotation.x = 0.17
           turns = null
         }
 
@@ -3082,9 +3092,14 @@
           )
           face.rotation.x = -Math.PI / 2
           root.add(face)
+          // The rim says whose card it is and who has read it: dark for a card
+          // still face down, bone for one face up — and cold blue for the one
+          // something has told you she is reaching for next. Foresight has no
+          // other body at this table, and a card picked out of a fan is what
+          // being told looks like from the chair.
           const rim = new THREE.Mesh(
             new THREE.PlaneGeometry(seen.size * 1.12, seen.size * 1.62),
-            glow(seen.stage === 0 ? 0x6b4c58 : 0xf5efe6, 0.7),
+            glow(seen.stage === 0 ? 0x6b4c58 : seen.stage === 4 ? 0x8ecae6 : 0xf5efe6, 0.7),
           )
           rim.rotation.x = -Math.PI / 2
           rim.position.y = -0.001
@@ -3198,6 +3213,9 @@
           // that moved is moved, not rebuilt.
           const key = `${seen.kind}|${seen.stage}|${seen.colour}|${seen.size}|${seen.hidden}|${seen.pair?.spaceId ?? ''}|${seen.climb ?? ''}`
           let held = apparitions[seen.id]
+          // The one thing about a thing that outlives the thing: which way it
+          // was looking. Everything else a mesh knows is rebuilt with it.
+          const facing = held?.facing
           if (held && held.key !== key) {
             dropApparition(seen.id)
             held = undefined
@@ -3205,6 +3223,7 @@
           if (!held) {
             held = buildApparition(seen)
             held.key = key
+            held.facing = facing
             apparitions[seen.id] = held
             scene.add(held.root)
           }
@@ -3218,7 +3237,105 @@
           held.root.position.set(seen.at[0], seen.y, seen.at[1])
         }
 
-        for (const id of Object.keys(apparitions)) if (!standing[id]) dropApparition(id)
+        for (const id of Object.keys(apparitions)) {
+          if (standing[id]) continue
+          // A card is the one apparition that is taken rather than dispelled,
+          // so it is the one that leaves instead of vanishing. See `sweepCard`.
+          const held = apparitions[id]
+          if (held?.kind === 'game-card') {
+            sweepCard(held)
+            delete apparitions[id]
+            continue
+          }
+          dropApparition(id)
+        }
+      }
+
+      // ── Cards leaving the table ──────────────────
+      //
+      // Everything else in this scene appears and disappears, because a
+      // technique that has ended has left the room. A card has not: somebody
+      // took it. The Manipulation is the whole reason this exists — the canon
+      // sanction of Morena's game is three cards leaving the guest's hand at
+      // once, which is the most violent thing that happens at that table, and
+      // it used to happen between two frames with nothing to see.
+      //
+      // The rule the drift keeps — a card does not move — is kept here too. A
+      // card that is *going* is not a card lying on the table, and it is gone
+      // in under half a second.
+
+      /** How long a card takes to leave, in seconds. */
+      const CARD_EXIT = 0.45
+      /** How far it goes before it is let go of, in metres. */
+      const CARD_REACH = 0.55
+
+      const leaving: {
+        root: import('three').Group
+        from: import('three').Vector3
+        to: import('three').Vector3
+        through: number
+        /** Cloned per card: the glow materials are shared by colour, and a card
+         *  fading out would otherwise take every card of its colour with it. */
+        fades: { material: import('three').MeshBasicMaterial; from: number }[]
+      }[] = []
+
+      /**
+       * Hand a card to whoever took it.
+       *
+       * Away from the visitor, because the person on the other side of this
+       * table is the only one who takes anything off it — that is true of the
+       * card she draws each round and true of the three the Manipulation
+       * removes, and it needs no name to be true.
+       */
+      function sweepCard(held: Shown) {
+        const from = held.root.position.clone()
+        const away = new THREE.Vector3(from.x - camera.position.x, 0, from.z - camera.position.z)
+        if (away.lengthSq() < 1e-6) away.set(0, 0, -1)
+        away.normalize().multiplyScalar(CARD_REACH)
+
+        const fades: { material: import('three').MeshBasicMaterial; from: number }[] = []
+        held.root.traverse((part) => {
+          const mesh = part as import('three').Mesh
+          if (!mesh.material) return
+          const own = (mesh.material as import('three').MeshBasicMaterial).clone()
+          mesh.material = own
+          fades.push({ material: own, from: own.opacity })
+        })
+
+        leaving.push({
+          root: held.root,
+          from,
+          to: new THREE.Vector3(from.x + away.x, from.y + 0.07, from.z + away.z),
+          through: 0,
+          fades,
+        })
+      }
+
+      function driftLeavingCards(delta: number) {
+        for (let i = leaving.length - 1; i >= 0; i--) {
+          const card = leaving[i]
+          card.through += delta / CARD_EXIT
+          if (card.through >= 1) {
+            dropLeavingCard(i)
+            continue
+          }
+          // Out fast and slowing: a card is pulled, and the hand that pulled it
+          // stops. Linear would be a card on a conveyor.
+          const eased = 1 - (1 - card.through) * (1 - card.through)
+          card.root.position.lerpVectors(card.from, card.to, eased)
+          for (const fade of card.fades) fade.material.opacity = fade.from * (1 - card.through)
+        }
+      }
+
+      function dropLeavingCard(index: number) {
+        const card = leaving[index]
+        scene.remove(card.root)
+        card.root.traverse((part) => {
+          const mesh = part as import('three').Mesh
+          if (mesh.geometry) mesh.geometry.dispose()
+        })
+        for (const fade of card.fades) fade.material.dispose()
+        leaving.splice(index, 1)
       }
 
       /**
@@ -3498,12 +3615,28 @@
           }
 
           // And the woman opposite breathes, and looks at whoever sat down.
+          //
+          // Both of those are hers to lose, and losing one is the only way a
+          // body that is already moving and already facing you can be seen to
+          // react. Stage 3 is the room having told her something: the one thing
+          // in the room that was moving stops, and a reader who was watching the
+          // table rather than the transcript learns that they were seen. Stage 4
+          // is Three Monkeys: she keeps breathing and stops finding you, which
+          // is a different loss and has to read as one.
           if (held.kind === 'dealer') {
-            held.root.position.set(held.at[0], held.y + Math.sin(phase * 0.5) * 0.012, held.at[1])
-            held.root.rotation.y = Math.atan2(
-              camera.position.x - held.root.position.x,
-              camera.position.z - held.root.position.z,
-            )
+            const breath = held.stage === 3 ? 0 : Math.sin(phase * 0.5) * 0.012
+            held.root.position.set(held.at[0], held.y + breath, held.at[1])
+            if (held.stage !== 4) {
+              held.facing = Math.atan2(
+                camera.position.x - held.root.position.x,
+                camera.position.z - held.root.position.z,
+              )
+            }
+            // Held rather than read back off the mesh: a change of stage rebuilds
+            // her, and a rebuilt dealer whose head snapped to due north the
+            // instant she was blinded would read as a fault rather than as a
+            // woman who has lost you.
+            held.root.rotation.y = held.facing ?? 0
             continue
           }
 
@@ -5179,6 +5312,7 @@
         driftSolids(clock)
         driftMotes(delta, clock)
         driftApparitions(clock)
+        driftLeavingCards(delta)
         driftFlash(delta)
         runLash(delta)
         syncGum(clock)
@@ -5682,6 +5816,7 @@
         eyeCamera = null
         for (const id of Object.keys(solids)) dropSolid(id)
         for (const id of Object.keys(apparitions)) dropApparition(id)
+        while (leaving.length) dropLeavingCard(leaving.length - 1)
         for (const material of Object.values(glowMaterials)) material?.dispose()
         portalDecks.length = 0
         gustGeometry.dispose()

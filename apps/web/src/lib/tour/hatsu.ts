@@ -74,6 +74,7 @@ export const TOUR_HATSU_KINDS = [
   'stitch',
   'animate',
   'shred',
+  'weapon-body',
   'growth',
   'polarity',
   'identity-swap',
@@ -198,6 +199,7 @@ export const SOLID_HATSU_KINDS = new Set<HatsuInteractionKind>([
   'stitch',
   'animate',
   'shred',
+  'weapon-body',
   'growth',
   'polarity',
   'identity-swap',
@@ -377,6 +379,16 @@ export interface TourWorld {
   wound: string | null
   /** Rotations wound into the next punch. */
   windup: number
+  /**
+   * How many times Padaille's arm has come down.
+   *
+   * A tally rather than a hold — nothing is being held, the count is only what
+   * the next draw is read off — so `worldIsQuiet` does not consult it and Nen
+   * Stitches has nothing here to put back. It exists because a technique whose
+   * whole character is that you do not know what you will get has to give a
+   * different answer to the same target twice.
+   */
+  swings: number
 
   /**
    * Rooms whose doorways are shut.
@@ -787,6 +799,16 @@ export interface SolidHold {
   bound?: boolean
   /** Biohazard: it wanders its room, still as solid as it was. */
   alive?: boolean
+  /**
+   * Padaille's drill went through it.
+   *
+   * The walk bakes a solid as a box and has nowhere to put a hole in one, so
+   * what it draws is not the bore but the consequence of it: a thing with a
+   * hole through it stops being a thing you have to walk around. It stands
+   * exactly where it stood and the visitor goes straight through where the
+   * drill was, which is the only part of a bore the ship can actually feel.
+   */
+  bored?: boolean
   /** The Sun and Moon's two marks. */
   mark?: 'sun' | 'moon'
   /**
@@ -875,6 +897,7 @@ export const EMPTY_WORLD: TourWorld = {
   pairing: null,
   wound: null,
   windup: 0,
+  swings: 0,
   shut: [],
   guarded: [],
   pinned: null,
@@ -1066,6 +1089,12 @@ export type TourReport =
   | { kind: 'animated'; solidId: string }
   | { kind: 'shred-stuck'; solidId: string }
   | { kind: 'shred-cut'; solidId: string; left: number }
+  // Padaille's three, which are three reports rather than one with a tool on
+  // it: what the visitor wants to read is what happened, and finding out which
+  // tool it was is the same sentence.
+  | { kind: 'hammered'; solidId: string }
+  | { kind: 'bored'; solidId: string }
+  | { kind: 'halved'; solidId: string; apart: boolean }
   | { kind: 'grown'; solidId: string }
   | { kind: 'growth-refused'; solidId: string }
   | { kind: 'marked'; solidId: string; mark: 'sun' | 'moon' }
@@ -1405,6 +1434,38 @@ export function driftOffset(id: string, seconds: number): [number, number, numbe
   ]
 }
 
+/**
+ * The three things Padaille's arm can turn out to be.
+ *
+ * Ordered as the swing finds them rather than by what they do: the visitor
+ * does not choose, so there is nothing here for them to walk round. Every
+ * other three-way technique in the walk — the flute's airs, the owl's watches,
+ * the eye's orders — is a manner the visitor sets and can set back. This one
+ * is the opposite of that, and the list exists only so the draw has something
+ * to land on.
+ */
+export const PADAILLE_TOOLS = ['hammer', 'drill', 'axe'] as const
+export type PadailleTool = (typeof PADAILLE_TOOLS)[number]
+
+/**
+ * Which of the three the arm became, this swing.
+ *
+ * Off the hash of the target and the tally, for the reason the wander and the
+ * dance are: the walk has no die in it anywhere, and a technique that rolled
+ * `Math.random` would be the one thing in here that answered differently on a
+ * replay of the same walk. Reading the tally as well as the id is what stops
+ * the same cupboard from being hammered forever — hit it twice and the second
+ * swing is drawn again, not remembered.
+ */
+export function toolFor(id: string, swings: number): PadailleTool {
+  let phase = 0
+  for (let i = 0; i < id.length; i++) phase = (phase * 31 + id.charCodeAt(i)) % 997
+  return PADAILLE_TOOLS[(phase + swings * 7) % PADAILLE_TOOLS.length]
+}
+
+/** How flat the hammer leaves a thing it has driven into the deck. */
+export const HAMMERED_SQUASH = 0.16
+
 /** Everything the beast has off the deck, which is what the panel counts. */
 export const adriftSolidIds = (world: TourWorld): string[] =>
   Object.entries(world.solids)
@@ -1739,6 +1800,9 @@ export function solidWalls(
   return detachedOn(ship, world, tierId, seconds)
     .filter(({ structure }) => !world.body.passengers.includes(structure.id))
     .filter(({ structure }) => !world.solids[structure.id]?.adrift)
+    // And what the drill went through is not either: the hole is the whole of
+    // what the walk can show of a bore, so it has to be a hole you can use.
+    .filter(({ structure }) => !world.solids[structure.id]?.bored)
     .filter(({ structure }) => blocksTheFloor(structure))
     .flatMap(({ structure }) => structureWalls(structure))
 }
@@ -2117,6 +2181,64 @@ const SOLID_CASTS: Partial<Record<HatsuInteractionKind, SolidCast>> = {
     world: { ...world, wound: id },
     report: { kind: 'shred-stuck', solidId: id },
   }),
+
+  // Padaille: swing, and find out what the arm was.
+  //
+  // The one technique in the walk whose result the visitor has no say in. Every
+  // other cast here is a decision — which room, which thing, which of two
+  // hands, which of three airs — and this one is a decision to swing and
+  // nothing more. So the tool is drawn before anything is read off the target,
+  // and the three outcomes are three different things rather than three
+  // strengths of one: driven into the deck, holed through, or in two pieces.
+  //
+  // The swing lands whatever it draws, including on something already dealt
+  // with: a cupboard the hammer flattened can still be halved, and the halves
+  // are half of what is left rather than half of what the blueprint had.
+  'weapon-body': ({ world, ship, structure, hold, id }) => {
+    const tool = toolFor(id, world.swings)
+    const swung = { ...world, swings: world.swings + 1 }
+
+    if (tool === 'hammer') {
+      return {
+        world: withHold(swung, id, { squash: HAMMERED_SQUASH }),
+        report: { kind: 'hammered', solidId: id },
+      }
+    }
+
+    if (tool === 'drill') {
+      return {
+        world: withHold(swung, id, { bored: true }),
+        report: { kind: 'bored', solidId: id },
+      }
+    }
+
+    // The axe. Two pieces where there was one, so the half that keeps the
+    // blueprint's id stays put and the other is a copy set down beside it —
+    // the same machinery Gallery Fake's forgery uses, because a half is a
+    // solid the ship never had either. If the room has no space to lay the
+    // second half in, the cut still happens and the halves stand in the same
+    // place: an axe stopped by the width of a cabin would be an axe that
+    // failed, and this one did not.
+    const halved = Math.max(0.05, (hold?.scale ?? 1) * 0.5)
+    const now = solidNow(structure, { ...hold, scale: halved })
+    const beside = shove(ship, world, structure, { ...hold, scale: halved }, [
+      clearanceOf(now) * 1.2,
+      0,
+    ])
+    const offcutId = `${id}::half${world.copies.length + 1}`
+    const offcut: Structure = { ...now, id: offcutId, at: beside ?? now.at }
+    return {
+      world: {
+        ...withHold(swung, id, { scale: halved }),
+        copies: [...world.copies, offcut],
+        solids: {
+          ...withHold(swung, id, { scale: halved }).solids,
+          [offcutId]: { copyOf: id },
+        },
+      },
+      report: { kind: 'halved', solidId: id, apart: beside !== null },
+    }
+  },
 
   // Dramatic on a thing, and weak on anything Nen is already holding.
   growth: ({ world, hold, id }) => {

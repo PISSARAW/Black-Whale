@@ -49,6 +49,9 @@ import {
   otherHand,
   OWL_SECONDS,
   paceOf,
+  PADAILLE_TOOLS,
+  toolFor,
+  HAMMERED_SQUASH,
   planSealed,
   polarityStep,
   planWithout,
@@ -621,6 +624,115 @@ describe('the rules solids hold each other to', () => {
     // The wound closes with the thing that carried it; the next cast opens a new one.
     expect(world.wound).toBeNull()
     expect(hit(world, 'shred', solidB.id).world.wound).toBe(solidB.id)
+  })
+
+  // ── Padaille ──────────────────────────────────────────────────────────
+  //
+  // The visitor swings and finds out. What these check is that the finding out
+  // is real — three different outcomes, drawn rather than chosen, and the same
+  // walk drawing the same way twice.
+
+  it('draws one of the three tools rather than letting the visitor pick', () => {
+    // Every swing lands one of exactly three things, and the report says which.
+    const seen = new Set<string>()
+    let world = EMPTY_WORLD
+    for (let swing = 0; swing < 40; swing++) {
+      const result = hit(world, 'weapon-body', solidA.id)
+      expect(['hammered', 'bored', 'halved']).toContain(result.report.kind)
+      seen.add(result.report.kind)
+      world = result.world
+    }
+    // Forty swings at one cupboard: all three have come up. A technique whose
+    // whole character is that you do not know what you will get would be a lie
+    // if the same target always answered the same way.
+    expect(seen.size).toBe(PADAILLE_TOOLS.length)
+    expect(world.swings).toBe(40)
+  })
+
+  it('draws off the target and the tally, so the same walk replays the same', () => {
+    const once = hit(EMPTY_WORLD, 'weapon-body', solidA.id)
+    const again = hit(EMPTY_WORLD, 'weapon-body', solidA.id)
+    expect(again.report.kind).toBe(once.report.kind)
+    // Not the same answer twice in a row though: the tally moved.
+    const drawn = [0, 1, 2, 3].map((swings) => toolFor(solidA.id, swings))
+    expect(new Set(drawn).size).toBeGreaterThan(1)
+    // And two things in one room are not swung at in step.
+    const apart = PADAILLE_TOOLS.some((_, swing) =>
+      [0, 1, 2].some(() => toolFor(solidA.id, swing) !== toolFor(solidB.id, swing)),
+    )
+    expect(apart).toBe(true)
+  })
+
+  it('drives a thing into the deck, bores through it, or leaves it in two', () => {
+    // Each of the three, forced by walking the tally to where it draws them.
+    const swingsFor = (tool: string) => {
+      for (let swings = 0; swings < 12; swings++) {
+        if (toolFor(solidA.id, swings) === tool) return swings
+      }
+      throw new Error(`the draw never lands on ${tool}`)
+    }
+    const at = (swings: number) => hit({ ...EMPTY_WORLD, swings }, 'weapon-body', solidA.id)
+
+    const hammer = at(swingsFor('hammer'))
+    expect(hammer.report).toMatchObject({ kind: 'hammered', solidId: solidA.id })
+    expect(hammer.world.solids[solidA.id].squash).toBe(HAMMERED_SQUASH)
+
+    const drill = at(swingsFor('drill'))
+    expect(drill.report).toMatchObject({ kind: 'bored', solidId: solidA.id })
+    // The hole is the whole of what the walk can show of a bore, so it has to
+    // be a hole you can use: the thing stands where it stood and stops you no
+    // longer.
+    expect(drill.world.solids[solidA.id].bored).toBe(true)
+    // Against the same thing held by a technique that did not go through it:
+    // a solid the aura has hold of is handed over with its walls, and this one
+    // is handed over with none.
+    const held = hit(EMPTY_WORLD, 'impact', solidA.id).world
+    expect(solidWalls(ship, held, busiest.space.tierId).length).toBeGreaterThan(0)
+    expect(solidWalls(ship, drill.world, busiest.space.tierId)).toEqual([])
+
+    const axe = at(swingsFor('axe'))
+    expect(axe.report).toMatchObject({ kind: 'halved', solidId: solidA.id })
+    expect(axe.world.solids[solidA.id].scale).toBe(0.5)
+    // Two pieces where there was one: the half that keeps the blueprint's id
+    // stays, and the offcut is a solid the ship never had.
+    expect(axe.world.copies).toHaveLength(1)
+    const offcut = axe.world.copies[0]
+    expect(axe.world.solids[offcut.id]).toMatchObject({ copyOf: solidA.id })
+  })
+
+  it('swings again on a thing it has already dealt with', () => {
+    // Halving what the hammer flattened takes half of what is left, not half
+    // of what the blueprint had — the swing reads the room as it is now.
+    const swingsFor = (tool: string) => {
+      for (let swings = 0; swings < 12; swings++) {
+        if (toolFor(solidA.id, swings) === tool) return swings
+      }
+      throw new Error(`the draw never lands on ${tool}`)
+    }
+    const flattened = hit({ ...EMPTY_WORLD, swings: swingsFor('hammer') }, 'weapon-body', solidA.id)
+    const halved = hit({ ...flattened.world, swings: swingsFor('axe') }, 'weapon-body', solidA.id)
+    expect(halved.report).toMatchObject({ kind: 'halved' })
+    expect(halved.world.solids[solidA.id]).toMatchObject({
+      squash: HAMMERED_SQUASH,
+      scale: 0.5,
+    })
+  })
+
+  it('counts its swings without that count being something Nen Stitches holds', () => {
+    const swingsFor = (tool: string) => {
+      for (let swings = 0; swings < 12; swings++) {
+        if (toolFor(solidA.id, swings) === tool) return swings
+      }
+      throw new Error(`the draw never lands on ${tool}`)
+    }
+    const swung = hit({ ...EMPTY_WORLD, swings: swingsFor('hammer') }, 'weapon-body', solidA.id)
+      .world
+    expect(worldIsQuiet(swung)).toBe(false)
+    const mended = hit(swung, 'stitch', solidA.id).world
+    // The tally is not a hold: nothing is being held by a count of past
+    // swings, so the walk is quiet again with the count still on it.
+    expect(mended.swings).toBe(swingsFor('hammer') + 1)
+    expect(worldIsQuiet(mended)).toBe(true)
   })
 
   it('marks with the hand that cast, and blows the pair when the two meet', () => {

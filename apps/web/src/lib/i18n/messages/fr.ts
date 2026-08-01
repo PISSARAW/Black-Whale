@@ -580,6 +580,13 @@ export const fr: Messages = {
         shredStuck: (solid) =>
           `Le confetti se fiche dans ${solid} · toutes les volées y convergeront`,
         shredCut: (solid, left) => `${solid} est taillé à ${left} % de lui-même`,
+        hammered: (solid) => `Le bras était un marteau · ${solid} est enfoncé dans le pont`,
+        bored: (solid) =>
+          `Le bras était une perceuse · un trou traverse ${solid}, et il se franchit`,
+        halved: (solid, apart) =>
+          apart
+            ? `Le bras était une hache · ${solid} est en deux morceaux, côte à côte`
+            : `Le bras était une hache · ${solid} est en deux morceaux, sans place où poser le second`,
         grown: (solid) => `${solid} a grossi hors de toute proportion`,
         growthRefused: (solid) => `${solid} bouge à peine · du Nen l'habite déjà`,
         marked: (solid, sun) => `${sun ? '☀' : '☾'} sur ${solid}`,

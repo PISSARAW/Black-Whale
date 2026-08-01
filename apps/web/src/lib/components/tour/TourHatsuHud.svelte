@@ -293,6 +293,12 @@
         return say.shredStuck(solidName(report.solidId))
       case 'shred-cut':
         return say.shredCut(solidName(report.solidId), report.left)
+      case 'hammered':
+        return say.hammered(solidName(report.solidId))
+      case 'bored':
+        return say.bored(solidName(report.solidId))
+      case 'halved':
+        return say.halved(solidName(report.solidId), report.apart)
       case 'grown':
         return say.grown(solidName(report.solidId))
       case 'growth-refused':

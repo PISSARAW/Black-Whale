@@ -650,6 +650,13 @@ export const en = {
         shredStuck: (solid: string) =>
           `The confetti sticks in ${solid} · every volley now goes there`,
         shredCut: (solid: string, left: number) => `${solid} is cut down to ${left}% of itself`,
+        hammered: (solid: string) => `The arm was a hammer · ${solid} is driven into the deck`,
+        bored: (solid: string) =>
+          `The arm was a drill · there is a hole through ${solid}, and you can walk it`,
+        halved: (solid: string, apart: boolean) =>
+          apart
+            ? `The arm was an axe · ${solid} is in two pieces, side by side`
+            : `The arm was an axe · ${solid} is in two pieces, with nowhere to lay the second`,
         grown: (solid: string) => `${solid} has grown out of all proportion`,
         growthRefused: (solid: string) => `${solid} barely stirs · Nen is already in it`,
         marked: (solid: string, sun: boolean) => `${sun ? '☀' : '☾'} on ${solid}`,

@@ -27,6 +27,7 @@
     aimedSolid,
     aimedSpace,
     centroid,
+    danceOffset,
     detachedOn,
     doorExit,
     emptiedOn,
@@ -46,6 +47,11 @@
     type TourWorld,
   } from '$lib/tour/hatsu'
   import {
+    BLOOM_HEART,
+    BLOOM_LEAF,
+    BOOKMARK_RIBBON,
+    SNAKE_BOW,
+    SNAKE_HEAD,
     apparitionsOn,
     wormMouthAt,
     wormMouths,
@@ -149,6 +155,39 @@
     /** Whether a technique the walk answers to is active, so aiming is live. */
     aiming?: boolean
     /**
+     * Whether the active technique can be turned on its own user.
+     *
+     * Black Voice is the reason this exists: the needle goes into a thing or
+     * into the visitor, and the reticle is nearly always on something, so
+     * aiming at nothing is not a gesture a walk can reliably make. R is that
+     * gesture — cast with an empty reticle, whatever is actually in front.
+     */
+    selfCastable?: boolean
+    /**
+     * The two techniques the two keys play, when the aura in hand is two.
+     *
+     * Double Face is what this is for: the book is open on one page and a
+     * ribbon is holding a second, and both are live. F plays the open page and
+     * R plays the bookmarked one — so R stops meaning *cast on me* and starts
+     * meaning *the other page*, which is the only thing the scene has to know
+     * about it. Named, because a phone has no F and no R and the two buttons it
+     * gets instead have to say which is which. `null` under everything else.
+     */
+    hands?: { first: string; second: string } | null
+    /**
+     * The three airs the three keys play, when what is in hand is an
+     * instrument rather than a technique to be aimed.
+     *
+     * Enchanting Music is the whole of it: the flute is materialized for as
+     * long as the aura is up, and which piece is played is chosen at the moment
+     * of playing — F for the lively one, R for the soft one, C for the sharp
+     * one. So R stops meaning *cast on me* and C, which the walk has never used
+     * for anything, becomes a third cast. Named, for the same reason the two
+     * hands are: a phone has no keys, and the buttons it gets instead have to
+     * say which piece each one plays. `null` under everything else.
+     */
+    tunes?: { first: string; second: string; third: string } | null
+    /**
      * Paint the deck in what it is worth as evidence rather than in what its
      * rooms are for: the reveal. It changes nothing about the ship — the same
      * walls, the same solids — only what the surfaces say about themselves.
@@ -158,8 +197,18 @@
     aimedAt?: Space | null
     /** The solid down the reticle, for the techniques that work on solids. */
     aimedSolidAt?: Structure | null
-    /** Fired when the visitor casts on what they are facing. */
-    onCast?: (spaceId: string | null, solidId: string | null) => void
+    /**
+     * Fired when the visitor casts on what they are facing.
+     *
+     * `hand` is which key cast: F is the first, R the second. What that means
+     * is the page's business — a second page of the book, or the second of a
+     * technique's two hands — and the scene only reports which was pressed.
+     */
+    onCast?: (
+      spaceId: string | null,
+      solidId: string | null,
+      hand: 'first' | 'second' | 'third',
+    ) => void
     /** Fired whenever the visitor sets foot in a different space. */
     onArrive?: (spaceId: string | null) => void
     /**
@@ -188,9 +237,15 @@
      */
     onOwlSecond?: () => void
     /**
-     * Asked every tenth of a second for polarity marks to detonate.
+     * Asked every tenth of a second while The Sun and Moon has anything marked.
+     *
+     * The marks close on each other and go off when they touch, which is the
+     * one thing in the walk that happens between casts rather than on one. The
+     * clock is the same one the drift is drawn off — so what is seen touching
+     * is what detonates — and `delta` is how much of a second went by, because
+     * the tick is not owed by a frame that dropped.
      */
-    onPolarity?: (seconds: number) => void
+    onPolarity?: (seconds: number, delta: number) => void
     /**
      * Asked every few seconds while Little Eye's insect is out scouting.
      *
@@ -240,6 +295,9 @@
     auraColour = null,
     flash = null,
     aiming = false,
+    selfCastable = false,
+    hands = null,
+    tunes = null,
     reveal = false,
     aimedAt = $bindable(null),
     aimedSolidAt = $bindable(null),
@@ -1257,7 +1315,16 @@
             : world.solids[id]?.alive
               ? wanderOffset(id, seconds)
               : null
-          held.mesh.position.set(drift ? drift[0] : 0, 0, drift ? drift[1] : 0)
+          // And the lively air on top of whatever else it is doing: a thing
+          // Biohazard woke and Enchanting Music got hold of wanders the room
+          // and hops as it goes. The hop is the only vertical offset any solid
+          // in the walk has, which is what makes it read as dancing.
+          const hop = world.solids[id]?.dancing ? danceOffset(id, seconds) : null
+          held.mesh.position.set(
+            (drift ? drift[0] : 0) + (hop ? hop[0] : 0),
+            hop ? hop[1] : 0,
+            (drift ? drift[1] : 0) + (hop ? hop[2] : 0),
+          )
           held.edges.position.copy(held.mesh.position)
         }
       }
@@ -1288,6 +1355,10 @@
         stage: number
         /** How far it may get from `at`, in metres. */
         spread: number
+        /** What it was built at, in metres: the coil's radius, for the snake. */
+        size: number
+        /** The deck it is on, for the arm that has to know whether you are on it. */
+        tierId: string
         /** The far end, for a mouth of the tunnel. */
         pair: Apparition['pair']
         /** The disc the other end is rendered onto. */
@@ -1387,6 +1458,15 @@
        * lash puts it across eight metres of promenade.
        */
       const CHAIN_LINKS = 14
+
+      /**
+       * How many beads the run of Snake Arm from the shoulder is drawn with.
+       *
+       * Enough that a limb thrown the length of a promenade still reads as one
+       * unbroken arm rather than a dotted line, which is what sets the count:
+       * the coil at the far end is a tube, and the run has to match it.
+       */
+      const SNAKE_BEADS = 26
       /** How long one lash takes: out fast, back slower, and it is over. */
       const LASH_OUT = 0.14
       const LASH_BACK = 0.36
@@ -1488,6 +1568,45 @@
             )
             root.add(ring)
           }
+          turns = root
+        }
+
+        // The Sun and Moon's two marks, over the heads of the things wearing
+        // them: a disc with rays, and a crescent. They have to be told apart at
+        // a glance and from across a room — which of the two a thing is wearing
+        // is the whole of what the visitor has to know before they meet.
+        if (seen.kind === 'sun-mark') {
+          const disc = new THREE.Mesh(new THREE.CircleGeometry(seen.size * 0.55, 16), skin)
+          root.add(disc)
+          for (let i = 0; i < 8; i++) {
+            const ray = new THREE.Mesh(
+              new THREE.BoxGeometry(seen.size * 0.09, seen.size * 0.42, seen.size * 0.09),
+              skin,
+            )
+            const angle = (Math.PI / 4) * i
+            ray.position.set(
+              Math.cos(angle) * seen.size * 0.86,
+              Math.sin(angle) * seen.size * 0.86,
+              0,
+            )
+            ray.rotation.z = angle - Math.PI / 2
+            root.add(ray)
+          }
+          turns = root
+        }
+
+        if (seen.kind === 'moon-mark') {
+          const crescent = new THREE.Shape()
+          crescent.absarc(0, 0, seen.size, Math.PI * 0.42, -Math.PI * 0.42, true)
+          crescent.absarc(
+            seen.size * 0.42,
+            0,
+            seen.size * 0.92,
+            -Math.PI * 0.36,
+            Math.PI * 0.36,
+            false,
+          )
+          root.add(new THREE.Mesh(new THREE.ShapeGeometry(crescent), skin))
           turns = root
         }
 
@@ -1724,6 +1843,341 @@
           turns = null
         }
 
+        if (seen.kind === 'book') {
+          // Skill Hunter, open. Built flat in the XZ plane with the spine along
+          // Z at the origin, so `holdTheBook` has only to put it under the eye
+          // and turn it: everything below is in the book's own metres, and the
+          // two pages are mirror images of each other about the spine.
+          //
+          // `size` is the width of one page. The length is the page's, and the
+          // ribbon's tail hangs off the near edge of whichever page the
+          // bookmark is on — which is `stage`, and the only thing about this
+          // object that can change while it is being carried.
+          const wide = seen.size
+          const long = seen.size * 1.35
+          const board = glow(seen.colour, 1)
+          const paper = glow(0xf4eeff, 0.96)
+          const ink = glow(seen.colour, 0.5)
+
+          for (const side of [-1, 1]) {
+            const leaf = new THREE.Group()
+            // The outer edge lifts: a book held open is a shallow V, and a flat
+            // one reads as a card rather than as something being read.
+            leaf.rotation.z = side * 0.2
+            const cover = new THREE.Mesh(new THREE.BoxGeometry(wide, 0.006, long), board)
+            cover.position.set((side * wide) / 2, -0.004, 0)
+            leaf.add(cover)
+            const sheet = new THREE.Mesh(
+              new THREE.BoxGeometry(wide * 0.9, 0.002, long * 0.9),
+              paper,
+            )
+            sheet.position.set((side * wide) / 2, 0.002, 0)
+            leaf.add(sheet)
+            // Five lines of something. It is never read from this distance; it
+            // is what makes the white rectangle a page.
+            for (let i = 0; i < 5; i++) {
+              const line = new THREE.Mesh(
+                new THREE.BoxGeometry(wide * 0.6, 0.001, long * 0.035),
+                ink,
+              )
+              line.position.set((side * wide) / 2, 0.004, (i - 2) * long * 0.14)
+              leaf.add(line)
+            }
+            root.add(leaf)
+
+            // The ribbon lies on one page only, and hangs off the near edge of
+            // it. Which page is which key: the bookmarked one is the one the
+            // second hand plays, and the visitor has to be able to see it.
+            if ((side < 0 ? 0 : 1) === seen.stage) {
+              const silk = glow(BOOKMARK_RIBBON, 1)
+              const along = new THREE.Mesh(
+                new THREE.BoxGeometry(wide * 0.16, 0.002, long * 1.05),
+                silk,
+              )
+              along.position.set(side * wide * 0.58, 0.006, 0)
+              leaf.add(along)
+              const tail = new THREE.Mesh(
+                new THREE.BoxGeometry(wide * 0.16, long * 0.5, 0.002),
+                silk,
+              )
+              tail.position.set(side * wide * 0.58, -long * 0.25, -long * 0.52)
+              leaf.add(tail)
+            }
+          }
+          turns = null
+        }
+
+        // Melody's flute, which is a made thing rather than a shape aura took:
+        // a tube, a lip plate to blow across, and the holes down it. Built
+        // along X with the middle of the tube at the origin, so `raiseTheFlute`
+        // has only to put it at the hands and turn it — the instrument lies
+        // across the player, and everything below is in its own metres.
+        //
+        // `size` is half the length of the tube. Nothing here depends on which
+        // air is playing: a flute is the same flute whatever comes out of it.
+        if (seen.kind === 'flute') {
+          const silver = glow(seen.colour, 1)
+          const bore = seen.size * 0.055
+          const tube = new THREE.Mesh(
+            new THREE.CylinderGeometry(bore, bore * 0.92, seen.size * 2, 10),
+            silver,
+          )
+          // Lying along X rather than standing: a flute held upright is a
+          // recorder, and the two are not the same instrument.
+          tube.rotation.z = Math.PI / 2
+          root.add(tube)
+
+          // The stopper at the head, which is the end that is blown across.
+          const crown = new THREE.Mesh(
+            new THREE.CylinderGeometry(bore * 1.25, bore * 1.25, seen.size * 0.1, 10),
+            silver,
+          )
+          crown.rotation.z = Math.PI / 2
+          crown.position.x = -seen.size
+          root.add(crown)
+
+          // The lip plate: the one part of a flute anybody could draw from
+          // memory, and what says which way up the thing is being held.
+          const lip = new THREE.Mesh(
+            new THREE.CylinderGeometry(bore * 0.85, bore * 0.85, bore * 1.2, 8),
+            silver,
+          )
+          lip.position.set(-seen.size * 0.78, bore * 0.9, 0)
+          root.add(lip)
+
+          // Six holes down the body and the keys over the foot. Dark rather
+          // than silver, because a hole is where the tube is not.
+          const holes = glow(0x2a2a30, 1)
+          for (let i = 0; i < 6; i++) {
+            const key = new THREE.Mesh(
+              new THREE.CylinderGeometry(bore * 0.62, bore * 0.62, bore * 0.9, 8),
+              holes,
+            )
+            key.position.set(-seen.size * 0.34 + i * seen.size * 0.24, bore * 0.85, 0)
+            root.add(key)
+          }
+          turns = null
+        }
+
+        // One flower of a room in bloom: a stem out of the deck, a leaf, five
+        // petals and a heart. Built standing at the origin so the whole thing
+        // sways from its own root rather than sliding about the floor.
+        if (seen.kind === 'bloom') {
+          const petal = glow(seen.colour, 0.94)
+          const green = glow(BLOOM_LEAF, 0.9)
+          const tall = seen.size * 2.6
+
+          const stem = new THREE.Mesh(
+            new THREE.CylinderGeometry(seen.size * 0.045, seen.size * 0.06, tall, 6),
+            green,
+          )
+          stem.position.y = tall / 2
+          root.add(stem)
+
+          const leaf = new THREE.Mesh(new THREE.CircleGeometry(seen.size * 0.42, 8), green)
+          leaf.scale.set(1, 0.42, 1)
+          leaf.rotation.x = -Math.PI / 2.6
+          leaf.position.set(seen.size * 0.3, tall * 0.42, 0)
+          root.add(leaf)
+
+          // The head, tipped over so the flower is open to whoever is walking
+          // under it rather than to the deckhead: a bed of flowers seen from
+          // eye height is a bed of stems unless the faces are turned.
+          const head = new THREE.Group()
+          head.position.y = tall
+          head.rotation.x = -Math.PI / 3
+          for (let i = 0; i < 5; i++) {
+            const blade = new THREE.Mesh(new THREE.CircleGeometry(seen.size * 0.34, 7), petal)
+            blade.scale.set(0.62, 1, 1)
+            const angle = ((Math.PI * 2) / 5) * i
+            blade.position.set(
+              Math.cos(angle) * seen.size * 0.3,
+              Math.sin(angle) * seen.size * 0.3,
+              0,
+            )
+            blade.rotation.z = angle - Math.PI / 2
+            head.add(blade)
+          }
+          const heart = new THREE.Mesh(
+            new THREE.SphereGeometry(seen.size * 0.15, 8, 6),
+            glow(BLOOM_HEART, 1),
+          )
+          heart.position.z = seen.size * 0.05
+          head.add(heart)
+          root.add(head)
+          turns = null
+        }
+
+        // One note shaken loose by the sharp air: a crotchet, a quaver or a
+        // semiquaver, which is `stage` counted round three. Built flat in the
+        // XY plane and turned to whoever is looking, because a note seen
+        // edge-on is a line and not a note.
+        if (seen.kind === 'note') {
+          const ink = glow(seen.colour, 0.95)
+          const flags = seen.stage % 3
+
+          const head = new THREE.Mesh(new THREE.CircleGeometry(seen.size * 0.36, 12), ink)
+          // Tipped and squashed: a note head is an ellipse leaning right, and
+          // a plain disc on a stick reads as a pin.
+          head.scale.set(1, 0.72, 1)
+          head.rotation.z = 0.38
+          root.add(head)
+
+          const stem = new THREE.Mesh(
+            new THREE.PlaneGeometry(seen.size * 0.075, seen.size * 1.5),
+            ink,
+          )
+          stem.position.set(seen.size * 0.3, seen.size * 0.72, 0)
+          root.add(stem)
+
+          // The tails. One for a quaver, two for a semiquaver, and the second
+          // sits under the first exactly as it is written.
+          for (let i = 0; i < flags; i++) {
+            const tail = new THREE.Mesh(
+              new THREE.PlaneGeometry(seen.size * 0.4, seen.size * 0.12),
+              ink,
+            )
+            tail.position.set(seen.size * 0.5, seen.size * (1.4 - i * 0.3), 0)
+            tail.rotation.z = -0.5
+            root.add(tail)
+          }
+          turns = root
+        }
+
+        // Snake Arm: an arm of black aura wound round whatever it is holding,
+        // and the head that comes off the end of it. Built from the foot of the
+        // thing upward — the group sits on the floor the solid stands on — so a
+        // bound coffin gets three coils and a bound stanchion gets five, off
+        // the one height the apparition was given.
+        if (seen.kind === 'snake') {
+          const arm = glow(seen.colour, 1)
+          const climb = Math.max(0.5, seen.climb ?? 1)
+          const coils = Math.min(5, Math.max(2, Math.round(climb / (seen.size * 1.5))))
+          const last = coils * Math.PI * 2
+
+          // The coil, as one tube through a helix rather than a stack of rings:
+          // an arm is continuous, and the join is what would give it away.
+          const path: import('three').Vector3[] = []
+          for (let i = 0; i <= coils * 14; i++) {
+            const along = i / (coils * 14)
+            const angle = along * last
+            path.push(
+              new THREE.Vector3(
+                Math.cos(angle) * seen.size,
+                -0.04 + along * climb,
+                Math.sin(angle) * seen.size,
+              ),
+            )
+          }
+          const thickness = Math.min(0.11, Math.max(0.05, seen.size * 0.2))
+          const body = new THREE.Mesh(
+            new THREE.TubeGeometry(
+              new THREE.CatmullRomCurve3(path),
+              coils * 16,
+              thickness,
+              6,
+              false,
+            ),
+            arm,
+          )
+          root.add(body)
+
+          // The head, over the top of the last coil, rearing where anyone
+          // walking up to the thing will meet it. It is a group of its own
+          // because it is the part that moves: `driftApparitions` turns it to
+          // whoever is looking and flicks the tongue.
+          const head = new THREE.Group()
+          head.position.set(Math.cos(last) * seen.size, climb + 0.24, Math.sin(last) * seen.size)
+
+          const neck = new THREE.Mesh(
+            new THREE.CylinderGeometry(thickness, thickness * 1.1, 0.34, 6),
+            arm,
+          )
+          neck.position.y = -0.24
+          head.add(neck)
+
+          // The bow, at the join, which is the one thing that makes this Snake
+          // Arm rather than a snake: two pink wings and a knot between them,
+          // sat exactly where the black stops and the violet starts.
+          const ribbon = glow(SNAKE_BOW, 1)
+          const bow = new THREE.Group()
+          bow.position.y = -0.07
+          for (const side of [-1, 1]) {
+            const wing = new THREE.Mesh(new THREE.ConeGeometry(0.11, 0.17, 5), ribbon)
+            wing.rotation.z = (side * Math.PI) / 2
+            wing.position.set(side * 0.13, 0.02, 0)
+            bow.add(wing)
+          }
+          const knot = new THREE.Mesh(new THREE.SphereGeometry(0.055, 8, 6), ribbon)
+          bow.add(knot)
+          head.add(bow)
+
+          const violet = glow(SNAKE_HEAD, 1)
+          const skull = new THREE.Mesh(new THREE.SphereGeometry(0.2, 12, 10), violet)
+          // Long rather than round, and pointing the way the head faces, which
+          // is -z: a snout is what says which end of a snake this is.
+          skull.scale.set(0.95, 0.82, 1.45)
+          head.add(skull)
+
+          // The mouth, held open. A snake that has hold of something is not a
+          // snake with its mouth shut.
+          const jaw = new THREE.Mesh(new THREE.SphereGeometry(0.18, 10, 8), violet)
+          jaw.scale.set(0.85, 0.42, 1.2)
+          jaw.position.set(0, -0.11, -0.06)
+          jaw.rotation.x = -0.3
+          head.add(jaw)
+
+          const white = glow(0xf7f2ff, 1)
+          const ink = glow(0x1a1420, 1)
+          for (const side of [-1, 1]) {
+            const eye = new THREE.Mesh(new THREE.SphereGeometry(0.075, 10, 8), white)
+            eye.position.set(side * 0.11, 0.06, -0.16)
+            head.add(eye)
+            const pupil = new THREE.Mesh(new THREE.SphereGeometry(0.036, 8, 6), ink)
+            pupil.position.set(side * 0.115, 0.06, -0.225)
+            head.add(pupil)
+            // Two fangs, because the mouth is open and an open mouth with
+            // nothing in it reads as a puppet rather than a snake.
+            const fang = new THREE.Mesh(new THREE.ConeGeometry(0.022, 0.09, 4), white)
+            fang.rotation.x = Math.PI
+            fang.position.set(side * 0.065, -0.09, -0.19)
+            head.add(fang)
+          }
+
+          // The tongue, forked, out of the front of the mouth. Named because
+          // the drift reaches for it by name to flick it.
+          const tongue = new THREE.Group()
+          tongue.name = 'tongue'
+          tongue.position.set(0, -0.08, -0.2)
+          const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.014, 0.014, 0.22, 5), ribbon)
+          stem.rotation.x = Math.PI / 2
+          stem.position.z = -0.11
+          tongue.add(stem)
+          for (const side of [-1, 1]) {
+            const tip = new THREE.Mesh(new THREE.CylinderGeometry(0.011, 0.002, 0.12, 5), ribbon)
+            tip.rotation.x = Math.PI / 2
+            tip.rotation.z = side * 0.4
+            tip.position.set(side * 0.028, 0, -0.27)
+            tongue.add(tip)
+          }
+          head.add(tongue)
+
+          // And the rest of the limb, back to the shoulder it came out of. It
+          // is beads rather than a tube for the reason the chain is links: the
+          // run is re-strung every frame between a hand that moves and a coil
+          // that does not, and a tube would have to be rebuilt to do that.
+          // Overlapped at this spacing they read as one arm.
+          const run = new THREE.Group()
+          run.name = 'run'
+          for (let i = 0; i < SNAKE_BEADS; i++) {
+            run.add(new THREE.Mesh(new THREE.SphereGeometry(thickness, 8, 6), arm))
+          }
+          root.add(run)
+
+          root.add(head)
+          turns = head
+        }
+
         if (seen.kind === 'cargo') {
           const crate = new THREE.Mesh(
             new THREE.BoxGeometry(seen.size, seen.size, seen.size),
@@ -1743,11 +2197,11 @@
           const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.01, 0.01, seen.size * 2), skin)
           pole.position.y = seen.size
           root.add(pole)
-          
+
           const bulb = new THREE.Mesh(new THREE.SphereGeometry(0.04), glow(seen.colour, 0.9))
           bulb.position.y = seen.size * 2
           root.add(bulb)
-          
+
           turns = root
         }
 
@@ -1777,6 +2231,8 @@
           at: seen.at,
           stage: seen.stage,
           spread: seen.spread ?? 0,
+          size: seen.size,
+          tierId: seen.tierId,
           pair: seen.pair,
           pane,
         }
@@ -1796,16 +2252,17 @@
       }
 
       /** Puts what the world says is standing into the scene, and takes out the rest. */
-      function syncApparitions() {
-        // Where the walk is, for the one apparition that follows it.
-        const wanted = apparitionsOn(ship, world, { at: pointer, tierId: currentTierId })
+      function syncApparitions(seconds: number) {
+        // Where the walk is, for the one apparition that follows it — and the
+        // clock, for the two that ride something that will not hold still.
+        const wanted = apparitionsOn(ship, world, { at: pointer, tierId: currentTierId }, seconds)
         const standing: Record<string, true> = {}
 
         for (const seen of wanted) {
           standing[seen.id] = true
           // Everything the geometry depends on. Position is not in it: a thing
           // that moved is moved, not rebuilt.
-          const key = `${seen.kind}|${seen.stage}|${seen.colour}|${seen.size}|${seen.hidden}|${seen.pair?.spaceId ?? ''}`
+          const key = `${seen.kind}|${seen.stage}|${seen.colour}|${seen.size}|${seen.hidden}|${seen.pair?.spaceId ?? ''}|${seen.climb ?? ''}`
           let held = apparitions[seen.id]
           if (held && held.key !== key) {
             dropApparition(seen.id)
@@ -1821,6 +2278,8 @@
           held.at = seen.at
           held.stage = seen.stage
           held.spread = seen.spread ?? 0
+          held.size = seen.size
+          held.tierId = seen.tierId
           held.pair = seen.pair
           held.root.position.set(seen.at[0], seen.y, seen.at[1])
         }
@@ -1973,6 +2432,98 @@
       }
 
       /**
+       * The flute, at the lips or at the side.
+       *
+       * Carried like the book and the chain: the group is put at the visitor's
+       * hands every frame and turned with them, so the instrument lies across
+       * the player with the head end on their left, which is how a transverse
+       * flute is held. `stage` says whether anything is coming out of it —
+       * raised, it is up at the mouth and breathing quickly with the playing;
+       * down, it hangs at the hip on a slow sway.
+       */
+      function raiseTheFlute(held: Shown, phase: number) {
+        const sin = Math.sin(yaw)
+        const cos = Math.cos(yaw)
+        const playing = held.stage > 0
+        // Forward is (cos, -sin) and the right hand is (-sin, -cos): played, it
+        // comes in under the eye and barely in front; down, it is out at the
+        // hip and well below it.
+        const ahead = playing ? 0.34 : 0.4
+        const aside = playing ? 0.12 : 0.42
+        const drop = playing ? 0.24 : 0.72
+        held.root.position.set(
+          camera.position.x + cos * ahead - sin * aside,
+          camera.position.y -
+            drop +
+            Math.sin(phase * (playing ? 7 : 1.5)) * (playing ? 0.006 : 0.02),
+          camera.position.z - sin * ahead - cos * aside,
+        )
+        // A quarter turn off the walk's own yaw puts the tube along the
+        // visitor's right, which is where the far end of a flute goes.
+        held.root.rotation.set(0, yaw + Math.PI / 2, 0)
+        // Level at the lips; angled down and away when it is only being held.
+        held.root.rotateZ(playing ? -0.12 : -0.95)
+        held.root.rotateX(playing ? 0.06 : 0.3)
+      }
+
+      /**
+       * The run of a snake, from the shoulder it came out of to the coil.
+       *
+       * Snake Arm is a limb, not a thing put down in a room: whatever it has
+       * hold of, the other end of it is still on the visitor. So the beads are
+       * strung between the hand and where the coil starts, every frame, the way
+       * the Dowsing Chain's links are strung between the hand and the ball.
+       *
+       * Which hand is `stage`: nought is the left arm and one the right, which
+       * is how two snakes out at once are two arms rather than one arm drawn
+       * twice. The run is only drawn on the deck the coil is on — an arm that
+       * crossed three decks of hull to reach the hand would be reaching through
+       * steel, and off the deck the limb is simply out of sight.
+       */
+      function strungFromTheArm(held: Shown, phase: number) {
+        const run = held.root.getObjectByName('run')
+        if (!run) return
+        run.visible = held.tierId === currentTierId
+        if (!run.visible) return
+
+        // The hand, at the visitor's side and a little in front, on the
+        // shoulder this snake belongs to.
+        const side = held.stage === 0 ? -1 : 1
+        const sin = Math.sin(yaw)
+        const cos = Math.cos(yaw)
+        // Taken off the coil's own position rather than through `worldToLocal`:
+        // the group was put where it stands this frame and is never turned, so
+        // the subtraction is exact and does not wait on a matrix.
+        const hand = new THREE.Vector3(
+          camera.position.x + side * cos * 0.42 - sin * 0.4 - held.root.position.x,
+          camera.position.y - 0.5 + Math.sin(phase * 1.6) * 0.02 - held.root.position.y,
+          camera.position.z - side * sin * 0.42 - cos * 0.4 - held.root.position.z,
+        )
+        // Where the coil starts, which is where the run has to arrive: the
+        // first point of the helix `buildApparition` wound.
+        const coil = new THREE.Vector3(held.size, -0.04, 0)
+
+        const along = new THREE.Vector3().subVectors(coil, hand)
+        // The wave runs across the arm rather than along it, so it needs an
+        // axis that is not the arm's own: the horizontal normal serves, and it
+        // is what makes the limb crawl instead of hanging like a rope.
+        const across = new THREE.Vector3(-along.z, 0, along.x)
+        if (across.lengthSq() < 1e-6) across.set(1, 0, 0)
+        across.normalize()
+        const swell = Math.min(0.5, along.length() * 0.12)
+
+        run.children.forEach((bead, i) => {
+          const t = (i + 1) / (run.children.length + 1)
+          const wave = Math.sin(t * Math.PI * 3 - phase * 2.4) * swell * Math.sin(t * Math.PI)
+          bead.position.set(
+            hand.x + along.x * t + across.x * wave,
+            hand.y + along.y * t - Math.sin(t * Math.PI) * swell * 0.5,
+            hand.z + along.z * t + across.z * wave,
+          )
+        })
+      }
+
+      /**
        * What the apparitions do while nobody is casting anything.
        *
        * All of it is a sine: an owl's head turning, a card riding on the air, a
@@ -2000,6 +2551,65 @@
 
           if (held.kind === 'chain') {
             swingTheChain(held, phase)
+            continue
+          }
+
+          if (held.kind === 'flute') {
+            raiseTheFlute(held, phase)
+            continue
+          }
+
+          if (held.kind === 'bloom') {
+            // Rooted, and swaying from the root: the position is where it grew
+            // and never changes, and the whole plant leans on a slow air. Each
+            // flower is on its own phase, so a bed of them moves like a bed of
+            // them rather than like one flower drawn sixteen times.
+            held.root.position.set(held.at[0], held.y, held.at[1])
+            held.root.rotation.z = Math.sin(phase * 0.7 + held.stage) * 0.09
+            held.root.rotation.x = Math.sin(phase * 0.5 + held.stage * 2) * 0.06
+            continue
+          }
+
+          if (held.kind === 'note') {
+            // Loose in the air and going nowhere in particular: two sines that
+            // do not divide into each other, the way the insect drifts, but
+            // slow — these were shaken out of an instrument, not flown.
+            held.root.position.set(
+              held.at[0] + Math.sin(phase * 0.42 + held.stage) * held.spread,
+              held.y + Math.sin(phase * 0.65 + held.stage * 1.7) * 0.28,
+              held.at[1] + Math.sin(phase * 0.31 + held.stage * 2.3) * held.spread,
+            )
+            // Face on to whoever is reading them, with a rock of their own:
+            // what is written on the air has to be legible from the deck.
+            if (held.turns) {
+              held.turns.rotation.y = Math.atan2(
+                camera.position.x - held.root.position.x,
+                camera.position.z - held.root.position.z,
+              )
+              held.turns.rotation.z = Math.sin(phase * 0.9 + held.stage) * 0.16
+            }
+            continue
+          }
+
+          if (held.kind === 'book') {
+            // Held open in front of the visitor at reading distance and a
+            // little below the eye, turned with them: it is the one apparition
+            // they are looking *at* rather than looking *for*, so it sits under
+            // the reticle without covering it, and breathes the way a thing
+            // being carried does.
+            const sin = Math.sin(yaw)
+            const cos = Math.cos(yaw)
+            held.root.position.set(
+              camera.position.x + cos * 0.52,
+              camera.position.y - 0.42 + Math.sin(phase * 1.6) * 0.008,
+              camera.position.z - sin * 0.52,
+            )
+            // A quarter turn off the walk's own yaw, because the book is built
+            // with its spine along Z and its pages across X: that puts the left
+            // page on the visitor's left. Then it is tipped up towards the face
+            // — a book held flat is a book nobody is reading.
+            held.root.rotation.set(0, yaw + Math.PI / 2, 0)
+            held.root.rotateX(-0.55)
             continue
           }
 
@@ -2032,6 +2642,34 @@
                   camera.position.z - held.root.position.z,
                 )
               : angle * 1.7
+            continue
+          }
+
+          // The arm does not move — it is holding something fast, and an arm
+          // that swayed would be an arm that had let go. The head does: it
+          // watches whoever comes near the thing, breathes on the neck, and
+          // tastes the air the way the animal it is drawn as does.
+          if (held.kind === 'snake') {
+            held.root.position.set(held.at[0], held.y, held.at[1])
+            strungFromTheArm(held, phase)
+            if (!held.turns) continue
+            held.turns.rotation.y =
+              Math.atan2(
+                camera.position.x - held.root.position.x,
+                camera.position.z - held.root.position.z,
+              ) +
+              Math.PI +
+              Math.sin(phase * 0.7) * 0.22
+            held.turns.rotation.z = Math.sin(phase * 0.5) * 0.1
+            // Out, held a moment, and back: a flick every two seconds or so,
+            // rather than a tongue that is permanently out.
+            const tongue = held.turns.getObjectByName('tongue')
+            if (tongue) {
+              const flick = Math.max(0, Math.sin(phase * 1.5) - 0.62) / 0.38
+              tongue.visible = flick > 0
+              tongue.scale.setScalar(0.3 + flick * 0.7)
+              tongue.rotation.x = Math.sin(phase * 9) * 0.25 * flick
+            }
             continue
           }
 
@@ -2099,10 +2737,17 @@
           if (held.kind === 'owl') {
             // Not a spin: a head that turns, stops, and turns back.
             held.turns.rotation.y = Math.sin(phase * 0.35) * 1.9
-          } else if (held.kind === 'double' || held.kind === 'card' || held.kind === 'portal') {
-            // The three that are meant to be looked at face whoever is looking:
-            // a person turns to you, a card is dealt to you, and a door you
-            // cannot see through the edge of is a door you can walk into.
+          } else if (
+            held.kind === 'double' ||
+            held.kind === 'card' ||
+            held.kind === 'portal' ||
+            held.kind === 'sun-mark' ||
+            held.kind === 'moon-mark'
+          ) {
+            // The ones that are meant to be looked at face whoever is looking:
+            // a person turns to you, a card is dealt to you, a door you cannot
+            // see through the edge of is a door you can walk into — and a bomb
+            // seen edge-on is a bomb nobody reads in time.
             held.turns.rotation.y = Math.atan2(
               camera.position.x - held.root.position.x,
               camera.position.z - held.root.position.z,
@@ -2173,6 +2818,8 @@
       const PUNCH_SECONDS = 1
       const SUN_SECONDS = 2.4
       const ARROW_SECONDS = 0.9
+      /** A bang rather than a sunrise: out fast, and gone. */
+      const BLAST_SECONDS = 0.9
       let playing = 0
       /** How hard the sun is burning, which the exposure is read off. */
       let burning = 0
@@ -2231,6 +2878,28 @@
       scene.add(sun)
       const sunLight = new THREE.PointLight(0xffb14a, 0, 60, 2)
       scene.add(sunLight)
+
+      /**
+       * The Sun and Moon going off, which is the same fire seen from outside.
+       *
+       * Rising Sun is a sphere the visitor is standing in the middle of; this is
+       * one they are standing next to — so it is the same two things, a shell
+       * and a light, put where the pair met rather than on the camera, and it is
+       * over in half the time. Genthru's bomb is a bang, not a sunrise.
+       */
+      const blastMaterial = new THREE.MeshBasicMaterial({
+        color: 0xffc46b,
+        transparent: true,
+        opacity: 0.5,
+        side: THREE.DoubleSide,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false,
+      })
+      const blast = new THREE.Mesh(new THREE.SphereGeometry(1, 20, 16), blastMaterial)
+      blast.visible = false
+      scene.add(blast)
+      const blastLight = new THREE.PointLight(0xffb14a, 0, 40, 2)
+      scene.add(blastLight)
 
       /**
        * The arrow, which is only ever seen going past.
@@ -2417,8 +3086,7 @@
         // heard and read out and left at that.
         if (flash.kind === 'lash') {
           played = null
-          lashing =
-            flash.tierId === currentTierId ? { at: flash.at, y: flash.y, through: 0 } : null
+          lashing = flash.tierId === currentTierId ? { at: flash.at, y: flash.y, through: 0 } : null
           return
         }
 
@@ -2447,7 +3115,9 @@
               ? SUN_SECONDS
               : played.kind === 'arrow'
                 ? ARROW_SECONDS
-                : PUNCH_SECONDS
+                : played.kind === 'blast'
+                  ? BLAST_SECONDS
+                  : PUNCH_SECONDS
         const through = playing / span
         if (through >= 1) {
           gust.visible = false
@@ -2456,6 +3126,8 @@
           shaft.visible = false
           sun.visible = false
           sunLight.intensity = 0
+          blast.visible = false
+          blastLight.intensity = 0
           if (burning) {
             burning = 0
             renderer.toneMappingExposure = blinded ? 0.02 : 1
@@ -2478,6 +3150,28 @@
           )
           shaft.lookAt(played.at[0], played.y, played.at[1])
           arrowMaterial.opacity = 0.95 * (1 - Math.max(0, (through - 0.5) * 2))
+          return
+        }
+
+        // The pair going off, in the room they went off in and not on the eye:
+        // out to its full width in the first fifth and fading from there, which
+        // is what a bang looks like from the other side of a saloon. Drawn on
+        // whatever deck it happened on, so a blast four decks down lights that
+        // deck and not this one.
+        if (played.kind === 'blast') {
+          if (played.tierId !== currentTierId) {
+            blast.visible = false
+            blastLight.intensity = 0
+            return
+          }
+          const out = Math.min(1, through * 5)
+          const metres = Math.max(2, played.metres ?? 4)
+          blast.visible = true
+          blast.position.set(played.at[0], played.y, played.at[1])
+          blast.scale.setScalar(metres * (0.3 + out * 0.7))
+          blastMaterial.opacity = 0.55 * (1 - through) * (1 - through)
+          blastLight.position.copy(blast.position)
+          blastLight.intensity = 40 * out * (1 - through)
           return
         }
 
@@ -2756,9 +3450,21 @@
         if (arc.through >= 1) arc = null
       }
 
-      function cast() {
-        onCast?.(facing()?.id ?? null, facingSolid()?.id ?? null)
+      function cast(hand: 'first' | 'second' | 'third' = 'first') {
+        onCast?.(facing()?.id ?? null, facingSolid()?.id ?? null, hand)
         if (swings) throwThread()
+      }
+
+      /**
+       * The same cast with the reticle emptied, which is what turns a technique
+       * on its own user.
+       *
+       * Neither the room nor the solid in front goes with it: the walk already
+       * tells the rules which room the visitor is standing in, so an empty
+       * reticle costs nothing and says the one thing R is for.
+       */
+      function castOnSelf() {
+        onCast?.(null, null, 'second')
       }
 
       // ── Input ────────────────────────────────────
@@ -2797,7 +3503,21 @@
           yaw += event.code === 'ArrowLeft' ? snapStep() : -snapStep()
         }
         if (event.code === 'KeyE' || event.code === 'Enter') takeLink()
-        if (event.code === 'KeyF' && aiming) cast()
+        // F is the cast. R is the second of whatever there are two of — a second
+        // page, a second air — and the cast turned on the visitor where there is
+        // only one; the cases never arise together, so the key never means two
+        // things at once. A technique cast with two hands spends no key on the
+        // second: its own key alternates, which the page works out.
+        if (event.code === 'KeyF' && aiming) cast('first')
+        if (event.code === 'KeyR' && !event.repeat && aiming) {
+          if (hands || tunes) cast('second')
+          else if (selfCastable) castOnSelf()
+        }
+        // C is the third, and only an instrument has one: three airs need three
+        // keys, and it is the one letter within reach of the hand already on
+        // WASD that the walk has never spent on anything. D is not free — it is
+        // the sidestep — so a flute played on it would walk you across the room.
+        if (event.code === 'KeyC' && !event.repeat && aiming && tunes) cast('third')
       }
       const onKeyUp = (event: KeyboardEvent) => {
         delete pressed[event.code]
@@ -3138,7 +3858,13 @@
       let sinceAim = 0
 
       let puppetId: string | null = null
-      let puppeteer: { tierId: string; at: Vec2; yaw: number; pitch: number; ground: number } | null = null
+      let puppeteer: {
+        tierId: string
+        at: Vec2
+        yaw: number
+        pitch: number
+        ground: number
+      } | null = null
 
       const tick = (now: number) => {
         const delta = Math.min((now - previous) / 1000, 0.1)
@@ -3148,7 +3874,9 @@
           if (world.puppet) {
             puppeteer = { tierId: currentTierId, at: pointer, yaw, pitch, ground }
             const hold = world.solids[world.puppet]
-            const structure = ship.structures.find((s) => s.id === world.puppet) || world.copies.find(c => c.id === world.puppet)
+            const structure =
+              ship.structures.find((s) => s.id === world.puppet) ||
+              world.copies.find((c) => c.id === world.puppet)
             if (structure) {
               const nowPos = solidNow(structure, hold)
               const space = ship.spaces.get(structure.spaceId)
@@ -3158,7 +3886,10 @@
                 pointer = nowPos.at
                 const activePlan = ship.plans.get(currentTierId)
                 if (activePlan) {
-                  ground = floorOf(spaceAt(activePlan, pointer) ?? entrySpace(activePlan), activePlan.tier)
+                  ground = floorOf(
+                    spaceAt(activePlan, pointer) ?? entrySpace(activePlan),
+                    activePlan.tier,
+                  )
                 }
               }
             }
@@ -3179,6 +3910,16 @@
         const plan = ship.plans.get(currentTierId)
         if (!plan) return
 
+        // One clock for everything the walk animates, and it is not the wall's:
+        // Parallel Future moves it back ten seconds, and the room does again
+        // exactly what it did — see `startRewind`.
+        // During the spooling, the clock is pulled back smoothly.
+        const rewinding = reeling ? REWIND_SECONDS * reeling.through : 0
+        // Read before anything is placed rather than after, because the marks
+        // The Sun and Moon leaves are put where their things are *now*, and a
+        // thing that wanders is somewhere new every frame.
+        const clock = now / 1000 - rewound - rewinding
+
         syncDeck()
         syncSolids()
         syncShells()
@@ -3188,15 +3929,9 @@
         // The far deck first, so a mouth built this frame already has a room to
         // look at rather than a frame of void.
         syncPortalDecks()
-        syncApparitions()
+        syncApparitions(clock)
         syncFlash()
         sweepStale()
-        // One clock for everything the walk animates, and it is not the wall's:
-        // Parallel Future moves it back ten seconds, and the room does again
-        // exactly what it did — see `startRewind`.
-        // During the spooling, the clock is pulled back smoothly.
-        const rewinding = reeling ? REWIND_SECONDS * reeling.through : 0
-        const clock = now / 1000 - rewound - rewinding
         driftSolids(clock)
         driftMotes(delta, clock)
         driftApparitions(clock)
@@ -3225,10 +3960,15 @@
           }
         } else sinceBite = 0
 
+        // The marks close on each other on a tenth of a second rather than on
+        // the frame: what they do is state, and sixty writes a second to a world
+        // the whole page reads is a cost with nothing bought by it. How much of
+        // a second actually went by goes with it, so a dropped frame slows
+        // nothing down.
         sincePolarity += delta
         if (sincePolarity >= 0.1) {
-          sincePolarity -= 0.1
-          onPolarity?.(clock)
+          onPolarity?.(clock, sincePolarity)
+          sincePolarity = 0
         }
 
         // The free bird on the same clock: it sits in a room for a few seconds
@@ -3685,7 +4425,7 @@
   let jump = $state<((spaceId: string, landing?: Vec2) => void) | null>(null)
   /** The same, for the two things the on-screen buttons stand in for. */
   let take = $state<(() => void) | null>(null)
-  let castNow = $state<(() => void) | null>(null)
+  let castNow = $state<((hand?: 'first' | 'second' | 'third') => void) | null>(null)
   /** The same, for the one comfort setting the camera holds rather than reads. */
   let relens = $state<((settings: Comfort) => void) | null>(null)
 
@@ -3790,7 +4530,44 @@
           {touchUseLabel}
         </button>
       {/if}
-      {#if aiming}
+      {#if aiming && hands}
+        <!-- Two techniques, so two buttons: a phone has no F and no R, and
+             which of the two pages is being cast is the whole of the ability. -->
+        {#each [{ hand: 'first' as const, name: hands.first }, { hand: 'second' as const, name: hands.second }] as page (page.hand)}
+          <button
+            type="button"
+            onclick={() => castNow?.(page.hand)}
+            aria-label={`${touchLabels.cast} · ${page.name}`}
+            class="max-w-[13rem] touch-none truncate rounded border bg-[#050505]/90 px-3 py-2 text-xs"
+            style:border-color={auraColour
+              ? `color-mix(in srgb, ${auraColour} 70%, transparent)`
+              : ''}
+            style:color={auraColour ?? '#FFFFF0'}
+          >
+            {page.name}
+          </button>
+        {/each}
+      {:else if aiming && tunes}
+        <!-- And three, for the instrument: a phone has no F, no R and no C, so
+             the three airs are three buttons in the order the keys play them. -->
+        {#each [{ hand: 'first' as const, name: tunes.first }, { hand: 'second' as const, name: tunes.second }, { hand: 'third' as const, name: tunes.third }] as air (air.hand)}
+          <button
+            type="button"
+            onclick={() => castNow?.(air.hand)}
+            aria-label={`${touchLabels.cast} · ${air.name}`}
+            class="max-w-[13rem] touch-none truncate rounded border bg-[#050505]/90 px-3 py-2 text-xs"
+            style:border-color={auraColour
+              ? `color-mix(in srgb, ${auraColour} 70%, transparent)`
+              : ''}
+            style:color={auraColour ?? '#FFFFF0'}
+          >
+            {air.name}
+          </button>
+        {/each}
+      {:else if aiming}
+        <!-- The two hands need no button of their own: the key alternates, so
+             one press is the sun and the next is the moon, and a phone taps the
+             one button twice exactly as a keyboard presses the one key twice. -->
         <button
           type="button"
           onclick={() => castNow?.()}

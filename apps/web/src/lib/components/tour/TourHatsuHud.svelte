@@ -15,6 +15,7 @@
     dialReading,
     identityOf,
     solidById,
+    twoPages,
     worksOnTheBody,
     type TourReport,
     type TourWorld,
@@ -58,9 +59,13 @@
     onCycleEye: () => void
     /** Casts a page of the book at whatever the visitor is aiming at. */
     onCastPage: (kind: HatsuInteractionKind) => void
+    /** The cast the two keys make, for a visitor working the panel instead. */
+    onCastHand: (hand: 'first' | 'second') => void
+    /** Moves Double Face's ribbon to the other page, which swaps the two keys. */
+    onTurnTheBook: () => void
   }
 
-  const {
+  let {
     ship,
     profile,
     castable,
@@ -77,6 +82,8 @@
     onCycleOwl,
     onCycleEye,
     onCastPage,
+    onCastHand,
+    onTurnTheBook,
   }: Props = $props()
 
   // The technique under the visitor's own name for it, as the dock names it.
@@ -88,28 +95,24 @@
   /** The pages of the book the visitor can actually play right now. */
   const pages = $derived(castablePages(world.book))
 
-  const CHROLLO_RANDOM_KINDS: HatsuInteractionKind[] = [
-    'devour',
-    'pocket',
-    'teleport',
-    'polarity',
-    'command',
-    'identity-swap',
-    'divination',
-    'prophecy',
-    'clone',
-  ]
-
-  let doubleFaceRandoms = $state<HatsuInteractionKind[]>([])
-
-  $effect(() => {
-    if (profile.id === 'double-face' && doubleFaceRandoms.length === 0) {
-      const shuffled = [...CHROLLO_RANDOM_KINDS].sort(() => 0.5 - Math.random())
-      doubleFaceRandoms = [shuffled[0], shuffled[1]]
-    } else if (profile.id !== 'double-face') {
-      doubleFaceRandoms = []
-    }
-  })
+  /**
+   * Double Face's two live pages, under the keys that play them.
+   *
+   * The bookmark is not cast at anything itself — it is what keeps a second
+   * page alive beside the open one — so the panel does not offer one thing to
+   * cast, it offers two, and says which key each is under. `null` under
+   * everything else, and under a book that has not been dealt yet.
+   */
+  const bothPages = $derived(profile.kind === 'bookmark' ? twoPages(world.book) : null)
+  /**
+   * Whether a two-handed technique is in reach of a key, in hand or on a page.
+   *
+   * It never spends a second key on its second hand — the one key alternates —
+   * so there is one thing to tell the visitor either way.
+   */
+  const marksBothHands = $derived(
+    bothPages ? bothPages.includes('polarity') : profile.kind === 'polarity',
+  )
 
   const roomName = (id: string) => {
     const space = ship.spaces.get(id)
@@ -266,6 +269,8 @@
         return say.bound(solidName(report.solidId))
       case 'released':
         return say.released(solidName(report.solidId))
+      case 'arms-full':
+        return say.armsFull(report.solidIds.map(solidName).join(', '))
       case 'came-up-under':
         return say.cameUpUnder(solidName(report.solidId), solidName(report.otherId))
       case 'came-up-empty':
@@ -655,11 +660,13 @@
       {/if}
     </p>
     <p class="text-[11px] text-[#FFFFF0]/45">
-      {onBody
-        ? $t.tour.hatsu.body.castHint
-        : onSolids
-          ? $t.tour.hatsu.solids.castHint
-          : $t.tour.hatsu.castHint}
+      {marksBothHands
+        ? $t.tour.hatsu.solids.markHint
+        : onBody
+          ? $t.tour.hatsu.body.castHint
+          : onSolids
+            ? $t.tour.hatsu.solids.castHint
+            : $t.tour.hatsu.castHint}
     </p>
   {:else}
     <p class="mt-2 text-xs leading-snug text-[#FFFFF0]/60">
@@ -690,7 +697,10 @@
     <p class="mt-1 text-[11px] text-[#FFFFF0]/40">{$t.tour.hatsu.nothingHeld}</p>
   {/if}
 
-  {#if pages.length}
+  <!-- Double Face has a panel of its own below, which says the same two pages
+       under the keys that play them: listing them twice would be the walk
+       offering the visitor a choice it has already made for them. -->
+  {#if pages.length && !bothPages}
     <p class="mt-3 text-[10px] uppercase tracking-widest text-[#FFFFF0]/45">
       {$t.tour.hatsu.book.title}
     </p>
@@ -713,19 +723,32 @@
     </div>
   {/if}
 
-  {#if doubleFaceRandoms.length > 0}
-    <p class="mt-3 text-[10px] uppercase tracking-widest text-[#FFFFF0]/45">Double Face</p>
+  {#if bothPages}
+    <p class="mt-3 text-[10px] uppercase tracking-widest text-[#FFFFF0]/45">
+      {$t.tour.hatsu.book.bothLive}
+    </p>
+    <p class="text-[10px] leading-snug text-[#FFFFF0]/35">{$t.tour.hatsu.book.bothHint}</p>
     <div class="mt-1 flex flex-wrap gap-1">
-      {#each doubleFaceRandoms as randomKind, index (`double-face-${randomKind}-${index}`)}
+      {#each [{ key: 'F', hand: 'first' as const, page: bothPages[0], ribbon: false }, { key: 'R', hand: 'second' as const, page: bothPages[1], ribbon: true }] as live (live.key)}
         <button
           type="button"
-          onclick={() => onCastPage(randomKind)}
-          title="Utiliser la capacité aléatoire"
-          class="rounded border border-[#444] px-1.5 py-0.5 text-[11px] text-[#FFFFF0]/80 transition-colors hover:border-[#FFD700]/60 hover:text-[#FFFFF0]"
+          onclick={() => onCastHand(live.hand)}
+          title={$t.tour.hatsu.book.cast}
+          class="rounded border px-1.5 py-0.5 text-[11px] transition-colors {live.ribbon
+            ? 'border-[#FFD700]/60 text-[#FFD700]'
+            : 'border-[#444] text-[#FFFFF0]/80'} hover:border-[#FFD700] hover:text-[#FFFFF0]"
         >
-          {pageName(randomKind)}
+          <span class="font-mono text-[#FFFFF0]/50">{live.key}</span>
+          {pageName(live.page)}
         </button>
       {/each}
+      <button
+        type="button"
+        onclick={onTurnTheBook}
+        class="rounded border border-[#444] px-1.5 py-0.5 text-[11px] text-[#FFFFF0]/60 transition-colors hover:border-[#FFD700]/60 hover:text-[#FFFFF0]"
+      >
+        {$t.tour.hatsu.book.turn}
+      </button>
     </div>
   {/if}
 

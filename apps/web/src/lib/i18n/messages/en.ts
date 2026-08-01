@@ -96,6 +96,12 @@ export const en = {
       fullscreenKeys: 'V',
       nen: 'Cast the active Hatsu',
       nenKeys: 'F, or click, on the room or the solid you are facing',
+      nenSelf: 'Turn the active Hatsu on yourself',
+      nenSelfKeys: 'R, wherever you are looking',
+      nenSecond: 'Cast the second page',
+      nenSecondKeys: (name: string) => `R casts ${name}, the one under the ribbon`,
+      nenMoon: 'Put the sun on, then the moon',
+      nenMoonKeys: 'The same key alternates: one press is the sun, the next the moon',
       touch: 'On a touchscreen',
       touchKeys:
         'The stick at bottom left walks, pushed to the rim it runs; drag the view to look; the buttons take a door and cast',
@@ -320,6 +326,13 @@ export const en = {
         scout: 'Working the deck',
         film: 'Filming where it is',
       },
+      // Enchanting Music's three airs, which are played rather than aimed: the
+      // room the visitor is standing in is the only one that can hear them.
+      tunes: {
+        dance: 'The lively air',
+        bloom: 'The soft air',
+        scatter: 'The sharp air',
+      },
       reports: {
         noTarget: 'Nothing in reach to cast on',
         teleported: (room: string) => `Sent to ${room} — you did not choose where you landed`,
@@ -491,7 +504,8 @@ export const en = {
         snakesFed: (room: string) => `The curse found its victim in ${room}`,
         snakesRebound: 'Dismissed with no victim · the curse comes back on the one who set it',
         puppeted: (solid: string) => `The antenna is planted · ${solid} is now under control`,
-        puppetReleased: (solid: string) => `The antenna is withdrawn · ${solid} is no longer controlled`,
+        puppetReleased: (solid: string) =>
+          `The antenna is withdrawn · ${solid} is no longer controlled`,
         autopilotStarted: 'Autopilot engaged · the body moves on its own to complete the task',
         wormSet: (room: string) => `One end of the tunnel in ${room} · name the other`,
         wormOpen: (a: string, b: string) =>
@@ -554,6 +568,8 @@ export const en = {
             : `The chain cracks across ${solid} and comes back`,
         bound: (solid: string) => `The snake has ${solid} · nothing else moves it now`,
         released: (solid: string) => `${solid} is let go`,
+        armsFull: (solids: string) =>
+          `Both snakes are out · they have ${solids}, and you have two arms`,
         cameUpUnder: (solid: string, other: string) =>
           `The aura ran out of ${solid} along the floor and came up under ${other}`,
         cameUpEmpty: (room: string) =>
@@ -584,6 +600,8 @@ export const en = {
       solids: {
         reach: 'Any solid in the ship, from anywhere in it',
         castHint: 'Press F, or click, to cast on it — or pick any solid in the ship below',
+        markHint:
+          'The key alternates: one press puts the sun on, the next the moon · marked things go looking for their opposite',
         aiming: (solid: string) => `Facing ${solid}`,
         aimingNothing: 'Nothing solid in front of you',
         targets: 'Cast on a solid',
@@ -629,6 +647,12 @@ export const en = {
         hint: 'A page is cast where you are aiming, like anything else',
         card: 'card',
         loan: 'loan',
+        // Double Face: the bookmark is not cast at anything, it is what keeps a
+        // second page live beside the open one — so the panel offers two things
+        // rather than one, and says which key plays each.
+        bothLive: 'The book is open at two',
+        bothHint: 'F casts the open page · R casts the one under the ribbon',
+        turn: 'Move the ribbon',
       },
       holds: {
         book: 'In the book',

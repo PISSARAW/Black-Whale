@@ -16,7 +16,16 @@
  */
 import { ceilingOf, floorOf, type Ship } from './blueprint'
 import { distanceToBoundary, pointInPolygon } from './geometry'
-import { centroid, solidById, solidNow, type TourReport, type TourWorld } from './hatsu'
+import {
+  boundSolidIds,
+  centroid,
+  solidById,
+  solidNow,
+  wanderOffset,
+  TUNES,
+  type TourReport,
+  type TourWorld,
+} from './hatsu'
 import type { Space, Vec2 } from './types'
 
 export type ApparitionKind =
@@ -52,6 +61,20 @@ export type ApparitionKind =
   | 'antenna'
   /** The Dowsing Chain: links off the visitor's hand, with the ball on the end. */
   | 'chain'
+  /** Skill Hunter, held open in front of the visitor with a ribbon on one page. */
+  | 'book'
+  /** Snake Arm, wound round the thing it is holding fast. */
+  | 'snake'
+  /** The Sun and Moon's sun, burning over the thing one hand marked. */
+  | 'sun-mark'
+  /** And its moon, over the thing the other hand marked. */
+  | 'moon-mark'
+  /** Melody's flute, materialized in the visitor's hands. */
+  | 'flute'
+  /** One flower of the room the soft air put in bloom. */
+  | 'bloom'
+  /** One note of the sharp air, loose in the room it was played into. */
+  | 'note'
 
 /**
  * One thing Nen has left standing in the ship.
@@ -87,6 +110,14 @@ export interface Apparition {
   /** The other mouth of the tunnel, for the portal that has to see through it. */
   pair?: { spaceId: string; tierId: string; at: Vec2; y: number }
   /**
+   * How far up something wound round a solid has to climb, in metres.
+   *
+   * Only Snake Arm has one. Everything else in this list stands beside a thing
+   * or over it; the arm is wrapped *around* it, so it needs the height of what
+   * it is holding as well as the width, and one `size` cannot say both.
+   */
+  climb?: number
+  /**
    * How far from `at` the thing may wander, in metres.
    *
    * The fish have one, and so does everything that was sent somewhere with
@@ -121,10 +152,59 @@ const GUM = 0xf06bb5
 const INSECT = 0x55c2ff
 /** The Dowsing Chain is steel: the pale blue the dock already publishes it in. */
 const CHAIN = 0x8ecae6
+/** Double Face's violet, the one the registry publishes the bookmark in. */
+const BOOK = 0x9c7ac4
+/** And the ribbon, which has to be the one thing in the book that is not violet. */
+export const BOOKMARK_RIBBON = 0xffd166
+/**
+ * Snake Arm is two colours and a ribbon, and it is drawn as it is drawn in the
+ * source: an arm of flat black, a violet head at the end of it, and the pink
+ * bow at the join that is the whole reason the thing is recognisable. Only the
+ * arm is the apparition's own colour — the head and the bow are the scene's,
+ * the way the owl's eyes and Kalluto's painted face are.
+ */
+const SNAKE = 0x14141a
+export const SNAKE_HEAD = 0xa06ad4
+export const SNAKE_BOW = 0xef7ac8
 /** Halkenburg's collective aura, which is the gold of the whole ship's will. */
 export const ARROW = 0xf7e27d
 /** Rising Sun is the one technique whose colour is a temperature. */
 export const SUN = 0xf2a63b
+/**
+ * And The Sun and Moon's other half, which is the cold end of the same pair.
+ *
+ * The sun's mark is drawn in the heat above, because the two are the same
+ * light: what tells them apart across a promenade is the shape — a disc with
+ * rays, and a crescent — and the colour only seconds that.
+ */
+export const MOON = 0xbcd2f5
+
+/**
+ * Enchanting Music: the instrument, and the two airs that leave something in
+ * the room to see.
+ *
+ * The flute is silver because it is the one apparition in the walk that is a
+ * made object rather than aura — Melody carries it, and what the technique does
+ * is play it. The flowers are the pink the registry publishes the technique in;
+ * the notes are paler, because ink hanging in the air of a dark ship has to be
+ * legible before it is pretty. The heart of a flower is the walk's own gold.
+ */
+const FLUTE = 0xe6e0cf
+const BLOOM = 0xf2a0c8
+export const BLOOM_HEART = 0xffd166
+export const BLOOM_LEAF = 0x7fc8a0
+const NOTE = 0xd7c6f7
+
+/**
+ * How many flowers a room in bloom gets, and how many notes are left hanging.
+ *
+ * Both are a handful rather than a census, for the shoal's reason: what the
+ * visitor has to read across a promenade is *this room has been played into*,
+ * and two hundred flowers say that no better than sixteen while costing a
+ * hundred and eighty more meshes.
+ */
+export const FLOWERS = 16
+export const LOOSE_NOTES = 12
 
 /** How many fish a room gets, whatever its size. A shoal, not a census. */
 export const SHOAL = 7
@@ -228,6 +308,11 @@ export function apparitionsOn(
   ship: Ship,
   world: TourWorld,
   visitor?: { at: Vec2; tierId: string },
+  /**
+   * The walk's clock, for the marks that ride something that will not hold
+   * still: a bomb drawn where its thing used to stand is a bomb that lies.
+   */
+  seconds = 0,
 ): Apparition[] {
   const found: Apparition[] = []
 
@@ -517,6 +602,105 @@ export function apparitionsOn(
     })
   }
 
+  // Skill Hunter, held open in front of whoever is carrying the bookmark. Two
+  // pages, and a ribbon lying across one of them — which one is the whole of
+  // what Double Face is, so it is what `stage` carries: 0 for the left page,
+  // 1 for the right. The book is worn like the chain and the hoover, so the
+  // room and the height here say only what deck it belongs to.
+  if (world.holding === 'bookmark' && visitor && world.book.bookmark) {
+    const ribboned = world.book.pages.indexOf(world.book.bookmark)
+    found.push({
+      id: 'book',
+      kind: 'book',
+      spaceId: world.cameFrom ?? '',
+      tierId: visitor.tierId,
+      at: [visitor.at[0], visitor.at[1]],
+      y: 0,
+      // Half the width of one page, in metres: a book held at reading distance.
+      size: 0.16,
+      colour: BOOK,
+      stage: ribboned < 0 ? 0 : ribboned,
+      hidden: false,
+    })
+  }
+
+  // Melody's flute, materialized for as long as the aura is up and carried the
+  // way the chain and the book are: the scene puts it at the hands every frame,
+  // so the room and the height here say only what deck it belongs to. `stage`
+  // is which air is coming out of it — nought for none, and the scene reads
+  // that as the difference between an instrument at the lips and one at the
+  // side, which is the only tell that says the technique is doing anything.
+  if (world.holding === 'melody' && visitor) {
+    found.push({
+      id: 'flute',
+      kind: 'flute',
+      spaceId: world.cameFrom ?? '',
+      tierId: visitor.tierId,
+      at: [visitor.at[0], visitor.at[1]],
+      y: 0,
+      // Half the length of the tube, in metres: a concert flute, near enough.
+      size: 0.33,
+      colour: FLUTE,
+      stage: world.body.playing ? TUNES.indexOf(world.body.playing) + 1 : 0,
+      hidden: false,
+    })
+  }
+
+  // A room the soft air was played into, in flower. The flowers are planted
+  // across the whole footprint rather than fanned about the middle, the way the
+  // shoal is spread and for the same reason: what the piece changed is the
+  // room, and a bouquet at the centre of a promenade is a bouquet.
+  for (const spaceId of world.flowered) {
+    const space = spaceOf(spaceId)
+    const measured = space ? room(ship, space) : null
+    if (!space || !measured) continue
+    for (const station of stationsIn(space, FLOWERS, landing(space))) {
+      found.push({
+        id: `bloom:${spaceId}:${station.index}`,
+        kind: 'bloom',
+        spaceId: space.id,
+        tierId: space.tierId,
+        at: station.at,
+        // Growing out of the deck, so the floor exactly: everything else in
+        // this list hangs over a room and this is the one thing rooted in one.
+        y: measured.floor,
+        // Not one height: a bed of flowers all of a size is a lawn.
+        size: 0.22 + (station.index % 3) * 0.07,
+        colour: BLOOM,
+        stage: station.index,
+        hidden: false,
+        spread: station.water,
+      })
+    }
+  }
+
+  // And a room the sharp air was played into, with the notes it shook loose
+  // still hanging in it. `stage` is both which note it is — a crotchet, a
+  // quaver, a semiquaver — and its place in the scatter, so no two are on the
+  // same drift.
+  for (const spaceId of world.scattered) {
+    const space = spaceOf(spaceId)
+    const measured = space ? room(ship, space) : null
+    if (!space || !measured) continue
+    for (const station of stationsIn(space, LOOSE_NOTES, landing(space))) {
+      found.push({
+        id: `note:${spaceId}:${station.index}`,
+        kind: 'note',
+        spaceId: space.id,
+        tierId: space.tierId,
+        at: station.at,
+        // Head height and above: notes hang where they were played, which is
+        // in front of a face rather than round anybody's ankles.
+        y: Math.min(measured.floor + 1.4 + (station.index % 4) * 0.4, measured.ceiling - 0.3),
+        size: 0.2,
+        colour: NOTE,
+        stage: station.index,
+        hidden: false,
+        spread: Math.min(station.water, 1.1),
+      })
+    }
+  }
+
   // Cargo a relay has taken and not yet advanced. `pairing` is shared by every
   // technique that joins two things, so it is only cargo while the relay is the
   // aura being held.
@@ -564,6 +748,75 @@ export function apparitionsOn(
       hidden: false,
     })
   }
+
+  // The Sun and Moon, one over every marked thing. The mark *is* the bomb, so
+  // it has to be legible from across the room — and it rides what it is on,
+  // drift and all, because a mark that lags behind the thing it is stuck to
+  // would say the two are apart when they are already touching.
+  for (const [id, hold] of Object.entries(world.solids)) {
+    if (!hold.mark || hold.gone) continue
+    const marked = solidById(ship, world, id)
+    const markRoom = marked ? spaceOf(marked.spaceId) : null
+    const measured = markRoom ? room(ship, markRoom) : null
+    if (!marked || !markRoom || !measured) continue
+    const now = solidNow(marked, hold)
+    const drift = hold.alive ? wanderOffset(id, seconds) : [0, 0]
+    const sun = hold.mark === 'sun'
+    found.push({
+      id: `${hold.mark}:${id}`,
+      kind: sun ? 'sun-mark' : 'moon-mark',
+      spaceId: markRoom.id,
+      tierId: markRoom.tierId,
+      at: [now.at[0] + drift[0], now.at[1] + drift[1]],
+      y: Math.min(measured.floor + now.base + now.height + 0.45, measured.ceiling - 0.2),
+      size: 0.32,
+      colour: sun ? SUN : MOON,
+      stage: 0,
+      hidden: false,
+    })
+  }
+
+  // Snake Arm, on everything it is holding fast. The technique is the only one
+  // in the walk whose whole effect is a refusal — a bound solid turns every
+  // other cast away — and until now that refusal was invisible until you tried
+  // it. So the arm is drawn where it is: wound round the thing, from the floor
+  // it stands on to the top of it, with the head over it.
+  //
+  // There are at most two, because there are two arms, and `stage` is which
+  // one — nought the left, one the right. The scene runs the rest of the limb
+  // back to that shoulder, so a snake in the room is a snake you are holding
+  // rather than one you left behind.
+  boundSolidIds(world).forEach((id, arm) => {
+    const hold = world.solids[id]
+    const caught = solidById(ship, world, id)
+    const boundRoom = caught ? spaceOf(caught.spaceId) : null
+    const measured = boundRoom ? room(ship, boundRoom) : null
+    if (!caught || !boundRoom || !measured) return
+    const now = solidNow(caught, hold)
+    // A bound solid Biohazard woke is still bound, and the coil rides it: an
+    // arm that stayed where the thing used to be has plainly let go of it.
+    const drift = hold.alive ? wanderOffset(id, seconds) : [0, 0]
+    found.push({
+      id: `snake:${id}`,
+      kind: 'snake',
+      spaceId: boundRoom.id,
+      tierId: boundRoom.tierId,
+      at: [now.at[0] + drift[0], now.at[1] + drift[1]],
+      // The foot of the thing, because that is where the coil starts; the
+      // height it climbs to is `climb`.
+      y: measured.floor + now.base,
+      // Clear of the widest side of what it is round, and never so thin a coil
+      // that a wine glass gets a bracelet: an arm has a thickness of its own.
+      size: Math.max(0.34, Math.max(now.size[0], now.size[1]) / 2 + 0.16),
+      colour: SNAKE,
+      stage: arm,
+      hidden: false,
+      climb: Math.min(
+        Math.max(now.height, 0.5),
+        Math.max(measured.ceiling - measured.floor - 0.6, 0.5),
+      ),
+    })
+  })
 
   const mouths = wormMouths(ship, world)
   for (const mouth of mouths) {
@@ -658,7 +911,7 @@ export function wormMouthAt(ship: Ship, world: TourWorld, tierId: string, at: Ve
  * direction to travel in.
  */
 export interface TourFlash {
-  kind: 'gust' | 'punch' | 'sun' | 'arrow' | 'rewind' | 'lash'
+  kind: 'gust' | 'punch' | 'sun' | 'arrow' | 'rewind' | 'lash' | 'blast'
   tierId: string
   at: Vec2
   /** The floor it comes out of, or the height it lands at, in metres. */
@@ -695,6 +948,26 @@ export function flashFor(
       y: Math.min(measured.floor + 1.4, measured.ceiling - 0.3),
       from,
       colour: GUST,
+    }
+  }
+
+  // The Sun and Moon going off, where the two of them met. The pair is already
+  // gone by the time this is read — that is what the report says — but what is
+  // wanted is the place they were standing when they touched, and a hold keeps
+  // where it was moved to after the thing itself has stopped being there.
+  if (report.kind === 'detonated') {
+    const met = solidById(ship, world, report.solidId)
+    const space = met ? (ship.spaces.get(met.spaceId) ?? null) : null
+    const measured = space ? room(ship, space) : null
+    if (!met || !space || !measured) return null
+    const now = solidNow(met, world.solids[report.solidId])
+    return {
+      kind: 'blast',
+      tierId: space.tierId,
+      at: now.at,
+      y: Math.min(measured.floor + now.height / 2 + 0.4, measured.ceiling - 0.3),
+      colour: SUN,
+      metres: 4,
     }
   }
 

@@ -95,6 +95,12 @@ export const fr: Messages = {
       fullscreenKeys: 'V',
       nen: 'Lancer le Hatsu actif',
       nenKeys: 'F, ou un clic, sur la pièce ou le volume que vous regardez',
+      nenSelf: 'Retourner le Hatsu actif sur soi',
+      nenSelfKeys: 'R, où que porte le regard',
+      nenSecond: 'Lancer la seconde page',
+      nenSecondKeys: (name) => `R lance ${name}, celle que tient le marque-page`,
+      nenMoon: 'Poser le soleil, puis la lune',
+      nenMoonKeys: 'La même touche alterne : une pression le soleil, la suivante la lune',
       touch: 'Sur écran tactile',
       touchKeys:
         'Le manche en bas à gauche fait marcher, poussé à fond il fait courir ; glissez sur la vue pour regarder ; les boutons franchissent une porte et lancent',
@@ -265,6 +271,11 @@ export const fr: Messages = {
         scout: 'En reconnaissance',
         film: 'En train de filmer',
       },
+      tunes: {
+        dance: 'L’air vif',
+        bloom: 'L’air doux',
+        scatter: 'L’air aigu',
+      },
       reports: {
         noTarget: 'Rien à portée sur quoi lancer',
         teleported: (room) => `Envoyé dans ${room} — vous n'avez pas choisi où vous tombiez`,
@@ -431,7 +442,8 @@ export const fr: Messages = {
         snakesRebound: "Congédiée sans victime · la malédiction revient sur qui l'a posée",
         puppeted: (solid) => `L'antenne est plantée · ${solid} est maintenant sous contrôle`,
         puppetReleased: (solid) => `L'antenne est retirée · ${solid} n'est plus contrôlé`,
-        autopilotStarted: "Pilote automatique activé · le corps avance seul pour accomplir la tâche",
+        autopilotStarted:
+          'Pilote automatique activé · le corps avance seul pour accomplir la tâche',
         wormSet: (room) => `Une extrémité du tunnel dans ${room} · désignez l'autre`,
         wormOpen: (a, b) =>
           `${a} et ${b} font une route d'une nuit, et elle est faite pour être prise une fois`,
@@ -492,6 +504,8 @@ export const fr: Messages = {
             : `La chaîne claque sur ${solid} et revient`,
         bound: (solid) => `Le serpent tient ${solid} · plus rien d'autre ne le bouge`,
         released: (solid) => `${solid} est relâché`,
+        armsFull: (solids) =>
+          `Les deux serpents sont sortis · ils tiennent ${solids}, et vous n'avez que deux bras`,
         cameUpUnder: (solid, other) =>
           `L'aura a couru depuis ${solid} le long du sol et a resurgi sous ${other}`,
         cameUpEmpty: (room) => `L'aura a couru le long du sol et a jailli du pont dans ${room}`,
@@ -520,6 +534,8 @@ export const fr: Messages = {
         reach: "N'importe quel volume du vaisseau, depuis n'importe où dans le vaisseau",
         castHint:
           'F, ou un clic, pour lancer dessus — ou choisissez ci-dessous un volume du vaisseau',
+        markHint:
+          'La touche alterne : une pression pose le soleil, la suivante la lune · ce qui est marqué part chercher son contraire',
         aiming: (solid) => `Face à ${solid}`,
         aimingNothing: 'Rien de solide devant vous',
         targets: 'Lancer sur un volume',
@@ -560,6 +576,9 @@ export const fr: Messages = {
         hint: 'Une page se lance là où vous visez, comme le reste',
         card: 'carte',
         loan: 'prêt',
+        bothLive: 'Le livre est ouvert sur deux',
+        bothHint: 'F lance la page ouverte · R celle que tient le marque-page',
+        turn: 'Déplacer le marque-page',
       },
       holds: {
         book: 'Dans le livre',

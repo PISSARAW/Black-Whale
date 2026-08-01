@@ -3,12 +3,15 @@ import { buildShip } from './blueprint'
 import {
   CAPACITY,
   CLOSED_BOOK,
+  DOUBLE_FACE_PAGES,
   EMPTY_WORLD,
   RESTING_BODY,
+  SNAKE_ARMS,
   SOLID_HATSU_KINDS,
   STAMP_LIMIT,
   SUN_FLARE_METRES_PER_HIT,
   TOUR_HATSU_KINDS,
+  TWO_HANDED_KINDS,
   aimedSolid,
   aimedSpace,
   arriveInTour,
@@ -28,9 +31,12 @@ import {
   lockedPuppets,
   nextEyeMode,
   nextOwlMode,
+  openTheBook,
+  otherHand,
   OWL_SECONDS,
   paceOf,
   planSealed,
+  polarityStep,
   planWithout,
   shellsFor,
   solidNow,
@@ -38,6 +44,8 @@ import {
   stampedPuppets,
   spendPage,
   techniqueHolding,
+  turnTheBook,
+  twoPages,
   reachOf,
   verseFor,
   walksThroughWalls,
@@ -46,6 +54,7 @@ import {
   wormExit,
   worldIsQuiet,
   holdsInWorld,
+  type TourReport,
   type TourWorld,
 } from './hatsu'
 import { apparitionsOn } from './apparitions'
@@ -519,6 +528,25 @@ describe('the rules solids hold each other to', () => {
     expect(hit(bound, 'stitch', solidA.id).world.solids[solidA.id]).toBeUndefined()
   })
 
+  it('has two arms and no more, and lets one go to free one', () => {
+    const solidC = busiest.solids[2]
+    expect(SNAKE_ARMS).toBe(2)
+
+    let world = hit(EMPTY_WORLD, 'serpent', solidA.id).world
+    world = hit(world, 'serpent', solidB.id).world
+    expect(world.solids[solidA.id].bound).toBe(true)
+    expect(world.solids[solidB.id].bound).toBe(true)
+
+    // Both arms are out, so a third catch is refused and says what has them.
+    const refused = hit(world, 'serpent', solidC.id)
+    expect(refused.report).toEqual({ kind: 'arms-full', solidIds: [solidA.id, solidB.id] })
+    expect(refused.world.solids[solidC.id]?.bound).toBeFalsy()
+
+    // An arm opened is an arm free: the same cast now lands.
+    const freed = hit(refused.world, 'serpent', solidA.id).world
+    expect(hit(freed, 'serpent', solidC.id).report).toMatchObject({ kind: 'bound' })
+  })
+
   it('cracks the chain across a thing, and lets go of it again', () => {
     const first = hit(EMPTY_WORLD, 'dowsing', solidA.id)
     expect(first.report).toMatchObject({ kind: 'lashed', solidId: solidA.id, hits: 1 })
@@ -561,13 +589,37 @@ describe('the rules solids hold each other to', () => {
     expect(hit(world, 'shred', solidB.id).world.wound).toBe(solidB.id)
   })
 
-  it('marks one, then blows the pair', () => {
-    const sun = hit(EMPTY_WORLD, 'polarity', solidA.id)
+  it('marks with the hand that cast, and blows the pair when the two meet', () => {
+    const sun = hit(EMPTY_WORLD, 'polarity', solidA.id, { mark: 'sun' })
     expect(sun.report).toMatchObject({ kind: 'marked', mark: 'sun' })
-    const moon = hit(sun.world, 'polarity', solidB.id)
-    expect(moon.report).toMatchObject({ kind: 'detonated' })
-    expect(moon.world.solids[solidA.id].gone).toBe(true)
-    expect(moon.world.solids[solidB.id].gone).toBe(true)
+    const moon = hit(sun.world, 'polarity', solidB.id, { mark: 'moon' })
+    expect(moon.report).toMatchObject({ kind: 'marked', mark: 'moon' })
+    // Marked is not spent: nothing has gone off on the cast itself, and both
+    // are awake, which is what sends them looking for each other.
+    expect(moon.world.solids[solidA.id]).toMatchObject({ alive: true, mark: 'sun' })
+    expect(moon.world.solids[solidB.id].gone).toBeFalsy()
+
+    let world = moon.world
+    let blown: TourReport | null = null
+    for (let tick = 0; tick < 1200 && !blown; tick++) {
+      const step = polarityStep(world, ship, tick * 0.1, 0.1)
+      if (!step) break
+      world = step.world
+      blown = step.report
+    }
+    expect(blown).toMatchObject({ kind: 'detonated' })
+    expect(world.solids[solidA.id].gone).toBe(true)
+    expect(world.solids[solidB.id].gone).toBe(true)
+  })
+
+  it('leaves two of the same mark to themselves', () => {
+    const first = hit(EMPTY_WORLD, 'polarity', solidA.id, { mark: 'sun' }).world
+    let world = hit(first, 'polarity', solidB.id, { mark: 'sun' }).world
+    for (let tick = 0; tick < 300; tick++) {
+      world = polarityStep(world, ship, tick * 0.1, 0.1)?.world ?? world
+    }
+    expect(world.solids[solidA.id].gone).toBeFalsy()
+    expect(world.solids[solidB.id].gone).toBeFalsy()
   })
 
   it('exchanges two appearances and leaves both where they stand', () => {
@@ -1493,6 +1545,42 @@ describe('taking a technique off the ship', () => {
     const marked = door(world, 'bookmark', roomA.id)
     expect(marked.report).toMatchObject({ kind: 'bookmarked' })
     expect(castablePages(marked.world.book)).toHaveLength(2)
+  })
+
+  it('deals Double Face two pages, so the bookmark has something to hold', () => {
+    // A bookmark with one page under it is not an ability, and the walk cannot
+    // ask for two thefts before it does anything — so the book arrives dealt.
+    const dealt = openTheBook(() => 0)
+    expect(dealt.pages).toEqual([DOUBLE_FACE_PAGES[0], DOUBLE_FACE_PAGES[1]])
+    expect(twoPages(dealt)).toEqual([dealt.open, dealt.bookmark])
+    expect(castablePages(dealt)).toHaveLength(2)
+    // Both of them are techniques the walk can honour: half an ability doing
+    // nothing would be worse than a bookmark that was never dealt.
+    for (const page of DOUBLE_FACE_PAGES) expect(TOUR_HATSU_KINDS).toContain(page)
+
+    // The ribbon moves, and moving it swaps what the two keys play.
+    expect(twoPages(turnTheBook(dealt))).toEqual([dealt.bookmark, dealt.open])
+    // And a book with nothing in it has no second key at all.
+    expect(twoPages(CLOSED_BOOK)).toBeNull()
+  })
+
+  it('takes The Sun and Moon in turn off one key rather than two', () => {
+    // The pair needs both marks out, and Double Face has already claimed the
+    // second key — so the hand alternates, and the walk is what remembers.
+    expect(TWO_HANDED_KINDS.has('polarity')).toBe(true)
+    expect(otherHand('sun')).toBe('moon')
+    expect(otherHand('moon')).toBe('sun')
+
+    let hand: 'sun' | 'moon' = 'sun'
+    let world = EMPTY_WORLD
+    for (const solid of [solidA, solidB]) {
+      const cast = hit(world, 'polarity', solid.id, { mark: hand })
+      expect(cast.report).toMatchObject({ kind: 'marked', mark: hand })
+      world = cast.world
+      hand = otherHand(hand)
+    }
+    expect(world.solids[solidA.id].mark).toBe('sun')
+    expect(world.solids[solidB.id].mark).toBe('moon')
   })
 
   it('cards an ability without taking it, and the arrow makes that fail', () => {

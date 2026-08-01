@@ -230,6 +230,22 @@ export const OWL_MODES = ['wander', 'shoulder', 'random'] as const
 export const DOUBLE_MODES = ['follow', 'wander', 'scout'] as const
 export const EYE_MODES = ['pilot', 'scout', 'film'] as const
 
+/**
+ * The three airs Enchanting Music has, in the order the three keys play them.
+ *
+ * Melody's whole ability is what a piece does to whoever hears it, and the walk
+ * had only the soothing: a technique with a flute in it that never materialized
+ * the flute. So the flute is in the hand for as long as the aura is up, and
+ * what it plays is a choice made at the moment of playing rather than a mode
+ * cycled beforehand — R for the soft air, C for the sharp one, F for the lively
+ * one. Each is heard by the room the visitor is standing in and by nothing
+ * else, because that is how far a flute carries.
+ */
+export const TUNES = ['bloom', 'scatter', 'dance'] as const
+
+/** Which air is being played, or was last played. */
+export type TourTune = (typeof TUNES)[number]
+
 /** Which bird was sent, which watch the double is under, what the insect is told. */
 export type TourOwlMode = (typeof OWL_MODES)[number]
 export type TourDoubleMode = (typeof DOUBLE_MODES)[number]
@@ -464,6 +480,19 @@ export interface TourWorld {
   /** Pairs of rooms whose identities the arrow exchanged. */
   souls: [string, string][]
 
+  /**
+   * Rooms the soft air put in flower, and rooms the sharp one left its notes
+   * loose in.
+   *
+   * Two lists rather than one field with a value in it, because the airs do not
+   * replace each other: a room can be in flower with the notes of the last
+   * piece still hanging in it, which is what an instrument played twice into
+   * the same room actually leaves behind. The lively air is not here — what it
+   * takes hold of is the things standing in the room, so it is written on them.
+   */
+  flowered: string[]
+  scattered: string[]
+
   /** The book, and what is in it. */
   book: TourBook
 
@@ -514,6 +543,15 @@ export interface TourBody {
   mimic: string | null
   /** Music holding the senses open against anything that would seal them. */
   soothed: boolean
+  /**
+   * The air currently coming out of the flute, or `null` while it is down.
+   *
+   * What it is for is the flute itself: an instrument held at the lips is being
+   * played and one held at the side is not, and that is the difference a
+   * visitor can see. It is the last air played rather than a count of them,
+   * because the pieces do not stack — see `flowered`.
+   */
+  playing: TourTune | null
   /** The holds Predator has correctly named, which is what makes it stronger. */
   deduced: string[]
 
@@ -542,6 +580,7 @@ export const RESTING_BODY: TourBody = {
   dance: 0,
   mimic: null,
   soothed: false,
+  playing: null,
   deduced: [],
   packed: null,
   autopilotUntil: null,
@@ -573,6 +612,15 @@ export interface SolidHold {
   alive?: boolean
   /** The Sun and Moon's two marks. */
   mark?: 'sun' | 'moon'
+  /**
+   * The lively air has it: it is dancing where it stands.
+   *
+   * A hold like any other, so a dancing coffin is lifted out of the baked deck
+   * and drawn by the walk — but the only one that changes nothing about the
+   * thing. It stands where it stood, it stops the visitor where it stopped
+   * them, and every other technique still finds it exactly where it was.
+   */
+  dancing?: boolean
   /** Order Stamp has put its 人 on this one: it is a puppet now. */
   stamped?: boolean
   /**
@@ -640,6 +688,8 @@ export const EMPTY_WORLD: TourWorld = {
   ninelives: [],
   curse: null,
   souls: [],
+  flowered: [],
+  scattered: [],
   book: CLOSED_BOOK,
   body: RESTING_BODY,
   gumTraps: [],
@@ -659,6 +709,7 @@ export const bodyIsRested = (body: TourBody): boolean =>
   !body.dance &&
   !body.mimic &&
   !body.soothed &&
+  !body.playing &&
   !body.deduced.length &&
   body.packed === null
 
@@ -702,6 +753,8 @@ export const worldIsQuiet = (world: TourWorld): boolean =>
   !world.curse &&
   !world.souls.length &&
   !world.gumTraps.length &&
+  !world.flowered.length &&
+  !world.scattered.length &&
   bookIsShut(world.book) &&
   bodyIsRested(world.body)
 
@@ -764,6 +817,8 @@ export type TourReport =
   | { kind: 'lashed'; solidId: string; hits: number }
   | { kind: 'bound'; solidId: string }
   | { kind: 'released'; solidId: string }
+  /** Both arms are already round something, so there is nothing to catch with. */
+  | { kind: 'arms-full'; solidIds: string[] }
   | { kind: 'came-up-under'; solidId: string; otherId: string }
   | { kind: 'came-up-empty'; spaceId: string }
   | { kind: 'stitched'; solidId: string }
@@ -824,6 +879,12 @@ export type TourReport =
   | { kind: 'mimicked'; solidId: string }
   | { kind: 'unmimicked' }
   | { kind: 'soothed'; opened: boolean }
+  /**
+   * One air played into one room. `on` is false when the same air was played
+   * into the same room again, which is what takes the piece back off it, and
+   * `solids` is what the lively one got moving — nought for the other two.
+   */
+  | { kind: 'tune-played'; tune: TourTune; spaceId: string; on: boolean; solids: number }
   | { kind: 'deduced'; what: string; strength: number }
   | { kind: 'nothing-to-deduce' }
   | { kind: 'armour-worn' }
@@ -891,6 +952,24 @@ export interface TourCastInput {
   at: Vec2
   /** Which way they face: a push goes where they are looking. */
   heading?: number
+  /**
+   * Which of The Sun and Moon's two hands is casting.
+   *
+   * Genthru puts the sun on with one hand and the moon with the other, and
+   * which one he uses is his own decision rather than a turn taken — so the
+   * walk gives the two marks two keys, and this is which of them was pressed.
+   * Nothing else in the roster reads it.
+   */
+  mark?: 'sun' | 'moon'
+  /**
+   * Which of Enchanting Music's three airs is being played.
+   *
+   * The same shape as the hand above and for the same reason: three keys, and
+   * which one was pressed is the whole of what the walk has to carry across.
+   * Absent, the flute is not raised at all and the technique does what it did
+   * before it had one — it soothes.
+   */
+  tune?: TourTune
   /** Deterministic in tests; Chrollo's teleport is the only caller. */
   random?: () => number
 }
@@ -974,6 +1053,28 @@ export function solidNow(structure: Structure, hold: SolidHold | undefined): Str
 export const heldSolidIds = (world: TourWorld): string[] => Object.keys(world.solids)
 
 /**
+ * How many things Snake Arm can hold at once, which is how many arms there are.
+ *
+ * The technique is not a field the visitor sets on a room: it is a limb, sent
+ * out and wrapped round something, and while it is round that thing it is not
+ * available for anything else. Two of them is the whole budget.
+ */
+export const SNAKE_ARMS = 2
+
+/**
+ * What the arms currently have, in the order the world records them.
+ *
+ * The order is what says which arm: first the left, then the right. It is the
+ * record order rather than the order they were caught in, which is stable for
+ * as long as the holds stand and is all the scene needs to keep a snake on the
+ * same shoulder from one frame to the next.
+ */
+export const boundSolidIds = (world: TourWorld): string[] =>
+  Object.entries(world.solids)
+    .filter(([, hold]) => hold.bound && !hold.gone)
+    .map(([id]) => id)
+
+/**
  * A solid Biohazard woke up does not stand still.
  *
  * The drift is a circle, and it is computed rather than stored so the collision
@@ -987,6 +1088,33 @@ export function wanderOffset(id: string, seconds: number): Vec2 {
   const angle = seconds * 0.6 + (phase * Math.PI) / 180
   return [Math.cos(angle) * 1.4, Math.sin(angle) * 1.4]
 }
+
+/**
+ * Where a solid the lively air took hold of is, this instant.
+ *
+ * A hop and a small sway about where it stands, computed rather than stored for
+ * the reason the wander is, and off the same hash — so two things dancing in
+ * one room are never in step, and the same thing dances the same way twice.
+ *
+ * The sway is deliberately narrower than a hand: the collision test does not
+ * read this, so a dancing table still stops the visitor exactly where the table
+ * stands, and anything wider would be a thing that had left its own floor.
+ */
+export function danceOffset(id: string, seconds: number): [number, number, number] {
+  let phase = 0
+  for (let i = 0; i < id.length; i++) phase = (phase * 31 + id.charCodeAt(i)) % 360
+  const beat = seconds * 3.4 + (phase * Math.PI) / 180
+  // Off the floor and down again — the rise is `abs`, because a thing that
+  // dropped as far below its floor as it rose above it is a thing falling
+  // through the deck.
+  return [Math.sin(beat * 0.5) * 0.12, Math.abs(Math.sin(beat)) * 0.24, Math.cos(beat * 0.5) * 0.12]
+}
+
+/** Everything one air took hold of, which is what the panel counts. */
+export const dancingSolidIds = (world: TourWorld): string[] =>
+  Object.entries(world.solids)
+    .filter(([, hold]) => hold.dancing && !hold.gone)
+    .map(([id]) => id)
 
 /** Everything the walk has to draw itself on one deck, ready to extrude. */
 export function detachedOn(
@@ -1161,6 +1289,8 @@ type SolidCastContext = {
   heading: number
   /** A push of `metres` straight away from where the visitor stands. */
   away: (metres: number) => Vec2
+  /** Which of The Sun and Moon's two hands cast. Only that one reads it. */
+  mark: 'sun' | 'moon'
 }
 
 type SolidCast = (ctx: SolidCastContext) => TourCastResult
@@ -1354,10 +1484,22 @@ const SOLID_CASTS: Partial<Record<HatsuInteractionKind, SolidCast>> = {
     }
   },
 
-  serpent: ({ world, hold, id }) =>
-    hold?.bound
-      ? { world: withHold(world, id, { bound: false }), report: { kind: 'released', solidId: id } }
-      : { world: withHold(world, id, { bound: true }), report: { kind: 'bound', solidId: id } },
+  // Two arms, two snakes, and no more than that. Letting one go is always
+  // allowed — that is the hand opening — but a third catch has nothing left to
+  // catch it with, so the cast is refused and says which two are busy.
+  serpent: ({ world, hold, id }) => {
+    if (hold?.bound) {
+      return {
+        world: withHold(world, id, { bound: false }),
+        report: { kind: 'released', solidId: id },
+      }
+    }
+    const held = boundSolidIds(world)
+    if (held.length >= SNAKE_ARMS) {
+      return { world, report: { kind: 'arms-full', solidIds: held } }
+    }
+    return { world: withHold(world, id, { bound: true }), report: { kind: 'bound', solidId: id } }
+  },
 
   // The aura runs along the floor and comes up under something else in the
   // same room: you strike here and the room is hit there.
@@ -1409,23 +1551,14 @@ const SOLID_CASTS: Partial<Record<HatsuInteractionKind, SolidCast>> = {
     }
   },
 
-  // Opposite marks, and the pair goes off when they meet.
-  polarity: ({ world, id }) => {
-    if (!world.pairing || world.pairing === id) {
-      return {
-        world: { ...withHold(world, id, { mark: 'sun' }), pairing: id },
-        report: { kind: 'marked', solidId: id, mark: 'sun' },
-      }
-    }
-    const other = world.pairing
-    return {
-      world: {
-        ...withHold(withHold(world, id, { mark: 'moon', gone: true }), other, { gone: true }),
-        pairing: null,
-      },
-      report: { kind: 'detonated', solidId: id, otherId: other },
-    }
-  },
+  // The Sun and Moon: one hand puts the sun on, the other the moon, and which
+  // hand cast is the visitor's own decision rather than a turn taken — the walk
+  // gives them a key each. A marked thing wakes up and goes looking for its
+  // opposite; what happens when it finds it is `polarityStep`'s.
+  polarity: ({ world, id, mark }) => ({
+    world: withHold(world, id, { mark, alive: true }),
+    report: { kind: 'marked', solidId: id, mark },
+  }),
 
   // The two exchange appearances, and nothing else: each stays where it is
   // and stays what it is.
@@ -1605,7 +1738,7 @@ function shredTheWound(world: TourWorld, ship: Ship, woundId: string): TourCastR
 }
 
 /**
- * One cast against a solid.
+ * One cast on the solid.
  *
  * Split out of `castInTour` because the two halves share nothing but the world:
  * a room is a place and a solid is a thing, and the rules that bind them —
@@ -1644,7 +1777,7 @@ function castOnSolid(
 
   const cast = SOLID_CASTS[kind]
   return cast
-    ? cast({ world, ship, structure, hold, id, heading, away })
+    ? cast({ world, ship, structure, hold, id, heading, away, mark: input.mark ?? 'sun' })
     : { world, report: { kind: 'inert' } }
 }
 
@@ -1719,6 +1852,8 @@ export function holdsInWorld(world: TourWorld): string[] {
     ...(world.snakes ? ['snakes'] : []),
     ...(world.trap ? [`trap:${world.trap}`] : []),
     ...world.gumTraps.map((id) => `gum:${id}`),
+    ...world.flowered.map((id) => `flowered:${id}`),
+    ...world.scattered.map((id) => `scattered:${id}`),
   ]
 }
 
@@ -1842,13 +1977,74 @@ function raiseTheSun({ world, ship, body, input }: BodyCastContext): TourCastRes
   }
 }
 
+/**
+ * One air, played into the room the visitor is standing in.
+ *
+ * Each of the three is a toggle on that room rather than something that stacks:
+ * the flute is still in the hand when the piece ends, and playing the same air
+ * into the same room again is how it is taken back off. Which room is never
+ * aimed — the walk is standing in the only room that can hear it.
+ *
+ * The soft air puts the room in flower, the sharp one leaves its notes loose in
+ * the air, and the lively one gets everything standing there dancing. All three
+ * are written down and nothing here is drawn: `$lib/tour/apparitions` decides
+ * what a room in flower looks like, exactly as it does for a room with fish in.
+ */
+function playTheTune(
+  world: TourWorld,
+  ship: Ship,
+  tune: TourTune,
+  spaceId: string,
+): TourCastResult {
+  if (tune === 'dance') {
+    // Everything the room has in it, the aura's own copies included: a room
+    // dances with what is standing in it, whoever put it there.
+    const solids = { ...world.solids }
+    const inRoom = [...ship.structures, ...world.copies].filter(
+      (solid) => solid.spaceId === spaceId && !solids[solid.id]?.gone,
+    )
+    const already = inRoom.some((solid) => solids[solid.id]?.dancing)
+    for (const solid of inRoom) {
+      const hold: SolidHold = { ...solids[solid.id] }
+      if (already) delete hold.dancing
+      else hold.dancing = true
+      // A thing the walk was only holding because it was dancing is let go of
+      // entirely when the music stops: an empty hold is not a hold, and one
+      // left behind would keep the solid out of the deck's own mesh for good.
+      if (Object.keys(hold).length) solids[solid.id] = hold
+      else delete solids[solid.id]
+    }
+    return {
+      world: { ...world, solids, body: { ...world.body, playing: already ? null : tune } },
+      report: { kind: 'tune-played', tune, spaceId, on: !already, solids: inRoom.length },
+    }
+  }
+
+  const rooms = tune === 'bloom' ? world.flowered : world.scattered
+  const on = !rooms.includes(spaceId)
+  const next = on ? [...rooms, spaceId] : rooms.filter((id) => id !== spaceId)
+  return {
+    world: {
+      ...world,
+      flowered: tune === 'bloom' ? next : world.flowered,
+      scattered: tune === 'scatter' ? next : world.scattered,
+      body: { ...world.body, playing: on ? tune : null },
+    },
+    report: { kind: 'tune-played', tune, spaceId, on, solids: 0 },
+  }
+}
+
 /** What each technique does to the visitor, one entry per kind. */
 const BODY_CASTS: Partial<Record<HatsuInteractionKind, BodyCast>> = {
   // Reinforcement in proportion to the aura committed, and it is committed a
   // handful at a time.
   enhance: ({ body, withBody }) => {
     const committed = Math.min(6, body.enhance + 1)
-    return { world: withBody({ enhance: committed }), report: { kind: 'reinforced', committed } }
+    const eyes = committed > 0 ? null : body.eyes
+    return {
+      world: withBody({ enhance: committed, eyes }),
+      report: { kind: 'reinforced', committed },
+    }
   },
 
   puppet: ({ withBody }) => {
@@ -1922,15 +2118,23 @@ const BODY_CASTS: Partial<Record<HatsuInteractionKind, BodyCast>> = {
     }
   },
 
-  // Music carried straight into the listener. What it soothes here is the
-  // only thing in the walk that can be done to a sense: it opens the three
-  // the monkeys sealed, and holds them open.
-  melody: ({ world, body }) => {
+  // Music carried straight into the listener. What it soothes is the only
+  // thing in the walk that can be done to a sense: it opens the three the
+  // monkeys sealed, and holds them open. That much happens whatever is played,
+  // and it is all that happens when nothing is — a cast off the book, where
+  // there is no flute in the hand and no key to choose an air with.
+  melody: ({ world, ship, body, input }) => {
     const opened = world.sealed > 0
-    return {
-      world: { ...world, sealed: 0, body: { ...body, soothed: !body.soothed || opened } },
-      report: { kind: 'soothed', opened },
+    const heard: TourWorld = {
+      ...world,
+      sealed: 0,
+      body: { ...body, soothed: !body.soothed || opened },
     }
+    if (!input.tune) return { world: heard, report: { kind: 'soothed', opened } }
+    // A flute is heard where it is played: the reticle is never consulted, and
+    // a piece with nowhere to land is a piece nobody was in the room for.
+    if (!input.standingIn) return { world: heard, report: { kind: 'no-target' } }
+    return playTheTune(heard, ship, input.tune, input.standingIn)
   },
 
   // Predator gets stronger by correctly naming what it is up against. There
@@ -2189,6 +2393,69 @@ export function castablePages(book: TourBook): HatsuInteractionKind[] {
     ...(book.loan ? [book.loan] : []),
   ]
 }
+
+/**
+ * What Chrollo has already stolen by the time the walk begins.
+ *
+ * Double Face is not a theft — it is the bookmark, and a bookmark is worthless
+ * without two pages under it. The walk cannot make the visitor steal twice
+ * before the ability does anything, so the book is handed over already holding
+ * a pair, drawn from what the archive has Chrollo carrying. Every one of them
+ * is a technique the walk can actually cast, because a page that turned out to
+ * be inert would be half the ability doing nothing.
+ */
+export const DOUBLE_FACE_PAGES: readonly HatsuInteractionKind[] = [
+  'devour',
+  'pocket',
+  'teleport',
+  'polarity',
+  'command',
+  'identity-swap',
+  'divination',
+  'prophecy',
+  'clone',
+]
+
+/**
+ * A book with two of them in it: one on the open page, one under the bookmark.
+ *
+ * Which two is the walk's own roll rather than the archive's — Chrollo's book
+ * held over a hundred, and the two he has to hand at any moment is exactly the
+ * kind of thing no record of the Black Whale settles.
+ */
+export function openTheBook(random: () => number = Math.random): TourBook {
+  const left = DOUBLE_FACE_PAGES[Math.floor(random() * DOUBLE_FACE_PAGES.length)]
+  const rest = DOUBLE_FACE_PAGES.filter((page) => page !== left)
+  const right = rest[Math.floor(random() * rest.length)]
+  return { ...CLOSED_BOOK, pages: [left, right], open: left, bookmark: right }
+}
+
+/** The open page and the bookmarked one, in the order the two keys play them. */
+export function twoPages(book: TourBook): [HatsuInteractionKind, HatsuInteractionKind] | null {
+  if (!book.open || !book.bookmark || book.open === book.bookmark) return null
+  return [book.open, book.bookmark]
+}
+
+/** The book with the ribbon moved to the other page, which swaps the two keys. */
+export function turnTheBook(book: TourBook): TourBook {
+  const pair = twoPages(book)
+  return pair ? { ...book, open: pair[1], bookmark: pair[0] } : book
+}
+
+/**
+ * The techniques cast with two hands rather than one.
+ *
+ * Genthru puts the sun on with one hand and the moon with the other, and the
+ * walk has one key per technique to say it with. So the key alternates: the
+ * first press is the sun, the next is the moon, and the pair the ability needs
+ * is two presses of the same key rather than two keys the visitor has to be
+ * told about. Nothing else in the roster casts twice like this yet — the set
+ * is here so that when something does, the key already knows how.
+ */
+export const TWO_HANDED_KINDS = new Set<HatsuInteractionKind>(['polarity'])
+
+/** The other hand. */
+export const otherHand = (mark: 'sun' | 'moon'): 'sun' | 'moon' => (mark === 'sun' ? 'moon' : 'sun')
 
 /**
  * One cast on the techniques rather than on the ship.
@@ -3772,4 +4039,118 @@ export function ageTheOwl(
     world: { ...world, owl: null, owlLife: 0, owlFilm: film },
     report: { kind: 'owl-expired', rooms: new Set(film.map((frame) => frame.spaceId)).size },
   }
+}
+
+/** How fast a marked thing crosses its room towards its opposite, in m/s. */
+const POLARITY_PACE = 0.9
+/** How near the two have to come, in metres, before the pair goes off. */
+export const POLARITY_CONTACT = 1.2
+
+/** Where a marked solid is this instant: where it was put, plus its own drift. */
+function markedAt(
+  ship: Ship,
+  world: TourWorld,
+  id: string,
+  hold: SolidHold,
+  seconds: number,
+): { spaceId: string; base: Vec2; at: Vec2 } | null {
+  const original = solidById(ship, world, id)
+  if (!original) return null
+  const base = solidNow(original, hold).at
+  const drift = hold.alive ? wanderOffset(id, seconds) : ([0, 0] as Vec2)
+  return { spaceId: original.spaceId, base, at: [base[0] + drift[0], base[1] + drift[1]] }
+}
+
+/**
+ * The sun and the moon walking towards each other, and what happens when they meet.
+ *
+ * Genthru's pair does nothing on its own: the bomb is the mark, and the mark is
+ * spent when the two touch. In a walk where nothing else is moving, that would
+ * be a payoff nobody ever sees — so a marked thing wakes up and goes looking
+ * for its opposite, at a walking pace, and the room it is in is as far as it
+ * will go. Two marks in two rooms sit there marked, which is the honest answer:
+ * they never touch.
+ *
+ * Called on the walk's clock rather than on a cast. `delta` is how much of a
+ * second went by since the last call; `seconds` is the same clock the scene
+ * draws the drift off, so what is seen touching is what detonates.
+ */
+export function polarityStep(
+  world: TourWorld,
+  ship: Ship,
+  seconds: number,
+  delta: number,
+): { world: TourWorld; report: TourReport | null } | null {
+  const suns: string[] = []
+  const moons: string[] = []
+  for (const [id, hold] of Object.entries(world.solids)) {
+    if (hold.gone) continue
+    if (hold.mark === 'sun') suns.push(id)
+    if (hold.mark === 'moon') moons.push(id)
+  }
+  if (!suns.length || !moons.length) return null
+
+  const solids = { ...world.solids }
+  /** Everything already blown this tick: a thing goes off once and is not there after. */
+  const spent = new Set<string>()
+  let report: TourReport | null = null
+
+  for (const sunId of suns) {
+    if (spent.has(sunId)) continue
+    const sun = markedAt(ship, world, sunId, world.solids[sunId], seconds)
+    if (!sun) continue
+    const room = ship.spaces.get(sun.spaceId)
+    if (!room) continue
+
+    // The nearest opposite in the same room. Nothing reaches through a bulkhead
+    // or through a deck: `at` is measured on the level it stands on, so two
+    // things four decks apart share coordinates and share nothing else.
+    let nearest: { id: string; base: Vec2; at: Vec2; away: number; apart: number } | null = null
+    for (const moonId of moons) {
+      if (spent.has(moonId)) continue
+      const moon = markedAt(ship, world, moonId, world.solids[moonId], seconds)
+      if (!moon || moon.spaceId !== sun.spaceId) continue
+      const away = Math.hypot(sun.at[0] - moon.at[0], sun.at[1] - moon.at[1])
+      const apart = Math.hypot(sun.base[0] - moon.base[0], sun.base[1] - moon.base[1])
+      if (!nearest || away < nearest.away) nearest = { id: moonId, ...moon, away, apart }
+    }
+    if (!nearest) continue
+
+    // Touching: both go, and the marks go with them. The first pair to meet is
+    // the one the walk speaks of — a second explosion in the same tenth of a
+    // second would talk over it.
+    //
+    // Two measurements rather than one, and either will do it. Where the things
+    // are drawn is the one a visitor can see, and it is what a near miss is
+    // decided on; but a living thing's drift is a ring it never leaves, and two
+    // rings of the same size can turn about the same point forever without the
+    // gap between them ever closing. So the things themselves arriving at the
+    // same place counts as having met, whatever the drift is doing over it.
+    if (nearest.away < POLARITY_CONTACT || nearest.apart < POLARITY_CONTACT) {
+      solids[sunId] = { ...solids[sunId], gone: true, alive: false, mark: undefined }
+      solids[nearest.id] = { ...solids[nearest.id], gone: true, alive: false, mark: undefined }
+      spent.add(sunId)
+      spent.add(nearest.id)
+      report ??= { kind: 'detonated', solidId: sunId, otherId: nearest.id }
+      continue
+    }
+
+    // Not touching yet: each takes a step towards the other, and neither leaves
+    // the room it was marked in.
+    const dx = nearest.base[0] - sun.base[0]
+    const dz = nearest.base[1] - sun.base[1]
+    const span = Math.hypot(dx, dz) || 1
+    const stride = Math.min(POLARITY_PACE * delta, span / 2)
+    const walk = (from: Vec2, towards: 1 | -1): Vec2 => {
+      const to: Vec2 = [
+        from[0] + (dx / span) * stride * towards,
+        from[1] + (dz / span) * stride * towards,
+      ]
+      return pointInPolygon(to, room.footprint) ? to : from
+    }
+    solids[sunId] = { ...solids[sunId], at: walk(sun.base, 1) }
+    solids[nearest.id] = { ...solids[nearest.id], at: walk(nearest.base, -1) }
+  }
+
+  return { world: { ...world, solids }, report }
 }

@@ -9,7 +9,15 @@ import {
   wormMouths,
   type Apparition,
 } from './apparitions'
-import { EMPTY_WORLD, castInTour, centroid, fishBite, type TourWorld } from './hatsu'
+import {
+  EMPTY_WORLD,
+  castInTour,
+  centroid,
+  fishBite,
+  openTheBook,
+  turnTheBook,
+  type TourWorld,
+} from './hatsu'
 
 const ship = buildShip()
 
@@ -27,6 +35,36 @@ const cast = (world: TourWorld, kind: Parameters<typeof castInTour>[1], targetId
 describe('what a quiet ship shows', () => {
   it('shows nothing at all', () => {
     expect(apparitionsOn(ship, EMPTY_WORLD)).toEqual([])
+  })
+})
+
+describe('the book', () => {
+  const walking = { at: [0, 0] as [number, number], tierId: furnished.tierId }
+  const dealt = openTheBook(() => 0)
+  const carrying: TourWorld = { ...EMPTY_WORLD, holding: 'bookmark', book: dealt }
+
+  it('is held open in front of whoever is carrying the bookmark', () => {
+    // Carried rather than placed, like the hoover and the chain: the scene puts
+    // it under the eye every frame, so what this says is only which deck.
+    const [book] = apparitionsOn(ship, carrying, walking).filter((seen) => seen.kind === 'book')
+    expect(book.tierId).toBe(furnished.tierId)
+    expect(book.at).toEqual(walking.at)
+
+    // And it is the bookmark's own: no aura, no book.
+    expect(
+      apparitionsOn(ship, { ...carrying, holding: null }, walking).filter(
+        (seen) => seen.kind === 'book',
+      ),
+    ).toEqual([])
+  })
+
+  it('puts the ribbon on the page the bookmark is holding, and moves it with it', () => {
+    const [before] = apparitionsOn(ship, carrying, walking).filter((seen) => seen.kind === 'book')
+    expect(before.stage).toBe(dealt.pages.indexOf(dealt.bookmark!))
+
+    const turned = { ...carrying, book: turnTheBook(dealt) }
+    const [after] = apparitionsOn(ship, turned, walking).filter((seen) => seen.kind === 'book')
+    expect(after.stage).not.toBe(before.stage)
   })
 })
 
@@ -190,6 +228,51 @@ describe('the relay', () => {
     expect(
       of({ ...loaded, holding: 'relay' as const }, 'cargo').map((seen) => seen.spaceId),
     ).toEqual([furnished.id])
+  })
+})
+
+describe('The Sun and Moon', () => {
+  const marked = (mark: 'sun' | 'moon') => {
+    const solid = ship.structures.find((structure) => structure.spaceId === furnished.id)!
+    const world = castInTour(EMPTY_WORLD, 'polarity', {
+      ship,
+      targetId: furnished.id,
+      targetSolidId: solid.id,
+      standingIn: furnished.id,
+      at: [0, 0],
+      mark,
+    }).world
+    return { solid, world }
+  }
+
+  it('wears the mark the hand that cast put on it, over the thing itself', () => {
+    for (const [mark, kind] of [
+      ['sun', 'sun-mark'],
+      ['moon', 'moon-mark'],
+    ] as const) {
+      const { solid, world } = marked(mark)
+      const [seen] = of(world, kind)
+      expect(seen.spaceId).toBe(furnished.id)
+      // On the thing, give or take the drift a woken thing is under: what the
+      // mark must not do is stay behind where the thing used to stand.
+      expect(Math.hypot(seen.at[0] - solid.at[0], seen.at[1] - solid.at[1])).toBeLessThan(1.5)
+      // Over the top of it, never through the deckhead.
+      const tier = ship.tiers.find((candidate) => candidate.id === furnished.tierId)!
+      expect(seen.y).toBeGreaterThan(floorOf(furnished, tier))
+      expect(seen.y).toBeLessThan(floorOf(furnished, tier) + ceilingOf(furnished, tier))
+      expect(of(world, mark === 'sun' ? 'moon-mark' : 'sun-mark')).toEqual([])
+    }
+  })
+
+  it('rides the thing it is on rather than the spot it was put on', () => {
+    const { world } = marked('sun')
+    const [still] = apparitionsOn(ship, world, undefined, 0).filter(
+      (seen) => seen.kind === 'sun-mark',
+    )
+    const [later] = apparitionsOn(ship, world, undefined, 3).filter(
+      (seen) => seen.kind === 'sun-mark',
+    )
+    expect(later.at).not.toEqual(still.at)
   })
 })
 

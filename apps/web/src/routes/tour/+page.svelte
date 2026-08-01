@@ -51,10 +51,11 @@
   } from '$lib/audio/hatsuSounds'
   import { activeHatsu, enterForcedZetsu, parallelFutureVisible } from '$lib/nen/hatsuState'
   import { get } from 'svelte/store'
-  import type { HatsuInteractionKind } from '$lib/nen/hatsuRegistry'
+  import { HATSU_PROFILES, type HatsuInteractionKind } from '$lib/nen/hatsuRegistry'
   import { breadcrumbSchema } from '$lib/seo/schema'
   import { link, t } from '$lib/i18n'
   import { locale } from '$lib/i18n'
+  import { localizeHatsu } from '$lib/i18n/hatsu'
   import { crossingsOn, deckOf, entrySpace, theShip, type Crossing } from '$lib/tour/blueprint'
   import {
     FOV_RANGE,
@@ -77,13 +78,19 @@
     castInTour,
     ageTheOwl,
     fishBite,
+    polarityStep,
     flyTheEye,
     flyTheOwl,
     identityOf,
     nextDoubleMode,
     nextEyeMode,
     nextOwlMode,
+    openTheBook,
+    otherHand,
     spendPage,
+    turnTheBook,
+    twoPages,
+    TWO_HANDED_KINDS,
     worksInTour,
     worksOnTheBody,
     wormExit,
@@ -377,8 +384,11 @@
    *
    * R changes the orders of the three techniques that take orders: the double's
    * watch under Without You, which of the three birds Secret Window sends, and
-   * what Little Eye's insect is doing where it is. Under anything else it means
-   * nothing and is left to the browser.
+   * what Little Eye's insect is doing where it is. Under a technique that can be
+   * turned on its own user — Black Voice's needle, Elastic Love — the walk takes
+   * it instead and casts with an empty reticle; the two sets do not overlap, so
+   * the key never means two things at once. Under anything else it means nothing
+   * and is left to the browser.
    */
   function onWindowKeydown(event: KeyboardEvent) {
     if (event.metaKey || event.ctrlKey || event.altKey) return
@@ -436,24 +446,26 @@
   // ── Nen ────────────────────────────────────────
   let world = $state<TourWorld>(EMPTY_WORLD)
 
+  /**
+   * The clock the ten blind seconds are read against.
+   *
+   * A deadline in the world is not reactive on its own — nothing changes when
+   * it passes — so the walk has to keep asking what time it is for the screen
+   * to come back. The walking itself is the scene's: it holds the keys down for
+   * the visitor and drifts the heading, which is what wandering looks like.
+   * Nothing here moves them, because a body carried room to room every second
+   * and a half is not a body walking blind.
+   */
   let now = $state(Date.now())
-  let lastAutopilotMove = 0
   $effect(() => {
     const i = setInterval(() => {
       now = Date.now()
-      if (isAutopilot && currentSpace && now - lastAutopilotMove > 1500) {
-        lastAutopilotMove = now
-        const doors = ship.links.filter((l) => l.from === currentSpace || l.to === currentSpace)
-        if (doors.length > 0) {
-          const targetLink = doors[Math.floor(Math.random() * doors.length)]
-          const targetId = targetLink.from === currentSpace ? targetLink.to : targetLink.from
-          arrived(targetId)
-        }
-      }
     }, 100)
     return () => clearInterval(i)
   })
-  const isAutopilot = $derived(world.body.autopilotUntil !== null && world.body.autopilotUntil > now)
+  const isAutopilot = $derived(
+    world.body.autopilotUntil !== null && world.body.autopilotUntil > now,
+  )
   let report = $state<TourReport | null>(null)
   /**
    * The blast and the punch, which are gone by the time the read-out is read.
@@ -491,10 +503,9 @@
       // The Dowsing Chain, used as what it is: a weight on the end of a chain.
       case 'lashed':
         return crackAWhip()
-      // Secret Window.
+      // Secret Window. Twenty seconds up, and the bird says so on its way out.
       case 'owl-attached':
       case 'owl-recalled':
-      // Twenty seconds up, and the bird says so on its way out.
       case 'owl-expired':
         return hootAnOwl()
       // Cross Game, and Culdcept, which is the other technique made of cards.
@@ -536,6 +547,11 @@
         return selectACard(shown.locked ? 2 : 1)
       case 'ordered':
         return wakeTheMachine()
+      // The Sun and Moon.
+      case 'marked':
+        return openAWormhole() // TODO: specialized sound
+      case 'detonated':
+        return strikeAGong(3) // TODO: specialized explosion sound
       // Remote Punch, whether it found something or bare deck.
       case 'came-up-under':
       case 'came-up-empty':
@@ -581,6 +597,92 @@
   let aimedSolidAt = $state<Structure | null>(null)
 
   const technique = $derived(worksInTour($activeHatsu) ? $activeHatsu : null)
+
+  /**
+   * The two pages Double Face has live, in the order the two keys play them:
+   * the open one under F, the one the ribbon is holding under R.
+   *
+   * `null` under everything else, which is what makes R mean what it has always
+   * meant everywhere else.
+   */
+  const openPages = $derived(technique?.kind === 'bookmark' ? twoPages(world.book) : null)
+
+  /** A page under the name of whoever the book took it from. */
+  const pageName = (kind: HatsuInteractionKind) => {
+    const stolen = HATSU_PROFILES.find((candidate) => candidate.kind === kind)
+    return stolen ? localizeHatsu(stolen, $locale).name : kind
+  }
+
+  /** The two pages as the two buttons a touchscreen gets instead of F and R. */
+  const hands = $derived(
+    openPages ? { first: pageName(openPages[0]), second: pageName(openPages[1]) } : null,
+  )
+
+  /**
+   * What a cast would actually run, which is not always the technique in hand.
+   *
+   * Double Face is not cast at all — it is a bookmark, and what a bookmark does
+   * is keep a second page live. So the key decides: F runs the open page and R
+   * runs the marked one, and the walk answers to whichever came back.
+   */
+  const castingKind = (hand: 'first' | 'second' | 'third'): HatsuInteractionKind | null => {
+    if (!technique) return null
+    if (!openPages) return technique.kind
+    return hand === 'second' ? openPages[1] : openPages[0]
+  }
+
+  /**
+   * Which of Enchanting Music's three airs each key plays.
+   *
+   * The lively one is on F because F is the key everything is cast with and the
+   * dance is what the technique is remembered for; the soft one is on R, which
+   * an instrument has no other use for; and the sharp one is on C. Nothing else
+   * in the walk reads this — the flute is the only thing aboard that is played
+   * rather than aimed.
+   */
+  const AIR_KEYS = { first: 'dance', second: 'bloom', third: 'scatter' } as const
+
+  /** The three airs as the three buttons a touchscreen gets instead of the keys. */
+  const tunes = $derived(
+    technique?.kind === 'melody' && !openPages
+      ? {
+          first: $t.tour.hatsu.tunes[AIR_KEYS.first],
+          second: $t.tour.hatsu.tunes[AIR_KEYS.second],
+          third: $t.tour.hatsu.tunes[AIR_KEYS.third],
+        }
+      : null,
+  )
+
+  /** Whether the technique in hand is cast with two hands off the one key. */
+  const twoHanded = $derived(Boolean(technique) && TWO_HANDED_KINDS.has(technique!.kind))
+
+  /**
+   * Which hand each key casts with next, for the techniques that have two.
+   *
+   * The Sun and Moon is the whole of it: Genthru puts the sun on with one hand
+   * and the moon with the other, and the pair does nothing until both are out.
+   * Spending a second key on the second hand would collide with everything else
+   * a key already means — R is Double Face's other page, and C is the flute's
+   * third air — so the key alternates instead. Press it once for the sun and
+   * again for the moon, and the pair is two presses of the same key. Kept per
+   * key, so a book holding it on one page counts that page's hands alone.
+   */
+  let nextHand = $state<Record<'first' | 'second' | 'third', 'sun' | 'moon'>>({
+    first: 'sun',
+    second: 'sun',
+    third: 'sun',
+  })
+
+  /**
+   * Whether R has anything to do: the technique is on both sides of the line.
+   *
+   * A technique that only ever works on the visitor takes F wherever the
+   * reticle happens to be pointing, so it needs no second key. The ones in both
+   * sets — Black Voice's needle, Elastic Love — are the ones the reticle
+   * decides for, and on a walk the reticle is nearly always on something. R is
+   * how the visitor says *me*.
+   */
+  const selfCastable = $derived(worksOnTheBody(technique) && aimsAtSolids(technique))
 
   /** Sight is the scene's business; hearing is the archive's ambience. */
   $effect(() => {
@@ -640,6 +742,15 @@
         // changes it, and taking the aura up again is not R.
         nextWorld.doubleMode = currentWorld.doubleMode ?? 'follow'
       }
+      // Double Face is handed over already holding two: a bookmark with one
+      // page under it is not an ability, and the walk cannot ask the visitor to
+      // steal twice before it does anything. Which two is rolled here and
+      // stands until the aura is put down.
+      if (kind === 'bookmark' && !twoPages(currentWorld.book)) {
+        nextWorld.book = openTheBook()
+      }
+      // Both hands begin with the sun, whatever the last aura left them on.
+      nextHand = { first: 'sun', second: 'sun', third: 'sun' }
       world = nextWorld
     }
   })
@@ -716,8 +827,15 @@
   function release() {
     const rebound = Boolean(world.snakes && !world.snakes.fed)
     // Everything the aura was holding is handed back — but the aura itself is
-    // still up, and what is held is not a hold.
-    world = { ...EMPTY_WORLD, holding: world.holding }
+    // still up, and what is held is not a hold. The book is the exception the
+    // other way round: it is not something Double Face did to the ship, it is
+    // Double Face, so letting go of the ship deals a fresh pair rather than
+    // leaving the visitor holding a bookmark with nothing under it.
+    world = {
+      ...EMPTY_WORLD,
+      holding: world.holding,
+      book: world.holding === 'bookmark' ? openTheBook() : EMPTY_WORLD.book,
+    }
     report = null
     if (rebound) punish($t.tour.hatsu.reports.snakesRebound)
   }
@@ -752,19 +870,42 @@
     stopEveryHatsuLoop()
   })
 
-  function castOn(spaceId: string | null, solidId: string | null = null) {
+  function castOn(
+    spaceId: string | null,
+    solidId: string | null = null,
+    /** Which key cast: F is the first hand, R the second, C the third. */
+    hand: 'first' | 'second' | 'third' = 'first',
+  ) {
     if (!technique) return
-    const result = castInTour(world, technique.kind, {
+    const kind = castingKind(hand)
+    if (!kind) return
+    // An instrument is played rather than cast, and which key was pressed is
+    // which piece: the walk carries the choice across and `$lib/tour/hatsu`
+    // decides what a room that has heard it looks like afterwards.
+    const tune = kind === 'melody' ? AIR_KEYS[hand] : undefined
+    // A technique with two hands takes them in turn off its own key rather than
+    // spending a second one: which hand this press is comes from what the last
+    // press of that key left behind. Kept per key, so The Sun and Moon on a page
+    // of the book counts that page's hands and nobody else's.
+    const mark = TWO_HANDED_KINDS.has(kind) ? nextHand[hand] : undefined
+    const result = castInTour(world, kind, {
       ship,
       targetId: spaceId,
       targetSolidId: solidId,
       standingIn: currentSpace?.id ?? null,
       at: position,
       heading,
+      mark,
+      tune,
     })
     world = result.world
     report = result.report
     show(result.report)
+    // The turn is only taken when a hand actually went out: a cast that found
+    // nothing to mark has not used one up, and the next press is still the sun.
+    if (mark && result.report?.kind === 'marked') {
+      nextHand = { ...nextHand, [hand]: otherHand(mark) }
+    }
     if (result.travelTo) {
       // Where the aura came down in that room, for the technique that carries
       // the visitor to it rather than merely reaching it.
@@ -792,6 +933,21 @@
     report = result.report
     show(result.report)
     if (result.travelTo) goToSpace(ship.spaces.get(result.travelTo)!)
+  }
+
+  /**
+   * What F and R do, offered to a visitor working the panel instead of the
+   * keyboard: the same cast, at whatever the reticle is on, under the same
+   * hand — so the sun and the moon alternate off a mouse exactly as they do
+   * off a key.
+   */
+  function castHand(hand: 'first' | 'second') {
+    castOn(aimedAt?.id ?? currentSpace?.id ?? null, aimedSolidAt?.id ?? null, hand)
+  }
+
+  /** The ribbon moved to the other page, which swaps what the two keys play. */
+  function turnTheRibbon() {
+    world = { ...world, book: turnTheBook(world.book) }
   }
 
   /**
@@ -834,6 +990,22 @@
     if (!last) return
     world = next
     report = last
+  }
+
+  /**
+   * The sun and the moon closing on each other, on the walk's own clock.
+   *
+   * Silent until they touch: two things crossing a room are something to watch
+   * rather than something to be told about, and the one line the technique has
+   * to say is the one it says when neither of them is there any more.
+   */
+  function polarityWalk(seconds: number, delta: number) {
+    const step = polarityStep(world, ship, seconds, delta)
+    if (!step) return
+    world = step.world
+    if (!step.report) return
+    report = step.report
+    show(step.report)
   }
 
   /**
@@ -1088,6 +1260,7 @@
         {flash}
         auraColour={technique?.color ?? null}
         aiming={Boolean(technique)}
+        {selfCastable}
         {reveal}
         onCast={castOn}
         onArrive={arrived}
@@ -1096,6 +1269,9 @@
         onOwl={owlFlight}
         onOwlSecond={owlSecond}
         onScout={scoutFlight}
+        onPolarity={polarityWalk}
+        {hands}
+        {tunes}
         swings={technique?.kind === 'stitch'}
         {touchUseLabel}
         touchLabels={{ move: $t.tour.touch.move, cast: $t.tour.touch.cast }}
@@ -1377,6 +1553,8 @@
           onCycleOwl={cycleOwl}
           onCycleEye={cycleEye}
           onCastPage={castPage}
+          onCastHand={castHand}
+          onTurnTheBook={turnTheRibbon}
         />
       {/if}
 
@@ -1525,6 +1703,16 @@
           {#if technique}
             <dt class="text-[#FFFFF0]">{$t.tour.controls.nen}</dt>
             <dd>{$t.tour.controls.nenKeys}</dd>
+          {/if}
+          {#if hands}
+            <dt class="text-[#FFFFF0]">{$t.tour.controls.nenSecond}</dt>
+            <dd>{$t.tour.controls.nenSecondKeys(hands.second)}</dd>
+          {:else if twoHanded}
+            <dt class="text-[#FFFFF0]">{$t.tour.controls.nenMoon}</dt>
+            <dd>{$t.tour.controls.nenMoonKeys}</dd>
+          {:else if selfCastable}
+            <dt class="text-[#FFFFF0]">{$t.tour.controls.nenSelf}</dt>
+            <dd>{$t.tour.controls.nenSelfKeys}</dd>
           {/if}
           {#if touch}
             <dt class="text-[#FFFFF0]">{$t.tour.controls.touch}</dt>

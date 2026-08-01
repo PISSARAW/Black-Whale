@@ -489,6 +489,131 @@ export function foldPaper() {
   })
 }
 
+/**
+ * Enchanting Music, on the flute the walk puts in the visitor's hands.
+ *
+ * A flute is a sine with air in it: the tone is nearly pure — which is why
+ * every other voice in this file needs a second oscillator to stop sounding
+ * like a test tone and this one does not — and what makes it an instrument
+ * rather than a signal is the breath across the lip plate and the slow waver a
+ * player cannot help putting on a held note.
+ *
+ * Three airs, and they are written out rather than generated, because what
+ * tells them apart is the writing: the soft one is long notes rising through a
+ * pentatonic, which has no interval in it that can sound wrong; the sharp one
+ * is the same instrument played in note values that keep halving — crotchet,
+ * quaver, semiquaver, which is exactly what the room fills up with; and the
+ * lively one is a jig, in the compound time that has made people dance for four
+ * hundred years.
+ */
+const FLUTE_ROOT = 74
+
+/**
+ * Each air as `[semitones above the root, when it lands in beats, how many
+ * beats it holds]`, with the beat it is counted in.
+ */
+const AIRS: Record<
+  'bloom' | 'scatter' | 'dance',
+  { beat: number; peak: number; notes: [number, number, number][] }
+> = {
+  // Rising, unhurried, and ending on the note it started from an octave up:
+  // nothing here resolves downward, because the room is opening.
+  bloom: {
+    beat: 0.42,
+    peak: 0.075,
+    notes: [
+      [0, 0, 2],
+      [2, 2, 1],
+      [4, 3, 1],
+      [7, 4, 2],
+      [9, 6, 1],
+      [7, 7, 1],
+      [12, 8, 3],
+    ],
+  },
+  // A crotchet, two quavers, four semiquavers, and the same again a step down:
+  // the piece is the note values, and the notes scatter as they shorten.
+  scatter: {
+    beat: 0.34,
+    peak: 0.07,
+    notes: [
+      [12, 0, 1],
+      [10, 1, 0.5],
+      [7, 1.5, 0.5],
+      [5, 2, 0.25],
+      [7, 2.25, 0.25],
+      [3, 2.5, 0.25],
+      [5, 2.75, 0.25],
+      [10, 3, 1],
+      [8, 4, 0.5],
+      [5, 4.5, 0.5],
+      [3, 5, 0.25],
+      [5, 5.25, 0.25],
+      [1, 5.5, 0.25],
+      [0, 5.75, 0.25],
+    ],
+  },
+  // Six-eight, and the long-short of it is the whole reason anything moves.
+  dance: {
+    beat: 0.19,
+    peak: 0.08,
+    notes: [
+      [0, 0, 1],
+      [4, 1, 0.5],
+      [7, 1.5, 0.5],
+      [9, 2, 1],
+      [7, 3, 0.5],
+      [4, 3.5, 0.5],
+      [5, 4, 1],
+      [9, 5, 0.5],
+      [12, 5.5, 0.5],
+      [11, 6, 1],
+      [9, 7, 0.5],
+      [7, 7.5, 0.5],
+      [4, 8, 1],
+      [7, 9, 1],
+      [0, 10, 2],
+    ],
+  },
+}
+
+/** One air, played once. Which one is the visitor's decision, and their key. */
+export function playATune(tune: 'bloom' | 'scatter' | 'dance') {
+  const g = hatsuAudioGraph()
+  if (!g) return
+  const at = startsAt(g)
+  const air = AIRS[tune]
+
+  for (const [step, when, held] of air.notes) {
+    const hz = midiToHz(FLUTE_ROOT + step)
+    const starts = at + when * air.beat
+    const length = held * air.beat
+    swept(g, starts, length, {
+      type: 'sine',
+      from: hz,
+      peak: air.peak,
+      // A player's tongue, near enough: the shorter the note the harder it is
+      // started, which is what makes a run of semiquavers sound played.
+      attack: Math.min(0.06, 0.012 + length * 0.08),
+      release: Math.min(0.35, 0.06 + length * 0.35),
+      // The waver a held note gets and a short one has no time for.
+      wobble: held >= 1 ? 3.5 : 0,
+      wobbleHz: 5,
+      send: 0.6,
+    })
+    // The breath across the lip plate, which is where the instrument is.
+    rush(g, starts, Math.min(length, 0.09), {
+      peak: 0.014,
+      type: 'bandpass',
+      cutoff: hz * 2,
+      q: 1.6,
+      attack: 0.006,
+      release: 0.06,
+      send: 0.35,
+    })
+  }
+}
+
 // ── Blinky, and the other things that run ────────────────────────────────
 
 let motor: Held | null = null
@@ -1328,7 +1453,7 @@ export function hissLikeASnake() {
   const g = hatsuAudioGraph()
   if (!g) return
   const at = startsAt(g)
-  
+
   // The initial strike/bite (quick and somewhat forceful)
   rush(g, at, 0.08, {
     peak: 0.1,

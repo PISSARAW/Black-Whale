@@ -534,7 +534,7 @@ describe('reading her hand', () => {
   })
 
   it('runs out: a one-shot is a one-shot', () => {
-    let game = playTechnique(withTechnique('future'), { random: clean })
+    const game = playTechnique(withTechnique('future'), { random: clean })
     const again = playTechnique(game, { random: clean })
     expect(again).toBe(game)
     expect(game.spent).toBe(1)

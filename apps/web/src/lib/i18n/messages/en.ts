@@ -983,6 +983,13 @@ export const en = {
         none: 'Nothing in hand. Pick a technique up from the Nen dock and sit down again — some of them have a great deal to say to twelve cards.',
         useless: (name: string) =>
           `${name} has nothing to do at a card table. The dock will hand you something else.`,
+        /**
+         * Why the dock stops offering the other seventy while a hand is live.
+         * Shown by the dock, which is why it has to read as a sentence on its
+         * own rather than as a label on this page.
+         */
+        sealed:
+          'A hand is in play at Morena Prudo’s table. Only what has something to say to twelve cards can be picked up here.',
         play: 'Play it',
         spent: (used: number, of: number) => `${used} of ${of} used`,
         exhausted: 'Spent',
@@ -1833,6 +1840,12 @@ export const en = {
     searchPlaceholder: 'Technique or user…',
     pickerFooter: (count: number) =>
       `${count} known techniques · the activation persists across navigation`,
+    /**
+     * What the dock says where only some techniques work. The room supplies
+     * the reason — the dock is site-wide and knows nothing about card tables.
+     */
+    gateBadge: 'Nothing to do here',
+    gateFooter: (usable: number, reason: string) => `${usable} usable here · ${reason}`,
     why: 'WHY?',
     projectedEffects: 'PROJECTED EFFECTS',
     noProjectedEffects: 'No effect can be projected in this state.',

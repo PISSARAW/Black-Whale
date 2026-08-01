@@ -893,6 +893,8 @@ export const fr: Messages = {
         none: 'Rien en main. Prenez une technique dans le dock Nen et rasseyez-vous — certaines ont beaucoup à dire à douze cartes.',
         useless: (name) =>
           `${name} n’a rien à faire à une table de cartes. Le dock vous donnera autre chose.`,
+        sealed:
+          'Une main est en cours à la table de Morena Prudo. Ici, on ne prend en main que ce qui a quelque chose à dire à douze cartes.',
         play: 'La jouer',
         spent: (used, of) => `${used} sur ${of} utilisée${used === 1 ? '' : 's'}`,
         exhausted: 'Épuisée',
@@ -1720,6 +1722,8 @@ export const fr: Messages = {
     searchPlaceholder: 'Technique ou utilisateur…',
     pickerFooter: (count) =>
       `${count} techniques connues · l’activation persiste pendant la navigation`,
+    gateBadge: 'Rien à y faire',
+    gateFooter: (usable, reason) => `${usable} utilisables ici · ${reason}`,
     why: 'POURQUOI ?',
     projectedEffects: 'EFFETS PROJETÉS',
     noProjectedEffects: 'Aucun effet projetable dans cet état.',

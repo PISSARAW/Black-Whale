@@ -582,3 +582,37 @@ décisions ont dû être prises que le tableau ne tranchait pas :
 de ce jeu qui ne passe pas par la Manipulation, puisque celle qui est partie n'est pas vous. Vu
 en train de le faire, en revanche, c'est vous le tricheur et la partie continue sans le tour de
 passe-passe.
+
+## 8. Le dock, pendant la main
+
+Une table où trente-trois techniques sur quatre-vingt-deux ont un siège, et un dock qui les
+propose toutes, ne fait pas un choix : il fait une recherche. Tant qu'une main est en cours,
+`/tour/morena` pose donc une **grille** sur le dock — `hatsuGate` dans
+`apps/web/src/lib/nen/hatsuState.ts` :
+
+```ts
+export interface HatsuGate {
+  admits: (kind: HatsuInteractionKind) => boolean
+  reason: string
+}
+```
+
+Trois choses, et rien de plus :
+
+- **`activateHatsu` refuse** ce que la grille écarte. Le contrôle est là et pas dans le
+  balisage du picker, parce que la même activation arrive par trois chemins — le picker, un lien
+  qui émet `black-whale:activate-hatsu`, et la session mémorisée au montage. Une règle appliquée
+  sur un chemin sur trois n'est pas une règle.
+- **Le dock grise le reste** plutôt que de le cacher : savoir qu'une technique existe et ne sert
+  à rien ici vaut mieux qu'une liste plus courte. La phrase affichée vient de la grille, jamais
+  du dock — le dock est global et n'a pas à savoir ce qu'est une table de cartes.
+- **Ce qui est déjà en main y reste.** La grille porte sur ce qu'on prend, pas sur ce qu'on
+  porte : entrer dans une pièce ne désarme personne, ça empêche seulement d'aller en chercher
+  une autre. Le visiteur assis avec Bungee Gum la garde, et le dock lui dit qu'elle est inerte.
+
+La grille se lève dès que la main est finie, pour que lire le verdict et choisir autre chose
+pour la donne suivante restent un seul geste. Sortir de table ne la lève pas : le canon laisse
+le joueur assis après avoir tenté de partir, et la main continue.
+
+C'est un mécanisme général et pas un détail de cette route : toute page qui a une raison de
+n'admettre qu'une partie du registre ouvre une grille et la referme en partant.

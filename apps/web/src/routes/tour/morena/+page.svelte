@@ -24,7 +24,7 @@
   import { breadcrumbSchema } from '$lib/seo/schema'
   import { link, locale, t } from '$lib/i18n'
   import { localizeHatsu } from '$lib/i18n/hatsu'
-  import { activeHatsu } from '$lib/nen/hatsuState'
+  import { activeHatsu, closeHatsuGate, openHatsuGate } from '$lib/nen/hatsuState'
   import { HATSU_PROFILES } from '$lib/nen/hatsuRegistry'
   import { floorOf, theShip } from '$lib/tour/blueprint'
   import {
@@ -150,6 +150,28 @@
     game = settle(game, choice ?? undefined)
     choice = null
   }
+
+  /**
+   * The dock, while a hand is live.
+   *
+   * Sitting down is a commitment, and the menu is where it is made: it names
+   * what you are carrying and says plainly whether it has a seat. Once the
+   * cards are dealt, going shopping is not one of the moves — so the dock
+   * stops offering the seventy techniques that would do nothing here, and says
+   * why. The one already in hand is untouched: walking into a room does not
+   * take an aura off anybody, it only stops them picking up a new one.
+   *
+   * The gate is lifted the moment the hand is over, so reading the verdict and
+   * choosing a different technique for the next deal is one gesture again.
+   */
+  $effect(() => {
+    if (view !== 'table' || game.phase === 'over') {
+      closeHatsuGate()
+      return
+    }
+    openHatsuGate({ admits: worksAtTheTable, reason: copy.hatsu.sealed })
+    return closeHatsuGate
+  })
 
   /** What Morena said to the last question asked, for the panel's read-out. */
   const lastAsked = $derived(game.asked.length ? game.asked[game.asked.length - 1] : null)

@@ -359,11 +359,177 @@ Les fiches du §3 se retrouvent une par une, y compris leurs contrepoids :
 décident seulement ce que le mot valait. C'est la garantie de fidélité du §5 tenue au niveau
 du code plutôt qu'au niveau de la fiche.
 
-### 6.3 Ce qui reste à faire
+### 6.3 Le §4, fait — avec deux corrections au document
 
-Le §4 n'est pas fait : rien de tout ceci n'est encore branché sur `world-engine`
-(`EFFECT_ATTRIBUTE_CHANGED`, `EFFECT_STATE_CHANGED`), ni sur `INFECTION_STEPS` de
-`packages/ability-modules/src/contagion/module.ts`, ni sur un `ContagionDashboard`. Le
-réducteur pur existe et il est testé (`apps/web/src/lib/tour/morena.test.ts`, 68 cas) : c'est
-exactement la pièce que le §4.1 demandait, et elle est prête à être consommée par le moteur
-quand les deux primitives manquantes seront branchées.
+**Le §4.2 était périmé.** `EFFECT_ATTRIBUTE_CHANGED` et `EFFECT_STATE_CHANGED` n'étaient pas
+« les deux manques identifiés » : les deux existent dans `packages/world-engine/src/events.ts`
+et sont réduits dans `reducer.ts` (`changeEffectAttributes` gère `attributes` / `increments` /
+`append`). Il n'y avait donc rien à ajouter au moteur, seulement à s'en servir.
+
+**Le §4.1 avait raison sur l'emplacement**, et c'est ce qui a été fait — le réducteur a été
+déplacé de la marche vers le paquet :
+
+```
+packages/ability-modules/src/contagion/
+  game.ts     // l'état de partie pur, sans aucune dépendance moteur
+  module.ts   // + open-game, ask, stake, refuse-stake, play-technique,
+              //   leave-table, settle, close-game
+```
+
+`apps/web/src/lib/tour/morena.ts` ne garde que le dessin (où est la table, de quelle couleur
+est chaque carte, `tableauOf`) et réexporte les règles. Il porte aussi la seule chose que le
+paquet ne peut pas porter : la preuve à la compilation que chaque clé de `TABLE_TECHNIQUES`
+nomme un `HatsuInteractionKind` que le registre publie réellement — un paquet sous `packages/`
+n'a pas le droit d'aller chercher un type dans l'app, donc le contrôle se fait du côté où les
+deux sont visibles.
+
+Ce que les actions émettent, conformément au §4.2 :
+
+| Coup                                                           | Événements                                                                                                                                 |
+| -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| `open-game`                                                    | `EFFECT_CREATED` `CUSTOM` `discriminator: 'game'`, `state: ACTIVE`, les règles en clair                                                    |
+| `ask` / `stake` / `refuse-stake` / `play-technique` / `settle` | un `EFFECT_ATTRIBUTE_CHANGED` chacun — **un coup, un événement**, donc la partie est rejouable coup par coup                               |
+| triche ou abandon détecté                                      | `EFFECT_STATE_CHANGED` → `TRIGGERED`, **plus** un `CONSTRAINT` portant `attributes.allowedAnswers: ['yes','no']` et ses `rules[]` lisibles |
+| `close-game`                                                   | `EFFECT_STATE_CHANGED` → `ENDED` avec `reason: 'game-completed' \| 'morena-dead' \| 'target-dead'`                                         |
+
+Deux points que le document ne prévoyait pas et qu'il fallait trancher :
+
+- **Le hasard devait devenir rejouable.** Morena pioche au hasard, et une branche rejouée qui
+  donnerait une autre main ne serait pas un rejeu. `seededRandom(ctx)` dérive la pioche de
+  `ctx.eventId` et du tour courant plutôt que de `Math.random` : même événement, même carte.
+- **`revealedAtChapter: 407`** sur tous les événements de partie, comme le §5 le demande.
+
+Le lien avec `INFECTION_STEPS` est fait dans le sens qui convient : `infectionStepsFrom(game)`
+rend ce que la main a réellement établi — `game-won-yes` si elle a été gagnée, `kiss` si le
+baiser a été pris — et rien du tout si c'était un pantin sur la chaise. C'est ce que
+`close-game` écrit dans `completedSteps`, et c'est ce que la condition `checklist` de `infect`
+consomme. La case que quelqu'un cochait de l'extérieur est devenue le résultat d'une partie.
+
+Testé sur 89 cas : 68 sur le réducteur (`apps/web/src/lib/tour/morena.test.ts`) et 21 sur le
+branchement moteur (`packages/ability-modules/test/morena-game.spec.ts`), dont une négociation
+complète appendue à une vraie `InMemoryBranchEngine` et relue dans l'état réduit.
+
+### 6.4 Ce qui reste
+
+Le §4.3 : `ContagionDashboard` n'existe toujours pas — le `ui.componentKey` du manifeste pointe
+sur un composant qui n'est pas écrit. L'onglet **Partie** et la **frise des fraudes** qu'il
+décrit sont désormais entièrement lisibles depuis l'état (`riders`, `aftermath`, les beats
+`played` avec leur `seen`), donc c'est du rendu et plus de la conception.
+
+---
+
+## 7. Les cinquante-quatre autres
+
+`TABLE_TECHNIQUES` compte **vingt-huit** entrées ; le catalogue en compte quatre-vingt-deux.
+Le commentaire du code règle la question d'une phrase — « everything not in this list is a
+capability that has nothing to say to twelve cards and a chair, which is most of them, and
+saying so is part of the point » — mais cette phrase couvre en réalité **six** situations très
+différentes, et deux d'entre elles sont des trous plutôt que des refus. Le registre attribue un
+`kind` unique par capacité (vérifié : 82 profils, 82 kinds, aucune collision), donc aucune
+absence ici n'est un artefact de clé : chacune est une décision.
+
+### 7.1 Elles jouent les deux autres conditions, pas celle-ci
+
+La partie n'est que la première des trois cases de `INFECTION_STEPS`. Ces capacités-là ne
+touchent pas la main : elles attaquent le baiser ou le meurtre observé, c'est-à-dire les
+conditions que la partie ne décide pas.
+
+- **Metamorphosen** `mimicry` — l'apparence de quelqu'un à qui on a parlé, tenue au plus aussi
+  longtemps qu'on a passé de temps avec lui. Sept questions dans une pièce close, c'est
+  exactement le budget de temps que la capacité demande. Morena embrasse le mauvais visage.
+- **Without You** `guardian` — une bête sans forme propre qui porte l'identité, la mémoire et
+  la personnalité d'une morte. Elle peut s'asseoir, jouer, dire Oui : l'infection tomberait sur
+  quelqu'un qui n'existe plus. C'est le `proxy` parfait, et il est canon.
+- **Indoor Fish** `devour` — tue sans douleur ni sang, la victime restant consciente. Un meurtre
+  que le témoin ne perçoit pas comme un meurtre ne remplit pas `witnessed-murder` : le
+  knowledge-engine dirait `BELIEVED`, pas `KNOWN`. Le contre le plus élégant du catalogue à la
+  troisième condition.
+  (Ces deux-là sont aussi les deux premières lignes du §7.5 : un proxy assis à la table est
+  précisément la façon dont on fait manquer le baiser.)
+- **Fun Fun Cloth** `pocket` — escamoter le corps : même effet, par l'autre bout.
+- **Silent Majority** `snakes` — fournit le meurtre, mais le pantin n'est visible que de son
+  porteur. Qui, exactement, a observé ?
+- **Yomotsu Hegui** `postmortem-curse` et **Cat's Name** `resurrection` — la famille du §3.4.
+  Elles ne changent pas la main, elles changent le prix de votre mort ; le rider `deterred`
+  (Beyond) exprime déjà ce prix, et trois sièges pour un seul effet auraient été trois
+  exceptions au lieu d'un verbe.
+- **« Are You Free ? »** `solicitation` — un extracteur de Oui sans négociation : un jeu
+  concurrent, pas un coup dans celui-ci.
+
+### 7.2 Elles sont le plateau
+
+- **LSDF** `legal-defense` **est déjà dans le jeu** : c'est `watch: 1`. Elle n'a pas de siège
+  parce qu'elle tient l'autre bout de la table.
+- **Spatial Teleportation** `spatial` — Luini exige une pièce close à porte fermée, ce que la
+  salle du jeu est par construction. Voisine de `hide`, avec l'inverse en plus : faire _entrer_
+  un témoin.
+- **Magical Worm** `portal`, **Transport Portals** `relay`, **Kurton** `vehicle` — des sorties.
+  Sortir, c'est abandonner : elles ne font pas gagner, elles font perdre plus confortablement.
+- **Bird Manipulation** `flock` — la messagerie d'avant et d'après.
+
+### 7.3 Elles visent Contagion, pas la partie
+
+Tout ce qui prend, hérite, analyse ou double une capacité arrive après le mot : **Culdcept**
+`capture`, **Benjamin Baton** `inherit` (hériter de Contagion à la mort de Morena),
+**Stealth Dolphin** `ability-loan`, **Double Face** `bookmark`, **Predator** `predator`.
+Rihan mérite sa phrase : c'est le seul contre frontal à Contagion, et le canon lui interdit
+de fonctionner sur des informations fournies par autrui — il faut donc avoir vu la partie
+soi-même. C'est le pendant tardif de Skill Hunter, qui, lui, est assis à la table.
+
+À côté : **Bloody Mary** `blood-search` (surveiller la salle), **Nen Stitches** `stitch` (fils
+masqués par In — la procuration indétectable, quatrième `proxy` d'une liste qui en a déjà
+quatre), **Great Hiker** `poetry` (le vers qui punit le mensonge : jumeau papier de `lie-marks`,
+le seul cas où un siège aurait pu être doublé), **Biohazard** `animate` (un gage qui s'enfuit),
+**Eye-wogs** `aura-levy` et **Diffusive Aura Smoke** `diffusive-smoke` — deux recruteurs rivaux,
+et la fumée de Salé-salé est la vraie quasi-retenue : elle vend de la bienveillance progressive,
+ce qu'un négociateur vend, et se contre en retenant son souffle, ce qu'un négociateur peut
+faire.
+
+**Emperor Time** `scarlet` a droit à la sienne : une heure de vie par seconde. Une partie de
+sept questions se paierait en années. C'est le seul hatsu du catalogue dont le coût rend une
+négociation littéralement inabordable — et c'est une fiche, pas un manque.
+
+### 7.4 Ce que le jeu interdit
+
+La moitié offensive du catalogue n'est pas _faible_ à cette table : elle est **interdite**.
+Frapper, c'est quitter la table, et quitter la table déclenche la Manipulation. C'est la seule
+table du site où la puissance est la mauvaise monnaie — et c'est pour ça que `truth-punch`
+(Body and Soul) est chiffré `exposure: 1, uses: 1` : le seul coup violent qui achète quelque
+chose est celui qu'on porte au dernier échange.
+
+| Capacité                                          | `kind`                                               |
+| ------------------------------------------------- | ---------------------------------------------------- |
+| Bungee Gum, Aura Manipulation, Air Blow           | `elastic`, `enhance`, `blast`                        |
+| Double Machine Gun, Ripper Cyclotron, Jupiter     | `barrage`, `windup`, `impact`                        |
+| Prologue, Pain Packer, Rising Sun                 | `rhythm`, `pain-armour`, `sun-flare`                 |
+| Dance of the Serpent's Bite, Snake Arm            | `shred`, `serpent`                                   |
+| Priest Staff, I'm Coming to Get You, Remote Punch | `staff`, `weapon-body`, `remote-strike`              |
+| Blinky, Aura Projectile, Damage: Sweet Home       | `vacuum`, `training-shot`, `damage-transfer`         |
+| Chain Jail, Steal Chain, Holy Chain, Cookie       | `chain-bind`, `chain-rule`, `healing`, `restoration` |
+| Body Transformation                               | `transformation`                                     |
+
+Deux exclusions sont d'une autre nature — ce sont des **interdits d'identité**, pas de
+violence : **Grimmel** `arrow` échange les âmes du tireur et de la cible, et
+**Camilla's Guardian Coercion** `coercive-beast` contrôle totalement après des conditions que
+le canon n'a pas révélées. Dans les deux cas le moteur ne saurait pas dire _qui_ a répondu Oui,
+et l'infection a besoin de le savoir. Tant que le canon ne tranche pas : pas de siège.
+
+### 7.5 Les cinq trous
+
+La cinquante-quatrième absente est Contagion elle-même, qui est le jeu et non un coup. Des
+cinquante-trois restantes, les sections précédentes en justifient quarante-huit. Cinq n'en
+sont pas : ce sont des
+capacités qui ont quelque chose à dire à douze cartes et à qui la table n'a pas encore ouvert
+de ligne.
+
+| À asseoir                      | Verbe                               | Pourquoi                                                                             |
+| ------------------------------ | ----------------------------------- | ------------------------------------------------------------------------------------ |
+| **Without You** `guardian`     | `proxy`, `exposure: 0.1`, `fraud`   | Le seul proxy qui rend l'infection sans objet plutôt que nulle.                      |
+| **Metamorphosen** `mimicry`    | `proxy`, exposition liée à la durée | La seule capacité dont le canon fixe la durée sur le temps passé à parler.           |
+| **Hanzo Skill 4** `projection` | `proxy` avec faille                 | Le corps dort ailleurs, le baiser n'atteint rien — mais un mot au corps annule tout. |
+| **Teleport** `teleport`        | verbe neuf : `evict`                | Sortir l'autre de la table sans son accord : **faire abandonner l'adversaire**.      |
+| **Cross Game** `tribunal`      | `evict`, `fraud: false`             | La carte rouge expulse. La version légale du même coup, avec avertissement.          |
+
+`evict` est le seul verbe qui manque, et il n'ajoute pas d'exception : il applique
+`leaveTheTable()` à l'autre siège. Deux capacités le partagent d'emblée, l'une frauduleuse et
+l'autre non — ce qui est la bonne forme pour ce jeu.

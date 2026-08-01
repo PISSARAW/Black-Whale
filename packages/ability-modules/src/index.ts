@@ -99,6 +99,10 @@ export { grimmelTheDissonance, grimmelCohortEffectId } from './grimmel-the-disso
 export { hanzoSkill4 } from './hanzo-skill-4/module.js'
 export { withoutYou } from './without-you/module.js'
 export { contagion, CONTAGION_LIMITS } from './contagion/module.js'
+// The negotiation game itself: the pure reducer the walk and the dashboard
+// both consume, and the first condition of Contagion in code rather than
+// as a checklist step somebody else ticks. See docs/jeu-de-morena.md.
+export * from './contagion/game.js'
 export { magicalWorm } from './magical-worm/module.js'
 export { luiniSpatialTeleportation } from './luini-spatial-teleportation/module.js'
 export { marayamGuardianIsolation } from './marayam-guardian-isolation/module.js'

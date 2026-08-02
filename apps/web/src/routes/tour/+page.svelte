@@ -76,14 +76,18 @@
   } from '$lib/tour/pageWorldSteps'
   import { activateTourWorld, cycleTourMode, releaseTourWorld } from '$lib/tour/pageWorldCommands'
   import {
+    AIR_KEYS,
+    advanceCastHand,
+    performPageCast,
+    performTourCast,
+    type CastHand,
+  } from '$lib/tour/pageCasting'
+  import {
     EMPTY_WORLD,
     aimsAtSolids,
     arriveInTour,
-    castInTour,
     hatsuKeys,
     identityOf,
-    otherHand,
-    spendPage,
     TAKES_ORDERS,
     turnTheBook,
     twoPages,
@@ -451,12 +455,6 @@
    * is keep a second page live. So the key decides: F runs the open page and R
    * runs the marked one, and the walk answers to whichever came back.
    */
-  const castingKind = (hand: 'first' | 'second' | 'third'): HatsuInteractionKind | null => {
-    if (!technique) return null
-    if (!openPages) return technique.kind
-    return hand === 'second' ? openPages[1] : openPages[0]
-  }
-
   /**
    * Which of Enchanting Music's three airs each key plays.
    *
@@ -466,8 +464,6 @@
    * in the walk reads this — the flute is the only thing aboard that is played
    * rather than aimed.
    */
-  const AIR_KEYS = { first: 'dance', second: 'bloom', third: 'scatter' } as const
-
   /** The three airs as the three buttons a touchscreen gets instead of the keys. */
   const tunes = $derived(
     technique?.kind === 'melody' && !openPages
@@ -505,7 +501,7 @@
    * again for the moon, and the pair is two presses of the same key. Kept per
    * key, so a book holding it on one page counts that page's hands alone.
    */
-  let nextHand = $state<Record<'first' | 'second' | 'third', 'sun' | 'moon'>>({
+  let nextHand = $state<Record<CastHand, 'sun' | 'moon'>>({
     first: 'sun',
     second: 'sun',
     third: 'sun',
@@ -680,44 +676,32 @@
     spaceId: string | null,
     solidId: string | null = null,
     /** Which key cast: F is the first hand, R the second, C the third. */
-    hand: 'first' | 'second' | 'third' = 'first',
+    hand: CastHand = 'first',
   ) {
-    if (!technique) return
-    const kind = castingKind(hand)
-    if (!kind) return
-    // An instrument is played rather than cast, and which key was pressed is
-    // which piece: the walk carries the choice across and `$lib/tour/hatsu`
-    // decides what a room that has heard it looks like afterwards.
-    const tune = kind === 'melody' ? AIR_KEYS[hand] : undefined
-    // The two hands on the two keys: F puts the sun on, R the moon. Held on a
-    // page of the book instead, the technique has only its own key — R is how
-    // the other page is cast — so that one alternates, and which hand this press
-    // is comes from what the last press of that key left behind.
-    const mark = !TWO_HANDED_KINDS.has(kind)
-      ? undefined
-      : openPages
-        ? nextHand[hand === 'third' ? 'first' : hand]
-        : hand === 'second'
-          ? ('moon' as const)
-          : ('sun' as const)
-    const result = castInTour(world, kind, {
+    const cast = performTourCast({
+      world,
       ship,
+      activeKind: technique?.kind ?? null,
+      pages: openPages,
+      hands: nextHand,
+      hand,
       targetId: spaceId,
       targetSolidId: solidId,
       standingIn: currentSpace?.id ?? null,
       at: position,
       heading,
-      mark,
-      tune,
     })
+    if (!cast) return
+    const { result, mark } = cast
     world = result.world
     report = result.report
     show(result.report)
-    // The turn is only taken when a hand actually went out: a cast that found
-    // nothing to mark has not used one up, and the next press is still the sun.
-    if (mark && result.report?.kind === 'marked') {
-      nextHand = { ...nextHand, [hand]: otherHand(mark) }
-    }
+    nextHand = advanceCastHand({
+      hands: nextHand,
+      hand,
+      mark,
+      marked: result.report?.kind === 'marked',
+    })
     if (result.travelTo) {
       // Where the aura came down in that room, for the technique that carries
       // the visitor to it rather than merely reaching it.
@@ -733,7 +717,9 @@
    * walk exactly one aura, and the book gives it a second to cast with.
    */
   function castPage(kind: HatsuInteractionKind) {
-    const result = castInTour(world, kind, {
+    const result = performPageCast({
+      world,
+      kind,
       ship,
       targetId: aimedAt?.id ?? currentSpace?.id ?? null,
       targetSolidId: aimedSolidAt?.id ?? null,
@@ -741,7 +727,7 @@
       at: position,
       heading,
     })
-    world = spendPage(result.world, kind)
+    world = result.world
     report = result.report
     show(result.report)
     if (result.travelTo) goToSpace(ship.spaces.get(result.travelTo)!)
@@ -752,7 +738,7 @@
    * the keyboard: the same cast, at whatever the reticle is on, under the same
    * hand — so the moon goes on off a mouse exactly as it does off R.
    */
-  function castHand(hand: 'first' | 'second' | 'third') {
+  function castHand(hand: CastHand) {
     castOn(aimedAt?.id ?? currentSpace?.id ?? null, aimedSolidAt?.id ?? null, hand)
   }
 

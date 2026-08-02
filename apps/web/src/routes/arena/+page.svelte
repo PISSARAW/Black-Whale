@@ -42,9 +42,10 @@
     type CombatEvent,
     type Impact,
   } from '$lib/combat/types'
-  import { floorOf, theShip } from '$lib/tour/blueprint'
-  import { EMPTY_WORLD } from '$lib/tour/hatsu'
+  import { floorOf, theShip, crossingsOn, type Crossing } from '$lib/tour/blueprint'
+  import { centroid, EMPTY_WORLD } from '$lib/tour/hatsu'
   import { localizeHatsu } from '$lib/i18n/hatsu'
+  import TourMinimapPanel from '$lib/components/tour/TourMinimapPanel.svelte'
   import { activeHatsu, closeHatsuGate, hatsuPanelOpen, openHatsuGate } from '$lib/nen/hatsuState'
   import { ModeNenState } from '$lib/nen/modeState.svelte'
   import type { Apparition } from '$lib/tour/apparitions'
@@ -64,7 +65,7 @@
   const DT = 1 / 60
   const ship = theShip()
   const terrain = buildCombatTerrain(data.terrainId)
-  const plan = ship.plans.get(terrain.tierId)!
+  let plan = $state(ship.plans.get(terrain.tierId)!)
   const ground = floorOf(terrain.space, plan.tier)
 
   let game = $state(freshGame())
@@ -79,6 +80,28 @@
   let engaged = $state(false)
   let touch = $state(false)
   let tierId = $state(terrain.tierId)
+
+  const nameOf = (entity: Space | { name: string; nameFr: string } | undefined) => {
+    if (!entity) return ''
+    return $locale === 'fr' ? entity.nameFr : entity.name
+  }
+
+  function selectTier(id: string) {
+    tierId = id
+    const newPlan = ship.plans.get(id)
+    if (newPlan) {
+      plan = newPlan
+    }
+  }
+
+  const crossings = $derived(crossingsOn(ship, tierId))
+  const decks = $derived(
+    ship.decks.map((tier) => ({
+      id: tier.id,
+      label: nameOf(tier),
+      active: tier.id === tierId,
+    })),
+  )
   let jumpTo = $state<string | null>(terrain.id)
   let jumpAt = $state<Vec2 | null>(terrain.spawns[0])
   let jumpHeading = $state<number | null>(facing(terrain.spawns[0], terrain.spawns[1]))
@@ -586,6 +609,22 @@
   class:opponent-bound={game.opponent.bound > 0}
 >
   <TourModeFullscreen />
+  <TourMinimapPanel
+    ship={ship}
+    tierId={tierId}
+    plan={plan}
+    position={position}
+    heading={heading}
+    currentSpaceId={currentSpace?.id ?? null}
+    decks={decks}
+    crossings={crossings}
+    nameOf={nameOf}
+    onSelectDeck={selectTier}
+    onSelectPlan={(space) => {
+      position = centroid(space)
+      currentSpace = space
+    }}
+  />
   <h1 class="sr-only">{$t.arena.title}</h1>
 
   {#if briefingOpen}

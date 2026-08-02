@@ -18,9 +18,10 @@
   import Seo from '$lib/components/Seo.svelte'
   import TourScene from '$lib/components/tour/TourScene.svelte'
   import TourModeFullscreen from '$lib/components/tour/TourModeFullscreen.svelte'
-  import { theShip } from '$lib/tour/blueprint'
+  import { theShip, crossingsOn, type Crossing } from '$lib/tour/blueprint'
   import type { TourFlash } from '$lib/tour/apparitions'
   import { interiorPoint } from '$lib/tour/geometry'
+  import TourMinimapPanel from '$lib/components/tour/TourMinimapPanel.svelte'
   import { breadcrumbSchema } from '$lib/seo/schema'
   import { link, locale, t } from '$lib/i18n'
   import type { Space, Vec2 } from '$lib/tour/types'
@@ -111,10 +112,10 @@
     return best
   }
 
-  const nameOf = (space: Space | undefined) =>
-    space ? ($locale === 'fr' ? space.nameFr : space.name) : ''
+  const nameForDeck = (entity: Space | { name: string; nameFr: string } | undefined) =>
+    entity ? ($locale === 'fr' ? entity.nameFr : entity.name) : ''
   const spaceById = (id: string | null) => arena.spaces.find((space) => space.id === id)
-  const roomName = (id: string | null) => nameOf(spaceById(id))
+  const roomName = (id: string | null) => nameForDeck(spaceById(id))
 
   const hatsuProfiles = [BUNGEE_GUM_HUNT, PARALLEL_FUTURE_HUNT, DOWSING_CHAIN_HUNT]
   const builtInContracts = listHuntContracts()
@@ -189,6 +190,28 @@
   let currentSpace = $state<Space | null>(null)
   let engaged = $state(false)
   let tierId = $state(initialArena.tierId)
+
+  const nameOf = (entity: Space | { name: string; nameFr: string } | undefined) => {
+    if (!entity) return ''
+    return $locale === 'fr' ? entity.nameFr : entity.name
+  }
+
+  function selectTier(id: string) {
+    tierId = id
+    const newPlan = ship.plans.get(id)
+    if (newPlan) {
+      plan = newPlan
+    }
+  }
+
+  const crossings = $derived(crossingsOn(ship, tierId))
+  const decks = $derived(
+    ship.decks.map((tier) => ({
+      id: tier.id,
+      label: nameForDeck(tier),
+      active: tier.id === tierId,
+    })),
+  )
 
   function selectTerrain(id: HuntTerrainId) {
     const declaredIndex = activeContract.terrainSequence.indexOf(id)
@@ -576,6 +599,22 @@
 
 <div class="relative h-screen w-full overflow-hidden bg-black text-white">
   <TourModeFullscreen />
+  <TourMinimapPanel
+    ship={ship}
+    tierId={tierId}
+    plan={plan}
+    position={position}
+    heading={heading}
+    currentSpaceId={currentSpace?.id ?? null}
+    decks={decks}
+    crossings={crossings}
+    nameOf={nameOf}
+    onSelectDeck={selectTier}
+    onSelectPlan={(space) => {
+      position = interiorPoint(space.footprint)
+      currentSpace = space
+    }}
+  />
   <HuntAudioControl locale={$locale} />
   <div class="sr-only" aria-live="polite" aria-atomic="true">
     {#if finished}

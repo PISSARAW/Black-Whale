@@ -8,9 +8,10 @@
   import { createNenTechniqueState, transitionNen, type NenTechniqueAction } from '@black-whale/nen-engine'
   import { isNenControlCode } from '$lib/nen/controls'
   import { buildNavGraph } from '$lib/hunt/navmesh'
-  import { floorOf, theShip } from '$lib/tour/blueprint'
+  import { floorOf, theShip, crossingsOn, type Crossing } from '$lib/tour/blueprint'
   import { centroid, EMPTY_WORLD } from '$lib/tour/hatsu'
   import { interiorPoint } from '$lib/tour/geometry'
+  import TourMinimapPanel from '$lib/components/tour/TourMinimapPanel.svelte'
   import { breadcrumbSchema } from '$lib/seo/schema'
   import { link, locale, t } from '$lib/i18n'
   import type { Apparition } from '$lib/tour/apparitions'
@@ -39,7 +40,7 @@
   const ship = theShip()
   const arena = buildArena()
   const graph = buildNavGraph(arena)
-  const plan = ship.plans.get(arena.tierId)!
+  let plan = $state(ship.plans.get(arena.tierId)!)
   const extraction = arena.spaces[0]
   const defaultSeed = seedFromText('black-whale-v2')
   const forgerySurfaces: ForgerySurface[] = ['work-order', 'door-sign', 'register-copy']
@@ -49,6 +50,36 @@
 
   const roomName = (space: Space | undefined | null) =>
     space ? ($locale === 'fr' ? space.nameFr : space.name) : '—'
+
+  const nameOf = (entity: Space | { name: string; nameFr: string } | undefined) => {
+    if (!entity) return '—'
+    return $locale === 'fr' ? entity.nameFr : entity.name
+  }
+
+  let tierId = $state(arena.tierId)
+
+  function selectTier(id: string) {
+    tierId = id
+    const newPlan = ship.plans.get(id)
+    if (newPlan) {
+      plan = newPlan
+      const newArena = buildArena()
+      if (newArena.tierId === id) {
+        const newSpace = newArena.spaces.find((s) => s.id === currentSpace?.id) ?? newArena.spaces[0]
+        position = centroid(newSpace)
+        currentSpace = newSpace
+      }
+    }
+  }
+
+  const crossings = $derived(crossingsOn(ship, tierId))
+  const decks = $derived(
+    ship.decks.map((tier) => ({
+      id: tier.id,
+      label: nameOf(tier),
+      active: tier.id === tierId,
+    })),
+  )
 
   function freshGame() {
     const selection = selectMission(selectedMission, defaultSeed)
@@ -82,7 +113,6 @@
   let position = $state<Vec2>(spawn)
   let heading = $state(0)
   let currentSpace = $state<Space | null>(extraction)
-  let tierId = $state(arena.tierId)
   let engaged = $state(false)
   let briefing = $state(true)
   let frame = 0
@@ -314,6 +344,22 @@
 
 <div class="relative h-screen w-full overflow-hidden bg-black text-white">
   <TourModeFullscreen />
+  <TourMinimapPanel
+    ship={ship}
+    tierId={tierId}
+    plan={plan}
+    position={position}
+    heading={heading}
+    currentSpaceId={currentSpace?.id ?? null}
+    decks={decks}
+    crossings={crossings}
+    nameOf={nameOf}
+    onSelectDeck={selectTier}
+    onSelectPlan={(space) => {
+      position = centroid(space)
+      currentSpace = space
+    }}
+  />
   <p class="sr-only" aria-live="polite">
     {$t.infiltration.alert}
     {Math.round(game.alert)}%. {$t.infiltration.integrity}

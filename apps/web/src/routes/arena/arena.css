@@ -130,6 +130,27 @@
     --command-colour: #f3cc68;
   }
 
+  .command-fx.hatsu {
+    --command-colour: #d7a4ff;
+  }
+
+  .hatsu-action {
+    grid-column: 1 / -1;
+    border-color: #b77bd477 !important;
+    background: linear-gradient(135deg, #301b3baa, #131820) !important;
+    color: #ebd2fa !important;
+  }
+
+  .hatsu-action small {
+    display: block;
+    margin-top: 0.15rem;
+    color: #c999e4aa;
+    font:
+      500 0.5rem 'IBM Plex Mono',
+      monospace;
+    letter-spacing: 0.12em;
+  }
+
   .command-fx.ren,
   .command-fx.ryu-up,
   .command-fx[class*='zone-'] {

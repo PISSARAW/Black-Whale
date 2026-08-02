@@ -3,6 +3,7 @@
   import Seo from '$lib/components/Seo.svelte'
   import TourScene from '$lib/components/tour/TourScene.svelte'
   import { advanceArena, OPPONENT_DOCTRINE } from '$lib/arena/ai'
+  import { arenaHatsuEffect, worksInArena } from '$lib/arena/hatsu'
   import { buildCombatTerrain } from '$lib/arena/terrain'
   import { readAura } from '$lib/combat/perception'
   import { STRIKE_RANGE } from '$lib/combat/resolve'
@@ -16,6 +17,13 @@
   } from '$lib/combat/types'
   import { floorOf, theShip } from '$lib/tour/blueprint'
   import { EMPTY_WORLD } from '$lib/tour/hatsu'
+  import { localizeHatsu } from '$lib/i18n/hatsu'
+  import {
+    activeHatsu,
+    closeHatsuGate,
+    hatsuPanelOpen,
+    openHatsuGate,
+  } from '$lib/nen/hatsuState'
   import type { Apparition } from '$lib/tour/apparitions'
   import type { Space, Vec2, WallSegment } from '$lib/tour/types'
   import { breadcrumbSchema } from '$lib/seo/schema'
@@ -58,12 +66,15 @@
     | 'gyo'
     | 'in'
     | 'ken'
+    | 'hatsu'
   let commandAnimation = $state<CommandAnimation | null>(null)
   let commandAnimationSeq = $state(0)
   let lesson = $state(0)
   const motionTimers = new Set<number>()
 
   let reading = $derived(readAura(game.player, game.opponent))
+  let carriedHatsu = $derived($activeHatsu ? localizeHatsu($activeHatsu, $locale) : null)
+  let hatsuEffect = $derived(arenaHatsuEffect($activeHatsu))
   let gap = $derived(distance(game.player.position, game.opponent.position))
   let inRange = $derived(gap <= STRIKE_RANGE)
   let threatened = $derived(reading.intentRemaining !== null)
@@ -136,6 +147,17 @@
     command({ type: 'FEINT', side: 'player', zone: game.player.guard }, 'in')
   }
 
+  function castHatsu() {
+    if (!hatsuEffect) {
+      hatsuPanelOpen.set(true)
+      return
+    }
+    command(
+      { type: 'HATSU', side: 'player', effect: hatsuEffect, zone: game.player.guard },
+      'hatsu',
+    )
+  }
+
   function shiftRyu(by: number) {
     command(
       {
@@ -172,6 +194,7 @@
     else if (event.code === 'Space') strike()
     else if (event.code === 'ShiftLeft' || event.code === 'ShiftRight') guard()
     else if (event.code === 'KeyV') feint()
+    else if (event.code === 'KeyH') castHatsu()
     else if (event.code === 'KeyC') gatherKo()
     else return
     event.preventDefault()
@@ -350,6 +373,13 @@
   }
 
   onMount(() => {
+    openHatsuGate({
+      admits: worksInArena,
+      reason:
+        $locale === 'fr'
+          ? 'Arena ne propose que les Hatsu dont les règles s’appliquent à un duel direct.'
+          : 'Arena only offers Hatsu whose rules apply to a direct duel.',
+    })
     window.addEventListener('keydown', onKeyDown)
     frame = requestAnimationFrame(tick)
   })
@@ -359,6 +389,7 @@
     window.removeEventListener('keydown', onKeyDown)
     cancelAnimationFrame(frame)
     for (const timer of motionTimers) window.clearTimeout(timer)
+    closeHatsuGate()
   })
 </script>
 
@@ -476,6 +507,7 @@
     <span class:active={commandGroup(commandAnimation) === 'ken'}><kbd>K</kbd>Ken</span>
     <span><kbd>⇧</kbd>{$t.arena.action.guard}</span>
     <span><kbd>V</kbd>{$t.arena.action.feint}</span>
+    <span class:active={commandGroup(commandAnimation) === 'hatsu'}><kbd>H</kbd>Hatsu</span>
   </div>
 
   {#if lesson < 4 && game.outcome === 'playing'}
@@ -541,6 +573,15 @@
         <button onclick={feint} disabled={game.outcome !== 'playing'}
           >{$t.arena.action.feint}</button
         >
+        <button
+          class="hatsu-action"
+          onclick={castHatsu}
+          disabled={game.outcome !== 'playing'}
+          title={carriedHatsu?.rule ?? ''}
+        >
+          {carriedHatsu?.name ?? ($locale === 'fr' ? 'Choisir un Hatsu' : 'Choose a Hatsu')}
+          {#if hatsuEffect}<small>H · 18 AURA</small>{/if}
+        </button>
       </div>
     </article>
 

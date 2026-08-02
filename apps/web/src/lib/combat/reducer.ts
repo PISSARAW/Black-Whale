@@ -5,6 +5,7 @@ import type { Vec2 } from '../tour/types'
 import {
   initialCombatState,
   otherSide,
+  type ArenaHatsuEffect,
   type BodyZone,
   type CombatAction,
   type CombatSide,
@@ -23,6 +24,7 @@ export const RYU_SHIFT_TIME = 0.22
 export const GUARD_WINDOW = 0.38
 export const FEINT_COST = 3
 export const STRIKE_WINDUP = 0.62
+export const HATSU_COST = 18
 export const MOVE_SPEED = 3.6
 export const MIN_SEPARATION = 1
 export const SCORE_TO_WIN = 10
@@ -31,7 +33,9 @@ interface StrikeRequest {
   state: CombatState
   side: CombatSide
   zone: BodyZone
-  technique: 'strike' | 'ko'
+  technique: 'strike' | 'ko' | 'hatsu'
+  power?: number
+  range?: number
 }
 
 export function combatReducer(state: CombatState, action: CombatAction): CombatState {
@@ -53,6 +57,7 @@ export function combatReducer(state: CombatState, action: CombatAction): CombatS
     return replace(state, action.side, feint(state[action.side], action.zone))
   if (action.type === 'PREPARE_STRIKE')
     return replace(state, action.side, prepareStrike(state[action.side], action.zone))
+  if (action.type === 'HATSU') return castHatsu(state, action.side, action.effect, action.zone)
   if (action.type === 'STRIKE') {
     return strike({ state, side: action.side, zone: action.zone, technique: 'strike' })
   }
@@ -92,6 +97,8 @@ function advanceFighter(
     cooldown: Math.max(0, moved.cooldown - context.dt),
     guardWindow: Math.max(0, moved.guardWindow - context.dt),
     recoveryWindow: Math.max(0, moved.recoveryWindow - context.dt),
+    bound: Math.max(0, moved.bound - context.dt),
+    empowered: Math.max(0, moved.empowered - context.dt),
     feint: moved.cooldown - context.dt <= 0 ? null : moved.feint,
     intent: moved.intent
       ? { ...moved.intent, remaining: moved.intent.remaining - context.dt }
@@ -141,7 +148,7 @@ function chargeContinuous(fighter: FighterState, dt: number): FighterState {
 }
 
 function move(fighter: FighterState, rival: FighterState, context: TickContext): FighterState {
-  if (fighter.condition !== 'ready' || fighter.ko || fighter.intent)
+  if (fighter.condition !== 'ready' || fighter.ko || fighter.intent || fighter.bound > 0)
     return { ...fighter, movement: [0, 0] }
   const proposed: Vec2 = [
     fighter.position[0] + fighter.movement[0] * MOVE_SPEED * context.dt,
@@ -157,6 +164,51 @@ function move(fighter: FighterState, rival: FighterState, context: TickContext):
     return { ...fighter, movement: [0, 0] }
   }
   return { ...fighter, position: resolved }
+}
+
+function castHatsu(
+  state: CombatState,
+  side: CombatSide,
+  effect: ArenaHatsuEffect,
+  zone: BodyZone,
+): CombatState {
+  const fighter = state[side]
+  if (fighter.condition !== 'ready' || fighter.cooldown > 0 || fighter.aura < HATSU_COST)
+    return state
+  const paid = { ...fighter, aura: fighter.aura - HATSU_COST, intent: null }
+  let current = replace(state, side, paid)
+  const rivalSide = otherSide(side)
+
+  if (effect === 'bind') {
+    if (distance(fighter.position, state[rivalSide].position) > 7) return state
+    current = replace(current, side, { ...paid, cooldown: 1.1 })
+    return replace(current, rivalSide, {
+      ...current[rivalSide],
+      bound: 1.6,
+      movement: [0, 0],
+      intent: null,
+    })
+  }
+  if (effect === 'restore') {
+    return replace(current, side, {
+      ...paid,
+      aura: Math.min(paid.capacity, paid.aura + 42),
+      condition: 'ready',
+      recovery: 0,
+      cooldown: 2.2,
+    })
+  }
+  if (effect === 'enhance') {
+    return replace(current, side, { ...paid, empowered: 5, cooldown: 0.8 })
+  }
+  return strike({
+    state: current,
+    side,
+    zone,
+    technique: 'hatsu',
+    power: effect === 'impact' ? 1.65 : 0.82,
+    range: effect === 'barrage' ? 9 : 2.7,
+  })
 }
 
 function landReadyIntent(state: CombatState): CombatState {
@@ -214,6 +266,8 @@ function strike(request: StrikeRequest): CombatState {
     technique,
     clock: state.clock,
     walls: state.terrain.walls,
+    power: request.power ?? (attacker.empowered > 0 ? 1.3 : 1),
+    range: request.range,
   })
   const counterBonus = state[defenderSide].recoveryWindow > 0 && result.event.points > 0 ? 1 : 0
   const event = counterBonus
@@ -306,7 +360,7 @@ function prepareStrike(fighter: FighterState, zone: BodyZone): FighterState {
   }
 }
 
-function exchangeRecovery(technique: 'strike' | 'ko'): number {
+function exchangeRecovery(technique: 'strike' | 'ko' | 'hatsu'): number {
   return technique === 'ko' ? 1.35 : 0.9
 }
 

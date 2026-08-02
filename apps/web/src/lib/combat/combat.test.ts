@@ -1,7 +1,14 @@
 import { describe, expect, it } from 'vitest'
 import { readAura } from './perception'
 import { impactOf } from './resolve'
-import { combatReducer, initialCombatState, KO_COST, RYU_SHIFT_TIME, SCORE_TO_WIN } from './reducer'
+import {
+  combatReducer,
+  HATSU_COST,
+  initialCombatState,
+  KO_COST,
+  RYU_SHIFT_TIME,
+  SCORE_TO_WIN,
+} from './reducer'
 
 describe('Nen perception', () => {
   it('lets Gyo reveal a Ryu distribution concealed with In', () => {
@@ -157,5 +164,43 @@ describe('qualitative exchanges', () => {
     state = combatReducer(state, { type: 'TICK', dt: 0.4 })
     expect(state.lastEvent?.attacker).toBe('opponent')
     expect(state.lastEvent?.zone).toBe('head')
+  })
+
+  it('spends aura to bind a nearby opponent and cancel their attack', () => {
+    let state = initialCombatState()
+    state = {
+      ...state,
+      opponent: {
+        ...state.opponent,
+        position: [4, 0],
+        intent: { zone: 'head', remaining: 0.4 },
+      },
+    }
+    state = combatReducer(state, {
+      type: 'HATSU',
+      side: 'player',
+      effect: 'bind',
+      zone: 'torso',
+    })
+    expect(state.player.aura).toBe(100 - HATSU_COST)
+    expect(state.opponent.bound).toBeGreaterThan(1)
+    expect(state.opponent.intent).toBeNull()
+  })
+
+  it('lets a barrage connect outside ordinary striking range', () => {
+    let state = initialCombatState()
+    state = {
+      ...state,
+      player: { ...state.player, position: [0, 0], mode: 'ren' },
+      opponent: { ...state.opponent, position: [7, 0], guard: 'head' },
+    }
+    state = combatReducer(state, {
+      type: 'HATSU',
+      side: 'player',
+      effect: 'barrage',
+      zone: 'torso',
+    })
+    expect(state.lastEvent?.technique).toBe('hatsu')
+    expect(state.lastEvent?.impact).not.toBe('miss')
   })
 })

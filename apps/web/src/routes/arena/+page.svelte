@@ -47,6 +47,7 @@
   let aimedExtra = $state<string | null>(null)
   let currentSpace = $state<Space | null>(null)
   let engaged = $state(false)
+  let touch = $state(false)
   let tierId = $state(terrain.tierId)
   let jumpTo = $state<string | null>(terrain.id)
   let jumpAt = $state<Vec2 | null>(terrain.spawns[0])
@@ -448,6 +449,7 @@
     bind:aimedExtra
     bind:currentSpace
     bind:engaged
+    bind:touch
     bind:jumpTo
     bind:jumpAt
     bind:jumpHeading
@@ -549,6 +551,14 @@
     <span class:active={commandGroup(commandAnimation) === 'hatsu'}><kbd>H</kbd>Hatsu</span>
   </div>
 
+  {#if touch && game.outcome === 'playing'}
+    <nav class="touch-combat" aria-label={$locale === 'fr' ? 'Actions rapides' : 'Quick actions'}>
+      <button onclick={guard}>{$locale === 'fr' ? 'Garde' : 'Guard'}</button>
+      <button onclick={feint}>{$locale === 'fr' ? 'Feinte' : 'Feint'}</button>
+      <button onclick={castHatsu}>Hatsu</button>
+    </nav>
+  {/if}
+
   {#if lesson < 4 && game.outcome === 'playing'}
     <aside class="arena-lesson" aria-live="polite">
       <small>{$t.arena.training} · {lesson + 1}/4</small>
@@ -593,6 +603,8 @@
           <button
             class:active={game.player.guard === zone}
             class:pulsing={commandAnimation === `zone-${zone}`}
+            aria-pressed={game.player.guard === zone}
+            aria-label={`${$locale === 'fr' ? 'Protéger' : 'Guard'} ${$t.arena.zone[zone]}`}
             onclick={() => setZone(zone)}
           >
             <kbd>{index + 1}</kbd>{$t.arena.zone[zone]}

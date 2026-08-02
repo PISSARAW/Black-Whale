@@ -1034,6 +1034,27 @@
 }
 
 @scope (.arena-world) {
+  .touch-combat {
+    position: absolute;
+    z-index: 12;
+    right: 0.8rem;
+    bottom: 9.5rem;
+    display: none;
+    grid-template-columns: repeat(3, minmax(4rem, 1fr));
+    gap: 0.35rem;
+  }
+
+  .touch-combat button {
+    min-height: 2.8rem;
+    border: 1px solid #8ad7e777;
+    border-radius: 0.35rem;
+    background: #061217dd;
+    color: #e2f0f2;
+    font:
+      600 0.62rem 'IBM Plex Mono',
+      monospace;
+  }
+
   @media (max-width: 800px) {
     .arena-overlay-header {
       left: 3.5rem;
@@ -1062,6 +1083,25 @@
 
     .ryu-card {
       grid-column: 1 / -1;
+    }
+
+    .touch-combat {
+      display: grid;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      scroll-behavior: auto !important;
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+    }
+
+    .attack-telegraph.concealed {
+      opacity: 0.85;
     }
   }
 }

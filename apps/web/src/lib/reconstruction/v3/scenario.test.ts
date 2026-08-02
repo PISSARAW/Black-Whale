@@ -1,5 +1,9 @@
 import { describe, expect, it } from 'vitest'
-import { defineReconstructionScenario, verifyReconstructionScenario } from './scenario'
+import {
+  defineReconstructionScenario,
+  parseReconstructionScenarioDraft,
+  verifyReconstructionScenario,
+} from './scenario'
 
 const draft = () => ({
   id: 'kurapika-leaves-1014',
@@ -57,5 +61,28 @@ describe('Reconstruction V3 scenario', () => {
 
   it('rejects an invalid seed before simulation', () => {
     expect(() => defineReconstructionScenario({ ...draft(), seed: -1 })).toThrow('seed')
+  })
+
+  it('parses a scenario received from an untrusted client', () => {
+    expect(parseReconstructionScenarioDraft(draft())).toEqual(draft())
+  })
+
+  it('rejects malformed, oversized and non-scalar client input', () => {
+    expect(() => parseReconstructionScenarioDraft({ ...draft(), mode: 'anything' })).toThrow('mode')
+    expect(() =>
+      parseReconstructionScenarioDraft({
+        ...draft(),
+        decisions: Array.from({ length: 51 }, (_, index) => ({
+          ...draft().decisions[0],
+          id: `decision-${index}`,
+        })),
+      }),
+    ).toThrow('at most 50')
+    expect(() =>
+      parseReconstructionScenarioDraft({
+        ...draft(),
+        decisions: [{ ...draft().decisions[0], parameters: { nested: {} } }],
+      }),
+    ).toThrow('must be scalar')
   })
 })

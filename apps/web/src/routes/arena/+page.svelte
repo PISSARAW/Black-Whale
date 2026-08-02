@@ -66,6 +66,7 @@
   let reading = $derived(readAura(game.player, game.opponent))
   let gap = $derived(distance(game.player.position, game.opponent.position))
   let inRange = $derived(gap <= STRIKE_RANGE)
+  let threatened = $derived(reading.intentRemaining !== null)
   let opponentActor = $derived<Apparition[]>([
     {
       id: 'arena-opponent',
@@ -238,7 +239,7 @@
   function actorStage(): number {
     const mode = { ten: 0, ren: 1, zetsu: 2 }[game.opponent.mode]
     const fallen = game.opponent.condition === 'down' || game.opponent.condition === 'ko'
-    const pose = fallen ? 'down' : opponentMotion
+    const pose = fallen ? 'down' : game.opponent.intent ? 'attack' : opponentMotion
     const poseIndex: Record<CombatMotion, number> = {
       idle: 0,
       guard: 1,
@@ -396,6 +397,21 @@
 
   <div class="reticle" class:near={inRange} aria-hidden="true"></div>
 
+  {#if game.opponent.intent}
+    <div class="attack-telegraph" class:concealed={!threatened} aria-live="assertive">
+      {#if reading.intentZone}
+        <small>{$locale === 'fr' ? 'INTENTION LUE' : 'INTENT READ'}</small>
+        <strong>{$t.arena.zone[reading.intentZone]}</strong>
+        <i
+          style:--threat-progress={`${Math.max(0, 1 - (reading.intentRemaining ?? 0) / 0.62) * 100}%`}
+        ></i>
+      {:else}
+        <small>{$locale === 'fr' ? 'AURA TROUBLÉE' : 'AURA DISTURBANCE'}</small>
+        <strong>?</strong>
+      {/if}
+    </div>
+  {/if}
+
   {#key commandAnimationSeq}
     {#if commandAnimation}
       <div class="command-fx {commandAnimation}" aria-hidden="true">
@@ -543,6 +559,11 @@
         {#if reading.guard}<span>Gyo · {$t.arena.zone[reading.guard]}</span>{/if}
         {#if reading.ken}<span>{$t.arena.state.ken}</span>{/if}
         {#if reading.koZone}<span>{$t.arena.state.ko} · {$t.arena.zone[reading.koZone]}</span>{/if}
+        {#if reading.intentZone}
+          <span class="threat-tag">
+            {$locale === 'fr' ? 'Attaque' : 'Attack'} · {$t.arena.zone[reading.intentZone]}
+          </span>
+        {/if}
       </div>
     </article>
   </section>

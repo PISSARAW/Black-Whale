@@ -29,6 +29,56 @@
       0 0 1rem #e5c476aa;
   }
 
+  .attack-telegraph {
+    position: absolute;
+    z-index: 9;
+    top: calc(50% - 6.5rem);
+    left: 50%;
+    display: grid;
+    min-width: 8rem;
+    justify-items: center;
+    transform: translateX(-50%);
+    color: #f2c86d;
+    text-align: center;
+    filter: drop-shadow(0 0 0.7rem #000);
+    pointer-events: none;
+  }
+
+  .attack-telegraph small {
+    font:
+      600 0.54rem 'IBM Plex Mono',
+      monospace;
+    letter-spacing: 0.18em;
+  }
+
+  .attack-telegraph strong {
+    margin-top: 0.2rem;
+    font:
+      700 0.82rem 'IBM Plex Mono',
+      monospace;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .attack-telegraph i {
+    width: 8rem;
+    height: 2px;
+    margin-top: 0.4rem;
+    background: linear-gradient(90deg, #f2c86d var(--threat-progress), #f2c86d22 0);
+    box-shadow: 0 0 0.55rem #f2c86daa;
+  }
+
+  .attack-telegraph.concealed {
+    color: #9589bf;
+    opacity: 0.65;
+    animation: arena-concealed-threat 240ms steps(2) infinite;
+  }
+
+  .threat-tag {
+    border-color: #e7bd6477 !important;
+    color: #f2ce7f !important;
+  }
+
   .command-fx {
     --command-colour: #84dff4;
     position: absolute;
@@ -833,6 +883,16 @@
     border-color: #e5c476;
     box-shadow: 0 0 1rem #e5c47688;
     transform: translateY(-0.15rem);
+  }
+}
+
+@keyframes arena-concealed-threat {
+  0%,
+  100% {
+    transform: translateX(-50%);
+  }
+  50% {
+    transform: translateX(calc(-50% + 2px));
   }
 }
 

@@ -22,6 +22,7 @@ export const KO_WINDUP = 0.8
 export const RYU_SHIFT_TIME = 0.22
 export const GUARD_WINDOW = 0.38
 export const FEINT_COST = 3
+export const STRIKE_WINDUP = 0.62
 export const MOVE_SPEED = 3.6
 export const MIN_SEPARATION = 1
 export const SCORE_TO_WIN = 10
@@ -50,6 +51,8 @@ export function combatReducer(state: CombatState, action: CombatAction): CombatS
   if (action.type === 'GUARD') return replace(state, action.side, activeGuard(state[action.side]))
   if (action.type === 'FEINT')
     return replace(state, action.side, feint(state[action.side], action.zone))
+  if (action.type === 'PREPARE_STRIKE')
+    return replace(state, action.side, prepareStrike(state[action.side], action.zone))
   if (action.type === 'STRIKE') {
     return strike({ state, side: action.side, zone: action.zone, technique: 'strike' })
   }
@@ -67,7 +70,7 @@ function tick(state: CombatState, dt: number): CombatState {
     player: advanceFighter(state.player, state.opponent, context),
     opponent: advanceFighter(state.opponent, state.player, context),
   }
-  return ringOut(landReadyKo(advanced))
+  return ringOut(landReadyKo(landReadyIntent(advanced)))
 }
 
 interface TickContext {
@@ -90,6 +93,9 @@ function advanceFighter(
     guardWindow: Math.max(0, moved.guardWindow - context.dt),
     recoveryWindow: Math.max(0, moved.recoveryWindow - context.dt),
     feint: moved.cooldown - context.dt <= 0 ? null : moved.feint,
+    intent: moved.intent
+      ? { ...moved.intent, remaining: moved.intent.remaining - context.dt }
+      : null,
     ko: moved.ko ? { ...moved.ko, remaining: moved.ko.remaining - context.dt } : null,
   }
 }
@@ -135,7 +141,8 @@ function chargeContinuous(fighter: FighterState, dt: number): FighterState {
 }
 
 function move(fighter: FighterState, rival: FighterState, context: TickContext): FighterState {
-  if (fighter.condition !== 'ready' || fighter.ko) return { ...fighter, movement: [0, 0] }
+  if (fighter.condition !== 'ready' || fighter.ko || fighter.intent)
+    return { ...fighter, movement: [0, 0] }
   const proposed: Vec2 = [
     fighter.position[0] + fighter.movement[0] * MOVE_SPEED * context.dt,
     fighter.position[1] + fighter.movement[1] * MOVE_SPEED * context.dt,
@@ -150,6 +157,17 @@ function move(fighter: FighterState, rival: FighterState, context: TickContext):
     return { ...fighter, movement: [0, 0] }
   }
   return { ...fighter, position: resolved }
+}
+
+function landReadyIntent(state: CombatState): CombatState {
+  let current = state
+  for (const side of ['player', 'opponent'] as const) {
+    const intent = current[side].intent
+    if (!intent || intent.remaining > 0 || current.outcome !== 'playing') continue
+    current = replace(current, side, { ...current[side], intent: null })
+    current = strike({ state: current, side, zone: intent.zone, technique: 'strike' })
+  }
+  return current
 }
 
 function ringOut(state: CombatState): CombatState {
@@ -207,11 +225,13 @@ function strike(request: StrikeRequest): CombatState {
     recoveryWindow: exchangeRecovery(technique),
     feint: null,
   }
-  const outcome = outcomeOf(side, scored, result.defender)
+  const connected = result.event.impact !== 'miss' && result.event.impact !== 'blocked'
+  const defender = connected ? { ...result.defender, intent: null } : result.defender
+  const outcome = outcomeOf(side, scored, defender)
   return {
     ...state,
     [side]: scored,
-    [defenderSide]: result.defender,
+    [defenderSide]: defender,
     lastEvent: event,
     outcome,
   }
@@ -273,6 +293,17 @@ function feint(fighter: FighterState, zone: BodyZone): FighterState {
   if (fighter.condition !== 'ready' || fighter.cooldown > 0 || fighter.aura < FEINT_COST)
     return fighter
   return { ...fighter, aura: fighter.aura - FEINT_COST, feint: zone, cooldown: 0.28 }
+}
+
+function prepareStrike(fighter: FighterState, zone: BodyZone): FighterState {
+  if (fighter.condition !== 'ready' || fighter.cooldown > 0 || fighter.ko || fighter.intent)
+    return fighter
+  return {
+    ...fighter,
+    intent: { zone, remaining: STRIKE_WINDUP },
+    movement: [0, 0],
+    feint: null,
+  }
 }
 
 function exchangeRecovery(technique: 'strike' | 'ko'): number {

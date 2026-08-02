@@ -18,6 +18,7 @@ export function advanceArena(state: CombatState, dt: number): CombatState {
 function decide(state: CombatState): CombatState {
   const ai = state.opponent
   if (ai.condition !== 'ready') return state
+  if (ai.intent) return state
   if (state.player.condition !== 'ready') {
     return combatReducer(state, { type: 'MOVE', side: 'opponent', vector: [0, 0] })
   }
@@ -66,7 +67,9 @@ function decide(state: CombatState): CombatState {
   if (current.opponent.aura >= 35 && current.clock % 3 < THINK_EVERY) {
     return combatReducer(current, { type: 'KO', side: 'opponent', zone })
   }
-  return combatReducer(current, { type: 'STRIKE', side: 'opponent', zone })
+  const hidden = Math.floor(current.clock / THINK_EVERY) % 6 === 3 && current.opponent.aura > 30
+  current = combatReducer(current, { type: 'IN', side: 'opponent', on: hidden })
+  return combatReducer(current, { type: 'PREPARE_STRIKE', side: 'opponent', zone })
 }
 
 function openZone(guard: BodyZone | null, turn: number): BodyZone {

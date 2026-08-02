@@ -20,6 +20,11 @@ export interface RyuShift {
   remaining: number
 }
 
+export interface AttackIntent {
+  zone: BodyZone
+  remaining: number
+}
+
 export interface FighterState {
   aura: number
   capacity: number
@@ -37,6 +42,7 @@ export interface FighterState {
   guardWindow: number
   recoveryWindow: number
   feint: BodyZone | null
+  intent: AttackIntent | null
   cooldown: number
   condition: FighterCondition
   recovery: number
@@ -83,6 +89,7 @@ export type CombatAction =
   | { type: 'KEN'; side: CombatSide; on: boolean }
   | { type: 'GUARD'; side: CombatSide }
   | { type: 'FEINT'; side: CombatSide; zone: BodyZone }
+  | { type: 'PREPARE_STRIKE'; side: CombatSide; zone: BodyZone }
   | { type: 'STRIKE'; side: CombatSide; zone: BodyZone }
   | { type: 'KO'; side: CombatSide; zone: BodyZone }
 
@@ -107,6 +114,7 @@ export function initialFighter(position: Vec2): FighterState {
     guardWindow: 0,
     recoveryWindow: 0,
     feint: null,
+    intent: null,
     cooldown: 0,
     condition: 'ready',
     recovery: 0,

@@ -11,6 +11,18 @@ describe('Nen perception', () => {
     expect(readAura(state.player, hidden).guard).toBeNull()
     expect(readAura({ ...state.player, gyo: true }, hidden).guard).toBe('head')
   })
+
+  it('hides an In-wrapped attack intention until the observer uses Gyo', () => {
+    const state = initialCombatState()
+    const hidden = {
+      ...state.opponent,
+      in: true,
+      intent: { zone: 'legs' as const, remaining: 0.4 },
+    }
+
+    expect(readAura(state.player, hidden).intentZone).toBeNull()
+    expect(readAura({ ...state.player, gyo: true }, hidden).intentZone).toBe('legs')
+  })
 })
 
 describe('qualitative exchanges', () => {
@@ -114,5 +126,36 @@ describe('qualitative exchanges', () => {
     state = combatReducer(state, { type: 'TICK', dt: 0.66 })
     state = combatReducer(state, { type: 'STRIKE', side: 'player', zone: 'head' })
     expect(state.lastEvent?.points).toBeGreaterThanOrEqual(2)
+  })
+
+  it('telegraphs a prepared strike and lets a clean hit interrupt it', () => {
+    let state = initialCombatState()
+    state = {
+      ...state,
+      player: { ...state.player, position: [0, 0], mode: 'ren' },
+      opponent: { ...state.opponent, position: [1.5, 0], guard: 'head' },
+    }
+    state = combatReducer(state, { type: 'PREPARE_STRIKE', side: 'opponent', zone: 'legs' })
+    expect(state.opponent.intent?.zone).toBe('legs')
+
+    state = combatReducer(state, { type: 'STRIKE', side: 'player', zone: 'torso' })
+    expect(state.lastEvent?.impact).not.toBe('miss')
+    expect(state.lastEvent?.impact).not.toBe('blocked')
+    expect(state.opponent.intent).toBeNull()
+  })
+
+  it('lands a prepared strike only after its readable wind-up', () => {
+    let state = initialCombatState()
+    state = {
+      ...state,
+      player: { ...state.player, position: [0, 0] },
+      opponent: { ...state.opponent, position: [1.5, 0] },
+    }
+    state = combatReducer(state, { type: 'PREPARE_STRIKE', side: 'opponent', zone: 'head' })
+    state = combatReducer(state, { type: 'TICK', dt: 0.3 })
+    expect(state.lastEvent).toBeNull()
+    state = combatReducer(state, { type: 'TICK', dt: 0.4 })
+    expect(state.lastEvent?.attacker).toBe('opponent')
+    expect(state.lastEvent?.zone).toBe('head')
   })
 })

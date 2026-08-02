@@ -50,12 +50,7 @@
   import { TourTargetView } from '$lib/tour/pageTargetView.svelte'
   import { type CastHand } from '$lib/tour/pageCasting'
   import { TourCastController } from '$lib/tour/pageCastController'
-  import {
-    aimReadout as buildAimReadout,
-    controlReadouts,
-    locationReadout as buildLocationReadout,
-    statusReadout,
-  } from '$lib/tour/pageReadouts'
+  import { TourOverlayView } from '$lib/tour/pageOverlayView.svelte'
   import {
     crossingLabel as describeCrossing,
     linkPrompt as describeLink,
@@ -443,73 +438,50 @@
     chrome.reveal ? declaredDoorReasons({ plan, ship, french }) : [],
   )
 
-  /** Standing in the isolated room as an outsider: the copy, not the room. */
-  const inEmptyCopy = $derived(
-    Boolean(
-      world.isolated && !world.isolated.occupant && world.isolated.spaceId === currentSpace?.id,
-    ),
-  )
-
-  const locationReadout = $derived.by(() => {
-    const room = currentSpace ? named(currentSpace) : null
-    return buildLocationReadout({
+  const overlayView = new TourOverlayView({
+    read: () => ({
       muted: mute,
-      level: `${deck ? nameOf(deck) : nameOf(plan.tier)}${insideInterior ? ` · ${$t.tour.insideOf(nameOf(plan.tier))}` : ''}`,
-      outside: $t.tour.outside,
-      room: room
-        ? {
-            name: nameOf(room),
-            badge: provenanceLabel(room),
-            badgeClass: provenanceClass(room),
-            source: sourceOf(room) || $t.tour.noSource,
-          }
-        : null,
-      copy: {
-        active: inEmptyCopy,
-        badge: $t.tour.hatsu.copy,
-        badgeClass: 'border-[#7095d6] bg-[#7095d6]/20 text-[#a8c2ea]',
-        source: $t.tour.hatsu.copySource,
-      },
-    })
-  })
-
-  const aimReadout = $derived.by(() => {
-    const solid = onSolids ? aimedSolidAt : null
-    const text = onSolids
-      ? solid
-        ? $t.tour.hatsu.solids.aiming(nameOf(solid))
-        : $t.tour.hatsu.solids.aimingNothing
-      : aimedAt
-        ? $t.tour.hatsu.aiming(nameOf(named(aimedAt)))
-        : $t.tour.hatsu.aimingNothing
-    return buildAimReadout({
-      muted: mute,
+      levelName: deck ? nameOf(deck) : nameOf(plan.tier),
+      tierName: nameOf(plan.tier),
+      insideInterior,
+      currentSpace,
+      isolatedCopy: Boolean(
+        world.isolated && !world.isolated.occupant && world.isolated.spaceId === currentSpace?.id,
+      ),
+      onSolids,
+      aimedAt,
+      aimedSolidAt,
       color: technique?.color ?? null,
-      text,
-      evidence: solid
-        ? {
-            badge: provenanceLabel(solid),
-            badgeClass: provenanceClass(solid),
-            source: sourceOf(solid) || $t.tour.noSource,
-          }
-        : null,
-    })
+      touch,
+      engaged,
+      controls: controlKeys,
+    }),
+    labels: () => ({
+      insideOf: $t.tour.insideOf,
+      outside: $t.tour.outside,
+      noSource: $t.tour.noSource,
+      copyBadge: $t.tour.hatsu.copy,
+      copySource: $t.tour.hatsu.copySource,
+      aimingSolid: $t.tour.hatsu.solids.aiming,
+      aimingNothingSolid: $t.tour.hatsu.solids.aimingNothing,
+      aimingSpace: $t.tour.hatsu.aiming,
+      aimingNothingSpace: $t.tour.hatsu.aimingNothing,
+      click: $t.tour.hatsu.keys.click,
+      action: (key) => $t.tour.hatsu.keys.actions[key],
+      engaged: $t.tour.engaged,
+      touch: $t.tour.touch.hint,
+      enter: $t.tour.enter,
+    }),
+    named,
+    nameOf,
+    badgeOf: provenanceLabel,
+    badgeClassOf: provenanceClass,
+    sourceOf,
   })
-
-  const overlayControls = $derived(controlReadouts({
-    hidden: touch || mute,
-    controls: controlKeys,
-    keyOf: (control) => control.click ? `${control.key} / ${$t.tour.hatsu.keys.click}` : control.key,
-    actionOf: (control) => $t.tour.hatsu.keys.actions[control.action],
-    color: technique?.color ?? null,
-  }))
-  const statusHint = $derived(statusReadout({
-    engaged,
-    touch,
-    engagedText: $t.tour.engaged,
-    touchText: $t.tour.touch.hint,
-    enterText: $t.tour.enter,
-  }))
+  const locationReadout = $derived(overlayView.location)
+  const aimReadout = $derived(overlayView.aim)
+  const overlayControls = $derived(overlayView.controls)
+  const statusHint = $derived(overlayView.status)
 </script>
 
 <svelte:window onkeydown={keyboard.onKeydown} />

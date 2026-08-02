@@ -1,5 +1,6 @@
 import { prisma } from '$lib/server/db'
 import { timeline } from '$lib/server/nen'
+import { ACTIVE_SCENARIO } from '$lib/strategy/scenario'
 import type { PageServerLoad } from './$types'
 
 const STRATEGY_CHAPTER = 359
@@ -51,16 +52,25 @@ export const load: PageServerLoad = async () => {
     ])
 
     const cutoffPosition: OrderedEvent = cutoff
+    const requiredByFaction = new Map(
+      ACTIVE_SCENARIO.playableFactions.map((entry) => [
+        entry.factionId,
+        new Set(entry.requiredCharacterIds),
+      ]),
+    )
     const factions = factionRows
       .map((faction) => ({
         id: faction.id,
         name: faction.name,
         members: faction.members
           .filter(
-            (member) =>
-              comparePosition(member.fromEvent, cutoffPosition) <= 0 &&
-              (!member.untilEvent || comparePosition(member.untilEvent, cutoffPosition) > 0) &&
-              Boolean(baseState.entities[member.character.id]),
+            (member) => {
+              const required = requiredByFaction.get(faction.id)?.has(member.character.id) ?? false
+              const activeAtCutoff =
+                comparePosition(member.fromEvent, cutoffPosition) <= 0 &&
+                (!member.untilEvent || comparePosition(member.untilEvent, cutoffPosition) > 0)
+              return (required || activeAtCutoff) && Boolean(baseState.entities[member.character.id])
+            },
           )
           .map((member) => ({
             role: member.role,

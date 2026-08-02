@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { StrategyFaction } from '$lib/strategy/types'
   import type { StrategySave } from '$lib/strategy/persistence'
-  import { doctrineForFaction } from '$lib/strategy/rules'
+  import { scenarioDoctrineForFaction } from '$lib/strategy/scenario'
 
   let {
     chapterNumber,
@@ -35,10 +35,8 @@
       {#each factions as faction (faction.id)}
         <button type="button" onclick={() => onselect(faction.id)}>
           <strong>{faction.name}</strong>
-          <span
-            >{faction.members.length} unité{faction.members.length > 1 ? 's' : ''} ·
-            {doctrineForFaction(faction.id).toLocaleLowerCase('fr')}</span
-          >
+          <span>{faction.members.length} unité{faction.members.length > 1 ? 's' : ''} · {scenarioDoctrineForFaction(faction.id).toLocaleLowerCase('fr')}</span>
+          <em>Jouer cette faction →</em>
         </button>
       {/each}
     </div>

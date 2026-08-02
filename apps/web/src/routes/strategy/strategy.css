@@ -78,6 +78,13 @@
   color: #71838e;
   font-size: 0.76rem;
 }
+.strategy-shell .faction-grid em {
+  color: #d7b86a;
+  font: 600 0.65rem var(--font-mono);
+  font-style: normal;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
 .strategy-shell .game-layout {
   display: grid;
   grid-template-columns: minmax(19rem, 25rem) minmax(0, 1fr);

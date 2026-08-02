@@ -23,6 +23,7 @@ export const GUARDS_359_SCENARIO: StrategyScenarioV2 = {
     {
       factionId: 'prince-woble',
       doctrine: 'INTELLIGENCE',
+      initialLocationId: 'tier-1-royal-residential-sector-room-1014',
       requiredCharacterIds: ['kurapika', 'queen-oito', 'bill'],
       publicObjective: objective({
         id: 'woble-confirm-threats',
@@ -43,6 +44,7 @@ export const GUARDS_359_SCENARIO: StrategyScenarioV2 = {
     {
       factionId: 'prince-benjamin',
       doctrine: 'EXPANSION',
+      initialLocationId: 'tier-1-royal-residential-sector-room-1001',
       requiredCharacterIds: ['prince-benjamin', 'balsamilco-might', 'musse'],
       publicObjective: objective({
         id: 'benjamin-occupy-sector',
@@ -63,6 +65,7 @@ export const GUARDS_359_SCENARIO: StrategyScenarioV2 = {
     {
       factionId: 'prince-camilla',
       doctrine: 'CONSOLIDATION',
+      initialLocationId: 'tier-1-royal-residential-sector-room-1002',
       requiredCharacterIds: ['prince-camilla', 'sarahell', 'moswana'],
       publicObjective: objective({
         id: 'camilla-form-bastion',

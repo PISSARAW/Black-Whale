@@ -17,6 +17,7 @@ export interface StrategyScenarioObjective {
 export interface StrategyScenarioFaction {
   factionId: string
   doctrine: StrategyDoctrine
+  initialLocationId: string
   requiredCharacterIds: string[]
   publicObjective: StrategyScenarioObjective
   secretObjective: StrategyScenarioObjective

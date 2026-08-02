@@ -20,15 +20,27 @@ describe('StrategyScenarioV2', () => {
 
   it('references production factions, characters and locations', () => {
     expect(validateStrategyScenario(GUARDS_359_SCENARIO, context)).toEqual([])
+    for (const faction of GUARDS_359_SCENARIO.playableFactions) {
+      expect(GUARDS_359_SCENARIO.locationIds).toContain(faction.initialLocationId)
+      expect(faction.requiredCharacterIds.length).toBeGreaterThan(0)
+    }
   })
 
   it('reports precise invalid references and impossible values', () => {
     const invalid = structuredClone(GUARDS_359_SCENARIO)
     invalid.locationIds.push('invented-room')
+    const outsideLocationId = locations.find(
+      (location) => !invalid.locationIds.includes(location.id),
+    )!.id
+    invalid.playableFactions[0].initialLocationId = outsideLocationId
     invalid.events[0].turn = 99
     expect(validateStrategyScenario(invalid, context)).toEqual(
       expect.arrayContaining([
         { path: 'locationIds', message: 'unknown location invented-room' },
+        {
+          path: 'playableFactions.0.initialLocationId',
+          message: `location outside scenario ${outsideLocationId}`,
+        },
         { path: 'events.security-alert.turn', message: 'outside scenario duration' },
       ]),
     )

@@ -5,17 +5,6 @@ import type { PageServerLoad } from './$types'
 
 const STRATEGY_CHAPTER = 359
 
-type OrderedEvent = {
-  ordinal: number | null
-  sequence: number
-  chapter: { number: number }
-}
-
-function comparePosition(left: OrderedEvent, right: OrderedEvent): number {
-  if (left.ordinal != null && right.ordinal != null) return left.ordinal - right.ordinal
-  return left.chapter.number - right.chapter.number || left.sequence - right.sequence
-}
-
 export const load: PageServerLoad = async () => {
   try {
     const cutoff = await prisma.narrativeEvent.findFirst({
@@ -30,54 +19,60 @@ export const load: PageServerLoad = async () => {
     if (!cutoff)
       throw new Error(`No canonical event is available through chapter ${STRATEGY_CHAPTER}`)
 
-    const [baseState, factionRows, locationRows] = await Promise.all([
+    const requiredCharacterIds = ACTIVE_SCENARIO.playableFactions.flatMap(
+      (entry) => entry.requiredCharacterIds,
+    )
+    const [kernelState, factionRows, locationRows, characterRows] = await Promise.all([
       timeline.getKernelState({ eventId: cutoff.id }),
       prisma.faction.findMany({
-        orderBy: { name: 'asc' },
-        include: {
-          members: {
-            include: {
-              character: { select: { id: true, canonicalName: true } },
-              fromEvent: {
-                select: { ordinal: true, sequence: true, chapter: { select: { number: true } } },
-              },
-              untilEvent: {
-                select: { ordinal: true, sequence: true, chapter: { select: { number: true } } },
-              },
-            },
-          },
-        },
+        where: { id: { in: ACTIVE_SCENARIO.playableFactions.map((entry) => entry.factionId) } },
+        select: { id: true, name: true },
       }),
       prisma.location.findMany({ orderBy: { name: 'asc' } }),
+      prisma.character.findMany({
+        where: { id: { in: requiredCharacterIds } },
+        select: { id: true, canonicalName: true },
+      }),
     ])
 
-    const cutoffPosition: OrderedEvent = cutoff
-    const requiredByFaction = new Map(
-      ACTIVE_SCENARIO.playableFactions.map((entry) => [
-        entry.factionId,
-        new Set(entry.requiredCharacterIds),
-      ]),
-    )
-    const factions = factionRows
-      .map((faction) => ({
-        id: faction.id,
-        name: faction.name,
-        members: faction.members
-          .filter(
-            (member) => {
-              const required = requiredByFaction.get(faction.id)?.has(member.character.id) ?? false
-              const activeAtCutoff =
-                comparePosition(member.fromEvent, cutoffPosition) <= 0 &&
-                (!member.untilEvent || comparePosition(member.untilEvent, cutoffPosition) > 0)
-              return (required || activeAtCutoff) && Boolean(baseState.entities[member.character.id])
-            },
-          )
-          .map((member) => ({
-            role: member.role,
-            character: member.character,
-          })),
-      }))
-      .filter((faction) => faction.members.length > 0)
+    const baseState = structuredClone(kernelState)
+    const characterById = new Map(characterRows.map((character) => [character.id, character]))
+    const factionById = new Map(factionRows.map((faction) => [faction.id, faction]))
+    const locationById = new Map(locationRows.map((location) => [location.id, location]))
+    const missingCharacterIds = requiredCharacterIds.filter((id) => !characterById.has(id))
+    if (missingCharacterIds.length > 0)
+      throw new Error(`Missing Strategy characters: ${missingCharacterIds.join(', ')}`)
+    for (const locationId of ACTIVE_SCENARIO.locationIds) {
+      const location = locationById.get(locationId)
+      if (location && !baseState.entities[locationId])
+        baseState.entities[locationId] = { id: locationId, kind: 'LOCATION', label: location.name }
+    }
+    const factions = ACTIVE_SCENARIO.playableFactions.map((entry) => {
+      const members = entry.requiredCharacterIds.flatMap((characterId) => {
+        const character = characterById.get(characterId)
+        if (!character) return []
+        if (!baseState.entities[characterId])
+          baseState.entities[characterId] = {
+            id: characterId,
+            kind: 'CHARACTER',
+            label: character.canonicalName,
+          }
+        if (!baseState.presences[characterId])
+          baseState.presences[characterId] = {
+            entity: { id: characterId, kind: 'CHARACTER' },
+            locationId: entry.initialLocationId,
+            precision: 'EXACT_ROOM',
+            certainty: 'CONFIRMED',
+            observedAtEventId: cutoff.id,
+          }
+        return [{ role: 'MEMBER', character }]
+      })
+      return {
+        id: entry.factionId,
+        name: factionById.get(entry.factionId)?.name ?? entry.factionId,
+        members,
+      }
+    })
 
     const locations = locationRows
       .filter(

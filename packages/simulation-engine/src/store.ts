@@ -6,7 +6,6 @@ import {
   type WorldEvent,
   type WorldState,
 } from '@black-whale/world-engine'
-import { randomUUID } from 'node:crypto'
 import { SimulationEngine, type SimulationMode, type SimulationStepResult } from './engine.js'
 
 export class SimulationInputError extends Error {}
@@ -163,7 +162,7 @@ export class SimulationStore {
     const baseState = await this.ports.loadKernelState(input.parentEventId)
     const branch = this.engine.createBranch(
       {
-        id: randomUUID(),
+        id: globalThis.crypto.randomUUID(),
         parentEventId: input.parentEventId,
         mode: input.mode,
         ownerId: input.ownerId,

@@ -5,7 +5,7 @@
   import TourModeFullscreen from '$lib/components/tour/TourModeFullscreen.svelte'
   import { buildArena } from '$lib/hunt/arena'
   import { ModeNenState } from '$lib/nen/modeState.svelte'
-  import type { NenTechniqueAction } from '@black-whale/nen-engine'
+  import { createNenTechniqueState, transitionNen, type NenTechniqueAction } from '@black-whale/nen-engine'
   import { isNenControlCode } from '$lib/nen/controls'
   import { buildNavGraph } from '$lib/hunt/navmesh'
   import { floorOf, theShip } from '$lib/tour/blueprint'
@@ -114,6 +114,17 @@
     nenGuard: 0xff4f64,
   }
 
+  function witnessNen(witness: (typeof game.witnesses)[number]) {
+    let nen = createNenTechniqueState<'head' | 'torso' | 'hands' | 'feet'>()
+    if (witness.id !== 'nenGuard') {
+      nen.mode = 'zetsu'
+      return nen
+    }
+    if (witness.challenged) nen = transitionNen(nen, { type: 'KEN', on: true }).state
+    if (witness.usesEn) nen = transitionNen(nen, { type: 'EN', radius: 8 }).state
+    return nen
+  }
+
   let figures = $derived(
     game.witnesses.map((witness): Apparition => ({
       id: witness.id,
@@ -135,6 +146,7 @@
         alert: witness.challenged || witness.investigating !== null,
         pose: witness.investigating ? 'search' : 'walk',
         aura: witness.usesEn ? 'ten' : 'none',
+        nen: witnessNen(witness),
       },
       hidden: false,
     })),

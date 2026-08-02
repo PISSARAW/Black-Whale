@@ -28,6 +28,8 @@
 import type { Apparition } from '../tour/apparitions'
 import type { HunterState } from './hunter/patrol'
 import type { DuelState } from './duel/state'
+import { createNenTechniqueState } from '@black-whale/nen-engine'
+import { huntDuelNen } from '$lib/nen/tourAdapters'
 
 /** A man's build, in the units the scene draws a combatant in. */
 export const HUNTER_SIZE = 1
@@ -84,6 +86,11 @@ export function hunterFigure(sighting: Sighting): Apparition | null {
   const { hunter } = sighting
   if (!hunter.spaceId) return null
 
+  const nen = sighting.duel
+    ? huntDuelNen(sighting.duel.hunter)
+    : createNenTechniqueState<'head' | 'torso' | 'hands' | 'feet'>()
+  if (!sighting.duel) nen.mode = hunter.pool.available <= 0 ? 'zetsu' : 'ten'
+
   return {
     id: 'hunt:hunter',
     kind: 'combatant',
@@ -108,6 +115,7 @@ export function hunterFigure(sighting: Sighting): Apparition | null {
               : 'walk',
       aura:
         hunter.pool.available <= 0 ? 'zetsu' : sighting.duel?.hunter.ken ? 'ren' : 'ten',
+      nen,
     },
     // Never Gyo-only: he is a body in a room, not a technique laid on one.
     hidden: false,

@@ -50,4 +50,22 @@ describe('the arena opponent', () => {
     const shelled = advanceArena(distant, 0.02, 'artillery')
     expect(shelled.lastEvent?.technique).toBe('hatsu')
   })
+
+  it('cannot react to a feint hidden with In without Gyo', () => {
+    const base = initialCombatState()
+    const state = {
+      ...base,
+      clock: 0.44,
+      player: {
+        ...base.player,
+        position: [0, 0] as [number, number],
+        in: true,
+        feint: 'head' as const,
+      },
+      opponent: { ...base.opponent, position: [1.5, 0] as [number, number], gyo: false },
+    }
+    const next = advanceArena(state, 0.02)
+    expect(next.opponent.guard).toBe('torso')
+    expect(next.opponent.guardWindow).toBe(0)
+  })
 })

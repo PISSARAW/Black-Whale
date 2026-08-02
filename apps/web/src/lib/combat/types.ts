@@ -80,6 +80,12 @@ export interface CombatState {
   lastEvent: CombatEvent | null
   terrain: CombatTerrainPhysics
   tethers: ElasticTether[]
+  opponentMemory: OpponentMemory
+}
+
+export interface OpponentMemory {
+  observedEventAt: number | null
+  zones: Record<BodyZone, number>
 }
 
 export interface CombatTerrainPhysics {
@@ -160,6 +166,10 @@ export function initialCombatState(setup: CombatSetup = defaultSetup()): CombatS
     lastEvent: null,
     terrain: setup.terrain,
     tethers: [],
+    opponentMemory: {
+      observedEventAt: null,
+      zones: { head: 0, torso: 0, arms: 0, legs: 0 },
+    },
   }
 }
 

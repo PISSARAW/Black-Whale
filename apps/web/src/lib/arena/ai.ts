@@ -28,7 +28,7 @@ export function advanceArena(
   doctrine: OpponentDoctrine = 'counter',
   difficulty: ArenaDifficulty = 'fighter',
 ): CombatState {
-  const ticked = combatReducer(state, { type: 'TICK', dt })
+  const ticked = rememberObservedStrike(combatReducer(state, { type: 'TICK', dt }))
   if (ticked.outcome !== 'playing') return ticked
   const cadence = DIFFICULTY_CADENCE[difficulty]
   if (Math.floor(ticked.clock / cadence) === Math.floor(state.clock / cadence)) return ticked
@@ -66,11 +66,12 @@ function decide(state: CombatState, doctrine: OpponentDoctrine, cadence: number)
   }
 
   let current = combatReducer(state, { type: 'MOVE', side: 'opponent', vector: [0, 0] })
-  if (state.player.feint) {
+  const playerReading = readAura(state.opponent, state.player)
+  if (playerReading.feintZone) {
     current = combatReducer(current, {
       type: 'RYU',
       side: 'opponent',
-      guard: state.player.feint,
+      guard: playerReading.feintZone,
     })
     return combatReducer(current, { type: 'GUARD', side: 'opponent' })
   }
@@ -86,6 +87,10 @@ function decide(state: CombatState, doctrine: OpponentDoctrine, cadence: number)
   current = combatReducer(current, { type: 'MODE', side: 'opponent', mode: 'ren' })
   current = combatReducer(current, { type: 'KEN', side: 'opponent', on: false })
   const reading = readAura(current.opponent, current.player)
+  const learned = learnedGuard(current)
+  if (learned && Math.floor(current.clock / cadence) % 2 === 0) {
+    current = combatReducer(current, { type: 'RYU', side: 'opponent', guard: learned })
+  }
   const zone = openZone(reading.guard, Math.floor(current.clock / cadence))
 
   if (current.player.recoveryWindow <= 0 && Math.floor(current.clock / THINK_EVERY) % 4 === 0) {
@@ -98,6 +103,35 @@ function decide(state: CombatState, doctrine: OpponentDoctrine, cadence: number)
   const hidden = Math.floor(current.clock / THINK_EVERY) % 6 === 3 && current.opponent.aura > 30
   current = combatReducer(current, { type: 'IN', side: 'opponent', on: hidden })
   return combatReducer(current, { type: 'PREPARE_STRIKE', side: 'opponent', zone })
+}
+
+function rememberObservedStrike(state: CombatState): CombatState {
+  const event = state.lastEvent
+  if (
+    !event ||
+    event.attacker !== 'player' ||
+    event.at === state.opponentMemory.observedEventAt ||
+    (state.player.in && !state.opponent.gyo)
+  )
+    return state
+  return {
+    ...state,
+    opponentMemory: {
+      observedEventAt: event.at,
+      zones: {
+        ...state.opponentMemory.zones,
+        [event.zone]: state.opponentMemory.zones[event.zone] + 1,
+      },
+    },
+  }
+}
+
+function learnedGuard(state: CombatState): BodyZone | null {
+  const entries = BODY_ZONES.map((zone) => [zone, state.opponentMemory.zones[zone]] as const)
+  const best = entries.reduce((current, candidate) =>
+    candidate[1] > current[1] ? candidate : current,
+  )
+  return best[1] > 0 ? best[0] : null
 }
 
 function shouldCastHatsu(state: CombatState, doctrine: OpponentDoctrine, gap: number): boolean {

@@ -17,6 +17,7 @@ export function stateChecksum(state: CombatState): string {
       restLength: rounded(tether.restLength),
       remaining: rounded(tether.remaining),
     })),
+    opponentMemory: state.opponentMemory,
   })
   let hash = 0x811c9dc5
   for (let index = 0; index < stable.length; index += 1) {

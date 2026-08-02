@@ -858,7 +858,34 @@
         "status": "absent"
       }
     ],
-    "battles": ["Hisoka Morow‡* vs. Chrollo Lucilfer"]
+    "battles": ["Hisoka Morow‡* vs. Chrollo Lucilfer"],
+    "mapTrajectory": [
+      {
+        "location": "tier-5-general-passenger-area",
+        "fromChapterId": "ch-377",
+        "note": "Recherche par l'Araignée et la Mafia"
+      },
+      {
+        "location": "tier-3-general-passenger-area",
+        "fromChapterId": "ch-392",
+        "note": "Promenade dans le Secteur Passager du Pont 3"
+      },
+      {
+        "location": "tier-3-theater",
+        "fromChapterId": "ch-392",
+        "note": "Séance de cinéma, rencontre avec Zakuro et Lynch"
+      },
+      {
+        "location": "tier-3-theater",
+        "fromChapterId": "ch-393",
+        "note": "Discussion avec Hinrigh Biganduffno"
+      },
+      {
+        "location": "tier-1-royal-residential-sector",
+        "fromChapterId": "ch-393",
+        "note": "Accepte de monter au Pont 1 à la demande de Hinrigh"
+      }
+    ]
   },
   {
     "id": "illumi",
@@ -1268,8 +1295,19 @@
     ],
     "mapTrajectory": [
       {
-        "location": "tier-3-observation-deck",
-        "fromChapterId": "ch-380"
+        "location": "tier-5-general-passenger-area",
+        "fromChapterId": "ch-377",
+        "note": "Rassemblement de la Brigade"
+      },
+      {
+        "location": "tier-3-general-passenger-area",
+        "fromChapterId": "ch-380",
+        "note": "Confrontation avec Mizaistom sur le Pont 3"
+      },
+      {
+        "location": "tier-3-vip-room",
+        "fromChapterId": "ch-381",
+        "note": "Placé sous surveillance dans une chambre VIP"
       }
     ]
   },
@@ -15372,26 +15410,19 @@
     "battles": ["Chrollo Lucilfer vs. Hisoka Morow‡*"],
     "mapTrajectory": [
       {
-        "location": "tier-5-standard-cabins",
-        "fromChapterId": "ch-359",
-        "certainty": "PROBABLE"
+        "location": "tier-5-general-passenger-area",
+        "fromChapterId": "ch-377",
+        "note": "Rassemblement de la Brigade, donne ses ordres"
       },
       {
-        "location": "tier-5-area-37564",
-        "fromChapterId": "ch-366"
+        "location": "tier-5-general-passenger-area",
+        "fromChapterId": "ch-378",
+        "note": "Exploration solo du Pont 5"
       },
       {
-        "location": "tier-4-central-passage",
-        "fromChapterId": "ch-380"
-      },
-      {
-        "location": "tier-1-princes-burial-chamber",
-        "fromChapterId": "ch-405.3"
-      },
-      {
-        "location": "tier-1-banquet-hall",
-        "fromChapterId": "ch-406",
-        "certainty": "PROBABLE"
+        "location": "tier-4-general-passenger-area",
+        "fromChapterId": "ch-380",
+        "note": "Accompagné de Shizuku et Bonolenov"
       }
     ]
   },
@@ -15809,25 +15840,29 @@
     ],
     "mapTrajectory": [
       {
-        "location": "tier-5-standard-cabins",
-        "fromChapterId": "ch-358",
-        "certainty": "PROBABLE"
+        "location": "tier-5-general-passenger-area",
+        "fromChapterId": "ch-377",
+        "note": "Rassemblement de la Brigade"
       },
       {
-        "location": "tier-5-warehouse",
-        "fromChapterId": "ch-378.2"
+        "location": "tier-5-cha-r-hq",
+        "fromChapterId": "ch-378",
+        "note": "Visite du QG Cha-R au Pont 5"
       },
       {
-        "location": "tier-5-cha-r-family-office",
-        "fromChapterId": "ch-380"
+        "location": "tier-3-general-passenger-area",
+        "fromChapterId": "ch-390",
+        "note": "Exploration du Pont 3 à la recherche de la planque Heil-Ly"
       },
       {
-        "location": "tier-3-residential-room-3101",
-        "fromChapterId": "ch-395"
+        "location": "tier-3-general-passenger-area",
+        "fromChapterId": "ch-393",
+        "note": "Découverte de l'entrée secrète du repaire Heil-Ly"
       },
       {
-        "location": "tier-2-heilly-secret-hideout",
-        "fromChapterId": "ch-399"
+        "location": "tier-3-heil-ly-hideout",
+        "fromChapterId": "ch-398",
+        "note": "Infiltration de la base Heil-Ly"
       }
     ],
     "positionProvenance": "inferred",
@@ -39548,26 +39583,14 @@
     ],
     "mapTrajectory": [
       {
-        "location": "tier-5-standard-cabins",
-        "fromChapterId": "ch-359",
-        "certainty": "PROBABLE"
+        "location": "tier-5-general-passenger-area",
+        "fromChapterId": "ch-377",
+        "note": "Rassemblement de la Brigade"
       },
       {
-        "location": "tier-4-central-passage",
-        "fromChapterId": "ch-380"
-      },
-      {
-        "location": "tier-3-cineplex",
-        "fromChapterId": "ch-392"
-      },
-      {
-        "location": "tier-3-residential-standard",
-        "fromChapterId": "ch-394",
-        "certainty": "PROBABLE"
-      },
-      {
-        "location": "tier-1-vip-casino",
-        "fromChapterId": "ch-405"
+        "location": "tier-4-general-passenger-area",
+        "fromChapterId": "ch-380",
+        "note": "Forme un trio avec Chrollo et Shizuku"
       }
     ]
   },
@@ -39981,13 +40004,14 @@
     ],
     "mapTrajectory": [
       {
-        "location": "tier-5-standard-cabins",
-        "fromChapterId": "ch-359",
-        "certainty": "PROBABLE"
+        "location": "tier-5-general-passenger-area",
+        "fromChapterId": "ch-377",
+        "note": "Rassemblement de la Brigade"
       },
       {
-        "location": "tier-4-central-passage",
-        "fromChapterId": "ch-380"
+        "location": "tier-4-general-passenger-area",
+        "fromChapterId": "ch-380",
+        "note": "Forme un trio avec Chrollo et Bonolenov"
       }
     ]
   },
@@ -40406,8 +40430,14 @@
     ],
     "mapTrajectory": [
       {
-        "location": "tier-5-central-dining-hall",
-        "fromChapterId": "ch-380"
+        "location": "tier-5-general-passenger-area",
+        "fromChapterId": "ch-377",
+        "note": "Rassemblement de la Brigade"
+      },
+      {
+        "location": "tier-5-cafeteria",
+        "fromChapterId": "ch-378",
+        "note": "Reste à la cafétéria du Pont 5 pour servir d'appât"
       }
     ]
   },
@@ -40828,25 +40858,29 @@
     ],
     "mapTrajectory": [
       {
-        "location": "tier-5-standard-cabins",
-        "fromChapterId": "ch-359",
-        "certainty": "PROBABLE"
+        "location": "tier-5-general-passenger-area",
+        "fromChapterId": "ch-377",
+        "note": "Rassemblement de la Brigade"
       },
       {
-        "location": "tier-5-warehouse",
-        "fromChapterId": "ch-378.2"
+        "location": "tier-5-cha-r-hq",
+        "fromChapterId": "ch-378",
+        "note": "Visite du QG Cha-R au Pont 5"
       },
       {
-        "location": "tier-5-cha-r-family-office",
-        "fromChapterId": "ch-380"
+        "location": "tier-3-general-passenger-area",
+        "fromChapterId": "ch-390",
+        "note": "Exploration du Pont 3 à la recherche de la planque Heil-Ly"
       },
       {
-        "location": "tier-3-residential-room-3101",
-        "fromChapterId": "ch-395"
+        "location": "tier-3-general-passenger-area",
+        "fromChapterId": "ch-393",
+        "note": "Découverte de l'entrée secrète du repaire Heil-Ly"
       },
       {
-        "location": "tier-4-recycling-sewage-facilities",
-        "fromChapterId": "ch-406"
+        "location": "tier-3-heil-ly-hideout",
+        "fromChapterId": "ch-398",
+        "note": "Infiltration de la base Heil-Ly"
       }
     ]
   },
@@ -41267,8 +41301,19 @@
     ],
     "mapTrajectory": [
       {
-        "location": "tier-3-observation-deck",
-        "fromChapterId": "ch-380"
+        "location": "tier-5-general-passenger-area",
+        "fromChapterId": "ch-377",
+        "note": "Rassemblement de la Brigade"
+      },
+      {
+        "location": "tier-3-general-passenger-area",
+        "fromChapterId": "ch-380",
+        "note": "Confrontation avec Mizaistom sur le Pont 3"
+      },
+      {
+        "location": "tier-3-vip-room",
+        "fromChapterId": "ch-381",
+        "note": "Placé sous surveillance dans une chambre VIP avec Illumi"
       }
     ]
   },
@@ -41686,8 +41731,14 @@
     "battles": ["Machi Komacine vs. Hisoka Morow"],
     "mapTrajectory": [
       {
-        "location": "tier-5-standard-cabins",
-        "fromChapterId": "ch-380"
+        "location": "tier-5-general-passenger-area",
+        "fromChapterId": "ch-377",
+        "note": "Rassemblement de la Brigade"
+      },
+      {
+        "location": "tier-5-general-passenger-area",
+        "fromChapterId": "ch-378",
+        "note": "Exploration du Pont 5 en solo"
       }
     ]
   },
@@ -42313,25 +42364,29 @@
     ],
     "mapTrajectory": [
       {
-        "location": "tier-5-standard-cabins",
-        "fromChapterId": "ch-359",
-        "certainty": "PROBABLE"
+        "location": "tier-5-general-passenger-area",
+        "fromChapterId": "ch-377",
+        "note": "Rassemblement de la Brigade"
       },
       {
-        "location": "tier-5-warehouse",
-        "fromChapterId": "ch-378.2"
+        "location": "tier-5-cha-r-hq",
+        "fromChapterId": "ch-378",
+        "note": "Visite du QG Cha-R au Pont 5"
       },
       {
-        "location": "tier-5-hangar-entrance",
-        "fromChapterId": "ch-380"
+        "location": "tier-3-general-passenger-area",
+        "fromChapterId": "ch-390",
+        "note": "Exploration du Pont 3 à la recherche de la planque Heil-Ly"
       },
       {
-        "location": "tier-3-residential-room-3101",
-        "fromChapterId": "ch-395"
+        "location": "tier-3-general-passenger-area",
+        "fromChapterId": "ch-393",
+        "note": "Découverte de l'entrée secrète du repaire Heil-Ly"
       },
       {
-        "location": "tier-4-recycling-sewage-facilities",
-        "fromChapterId": "ch-406"
+        "location": "tier-3-heil-ly-hideout",
+        "fromChapterId": "ch-398",
+        "note": "Infiltration de la base Heil-Ly"
       }
     ],
     "positionProvenance": "inferred",

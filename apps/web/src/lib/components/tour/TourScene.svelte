@@ -65,11 +65,8 @@
   import { comfort, prefersReducedMotion, type Comfort } from '$lib/tour/comfort'
   import { buildSolidMesh, buildTierMesh } from '$lib/tour/mesh'
   import { animateDealerFace, buildDealer } from '$lib/tour/dealer'
-  import {
-    HUMAN_LOD_DISTANCE,
-    buildHumanFigure,
-    humanStateKey,
-  } from '$lib/tour/humanFigure'
+  import { HUMAN_LOD_DISTANCE, buildHumanFigure, humanStateKey } from '$lib/tour/humanFigure'
+  import type { HumanPose } from '$lib/tour/humanAnimation'
   import { styleNenCreature } from '$lib/tour/nenCreatureFigure'
   import { cardFaceSvg } from '$lib/tour/cardArt'
   import { EYE_FOV, FORGED_AURA, OWL_FOV, type CardFace, type EyeFeed } from '$lib/tour/morena'
@@ -1618,7 +1615,8 @@
         flown?: import('three').Vector3
         /** Near and far representations of a shared human, when this is one. */
         humanLod?: { near: import('three').Group; far: import('three').Group }
-        humanAnimate?: (seconds: number) => void
+        humanAnimate?: (seconds: number, pose?: HumanPose) => void
+        humanPose?: HumanPose
       }
 
       // A plain record for the same reason the solids are one: the render loop
@@ -1810,11 +1808,7 @@
               skin,
             )
             drip.rotation.z = Math.PI
-            drip.position.set(
-              (i - 3) * seen.size * 0.18,
-              -seen.size * (0.68 + (i % 3) * 0.06),
-              0,
-            )
+            drip.position.set((i - 3) * seen.size * 0.18, -seen.size * (0.68 + (i % 3) * 0.06), 0)
             root.add(drip)
           }
           const head = new THREE.Group()
@@ -1846,7 +1840,11 @@
         let humanLod: Shown['humanLod']
         let humanAnimate: Shown['humanAnimate']
         if (seen.kind === 'avatar' || seen.kind === 'combatant') {
-          const human = buildHumanFigure({ THREE, glow, seen })
+          const human = buildHumanFigure({
+            THREE,
+            glow,
+            seen: seen as Apparition & { kind: 'avatar' | 'combatant' },
+          })
           root.add(human.root)
           turns = human.turns
           humanLod = human.lod
@@ -2009,17 +2007,11 @@
             caseWing.position.set(-seen.size * 0.36, seen.size * 0.38, side * seen.size * 0.26)
             root.add(caseWing)
           }
-          const pronotum = new THREE.Mesh(
-            new THREE.SphereGeometry(seen.size * 0.52, 12, 8),
-            chitin,
-          )
+          const pronotum = new THREE.Mesh(new THREE.SphereGeometry(seen.size * 0.52, 12, 8), chitin)
           pronotum.scale.set(1.05, 0.42, 0.9)
           pronotum.position.set(seen.size * 0.72, seen.size * 0.05, 0)
           root.add(pronotum)
-          const head = new THREE.Mesh(
-            new THREE.SphereGeometry(seen.size * 0.32, 10, 7),
-            chitin,
-          )
+          const head = new THREE.Mesh(new THREE.SphereGeometry(seen.size * 0.32, 10, 7), chitin)
           head.scale.set(0.82, 0.68, 0.9)
           head.position.set(seen.size * 1.14, -seen.size * 0.16, 0)
           root.add(head)
@@ -2029,18 +2021,36 @@
           for (let pair = 0; pair < 3; pair++) {
             for (const side of [-1, 1]) {
               const leg = new THREE.Group()
-              leg.position.set(seen.size * (0.62 - pair * 0.62), -seen.size * 0.12, side * seen.size * 0.44)
+              leg.position.set(
+                seen.size * (0.62 - pair * 0.62),
+                -seen.size * 0.12,
+                side * seen.size * 0.44,
+              )
               const upper = new THREE.Mesh(
-                new THREE.CylinderGeometry(seen.size * 0.025, seen.size * 0.018, seen.size * 0.7, 5),
+                new THREE.CylinderGeometry(
+                  seen.size * 0.025,
+                  seen.size * 0.018,
+                  seen.size * 0.7,
+                  5,
+                ),
                 chitin,
               )
               upper.rotation.x = side * 0.95
               leg.add(upper)
               const lower = new THREE.Mesh(
-                new THREE.CylinderGeometry(seen.size * 0.018, seen.size * 0.01, seen.size * 0.72, 5),
+                new THREE.CylinderGeometry(
+                  seen.size * 0.018,
+                  seen.size * 0.01,
+                  seen.size * 0.72,
+                  5,
+                ),
                 chitin,
               )
-              lower.position.set(seen.size * (0.12 - pair * 0.08), -seen.size * 0.27, side * seen.size * 0.4)
+              lower.position.set(
+                seen.size * (0.12 - pair * 0.08),
+                -seen.size * 0.27,
+                side * seen.size * 0.4,
+              )
               lower.rotation.x = side * -0.72
               lower.rotation.z = (pair - 1) * 0.28
               leg.add(lower)
@@ -2054,7 +2064,7 @@
                   -seen.size * (0.12 + thorn * 0.11),
                   side * seen.size * (0.18 + thorn * 0.07),
                 )
-                spine.rotation.x = side * Math.PI / 2
+                spine.rotation.x = (side * Math.PI) / 2
                 leg.add(spine)
               }
               legs.add(leg)
@@ -2665,10 +2675,7 @@
           skirt.name = 'camilla-skirt'
           for (let i = 0; i < TENTACLES; i++) {
             const angle = (Math.PI * 2 * i) / TENTACLES
-            const lobe = new THREE.Mesh(
-              new THREE.SphereGeometry(seen.size * 0.42, 9, 6),
-              hide,
-            )
+            const lobe = new THREE.Mesh(new THREE.SphereGeometry(seen.size * 0.42, 9, 6), hide)
             lobe.scale.set(1.35, 0.42, 0.72)
             lobe.position.set(
               Math.cos(angle) * seen.size * 0.7,
@@ -2745,20 +2752,11 @@
           for (let neckIndex = 0; neckIndex < 9; neckIndex++) {
             const along = neckIndex / 8
             const neck = new THREE.Mesh(
-              new THREE.TorusGeometry(
-                seen.size * (0.24 - along * 0.055),
-                seen.size * 0.085,
-                6,
-                10,
-              ),
+              new THREE.TorusGeometry(seen.size * (0.24 - along * 0.055), seen.size * 0.085, 6, 10),
               coat,
             )
             neck.rotation.y = Math.PI / 2
-            neck.position.set(
-              -along * seen.size * 0.95,
-              seen.size * (0.25 - along * 1.1),
-              0,
-            )
+            neck.position.set(-along * seen.size * 0.95, seen.size * (0.25 - along * 1.1), 0)
             head.add(neck)
           }
           const skull = new THREE.Mesh(new THREE.SphereGeometry(seen.size * 0.24, 12, 9), coat)
@@ -2775,10 +2773,7 @@
             horn.position.set(-seen.size * 1.0, -seen.size * 0.68, side * seen.size * 0.13)
             horn.rotation.set(0, side * 0.22, side * 0.18)
             head.add(horn)
-            const eye = new THREE.Mesh(
-              new THREE.SphereGeometry(seen.size * 0.045, 7, 5),
-              dark,
-            )
+            const eye = new THREE.Mesh(new THREE.SphereGeometry(seen.size * 0.045, 7, 5), dark)
             eye.position.set(-seen.size * 1.18, -seen.size * 0.94, side * seen.size * 0.16)
             head.add(eye)
           }
@@ -2804,11 +2799,7 @@
           crown.add(eye)
           for (let tendril = 0; tendril < 9; tendril++) {
             const ribbon = new THREE.Mesh(
-              new THREE.ConeGeometry(
-                seen.size * 0.06,
-                seen.size * (0.7 + (tendril % 4) * 0.22),
-                4,
-              ),
+              new THREE.ConeGeometry(seen.size * 0.06, seen.size * (0.7 + (tendril % 4) * 0.22), 4),
               dark,
             )
             const angle = (Math.PI * 2 * tendril) / 9
@@ -2917,7 +2908,12 @@
           for (const side of [-1, 1]) {
             for (let wheel = 0; wheel < 2; wheel++) {
               const rim = new THREE.Mesh(
-                new THREE.TorusGeometry(seen.size * (0.31 - wheel * 0.04), seen.size * 0.075, 7, 16),
+                new THREE.TorusGeometry(
+                  seen.size * (0.31 - wheel * 0.04),
+                  seen.size * 0.075,
+                  7,
+                  16,
+                ),
                 raised,
               )
               rim.rotation.y = Math.PI / 2
@@ -3143,10 +3139,7 @@
           ball.scale.set(1.12, 1, 0.68)
           root.add(ball)
           for (const side of [-1, 1]) {
-            const lobe = new THREE.Mesh(
-              new THREE.SphereGeometry(seen.size * 0.66, 14, 10),
-              flesh,
-            )
+            const lobe = new THREE.Mesh(new THREE.SphereGeometry(seen.size * 0.66, 14, 10), flesh)
             lobe.scale.set(0.92, 0.9, 0.7)
             lobe.position.set(side * seen.size * 0.43, seen.size * 0.38, 0)
             root.add(lobe)
@@ -3161,12 +3154,23 @@
           root.add(point)
           const eyeShape = new THREE.Shape()
           eyeShape.moveTo(-seen.size * 0.78, 0)
-          eyeShape.bezierCurveTo(-seen.size * 0.38, seen.size * 0.3, seen.size * 0.38, seen.size * 0.3, seen.size * 0.78, 0)
-          eyeShape.bezierCurveTo(seen.size * 0.38, -seen.size * 0.28, -seen.size * 0.38, -seen.size * 0.28, -seen.size * 0.78, 0)
-          const white = new THREE.Mesh(
-            new THREE.ShapeGeometry(eyeShape, 16),
-            glow(0xfdf6fb, 1),
+          eyeShape.bezierCurveTo(
+            -seen.size * 0.38,
+            seen.size * 0.3,
+            seen.size * 0.38,
+            seen.size * 0.3,
+            seen.size * 0.78,
+            0,
           )
+          eyeShape.bezierCurveTo(
+            seen.size * 0.38,
+            -seen.size * 0.28,
+            -seen.size * 0.38,
+            -seen.size * 0.28,
+            -seen.size * 0.78,
+            0,
+          )
+          const white = new THREE.Mesh(new THREE.ShapeGeometry(eyeShape, 16), glow(0xfdf6fb, 1))
           white.position.z = seen.size * 0.7
           root.add(white)
           const pupil = new THREE.Mesh(
@@ -3214,11 +3218,7 @@
               glow(seen.colour, 0.6),
             )
             drip.scale.y = 1.7
-            drip.position.set(
-              (i - 2.5) * seen.size * 0.16,
-              -seen.size * (1.22 + (i % 3) * 0.15),
-              0,
-            )
+            drip.position.set((i - 2.5) * seen.size * 0.16, -seen.size * (1.22 + (i % 3) * 0.15), 0)
             root.add(drip)
           }
           turns = wings
@@ -3242,10 +3242,7 @@
           eye.scale.set(0.72, 1, 0.5)
           eye.position.set(-seen.size * 0.1, -seen.size * 0.3, seen.size * 0.08)
           stem.add(eye)
-          const pupil = new THREE.Mesh(
-            new THREE.SphereGeometry(seen.size * 0.1, 7, 5),
-            ink,
-          )
+          const pupil = new THREE.Mesh(new THREE.SphereGeometry(seen.size * 0.1, 7, 5), ink)
           pupil.position.set(-seen.size * 0.1, -seen.size * 0.3, seen.size * 0.2)
           stem.add(pupil)
 
@@ -3255,11 +3252,7 @@
             const side = limbIndex % 2 ? 1 : -1
             const upper = limbIndex < 2
             const limb = new THREE.Group()
-            limb.position.set(
-              side * seen.size * 0.05,
-              seen.size * (upper ? 0.32 : -0.38),
-              0,
-            )
+            limb.position.set(side * seen.size * 0.05, seen.size * (upper ? 0.32 : -0.38), 0)
             const arm = new THREE.Mesh(
               new THREE.CylinderGeometry(seen.size * 0.018, seen.size * 0.014, seen.size * 0.52, 4),
               ink,
@@ -3289,10 +3282,7 @@
           tail.position.set(seen.size * 0.06, seen.size * 0.88, 0)
           tail.rotation.z = -0.18
           stem.add(tail)
-          const club = new THREE.Mesh(
-            new THREE.SphereGeometry(seen.size * 0.16, 8, 6),
-            ink,
-          )
+          const club = new THREE.Mesh(new THREE.SphereGeometry(seen.size * 0.16, 8, 6), ink)
           club.scale.set(0.7, 1.45, 0.7)
           club.position.set(seen.size * 0.14, seen.size * 1.36, 0)
           club.rotation.z = -0.5
@@ -3334,14 +3324,24 @@
             }
             for (const side of [-1, 1]) {
               const upper = new THREE.Mesh(
-                new THREE.CylinderGeometry(seen.size * 0.045, seen.size * 0.035, seen.size * 0.72, 5),
+                new THREE.CylinderGeometry(
+                  seen.size * 0.045,
+                  seen.size * 0.035,
+                  seen.size * 0.72,
+                  5,
+                ),
                 markings,
               )
               upper.position.set(0, -seen.size * 0.34, side * seen.size * 0.72)
               upper.rotation.x = side * 0.9
               segment.add(upper)
               const lower = new THREE.Mesh(
-                new THREE.CylinderGeometry(seen.size * 0.035, seen.size * 0.02, seen.size * 0.62, 5),
+                new THREE.CylinderGeometry(
+                  seen.size * 0.035,
+                  seen.size * 0.02,
+                  seen.size * 0.62,
+                  5,
+                ),
                 markings,
               )
               lower.position.set(0, -seen.size * 0.68, side * seen.size * 0.98)
@@ -3366,10 +3366,7 @@
             eye.position.set(seen.size * 1.34, seen.size * 0.1, side * seen.size * 0.48)
             root.add(eye)
           }
-          const mouthDark = new THREE.Mesh(
-            new THREE.CircleGeometry(seen.size * 0.46, 18),
-            markings,
-          )
+          const mouthDark = new THREE.Mesh(new THREE.CircleGeometry(seen.size * 0.46, 18), markings)
           mouthDark.scale.set(1, 0.42, 1)
           mouthDark.rotation.y = Math.PI / 2
           mouthDark.position.set(seen.size * 1.53, -seen.size * 0.36, 0)
@@ -3410,10 +3407,7 @@
             [0.08, 0.72, -0.25, 0.38],
           ] as const
           for (const [x, y, z, radius] of bulges) {
-            const bulge = new THREE.Mesh(
-              new THREE.SphereGeometry(seen.size * radius, 10, 7),
-              flesh,
-            )
+            const bulge = new THREE.Mesh(new THREE.SphereGeometry(seen.size * radius, 10, 7), flesh)
             bulge.position.set(x * seen.size, y * seen.size, z * seen.size)
             root.add(bulge)
           }
@@ -3434,7 +3428,7 @@
             const [x, y, z, radius, toothed] = mouths[i]
             const mouth = new THREE.Group()
             mouth.position.set(x * seen.size, y * seen.size, z * seen.size)
-            mouth.rotation.z = (i % 3 - 1) * 0.22
+            mouth.rotation.z = ((i % 3) - 1) * 0.22
             const dark = new THREE.Mesh(
               new THREE.CircleGeometry(seen.size * radius, 16),
               glow(0x1a1420, 1),
@@ -3463,7 +3457,7 @@
                   glow(0xfff8e9, 1),
                 )
                 tooth.position.set(
-                  (toothIndex % 4 - 1.5) * seen.size * radius * 0.4,
+                  ((toothIndex % 4) - 1.5) * seen.size * radius * 0.4,
                   (upper ? 1 : -1) * seen.size * radius * 0.25,
                   0.025,
                 )
@@ -3547,10 +3541,7 @@
             tail.rotation.set(Math.PI / 2, 0.5, 0)
             root.add(tail)
           } else if (shape === 1) {
-            const cap = new THREE.Mesh(
-              new THREE.SphereGeometry(seen.size * 0.62, 12, 9),
-              fur,
-            )
+            const cap = new THREE.Mesh(new THREE.SphereGeometry(seen.size * 0.62, 12, 9), fur)
             cap.position.y = seen.size * 0.42
             root.add(cap)
             for (let i = 0; i < 9; i++) {
@@ -3685,7 +3676,7 @@
               )
               const upper = tooth < 5
               fang.position.set(
-                (tooth % 5 - 2) * seen.size * 0.13,
+                ((tooth % 5) - 2) * seen.size * 0.13,
                 seen.size * (upper ? 0.35 : 0.05),
                 seen.size * 0.57,
               )
@@ -3838,10 +3829,7 @@
             )
             limb.rotation.z = side * -0.28
             arm.add(limb)
-            const hand = new THREE.Mesh(
-              new THREE.SphereGeometry(seen.size * 0.22, 9, 6),
-              hide,
-            )
+            const hand = new THREE.Mesh(new THREE.SphereGeometry(seen.size * 0.22, 9, 6), hide)
             hand.scale.set(1.2, 0.5, 1)
             hand.position.y = -seen.size * 0.56
             arm.add(hand)
@@ -4361,6 +4349,7 @@
           held.size = seen.size
           held.tierId = seen.tierId
           held.pair = seen.pair
+          held.humanPose = seen.human?.pose
           // Not part of the key: whether a card may be taken hold of changes
           // every time the phase does, and a hand that rebuilt five meshes each
           // time it became your turn would be a table that flickers.
@@ -4716,11 +4705,15 @@
       const FLY_TO = new THREE.Vector3()
       const HUMAN_VIEW = new THREE.Frustum()
       const HUMAN_VIEW_PROJECTION = new THREE.Matrix4()
+      const HUMAN_VIEW_BOX = new THREE.Box3()
 
       function driftApparitions(seconds: number, delta: number) {
         camera.updateMatrixWorld()
         HUMAN_VIEW.setFromProjectionMatrix(
-          HUMAN_VIEW_PROJECTION.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse),
+          HUMAN_VIEW_PROJECTION.multiplyMatrices(
+            camera.projectionMatrix,
+            camera.matrixWorldInverse,
+          ),
         )
         for (const [id, held] of Object.entries(apparitions)) {
           if (!held) continue
@@ -4735,15 +4728,18 @@
             // camera-facing work do not run until the figure can be seen again.
             held.root.position.set(held.at[0], held.y, held.at[1])
             held.root.updateMatrixWorld(true)
-            const visible = HUMAN_VIEW.intersectsObject(
-              near ? held.humanLod.near : held.humanLod.far,
-            )
+            // `Frustum.intersectsObject` only accepts renderable objects with
+            // their own geometry. Both LODs are groups, so asking it directly
+            // throws while reading `geometry.boundingSphere` as soon as a
+            // shared human (notably Silent Majority's puppet) is materialized.
+            HUMAN_VIEW_BOX.setFromObject(near ? held.humanLod.near : held.humanLod.far)
+            const visible = HUMAN_VIEW.intersectsBox(HUMAN_VIEW_BOX)
             if (!visible) continue
             held.root.rotation.y = Math.atan2(
               camera.position.x - held.root.position.x,
               camera.position.z - held.root.position.z,
             )
-            if (near) held.humanAnimate?.(seconds)
+            if (near) held.humanAnimate?.(seconds, held.humanPose)
             continue
           }
 

@@ -18,6 +18,7 @@
     type WitnessId,
   } from '$lib/infiltration/state'
   import { INFILTRATION_DT, reconstruction, updateInfiltration } from '$lib/infiltration/loop'
+  import { INFILTRATION_HATSU } from '$lib/infiltration/hatsu'
 
   const ship = theShip()
   const arena = buildArena()
@@ -107,6 +108,7 @@
     if (event.code === 'KeyX') send({ type: 'ZETSU' })
     else if (event.code === 'KeyV') send({ type: 'DIVERT' })
     else if (event.code === 'KeyF') act()
+    else if (event.code === 'KeyH') send({ type: 'CAST_HATSU' })
     else return
     event.preventDefault()
   }
@@ -202,6 +204,13 @@
       <p class="mt-1 text-xs text-white/65">
         Nen: <strong>{game.player.nen === 'zetsu' ? 'Zetsu' : 'Ten'}</strong>
       </p>
+      <p class="mt-1 text-xs text-white/65">
+        Hatsu: <strong
+          >{INFILTRATION_HATSU.find((entry) => entry.id === game.hatsu.id)?.name}</strong
+        >
+        · {game.hatsu.aura} aura · {game.hatsu.uses}
+        {$t.infiltration.uses}
+      </p>
     </section>
 
     <div class="absolute bottom-6 left-1/2 flex -translate-x-1/2 gap-2">
@@ -223,6 +232,12 @@
         disabled={!!game.diversion}
         class="rounded border border-white/25 bg-black/90 px-3 py-2 text-xs disabled:opacity-30"
         >V · {$t.infiltration.divert}</button
+      >
+      <button
+        onclick={() => send({ type: 'CAST_HATSU' })}
+        disabled={game.hatsu.uses <= 0}
+        class="rounded border border-fuchsia-300/40 bg-black/90 px-3 py-2 text-xs text-fuchsia-200 disabled:opacity-30"
+        >H · {$t.infiltration.castHatsu}</button
       >
     </div>
 
@@ -267,6 +282,24 @@
           <li>• {$t.infiltration.taskVerify}</li>
           <li>• {$t.infiltration.taskLeave}</li>
         </ul>
+        <p class="mt-6 text-xs uppercase tracking-[.2em] text-fuchsia-300">
+          {$t.infiltration.chooseHatsu}
+        </p>
+        <div class="mt-3 grid gap-2 sm:grid-cols-3">
+          {#each INFILTRATION_HATSU as ability (ability.id)}
+            <button
+              onclick={() => send({ type: 'SELECT_HATSU', id: ability.id })}
+              class="border p-3 text-left text-xs {game.hatsu.id === ability.id
+                ? 'border-fuchsia-300 bg-fuchsia-300/10'
+                : 'border-white/15'}"
+            >
+              <strong class="block text-white">{ability.name}</strong>
+              <span class="mt-1 block text-white/45"
+                >{$t.infiltration.hatsuRoles[ability.role]}</span
+              >
+            </button>
+          {/each}
+        </div>
         <button
           onclick={() => (briefing = false)}
           class="mt-8 bg-amber-300 px-6 py-3 text-sm font-bold text-black"

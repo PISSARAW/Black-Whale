@@ -1,5 +1,6 @@
 import type { NavGraph } from '../hunt/navmesh'
 import { hearsMovement, patrolWitness } from './patrol'
+import { activeDisguise } from './hatsu'
 import type { InfiltrationState, Witness } from './state'
 
 export const INFILTRATION_DT = 1 / 30
@@ -98,6 +99,7 @@ function challengeFor(
   const challenger = witnesses.find((witness) => {
     if (!witness.social || witness.challenged || witness.spaceId !== state.player.spaceId)
       return false
+    if (activeDisguise(state) && !witness.usesEn) return false
     return (
       Math.hypot(
         witness.position[0] - state.player.position[0],

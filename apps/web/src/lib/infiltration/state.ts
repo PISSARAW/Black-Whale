@@ -1,9 +1,10 @@
 import type { Vec2 } from '../tour/types'
 import type { NenState } from '../hunt/nen/states'
+import { castHatsu, selectHatsu, type InfiltrationHatsuId } from './hatsu'
 
 export type WitnessId = 'steward' | 'guard' | 'nenGuard'
 export type MissionOutcome = 'playing' | 'escaped' | 'identified' | 'timeUp'
-export type TraceKind = 'door' | 'document' | 'diversion' | 'aura'
+export type TraceKind = 'door' | 'document' | 'diversion' | 'aura' | 'forgery'
 
 export interface Belief {
   identity: 'maintenance' | 'intruder' | 'unknown'
@@ -52,6 +53,14 @@ export interface InfiltrationState {
   alert: number
   challenge: Challenge | null
   reports: { witnessId: WitnessId; at: number; certainty: number }[]
+  hatsu: {
+    id: InfiltrationHatsuId
+    aura: number
+    uses: number
+    activeUntil: number
+    forgedOrder: boolean
+    scouted: boolean
+  }
 }
 
 export interface MissionSetup {
@@ -68,6 +77,8 @@ export type InfiltrationAction =
   | { type: 'VERIFY' }
   | { type: 'DIVERT' }
   | { type: 'ANSWER'; answer: 'workOrder' | 'bluff' }
+  | { type: 'SELECT_HATSU'; id: InfiltrationHatsuId }
+  | { type: 'CAST_HATSU' }
   | { type: 'EXTRACT' }
 
 const noBelief = (): Belief => ({
@@ -99,6 +110,14 @@ export function initialInfiltrationState(setup: MissionSetup): InfiltrationState
     alert: 0,
     challenge: null,
     reports: [],
+    hatsu: {
+      id: 'little-eye',
+      aura: 100,
+      uses: 2,
+      activeUntil: 0,
+      forgedOrder: false,
+      scouted: false,
+    },
   }
 }
 
@@ -133,6 +152,10 @@ export function infiltrationReducer(
       return divert(state)
     case 'ANSWER':
       return answerChallenge(state, action.answer)
+    case 'SELECT_HATSU':
+      return selectHatsu(state, action.id)
+    case 'CAST_HATSU':
+      return castHatsu(state)
     case 'EXTRACT':
       return extract(state)
   }
@@ -145,7 +168,10 @@ function answerChallenge(
   if (!state.challenge) return state
   const witnesses = state.witnesses.map((witness) => {
     if (witness.id !== state.challenge?.witnessId) return witness
-    const correct = answer === (witness.usesEn ? 'bluff' : 'workOrder')
+    const correct =
+      state.hatsu.forgedOrder && answer === 'workOrder'
+        ? true
+        : answer === (witness.usesEn ? 'bluff' : 'workOrder')
     return {
       ...witness,
       challenged: true,

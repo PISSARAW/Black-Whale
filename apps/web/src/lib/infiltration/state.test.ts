@@ -115,4 +115,23 @@ describe('infiltration', () => {
     expect(state.witnesses[0].belief.identity).toBe('maintenance')
     expect(state.challenge).toBeNull()
   })
+
+  it('uses Little Eye to confirm intelligence at an aura cost', () => {
+    let state = initialInfiltrationState(setup)
+    state = infiltrationReducer(state, { type: 'CAST_HATSU' })
+    expect(state.authorConfirmed).toBe(true)
+    expect(state.hatsu.aura).toBe(82)
+    expect(state.hatsu.scouted).toBe(true)
+  })
+
+  it('makes a forged work order pass a Nen guard social check', () => {
+    let state = initialInfiltrationState(setup)
+    state = infiltrationReducer(state, { type: 'SELECT_HATSU', id: 'texture-surprise' })
+    state = infiltrationReducer(state, { type: 'CAST_HATSU' })
+    state.challenge = { witnessId: 'guard', left: 5 }
+    state.witnesses[0] = { ...state.witnesses[0], usesEn: true }
+    state = infiltrationReducer(state, { type: 'ANSWER', answer: 'workOrder' })
+    expect(state.witnesses[0].belief.identity).toBe('maintenance')
+    expect(state.traces[0].kind).toBe('forgery')
+  })
 })

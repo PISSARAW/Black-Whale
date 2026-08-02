@@ -260,16 +260,6 @@
   let world = $state<TourWorld>(EMPTY_WORLD)
   hatsuAudio.watch(() => world)
 
-  /**
-   * The clock the ten blind seconds are read against.
-   *
-   * A deadline in the world is not reactive on its own — nothing changes when
-   * it passes — so the walk has to keep asking what time it is for the screen
-   * to come back. The walking itself is the scene's: it holds the keys down for
-   * the visitor and drifts the heading, which is what wandering looks like.
-   * Nothing here moves them, because a body carried room to room every second
-   * and a half is not a body walking blind.
-   */
   let now = $state(Date.now())
   $effect(() => {
     const i = setInterval(() => {
@@ -281,18 +271,9 @@
     world.body.autopilotUntil !== null && world.body.autopilotUntil > now,
   )
   let report = $state<TourReport | null>(null)
-  /**
-   * The blast and the punch, which are gone by the time the read-out is read.
-   *
-   * Everything else a technique does is in the world and can simply be drawn
-   * from it. These two are events: the page hands the walk one and counts it,
-   * because casting the same blast at the same room twice is two gusts of air
-   * and an unchanged value would only ever be one.
-   */
   let flash = $state<(TourFlash & { seq: number }) | null>(null)
   let flashes = 0
 
-  /** Hands the walk whatever the cast that just happened has to show. */
   function show(shown: TourReport) {
     const seen = flashFor({ report: shown, from: position }, ship, world)
     if (seen) flash = { ...seen, seq: ++flashes }
@@ -309,52 +290,19 @@
 
   const technique = $derived(worksInTour($activeHatsu) ? $activeHatsu : null)
 
-  /**
-   * The two pages Double Face has live, in the order the two keys play them:
-   * the open one under F, the one the ribbon is holding under R.
-   *
-   * `null` under everything else, which is what makes R mean what it has always
-   * meant everywhere else.
-   */
   const openPages = $derived(technique?.kind === 'bookmark' ? twoPages(world.book) : null)
 
-  /**
-   * Every key the technique in hand answers to, said before it is pressed.
-   *
-   * The walk casts with three keys at most and no aura uses all three: which
-   * ones this one uses — and what R means under it — is decided in one place,
-   * and both the panel and the walk itself read it from there.
-   */
   const controlKeys = $derived(hatsuKeys(technique, world.book))
 
-  /** A page under the name of whoever the book took it from. */
   const pageName = (kind: HatsuInteractionKind) => {
     const stolen = HATSU_PROFILES.find((candidate) => candidate.kind === kind)
     return stolen ? localizeHatsu(stolen, $locale).name : kind
   }
 
-  /** The two pages as the two buttons a touchscreen gets instead of F and R. */
   const hands = $derived(
     openPages ? { first: pageName(openPages[0]), second: pageName(openPages[1]) } : null,
   )
 
-  /**
-   * What a cast would actually run, which is not always the technique in hand.
-   *
-   * Double Face is not cast at all — it is a bookmark, and what a bookmark does
-   * is keep a second page live. So the key decides: F runs the open page and R
-   * runs the marked one, and the walk answers to whichever came back.
-   */
-  /**
-   * Which of Enchanting Music's three airs each key plays.
-   *
-   * The lively one is on F because F is the key everything is cast with and the
-   * dance is what the technique is remembered for; the soft one is on R, which
-   * an instrument has no other use for; and the sharp one is on C. Nothing else
-   * in the walk reads this — the flute is the only thing aboard that is played
-   * rather than aimed.
-   */
-  /** The three airs as the three buttons a touchscreen gets instead of the keys. */
   const tunes = $derived(
     technique?.kind === 'melody' && !openPages
       ? {
@@ -365,32 +313,10 @@
       : null,
   )
 
-  /**
-   * Whether the technique in hand is cast with two hands rather than one.
-   *
-   * Genthru puts the sun on with one hand and the moon with the other, and
-   * which of the two a thing wears is the whole decision the technique asks
-   * for — so the walk gives the two hands the two keys it already casts with:
-   * F is the sun and R is the moon. R is free to be that, because the only
-   * other thing it does is turn a technique on its own user and The Sun and
-   * Moon has nothing to do to one. A page of the book is the exception, and
-   * says so at `nextHand`.
-   */
   const twoHanded = $derived(
     Boolean(technique) && !openPages && TWO_HANDED_KINDS.has(technique!.kind),
   )
 
-  /**
-   * Which hand each key casts with next, for the techniques that have two.
-   *
-   * The Sun and Moon is the whole of it: Genthru puts the sun on with one hand
-   * and the moon with the other, and the pair does nothing until both are out.
-   * Spending a second key on the second hand would collide with everything else
-   * a key already means — R is Double Face's other page, and C is the flute's
-   * third air — so the key alternates instead. Press it once for the sun and
-   * again for the moon, and the pair is two presses of the same key. Kept per
-   * key, so a book holding it on one page counts that page's hands alone.
-   */
   let nextHand = $state<Record<CastHand, 'sun' | 'moon'>>({
     first: 'sun',
     second: 'sun',
@@ -445,87 +371,24 @@
   hatsuSession.watchActivation()
   hatsuSession.watchFuture()
 
-  /**
-   * Whether R has anything to do: the technique is on both sides of the line.
-   *
-   * A technique that only ever works on the visitor takes F wherever the
-   * reticle happens to be pointing, so it needs no second key. The ones in both
-   * sets — Black Voice's needle, Elastic Love — are the ones the reticle
-   * decides for, and on a walk the reticle is nearly always on something. R is
-   * how the visitor says *me*.
-   */
   const selfCastable = $derived(worksOnTheBody(technique) && aimsAtSolids(technique))
 
-  /**
-   * The four techniques that make a noise for as long as they are up.
-   *
-   * A motor, an engine, an insect and a mass for the dead are states rather
-   * than events, so they are driven off the world exactly as the apparitions
-   * are, and not off the report that started them. Each is keyed to the same
-   * value the scene draws from — Blinky's is `holding`, which is when the
-   * hoover appears at the visitor's side — so what is heard and what is on
-   * screen can never disagree.
-   */
-  // Dropping the aura hands the ship back; swapping one technique for another
-  // does not. Air Blow exists to blow off what *another* technique put on a
-  // room and Blinky refuses to swallow what Nen is holding — both of which
-  // would be unreachable if changing technique quietly undid the last one. What
-  // is still standing is always listed in the panel, and released from it.
-  /**
-   * The double's next watch: at your shoulder, loose in the room she was posted
-   * in, or out ahead of the walk.
-   *
-   * One ability with three orders rather than three abilities in the dock —
-   * she is the same double whichever of them she is under, and the visitor
-   * changes her orders mid-walk the way they would speak to her.
-   */
   function cycleDouble() {
     hatsuSession.turn('guardian')
   }
 
-  /**
-   * The next of Little Eye's three orders: piloted, scouting, filming.
-   *
-   * The sphere is the whole ability and it costs nothing to keep up — what
-   * makes it worth anything is what the insect is told to do with the room it
-   * is in, which is the choice Sayird's module exposes and the walk did not.
-   */
   function cycleEye() {
     hatsuSession.turn('scout')
   }
 
-  /**
-   * The next of Secret Window's three birds: the free one, the one that rides
-   * your shoulder, and the one let go without being aimed.
-   *
-   * Chosen before the cast rather than by it — the bird is what F sends, so the
-   * visitor has to be able to say which bird it is while nothing is out. A bird
-   * already perched is left where it is; what changes is what the next cast
-   * sends, and whether this one is still allowed to move.
-   */
   function cycleOwl() {
     hatsuSession.turn('surveillance')
   }
 
-  /**
-   * R, in one place: the walk asks the technique for its next order and says
-   * what came back. A technique with nothing to cycle — or one that is not the
-   * aura being held — answers with nothing, and the key stays inert.
-   */
   const turn = hatsuSession.turn
 
-  /**
-   * Handing the ship back is not always free. Silent Majority is a curse that
-   * has to find a victim: dismissing it without one turns it on the user, and
-   * the archive already has a penalty for that.
-   */
   const release = hatsuSession.release
 
-  /**
-   * The two techniques that can turn on their user cost the aura itself, which
-   * takes the panel down with it — so what happened has to be said over the
-   * walk instead, where the visitor is still looking.
-   */
   onDestroy(() => {
     hatsuSession.dispose()
     hatsuAudio.dispose()
@@ -538,12 +401,6 @@
   const castHand = casting.castHand
   const turnTheRibbon = casting.turnRibbon
 
-  /**
-   * Setting foot somewhere is where half the techniques actually happen: the
-   * guards expel, the chain punishes, the fish take one more thing, the dolls
-   * count. `arriveInTour` holds all of it, so the page only carries out what it
-   * is told — including the archive's own penalty, which is Zetsu.
-   */
   function arrived(spaceId: string | null) {
     hatsuSession.arrived(spaceId)
   }

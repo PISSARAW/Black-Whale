@@ -61,11 +61,3 @@ function arrive(witness: Witness, goalId: string): Witness {
 function distance(a: Vec2, b: Vec2): number {
   return Math.hypot(a[0] - b[0], a[1] - b[1])
 }
-
-export function hearsMovement(witness: Witness, playerSpaceId: string | null, graph: NavGraph) {
-  if (!playerSpaceId) return false
-  return (
-    witness.spaceId === playerSpaceId ||
-    (graph.edges.get(witness.spaceId) ?? []).includes(playerSpaceId)
-  )
-}

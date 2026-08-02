@@ -124,7 +124,13 @@
       position[0] - game.player.position[0],
       position[1] - game.player.position[1],
     )
-    send({ type: 'WALKED', position, spaceId: currentSpace?.id ?? null, moving: moved > 0.001 })
+    send({
+      type: 'WALKED',
+      position,
+      spaceId: currentSpace?.id ?? null,
+      moving: moved > 0.001,
+      speed: elapsed > 0 ? moved / elapsed : 0,
+    })
     while (owed >= INFILTRATION_DT && game.outcome === 'playing') {
       game = updateInfiltration(game, { dt: INFILTRATION_DT, graph, arena })
       owed -= INFILTRATION_DT

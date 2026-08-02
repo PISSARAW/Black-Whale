@@ -1,6 +1,7 @@
 import type { NavGraph } from '../hunt/navmesh'
 import type { Arena } from '../hunt/arena'
-import { hearsMovement, patrolWitness } from './patrol'
+import { patrolWitness } from './patrol'
+import { hearingStrength } from './sound'
 import { activeDisguise } from './hatsu'
 import { canSee } from './vision'
 import type { InfiltrationState, Witness } from './state'
@@ -86,7 +87,7 @@ function moveWitness(
 ): Witness {
   const distracted = state.diversion?.spaceId === witness.spaceId && state.diversion.left > 0
   if (distracted) return { ...witness, investigating: state.diversion!.spaceId }
-  const heard = state.player.moving && hearsMovement(witness, state.player.spaceId, world.graph)
+  const heard = hearingStrength(witness, state.player, world.graph) >= 0.2
   const informed = heard ? { ...witness, investigating: state.player.spaceId } : witness
   return patrolWitness(informed, world)
 }

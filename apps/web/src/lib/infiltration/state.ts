@@ -42,7 +42,7 @@ export interface Trace {
 export interface InfiltrationState {
   clock: number
   outcome: MissionOutcome
-  player: { position: Vec2; spaceId: string | null; nen: NenState; moving: boolean }
+  player: { position: Vec2; spaceId: string | null; nen: NenState; moving: boolean; speed: number }
   witnesses: Witness[]
   traces: Trace[]
   objectiveSpaceId: string
@@ -72,7 +72,7 @@ export interface MissionSetup {
 }
 
 export type InfiltrationAction =
-  | { type: 'WALKED'; position: Vec2; spaceId: string | null; moving: boolean }
+  | { type: 'WALKED'; position: Vec2; spaceId: string | null; moving: boolean; speed?: number }
   | { type: 'ZETSU' }
   | { type: 'COPY' }
   | { type: 'VERIFY' }
@@ -93,7 +93,7 @@ export function initialInfiltrationState(setup: MissionSetup): InfiltrationState
   return {
     clock: 0,
     outcome: 'playing',
-    player: { ...setup.playerAt, nen: 'ten', moving: false },
+    player: { ...setup.playerAt, nen: 'ten', moving: false, speed: 0 },
     witnesses: setup.witnesses.map((witness) => ({
       ...witness,
       belief: noBelief(),
@@ -136,6 +136,7 @@ export function infiltrationReducer(
           position: action.position,
           spaceId: action.spaceId,
           moving: action.moving,
+          speed: action.speed ?? (action.moving ? 2.1 : 0),
         },
       }
     case 'ZETSU':

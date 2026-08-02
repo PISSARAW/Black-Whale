@@ -25,7 +25,7 @@
   import TourPlanDialog from '$lib/components/tour/TourPlanDialog.svelte'
   import TourProvenancePanel from '$lib/components/tour/TourProvenancePanel.svelte'
   import TourScene from '$lib/components/tour/TourScene.svelte'
-  import TourTargetIndex, { type TourTargetMode } from '$lib/components/tour/TourTargetIndex.svelte'
+  import TourTargetIndex from '$lib/components/tour/TourTargetIndex.svelte'
   import { setAmbientMuffled } from '$lib/audio/ambient'
   import {
     startEngine,
@@ -99,6 +99,7 @@
   import type { Link, Provenance, Space, Structure, Vec2 } from '$lib/tour/types'
 
   const ship = theShip()
+  type TourTargetMode = 'body' | 'solid' | 'relay' | 'space' | 'jump'
 
   // `?space=` names a space to open in, `?deck=` a deck. `/tour/sources` links to
   // three hundred and one of them, so the walk does not read them once and forget

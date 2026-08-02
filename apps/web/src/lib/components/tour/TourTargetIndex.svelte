@@ -2,7 +2,7 @@
   import { t } from '$lib/i18n'
   import type { Space, Structure, Tier } from '$lib/tour/types'
 
-  export type TourTargetMode = 'body' | 'solid' | 'relay' | 'space' | 'jump'
+  type TourTargetMode = 'body' | 'solid' | 'relay' | 'space' | 'jump'
   type Named = { name: string; nameFr: string }
   type Sourced = { provenance: Structure['provenance'] }
 

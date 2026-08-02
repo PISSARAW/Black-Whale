@@ -58,6 +58,19 @@ describe('distinct Hatsu loadouts', () => {
     expect(read.hatsu.probableBearing).toEqual([1, 0])
     expect(read.hatsu.forecastSpaceId).toBeNull()
   })
+
+  it('keeps the selected loadout and drops a dowsing read when movement resumes', () => {
+    const selected = initialHuntState({
+      playerAt: { position: [0, 0], spaceId: 'salon' },
+      hunterAt: { position: [5, 0], spaceId: 'cuisine' },
+      targetSpaceId: 'chambre',
+      hatsu: 'dowsing-chain',
+    })
+    const read = huntReducer(selected, { type: 'HATSU' })
+    const moved = huntReducer(read, { type: 'WALKED', player: { atRest: false } })
+    expect(moved.hatsu.id).toBe('dowsing-chain')
+    expect(moved.hatsu.probableBearing).toBeNull()
+  })
 })
 
 describe('the player’s own En', () => {

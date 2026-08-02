@@ -13632,26 +13632,22 @@
     ],
     "mapTrajectory": [
       {
-        "location": "tier-4-xi-yu-family-office",
+        "location": "tier-4-xi-yu-hq",
+        "fromChapterId": "ch-358"
+      },
+      {
+        "location": "tier-3-general-passenger-area",
         "fromChapterId": "ch-377",
-        "certainty": "PROBABLE"
+        "note": "Recherche de la base Heil-Ly et Hisoka"
       },
       {
-        "location": "tier-4-xi-yu-family-office",
-        "fromChapterId": "ch-380"
+        "location": "tier-3-heil-ly-hideout",
+        "fromChapterId": "ch-393",
+        "note": "Infiltration de la base Heil-Ly"
       },
       {
-        "location": "tier-3-residential-standard",
-        "fromChapterId": "ch-390",
-        "certainty": "PROBABLE"
-      },
-      {
-        "location": "tier-3-residential-room-3101",
-        "fromChapterId": "ch-395"
-      },
-      {
-        "location": "tier-2-heilly-secret-hideout",
-        "fromChapterId": "ch-399"
+        "location": "tier-3-general-passenger-area",
+        "fromChapterId": "ch-394"
       }
     ],
     "positionProvenance": "inferred",
@@ -14501,6 +14497,12 @@
         "title": "Friends",
         "status": "absent"
       }
+    ],
+    "mapTrajectory": [
+      {
+        "location": "tier-3-heil-ly-hideout",
+        "fromChapterId": "ch-358"
+      }
     ]
   },
   {
@@ -14914,25 +14916,17 @@
     "battles": ["Luini vs. Nobunaga Hazama"],
     "mapTrajectory": [
       {
-        "location": "tier-5-cha-r-family-office",
-        "fromChapterId": "ch-371"
+        "location": "tier-3-heil-ly-hideout",
+        "fromChapterId": "ch-358"
       },
       {
-        "location": "tier-3-residential-standard",
+        "location": "tier-5-general-passenger-area",
+        "fromChapterId": "ch-377",
+        "note": "Provoque le Cha-R"
+      },
+      {
+        "location": "tier-3-heil-ly-hideout",
         "fromChapterId": "ch-378"
-      },
-      {
-        "location": "tier-5-warehouse",
-        "fromChapterId": "ch-378.2"
-      },
-      {
-        "location": "tier-4-ei-i-family-office",
-        "fromChapterId": "ch-380"
-      },
-      {
-        "location": "tier-5-cha-r-family-office",
-        "fromChapterId": "ch-384",
-        "untilChapterId": "ch-393"
       }
     ]
   },
@@ -33108,7 +33102,7 @@
     ],
     "mapTrajectory": [
       {
-        "location": "tier-3-central-hospital",
+        "location": "tier-3-heil-ly-hideout",
         "fromChapterId": "ch-358"
       }
     ]
@@ -37510,6 +37504,12 @@
         "title": "Friends",
         "status": "absent"
       }
+    ],
+    "mapTrajectory": [
+      {
+        "location": "tier-4-xi-yu-hq",
+        "fromChapterId": "ch-358"
+      }
     ]
   },
   {
@@ -37915,6 +37915,12 @@
         "chapter": 414,
         "title": "Friends",
         "status": "absent"
+      }
+    ],
+    "mapTrajectory": [
+      {
+        "location": "tier-5-cha-r-hq",
+        "fromChapterId": "ch-358"
       }
     ]
   },
@@ -38710,8 +38716,8 @@
     ],
     "mapTrajectory": [
       {
-        "location": "tier-3-residential-standard",
-        "fromChapterId": "ch-392"
+        "location": "tier-4-xi-yu-hq",
+        "fromChapterId": "ch-358"
       }
     ],
     "positionProvenance": "inferred",
@@ -41890,7 +41896,13 @@
     },
     "mapPresenceFromChapterId": "ch-378",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-3-heil-ly-hideout",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "bladge",
@@ -42014,17 +42026,13 @@
     "mangaAppearances": [],
     "mapTrajectory": [
       {
-        "location": "black-whale-unknown",
-        "fromChapterId": "ch-358",
-        "certainty": "PROBABLE"
+        "location": "tier-3-heil-ly-hideout",
+        "fromChapterId": "ch-358"
       },
       {
-        "location": "tier-3-central-police-station",
-        "fromChapterId": "ch-379"
-      },
-      {
-        "location": "tier-3-residential-standard",
-        "fromChapterId": "ch-380"
+        "location": "tier-3-general-passenger-area",
+        "fromChapterId": "ch-378",
+        "note": "Chasse"
       }
     ]
   },
@@ -42068,7 +42076,13 @@
     },
     "mapPresenceFromChapterId": "ch-378",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-3-heil-ly-hideout",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "chiyamasi",
@@ -42112,7 +42126,13 @@
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": [],
     "positionProvenance": "inferred",
-    "mapLocationCorrection": true
+    "mapLocationCorrection": true,
+    "mapTrajectory": [
+      {
+        "location": "tier-4-xi-yu-hq",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "coventoba",
@@ -42169,7 +42189,13 @@
     },
     "mapPresenceFromChapterId": "ch-378",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-3-heil-ly-hideout",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "deruboro",
@@ -42214,17 +42240,8 @@
     "mangaAppearances": [],
     "mapTrajectory": [
       {
-        "location": "black-whale-unknown",
-        "fromChapterId": "ch-358",
-        "certainty": "PROBABLE"
-      },
-      {
-        "location": "tier-1-princes-burial-chamber",
-        "fromChapterId": "ch-405"
-      },
-      {
-        "location": "tier-2-heilly-secret-hideout",
-        "fromChapterId": "ch-407"
+        "location": "tier-3-heil-ly-hideout",
+        "fromChapterId": "ch-358"
       }
     ]
   },
@@ -42459,7 +42476,13 @@
     },
     "mapPresenceFromChapterId": "ch-378",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-3-heil-ly-hideout",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "gelato",
@@ -42477,7 +42500,13 @@
     },
     "mapPresenceFromChapterId": "ch-378",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-3-heil-ly-hideout",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "gihoruto",
@@ -42677,7 +42706,13 @@
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": [],
     "positionProvenance": "inferred",
-    "mapLocationCorrection": true
+    "mapLocationCorrection": true,
+    "mapTrajectory": [
+      {
+        "location": "tier-5-cha-r-hq",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "javietti",
@@ -43043,14 +43078,18 @@
     ],
     "mapTrajectory": [
       {
-        "location": "tier-3-residential-standard",
-        "fromChapterId": "ch-392",
-        "certainty": "PROBABLE"
+        "location": "tier-4-xi-yu-hq",
+        "fromChapterId": "ch-358"
       },
       {
-        "location": "tier-3-cineplex",
-        "fromChapterId": "ch-392.2",
-        "untilChapterId": "ch-393"
+        "location": "tier-3-general-passenger-area",
+        "fromChapterId": "ch-377",
+        "note": "Recherche de Hisoka"
+      },
+      {
+        "location": "tier-3-theater",
+        "fromChapterId": "ch-392",
+        "note": "Rencontre Hisoka, mise KO"
       }
     ]
   },
@@ -43149,7 +43188,13 @@
     },
     "mapPresenceFromChapterId": "ch-378",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-3-heil-ly-hideout",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "misha-hao",
@@ -43167,7 +43212,13 @@
     },
     "mapPresenceFromChapterId": "ch-392",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-4-xi-yu-hq",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "mizaurouno",
@@ -43233,7 +43284,13 @@
     },
     "mapPresenceFromChapterId": "ch-378",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-3-heil-ly-hideout",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "moswana",
@@ -43475,7 +43532,13 @@
     },
     "mapPresenceFromChapterId": "ch-378",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-3-heil-ly-hideout",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "nukuocon",
@@ -43541,7 +43604,13 @@
     },
     "mapPresenceFromChapterId": "ch-378",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-3-heil-ly-hideout",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "orau",
@@ -43607,7 +43676,18 @@
     },
     "mapPresenceFromChapterId": "ch-378",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-3-heil-ly-hideout",
+        "fromChapterId": "ch-358"
+      },
+      {
+        "location": "tier-3-general-passenger-area",
+        "fromChapterId": "ch-392",
+        "note": "Combat contre Hinrigh"
+      }
+    ]
   },
   {
     "id": "perigord",
@@ -43625,7 +43705,13 @@
     },
     "mapPresenceFromChapterId": "ch-378",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-3-heil-ly-hideout",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "pitakusu",
@@ -43661,7 +43747,13 @@
     },
     "mapPresenceFromChapterId": "ch-378",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-3-heil-ly-hideout",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "reuen",
@@ -43965,7 +44057,13 @@
     },
     "mapPresenceFromChapterId": "ch-378",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-3-heil-ly-hideout",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "souffle",
@@ -43983,7 +44081,13 @@
     },
     "mapPresenceFromChapterId": "ch-378",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-3-heil-ly-hideout",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "sumidori",
@@ -44027,7 +44131,13 @@
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": [],
     "positionProvenance": "inferred",
-    "mapLocationCorrection": true
+    "mapLocationCorrection": true,
+    "mapTrajectory": [
+      {
+        "location": "tier-5-cha-r-hq",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "tagenpaku",
@@ -44071,7 +44181,13 @@
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": [],
     "positionProvenance": "inferred",
-    "mapLocationCorrection": true
+    "mapLocationCorrection": true,
+    "mapTrajectory": [
+      {
+        "location": "tier-5-cha-r-hq",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "taler",
@@ -44122,14 +44238,8 @@
     ],
     "mapTrajectory": [
       {
-        "location": "black-whale-unknown",
-        "fromChapterId": "ch-358",
-        "certainty": "PROBABLE"
-      },
-      {
-        "location": "tier-3-residential-room-3101",
-        "fromChapterId": "ch-394",
-        "untilChapterId": "ch-394"
+        "location": "tier-4-xi-yu-hq",
+        "fromChapterId": "ch-358"
       }
     ]
   },
@@ -44173,7 +44283,13 @@
     },
     "mapPresenceFromChapterId": "ch-378",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-3-heil-ly-hideout",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "tevelares",
@@ -44191,7 +44307,13 @@
     },
     "mapPresenceFromChapterId": "ch-378",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-3-heil-ly-hideout",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "toneaster",
@@ -44229,7 +44351,17 @@
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": [],
     "positionProvenance": "inferred",
-    "mapLocationCorrection": true
+    "mapLocationCorrection": true,
+    "mapTrajectory": [
+      {
+        "location": "tier-5-cha-r-hq",
+        "fromChapterId": "ch-358"
+      },
+      {
+        "location": "tier-5-general-passenger-area",
+        "fromChapterId": "ch-377"
+      }
+    ]
   },
   {
     "id": "tuffdy",
@@ -44344,7 +44476,13 @@
     },
     "mapPresenceFromChapterId": "ch-380",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-5-cha-r-hq",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "vincent",
@@ -44395,7 +44533,13 @@
     },
     "mapPresenceFromChapterId": "ch-378",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-3-heil-ly-hideout",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "wolfe",
@@ -44440,13 +44584,8 @@
     "mangaAppearances": [],
     "mapTrajectory": [
       {
-        "location": "black-whale-unknown",
-        "fromChapterId": "ch-358",
-        "certainty": "PROBABLE"
-      },
-      {
-        "location": "tier-2-heilly-secret-hideout",
-        "fromChapterId": "ch-399"
+        "location": "tier-3-heil-ly-hideout",
+        "fromChapterId": "ch-358"
       }
     ]
   },
@@ -44543,18 +44682,18 @@
     "mangaAppearances": [],
     "mapTrajectory": [
       {
-        "location": "black-whale-unknown",
-        "fromChapterId": "ch-358",
-        "certainty": "PROBABLE"
+        "location": "tier-4-xi-yu-hq",
+        "fromChapterId": "ch-358"
       },
       {
-        "location": "tier-3-cineplex",
-        "fromChapterId": "ch-393"
+        "location": "tier-3-general-passenger-area",
+        "fromChapterId": "ch-377",
+        "note": "Recherche de Hisoka"
       },
       {
-        "location": "black-whale-unknown",
-        "fromChapterId": "ch-394",
-        "certainty": "PROBABLE"
+        "location": "tier-3-theater",
+        "fromChapterId": "ch-392",
+        "note": "Rencontre Hisoka"
       }
     ]
   }

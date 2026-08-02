@@ -152,7 +152,7 @@
     error = ''
     report = null
     try {
-      const response = await fetch('/reconstruction/v3', {
+      const response = await fetch('/reconstruction/v3/run', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify({ scenario: draft() }),

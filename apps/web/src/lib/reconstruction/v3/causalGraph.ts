@@ -101,13 +101,13 @@ function evaluatePrecondition(
           reason: `${condition.expected} is unavailable to ${condition.subjectId}`,
         }
   }
+  if (context.occurredEventIds.includes(condition.expected)) {
+    return { status: 'satisfied', reason: `Event ${condition.expected} occurred` }
+  }
   if (decisionIds.has(condition.expected)) {
     return { status: 'dependent', reason: `Waits for decision ${condition.expected}` }
   }
-  const occurred = context.occurredEventIds.includes(condition.expected)
-  return occurred
-    ? { status: 'satisfied', reason: `Event ${condition.expected} occurred` }
-    : { status: 'blocked', reason: `Event ${condition.expected} did not occur` }
+  return { status: 'blocked', reason: `Event ${condition.expected} did not occur` }
 }
 
 function decisionReason(decision: ReconstructionDecision, status: CausalNode['status']): string {

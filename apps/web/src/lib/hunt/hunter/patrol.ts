@@ -30,6 +30,11 @@ import { tickHold } from '../nen/entrave'
 import { INSPECT_COST, INSPECT_INTERVAL } from './inspect'
 import { pick, seedRng, type Rng } from '../random'
 import {
+  DEFAULT_HUNTER_PROFILE,
+  hunterProfile,
+  type HunterProfileId,
+} from './profiles'
+import {
   beliefIsStale,
   clearRoom,
   forget,
@@ -51,6 +56,7 @@ export const SEARCH_DRAIN = 3
 export const ARRIVE_WITHIN = 1
 
 export interface HunterState {
+  profileId: HunterProfileId
   position: Vec2
   spaceId: string | null
   mode: HunterMode
@@ -83,10 +89,12 @@ export interface HunterSpawn {
   position: Vec2
   spaceId: string
   seed?: number
+  profileId?: HunterProfileId
 }
 
 export function initialHunterState(spawn: HunterSpawn): HunterState {
   return {
+    profileId: spawn.profileId ?? DEFAULT_HUNTER_PROFILE,
     position: spawn.position,
     spaceId: spawn.spaceId,
     mode: 'patrol',
@@ -156,7 +164,9 @@ function decide(state: HunterState): HunterState {
 }
 
 function wants(state: HunterState): HunterIntents {
-  const canSweep = state.sinceSweep >= SWEEP_INTERVAL && state.pool.available >= EN_COST
+  const canSweep =
+    state.sinceSweep >= hunterProfile(state.profileId).sweepInterval &&
+    state.pool.available >= EN_COST
   const canInspect =
     state.mode === 'search' &&
     state.sinceInspect >= INSPECT_INTERVAL &&
@@ -172,7 +182,7 @@ function wants(state: HunterState): HunterIntents {
 function pay(state: HunterState, dt: number, intents: HunterIntents): HunterState {
   const searching = state.mode === 'search'
   const pool = searching
-    ? spend(state.pool, SEARCH_DRAIN * dt)
+    ? spend(state.pool, hunterProfile(state.profileId).searchDrain * dt)
     : regenerate(state.pool, dt, state.mode === 'listen')
   return {
     ...state,
@@ -239,5 +249,10 @@ function arrive(state: HunterState): HunterState {
   if (state.mode === 'search') {
     return { ...state, belief: clearRoom(state.belief, state.spaceId), mode: 'patrol', path: [] }
   }
-  return { ...state, path: state.path.slice(1), mode: 'listen', listening: LISTEN_FOR }
+  return {
+    ...state,
+    path: state.path.slice(1),
+    mode: 'listen',
+    listening: hunterProfile(state.profileId).listenFor,
+  }
 }

@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { HuntHatsuId, HuntHatsuProfile } from '$lib/hunt/hatsu'
+  import type { HunterProfile, HunterProfileId } from '$lib/hunt/hunter/profiles'
 
   interface Props {
     labels: {
@@ -17,10 +18,24 @@
     profiles: HuntHatsuProfile[]
     selected: HuntHatsuId
     onSelect: (id: HuntHatsuId) => void
+    hunterProfiles: HunterProfile[]
+    selectedHunter: HunterProfileId
+    hunterLabels: { choose: string; role: Record<HunterProfileId, string> }
+    onSelectHunter: (id: HunterProfileId) => void
     onBegin: () => void
   }
 
-  let { labels, profiles, selected, onSelect, onBegin }: Props = $props()
+  let {
+    labels,
+    profiles,
+    selected,
+    onSelect,
+    hunterProfiles,
+    selectedHunter,
+    hunterLabels,
+    onSelectHunter,
+    onBegin,
+  }: Props = $props()
 </script>
 
 <section
@@ -57,6 +72,25 @@
         {/each}
       </div>
       <p class="mt-2 text-xs leading-relaxed text-white/45">{labels.hatsuRule}</p>
+      <p class="mt-5 text-[0.65rem] uppercase tracking-[0.25em] text-rose-300/70">
+        {hunterLabels.choose}
+      </p>
+      <div class="mt-2 grid gap-2 sm:grid-cols-3">
+        {#each hunterProfiles as profile (profile.id)}
+          <button
+            class="rounded-lg border p-3 text-left transition {selectedHunter === profile.id
+              ? 'border-rose-300 bg-rose-300/10'
+              : 'border-white/10 bg-white/[0.03]'}"
+            aria-pressed={selectedHunter === profile.id}
+            onclick={() => onSelectHunter(profile.id)}
+          >
+            <span class="block text-sm font-medium capitalize text-rose-100">{profile.id}</span>
+            <span class="mt-1 block text-[0.65rem] leading-snug text-white/40">
+              {hunterLabels.role[profile.id]}
+            </span>
+          </button>
+        {/each}
+      </div>
     </div>
     <button
       class="mt-8 rounded-full border border-sky-300/60 bg-sky-300/10 px-7 py-3 text-sm uppercase tracking-widest text-sky-100 transition hover:bg-sky-300/20"

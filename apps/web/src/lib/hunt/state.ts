@@ -26,6 +26,7 @@ import type { HuntOutcome } from './outcome'
 import { duelReducer, type DuelAction } from './duel/reducer'
 import { recoverInDuel } from './duel/recover'
 import type { DuelState } from './duel/state'
+import type { HunterProfileId } from './hunter/profiles'
 import {
   DEFAULT_HUNT_HATSU,
   initialHatsu,
@@ -79,6 +80,7 @@ export interface HuntSetup {
   targetSpaceId: string
   seed?: number
   hatsu?: HuntHatsuId
+  hunterProfile?: HunterProfileId
 }
 
 export function initialHuntState(setup: HuntSetup): HuntState {
@@ -91,7 +93,11 @@ export function initialHuntState(setup: HuntSetup): HuntState {
       nen: 'ten',
       atRest: true,
     },
-    hunter: initialHunterState({ ...setup.hunterAt, seed: setup.seed }),
+    hunter: initialHunterState({
+      ...setup.hunterAt,
+      seed: setup.seed,
+      profileId: setup.hunterProfile,
+    }),
     ledger: { pool: fullPool(), placements: [] },
     feedback: quietFeedback(),
     echoes: noEchoes(),

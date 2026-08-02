@@ -45,6 +45,12 @@
   import { tutorialStep } from '$lib/hunt/tutorial'
   import { tutorialMessages } from '$lib/hunt/tutorialMessages'
   import {
+    DEFAULT_HUNTER_PROFILE,
+    HUNTER_PROFILES,
+    type HunterProfileId,
+  } from '$lib/hunt/hunter/profiles'
+  import { hunterProfileMessages } from '$lib/hunt/hunter/profileMessages'
+  import {
     BUNGEE_GUM_HUNT,
     DEFAULT_HUNT_HATSU,
     DOWSING_CHAIN_HUNT,
@@ -84,6 +90,7 @@
 
   const hatsuProfiles = [BUNGEE_GUM_HUNT, PARALLEL_FUTURE_HUNT, DOWSING_CHAIN_HUNT]
   let selectedHatsu = $state<HuntHatsuId>(DEFAULT_HUNT_HATSU)
+  let selectedHunter = $state<HunterProfileId>(DEFAULT_HUNTER_PROFILE)
 
   function freshGame() {
     return initialHuntState({
@@ -92,6 +99,7 @@
       targetSpaceId: opening.to.id,
       seed: 0x5eed,
       hatsu: selectedHatsu,
+      hunterProfile: selectedHunter,
     })
   }
 
@@ -481,8 +489,15 @@
       labels={$t.hunt.briefing}
       profiles={hatsuProfiles}
       selected={selectedHatsu}
+      hunterProfiles={HUNTER_PROFILES}
+      selectedHunter={selectedHunter}
+      hunterLabels={hunterProfileMessages($locale)}
       onSelect={(id) => {
         selectedHatsu = id
+        game = freshGame()
+      }}
+      onSelectHunter={(id) => {
+        selectedHunter = id
         game = freshGame()
       }}
       onBegin={begin}

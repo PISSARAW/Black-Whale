@@ -2,13 +2,13 @@ import { untrack } from 'svelte'
 import { get } from 'svelte/store'
 import {
   canUseHatsu,
-  createNenTechniqueState,
   transitionNen,
   type NenTechniqueAction,
   type NenTechniqueState,
   type NenTransition,
 } from '@black-whale/nen-engine'
 import type { HatsuInteractionKind } from '$lib/nen/hatsuRegistry'
+import { loadTourNen, saveTourNen } from '$lib/nen/persistence'
 import { activeHatsu, enterForcedZetsu, parallelFutureVisible } from '$lib/nen/hatsuState'
 import type { Ship } from '$lib/tour/blueprint'
 import { arriveInTour, EMPTY_WORLD, type TourReport, type TourWorld } from '$lib/tour/hatsu'
@@ -42,7 +42,7 @@ interface SessionOptions {
 export class TourHatsuSession {
   penalty = $state<string | null>(null)
   /** TourSense reads and mutates the same Nen contract as every other surface. */
-  nen = $state<NenTechniqueState>(createNenTechniqueState())
+  nen = $state<NenTechniqueState>(loadTourNen())
   private wasFutureVisible = false
   private unsubscribeFuture: (() => void) | null = null
 
@@ -106,7 +106,10 @@ export class TourHatsuSession {
 
   useNen = (action: NenTechniqueAction): NenTransition => {
     const result = transitionNen(this.nen, action)
-    if (result.accepted) this.nen = result.state
+    if (result.accepted) {
+      this.nen = result.state
+      saveTourNen(this.nen)
+    }
     if (!canUseHatsu(this.nen)) {
       this.options.updateWorld(EMPTY_WORLD)
       this.options.updateReport(null)

@@ -33,13 +33,13 @@ export const load: PageServerLoad = async ({ cookies }) => {
         prisma.presence.findMany({
           where: {
             entityType: 'BODY',
-            precision: 'EXACT_ROOM',
-            locationId: { not: null },
           },
           select: {
             id: true,
             entityId: true,
             locationId: true,
+            precision: true,
+            certainty: true,
             body: {
               select: {
                 label: true,
@@ -64,7 +64,17 @@ export const load: PageServerLoad = async ({ cookies }) => {
             },
           },
         }),
-        prisma.location.findMany({ select: { id: true, slug: true } }),
+        prisma.location.findMany({
+          select: {
+            id: true,
+            slug: true,
+            name: true,
+            type: true,
+            parentLocationId: true,
+            firstVisibleEventId: true,
+            mapElementId: true,
+          },
+        }),
         prisma.eventParticipation.findMany({
           where: {
             eventId: { in: eventIds },
@@ -143,6 +153,7 @@ export const load: PageServerLoad = async ({ cookies }) => {
       presences,
       sceneCharacters,
       locationSlugs,
+      locations,
       spoilerLimit: maxChapter,
     }
   } catch (err: unknown) {
@@ -155,6 +166,7 @@ export const load: PageServerLoad = async ({ cookies }) => {
       presences: [],
       sceneCharacters: [],
       locationSlugs: {},
+      locations: [],
       spoilerLimit: maxChapter,
     }
   }

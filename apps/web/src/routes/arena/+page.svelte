@@ -2,6 +2,7 @@
   import { onDestroy, onMount } from 'svelte'
   import Seo from '$lib/components/Seo.svelte'
   import TourScene from '$lib/components/tour/TourScene.svelte'
+  import TourModeFullscreen from '$lib/components/tour/TourModeFullscreen.svelte'
   import ReplayPanel from '$lib/components/arena/ReplayPanel.svelte'
   import {
     advanceArena,
@@ -542,6 +543,7 @@
   class:player-empowered={game.player.empowered > 0}
   class:opponent-bound={game.opponent.bound > 0}
 >
+  <TourModeFullscreen />
   <h1 class="sr-only">{$t.arena.title}</h1>
 
   {#if briefingOpen}

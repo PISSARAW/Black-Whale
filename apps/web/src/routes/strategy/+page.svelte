@@ -5,6 +5,7 @@
   import type { PageData } from './$types'
   import './strategy.css'
   import StrategyBattlefield from '$lib/components/strategy/StrategyBattlefield.svelte'
+  import TourModeFullscreen from '$lib/components/tour/TourModeFullscreen.svelte'
   import StrategyDiplomacyPanel from '$lib/components/strategy/StrategyDiplomacyPanel.svelte'
   import StrategyDebrief from '$lib/components/strategy/StrategyDebrief.svelte'
   import StrategyFactionPicker from '$lib/components/strategy/StrategyFactionPicker.svelte'
@@ -294,6 +295,7 @@
     />
   {:else}
     <div class="game-layout">
+      <TourModeFullscreen />
       <aside class="command-panel">
         <header>
           <button class="back" type="button" onclick={() => (playerFactionId = null)}

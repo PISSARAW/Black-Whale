@@ -2,6 +2,7 @@
   import { onDestroy, onMount } from 'svelte'
   import Seo from '$lib/components/Seo.svelte'
   import TourScene from '$lib/components/tour/TourScene.svelte'
+  import TourModeFullscreen from '$lib/components/tour/TourModeFullscreen.svelte'
   import { buildArena } from '$lib/hunt/arena'
   import { buildNavGraph } from '$lib/hunt/navmesh'
   import { floorOf, theShip } from '$lib/tour/blueprint'
@@ -202,6 +203,7 @@
 />
 
 <div class="relative h-screen w-full overflow-hidden bg-black text-white">
+  <TourModeFullscreen />
   <p class="sr-only" aria-live="polite">
     {$t.infiltration.alert}
     {Math.round(game.alert)}%. {$t.infiltration.integrity}

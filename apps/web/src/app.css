@@ -263,6 +263,27 @@ html.tour-immersive body {
   overflow: hidden;
 }
 
+/* Shared scene host for standalone Tour modes, including the fixed-layout
+   fallback used when the browser cannot grant native fullscreen. */
+.tour-mode-host {
+  position: relative;
+}
+
+.tour-mode-immersive {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 90 !important;
+  width: 100vw !important;
+  height: 100dvh !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  margin: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  overflow: hidden !important;
+  background: #050505;
+}
+
 @media (max-width: 800px) {
   :root {
     --header-height: 3.5rem;

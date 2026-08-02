@@ -8,6 +8,7 @@
   import type { StoryCursor, WorldEvent } from '@black-whale/world-engine'
   import Seo from '$lib/components/Seo.svelte'
   import TourScene from '$lib/components/tour/TourScene.svelte'
+  import TourModeFullscreen from '$lib/components/tour/TourModeFullscreen.svelte'
   import ReconstructionOverview from '$lib/components/reconstruction/ReconstructionOverview.svelte'
   import { activeHatsu, hatsuPanelOpen } from '$lib/nen/hatsuState'
   import { localizeHatsu } from '$lib/i18n/hatsu'
@@ -697,6 +698,9 @@
     <section class="empty-state"><p>{$t.reconstruction.empty}</p></section>
   {:else}
     <div class="workspace">
+      {#if viewMode === 'scene'}
+        <TourModeFullscreen />
+      {/if}
       <aside class="timeline-panel" data-hatsu-pass>
         <label class="search">
           <span>{$t.reconstruction.searchEvents}</span>

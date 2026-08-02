@@ -17,6 +17,7 @@
   import { onDestroy, onMount } from 'svelte'
   import Seo from '$lib/components/Seo.svelte'
   import TourScene from '$lib/components/tour/TourScene.svelte'
+  import TourModeFullscreen from '$lib/components/tour/TourModeFullscreen.svelte'
   import { theShip } from '$lib/tour/blueprint'
   import { EMPTY_WORLD } from '$lib/tour/hatsu'
   import { interiorPoint } from '$lib/tour/geometry'
@@ -421,6 +422,7 @@
 />
 
 <div class="relative h-screen w-full overflow-hidden bg-black text-white">
+  <TourModeFullscreen />
   <HuntAudioControl locale={$locale} />
   <div class="sr-only" aria-live="polite" aria-atomic="true">
     {#if finished}

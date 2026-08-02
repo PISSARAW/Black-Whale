@@ -3,6 +3,7 @@
   import { centroid } from '$lib/tour/hatsu'
   import { theShip } from '$lib/tour/blueprint'
   import TourScene from '$lib/components/tour/TourScene.svelte'
+  import TourModeFullscreen from '$lib/components/tour/TourModeFullscreen.svelte'
   import { locale, t } from '$lib/i18n'
   import {
     evaluateHypothesis,
@@ -430,6 +431,7 @@
 </svelte:head>
 
 <div class="relative h-screen w-full overflow-hidden bg-[#050809] font-sans text-[#f4ead4]">
+  <TourModeFullscreen />
   <TourScene
     {ship}
     bind:tierId

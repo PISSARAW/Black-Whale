@@ -40,6 +40,26 @@ describe('what a quiet ship shows', () => {
   })
 })
 
+describe('Silent Majority in the tour', () => {
+  it('uses the shared ritual human instead of the legacy puppet', () => {
+    const world = cast(EMPTY_WORLD, 'snakes', furnished.id).world
+    const figures = apparitionsOn(ship, world).filter((seen) =>
+      seen.id.startsWith('silent-majority:'),
+    )
+
+    expect(figures).toHaveLength(world.snakes?.rooms.length ?? 0)
+    expect(figures.length).toBeGreaterThan(0)
+    expect(of(world, 'puppet')).toHaveLength(0)
+    for (const figure of figures) {
+      expect(figure.kind).toBe('avatar')
+      expect(figure.human).toMatchObject({
+        role: 'silent-majority',
+        identity: 'silent-majority',
+      })
+    }
+  })
+})
+
 describe('the book', () => {
   const walking = { at: [0, 0] as [number, number], tierId: furnished.tierId }
   const dealt = openTheBook(() => 0)

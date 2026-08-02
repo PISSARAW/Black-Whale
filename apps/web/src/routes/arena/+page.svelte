@@ -127,6 +127,8 @@
       stage: actorStage(),
       human: {
         role: 'fighter',
+        identity: `arena:${opponentDoctrine}`,
+        alert: threatened,
         pose:
           game.opponent.condition === 'down' || game.opponent.condition === 'ko'
             ? 'fallen'

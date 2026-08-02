@@ -96,6 +96,8 @@ export function hunterFigure(sighting: Sighting): Apparition | null {
     stage: stageOf(sighting),
     human: {
       role: 'hunter',
+      identity: hunter.profileId,
+      alert: hunter.mode === 'search',
       pose:
         hunter.held > 0
           ? 'held'

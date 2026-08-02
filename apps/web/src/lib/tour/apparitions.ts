@@ -180,9 +180,20 @@ export interface Apparition {
   stage: number
   /** Visual direction for the shared human figure used by tour-derived games. */
   human?: {
-    role: 'witness' | 'guard' | 'nen-guard' | 'hunter' | 'fighter' | 'steward' | 'victim'
+    role:
+      | 'witness'
+      | 'guard'
+      | 'nen-guard'
+      | 'hunter'
+      | 'fighter'
+      | 'steward'
+      | 'victim'
+      | 'silent-majority'
     pose: 'idle' | 'walk' | 'listen' | 'search' | 'held' | 'guard' | 'attack' | 'fallen'
     aura?: 'none' | 'ten' | 'ren' | 'zetsu'
+    /** Stable identity seed: named character when known, otherwise apparition id. */
+    identity?: string
+    alert?: boolean
   }
   /**
    * Whether only Gyo shows it.
@@ -871,27 +882,30 @@ export function apparitionsOn(ship: Ship, world: TourWorld, walk: Walk = {}): Ap
     }
   }
 
-  // Kalluto, once in each room the snakes are loose in. Not an effect on the
-  // room: a person standing in it, who does not stay standing in one place —
-  // the scene moves her about, takes her away and puts her back. `spread` is
-  // how much of the room she has to move in without leaving it.
+  // Silent Majority, once in each room covered by the curse. The shared human
+  // builder supplies its fixed mask, ritual robe and black bob.
   for (const spaceId of world.snakes?.rooms ?? []) {
     const space = spaceOf(spaceId)
     const measured = space ? room(ship, space) : null
     if (!space || !measured) continue
     const [station] = stationsIn(space, 1, landing(space))
     found.push({
-      id: `puppet:${spaceId}`,
-      kind: 'puppet',
+      id: `silent-majority:${spaceId}`,
+      kind: 'avatar',
       spaceId: space.id,
       tierId: space.tierId,
       at: station.at,
       y: measured.floor,
-      size: 0.85,
+      size: 0.42,
       colour: PUPPET,
       stage: 0,
+      human: {
+        role: 'silent-majority',
+        identity: 'silent-majority',
+        pose: 'idle',
+        aura: 'none',
+      },
       hidden: false,
-      spread: station.water,
     })
   }
 

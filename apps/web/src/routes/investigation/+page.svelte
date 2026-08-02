@@ -218,8 +218,8 @@
     }))
   })
 
-  const extras = $derived.by(() =>
-    interactables.map(
+  const extras = $derived.by(() => {
+    const people = interactables.map(
       (subject) =>
         ({
           id: subject.id,
@@ -233,14 +233,37 @@
           stage: 0,
           human: {
             role: subject.isDead ? 'victim' : 'witness',
+            identity: `investigation:${subject.id}`,
             pose: subject.isDead ? 'fallen' : 'idle',
             aura: 'none',
           },
           hidden: false,
           pick: true,
         }) as Apparition,
-    ),
-  )
+    )
+    const furykov = interactables.find((subject) => subject.id === 'furykov')
+    if (!furykov) return people
+    const doll: Apparition = {
+      id: 'silent-majority-doll',
+      kind: 'avatar',
+      colour: 0x171717,
+      size: 0.42,
+      y: 0,
+      at: [furykov.position[0], furykov.position[1] + 0.85],
+      tierId: SCENE_TIER_ID,
+      spaceId: SCENE_SPACE_ID,
+      stage: 0,
+      human: {
+        role: 'silent-majority',
+        identity: 'silent-majority',
+        pose: 'idle',
+        aura: 'none',
+      },
+      hidden: false,
+      pick: false,
+    }
+    return [...people, doll]
+  })
 
   function discover(ids: string[]) {
     const newIds = ids.filter((id) => !discoveredIds.includes(id))

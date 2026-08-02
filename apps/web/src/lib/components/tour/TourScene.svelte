@@ -1613,6 +1613,7 @@
         flown?: import('three').Vector3
         /** Near and far representations of a shared human, when this is one. */
         humanLod?: { near: import('three').Group; far: import('three').Group }
+        humanAnimate?: (seconds: number) => void
       }
 
       // A plain record for the same reason the solids are one: the render loop
@@ -1801,11 +1802,13 @@
         }
 
         let humanLod: Shown['humanLod']
+        let humanAnimate: Shown['humanAnimate']
         if (seen.kind === 'avatar' || seen.kind === 'combatant') {
           const human = buildHumanFigure({ THREE, glow, seen })
           root.add(human.root)
           turns = human.turns
           humanLod = human.lod
+          humanAnimate = human.animate
         }
 
         if (seen.kind === 'card') {
@@ -3601,6 +3604,7 @@
           pick: seen.pick ?? false,
           pane,
           humanLod,
+          humanAnimate,
         }
       }
 
@@ -3636,7 +3640,7 @@
           standing[seen.id] = true
           // Everything the geometry depends on. Position is not in it: a thing
           // that moved is moved, not rebuilt.
-          const key = `${seen.kind}|${seen.stage}|${seen.colour}|${seen.size}|${seen.hidden}|${seen.pair?.spaceId ?? ''}|${seen.climb ?? ''}|${seen.face ?? ''}`
+          const key = `${seen.kind}|${seen.stage}|${seen.colour}|${seen.size}|${seen.hidden}|${seen.pair?.spaceId ?? ''}|${seen.climb ?? ''}|${seen.face ?? ''}|${seen.human ? JSON.stringify(seen.human) : ''}`
           let held = apparitions[seen.id]
           // The two things about a thing that outlive the thing: which way it
           // was looking, and where it had got to. Everything else a mesh knows
@@ -4044,6 +4048,7 @@
               camera.position.x - held.root.position.x,
               camera.position.z - held.root.position.z,
             )
+            if (near) held.humanAnimate?.(seconds)
             continue
           }
 

@@ -95,6 +95,8 @@
       stage: 0,
       human: {
         role: witness.id === 'steward' ? 'steward' : witness.id === 'nenGuard' ? 'nen-guard' : 'guard',
+        identity: `infiltration:${witness.id}`,
+        alert: witness.challenged || witness.investigating !== null,
         pose: witness.investigating ? 'search' : 'walk',
         aura: witness.usesEn ? 'ten' : 'none',
       },

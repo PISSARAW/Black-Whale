@@ -63,6 +63,7 @@
   import { contractMessages } from '$lib/hunt/contracts/messages'
   import { carryIntoStage, nextStage } from '$lib/hunt/contracts/transition'
   import { capabilitiesOf, type HuntVow } from '$lib/hunt/nen/advanced'
+  import { completeCampaignRun, initialCampaign, loadCampaign, saveCampaign } from '$lib/hunt/campaign'
   import {
     DEFAULT_HUNTER_PROFILE,
     HUNTER_PROFILES,
@@ -118,6 +119,8 @@
   let selectedHatsu = $state<HuntHatsuId>(DEFAULT_HUNT_HATSU)
   let selectedHunter = $state<HunterProfileId>(DEFAULT_HUNTER_PROFILE)
   let selectedVow = $state<HuntVow | null>(null)
+  let campaign = $state.raw(initialCampaign())
+  let campaignRecorded = false
   let activeContract = $derived(huntContractById(selectedContract) ?? contracts[0])
   let availableHatsuProfiles = $derived(
     hatsuProfiles.filter((profile) => activeContract.allowedHatsu.includes(profile.id)),
@@ -192,6 +195,7 @@
     const contract = huntContractById(id)
     if (!contract) return
     selectedContract = contract.id
+    campaignRecorded = false
     contractStage = 0
     if (!contract.allowedHatsu.includes(selectedHatsu)) selectedHatsu = contract.allowedHatsu[0]
     if (!contract.hunterProfiles.includes(selectedHunter)) {
@@ -416,6 +420,7 @@
       }
       if (!beforeTick.duel && game.duel) playHuntCue('contact')
       if (!huntIsOver(beforeTick.outcome) && huntIsOver(game.outcome)) playHuntCue('outcome')
+      if (huntIsOver(game.outcome) && !campaignRecorded) recordCampaignRun()
       for (const event of game.log.slice(beforeTick.log.length)) {
         if (event.kind === 'feltEn') playHuntCue('en')
         if (event.kind === 'sprungEntrave') playHuntCue('trap')
@@ -443,6 +448,7 @@
 
   onMount(() => {
     calm = prefersReducedMotion()
+    campaign = loadCampaign(localStorage)
     window.addEventListener('keydown', onKeyDown)
     document.addEventListener('visibilitychange', resetFrameClock)
     window.addEventListener('pagehide', closeHuntAudio)
@@ -463,6 +469,18 @@
     owed = 0
   }
 
+  function recordCampaignRun() {
+    campaignRecorded = true
+    campaign = completeCampaignRun(campaign, {
+      contractId: selectedContract,
+      hatsu: game.hatsu.id,
+      outcome: game.outcome,
+      seconds: game.clock,
+      wounds: game.advancedNen.wounds,
+    })
+    saveCampaign(localStorage, campaign)
+  }
+
   function useStandardNen(action: NenTechniqueAction) {
     if (!game.duel) {
       if ((action.type === 'TEN' && game.player.nen === 'zetsu') || (action.type === 'ZETSU' && game.player.nen !== 'zetsu')) send({ type: 'ZETSU' })
@@ -479,6 +497,7 @@
   }
 
   function again() {
+    campaignRecorded = false
     game = freshGame()
     position = game.player.position
     owed = 0

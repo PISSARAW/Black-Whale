@@ -17,6 +17,8 @@
   import type { TelemetryEvent, TelemetryKind } from '$lib/hunt/telemetry'
   import { spentBy } from '$lib/hunt/telemetry'
   import type { AuraPool } from '$lib/hunt/aura'
+  import type { Arena } from '$lib/hunt/arena'
+  import HuntTrajectory from './HuntTrajectory.svelte'
 
   interface Props {
     report: {
@@ -29,6 +31,7 @@
       sprung: number
       recovered: number
       roomName: (spaceId: string | null) => string
+      arena: Arena
     }
     labels: {
       title: string
@@ -47,9 +50,10 @@
       kind: Partial<Record<TelemetryKind, string>>
     }
     outcomeLabel: string
+    trajectoryLabels: { title: string; entered: string }
   }
 
-  let { report, labels, outcomeLabel }: Props = $props()
+  let { report, labels, outcomeLabel, trajectoryLabels }: Props = $props()
 
   let clock = $derived((seconds: number) => {
     const whole = Math.floor(seconds)
@@ -94,6 +98,13 @@
       {report.hunterPool.available > 0 ? labels.intact : labels.kind.duelClosed}
     </dd>
   </dl>
+
+  <HuntTrajectory
+    arena={report.arena}
+    log={report.log}
+    roomName={report.roomName}
+    labels={{ ...trajectoryLabels, ...labels.actor }}
+  />
 
   <h3 class="mt-10 text-xs uppercase tracking-[0.35em] text-white/40">{labels.journal}</h3>
 

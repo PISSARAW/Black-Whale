@@ -50,6 +50,7 @@
   import { tutorialStep } from '$lib/hunt/tutorial'
   import { tutorialMessages } from '$lib/hunt/tutorialMessages'
   import { terrainMessages } from '$lib/hunt/terrainMessages'
+  import { debriefMessages } from '$lib/hunt/debriefMessages'
   import {
     DEFAULT_HUNTER_PROFILE,
     HUNTER_PROFILES,
@@ -488,8 +489,10 @@
           recovered: game.ledger.placements.filter((placement) => placement.state === 'recovered')
             .length,
           roomName,
+          arena,
         }}
         labels={$t.hunt.debrief}
+        trajectoryLabels={debriefMessages($locale)}
         outcomeLabel={$t.hunt.outcome[
           game.outcome === 'playing' || game.outcome === 'contact' ? 'timeUp' : game.outcome
         ]}

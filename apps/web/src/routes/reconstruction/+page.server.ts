@@ -1,5 +1,6 @@
 import { prisma } from '$lib/server/db'
 import { readSpoilerLimit } from '$lib/server/spoiler'
+import { resolveReconstructionSources } from '$lib/reconstruction/sourceView'
 import type { PageServerLoad } from './$types'
 
 export const load: PageServerLoad = async ({ cookies }) => {
@@ -40,6 +41,9 @@ export const load: PageServerLoad = async ({ cookies }) => {
             locationId: true,
             precision: true,
             certainty: true,
+            sources: {
+              select: { id: true, chapterNumber: true, page: true, description: true },
+            },
             body: {
               select: {
                 label: true,
@@ -95,6 +99,18 @@ export const load: PageServerLoad = async ({ cookies }) => {
           },
         }),
       ])
+
+    const referencedSourceIds = [
+      ...worldEvents.flatMap((event) => event.sourceIds),
+      ...presences.flatMap((presence) => presence.sources.map((source) => source.id)),
+    ]
+    const sourceRecords = referencedSourceIds.length
+      ? await prisma.source.findMany({
+          where: { id: { in: [...new Set(referencedSourceIds)] } },
+          select: { id: true, chapterNumber: true, page: true, description: true },
+        })
+      : []
+    const sources = resolveReconstructionSources(referencedSourceIds, sourceRecords)
 
     const locationSlugs = Object.fromEntries(
       locations.map((location) => [location.id, location.slug]),
@@ -154,6 +170,7 @@ export const load: PageServerLoad = async ({ cookies }) => {
       sceneCharacters,
       locationSlugs,
       locations,
+      sources,
       spoilerLimit: maxChapter,
     }
   } catch (err: unknown) {
@@ -167,6 +184,7 @@ export const load: PageServerLoad = async ({ cookies }) => {
       sceneCharacters: [],
       locationSlugs: {},
       locations: [],
+      sources: [],
       spoilerLimit: maxChapter,
     }
   }

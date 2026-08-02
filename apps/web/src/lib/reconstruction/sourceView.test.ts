@@ -1,5 +1,9 @@
 import { describe, expect, it } from 'vitest'
-import { projectReconstructionSource, safeInternalSourceHref } from './sourceView'
+import {
+  projectReconstructionSource,
+  resolveReconstructionSources,
+  safeInternalSourceHref,
+} from './sourceView'
 
 describe('ReconstructionSourceView', () => {
   it('projects a manga source without inventing a missing page', () => {
@@ -39,5 +43,31 @@ describe('ReconstructionSourceView', () => {
     expect(
       projectReconstructionSource({ id: 'invalid', chapterNumber: 0, page: 1.5 }),
     ).toMatchObject({ chapterNumber: null, page: null })
+  })
+
+  it('resolves known records and preserves an honest unresolved fallback', () => {
+    expect(
+      resolveReconstructionSources(
+        ['source-401', 'actor-id', 'source-401'],
+        [{ id: 'source-401', chapterNumber: 401, page: 12, description: 'Corridor' }],
+      ),
+    ).toEqual([
+      {
+        id: 'source-401',
+        chapterNumber: 401,
+        page: 12,
+        description: 'Corridor',
+        kind: 'manga',
+        href: '/timeline?chapter=401',
+      },
+      {
+        id: 'actor-id',
+        chapterNumber: null,
+        page: null,
+        description: null,
+        kind: 'unresolved',
+        href: null,
+      },
+    ])
   })
 })

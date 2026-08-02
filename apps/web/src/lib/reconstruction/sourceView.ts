@@ -47,6 +47,22 @@ export function projectReconstructionSource(
   }
 }
 
+export function resolveReconstructionSources(
+  sourceIds: readonly string[],
+  records: readonly ReconstructionSourceRecord[],
+): ReconstructionSourceView[] {
+  const byId = new Map(records.map((record) => [record.id, record]))
+  return [...new Set(sourceIds.map((id) => id.trim()).filter(Boolean))].map((id) => {
+    const record = byId.get(id)
+    if (!record) return projectReconstructionSource({ id })
+    const chapter = validPositiveInteger(record.chapterNumber)
+    return projectReconstructionSource(record, {
+      kind: 'manga',
+      href: chapter === null ? null : `/timeline?chapter=${chapter}`,
+    })
+  })
+}
+
 function validPositiveInteger(value: number | null | undefined): number | null {
   return Number.isInteger(value) && Number(value) > 0 ? Number(value) : null
 }

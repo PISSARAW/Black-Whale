@@ -27,6 +27,15 @@ export interface AttackIntent {
   targetAt: Vec2
 }
 
+export interface ElasticTether {
+  id: string
+  owner: CombatSide
+  subject: CombatSide
+  anchor: Vec2 | null
+  restLength: number
+  remaining: number
+}
+
 export interface FighterState {
   aura: number
   capacity: number
@@ -70,6 +79,7 @@ export interface CombatState {
   outcome: MatchOutcome
   lastEvent: CombatEvent | null
   terrain: CombatTerrainPhysics
+  tethers: ElasticTether[]
 }
 
 export interface CombatTerrainPhysics {
@@ -98,7 +108,14 @@ export type CombatAction =
   | { type: 'GUARD'; side: CombatSide }
   | { type: 'FEINT'; side: CombatSide; zone: BodyZone }
   | { type: 'PREPARE_STRIKE'; side: CombatSide; zone: BodyZone }
-  | { type: 'HATSU'; side: CombatSide; effect: ArenaHatsuEffect; zone: BodyZone }
+  | {
+      type: 'HATSU'
+      side: CombatSide
+      effect: ArenaHatsuEffect
+      zone: BodyZone
+      hatsuId?: string
+      targetAt?: Vec2
+    }
   | { type: 'STRIKE'; side: CombatSide; zone: BodyZone }
   | { type: 'KO'; side: CombatSide; zone: BodyZone }
 
@@ -142,6 +159,7 @@ export function initialCombatState(setup: CombatSetup = defaultSetup()): CombatS
     outcome: 'playing',
     lastEvent: null,
     terrain: setup.terrain,
+    tethers: [],
   }
 }
 

@@ -39,6 +39,8 @@
   import { activeHatsu, closeHatsuGate, hatsuPanelOpen, openHatsuGate } from '$lib/nen/hatsuState'
   import type { Apparition } from '$lib/tour/apparitions'
   import type { Space, Vec2, WallSegment } from '$lib/tour/types'
+  import type { Structure } from '$lib/tour/types'
+  import { centroid, structureFootprint } from '$lib/tour/geometry'
   import { breadcrumbSchema } from '$lib/seo/schema'
   import { link, locale, t } from '$lib/i18n'
   import './arena.css'
@@ -55,6 +57,7 @@
   let heading = $state(0)
   let lookPitch = $state(0)
   let aimedExtra = $state<string | null>(null)
+  let aimedSolidAt = $state<Structure | null>(null)
   let currentSpace = $state<Space | null>(null)
   let engaged = $state(false)
   let touch = $state(false)
@@ -203,7 +206,17 @@
       return
     }
     const accepted = command(
-      { type: 'HATSU', side: 'player', effect: hatsuEffect, zone: aimedZone },
+      {
+        type: 'HATSU',
+        side: 'player',
+        effect: hatsuEffect,
+        zone: aimedZone,
+        hatsuId: carriedHatsu?.id,
+        targetAt:
+          carriedHatsu?.id === 'bungee-gum' && aimedSolidAt
+            ? centroid(structureFootprint(aimedSolidAt))
+            : undefined,
+      },
       'hatsu',
     )
     if (accepted) playArenaHatsu(hatsuEffect)
@@ -494,6 +507,7 @@
     bind:heading
     bind:lookPitch
     bind:aimedExtra
+    bind:aimedSolidAt
     bind:currentSpace
     bind:engaged
     bind:touch
@@ -528,6 +542,17 @@
         <small>{$locale === 'fr' ? 'AURA TROUBLÉE' : 'AURA DISTURBANCE'}</small>
         <strong>?</strong>
       {/if}
+    </div>
+  {/if}
+
+  {#if game.tethers.length > 0}
+    <div class="elastic-readout" aria-live="polite">
+      BUNGEE GUM · {game.tethers[0].anchor
+        ? $locale === 'fr'
+          ? 'DÉCOR'
+          : 'TERRAIN'
+        : OPPONENT_DOCTRINES[opponentDoctrine].name}
+      · {game.tethers[0].remaining.toFixed(1)}s
     </div>
   {/if}
 

@@ -100,6 +100,22 @@
     animation: arena-concealed-threat 240ms steps(2) infinite;
   }
 
+  .elastic-readout {
+    position: absolute;
+    z-index: 9;
+    top: calc(50% + 4rem);
+    left: 50%;
+    padding: 0.35rem 0.55rem;
+    border: 1px solid #d08be799;
+    background: #1d0d25cc;
+    color: #e5b7f3;
+    font:
+      600 0.55rem 'IBM Plex Mono',
+      monospace;
+    letter-spacing: 0.1em;
+    transform: translateX(-50%);
+  }
+
   .threat-tag {
     border-color: #e7bd6477 !important;
     color: #f2ce7f !important;

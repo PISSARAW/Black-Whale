@@ -65,7 +65,15 @@ export function combatReducer(state: CombatState, action: CombatAction): CombatS
   if (action.type === 'FEINT')
     return replace(state, action.side, feint(state[action.side], action.zone))
   if (action.type === 'PREPARE_STRIKE') return prepareStrike(state, action.side, action.zone)
-  if (action.type === 'HATSU') return castHatsu(state, action.side, action.effect, action.zone)
+  if (action.type === 'HATSU')
+    return castHatsu(
+      state,
+      action.side,
+      action.effect,
+      action.zone,
+      action.hatsuId,
+      action.targetAt,
+    )
   if (action.type === 'STRIKE') {
     return strike({ state, side: action.side, zone: action.zone, technique: 'strike' })
   }
@@ -83,7 +91,7 @@ function tick(state: CombatState, dt: number): CombatState {
     player: advanceFighter(state.player, state.opponent, context),
     opponent: advanceFighter(state.opponent, state.player, context),
   }
-  return ringOut(landReadyKo(landReadyIntent(advanced)))
+  return ringOut(landReadyKo(landReadyIntent(advanceTethers(advanced, dt))))
 }
 
 interface TickContext {
@@ -179,6 +187,8 @@ function castHatsu(
   side: CombatSide,
   effect: ArenaHatsuEffect,
   zone: BodyZone,
+  hatsuId?: string,
+  targetAt?: Vec2,
 ): CombatState {
   const fighter = state[side]
   if (fighter.condition !== 'ready' || fighter.cooldown > 0 || fighter.aura < HATSU_COST)
@@ -186,6 +196,27 @@ function castHatsu(
   const paid = { ...fighter, aura: fighter.aura - HATSU_COST, intent: null }
   let current = replace(state, side, paid)
   const rivalSide = otherSide(side)
+
+  if (hatsuId === 'bungee-gum') {
+    const anchor = targetAt ?? state[rivalSide].position
+    const subject = targetAt ? side : rivalSide
+    const gap = distance(state[subject].position, anchor)
+    if (gap > 10) return state
+    return {
+      ...replace(current, side, { ...paid, cooldown: 0.8 }),
+      tethers: [
+        ...state.tethers.filter((tether) => tether.owner !== side),
+        {
+          id: `bungee-${side}`,
+          owner: side,
+          subject,
+          anchor: targetAt ?? null,
+          restLength: Math.max(0.8, gap * 0.6),
+          remaining: 8,
+        },
+      ],
+    }
+  }
 
   if (effect === 'bind') {
     if (distance(fighter.position, state[rivalSide].position) > 7) return state
@@ -217,6 +248,31 @@ function castHatsu(
     power: effect === 'impact' ? 1.65 : 0.82,
     range: effect === 'barrage' ? 9 : 2.7,
   })
+}
+
+function advanceTethers(state: CombatState, dt: number): CombatState {
+  let current = state
+  const live = state.tethers
+    .map((tether) => ({ ...tether, remaining: tether.remaining - dt }))
+    .filter((tether) => tether.remaining > 0)
+  for (const tether of live) {
+    const subject = current[tether.subject]
+    const anchor = tether.anchor ?? current[otherSide(tether.subject)].position
+    const gap = distance(subject.position, anchor)
+    if (gap <= tether.restLength) continue
+    const direction = normalise([anchor[0] - subject.position[0], anchor[1] - subject.position[1]])
+    const pull = Math.min(gap - tether.restLength, 2.8 * dt)
+    const proposed: Vec2 = [
+      subject.position[0] + direction[0] * pull,
+      subject.position[1] + direction[1] * pull,
+    ]
+    const position = resolveMovement(subject.position, proposed, {
+      walls: wallsNear(current.terrain.walls, subject.position, pull + 1),
+      radius: 0.45,
+    })
+    current = replace(current, tether.subject, { ...subject, position })
+  }
+  return { ...current, tethers: live }
 }
 
 function landReadyIntent(state: CombatState): CombatState {

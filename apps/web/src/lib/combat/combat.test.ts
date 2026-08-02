@@ -201,6 +201,27 @@ describe('qualitative exchanges', () => {
     expect(state.opponent.intent).toBeNull()
   })
 
+  it('keeps Bungee Gum as a persistent elastic tether', () => {
+    let state = initialCombatState()
+    state = {
+      ...state,
+      player: { ...state.player, position: [0, 0] },
+      opponent: { ...state.opponent, position: [6, 0] },
+    }
+    state = combatReducer(state, {
+      type: 'HATSU',
+      side: 'player',
+      effect: 'bind',
+      hatsuId: 'bungee-gum',
+      zone: 'torso',
+    })
+    expect(state.tethers).toHaveLength(1)
+    const before = state.opponent.position[0]
+    state = combatReducer(state, { type: 'TICK', dt: 1 })
+    expect(state.opponent.position[0]).toBeLessThan(before)
+    expect(state.tethers[0].remaining).toBe(7)
+  })
+
   it('lets a barrage connect outside ordinary striking range', () => {
     let state = initialCombatState()
     state = {

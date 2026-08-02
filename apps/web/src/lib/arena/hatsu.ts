@@ -1,5 +1,6 @@
 import type { HatsuInteractionKind, HatsuProfile } from '$lib/nen/hatsuRegistry'
 import type { ArenaHatsuEffect } from '../combat/types'
+import { arenaDefinition } from './hatsu/contract'
 
 const EFFECTS: Partial<Record<HatsuInteractionKind, ArenaHatsuEffect>> = {
   elastic: 'bind',
@@ -14,7 +15,7 @@ const EFFECTS: Partial<Record<HatsuInteractionKind, ArenaHatsuEffect>> = {
 }
 
 export function arenaHatsuEffect(profile: HatsuProfile | null): ArenaHatsuEffect | null {
-  return profile ? (EFFECTS[profile.kind] ?? null) : null
+  return arenaDefinition(profile)?.effect ?? (profile ? (EFFECTS[profile.kind] ?? null) : null)
 }
 
 export function worksInArena(kind: HatsuInteractionKind): boolean {

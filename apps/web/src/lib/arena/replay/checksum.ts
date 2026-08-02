@@ -12,6 +12,11 @@ export function stateChecksum(state: CombatState): string {
     opponent: fighterDigest(state.opponent),
     lastEvent: state.lastEvent,
     terrain: state.terrain.id,
+    tethers: state.tethers.map((tether) => ({
+      ...tether,
+      restLength: rounded(tether.restLength),
+      remaining: rounded(tether.remaining),
+    })),
   })
   let hash = 0x811c9dc5
   for (let index = 0; index < stable.length; index += 1) {

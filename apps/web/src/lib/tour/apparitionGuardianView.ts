@@ -205,12 +205,149 @@ function chimera(seen: Apparition, { THREE, glow, root }: BasicApparitionContext
   }
   root.add(crown)
   return head
+}
+
+function monster(seen: Apparition, { THREE, glow, root }: BasicApparitionContext): Object3D {
+  const hide = glow(seen.colour, 0.85)
+  const climb = seen.climb ?? seen.size
+  const mass = new THREE.Mesh(new THREE.SphereGeometry(seen.size, 10, 8), hide)
+  mass.scale.set(1, Math.max(0.5, climb / (seen.size * 2)), 0.9)
+  mass.position.y = climb / 2
+  root.add(mass)
+  for (let i = 0; i < 9; i++) {
+    const angle = (Math.PI * 2 * i) / 9
+    const spine = new THREE.Mesh(
+      new THREE.ConeGeometry(seen.size * 0.14, seen.size * 0.9, 4),
+      hide,
+    )
+    spine.position.set(
+      Math.cos(angle) * seen.size * 0.7,
+      climb * (0.45 + (i % 3) * 0.2),
+      Math.sin(angle) * seen.size * 0.7,
+    )
+    spine.rotation.z = -Math.cos(angle) * 1.1
+    spine.rotation.x = Math.sin(angle) * 1.1
+    root.add(spine)
+  }
+  // Two eyes, because the thing it was had none and that is the tell.
+  const glare = glow(0xffe0f0, 1)
+  for (const side of [-1, 1]) {
+    const eye = new THREE.Mesh(new THREE.SphereGeometry(seen.size * 0.13, 8, 6), glare)
+    eye.position.set(seen.size * 0.6, climb * 0.62, side * seen.size * 0.3)
+    root.add(eye)
+  }
+  return root
+
+}
+
+function toad(seen: Apparition, { THREE, glow, root }: BasicApparitionContext): Object3D {
+  const hide = glow(seen.colour, 0.82)
+  const raised = glow(seen.colour, 0.98)
+  const body = new THREE.Mesh(new THREE.SphereGeometry(seen.size, 14, 10), hide)
+  body.scale.set(1.48, 0.82, 1.14)
+  body.position.z = -seen.size * 0.12
+  root.add(body)
+  const jaw = new THREE.Mesh(new THREE.SphereGeometry(seen.size * 0.72, 12, 8), hide)
+  jaw.scale.set(1.2, 0.5, 0.72)
+  jaw.position.set(0, -seen.size * 0.46, seen.size * 0.82)
+  root.add(jaw)
+  for (let i = 0; i < 14; i++) {
+    const spine = new THREE.Mesh(
+      new THREE.BoxGeometry(
+        seen.size * 0.14,
+        seen.size * (0.4 + (i % 4) * 0.11),
+        seen.size * 0.14,
+      ),
+      raised,
+    )
+    const angle = Math.PI * (i / 13)
+    spine.position.set(
+      Math.cos(angle) * seen.size * 1.16,
+      seen.size * (0.68 + (i % 3) * 0.04),
+      -Math.sin(angle) * seen.size * 0.72,
+    )
+    spine.rotation.z = Math.cos(angle) * 0.38
+    root.add(spine)
+  }
+  const eyes = new THREE.Group()
+  for (const side of [-1, 1]) {
+    const socket = new THREE.Mesh(
+      new THREE.TorusGeometry(seen.size * 0.15, seen.size * 0.035, 6, 14),
+      raised,
+    )
+    socket.position.set(side * seen.size * 0.58, seen.size * 0.2, seen.size * 1.13)
+    eyes.add(socket)
+    const pupil = new THREE.Mesh(
+      new THREE.SphereGeometry(seen.size * 0.065, 8, 6),
+      glow(0x1b2418, 1),
+    )
+    pupil.position.set(side * seen.size * 0.58, seen.size * 0.2, seen.size * 1.15)
+    eyes.add(pupil)
+  }
+  root.add(eyes)
+  const mouth = new THREE.Mesh(
+    new THREE.BoxGeometry(seen.size * 0.72, seen.size * 0.035, seen.size * 0.035),
+    glow(0x1b2418, 1),
+  )
+  mouth.position.set(0, -seen.size * 0.37, seen.size * 1.15)
+  root.add(mouth)
+
+  for (const side of [-1, 1]) {
+    for (let wheel = 0; wheel < 2; wheel++) {
+      const rim = new THREE.Mesh(
+        new THREE.TorusGeometry(
+          seen.size * (0.31 - wheel * 0.04),
+          seen.size * 0.075,
+          7,
+          16,
+        ),
+        raised,
+      )
+      rim.rotation.y = Math.PI / 2
+      rim.position.set(
+        side * seen.size * 1.32,
+        -seen.size * (0.2 + wheel * 0.38),
+        seen.size * (0.18 - wheel * 0.28),
+      )
+      root.add(rim)
+    }
+  }
+
+  for (let i = 0; i < 28; i++) {
+    const angle = i * 2.399
+    const wart = new THREE.Mesh(
+      new THREE.SphereGeometry(seen.size * (0.035 + (i % 3) * 0.012), 6, 4),
+      raised,
+    )
+    wart.position.set(
+      Math.cos(angle) * seen.size * (0.72 + (i % 5) * 0.1),
+      seen.size * (0.68 - (i % 4) * 0.23),
+      seen.size * (0.72 + Math.sin(angle) * 0.28),
+    )
+    root.add(wart)
+  }
+
+  const tail = new THREE.Group()
+  tail.name = 'tubeppa-tail'
+  const cable = new THREE.Mesh(
+    new THREE.CylinderGeometry(seen.size * 0.035, seen.size * 0.035, seen.size * 2.2, 7),
+    raised,
+  )
+  cable.rotation.z = Math.PI / 2
+  cable.position.set(seen.size * 1.85, -seen.size * 0.45, -seen.size * 0.42)
+  tail.add(cable)
+  const paddle = new THREE.Mesh(new THREE.CircleGeometry(seen.size * 0.34, 8), hide)
+  paddle.position.set(seen.size * 2.95, -seen.size * 0.45, -seen.size * 0.42)
+  paddle.rotation.y = -0.25
+  tail.add(paddle)
+  root.add(tail)
+  return root
 
 }
 
 const BUILDERS: Partial<
   Record<Apparition['kind'], (seen: Apparition, context: BasicApparitionContext) => Object3D>
-> = { medusa, chimera }
+> = { medusa, chimera, monster, toad }
 
 
 export function buildGuardianApparition(

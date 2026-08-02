@@ -4,8 +4,25 @@ import type { Polygon, Space, Structure, Vec2, WallSegment } from '../tour/types
 
 export const BANQUET_HALL_ID = 'tier-1-banquet-hall'
 export const SCREENING_ROOM_ID = 'tier-2-screening-room'
-export const ARENA_TERRAIN_IDS = [BANQUET_HALL_ID, SCREENING_ROOM_ID] as const
+export const VIP_CASINO_ID = 'tier-1-vip-casino'
+export const OBSERVATION_DECK_ID = 'tier-3-observation-deck'
+export const ARENA_TERRAIN_IDS = [
+  BANQUET_HALL_ID,
+  SCREENING_ROOM_ID,
+  VIP_CASINO_ID,
+  OBSERVATION_DECK_ID,
+] as const
 export type ArenaTerrainId = (typeof ARENA_TERRAIN_IDS)[number]
+
+export const ARENA_TERRAINS: ReadonlyArray<{
+  id: ArenaTerrainId
+  tacticalRole: 'cover' | 'open' | 'lanes'
+}> = [
+  { id: BANQUET_HALL_ID, tacticalRole: 'cover' },
+  { id: SCREENING_ROOM_ID, tacticalRole: 'lanes' },
+  { id: VIP_CASINO_ID, tacticalRole: 'cover' },
+  { id: OBSERVATION_DECK_ID, tacticalRole: 'open' },
+]
 const SPAWN_CLEARANCE = 1.5
 const SAMPLE_STEP = 2.5
 const OPENING_DISTANCE = 24

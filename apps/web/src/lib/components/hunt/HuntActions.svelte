@@ -1,14 +1,10 @@
 <script lang="ts">
-  import type { NenState } from '$lib/hunt/nen/states'
   import type { HuntHatsuId } from '$lib/hunt/hatsu'
 
   interface Props {
-    nen: NenState
-    canSweep: boolean
     canLay: boolean
     canTake: boolean
     hatsuId: HuntHatsuId
-    canHatsu: boolean
     labels: {
       sweep: string
       zetsu: string
@@ -18,26 +14,17 @@
       hint: string
       hatsu: Record<HuntHatsuId, string>
     }
-    onSweep: () => void
-    onToggleNen: () => void
     onLay: () => void
     onTake: () => void
-    onHatsu: () => void
   }
 
   let {
-    nen,
-    canSweep,
     canLay,
     canTake,
     hatsuId,
-    canHatsu,
     labels,
-    onSweep,
-    onToggleNen,
     onLay,
     onTake,
-    onHatsu,
   }: Props = $props()
 </script>
 
@@ -45,24 +32,9 @@
   class="absolute inset-x-0 bottom-3 z-20 flex flex-wrap justify-center gap-2 px-3 sm:inset-x-auto sm:right-6 sm:bottom-6 sm:max-w-md sm:justify-end"
   aria-label={labels.hint}
 >
-  <button class="hunt-action" disabled={!canSweep} onclick={onSweep}>
-    <kbd>F</kbd><span>{labels.sweep}</span>
-  </button>
-  <button
-    class="hunt-action"
-    class:active={nen === 'zetsu'}
-    aria-pressed={nen === 'zetsu'}
-    onclick={onToggleNen}
-  >
-    <kbd>X</kbd><span>{nen === 'zetsu' ? labels.ten : labels.zetsu}</span>
-  </button>
   {#if hatsuId === 'bungee-gum'}
     <button class="hunt-action" disabled={!canLay} onclick={onLay}>
       <kbd>V</kbd><span>{labels.lay}</span>
-    </button>
-  {:else}
-    <button class="hunt-action hatsu" disabled={!canHatsu} onclick={onHatsu}>
-      <kbd>H</kbd><span>{labels.hatsu[hatsuId]}</span>
     </button>
   {/if}
   {#if canTake}

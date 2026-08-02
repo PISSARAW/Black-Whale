@@ -52,7 +52,6 @@
   import HuntBriefing from '$lib/components/hunt/HuntBriefing.svelte'
   import HuntTutorial from '$lib/components/hunt/HuntTutorial.svelte'
   import HuntAudioControl from '$lib/components/hunt/HuntAudioControl.svelte'
-  import AdvancedNenActions from '$lib/components/hunt/AdvancedNenActions.svelte'
   import { closeHuntAudio, playHuntCue } from '$lib/hunt/audio'
   import { tutorialStep } from '$lib/hunt/tutorial'
   import { tutorialMessages } from '$lib/hunt/tutorialMessages'
@@ -631,25 +630,12 @@
 
   {#if briefed && !inDuel && !finished}
     <HuntActions
-      nen={game.player.nen}
-      {canSweep}
       {canLay}
       {canTake}
       hatsuId={game.hatsu.id}
-      {canHatsu}
       labels={$t.hunt.actions}
-      onSweep={() => send({ type: 'SWEEP' })}
-      onToggleNen={() => send({ type: 'ZETSU' })}
       onLay={() => send({ type: 'LAY' })}
       onTake={() => send({ type: 'TAKE' })}
-      onHatsu={() => send({ type: 'HATSU' })}
-    />
-    <AdvancedNenActions
-      state={game.advancedNen}
-      locale={$locale}
-      canShu={game.ledger.pool.available >= 10 && game.player.spaceId !== null}
-      onRen={() => send({ type: 'REN' })}
-      onShu={() => send({ type: 'SHU', itemId: `room:${game.player.spaceId}` })}
     />
   {/if}
 

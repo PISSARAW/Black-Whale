@@ -6,7 +6,11 @@ describe('investigation verdict', () => {
     const verdict = evaluateHypothesis(room1014Case, 'hidden-nen', ['wounds', 'bill-testimony'])
 
     expect(verdict.status).toBe('plausible')
-    expect(verdict.missing.map((evidence) => evidence.id)).toEqual(['sealed-room', 'nen-residue'])
+    expect(verdict.missing.map((evidence) => evidence.id)).toEqual([
+      'death-window',
+      'loberry-vision',
+      'nen-residue',
+    ])
   })
 
   it('solves the case when the hidden Nen hypothesis is fully supported', () => {
@@ -24,10 +28,10 @@ describe('investigation verdict', () => {
     const verdict = evaluateHypothesis(room1014Case, 'ordinary-weapon', [
       'wounds',
       'bill-testimony',
-      'sealed-room',
+      'loberry-vision',
     ])
 
     expect(verdict.status).toBe('contradicted')
-    expect(verdict.contradictions).toHaveLength(2)
+    expect(verdict.contradictions).toHaveLength(1)
   })
 })

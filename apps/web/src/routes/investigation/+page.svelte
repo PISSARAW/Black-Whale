@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { onMount } from 'svelte'
   import { centroid } from '$lib/tour/hatsu'
   import { theShip } from '$lib/tour/blueprint'
   import TourScene from '$lib/components/tour/TourScene.svelte'
@@ -10,6 +11,13 @@
     type InvestigationTab,
     type Verdict,
   } from '$lib/investigation/case'
+  import {
+    INVESTIGATION_STORAGE_KEY,
+    freshProgress,
+    parseProgress,
+    serializeProgress,
+    type InvestigationLogEntry,
+  } from '$lib/investigation/progress'
   import type { Apparition } from '$lib/tour/apparitions'
   import type { Space, Vec2 } from '$lib/tour/types'
 
@@ -29,6 +37,9 @@
   let selectedEvidenceIds = $state<string[]>([])
   let selectedHypothesisId = $state<string | null>(null)
   let verdict = $state<Verdict | null>(null)
+  let briefingOpen = $state(true)
+  let solved = $state(false)
+  let log = $state<InvestigationLogEntry[]>([])
 
   const activeSubject = $derived(
     investigation.subjects.find((subject) => subject.id === activeSubjectId) ?? null,
@@ -39,6 +50,48 @@
   const progress = $derived(
     Math.round((discoveredIds.length / investigation.evidence.length) * 100),
   )
+  const completedObjectives = $derived(
+    investigation.objectives.filter((objective) =>
+      objective.requiredEvidenceIds.every((id) => discoveredIds.includes(id)),
+    ).length,
+  )
+
+  onMount(() => {
+    const saved = parseProgress(localStorage.getItem(INVESTIGATION_STORAGE_KEY), investigation.id)
+    discoveredIds = saved.discoveredIds.filter((id) =>
+      investigation.evidence.some((evidence) => evidence.id === id),
+    )
+    selectedEvidenceIds = saved.selectedEvidenceIds.filter((id) => discoveredIds.includes(id))
+    selectedHypothesisId = investigation.hypotheses.some(
+      (hypothesis) => hypothesis.id === saved.selectedHypothesisId,
+    )
+      ? saved.selectedHypothesisId
+      : null
+    solved = saved.solved
+    log = saved.log
+    briefingOpen = !saved.started
+  })
+
+  function persist(started = true) {
+    if (typeof localStorage === 'undefined') return
+    localStorage.setItem(
+      INVESTIGATION_STORAGE_KEY,
+      serializeProgress({
+        ...freshProgress(investigation.id),
+        started,
+        discoveredIds,
+        selectedEvidenceIds,
+        selectedHypothesisId,
+        solved,
+        log,
+      }),
+    )
+  }
+
+  function addLog(entry: InvestigationLogEntry) {
+    if (log.some((item) => item.id === entry.id)) return
+    log = [...log, entry].slice(-30)
+  }
 
   const interactables = $derived.by(() => {
     const space = ship.spaces.get('1014')
@@ -69,7 +122,13 @@
   )
 
   function discover(ids: string[]) {
+    const newIds = ids.filter((id) => !discoveredIds.includes(id))
     discoveredIds = [...new Set([...discoveredIds, ...ids])]
+    for (const id of newIds) {
+      const evidence = investigation.evidence.find((item) => item.id === id)
+      if (evidence) addLog({ id: `discovery:${id}`, kind: 'DISCOVERY', label: evidence.title })
+    }
+    persist()
   }
 
   function handlePick(id: string) {
@@ -98,16 +157,45 @@
     selectedEvidenceIds = selectedEvidenceIds.includes(id)
       ? selectedEvidenceIds.filter((item) => item !== id)
       : [...selectedEvidenceIds, id]
+    persist()
   }
 
   function chooseHypothesis(id: string) {
     selectedHypothesisId = id
     verdict = null
+    const hypothesis = investigation.hypotheses.find((item) => item.id === id)
+    if (hypothesis) addLog({ id: `hypothesis:${id}`, kind: 'HYPOTHESIS', label: hypothesis.label })
+    persist()
   }
 
   function submitVerdict() {
     if (!selectedHypothesisId) return
     verdict = evaluateHypothesis(investigation, selectedHypothesisId, selectedEvidenceIds)
+    if (verdict.status === 'solved') solved = true
+    addLog({
+      id: `verdict:${log.filter((entry) => entry.kind === 'VERDICT').length + 1}`,
+      kind: 'VERDICT',
+      label: verdict.title,
+    })
+    persist()
+  }
+
+  function startInvestigation() {
+    briefingOpen = false
+    persist()
+  }
+
+  function resetInvestigation() {
+    discoveredIds = []
+    selectedEvidenceIds = []
+    selectedHypothesisId = null
+    verdict = null
+    solved = false
+    log = []
+    notebookOpen = false
+    activeSubjectId = null
+    briefingOpen = true
+    if (typeof localStorage !== 'undefined') localStorage.removeItem(INVESTIGATION_STORAGE_KEY)
   }
 
   function evidenceTone(evidence: Evidence) {
@@ -121,7 +209,7 @@
   <title>Investigation · {investigation.title}</title>
   <meta
     name="description"
-    content="Explorez la chambre 1014, confrontez les témoignages et formulez une conclusion fondée sur les preuves."
+    content="Explorez la chambre 1014, confrontez les témoignages et reconstituez l'attaque de Silent Majority."
   />
 </svelte:head>
 
@@ -171,7 +259,9 @@
         >Carnet d’enquête</span
       >
       <span class="mt-1 block text-sm font-semibold text-white"
-        >{discoveredIds.length}/{investigation.evidence.length} éléments</span
+        >{solved
+          ? 'Affaire résolue'
+          : `${discoveredIds.length}/${investigation.evidence.length} éléments`}</span
       >
       <span class="mt-2 block h-1 overflow-hidden bg-white/10">
         <span class="block h-full bg-[#d6b35a] transition-all" style:width={`${progress}%`}></span>
@@ -199,6 +289,27 @@
           >
         </button>
       {/each}
+    </div>
+  </aside>
+
+  <aside class="pointer-events-none absolute bottom-5 right-4 z-30 hidden w-72 lg:block">
+    <div class="border border-white/15 bg-black/75 p-4 backdrop-blur">
+      <div class="flex items-center justify-between">
+        <p class="text-[9px] font-bold uppercase tracking-[0.2em] text-[#d6b35a]">Objectifs</p>
+        <span class="font-mono text-[10px] text-white/40"
+          >{completedObjectives}/{investigation.objectives.length}</span
+        >
+      </div>
+      <ul class="mt-3 space-y-2">
+        {#each investigation.objectives as objective}
+          {@const complete = objective.requiredEvidenceIds.every((id) =>
+            discoveredIds.includes(id),
+          )}
+          <li class="flex gap-2 text-xs {complete ? 'text-emerald-200' : 'text-white/50'}">
+            <span>{complete ? '✓' : '○'}</span><span>{objective.label}</span>
+          </li>
+        {/each}
+      </ul>
     </div>
   </aside>
 
@@ -346,6 +457,27 @@
               {/each}
             </div>
           {/if}
+          {#if log.length > 0}
+            <div class="mt-8 border-t border-white/10 pt-5">
+              <p class="text-[10px] font-bold uppercase tracking-widest text-white/40">
+                Journal d’enquête
+              </p>
+              <ol class="mt-3 space-y-2">
+                {#each [...log].reverse().slice(0, 8) as entry}
+                  <li class="flex items-center gap-3 text-xs text-white/50">
+                    <span
+                      class="w-20 shrink-0 font-mono text-[9px] uppercase tracking-wider text-[#d6b35a]/70"
+                      >{entry.kind === 'DISCOVERY'
+                        ? 'indice'
+                        : entry.kind === 'HYPOTHESIS'
+                          ? 'piste'
+                          : 'verdict'}</span
+                    ><span>{entry.label}</span>
+                  </li>
+                {/each}
+              </ol>
+            </div>
+          {/if}
         {:else if activeTab === 'people'}
           <div class="grid gap-3 sm:grid-cols-2">
             {#each investigation.subjects as subject}
@@ -375,7 +507,7 @@
           </div>
         {:else if activeTab === 'timeline'}
           <ol class="relative ml-2 border-l border-[#d6b35a]/30 pl-7">
-            {#each [['T − 00:11', 'Un cri détourne l’attention de la pièce.', 'sealed-room'], ['T − 00:08', 'La victime demeure visible, sans contact apparent.', 'bill-testimony'], ['T + 00:00', 'Le garde s’effondre, couvert de perforations.', 'wounds'], ['Après', 'Kurapika recherche un mécanisme de Nen.', 'nen-residue']] as event}
+            {#each [['T − 00:11', 'Loberry désigne une poupée que personne d’autre ne voit.', 'loberry-vision'], ['T − 00:08', 'Quatre créatures blanches se fixent au cou de Barrigen.', 'bill-testimony'], ['T + 00:00', 'Barrigen s’effondre, entièrement vidé de son sang.', 'wounds'], ['Après', 'Kurapika recherche un mécanisme de Nen.', 'nen-residue']] as event}
               <li class="relative mb-8 last:mb-0">
                 <span
                   class="absolute -left-[2.08rem] top-1 h-2.5 w-2.5 rounded-full border border-[#d6b35a] {discoveredIds.includes(
@@ -399,7 +531,7 @@
           <div class="max-w-2xl">
             <p class="text-xs uppercase tracking-widest text-[#d6b35a]">Construire la conclusion</p>
             <h3 class="mt-2 font-serif text-2xl text-white">
-              Que s’est-il passé dans la chambre 1014 ?
+              Que s’est-il passé pendant ces onze secondes ?
             </h3>
             <p class="mt-2 text-sm leading-relaxed text-white/50">
               Choisissez une hypothèse puis uniquement les éléments qui la soutiennent. Le verdict
@@ -488,10 +620,67 @@
       <footer
         class="flex items-center justify-between border-t border-white/10 px-5 py-3 text-[9px] uppercase tracking-wider text-white/30 sm:px-7"
       >
-        <span>Perspective · {investigation.investigator}</span><span
-          >Spoilers · ch. {investigation.chapter}</span
+        <span>Perspective · {investigation.investigator}</span>
+        <span class="flex items-center gap-4"
+          ><button class="text-white/40 hover:text-red-200" onclick={resetInvestigation}
+            >Réinitialiser</button
+          ><span>Spoilers · ch. {investigation.chapter}</span></span
         >
       </footer>
+    </div>
+  {/if}
+
+  {#if briefingOpen}
+    <div
+      class="absolute inset-0 z-[70] flex items-center justify-center overflow-y-auto bg-[#050809]/95 p-4 backdrop-blur-md"
+    >
+      <section class="w-full max-w-3xl border border-[#d6b35a]/35 bg-[#0b0f10] shadow-2xl">
+        <div class="border-b border-white/10 p-6 sm:p-9">
+          <p class="text-[10px] font-bold uppercase tracking-[0.3em] text-[#d6b35a]">
+            Briefing · Jour 2 · 09:00
+          </p>
+          <h2 class="mt-3 font-serif text-4xl text-white sm:text-6xl">Onze secondes</h2>
+          <p class="mt-3 max-w-2xl text-sm leading-relaxed text-white/60">
+            Le premier cours de Nen vient de devenir une scène de crime. Barrigen est mort devant
+            toute la classe. Une seule personne affirme avoir vu une présence masquée; plusieurs
+            autres ont vu les créatures qui ont tué.
+          </p>
+        </div>
+        <div class="grid gap-7 p-6 sm:grid-cols-[1fr_0.8fr] sm:p-9">
+          <div>
+            <p class="text-[10px] font-bold uppercase tracking-widest text-white/40">
+              Ordre de mission
+            </p>
+            <p class="mt-3 font-serif text-xl leading-relaxed text-white/85">
+              {investigation.objective}
+            </p>
+            <p class="mt-4 text-xs leading-relaxed text-amber-100/65">
+              L’identité de l’utilisateur de Silent Majority n’est pas connue dans le canon. Une
+              enquête rigoureuse doit savoir s’arrêter avant l’accusation.
+            </p>
+          </div>
+          <ol class="space-y-3 border-l border-white/10 pl-6">
+            {#each investigation.objectives as objective, index}
+              <li class="flex gap-3 text-sm text-white/65">
+                <span class="font-mono text-[#d6b35a]">0{index + 1}</span><span
+                  >{objective.label}</span
+                >
+              </li>
+            {/each}
+          </ol>
+        </div>
+        <div
+          class="flex flex-wrap items-center justify-between gap-4 border-t border-white/10 px-6 py-5 sm:px-9"
+        >
+          <p class="text-[9px] uppercase tracking-wider text-white/30">
+            Progression sauvegardée sur cet appareil
+          </p>
+          <button
+            class="border border-[#d6b35a] bg-[#d6b35a] px-6 py-3 text-xs font-bold uppercase tracking-[0.18em] text-black hover:bg-[#f0cf76]"
+            onclick={startInvestigation}>Entrer dans la scène</button
+          >
+        </div>
+      </section>
     </div>
   {/if}
 </div>

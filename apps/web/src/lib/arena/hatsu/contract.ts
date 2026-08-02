@@ -1,5 +1,6 @@
 import type { ArenaHatsuEffect } from '../../combat/types'
 import type { HatsuProfile } from '../../nen/hatsuRegistry'
+import { blackWhaleArenaContract } from './blackWhale'
 
 export interface ArenaHatsuDefinition {
   id: string
@@ -12,6 +13,8 @@ export interface ArenaHatsuDefinition {
 
 export function arenaDefinition(profile: HatsuProfile | null): ArenaHatsuDefinition | null {
   if (!profile) return null
+  const blackWhale = blackWhaleArenaContract(profile.id)
+  if (blackWhale) return blackWhale
   if (profile.id === 'bungee-gum') {
     return {
       id: profile.id,

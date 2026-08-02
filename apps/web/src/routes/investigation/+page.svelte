@@ -25,6 +25,7 @@
   } from '$lib/investigation/hatsu'
   import { questionIsAvailable } from '$lib/investigation/interrogation'
   import { confrontWitnesses, type ConfrontationResult } from '$lib/investigation/confrontation'
+  import { sceneNodes, visibleSightLines, type ScenePhenomenon } from '$lib/investigation/geometry'
   import {
     activeHatsu,
     closeHatsuGate,
@@ -62,6 +63,7 @@
   let confrontationKeys = $state<string[]>([])
   let confrontationWitnessIds = $state<string[]>([])
   let confrontationResult = $state<ConfrontationResult | null>(null)
+  let scenePhenomenon = $state<ScenePhenomenon>('doll')
 
   const activeSubject = $derived(
     investigation.subjects.find((subject) => subject.id === activeSubjectId) ?? null,
@@ -77,6 +79,9 @@
       objective.requiredEvidenceIds.every((id) => discoveredIds.includes(id)),
     ).length,
   )
+  const planNodes = $derived(sceneNodes(investigation))
+  const planNodeById = $derived(new Map(planNodes.map((node) => [node.id, node])))
+  const planSightLines = $derived(visibleSightLines(scenePhenomenon))
 
   onMount(() => {
     openHatsuGate({
@@ -725,6 +730,91 @@
             {/if}
           </section>
         {:else if activeTab === 'timeline'}
+          <section class="mb-8 border border-white/10 bg-white/[0.02] p-4">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <p class="text-[10px] font-bold uppercase tracking-widest text-[#d6b35a]">
+                  Plan des lignes de vue
+                </p>
+                <p class="mt-1 text-xs text-white/40">Position relative au moment de l’attaque</p>
+              </div>
+              <div class="flex border border-white/10">
+                {#each [['doll', 'Poupée'], ['snakes', 'Créatures']] as layer}
+                  <button
+                    class="px-3 py-2 text-[9px] font-bold uppercase tracking-wider {scenePhenomenon ===
+                    layer[0]
+                      ? 'bg-[#d6b35a]/15 text-[#f0cf76]'
+                      : 'text-white/35 hover:text-white'}"
+                    onclick={() => (scenePhenomenon = layer[0] as ScenePhenomenon)}
+                    >{layer[1]}</button
+                  >
+                {/each}
+              </div>
+            </div>
+            <svg
+              class="mt-4 h-auto w-full border border-white/5 bg-black/35"
+              viewBox="0 0 400 260"
+              role="img"
+              aria-label={`Lignes de vue · ${scenePhenomenon === 'doll' ? 'poupée' : 'créatures'}`}
+            >
+              <rect
+                x="8"
+                y="8"
+                width="384"
+                height="244"
+                rx="4"
+                fill="none"
+                stroke="rgba(255,255,255,.12)"
+              />
+              {#each planSightLines as line}
+                {@const from = planNodeById.get(line.observerId)}
+                {@const to = planNodeById.get(line.targetId)}
+                {#if from && to}
+                  <line
+                    x1={from.x}
+                    y1={from.y}
+                    x2={to.x}
+                    y2={to.y}
+                    stroke={scenePhenomenon === 'doll' ? '#d6b35a' : '#7dd3fc'}
+                    stroke-width="1.5"
+                    stroke-dasharray={scenePhenomenon === 'doll' ? '4 3' : 'none'}
+                    opacity=".7"
+                  />
+                {/if}
+              {/each}
+              {#each planNodes as node}
+                <g>
+                  <circle
+                    cx={node.x}
+                    cy={node.y}
+                    r={node.isDead ? 10 : 7}
+                    fill={node.isDead ? '#7f1d1d' : '#182126'}
+                    stroke={node.id === 'loberry' && scenePhenomenon === 'doll'
+                      ? '#d6b35a'
+                      : 'rgba(255,255,255,.45)'}
+                    stroke-width="1.5"
+                  />
+                  <text
+                    x={node.x}
+                    y={node.y + 19}
+                    text-anchor="middle"
+                    fill="rgba(255,255,255,.65)"
+                    font-size="8">{node.label}</text
+                  >
+                </g>
+              {/each}
+              <text
+                x="92"
+                y="30"
+                fill={scenePhenomenon === 'doll' ? '#d6b35a' : '#7dd3fc'}
+                font-size="9"
+              >
+                {scenePhenomenon === 'doll'
+                  ? 'Poupée derrière Furykov · visible par Loberry seule'
+                  : 'Créatures matérialisées · visibles par tous'}
+              </text>
+            </svg>
+          </section>
           <ol class="relative ml-2 border-l border-[#d6b35a]/30 pl-7">
             {#each [['T − 00:11', 'Loberry désigne une poupée que personne d’autre ne voit.', 'loberry-vision'], ['T − 00:08', 'Quatre créatures blanches se fixent au cou de Barrigen.', 'bill-testimony'], ['T + 00:00', 'Barrigen s’effondre, entièrement vidé de son sang.', 'wounds'], ['Après', 'Kurapika recherche un mécanisme de Nen.', 'nen-residue']] as event}
               <li class="relative mb-8 last:mb-0">

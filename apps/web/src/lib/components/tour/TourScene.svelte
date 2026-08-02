@@ -121,6 +121,7 @@
     TourAtmosphereView,
   } from '$lib/tour/TourAtmosphereView'
   import { ApparitionView } from '$lib/tour/ApparitionView'
+  import { HatsuSceneEffects } from '$lib/tour/HatsuSceneEffects'
   import type { Link, Space, Structure, Vec2, WallSegment } from '$lib/tour/types'
 
   interface Props {
@@ -605,6 +606,7 @@
         scene,
         viewDistance: VIEW_DISTANCE,
       })
+      const hatsuEffects = new HatsuSceneEffects(THREE, scene)
       /**
        * The air, which is a different air in every room.
        *
@@ -5112,52 +5114,6 @@
         }
       }
 
-      // ── Kurton ───────────────────────────────────
-      /**
-       * The visitor as a vehicle.
-       *
-       * Riding used to be a number: a pace multiplier and ninety centimetres of
-       * extra height, which from inside the visitor's own head is indistinguishable
-       * from walking fast on a box. What was missing is the vehicle — so here it
-       * is, carried in front of the eye where a bonnet would be, with the two
-       * lamps a thing that moves at that speed through a dark ship would need.
-       */
-      const chassis = new THREE.Group()
-      chassis.visible = false
-      const chassisSkin = new THREE.MeshLambertMaterial({ color: 0xf2a65a })
-      const bonnet = new THREE.Mesh(new THREE.BoxGeometry(2.1, 0.35, 2.6), chassisSkin)
-      bonnet.position.set(0, -0.95, -1.5)
-      chassis.add(bonnet)
-      for (const side of [-1, 1]) {
-        const wing = new THREE.Mesh(new THREE.BoxGeometry(0.35, 0.5, 3.4), chassisSkin)
-        wing.position.set(side * 1.05, -0.85, -0.9)
-        chassis.add(wing)
-        const lamp = new THREE.Mesh(
-          new THREE.SphereGeometry(0.22, 10, 8),
-          new THREE.MeshBasicMaterial({ color: 0xfff0c0 }),
-        )
-        lamp.position.set(side * 0.75, -0.85, -2.75)
-        chassis.add(lamp)
-      }
-      scene.add(chassis)
-      /** The road the lamps throw, which is the whole reason to be one. */
-      const headlamp = new THREE.PointLight(0xffe0a0, 0, 22, 2)
-      scene.add(headlamp)
-
-      function syncVehicle(eye: number) {
-        const riding = world.body.riding
-        chassis.visible = riding
-        headlamp.intensity = riding ? 3.2 : 0
-        if (!riding) return
-        chassis.position.set(pointer[0], eye, pointer[1])
-        chassis.rotation.set(0, yaw, 0)
-        headlamp.position.set(
-          pointer[0] - Math.sin(yaw) * 4,
-          eye - 0.8,
-          pointer[1] - Math.cos(yaw) * 4,
-        )
-      }
-
       // ── The blast and the punch ──────────────────
       /**
        * The two techniques that happen rather than stand.
@@ -6653,7 +6609,7 @@
         camera.rotateZ(bob.roll)
         // Kurton is worn rather than stood in: the chassis goes where the
         // visitor is, facing where they face, every frame.
-        syncVehicle(eye)
+        hatsuEffects.syncVehicle(world.body.riding, pointer, eye, yaw)
 
         // One pace, one footstep, on the same counter the head is dipping to — so
         // the sound lands with the foot at every speed and never drifts off it.
@@ -6972,11 +6928,7 @@
         afterMaterial.dispose()
         portals.dispose()
         atmosphere.dispose()
-        chassis.traverse((part) => {
-          const mesh = part as import('three').Mesh
-          if (mesh.geometry) mesh.geometry.dispose()
-        })
-        chassisSkin.dispose()
+        hatsuEffects.dispose()
         // The walk is over: no more footsteps, and the audio graph goes with it.
         stopSteps()
         shells?.geometry.dispose()

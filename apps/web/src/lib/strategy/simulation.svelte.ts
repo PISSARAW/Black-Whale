@@ -61,7 +61,7 @@ function strategyMsg(locale: Locale) {
   return messagesFor(locale).strategy
 }
 
-export class StrategyInputError extends Error {
+export class StrategyInputError extends Error {}
 export function createSimulationStore() {
   let engine = new SimulationEngine()
   let branch = $state<WorldBranch | null>(null)

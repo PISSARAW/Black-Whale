@@ -3,15 +3,17 @@
   import PlanMap from '$lib/components/map/PlanMap.svelte'
   import TourScene from '$lib/components/tour/TourScene.svelte'
   import type { Apparition } from '$lib/tour/apparitions'
-  import { floorOf, spaceForLocation, theShip } from '$lib/tour/blueprint'
+  import { floorOf, spaceForLocation, theShip, crossingsOn, type Crossing } from '$lib/tour/blueprint'
   import { centroid } from '$lib/tour/hatsu'
   import { TourNavigationState } from '$lib/tour/pageNavigationState.svelte'
+  import TourMinimapPanel from '$lib/components/tour/TourMinimapPanel.svelte'
   import { ModeNenState } from '$lib/nen/modeState.svelte'
   import { hatsuById } from '$lib/nen/hatsuRegistry'
   import {
     strategyHatsuPresentation,
     type StrategyHatsuCue,
   } from '$lib/strategy/hatsuPresentation'
+  import { locale } from '$lib/i18n'
 
   interface Marker {
     id: string
@@ -32,6 +34,20 @@
   const modeNen = new ModeNenState()
   let view = $state<'tour' | 'map'>('tour')
   let selectedTier = $state('tier-1')
+
+  const nameOf = (entity: { name: string; nameFr: string }) =>
+    ($locale === 'fr' ? entity.nameFr : entity.name)
+
+  const tierId = $derived(navigation.tierId)
+  const plan = $derived(ship.plans.get(tierId)!)
+  const crossings = $derived(crossingsOn(ship, tierId))
+  const decks = $derived(
+    ship.decks.map((tier) => ({
+      id: tier.id,
+      label: nameOf(tier),
+      active: tier.id === tierId,
+    })),
+  )
   let hatsuManifestations = $state<Apparition[]>([])
   let latestHatsuCue = $state<StrategyHatsuCue | null>(null)
   const manifestationTimers = new Set<number>()
@@ -140,6 +156,19 @@
 
 {#if view === 'tour'}
   <div class="tour-stage">
+    <TourMinimapPanel
+      ship={ship}
+      tierId={tierId}
+      plan={plan}
+      position={navigation.position}
+      heading={navigation.heading}
+      currentSpaceId={navigation.currentSpace?.id ?? null}
+      decks={decks}
+      crossings={crossings}
+      nameOf={nameOf}
+      onSelectDeck={selectTier}
+      onSelectPlan={(space) => navigation.goToSpace(space)}
+    />
     <TourScene
       {ship}
       {extras}

@@ -495,6 +495,7 @@
     swings = false,
   }: Props = $props()
 
+  let interactWithNen = $state<(() => void) | null>(null)
   let localNen = $state<NenTechniqueState>(createNenTechniqueState())
   const effectiveNen = $derived(nen ?? localNen)
   function useNen(action: NenTechniqueAction) {
@@ -2859,7 +2860,7 @@
           ? aimedSolid({ ship, world }, plan, {
               at: pointer,
               heading: yaw,
-              range: reachOf(world.body) / 2,
+              range: Math.max(reachOf(world.body) / 2, effectiveNen.en?.radius ?? 0),
             })
           : null
       }
@@ -2922,6 +2923,35 @@
         return null
       }
 
+
+      interactWithNen = () => {
+        if (effectiveNen.mode === 'zetsu') return
+        const aimed = aimedSolidAt ?? facingSolid()
+        if (!aimed) return
+        const target = solidById(ship, world, aimed.id) ?? aimed
+        const attackShare = Number(effectiveNen.ryu.hands ?? 0) + Number(effectiveNen.ryu.feet ?? 0)
+        const kind =
+          effectiveNen.ko || attackShare >= 0.6
+            ? 'strike'
+            : effectiveNen.on || effectiveNen.mode === 'ren'
+              ? 'pressure'
+              : effectiveNen.gyo || effectiveNen.en
+                ? 'sense'
+                : 'channel'
+        if (kind === 'channel' && !effectiveNen.shu.includes(target.id)) {
+          useNen({ type: 'SHU', objectId: target.id, on: true })
+        }
+        nenAura.interact(
+          {
+            id: target.id,
+            at: target.at,
+            y: ground + target.base,
+            size: target.size,
+            height: target.height,
+          },
+          kind,
+        )
+      }
       /** Take hold of what is under a gesture, and say whether anything was. */
       function takeWhatIsUnder(aim: import('three').Vector2): boolean {
         if (!onPick) return false
@@ -3271,6 +3301,7 @@
       }
       const onKeyUp = (event: KeyboardEvent) => {
         delete pressed[event.code]
+        else if (event.code === 'KeyF') interactWithNen?.()
       }
 
       function takeLink() {
@@ -4136,7 +4167,8 @@
 
         // The reticle is polled rather than traced every frame: it walks the
         // floor plan, and nothing about it changes in a sixtieth of a second.
-        if (aiming && ++sinceAim >= 6) {
+        const nenCanTarget = effectiveNen.mode !== 'zetsu'
+        if ((aiming || nenCanTarget) && ++sinceAim >= 6) {
           sinceAim = 0
           const faced = facing()
           if ((faced?.id ?? null) !== aimedId) {
@@ -4148,7 +4180,7 @@
             aimedSolidId = solid?.id ?? null
             aimedSolidAt = solid
           }
-        } else if (!aiming && aimedId !== null) {
+        } else if (!aiming && !nenCanTarget && aimedId !== null) {
           aimedId = null
           aimedAt = null
           aimedSolidId = null
@@ -4372,6 +4404,7 @@
       type="button"
       onclick={() => toggleSteps()}
       aria-pressed={$stepsPlaying}
+      interactWithNen = null
       title={$stepsPlaying ? soundLabels.silence : soundLabels.restore}
       class="absolute left-3 top-3 flex h-9 w-9 items-center justify-center rounded-full border border-[#FFD700]/40 bg-[#050505]/80 text-[#FFD700]/80 transition-colors hover:border-[#FFD700]/80 hover:text-[#FFD700]"
     >
@@ -4456,6 +4489,7 @@
           >
             {page.name}
           </button>
+      onInteract={() => interactWithNen?.()}
         {/each}
       {:else if aiming && tunes}
         <!-- And three, for the instrument: a phone has no F, no R and no C, so

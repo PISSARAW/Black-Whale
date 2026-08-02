@@ -1,4 +1,4 @@
-import type { BufferGeometry, Group, Material, MeshBasicMaterial, Object3D } from 'three'
+import type { BufferGeometry, Group, Material, Mesh, MeshBasicMaterial, Object3D } from 'three'
 import {
   createNenTechniqueState,
   isAuraVisibleTo,
@@ -583,6 +583,16 @@ export function buildHumanFigure({ THREE, glow, seen, observerGyo = false }: Hum
     ? transitionNen(createNenTechniqueState(), { type: 'GYO', on: true }).state
     : createNenTechniqueState()
   const auraVisible = isAuraVisibleTo(nen, observer)
+  const onFlames: Mesh[] = []
+  const renFlames: Mesh[] = []
+  const eyeAuras: Mesh[] = []
+  const koPoints: Mesh[] = []
+  const ryuPoints: Mesh[] = []
+  const enFields: Mesh[] = []
+  let onCore: Mesh | null = null
+  let zetsuTrace: Mesh | null = null
+  let auraShell: Mesh | null = null
+  let kenMantle: Mesh | null = null
   if (nen.mode === 'zetsu') {
     const trace = new THREE.Mesh(
       geometry(THREE, 'aura:zetsu', () => new THREE.SphereGeometry(0.69, 16, 10)),
@@ -592,6 +602,7 @@ export function buildHumanFigure({ THREE, glow, seen, observerGyo = false }: Hum
     trace.scale.y = 1.32
     trace.position.y = 0.9
     figure.add(trace)
+    zetsuTrace = trace
   }
   if (auraVisible && nen.on) {
     const core = new THREE.Mesh(
@@ -602,21 +613,25 @@ export function buildHumanFigure({ THREE, glow, seen, observerGyo = false }: Hum
     core.scale.y = 1.48
     core.position.y = 0.9
     figure.add(core)
-    for (let index = 0; index < 18; index++) {
+    onCore = core
+    for (let index = 0; index < 28; index++) {
       const outer = index % 2 === 0
       const flame = new THREE.Mesh(
         geometry(
           THREE,
-          `aura:on-flame:${index % 4}`,
-          () => new THREE.ConeGeometry(0.1 + (index % 4) * 0.018, 0.7, 7),
+          `aura:on-flame:${index % 4}:${index % 5}`,
+          () => new THREE.ConeGeometry(0.07 + (index % 4) * 0.018, 0.58 + (index % 5) * 0.1, 7),
         ),
         glow(outer ? 0x123b7a : 0x01040c, outer ? 0.44 : 0.76),
       )
-      const angle = (index / 18) * Math.PI * 2
+      const angle = (index / 28) * Math.PI * 2
       flame.name = 'nen-on-flame'
-      flame.position.set(Math.cos(angle) * 0.62, 0.36 + (index % 6) * 0.25, Math.sin(angle) * 0.62)
+      flame.position.set(Math.cos(angle) * 0.62, 0.2 + (index % 7) * 0.27, Math.sin(angle) * 0.62)
       flame.rotation.z = Math.cos(angle) * -0.3
       flame.rotation.x = Math.sin(angle) * 0.3
+      flame.userData.onAngle = angle
+      flame.userData.onLayer = index % 7
+      onFlames.push(flame)
       figure.add(flame)
     }
   }
@@ -633,6 +648,7 @@ export function buildHumanFigure({ THREE, glow, seen, observerGyo = false }: Hum
     shell.scale.y = 1.35
     shell.position.y = 0.9
     figure.add(shell)
+    auraShell = shell
     if (nen.mode === 'ren') {
       for (let index = 0; index < 12; index++) {
         const flame = new THREE.Mesh(
@@ -648,6 +664,9 @@ export function buildHumanFigure({ THREE, glow, seen, observerGyo = false }: Hum
         flame.position.set(Math.cos(angle) * 0.55, 0.5 + (index % 4) * 0.28, Math.sin(angle) * 0.55)
         flame.rotation.z = Math.cos(angle) * -0.22
         flame.rotation.x = Math.sin(angle) * 0.22
+        flame.userData.auraAngle = angle
+        flame.userData.auraLayer = index % 4
+        renFlames.push(flame)
         figure.add(flame)
       }
     }
@@ -662,6 +681,7 @@ export function buildHumanFigure({ THREE, glow, seen, observerGyo = false }: Hum
     mantle.scale.y = 1.42
     mantle.position.y = 0.9
     figure.add(mantle)
+    kenMantle = mantle
   }
 
   if (auraVisible && nen.gyo) {
@@ -672,19 +692,28 @@ export function buildHumanFigure({ THREE, glow, seen, observerGyo = false }: Hum
       )
       eyeAura.name = side < 0 ? 'nen-gyo-left' : 'nen-gyo-right'
       eyeAura.position.set(side * 0.075, 1.61, 0.17)
+      eyeAura.userData.eyeSide = side
+      eyeAuras.push(eyeAura)
       figure.add(eyeAura)
     }
   }
 
   if (auraVisible && nen.en) {
-    const field = new THREE.Mesh(
-      new THREE.RingGeometry(Math.max(0.05, nen.en.radius - 0.035), nen.en.radius, 64),
-      glow(seen.colour, 0.24),
-    )
-    field.name = 'nen-en'
-    field.rotation.x = -Math.PI / 2
-    field.position.y = 0.025
-    root.add(field)
+    for (let index = 0; index < 3; index++) {
+      const field = new THREE.Mesh(
+        new THREE.RingGeometry(
+          Math.max(0.05, nen.en.radius - 0.035 - index * 0.012),
+          nen.en.radius + index * 0.018,
+          64,
+        ),
+        glow(seen.colour, 0.24 - index * 0.045),
+      )
+      field.name = `nen-en-${index}`
+      field.rotation.x = -Math.PI / 2
+      field.position.y = 0.025 + index * 0.004
+      enFields.push(field)
+      root.add(field)
+    }
   }
 
   const zonePositions: Record<HumanZone, [number, number, number]> = {
@@ -694,14 +723,17 @@ export function buildHumanFigure({ THREE, glow, seen, observerGyo = false }: Hum
     feet: [0, 0.14, 0.08],
   }
   if (auraVisible && nen.ko) {
-    const [x, y, z] = zonePositions[nen.ko]
-    for (const side of nen.ko === 'hands' || nen.ko === 'feet' ? [-1, 1] : [0]) {
+    const zone = nen.ko as HumanZone
+    const [x, y, z] = zonePositions[zone]
+    for (const side of zone === 'hands' || zone === 'feet' ? [-1, 1] : [0]) {
       const point = new THREE.Mesh(
         geometry(THREE, `aura:ko:${nen.ko}`, () => new THREE.SphereGeometry(0.16, 12, 9)),
         glow(seen.colour, 0.78),
       )
-      point.name = `nen-ko-${nen.ko}`
+      point.name = `nen-ko-${zone}`
       point.position.set(x + side * 0.23, y, z)
+      point.userData.auraBase = [x + side * 0.23, y, z]
+      koPoints.push(point)
       figure.add(point)
     }
   }
@@ -717,6 +749,10 @@ export function buildHumanFigure({ THREE, glow, seen, observerGyo = false }: Hum
       point.name = `nen-ryu-${zone}`
       point.position.set(x, y, z)
       point.scale.setScalar(0.65 + share * 0.85)
+      point.userData.auraBase = [x, y, z]
+      point.userData.auraShare = share
+      point.userData.auraPhase = ryuPoints.length * 1.9
+      ryuPoints.push(point)
       figure.add(point)
     }
   }
@@ -747,7 +783,88 @@ export function buildHumanFigure({ THREE, glow, seen, observerGyo = false }: Hum
   far.position.copy(figure.position)
   far.rotation.copy(figure.rotation)
 
-  const animate = humanAnimation({ pose, figure, torso, pelvis, head, arms, legs, knees })
+  const animateHuman = humanAnimation({ pose, figure, torso, pelvis, head, arms, legs, knees })
+  const animate = (seconds: number) => {
+    animateHuman(seconds)
+    if (zetsuTrace) {
+      const remnant = 0.985 + Math.sin(seconds * 0.8) * 0.008
+      zetsuTrace.scale.set(0.72 * remnant, 1.32, 0.72 * remnant)
+      ;(zetsuTrace.material as MeshBasicMaterial).opacity =
+        0.003 + Math.max(0, Math.sin(seconds * 0.65)) * 0.004
+    }
+    if (auraShell) {
+      const stable = 1 + Math.sin(seconds * 1.8) * (nen.mode === 'ten' ? 0.012 : 0.025)
+      auraShell.scale.set(stable, 1.35 * stable, stable)
+      ;(auraShell.material as MeshBasicMaterial).opacity =
+        nen.mode === 'ten'
+          ? 0.064 + Math.sin(seconds * 1.8) * 0.006
+          : 0.14 + Math.sin(seconds * 4.2) * 0.025
+    }
+    renFlames.forEach((flame, index) => {
+      const phase = seconds * (3.4 + (index % 3) * 0.28) + index * 1.37
+      const angle = Number(flame.userData.auraAngle) + seconds * -0.14 + Math.sin(phase) * 0.16
+      const rise = ((seconds * (0.62 + (index % 2) * 0.09) + index / 4) % 1) * 0.38
+      const radius = 0.52 + Math.sin(phase * 0.73) * 0.1
+      flame.position.set(
+        Math.cos(angle) * radius,
+        0.34 + Number(flame.userData.auraLayer) * 0.31 + rise,
+        Math.sin(angle) * radius,
+      )
+      flame.rotation.set(Math.sin(angle) * 0.3, -angle, Math.cos(angle) * -0.3)
+      flame.scale.set(0.72 + Math.sin(phase) * 0.22, 0.9 + Math.sin(phase * 1.41) * 0.32, 0.72)
+      ;(flame.material as MeshBasicMaterial).opacity = 0.16 + Math.max(0, Math.sin(phase)) * 0.13
+    })
+    if (kenMantle) {
+      const pressure = 1 + Math.sin(seconds * 3.2) * 0.014 + Math.sin(seconds * 7.4) * 0.006
+      kenMantle.scale.set(pressure, 1.42 * pressure, pressure)
+      ;(kenMantle.material as MeshBasicMaterial).opacity = 0.25 + Math.sin(seconds * 5) * 0.025
+    }
+    eyeAuras.forEach((eye, index) => {
+      const focus = 1 + Math.sin(seconds * 11 + index * Math.PI) * 0.14
+      eye.scale.set(1.45 * focus, 0.68 * focus, 1.15 * focus)
+      ;(eye.material as MeshBasicMaterial).opacity = 0.62 + Math.sin(seconds * 15 + index) * 0.16
+    })
+    enFields.forEach((field, index) => {
+      const sweep = (seconds * (0.42 + index * 0.07) + index / 3) % 1
+      field.scale.setScalar(0.92 + sweep * 0.16)
+      field.rotation.z = seconds * (index % 2 ? -0.045 : 0.055)
+      ;(field.material as MeshBasicMaterial).opacity = (1 - sweep) * (0.28 - index * 0.04)
+    })
+    koPoints.forEach((point, index) => {
+      const base = point.userData.auraBase as [number, number, number]
+      const impact = 1 + Math.sin(seconds * 12 + index * Math.PI) * 0.17
+      point.position.set(base[0], base[1] + Math.sin(seconds * 8 + index) * 0.018, base[2])
+      point.scale.setScalar(impact)
+      ;(point.material as MeshBasicMaterial).opacity = 0.7 + Math.sin(seconds * 14 + index) * 0.12
+    })
+    ryuPoints.forEach((point) => {
+      const base = point.userData.auraBase as [number, number, number]
+      const share = Number(point.userData.auraShare)
+      const phase = seconds * 6.5 + Number(point.userData.auraPhase)
+      const flow = 1 + Math.sin(phase) * 0.1
+      point.position.set(base[0], base[1] + Math.sin(phase * 0.7) * 0.025, base[2])
+      point.scale.setScalar((0.65 + share * 0.85) * flow)
+      ;(point.material as MeshBasicMaterial).opacity =
+        Math.min(0.72, 0.12 + share * 0.58) + Math.sin(phase) * 0.06
+    })
+    if (onCore) {
+      const breath = 1 + Math.sin(seconds * 5.5) * 0.035 + Math.sin(seconds * 13) * 0.012
+      onCore.scale.set(1 * breath, 1.48 + Math.sin(seconds * 8) * 0.07, 1 * breath)
+    }
+    onFlames.forEach((flame, index) => {
+      const phase = seconds * (2.4 + (index % 4) * 0.16) + index * 1.73
+      const rise = ((seconds * (0.42 + (index % 3) * 0.06) + index / 7) % 1) * 0.32
+      const angle = Number(flame.userData.onAngle) + seconds * 0.22 + Math.sin(phase) * 0.12
+      const radius = 0.57 + Math.sin(phase * 0.7) * 0.08
+      flame.position.set(
+        Math.cos(angle) * radius,
+        0.16 + Number(flame.userData.onLayer) * 0.27 + rise,
+        Math.sin(angle) * radius,
+      )
+      flame.rotation.set(Math.sin(angle) * 0.28, -angle, Math.cos(angle) * -0.28)
+      flame.scale.set(0.75 + Math.sin(phase) * 0.18, 0.82 + Math.sin(phase * 1.3) * 0.24, 0.75)
+    })
+  }
 
   return { root, turns: figure, lod: { near: figure, far }, animate }
 }

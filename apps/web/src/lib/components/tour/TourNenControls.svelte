@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { NenTechniqueAction, NenTechniqueState } from '@black-whale/nen-engine'
-  interface Props { nenState: NenTechniqueState; aimedObjectId?: string | null; onAction: (action: NenTechniqueAction) => void }
-  let { nenState, aimedObjectId = null, onAction }: Props = $props()
+  interface Props { nenState: NenTechniqueState; aimedObjectId?: string | null; onAction: (action: NenTechniqueAction) => void; onInteract?: () => void }
+  let { nenState, aimedObjectId = null, onAction, onInteract }: Props = $props()
   let open = $state(false)
   const toggle = (type: 'IN' | 'GYO' | 'KEN') => onAction({ type, on: !nenState[type.toLowerCase() as 'in' | 'gyo' | 'ken'] })
 </script>
@@ -23,6 +23,7 @@
       <button onclick={() => onAction({ type: 'RYU', distribution: { hands: 0.65, torso: 0.2, feet: 0.15 } })}>Ryu ATK</button>
       <button onclick={() => onAction({ type: 'RYU', distribution: { torso: 0.55, head: 0.25, hands: 0.2 } })}>Ryu DEF</button>
       <button disabled={!aimedObjectId} class:active={Boolean(aimedObjectId && nenState.shu.includes(aimedObjectId))} onclick={() => aimedObjectId && onAction({ type: 'SHU', objectId: aimedObjectId, on: !nenState.shu.includes(aimedObjectId) })}>Shu</button>
+      <button class="col-span-2" disabled={!aimedObjectId || nenState.mode === 'zetsu'} onclick={() => onInteract?.()}>Agir sur l'objet</button>
       <p class="col-span-3 mt-1 text-[9px] leading-snug text-[#FFFFF0]/40">Alt + O · T/R/X · G/I/E/K · 1/2/3/4 · S</p>
     </div>
   {/if}

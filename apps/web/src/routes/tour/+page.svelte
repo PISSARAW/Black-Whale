@@ -89,6 +89,12 @@
     statusReadout,
   } from '$lib/tour/pageReadouts'
   import {
+    crossingLabel as describeCrossing,
+    linkPrompt as describeLink,
+    viewpointUrl,
+    type LinkWords,
+  } from '$lib/tour/pageNavigation'
+  import {
     EMPTY_WORLD,
     aimsAtSolids,
     arriveInTour,
@@ -192,26 +198,8 @@
    * other, because the same crossing is a key to press on a keyboard and a
    * button to tap on a phone, which has no E.
    */
-  const promptFor = (words: {
-    takeLink: (destination: string) => string
-    takeBulkhead: (destination: string) => string
-    enterInterior: (destination: string) => string
-    leaveInterior: (destination: string) => string
-  }) => {
-    if (!availableLink) return null
-    const destination = ship.spaces.get(availableLink.to)
-    if (!destination) return null
-    const tier = ship.tiers.find((candidate) => candidate.id === destination.tierId)
-    const label = `${nameOf(destination)}${tier ? ` — ${nameOf(tier)}` : ''}`
-    if (availableLink.link.kind === 'door') {
-      return tier?.kind === 'interior'
-        ? words.enterInterior(nameOf(tier))
-        : words.leaveInterior(nameOf(destination))
-    }
-    return availableLink.link.kind === 'bulkhead'
-      ? words.takeBulkhead(label)
-      : words.takeLink(label)
-  }
+  const promptFor = (words: LinkWords) =>
+    describeLink({ available: availableLink, ship, nameOf, words })
 
   const linkPrompt = $derived(promptFor($t.tour))
   const touchUseLabel = $derived(promptFor($t.tour.touch))
@@ -256,11 +244,7 @@
   let copyTimer: ReturnType<typeof setTimeout> | null = null
 
   async function copyViewpoint() {
-    const url = new URL($page.url)
-    url.searchParams.delete('deck')
-    url.searchParams.delete('space')
-    if (currentSpace) url.searchParams.set('space', currentSpace.id)
-    else url.searchParams.set('deck', tierId)
+    const url = viewpointUrl({ current: $page.url, spaceId: currentSpace?.id ?? null, tierId })
 
     try {
       await navigator.clipboard.writeText(url.toString())
@@ -287,16 +271,15 @@
   const crossings = $derived(crossingsOn(ship, tierId))
 
   const crossingLabel = (crossing: Crossing) => {
-    const destination = ship.spaces.get(crossing.to)
-    const tier = destination
-      ? ship.tiers.find((candidate) => candidate.id === destination.tierId)
-      : null
-    const label = destination
-      ? `${nameOf(named(destination))}${tier ? ` — ${nameOf(tier)}` : ''}`
-      : crossing.to
-    if (crossing.rise > 0.5) return $t.tour.plan.crossingUp(label)
-    if (crossing.rise < -0.5) return $t.tour.plan.crossingDown(label)
-    return $t.tour.plan.crossingAcross(label)
+    return describeCrossing({
+      crossing,
+      ship,
+      nameOf,
+      named,
+      up: $t.tour.plan.crossingUp,
+      down: $t.tour.plan.crossingDown,
+      across: $t.tour.plan.crossingAcross,
+    })
   }
 
   // ── The walk at the size of the screen ─────────

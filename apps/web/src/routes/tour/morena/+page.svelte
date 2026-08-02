@@ -26,6 +26,7 @@
   import MorenaSetupPanel from '$lib/components/tour/MorenaSetupPanel.svelte'
   import MorenaSceneOverlay from '$lib/components/tour/MorenaSceneOverlay.svelte'
   import MorenaGameStatus from '$lib/components/tour/MorenaGameStatus.svelte'
+  import MorenaPhaseActions from '$lib/components/tour/MorenaPhaseActions.svelte'
   import ContagionDashboard from '$lib/nen/ContagionDashboard.svelte'
   import { breadcrumbSchema } from '$lib/seo/schema'
   import { link, locale, t } from '$lib/i18n'
@@ -65,7 +66,6 @@
     openTheBookHere,
     owlFilm,
     playTechnique,
-    refuseTheDeal,
     settle,
     sheWillNotPlay,
     sitsAtTheTable,
@@ -73,7 +73,6 @@
     theEyesTakeYou,
     castsItself,
     tableauOf,
-    takeTheDeal,
     worksAtTheTable,
     type AnswerCard,
     type MorenaGame,
@@ -641,34 +640,7 @@
         {/if}
 
         {#if game.phase === 'deal'}
-          <div class="mt-4 rounded border border-[#d94f68]/60 bg-[#d94f68]/10 p-3">
-            <h2 class="text-sm font-semibold text-[#FFFFF0]">{copy.deal.title}</h2>
-            <p class="mt-1 text-xs leading-relaxed text-[#FFFFF0]/70">{copy.deal.body}</p>
-            <p class="mt-3 text-[10px] uppercase tracking-widest text-[#FFFFF0]/40">
-              {copy.deal.pick}
-            </p>
-            <div class="mt-2 flex flex-wrap items-end gap-2">
-              {#each game.graveyard as card (card)}
-                <button
-                  class="rounded border border-[#d94f68] p-1.5 hover:bg-[#d94f68]/30"
-                  onclick={() => (game = takeTheDeal(game, card))}
-                  title="{copy.deal.take} · {nameOfCard(card)}"
-                >
-                  <MorenaCard
-                    face={card}
-                    label={nameOfCard(card)}
-                    ink={cssInk(CARD_COLOURS[card])}
-                  />
-                </button>
-              {/each}
-              <button
-                class="rounded border border-[#444] px-3 py-1.5 text-xs text-[#FFFFF0] hover:border-[#FFD700]"
-                onclick={() => (game = refuseTheDeal(game))}
-              >
-                {copy.deal.refuse}
-              </button>
-            </div>
-          </div>
+          <MorenaPhaseActions bind:game bind:choice {nameOfCard} />
         {:else if game.phase === 'asking'}
           <h2 class="mt-4 text-sm font-semibold text-[#FFFFF0]">{copy.askTitle}</h2>
           <p class="mt-1 text-xs leading-snug text-[#FFFFF0]/55">{copy.askHint}</p>

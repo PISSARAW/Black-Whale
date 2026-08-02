@@ -71,17 +71,17 @@
 
   const ship = theShip()
   let selectedTerrain = $state<HuntTerrainId>(DEFAULT_HUNT_TERRAIN)
-  let arena = buildArena()
-  let plan = ship.plans.get(arena.tierId)!
-  let graph = buildNavGraph(arena)
-  let world: HuntWorld = { dt: HUNT_DT, arena, graph }
+  let arena = $state.raw(buildArena())
+  let plan = $state.raw(ship.plans.get(arena.tierId)!)
+  let graph = $state.raw(buildNavGraph(arena))
+  let world = $state.raw<HuntWorld>({ dt: HUNT_DT, arena, graph })
 
   /**
    * Player and hunter start as far apart as the apartment allows, and the room
    * to reach is the far one — measured on the doorway graph rather than in
    * metres, because what matters is how many rooms have to be crossed.
    */
-  let opening = farthestApart()
+  let opening = $state.raw(farthestApart())
 
   function farthestApart(): { from: Space; to: Space } {
     let best = { from: arena.spaces[0], to: arena.spaces[1], rooms: 0 }

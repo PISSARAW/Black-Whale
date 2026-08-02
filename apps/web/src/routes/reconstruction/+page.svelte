@@ -12,8 +12,12 @@
   import { activeHatsu, hatsuPanelOpen } from '$lib/nen/hatsuState'
   import { localizeHatsu } from '$lib/i18n/hatsu'
   import { floorOf, spaceForLocation, theShip } from '$lib/tour/blueprint'
-  import { AVATAR, type Apparition } from '$lib/tour/apparitions'
-  import { EMPTY_WORLD, centroid } from '$lib/tour/hatsu'
+  import { AVATAR, flashFor, type Apparition, type TourFlash } from '$lib/tour/apparitions'
+  import { EMPTY_WORLD, centroid, type TourReport, type TourWorld } from '$lib/tour/hatsu'
+  import { TourHatsuView } from '$lib/tour/pageHatsuView.svelte'
+  import { TourHatsuSession } from '$lib/tour/pageHatsuSession.svelte'
+  import { TourCastController } from '$lib/tour/pageCastController'
+  import type { CastHand } from '$lib/tour/pageCasting'
   import { breadcrumbSchema } from '$lib/seo/schema'
   import { link, locale, t } from '$lib/i18n'
   import { displayName } from '$lib/utils/displayNames'
@@ -92,6 +96,89 @@
   let engaged = $state(false)
   let jumpTo = $state<string | null>(null)
   let jumpAt = $state<Vec2 | null>(null)
+  let aimedAt = $state<Space | null>(null)
+  let aimedSolidAt = $state<import('$lib/tour/types').Structure | null>(null)
+  let hatsuWorld = $state<TourWorld>(EMPTY_WORLD)
+  let hatsuReport = $state<TourReport | null>(null)
+  let hatsuFlash = $state<(TourFlash & { seq: number }) | null>(null)
+  let hatsuFlashSequence = 0
+  let nextHand = $state<Record<CastHand, 'sun' | 'moon'>>({
+    first: 'sun',
+    second: 'sun',
+    third: 'sun',
+  })
+
+  const hatsuView = new TourHatsuView({
+    active: () => $activeHatsu,
+    world: () => hatsuWorld,
+    locale: () => $locale,
+    tuneName: (air) => $t.tour.hatsu.tunes[air],
+  })
+  let sceneTechnique = $derived(hatsuView.technique)
+  let hatsuHands = $derived(hatsuView.hands)
+  let hatsuTunes = $derived(hatsuView.tunes)
+
+  function showHatsuReport(report: TourReport) {
+    hatsuReport = report
+    const flash = flashFor({ report, from: position }, ship, hatsuWorld)
+    if (flash) hatsuFlash = { ...flash, seq: ++hatsuFlashSequence }
+  }
+
+  function goToHatsuSpace(space: Space, landing?: Vec2 | null) {
+    tierId = space.tierId
+    jumpTo = space.id
+    jumpAt = landing ?? null
+  }
+
+  const hatsuCasting = new TourCastController({
+    read: () => ({
+      world: hatsuWorld,
+      ship,
+      activeKind: sceneTechnique?.kind ?? null,
+      pages: hatsuView.openPages,
+      hands: nextHand,
+      currentSpace,
+      aimedAt,
+      aimedSolidAt,
+      position,
+      heading,
+    }),
+    updateWorld: (next) => (hatsuWorld = next),
+    updateReport: (next) => (hatsuReport = next),
+    updateHands: (next) => (nextHand = next),
+    show: showHatsuReport,
+    goToSpace: goToHatsuSpace,
+  })
+
+  const hatsuSession = new TourHatsuSession({
+    readActivation: () => ({
+      ship,
+      activeKind: sceneTechnique?.kind ?? null,
+      hasAura: Boolean($activeHatsu),
+      position,
+      spaceId: currentSpace?.id ?? null,
+    }),
+    read: () => ({
+      world: hatsuWorld,
+      ship,
+      activeKind: sceneTechnique?.kind ?? null,
+      hasAura: Boolean($activeHatsu),
+      position,
+      spaceId: currentSpace?.id ?? null,
+    }),
+    updateWorld: (next) => (hatsuWorld = next),
+    updateReport: (next) => (hatsuReport = next),
+    resetHands: () => (nextHand = { first: 'sun', second: 'sun', third: 'sun' }),
+    show: showHatsuReport,
+    goToSpace: (spaceId) => {
+      const space = ship.spaces.get(spaceId)
+      if (space) goToHatsuSpace(space)
+    },
+    reboundText: () => $t.tour.hatsu.reports.snakesRebound,
+    vowText: (spaceId) => $t.tour.hatsu.reports.vowBroken(spaceId),
+  })
+  hatsuSession.watchActivation()
+  hatsuSession.watchFuture()
 
   let sceneCharacters = $derived(
     data.sceneCharacters
@@ -555,7 +642,10 @@
     if (destination !== undefined) chooseScene(destination)
   }
 
-  onDestroy(stopPlayback)
+  onDestroy(() => {
+    stopPlayback()
+    hatsuSession.dispose()
+  })
 </script>
 
 <Seo
@@ -725,13 +815,30 @@
               bind:engaged
               bind:jumpTo
               bind:jumpAt
-              world={EMPTY_WORLD}
+              world={hatsuWorld}
+              auraColour={sceneTechnique?.color ?? null}
+              flash={hatsuFlash}
+              aiming={Boolean(sceneTechnique)}
+              selfCastable={hatsuView.selfCastable}
+              hands={hatsuHands}
+              tunes={hatsuTunes}
+              twoHanded={hatsuView.twoHanded}
+              bind:aimedAt
+              bind:aimedSolidAt
+              onCast={hatsuCasting.castOn}
+              onArrive={hatsuSession.arrived}
               {extras}
               touchLabels={{ move: $t.tour.touch.move, cast: $t.tour.touch.cast }}
               soundLabels={{ silence: $t.tour.sound.silence, restore: $t.tour.sound.restore }}
               loadingLabel={$t.tour.loading}
               unsupportedLabel={$t.tour.unsupported}
             />
+            {#if hatsuReport}
+              <output class="scene-hatsu-report" aria-live="polite">
+                <strong>{activeTechnique?.name ?? $t.reconstruction.hatsuLens}</strong>
+                <span>{hatsuReport.kind}</span>
+              </output>
+            {/if}
           </div>
         {/if}
       </section>
@@ -1014,6 +1121,24 @@
     padding: 0.55rem 0.8rem;
     color: rgba(237, 241, 238, 0.7);
     font-size: 0.72rem;
+  }
+  .scene-hatsu-report {
+    position: absolute;
+    right: 1rem;
+    bottom: 1rem;
+    z-index: 5;
+    display: grid;
+    gap: 0.2rem;
+    border: 1px solid color-mix(in srgb, var(--hatsu, #6faeb2) 65%, transparent);
+    background: rgba(3, 8, 10, 0.9);
+    padding: 0.65rem 0.85rem;
+    color: #edf1ee;
+  }
+  .scene-hatsu-report span {
+    color: rgba(237, 241, 238, 0.58);
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
   }
   .masthead {
     max-width: 1600px;

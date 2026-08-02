@@ -3230,11 +3230,19 @@
        * are how a list is walked; swallowing them there would leave a keyboard
        * visitor unable to work the page at all.
        */
-      const typingElsewhere = (target: EventTarget | null) =>
-        target instanceof HTMLElement &&
-        (target.isContentEditable ||
-          target.closest('a, button, input, textarea, select, [role="button"], [tabindex]') !==
-            null)
+      const isKeyForElsewhere = (event: KeyboardEvent) => {
+        const target = event.target
+        if (!(target instanceof HTMLElement)) return false
+        if (target.isContentEditable || target.closest('input, textarea, select') !== null) {
+          return true
+        }
+        if (target.closest('a, button, [role="button"], [tabindex]') !== null) {
+          return ['Space', 'Enter', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(
+            event.code
+          )
+        }
+        return false
+      }
 
       /** One step to the side, in radians, as the visitor has set it. */
       const snapStep = () => ($comfort.snapAngle * Math.PI) / 180
@@ -3299,7 +3307,7 @@
           document.exitPointerLock()
           return
         }
-        if (typingElsewhere(event.target)) return
+        if (isKeyForElsewhere(event)) return
         if (event.code === NEN_KEYS.hatsu && beginHatsu(event)) return
         const wheelZone = nenZoneIndex(event.code)
         if (hatsuWheelOpen && wheelZone !== null) {

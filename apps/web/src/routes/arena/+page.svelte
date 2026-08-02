@@ -4,6 +4,7 @@
   import TourScene from '$lib/components/tour/TourScene.svelte'
   import TourModeFullscreen from '$lib/components/tour/TourModeFullscreen.svelte'
   import ReplayPanel from '$lib/components/arena/ReplayPanel.svelte'
+  import ArenaV3Panel from '$lib/components/arena/ArenaV3Panel.svelte'
   import {
     advanceArena,
     OPPONENT_DOCTRINES,
@@ -101,14 +102,14 @@
   let commandAnimation = $state<CommandAnimation | null>(null)
   let commandAnimationSeq = $state(0)
   let lesson = $state(0)
-  let opponentDoctrine = $state<OpponentDoctrine>('counter')
-  let difficulty = $state<ArenaDifficulty>('fighter')
+  let opponentDoctrine = $state<OpponentDoctrine>(data.doctrine)
+  let difficulty = $state<ArenaDifficulty>(data.difficulty)
   let recorder = new ArenaRecorder(combatSetup(), opponentDoctrine, difficulty)
   let lastReplay = $state<ArenaReplay | null>(null)
   let stats = $state<ArenaStats>({ ...EMPTY_STATS })
   let bestGrade = $state<string | null>(null)
   let graded = $state(false)
-  let selectedChallengeId = $state<string | null>(null)
+  let selectedChallengeId = $state<string | null>(data.challengeId)
   const motionTimers = new Set<number>()
 
   let reading = $derived(readAura(game.player, game.opponent))
@@ -713,6 +714,15 @@
     <a class:active={terrain.id === 'tier-2-screening-room'} href="?terrain=tier-2-screening-room">
       {$locale === 'fr' ? 'Salle de projection' : 'Screening Room'}
     </a>
+    <a class:active={terrain.id === 'tier-1-vip-casino'} href="?terrain=tier-1-vip-casino">
+      {$locale === 'fr' ? 'Casino VIP' : 'VIP Casino'}
+    </a>
+    <a
+      class:active={terrain.id === 'tier-3-observation-deck'}
+      href="?terrain=tier-3-observation-deck"
+    >
+      {$locale === 'fr' ? "Pont d'observation" : 'Observation Deck'}
+    </a>
   </nav>
 
   <aside class="challenge-panel" aria-label={$locale === 'fr' ? 'Épreuves' : 'Challenges'}>
@@ -919,6 +929,12 @@
         </section>
       {/if}
       {#if lastReplay}<ReplayPanel replay={lastReplay} locale={$locale} />{/if}
+      <ArenaV3Panel
+        replay={lastReplay}
+        challengeId={selectedChallengeId}
+        result={challengeResult}
+        locale={$locale}
+      />
       <button onclick={restart}>{$t.arena.action.restart}</button>
       <div class="difficulty-picker" aria-label="Difficulty">
         {#each ['initiate', 'fighter', 'master'] as level}

@@ -24,6 +24,7 @@
   import MorenaCard from '$lib/components/tour/MorenaCard.svelte'
   import MorenaPiles from '$lib/components/tour/MorenaPiles.svelte'
   import MorenaSetupPanel from '$lib/components/tour/MorenaSetupPanel.svelte'
+  import MorenaSceneOverlay from '$lib/components/tour/MorenaSceneOverlay.svelte'
   import ContagionDashboard from '$lib/nen/ContagionDashboard.svelte'
   import { breadcrumbSchema } from '$lib/seo/schema'
   import { link, locale, t } from '$lib/i18n'
@@ -532,28 +533,6 @@
         unsupportedLabel={copy.unsupported}
       />
 
-      <div class="pointer-events-none absolute left-3 top-3 max-w-sm">
-        <p class="text-[10px] uppercase tracking-widest text-[#FFD700]/70">
-          {french ? hideout.tier.nameFr : hideout.tier.name}
-        </p>
-        <p class="text-lg font-semibold leading-tight text-[#FFFFF0]">
-          {french ? office.nameFr : office.name}
-        </p>
-        <p class="mt-1 text-xs leading-snug text-[#FFFFF0]/60">{copy.seat}</p>
-      </div>
-
-      <!-- Looking around took the mouse, and the cards need it back. Said only
-           while the table is holding it, at the foot of the room where the walk
-           says the same thing: the hand is to the right, and a line over the
-           cards would be covering what it is telling you to go and play. -->
-      {#if engaged}
-        <p
-          class="pointer-events-none absolute bottom-3 left-1/2 z-20 -translate-x-1/2 rounded bg-[#050505]/80 px-3 py-1 text-center text-xs text-[#FFFFF0]/70"
-        >
-          {$t.tour.engaged}
-        </p>
-      {/if}
-
       <!-- Emperor Time, which is the one seat you look through rather than at.
            The room goes scarlet the way the eyes do, and it goes further with
            every second the visitor sits there: what is being spent is not a
@@ -561,82 +540,31 @@
            put it over everything. The number is said as well as shown — a tint
            is a feeling and a year is a quantity, and this ability is the one
            whose whole argument is the quantity. -->
-      {#if view === 'table' && spentOn(game, 'scarlet') !== null}
-        <div
-          class="pointer-events-none absolute inset-0 z-10"
-          style:background="radial-gradient(ellipse at center, rgba(239,51,64,{scorch * 0.16}) 0%,
-          rgba(239,51,64,{0.1 + scorch * 0.6}) 100%)"
-          style:mix-blend-mode="screen"
-        ></div>
-        <p
-          class="pointer-events-none absolute left-1/2 top-3 z-20 -translate-x-1/2 rounded border border-[#ef3340]/60 bg-[#050505]/85 px-3 py-1 text-center text-[11px] uppercase tracking-widest text-[#ef8a90]"
-        >
-          {$t.nen.lifeConsumed($emperorTimeLifeHours.toLocaleString($locale))}
-          <span class="ml-2 text-[#FFFFF0]/45">{copy.scarlet.watching}</span>
-        </p>
-      {/if}
-
       <!-- The table, played with the hands.
            A reticle only while the pointer is held — with a cursor on the glass
            there is already a thing pointing at the card, and two would be one
            too many — and, above it, what the card under it would do. The line is
            the whole of the interface: it is the only thing that says a hand of
            cards a metre away is something you may reach for. -->
-      {#if view === 'table' && engaged}
-        <span
-          class="pointer-events-none absolute left-1/2 top-1/2 z-20 block h-1.5 w-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full border border-[#050505]/70 bg-[#FFFFF0]/80"
-        ></span>
-      {/if}
-
-      {#if view === 'table'}
-        <div
-          class="pointer-events-none absolute bottom-12 left-1/2 z-20 flex -translate-x-1/2 flex-col items-center gap-1"
-        >
-          {#if pointedLabel}
-            <p
-              class="rounded border border-[#FFD700]/50 bg-[#050505]/85 px-3 py-1 text-center text-xs text-[#FFD700]"
-            >
-              {pointedLabel}
-            </p>
-          {:else if game.phase !== 'over'}
-            <p class="rounded bg-[#050505]/70 px-3 py-1 text-center text-xs text-[#FFFFF0]/55">
-              {copy.reach.hint}
-            </p>
-          {/if}
-          <!-- And the keys the aura is played with, which are the walk's own F
-               and — where a book has put a second page up — its R. One line per
-               live page, because two pages are two different moves and a single
-               line naming one of them would be lying about the other. -->
-          {#if castable}
-            {#each keyed as seat, index (seat.page)}
-              {#if !seat.usedUp}
-                <p
-                  class="rounded bg-[#050505]/70 px-3 py-1 text-center text-xs"
-                  style:color={carried?.color ?? '#FFFFF0'}
-                >
-                  {index === 0
-                    ? copy.reach.cast(copy.hatsu.effects[seat.move.effect])
-                    : copy.reach.castSecond(copy.hatsu.effects[seat.move.effect])}
-                </p>
-              {/if}
-            {/each}
-          {/if}
-        </div>
-      {/if}
-
-      <!-- The way in and out of the screen. Top right of the room, because the
-           left corner already names the deck and the office. -->
-      <button
-        type="button"
-        onclick={toggleFullscreen}
-        aria-pressed={immersive}
-        class="absolute right-3 top-3 z-20 rounded border px-2.5 py-1 text-xs transition-colors {immersive
-          ? 'border-[#FFD700] bg-[#050505]/80 text-[#FFD700]'
-          : 'border-[#333] bg-[#050505]/80 text-[#FFFFF0]/70 hover:border-[#FFD700]/50 hover:text-[#FFFFF0]'}"
-      >
-        {immersive ? $t.tour.fullscreen.exit : $t.tour.fullscreen.enter}
-        <kbd class="ml-1 text-[10px] text-[#FFD700]/70">V</kbd>
-      </button>
+      <MorenaSceneOverlay
+        tierName={french ? hideout.tier.nameFr : hideout.tier.name}
+        officeName={french ? office.nameFr : office.name}
+        {engaged}
+        tableActive={view === 'table'}
+        scarletActive={spentOn(game, 'scarlet') !== null}
+        {scorch}
+        {pointedLabel}
+        phaseOver={game.phase === 'over'}
+        {castable}
+        castHints={keyed.map((seat) => ({
+          id: seat.page,
+          effect: copy.hatsu.effects[seat.move.effect],
+          usedUp: seat.usedUp,
+        }))}
+        auraColor={carried?.color ?? null}
+        {immersive}
+        onFullscreen={toggleFullscreen}
+      />
     </section>
 
     <!-- The hand, once it is folded away: the table is still there to be looked

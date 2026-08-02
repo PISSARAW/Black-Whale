@@ -90,6 +90,7 @@
         plan.tier,
       ),
       at: witness.position,
+      heading: witness.heading,
       tierId: arena.tierId,
       spaceId: witness.spaceId,
       stage: 0,

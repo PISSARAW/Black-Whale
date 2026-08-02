@@ -172,6 +172,8 @@ export interface Apparition {
   tierId: string
   /** Where it stands, in the coordinates of the deck it is on. */
   at: Vec2
+  /** Direction of travel for moving humans, in radians around the vertical axis. */
+  heading?: number
   /** How high its centre is, in metres above sea level, like every other Y. */
   y: number
   /** Its size in metres: what that measures is the kind's own business. */

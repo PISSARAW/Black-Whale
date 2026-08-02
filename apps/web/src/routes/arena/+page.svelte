@@ -122,6 +122,7 @@
       spaceId: terrain.id,
       tierId: terrain.tierId,
       at: game.opponent.position,
+      heading: game.opponent.facing,
       y: ground,
       size: 1,
       colour: 0xc36f68,
@@ -544,11 +545,18 @@
   <h1 class="sr-only">{$t.arena.title}</h1>
 
   {#if briefingOpen}
-    <div class="combat-briefing" role="dialog" aria-modal="true" aria-labelledby="combat-briefing-title">
+    <div
+      class="combat-briefing"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="combat-briefing-title"
+    >
       <div class="briefing-card">
         <p class="briefing-kicker">{$locale === 'fr' ? 'AVANT LE COMBAT' : 'BEFORE THE FIGHT'}</p>
         <h2 id="combat-briefing-title">
-          {$locale === 'fr' ? 'Touchez votre adversaire avant qu’il ne vous touche' : 'Hit your opponent before they hit you'}
+          {$locale === 'fr'
+            ? 'Touchez votre adversaire avant qu’il ne vous touche'
+            : 'Hit your opponent before they hit you'}
         </h2>
         <p class="briefing-goal">
           {$locale === 'fr'
@@ -558,15 +566,27 @@
         <ol class="briefing-steps">
           <li>
             <kbd>{$locale === 'fr' ? 'ZQSD' : 'WASD'}</kbd>
-            <span><strong>{$locale === 'fr' ? 'Approchez' : 'Close in'}</strong>{$locale === 'fr' ? ' jusqu’à ce que le viseur devienne doré.' : ' until the reticle turns gold.'}</span>
+            <span
+              ><strong>{$locale === 'fr' ? 'Approchez' : 'Close in'}</strong>{$locale === 'fr'
+                ? ' jusqu’à ce que le viseur devienne doré.'
+                : ' until the reticle turns gold.'}</span
+            >
           </li>
           <li>
             <kbd>CLIC · F</kbd>
-            <span><strong>{$locale === 'fr' ? 'Frappez' : 'Strike'}</strong>{$locale === 'fr' ? ' en visant l’adversaire. Une touche rapporte au moins 1 point.' : ' while aiming at the opponent. A hit scores at least 1 point.'}</span>
+            <span
+              ><strong>{$locale === 'fr' ? 'Frappez' : 'Strike'}</strong>{$locale === 'fr'
+                ? ' en visant l’adversaire. Une touche rapporte au moins 1 point.'
+                : ' while aiming at the opponent. A hit scores at least 1 point.'}</span
+            >
           </li>
           <li>
             <kbd>MAJ</kbd>
-            <span><strong>{$locale === 'fr' ? 'Bloquez' : 'Block'}</strong>{$locale === 'fr' ? ' quand l’alerte d’attaque apparaît. Les techniques Nen sont optionnelles pour commencer.' : ' when the attack warning appears. Nen techniques are optional at first.'}</span>
+            <span
+              ><strong>{$locale === 'fr' ? 'Bloquez' : 'Block'}</strong>{$locale === 'fr'
+                ? ' quand l’alerte d’attaque apparaît. Les techniques Nen sont optionnelles pour commencer.'
+                : ' when the attack warning appears. Nen techniques are optional at first.'}</span
+            >
           </li>
         </ol>
         <button class="briefing-start" onclick={() => (briefingOpen = false)}>

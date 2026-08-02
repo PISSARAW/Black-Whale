@@ -4,6 +4,12 @@ import { combatReducer } from '../combat/reducer'
 import { BODY_ZONES, type BodyZone, type CombatState } from '../combat/types'
 
 const THINK_EVERY = 0.45
+export type ArenaDifficulty = 'initiate' | 'fighter' | 'master'
+export const DIFFICULTY_CADENCE: Record<ArenaDifficulty, number> = {
+  initiate: 0.68,
+  fighter: THINK_EVERY,
+  master: 0.3,
+}
 
 export type OpponentDoctrine = 'counter' | 'binder' | 'artillery'
 
@@ -20,15 +26,16 @@ export function advanceArena(
   state: CombatState,
   dt: number,
   doctrine: OpponentDoctrine = 'counter',
+  difficulty: ArenaDifficulty = 'fighter',
 ): CombatState {
   const ticked = combatReducer(state, { type: 'TICK', dt })
   if (ticked.outcome !== 'playing') return ticked
-  if (Math.floor(ticked.clock / THINK_EVERY) === Math.floor(state.clock / THINK_EVERY))
-    return ticked
-  return decide(ticked, doctrine)
+  const cadence = DIFFICULTY_CADENCE[difficulty]
+  if (Math.floor(ticked.clock / cadence) === Math.floor(state.clock / cadence)) return ticked
+  return decide(ticked, doctrine, cadence)
 }
 
-function decide(state: CombatState, doctrine: OpponentDoctrine): CombatState {
+function decide(state: CombatState, doctrine: OpponentDoctrine, cadence: number): CombatState {
   const ai = state.opponent
   if (ai.condition !== 'ready') return state
   if (ai.intent) return state
@@ -79,7 +86,7 @@ function decide(state: CombatState, doctrine: OpponentDoctrine): CombatState {
   current = combatReducer(current, { type: 'MODE', side: 'opponent', mode: 'ren' })
   current = combatReducer(current, { type: 'KEN', side: 'opponent', on: false })
   const reading = readAura(current.opponent, current.player)
-  const zone = openZone(reading.guard, Math.floor(current.clock / THINK_EVERY))
+  const zone = openZone(reading.guard, Math.floor(current.clock / cadence))
 
   if (current.player.recoveryWindow <= 0 && Math.floor(current.clock / THINK_EVERY) % 4 === 0) {
     return combatReducer(current, { type: 'FEINT', side: 'opponent', zone })

@@ -2,10 +2,16 @@
   import { onDestroy, onMount } from 'svelte'
   import Seo from '$lib/components/Seo.svelte'
   import TourScene from '$lib/components/tour/TourScene.svelte'
-  import { advanceArena, OPPONENT_DOCTRINES, type OpponentDoctrine } from '$lib/arena/ai'
+  import {
+    advanceArena,
+    OPPONENT_DOCTRINES,
+    type ArenaDifficulty,
+    type OpponentDoctrine,
+  } from '$lib/arena/ai'
   import { arenaHatsuEffect, worksInArena } from '$lib/arena/hatsu'
   import { zoneFromPitch } from '$lib/arena/targeting'
   import { playArenaHatsu, playArenaImpact } from '$lib/arena/audio'
+  import { EMPTY_STATS, gradeArena, recordEvent, type ArenaStats } from '$lib/arena/progression'
   import { buildCombatTerrain } from '$lib/arena/terrain'
   import { readAura } from '$lib/combat/perception'
   import { STRIKE_RANGE } from '$lib/combat/resolve'
@@ -70,6 +76,10 @@
   let commandAnimationSeq = $state(0)
   let lesson = $state(0)
   let opponentDoctrine = $state<OpponentDoctrine>('counter')
+  let difficulty = $state<ArenaDifficulty>('fighter')
+  let stats = $state<ArenaStats>({ ...EMPTY_STATS })
+  let bestGrade = $state<string | null>(null)
+  let graded = $state(false)
   const motionTimers = new Set<number>()
 
   let reading = $derived(readAura(game.player, game.opponent))
@@ -111,6 +121,7 @@
     game = combatReducer(game, action)
     advanceLesson(action)
     if (game.lastEvent !== previous && game.lastEvent) animateExchange(game.lastEvent)
+    finishRun()
     return game !== previousGame
   }
 
@@ -242,8 +253,9 @@
     while (owed >= DT && game.outcome === 'playing') {
       owed -= DT
       const previous = game.lastEvent
-      game = advanceArena(game, DT, opponentDoctrine)
+      game = advanceArena(game, DT, opponentDoctrine, difficulty)
       if (game.lastEvent !== previous && game.lastEvent) animateExchange(game.lastEvent)
+      finishRun()
     }
   }
 
@@ -258,6 +270,8 @@
     opponentMotion = 'idle'
     commandAnimation = null
     lesson = 0
+    stats = { ...EMPTY_STATS }
+    graded = false
     owed = 0
     last = 0
   }
@@ -277,6 +291,7 @@
   }
 
   function animateExchange(event: CombatEvent) {
+    stats = recordEvent(stats, event)
     playArenaImpact(event.impact)
     const defenderMotion = reactionFor(event.impact)
     if (event.attacker === 'player') {
@@ -286,6 +301,17 @@
     }
     playOpponent('attack', 320)
     if (defenderMotion !== 'idle') playPlayer(defenderMotion, reactionTime(event.impact))
+  }
+
+  function finishRun() {
+    if (graded || game.outcome === 'playing') return
+    graded = true
+    const grade = gradeArena(stats, game.outcome === 'won', game.player.aura)
+    const order = ['C', 'B', 'A', 'S']
+    if (!bestGrade || order.indexOf(grade) > order.indexOf(bestGrade)) {
+      bestGrade = grade
+      localStorage.setItem('black-whale:arena-best-grade', grade)
+    }
   }
 
   function reactionFor(impact: Impact): CombatMotion {
@@ -377,6 +403,7 @@
   }
 
   onMount(() => {
+    bestGrade = localStorage.getItem('black-whale:arena-best-grade')
     openHatsuGate({
       admits: worksInArena,
       reason:
@@ -635,7 +662,25 @@
       <p>{$t.arena.eyebrow}</p>
       <h1>{$t.arena.outcome[game.outcome]}</h1>
       <strong>{game.player.score} — {game.opponent.score}</strong>
+      <div class="match-report">
+        <b>{gradeArena(stats, game.outcome === 'won', game.player.aura)}</b>
+        <span>{stats.hits}/{stats.attacks} {$locale === 'fr' ? 'touches' : 'hits'}</span>
+        <span>{stats.blocks} {$locale === 'fr' ? 'blocages' : 'blocks'}</span>
+        <span>{stats.hatsu} Hatsu</span>
+        {#if bestGrade}<small>BEST · {bestGrade}</small>{/if}
+      </div>
       <button onclick={restart}>{$t.arena.action.restart}</button>
+      <div class="difficulty-picker" aria-label="Difficulty">
+        {#each ['initiate', 'fighter', 'master'] as level}
+          <button
+            class:active={difficulty === level}
+            onclick={() => {
+              difficulty = level as ArenaDifficulty
+              restart()
+            }}>{level}</button
+          >
+        {/each}
+      </div>
       <div class="doctrine-picker" aria-label="Adversaire">
         {#each Object.entries(OPPONENT_DOCTRINES) as [id, doctrine]}
           <button

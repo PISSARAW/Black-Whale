@@ -185,6 +185,45 @@
     margin-top: 0.8rem;
   }
 
+  .difficulty-picker,
+  .match-report {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.45rem;
+    margin: 0.65rem 0;
+  }
+
+  .match-report b {
+    width: 100%;
+    color: #e8cb76;
+    font-size: 2.6rem;
+  }
+
+  .match-report span,
+  .match-report small {
+    color: #aec4c9;
+    font:
+      0.58rem 'IBM Plex Mono',
+      monospace;
+  }
+
+  .difficulty-picker button {
+    padding: 0.35rem 0.55rem;
+    border: 1px solid #83c9d844;
+    background: #071217;
+    color: #9eb7bd;
+    font:
+      0.55rem 'IBM Plex Mono',
+      monospace;
+    text-transform: uppercase;
+  }
+
+  .difficulty-picker button.active {
+    border-color: #e5c476;
+    color: #e5c476;
+  }
+
   .doctrine-picker button {
     padding: 0.4rem 0.65rem;
     border: 1px solid #a7d9e744;

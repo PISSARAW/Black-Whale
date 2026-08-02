@@ -3,6 +3,7 @@
   import type { HunterProfile, HunterProfileId } from '$lib/hunt/hunter/profiles'
   import type { HuntTerrain, HuntTerrainId } from '$lib/hunt/arena'
   import type { HuntContractV3 } from '$lib/hunt/contracts/types'
+  import type { HuntVow } from '$lib/hunt/nen/advanced'
 
   interface Props {
     labels: {
@@ -33,6 +34,8 @@
     selectedContract: string
     contractLabel: string
     onSelectContract: (id: string) => void
+    selectedVow: HuntVow | null
+    onSelectVow: (vow: HuntVow | null) => void
     onBegin: () => void
   }
 
@@ -54,6 +57,8 @@
     selectedContract,
     contractLabel,
     onSelectContract,
+    selectedVow,
+    onSelectVow,
     onBegin,
   }: Props = $props()
 </script>
@@ -91,6 +96,18 @@
               {locale === 'fr' ? contract.description.fr : contract.description.en}
             </span>
           </button>
+        {/each}
+      </div>
+      <p class="mt-5 text-[0.65rem] uppercase tracking-[0.25em] text-amber-300/70">
+        {locale === 'fr' ? 'Vœu optionnel' : 'Optional vow'}
+      </p>
+      <div class="mt-2 grid grid-cols-3 gap-2">
+        {#each [{ id: null, en: 'None', fr: 'Aucun' }, { id: 'silent-hunt', en: 'Silent Hunt', fr: 'Traque silencieuse' }, { id: 'no-retreat', en: 'No retreat', fr: 'Sans retraite' }] as vow (vow.id)}
+          <button
+            class="rounded-lg border p-2 text-xs transition {selectedVow === vow.id ? 'border-amber-300 bg-amber-300/10 text-white' : 'border-white/10 text-white/50'}"
+            aria-pressed={selectedVow === vow.id}
+            onclick={() => onSelectVow(vow.id as HuntVow | null)}
+          >{locale === 'fr' ? vow.fr : vow.en}</button>
         {/each}
       </div>
       <p class="text-[0.65rem] uppercase tracking-[0.25em] text-violet-300/70">

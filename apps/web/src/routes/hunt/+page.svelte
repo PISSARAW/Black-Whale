@@ -52,6 +52,7 @@
   import HuntBriefing from '$lib/components/hunt/HuntBriefing.svelte'
   import HuntTutorial from '$lib/components/hunt/HuntTutorial.svelte'
   import HuntAudioControl from '$lib/components/hunt/HuntAudioControl.svelte'
+  import AdvancedNenActions from '$lib/components/hunt/AdvancedNenActions.svelte'
   import { closeHuntAudio, playHuntCue } from '$lib/hunt/audio'
   import { tutorialStep } from '$lib/hunt/tutorial'
   import { tutorialMessages } from '$lib/hunt/tutorialMessages'
@@ -61,6 +62,7 @@
   import { huntContractById, listHuntContracts } from '$lib/hunt/contracts/registry'
   import { contractMessages } from '$lib/hunt/contracts/messages'
   import { carryIntoStage, nextStage } from '$lib/hunt/contracts/transition'
+  import { capabilitiesOf, type HuntVow } from '$lib/hunt/nen/advanced'
   import {
     DEFAULT_HUNTER_PROFILE,
     HUNTER_PROFILES,
@@ -115,6 +117,7 @@
   let contractStage = $state(0)
   let selectedHatsu = $state<HuntHatsuId>(DEFAULT_HUNT_HATSU)
   let selectedHunter = $state<HunterProfileId>(DEFAULT_HUNTER_PROFILE)
+  let selectedVow = $state<HuntVow | null>(null)
   let activeContract = $derived(huntContractById(selectedContract) ?? contracts[0])
   let availableHatsuProfiles = $derived(
     hatsuProfiles.filter((profile) => activeContract.allowedHatsu.includes(profile.id)),
@@ -127,7 +130,7 @@
   )
 
   function freshGame() {
-    return initialHuntState({
+    const fresh = initialHuntState({
       playerAt: { position: interiorPoint(opening.from.footprint), spaceId: opening.from.id },
       hunterAt: { position: interiorPoint(opening.to.footprint), spaceId: opening.to.id },
       targetSpaceId: opening.to.id,
@@ -135,6 +138,7 @@
       hatsu: selectedHatsu,
       hunterProfile: selectedHunter,
     })
+    return selectedVow ? huntReducer(fresh, { type: 'VOW', vow: selectedVow }) : fresh
   }
 
   let game = $state(freshGame())
@@ -269,7 +273,11 @@
     if (action.type === 'LAY' || action.type === 'TAKE') playHuntCue('trap')
   }
 
-  let canSweep = $derived(game.player.nen === 'ten' && game.ledger.pool.available >= 15)
+  let canSweep = $derived(
+    game.player.nen === 'ten' &&
+      game.ledger.pool.available >= 15 &&
+      capabilitiesOf(game.advancedNen).canSweepEn,
+  )
   let canLay = $derived(
     game.hatsu.id === 'bungee-gum' &&
       game.player.spaceId !== null &&
@@ -298,6 +306,7 @@
     KeyX: { type: 'ZETSU' },
     KeyV: { type: 'LAY' },
     KeyR: { type: 'TAKE' },
+    KeyN: { type: 'REN' },
   }
 
   function onKeyDown(event: KeyboardEvent) {
@@ -307,6 +316,10 @@
   }
 
   function huntKey(code: string): boolean {
+    if (code === 'KeyU' && game.player.spaceId) {
+      send({ type: 'SHU', itemId: `room:${game.player.spaceId}` })
+      return true
+    }
     const action = HUNT_KEYS[code]
     if (!action) return false
     send(action)
@@ -561,6 +574,13 @@
       onTake={() => send({ type: 'TAKE' })}
       onHatsu={() => send({ type: 'HATSU' })}
     />
+    <AdvancedNenActions
+      state={game.advancedNen}
+      locale={$locale}
+      canShu={game.ledger.pool.available >= 10 && game.player.spaceId !== null}
+      onRen={() => send({ type: 'REN' })}
+      onShu={() => send({ type: 'SHU', itemId: `room:${game.player.spaceId}` })}
+    />
   {/if}
 
   {#if briefed && !tutorialDismissed && lesson !== 'done' && !finished}
@@ -640,6 +660,7 @@
       {contracts}
       {selectedContract}
       contractLabel={contractMessages($locale).choose}
+      {selectedVow}
       locale={$locale}
       onSelect={(id) => {
         selectedHatsu = id
@@ -651,6 +672,10 @@
       }}
       onSelectTerrain={selectTerrain}
       onSelectContract={selectContract}
+      onSelectVow={(vow) => {
+        selectedVow = vow
+        game = freshGame()
+      }}
       onBegin={begin}
     />
   {/if}

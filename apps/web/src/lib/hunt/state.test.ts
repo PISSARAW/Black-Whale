@@ -164,6 +164,26 @@ describe('laying and taking back', () => {
   })
 })
 
+describe('advanced Nen actions', () => {
+  it('charges Shu from the same pool and toggles Ren', () => {
+    const shu = huntReducer(game(), { type: 'SHU', itemId: 'pipe-1' })
+    expect(shu.advancedNen.shuItem).toBe('pipe-1')
+    expect(shu.ledger.pool.available).toBe(90)
+    expect(huntReducer(shu, { type: 'REN' }).advancedNen.ren).toBe(true)
+  })
+
+  it('enforces a silent-hunt vow by refusing En', () => {
+    const vowed = huntReducer(game(), { type: 'VOW', vow: 'silent-hunt' })
+    expect(vowed.advancedNen.vow).toBe('silent-hunt')
+    expect(huntReducer(vowed, { type: 'SWEEP' })).toBe(vowed)
+  })
+
+  it('records localized wounds as lost capabilities', () => {
+    const wounded = huntReducer(game(), { type: 'WOUND', limb: 'left-leg' })
+    expect(wounded.advancedNen.wounds).toEqual(['left-leg'])
+  })
+})
+
 describe('purity', () => {
   it('never mutates the state it was given', () => {
     const state = game()

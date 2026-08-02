@@ -29,6 +29,17 @@ import type { DuelState } from './duel/state'
 import type { HunterProfileId } from './hunter/profiles'
 import type { SealedExit } from './environment'
 import {
+  acceptVow,
+  applyShu,
+  capabilitiesOf,
+  initialAdvancedNen,
+  toggleRen,
+  wound,
+  type AdvancedNenState,
+  type HuntVow,
+  type WoundedLimb,
+} from './nen/advanced'
+import {
   DEFAULT_HUNT_HATSU,
   initialHatsu,
   openFuture,
@@ -65,6 +76,7 @@ export interface HuntState {
   nextId: number
   sealedExits: SealedExit[]
   sealedAtSpaces: string[]
+  advancedNen: AdvancedNenState
 }
 
 export type HuntAction =
@@ -76,6 +88,10 @@ export type HuntAction =
   | { type: 'DUEL'; action: DuelAction }
   | { type: 'TAKE_IN_DUEL' }
   | { type: 'HATSU' }
+  | { type: 'REN' }
+  | { type: 'SHU'; itemId: string }
+  | { type: 'VOW'; vow: HuntVow }
+  | { type: 'WOUND'; limb: WoundedLimb }
 
 export interface HuntSetup {
   playerAt: { position: Vec2; spaceId: string }
@@ -112,6 +128,7 @@ export function initialHuntState(setup: HuntSetup): HuntState {
     nextId: 1,
     sealedExits: [],
     sealedAtSpaces: [],
+    advancedNen: initialAdvancedNen(),
   }
 }
 
@@ -143,11 +160,28 @@ export function huntReducer(state: HuntState, action: HuntAction): HuntState {
     case 'TAKE':
       return take(state)
     case 'DUEL':
+      if (action.action.type === 'ZETSU' && !capabilitiesOf(state.advancedNen).canBreakAway) {
+        return state
+      }
       return state.duel ? { ...state, duel: duelReducer(state.duel, action.action) } : state
     case 'TAKE_IN_DUEL':
       return takeInDuel(state)
     case 'HATSU':
       return useHatsu(state)
+    case 'REN':
+      return { ...state, advancedNen: toggleRen(state.advancedNen) }
+    case 'SHU': {
+      const result = applyShu(state.advancedNen, state.ledger.pool, action.itemId)
+      return {
+        ...state,
+        advancedNen: result.state,
+        ledger: { ...state.ledger, pool: result.pool },
+      }
+    }
+    case 'VOW':
+      return { ...state, advancedNen: acceptVow(state.advancedNen, action.vow, state.clock) }
+    case 'WOUND':
+      return { ...state, advancedNen: wound(state.advancedNen, action.limb) }
     default:
       return state
   }
@@ -159,6 +193,7 @@ export function huntReducer(state: HuntState, action: HuntAction): HuntState {
  * is the half the player does not get told about.
  */
 function sweep(state: HuntState): HuntState {
+  if (!capabilitiesOf(state.advancedNen).canSweepEn) return state
   const { pool, sweep: cast } = sweepEn(state.ledger.pool, {
     origin: state.player.position,
     caster: state.player.nen,

@@ -26,6 +26,7 @@ export function carryIntoStage(previous: HuntState, fresh: HuntState): HuntState
   return {
     ...fresh,
     hatsu: previous.hatsu,
+    advancedNen: previous.advancedNen,
     ledger: { ...fresh.ledger, pool: previous.ledger.pool, placements: previous.ledger.placements },
     hunter: {
       ...fresh.hunter,

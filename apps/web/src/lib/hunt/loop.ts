@@ -40,6 +40,7 @@ import {
 } from './environment'
 import type { ContractEnvironment } from './contracts/types'
 import { strategicPlanner } from './hunter/strategy'
+import { tickRen } from './nen/advanced'
 
 export const HUNT_TICK_RATE = 60
 export const HUNT_DT = 1 / HUNT_TICK_RATE
@@ -55,10 +56,13 @@ export function updateHunt(state: HuntState, world: HuntWorld): HuntState {
   if (state.outcome !== 'playing' && state.outcome !== 'contact') return state
   if (state.duel) return advanceDuel(state, world.dt)
 
+  const breathing = breathe(state, world.dt)
+  const ren = tickRen(state.advancedNen, breathing.pool, world.dt)
   const ticked = {
     ...state,
     clock: state.clock + world.dt,
-    ledger: breathe(state, world.dt),
+    ledger: { ...breathing, pool: ren.pool },
+    advancedNen: ren.state,
     hatsu: tickHatsu(state.hatsu, world.dt),
   }
   const moved = advanceHunter(ticked, world)

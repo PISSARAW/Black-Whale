@@ -71,21 +71,15 @@
   } from '$lib/tour/pageTargets'
   import { tourShortcut } from '$lib/tour/pageKeyboard'
   import {
+    stepBeast, stepCoin, stepFish, stepOwl, stepOwlAge, stepPolarity, stepScout,
+    type WorldStep,
+  } from '$lib/tour/pageWorldSteps'
+  import {
     EMPTY_WORLD,
     aimsAtSolids,
     arriveInTour,
     castInTour,
-    catStep,
-    gasStep,
     looseTheFlock,
-    reelStep,
-    smokeStep,
-    takeTheCoin,
-    ageTheOwl,
-    fishBite,
-    polarityStep,
-    flyTheEye,
-    flyTheOwl,
     hatsuKeys,
     identityOf,
     nextDoubleMode,
@@ -834,6 +828,14 @@
     }
   }
 
+  function applyWorldStep(step: WorldStep | null, audible = false) {
+    if (!step) return
+    world = step.world
+    if (!step.report) return
+    report = step.report
+    if (audible) show(step.report)
+  }
+
   /**
    * One mouthful, in every room the fish are loose in.
    *
@@ -842,17 +844,7 @@
    * read-out goes quiet rather than repeating itself.
    */
   function fishEat() {
-    let next = world
-    let last: TourReport | null = null
-    for (const spaceId of world.devouring) {
-      const bite = fishBite(next, ship, spaceId)
-      if (!bite) continue
-      next = bite.world
-      last = bite.report
-    }
-    if (!last) return
-    world = next
-    report = last
+    applyWorldStep(stepFish({ world, ship }))
   }
 
   /**
@@ -873,24 +865,7 @@
    * rather than repeating itself.
    */
   function beastStep() {
-    let next = world
-    let last: TourReport | null = null
-    for (const step of [gasStep(next, ship), reelStep(next, ship, position), catStep(next, ship)]) {
-      if (!step) continue
-      next = step.world
-      last = step.report
-    }
-    // The smoke reads the world the others left, since filling a room is not
-    // affected by what melted in it — but it must not read a stale one.
-    const filling = smokeStep(next)
-    if (filling) {
-      next = filling.world
-      last = filling.report
-    }
-    if (!last) return
-    world = next
-    report = last
-    show(last)
+    applyWorldStep(stepBeast({ world, ship, position }), true)
   }
 
   /**
@@ -900,20 +875,11 @@
    * and what the wheel puts out next, is the pure layer's.
    */
   function takeCoin() {
-    const taken = takeTheCoin(world)
-    if (!taken) return
-    world = taken.world
-    report = taken.report
-    show(taken.report)
+    applyWorldStep(stepCoin(world), true)
   }
 
   function polarityWalk(seconds: number, delta: number) {
-    const step = polarityStep(world, ship, { seconds, delta })
-    if (!step) return
-    world = step.world
-    if (!step.report) return
-    report = step.report
-    show(step.report)
+    applyWorldStep(stepPolarity({ world, ship, seconds, delta }), true)
   }
 
   /**
@@ -925,10 +891,7 @@
    * walk talking over itself.
    */
   function owlFlight() {
-    const flown = flyTheOwl(world, ship)
-    if (!flown) return
-    world = flown.world
-    report = flown.report
+    applyWorldStep(stepOwl({ world, ship }))
   }
 
   /**
@@ -940,10 +903,7 @@
    * picture that keeps changing.
    */
   function scoutFlight() {
-    const flown = flyTheEye(world, ship)
-    if (!flown) return
-    world = flown.world
-    report = flown.report
+    applyWorldStep(stepScout({ world, ship }))
   }
 
   /**
@@ -955,12 +915,7 @@
    * in the corner off the same disappearance.
    */
   function owlSecond() {
-    const aged = ageTheOwl(world)
-    if (!aged) return
-    world = aged.world
-    if (!aged.report) return
-    report = aged.report
-    show(aged.report)
+    applyWorldStep(stepOwlAge(world), true)
   }
 
   /** Fugetsu's tunnel, asked on the same arrival the doors are asked on. */

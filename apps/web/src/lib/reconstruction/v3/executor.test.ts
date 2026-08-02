@@ -109,4 +109,11 @@ describe('V3 scenario executor', () => {
     })
     expect(result.replay.steps[1].status).toBe('blocked')
   })
+
+  it('can derive canonical knowledge from the branch snapshot', async () => {
+    const initializer = vi.fn(() => knowledge)
+    const result = await executeReconstructionScenario(scenario(), initializer, ports())
+    expect(initializer).toHaveBeenCalledWith({ location: 'room-a' })
+    expect(result.initialState).toEqual({ location: 'room-a' })
+  })
 })

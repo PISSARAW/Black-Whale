@@ -45,6 +45,7 @@ export interface ReconstructionExecutorPorts {
 
 export interface ReconstructionExecutionResult {
   branchId: string
+  initialState: unknown
   finalState: unknown
   knowledge: BranchKnowledgeState
   replay: ReturnType<typeof createReconstructionReplay>
@@ -52,11 +53,15 @@ export interface ReconstructionExecutionResult {
 
 export async function executeReconstructionScenario(
   scenario: ReconstructionScenario,
-  initialKnowledge: BranchKnowledgeState,
+  initialKnowledgeInput: BranchKnowledgeState | ((state: unknown) => BranchKnowledgeState),
   ports: ReconstructionExecutorPorts,
 ): Promise<ReconstructionExecutionResult> {
   const branch = await ports.createBranch(scenario.forkEventId, scenario.mode)
   const initialState = branch.state
+  const initialKnowledge =
+    typeof initialKnowledgeInput === 'function'
+      ? initialKnowledgeInput(initialState)
+      : initialKnowledgeInput
   let state = initialState
   let knowledge = initialKnowledge
   const occurredIds: string[] = [scenario.forkEventId]
@@ -109,6 +114,7 @@ export async function executeReconstructionScenario(
 
   return {
     branchId: branch.id,
+    initialState,
     finalState: state,
     knowledge,
     replay: createReconstructionReplay({

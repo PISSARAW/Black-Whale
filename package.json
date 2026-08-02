@@ -12,7 +12,8 @@
     "typecheck": "turbo typecheck",
     "clean": "turbo clean && rimraf node_modules",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "test:hunt:e2e": "playwright test tests/hunt.spec.ts"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.5",

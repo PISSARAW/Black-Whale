@@ -46,7 +46,7 @@ export type MapPresence = Presence & {
 }
 
 /** Only the event fields the projection consults. */
-export type MapEvent = { id: string; chapterId?: string | null }
+export type MapEvent = { id: string; chapterId?: string | null; title?: string | null }
 
 export interface MapWorldState {
   characters: MapCharacter[]
@@ -69,6 +69,8 @@ export type MapMarker = MarkerIdentityState & {
   /** Catalogue slug of the body's owner, which is what `localSpotAnchors` keys on. */
   characterSlug?: string
   location?: Location | null
+  /** Selected narrative event, used when a chapter depicts an exact position inside a room. */
+  currentEventTitle?: string | null
   overviewX: number
   overviewY: number
 }
@@ -501,6 +503,58 @@ const localSpotAnchors: Record<string, { occupants: Record<string, Spot>; fallba
 }
 
 /**
+ * Positions drawn by one specific event, before the room's habitual positions.
+ *
+ * Chapter 416 moves the same military group through two apartments in a few
+ * minutes. A room-wide anchor cannot represent that: Benjamin is neither at his
+ * command console nor on Tserriednich's training spot. These tables reconstruct
+ * the staging on the shared apartment plan. In the final event Benjamin and
+ * Tserriednich share a horizontal sight line, with the soldiers behind Benjamin,
+ * so the map shows the point-blank shot as a confrontation rather than a crowd.
+ */
+const localEventSpotAnchors: Record<string, Record<string, Record<string, Spot>>> = {
+  'Benjamin confronts Camilla under special martial law': {
+    'tier-1-vip-jail': {
+      'prince-camilla': { x: 35, y: 42 },
+      'prince-benjamin': { x: 35, y: 53 },
+      furykov: { x: 48, y: 53 },
+      butch: { x: 55, y: 53 },
+      mozbe: { x: 42, y: 41 },
+      fukataki: { x: 24, y: 41 },
+    },
+  },
+  'Moswana sacrifices herself and curses Benjamin': {
+    'tier-1-vip-jail': {
+      'prince-camilla': { x: 27, y: 33 },
+      moswana: { x: 35, y: 49 },
+      'prince-benjamin': { x: 35, y: 54 },
+      furykov: { x: 48, y: 54 },
+      butch: { x: 55, y: 54 },
+      mozbe: { x: 42, y: 41 },
+      fukataki: { x: 24, y: 41 },
+    },
+  },
+  'Tserriednich prepares Salkov to witness his false death': {
+    'tier-1-royal-residential-sector-room-1004': {
+      'prince-tserriednich': { x: 74, y: 63.29 },
+      salkov: { x: 61, y: 63.29 },
+      danjin: { x: 50, y: 38 },
+    },
+  },
+  'Benjamin breaches room 1004 and shoots Tserriednich': {
+    'tier-1-royal-residential-sector-room-1004': {
+      // Same axis, opposite sides: the shot is face-to-face.
+      'prince-benjamin': { x: 61, y: 63.29 },
+      'prince-tserriednich': { x: 70, y: 63.29 },
+      furykov: { x: 52, y: 57 },
+      butch: { x: 52, y: 69 },
+      salkov: { x: 78, y: 55 },
+      danjin: { x: 50, y: 38 },
+    },
+  },
+}
+
+/**
  * The spot a marker occupies inside its room, if the room declares any.
  *
  * `exact` separates the two cases the caller has to treat differently: a fixture
@@ -508,6 +562,13 @@ const localSpotAnchors: Record<string, { occupants: Record<string, Spot>; fallba
  * room's catch-all corner, which several markers share and must fan out across.
  */
 function spotAnchorFor(marker: MapMarker): (Spot & { exact: boolean }) | null {
+  const eventSpot = marker.currentEventTitle
+    ? localEventSpotAnchors[marker.currentEventTitle]?.[marker.locationId ?? '']?.[
+        marker.characterSlug ?? ''
+      ]
+    : undefined
+  if (eventSpot) return { ...eventSpot, exact: true }
+
   const room = localSpotAnchors[marker.locationId ?? '']
   if (!room) return null
   const own = marker.characterSlug ? room.occupants[marker.characterSlug] : undefined
@@ -1156,6 +1217,7 @@ export function projectPresenceMarker(
     locationId: loc.slug,
     characterSlug: ownerCharacter.slug,
     location: loc,
+    currentEventTitle: context.currentEvent?.title,
     overviewX: 50,
     overviewY: (tierId ? tierOverviewY[tierId] : undefined) ?? 46,
     x: x / 10,

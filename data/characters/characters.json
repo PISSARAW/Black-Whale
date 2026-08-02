@@ -2181,7 +2181,7 @@
     },
     "shipLocation": {
       "tier": 1,
-      "room": "1002",
+      "room": "VIP Jail",
       "status": "emprisonnee",
       "role": "prisonniere"
     },
@@ -26770,7 +26770,7 @@
     "canonStatus": "canon",
     "shipLocation": {
       "tier": 1,
-      "room": "1002",
+      "room": "VIP Jail",
       "status": "actif",
       "role": "Private Guard of Prince Camilla ; Provisional Hunter"
     },
@@ -41978,7 +41978,7 @@
     "canonStatus": "canon",
     "shipLocation": {
       "tier": 1,
-      "room": "1002",
+      "room": "VIP Jail",
       "status": "décédée",
       "role": "Majordomo of Prince Camilla"
     },
@@ -42777,7 +42777,7 @@
     "canonStatus": "canon",
     "shipLocation": {
       "tier": 1,
-      "room": "1002",
+      "room": "VIP Jail",
       "status": "décédée",
       "role": "Private Guard of Prince Camilla"
     },

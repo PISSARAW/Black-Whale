@@ -103,13 +103,13 @@ async function markDead(character, event) {
 }
 
 async function main() {
-  const [camillaConfrontation, moswanaCurse, falseDeathPlan, room1004Breach, room1002, room1004] =
+  const [camillaConfrontation, moswanaCurse, falseDeathPlan, room1004Breach, vipJail, room1004] =
     await Promise.all([
       requiredEvent('Benjamin confronts Camilla under special martial law'),
       requiredEvent('Moswana sacrifices herself and curses Benjamin'),
       requiredEvent('Tserriednich prepares Salkov to witness his false death'),
       requiredEvent('Benjamin breaches room 1004 and shoots Tserriednich'),
-      requiredLocation('tier-1-royal-residential-sector-room-1002'),
+      requiredLocation('tier-1-vip-jail'),
       requiredLocation('tier-1-royal-residential-sector-room-1004'),
     ])
 
@@ -180,7 +180,7 @@ async function main() {
   for (const event of [camillaConfrontation, moswanaCurse]) {
     await prisma.narrativeEvent.update({
       where: { id: event.id },
-      data: { locationId: room1002.id },
+      data: { locationId: vipJail.id },
     })
   }
   for (const event of [falseDeathPlan, room1004Breach]) {
@@ -190,6 +190,46 @@ async function main() {
     })
   }
 
+  const detentionSlugs = [
+    'prince-benjamin',
+    'prince-camilla',
+    'furykov',
+    'butch',
+    'mozbe',
+    'fukataki',
+  ]
+  for (const slug of detentionSlugs) {
+    const character = characters.get(slug)
+    // A previous run of the chapter backfill may already have closed the
+    // character's room-1001 presence at the later breach. Pull that boundary
+    // back to the confrontation before inserting the intermediate room-1002
+    // presence, otherwise the two rooms overlap for events 1–3.
+    await prisma.presence.updateMany({
+      where: {
+        entityId: character.originalBody.id,
+        untilEventId: room1004Breach.id,
+        id: { notIn: [`ch416-presence-${slug}-vip-jail`, `ch416-presence-${slug}-room1004`] },
+      },
+      data: { untilEventId: camillaConfrontation.id },
+    })
+    // Remove the erroneous intermediate location produced by the first version
+    // of this backfill, which treated Camilla's detention scene as room 1002.
+    await prisma.presence.deleteMany({ where: { id: `ch416-presence-${slug}-room1002` } })
+    await moveBody({
+      id: `ch416-presence-${slug}-vip-jail`,
+      character,
+      location: vipJail,
+      event: camillaConfrontation,
+    })
+  }
+  const moswana = characters.get('moswana')
+  await prisma.presence.deleteMany({ where: { id: 'ch416-presence-moswana-room1002' } })
+  await moveBody({
+    id: 'ch416-presence-moswana-vip-jail',
+    character: moswana,
+    location: vipJail,
+    event: moswanaCurse,
+  })
   for (const slug of ['prince-benjamin', 'furykov', 'butch']) {
     await moveBody({
       id: `ch416-presence-${slug}-room1004`,

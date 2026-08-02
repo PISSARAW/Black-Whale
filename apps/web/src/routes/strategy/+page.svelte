@@ -5,9 +5,11 @@
   import type { PageData } from './$types'
   import './strategy.css'
   import PlanMap from '$lib/components/map/PlanMap.svelte'
+  import StrategyDiplomacyPanel from '$lib/components/strategy/StrategyDiplomacyPanel.svelte'
   import { calculatePresencePosition } from '$lib/components/map/markerProjection'
   import { hatsuById } from '$lib/nen/hatsuRegistry'
   import { SCENARIO_MAX_TURNS } from '$lib/strategy/scenario'
+  import { diplomacyCost, type DiplomacyAction, type DiplomacyOrder } from '$lib/strategy/diplomacy'
   import {
     StrategyInputError,
     createSimulationStore,
@@ -34,12 +36,15 @@
   let selectedLocationId = $state('')
   let selectedOrderType = $state<StrategyOrderType>('MOVE')
   let selectedAbilityId = $state('')
+  let pendingDiplomacy = $state<DiplomacyOrder[]>([])
+  let selectedDiplomacyFactionId = $state('')
+  let selectedDiplomacyAction = $state<DiplomacyAction>('SHARE_INTEL')
   let selectedTier = $state('tier-1')
   let errorMessage = $state<string | null>(null)
 
   let playerFaction = $derived(data.factions.find((faction) => faction.id === playerFactionId))
   let locationById = $derived(new Map(data.locations.map((location) => [location.id, location])))
-  let spentCommandPoints = $derived(planCost(pendingOrders))
+  let spentCommandPoints = $derived(planCost(pendingOrders) + diplomacyCost(pendingDiplomacy))
   let remainingCommandPoints = $derived(COMMAND_POINTS_PER_TURN - spentCommandPoints)
   let availableHatsu = $derived.by(() =>
     selectedCharacterId
@@ -150,6 +155,7 @@
     selectedCharacterId = ''
     selectedLocationId = ''
     selectedAbilityId = ''
+    pendingDiplomacy = []
     errorMessage = null
     simStore.selectFaction(id)
   }
@@ -200,12 +206,28 @@
     pendingOrders = pendingOrders.filter((order) => order.characterId !== characterId)
   }
 
+  function queueDiplomacy() {
+    if (!selectedDiplomacyFactionId) return
+    const next = [
+      ...pendingDiplomacy.filter((order) => order.factionId !== selectedDiplomacyFactionId),
+      { factionId: selectedDiplomacyFactionId, action: selectedDiplomacyAction },
+    ]
+    if (planCost(pendingOrders) + diplomacyCost(next) > COMMAND_POINTS_PER_TURN) {
+      errorMessage = 'Cette action diplomatique dépasse vos points de commandement.'
+      return
+    }
+    pendingDiplomacy = next
+    selectedDiplomacyFactionId = ''
+    errorMessage = null
+  }
+
   function handleEndTurn() {
     if (!playerFactionId) return
     errorMessage = null
     try {
-      simStore.endTurn(playerFactionId, pendingOrders)
+      simStore.endTurn(playerFactionId, pendingOrders, pendingDiplomacy)
       pendingOrders = []
+      pendingDiplomacy = []
     } catch (error) {
       errorMessage =
         error instanceof StrategyInputError
@@ -382,6 +404,15 @@
               onclick={queueOrder}>Ajouter au plan</button
             >
           </section>
+
+          <StrategyDiplomacyPanel
+            factions={simStore.activeFactions.filter((faction) => faction.id !== playerFactionId)}
+            relationships={simStore.relationships}
+            pending={pendingDiplomacy}
+            bind:selectedFactionId={selectedDiplomacyFactionId}
+            bind:selectedAction={selectedDiplomacyAction}
+            onqueue={queueDiplomacy}
+          />
 
           <section>
             <div class="section-title"><h2>Plan du tour</h2></div>

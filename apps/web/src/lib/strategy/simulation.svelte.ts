@@ -12,6 +12,15 @@ import type {
 } from '@black-whale/world-engine'
 import { hatsuById } from '$lib/nen/hatsuRegistry'
 import {
+  diplomacyCost,
+  initialRelationship,
+  resolveDiplomacy,
+  type DiplomacyOrder,
+  type FactionRelationship,
+} from './diplomacy'
+import { buildTurnReports } from './reports'
+import { characterAbilityIds, factionEntityIds as selectFactionEntityIds } from './selectors'
+import {
   SCENARIO_MAX_TURNS,
   buildScenarioRoster,
   doctrineBriefing,
@@ -29,48 +38,26 @@ import {
   intelCertainty,
   planCost,
   strategicRoleForHatsu,
-  type StrategyOrder,
   type StrategyObjective,
 } from './rules'
+import type {
+  StrategyFaction,
+  StrategyIntel,
+  StrategyLocation,
+  StrategyMoveOrder,
+  StrategyTurnResult,
+} from './types'
 
 export type { StrategyOrder, StrategyOrderType } from './rules'
-
-export interface StrategyMember {
-  character: { id: string; canonicalName: string }
-  role: string
-}
-
-export interface StrategyFaction {
-  id: string
-  name: string
-  members: StrategyMember[]
-}
-
-export interface StrategyLocation {
-  id: string
-  name: string
-  type: 'SHIP' | 'TIER' | 'ZONE' | 'ROOM' | 'CORRIDOR' | 'UNKNOWN'
-}
-
-export type StrategyMoveOrder = StrategyOrder
-
-export interface StrategyIntel {
-  entityId: string
-  locationId: string
-  observedTurn: number
-  certainty: 'CONFIRMED' | 'PROBABLE' | 'LAST_KNOWN'
-}
-
-export interface StrategyTurnResult {
-  playerEvents: number
-  aiEvents: number
-  totalEvents: number
-  warnings: string[]
-}
-
+export type {
+  StrategyFaction,
+  StrategyIntel,
+  StrategyLocation,
+  StrategyMoveOrder,
+  StrategyTurnResult,
+} from './types'
 export class StrategyInputError extends Error {}
 
-/** A self-contained, client-side strategy sandbox. Nothing here mutates canon. */
 export function createSimulationStore() {
   let engine = new SimulationEngine()
   let branch = $state<WorldBranch | null>(null)
@@ -87,14 +74,13 @@ export function createSimulationStore() {
   let activeFactionIds = $state<string[]>([])
   let scenarioLocationIds = $state<string[]>([])
   let gameLost = $state(false)
+  let relationships = $state<Record<string, FactionRelationship>>({})
 
   function init(
     baseState: WorldState,
     loadedFactions: StrategyFaction[],
     loadedLocations: StrategyLocation[],
   ) {
-    // Reinitialisation can happen during hot reload. A fresh engine avoids a
-    // duplicate fixed branch id and guarantees that the UI and engine agree.
     engine = new SimulationEngine()
     const newBranch = engine.createBranch(
       {
@@ -119,6 +105,7 @@ export function createSimulationStore() {
     activeFactionIds = []
     scenarioLocationIds = []
     gameLost = false
+    relationships = {}
     turnReports = ['Simulation initialisée.']
   }
 
@@ -129,6 +116,11 @@ export function createSimulationStore() {
     selectedFactionId = factionId
     const roster = buildScenarioRoster(factions, factionId)
     activeFactionIds = roster.map((faction) => faction.id)
+    relationships = Object.fromEntries(
+      roster
+        .filter((faction) => faction.id !== factionId)
+        .map((faction) => [faction.id, initialRelationship()]),
+    )
     const occupied = roster.flatMap((faction) =>
       factionEntityIds(faction.id)
         .map((entityId) => currentState!.presences[entityId]?.locationId)
@@ -153,22 +145,11 @@ export function createSimulationStore() {
   }
 
   function factionEntityIds(factionId: string): string[] {
-    const faction = factions.find((candidate) => candidate.id === factionId)
-    if (!faction || !currentState) return []
-    return faction.members
-      .map((member) => resolveControlledEntity(currentState!, member.character.id)?.id)
-      .filter((id): id is string => Boolean(id))
+    return currentState ? selectFactionEntityIds(currentState, factions, factionId) : []
   }
 
   function abilityIdsForCharacter(characterId: string): string[] {
-    if (!currentState) return []
-    const entity = resolveControlledEntity(currentState, characterId)
-    return [
-      ...new Set([
-        ...(currentState.abilitiesByOwner[characterId] ?? []),
-        ...(entity ? (currentState.abilitiesByOwner[entity.id] ?? []) : []),
-      ]),
-    ].filter((abilityId) => Boolean(hatsuById(abilityId)))
+    return currentState ? characterAbilityIds(currentState, characterId) : []
   }
 
   function refreshIntel(scoutedLocations: readonly string[], guardedLocations: readonly string[]) {
@@ -225,6 +206,7 @@ export function createSimulationStore() {
   function endTurn(
     playerFactionId: string,
     playerOrders: readonly StrategyMoveOrder[],
+    diplomacyOrders: readonly DiplomacyOrder[] = [],
   ): StrategyTurnResult {
     if (!branch || !currentState) throw new StrategyInputError('La simulation n’est pas prête.')
     if (gameWon || gameLost) throw new StrategyInputError('Le scénario est terminé.')
@@ -234,7 +216,7 @@ export function createSimulationStore() {
 
     const playerFaction = factions.find((faction) => faction.id === playerFactionId)
     if (!playerFaction) throw new StrategyInputError('Faction inconnue.')
-    if (planCost(playerOrders) > COMMAND_POINTS_PER_TURN) {
+    if (planCost(playerOrders) + diplomacyCost(diplomacyOrders) > COMMAND_POINTS_PER_TURN) {
       throw new StrategyInputError(
         `Le plan dépasse les ${COMMAND_POINTS_PER_TURN} points de commandement.`,
       )
@@ -254,8 +236,31 @@ export function createSimulationStore() {
     const deniedLocations: string[] = []
     const activatedHatsu: string[] = []
     const activatedAbilityIds: string[] = []
+    const nextRelationships = structuredClone(relationships)
+    const diplomacyReports: string[] = []
+    const addressedFactions = new Set<string>()
 
-    // Validate the complete player batch before producing any event.
+    for (const order of diplomacyOrders) {
+      if (!activeFactionIds.includes(order.factionId) || order.factionId === playerFactionId) {
+        throw new StrategyInputError(
+          'Une action diplomatique vise une faction absente du scénario.',
+        )
+      }
+      if (addressedFactions.has(order.factionId)) {
+        throw new StrategyInputError(
+          'Une seule action diplomatique est possible par faction et par tour.',
+        )
+      }
+      addressedFactions.add(order.factionId)
+      const resolution = resolveDiplomacy(
+        nextRelationships[order.factionId] ?? initialRelationship(),
+        order.action,
+      )
+      nextRelationships[order.factionId] = resolution.relationship
+      const factionName = factions.find((faction) => faction.id === order.factionId)?.name
+      diplomacyReports.push(`${factionName ?? order.factionId} · ${resolution.report}`)
+    }
+
     for (const order of playerOrders) {
       if (
         order.type !== 'MOVE' &&
@@ -355,8 +360,6 @@ export function createSimulationStore() {
     ) as Record<string, 'TIER' | 'ZONE' | 'ROOM' | 'CORRIDOR' | 'UNKNOWN'>
     for (const faction of factions.filter((candidate) => activeFactionIds.includes(candidate.id))) {
       if (faction.id === playerFactionId) continue
-      // Overlapping affiliations must not grant two factions control of the
-      // same character in a single turn. The first catalogue faction owns it.
       const members = faction.members
         .map((member) => member.character.id)
         .filter((characterId) => {
@@ -379,12 +382,15 @@ export function createSimulationStore() {
         .map((entityId) => currentState!.presences[entityId]?.locationId)
         .filter((id): id is string => Boolean(id))
       const doctrine = doctrineForFaction(faction.id)
+      const allowedDestinations = nextRelationships[faction.id]?.pact
+        ? destinationIds.filter((id) => !playerLocations.includes(id))
+        : destinationIds
 
       for (const entity of memberEntities) {
         if (random() >= scenarioMoveChance(currentTurn)) continue
         const destination = chooseStrategicDestination(doctrine, {
           currentLocationId: currentState.presences[entity.id]?.locationId,
-          availableLocationIds: destinationIds,
+          availableLocationIds: allowedDestinations,
           occupiedLocationIds: occupiedLocations,
           opposingLocationIds: playerLocations,
           roll: random(),
@@ -410,6 +416,7 @@ export function createSimulationStore() {
     const resolvedAIEvents = aiEvents.filter((event) => !interceptedEvents.includes(event))
     const result = engine.applyEvents(branch.id, [...playerEvents, ...resolvedAIEvents])
     currentState = result.snapshot
+    relationships = nextRelationships
     const completedTurn = currentTurn
     for (const abilityId of activatedAbilityIds) hatsuCooldowns[abilityId] = currentTurn + 2
     currentTurn += 1
@@ -439,28 +446,22 @@ export function createSimulationStore() {
     if (!gameWon && completedTurn >= SCENARIO_MAX_TURNS) gameLost = true
     turnReports = [
       ...turnReports,
-      ...(scenarioEvent
-        ? [`Événement · ${scenarioEvent.title} — ${scenarioEvent.description}`]
-        : []),
-      `Tour ${completedTurn} · ${playerOrders.length} ordre(s) résolu(s), ${discoveries} renseignement(s) actualisé(s).`,
-      ...(interceptedEvents.length
-        ? [`Interception réussie : ${interceptedEvents.length} mouvement(s) adverse(s) bloqué(s).`]
-        : []),
-      ...activatedHatsu.map((activation) => `Hatsu activé · ${activation}.`),
-      ...(hostileContacts
-        ? [`Contact hostile dans ${hostileContacts} zone(s). La position ennemie est confirmée.`]
-        : []),
-      ...(objective?.complete
-        ? [`Objectif rempli · ${victoryPoints}/${VICTORY_POINTS_TARGET} points de victoire.`]
-        : []),
-      ...(gameWon ? ['Victoire stratégique acquise.'] : []),
-      ...(gameLost ? ['Défaite stratégique · le temps imparti est écoulé.'] : []),
-      ...(scoutedLocations.length
-        ? [`Enquête terminée dans ${scoutedLocations.length} zone(s).`]
-        : []),
-      ...(guardedLocations.length
-        ? [`Protection maintenue dans ${guardedLocations.length} zone(s).`]
-        : []),
+      ...buildTurnReports({
+        completedTurn,
+        playerOrderCount: playerOrders.length,
+        discoveries,
+        interceptions: interceptedEvents.length,
+        hostileContacts,
+        victoryPoints,
+        objectiveComplete: objective?.complete ?? false,
+        gameWon,
+        gameLost,
+        scoutedLocations: scoutedLocations.length,
+        guardedLocations: guardedLocations.length,
+        scenarioEvent,
+        diplomacyReports,
+        activatedHatsu,
+      }),
     ].slice(-100)
 
     return {
@@ -472,9 +473,6 @@ export function createSimulationStore() {
   }
 
   return {
-    get branch() {
-      return branch
-    },
     get currentState() {
       return currentState
     },
@@ -483,12 +481,6 @@ export function createSimulationStore() {
     },
     get turnReports() {
       return turnReports
-    },
-    get factions() {
-      return factions
-    },
-    get locations() {
-      return locations
     },
     get intel() {
       return intel
@@ -516,6 +508,9 @@ export function createSimulationStore() {
     },
     get scenarioEvent() {
       return scenarioEventForTurn(currentTurn)
+    },
+    get relationships() {
+      return relationships
     },
     get hatsuCooldowns() {
       return hatsuCooldowns

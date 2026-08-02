@@ -1,16 +1,10 @@
 import type { ArenaHatsuEffect, Impact } from '../combat/types'
-
-let context: AudioContext | null = null
-
-function graph(): AudioContext | null {
-  if (typeof window === 'undefined') return null
-  context ??= new AudioContext()
-  return context
-}
+import { hatsuAudioGraph } from '$lib/audio/ambient'
 
 function pulse(frequency: number, duration: number, gain: number, type: OscillatorType) {
-  const audio = graph()
-  if (!audio) return
+  const graph = hatsuAudioGraph()
+  if (!graph) return
+  const audio = graph.context
   const oscillator = audio.createOscillator()
   const volume = audio.createGain()
   oscillator.type = type
@@ -21,7 +15,7 @@ function pulse(frequency: number, duration: number, gain: number, type: Oscillat
   )
   volume.gain.setValueAtTime(gain, audio.currentTime)
   volume.gain.exponentialRampToValueAtTime(0.0001, audio.currentTime + duration)
-  oscillator.connect(volume).connect(audio.destination)
+  oscillator.connect(volume).connect(graph.muffle)
   oscillator.start()
   oscillator.stop(audio.currentTime + duration)
 }

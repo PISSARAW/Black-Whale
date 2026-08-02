@@ -299,8 +299,6 @@
         if (action.type === 'WALKED') lastReplayMovementAt = game.clock
       }
     }
-    if (action.type === 'SWEEP') playHuntCue('en')
-    if (action.type === 'ZETSU') playHuntCue('nen')
     if (action.type === 'HATSU') playHuntCue('hatsu')
     if (action.type === 'LAY' || action.type === 'TAKE') playHuntCue('trap')
   }

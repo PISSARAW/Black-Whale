@@ -1,6 +1,7 @@
+import { hatsuAudioGraph } from '$lib/audio/ambient'
+
 export type HuntCue = 'en' | 'nen' | 'hatsu' | 'trap' | 'contact' | 'outcome'
 
-let context: AudioContext | null = null
 let muted = true
 let volume = 0.35
 
@@ -14,22 +15,20 @@ export function configureHuntAudio(next: { muted?: boolean; volume?: number }) {
 }
 
 export async function enableHuntAudio(): Promise<void> {
-  if (typeof AudioContext === 'undefined') return
-  context ??= new AudioContext()
-  await context.resume()
+  const graph = hatsuAudioGraph()
+  if (!graph) return
+  await graph.context.resume()
   muted = false
 }
 
-export function closeHuntAudio(): void {
-  void context?.close()
-  context = null
-}
+export function closeHuntAudio(): void {}
 
 export function playHuntCue(cue: HuntCue): void {
-  if (!context || muted || context.state !== 'running') return
-  const now = context.currentTime
-  const oscillator = context.createOscillator()
-  const gain = context.createGain()
+  const graph = hatsuAudioGraph()
+  if (!graph || muted || graph.context.state !== 'running') return
+  const now = graph.context.currentTime
+  const oscillator = graph.context.createOscillator()
+  const gain = graph.context.createGain()
   const [frequency, duration, wave] = signature(cue)
   oscillator.type = wave
   oscillator.frequency.setValueAtTime(frequency, now)
@@ -37,7 +36,7 @@ export function playHuntCue(cue: HuntCue): void {
   gain.gain.setValueAtTime(0.0001, now)
   gain.gain.exponentialRampToValueAtTime(Math.max(0.0001, volume * 0.12), now + 0.015)
   gain.gain.exponentialRampToValueAtTime(0.0001, now + duration)
-  oscillator.connect(gain).connect(context.destination)
+  oscillator.connect(gain).connect(graph.muffle)
   oscillator.start(now)
   oscillator.stop(now + duration)
 }

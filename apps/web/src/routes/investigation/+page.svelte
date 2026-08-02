@@ -13,12 +13,12 @@
   } from '$lib/investigation/case'
   import { caseById, DEFAULT_INVESTIGATION_CASE_ID } from '$lib/investigation/catalog'
   import {
-    INVESTIGATION_STORAGE_KEY,
     freshProgress,
-    parseProgress,
+    loadProgress,
     serializeProgress,
     type InvestigationLogEntry,
   } from '$lib/investigation/progress'
+  import { caseProgressStorageKey } from '$lib/investigation/portfolio'
   import { investigationHatsuUse, type InvestigationHatsuUse } from '$lib/investigation/hatsu'
   import { questionIsAvailable } from '$lib/investigation/interrogation'
   import { confrontWitnesses, type ConfrontationResult } from '$lib/investigation/confrontation'
@@ -242,7 +242,11 @@
       reason:
         "Seules les techniques capables d'observer, d'analyser ou de reproduire la scène ont une prise sur ce dossier.",
     })
-    const saved = parseProgress(localStorage.getItem(INVESTIGATION_STORAGE_KEY), investigation.id)
+    const saved = loadProgress(
+      localStorage,
+      investigation.id,
+      caseProgressStorageKey(investigation.id),
+    )
     discoveredIds = saved.discoveredIds.filter((id) =>
       investigation.evidence.some((evidence) => evidence.id === id),
     )
@@ -264,7 +268,7 @@
   function persist(started = true) {
     if (typeof localStorage === 'undefined') return
     localStorage.setItem(
-      INVESTIGATION_STORAGE_KEY,
+      caseProgressStorageKey(investigation.id),
       serializeProgress({
         ...freshProgress(investigation.id),
         started,
@@ -485,7 +489,9 @@
     notebookOpen = false
     activeSubjectId = null
     briefingOpen = true
-    if (typeof localStorage !== 'undefined') localStorage.removeItem(INVESTIGATION_STORAGE_KEY)
+    if (typeof localStorage !== 'undefined') {
+      localStorage.removeItem(caseProgressStorageKey(investigation.id))
+    }
   }
 
   function evidenceTone(evidence: Evidence) {

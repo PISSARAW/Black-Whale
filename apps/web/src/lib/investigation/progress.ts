@@ -1,5 +1,5 @@
 export const INVESTIGATION_PROGRESS_VERSION = 4
-export const INVESTIGATION_STORAGE_KEY = 'black-whale:investigation:room-1014'
+export const LEGACY_INVESTIGATION_STORAGE_KEY = 'black-whale:investigation:room-1014'
 
 export interface InvestigationLogEntry {
   id: string
@@ -42,7 +42,7 @@ export function parseProgress(raw: string | null, caseId: string): Investigation
 
   try {
     const value = JSON.parse(raw) as Partial<InvestigationProgress>
-    if (value.version !== INVESTIGATION_PROGRESS_VERSION || value.caseId !== caseId) {
+    if (!isSupportedVersion(value.version) || value.caseId !== caseId) {
       return freshProgress(caseId)
     }
 
@@ -65,6 +65,25 @@ export function parseProgress(raw: string | null, caseId: string): Investigation
   }
 }
 
+export function loadProgress(
+  storage: Pick<Storage, 'getItem' | 'setItem' | 'removeItem'>,
+  caseId: string,
+  storageKey: string,
+): InvestigationProgress {
+  const current = storage.getItem(storageKey)
+  if (current) return parseProgress(current, caseId)
+
+  const legacy = storage.getItem(LEGACY_INVESTIGATION_STORAGE_KEY)
+  if (!legacy) return freshProgress(caseId)
+
+  const migrated = parseProgress(legacy, caseId)
+  if (!migrated.started && migrated.discoveredIds.length === 0) return migrated
+
+  storage.setItem(storageKey, serializeProgress(migrated))
+  storage.removeItem(LEGACY_INVESTIGATION_STORAGE_KEY)
+  return migrated
+}
+
 export function serializeProgress(progress: InvestigationProgress): string {
   return JSON.stringify(progress)
 }
@@ -73,6 +92,10 @@ function stringArray(value: unknown): string[] {
   return Array.isArray(value)
     ? [...new Set(value.filter((item): item is string => typeof item === 'string'))]
     : []
+}
+
+function isSupportedVersion(value: unknown): value is number {
+  return typeof value === 'number' && value >= 1 && value <= INVESTIGATION_PROGRESS_VERSION
 }
 
 function isLogEntry(value: unknown): value is InvestigationLogEntry {

@@ -41,6 +41,9 @@
   import Debrief from '$lib/components/hunt/Debrief.svelte'
   import HuntActions from '$lib/components/hunt/HuntActions.svelte'
   import HuntBriefing from '$lib/components/hunt/HuntBriefing.svelte'
+  import HuntTutorial from '$lib/components/hunt/HuntTutorial.svelte'
+  import { tutorialStep } from '$lib/hunt/tutorial'
+  import { tutorialMessages } from '$lib/hunt/tutorialMessages'
   import {
     BUNGEE_GUM_HUNT,
     DEFAULT_HUNT_HATSU,
@@ -130,6 +133,8 @@
   // has asked for less movement should not have it re-decided mid-game.
   let calm = $state(false)
   let briefed = $state(false)
+  let tutorialDismissed = $state(false)
+  let lesson = $derived(tutorialStep(game))
   let duelSeat = $state<{ at: Vec2; heading: number; eye: number } | null>(null)
 
   // `TourScene` already owns the one trustworthy way to immobilise a body
@@ -407,6 +412,14 @@
       onLay={() => send({ type: 'LAY' })}
       onTake={() => send({ type: 'TAKE' })}
       onHatsu={() => send({ type: 'HATSU' })}
+    />
+  {/if}
+
+  {#if briefed && !tutorialDismissed && lesson !== 'done' && !finished}
+    <HuntTutorial
+      step={lesson}
+      labels={tutorialMessages($locale)}
+      onDismiss={() => (tutorialDismissed = true)}
     />
   {/if}
 

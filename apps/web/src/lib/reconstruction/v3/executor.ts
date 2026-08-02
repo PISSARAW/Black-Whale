@@ -1,5 +1,9 @@
 import { buildCausalGraph, type CausalContext } from './causalGraph'
-import { propagateKnowledge, type BranchKnowledgeState } from './knowledge'
+import {
+  propagateKnowledge,
+  type BranchKnowledgeState,
+  type TransferReliability,
+} from './knowledge'
 import { createReconstructionReplay, type ReconstructionReplayStep } from './replay'
 import {
   reconstructionChecksum,
@@ -149,7 +153,7 @@ async function applyDecision(input: DecisionExecution) {
     senderId: decision.actorId,
     receiverIds: decision.targetIds,
     factId,
-    reliability: String(decision.parameters['reliability'] ?? 'trusted') as 'trusted',
+    reliability: reliabilityParameter(decision),
     deceptive: decision.parameters['deceptive'] === true,
   })
   if (propagated.traces.some((trace) => trace.status === 'blocked')) {
@@ -161,6 +165,14 @@ async function applyDecision(input: DecisionExecution) {
     eventIds: [],
     reason: propagated.traces.map((trace) => trace.reason).join('; '),
   }
+}
+
+function reliabilityParameter(decision: ReconstructionDecision): TransferReliability {
+  const value = String(decision.parameters['reliability'] ?? 'trusted')
+  if (!['trusted', 'unverified', 'deceptive', 'unknown'].includes(value)) {
+    throw new Error(`Decision ${decision.id} has invalid reliability ${value}`)
+  }
+  return value as TransferReliability
 }
 
 function requiredTarget(decision: ReconstructionDecision): string {

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { readAura } from './perception'
 import { impactOf } from './resolve'
-import { combatReducer, initialCombatState, KO_COST, SCORE_TO_WIN } from './reducer'
+import { combatReducer, initialCombatState, KO_COST, RYU_SHIFT_TIME, SCORE_TO_WIN } from './reducer'
 
 describe('Nen perception', () => {
   it('lets Gyo reveal a Ryu distribution concealed with In', () => {
@@ -87,5 +87,32 @@ describe('qualitative exchanges', () => {
     state = combatReducer(state, { type: 'MOVE', side: 'player', vector: [1, 0] })
     state = combatReducer(state, { type: 'TICK', dt: 0.5 })
     expect(state.player.position[0]).toBeLessThan(0.75)
+  })
+
+  it('makes a large Ryu read take time instead of teleporting aura', () => {
+    let state = initialCombatState()
+    state = combatReducer(state, { type: 'RYU', side: 'player', attackShare: 0.9, guard: 'head' })
+    expect(state.player.attackShare).toBe(0.5)
+    expect(state.player.ryuShift?.guard).toBe('head')
+    state = combatReducer(state, { type: 'TICK', dt: RYU_SHIFT_TIME })
+    expect(state.player.attackShare).toBe(0.9)
+    expect(state.player.guard).toBe('head')
+    expect(state.player.ryuShift).toBeNull()
+  })
+
+  it('rewards an active guard and a counter during recovery', () => {
+    let state = initialCombatState()
+    state = {
+      ...state,
+      player: { ...state.player, position: [0, 0], guard: 'head' },
+      opponent: { ...state.opponent, position: [1.5, 0], guard: 'torso' },
+    }
+    state = combatReducer(state, { type: 'GUARD', side: 'player' })
+    state = combatReducer(state, { type: 'STRIKE', side: 'opponent', zone: 'head' })
+    expect(state.lastEvent?.impact).toBe('blocked')
+
+    state = combatReducer(state, { type: 'TICK', dt: 0.66 })
+    state = combatReducer(state, { type: 'STRIKE', side: 'player', zone: 'head' })
+    expect(state.lastEvent?.points).toBeGreaterThanOrEqual(2)
   })
 })

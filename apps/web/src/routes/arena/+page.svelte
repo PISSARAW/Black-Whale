@@ -2,7 +2,7 @@
   import { onDestroy, onMount } from 'svelte'
   import Seo from '$lib/components/Seo.svelte'
   import TourScene from '$lib/components/tour/TourScene.svelte'
-  import { advanceArena } from '$lib/arena/ai'
+  import { advanceArena, OPPONENT_DOCTRINE } from '$lib/arena/ai'
   import { buildCombatTerrain } from '$lib/arena/terrain'
   import { readAura } from '$lib/combat/perception'
   import { STRIKE_RANGE } from '$lib/combat/resolve'
@@ -60,6 +60,7 @@
     | 'ken'
   let commandAnimation = $state<CommandAnimation | null>(null)
   let commandAnimationSeq = $state(0)
+  let lesson = $state(0)
   const motionTimers = new Set<number>()
 
   let reading = $derived(readAura(game.player, game.opponent))
@@ -94,8 +95,16 @@
     const previousGame = game
     const previous = game.lastEvent
     game = combatReducer(game, action)
+    advanceLesson(action)
     if (game.lastEvent !== previous && game.lastEvent) animateExchange(game.lastEvent)
     return game !== previousGame
+  }
+
+  function advanceLesson(action: CombatAction) {
+    if (lesson === 0 && action.type === 'RYU') lesson = 1
+    else if (lesson === 1 && action.type === 'GUARD') lesson = 2
+    else if (lesson === 2 && action.type === 'FEINT') lesson = 3
+    else if (lesson === 3 && action.type === 'STRIKE') lesson = 4
   }
 
   function command(action: CombatAction, animation: CommandAnimation): boolean {
@@ -116,6 +125,14 @@
 
   function gatherKo() {
     command({ type: 'KO', side: 'player', zone: game.player.guard }, 'ko')
+  }
+
+  function guard() {
+    command({ type: 'GUARD', side: 'player' }, 'ken')
+  }
+
+  function feint() {
+    command({ type: 'FEINT', side: 'player', zone: game.player.guard }, 'in')
   }
 
   function shiftRyu(by: number) {
@@ -152,6 +169,8 @@
     else if (event.code === 'Minus') shiftRyu(-0.1)
     else if (event.code === 'Equal') shiftRyu(0.1)
     else if (event.code === 'Space') strike()
+    else if (event.code === 'ShiftLeft' || event.code === 'ShiftRight') guard()
+    else if (event.code === 'KeyV') feint()
     else if (event.code === 'KeyC') gatherKo()
     else return
     event.preventDefault()
@@ -211,6 +230,7 @@
     playerMotion = 'idle'
     opponentMotion = 'idle'
     commandAnimation = null
+    lesson = 0
     owed = 0
     last = 0
   }
@@ -438,7 +458,17 @@
     <span class:active={commandGroup(commandAnimation) === 'gyo'}><kbd>G</kbd>Gyo</span>
     <span class:active={commandGroup(commandAnimation) === 'in'}><kbd>I</kbd>In</span>
     <span class:active={commandGroup(commandAnimation) === 'ken'}><kbd>K</kbd>Ken</span>
+    <span><kbd>⇧</kbd>{$t.arena.action.guard}</span>
+    <span><kbd>V</kbd>{$t.arena.action.feint}</span>
   </div>
+
+  {#if lesson < 4 && game.outcome === 'playing'}
+    <aside class="arena-lesson" aria-live="polite">
+      <small>{$t.arena.training} · {lesson + 1}/4</small>
+      <strong>{$t.arena.lesson[lesson].title}</strong>
+      <p>{$t.arena.lesson[lesson].body}</p>
+    </aside>
+  {/if}
 
   {#if !engaged && game.outcome === 'playing'}
     <p class="enter-prompt">{$t.arena.enter}</p>
@@ -459,7 +489,18 @@
 
     <article class="ryu-card" class:commanding={commandGroup(commandAnimation) === 'ryu'}>
       <header><strong>Ryu</strong><span>{Math.round(game.player.attackShare * 100)}%</span></header>
-      <div class="flow"><i style:width="{game.player.attackShare * 100}%"></i></div>
+      <div class="flow" class:shifting={game.player.ryuShift}>
+        <i style:width="{game.player.attackShare * 100}%"></i>
+      </div>
+      <div class="aura-body" aria-label={$t.arena.auraDistribution}>
+        {#each BODY_ZONES as zone}
+          <i
+            class:guarded={game.player.guard === zone}
+            class:incoming={game.player.ryuShift?.guard === zone}
+            data-zone={$t.arena.zone[zone]}
+          ></i>
+        {/each}
+      </div>
       <div class="zones">
         {#each BODY_ZONES as zone, index (zone)}
           <button
@@ -478,12 +519,18 @@
         <button class="ko-action" onclick={gatherKo} disabled={game.outcome !== 'playing'}>
           {$t.arena.action.ko}
         </button>
+        <button onclick={guard} disabled={game.outcome !== 'playing'}
+          >{$t.arena.action.guard}</button
+        >
+        <button onclick={feint} disabled={game.outcome !== 'playing'}
+          >{$t.arena.action.feint}</button
+        >
       </div>
     </article>
 
     <article class="status-card opponent-card">
       <header>
-        <strong>{$t.arena.opponent}</strong>
+        <strong>{OPPONENT_DOCTRINE}</strong>
         <span
           >{reading.concealed ? $t.arena.state.concealed : $t.arena.mode[game.opponent.mode]}</span
         >

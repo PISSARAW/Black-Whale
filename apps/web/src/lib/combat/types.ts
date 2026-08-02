@@ -14,6 +14,12 @@ export interface KoCharge {
   remaining: number
 }
 
+export interface RyuShift {
+  attackShare: number
+  guard: BodyZone
+  remaining: number
+}
+
 export interface FighterState {
   aura: number
   capacity: number
@@ -27,6 +33,10 @@ export interface FighterState {
   in: boolean
   ken: boolean
   ko: KoCharge | null
+  ryuShift: RyuShift | null
+  guardWindow: number
+  recoveryWindow: number
+  feint: BodyZone | null
   cooldown: number
   condition: FighterCondition
   recovery: number
@@ -71,6 +81,8 @@ export type CombatAction =
   | { type: 'GYO'; side: CombatSide; on: boolean }
   | { type: 'IN'; side: CombatSide; on: boolean }
   | { type: 'KEN'; side: CombatSide; on: boolean }
+  | { type: 'GUARD'; side: CombatSide }
+  | { type: 'FEINT'; side: CombatSide; zone: BodyZone }
   | { type: 'STRIKE'; side: CombatSide; zone: BodyZone }
   | { type: 'KO'; side: CombatSide; zone: BodyZone }
 
@@ -91,6 +103,10 @@ export function initialFighter(position: Vec2): FighterState {
     in: false,
     ken: false,
     ko: null,
+    ryuShift: null,
+    guardWindow: 0,
+    recoveryWindow: 0,
+    feint: null,
     cooldown: 0,
     condition: 'ready',
     recovery: 0,

@@ -5,6 +5,8 @@ import { BODY_ZONES, type BodyZone, type CombatState } from '../combat/types'
 
 const THINK_EVERY = 0.45
 
+export const OPPONENT_DOCTRINE = 'Le Contreur'
+
 export function advanceArena(state: CombatState, dt: number): CombatState {
   const ticked = combatReducer(state, { type: 'TICK', dt })
   if (ticked.outcome !== 'playing') return ticked
@@ -35,6 +37,14 @@ function decide(state: CombatState): CombatState {
   }
 
   let current = combatReducer(state, { type: 'MOVE', side: 'opponent', vector: [0, 0] })
+  if (state.player.feint) {
+    current = combatReducer(current, {
+      type: 'RYU',
+      side: 'opponent',
+      guard: state.player.feint,
+    })
+    return combatReducer(current, { type: 'GUARD', side: 'opponent' })
+  }
   if (state.player.ko) {
     return combatReducer(current, { type: 'KEN', side: 'opponent', on: true })
   }
@@ -48,6 +58,10 @@ function decide(state: CombatState): CombatState {
   current = combatReducer(current, { type: 'KEN', side: 'opponent', on: false })
   const reading = readAura(current.opponent, current.player)
   const zone = openZone(reading.guard, Math.floor(current.clock / THINK_EVERY))
+
+  if (current.player.recoveryWindow <= 0 && Math.floor(current.clock / THINK_EVERY) % 4 === 0) {
+    return combatReducer(current, { type: 'FEINT', side: 'opponent', zone })
+  }
 
   if (current.opponent.aura >= 35 && current.clock % 3 < THINK_EVERY) {
     return combatReducer(current, { type: 'KO', side: 'opponent', zone })

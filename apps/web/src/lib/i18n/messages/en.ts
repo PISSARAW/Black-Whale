@@ -1667,7 +1667,21 @@ export const en = {
       ryu: '1–4',
       modes: 'T · R · X',
     },
-    action: { strike: 'Strike', ko: 'Gather Ko', restart: 'Fight again' },
+    action: {
+      strike: 'Strike',
+      ko: 'Gather Ko',
+      guard: 'Active guard',
+      feint: 'Feint',
+      restart: 'Fight again',
+    },
+    training: 'Nen initiation',
+    auraDistribution: 'Ryu distribution',
+    lesson: [
+      { title: 'Shift your Ryu', body: 'Choose a zone with 1–4. Aura takes a moment to arrive.' },
+      { title: 'Close your guard', body: 'Hold your read, then press Shift as the attack arrives.' },
+      { title: 'Force a reaction', body: 'Press V to feint toward the zone you are targeting.' },
+      { title: 'Punish the opening', body: 'Strike while your opponent is recovering.' },
+    ],
     state: { gyo: 'Gyo', in: 'In', ken: 'Ken', ko: 'Ko gathering', concealed: 'Aura concealed' },
     outcome: { won: 'Match won', lost: 'Match lost' },
     roadmap:
@@ -3061,3 +3075,4 @@ export const en = {
     },
   },
 }
+

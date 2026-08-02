@@ -19,6 +19,9 @@ export const KEN_PER_SECOND = 6
 export const ZETSU_RECOVERY = 7
 export const KO_COST = 18
 export const KO_WINDUP = 0.8
+export const RYU_SHIFT_TIME = 0.22
+export const GUARD_WINDOW = 0.38
+export const FEINT_COST = 3
 export const MOVE_SPEED = 3.6
 export const MIN_SEPARATION = 1
 export const SCORE_TO_WIN = 10
@@ -44,6 +47,9 @@ export function combatReducer(state: CombatState, action: CombatAction): CombatS
     return replace(state, action.side, toggle(state[action.side], 'in', action.on))
   if (action.type === 'KEN')
     return replace(state, action.side, setKen(state[action.side], action.on))
+  if (action.type === 'GUARD') return replace(state, action.side, activeGuard(state[action.side]))
+  if (action.type === 'FEINT')
+    return replace(state, action.side, feint(state[action.side], action.zone))
   if (action.type === 'STRIKE') {
     return strike({ state, side: action.side, zone: action.zone, technique: 'strike' })
   }
@@ -76,11 +82,27 @@ function advanceFighter(
 ): FighterState {
   const recovered = recoverCondition(fighter, context.dt)
   const charged = chargeContinuous(recovered, context.dt)
-  const moved = move(charged, rival, context)
+  const shifted = settleRyu(charged, context.dt)
+  const moved = move(shifted, rival, context)
   return {
     ...moved,
     cooldown: Math.max(0, moved.cooldown - context.dt),
+    guardWindow: Math.max(0, moved.guardWindow - context.dt),
+    recoveryWindow: Math.max(0, moved.recoveryWindow - context.dt),
+    feint: moved.cooldown - context.dt <= 0 ? null : moved.feint,
     ko: moved.ko ? { ...moved.ko, remaining: moved.ko.remaining - context.dt } : null,
+  }
+}
+
+function settleRyu(fighter: FighterState, dt: number): FighterState {
+  if (!fighter.ryuShift) return fighter
+  const remaining = fighter.ryuShift.remaining - dt
+  if (remaining > 0) return { ...fighter, ryuShift: { ...fighter.ryuShift, remaining } }
+  return {
+    ...fighter,
+    attackShare: fighter.ryuShift.attackShare,
+    guard: fighter.ryuShift.guard,
+    ryuShift: null,
   }
 }
 
@@ -175,13 +197,22 @@ function strike(request: StrikeRequest): CombatState {
     clock: state.clock,
     walls: state.terrain.walls,
   })
-  const scored = { ...result.attacker, score: result.attacker.score + result.event.points }
+  const counterBonus = state[defenderSide].recoveryWindow > 0 && result.event.points > 0 ? 1 : 0
+  const event = counterBonus
+    ? { ...result.event, points: result.event.points + counterBonus }
+    : result.event
+  const scored = {
+    ...result.attacker,
+    score: result.attacker.score + event.points,
+    recoveryWindow: exchangeRecovery(technique),
+    feint: null,
+  }
   const outcome = outcomeOf(side, scored, result.defender)
   return {
     ...state,
     [side]: scored,
     [defenderSide]: result.defender,
-    lastEvent: result.event,
+    lastEvent: event,
     outcome,
   }
 }
@@ -227,12 +258,25 @@ function setRyu(
   fighter: FighterState,
   action: Extract<CombatAction, { type: 'RYU' }>,
 ): FighterState {
-  return {
-    ...fighter,
-    attackShare: clamp(action.attackShare ?? fighter.attackShare, 0.1, 0.9),
-    guard: action.guard ?? fighter.guard,
-    ko: null,
-  }
+  const attackShare = clamp(action.attackShare ?? fighter.attackShare, 0.1, 0.9)
+  const guard = action.guard ?? fighter.guard
+  if (attackShare === fighter.attackShare && guard === fighter.guard) return fighter
+  return { ...fighter, ryuShift: { attackShare, guard, remaining: RYU_SHIFT_TIME }, ko: null }
+}
+
+function activeGuard(fighter: FighterState): FighterState {
+  if (fighter.condition !== 'ready' || fighter.mode === 'zetsu') return fighter
+  return { ...fighter, guardWindow: GUARD_WINDOW, ko: null }
+}
+
+function feint(fighter: FighterState, zone: BodyZone): FighterState {
+  if (fighter.condition !== 'ready' || fighter.cooldown > 0 || fighter.aura < FEINT_COST)
+    return fighter
+  return { ...fighter, aura: fighter.aura - FEINT_COST, feint: zone, cooldown: 0.28 }
+}
+
+function exchangeRecovery(technique: 'strike' | 'ko'): number {
+  return technique === 'ko' ? 1.35 : 0.9
 }
 
 function setMovement(fighter: FighterState, vector: Vec2): FighterState {

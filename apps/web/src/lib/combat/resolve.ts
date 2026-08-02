@@ -72,10 +72,10 @@ export function defensiveAura(fighter: FighterState, zone: BodyZone): number {
     return 0
   }
   const output = fighter.mode === 'ren' ? 1 : 0.65
-  if (fighter.ken) return output * 0.72
+  if (fighter.ken) return output * (fighter.guardWindow > 0 ? 0.92 : 0.72)
 
   const reserve = output * (1 - fighter.attackShare)
-  if (zone === fighter.guard) return reserve * 1.5
+  if (zone === fighter.guard) return reserve * (fighter.guardWindow > 0 ? 2.15 : 1.5)
   return reserve * 0.45
 }
 

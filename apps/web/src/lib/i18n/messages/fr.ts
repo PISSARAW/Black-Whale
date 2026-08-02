@@ -1495,6 +1495,9 @@ export const fr: Messages = {
       'missing-report': { name: 'Le rapport disparu', goal: 'Copiez le rapport, confirmez son auteur et rejoignez la sortie.' },
       courier: { name: 'Le courrier sous surveillance', goal: 'Identifiez puis suivez le bon courrier sans perdre votre couverture.' },
       'listening-device': { name: "Le dispositif d'écoute", goal: 'Posez le dispositif au bon endroit et quittez les lieux.' },
+      'compromised-shift': { name: 'La relève compromise', goal: 'Tenez votre rôle, accomplissez la tâche attendue et remplacez le registre.' },
+      'impossible-witness': { name: 'Le témoin impossible', goal: 'Gagnez sa confiance, extrayez-le et installez une autre explication.' },
+      'three-princes': { name: 'La réunion des trois princes', goal: 'Placez plusieurs sources et distinguez le vrai du renseignement préparé.' },
     },
     objectiveLabels: {
       copy: 'Copier la cible sans déplacer l’original.',
@@ -1502,6 +1505,11 @@ export const fr: Messages = {
       follow: 'Suivre la cible jusqu’au point de transmission.',
       plant: "Poser le dispositif d'écoute dans la zone cible.",
       extract: 'Rejoindre le point d’extraction.',
+    },
+    v3: {
+      campaign: 'Campagne', operations: 'opérations', knownAreas: 'zones connues',
+      documentChecks: 'Contrôle des documents actif', objectiveAxis: 'Objectif',
+      informationAxis: 'Information', coverAxis: 'Couverture',
     },
     intro:
       'Vous entrez comme aide de maintenance. Copiez le rapport placé au fond de l’appartement, confirmez si possible son véritable auteur, puis revenez au point d’entrée. Être vu n’est pas perdre : être compris l’est.',

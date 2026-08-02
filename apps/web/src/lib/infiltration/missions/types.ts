@@ -1,6 +1,12 @@
 import type { WitnessId } from '../state'
 
-export type MissionId = 'missing-report' | 'courier' | 'listening-device'
+export type MissionId =
+  | 'missing-report'
+  | 'courier'
+  | 'listening-device'
+  | 'compromised-shift'
+  | 'impossible-witness'
+  | 'three-princes'
 export type ObjectiveState = 'unknown' | 'believed' | 'confirmed' | 'invalidated'
 export type ObjectiveKind = 'copy' | 'identify' | 'follow' | 'plant' | 'extract'
 

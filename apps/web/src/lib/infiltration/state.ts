@@ -9,6 +9,9 @@ import {
 } from './missions/objectives'
 import type { MissionId, MissionObjective, MissionSelection } from './missions/types'
 import { createTrace } from './traces'
+import { emptyMemory, type ActorMemory } from './actors/memory'
+import type { CoverProfile } from './social/cover'
+import { securityPolicy, type SecurityPolicy } from './security'
 
 export type WitnessId = 'steward' | 'guard' | 'nenGuard'
 export type MissionOutcome = 'playing' | 'escaped' | 'identified' | 'timeUp'
@@ -89,6 +92,10 @@ export interface InfiltrationState {
   metrics: MissionMetrics
   mission: { id: MissionId; seed: number; variantId: string; duration: number }
   objectives: MissionObjective[]
+  memories: Record<WitnessId, ActorMemory>
+  cover: CoverProfile
+  security: SecurityPolicy
+  journal: MissionEvent[]
   hatsu: {
     id: InfiltrationHatsuId
     aura: number
@@ -117,6 +124,15 @@ export type InfiltrationAction =
   | { type: 'SELECT_HATSU'; id: InfiltrationHatsuId }
   | { type: 'CAST_HATSU' }
   | { type: 'EXTRACT' }
+
+export interface MissionEvent {
+  id: string
+  at: number
+  type: InfiltrationAction['type'] | 'ALERT_CHANGED'
+  actor: 'player' | WitnessId | 'system'
+  sourceId?: string
+  payload?: string
+}
 
 const noBelief = (): Belief => ({
   identity: 'unknown',
@@ -166,6 +182,14 @@ export function initialInfiltrationState(setup: MissionSetup): InfiltrationState
       duration: selection.definition.duration,
     },
     objectives: initialObjectives(selection.definition.objectives),
+    memories: { steward: emptyMemory(), guard: emptyMemory(), nenGuard: emptyMemory() },
+    cover: {
+      role: 'maintenance', superior: 'deck-operations', assignment: 'ventilation-inspection',
+      allowedSpaces: [setup.playerAt.spaceId, setup.objectiveSpaceId], evidence: ['work-order'],
+      obligations: ['inspect-service-panel'],
+    },
+    security: securityPolicy('normal', setup.extractionSpaceId, []),
+    journal: [],
     hatsu: {
       id: 'little-eye',
       aura: 100,
@@ -182,6 +206,15 @@ export function infiltrationReducer(
   action: InfiltrationAction,
 ): InfiltrationState {
   if (state.outcome !== 'playing') return state
+  const reduced = reduceAction(state, action)
+  if (reduced === state) return state
+  return {
+    ...reduced,
+    journal: [...reduced.journal, { id: `action:${reduced.journal.length}:${state.clock.toFixed(3)}`, at: state.clock, type: action.type, actor: 'player' }],
+  }
+}
+
+function reduceAction(state: InfiltrationState, action: InfiltrationAction): InfiltrationState {
   switch (action.type) {
     case 'WALKED':
       return {

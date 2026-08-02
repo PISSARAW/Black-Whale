@@ -44,6 +44,37 @@ export const MISSIONS: Record<MissionId, MissionDefinition> = {
     ],
     variants: variants('listening'),
   },
+  'compromised-shift': {
+    id: 'compromised-shift', duration: 16 * 60, witnesses: commonWitnesses,
+    teaching: ['social', 'traces', 'nen', 'hatsu'],
+    objectives: [
+      { id: 'perform-duty', kind: 'plant', required: false },
+      { id: 'replace-register', kind: 'copy', required: true },
+      { id: 'extract', kind: 'extract', required: true },
+    ],
+    variants: variants('shift'),
+  },
+  'impossible-witness': {
+    id: 'impossible-witness', duration: 18 * 60, witnesses: commonWitnesses,
+    teaching: ['social', 'vision', 'sound', 'traces'],
+    objectives: [
+      { id: 'gain-trust', kind: 'identify', required: true },
+      { id: 'escort-witness', kind: 'follow', required: true },
+      { id: 'false-narrative', kind: 'plant', required: false, secret: true },
+      { id: 'extract', kind: 'extract', required: true },
+    ],
+    variants: variants('witness'),
+  },
+  'three-princes': {
+    id: 'three-princes', duration: 20 * 60, witnesses: commonWitnesses,
+    teaching: ['social', 'nen', 'traces', 'hatsu'],
+    objectives: [
+      { id: 'place-sources', kind: 'plant', required: true },
+      { id: 'assess-intelligence', kind: 'identify', required: true },
+      { id: 'extract', kind: 'extract', required: true },
+    ],
+    variants: variants('princes'),
+  },
 }
 
 export function selectMission(id: MissionId, seed: number): MissionSelection {

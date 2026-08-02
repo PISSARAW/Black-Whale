@@ -7,6 +7,8 @@ import { canSee } from './vision'
 import type { InfiltrationState, Witness } from './state'
 import { assessAlert } from './alerts'
 import { activeTraces } from './traces'
+import { remember } from './actors/memory'
+import { securityPolicy } from './security'
 
 export const INFILTRATION_DT = 1 / 30
 const REPORT_THRESHOLD = 72
@@ -49,6 +51,19 @@ export function updateInfiltration(
       }, 0),
   )
   const alertLevel = assessAlert(reports, witnesses.filter((witness) => witness.belief.identity === 'intruder').length).level
+  const alertChanged = alertLevel !== state.alertLevel
+  let memories = searched.memories
+  for (const report of reports.slice(searched.reports.length)) {
+    memories = {
+      ...memories,
+      [report.witnessId]: remember(memories[report.witnessId], {
+        id: `report:${report.witnessId}:${report.at.toFixed(3)}`,
+        at: report.at,
+        observerId: report.witnessId,
+        kind: 'report', subject: 'player', value: 'intruder', certainty: report.certainty,
+      }),
+    }
+  }
   const newlyDiscovered = searched.traces.reduce((count, trace, index) => {
     const before = challenged.traces[index]?.discoveredBy?.length ?? 0
     return count + Math.max(0, (trace.discoveredBy?.length ?? 0) - before)
@@ -60,6 +75,11 @@ export function updateInfiltration(
     witnesses,
     alert,
     alertLevel,
+    memories,
+    security: securityPolicy(alertLevel, searched.extractionSpaceId, witnesses.map((witness) => witness.belief.lastSpaceId).filter((space): space is string => !!space)),
+    journal: alertChanged
+      ? [...searched.journal, { id: `alert:${clock.toFixed(3)}`, at: clock, type: 'ALERT_CHANGED', actor: 'system', payload: `${state.alertLevel}>${alertLevel}` }]
+      : searched.journal,
     coverIntegrity,
     challenge,
     reports,

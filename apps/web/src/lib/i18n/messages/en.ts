@@ -1634,6 +1634,9 @@ export const en = {
       'missing-report': { name: 'The missing report', goal: 'Copy the report, confirm its author, and reach extraction.' },
       courier: { name: 'The watched courier', goal: 'Identify and follow the right courier without losing your cover.' },
       'listening-device': { name: 'The listening device', goal: 'Plant the device in the right room and leave without being detained.' },
+      'compromised-shift': { name: 'The compromised shift', goal: 'Perform the expected duty and replace the register before relief arrives.' },
+      'impossible-witness': { name: 'The impossible witness', goal: 'Gain their trust, extract them, and establish an alternative explanation.' },
+      'three-princes': { name: 'The three princes meeting', goal: 'Place several sources and separate truth from prepared intelligence.' },
     },
     objectiveLabels: {
       copy: 'Copy the target without moving the original.',
@@ -1641,6 +1644,11 @@ export const en = {
       follow: 'Follow the target to the handoff point.',
       plant: 'Plant the listening device in the target area.',
       extract: 'Reach the extraction point.',
+    },
+    v3: {
+      campaign: 'Campaign', operations: 'operations', knownAreas: 'known areas',
+      documentChecks: 'Document checks active', objectiveAxis: 'Objective',
+      informationAxis: 'Information', coverAxis: 'Cover',
     },
     intro:
       'You enter as a maintenance aide. Copy the report at the far end of the apartment, confirm its true author if possible, then return to the entrance. Being seen is not losing: being understood is.',

@@ -5,6 +5,7 @@
   import TourModeFullscreen from '$lib/components/tour/TourModeFullscreen.svelte'
   import { buildArena } from '$lib/hunt/arena'
   import { explorationNen } from '$lib/nen/tourAdapters'
+  import type { NenTechniqueAction } from '@black-whale/nen-engine'
   import { buildNavGraph } from '$lib/hunt/navmesh'
   import { floorOf, theShip } from '$lib/tour/blueprint'
   import { centroid, EMPTY_WORLD } from '$lib/tour/hatsu'
@@ -27,6 +28,7 @@
   import type { MissionId } from '$lib/infiltration/missions/types'
   import { decodeSave, encodeSave } from '$lib/infiltration/persistence'
   import { causalTimeline, debriefAxes } from '$lib/infiltration/debrief'
+  import { applyConsequences, initialCampaign, type CampaignState } from '$lib/infiltration/campaign'
 
   const ship = theShip()
   const arena = buildArena()
@@ -35,6 +37,7 @@
   const extraction = arena.spaces[0]
   const defaultSeed = seedFromText('black-whale-v2')
   let selectedMission = $state<MissionId>('missing-report')
+  let campaign = $state<CampaignState>(initialCampaign())
 
   const roomName = (space: Space | undefined | null) =>
     space ? ($locale === 'fr' ? space.nameFr : space.name) : '—'
@@ -125,7 +128,22 @@
   )
 
   function send(action: InfiltrationAction) {
+    const wasPlaying = game.outcome === 'playing'
     game = infiltrationReducer(game, action)
+    if (wasPlaying && game.outcome === 'escaped') {
+      campaign = applyConsequences(campaign, {
+        missionId: game.mission.id,
+        discoveredSpaces: [...new Set(game.witnesses.map((witness) => witness.spaceId))],
+        compromisedRole: game.coverIntegrity < 50 ? game.cover.role : undefined,
+        learnedProcedure: game.security.level !== 'normal' ? game.security.level : undefined,
+      })
+      localStorage.setItem('black-whale:infiltration:campaign:v1', JSON.stringify(campaign))
+    }
+  }
+
+  function useStandardNen(action: NenTechniqueAction) {
+    if (action.type === 'TEN' && game.player.nen === 'zetsu') send({ type: 'ZETSU' })
+    if (action.type === 'ZETSU' && game.player.nen !== 'zetsu') send({ type: 'ZETSU' })
   }
 
   function act() {
@@ -201,7 +219,11 @@
   }
 
   onMount(() => {
-    const saved = decodeSave(localStorage.getItem('black-whale:infiltration:v2') ?? '')
+    try {
+      const storedCampaign = JSON.parse(localStorage.getItem('black-whale:infiltration:campaign:v1') ?? 'null')
+      if (storedCampaign?.version === 1) campaign = storedCampaign
+    } catch { /* A corrupt campaign never blocks a mission. */ }
+    const saved = decodeSave(localStorage.getItem('black-whale:infiltration:v3') ?? localStorage.getItem('black-whale:infiltration:v2') ?? '')
     if (saved?.state.outcome === 'playing') {
       game = saved.state
       selectedMission = saved.state.mission.id
@@ -210,7 +232,7 @@
     }
     autosave = setInterval(() => {
       if (game.outcome === 'playing' && !briefing)
-        localStorage.setItem('black-whale:infiltration:v2', encodeSave(game))
+        localStorage.setItem('black-whale:infiltration:v3', encodeSave(game))
     }, 3000)
     window.addEventListener('keydown', onKeyDown)
     document.addEventListener('visibilitychange', resetClock)
@@ -255,7 +277,9 @@
     bind:engaged
     world={EMPTY_WORLD}
     nen={explorationNen(game.player.nen)}
-    showNenControls={false}
+    showNenControls={true}
+    nenAvailability={{ ren: false, gyo: false, in: false, en: false, shu: false, ken: false, ko: false, ryu: false, on: false }}
+    onNenChange={useStandardNen}
     onHatsu={() => send({ type: 'CAST_HATSU' })}
     extras={figures}
     touchLabels={{ move: $t.tour.touch.move, cast: $t.tour.touch.cast }}
@@ -295,6 +319,9 @@
       <p class="mt-1 text-xs text-white/45">
         {game.alertLevel.toUpperCase()} · {game.mission.variantId} · seed {game.mission.seed}
       </p>
+      {#if game.security.verifyDocuments}
+        <p class="mt-1 text-xs text-red-300">{$t.infiltration.v3.documentChecks}</p>
+      {/if}
       <p class="mt-1 text-xs text-white/65">
         Nen: <strong>{game.player.nen === 'zetsu' ? 'Zetsu' : 'Ten'}</strong>
       </p>
@@ -390,6 +417,10 @@
         <p class="text-xs uppercase tracking-[.3em] text-amber-300">{$t.infiltration.briefing}</p>
         <h1 id="mission-title" class="mt-3 text-4xl font-black">{$t.infiltration.title}</h1>
         <p class="mt-5 leading-relaxed text-white/70">{$t.infiltration.intro}</p>
+        <p class="mt-2 text-xs text-white/40">
+          {$t.infiltration.v3.campaign} · {campaign.completed.length} {$t.infiltration.v3
+            .operations} · {campaign.knownSpaces.length} {$t.infiltration.v3.knownAreas}
+        </p>
         <p class="mt-6 text-xs uppercase tracking-[.2em] text-amber-300">
           {$t.infiltration.chooseMission}
         </p>
@@ -457,9 +488,9 @@
           {game.mission.id} · {game.mission.variantId} · seed {game.mission.seed} · {game.alertLevel}
         </p>
         <div class="mt-6 grid grid-cols-3 gap-2 text-xs">
-          <p class="border border-white/15 p-3">Objectif<br /><strong>{verdict.material}</strong></p>
-          <p class="border border-white/15 p-3">Information<br /><strong>{verdict.information}</strong></p>
-          <p class="border border-white/15 p-3">Couverture<br /><strong>{verdict.cover}</strong></p>
+          <p class="border border-white/15 p-3">{$t.infiltration.v3.objectiveAxis}<br /><strong>{verdict.material}</strong></p>
+          <p class="border border-white/15 p-3">{$t.infiltration.v3.informationAxis}<br /><strong>{verdict.information}</strong></p>
+          <p class="border border-white/15 p-3">{$t.infiltration.v3.coverAxis}<br /><strong>{verdict.cover}</strong></p>
         </div>
         {#if timeline.length > 0}
           <ol class="mt-6 max-h-40 space-y-1 overflow-y-auto text-xs text-white/55">

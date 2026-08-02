@@ -71,17 +71,20 @@
 
   const ship = theShip()
   let selectedTerrain = $state<HuntTerrainId>(DEFAULT_HUNT_TERRAIN)
-  let arena = $state.raw(buildArena())
-  let plan = $state.raw(ship.plans.get(arena.tierId)!)
-  let graph = $state.raw(buildNavGraph(arena))
-  let world = $state.raw<HuntWorld>({ dt: HUNT_DT, arena, graph })
+  const initialArena = buildArena()
+  const initialGraph = buildNavGraph(initialArena)
+  let arena = $state.raw(initialArena)
+  let plan = $state.raw(ship.plans.get(initialArena.tierId)!)
+  let graph = $state.raw(initialGraph)
+  let world = $state.raw<HuntWorld>({ dt: HUNT_DT, arena: initialArena, graph: initialGraph })
 
   /**
    * Player and hunter start as far apart as the apartment allows, and the room
    * to reach is the far one — measured on the doorway graph rather than in
    * metres, because what matters is how many rooms have to be crossed.
    */
-  let opening = $state.raw(farthestApart())
+  const initialOpening = farthestApart()
+  let opening = $state.raw(initialOpening)
 
   function farthestApart(): { from: Space; to: Space } {
     let best = { from: arena.spaces[0], to: arena.spaces[1], rooms: 0 }
@@ -139,11 +142,11 @@
   // Bound out of TourScene: the walk is its job, not this page's. Seeded from
   // the spawn rather than from `game`, which is where it came from anyway — the
   // binding takes over on the first frame.
-  let position = $state<Vec2>(interiorPoint(opening.from.footprint))
+  let position = $state<Vec2>(interiorPoint(initialOpening.from.footprint))
   let heading = $state(0)
   let currentSpace = $state<Space | null>(null)
   let engaged = $state(false)
-  let tierId = $state(arena.tierId)
+  let tierId = $state(initialArena.tierId)
 
   function selectTerrain(id: HuntTerrainId) {
     selectedTerrain = id

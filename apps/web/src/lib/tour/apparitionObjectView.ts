@@ -309,6 +309,64 @@ function gameCard(
   return null
 }
 
+function ghost(seen: Apparition, { THREE, glow, root, skin }: BasicApparitionContext) {
+  const body = new THREE.Mesh(new THREE.SphereGeometry(seen.size, 10, 8), skin)
+  body.scale.set(0.9, 1, 1.25)
+  root.add(body)
+
+  const head = new THREE.Group()
+  head.position.set(0, seen.size * 0.9, -seen.size * 0.35)
+  const skull = new THREE.Mesh(new THREE.SphereGeometry(seen.size * 0.66, 10, 8), skin)
+  skull.scale.set(1, 0.8, 1.5)
+  head.add(skull)
+  const mouth = new THREE.Mesh(
+    new THREE.ConeGeometry(seen.size * 0.42, seen.size * 0.9, 8, 1, true),
+    glow(0x2a1f33, 0.95),
+  )
+  mouth.rotation.x = -Math.PI / 2.2
+  mouth.position.set(0, -seen.size * 0.12, -seen.size * 0.7)
+  head.add(mouth)
+  for (const side of [-1, 1]) {
+    const eye = new THREE.Mesh(
+      new THREE.SphereGeometry(seen.size * 0.12, 8, 6),
+      glow(0xfdfbff, 1),
+    )
+    eye.position.set(side * seen.size * 0.26, seen.size * 0.3, -seen.size * 0.5)
+    head.add(eye)
+  }
+  root.add(head)
+
+  const arm = new THREE.Mesh(
+    new THREE.CylinderGeometry(seen.size * 0.07, seen.size * 0.07, seen.size * 1.1, 6),
+    skin,
+  )
+  arm.position.set(-seen.size * 0.5, -seen.size * 0.3, -seen.size * 0.3)
+  arm.rotation.z = 0.6
+  root.add(arm)
+  const pen = new THREE.Mesh(
+    new THREE.CylinderGeometry(seen.size * 0.035, seen.size * 0.01, seen.size * 0.8, 6),
+    glow(0xfff4d6, 1),
+  )
+  pen.position.set(
+    -seen.size * 0.85,
+    seen.size * (seen.stage > 0 ? -1.05 : -0.7),
+    -seen.size * 0.5,
+  )
+  pen.rotation.z = seen.stage > 0 ? 0.15 : 0.5
+  root.add(pen)
+
+  if (seen.stage > 0) {
+    const page = new THREE.Mesh(
+      new THREE.PlaneGeometry(seen.size * 1.5, seen.size * 2),
+      glow(0xf6f3ec, 0.85),
+    )
+    page.rotation.x = -Math.PI / 2
+    page.position.set(-seen.size * 0.9, -seen.size * 1.6, -seen.size * 0.2)
+    root.add(page)
+  }
+  return null
+}
+
 const BUILDERS: Partial<Record<Apparition['kind'], Builder>> = {
   gum,
   double,
@@ -321,6 +379,7 @@ const BUILDERS: Partial<Record<Apparition['kind'], Builder>> = {
   flute,
   dealer,
   'game-card': gameCard,
+  ghost,
 }
 
 export function buildObjectApparition(

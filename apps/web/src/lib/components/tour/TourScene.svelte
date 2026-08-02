@@ -121,6 +121,7 @@
   } from '$lib/tour/TourAtmosphereView'
   import { ApparitionView } from '$lib/tour/ApparitionView'
   import { buildBasicApparition } from '$lib/tour/apparitionBasicView'
+  import { buildObjectApparition } from '$lib/tour/apparitionObjectView'
   import { HatsuSceneEffects } from '$lib/tour/HatsuSceneEffects'
   import type { Link, Space, Structure, Vec2, WallSegment } from '$lib/tour/types'
 
@@ -1620,39 +1621,7 @@
           humanLod = basic.humanLod
           humanAnimate = basic.humanAnimate
         }
-
-        // Bungee Gum's trap is a strand and a blob: the line is what you walk
-        // into, and the gum at the middle of it is what makes it obvious the
-        // line is not a wire. Nothing about it moves — the point of In is that
-        // there is no tell — so the slow turn the group gets is all it does.
-        if (seen.kind === 'gum') {
-          const strand = new THREE.Mesh(
-            new THREE.CylinderGeometry(seen.size * 0.035, seen.size * 0.035, seen.size * 2, 6),
-            skin,
-          )
-          strand.rotation.z = Math.PI / 2
-          root.add(strand)
-          const blob = new THREE.Mesh(new THREE.SphereGeometry(seen.size * 0.16, 8, 6), skin)
-          blob.scale.set(1, 0.7, 1)
-          root.add(blob)
-          turns = root
-        }
-
-        if (seen.kind === 'double') {
-          const body = new THREE.Mesh(
-            new THREE.CapsuleGeometry(seen.size * 0.3, seen.size * 1.1, 4, 8),
-            glow(seen.colour, 0.42),
-          )
-          body.position.y = seen.size * 0.15
-          root.add(body)
-          const head = new THREE.Mesh(
-            new THREE.SphereGeometry(seen.size * 0.26, 10, 8),
-            glow(seen.colour, 0.42),
-          )
-          head.position.y = seen.size * 1.05
-          root.add(head)
-          turns = root
-        }
+        turns = buildObjectApparition(seen, { THREE, glow, root, skin }) ?? turns
 
         if (seen.kind === 'insect') {
           const shell = glow(seen.colour, 0.3)
@@ -1758,37 +1727,6 @@
           const sphere = new THREE.Mesh(new THREE.SphereGeometry(seen.size * 2.1, 10, 8), shell)
           root.add(sphere)
           turns = legs
-        }
-
-        if (seen.kind === 'fish') {
-          // A body and a tail, and that is a fish: the walk is flat colour and
-          // hard edges, and a modelled carp would be the only thing aboard that
-          // was not. What it has to be is unmistakably swimming.
-          const body = new THREE.Mesh(new THREE.SphereGeometry(seen.size, 8, 6), skin)
-          body.scale.set(1.7, 0.75, 0.75)
-          root.add(body)
-          const tail = new THREE.Mesh(new THREE.ConeGeometry(seen.size * 0.55, seen.size, 4), skin)
-          tail.rotation.z = Math.PI / 2
-          tail.position.x = seen.size * 1.7
-          root.add(tail)
-          const eye = new THREE.Mesh(
-            new THREE.SphereGeometry(seen.size * 0.16, 6, 5),
-            glow(0xfff3d0, 1),
-          )
-          eye.position.set(-seen.size * 1.1, seen.size * 0.2, seen.size * 0.35)
-          root.add(eye)
-          turns = root
-        }
-
-        if (seen.kind === 'paper') {
-          const scrap = new THREE.Mesh(new THREE.PlaneGeometry(seen.size, seen.size * 1.4), skin)
-          root.add(scrap)
-          // The head and the two arms of a cut-out figure, which is what makes
-          // it a doll rather than a stuck note.
-          const head = new THREE.Mesh(new THREE.CircleGeometry(seen.size * 0.3, 8), skin)
-          head.position.y = seen.size * 0.85
-          root.add(head)
-          turns = root
         }
 
         if (seen.kind === 'puppet') {

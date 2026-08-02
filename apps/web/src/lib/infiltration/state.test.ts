@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { infiltrationReducer, initialInfiltrationState, type MissionSetup } from './state'
 import { reconstruction, updateInfiltration } from './loop'
 import type { NavGraph } from '../hunt/navmesh'
+import type { Arena } from '../hunt/arena'
 
 const setup: MissionSetup = {
   playerAt: { position: [0, 0], spaceId: 'entry' },
@@ -31,7 +32,15 @@ const graph: NavGraph = {
     ['office', [1, 0]],
   ]),
 }
-const world = (dt: number) => ({ dt, graph })
+const arena: Arena = {
+  tierId: 'test',
+  spaces: [],
+  walls: [],
+  doorways: [
+    { tierId: 'test', a: 'entry', b: 'office', start: [0.45, -0.2], end: [0.45, 0.2], width: 0.4 },
+  ],
+}
+const world = (dt: number) => ({ dt, graph, arena })
 
 describe('infiltration', () => {
   it('requires the document before extraction', () => {

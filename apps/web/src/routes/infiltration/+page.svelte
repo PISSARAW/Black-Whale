@@ -125,7 +125,7 @@
     )
     send({ type: 'WALKED', position, spaceId: currentSpace?.id ?? null, moving: moved > 0.001 })
     while (owed >= INFILTRATION_DT && game.outcome === 'playing') {
-      game = updateInfiltration(game, { dt: INFILTRATION_DT, graph })
+      game = updateInfiltration(game, { dt: INFILTRATION_DT, graph, arena })
       owed -= INFILTRATION_DT
     }
   }

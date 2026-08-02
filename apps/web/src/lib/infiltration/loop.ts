@@ -1,4 +1,5 @@
 import type { NavGraph } from '../hunt/navmesh'
+import type { Arena } from '../hunt/arena'
 import { hearsMovement, patrolWitness } from './patrol'
 import { activeDisguise } from './hatsu'
 import type { InfiltrationState, Witness } from './state'
@@ -9,6 +10,7 @@ const REPORT_THRESHOLD = 72
 export interface InfiltrationWorld {
   dt: number
   graph: NavGraph
+  arena: Arena
 }
 
 export function updateInfiltration(
@@ -85,7 +87,7 @@ function moveWitness(
   if (distracted) return { ...witness, investigating: state.diversion!.spaceId }
   const heard = state.player.moving && hearsMovement(witness, state.player.spaceId, world.graph)
   const informed = heard ? { ...witness, investigating: state.player.spaceId } : witness
-  return patrolWitness(informed, world.graph, world.dt)
+  return patrolWitness(informed, world)
 }
 
 function challengeFor(

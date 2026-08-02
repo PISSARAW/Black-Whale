@@ -1,6 +1,7 @@
 import type * as Three from 'three'
 import type { Vec2 } from './types'
 import type { TourFlash } from './apparitions'
+import { HatsuRewindEffect, type RewindFrame } from './HatsuRewindEffect'
 
 const GUST_SECONDS = 1.1
 const PUNCH_SECONDS = 1
@@ -9,6 +10,16 @@ const ARROW_SECONDS = 0.9
 const BLAST_SECONDS = 0.9
 
 type SequencedFlash = TourFlash & { seq: number }
+export interface FlashFrame {
+  delta: number
+  camera: Three.PerspectiveCamera
+  tierId: string
+  blinded: boolean
+  fog: Three.FogExp2
+  baseFog: Three.Color
+  renderer: Three.WebGLRenderer
+}
+export interface VehicleFrame { riding: boolean; at: Vec2; eye: number; yaw: number }
 
 /** Owns transient and visitor-carried Nen visuals outside the apparition world. */
 export class HatsuSceneEffects {
@@ -31,6 +42,7 @@ export class HatsuSceneEffects {
   readonly #shaft: Three.Group
   readonly #fist: Three.Group
   readonly #fistMaterial: Three.MeshBasicMaterial
+  readonly #rewind: HatsuRewindEffect
   #playing = 0
   #playedSeq = -1
   #played: SequencedFlash | null = null
@@ -120,6 +132,7 @@ export class HatsuSceneEffects {
     forearm.position.y = 0.2
     this.#fist.add(knuckles, thumb, forearm)
     this.#fist.visible = false
+    this.#rewind = new HatsuRewindEffect(THREE, scene)
     scene.add(
       this.#chassis, this.#headlamp, this.#gust, this.#gustRing, this.#sun,
       this.#sunLight, this.#blast, this.#blastLight, this.#shaft, this.#fist,
@@ -143,73 +156,89 @@ export class HatsuSceneEffects {
     return true
   }
 
-  tickFlash(
-    delta: number,
-    view: { camera: Three.PerspectiveCamera; tierId: string; blinded: boolean },
-    fog: Three.FogExp2,
-    baseFog: Three.Color,
-    renderer: Three.WebGLRenderer,
-  ): void {
+  get rewindOffset(): number {
+    return this.#rewind.offset
+  }
+
+  updateRewind(frame: RewindFrame): void {
+    this.#rewind.update(frame)
+  }
+
+  startRewind(): void {
+    this.#rewind.start()
+  }
+
+  tickFlash(frame: FlashFrame): void {
     const played = this.#played
     if (!played || played.kind === 'rewind' || played.kind === 'lash') return
-    this.#playing += delta
-    const span = played.kind === 'gust' ? GUST_SECONDS : played.kind === 'sun' ? SUN_SECONDS
-      : played.kind === 'arrow' ? ARROW_SECONDS : played.kind === 'blast' ? BLAST_SECONDS : PUNCH_SECONDS
-    const through = this.#playing / span
+    this.#playing += frame.delta
+    const through = this.#playing / flashDuration(played.kind)
     if (through >= 1) {
       this.hideFlashes()
       if (this.burning) {
         this.burning = 0
-        renderer.toneMappingExposure = view.blinded ? 0.02 : 1
-        fog.color.copy(baseFog)
+        frame.renderer.toneMappingExposure = frame.blinded ? 0.02 : 1
+        frame.fog.color.copy(frame.baseFog)
       }
       this.#played = null
       return
     }
-    if (played.kind === 'arrow') {
-      const from = played.from ?? played.at
-      const flown = Math.min(1, through * 3)
-      this.#shaft.visible = true
-      this.#shaft.position.set(
-        from[0] + (played.at[0] - from[0]) * flown,
-        played.y + Math.sin(flown * Math.PI) * 1.2,
-        from[1] + (played.at[1] - from[1]) * flown,
-      )
-      this.#shaft.lookAt(played.at[0], played.y, played.at[1])
-      this.#arrowMaterial.opacity = 0.95 * (1 - Math.max(0, (through - 0.5) * 2))
-      return
-    }
-    if (played.kind === 'blast') {
-      if (played.tierId !== view.tierId) return this.hideBlast()
-      const out = Math.min(1, through * 5)
-      const metres = Math.max(2, played.metres ?? 4)
-      this.#blast.visible = true
-      this.#blast.position.set(played.at[0], played.y, played.at[1])
-      this.#blast.scale.setScalar(metres * (0.3 + out * 0.7))
-      this.#blastMaterial.opacity = 0.55 * (1 - through) ** 2
-      this.#blastLight.position.copy(this.#blast.position)
-      this.#blastLight.intensity = 40 * out * (1 - through)
-      return
-    }
-    if (played.kind === 'sun') {
-      const risen = Math.min(1, through * 3)
-      const metres = Math.max(2, played.metres ?? 4)
-      this.#sun.visible = true
-      this.#sun.position.copy(view.camera.position)
-      this.#sun.scale.setScalar(metres * risen)
-      this.#sunMaterial.opacity = 0.34 * (1 - through * through)
-      this.#sunLight.position.copy(view.camera.position)
-      this.#sunLight.distance = metres * 2.5
-      this.#sunLight.intensity = 26 * risen * (1 - through)
-      this.burning = risen * (1 - through * through)
-      renderer.toneMappingExposure = 1 + this.burning * 2.6
-      fog.color.setHex(0xf2a63b)
-      return
-    }
-    if (played.kind === 'gust') {
-      this.animateGust(played, through)
-      return
-    }
+    this.animateFlash(played, through, frame)
+  }
+
+  private animateFlash(played: SequencedFlash, through: number, frame: FlashFrame): void {
+    if (played.kind === 'arrow') return this.animateArrow(played, through)
+    if (played.kind === 'blast') return this.animateBlast(played, through, frame)
+    if (played.kind === 'sun') return this.animateSun(played, through, frame)
+    if (played.kind === 'gust') return this.animateGust(played, through)
+    this.animatePunch(played, through)
+  }
+
+  private animateArrow(played: SequencedFlash, through: number): void {
+    if (played.kind !== 'arrow') return
+    const from = played.from ?? played.at
+    const flown = Math.min(1, through * 3)
+    this.#shaft.visible = true
+    this.#shaft.position.set(
+      from[0] + (played.at[0] - from[0]) * flown,
+      played.y + Math.sin(flown * Math.PI) * 1.2,
+      from[1] + (played.at[1] - from[1]) * flown,
+    )
+    this.#shaft.lookAt(played.at[0], played.y, played.at[1])
+    this.#arrowMaterial.opacity = 0.95 * (1 - Math.max(0, (through - 0.5) * 2))
+  }
+
+  private animateBlast(played: SequencedFlash, through: number, frame: FlashFrame): void {
+    if (played.kind !== 'blast') return
+    if (played.tierId !== frame.tierId) return this.hideBlast()
+    const out = Math.min(1, through * 5)
+    const metres = Math.max(2, played.metres ?? 4)
+    this.#blast.visible = true
+    this.#blast.position.set(played.at[0], played.y, played.at[1])
+    this.#blast.scale.setScalar(metres * (0.3 + out * 0.7))
+    this.#blastMaterial.opacity = 0.55 * (1 - through) ** 2
+    this.#blastLight.position.copy(this.#blast.position)
+    this.#blastLight.intensity = 40 * out * (1 - through)
+  }
+
+  private animateSun(played: SequencedFlash, through: number, frame: FlashFrame): void {
+    if (played.kind !== 'sun') return
+    const risen = Math.min(1, through * 3)
+    const metres = Math.max(2, played.metres ?? 4)
+    this.#sun.visible = true
+    this.#sun.position.copy(frame.camera.position)
+    this.#sun.scale.setScalar(metres * risen)
+    this.#sunMaterial.opacity = 0.34 * (1 - through * through)
+    this.#sunLight.position.copy(frame.camera.position)
+    this.#sunLight.distance = metres * 2.5
+    this.#sunLight.intensity = 26 * risen * (1 - through)
+    this.burning = risen * (1 - through * through)
+    frame.renderer.toneMappingExposure = 1 + this.burning * 2.6
+    frame.fog.color.setHex(0xf2a63b)
+  }
+
+  private animatePunch(played: SequencedFlash, through: number): void {
+    if (played.kind !== 'punch') return
     const rise = through < 0.25 ? through / 0.25 : Math.max(0, 1 - (through - 0.25) / 0.75)
     this.#fist.visible = true
     this.#fist.position.set(played.at[0], played.y - 2 + rise * 3.1, played.at[1])
@@ -217,7 +246,8 @@ export class HatsuSceneEffects {
     this.#fistMaterial.opacity = 0.72 * (1 - through * 0.6)
   }
 
-  syncVehicle(riding: boolean, at: Vec2, eye: number, yaw: number): void {
+  syncVehicle(frame: VehicleFrame): void {
+    const { riding, at, eye, yaw } = frame
     this.#chassis.visible = riding
     this.#headlamp.intensity = riding ? 3.2 : 0
     if (!riding) return
@@ -294,5 +324,14 @@ export class HatsuSceneEffects {
     this.#arrowMaterial.dispose()
     this.#fist.traverse((part: Three.Object3D) => (part as Three.Mesh).geometry?.dispose())
     this.#fistMaterial.dispose()
+    this.#rewind.dispose()
   }
+}
+
+function flashDuration(kind: TourFlash['kind']): number {
+  if (kind === 'gust') return GUST_SECONDS
+  if (kind === 'sun') return SUN_SECONDS
+  if (kind === 'arrow') return ARROW_SECONDS
+  if (kind === 'blast') return BLAST_SECONDS
+  return PUNCH_SECONDS
 }

@@ -95,7 +95,6 @@
     setStepsMuffled,
     startSteps,
     stepsPlaying,
-    rewindSound,
     stepsWereSilenced,
     stopSteps,
     toggleSteps,
@@ -936,7 +935,7 @@
        * and in the bounding sphere `buildTierMesh` measured for it.
        */
       function extrude(nextTierId: string): Built {
-        return tierView.build(ship, world, nextTierId, reveal)
+        return tierView.build({ ship, world, tierId: nextTierId, reveal })
       }
 
       const dispose = (built: Built) => tierView.dispose(built)
@@ -5164,111 +5163,10 @@
        * then walked forward again by the afterimage — the visitor as they were
        * predicted, going where they were going to go while you go elsewhere.
        */
-      const REWIND_SECONDS = 10
-      /** How long the spooling itself takes. Fast, but not a cut. */
-      const REEL_SECONDS = 1.2
-      const TRACK_STEP = 0.1
-
-      const track: { at: number; where: Vec2; yaw: number }[] = []
-      let sinceSample = 0
-
-      /** Seconds taken off the clock everything animated is read from. */
-      let rewound = 0
-      /** The spool, while it is running: how far through, and from where. */
-      let reeling: { through: number } | null = null
-      /** The afterimage, and the clock it walks its recorded track against. */
-      let after: { from: number } | null = null
-
-      /** The visitor as they were, `seconds` ago — interpolated, not snapped. */
-      function trackAt(seconds: number) {
-        if (!track.length) return null
-        const wanted = track[track.length - 1].at - seconds
-        if (wanted <= track[0].at) return track[0]
-        for (let i = track.length - 1; i > 0; i--) {
-          const later = track[i]
-          const earlier = track[i - 1]
-          if (later.at < wanted) continue
-          const span = later.at - earlier.at || 1
-          const along = Math.min(1, Math.max(0, (wanted - earlier.at) / span))
-          return {
-            at: wanted,
-            where: [
-              earlier.where[0] + (later.where[0] - earlier.where[0]) * along,
-              earlier.where[1] + (later.where[1] - earlier.where[1]) * along,
-            ] as Vec2,
-            yaw: earlier.yaw + angleGap(later.yaw, earlier.yaw) * along,
-          }
-        }
-        return track[track.length - 1]
-      }
-
-      /**
-       * The afterimage: the visitor as the prediction has them.
-       *
-       * Pale, and not solid — everyone else goes on perceiving the ten seconds
-       * that were foreseen, so what the walk draws is the version of you they
-       * are still watching, walking the path you have just been given back.
-       */
-      const afterMaterial = new THREE.MeshBasicMaterial({
-        color: 0x7dd3fc,
-        transparent: true,
-        opacity: 0.3,
-        depthWrite: false,
-      })
-      const afterimage = new THREE.Group()
-      const afterBody = new THREE.Mesh(new THREE.CapsuleGeometry(0.28, 1.05, 4, 8), afterMaterial)
-      afterBody.position.y = 0.95
-      afterimage.add(afterBody)
-      const afterHead = new THREE.Mesh(new THREE.SphereGeometry(0.24, 10, 8), afterMaterial)
-      afterHead.position.y = 1.72
-      afterimage.add(afterHead)
-      afterimage.visible = false
-      scene.add(afterimage)
-
-      /** Takes the ten seconds back: the spool, the clock, and the afterimage. */
-      function startRewind() {
-        if (!track.length) return
-        rewindSound(REEL_SECONDS)
-        reeling = { through: 0 }
-      }
-
-      /** Runs the spool, and hands the walk back when it has finished. */
-      function reelBack(delta: number) {
-        if (reeling) {
-          reeling.through = Math.min(1, reeling.through + delta / REEL_SECONDS)
-          if (reeling.through >= 1) {
-            reeling = null
-            // The clock goes back without the visitor, so the room does again what
-            // it was doing — and the afterimage sets off from where they were.
-            rewound += REWIND_SECONDS
-            after = { from: 0 }
-          }
-          return
-        }
-
-        if (!after) {
-          afterimage.visible = false
-          return
-        }
-        after.from += delta
-        if (after.from >= REWIND_SECONDS) {
-          after = null
-          afterimage.visible = false
-          return
-        }
-        const seen = trackAt(REWIND_SECONDS - after.from)
-        if (!seen) return
-        afterimage.visible = true
-        afterimage.position.set(seen.where[0], ground, seen.where[1])
-        afterimage.rotation.y = seen.yaw
-        // It fades as the ten seconds it was given run out.
-        afterMaterial.opacity = 0.3 * (1 - (after.from / REWIND_SECONDS) ** 2)
-      }
-
       /** Starts whichever of the two the page has just handed over. */
       function syncFlash() {
         if (!flash || !hatsuEffects.play(flash)) return
-        if (flash.kind === 'rewind') startRewind()
+        if (flash.kind === 'rewind') hatsuEffects.startRewind()
         if (flash.kind === 'lash') {
           lashing = flash.tierId === currentTierId ? { at: flash.at, y: flash.y, through: 0 } : null
         }
@@ -5870,7 +5768,12 @@
        * frame is the whole of it; `pendingResize` is the handle, so a resize
        * still in the queue when the scene is torn down can be dropped.
        */
-      const resize = observeSceneResize(THREE, container, runtime, () => portals.targets())
+      const resize = observeSceneResize({
+        THREE,
+        container,
+        runtime,
+        targets: () => portals.targets(),
+      })
 
       // ── Frame ────────────────────────────────────
       let previous = performance.now()
@@ -5954,7 +5857,7 @@
        */
       function recordTheOwl(clock: number, delta: number) {
         sinceFilmSample += delta
-        if (sinceFilmSample < TRACK_STEP) return
+        if (sinceFilmSample < 0.1) return
         sinceFilmSample = 0
         const bird = apparitions[`owl:${world.owl}`]
         const space = world.owl ? ship.spaces.get(world.owl) : null
@@ -6093,13 +5996,11 @@
 
         // One clock for everything the walk animates, and it is not the wall's:
         // Parallel Future moves it back ten seconds, and the room does again
-        // exactly what it did — see `startRewind`.
-        // During the spooling, the clock is pulled back smoothly.
-        const rewinding = reeling ? REWIND_SECONDS * reeling.through : 0
+        // exactly what it did — see `HatsuRewindEffect`.
         // Read before anything is placed rather than after, because the marks
         // The Sun and Moon leaves are put where their things are *now*, and a
         // thing that wanders is somewhere new every frame.
-        const clock = now / 1000 - rewound - rewinding
+        const clock = now / 1000 - hatsuEffects.rewindOffset
 
         syncDeck()
         syncSolids()
@@ -6117,25 +6018,18 @@
         driftMotes(delta, clock)
         driftApparitions(clock, delta)
         driftLeavingCards(delta)
-        hatsuEffects.tickFlash(
+        hatsuEffects.tickFlash({
           delta,
-          { camera, tierId: currentTierId, blinded },
+          camera,
+          tierId: currentTierId,
+          blinded,
           fog,
           baseFog,
           renderer,
-        )
+        })
         runLash(delta)
         syncGum(clock)
-        reelBack(delta)
-
-        // The last twelve seconds of the visitor's own walk, which is the one
-        // thing aboard that is not a function of the clock.
-        sinceSample += delta
-        if (sinceSample >= TRACK_STEP) {
-          sinceSample = 0
-          track.push({ at: clock, where: pointer, yaw })
-          while (track.length && track[0].at < clock - (REWIND_SECONDS + 2)) track.shift()
-        }
+        hatsuEffects.updateRewind({ clock, position: pointer, yaw, ground, delta })
 
         // The fish feed on the clock rather than on a threshold: they are drawn
         // now, and a fish that swims through a coffin and leaves it standing is
@@ -6233,7 +6127,7 @@
         // it, and where the drift has it this instant.
         const loose = solidWalls(ship, world, {
           tierId: currentTierId,
-          seconds: now / 1000 - rewound,
+          seconds: now / 1000 - hatsuEffects.rewindOffset,
         })
 
         // `code` is the physical key, so W A S D covers ZQSD on an AZERTY
@@ -6340,7 +6234,7 @@
         camera.rotateZ(bob.roll)
         // Kurton is worn rather than stood in: the chassis goes where the
         // visitor is, facing where they face, every frame.
-        hatsuEffects.syncVehicle(world.body.riding, pointer, eye, yaw)
+        hatsuEffects.syncVehicle({ riding: world.body.riding, at: pointer, eye, yaw })
 
         // One pace, one footstep, on the same counter the head is dipping to — so
         // the sound lands with the foot at every speed and never drifts off it.
@@ -6560,7 +6454,7 @@
         if (eyeCamera) {
           eyeCamera.rotation.set(0, 0, 0)
           eyeCamera.rotateY(now / 6000)
-          renderSceneInset(runtime, eyeCamera, 'top', size)
+          renderSceneInset({ runtime, lens: eyeCamera, corner: 'top', measure: size })
         }
 
         // The table's own eye, which is the same technique doing the same thing
@@ -6572,12 +6466,14 @@
           if (!tableCamera) tableCamera = new THREE.PerspectiveCamera(EYE_FOV, 1, 0.02, 40)
           tableCamera.position.set(feed.at[0], feed.y, feed.at[1])
           tableCamera.lookAt(feed.look[0], feed.lookY, feed.look[1])
-          renderSceneInset(runtime, tableCamera, 'top', size)
+          renderSceneInset({ runtime, lens: tableCamera, corner: 'top', measure: size })
         }
 
         // The owl's film, inset below the eye's feed: the last ten seconds of
         // a bird that is not there any more, played at the speed it flew them.
-        if (filmCamera && showing) renderSceneInset(runtime, filmCamera, 'bottom', size)
+        if (filmCamera && showing) {
+          renderSceneInset({ runtime, lens: filmCamera, corner: 'bottom', measure: size })
+        }
         // And the table's own owl, in the same corner and for the same reason:
         // this is not a feed, it is what a bird already filmed being looked at
         // afterwards. It holds still because a recording does, and it stays up
@@ -6586,7 +6482,7 @@
           if (!recordCamera) recordCamera = new THREE.PerspectiveCamera(OWL_FOV, 1, 0.02, 40)
           recordCamera.position.set(record.at[0], record.y, record.at[1])
           recordCamera.lookAt(record.look[0], record.lookY, record.look[1])
-          renderSceneInset(runtime, recordCamera, 'bottom', size)
+          renderSceneInset({ runtime, lens: recordCamera, corner: 'bottom', measure: size })
         }
       }
 
@@ -6611,10 +6507,10 @@
        * hand to a headset, and because stopping it is one call rather than a
        * cancelled handle and a flag.
        */
-      const stopAnimating = animateVisibleScene(container, renderer, tick, () => {
+      const stopAnimating = animateVisibleScene({ container, renderer, frame: tick, onResume: () => {
         // Do not charge the walk for time spent reading below the canvas.
         previous = performance.now()
-      })
+      } })
       ready = true
 
       cleanup = () => {
@@ -6643,9 +6539,6 @@
         threadMaterial.dispose()
         gumGeometry.dispose()
         gumMaterial.dispose()
-        afterBody.geometry.dispose()
-        afterHead.geometry.dispose()
-        afterMaterial.dispose()
         portals.dispose()
         atmosphere.dispose()
         hatsuEffects.dispose()

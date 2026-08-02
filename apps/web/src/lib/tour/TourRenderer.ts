@@ -30,14 +30,16 @@ export interface SceneResize {
   apply: () => void
   dispose: () => void
 }
+interface ResizeOptions {
+  THREE: typeof Three
+  container: HTMLElement
+  runtime: SceneRuntime
+  targets: () => Iterable<Three.WebGLRenderTarget | undefined>
+}
 
 /** Coalesce resize bursts and keep portal targets in screen-space. */
-export function observeSceneResize(
-  THREE: typeof Three,
-  container: HTMLElement,
-  runtime: SceneRuntime,
-  targets: () => Iterable<Three.WebGLRenderTarget | undefined>,
-): SceneResize {
+export function observeSceneResize(options: ResizeOptions): SceneResize {
+  const { THREE, container, runtime, targets } = options
   let pending = 0
   const measure = new THREE.Vector2()
   const apply = () => {
@@ -71,12 +73,13 @@ export function disposeSceneRuntime(runtime: SceneRuntime): void {
 }
 
 /** Run the expensive frame loop only while the tour canvas is visible. */
-export function animateVisibleScene(
-  container: HTMLElement,
-  renderer: Three.WebGLRenderer,
-  frame: (time: number) => void,
-  onResume: () => void,
-): () => void {
+export function animateVisibleScene(options: {
+  container: HTMLElement
+  renderer: Three.WebGLRenderer
+  frame: (time: number) => void
+  onResume: () => void
+}): () => void {
+  const { container, renderer, frame, onResume } = options
   const observer = new IntersectionObserver(
     ([entry]) => {
       if (entry.isIntersecting) {
@@ -97,12 +100,13 @@ export function animateVisibleScene(
 }
 
 /** Render a secondary camera without disturbing the main viewport state. */
-export function renderSceneInset(
-  runtime: Pick<SceneRuntime, 'renderer' | 'scene'>,
-  lens: Three.PerspectiveCamera,
-  corner: 'top' | 'bottom',
-  measure: Three.Vector2,
-): void {
+export function renderSceneInset(options: {
+  runtime: Pick<SceneRuntime, 'renderer' | 'scene'>
+  lens: Three.PerspectiveCamera
+  corner: 'top' | 'bottom'
+  measure: Three.Vector2
+}): void {
+  const { runtime, lens, corner, measure } = options
   const { renderer, scene } = runtime
   const { width, height } = renderer.getSize(measure)
   const boxWidth = Math.round(Math.min(320, width * 0.3))

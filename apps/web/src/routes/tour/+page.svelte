@@ -240,44 +240,6 @@
     })
   }
 
-  // ── The walk at the size of the screen ─────────
-  /**
-   * Full screen is not the walk with its page taken away.
-   *
-   * Two things make that true. The layout: the walk takes the screen and the
-   * column comes with it — the decks, the plan, the index, the Hatsu panel, the
-   * comfort dials, the legend — folded away on a keypress when the ship is what
-   * you came to look at, and never gone. And the element: what is handed to the
-   * browser is the document rather than this page, because the Nen dock is the
-   * archive's and hangs outside the route. Full screen on the grid would take
-   * the walk and leave the aura at the door.
-   */
-  /**
-   * The archive's chrome stands down for the walk.
-   *
-   * Not decoration: the route is drawn inside a transformed shell, which is a
-   * stacking context of its own, so no z-index this page can name will ever put
-   * the walk over the site header. The header goes instead — and the Nen dock,
-   * which hangs outside the route entirely, deliberately stays.
-   */
-  /**
-   * M opens the plan at a size it can be read at. In the 320-pixel column a
-   * room's legend comes out under four pixels tall, which is a cost paid for
-   * nothing; full screen, the same drawing is legible, and it is the same
-   * component rather than a second plan to keep in step.
-   *
-   * V gives the walk the screen, and Esc gives it back — but only when the
-   * pointer is not engaged, because there Esc already means "let go of my
-   * mouse", and one key cannot mean two things in the same breath.
-   *
-   * R changes the orders of the three techniques that take orders: the double's
-   * watch under Without You, which of the three birds Secret Window sends, and
-   * what Little Eye's insect is doing where it is. Under a technique that can be
-   * turned on its own user — Black Voice's needle, Elastic Love — the walk takes
-   * it instead and casts with an empty reticle; the two sets do not overlap, so
-   * the key never means two things at once. Under anything else it means nothing
-   * and is left to the browser.
-   */
   function onWindowKeydown(event: KeyboardEvent) {
     const action = tourShortcut(event, {
       takesOrders: Boolean(technique && TAKES_ORDERS.has(technique.kind)),
@@ -612,22 +574,9 @@
 
   const castOn = casting.castOn
 
-  /**
-   * A page of the book, cast at whatever the visitor is aiming at.
-   *
-   * This is the whole of what the fifth wave bought: the dock still gives the
-   * walk exactly one aura, and the book gives it a second to cast with.
-   */
   const castPage = casting.castPage
 
-  /**
-   * What the cast keys do, offered to a visitor working the panel instead of
-   * the keyboard: the same cast, at whatever the reticle is on, under the same
-   * hand — so the moon goes on off a mouse exactly as it does off R.
-   */
   const castHand = casting.castHand
-
-  /** The ribbon moved to the other page, which swaps what the two keys play. */
   const turnTheRibbon = casting.turnRibbon
 
   /**
@@ -651,75 +600,19 @@
     }
   }
 
-  /**
-   * One mouthful, in every room the fish are loose in.
-   *
-   * The walk's clock decides when; `fishBite` decides what. A room they have
-   * already emptied gives them nothing and says nothing, which is why the
-   * read-out goes quiet rather than repeating itself.
-   */
   const fishEat = ticker.fishEat
 
-  /**
-   * The sun and the moon closing on each other, on the walk's own clock.
-   *
-   * Silent until they touch: two things crossing a room are something to watch
-   * rather than something to be told about, and the one line the technique has
-   * to say is the one it says when neither of them is there any more.
-   */
-  /**
-   * One step of every Guardian Spirit Beast that goes on working after the cast.
-   *
-   * Four of them do, and they are asked in one call rather than four because
-   * they share a clock and because only one of them can be up at a time in
-   * practice — the walk hands out one aura. Each answers with a world and a
-   * line or with nothing at all, and the last one that had something to say is
-   * what the read-out shows: a beast that has finished its room goes quiet
-   * rather than repeating itself.
-   */
   const beastStep = ticker.beastStep
 
-  /**
-   * The coin off Zhang Lei's wheel, taken by having walked into it.
-   *
-   * The scene says the visitor is standing where it hangs; what that is worth,
-   * and what the wheel puts out next, is the pure layer's.
-   */
   const takeCoin = ticker.takeCoin
 
   const polarityWalk = ticker.polarityWalk
 
-  /**
-   * One hop of the free bird, on the same clock the fish feed on.
-   *
-   * The read-out says where it went, because a bird that leaves the room you
-   * sent it to without saying so is a bird you have lost. It is not sounded:
-   * one hoot every few seconds for as long as the technique is up would be the
-   * walk talking over itself.
-   */
   const owlFlight = ticker.owlFlight
 
-  /**
-   * One room further for the insect, while it is scouting.
-   *
-   * Said and not sounded, for the bird's reason: the walk already has the fly
-   * running under it for as long as the sphere is up, and one line a room is
-   * what makes the feed in the corner readable as a route rather than as a
-   * picture that keeps changing.
-   */
   const scoutFlight = ticker.scoutFlight
 
-  /**
-   * One second of the twenty a bird holds for.
-   *
-   * Silent while it is counting: nineteen lines saying the owl is still there
-   * would bury whatever the walk was actually told. It speaks once, when the
-   * bird goes and hands its ten seconds over — and the scene plays them back
-   * in the corner off the same disappearance.
-   */
   const owlSecond = ticker.owlSecond
-
-  /** Fugetsu's tunnel, asked on the same arrival the doors are asked on. */
   const crossWorm = ticker.crossWorm
 
   /** With a technique up, the index stops being a way to travel and becomes the reach. */

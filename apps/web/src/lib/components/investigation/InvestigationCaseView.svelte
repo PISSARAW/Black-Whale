@@ -52,7 +52,8 @@
 
   const ship = theShip()
   const modeNen = new ModeNenState()
-  const initialDefinition = caseById(caseId, 'fr')!
+  const initialCaseId = caseId
+  const initialDefinition = caseById(initialCaseId, 'fr')!
   const definition = $derived(caseById(caseId, $locale)!)
   const investigation = $derived(definition.content)
   const ui = $derived(

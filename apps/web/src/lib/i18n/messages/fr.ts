@@ -1453,6 +1453,13 @@ export const fr: Messages = {
       forge: 'Falsification de l’ordre de mission',
       disguise: 'Déguisement social temporaire',
     },
+    hatsuConditions: {
+      ten: 'Ten doit être actif',
+      conscious: 'Vous devez être en état d’agir',
+      aura: 'Aura insuffisante',
+      uses: 'Aucun usage restant',
+      uninterrupted: 'Impossible pendant un contrôle',
+    },
     truth: 'Information rapportée',
     confirmed: 'Auteur confirmé',
     uncertain: 'Auteur encore incertain',
@@ -1491,6 +1498,12 @@ export const fr: Messages = {
       rule: 'Votre aura sert à savoir, à préparer et à survivre. Contre un chasseur intact, vous perdez.',
       objective: 'Atteignez la pièce cible — ou préparez une rencontre qu’il ne pourra pas gagner.',
       hatsu: 'Hatsu emporté',
+      chooseHatsu: 'Choisissez votre Hatsu',
+      role: {
+        prepare: 'Préparer le terrain',
+        foresee: 'Voir l’intention future',
+        locate: 'Localiser probablement',
+      },
       hatsuRule:
         'Pose sur une surface un lien élastique dissimulé avec In. Il retient sans infliger de dégâts.',
       begin: 'Entrer dans l’appartement',
@@ -1502,6 +1515,15 @@ export const fr: Messages = {
       ten: 'Reprendre Ten',
       lay: 'Piège Bungee Gum',
       take: 'Récupérer',
+      hatsu: {
+        'bungee-gum': 'Piège Bungee Gum',
+        'parallel-future': 'Ouvrir le futur',
+        'dowsing-chain': 'Sonder',
+      },
+    },
+    hatsu: {
+      future: (room, seconds) => `intention : ${room || 'ailleurs'} · ${seconds} s`,
+      probable: 'direction probable, pas une position confirmée',
     },
     controls: {
       walk: 'ZQSD — marcher',

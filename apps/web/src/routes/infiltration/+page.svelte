@@ -18,7 +18,7 @@
     type WitnessId,
   } from '$lib/infiltration/state'
   import { INFILTRATION_DT, reconstruction, updateInfiltration } from '$lib/infiltration/loop'
-  import { INFILTRATION_HATSU } from '$lib/infiltration/hatsu'
+  import { INFILTRATION_HATSU, planHatsu } from '$lib/infiltration/hatsu'
 
   const ship = theShip()
   const arena = buildArena()
@@ -69,6 +69,7 @@
   )
   let canExtract = $derived(currentSpace?.id === extraction.id && game.documentCopied)
   let report = $derived(reconstruction(game))
+  let hatsuPlan = $derived(planHatsu(game))
 
   const colours: Record<WitnessId, number> = {
     steward: 0x58a6ff,
@@ -242,7 +243,11 @@
       >
       <button
         onclick={() => send({ type: 'CAST_HATSU' })}
-        disabled={game.hatsu.uses <= 0}
+        disabled={!hatsuPlan.available}
+        title={hatsuPlan.conditions
+          .filter((condition) => !condition.met)
+          .map((condition) => $t.infiltration.hatsuConditions[condition.id])
+          .join(' · ')}
         class="rounded border border-fuchsia-300/40 bg-black/90 px-3 py-2 text-xs text-fuchsia-200 disabled:opacity-30"
         >H · {$t.infiltration.castHatsu}</button
       >
@@ -304,6 +309,7 @@
               <span class="mt-1 block text-white/45"
                 >{$t.infiltration.hatsuRoles[ability.role]}</span
               >
+              <span class="mt-2 block text-[10px] leading-snug text-white/35">{ability.rule}</span>
             </button>
           {/each}
         </div>

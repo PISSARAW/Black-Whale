@@ -41,7 +41,14 @@
   import Debrief from '$lib/components/hunt/Debrief.svelte'
   import HuntActions from '$lib/components/hunt/HuntActions.svelte'
   import HuntBriefing from '$lib/components/hunt/HuntBriefing.svelte'
-  import { huntHatsu } from '$lib/hunt/hatsu'
+  import {
+    BUNGEE_GUM_HUNT,
+    DEFAULT_HUNT_HATSU,
+    DOWSING_CHAIN_HUNT,
+    huntHatsu,
+    PARALLEL_FUTURE_HUNT,
+    type HuntHatsuId,
+  } from '$lib/hunt/hatsu'
 
   const ship = theShip()
   const plan = ship.plans.get(buildArena().tierId)!
@@ -72,17 +79,40 @@
   const spaceById = (id: string | null) => arena.spaces.find((space) => space.id === id)
   const roomName = (id: string | null) => nameOf(spaceById(id))
 
+  const hatsuProfiles = [BUNGEE_GUM_HUNT, PARALLEL_FUTURE_HUNT, DOWSING_CHAIN_HUNT]
+  let selectedHatsu = $state<HuntHatsuId>(DEFAULT_HUNT_HATSU)
+
   function freshGame() {
     return initialHuntState({
       playerAt: { position: interiorPoint(opening.from.footprint), spaceId: opening.from.id },
       hunterAt: { position: interiorPoint(opening.to.footprint), spaceId: opening.to.id },
       targetSpaceId: opening.to.id,
       seed: 0x5eed,
+      hatsu: selectedHatsu,
     })
   }
 
   let game = $state(freshGame())
   let equippedHatsu = $derived(huntHatsu(game.hatsu.id))
+  let hatsuReading = $derived.by(() => {
+    if (game.hatsu.id === 'parallel-future' && game.hatsu.window > 0) {
+      return {
+        label: equippedHatsu.name,
+        detail: $t.hunt.hatsu.future(
+          roomName(game.hatsu.forecastSpaceId),
+          Math.ceil(game.hatsu.window),
+        ),
+      }
+    }
+    if (game.hatsu.id === 'dowsing-chain' && game.hatsu.probableBearing) {
+      return {
+        label: equippedHatsu.name,
+        detail: $t.hunt.hatsu.probable,
+        bearing: game.hatsu.probableBearing,
+      }
+    }
+    return null
+  })
 
   // Bound out of TourScene: the walk is its job, not this page's. Seeded from
   // the spawn rather than from `game`, which is where it came from anyway — the
@@ -148,12 +178,20 @@
 
   let canSweep = $derived(game.player.nen === 'ten' && game.ledger.pool.available >= 15)
   let canLay = $derived(
-    game.player.spaceId !== null && game.ledger.pool.available >= 25 && game.player.nen === 'ten',
+    game.hatsu.id === 'bungee-gum' &&
+      game.player.spaceId !== null &&
+      game.ledger.pool.available >= 25 &&
+      game.player.nen === 'ten',
   )
   let canTake = $derived(
     game.ledger.placements.some(
       (placement) => placement.state === 'set' && placement.spaceId === game.player.spaceId,
     ),
+  )
+  let canHatsu = $derived(
+    game.hatsu.id === 'parallel-future'
+      ? game.player.nen === 'zetsu'
+      : game.hatsu.id === 'dowsing-chain' && game.player.nen === 'ten' && game.player.atRest,
   )
 
   // ── Input ────────────────────────────────────────────────────────────────
@@ -167,6 +205,7 @@
     KeyX: { type: 'ZETSU' },
     KeyV: { type: 'LAY' },
     KeyR: { type: 'TAKE' },
+    KeyH: { type: 'HATSU' },
   }
 
   function onKeyDown(event: KeyboardEvent) {
@@ -348,6 +387,7 @@
         targetName: roomName(game.targetSpaceId),
         entraves: liveOf(game.ledger.placements).length,
         heading: game.player.heading,
+        hatsu: hatsuReading,
       }}
       labels={{ hud: $t.hunt.hud, feel: $t.hunt.feel }}
     />
@@ -359,11 +399,14 @@
       {canSweep}
       {canLay}
       {canTake}
+      hatsuId={game.hatsu.id}
+      {canHatsu}
       labels={$t.hunt.actions}
       onSweep={() => send({ type: 'SWEEP' })}
       onToggleNen={() => send({ type: 'ZETSU' })}
       onLay={() => send({ type: 'LAY' })}
       onTake={() => send({ type: 'TAKE' })}
+      onHatsu={() => send({ type: 'HATSU' })}
     />
   {/if}
 
@@ -421,6 +464,15 @@
   {/if}
 
   {#if !briefed}
-    <HuntBriefing labels={$t.hunt.briefing} abilityName={equippedHatsu.name} onBegin={begin} />
+    <HuntBriefing
+      labels={$t.hunt.briefing}
+      profiles={hatsuProfiles}
+      selected={selectedHatsu}
+      onSelect={(id) => {
+        selectedHatsu = id
+        game = freshGame()
+      }}
+      onBegin={begin}
+    />
   {/if}
 </div>

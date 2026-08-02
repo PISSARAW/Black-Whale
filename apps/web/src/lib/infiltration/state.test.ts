@@ -3,6 +3,7 @@ import { infiltrationReducer, initialInfiltrationState, type MissionSetup } from
 import { reconstruction, updateInfiltration } from './loop'
 import type { NavGraph } from '../hunt/navmesh'
 import type { Arena } from '../hunt/arena'
+import { planHatsu } from './hatsu'
 
 const setup: MissionSetup = {
   playerAt: { position: [0, 0], spaceId: 'entry' },
@@ -132,6 +133,15 @@ describe('infiltration', () => {
     expect(state.authorConfirmed).toBe(true)
     expect(state.hatsu.aura).toBe(82)
     expect(state.hatsu.scouted).toBe(true)
+  })
+
+  it('projects and enforces the canonical need to hold aura', () => {
+    let state = initialInfiltrationState(setup)
+    state = infiltrationReducer(state, { type: 'ZETSU' })
+    expect(planHatsu(state).available).toBe(false)
+    state = infiltrationReducer(state, { type: 'CAST_HATSU' })
+    expect(state.hatsu.aura).toBe(100)
+    expect(planHatsu(state).conditions.find((condition) => condition.id === 'ten')?.met).toBe(false)
   })
 
   it('makes a forged work order pass a Nen guard social check', () => {

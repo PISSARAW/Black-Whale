@@ -15,7 +15,7 @@ const graph: NavGraph = {
 const witness = { position: [0, 0], spaceId: 'a' } as Witness
 const player = (spaceId: string, speed: number) =>
   ({
-  position: [8, 0],
+    position: [8, 0],
     spaceId,
     moving: speed > 0,
     speed,

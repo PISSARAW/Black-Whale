@@ -22,6 +22,7 @@
       targetName: string
       entraves: number
       heading: number
+      hatsu: { label: string; detail: string; bearing?: Vec2 | null } | null
     }
     labels: {
       hud: {
@@ -52,6 +53,7 @@
 
   let footstepBearing = $derived(degreesTo(feedback.footsteps?.bearing ?? null))
   let sweepBearing = $derived(degreesTo(feedback.sweptFrom))
+  let hatsuBearing = $derived(degreesTo(reading.hatsu?.bearing ?? null))
 </script>
 
 <div
@@ -80,6 +82,17 @@
     </p>
 
     <div class="mt-3 min-h-[3.25rem] space-y-1 text-xs">
+      {#if reading.hatsu}
+        <p class="flex items-center gap-2 text-violet-200">
+          {#if reading.hatsu.bearing}
+            <span class="inline-block" style:transform="rotate({hatsuBearing}deg)">↑</span>
+          {/if}
+          <span
+            ><strong class="font-medium">{reading.hatsu.label}</strong> — {reading.hatsu
+              .detail}</span
+          >
+        </p>
+      {/if}
       {#if feedback.sweptFrom}
         <p class="flex items-center gap-2 text-rose-300">
           <span class="inline-block" style:transform="rotate({sweepBearing}deg)">↑</span>

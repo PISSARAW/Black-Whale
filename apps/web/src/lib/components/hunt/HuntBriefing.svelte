@@ -1,4 +1,6 @@
 <script lang="ts">
+  import type { HuntHatsuId, HuntHatsuProfile } from '$lib/hunt/hatsu'
+
   interface Props {
     labels: {
       eyebrow: string
@@ -9,15 +11,21 @@
       begin: string
       hatsu: string
       hatsuRule: string
+      chooseHatsu: string
+      role: Record<HuntHatsuProfile['role'], string>
     }
-    abilityName: string
+    profiles: HuntHatsuProfile[]
+    selected: HuntHatsuId
+    onSelect: (id: HuntHatsuId) => void
     onBegin: () => void
   }
 
-  let { labels, abilityName, onBegin }: Props = $props()
+  let { labels, profiles, selected, onSelect, onBegin }: Props = $props()
 </script>
 
-<section class="absolute inset-0 z-40 grid place-items-center bg-black/88 p-6 backdrop-blur-md">
+<section
+  class="absolute inset-0 z-40 grid place-items-center overflow-y-auto bg-black/88 p-6 backdrop-blur-md"
+>
   <div class="max-w-lg text-center">
     <p class="text-xs uppercase tracking-[0.35em] text-sky-300/80">{labels.eyebrow}</p>
     <h1 class="mt-4 text-3xl font-medium text-white sm:text-4xl">{labels.title}</h1>
@@ -28,10 +36,27 @@
       {labels.rule}
     </p>
     <p class="mt-4 text-sm text-white/55">{labels.objective}</p>
-    <div class="mx-auto mt-6 max-w-sm rounded-lg border border-violet-300/20 bg-violet-300/5 p-3">
-      <p class="text-[0.65rem] uppercase tracking-[0.25em] text-violet-300/70">{labels.hatsu}</p>
-      <p class="mt-1 text-sm font-medium text-violet-100">{abilityName}</p>
-      <p class="mt-1 text-xs leading-relaxed text-white/45">{labels.hatsuRule}</p>
+    <div class="mx-auto mt-6 max-w-lg">
+      <p class="text-[0.65rem] uppercase tracking-[0.25em] text-violet-300/70">
+        {labels.chooseHatsu}
+      </p>
+      <div class="mt-2 grid gap-2 sm:grid-cols-3">
+        {#each profiles as profile (profile.id)}
+          <button
+            class="rounded-lg border p-3 text-left transition {selected === profile.id
+              ? 'border-violet-300 bg-violet-300/10'
+              : 'border-white/10 bg-white/[0.03]'}"
+            aria-pressed={selected === profile.id}
+            onclick={() => onSelect(profile.id)}
+          >
+            <span class="block text-sm font-medium text-violet-100">{profile.name}</span>
+            <span class="mt-1 block text-[0.65rem] uppercase tracking-wider text-white/40">
+              {labels.role[profile.role]}
+            </span>
+          </button>
+        {/each}
+      </div>
+      <p class="mt-2 text-xs leading-relaxed text-white/45">{labels.hatsuRule}</p>
     </div>
     <button
       class="mt-8 rounded-full border border-sky-300/60 bg-sky-300/10 px-7 py-3 text-sm uppercase tracking-widest text-sky-100 transition hover:bg-sky-300/20"

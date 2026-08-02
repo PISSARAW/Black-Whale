@@ -11,6 +11,13 @@ export interface InfiltrationHatsu {
   cost: number
   uses: number
   role: HatsuRole
+  rule: string
+}
+
+export interface HatsuPlan {
+  available: boolean
+  conditions: { id: 'ten' | 'conscious' | 'aura' | 'uses' | 'uninterrupted'; met: boolean }[]
+  projected: ('knowledge' | 'perception-mask' | 'aura-trace')[]
 }
 
 export const INFILTRATION_HATSU: InfiltrationHatsu[] = [
@@ -36,6 +43,7 @@ function fromProfile(
   return {
     id: profile.id as InfiltrationHatsuId,
     name: profile.name,
+    rule: profile.rule,
     ...config,
   }
 }
@@ -58,7 +66,7 @@ export function selectHatsu(state: InfiltrationState, id: InfiltrationHatsuId) {
 
 export function castHatsu(state: InfiltrationState): InfiltrationState {
   const ability = INFILTRATION_HATSU.find((entry) => entry.id === state.hatsu.id)
-  if (!ability || state.hatsu.uses <= 0 || state.hatsu.aura < ability.cost) return state
+  if (!ability || !planHatsu(state).available) return state
   const hatsu = {
     ...state.hatsu,
     aura: state.hatsu.aura - ability.cost,
@@ -85,6 +93,24 @@ export function castHatsu(state: InfiltrationState): InfiltrationState {
       { kind: 'aura', spaceId: state.player.spaceId ?? state.extractionSpaceId, strength: 38 },
     ],
   }
+}
+
+export function planHatsu(state: InfiltrationState): HatsuPlan {
+  const ability = INFILTRATION_HATSU.find((entry) => entry.id === state.hatsu.id)!
+  const conditions: HatsuPlan['conditions'] = [
+    { id: 'ten', met: state.player.nen === 'ten' },
+    { id: 'conscious', met: state.outcome === 'playing' },
+    { id: 'aura', met: state.hatsu.aura >= ability.cost },
+    { id: 'uses', met: state.hatsu.uses > 0 },
+    { id: 'uninterrupted', met: state.challenge === null },
+  ]
+  const projected: HatsuPlan['projected'] =
+    ability.role === 'scout'
+      ? ['knowledge']
+      : ability.role === 'forge'
+        ? ['perception-mask']
+        : ['perception-mask', 'aura-trace']
+  return { available: conditions.every((condition) => condition.met), conditions, projected }
 }
 
 export function activeDisguise(state: InfiltrationState): boolean {

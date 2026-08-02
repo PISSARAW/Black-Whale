@@ -1,11 +1,14 @@
 <script lang="ts">
   import type { NenState } from '$lib/hunt/nen/states'
+  import type { HuntHatsuId } from '$lib/hunt/hatsu'
 
   interface Props {
     nen: NenState
     canSweep: boolean
     canLay: boolean
     canTake: boolean
+    hatsuId: HuntHatsuId
+    canHatsu: boolean
     labels: {
       sweep: string
       zetsu: string
@@ -13,15 +16,29 @@
       lay: string
       take: string
       hint: string
+      hatsu: Record<HuntHatsuId, string>
     }
     onSweep: () => void
     onToggleNen: () => void
     onLay: () => void
     onTake: () => void
+    onHatsu: () => void
   }
 
-  let { nen, canSweep, canLay, canTake, labels, onSweep, onToggleNen, onLay, onTake }: Props =
-    $props()
+  let {
+    nen,
+    canSweep,
+    canLay,
+    canTake,
+    hatsuId,
+    canHatsu,
+    labels,
+    onSweep,
+    onToggleNen,
+    onLay,
+    onTake,
+    onHatsu,
+  }: Props = $props()
 </script>
 
 <nav
@@ -34,9 +51,15 @@
   <button class="hunt-action" class:active={nen === 'zetsu'} onclick={onToggleNen}>
     <kbd>X</kbd><span>{nen === 'zetsu' ? labels.ten : labels.zetsu}</span>
   </button>
-  <button class="hunt-action" disabled={!canLay} onclick={onLay}>
-    <kbd>V</kbd><span>{labels.lay}</span>
-  </button>
+  {#if hatsuId === 'bungee-gum'}
+    <button class="hunt-action" disabled={!canLay} onclick={onLay}>
+      <kbd>V</kbd><span>{labels.lay}</span>
+    </button>
+  {:else}
+    <button class="hunt-action hatsu" disabled={!canHatsu} onclick={onHatsu}>
+      <kbd>H</kbd><span>{labels.hatsu[hatsuId]}</span>
+    </button>
+  {/if}
   {#if canTake}
     <button class="hunt-action active" onclick={onTake}>
       <kbd>R</kbd><span>{labels.take}</span>
@@ -67,6 +90,9 @@
 
   .hunt-action:disabled {
     opacity: 0.3;
+  }
+  .hunt-action.hatsu {
+    border-color: rgb(196 181 253 / 0.4);
   }
   kbd {
     color: rgb(125 211 252);

@@ -107,7 +107,14 @@ export function initialHuntState(setup: HuntSetup): HuntState {
 export function huntReducer(state: HuntState, action: HuntAction): HuntState {
   switch (action.type) {
     case 'WALKED':
-      return { ...state, player: { ...state.player, ...action.player } }
+      return {
+        ...state,
+        player: { ...state.player, ...action.player },
+        hatsu:
+          action.player.atRest === false && state.hatsu.probableBearing
+            ? { ...state.hatsu, probableBearing: null }
+            : state.hatsu,
+      }
     case 'SWEEP':
       return sweep(state)
     case 'ZETSU':

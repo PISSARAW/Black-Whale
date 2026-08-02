@@ -1593,6 +1593,13 @@ export const en = {
       forge: 'Mission-order forgery',
       disguise: 'Temporary social disguise',
     },
+    hatsuConditions: {
+      ten: 'Ten must be active',
+      conscious: 'You must be able to act',
+      aura: 'Not enough aura',
+      uses: 'No uses remaining',
+      uninterrupted: 'Unavailable during a cover check',
+    },
     truth: 'Intelligence returned',
     confirmed: 'Author confirmed',
     uncertain: 'Author still uncertain',
@@ -1631,6 +1638,12 @@ export const en = {
       rule: 'Your aura pays for knowing, preparing, and surviving. Against an intact hunter, you lose.',
       objective: 'Reach the target room — or prepare an encounter he cannot win.',
       hatsu: 'Equipped Hatsu',
+      chooseHatsu: 'Choose your Hatsu',
+      role: {
+        prepare: 'Prepare the ground',
+        foresee: 'Read future intent',
+        locate: 'Locate probably',
+      },
       hatsuRule:
         'Lays an elastic connection on a surface, concealed with In. It restrains without dealing damage.',
       begin: 'Enter the apartment',
@@ -1642,6 +1655,15 @@ export const en = {
       ten: 'Raise Ten',
       lay: 'Bungee Gum trap',
       take: 'Recover',
+      hatsu: {
+        'bungee-gum': 'Bungee Gum trap',
+        'parallel-future': 'Open the future',
+        'dowsing-chain': 'Dowse',
+      },
+    },
+    hatsu: {
+      future: (room, seconds) => `intent: ${room || 'elsewhere'} · ${seconds}s`,
+      probable: 'probable direction, not a confirmed position',
     },
     controls: {
       walk: 'WASD — walk',

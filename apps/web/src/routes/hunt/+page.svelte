@@ -66,6 +66,8 @@
   import { completeCampaignRun, initialCampaign, loadCampaign, saveCampaign } from '$lib/hunt/campaign'
   import { appendReplayAction, createReplay, decodeReplay, encodeReplay, type HuntReplayV3 } from '$lib/hunt/replay'
   import { ghostAt, ghostFigure } from '$lib/hunt/ghost'
+  import { decodeContract } from '$lib/hunt/contracts/share'
+  import type { HuntContractV3 } from '$lib/hunt/contracts/types'
   import {
     DEFAULT_HUNTER_PROFILE,
     HUNTER_PROFILES,
@@ -115,7 +117,9 @@
   const roomName = (id: string | null) => nameOf(spaceById(id))
 
   const hatsuProfiles = [BUNGEE_GUM_HUNT, PARALLEL_FUTURE_HUNT, DOWSING_CHAIN_HUNT]
-  const contracts = listHuntContracts()
+  const builtInContracts = listHuntContracts()
+  let customContract = $state.raw<HuntContractV3 | null>(null)
+  let contracts = $derived(customContract ? [...builtInContracts, customContract] : builtInContracts)
   let selectedContract = $state('royal-apartments')
   let contractStage = $state(0)
   let selectedHatsu = $state<HuntHatsuId>(DEFAULT_HUNT_HATSU)
@@ -127,7 +131,10 @@
   let replay = $state.raw<HuntReplayV3 | null>(null)
   let lastReplay = $state.raw<HuntReplayV3 | null>(null)
   let lastReplayMovementAt = -Infinity
-  let activeContract = $derived(huntContractById(selectedContract) ?? contracts[0])
+  let activeContract = $derived(
+    (customContract?.id === selectedContract ? customContract : huntContractById(selectedContract)) ??
+      builtInContracts[0],
+  )
   let availableHatsuProfiles = $derived(
     hatsuProfiles.filter((profile) => activeContract.allowedHatsu.includes(profile.id)),
   )
@@ -198,7 +205,7 @@
   }
 
   function selectContract(id: string) {
-    const contract = huntContractById(id)
+    const contract = customContract?.id === id ? customContract : huntContractById(id)
     if (!contract) return
     selectedContract = contract.id
     campaignRecorded = false
@@ -469,6 +476,12 @@
   onMount(() => {
     calm = prefersReducedMotion()
     campaign = loadCampaign(localStorage)
+    const sharedValue = new URLSearchParams(window.location.search).get('contract')
+    const sharedContract = sharedValue ? decodeContract(sharedValue) : null
+    if (sharedContract) {
+      customContract = sharedContract
+      selectContract(sharedContract.id)
+    }
     const storedReplay = localStorage.getItem(replayKey)
     lastReplay = storedReplay ? decodeReplay(storedReplay) : null
     window.addEventListener('keydown', onKeyDown)

@@ -98,6 +98,9 @@
           </button>
         {/each}
       </div>
+      <a class="mt-2 inline-block text-xs text-amber-200/65 underline underline-offset-4" href="/hunt/editor">
+        {locale === 'fr' ? 'Créer et partager un contrat' : 'Create and share a contract'}
+      </a>
       <p class="mt-5 text-[0.65rem] uppercase tracking-[0.25em] text-amber-300/70">
         {locale === 'fr' ? 'Vœu optionnel' : 'Optional vow'}
       </p>

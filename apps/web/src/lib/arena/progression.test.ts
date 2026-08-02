@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { EMPTY_STATS, gradeArena, recordEvent } from './progression'
+import { difficultyLabel, EMPTY_STATS, gradeArena, recordEvent } from './progression'
 
 describe('Arena progression', () => {
   it('grades efficient wins above missed exchanges', () => {
@@ -19,5 +19,10 @@ describe('Arena progression', () => {
       technique: 'hatsu',
     })
     expect(hit).toMatchObject({ attacks: 1, hits: 1, hatsu: 1 })
+  })
+
+  it('names difficulty levels in the active locale', () => {
+    expect(difficultyLabel('master', 'fr')).toBe('Maître')
+    expect(difficultyLabel('initiate', 'en')).toBe('Initiate')
   })
 })

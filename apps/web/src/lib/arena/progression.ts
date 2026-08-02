@@ -1,4 +1,5 @@
 import type { CombatEvent } from '../combat/types'
+import type { ArenaDifficulty } from './ai'
 
 export interface ArenaStats {
   attacks: number
@@ -8,6 +9,14 @@ export interface ArenaStats {
 }
 
 export const EMPTY_STATS: ArenaStats = { attacks: 0, hits: 0, blocks: 0, hatsu: 0 }
+
+export function difficultyLabel(level: ArenaDifficulty, locale: 'fr' | 'en'): string {
+  const labels = {
+    fr: { initiate: 'Initié', fighter: 'Combattant', master: 'Maître' },
+    en: { initiate: 'Initiate', fighter: 'Fighter', master: 'Master' },
+  } as const
+  return labels[locale][level]
+}
 
 export function recordEvent(stats: ArenaStats, event: CombatEvent): ArenaStats {
   if (event.attacker === 'player') {

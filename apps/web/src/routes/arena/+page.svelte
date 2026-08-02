@@ -11,7 +11,13 @@
   import { arenaHatsuEffect, worksInArena } from '$lib/arena/hatsu'
   import { zoneFromPitch } from '$lib/arena/targeting'
   import { playArenaHatsu, playArenaImpact } from '$lib/arena/audio'
-  import { EMPTY_STATS, gradeArena, recordEvent, type ArenaStats } from '$lib/arena/progression'
+  import {
+    difficultyLabel,
+    EMPTY_STATS,
+    gradeArena,
+    recordEvent,
+    type ArenaStats,
+  } from '$lib/arena/progression'
   import { buildCombatTerrain } from '$lib/arena/terrain'
   import { readAura } from '$lib/combat/perception'
   import { STRIKE_RANGE } from '$lib/combat/resolve'
@@ -689,7 +695,7 @@
             onclick={() => {
               difficulty = level as ArenaDifficulty
               restart()
-            }}>{level}</button
+            }}>{difficultyLabel(level as ArenaDifficulty, $locale)}</button
           >
         {/each}
       </div>

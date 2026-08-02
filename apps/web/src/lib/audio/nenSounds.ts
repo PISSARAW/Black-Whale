@@ -1,4 +1,4 @@
-import type { NenTechniqueAction } from '@black-whale/nen-engine'
+import { NEN_PRESENTATION, type NenTechnique, type NenTechniqueAction } from '@black-whale/nen-engine'
 import { hatsuAudioGraph, type Graph } from './ambient'
 import type { NenObjectInteraction } from '$lib/tour/NenSceneAura'
 
@@ -32,44 +32,39 @@ function chord(g: Graph, notes: Tone[]) {
   notes.forEach((note, index) => tone(g, at + index * 0.018, note))
 }
 
+const ACTION_TECHNIQUE: Record<NenTechniqueAction['type'], NenTechnique> = {
+  TEN: 'ten', REN: 'ren', ZETSU: 'zetsu', GYO: 'gyo', IN: 'in', EN: 'en',
+  KEN: 'ken', KO: 'ko', RYU: 'ryu', SHU: 'shu', ON: 'on',
+}
+
+function activeTransition(action: NenTechniqueAction) {
+  if ('on' in action) return action.on
+  if (action.type === 'EN') return action.radius !== null
+  if (action.type === 'KO') return action.zone !== null
+  return true
+}
+
+/** The same abstract signature drives every Tour mode; only spatial gain may differ. */
+function canonicalCue(g: Graph, technique: NenTechnique) {
+  const profile = NEN_PRESENTATION[technique]
+  const duration = Math.max(0.16, profile.envelope.attack + profile.envelope.release)
+  const peak = 0.14 * profile.sound.volume
+  chord(g, [
+    { from: profile.sound.lowHz, to: Math.min(profile.sound.highHz, profile.sound.lowHz * 1.8), peak, duration, type: profile.sound.noise > 0.35 ? 'sawtooth' : 'triangle' },
+    { from: profile.sound.highHz, to: Math.max(profile.sound.lowHz, profile.sound.highHz * 0.72), peak: peak * 0.46, duration: duration * 1.08, type: 'sine' },
+  ])
+}
+
 /** Audible signature of a basic Nen transition. Zetsu gets only its closing hush. */
 export function playNenTechniqueSound(action: NenTechniqueAction) {
   const g = hatsuAudioGraph()
   if (!g) return
+  if (activeTransition(action)) return canonicalCue(g, ACTION_TECHNIQUE[action.type])
   switch (action.type) {
-    case 'TEN':
-      chord(g, [{ from: 210, to: 260, peak: 0.035, duration: 0.42 }, { from: 420, to: 520, peak: 0.018, duration: 0.38 }])
-      break
-    case 'REN':
-      chord(g, [{ from: 68, to: 118, peak: 0.12, duration: 0.72, type: 'sawtooth' }, { from: 136, to: 228, peak: 0.06, duration: 0.65, type: 'triangle' }])
-      break
-    case 'ZETSU':
-      chord(g, [{ from: 480, to: 48, peak: 0.055, duration: 0.5, type: 'triangle' }])
-      break
-    case 'GYO':
-      if (action.on) chord(g, [{ from: 720, to: 1220, peak: 0.055, duration: 0.2 }, { from: 1080, to: 1680, peak: 0.025, duration: 0.16 }])
-      break
-    case 'EN':
-      if (action.radius) chord(g, [{ from: 190, to: 760, peak: 0.07, duration: 0.62, type: 'sine' }, { from: 380, to: 980, peak: 0.03, duration: 0.7 }])
-      break
-    case 'KEN':
-      if (action.on) chord(g, [{ from: 92, to: 74, peak: 0.11, duration: 0.38, type: 'square' }, { from: 184, to: 148, peak: 0.045, duration: 0.42 }])
-      break
-    case 'KO':
-      if (action.zone) chord(g, [{ from: 160, to: 54, peak: 0.13, duration: 0.24, type: 'sawtooth' }])
-      break
-    case 'RYU':
-      chord(g, [{ from: 330, to: 520, peak: 0.045, duration: 0.28, type: 'triangle' }, { from: 520, to: 290, peak: 0.032, duration: 0.34 }])
-      break
-    case 'SHU':
-      if (action.on) chord(g, [{ from: 260, to: 390, peak: 0.05, duration: 0.36 }, { from: 520, to: 780, peak: 0.022, duration: 0.42 }])
-      break
-    case 'ON':
-      if (action.on) chord(g, [{ from: 52, to: 88, peak: 0.14, duration: 0.86, type: 'sawtooth' }, { from: 104, to: 176, peak: 0.075, duration: 0.78, type: 'square' }])
-      break
-    case 'IN':
-      if (action.on) chord(g, [{ from: 640, to: 120, peak: 0.028, duration: 0.32, type: 'triangle' }])
-      break
+    case 'GYO': case 'IN': case 'KEN': case 'SHU': case 'ON':
+      chord(g, [{ from: 360, to: 90, peak: 0.012, duration: 0.16, type: 'triangle' }])
+      return
+    case 'EN': case 'KO': return
   }
 }
 

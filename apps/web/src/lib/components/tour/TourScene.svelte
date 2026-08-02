@@ -105,6 +105,7 @@
   // The flock's chirp is raised by the page itself, where the arrival happens.
   import { roarLikeADragon } from '$lib/audio/hatsuSounds'
   import { playNenObjectSound, playNenTechniqueSound } from '$lib/audio/nenSounds'
+  import { NEN_KEYS, nenZoneIndex } from '$lib/nen/controls'
   import { visibleSpaces } from '$lib/tour/visibility'
   import {
     animateVisibleScene,
@@ -193,6 +194,8 @@
     auraColour?: string | null
     /** Standard Nen state of the first-person visitor. */
     nen?: NenTechniqueState
+    /** Modes with their own Nen HUD still use the shared renderer without duplicating controls. */
+    showNenControls?: boolean
     /** Controlled modes receive every accepted standard Nen action here. */
     onNenChange?: (action: NenTechniqueAction) => void
     /**
@@ -360,6 +363,14 @@
       solidId: string | null,
       hand: 'first' | 'second' | 'third',
     ) => void
+    /** Standard H-key entry point, separate from clicks and physical F actions. */
+    onHatsu?: (
+      spaceId: string | null,
+      solidId: string | null,
+      hand: 'first' | 'second' | 'third',
+    ) => void
+    /** Exceptional abilities whose activation condition explicitly requires Zetsu. */
+    hatsuAllowedInZetsu?: boolean
     /** Fired whenever the visitor sets foot in a different space. */
     onArrive?: (spaceId: string | null) => void
     /**
@@ -466,6 +477,7 @@
     auraColour = null,
     nen,
     onNenChange,
+    showNenControls = true,
     flash = null,
     aiming = false,
     selfCastable = false,
@@ -485,6 +497,8 @@
     castOnClick = true,
     onPick,
     onCast,
+    onHatsu,
+    hatsuAllowedInZetsu = false,
     onArrive,
     onWorm,
     onFish,
@@ -499,6 +513,16 @@
 
   let localNen = $state<NenTechniqueState>(createNenTechniqueState())
   let interactWithNen = $state<(() => void) | null>(null)
+  let hatsuWheelOpen = $state(false)
+  let hatsuVariantIndex = $state(0)
+  let lastHatsuVariant = $state(0)
+  const hatsuVariants = $derived.by(() => {
+    if (tunes) return [tunes.first, tunes.second, tunes.third]
+    if (hands) return [hands.first, hands.second]
+    if (twoHanded) return ['☀', '☾']
+    if (selfCastable) return ['Cible', 'Soi']
+    return [touchLabels.cast]
+  })
   const effectiveNen = $derived(nen ?? localNen)
   function useNen(action: NenTechniqueAction) {
     const result = transitionNen(effectiveNen, action)
@@ -3146,8 +3170,44 @@
        * tells the rules which room the visitor is standing in, so an empty
        * reticle costs nothing and says the one thing R is for.
        */
-      function castOnSelf() {
-        onCast?.(null, null, 'second')
+      function useHatsu(hand: 'first' | 'second' | 'third') {
+        if (!onHatsu || (effectiveNen.mode === 'zetsu' && !hatsuAllowedInZetsu)) return
+        const self = hand === 'second' && selfCastable && !hands && !tunes && !twoHanded
+        onHatsu(
+          self ? null : facing()?.id ?? null,
+          self ? null : facingSolid()?.id ?? null,
+          hand,
+        )
+        if (swings) throwThread()
+      }
+
+      const variantHand = (index: number): 'first' | 'second' | 'third' =>
+        index === 2 ? 'third' : index === 1 ? 'second' : 'first'
+      let hatsuHoldTimer: number | null = null
+      let hatsuPressed = false
+
+      function beginHatsu(event: KeyboardEvent) {
+        if (!onHatsu || (effectiveNen.mode === 'zetsu' && !hatsuAllowedInZetsu) || event.repeat) return false
+        hatsuPressed = true
+        hatsuVariantIndex = event.shiftKey && hatsuVariants.length > 1 ? 1 : lastHatsuVariant
+        hatsuHoldTimer = window.setTimeout(() => {
+          if (hatsuPressed && hatsuVariants.length > 1) hatsuWheelOpen = true
+        }, 260)
+        event.preventDefault()
+        return true
+      }
+
+      function finishHatsu(event: KeyboardEvent) {
+        if (event.code !== NEN_KEYS.hatsu || !hatsuPressed) return false
+        hatsuPressed = false
+        if (hatsuHoldTimer !== null) window.clearTimeout(hatsuHoldTimer)
+        hatsuHoldTimer = null
+        const chosen = Math.min(hatsuVariantIndex, hatsuVariants.length - 1)
+        lastHatsuVariant = chosen
+        hatsuWheelOpen = false
+        useHatsu(variantHand(chosen))
+        event.preventDefault()
+        return true
       }
 
       // ── Input ────────────────────────────────────
@@ -3170,37 +3230,41 @@
       const snapStep = () => ($comfort.snapAngle * Math.PI) / 180
 
       const useNenShortcut = (event: KeyboardEvent) => {
-        if (!event.altKey || event.repeat) return false
+        if (event.repeat || event.metaKey || event.ctrlKey) return false
         const toggled = (type: 'IN' | 'GYO' | 'KEN', on: boolean) => useNen({ type, on })
-        if (event.code === 'KeyT') useNen({ type: 'TEN' })
-        else if (event.code === 'KeyO')
+        const zoneIndex = nenZoneIndex(event.code)
+        const zones = ['head', 'torso', 'hands', 'feet'] as const
+        if (zoneIndex !== null) {
+          const selected = zones[zoneIndex]
+          useNen({ type: 'RYU', distribution: { [selected]: 0.55, torso: selected === 'torso' ? 0.55 : 0.25, hands: selected === 'hands' ? 0.55 : 0.2 } })
+        }
+        else if (event.code === NEN_KEYS.ten) useNen({ type: 'TEN' })
+        else if (event.code === NEN_KEYS.on)
           useNen({
             type: 'ON',
             on: !effectiveNen.on,
             distribution: { hands: 0.45, torso: 0.35, feet: 0.2 },
           })
-        else if (event.code === 'KeyR') useNen({ type: 'REN' })
-        else if (event.code === 'KeyX') useNen({ type: 'ZETSU' })
-        else if (event.code === 'KeyG') toggled('GYO', !effectiveNen.gyo)
-        else if (event.code === 'KeyI') toggled('IN', !effectiveNen.in)
-        else if (event.code === 'KeyE')
+        else if (event.code === NEN_KEYS.ren) useNen({ type: 'REN' })
+        else if (event.code === NEN_KEYS.zetsu) useNen({ type: 'ZETSU' })
+        else if (event.code === NEN_KEYS.gyo) toggled('GYO', !effectiveNen.gyo)
+        else if (event.code === NEN_KEYS.in) toggled('IN', !effectiveNen.in)
+        else if (event.code === NEN_KEYS.en)
           useNen({ type: 'EN', radius: effectiveNen.en ? null : 8 })
-        else if (event.code === 'KeyK') toggled('KEN', !effectiveNen.ken)
-        else if (event.code === 'Digit1')
+        else if (event.code === NEN_KEYS.ken) toggled('KEN', !effectiveNen.ken)
+        else if (event.code === NEN_KEYS.ko)
           useNen({ type: 'KO', zone: effectiveNen.ko === 'hands' ? null : 'hands' })
-        else if (event.code === 'Digit2')
-          useNen({ type: 'KO', zone: effectiveNen.ko === 'feet' ? null : 'feet' })
-        else if (event.code === 'Digit3')
-          useNen({ type: 'RYU', distribution: { hands: 0.65, torso: 0.2, feet: 0.15 } })
-        else if (event.code === 'Digit4')
-          useNen({ type: 'RYU', distribution: { torso: 0.55, head: 0.25, hands: 0.2 } })
-        else if (event.code === 'KeyS' && aimedSolidAt)
+        else if (event.code === NEN_KEYS.ryuUp)
+          useNen({ type: 'RYU', distribution: { hands: Math.min(0.9, Number(effectiveNen.ryu.hands ?? 0.5) + 0.1), torso: 0.3 } })
+        else if (event.code === NEN_KEYS.ryuDown)
+          useNen({ type: 'RYU', distribution: { hands: Math.max(0.1, Number(effectiveNen.ryu.hands ?? 0.5) - 0.1), torso: 0.7 } })
+        else if (event.code === NEN_KEYS.shu && aimedSolidAt)
           useNen({
             type: 'SHU',
             objectId: aimedSolidAt.id,
             on: !effectiveNen.shu.includes(aimedSolidAt.id),
           })
-        else if (event.code === 'KeyF') interactWithNen?.()
+        else if (event.code === NEN_KEYS.action) interactWithNen?.()
         else return false
         event.preventDefault()
         return true
@@ -3225,6 +3289,13 @@
           return
         }
         if (typingElsewhere(event.target)) return
+        if (event.code === NEN_KEYS.hatsu && beginHatsu(event)) return
+        const wheelZone = nenZoneIndex(event.code)
+        if (hatsuWheelOpen && wheelZone !== null) {
+          if (wheelZone < hatsuVariants.length) hatsuVariantIndex = wheelZone
+          event.preventDefault()
+          return
+        }
         if (useNenShortcut(event)) return
         pressed[event.code] = true
         // Space and the arrows scroll the page underneath an engaged pointer.
@@ -3246,19 +3317,16 @@
         // only one; the cases never arise together, so the key never means two
         // things at once. A technique cast with two hands spends no key on the
         // second: its own key alternates, which the page works out.
-        if (event.code === 'KeyF' && aiming) cast('first')
-        if (event.code === 'KeyR' && !event.repeat && aiming) {
-          if (hands || tunes || twoHanded) cast('second')
-          else if (selfCastable) castOnSelf()
-        }
+        // F is reserved for physical/Nen interaction; R is always Ren.
         // C is the third, and only an instrument has one: three airs need three
         // keys, and it is the one letter within reach of the hand already on
         // WASD that the walk has never spent on anything. D is not free — it is
         // the sidestep — so a flute played on it would walk you across the room.
-        if (event.code === 'KeyC' && !event.repeat && aiming && tunes) cast('third')
+        // C is reserved for Ko. H owns every Hatsu variant.
       }
       const onKeyUp = (event: KeyboardEvent) => {
         delete pressed[event.code]
+        finishHatsu(event)
       }
 
       function takeLink() {
@@ -4227,6 +4295,7 @@
       ready = true
 
       cleanup = () => {
+        if (hatsuHoldTimer !== null) window.clearTimeout(hatsuHoldTimer)
         stopAnimating()
         resize.dispose()
         stopListening()
@@ -4384,12 +4453,29 @@
         {/if}
       </svg>
     </button>
-    <TourNenControls
-      nenState={effectiveNen}
-      aimedObjectId={aimedSolidAt?.id ?? null}
-      onAction={useNen}
-      onInteract={() => interactWithNen?.()}
-    />
+    {#if showNenControls}
+      <TourNenControls
+        nenState={effectiveNen}
+        aimedObjectId={aimedSolidAt?.id ?? null}
+        onAction={useNen}
+        onInteract={() => interactWithNen?.()}
+      />
+    {/if}
+    {#if hatsuWheelOpen}
+      <div class="pointer-events-auto absolute left-1/2 top-1/2 z-30 grid -translate-x-1/2 -translate-y-1/2 grid-cols-2 gap-2 rounded-full border border-[#8ecae6]/40 bg-[#02070b]/95 p-6 shadow-[0_0_4rem_rgb(76_185_220_/_0.25)] backdrop-blur" role="menu" aria-label="Variantes du Hatsu">
+        {#each hatsuVariants as variant, index}
+          <button
+            type="button"
+            role="menuitem"
+            class:active={hatsuVariantIndex === index}
+            class="min-w-28 rounded border border-white/20 px-3 py-2 text-xs text-white/75 transition"
+            onclick={() => {
+              hatsuVariantIndex = index
+            }}
+          ><kbd>{index + 1}</kbd> · {variant}</button>
+        {/each}
+      </div>
+    {/if}
   {/if}
 
   <!-- The touchscreen's keyboard: a stick to walk with, and buttons for the two

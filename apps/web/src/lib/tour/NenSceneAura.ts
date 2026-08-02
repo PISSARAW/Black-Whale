@@ -1,4 +1,4 @@
-import type { NenTechniqueState } from '@black-whale/nen-engine'
+import { NEN_PRESENTATION, type NenTechnique, type NenTechniqueState } from '@black-whale/nen-engine'
 import type * as Three from 'three'
 
 type ThreeModule = typeof import('three')
@@ -23,15 +23,19 @@ export class NenSceneAura {
   readonly #THREE: ThreeModule
   readonly #shu = new Map<string, Three.Mesh>()
   readonly #interactions: Three.Group[] = []
+  readonly #transition: Three.Mesh
+  #transitionTechnique: NenTechnique | null = null
+  #transitionStarted = 0
+  #previousSignature = ''
   #seconds = 0
 
   constructor(THREE: ThreeModule, scene: Three.Scene) {
     this.#THREE = THREE
     this.#root = new THREE.Group()
     this.#world = new THREE.Group()
-    const material = (opacity: number) =>
+    const material = (opacity: number, technique: NenTechnique = 'ten') =>
       new THREE.MeshBasicMaterial({
-        color: 0x8ecae6,
+        color: NEN_PRESENTATION[technique].colours[0],
         transparent: true,
         opacity,
         depthWrite: false,
@@ -42,7 +46,7 @@ export class NenSceneAura {
     for (let index = 0; index < 3; index++) {
       const ring = new THREE.Mesh(
         new THREE.RingGeometry(0.965 - index * 0.012, 1 + index * 0.018, 96),
-        material(0.26 - index * 0.055),
+        material(0.26 - index * 0.055, 'en'),
       )
       ring.rotation.x = -Math.PI / 2
       this.#enRings.push(ring)
@@ -52,21 +56,21 @@ export class NenSceneAura {
     for (let index = 0; index < 2; index++) {
       const shell = new THREE.Mesh(
         new THREE.SphereGeometry(1 + index * 0.065, 24, 18),
-        material(index === 0 ? 0.2 : 0.075),
+        material(index === 0 ? 0.2 : 0.075, 'ken'),
       )
       ;(shell.material as Three.Material).side = THREE.BackSide
       this.#kenShells.push(shell)
       this.#ken.add(shell)
     }
     this.#eyes = [-1, 1].map((side) => {
-      const eye = new THREE.Mesh(new THREE.SphereGeometry(0.045, 10, 7), material(0.72))
+      const eye = new THREE.Mesh(new THREE.SphereGeometry(0.045, 10, 7), material(0.72, 'gyo'))
       eye.position.set(side * 0.07, -0.035, -0.22)
       return eye
     })
     const pointCounts = { head: 1, torso: 1, hands: 2, feet: 2 }
     for (const [zone, count] of Object.entries(pointCounts)) {
       const points = Array.from({ length: count }, () =>
-        new THREE.Mesh(new THREE.SphereGeometry(0.13, 12, 9), material(0.7)),
+        new THREE.Mesh(new THREE.SphereGeometry(0.13, 12, 9), material(0.7, 'ryu')),
       )
       this.#points.set(zone, points)
     }
@@ -76,7 +80,7 @@ export class NenSceneAura {
     for (let index = 0; index < 14; index++) {
       const flame = new THREE.Mesh(
         new THREE.ConeGeometry(0.1 + (index % 3) * 0.025, 0.65, 7),
-        material(0.2),
+        material(0.2, 'ren'),
       )
       const angle = (index / 14) * Math.PI * 2
       flame.position.set(Math.cos(angle) * 0.58, -0.7 + (index % 5) * 0.35, Math.sin(angle) * 0.58)
@@ -86,6 +90,14 @@ export class NenSceneAura {
       this.#ren.add(flame)
     }
     this.#on = new THREE.Group()
+    this.#transition = new THREE.Mesh(
+      new THREE.RingGeometry(0.22, 0.27, 96),
+      new THREE.MeshBasicMaterial({
+        color: NEN_PRESENTATION.ten.colours[0], transparent: true, opacity: 0,
+        depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide,
+      }),
+    )
+    this.#transition.position.z = -0.82
     this.#onCore = new THREE.Mesh(
       new THREE.SphereGeometry(0.82, 24, 18),
       new THREE.MeshBasicMaterial({
@@ -101,7 +113,7 @@ export class NenSceneAura {
     this.#on.add(this.#onCore)
     for (let index = 0; index < 28; index++) {
       const materialOn = new THREE.MeshBasicMaterial({
-        color: index % 2 ? 0x01040c : 0x123b7a,
+        color: NEN_PRESENTATION.on.colours[index % 2],
         transparent: true,
         opacity: index % 2 ? 0.66 : 0.46,
         depthWrite: false,
@@ -126,6 +138,7 @@ export class NenSceneAura {
       this.#ken,
       ...this.#eyes,
       ...[...this.#points.values()].flat(),
+      this.#transition,
     )
     scene.add(this.#root, this.#world)
   }
@@ -138,7 +151,7 @@ export class NenSceneAura {
         shell = new this.#THREE.Mesh(
           new this.#THREE.BoxGeometry(1, 1, 1),
           new this.#THREE.MeshBasicMaterial({
-            color: 0x8ecae6,
+            color: NEN_PRESENTATION.shu.colours[0],
             transparent: true,
             opacity: 0.28,
             wireframe: true,
@@ -173,7 +186,7 @@ export class NenSceneAura {
     root.userData.started = this.#seconds
     root.userData.kind = kind
     root.userData.extent = Math.max(object.size[0], object.size[1], object.height, 0.35)
-    const colour = kind === 'pressure' ? 0x123b7a : kind === 'strike' ? 0xd9f4ff : 0x8ecae6
+    const colour = kind === 'pressure' ? NEN_PRESENTATION.on.colours[1] : kind === 'strike' ? NEN_PRESENTATION.ko.colours[0] : NEN_PRESENTATION.gyo.colours[0]
     const material = (opacity: number) =>
       new THREE.MeshBasicMaterial({
         color: colour,
@@ -214,12 +227,13 @@ export class NenSceneAura {
     seconds: number,
   ) {
     this.#seconds = seconds
+    this.#syncTransition(state, seconds)
     const active = state.mode !== 'zetsu'
     this.#root.position.copy(camera.position)
     this.#root.rotation.set(0, camera.rotation.y, 0)
     this.#eyes.forEach((eye, index) => {
       eye.visible = active && state.gyo
-      const focus = 1 + Math.sin(seconds * 11 + index * Math.PI) * 0.14
+      const focus = 1 + Math.sin(seconds * Math.PI * 2 * NEN_PRESENTATION.gyo.pulseHz + index * Math.PI) * 0.14
       eye.scale.set(1.5 * focus, 0.72 * focus, 1.5 * focus)
       ;(eye.material as Three.MeshBasicMaterial).opacity = 0.62 + Math.sin(seconds * 15 + index) * 0.16
       eye.quaternion.copy(camera.quaternion)
@@ -246,7 +260,7 @@ export class NenSceneAura {
     }
     this.#en.position.y = ground + 0.025 - camera.position.y
     this.#base.visible = !state.ken && !state.on
-    const tenBreath = 1 + Math.sin(seconds * 1.8) * 0.012
+    const tenBreath = 1 + Math.sin(seconds * Math.PI * 2 * NEN_PRESENTATION.ten.pulseHz) * 0.012
     const zetsuCollapse = state.mode === 'zetsu' ? 0.72 + Math.sin(seconds * 0.9) * 0.01 : 1
     this.#base.scale.set(0.78 * tenBreath * zetsuCollapse, 1.62 * tenBreath, 0.78 * tenBreath * zetsuCollapse)
     ;(this.#base.material as Three.MeshBasicMaterial).opacity =
@@ -259,7 +273,7 @@ export class NenSceneAura {
     this.#ren.position.y = ground + 0.9 - camera.position.y
     this.#ren.rotation.y = seconds * -0.14
     this.#renFlames.forEach((flame, index) => {
-      const phase = seconds * (3.4 + (index % 3) * 0.28) + index * 1.37
+      const phase = seconds * Math.PI * 2 * (NEN_PRESENTATION.ren.pulseHz + (index % 3) * 0.08) + index * 1.37
       const angle = Number(flame.userData.auraAngle) + Math.sin(phase) * 0.16
       const rise = ((seconds * (0.62 + (index % 2) * 0.09) + index / 5) % 1) * 0.38
       const radius = 0.52 + Math.sin(phase * 0.73) * 0.1
@@ -280,7 +294,7 @@ export class NenSceneAura {
     this.#onCore.scale.set(0.82 * onBreath, 1.72 + Math.sin(seconds * 8) * 0.07, 0.82 * onBreath)
     ;(this.#onCore.material as Three.MeshBasicMaterial).opacity = 0.42 + Math.sin(seconds * 9) * 0.06
     this.#onFlames.forEach((flame, index) => {
-      const phase = seconds * (2.4 + (index % 4) * 0.16) + index * 1.73
+      const phase = seconds * Math.PI * 2 * (NEN_PRESENTATION.on.pulseHz + (index % 4) * 0.06) + index * 1.73
       const rise = ((seconds * (0.42 + (index % 3) * 0.06) + index / 7) % 1) * 0.32
       const angle = Number(flame.userData.onAngle) + Math.sin(phase) * 0.12
       const radius = 0.57 + Math.sin(phase * 0.7) * 0.08
@@ -354,6 +368,44 @@ export class NenSceneAura {
         }
       })
     }
+  }
+
+  #syncTransition(state: NenTechniqueState, seconds: number) {
+    const signature = JSON.stringify({
+      mode: state.mode, gyo: state.gyo, in: state.in, en: Boolean(state.en), ken: state.ken,
+      ko: state.ko, ryu: state.ryu, on: state.on, shu: state.shu.length,
+    })
+    if (!this.#previousSignature) this.#previousSignature = signature
+    else if (signature !== this.#previousSignature) {
+      const before = JSON.parse(this.#previousSignature) as Record<string, unknown>
+      this.#transitionTechnique = state.on ? 'on'
+        : state.mode !== before.mode ? state.mode
+        : state.ko !== before.ko ? 'ko'
+        : state.ken !== before.ken ? 'ken'
+        : state.gyo !== before.gyo ? 'gyo'
+        : state.in !== before.in ? 'in'
+        : Boolean(state.en) !== before.en ? 'en'
+        : state.shu.length !== before.shu ? 'shu' : 'ryu'
+      this.#transitionStarted = seconds
+      this.#previousSignature = signature
+      const material = this.#transition.material as Three.MeshBasicMaterial
+      material.color.setHex(NEN_PRESENTATION[this.#transitionTechnique].colours[0])
+    }
+    if (!this.#transitionTechnique) return
+    const profile = NEN_PRESENTATION[this.#transitionTechnique]
+    const duration = profile.envelope.attack + profile.envelope.release
+    const progress = Math.min(1, Math.max(0, (seconds - this.#transitionStarted) / duration))
+    const collapse = this.#transitionTechnique === 'zetsu' || this.#transitionTechnique === 'in'
+    const focus = this.#transitionTechnique === 'gyo'
+    const scale = collapse ? 3.8 - progress * 3.65 : focus ? 3.2 - progress * 2.85 : 0.35 + progress * (this.#transitionTechnique === 'ko' ? 5.2 : 3.1)
+    this.#transition.scale.set(scale, focus ? scale * 0.58 : scale, 1)
+    this.#transition.rotation.z = focus ? progress * Math.PI * 0.5 : 0
+    ;(this.#transition.material as Three.MeshBasicMaterial).opacity =
+      Math.sin(progress * Math.PI) * profile.intensity * 0.72
+    if (progress >= 1) {
+      this.#transitionTechnique = null
+      this.#transition.visible = false
+    } else this.#transition.visible = true
   }
 
   dispose(scene: Three.Scene) {

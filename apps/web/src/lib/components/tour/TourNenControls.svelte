@@ -19,12 +19,12 @@
       <button class:active={nenState.en !== null} onclick={() => onAction({ type: 'EN', radius: nenState.en ? null : 8 })}>En</button>
       <button class:active={nenState.ken} onclick={() => toggle('KEN')}>Ken</button>
       <button class:active={nenState.ko === 'hands'} onclick={() => onAction({ type: 'KO', zone: nenState.ko === 'hands' ? null : 'hands' })}>Ko mains</button>
-      <button class:active={nenState.ko === 'feet'} onclick={() => onAction({ type: 'KO', zone: nenState.ko === 'feet' ? null : 'feet' })}>Ko pieds</button>
+      <button onclick={() => onAction({ type: 'RYU', distribution: { feet: 0.7, torso: 0.2, head: 0.1 } })}>Ryu pieds</button>
       <button onclick={() => onAction({ type: 'RYU', distribution: { hands: 0.65, torso: 0.2, feet: 0.15 } })}>Ryu ATK</button>
       <button onclick={() => onAction({ type: 'RYU', distribution: { torso: 0.55, head: 0.25, hands: 0.2 } })}>Ryu DEF</button>
       <button disabled={!aimedObjectId} class:active={Boolean(aimedObjectId && nenState.shu.includes(aimedObjectId))} onclick={() => aimedObjectId && onAction({ type: 'SHU', objectId: aimedObjectId, on: !nenState.shu.includes(aimedObjectId) })}>Shu</button>
       <button class="col-span-2" disabled={!aimedObjectId || nenState.mode === 'zetsu'} onclick={() => onInteract?.()}>Agir sur l'objet</button>
-      <p class="col-span-3 mt-1 text-[9px] leading-snug text-[#FFFFF0]/40">Alt + O · T/R/X · G/I/E/K · 1/2/3/4 · S</p>
+      <p class="col-span-3 mt-1 text-[9px] leading-snug text-[#FFFFF0]/40">T/R/X · G/I/K · −/+ Ryu · 1–4 zone · C Ko · F action · H Hatsu · N En · U Shu</p>
     </div>
   {/if}
 </aside>

@@ -494,6 +494,7 @@
         onPick={view === 'table' ? takeHold : undefined}
         aiming={castable}
         onCast={cast}
+        onHatsu={cast}
         auraColour={carried?.color ?? null}
         castOnClick={false}
         touchLabels={{

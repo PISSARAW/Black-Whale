@@ -353,6 +353,7 @@
         selfCastable,
         reveal: chrome.reveal,
         onCast: castOn,
+        onHatsu: castOn,
         onArrive: arrived,
         onWorm: crossWorm,
         onFish: fishEat,

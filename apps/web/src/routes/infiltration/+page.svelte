@@ -157,7 +157,6 @@
     if (event.code === 'KeyX') send({ type: 'ZETSU' })
     else if (event.code === 'KeyV') send({ type: 'DIVERT' })
     else if (event.code === 'KeyF') act()
-    else if (event.code === 'KeyH') send({ type: 'CAST_HATSU' })
     else return
     event.preventDefault()
   }
@@ -257,6 +256,7 @@
     world={EMPTY_WORLD}
     nen={explorationNen(game.player.nen)}
     showNenControls={false}
+    onHatsu={() => send({ type: 'CAST_HATSU' })}
     extras={figures}
     touchLabels={{ move: $t.tour.touch.move, cast: $t.tour.touch.cast }}
     soundLabels={{ silence: $t.tour.sound.silence, restore: $t.tour.sound.restore }}

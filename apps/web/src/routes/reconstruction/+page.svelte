@@ -830,6 +830,7 @@
               bind:aimedAt
               bind:aimedSolidAt
               onCast={hatsuCasting.castOn}
+              onHatsu={hatsuCasting.castOn}
               onArrive={hatsuSession.arrived}
               {extras}
               touchLabels={{ move: $t.tour.touch.move, cast: $t.tour.touch.cast }}

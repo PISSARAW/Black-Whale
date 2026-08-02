@@ -51,6 +51,8 @@
   import { link, locale, t } from '$lib/i18n'
   import './arena.css'
   import type { PageData } from './$types'
+  import { arenaNen } from '$lib/nen/tourAdapters'
+  import { NEN_KEYS, nenZoneIndex } from '$lib/nen/controls'
 
   let { data }: { data: PageData } = $props()
 
@@ -116,6 +118,8 @@
   let inRange = $derived(gap <= STRIKE_RANGE)
   let threatened = $derived(reading.intentRemaining !== null)
   let aimedZone = $derived(zoneFromPitch(lookPitch))
+  let playerNen = $derived(arenaNen(game.player))
+  let opponentNen = $derived(arenaNen(game.opponent))
   let opponentActor = $derived<Apparition[]>([
     {
       id: 'arena-opponent',
@@ -142,6 +146,7 @@
                   ? 'held'
                   : 'idle',
         aura: game.opponent.mode,
+        nen: opponentNen,
       },
       hidden: false,
       pick: true,
@@ -281,25 +286,24 @@
 
     const zone = zoneFor(event.code)
     if (zone) setZone(zone)
-    else if (event.code === 'KeyT') command({ type: 'MODE', side: 'player', mode: 'ten' }, 'ten')
-    else if (event.code === 'KeyR') command({ type: 'MODE', side: 'player', mode: 'ren' }, 'ren')
-    else if (event.code === 'KeyX')
+    else if (event.code === NEN_KEYS.ten) command({ type: 'MODE', side: 'player', mode: 'ten' }, 'ten')
+    else if (event.code === NEN_KEYS.ren) command({ type: 'MODE', side: 'player', mode: 'ren' }, 'ren')
+    else if (event.code === NEN_KEYS.zetsu)
       command({ type: 'MODE', side: 'player', mode: 'zetsu' }, 'zetsu')
-    else if (event.code === 'KeyG')
+    else if (event.code === NEN_KEYS.gyo)
       command({ type: 'GYO', side: 'player', on: !game.player.gyo }, 'gyo')
-    else if (event.code === 'KeyI')
+    else if (event.code === NEN_KEYS.in)
       command({ type: 'IN', side: 'player', on: !game.player.in }, 'in')
-    else if (event.code === 'KeyK')
+    else if (event.code === NEN_KEYS.ken)
       command({ type: 'KEN', side: 'player', on: !game.player.ken }, 'ken')
-    else if (event.code === 'Minus') shiftRyu(-0.1)
-    else if (event.code === 'Equal') shiftRyu(0.1)
-    else if (event.code === 'Space' || event.code === 'KeyF') strike()
+    else if (event.code === NEN_KEYS.ryuDown) shiftRyu(-0.1)
+    else if (event.code === NEN_KEYS.ryuUp) shiftRyu(0.1)
+    else if (event.code === 'Space' || event.code === NEN_KEYS.action) strike()
     else if (event.code === 'ShiftLeft' || event.code === 'ShiftRight') guard()
     else if (event.code === 'KeyV') feint()
     else if (event.code === 'KeyJ') evade(-1)
     else if (event.code === 'KeyL') evade(1)
-    else if (event.code === 'KeyH') castHatsu()
-    else if (event.code === 'KeyC') gatherKo()
+    else if (event.code === NEN_KEYS.ko) gatherKo()
     else return
     event.preventDefault()
   }
@@ -320,8 +324,8 @@
   }
 
   function zoneFor(code: string): BodyZone | null {
-    const index = ['Digit1', 'Digit2', 'Digit3', 'Digit4'].indexOf(code)
-    return index === -1 ? null : BODY_ZONES[index]
+    const index = nenZoneIndex(code)
+    return index === null ? null : BODY_ZONES[index]
   }
 
   function reportWalk() {
@@ -612,11 +616,14 @@
     bind:jumpAt
     bind:jumpHeading
     world={EMPTY_WORLD}
+    nen={playerNen}
+    showNenControls={false}
     extras={opponentActor}
     collisionWalls={opponentWalls}
     aiming={true}
     castOnClick={true}
     onCast={strike}
+    onHatsu={() => castHatsu()}
     touchLabels={{ move: $t.tour.touch.move, cast: $t.arena.action.strike }}
     soundLabels={{ silence: $t.tour.sound.silence, restore: $t.tour.sound.restore }}
     loadingLabel={$t.tour.loading}

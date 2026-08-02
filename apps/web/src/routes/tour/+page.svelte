@@ -78,6 +78,12 @@
   import { Fullscreen } from '$lib/tour/fullscreen.svelte'
   import { placeOf, type Naming } from '$lib/tour/search'
   import {
+    localizedName,
+    localizedSource,
+    provenanceClass,
+    shipLength as measureShipLength,
+  } from '$lib/tour/pagePresentation'
+  import {
     EMPTY_WORLD,
     aimsAtSolids,
     arriveInTour,
@@ -164,11 +170,10 @@
   const insideInterior = $derived(plan.tier.kind === 'interior')
   const french = $derived($locale === 'fr')
 
-  const nameOf = (entity: { name: string; nameFr: string }) =>
-    french ? entity.nameFr : entity.name
+  const nameOf = (entity: { name: string; nameFr: string }) => localizedName(entity, french)
 
   const sourceOf = (entity: { source: string; sourceFr: string }) =>
-    french ? entity.sourceFr : entity.source
+    localizedSource(entity, french)
 
   const sortedSpaces = $derived(
     [...plan.spaces].sort((a, b) => nameOf(a).localeCompare(nameOf(b), french ? 'fr' : 'en')),
@@ -194,15 +199,6 @@
 
   // Four ranks, four readings: gold for a panel, bone for a deck plan, green
   // for what only the /ship room plan draws, cold blue for what nothing draws.
-  const PROVENANCE_CLASS: Record<Provenance, string> = {
-    panel: 'border-[#FFD700]/60 bg-[#FFD700]/10 text-[#FFD700]',
-    plan: 'border-[#FFFFF0]/30 bg-[#FFFFF0]/5 text-[#FFFFF0]/80',
-    map: 'border-[#5f8f6a] bg-[#5f8f6a]/20 text-[#8fd0a0]',
-    inferred: 'border-[#2b3a4a] bg-[#2b3a4a]/30 text-[#9dc4e0]',
-  }
-
-  const provenanceClass = (thing: { provenance: Provenance }) => PROVENANCE_CLASS[thing.provenance]
-
   /**
    * The stairwell or door within reach, named — read out of one wording or the
    * other, because the same crossing is a key to press on a keyboard and a
@@ -233,14 +229,7 @@
   const touchUseLabel = $derived(promptFor($t.tour.touch))
 
   /** Bow-to-stern length of the ship, read off the widest deck. */
-  const shipLength = Math.round(
-    Math.max(
-      ...ship.decks.map((tier) => {
-        const zs = tier.hull.map((point) => point[1])
-        return Math.max(...zs) - Math.min(...zs)
-      }),
-    ),
-  )
+  const shipLength = measureShipLength(ship)
 
   function goToSpace(space: Space, landing: Vec2 | null = null) {
     if (space.tierId !== tierId) tierId = space.tierId

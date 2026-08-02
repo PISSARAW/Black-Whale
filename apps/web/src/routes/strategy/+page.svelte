@@ -94,7 +94,11 @@
     const state = simStore.currentState
     if (!state) return [] as Presence[]
     return Object.values(simStore.intel)
-      .filter((sighting) => Boolean(controlledEntities[sighting.entityId]))
+      .filter(
+        (sighting) =>
+          Boolean(controlledEntities[sighting.entityId]) &&
+          simStore.unitConditions[sighting.entityId] !== 'ELIMINATED',
+      )
       .map((sighting): Presence => ({
         id: `strategy:${sighting.entityId}`,
         entityType: 'BODY',
@@ -166,6 +170,15 @@
     const entity = entityForCharacter(state, characterId)
     const locationId = entity ? state.presences[entity.id]?.locationId : undefined
     return locationId ? (locationById.get(locationId)?.name ?? locationId) : 'Position inconnue'
+  }
+
+  function conditionForCharacter(characterId: string): string {
+    const state = simStore.currentState
+    const entity = state ? entityForCharacter(state, characterId) : undefined
+    const condition = entity ? simStore.unitConditions[entity.id] : undefined
+    if (condition === 'WOUNDED') return 'Blessé'
+    if (condition === 'ELIMINATED') return 'Éliminé'
+    return 'Opérationnel'
   }
 
   function queueOrder() {
@@ -372,10 +385,11 @@
               <select bind:value={selectedCharacterId}>
                 <option value="">Choisir une unité</option>
                 {#each playerFaction?.members ?? [] as member (member.character.id)}
-                  <option value={member.character.id}
-                    >{member.character.canonicalName} · {currentLocation(
-                      member.character.id,
-                    )}</option
+                  <option
+                    value={member.character.id}
+                    disabled={conditionForCharacter(member.character.id) === 'Éliminé'}
+                    >{member.character.canonicalName} · {conditionForCharacter(member.character.id)} ·
+                    {currentLocation(member.character.id)}</option
                   >
                 {/each}
               </select>

@@ -15,6 +15,7 @@ export interface TurnReportInput {
   scenarioEvent: ScenarioEvent | null
   diplomacyReports: readonly string[]
   activatedHatsu: readonly string[]
+  conflictReports: readonly string[]
 }
 
 export function buildTurnReports(input: TurnReportInput): string[] {
@@ -28,6 +29,7 @@ export function buildTurnReports(input: TurnReportInput): string[] {
       ? [`Interception réussie : ${input.interceptions} mouvement(s) adverse(s) bloqué(s).`]
       : []),
     ...input.activatedHatsu.map((activation) => `Hatsu activé · ${activation}.`),
+    ...input.conflictReports,
     ...(input.hostileContacts
       ? [
           `Contact hostile dans ${input.hostileContacts} zone(s). La position ennemie est confirmée.`,

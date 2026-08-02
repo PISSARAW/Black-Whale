@@ -82,3 +82,36 @@ export function resolveDiplomacy(
       : 'La proposition de pacte est refusée.',
   }
 }
+
+export function resolveDiplomacyPlan(input: {
+  relationships: Record<string, FactionRelationship>
+  orders: readonly DiplomacyOrder[]
+  activeFactionIds: readonly string[]
+  playerFactionId: string
+  factionNames: Record<string, string>
+}): { relationships: Record<string, FactionRelationship>; reports: string[]; error?: string } {
+  const relationships = structuredClone(input.relationships)
+  const reports: string[] = []
+  const addressed = new Set<string>()
+  for (const order of input.orders) {
+    if (
+      !input.activeFactionIds.includes(order.factionId) ||
+      order.factionId === input.playerFactionId
+    )
+      return { relationships, reports, error: 'Une action diplomatique vise une faction absente.' }
+    if (addressed.has(order.factionId))
+      return {
+        relationships,
+        reports,
+        error: 'Une seule action diplomatique est permise par faction.',
+      }
+    addressed.add(order.factionId)
+    const resolution = resolveDiplomacy(
+      relationships[order.factionId] ?? initialRelationship(),
+      order.action,
+    )
+    relationships[order.factionId] = resolution.relationship
+    reports.push(`${input.factionNames[order.factionId] ?? order.factionId} · ${resolution.report}`)
+  }
+  return { relationships, reports }
+}

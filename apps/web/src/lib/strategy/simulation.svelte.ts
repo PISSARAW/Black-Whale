@@ -1,38 +1,33 @@
-import {
-  SimulationEngine,
-  generateAIOperations,
-  resolveControlledEntity,
-} from '@black-whale/simulation-engine'
+import { SimulationEngine, resolveControlledEntity } from '@black-whale/simulation-engine'
 import type {
   ProposedWorldEvent,
   SpatialEstimate,
   WorldBranch,
-  WorldEntity,
   WorldState,
 } from '@black-whale/world-engine'
 import { hatsuById } from '$lib/nen/hatsuRegistry'
 import {
   diplomacyCost,
   initialRelationship,
-  resolveDiplomacy,
+  resolveDiplomacyPlan,
   type DiplomacyOrder,
   type FactionRelationship,
 } from './diplomacy'
+import { factionEliminated, resolveLocationConflicts, type UnitCondition } from './conflict'
 import { buildTurnReports } from './reports'
 import { characterAbilityIds, factionEntityIds as selectFactionEntityIds } from './selectors'
+import { generateFactionAIOperations } from './tacticalAI'
 import {
   SCENARIO_MAX_TURNS,
   buildScenarioRoster,
   doctrineBriefing,
   scenarioEventForTurn,
-  scenarioMoveChance,
   seededScenarioRandom,
   selectScenarioLocationIds,
 } from './scenario'
 import {
   COMMAND_POINTS_PER_TURN,
   VICTORY_POINTS_TARGET,
-  chooseStrategicDestination,
   doctrineForFaction,
   evaluateObjective,
   intelCertainty,
@@ -47,7 +42,6 @@ import type {
   StrategyMoveOrder,
   StrategyTurnResult,
 } from './types'
-
 export type { StrategyOrder, StrategyOrderType } from './rules'
 export type {
   StrategyFaction,
@@ -57,7 +51,6 @@ export type {
   StrategyTurnResult,
 } from './types'
 export class StrategyInputError extends Error {}
-
 export function createSimulationStore() {
   let engine = new SimulationEngine()
   let branch = $state<WorldBranch | null>(null)
@@ -75,6 +68,7 @@ export function createSimulationStore() {
   let scenarioLocationIds = $state<string[]>([])
   let gameLost = $state(false)
   let relationships = $state<Record<string, FactionRelationship>>({})
+  let unitConditions = $state<Record<string, UnitCondition>>({})
 
   function init(
     baseState: WorldState,
@@ -106,9 +100,9 @@ export function createSimulationStore() {
     scenarioLocationIds = []
     gameLost = false
     relationships = {}
+    unitConditions = {}
     turnReports = ['Simulation initialisée.']
   }
-
   function selectFaction(factionId: string) {
     if (!currentState || !factions.some((faction) => faction.id === factionId)) {
       throw new StrategyInputError('Faction inconnue.')
@@ -120,6 +114,11 @@ export function createSimulationStore() {
       roster
         .filter((faction) => faction.id !== factionId)
         .map((faction) => [faction.id, initialRelationship()]),
+    )
+    unitConditions = Object.fromEntries(
+      roster.flatMap((faction) =>
+        selectFactionEntityIds(currentState, factions, faction.id).map((id) => [id, 'READY']),
+      ),
     )
     const occupied = roster.flatMap((faction) =>
       factionEntityIds(faction.id)
@@ -143,9 +142,12 @@ export function createSimulationStore() {
       'Les positions adverses restent inconnues tant qu’elles ne sont pas observées.',
     ]
   }
-
   function factionEntityIds(factionId: string): string[] {
-    return currentState ? selectFactionEntityIds(currentState, factions, factionId) : []
+    return currentState
+      ? selectFactionEntityIds(currentState, factions, factionId).filter(
+          (id) => unitConditions[id] !== 'ELIMINATED',
+        )
+      : []
   }
 
   function abilityIdsForCharacter(characterId: string): string[] {
@@ -236,30 +238,16 @@ export function createSimulationStore() {
     const deniedLocations: string[] = []
     const activatedHatsu: string[] = []
     const activatedAbilityIds: string[] = []
-    const nextRelationships = structuredClone(relationships)
-    const diplomacyReports: string[] = []
-    const addressedFactions = new Set<string>()
-
-    for (const order of diplomacyOrders) {
-      if (!activeFactionIds.includes(order.factionId) || order.factionId === playerFactionId) {
-        throw new StrategyInputError(
-          'Une action diplomatique vise une faction absente du scénario.',
-        )
-      }
-      if (addressedFactions.has(order.factionId)) {
-        throw new StrategyInputError(
-          'Une seule action diplomatique est possible par faction et par tour.',
-        )
-      }
-      addressedFactions.add(order.factionId)
-      const resolution = resolveDiplomacy(
-        nextRelationships[order.factionId] ?? initialRelationship(),
-        order.action,
-      )
-      nextRelationships[order.factionId] = resolution.relationship
-      const factionName = factions.find((faction) => faction.id === order.factionId)?.name
-      diplomacyReports.push(`${factionName ?? order.factionId} · ${resolution.report}`)
-    }
+    const diplomacy = resolveDiplomacyPlan({
+      relationships,
+      orders: diplomacyOrders,
+      activeFactionIds,
+      playerFactionId,
+      factionNames: Object.fromEntries(factions.map((faction) => [faction.id, faction.name])),
+    })
+    if (diplomacy.error) throw new StrategyInputError(diplomacy.error)
+    const nextRelationships = diplomacy.relationships
+    const diplomacyReports = diplomacy.reports
 
     for (const order of playerOrders) {
       if (
@@ -282,6 +270,9 @@ export function createSimulationStore() {
       }
       const entity = resolveControlledEntity(currentState, order.characterId)
       if (!entity) throw new StrategyInputError('Cette unité n’existe pas dans cet état du monde.')
+      if (unitConditions[entity.id] === 'ELIMINATED') {
+        throw new StrategyInputError('Une unité éliminée ne peut plus recevoir d’ordre.')
+      }
 
       orderedCharacters.add(order.characterId)
       playerEntityIds.add(entity.id)
@@ -371,40 +362,23 @@ export function createSimulationStore() {
           return true
         })
 
-      const random = seededScenarioRandom(`${branch.id}:${currentTurn}:${faction.id}`)
-      const memberEntities = members
-        .map((characterId) => resolveControlledEntity(currentState!, characterId))
-        .filter((entity): entity is WorldEntity => Boolean(entity))
-      const occupiedLocations = memberEntities
-        .map((entity) => currentState!.presences[entity.id]?.locationId)
-        .filter((id): id is string => Boolean(id))
       const playerLocations = factionEntityIds(playerFactionId)
         .map((entityId) => currentState!.presences[entityId]?.locationId)
         .filter((id): id is string => Boolean(id))
-      const doctrine = doctrineForFaction(faction.id)
-      const allowedDestinations = nextRelationships[faction.id]?.pact
-        ? destinationIds.filter((id) => !playerLocations.includes(id))
-        : destinationIds
-
-      for (const entity of memberEntities) {
-        if (random() >= scenarioMoveChance(currentTurn)) continue
-        const destination = chooseStrategicDestination(doctrine, {
-          currentLocationId: currentState.presences[entity.id]?.locationId,
-          availableLocationIds: allowedDestinations,
-          occupiedLocationIds: occupiedLocations,
-          opposingLocationIds: playerLocations,
-          roll: random(),
-        })
-        if (!destination) continue
-        aiEvents.push(
-          ...generateAIOperations(currentState, [entity.originalCharacterId ?? entity.id], {
-            destinationIds: [destination],
-            destinationTypes,
-            moveChance: 1,
-            random: () => 0,
-          }),
-        )
-      }
+      aiEvents.push(
+        ...generateFactionAIOperations({
+          state: currentState,
+          faction,
+          memberCharacterIds: members,
+          unitConditions,
+          destinationIds,
+          destinationTypes,
+          playerLocations,
+          pact: nextRelationships[faction.id]?.pact ?? false,
+          turn: currentTurn,
+          seed: `${branch.id}:${currentTurn}:${faction.id}`,
+        }),
+      )
     }
 
     const interceptedEvents = aiEvents.filter(
@@ -417,6 +391,24 @@ export function createSimulationStore() {
     const result = engine.applyEvents(branch.id, [...playerEvents, ...resolvedAIEvents])
     currentState = result.snapshot
     relationships = nextRelationships
+    const playerIds = factionEntityIds(playerFactionId)
+    const conflict = resolveLocationConflicts({
+      conditions: unitConditions,
+      playerIds,
+      opponents: activeFactionIds
+        .filter((id) => id !== playerFactionId)
+        .map((id) => ({
+          factionId: id,
+          entityIds: factionEntityIds(id),
+          pact: nextRelationships[id]?.pact ?? false,
+        })),
+      locationByEntity: Object.fromEntries(
+        Object.entries(currentState.presences).map(([id, presence]) => [id, presence.locationId]),
+      ),
+      guardedLocations,
+      random: seededScenarioRandom(`${branch.id}:${currentTurn}:conflicts`),
+    })
+    unitConditions = conflict.conditions
     const completedTurn = currentTurn
     for (const abilityId of activatedAbilityIds) hatsuCooldowns[abilityId] = currentTurn + 2
     currentTurn += 1
@@ -444,6 +436,7 @@ export function createSimulationStore() {
       if (victoryPoints >= VICTORY_POINTS_TARGET) gameWon = true
     }
     if (!gameWon && completedTurn >= SCENARIO_MAX_TURNS) gameLost = true
+    if (factionEliminated(playerIds, unitConditions)) gameLost = true
     turnReports = [
       ...turnReports,
       ...buildTurnReports({
@@ -461,6 +454,7 @@ export function createSimulationStore() {
         scenarioEvent,
         diplomacyReports,
         activatedHatsu,
+        conflictReports: conflict.reports,
       }),
     ].slice(-100)
 
@@ -473,12 +467,8 @@ export function createSimulationStore() {
   }
 
   return {
-    get currentState() {
-      return currentState
-    },
-    get currentTurn() {
-      return currentTurn
-    },
+    get currentState() { return currentState },
+    get currentTurn() { return currentTurn },
     get turnReports() {
       return turnReports
     },
@@ -511,6 +501,9 @@ export function createSimulationStore() {
     },
     get relationships() {
       return relationships
+    },
+    get unitConditions() {
+      return unitConditions
     },
     get hatsuCooldowns() {
       return hatsuCooldowns

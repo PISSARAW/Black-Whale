@@ -20,7 +20,7 @@
   import TourScene from '$lib/components/tour/TourScene.svelte'
   import TourSceneOverlay from '$lib/components/tour/TourSceneOverlay.svelte'
   import TourPageSidebar from '$lib/components/tour/TourPageSidebar.svelte'
-  import { activeHatsu, enterForcedZetsu, parallelFutureVisible } from '$lib/nen/hatsuState'
+  import { activeHatsu, parallelFutureVisible } from '$lib/nen/hatsuState'
   import { get } from 'svelte/store'
   import { HATSU_PROFILES, type HatsuInteractionKind } from '$lib/nen/hatsuRegistry'
   import { link, t } from '$lib/i18n'
@@ -50,7 +50,7 @@
   } from '$lib/tour/pageTargets'
   import { TourKeyboardController } from '$lib/tour/pageKeyboard'
   import { TourWorldTicker } from '$lib/tour/pageWorldTicker'
-  import { activateTourWorld, cycleTourMode, releaseTourWorld } from '$lib/tour/pageWorldCommands'
+  import { TourHatsuSession } from '$lib/tour/pageHatsuSession.svelte'
   import {
     AIR_KEYS,
     type CastHand,
@@ -70,7 +70,6 @@
   import {
     EMPTY_WORLD,
     aimsAtSolids,
-    arriveInTour,
     hatsuKeys,
     identityOf,
     TAKES_ORDERS,
@@ -417,6 +416,34 @@
     show,
     goToSpace,
   })
+  const hatsuSession = new TourHatsuSession({
+    readActivation: () => ({
+      ship,
+      activeKind: technique?.kind ?? null,
+      hasAura: Boolean($activeHatsu),
+      position,
+      spaceId: currentSpace?.id ?? null,
+    }),
+    read: () => ({
+      world,
+      ship,
+      activeKind: technique?.kind ?? null,
+      hasAura: Boolean($activeHatsu),
+      position,
+      spaceId: currentSpace?.id ?? null,
+    }),
+    updateWorld: (next) => (world = next),
+    updateReport: (next) => (report = next),
+    resetHands: () => (nextHand = { first: 'sun', second: 'sun', third: 'sun' }),
+    show,
+    goToSpace: (spaceId) => {
+      const space = ship.spaces.get(spaceId)
+      if (space) goToSpace(space)
+    },
+    reboundText: () => $t.tour.hatsu.reports.snakesRebound,
+    vowText: (spaceId) => $t.tour.hatsu.reports.vowBroken(nameOf(ship.spaces.get(spaceId)!)),
+  })
+  hatsuSession.watchActivation()
 
   /**
    * Whether R has anything to do: the technique is on both sides of the line.
@@ -444,32 +471,6 @@
   // room and Blinky refuses to swallow what Nen is holding — both of which
   // would be unreachable if changing technique quietly undid the last one. What
   // is still standing is always listed in the panel, and released from it.
-  $effect(() => {
-    if (!$activeHatsu) {
-      world = EMPTY_WORLD
-      report = null
-      return
-    }
-    // Taking an aura up again is what clears the last penalty off the walk.
-    penalty = null
-    // What is being held, in the world rather than only in the dock: the
-    // passive abilities are decided by `$lib/tour/hatsu`, and it has to be able
-    // to tell Voconte's doors from anyone else's.
-    const kind = worksInTour($activeHatsu) ? $activeHatsu.kind : null
-    const currentWorld = untrack(() => world)
-    const activated = activateTourWorld({
-      world: currentWorld,
-      kind,
-      ship,
-      position,
-      spaceId: currentSpace?.id ?? null,
-    })
-    if (activated) {
-      nextHand = { first: 'sun', second: 'sun', third: 'sun' }
-      world = activated
-    }
-  })
-
   /**
    * The double's next watch: at your shoulder, loose in the room she was posted
    * in, or out ahead of the walk.
@@ -479,7 +480,7 @@
    * changes her orders mid-walk the way they would speak to her.
    */
   function cycleDouble() {
-    turn('guardian')
+    hatsuSession.turn('guardian')
   }
 
   /**
@@ -490,7 +491,7 @@
    * is in, which is the choice Sayird's module exposes and the walk did not.
    */
   function cycleEye() {
-    turn('scout')
+    hatsuSession.turn('scout')
   }
 
   /**
@@ -503,7 +504,7 @@
    * sends, and whether this one is still allowed to move.
    */
   function cycleOwl() {
-    turn('surveillance')
+    hatsuSession.turn('surveillance')
   }
 
   /**
@@ -511,37 +512,20 @@
    * what came back. A technique with nothing to cycle — or one that is not the
    * aura being held — answers with nothing, and the key stays inert.
    */
-  function turn(kind: HatsuInteractionKind) {
-    const changed = cycleTourMode({ world, requested: kind, active: technique?.kind ?? null })
-    if (!changed) return
-    world = changed.world
-    report = changed.report
-    show(changed.report)
-  }
+  const turn = hatsuSession.turn
 
   /**
    * Handing the ship back is not always free. Silent Majority is a curse that
    * has to find a victim: dismissing it without one turns it on the user, and
    * the archive already has a penalty for that.
    */
-  function release() {
-    const released = releaseTourWorld(world)
-    world = released.world
-    report = null
-    if (released.rebound) punish($t.tour.hatsu.reports.snakesRebound)
-  }
+  const release = hatsuSession.release
 
   /**
    * The two techniques that can turn on their user cost the aura itself, which
    * takes the panel down with it — so what happened has to be said over the
    * walk instead, where the visitor is still looking.
    */
-  let penalty = $state<string | null>(null)
-  function punish(said: string) {
-    penalty = said
-    enterForcedZetsu()
-  }
-
   let wasFutureVisible = false
   const unsubFuture = parallelFutureVisible.subscribe((isVisible) => {
     const active = get(activeHatsu)
@@ -572,18 +556,7 @@
    * is told — including the archive's own penalty, which is Zetsu.
    */
   function arrived(spaceId: string | null) {
-    const arrival = arriveInTour(world, ship, spaceId)
-    world = arrival.world
-    if (arrival.report) report = arrival.report
-    if (arrival.travelTo) {
-      const back = ship.spaces.get(arrival.travelTo)
-      if (back) goToSpace(back)
-    }
-    // A vow broken is a vow broken: the aura goes, and with it the ship comes
-    // back — the same five minutes of Zetsu the rest of the archive charges.
-    if (arrival.punished && spaceId) {
-      punish($t.tour.hatsu.reports.vowBroken(nameOf(ship.spaces.get(spaceId)!)))
-    }
+    hatsuSession.arrived(spaceId)
   }
 
   const fishEat = ticker.fishEat
@@ -841,7 +814,7 @@
         reticleColor={technique?.color ?? null}
         {spoken}
         location={locationReadout}
-        {penalty}
+        penalty={hatsuSession.penalty}
         aim={aimReadout}
         controls={overlayControls}
         {statusHint}

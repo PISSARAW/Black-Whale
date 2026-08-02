@@ -131,6 +131,7 @@
   import { buildSpriteApparition } from '$lib/tour/apparitionSpriteView'
   import { buildDragonApparition } from '$lib/tour/apparitionDragonView'
   import { buildVowApparition } from '$lib/tour/apparitionVowView'
+  import { buildAnimalApparition } from '$lib/tour/apparitionAnimalView'
   import { HatsuSceneEffects } from '$lib/tour/HatsuSceneEffects'
   import { NenSceneAura } from '$lib/tour/NenSceneAura'
   import TourNenControls from './TourNenControls.svelte'
@@ -1655,6 +1656,7 @@
         turns = buildSpriteApparition(seen, { THREE, glow, root, skin }) ?? turns
         turns = buildDragonApparition(seen, { THREE, glow, root, skin }) ?? turns
         turns = buildVowApparition(seen, { THREE, glow, root, skin }) ?? turns
+        turns = buildAnimalApparition(seen, { THREE, glow, root, skin }) ?? turns
 
         // ── The Guardian Spirit Beasts ─────────────
         //
@@ -1673,67 +1675,6 @@
         // that the one room the walk sits you down in is drawn by the same
         // machinery as the ninety you walk through.
 
-
-        if (seen.kind === 'cat') {
-          // Camilla's cat, which is drawn sitting because that is all it ever
-          // does until somebody kills its owner. `size` is the shoulder height,
-          // so the animal is built at the scale of a cat rather than at the
-          // scale of the room it is in.
-          //
-          // Three stages, and they are three postures: sitting and looking away
-          // (nobody has been told about it), sitting and looking at the woman
-          // opposite (they have), and standing where she was (it collected).
-          const fur = glow(seen.colour, seen.stage === 2 ? 1 : 0.85)
-          const body = new THREE.Mesh(
-            new THREE.CapsuleGeometry(seen.size * 0.36, seen.size * 0.5, 4, 10),
-            fur,
-          )
-          // Sitting: the trunk is upright and the animal is short. Standing, it
-          // is a quadruped, which is the same capsule tipped onto its side.
-          if (seen.stage === 2) {
-            body.rotation.x = Math.PI / 2
-            body.position.y = seen.size * 0.72
-          } else {
-            body.position.y = seen.size * 0.5
-          }
-          root.add(body)
-
-          const head = new THREE.Mesh(new THREE.SphereGeometry(seen.size * 0.3, 10, 8), fur)
-          head.position.set(0, seen.size * (seen.stage === 2 ? 1.02 : 1.12), seen.size * 0.34)
-          root.add(head)
-          for (const side of [-1, 1]) {
-            const ear = new THREE.Mesh(
-              new THREE.ConeGeometry(seen.size * 0.12, seen.size * 0.22, 4),
-              fur,
-            )
-            ear.position.set(side * seen.size * 0.16, seen.size * 0.24, -seen.size * 0.04)
-            head.add(ear)
-            // The eyes are the only part of it that is not fur, and they are
-            // what a cat in a dark corner actually is: two points, and they are
-            // pointed at you. Brighter once it has done what it is for.
-            const eye = new THREE.Mesh(
-              new THREE.SphereGeometry(seen.size * 0.05, 6, 5),
-              glow(0xfff2a8, seen.stage === 2 ? 1 : 0.8),
-            )
-            eye.position.set(side * seen.size * 0.12, seen.size * 0.04, seen.size * 0.26)
-            head.add(eye)
-          }
-
-          // And the tail, which is the only thing about a sitting cat that
-          // moves. Four beads, curled round the front of it, strung by the
-          // drift the way the chain's links are.
-          const tail = new THREE.Group()
-          for (let i = 0; i < 4; i++) {
-            const bead = new THREE.Mesh(
-              new THREE.SphereGeometry(seen.size * (0.11 - i * 0.015), 6, 5),
-              fur,
-            )
-            bead.position.set(0, seen.size * 0.16, -seen.size * (0.36 + i * 0.2))
-            tail.add(bead)
-          }
-          root.add(tail)
-          turns = tail
-        }
 
         if (seen.kind === 'contract') {
           // A sheet and a pen, both made of the same aura, and the whole of the

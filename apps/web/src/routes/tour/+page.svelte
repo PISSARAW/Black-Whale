@@ -1,18 +1,4 @@
 <script lang="ts">
-  /**
-   * The virtual tour: a first-person walk through the reconstructed ship.
-   *
-   * This route is deliberately self-contained. It reads `data/ship` and nothing
-   * else — no world state, no perspective, no spoiler profile — because the
-   * reconstruction is architecture rather than a moment in the story. `/ship`
-   * remains the place to ask who was where.
-   *
-   * The one thing it does take from the rest of the archive is the Hatsu the
-   * visitor has active. The page marks itself `data-hatsu-pass`, which stops the
-   * DOM layer of the Nen system at the door: in the walk a technique works on
-   * the ship, through `$lib/tour/hatsu`, and on nothing else — not the deck
-   * buttons, not the index, not the minimap. Those become how you aim it.
-   */
   import { onDestroy, onMount, untrack } from 'svelte'
   import { page } from '$app/stores'
   import TourPageIntro from '$lib/components/tour/TourPageIntro.svelte'
@@ -70,20 +56,10 @@
   const hatsuAudio = new TourHatsuAudio()
   chrome.watch()
 
-  // `?space=` names a space to open in, `?deck=` a deck. `/tour/sources` links to
-  // three hundred and one of them, so the walk does not read them once and forget
-  // them: the request is derived from the URL and honoured whenever it changes,
-  // which is what makes a second link, and the back button, do anything at all.
-  //
-  // The walk still does not *write* the URL as the visitor moves — a shared link
-  // has to keep pointing at the room it was copied from, and "copy this
-  // viewpoint" is how a new one is made.
   const requestedSpace = $derived(
     ship.spaces.get($page.url.searchParams.get('space') ?? '') ?? null,
   )
   const requestedDeck = $derived($page.url.searchParams.get('deck'))
-  // Read once, deliberately: the level the walk opens on. Every later change of
-  // URL goes through the effect below instead.
   const initialTierId = untrack(
     () =>
       requestedSpace?.tierId ??
@@ -100,17 +76,6 @@
   const heading = $derived(navigation.heading)
   const aimedAt = $derived(navigation.aimedAt)
   const aimedSolidAt = $derived(navigation.aimedSolidAt)
-  /**
-   * The reveal, on G.
-   *
-   * The walk already tints a surface by what it is worth as evidence, which is
-   * enough to notice and not enough to read. Turned on, the categories drop out
-   * and the deck is painted in its badges alone — and the two things the
-   * reconstruction authored rather than derived, the walls it declared blind and
-   * the openings it placed by hand, are shown with the reason each was declared
-   * for. It changes nothing about the ship, only what the ship says about
-   * itself.
-   */
   const plan = $derived(ship.plans.get(tierId)!)
   const deck = $derived(deckOf(ship, tierId))
   const insideInterior = $derived(plan.tier.kind === 'interior')
@@ -125,31 +90,11 @@
     [...plan.spaces].sort((a, b) => nameOf(a).localeCompare(nameOf(b), french ? 'fr' : 'en')),
   )
 
-  /**
-   * A room under the name the walk currently gives it.
-   *
-   * Grimmel's arrow swaps what two rooms are, so every place the walk says a
-   * room's name — the read-out, the index, the panel — has to ask this rather
-   * than read the blueprint directly, or the same room ends up called two
-   * things on one screen.
-   */
   const named = (space: Space) => identityOf(ship, world, space)
 
-  /**
-   * A room and a solid are sourced the same way and read the same way — the
-   * coffin carries ch. 371 whatever the chamber around it carries — so the
-   * badge takes anything with a provenance rather than a space.
-   */
   const provenanceLabel = (thing: { provenance: Provenance }) =>
     $t.tour.provenance[thing.provenance]
 
-  // Four ranks, four readings: gold for a panel, bone for a deck plan, green
-  // for what only the /ship room plan draws, cold blue for what nothing draws.
-  /**
-   * The stairwell or door within reach, named — read out of one wording or the
-   * other, because the same crossing is a key to press on a keyboard and a
-   * button to tap on a phone, which has no E.
-   */
   const promptFor = (words: LinkWords) =>
     describeLink({ available: availableLink, ship, nameOf, words })
 
@@ -159,30 +104,16 @@
   const goToSpace = navigation.goToSpace
   const selectTier = navigation.selectTier
 
-  /**
-   * Honour whatever the URL currently asks for. `untrack` because `selectTier`
-   * reads the deck it is leaving: without it the walk would answer its own move
-   * and jump back to the linked room every time the visitor took a stairwell.
-   */
   $effect(() => {
     const space = requestedSpace
     const deck = requestedDeck
     untrack(() => navigation.honor(space, deck))
   })
 
-  /**
-   * A link back to where the visitor is standing.
-   *
-   * The walk deliberately does not rewrite the URL as it is walked, so this is
-   * how a viewpoint is shared: the room under the visitor's feet, or the deck
-   * they are on when they are out between rooms.
-   */
   async function copyViewpoint() {
     await chrome.copyViewpoint({ current: $page.url, spaceId: currentSpace?.id ?? null, tierId })
   }
 
-  // ── The plan, and the finder ───────────────────
-  /** The stairs, the bulkhead and the interior doors that touch this level. */
   const crossings = $derived(crossingsOn(ship, tierId))
 
   const crossingLabel = (crossing: Crossing) => {
@@ -212,11 +143,6 @@
     togglePlan: () => (chrome.planOpen = !chrome.planOpen),
   })
 
-  /**
-   * Whether this system asks for less movement — read on mount rather than at
-   * init, because the server has no media query to ask and would render the
-   * hint one way and hydrate it the other.
-   */
   onMount(() => {
     loadComfort()
     chrome.calm = prefersReducedMotion()
@@ -226,7 +152,6 @@
     chrome.dispose()
   })
 
-  // ── Nen ────────────────────────────────────────
   let world = $state<TourWorld>(EMPTY_WORLD)
   hatsuAudio.watch(() => world)
 
@@ -382,26 +307,14 @@
   const targetName = targetView.name
   const solidTargets = $derived(targetView.solids)
 
-  /** Speech sealed: the walk stops naming the room the visitor is standing in. */
   const mute = $derived(world.sealed >= 3)
 
-  // ── What the walk says out loud ────────────────
-  /** How a place is named and situated, for the finder and the read-out alike. */
   const naming = $derived<Naming>({
     nameOf,
     sourceOf,
     insideOf: (room: string) => $t.tour.insideOf(room),
   })
 
-  /**
-   * The room the visitor is standing in, in one sentence.
-   *
-   * A canvas and an SVG are, to a screen reader, two rectangles that never
-   * change. Everything needed to say what a room actually is has been in the
-   * blueprint all along, so arriving somewhere is announced rather than merely
-   * drawn — and it is announced under the name the walk currently gives the
-   * room, which a technique may have swapped.
-   */
   const spoken = $derived(
     currentSpace && !mute
       ? describeSpace(ship, named(currentSpace), {
@@ -415,21 +328,11 @@
       : '',
   )
 
-  /**
-   * One verb per widget. With a technique up the index casts rather than
-   * travels, and the plan has to agree with it: the same drawing that teleports
-   * empty-handed and aims with an aura up is two behaviours wearing one face.
-   */
   const selectOnPlan = $derived(
     technique ? (space: Space) => castOn(space.id) : (space: Space) => goToSpace(space),
   )
   const planVerb = $derived(technique ? $t.tour.aimAt : $t.tour.goTo)
 
-  /**
-   * What the reveal shows in words: the walls this level keeps blind, and the
-   * openings on it the blueprint places rather than derives — each under the
-   * reason it was declared for, because a declaration is a claim about the ship.
-   */
   const blindWalls = $derived(
     chrome.reveal ? blindWallReasons(plan, french) : [],
   )
@@ -489,15 +392,9 @@
 <TourPageIntro {ship} />
 
 <div class="mx-auto max-w-[1600px] px-4 py-8" data-hatsu-pass>
-  <!-- Full screen is this grid over everything else, not the canvas alone:
-       everything in the column has to come with the ship, or it would be a walk
-       with no way to change deck, aim a technique or read the plan. -->
   <div
     class="grid {chrome.immersive
-      ? // Over the archive's own sticky header (80) and under its Nen dock
-        // (100), which is the one thing that has to stay reachable above the
-        // walk: full screen must not be where the aura cannot be picked up.
-        `fixed inset-0 z-[90] h-[100dvh] w-screen overflow-hidden bg-[#050505] ${
+      ? `fixed inset-0 z-[90] h-[100dvh] w-screen overflow-hidden bg-[#050505] ${
           chrome.panelOpen ? 'grid-cols-[1fr_min(22rem,50vw)]' : 'grid-cols-1'
         }`
       : 'gap-4 lg:grid-cols-[1fr_320px]'}"
@@ -546,9 +443,6 @@
       }}
     />
 
-    <!-- The way back into the panel, once it is folded. Halfway down the right
-         edge because the walk has already spoken for the corners: the eye's feed
-         is inset top right, the read-outs run along the bottom. -->
     {#if chrome.immersive && !chrome.panelOpen}
       <button
         type="button"

@@ -27,18 +27,6 @@
   import TourSceneOverlay from '$lib/components/tour/TourSceneOverlay.svelte'
   import TourSidebarNavigation from '$lib/components/tour/TourSidebarNavigation.svelte'
   import TourTargetIndex from '$lib/components/tour/TourTargetIndex.svelte'
-  import { setAmbientMuffled } from '$lib/audio/ambient'
-  import {
-    startEngine,
-    startFly,
-    startRequiem,
-    startVacuum,
-    stopEngine,
-    stopEveryHatsuLoop,
-    stopFly,
-    stopRequiem,
-    stopVacuum,
-  } from '$lib/audio/hatsuSounds'
   import { activeHatsu, enterForcedZetsu, parallelFutureVisible } from '$lib/nen/hatsuState'
   import { get } from 'svelte/store'
   import { HATSU_PROFILES, type HatsuInteractionKind } from '$lib/nen/hatsuRegistry'
@@ -54,6 +42,7 @@
   import { flashFor, type TourFlash } from '$lib/tour/apparitions'
   import { describeSpace } from '$lib/tour/describe'
   import { TourChromeState } from '$lib/tour/pageChrome.svelte'
+  import { TourHatsuAudio } from '$lib/tour/pageHatsuAudio.svelte'
   import { placeOf, type Naming } from '$lib/tour/search'
   import {
     PROVENANCE_CLASS,
@@ -113,6 +102,7 @@
 
   const ship = theShip()
   const chrome = new TourChromeState()
+  const hatsuAudio = new TourHatsuAudio()
   chrome.watch()
   type TourTargetMode = 'body' | 'solid' | 'relay' | 'space' | 'jump'
 
@@ -331,6 +321,7 @@
 
   // ── Nen ────────────────────────────────────────
   let world = $state<TourWorld>(EMPTY_WORLD)
+  hatsuAudio.watch(() => world)
 
   /**
    * The clock the ten blind seconds are read against.
@@ -474,11 +465,6 @@
    */
   const selfCastable = $derived(worksOnTheBody(technique) && aimsAtSolids(technique))
 
-  /** Sight is the scene's business; hearing is the archive's ambience. */
-  $effect(() => {
-    setAmbientMuffled(world.sealed >= 2)
-  })
-
   /**
    * The four techniques that make a noise for as long as they are up.
    *
@@ -489,23 +475,6 @@
    * hoover appears at the visitor's side — so what is heard and what is on
    * screen can never disagree.
    */
-  $effect(() => {
-    if (world.holding === 'vacuum') startVacuum()
-    else stopVacuum()
-  })
-  $effect(() => {
-    if (world.body.riding) startEngine()
-    else stopEngine()
-  })
-  $effect(() => {
-    if (world.eye) startFly()
-    else stopFly()
-  })
-  $effect(() => {
-    if (world.devouring.length) startRequiem()
-    else stopRequiem()
-  })
-
   // Dropping the aura hands the ship back; swapping one technique for another
   // does not. Air Blow exists to blow off what *another* technique put on a
   // room and Blinky refuses to swallow what Nen is holding — both of which
@@ -622,10 +591,7 @@
 
   onDestroy(() => {
     unsubFuture()
-    setAmbientMuffled(false)
-    // Leaving the walk stops the walk's noises. An engine that kept running on
-    // the sources page would be the archive talking over itself.
-    stopEveryHatsuLoop()
+    hatsuAudio.dispose()
   })
 
   function castOn(

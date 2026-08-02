@@ -23,23 +23,6 @@
   import TourScene from '$lib/components/tour/TourScene.svelte'
   import { setAmbientMuffled } from '$lib/audio/ambient'
   import {
-    blowAGust,
-    fireABurst,
-    foldPaper,
-    crackAWhip,
-    grindThroughSpace,
-    hissLikeASnake,
-    hootAnOwl,
-    landAPunch,
-    loostAnArrow,
-    openAWormhole,
-    playATune,
-    chirpTheFlock,
-    crushLikeACat,
-    roarLikeADragon,
-    raiseTheSun,
-    selectACard,
-    skipThroughTime,
     startEngine,
     startFly,
     startRequiem,
@@ -49,10 +32,6 @@
     stopFly,
     stopRequiem,
     stopVacuum,
-    stretchTheGum,
-    strikeAGong,
-    unspoolWire,
-    wakeTheMachine,
   } from '$lib/audio/hatsuSounds'
   import { activeHatsu, enterForcedZetsu, parallelFutureVisible } from '$lib/nen/hatsuState'
   import { get } from 'svelte/store'
@@ -78,11 +57,13 @@
   import { Fullscreen } from '$lib/tour/fullscreen.svelte'
   import { placeOf, type Naming } from '$lib/tour/search'
   import {
+    PROVENANCE_CLASS,
     localizedName,
     localizedSource,
     provenanceClass,
     shipLength as measureShipLength,
   } from '$lib/tour/pagePresentation'
+  import { playTourReportSound } from '$lib/tour/reportSound'
   import {
     EMPTY_WORLD,
     aimsAtSolids,
@@ -437,134 +418,7 @@
   function show(shown: TourReport) {
     const seen = flashFor({ report: shown, from: position }, ship, world)
     if (seen) flash = { ...seen, seq: ++flashes }
-    sound(shown)
-  }
-
-  /**
-   * And whatever it has to be heard as.
-   *
-   * Nineteen of the techniques have a sound of their own, in
-   * `$lib/audio/hatsuSounds`; the rest are silent and should be, because a walk
-   * where every cast made a noise would be a slot machine. The switch is on the
-   * report rather than on the technique for the reason the flash is: a cast that
-   * came up empty is a different event from one that landed, and the ear is
-   * better than the read-out at telling a visitor which of the two happened.
-   */
-  function sound(shown: TourReport) {
-    switch (shown.kind) {
-      // Snake Arm.
-      case 'bound':
-        return hissLikeASnake()
-      // The Dowsing Chain, used as what it is: a weight on the end of a chain.
-      case 'lashed':
-        return crackAWhip()
-      // Secret Window. Twenty seconds up, and the bird says so on its way out.
-      case 'owl-attached':
-      case 'owl-recalled':
-      case 'owl-expired':
-        return hootAnOwl()
-      // Cross Game, and Culdcept, which is the other technique made of cards.
-      case 'card-blue':
-        return selectACard(1)
-      case 'card-yellow':
-        return selectACard(2)
-      case 'card-red':
-        return selectACard(3)
-      case 'carded':
-      case 'acquisition-failed':
-        return selectACard(1)
-      // Magical Worm: both mouths are the same hole being cut.
-      case 'worm-set':
-      case 'worm-open':
-      case 'worm-crossed':
-        return openAWormhole()
-      // Chrollo's teleport.
-      case 'teleported':
-        return skipThroughTime()
-      // Surveillance Paper Dolls.
-      case 'watching':
-        return foldPaper()
-      // Air Blow.
-      case 'stripped':
-        return blowAGust()
-      // Black Voice.
-      case 'puppeted':
-      case 'puppet-released':
-      case 'autopilot-started':
-        return unspoolWire()
-      // Order Stamp: the seal coming down, the lock turning on a head that
-      // already wears one, and the puppets moving when they are finally told.
-      // An order with nothing locked is deliberately silent — it is spoken to
-      // nobody, and nobody is what it sounds like.
-      case 'stamped':
-        return strikeAGong(1)
-      case 'stamp-locked':
-        return selectACard(shown.locked ? 2 : 1)
-      case 'ordered':
-        return wakeTheMachine()
-      // The Sun and Moon.
-      case 'marked':
-        return openAWormhole() // TODO: specialized sound
-      case 'detonated':
-        return strikeAGong(3) // TODO: specialized explosion sound
-      // Remote Punch, whether it found something or bare deck.
-      case 'came-up-under':
-      case 'came-up-empty':
-        return landAPunch()
-      // Rising Sun, at whatever radius the wrapping had taken.
-      case 'sun-risen':
-        return raiseTheSun(shown.metres)
-      // Grimmel the Dissonance.
-      case 'souls-swapped':
-      case 'arrow-drawn':
-        return loostAnArrow()
-      // Nen Stitches. The thread is thrown on the same click, so this is also
-      // the sound of the swing the scene is about to take.
-      case 'stitched':
-      case 'nothing-to-stitch':
-        return unspoolWire()
-      // Double Machine Gun.
-      case 'volley':
-        return fireABurst(shown.hits)
-      // Three Monkeys: one gong per seal, and one for lifting all three.
-      case 'sealed':
-        return strikeAGong(shown.stage)
-      // Bungee Gum, all five of its uses: the strand, the pull, the trap laid,
-      // the trap sprung, and the two it works on the visitor themselves.
-      case 'gum-set':
-      case 'gum-pulled':
-      case 'gum-trap-set':
-      case 'gum-rebound':
-      case 'gum-propulsion':
-      case 'gum-healed':
-        return stretchTheGum()
-      // Spatial Teleportation, which grinds one way going and the other coming.
-      case 'phasing':
-        return grindThroughSpace(shown.on)
-      // Biohazard.
-      case 'animated':
-        return wakeTheMachine()
-      // Enchanting Music, which is the one technique in the walk whose whole
-      // substance is a sound: the air is played whether it is being put on the
-      // room or taken back off it, because both are the flute being played.
-      case 'tune-played':
-        return playATune(shown.tune)
-      // The Guardian Spirit Beasts that have a voice. Not all of them do: a
-      // jellyfish over a room and a wheel turning in one are silent in the
-      // source and are silent here, and inventing a noise for them would be
-      // the walk making something up.
-      case 'crushed-one':
-        return crushLikeACat()
-      case 'flock-loosed':
-        return chirpTheFlock()
-      // Marayam's roars at somebody trying the door — the scene answers that
-      // one, because the door is a keypress rather than a cast — and it roars
-      // once on arriving, which is this.
-      case 'isolated':
-        return roarLikeADragon()
-      default:
-        return
-    }
+    playTourReportSound(shown)
   }
   let aimedAt = $state<Space | null>(null)
   let aimedSolidAt = $state<Structure | null>(null)

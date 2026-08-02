@@ -11,7 +11,7 @@ export interface LocalizedSource {
   sourceFr: string
 }
 
-const PROVENANCE_CLASS: Record<Provenance, string> = {
+export const PROVENANCE_CLASS: Record<Provenance, string> = {
   panel: 'border-[#FFD700]/60 bg-[#FFD700]/10 text-[#FFD700]',
   plan: 'border-[#FFFFF0]/30 bg-[#FFFFF0]/5 text-[#FFFFF0]/80',
   map: 'border-[#5f8f6a] bg-[#5f8f6a]/20 text-[#8fd0a0]',

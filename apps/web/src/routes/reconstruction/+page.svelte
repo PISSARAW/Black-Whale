@@ -2,6 +2,8 @@
   /* eslint-disable max-lines -- The route keeps its state machine, three coordinated panes and responsive shell together. */
   import type { PageData } from './$types'
   import { onDestroy } from 'svelte'
+  import { goto } from '$app/navigation'
+  import { page } from '$app/stores'
   import { createEmptyWorld, reduceWorld } from '@black-whale/world-engine'
   import type { StoryCursor, WorldEvent } from '@black-whale/world-engine'
   import Seo from '$lib/components/Seo.svelte'
@@ -17,6 +19,7 @@
   import { displayName } from '$lib/utils/displayNames'
   import { claimLevel, evidenceForEvent } from '$lib/reconstruction/evidence'
   import { visibleInPerspective, type PerspectiveProjection } from '$lib/reconstruction/perspective'
+  import { readReconstructionUrl, writeReconstructionUrl } from '$lib/reconstruction/urlState'
   import type { Space, Vec2 } from '$lib/tour/types'
 
   let { data }: { data: PageData } = $props()
@@ -67,6 +70,7 @@
   let perspective = $state<PerspectiveProjection | null>(null)
   let perspectiveLoading = $state(false)
   let perspectiveError = $state(false)
+  let urlHydrated = $state(false)
 
   type DisplayPresence = {
     entityId: string
@@ -219,6 +223,46 @@
     return indexes
   })
   let activeTechnique = $derived($activeHatsu ? localizeHatsu($activeHatsu, $locale) : null)
+
+  $effect(() => {
+    if (urlHydrated) return
+    const requested = readReconstructionUrl($page.url.searchParams)
+    const eventIndex = chronologicalEvents.findIndex(
+      (entry) => entry.event.id === requested.eventId,
+    )
+    if (eventIndex >= 0) currentIndex = eventIndex
+    viewMode = requested.view
+    followedBodyId = requested.follow
+    changeFilter = requested.changesOnly ? 'changed' : 'all'
+    if (['all', 'CONFIRMED', 'PROBABLE', 'LAST_KNOWN'].includes(requested.certainty)) {
+      certaintyFilter = requested.certainty as typeof certaintyFilter
+    }
+    if (
+      requested.observer === 'canon' ||
+      perspectiveCharacters.some((character) => character.id === requested.observer)
+    ) {
+      perspectiveCharacterId = requested.observer
+    }
+    urlHydrated = true
+  })
+
+  $effect(() => {
+    if (!urlHydrated) return
+    const query = writeReconstructionUrl({
+      eventId: selectedEvent?.event.id ?? null,
+      view: viewMode,
+      follow: followedBodyId,
+      changesOnly: changeFilter === 'changed',
+      certainty: certaintyFilter,
+      observer: perspectiveCharacterId,
+    })
+    if ($page.url.search.slice(1) === query) return
+    void goto(`${$page.url.pathname}${query ? `?${query}` : ''}`, {
+      replaceState: true,
+      keepFocus: true,
+      noScroll: true,
+    })
+  })
 
   $effect(() => {
     const observer = perspectiveCharacterId

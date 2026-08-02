@@ -1,5 +1,6 @@
 <script lang="ts">
   import BlackWhaleOverview from '$lib/assets/maps/black-whale-overview.svelte'
+  import { trajectoryPath } from '$lib/reconstruction/trajectory'
 
   type ReconstructionMarker = {
     id: string
@@ -11,6 +12,7 @@
     active: boolean
     change: 'arrived' | 'moved' | 'departed' | 'unchanged'
     previousLocationLabel: string | null
+    previousTierId: string | null
   }
 
   // Kept in the overview's own coordinate system. The section-map tests guard
@@ -87,10 +89,25 @@
       return { ...marker, x, y }
     })
   })
+  let trajectories = $derived(
+    positioned.flatMap((marker) => {
+      if (marker.change !== 'moved' || !marker.previousTierId) return []
+      const from = {
+        x: (tierOverviewSpan[marker.previousTierId] ?? [12, 78]).reduce((a, b) => a + b) / 2,
+        y: tierOverviewY[marker.previousTierId] ?? 46,
+      }
+      return [{ id: marker.id, path: trajectoryPath(from, marker), label: marker.label }]
+    }),
+  )
 </script>
 
 <div class="overview" data-hatsu-scope="reconstruction">
   <div class="map"><BlackWhaleOverview /></div>
+  <svg class="trajectories" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+    {#each trajectories as trajectory (trajectory.id)}
+      <path d={trajectory.path} pathLength="1" />
+    {/each}
+  </svg>
   <div class="markers">
     {#each positioned as marker (marker.id)}
       <button
@@ -130,9 +147,37 @@
   }
 
   .map,
+  .trajectories,
   .markers {
     position: absolute;
     inset: 0;
+  }
+  .trajectories {
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    pointer-events: none;
+  }
+  .trajectories path {
+    fill: none;
+    stroke: #e5c57a;
+    stroke-width: 0.35;
+    stroke-linecap: round;
+    stroke-dasharray: 0.08 0.06;
+    opacity: 0.8;
+    animation: trace-route 1.4s linear infinite;
+    vector-effect: non-scaling-stroke;
+  }
+  @keyframes trace-route {
+    to {
+      stroke-dashoffset: -0.28;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .trajectories path {
+      animation: none;
+    }
   }
 
   .map :global(svg) {

@@ -104,6 +104,7 @@
   type PresenceChange = DisplayPresence & {
     change: 'arrived' | 'moved' | 'departed' | 'unchanged'
     previousLocationLabel: string | null
+    previousTierId: string | null
   }
 
   let presenceChanges = $derived.by(() => {
@@ -118,6 +119,7 @@
         ...presence,
         change: previous ? (moved ? 'moved' : 'unchanged') : 'arrived',
         previousLocationLabel: previous?.locationLabel ?? null,
+        previousTierId: previous?.tierId ?? null,
       }
     })
     for (const previous of previousPresences) {
@@ -126,6 +128,7 @@
         ...previous,
         change: 'departed',
         previousLocationLabel: previous.locationLabel,
+        previousTierId: previous.tierId,
       })
     }
     return changes
@@ -149,6 +152,7 @@
         active: activeBodyIds.has(presence.entityId),
         change: presence.change,
         previousLocationLabel: presence.previousLocationLabel,
+        previousTierId: presence.previousTierId,
       })),
   )
   let perspectiveCharacters = $derived.by(() => {

@@ -21,18 +21,19 @@ export function updateInfiltration(
 ): InfiltrationState {
   if (state.outcome !== 'playing') return state
   const dt = world.dt
-  const challenged = expireChallenge(state, dt)
+  const challenged = advanceVerification(expireChallenge(state, dt), dt)
   const clock = challenged.clock + dt
   const diversion = challenged.diversion
     ? { ...challenged.diversion, left: Math.max(0, challenged.diversion.left - dt) }
     : null
   const moved = challenged.witnesses.map((witness) => moveWitness(challenged, witness, world))
-  const witnesses = moved.map((witness) => observe(challenged, witness, world))
+  const searched = discoverTraces({ ...challenged, witnesses: moved })
+  const witnesses = searched.witnesses.map((witness) => observe(searched, witness, world))
   const reports = witnesses.reduce((all, witness, index) => {
     if (!witness.belief.reported || challenged.witnesses[index].belief.reported) return all
     return [...all, { witnessId: witness.id, at: clock, certainty: witness.belief.certainty }]
-  }, challenged.reports)
-  const challenge = challengeFor(challenged, witnesses, dt)
+  }, searched.reports)
+  const challenge = challengeFor(searched, witnesses, dt)
   const alert = Math.min(
     100,
     witnesses.reduce((sum, witness) => {
@@ -46,8 +47,12 @@ export function updateInfiltration(
         return sum + (witness.belief.identity === 'intruder' ? witness.belief.certainty * 0.34 : 0)
       }, 0),
   )
+  const newlyDiscovered = searched.traces.reduce((count, trace, index) => {
+    const before = challenged.traces[index]?.discoveredBy?.length ?? 0
+    return count + Math.max(0, (trace.discoveredBy?.length ?? 0) - before)
+  }, 0)
   return {
-    ...challenged,
+    ...searched,
     clock,
     diversion: diversion?.left ? diversion : null,
     witnesses,
@@ -55,7 +60,66 @@ export function updateInfiltration(
     coverIntegrity,
     challenge,
     reports,
+    metrics: {
+      ...searched.metrics,
+      maxAlert: Math.max(searched.metrics.maxAlert, alert),
+      tracesDiscovered: searched.metrics.tracesDiscovered + newlyDiscovered,
+    },
     outcome: clock >= MISSION_LENGTH ? 'timeUp' : alert >= 100 ? 'identified' : state.outcome,
+  }
+}
+
+function discoverTraces(state: InfiltrationState): InfiltrationState {
+  let witnesses = state.witnesses
+  const traces = state.traces.map((trace) => {
+    const discoverers = witnesses.filter((witness) => {
+      if (witness.spaceId !== trace.spaceId || trace.discoveredBy?.includes(witness.id))
+        return false
+      return trace.kind !== 'aura' || witness.usesEn
+    })
+    if (discoverers.length === 0) return trace
+    const ids = discoverers.map((witness) => witness.id)
+    witnesses = witnesses.map((witness) => {
+      if (!ids.includes(witness.id)) return witness
+      const certainty = Math.min(100, witness.belief.certainty + trace.strength * 0.45)
+      return {
+        ...witness,
+        belief: {
+          ...witness.belief,
+          identity: 'intruder',
+          certainty,
+          lastSpaceId: trace.spaceId,
+          reported: witness.belief.reported || certainty >= REPORT_THRESHOLD,
+        },
+      }
+    })
+    return { ...trace, discoveredBy: [...(trace.discoveredBy ?? []), ...ids] }
+  })
+  return { ...state, traces, witnesses }
+}
+
+function advanceVerification(state: InfiltrationState, dt: number): InfiltrationState {
+  if (!state.verification) return state
+  if (state.verification.left > dt) {
+    return { ...state, verification: { ...state.verification, left: state.verification.left - dt } }
+  }
+  return {
+    ...state,
+    verification: null,
+    hatsu: { ...state.hatsu, forgedOrder: false },
+    witnesses: state.witnesses.map((witness) =>
+      witness.id === state.verification?.witnessId
+        ? {
+            ...witness,
+            belief: {
+              ...witness.belief,
+              identity: 'intruder',
+              certainty: Math.min(100, witness.belief.certainty + 65),
+              reported: true,
+            },
+          }
+        : witness,
+    ),
   }
 }
 
@@ -151,6 +215,8 @@ export function reconstruction(state: InfiltrationState) {
     traces: state.traces,
     identified: compromised.some((witness) => witness.belief.reported),
     reports: state.reports,
+    claims: state.claims,
+    discoveredTraces: state.traces.filter((trace) => (trace.discoveredBy?.length ?? 0) > 0).length,
     score: Math.max(
       0,
       Math.round(100 - state.alert - state.traces.reduce((n, t) => n + t.strength * 0.1, 0)),

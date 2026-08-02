@@ -12,7 +12,10 @@ const graph: NavGraph = {
   ]),
   centers: new Map(),
 }
-const witness = { position: [0, 0], spaceId: 'a' } as Witness
+const witness = { position: [0, 0] as [number, number], spaceId: 'a' } satisfies Pick<
+  Witness,
+  'position' | 'spaceId'
+>
 const player = (spaceId: string, speed: number) =>
   ({
     position: [8, 0],

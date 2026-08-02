@@ -37,6 +37,22 @@ export interface Trace {
   kind: TraceKind
   spaceId: string
   strength: number
+  discoveredBy?: WitnessId[]
+}
+
+export interface CoverClaim {
+  witnessId: WitnessId
+  answer: 'workOrder' | 'bluff'
+  at: number
+}
+
+export interface MissionMetrics {
+  distance: number
+  maxAlert: number
+  challenges: number
+  contradictions: number
+  hatsuCasts: number
+  tracesDiscovered: number
 }
 
 export interface InfiltrationState {
@@ -54,6 +70,9 @@ export interface InfiltrationState {
   alert: number
   challenge: Challenge | null
   reports: { witnessId: WitnessId; at: number; certainty: number }[]
+  claims: CoverClaim[]
+  verification: { witnessId: WitnessId; left: number } | null
+  metrics: MissionMetrics
   hatsu: {
     id: InfiltrationHatsuId
     aura: number
@@ -111,6 +130,16 @@ export function initialInfiltrationState(setup: MissionSetup): InfiltrationState
     alert: 0,
     challenge: null,
     reports: [],
+    claims: [],
+    verification: null,
+    metrics: {
+      distance: 0,
+      maxAlert: 0,
+      challenges: 0,
+      contradictions: 0,
+      hatsuCasts: 0,
+      tracesDiscovered: 0,
+    },
     hatsu: {
       id: 'little-eye',
       aura: 100,
@@ -131,6 +160,15 @@ export function infiltrationReducer(
     case 'WALKED':
       return {
         ...state,
+        metrics: {
+          ...state.metrics,
+          distance:
+            state.metrics.distance +
+            Math.hypot(
+              action.position[0] - state.player.position[0],
+              action.position[1] - state.player.position[1],
+            ),
+        },
         player: {
           ...state.player,
           position: action.position,
@@ -157,10 +195,16 @@ export function infiltrationReducer(
     case 'SELECT_HATSU':
       return selectHatsu(state, action.id)
     case 'CAST_HATSU':
-      return castHatsu(state)
+      return useHatsu(state)
     case 'EXTRACT':
       return extract(state)
   }
+}
+
+function useHatsu(state: InfiltrationState): InfiltrationState {
+  const cast = castHatsu(state)
+  if (cast === state) return state
+  return { ...cast, metrics: { ...cast.metrics, hatsuCasts: cast.metrics.hatsuCasts + 1 } }
 }
 
 function answerChallenge(
@@ -168,12 +212,19 @@ function answerChallenge(
   answer: 'workOrder' | 'bluff',
 ): InfiltrationState {
   if (!state.challenge) return state
+  const prior = state.claims.at(-1)
+  const contradiction = !!prior && prior.answer !== answer
+  const verification =
+    state.hatsu.forgedOrder && answer === 'workOrder'
+      ? { witnessId: state.challenge.witnessId, left: 15 }
+      : state.verification
   const witnesses = state.witnesses.map((witness) => {
     if (witness.id !== state.challenge?.witnessId) return witness
     const correct =
-      state.hatsu.forgedOrder && answer === 'workOrder'
+      !contradiction &&
+      (state.hatsu.forgedOrder && answer === 'workOrder'
         ? true
-        : answer === (witness.usesEn ? 'bluff' : 'workOrder')
+        : answer === (witness.usesEn ? 'bluff' : 'workOrder'))
     return {
       ...witness,
       challenged: true,
@@ -186,7 +237,18 @@ function answerChallenge(
       },
     }
   })
-  return { ...state, witnesses, challenge: null }
+  return {
+    ...state,
+    witnesses,
+    challenge: null,
+    verification,
+    claims: [...state.claims, { witnessId: state.challenge.witnessId, answer, at: state.clock }],
+    metrics: {
+      ...state.metrics,
+      challenges: state.metrics.challenges + 1,
+      contradictions: state.metrics.contradictions + (contradiction ? 1 : 0),
+    },
+  }
 }
 
 function copyDocument(state: InfiltrationState): InfiltrationState {

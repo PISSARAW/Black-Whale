@@ -5,7 +5,7 @@ const DOOR_ATTENUATION = 0.48
 const MAX_DOORS = 2
 
 export function hearingStrength(
-  witness: Witness,
+  witness: Pick<Witness, 'position' | 'spaceId'>,
   player: InfiltrationState['player'],
   graph: NavGraph,
 ): number {

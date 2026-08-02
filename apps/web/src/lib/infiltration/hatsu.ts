@@ -38,7 +38,7 @@ export const INFILTRATION_HATSU: InfiltrationHatsu[] = [
 
 function fromProfile(
   profile: HatsuProfile,
-  config: Omit<InfiltrationHatsu, 'id' | 'name'>,
+  config: Omit<InfiltrationHatsu, 'id' | 'name' | 'rule'>,
 ): InfiltrationHatsu {
   return {
     id: profile.id as InfiltrationHatsuId,

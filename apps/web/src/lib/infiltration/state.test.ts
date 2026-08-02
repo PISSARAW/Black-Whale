@@ -76,7 +76,8 @@ describe('infiltration', () => {
     })
     state = infiltrationReducer(state, { type: 'DIVERT' })
     state = updateInfiltration(state, world(5))
-    expect(state.witnesses[0].belief.certainty).toBe(0)
+    expect(state.witnesses[0].belief.lastSpaceId).toBe('office')
+    expect(state.traces[0].discoveredBy).toContain('guard')
   })
 
   it('extracts with a reconstruction rather than erasing traces', () => {
@@ -153,5 +154,26 @@ describe('infiltration', () => {
     state = infiltrationReducer(state, { type: 'ANSWER', answer: 'workOrder' })
     expect(state.witnesses[0].belief.identity).toBe('maintenance')
     expect(state.traces[0].kind).toBe('forgery')
+  })
+
+  it('turns contradictory cover stories into evidence', () => {
+    let state = initialInfiltrationState(setup)
+    state.challenge = { witnessId: 'guard', left: 5 }
+    state = infiltrationReducer(state, { type: 'ANSWER', answer: 'workOrder' })
+    state.challenge = { witnessId: 'guard', left: 5 }
+    state = infiltrationReducer(state, { type: 'ANSWER', answer: 'bluff' })
+    expect(state.claims).toHaveLength(2)
+    expect(state.witnesses[0].belief.identity).toBe('intruder')
+  })
+
+  it('reveals a forged order when its delayed verification completes', () => {
+    let state = initialInfiltrationState(setup)
+    state = infiltrationReducer(state, { type: 'SELECT_HATSU', id: 'texture-surprise' })
+    state = infiltrationReducer(state, { type: 'CAST_HATSU' })
+    state.challenge = { witnessId: 'guard', left: 5 }
+    state = infiltrationReducer(state, { type: 'ANSWER', answer: 'workOrder' })
+    state = updateInfiltration(state, world(16))
+    expect(state.verification).toBeNull()
+    expect(state.witnesses[0].belief.reported).toBe(true)
   })
 })

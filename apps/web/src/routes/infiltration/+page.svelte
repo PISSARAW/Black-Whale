@@ -19,6 +19,7 @@
   } from '$lib/infiltration/state'
   import { INFILTRATION_DT, reconstruction, updateInfiltration } from '$lib/infiltration/loop'
   import { INFILTRATION_HATSU, planHatsu } from '$lib/infiltration/hatsu'
+  import { evaluateRun } from '$lib/infiltration/balance'
 
   const ship = theShip()
   const arena = buildArena()
@@ -70,6 +71,7 @@
   let canExtract = $derived(currentSpace?.id === extraction.id && game.documentCopied)
   let report = $derived(reconstruction(game))
   let hatsuPlan = $derived(planHatsu(game))
+  let balance = $derived(evaluateRun(game))
 
   const colours: Record<WitnessId, number> = {
     steward: 0x58a6ff,
@@ -106,7 +108,25 @@
   }
 
   function onKeyDown(event: KeyboardEvent) {
-    if (briefing || finished || event.repeat) return
+    if (finished || event.repeat) return
+    if (game.challenge && event.code === 'Digit1') {
+      send({ type: 'ANSWER', answer: 'workOrder' })
+      event.preventDefault()
+      return
+    } else if (game.challenge && event.code === 'Digit2') {
+      send({ type: 'ANSWER', answer: 'bluff' })
+      event.preventDefault()
+      return
+    } else if (briefing && ['Digit1', 'Digit2', 'Digit3'].includes(event.code)) {
+      const ability = INFILTRATION_HATSU[Number(event.code.at(-1)) - 1]
+      if (ability) send({ type: 'SELECT_HATSU', id: ability.id })
+      event.preventDefault()
+      return
+    } else if (briefing && event.code === 'Enter') {
+      briefing = false
+      event.preventDefault()
+      return
+    } else if (briefing) return
     if (event.code === 'KeyX') send({ type: 'ZETSU' })
     else if (event.code === 'KeyV') send({ type: 'DIVERT' })
     else if (event.code === 'KeyF') act()
@@ -148,12 +168,19 @@
 
   onMount(() => {
     window.addEventListener('keydown', onKeyDown)
+    document.addEventListener('visibilitychange', resetClock)
     frame = requestAnimationFrame(tick)
   })
   onDestroy(() => {
     window.removeEventListener('keydown', onKeyDown)
+    document.removeEventListener('visibilitychange', resetClock)
     cancelAnimationFrame(frame)
   })
+
+  function resetClock() {
+    last = 0
+    owed = 0
+  }
 </script>
 
 <Seo
@@ -166,6 +193,11 @@
 />
 
 <div class="relative h-screen w-full overflow-hidden bg-black text-white">
+  <p class="sr-only" aria-live="polite">
+    {$t.infiltration.alert}
+    {Math.round(game.alert)}%. {$t.infiltration.integrity}
+    {Math.round(game.coverIntegrity)}%.
+  </p>
   <TourScene
     {ship}
     bind:tierId
@@ -233,16 +265,19 @@
         >{/if}
       <button
         onclick={() => send({ type: 'ZETSU' })}
+        aria-keyshortcuts="X"
         class="rounded border border-white/25 bg-black/90 px-3 py-2 text-xs">X · Ten/Zetsu</button
       >
       <button
         onclick={() => send({ type: 'DIVERT' })}
+        aria-keyshortcuts="V"
         disabled={!!game.diversion}
         class="rounded border border-white/25 bg-black/90 px-3 py-2 text-xs disabled:opacity-30"
         >V · {$t.infiltration.divert}</button
       >
       <button
         onclick={() => send({ type: 'CAST_HATSU' })}
+        aria-keyshortcuts="H"
         disabled={!hatsuPlan.available}
         title={hatsuPlan.conditions
           .filter((condition) => !condition.met)
@@ -254,12 +289,17 @@
     </div>
 
     {#if game.challenge}
-      <div class="absolute inset-0 grid place-items-center bg-black/55 p-6">
+      <div
+        class="absolute inset-0 grid place-items-center bg-black/55 p-6"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="cover-check-title"
+      >
         <section class="w-full max-w-md border border-amber-300/40 bg-black/95 p-6 shadow-2xl">
           <p class="text-xs uppercase tracking-[.25em] text-amber-300">
             {$t.infiltration.challenge}
           </p>
-          <h2 class="mt-2 text-2xl font-bold">
+          <h2 id="cover-check-title" class="mt-2 text-2xl font-bold">
             {$t.infiltration.witnesses[game.challenge.witnessId]}
           </h2>
           <p class="mt-3 text-sm leading-relaxed text-white/65">
@@ -268,11 +308,13 @@
           <p class="mt-2 text-xs text-white/40">{Math.ceil(game.challenge.left)} s</p>
           <div class="mt-6 grid gap-2">
             <button
+              aria-keyshortcuts="1"
               onclick={() => send({ type: 'ANSWER', answer: 'workOrder' })}
               class="border border-white/25 px-4 py-3 text-left text-sm hover:border-amber-300"
               >{$t.infiltration.workOrder}</button
             >
             <button
+              aria-keyshortcuts="2"
               onclick={() => send({ type: 'ANSWER', answer: 'bluff' })}
               class="border border-white/25 px-4 py-3 text-left text-sm hover:border-amber-300"
               >{$t.infiltration.bluff}</button
@@ -284,10 +326,15 @@
   {/if}
 
   {#if briefing}
-    <div class="absolute inset-0 grid place-items-center bg-black/90 p-6">
+    <div
+      class="absolute inset-0 grid place-items-center bg-black/90 p-6"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="mission-title"
+    >
       <article class="max-w-xl border border-amber-300/30 bg-[#0b0b0b] p-8">
         <p class="text-xs uppercase tracking-[.3em] text-amber-300">{$t.infiltration.briefing}</p>
-        <h1 class="mt-3 text-4xl font-black">{$t.infiltration.title}</h1>
+        <h1 id="mission-title" class="mt-3 text-4xl font-black">{$t.infiltration.title}</h1>
         <p class="mt-5 leading-relaxed text-white/70">{$t.infiltration.intro}</p>
         <ul class="mt-5 space-y-2 text-sm text-white/75">
           <li>• {$t.infiltration.taskCopy}</li>
@@ -301,6 +348,7 @@
           {#each INFILTRATION_HATSU as ability (ability.id)}
             <button
               onclick={() => send({ type: 'SELECT_HATSU', id: ability.id })}
+              aria-pressed={game.hatsu.id === ability.id}
               class="border p-3 text-left text-xs {game.hatsu.id === ability.id
                 ? 'border-fuchsia-300 bg-fuchsia-300/10'
                 : 'border-white/15'}"
@@ -315,6 +363,7 @@
         </div>
         <button
           onclick={() => (briefing = false)}
+          aria-keyshortcuts="Enter"
           class="mt-8 bg-amber-300 px-6 py-3 text-sm font-bold text-black"
           >{$t.infiltration.begin}</button
         >
@@ -333,6 +382,11 @@
         </p>
         <p class="mt-2 text-sm text-white/45">
           {$t.infiltration.reports}: {report.reports.length}
+        </p>
+        <p class="mt-2 text-sm text-white/45">
+          {$t.infiltration.discoveredTraces}: {report.discoveredTraces} · {$t.infiltration
+            .runStyle}:
+          {$t.infiltration.styles[balance.style]}
         </p>
         <div class="mt-8 grid gap-3 sm:grid-cols-3">
           {#each report.witnesses as witness (witness.id)}<section

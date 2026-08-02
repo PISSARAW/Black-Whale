@@ -19,6 +19,7 @@
   import TourFinder from '$lib/components/tour/TourFinder.svelte'
   import TourHatsuHud from '$lib/components/tour/TourHatsuHud.svelte'
   import TourMinimap from '$lib/components/tour/TourMinimap.svelte'
+  import TourPageHeader from '$lib/components/tour/TourPageHeader.svelte'
   import TourScene from '$lib/components/tour/TourScene.svelte'
   import { setAmbientMuffled } from '$lib/audio/ambient'
   import {
@@ -1276,27 +1277,18 @@
 />
 
 <div class="mx-auto max-w-[1600px] px-4 py-8" data-hatsu-pass>
-  <header class="mb-6">
-    <h1 class="text-3xl font-bold tracking-tight text-[#FFFFF0] sm:text-4xl">{$t.tour.title}</h1>
-    <p class="mt-2 max-w-3xl text-sm leading-relaxed text-[#FFFFF0]/70">{$t.tour.intro}</p>
-    <p class="mt-2 text-xs uppercase tracking-widest text-[#FFD700]/70">
-      {$t.tour.counts(
-        ship.blueprint.spaces.length,
-        ship.decks.length,
-        ship.tiers.length - ship.decks.length,
-      )} · {$t.tour.scale(shipLength)}
-    </p>
-    <!-- The one room of the reconstruction you sit down in rather than walk
-         through, which is the only reason it is a page of its own. -->
-    <p class="mt-3">
-      <a
-        href={$link('/tour/morena')}
-        class="text-sm text-[#d94f68] underline underline-offset-2 transition-colors hover:text-[#e8697f]"
-      >
-        {$t.tour.morena.title} →
-      </a>
-    </p>
-  </header>
+  <TourPageHeader
+    title={$t.tour.title}
+    intro={$t.tour.intro}
+    counts={$t.tour.counts(
+      ship.blueprint.spaces.length,
+      ship.decks.length,
+      ship.tiers.length - ship.decks.length,
+    )}
+    scale={$t.tour.scale(shipLength)}
+    morenaTitle={$t.tour.morena.title}
+    morenaHref={$link('/tour/morena')}
+  />
 
   <!-- Full screen is this grid over everything else, not the canvas alone:
        everything in the column has to come with the ship, or it would be a walk

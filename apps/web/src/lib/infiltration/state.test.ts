@@ -35,6 +35,7 @@ const graph: NavGraph = {
   ]),
 }
 const arena: Arena = {
+  id: 'tserriednich',
   tierId: 'test',
   spaces: [],
   walls: [],

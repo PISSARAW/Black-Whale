@@ -1,5 +1,6 @@
 import { hatsuById, type HatsuProfile } from '../nen/hatsuRegistry'
 import type { InfiltrationState } from './state'
+import { createTrace } from './traces'
 
 export type InfiltrationHatsuId = 'little-eye' | 'texture-surprise' | 'illumi-needle-people'
 export type HatsuRole = 'scout' | 'forge' | 'disguise'
@@ -81,7 +82,7 @@ export function castHatsu(state: InfiltrationState): InfiltrationState {
       hatsu: { ...hatsu, forgedOrder: true },
       traces: [
         ...state.traces,
-        { kind: 'forgery', spaceId: state.player.spaceId ?? state.extractionSpaceId, strength: 28 },
+        createTrace({ kind: 'forgery', spaceId: state.player.spaceId ?? state.extractionSpaceId, position: state.player.position, at: state.clock, strength: 28, duration: 300, allegedAuthor: 'maintenance' }),
       ],
     }
   }
@@ -90,7 +91,7 @@ export function castHatsu(state: InfiltrationState): InfiltrationState {
     hatsu: { ...hatsu, activeUntil: state.clock + 75 },
     traces: [
       ...state.traces,
-      { kind: 'aura', spaceId: state.player.spaceId ?? state.extractionSpaceId, strength: 38 },
+      createTrace({ kind: 'aura', spaceId: state.player.spaceId ?? state.extractionSpaceId, position: state.player.position, at: state.clock, strength: 38, duration: 90 }),
     ],
   }
 }

@@ -4,6 +4,7 @@
   import TourScene from '$lib/components/tour/TourScene.svelte'
   import TourModeFullscreen from '$lib/components/tour/TourModeFullscreen.svelte'
   import { buildArena } from '$lib/hunt/arena'
+  import { explorationNen } from '$lib/nen/tourAdapters'
   import { buildNavGraph } from '$lib/hunt/navmesh'
   import { floorOf, theShip } from '$lib/tour/blueprint'
   import { centroid, EMPTY_WORLD } from '$lib/tour/hatsu'
@@ -21,34 +22,47 @@
   import { INFILTRATION_DT, reconstruction, updateInfiltration } from '$lib/infiltration/loop'
   import { INFILTRATION_HATSU, planHatsu } from '$lib/infiltration/hatsu'
   import { evaluateRun } from '$lib/infiltration/balance'
+  import { MISSIONS, selectMission } from '$lib/infiltration/missions/definitions'
+  import { seedFromText } from '$lib/infiltration/missions/random'
+  import type { MissionId } from '$lib/infiltration/missions/types'
+  import { decodeSave, encodeSave } from '$lib/infiltration/persistence'
+  import { causalTimeline, debriefAxes } from '$lib/infiltration/debrief'
 
   const ship = theShip()
   const arena = buildArena()
   const graph = buildNavGraph(arena)
   const plan = ship.plans.get(arena.tierId)!
   const extraction = arena.spaces[0]
-  const objective = arena.spaces.at(-1)!
-  const posts = [arena.spaces[2], arena.spaces[4], objective]
-  const witnessIds: WitnessId[] = ['steward', 'guard', 'nenGuard']
+  const defaultSeed = seedFromText('black-whale-v2')
+  let selectedMission = $state<MissionId>('missing-report')
 
   const roomName = (space: Space | undefined | null) =>
     space ? ($locale === 'fr' ? space.nameFr : space.name) : '—'
 
   function freshGame() {
+    const selection = selectMission(selectedMission, defaultSeed)
+    const objective = arena.spaces[selection.variant.objectiveIndex]
     return initialInfiltrationState({
       playerAt: { position: interiorPoint(extraction.footprint), spaceId: extraction.id },
       objectiveSpaceId: objective.id,
       extractionSpaceId: extraction.id,
-      witnesses: posts.map((space, index) => ({
-        id: witnessIds[index],
+      selection,
+      witnesses: selection.definition.witnesses.map((definition, index) => {
+        const space = arena.spaces[definition.spaceIndex]
+        const neighbours = graph.edges.get(space.id) ?? []
+        const rotated = neighbours.map((_, routeIndex) =>
+          neighbours[(routeIndex + selection.variant.routeOffset) % neighbours.length],
+        )
+        return {
+        id: definition.id,
         position: centroid(space),
         heading: index % 2 === 0 ? 0 : Math.PI,
         spaceId: space.id,
-        sight: index === 2 ? 11 : 8,
-        social: index !== 1,
-        usesEn: index === 2,
-        route: [space.id, ...(graph.edges.get(space.id) ?? [])],
-      })),
+        sight: definition.sight,
+        social: definition.social,
+        usesEn: definition.usesEn,
+        route: [space.id, ...rotated],
+      }}),
     })
   }
 
@@ -63,8 +77,10 @@
   let frame = 0
   let owed = 0
   let last = 0
+  let autosave: ReturnType<typeof setInterval> | undefined
 
   let finished = $derived(game.outcome !== 'playing')
+  let objective = $derived(arena.spaces.find((space) => space.id === game.objectiveSpaceId)!)
   let canCopy = $derived(currentSpace?.id === objective.id && !game.documentCopied)
   let canVerify = $derived(
     currentSpace?.id === objective.id && game.documentCopied && !game.authorConfirmed,
@@ -73,6 +89,8 @@
   let report = $derived(reconstruction(game))
   let hatsuPlan = $derived(planHatsu(game))
   let balance = $derived(evaluateRun(game))
+  let verdict = $derived(debriefAxes(game))
+  let timeline = $derived(causalTimeline(game))
 
   const colours: Record<WitnessId, number> = {
     steward: 0x58a6ff,
@@ -175,12 +193,32 @@
     last = 0
   }
 
+  function chooseMission(id: MissionId) {
+    selectedMission = id
+    game = freshGame()
+    position = game.player.position
+    currentSpace = extraction
+    resetClock()
+  }
+
   onMount(() => {
+    const saved = decodeSave(localStorage.getItem('black-whale:infiltration:v2') ?? '')
+    if (saved?.state.outcome === 'playing') {
+      game = saved.state
+      selectedMission = saved.state.mission.id
+      position = saved.state.player.position
+      currentSpace = arena.spaces.find((space) => space.id === saved.state.player.spaceId) ?? extraction
+    }
+    autosave = setInterval(() => {
+      if (game.outcome === 'playing' && !briefing)
+        localStorage.setItem('black-whale:infiltration:v2', encodeSave(game))
+    }, 3000)
     window.addEventListener('keydown', onKeyDown)
     document.addEventListener('visibilitychange', resetClock)
     frame = requestAnimationFrame(tick)
   })
   onDestroy(() => {
+    if (autosave) clearInterval(autosave)
     if (typeof window === 'undefined') return
     window.removeEventListener('keydown', onKeyDown)
     document.removeEventListener('visibilitychange', resetClock)
@@ -217,6 +255,8 @@
     bind:currentSpace
     bind:engaged
     world={EMPTY_WORLD}
+    nen={explorationNen(game.player.nen)}
+    showNenControls={false}
     extras={figures}
     touchLabels={{ move: $t.tour.touch.move, cast: $t.tour.touch.cast }}
     soundLabels={{ silence: $t.tour.sound.silence, restore: $t.tour.sound.restore }}
@@ -251,6 +291,9 @@
         <strong class={game.documentCopied ? 'text-emerald-300' : 'text-white'}
           >{game.documentCopied ? $t.infiltration.copied : roomName(objective)}</strong
         >
+      </p>
+      <p class="mt-1 text-xs text-white/45">
+        {game.alertLevel.toUpperCase()} · {game.mission.variantId} · seed {game.mission.seed}
       </p>
       <p class="mt-1 text-xs text-white/65">
         Nen: <strong>{game.player.nen === 'zetsu' ? 'Zetsu' : 'Ten'}</strong>
@@ -347,10 +390,29 @@
         <p class="text-xs uppercase tracking-[.3em] text-amber-300">{$t.infiltration.briefing}</p>
         <h1 id="mission-title" class="mt-3 text-4xl font-black">{$t.infiltration.title}</h1>
         <p class="mt-5 leading-relaxed text-white/70">{$t.infiltration.intro}</p>
+        <p class="mt-6 text-xs uppercase tracking-[.2em] text-amber-300">
+          {$t.infiltration.chooseMission}
+        </p>
+        <div class="mt-3 grid gap-2 sm:grid-cols-3">
+          {#each Object.values(MISSIONS) as mission (mission.id)}
+            <button
+              onclick={() => chooseMission(mission.id)}
+              aria-pressed={selectedMission === mission.id}
+              class="border p-3 text-left text-xs {selectedMission === mission.id
+                ? 'border-amber-300 bg-amber-300/10'
+                : 'border-white/15'}"
+            >
+              <strong class="block text-white">{$t.infiltration.missions[mission.id].name}</strong>
+              <span class="mt-1 block leading-snug text-white/45"
+                >{$t.infiltration.missions[mission.id].goal}</span
+              >
+            </button>
+          {/each}
+        </div>
         <ul class="mt-5 space-y-2 text-sm text-white/75">
-          <li>• {$t.infiltration.taskCopy}</li>
-          <li>• {$t.infiltration.taskVerify}</li>
-          <li>• {$t.infiltration.taskLeave}</li>
+          {#each game.objectives as missionObjective (missionObjective.id)}
+            <li>• {$t.infiltration.objectiveLabels[missionObjective.kind]}</li>
+          {/each}
         </ul>
         <p class="mt-6 text-xs uppercase tracking-[.2em] text-fuchsia-300">
           {$t.infiltration.chooseHatsu}
@@ -391,6 +453,21 @@
           {$t.infiltration.score}: {report.score}/100 · {$t.infiltration.traces}: {report.traces
             .length}
         </p>
+        <p class="mt-2 text-sm text-white/45">
+          {game.mission.id} · {game.mission.variantId} · seed {game.mission.seed} · {game.alertLevel}
+        </p>
+        <div class="mt-6 grid grid-cols-3 gap-2 text-xs">
+          <p class="border border-white/15 p-3">Objectif<br /><strong>{verdict.material}</strong></p>
+          <p class="border border-white/15 p-3">Information<br /><strong>{verdict.information}</strong></p>
+          <p class="border border-white/15 p-3">Couverture<br /><strong>{verdict.cover}</strong></p>
+        </div>
+        {#if timeline.length > 0}
+          <ol class="mt-6 max-h-40 space-y-1 overflow-y-auto text-xs text-white/55">
+            {#each timeline as event}
+              <li>{event.at.toFixed(1)}s · {event.actor} · {event.detail}</li>
+            {/each}
+          </ol>
+        {/if}
         <p class="mt-2 text-sm text-white/45">
           {$t.infiltration.reports}: {report.reports.length}
         </p>

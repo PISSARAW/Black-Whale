@@ -1,6 +1,14 @@
 import type { Vec2 } from '../tour/types'
 import type { NenState } from '../hunt/nen/states'
 import { castHatsu, selectHatsu, type InfiltrationHatsuId } from './hatsu'
+import { selectMission } from './missions/definitions'
+import {
+  initialObjectives,
+  objectivesPermitExtraction,
+  setObjective,
+} from './missions/objectives'
+import type { MissionId, MissionObjective, MissionSelection } from './missions/types'
+import { createTrace } from './traces'
 
 export type WitnessId = 'steward' | 'guard' | 'nenGuard'
 export type MissionOutcome = 'playing' | 'escaped' | 'identified' | 'timeUp'
@@ -34,8 +42,13 @@ export interface Challenge {
 }
 
 export interface Trace {
+  id?: string
   kind: TraceKind
   spaceId: string
+  position?: Vec2
+  at?: number
+  expiresAt?: number
+  allegedAuthor?: string
   strength: number
   discoveredBy?: WitnessId[]
 }
@@ -68,11 +81,14 @@ export interface InfiltrationState {
   diversion: { spaceId: string; left: number } | null
   coverIntegrity: number
   alert: number
+  alertLevel: import('./alerts').AlertLevel
   challenge: Challenge | null
   reports: { witnessId: WitnessId; at: number; certainty: number }[]
   claims: CoverClaim[]
   verification: { witnessId: WitnessId; left: number } | null
   metrics: MissionMetrics
+  mission: { id: MissionId; seed: number; variantId: string; duration: number }
+  objectives: MissionObjective[]
   hatsu: {
     id: InfiltrationHatsuId
     aura: number
@@ -88,6 +104,7 @@ export interface MissionSetup {
   objectiveSpaceId: string
   extractionSpaceId: string
   witnesses: Omit<Witness, 'belief' | 'routeIndex' | 'investigating' | 'challenged'>[]
+  selection?: MissionSelection
 }
 
 export type InfiltrationAction =
@@ -109,6 +126,7 @@ const noBelief = (): Belief => ({
 })
 
 export function initialInfiltrationState(setup: MissionSetup): InfiltrationState {
+  const selection = setup.selection ?? selectMission('missing-report', 0x5eed)
   return {
     clock: 0,
     outcome: 'playing',
@@ -128,6 +146,7 @@ export function initialInfiltrationState(setup: MissionSetup): InfiltrationState
     diversion: null,
     coverIntegrity: 100,
     alert: 0,
+    alertLevel: 'normal',
     challenge: null,
     reports: [],
     claims: [],
@@ -140,6 +159,13 @@ export function initialInfiltrationState(setup: MissionSetup): InfiltrationState
       hatsuCasts: 0,
       tracesDiscovered: 0,
     },
+    mission: {
+      id: selection.definition.id,
+      seed: selection.seed,
+      variantId: selection.variant.id,
+      duration: selection.definition.duration,
+    },
+    objectives: initialObjectives(selection.definition.objectives),
     hatsu: {
       id: 'little-eye',
       aura: 100,
@@ -185,9 +211,7 @@ export function infiltrationReducer(
     case 'COPY':
       return copyDocument(state)
     case 'VERIFY':
-      return state.documentCopied && state.player.spaceId === state.objectiveSpaceId
-        ? { ...state, authorConfirmed: true }
-        : state
+      return verifyInformation(state)
     case 'DIVERT':
       return divert(state)
     case 'ANSWER':
@@ -204,7 +228,14 @@ export function infiltrationReducer(
 function useHatsu(state: InfiltrationState): InfiltrationState {
   const cast = castHatsu(state)
   if (cast === state) return state
-  return { ...cast, metrics: { ...cast.metrics, hatsuCasts: cast.metrics.hatsuCasts + 1 } }
+  return {
+    ...cast,
+    objectives:
+      cast.authorConfirmed && !state.authorConfirmed
+        ? completeObjective(cast.objectives, ['identify'], 'confirmed')
+        : cast.objectives,
+    metrics: { ...cast.metrics, hatsuCasts: cast.metrics.hatsuCasts + 1 },
+  }
 }
 
 function answerChallenge(
@@ -256,8 +287,27 @@ function copyDocument(state: InfiltrationState): InfiltrationState {
   return {
     ...state,
     documentCopied: true,
-    traces: [...state.traces, { kind: 'document', spaceId: state.objectiveSpaceId, strength: 35 }],
+    objectives: completeObjective(state.objectives, ['copy', 'plant', 'follow'], 'believed'),
+    traces: [...state.traces, createTrace({ kind: 'document', spaceId: state.objectiveSpaceId, position: state.player.position, at: state.clock, strength: 35, duration: 180, allegedAuthor: 'maintenance' })],
   }
+}
+
+function verifyInformation(state: InfiltrationState): InfiltrationState {
+  if (!state.documentCopied || state.player.spaceId !== state.objectiveSpaceId) return state
+  return {
+    ...state,
+    authorConfirmed: true,
+    objectives: completeObjective(state.objectives, ['identify'], 'confirmed'),
+  }
+}
+
+function completeObjective(
+  objectives: MissionObjective[],
+  kinds: MissionObjective['kind'][],
+  result: MissionObjective['state'],
+): MissionObjective[] {
+  const objective = objectives.find((candidate) => kinds.includes(candidate.kind))
+  return objective ? setObjective(objectives, objective.id, result) : objectives
 }
 
 function divert(state: InfiltrationState): InfiltrationState {
@@ -265,13 +315,19 @@ function divert(state: InfiltrationState): InfiltrationState {
   return {
     ...state,
     diversion: { spaceId: state.player.spaceId, left: 18 },
-    traces: [...state.traces, { kind: 'diversion', spaceId: state.player.spaceId, strength: 55 }],
+    traces: [...state.traces, createTrace({ kind: 'diversion', spaceId: state.player.spaceId, position: state.player.position, at: state.clock, strength: 55, duration: 45 })],
   }
 }
 
 function extract(state: InfiltrationState): InfiltrationState {
-  if (state.player.spaceId !== state.extractionSpaceId || !state.documentCopied) return state
-  return { ...state, outcome: state.alert >= 100 ? 'identified' : 'escaped' }
+  if (state.player.spaceId !== state.extractionSpaceId || !objectivesPermitExtraction(state.objectives)) {
+    return state
+  }
+  return {
+    ...state,
+    objectives: completeObjective(state.objectives, ['extract'], 'confirmed'),
+    outcome: 'escaped',
+  }
 }
 
 export function addTrace(state: InfiltrationState, trace: Trace): InfiltrationState {

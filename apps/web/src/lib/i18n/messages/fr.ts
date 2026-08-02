@@ -1490,6 +1490,19 @@ export const fr: Messages = {
       'Infiltrez un appartement du pont 1 sous couverture, copiez un rapport et ressortez avant que les témoins ne relient les indices.',
     title: 'Infiltration',
     briefing: 'Ordre de mission · Pont 1',
+    chooseMission: 'Choisir une mission',
+    missions: {
+      'missing-report': { name: 'Le rapport disparu', goal: 'Copiez le rapport, confirmez son auteur et rejoignez la sortie.' },
+      courier: { name: 'Le courrier sous surveillance', goal: 'Identifiez puis suivez le bon courrier sans perdre votre couverture.' },
+      'listening-device': { name: "Le dispositif d'écoute", goal: 'Posez le dispositif au bon endroit et quittez les lieux.' },
+    },
+    objectiveLabels: {
+      copy: 'Copier la cible sans déplacer l’original.',
+      identify: 'Confirmer l’identité de la cible.',
+      follow: 'Suivre la cible jusqu’au point de transmission.',
+      plant: "Poser le dispositif d'écoute dans la zone cible.",
+      extract: 'Rejoindre le point d’extraction.',
+    },
     intro:
       'Vous entrez comme aide de maintenance. Copiez le rapport placé au fond de l’appartement, confirmez si possible son véritable auteur, puis revenez au point d’entrée. Être vu n’est pas perdre : être compris l’est.',
     cover: 'Couverture · Maintenance',

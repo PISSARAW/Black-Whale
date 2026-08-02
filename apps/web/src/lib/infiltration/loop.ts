@@ -5,9 +5,10 @@ import { hearingStrength } from './sound'
 import { activeDisguise } from './hatsu'
 import { canSee } from './vision'
 import type { InfiltrationState, Witness } from './state'
+import { assessAlert } from './alerts'
+import { activeTraces } from './traces'
 
 export const INFILTRATION_DT = 1 / 30
-export const MISSION_LENGTH = 8 * 60
 const REPORT_THRESHOLD = 72
 export interface InfiltrationWorld {
   dt: number
@@ -27,7 +28,7 @@ export function updateInfiltration(
     ? { ...challenged.diversion, left: Math.max(0, challenged.diversion.left - dt) }
     : null
   const moved = challenged.witnesses.map((witness) => moveWitness(challenged, witness, world))
-  const searched = discoverTraces({ ...challenged, witnesses: moved })
+  const searched = discoverTraces({ ...challenged, witnesses: moved, traces: activeTraces(challenged.traces, clock) })
   const witnesses = searched.witnesses.map((witness) => observe(searched, witness, world))
   const reports = witnesses.reduce((all, witness, index) => {
     if (!witness.belief.reported || challenged.witnesses[index].belief.reported) return all
@@ -47,6 +48,7 @@ export function updateInfiltration(
         return sum + (witness.belief.identity === 'intruder' ? witness.belief.certainty * 0.34 : 0)
       }, 0),
   )
+  const alertLevel = assessAlert(reports, witnesses.filter((witness) => witness.belief.identity === 'intruder').length).level
   const newlyDiscovered = searched.traces.reduce((count, trace, index) => {
     const before = challenged.traces[index]?.discoveredBy?.length ?? 0
     return count + Math.max(0, (trace.discoveredBy?.length ?? 0) - before)
@@ -57,6 +59,7 @@ export function updateInfiltration(
     diversion: diversion?.left ? diversion : null,
     witnesses,
     alert,
+    alertLevel,
     coverIntegrity,
     challenge,
     reports,
@@ -65,7 +68,8 @@ export function updateInfiltration(
       maxAlert: Math.max(searched.metrics.maxAlert, alert),
       tracesDiscovered: searched.metrics.tracesDiscovered + newlyDiscovered,
     },
-    outcome: clock >= MISSION_LENGTH ? 'timeUp' : alert >= 100 ? 'identified' : state.outcome,
+    outcome:
+      clock >= searched.mission.duration ? 'timeUp' : state.outcome,
   }
 }
 

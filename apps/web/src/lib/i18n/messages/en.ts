@@ -1629,6 +1629,19 @@ export const en = {
       'Enter a deck 1 apartment under cover, copy a report, and leave before witnesses can connect the evidence.',
     title: 'Infiltration',
     briefing: 'Mission order · Deck 1',
+    chooseMission: 'Choose a mission',
+    missions: {
+      'missing-report': { name: 'The missing report', goal: 'Copy the report, confirm its author, and reach extraction.' },
+      courier: { name: 'The watched courier', goal: 'Identify and follow the right courier without losing your cover.' },
+      'listening-device': { name: 'The listening device', goal: 'Plant the device in the right room and leave without being detained.' },
+    },
+    objectiveLabels: {
+      copy: 'Copy the target without moving the original.',
+      identify: 'Confirm the target identity.',
+      follow: 'Follow the target to the handoff point.',
+      plant: 'Plant the listening device in the target area.',
+      extract: 'Reach the extraction point.',
+    },
     intro:
       'You enter as a maintenance aide. Copy the report at the far end of the apartment, confirm its true author if possible, then return to the entrance. Being seen is not losing: being understood is.',
     cover: 'Cover · Maintenance',

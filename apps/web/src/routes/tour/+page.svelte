@@ -20,10 +20,8 @@
   import TourPageStage from '$lib/components/tour/TourPageStage.svelte'
   import TourPageSidebar from '$lib/components/tour/TourPageSidebar.svelte'
   import { activeHatsu } from '$lib/nen/hatsuState'
-  import { HATSU_PROFILES, type HatsuInteractionKind } from '$lib/nen/hatsuRegistry'
   import { link, t } from '$lib/i18n'
   import { locale } from '$lib/i18n'
-  import { localizeHatsu } from '$lib/i18n/hatsu'
   import { crossingsOn, deckOf, theShip, type Crossing } from '$lib/tour/blueprint'
   import {
     loadComfort,
@@ -49,11 +47,9 @@
   import { TourKeyboardController } from '$lib/tour/pageKeyboard'
   import { TourWorldTicker } from '$lib/tour/pageWorldTicker'
   import { TourHatsuSession } from '$lib/tour/pageHatsuSession.svelte'
+  import { TourHatsuView } from '$lib/tour/pageHatsuView.svelte'
   import { TourNavigationState } from '$lib/tour/pageNavigationState.svelte'
-  import {
-    AIR_KEYS,
-    type CastHand,
-  } from '$lib/tour/pageCasting'
+  import { type CastHand } from '$lib/tour/pageCasting'
   import { TourCastController } from '$lib/tour/pageCastController'
   import {
     aimReadout as buildAimReadout,
@@ -69,12 +65,8 @@
   import {
     EMPTY_WORLD,
     aimsAtSolids,
-    hatsuKeys,
     identityOf,
     TAKES_ORDERS,
-    twoPages,
-    TWO_HANDED_KINDS,
-    worksInTour,
     worksOnTheBody,
     type TourReport,
     type TourWorld,
@@ -272,34 +264,19 @@
     updateReport: (next) => (report = next),
     show,
   })
-  const technique = $derived(worksInTour($activeHatsu) ? $activeHatsu : null)
-
-  const openPages = $derived(technique?.kind === 'bookmark' ? twoPages(world.book) : null)
-
-  const controlKeys = $derived(hatsuKeys(technique, world.book))
-
-  const pageName = (kind: HatsuInteractionKind) => {
-    const stolen = HATSU_PROFILES.find((candidate) => candidate.kind === kind)
-    return stolen ? localizeHatsu(stolen, $locale).name : kind
-  }
-
-  const hands = $derived(
-    openPages ? { first: pageName(openPages[0]), second: pageName(openPages[1]) } : null,
-  )
-
-  const tunes = $derived(
-    technique?.kind === 'melody' && !openPages
-      ? {
-          first: $t.tour.hatsu.tunes[AIR_KEYS.first],
-          second: $t.tour.hatsu.tunes[AIR_KEYS.second],
-          third: $t.tour.hatsu.tunes[AIR_KEYS.third],
-        }
-      : null,
-  )
-
-  const twoHanded = $derived(
-    Boolean(technique) && !openPages && TWO_HANDED_KINDS.has(technique!.kind),
-  )
+  const hatsuView = new TourHatsuView({
+    active: () => $activeHatsu,
+    world: () => world,
+    locale: () => $locale,
+    tuneName: (air) => $t.tour.hatsu.tunes[air],
+  })
+  const technique = $derived(hatsuView.technique)
+  const openPages = $derived(hatsuView.openPages)
+  const controlKeys = $derived(hatsuView.controlKeys)
+  const hands = $derived(hatsuView.hands)
+  const tunes = $derived(hatsuView.tunes)
+  const twoHanded = $derived(hatsuView.twoHanded)
+  const selfCastable = $derived(hatsuView.selfCastable)
 
   let nextHand = $state<Record<CastHand, 'sun' | 'moon'>>({
     first: 'sun',
@@ -354,8 +331,6 @@
   })
   hatsuSession.watchActivation()
   hatsuSession.watchFuture()
-
-  const selfCastable = $derived(worksOnTheBody(technique) && aimsAtSolids(technique))
 
   function cycleDouble() {
     hatsuSession.turn('guardian')

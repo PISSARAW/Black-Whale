@@ -86,7 +86,8 @@ export function buildDealer({ THREE, glow, seen }: DealerBuild): Group {
 
   // Preserve the negotiation's restrained body language while the articulated
   // seated pose keeps her hips, knees and forearms aligned with the chair/table.
-  if (seen.stage === 1) human.turns.rotation.x = -0.08
+  human.turns.rotation.x = -0.04
+  if (seen.stage === 1) human.turns.rotation.x = -0.1
   if (seen.stage === 2) human.turns.rotation.x = 0.06
   if (seen.stage === 3) human.turns.rotation.x = 0.1
   return root

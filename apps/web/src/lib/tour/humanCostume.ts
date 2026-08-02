@@ -120,29 +120,43 @@ export function addSilentMajorityCostume(build: CostumeBuild): void {
 
 interface MorenaBuild extends CostumeBuild {
   head: Group
+  seated: boolean
 }
 
 /** Morena's manga identifiers layered over the shared articulated anatomy. */
 export function addMorenaDetails(build: MorenaBuild): void {
-  const { THREE, geometry, outlined, figure, head, cloth, ink, accent } = build
-  const gown = outlined({
-    THREE,
-    geometry: geometry(THREE, 'morena:gown', () =>
-      new THREE.CylinderGeometry(0.23, 0.39, 1.02, 8),
-    ),
-    material: cloth,
-    ink,
-  })
-  gown.position.y = 0.66
-  figure.add(gown)
-  const lap = outlined({
-    THREE,
-    geometry: geometry(THREE, 'morena:gown-lap', () => new THREE.BoxGeometry(0.45, 0.12, 0.62)),
-    material: cloth,
-    ink,
-  })
-  lap.position.set(0, 0.56, 0.25)
-  figure.add(lap)
+  const { THREE, geometry, outlined, figure, head, cloth, ink, accent, seated } = build
+
+  if (seated) {
+    // The shared torso already supplies the upright part of the dress. Only the
+    // cloth folded over her thighs belongs below it while she is at the table;
+    // keeping the full standing skirt here made a second, upright silhouette
+    // continue through the seated body.
+    const lap = outlined({
+      THREE,
+      geometry: geometry(THREE, 'morena:gown-lap', () =>
+        new THREE.BoxGeometry(0.46, 0.1, 0.66),
+      ),
+      material: cloth,
+      ink,
+    })
+    lap.name = 'morena-seated-lap'
+    lap.position.set(0, 0.72, 0.26)
+    lap.rotation.x = -0.08
+    figure.add(lap)
+  } else {
+    const gown = outlined({
+      THREE,
+      geometry: geometry(THREE, 'morena:gown', () =>
+        new THREE.CylinderGeometry(0.23, 0.39, 1.02, 8),
+      ),
+      material: cloth,
+      ink,
+    })
+    gown.name = 'morena-standing-gown'
+    gown.position.y = 0.66
+    figure.add(gown)
+  }
 
   const neckline = new THREE.Mesh(
     geometry(THREE, 'morena:neckline', () => new THREE.RingGeometry(0.08, 0.17, 8, 1, 0.35, 2.44)),

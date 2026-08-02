@@ -429,6 +429,7 @@ export function buildHumanFigure({ THREE, glow, seen }: HumanFigureBuild): Human
       accent,
       dark,
       skin,
+      seated: pose === 'seated',
     })
   }
 
@@ -523,10 +524,13 @@ export function buildHumanFigure({ THREE, glow, seen }: HumanFigureBuild): Human
     legs[0].rotation.x = 0.2
     legs[1].rotation.x = -0.2
   } else if (pose === 'seated') {
-    figure.position.y = -0.25
+    figure.position.y = -0.3
     arms.forEach((arm, index) => {
       const side = index === 0 ? -1 : 1
-      arm.position.set(side * 0.27, 1.29, 0.02)
+      // Shoulder, elbow and hand form one continuous reach onto the tabletop.
+      // The old angles left the upper arms hanging beside an upright gown,
+      // which read as a standing figure layered over bent legs.
+      arm.position.set(side * 0.27, 1.34, 0.02)
       arm.rotation.set(-0.72, 0, side * -0.12)
       elbows[index].rotation.x = -1.12
     })

@@ -367,6 +367,58 @@ function ghost(seen: Apparition, { THREE, glow, root, skin }: BasicApparitionCon
   return null
 }
 
+function contract(seen: Apparition, { THREE, glow, root }: BasicApparitionContext) {
+  const aura = glow(seen.colour, seen.stage === 0 ? 0.55 : 0.8)
+  const ink = glow(0x2b3a5c, 0.9)
+  const long = seen.size
+  const tall = seen.size * 0.72
+  const sheet = new THREE.Mesh(new THREE.PlaneGeometry(long, tall), aura)
+  if (seen.stage > 0) sheet.rotation.x = -Math.PI / 2
+  root.add(sheet)
+
+  if (seen.stage > 0) {
+    for (let line = 0; line < 5; line++) {
+      const signature = line === 4
+      const ruled = new THREE.Mesh(
+        new THREE.PlaneGeometry(long * (signature ? 0.34 : 0.66), tall * 0.045),
+        ink,
+      )
+      ruled.rotation.x = -Math.PI / 2
+      ruled.position.set(
+        signature ? long * 0.24 : -long * 0.1,
+        0.001,
+        tall * (-0.3 + line * 0.13 + (signature ? 0.06 : 0)),
+      )
+      root.add(ruled)
+    }
+  }
+
+  const pen = new THREE.Group()
+  pen.add(
+    new THREE.Mesh(
+      new THREE.CylinderGeometry(seen.size * 0.022, seen.size * 0.022, seen.size * 0.5, 6),
+      aura,
+    ),
+  )
+  const nib = new THREE.Mesh(
+    new THREE.ConeGeometry(seen.size * 0.024, seen.size * 0.09, 6),
+    ink,
+  )
+  nib.position.y = -seen.size * 0.29
+  nib.rotation.x = Math.PI
+  pen.add(nib)
+  if (seen.stage > 0) {
+    pen.rotation.set(Math.PI / 2, 0, 0)
+    pen.rotateY(0.6)
+    pen.position.set(long * 0.12, seen.size * 0.03, -tall * 0.1)
+  } else {
+    pen.rotation.z = -0.35
+    pen.position.set(long * 0.62, -tall * 0.1, 0)
+  }
+  root.add(pen)
+  return null
+}
+
 const BUILDERS: Partial<Record<Apparition['kind'], Builder>> = {
   gum,
   double,
@@ -380,6 +432,7 @@ const BUILDERS: Partial<Record<Apparition['kind'], Builder>> = {
   dealer,
   'game-card': gameCard,
   ghost,
+  contract,
 }
 
 export function buildObjectApparition(

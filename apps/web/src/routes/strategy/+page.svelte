@@ -561,7 +561,7 @@
             <h2>Black Whale</h2>
           </div>
         </div>
-        <StrategyBattlefield {markers} />
+        <StrategyBattlefield {markers} hatsuCues={simStore.hatsuCues} />
         <p class="legend">
           <i></i> Votre faction <i class="other"></i> Contact observé · les pointillés indiquent un renseignement
           ancien.

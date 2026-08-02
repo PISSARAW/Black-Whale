@@ -16,6 +16,7 @@ import {
 import { factionEliminated, resolveLocationConflicts, type UnitCondition } from './conflict'
 import { buildTurnReports } from './reports'
 import { strategyHatsuResolution } from './hatsu'
+import type { StrategyHatsuCue } from './hatsuPresentation'
 import { characterAbilityIds, factionEntityIds as selectFactionEntityIds } from './selectors'
 import { generateFactionAIOperations, partitionBlockedMoves } from './tacticalAI'
 import {
@@ -73,6 +74,8 @@ export function createSimulationStore() {
   let unitConditions = $state<Record<string, UnitCondition>>({})
   let turnHistory = $state<Array<{ orders: StrategyMoveOrder[]; diplomacy: DiplomacyOrder[] }>>([])
   let activeScenario = ACTIVE_SCENARIO
+  let hatsuCues = $state<StrategyHatsuCue[]>([])
+  let hatsuCueSequence = 0
 
   function init(
     baseState: WorldState,
@@ -108,6 +111,8 @@ export function createSimulationStore() {
     relationships = {}
     unitConditions = {}
     turnHistory = []
+    hatsuCues = []
+    hatsuCueSequence = 0
     turnReports = ['Simulation initialisée.']
   }
   function selectFaction(factionId: string) {
@@ -367,6 +372,17 @@ export function createSimulationStore() {
         activatedAbilityIds.push(order.abilityId)
         abilityCooldownTurns[order.abilityId] = adapted?.cooldownTurns ?? 2
         activatedHatsu.push(`${profile.name} · ${adapted?.report ?? destination.name}`)
+        hatsuCues = [
+          ...hatsuCues,
+          {
+            seq: ++hatsuCueSequence,
+            abilityId: order.abilityId,
+            sourceCharacterId: order.characterId,
+            sourceLocationId: currentState.presences[entity.id]?.locationId ?? destination.id,
+            targetLocationId: destination.id,
+            report: adapted?.report ?? profile.name,
+          },
+        ].slice(-20)
         continue
       }
       if (order.type === 'SCOUT') {
@@ -487,6 +503,17 @@ export function createSimulationStore() {
         conflict.conditions[camilla.id] = 'READY'
         conflict.conditions[killer] = 'ELIMINATED'
         conflict.reports.push('Cat’s Name se déclenche : Camilla revient à la vie et son meurtrier est consumé.')
+        hatsuCues = [
+          ...hatsuCues,
+          {
+            seq: ++hatsuCueSequence,
+            abilityId: 'cats-name',
+            sourceCharacterId: 'prince-camilla',
+            sourceLocationId: locationId ?? '',
+            targetLocationId: locationId ?? '',
+            report: 'Cat’s Name se déclenche.',
+          },
+        ].slice(-20)
       }
     }
     unitConditions = conflict.conditions
@@ -585,6 +612,9 @@ export function createSimulationStore() {
     },
     get hatsuCooldowns() {
       return hatsuCooldowns
+    },
+    get hatsuCues() {
+      return hatsuCues
     },
     abilityIdsForCharacter,
     init,

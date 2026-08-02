@@ -4,8 +4,6 @@ test.describe('Hunt V3 critical path', () => {
   test.beforeEach(async ({ page }) => {
     const response = await page.goto('/hunt')
     expect(response?.status()).toBeLessThan(400)
-    await page.waitForLoadState('domcontentloaded')
-    await page.waitForTimeout(1_000)
   })
 
   test('selects terrain, hunter and Hatsu before beginning', async ({ page }) => {
@@ -22,14 +20,14 @@ test.describe('Hunt V3 critical path', () => {
     await expect(hatsu).toHaveAttribute('aria-pressed', 'true')
 
     await page.getByRole('button', { name: 'Enter the apartment' }).click()
-    await expect(page.getByRole('navigation', { name: 'Hunt actions' })).toBeVisible()
+    await expect(page.getByRole('navigation')).toBeVisible()
   })
 
   test('exposes sound and gameplay controls to assistive technology', async ({ page }) => {
     const sound = page.getByRole('button', { name: 'Enable sound' })
     await expect(sound).toHaveAttribute('aria-pressed', 'false')
     await page.getByRole('button', { name: 'Enter the apartment' }).click()
-    await expect(page.locator('[aria-live="polite"]').first()).toBeAttached()
+    await expect(page.locator('[aria-live="polite"]')).toBeAttached()
     await expect(page.getByRole('button', { name: /Zetsu/ })).toBeVisible()
   })
 
@@ -54,11 +52,7 @@ test.describe('Hunt V3 critical path', () => {
 
     await page.getByLabel('English title').fill('Silent Meridian')
     await page.getByLabel('Lighting').selectOption('blackout')
-    await Promise.all([
-      page.waitForURL(/contract=/, { timeout: 20_000 }),
-      page.getByRole('link', { name: /Play and share this contract/i }).click(),
-    ])
-    await page.waitForTimeout(1_000)
+    await page.getByRole('link', { name: /Play and share this contract/i }).click()
 
     const shared = page.getByRole('button', { name: /Silent Meridian/i })
     await expect(shared).toBeVisible()

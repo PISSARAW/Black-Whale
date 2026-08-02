@@ -7,6 +7,7 @@
   import PlanMap from '$lib/components/map/PlanMap.svelte'
   import { calculatePresencePosition } from '$lib/components/map/markerProjection'
   import { hatsuById } from '$lib/nen/hatsuRegistry'
+  import { SCENARIO_MAX_TURNS } from '$lib/strategy/scenario'
   import {
     StrategyInputError,
     createSimulationStore,
@@ -49,6 +50,9 @@
       : [],
   )
   let selectedHatsu = $derived(hatsuById(selectedAbilityId))
+  let playableLocations = $derived(
+    simStore.scenarioLocations.length ? simStore.scenarioLocations : data.locations,
+  )
 
   function entityForCharacter(state: WorldState, characterId: string): WorldEntity | undefined {
     const direct = state.entities[characterId]
@@ -269,10 +273,19 @@
           >
           <p>Vous commandez</p>
           <h1>{playerFaction?.name}</h1>
-          <span>Tour {simStore.currentTurn}</span>
+          <span
+            >Tour {Math.min(simStore.currentTurn, SCENARIO_MAX_TURNS)} / {SCENARIO_MAX_TURNS}</span
+          >
         </header>
 
         <div class="panel-scroll">
+          {#if simStore.scenarioEvent}
+            <section class="scenario-event">
+              <span>Événement prévu</span>
+              <strong>{simStore.scenarioEvent.title}</strong>
+              <p>{simStore.scenarioEvent.description}</p>
+            </section>
+          {/if}
           <section>
             <div class="objective-card" class:complete={objective?.complete}>
               <span>Objectif</span>
@@ -354,7 +367,7 @@
                     : 'Destination'}
                 <select bind:value={selectedLocationId}>
                   <option value="">Choisir une destination</option>
-                  {#each data.locations as location (location.id)}
+                  {#each playableLocations as location (location.id)}
                     <option value={location.id}>{location.name}</option>
                   {/each}
                 </select>
@@ -409,8 +422,16 @@
 
         <footer>
           {#if errorMessage}<p class="error" role="alert">{errorMessage}</p>{/if}
-          <button class="end-turn" type="button" onclick={handleEndTurn}
-            >Résoudre le tour · {spentCommandPoints} PC</button
+          <button
+            class="end-turn"
+            type="button"
+            disabled={simStore.gameOver}
+            onclick={handleEndTurn}
+            >{simStore.gameWon
+              ? 'Victoire stratégique'
+              : simStore.gameLost
+                ? 'Scénario terminé'
+                : `Résoudre le tour · ${spentCommandPoints} PC`}</button
           >
         </footer>
       </aside>

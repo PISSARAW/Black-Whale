@@ -12,6 +12,15 @@ import type {
 } from '@black-whale/world-engine'
 import { hatsuById } from '$lib/nen/hatsuRegistry'
 import {
+  SCENARIO_MAX_TURNS,
+  buildScenarioRoster,
+  doctrineBriefing,
+  scenarioEventForTurn,
+  scenarioMoveChance,
+  seededScenarioRandom,
+  selectScenarioLocationIds,
+} from './scenario'
+import {
   COMMAND_POINTS_PER_TURN,
   VICTORY_POINTS_TARGET,
   chooseStrategicDestination,
@@ -61,21 +70,6 @@ export interface StrategyTurnResult {
 
 export class StrategyInputError extends Error {}
 
-function seededRandom(seed: string): () => number {
-  let value = 2166136261
-  for (let index = 0; index < seed.length; index += 1) {
-    value ^= seed.charCodeAt(index)
-    value = Math.imul(value, 16777619)
-  }
-  return () => {
-    value += 0x6d2b79f5
-    let mixed = value
-    mixed = Math.imul(mixed ^ (mixed >>> 15), mixed | 1)
-    mixed ^= mixed + Math.imul(mixed ^ (mixed >>> 7), mixed | 61)
-    return ((mixed ^ (mixed >>> 14)) >>> 0) / 4294967296
-  }
-}
-
 /** A self-contained, client-side strategy sandbox. Nothing here mutates canon. */
 export function createSimulationStore() {
   let engine = new SimulationEngine()
@@ -90,6 +84,9 @@ export function createSimulationStore() {
   let victoryPoints = $state(0)
   let gameWon = $state(false)
   let hatsuCooldowns = $state<Record<string, number>>({})
+  let activeFactionIds = $state<string[]>([])
+  let scenarioLocationIds = $state<string[]>([])
+  let gameLost = $state(false)
 
   function init(
     baseState: WorldState,
@@ -119,6 +116,9 @@ export function createSimulationStore() {
     victoryPoints = 0
     gameWon = false
     hatsuCooldowns = {}
+    activeFactionIds = []
+    scenarioLocationIds = []
+    gameLost = false
     turnReports = ['Simulation initialisée.']
   }
 
@@ -127,10 +127,27 @@ export function createSimulationStore() {
       throw new StrategyInputError('Faction inconnue.')
     }
     selectedFactionId = factionId
+    const roster = buildScenarioRoster(factions, factionId)
+    activeFactionIds = roster.map((faction) => faction.id)
+    const occupied = roster.flatMap((faction) =>
+      factionEntityIds(faction.id)
+        .map((entityId) => currentState!.presences[entityId]?.locationId)
+        .filter((id): id is string => Boolean(id)),
+    )
+    scenarioLocationIds = selectScenarioLocationIds(
+      locations.map((location) => location.id),
+      occupied,
+    )
     intel = {}
     refreshIntel([], [])
     turnReports = [
-      `Briefing reçu. Doctrine : ${doctrineForFaction(factionId).toLocaleLowerCase('fr')}.`,
+      `Briefing reçu · ${doctrineBriefing(doctrineForFaction(factionId))}`,
+      `Opposition identifiée : ${
+        roster
+          .filter((faction) => faction.id !== factionId)
+          .map((faction) => faction.name)
+          .join(', ') || 'aucune'
+      }.`,
       'Les positions adverses restent inconnues tant qu’elles ne sont pas observées.',
     ]
   }
@@ -210,6 +227,7 @@ export function createSimulationStore() {
     playerOrders: readonly StrategyMoveOrder[],
   ): StrategyTurnResult {
     if (!branch || !currentState) throw new StrategyInputError('La simulation n’est pas prête.')
+    if (gameWon || gameLost) throw new StrategyInputError('Le scénario est terminé.')
     if (playerFactionId !== selectedFactionId) {
       throw new StrategyInputError('La faction active ne correspond pas au plan.')
     }
@@ -223,7 +241,11 @@ export function createSimulationStore() {
     }
 
     const allowedCharacters = new Set(playerFaction.members.map((member) => member.character.id))
-    const destinations = new Map(locations.map((location) => [location.id, location]))
+    const destinations = new Map(
+      locations
+        .filter((location) => scenarioLocationIds.includes(location.id))
+        .map((location) => [location.id, location]),
+    )
     const orderedCharacters = new Set<string>()
     const playerEvents: ProposedWorldEvent[] = []
     const playerEntityIds = new Set<string>()
@@ -324,14 +346,14 @@ export function createSimulationStore() {
     const aiEvents: ProposedWorldEvent[] = []
     const claimedCharacters = new Set(allowedCharacters)
     const claimedEntities = new Set(playerEntityIds)
-    const destinationIds = locations.map((location) => location.id)
+    const destinationIds = scenarioLocationIds
     const destinationTypes = Object.fromEntries(
       locations.map((location) => [
         location.id,
         location.type === 'SHIP' ? 'UNKNOWN' : location.type,
       ]),
     ) as Record<string, 'TIER' | 'ZONE' | 'ROOM' | 'CORRIDOR' | 'UNKNOWN'>
-    for (const faction of factions) {
+    for (const faction of factions.filter((candidate) => activeFactionIds.includes(candidate.id))) {
       if (faction.id === playerFactionId) continue
       // Overlapping affiliations must not grant two factions control of the
       // same character in a single turn. The first catalogue faction owns it.
@@ -346,7 +368,7 @@ export function createSimulationStore() {
           return true
         })
 
-      const random = seededRandom(`${branch.id}:${currentTurn}:${faction.id}`)
+      const random = seededScenarioRandom(`${branch.id}:${currentTurn}:${faction.id}`)
       const memberEntities = members
         .map((characterId) => resolveControlledEntity(currentState!, characterId))
         .filter((entity): entity is WorldEntity => Boolean(entity))
@@ -359,7 +381,7 @@ export function createSimulationStore() {
       const doctrine = doctrineForFaction(faction.id)
 
       for (const entity of memberEntities) {
-        if (random() >= 0.72) continue
+        if (random() >= scenarioMoveChance(currentTurn)) continue
         const destination = chooseStrategicDestination(doctrine, {
           currentLocationId: currentState.presences[entity.id]?.locationId,
           availableLocationIds: destinationIds,
@@ -391,7 +413,8 @@ export function createSimulationStore() {
     const completedTurn = currentTurn
     for (const abilityId of activatedAbilityIds) hatsuCooldowns[abilityId] = currentTurn + 2
     currentTurn += 1
-    refreshIntel(scoutedLocations, guardedLocations)
+    const scenarioEvent = scenarioEventForTurn(completedTurn)
+    refreshIntel(scenarioEvent?.kind === 'BLACKOUT' ? [] : scoutedLocations, guardedLocations)
     const friendlyIds = new Set(factionEntityIds(playerFactionId))
     const discoveries = Object.values(intel).filter(
       (sighting) => sighting.observedTurn === currentTurn && !friendlyIds.has(sighting.entityId),
@@ -413,8 +436,12 @@ export function createSimulationStore() {
       victoryPoints += 1
       if (victoryPoints >= VICTORY_POINTS_TARGET) gameWon = true
     }
+    if (!gameWon && completedTurn >= SCENARIO_MAX_TURNS) gameLost = true
     turnReports = [
       ...turnReports,
+      ...(scenarioEvent
+        ? [`Événement · ${scenarioEvent.title} — ${scenarioEvent.description}`]
+        : []),
       `Tour ${completedTurn} · ${playerOrders.length} ordre(s) résolu(s), ${discoveries} renseignement(s) actualisé(s).`,
       ...(interceptedEvents.length
         ? [`Interception réussie : ${interceptedEvents.length} mouvement(s) adverse(s) bloqué(s).`]
@@ -426,7 +453,8 @@ export function createSimulationStore() {
       ...(objective?.complete
         ? [`Objectif rempli · ${victoryPoints}/${VICTORY_POINTS_TARGET} points de victoire.`]
         : []),
-      ...(gameWon ? ['Victoire stratégique acquise. La simulation peut être poursuivie.'] : []),
+      ...(gameWon ? ['Victoire stratégique acquise.'] : []),
+      ...(gameLost ? ['Défaite stratégique · le temps imparti est écoulé.'] : []),
       ...(scoutedLocations.length
         ? [`Enquête terminée dans ${scoutedLocations.length} zone(s).`]
         : []),
@@ -473,6 +501,21 @@ export function createSimulationStore() {
     },
     get gameWon() {
       return gameWon
+    },
+    get gameLost() {
+      return gameLost
+    },
+    get gameOver() {
+      return gameWon || gameLost
+    },
+    get activeFactions() {
+      return factions.filter((faction) => activeFactionIds.includes(faction.id))
+    },
+    get scenarioLocations() {
+      return locations.filter((location) => scenarioLocationIds.includes(location.id))
+    },
+    get scenarioEvent() {
+      return scenarioEventForTurn(currentTurn)
     },
     get hatsuCooldowns() {
       return hatsuCooldowns

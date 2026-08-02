@@ -123,6 +123,26 @@
   background: linear-gradient(145deg, #14222b, #0c151b);
   padding: 1rem;
 }
+.strategy-shell .scenario-event {
+  display: grid;
+  gap: 0.35rem;
+  margin-top: 1rem;
+  border-left: 2px solid #d7b86a;
+  background: #101a21;
+  padding: 0.85rem !important;
+}
+.strategy-shell .scenario-event span {
+  color: #d7b86a;
+  font: 0.58rem var(--font-mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.strategy-shell .scenario-event p {
+  margin: 0;
+  color: #82949e;
+  font-size: 0.7rem;
+  line-height: 1.5;
+}
 .strategy-shell .objective-card > span,
 .strategy-shell .objective-card small {
   color: #8fa0aa;
@@ -224,6 +244,11 @@
   color: #101418;
   font-weight: 750;
   cursor: pointer;
+}
+.strategy-shell .end-turn:disabled {
+  cursor: default;
+  filter: saturate(0.4);
+  opacity: 0.75;
 }
 .strategy-shell .queue:disabled {
   cursor: not-allowed;

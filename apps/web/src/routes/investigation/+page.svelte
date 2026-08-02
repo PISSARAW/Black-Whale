@@ -3,14 +3,14 @@
   import { centroid } from '$lib/tour/hatsu'
   import { theShip } from '$lib/tour/blueprint'
   import TourScene from '$lib/components/tour/TourScene.svelte'
-  import { t } from '$lib/i18n'
+  import { locale, t } from '$lib/i18n'
   import {
     evaluateHypothesis,
-    room1014Case,
     type Evidence,
     type InvestigationTab,
     type Verdict,
   } from '$lib/investigation/case'
+  import { localizedRoom1014Case } from '$lib/investigation/localizedCase'
   import {
     INVESTIGATION_STORAGE_KEY,
     freshProgress,
@@ -40,13 +40,25 @@
   import type { Space, Vec2 } from '$lib/tour/types'
 
   const ship = theShip()
-  const investigation = room1014Case
+  const investigation = $derived(localizedRoom1014Case($locale))
 
-  let tierId = $state('t1')
+  const SCENE_TIER_ID = 'interior-room-1014'
+  const SCENE_SPACE_ID = 'tier-1-royal-residential-sector-room-1014-living'
+  const ui = $derived(
+    $locale === 'fr'
+      ? {
+          description: "Explorez la chambre 1014, confrontez les témoignages et reconstituez l'attaque de Silent Majority.", dossier: 'Dossier', chapter: 'chapitre', choose: 'Choisir', notebook: 'Carnet d’enquête', solved: 'Affaire résolue', items: 'éléments', people: 'Personnes et éléments', objectives: 'Objectifs', close: 'Fermer', closeTestimony: 'Fermer le témoignage', closeNotebook: 'Fermer le carnet', briefing: 'Briefing · Jour 2 · 09:00', briefingBody: 'Le premier cours de Nen vient de devenir une scène de crime. Barrigen est mort devant toute la classe. Une seule personne affirme avoir vu une présence masquée ; plusieurs autres ont vu les créatures qui ont tué.', mission: 'Ordre de mission', canonLimit: 'L’identité de l’utilisateur de Silent Majority n’est pas connue dans le canon. Une enquête rigoureuse doit savoir s’arrêter avant l’accusation.', saved: 'Progression sauvegardée sur cet appareil', enter: 'Entrer dans la scène', activeCase: 'dossier actif', needsEvidence: 'Nécessite un nouvel élément', nenAnalysis: 'Analyse Nen', noHatsu: 'Aucun Hatsu actif', useTarget: 'Utiliser sur cette cible', chooseHatsu: 'Choisir un Hatsu', inspectNotebook: 'Examiner dans le carnet', recorded: (count: number) => `+ ${count} élément${count > 1 ? 's' : ''} consigné${count > 1 ? 's' : ''}`, tabs: [['evidence', 'Preuves'], ['people', 'Personnes'], ['timeline', 'Chronologie'], ['deduction', 'Déduction']] as const, collected: 'Éléments collectés', sourceCaution: 'Une source n’est pas nécessairement une certitude.', emptyNotebook: 'Le carnet est vide. Examinez la scène et interrogez les témoins.', reset: 'Réinitialiser', spoilers: 'Spoilers', perspective: 'Perspective',
+        }
+      : {
+          description: 'Explore room 1014, compare testimony and reconstruct the Silent Majority attack.', dossier: 'Case file', chapter: 'chapter', choose: 'Choose', notebook: 'Investigation notebook', solved: 'Case solved', items: 'items', people: 'People and evidence', objectives: 'Objectives', close: 'Close', closeTestimony: 'Close testimony', closeNotebook: 'Close notebook', briefing: 'Briefing · Day 2 · 09:00', briefingBody: 'The first Nen lesson has become a crime scene. Barrigen died in front of the entire class. One person claims to have seen a masked presence; several others saw the creatures that killed him.', mission: 'Mission order', canonLimit: 'The identity of the Silent Majority user is not known in canon. A rigorous investigation must stop before making an accusation.', saved: 'Progress saved on this device', enter: 'Enter the scene', activeCase: 'active case', needsEvidence: 'Requires new evidence', nenAnalysis: 'Nen analysis', noHatsu: 'No active Hatsu', useTarget: 'Use on this target', chooseHatsu: 'Choose a Hatsu', inspectNotebook: 'Review in notebook', recorded: (count: number) => `+ ${count} evidence item${count > 1 ? 's' : ''} recorded`, tabs: [['evidence', 'Evidence'], ['people', 'People'], ['timeline', 'Timeline'], ['deduction', 'Deduction']] as const, collected: 'Collected evidence', sourceCaution: 'A source is not necessarily a certainty.', emptyNotebook: 'The notebook is empty. Examine the scene and question the witnesses.', reset: 'Reset', spoilers: 'Spoilers', perspective: 'Perspective',
+        },
+  )
+
+  let tierId = $state(SCENE_TIER_ID)
   let currentSpace = $state<Space | null>(null)
   let position = $state<Vec2>([0, 0])
   let heading = $state(Math.PI)
-  let jumpTo = $state<string | null>('1014')
+  let jumpTo = $state<string | null>(SCENE_SPACE_ID)
 
   let notebookOpen = $state(false)
   let activeTab = $state<InvestigationTab>('evidence')
@@ -198,7 +210,7 @@
   }
 
   const interactables = $derived.by(() => {
-    const space = ship.spaces.get('1014')
+    const space = ship.spaces.get(SCENE_SPACE_ID)
     const center = space ? centroid(space) : ([0, 0] as Vec2)
     return investigation.subjects.map((subject) => ({
       ...subject,
@@ -216,8 +228,8 @@
           size: subject.isDead ? 1 : 0.42,
           y: subject.isDead ? -0.9 : 0,
           at: subject.position,
-          tierId: 't1',
-          spaceId: '1014',
+          tierId: SCENE_TIER_ID,
+          spaceId: SCENE_SPACE_ID,
           stage: 0,
           hidden: false,
           pick: true,
@@ -385,7 +397,7 @@
   <title>Investigation · {investigation.title}</title>
   <meta
     name="description"
-    content="Explorez la chambre 1014, confrontez les témoignages et reconstituez l'attaque de Silent Majority."
+    content={ui.description}
   />
 </svelte:head>
 
@@ -417,7 +429,7 @@
   >
     <div class="max-w-xl border-l-2 border-[#d6b35a] pl-4 drop-shadow-lg">
       <p class="text-[10px] font-bold uppercase tracking-[0.28em] text-[#d6b35a]">
-        Dossier {investigation.id} · chapitre {investigation.chapter}
+        {ui.dossier} {investigation.id} · {ui.chapter} {investigation.chapter}
       </p>
       <h1 class="mt-1 font-serif text-2xl leading-none text-white sm:text-4xl">
         {investigation.title}
@@ -435,7 +447,7 @@
         <span class="block text-[9px] uppercase tracking-[0.2em] text-white/40">Hatsu</span>
         <span
           class="mt-1 block max-w-28 truncate text-xs font-semibold"
-          style:color={$activeHatsu?.color ?? '#ffffff'}>{$activeHatsu?.name ?? 'Choisir'}</span
+          style:color={$activeHatsu?.color ?? '#ffffff'}>{$activeHatsu?.name ?? ui.choose}</span
         >
       </button>
       <button
@@ -443,12 +455,12 @@
         onclick={() => (solved ? (reportOpen = true) : openNotebook('evidence'))}
       >
         <span class="block text-[9px] uppercase tracking-[0.22em] text-[#d6b35a]"
-          >Carnet d’enquête</span
+          >{ui.notebook}</span
         >
         <span class="mt-1 block text-sm font-semibold text-white"
           >{solved
-            ? 'Affaire résolue'
-            : `${discoveredIds.length}/${investigation.evidence.length} éléments`}</span
+            ? ui.solved
+            : `${discoveredIds.length}/${investigation.evidence.length} ${ui.items}`}</span
         >
         <span class="mt-2 block h-1 overflow-hidden bg-white/10"
           ><span class="block h-full bg-[#d6b35a] transition-all" style:width={`${progress}%`}
@@ -460,7 +472,7 @@
 
   <aside class="pointer-events-none absolute bottom-5 left-4 z-30 hidden w-64 sm:block">
     <p class="mb-2 text-[9px] font-bold uppercase tracking-[0.2em] text-white/45">
-      Personnes et éléments
+      {ui.people}
     </p>
     <div class="grid grid-cols-2 gap-1.5">
       {#each investigation.subjects as subject}
@@ -484,7 +496,7 @@
   <aside class="pointer-events-none absolute bottom-5 right-4 z-30 hidden w-72 lg:block">
     <div class="border border-white/15 bg-black/75 p-4 backdrop-blur">
       <div class="flex items-center justify-between">
-        <p class="text-[9px] font-bold uppercase tracking-[0.2em] text-[#d6b35a]">Objectifs</p>
+        <p class="text-[9px] font-bold uppercase tracking-[0.2em] text-[#d6b35a]">{ui.objectives}</p>
         <span class="font-mono text-[10px] text-white/40"
           >{completedObjectives}/{investigation.objectives.length}</span
         >
@@ -511,7 +523,7 @@
   {#if activeSubject}
     <button
       class="absolute inset-0 z-40 cursor-default bg-black/30"
-      aria-label="Fermer le témoignage"
+      aria-label={ui.closeTestimony}
       onclick={() => (activeSubjectId = null)}
     ></button>
     <div
@@ -533,7 +545,7 @@
         <button
           class="px-2 text-2xl text-white/45 hover:text-white"
           onclick={() => (activeSubjectId = null)}
-          aria-label="Fermer">×</button
+          aria-label={ui.close}>×</button
         >
       </div>
       <blockquote
@@ -557,7 +569,7 @@
             >
               <span class="block">{asked ? '✓ ' : ''}{question.prompt}</span>
               {#if !available}<span class="mt-1 block text-[9px] uppercase tracking-wider"
-                  >Nécessite un nouvel élément</span
+                  >{ui.needsEvidence}</span
                 >{/if}
             </button>
           {/each}
@@ -574,9 +586,9 @@
       <div class="mt-5 border border-white/10 bg-black/25 p-4">
         <div class="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <p class="text-[9px] font-bold uppercase tracking-[0.2em] text-white/40">Analyse Nen</p>
+            <p class="text-[9px] font-bold uppercase tracking-[0.2em] text-white/40">{ui.nenAnalysis}</p>
             <p class="mt-1 text-sm font-semibold" style:color={$activeHatsu?.color ?? '#ffffff'}>
-              {$activeHatsu?.name ?? 'Aucun Hatsu actif'}
+              {$activeHatsu?.name ?? ui.noHatsu}
             </p>
           </div>
           <button
@@ -584,7 +596,7 @@
               ? 'border-white/30 text-white hover:border-white/60'
               : 'border-[#d6b35a]/50 text-[#e8cc84] hover:bg-[#d6b35a]/10'}"
             onclick={useActiveHatsu}
-            >{$activeHatsu ? 'Utiliser sur cette cible' : 'Choisir un Hatsu'}</button
+            >{$activeHatsu ? ui.useTarget : ui.chooseHatsu}</button
           >
         </div>
         {#if hatsuResult}
@@ -611,13 +623,11 @@
           class="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-white/10 pt-4"
         >
           <p class="text-xs text-emerald-200">
-            + {activeSubject.evidenceIds.length} élément{activeSubject.evidenceIds.length > 1
-              ? 's'
-              : ''} consigné{activeSubject.evidenceIds.length > 1 ? 's' : ''}
+            {ui.recorded(activeSubject.evidenceIds.length)}
           </p>
           <button
             class="border border-[#d6b35a]/50 px-4 py-2 text-[10px] font-bold uppercase tracking-widest text-[#e8cc84] hover:bg-[#d6b35a]/10"
-            onclick={() => openNotebook('evidence')}>Examiner dans le carnet</button
+            onclick={() => openNotebook('evidence')}>{ui.inspectNotebook}</button
           >
         </div>
       {/if}
@@ -627,7 +637,7 @@
   {#if notebookOpen}
     <button
       class="absolute inset-0 z-40 bg-black/65 backdrop-blur-sm"
-      aria-label="Fermer le carnet"
+      aria-label={ui.closeNotebook}
       onclick={() => (notebookOpen = false)}
     ></button>
     <div
@@ -639,7 +649,7 @@
       <header class="flex items-start justify-between border-b border-white/10 p-5 sm:p-7">
         <div>
           <p class="text-[9px] font-bold uppercase tracking-[0.25em] text-[#d6b35a]">
-            {investigation.investigator} · dossier actif
+            {investigation.investigator} · {ui.activeCase}
           </p>
           <h2 class="mt-1 font-serif text-2xl text-white sm:text-3xl">{investigation.subtitle}</h2>
         </div>
@@ -654,7 +664,7 @@
         class="grid grid-cols-2 border-b border-white/10 sm:grid-cols-4"
         aria-label="Sections du carnet"
       >
-        {#each [['evidence', 'Preuves'], ['people', 'Personnes'], ['timeline', 'Chronologie'], ['deduction', 'Déduction']] as tab}
+        {#each ui.tabs as tab}
           <button
             class="border-r border-white/10 px-2 py-3 text-[9px] font-bold uppercase tracking-wider transition sm:text-[10px] {activeTab ===
             tab[0]
@@ -669,9 +679,9 @@
         {#if activeTab === 'evidence'}
           <div class="mb-5 flex items-end justify-between gap-4">
             <div>
-              <p class="text-xs uppercase tracking-widest text-[#d6b35a]">Éléments collectés</p>
+              <p class="text-xs uppercase tracking-widest text-[#d6b35a]">{ui.collected}</p>
               <p class="mt-1 text-sm text-white/50">
-                Une source n’est pas nécessairement une certitude.
+                {ui.sourceCaution}
               </p>
             </div>
             <span class="font-mono text-sm text-white/40"
@@ -682,7 +692,7 @@
             <div
               class="border border-dashed border-white/20 p-10 text-center text-sm text-white/45"
             >
-              Le carnet est vide. Examinez la scène et interrogez les témoins.
+              {ui.emptyNotebook}
             </div>
           {:else}
             <div class="space-y-3">
@@ -1089,11 +1099,11 @@
       <footer
         class="flex items-center justify-between border-t border-white/10 px-5 py-3 text-[9px] uppercase tracking-wider text-white/30 sm:px-7"
       >
-        <span>Perspective · {investigation.investigator}</span>
+        <span>{ui.perspective} · {investigation.investigator}</span>
         <span class="flex items-center gap-4"
           ><button class="text-white/40 hover:text-red-200" onclick={resetInvestigation}
-            >Réinitialiser</button
-          ><span>Spoilers · ch. {investigation.chapter}</span></span
+            >{ui.reset}</button
+          ><span>{ui.spoilers} · ch. {investigation.chapter}</span></span
         >
       </footer>
     </div>
@@ -1217,26 +1227,23 @@
       <section class="w-full max-w-3xl border border-[#d6b35a]/35 bg-[#0b0f10] shadow-2xl">
         <div class="border-b border-white/10 p-6 sm:p-9">
           <p class="text-[10px] font-bold uppercase tracking-[0.3em] text-[#d6b35a]">
-            Briefing · Jour 2 · 09:00
+            {ui.briefing}
           </p>
-          <h2 class="mt-3 font-serif text-4xl text-white sm:text-6xl">Onze secondes</h2>
+          <h2 class="mt-3 font-serif text-4xl text-white sm:text-6xl">{investigation.title}</h2>
           <p class="mt-3 max-w-2xl text-sm leading-relaxed text-white/60">
-            Le premier cours de Nen vient de devenir une scène de crime. Barrigen est mort devant
-            toute la classe. Une seule personne affirme avoir vu une présence masquée; plusieurs
-            autres ont vu les créatures qui ont tué.
+            {ui.briefingBody}
           </p>
         </div>
         <div class="grid gap-7 p-6 sm:grid-cols-[1fr_0.8fr] sm:p-9">
           <div>
             <p class="text-[10px] font-bold uppercase tracking-widest text-white/40">
-              Ordre de mission
+              {ui.mission}
             </p>
             <p class="mt-3 font-serif text-xl leading-relaxed text-white/85">
               {investigation.objective}
             </p>
             <p class="mt-4 text-xs leading-relaxed text-amber-100/65">
-              L’identité de l’utilisateur de Silent Majority n’est pas connue dans le canon. Une
-              enquête rigoureuse doit savoir s’arrêter avant l’accusation.
+              {ui.canonLimit}
             </p>
           </div>
           <ol class="space-y-3 border-l border-white/10 pl-6">
@@ -1253,11 +1260,11 @@
           class="flex flex-wrap items-center justify-between gap-4 border-t border-white/10 px-6 py-5 sm:px-9"
         >
           <p class="text-[9px] uppercase tracking-wider text-white/30">
-            Progression sauvegardée sur cet appareil
+            {ui.saved}
           </p>
           <button
             class="border border-[#d6b35a] bg-[#d6b35a] px-6 py-3 text-xs font-bold uppercase tracking-[0.18em] text-black hover:bg-[#f0cf76]"
-            onclick={startInvestigation}>Entrer dans la scène</button
+            onclick={startInvestigation}>{ui.enter}</button
           >
         </div>
       </section>

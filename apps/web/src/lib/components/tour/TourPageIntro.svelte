@@ -33,4 +33,6 @@
   scale={$t.tour.scale(shipLength(ship))}
   morenaTitle={$t.tour.morena.title}
   morenaHref={$link('/tour/morena')}
+  modesTitle={$t.nav.tourModes}
+  modesHref={$link('/tour/modes')}
 />

@@ -9437,28 +9437,18 @@
     ],
     "mapTrajectory": [
       {
-        "location": "tier-3-central-police-station",
+        "location": "tier-3-political-ward",
         "fromChapterId": "ch-358"
       },
       {
-        "location": "tier-4-royal-army-conference-room",
-        "fromChapterId": "ch-359"
+        "location": "tier-3-general-passenger-area",
+        "fromChapterId": "ch-380",
+        "note": "Intercepte Illumi et Kalluto"
       },
       {
-        "location": "tier-3-central-police-station",
-        "fromChapterId": "ch-360"
-      },
-      {
-        "location": "tier-3-political-ward",
-        "fromChapterId": "ch-380"
-      },
-      {
-        "location": "tier-4-royal-army-conference-room",
-        "fromChapterId": "ch-380.2"
-      },
-      {
-        "location": "tier-3-central-police-station",
-        "fromChapterId": "ch-381"
+        "location": "tier-3-vip-room",
+        "fromChapterId": "ch-381",
+        "note": "Installe les Zoldyck en salle VIP et enquête"
       }
     ]
   },
@@ -9859,21 +9849,8 @@
     ],
     "mapTrajectory": [
       {
-        "location": "tier-3-central-courthouse",
-        "fromChapterId": "ch-358"
-      },
-      {
         "location": "tier-3-political-ward",
-        "fromChapterId": "ch-380"
-      },
-      {
-        "location": "tier-4-royal-army-conference-room",
-        "fromChapterId": "ch-380.2",
-        "certainty": "PROBABLE"
-      },
-      {
-        "location": "tier-3-central-courthouse",
-        "fromChapterId": "ch-381"
+        "fromChapterId": "ch-358"
       }
     ]
   },
@@ -10281,7 +10258,7 @@
     "mapTrajectory": [
       {
         "location": "tier-3-central-hospital",
-        "fromChapterId": "ch-380"
+        "fromChapterId": "ch-358"
       }
     ]
   },
@@ -17074,7 +17051,7 @@
     "mapTrajectory": [
       {
         "location": "tier-3-central-hospital",
-        "fromChapterId": "ch-380"
+        "fromChapterId": "ch-358"
       }
     ]
   },
@@ -17485,7 +17462,7 @@
     "mapTrajectory": [
       {
         "location": "tier-3-political-ward",
-        "fromChapterId": "ch-380"
+        "fromChapterId": "ch-358"
       }
     ]
   },
@@ -17888,7 +17865,7 @@
     "mapTrajectory": [
       {
         "location": "tier-3-political-ward",
-        "fromChapterId": "ch-380"
+        "fromChapterId": "ch-358"
       }
     ]
   },
@@ -17909,7 +17886,7 @@
     "mapTrajectory": [
       {
         "location": "tier-3-political-ward",
-        "fromChapterId": "ch-380"
+        "fromChapterId": "ch-358"
       }
     ]
   },
@@ -18310,7 +18287,7 @@
     ],
     "mapTrajectory": [
       {
-        "location": "tier-1-royal-residential-sector",
+        "location": "tier-1-vvip-prison-beyond",
         "fromChapterId": "ch-358"
       }
     ],
@@ -18723,7 +18700,7 @@
     },
     "mapTrajectory": [
       {
-        "location": "tier-3-hopital",
+        "location": "tier-3-central-hospital",
         "fromChapterId": "ch-358"
       }
     ]
@@ -19124,7 +19101,13 @@
       "At the departure she sits a meeting of seven in the Tier 3 first-class compartment: the Zodiacs Gel, Cluck and Ginta, the doctors Sanbica Norton and Tokarine, and one more Hunter the chapter leaves unnamed. They work through the expedition's logistics — supply distribution, and the transport arrangements Tokarine's ability cannot carry alone. It is the room the Association contingent works from, and the only panel that fixes it.",
       "She announces to the Zodiacs that she has been folding Ancient Language data into their software in case the expedition meets a Dark Continent civilisation, and that reconstruction comes first once the passenger list is retrieved. On the twelfth day Kurapika is still waiting on her sweep of the passengers under two years old for Prince Woble."
     ],
-    "mapLocationCorrection": true
+    "mapLocationCorrection": true,
+    "mapTrajectory": [
+      {
+        "location": "tier-3-political-ward",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "saccho-kobayakawa",
@@ -19523,7 +19506,7 @@
     ],
     "mapTrajectory": [
       {
-        "location": "tier-1-royal-residential-sector",
+        "location": "tier-1-vvip-prison-beyond",
         "fromChapterId": "ch-358"
       }
     ],
@@ -19936,7 +19919,7 @@
     },
     "mapTrajectory": [
       {
-        "location": "tier-1-royal-residential-sector",
+        "location": "tier-1-vvip-prison-beyond",
         "fromChapterId": "ch-358"
       }
     ],

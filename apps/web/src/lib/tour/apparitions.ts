@@ -178,6 +178,12 @@ export interface Apparition {
   colour: number
   /** How far the technique has got: the card's three stages, and nothing else. */
   stage: number
+  /** Visual direction for the shared human figure used by tour-derived games. */
+  human?: {
+    role: 'witness' | 'guard' | 'nen-guard' | 'hunter' | 'fighter' | 'steward' | 'victim'
+    pose: 'idle' | 'walk' | 'listen' | 'search' | 'held' | 'guard' | 'attack' | 'fallen'
+    aura?: 'none' | 'ten' | 'ren' | 'zetsu'
+  }
   /**
    * Whether only Gyo shows it.
    *

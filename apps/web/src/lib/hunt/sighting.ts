@@ -94,6 +94,19 @@ export function hunterFigure(sighting: Sighting): Apparition | null {
     size: HUNTER_SIZE,
     colour: HUNTER_COLOURS[lookOf(hunter)],
     stage: stageOf(sighting),
+    human: {
+      role: 'hunter',
+      pose:
+        hunter.held > 0
+          ? 'held'
+          : hunter.mode === 'listen'
+            ? 'listen'
+            : hunter.mode === 'search'
+              ? 'search'
+              : 'walk',
+      aura:
+        hunter.pool.available <= 0 ? 'zetsu' : sighting.duel?.hunter.ken ? 'ren' : 'ten',
+    },
     // Never Gyo-only: he is a body in a room, not a technique laid on one.
     hidden: false,
   }

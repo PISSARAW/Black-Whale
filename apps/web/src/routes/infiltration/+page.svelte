@@ -93,6 +93,11 @@
       tierId: arena.tierId,
       spaceId: witness.spaceId,
       stage: 0,
+      human: {
+        role: witness.id === 'steward' ? 'steward' : witness.id === 'nenGuard' ? 'nen-guard' : 'guard',
+        pose: witness.investigating ? 'search' : 'walk',
+        aura: witness.usesEn ? 'ten' : 'none',
+      },
       hidden: false,
     })),
   )

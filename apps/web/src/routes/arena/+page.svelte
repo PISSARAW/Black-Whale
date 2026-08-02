@@ -107,6 +107,20 @@
       size: 1,
       colour: 0xc36f68,
       stage: actorStage(),
+      human: {
+        role: 'fighter',
+        pose:
+          game.opponent.condition === 'down' || game.opponent.condition === 'ko'
+            ? 'fallen'
+            : game.opponent.intent || opponentMotion === 'attack'
+              ? 'attack'
+              : opponentMotion === 'guard'
+                ? 'guard'
+                : opponentMotion === 'hit'
+                  ? 'held'
+                  : 'idle',
+        aura: game.opponent.mode,
+      },
       hidden: false,
       pick: true,
     },

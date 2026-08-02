@@ -136,6 +136,7 @@
               ? ('believed' as const)
               : ('outdated' as const),
         isObserver: owner?.factionId === playerFactionId,
+        human: true,
         locationLabel: placement.loc?.name ?? null,
       }
     })

@@ -342,12 +342,79 @@ function toad(seen: Apparition, { THREE, glow, root }: BasicApparitionContext): 
   tail.add(paddle)
   root.add(tail)
   return root
+}
+
+function wog(seen: Apparition, { THREE, glow, root }: BasicApparitionContext): Object3D {
+  const ink = glow(0x171318, 1)
+  const stem = new THREE.Group()
+  stem.name = 'eyewog-limbs'
+  const torso = new THREE.Mesh(
+    new THREE.CylinderGeometry(seen.size * 0.07, seen.size * 0.055, seen.size * 1.25, 6),
+    ink,
+  )
+  torso.rotation.z = -0.18
+  stem.add(torso)
+
+  const eye = new THREE.Mesh(
+    new THREE.SphereGeometry(seen.size * 0.27, 10, 8),
+    glow(0xf8f2e8, 1),
+  )
+  eye.scale.set(0.72, 1, 0.5)
+  eye.position.set(-seen.size * 0.1, -seen.size * 0.3, seen.size * 0.08)
+  stem.add(eye)
+  const pupil = new THREE.Mesh(new THREE.SphereGeometry(seen.size * 0.1, 7, 5), ink)
+  pupil.position.set(-seen.size * 0.1, -seen.size * 0.3, seen.size * 0.2)
+  stem.add(pupil)
+
+  // Four twig limbs, each ending in the three prehensile fingers shown
+  // in the source. Their uneven angles keep the creature insect-like.
+  for (let limbIndex = 0; limbIndex < 4; limbIndex++) {
+    const side = limbIndex % 2 ? 1 : -1
+    const upper = limbIndex < 2
+    const limb = new THREE.Group()
+    limb.position.set(side * seen.size * 0.05, seen.size * (upper ? 0.32 : -0.38), 0)
+    const arm = new THREE.Mesh(
+      new THREE.CylinderGeometry(seen.size * 0.018, seen.size * 0.014, seen.size * 0.52, 4),
+      ink,
+    )
+    arm.rotation.z = side * (upper ? 1.05 : 0.72)
+    limb.add(arm)
+    for (let finger = 0; finger < 3; finger++) {
+      const digit = new THREE.Mesh(
+        new THREE.CylinderGeometry(seen.size * 0.01, seen.size * 0.007, seen.size * 0.2, 4),
+        ink,
+      )
+      digit.position.set(
+        side * seen.size * 0.25,
+        -seen.size * 0.16 + finger * seen.size * 0.07,
+        0,
+      )
+      digit.rotation.z = side * (0.65 + finger * 0.35)
+      limb.add(digit)
+    }
+    stem.add(limb)
+  }
+
+  const tail = new THREE.Mesh(
+    new THREE.CylinderGeometry(seen.size * 0.022, seen.size * 0.016, seen.size * 0.92, 5),
+    ink,
+  )
+  tail.position.set(seen.size * 0.06, seen.size * 0.88, 0)
+  tail.rotation.z = -0.18
+  stem.add(tail)
+  const club = new THREE.Mesh(new THREE.SphereGeometry(seen.size * 0.16, 8, 6), ink)
+  club.scale.set(0.7, 1.45, 0.7)
+  club.position.set(seen.size * 0.14, seen.size * 1.36, 0)
+  club.rotation.z = -0.5
+  stem.add(club)
+  root.add(stem)
+  return stem
 
 }
 
 const BUILDERS: Partial<
   Record<Apparition['kind'], (seen: Apparition, context: BasicApparitionContext) => Object3D>
-> = { medusa, chimera, monster, toad }
+> = { medusa, chimera, monster, toad, wog }
 
 
 export function buildGuardianApparition(

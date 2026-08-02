@@ -25,6 +25,7 @@
   import TourPlanDialog from '$lib/components/tour/TourPlanDialog.svelte'
   import TourProvenancePanel from '$lib/components/tour/TourProvenancePanel.svelte'
   import TourScene from '$lib/components/tour/TourScene.svelte'
+  import TourTargetIndex, { type TourTargetMode } from '$lib/components/tour/TourTargetIndex.svelte'
   import { setAmbientMuffled } from '$lib/audio/ambient'
   import {
     startEngine,
@@ -994,6 +995,22 @@
 
   /** A technique whose target is the visitor has nothing for the index to offer. */
   const onBody = $derived(worksOnTheBody(technique) && !onSolids)
+  const targetMode = $derived<TourTargetMode>(
+    onBody
+      ? 'body'
+      : onSolids
+        ? 'solid'
+        : technique?.kind === 'relay' && world.pairing
+          ? 'relay'
+          : technique
+            ? 'space'
+            : 'jump',
+  )
+
+  function targetName(item: { id?: string; name: string; nameFr: string }): string {
+    const space = item.id ? ship.spaces.get(item.id) : null
+    return nameOf(space ? named(space) : item)
+  }
 
   /**
    * Every solid in the ship, grouped by the room it stands in.
@@ -1489,126 +1506,21 @@
         />
       {/if}
 
-      <section>
-        <p class="mb-2 text-[10px] uppercase tracking-widest text-[#FFD700]/70">
-          {#if onBody}
-            {$t.tour.hatsu.body.noTarget}
-          {:else if onSolids}
-            {$t.tour.hatsu.solids.targets} · {$t.tour.hatsu.allDecks}
-          {:else if technique?.kind === 'relay' && world.pairing}
-            {$t.tour.hatsu.solids.relayTargets}
-          {:else if technique}
-            {$t.tour.hatsu.targets} · {$t.tour.hatsu.allDecks}
-          {:else}
-            {$t.tour.jumpTo}
-          {/if}
-        </p>
-        {#if onBody}
-          <p
-            class="rounded border border-[#333] px-2.5 py-2 text-xs leading-snug text-[#FFFFF0]/50"
-          >
-            {$t.tour.hatsu.body.castHint}
-          </p>
-        {:else if onSolids}
-          <!-- The same reach, one noun down: every solid in the ship, under the
-               room it stands in. -->
-          <ul class="max-h-56 overflow-y-auto rounded border border-[#333]">
-            {#each solidTargets as group (group.tier.id)}
-              <li
-                class="sticky top-0 bg-[#0b0b0b] px-2.5 py-1 text-[10px] uppercase tracking-widest text-[#FFFFF0]/40"
-              >
-                {nameOf(group.tier)}
-              </li>
-              {#each group.solids as solid (solid.id)}
-                <li>
-                  <button
-                    type="button"
-                    onclick={() => castOn(solid.spaceId, solid.id)}
-                    class="flex w-full items-center justify-between gap-2 px-2.5 py-1.5 text-left text-xs text-[#FFFFF0]/80 transition-colors hover:text-[#FFFFF0]"
-                    style:background={world.solids[solid.id]
-                      ? `color-mix(in srgb, ${technique?.color} 18%, transparent)`
-                      : undefined}
-                  >
-                    <span class="truncate">{nameOf(solid)}</span>
-                    <span class="flex shrink-0 items-baseline gap-1.5">
-                      <span class="truncate text-[9px] text-[#FFFFF0]/40">
-                        {nameOf(ship.spaces.get(solid.spaceId) ?? solid)}
-                      </span>
-                      <span
-                        class="shrink-0 rounded border px-1 py-px text-[9px] uppercase {provenanceClass(
-                          solid,
-                        )}"
-                      >
-                        {provenanceLabel(solid)}
-                      </span>
-                    </span>
-                  </button>
-                </li>
-              {/each}
-            {/each}
-          </ul>
-        {:else if technique}
-          <!-- Reach is the whole ship, so the index stops being this deck's and
-               becomes every deck's: a room four levels down is as castable as
-               the one through the bulkhead. -->
-          <ul class="max-h-56 overflow-y-auto rounded border border-[#333]">
-            {#each targets as group (group.tier.id)}
-              {#if group.spaces.length}
-                <li
-                  class="sticky top-0 bg-[#0b0b0b] px-2.5 py-1 text-[10px] uppercase tracking-widest text-[#FFFFF0]/40"
-                >
-                  {nameOf(group.tier)}
-                </li>
-                {#each group.spaces as space (space.id)}
-                  <li>
-                    <button
-                      type="button"
-                      onclick={() => castOn(space.id)}
-                      class="flex w-full items-center justify-between gap-2 px-2.5 py-1.5 text-left text-xs text-[#FFFFF0]/80 transition-colors hover:text-[#FFFFF0]"
-                      style:background={space.id === currentSpace?.id
-                        ? `color-mix(in srgb, ${technique.color} 18%, transparent)`
-                        : undefined}
-                    >
-                      <span class="truncate">{nameOf(named(space))}</span>
-                      <span
-                        class="shrink-0 rounded border px-1 py-px text-[9px] uppercase {provenanceClass(
-                          named(space),
-                        )}"
-                      >
-                        {provenanceLabel(named(space))}
-                      </span>
-                    </button>
-                  </li>
-                {/each}
-              {/if}
-            {/each}
-          </ul>
-        {:else}
-          <ul class="max-h-56 overflow-y-auto rounded border border-[#333]">
-            {#each sortedSpaces as space (space.id)}
-              <li>
-                <button
-                  type="button"
-                  onclick={() => goToSpace(space)}
-                  class="flex w-full items-center justify-between gap-2 px-2.5 py-1.5 text-left text-xs transition-colors hover:bg-[#FFD700]/10 {space.id ===
-                  currentSpace?.id
-                    ? 'bg-[#FFD700]/15 text-[#FFD700]'
-                    : 'text-[#FFFFF0]/80'}"
-                >
-                  <span class="truncate">{nameOf(named(space))}</span>
-                  <span
-                    class="shrink-0 rounded border px-1 py-px text-[9px] uppercase {provenanceClass(
-                      named(space),
-                    )}"
-                  >
-                    {provenanceLabel(named(space))}
-                  </span>
-                </button>
-              </li>
-            {/each}
-          </ul>
-        {/if}
-      </section>
+      <TourTargetIndex
+        mode={targetMode}
+        solidGroups={solidTargets}
+        spaceGroups={targets}
+        deckSpaces={sortedSpaces}
+        currentSpaceId={currentSpace?.id ?? null}
+        techniqueColor={technique?.color ?? null}
+        nameOf={targetName}
+        roomName={(solid) => targetName(ship.spaces.get(solid.spaceId) ?? solid)}
+        {provenanceLabel}
+        {provenanceClass}
+        isSolidActive={(solidId) => Boolean(world.solids[solidId])}
+        onSolid={(spaceId, solidId) => castOn(spaceId, solidId)}
+        onSpace={(space) => (technique ? castOn(space.id) : goToSpace(space))}
+      />
 
       <TourControlsPanel
         hasTechnique={Boolean(technique)}

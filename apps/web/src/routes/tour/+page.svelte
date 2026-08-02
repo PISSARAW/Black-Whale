@@ -15,11 +15,10 @@
    */
   import { onDestroy, onMount, untrack } from 'svelte'
   import { page } from '$app/stores'
-  import Seo from '$lib/components/Seo.svelte'
   import TourComfortPanel from '$lib/components/tour/TourComfortPanel.svelte'
   import TourControlsPanel from '$lib/components/tour/TourControlsPanel.svelte'
   import TourHatsuHud from '$lib/components/tour/TourHatsuHud.svelte'
-  import TourPageHeader from '$lib/components/tour/TourPageHeader.svelte'
+  import TourPageIntro from '$lib/components/tour/TourPageIntro.svelte'
   import TourPageDialogs from '$lib/components/tour/TourPageDialogs.svelte'
   import TourProvenancePanel from '$lib/components/tour/TourProvenancePanel.svelte'
   import TourScene from '$lib/components/tour/TourScene.svelte'
@@ -29,7 +28,6 @@
   import { activeHatsu, enterForcedZetsu, parallelFutureVisible } from '$lib/nen/hatsuState'
   import { get } from 'svelte/store'
   import { HATSU_PROFILES, type HatsuInteractionKind } from '$lib/nen/hatsuRegistry'
-  import { breadcrumbSchema } from '$lib/seo/schema'
   import { link, t } from '$lib/i18n'
   import { locale } from '$lib/i18n'
   import { localizeHatsu } from '$lib/i18n/hatsu'
@@ -47,7 +45,6 @@
     localizedName,
     localizedSource,
     provenanceClass,
-    shipLength as measureShipLength,
   } from '$lib/tour/pagePresentation'
   import { playTourReportSound } from '$lib/tour/reportSound'
   import {
@@ -183,9 +180,6 @@
 
   const linkPrompt = $derived(promptFor($t.tour))
   const touchUseLabel = $derived(promptFor($t.tour.touch))
-
-  /** Bow-to-stern length of the ship, read off the widest deck. */
-  const shipLength = measureShipLength(ship)
 
   function goToSpace(space: Space, landing: Vec2 | null = null) {
     if (space.tierId !== tierId) tierId = space.tierId
@@ -785,29 +779,9 @@
 
 <svelte:window onkeydown={keyboard.onKeydown} />
 
-<Seo
-  title={$t.tour.seoTitle}
-  description={$t.tour.seoDescription}
-  jsonLd={breadcrumbSchema([
-    { name: $t.common.home, path: $link('/') },
-    { name: $t.nav.virtualTour, path: $link('/tour') },
-  ])}
-/>
+<TourPageIntro {ship} />
 
 <div class="mx-auto max-w-[1600px] px-4 py-8" data-hatsu-pass>
-  <TourPageHeader
-    title={$t.tour.title}
-    intro={$t.tour.intro}
-    counts={$t.tour.counts(
-      ship.blueprint.spaces.length,
-      ship.decks.length,
-      ship.tiers.length - ship.decks.length,
-    )}
-    scale={$t.tour.scale(shipLength)}
-    morenaTitle={$t.tour.morena.title}
-    morenaHref={$link('/tour/morena')}
-  />
-
   <!-- Full screen is this grid over everything else, not the canvas alone:
        everything in the column has to come with the ship, or it would be a walk
        with no way to change deck, aim a technique or read the plan. -->

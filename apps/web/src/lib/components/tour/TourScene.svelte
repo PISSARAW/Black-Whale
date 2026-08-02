@@ -65,7 +65,7 @@
   import { comfort, prefersReducedMotion, type Comfort } from '$lib/tour/comfort'
   import { buildSolidMesh } from '$lib/tour/mesh'
   import { animateDealerFace, buildDealer } from '$lib/tour/dealer'
-  import { HUMAN_LOD_DISTANCE, buildHumanFigure, humanStateKey } from '$lib/tour/humanFigure'
+  import { HUMAN_LOD_DISTANCE, humanStateKey } from '$lib/tour/humanFigure'
   import type { HumanPose } from '$lib/tour/humanAnimation'
   import { styleNenCreature } from '$lib/tour/nenCreatureFigure'
   import { cardFaceSvg } from '$lib/tour/cardArt'
@@ -120,6 +120,7 @@
     TourAtmosphereView,
   } from '$lib/tour/TourAtmosphereView'
   import { ApparitionView } from '$lib/tour/ApparitionView'
+  import { buildBasicApparition } from '$lib/tour/apparitionBasicView'
   import { HatsuSceneEffects } from '$lib/tour/HatsuSceneEffects'
   import type { Link, Space, Structure, Vec2, WallSegment } from '$lib/tour/types'
 
@@ -1576,21 +1577,6 @@
        * ring read as a hole in the room instead of a picture hung in it.
        */
 
-      /** A five-pointed star, flat, in the plane it is drawn facing. */
-      function starShape(size: number) {
-        const shape = new THREE.Shape()
-        for (let i = 0; i < 10; i++) {
-          const angle = (Math.PI / 5) * i - Math.PI / 2
-          const radius = i % 2 === 0 ? size : size * 0.42
-          const x = Math.cos(angle) * radius
-          const y = Math.sin(angle) * radius
-          if (i === 0) shape.moveTo(x, y)
-          else shape.lineTo(x, y)
-        }
-        shape.closePath()
-        return new THREE.ShapeGeometry(shape)
-      }
-
       /**
        * How many links the Dowsing Chain is drawn with.
        *
@@ -1625,183 +1611,14 @@
         const skin = glow(seen.colour, seen.hidden ? 0.18 : 0.92)
         let turns: import('three').Object3D | null = null
         let pane: import('three').Mesh | null = null
-
-        if (seen.kind === 'owl') {
-          // Secret Window is called an owl by the ability, but its visible form
-          // is a small hooded spectre: one dark visor, two flame-like points and
-          // a lower edge that melts into hanging aura.
-          const cloak = new THREE.Mesh(
-            new THREE.CapsuleGeometry(seen.size * 0.64, seen.size * 0.82, 5, 10),
-            skin,
-          )
-          cloak.scale.set(1, 1.08, 0.72)
-          cloak.position.y = seen.size * 0.15
-          root.add(cloak)
-          for (const side of [-1, 1]) {
-            const peak = new THREE.Mesh(
-              new THREE.ConeGeometry(seen.size * 0.2, seen.size * 0.78, 5),
-              skin,
-            )
-            peak.position.set(side * seen.size * 0.34, seen.size * 1.05, 0)
-            peak.rotation.z = side * -0.18
-            root.add(peak)
-          }
-          for (let i = 0; i < 7; i++) {
-            const drip = new THREE.Mesh(
-              new THREE.ConeGeometry(
-                seen.size * (0.1 + (i % 2) * 0.025),
-                seen.size * (0.32 + (i % 3) * 0.11),
-                5,
-              ),
-              skin,
-            )
-            drip.rotation.z = Math.PI
-            drip.position.set((i - 3) * seen.size * 0.18, -seen.size * (0.68 + (i % 3) * 0.06), 0)
-            root.add(drip)
-          }
-          const head = new THREE.Group()
-          head.position.set(0, seen.size * 0.28, -seen.size * 0.52)
-          const visor = new THREE.Mesh(
-            new THREE.BoxGeometry(seen.size * 0.7, seen.size * 0.16, seen.size * 0.035),
-            glow(0x171318, 1),
-          )
-          head.add(visor)
-          for (let slit = 0; slit < 5; slit++) {
-            const gleam = new THREE.Mesh(
-              new THREE.BoxGeometry(seen.size * 0.025, seen.size * 0.1, seen.size * 0.012),
-              glow(0xc5b8b0, 0.7),
-            )
-            gleam.position.set((slit - 2) * seen.size * 0.09, 0, -seen.size * 0.025)
-            head.add(gleam)
-          }
-          const tear = new THREE.Mesh(
-            new THREE.ConeGeometry(seen.size * 0.09, seen.size * 0.25, 5),
-            glow(0x6b5d68, 0.92),
-          )
-          tear.rotation.z = Math.PI
-          tear.position.set(0, -seen.size * 0.28, 0)
-          head.add(tear)
-          root.add(head)
-          turns = head
-        }
-
         let humanLod: Shown['humanLod']
         let humanAnimate: Shown['humanAnimate']
-        if (seen.kind === 'avatar' || seen.kind === 'combatant') {
-          const human = buildHumanFigure({
-            THREE,
-            glow,
-            seen: seen as Apparition & { kind: 'avatar' | 'combatant' },
-          })
-          root.add(human.root)
-          turns = human.turns
-          humanLod = human.lod
-          humanAnimate = human.animate
-        }
 
-        if (seen.kind === 'card') {
-          // One card per stage, fanned: the blue admission is still on the table
-          // when the yellow restraint is laid over it.
-          for (let i = 0; i < Math.max(1, seen.stage); i++) {
-            const face = new THREE.Mesh(
-              new THREE.PlaneGeometry(seen.size, seen.size * 1.5),
-              glow([0x4d8ff0, 0xf0c94d, 0xe5484d][Math.min(2, i)], 0.9),
-            )
-            face.position.set(i * seen.size * 0.28, i * seen.size * 0.12, i * 0.01)
-            face.rotation.z = (i - 1) * 0.16
-            root.add(face)
-          }
-          turns = root
-        }
-
-        if (seen.kind === 'mark') {
-          const ring = new THREE.Mesh(
-            new THREE.TorusGeometry(seen.size, seen.size * 0.12, 6, 20),
-            skin,
-          )
-          root.add(ring)
-          // Three bars across it: a sigil rather than a hoop, and unmistakably
-          // something put on the room rather than part of it.
-          for (let i = 0; i < 3; i++) {
-            const bar = new THREE.Mesh(
-              new THREE.BoxGeometry(seen.size * 1.8, seen.size * 0.09, seen.size * 0.09),
-              skin,
-            )
-            bar.rotation.z = (Math.PI / 3) * i
-            root.add(bar)
-          }
-          turns = root
-        }
-
-        // Order Stamp's seal: the two strokes of 人, cut out of a small plate
-        // and turning slowly over the head of whatever is wearing it. A locked
-        // puppet gets a ring around the seal — that is the walk's red outline,
-        // and it is the only tell that says which ones an order will reach.
-        if (seen.kind === 'stamp') {
-          const stroke = (lean: number, offset: number) => {
-            const bar = new THREE.Mesh(
-              new THREE.BoxGeometry(seen.size * 0.16, seen.size * 1.1, seen.size * 0.16),
-              skin,
-            )
-            bar.rotation.z = lean
-            bar.position.set(offset, 0, 0)
-            return bar
-          }
-          root.add(stroke(0.42, -seen.size * 0.2))
-          root.add(stroke(-0.42, seen.size * 0.2))
-          if (seen.stage) {
-            const ring = new THREE.Mesh(
-              new THREE.TorusGeometry(seen.size * 0.95, seen.size * 0.09, 6, 18),
-              skin,
-            )
-            root.add(ring)
-          }
-          turns = root
-        }
-
-        // The Sun and Moon's two marks, over the heads of the things wearing
-        // them: a disc with rays, and a crescent. They have to be told apart at
-        // a glance and from across a room — which of the two a thing is wearing
-        // is the whole of what the visitor has to know before they meet.
-        if (seen.kind === 'sun-mark') {
-          const disc = new THREE.Mesh(new THREE.CircleGeometry(seen.size * 0.55, 16), skin)
-          root.add(disc)
-          for (let i = 0; i < 8; i++) {
-            const ray = new THREE.Mesh(
-              new THREE.BoxGeometry(seen.size * 0.09, seen.size * 0.42, seen.size * 0.09),
-              skin,
-            )
-            const angle = (Math.PI / 4) * i
-            ray.position.set(
-              Math.cos(angle) * seen.size * 0.86,
-              Math.sin(angle) * seen.size * 0.86,
-              0,
-            )
-            ray.rotation.z = angle - Math.PI / 2
-            root.add(ray)
-          }
-          turns = root
-        }
-
-        if (seen.kind === 'moon-mark') {
-          const crescent = new THREE.Shape()
-          crescent.absarc(0, 0, seen.size, Math.PI * 0.42, -Math.PI * 0.42, true)
-          crescent.absarc(
-            seen.size * 0.42,
-            0,
-            seen.size * 0.92,
-            -Math.PI * 0.36,
-            Math.PI * 0.36,
-            false,
-          )
-          root.add(new THREE.Mesh(new THREE.ShapeGeometry(crescent), skin))
-          turns = root
-        }
-
-        if (seen.kind === 'star') {
-          const star = new THREE.Mesh(starShape(seen.size), skin)
-          root.add(star)
-          turns = star
+        const basic = buildBasicApparition(seen, { THREE, glow, root, skin })
+        if (basic) {
+          turns = basic.turns
+          humanLod = basic.humanLod
+          humanAnimate = basic.humanAnimate
         }
 
         // Bungee Gum's trap is a strand and a blob: the line is what you walk

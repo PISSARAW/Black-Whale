@@ -1,6 +1,7 @@
 import type { InvestigationTab } from './case'
+import type { WitnessDisposition } from './interview'
 
-export const INVESTIGATION_PROGRESS_VERSION = 5
+export const INVESTIGATION_PROGRESS_VERSION = 6
 export const LEGACY_INVESTIGATION_STORAGE_KEY = 'black-whale:investigation:room-1014'
 
 export interface InvestigationLogEntry {
@@ -23,6 +24,7 @@ export interface InvestigationProgress {
   activeTab: InvestigationTab
   activeSubjectId: string | null
   replaySecond: number
+  witnessDispositions: Record<string, WitnessDisposition>
   log: InvestigationLogEntry[]
 }
 
@@ -41,6 +43,7 @@ export function freshProgress(caseId: string): InvestigationProgress {
     activeTab: 'evidence',
     activeSubjectId: null,
     replaySecond: 0,
+    witnessDispositions: {},
     log: [],
   }
 }
@@ -72,6 +75,7 @@ export function parseProgress(raw: string | null, caseId: string): Investigation
         typeof value.replaySecond === 'number' && Number.isFinite(value.replaySecond)
           ? Math.max(0, Math.min(11, Math.round(value.replaySecond)))
           : 0,
+      witnessDispositions: parseWitnessDispositions(value.witnessDispositions),
       log: Array.isArray(value.log) ? value.log.filter(isLogEntry).slice(-30) : [],
     }
   } catch {
@@ -114,6 +118,22 @@ function isSupportedVersion(value: unknown): value is number {
 
 function isInvestigationTab(value: unknown): value is InvestigationTab {
   return value === 'evidence' || value === 'people' || value === 'timeline' || value === 'deduction'
+}
+
+function parseWitnessDispositions(value: unknown): Record<string, WitnessDisposition> {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return {}
+  return Object.fromEntries(
+    Object.entries(value).filter((entry): entry is [string, WitnessDisposition] => {
+      const disposition = entry[1] as Partial<WitnessDisposition>
+      return (
+        typeof disposition.subjectId === 'string' &&
+        typeof disposition.trust === 'number' &&
+        typeof disposition.stress === 'number' &&
+        Array.isArray(disposition.preferredStances) &&
+        Array.isArray(disposition.resistedStances)
+      )
+    }),
+  )
 }
 
 function isLogEntry(value: unknown): value is InvestigationLogEntry {

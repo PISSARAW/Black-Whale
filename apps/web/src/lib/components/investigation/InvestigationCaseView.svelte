@@ -292,6 +292,7 @@
       ? saved.activeSubjectId
       : null
     replaySecond = saved.replaySecond
+    witnessDispositions = saved.witnessDispositions
     log = saved.log
     briefingOpen = !saved.started
     return closeHatsuGate
@@ -314,6 +315,7 @@
         activeTab,
         activeSubjectId,
         replaySecond,
+        witnessDispositions,
         log,
       }),
     )
@@ -516,7 +518,10 @@
       [activeSubject.id]: outcome.nextDisposition,
     }
     activeResponse = outcome.cooperation === 'refused' ? ui.refused : question.response
-    if (outcome.cooperation === 'refused') return
+    if (outcome.cooperation === 'refused') {
+      persist()
+      return
+    }
     if (!askedQuestionKeys.includes(key)) {
       askedQuestionKeys = [...askedQuestionKeys, key]
       discover(outcome.revealedEvidenceIds)
@@ -559,6 +564,7 @@
     hatsuResult = null
     askedQuestionKeys = []
     activeResponse = null
+    witnessDispositions = {}
     confrontationKeys = []
     confrontationWitnessIds = []
     confrontationResult = null

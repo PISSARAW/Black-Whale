@@ -64,4 +64,9 @@ describe('investigation progress', () => {
     expect(parsed.activeSubjectId).toBe('guard')
     expect(parsed.replaySecond).toBe(11)
   })
+
+  it('migrates V5 saves with an empty social state', () => {
+    const parsed = parseProgress('{"version":5,"caseId":"case-a","started":true}', 'case-a')
+    expect(parsed.witnessDispositions).toEqual({})
+  })
 })

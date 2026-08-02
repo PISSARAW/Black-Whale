@@ -871,12 +871,12 @@
         "note": "Promenade dans le Secteur Passager du Pont 3"
       },
       {
-        "location": "tier-3-theater",
+        "location": "tier-3-cineplex",
         "fromChapterId": "ch-392",
         "note": "Séance de cinéma, rencontre avec Zakuro et Lynch"
       },
       {
-        "location": "tier-3-theater",
+        "location": "tier-3-cineplex",
         "fromChapterId": "ch-393",
         "note": "Discussion avec Hinrigh Biganduffno"
       },
@@ -1305,7 +1305,7 @@
         "note": "Confrontation avec Mizaistom sur le Pont 3"
       },
       {
-        "location": "tier-3-vip-room",
+        "location": "tier-3-residential-first-class",
         "fromChapterId": "ch-381",
         "note": "Placé sous surveillance dans une chambre VIP"
       }
@@ -9452,7 +9452,7 @@
         "note": "Intercepte Illumi et Kalluto"
       },
       {
-        "location": "tier-3-vip-room",
+        "location": "tier-3-residential-first-class",
         "fromChapterId": "ch-381",
         "note": "Installe les Zoldyck en salle VIP et enquête"
       }
@@ -13659,7 +13659,7 @@
     ],
     "mapTrajectory": [
       {
-        "location": "tier-4-xi-yu-hq",
+        "location": "tier-4-xi-yu-family-office",
         "fromChapterId": "ch-358"
       },
       {
@@ -13668,7 +13668,7 @@
         "note": "Recherche de la base Heil-Ly et Hisoka"
       },
       {
-        "location": "tier-3-heil-ly-hideout",
+        "location": "tier-3-heilly-family-office",
         "fromChapterId": "ch-393",
         "note": "Infiltration de la base Heil-Ly"
       },
@@ -14531,7 +14531,7 @@
     ],
     "mapTrajectory": [
       {
-        "location": "tier-3-heil-ly-hideout",
+        "location": "tier-3-heilly-family-office",
         "fromChapterId": "ch-358"
       }
     ]
@@ -14947,7 +14947,7 @@
     "battles": ["Luini vs. Nobunaga Hazama"],
     "mapTrajectory": [
       {
-        "location": "tier-3-heil-ly-hideout",
+        "location": "tier-3-heilly-family-office",
         "fromChapterId": "ch-358"
       },
       {
@@ -14956,7 +14956,7 @@
         "note": "Provoque le Cha-R"
       },
       {
-        "location": "tier-3-heil-ly-hideout",
+        "location": "tier-3-heilly-family-office",
         "fromChapterId": "ch-378"
       }
     ]
@@ -15857,12 +15857,12 @@
         "note": "Découverte de l'entrée secrète du repaire Heil-Ly"
       },
       {
-        "location": "tier-3-heil-ly-hideout",
+        "location": "tier-3-heilly-family-office",
         "fromChapterId": "ch-398",
         "note": "Infiltration de la base Heil-Ly"
       },
       {
-        "location": "tier-4-waste-facility",
+        "location": "tier-4-recycling-sewage-facilities",
         "fromChapterId": "ch-406"
       }
     ],
@@ -16265,7 +16265,7 @@
     ],
     "mapTrajectory": [
       {
-        "location": "black-whale-unknown",
+        "location": null,
         "fromChapterId": "ch-358"
       }
     ]
@@ -16666,7 +16666,7 @@
     ],
     "mapTrajectory": [
       {
-        "location": "black-whale-unknown",
+        "location": null,
         "fromChapterId": "ch-358"
       }
     ]
@@ -16690,7 +16690,7 @@
     ],
     "mapTrajectory": [
       {
-        "location": "tier-3-theater",
+        "location": "tier-3-cineplex",
         "fromChapterId": "ch-358"
       }
     ]
@@ -25348,7 +25348,7 @@
     "competitions": ["Borksen vs. Morena Prudo — negotiation game"],
     "mapTrajectory": [
       {
-        "location": "black-whale-unknown",
+        "location": null,
         "fromChapterId": "ch-394",
         "certainty": "PROBABLE"
       },
@@ -25357,7 +25357,7 @@
         "fromChapterId": "ch-405"
       },
       {
-        "location": "tier-2-heilly-hq",
+        "location": "tier-2-heilly-secret-hideout",
         "fromChapterId": "ch-407"
       }
     ]
@@ -33196,7 +33196,7 @@
     ],
     "mapTrajectory": [
       {
-        "location": "tier-3-heil-ly-hideout",
+        "location": "tier-3-heilly-family-office",
         "fromChapterId": "ch-358"
       }
     ]
@@ -34006,15 +34006,15 @@
     ],
     "mapTrajectory": [
       {
-        "location": "tier-2-justice-bureau",
+        "location": "tier-2-ministry-of-justice",
         "fromChapterId": "ch-358"
       },
       {
-        "location": "tier-1-vvip-area",
+        "location": "tier-1-vvip-living-quarters",
         "fromChapterId": "ch-402"
       },
       {
-        "location": "tier-2-justice-bureau",
+        "location": "tier-2-ministry-of-justice",
         "fromChapterId": "ch-402"
       }
     ]
@@ -35627,7 +35627,7 @@
     ],
     "mapTrajectory": [
       {
-        "location": "tier-1-kings-living-quarters",
+        "location": "tier-1-king-living-quarters",
         "fromChapterId": "ch-358"
       }
     ]
@@ -37651,7 +37651,7 @@
     ],
     "mapTrajectory": [
       {
-        "location": "tier-4-xi-yu-hq",
+        "location": "tier-4-xi-yu-family-office",
         "fromChapterId": "ch-358"
       }
     ]
@@ -38464,7 +38464,7 @@
     ],
     "mapTrajectory": [
       {
-        "location": "tier-1-kings-living-quarters",
+        "location": "tier-1-king-living-quarters",
         "fromChapterId": "ch-358"
       }
     ]
@@ -38866,7 +38866,7 @@
     ],
     "mapTrajectory": [
       {
-        "location": "tier-4-xi-yu-hq",
+        "location": "tier-4-xi-yu-family-office",
         "fromChapterId": "ch-358"
       }
     ],
@@ -41003,12 +41003,12 @@
         "note": "Découverte de l'entrée secrète du repaire Heil-Ly"
       },
       {
-        "location": "tier-3-heil-ly-hideout",
+        "location": "tier-3-heilly-family-office",
         "fromChapterId": "ch-398",
         "note": "Infiltration de la base Heil-Ly"
       },
       {
-        "location": "tier-4-waste-facility",
+        "location": "tier-4-recycling-sewage-facilities",
         "fromChapterId": "ch-406"
       }
     ]
@@ -41440,7 +41440,7 @@
         "note": "Confrontation avec Mizaistom sur le Pont 3"
       },
       {
-        "location": "tier-3-vip-room",
+        "location": "tier-3-residential-first-class",
         "fromChapterId": "ch-381",
         "note": "Placé sous surveillance dans une chambre VIP avec Illumi"
       }
@@ -42079,7 +42079,7 @@
     "mangaAppearances": [],
     "mapTrajectory": [
       {
-        "location": "tier-3-heil-ly-hideout",
+        "location": "tier-3-heilly-family-office",
         "fromChapterId": "ch-358"
       }
     ]
@@ -42206,7 +42206,7 @@
     "mangaAppearances": [],
     "mapTrajectory": [
       {
-        "location": "tier-3-heil-ly-hideout",
+        "location": "tier-3-heilly-family-office",
         "fromChapterId": "ch-358"
       },
       {
@@ -42259,7 +42259,7 @@
     "mangaAppearances": [],
     "mapTrajectory": [
       {
-        "location": "tier-3-heil-ly-hideout",
+        "location": "tier-3-heilly-family-office",
         "fromChapterId": "ch-358"
       }
     ]
@@ -42309,7 +42309,7 @@
     "mapLocationCorrection": true,
     "mapTrajectory": [
       {
-        "location": "tier-4-xi-yu-hq",
+        "location": "tier-4-xi-yu-family-office",
         "fromChapterId": "ch-358"
       }
     ]
@@ -42372,7 +42372,7 @@
     "mangaAppearances": [],
     "mapTrajectory": [
       {
-        "location": "tier-3-heil-ly-hideout",
+        "location": "tier-3-heilly-family-office",
         "fromChapterId": "ch-358"
       }
     ]
@@ -42420,7 +42420,7 @@
     "mangaAppearances": [],
     "mapTrajectory": [
       {
-        "location": "tier-3-heil-ly-hideout",
+        "location": "tier-3-heilly-family-office",
         "fromChapterId": "ch-358"
       }
     ]
@@ -42513,7 +42513,7 @@
         "note": "Découverte de l'entrée secrète du repaire Heil-Ly"
       },
       {
-        "location": "tier-3-heil-ly-hideout",
+        "location": "tier-3-heilly-family-office",
         "fromChapterId": "ch-398",
         "note": "Infiltration de la base Heil-Ly"
       }
@@ -42669,7 +42669,7 @@
     "mangaAppearances": [],
     "mapTrajectory": [
       {
-        "location": "tier-3-heil-ly-hideout",
+        "location": "tier-3-heilly-family-office",
         "fromChapterId": "ch-358"
       }
     ]
@@ -42693,7 +42693,7 @@
     "mangaAppearances": [],
     "mapTrajectory": [
       {
-        "location": "tier-3-heil-ly-hideout",
+        "location": "tier-3-heilly-family-office",
         "fromChapterId": "ch-358"
       }
     ]
@@ -42959,7 +42959,7 @@
     "mangaAppearances": [],
     "mapTrajectory": [
       {
-        "location": "black-whale-unknown",
+        "location": null,
         "fromChapterId": "ch-358"
       }
     ]
@@ -43018,7 +43018,7 @@
         "fromChapterId": "ch-358"
       },
       {
-        "location": "tier-1-1007",
+        "location": "tier-1-royal-residential-sector-room-1007",
         "fromChapterId": "ch-414"
       }
     ]
@@ -43320,7 +43320,7 @@
     ],
     "mapTrajectory": [
       {
-        "location": "tier-4-xi-yu-hq",
+        "location": "tier-4-xi-yu-family-office",
         "fromChapterId": "ch-358"
       },
       {
@@ -43329,7 +43329,7 @@
         "note": "Recherche de Hisoka"
       },
       {
-        "location": "tier-3-theater",
+        "location": "tier-3-cineplex",
         "fromChapterId": "ch-392",
         "note": "Rencontre Hisoka, mise KO"
       },
@@ -43443,7 +43443,7 @@
     "mangaAppearances": [],
     "mapTrajectory": [
       {
-        "location": "tier-3-heil-ly-hideout",
+        "location": "tier-3-heilly-family-office",
         "fromChapterId": "ch-358"
       }
     ]
@@ -43467,7 +43467,7 @@
     "mangaAppearances": [],
     "mapTrajectory": [
       {
-        "location": "tier-4-xi-yu-hq",
+        "location": "tier-4-xi-yu-family-office",
         "fromChapterId": "ch-358"
       }
     ]
@@ -43539,7 +43539,7 @@
     "mangaAppearances": [],
     "mapTrajectory": [
       {
-        "location": "tier-3-heil-ly-hideout",
+        "location": "tier-3-heilly-family-office",
         "fromChapterId": "ch-358"
       }
     ]
@@ -43799,7 +43799,7 @@
     "mangaAppearances": [],
     "mapTrajectory": [
       {
-        "location": "tier-3-heil-ly-hideout",
+        "location": "tier-3-heilly-family-office",
         "fromChapterId": "ch-358"
       }
     ]
@@ -43871,7 +43871,7 @@
     "mangaAppearances": [],
     "mapTrajectory": [
       {
-        "location": "tier-3-heil-ly-hideout",
+        "location": "tier-3-heilly-family-office",
         "fromChapterId": "ch-358"
       }
     ]
@@ -43943,7 +43943,7 @@
     "mangaAppearances": [],
     "mapTrajectory": [
       {
-        "location": "tier-3-heil-ly-hideout",
+        "location": "tier-3-heilly-family-office",
         "fromChapterId": "ch-358"
       },
       {
@@ -43972,7 +43972,7 @@
     "mangaAppearances": [],
     "mapTrajectory": [
       {
-        "location": "tier-3-heil-ly-hideout",
+        "location": "tier-3-heilly-family-office",
         "fromChapterId": "ch-358"
       }
     ]
@@ -44020,7 +44020,7 @@
     "mangaAppearances": [],
     "mapTrajectory": [
       {
-        "location": "tier-3-heil-ly-hideout",
+        "location": "tier-3-heilly-family-office",
         "fromChapterId": "ch-358"
       }
     ]
@@ -44216,7 +44216,7 @@
         "fromChapterId": "ch-358"
       },
       {
-        "location": "tier-1-1014",
+        "location": "tier-1-royal-residential-sector-room-1014",
         "fromChapterId": "ch-411"
       }
     ]
@@ -44340,7 +44340,7 @@
     "mangaAppearances": [],
     "mapTrajectory": [
       {
-        "location": "tier-3-heil-ly-hideout",
+        "location": "tier-3-heilly-family-office",
         "fromChapterId": "ch-358"
       }
     ]
@@ -44364,7 +44364,7 @@
     "mangaAppearances": [],
     "mapTrajectory": [
       {
-        "location": "tier-3-heil-ly-hideout",
+        "location": "tier-3-heilly-family-office",
         "fromChapterId": "ch-358"
       }
     ]
@@ -44518,7 +44518,7 @@
     ],
     "mapTrajectory": [
       {
-        "location": "tier-4-xi-yu-hq",
+        "location": "tier-4-xi-yu-family-office",
         "fromChapterId": "ch-358"
       }
     ]
@@ -44566,7 +44566,7 @@
     "mangaAppearances": [],
     "mapTrajectory": [
       {
-        "location": "tier-3-heil-ly-hideout",
+        "location": "tier-3-heilly-family-office",
         "fromChapterId": "ch-358"
       }
     ]
@@ -44590,7 +44590,7 @@
     "mangaAppearances": [],
     "mapTrajectory": [
       {
-        "location": "tier-3-heil-ly-hideout",
+        "location": "tier-3-heilly-family-office",
         "fromChapterId": "ch-358"
       }
     ]
@@ -44828,7 +44828,7 @@
     "mangaAppearances": [],
     "mapTrajectory": [
       {
-        "location": "tier-3-heil-ly-hideout",
+        "location": "tier-3-heilly-family-office",
         "fromChapterId": "ch-358"
       }
     ]
@@ -44876,7 +44876,7 @@
     "mangaAppearances": [],
     "mapTrajectory": [
       {
-        "location": "tier-3-heil-ly-hideout",
+        "location": "tier-3-heilly-family-office",
         "fromChapterId": "ch-358"
       }
     ]
@@ -44980,7 +44980,7 @@
     "mangaAppearances": [],
     "mapTrajectory": [
       {
-        "location": "tier-4-xi-yu-hq",
+        "location": "tier-4-xi-yu-family-office",
         "fromChapterId": "ch-358"
       },
       {
@@ -44989,7 +44989,7 @@
         "note": "Recherche de Hisoka"
       },
       {
-        "location": "tier-3-theater",
+        "location": "tier-3-cineplex",
         "fromChapterId": "ch-392",
         "note": "Rencontre Hisoka"
       },

@@ -28499,6 +28499,12 @@
     ],
     "biography": [
       "Unma is Kakin's first queen and the mother of Benjamin and Tserriednich. She remains part of the royal household while both sons pursue competing strategies in the succession war."
+    ],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-queens-living-quarters-room-01",
+        "fromChapterId": "ch-358"
+      }
     ]
   },
   {
@@ -28894,6 +28900,20 @@
     ],
     "biography": [
       "Duazul is Kakin's second queen and mother of Camilla, Tubeppa, Luzurus and Halkenburg. Her guards and children become entangled in several competing alliances and assassination plans."
+    ],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-queens-living-quarters-room-02",
+        "fromChapterId": "ch-358"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1007",
+        "fromChapterId": "ch-373"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1009",
+        "fromChapterId": "ch-382"
+      }
     ]
   },
   {
@@ -29289,6 +29309,12 @@
     ],
     "biography": [
       "Tang Zhao Li is Kakin's third queen and mother of Zhang Lei. Her relationship with the Xi-Yu-backed third prince places her household within the succession contest's mafia balance."
+    ],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-queens-living-quarters-room-03",
+        "fromChapterId": "ch-358"
+      }
     ]
   },
   {
@@ -29684,6 +29710,12 @@
     ],
     "biography": [
       "Katrono is Kakin's fourth queen and mother of Tserriednich. She appears as part of the royal family records surrounding the fourteen princes."
+    ],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-queens-living-quarters-room-04",
+        "fromChapterId": "ch-358"
+      }
     ]
   },
   {
@@ -30485,6 +30517,16 @@
     "biography": [
       "Seiko is Kakin's sixth queen and mother of Kacho and Fugetsu. She is outwardly severe with Fugetsu after Kacho's death while trying to maneuver within the royal hierarchy.",
       "Her true intentions remain ambiguous as Melody and Kaiser work to protect Fugetsu from curses and political pressure."
+    ],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-queens-living-quarters-room-06",
+        "fromChapterId": "ch-358"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1010",
+        "fromChapterId": "ch-359"
+      }
     ]
   },
   {
@@ -30898,6 +30940,11 @@
       {
         "location": "tier-1-royal-residential-sector-room-1013",
         "fromChapterId": "ch-372"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1013",
+        "fromChapterId": "ch-374",
+        "note": "Isolated in Nen space"
       }
     ],
     "positionProvenance": "inferred",

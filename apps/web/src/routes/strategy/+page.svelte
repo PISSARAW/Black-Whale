@@ -49,7 +49,6 @@
   let selectedTier = $state('tier-1')
   let errorMessage = $state<string | null>(null)
   let availableSave = $state<StrategySave | null>(null)
-
   let playerFaction = $derived(data.factions.find((faction) => faction.id === playerFactionId))
   let locationById = $derived(new Map(data.locations.map((location) => [location.id, location])))
   let spentCommandPoints = $derived(planCost(pendingOrders) + diplomacyCost(pendingDiplomacy))
@@ -66,7 +65,6 @@
   let playableLocations = $derived(
     simStore.scenarioLocations.length ? simStore.scenarioLocations : data.locations,
   )
-
   function entityForCharacter(state: WorldState, characterId: string): WorldEntity | undefined {
     const direct = state.entities[characterId]
     if (direct && state.presences[direct.id]) return direct
@@ -286,10 +284,6 @@
 
   function memberName(characterId: string): string { return playerFaction?.members.find((member) => member.character.id === characterId)?.character.canonicalName ?? characterId }
 </script>
-<svelte:head>
-  <title>Mode stratégie · Black Whale</title>
-</svelte:head>
-
 <main class="strategy-shell">
   {#if data.error}
     <section class="fatal" role="alert">

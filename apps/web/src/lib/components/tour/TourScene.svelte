@@ -48,8 +48,6 @@
     type TourWorld,
   } from '$lib/tour/hatsu'
   import {
-    BLOOM_HEART,
-    BLOOM_LEAF,
     SNAKE_BOW,
     SNAKE_HEAD,
     TENTACLES,
@@ -122,6 +120,7 @@
   import { buildBasicApparition } from '$lib/tour/apparitionBasicView'
   import { buildObjectApparition } from '$lib/tour/apparitionObjectView'
   import { HatsuSceneEffects } from '$lib/tour/HatsuSceneEffects'
+  import { buildEmbellishmentApparition } from '$lib/tour/apparitionEmbellishmentView'
   import type { Link, Space, Structure, Vec2, WallSegment } from '$lib/tour/types'
 
   interface Props {
@@ -1633,6 +1632,7 @@
           // cockroach; they are not the broad exposed wings of the old fly.
           for (const side of [-1, 1]) {
             const caseWing = new THREE.Mesh(
+        turns = buildEmbellishmentApparition(seen, { THREE, glow, root, skin }) ?? turns
               new THREE.SphereGeometry(seen.size * 0.72, 10, 7),
               glow(0x29222a, 1),
             )
@@ -1726,91 +1726,6 @@
           const sphere = new THREE.Mesh(new THREE.SphereGeometry(seen.size * 2.1, 10, 8), shell)
           root.add(sphere)
           turns = legs
-        }
-
-        // One flower of a room in bloom: a stem out of the deck, a leaf, five
-        // petals and a heart. Built standing at the origin so the whole thing
-        // sways from its own root rather than sliding about the floor.
-        if (seen.kind === 'bloom') {
-          const petal = glow(seen.colour, 0.94)
-          const green = glow(BLOOM_LEAF, 0.9)
-          const tall = seen.size * 2.6
-
-          const stem = new THREE.Mesh(
-            new THREE.CylinderGeometry(seen.size * 0.045, seen.size * 0.06, tall, 6),
-            green,
-          )
-          stem.position.y = tall / 2
-          root.add(stem)
-
-          const leaf = new THREE.Mesh(new THREE.CircleGeometry(seen.size * 0.42, 8), green)
-          leaf.scale.set(1, 0.42, 1)
-          leaf.rotation.x = -Math.PI / 2.6
-          leaf.position.set(seen.size * 0.3, tall * 0.42, 0)
-          root.add(leaf)
-
-          // The head, tipped over so the flower is open to whoever is walking
-          // under it rather than to the deckhead: a bed of flowers seen from
-          // eye height is a bed of stems unless the faces are turned.
-          const head = new THREE.Group()
-          head.position.y = tall
-          head.rotation.x = -Math.PI / 3
-          for (let i = 0; i < 5; i++) {
-            const blade = new THREE.Mesh(new THREE.CircleGeometry(seen.size * 0.34, 7), petal)
-            blade.scale.set(0.62, 1, 1)
-            const angle = ((Math.PI * 2) / 5) * i
-            blade.position.set(
-              Math.cos(angle) * seen.size * 0.3,
-              Math.sin(angle) * seen.size * 0.3,
-              0,
-            )
-            blade.rotation.z = angle - Math.PI / 2
-            head.add(blade)
-          }
-          const heart = new THREE.Mesh(
-            new THREE.SphereGeometry(seen.size * 0.15, 8, 6),
-            glow(BLOOM_HEART, 1),
-          )
-          heart.position.z = seen.size * 0.05
-          head.add(heart)
-          root.add(head)
-          turns = null
-        }
-
-        // One note shaken loose by the sharp air: a crotchet, a quaver or a
-        // semiquaver, which is `stage` counted round three. Built flat in the
-        // XY plane and turned to whoever is looking, because a note seen
-        // edge-on is a line and not a note.
-        if (seen.kind === 'note') {
-          const ink = glow(seen.colour, 0.95)
-          const flags = seen.stage % 3
-
-          const head = new THREE.Mesh(new THREE.CircleGeometry(seen.size * 0.36, 12), ink)
-          // Tipped and squashed: a note head is an ellipse leaning right, and
-          // a plain disc on a stick reads as a pin.
-          head.scale.set(1, 0.72, 1)
-          head.rotation.z = 0.38
-          root.add(head)
-
-          const stem = new THREE.Mesh(
-            new THREE.PlaneGeometry(seen.size * 0.075, seen.size * 1.5),
-            ink,
-          )
-          stem.position.set(seen.size * 0.3, seen.size * 0.72, 0)
-          root.add(stem)
-
-          // The tails. One for a quaver, two for a semiquaver, and the second
-          // sits under the first exactly as it is written.
-          for (let i = 0; i < flags; i++) {
-            const tail = new THREE.Mesh(
-              new THREE.PlaneGeometry(seen.size * 0.4, seen.size * 0.12),
-              ink,
-            )
-            tail.position.set(seen.size * 0.5, seen.size * (1.4 - i * 0.3), 0)
-            tail.rotation.z = -0.5
-            root.add(tail)
-          }
-          turns = root
         }
 
         // Snake Arm: an arm of black aura wound round whatever it is holding,

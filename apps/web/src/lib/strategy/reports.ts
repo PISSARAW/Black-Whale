@@ -16,6 +16,8 @@ export interface TurnReportInput {
   diplomacyReports: readonly string[]
   activatedHatsu: readonly string[]
   conflictReports: readonly string[]
+  aiHatsuActivations: number
+  playerMovesBlocked: number
 }
 
 export function buildTurnReports(input: TurnReportInput): string[] {
@@ -30,6 +32,10 @@ export function buildTurnReports(input: TurnReportInput): string[] {
       : []),
     ...input.activatedHatsu.map((activation) => `Hatsu activé · ${activation}.`),
     ...input.conflictReports,
+    ...(input.aiHatsuActivations ? ['Une activité Nen adverse est détectée.'] : []),
+    ...(input.playerMovesBlocked
+      ? [`Contrôle adverse · ${input.playerMovesBlocked} déplacement(s) allié(s) bloqué(s).`]
+      : []),
     ...(input.hostileContacts
       ? [
           `Contact hostile dans ${input.hostileContacts} zone(s). La position ennemie est confirmée.`,

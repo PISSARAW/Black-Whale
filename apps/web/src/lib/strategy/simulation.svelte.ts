@@ -16,7 +16,7 @@ import {
 import { factionEliminated, resolveLocationConflicts, type UnitCondition } from './conflict'
 import { buildTurnReports } from './reports'
 import { characterAbilityIds, factionEntityIds as selectFactionEntityIds } from './selectors'
-import { generateFactionAIOperations } from './tacticalAI'
+import { generateFactionAIOperations, partitionBlockedMoves } from './tacticalAI'
 import {
   SCENARIO_MAX_TURNS,
   buildScenarioRoster,
@@ -340,6 +340,8 @@ export function createSimulationStore() {
     }
 
     const aiEvents: ProposedWorldEvent[] = []
+    const aiDeniedLocations: string[] = []
+    let aiHatsuActivations = 0
     const claimedCharacters = new Set(allowedCharacters)
     const claimedEntities = new Set(playerEntityIds)
     const destinationIds = scenarioLocationIds
@@ -365,30 +367,30 @@ export function createSimulationStore() {
       const playerLocations = factionEntityIds(playerFactionId)
         .map((entityId) => currentState!.presences[entityId]?.locationId)
         .filter((id): id is string => Boolean(id))
-      aiEvents.push(
-        ...generateFactionAIOperations({
-          state: currentState,
-          faction,
-          memberCharacterIds: members,
-          unitConditions,
-          destinationIds,
-          destinationTypes,
-          playerLocations,
-          pact: nextRelationships[faction.id]?.pact ?? false,
-          turn: currentTurn,
-          seed: `${branch.id}:${currentTurn}:${faction.id}`,
-        }),
-      )
+      const aiPlan = generateFactionAIOperations({
+        state: currentState,
+        faction,
+        memberCharacterIds: members,
+        unitConditions,
+        destinationIds,
+        destinationTypes,
+        playerLocations,
+        pact: nextRelationships[faction.id]?.pact ?? false,
+        turn: currentTurn,
+        seed: `${branch.id}:${currentTurn}:${faction.id}`,
+      })
+      aiEvents.push(...aiPlan.events)
+      aiDeniedLocations.push(...aiPlan.deniedLocations)
+      aiHatsuActivations += aiPlan.hatsuActivations
     }
 
-    const interceptedEvents = aiEvents.filter(
-      (event) =>
-        event.type === 'ENTITY_MOVED' &&
-        Boolean(event.payload.presence.locationId) &&
-        [...guardedLocations, ...deniedLocations].includes(event.payload.presence.locationId!),
-    )
-    const resolvedAIEvents = aiEvents.filter((event) => !interceptedEvents.includes(event))
-    const result = engine.applyEvents(branch.id, [...playerEvents, ...resolvedAIEvents])
+    const aiResolution = partitionBlockedMoves(aiEvents, [...guardedLocations, ...deniedLocations])
+    const playerResolution = partitionBlockedMoves(playerEvents, aiDeniedLocations)
+    const interceptedEvents = aiResolution.blocked
+    const resolvedAIEvents = aiResolution.resolved
+    const blockedPlayerEvents = playerResolution.blocked
+    const resolvedPlayerEvents = playerResolution.resolved
+    const result = engine.applyEvents(branch.id, [...resolvedPlayerEvents, ...resolvedAIEvents])
     currentState = result.snapshot
     relationships = nextRelationships
     const playerIds = factionEntityIds(playerFactionId)
@@ -455,11 +457,13 @@ export function createSimulationStore() {
         diplomacyReports,
         activatedHatsu,
         conflictReports: conflict.reports,
+        aiHatsuActivations,
+        playerMovesBlocked: blockedPlayerEvents.length,
       }),
     ].slice(-100)
 
     return {
-      playerEvents: playerEvents.length,
+      playerEvents: resolvedPlayerEvents.length,
       aiEvents: resolvedAIEvents.length,
       totalEvents: result.appliedEvents.length,
       warnings: result.warnings,
@@ -469,12 +473,8 @@ export function createSimulationStore() {
   return {
     get currentState() { return currentState },
     get currentTurn() { return currentTurn },
-    get turnReports() {
-      return turnReports
-    },
-    get intel() {
-      return intel
-    },
+    get turnReports() { return turnReports },
+    get intel() { return intel },
     get objective() {
       return currentObjective()
     },

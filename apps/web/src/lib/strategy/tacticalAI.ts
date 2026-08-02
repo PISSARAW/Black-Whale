@@ -4,6 +4,29 @@ import type { UnitCondition } from './conflict'
 import { chooseStrategicDestination, doctrineForFaction } from './rules'
 import { scenarioMoveChance, seededScenarioRandom } from './scenario'
 import type { StrategyFaction } from './types'
+import { hatsuById } from '$lib/nen/hatsuRegistry'
+import { strategicRoleForHatsu } from './rules'
+
+export type AIPersonality = 'CAUTIOUS' | 'AGGRESSIVE' | 'OPPORTUNIST'
+
+export function partitionBlockedMoves(
+  events: readonly ProposedWorldEvent[],
+  blockedLocationIds: readonly string[],
+): { blocked: ProposedWorldEvent[]; resolved: ProposedWorldEvent[] } {
+  const blocked = events.filter(
+    (event) =>
+      event.type === 'ENTITY_MOVED' &&
+      Boolean(event.payload.presence.locationId) &&
+      blockedLocationIds.includes(event.payload.presence.locationId!),
+  )
+  return { blocked, resolved: events.filter((event) => !blocked.includes(event)) }
+}
+
+export function personalityForFaction(factionId: string): AIPersonality {
+  let score = 0
+  for (const character of factionId) score = (score + character.charCodeAt(0)) % 3
+  return (['CAUTIOUS', 'AGGRESSIVE', 'OPPORTUNIST'] as const)[score]
+}
 
 export function generateFactionAIOperations(input: {
   state: WorldState
@@ -16,7 +39,7 @@ export function generateFactionAIOperations(input: {
   pact: boolean
   turn: number
   seed: string
-}): ProposedWorldEvent[] {
+}): { events: ProposedWorldEvent[]; deniedLocations: string[]; hatsuActivations: number } {
   const random = seededScenarioRandom(input.seed)
   const entities = input.memberCharacterIds
     .map((id) => resolveControlledEntity(input.state, id))
@@ -31,8 +54,36 @@ export function generateFactionAIOperations(input: {
     ? input.destinationIds.filter((id) => !input.playerLocations.includes(id))
     : input.destinationIds
   const events: ProposedWorldEvent[] = []
+  const deniedLocations: string[] = []
+  let hatsuActivations = 0
+  const personality = personalityForFaction(input.faction.id)
+  const moveChance =
+    scenarioMoveChance(input.turn) *
+    (personality === 'AGGRESSIVE' ? 1.2 : personality === 'CAUTIOUS' ? 0.72 : 1)
   for (const entity of entities) {
-    if (random() >= scenarioMoveChance(input.turn)) continue
+    const abilityId = (
+      input.state.abilitiesByOwner[entity.originalCharacterId ?? entity.id] ?? []
+    ).find((id) => Boolean(hatsuById(id)))
+    const profile = hatsuById(abilityId)
+    const usesHatsu = profile && (input.turn + entity.id.length) % 3 === 0
+    if (usesHatsu) {
+      hatsuActivations += 1
+      const role = strategicRoleForHatsu(profile.kind)
+      if (role === 'DENIAL' && input.state.presences[entity.id]?.locationId)
+        deniedLocations.push(input.state.presences[entity.id].locationId!)
+      if (role === 'MOBILITY' && input.playerLocations.length) {
+        events.push(
+          ...generateAIOperations(input.state, [entity.originalCharacterId ?? entity.id], {
+            destinationIds: [input.playerLocations[0]],
+            destinationTypes: input.destinationTypes,
+            moveChance: 1,
+            random: () => 0,
+          }),
+        )
+        continue
+      }
+    }
+    if (random() >= moveChance) continue
     const destination = chooseStrategicDestination(doctrineForFaction(input.faction.id), {
       currentLocationId: input.state.presences[entity.id]?.locationId,
       availableLocationIds: destinations,
@@ -50,5 +101,5 @@ export function generateFactionAIOperations(input: {
       }),
     )
   }
-  return events
+  return { events, deniedLocations, hatsuActivations }
 }

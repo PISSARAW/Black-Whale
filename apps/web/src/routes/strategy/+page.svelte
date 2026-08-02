@@ -13,6 +13,8 @@
   import { isPlayableScenarioFaction, SCENARIO_MAX_TURNS } from '$lib/strategy/scenario'
   import {
     STRATEGY_SAVE_KEY,
+    LEGACY_STRATEGY_SAVE_KEY,
+    createStrategySave,
     decodeStrategySave,
     encodeStrategySave,
     type StrategySave,
@@ -35,7 +37,6 @@
 
   let { data }: { data: PageData } = $props()
   const simStore = createSimulationStore()
-
   let ready = $state(false)
   let playerFactionId = $state<string | null>(null)
   let pendingOrders = $state<StrategyMoveOrder[]>([])
@@ -152,12 +153,11 @@
   )
 
   let objective = $derived(simStore.objective)
-
   onMount(() => {
     if (data.baseState) {
       simStore.init(data.baseState, data.factions, data.locations)
       ready = true
-      const saved = decodeStrategySave(localStorage.getItem(STRATEGY_SAVE_KEY))
+      const saved = decodeStrategySave(localStorage.getItem(STRATEGY_SAVE_KEY) ?? localStorage.getItem(LEGACY_STRATEGY_SAVE_KEY))
       if (saved?.baseEventId === data.cutoff?.eventId) availableSave = saved
     }
   })
@@ -266,13 +266,13 @@
       pendingDiplomacy = []
       localStorage.setItem(
         STRATEGY_SAVE_KEY,
-        encodeStrategySave({
-          version: 1,
+        encodeStrategySave(createStrategySave({
           savedAt: new Date().toISOString(),
+          seed: `${data.cutoff?.eventId ?? 'unknown'}:${playerFactionId}`,
           baseEventId: data.cutoff?.eventId ?? '',
           selectedFactionId: playerFactionId,
-          turns: structuredClone(simStore.turnHistory),
-        }),
+          turns: structuredClone(simStore.turnHistory).map((turn, index) => ({ ...turn, turn: index + 1 })),
+        })),
       )
     } catch (error) {
       errorMessage =

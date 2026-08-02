@@ -1,6 +1,7 @@
 import type { Object3D } from 'three'
 import { BOOKMARK_RIBBON, type Apparition } from './apparitions'
 import type { BasicApparitionContext } from './apparitionBasicView'
+import { buildDealer } from './dealer'
 
 type Builder = (seen: Apparition, context: BasicApparitionContext) => Object3D | null
 
@@ -250,6 +251,11 @@ function flute(seen: Apparition, { THREE, glow, root }: BasicApparitionContext) 
   return null
 }
 
+function dealer(seen: Apparition, { THREE, glow, root }: BasicApparitionContext) {
+  root.add(buildDealer({ THREE, glow, seen }))
+  return null
+}
+
 const BUILDERS: Partial<Record<Apparition['kind'], Builder>> = {
   gum,
   double,
@@ -260,6 +266,7 @@ const BUILDERS: Partial<Record<Apparition['kind'], Builder>> = {
   chain,
   book,
   flute,
+  dealer,
 }
 
 export function buildObjectApparition(

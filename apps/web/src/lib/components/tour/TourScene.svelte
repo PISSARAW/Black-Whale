@@ -65,7 +65,7 @@
   } from '$lib/tour/apparitions'
   import { comfort, prefersReducedMotion, type Comfort } from '$lib/tour/comfort'
   import { buildSolidMesh } from '$lib/tour/mesh'
-  import { animateDealerFace, buildDealer } from '$lib/tour/dealer'
+  import { animateDealerFace } from '$lib/tour/dealer'
   import { HUMAN_LOD_DISTANCE, humanStateKey } from '$lib/tour/humanFigure'
   import type { HumanPose } from '$lib/tour/humanAnimation'
   import { styleNenCreature } from '$lib/tour/nenCreatureFigure'
@@ -1673,15 +1673,6 @@
         // that the one room the walk sits you down in is drawn by the same
         // machinery as the ninety you walk through.
 
-        if (seen.kind === 'dealer') {
-          // Seated, arms on the table, and unmistakably a person rather than an
-          // apparition: she is the only thing aboard that is simply there — and
-          // the only one drawn with a face, because she is the only one the
-          // walk puts you a metre and a half away from for a quarter of an
-          // hour. See `$lib/tour/dealer`, which is all of her.
-          root.add(buildDealer({ THREE, glow, seen }))
-          turns = null
-        }
 
         if (seen.kind === 'game-card') {
           // Lying flat, face up or face down, with a rim so the edge of it is

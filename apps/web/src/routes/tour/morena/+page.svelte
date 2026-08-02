@@ -25,6 +25,7 @@
   import MorenaPiles from '$lib/components/tour/MorenaPiles.svelte'
   import MorenaSetupPanel from '$lib/components/tour/MorenaSetupPanel.svelte'
   import MorenaSceneOverlay from '$lib/components/tour/MorenaSceneOverlay.svelte'
+  import MorenaGameStatus from '$lib/components/tour/MorenaGameStatus.svelte'
   import ContagionDashboard from '$lib/nen/ContagionDashboard.svelte'
   import { breadcrumbSchema } from '$lib/seo/schema'
   import { link, locale, t } from '$lib/i18n'
@@ -60,11 +61,9 @@
     exposureNow,
     moveFor,
     needsAChoice,
-    OWL_COLOUR,
     REWIND_BLUE,
     openTheBookHere,
     owlFilm,
-    owlSaw,
     playTechnique,
     refuseTheDeal,
     settle,
@@ -75,7 +74,6 @@
     castsItself,
     tableauOf,
     takeTheDeal,
-    theLosingBranch,
     worksAtTheTable,
     type AnswerCard,
     type MorenaGame,
@@ -194,7 +192,6 @@
    */
   const record = $derived(owlFilm(game, floor))
   /** Her fan as that recording has it, which is not her fan as it is now. */
-  const filmed = $derived(owlSaw(game))
   /**
    * The colour the room is standing in, and why.
    *
@@ -205,11 +202,9 @@
    */
   const tint = $derived(game.forced.length ? REWIND_BLUE : null)
   /** Which quatrain the beast wrote, or nothing while it has written none. */
-  const losing = $derived(theLosingBranch(game))
 
   const nameOfCard = (card: AnswerCard) => copy.cards[card].name
   const questionsLeft = $derived(game.questions)
-  const answersLeft = $derived(game.hand.length)
 
   /**
    * The aura in hand, as the table sees it.
@@ -614,97 +609,22 @@
       {:else if view === 'rules'}
         <MorenaSetupPanel mode="rules" bind:cheats {carried} onDeal={deal} onRules={() => (view = 'rules')} onBack={() => (view = 'menu')} />
       {:else}
-        <!-- The hand, laid out the way the table is: her side, the middle, yours.
-             The round counter goes when the hand does: a table that is still
-             counting rounds is a table you are still sat at. -->
-        {#if game.phase !== 'over'}
-          <p class="text-[10px] uppercase tracking-widest text-[#FFD700]/70" aria-live="polite">
-            {copy.round(game.asked.length, answersLeft)}
-          </p>
-        {/if}
-
-        <!-- The Manipulation, once it has landed. It is the game's only
-             sanction and it is canon, so it is stated rather than implied. -->
-        {#if game.manipulated}
-          <div class="mt-3 rounded border border-[#9d65d0]/70 bg-[#9d65d0]/10 p-3">
-            <p class="text-[10px] uppercase tracking-widest text-[#c7a5e8]">
-              {copy.hatsu.narrowed.title}
-            </p>
-            <p class="mt-1 text-xs leading-relaxed text-[#FFFFF0]/80">
-              {game.ending === 'abandoned'
-                ? copy.hatsu.narrowed.leaving
-                : copy.hatsu.narrowed.cheating}
-            </p>
-          </div>
-        {/if}
-
-        <!-- What the aura has bought so far, while it is still worth knowing. -->
-        {#if game.read || game.foreseen || game.forged || game.shielded || game.proxied}
-          <ul class="mt-3 space-y-1 text-xs leading-snug text-[#8ecae6]">
-            {#if game.read}<li>{copy.hatsu.read}</li>{/if}
-            {#if game.foreseen}<li>{copy.hatsu.foreseen(nameOfCard(game.foreseen))}</li>{/if}
-            {#if game.forged}<li>{copy.hatsu.forged(nameOfCard(game.forged))}</li>{/if}
-            {#if game.shielded}<li class="text-[#FFD700]">{copy.hatsu.shielded}</li>{/if}
-            {#if game.proxied}<li>{copy.hatsu.proxied}</li>{/if}
-          </ul>
-        {/if}
+        <MorenaGameStatus {game} {nameOfCard} />
 
         <!-- The room, ten seconds behind itself. Said while it is true and not
              a word afterwards: what the reader can see is that the light is
              wrong, and this is the sentence that names why. -->
-        {#if game.forced.length}
-          <div class="mt-3 rounded border border-[#7dd3fc]/50 bg-[#7dd3fc]/10 p-3">
-            <p class="text-[10px] uppercase tracking-widest text-[#7dd3fc]">
-              {copy.hatsu.rewound.title}
-            </p>
-            <p class="mt-1 text-xs leading-relaxed text-[#FFFFF0]/80">
-              {copy.hatsu.rewound.body(game.forced.length)}
-            </p>
-          </div>
-        {/if}
-
         <!-- The quatrain, once the beast has written it. Printed as a poem and
              not as a read-out: the technique is cryptic verse, and a line
              saying "she marked the Back" would be the page playing the game
              for the reader. Kept for the rest of the hand, and after it — a
              prophecy that came true is still what was written. -->
-        {#if losing}
-          <div class="mt-3 rounded border border-[#d8c7ed]/40 bg-[#d8c7ed]/5 p-3">
-            <p class="text-[10px] uppercase tracking-widest text-[#d8c7ed]">
-              {copy.hatsu.ghost.title}
-            </p>
-            <p class="mt-2 whitespace-pre-line text-xs italic leading-relaxed text-[#FFFFF0]/80">
-              {copy.hatsu.ghost.verse[losing].join('\n')}
-            </p>
-            <p class="mt-2 text-[11px] leading-snug text-[#FFFFF0]/45">{copy.hatsu.ghost.body}</p>
-          </div>
-        {/if}
-
         <!-- The owl's recording, which is the one thing at this table that does
              not go out of date because it is already out of date: seven cards
              as a bird on the bulkhead had them at the moment somebody thought
              to look. The ones spent since are still in it — that is what a
              recording is — and the corner of the room is showing the same
              footage as a picture. -->
-        {#if filmed}
-          <div class="mt-3 rounded border border-[#a8b7d8]/40 bg-[#a8b7d8]/5 p-3">
-            <p class="text-[10px] uppercase tracking-widest text-[#a8b7d8]">
-              {copy.hatsu.owl.title}
-            </p>
-            <p class="mt-1 text-xs leading-snug text-[#FFFFF0]/60">{copy.hatsu.owl.body}</p>
-            <div class="mt-2 flex flex-wrap gap-1">
-              {#each filmed as question (question)}
-                <MorenaCard
-                  face={question}
-                  label={copy.questions[question].short}
-                  ink={cssInk(OWL_COLOUR)}
-                  state={game.questions.includes(question) ? 'live' : 'spent'}
-                />
-              {/each}
-            </div>
-          </div>
-        {/if}
-
         {#if lastAsked}
           <div class="mt-3 rounded border border-[#3a2b33] bg-[#140f13] p-3">
             <p class="text-[10px] uppercase tracking-widest text-[#FFFFF0]/40">

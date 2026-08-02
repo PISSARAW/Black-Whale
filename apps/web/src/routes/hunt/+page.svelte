@@ -40,6 +40,7 @@
   import { cuesFor } from '$lib/hunt/veil'
   import { explorationNen, huntDuelNen } from '$lib/nen/tourAdapters'
   import { NEN_KEYS, nenZoneIndex } from '$lib/nen/controls'
+  import type { NenTechniqueAction } from '@black-whale/nen-engine'
   import { sightings } from '$lib/hunt/sighting'
   import { floorOf } from '$lib/tour/blueprint'
   import { prefersReducedMotion } from '$lib/tour/comfort'
@@ -59,6 +60,7 @@
   import { safeFrameDebt } from '$lib/hunt/lifecycle'
   import { huntContractById, listHuntContracts } from '$lib/hunt/contracts/registry'
   import { contractMessages } from '$lib/hunt/contracts/messages'
+  import { carryIntoStage, nextStage } from '$lib/hunt/contracts/transition'
   import {
     DEFAULT_HUNTER_PROFILE,
     HUNTER_PROFILES,
@@ -110,6 +112,7 @@
   const hatsuProfiles = [BUNGEE_GUM_HUNT, PARALLEL_FUTURE_HUNT, DOWSING_CHAIN_HUNT]
   const contracts = listHuntContracts()
   let selectedContract = $state('royal-apartments')
+  let contractStage = $state(0)
   let selectedHatsu = $state<HuntHatsuId>(DEFAULT_HUNT_HATSU)
   let selectedHunter = $state<HunterProfileId>(DEFAULT_HUNTER_PROFILE)
   let activeContract = $derived(huntContractById(selectedContract) ?? contracts[0])
@@ -166,6 +169,8 @@
   let tierId = $state(initialArena.tierId)
 
   function selectTerrain(id: HuntTerrainId) {
+    const declaredIndex = activeContract.terrainSequence.indexOf(id)
+    if (declaredIndex >= 0) contractStage = declaredIndex
     selectedTerrain = id
     arena = buildArena(id)
     plan = ship.plans.get(arena.tierId)!
@@ -183,12 +188,23 @@
     const contract = huntContractById(id)
     if (!contract) return
     selectedContract = contract.id
+    contractStage = 0
     if (!contract.allowedHatsu.includes(selectedHatsu)) selectedHatsu = contract.allowedHatsu[0]
     if (!contract.hunterProfiles.includes(selectedHunter)) {
       selectedHunter = contract.hunterProfiles[0]
     }
     selectTerrain(contract.terrainSequence[0])
     game = freshGame()
+  }
+
+  function advanceContractZone(): boolean {
+    const upcoming = nextStage(activeContract, contractStage)
+    if (!upcoming) return false
+    const previous = game
+    contractStage = upcoming.index
+    selectTerrain(upcoming.terrain)
+    game = carryIntoStage(previous, game)
+    return true
   }
 
   let inDuel = $derived(game.duel !== null)
@@ -381,6 +397,10 @@
       owed -= HUNT_DT
       const beforeTick = game
       game = updateHunt(game, world)
+      if (game.outcome === 'reached' && advanceContractZone()) {
+        playHuntCue('hatsu')
+        continue
+      }
       if (!beforeTick.duel && game.duel) playHuntCue('contact')
       if (!huntIsOver(beforeTick.outcome) && huntIsOver(game.outcome)) playHuntCue('outcome')
       for (const event of game.log.slice(beforeTick.log.length)) {
@@ -430,6 +450,21 @@
     owed = 0
   }
 
+  function useStandardNen(action: NenTechniqueAction) {
+    if (!game.duel) {
+      if ((action.type === 'TEN' && game.player.nen === 'zetsu') || (action.type === 'ZETSU' && game.player.nen !== 'zetsu')) send({ type: 'ZETSU' })
+      if (action.type === 'EN' && action.radius !== null) send({ type: 'SWEEP' })
+      return
+    }
+    if (action.type === 'TEN' && game.duel.player.zetsu) return duel({ type: 'ZETSU', on: false })
+    if (action.type === 'ZETSU' && !game.duel.player.zetsu) return duel({ type: 'ZETSU', on: true })
+    if (action.type === 'GYO' || action.type === 'IN' || action.type === 'KEN')
+      return duel({ type: action.type, side: 'player', on: action.on })
+    if (action.type === 'KO' && action.zone) return strike()
+    if (action.type === 'RYU')
+      return duel({ type: 'RYU', side: 'player', setting: { attack: Number(action.distribution.hands ?? game.duel.player.attack) } })
+  }
+
   function again() {
     game = freshGame()
     position = game.player.position
@@ -477,7 +512,11 @@
     seated={duelSeat}
     world={EMPTY_WORLD}
     nen={playerNen}
-    showNenControls={false}
+    showNenControls={true}
+    nenAvailability={game.duel
+      ? { ren: false, en: false, shu: false, on: false, action: false }
+      : { ren: false, gyo: false, in: false, shu: false, ken: false, ko: false, ryu: false, on: false, action: false }}
+    onNenChange={useStandardNen}
     onHatsu={() => send({ type: 'HATSU' })}
     hatsuAllowedInZetsu={game.hatsu.id === 'parallel-future'}
     extras={figures}

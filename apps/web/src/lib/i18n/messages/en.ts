@@ -63,6 +63,12 @@ export const en = {
     searchEvents: 'Find an event',
     searchPlaceholder: 'Chapter, event or consequence…',
     currentState: 'Reconstructed state of the Black Whale',
+    loadErrorEyebrow: 'Reconstruction unavailable',
+    loadErrorTitle: 'The temporal data could not be loaded',
+    loadErrorBody:
+      'The timeline stays hidden so an empty ship is never presented as canonical information.',
+    retry: 'Try again',
+    technicalDetails: 'Technical details',
     event: 'Selected event',
     shipState: 'Known ship state',
     exact: 'Exact room',

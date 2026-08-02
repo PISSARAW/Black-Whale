@@ -482,7 +482,18 @@
     </div>
   </header>
 
-  {#if chronologicalEvents.length === 0}
+  {#if data.error}
+    <section class="error-state" role="alert" aria-labelledby="reconstruction-error-title">
+      <p class="eyebrow">{$t.reconstruction.loadErrorEyebrow}</p>
+      <h2 id="reconstruction-error-title">{$t.reconstruction.loadErrorTitle}</h2>
+      <p>{$t.reconstruction.loadErrorBody}</p>
+      <button type="button" onclick={() => location.reload()}>{$t.reconstruction.retry}</button>
+      <details>
+        <summary>{$t.reconstruction.technicalDetails}</summary>
+        <code>{data.error}</code>
+      </details>
+    </section>
+  {:else if chronologicalEvents.length === 0}
     <section class="empty-state"><p>{$t.reconstruction.empty}</p></section>
   {:else}
     <div class="workspace">
@@ -769,6 +780,33 @@
     background: #030608;
     color: #edf1ee;
     padding: 6rem 1.25rem 5.5rem;
+  }
+  .error-state {
+    max-width: 46rem;
+    margin: 5rem auto;
+    padding: 2rem;
+    border: 1px solid rgba(207, 128, 108, 0.55);
+    background: rgba(39, 17, 16, 0.72);
+  }
+  .error-state h2 {
+    margin: 0.35rem 0 0.7rem;
+  }
+  .error-state button {
+    margin-top: 1rem;
+    border: 1px solid #e5c57a;
+    background: transparent;
+    padding: 0.55rem 0.9rem;
+    color: #e5c57a;
+    cursor: pointer;
+  }
+  .error-state details {
+    margin-top: 1.25rem;
+    color: rgba(237, 241, 238, 0.65);
+  }
+  .error-state code {
+    display: block;
+    margin-top: 0.6rem;
+    overflow-wrap: anywhere;
   }
   .masthead {
     max-width: 1600px;

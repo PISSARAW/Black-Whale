@@ -62,6 +62,12 @@ export const fr: Messages = {
     searchEvents: 'Trouver un événement',
     searchPlaceholder: 'Chapitre, événement ou conséquence…',
     currentState: 'État reconstruit du Black Whale',
+    loadErrorEyebrow: 'Reconstruction indisponible',
+    loadErrorTitle: 'Les données temporelles n’ont pas pu être chargées',
+    loadErrorBody:
+      'La chronologie reste masquée pour éviter de présenter un navire vide comme une information canonique.',
+    retry: 'Réessayer',
+    technicalDetails: 'Détails techniques',
     event: 'Événement sélectionné',
     shipState: 'État connu du navire',
     exact: 'Pièce exacte',

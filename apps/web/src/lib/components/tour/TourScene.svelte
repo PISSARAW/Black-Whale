@@ -12,7 +12,12 @@
    * module so the server never has to evaluate a WebGL library to render a page.
    */
   import { onMount, untrack } from 'svelte'
-  import type { NenTechniqueState } from '@black-whale/nen-engine'
+  import {
+    createNenTechniqueState,
+    transitionNen,
+    type NenTechniqueAction,
+    type NenTechniqueState,
+  } from '@black-whale/nen-engine'
   import type { Ship, TierPlan } from '$lib/tour/blueprint'
   import {
     ceilingOf,
@@ -124,6 +129,7 @@
   import { buildGuardianApparition } from '$lib/tour/apparitionGuardianView'
   import { HatsuSceneEffects } from '$lib/tour/HatsuSceneEffects'
   import { NenSceneAura } from '$lib/tour/NenSceneAura'
+  import TourNenControls from './TourNenControls.svelte'
   import type { Link, Space, Structure, Vec2, WallSegment } from '$lib/tour/types'
 
   interface Props {
@@ -180,6 +186,8 @@
     auraColour?: string | null
     /** Standard Nen state of the first-person visitor. */
     nen?: NenTechniqueState
+    /** Controlled modes receive every accepted standard Nen action here. */
+    onNenChange?: (action: NenTechniqueAction) => void
     /**
      * The one technique that is an event rather than a thing, and the count of
      * how many have been cast.
@@ -450,6 +458,7 @@
     world = EMPTY_WORLD,
     auraColour = null,
     nen,
+    onNenChange,
     flash = null,
     aiming = false,
     selfCastable = false,
@@ -480,6 +489,15 @@
     onCoin,
     swings = false,
   }: Props = $props()
+
+  let localNen = $state<NenTechniqueState>(createNenTechniqueState())
+  const effectiveNen = $derived(nen ?? localNen)
+  function useNen(action: NenTechniqueAction) {
+    const result = transitionNen(effectiveNen, action)
+    if (!result.accepted) return
+    if (nen === undefined) localNen = result.state
+    onNenChange?.(action)
+  }
 
   /**
    * How high the visitor's eye is off the floor.
@@ -1617,7 +1635,7 @@
           glow,
           root,
           skin,
-          observerGyo: nen?.gyo ?? false,
+          observerGyo: effectiveNen.gyo,
         })
         if (basic) {
           turns = basic.turns
@@ -2965,11 +2983,11 @@
             seconds,
           }),
           ...extras,
-        ].filter((seen) => !seen.hidden || nen?.gyo)
+        ].filter((seen) => !seen.hidden || effectiveNen.gyo)
         apparitionView.sync(wanted, {
           idOf: (seen) => seen.id,
           keyOf: (seen) =>
-            `${seen.kind}|${seen.colour}|${seen.size}|${seen.hidden}|${seen.pair?.spaceId ?? ''}|${seen.climb ?? ''}|${seen.face ?? ''}|${humanStateKey(seen)}|gyo:${nen?.gyo ?? false}`,
+            `${seen.kind}|${seen.colour}|${seen.size}|${seen.hidden}|${seen.pair?.spaceId ?? ''}|${seen.climb ?? ''}|${seen.face ?? ''}|${humanStateKey(seen)}|gyo:${effectiveNen.gyo}`,
           build: buildApparition,
           preserve: (held) => ({ facing: held.facing, flown: held.flown }),
           restore: (held, saved) => {
@@ -4319,6 +4337,36 @@
       /** One step to the side, in radians, as the visitor has set it. */
       const snapStep = () => ($comfort.snapAngle * Math.PI) / 180
 
+      const useNenShortcut = (event: KeyboardEvent) => {
+        if (!event.altKey || event.repeat) return false
+        const toggled = (type: 'IN' | 'GYO' | 'KEN', on: boolean) => useNen({ type, on })
+        if (event.code === 'KeyT') useNen({ type: 'TEN' })
+        else if (event.code === 'KeyR') useNen({ type: 'REN' })
+        else if (event.code === 'KeyX') useNen({ type: 'ZETSU' })
+        else if (event.code === 'KeyG') toggled('GYO', !effectiveNen.gyo)
+        else if (event.code === 'KeyI') toggled('IN', !effectiveNen.in)
+        else if (event.code === 'KeyE')
+          useNen({ type: 'EN', radius: effectiveNen.en ? null : 8 })
+        else if (event.code === 'KeyK') toggled('KEN', !effectiveNen.ken)
+        else if (event.code === 'Digit1')
+          useNen({ type: 'KO', zone: effectiveNen.ko === 'hands' ? null : 'hands' })
+        else if (event.code === 'Digit2')
+          useNen({ type: 'KO', zone: effectiveNen.ko === 'feet' ? null : 'feet' })
+        else if (event.code === 'Digit3')
+          useNen({ type: 'RYU', distribution: { hands: 0.65, torso: 0.2, feet: 0.15 } })
+        else if (event.code === 'Digit4')
+          useNen({ type: 'RYU', distribution: { torso: 0.55, head: 0.25, hands: 0.2 } })
+        else if (event.code === 'KeyS' && aimedSolidAt)
+          useNen({
+            type: 'SHU',
+            objectId: aimedSolidAt.id,
+            on: !effectiveNen.shu.includes(aimedSolidAt.id),
+          })
+        else return false
+        event.preventDefault()
+        return true
+      }
+
       const onKeyDown = (event: KeyboardEvent) => {
         // Giving the pointer back, without giving the screen back with it.
         //
@@ -4338,6 +4386,7 @@
           return
         }
         if (typingElsewhere(event.target)) return
+        if (useNenShortcut(event)) return
         pressed[event.code] = true
         // Space and the arrows scroll the page underneath an engaged pointer.
         if (['Space', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(event.code)) {
@@ -5046,10 +5095,10 @@
         camera.rotateY(yaw)
         camera.rotateX(pitch)
         camera.rotateZ(bob.roll)
-        if (nen) {
-          nenAura.update(nen, camera, ground, now / 1000)
+        {
+          nenAura.update(effectiveNen, camera, ground, now / 1000)
           nenAura.syncShu(
-            nen.shu.flatMap((id) => {
+            effectiveNen.shu.flatMap((id) => {
               const solid = solidById(ship, world, id)
               if (!solid) return []
               return [{ id, at: solid.at, y: ground + solid.base, size: solid.size, height: solid.height }]
@@ -5493,6 +5542,11 @@
         {/if}
       </svg>
     </button>
+    <TourNenControls
+      nenState={effectiveNen}
+      aimedObjectId={aimedSolidAt?.id ?? null}
+      onAction={useNen}
+    />
   {/if}
 
   <!-- The touchscreen's keyboard: a stick to walk with, and buttons for the two

@@ -348,6 +348,7 @@
         flash,
         auraColour: technique?.color ?? null,
         nen: hatsuSession.nen,
+        onNenChange: hatsuSession.useNen,
         aiming: Boolean(technique),
         selfCastable,
         reveal: chrome.reveal,

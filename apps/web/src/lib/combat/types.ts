@@ -121,6 +121,7 @@ export type CombatAction =
       effect: ArenaHatsuEffect
       zone: BodyZone
       hatsuId?: string
+      cost?: number
       targetAt?: Vec2
     }
   | { type: 'STRIKE'; side: CombatSide; zone: BodyZone }

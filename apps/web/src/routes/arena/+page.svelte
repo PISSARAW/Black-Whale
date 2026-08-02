@@ -5,6 +5,7 @@
   import TourModeFullscreen from '$lib/components/tour/TourModeFullscreen.svelte'
   import ReplayPanel from '$lib/components/arena/ReplayPanel.svelte'
   import ArenaV3Panel from '$lib/components/arena/ArenaV3Panel.svelte'
+  import ArenaHatsuFx from '$lib/components/arena/ArenaHatsuFx.svelte'
   import {
     advanceArena,
     OPPONENT_DOCTRINES,
@@ -12,6 +13,7 @@
     type OpponentDoctrine,
   } from '$lib/arena/ai'
   import { arenaHatsuEffect, worksInArena } from '$lib/arena/hatsu'
+  import { arenaDefinition } from '$lib/arena/hatsu/contract'
   import { zoneFromPitch } from '$lib/arena/targeting'
   import { playArenaHatsu, playArenaImpact } from '$lib/arena/audio'
   import {
@@ -103,6 +105,7 @@
     | 'hatsu'
   let commandAnimation = $state<CommandAnimation | null>(null)
   let commandAnimationSeq = $state(0)
+  let hatsuAnimationSeq = $state(0)
   let lesson = $state(0)
   let opponentDoctrine = $state<OpponentDoctrine>(data.doctrine)
   let difficulty = $state<ArenaDifficulty>(data.difficulty)
@@ -117,6 +120,7 @@
   let reading = $derived(readAura(game.player, game.opponent))
   let carriedHatsu = $derived($activeHatsu ? localizeHatsu($activeHatsu, $locale) : null)
   let hatsuEffect = $derived(arenaHatsuEffect($activeHatsu))
+  let hatsuDefinition = $derived(arenaDefinition($activeHatsu))
   let gap = $derived(distance(game.player.position, game.opponent.position))
   let inRange = $derived(gap <= STRIKE_RANGE)
   let threatened = $derived(reading.intentRemaining !== null)
@@ -304,6 +308,7 @@
         effect: hatsuEffect,
         zone: aimedZone,
         hatsuId: carriedHatsu?.id,
+        cost: hatsuDefinition?.cost,
         targetAt:
           carriedHatsu?.id === 'bungee-gum' && aimedSolidAt
             ? polygonCentre(structureFootprint(aimedSolidAt))
@@ -311,7 +316,10 @@
       },
       'hatsu',
     )
-    if (accepted) playArenaHatsu(hatsuEffect)
+    if (accepted) {
+      hatsuAnimationSeq += 1
+      playArenaHatsu(hatsuEffect, $activeHatsu)
+    }
   }
 
   function shiftRyu(by: number) {
@@ -701,6 +709,10 @@
       </div>
     {/if}
   {/key}
+
+  {#if hatsuAnimationSeq > 0 && $activeHatsu}
+    <ArenaHatsuFx profile={$activeHatsu} sequence={hatsuAnimationSeq} />
+  {/if}
 
   <div
     class="combat-hands"

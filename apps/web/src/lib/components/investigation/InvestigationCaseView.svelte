@@ -31,6 +31,7 @@
   import { sceneNodes, visibleSightLines, type ScenePhenomenon } from '$lib/investigation/geometry'
   import { buildFinalReport } from '$lib/investigation/report'
   import { assessHypothesesFromEvidence } from '$lib/investigation/v3Runtime'
+  import { subjectSceneAppearance } from '$lib/investigation/appearance'
   import {
     activeHatsu,
     closeHatsuGate,
@@ -41,10 +42,12 @@
   } from '$lib/nen/hatsuState'
   import type { Apparition } from '$lib/tour/apparitions'
   import type { Space, Vec2 } from '$lib/tour/types'
+  import { ModeNenState } from '$lib/nen/modeState.svelte'
 
   let { caseId }: { caseId: string } = $props()
 
   const ship = theShip()
+  const modeNen = new ModeNenState()
   const initialDefinition = caseById(caseId, 'fr')!
   const definition = $derived(caseById(caseId, $locale)!)
   const investigation = $derived(definition.content)
@@ -345,28 +348,28 @@
   })
 
   const extras = $derived.by(() => {
-    const people = interactables.map(
-      (subject) =>
-        ({
-          id: subject.id,
-          kind: 'avatar',
-          colour: subject.color,
-          size: 0.42,
-          y: 0,
-          at: subject.position,
-          tierId: definition.scene.tierId,
-          spaceId: definition.scene.spaceId,
-          stage: 0,
-          human: {
-            role: subject.isDead ? 'victim' : 'witness',
-            identity: `investigation:${subject.id}`,
-            pose: subject.isDead ? 'fallen' : 'idle',
-            aura: 'none',
-          },
-          hidden: false,
-          pick: true,
-        }) as Apparition,
-    )
+    const people = interactables.map((subject) => {
+      const appearance = subjectSceneAppearance(subject)
+      return {
+        id: subject.id,
+        kind: 'avatar',
+        colour: appearance.colour,
+        size: appearance.size,
+        y: appearance.y,
+        at: subject.position,
+        tierId: definition.scene.tierId,
+        spaceId: definition.scene.spaceId,
+        stage: 0,
+        human: {
+          role: subject.isDead ? 'victim' : 'witness',
+          identity: `investigation:${subject.id}`,
+          pose: subject.isDead ? 'fallen' : 'idle',
+          aura: 'none',
+        },
+        hidden: false,
+        pick: true,
+      } as Apparition
+    })
     const furykov = interactables.find((subject) => subject.id === 'furykov')
     if (!furykov) return people
     const doll: Apparition = {
@@ -609,6 +612,8 @@
     bind:heading
     bind:jumpTo
     {extras}
+    nen={modeNen.value}
+    onNenChange={modeNen.use}
     onPick={handlePick}
     touchLabels={{ move: $t.tour.touch.move, cast: $t.tour.touch.cast }}
     soundLabels={{ silence: $t.tour.sound.silence, restore: $t.tour.sound.restore }}

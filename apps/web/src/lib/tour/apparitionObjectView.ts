@@ -56,7 +56,75 @@ function paper(seen: Apparition, { THREE, root, skin }: BasicApparitionContext) 
   return root
 }
 
-const BUILDERS: Partial<Record<Apparition['kind'], Builder>> = { gum, double, fish, paper }
+function puppet(seen: Apparition, { THREE, glow, root }: BasicApparitionContext) {
+  const ink = glow(seen.colour, 1)
+  const pale = glow(0xefe7dd, 1)
+  const kimono = new THREE.Mesh(
+    new THREE.CylinderGeometry(seen.size * 0.34, seen.size * 0.62, seen.size * 1.35, 8),
+    ink,
+  )
+  kimono.position.y = seen.size * 0.68
+  root.add(kimono)
+  const obi = new THREE.Mesh(
+    new THREE.CylinderGeometry(seen.size * 0.38, seen.size * 0.41, seen.size * 0.22, 10),
+    pale,
+  )
+  obi.position.y = seen.size * 0.85
+  root.add(obi)
+  for (const side of [-1, 1]) {
+    const lapel = new THREE.Mesh(
+      new THREE.BoxGeometry(seen.size * 0.1, seen.size * 0.45, seen.size * 0.05),
+      pale,
+    )
+    lapel.rotation.z = side * 0.5
+    lapel.position.set(0, seen.size * 1.15, seen.size * (0.31 + side * 0.01))
+    root.add(lapel)
+    const sleeve = new THREE.Mesh(
+      new THREE.BoxGeometry(seen.size * 0.3, seen.size * 0.62, seen.size * 0.3),
+      ink,
+    )
+    sleeve.position.set(side * seen.size * 0.45, seen.size * 0.95, 0)
+    root.add(sleeve)
+  }
+  const face = new THREE.Mesh(new THREE.SphereGeometry(seen.size * 0.24, 10, 8), pale)
+  face.position.y = seen.size * 1.6
+  root.add(face)
+  const zipper = new THREE.Mesh(
+    new THREE.BoxGeometry(seen.size * 0.03, seen.size * 0.28, seen.size * 0.02),
+    ink,
+  )
+  zipper.position.set(0, seen.size * 1.57, seen.size * 0.235)
+  root.add(zipper)
+  for (const side of [-1, 1]) {
+    const crossV = new THREE.Mesh(
+      new THREE.BoxGeometry(seen.size * 0.03, seen.size * 0.15, seen.size * 0.02),
+      ink,
+    )
+    crossV.position.set(side * seen.size * 0.12, seen.size * 1.58, seen.size * 0.21)
+    root.add(crossV)
+    const crossH = new THREE.Mesh(
+      new THREE.BoxGeometry(seen.size * 0.1, seen.size * 0.03, seen.size * 0.02),
+      ink,
+    )
+    crossH.position.set(side * seen.size * 0.12, seen.size * 1.6, seen.size * 0.21)
+    root.add(crossH)
+  }
+  const hair = new THREE.Mesh(
+    new THREE.CylinderGeometry(seen.size * 0.28, seen.size * 0.3, seen.size * 0.42, 10),
+    ink,
+  )
+  hair.position.y = seen.size * 1.68
+  root.add(hair)
+  return root
+}
+
+const BUILDERS: Partial<Record<Apparition['kind'], Builder>> = {
+  gum,
+  double,
+  fish,
+  paper,
+  puppet,
+}
 
 export function buildObjectApparition(
   seen: Apparition,

@@ -7,6 +7,7 @@
     ReconstructionDecision,
     ReconstructionScenarioDraft,
   } from '$lib/reconstruction/v3/scenario'
+  import { defineReconstructionScenario } from '$lib/reconstruction/v3/scenario'
   import type { ReconstructionReport } from '$lib/reconstruction/v3/report'
   import type { ReconstructionReplay } from '$lib/reconstruction/v3/replay'
   import { decodeSharedScenario, encodeSharedScenario } from '$lib/reconstruction/v3/share'
@@ -137,15 +138,8 @@
   }
 
   async function share() {
-    const response = await fetch('/reconstruction/v3', {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ scenario: draft() }),
-    })
-    const body = await response.json()
-    if (!response.ok) return void (error = body.error || 'Impossible de préparer le partage.')
     const search = new URLSearchParams({
-      scenario: encodeSharedScenario(body.replay.scenario),
+      scenario: encodeSharedScenario(defineReconstructionScenario(draft())),
     }).toString()
     await navigator.clipboard.writeText(`${location.origin}${location.pathname}?${search}`)
     shared = true

@@ -10,6 +10,7 @@ export interface BasicApparitionContext {
   glow: Glow
   root: Group
   skin: MeshBasicMaterial
+  observerGyo?: boolean
 }
 
 export interface BasicApparitionParts {
@@ -78,11 +79,12 @@ function owl(seen: Apparition, { THREE, glow, root, skin }: BasicApparitionConte
   return { turns: head }
 }
 
-function human(seen: Apparition, { THREE, glow, root }: BasicApparitionContext) {
+function human(seen: Apparition, { THREE, glow, root, observerGyo }: BasicApparitionContext) {
   const figure = buildHumanFigure({
     THREE,
     glow,
     seen: seen as Apparition & { kind: 'avatar' | 'combatant' },
+    observerGyo,
   })
   root.add(figure.root)
   return { turns: figure.turns, humanLod: figure.lod, humanAnimate: figure.animate }

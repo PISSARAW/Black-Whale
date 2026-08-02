@@ -1,5 +1,13 @@
 import { untrack } from 'svelte'
 import { get } from 'svelte/store'
+import {
+  canUseHatsu,
+  createNenTechniqueState,
+  transitionNen,
+  type NenTechniqueAction,
+  type NenTechniqueState,
+  type NenTransition,
+} from '@black-whale/nen-engine'
 import type { HatsuInteractionKind } from '$lib/nen/hatsuRegistry'
 import { activeHatsu, enterForcedZetsu, parallelFutureVisible } from '$lib/nen/hatsuState'
 import type { Ship } from '$lib/tour/blueprint'
@@ -33,6 +41,8 @@ interface SessionOptions {
 
 export class TourHatsuSession {
   penalty = $state<string | null>(null)
+  /** TourSense reads and mutates the same Nen contract as every other surface. */
+  nen = $state<NenTechniqueState>(createNenTechniqueState())
   private wasFutureVisible = false
   private unsubscribeFuture: (() => void) | null = null
 
@@ -41,7 +51,7 @@ export class TourHatsuSession {
   watchActivation() {
     $effect(() => {
       const context = this.options.readActivation()
-      if (!context.hasAura) {
+      if (!context.hasAura || !canUseHatsu(this.nen)) {
         this.options.updateWorld(EMPTY_WORLD)
         this.options.updateReport(null)
         return
@@ -94,6 +104,16 @@ export class TourHatsuSession {
     if (released.rebound) this.punish(this.options.reboundText())
   }
 
+  useNen = (action: NenTechniqueAction): NenTransition => {
+    const result = transitionNen(this.nen, action)
+    if (result.accepted) this.nen = result.state
+    if (!canUseHatsu(this.nen)) {
+      this.options.updateWorld(EMPTY_WORLD)
+      this.options.updateReport(null)
+    }
+    return result
+  }
+
   arrived = (spaceId: string | null) => {
     const context = this.options.read()
     const arrival = arriveInTour(context.world, context.ship, spaceId)
@@ -105,6 +125,7 @@ export class TourHatsuSession {
 
   punish(said: string) {
     this.penalty = said
+    this.useNen({ type: 'ZETSU' })
     enterForcedZetsu()
   }
 }

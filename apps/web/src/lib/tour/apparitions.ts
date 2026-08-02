@@ -27,6 +27,7 @@ import {
   type TourReport,
   type TourWorld,
 } from './hatsu'
+import type { NenTechniqueState } from '@black-whale/nen-engine'
 import type { Space, Vec2 } from './types'
 // A type and nothing else: `morena` reads the insect's colour off this file,
 // and this file needs the name of a card face. An import that is erased before
@@ -205,6 +206,8 @@ export interface Apparition {
       | 'fallen'
       | 'seated'
     aura?: 'none' | 'ten' | 'ren' | 'zetsu'
+    /** Shared Nen state; every human figure consumes the same engine contract. */
+    nen?: NenTechniqueState<'head' | 'torso' | 'hands' | 'feet'>
     /** Stable identity seed: named character when known, otherwise apparition id. */
     identity?: string
     alert?: boolean

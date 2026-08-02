@@ -1,4 +1,10 @@
 import type { BufferGeometry, Group, Material, MeshBasicMaterial, Object3D } from 'three'
+import {
+  createNenTechniqueState,
+  isAuraVisibleTo,
+  transitionNen,
+  type NenTechniqueState,
+} from '@black-whale/nen-engine'
 import type { Apparition } from './apparitions'
 import { humanAnimation } from './humanAnimation'
 import {
@@ -15,6 +21,7 @@ export interface HumanFigureBuild {
   THREE: Three
   glow: (colour: number, opacity: number) => MeshBasicMaterial
   seen: HumanLook
+  observerGyo?: boolean
 }
 
 export interface HumanFigure {
@@ -125,7 +132,17 @@ function legacyAura(seen: HumanLook): NonNullable<Apparition['human']>['aura'] {
   return (['ten', 'ren', 'zetsu'] as const)[seen.stage % 3]
 }
 
-export function buildHumanFigure({ THREE, glow, seen }: HumanFigureBuild): HumanFigure {
+type HumanZone = 'head' | 'torso' | 'hands' | 'feet'
+
+function nenState(seen: HumanLook): NenTechniqueState<HumanZone> {
+  if (seen.human?.nen) return seen.human.nen
+  const state = createNenTechniqueState<HumanZone>()
+  const aura = legacyAura(seen)
+  state.mode = aura === 'none' ? 'zetsu' : aura
+  return state
+}
+
+export function buildHumanFigure({ THREE, glow, seen, observerGyo = false }: HumanFigureBuild): HumanFigure {
   const root = new THREE.Group()
   const figure = new THREE.Group()
   const far = new THREE.Group()
@@ -561,19 +578,120 @@ export function buildHumanFigure({ THREE, glow, seen }: HumanFigureBuild): Human
     root.add(alert)
   }
 
-  const aura = legacyAura(seen)
-  if (aura === 'ten' || aura === 'ren') {
+  const nen = nenState(seen)
+  const observer = observerGyo
+    ? transitionNen(createNenTechniqueState(), { type: 'GYO', on: true }).state
+    : createNenTechniqueState()
+  const auraVisible = isAuraVisibleTo(nen, observer)
+  if (nen.mode === 'zetsu') {
+    const trace = new THREE.Mesh(
+      geometry(THREE, 'aura:zetsu', () => new THREE.SphereGeometry(0.69, 16, 10)),
+      glow(seen.colour, 0.012),
+    )
+    trace.name = 'nen-zetsu-trace'
+    trace.scale.y = 1.32
+    trace.position.y = 0.9
+    figure.add(trace)
+  }
+  if (auraVisible && nen.mode !== 'zetsu' && !nen.ken) {
     const shell = new THREE.Mesh(
       geometry(
         THREE,
-        `aura:${aura}`,
-        () => new THREE.SphereGeometry(aura === 'ren' ? 0.9 : 0.72, 18, 12),
+        `aura:${nen.mode}`,
+        () => new THREE.SphereGeometry(nen.mode === 'ren' ? 0.9 : 0.72, 18, 12),
       ),
-      glow(seen.colour, aura === 'ren' ? 0.16 : 0.07),
+      glow(seen.colour, nen.mode === 'ren' ? 0.16 : 0.07),
     )
+    shell.name = 'nen-ten-ren'
     shell.scale.y = 1.35
     shell.position.y = 0.9
     figure.add(shell)
+    if (nen.mode === 'ren') {
+      for (let index = 0; index < 12; index++) {
+        const flame = new THREE.Mesh(
+          geometry(
+            THREE,
+            `aura:ren-flame:${index % 3}`,
+            () => new THREE.ConeGeometry(0.1 + (index % 3) * 0.025, 0.55, 7),
+          ),
+          glow(seen.colour, 0.2),
+        )
+        const angle = (index / 12) * Math.PI * 2
+        flame.name = 'nen-ren-flame'
+        flame.position.set(Math.cos(angle) * 0.55, 0.5 + (index % 4) * 0.28, Math.sin(angle) * 0.55)
+        flame.rotation.z = Math.cos(angle) * -0.22
+        flame.rotation.x = Math.sin(angle) * 0.22
+        figure.add(flame)
+      }
+    }
+  }
+
+  if (auraVisible && nen.ken) {
+    const mantle = new THREE.Mesh(
+      geometry(THREE, 'aura:ken', () => new THREE.SphereGeometry(0.96, 22, 16)),
+      glow(seen.colour, 0.28),
+    )
+    mantle.name = 'nen-ken'
+    mantle.scale.y = 1.42
+    mantle.position.y = 0.9
+    figure.add(mantle)
+  }
+
+  if (auraVisible && nen.gyo) {
+    for (const side of [-1, 1]) {
+      const eyeAura = new THREE.Mesh(
+        geometry(THREE, 'aura:gyo-eye', () => new THREE.SphereGeometry(0.075, 10, 7)),
+        glow(seen.colour, 0.72),
+      )
+      eyeAura.name = side < 0 ? 'nen-gyo-left' : 'nen-gyo-right'
+      eyeAura.position.set(side * 0.075, 1.61, 0.17)
+      figure.add(eyeAura)
+    }
+  }
+
+  if (auraVisible && nen.en) {
+    const field = new THREE.Mesh(
+      new THREE.RingGeometry(Math.max(0.05, nen.en.radius - 0.035), nen.en.radius, 64),
+      glow(seen.colour, 0.24),
+    )
+    field.name = 'nen-en'
+    field.rotation.x = -Math.PI / 2
+    field.position.y = 0.025
+    root.add(field)
+  }
+
+  const zonePositions: Record<HumanZone, [number, number, number]> = {
+    head: [0, 1.62, 0],
+    torso: [0, 1.08, 0],
+    hands: [0, 1.02, 0.24],
+    feet: [0, 0.14, 0.08],
+  }
+  if (auraVisible && nen.ko) {
+    const [x, y, z] = zonePositions[nen.ko]
+    for (const side of nen.ko === 'hands' || nen.ko === 'feet' ? [-1, 1] : [0]) {
+      const point = new THREE.Mesh(
+        geometry(THREE, `aura:ko:${nen.ko}`, () => new THREE.SphereGeometry(0.16, 12, 9)),
+        glow(seen.colour, 0.78),
+      )
+      point.name = `nen-ko-${nen.ko}`
+      point.position.set(x + side * 0.23, y, z)
+      figure.add(point)
+    }
+  }
+
+  if (auraVisible && !nen.ko) {
+    for (const [zone, share] of Object.entries(nen.ryu) as [HumanZone, number][]) {
+      if (!share) continue
+      const [x, y, z] = zonePositions[zone]
+      const point = new THREE.Mesh(
+        geometry(THREE, `aura:ryu:${zone}`, () => new THREE.SphereGeometry(0.2, 12, 9)),
+        glow(seen.colour, Math.min(0.68, 0.1 + share * 0.58)),
+      )
+      point.name = `nen-ryu-${zone}`
+      point.position.set(x, y, z)
+      point.scale.setScalar(0.65 + share * 0.85)
+      figure.add(point)
+    }
   }
 
   const farBody = new THREE.Mesh(

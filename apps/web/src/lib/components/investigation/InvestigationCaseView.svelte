@@ -19,7 +19,13 @@
     type InvestigationLogEntry,
   } from '$lib/investigation/progress'
   import { caseProgressStorageKey } from '$lib/investigation/portfolio'
-  import { investigationHatsuUse, type InvestigationHatsuUse } from '$lib/investigation/hatsu'
+  import type { InvestigationHatsuUse } from '$lib/investigation/hatsu'
+  import { resolveInvestigationHatsu } from '$lib/investigation/hatsuSystem'
+  import {
+    resolveInterview,
+    type InterviewStance,
+    type WitnessDisposition,
+  } from '$lib/investigation/interview'
   import { questionIsAvailable } from '$lib/investigation/interrogation'
   import { confrontWitnesses, type ConfrontationResult } from '$lib/investigation/confrontation'
   import { sceneNodes, visibleSightLines, type ScenePhenomenon } from '$lib/investigation/geometry'
@@ -86,6 +92,14 @@
           reset: 'Réinitialiser',
           spoilers: 'Spoilers',
           perspective: 'Perspective',
+          approach: 'Posture',
+          refused: 'Le témoin se referme. Changez de posture ou présentez un élément pertinent.',
+          stances: {
+            neutral: 'Neutre',
+            empathetic: 'Empathique',
+            pressing: 'Pressante',
+            accusatory: 'Accusatrice',
+          },
         }
       : {
           description:
@@ -129,6 +143,14 @@
           reset: 'Reset',
           spoilers: 'Spoilers',
           perspective: 'Perspective',
+          approach: 'Approach',
+          refused: 'The witness shuts down. Change approach or present relevant evidence.',
+          stances: {
+            neutral: 'Neutral',
+            empathetic: 'Empathetic',
+            pressing: 'Pressing',
+            accusatory: 'Accusatory',
+          },
         },
   )
 
@@ -152,6 +174,8 @@
   let hatsuResult = $state<InvestigationHatsuUse | null>(null)
   let askedQuestionKeys = $state<string[]>([])
   let activeResponse = $state<string | null>(null)
+  let interviewStance = $state<InterviewStance>('neutral')
+  let witnessDispositions = $state<Record<string, WitnessDisposition>>({})
   let confrontationKeys = $state<string[]>([])
   let confrontationWitnessIds = $state<string[]>([])
   let confrontationResult = $state<ConfrontationResult | null>(null)
@@ -301,7 +325,7 @@
   }
 
   const interactables = $derived.by(() => {
-    const space = ship.spaces.get(SCENE_SPACE_ID)
+    const space = ship.spaces.get(definition.scene.spaceId)
     const center = space ? centroid(space) : ([0, 0] as Vec2)
     return investigation.subjects.map((subject) => ({
       ...subject,
@@ -319,8 +343,8 @@
           size: 0.42,
           y: 0,
           at: subject.position,
-          tierId: SCENE_TIER_ID,
-          spaceId: SCENE_SPACE_ID,
+          tierId: definition.scene.tierId,
+          spaceId: definition.scene.spaceId,
           stage: 0,
           human: {
             role: subject.isDead ? 'victim' : 'witness',
@@ -341,8 +365,8 @@
       size: 0.42,
       y: 0,
       at: [furykov.position[0], furykov.position[1] + 0.85],
-      tierId: SCENE_TIER_ID,
-      spaceId: SCENE_SPACE_ID,
+      tierId: definition.scene.tierId,
+      spaceId: definition.scene.spaceId,
       stage: 0,
       human: {
         role: 'silent-majority',
@@ -438,7 +462,15 @@
     }
     if (!activeSubject) return
 
-    const result = investigationHatsuUse($activeHatsu, activeSubject.id)
+    const result = resolveInvestigationHatsu(
+      $activeHatsu,
+      activeSubject.id,
+      definition.hatsuRules,
+      {
+        availableEvidenceIds: discoveredIds,
+        remainingLifeHours: $emperorTimeLifeHours,
+      },
+    )
     const alreadyUsed = hatsuUseKeys.includes(result.key)
     hatsuResult = result
     if (!alreadyUsed) {
@@ -459,10 +491,35 @@
     const question = activeSubject.questions.find((item) => item.id === questionId)
     if (!question || !questionIsAvailable(question, discoveredIds)) return
     const key = `${activeSubject.id}:${question.id}`
-    activeResponse = question.response
+    const disposition = witnessDispositions[activeSubject.id] ?? {
+      subjectId: activeSubject.id,
+      trust: activeSubject.isDead ? 0 : activeSubject.role === 'Enquêteur' ? 80 : 50,
+      stress: activeSubject.isDead ? 0 : 35,
+      preferredStances:
+        activeSubject.role === 'Enquêteur' ? ['neutral'] : ['neutral', 'empathetic'],
+      resistedStances: ['accusatory'],
+    }
+    const outcome = resolveInterview(
+      disposition,
+      {
+        questionId,
+        stance: interviewStance,
+        leverageEvidenceIds: question.requiredEvidenceIds,
+        requiredTrust: 45,
+        baseEvidenceIds: question.evidenceIds,
+        cooperativeEvidenceIds: [],
+      },
+      discoveredIds,
+    )
+    witnessDispositions = {
+      ...witnessDispositions,
+      [activeSubject.id]: outcome.nextDisposition,
+    }
+    activeResponse = outcome.cooperation === 'refused' ? ui.refused : question.response
+    if (outcome.cooperation === 'refused') return
     if (!askedQuestionKeys.includes(key)) {
       askedQuestionKeys = [...askedQuestionKeys, key]
-      discover(question.evidenceIds)
+      discover(outcome.revealedEvidenceIds)
       addLog({ id: `question:${key}`, kind: 'DISCOVERY', label: question.prompt })
       persist()
     }
@@ -685,6 +742,25 @@
         « {activeSubject.dialogue} »
       </blockquote>
       {#if activeSubject.questions.length > 0}
+        <fieldset class="mt-5">
+          <legend class="text-[9px] font-bold uppercase tracking-[0.2em] text-white/40">
+            {ui.approach}
+          </legend>
+          <div class="mt-2 flex flex-wrap gap-2">
+            {#each ['neutral', 'empathetic', 'pressing', 'accusatory'] as stance}
+              <button
+                type="button"
+                aria-pressed={interviewStance === stance}
+                class="min-h-9 border px-3 text-[10px] font-bold uppercase tracking-wider transition {interviewStance ===
+                stance
+                  ? 'border-[#d6b35a] bg-[#d6b35a]/15 text-[#f2d98c]'
+                  : 'border-white/10 text-white/45 hover:border-white/30 hover:text-white/75'}"
+                onclick={() => (interviewStance = stance as InterviewStance)}
+                >{ui.stances[stance as InterviewStance]}</button
+              >
+            {/each}
+          </div>
+        </fieldset>
         <div class="mt-5 grid gap-2 sm:grid-cols-2">
           {#each activeSubject.questions as question}
             {@const available = questionIsAvailable(question, discoveredIds)}

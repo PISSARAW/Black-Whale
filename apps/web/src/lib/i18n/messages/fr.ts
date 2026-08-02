@@ -68,6 +68,12 @@ export const fr: Messages = {
       'La chronologie reste masquée pour éviter de présenter un navire vide comme une information canonique.',
     retry: 'Réessayer',
     technicalDetails: 'Détails techniques',
+    sources: 'Sources et méthode',
+    evidenceLevels: {
+      attested: 'Attesté',
+      derived: 'Dérivé',
+      inferred: 'Inféré',
+    },
     event: 'Événement sélectionné',
     shipState: 'État connu du navire',
     exact: 'Pièce exacte',

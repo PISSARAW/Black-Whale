@@ -69,6 +69,12 @@ export const en = {
       'The timeline stays hidden so an empty ship is never presented as canonical information.',
     retry: 'Try again',
     technicalDetails: 'Technical details',
+    sources: 'Sources and method',
+    evidenceLevels: {
+      attested: 'Attested',
+      derived: 'Derived',
+      inferred: 'Inferred',
+    },
     event: 'Selected event',
     shipState: 'Known ship state',
     exact: 'Exact room',

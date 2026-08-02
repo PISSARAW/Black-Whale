@@ -15,6 +15,7 @@
   import { breadcrumbSchema } from '$lib/seo/schema'
   import { link, locale, t } from '$lib/i18n'
   import { displayName } from '$lib/utils/displayNames'
+  import { claimLevel, evidenceForEvent } from '$lib/reconstruction/evidence'
   import type { Space, Vec2 } from '$lib/tour/types'
 
   let { data }: { data: PageData } = $props()
@@ -160,6 +161,23 @@
       }),
   )
   let selectedEvent = $derived(chronologicalEvents[currentIndex])
+  let selectedEvidence = $derived.by(() => {
+    if (!selectedEvent) return []
+    const sourceIds = data.worldEvents
+      .filter(
+        (record) =>
+          record.chapterNumber === selectedEvent.chapter.number &&
+          record.localSequence === selectedEvent.event.sequence,
+      )
+      .flatMap((record) => record.sourceIds)
+    return evidenceForEvent({
+      chapterNumber: selectedEvent.chapter.number,
+      eventId: selectedEvent.event.id,
+      occurredAtBasis: selectedEvent.event.occurredAtBasis,
+      occurredAtSource: selectedEvent.event.occurredAtSource,
+      sourceIds,
+    })
+  })
   let followedName = $derived(followedBodyId ? presenceName(followedBodyId) : null)
   let followedEventIndexes = $derived.by(() => {
     if (!followedBodyId) return [] as number[]
@@ -676,12 +694,33 @@
                         · {presence.locationLabel}{/if}
                     {/if}
                   </span>
+                  <small data-evidence={claimLevel(presence.certainty, presence.precision)}>
+                    {$t.reconstruction.evidenceLevels[
+                      claimLevel(presence.certainty, presence.precision)
+                    ]}
+                  </small>
                 </li>
               {/each}
             </ul>
           {:else}
             <p class="muted">{$t.reconstruction.noChanges}</p>
           {/if}
+        </section>
+
+        <section class="evidence-panel">
+          <div class="section-heading">
+            <h3>{$t.reconstruction.sources}</h3>
+            <span>{selectedEvidence.length}</span>
+          </div>
+          <ul>
+            {#each selectedEvidence as evidence (evidence.id)}
+              <li data-evidence={evidence.level}>
+                <span>{$t.reconstruction.evidenceLevels[evidence.level]}</span>
+                <strong>{evidence.label}</strong>
+                {#if evidence.detail}<code>{evidence.detail}</code>{/if}
+              </li>
+            {/each}
+          </ul>
         </section>
 
         {#if followedBodyId && followedName}
@@ -807,6 +846,41 @@
     display: block;
     margin-top: 0.6rem;
     overflow-wrap: anywhere;
+  }
+  .evidence-panel ul {
+    display: grid;
+    gap: 0.45rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .evidence-panel li {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.2rem 0.55rem;
+    border-left: 2px solid #6faeb2;
+    padding-left: 0.65rem;
+  }
+  .evidence-panel li[data-evidence='derived'] {
+    border-left-style: dashed;
+    border-left-color: #e5c57a;
+  }
+  .evidence-panel li[data-evidence='inferred'] {
+    border-left-style: dotted;
+    border-left-color: #cf806c;
+  }
+  .evidence-panel li span,
+  .change-list small[data-evidence] {
+    color: rgba(237, 241, 238, 0.55);
+    font-size: 0.62rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .evidence-panel li code {
+    grid-column: 2;
+    overflow-wrap: anywhere;
+    color: rgba(237, 241, 238, 0.48);
+    font-size: 0.66rem;
   }
   .masthead {
     max-width: 1600px;

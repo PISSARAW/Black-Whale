@@ -1500,6 +1500,9 @@
         humanLod?: { near: import('three').Group; far: import('three').Group }
         humanAnimate?: (seconds: number, pose?: HumanPose) => void
         humanPose?: HumanPose
+        humanHeading?: number
+        /** False only until the first authoritative position has been applied. */
+        positioned?: boolean
       }
 
       // A plain record for the same reason the solids are one: the render loop
@@ -4170,8 +4173,12 @@
             held.tierId = seen.tierId
             held.pair = seen.pair
             held.humanPose = seen.human?.pose
+            held.humanHeading = seen.heading
             held.pick = seen.pick ?? false
-            held.root.position.set(seen.at[0], seen.y, seen.at[1])
+            if (!held.positioned) {
+              held.root.position.set(seen.at[0], seen.y, seen.at[1])
+              held.positioned = true
+            }
           },
           leaving: (held) => held.kind === 'game-card',
           sweep: sweepCard,
@@ -4519,8 +4526,18 @@
             held.humanLod.near.visible = near
             held.humanLod.far.visible = !near
             // Position remains authoritative even off-screen; pose animation and
-            // camera-facing work do not run until the figure can be seen again.
-            held.root.position.set(held.at[0], held.y, held.at[1])
+            // orientation work do not run until the figure can be seen again.
+            // Game simulations usually publish human positions at 30 Hz while
+            // the scene renders at the display rate. Ease toward the latest
+            // authoritative point instead of visibly hopping between ticks.
+            const moveX = held.at[0] - held.root.position.x
+            const moveZ = held.at[1] - held.root.position.z
+            const moving = Math.hypot(moveX, moveZ) > 0.002
+            if (moving) held.facing = Math.atan2(moveX, moveZ)
+            const follow = 1 - Math.exp(-delta * 14)
+            held.root.position.x += (held.at[0] - held.root.position.x) * follow
+            held.root.position.y += (held.y - held.root.position.y) * follow
+            held.root.position.z += (held.at[1] - held.root.position.z) * follow
             held.root.updateMatrixWorld(true)
             // `Frustum.intersectsObject` only accepts renderable objects with
             // their own geometry. Both LODs are groups, so asking it directly
@@ -4529,10 +4546,17 @@
             HUMAN_VIEW_BOX.setFromObject(near ? held.humanLod.near : held.humanLod.far)
             const visible = HUMAN_VIEW.intersectsBox(HUMAN_VIEW_BOX)
             if (!visible) continue
-            held.root.rotation.y = Math.atan2(
-              camera.position.x - held.root.position.x,
-              camera.position.z - held.root.position.z,
+            const desiredHeading =
+              (moving ? held.facing : held.humanHeading ?? held.facing) ??
+              Math.atan2(
+                camera.position.x - held.root.position.x,
+                camera.position.z - held.root.position.z,
+              )
+            const turn = Math.atan2(
+              Math.sin(desiredHeading - held.root.rotation.y),
+              Math.cos(desiredHeading - held.root.rotation.y),
             )
+            held.root.rotation.y += turn * (1 - Math.exp(-delta * 12))
             if (near) held.humanAnimate?.(seconds, held.humanPose)
             continue
           }
@@ -5123,143 +5147,6 @@
        * through it is, in seconds, and the whole thing is hidden at the end of
        * it rather than rebuilt every cast.
        */
-      const GUST_SECONDS = 1.1
-      const PUNCH_SECONDS = 1
-      const SUN_SECONDS = 2.4
-      const ARROW_SECONDS = 0.9
-      /** A bang rather than a sunrise: out fast, and gone. */
-      const BLAST_SECONDS = 0.9
-      let playing = 0
-      /** How hard the sun is burning, which the exposure is read off. */
-      let burning = 0
-      let playedSeq = -1
-      let played: (TourFlash & { seq: number }) | null = null
-
-      const gustCount = 90
-      const gustPositions = new Float32Array(gustCount * 3)
-      const gustGeometry = new THREE.BufferGeometry()
-      gustGeometry.setAttribute('position', new THREE.BufferAttribute(gustPositions, 3))
-      const gustMaterial = new THREE.PointsMaterial({
-        color: 0xc6f1ff,
-        size: 0.22,
-        sizeAttenuation: true,
-        transparent: true,
-        opacity: 0.8,
-        blending: THREE.AdditiveBlending,
-        depthWrite: false,
-      })
-      const gust = new THREE.Points(gustGeometry, gustMaterial)
-      gust.visible = false
-      gust.frustumCulled = false
-      scene.add(gust)
-
-      /** The ring the blast lands in, which is what says it arrived. */
-      const gustRingMaterial = new THREE.MeshBasicMaterial({
-        color: 0xc6f1ff,
-        transparent: true,
-        opacity: 0.5,
-        side: THREE.DoubleSide,
-        depthWrite: false,
-      })
-      const gustRing = new THREE.Mesh(new THREE.TorusGeometry(1, 0.06, 6, 28), gustRingMaterial)
-      gustRing.visible = false
-      scene.add(gustRing)
-
-      /**
-       * The sun the visitor becomes.
-       *
-       * Not thrown: Feitan rises inside it, so it is centred on the head and
-       * everything the walk can see is inside it while it burns. The sphere is
-       * drawn from the inside as well as the outside — the visitor is in it —
-       * and the light it casts is the only one on the ship that outshines the
-       * fittings.
-       */
-      const sunMaterial = new THREE.MeshBasicMaterial({
-        color: 0xf2a63b,
-        transparent: true,
-        opacity: 0.3,
-        side: THREE.DoubleSide,
-        blending: THREE.AdditiveBlending,
-        depthWrite: false,
-      })
-      const sun = new THREE.Mesh(new THREE.SphereGeometry(1, 20, 16), sunMaterial)
-      sun.visible = false
-      scene.add(sun)
-      const sunLight = new THREE.PointLight(0xffb14a, 0, 60, 2)
-      scene.add(sunLight)
-
-      /**
-       * The Sun and Moon going off, which is the same fire seen from outside.
-       *
-       * Rising Sun is a sphere the visitor is standing in the middle of; this is
-       * one they are standing next to — so it is the same two things, a shell
-       * and a light, put where the pair met rather than on the camera, and it is
-       * over in half the time. Genthru's bomb is a bang, not a sunrise.
-       */
-      const blastMaterial = new THREE.MeshBasicMaterial({
-        color: 0xffc46b,
-        transparent: true,
-        opacity: 0.5,
-        side: THREE.DoubleSide,
-        blending: THREE.AdditiveBlending,
-        depthWrite: false,
-      })
-      const blast = new THREE.Mesh(new THREE.SphereGeometry(1, 20, 16), blastMaterial)
-      blast.visible = false
-      scene.add(blast)
-      const blastLight = new THREE.PointLight(0xffb14a, 0, 40, 2)
-      scene.add(blastLight)
-
-      /**
-       * The arrow, which is only ever seen going past.
-       *
-       * A shaft and a head, flown from where it was loosed to where it fell —
-       * the exchange it makes has already happened, so what the walk draws is
-       * the trace of it, in the gold of the aura that made it.
-       */
-      const arrowMaterial = new THREE.MeshBasicMaterial({
-        color: 0xf7e27d,
-        transparent: true,
-        opacity: 0.95,
-        depthTest: false,
-      })
-      const shaft = new THREE.Group()
-      const arrowShaft = new THREE.Mesh(
-        new THREE.CylinderGeometry(0.05, 0.05, 1.6, 6),
-        arrowMaterial,
-      )
-      arrowShaft.rotation.x = Math.PI / 2
-      shaft.add(arrowShaft)
-      const arrowHead = new THREE.Mesh(new THREE.ConeGeometry(0.13, 0.4, 6), arrowMaterial)
-      arrowHead.rotation.x = -Math.PI / 2
-      arrowHead.position.z = -1
-      shaft.add(arrowHead)
-      shaft.visible = false
-      shaft.frustumCulled = false
-      shaft.renderOrder = 3
-      scene.add(shaft)
-
-      /** A fist: a block of knuckles, a thumb, and the forearm behind it. */
-      const fist = new THREE.Group()
-      const fistMaterial = new THREE.MeshBasicMaterial({
-        color: 0x55a7ff,
-        transparent: true,
-        opacity: 0.72,
-        blending: THREE.AdditiveBlending,
-        depthWrite: false,
-      })
-      const knuckles = new THREE.Mesh(new THREE.BoxGeometry(0.95, 0.75, 0.8), fistMaterial)
-      knuckles.position.y = 1.2
-      fist.add(knuckles)
-      const thumb = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.3, 0.55), fistMaterial)
-      thumb.position.set(0.55, 1.15, 0.1)
-      fist.add(thumb)
-      const forearm = new THREE.Mesh(new THREE.CylinderGeometry(0.32, 0.36, 1.6, 10), fistMaterial)
-      forearm.position.y = 0.2
-      fist.add(forearm)
-      fist.visible = false
-      scene.add(fist)
-
       // ── Ten seconds, taken back ──────────────────
       /**
        * What the walk did lately, and what it does with it.
@@ -5380,170 +5267,13 @@
 
       /** Starts whichever of the two the page has just handed over. */
       function syncFlash() {
-        if (!flash || flash.seq === playedSeq) return
-        playedSeq = flash.seq
-        played = flash
-        playing = 0
-
-        // The vision is not drawn: it is ten seconds of the walk, given back.
+        if (!flash || !hatsuEffects.play(flash)) return
         if (flash.kind === 'rewind') startRewind()
-
-        // The lash is not drawn either: the chain is already in the room, on
-        // the visitor's hand, so what this starts is the swing of the thing
-        // they are holding. A blow landed on another deck is one the walk
-        // cannot show — the chain would run through the deckhead — so it is
-        // heard and read out and left at that.
         if (flash.kind === 'lash') {
-          played = null
           lashing = flash.tierId === currentTierId ? { at: flash.at, y: flash.y, through: 0 } : null
-          return
-        }
-
-        if (flash.kind === 'gust') {
-          const from = flash.from ?? flash.at
-          // Every mote gets its own place along the line and its own spread, so
-          // the blast reads as air moving rather than as a bead on a string.
-          for (let i = 0; i < gustCount; i++) {
-            const along = i / gustCount
-            gustPositions[i * 3] = from[0] + (flash.at[0] - from[0]) * along
-            gustPositions[i * 3 + 1] = flash.y
-            gustPositions[i * 3 + 2] = from[1] + (flash.at[1] - from[1]) * along
-          }
-          gustGeometry.attributes.position.needsUpdate = true
         }
       }
-
       /** Plays the blast or the punch out, and puts it away when it is over. */
-      function driftFlash(delta: number) {
-        if (!played) return
-        playing += delta
-        const span =
-          played.kind === 'gust'
-            ? GUST_SECONDS
-            : played.kind === 'sun'
-              ? SUN_SECONDS
-              : played.kind === 'arrow'
-                ? ARROW_SECONDS
-                : played.kind === 'blast'
-                  ? BLAST_SECONDS
-                  : PUNCH_SECONDS
-        const through = playing / span
-        if (through >= 1) {
-          gust.visible = false
-          gustRing.visible = false
-          fist.visible = false
-          shaft.visible = false
-          sun.visible = false
-          sunLight.intensity = 0
-          blast.visible = false
-          blastLight.intensity = 0
-          if (burning) {
-            burning = 0
-            renderer.toneMappingExposure = blinded ? 0.02 : 1
-            // Back to whatever the room's colour actually is, which is not
-            // always the ship's: a technique may have left it standing in one.
-            fog.color.copy(baseFog)
-          }
-          played = null
-          return
-        }
-
-        if (played.kind === 'arrow') {
-          // Loosed and gone: a quarter of a second across whatever it crossed,
-          // and the shaft points the way it is travelling.
-          const from = played.from ?? played.at
-          const flown = Math.min(1, through * 3)
-          shaft.visible = true
-          shaft.position.set(
-            from[0] + (played.at[0] - from[0]) * flown,
-            played.y + Math.sin(flown * Math.PI) * 1.2,
-            from[1] + (played.at[1] - from[1]) * flown,
-          )
-          shaft.lookAt(played.at[0], played.y, played.at[1])
-          arrowMaterial.opacity = 0.95 * (1 - Math.max(0, (through - 0.5) * 2))
-          return
-        }
-
-        // The pair going off, in the room they went off in and not on the eye:
-        // out to its full width in the first fifth and fading from there, which
-        // is what a bang looks like from the other side of a saloon. Drawn on
-        // whatever deck it happened on, so a blast four decks down lights that
-        // deck and not this one.
-        if (played.kind === 'blast') {
-          if (played.tierId !== currentTierId) {
-            blast.visible = false
-            blastLight.intensity = 0
-            return
-          }
-          const out = Math.min(1, through * 5)
-          const metres = Math.max(2, played.metres ?? 4)
-          blast.visible = true
-          blast.position.set(played.at[0], played.y, played.at[1])
-          blast.scale.setScalar(metres * (0.3 + out * 0.7))
-          blastMaterial.opacity = 0.55 * (1 - through) * (1 - through)
-          blastLight.position.copy(blast.position)
-          blastLight.intensity = 40 * out * (1 - through)
-          return
-        }
-
-        if (played.kind === 'sun') {
-          // Out to its full radius in the first third, and burning down for the
-          // rest of it. The visitor is inside it the whole time, which is the
-          // difference between rising as the sun and throwing one.
-          const risen = Math.min(1, through * 3)
-          const metres = Math.max(2, played.metres ?? 4)
-          sun.visible = true
-          sun.position.copy(camera.position)
-          sun.scale.setScalar(metres * risen)
-          sunMaterial.opacity = 0.34 * (1 - through * through)
-          sunLight.position.copy(camera.position)
-          sunLight.distance = metres * 2.5
-          sunLight.intensity = 26 * risen * (1 - through)
-          // And the whole picture burns with it. A sphere the visitor is
-          // standing inside is a wash of colour over the room; the exposure and
-          // the air are what make it a sun — the deck blows out white the way it
-          // does looking into one, and comes back as it goes out.
-          burning = risen * (1 - through * through)
-          renderer.toneMappingExposure = 1 + burning * 2.6
-          fog.color.setHex(0xf2a63b)
-          return
-        }
-
-        if (played.kind === 'gust') {
-          const from = played.from ?? played.at
-          const reach = Math.hypot(played.at[0] - from[0], played.at[1] - from[1]) || 1
-          gust.visible = true
-          for (let i = 0; i < gustCount; i++) {
-            // Each mote runs the length of the throw, wraps, and swirls about
-            // the line it is running along: a gust has width.
-            const along = (i / gustCount + through * 1.6) % 1
-            const swirl = (i % 7) - 3
-            gustPositions[i * 3] = from[0] + (played.at[0] - from[0]) * along + swirl * 0.12
-            gustPositions[i * 3 + 1] = played.y + Math.sin(along * 9 + i) * 0.5
-            gustPositions[i * 3 + 2] = from[1] + (played.at[1] - from[1]) * along + swirl * 0.12
-          }
-          gustGeometry.attributes.position.needsUpdate = true
-          gustMaterial.opacity = 0.8 * (1 - through)
-          // The ring opens where it lands, once the air has had time to get there.
-          const landed = Math.max(0, (through - 0.45) / 0.55)
-          gustRing.visible = landed > 0
-          gustRing.position.set(played.at[0], played.y, played.at[1])
-          gustRing.rotation.set(Math.PI / 2, 0, 0)
-          gustRing.scale.setScalar(0.4 + landed * Math.min(6, reach * 0.35))
-          gustRingMaterial.opacity = 0.5 * (1 - landed)
-          return
-        }
-
-        // Out of the deck fast, held for a beat, and back down: the floor is
-        // where it comes from, so it is never drawn below where it started.
-        const rise = through < 0.25 ? through / 0.25 : Math.max(0, 1 - (through - 0.25) / 0.75)
-        fist.visible = true
-        fist.position.set(played.at[0], played.y - 2 + rise * 3.1, played.at[1])
-        fist.rotation.y = playedSeq
-        fistMaterial.opacity = 0.72 * (1 - through * 0.6)
-      }
-
-      /** The room and the solid down the reticle, and the cast that lands on them. */
       const facing = () =>
         activePlan
           ? aimedSpace(activePlan, { at: pointer, heading: yaw, range: reachOf(world.body) })
@@ -6140,12 +5870,7 @@
        * frame is the whole of it; `pendingResize` is the handle, so a resize
        * still in the queue when the scene is torn down can be dropped.
        */
-      const resize = observeSceneResize(
-        THREE,
-        container,
-        runtime,
-        () => portals.targets(),
-      )
+      const resize = observeSceneResize(THREE, container, runtime, () => portals.targets())
 
       // ── Frame ────────────────────────────────────
       let previous = performance.now()
@@ -6392,7 +6117,13 @@
         driftMotes(delta, clock)
         driftApparitions(clock, delta)
         driftLeavingCards(delta)
-        driftFlash(delta)
+        hatsuEffects.tickFlash(
+          delta,
+          { camera, tierId: currentTierId, blinded },
+          fog,
+          baseFog,
+          renderer,
+        )
         runLash(delta)
         syncGum(clock)
         reelBack(delta)
@@ -6701,7 +6432,7 @@
           // something laid over the picture rather than the light in the room.
           baseFog.setHex(tinted ?? 0x050505)
           if (tinted !== null) baseFog.multiplyScalar(0.22)
-          if (!burning) {
+          if (!hatsuEffects.burning) {
             fog.color.copy(baseFog)
             renderer.setClearColor(baseFog)
           }
@@ -6908,17 +6639,6 @@
         for (const material of Object.values(faceMaterials)) material?.dispose()
         for (const texture of Object.values(faceTextures)) texture?.dispose()
         portalDecks.length = 0
-        gustGeometry.dispose()
-        gustMaterial.dispose()
-        gustRing.geometry.dispose()
-        gustRingMaterial.dispose()
-        fist.traverse((part) => {
-          const mesh = part as import('three').Mesh
-          if (mesh.geometry) mesh.geometry.dispose()
-        })
-        fistMaterial.dispose()
-        sun.geometry.dispose()
-        sunMaterial.dispose()
         threadGeometry.dispose()
         threadMaterial.dispose()
         gumGeometry.dispose()

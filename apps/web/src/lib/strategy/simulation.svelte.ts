@@ -18,7 +18,7 @@ import { buildTurnReports } from './reports'
 import { characterAbilityIds, factionEntityIds as selectFactionEntityIds } from './selectors'
 import { generateFactionAIOperations, partitionBlockedMoves } from './tacticalAI'
 import {
-  SCENARIO_MAX_TURNS,
+  ACTIVE_SCENARIO,
   buildScenarioRoster,
   doctrineBriefing,
   evaluateScenarioObjective,
@@ -27,6 +27,7 @@ import {
   seededScenarioRandom,
   selectScenarioLocationIds,
 } from './scenario'
+import type { StrategyScenarioV2 } from './scenario/types'
 import {
   COMMAND_POINTS_PER_TURN,
   VICTORY_POINTS_TARGET,
@@ -70,12 +71,15 @@ export function createSimulationStore() {
   let relationships = $state<Record<string, FactionRelationship>>({})
   let unitConditions = $state<Record<string, UnitCondition>>({})
   let turnHistory = $state<Array<{ orders: StrategyMoveOrder[]; diplomacy: DiplomacyOrder[] }>>([])
+  let activeScenario = ACTIVE_SCENARIO
 
   function init(
     baseState: WorldState,
     loadedFactions: StrategyFaction[],
     loadedLocations: StrategyLocation[],
+    scenario: StrategyScenarioV2 = ACTIVE_SCENARIO,
   ) {
+    activeScenario = scenario
     engine = new SimulationEngine()
     const newBranch = engine.createBranch(
       {
@@ -110,7 +114,7 @@ export function createSimulationStore() {
       throw new StrategyInputError('Faction inconnue.')
     }
     selectedFactionId = factionId
-    const roster = buildScenarioRoster(factions, factionId)
+    const roster = buildScenarioRoster(factions, factionId, activeScenario)
     activeFactionIds = roster.map((faction) => faction.id)
     relationships = Object.fromEntries(
       roster
@@ -130,11 +134,12 @@ export function createSimulationStore() {
     scenarioLocationIds = selectScenarioLocationIds(
       locations.map((location) => location.id),
       occupied,
+      activeScenario,
     )
     intel = {}
     refreshIntel([], [])
     turnReports = [
-      `Briefing reçu · ${doctrineBriefing(scenarioDoctrineForFaction(factionId))}`,
+      `Briefing reçu · ${doctrineBriefing(scenarioDoctrineForFaction(factionId, activeScenario))}`,
       `Opposition identifiée : ${
         roster
           .filter((faction) => faction.id !== factionId)
@@ -151,6 +156,25 @@ export function createSimulationStore() {
           (id) => unitConditions[id] !== 'ELIMINATED',
         )
       : []
+  }
+
+  function restoreCampaignState(
+    savedRelationships: Record<string, FactionRelationship>,
+    savedConditions: Record<string, UnitCondition>,
+  ) {
+    relationships = Object.fromEntries(
+      Object.entries(relationships).map(([id, relationship]) => [
+        id,
+        savedRelationships[id] ?? relationship,
+      ]),
+    )
+    unitConditions = Object.fromEntries(
+      Object.entries(unitConditions).map(([id, condition]) => [
+        id,
+        savedConditions[id] ?? condition,
+      ]),
+    )
+    refreshIntel([], [])
   }
 
   function abilityIdsForCharacter(characterId: string): string[] {
@@ -201,7 +225,7 @@ export function createSimulationStore() {
     const confirmedHostiles = Object.values(intel).filter(
       (sighting) => sighting.certainty === 'CONFIRMED' && !friendlyIds.has(sighting.entityId),
     ).length
-    return evaluateScenarioObjective(selectedFactionId, friendlyLocations, confirmedHostiles)
+    return evaluateScenarioObjective(selectedFactionId, friendlyLocations, confirmedHostiles, activeScenario)
   }
 
   function endTurn(
@@ -369,7 +393,7 @@ export function createSimulationStore() {
       const aiPlan = generateFactionAIOperations({
         state: currentState,
         faction,
-        doctrine: scenarioDoctrineForFaction(faction.id),
+        doctrine: scenarioDoctrineForFaction(faction.id, activeScenario),
         memberCharacterIds: members,
         unitConditions,
         destinationIds,
@@ -378,6 +402,7 @@ export function createSimulationStore() {
         pact: nextRelationships[faction.id]?.pact ?? false,
         turn: currentTurn,
         seed: `${branch.id}:${currentTurn}:${faction.id}`,
+        scenario: activeScenario,
       })
       aiEvents.push(...aiPlan.events)
       aiDeniedLocations.push(...aiPlan.deniedLocations)
@@ -414,7 +439,7 @@ export function createSimulationStore() {
     const completedTurn = currentTurn
     for (const abilityId of activatedAbilityIds) hatsuCooldowns[abilityId] = currentTurn + 2
     currentTurn += 1
-    const scenarioEvent = scenarioEventForTurn(completedTurn)
+    const scenarioEvent = scenarioEventForTurn(completedTurn, activeScenario)
     refreshIntel(scenarioEvent?.kind === 'BLACKOUT' ? [] : scoutedLocations, guardedLocations)
     const friendlyIds = new Set(factionEntityIds(playerFactionId))
     const discoveries = Object.values(intel).filter(
@@ -437,7 +462,7 @@ export function createSimulationStore() {
       victoryPoints += 1
       if (victoryPoints >= VICTORY_POINTS_TARGET) gameWon = true
     }
-    if (!gameWon && completedTurn >= SCENARIO_MAX_TURNS) gameLost = true
+    if (!gameWon && completedTurn >= activeScenario.maxTurns) gameLost = true
     if (factionEliminated(playerIds, unitConditions)) gameLost = true
     turnHistory = [
       ...turnHistory,
@@ -494,7 +519,7 @@ export function createSimulationStore() {
       return locations.filter((location) => scenarioLocationIds.includes(location.id))
     },
     get scenarioEvent() {
-      return scenarioEventForTurn(currentTurn)
+      return scenarioEventForTurn(currentTurn, activeScenario)
     },
     get relationships() { return relationships },
     get unitConditions() { return unitConditions },
@@ -507,6 +532,7 @@ export function createSimulationStore() {
     abilityIdsForCharacter,
     init,
     selectFaction,
+    restoreCampaignState,
     endTurn,
   }
 }

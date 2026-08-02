@@ -1,6 +1,6 @@
 import type { StrategyDoctrine, StrategyObjective } from './rules'
 import { requireStrategyScenario } from './scenario/registry'
-import type { StrategyScenarioFaction } from './scenario/types'
+import type { StrategyScenarioFaction, StrategyScenarioV2 } from './scenario/types'
 
 export const ACTIVE_SCENARIO = requireStrategyScenario()
 export const SCENARIO_MAX_TURNS = ACTIVE_SCENARIO.maxTurns
@@ -22,25 +22,25 @@ export interface ScenarioFactionCandidate {
 
 export const SCENARIO_EVENTS: readonly ScenarioEvent[] = ACTIVE_SCENARIO.events
 
-export function scenarioEventForTurn(turn: number): ScenarioEvent | null {
-  return SCENARIO_EVENTS.find((event) => event.turn === turn) ?? null
+export function scenarioEventForTurn(turn: number, scenario = ACTIVE_SCENARIO): ScenarioEvent | null {
+  return scenario.events.find((event) => event.turn === turn) ?? null
 }
 
-export function scenarioMoveChance(turn: number): number {
-  const event = ACTIVE_SCENARIO.events.find((candidate) => candidate.turn === turn)
+export function scenarioMoveChance(turn: number, scenario = ACTIVE_SCENARIO): number {
+  const event = scenario.events.find((candidate) => candidate.turn === turn)
   return Math.min(1, 0.72 * (event?.aiMoveMultiplier ?? 1))
 }
 
-export function scenarioFactionConfig(factionId: string): StrategyScenarioFaction | null {
-  return ACTIVE_SCENARIO.playableFactions.find((entry) => entry.factionId === factionId) ?? null
+export function scenarioFactionConfig(factionId: string, scenario = ACTIVE_SCENARIO): StrategyScenarioFaction | null {
+  return scenario.playableFactions.find((entry) => entry.factionId === factionId) ?? null
 }
 
-export function isPlayableScenarioFaction(factionId: string): boolean {
-  return Boolean(scenarioFactionConfig(factionId))
+export function isPlayableScenarioFaction(factionId: string, scenario = ACTIVE_SCENARIO): boolean {
+  return Boolean(scenarioFactionConfig(factionId, scenario))
 }
 
-export function scenarioDoctrineForFaction(factionId: string): StrategyDoctrine {
-  const config = scenarioFactionConfig(factionId)
+export function scenarioDoctrineForFaction(factionId: string, scenario = ACTIVE_SCENARIO): StrategyDoctrine {
+  const config = scenarioFactionConfig(factionId, scenario)
   if (!config) throw new Error(`Faction absente du scénario : ${factionId}`)
   return config.doctrine
 }
@@ -49,8 +49,9 @@ export function evaluateScenarioObjective(
   factionId: string,
   characterLocations: readonly (string | undefined)[],
   confirmedHostiles: number,
+  scenario = ACTIVE_SCENARIO,
 ): StrategyObjective {
-  const config = scenarioFactionConfig(factionId)
+  const config = scenarioFactionConfig(factionId, scenario)
   if (!config) throw new Error(`Faction absente du scénario : ${factionId}`)
   const objective = config.publicObjective
   const occupied = characterLocations.filter((id): id is string => Boolean(id))
@@ -90,10 +91,11 @@ export function seededScenarioRandom(seed: string): () => number {
 export function buildScenarioRoster<T extends ScenarioFactionCandidate>(
   factions: readonly T[],
   playerFactionId: string,
+  scenario = ACTIVE_SCENARIO,
 ): T[] {
   const player = factions.find((faction) => faction.id === playerFactionId)
-  if (!player || !isPlayableScenarioFaction(playerFactionId)) return []
-  const opponents = ACTIVE_SCENARIO.playableFactions
+  if (!player || !isPlayableScenarioFaction(playerFactionId, scenario)) return []
+  const opponents = scenario.playableFactions
     .filter((entry) => entry.factionId !== playerFactionId)
     .flatMap((entry) => factions.filter((faction) => faction.id === entry.factionId))
   return [player, ...opponents]
@@ -110,9 +112,10 @@ export function doctrineBriefing(doctrine: StrategyDoctrine): string {
 export function selectScenarioLocationIds(
   allLocationIds: readonly string[],
   occupiedLocationIds: readonly string[],
+  scenario: StrategyScenarioV2 = ACTIVE_SCENARIO,
 ): string[] {
   const occupied = [...new Set(occupiedLocationIds)].filter((id) => allLocationIds.includes(id))
-  const configured = ACTIVE_SCENARIO.locationIds.filter(
+  const configured = scenario.locationIds.filter(
     (id) => allLocationIds.includes(id) && !occupied.includes(id),
   )
   const remaining = [...new Set([...configured, ...allLocationIds])]
@@ -125,5 +128,5 @@ export function selectScenarioLocationIds(
       if (rightIndex >= 0) return 1
       return left.localeCompare(right)
     })
-  return [...occupied, ...remaining].slice(0, Math.max(SCENARIO_LOCATION_COUNT, occupied.length))
+  return [...occupied, ...remaining].slice(0, Math.max(scenario.locationIds.length, occupied.length))
 }

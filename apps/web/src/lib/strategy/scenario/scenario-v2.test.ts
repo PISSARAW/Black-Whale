@@ -3,7 +3,7 @@ import factions from '../../../../../../data/factions/factions.json'
 import locations from '../../../../../../data/locations/locations.json'
 import characters from '../../../../../../data/characters/characters.json'
 import { GUARDS_359_SCENARIO } from './guards359'
-import { requireStrategyScenario } from './registry'
+import { listStrategyScenarios, requireStrategyScenario } from './registry'
 import { validateStrategyScenario } from './validate'
 
 const context = {
@@ -16,10 +16,12 @@ describe('StrategyScenarioV2', () => {
   it('registers the versioned guards scenario', () => {
     expect(requireStrategyScenario().schemaVersion).toBe(2)
     expect(requireStrategyScenario().playableFactions).toHaveLength(3)
+    expect(listStrategyScenarios()).toHaveLength(3)
   })
 
   it('references production factions, characters and locations', () => {
-    expect(validateStrategyScenario(GUARDS_359_SCENARIO, context)).toEqual([])
+    for (const scenario of listStrategyScenarios())
+      expect(validateStrategyScenario(scenario, context)).toEqual([])
     for (const faction of GUARDS_359_SCENARIO.playableFactions) {
       expect(GUARDS_359_SCENARIO.locationIds).toContain(faction.initialLocationId)
       expect(faction.requiredCharacterIds.length).toBeGreaterThan(0)

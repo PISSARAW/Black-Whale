@@ -11,7 +11,16 @@
   import StrategyFactionPicker from '$lib/components/strategy/StrategyFactionPicker.svelte'
   import { calculatePresencePosition } from '$lib/components/map/markerProjection'
   import { hatsuById } from '$lib/nen/hatsuRegistry'
-  import { isPlayableScenarioFaction, SCENARIO_MAX_TURNS } from '$lib/strategy/scenario'
+  import { isPlayableScenarioFaction } from '$lib/strategy/scenario'
+  import { completeCampaignScenario, createStrategyCampaign, currentCampaignScenario } from '$lib/strategy/campaign/engine'
+  import {
+    STRATEGY_CAMPAIGN_KEY,
+    createCampaignSave,
+    decodeCampaignSave,
+    encodeCampaignSave,
+    migrateStrategySaveV2,
+    type StrategyCampaignSaveV3,
+  } from '$lib/strategy/campaign/persistence'
   import {
     STRATEGY_SAVE_KEY, LEGACY_STRATEGY_SAVE_KEY,
     createStrategySave,
@@ -48,8 +57,13 @@
   let selectedDiplomacyAction = $state<DiplomacyAction>('SHARE_INTEL')
   let errorMessage = $state<string | null>(null)
   let availableSave = $state<StrategySave | null>(null)
+  let campaignSave = $state<StrategyCampaignSaveV3 | null>(null)
   let playerFaction = $derived(data.factions.find((faction) => faction.id === playerFactionId))
-  let playableFactions = $derived(data.factions.filter((faction) => isPlayableScenarioFaction(faction.id)))
+  let playableFactions = $derived(
+    data.factions.filter((faction) =>
+      data.scenario ? isPlayableScenarioFaction(faction.id, data.scenario) : false,
+    ),
+  )
   let locationById = $derived(new Map(data.locations.map((location) => [location.id, location])))
   let spentCommandPoints = $derived(planCost(pendingOrders) + diplomacyCost(pendingDiplomacy))
   let remainingCommandPoints = $derived(COMMAND_POINTS_PER_TURN - spentCommandPoints)
@@ -146,10 +160,25 @@
   let objective = $derived(simStore.objective)
   onMount(() => {
     if (data.baseState) {
-      simStore.init(data.baseState, data.factions, data.locations)
+      simStore.init(data.baseState, data.factions, data.locations, data.scenario ?? undefined)
       ready = true
       const saved = decodeStrategySave(localStorage.getItem(STRATEGY_SAVE_KEY) ?? localStorage.getItem(LEGACY_STRATEGY_SAVE_KEY))
-      if (saved?.baseEventId === data.cutoff?.eventId) availableSave = saved
+      campaignSave = decodeCampaignSave(localStorage.getItem(STRATEGY_CAMPAIGN_KEY))
+      if (!campaignSave) {
+        campaignSave = saved
+          ? migrateStrategySaveV2(saved)
+          : createCampaignSave(
+              createStrategyCampaign(`${data.cutoff?.eventId ?? 'strategy'}:campaign`),
+              new Date().toISOString(),
+            )
+        localStorage.setItem(STRATEGY_CAMPAIGN_KEY, encodeCampaignSave(campaignSave))
+      }
+      if (
+        saved &&
+        saved.baseEventId === data.cutoff?.eventId &&
+        saved.scenarioId === data.scenario?.id
+      )
+        availableSave = saved
     }
   })
 
@@ -162,6 +191,11 @@
     pendingDiplomacy = []
     errorMessage = null
     simStore.selectFaction(id)
+    if (campaignSave)
+      simStore.restoreCampaignState(
+        campaignSave.campaign.relationships,
+        campaignSave.campaign.unitConditions,
+      )
   }
 
   function resumeScenario() {
@@ -178,8 +212,26 @@
     const factionId = playerFactionId
     localStorage.removeItem(STRATEGY_SAVE_KEY)
     availableSave = null
-    simStore.init(data.baseState, data.factions, data.locations)
+    simStore.init(data.baseState, data.factions, data.locations, data.scenario ?? undefined)
     selectFaction(factionId)
+  }
+
+  function continueCampaign() {
+    if (!campaignSave || !data.scenario || !playerFactionId) return
+    if (currentCampaignScenario(campaignSave.campaign)?.id !== data.scenario.id) return
+    const campaign = completeCampaignScenario(campaignSave.campaign, {
+      scenarioId: data.scenario.id,
+      selectedFactionId: playerFactionId,
+      won: simStore.gameWon,
+      turnsPlayed: Math.min(simStore.currentTurn - 1, data.scenario.maxTurns),
+      victoryPoints: simStore.victoryPoints,
+      relationships: structuredClone(simStore.relationships),
+      unitConditions: structuredClone(simStore.unitConditions),
+    })
+    campaignSave = createCampaignSave(campaign, new Date().toISOString())
+    localStorage.setItem(STRATEGY_CAMPAIGN_KEY, encodeCampaignSave(campaignSave))
+    const next = currentCampaignScenario(campaign)
+    if (next) window.location.assign(`/strategy?scenario=${next.id}`)
   }
 
   function currentLocation(characterId: string): string {
@@ -263,7 +315,7 @@
           baseEventId: data.cutoff?.eventId ?? '',
           selectedFactionId: playerFactionId,
           turns: structuredClone(simStore.turnHistory).map((turn, index) => ({ ...turn, turn: index + 1 })),
-        })),
+        }, data.scenario ?? undefined)),
       )
     } catch (error) {
       errorMessage =
@@ -286,6 +338,18 @@
   {:else if !ready}
     <section class="fatal" aria-live="polite"><h1>Initialisation du scénario…</h1></section>
   {:else if !playerFactionId}
+    <nav class="campaign-operations" aria-label="Opérations de la campagne V3">
+      {#each data.scenarios as operation, index (operation.id)}
+        <a
+          href={`/strategy?scenario=${operation.id}`}
+          aria-current={data.scenario?.id === operation.id ? 'page' : undefined}
+        >
+          <span>Opération {index + 1} · chapitre {operation.chapterNumber}</span>
+          <strong>{operation.title}</strong>
+          <small>{operation.description}</small>
+        </a>
+      {/each}
+    </nav>
     <StrategyFactionPicker
       chapterNumber={data.cutoff?.chapterNumber}
       factions={playableFactions}
@@ -304,7 +368,7 @@
           <p>Vous commandez</p>
           <h1>{playerFaction?.name}</h1>
           <span
-            >Tour {Math.min(simStore.currentTurn, SCENARIO_MAX_TURNS)} / {SCENARIO_MAX_TURNS}</span
+            >Tour {Math.min(simStore.currentTurn, data.scenario?.maxTurns ?? 8)} / {data.scenario?.maxTurns ?? 8}</span
           >
         </header>
 
@@ -480,10 +544,15 @@
         {#if simStore.gameOver}
           <StrategyDebrief
             won={simStore.gameWon}
-            turn={Math.min(simStore.currentTurn - 1, SCENARIO_MAX_TURNS)}
+            turn={Math.min(simStore.currentTurn - 1, data.scenario?.maxTurns ?? 8)}
             victoryPoints={simStore.victoryPoints}
             reports={simStore.turnReports}
             onrestart={restartScenario}
+            oncontinue={
+              campaignSave && currentCampaignScenario(campaignSave.campaign)?.id === data.scenario?.id
+                ? continueCampaign
+                : undefined
+            }
           />
         {/if}
         <div class="map-heading">

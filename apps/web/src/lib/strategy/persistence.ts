@@ -1,4 +1,6 @@
 import { ACTIVE_SCENARIO, isPlayableScenarioFaction } from './scenario'
+import { strategyScenarioById } from './scenario/registry'
+import type { StrategyScenarioV2 } from './scenario/types'
 import { strategyChecksum } from './replay/checksum'
 import type { StrategySaveV2, StrategyTurnV2 } from './replay/types'
 
@@ -22,12 +24,13 @@ function replayPayload(save: Partial<StrategySaveV2>) {
 
 export function createStrategySave(
   input: Omit<StrategySaveV2, 'version' | 'scenarioId' | 'scenarioContentVersion' | 'checksum'>,
+  scenario: StrategyScenarioV2 = ACTIVE_SCENARIO,
 ): StrategySaveV2 {
   const replay = {
     ...input,
     version: 2 as const,
-    scenarioId: ACTIVE_SCENARIO.id,
-    scenarioContentVersion: ACTIVE_SCENARIO.contentVersion,
+    scenarioId: scenario.id,
+    scenarioContentVersion: scenario.contentVersion,
   }
   return { ...replay, checksum: strategyChecksum(replayPayload(replay)) }
 }
@@ -36,8 +39,8 @@ export function encodeStrategySave(save: StrategySaveV2): string {
   return JSON.stringify(save)
 }
 
-function validTurns(value: unknown): value is StrategyTurnV2[] {
-  if (!Array.isArray(value) || value.length > ACTIVE_SCENARIO.maxTurns) return false
+function validTurns(value: unknown, maxTurns = ACTIVE_SCENARIO.maxTurns): value is StrategyTurnV2[] {
+  if (!Array.isArray(value) || value.length > maxTurns) return false
   return value.every(
     (turn, index) =>
       turn &&
@@ -65,15 +68,16 @@ export function decodeStrategySave(serialized: string | null): StrategySaveV2 | 
   try {
     const parsed = JSON.parse(serialized) as Partial<StrategySaveV2> & Partial<LegacyStrategySave>
     if (parsed.version === 1) return migrateLegacy(parsed as LegacyStrategySave)
+    const scenario = parsed.scenarioId ? strategyScenarioById(parsed.scenarioId) : null
     if (
       parsed.version !== 2 ||
-      parsed.scenarioId !== ACTIVE_SCENARIO.id ||
-      parsed.scenarioContentVersion !== ACTIVE_SCENARIO.contentVersion ||
+      !scenario ||
+      parsed.scenarioContentVersion !== scenario.contentVersion ||
       !parsed.seed ||
       !parsed.baseEventId ||
       !parsed.selectedFactionId ||
-      !isPlayableScenarioFaction(parsed.selectedFactionId) ||
-      !validTurns(parsed.turns)
+      !isPlayableScenarioFaction(parsed.selectedFactionId, scenario) ||
+      !validTurns(parsed.turns, scenario.maxTurns)
     )
       return null
     const save = parsed as StrategySaveV2

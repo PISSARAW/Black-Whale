@@ -5,12 +5,14 @@
     victoryPoints,
     reports,
     onrestart,
+    oncontinue,
   }: {
     won: boolean
     turn: number
     victoryPoints: number
     reports: string[]
     onrestart: () => void
+    oncontinue?: () => void
   } = $props()
 </script>
 
@@ -22,4 +24,5 @@
     {#each reports.slice(-4) as report (report)}<span>{report}</span>{/each}
   </div>
   <button type="button" onclick={onrestart}>Rejouer le scénario</button>
+  {#if oncontinue}<button type="button" onclick={oncontinue}>Continuer la campagne</button>{/if}
 </div>

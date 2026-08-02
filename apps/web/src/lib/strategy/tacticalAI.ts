@@ -4,6 +4,7 @@ import type { UnitCondition } from './conflict'
 import { chooseStrategicDestination, type StrategyDoctrine } from './rules'
 import { scenarioMoveChance, seededScenarioRandom } from './scenario'
 import type { StrategyFaction } from './types'
+import type { StrategyScenarioV2 } from './scenario/types'
 import { hatsuById } from '$lib/nen/hatsuRegistry'
 import { strategicRoleForHatsu } from './rules'
 
@@ -40,6 +41,7 @@ export function generateFactionAIOperations(input: {
   pact: boolean
   turn: number
   seed: string
+  scenario?: StrategyScenarioV2
 }): { events: ProposedWorldEvent[]; deniedLocations: string[]; hatsuActivations: number } {
   const random = seededScenarioRandom(input.seed)
   const entities = input.memberCharacterIds
@@ -59,7 +61,7 @@ export function generateFactionAIOperations(input: {
   let hatsuActivations = 0
   const personality = personalityForFaction(input.faction.id)
   const moveChance =
-    scenarioMoveChance(input.turn) *
+    scenarioMoveChance(input.turn, input.scenario) *
     (personality === 'AGGRESSIVE' ? 1.2 : personality === 'CAUTIOUS' ? 0.72 : 1)
   for (const entity of entities) {
     const abilityId = (

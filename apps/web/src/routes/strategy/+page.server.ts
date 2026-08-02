@@ -1,31 +1,36 @@
 import { prisma } from '$lib/server/db'
 import { timeline } from '$lib/server/nen'
-import { ACTIVE_SCENARIO } from '$lib/strategy/scenario'
+import { listStrategyScenarios, requireStrategyScenario } from '$lib/strategy/scenario/registry'
 import type { PageServerLoad } from './$types'
 
-const STRATEGY_CHAPTER = 359
-
-export const load: PageServerLoad = async () => {
+export const load: PageServerLoad = async ({ url }) => {
+  const scenarios = listStrategyScenarios().map(({ id, title, description, chapterNumber }) => ({
+    id,
+    title,
+    description,
+    chapterNumber,
+  }))
   try {
+    const scenario = requireStrategyScenario(url.searchParams.get('scenario') ?? undefined)
     const cutoff = await prisma.narrativeEvent.findFirst({
       where: {
         occursOnBlackWhale: true,
         ordinal: { not: null },
-        chapter: { number: { lte: STRATEGY_CHAPTER } },
+        chapter: { number: { lte: scenario.chapterNumber } },
       },
       orderBy: { ordinal: 'desc' },
       include: { chapter: { select: { number: true } } },
     })
     if (!cutoff)
-      throw new Error(`No canonical event is available through chapter ${STRATEGY_CHAPTER}`)
+      throw new Error(`No canonical event is available through chapter ${scenario.chapterNumber}`)
 
-    const requiredCharacterIds = ACTIVE_SCENARIO.playableFactions.flatMap(
+    const requiredCharacterIds = scenario.playableFactions.flatMap(
       (entry) => entry.requiredCharacterIds,
     )
     const [kernelState, factionRows, locationRows, characterRows] = await Promise.all([
       timeline.getKernelState({ eventId: cutoff.id }),
       prisma.faction.findMany({
-        where: { id: { in: ACTIVE_SCENARIO.playableFactions.map((entry) => entry.factionId) } },
+        where: { id: { in: scenario.playableFactions.map((entry) => entry.factionId) } },
         select: { id: true, name: true },
       }),
       prisma.location.findMany({ orderBy: { name: 'asc' } }),
@@ -43,12 +48,12 @@ export const load: PageServerLoad = async () => {
     const missingCharacterIds = requiredCharacterIds.filter((id) => !characterById.has(id))
     if (missingCharacterIds.length > 0)
       throw new Error(`Missing Strategy characters: ${missingCharacterIds.join(', ')}`)
-    for (const locationId of ACTIVE_SCENARIO.locationIds) {
+    for (const locationId of scenario.locationIds) {
       const location = locationById.get(locationId)
       if (location && !baseState.entities[locationId])
         baseState.entities[locationId] = { id: locationId, kind: 'LOCATION', label: location.name }
     }
-    const factions = ACTIVE_SCENARIO.playableFactions.map((entry) => {
+    const factions = scenario.playableFactions.map((entry) => {
       const members = entry.requiredCharacterIds.flatMap((characterId) => {
         const character = characterById.get(characterId)
         if (!character) return []
@@ -99,6 +104,8 @@ export const load: PageServerLoad = async () => {
 
     return {
       error: null,
+      scenario,
+      scenarios,
       cutoff: { chapterNumber: cutoff.chapter.number, eventId: cutoff.id },
       baseState,
       factions,
@@ -108,6 +115,8 @@ export const load: PageServerLoad = async () => {
     console.error('[strategy]', error)
     return {
       error: 'Le scénario stratégique n’a pas pu être initialisé.',
+      scenario: null,
+      scenarios,
       cutoff: null,
       baseState: null,
       factions: [],

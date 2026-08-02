@@ -19,6 +19,8 @@
   import type { AuraPool } from '$lib/hunt/aura'
   import type { Arena } from '$lib/hunt/arena'
   import HuntTrajectory from './HuntTrajectory.svelte'
+  import HuntRunSummary from './HuntRunSummary.svelte'
+  import type { RunInsight } from '$lib/hunt/debriefAnalysis'
 
   interface Props {
     report: {
@@ -50,7 +52,19 @@
       kind: Partial<Record<TelemetryKind, string>>
     }
     outcomeLabel: string
-    trajectoryLabels: { title: string; entered: string }
+    trajectoryLabels: {
+      title: string
+      entered: string
+      summary: {
+        title: string
+        metrics: string
+        rooms: string
+        zetsu: string
+        hatsu: string
+        falseTrails: string
+        insight: Record<RunInsight, string>
+      }
+    }
   }
 
   let { report, labels, outcomeLabel, trajectoryLabels }: Props = $props()
@@ -98,6 +112,13 @@
       {report.hunterPool.available > 0 ? labels.intact : labels.kind.duelClosed}
     </dd>
   </dl>
+
+  <HuntRunSummary
+    log={report.log}
+    clock={report.clock}
+    outcome={report.outcome}
+    labels={trajectoryLabels.summary}
+  />
 
   <HuntTrajectory
     arena={report.arena}

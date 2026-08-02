@@ -2,7 +2,22 @@
   import { onDestroy, onMount } from 'svelte'
   import Seo from '$lib/components/Seo.svelte'
   import TourScene from '$lib/components/tour/TourScene.svelte'
-  import { advanceArena } from '$lib/arena/ai'
+  import {
+    advanceArena,
+    OPPONENT_DOCTRINES,
+    type ArenaDifficulty,
+    type OpponentDoctrine,
+  } from '$lib/arena/ai'
+  import { arenaHatsuEffect, worksInArena } from '$lib/arena/hatsu'
+  import { zoneFromPitch } from '$lib/arena/targeting'
+  import { playArenaHatsu, playArenaImpact } from '$lib/arena/audio'
+  import {
+    difficultyLabel,
+    EMPTY_STATS,
+    gradeArena,
+    recordEvent,
+    type ArenaStats,
+  } from '$lib/arena/progression'
   import { buildCombatTerrain } from '$lib/arena/terrain'
   import { readAura } from '$lib/combat/perception'
   import { STRIKE_RANGE } from '$lib/combat/resolve'
@@ -16,6 +31,8 @@
   } from '$lib/combat/types'
   import { floorOf, theShip } from '$lib/tour/blueprint'
   import { EMPTY_WORLD } from '$lib/tour/hatsu'
+  import { localizeHatsu } from '$lib/i18n/hatsu'
+  import { activeHatsu, closeHatsuGate, hatsuPanelOpen, openHatsuGate } from '$lib/nen/hatsuState'
   import type { Apparition } from '$lib/tour/apparitions'
   import type { Space, Vec2, WallSegment } from '$lib/tour/types'
   import { breadcrumbSchema } from '$lib/seo/schema'
@@ -32,8 +49,11 @@
   let started = $state(false)
   let position = $state<Vec2>(terrain.spawns[0])
   let heading = $state(0)
+  let lookPitch = $state(0)
+  let aimedExtra = $state<string | null>(null)
   let currentSpace = $state<Space | null>(null)
   let engaged = $state(false)
+  let touch = $state(false)
   let tierId = $state(terrain.tierId)
   let jumpTo = $state<string | null>(terrain.id)
   let jumpAt = $state<Vec2 | null>(terrain.spawns[0])
@@ -58,13 +78,24 @@
     | 'gyo'
     | 'in'
     | 'ken'
+    | 'hatsu'
   let commandAnimation = $state<CommandAnimation | null>(null)
   let commandAnimationSeq = $state(0)
+  let lesson = $state(0)
+  let opponentDoctrine = $state<OpponentDoctrine>('counter')
+  let difficulty = $state<ArenaDifficulty>('fighter')
+  let stats = $state<ArenaStats>({ ...EMPTY_STATS })
+  let bestGrade = $state<string | null>(null)
+  let graded = $state(false)
   const motionTimers = new Set<number>()
 
   let reading = $derived(readAura(game.player, game.opponent))
+  let carriedHatsu = $derived($activeHatsu ? localizeHatsu($activeHatsu, $locale) : null)
+  let hatsuEffect = $derived(arenaHatsuEffect($activeHatsu))
   let gap = $derived(distance(game.player.position, game.opponent.position))
   let inRange = $derived(gap <= STRIKE_RANGE)
+  let threatened = $derived(reading.intentRemaining !== null)
+  let aimedZone = $derived(zoneFromPitch(lookPitch))
   let opponentActor = $derived<Apparition[]>([
     {
       id: 'arena-opponent',
@@ -77,6 +108,7 @@
       colour: 0xc36f68,
       stage: actorStage(),
       hidden: false,
+      pick: true,
     },
   ])
   let opponentWalls = $derived(blockerAt(game.opponent.position))
@@ -94,8 +126,17 @@
     const previousGame = game
     const previous = game.lastEvent
     game = combatReducer(game, action)
+    advanceLesson(action)
     if (game.lastEvent !== previous && game.lastEvent) animateExchange(game.lastEvent)
+    finishRun()
     return game !== previousGame
+  }
+
+  function advanceLesson(action: CombatAction) {
+    if (lesson === 0 && action.type === 'RYU') lesson = 1
+    else if (lesson === 1 && action.type === 'GUARD') lesson = 2
+    else if (lesson === 2 && action.type === 'FEINT') lesson = 3
+    else if (lesson === 3 && action.type === 'STRIKE') lesson = 4
   }
 
   function command(action: CombatAction, animation: CommandAnimation): boolean {
@@ -111,11 +152,31 @@
   }
 
   function strike() {
-    command({ type: 'STRIKE', side: 'player', zone: game.player.guard }, 'strike')
+    command({ type: 'STRIKE', side: 'player', zone: aimedZone }, 'strike')
   }
 
   function gatherKo() {
     command({ type: 'KO', side: 'player', zone: game.player.guard }, 'ko')
+  }
+
+  function guard() {
+    command({ type: 'GUARD', side: 'player' }, 'ken')
+  }
+
+  function feint() {
+    command({ type: 'FEINT', side: 'player', zone: game.player.guard }, 'in')
+  }
+
+  function castHatsu() {
+    if (!hatsuEffect) {
+      hatsuPanelOpen.set(true)
+      return
+    }
+    const accepted = command(
+      { type: 'HATSU', side: 'player', effect: hatsuEffect, zone: aimedZone },
+      'hatsu',
+    )
+    if (accepted) playArenaHatsu(hatsuEffect)
   }
 
   function shiftRyu(by: number) {
@@ -152,6 +213,9 @@
     else if (event.code === 'Minus') shiftRyu(-0.1)
     else if (event.code === 'Equal') shiftRyu(0.1)
     else if (event.code === 'Space') strike()
+    else if (event.code === 'ShiftLeft' || event.code === 'ShiftRight') guard()
+    else if (event.code === 'KeyV') feint()
+    else if (event.code === 'KeyH') castHatsu()
     else if (event.code === 'KeyC') gatherKo()
     else return
     event.preventDefault()
@@ -196,8 +260,9 @@
     while (owed >= DT && game.outcome === 'playing') {
       owed -= DT
       const previous = game.lastEvent
-      game = advanceArena(game, DT)
+      game = advanceArena(game, DT, opponentDoctrine, difficulty)
       if (game.lastEvent !== previous && game.lastEvent) animateExchange(game.lastEvent)
+      finishRun()
     }
   }
 
@@ -211,6 +276,9 @@
     playerMotion = 'idle'
     opponentMotion = 'idle'
     commandAnimation = null
+    lesson = 0
+    stats = { ...EMPTY_STATS }
+    graded = false
     owed = 0
     last = 0
   }
@@ -218,7 +286,7 @@
   function actorStage(): number {
     const mode = { ten: 0, ren: 1, zetsu: 2 }[game.opponent.mode]
     const fallen = game.opponent.condition === 'down' || game.opponent.condition === 'ko'
-    const pose = fallen ? 'down' : opponentMotion
+    const pose = fallen ? 'down' : game.opponent.intent ? 'attack' : opponentMotion
     const poseIndex: Record<CombatMotion, number> = {
       idle: 0,
       guard: 1,
@@ -230,6 +298,8 @@
   }
 
   function animateExchange(event: CombatEvent) {
+    stats = recordEvent(stats, event)
+    playArenaImpact(event.impact)
     const defenderMotion = reactionFor(event.impact)
     if (event.attacker === 'player') {
       playPlayer('attack', 280)
@@ -238,6 +308,17 @@
     }
     playOpponent('attack', 320)
     if (defenderMotion !== 'idle') playPlayer(defenderMotion, reactionTime(event.impact))
+  }
+
+  function finishRun() {
+    if (graded || game.outcome === 'playing') return
+    graded = true
+    const grade = gradeArena(stats, game.outcome === 'won', game.player.aura)
+    const order = ['C', 'B', 'A', 'S']
+    if (!bestGrade || order.indexOf(grade) > order.indexOf(bestGrade)) {
+      bestGrade = grade
+      localStorage.setItem('black-whale:arena-best-grade', grade)
+    }
   }
 
   function reactionFor(impact: Impact): CombatMotion {
@@ -329,6 +410,14 @@
   }
 
   onMount(() => {
+    bestGrade = localStorage.getItem('black-whale:arena-best-grade')
+    openHatsuGate({
+      admits: worksInArena,
+      reason:
+        $locale === 'fr'
+          ? 'Arena ne propose que les Hatsu dont les règles s’appliquent à un duel direct.'
+          : 'Arena only offers Hatsu whose rules apply to a direct duel.',
+    })
     window.addEventListener('keydown', onKeyDown)
     frame = requestAnimationFrame(tick)
   })
@@ -338,6 +427,7 @@
     window.removeEventListener('keydown', onKeyDown)
     cancelAnimationFrame(frame)
     for (const timer of motionTimers) window.clearTimeout(timer)
+    closeHatsuGate()
   })
 </script>
 
@@ -350,15 +440,22 @@
   ])}
 />
 
-<div class="arena-world">
+<div
+  class="arena-world"
+  class:player-empowered={game.player.empowered > 0}
+  class:opponent-bound={game.opponent.bound > 0}
+>
   <h1 class="sr-only">{$t.arena.title}</h1>
   <TourScene
     {ship}
     bind:tierId
     bind:position
     bind:heading
+    bind:lookPitch
+    bind:aimedExtra
     bind:currentSpace
     bind:engaged
+    bind:touch
     bind:jumpTo
     bind:jumpAt
     bind:jumpHeading
@@ -374,7 +471,24 @@
     unsupportedLabel={$t.tour.unsupported}
   />
 
-  <div class="reticle" class:near={inRange} aria-hidden="true"></div>
+  <div class="reticle" class:near={inRange} class:locked={aimedExtra === 'arena-opponent'}>
+    <span>{$t.arena.zone[aimedZone]}</span>
+  </div>
+
+  {#if game.opponent.intent}
+    <div class="attack-telegraph" class:concealed={!threatened} aria-live="assertive">
+      {#if reading.intentZone}
+        <small>{$locale === 'fr' ? 'INTENTION LUE' : 'INTENT READ'}</small>
+        <strong>{$t.arena.zone[reading.intentZone]}</strong>
+        <i
+          style:--threat-progress={`${Math.max(0, 1 - (reading.intentRemaining ?? 0) / 0.62) * 100}%`}
+        ></i>
+      {:else}
+        <small>{$locale === 'fr' ? 'AURA TROUBLÉE' : 'AURA DISTURBANCE'}</small>
+        <strong>?</strong>
+      {/if}
+    </div>
+  {/if}
 
   {#key commandAnimationSeq}
     {#if commandAnimation}
@@ -438,7 +552,26 @@
     <span class:active={commandGroup(commandAnimation) === 'gyo'}><kbd>G</kbd>Gyo</span>
     <span class:active={commandGroup(commandAnimation) === 'in'}><kbd>I</kbd>In</span>
     <span class:active={commandGroup(commandAnimation) === 'ken'}><kbd>K</kbd>Ken</span>
+    <span><kbd>⇧</kbd>{$t.arena.action.guard}</span>
+    <span><kbd>V</kbd>{$t.arena.action.feint}</span>
+    <span class:active={commandGroup(commandAnimation) === 'hatsu'}><kbd>H</kbd>Hatsu</span>
   </div>
+
+  {#if touch && game.outcome === 'playing'}
+    <nav class="touch-combat" aria-label={$locale === 'fr' ? 'Actions rapides' : 'Quick actions'}>
+      <button onclick={guard}>{$locale === 'fr' ? 'Garde' : 'Guard'}</button>
+      <button onclick={feint}>{$locale === 'fr' ? 'Feinte' : 'Feint'}</button>
+      <button onclick={castHatsu}>Hatsu</button>
+    </nav>
+  {/if}
+
+  {#if lesson < 4 && game.outcome === 'playing'}
+    <aside class="arena-lesson" aria-live="polite">
+      <small>{$t.arena.training} · {lesson + 1}/4</small>
+      <strong>{$t.arena.lesson[lesson].title}</strong>
+      <p>{$t.arena.lesson[lesson].body}</p>
+    </aside>
+  {/if}
 
   {#if !engaged && game.outcome === 'playing'}
     <p class="enter-prompt">{$t.arena.enter}</p>
@@ -459,12 +592,25 @@
 
     <article class="ryu-card" class:commanding={commandGroup(commandAnimation) === 'ryu'}>
       <header><strong>Ryu</strong><span>{Math.round(game.player.attackShare * 100)}%</span></header>
-      <div class="flow"><i style:width="{game.player.attackShare * 100}%"></i></div>
+      <div class="flow" class:shifting={game.player.ryuShift}>
+        <i style:width="{game.player.attackShare * 100}%"></i>
+      </div>
+      <div class="aura-body" aria-label={$t.arena.auraDistribution}>
+        {#each BODY_ZONES as zone}
+          <i
+            class:guarded={game.player.guard === zone}
+            class:incoming={game.player.ryuShift?.guard === zone}
+            data-zone={$t.arena.zone[zone]}
+          ></i>
+        {/each}
+      </div>
       <div class="zones">
         {#each BODY_ZONES as zone, index (zone)}
           <button
             class:active={game.player.guard === zone}
             class:pulsing={commandAnimation === `zone-${zone}`}
+            aria-pressed={game.player.guard === zone}
+            aria-label={`${$locale === 'fr' ? 'Protéger' : 'Guard'} ${$t.arena.zone[zone]}`}
             onclick={() => setZone(zone)}
           >
             <kbd>{index + 1}</kbd>{$t.arena.zone[zone]}
@@ -478,12 +624,27 @@
         <button class="ko-action" onclick={gatherKo} disabled={game.outcome !== 'playing'}>
           {$t.arena.action.ko}
         </button>
+        <button onclick={guard} disabled={game.outcome !== 'playing'}
+          >{$t.arena.action.guard}</button
+        >
+        <button onclick={feint} disabled={game.outcome !== 'playing'}
+          >{$t.arena.action.feint}</button
+        >
+        <button
+          class="hatsu-action"
+          onclick={castHatsu}
+          disabled={game.outcome !== 'playing'}
+          title={carriedHatsu?.rule ?? ''}
+        >
+          {carriedHatsu?.name ?? ($locale === 'fr' ? 'Choisir un Hatsu' : 'Choose a Hatsu')}
+          {#if hatsuEffect}<small>H · 18 AURA</small>{/if}
+        </button>
       </div>
     </article>
 
-    <article class="status-card opponent-card">
+    <article class="status-card opponent-card" class:bound={game.opponent.bound > 0}>
       <header>
-        <strong>{$t.arena.opponent}</strong>
+        <strong>{OPPONENT_DOCTRINES[opponentDoctrine].name}</strong>
         <span
           >{reading.concealed ? $t.arena.state.concealed : $t.arena.mode[game.opponent.mode]}</span
         >
@@ -496,6 +657,11 @@
         {#if reading.guard}<span>Gyo · {$t.arena.zone[reading.guard]}</span>{/if}
         {#if reading.ken}<span>{$t.arena.state.ken}</span>{/if}
         {#if reading.koZone}<span>{$t.arena.state.ko} · {$t.arena.zone[reading.koZone]}</span>{/if}
+        {#if reading.intentZone}
+          <span class="threat-tag">
+            {$locale === 'fr' ? 'Attaque' : 'Attack'} · {$t.arena.zone[reading.intentZone]}
+          </span>
+        {/if}
       </div>
     </article>
   </section>
@@ -514,7 +680,36 @@
       <p>{$t.arena.eyebrow}</p>
       <h1>{$t.arena.outcome[game.outcome]}</h1>
       <strong>{game.player.score} — {game.opponent.score}</strong>
+      <div class="match-report">
+        <b>{gradeArena(stats, game.outcome === 'won', game.player.aura)}</b>
+        <span>{stats.hits}/{stats.attacks} {$locale === 'fr' ? 'touches' : 'hits'}</span>
+        <span>{stats.blocks} {$locale === 'fr' ? 'blocages' : 'blocks'}</span>
+        <span>{stats.hatsu} Hatsu</span>
+        {#if bestGrade}<small>BEST · {bestGrade}</small>{/if}
+      </div>
       <button onclick={restart}>{$t.arena.action.restart}</button>
+      <div class="difficulty-picker" aria-label="Difficulty">
+        {#each ['initiate', 'fighter', 'master'] as level}
+          <button
+            class:active={difficulty === level}
+            onclick={() => {
+              difficulty = level as ArenaDifficulty
+              restart()
+            }}>{difficultyLabel(level as ArenaDifficulty, $locale)}</button
+          >
+        {/each}
+      </div>
+      <div class="doctrine-picker" aria-label="Adversaire">
+        {#each Object.entries(OPPONENT_DOCTRINES) as [id, doctrine]}
+          <button
+            class:active={opponentDoctrine === id}
+            onclick={() => {
+              opponentDoctrine = id as OpponentDoctrine
+              restart()
+            }}>{doctrine.name}</button
+          >
+        {/each}
+      </div>
     </div>
   {/if}
 </div>

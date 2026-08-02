@@ -5,12 +5,33 @@
   import type { PageData } from './$types'
   import './strategy.css'
   import PlanMap from '$lib/components/map/PlanMap.svelte'
+  import StrategyDiplomacyPanel from '$lib/components/strategy/StrategyDiplomacyPanel.svelte'
+  import StrategyDebrief from '$lib/components/strategy/StrategyDebrief.svelte'
+  import StrategyFactionPicker from '$lib/components/strategy/StrategyFactionPicker.svelte'
   import { calculatePresencePosition } from '$lib/components/map/markerProjection'
+  import { hatsuById } from '$lib/nen/hatsuRegistry'
+  import { SCENARIO_MAX_TURNS } from '$lib/strategy/scenario'
+  import {
+    STRATEGY_SAVE_KEY,
+    decodeStrategySave,
+    encodeStrategySave,
+    type StrategySave,
+  } from '$lib/strategy/persistence'
+  import { diplomacyCost, type DiplomacyAction, type DiplomacyOrder } from '$lib/strategy/diplomacy'
   import {
     StrategyInputError,
     createSimulationStore,
     type StrategyMoveOrder,
+    type StrategyOrderType,
   } from '$lib/strategy/simulation.svelte'
+  import {
+    COMMAND_POINTS_PER_TURN,
+    HATSU_ROLE_LABELS,
+    ORDER_LABELS,
+    VICTORY_POINTS_TARGET,
+    planCost,
+    strategicRoleForHatsu,
+  } from '$lib/strategy/rules'
 
   let { data }: { data: PageData } = $props()
   const simStore = createSimulationStore()
@@ -20,12 +41,30 @@
   let pendingOrders = $state<StrategyMoveOrder[]>([])
   let selectedCharacterId = $state('')
   let selectedLocationId = $state('')
+  let selectedOrderType = $state<StrategyOrderType>('MOVE')
+  let selectedAbilityId = $state('')
+  let pendingDiplomacy = $state<DiplomacyOrder[]>([])
+  let selectedDiplomacyFactionId = $state('')
+  let selectedDiplomacyAction = $state<DiplomacyAction>('SHARE_INTEL')
   let selectedTier = $state('tier-1')
   let errorMessage = $state<string | null>(null)
-
+  let availableSave = $state<StrategySave | null>(null)
   let playerFaction = $derived(data.factions.find((faction) => faction.id === playerFactionId))
   let locationById = $derived(new Map(data.locations.map((location) => [location.id, location])))
-
+  let spentCommandPoints = $derived(planCost(pendingOrders) + diplomacyCost(pendingDiplomacy))
+  let remainingCommandPoints = $derived(COMMAND_POINTS_PER_TURN - spentCommandPoints)
+  let availableHatsu = $derived.by(() =>
+    selectedCharacterId
+      ? simStore.abilityIdsForCharacter(selectedCharacterId).flatMap((abilityId) => {
+          const profile = hatsuById(abilityId)
+          return profile ? [profile] : []
+        })
+      : [],
+  )
+  let selectedHatsu = $derived(hatsuById(selectedAbilityId))
+  let playableLocations = $derived(
+    simStore.scenarioLocations.length ? simStore.scenarioLocations : data.locations,
+  )
   function entityForCharacter(state: WorldState, characterId: string): WorldEntity | undefined {
     const direct = state.entities[characterId]
     if (direct && state.presences[direct.id]) return direct
@@ -60,19 +99,20 @@
   let mapPresences = $derived.by(() => {
     const state = simStore.currentState
     if (!state) return [] as Presence[]
-    return Object.values(state.presences)
+    return Object.values(simStore.intel)
       .filter(
-        (presence) =>
-          Boolean(presence.locationId) && Boolean(controlledEntities[presence.entity.id]),
+        (sighting) =>
+          Boolean(controlledEntities[sighting.entityId]) &&
+          simStore.unitConditions[sighting.entityId] !== 'ELIMINATED',
       )
-      .map((presence): Presence => ({
-        id: `strategy:${presence.entity.id}`,
+      .map((sighting): Presence => ({
+        id: `strategy:${sighting.entityId}`,
         entityType: 'BODY',
-        entityId: presence.entity.id,
-        locationId: presence.locationId,
-        fromEventId: presence.observedAtEventId ?? state.cursor.eventId,
-        precision: presence.precision,
-        certainty: presence.certainty,
+        entityId: sighting.entityId,
+        locationId: sighting.locationId,
+        fromEventId: state.cursor.eventId,
+        precision: state.presences[sighting.entityId]?.precision ?? 'UNKNOWN',
+        certainty: sighting.certainty,
       }))
   })
 
@@ -110,10 +150,14 @@
     ].sort(),
   )
 
+  let objective = $derived(simStore.objective)
+
   onMount(() => {
     if (data.baseState) {
       simStore.init(data.baseState, data.factions, data.locations)
       ready = true
+      const saved = decodeStrategySave(localStorage.getItem(STRATEGY_SAVE_KEY))
+      if (saved?.baseEventId === data.cutoff?.eventId) availableSave = saved
     }
   })
 
@@ -122,7 +166,28 @@
     pendingOrders = []
     selectedCharacterId = ''
     selectedLocationId = ''
+    selectedAbilityId = ''
+    pendingDiplomacy = []
     errorMessage = null
+    simStore.selectFaction(id)
+  }
+
+  function resumeScenario() {
+    if (!availableSave) return
+    selectFaction(availableSave.selectedFactionId)
+    for (const turn of availableSave.turns) {
+      if (simStore.gameOver) break
+      simStore.endTurn(availableSave.selectedFactionId, turn.orders, turn.diplomacy)
+    }
+  }
+
+  function restartScenario() {
+    if (!data.baseState || !playerFactionId) return
+    const factionId = playerFactionId
+    localStorage.removeItem(STRATEGY_SAVE_KEY)
+    availableSave = null
+    simStore.init(data.baseState, data.factions, data.locations)
+    selectFaction(factionId)
   }
 
   function currentLocation(characterId: string): string {
@@ -133,27 +198,81 @@
     return locationId ? (locationById.get(locationId)?.name ?? locationId) : 'Position inconnue'
   }
 
+  function conditionForCharacter(characterId: string): string {
+    const state = simStore.currentState
+    const entity = state ? entityForCharacter(state, characterId) : undefined
+    const condition = entity ? simStore.unitConditions[entity.id] : undefined
+    return condition === 'WOUNDED' ? 'Blessé' : condition === 'ELIMINATED' ? 'Éliminé' : 'Opérationnel'
+  }
+
   function queueOrder() {
-    if (!selectedCharacterId || !selectedLocationId) return
-    pendingOrders = [
+    if (!selectedCharacterId) return
+    if (selectedOrderType === 'HATSU' && !selectedAbilityId) return
+    const destination =
+      selectedOrderType === 'GUARD' ? currentLocationId(selectedCharacterId) : selectedLocationId
+    if (!destination) return
+    const nextOrder = {
+      characterId: selectedCharacterId,
+      locationId: destination,
+      type: selectedOrderType,
+      ...(selectedOrderType === 'HATSU' ? { abilityId: selectedAbilityId } : {}),
+    }
+    const nextOrders = [
       ...pendingOrders.filter((order) => order.characterId !== selectedCharacterId),
-      { characterId: selectedCharacterId, locationId: selectedLocationId },
+      nextOrder,
     ]
+    if (planCost(nextOrders) > COMMAND_POINTS_PER_TURN) {
+      errorMessage = 'Ce plan dépasse vos points de commandement.'
+      return
+    }
+    pendingOrders = nextOrders
     selectedCharacterId = ''
     selectedLocationId = ''
+    selectedAbilityId = ''
     errorMessage = null
   }
 
-  function removeOrder(characterId: string) {
-    pendingOrders = pendingOrders.filter((order) => order.characterId !== characterId)
+  function currentLocationId(characterId: string): string {
+    const state = simStore.currentState
+    if (!state) return ''
+    const entity = entityForCharacter(state, characterId)
+    return entity ? (state.presences[entity.id]?.locationId ?? '') : ''
+  }
+
+  function removeOrder(characterId: string) { pendingOrders = pendingOrders.filter((order) => order.characterId !== characterId) }
+
+  function queueDiplomacy() {
+    if (!selectedDiplomacyFactionId) return
+    const next = [
+      ...pendingDiplomacy.filter((order) => order.factionId !== selectedDiplomacyFactionId),
+      { factionId: selectedDiplomacyFactionId, action: selectedDiplomacyAction },
+    ]
+    if (planCost(pendingOrders) + diplomacyCost(next) > COMMAND_POINTS_PER_TURN) {
+      errorMessage = 'Cette action diplomatique dépasse vos points de commandement.'
+      return
+    }
+    pendingDiplomacy = next
+    selectedDiplomacyFactionId = ''
+    errorMessage = null
   }
 
   function handleEndTurn() {
     if (!playerFactionId) return
     errorMessage = null
     try {
-      simStore.endTurn(playerFactionId, pendingOrders)
+      simStore.endTurn(playerFactionId, pendingOrders, pendingDiplomacy)
       pendingOrders = []
+      pendingDiplomacy = []
+      localStorage.setItem(
+        STRATEGY_SAVE_KEY,
+        encodeStrategySave({
+          version: 1,
+          savedAt: new Date().toISOString(),
+          baseEventId: data.cutoff?.eventId ?? '',
+          selectedFactionId: playerFactionId,
+          turns: structuredClone(simStore.turnHistory),
+        }),
+      )
     } catch (error) {
       errorMessage =
         error instanceof StrategyInputError
@@ -163,22 +282,8 @@
     }
   }
 
-  function memberName(characterId: string): string {
-    return (
-      playerFaction?.members.find((member) => member.character.id === characterId)?.character
-        .canonicalName ?? characterId
-    )
-  }
+  function memberName(characterId: string): string { return playerFaction?.members.find((member) => member.character.id === characterId)?.character.canonicalName ?? characterId }
 </script>
-
-<svelte:head>
-  <title>Mode stratégie · Black Whale</title>
-  <meta
-    name="description"
-    content="Prenez le contrôle d’une faction et simulez ses déplacements sur le Black Whale."
-  />
-</svelte:head>
-
 <main class="strategy-shell">
   {#if data.error}
     <section class="fatal" role="alert">
@@ -189,26 +294,13 @@
   {:else if !ready}
     <section class="fatal" aria-live="polite"><h1>Initialisation du scénario…</h1></section>
   {:else if !playerFactionId}
-    <section class="faction-picker">
-      <p class="eyebrow">Scénario · chapitre {data.cutoff?.chapterNumber}</p>
-      <h1>Choisissez votre faction</h1>
-      <p class="intro">
-        Chaque unité reçoit au plus un déplacement par tour. Les autres factions réagissent ensuite
-        automatiquement.
-      </p>
-      {#if data.factions.length}
-        <div class="faction-grid">
-          {#each data.factions as faction (faction.id)}
-            <button type="button" onclick={() => selectFaction(faction.id)}>
-              <strong>{faction.name}</strong>
-              <span>{faction.members.length} unité{faction.members.length > 1 ? 's' : ''}</span>
-            </button>
-          {/each}
-        </div>
-      {:else}
-        <p class="empty">Aucune faction active à ce point du récit.</p>
-      {/if}
-    </section>
+    <StrategyFactionPicker
+      chapterNumber={data.cutoff?.chapterNumber}
+      factions={data.factions}
+      saved={availableSave}
+      onselect={selectFaction}
+      onresume={resumeScenario}
+    />
   {:else}
     <div class="game-layout">
       <aside class="command-panel">
@@ -218,44 +310,125 @@
           >
           <p>Vous commandez</p>
           <h1>{playerFaction?.name}</h1>
-          <span>Tour {simStore.currentTurn}</span>
+          <span
+            >Tour {Math.min(simStore.currentTurn, SCENARIO_MAX_TURNS)} / {SCENARIO_MAX_TURNS}</span
+          >
         </header>
 
         <div class="panel-scroll">
+          {#if simStore.scenarioEvent}
+            <section class="scenario-event">
+              <span>Événement prévu</span>
+              <strong>{simStore.scenarioEvent.title}</strong>
+              <p>{simStore.scenarioEvent.description}</p>
+            </section>
+          {/if}
+          <section>
+            <div class="objective-card" class:complete={objective?.complete}>
+              <span>Objectif</span>
+              <strong>{objective?.title ?? 'Objectif indisponible'}</strong>
+              <p>{objective?.description ?? 'La situation tactique est en cours d’analyse.'}</p>
+              <div>
+                <i
+                  style={`width:${objective ? Math.min(100, (objective.current / objective.target) * 100) : 0}%`}
+                ></i>
+              </div>
+              <small
+                >{objective?.current ?? 0} / {objective?.target ?? 0}
+                {objective?.complete ? '· objectif atteint' : ''}</small
+              >
+              <small class="victory-score" class:won={simStore.gameWon}
+                >Influence {simStore.victoryPoints} / {VICTORY_POINTS_TARGET}</small
+              >
+            </div>
+          </section>
+
           <section>
             <div class="section-title">
               <h2>Nouvel ordre</h2>
-              <span>{pendingOrders.length} en attente</span>
+              <span>{remainingCommandPoints} / {COMMAND_POINTS_PER_TURN} PC</span>
             </div>
+            <label>
+              Action
+              <select bind:value={selectedOrderType}>
+                <option value="MOVE">Se déplacer · 1 PC</option>
+                <option value="SCOUT">Enquêter · 2 PC</option>
+                <option value="GUARD">Protéger sur place · 1 PC</option>
+                <option value="HATSU">Activer un Hatsu · 3 PC</option>
+              </select>
+            </label>
+            {#if selectedOrderType === 'HATSU'}
+              <label>
+                Hatsu
+                <select bind:value={selectedAbilityId}>
+                  <option value="">Choisir une capacité</option>
+                  {#each availableHatsu as profile (profile.id)}
+                    <option
+                      value={profile.id}
+                      disabled={(simStore.hatsuCooldowns[profile.id] ?? 0) > simStore.currentTurn}
+                      >{profile.name}{(simStore.hatsuCooldowns[profile.id] ?? 0) >
+                      simStore.currentTurn
+                        ? ` · disponible tour ${simStore.hatsuCooldowns[profile.id]}`
+                        : ''}</option
+                    >
+                  {/each}
+                </select>
+                {#if selectedCharacterId && !availableHatsu.length}
+                  <small class="field-hint">Aucun Hatsu tactique connu pour cette unité.</small>
+                {:else if selectedHatsu}
+                  <small class="field-hint"
+                    >{HATSU_ROLE_LABELS[strategicRoleForHatsu(selectedHatsu.kind)]}</small
+                  >
+                {/if}
+              </label>
+            {/if}
             <label>
               Unité
               <select bind:value={selectedCharacterId}>
                 <option value="">Choisir une unité</option>
                 {#each playerFaction?.members ?? [] as member (member.character.id)}
-                  <option value={member.character.id}
-                    >{member.character.canonicalName} · {currentLocation(
-                      member.character.id,
-                    )}</option
+                  <option
+                    value={member.character.id}
+                    disabled={conditionForCharacter(member.character.id) === 'Éliminé'}
+                    >{member.character.canonicalName} · {conditionForCharacter(member.character.id)} ·
+                    {currentLocation(member.character.id)}</option
                   >
                 {/each}
               </select>
             </label>
-            <label>
-              Destination
-              <select bind:value={selectedLocationId}>
-                <option value="">Choisir une destination</option>
-                {#each data.locations as location (location.id)}
-                  <option value={location.id}>{location.name}</option>
-                {/each}
-              </select>
-            </label>
+            {#if selectedOrderType !== 'GUARD'}
+              <label>
+                {selectedOrderType === 'SCOUT'
+                  ? 'Zone à enquêter'
+                  : selectedOrderType === 'HATSU'
+                    ? 'Zone ciblée'
+                    : 'Destination'}
+                <select bind:value={selectedLocationId}>
+                  <option value="">Choisir une destination</option>
+                  {#each playableLocations as location (location.id)}
+                    <option value={location.id}>{location.name}</option>
+                  {/each}
+                </select>
+              </label>
+            {/if}
             <button
               class="queue"
               type="button"
-              disabled={!selectedCharacterId || !selectedLocationId}
+              disabled={!selectedCharacterId ||
+                (selectedOrderType !== 'GUARD' && !selectedLocationId) ||
+                (selectedOrderType === 'HATSU' && !selectedAbilityId)}
               onclick={queueOrder}>Ajouter au plan</button
             >
           </section>
+
+          <StrategyDiplomacyPanel
+            factions={simStore.activeFactions.filter((faction) => faction.id !== playerFactionId)}
+            relationships={simStore.relationships}
+            pending={pendingDiplomacy}
+            bind:selectedFactionId={selectedDiplomacyFactionId}
+            bind:selectedAction={selectedDiplomacyAction}
+            onqueue={queueDiplomacy}
+          />
 
           <section>
             <div class="section-title"><h2>Plan du tour</h2></div>
@@ -265,7 +438,10 @@
                   <li>
                     <div>
                       <strong>{memberName(order.characterId)}</strong><span
-                        >→ {locationById.get(order.locationId)?.name ?? order.locationId}</span
+                        >{order.type === 'HATSU'
+                          ? (hatsuById(order.abilityId)?.name ?? ORDER_LABELS[order.type])
+                          : ORDER_LABELS[order.type]} · {locationById.get(order.locationId)?.name ??
+                          order.locationId}</span
                       >
                     </div>
                     <button
@@ -293,16 +469,33 @@
 
         <footer>
           {#if errorMessage}<p class="error" role="alert">{errorMessage}</p>{/if}
-          <button class="end-turn" type="button" onclick={handleEndTurn}
-            >Terminer le tour {simStore.currentTurn}</button
+          <button
+            class="end-turn"
+            type="button"
+            disabled={simStore.gameOver}
+            onclick={handleEndTurn}
+            >{simStore.gameWon
+              ? 'Victoire stratégique'
+              : simStore.gameLost
+                ? 'Scénario terminé'
+                : `Résoudre le tour · ${spentCommandPoints} PC`}</button
           >
         </footer>
       </aside>
 
       <section class="map-panel">
+        {#if simStore.gameOver}
+          <StrategyDebrief
+            won={simStore.gameWon}
+            turn={Math.min(simStore.currentTurn - 1, SCENARIO_MAX_TURNS)}
+            victoryPoints={simStore.victoryPoints}
+            reports={simStore.turnReports}
+            onrestart={restartScenario}
+          />
+        {/if}
         <div class="map-heading">
           <div>
-            <p>Situation tactique</p>
+            <p>Situation tactique · renseignement limité</p>
             <h2>Black Whale</h2>
           </div>
           <div class="tier-tabs" aria-label="Pont affiché">
@@ -318,12 +511,12 @@
         <PlanMap
           {markers}
           tier={selectedTier}
-          emptyLabel="Aucune unité localisée dans ce scénario."
+          emptyLabel="Aucun renseignement disponible sur ce pont."
           elsewhereLabel={(count) => `${count} unité${count > 1 ? 's' : ''} sur les autres ponts.`}
         />
         <p class="legend">
-          <i></i> Votre faction <i class="other"></i> Autres factions · les positions se mettent à jour
-          à la fin du tour.
+          <i></i> Votre faction <i class="other"></i> Contact observé · les pointillés indiquent un renseignement
+          ancien.
         </p>
       </section>
     </div>

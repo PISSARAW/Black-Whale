@@ -8,7 +8,9 @@ interface Exchange {
   defender: FighterState
   attackerSide: CombatSide
   zone: BodyZone
-  technique: 'strike' | 'ko'
+  technique: 'strike' | 'ko' | 'hatsu'
+  power?: number
+  range?: number
   clock: number
   walls: WallSegment[]
 }
@@ -20,10 +22,12 @@ export interface ExchangeResult {
 }
 
 export function resolveExchange(exchange: Exchange): ExchangeResult {
-  const inRange = distance(exchange.attacker.position, exchange.defender.position) <= STRIKE_RANGE
+  const inRange =
+    distance(exchange.attacker.position, exchange.defender.position) <=
+    (exchange.range ?? STRIKE_RANGE)
   if (!inRange || isObstructed(exchange)) return resultOf(exchange, 'miss')
 
-  const offence = offensiveAura(exchange.attacker, exchange.technique)
+  const offence = offensiveAura(exchange.attacker, exchange.technique) * (exchange.power ?? 1)
   const defence = defensiveAura(exchange.defender, exchange.zone)
   const impact = impactOf(offence, defence)
   return resultOf(exchange, impact)
@@ -57,7 +61,7 @@ function distance(a: FighterState['position'], b: FighterState['position']): num
   return Math.hypot(a[0] - b[0], a[1] - b[1])
 }
 
-export function offensiveAura(fighter: FighterState, technique: 'strike' | 'ko'): number {
+export function offensiveAura(fighter: FighterState, technique: 'strike' | 'ko' | 'hatsu'): number {
   if (fighter.mode === 'zetsu' || fighter.condition === 'down' || fighter.condition === 'ko') {
     return 0
   }
@@ -72,10 +76,10 @@ export function defensiveAura(fighter: FighterState, zone: BodyZone): number {
     return 0
   }
   const output = fighter.mode === 'ren' ? 1 : 0.65
-  if (fighter.ken) return output * 0.72
+  if (fighter.ken) return output * (fighter.guardWindow > 0 ? 0.92 : 0.72)
 
   const reserve = output * (1 - fighter.attackShare)
-  if (zone === fighter.guard) return reserve * 1.5
+  if (zone === fighter.guard) return reserve * (fighter.guardWindow > 0 ? 2.15 : 1.5)
   return reserve * 0.45
 }
 

@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
+    "postinstall": "pnpm --filter @black-whale/database generate",
     "build": "turbo build",
     "dev": "turbo dev",
     "lint": "eslint .",

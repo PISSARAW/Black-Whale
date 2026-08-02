@@ -1,5 +1,5 @@
 import { theShip } from '../tour/blueprint'
-import { closestPointOnSegment, pointInPolygon } from '../tour/geometry'
+import { closestPointOnSegment, pointInPolygon, structureWalls } from '../tour/geometry'
 import type { Polygon, Space, Structure, Vec2, WallSegment } from '../tour/types'
 
 export const BANQUET_HALL_ID = 'tier-1-banquet-hall'
@@ -34,8 +34,11 @@ export function buildCombatTerrain(spaceId = BANQUET_HALL_ID): CombatTerrain {
   const plan = ship.plans.get(space.tierId)
   if (!plan) throw new Error(`Combat terrain tier ${space.tierId} has no plan`)
 
-  const walls = plan.walls.filter((wall) => wall.spaceId === space.id)
   const structures = plan.structures.filter((structure) => structure.spaceId === space.id)
+  const walls = [
+    ...plan.walls.filter((wall) => wall.spaceId === space.id),
+    ...structures.flatMap(structureWalls),
+  ]
   const spawns = spawnPair(space.footprint, walls)
   return {
     id: space.id,

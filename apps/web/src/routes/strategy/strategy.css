@@ -41,6 +41,15 @@
   grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
   gap: 0.8rem;
 }
+.strategy-shell .resume {
+  margin: -1.4rem 0 1.8rem;
+  border: 1px solid #d7b86a;
+  border-radius: 999px;
+  background: transparent;
+  padding: 0.65rem 1rem;
+  color: #ead99f;
+  cursor: pointer;
+}
 .strategy-shell .faction-grid button {
   display: grid;
   gap: 0.7rem;
@@ -115,6 +124,73 @@
   padding: 1.4rem 0;
   border-bottom: 1px solid #1c2931;
 }
+.strategy-shell .objective-card {
+  display: grid;
+  gap: 0.45rem;
+  border: 1px solid #30414b;
+  border-radius: 0.55rem;
+  background: linear-gradient(145deg, #14222b, #0c151b);
+  padding: 1rem;
+}
+.strategy-shell .scenario-event {
+  display: grid;
+  gap: 0.35rem;
+  margin-top: 1rem;
+  border-left: 2px solid #d7b86a;
+  background: #101a21;
+  padding: 0.85rem !important;
+}
+.strategy-shell .scenario-event span {
+  color: #d7b86a;
+  font: 0.58rem var(--font-mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.strategy-shell .scenario-event p {
+  margin: 0;
+  color: #82949e;
+  font-size: 0.7rem;
+  line-height: 1.5;
+}
+.strategy-shell .objective-card > span,
+.strategy-shell .objective-card small {
+  color: #8fa0aa;
+  font: 0.6rem var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.strategy-shell .objective-card strong {
+  color: #e7d7a8;
+  font-size: 0.86rem;
+}
+.strategy-shell .objective-card p {
+  margin: 0;
+  color: #8799a3;
+  font-size: 0.72rem;
+  line-height: 1.5;
+}
+.strategy-shell .objective-card > div {
+  height: 0.25rem;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #26343d;
+}
+.strategy-shell .objective-card > div i {
+  display: block;
+  height: 100%;
+  background: #d7b86a;
+  transition: width 0.25s ease;
+}
+.strategy-shell .objective-card.complete {
+  border-color: #789b75;
+}
+.strategy-shell .objective-card .victory-score {
+  margin-top: 0.25rem;
+  color: #d7b86a;
+}
+.strategy-shell .objective-card .victory-score.won {
+  color: #9bd598;
+}
 .strategy-shell .section-title {
   display: flex;
   align-items: center;
@@ -141,6 +217,14 @@
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
+.strategy-shell .field-hint {
+  color: #71838e;
+  font:
+    0.65rem/1.45 system-ui,
+    sans-serif;
+  letter-spacing: 0;
+  text-transform: none;
+}
 .strategy-shell select {
   width: 100%;
   min-width: 0;
@@ -159,7 +243,8 @@
   outline-offset: 2px;
 }
 .strategy-shell .queue,
-.strategy-shell .end-turn {
+.strategy-shell .end-turn,
+.strategy-shell .secondary-action {
   width: 100%;
   margin-top: 0.85rem;
   border: 1px solid #b89648;
@@ -169,6 +254,50 @@
   color: #101418;
   font-weight: 750;
   cursor: pointer;
+}
+.strategy-shell .secondary-action {
+  width: 100%;
+  margin-top: 0.8rem;
+  border: 1px solid #3a4c57;
+  border-radius: 0.4rem;
+  background: #15222b;
+  padding: 0.65rem;
+  color: #cfdae0;
+  cursor: pointer;
+}
+.strategy-shell .secondary-action:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+.strategy-shell .relations {
+  display: grid;
+  gap: 0.45rem;
+}
+.strategy-shell .relations > div {
+  display: grid;
+  gap: 0.2rem;
+  border-left: 2px solid #536b78;
+  padding-left: 0.55rem;
+}
+.strategy-shell .relations strong,
+.strategy-shell .diplomacy-plan {
+  font-size: 0.7rem;
+}
+.strategy-shell .relations span {
+  color: #7f929e;
+  font-size: 0.62rem;
+}
+.strategy-shell .diplomacy-plan {
+  display: grid;
+  gap: 0.3rem;
+  margin: 0.75rem 0 0;
+  padding-left: 1rem;
+  color: #9aacb5;
+}
+.strategy-shell .end-turn:disabled {
+  cursor: default;
+  filter: saturate(0.4);
+  opacity: 0.75;
 }
 .strategy-shell .queue:disabled {
   cursor: not-allowed;
@@ -243,6 +372,37 @@
   min-width: 0;
   padding: clamp(1rem, 3vw, 2rem);
   background: radial-gradient(circle at 60% 25%, #13212b, #070b0f 65%);
+}
+.strategy-shell .strategy-debrief {
+  display: grid;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  border: 1px solid #d7b86a;
+  border-radius: 0.65rem;
+  background: #101920;
+  padding: 1.2rem;
+}
+.strategy-shell .strategy-debrief p,
+.strategy-shell .strategy-debrief h2 {
+  margin: 0;
+}
+.strategy-shell .strategy-debrief > strong {
+  color: #d7b86a;
+}
+.strategy-shell .strategy-debrief > div {
+  display: grid;
+  gap: 0.25rem;
+  color: #82949e;
+  font-size: 0.68rem;
+}
+.strategy-shell .strategy-debrief button {
+  justify-self: start;
+  border: 1px solid #536b78;
+  border-radius: 0.4rem;
+  background: #182630;
+  padding: 0.55rem 0.8rem;
+  color: #e8eef2;
+  cursor: pointer;
 }
 .strategy-shell .map-heading {
   display: flex;

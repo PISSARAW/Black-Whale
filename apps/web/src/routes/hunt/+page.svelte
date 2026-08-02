@@ -39,6 +39,25 @@
   import HuntHud from '$lib/components/hunt/HuntHud.svelte'
   import DuelPanel from '$lib/components/hunt/DuelPanel.svelte'
   import Debrief from '$lib/components/hunt/Debrief.svelte'
+  import HuntActions from '$lib/components/hunt/HuntActions.svelte'
+  import HuntBriefing from '$lib/components/hunt/HuntBriefing.svelte'
+  import HuntTutorial from '$lib/components/hunt/HuntTutorial.svelte'
+  import { tutorialStep } from '$lib/hunt/tutorial'
+  import { tutorialMessages } from '$lib/hunt/tutorialMessages'
+  import {
+    DEFAULT_HUNTER_PROFILE,
+    HUNTER_PROFILES,
+    type HunterProfileId,
+  } from '$lib/hunt/hunter/profiles'
+  import { hunterProfileMessages } from '$lib/hunt/hunter/profileMessages'
+  import {
+    BUNGEE_GUM_HUNT,
+    DEFAULT_HUNT_HATSU,
+    DOWSING_CHAIN_HUNT,
+    huntHatsu,
+    PARALLEL_FUTURE_HUNT,
+    type HuntHatsuId,
+  } from '$lib/hunt/hatsu'
 
   const ship = theShip()
   const plan = ship.plans.get(buildArena().tierId)!
@@ -69,16 +88,42 @@
   const spaceById = (id: string | null) => arena.spaces.find((space) => space.id === id)
   const roomName = (id: string | null) => nameOf(spaceById(id))
 
+  const hatsuProfiles = [BUNGEE_GUM_HUNT, PARALLEL_FUTURE_HUNT, DOWSING_CHAIN_HUNT]
+  let selectedHatsu = $state<HuntHatsuId>(DEFAULT_HUNT_HATSU)
+  let selectedHunter = $state<HunterProfileId>(DEFAULT_HUNTER_PROFILE)
+
   function freshGame() {
     return initialHuntState({
       playerAt: { position: interiorPoint(opening.from.footprint), spaceId: opening.from.id },
       hunterAt: { position: interiorPoint(opening.to.footprint), spaceId: opening.to.id },
       targetSpaceId: opening.to.id,
       seed: 0x5eed,
+      hatsu: selectedHatsu,
+      hunterProfile: selectedHunter,
     })
   }
 
   let game = $state(freshGame())
+  let equippedHatsu = $derived(huntHatsu(game.hatsu.id))
+  let hatsuReading = $derived.by(() => {
+    if (game.hatsu.id === 'parallel-future' && game.hatsu.window > 0) {
+      return {
+        label: equippedHatsu.name,
+        detail: $t.hunt.hatsu.future(
+          roomName(game.hatsu.forecastSpaceId),
+          Math.ceil(game.hatsu.window),
+        ),
+      }
+    }
+    if (game.hatsu.id === 'dowsing-chain' && game.hatsu.probableBearing) {
+      return {
+        label: equippedHatsu.name,
+        detail: $t.hunt.hatsu.probable,
+        bearing: game.hatsu.probableBearing,
+      }
+    }
+    return null
+  })
 
   // Bound out of TourScene: the walk is its job, not this page's. Seeded from
   // the spawn rather than from `game`, which is where it came from anyway — the
@@ -95,6 +140,21 @@
   // Read once, on mount: this drives whether the veil moves, and a visitor who
   // has asked for less movement should not have it re-decided mid-game.
   let calm = $state(false)
+  let briefed = $state(false)
+  let tutorialDismissed = $state(false)
+  let lesson = $derived(tutorialStep(game))
+  let duelSeat = $state<{ at: Vec2; heading: number; eye: number } | null>(null)
+
+  // `TourScene` already owns the one trustworthy way to immobilise a body
+  // while leaving the head free. Capture the contact point once: rebuilding
+  // this object every tick would also reset the player's gaze every tick.
+  $effect(() => {
+    if (game.duel && !duelSeat) {
+      duelSeat = { at: [...game.player.position], heading: game.player.heading, eye: 1.7 }
+    } else if (!game.duel && duelSeat) {
+      duelSeat = null
+    }
+  })
 
   /**
    * What the principles currently look like. Derived from the same state the
@@ -129,6 +189,24 @@
     game = huntReducer(game, action)
   }
 
+  let canSweep = $derived(game.player.nen === 'ten' && game.ledger.pool.available >= 15)
+  let canLay = $derived(
+    game.hatsu.id === 'bungee-gum' &&
+      game.player.spaceId !== null &&
+      game.ledger.pool.available >= 25 &&
+      game.player.nen === 'ten',
+  )
+  let canTake = $derived(
+    game.ledger.placements.some(
+      (placement) => placement.state === 'set' && placement.spaceId === game.player.spaceId,
+    ),
+  )
+  let canHatsu = $derived(
+    game.hatsu.id === 'parallel-future'
+      ? game.player.nen === 'zetsu'
+      : game.hatsu.id === 'dowsing-chain' && game.player.nen === 'ten' && game.player.atRest,
+  )
+
   // ── Input ────────────────────────────────────────────────────────────────
   //
   // Every key here is one `TourScene` does not already spend on walking: it owns
@@ -140,10 +218,11 @@
     KeyX: { type: 'ZETSU' },
     KeyV: { type: 'LAY' },
     KeyR: { type: 'TAKE' },
+    KeyH: { type: 'HATSU' },
   }
 
   function onKeyDown(event: KeyboardEvent) {
-    if (finished || event.repeat || event.metaKey || event.ctrlKey) return
+    if (!briefed || finished || event.repeat || event.metaKey || event.ctrlKey) return
     const handled = game.duel ? duelKey(event.code) : huntKey(event.code)
     if (handled) event.preventDefault()
   }
@@ -227,6 +306,11 @@
     // hunter does not get to cross the apartment while nobody was looking.
     owed = Math.min(owed + elapsed, 0.25)
 
+    if (!briefed) {
+      owed = 0
+      return
+    }
+
     reportWalk()
     while (owed >= HUNT_DT && !huntIsOver(game.outcome)) {
       owed -= HUNT_DT
@@ -243,7 +327,12 @@
     if (moved === 0 && game.player.atRest && heading === game.player.heading) return
     send({
       type: 'WALKED',
-      player: { position: position, heading, spaceId: currentSpace?.id ?? null, atRest: moved === 0 },
+      player: {
+        position: position,
+        heading,
+        spaceId: currentSpace?.id ?? null,
+        atRest: moved === 0,
+      },
     })
   }
 
@@ -265,6 +354,10 @@
     owed = 0
     last = 0
   }
+
+  function begin() {
+    briefed = true
+  }
 </script>
 
 <Seo
@@ -284,6 +377,7 @@
     bind:heading
     bind:currentSpace
     bind:engaged
+    seated={duelSeat}
     world={EMPTY_WORLD}
     extras={figures}
     touchLabels={{ move: $t.tour.touch.move, cast: $t.tour.touch.cast }}
@@ -296,7 +390,7 @@
     <NenVeil {cues} {calm} />
   {/if}
 
-  {#if !finished}
+  {#if !finished && !inDuel}
     <HuntHud
       pool={game.duel ? game.duel.player.pool : game.ledger.pool}
       feedback={game.feedback}
@@ -306,13 +400,51 @@
         targetName: roomName(game.targetSpaceId),
         entraves: liveOf(game.ledger.placements).length,
         heading: game.player.heading,
+        hatsu: hatsuReading,
       }}
-      labels={{ hud: $t.hunt.hud, feel: $t.hunt.feel, controls: $t.hunt.controls }}
+      labels={{ hud: $t.hunt.hud, feel: $t.hunt.feel }}
+    />
+  {/if}
+
+  {#if briefed && !inDuel && !finished}
+    <HuntActions
+      nen={game.player.nen}
+      {canSweep}
+      {canLay}
+      {canTake}
+      hatsuId={game.hatsu.id}
+      {canHatsu}
+      labels={$t.hunt.actions}
+      onSweep={() => send({ type: 'SWEEP' })}
+      onToggleNen={() => send({ type: 'ZETSU' })}
+      onLay={() => send({ type: 'LAY' })}
+      onTake={() => send({ type: 'TAKE' })}
+      onHatsu={() => send({ type: 'HATSU' })}
+    />
+  {/if}
+
+  {#if briefed && !tutorialDismissed && lesson !== 'done' && !finished}
+    <HuntTutorial
+      step={lesson}
+      labels={tutorialMessages($locale)}
+      onDismiss={() => (tutorialDismissed = true)}
     />
   {/if}
 
   {#if inDuel && !finished}
-    <DuelPanel duel={game.duel!} labels={$t.hunt.duel} />
+    <DuelPanel
+      duel={game.duel!}
+      labels={$t.hunt.duel}
+      canRecover={canTake}
+      onGuard={(zone) => duel({ type: 'RYU', side: 'player', setting: { guard: zone } })}
+      onRyu={(attack) => duel({ type: 'RYU', side: 'player', setting: { attack } })}
+      onGyo={() => duel({ type: 'GYO', side: 'player', on: !game.duel!.player.gyo })}
+      onIn={() => duel({ type: 'IN', side: 'player', on: !game.duel!.player.in })}
+      onKen={() => duel({ type: 'KEN', side: 'player', on: !game.duel!.player.ken })}
+      onKo={() => strike()}
+      onBreakAway={() => duel({ type: 'ZETSU', on: !game.duel!.player.zetsu })}
+      onRecover={() => send({ type: 'TAKE_IN_DUEL' })}
+    />
   {/if}
 
   {#if !engaged && !inDuel && !finished}
@@ -337,9 +469,9 @@
           roomName,
         }}
         labels={$t.hunt.debrief}
-        outcomeLabel={$t.hunt.outcome[game.outcome === 'playing' || game.outcome === 'contact'
-          ? 'timeUp'
-          : game.outcome]}
+        outcomeLabel={$t.hunt.outcome[
+          game.outcome === 'playing' || game.outcome === 'contact' ? 'timeUp' : game.outcome
+        ]}
       />
       <div class="pb-16 text-center">
         <button
@@ -350,5 +482,25 @@
         </button>
       </div>
     </div>
+  {/if}
+
+  {#if !briefed}
+    <HuntBriefing
+      labels={$t.hunt.briefing}
+      profiles={hatsuProfiles}
+      selected={selectedHatsu}
+      hunterProfiles={HUNTER_PROFILES}
+      selectedHunter={selectedHunter}
+      hunterLabels={hunterProfileMessages($locale)}
+      onSelect={(id) => {
+        selectedHatsu = id
+        game = freshGame()
+      }}
+      onSelectHunter={(id) => {
+        selectedHunter = id
+        game = freshGame()
+      }}
+      onBegin={begin}
+    />
   {/if}
 </div>

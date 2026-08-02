@@ -147,6 +147,8 @@
     position?: Vec2
     /** Which way they face, in radians, for the mini-map cone. */
     heading?: number
+    /** Vertical camera angle, exposed for games whose reticle targets body height. */
+    lookPitch?: number
     /**
      * What Nen is currently doing to the ship. The scene is the only thing that
      * draws it; `$lib/tour/hatsu` is the only thing that decides it.
@@ -420,6 +422,7 @@
     touchUseLabel = null,
     position = $bindable([0, 0]),
     heading = $bindable(0),
+    lookPitch = $bindable(0),
     world = EMPTY_WORLD,
     auraColour = null,
     flash = null,
@@ -5601,6 +5604,7 @@
           yaw -= dx * sensitivity
         }
         pitch = Math.max(-MAX_PITCH, Math.min(MAX_PITCH, pitch - dy * sensitivity))
+        lookPitch = pitch
       }
 
       /**

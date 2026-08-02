@@ -6,10 +6,22 @@ export type AuraMode = 'ten' | 'ren' | 'zetsu'
 export type FighterCondition = 'ready' | 'staggered' | 'down' | 'ko'
 export type Impact = 'miss' | 'blocked' | 'clean' | 'critical' | 'knockdown' | 'ko'
 export type MatchOutcome = 'playing' | 'won' | 'lost'
+export type ArenaHatsuEffect = 'bind' | 'impact' | 'barrage' | 'restore' | 'enhance'
 
 export const BODY_ZONES: readonly BodyZone[] = ['head', 'torso', 'arms', 'legs']
 
 export interface KoCharge {
+  zone: BodyZone
+  remaining: number
+}
+
+export interface RyuShift {
+  attackShare: number
+  guard: BodyZone
+  remaining: number
+}
+
+export interface AttackIntent {
   zone: BodyZone
   remaining: number
 }
@@ -27,6 +39,13 @@ export interface FighterState {
   in: boolean
   ken: boolean
   ko: KoCharge | null
+  ryuShift: RyuShift | null
+  guardWindow: number
+  recoveryWindow: number
+  feint: BodyZone | null
+  intent: AttackIntent | null
+  bound: number
+  empowered: number
   cooldown: number
   condition: FighterCondition
   recovery: number
@@ -39,7 +58,7 @@ export interface CombatEvent {
   zone: BodyZone
   impact: Impact
   points: number
-  technique: 'strike' | 'ko'
+  technique: 'strike' | 'ko' | 'hatsu'
 }
 
 export interface CombatState {
@@ -71,6 +90,10 @@ export type CombatAction =
   | { type: 'GYO'; side: CombatSide; on: boolean }
   | { type: 'IN'; side: CombatSide; on: boolean }
   | { type: 'KEN'; side: CombatSide; on: boolean }
+  | { type: 'GUARD'; side: CombatSide }
+  | { type: 'FEINT'; side: CombatSide; zone: BodyZone }
+  | { type: 'PREPARE_STRIKE'; side: CombatSide; zone: BodyZone }
+  | { type: 'HATSU'; side: CombatSide; effect: ArenaHatsuEffect; zone: BodyZone }
   | { type: 'STRIKE'; side: CombatSide; zone: BodyZone }
   | { type: 'KO'; side: CombatSide; zone: BodyZone }
 
@@ -91,6 +114,13 @@ export function initialFighter(position: Vec2): FighterState {
     in: false,
     ken: false,
     ko: null,
+    ryuShift: null,
+    guardWindow: 0,
+    recoveryWindow: 0,
+    feint: null,
+    intent: null,
+    bound: 0,
+    empowered: 0,
     cooldown: 0,
     condition: 'ready',
     recovery: 0,

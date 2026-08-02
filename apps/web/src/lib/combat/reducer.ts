@@ -5,6 +5,7 @@ import type { Vec2 } from '../tour/types'
 import {
   initialCombatState,
   otherSide,
+  type ArenaHatsuEffect,
   type BodyZone,
   type CombatAction,
   type CombatSide,
@@ -19,6 +20,11 @@ export const KEN_PER_SECOND = 6
 export const ZETSU_RECOVERY = 7
 export const KO_COST = 18
 export const KO_WINDUP = 0.8
+export const RYU_SHIFT_TIME = 0.22
+export const GUARD_WINDOW = 0.38
+export const FEINT_COST = 3
+export const STRIKE_WINDUP = 0.62
+export const HATSU_COST = 18
 export const MOVE_SPEED = 3.6
 export const MIN_SEPARATION = 1
 export const SCORE_TO_WIN = 10
@@ -27,7 +33,9 @@ interface StrikeRequest {
   state: CombatState
   side: CombatSide
   zone: BodyZone
-  technique: 'strike' | 'ko'
+  technique: 'strike' | 'ko' | 'hatsu'
+  power?: number
+  range?: number
 }
 
 export function combatReducer(state: CombatState, action: CombatAction): CombatState {
@@ -44,6 +52,12 @@ export function combatReducer(state: CombatState, action: CombatAction): CombatS
     return replace(state, action.side, toggle(state[action.side], 'in', action.on))
   if (action.type === 'KEN')
     return replace(state, action.side, setKen(state[action.side], action.on))
+  if (action.type === 'GUARD') return replace(state, action.side, activeGuard(state[action.side]))
+  if (action.type === 'FEINT')
+    return replace(state, action.side, feint(state[action.side], action.zone))
+  if (action.type === 'PREPARE_STRIKE')
+    return replace(state, action.side, prepareStrike(state[action.side], action.zone))
+  if (action.type === 'HATSU') return castHatsu(state, action.side, action.effect, action.zone)
   if (action.type === 'STRIKE') {
     return strike({ state, side: action.side, zone: action.zone, technique: 'strike' })
   }
@@ -61,7 +75,7 @@ function tick(state: CombatState, dt: number): CombatState {
     player: advanceFighter(state.player, state.opponent, context),
     opponent: advanceFighter(state.opponent, state.player, context),
   }
-  return ringOut(landReadyKo(advanced))
+  return ringOut(landReadyKo(landReadyIntent(advanced)))
 }
 
 interface TickContext {
@@ -76,11 +90,32 @@ function advanceFighter(
 ): FighterState {
   const recovered = recoverCondition(fighter, context.dt)
   const charged = chargeContinuous(recovered, context.dt)
-  const moved = move(charged, rival, context)
+  const shifted = settleRyu(charged, context.dt)
+  const moved = move(shifted, rival, context)
   return {
     ...moved,
     cooldown: Math.max(0, moved.cooldown - context.dt),
+    guardWindow: Math.max(0, moved.guardWindow - context.dt),
+    recoveryWindow: Math.max(0, moved.recoveryWindow - context.dt),
+    bound: Math.max(0, moved.bound - context.dt),
+    empowered: Math.max(0, moved.empowered - context.dt),
+    feint: moved.cooldown - context.dt <= 0 ? null : moved.feint,
+    intent: moved.intent
+      ? { ...moved.intent, remaining: moved.intent.remaining - context.dt }
+      : null,
     ko: moved.ko ? { ...moved.ko, remaining: moved.ko.remaining - context.dt } : null,
+  }
+}
+
+function settleRyu(fighter: FighterState, dt: number): FighterState {
+  if (!fighter.ryuShift) return fighter
+  const remaining = fighter.ryuShift.remaining - dt
+  if (remaining > 0) return { ...fighter, ryuShift: { ...fighter.ryuShift, remaining } }
+  return {
+    ...fighter,
+    attackShare: fighter.ryuShift.attackShare,
+    guard: fighter.ryuShift.guard,
+    ryuShift: null,
   }
 }
 
@@ -113,7 +148,8 @@ function chargeContinuous(fighter: FighterState, dt: number): FighterState {
 }
 
 function move(fighter: FighterState, rival: FighterState, context: TickContext): FighterState {
-  if (fighter.condition !== 'ready' || fighter.ko) return { ...fighter, movement: [0, 0] }
+  if (fighter.condition !== 'ready' || fighter.ko || fighter.intent || fighter.bound > 0)
+    return { ...fighter, movement: [0, 0] }
   const proposed: Vec2 = [
     fighter.position[0] + fighter.movement[0] * MOVE_SPEED * context.dt,
     fighter.position[1] + fighter.movement[1] * MOVE_SPEED * context.dt,
@@ -128,6 +164,62 @@ function move(fighter: FighterState, rival: FighterState, context: TickContext):
     return { ...fighter, movement: [0, 0] }
   }
   return { ...fighter, position: resolved }
+}
+
+function castHatsu(
+  state: CombatState,
+  side: CombatSide,
+  effect: ArenaHatsuEffect,
+  zone: BodyZone,
+): CombatState {
+  const fighter = state[side]
+  if (fighter.condition !== 'ready' || fighter.cooldown > 0 || fighter.aura < HATSU_COST)
+    return state
+  const paid = { ...fighter, aura: fighter.aura - HATSU_COST, intent: null }
+  let current = replace(state, side, paid)
+  const rivalSide = otherSide(side)
+
+  if (effect === 'bind') {
+    if (distance(fighter.position, state[rivalSide].position) > 7) return state
+    current = replace(current, side, { ...paid, cooldown: 1.1 })
+    return replace(current, rivalSide, {
+      ...current[rivalSide],
+      bound: 1.6,
+      movement: [0, 0],
+      intent: null,
+    })
+  }
+  if (effect === 'restore') {
+    return replace(current, side, {
+      ...paid,
+      aura: Math.min(paid.capacity, paid.aura + 42),
+      condition: 'ready',
+      recovery: 0,
+      cooldown: 2.2,
+    })
+  }
+  if (effect === 'enhance') {
+    return replace(current, side, { ...paid, empowered: 5, cooldown: 0.8 })
+  }
+  return strike({
+    state: current,
+    side,
+    zone,
+    technique: 'hatsu',
+    power: effect === 'impact' ? 1.65 : 0.82,
+    range: effect === 'barrage' ? 9 : 2.7,
+  })
+}
+
+function landReadyIntent(state: CombatState): CombatState {
+  let current = state
+  for (const side of ['player', 'opponent'] as const) {
+    const intent = current[side].intent
+    if (!intent || intent.remaining > 0 || current.outcome !== 'playing') continue
+    current = replace(current, side, { ...current[side], intent: null })
+    current = strike({ state: current, side, zone: intent.zone, technique: 'strike' })
+  }
+  return current
 }
 
 function ringOut(state: CombatState): CombatState {
@@ -174,14 +266,27 @@ function strike(request: StrikeRequest): CombatState {
     technique,
     clock: state.clock,
     walls: state.terrain.walls,
+    power: request.power ?? (attacker.empowered > 0 ? 1.3 : 1),
+    range: request.range,
   })
-  const scored = { ...result.attacker, score: result.attacker.score + result.event.points }
-  const outcome = outcomeOf(side, scored, result.defender)
+  const counterBonus = state[defenderSide].recoveryWindow > 0 && result.event.points > 0 ? 1 : 0
+  const event = counterBonus
+    ? { ...result.event, points: result.event.points + counterBonus }
+    : result.event
+  const scored = {
+    ...result.attacker,
+    score: result.attacker.score + event.points,
+    recoveryWindow: exchangeRecovery(technique),
+    feint: null,
+  }
+  const connected = result.event.impact !== 'miss' && result.event.impact !== 'blocked'
+  const defender = connected ? { ...result.defender, intent: null } : result.defender
+  const outcome = outcomeOf(side, scored, defender)
   return {
     ...state,
     [side]: scored,
-    [defenderSide]: result.defender,
-    lastEvent: result.event,
+    [defenderSide]: defender,
+    lastEvent: event,
     outcome,
   }
 }
@@ -227,12 +332,36 @@ function setRyu(
   fighter: FighterState,
   action: Extract<CombatAction, { type: 'RYU' }>,
 ): FighterState {
+  const attackShare = clamp(action.attackShare ?? fighter.attackShare, 0.1, 0.9)
+  const guard = action.guard ?? fighter.guard
+  if (attackShare === fighter.attackShare && guard === fighter.guard) return fighter
+  return { ...fighter, ryuShift: { attackShare, guard, remaining: RYU_SHIFT_TIME }, ko: null }
+}
+
+function activeGuard(fighter: FighterState): FighterState {
+  if (fighter.condition !== 'ready' || fighter.mode === 'zetsu') return fighter
+  return { ...fighter, guardWindow: GUARD_WINDOW, ko: null }
+}
+
+function feint(fighter: FighterState, zone: BodyZone): FighterState {
+  if (fighter.condition !== 'ready' || fighter.cooldown > 0 || fighter.aura < FEINT_COST)
+    return fighter
+  return { ...fighter, aura: fighter.aura - FEINT_COST, feint: zone, cooldown: 0.28 }
+}
+
+function prepareStrike(fighter: FighterState, zone: BodyZone): FighterState {
+  if (fighter.condition !== 'ready' || fighter.cooldown > 0 || fighter.ko || fighter.intent)
+    return fighter
   return {
     ...fighter,
-    attackShare: clamp(action.attackShare ?? fighter.attackShare, 0.1, 0.9),
-    guard: action.guard ?? fighter.guard,
-    ko: null,
+    intent: { zone, remaining: STRIKE_WINDUP },
+    movement: [0, 0],
+    feint: null,
   }
+}
+
+function exchangeRecovery(technique: 'strike' | 'ko' | 'hatsu'): number {
+  return technique === 'ko' ? 1.35 : 0.9
 }
 
 function setMovement(fighter: FighterState, vector: Vec2): FighterState {

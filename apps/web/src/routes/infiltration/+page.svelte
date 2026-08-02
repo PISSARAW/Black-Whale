@@ -4,7 +4,7 @@
   import TourScene from '$lib/components/tour/TourScene.svelte'
   import TourModeFullscreen from '$lib/components/tour/TourModeFullscreen.svelte'
   import { buildArena } from '$lib/hunt/arena'
-  import { explorationNen } from '$lib/nen/tourAdapters'
+  import { ModeNenState } from '$lib/nen/modeState.svelte'
   import type { NenTechniqueAction } from '@black-whale/nen-engine'
   import { isNenControlCode } from '$lib/nen/controls'
   import { buildNavGraph } from '$lib/hunt/navmesh'
@@ -23,6 +23,7 @@
   } from '$lib/infiltration/state'
   import { INFILTRATION_DT, reconstruction, updateInfiltration } from '$lib/infiltration/loop'
   import { INFILTRATION_HATSU, planHatsu, type ForgerySurface } from '$lib/infiltration/hatsu'
+
   import type { CoverRole } from '$lib/infiltration/social/cover'
   import { evaluateRun } from '$lib/infiltration/balance'
   import { MISSIONS, selectMission } from '$lib/infiltration/missions/definitions'
@@ -32,6 +33,7 @@
   import { causalTimeline, debriefAxes } from '$lib/infiltration/debrief'
   import { applyConsequences, initialCampaign, type CampaignState } from '$lib/infiltration/campaign'
 
+  const modeNen = new ModeNenState()
   const ship = theShip()
   const arena = buildArena()
   const graph = buildNavGraph(arena)
@@ -170,6 +172,7 @@
   }
 
   function useStandardNen(action: NenTechniqueAction) {
+    modeNen.use(action)
     if (action.type === 'TEN' && game.player.nen === 'zetsu') send({ type: 'ZETSU' })
     if (action.type === 'ZETSU' && game.player.nen !== 'zetsu') send({ type: 'ZETSU' })
   }
@@ -303,9 +306,8 @@
     bind:currentSpace
     bind:engaged
     world={EMPTY_WORLD}
-    nen={explorationNen(game.player.nen)}
+    nen={modeNen.value}
     showNenControls={true}
-    nenAvailability={{ ren: false, gyo: false, in: false, en: false, shu: false, ken: false, ko: false, ryu: false, on: false }}
     onNenChange={useStandardNen}
     onPhysicalNenAction={act}
     onHatsu={() => send({ type: 'CAST_HATSU' })}

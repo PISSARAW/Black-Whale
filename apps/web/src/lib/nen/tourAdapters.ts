@@ -2,6 +2,7 @@ import { createNenTechniqueState, type NenTechniqueState } from '@black-whale/ne
 import type { FighterState } from '$lib/combat/types'
 import type { DuelistState } from '$lib/hunt/duel/state'
 import type { NenState as HuntNenState } from '$lib/hunt/nen/states'
+import type { AdvancedNenState } from '$lib/hunt/nen/advanced'
 
 export type TourNenZone = 'head' | 'torso' | 'hands' | 'feet'
 export type TourNenState = NenTechniqueState<TourNenZone>
@@ -39,8 +40,9 @@ export function huntDuelNen(duelist: DuelistState): TourNenState {
   return state
 }
 
-export function explorationNen(mode: HuntNenState): TourNenState {
+export function explorationNen(mode: HuntNenState, advanced?: AdvancedNenState): TourNenState {
   const state = createNenTechniqueState<TourNenZone>()
-  state.mode = mode
+  state.mode = advanced?.ren ? 'ren' : mode
+  state.shuTarget = advanced?.shuItem ?? null
   return state
 }

@@ -44,6 +44,7 @@
   import { EMPTY_WORLD } from '$lib/tour/hatsu'
   import { localizeHatsu } from '$lib/i18n/hatsu'
   import { activeHatsu, closeHatsuGate, hatsuPanelOpen, openHatsuGate } from '$lib/nen/hatsuState'
+  import { ModeNenState } from '$lib/nen/modeState.svelte'
   import type { Apparition } from '$lib/tour/apparitions'
   import type { Space, Vec2, WallSegment } from '$lib/tour/types'
   import type { Structure } from '$lib/tour/types'
@@ -120,7 +121,13 @@
   let inRange = $derived(gap <= STRIKE_RANGE)
   let threatened = $derived(reading.intentRemaining !== null)
   let aimedZone = $derived(zoneFromPitch(lookPitch))
-  let playerNen = $derived(arenaNen(game.player))
+  const extendedNen = new ModeNenState()
+  let playerNen = $derived({
+    ...arenaNen(game.player),
+    enRadius: extendedNen.value.enRadius,
+    shuTarget: extendedNen.value.shuTarget,
+    on: extendedNen.value.on,
+  })
   let opponentNen = $derived(arenaNen(game.opponent))
   let opponentActor = $derived<Apparition[]>([
     {
@@ -221,6 +228,8 @@
   }
 
   function useStandardNen(action: NenTechniqueAction) {
+    if (action.type === 'EN' || action.type === 'SHU' || action.type === 'ON')
+      return extendedNen.use(action)
     if (action.type === 'TEN' || action.type === 'REN' || action.type === 'ZETSU')
       return command(
         {
@@ -639,7 +648,6 @@
     world={EMPTY_WORLD}
     nen={playerNen}
     showNenControls={true}
-    nenAvailability={{ en: false, shu: false, on: false }}
     onNenChange={useStandardNen}
     onPhysicalNenAction={strike}
     extras={opponentActor}

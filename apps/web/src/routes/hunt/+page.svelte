@@ -284,7 +284,9 @@
       duel: game.duel,
     }),
   )
-  let playerNen = $derived(game.duel ? huntDuelNen(game.duel.player) : explorationNen(game.player.nen))
+  let playerNen = $derived(
+    game.duel ? huntDuelNen(game.duel.player) : explorationNen(game.player.nen, game.advancedNen),
+  )
 
   function send(action: HuntAction) {
     const before = game
@@ -520,7 +522,9 @@
   function useStandardNen(action: NenTechniqueAction) {
     if (!game.duel) {
       if ((action.type === 'TEN' && game.player.nen === 'zetsu') || (action.type === 'ZETSU' && game.player.nen !== 'zetsu')) send({ type: 'ZETSU' })
+      if (action.type === 'REN') send({ type: 'REN' })
       if (action.type === 'EN' && action.radius !== null) send({ type: 'SWEEP' })
+      if (action.type === 'SHU' && action.objectId) send({ type: 'SHU', itemId: action.objectId })
       return
     }
     if (action.type === 'TEN' && game.duel.player.zetsu) return duel({ type: 'ZETSU', on: false })
@@ -595,7 +599,7 @@
     showNenControls={true}
     nenAvailability={game.duel
       ? { ren: false, en: false, shu: false, on: false, action: false }
-      : { ren: false, gyo: false, in: false, shu: false, ken: false, ko: false, ryu: false, on: false, action: false }}
+      : { gyo: false, in: false, ken: false, ko: false, ryu: false, on: false, action: false }}
     onNenChange={useStandardNen}
     onPhysicalNenAction={() => game.duel && strike()}
     onHatsu={() => send({ type: 'HATSU' })}

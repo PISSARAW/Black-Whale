@@ -666,6 +666,7 @@
       <p>{$t.reconstruction.intro}</p>
     </div>
     <div class="mode-switch" aria-label={$t.reconstruction.viewLabel}>
+      <a href={$link('/reconstruction/v3')}>V3 · Et si…</a>
       <button
         class:active={viewMode === 'overview'}
         type="button"

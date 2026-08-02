@@ -53,6 +53,7 @@
   import { tutorialMessages } from '$lib/hunt/tutorialMessages'
   import { terrainMessages } from '$lib/hunt/terrainMessages'
   import { debriefMessages } from '$lib/hunt/debriefMessages'
+  import { safeFrameDebt } from '$lib/hunt/lifecycle'
   import {
     DEFAULT_HUNTER_PROFILE,
     HUNTER_PROFILES,
@@ -334,7 +335,7 @@
 
     // A backgrounded tab comes back owing a quarter of a second at most: the
     // hunter does not get to cross the apartment while nobody was looking.
-    owed = Math.min(owed + elapsed, 0.25)
+    owed = safeFrameDebt(owed, elapsed)
 
     if (!briefed) {
       owed = 0
@@ -376,15 +377,24 @@
   onMount(() => {
     calm = prefersReducedMotion()
     window.addEventListener('keydown', onKeyDown)
+    document.addEventListener('visibilitychange', resetFrameClock)
+    window.addEventListener('pagehide', closeHuntAudio)
     frame = requestAnimationFrame(tick)
   })
 
   onDestroy(() => {
     if (typeof window === 'undefined') return
     window.removeEventListener('keydown', onKeyDown)
+    document.removeEventListener('visibilitychange', resetFrameClock)
+    window.removeEventListener('pagehide', closeHuntAudio)
     closeHuntAudio()
     cancelAnimationFrame(frame)
   })
+
+  function resetFrameClock() {
+    last = 0
+    owed = 0
+  }
 
   function again() {
     game = freshGame()

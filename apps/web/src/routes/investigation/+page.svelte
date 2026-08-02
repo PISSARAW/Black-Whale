@@ -140,6 +140,14 @@
     replaySecond = second
   }
 
+  function handleKeydown(event: KeyboardEvent) {
+    if (event.key !== 'Escape') return
+    if (reportOpen) reportOpen = false
+    else if (briefingOpen) briefingOpen = false
+    else if (notebookOpen) notebookOpen = false
+    else if (activeSubjectId) activeSubjectId = null
+  }
+
   onMount(() => {
     openHatsuGate({
       admits: (kind) => INVESTIGATION_HATSU_KINDS.has(kind),
@@ -371,6 +379,8 @@
   }
 </script>
 
+<svelte:window onkeydown={handleKeydown} />
+
 <svelte:head>
   <title>Investigation · {investigation.title}</title>
   <meta
@@ -403,7 +413,7 @@
   ></div>
 
   <header
-    class="pointer-events-none absolute inset-x-0 top-0 z-30 flex items-start justify-between gap-4 p-4 sm:p-6"
+    class="pointer-events-none absolute inset-x-0 top-0 z-30 flex flex-col items-start justify-between gap-3 p-3 sm:flex-row sm:gap-4 sm:p-6"
   >
     <div class="max-w-xl border-l-2 border-[#d6b35a] pl-4 drop-shadow-lg">
       <p class="text-[10px] font-bold uppercase tracking-[0.28em] text-[#d6b35a]">
@@ -417,9 +427,9 @@
       </p>
     </div>
 
-    <div class="pointer-events-auto flex items-stretch gap-2">
+    <div class="pointer-events-auto flex w-full items-stretch justify-end gap-2 sm:w-auto">
       <button
-        class="border border-white/20 bg-black/80 px-3 py-2 text-left backdrop-blur transition hover:border-white/50"
+        class="min-w-0 flex-1 border border-white/20 bg-black/80 px-3 py-2 text-left backdrop-blur transition hover:border-white/50 sm:flex-none"
         onclick={() => hatsuPanelOpen.set(true)}
       >
         <span class="block text-[9px] uppercase tracking-[0.2em] text-white/40">Hatsu</span>
@@ -429,7 +439,7 @@
         >
       </button>
       <button
-        class="min-w-32 border border-[#d6b35a]/50 bg-black/80 px-4 py-3 text-left backdrop-blur transition hover:border-[#f0cf76] hover:bg-black"
+        class="min-w-0 flex-1 border border-[#d6b35a]/50 bg-black/80 px-4 py-3 text-left backdrop-blur transition hover:border-[#f0cf76] hover:bg-black sm:min-w-32 sm:flex-none"
         onclick={() => (solved ? (reportOpen = true) : openNotebook('evidence'))}
       >
         <span class="block text-[9px] uppercase tracking-[0.22em] text-[#d6b35a]"
@@ -505,7 +515,7 @@
       onclick={() => (activeSubjectId = null)}
     ></button>
     <div
-      class="absolute bottom-5 left-1/2 z-50 w-[calc(100%-2rem)] max-w-3xl -translate-x-1/2 border border-white/20 bg-[#0b1012]/95 p-5 shadow-2xl backdrop-blur-md sm:p-7"
+      class="absolute bottom-2 left-1/2 z-50 max-h-[calc(100vh-1rem)] w-[calc(100%-1rem)] max-w-3xl -translate-x-1/2 overflow-y-auto border border-white/20 bg-[#0b1012]/95 p-4 shadow-2xl backdrop-blur-md sm:bottom-5 sm:w-[calc(100%-2rem)] sm:p-7"
       role="dialog"
       aria-modal="true"
       aria-labelledby="subject-name"
@@ -640,7 +650,10 @@
         >
       </header>
 
-      <nav class="grid grid-cols-4 border-b border-white/10" aria-label="Sections du carnet">
+      <nav
+        class="grid grid-cols-2 border-b border-white/10 sm:grid-cols-4"
+        aria-label="Sections du carnet"
+      >
         {#each [['evidence', 'Preuves'], ['people', 'Personnes'], ['timeline', 'Chronologie'], ['deduction', 'Déduction']] as tab}
           <button
             class="border-r border-white/10 px-2 py-3 text-[9px] font-bold uppercase tracking-wider transition sm:text-[10px] {activeTab ===

@@ -216,6 +216,40 @@ function addBookmark(seen: Apparition, { THREE, glow, leaf, side }: BookmarkCont
   leaf.add(tail)
 }
 
+function flute(seen: Apparition, { THREE, glow, root }: BasicApparitionContext) {
+  const silver = glow(seen.colour, 1)
+  const bore = seen.size * 0.055
+  const tube = new THREE.Mesh(
+    new THREE.CylinderGeometry(bore, bore * 0.92, seen.size * 2, 10),
+    silver,
+  )
+  tube.rotation.z = Math.PI / 2
+  root.add(tube)
+  const crown = new THREE.Mesh(
+    new THREE.CylinderGeometry(bore * 1.25, bore * 1.25, seen.size * 0.1, 10),
+    silver,
+  )
+  crown.rotation.z = Math.PI / 2
+  crown.position.x = -seen.size
+  root.add(crown)
+  const lip = new THREE.Mesh(
+    new THREE.CylinderGeometry(bore * 0.85, bore * 0.85, bore * 1.2, 8),
+    silver,
+  )
+  lip.position.set(-seen.size * 0.78, bore * 0.9, 0)
+  root.add(lip)
+  const holes = glow(0x2a2a30, 1)
+  for (let index = 0; index < 6; index++) {
+    const key = new THREE.Mesh(
+      new THREE.CylinderGeometry(bore * 0.62, bore * 0.62, bore * 0.9, 8),
+      holes,
+    )
+    key.position.set(-seen.size * 0.34 + index * seen.size * 0.24, bore * 0.85, 0)
+    root.add(key)
+  }
+  return null
+}
+
 const BUILDERS: Partial<Record<Apparition['kind'], Builder>> = {
   gum,
   double,
@@ -225,6 +259,7 @@ const BUILDERS: Partial<Record<Apparition['kind'], Builder>> = {
   hoover,
   chain,
   book,
+  flute,
 }
 
 export function buildObjectApparition(

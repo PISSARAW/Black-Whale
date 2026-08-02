@@ -1728,58 +1728,6 @@
           turns = legs
         }
 
-        // Melody's flute, which is a made thing rather than a shape aura took:
-        // a tube, a lip plate to blow across, and the holes down it. Built
-        // along X with the middle of the tube at the origin, so `raiseTheFlute`
-        // has only to put it at the hands and turn it — the instrument lies
-        // across the player, and everything below is in its own metres.
-        //
-        // `size` is half the length of the tube. Nothing here depends on which
-        // air is playing: a flute is the same flute whatever comes out of it.
-        if (seen.kind === 'flute') {
-          const silver = glow(seen.colour, 1)
-          const bore = seen.size * 0.055
-          const tube = new THREE.Mesh(
-            new THREE.CylinderGeometry(bore, bore * 0.92, seen.size * 2, 10),
-            silver,
-          )
-          // Lying along X rather than standing: a flute held upright is a
-          // recorder, and the two are not the same instrument.
-          tube.rotation.z = Math.PI / 2
-          root.add(tube)
-
-          // The stopper at the head, which is the end that is blown across.
-          const crown = new THREE.Mesh(
-            new THREE.CylinderGeometry(bore * 1.25, bore * 1.25, seen.size * 0.1, 10),
-            silver,
-          )
-          crown.rotation.z = Math.PI / 2
-          crown.position.x = -seen.size
-          root.add(crown)
-
-          // The lip plate: the one part of a flute anybody could draw from
-          // memory, and what says which way up the thing is being held.
-          const lip = new THREE.Mesh(
-            new THREE.CylinderGeometry(bore * 0.85, bore * 0.85, bore * 1.2, 8),
-            silver,
-          )
-          lip.position.set(-seen.size * 0.78, bore * 0.9, 0)
-          root.add(lip)
-
-          // Six holes down the body and the keys over the foot. Dark rather
-          // than silver, because a hole is where the tube is not.
-          const holes = glow(0x2a2a30, 1)
-          for (let i = 0; i < 6; i++) {
-            const key = new THREE.Mesh(
-              new THREE.CylinderGeometry(bore * 0.62, bore * 0.62, bore * 0.9, 8),
-              holes,
-            )
-            key.position.set(-seen.size * 0.34 + i * seen.size * 0.24, bore * 0.85, 0)
-            root.add(key)
-          }
-          turns = null
-        }
-
         // One flower of a room in bloom: a stem out of the deck, a leaf, five
         // petals and a heart. Built standing at the origin so the whole thing
         // sways from its own root rather than sliding about the floor.

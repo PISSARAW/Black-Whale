@@ -1,105 +1,131 @@
 <script lang="ts">
-  import { SvelteSet } from 'svelte/reactivity'
-  import { theShip } from '$lib/tour/blueprint'
   import { centroid } from '$lib/tour/hatsu'
+  import { theShip } from '$lib/tour/blueprint'
   import TourScene from '$lib/components/tour/TourScene.svelte'
   import { t } from '$lib/i18n'
+  import {
+    evaluateHypothesis,
+    room1014Case,
+    type Evidence,
+    type InvestigationTab,
+    type Verdict,
+  } from '$lib/investigation/case'
   import type { Apparition } from '$lib/tour/apparitions'
-  import type { Vec2 } from '$lib/tour/types'
+  import type { Space, Vec2 } from '$lib/tour/types'
 
   const ship = theShip()
+  const investigation = room1014Case
 
-  // Game state
   let tierId = $state('t1')
-  let currentSpace = $state(null)
+  let currentSpace = $state<Space | null>(null)
   let position = $state<Vec2>([0, 0])
   let heading = $state(Math.PI)
   let jumpTo = $state<string | null>('1014')
 
   let notebookOpen = $state(false)
-  let activeDialog = $state<{ name: string; text: string } | null>(null)
-  const clues = new SvelteSet<string>()
+  let activeTab = $state<InvestigationTab>('evidence')
+  let activeSubjectId = $state<string | null>(null)
+  let discoveredIds = $state<string[]>([])
+  let selectedEvidenceIds = $state<string[]>([])
+  let selectedHypothesisId = $state<string | null>(null)
+  let verdict = $state<Verdict | null>(null)
 
-  const npcs = [
-    { id: 'kurapika', name: 'Kurapika', color: 0xffeeaa, posOffset: [2, 0] },
-    { id: 'bill', name: 'Bill', color: 0xaaffaa, posOffset: [-2, 1] },
-    { id: 'oito', name: 'Oito', color: 0xffaaff, posOffset: [0, -2] },
-    { id: 'corps', name: 'Garde (Corps)', color: 0x880000, posOffset: [0, 2], isDead: true },
-  ]
+  const activeSubject = $derived(
+    investigation.subjects.find((subject) => subject.id === activeSubjectId) ?? null,
+  )
+  const discoveredEvidence = $derived(
+    investigation.evidence.filter((evidence) => discoveredIds.includes(evidence.id)),
+  )
+  const progress = $derived(
+    Math.round((discoveredIds.length / investigation.evidence.length) * 100),
+  )
 
-  // Setup positions around the center of room 1014
-  let interactables = $derived.by(() => {
+  const interactables = $derived.by(() => {
     const space = ship.spaces.get('1014')
-    const center = space ? centroid(space) : [0, 0]
-
-    return npcs.map((npc) => ({
-      ...npc,
-      position: [center[0] + npc.posOffset[0], center[1] + npc.posOffset[1]] as Vec2,
+    const center = space ? centroid(space) : ([0, 0] as Vec2)
+    return investigation.subjects.map((subject) => ({
+      ...subject,
+      position: [center[0] + subject.posOffset[0], center[1] + subject.posOffset[1]] as Vec2,
     }))
   })
 
-  // Build extras (Apparitions) for TourScene
-  let extras = $derived.by(() => {
-    return interactables.map(
-      (npc) =>
+  const extras = $derived.by(() =>
+    interactables.map(
+      (subject) =>
         ({
-          id: npc.id,
+          id: subject.id,
           kind: 'avatar',
-          colour: npc.color,
-          size: npc.isDead ? 1.0 : 0.4,
-          y: npc.isDead ? -0.9 : 0, // Corps on the floor
-          at: npc.position,
+          colour: subject.color,
+          size: subject.isDead ? 1 : 0.42,
+          y: subject.isDead ? -0.9 : 0,
+          at: subject.position,
           tierId: 't1',
           spaceId: '1014',
           stage: 0,
           hidden: false,
-          pick: true, // Clickable!
+          pick: true,
         }) as Apparition,
-    )
-  })
+    ),
+  )
 
-  const DIALOGS: Record<string, { text: string; clue?: string }> = {
-    kurapika: {
-      text: "Le garde a été manipulé. Quelqu'un manipule l'aura dans cette pièce. Restez sur vos gardes.",
-      clue: 'Aura de manipulation détectée.',
-    },
-    bill: {
-      text: "Je n'ai rien vu... Tout s'est passé si vite. On devrait évacuer le Prince.",
-      clue: 'Aucun témoin visuel direct.',
-    },
-    oito: {
-      text: '(Tremble) Mon bébé... Protégez Woble, je vous en prie !',
-    },
-    corps: {
-      text: "Le corps est criblé de trous minuscules, comme s'il avait été transpercé par de multiples aiguilles.",
-      clue: 'Blessures par perforation (aiguilles ?)',
-    },
+  function discover(ids: string[]) {
+    discoveredIds = [...new Set([...discoveredIds, ...ids])]
   }
 
   function handlePick(id: string) {
-    // Prevent picking if a dialog is already open
-    if (activeDialog) return
-
-    const npc = interactables.find((i) => i.id === id)
-    const dialogData = DIALOGS[id]
-
-    if (npc && dialogData) {
-      activeDialog = {
-        name: npc.name,
-        text: dialogData.text,
-      }
-      if (dialogData.clue) {
-        clues.add(dialogData.clue)
-      }
-    }
+    if (activeSubjectId) return
+    const subject = investigation.subjects.find((item) => item.id === id)
+    if (!subject) return
+    activeSubjectId = id
+    discover(subject.evidenceIds)
   }
 
-  function closeDialog() {
-    activeDialog = null
+  function openSubject(id: string) {
+    const subject = investigation.subjects.find((item) => item.id === id)
+    if (!subject) return
+    activeSubjectId = id
+    discover(subject.evidenceIds)
+  }
+
+  function openNotebook(tab: InvestigationTab = 'evidence') {
+    activeTab = tab
+    activeSubjectId = null
+    notebookOpen = true
+  }
+
+  function toggleEvidence(id: string) {
+    verdict = null
+    selectedEvidenceIds = selectedEvidenceIds.includes(id)
+      ? selectedEvidenceIds.filter((item) => item !== id)
+      : [...selectedEvidenceIds, id]
+  }
+
+  function chooseHypothesis(id: string) {
+    selectedHypothesisId = id
+    verdict = null
+  }
+
+  function submitVerdict() {
+    if (!selectedHypothesisId) return
+    verdict = evaluateHypothesis(investigation, selectedHypothesisId, selectedEvidenceIds)
+  }
+
+  function evidenceTone(evidence: Evidence) {
+    if (evidence.truthStatus === 'CONFIRMED') return 'border-emerald-400/40 text-emerald-200'
+    if (evidence.truthStatus === 'CONTESTED') return 'border-red-400/40 text-red-200'
+    return 'border-amber-300/40 text-amber-100'
   }
 </script>
 
-<div class="relative h-screen w-full overflow-hidden bg-black font-sans">
+<svelte:head>
+  <title>Investigation · {investigation.title}</title>
+  <meta
+    name="description"
+    content="Explorez la chambre 1014, confrontez les témoignages et formulez une conclusion fondée sur les preuves."
+  />
+</svelte:head>
+
+<div class="relative h-screen w-full overflow-hidden bg-[#050809] font-sans text-[#f4ead4]">
   <TourScene
     {ship}
     bind:tierId
@@ -115,81 +141,357 @@
     unsupportedLabel={$t.tour.unsupported}
   />
 
-  <!-- Overlay to block TourScene interaction when Dialog is open -->
-  {#if activeDialog}
-    <!-- svelte-ignore a11y_click_events_have_key_events -->
-    <!-- svelte-ignore a11y_no_static_element_interactions -->
-    <div class="absolute inset-0 z-40 bg-black/20" onclick={closeDialog}></div>
-  {/if}
+  <div
+    class="pointer-events-none absolute inset-x-0 top-0 z-20 h-48 bg-gradient-to-b from-black/90 to-transparent"
+  ></div>
+  <div
+    class="pointer-events-none absolute inset-x-0 bottom-0 z-20 h-44 bg-gradient-to-t from-black/85 to-transparent"
+  ></div>
 
-  <!-- Dialogue Box -->
-  {#if activeDialog}
-    <div
-      class="absolute bottom-8 left-1/2 -translate-x-1/2 w-3/4 max-w-4xl z-50 bg-slate-900/95 border-2 border-slate-700 rounded-lg p-6 shadow-2xl backdrop-blur-sm flex flex-col pointer-events-auto"
-    >
-      <h3 class="text-blue-400 font-bold text-xl mb-2 tracking-wide">{activeDialog.name}</h3>
-      <p class="text-white text-lg leading-relaxed">{activeDialog.text}</p>
-      <div class="mt-4 flex justify-end">
-        <button
-          onclick={closeDialog}
-          class="px-4 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-600 text-white rounded transition-colors text-sm uppercase tracking-wider"
-        >
-          Continuer
-        </button>
-      </div>
+  <header
+    class="pointer-events-none absolute inset-x-0 top-0 z-30 flex items-start justify-between gap-4 p-4 sm:p-6"
+  >
+    <div class="max-w-xl border-l-2 border-[#d6b35a] pl-4 drop-shadow-lg">
+      <p class="text-[10px] font-bold uppercase tracking-[0.28em] text-[#d6b35a]">
+        Dossier {investigation.id} · chapitre {investigation.chapter}
+      </p>
+      <h1 class="mt-1 font-serif text-2xl leading-none text-white sm:text-4xl">
+        {investigation.title}
+      </h1>
+      <p class="mt-2 text-xs text-white/65 sm:text-sm">
+        {investigation.location} · {investigation.objective}
+      </p>
     </div>
-  {/if}
 
-  <!-- HUD: Notebook Toggle -->
-  <div class="absolute top-6 right-6 z-30 pointer-events-auto">
     <button
-      class="px-4 py-3 bg-amber-900/90 hover:bg-amber-800 border-2 border-amber-700 text-amber-100 font-bold rounded-l-lg shadow-lg flex items-center gap-2 transition-transform"
-      onclick={() => (notebookOpen = !notebookOpen)}
+      class="pointer-events-auto min-w-32 border border-[#d6b35a]/50 bg-black/80 px-4 py-3 text-left backdrop-blur transition hover:border-[#f0cf76] hover:bg-black"
+      onclick={() => openNotebook('evidence')}
     >
-      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-        ><path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="2"
-          d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
-        ></path></svg
+      <span class="block text-[9px] uppercase tracking-[0.22em] text-[#d6b35a]"
+        >Carnet d’enquête</span
       >
-      Carnet ({clues.size})
+      <span class="mt-1 block text-sm font-semibold text-white"
+        >{discoveredIds.length}/{investigation.evidence.length} éléments</span
+      >
+      <span class="mt-2 block h-1 overflow-hidden bg-white/10">
+        <span class="block h-full bg-[#d6b35a] transition-all" style:width={`${progress}%`}></span>
+      </span>
     </button>
+  </header>
+
+  <aside class="pointer-events-none absolute bottom-5 left-4 z-30 hidden w-64 sm:block">
+    <p class="mb-2 text-[9px] font-bold uppercase tracking-[0.2em] text-white/45">
+      Personnes et éléments
+    </p>
+    <div class="grid grid-cols-2 gap-1.5">
+      {#each investigation.subjects as subject}
+        <button
+          class="pointer-events-auto border bg-black/70 px-3 py-2 text-left backdrop-blur transition {discoveredIds.some(
+            (id) => subject.evidenceIds.includes(id),
+          )
+            ? 'border-[#d6b35a]/60'
+            : 'border-white/15 hover:border-white/40'}"
+          onclick={() => openSubject(subject.id)}
+        >
+          <span class="block truncate text-xs font-semibold text-white">{subject.name}</span>
+          <span class="mt-0.5 block truncate text-[9px] uppercase tracking-wider text-white/45"
+            >{subject.role}</span
+          >
+        </button>
+      {/each}
+    </div>
+  </aside>
+
+  <div class="pointer-events-none absolute inset-0 z-10 flex items-center justify-center">
+    <div
+      class="h-2 w-2 rounded-full border border-white/70 bg-black/20 shadow-[0_0_8px_black]"
+    ></div>
   </div>
 
-  <!-- Notebook Panel -->
-  {#if notebookOpen}
-    <!-- svelte-ignore a11y_click_events_have_key_events -->
-    <!-- svelte-ignore a11y_no_static_element_interactions -->
-    <div class="absolute inset-0 z-40" onclick={() => (notebookOpen = false)}></div>
-
+  {#if activeSubject}
+    <button
+      class="absolute inset-0 z-40 cursor-default bg-black/30"
+      aria-label="Fermer le témoignage"
+      onclick={() => (activeSubjectId = null)}
+    ></button>
     <div
-      class="absolute top-20 right-6 w-80 bg-[#f4e4bc] border-l-4 border-amber-800 p-6 shadow-2xl z-50 rounded-b-lg transform origin-top-right transition-transform pointer-events-auto min-h-64"
+      class="absolute bottom-5 left-1/2 z-50 w-[calc(100%-2rem)] max-w-3xl -translate-x-1/2 border border-white/20 bg-[#0b1012]/95 p-5 shadow-2xl backdrop-blur-md sm:p-7"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="subject-name"
     >
-      <h2 class="text-2xl font-serif text-amber-950 border-b-2 border-amber-900/30 pb-2 mb-4">
-        Indices Récoltés
-      </h2>
-
-      {#if clues.size === 0}
-        <p class="text-amber-900/60 italic text-center mt-8 font-serif">
-          Le carnet est vide pour l'instant. Interrogez les témoins.
-        </p>
-      {:else}
-        <ul class="space-y-3">
-          {#each Array.from(clues) as clue (clue)}
-            <li class="text-amber-950 font-serif leading-snug flex items-start">
-              <span class="mr-2 text-amber-800">•</span>
-              {clue}
-            </li>
-          {/each}
-        </ul>
+      <div class="flex items-start justify-between gap-5">
+        <div>
+          <p class="text-[9px] font-bold uppercase tracking-[0.24em] text-[#d6b35a]">
+            {activeSubject.role}
+          </p>
+          <h2 id="subject-name" class="mt-1 font-serif text-2xl text-white">
+            {activeSubject.name}
+          </h2>
+          <p class="mt-1 text-xs text-white/45">{activeSubject.status}</p>
+        </div>
+        <button
+          class="px-2 text-2xl text-white/45 hover:text-white"
+          onclick={() => (activeSubjectId = null)}
+          aria-label="Fermer">×</button
+        >
+      </div>
+      <blockquote
+        class="mt-5 border-l border-[#d6b35a]/50 pl-4 font-serif text-lg leading-relaxed text-white/85"
+      >
+        « {activeSubject.dialogue} »
+      </blockquote>
+      {#if activeSubject.evidenceIds.length > 0}
+        <div
+          class="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-white/10 pt-4"
+        >
+          <p class="text-xs text-emerald-200">
+            + {activeSubject.evidenceIds.length} élément{activeSubject.evidenceIds.length > 1
+              ? 's'
+              : ''} consigné{activeSubject.evidenceIds.length > 1 ? 's' : ''}
+          </p>
+          <button
+            class="border border-[#d6b35a]/50 px-4 py-2 text-[10px] font-bold uppercase tracking-widest text-[#e8cc84] hover:bg-[#d6b35a]/10"
+            onclick={() => openNotebook('evidence')}>Examiner dans le carnet</button
+          >
+        </div>
       {/if}
     </div>
   {/if}
 
-  <!-- Crosshair (since you need to aim to pick) -->
-  <div class="absolute inset-0 pointer-events-none flex items-center justify-center z-10">
-    <div class="w-1.5 h-1.5 bg-white/50 rounded-full"></div>
-  </div>
+  {#if notebookOpen}
+    <button
+      class="absolute inset-0 z-40 bg-black/65 backdrop-blur-sm"
+      aria-label="Fermer le carnet"
+      onclick={() => (notebookOpen = false)}
+    ></button>
+    <div
+      class="absolute inset-y-0 right-0 z-50 flex w-full max-w-3xl flex-col border-l border-[#d6b35a]/35 bg-[#0a0d0e] shadow-2xl"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Carnet d’enquête"
+    >
+      <header class="flex items-start justify-between border-b border-white/10 p-5 sm:p-7">
+        <div>
+          <p class="text-[9px] font-bold uppercase tracking-[0.25em] text-[#d6b35a]">
+            {investigation.investigator} · dossier actif
+          </p>
+          <h2 class="mt-1 font-serif text-2xl text-white sm:text-3xl">{investigation.subtitle}</h2>
+        </div>
+        <button
+          class="px-2 text-3xl text-white/45 hover:text-white"
+          onclick={() => (notebookOpen = false)}
+          aria-label="Fermer">×</button
+        >
+      </header>
+
+      <nav class="grid grid-cols-4 border-b border-white/10" aria-label="Sections du carnet">
+        {#each [['evidence', 'Preuves'], ['people', 'Personnes'], ['timeline', 'Chronologie'], ['deduction', 'Déduction']] as tab}
+          <button
+            class="border-r border-white/10 px-2 py-3 text-[9px] font-bold uppercase tracking-wider transition sm:text-[10px] {activeTab ===
+            tab[0]
+              ? 'bg-[#d6b35a]/12 text-[#f0cf76]'
+              : 'text-white/45 hover:text-white'}"
+            onclick={() => (activeTab = tab[0] as InvestigationTab)}>{tab[1]}</button
+          >
+        {/each}
+      </nav>
+
+      <div class="flex-1 overflow-y-auto p-5 sm:p-7">
+        {#if activeTab === 'evidence'}
+          <div class="mb-5 flex items-end justify-between gap-4">
+            <div>
+              <p class="text-xs uppercase tracking-widest text-[#d6b35a]">Éléments collectés</p>
+              <p class="mt-1 text-sm text-white/50">
+                Une source n’est pas nécessairement une certitude.
+              </p>
+            </div>
+            <span class="font-mono text-sm text-white/40"
+              >{discoveredIds.length}/{investigation.evidence.length}</span
+            >
+          </div>
+          {#if discoveredEvidence.length === 0}
+            <div
+              class="border border-dashed border-white/20 p-10 text-center text-sm text-white/45"
+            >
+              Le carnet est vide. Examinez la scène et interrogez les témoins.
+            </div>
+          {:else}
+            <div class="space-y-3">
+              {#each discoveredEvidence as evidence}
+                <article class="border border-white/10 bg-white/[0.025] p-4">
+                  <div class="flex flex-wrap items-start justify-between gap-3">
+                    <div>
+                      <h3 class="font-serif text-lg text-white">{evidence.title}</h3>
+                      <p class="mt-1 text-sm leading-relaxed text-white/65">{evidence.claim}</p>
+                    </div>
+                    <span
+                      class="border px-2 py-1 text-[9px] uppercase tracking-wider {evidenceTone(
+                        evidence,
+                      )}"
+                      >{evidence.truthStatus === 'CONFIRMED'
+                        ? 'confirmé'
+                        : evidence.truthStatus === 'DEDUCTION'
+                          ? 'déduit'
+                          : 'impliqué'}</span
+                    >
+                  </div>
+                  <p class="mt-3 text-[10px] uppercase tracking-wider text-white/35">
+                    {evidence.source} · ch. {evidence.chapter} · {evidence.method.replaceAll(
+                      '_',
+                      ' ',
+                    )}
+                  </p>
+                </article>
+              {/each}
+            </div>
+          {/if}
+        {:else if activeTab === 'people'}
+          <div class="grid gap-3 sm:grid-cols-2">
+            {#each investigation.subjects as subject}
+              <button
+                class="border border-white/10 bg-white/[0.025] p-4 text-left hover:border-[#d6b35a]/40"
+                onclick={() => {
+                  notebookOpen = false
+                  openSubject(subject.id)
+                }}
+              >
+                <p class="text-[9px] uppercase tracking-widest text-[#d6b35a]">{subject.role}</p>
+                <h3 class="mt-1 font-serif text-xl text-white">{subject.name}</h3>
+                <p class="mt-1 text-xs text-white/45">{subject.status}</p>
+                <p
+                  class="mt-4 text-[10px] uppercase tracking-wider {discoveredIds.some((id) =>
+                    subject.evidenceIds.includes(id),
+                  )
+                    ? 'text-emerald-200'
+                    : 'text-white/30'}"
+                >
+                  {discoveredIds.some((id) => subject.evidenceIds.includes(id))
+                    ? 'Consigné · revoir'
+                    : 'À examiner'}
+                </p>
+              </button>
+            {/each}
+          </div>
+        {:else if activeTab === 'timeline'}
+          <ol class="relative ml-2 border-l border-[#d6b35a]/30 pl-7">
+            {#each [['T − 00:11', 'Un cri détourne l’attention de la pièce.', 'sealed-room'], ['T − 00:08', 'La victime demeure visible, sans contact apparent.', 'bill-testimony'], ['T + 00:00', 'Le garde s’effondre, couvert de perforations.', 'wounds'], ['Après', 'Kurapika recherche un mécanisme de Nen.', 'nen-residue']] as event}
+              <li class="relative mb-8 last:mb-0">
+                <span
+                  class="absolute -left-[2.08rem] top-1 h-2.5 w-2.5 rounded-full border border-[#d6b35a] {discoveredIds.includes(
+                    event[2],
+                  )
+                    ? 'bg-[#d6b35a]'
+                    : 'bg-[#0a0d0e]'}"
+                ></span>
+                <p class="font-mono text-[10px] text-[#d6b35a]">{event[0]}</p>
+                <p
+                  class="mt-1 text-sm {discoveredIds.includes(event[2])
+                    ? 'text-white/75'
+                    : 'text-white/25 blur-[3px] select-none'}"
+                >
+                  {event[1]}
+                </p>
+              </li>
+            {/each}
+          </ol>
+        {:else}
+          <div class="max-w-2xl">
+            <p class="text-xs uppercase tracking-widest text-[#d6b35a]">Construire la conclusion</p>
+            <h3 class="mt-2 font-serif text-2xl text-white">
+              Que s’est-il passé dans la chambre 1014 ?
+            </h3>
+            <p class="mt-2 text-sm leading-relaxed text-white/50">
+              Choisissez une hypothèse puis uniquement les éléments qui la soutiennent. Le verdict
+              évaluera aussi les contradictions.
+            </p>
+
+            <div class="mt-6 space-y-2">
+              {#each investigation.hypotheses as hypothesis}
+                <button
+                  class="w-full border p-4 text-left transition {selectedHypothesisId ===
+                  hypothesis.id
+                    ? 'border-[#d6b35a] bg-[#d6b35a]/10'
+                    : 'border-white/10 hover:border-white/30'}"
+                  onclick={() => chooseHypothesis(hypothesis.id)}
+                >
+                  <span class="flex items-center gap-3"
+                    ><span
+                      class="h-3 w-3 rounded-full border {selectedHypothesisId === hypothesis.id
+                        ? 'border-[#d6b35a] bg-[#d6b35a]'
+                        : 'border-white/35'}"
+                    ></span><span class="font-serif text-lg text-white">{hypothesis.label}</span
+                    ></span
+                  >
+                </button>
+              {/each}
+            </div>
+
+            <p class="mt-7 text-[10px] font-bold uppercase tracking-widest text-white/45">
+              Pièces versées au raisonnement · {selectedEvidenceIds.length}
+            </p>
+            <div class="mt-3 grid gap-2 sm:grid-cols-2">
+              {#each discoveredEvidence as evidence}
+                <button
+                  class="border p-3 text-left text-xs transition {selectedEvidenceIds.includes(
+                    evidence.id,
+                  )
+                    ? 'border-emerald-400/60 bg-emerald-400/10 text-emerald-100'
+                    : 'border-white/10 text-white/55 hover:border-white/30'}"
+                  onclick={() => toggleEvidence(evidence.id)}
+                >
+                  <span class="mr-2">{selectedEvidenceIds.includes(evidence.id) ? '✓' : '○'}</span
+                  >{evidence.title}
+                </button>
+              {/each}
+            </div>
+
+            <button
+              class="mt-6 w-full border border-[#d6b35a] bg-[#d6b35a] px-5 py-3 text-xs font-bold uppercase tracking-[0.18em] text-black transition enabled:hover:bg-[#f0cf76] disabled:cursor-not-allowed disabled:opacity-30"
+              disabled={!selectedHypothesisId || selectedEvidenceIds.length === 0}
+              onclick={submitVerdict}>Soumettre la reconstruction</button
+            >
+
+            {#if verdict}
+              <article
+                class="mt-5 border p-5 {verdict.status === 'solved'
+                  ? 'border-emerald-400/50 bg-emerald-400/[0.07]'
+                  : verdict.status === 'contradicted'
+                    ? 'border-red-400/50 bg-red-400/[0.07]'
+                    : 'border-amber-300/40 bg-amber-300/[0.06]'}"
+                aria-live="polite"
+              >
+                <p class="text-[9px] font-bold uppercase tracking-widest text-white/45">
+                  Analyse du raisonnement
+                </p>
+                <h4 class="mt-1 font-serif text-2xl text-white">{verdict.title}</h4>
+                <p class="mt-2 text-sm leading-relaxed text-white/65">{verdict.summary}</p>
+                {#if verdict.contradictions.length > 0}<p class="mt-4 text-xs text-red-200">
+                    Contradiction : {verdict.contradictions.map((item) => item.title).join(' · ')}
+                  </p>{/if}
+                {#if verdict.missing.length > 0}<p class="mt-3 text-xs text-amber-100/75">
+                    À établir : {verdict.missing.map((item) => item.title).join(' · ')}
+                  </p>{/if}
+                {#if verdict.status === 'solved'}<p
+                    class="mt-4 border-t border-white/10 pt-4 text-xs leading-relaxed text-emerald-100/80"
+                  >
+                    Limite épistémique : l’enquêteur peut démontrer l’usage d’un Nen dissimulé, mais
+                    pas encore nommer son utilisateur. La vérité du lecteur reste séparée du
+                    verdict.
+                  </p>{/if}
+              </article>
+            {/if}
+          </div>
+        {/if}
+      </div>
+
+      <footer
+        class="flex items-center justify-between border-t border-white/10 px-5 py-3 text-[9px] uppercase tracking-wider text-white/30 sm:px-7"
+      >
+        <span>Perspective · {investigation.investigator}</span><span
+          >Spoilers · ch. {investigation.chapter}</span
+        >
+      </footer>
+    </div>
+  {/if}
 </div>

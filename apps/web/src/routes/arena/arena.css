@@ -151,6 +151,29 @@
     letter-spacing: 0.12em;
   }
 
+  .doctrine-picker {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.4rem;
+    margin-top: 0.8rem;
+  }
+
+  .doctrine-picker button {
+    padding: 0.4rem 0.65rem;
+    border: 1px solid #a7d9e744;
+    background: #081216cc;
+    color: #aac2c8;
+    font:
+      0.58rem 'IBM Plex Mono',
+      monospace;
+  }
+
+  .doctrine-picker button.active {
+    border-color: #e5c476;
+    color: #f1d996;
+  }
+
   .command-fx.ren,
   .command-fx.ryu-up,
   .command-fx[class*='zone-'] {

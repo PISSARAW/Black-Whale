@@ -2,7 +2,7 @@
   import { onDestroy, onMount } from 'svelte'
   import Seo from '$lib/components/Seo.svelte'
   import TourScene from '$lib/components/tour/TourScene.svelte'
-  import { advanceArena, OPPONENT_DOCTRINE } from '$lib/arena/ai'
+  import { advanceArena, OPPONENT_DOCTRINES, type OpponentDoctrine } from '$lib/arena/ai'
   import { arenaHatsuEffect, worksInArena } from '$lib/arena/hatsu'
   import { buildCombatTerrain } from '$lib/arena/terrain'
   import { readAura } from '$lib/combat/perception'
@@ -18,12 +18,7 @@
   import { floorOf, theShip } from '$lib/tour/blueprint'
   import { EMPTY_WORLD } from '$lib/tour/hatsu'
   import { localizeHatsu } from '$lib/i18n/hatsu'
-  import {
-    activeHatsu,
-    closeHatsuGate,
-    hatsuPanelOpen,
-    openHatsuGate,
-  } from '$lib/nen/hatsuState'
+  import { activeHatsu, closeHatsuGate, hatsuPanelOpen, openHatsuGate } from '$lib/nen/hatsuState'
   import type { Apparition } from '$lib/tour/apparitions'
   import type { Space, Vec2, WallSegment } from '$lib/tour/types'
   import { breadcrumbSchema } from '$lib/seo/schema'
@@ -70,6 +65,7 @@
   let commandAnimation = $state<CommandAnimation | null>(null)
   let commandAnimationSeq = $state(0)
   let lesson = $state(0)
+  let opponentDoctrine = $state<OpponentDoctrine>('counter')
   const motionTimers = new Set<number>()
 
   let reading = $derived(readAura(game.player, game.opponent))
@@ -239,7 +235,7 @@
     while (owed >= DT && game.outcome === 'playing') {
       owed -= DT
       const previous = game.lastEvent
-      game = advanceArena(game, DT)
+      game = advanceArena(game, DT, opponentDoctrine)
       if (game.lastEvent !== previous && game.lastEvent) animateExchange(game.lastEvent)
     }
   }
@@ -587,7 +583,7 @@
 
     <article class="status-card opponent-card">
       <header>
-        <strong>{OPPONENT_DOCTRINE}</strong>
+        <strong>{OPPONENT_DOCTRINES[opponentDoctrine].name}</strong>
         <span
           >{reading.concealed ? $t.arena.state.concealed : $t.arena.mode[game.opponent.mode]}</span
         >
@@ -624,6 +620,17 @@
       <h1>{$t.arena.outcome[game.outcome]}</h1>
       <strong>{game.player.score} — {game.opponent.score}</strong>
       <button onclick={restart}>{$t.arena.action.restart}</button>
+      <div class="doctrine-picker" aria-label="Adversaire">
+        {#each Object.entries(OPPONENT_DOCTRINES) as [id, doctrine]}
+          <button
+            class:active={opponentDoctrine === id}
+            onclick={() => {
+              opponentDoctrine = id as OpponentDoctrine
+              restart()
+            }}>{doctrine.name}</button
+          >
+        {/each}
+      </div>
     </div>
   {/if}
 </div>

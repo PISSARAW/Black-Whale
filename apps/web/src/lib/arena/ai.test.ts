@@ -31,4 +31,23 @@ describe('the arena opponent', () => {
     expect(state.opponent.movement).toEqual([0, 0])
     expect(state.lastEvent).toBeNull()
   })
+
+  it('gives each doctrine a distinct Hatsu decision', () => {
+    const base = initialCombatState()
+    const ready = {
+      ...base,
+      clock: 3.14,
+      player: { ...base.player, position: [0, 0] as [number, number] },
+      opponent: { ...base.opponent, position: [4, 0] as [number, number] },
+    }
+    const bound = advanceArena(ready, 0.02, 'binder')
+    expect(bound.player.bound).toBeGreaterThan(0)
+
+    const distant = {
+      ...ready,
+      opponent: { ...ready.opponent, position: [7, 0] as [number, number] },
+    }
+    const shelled = advanceArena(distant, 0.02, 'artillery')
+    expect(shelled.lastEvent?.technique).toBe('hatsu')
+  })
 })

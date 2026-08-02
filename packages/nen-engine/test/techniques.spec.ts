@@ -56,6 +56,18 @@ describe('standard Nen techniques', () => {
     expect(state.shu).toEqual(['blade'])
   })
 
+  it('leaves Shu on an object through Ten and Ren until Zetsu dissipates it', () => {
+    const marked = transitionNen(createNenTechniqueState<Zone>(), {
+      type: 'SHU',
+      objectId: 'door',
+      on: true,
+    }).state
+    const ren = transitionNen(marked, { type: 'REN' }).state
+    expect(ren.shu).toEqual(['door'])
+    expect(transitionNen(ren, { type: 'TEN' }).state.shu).toEqual(['door'])
+    expect(transitionNen(ren, { type: 'ZETSU' }).state.shu).toEqual([])
+  })
+
   it('leaves a Zetsu user without Nen defence', () => {
     const state = transitionNen(createNenTechniqueState(), { type: 'ZETSU' }).state
     expect(nenDefenceFactor(state)).toBe(0)

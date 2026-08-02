@@ -98,6 +98,7 @@ type Graph = {
 
 let graph: Graph | null = null
 let muffled = false
+let auraQuiet = false
 /** The room last handed to `enterRoom`, so an unchanged room is not rebuilt. */
 let roomKey = ''
 /** The deck last handed to `enterDeck`, so a graph built later still knows it. */
@@ -453,9 +454,9 @@ export function rewindSound(seconds = 1.1) {
 function applyMuffle(g: Graph, on: boolean, seconds: number) {
   const now = g.context.currentTime
   g.muffle.frequency.cancelScheduledValues(now)
-  g.muffle.frequency.setTargetAtTime(on ? 210 : 18000, now, seconds / 3)
+  g.muffle.frequency.setTargetAtTime(on ? 210 : auraQuiet ? 4200 : 18000, now, seconds / 3)
   g.master.gain.cancelScheduledValues(now)
-  g.master.gain.setTargetAtTime(on ? 0.12 : 0.9, now, seconds / 3)
+  g.master.gain.setTargetAtTime(on ? 0.12 : auraQuiet ? 0.075 : 0.9, now, seconds / 3)
 }
 
 /**
@@ -511,6 +512,12 @@ export function toggleSteps() {
 export function setStepsMuffled(on: boolean) {
   muffled = on
   if (graph) applyMuffle(graph, on, 0.9)
+}
+
+/** Zetsu suppresses the user's presence: footsteps and transmitted hull noise recede together. */
+export function setStepsAuraQuiet(on: boolean) {
+  auraQuiet = on
+  if (graph) applyMuffle(graph, muffled, 0.22)
 }
 
 /**

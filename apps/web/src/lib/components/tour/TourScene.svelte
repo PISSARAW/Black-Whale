@@ -92,6 +92,7 @@
     enterRoom,
     footstep,
     nearWall,
+    setStepsAuraQuiet,
     setStepsMuffled,
     startSteps,
     stepsPlaying,
@@ -103,6 +104,7 @@
   // to a keypress, so it does not go through the page's report-to-sound table.
   // The flock's chirp is raised by the page itself, where the arrival happens.
   import { roarLikeADragon } from '$lib/audio/hatsuSounds'
+  import { playNenObjectSound, playNenTechniqueSound } from '$lib/audio/nenSounds'
   import { visibleSpaces } from '$lib/tour/visibility'
   import {
     animateVisibleScene,
@@ -501,9 +503,14 @@
   function useNen(action: NenTechniqueAction) {
     const result = transitionNen(effectiveNen, action)
     if (!result.accepted) return
+    playNenTechniqueSound(action)
     if (nen === undefined) localNen = result.state
     onNenChange?.(action)
   }
+
+  $effect(() => {
+    setStepsAuraQuiet(effectiveNen.mode === 'zetsu')
+  })
 
   /**
    * How high the visitor's eye is off the floor.
@@ -2810,6 +2817,28 @@
         if (kind === 'channel' && !effectiveNen.shu.includes(target.id)) {
           useNen({ type: 'SHU', objectId: target.id, on: true })
         }
+        if (kind !== 'sense') {
+          const dx = target.at[0] - pointer[0]
+          const dz = target.at[1] - pointer[1]
+          const distance = Math.max(0.001, Math.hypot(dx, dz))
+          const force =
+            kind === 'strike'
+              ? 0.9
+              : kind === 'pressure'
+                ? effectiveNen.on
+                  ? 1.25
+                  : 0.55
+                : effectiveNen.ken
+                  ? 0.32
+                  : 0.18
+          const held = world.solids[target.id] ?? {}
+          world.solids[target.id] = {
+            ...held,
+            at: [target.at[0] + (dx / distance) * force, target.at[1] + (dz / distance) * force],
+            rotation: target.rotation + (kind === 'strike' ? 7 : kind === 'pressure' ? 3 : 1),
+          }
+        }
+        playNenObjectSound(kind)
         nenAura.interact(
           {
             id: target.id,
@@ -4274,6 +4303,7 @@
     return () => {
       disposed = true
       interactWithNen = null
+      setStepsAuraQuiet(false)
       cleanup?.()
     }
   })

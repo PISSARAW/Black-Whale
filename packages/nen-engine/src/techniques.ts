@@ -98,6 +98,14 @@ function enterZetsu<Zone extends string>(state: NenTechniqueState<Zone>): NenTec
   }
 }
 
+/** Ten and Ren reshape the body's output; aura already entrusted to Shu remains. */
+function enterAuraMode<Zone extends string>(
+  state: NenTechniqueState<Zone>,
+  mode: Exclude<NenAuraMode, 'zetsu'>,
+): NenTechniqueState<Zone> {
+  return { ...state, mode, on: false, ken: false, ko: null, ryu: {} }
+}
+
 function needsAura<Zone extends string>(state: NenTechniqueState<Zone>): NenTransition<Zone> | null {
   return state.mode === 'zetsu'
     ? { state, accepted: false, reason: 'ZETSU_HAS_NO_AURA' }
@@ -125,8 +133,8 @@ export function transitionNen<Zone extends string>(
   action: NenTechniqueAction<Zone>,
 ): NenTransition<Zone> {
   if (action.type === 'ZETSU') return { state: enterZetsu(state), accepted: true }
-  if (action.type === 'TEN') return { state: { ...enterZetsu(state), mode: 'ten' }, accepted: true }
-  if (action.type === 'REN') return { state: { ...enterZetsu(state), mode: 'ren' }, accepted: true }
+  if (action.type === 'TEN') return { state: enterAuraMode(state, 'ten'), accepted: true }
+  if (action.type === 'REN') return { state: enterAuraMode(state, 'ren'), accepted: true }
 
   if (action.type === 'ON') {
     if (!action.on) return { state: { ...state, on: false }, accepted: true }

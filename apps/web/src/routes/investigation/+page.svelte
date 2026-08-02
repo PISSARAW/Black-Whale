@@ -27,6 +27,7 @@
   import { confrontWitnesses, type ConfrontationResult } from '$lib/investigation/confrontation'
   import { sceneNodes, visibleSightLines, type ScenePhenomenon } from '$lib/investigation/geometry'
   import { frameAt } from '$lib/investigation/replay'
+  import { buildFinalReport } from '$lib/investigation/report'
   import {
     activeHatsu,
     closeHatsuGate,
@@ -68,6 +69,7 @@
   let replaySecond = $state(0)
   let replayPlaying = $state(false)
   let replayTimer: ReturnType<typeof setInterval> | null = null
+  let reportOpen = $state(false)
 
   const activeSubject = $derived(
     investigation.subjects.find((subject) => subject.id === activeSubjectId) ?? null,
@@ -87,6 +89,25 @@
   const planNodeById = $derived(new Map(planNodes.map((node) => [node.id, node])))
   const planSightLines = $derived(visibleSightLines(scenePhenomenon))
   const replayFrame = $derived(frameAt(replaySecond))
+  const reportVerdict = $derived(
+    solved
+      ? evaluateHypothesis(investigation, investigation.canonicalHypothesisId, discoveredIds)
+      : verdict,
+  )
+  const finalReport = $derived(
+    reportVerdict && reportVerdict.status === 'solved'
+      ? buildFinalReport(investigation, reportVerdict)
+      : null,
+  )
+  const reportGroups = $derived(
+    finalReport
+      ? [
+          { label: 'Faits établis', evidence: finalReport.established, tone: 'text-emerald-200' },
+          { label: 'Déductions', evidence: finalReport.deductions, tone: 'text-amber-100' },
+          { label: 'Témoignages', evidence: finalReport.testimony, tone: 'text-sky-200' },
+        ]
+      : [],
+  )
 
   onDestroy(() => {
     if (replayTimer) clearInterval(replayTimer)
@@ -257,6 +278,10 @@
       label: verdict.title,
     })
     persist()
+    if (verdict.status === 'solved') {
+      notebookOpen = false
+      reportOpen = true
+    }
   }
 
   function useActiveHatsu() {
@@ -298,6 +323,7 @@
 
   function toggleConfrontationWitness(id: string) {
     confrontationResult = null
+    reportOpen = false
     confrontationWitnessIds = confrontationWitnessIds.includes(id)
       ? confrontationWitnessIds.filter((item) => item !== id)
       : [...confrontationWitnessIds.slice(-1), id]
@@ -404,7 +430,7 @@
       </button>
       <button
         class="min-w-32 border border-[#d6b35a]/50 bg-black/80 px-4 py-3 text-left backdrop-blur transition hover:border-[#f0cf76] hover:bg-black"
-        onclick={() => openNotebook('evidence')}
+        onclick={() => (solved ? (reportOpen = true) : openNotebook('evidence'))}
       >
         <span class="block text-[9px] uppercase tracking-[0.22em] text-[#d6b35a]"
           >Carnet d’enquête</span
@@ -1057,6 +1083,117 @@
           ><span>Spoilers · ch. {investigation.chapter}</span></span
         >
       </footer>
+    </div>
+  {/if}
+
+  {#if reportOpen && finalReport}
+    <div
+      class="absolute inset-0 z-[65] overflow-y-auto bg-[#050809]/96 p-4 backdrop-blur-md sm:p-8"
+    >
+      <article class="mx-auto max-w-5xl border border-emerald-400/30 bg-[#0a0f0f] shadow-2xl">
+        <header class="flex items-start justify-between gap-5 border-b border-white/10 p-6 sm:p-9">
+          <div>
+            <p class="text-[10px] font-bold uppercase tracking-[0.28em] text-emerald-300">
+              Rapport final · {finalReport.caseId}
+            </p>
+            <h2 class="mt-2 font-serif text-4xl text-white sm:text-5xl">{finalReport.title}</h2>
+            <p class="mt-3 text-sm uppercase tracking-wider text-emerald-200/70">
+              {finalReport.disposition}
+            </p>
+          </div>
+          <button
+            class="text-3xl text-white/40 hover:text-white"
+            aria-label="Fermer le rapport"
+            onclick={() => (reportOpen = false)}>×</button
+          >
+        </header>
+
+        <div class="grid gap-8 p-6 sm:p-9 lg:grid-cols-[1.1fr_0.9fr]">
+          <section>
+            <p class="text-[10px] font-bold uppercase tracking-widest text-[#d6b35a]">
+              Reconstitution retenue
+            </p>
+            <ol class="mt-4 space-y-4 border-l border-[#d6b35a]/30 pl-6">
+              {#each finalReport.mechanism as step, index}
+                <li class="relative text-sm leading-relaxed text-white/70">
+                  <span
+                    class="absolute -left-[2.05rem] flex h-5 w-5 items-center justify-center rounded-full border border-[#d6b35a]/50 bg-[#0a0f0f] font-mono text-[8px] text-[#d6b35a]"
+                    >{index + 1}</span
+                  >{step}
+                </li>
+              {/each}
+            </ol>
+
+            <div class="mt-8 grid gap-3 sm:grid-cols-3">
+              {#each reportGroups as group}
+                <div class="border border-white/10 p-3">
+                  <p class="text-[9px] font-bold uppercase tracking-wider {group.tone}">
+                    {group.label} · {group.evidence.length}
+                  </p>
+                  <ul class="mt-2 space-y-1">
+                    {#each group.evidence as evidence}<li
+                        class="text-xs leading-snug text-white/50"
+                      >
+                        {evidence.title}
+                      </li>{/each}
+                  </ul>
+                </div>
+              {/each}
+            </div>
+          </section>
+
+          <aside class="space-y-6">
+            <section class="border border-red-400/20 bg-red-400/[0.04] p-5">
+              <p class="text-[10px] font-bold uppercase tracking-widest text-red-200">
+                Inconnues persistantes
+              </p>
+              <ul class="mt-3 space-y-2">
+                {#each finalReport.unknowns as unknown}<li
+                    class="flex gap-2 text-xs leading-relaxed text-white/60"
+                  >
+                    <span class="text-red-300">?</span><span>{unknown}</span>
+                  </li>{/each}
+              </ul>
+            </section>
+            <section class="border border-white/10 p-5">
+              <p class="text-[10px] font-bold uppercase tracking-widest text-white/40">
+                Hypothèses écartées
+              </p>
+              <ul class="mt-3 space-y-2">
+                {#each finalReport.rejectedHypotheses as hypothesis}<li
+                    class="text-xs text-white/50"
+                  >
+                    × {hypothesis}
+                  </li>{/each}
+              </ul>
+            </section>
+            <p class="text-xs leading-relaxed text-amber-100/55">
+              Conclusion procédurale : le mécanisme peut être communiqué aux gardes. Toute
+              accusation nominative dépasserait les éléments disponibles au chapitre {investigation.chapter}.
+            </p>
+          </aside>
+        </div>
+
+        <footer
+          class="flex flex-wrap items-center justify-between gap-4 border-t border-white/10 px-6 py-5 sm:px-9"
+        >
+          <span class="text-[9px] uppercase tracking-wider text-white/30"
+            >Signé · {investigation.investigator}</span
+          >
+          <div class="flex gap-2">
+            <button
+              class="border border-white/20 px-4 py-2 text-[10px] uppercase tracking-wider text-white/55 hover:text-white"
+              onclick={() => {
+                reportOpen = false
+                openNotebook('evidence')
+              }}>Revoir les pièces</button
+            ><button
+              class="border border-emerald-400/40 px-4 py-2 text-[10px] uppercase tracking-wider text-emerald-200 hover:bg-emerald-400/10"
+              onclick={() => (reportOpen = false)}>Retour à la scène</button
+            >
+          </div>
+        </footer>
+      </article>
     </div>
   {/if}
 

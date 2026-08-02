@@ -2,6 +2,7 @@ import { combatReducer, initialCombatState } from '../../combat/reducer'
 import { advanceArena } from '../ai'
 import { stateChecksum } from './checksum'
 import type { ArenaReplay, ReplayResult } from './types'
+import type { CombatEvent } from '../../combat/types'
 
 export function playReplay(replay: ArenaReplay): ReplayResult {
   const state = stateAtTick(replay, replay.ticks)
@@ -20,4 +21,17 @@ export function stateAtTick(replay: ArenaReplay, requestedTick: number) {
     state = advanceArena(state, 1 / replay.tickRate, replay.doctrine, replay.difficulty)
   }
   return state
+}
+
+export function eventsFromReplay(replay: ArenaReplay): CombatEvent[] {
+  const events: CombatEvent[] = []
+  let previousAt: number | null = null
+  for (let tick = 1; tick <= replay.ticks; tick += 1) {
+    const event = stateAtTick(replay, tick).lastEvent
+    if (event && event.at !== previousAt) {
+      events.push(event)
+      previousAt = event.at
+    }
+  }
+  return events
 }

@@ -1,6 +1,7 @@
 import { untrack } from 'svelte'
+import { get } from 'svelte/store'
 import type { HatsuInteractionKind } from '$lib/nen/hatsuRegistry'
-import { enterForcedZetsu } from '$lib/nen/hatsuState'
+import { activeHatsu, enterForcedZetsu, parallelFutureVisible } from '$lib/nen/hatsuState'
 import type { Ship } from '$lib/tour/blueprint'
 import { arriveInTour, EMPTY_WORLD, type TourReport, type TourWorld } from '$lib/tour/hatsu'
 import { activateTourWorld, cycleTourMode, releaseTourWorld } from '$lib/tour/pageWorldCommands'
@@ -32,6 +33,8 @@ interface SessionOptions {
 
 export class TourHatsuSession {
   penalty = $state<string | null>(null)
+  private wasFutureVisible = false
+  private unsubscribeFuture: (() => void) | null = null
 
   constructor(private readonly options: SessionOptions) {}
 
@@ -56,6 +59,23 @@ export class TourHatsuSession {
       this.options.resetHands()
       this.options.updateWorld(activated)
     })
+  }
+
+  watchFuture() {
+    this.unsubscribeFuture = parallelFutureVisible.subscribe((isVisible) => {
+      const active = get(activeHatsu)
+      if (this.wasFutureVisible && !isVisible && active?.id === 'parallel-future') {
+        const report: TourReport = { kind: 'vision-ended' }
+        this.options.updateReport(report)
+        this.options.show(report)
+      }
+      this.wasFutureVisible = isVisible
+    })
+  }
+
+  dispose() {
+    this.unsubscribeFuture?.()
+    this.unsubscribeFuture = null
   }
 
   turn = (requested: HatsuInteractionKind) => {

@@ -20,8 +20,7 @@
   import TourScene from '$lib/components/tour/TourScene.svelte'
   import TourSceneOverlay from '$lib/components/tour/TourSceneOverlay.svelte'
   import TourPageSidebar from '$lib/components/tour/TourPageSidebar.svelte'
-  import { activeHatsu, parallelFutureVisible } from '$lib/nen/hatsuState'
-  import { get } from 'svelte/store'
+  import { activeHatsu } from '$lib/nen/hatsuState'
   import { HATSU_PROFILES, type HatsuInteractionKind } from '$lib/nen/hatsuRegistry'
   import { link, t } from '$lib/i18n'
   import { locale } from '$lib/i18n'
@@ -444,6 +443,7 @@
     vowText: (spaceId) => $t.tour.hatsu.reports.vowBroken(nameOf(ship.spaces.get(spaceId)!)),
   })
   hatsuSession.watchActivation()
+  hatsuSession.watchFuture()
 
   /**
    * Whether R has anything to do: the technique is on both sides of the line.
@@ -526,19 +526,8 @@
    * takes the panel down with it — so what happened has to be said over the
    * walk instead, where the visitor is still looking.
    */
-  let wasFutureVisible = false
-  const unsubFuture = parallelFutureVisible.subscribe((isVisible) => {
-    const active = get(activeHatsu)
-    if (wasFutureVisible && !isVisible && active?.id === 'parallel-future') {
-      const ended: TourReport = { kind: 'vision-ended' }
-      report = ended
-      show(ended)
-    }
-    wasFutureVisible = isVisible
-  })
-
   onDestroy(() => {
-    unsubFuture()
+    hatsuSession.dispose()
     hatsuAudio.dispose()
   })
 

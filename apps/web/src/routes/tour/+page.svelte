@@ -83,6 +83,12 @@
     type CastHand,
   } from '$lib/tour/pageCasting'
   import {
+    aimReadout as buildAimReadout,
+    controlReadouts,
+    locationReadout as buildLocationReadout,
+    statusReadout,
+  } from '$lib/tour/pageReadouts'
+  import {
     EMPTY_WORLD,
     aimsAtSolids,
     arriveInTour,
@@ -977,55 +983,65 @@
   )
 
   const locationReadout = $derived.by(() => {
-    if (mute) return null
     const room = currentSpace ? named(currentSpace) : null
-    return {
+    return buildLocationReadout({
+      muted: mute,
       level: `${deck ? nameOf(deck) : nameOf(plan.tier)}${insideInterior ? ` · ${$t.tour.insideOf(nameOf(plan.tier))}` : ''}`,
-      room: room ? nameOf(room) : $t.tour.outside,
-      badge: room ? (inEmptyCopy ? $t.tour.hatsu.copy : provenanceLabel(room)) : null,
-      badgeClass: inEmptyCopy
-        ? 'border-[#7095d6] bg-[#7095d6]/20 text-[#a8c2ea]'
-        : room
-          ? provenanceClass(room)
-          : '',
-      source: room
-        ? inEmptyCopy
-          ? $t.tour.hatsu.copySource
-          : sourceOf(room) || $t.tour.noSource
+      outside: $t.tour.outside,
+      room: room
+        ? {
+            name: nameOf(room),
+            badge: provenanceLabel(room),
+            badgeClass: provenanceClass(room),
+            source: sourceOf(room) || $t.tour.noSource,
+          }
         : null,
-    }
+      copy: {
+        active: inEmptyCopy,
+        badge: $t.tour.hatsu.copy,
+        badgeClass: 'border-[#7095d6] bg-[#7095d6]/20 text-[#a8c2ea]',
+        source: $t.tour.hatsu.copySource,
+      },
+    })
   })
 
   const aimReadout = $derived.by(() => {
-    if (!technique || mute) return null
     const solid = onSolids ? aimedSolidAt : null
-    return {
-      color: technique.color,
-      text: onSolids
-        ? solid
-          ? $t.tour.hatsu.solids.aiming(nameOf(solid))
-          : $t.tour.hatsu.solids.aimingNothing
-        : aimedAt
-          ? $t.tour.hatsu.aiming(nameOf(named(aimedAt)))
-          : $t.tour.hatsu.aimingNothing,
-      badge: solid ? provenanceLabel(solid) : null,
-      badgeClass: solid ? provenanceClass(solid) : '',
-      source: solid ? sourceOf(solid) || $t.tour.noSource : null,
-    }
+    const text = onSolids
+      ? solid
+        ? $t.tour.hatsu.solids.aiming(nameOf(solid))
+        : $t.tour.hatsu.solids.aimingNothing
+      : aimedAt
+        ? $t.tour.hatsu.aiming(nameOf(named(aimedAt)))
+        : $t.tour.hatsu.aimingNothing
+    return buildAimReadout({
+      muted: mute,
+      color: technique?.color ?? null,
+      text,
+      evidence: solid
+        ? {
+            badge: provenanceLabel(solid),
+            badgeClass: provenanceClass(solid),
+            source: sourceOf(solid) || $t.tour.noSource,
+          }
+        : null,
+    })
   })
 
-  const overlayControls = $derived(
-    touch || mute
-      ? []
-      : controlKeys.map((control) => ({
-          key: control.click ? `${control.key} / ${$t.tour.hatsu.keys.click}` : control.key,
-          action: $t.tour.hatsu.keys.actions[control.action],
-          color: technique?.color ?? null,
-        })),
-  )
-  const statusHint = $derived(
-    engaged ? $t.tour.engaged : touch ? $t.tour.touch.hint : $t.tour.enter,
-  )
+  const overlayControls = $derived(controlReadouts({
+    hidden: touch || mute,
+    controls: controlKeys,
+    keyOf: (control) => control.click ? `${control.key} / ${$t.tour.hatsu.keys.click}` : control.key,
+    actionOf: (control) => $t.tour.hatsu.keys.actions[control.action],
+    color: technique?.color ?? null,
+  }))
+  const statusHint = $derived(statusReadout({
+    engaged,
+    touch,
+    engagedText: $t.tour.engaged,
+    touchText: $t.tour.touch.hint,
+    enterText: $t.tour.enter,
+  }))
 </script>
 
 <svelte:window onkeydown={onWindowKeydown} />

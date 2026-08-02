@@ -18,6 +18,19 @@
     serializeProgress,
     type InvestigationLogEntry,
   } from '$lib/investigation/progress'
+  import {
+    INVESTIGATION_HATSU_KINDS,
+    investigationHatsuUse,
+    type InvestigationHatsuUse,
+  } from '$lib/investigation/hatsu'
+  import {
+    activeHatsu,
+    closeHatsuGate,
+    emperorTimeLifeHours,
+    hatsuPanelOpen,
+    openHatsuGate,
+    spendEmperorTimeHours,
+  } from '$lib/nen/hatsuState'
   import type { Apparition } from '$lib/tour/apparitions'
   import type { Space, Vec2 } from '$lib/tour/types'
 
@@ -40,6 +53,8 @@
   let briefingOpen = $state(true)
   let solved = $state(false)
   let log = $state<InvestigationLogEntry[]>([])
+  let hatsuUseKeys = $state<string[]>([])
+  let hatsuResult = $state<InvestigationHatsuUse | null>(null)
 
   const activeSubject = $derived(
     investigation.subjects.find((subject) => subject.id === activeSubjectId) ?? null,
@@ -57,6 +72,11 @@
   )
 
   onMount(() => {
+    openHatsuGate({
+      admits: (kind) => INVESTIGATION_HATSU_KINDS.has(kind),
+      reason:
+        "Seules les techniques capables d'observer, d'analyser ou de reproduire la scène ont une prise sur ce dossier.",
+    })
     const saved = parseProgress(localStorage.getItem(INVESTIGATION_STORAGE_KEY), investigation.id)
     discoveredIds = saved.discoveredIds.filter((id) =>
       investigation.evidence.some((evidence) => evidence.id === id),
@@ -68,8 +88,10 @@
       ? saved.selectedHypothesisId
       : null
     solved = saved.solved
+    hatsuUseKeys = saved.hatsuUseKeys
     log = saved.log
     briefingOpen = !saved.started
+    return closeHatsuGate
   })
 
   function persist(started = true) {
@@ -83,6 +105,7 @@
         selectedEvidenceIds,
         selectedHypothesisId,
         solved,
+        hatsuUseKeys,
         log,
       }),
     )
@@ -136,6 +159,7 @@
     const subject = investigation.subjects.find((item) => item.id === id)
     if (!subject) return
     activeSubjectId = id
+    hatsuResult = null
     discover(subject.evidenceIds)
   }
 
@@ -143,6 +167,7 @@
     const subject = investigation.subjects.find((item) => item.id === id)
     if (!subject) return
     activeSubjectId = id
+    hatsuResult = null
     discover(subject.evidenceIds)
   }
 
@@ -180,6 +205,29 @@
     persist()
   }
 
+  function useActiveHatsu() {
+    if (!$activeHatsu) {
+      hatsuPanelOpen.set(true)
+      return
+    }
+    if (!activeSubject) return
+
+    const result = investigationHatsuUse($activeHatsu, activeSubject.id)
+    const alreadyUsed = hatsuUseKeys.includes(result.key)
+    hatsuResult = result
+    if (!alreadyUsed) {
+      hatsuUseKeys = [...hatsuUseKeys, result.key]
+      if (result.lifeHours > 0) spendEmperorTimeHours(result.lifeHours)
+      discover(result.evidenceIds)
+      addLog({
+        id: `hatsu:${result.key}`,
+        kind: 'HATSU',
+        label: `${$activeHatsu.name} · ${result.title}`,
+      })
+      persist()
+    }
+  }
+
   function startInvestigation() {
     briefingOpen = false
     persist()
@@ -192,6 +240,8 @@
     verdict = null
     solved = false
     log = []
+    hatsuUseKeys = []
+    hatsuResult = null
     notebookOpen = false
     activeSubjectId = null
     briefingOpen = true
@@ -251,22 +301,35 @@
       </p>
     </div>
 
-    <button
-      class="pointer-events-auto min-w-32 border border-[#d6b35a]/50 bg-black/80 px-4 py-3 text-left backdrop-blur transition hover:border-[#f0cf76] hover:bg-black"
-      onclick={() => openNotebook('evidence')}
-    >
-      <span class="block text-[9px] uppercase tracking-[0.22em] text-[#d6b35a]"
-        >Carnet d’enquête</span
+    <div class="pointer-events-auto flex items-stretch gap-2">
+      <button
+        class="border border-white/20 bg-black/80 px-3 py-2 text-left backdrop-blur transition hover:border-white/50"
+        onclick={() => hatsuPanelOpen.set(true)}
       >
-      <span class="mt-1 block text-sm font-semibold text-white"
-        >{solved
-          ? 'Affaire résolue'
-          : `${discoveredIds.length}/${investigation.evidence.length} éléments`}</span
+        <span class="block text-[9px] uppercase tracking-[0.2em] text-white/40">Hatsu</span>
+        <span
+          class="mt-1 block max-w-28 truncate text-xs font-semibold"
+          style:color={$activeHatsu?.color ?? '#ffffff'}>{$activeHatsu?.name ?? 'Choisir'}</span
+        >
+      </button>
+      <button
+        class="min-w-32 border border-[#d6b35a]/50 bg-black/80 px-4 py-3 text-left backdrop-blur transition hover:border-[#f0cf76] hover:bg-black"
+        onclick={() => openNotebook('evidence')}
       >
-      <span class="mt-2 block h-1 overflow-hidden bg-white/10">
-        <span class="block h-full bg-[#d6b35a] transition-all" style:width={`${progress}%`}></span>
-      </span>
-    </button>
+        <span class="block text-[9px] uppercase tracking-[0.22em] text-[#d6b35a]"
+          >Carnet d’enquête</span
+        >
+        <span class="mt-1 block text-sm font-semibold text-white"
+          >{solved
+            ? 'Affaire résolue'
+            : `${discoveredIds.length}/${investigation.evidence.length} éléments`}</span
+        >
+        <span class="mt-2 block h-1 overflow-hidden bg-white/10"
+          ><span class="block h-full bg-[#d6b35a] transition-all" style:width={`${progress}%`}
+          ></span></span
+        >
+      </button>
+    </div>
   </header>
 
   <aside class="pointer-events-none absolute bottom-5 left-4 z-30 hidden w-64 sm:block">
@@ -352,6 +415,41 @@
       >
         « {activeSubject.dialogue} »
       </blockquote>
+      <div class="mt-5 border border-white/10 bg-black/25 p-4">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <p class="text-[9px] font-bold uppercase tracking-[0.2em] text-white/40">Analyse Nen</p>
+            <p class="mt-1 text-sm font-semibold" style:color={$activeHatsu?.color ?? '#ffffff'}>
+              {$activeHatsu?.name ?? 'Aucun Hatsu actif'}
+            </p>
+          </div>
+          <button
+            class="border px-4 py-2 text-[10px] font-bold uppercase tracking-widest transition {$activeHatsu
+              ? 'border-white/30 text-white hover:border-white/60'
+              : 'border-[#d6b35a]/50 text-[#e8cc84] hover:bg-[#d6b35a]/10'}"
+            onclick={useActiveHatsu}
+            >{$activeHatsu ? 'Utiliser sur cette cible' : 'Choisir un Hatsu'}</button
+          >
+        </div>
+        {#if hatsuResult}
+          <div
+            class="mt-4 border-l-2 pl-3 {hatsuResult.tone === 'success'
+              ? 'border-emerald-400'
+              : hatsuResult.tone === 'forbidden'
+                ? 'border-red-400'
+                : 'border-amber-300'}"
+            aria-live="polite"
+          >
+            <p class="text-xs font-semibold text-white">{hatsuResult.title}</p>
+            <p class="mt-1 text-xs leading-relaxed text-white/55">{hatsuResult.finding}</p>
+            {#if hatsuResult.lifeHours > 0}<p
+                class="mt-2 font-mono text-[9px] uppercase tracking-wider text-red-200"
+              >
+                Vie consommée · +{hatsuResult.lifeHours} h · total {$emperorTimeLifeHours} h
+              </p>{/if}
+          </div>
+        {/if}
+      </div>
       {#if activeSubject.evidenceIds.length > 0}
         <div
           class="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-white/10 pt-4"
@@ -471,7 +569,9 @@
                         ? 'indice'
                         : entry.kind === 'HYPOTHESIS'
                           ? 'piste'
-                          : 'verdict'}</span
+                          : entry.kind === 'HATSU'
+                            ? 'hatsu'
+                            : 'verdict'}</span
                     ><span>{entry.label}</span>
                   </li>
                 {/each}

@@ -1,9 +1,9 @@
-export const INVESTIGATION_PROGRESS_VERSION = 1
+export const INVESTIGATION_PROGRESS_VERSION = 2
 export const INVESTIGATION_STORAGE_KEY = 'black-whale:investigation:room-1014'
 
 export interface InvestigationLogEntry {
   id: string
-  kind: 'DISCOVERY' | 'HYPOTHESIS' | 'VERDICT'
+  kind: 'DISCOVERY' | 'HYPOTHESIS' | 'VERDICT' | 'HATSU'
   label: string
 }
 
@@ -15,6 +15,7 @@ export interface InvestigationProgress {
   selectedEvidenceIds: string[]
   selectedHypothesisId: string | null
   solved: boolean
+  hatsuUseKeys: string[]
   log: InvestigationLogEntry[]
 }
 
@@ -27,6 +28,7 @@ export function freshProgress(caseId: string): InvestigationProgress {
     selectedEvidenceIds: [],
     selectedHypothesisId: null,
     solved: false,
+    hatsuUseKeys: [],
     log: [],
   }
 }
@@ -49,6 +51,7 @@ export function parseProgress(raw: string | null, caseId: string): Investigation
       selectedHypothesisId:
         typeof value.selectedHypothesisId === 'string' ? value.selectedHypothesisId : null,
       solved: value.solved === true,
+      hatsuUseKeys: stringArray(value.hatsuUseKeys),
       log: Array.isArray(value.log) ? value.log.filter(isLogEntry).slice(-30) : [],
     }
   } catch {
@@ -72,6 +75,9 @@ function isLogEntry(value: unknown): value is InvestigationLogEntry {
   return (
     typeof entry.id === 'string' &&
     typeof entry.label === 'string' &&
-    (entry.kind === 'DISCOVERY' || entry.kind === 'HYPOTHESIS' || entry.kind === 'VERDICT')
+    (entry.kind === 'DISCOVERY' ||
+      entry.kind === 'HYPOTHESIS' ||
+      entry.kind === 'VERDICT' ||
+      entry.kind === 'HATSU')
   )
 }

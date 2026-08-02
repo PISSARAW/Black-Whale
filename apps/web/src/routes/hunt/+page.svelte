@@ -24,7 +24,12 @@
   import { link, locale, t } from '$lib/i18n'
   import type { Space, Vec2 } from '$lib/tour/types'
 
-  import { buildArena } from '$lib/hunt/arena'
+  import {
+    DEFAULT_HUNT_TERRAIN,
+    HUNT_TERRAINS,
+    buildArena,
+    type HuntTerrainId,
+  } from '$lib/hunt/arena'
   import { buildNavGraph, shortestPath } from '$lib/hunt/navmesh'
   import { HUNT_DT, huntIsOver, updateHunt, type HuntWorld } from '$lib/hunt/loop'
   import { huntReducer, initialHuntState, type HuntAction } from '$lib/hunt/state'
@@ -44,6 +49,7 @@
   import HuntTutorial from '$lib/components/hunt/HuntTutorial.svelte'
   import { tutorialStep } from '$lib/hunt/tutorial'
   import { tutorialMessages } from '$lib/hunt/tutorialMessages'
+  import { terrainMessages } from '$lib/hunt/terrainMessages'
   import {
     DEFAULT_HUNTER_PROFILE,
     HUNTER_PROFILES,
@@ -60,17 +66,18 @@
   } from '$lib/hunt/hatsu'
 
   const ship = theShip()
-  const plan = ship.plans.get(buildArena().tierId)!
-  const arena = buildArena()
-  const graph = buildNavGraph(arena)
-  const world: HuntWorld = { dt: HUNT_DT, arena, graph }
+  let selectedTerrain = $state<HuntTerrainId>(DEFAULT_HUNT_TERRAIN)
+  let arena = buildArena()
+  let plan = ship.plans.get(arena.tierId)!
+  let graph = buildNavGraph(arena)
+  let world: HuntWorld = { dt: HUNT_DT, arena, graph }
 
   /**
    * Player and hunter start as far apart as the apartment allows, and the room
    * to reach is the far one — measured on the doorway graph rather than in
    * metres, because what matters is how many rooms have to be crossed.
    */
-  const opening = farthestApart()
+  let opening = farthestApart()
 
   function farthestApart(): { from: Space; to: Space } {
     let best = { from: arena.spaces[0], to: arena.spaces[1], rooms: 0 }
@@ -133,6 +140,20 @@
   let currentSpace = $state<Space | null>(null)
   let engaged = $state(false)
   let tierId = $state(arena.tierId)
+
+  function selectTerrain(id: HuntTerrainId) {
+    selectedTerrain = id
+    arena = buildArena(id)
+    plan = ship.plans.get(arena.tierId)!
+    graph = buildNavGraph(arena)
+    world = { dt: HUNT_DT, arena, graph }
+    opening = farthestApart()
+    position = interiorPoint(opening.from.footprint)
+    heading = 0
+    currentSpace = null
+    tierId = arena.tierId
+    game = freshGame()
+  }
 
   let inDuel = $derived(game.duel !== null)
   let finished = $derived(huntIsOver(game.outcome))
@@ -492,6 +513,10 @@
       hunterProfiles={HUNTER_PROFILES}
       selectedHunter={selectedHunter}
       hunterLabels={hunterProfileMessages($locale)}
+      terrains={HUNT_TERRAINS}
+      selectedTerrain={selectedTerrain}
+      terrainLabel={terrainMessages($locale).choose}
+      locale={$locale}
       onSelect={(id) => {
         selectedHatsu = id
         game = freshGame()
@@ -500,6 +525,7 @@
         selectedHunter = id
         game = freshGame()
       }}
+      onSelectTerrain={selectTerrain}
       onBegin={begin}
     />
   {/if}

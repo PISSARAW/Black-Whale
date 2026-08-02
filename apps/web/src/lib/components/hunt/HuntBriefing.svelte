@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { HuntHatsuId, HuntHatsuProfile } from '$lib/hunt/hatsu'
   import type { HunterProfile, HunterProfileId } from '$lib/hunt/hunter/profiles'
+  import type { HuntTerrain, HuntTerrainId } from '$lib/hunt/arena'
 
   interface Props {
     labels: {
@@ -22,6 +23,11 @@
     selectedHunter: HunterProfileId
     hunterLabels: { choose: string; role: Record<HunterProfileId, string> }
     onSelectHunter: (id: HunterProfileId) => void
+    terrains: HuntTerrain[]
+    selectedTerrain: HuntTerrainId
+    terrainLabel: string
+    locale: string
+    onSelectTerrain: (id: HuntTerrainId) => void
     onBegin: () => void
   }
 
@@ -34,6 +40,11 @@
     selectedHunter,
     hunterLabels,
     onSelectHunter,
+    terrains,
+    selectedTerrain,
+    terrainLabel,
+    locale,
+    onSelectTerrain,
     onBegin,
   }: Props = $props()
 </script>
@@ -67,6 +78,27 @@
             <span class="block text-sm font-medium text-violet-100">{profile.name}</span>
             <span class="mt-1 block text-[0.65rem] uppercase tracking-wider text-white/40">
               {labels.role[profile.role]}
+            </span>
+          </button>
+        {/each}
+      </div>
+      <p class="mt-5 text-[0.65rem] uppercase tracking-[0.25em] text-sky-300/70">
+        {terrainLabel}
+      </p>
+      <div class="mt-2 grid gap-2 sm:grid-cols-3">
+        {#each terrains as terrain (terrain.id)}
+          <button
+            class="rounded-lg border p-3 text-left transition {selectedTerrain === terrain.id
+              ? 'border-sky-300 bg-sky-300/10'
+              : 'border-white/10 bg-white/[0.03]'}"
+            aria-pressed={selectedTerrain === terrain.id}
+            onclick={() => onSelectTerrain(terrain.id)}
+          >
+            <span class="block text-sm font-medium text-sky-100">
+              {locale === 'fr' ? terrain.name.fr : terrain.name.en}
+            </span>
+            <span class="mt-1 block text-[0.65rem] leading-snug text-white/40">
+              {locale === 'fr' ? terrain.description.fr : terrain.description.en}
             </span>
           </button>
         {/each}

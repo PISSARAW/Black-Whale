@@ -25,6 +25,7 @@
   import TourPlanDialog from '$lib/components/tour/TourPlanDialog.svelte'
   import TourProvenancePanel from '$lib/components/tour/TourProvenancePanel.svelte'
   import TourScene from '$lib/components/tour/TourScene.svelte'
+  import TourSceneOverlay from '$lib/components/tour/TourSceneOverlay.svelte'
   import TourTargetIndex from '$lib/components/tour/TourTargetIndex.svelte'
   import { setAmbientMuffled } from '$lib/audio/ambient'
   import {
@@ -1121,6 +1122,57 @@
       world.isolated && !world.isolated.occupant && world.isolated.spaceId === currentSpace?.id,
     ),
   )
+
+  const locationReadout = $derived.by(() => {
+    if (mute) return null
+    const room = currentSpace ? named(currentSpace) : null
+    return {
+      level: `${deck ? nameOf(deck) : nameOf(plan.tier)}${insideInterior ? ` · ${$t.tour.insideOf(nameOf(plan.tier))}` : ''}`,
+      room: room ? nameOf(room) : $t.tour.outside,
+      badge: room ? (inEmptyCopy ? $t.tour.hatsu.copy : provenanceLabel(room)) : null,
+      badgeClass: inEmptyCopy
+        ? 'border-[#7095d6] bg-[#7095d6]/20 text-[#a8c2ea]'
+        : room
+          ? provenanceClass(room)
+          : '',
+      source: room
+        ? inEmptyCopy
+          ? $t.tour.hatsu.copySource
+          : sourceOf(room) || $t.tour.noSource
+        : null,
+    }
+  })
+
+  const aimReadout = $derived.by(() => {
+    if (!technique || mute) return null
+    const solid = onSolids ? aimedSolidAt : null
+    return {
+      color: technique.color,
+      text: onSolids
+        ? solid
+          ? $t.tour.hatsu.solids.aiming(nameOf(solid))
+          : $t.tour.hatsu.solids.aimingNothing
+        : aimedAt
+          ? $t.tour.hatsu.aiming(nameOf(named(aimedAt)))
+          : $t.tour.hatsu.aimingNothing,
+      badge: solid ? provenanceLabel(solid) : null,
+      badgeClass: solid ? provenanceClass(solid) : '',
+      source: solid ? sourceOf(solid) || $t.tour.noSource : null,
+    }
+  })
+
+  const overlayControls = $derived(
+    touch || mute
+      ? []
+      : controlKeys.map((control) => ({
+          key: control.click ? `${control.key} / ${$t.tour.hatsu.keys.click}` : control.key,
+          action: $t.tour.hatsu.keys.actions[control.action],
+          color: technique?.color ?? null,
+        })),
+  )
+  const statusHint = $derived(
+    engaged ? $t.tour.engaged : touch ? $t.tour.touch.hint : $t.tour.enter,
+  )
 </script>
 
 <svelte:window onkeydown={onWindowKeydown} />
@@ -1207,151 +1259,18 @@
         unsupportedLabel={$t.tour.unsupported}
       />
 
-      {#if isAutopilot}
-        <div class="pointer-events-auto absolute inset-0 z-50 bg-black"></div>
-      {/if}
+      <TourSceneOverlay
+        autopilot={isAutopilot}
+        reticleColor={technique?.color ?? null}
+        {spoken}
+        location={locationReadout}
+        {penalty}
+        aim={aimReadout}
+        controls={overlayControls}
+        {statusHint}
+        linkPrompt={touch ? null : linkPrompt}
+      />
 
-      <!-- Reticle. It takes the technique's colour while one is up, because it
-           has stopped being a crosshair and become where the aura goes. -->
-      <div
-        class="pointer-events-none absolute left-1/2 top-1/2 h-1.5 w-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full"
-        style:background={technique ? technique.color : 'rgb(255 255 240 / 0.6)'}
-        style:box-shadow={technique ? `0 0 10px ${technique.color}` : 'none'}
-      ></div>
-
-      <!-- The walk, said out loud. The canvas is one unchanging rectangle to a
-           screen reader, and everything needed to describe a room — its size, its
-           height, its ways out, what the panels put in it — is in the blueprint
-           already. Announced on arrival, and only then: it is polite, so it waits
-           for a pause rather than interrupting. -->
-      <p class="sr-only" aria-live="polite" aria-atomic="true">{spoken}</p>
-
-      <!-- Where the visitor stands, and what it is worth as evidence -->
-      {#if !mute}
-        <div class="pointer-events-none absolute left-3 top-3 max-w-sm">
-          <p class="text-[10px] uppercase tracking-widest text-[#FFD700]/70">
-            {deck ? nameOf(deck) : nameOf(plan.tier)}{insideInterior
-              ? ` · ${$t.tour.insideOf(nameOf(plan.tier))}`
-              : ''}
-          </p>
-          <p class="text-lg font-semibold leading-tight text-[#FFFFF0]">
-            {currentSpace ? nameOf(named(currentSpace)) : $t.tour.outside}
-          </p>
-          {#if currentSpace && inEmptyCopy}
-            <!-- An isolated room reached from outside: the walls are the ship's
-                 and nothing in it is, so it cannot be cited as evidence. -->
-            <span
-              class="mt-1 inline-block rounded border border-[#7095d6] bg-[#7095d6]/20 px-1.5 py-0.5 text-[10px] uppercase tracking-wider text-[#a8c2ea]"
-            >
-              {$t.tour.hatsu.copy}
-            </span>
-            <p class="mt-1 text-xs leading-snug text-[#FFFFF0]/60">{$t.tour.hatsu.copySource}</p>
-          {:else if currentSpace}
-            <span
-              class="mt-1 inline-block rounded border px-1.5 py-0.5 text-[10px] uppercase tracking-wider {provenanceClass(
-                named(currentSpace),
-              )}"
-            >
-              {provenanceLabel(named(currentSpace))}
-            </span>
-            <p class="mt-1 text-xs leading-snug text-[#FFFFF0]/60">
-              {sourceOf(named(currentSpace)) || $t.tour.noSource}
-            </p>
-          {/if}
-        </div>
-      {/if}
-
-      {#if penalty}
-        <p
-          class="pointer-events-none absolute bottom-20 left-1/2 max-w-md -translate-x-1/2 rounded border border-[#ef3340]/60 bg-[#050505]/90 px-3 py-1.5 text-center text-xs leading-snug text-[#ef8a90]"
-          aria-live="polite"
-        >
-          {penalty}
-        </p>
-      {/if}
-
-      <!-- Bottom right: the top right of the canvas is the remote eye's feed.
-
-           A solid is a claim about the ship in its own right — the coffin rests
-           on ch. 371 whether or not the chamber around it does — so what is
-           under the reticle says where it comes from, exactly as the room the
-           visitor is standing in does. -->
-      {#if technique && !mute}
-        <div class="pointer-events-none absolute bottom-3 right-3 max-w-xs text-right">
-          <p
-            class="inline-block rounded border bg-[#050505]/80 px-2 py-1 text-[11px]"
-            style:border-color="color-mix(in srgb, {technique.color} 55%, transparent)"
-            style:color={technique.color}
-          >
-            {#if onSolids}
-              {aimedSolidAt
-                ? $t.tour.hatsu.solids.aiming(nameOf(aimedSolidAt))
-                : $t.tour.hatsu.solids.aimingNothing}
-            {:else}
-              {aimedAt ? $t.tour.hatsu.aiming(nameOf(named(aimedAt))) : $t.tour.hatsu.aimingNothing}
-            {/if}
-          </p>
-          {#if onSolids && aimedSolidAt}
-            <p class="mt-1">
-              <span
-                class="inline-block rounded border bg-[#050505]/80 px-1.5 py-0.5 text-[10px] uppercase tracking-wider {provenanceClass(
-                  aimedSolidAt,
-                )}"
-              >
-                {provenanceLabel(aimedSolidAt)}
-              </span>
-            </p>
-            <p
-              class="mt-1 rounded bg-[#050505]/80 px-1.5 py-0.5 text-[11px] leading-snug text-[#FFFFF0]/60"
-            >
-              {sourceOf(aimedSolidAt) || $t.tour.noSource}
-            </p>
-          {/if}
-        </div>
-      {/if}
-
-      <!-- The keys the technique in hand answers to, over the walk itself: the
-           panel says the same thing, and the panel is the first thing folded
-           away in full screen — which is exactly when a visitor is walking with
-           an aura up and nothing to remind them what R does under it. Not on a
-           touchscreen, where there are no keys and the casts are the buttons in
-           the corner. -->
-      {#if controlKeys.length && !touch && !mute}
-        <ul
-          class="pointer-events-none absolute bottom-3 left-3 space-y-0.5 rounded bg-[#050505]/80 px-2 py-1"
-        >
-          {#each controlKeys as control (control.key)}
-            <li class="flex items-baseline gap-2 text-[11px]">
-              <kbd class="shrink-0 font-mono text-[10px]" style:color={technique?.color}>
-                {control.click ? `${control.key} / ${$t.tour.hatsu.keys.click}` : control.key}
-              </kbd>
-              <span class="text-[#FFFFF0]/70">{$t.tour.hatsu.keys.actions[control.action]}</span>
-            </li>
-          {/each}
-        </ul>
-      {/if}
-
-      <p
-        class="pointer-events-none absolute bottom-3 left-1/2 -translate-x-1/2 rounded bg-[#050505]/80 px-3 py-1 text-xs text-[#FFFFF0]/70"
-      >
-        {#if engaged}
-          {$t.tour.engaged}
-        {:else if touch}
-          {$t.tour.touch.hint}
-        {:else}
-          {$t.tour.enter}
-        {/if}
-      </p>
-
-      <!-- On a touchscreen the crossing is a button in the scene, which says the
-           same thing without naming a key. -->
-      {#if linkPrompt && !touch}
-        <p
-          class="pointer-events-none absolute bottom-12 left-1/2 -translate-x-1/2 rounded border border-[#FFD700]/50 bg-[#050505]/90 px-3 py-1 text-xs text-[#FFD700]"
-        >
-          {linkPrompt}
-        </p>
-      {/if}
     </section>
 
     <!-- The way back into the panel, once it is folded. Halfway down the right

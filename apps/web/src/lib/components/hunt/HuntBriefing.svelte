@@ -7,11 +7,14 @@
       rule: string
       objective: string
       begin: string
+      hatsu: string
+      hatsuRule: string
     }
+    abilityName: string
     onBegin: () => void
   }
 
-  let { labels, onBegin }: Props = $props()
+  let { labels, abilityName, onBegin }: Props = $props()
 </script>
 
 <section class="absolute inset-0 z-40 grid place-items-center bg-black/88 p-6 backdrop-blur-md">
@@ -25,6 +28,11 @@
       {labels.rule}
     </p>
     <p class="mt-4 text-sm text-white/55">{labels.objective}</p>
+    <div class="mx-auto mt-6 max-w-sm rounded-lg border border-violet-300/20 bg-violet-300/5 p-3">
+      <p class="text-[0.65rem] uppercase tracking-[0.25em] text-violet-300/70">{labels.hatsu}</p>
+      <p class="mt-1 text-sm font-medium text-violet-100">{abilityName}</p>
+      <p class="mt-1 text-xs leading-relaxed text-white/45">{labels.hatsuRule}</p>
+    </div>
     <button
       class="mt-8 rounded-full border border-sky-300/60 bg-sky-300/10 px-7 py-3 text-sm uppercase tracking-widest text-sky-100 transition hover:bg-sky-300/20"
       onclick={onBegin}>{labels.begin}</button

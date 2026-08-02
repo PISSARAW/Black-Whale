@@ -1612,6 +1612,9 @@ export const en = {
         'Cross the apartment and reach the marked room. Listen to him, mislead him, and choose where contact happens.',
       rule: 'Your aura pays for knowing, preparing, and surviving. Against an intact hunter, you lose.',
       objective: 'Reach the target room — or prepare an encounter he cannot win.',
+      hatsu: 'Equipped Hatsu',
+      hatsuRule:
+        'Lays an elastic connection on a surface, concealed with In. It restrains without dealing damage.',
       begin: 'Enter the apartment',
     },
     actions: {
@@ -1619,7 +1622,7 @@ export const en = {
       sweep: 'Sense',
       zetsu: 'Go quiet',
       ten: 'Raise Ten',
-      lay: 'Prepare',
+      lay: 'Bungee Gum trap',
       take: 'Recover',
     },
     controls: {

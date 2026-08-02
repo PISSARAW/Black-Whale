@@ -1471,6 +1471,9 @@ export const fr: Messages = {
         'Traversez l’appartement et rejoignez la pièce indiquée. Écoutez-le, trompez-le et choisissez où aura lieu le contact.',
       rule: 'Votre aura sert à savoir, à préparer et à survivre. Contre un chasseur intact, vous perdez.',
       objective: 'Atteignez la pièce cible — ou préparez une rencontre qu’il ne pourra pas gagner.',
+      hatsu: 'Hatsu emporté',
+      hatsuRule:
+        'Pose sur une surface un lien élastique dissimulé avec In. Il retient sans infliger de dégâts.',
       begin: 'Entrer dans l’appartement',
     },
     actions: {
@@ -1478,7 +1481,7 @@ export const fr: Messages = {
       sweep: 'Sentir',
       zetsu: 'Se taire',
       ten: 'Reprendre Ten',
-      lay: 'Préparer',
+      lay: 'Piège Bungee Gum',
       take: 'Récupérer',
     },
     controls: {

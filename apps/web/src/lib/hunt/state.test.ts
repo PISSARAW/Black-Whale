@@ -20,6 +20,7 @@ describe('the game state', () => {
     expect(state.player.nen).toBe('ten')
     expect(state.ledger.placements).toEqual([])
     expect(state.outcome).toBe('playing')
+    expect(state.hatsu).toBe('bungee-gum')
   })
 
   it('takes the walked position from wherever the walking happens', () => {
@@ -116,6 +117,11 @@ describe('laying and taking back', () => {
   it('cannot lay one outside any room', () => {
     const nowhere = huntReducer(game(), { type: 'WALKED', player: { spaceId: null } })
     expect(huntReducer(nowhere, { type: 'LAY' })).toBe(nowhere)
+  })
+
+  it('cannot use Bungee Gum while in Zetsu', () => {
+    const hidden = huntReducer(game(), { type: 'ZETSU' })
+    expect(huntReducer(hidden, { type: 'LAY' })).toBe(hidden)
   })
 })
 

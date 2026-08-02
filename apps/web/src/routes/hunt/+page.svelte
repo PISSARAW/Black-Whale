@@ -41,6 +41,7 @@
   import Debrief from '$lib/components/hunt/Debrief.svelte'
   import HuntActions from '$lib/components/hunt/HuntActions.svelte'
   import HuntBriefing from '$lib/components/hunt/HuntBriefing.svelte'
+  import { huntHatsu } from '$lib/hunt/hatsu'
 
   const ship = theShip()
   const plan = ship.plans.get(buildArena().tierId)!
@@ -81,6 +82,7 @@
   }
 
   let game = $state(freshGame())
+  let equippedHatsu = $derived(huntHatsu(game.hatsu))
 
   // Bound out of TourScene: the walk is its job, not this page's. Seeded from
   // the spawn rather than from `game`, which is where it came from anyway — the
@@ -419,6 +421,6 @@
   {/if}
 
   {#if !briefed}
-    <HuntBriefing labels={$t.hunt.briefing} onBegin={begin} />
+    <HuntBriefing labels={$t.hunt.briefing} abilityName={equippedHatsu.name} onBegin={begin} />
   {/if}
 </div>

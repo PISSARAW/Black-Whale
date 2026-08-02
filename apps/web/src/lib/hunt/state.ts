@@ -26,6 +26,7 @@ import type { HuntOutcome } from './outcome'
 import { duelReducer, type DuelAction } from './duel/reducer'
 import { recoverInDuel } from './duel/recover'
 import type { DuelState } from './duel/state'
+import { DEFAULT_HUNT_HATSU, type HuntHatsuId } from './hatsu'
 
 export interface PlayerState {
   position: Vec2
@@ -37,6 +38,8 @@ export interface PlayerState {
 }
 
 export interface HuntState {
+  /** The one declared ability brought into this run. */
+  hatsu: HuntHatsuId
   player: PlayerState
   hunter: HunterState
   /** The player's reservoir and everything they have laid down, in one place. */
@@ -67,10 +70,12 @@ export interface HuntSetup {
   hunterAt: { position: Vec2; spaceId: string }
   targetSpaceId: string
   seed?: number
+  hatsu?: HuntHatsuId
 }
 
 export function initialHuntState(setup: HuntSetup): HuntState {
   return {
+    hatsu: setup.hatsu ?? DEFAULT_HUNT_HATSU,
     player: {
       position: setup.playerAt.position,
       heading: 0,
@@ -172,7 +177,9 @@ function changeNen(state: HuntState): HuntState {
 }
 
 function lay(state: HuntState): HuntState {
-  if (!state.player.spaceId) return state
+  // Bungee Gum requires usable Nen and a surface. The current room's attested
+  // floor is that surface; Zetsu makes the first condition false.
+  if (!state.player.spaceId || state.player.nen === 'zetsu') return state
   const { ledger, placed } = placeAura(state.ledger, {
     id: `entrave-${state.nextId}`,
     cost: ENTRAVE_COST,

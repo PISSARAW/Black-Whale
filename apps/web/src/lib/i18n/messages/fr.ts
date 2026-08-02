@@ -855,7 +855,6 @@ export const fr: Messages = {
         armed: 'armé',
       },
     },
-
     morena: {
       seoTitle: 'Le jeu de Morena — La table de négociation à bord du Black Whale',
       seoDescription:
@@ -1709,9 +1708,18 @@ export const fr: Messages = {
     training: 'Initiation Nen',
     auraDistribution: 'Distribution du Ryu',
     lesson: [
-      { title: 'Déplacez votre Ryu', body: 'Choisissez une zone avec 1–4. Le transfert prend un instant.' },
-      { title: 'Fermez la garde', body: 'Maintenez votre lecture puis pressez Maj au moment de l’attaque.' },
-      { title: 'Provoquez une réaction', body: 'Pressez V pour feinter sur la zone actuellement visée.' },
+      {
+        title: 'Déplacez votre Ryu',
+        body: 'Choisissez une zone avec 1–4. Le transfert prend un instant.',
+      },
+      {
+        title: 'Fermez la garde',
+        body: 'Maintenez votre lecture puis pressez Maj au moment de l’attaque.',
+      },
+      {
+        title: 'Provoquez une réaction',
+        body: 'Pressez V pour feinter sur la zone actuellement visée.',
+      },
       { title: 'Punissez l’ouverture', body: 'Frappez pendant que l’adversaire récupère.' },
     ],
     state: { gyo: 'Gyo', in: 'In', ken: 'Ken', ko: 'Ko en charge', concealed: 'Aura dissimulée' },

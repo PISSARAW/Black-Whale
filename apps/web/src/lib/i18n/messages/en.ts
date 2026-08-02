@@ -941,7 +941,6 @@ export const en = {
         armed: 'armed',
       },
     },
-
     /**
      * The one room of the walk you sit down in: Morena Prudo's negotiation
      * game, played across the table in the Heil-Ly hideout.
@@ -1849,7 +1848,10 @@ export const en = {
     auraDistribution: 'Ryu distribution',
     lesson: [
       { title: 'Shift your Ryu', body: 'Choose a zone with 1–4. Aura takes a moment to arrive.' },
-      { title: 'Close your guard', body: 'Hold your read, then press Shift as the attack arrives.' },
+      {
+        title: 'Close your guard',
+        body: 'Hold your read, then press Shift as the attack arrives.',
+      },
       { title: 'Force a reaction', body: 'Press V to feint toward the zone you are targeting.' },
       { title: 'Punish the opening', body: 'Strike while your opponent is recovering.' },
     ],

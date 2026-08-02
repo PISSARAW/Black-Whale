@@ -4137,8 +4137,6 @@
 
       /** Puts what the world says is standing into the scene, and takes out the rest. */
       function syncApparitions(seconds: number) {
-        // Where the walk is, for the one apparition that follows it — and the
-        // clock, for the two that ride something that will not hold still.
         const wanted = [
           ...apparitionsOn(ship, world, {
             visitor: {
@@ -4148,63 +4146,35 @@
             },
             seconds,
           }),
-          // What the page is holding rather than the ship: the cards on
-          // Morena's table, and the woman dealing them.
           ...extras,
         ]
-        const standing: Record<string, true> = {}
-
-        for (const seen of wanted) {
-          standing[seen.id] = true
-          // Everything the geometry depends on. Position is not in it: a thing
-          // that moved is moved, not rebuilt.
-          const key = `${seen.kind}|${seen.colour}|${seen.size}|${seen.hidden}|${seen.pair?.spaceId ?? ''}|${seen.climb ?? ''}|${seen.face ?? ''}|${humanStateKey(seen)}`
-          let held = apparitions[seen.id]
-          // The two things about a thing that outlive the thing: which way it
-          // was looking, and where it had got to. Everything else a mesh knows
-          // is rebuilt with it.
-          const facing = held?.facing
-          const flown = held?.flown
-          if (held && held.key !== key) {
-            dropApparition(seen.id)
-            held = undefined
-          }
-          if (!held) {
-            held = buildApparition(seen)
-            held.key = key
-            held.facing = facing
-            held.flown = flown
-            apparitionView.add(seen.id, held)
-          }
-          held.y = seen.y
-          held.at = seen.at
-          held.stage = seen.stage
-          held.spread = seen.spread ?? 0
-          held.size = seen.size
-          held.tierId = seen.tierId
-          held.pair = seen.pair
-          held.humanPose = seen.human?.pose
-          // Not part of the key: whether a card may be taken hold of changes
-          // every time the phase does, and a hand that rebuilt five meshes each
-          // time it became your turn would be a table that flickers.
-          held.pick = seen.pick ?? false
-          held.root.position.set(seen.at[0], seen.y, seen.at[1])
-        }
-
-        for (const id of Object.keys(apparitions)) {
-          if (standing[id]) continue
-          // A card is the one apparition that is taken rather than dispelled,
-          // so it is the one that leaves instead of vanishing. See `sweepCard`.
-          const held = apparitions[id]
-          if (held?.kind === 'game-card') {
-            sweepCard(held)
-            apparitionView.detach(id)
-            continue
-          }
-          dropApparition(id)
-        }
+        apparitionView.sync(wanted, {
+          idOf: (seen) => seen.id,
+          keyOf: (seen) =>
+            `${seen.kind}|${seen.colour}|${seen.size}|${seen.hidden}|${seen.pair?.spaceId ?? ''}|${seen.climb ?? ''}|${seen.face ?? ''}|${humanStateKey(seen)}`,
+          build: buildApparition,
+          preserve: (held) => ({ facing: held.facing, flown: held.flown }),
+          restore: (held, saved) => {
+            const previous = saved as Pick<Shown, 'facing' | 'flown'> | undefined
+            held.facing = previous?.facing
+            held.flown = previous?.flown
+          },
+          update: (held, seen) => {
+            held.y = seen.y
+            held.at = seen.at
+            held.stage = seen.stage
+            held.spread = seen.spread ?? 0
+            held.size = seen.size
+            held.tierId = seen.tierId
+            held.pair = seen.pair
+            held.humanPose = seen.human?.pose
+            held.pick = seen.pick ?? false
+            held.root.position.set(seen.at[0], seen.y, seen.at[1])
+          },
+          leaving: (held) => held.kind === 'game-card',
+          sweep: sweepCard,
+        })
       }
-
       // ── Cards leaving the table ──────────────────
       //
       // Everything else in this scene appears and disappears, because a

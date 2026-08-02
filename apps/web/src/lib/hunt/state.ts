@@ -242,11 +242,24 @@ function useHatsu(state: HuntState): HuntState {
   if (state.hatsu.id === 'parallel-future') {
     if (state.player.nen !== 'zetsu') return state
     const intended = state.hunter.path.at(-1) ?? state.hunter.belief.spaceId ?? state.hunter.spaceId
-    return { ...state, hatsu: openFuture(state.hatsu, intended) }
+    return withHatsuUse(state, openFuture(state.hatsu, intended))
   }
 
   if (state.player.nen !== 'ten' || !state.player.atRest) return state
-  return { ...state, hatsu: readDowsing(state.hatsu, directionToHunter(state)) }
+  return withHatsuUse(state, readDowsing(state.hatsu, directionToHunter(state)))
+}
+
+function withHatsuUse(state: HuntState, hatsu: HuntHatsuState): HuntState {
+  if (hatsu.uses === state.hatsu.uses) return state
+  return {
+    ...state,
+    hatsu,
+    log: record(state.log, state.clock, {
+      actor: 'player',
+      kind: 'usedHatsu',
+      where: state.player.spaceId,
+    }),
+  }
 }
 
 function directionToHunter(state: HuntState): Vec2 | null {

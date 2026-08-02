@@ -44,7 +44,7 @@
       journal: string
       nothing: string
       actor: { player: string; hunter: string }
-      kind: Record<TelemetryKind, string>
+      kind: Partial<Record<TelemetryKind, string>>
     }
     outcomeLabel: string
   }
@@ -56,8 +56,12 @@
     return `${Math.floor(whole / 60)}:${String(whole % 60).padStart(2, '0')}`
   })
 
-  let byPlayer = $derived(report.log.filter((event) => event.actor === 'player'))
-  let byHunter = $derived(report.log.filter((event) => event.actor === 'hunter'))
+  let byPlayer = $derived(
+    report.log.filter((event) => event.actor === 'player' && event.kind !== 'enteredRoom'),
+  )
+  let byHunter = $derived(
+    report.log.filter((event) => event.actor === 'hunter' && event.kind !== 'enteredRoom'),
+  )
 </script>
 
 <article class="mx-auto max-w-3xl px-6 py-10 text-white/80">

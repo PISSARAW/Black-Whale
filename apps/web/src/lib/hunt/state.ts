@@ -116,6 +116,14 @@ export function huntReducer(state: HuntState, action: HuntAction): HuntState {
       return {
         ...state,
         player: { ...state.player, ...action.player },
+        log:
+          action.player.spaceId && action.player.spaceId !== state.player.spaceId
+            ? record(state.log, state.clock, {
+                actor: 'player',
+                kind: 'enteredRoom',
+                where: action.player.spaceId,
+              })
+            : state.log,
         hatsu:
           action.player.atRest === false && state.hatsu.probableBearing
             ? { ...state.hatsu, probableBearing: null }

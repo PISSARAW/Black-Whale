@@ -70,7 +70,15 @@ function advanceHunter(state: HuntState, world: HuntWorld): HuntState {
   const heard = overheard(state, world.graph)
   const { hunter, intents } = updateHunter(state.hunter, { ...world, percept: heard })
 
-  const swept = resolveSweep({ ...state, hunter }, intents)
+  const movedLog =
+    hunter.spaceId && hunter.spaceId !== state.hunter.spaceId
+      ? record(state.log, state.clock, {
+          actor: 'hunter',
+          kind: 'enteredRoom',
+          where: hunter.spaceId,
+        })
+      : state.log
+  const swept = resolveSweep({ ...state, hunter, log: movedLog }, intents)
   return resolveInspection(swept, intents)
 }
 

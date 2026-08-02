@@ -28,6 +28,7 @@ export type TelemetryKind =
   | 'lostTheTrail'
   | 'duelOpened'
   | 'duelClosed'
+  | 'enteredRoom'
 
 export interface TelemetryEvent {
   /** Game clock, in seconds. */
@@ -70,4 +71,11 @@ export function countOf(log: readonly TelemetryEvent[], kind: TelemetryKind): nu
 /** What each side believed, in order — the spine of the debrief. */
 export function beliefsIn(log: readonly TelemetryEvent[]): TelemetryEvent[] {
   return log.filter((event) => event.kind === 'believed' || event.kind === 'lostTheTrail')
+}
+
+/** Room transitions only, suitable for a bounded spatial debrief. */
+export function movementsIn(log: readonly TelemetryEvent[], actor?: Actor): TelemetryEvent[] {
+  return log.filter(
+    (event) => event.kind === 'enteredRoom' && (!actor || event.actor === actor),
+  )
 }

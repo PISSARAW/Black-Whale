@@ -1,5 +1,13 @@
 import { describe, it, expect } from 'vitest'
-import { beliefsIn, countOf, JOURNAL_LIMIT, record, spentBy, type TelemetryEvent } from './telemetry'
+import {
+  beliefsIn,
+  countOf,
+  JOURNAL_LIMIT,
+  movementsIn,
+  record,
+  spentBy,
+  type TelemetryEvent,
+} from './telemetry'
 
 function journal(): TelemetryEvent[] {
   let log: TelemetryEvent[] = []
@@ -12,6 +20,14 @@ function journal(): TelemetryEvent[] {
 }
 
 describe('the journal', () => {
+  it('extracts each actor room trajectory without frame noise', () => {
+    let log = record([], 1, { actor: 'player', kind: 'enteredRoom', where: 'kitchen' })
+    log = record(log, 2, { actor: 'player', kind: 'wentZetsu', where: 'kitchen' })
+    log = record(log, 3, { actor: 'hunter', kind: 'enteredRoom', where: 'hall' })
+
+    expect(movementsIn(log, 'player').map((event) => event.where)).toEqual(['kitchen'])
+    expect(movementsIn(log, 'hunter').map((event) => event.where)).toEqual(['hall'])
+  })
   it('keeps what was spent, by whom, when and where', () => {
     const log = journal()
     expect(log[0]).toEqual({ at: 10, actor: 'player', kind: 'sweptEn', cost: 15, where: 'salon' })

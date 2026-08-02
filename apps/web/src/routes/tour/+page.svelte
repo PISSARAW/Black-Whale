@@ -16,12 +16,11 @@
   import { onDestroy, onMount, untrack } from 'svelte'
   import { page } from '$app/stores'
   import Seo from '$lib/components/Seo.svelte'
-  import TourFinder from '$lib/components/tour/TourFinder.svelte'
   import TourComfortPanel from '$lib/components/tour/TourComfortPanel.svelte'
   import TourControlsPanel from '$lib/components/tour/TourControlsPanel.svelte'
   import TourHatsuHud from '$lib/components/tour/TourHatsuHud.svelte'
   import TourPageHeader from '$lib/components/tour/TourPageHeader.svelte'
-  import TourPlanDialog from '$lib/components/tour/TourPlanDialog.svelte'
+  import TourPageDialogs from '$lib/components/tour/TourPageDialogs.svelte'
   import TourProvenancePanel from '$lib/components/tour/TourProvenancePanel.svelte'
   import TourScene from '$lib/components/tour/TourScene.svelte'
   import TourSceneOverlay from '$lib/components/tour/TourSceneOverlay.svelte'
@@ -45,7 +44,6 @@
   import { TourHatsuAudio } from '$lib/tour/pageHatsuAudio.svelte'
   import { placeOf, type Naming } from '$lib/tour/search'
   import {
-    PROVENANCE_CLASS,
     localizedName,
     localizedSource,
     provenanceClass,
@@ -1162,8 +1160,10 @@
   </div>
 </div>
 
-<TourPlanDialog
+<TourPageDialogs
   bind:dialog={chrome.planDialog}
+  bind:finderOpen={chrome.findOpen}
+  {ship}
   {plan}
   {position}
   {heading}
@@ -1174,32 +1174,9 @@
   nameOf={(space) => nameOf(named(space))}
   selectLabel={planVerb}
   aiming={Boolean(technique)}
-  onClose={() => (chrome.planOpen = false)}
+  {naming}
+  onClosePlan={() => (chrome.planOpen = false)}
   onSelect={selectOnPlan}
-/>
-
-<TourFinder
-  {ship}
-  bind:open={chrome.findOpen}
-  words={naming}
-  labels={{
-    title: $t.tour.find.title,
-    placeholder: $t.tour.find.placeholder,
-    showing: $t.tour.find.showing,
-    noMatch: $t.tour.find.noMatch,
-    action: technique ? $t.tour.hatsu.targets : $t.tour.jumpTo,
-    level: $t.tour.find.level,
-    close: $t.tour.find.close,
-    hint: $t.tour.find.hint,
-  }}
-  provenanceLabel={(provenance) => $t.tour.provenance[provenance]}
-  provenanceClass={(provenance) => PROVENANCE_CLASS[provenance]}
-  onPick={(spaceId) => {
-    const space = ship.spaces.get(spaceId)
-    if (!space) return
-    // The finder reaches the whole ship, and so does a technique: with an aura up
-    // it aims rather than travels, like the index and the plan.
-    if (technique) castOn(space.id)
-    else goToSpace(space)
-  }}
+  onCast={(spaceId) => castOn(spaceId)}
+  onGo={goToSpace}
 />

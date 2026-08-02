@@ -23,6 +23,7 @@
     investigationHatsuUse,
     type InvestigationHatsuUse,
   } from '$lib/investigation/hatsu'
+  import { questionIsAvailable } from '$lib/investigation/interrogation'
   import {
     activeHatsu,
     closeHatsuGate,
@@ -55,6 +56,8 @@
   let log = $state<InvestigationLogEntry[]>([])
   let hatsuUseKeys = $state<string[]>([])
   let hatsuResult = $state<InvestigationHatsuUse | null>(null)
+  let askedQuestionKeys = $state<string[]>([])
+  let activeResponse = $state<string | null>(null)
 
   const activeSubject = $derived(
     investigation.subjects.find((subject) => subject.id === activeSubjectId) ?? null,
@@ -89,6 +92,7 @@
       : null
     solved = saved.solved
     hatsuUseKeys = saved.hatsuUseKeys
+    askedQuestionKeys = saved.askedQuestionKeys
     log = saved.log
     briefingOpen = !saved.started
     return closeHatsuGate
@@ -106,6 +110,7 @@
         selectedHypothesisId,
         solved,
         hatsuUseKeys,
+        askedQuestionKeys,
         log,
       }),
     )
@@ -160,6 +165,7 @@
     if (!subject) return
     activeSubjectId = id
     hatsuResult = null
+    activeResponse = null
     discover(subject.evidenceIds)
   }
 
@@ -168,6 +174,7 @@
     if (!subject) return
     activeSubjectId = id
     hatsuResult = null
+    activeResponse = null
     discover(subject.evidenceIds)
   }
 
@@ -228,6 +235,20 @@
     }
   }
 
+  function askQuestion(questionId: string) {
+    if (!activeSubject) return
+    const question = activeSubject.questions.find((item) => item.id === questionId)
+    if (!question || !questionIsAvailable(question, discoveredIds)) return
+    const key = `${activeSubject.id}:${question.id}`
+    activeResponse = question.response
+    if (!askedQuestionKeys.includes(key)) {
+      askedQuestionKeys = [...askedQuestionKeys, key]
+      discover(question.evidenceIds)
+      addLog({ id: `question:${key}`, kind: 'DISCOVERY', label: question.prompt })
+      persist()
+    }
+  }
+
   function startInvestigation() {
     briefingOpen = false
     persist()
@@ -242,6 +263,8 @@
     log = []
     hatsuUseKeys = []
     hatsuResult = null
+    askedQuestionKeys = []
+    activeResponse = null
     notebookOpen = false
     activeSubjectId = null
     briefingOpen = true
@@ -415,6 +438,36 @@
       >
         « {activeSubject.dialogue} »
       </blockquote>
+      {#if activeSubject.questions.length > 0}
+        <div class="mt-5 grid gap-2 sm:grid-cols-2">
+          {#each activeSubject.questions as question}
+            {@const available = questionIsAvailable(question, discoveredIds)}
+            {@const asked = askedQuestionKeys.includes(`${activeSubject.id}:${question.id}`)}
+            <button
+              class="border p-3 text-left text-xs transition {asked
+                ? 'border-emerald-400/35 bg-emerald-400/[0.06] text-emerald-100'
+                : available
+                  ? 'border-white/20 text-white/75 hover:border-[#d6b35a]/60'
+                  : 'cursor-not-allowed border-white/5 text-white/25'}"
+              disabled={!available}
+              onclick={() => askQuestion(question.id)}
+            >
+              <span class="block">{asked ? '✓ ' : ''}{question.prompt}</span>
+              {#if !available}<span class="mt-1 block text-[9px] uppercase tracking-wider"
+                  >Nécessite un nouvel élément</span
+                >{/if}
+            </button>
+          {/each}
+        </div>
+      {/if}
+      {#if activeResponse}
+        <div
+          class="mt-3 border-l-2 border-[#d6b35a] bg-[#d6b35a]/[0.06] px-4 py-3 text-sm leading-relaxed text-white/70"
+          aria-live="polite"
+        >
+          « {activeResponse} »
+        </div>
+      {/if}
       <div class="mt-5 border border-white/10 bg-black/25 p-4">
         <div class="flex flex-wrap items-center justify-between gap-3">
           <div>

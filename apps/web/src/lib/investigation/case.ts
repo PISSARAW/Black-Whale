@@ -36,6 +36,15 @@ export interface InvestigationSubject {
   isDead?: boolean
   dialogue: string
   evidenceIds: string[]
+  questions: InvestigationQuestion[]
+}
+
+export interface InvestigationQuestion {
+  id: string
+  prompt: string
+  response: string
+  requiredEvidenceIds: string[]
+  evidenceIds: string[]
 }
 
 export interface Hypothesis {
@@ -89,6 +98,16 @@ export const room1014Case: InvestigationCase = {
       dialogue:
         'Une attaque a eu lieu au milieu du groupe. Ne confondons pas ce que nous soupçonnons avec ce que nous pouvons prouver.',
       evidenceIds: ['nen-residue'],
+      questions: [
+        {
+          id: 'kurapika-method',
+          prompt: 'Que peut-on déjà affirmer sur la capacité ?',
+          response:
+            "Les créatures sont matérialisées et dirigées. La poupée obéit à une autre règle de visibilité. Ce sont des propriétés, pas l'identité de l'utilisateur.",
+          requiredEvidenceIds: ['bill-testimony', 'loberry-vision'],
+          evidenceIds: ['nen-residue'],
+        },
+      ],
     },
     {
       id: 'bill',
@@ -99,7 +118,25 @@ export const room1014Case: InvestigationCase = {
       posOffset: [-2.4, 1.2],
       dialogue:
         "J'étais face à la pièce. J'ai vu le garde s'effondrer, mais aucune arme ni aucun assaillant ne l'a touché.",
-      evidenceIds: ['bill-testimony'],
+      evidenceIds: [],
+      questions: [
+        {
+          id: 'bill-seen',
+          prompt: 'Qu’avez-vous vu au moment de l’attaque ?',
+          response:
+            'Quatre formes blanches autour du cou de Barrigen. Elles étaient visibles et les gardes ont essayé de les arracher.',
+          requiredEvidenceIds: [],
+          evidenceIds: ['bill-testimony'],
+        },
+        {
+          id: 'bill-duration',
+          prompt: 'Combien de temps avons-nous eu pour réagir ?',
+          response:
+            "Presque rien. Onze secondes au plus entre l'apparition des créatures et sa mort.",
+          requiredEvidenceIds: ['wounds'],
+          evidenceIds: ['death-window'],
+        },
+      ],
     },
     {
       id: 'loberry',
@@ -110,7 +147,25 @@ export const room1014Case: InvestigationCase = {
       posOffset: [0, -2.4],
       dialogue:
         "Une fille masquée se tenait derrière Furykov. Je vous jure qu'elle était là, mais personne d'autre ne semblait la voir.",
-      evidenceIds: ['loberry-vision'],
+      evidenceIds: [],
+      questions: [
+        {
+          id: 'loberry-figure',
+          prompt: 'Décrivez exactement la présence masquée.',
+          response:
+            "Une petite fille décorative avec un masque. Elle se tenait derrière Furykov. Quand je l'ai montrée, personne ne regardait au bon endroit.",
+          requiredEvidenceIds: [],
+          evidenceIds: ['loberry-vision'],
+        },
+        {
+          id: 'loberry-control',
+          prompt: 'La contrôliez-vous ?',
+          response:
+            "Non. Je ne pouvais que la voir. Elle s'est imposée à moi et ma panique a attiré tous les regards.",
+          requiredEvidenceIds: ['loberry-vision'],
+          evidenceIds: [],
+        },
+      ],
     },
     {
       id: 'furykov',
@@ -122,6 +177,16 @@ export const room1014Case: InvestigationCase = {
       dialogue:
         "Je n'ai vu aucune fille masquée derrière moi. En revanche, les créatures fixées au cou de Barrigen étaient matérialisées et visibles de tous.",
       evidenceIds: ['bill-testimony'],
+      questions: [
+        {
+          id: 'furykov-doll',
+          prompt: 'La poupée se trouvait-elle derrière vous ?',
+          response:
+            "Loberry l'affirme. Moi, je n'ai rien vu derrière mon dos. Cela indique une condition de perception, pas une absence.",
+          requiredEvidenceIds: ['loberry-vision'],
+          evidenceIds: [],
+        },
+      ],
     },
     {
       id: 'belerainte',
@@ -133,6 +198,16 @@ export const room1014Case: InvestigationCase = {
       dialogue:
         "Six personnes dans cette salle savent déjà utiliser le Nen, mais seules Furykov et moi l'avons déclaré. Le meurtrier peut se cacher parmi ceux qui se taisent.",
       evidenceIds: [],
+      questions: [
+        {
+          id: 'belerainte-users',
+          prompt: 'Combien de participants savent utiliser le Nen ?',
+          response:
+            'Six selon le décompte entendu dans la salle. Furykov et moi nous sommes déclarés; quatre autres se taisent.',
+          requiredEvidenceIds: [],
+          evidenceIds: ['six-nen-users'],
+        },
+      ],
     },
     {
       id: 'sakata',
@@ -143,7 +218,25 @@ export const room1014Case: InvestigationCase = {
       posOffset: [-2.2, -1],
       dialogue:
         "J'ai tiré sur les créatures lorsqu'elles sont apparues autour de son cou. Les balles les ont atteintes, mais Barrigen était déjà condamné.",
-      evidenceIds: ['bill-testimony', 'death-window'],
+      evidenceIds: [],
+      questions: [
+        {
+          id: 'sakata-shots',
+          prompt: 'Sur quoi avez-vous tiré ?',
+          response:
+            "Sur les créatures blanches. Mes tirs les atteignaient; elles n'étaient donc ni une hallucination de Loberry, ni invisibles.",
+          requiredEvidenceIds: ['loberry-vision'],
+          evidenceIds: ['bill-testimony'],
+        },
+        {
+          id: 'sakata-time',
+          prompt: 'Auriez-vous pu sauver Barrigen en tirant plus tôt ?',
+          response:
+            "Non. Leur action combinée était trop rapide; nous n'avions qu'environ onze secondes.",
+          requiredEvidenceIds: ['wounds'],
+          evidenceIds: ['death-window'],
+        },
+      ],
     },
     {
       id: 'body',
@@ -156,9 +249,23 @@ export const room1014Case: InvestigationCase = {
       dialogue:
         'Le corps est exsangue. Quatre créatures blanches se sont fixées à son cou; les gardes ont pu les voir et tenter de les arracher.',
       evidenceIds: ['wounds', 'death-window'],
+      questions: [],
     },
   ],
   evidence: [
+    {
+      id: 'six-nen-users',
+      title: 'Six utilisateurs dans la classe',
+      claim:
+        "Six participants savent déjà utiliser le Nen; seuls Furykov et Belerainte l'ont déclaré.",
+      source: 'Décompte pendant le cours',
+      chapter: 369,
+      kind: 'TESTIMONY',
+      method: 'TOLD_BY_OTHER',
+      truthStatus: 'STRONGLY_IMPLIED',
+      reliability: 'UNVERIFIED',
+      subjectId: 'belerainte',
+    },
     {
       id: 'wounds',
       title: 'Perforations multiples',

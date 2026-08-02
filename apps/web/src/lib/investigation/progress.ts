@@ -1,4 +1,4 @@
-export const INVESTIGATION_PROGRESS_VERSION = 2
+export const INVESTIGATION_PROGRESS_VERSION = 3
 export const INVESTIGATION_STORAGE_KEY = 'black-whale:investigation:room-1014'
 
 export interface InvestigationLogEntry {
@@ -16,6 +16,7 @@ export interface InvestigationProgress {
   selectedHypothesisId: string | null
   solved: boolean
   hatsuUseKeys: string[]
+  askedQuestionKeys: string[]
   log: InvestigationLogEntry[]
 }
 
@@ -29,6 +30,7 @@ export function freshProgress(caseId: string): InvestigationProgress {
     selectedHypothesisId: null,
     solved: false,
     hatsuUseKeys: [],
+    askedQuestionKeys: [],
     log: [],
   }
 }
@@ -52,6 +54,7 @@ export function parseProgress(raw: string | null, caseId: string): Investigation
         typeof value.selectedHypothesisId === 'string' ? value.selectedHypothesisId : null,
       solved: value.solved === true,
       hatsuUseKeys: stringArray(value.hatsuUseKeys),
+      askedQuestionKeys: stringArray(value.askedQuestionKeys),
       log: Array.isArray(value.log) ? value.log.filter(isLogEntry).slice(-30) : [],
     }
   } catch {

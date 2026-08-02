@@ -20,7 +20,7 @@ describe('investigation progress', () => {
 
   it('deduplicates stored identifiers', () => {
     const parsed = parseProgress(
-      '{"version":2,"caseId":"case-a","discoveredIds":["a","a",2]}',
+      '{"version":3,"caseId":"case-a","discoveredIds":["a","a",2]}',
       'case-a',
     )
     expect(parsed.discoveredIds).toEqual(['a'])

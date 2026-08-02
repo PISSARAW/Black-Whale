@@ -41,6 +41,8 @@ interface StrikeRequest {
 export function combatReducer(state: CombatState, action: CombatAction): CombatState {
   if (state.outcome !== 'playing') return state
   if (action.type === 'TICK') return tick(state, action.dt)
+  if (action.type === 'SYNC_POSITION')
+    return replace(state, action.side, syncPosition(state[action.side], action.position))
   if (action.type === 'MOVE')
     return replace(state, action.side, setMovement(state[action.side], action.vector))
   if (action.type === 'MODE')
@@ -366,6 +368,11 @@ function exchangeRecovery(technique: 'strike' | 'ko' | 'hatsu'): number {
 
 function setMovement(fighter: FighterState, vector: Vec2): FighterState {
   return fighter.condition === 'ready' ? { ...fighter, movement: normalise(vector) } : fighter
+}
+
+function syncPosition(fighter: FighterState, position: Vec2): FighterState {
+  if (fighter.condition !== 'ready' || fighter.bound > 0 || fighter.intent) return fighter
+  return { ...fighter, position, movement: [0, 0] }
 }
 
 function toggle(fighter: FighterState, key: 'gyo' | 'in', on: boolean): FighterState {

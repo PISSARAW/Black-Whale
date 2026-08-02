@@ -84,6 +84,7 @@ export interface CombatSetup {
 
 export type CombatAction =
   | { type: 'TICK'; dt: number }
+  | { type: 'SYNC_POSITION'; side: CombatSide; position: Vec2 }
   | { type: 'MOVE'; side: CombatSide; vector: Vec2 }
   | { type: 'MODE'; side: CombatSide; mode: AuraMode }
   | { type: 'RYU'; side: CombatSide; attackShare?: number; guard?: BodyZone }

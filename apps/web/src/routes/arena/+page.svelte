@@ -19,6 +19,8 @@
     type ArenaStats,
   } from '$lib/arena/progression'
   import { buildCombatTerrain } from '$lib/arena/terrain'
+  import { ArenaRecorder } from '$lib/arena/replay/recorder'
+  import type { ArenaReplay } from '$lib/arena/replay/types'
   import { readAura } from '$lib/combat/perception'
   import { STRIKE_RANGE } from '$lib/combat/resolve'
   import { combatReducer, initialCombatState } from '$lib/combat/reducer'
@@ -84,6 +86,8 @@
   let lesson = $state(0)
   let opponentDoctrine = $state<OpponentDoctrine>('counter')
   let difficulty = $state<ArenaDifficulty>('fighter')
+  let recorder = new ArenaRecorder(combatSetup(), opponentDoctrine, difficulty)
+  let lastReplay = $state<ArenaReplay | null>(null)
   let stats = $state<ArenaStats>({ ...EMPTY_STATS })
   let bestGrade = $state<string | null>(null)
   let graded = $state(false)
@@ -128,17 +132,22 @@
   let opponentWalls = $derived(blockerAt(game.opponent.position))
 
   function freshGame() {
-    return initialCombatState({
+    return initialCombatState(combatSetup())
+  }
+
+  function combatSetup() {
+    return {
       playerAt: terrain.spawns[0],
       opponentAt: terrain.spawns[1],
       terrain: { id: terrain.id, footprint: terrain.footprint, walls: terrain.walls },
-    })
+    }
   }
 
   function send(action: CombatAction): boolean {
     started = true
     const previousGame = game
     const previous = game.lastEvent
+    if (action.type !== 'TICK') recorder.record(action)
     game = combatReducer(game, action)
     advanceLesson(action)
     if (game.lastEvent !== previous && game.lastEvent) animateExchange(game.lastEvent)
@@ -258,7 +267,7 @@
   function reportWalk() {
     if (distance(position, game.player.position) < 0.001) return
     started = true
-    game = { ...game, player: { ...game.player, position, movement: [0, 0] } }
+    send({ type: 'SYNC_POSITION', side: 'player', position })
   }
 
   function tick(now: number) {
@@ -275,6 +284,7 @@
       owed -= DT
       const previous = game.lastEvent
       game = advanceArena(game, DT, opponentDoctrine, difficulty)
+      recorder.advance()
       if (game.lastEvent !== previous && game.lastEvent) animateExchange(game.lastEvent)
       finishRun()
     }
@@ -293,6 +303,8 @@
     lesson = 0
     stats = { ...EMPTY_STATS }
     graded = false
+    lastReplay = null
+    recorder = new ArenaRecorder(combatSetup(), opponentDoctrine, difficulty)
     owed = 0
     last = 0
   }
@@ -327,6 +339,7 @@
   function finishRun() {
     if (graded || game.outcome === 'playing') return
     graded = true
+    lastReplay = recorder.finish(game)
     const grade = gradeArena(stats, game.outcome === 'won', game.player.aura)
     const order = ['C', 'B', 'A', 'S']
     if (!bestGrade || order.indexOf(grade) > order.indexOf(bestGrade)) {

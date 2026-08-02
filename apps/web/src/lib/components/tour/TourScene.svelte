@@ -63,7 +63,7 @@
     type TourFlash,
   } from '$lib/tour/apparitions'
   import { comfort, prefersReducedMotion, type Comfort } from '$lib/tour/comfort'
-  import { buildSolidMesh, buildTierMesh } from '$lib/tour/mesh'
+  import { buildSolidMesh } from '$lib/tour/mesh'
   import { animateDealerFace, buildDealer } from '$lib/tour/dealer'
   import { HUMAN_LOD_DISTANCE, buildHumanFigure, humanStateKey } from '$lib/tour/humanFigure'
   import type { HumanPose } from '$lib/tour/humanAnimation'
@@ -85,7 +85,7 @@
     wayOutOfInterior,
   } from '$lib/tour/navigation'
   import { SEALED_DENSITY, fogDensityOf, reverbTime, settleDensity } from '$lib/tour/atmosphere'
-  import { driftDust, dustOf, type Dust } from '$lib/tour/dust'
+  import { driftDust } from '$lib/tour/dust'
   import { distanceToBoundary } from '$lib/tour/geometry'
   import {
     enterDeck,
@@ -105,6 +105,22 @@
   // The flock's chirp is raised by the page itself, where the arrival happens.
   import { roarLikeADragon } from '$lib/audio/hatsuSounds'
   import { visibleSpaces } from '$lib/tour/visibility'
+  import {
+    animateVisibleScene,
+    createSceneRuntime,
+    disposeSceneRuntime,
+    observeSceneResize,
+    renderSceneInset,
+  } from '$lib/tour/TourRenderer'
+  import { listenToSceneInput } from '$lib/tour/sceneInput'
+  import { PortalRenderer } from '$lib/tour/PortalRenderer'
+  import { TierView, type BuiltTierView } from '$lib/tour/TierView'
+  import {
+    AURA_LIGHT_INTENSITY,
+    NIGHT_LIGHT_INTENSITY,
+    TourAtmosphereView,
+  } from '$lib/tour/TourAtmosphereView'
+  import { ApparitionView } from '$lib/tour/ApparitionView'
   import type { Link, Space, Structure, Vec2, WallSegment } from '$lib/tour/types'
 
   interface Props {
@@ -558,13 +574,17 @@
       // renderer is made before the first finger can land on the glass.
       const coarse = window.matchMedia?.('(hover: none) and (pointer: coarse)').matches ?? false
 
-      let renderer: import('three').WebGLRenderer
+      let runtime: ReturnType<typeof createSceneRuntime>
       try {
         // Multisampling on a phone is paid for at every one of a lot of pixels,
         // and on a display this dense it is buying an edge nobody can see. The
         // gold outlines are lines rather than geometry, so what it was mostly
         // smoothing is not there to be smoothed.
-        renderer = new THREE.WebGLRenderer({ canvas, antialias: !coarse })
+        runtime = createSceneRuntime(THREE, canvas, {
+          coarse,
+          fov: $comfort.fov,
+          viewDistance: VIEW_DISTANCE,
+        })
       } catch {
         failure = 'webgl'
         return
@@ -573,18 +593,18 @@
       // A 3× display was rendering nine times the pixels of a 1× one for a walk
       // whose surfaces are flat colour. Capping at 1.5 costs about a percent of
       // apparent sharpness and 44% of the fragments.
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5))
-      renderer.setClearColor(0x050505)
       // The deck colours are true albedos, and the emissive surfaces are written
       // above white on purpose — a fitting at 2,4 and a window pane at 1,28. A
       // linear render clips all of that to flat white and leaves the far end of a
       // corridor as mud. The filmic curve is what holds both ends: it rolls a lamp
       // off instead of clipping it and keeps shadowed steel above black. It is also
       // what `syncSight` closes when the monkeys take sight.
-      renderer.toneMapping = THREE.ACESFilmicToneMapping
-      renderer.toneMappingExposure = 1
-
-      const scene = new THREE.Scene()
+      const { renderer, scene, fog, camera } = runtime
+      const portals = new PortalRenderer(THREE, {
+        renderer,
+        scene,
+        viewDistance: VIEW_DISTANCE,
+      })
       /**
        * The air, which is a different air in every room.
        *
@@ -597,13 +617,8 @@
        * standing in, and eases over `SETTLE` when they cross a threshold — see
        * `$lib/tour/atmosphere`. Crossing a doorway is felt: the air opens.
        */
-      const fog = new THREE.FogExp2(0x050505, 0.02)
-      scene.fog = fog
-
       // The field of view is the visitor's to set: 72° is a wide-angle lens, and
       // on a laptop held at arm's length it is a fisheye that makes people ill.
-      const camera = new THREE.PerspectiveCamera($comfort.fov, 1, 0.1, VIEW_DISTANCE)
-
       /**
        * The ship lights itself now, and the visitor is no longer a lamp.
        *
@@ -647,23 +662,16 @@
        *   only coloured light on the ship, so a technique *lights* the deck rather
        *   than drawing an outline on it.
        */
-      const AMBIENT = 2.2
-      const NIGHT_LIGHT = 1.2
-      const ambient = new THREE.AmbientLight(0xffffff, AMBIENT)
-      scene.add(ambient)
+      const atmosphere = new TourAtmosphereView(THREE, scene, $comfort.nightLight)
+      const { ambient, nightLight, auraLight, gildLight, haloLight, haloBubble, litLights } =
+        atmosphere
+      const NIGHT_LIGHT = NIGHT_LIGHT_INTENSITY
       /** The tint in force, and the clear colour the air is closing to. */
-      let tinted: number | null = null
-      const WHITE = new THREE.Color(0xffffff)
-      const baseFog = new THREE.Color(0x050505)
+      let tinted: number | null = atmosphere.tinted
+      const WHITE = atmosphere.white
+      const baseFog = atmosphere.baseFog
       // Its reach is the visitor's to set, down to nothing: see `nightLight` in
       // `$lib/tour/comfort` for why that is a setting and not a constant.
-      const nightLight = new THREE.PointLight(
-        0xffd9a0,
-        $comfort.nightLight > 0 ? NIGHT_LIGHT : 0,
-        $comfort.nightLight,
-        2,
-      )
-      scene.add(nightLight)
 
       /**
        * The aura as a light, not as an outline.
@@ -674,9 +682,7 @@
        * filament, which is the point — Nen is the one thing aboard that is not the
        * ship.
        */
-      const AURA_LIGHT = 2.4
-      const auraLight = new THREE.PointLight(0xffffff, 0, 14, 2)
-      scene.add(auraLight)
+      const AURA_LIGHT = AURA_LIGHT_INTENSITY
 
       /**
        * What the two Guardian Spirit Beasts that give something back leave on
@@ -691,28 +697,12 @@
        * with what has actually been taken, so a tenth coin is plainly a tenth
        * coin.
        */
-      const gildLight = new THREE.PointLight(0xffd98a, 0, 9, 2)
-      scene.add(gildLight)
-      const haloLight = new THREE.PointLight(0xfff1d8, 0, 12, 2)
-      scene.add(haloLight)
       /**
        * And the bubble itself, which is the half of the levy you can see from
        * inside it: a shell round the visitor, drawn from the inside, so the
        * whole view warms rather than one wall of it. Carried at the camera and
        * scaled with the halo; invisible while there is none.
        */
-      const haloBubble = new THREE.Mesh(
-        new THREE.SphereGeometry(1, 16, 12),
-        new THREE.MeshBasicMaterial({
-          color: 0xfff1d8,
-          transparent: true,
-          opacity: 0.06,
-          side: THREE.BackSide,
-          depthWrite: false,
-        }),
-      )
-      haloBubble.visible = false
-      scene.add(haloBubble)
 
       /**
        * A lamp per room an eye-wog has lit, which is the other half of it.
@@ -723,7 +713,6 @@
        * the solids are synced, so a room that has been blown clear of the levy
        * loses its lamp on the same frame.
        */
-      const litLights: Record<string, import('three').PointLight | undefined> = {}
 
       /**
        * One face per surface, and it is the face that looks at the room.
@@ -834,20 +823,7 @@
        * rooms off, and what gives the GPU a bounding sphere per room to frustum
        * cull against instead of a 145-metre sphere around the whole deck.
        */
-      type Room = {
-        spaceId: string
-        mesh: import('three').Mesh
-        edges: import('three').LineSegments
-        /** The deck plating of this room, in its own dim material. */
-        seams: import('three').LineSegments
-        /** The room's ceiling fittings, in the one material that is not lit. */
-        fittings: import('three').Mesh
-        /** The dust hanging in one of the ten great voids, or nothing. */
-        motes: import('three').Points | null
-        dust: Dust | null
-      }
-      /** A deck, as one group holding a mesh and an edge run per room. */
-      type Built = { root: import('three').Group; rooms: Room[] }
+      type Built = BuiltTierView
 
       const decks: Record<string, Built | undefined> = {}
       // The reveal is a second painting of the same geometry, so it is cached
@@ -940,6 +916,13 @@
        * long enough session would hold a copy of the ship per cast.
        */
       const variants: Record<string, { key: string; built: Built } | undefined> = {}
+      const tierView = new TierView(THREE, {
+        surface: material,
+        edge: edgeMaterial,
+        seam: seamMaterial,
+        fitting: fittingMaterial,
+        dust: dustMaterial,
+      })
 
       /**
        * One deck, extruded once and cut into rooms.
@@ -951,112 +934,10 @@
        * and in the bounding sphere `buildTierMesh` measured for it.
        */
       function extrude(nextTierId: string): Built {
-        const mesh = buildTierMesh(walkedPlan(ship, world, nextTierId), { reveal })
-        const position = new THREE.BufferAttribute(mesh.positions, 3)
-        const normal = new THREE.BufferAttribute(mesh.normals, 3)
-        const color = new THREE.BufferAttribute(mesh.colors, 3)
-        const edgePosition = new THREE.BufferAttribute(mesh.edges, 3)
-        const seamPosition = new THREE.BufferAttribute(mesh.seams, 3)
-        const fittingPosition = new THREE.BufferAttribute(mesh.fittings, 3)
-        const fittingColor = new THREE.BufferAttribute(mesh.fittingColors, 3)
-
-        const root = new THREE.Group()
-        const rooms: Room[] = []
-
-        for (const group of mesh.groups) {
-          const centre = new THREE.Vector3(group.centre[0], group.centre[1], group.centre[2])
-
-          const geometry = new THREE.BufferGeometry()
-          geometry.setAttribute('position', position)
-          geometry.setAttribute('normal', normal)
-          geometry.setAttribute('color', color)
-          geometry.setDrawRange(group.start, group.count)
-          // Set by hand: `computeBoundingSphere` reads the whole attribute, so
-          // every room would come back with the sphere of the entire deck and
-          // nothing would ever be culled.
-          geometry.boundingSphere = new THREE.Sphere(centre.clone(), group.radius)
-
-          const edgeGeometry = new THREE.BufferGeometry()
-          edgeGeometry.setAttribute('position', edgePosition)
-          edgeGeometry.setDrawRange(group.edgeStart, group.edgeCount)
-          edgeGeometry.boundingSphere = new THREE.Sphere(centre.clone(), group.radius)
-
-          // The plating shares the room's sphere and its draw range, so it is
-          // culled with the room rather than being a deck-wide grid.
-          const seamGeometry = new THREE.BufferGeometry()
-          seamGeometry.setAttribute('position', seamPosition)
-          seamGeometry.setDrawRange(group.seamStart, group.seamCount)
-          seamGeometry.boundingSphere = new THREE.Sphere(centre.clone(), group.radius)
-
-          // The fittings share the room's sphere and range for the same reason
-          // the plating does: a lamp drawn while its room is culled is a light
-          // hanging in the void where the room should be.
-          const fittingGeometry = new THREE.BufferGeometry()
-          fittingGeometry.setAttribute('position', fittingPosition)
-          fittingGeometry.setAttribute('color', fittingColor)
-          fittingGeometry.setDrawRange(group.fittingStart, group.fittingCount)
-          fittingGeometry.boundingSphere = new THREE.Sphere(centre.clone(), group.radius)
-
-          /**
-           * The dust of a great void, where the room is one.
-           *
-           * Its own geometry rather than a slice of the deck's: the positions
-           * change every frame, and the deck's buffers are uploaded once and never
-           * touched again. Ten rooms on the ship have one — see `dustOf` — and the
-           * cloud is only advanced while it is being drawn.
-           */
-          const space = ship.spaces.get(group.spaceId)
-          const deck = ship.plans.get(nextTierId)
-          // Not under the reveal, for the reason the lamps are not:
-          // there every surface has to say what it is worth as evidence, and dust
-          // is derived — it answers nothing about the sources.
-          const dust = space && deck && !reveal ? dustOf(space, deck.tier) : null
-          let motes: import('three').Points | null = null
-          if (dust) {
-            const moteGeometry = new THREE.BufferGeometry()
-            moteGeometry.setAttribute('position', new THREE.BufferAttribute(dust.positions, 3))
-            moteGeometry.boundingSphere = new THREE.Sphere(
-              new THREE.Vector3(dust.centre[0], dust.centre[1], dust.centre[2]),
-              dust.radius,
-            )
-            motes = new THREE.Points(moteGeometry, dustMaterial)
-            // The cloud is written to every frame it is drawn, so three.js must
-            // not be allowed to assume otherwise.
-            moteGeometry.attributes.position.needsUpdate = true
-          }
-
-          const roomMesh = new THREE.Mesh(geometry, material)
-          const roomEdges = new THREE.LineSegments(edgeGeometry, edgeMaterial)
-          const roomSeams = new THREE.LineSegments(seamGeometry, seamMaterial)
-          const roomFittings = new THREE.Mesh(fittingGeometry, fittingMaterial)
-          root.add(roomMesh)
-          root.add(roomEdges)
-          root.add(roomSeams)
-          root.add(roomFittings)
-          if (motes) root.add(motes)
-          rooms.push({
-            spaceId: group.spaceId,
-            mesh: roomMesh,
-            edges: roomEdges,
-            seams: roomSeams,
-            fittings: roomFittings,
-            motes,
-            dust,
-          })
-        }
-
-        return { root, rooms }
+        return tierView.build(ship, world, nextTierId, reveal)
       }
 
-      const dispose = (built: Built) => {
-        for (const room of built.rooms) {
-          room.mesh.geometry.dispose()
-          room.edges.geometry.dispose()
-          room.seams.geometry.dispose()
-          room.fittings.geometry.dispose()
-          room.motes?.geometry.dispose()
-        }
-      }
+      const dispose = (built: Built) => tierView.dispose(built)
 
       /**
        * Variants replaced while they were still being drawn.
@@ -1621,7 +1502,8 @@
 
       // A plain record for the same reason the solids are one: the render loop
       // owns it and nothing in the markup reads it.
-      const apparitions: Record<string, Shown | undefined> = {}
+      const apparitionView = new ApparitionView<Shown>(scene, portals)
+      const apparitions = apparitionView.items
 
       /** Materials are shared by colour: a fleet of stars is one upload. */
       const glowMaterials: Record<string, import('three').MeshBasicMaterial | undefined> = {}
@@ -1689,44 +1571,6 @@
        * shader — clip space in, screen space out — and it is what makes the
        * ring read as a hole in the room instead of a picture hung in it.
        */
-      const portalShader = (texture: import('three').Texture) =>
-        new THREE.ShaderMaterial({
-          uniforms: { pane: { value: texture } },
-          vertexShader: `
-            varying vec4 vClip;
-            void main() {
-              vClip = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-              gl_Position = vClip;
-            }
-          `,
-          fragmentShader: `
-            uniform sampler2D pane;
-            varying vec4 vClip;
-            void main() {
-              vec2 uv = (vClip.xy / vClip.w) * 0.5 + 0.5;
-              gl_FragColor = texture2D(pane, uv);
-            }
-          `,
-          side: THREE.DoubleSide,
-        })
-
-      /** The render target each mouth draws the far end into, by apparition. */
-      const portalTargets: Record<string, import('three').WebGLRenderTarget | undefined> = {}
-      const portalCamera = new THREE.PerspectiveCamera($comfort.fov, 1, 0.1, VIEW_DISTANCE)
-
-      function portalTarget(id: string) {
-        const held = portalTargets[id]
-        if (held) return held
-        const { width, height } = renderer.getSize(new THREE.Vector2())
-        // The pane is sampled in screen space, so the target has to be the
-        // shape of the screen or the far room comes back stretched.
-        const made = new THREE.WebGLRenderTarget(
-          Math.max(2, Math.round(width)),
-          Math.max(2, Math.round(height)),
-        )
-        portalTargets[id] = made
-        return made
-      }
 
       /** A five-pointed star, flat, in the plane it is drawn facing. */
       function starShape(size: number) {
@@ -4259,7 +4103,7 @@
           // technique's own colour, so an unpaired door still reads as a door.
           pane = new THREE.Mesh(
             new THREE.CircleGeometry(seen.size, 32),
-            seen.pair ? portalShader(portalTarget(seen.id).texture) : glow(seen.colour, 0.22),
+            seen.pair ? portals.material(seen.id) : glow(seen.colour, 0.22),
           )
           pane.renderOrder = 1
           root.add(pane)
@@ -4288,16 +4132,7 @@
       }
 
       function dropApparition(id: string) {
-        const held = apparitions[id]
-        if (!held) return
-        scene.remove(held.root)
-        portalTargets[id]?.dispose()
-        delete portalTargets[id]
-        held.root.traverse((part) => {
-          const mesh = part as import('three').Mesh
-          if (mesh.geometry && !mesh.geometry.userData.sharedHuman) mesh.geometry.dispose()
-        })
-        delete apparitions[id]
+        apparitionView.drop(id)
       }
 
       /** Puts what the world says is standing into the scene, and takes out the rest. */
@@ -4339,8 +4174,7 @@
             held.key = key
             held.facing = facing
             held.flown = flown
-            apparitions[seen.id] = held
-            scene.add(held.root)
+            apparitionView.add(seen.id, held)
           }
           held.y = seen.y
           held.at = seen.at
@@ -4364,7 +4198,7 @@
           const held = apparitions[id]
           if (held?.kind === 'game-card') {
             sweepCard(held)
-            delete apparitions[id]
+            apparitionView.detach(id)
             continue
           }
           dropApparition(id)
@@ -4498,26 +4332,14 @@
        * infinite regress or a black disc, and neither is a door.
        */
       function renderPortals() {
-        const mouths = Object.entries(apparitions).filter(([, held]) => held?.kind === 'portal')
-        if (!mouths.length) return
-
-        for (const [, held] of mouths) if (held?.pane) held.pane.visible = false
-
-        for (const [id, held] of mouths) {
-          if (!held?.pair || !held.pane) continue
-          const target = portalTarget(id)
-          portalCamera.fov = camera.fov
-          portalCamera.aspect = camera.aspect
-          portalCamera.updateProjectionMatrix()
-          portalCamera.position.set(held.pair.at[0], held.pair.y, held.pair.at[1])
-          portalCamera.quaternion.copy(camera.quaternion)
-          renderer.setRenderTarget(target)
-          renderer.clear()
-          renderer.render(scene, portalCamera)
-          renderer.setRenderTarget(null)
-        }
-
-        for (const [, held] of mouths) if (held?.pane) held.pane.visible = true
+        portals.render(
+          Object.entries(apparitions).flatMap(([id, held]) =>
+            held?.kind === 'portal' && held.pair && held.pane
+              ? [{ id, pair: held.pair, pane: held.pane }]
+              : [],
+          ),
+          camera,
+        )
       }
 
       /**
@@ -6370,16 +6192,18 @@
         lookFinger = null
       }
 
-      canvas.addEventListener('mousedown', onMouseDown)
-      canvas.addEventListener('touchstart', onTouchStart, { passive: true })
-      canvas.addEventListener('touchmove', onTouchMove, { passive: true })
-      canvas.addEventListener('touchend', onTouchEnd)
-      canvas.addEventListener('touchcancel', onTouchCancel)
-      window.addEventListener('mousemove', onMouseMove)
-      window.addEventListener('mouseup', onMouseUp)
-      window.addEventListener('keydown', onKeyDown)
-      window.addEventListener('keyup', onKeyUp)
-      document.addEventListener('pointerlockchange', onPointerLockChange)
+      const stopListening = listenToSceneInput(canvas, {
+        mouseDown: onMouseDown,
+        mouseMove: onMouseMove,
+        mouseUp: onMouseUp,
+        touchStart: onTouchStart,
+        touchMove: onTouchMove,
+        touchEnd: onTouchEnd,
+        touchCancel: onTouchCancel,
+        keyDown: onKeyDown,
+        keyUp: onKeyUp,
+        pointerLockChange: onPointerLockChange,
+      })
 
       /**
        * Resizing is deferred to the next frame.
@@ -6390,27 +6214,12 @@
        * frame is the whole of it; `pendingResize` is the handle, so a resize
        * still in the queue when the scene is torn down can be dropped.
        */
-      let pendingResize = 0
-      const applyResize = () => {
-        pendingResize = 0
-        if (!container) return
-        const { clientWidth, clientHeight } = container
-        if (!clientWidth || !clientHeight) return
-        renderer.setSize(clientWidth, clientHeight, false)
-        camera.aspect = clientWidth / clientHeight
-        camera.updateProjectionMatrix()
-        // The panes are sampled in screen space, so they are the size of the
-        // screen: a target left at the old size shows the far room stretched.
-        const { width, height } = renderer.getSize(new THREE.Vector2())
-        for (const target of Object.values(portalTargets)) {
-          target?.setSize(Math.max(2, Math.round(width)), Math.max(2, Math.round(height)))
-        }
-      }
-      const resize = new ResizeObserver(() => {
-        if (pendingResize) return
-        pendingResize = requestAnimationFrame(applyResize)
-      })
-      resize.observe(container)
+      const resize = observeSceneResize(
+        THREE,
+        container,
+        runtime,
+        () => portals.targets(),
+      )
 
       // ── Frame ────────────────────────────────────
       let previous = performance.now()
@@ -7094,7 +6903,7 @@
         if (eyeCamera) {
           eyeCamera.rotation.set(0, 0, 0)
           eyeCamera.rotateY(now / 6000)
-          renderInset(eyeCamera, 'top')
+          renderSceneInset(runtime, eyeCamera, 'top', size)
         }
 
         // The table's own eye, which is the same technique doing the same thing
@@ -7106,12 +6915,12 @@
           if (!tableCamera) tableCamera = new THREE.PerspectiveCamera(EYE_FOV, 1, 0.02, 40)
           tableCamera.position.set(feed.at[0], feed.y, feed.at[1])
           tableCamera.lookAt(feed.look[0], feed.lookY, feed.look[1])
-          renderInset(tableCamera, 'top')
+          renderSceneInset(runtime, tableCamera, 'top', size)
         }
 
         // The owl's film, inset below the eye's feed: the last ten seconds of
         // a bird that is not there any more, played at the speed it flew them.
-        if (filmCamera && showing) renderInset(filmCamera, 'bottom')
+        if (filmCamera && showing) renderSceneInset(runtime, filmCamera, 'bottom', size)
         // And the table's own owl, in the same corner and for the same reason:
         // this is not a feed, it is what a bird already filmed being looked at
         // afterwards. It holds still because a recording does, and it stays up
@@ -7120,7 +6929,7 @@
           if (!recordCamera) recordCamera = new THREE.PerspectiveCamera(OWL_FOV, 1, 0.02, 40)
           recordCamera.position.set(record.at[0], record.y, record.at[1])
           recordCamera.lookAt(record.look[0], record.lookY, record.look[1])
-          renderInset(recordCamera, 'bottom')
+          renderSceneInset(runtime, recordCamera, 'bottom', size)
         }
       }
 
@@ -7133,31 +6942,6 @@
        * not the colour; put `autoClear` back, or the next frame draws the walk
        * into a stale buffer) that three copies of it was two too many.
        */
-      function renderInset(
-        lens: import('three').PerspectiveCamera,
-        corner: 'top' | 'bottom',
-      ): void {
-        const { width, height } = renderer.getSize(size)
-        const boxWidth = Math.round(Math.min(320, width * 0.3))
-        const boxHeight = Math.round(boxWidth * 0.62)
-        const pad = 12
-        const box: [number, number, number, number] = [
-          width - boxWidth - pad,
-          corner === 'top' ? height - boxHeight - pad : pad,
-          boxWidth,
-          boxHeight,
-        ]
-        lens.aspect = boxWidth / boxHeight
-        lens.updateProjectionMatrix()
-        renderer.setViewport(...box)
-        renderer.setScissor(...box)
-        renderer.setScissorTest(true)
-        renderer.autoClear = false
-        renderer.clear(true, true, false)
-        renderer.render(scene, lens)
-        renderer.autoClear = true
-        renderer.setScissorTest(false)
-      }
 
       /**
        * The walk only runs while it is on screen.
@@ -7170,39 +6954,16 @@
        * hand to a headset, and because stopping it is one call rather than a
        * cancelled handle and a flag.
        */
-      const watching = new IntersectionObserver(
-        ([entry]) => {
-          if (entry.isIntersecting) {
-            // The clock is reset, or the first frame back charges the walk for
-            // however long the visitor spent reading further down the page.
-            previous = performance.now()
-            renderer.setAnimationLoop(tick)
-          } else {
-            renderer.setAnimationLoop(null)
-          }
-        },
-        { threshold: 0 },
-      )
-      watching.observe(container)
-
-      renderer.setAnimationLoop(tick)
+      const stopAnimating = animateVisibleScene(container, renderer, tick, () => {
+        // Do not charge the walk for time spent reading below the canvas.
+        previous = performance.now()
+      })
       ready = true
 
       cleanup = () => {
-        renderer.setAnimationLoop(null)
-        watching.disconnect()
-        if (pendingResize) cancelAnimationFrame(pendingResize)
-        resize.disconnect()
-        canvas?.removeEventListener('mousedown', onMouseDown)
-        canvas?.removeEventListener('touchstart', onTouchStart)
-        canvas?.removeEventListener('touchmove', onTouchMove)
-        canvas?.removeEventListener('touchend', onTouchEnd)
-        canvas?.removeEventListener('touchcancel', onTouchCancel)
-        window.removeEventListener('mousemove', onMouseMove)
-        window.removeEventListener('mouseup', onMouseUp)
-        window.removeEventListener('keydown', onKeyDown)
-        window.removeEventListener('keyup', onKeyUp)
-        document.removeEventListener('pointerlockchange', onPointerLockChange)
+        stopAnimating()
+        resize.dispose()
+        stopListening()
         for (const built of Object.values(decks)) if (built) dispose(built)
         for (const held of Object.values(variants)) if (held) dispose(held.built)
         for (const built of stale) dispose(built)
@@ -7239,7 +7000,8 @@
         afterBody.geometry.dispose()
         afterHead.geometry.dispose()
         afterMaterial.dispose()
-        for (const target of Object.values(portalTargets)) target?.dispose()
+        portals.dispose()
+        atmosphere.dispose()
         chassis.traverse((part) => {
           const mesh = part as import('three').Mesh
           if (mesh.geometry) mesh.geometry.dispose()
@@ -7253,12 +7015,7 @@
         edgeMaterial.dispose()
         seamMaterial.dispose()
         material.dispose()
-        renderer.dispose()
-        // `dispose` frees what three.js allocated; the drawing buffer and the
-        // context itself are the browser's, and a visitor who walks in and out
-        // of the tour a few times would otherwise collect one of each until the
-        // driver drops the oldest and takes a live canvas down with it.
-        renderer.forceContextLoss()
+        disposeSceneRuntime(runtime)
       }
 
       // The page asks for a jump by setting `jumpTo`; honour it and clear it so

@@ -32,8 +32,14 @@ import { GAME_LENGTH, judgeHunt, type HuntOutcome } from './outcome'
 import { record, type TelemetryEvent } from './telemetry'
 import type { HuntState } from './state'
 import { tickHatsu } from './hatsu'
-import { environmentModifiers, NORMAL_ENVIRONMENT } from './environment'
+import {
+  canSealExit,
+  environmentModifiers,
+  graphWithSeals,
+  NORMAL_ENVIRONMENT,
+} from './environment'
 import type { ContractEnvironment } from './contracts/types'
+import { strategicPlanner } from './hunter/strategy'
 
 export const HUNT_TICK_RATE = 60
 export const HUNT_DT = 1 / HUNT_TICK_RATE
@@ -70,19 +76,51 @@ function breathe(state: HuntState, dt: number): Ledger {
  * matters: he decides blind, then the world answers.
  */
 function advanceHunter(state: HuntState, world: HuntWorld): HuntState {
-  const heard = overheard(state, world.graph, world.environment ?? NORMAL_ENVIRONMENT)
-  const { hunter, intents } = updateHunter(state.hunter, { ...world, percept: heard })
+  const strategic = executeStrategicSeal(state, world)
+  const graph = graphWithSeals(world.graph, strategic.sealedExits)
+  const heard = overheard(strategic, graph, world.environment ?? NORMAL_ENVIRONMENT)
+  const { hunter, intents } = updateHunter(strategic.hunter, { ...world, graph, percept: heard })
 
   const movedLog =
     hunter.spaceId && hunter.spaceId !== state.hunter.spaceId
-      ? record(state.log, state.clock, {
+      ? record(strategic.log, strategic.clock, {
           actor: 'hunter',
           kind: 'enteredRoom',
           where: hunter.spaceId,
         })
-      : state.log
-  const swept = resolveSweep({ ...state, hunter, log: movedLog }, intents)
+      : strategic.log
+  const swept = resolveSweep({ ...strategic, hunter, log: movedLog }, intents)
   return resolveInspection(swept, intents)
+}
+
+function executeStrategicSeal(state: HuntState, world: HuntWorld): HuntState {
+  const environment = world.environment ?? NORMAL_ENVIRONMENT
+  const spaceId = state.hunter.spaceId
+  if (!spaceId || state.hunter.mode !== 'listen' || state.sealedAtSpaces.includes(spaceId)) return state
+  const visibleExits = (world.graph.edges.get(spaceId) ?? []).map((to) => ({
+    from: spaceId,
+    to,
+    sealed: state.sealedExits.some((seal) => [seal.a, seal.b].sort().join('|') === [spaceId, to].sort().join('|')),
+  }))
+  const intent = strategicPlanner('containment').plan({
+    selfSpaceId: spaceId,
+    belief: state.hunter.belief,
+    visibleExits,
+    sealedExits: state.sealedExits,
+    aura: state.hunter.pool.available,
+    sinceSweep: state.hunter.sinceSweep,
+  })
+  if (intent.kind !== 'seal' || !canSealExit(environment, world.graph, intent.exit)) return state
+  return {
+    ...state,
+    sealedExits: [...state.sealedExits, intent.exit],
+    sealedAtSpaces: [...state.sealedAtSpaces, spaceId],
+    log: record(state.log, state.clock, {
+      actor: 'hunter',
+      kind: 'sealedExit',
+      where: spaceId,
+    }),
+  }
 }
 
 /** Footsteps carrying into the hunter's ear — a bearing, never a position. */

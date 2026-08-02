@@ -30,6 +30,7 @@ export type TelemetryKind =
   | 'duelClosed'
   | 'enteredRoom'
   | 'usedHatsu'
+  | 'sealedExit'
 
 export interface TelemetryEvent {
   /** Game clock, in seconds. */

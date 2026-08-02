@@ -27,6 +27,7 @@ import { duelReducer, type DuelAction } from './duel/reducer'
 import { recoverInDuel } from './duel/recover'
 import type { DuelState } from './duel/state'
 import type { HunterProfileId } from './hunter/profiles'
+import type { SealedExit } from './environment'
 import {
   DEFAULT_HUNT_HATSU,
   initialHatsu,
@@ -62,6 +63,8 @@ export interface HuntState {
   log: TelemetryEvent[]
   /** Serial for placement ids — no clock, no randomness, replayable. */
   nextId: number
+  sealedExits: SealedExit[]
+  sealedAtSpaces: string[]
 }
 
 export type HuntAction =
@@ -107,6 +110,8 @@ export function initialHuntState(setup: HuntSetup): HuntState {
     duel: null,
     log: [],
     nextId: 1,
+    sealedExits: [],
+    sealedAtSpaces: [],
   }
 }
 

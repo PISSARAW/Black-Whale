@@ -202,6 +202,31 @@ describe('the junction', () => {
   })
 })
 
+describe('strategic exit sealing', () => {
+  it('closes one perceived exit when the contract permits it', () => {
+    const state = game(rooms[0], rooms[1])
+    const listening = {
+      ...state,
+      hunter: { ...state.hunter, mode: 'listen' as const, listening: 2 },
+    }
+    const sealed = updateHunt(listening, {
+      ...world,
+      environment: { lighting: 'normal', acoustics: 'clear', sealableExits: true },
+    })
+    expect(sealed.sealedExits).toHaveLength(1)
+    expect(sealed.log.at(-1)?.kind).toBe('sealedExit')
+  })
+
+  it('cannot close an exit in an ordinary contract', () => {
+    const state = game(rooms[0], rooms[1])
+    const listening = {
+      ...state,
+      hunter: { ...state.hunter, mode: 'listen' as const, listening: 2 },
+    }
+    expect(updateHunt(listening, world).sealedExits).toEqual([])
+  })
+})
+
 describe('the endings', () => {
   it('stops at ten minutes', () => {
     const state = { ...game(rooms[0], rooms[rooms.length - 1]), clock: GAME_LENGTH - 0.5 }

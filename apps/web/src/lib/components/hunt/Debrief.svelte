@@ -78,7 +78,12 @@
     report.log.filter((event) => event.actor === 'player' && event.kind !== 'enteredRoom'),
   )
   let byHunter = $derived(
-    report.log.filter((event) => event.actor === 'hunter' && event.kind !== 'enteredRoom'),
+    report.log.filter(
+      (event) =>
+        event.actor === 'hunter' &&
+        event.kind !== 'enteredRoom' &&
+        event.kind !== 'sealedExit',
+    ),
   )
 </script>
 

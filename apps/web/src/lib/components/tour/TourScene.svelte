@@ -4383,8 +4383,6 @@
 
     return () => {
       disposed = true
-      interactWithNen = null
-      hatsuNow = null
       setStepsAuraQuiet(false)
       cleanup?.()
     }

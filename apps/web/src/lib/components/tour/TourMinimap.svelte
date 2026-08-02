@@ -34,7 +34,7 @@
      */
     crossings?: Crossing[]
     /** The name to write on a room, in the language being read. */
-    nameOf?: (space: Space) => string
+    nameOf?: (space: Space | { name: string; nameFr: string } | undefined) => string
     onSelect?: (space: Space) => void
     /**
      * What clicking a room does, in words: the plan travels while the visitor is
@@ -60,7 +60,10 @@
     currentSpaceId,
     label,
     crossings = [],
-    nameOf = (space) => space.name,
+    nameOf = (space) => {
+      if (!space) return ''
+      return space.name
+    },
     onSelect,
     selectLabel = (room) => room,
     crossingLabel = () => '',

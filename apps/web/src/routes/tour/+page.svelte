@@ -411,7 +411,10 @@
         crossings,
         currentSpaceId: currentSpace?.id ?? null,
         planLabel: $t.tour.minimap(nameOf(plan.tier)),
-        nameOf: (space) => nameOf(named(space)),
+        nameOf: (space) => {
+          if (!space) return ''
+          return nameOf(named(space as Space))
+        },
         crossingLabel,
         onSelectPlan: selectOnPlan,
         selectLabel: planVerb,

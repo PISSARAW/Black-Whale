@@ -16,7 +16,7 @@
     crossings: Crossing[]
     currentSpaceId: string | null
     planLabel: string
-    nameOf: (space: Space) => string
+    nameOf: (space: Space | { name: string; nameFr: string } | undefined) => string
     crossingLabel: (crossing: Crossing) => string
     onSelectPlan: (space: Space) => void
     selectLabel: (room: string) => string

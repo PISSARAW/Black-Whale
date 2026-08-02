@@ -27,6 +27,7 @@
   import MorenaGameStatus from '$lib/components/tour/MorenaGameStatus.svelte'
   import MorenaPhaseActions from '$lib/components/tour/MorenaPhaseActions.svelte'
   import MorenaVerdictPanel from '$lib/components/tour/MorenaVerdictPanel.svelte'
+  import MorenaHatsuSeats from '$lib/components/tour/MorenaHatsuSeats.svelte'
   import ContagionDashboard from '$lib/nen/ContagionDashboard.svelte'
   import { breadcrumbSchema } from '$lib/seo/schema'
   import { link, locale, t } from '$lib/i18n'
@@ -53,7 +54,6 @@
     eyeFeed,
     leaveTheTable,
     livePages,
-    exposureNow,
     moveFor,
     REWIND_BLUE,
     openTheBookHere,
@@ -626,77 +626,13 @@
           <MorenaVerdictPanel {game} onAgain={deal} onLeave={() => (view = 'menu')} />
         {/if}
 
-        <!-- The aura, played across the table.
-             Kept below the hand and above the piles because that is where it
-             sits in the fiction too: it is not one of the twelve cards, it is
-             the thing you brought into a room that has rules. -->
-        {#if seats.length && game.phase !== 'over'}
-          <!-- One block per live page. A book is two of these, and the ribbon
-               between them says which key plays which — the numbers are not
-               shared, because two stolen one-shots are two one-shots. -->
-          {#if seats.length > 1}
-            <p class="mt-5 text-[10px] uppercase tracking-widest text-[#FFD700]/70">
-              {copy.hatsu.book.title}
-            </p>
-            <p class="mt-1 text-xs leading-snug text-[#FFFFF0]/55">{copy.hatsu.book.body}</p>
-          {/if}
-          {#each seats as seat, index (seat.page)}
-            <div
-              class="mt-3 rounded border border-[#333] p-3 {index === 0 && seats.length === 1
-                ? 'mt-5'
-                : ''}"
-              style:border-color={carried?.color}
-            >
-              <div class="flex items-baseline justify-between gap-2">
-                <p class="text-sm font-semibold" style:color={carried?.color}>
-                  {#if keyed.length > 1 && !seat.unbidden}<span class="text-[#FFFFF0]/40"
-                      >{keyed.indexOf(seat) === 0 ? 'F' : 'R'} ·
-                    </span>{/if}{seat.name}
-                </p>
-                <span
-                  class="rounded border px-1.5 py-0.5 text-[10px] uppercase tracking-wider {seat
-                    .move.fraud
-                    ? 'border-[#ef3340]/60 text-[#ef8a90]'
-                    : 'border-[#7fc8a0]/60 text-[#7fc8a0]'}"
-                >
-                  {seat.move.fraud ? copy.hatsu.fraud : copy.hatsu.legal}
-                </span>
-              </div>
-              <p class="mt-1 text-xs leading-snug text-[#FFFFF0]/60">
-                {copy.hatsu.techniques[seat.kind].buys}
-              </p>
-              {#if seat.move.fraud}
-                <p class="mt-2 text-[11px] text-[#ef8a90]/80">
-                  {copy.hatsu.exposure(Math.round(exposureNow(seat.move, game) * 100))}
-                </p>
-              {/if}
-              <div class="mt-3 flex flex-wrap items-center gap-2">
-                <!-- A technique that fires on its own gets no button. Offering
-                     one would be asking for automatic writing, which is the one
-                     thing nobody does: the beast writes when Morena reaches. -->
-                {#if seat.unbidden}
-                  <span class="text-[11px] leading-snug text-[#d8c7ed]">
-                    {copy.hatsu.unbidden}
-                  </span>
-                {:else}
-                  <button
-                    class="rounded px-3 py-1.5 text-xs font-semibold text-[#0b0b0d] disabled:opacity-30"
-                    style:background={carried?.color ?? '#d94f68'}
-                    disabled={seat.usedUp}
-                    onclick={() => cast(null, null, keyed.indexOf(seat) === 0 ? 'first' : 'second')}
-                  >
-                    {copy.hatsu.effects[seat.move.effect]}
-                  </button>
-                {/if}
-                <span class="text-[10px] uppercase tracking-wider text-[#FFFFF0]/40">
-                  {seat.usedUp
-                    ? copy.hatsu.exhausted
-                    : copy.hatsu.spent(seat.spent, seat.move.uses)}
-                </span>
-              </div>
-            </div>
-          {/each}
-        {/if}
+        <MorenaHatsuSeats
+          {game}
+          {seats}
+          {keyed}
+          auraColor={carried?.color ?? null}
+          onCast={(hand) => cast(null, null, hand)}
+        />
 
         <!-- Walking out. Canon puts it under the same sanction as cheating, so
              it is offered as a move rather than as a way out. -->

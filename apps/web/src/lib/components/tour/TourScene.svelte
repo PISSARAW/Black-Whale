@@ -1646,7 +1646,7 @@
           humanLod = basic.humanLod
           humanAnimate = basic.humanAnimate
         }
-        turns = buildObjectApparition(seen, { THREE, glow, root, skin }) ?? turns
+        turns = buildObjectApparition(seen, { THREE, glow, root, skin, cardFace }) ?? turns
         turns = buildEmbellishmentApparition(seen, { THREE, glow, root, skin }) ?? turns
         turns = buildInsectApparition(seen, { THREE, glow, root, skin }) ?? turns
         turns = buildSnakeApparition(seen, { THREE, glow, root, skin }) ?? turns
@@ -1673,78 +1673,6 @@
         // that the one room the walk sits you down in is drawn by the same
         // machinery as the ninety you walk through.
 
-
-        if (seen.kind === 'game-card') {
-          // Lying flat, face up or face down, with a rim so the edge of it is
-          // still legible from the low angle a seated eye has on a table.
-          const face = new THREE.Mesh(
-            new THREE.PlaneGeometry(seen.size, seen.size * 1.5),
-            glow(seen.colour, seen.stage === 2 ? 0.55 : 0.95),
-          )
-          face.rotation.x = -Math.PI / 2
-          root.add(face)
-          // The rim says whose card it is and who has read it: dark for a card
-          // still face down, bone for one face up ? and cold blue for the one
-          // something has told you she is reaching for next. Foresight has no
-          // other body at this table, and a card picked out of a fan is what
-          // being told looks like from the chair.
-          const rim = new THREE.Mesh(
-            new THREE.PlaneGeometry(seen.size * 1.12, seen.size * 1.62),
-            glow(
-              seen.stage === 0
-                ? 0x6b4c58
-                : seen.stage === 4
-                  ? 0x8ecae6
-                  : seen.stage === 5
-                    ? FORGED_AURA
-                    : 0xf5efe6,
-              0.7,
-            ),
-          )
-          rim.rotation.x = -Math.PI / 2
-          rim.position.y = -0.001
-          root.add(rim)
-          // And the mark, on every card that is lying face up. It reads from
-          // the guest's chair ? the top of the drawing points across the table
-          // at the woman opposite, which is the way a card is laid down by the
-          // person holding it ? and it is drawn in ink rather than in aura,
-          // because it is printed on the card and not cast on it.
-          if (seen.face) {
-            const mark = new THREE.Mesh(
-              new THREE.PlaneGeometry(seen.size * 0.82, seen.size * 1.16),
-              cardFace(seen.face, seen.stage === 2 ? '#6f6f78' : '#20161c'),
-            )
-            mark.rotation.x = -Math.PI / 2
-            mark.position.y = 0.002
-            root.add(mark)
-          }
-          // The forged card, which is a face with nothing under it: the pink is
-          // the aura holding it together, so it is drawn as aura ? a wash lying
-          // on the wood around the card, wider and fainter than the card's own
-          // rim, rather than as anything printed on the face.
-          if (seen.stage === 5) {
-            const aura = new THREE.Mesh(
-              new THREE.PlaneGeometry(seen.size * 1.9, seen.size * 2.5),
-              glow(FORGED_AURA, 0.22),
-            )
-            aura.rotation.x = -Math.PI / 2
-            aura.position.y = -0.002
-            root.add(aura)
-          }
-          // The card Morena marked carries the mark: a nick in one corner, which
-          // is exactly as much as a reader is meant to be able to see of it.
-          if (seen.stage === 3) {
-            const nick = new THREE.Mesh(
-              new THREE.PlaneGeometry(seen.size * 0.22, seen.size * 0.06),
-              glow(0x2b1b22, 1),
-            )
-            nick.rotation.x = -Math.PI / 2
-            nick.rotation.z = Math.PI / 4
-            nick.position.set(seen.size * 0.32, 0.001, -seen.size * 0.6)
-            root.add(nick)
-          }
-          turns = null
-        }
 
         if (seen.kind === 'ghost') {
           // Neon's beast: a pale animal hanging in the air with its mouth open

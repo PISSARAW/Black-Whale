@@ -2,6 +2,7 @@ import type { Object3D } from 'three'
 import { BOOKMARK_RIBBON, type Apparition } from './apparitions'
 import type { BasicApparitionContext } from './apparitionBasicView'
 import { buildDealer } from './dealer'
+import { FORGED_AURA } from './morena'
 
 type Builder = (seen: Apparition, context: BasicApparitionContext) => Object3D | null
 
@@ -256,6 +257,58 @@ function dealer(seen: Apparition, { THREE, glow, root }: BasicApparitionContext)
   return null
 }
 
+function gameCard(
+  seen: Apparition,
+  { THREE, glow, root, cardFace }: BasicApparitionContext,
+) {
+  const face = new THREE.Mesh(
+    new THREE.PlaneGeometry(seen.size, seen.size * 1.5),
+    glow(seen.colour, seen.stage === 2 ? 0.55 : 0.95),
+  )
+  face.rotation.x = -Math.PI / 2
+  root.add(face)
+
+  const rimColour =
+    seen.stage === 0 ? 0x6b4c58 : seen.stage === 4 ? 0x8ecae6 : seen.stage === 5 ? FORGED_AURA : 0xf5efe6
+  const rim = new THREE.Mesh(
+    new THREE.PlaneGeometry(seen.size * 1.12, seen.size * 1.62),
+    glow(rimColour, 0.7),
+  )
+  rim.rotation.x = -Math.PI / 2
+  rim.position.y = -0.001
+  root.add(rim)
+
+  if (seen.face && cardFace) {
+    const mark = new THREE.Mesh(
+      new THREE.PlaneGeometry(seen.size * 0.82, seen.size * 1.16),
+      cardFace(seen.face, seen.stage === 2 ? '#6f6f78' : '#20161c'),
+    )
+    mark.rotation.x = -Math.PI / 2
+    mark.position.y = 0.002
+    root.add(mark)
+  }
+  if (seen.stage === 5) {
+    const aura = new THREE.Mesh(
+      new THREE.PlaneGeometry(seen.size * 1.9, seen.size * 2.5),
+      glow(FORGED_AURA, 0.22),
+    )
+    aura.rotation.x = -Math.PI / 2
+    aura.position.y = -0.002
+    root.add(aura)
+  }
+  if (seen.stage === 3) {
+    const nick = new THREE.Mesh(
+      new THREE.PlaneGeometry(seen.size * 0.22, seen.size * 0.06),
+      glow(0x2b1b22, 1),
+    )
+    nick.rotation.x = -Math.PI / 2
+    nick.rotation.z = Math.PI / 4
+    nick.position.set(seen.size * 0.32, 0.001, -seen.size * 0.6)
+    root.add(nick)
+  }
+  return null
+}
+
 const BUILDERS: Partial<Record<Apparition['kind'], Builder>> = {
   gum,
   double,
@@ -267,6 +320,7 @@ const BUILDERS: Partial<Record<Apparition['kind'], Builder>> = {
   book,
   flute,
   dealer,
+  'game-card': gameCard,
 }
 
 export function buildObjectApparition(

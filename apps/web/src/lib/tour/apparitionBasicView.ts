@@ -1,5 +1,6 @@
 import type { Group, MeshBasicMaterial, Object3D } from 'three'
 import type { Apparition } from './apparitions'
+import type { CardFace } from './morena'
 import { buildHumanFigure, type HumanFigure } from './humanFigure'
 
 type Three = typeof import('three')
@@ -11,6 +12,7 @@ export interface BasicApparitionContext {
   root: Group
   skin: MeshBasicMaterial
   observerGyo?: boolean
+  cardFace?: (face: CardFace, ink: string) => MeshBasicMaterial
 }
 
 export interface BasicApparitionParts {

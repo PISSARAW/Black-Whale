@@ -34,7 +34,6 @@
     planCost,
     strategicRoleForHatsu,
   } from '$lib/strategy/rules'
-
   let { data }: { data: PageData } = $props()
   const simStore = createSimulationStore()
   let ready = $state(false)

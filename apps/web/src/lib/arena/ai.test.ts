@@ -68,4 +68,17 @@ describe('the arena opponent', () => {
     expect(next.opponent.guard).toBe('torso')
     expect(next.opponent.guardWindow).toBe(0)
   })
+
+  it('makes the deceiver prepare attacks under In', () => {
+    let state = initialCombatState()
+    state = {
+      ...state,
+      clock: 0.44,
+      player: { ...state.player, position: [0, 0] },
+      opponent: { ...state.opponent, position: [1.5, 0] },
+    }
+    state = advanceArena(state, 0.02, 'deceiver')
+    expect(state.opponent.in).toBe(true)
+    expect(state.opponent.intent ?? state.opponent.feint).not.toBeNull()
+  })
 })

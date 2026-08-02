@@ -24,7 +24,7 @@ function isReplay(value: unknown): boolean {
     typeof replay.ticks === 'number' &&
     replay.ticks >= 0 &&
     Boolean(replay.setup?.terrain?.id) &&
-    ['counter', 'binder', 'artillery'].includes(replay.doctrine ?? '') &&
+    ['counter', 'binder', 'artillery', 'deceiver'].includes(replay.doctrine ?? '') &&
     ['initiate', 'fighter', 'master'].includes(replay.difficulty ?? '') &&
     Array.isArray(replay.commands) &&
     replay.commands.every(validCommand) &&

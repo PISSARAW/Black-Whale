@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { initialCombatState } from '../combat/types'
 import { advanceArena, type ArenaDifficulty, type OpponentDoctrine } from './ai'
 
-const doctrines: OpponentDoctrine[] = ['counter', 'binder', 'artillery']
+const doctrines: OpponentDoctrine[] = ['counter', 'binder', 'artillery', 'deceiver']
 const difficulties: ArenaDifficulty[] = ['initiate', 'fighter', 'master']
 
 describe('Arena balance smoke simulations', () => {

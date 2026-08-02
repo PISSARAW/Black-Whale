@@ -11,7 +11,7 @@ export const DIFFICULTY_CADENCE: Record<ArenaDifficulty, number> = {
   master: 0.3,
 }
 
-export type OpponentDoctrine = 'counter' | 'binder' | 'artillery'
+export type OpponentDoctrine = 'counter' | 'binder' | 'artillery' | 'deceiver'
 
 export const OPPONENT_DOCTRINES: Record<
   OpponentDoctrine,
@@ -20,6 +20,7 @@ export const OPPONENT_DOCTRINES: Record<
   counter: { name: 'Le Contreur', hatsu: 'enhance' },
   binder: { name: "L'Entraveuse", hatsu: 'bind' },
   artillery: { name: "L'Artilleur", hatsu: 'barrage' },
+  deceiver: { name: 'Le Trompeur', hatsu: 'enhance' },
 }
 
 export function advanceArena(
@@ -94,13 +95,18 @@ function decide(state: CombatState, doctrine: OpponentDoctrine, cadence: number)
   const zone = openZone(reading.guard, Math.floor(current.clock / cadence))
 
   if (current.player.recoveryWindow <= 0 && Math.floor(current.clock / THINK_EVERY) % 4 === 0) {
+    if (doctrine === 'deceiver') {
+      current = combatReducer(current, { type: 'IN', side: 'opponent', on: true })
+    }
     return combatReducer(current, { type: 'FEINT', side: 'opponent', zone })
   }
 
   if (current.opponent.aura >= 35 && current.clock % 3 < THINK_EVERY) {
     return combatReducer(current, { type: 'KO', side: 'opponent', zone })
   }
-  const hidden = Math.floor(current.clock / THINK_EVERY) % 6 === 3 && current.opponent.aura > 30
+  const hidden =
+    doctrine === 'deceiver' ||
+    (Math.floor(current.clock / THINK_EVERY) % 6 === 3 && current.opponent.aura > 30)
   current = combatReducer(current, { type: 'IN', side: 'opponent', on: hidden })
   return combatReducer(current, { type: 'PREPARE_STRIKE', side: 'opponent', zone })
 }

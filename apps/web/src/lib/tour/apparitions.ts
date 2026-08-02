@@ -97,7 +97,9 @@ export type ApparitionKind =
   | 'wheel'
   /** And the coin at its mouth, worth nothing to anybody who does not take it. */
   | 'coin'
-  /** Tyson's, come up in front of the reader it is levying. */
+  /** Tyson's heart-shaped Guardian Spirit Beast, which produces Eye-wogs. */
+  | 'tyson-guardian'
+  /** One of Tyson's Eye-wogs, attached to the reader it is levying. */
   | 'wog'
   /** Luzurus's, coiled in the room it baited. */
   | 'centipede'
@@ -1321,6 +1323,18 @@ export function apparitionsOn(ship: Ship, world: TourWorld, walk: Walk = {}): Ap
   // and stays in front of them, at eye height, for as long as the aura is up.
   if (world.holding === 'aura-levy' && visitor) {
     found.push({
+      id: 'tyson-guardian',
+      kind: 'tyson-guardian',
+      spaceId: world.cameFrom ?? '',
+      tierId: visitor.tierId,
+      at: [visitor.at[0], visitor.at[1]],
+      y: 0,
+      size: 0.58,
+      colour: WOG,
+      stage: world.body.halo,
+      hidden: false,
+    })
+    found.push({
       id: 'wog',
       kind: 'wog',
       spaceId: world.cameFrom ?? '',
@@ -1328,7 +1342,7 @@ export function apparitionsOn(ship: Ship, world: TourWorld, walk: Walk = {}): Ap
       at: [visitor.at[0], visitor.at[1]],
       // Carried, so the height is the visitor's and the scene sets it.
       y: 0,
-      size: 0.42,
+      size: 0.16,
       colour: WOG,
       stage: world.body.halo,
       hidden: false,

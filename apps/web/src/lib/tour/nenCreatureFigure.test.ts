@@ -8,6 +8,8 @@ describe('Nen creature figure', () => {
     expect(isNenCreatureKind('chimera')).toBe(true)
     expect(isNenCreatureKind('owl')).toBe(true)
     expect(isNenCreatureKind('insect')).toBe(true)
+    expect(isNenCreatureKind('tyson-guardian')).toBe(true)
+    expect(isNenCreatureKind('wog')).toBe(true)
     expect(isNenCreatureKind('game-card')).toBe(false)
     expect(isNenCreatureKind('dealer')).toBe(false)
     expect(isNenCreatureKind('avatar')).toBe(false)

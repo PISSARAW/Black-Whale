@@ -20,6 +20,7 @@ export const NEN_CREATURE_KINDS = new Set<ApparitionKind>([
   'monster',
   'toad',
   'wheel',
+  'tyson-guardian',
   'wog',
   'centipede',
   'mouths',

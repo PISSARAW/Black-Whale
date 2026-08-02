@@ -3,6 +3,7 @@
   import { onMount } from 'svelte'
   import type { PageData } from './$types'
   import Seo from '$lib/components/Seo.svelte'
+  import ReconstructionV3Scene from '$lib/components/reconstruction/ReconstructionV3Scene.svelte'
   import type {
     ReconstructionDecision,
     ReconstructionScenarioDraft,
@@ -24,6 +25,10 @@
   let reliability = $state('trusted')
   let abilityId = $state(data.abilities[0]?.id ?? '')
   let actionId = $state('activate')
+  let hatsuActions = $state<
+    Array<{ id: string; label: string; visibility: string; hint?: string }>
+  >([])
+  let actionsLoading = $state(false)
   let conditionKind = $state<ReconstructionDecision['preconditions'][number]['kind']>('entity-at')
   let conditionSubject = $state('')
   let conditionExpected = $state('')
@@ -36,6 +41,33 @@
   let shared = $state(false)
 
   const actor = $derived(data.characters.find((character) => character.id === actorId))
+
+  $effect(() => {
+    if (kind !== 'ACTIVATE_HATSU' || !forkEventId || !abilityId || !actorId) return
+    const controller = new AbortController()
+    actionsLoading = true
+    const query = new URLSearchParams({
+      event: forkEventId,
+      ability: abilityId,
+      actor: actorId,
+      ...(targetId ? { target: targetId } : {}),
+    })
+    fetch(`/reconstruction/v3/actions?${query}`, { signal: controller.signal })
+      .then(async (response) => {
+        const body = await response.json()
+        if (!response.ok) throw new Error(body.error)
+        hatsuActions = body.actions
+        const available = hatsuActions.find((action) => action.visibility === 'available')
+        actionId = available?.id ?? hatsuActions[0]?.id ?? ''
+      })
+      .catch((cause) => {
+        if (cause instanceof DOMException && cause.name === 'AbortError') return
+        hatsuActions = []
+        error = cause instanceof Error ? cause.message : 'Actions du Hatsu indisponibles.'
+      })
+      .finally(() => (actionsLoading = false))
+    return () => controller.abort()
+  })
 
   onMount(() => {
     const encoded = new URLSearchParams(location.search).get('scenario')
@@ -246,9 +278,20 @@
               >{/each}</select
           ></label
         >
-        <label>Action moteur<input bind:value={actionId} placeholder="activate" /></label>
+        <label
+          >Action moteur<select bind:value={actionId} disabled={actionsLoading}
+            >{#each hatsuActions as action (action.id)}<option
+                value={action.id}
+                disabled={action.visibility === 'locked' || action.visibility === 'hidden'}
+                >{action.label} · {action.visibility}</option
+              >{/each}</select
+          ></label
+        >
       {/if}
     </div>
+    {#if kind === 'ACTIVATE_HATSU'}
+      <ReconstructionV3Scene {abilityId} onTarget={(id) => (targetId = id)} />
+    {/if}
     <details>
       <summary>Ajouter une précondition causale</summary>
       <div class="grid three condition">

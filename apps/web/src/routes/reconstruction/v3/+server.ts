@@ -31,15 +31,9 @@ export const POST: RequestHandler = async ({ request, cookies, getClientAddress 
     const input = body && typeof body === 'object' ? (body as Record<string, unknown>) : {}
     const scenario = defineReconstructionScenario(parseReconstructionScenarioDraft(input.scenario))
     const spoilerLimit = readSpoilerLimit(cookies)
-    const fork = await prisma.narrativeEvent.findFirst({
-      where: {
-        id: scenario.forkEventId,
-        occursOnBlackWhale: true,
-        ...(spoilerLimit === undefined ? {} : { chapter: { number: { lte: spoilerLimit } } }),
-      },
-      select: { id: true },
-    })
-    if (!fork) return json({ error: 'Point de divergence inconnu ou masqué.' }, { status: 404 })
+    if (!(await visibleFork(scenario.forkEventId, spoilerLimit))) {
+      return json({ error: 'Point de divergence inconnu ou masqué.' }, { status: 404 })
+    }
 
     const result = await executeReconstructionScenario(
       scenario,
@@ -60,6 +54,19 @@ export const POST: RequestHandler = async ({ request, cookies, getClientAddress 
     const message = error instanceof Error ? error.message : 'Scénario invalide'
     return json({ error: message }, { status: 400 })
   }
+}
+
+async function visibleFork(eventId: string, spoilerLimit: number | undefined): Promise<boolean> {
+  return Boolean(
+    await prisma.narrativeEvent.findFirst({
+      where: {
+        id: eventId,
+        occursOnBlackWhale: true,
+        ...(spoilerLimit === undefined ? {} : { chapter: { number: { lte: spoilerLimit } } }),
+      },
+      select: { id: true },
+    }),
+  )
 }
 
 function knowledgeFromWorldState(state: WorldState): BranchKnowledgeState {

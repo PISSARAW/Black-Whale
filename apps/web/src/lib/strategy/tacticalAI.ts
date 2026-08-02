@@ -1,7 +1,7 @@
 import { generateAIOperations, resolveControlledEntity } from '@black-whale/simulation-engine'
 import type { ProposedWorldEvent, WorldEntity, WorldState } from '@black-whale/world-engine'
 import type { UnitCondition } from './conflict'
-import { chooseStrategicDestination, doctrineForFaction } from './rules'
+import { chooseStrategicDestination, type StrategyDoctrine } from './rules'
 import { scenarioMoveChance, seededScenarioRandom } from './scenario'
 import type { StrategyFaction } from './types'
 import { hatsuById } from '$lib/nen/hatsuRegistry'
@@ -31,6 +31,7 @@ export function personalityForFaction(factionId: string): AIPersonality {
 export function generateFactionAIOperations(input: {
   state: WorldState
   faction: StrategyFaction
+  doctrine: StrategyDoctrine
   memberCharacterIds: string[]
   unitConditions: Record<string, UnitCondition>
   destinationIds: string[]
@@ -84,7 +85,7 @@ export function generateFactionAIOperations(input: {
       }
     }
     if (random() >= moveChance) continue
-    const destination = chooseStrategicDestination(doctrineForFaction(input.faction.id), {
+    const destination = chooseStrategicDestination(input.doctrine, {
       currentLocationId: input.state.presences[entity.id]?.locationId,
       availableLocationIds: destinations,
       occupiedLocationIds: occupied,

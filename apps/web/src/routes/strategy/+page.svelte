@@ -10,7 +10,7 @@
   import StrategyFactionPicker from '$lib/components/strategy/StrategyFactionPicker.svelte'
   import { calculatePresencePosition } from '$lib/components/map/markerProjection'
   import { hatsuById } from '$lib/nen/hatsuRegistry'
-  import { SCENARIO_MAX_TURNS } from '$lib/strategy/scenario'
+  import { isPlayableScenarioFaction, SCENARIO_MAX_TURNS } from '$lib/strategy/scenario'
   import {
     STRATEGY_SAVE_KEY,
     decodeStrategySave,
@@ -50,6 +50,7 @@
   let errorMessage = $state<string | null>(null)
   let availableSave = $state<StrategySave | null>(null)
   let playerFaction = $derived(data.factions.find((faction) => faction.id === playerFactionId))
+  let playableFactions = $derived(data.factions.filter((faction) => isPlayableScenarioFaction(faction.id)))
   let locationById = $derived(new Map(data.locations.map((location) => [location.id, location])))
   let spentCommandPoints = $derived(planCost(pendingOrders) + diplomacyCost(pendingDiplomacy))
   let remainingCommandPoints = $derived(COMMAND_POINTS_PER_TURN - spentCommandPoints)
@@ -296,7 +297,7 @@
   {:else if !playerFactionId}
     <StrategyFactionPicker
       chapterNumber={data.cutoff?.chapterNumber}
-      factions={data.factions}
+      factions={playableFactions}
       saved={availableSave}
       onselect={selectFaction}
       onresume={resumeScenario}

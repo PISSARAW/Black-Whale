@@ -21,15 +21,15 @@ import {
   SCENARIO_MAX_TURNS,
   buildScenarioRoster,
   doctrineBriefing,
+  evaluateScenarioObjective,
   scenarioEventForTurn,
+  scenarioDoctrineForFaction,
   seededScenarioRandom,
   selectScenarioLocationIds,
 } from './scenario'
 import {
   COMMAND_POINTS_PER_TURN,
   VICTORY_POINTS_TARGET,
-  doctrineForFaction,
-  evaluateObjective,
   intelCertainty,
   planCost,
   strategicRoleForHatsu,
@@ -134,7 +134,7 @@ export function createSimulationStore() {
     intel = {}
     refreshIntel([], [])
     turnReports = [
-      `Briefing reçu · ${doctrineBriefing(doctrineForFaction(factionId))}`,
+      `Briefing reçu · ${doctrineBriefing(scenarioDoctrineForFaction(factionId))}`,
       `Opposition identifiée : ${
         roster
           .filter((faction) => faction.id !== factionId)
@@ -201,11 +201,7 @@ export function createSimulationStore() {
     const confirmedHostiles = Object.values(intel).filter(
       (sighting) => sighting.certainty === 'CONFIRMED' && !friendlyIds.has(sighting.entityId),
     ).length
-    return evaluateObjective(
-      doctrineForFaction(selectedFactionId),
-      friendlyLocations,
-      confirmedHostiles,
-    )
+    return evaluateScenarioObjective(selectedFactionId, friendlyLocations, confirmedHostiles)
   }
 
   function endTurn(
@@ -373,6 +369,7 @@ export function createSimulationStore() {
       const aiPlan = generateFactionAIOperations({
         state: currentState,
         faction,
+        doctrine: scenarioDoctrineForFaction(faction.id),
         memberCharacterIds: members,
         unitConditions,
         destinationIds,

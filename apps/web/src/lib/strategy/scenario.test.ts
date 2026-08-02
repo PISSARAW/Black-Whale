@@ -9,10 +9,12 @@ import {
 
 describe('strategy scenario', () => {
   it('builds a closed three-faction roster around the player', () => {
-    const factions = ['a', 'b', 'c', 'd'].map((id) => ({ id }))
-    const roster = buildScenarioRoster(factions, 'c')
+    const factions = ['prince-benjamin', 'prince-camilla', 'prince-woble', 'irrelevant'].map(
+      (id) => ({ id }),
+    )
+    const roster = buildScenarioRoster(factions, 'prince-camilla')
     expect(roster).toHaveLength(3)
-    expect(roster[0].id).toBe('c')
+    expect(roster[0].id).toBe('prince-camilla')
   })
 
   it('keeps occupied locations inside the scenario', () => {

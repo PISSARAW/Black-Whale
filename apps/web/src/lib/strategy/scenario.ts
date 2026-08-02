@@ -1,8 +1,11 @@
-import { doctrineForFaction, type StrategyDoctrine } from './rules'
+import type { StrategyDoctrine, StrategyObjective } from './rules'
+import { requireStrategyScenario } from './scenario/registry'
+import type { StrategyScenarioFaction } from './scenario/types'
 
-export const SCENARIO_MAX_TURNS = 8
-export const SCENARIO_FACTION_COUNT = 3
-export const SCENARIO_LOCATION_COUNT = 12
+export const ACTIVE_SCENARIO = requireStrategyScenario()
+export const SCENARIO_MAX_TURNS = ACTIVE_SCENARIO.maxTurns
+export const SCENARIO_FACTION_COUNT = ACTIVE_SCENARIO.playableFactions.length
+export const SCENARIO_LOCATION_COUNT = ACTIVE_SCENARIO.locationIds.length
 
 export type ScenarioEventKind = 'ALERT' | 'BLACKOUT' | 'LOCKDOWN'
 
@@ -17,36 +20,55 @@ export interface ScenarioFactionCandidate {
   id: string
 }
 
-export const SCENARIO_EVENTS: readonly ScenarioEvent[] = [
-  {
-    turn: 2,
-    kind: 'ALERT',
-    title: 'Alerte de sécurité',
-    description: 'Les factions adverses accélèrent leurs opérations.',
-  },
-  {
-    turn: 4,
-    kind: 'BLACKOUT',
-    title: 'Coupure des communications',
-    description: 'Les enquêtes à distance ne révèlent aucune nouvelle position ce tour.',
-  },
-  {
-    turn: 6,
-    kind: 'LOCKDOWN',
-    title: 'Confinement des ponts',
-    description: 'Les déplacements adverses deviennent plus rares.',
-  },
-]
+export const SCENARIO_EVENTS: readonly ScenarioEvent[] = ACTIVE_SCENARIO.events
 
 export function scenarioEventForTurn(turn: number): ScenarioEvent | null {
   return SCENARIO_EVENTS.find((event) => event.turn === turn) ?? null
 }
 
 export function scenarioMoveChance(turn: number): number {
-  const event = scenarioEventForTurn(turn)
-  if (event?.kind === 'ALERT') return 0.9
-  if (event?.kind === 'LOCKDOWN') return 0.35
-  return 0.72
+  const event = ACTIVE_SCENARIO.events.find((candidate) => candidate.turn === turn)
+  return Math.min(1, 0.72 * (event?.aiMoveMultiplier ?? 1))
+}
+
+export function scenarioFactionConfig(factionId: string): StrategyScenarioFaction | null {
+  return ACTIVE_SCENARIO.playableFactions.find((entry) => entry.factionId === factionId) ?? null
+}
+
+export function isPlayableScenarioFaction(factionId: string): boolean {
+  return Boolean(scenarioFactionConfig(factionId))
+}
+
+export function scenarioDoctrineForFaction(factionId: string): StrategyDoctrine {
+  const config = scenarioFactionConfig(factionId)
+  if (!config) throw new Error(`Faction absente du scénario : ${factionId}`)
+  return config.doctrine
+}
+
+export function evaluateScenarioObjective(
+  factionId: string,
+  characterLocations: readonly (string | undefined)[],
+  confirmedHostiles: number,
+): StrategyObjective {
+  const config = scenarioFactionConfig(factionId)
+  if (!config) throw new Error(`Faction absente du scénario : ${factionId}`)
+  const objective = config.publicObjective
+  const occupied = characterLocations.filter((id): id is string => Boolean(id))
+  let current = new Set(occupied).size
+  if (objective.kind === 'CONFIRM_HOSTILES') current = confirmedHostiles
+  if (objective.kind === 'FORM_BASTION') {
+    const groups = new Map<string, number>()
+    for (const id of occupied) groups.set(id, (groups.get(id) ?? 0) + 1)
+    current = Math.max(0, ...groups.values())
+  }
+  return {
+    doctrine: config.doctrine,
+    title: objective.title,
+    description: objective.description,
+    current,
+    target: objective.target,
+    complete: current >= objective.target,
+  }
 }
 
 export function seededScenarioRandom(seed: string): () => number {
@@ -64,22 +86,16 @@ export function seededScenarioRandom(seed: string): () => number {
   }
 }
 
-/** Pick two opponents while favouring doctrines unlike the player's. */
+/** Build the closed scenario roster while keeping the chosen faction first. */
 export function buildScenarioRoster<T extends ScenarioFactionCandidate>(
   factions: readonly T[],
   playerFactionId: string,
 ): T[] {
   const player = factions.find((faction) => faction.id === playerFactionId)
-  if (!player) return []
-  const playerDoctrine = doctrineForFaction(playerFactionId)
-  const opponents = factions
-    .filter((faction) => faction.id !== playerFactionId)
-    .sort((left, right) => {
-      const leftDifferent = doctrineForFaction(left.id) !== playerDoctrine ? 1 : 0
-      const rightDifferent = doctrineForFaction(right.id) !== playerDoctrine ? 1 : 0
-      return rightDifferent - leftDifferent || left.id.localeCompare(right.id)
-    })
-    .slice(0, SCENARIO_FACTION_COUNT - 1)
+  if (!player || !isPlayableScenarioFaction(playerFactionId)) return []
+  const opponents = ACTIVE_SCENARIO.playableFactions
+    .filter((entry) => entry.factionId !== playerFactionId)
+    .flatMap((entry) => factions.filter((faction) => faction.id === entry.factionId))
   return [player, ...opponents]
 }
 
@@ -96,8 +112,18 @@ export function selectScenarioLocationIds(
   occupiedLocationIds: readonly string[],
 ): string[] {
   const occupied = [...new Set(occupiedLocationIds)].filter((id) => allLocationIds.includes(id))
-  const remaining = [...new Set(allLocationIds)]
+  const configured = ACTIVE_SCENARIO.locationIds.filter(
+    (id) => allLocationIds.includes(id) && !occupied.includes(id),
+  )
+  const remaining = [...new Set([...configured, ...allLocationIds])]
     .filter((id) => !occupied.includes(id))
-    .sort((left, right) => left.localeCompare(right))
+    .sort((left, right) => {
+      const leftIndex = configured.indexOf(left)
+      const rightIndex = configured.indexOf(right)
+      if (leftIndex >= 0 && rightIndex >= 0) return leftIndex - rightIndex
+      if (leftIndex >= 0) return -1
+      if (rightIndex >= 0) return 1
+      return left.localeCompare(right)
+    })
   return [...occupied, ...remaining].slice(0, Math.max(SCENARIO_LOCATION_COUNT, occupied.length))
 }

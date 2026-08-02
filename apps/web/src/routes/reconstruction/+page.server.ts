@@ -1,6 +1,7 @@
 import { prisma } from '$lib/server/db'
 import { readSpoilerLimit } from '$lib/server/spoiler'
 import { resolveReconstructionSources } from '$lib/reconstruction/sourceView'
+import { buildReconstructionClaimIndex } from '$lib/reconstruction/claimIndex'
 import type { PageServerLoad } from './$types'
 
 export const load: PageServerLoad = async ({ cookies }) => {
@@ -111,6 +112,7 @@ export const load: PageServerLoad = async ({ cookies }) => {
         })
       : []
     const sources = resolveReconstructionSources(referencedSourceIds, sourceRecords)
+    const claimIndex = buildReconstructionClaimIndex(presences, worldEvents)
 
     const locationSlugs = Object.fromEntries(
       locations.map((location) => [location.id, location.slug]),
@@ -171,6 +173,7 @@ export const load: PageServerLoad = async ({ cookies }) => {
       locationSlugs,
       locations,
       sources,
+      claimIndex,
       spoilerLimit: maxChapter,
     }
   } catch (err: unknown) {
@@ -185,6 +188,7 @@ export const load: PageServerLoad = async ({ cookies }) => {
       locationSlugs: {},
       locations: [],
       sources: [],
+      claimIndex: { claims: [], byEvent: {} },
       spoilerLimit: maxChapter,
     }
   }

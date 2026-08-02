@@ -1,5 +1,14 @@
 export type ReconstructionSubjectType =
-  'BODY' | 'CONSCIOUSNESS' | 'APPEARANCE' | 'CHARACTER' | 'LOCATION' | 'EVENT'
+  | 'BODY'
+  | 'CONSCIOUSNESS'
+  | 'APPEARANCE'
+  | 'CHARACTER'
+  | 'OBJECT'
+  | 'NEN_ENTITY'
+  | 'AURA_ENTITY'
+  | 'COHORT'
+  | 'LOCATION'
+  | 'EVENT'
 
 export type ReconstructionPredicate =
   'location' | 'presence' | 'body-state' | 'consciousness-occupancy' | 'appearance' | 'identity'

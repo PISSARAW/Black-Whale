@@ -15,16 +15,11 @@
    */
   import { onDestroy, onMount, untrack } from 'svelte'
   import { page } from '$app/stores'
-  import TourComfortPanel from '$lib/components/tour/TourComfortPanel.svelte'
-  import TourControlsPanel from '$lib/components/tour/TourControlsPanel.svelte'
-  import TourHatsuHud from '$lib/components/tour/TourHatsuHud.svelte'
   import TourPageIntro from '$lib/components/tour/TourPageIntro.svelte'
   import TourPageDialogs from '$lib/components/tour/TourPageDialogs.svelte'
-  import TourProvenancePanel from '$lib/components/tour/TourProvenancePanel.svelte'
   import TourScene from '$lib/components/tour/TourScene.svelte'
   import TourSceneOverlay from '$lib/components/tour/TourSceneOverlay.svelte'
-  import TourSidebarNavigation from '$lib/components/tour/TourSidebarNavigation.svelte'
-  import TourTargetIndex from '$lib/components/tour/TourTargetIndex.svelte'
+  import TourPageSidebar from '$lib/components/tour/TourPageSidebar.svelte'
   import { activeHatsu, enterForcedZetsu, parallelFutureVisible } from '$lib/nen/hatsuState'
   import { get } from 'svelte/store'
   import { HATSU_PROFILES, type HatsuInteractionKind } from '$lib/nen/hatsuRegistry'
@@ -869,93 +864,86 @@
       </button>
     {/if}
 
-    <!-- Deck selector, plan and index -->
-    <aside
-      class="flex flex-col gap-4 {chrome.immersive
-        ? `min-h-0 overflow-y-auto border-l border-[#333] p-3 ${chrome.panelOpen ? '' : 'hidden'}`
-        : ''}"
-    >
-      <TourSidebarNavigation
-        immersive={chrome.immersive}
-        reveal={chrome.reveal}
-        copied={chrome.copied}
-        decks={ship.decks.map((tier) => ({ id: tier.id, label: nameOf(tier), active: tier.id === deck?.id }))}
-        {plan}
-        {position}
-        {heading}
-        {crossings}
-        currentSpaceId={currentSpace?.id ?? null}
-        planLabel={$t.tour.minimap(nameOf(plan.tier))}
-        nameOf={(space) => nameOf(named(space))}
-        {crossingLabel}
-        onSelectPlan={selectOnPlan}
-        selectLabel={planVerb}
-        aiming={Boolean(technique)}
-        onHide={() => (chrome.panelOpen = false)}
-        onFullscreen={() => chrome.toggleFullscreen()}
-        onSelectDeck={selectTier}
-        onOpenPlan={() => (chrome.planOpen = true)}
-        onOpenFinder={() => (chrome.findOpen = true)}
-        onToggleReveal={() => (chrome.reveal = !chrome.reveal)}
-        onCopy={copyViewpoint}
-      />
-
-      {#if $activeHatsu}
-        <TourHatsuHud
-          {ship}
-          profile={$activeHatsu}
-          castable={Boolean(technique)}
-          {world}
-          {report}
-          {aimedAt}
-          {aimedSolidAt}
-          at={position}
-          standingIn={currentSpace?.id ?? null}
-          {touch}
-          {nameOf}
-          {sourceOf}
-          onRelease={release}
-          onCycleDouble={cycleDouble}
-          onCycleOwl={cycleOwl}
-          onCycleEye={cycleEye}
-          onCastPage={castPage}
-          onCastHand={castHand}
-          onTurnTheBook={turnTheRibbon}
-        />
-      {/if}
-
-      <TourTargetIndex
-        mode={targetMode}
-        solidGroups={solidTargets}
-        spaceGroups={targets}
-        deckSpaces={sortedSpaces}
-        currentSpaceId={currentSpace?.id ?? null}
-        techniqueColor={technique?.color ?? null}
-        nameOf={targetName}
-        roomName={(solid) => targetName(ship.spaces.get(solid.spaceId) ?? solid)}
-        {provenanceLabel}
-        {provenanceClass}
-        isSolidActive={(solidId) => Boolean(world.solids[solidId])}
-        onSolid={(spaceId, solidId) => castOn(spaceId, solidId)}
-        onSpace={(space) => (technique ? castOn(space.id) : goToSpace(space))}
-      />
-
-      <TourControlsPanel
-        hasTechnique={Boolean(technique)}
-        secondHand={hands?.second ?? null}
-        {twoHanded}
-        {selfCastable}
-        {touch}
-      />
-
-      <TourComfortPanel calm={chrome.calm} />
-      <TourProvenancePanel
-        reveal={chrome.reveal}
-        {blindWalls}
-        {handPlacedDoors}
-        sourcesHref={$link('/tour/sources')}
-      />
-    </aside>
+    <TourPageSidebar
+      immersive={chrome.immersive}
+      panelOpen={chrome.panelOpen}
+      navigation={{
+        immersive: chrome.immersive,
+        reveal: chrome.reveal,
+        copied: chrome.copied,
+        decks: ship.decks.map((tier) => ({ id: tier.id, label: nameOf(tier), active: tier.id === deck?.id })),
+        plan,
+        position,
+        heading,
+        crossings,
+        currentSpaceId: currentSpace?.id ?? null,
+        planLabel: $t.tour.minimap(nameOf(plan.tier)),
+        nameOf: (space) => nameOf(named(space)),
+        crossingLabel,
+        onSelectPlan: selectOnPlan,
+        selectLabel: planVerb,
+        aiming: Boolean(technique),
+        onHide: () => (chrome.panelOpen = false),
+        onFullscreen: () => chrome.toggleFullscreen(),
+        onSelectDeck: selectTier,
+        onOpenPlan: () => (chrome.planOpen = true),
+        onOpenFinder: () => (chrome.findOpen = true),
+        onToggleReveal: () => (chrome.reveal = !chrome.reveal),
+        onCopy: copyViewpoint,
+      }}
+      hatsu={$activeHatsu
+        ? {
+            ship,
+            profile: $activeHatsu,
+            castable: Boolean(technique),
+            world,
+            report,
+            aimedAt,
+            aimedSolidAt,
+            at: position,
+            standingIn: currentSpace?.id ?? null,
+            touch,
+            nameOf,
+            sourceOf,
+            onRelease: release,
+            onCycleDouble: cycleDouble,
+            onCycleOwl: cycleOwl,
+            onCycleEye: cycleEye,
+            onCastPage: castPage,
+            onCastHand: castHand,
+            onTurnTheBook: turnTheRibbon,
+        }
+        : null}
+      targets={{
+        mode: targetMode,
+        solidGroups: solidTargets,
+        spaceGroups: targets,
+        deckSpaces: sortedSpaces,
+        currentSpaceId: currentSpace?.id ?? null,
+        techniqueColor: technique?.color ?? null,
+        nameOf: targetName,
+        roomName: (solid) => targetName(ship.spaces.get(solid.spaceId) ?? solid),
+        provenanceLabel,
+        provenanceClass,
+        isSolidActive: (solidId) => Boolean(world.solids[solidId]),
+        onSolid: (spaceId, solidId) => castOn(spaceId, solidId),
+        onSpace: (space) => (technique ? castOn(space.id) : goToSpace(space)),
+      }}
+      controls={{
+        hasTechnique: Boolean(technique),
+        secondHand: hands?.second ?? null,
+        twoHanded,
+        selfCastable,
+        touch,
+      }}
+      calm={chrome.calm}
+      provenance={{
+        reveal: chrome.reveal,
+        blindWalls,
+        handPlacedDoors,
+        sourcesHref: $link('/tour/sources'),
+      }}
+    />
   </div>
 </div>
 

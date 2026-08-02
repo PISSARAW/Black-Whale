@@ -1362,6 +1362,23 @@ export const fr: Messages = {
       'Huit pièces, dix minutes, et cent points d’aura qui doivent couvrir savoir où il est, préparer le terrain, et tenir debout quand il vous trouve. Contre un chasseur intact, vous perdez. Le jeu, c’est ce que vous faites avant.',
     enter: 'Cliquez pour marcher',
     engaged: 'Tab libère le pointeur',
+    briefing: {
+      eyebrow: 'PROTOTYPE DE TRAQUE',
+      title: 'Le chasseur est déjà là.',
+      premise:
+        'Traversez l’appartement et rejoignez la pièce indiquée. Écoutez-le, trompez-le et choisissez où aura lieu le contact.',
+      rule: 'Votre aura sert à savoir, à préparer et à survivre. Contre un chasseur intact, vous perdez.',
+      objective: 'Atteignez la pièce cible — ou préparez une rencontre qu’il ne pourra pas gagner.',
+      begin: 'Entrer dans l’appartement',
+    },
+    actions: {
+      hint: 'Actions de traque',
+      sweep: 'Sentir',
+      zetsu: 'Se taire',
+      ten: 'Reprendre Ten',
+      lay: 'Préparer',
+      take: 'Récupérer',
+    },
     controls: {
       walk: 'ZQSD — marcher',
       look: 'Souris — regarder',

@@ -16,7 +16,13 @@
   interface Props {
     pool: AuraPool
     feedback: HuntFeedback
-    reading: { nen: NenState; roomName: string; targetName: string; entraves: number; heading: number }
+    reading: {
+      nen: NenState
+      roomName: string
+      targetName: string
+      entraves: number
+      heading: number
+    }
     labels: {
       hud: {
         room: string
@@ -30,7 +36,6 @@
         entraves: string
       }
       feel: { swept: string; footsteps: string; muffled: string; sprung: string; found: string }
-      controls: Record<string, string>
     }
   }
 
@@ -49,7 +54,9 @@
   let sweepBearing = $derived(degreesTo(feedback.sweptFrom))
 </script>
 
-<div class="pointer-events-none absolute inset-x-0 bottom-0 p-4 sm:inset-auto sm:bottom-6 sm:left-6 sm:w-72">
+<div
+  class="pointer-events-none absolute inset-x-0 bottom-0 p-4 sm:inset-auto sm:bottom-6 sm:left-6 sm:w-72"
+>
   <div class="rounded-lg bg-black/65 p-4 text-sm text-white/85 backdrop-blur">
     <p class="text-xs uppercase tracking-widest text-white/45">
       {reading.roomName ? labels.hud.room : labels.hud.nowhere}
@@ -65,7 +72,10 @@
       <dd class="truncate text-right text-white/85">{reading.targetName}</dd>
     </dl>
 
-    <p class="mt-2 text-xs uppercase tracking-widest" class:text-slate-400={reading.nen === 'zetsu'}>
+    <p
+      class="mt-2 text-xs uppercase tracking-widest"
+      class:text-slate-400={reading.nen === 'zetsu'}
+    >
       {reading.nen === 'zetsu' ? labels.hud.zetsu : labels.hud.ten}
     </p>
 
@@ -92,11 +102,5 @@
         <p class="text-white/50">{labels.feel.found}</p>
       {/if}
     </div>
-
-    <ul class="mt-3 space-y-0.5 border-t border-white/10 pt-2 text-[0.65rem] text-white/40">
-      {#each Object.values(labels.controls) as control (control)}
-        <li>{control}</li>
-      {/each}
-    </ul>
   </div>
 </div>

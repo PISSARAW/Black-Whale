@@ -1503,6 +1503,23 @@ export const en = {
       'Eight rooms, ten minutes, and one hundred points of aura that have to cover knowing where he is, preparing the ground, and staying up when he finds you. Against an intact hunter you lose. The game is what you do about that beforehand.',
     enter: 'Click to walk',
     engaged: 'Tab releases the pointer',
+    briefing: {
+      eyebrow: 'HUNT PROTOTYPE',
+      title: 'The hunter is already here.',
+      premise:
+        'Cross the apartment and reach the marked room. Listen to him, mislead him, and choose where contact happens.',
+      rule: 'Your aura pays for knowing, preparing, and surviving. Against an intact hunter, you lose.',
+      objective: 'Reach the target room — or prepare an encounter he cannot win.',
+      begin: 'Enter the apartment',
+    },
+    actions: {
+      hint: 'Hunt actions',
+      sweep: 'Sense',
+      zetsu: 'Go quiet',
+      ten: 'Raise Ten',
+      lay: 'Prepare',
+      take: 'Recover',
+    },
     controls: {
       walk: 'WASD — walk',
       look: 'Mouse — look',

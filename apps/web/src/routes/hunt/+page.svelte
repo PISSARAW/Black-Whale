@@ -39,6 +39,8 @@
   import HuntHud from '$lib/components/hunt/HuntHud.svelte'
   import DuelPanel from '$lib/components/hunt/DuelPanel.svelte'
   import Debrief from '$lib/components/hunt/Debrief.svelte'
+  import HuntActions from '$lib/components/hunt/HuntActions.svelte'
+  import HuntBriefing from '$lib/components/hunt/HuntBriefing.svelte'
 
   const ship = theShip()
   const plan = ship.plans.get(buildArena().tierId)!
@@ -95,6 +97,7 @@
   // Read once, on mount: this drives whether the veil moves, and a visitor who
   // has asked for less movement should not have it re-decided mid-game.
   let calm = $state(false)
+  let briefed = $state(false)
 
   /**
    * What the principles currently look like. Derived from the same state the
@@ -129,6 +132,16 @@
     game = huntReducer(game, action)
   }
 
+  let canSweep = $derived(game.player.nen === 'ten' && game.ledger.pool.available >= 15)
+  let canLay = $derived(
+    game.player.spaceId !== null && game.ledger.pool.available >= 25 && game.player.nen === 'ten',
+  )
+  let canTake = $derived(
+    game.ledger.placements.some(
+      (placement) => placement.state === 'set' && placement.spaceId === game.player.spaceId,
+    ),
+  )
+
   // ── Input ────────────────────────────────────────────────────────────────
   //
   // Every key here is one `TourScene` does not already spend on walking: it owns
@@ -143,7 +156,7 @@
   }
 
   function onKeyDown(event: KeyboardEvent) {
-    if (finished || event.repeat || event.metaKey || event.ctrlKey) return
+    if (!briefed || finished || event.repeat || event.metaKey || event.ctrlKey) return
     const handled = game.duel ? duelKey(event.code) : huntKey(event.code)
     if (handled) event.preventDefault()
   }
@@ -227,6 +240,11 @@
     // hunter does not get to cross the apartment while nobody was looking.
     owed = Math.min(owed + elapsed, 0.25)
 
+    if (!briefed) {
+      owed = 0
+      return
+    }
+
     reportWalk()
     while (owed >= HUNT_DT && !huntIsOver(game.outcome)) {
       owed -= HUNT_DT
@@ -243,7 +261,12 @@
     if (moved === 0 && game.player.atRest && heading === game.player.heading) return
     send({
       type: 'WALKED',
-      player: { position: position, heading, spaceId: currentSpace?.id ?? null, atRest: moved === 0 },
+      player: {
+        position: position,
+        heading,
+        spaceId: currentSpace?.id ?? null,
+        atRest: moved === 0,
+      },
     })
   }
 
@@ -264,6 +287,10 @@
     position = game.player.position
     owed = 0
     last = 0
+  }
+
+  function begin() {
+    briefed = true
   }
 </script>
 
@@ -307,7 +334,21 @@
         entraves: liveOf(game.ledger.placements).length,
         heading: game.player.heading,
       }}
-      labels={{ hud: $t.hunt.hud, feel: $t.hunt.feel, controls: $t.hunt.controls }}
+      labels={{ hud: $t.hunt.hud, feel: $t.hunt.feel }}
+    />
+  {/if}
+
+  {#if briefed && !inDuel && !finished}
+    <HuntActions
+      nen={game.player.nen}
+      {canSweep}
+      {canLay}
+      {canTake}
+      labels={$t.hunt.actions}
+      onSweep={() => send({ type: 'SWEEP' })}
+      onToggleNen={() => send({ type: 'ZETSU' })}
+      onLay={() => send({ type: 'LAY' })}
+      onTake={() => send({ type: 'TAKE' })}
     />
   {/if}
 
@@ -337,9 +378,9 @@
           roomName,
         }}
         labels={$t.hunt.debrief}
-        outcomeLabel={$t.hunt.outcome[game.outcome === 'playing' || game.outcome === 'contact'
-          ? 'timeUp'
-          : game.outcome]}
+        outcomeLabel={$t.hunt.outcome[
+          game.outcome === 'playing' || game.outcome === 'contact' ? 'timeUp' : game.outcome
+        ]}
       />
       <div class="pb-16 text-center">
         <button
@@ -350,5 +391,9 @@
         </button>
       </div>
     </div>
+  {/if}
+
+  {#if !briefed}
+    <HuntBriefing labels={$t.hunt.briefing} onBegin={begin} />
   {/if}
 </div>

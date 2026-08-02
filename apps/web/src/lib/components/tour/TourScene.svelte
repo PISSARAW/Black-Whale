@@ -4396,6 +4396,23 @@
   let take = $state<(() => void) | null>(null)
   let castNow = $state<((hand?: 'first' | 'second' | 'third') => void) | null>(null)
   let hatsuNow = $state<((hand: 'first' | 'second' | 'third') => void) | null>(null)
+
+  function chooseHatsuVariant(index: number) {
+    const chosen = Math.max(0, Math.min(index, hatsuVariants.length - 1))
+    hatsuVariantIndex = chosen
+    lastHatsuVariant = chosen
+    hatsuWheelOpen = false
+    hatsuNow?.(chosen === 2 ? 'third' : chosen === 1 ? 'second' : 'first')
+  }
+
+  function openOrCastHatsu() {
+    if (hatsuVariants.length > 1) {
+      hatsuVariantIndex = lastHatsuVariant
+      hatsuWheelOpen = true
+      return
+    }
+    chooseHatsuVariant(0)
+  }
   /** The same, for the one comfort setting the camera holds rather than reads. */
   let relens = $state<((settings: Comfort) => void) | null>(null)
 
@@ -4473,7 +4490,7 @@
         {hatsuAllowedInZetsu}
         onAction={useNen}
         onInteract={() => interactWithNen?.()}
-        onHatsu={() => hatsuNow?.(lastHatsuVariant === 2 ? 'third' : lastHatsuVariant === 1 ? 'second' : 'first')}
+        onHatsu={openOrCastHatsu}
       />
     {/if}
     {#if hatsuWheelOpen}
@@ -4484,9 +4501,7 @@
             role="menuitem"
             class:active={hatsuVariantIndex === index}
             class="min-w-28 rounded border border-white/20 px-3 py-2 text-xs text-white/75 transition"
-            onclick={() => {
-              hatsuVariantIndex = index
-            }}
+            onclick={() => chooseHatsuVariant(index)}
           ><kbd>{index + 1}</kbd> · {variant}</button>
         {/each}
       </div>

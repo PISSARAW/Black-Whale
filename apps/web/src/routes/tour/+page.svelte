@@ -17,6 +17,7 @@
   import { page } from '$app/stores'
   import Seo from '$lib/components/Seo.svelte'
   import TourFinder from '$lib/components/tour/TourFinder.svelte'
+  import TourComfortPanel from '$lib/components/tour/TourComfortPanel.svelte'
   import TourHatsuHud from '$lib/components/tour/TourHatsuHud.svelte'
   import TourMinimap from '$lib/components/tour/TourMinimap.svelte'
   import TourPageHeader from '$lib/components/tour/TourPageHeader.svelte'
@@ -42,15 +43,8 @@
   import { localizeHatsu } from '$lib/i18n/hatsu'
   import { crossingsOn, deckOf, entrySpace, theShip, type Crossing } from '$lib/tour/blueprint'
   import {
-    FOV_RANGE,
-    NIGHT_LIGHT_RANGE,
-    SENSITIVITY_RANGE,
-    SNAP_ANGLE_RANGE,
-    comfort,
     loadComfort,
     prefersReducedMotion,
-    resetComfort,
-    setComfort,
   } from '$lib/tour/comfort'
   import { flashFor, type TourFlash } from '$lib/tour/apparitions'
   import { describeSpace } from '$lib/tour/describe'
@@ -1657,124 +1651,7 @@
         </dl>
       </section>
 
-      <!-- How the walk is driven. A first-person camera is not a neutral thing to
-           put in front of someone, and none of these has a right answer, so all of
-           them are the visitor's — kept in localStorage, because being made to dial
-           them in again on every visit is the same as not having them. -->
-      <section class="rounded border border-[#333] p-3">
-        <p class="mb-2 text-[10px] uppercase tracking-widest text-[#FFD700]/70">
-          {$t.tour.comfort.title}
-        </p>
-        {#if calm}
-          <p class="mb-2 text-xs leading-snug text-[#FFFFF0]/50">{$t.tour.comfort.calm}</p>
-        {/if}
-
-        <div class="space-y-2.5 text-xs text-[#FFFFF0]/70">
-          <label class="block">
-            <span class="flex items-baseline justify-between">
-              <span>{$t.tour.comfort.fov}</span>
-              <span class="text-[#FFD700]/80">{$t.tour.comfort.degrees($comfort.fov)}</span>
-            </span>
-            <input
-              type="range"
-              min={FOV_RANGE[0]}
-              max={FOV_RANGE[1]}
-              step="1"
-              value={$comfort.fov}
-              oninput={(event) => setComfort({ fov: Number(event.currentTarget.value) })}
-              class="mt-1 w-full accent-[#FFD700]"
-            />
-          </label>
-
-          <label class="block">
-            <span class="flex items-baseline justify-between">
-              <span>{$t.tour.comfort.sensitivity}</span>
-              <span class="text-[#FFD700]/80">{$t.tour.comfort.times($comfort.sensitivity)}</span>
-            </span>
-            <input
-              type="range"
-              min={SENSITIVITY_RANGE[0]}
-              max={SENSITIVITY_RANGE[1]}
-              step="0.05"
-              value={$comfort.sensitivity}
-              oninput={(event) => setComfort({ sensitivity: Number(event.currentTarget.value) })}
-              class="mt-1 w-full accent-[#FFD700]"
-            />
-          </label>
-
-          <!-- The one light aboard that is not the ship's: see `nightLight` in
-               `$lib/tour/comfort`. Off is a real position on this slider, and the
-               label says what off means rather than reading zero. -->
-          <label class="block">
-            <span class="flex items-baseline justify-between">
-              <span>{$t.tour.comfort.nightLight}</span>
-              <span class="text-[#FFD700]/80">
-                {$comfort.nightLight > 0
-                  ? $t.tour.comfort.metres($comfort.nightLight)
-                  : $t.tour.comfort.nightLightOff}
-              </span>
-            </span>
-            <input
-              type="range"
-              min={NIGHT_LIGHT_RANGE[0]}
-              max={NIGHT_LIGHT_RANGE[1]}
-              step="1"
-              value={$comfort.nightLight}
-              oninput={(event) => setComfort({ nightLight: Number(event.currentTarget.value) })}
-              class="mt-1 w-full accent-[#FFD700]"
-            />
-          </label>
-
-          <label class="flex items-center gap-2">
-            <input
-              type="checkbox"
-              checked={$comfort.snapTurn}
-              onchange={(event) => setComfort({ snapTurn: event.currentTarget.checked })}
-              class="accent-[#FFD700]"
-            />
-            <span>{$t.tour.comfort.snapTurn}</span>
-          </label>
-
-          {#if $comfort.snapTurn}
-            <label class="block">
-              <span class="flex items-baseline justify-between">
-                <span>{$t.tour.comfort.snapAngle}</span>
-                <span class="text-[#FFD700]/80">
-                  {$t.tour.comfort.degrees($comfort.snapAngle)}
-                </span>
-              </span>
-              <input
-                type="range"
-                min={SNAP_ANGLE_RANGE[0]}
-                max={SNAP_ANGLE_RANGE[1]}
-                step="5"
-                value={$comfort.snapAngle}
-                oninput={(event) => setComfort({ snapAngle: Number(event.currentTarget.value) })}
-                class="mt-1 w-full accent-[#FFD700]"
-              />
-            </label>
-          {/if}
-
-          <label class="flex items-center gap-2">
-            <input
-              type="checkbox"
-              checked={$comfort.jumpOnly}
-              onchange={(event) => setComfort({ jumpOnly: event.currentTarget.checked })}
-              class="accent-[#FFD700]"
-            />
-            <span>{$t.tour.comfort.jumpOnly}</span>
-          </label>
-
-          <button
-            type="button"
-            onclick={resetComfort}
-            class="rounded border border-[#333] px-2 py-1 text-[11px] text-[#FFFFF0]/60 transition-colors hover:border-[#FFD700]/50 hover:text-[#FFFFF0]"
-          >
-            {$t.tour.comfort.reset}
-          </button>
-        </div>
-      </section>
-
+      <TourComfortPanel {calm} />
       <section class="rounded border border-[#333] p-3">
         <p class="mb-2 text-[10px] uppercase tracking-widest text-[#FFD700]/70">
           {$t.tour.provenance.title}

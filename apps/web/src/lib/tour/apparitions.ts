@@ -578,6 +578,8 @@ function room(ship: Ship, space: Space) {
 export interface Footing {
   at: Vec2
   tierId: string
+  /** Current room, when the renderer knows it and may lazily materialize occupants. */
+  spaceId?: string | null
 }
 
 /** The state of the walk that an apparition may depend on. */
@@ -896,7 +898,13 @@ export function apparitionsOn(ship: Ship, world: TourWorld, walk: Walk = {}): Ap
 
   // Silent Majority, once in each room covered by the curse. The shared human
   // builder supplies its fixed mask, ritual robe and black bob.
-  for (const spaceId of world.snakes?.rooms ?? []) {
+  const silentRooms = world.snakes?.rooms ?? []
+  const renderedSilentRooms = visitor
+    ? visitor.spaceId
+      ? silentRooms.filter((spaceId) => spaceId === visitor.spaceId)
+      : []
+    : silentRooms
+  for (const spaceId of renderedSilentRooms) {
     const space = spaceOf(spaceId)
     const measured = space ? room(ship, space) : null
     if (!space || !measured) continue

@@ -124,7 +124,7 @@ interface MorenaBuild extends CostumeBuild {
 
 /** Morena's manga identifiers layered over the shared articulated anatomy. */
 export function addMorenaDetails(build: MorenaBuild): void {
-  const { THREE, geometry, outlined, figure, head, cloth, ink } = build
+  const { THREE, geometry, outlined, figure, head, cloth, ink, accent } = build
   const gown = outlined({
     THREE,
     geometry: geometry(THREE, 'morena:gown', () =>
@@ -151,6 +151,88 @@ export function addMorenaDetails(build: MorenaBuild): void {
   neckline.position.set(0, 1.39, 0.18)
   neckline.rotation.z = 0.35
   figure.add(neckline)
+
+  // Her hair is a major part of the silhouette: a broad fall to the waist,
+  // plus the two long locks that curl in over her chest in the manga panels.
+  const hairBack = outlined({
+    THREE,
+    geometry: geometry(THREE, 'morena:hair-back', () =>
+      new THREE.CylinderGeometry(0.24, 0.3, 1.12, 10),
+    ),
+    material: accent,
+    ink,
+  })
+  hairBack.position.set(0, 1.02, -0.16)
+  hairBack.scale.z = 0.55
+  figure.add(hairBack)
+  for (const side of [-1, 1]) {
+    const lock = outlined({
+      THREE,
+      geometry: geometry(THREE, 'morena:hair-lock', () =>
+        new THREE.CapsuleGeometry(0.075, 0.64, 4, 8),
+      ),
+      material: accent,
+      ink,
+      scale: 1.025,
+    })
+    lock.position.set(side * 0.2, 1.17, 0.13)
+    lock.rotation.z = side * 0.1
+    figure.add(lock)
+    const curl = new THREE.Mesh(
+      geometry(THREE, 'morena:hair-curl', () => new THREE.TorusGeometry(0.105, 0.045, 5, 12, 3.8)),
+      accent,
+    )
+    curl.position.set(side * 0.16, 0.83, 0.14)
+    curl.rotation.z = side < 0 ? -0.5 : Math.PI + 0.5
+    figure.add(curl)
+  }
+
+  // Dedicated manga face: long heavy lids, visible pupils, fine brows and
+  // lashes. The common figure's simpler marks are hidden for Morena.
+  for (const side of [-1, 1]) {
+    const eye = new THREE.Mesh(
+      geometry(THREE, 'morena:eye', () => new THREE.CircleGeometry(0.5, 12)),
+      ink,
+    )
+    eye.name = side < 0 ? 'face-eye-left' : 'face-eye-right'
+    eye.scale.set(0.075, 0.026, 1)
+    eye.position.set(side * 0.068, 0.015, 0.194)
+    head.add(eye)
+
+    const lid = new THREE.Mesh(
+      geometry(THREE, 'morena:lid', () => new THREE.PlaneGeometry(0.115, 0.012)),
+      ink,
+    )
+    lid.position.set(side * 0.068, 0.043, 0.196)
+    lid.rotation.z = side * -0.06
+    head.add(lid)
+    for (let lashIndex = 0; lashIndex < 3; lashIndex++) {
+      const lash = new THREE.Mesh(
+        geometry(THREE, 'morena:lash', () => new THREE.PlaneGeometry(0.035, 0.008)),
+        ink,
+      )
+      lash.position.set(side * (0.11 + lashIndex * 0.008), 0.035 - lashIndex * 0.008, 0.197)
+      lash.rotation.z = side * (-0.28 - lashIndex * 0.12)
+      head.add(lash)
+    }
+
+    const brow = new THREE.Mesh(
+      geometry(THREE, 'morena:brow', () => new THREE.PlaneGeometry(0.105, 0.01)),
+      ink,
+    )
+    brow.name = side < 0 ? 'face-brow-left' : 'face-brow-right'
+    brow.position.set(side * 0.068, 0.092, 0.19)
+    brow.rotation.z = side * -0.08
+    head.add(brow)
+  }
+
+  const mouth = new THREE.Mesh(
+    geometry(THREE, 'morena:mouth', () => new THREE.PlaneGeometry(0.105, 0.01)),
+    ink,
+  )
+  mouth.name = 'face-mouth'
+  mouth.position.set(0, -0.092, 0.19)
+  head.add(mouth)
 
   const thornBand = new THREE.Mesh(
     geometry(THREE, 'morena:thorn-band', () => new THREE.TorusGeometry(0.2, 0.012, 4, 18)),

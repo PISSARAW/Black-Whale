@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { Apparition } from './apparitions'
+import { humanStateKey } from './humanFigure'
 import { humanProfile } from './humanProfiles'
 
 function person(identity: string, role: NonNullable<Apparition['human']>['role']): Apparition {
@@ -64,5 +65,16 @@ describe('shared human profiles', () => {
       face: 'narrow',
       clothing: 'gown',
     })
+  })
+
+  it('does not rebuild an Arena fighter for every transient combat pose', () => {
+    const idle = person('arena:counter', 'fighter')
+    idle.kind = 'combatant'
+    const attack = {
+      ...idle,
+      stage: 4,
+      human: { ...idle.human!, pose: 'attack' as const, alert: true },
+    }
+    expect(humanStateKey(attack)).toBe(humanStateKey(idle))
   })
 })

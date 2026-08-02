@@ -58,6 +58,18 @@ describe('Silent Majority in the tour', () => {
       })
     }
   })
+
+  it('only materializes the figure in the room currently being visited', () => {
+    const world = cast(EMPTY_WORLD, 'snakes', furnished.id).world
+    const current = world.snakes!.rooms[0]
+    const room = ship.spaces.get(current)!
+    const figures = apparitionsOn(ship, world, {
+      visitor: { at: centroid(room), tierId: room.tierId, spaceId: current },
+    }).filter((seen) => seen.id.startsWith('silent-majority:'))
+
+    expect(figures).toHaveLength(1)
+    expect(figures[0].spaceId).toBe(current)
+  })
 })
 
 describe('the book', () => {

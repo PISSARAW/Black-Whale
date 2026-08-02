@@ -27,6 +27,17 @@ export interface HumanFigure {
 export const HUMAN_INSTANCE_THRESHOLD = 20
 export const HUMAN_LOD_DISTANCE = 24
 
+/** Geometry-affecting state only; combat motion must not rebuild a full rig. */
+export function humanStateKey(seen: Apparition): string {
+  if (!seen.human) return String(seen.stage)
+  if (seen.kind !== 'combatant') return JSON.stringify(seen.human)
+  return JSON.stringify({
+    role: seen.human.role,
+    identity: seen.human.identity,
+    aura: seen.human.aura,
+  })
+}
+
 const SKIN = 0xd8b49a
 const INK = 0x171318
 const SHIRT = 0xe7e1d4
@@ -190,7 +201,15 @@ export function buildHumanFigure({ THREE, glow, seen }: HumanFigureBuild): Human
       geometry(THREE, 'eye', () => new THREE.PlaneGeometry(0.055, 0.014)),
       ink,
     )
-    eye.name = side < 0 ? 'face-eye-left' : 'face-eye-right'
+    eye.name =
+      seen.human?.role === 'morena'
+        ? side < 0
+          ? 'face-eye-base-left'
+          : 'face-eye-base-right'
+        : side < 0
+          ? 'face-eye-left'
+          : 'face-eye-right'
+    eye.visible = seen.human?.role !== 'morena'
     eye.position.set(side * 0.062, 0.018, 0.181)
     eye.scale.y = profile.expression === 'tired' ? 0.65 : profile.expression === 'anxious' ? 1.4 : 1
     eye.rotation.z =
@@ -204,7 +223,15 @@ export function buildHumanFigure({ THREE, glow, seen }: HumanFigureBuild): Human
       geometry(THREE, 'brow', () => new THREE.PlaneGeometry(0.064, 0.009)),
       ink,
     )
-    brow.name = side < 0 ? 'face-brow-left' : 'face-brow-right'
+    brow.name =
+      seen.human?.role === 'morena'
+        ? side < 0
+          ? 'face-brow-base-left'
+          : 'face-brow-base-right'
+        : side < 0
+          ? 'face-brow-left'
+          : 'face-brow-right'
+    brow.visible = seen.human?.role !== 'morena'
     brow.position.set(side * 0.064, 0.06, 0.176)
     brow.scale.y = profile.expression === 'severe' ? 1.8 : 1
     brow.rotation.z =
@@ -234,7 +261,8 @@ export function buildHumanFigure({ THREE, glow, seen }: HumanFigureBuild): Human
     ink,
   )
   mouth.position.set(0, -0.09, 0.178)
-  mouth.name = 'face-mouth'
+  mouth.name = seen.human?.role === 'morena' ? 'face-mouth-base' : 'face-mouth'
+  mouth.visible = seen.human?.role !== 'morena'
   head.add(mouth)
   const jawShade = new THREE.Mesh(
     geometry(THREE, 'face:jaw-shadow', () => new THREE.PlaneGeometry(0.14, 0.045)),

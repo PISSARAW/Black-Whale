@@ -65,7 +65,11 @@
   import { comfort, prefersReducedMotion, type Comfort } from '$lib/tour/comfort'
   import { buildSolidMesh, buildTierMesh } from '$lib/tour/mesh'
   import { animateDealerFace, buildDealer } from '$lib/tour/dealer'
-  import { HUMAN_LOD_DISTANCE, buildHumanFigure } from '$lib/tour/humanFigure'
+  import {
+    HUMAN_LOD_DISTANCE,
+    buildHumanFigure,
+    humanStateKey,
+  } from '$lib/tour/humanFigure'
   import { styleNenCreature } from '$lib/tour/nenCreatureFigure'
   import { cardFaceSvg } from '$lib/tour/cardArt'
   import { EYE_FOV, FORGED_AURA, OWL_FOV, type CardFace, type EyeFeed } from '$lib/tour/morena'
@@ -4221,7 +4225,11 @@
         // clock, for the two that ride something that will not hold still.
         const wanted = [
           ...apparitionsOn(ship, world, {
-            visitor: { at: pointer, tierId: currentTierId },
+            visitor: {
+              at: pointer,
+              tierId: currentTierId,
+              spaceId: untrack(() => currentSpace)?.id ?? null,
+            },
             seconds,
           }),
           // What the page is holding rather than the ship: the cards on
@@ -4234,7 +4242,7 @@
           standing[seen.id] = true
           // Everything the geometry depends on. Position is not in it: a thing
           // that moved is moved, not rebuilt.
-          const key = `${seen.kind}|${seen.stage}|${seen.colour}|${seen.size}|${seen.hidden}|${seen.pair?.spaceId ?? ''}|${seen.climb ?? ''}|${seen.face ?? ''}|${seen.human ? JSON.stringify(seen.human) : ''}`
+          const key = `${seen.kind}|${seen.colour}|${seen.size}|${seen.hidden}|${seen.pair?.spaceId ?? ''}|${seen.climb ?? ''}|${seen.face ?? ''}|${humanStateKey(seen)}`
           let held = apparitions[seen.id]
           // The two things about a thing that outlive the thing: which way it
           // was looking, and where it had got to. Everything else a mesh knows

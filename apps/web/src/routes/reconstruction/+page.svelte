@@ -7,6 +7,8 @@
   import Seo from '$lib/components/Seo.svelte'
   import TourScene from '$lib/components/tour/TourScene.svelte'
   import ReconstructionOverview from '$lib/components/reconstruction/ReconstructionOverview.svelte'
+  import { activeHatsu, hatsuPanelOpen } from '$lib/nen/hatsuState'
+  import { localizeHatsu } from '$lib/i18n/hatsu'
   import { floorOf, spaceForLocation, theShip } from '$lib/tour/blueprint'
   import { AVATAR, type Apparition } from '$lib/tour/apparitions'
   import { EMPTY_WORLD, centroid } from '$lib/tour/hatsu'
@@ -55,7 +57,10 @@
   let extras = $state<Apparition[]>([])
   let viewMode = $state<'overview' | 'scene'>('overview')
   let selectedBodyId = $state<string | null>(null)
+  let followedBodyId = $state<string | null>(null)
   let eventQuery = $state('')
+  let changeFilter = $state<'all' | 'changed'>('all')
+  let certaintyFilter = $state<'all' | DisplayPresence['certainty']>('all')
 
   type DisplayPresence = {
     entityId: string
@@ -68,6 +73,7 @@
   }
 
   let currentPresences = $state<DisplayPresence[]>([])
+  let previousPresences = $state<DisplayPresence[]>([])
 
   let tierId = $state(ship.tiers[0].id)
   let currentSpace = $state<Space | null>(null)
@@ -89,9 +95,44 @@
   )
 
   let activeBodyIds = $derived(new Set(sceneCharacters.map((character) => character.bodyId)))
+  type PresenceChange = DisplayPresence & {
+    change: 'arrived' | 'moved' | 'departed' | 'unchanged'
+    previousLocationLabel: string | null
+  }
+
+  let presenceChanges = $derived.by(() => {
+    const previousById = new Map(previousPresences.map((presence) => [presence.entityId, presence]))
+    const currentById = new Map(currentPresences.map((presence) => [presence.entityId, presence]))
+    const changes: PresenceChange[] = currentPresences.map((presence) => {
+      const previous = previousById.get(presence.entityId)
+      const moved =
+        previous &&
+        (previous.locationId !== presence.locationId || previous.precision !== presence.precision)
+      return {
+        ...presence,
+        change: previous ? (moved ? 'moved' : 'unchanged') : 'arrived',
+        previousLocationLabel: previous?.locationLabel ?? null,
+      }
+    })
+    for (const previous of previousPresences) {
+      if (currentById.has(previous.entityId)) continue
+      changes.push({
+        ...previous,
+        change: 'departed',
+        previousLocationLabel: previous.locationLabel,
+      })
+    }
+    return changes
+  })
+
+  let changedPresences = $derived(
+    presenceChanges.filter((presence) => presence.change !== 'unchanged'),
+  )
   let overviewMarkers = $derived(
-    currentPresences
+    presenceChanges
       .filter((presence) => presence.tierId)
+      .filter((presence) => changeFilter === 'all' || presence.change !== 'unchanged')
+      .filter((presence) => certaintyFilter === 'all' || presence.certainty === certaintyFilter)
       .map((presence) => ({
         id: presence.entityId,
         label: presence.name,
@@ -100,6 +141,8 @@
         certainty: presence.certainty,
         precision: presence.precision,
         active: activeBodyIds.has(presence.entityId),
+        change: presence.change,
+        previousLocationLabel: presence.previousLocationLabel,
       })),
   )
   let unknownPresences = $derived(currentPresences.filter((presence) => !presence.tierId))
@@ -117,6 +160,57 @@
       }),
   )
   let selectedEvent = $derived(chronologicalEvents[currentIndex])
+  let followedName = $derived(followedBodyId ? presenceName(followedBodyId) : null)
+  let followedEventIndexes = $derived.by(() => {
+    if (!followedBodyId) return [] as number[]
+    const indexes: number[] = []
+    chronologicalEvents.forEach((entry, index) => {
+      if (
+        data.sceneCharacters.some(
+          (character) =>
+            character.eventId === entry.event.id && character.bodyId === followedBodyId,
+        ) ||
+        data.presences.some(
+          (presence) =>
+            presence.entityId === followedBodyId &&
+            (presence.fromEvent.id === entry.event.id ||
+              presence.untilEvent?.id === entry.event.id),
+        )
+      ) {
+        indexes.push(index)
+      }
+    })
+    return indexes
+  })
+  let activeTechnique = $derived($activeHatsu ? localizeHatsu($activeHatsu, $locale) : null)
+  let hatsuReading = $derived.by(() => {
+    if (!$activeHatsu) return null
+    const selected = selectedBodyId
+      ? presenceChanges.find((presence) => presence.entityId === selectedBodyId)
+      : null
+    switch ($activeHatsu.kind) {
+      case 'future':
+      case 'divination':
+      case 'prophecy':
+        return $t.reconstruction.hatsuReadings.future(changedPresences.length)
+      case 'scout':
+      case 'surveillance':
+      case 'dowsing':
+      case 'blood-search':
+        return selected
+          ? $t.reconstruction.hatsuReadings.trace(selected.name, selected.change)
+          : $t.reconstruction.hatsuReadings.chooseTarget
+      case 'chain-bind':
+      case 'chain-rule':
+      case 'curse':
+      case 'ability-loan':
+      case 'inherit':
+      case 'elastic':
+        return $t.reconstruction.hatsuReadings.characterTarget
+      default:
+        return $t.reconstruction.hatsuReadings.sceneTarget
+    }
+  })
 
   type NarrativePosition = {
     id: string
@@ -204,12 +298,10 @@
     }
   }
 
-  $effect(() => {
-    const currentMangaEvent = chronologicalEvents[currentIndex]
+  function reconstructAt(index: number): { extras: Apparition[]; presences: DisplayPresence[] } {
+    const currentMangaEvent = chronologicalEvents[index]
     if (!currentMangaEvent) {
-      extras = []
-      currentPresences = []
-      return
+      return { extras: [], presences: [] }
     }
 
     const target = currentMangaEvent.event
@@ -265,16 +357,29 @@
       if (shown) byEntity[entityId] = shown
     }
 
-    const nextExtras = Object.values(byEntity)
-    extras = nextExtras
-    currentPresences = Object.values(presenceByEntity).sort((left, right) =>
-      left.name.localeCompare(right.name, $locale),
-    )
+    return {
+      extras: Object.values(byEntity),
+      presences: Object.values(presenceByEntity).sort((left, right) =>
+        left.name.localeCompare(right.name, $locale),
+      ),
+    }
+  }
+
+  $effect(() => {
+    const current = reconstructAt(currentIndex)
+    const previous = reconstructAt(currentIndex - 1)
+    extras = current.extras
+    currentPresences = current.presences
+    previousPresences = previous.presences
 
     // Stay on the visitor's chosen deck while it has a known presence. If it
     // does not, follow the timeline to a populated deck instead of showing an
     // apparently empty reconstruction.
-    const focus = nextExtras.find((shown) => shown.tierId === tierId) ?? nextExtras[0]
+    const followed = followedBodyId
+      ? current.extras.find((shown) => shown.id === `avatar-${followedBodyId}`)
+      : null
+    const focus =
+      followed ?? current.extras.find((shown) => shown.tierId === tierId) ?? current.extras[0]
     if (focus && focus.tierId !== tierId) {
       tierId = focus.tierId
       jumpTo = focus.spaceId
@@ -295,10 +400,16 @@
     }
     if (chronologicalEvents.length < 2) return
     isPlaying = true
-    playbackInterval = setInterval(() => {
+    schedulePlayback()
+  }
+
+  function schedulePlayback() {
+    const delay = Math.min(5000, 1200 + changedPresences.length * 240)
+    playbackInterval = setTimeout(() => {
       if (currentIndex < chronologicalEvents.length - 1) currentIndex++
       else stopPlayback()
-    }, 1000)
+      if (isPlaying) schedulePlayback()
+    }, delay)
   }
 
   function chooseScene(index: number) {
@@ -320,6 +431,20 @@
     selectedBodyId = entityId
   }
 
+  function toggleFollow(entityId: string) {
+    followedBodyId = followedBodyId === entityId ? null : entityId
+    selectedBodyId = entityId
+  }
+
+  function jumpFollow(direction: -1 | 1) {
+    const candidates = followedEventIndexes.toSorted((a, b) => a - b)
+    const destination =
+      direction < 0
+        ? candidates.filter((index) => index < currentIndex).at(-1)
+        : candidates.find((index) => index > currentIndex)
+    if (destination !== undefined) chooseScene(destination)
+  }
+
   onDestroy(stopPlayback)
 </script>
 
@@ -333,7 +458,7 @@
 />
 
 <main class="reconstruction-shell">
-  <header class="masthead">
+  <header class="masthead" data-hatsu-pass>
     <div>
       <p class="eyebrow">{$t.reconstruction.eyebrow}</p>
       <h1>{$t.reconstruction.title}</h1>
@@ -361,7 +486,7 @@
     <section class="empty-state"><p>{$t.reconstruction.empty}</p></section>
   {:else}
     <div class="workspace">
-      <aside class="timeline-panel">
+      <aside class="timeline-panel" data-hatsu-pass>
         <label class="search">
           <span>{$t.reconstruction.searchEvents}</span>
           <input
@@ -375,6 +500,7 @@
             <button
               type="button"
               class:current={entry.index === currentIndex}
+              class:followed={followedEventIndexes.includes(entry.index)}
               aria-current={entry.index === currentIndex ? 'step' : undefined}
               onclick={() => chooseScene(entry.index)}
             >
@@ -399,12 +525,50 @@
             selectedId={selectedBodyId}
             onSelect={selectOverviewCharacter}
           />
-          <div class="map-legend">
+          <div class="map-filters" aria-label={$t.reconstruction.filters} data-hatsu-pass>
+            <button
+              class:active={changeFilter === 'all'}
+              type="button"
+              onclick={() => (changeFilter = 'all')}>{$t.reconstruction.allPresences}</button
+            >
+            <button
+              class:active={changeFilter === 'changed'}
+              type="button"
+              onclick={() => (changeFilter = 'changed')}>{$t.reconstruction.changesOnly}</button
+            >
+            <select bind:value={certaintyFilter} aria-label={$t.reconstruction.certaintyFilter}>
+              <option value="all">{$t.reconstruction.allCertainties}</option>
+              <option value="CONFIRMED">{$t.reconstruction.legendKnown}</option>
+              <option value="PROBABLE">{$t.reconstruction.legendProbable}</option>
+              <option value="LAST_KNOWN">{$t.reconstruction.legendLastKnown}</option>
+            </select>
+          </div>
+          <div class="map-legend" data-hatsu-pass>
             <span><i class="active-dot"></i>{$t.reconstruction.legendActive}</span>
             <span><i></i>{$t.reconstruction.legendKnown}</span>
             <span><i class="probable"></i>{$t.reconstruction.legendProbable}</span>
             <span><i class="last-known"></i>{$t.reconstruction.legendLastKnown}</span>
+            <span><i class="arrived"></i>{$t.reconstruction.arrived}</span>
+            <span><i class="departed"></i>{$t.reconstruction.departed}</span>
           </div>
+          <aside
+            class="hatsu-lens"
+            class:active={Boolean(activeTechnique)}
+            style:--hatsu={activeTechnique?.color ?? '#6faeb2'}
+            data-hatsu-pass
+          >
+            {#if activeTechnique}
+              <span>{$t.reconstruction.hatsuLens}</span>
+              <strong>{activeTechnique.name}</strong>
+              <p>{hatsuReading}</p>
+            {:else}
+              <span>{$t.reconstruction.hatsuLens}</span>
+              <p>{$t.reconstruction.noHatsu}</p>
+              <button type="button" onclick={() => hatsuPanelOpen.set(true)}>
+                {$t.reconstruction.chooseHatsu}
+              </button>
+            {/if}
+          </aside>
         {:else}
           <div class="tour-stage">
             <TourScene
@@ -445,28 +609,88 @@
           {#if sceneCharacters.length}
             <div class="cast">
               {#each sceneCharacters as character (character.characterId)}
-                <button
-                  type="button"
-                  class:selected={selectedBodyId === character.bodyId}
-                  disabled={!character.shown}
-                  title={character.shown
-                    ? $t.reconstruction.watchCharacter(character.name)
-                    : $t.reconstruction.unknownPosition}
-                  onclick={() => watchCharacter(character)}
-                >
-                  <span
-                    ><strong>{character.name}</strong><small
-                      >{$t.reconstruction.roles[character.participationType]}</small
-                    ></span
+                <div class="cast-row">
+                  <button
+                    type="button"
+                    class:selected={selectedBodyId === character.bodyId}
+                    disabled={!character.shown}
+                    title={character.shown
+                      ? $t.reconstruction.watchCharacter(character.name)
+                      : $t.reconstruction.unknownPosition}
+                    onclick={() => watchCharacter(character)}
+                    data-hatsu-character={character.bodyId}
+                    data-hatsu-character-name={character.name}
+                    data-hatsu-uncertain={!character.shown ? 'true' : undefined}
                   >
-                  <b>{character.shown ? '→' : '?'}</b>
-                </button>
+                    <span
+                      ><strong>{character.name}</strong><small
+                        >{$t.reconstruction.roles[character.participationType]}</small
+                      ></span
+                    >
+                    <b>{character.shown ? '→' : '?'}</b>
+                  </button>
+                  <button
+                    class="follow"
+                    class:active={followedBodyId === character.bodyId}
+                    type="button"
+                    data-hatsu-pass
+                    aria-label={$t.reconstruction.followCharacter(character.name)}
+                    onclick={() => toggleFollow(character.bodyId)}>◎</button
+                  >
+                </div>
               {/each}
             </div>
           {:else}
             <p class="muted">{$t.reconstruction.noCharacters}</p>
           {/if}
         </section>
+
+        <section>
+          <div class="section-heading">
+            <h3>{$t.reconstruction.changes}</h3>
+            <span>{changedPresences.length}</span>
+          </div>
+          {#if changedPresences.length}
+            <ul class="change-list">
+              {#each changedPresences.slice(0, 8) as presence (presence.entityId)}
+                <li data-change={presence.change}>
+                  <strong>{presence.name}</strong>
+                  <span>
+                    {#if presence.change === 'moved'}
+                      {presence.previousLocationLabel ?? $t.common.unknown} → {presence.locationLabel ??
+                        $t.common.unknown}
+                    {:else}
+                      {$t.reconstruction.changeLabels[presence.change]}
+                      {#if presence.locationLabel}
+                        · {presence.locationLabel}{/if}
+                    {/if}
+                  </span>
+                </li>
+              {/each}
+            </ul>
+          {:else}
+            <p class="muted">{$t.reconstruction.noChanges}</p>
+          {/if}
+        </section>
+
+        {#if followedBodyId && followedName}
+          <section class="follow-panel">
+            <div class="section-heading">
+              <h3>{$t.reconstruction.following}</h3>
+              <button type="button" onclick={() => (followedBodyId = null)}>×</button>
+            </div>
+            <strong>{followedName}</strong>
+            <p>{$t.reconstruction.followCount(followedEventIndexes.length)}</p>
+            <div>
+              <button type="button" onclick={() => jumpFollow(-1)}
+                >← {$t.reconstruction.previousTrace}</button
+              >
+              <button type="button" onclick={() => jumpFollow(1)}
+                >{$t.reconstruction.nextTrace} →</button
+              >
+            </div>
+          </section>
+        {/if}
 
         <section>
           <div class="section-heading">
@@ -507,7 +731,7 @@
       </aside>
     </div>
 
-    <footer class="transport">
+    <footer class="transport" data-hatsu-pass>
       <button
         aria-label={$t.reconstruction.previous}
         disabled={currentIndex === 0}
@@ -654,6 +878,9 @@
   .timeline-panel nav button.current {
     box-shadow: inset 2px 0 #d5b86e;
   }
+  .timeline-panel nav button.followed:not(.current) {
+    box-shadow: inset 2px 0 rgba(111, 174, 178, 0.65);
+  }
   .event-index,
   .timeline-panel small {
     color: rgba(237, 241, 238, 0.35);
@@ -674,6 +901,76 @@
   .tour-stage {
     position: absolute;
     inset: 0;
+  }
+  .map-filters {
+    position: absolute;
+    z-index: 5;
+    top: 1rem;
+    left: 1rem;
+    display: flex;
+    gap: 0.3rem;
+    border: 1px solid rgba(237, 241, 238, 0.13);
+    background: rgba(3, 8, 10, 0.9);
+    padding: 0.3rem;
+  }
+  .map-filters button,
+  .map-filters select {
+    border: 0;
+    background: transparent;
+    padding: 0.45rem 0.55rem;
+    color: rgba(237, 241, 238, 0.58);
+    font-size: 0.62rem;
+  }
+  .hatsu-lens {
+    position: absolute;
+    z-index: 6;
+    top: 1rem;
+    right: 1rem;
+    width: min(16rem, 42%);
+    border: 1px solid rgba(237, 241, 238, 0.14);
+    background: rgba(3, 8, 10, 0.92);
+    padding: 0.75rem;
+    color: rgba(237, 241, 238, 0.58);
+    box-shadow: 0 0.6rem 2rem rgba(0, 0, 0, 0.35);
+  }
+  .hatsu-lens.active {
+    border-color: color-mix(in srgb, var(--hatsu) 58%, rgba(237, 241, 238, 0.16));
+    box-shadow: 0 0 1.5rem color-mix(in srgb, var(--hatsu) 14%, transparent);
+  }
+  .hatsu-lens > span {
+    display: block;
+    color: color-mix(in srgb, var(--hatsu) 75%, #fff 25%);
+    font-size: 0.58rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+  .hatsu-lens strong {
+    display: block;
+    margin-top: 0.25rem;
+    font-family: Georgia, serif;
+    color: #edf1ee;
+  }
+  .hatsu-lens p {
+    margin: 0.35rem 0 0;
+    font-size: 0.62rem;
+    line-height: 1.45;
+  }
+  .hatsu-lens button {
+    margin-top: 0.55rem;
+    border: 1px solid rgba(229, 197, 122, 0.45);
+    background: rgba(229, 197, 122, 0.08);
+    padding: 0.4rem 0.55rem;
+    color: #f2ddb0;
+    font-size: 0.6rem;
+  }
+  .map-filters button.active {
+    background: rgba(229, 197, 122, 0.14);
+    color: #f2ddb0;
+  }
+  .map-filters select {
+    border-left: 1px solid rgba(237, 241, 238, 0.12);
+    color-scheme: dark;
   }
   .map-legend {
     position: absolute;
@@ -710,6 +1007,14 @@
     border: 1px dotted #cf806c;
     background: transparent;
     opacity: 0.7;
+  }
+  .map-legend i.arrived {
+    background: #78c6a3;
+  }
+  .map-legend i.departed {
+    border: 1px solid #cf806c;
+    background: transparent;
+    opacity: 0.55;
   }
   .event-panel {
     overflow-y: auto;
@@ -759,6 +1064,24 @@
   .cast {
     display: grid;
     gap: 0.35rem;
+  }
+  .cast-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 0.3rem;
+  }
+  .cast-row > button:first-child {
+    width: 100%;
+  }
+  .cast-row button.follow {
+    width: 2.25rem;
+    justify-content: center;
+    color: rgba(237, 241, 238, 0.45);
+  }
+  .cast-row button.follow.active {
+    border-color: #6faeb2;
+    color: #9bd3d5;
+    background: rgba(111, 174, 178, 0.12);
   }
   .cast button {
     display: flex;
@@ -830,6 +1153,64 @@
     color: rgba(237, 241, 238, 0.42);
     font-size: 0.7rem;
   }
+  .change-list {
+    display: grid;
+    gap: 0.42rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .change-list li {
+    border-left: 2px solid rgba(237, 241, 238, 0.2);
+    padding-left: 0.55rem;
+  }
+  .change-list li[data-change='arrived'] {
+    border-color: #78c6a3;
+  }
+  .change-list li[data-change='moved'] {
+    border-color: #e5c57a;
+  }
+  .change-list li[data-change='departed'] {
+    border-color: #cf806c;
+  }
+  .change-list strong,
+  .change-list span {
+    display: block;
+  }
+  .change-list strong {
+    font-size: 0.68rem;
+  }
+  .change-list span {
+    margin-top: 0.1rem;
+    color: rgba(237, 241, 238, 0.46);
+    font-size: 0.6rem;
+  }
+  .follow-panel > strong {
+    color: #9bd3d5;
+    font-family: Georgia, serif;
+    font-size: 1.05rem;
+  }
+  .follow-panel p {
+    color: rgba(237, 241, 238, 0.48);
+    font-size: 0.65rem;
+  }
+  .follow-panel .section-heading button {
+    border: 0;
+    background: transparent;
+    color: inherit;
+  }
+  .follow-panel > div:last-child {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.35rem;
+  }
+  .follow-panel > div:last-child button {
+    border: 1px solid rgba(237, 241, 238, 0.12);
+    background: transparent;
+    padding: 0.45rem;
+    color: rgba(237, 241, 238, 0.62);
+    font-size: 0.6rem;
+  }
   .transport {
     position: fixed;
     z-index: 60;
@@ -869,6 +1250,9 @@
     color: rgba(237, 241, 238, 0.5);
     font-size: 0.7rem;
   }
+  :global(.hatsu-dock) {
+    bottom: 4.6rem;
+  }
   .empty-state {
     max-width: 60rem;
     margin: 5rem auto;
@@ -888,6 +1272,12 @@
     }
     .stage {
       min-height: 30rem;
+    }
+    .hatsu-lens {
+      top: auto;
+      right: 0.6rem;
+      bottom: 3.4rem;
+      width: min(15rem, 58%);
     }
   }
   @media (max-width: 700px) {

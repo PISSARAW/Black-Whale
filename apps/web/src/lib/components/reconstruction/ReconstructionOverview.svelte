@@ -9,6 +9,8 @@
     certainty: 'CONFIRMED' | 'PROBABLE' | 'LAST_KNOWN'
     precision: 'EXACT_ROOM' | 'ZONE' | 'TIER' | 'UNKNOWN'
     active: boolean
+    change: 'arrived' | 'moved' | 'departed' | 'unchanged'
+    previousLocationLabel: string | null
   }
 
   // Kept in the overview's own coordinate system. The section-map tests guard
@@ -87,7 +89,7 @@
   })
 </script>
 
-<div class="overview">
+<div class="overview" data-hatsu-scope="reconstruction">
   <div class="map"><BlackWhaleOverview /></div>
   <div class="markers">
     {#each positioned as marker (marker.id)}
@@ -98,6 +100,13 @@
         class:selected={marker.id === selectedId}
         data-certainty={marker.certainty}
         data-precision={marker.precision}
+        data-change={marker.change}
+        data-hatsu-character={marker.id}
+        data-hatsu-character-name={marker.label}
+        data-hatsu-location={marker.locationLabel ?? undefined}
+        data-hatsu-next-change={marker.change}
+        data-hatsu-uncertain={marker.certainty !== 'CONFIRMED' ? 'true' : undefined}
+        data-hatsu-previous-location={marker.previousLocationLabel ?? undefined}
         style={`left:${marker.x}%;top:${marker.y}%`}
         title={marker.locationLabel ?? marker.label}
         aria-label={`${marker.label}${marker.locationLabel ? ` — ${marker.locationLabel}` : ''}`}
@@ -172,6 +181,18 @@
   .marker[data-precision='TIER'],
   .marker[data-precision='ZONE'] {
     background: rgba(13, 26, 32, 0.84);
+  }
+  .marker[data-change='arrived'] {
+    border-color: #78c6a3;
+  }
+  .marker[data-change='moved'] {
+    border-color: #e5c57a;
+    box-shadow: 0 0 0.8rem rgba(229, 197, 122, 0.22);
+  }
+  .marker[data-change='departed'] {
+    border-color: #cf806c;
+    opacity: 0.46;
+    text-decoration: line-through;
   }
 
   .pulse {

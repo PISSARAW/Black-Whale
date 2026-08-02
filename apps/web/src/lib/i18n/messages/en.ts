@@ -97,6 +97,18 @@ export const en = {
       `${count} recorded ${count === 1 ? 'turning point' : 'turning points'}`,
     previousTrace: 'Previous trace',
     nextTrace: 'Next trace',
+    hatsuLens: 'Nen lens',
+    noHatsu: 'No technique is reading the reconstruction.',
+    chooseHatsu: 'Choose a Hatsu',
+    hatsuReadings: {
+      future: (count: number) =>
+        `${count} spatial ${count === 1 ? 'change stands' : 'changes stand'} between this state and the previous one.`,
+      trace: (name: string, change: string) =>
+        `${name} · ${change === 'unchanged' ? 'no spatial break at this event' : change}`,
+      chooseTarget: 'Choose a passenger on the section to read their temporal trace.',
+      characterTarget: 'This technique requires a body. Choose a passenger on the section.',
+      sceneTarget: 'Choose a passenger or a reconstructed element to apply the technique locally.',
+    },
     previous: 'Previous event',
     next: 'Next event',
     play: 'Play timeline',
@@ -1794,7 +1806,10 @@ export const en = {
     auraDistribution: 'Ryu distribution',
     lesson: [
       { title: 'Shift your Ryu', body: 'Choose a zone with 1–4. Aura takes a moment to arrive.' },
-      { title: 'Close your guard', body: 'Hold your read, then press Shift as the attack arrives.' },
+      {
+        title: 'Close your guard',
+        body: 'Hold your read, then press Shift as the attack arrives.',
+      },
       { title: 'Force a reaction', body: 'Press V to feint toward the zone you are targeting.' },
       { title: 'Punish the opening', body: 'Strike while your opponent is recovering.' },
     ],
@@ -3191,4 +3206,3 @@ export const en = {
     },
   },
 }
-

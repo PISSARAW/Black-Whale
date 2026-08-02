@@ -96,6 +96,19 @@ export const fr: Messages = {
       `${count} point${count === 1 ? '' : 's'} de bascule consigné${count === 1 ? '' : 's'}`,
     previousTrace: 'Trace précédente',
     nextTrace: 'Trace suivante',
+    hatsuLens: 'Lentille de Nen',
+    noHatsu: 'Aucune technique ne lit la reconstruction.',
+    chooseHatsu: 'Choisir un Hatsu',
+    hatsuReadings: {
+      future: (count) =>
+        `${count} changement${count === 1 ? '' : 's'} spatial${count === 1 ? '' : 'ux'} sépare${count === 1 ? '' : 'nt'} cet état du précédent.`,
+      trace: (name, change) =>
+        `${name} · ${change === 'unchanged' ? 'aucune rupture spatiale à cet événement' : change}`,
+      chooseTarget: 'Choisissez un passager sur la coupe pour lire sa trace temporelle.',
+      characterTarget: 'Cette technique exige un corps. Choisissez un passager sur la coupe.',
+      sceneTarget:
+        'Choisissez un passager ou un élément reconstruit pour appliquer la technique localement.',
+    },
     previous: 'Événement précédent',
     next: 'Événement suivant',
     play: 'Lire la chronologie',
@@ -1653,9 +1666,18 @@ export const fr: Messages = {
     training: 'Initiation Nen',
     auraDistribution: 'Distribution du Ryu',
     lesson: [
-      { title: 'Déplacez votre Ryu', body: 'Choisissez une zone avec 1–4. Le transfert prend un instant.' },
-      { title: 'Fermez la garde', body: 'Maintenez votre lecture puis pressez Maj au moment de l’attaque.' },
-      { title: 'Provoquez une réaction', body: 'Pressez V pour feinter sur la zone actuellement visée.' },
+      {
+        title: 'Déplacez votre Ryu',
+        body: 'Choisissez une zone avec 1–4. Le transfert prend un instant.',
+      },
+      {
+        title: 'Fermez la garde',
+        body: 'Maintenez votre lecture puis pressez Maj au moment de l’attaque.',
+      },
+      {
+        title: 'Provoquez une réaction',
+        body: 'Pressez V pour feinter sur la zone actuellement visée.',
+      },
       { title: 'Punissez l’ouverture', body: 'Frappez pendant que l’adversaire récupère.' },
     ],
     state: { gyo: 'Gyo', in: 'In', ken: 'Ken', ko: 'Ko en charge', concealed: 'Aura dissimulée' },
@@ -3007,4 +3029,3 @@ export const fr: Messages = {
     },
   },
 }
-

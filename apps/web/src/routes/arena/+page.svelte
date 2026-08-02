@@ -2,6 +2,7 @@
   import { onDestroy, onMount } from 'svelte'
   import Seo from '$lib/components/Seo.svelte'
   import TourScene from '$lib/components/tour/TourScene.svelte'
+  import ReplayPanel from '$lib/components/arena/ReplayPanel.svelte'
   import {
     advanceArena,
     OPPONENT_DOCTRINES,
@@ -716,6 +717,7 @@
         <span>{stats.hatsu} Hatsu</span>
         {#if bestGrade}<small>BEST · {bestGrade}</small>{/if}
       </div>
+      {#if lastReplay}<ReplayPanel replay={lastReplay} locale={$locale} />{/if}
       <button onclick={restart}>{$t.arena.action.restart}</button>
       <div class="difficulty-picker" aria-label="Difficulty">
         {#each ['initiate', 'fighter', 'master'] as level}

@@ -1504,6 +1504,17 @@ export const fr: Messages = {
         zetsu: 'X — tout lâcher et rompre',
         take: 'R — reprendre ce que vous avez posé ici',
       },
+      action: {
+        guard: 'Zone protégée',
+        reserve: 'Réserve',
+        press: 'Pression',
+        observe: 'Observer',
+        conceal: 'Dissimuler',
+        endure: 'Tenir',
+        strike: 'Engager Ko',
+        breakAway: 'Rompre le duel',
+        recover: 'Reprendre l’entrave',
+      },
       state: {
         held: 'Retenu',
         broken: 'Son Ten ne tient plus',

@@ -353,7 +353,19 @@
   {/if}
 
   {#if inDuel && !finished}
-    <DuelPanel duel={game.duel!} labels={$t.hunt.duel} />
+    <DuelPanel
+      duel={game.duel!}
+      labels={$t.hunt.duel}
+      canRecover={canTake}
+      onGuard={(zone) => duel({ type: 'RYU', side: 'player', setting: { guard: zone } })}
+      onRyu={(attack) => duel({ type: 'RYU', side: 'player', setting: { attack } })}
+      onGyo={() => duel({ type: 'GYO', side: 'player', on: !game.duel!.player.gyo })}
+      onIn={() => duel({ type: 'IN', side: 'player', on: !game.duel!.player.in })}
+      onKen={() => duel({ type: 'KEN', side: 'player', on: !game.duel!.player.ken })}
+      onKo={() => strike()}
+      onBreakAway={() => duel({ type: 'ZETSU', on: !game.duel!.player.zetsu })}
+      onRecover={() => send({ type: 'TAKE_IN_DUEL' })}
+    />
   {/if}
 
   {#if !engaged && !inDuel && !finished}

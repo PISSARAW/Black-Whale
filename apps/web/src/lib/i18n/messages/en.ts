@@ -1644,6 +1644,17 @@ export const en = {
         zetsu: 'X — drop it all and break away',
         take: 'R — take back what you laid here',
       },
+      action: {
+        guard: 'Guarded zone',
+        reserve: 'Reserve',
+        press: 'Pressure',
+        observe: 'Observe',
+        conceal: 'Conceal',
+        endure: 'Endure',
+        strike: 'Commit Ko',
+        breakAway: 'Break away',
+        recover: 'Recover entrave',
+      },
       state: {
         held: 'Held',
         broken: 'His Ten no longer holds',

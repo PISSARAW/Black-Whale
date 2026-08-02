@@ -31,6 +31,7 @@ import { openDuel } from './duel/inherit'
 import { GAME_LENGTH, judgeHunt, type HuntOutcome } from './outcome'
 import { record, type TelemetryEvent } from './telemetry'
 import type { HuntState } from './state'
+import { tickHatsu } from './hatsu'
 
 export const HUNT_TICK_RATE = 60
 export const HUNT_DT = 1 / HUNT_TICK_RATE
@@ -45,7 +46,12 @@ export function updateHunt(state: HuntState, world: HuntWorld): HuntState {
   if (state.outcome !== 'playing' && state.outcome !== 'contact') return state
   if (state.duel) return advanceDuel(state, world.dt)
 
-  const ticked = { ...state, clock: state.clock + world.dt, ledger: breathe(state, world.dt) }
+  const ticked = {
+    ...state,
+    clock: state.clock + world.dt,
+    ledger: breathe(state, world.dt),
+    hatsu: tickHatsu(state.hatsu, world.dt),
+  }
   const moved = advanceHunter(ticked, world)
   const sprung = springUnderHunter(moved)
   return conclude(sprung, world)
@@ -75,7 +81,8 @@ function overheard(state: HuntState, graph: NavGraph): Percept | null {
   if (reach === 'apart') return null
 
   const gap = distance(state.player.position, state.hunter.position)
-  const nearness = Math.max(0, 1 - gap / HEARING_RANGE) * (reach === 'adjacent' ? THROUGH_A_WALL : 1)
+  const nearness =
+    Math.max(0, 1 - gap / HEARING_RANGE) * (reach === 'adjacent' ? THROUGH_A_WALL : 1)
   if (nearness <= 0.15) return null
 
   return { kind: 'sound', at: state.player.position, spaceId: state.player.spaceId, sharp: false }
@@ -258,7 +265,11 @@ function handOver(state: HuntState): HuntState {
     ledger: junction.ledger,
     log: junction.sprung.reduce(
       (log, placement) =>
-        record(log, state.clock, { actor: 'hunter', kind: 'sprungEntrave', where: placement.spaceId }),
+        record(log, state.clock, {
+          actor: 'hunter',
+          kind: 'sprungEntrave',
+          where: placement.spaceId,
+        }),
       opened,
     ),
   }

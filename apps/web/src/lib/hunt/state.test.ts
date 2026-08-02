@@ -20,7 +20,7 @@ describe('the game state', () => {
     expect(state.player.nen).toBe('ten')
     expect(state.ledger.placements).toEqual([])
     expect(state.outcome).toBe('playing')
-    expect(state.hatsu).toBe('bungee-gum')
+    expect(state.hatsu.id).toBe('bungee-gum')
   })
 
   it('takes the walked position from wherever the walking happens', () => {
@@ -31,6 +31,32 @@ describe('the game state', () => {
     expect(walked.player.position).toEqual([3, 4])
     expect(walked.player.spaceId).toBe('cuisine')
     expect(walked.player.atRest).toBe(false)
+  })
+})
+
+describe('distinct Hatsu loadouts', () => {
+  it('opens Parallel Future only from Zetsu and records intended space', () => {
+    const future = initialHuntState({
+      playerAt: { position: [0, 0], spaceId: 'salon' },
+      hunterAt: { position: [5, 0], spaceId: 'cuisine' },
+      targetSpaceId: 'chambre',
+      hatsu: 'parallel-future',
+    })
+    expect(huntReducer(future, { type: 'HATSU' })).toBe(future)
+    const hidden = huntReducer(future, { type: 'ZETSU' })
+    expect(huntReducer(hidden, { type: 'HATSU' }).hatsu.window).toBe(10)
+  })
+
+  it('dowses only while still in Ten and returns no room id', () => {
+    const dowsing = initialHuntState({
+      playerAt: { position: [0, 0], spaceId: 'salon' },
+      hunterAt: { position: [5, 0], spaceId: 'cuisine' },
+      targetSpaceId: 'chambre',
+      hatsu: 'dowsing-chain',
+    })
+    const read = huntReducer(dowsing, { type: 'HATSU' })
+    expect(read.hatsu.probableBearing).toEqual([1, 0])
+    expect(read.hatsu.forecastSpaceId).toBeNull()
   })
 })
 

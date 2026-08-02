@@ -82,7 +82,7 @@
   }
 
   let game = $state(freshGame())
-  let equippedHatsu = $derived(huntHatsu(game.hatsu))
+  let equippedHatsu = $derived(huntHatsu(game.hatsu.id))
 
   // Bound out of TourScene: the walk is its job, not this page's. Seeded from
   // the spawn rather than from `game`, which is where it came from anyway — the

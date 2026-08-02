@@ -26,7 +26,14 @@ import type { HuntOutcome } from './outcome'
 import { duelReducer, type DuelAction } from './duel/reducer'
 import { recoverInDuel } from './duel/recover'
 import type { DuelState } from './duel/state'
-import { DEFAULT_HUNT_HATSU, type HuntHatsuId } from './hatsu'
+import {
+  DEFAULT_HUNT_HATSU,
+  initialHatsu,
+  openFuture,
+  readDowsing,
+  type HuntHatsuId,
+  type HuntHatsuState,
+} from './hatsu'
 
 export interface PlayerState {
   position: Vec2
@@ -39,7 +46,7 @@ export interface PlayerState {
 
 export interface HuntState {
   /** The one declared ability brought into this run. */
-  hatsu: HuntHatsuId
+  hatsu: HuntHatsuState
   player: PlayerState
   hunter: HunterState
   /** The player's reservoir and everything they have laid down, in one place. */
@@ -64,6 +71,7 @@ export type HuntAction =
   | { type: 'TAKE' }
   | { type: 'DUEL'; action: DuelAction }
   | { type: 'TAKE_IN_DUEL' }
+  | { type: 'HATSU' }
 
 export interface HuntSetup {
   playerAt: { position: Vec2; spaceId: string }
@@ -75,7 +83,7 @@ export interface HuntSetup {
 
 export function initialHuntState(setup: HuntSetup): HuntState {
   return {
-    hatsu: setup.hatsu ?? DEFAULT_HUNT_HATSU,
+    hatsu: initialHatsu(setup.hatsu ?? DEFAULT_HUNT_HATSU),
     player: {
       position: setup.playerAt.position,
       heading: 0,
@@ -112,6 +120,8 @@ export function huntReducer(state: HuntState, action: HuntAction): HuntState {
       return state.duel ? { ...state, duel: duelReducer(state.duel, action.action) } : state
     case 'TAKE_IN_DUEL':
       return takeInDuel(state)
+    case 'HATSU':
+      return useHatsu(state)
     default:
       return state
   }
@@ -179,7 +189,8 @@ function changeNen(state: HuntState): HuntState {
 function lay(state: HuntState): HuntState {
   // Bungee Gum requires usable Nen and a surface. The current room's attested
   // floor is that surface; Zetsu makes the first condition false.
-  if (!state.player.spaceId || state.player.nen === 'zetsu') return state
+  if (state.hatsu.id !== 'bungee-gum' || !state.player.spaceId || state.player.nen === 'zetsu')
+    return state
   const { ledger, placed } = placeAura(state.ledger, {
     id: `entrave-${state.nextId}`,
     cost: ENTRAVE_COST,
@@ -202,6 +213,26 @@ function lay(state: HuntState): HuntState {
       where: placed.spaceId,
     }),
   }
+}
+
+function useHatsu(state: HuntState): HuntState {
+  if (state.duel || state.hatsu.id === 'bungee-gum') return state
+
+  if (state.hatsu.id === 'parallel-future') {
+    if (state.player.nen !== 'zetsu') return state
+    const intended = state.hunter.path.at(-1) ?? state.hunter.belief.spaceId ?? state.hunter.spaceId
+    return { ...state, hatsu: openFuture(state.hatsu, intended) }
+  }
+
+  if (state.player.nen !== 'ten' || !state.player.atRest) return state
+  return { ...state, hatsu: readDowsing(state.hatsu, directionToHunter(state)) }
+}
+
+function directionToHunter(state: HuntState): Vec2 | null {
+  const dx = state.hunter.position[0] - state.player.position[0]
+  const dz = state.hunter.position[1] - state.player.position[1]
+  const gap = Math.hypot(dx, dz)
+  return gap === 0 ? null : [dx / gap, dz / gap]
 }
 
 function take(state: HuntState): HuntState {

@@ -269,10 +269,12 @@
         })
       : '',
   )
-  const selectOnPlan = $derived(
-    technique ? (space: Space) => castOn(space.id) : (space: Space) => goToSpace(space),
-  )
-  const planVerb = $derived(technique ? $t.tour.aimAt : $t.tour.goTo)
+  // The plan and finder are navigation controls, even while aura is active.
+  // Hatsu targets have their own index in the sidebar; sharing this callback
+  // made every room click cast instead of walking as soon as a technique was
+  // selected, which made the tour appear to stop working.
+  const selectOnPlan = (space: Space) => goToSpace(space)
+  const planVerb = $derived($t.tour.goTo)
   const blindWalls = $derived(
     chrome.reveal ? blindWallReasons(plan, french) : [],
   )
@@ -410,7 +412,7 @@
         crossingLabel,
         onSelectPlan: selectOnPlan,
         selectLabel: planVerb,
-        aiming: Boolean(technique),
+        aiming: false,
         onHide: () => (chrome.panelOpen = false),
         onFullscreen: () => chrome.toggleFullscreen(),
         onSelectDeck: selectTier,
@@ -488,10 +490,8 @@
   {crossingLabel}
   nameOf={(space) => nameOf(named(space))}
   selectLabel={planVerb}
-  aiming={Boolean(technique)}
   {naming}
   onClosePlan={() => (chrome.planOpen = false)}
   onSelect={selectOnPlan}
-  onCast={(spaceId) => castOn(spaceId)}
   onGo={goToSpace}
 />

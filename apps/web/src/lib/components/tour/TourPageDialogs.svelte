@@ -20,11 +20,9 @@
     crossingLabel: (crossing: Crossing) => string
     nameOf: (space: Space) => string
     selectLabel: (room: string) => string
-    aiming: boolean
     naming: Naming
     onClosePlan: () => void
     onSelect: (space: Space) => void
-    onCast: (spaceId: string) => void
     onGo: (space: Space) => void
   }
 
@@ -41,19 +39,16 @@
     crossingLabel,
     nameOf,
     selectLabel,
-    aiming,
     naming,
     onClosePlan,
     onSelect,
-    onCast,
     onGo,
   }: Props = $props()
 
   function pick(spaceId: string) {
     const space = ship.spaces.get(spaceId)
     if (!space) return
-    if (aiming) onCast(space.id)
-    else onGo(space)
+    onGo(space)
   }
 </script>
 
@@ -68,7 +63,7 @@
   {crossingLabel}
   {nameOf}
   {selectLabel}
-  {aiming}
+  aiming={false}
   onClose={onClosePlan}
   {onSelect}
 />
@@ -82,7 +77,7 @@
     placeholder: $t.tour.find.placeholder,
     showing: $t.tour.find.showing,
     noMatch: $t.tour.find.noMatch,
-    action: aiming ? $t.tour.hatsu.targets : $t.tour.jumpTo,
+    action: $t.tour.jumpTo,
     level: $t.tour.find.level,
     close: $t.tour.find.close,
     hint: $t.tour.find.hint,

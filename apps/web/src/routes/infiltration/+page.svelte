@@ -40,6 +40,7 @@
       witnesses: posts.map((space, index) => ({
         id: witnessIds[index],
         position: centroid(space),
+        heading: index % 2 === 0 ? 0 : Math.PI,
         spaceId: space.id,
         sight: index === 2 ? 11 : 8,
         social: index !== 1,

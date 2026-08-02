@@ -29,7 +29,11 @@ export function patrolWitness(witness: Witness, world: PatrolWorld): Witness {
     target,
     wallsNear(world.arena.walls, witness.position, 2),
   )
-  return { ...witness, position }
+  return {
+    ...witness,
+    position,
+    heading: Math.atan2(goal[0] - witness.position[0], goal[1] - witness.position[1]),
+  }
 }
 
 function waypoint(witness: Witness, goalId: string, world: PatrolWorld): Vec2 | null {

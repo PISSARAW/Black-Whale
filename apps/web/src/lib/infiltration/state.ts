@@ -16,6 +16,7 @@ export interface Belief {
 export interface Witness {
   id: WitnessId
   position: Vec2
+  heading: number
   spaceId: string
   sight: number
   social: boolean

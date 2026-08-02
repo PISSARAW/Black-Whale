@@ -24,6 +24,7 @@ const arena: Arena = {
 const witness: Witness = {
   id: 'guard',
   position: [0, 0],
+  heading: 0,
   spaceId: 'a',
   sight: 8,
   social: false,

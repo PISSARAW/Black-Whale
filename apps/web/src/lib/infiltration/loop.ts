@@ -2,6 +2,7 @@ import type { NavGraph } from '../hunt/navmesh'
 import type { Arena } from '../hunt/arena'
 import { hearsMovement, patrolWitness } from './patrol'
 import { activeDisguise } from './hatsu'
+import { canSee } from './vision'
 import type { InfiltrationState, Witness } from './state'
 
 export const INFILTRATION_DT = 1 / 30
@@ -25,7 +26,7 @@ export function updateInfiltration(
     ? { ...challenged.diversion, left: Math.max(0, challenged.diversion.left - dt) }
     : null
   const moved = challenged.witnesses.map((witness) => moveWitness(challenged, witness, world))
-  const witnesses = moved.map((witness) => observe(challenged, witness, dt))
+  const witnesses = moved.map((witness) => observe(challenged, witness, world))
   const reports = witnesses.reduce((all, witness, index) => {
     if (!witness.belief.reported || challenged.witnesses[index].belief.reported) return all
     return [...all, { witnessId: witness.id, at: clock, certainty: witness.belief.certainty }]
@@ -112,16 +113,10 @@ function challengeFor(
   return challenger ? { witnessId: challenger.id, left: 7 } : null
 }
 
-function observe(state: InfiltrationState, witness: Witness, dt: number): Witness {
+function observe(state: InfiltrationState, witness: Witness, world: InfiltrationWorld): Witness {
+  const dt = world.dt
   const distracted = state.diversion?.spaceId === witness.spaceId && state.diversion.left > 0
-  const sameRoom = state.player.spaceId === witness.spaceId
-  if (!sameRoom || distracted) return cool(witness, dt)
-
-  const distance = Math.hypot(
-    state.player.position[0] - witness.position[0],
-    state.player.position[1] - witness.position[1],
-  )
-  if (distance > witness.sight) return cool(witness, dt)
+  if (distracted || !canSee(witness, state.player, world.arena.walls)) return cool(witness, dt)
 
   const auraHidden = state.player.nen === 'zetsu'
   const sociallyWrong = witness.social && state.player.spaceId === state.objectiveSpaceId

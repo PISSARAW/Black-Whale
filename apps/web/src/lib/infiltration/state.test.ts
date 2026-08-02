@@ -12,6 +12,7 @@ const setup: MissionSetup = {
     {
       id: 'guard',
       position: [1, 0],
+      heading: -Math.PI / 2,
       spaceId: 'office',
       sight: 8,
       social: true,

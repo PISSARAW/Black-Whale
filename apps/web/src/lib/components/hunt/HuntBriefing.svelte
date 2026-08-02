@@ -2,6 +2,7 @@
   import type { HuntHatsuId, HuntHatsuProfile } from '$lib/hunt/hatsu'
   import type { HunterProfile, HunterProfileId } from '$lib/hunt/hunter/profiles'
   import type { HuntTerrain, HuntTerrainId } from '$lib/hunt/arena'
+  import type { HuntContractV3 } from '$lib/hunt/contracts/types'
 
   interface Props {
     labels: {
@@ -28,6 +29,10 @@
     terrainLabel: string
     locale: string
     onSelectTerrain: (id: HuntTerrainId) => void
+    contracts: HuntContractV3[]
+    selectedContract: string
+    contractLabel: string
+    onSelectContract: (id: string) => void
     onBegin: () => void
   }
 
@@ -45,6 +50,10 @@
     terrainLabel,
     locale,
     onSelectTerrain,
+    contracts,
+    selectedContract,
+    contractLabel,
+    onSelectContract,
     onBegin,
   }: Props = $props()
 </script>
@@ -63,6 +72,27 @@
     </p>
     <p class="mt-4 text-sm text-white/55">{labels.objective}</p>
     <div class="mx-auto mt-6 max-w-lg">
+      <p class="text-[0.65rem] uppercase tracking-[0.25em] text-amber-300/70">
+        {contractLabel}
+      </p>
+      <div class="mt-2 grid gap-2 sm:grid-cols-2">
+        {#each contracts as contract (contract.id)}
+          <button
+            class="rounded-lg border p-3 text-left transition {selectedContract === contract.id
+              ? 'border-amber-300 bg-amber-300/10'
+              : 'border-white/10 bg-white/[0.03]'}"
+            aria-pressed={selectedContract === contract.id}
+            onclick={() => onSelectContract(contract.id)}
+          >
+            <span class="block text-sm font-medium text-amber-100">
+              {locale === 'fr' ? contract.title.fr : contract.title.en}
+            </span>
+            <span class="mt-1 block text-[0.65rem] leading-snug text-white/40">
+              {locale === 'fr' ? contract.description.fr : contract.description.en}
+            </span>
+          </button>
+        {/each}
+      </div>
       <p class="text-[0.65rem] uppercase tracking-[0.25em] text-violet-300/70">
         {labels.chooseHatsu}
       </p>

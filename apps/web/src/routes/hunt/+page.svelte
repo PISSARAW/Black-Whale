@@ -38,6 +38,8 @@
   import { STRIKE_THRESHOLD } from '$lib/hunt/duel/ryu'
   import { liveOf } from '$lib/hunt/nen/placed'
   import { cuesFor } from '$lib/hunt/veil'
+  import { explorationNen, huntDuelNen } from '$lib/nen/tourAdapters'
+  import { NEN_KEYS, nenZoneIndex } from '$lib/nen/controls'
   import { sightings } from '$lib/hunt/sighting'
   import { floorOf } from '$lib/tour/blueprint'
   import { prefersReducedMotion } from '$lib/tour/comfort'
@@ -55,6 +57,8 @@
   import { terrainMessages } from '$lib/hunt/terrainMessages'
   import { debriefMessages } from '$lib/hunt/debriefMessages'
   import { safeFrameDebt } from '$lib/hunt/lifecycle'
+  import { huntContractById, listHuntContracts } from '$lib/hunt/contracts/registry'
+  import { contractMessages } from '$lib/hunt/contracts/messages'
   import {
     DEFAULT_HUNTER_PROFILE,
     HUNTER_PROFILES,
@@ -104,8 +108,20 @@
   const roomName = (id: string | null) => nameOf(spaceById(id))
 
   const hatsuProfiles = [BUNGEE_GUM_HUNT, PARALLEL_FUTURE_HUNT, DOWSING_CHAIN_HUNT]
+  const contracts = listHuntContracts()
+  let selectedContract = $state('royal-apartments')
   let selectedHatsu = $state<HuntHatsuId>(DEFAULT_HUNT_HATSU)
   let selectedHunter = $state<HunterProfileId>(DEFAULT_HUNTER_PROFILE)
+  let activeContract = $derived(huntContractById(selectedContract) ?? contracts[0])
+  let availableHatsuProfiles = $derived(
+    hatsuProfiles.filter((profile) => activeContract.allowedHatsu.includes(profile.id)),
+  )
+  let availableHunterProfiles = $derived(
+    HUNTER_PROFILES.filter((profile) => activeContract.hunterProfiles.includes(profile.id)),
+  )
+  let availableTerrains = $derived(
+    HUNT_TERRAINS.filter((terrain) => activeContract.terrainSequence.includes(terrain.id)),
+  )
 
   function freshGame() {
     return initialHuntState({
@@ -154,12 +170,24 @@
     arena = buildArena(id)
     plan = ship.plans.get(arena.tierId)!
     graph = buildNavGraph(arena)
-    world = { dt: HUNT_DT, arena, graph }
+    world = { dt: HUNT_DT, arena, graph, environment: activeContract.environment }
     opening = farthestApart()
     position = interiorPoint(opening.from.footprint)
     heading = 0
     currentSpace = null
     tierId = arena.tierId
+    game = freshGame()
+  }
+
+  function selectContract(id: string) {
+    const contract = huntContractById(id)
+    if (!contract) return
+    selectedContract = contract.id
+    if (!contract.allowedHatsu.includes(selectedHatsu)) selectedHatsu = contract.allowedHatsu[0]
+    if (!contract.hunterProfiles.includes(selectedHunter)) {
+      selectedHunter = contract.hunterProfiles[0]
+    }
+    selectTerrain(contract.terrainSequence[0])
     game = freshGame()
   }
 
@@ -213,6 +241,7 @@
       duel: game.duel,
     }),
   )
+  let playerNen = $derived(game.duel ? huntDuelNen(game.duel.player) : explorationNen(game.player.nen))
 
   function send(action: HuntAction) {
     const before = game
@@ -253,7 +282,6 @@
     KeyX: { type: 'ZETSU' },
     KeyV: { type: 'LAY' },
     KeyR: { type: 'TAKE' },
-    KeyH: { type: 'HATSU' },
   }
 
   function onKeyDown(event: KeyboardEvent) {
@@ -274,22 +302,24 @@
     if (zone) return duel({ type: 'RYU', side: 'player', setting: { guard: zone } })
 
     switch (code) {
-      case 'Minus':
+      case NEN_KEYS.ryuDown:
         return shiftRyu(-0.15)
-      case 'Equal':
+      case NEN_KEYS.ryuUp:
         return shiftRyu(0.15)
-      case 'KeyG':
+      case NEN_KEYS.gyo:
         return duel({ type: 'GYO', side: 'player', on: !game.duel!.player.gyo })
-      case 'KeyI':
+      case NEN_KEYS.in:
         return duel({ type: 'IN', side: 'player', on: !game.duel!.player.in })
-      case 'KeyK':
+      case NEN_KEYS.ken:
         return duel({ type: 'KEN', side: 'player', on: !game.duel!.player.ken })
-      case 'KeyX':
+      case NEN_KEYS.zetsu:
         return duel({ type: 'ZETSU', on: !game.duel!.player.zetsu })
       case 'KeyR':
         send({ type: 'TAKE_IN_DUEL' })
         return true
       case 'Space':
+        return strike()
+      case NEN_KEYS.ko:
         return strike()
       default:
         return false
@@ -297,8 +327,8 @@
   }
 
   function zoneFor(code: string): BodyZone | null {
-    const index = ['Digit1', 'Digit2', 'Digit3', 'Digit4'].indexOf(code)
-    return index === -1 ? null : BODY_ZONES[index]
+    const index = nenZoneIndex(code)
+    return index === null ? null : BODY_ZONES[index]
   }
 
   function duel(action: Extract<HuntAction, { type: 'DUEL' }>['action']): boolean {
@@ -446,6 +476,10 @@
     bind:engaged
     seated={duelSeat}
     world={EMPTY_WORLD}
+    nen={playerNen}
+    showNenControls={false}
+    onHatsu={() => send({ type: 'HATSU' })}
+    hatsuAllowedInZetsu={game.hatsu.id === 'parallel-future'}
     extras={figures}
     touchLabels={{ move: $t.tour.touch.move, cast: $t.tour.touch.cast }}
     soundLabels={{ silence: $t.tour.sound.silence, restore: $t.tour.sound.restore }}
@@ -556,14 +590,17 @@
   {#if !briefed}
     <HuntBriefing
       labels={$t.hunt.briefing}
-      profiles={hatsuProfiles}
+      profiles={availableHatsuProfiles}
       selected={selectedHatsu}
-      hunterProfiles={HUNTER_PROFILES}
+      hunterProfiles={availableHunterProfiles}
       selectedHunter={selectedHunter}
       hunterLabels={hunterProfileMessages($locale)}
-      terrains={HUNT_TERRAINS}
+      terrains={availableTerrains}
       selectedTerrain={selectedTerrain}
       terrainLabel={terrainMessages($locale).choose}
+      {contracts}
+      {selectedContract}
+      contractLabel={contractMessages($locale).choose}
       locale={$locale}
       onSelect={(id) => {
         selectedHatsu = id
@@ -574,6 +611,7 @@
         game = freshGame()
       }}
       onSelectTerrain={selectTerrain}
+      onSelectContract={selectContract}
       onBegin={begin}
     />
   {/if}

@@ -1,6 +1,14 @@
 import { hatsuAudioGraph } from '$lib/audio/ambient'
 
-export type HuntCue = 'en' | 'nen' | 'hatsu' | 'trap' | 'contact' | 'outcome'
+export type HuntCue =
+  | 'en'
+  | 'nen'
+  | 'bungee-gum'
+  | 'parallel-future'
+  | 'dowsing-chain'
+  | 'trap'
+  | 'contact'
+  | 'outcome'
 
 let muted = true
 let volume = 0.35
@@ -29,7 +37,7 @@ export function playHuntCue(cue: HuntCue): void {
   const now = graph.context.currentTime
   const oscillator = graph.context.createOscillator()
   const gain = graph.context.createGain()
-  const [frequency, duration, wave] = signature(cue)
+  const [frequency, duration, wave] = huntCueSignature(cue)
   oscillator.type = wave
   oscillator.frequency.setValueAtTime(frequency, now)
   oscillator.frequency.exponentialRampToValueAtTime(Math.max(40, frequency * 0.72), now + duration)
@@ -41,11 +49,13 @@ export function playHuntCue(cue: HuntCue): void {
   oscillator.stop(now + duration)
 }
 
-function signature(cue: HuntCue): [number, number, OscillatorType] {
+export function huntCueSignature(cue: HuntCue): [number, number, OscillatorType] {
   switch (cue) {
     case 'en': return [180, 0.7, 'sine']
     case 'nen': return [320, 0.18, 'triangle']
-    case 'hatsu': return [520, 0.45, 'sine']
+    case 'bungee-gum': return [145, 0.32, 'square']
+    case 'parallel-future': return [760, 0.9, 'sine']
+    case 'dowsing-chain': return [1180, 0.55, 'triangle']
     case 'trap': return [110, 0.28, 'square']
     case 'contact': return [75, 0.8, 'sawtooth']
     case 'outcome': return [240, 1.1, 'triangle']

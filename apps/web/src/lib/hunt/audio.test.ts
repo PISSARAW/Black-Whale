@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it } from 'vitest'
-import { configureHuntAudio, huntAudioState, playHuntCue } from './audio'
+import { configureHuntAudio, huntAudioState, huntCueSignature, playHuntCue } from './audio'
 
 afterEach(() => configureHuntAudio({ muted: true, volume: 0.35 }))
 
@@ -13,5 +13,12 @@ describe('hunt audio controls', () => {
 
   it('is safely silent before user activation', () => {
     expect(() => playHuntCue('contact')).not.toThrow()
+  })
+
+  it('gives every playable Hatsu its own acoustic signature', () => {
+    const signatures = ['bungee-gum', 'parallel-future', 'dowsing-chain'].map((cue) =>
+      huntCueSignature(cue as Parameters<typeof huntCueSignature>[0]).join(':'),
+    )
+    expect(new Set(signatures).size).toBe(3)
   })
 })

@@ -26,10 +26,10 @@ export const DIPLOMACY_COSTS: Record<DiplomacyAction, number> = {
 }
 
 export const DIPLOMACY_LABELS: Record<DiplomacyAction, string> = {
-  SHARE_INTEL: 'Partager un renseignement',
-  PROPOSE_PACT: 'Proposer un pacte',
-  THREATEN: 'Faire pression',
-  BETRAY: 'Rompre le pacte',
+  SHARE_INTEL: 'Share intel',
+  PROPOSE_PACT: 'Propose pact',
+  THREATEN: 'Apply pressure',
+  BETRAY: 'Break pact',
 }
 
 export function initialRelationship(): FactionRelationship {
@@ -48,7 +48,7 @@ export function resolveDiplomacy(
     return {
       relationship: { ...current, trust: Math.min(100, current.trust + 25) },
       accepted: true,
-      report: 'Le renseignement partagé améliore la confiance.',
+      report: 'Shared intel improves trust.',
     }
   }
   if (action === 'THREATEN') {
@@ -59,7 +59,7 @@ export function resolveDiplomacy(
         fear: Math.min(100, current.fear + 35),
       },
       accepted: true,
-      report: 'La pression est comprise, mais la confiance recule.',
+      report: 'Pressure is understood, but trust decreases.',
     }
   }
   if (action === 'BETRAY') {
@@ -67,8 +67,8 @@ export function resolveDiplomacy(
       relationship: { trust: -100, fear: current.fear, pact: false, betrayed: true },
       accepted: current.pact,
       report: current.pact
-        ? 'Le pacte est rompu. Cette trahison sera mémorisée.'
-        : 'Aucun pacte à rompre.',
+        ? 'The pact is broken. This betrayal will be remembered.'
+        : 'No pact to break.',
     }
   }
   const accepted = !current.betrayed && (current.trust >= 20 || current.fear >= 60)
@@ -78,8 +78,8 @@ export function resolveDiplomacy(
       : { ...current, trust: Math.max(-100, current.trust - 5) },
     accepted,
     report: accepted
-      ? 'Le pacte de non-agression est accepté.'
-      : 'La proposition de pacte est refusée.',
+      ? 'The non-aggression pact is accepted.'
+      : 'The pact proposal is refused.',
   }
 }
 
@@ -98,12 +98,12 @@ export function resolveDiplomacyPlan(input: {
       !input.activeFactionIds.includes(order.factionId) ||
       order.factionId === input.playerFactionId
     )
-      return { relationships, reports, error: 'Une action diplomatique vise une faction absente.' }
+      return { relationships, reports, error: 'A diplomatic action targets a missing faction.' }
     if (addressed.has(order.factionId))
       return {
         relationships,
         reports,
-        error: 'Une seule action diplomatique est permise par faction.',
+        error: 'Only one diplomatic action is allowed per faction.',
       }
     addressed.add(order.factionId)
     const resolution = resolveDiplomacy(

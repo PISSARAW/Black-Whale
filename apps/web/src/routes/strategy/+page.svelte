@@ -236,17 +236,17 @@
 
   function currentLocation(characterId: string): string {
     const state = simStore.currentState
-    if (!state) return 'Position inconnue'
+    if (!state) return 'Unknown position'
     const entity = entityForCharacter(state, characterId)
     const locationId = entity ? state.presences[entity.id]?.locationId : undefined
-    return locationId ? (locationById.get(locationId)?.name ?? locationId) : 'Position inconnue'
+    return locationId ? (locationById.get(locationId)?.name ?? locationId) : 'Unknown position'
   }
 
   function conditionForCharacter(characterId: string): string {
     const state = simStore.currentState
     const entity = state ? entityForCharacter(state, characterId) : undefined
     const condition = entity ? simStore.unitConditions[entity.id] : undefined
-    return condition === 'WOUNDED' ? 'Blessé' : condition === 'ELIMINATED' ? 'Éliminé' : 'Opérationnel'
+    return condition === 'WOUNDED' ? 'Wounded' : condition === 'ELIMINATED' ? 'Eliminated' : 'Operational'
   }
 
   function queueOrder() {
@@ -266,7 +266,7 @@
       nextOrder,
     ]
     if (planCost(nextOrders) > COMMAND_POINTS_PER_TURN) {
-      errorMessage = 'Ce plan dépasse vos points de commandement.'
+      errorMessage = 'This plan exceeds your command points.'
       return
     }
     pendingOrders = nextOrders
@@ -292,7 +292,7 @@
       { factionId: selectedDiplomacyFactionId, action: selectedDiplomacyAction },
     ]
     if (planCost(pendingOrders) + diplomacyCost(next) > COMMAND_POINTS_PER_TURN) {
-      errorMessage = 'Cette action diplomatique dépasse vos points de commandement.'
+      errorMessage = 'This diplomatic action exceeds your command points.'
       return
     }
     pendingDiplomacy = next
@@ -321,7 +321,7 @@
       errorMessage =
         error instanceof StrategyInputError
           ? error.message
-          : 'Le tour a échoué. Aucun ordre n’a été appliqué.'
+          : 'The turn failed. No orders were applied.'
       console.error('[strategy] turn', error)
     }
   }
@@ -331,20 +331,20 @@
 <main class="strategy-shell">
   {#if data.error}
     <section class="fatal" role="alert">
-      <p>Mode stratégie indisponible</p>
+      <p>Strategy mode unavailable</p>
       <h1>{data.error}</h1>
-      <span>Réessayez après avoir vérifié la connexion à la base de données.</span>
+      <span>Please try again after checking the database connection.</span>
     </section>
   {:else if !ready}
-    <section class="fatal" aria-live="polite"><h1>Initialisation du scénario…</h1></section>
+    <section class="fatal" aria-live="polite"><h1>Initializing scenario...</h1></section>
   {:else if !playerFactionId}
-    <nav class="campaign-operations" aria-label="Opérations de la campagne V3">
+    <nav class="campaign-operations" aria-label="Campaign Operations V3">
       {#each data.scenarios as operation, index (operation.id)}
         <a
           href={`/strategy?scenario=${operation.id}`}
           aria-current={data.scenario?.id === operation.id ? 'page' : undefined}
         >
-          <span>Opération {index + 1} · chapitre {operation.chapterNumber}</span>
+          <span>Operation {index + 1} · chapter {operation.chapterNumber}</span>
           <strong>{operation.title}</strong>
           <small>{operation.description}</small>
         </a>
@@ -365,26 +365,26 @@
           <button class="back" type="button" onclick={() => (playerFactionId = null)}
             >← Factions</button
           >
-          <p>Vous commandez</p>
+          <p>YOU COMMAND</p>
           <h1>{playerFaction?.name}</h1>
           <span
-            >Tour {Math.min(simStore.currentTurn, data.scenario?.maxTurns ?? 8)} / {data.scenario?.maxTurns ?? 8}</span
+            >Turn {Math.min(simStore.currentTurn, data.scenario?.maxTurns ?? 8)} / {data.scenario?.maxTurns ?? 8}</span
           >
         </header>
 
         <div class="panel-scroll">
           {#if simStore.scenarioEvent}
             <section class="scenario-event">
-              <span>Événement prévu</span>
+              <span>Scheduled Event</span>
               <strong>{simStore.scenarioEvent.title}</strong>
               <p>{simStore.scenarioEvent.description}</p>
             </section>
           {/if}
           <section>
             <div class="objective-card" class:complete={objective?.complete}>
-              <span>Objectif</span>
-              <strong>{objective?.title ?? 'Objectif indisponible'}</strong>
-              <p>{objective?.description ?? 'La situation tactique est en cours d’analyse.'}</p>
+              <span>OBJECTIVE</span>
+              <strong>{objective?.title ?? 'Objective unavailable'}</strong>
+              <p>{objective?.description ?? 'Analyzing tactical situation.'}</p>
               <div>
                 <i
                   style={`width:${objective ? Math.min(100, (objective.current / objective.target) * 100) : 0}%`}
@@ -392,46 +392,46 @@
               </div>
               <small
                 >{objective?.current ?? 0} / {objective?.target ?? 0}
-                {objective?.complete ? '· objectif atteint' : ''}</small
+                {objective?.complete ? '· objective achieved' : ''}</small
               >
               <small class="victory-score" class:won={simStore.gameWon}
-                >Influence {simStore.victoryPoints} / {VICTORY_POINTS_TARGET}</small
+                >INFLUENCE {simStore.victoryPoints} / {VICTORY_POINTS_TARGET}</small
               >
             </div>
           </section>
 
           <section>
             <div class="section-title">
-              <h2>Nouvel ordre</h2>
-              <span>{remainingCommandPoints} / {COMMAND_POINTS_PER_TURN} PC</span>
+              <h2>New Order</h2>
+              <span>{remainingCommandPoints} / {COMMAND_POINTS_PER_TURN} CP</span>
             </div>
             <label>
               Action
               <select bind:value={selectedOrderType}>
-                <option value="MOVE">Se déplacer · 1 PC</option>
-                <option value="SCOUT">Enquêter · 2 PC</option>
-                <option value="GUARD">Protéger sur place · 1 PC</option>
-                <option value="HATSU">Activer un Hatsu · 3 PC</option>
+                <option value="MOVE">Move · 1 CP</option>
+                <option value="SCOUT">Investigate · 2 CP</option>
+                <option value="GUARD">Guard in place · 1 CP</option>
+                <option value="HATSU">Activate Hatsu · 3 CP</option>
               </select>
             </label>
             {#if selectedOrderType === 'HATSU'}
               <label>
                 Hatsu
                 <select bind:value={selectedAbilityId}>
-                  <option value="">Choisir une capacité</option>
+                  <option value="">Choose a capability</option>
                   {#each availableHatsu as profile (profile.id)}
                     <option
                       value={profile.id}
                       disabled={(simStore.hatsuCooldowns[profile.id] ?? 0) > simStore.currentTurn}
                       >{profile.name}{(simStore.hatsuCooldowns[profile.id] ?? 0) >
                       simStore.currentTurn
-                        ? ` · disponible tour ${simStore.hatsuCooldowns[profile.id]}`
+                        ? ` · available turn ${simStore.hatsuCooldowns[profile.id]}`
                         : ''}</option
                     >
                   {/each}
                 </select>
                 {#if selectedCharacterId && !availableHatsu.length}
-                  <small class="field-hint">Aucun Hatsu tactique connu pour cette unité.</small>
+                  <small class="field-hint">No tactical Hatsu known for this unit.</small>
                 {:else if selectedHatsu}
                   <small class="field-hint"
                     >{HATSU_ROLE_LABELS[strategicRoleForHatsu(selectedHatsu.kind)]}</small
@@ -440,13 +440,13 @@
               </label>
             {/if}
             <label>
-              Unité
+              Unit
               <select bind:value={selectedCharacterId}>
-                <option value="">Choisir une unité</option>
+                <option value="">Choose a unit</option>
                 {#each playerFaction?.members ?? [] as member (member.character.id)}
                   <option
                     value={member.character.id}
-                    disabled={conditionForCharacter(member.character.id) === 'Éliminé'}
+                    disabled={conditionForCharacter(member.character.id) === 'Eliminated'}
                     >{member.character.canonicalName} · {conditionForCharacter(member.character.id)} ·
                     {currentLocation(member.character.id)}</option
                   >
@@ -456,12 +456,12 @@
             {#if selectedOrderType !== 'GUARD'}
               <label>
                 {selectedOrderType === 'SCOUT'
-                  ? 'Zone à enquêter'
+                  ? 'Zone to investigate'
                   : selectedOrderType === 'HATSU'
-                    ? 'Zone ciblée'
+                    ? 'Target zone'
                     : 'Destination'}
                 <select bind:value={selectedLocationId}>
-                  <option value="">Choisir une destination</option>
+                  <option value="">Choose a destination</option>
                   {#each playableLocations as location (location.id)}
                     <option value={location.id}>{location.name}</option>
                   {/each}
@@ -474,7 +474,7 @@
               disabled={!selectedCharacterId ||
                 (selectedOrderType !== 'GUARD' && !selectedLocationId) ||
                 (selectedOrderType === 'HATSU' && !selectedAbilityId)}
-              onclick={queueOrder}>Ajouter au plan</button
+              onclick={queueOrder}>Add to plan</button
             >
           </section>
 
@@ -488,7 +488,7 @@
           />
 
           <section>
-            <div class="section-title"><h2>Plan du tour</h2></div>
+            <div class="section-title"><h2>Turn Plan</h2></div>
             {#if pendingOrders.length}
               <ul class="orders">
                 {#each pendingOrders as order (order.characterId)}
@@ -503,19 +503,19 @@
                     </div>
                     <button
                       type="button"
-                      aria-label={`Retirer l’ordre de ${memberName(order.characterId)}`}
+                      aria-label={`Remove ${memberName(order.characterId)}'s order`}
                       onclick={() => removeOrder(order.characterId)}>×</button
                     >
                   </li>
                 {/each}
               </ul>
             {:else}
-              <p class="empty">Aucun ordre : terminer le tour revient à passer.</p>
+              <p class="empty">No orders: ending the turn will pass.</p>
             {/if}
           </section>
 
           <section>
-            <div class="section-title"><h2>Journal</h2></div>
+            <div class="section-title"><h2>Log</h2></div>
             <div class="reports" aria-live="polite">
               {#each simStore.turnReports as report, index (`${index}:${report}`)}<p>
                   {report}
@@ -532,10 +532,10 @@
             disabled={simStore.gameOver}
             onclick={handleEndTurn}
             >{simStore.gameWon
-              ? 'Victoire stratégique'
+              ? 'Strategic Victory'
               : simStore.gameLost
-                ? 'Scénario terminé'
-                : `Résoudre le tour · ${spentCommandPoints} PC`}</button
+                ? 'Scenario Complete'
+                : `Resolve Turn · ${spentCommandPoints} CP`}</button
           >
         </footer>
       </aside>
@@ -557,14 +557,13 @@
         {/if}
         <div class="map-heading">
           <div>
-            <p>Situation tactique · renseignement limité</p>
+            <p>TACTICAL SITUATION · LIMITED INTEL</p>
             <h2>Black Whale</h2>
           </div>
         </div>
         <StrategyBattlefield {markers} hatsuCues={simStore.hatsuCues} />
         <p class="legend">
-          <i></i> Votre faction <i class="other"></i> Contact observé · les pointillés indiquent un renseignement
-          ancien.
+          <i></i> Your faction <i class="other"></i> Observed contact · dashed lines indicate old intel.
         </p>
       </section>
     </div>

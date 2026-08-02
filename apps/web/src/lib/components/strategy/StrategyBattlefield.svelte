@@ -122,12 +122,12 @@
   }
 </script>
 
-<div class="battlefield-tabs" role="group" aria-label="Vue du champ de bataille">
+<div class="battlefield-tabs" role="group" aria-label="Battlefield view">
   <button class:active={view === 'tour'} type="button" onclick={() => (view = 'tour')}
-    >Vue 3D</button
+    >3D View</button
   >
   <button class:active={view === 'map'} type="button" onclick={() => (view = 'map')}
-    >Carte tactique</button
+    >Tactical Map</button
   >
 </div>
 
@@ -156,25 +156,25 @@
       bind:aimedSolidAt={navigation.aimedSolidAt}
       nen={modeNen.value}
       onNenChange={modeNen.use}
-      touchLabels={{ move: 'Déplacement', cast: 'Action' }}
-      soundLabels={{ silence: 'Couper les pas', restore: 'Rétablir les pas' }}
-      loadingLabel="Chargement du Black Whale…"
-      unsupportedLabel="La vue 3D nécessite WebGL. Utilisez la carte tactique."
+      touchLabels={{ move: 'Movement', cast: 'Action' }}
+      soundLabels={{ silence: 'Cut footsteps', restore: 'Restore footsteps' }}
+      loadingLabel="Loading Black Whale..."
+      unsupportedLabel="3D view requires WebGL. Use the tactical map."
     />
   </div>
 {:else}
-  <div class="tier-tabs" aria-label="Pont affiché">
+  <div class="tier-tabs" aria-label="Display deck">
     {#each availableTiers as tier (tier)}
       <button class:active={selectedTier === tier} type="button" onclick={() => selectTier(tier)}
-        >{tier.replace('tier-', 'Pont ')}</button
+        >{tier.replace('tier-', 'Deck ')}</button
       >
     {/each}
   </div>
   <PlanMap
     {markers}
     tier={selectedTier}
-    emptyLabel="Aucun renseignement disponible sur ce pont."
-    elsewhereLabel={(count) => `${count} unité${count > 1 ? 's' : ''} sur les autres ponts.`}
+    emptyLabel="No intel available on this deck."
+    elsewhereLabel={(count) => `${count} unit${count > 1 ? 's' : ''} on other decks.`}
   />
 {/if}
 

@@ -41,7 +41,7 @@ export function isPlayableScenarioFaction(factionId: string, scenario = ACTIVE_S
 
 export function scenarioDoctrineForFaction(factionId: string, scenario = ACTIVE_SCENARIO): StrategyDoctrine {
   const config = scenarioFactionConfig(factionId, scenario)
-  if (!config) throw new Error(`Faction absente du scénario : ${factionId}`)
+  if (!config) throw new Error(`Faction missing from scenario: ${factionId}`)
   return config.doctrine
 }
 
@@ -52,7 +52,7 @@ export function evaluateScenarioObjective(
   scenario = ACTIVE_SCENARIO,
 ): StrategyObjective {
   const config = scenarioFactionConfig(factionId, scenario)
-  if (!config) throw new Error(`Faction absente du scénario : ${factionId}`)
+  if (!config) throw new Error(`Faction missing from scenario: ${factionId}`)
   const objective = config.publicObjective
   const occupied = characterLocations.filter((id): id is string => Boolean(id))
   let current = new Set(occupied).size
@@ -103,10 +103,10 @@ export function buildScenarioRoster<T extends ScenarioFactionCandidate>(
 
 export function doctrineBriefing(doctrine: StrategyDoctrine): string {
   if (doctrine === 'CONSOLIDATION')
-    return 'Rassemblez vos forces, verrouillez un point d’appui et résistez aux incursions.'
+    return 'Gather your forces, secure a stronghold and resist incursions.'
   if (doctrine === 'INTELLIGENCE')
-    return 'Identifiez les mouvements adverses avant que leurs intentions ne deviennent irréversibles.'
-  return 'Dispersez vos unités et imposez votre présence dans les secteurs disputés.'
+    return 'Identify hostile movements before their intentions become irreversible.'
+  return 'Disperse your units and impose your presence in contested sectors.'
 }
 
 export function selectScenarioLocationIds(

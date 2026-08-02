@@ -19,15 +19,14 @@
 </script>
 
 <section class="faction-picker">
-  <p class="eyebrow">Scénario · chapitre {chapterNumber}</p>
-  <h1>Choisissez votre faction</h1>
+  <p class="eyebrow">Scenario · Chapter {chapterNumber}</p>
+  <h1>Choose Your Faction</h1>
   <p class="intro">
-    Huit tours pour imposer votre doctrine. Les ordres, négociations et Hatsu partagent le même
-    budget de commandement.
+    Eight turns to impose your doctrine. Orders, negotiations and Hatsu share the same command point budget.
   </p>
   {#if saved}
     <button class="resume" type="button" onclick={onresume}
-      >Reprendre · tour {saved.turns.length + 1}</button
+      >Resume · turn {saved.turns.length + 1}</button
     >
   {/if}
   {#if factions.length}
@@ -35,12 +34,12 @@
       {#each factions as faction (faction.id)}
         <button type="button" onclick={() => onselect(faction.id)}>
           <strong>{faction.name}</strong>
-          <span>{faction.members.length} unité{faction.members.length > 1 ? 's' : ''} · {scenarioDoctrineForFaction(faction.id).toLocaleLowerCase('fr')}</span>
-          <em>Jouer cette faction →</em>
+          <span>{faction.members.length} unit{faction.members.length > 1 ? 's' : ''} · {scenarioDoctrineForFaction(faction.id)}</span>
+          <em>Play this faction →</em>
         </button>
       {/each}
     </div>
   {:else}
-    <p class="empty">Aucune faction active à ce point du récit.</p>
+    <p class="empty">No active faction at this point in the story.</p>
   {/if}
 </section>

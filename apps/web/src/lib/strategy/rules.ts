@@ -2,9 +2,9 @@ export type StrategyOrderType = 'MOVE' | 'SCOUT' | 'GUARD' | 'HATSU'
 export type StrategyHatsuRole = 'RECON' | 'MOBILITY' | 'DENIAL'
 
 export const HATSU_ROLE_LABELS: Record<StrategyHatsuRole, string> = {
-  RECON: 'Révèle les présences adverses dans la zone ciblée.',
-  MOBILITY: 'Déplace instantanément l’unité vers la zone ciblée.',
-  DENIAL: 'Empêche les mouvements adverses vers la zone pendant ce tour.',
+  RECON: 'Reveals hostile presences in the targeted zone.',
+  MOBILITY: 'Instantly moves the unit to the targeted zone.',
+  DENIAL: 'Prevents hostile movements to the zone for this turn.',
 }
 
 export interface StrategyOrder {
@@ -36,10 +36,10 @@ export const ORDER_COSTS: Record<StrategyOrderType, number> = {
 }
 
 export const ORDER_LABELS: Record<StrategyOrderType, string> = {
-  MOVE: 'Se déplacer',
-  SCOUT: 'Enquêter',
-  GUARD: 'Protéger',
-  HATSU: 'Activer un Hatsu',
+  MOVE: 'Move',
+  SCOUT: 'Investigate',
+  GUARD: 'Guard',
+  HATSU: 'Activate Hatsu',
 }
 
 const RECON_HATSU_KINDS = new Set([
@@ -122,8 +122,8 @@ export function evaluateObjective(
     const target = Math.min(2, Math.max(1, occupied.length))
     return {
       doctrine,
-      title: 'Former un bastion',
-      description: `Rassemblez ${target} unités dans un même lieu à la fin du tour.`,
+      title: 'Form a Bastion',
+      description: `Gather ${target} units in the same location by the end of the turn.`,
       current,
       target,
       complete: current >= target,
@@ -133,8 +133,8 @@ export function evaluateObjective(
     const target = 2
     return {
       doctrine,
-      title: 'Lever le brouillard',
-      description: `Confirmez la position de ${target} unités adverses.`,
+      title: 'Clear the Fog',
+      description: `Confirm the position of ${target} hostile units.`,
       current: confirmedHostiles,
       target,
       complete: confirmedHostiles >= target,
@@ -143,8 +143,8 @@ export function evaluateObjective(
   const progress = objectiveProgress(characterLocations, occupied.length)
   return {
     doctrine,
-    title: 'Étendre votre présence',
-    description: `Occupez ${progress.target} lieux distincts avec vos unités.`,
+    title: 'Extend Your Presence',
+    description: `Occupy ${progress.target} distinct locations with your units.`,
     ...progress,
   }
 }

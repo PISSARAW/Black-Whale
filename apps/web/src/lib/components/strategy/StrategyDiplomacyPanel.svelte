@@ -26,8 +26,8 @@
 
 <section>
   <div class="section-title">
-    <h2>Diplomatie</h2>
-    <span>{pending.length} action</span>
+    <h2>Diplomacy</h2>
+    <span>{pending.length} action{pending.length !== 1 ? 's' : ''}</span>
   </div>
   <div class="relations">
     {#each factions as faction (faction.id)}
@@ -35,32 +35,32 @@
       <div>
         <strong>{faction.name}</strong>
         <span
-          >Confiance {relation?.trust ?? 0} · Crainte {relation?.fear ?? 0}{relation?.pact
-            ? ' · Pacte actif'
+          >Trust {relation?.trust ?? 0} · Fear {relation?.fear ?? 0}{relation?.pact
+            ? ' · Active Pact'
             : ''}</span
         >
       </div>
     {/each}
   </div>
   <label>
-    Interlocuteur
+    Interlocutor
     <select bind:value={selectedFactionId}>
-      <option value="">Choisir une faction</option>
+      <option value="">Choose a faction</option>
       {#each factions as faction (faction.id)}<option value={faction.id}>{faction.name}</option
         >{/each}
     </select>
   </label>
   <label>
-    Proposition
+    Proposal
     <select bind:value={selectedAction}>
-      <option value="SHARE_INTEL">Partager un renseignement · 1 PC</option>
-      <option value="PROPOSE_PACT">Proposer un pacte · 2 PC</option>
-      <option value="THREATEN">Faire pression · 1 PC</option>
-      <option value="BETRAY">Rompre le pacte · 0 PC</option>
+      <option value="SHARE_INTEL">Share intel · 1 CP</option>
+      <option value="PROPOSE_PACT">Propose pact · 2 CP</option>
+      <option value="THREATEN">Apply pressure · 1 CP</option>
+      <option value="BETRAY">Break pact · 0 CP</option>
     </select>
   </label>
   <button class="secondary-action" type="button" disabled={!selectedFactionId} onclick={onqueue}
-    >Ajouter la proposition</button
+    >Add Proposal</button
   >
   {#if pending.length}
     <ul class="diplomacy-plan">

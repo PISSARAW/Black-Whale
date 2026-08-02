@@ -4,7 +4,7 @@
   import type { WorldEntity, WorldState } from '@black-whale/world-engine'
   import type { PageData } from './$types'
   import './strategy.css'
-  import PlanMap from '$lib/components/map/PlanMap.svelte'
+  import StrategyBattlefield from '$lib/components/strategy/StrategyBattlefield.svelte'
   import StrategyDiplomacyPanel from '$lib/components/strategy/StrategyDiplomacyPanel.svelte'
   import StrategyDebrief from '$lib/components/strategy/StrategyDebrief.svelte'
   import StrategyFactionPicker from '$lib/components/strategy/StrategyFactionPicker.svelte'
@@ -45,7 +45,6 @@
   let pendingDiplomacy = $state<DiplomacyOrder[]>([])
   let selectedDiplomacyFactionId = $state('')
   let selectedDiplomacyAction = $state<DiplomacyAction>('SHARE_INTEL')
-  let selectedTier = $state('tier-1')
   let errorMessage = $state<string | null>(null)
   let availableSave = $state<StrategySave | null>(null)
   let playerFaction = $derived(data.factions.find((faction) => faction.id === playerFactionId))
@@ -137,18 +136,11 @@
               : ('outdated' as const),
         isObserver: owner?.factionId === playerFactionId,
         human: true,
+        locationId: presence.locationId,
         locationLabel: placement.loc?.name ?? null,
       }
     })
   })
-
-  let availableTiers = $derived(
-    [
-      ...new Set(
-        markers.map((marker) => marker.tier).filter((tier): tier is string => Boolean(tier)),
-      ),
-    ].sort(),
-  )
 
   let objective = $derived(simStore.objective)
   onMount(() => {
@@ -497,22 +489,8 @@
             <p>Situation tactique · renseignement limité</p>
             <h2>Black Whale</h2>
           </div>
-          <div class="tier-tabs" aria-label="Pont affiché">
-            {#each availableTiers as tier (tier)}
-              <button
-                class:active={selectedTier === tier}
-                type="button"
-                onclick={() => (selectedTier = tier)}>{tier.replace('tier-', 'Pont ')}</button
-              >
-            {/each}
-          </div>
         </div>
-        <PlanMap
-          {markers}
-          tier={selectedTier}
-          emptyLabel="Aucun renseignement disponible sur ce pont."
-          elsewhereLabel={(count) => `${count} unité${count > 1 ? 's' : ''} sur les autres ponts.`}
-        />
+        <StrategyBattlefield {markers} />
         <p class="legend">
           <i></i> Votre faction <i class="other"></i> Contact observé · les pointillés indiquent un renseignement
           ancien.

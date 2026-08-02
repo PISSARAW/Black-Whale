@@ -66,6 +66,7 @@
   import { buildSolidMesh, buildTierMesh } from '$lib/tour/mesh'
   import { buildDealer } from '$lib/tour/dealer'
   import { HUMAN_LOD_DISTANCE, buildHumanFigure } from '$lib/tour/humanFigure'
+  import { styleNenCreature } from '$lib/tour/nenCreatureFigure'
   import { cardFaceSvg } from '$lib/tour/cardArt'
   import { EYE_FOV, FORGED_AURA, OWL_FOV, type CardFace, type EyeFeed } from '$lib/tour/morena'
   import {
@@ -2487,57 +2488,85 @@
         // toad with spines, an eye with wings. Recognisable across a promenade
         // and nowhere near modelled, which is the rule the whole scene keeps.
 
-        // Camilla's: a bell, the ring of bulbs the drawing hangs round it, and
-        // twelve tentacles under the lot. The tentacles are the point of it —
-        // they are named so `driftApparitions` can find them and work every one
-        // of them on its own phase.
+        // Camilla's: a vast mushroom-like crown made of eye-lobes over a narrow,
+        // scaled body and a scalloped hem, matching its canonical silhouette.
         if (seen.kind === 'medusa') {
-          const bell = new THREE.Mesh(
-            new THREE.SphereGeometry(seen.size, 16, 10, 0, Math.PI * 2, 0, Math.PI * 0.62),
-            glow(seen.colour, 0.55),
-          )
-          root.add(bell)
-          // The bulbs round the rim, which are what makes it that jellyfish
-          // rather than a jellyfish: eight of them, each half sunk into the
-          // bell so the edge reads as swollen rather than as beaded.
-          for (let i = 0; i < 8; i++) {
-            const angle = (Math.PI / 4) * i
-            const bulb = new THREE.Mesh(
-              new THREE.SphereGeometry(seen.size * 0.34, 8, 6),
-              glow(seen.colour, 0.75),
-            )
-            bulb.position.set(
-              Math.cos(angle) * seen.size * 0.92,
-              -seen.size * 0.35,
-              Math.sin(angle) * seen.size * 0.92,
-            )
-            root.add(bulb)
+          const hide = glow(seen.colour, 0.82)
+          const canopy = new THREE.Group()
+          canopy.name = 'camilla-eye-canopy'
+          const rings = [1, 8, 13, 17]
+          for (let ring = 0; ring < rings.length; ring++) {
+            const count = rings[ring]
+            const radius = ring * seen.size * 0.58
+            for (let i = 0; i < count; i++) {
+              const angle = (Math.PI * 2 * i) / count + ring * 0.31
+              const pod = new THREE.Group()
+              const lobe = new THREE.Mesh(
+                new THREE.SphereGeometry(seen.size * (ring === 3 ? 0.37 : 0.4), 10, 7),
+                hide,
+              )
+              lobe.scale.set(1.25, 0.82, 0.92)
+              pod.add(lobe)
+              const eye = new THREE.Mesh(
+                new THREE.SphereGeometry(seen.size * 0.055, 7, 5),
+                glow(0x171318, 1),
+              )
+              eye.position.set(0, seen.size * 0.02, -seen.size * 0.37)
+              pod.add(eye)
+              pod.position.set(
+                Math.cos(angle) * radius,
+                seen.size * (0.48 - ring * 0.14 + (i % 3) * 0.05),
+                Math.sin(angle) * radius * 0.68,
+              )
+              pod.rotation.y = angle + Math.PI / 2
+              canopy.add(pod)
+            }
           }
-          const arms = new THREE.Group()
-          arms.name = 'tentacles'
+          root.add(canopy)
+
+          const body = new THREE.Mesh(
+            new THREE.CylinderGeometry(seen.size * 0.48, seen.size * 0.78, seen.size * 1.85, 12),
+            hide,
+          )
+          body.position.y = -seen.size * 0.75
+          root.add(body)
+
+          for (let row = 0; row < 6; row++) {
+            for (let i = 0; i < 7; i++) {
+              const angle = (Math.PI * 2 * i) / 7 + (row % 2) * 0.35
+              const scale = new THREE.Mesh(
+                new THREE.SphereGeometry(seen.size * 0.11, 7, 5),
+                glow(seen.colour, 0.94),
+              )
+              scale.scale.set(0.72, 1.25, 0.35)
+              scale.position.set(
+                Math.cos(angle) * seen.size * 0.51,
+                seen.size * (0.02 - row * 0.26),
+                Math.sin(angle) * seen.size * 0.51,
+              )
+              root.add(scale)
+            }
+          }
+
+          const skirt = new THREE.Group()
+          skirt.name = 'camilla-skirt'
           for (let i = 0; i < TENTACLES; i++) {
             const angle = (Math.PI * 2 * i) / TENTACLES
-            const arm = new THREE.Group()
-            arm.position.set(
-              Math.cos(angle) * seen.size * 0.72,
-              -seen.size * 0.5,
-              Math.sin(angle) * seen.size * 0.72,
+            const lobe = new THREE.Mesh(
+              new THREE.SphereGeometry(seen.size * 0.42, 9, 6),
+              hide,
             )
-            // A tentacle is a run of beads that thin as they go: the animation
-            // moves each bead further than the one above it, which is what
-            // makes the whole length whip rather than swing.
-            for (let bead = 0; bead < 7; bead++) {
-              const knot = new THREE.Mesh(
-                new THREE.SphereGeometry(seen.size * (0.13 - bead * 0.012), 6, 5),
-                glow(seen.colour, 0.85 - bead * 0.07),
-              )
-              knot.position.y = -bead * seen.size * 0.42
-              arm.add(knot)
-            }
-            arms.add(arm)
+            lobe.scale.set(1.35, 0.42, 0.72)
+            lobe.position.set(
+              Math.cos(angle) * seen.size * 0.7,
+              -seen.size * 1.72,
+              Math.sin(angle) * seen.size * 0.7,
+            )
+            lobe.rotation.y = -angle
+            skirt.add(lobe)
           }
-          root.add(arms)
-          turns = arms
+          root.add(skirt)
+          turns = skirt
         }
 
         // Tserriednich's: a horned quadruped with a face at the end of a long
@@ -2625,48 +2654,104 @@
           turns = root
         }
 
-        // Tubeppa's: squat, wide, spined along the back, and two eyes on top of
-        // the head rather than in front of it. Drawn as it sits in the source —
-        // a thing that fills the space between the deck and your waist.
+        // Tubeppa's: an enormous boxy toad with organ-pipe growths, wheeled
+        // flanks, mottled skin and a long cable ending in a polygonal paddle.
         if (seen.kind === 'toad') {
-          const hide = glow(seen.colour, 0.72)
+          const hide = glow(seen.colour, 0.82)
+          const raised = glow(seen.colour, 0.98)
           const body = new THREE.Mesh(new THREE.SphereGeometry(seen.size, 14, 10), hide)
-          body.scale.set(1.25, 0.78, 1)
+          body.scale.set(1.48, 0.82, 1.14)
+          body.position.z = -seen.size * 0.12
           root.add(body)
           const jaw = new THREE.Mesh(new THREE.SphereGeometry(seen.size * 0.72, 12, 8), hide)
-          jaw.scale.set(1.2, 0.5, 1)
-          jaw.position.set(0, -seen.size * 0.42, seen.size * 0.5)
+          jaw.scale.set(1.2, 0.5, 0.72)
+          jaw.position.set(0, -seen.size * 0.46, seen.size * 0.82)
           root.add(jaw)
-          for (let i = 0; i < 11; i++) {
+          for (let i = 0; i < 14; i++) {
             const spine = new THREE.Mesh(
-              new THREE.BoxGeometry(seen.size * 0.12, seen.size * 0.5, seen.size * 0.12),
-              glow(seen.colour, 0.95),
+              new THREE.BoxGeometry(
+                seen.size * 0.14,
+                seen.size * (0.4 + (i % 4) * 0.11),
+                seen.size * 0.14,
+              ),
+              raised,
             )
-            const angle = Math.PI * (i / 10)
+            const angle = Math.PI * (i / 13)
             spine.position.set(
-              Math.cos(angle) * seen.size * 1.05,
-              seen.size * 0.6,
-              -Math.sin(angle) * seen.size * 0.4,
+              Math.cos(angle) * seen.size * 1.16,
+              seen.size * (0.68 + (i % 3) * 0.04),
+              -Math.sin(angle) * seen.size * 0.72,
             )
-            spine.rotation.z = Math.cos(angle) * 0.7
+            spine.rotation.z = Math.cos(angle) * 0.38
             root.add(spine)
           }
           const eyes = new THREE.Group()
           for (const side of [-1, 1]) {
             const socket = new THREE.Mesh(
-              new THREE.SphereGeometry(seen.size * 0.22, 10, 8),
-              glow(0xf6ffe8, 0.95),
+              new THREE.TorusGeometry(seen.size * 0.15, seen.size * 0.035, 6, 14),
+              raised,
             )
-            socket.position.set(side * seen.size * 0.48, seen.size * 0.55, seen.size * 0.5)
+            socket.position.set(side * seen.size * 0.58, seen.size * 0.2, seen.size * 1.13)
             eyes.add(socket)
             const pupil = new THREE.Mesh(
-              new THREE.SphereGeometry(seen.size * 0.1, 8, 6),
+              new THREE.SphereGeometry(seen.size * 0.065, 8, 6),
               glow(0x1b2418, 1),
             )
-            pupil.position.set(side * seen.size * 0.48, seen.size * 0.57, seen.size * 0.66)
+            pupil.position.set(side * seen.size * 0.58, seen.size * 0.2, seen.size * 1.15)
             eyes.add(pupil)
           }
           root.add(eyes)
+          const mouth = new THREE.Mesh(
+            new THREE.BoxGeometry(seen.size * 0.72, seen.size * 0.035, seen.size * 0.035),
+            glow(0x1b2418, 1),
+          )
+          mouth.position.set(0, -seen.size * 0.37, seen.size * 1.15)
+          root.add(mouth)
+
+          for (const side of [-1, 1]) {
+            for (let wheel = 0; wheel < 2; wheel++) {
+              const rim = new THREE.Mesh(
+                new THREE.TorusGeometry(seen.size * (0.31 - wheel * 0.04), seen.size * 0.075, 7, 16),
+                raised,
+              )
+              rim.rotation.y = Math.PI / 2
+              rim.position.set(
+                side * seen.size * 1.32,
+                -seen.size * (0.2 + wheel * 0.38),
+                seen.size * (0.18 - wheel * 0.28),
+              )
+              root.add(rim)
+            }
+          }
+
+          for (let i = 0; i < 28; i++) {
+            const angle = i * 2.399
+            const wart = new THREE.Mesh(
+              new THREE.SphereGeometry(seen.size * (0.035 + (i % 3) * 0.012), 6, 4),
+              raised,
+            )
+            wart.position.set(
+              Math.cos(angle) * seen.size * (0.72 + (i % 5) * 0.1),
+              seen.size * (0.68 - (i % 4) * 0.23),
+              seen.size * (0.72 + Math.sin(angle) * 0.28),
+            )
+            root.add(wart)
+          }
+
+          const tail = new THREE.Group()
+          tail.name = 'tubeppa-tail'
+          const cable = new THREE.Mesh(
+            new THREE.CylinderGeometry(seen.size * 0.035, seen.size * 0.035, seen.size * 2.2, 7),
+            raised,
+          )
+          cable.rotation.z = Math.PI / 2
+          cable.position.set(seen.size * 1.85, -seen.size * 0.45, -seen.size * 0.42)
+          tail.add(cable)
+          const paddle = new THREE.Mesh(new THREE.CircleGeometry(seen.size * 0.34, 8), hide)
+          paddle.position.set(seen.size * 2.95, -seen.size * 0.45, -seen.size * 0.42)
+          paddle.rotation.y = -0.25
+          tail.add(paddle)
+          root.add(tail)
           turns = root
         }
 
@@ -2702,26 +2787,69 @@
           )
           spun.add(
             new THREE.Mesh(
+              new THREE.TorusGeometry(seen.size * 0.88, seen.size * 0.025, 5, 32),
+              iron,
+            ),
+          )
+          spun.add(
+            new THREE.Mesh(
               new THREE.TorusGeometry(seen.size * 0.74, seen.size * 0.05, 6, 24),
               iron,
             ),
           )
-          for (let i = 0; i < 8; i++) {
+          // Four bars crossing the hub make the canonical eight spokes.
+          for (let i = 0; i < 4; i++) {
             const spoke = new THREE.Mesh(
               new THREE.BoxGeometry(seen.size * 1.5, seen.size * 0.05, seen.size * 0.05),
               iron,
             )
-            spoke.rotation.z = (Math.PI / 8) * i
+            spoke.rotation.z = (Math.PI / 4) * i
             spun.add(spoke)
-            // The studs the drawing puts where each spoke meets the inner ring.
-            const stud = new THREE.Mesh(new THREE.SphereGeometry(seen.size * 0.08, 6, 5), iron)
+          }
+          for (let i = 0; i < 8; i++) {
             const angle = (Math.PI / 4) * i
+            const stud = new THREE.Mesh(new THREE.SphereGeometry(seen.size * 0.08, 6, 5), iron)
             stud.position.set(
               Math.cos(angle) * seen.size * 0.74,
               Math.sin(angle) * seen.size * 0.74,
               0,
             )
             spun.add(stud)
+
+            // The eight cross-shaped cardinal marks outside the inscribed band.
+            const cross = new THREE.Group()
+            cross.add(
+              new THREE.Mesh(
+                new THREE.BoxGeometry(seen.size * 0.22, seen.size * 0.045, seen.size * 0.035),
+                iron,
+              ),
+              new THREE.Mesh(
+                new THREE.BoxGeometry(seen.size * 0.045, seen.size * 0.22, seen.size * 0.035),
+                iron,
+              ),
+            )
+            cross.position.set(
+              Math.cos(angle) * seen.size * 1.02,
+              Math.sin(angle) * seen.size * 1.02,
+              0,
+            )
+            cross.rotation.z = angle
+            spun.add(cross)
+          }
+          // Dense short ticks reproduce the writing-like band around the rim.
+          for (let i = 0; i < 40; i++) {
+            const angle = (Math.PI * 2 * i) / 40
+            const tick = new THREE.Mesh(
+              new THREE.BoxGeometry(seen.size * 0.018, seen.size * 0.11, seen.size * 0.025),
+              iron,
+            )
+            tick.position.set(
+              Math.cos(angle) * seen.size * 0.88,
+              Math.sin(angle) * seen.size * 0.88,
+              0,
+            )
+            tick.rotation.z = angle
+            spun.add(tick)
           }
           root.add(spun)
           // The hub, which does not turn with the rim: a face that rotated with
@@ -2744,22 +2872,39 @@
           )
           mouth.position.set(0, -seen.size * 0.1, 0.02)
           root.add(mouth)
+          const browMark = new THREE.Group()
+          browMark.position.set(0, seen.size * 0.2, 0.025)
+          browMark.add(
+            new THREE.Mesh(
+              new THREE.BoxGeometry(seen.size * 0.11, seen.size * 0.025, seen.size * 0.018),
+              ink,
+            ),
+            new THREE.Mesh(
+              new THREE.BoxGeometry(seen.size * 0.025, seen.size * 0.11, seen.size * 0.018),
+              ink,
+            ),
+          )
+          root.add(browMark)
           // And the fire round the outside, which is a group of its own so it
           // can flicker without the rim flickering with it.
           const fire = new THREE.Group()
           fire.name = 'corona'
-          for (let i = 0; i < 20; i++) {
-            const angle = (Math.PI * 2 * i) / 20
+          for (let i = 0; i < 32; i++) {
+            const angle = (Math.PI * 2 * i) / 32
             const flame = new THREE.Mesh(
-              new THREE.ConeGeometry(seen.size * 0.1, seen.size * (0.4 + (i % 3) * 0.18), 4),
-              glow(seen.colour, 0.5),
+              new THREE.ConeGeometry(
+                seen.size * (0.065 + (i % 4) * 0.012),
+                seen.size * (0.36 + (i % 5) * 0.12),
+                5,
+              ),
+              glow(0x241923, 0.68),
             )
             flame.position.set(
-              Math.cos(angle) * seen.size * 1.24,
-              Math.sin(angle) * seen.size * 1.24,
+              Math.cos(angle) * seen.size * 1.27,
+              Math.sin(angle) * seen.size * 1.27,
               0,
             )
-            flame.rotation.z = angle - Math.PI / 2
+            flame.rotation.z = angle - Math.PI / 2 + Math.sin(i * 2.3) * 0.13
             fire.add(flame)
           }
           root.add(fire)
@@ -2784,54 +2929,90 @@
           turns = root
         }
 
-        // Tyson's: one eye with a pair of wings on it. Drawn from the front,
-        // because it comes up in front of the reader and looks at them — the
-        // whole ability is being looked at by the thing that is taking from you.
+        // Tyson's: a heart-shaped body almost entirely occupied by one long
+        // almond eye, with three small pairs of wings and a dripping fringe.
         if (seen.kind === 'wog') {
           const flesh = glow(seen.colour, 0.8)
           const ball = new THREE.Mesh(new THREE.SphereGeometry(seen.size, 16, 12), flesh)
+          ball.scale.set(1.12, 1, 0.68)
           root.add(ball)
+          for (const side of [-1, 1]) {
+            const lobe = new THREE.Mesh(
+              new THREE.SphereGeometry(seen.size * 0.66, 14, 10),
+              flesh,
+            )
+            lobe.scale.set(0.92, 0.9, 0.7)
+            lobe.position.set(side * seen.size * 0.43, seen.size * 0.38, 0)
+            root.add(lobe)
+          }
+          const point = new THREE.Mesh(
+            new THREE.ConeGeometry(seen.size * 0.92, seen.size * 1.25, 18),
+            flesh,
+          )
+          point.rotation.z = Math.PI
+          point.position.y = -seen.size * 0.48
+          point.scale.z = 0.68
+          root.add(point)
+          const eyeShape = new THREE.Shape()
+          eyeShape.moveTo(-seen.size * 0.78, 0)
+          eyeShape.bezierCurveTo(-seen.size * 0.38, seen.size * 0.3, seen.size * 0.38, seen.size * 0.3, seen.size * 0.78, 0)
+          eyeShape.bezierCurveTo(seen.size * 0.38, -seen.size * 0.28, -seen.size * 0.38, -seen.size * 0.28, -seen.size * 0.78, 0)
           const white = new THREE.Mesh(
-            new THREE.CircleGeometry(seen.size * 0.66, 20),
+            new THREE.ShapeGeometry(eyeShape, 16),
             glow(0xfdf6fb, 1),
           )
-          white.position.z = seen.size * 0.82
-          white.scale.set(1, 0.62, 1)
+          white.position.z = seen.size * 0.7
           root.add(white)
           const pupil = new THREE.Mesh(
-            new THREE.CircleGeometry(seen.size * 0.3, 16),
+            new THREE.CircleGeometry(seen.size * 0.31, 18),
             glow(0x14101a, 1),
           )
-          pupil.position.z = seen.size * 0.85
+          pupil.scale.x = 1.45
+          pupil.position.z = seen.size * 0.72
           root.add(pupil)
           const wings = new THREE.Group()
           wings.name = 'wings'
           for (const side of [-1, 1]) {
-            const wing = new THREE.Group()
-            for (let i = 0; i < 3; i++) {
-              const feather = new THREE.Mesh(
-                new THREE.PlaneGeometry(seen.size * (0.9 - i * 0.15), seen.size * 0.3),
-                glow(0xfdf6fb, 0.8),
+            for (let tier = 0; tier < 3; tier++) {
+              const wing = new THREE.Group()
+              wing.position.set(
+                side * seen.size * (0.96 + tier * 0.04),
+                seen.size * (0.52 - tier * 0.47),
+                -seen.size * 0.08,
               )
-              feather.position.set(
-                side * seen.size * (0.6 + i * 0.32),
-                seen.size * (0.1 - i * 0.18),
-                0,
-              )
-              feather.rotation.z = side * (0.2 - i * 0.16)
-              wing.add(feather)
+              for (let i = 0; i < 3; i++) {
+                const feather = new THREE.Mesh(
+                  new THREE.CircleGeometry(seen.size * (0.22 - i * 0.035), 9, 0, Math.PI),
+                  glow(0xfdf6fb, 0.88),
+                )
+                feather.scale.set(1.55, 0.72, 1)
+                feather.position.x = side * seen.size * i * 0.16
+                feather.rotation.z = side * (-0.15 - i * 0.08)
+                wing.add(feather)
+              }
+              wings.add(wing)
             }
-            wing.position.x = side * seen.size * 0.9
-            wings.add(wing)
           }
           root.add(wings)
           // The fringe under it, which is where the aura it has taken runs out.
-          for (let i = 0; i < 7; i++) {
+          const fringe = new THREE.Mesh(
+            new THREE.SphereGeometry(seen.size * 0.43, 12, 7),
+            glow(seen.colour, 0.68),
+          )
+          fringe.scale.set(1, 0.34, 0.46)
+          fringe.position.y = -seen.size * 1.03
+          root.add(fringe)
+          for (let i = 0; i < 6; i++) {
             const drip = new THREE.Mesh(
-              new THREE.SphereGeometry(seen.size * 0.09, 6, 5),
+              new THREE.SphereGeometry(seen.size * 0.065, 6, 5),
               glow(seen.colour, 0.6),
             )
-            drip.position.set((i - 3) * seen.size * 0.22, -seen.size * (0.95 + (i % 3) * 0.14), 0)
+            drip.scale.y = 1.7
+            drip.position.set(
+              (i - 2.5) * seen.size * 0.16,
+              -seen.size * (1.22 + (i % 3) * 0.15),
+              0,
+            )
             root.add(drip)
           }
           turns = wings
@@ -3589,6 +3770,8 @@
           turns = root
         }
 
+        styleNenCreature(THREE, root, seen.kind, seen.size)
+
         return {
           key: '',
           kind: seen.kind,
@@ -4161,24 +4344,18 @@
           // merely present: everything above them is a mark riding on the air,
           // and an animal that only bobbed would be a prop of an animal.
 
-          // Camilla's works its tentacles, and it works them in every direction
-          // at once — each arm on its own phase, and each bead of an arm
-          // further round that phase than the one above it, so the length whips
-          // instead of swinging as a rod. The bell breathes on a slower count,
-          // because a jellyfish is a bell that is pumping.
+          // The enormous crown breathes while the hanging hem moves in slow,
+          // separate waves: a living curtain rather than a swimming jellyfish.
           if (held.kind === 'medusa') {
             held.root.position.set(held.at[0], held.y + Math.sin(phase * 0.6) * 0.18, held.at[1])
-            const pump = 1 + Math.sin(phase * 1.1) * 0.08
-            held.root.scale.set(pump, 2 - pump, pump)
+            const breath = 1 + Math.sin(phase * 0.72) * 0.025
+            const canopy = held.root.getObjectByName('camilla-eye-canopy')
+            if (canopy) canopy.scale.set(breath, 2 - breath, breath)
             if (!held.turns) continue
-            held.turns.children.forEach((arm, i) => {
-              const own = phase * 1.3 + (i * Math.PI * 2) / TENTACLES
-              arm.children.forEach((bead, deep) => {
-                const reach = deep * held.size * 0.16
-                bead.position.x = Math.sin(own + deep * 0.7) * reach
-                bead.position.z = Math.cos(own * 0.8 + deep * 0.9) * reach
-                bead.position.y = -deep * held.size * 0.42 + Math.sin(own + deep) * 0.05
-              })
+            held.turns.children.forEach((lobe, i) => {
+              const own = phase * 0.8 + (i * Math.PI * 2) / TENTACLES
+              lobe.rotation.z = Math.sin(own) * 0.12
+              lobe.position.y = -held.size * 1.72 + Math.sin(own) * held.size * 0.07
             })
             continue
           }

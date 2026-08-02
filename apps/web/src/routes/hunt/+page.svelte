@@ -47,6 +47,8 @@
   import HuntActions from '$lib/components/hunt/HuntActions.svelte'
   import HuntBriefing from '$lib/components/hunt/HuntBriefing.svelte'
   import HuntTutorial from '$lib/components/hunt/HuntTutorial.svelte'
+  import HuntAudioControl from '$lib/components/hunt/HuntAudioControl.svelte'
+  import { closeHuntAudio, playHuntCue } from '$lib/hunt/audio'
   import { tutorialStep } from '$lib/hunt/tutorial'
   import { tutorialMessages } from '$lib/hunt/tutorialMessages'
   import { terrainMessages } from '$lib/hunt/terrainMessages'
@@ -208,7 +210,13 @@
   )
 
   function send(action: HuntAction) {
+    const before = game
     game = huntReducer(game, action)
+    if (game === before) return
+    if (action.type === 'SWEEP') playHuntCue('en')
+    if (action.type === 'ZETSU') playHuntCue('nen')
+    if (action.type === 'HATSU') playHuntCue('hatsu')
+    if (action.type === 'LAY' || action.type === 'TAKE') playHuntCue('trap')
   }
 
   let canSweep = $derived(game.player.nen === 'ten' && game.ledger.pool.available >= 15)
@@ -336,7 +344,14 @@
     reportWalk()
     while (owed >= HUNT_DT && !huntIsOver(game.outcome)) {
       owed -= HUNT_DT
+      const beforeTick = game
       game = updateHunt(game, world)
+      if (!beforeTick.duel && game.duel) playHuntCue('contact')
+      if (!huntIsOver(beforeTick.outcome) && huntIsOver(game.outcome)) playHuntCue('outcome')
+      for (const event of game.log.slice(beforeTick.log.length)) {
+        if (event.kind === 'feltEn') playHuntCue('en')
+        if (event.kind === 'sprungEntrave') playHuntCue('trap')
+      }
     }
   }
 
@@ -367,6 +382,7 @@
   onDestroy(() => {
     if (typeof window === 'undefined') return
     window.removeEventListener('keydown', onKeyDown)
+    closeHuntAudio()
     cancelAnimationFrame(frame)
   })
 
@@ -392,6 +408,7 @@
 />
 
 <div class="relative h-screen w-full overflow-hidden bg-black text-white">
+  <HuntAudioControl locale={$locale} />
   <div class="sr-only" aria-live="polite" aria-atomic="true">
     {#if finished}
       {$t.hunt.outcome[

@@ -25,7 +25,7 @@ export function updateInfiltration(
 ): InfiltrationState {
   if (state.outcome !== 'playing') return state
   const dt = world.dt
-  const challenged = advanceVerification(expireChallenge(state, dt), dt)
+  const challenged = advanceVerification(expireChallenge(expireHatsuEffect(state), dt), dt)
   const clock = challenged.clock + dt
   const diversion = challenged.diversion
     ? { ...challenged.diversion, left: Math.max(0, challenged.diversion.left - dt) }
@@ -92,6 +92,12 @@ export function updateInfiltration(
     outcome:
       clock >= searched.mission.duration ? 'timeUp' : state.outcome,
   }
+}
+
+function expireHatsuEffect(state: InfiltrationState): InfiltrationState {
+  const effect = state.hatsu.effect
+  if (!effect?.expiresAt || effect.expiresAt > state.clock) return state
+  return { ...state, hatsu: { ...state.hatsu, effect: null } }
 }
 
 function discoverTraces(state: InfiltrationState): InfiltrationState {

@@ -32,6 +32,8 @@
   import { decodeSave, encodeSave } from '$lib/infiltration/persistence'
   import { causalTimeline, debriefAxes } from '$lib/infiltration/debrief'
   import { applyConsequences, initialCampaign, type CampaignState } from '$lib/infiltration/campaign'
+  import { infiltrationHatsuManifestations } from '$lib/infiltration/hatsuPresentation'
+  import { playInfiltrationHatsuSound } from '$lib/audio/infiltrationHatsuSounds'
 
   const modeNen = new ModeNenState()
   const ship = theShip()
@@ -107,6 +109,12 @@
           .filter((space): space is Space => !!space)
       : [],
   )
+  let nearbyHatsuTargets = $derived(
+    game.witnesses.filter((witness) => witness.spaceId === currentSpace?.id),
+  )
+  let needsHatsuTarget = $derived(
+    ['secret-window', 'bloody-mary', 'body-and-soul'].includes(game.hatsu.id),
+  )
 
   const colours: Record<WitnessId, number> = {
     steward: 0x58a6ff,
@@ -151,15 +159,14 @@
       hidden: false,
     })),
   )
-  let scoutFigure = $derived<Apparition[]>(
-    game.hatsu.scout?.active
-      ? [{
-          id: 'little-eye-scout', kind: 'insect', colour: 0xd86cff, size: 0.22,
-          y: floorOf(arena.spaces.find((space) => space.id === game.hatsu.scout?.spaceId)!, plan.tier) + 1.3,
-          at: game.hatsu.scout.position, heading: game.hatsu.scout.heading, tierId: arena.tierId,
-          spaceId: game.hatsu.scout.spaceId, stage: 0, hidden: false,
-        }]
-      : [],
+  let hatsuFigures = $derived<Apparition[]>(
+    infiltrationHatsuManifestations(game).map((manifestation) => {
+      const space = arena.spaces.find((candidate) => candidate.id === manifestation.spaceId) ?? extraction
+      return {
+        ...manifestation, y: floorOf(space, plan.tier) + 1.1, heading: 0,
+        tierId: arena.tierId, stage: manifestation.stage ?? 0, hidden: false,
+      }
+    }),
   )
 
   function moveScoutTo(space: Space) {
@@ -171,7 +178,9 @@
 
   function send(action: InfiltrationAction) {
     const wasPlaying = game.outcome === 'playing'
+    const prior = game
     game = infiltrationReducer(game, action)
+    if (action.type === 'CAST_HATSU' && game !== prior) playInfiltrationHatsuSound(game.hatsu.id)
     if (wasPlaying && game.outcome === 'escaped') {
       campaign = applyConsequences(campaign, {
         missionId: game.mission.id,
@@ -323,7 +332,7 @@
     onNenChange={useStandardNen}
     onPhysicalNenAction={act}
     onHatsu={() => send({ type: 'CAST_HATSU' })}
-    extras={[...figures, ...scoutFigure]}
+    extras={[...figures, ...hatsuFigures]}
     touchLabels={{ move: $t.tour.touch.move, cast: $t.tour.touch.cast }}
     soundLabels={{ silence: $t.tour.sound.silence, restore: $t.tour.sound.restore }}
     loadingLabel={$t.tour.loading}
@@ -367,6 +376,15 @@
       <p class="mt-1 text-xs text-white/65">
         Nen: <strong>{game.player.nen === 'zetsu' ? 'Zetsu' : 'Ten'}</strong>
       </p>
+      {#if game.hatsu.effect}
+        <p class="mt-1 text-xs text-fuchsia-200">
+          {game.hatsu.effect.kind}{game.hatsu.effect.witnessId
+            ? ` · ${$t.infiltration.witnesses[game.hatsu.effect.witnessId]}`
+            : game.hatsu.effect.spaceId
+              ? ` · ${roomName(arena.spaces.find((space) => space.id === game.hatsu.effect?.spaceId))}`
+              : ''}
+        </p>
+      {/if}
       <p class="mt-1 text-xs text-white/65">
         Hatsu: <strong
           >{INFILTRATION_HATSU.find((entry) => entry.id === game.hatsu.id)?.name}</strong
@@ -377,6 +395,15 @@
     </section>
 
     <div class="absolute bottom-6 left-1/2 flex -translate-x-1/2 gap-2">
+      {#if needsHatsuTarget}
+        {#each nearbyHatsuTargets as target (target.id)}
+          <button
+            onclick={() => send({ type: 'TARGET_HATSU', witnessId: target.id })}
+            aria-pressed={game.hatsu.targetWitnessId === target.id}
+            class="rounded border border-fuchsia-300/40 bg-black/90 px-3 py-2 text-xs aria-pressed:bg-fuchsia-300/20"
+          >{$t.infiltration.witnesses[target.id]}</button>
+        {/each}
+      {/if}
       {#if game.hatsu.scout?.active}
         {#each scoutDestinations as destination (destination.id)}
           <button onclick={() => moveScoutTo(destination)} class="rounded border border-fuchsia-300/50 bg-black/90 px-3 py-2 text-xs text-fuchsia-200">
@@ -454,6 +481,14 @@
         </section>
       </div>
     {/if}
+
+    <div class="sr-only" aria-live="polite">
+      {game.hatsu.effect
+        ? `${game.hatsu.id}: ${game.hatsu.effect.kind}${game.hatsu.effect.payload ? `, ${game.hatsu.effect.payload}` : ''}`
+        : game.hatsu.scout?.active
+          ? `${game.hatsu.id}: ${game.hatsu.scout.spaceId}, signal ${Math.round(game.hatsu.scout.signal)}%`
+          : ''}
+    </div>
   {/if}
 
   {#if briefing}
@@ -463,7 +498,7 @@
       aria-modal="true"
       aria-labelledby="mission-title"
     >
-      <article class="max-w-xl border border-amber-300/30 bg-[#0b0b0b] p-8">
+      <article class="max-h-[90vh] max-w-3xl overflow-y-auto border border-amber-300/30 bg-[#0b0b0b] p-8">
         <p class="text-xs uppercase tracking-[.3em] text-amber-300">{$t.infiltration.briefing}</p>
         <h1 id="mission-title" class="mt-3 text-4xl font-black">{$t.infiltration.title}</h1>
         <p class="mt-5 leading-relaxed text-white/70">{$t.infiltration.intro}</p>

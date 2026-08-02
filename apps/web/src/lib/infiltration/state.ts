@@ -108,6 +108,9 @@ export interface InfiltrationState {
     scout: LittleEyeScout | null
     forgerySurface: ForgerySurface
     disguiseIdentity: CoverRole
+    effect: { kind: string; spaceId?: string; witnessId?: WitnessId; expiresAt?: number; payload?: string } | null
+    targetWitnessId: WitnessId | null
+    targetSpaceId: string | null
   }
 }
 
@@ -129,6 +132,7 @@ export type InfiltrationAction =
   | { type: 'SELECT_HATSU'; id: InfiltrationHatsuId }
   | { type: 'CAST_HATSU' }
   | { type: 'CONFIGURE_HATSU'; forgerySurface?: ForgerySurface; disguiseIdentity?: CoverRole }
+  | { type: 'TARGET_HATSU'; witnessId?: WitnessId; spaceId?: string }
   | { type: 'SCOUT_MOVE'; position: Vec2; spaceId: string; visibleToGuard: boolean }
   | { type: 'SCOUT_RECALL' }
   | { type: 'EXTRACT' }
@@ -208,6 +212,9 @@ export function initialInfiltrationState(setup: MissionSetup): InfiltrationState
       scout: null,
       forgerySurface: 'work-order',
       disguiseIdentity: 'maintenance',
+      effect: null,
+      targetWitnessId: null,
+      targetSpaceId: null,
     },
   }
 }
@@ -266,6 +273,8 @@ function reduceAction(state: InfiltrationState, action: InfiltrationAction): Inf
       return useHatsu(state)
     case 'CONFIGURE_HATSU':
       return configureHatsu(state, action)
+    case 'TARGET_HATSU':
+      return { ...state, hatsu: { ...state.hatsu, targetWitnessId: action.witnessId ?? state.hatsu.targetWitnessId, targetSpaceId: action.spaceId ?? state.hatsu.targetSpaceId } }
     case 'SCOUT_MOVE': {
       const moved = moveLittleEye(state, action.position, action.spaceId, action.visibleToGuard)
       return moved.authorConfirmed && !state.authorConfirmed

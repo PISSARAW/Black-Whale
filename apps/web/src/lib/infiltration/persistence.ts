@@ -23,6 +23,9 @@ export function decodeSave(raw: string): InfiltrationSave | null {
     state.hatsu.scout ??= null
     state.hatsu.forgerySurface ??= 'work-order'
     state.hatsu.disguiseIdentity ??= 'maintenance'
+    state.hatsu.effect ??= null
+    state.hatsu.targetWitnessId ??= null
+    state.hatsu.targetSpaceId ??= null
     return { version: 3, savedAt: value.savedAt ?? new Date(0).toISOString(), state }
   } catch { return null }
 }

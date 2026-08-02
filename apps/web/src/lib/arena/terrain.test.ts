@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { pointInPolygon } from '../tour/geometry'
+import { pointInPolygon, structureWalls } from '../tour/geometry'
 import { BANQUET_HALL_ID, buildCombatTerrain } from './terrain'
 
 describe('a combat terrain from the Black Whale', () => {
@@ -20,5 +20,10 @@ describe('a combat terrain from the Black Whale', () => {
         terrain.spawns[0][1] - terrain.spawns[1][1],
       ),
     ).toBeCloseTo(24, 0)
+  })
+
+  it('turns attested furniture into tactical collision and cover', () => {
+    const table = terrain.structures.find((structure) => structure.kind === 'table')!
+    for (const wall of structureWalls(table)) expect(terrain.walls).toContainEqual(wall)
   })
 })

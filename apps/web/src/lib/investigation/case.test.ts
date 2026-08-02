@@ -8,6 +8,14 @@ describe('investigation verdict', () => {
     )
   })
 
+  it('links every evidence item to a stable canonical record', () => {
+    for (const evidence of room1014Case.evidence) {
+      expect(evidence.canonicalRefs.length).toBeGreaterThan(0)
+      expect(evidence.canonicalRefs[0].id).toMatch(/^ch-\d+-seq-\d+$/)
+      expect(evidence.canonicalRefs[0].href).toMatch(/^\/timeline#chapter-\d+$/)
+    }
+  })
+
   it('requires every decisive clue before solving the case', () => {
     const verdict = evaluateHypothesis(room1014Case, 'hidden-nen', ['wounds', 'bill-testimony'])
 

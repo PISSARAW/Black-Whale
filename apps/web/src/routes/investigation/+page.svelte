@@ -671,6 +671,17 @@
                       ' ',
                     )}
                   </p>
+                  <div class="mt-3 flex flex-wrap gap-2 border-t border-white/5 pt-3">
+                    {#each evidence.canonicalRefs as reference}
+                      <a
+                        class="border border-white/10 px-2 py-1 text-[9px] text-white/45 transition hover:border-[#d6b35a]/50 hover:text-[#e8cc84]"
+                        href={reference.href}
+                        title={reference.id}
+                      >
+                        ↗ {reference.label}
+                      </a>
+                    {/each}
+                  </div>
                 </article>
               {/each}
             </div>

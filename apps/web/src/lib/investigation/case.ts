@@ -24,6 +24,14 @@ export interface Evidence {
   truthStatus: TruthStatus
   reliability: 'TRUSTED' | 'UNVERIFIED' | 'DECEPTIVE' | 'UNKNOWN'
   subjectId: string
+  canonicalRefs: CanonicalReference[]
+}
+
+export interface CanonicalReference {
+  type: 'EVENT' | 'CHAPTER'
+  id: string
+  label: string
+  href: string
 }
 
 export interface InvestigationSubject {
@@ -265,6 +273,20 @@ export const room1014Case: InvestigationCase = {
       truthStatus: 'DEDUCTION',
       reliability: 'TRUSTED',
       subjectId: 'loberry',
+      canonicalRefs: [
+        {
+          type: 'EVENT',
+          id: 'ch-369-seq-5',
+          label: 'Silent Majority possesses Loberry',
+          href: '/timeline#chapter-369',
+        },
+        {
+          type: 'EVENT',
+          id: 'ch-370-seq-1',
+          label: 'Silent Majority kills Barrigen',
+          href: '/timeline#chapter-370',
+        },
+      ],
     },
     {
       id: 'six-nen-users',
@@ -278,6 +300,14 @@ export const room1014Case: InvestigationCase = {
       truthStatus: 'STRONGLY_IMPLIED',
       reliability: 'UNVERIFIED',
       subjectId: 'belerainte',
+      canonicalRefs: [
+        {
+          type: 'EVENT',
+          id: 'ch-369-seq-6',
+          label: 'Kurapika asks who already knows Nen',
+          href: '/timeline#chapter-369',
+        },
+      ],
     },
     {
       id: 'wounds',
@@ -290,6 +320,14 @@ export const room1014Case: InvestigationCase = {
       truthStatus: 'CONFIRMED',
       reliability: 'TRUSTED',
       subjectId: 'body',
+      canonicalRefs: [
+        {
+          type: 'EVENT',
+          id: 'ch-370-seq-1',
+          label: 'Silent Majority kills Barrigen',
+          href: '/timeline#chapter-370',
+        },
+      ],
     },
     {
       id: 'death-window',
@@ -303,6 +341,14 @@ export const room1014Case: InvestigationCase = {
       truthStatus: 'DEDUCTION',
       reliability: 'TRUSTED',
       subjectId: 'body',
+      canonicalRefs: [
+        {
+          type: 'EVENT',
+          id: 'ch-370-seq-1',
+          label: 'Silent Majority kills Barrigen',
+          href: '/timeline#chapter-370',
+        },
+      ],
     },
     {
       id: 'bill-testimony',
@@ -316,6 +362,14 @@ export const room1014Case: InvestigationCase = {
       truthStatus: 'STRONGLY_IMPLIED',
       reliability: 'UNVERIFIED',
       subjectId: 'bill',
+      canonicalRefs: [
+        {
+          type: 'EVENT',
+          id: 'ch-370-seq-1',
+          label: 'Silent Majority kills Barrigen',
+          href: '/timeline#chapter-370',
+        },
+      ],
     },
     {
       id: 'loberry-vision',
@@ -329,6 +383,14 @@ export const room1014Case: InvestigationCase = {
       truthStatus: 'STRONGLY_IMPLIED',
       reliability: 'UNVERIFIED',
       subjectId: 'loberry',
+      canonicalRefs: [
+        {
+          type: 'EVENT',
+          id: 'ch-369-seq-5',
+          label: 'Silent Majority possesses Loberry',
+          href: '/timeline#chapter-369',
+        },
+      ],
     },
     {
       id: 'nen-residue',
@@ -342,6 +404,14 @@ export const room1014Case: InvestigationCase = {
       truthStatus: 'DEDUCTION',
       reliability: 'TRUSTED',
       subjectId: 'kurapika',
+      canonicalRefs: [
+        {
+          type: 'EVENT',
+          id: 'ch-370-seq-1',
+          label: 'Silent Majority kills Barrigen',
+          href: '/timeline#chapter-370',
+        },
+      ],
     },
   ],
   hypotheses: [

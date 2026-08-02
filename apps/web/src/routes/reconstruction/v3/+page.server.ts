@@ -17,6 +17,7 @@ export const load: PageServerLoad = async ({ cookies }) => {
       orderBy: { canonicalName: 'asc' },
       select: {
         id: true,
+        slug: true,
         canonicalName: true,
         originalBody: { select: { id: true } },
       },
@@ -33,12 +34,24 @@ export const load: PageServerLoad = async ({ cookies }) => {
     locations,
     characters: characters.flatMap((character) =>
       character.originalBody
-        ? [{ ...character, bodyId: character.originalBody.id, originalBody: undefined }]
+        ? [
+            {
+              id: character.id,
+              canonicalName: character.canonicalName,
+              bodyId: character.originalBody.id,
+            },
+          ]
         : [],
     ),
     abilities: nenRuntime
       .listRunnableAbilities()
-      .map(({ id, name, ownerId }) => ({ id, name, ownerId: ownerId ?? null }))
+      .map(({ id, name, owner }) => ({
+        id,
+        name,
+        ownerCharacterId:
+          characters.find((character) => character.slug === owner || character.id === owner)?.id ??
+          null,
+      }))
       .sort((left, right) => left.name.localeCompare(right.name)),
     spoilerLimit: spoilerLimit ?? null,
   }

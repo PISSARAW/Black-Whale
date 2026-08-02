@@ -43,6 +43,11 @@
   const actor = $derived(data.characters.find((character) => character.id === actorId))
 
   $effect(() => {
+    const owner = data.abilities.find((ability) => ability.id === abilityId)?.ownerCharacterId
+    if (kind === 'ACTIVATE_HATSU' && owner) actorId = owner
+  })
+
+  $effect(() => {
     if (kind !== 'ACTIVATE_HATSU' || !forkEventId || !abilityId || !actorId) return
     const controller = new AbortController()
     actionsLoading = true

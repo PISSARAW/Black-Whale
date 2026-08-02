@@ -65,7 +65,7 @@
   import { comfort, prefersReducedMotion, type Comfort } from '$lib/tour/comfort'
   import { buildSolidMesh, buildTierMesh } from '$lib/tour/mesh'
   import { buildDealer } from '$lib/tour/dealer'
-  import { buildHumanFigure } from '$lib/tour/humanFigure'
+  import { HUMAN_LOD_DISTANCE, buildHumanFigure } from '$lib/tour/humanFigure'
   import { cardFaceSvg } from '$lib/tour/cardArt'
   import { EYE_FOV, FORGED_AURA, OWL_FOV, type CardFace, type EyeFeed } from '$lib/tour/morena'
   import {
@@ -1611,6 +1611,8 @@
          * the room to obey. So it chases `at` rather than sitting on it.
          */
         flown?: import('three').Vector3
+        /** Near and far representations of a shared human, when this is one. */
+        humanLod?: { near: import('three').Group; far: import('three').Group }
       }
 
       // A plain record for the same reason the solids are one: the render loop
@@ -1798,10 +1800,12 @@
           turns = head
         }
 
+        let humanLod: Shown['humanLod']
         if (seen.kind === 'avatar' || seen.kind === 'combatant') {
           const human = buildHumanFigure({ THREE, glow, seen })
           root.add(human.root)
           turns = human.turns
+          humanLod = human.lod
         }
 
         if (seen.kind === 'card') {
@@ -3596,6 +3600,7 @@
           pair: seen.pair,
           pick: seen.pick ?? false,
           pane,
+          humanLod,
         }
       }
 
@@ -3607,7 +3612,7 @@
         delete portalTargets[id]
         held.root.traverse((part) => {
           const mesh = part as import('three').Mesh
-          if (mesh.geometry) mesh.geometry.dispose()
+          if (mesh.geometry && !mesh.geometry.userData.sharedHuman) mesh.geometry.dispose()
         })
         delete apparitions[id]
       }
@@ -4010,11 +4015,37 @@
        */
       /** Where the insect has been told to be, held once rather than per frame. */
       const FLY_TO = new THREE.Vector3()
+      const HUMAN_VIEW = new THREE.Frustum()
+      const HUMAN_VIEW_PROJECTION = new THREE.Matrix4()
 
       function driftApparitions(seconds: number, delta: number) {
+        camera.updateMatrixWorld()
+        HUMAN_VIEW.setFromProjectionMatrix(
+          HUMAN_VIEW_PROJECTION.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse),
+        )
         for (const [id, held] of Object.entries(apparitions)) {
           if (!held) continue
           const phase = seconds + id.length
+
+          if (held.humanLod) {
+            const distance = camera.position.distanceTo(held.root.position)
+            const near = distance <= HUMAN_LOD_DISTANCE
+            held.humanLod.near.visible = near
+            held.humanLod.far.visible = !near
+            // Position remains authoritative even off-screen; pose animation and
+            // camera-facing work do not run until the figure can be seen again.
+            held.root.position.set(held.at[0], held.y, held.at[1])
+            held.root.updateMatrixWorld(true)
+            const visible = HUMAN_VIEW.intersectsObject(
+              near ? held.humanLod.near : held.humanLod.far,
+            )
+            if (!visible) continue
+            held.root.rotation.y = Math.atan2(
+              camera.position.x - held.root.position.x,
+              camera.position.z - held.root.position.z,
+            )
+            continue
+          }
 
           if (held.kind === 'hoover') {
             // Worn at the hip, on the visitor's right, pointing where they are:
@@ -4079,15 +4110,6 @@
             // reticle leaves, because nothing was played.
             const lifted = held.pick && id === aimedExtra ? 0.012 : 0
             held.root.position.set(held.at[0], held.y + lifted, held.at[1])
-            continue
-          }
-
-          if (held.kind === 'combatant') {
-            held.root.position.set(held.at[0], held.y, held.at[1])
-            held.root.rotation.y = Math.atan2(
-              camera.position.x - held.root.position.x,
-              camera.position.z - held.root.position.z,
-            )
             continue
           }
 

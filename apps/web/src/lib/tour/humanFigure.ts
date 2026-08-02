@@ -14,12 +14,43 @@ export interface HumanFigureBuild {
 export interface HumanFigure {
   root: Group
   turns: Object3D
+  lod: { near: Group; far: Group }
 }
+
+/** Instancing only becomes worthwhile beyond the populations used today. */
+export const HUMAN_INSTANCE_THRESHOLD = 20
+export const HUMAN_LOD_DISTANCE = 24
 
 const SKIN = 0xd8b49a
 const INK = 0x171318
 const SHIRT = 0xe7e1d4
 const BOOTS = 0x17191d
+
+const geometryCaches = new WeakMap<Three, Map<string, BufferGeometry>>()
+const outlineMaterials = new WeakMap<MeshBasicMaterial, MeshBasicMaterial>()
+
+function geometry(THREE: Three, key: string, make: () => BufferGeometry): BufferGeometry {
+  let cache = geometryCaches.get(THREE)
+  if (!cache) {
+    cache = new Map()
+    geometryCaches.set(THREE, cache)
+  }
+  const held = cache.get(key)
+  if (held) return held
+  const made = make()
+  made.userData.sharedHuman = true
+  cache.set(key, made)
+  return made
+}
+
+function outlineMaterial(THREE: Three, source: MeshBasicMaterial): MeshBasicMaterial {
+  const held = outlineMaterials.get(source)
+  if (held) return held
+  const made = source.clone()
+  made.side = THREE.BackSide
+  outlineMaterials.set(source, made)
+  return made
+}
 
 interface OutlinedShape {
   THREE: Three
@@ -31,10 +62,8 @@ interface OutlinedShape {
 
 function outlined({ THREE, geometry, material, ink, scale = 1.045 }: OutlinedShape): Group {
   const group = new THREE.Group()
-  const edge = new THREE.Mesh(geometry, ink)
+  const edge = new THREE.Mesh(geometry, outlineMaterial(THREE, ink as MeshBasicMaterial))
   edge.scale.setScalar(scale)
-  edge.material = (edge.material as Material).clone()
-  ;(edge.material as Material).side = THREE.BackSide
   group.add(edge, new THREE.Mesh(geometry, material))
   return group
 }
@@ -47,7 +76,9 @@ interface LimbShape extends HumanFigureBuild {
 function limb({ THREE, glow, seen, radius, length }: LimbShape): Group {
   return outlined({
     THREE,
-    geometry: new THREE.CapsuleGeometry(radius, length, 3, 7),
+    geometry: geometry(THREE, `limb:${radius}:${length}`, () =>
+      new THREE.CapsuleGeometry(radius, length, 3, 7),
+    ),
     material: glow(seen.colour, 1),
     ink: glow(INK, 1),
     scale: 1.055,
@@ -69,9 +100,12 @@ function legacyAura(seen: HumanLook): NonNullable<Apparition['human']>['aura'] {
 export function buildHumanFigure({ THREE, glow, seen }: HumanFigureBuild): HumanFigure {
   const root = new THREE.Group()
   const figure = new THREE.Group()
+  const far = new THREE.Group()
   const unit = seen.kind === 'avatar' ? seen.size / 0.42 : seen.size
   figure.scale.setScalar(unit)
   root.add(figure)
+  root.add(far)
+  far.visible = false
 
   const ink = glow(INK, 1)
   const cloth = glow(seen.colour, 0.98)
@@ -83,7 +117,7 @@ export function buildHumanFigure({ THREE, glow, seen }: HumanFigureBuild): Human
 
   const pelvis = outlined({
     THREE,
-    geometry: new THREE.SphereGeometry(0.2, 8, 6),
+    geometry: geometry(THREE, 'pelvis', () => new THREE.SphereGeometry(0.2, 8, 6)),
     material: cloth,
     ink,
   })
@@ -93,7 +127,7 @@ export function buildHumanFigure({ THREE, glow, seen }: HumanFigureBuild): Human
 
   const torso = outlined({
     THREE,
-    geometry: new THREE.CylinderGeometry(0.22, 0.18, 0.58, 7),
+    geometry: geometry(THREE, 'torso', () => new THREE.CylinderGeometry(0.22, 0.18, 0.58, 7)),
     material: cloth,
     ink,
   })
@@ -101,16 +135,17 @@ export function buildHumanFigure({ THREE, glow, seen }: HumanFigureBuild): Human
   torso.position.y = 1.12
   figure.add(torso)
 
-  const collar = outlined({
-    THREE,
-    geometry: new THREE.CylinderGeometry(0.13, 0.17, 0.1, 7),
-    material: glow(SHIRT, 1),
-    ink,
-  })
+  const collar = new THREE.Mesh(
+    geometry(THREE, 'collar', () => new THREE.CylinderGeometry(0.13, 0.17, 0.1, 7)),
+    glow(SHIRT, 1),
+  )
   collar.position.y = 1.43
   figure.add(collar)
 
-  const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.075, 0.09, 0.14, 7), skin)
+  const neck = new THREE.Mesh(
+    geometry(THREE, 'neck', () => new THREE.CylinderGeometry(0.075, 0.09, 0.14, 7)),
+    skin,
+  )
   neck.position.y = 1.51
   figure.add(neck)
 
@@ -118,7 +153,7 @@ export function buildHumanFigure({ THREE, glow, seen }: HumanFigureBuild): Human
   head.position.y = 1.72
   const skull = outlined({
     THREE,
-    geometry: new THREE.SphereGeometry(0.19, 10, 8),
+    geometry: geometry(THREE, 'skull', () => new THREE.SphereGeometry(0.19, 10, 8)),
     material: skin,
     ink,
   })
@@ -127,35 +162,47 @@ export function buildHumanFigure({ THREE, glow, seen }: HumanFigureBuild): Human
 
   // Graphic facial planes: readable like ink marks, not realistic textures.
   for (const side of [-1, 1]) {
-    const eye = new THREE.Mesh(new THREE.PlaneGeometry(0.055, 0.014), ink)
+    const eye = new THREE.Mesh(
+      geometry(THREE, 'eye', () => new THREE.PlaneGeometry(0.055, 0.014)),
+      ink,
+    )
     eye.position.set(side * 0.062, 0.018, 0.181)
     eye.rotation.z = side * -0.08
     head.add(eye)
-    const brow = new THREE.Mesh(new THREE.PlaneGeometry(0.064, 0.009), ink)
+    const brow = new THREE.Mesh(
+      geometry(THREE, 'brow', () => new THREE.PlaneGeometry(0.064, 0.009)),
+      ink,
+    )
     brow.position.set(side * 0.064, 0.06, 0.176)
     brow.rotation.z = side * -0.12
     head.add(brow)
-    const ear = outlined({
-      THREE,
-      geometry: new THREE.SphereGeometry(0.035, 6, 4),
-      material: skin,
-      ink,
-    })
+    const ear = new THREE.Mesh(
+      geometry(THREE, 'ear', () => new THREE.SphereGeometry(0.035, 6, 4)),
+      skin,
+    )
     ear.scale.y = 1.35
     ear.position.x = side * 0.185
     head.add(ear)
   }
-  const nose = new THREE.Mesh(new THREE.ConeGeometry(0.022, 0.065, 4), skin)
+  const nose = new THREE.Mesh(
+    geometry(THREE, 'nose', () => new THREE.ConeGeometry(0.022, 0.065, 4)),
+    skin,
+  )
   nose.rotation.x = Math.PI / 2
   nose.position.set(0, -0.018, 0.195)
   head.add(nose)
-  const mouth = new THREE.Mesh(new THREE.PlaneGeometry(0.07, 0.01), ink)
+  const mouth = new THREE.Mesh(
+    geometry(THREE, 'mouth', () => new THREE.PlaneGeometry(0.07, 0.01)),
+    ink,
+  )
   mouth.position.set(0, -0.09, 0.178)
   head.add(mouth)
 
   const hair = outlined({
     THREE,
-    geometry: new THREE.SphereGeometry(0.196, 9, 5, 0, Math.PI * 2, 0, 1.18),
+    geometry: geometry(THREE, 'hair', () =>
+      new THREE.SphereGeometry(0.196, 9, 5, 0, Math.PI * 2, 0, 1.18),
+    ),
     material: dark,
     ink,
     scale: 1.025,
@@ -175,7 +222,7 @@ export function buildHumanFigure({ THREE, glow, seen }: HumanFigureBuild): Human
     leg.add(shin)
     const shoe = outlined({
       THREE,
-      geometry: new THREE.BoxGeometry(0.15, 0.09, 0.25),
+      geometry: geometry(THREE, 'shoe', () => new THREE.BoxGeometry(0.15, 0.09, 0.25)),
       material: dark,
       ink,
     })
@@ -192,12 +239,10 @@ export function buildHumanFigure({ THREE, glow, seen }: HumanFigureBuild): Human
     const forearm = limb({ THREE, glow, seen, radius: 0.052, length: 0.2 })
     forearm.position.y = -0.4
     arm.add(forearm)
-    const hand = outlined({
-      THREE,
-      geometry: new THREE.SphereGeometry(0.062, 7, 5),
-      material: skin,
-      ink,
-    })
+    const hand = new THREE.Mesh(
+      geometry(THREE, 'hand', () => new THREE.SphereGeometry(0.062, 7, 5)),
+      skin,
+    )
     hand.position.y = -0.57
     arm.add(hand)
     arm.position.set(side * 0.3, 1.34, 0)
@@ -238,7 +283,9 @@ export function buildHumanFigure({ THREE, glow, seen }: HumanFigureBuild): Human
   const aura = legacyAura(seen)
   if (aura === 'ten' || aura === 'ren') {
     const shell = new THREE.Mesh(
-      new THREE.SphereGeometry(aura === 'ren' ? 0.9 : 0.72, 18, 12),
+      geometry(THREE, `aura:${aura}`, () =>
+        new THREE.SphereGeometry(aura === 'ren' ? 0.9 : 0.72, 18, 12),
+      ),
       glow(seen.colour, aura === 'ren' ? 0.16 : 0.07),
     )
     shell.scale.y = 1.35
@@ -246,5 +293,31 @@ export function buildHumanFigure({ THREE, glow, seen }: HumanFigureBuild): Human
     figure.add(shell)
   }
 
-  return { root, turns: figure }
+  // The distant silhouette drops facial planes, joints, outlines and aura to
+  // three shared meshes. At that range those details occupy less than a pixel.
+  const farBody = new THREE.Mesh(
+    geometry(THREE, 'far:body', () => new THREE.CylinderGeometry(0.2, 0.14, 1.2, 5)),
+    cloth,
+  )
+  farBody.position.y = 0.72
+  far.add(farBody)
+  const farHead = new THREE.Mesh(
+    geometry(THREE, 'far:head', () => new THREE.SphereGeometry(0.18, 6, 4)),
+    skin,
+  )
+  farHead.position.y = 1.52
+  far.add(farHead)
+  const farHair = new THREE.Mesh(
+    geometry(THREE, 'far:hair', () =>
+      new THREE.SphereGeometry(0.185, 6, 3, 0, Math.PI * 2, 0, 1.2),
+    ),
+    dark,
+  )
+  farHair.position.y = 1.54
+  far.add(farHair)
+  far.scale.setScalar(unit)
+  far.position.copy(figure.position)
+  far.rotation.copy(figure.rotation)
+
+  return { root, turns: figure, lod: { near: figure, far } }
 }

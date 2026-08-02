@@ -226,6 +226,7 @@
   function seekReplay(second: number) {
     stopReplay()
     replaySecond = second
+    persist()
   }
 
   function handleKeydown(event: KeyboardEvent) {
@@ -260,6 +261,11 @@
     hatsuUseKeys = saved.hatsuUseKeys
     askedQuestionKeys = saved.askedQuestionKeys
     confrontationKeys = saved.confrontationKeys
+    activeTab = saved.activeTab
+    activeSubjectId = investigation.subjects.some((subject) => subject.id === saved.activeSubjectId)
+      ? saved.activeSubjectId
+      : null
+    replaySecond = saved.replaySecond
     log = saved.log
     briefingOpen = !saved.started
     return closeHatsuGate
@@ -279,6 +285,9 @@
         hatsuUseKeys,
         askedQuestionKeys,
         confrontationKeys,
+        activeTab,
+        activeSubjectId,
+        replaySecond,
         log,
       }),
     )
@@ -363,6 +372,7 @@
     hatsuResult = null
     activeResponse = null
     discover(subject.evidenceIds)
+    persist()
   }
 
   function openSubject(id: string) {
@@ -372,12 +382,19 @@
     hatsuResult = null
     activeResponse = null
     discover(subject.evidenceIds)
+    persist()
   }
 
   function openNotebook(tab: InvestigationTab = 'evidence') {
     activeTab = tab
     activeSubjectId = null
     notebookOpen = true
+    persist()
+  }
+
+  function selectNotebookTab(tab: InvestigationTab) {
+    activeTab = tab
+    persist()
   }
 
   function toggleEvidence(id: string) {
@@ -783,7 +800,7 @@
             tab[0]
               ? 'bg-[#d6b35a]/12 text-[#f0cf76]'
               : 'text-white/45 hover:text-white'}"
-            onclick={() => (activeTab = tab[0] as InvestigationTab)}>{tab[1]}</button
+            onclick={() => selectNotebookTab(tab[0] as InvestigationTab)}>{tab[1]}</button
           >
         {/each}
       </nav>

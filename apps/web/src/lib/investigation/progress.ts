@@ -1,4 +1,6 @@
-export const INVESTIGATION_PROGRESS_VERSION = 4
+import type { InvestigationTab } from './case'
+
+export const INVESTIGATION_PROGRESS_VERSION = 5
 export const LEGACY_INVESTIGATION_STORAGE_KEY = 'black-whale:investigation:room-1014'
 
 export interface InvestigationLogEntry {
@@ -18,6 +20,9 @@ export interface InvestigationProgress {
   hatsuUseKeys: string[]
   askedQuestionKeys: string[]
   confrontationKeys: string[]
+  activeTab: InvestigationTab
+  activeSubjectId: string | null
+  replaySecond: number
   log: InvestigationLogEntry[]
 }
 
@@ -33,6 +38,9 @@ export function freshProgress(caseId: string): InvestigationProgress {
     hatsuUseKeys: [],
     askedQuestionKeys: [],
     confrontationKeys: [],
+    activeTab: 'evidence',
+    activeSubjectId: null,
+    replaySecond: 0,
     log: [],
   }
 }
@@ -58,6 +66,12 @@ export function parseProgress(raw: string | null, caseId: string): Investigation
       hatsuUseKeys: stringArray(value.hatsuUseKeys),
       askedQuestionKeys: stringArray(value.askedQuestionKeys),
       confrontationKeys: stringArray(value.confrontationKeys),
+      activeTab: isInvestigationTab(value.activeTab) ? value.activeTab : 'evidence',
+      activeSubjectId: typeof value.activeSubjectId === 'string' ? value.activeSubjectId : null,
+      replaySecond:
+        typeof value.replaySecond === 'number' && Number.isFinite(value.replaySecond)
+          ? Math.max(0, Math.min(11, Math.round(value.replaySecond)))
+          : 0,
       log: Array.isArray(value.log) ? value.log.filter(isLogEntry).slice(-30) : [],
     }
   } catch {
@@ -96,6 +110,10 @@ function stringArray(value: unknown): string[] {
 
 function isSupportedVersion(value: unknown): value is number {
   return typeof value === 'number' && value >= 1 && value <= INVESTIGATION_PROGRESS_VERSION
+}
+
+function isInvestigationTab(value: unknown): value is InvestigationTab {
+  return value === 'evidence' || value === 'people' || value === 'timeline' || value === 'deduction'
 }
 
 function isLogEntry(value: unknown): value is InvestigationLogEntry {

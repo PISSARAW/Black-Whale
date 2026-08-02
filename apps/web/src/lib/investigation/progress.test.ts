@@ -54,4 +54,14 @@ describe('investigation progress', () => {
     )
     expect(parsed.discoveredIds).toEqual(['a'])
   })
+
+  it('restores and bounds the last investigation context', () => {
+    const parsed = parseProgress(
+      '{"version":5,"caseId":"case-a","activeTab":"timeline","activeSubjectId":"guard","replaySecond":99}',
+      'case-a',
+    )
+    expect(parsed.activeTab).toBe('timeline')
+    expect(parsed.activeSubjectId).toBe('guard')
+    expect(parsed.replaySecond).toBe(11)
+  })
 })

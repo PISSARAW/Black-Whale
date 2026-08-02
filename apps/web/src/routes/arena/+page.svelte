@@ -124,8 +124,8 @@
   const extendedNen = new ModeNenState()
   let playerNen = $derived({
     ...arenaNen(game.player),
-    enRadius: extendedNen.value.enRadius,
-    shuTarget: extendedNen.value.shuTarget,
+    en: extendedNen.value.en,
+    shu: extendedNen.value.shu,
     on: extendedNen.value.on,
   })
   let opponentNen = $derived(arenaNen(game.opponent))

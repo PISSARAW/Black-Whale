@@ -1,4 +1,4 @@
-import { NEN_PRESENTATION, type NenTechnique, type NenTechniqueAction } from '@black-whale/nen-engine'
+import { NEN_PRESENTATION, type NenTechnique, type NenTechniqueAction, type NenTechniqueState } from '@black-whale/nen-engine'
 import { hatsuAudioGraph, type Graph } from './ambient'
 import type { NenObjectInteraction } from '$lib/tour/NenSceneAura'
 
@@ -79,5 +79,42 @@ export function playNenObjectSound(kind: NenObjectInteraction) {
     chord(g, [{ from: 540, to: 1080, peak: 0.055, duration: 0.42 }, { from: 810, to: 1320, peak: 0.025, duration: 0.5 }])
   } else {
     chord(g, [{ from: 240, to: 420, peak: 0.05, duration: 0.3, type: 'triangle' }])
+  }
+}
+
+/** Keeps the active principle audible without stacking a new AudioContext per mode. */
+export function sustainNenSound(state: NenTechniqueState): () => void {
+  const g = hatsuAudioGraph()
+  if (!g || g.context.state !== 'running' || state.mode === 'zetsu') return () => {}
+  const technique: NenTechnique = state.on
+    ? 'on'
+    : state.ken
+      ? 'ken'
+      : state.en
+        ? 'en'
+        : state.mode
+  const profile = NEN_PRESENTATION[technique]
+  const now = g.context.currentTime
+  const oscillator = g.context.createOscillator()
+  const gain = g.context.createGain()
+  const lfo = g.context.createOscillator()
+  const depth = g.context.createGain()
+  oscillator.type = profile.sound.noise > 0.3 ? 'sawtooth' : 'sine'
+  oscillator.frequency.value = profile.sound.lowHz
+  lfo.frequency.value = profile.pulseHz
+  depth.gain.value = 0.0035 * profile.sound.volume
+  gain.gain.setValueAtTime(0.0001, now)
+  gain.gain.exponentialRampToValueAtTime(0.009 * profile.sound.volume, now + profile.envelope.attack)
+  lfo.connect(depth).connect(gain.gain)
+  oscillator.connect(gain).connect(g.muffle)
+  oscillator.start(now)
+  lfo.start(now)
+  return () => {
+    const stopAt = g.context.currentTime + profile.envelope.release
+    gain.gain.cancelScheduledValues(g.context.currentTime)
+    gain.gain.setValueAtTime(Math.max(0.0001, gain.gain.value), g.context.currentTime)
+    gain.gain.exponentialRampToValueAtTime(0.0001, stopAt)
+    oscillator.stop(stopAt + 0.02)
+    lfo.stop(stopAt + 0.02)
   }
 }

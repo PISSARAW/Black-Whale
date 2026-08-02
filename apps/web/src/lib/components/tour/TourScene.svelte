@@ -105,7 +105,7 @@
   // to a keypress, so it does not go through the page's report-to-sound table.
   // The flock's chirp is raised by the page itself, where the arrival happens.
   import { roarLikeADragon } from '$lib/audio/hatsuSounds'
-  import { playNenObjectSound, playNenTechniqueSound } from '$lib/audio/nenSounds'
+  import { playNenObjectSound, playNenTechniqueSound, sustainNenSound } from '$lib/audio/nenSounds'
   import { NEN_KEYS, nenZoneIndex } from '$lib/nen/controls'
   import { visibleSpaces } from '$lib/tour/visibility'
   import {
@@ -542,6 +542,8 @@
   $effect(() => {
     setStepsAuraQuiet(effectiveNen.mode === 'zetsu')
   })
+
+  $effect(() => sustainNenSound(effectiveNen))
 
   /**
    * How high the visitor's eye is off the floor.

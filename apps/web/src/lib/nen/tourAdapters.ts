@@ -43,6 +43,6 @@ export function huntDuelNen(duelist: DuelistState): TourNenState {
 export function explorationNen(mode: HuntNenState, advanced?: AdvancedNenState): TourNenState {
   const state = createNenTechniqueState<TourNenZone>()
   state.mode = advanced?.ren ? 'ren' : mode
-  state.shuTarget = advanced?.shuItem ?? null
+  state.shu = advanced?.shuItem ? [advanced.shuItem] : []
   return state
 }

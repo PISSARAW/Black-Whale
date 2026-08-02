@@ -8,19 +8,12 @@ test.describe('Hunt V3 critical path', () => {
     await page.waitForTimeout(1_000)
   })
 
-  test('selects terrain, hunter and Hatsu before beginning', async ({ page }) => {
-    const terrain = page.getByRole('button', { name: /Tubeppa/ })
-    await terrain.click()
-    await expect(terrain).toHaveAttribute('aria-pressed', 'true')
-
-    const hunter = page.getByRole('button', { name: /aggressive/i })
-    await hunter.click()
-    await expect(hunter).toHaveAttribute('aria-pressed', 'true')
-
-    const hatsu = page.getByRole('button', { name: /Parallel Future/i })
-    await hatsu.click()
-    await expect(hatsu).toHaveAttribute('aria-pressed', 'true')
-
+  test('starts the selected contract with its configured loadout', async ({ page }) => {
+    await expect(page.getByRole('button', { name: /Royal apartments/i })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    )
+    await expect(page.getByRole('button', { name: /Bungee Gum/i })).toBeVisible()
     await page.getByRole('button', { name: 'Enter the apartment' }).click()
     await expect(page.getByRole('navigation', { name: 'Hunt actions' })).toBeVisible()
   })
@@ -30,7 +23,7 @@ test.describe('Hunt V3 critical path', () => {
     await expect(sound).toHaveAttribute('aria-pressed', 'false')
     await page.getByRole('button', { name: 'Enter the apartment' }).click()
     await expect(page.locator('[aria-live="polite"]').first()).toBeAttached()
-    await expect(page.getByRole('button', { name: /Zetsu/ })).toBeVisible()
+    await expect(page.getByRole('navigation', { name: 'Hunt actions' })).toBeVisible()
   })
 
   test('selects a contract and vow, then exposes advanced Nen actions', async ({ page }) => {

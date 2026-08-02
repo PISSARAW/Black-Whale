@@ -1493,6 +1493,50 @@ export const en = {
     },
   },
 
+  infiltration: {
+    seoTitle: 'Infiltration — A mission aboard the Black Whale',
+    seoDescription:
+      'Enter a deck 1 apartment under cover, copy a report, and leave before witnesses can connect the evidence.',
+    title: 'Infiltration',
+    briefing: 'Mission order · Deck 1',
+    intro:
+      'You enter as a maintenance aide. Copy the report at the far end of the apartment, confirm its true author if possible, then return to the entrance. Being seen is not losing: being understood is.',
+    cover: 'Cover · Maintenance',
+    integrity: 'Integrity',
+    alert: 'Shared alert',
+    objective: 'Objective',
+    copied: 'Report copied',
+    copy: 'Copy the report',
+    verify: 'Verify the author',
+    extract: 'Extract',
+    divert: 'Diversion',
+    taskCopy: 'Copy the report without moving it.',
+    taskVerify: 'Identify its true author (optional).',
+    taskLeave: 'Return to the entrance with a coherent story.',
+    begin: 'Begin mission',
+    debrief: 'Reconstruction after you left',
+    score: 'Discretion',
+    traces: 'Traces left',
+    truth: 'Intelligence returned',
+    confirmed: 'Author confirmed',
+    uncertain: 'Author still uncertain',
+    again: 'Try again',
+    reported: 'Observation reported',
+    unreported: 'Observation remained local',
+    witnesses: { steward: 'The steward', guard: 'The guard', nenGuard: 'The Nen guard' },
+    beliefs: {
+      maintenance: 'Saw a maintenance worker',
+      intruder: 'Suspects an intrusion',
+      unknown: 'Established nothing',
+    },
+    outcomes: {
+      playing: 'Mission in progress',
+      escaped: 'Extraction successful',
+      identified: 'Cover compromised',
+      timeUp: 'Relief arrived',
+    },
+  },
+
   hunt: {
     seoTitle: 'The hunt — A game in Tserriednich’s apartment',
     seoDescription:

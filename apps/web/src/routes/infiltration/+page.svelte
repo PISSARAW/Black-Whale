@@ -1,255 +1,283 @@
 <script lang="ts">
-  import type { PageData } from './$types'
-  import { onMount } from 'svelte'
-  import { theShip } from '$lib/tour/blueprint'
-  import { centroid } from '$lib/tour/hatsu'
+  import { onDestroy, onMount } from 'svelte'
+  import Seo from '$lib/components/Seo.svelte'
   import TourScene from '$lib/components/tour/TourScene.svelte'
-  import { t } from '$lib/i18n'
+  import { buildArena } from '$lib/hunt/arena'
+  import { floorOf, theShip } from '$lib/tour/blueprint'
+  import { centroid, EMPTY_WORLD } from '$lib/tour/hatsu'
+  import { interiorPoint } from '$lib/tour/geometry'
+  import { breadcrumbSchema } from '$lib/seo/schema'
+  import { link, locale, t } from '$lib/i18n'
   import type { Apparition } from '$lib/tour/apparitions'
-  import type { Vec2 } from '$lib/tour/types'
+  import type { Space, Vec2 } from '$lib/tour/types'
+  import {
+    infiltrationReducer,
+    initialInfiltrationState,
+    type InfiltrationAction,
+    type WitnessId,
+  } from '$lib/infiltration/state'
+  import { INFILTRATION_DT, reconstruction, updateInfiltration } from '$lib/infiltration/loop'
 
-  let { data }: { data: PageData } = $props()
-  
   const ship = theShip()
-  
-  // Player state
-  let tierId = $state('t1')
-  let currentSpace = $state(null)
-  let position = $state<Vec2>([0, 0])
-  let heading = $state(0)
-  
-  // Game state
-  let zetsuActive = $state(false)
-  let detectionLevel = $state(0) // 0 to 100
-  let gameOver = $state(false)
-  let lastTime = 0
-  let gameLoopHandle: number
+  const arena = buildArena()
+  const plan = ship.plans.get(arena.tierId)!
+  const extraction = arena.spaces[0]
+  const objective = arena.spaces.at(-1)!
+  const posts = [arena.spaces[2], arena.spaces[4], objective]
+  const witnessIds: WitnessId[] = ['steward', 'guard', 'nenGuard']
 
-  // Guards
-  // We place 5 guards in deck 1
-  interface Guard {
-    id: string
-    position: Vec2
-    heading: number
-    speed: number
-    room: string
-    targetPos?: Vec2
-  }
+  const roomName = (space: Space | undefined | null) =>
+    space ? ($locale === 'fr' ? space.nameFr : space.name) : '—'
 
-  let guards = $state<Guard[]>([])
-
-  function randomPointInRoom(spaceId: string): Vec2 {
-    const space = ship.spaces.get(spaceId)
-    const center = space ? centroid(space) : [0, 0]
-    // Add small random offset around center
-    return [
-      center[0] + (Math.random() - 0.5) * 5,
-      center[1] + (Math.random() - 0.5) * 5
-    ] as Vec2
-  }
-
-  function initGuards() {
-    const rooms = ['1001', '1005', '1010', '1015', '1020'] // sample rooms on deck 1
-    guards = rooms.map((roomId, i) => {
-      const space = ship.spaces.get(roomId)
-      const pos = space ? centroid(space) : [0, 0]
-      return {
-        id: `guard-${i}`,
-        position: [pos[0], pos[1]] as Vec2,
-        heading: Math.random() * Math.PI * 2,
-        speed: 1.5, // m/s
-        room: roomId,
-        targetPos: randomPointInRoom(roomId)
-      }
+  function freshGame() {
+    return initialInfiltrationState({
+      playerAt: { position: interiorPoint(extraction.footprint), spaceId: extraction.id },
+      objectiveSpaceId: objective.id,
+      extractionSpaceId: extraction.id,
+      witnesses: posts.map((space, index) => ({
+        id: witnessIds[index],
+        position: centroid(space),
+        spaceId: space.id,
+        sight: index === 2 ? 11 : 8,
+        social: index !== 1,
+        usesEn: index === 2,
+      })),
     })
   }
 
-  function restartGame() {
-    gameOver = false
-    detectionLevel = 0
-    zetsuActive = false
-    initGuards()
-    // Reset player position by jumping to a specific room
-    jumpTo = '1000'
+  const spawn = interiorPoint(extraction.footprint)
+  let game = $state(freshGame())
+  let position = $state<Vec2>(spawn)
+  let heading = $state(0)
+  let currentSpace = $state<Space | null>(extraction)
+  let tierId = $state(arena.tierId)
+  let engaged = $state(false)
+  let briefing = $state(true)
+  let frame = 0
+  let owed = 0
+  let last = 0
+
+  let finished = $derived(game.outcome !== 'playing')
+  let canCopy = $derived(currentSpace?.id === objective.id && !game.documentCopied)
+  let canVerify = $derived(
+    currentSpace?.id === objective.id && game.documentCopied && !game.authorConfirmed,
+  )
+  let canExtract = $derived(currentSpace?.id === extraction.id && game.documentCopied)
+  let report = $derived(reconstruction(game))
+
+  const colours: Record<WitnessId, number> = {
+    steward: 0x58a6ff,
+    guard: 0xffb347,
+    nenGuard: 0xff4f64,
   }
 
-  let jumpTo = $state<string | null>('1000') // start room
+  let figures = $derived(
+    game.witnesses.map((witness): Apparition => ({
+      id: witness.id,
+      kind: 'avatar',
+      colour: colours[witness.id],
+      size: 0.42,
+      y: floorOf(
+        arena.spaces.find((space) => space.id === witness.spaceId)!,
+        plan.tier,
+      ),
+      at: witness.position,
+      tierId: arena.tierId,
+      spaceId: witness.spaceId,
+      stage: 0,
+      hidden: false,
+    })),
+  )
 
-  // Utility math
-  function vec2Distance(a: Vec2, b: Vec2) {
-    return Math.sqrt(Math.pow(a[0] - b[0], 2) + Math.pow(a[1] - b[1], 2))
+  function send(action: InfiltrationAction) {
+    game = infiltrationReducer(game, action)
   }
 
-  function gameLoop(timestamp: number) {
-    if (gameOver) return
-    if (!lastTime) lastTime = timestamp
-    const dt = (timestamp - lastTime) / 1000
-    lastTime = timestamp
+  function act() {
+    if (canCopy) send({ type: 'COPY' })
+    else if (canVerify) send({ type: 'VERIFY' })
+    else if (canExtract) send({ type: 'EXTRACT' })
+  }
 
-    let playerDetectedThisFrame = false
+  function onKeyDown(event: KeyboardEvent) {
+    if (briefing || finished || event.repeat) return
+    if (event.code === 'KeyX') send({ type: 'ZETSU' })
+    else if (event.code === 'KeyV') send({ type: 'DIVERT' })
+    else if (event.code === 'KeyF') act()
+    else return
+    event.preventDefault()
+  }
 
-    // Update guards
-    for (let i = 0; i < guards.length; i++) {
-      const guard = guards[i]
-      if (guard.targetPos) {
-        const dist = vec2Distance(guard.position, guard.targetPos)
-        if (dist < 0.5) {
-          guard.targetPos = randomPointInRoom(guard.room)
-        } else {
-          // Move towards target
-          const dx = guard.targetPos[0] - guard.position[0]
-          const dz = guard.targetPos[1] - guard.position[1]
-          const targetHeading = Math.atan2(dx, dz)
-          
-          // Smooth rotation (simplified)
-          guard.heading = targetHeading
-          
-          guard.position = [
-            guard.position[0] + Math.sin(guard.heading) * guard.speed * dt,
-            guard.position[1] + Math.cos(guard.heading) * guard.speed * dt
-          ] as Vec2
-        }
-      }
-
-      // Detection Logic (Simple)
-      // Only detect if on same deck. We assume guards are on t1.
-      if (tierId === 't1') {
-        const distToPlayer = vec2Distance(guard.position, position)
-        
-        // 1. Visual Detection: distance < 15m and angle < 45deg
-        // Calculate angle between guard's heading and player
-        const dx = position[0] - guard.position[0]
-        const dz = position[1] - guard.position[1]
-        const angleToPlayer = Math.atan2(dx, dz)
-        let angleDiff = Math.abs(angleToPlayer - guard.heading)
-        if (angleDiff > Math.PI) angleDiff = 2 * Math.PI - angleDiff
-        
-        const inVisionCone = angleDiff < Math.PI / 4 // 45 degrees
-        
-        if (distToPlayer < 15 && inVisionCone) {
-          playerDetectedThisFrame = true
-          detectionLevel += 10 * dt * (15 - distToPlayer) // Faster detection if closer
-        }
-
-        // 2. Acoustic Detection (simplified)
-        // Assume player makes constant noise if moving (we don't track velocity accurately here, 
-        // so we just check if distance is very close). Zetsu halves the acoustic radius.
-        const acousticRadius = zetsuActive ? 4 : 8
-        if (distToPlayer < acousticRadius) {
-          playerDetectedThisFrame = true
-          detectionLevel += 5 * dt
-        }
-      }
+  function tick(now: number) {
+    frame = requestAnimationFrame(tick)
+    const elapsed = last === 0 ? 0 : (now - last) / 1000
+    last = now
+    if (briefing || finished) return
+    owed = Math.min(0.25, owed + elapsed)
+    const moved = Math.hypot(
+      position[0] - game.player.position[0],
+      position[1] - game.player.position[1],
+    )
+    send({ type: 'WALKED', position, spaceId: currentSpace?.id ?? null, moving: moved > 0.001 })
+    while (owed >= INFILTRATION_DT && game.outcome === 'playing') {
+      game = updateInfiltration(game)
+      owed -= INFILTRATION_DT
     }
+  }
 
-    if (!playerDetectedThisFrame) {
-      detectionLevel = Math.max(0, detectionLevel - 5 * dt)
-    }
-
-    if (detectionLevel >= 100) {
-      gameOver = true
-      detectionLevel = 100
-    }
-
-    gameLoopHandle = requestAnimationFrame(gameLoop)
+  function again() {
+    game = freshGame()
+    position = game.player.position
+    briefing = true
+    owed = 0
+    last = 0
   }
 
   onMount(() => {
-    initGuards()
-    gameLoopHandle = requestAnimationFrame(gameLoop)
-    return () => cancelAnimationFrame(gameLoopHandle)
+    window.addEventListener('keydown', onKeyDown)
+    frame = requestAnimationFrame(tick)
   })
-
-  // Build extras (Apparitions) to render
-  let extras = $derived.by(() => {
-    const list: Apparition[] = []
-    for (const guard of guards) {
-      // The guard body
-      list.push({
-        id: guard.id,
-        kind: 'avatar',
-        colour: 0xff4444, // Red
-        size: 0.4,
-        y: 0,
-        at: guard.position,
-        tierId: 't1',
-        spaceId: guard.room,
-        stage: 0,
-        hidden: false
-      })
-
-      // The guard's En (Aura field)
-      // If player is in Zetsu, they cannot perceive the aura field.
-      if (!zetsuActive) {
-        list.push({
-          id: `${guard.id}-en`,
-          kind: 'avatar',
-          colour: 0xffaa00, // Orange
-          size: 4, // 4 meters En radius
-          y: -0.9, // flat on floor
-          at: guard.position,
-          tierId: 't1',
-          spaceId: guard.room,
-          stage: 0,
-          hidden: true // renders faint
-        })
-      }
-    }
-    return list
+  onDestroy(() => {
+    window.removeEventListener('keydown', onKeyDown)
+    cancelAnimationFrame(frame)
   })
-
 </script>
 
-<div class="relative h-screen w-full overflow-hidden bg-black">
-  <div class="absolute inset-0" style={zetsuActive ? 'filter: grayscale(100%) contrast(1.2);' : ''}>
-    <TourScene
-      {ship}
-      bind:tierId
-      bind:currentSpace
-      bind:position
-      bind:heading
-      bind:jumpTo
-      {extras}
-      touchLabels={{ move: $t.tour.touch.move, cast: $t.tour.touch.cast }}
-      soundLabels={{ silence: $t.tour.sound.silence, restore: $t.tour.sound.restore }}
-      loadingLabel={$t.tour.loading}
-      unsupportedLabel={$t.tour.unsupported}
-    />
-  </div>
+<Seo
+  title={$t.infiltration.seoTitle}
+  description={$t.infiltration.seoDescription}
+  jsonLd={breadcrumbSchema([
+    { name: $t.common.home, path: $link('/') },
+    { name: $t.infiltration.title, path: $link('/infiltration') },
+  ])}
+/>
 
-  <!-- HUD -->
-  <div class="pointer-events-none absolute top-0 left-0 right-0 p-6 z-10 flex justify-between items-start">
-    <div class="w-64">
-      <p class="text-white font-bold mb-2 uppercase tracking-widest text-sm drop-shadow-md">Niveau de Détection</p>
-      <div class="h-4 w-full bg-black/50 rounded-full border border-white/20 overflow-hidden">
-        <div 
-          class="h-full transition-all duration-100 {detectionLevel > 75 ? 'bg-red-500' : detectionLevel > 40 ? 'bg-yellow-500' : 'bg-green-500'}"
-          style="width: {detectionLevel}%"
-        ></div>
-      </div>
-    </div>
+<div class="relative h-screen w-full overflow-hidden bg-black text-white">
+  <TourScene
+    {ship}
+    bind:tierId
+    bind:position
+    bind:heading
+    bind:currentSpace
+    bind:engaged
+    world={EMPTY_WORLD}
+    extras={figures}
+    touchLabels={{ move: $t.tour.touch.move, cast: $t.tour.touch.cast }}
+    soundLabels={{ silence: $t.tour.sound.silence, restore: $t.tour.sound.restore }}
+    loadingLabel={$t.tour.loading}
+    unsupportedLabel={$t.tour.unsupported}
+  />
 
-    <button 
-      class="pointer-events-auto px-6 py-2 rounded-full border-2 font-bold transition-all shadow-lg backdrop-blur-sm
-             {zetsuActive ? 'bg-black text-white border-white' : 'bg-white/10 text-white border-white/30 hover:bg-white/20'}"
-      onclick={() => zetsuActive = !zetsuActive}
+  {#if !briefing && !finished}
+    <section
+      class="pointer-events-none absolute left-4 top-16 w-[min(24rem,calc(100%-2rem))] rounded border border-white/15 bg-black/85 p-4 backdrop-blur"
     >
-      {zetsuActive ? 'Zetsu Actif' : 'Activer Zetsu'}
-    </button>
-  </div>
-
-  {#if gameOver}
-    <div class="absolute inset-0 z-50 flex items-center justify-center bg-red-950/90 backdrop-blur-md">
-      <div class="text-center">
-        <h1 class="text-6xl font-black text-red-500 mb-4 tracking-widest uppercase drop-shadow-lg">Repéré</h1>
-        <p class="text-white/70 mb-8 text-xl">Vous avez été découvert par la sécurité.</p>
-        <button 
-          onclick={restartGame}
-          class="px-8 py-3 bg-red-600 hover:bg-red-500 text-white font-bold rounded shadow-lg transition-transform hover:scale-105"
-        >
-          Recommencer
-        </button>
+      <p class="text-[10px] uppercase tracking-[.25em] text-amber-300">{$t.infiltration.cover}</p>
+      <h1 class="mt-1 text-lg font-bold">{$t.infiltration.title}</h1>
+      <p class="mt-2 text-sm text-white/65">{roomName(currentSpace)}</p>
+      <div class="mt-4 grid grid-cols-2 gap-3 text-xs">
+        <div>
+          <span class="text-white/45">{$t.infiltration.integrity}</span><strong
+            class="block text-lg">{Math.round(game.coverIntegrity)}%</strong
+          >
+        </div>
+        <div>
+          <span class="text-white/45">{$t.infiltration.alert}</span><strong class="block text-lg"
+            >{Math.round(game.alert)}%</strong
+          >
+        </div>
       </div>
+      <div class="mt-3 h-1 overflow-hidden rounded bg-white/10">
+        <div class="h-full bg-amber-300" style:width={`${game.coverIntegrity}%`}></div>
+      </div>
+      <p class="mt-4 text-xs text-white/65">
+        {$t.infiltration.objective}:
+        <strong class={game.documentCopied ? 'text-emerald-300' : 'text-white'}
+          >{game.documentCopied ? $t.infiltration.copied : roomName(objective)}</strong
+        >
+      </p>
+      <p class="mt-1 text-xs text-white/65">
+        Nen: <strong>{game.player.nen === 'zetsu' ? 'Zetsu' : 'Ten'}</strong>
+      </p>
+    </section>
+
+    <div class="absolute bottom-6 left-1/2 flex -translate-x-1/2 gap-2">
+      {#if canCopy || canVerify || canExtract}<button
+          onclick={act}
+          class="rounded border border-amber-300/60 bg-black/90 px-4 py-2 text-xs text-amber-200"
+          >F · {canCopy
+            ? $t.infiltration.copy
+            : canVerify
+              ? $t.infiltration.verify
+              : $t.infiltration.extract}</button
+        >{/if}
+      <button
+        onclick={() => send({ type: 'ZETSU' })}
+        class="rounded border border-white/25 bg-black/90 px-3 py-2 text-xs">X · Ten/Zetsu</button
+      >
+      <button
+        onclick={() => send({ type: 'DIVERT' })}
+        disabled={!!game.diversion}
+        class="rounded border border-white/25 bg-black/90 px-3 py-2 text-xs disabled:opacity-30"
+        >V · {$t.infiltration.divert}</button
+      >
+    </div>
+  {/if}
+
+  {#if briefing}
+    <div class="absolute inset-0 grid place-items-center bg-black/90 p-6">
+      <article class="max-w-xl border border-amber-300/30 bg-[#0b0b0b] p-8">
+        <p class="text-xs uppercase tracking-[.3em] text-amber-300">{$t.infiltration.briefing}</p>
+        <h1 class="mt-3 text-4xl font-black">{$t.infiltration.title}</h1>
+        <p class="mt-5 leading-relaxed text-white/70">{$t.infiltration.intro}</p>
+        <ul class="mt-5 space-y-2 text-sm text-white/75">
+          <li>• {$t.infiltration.taskCopy}</li>
+          <li>• {$t.infiltration.taskVerify}</li>
+          <li>• {$t.infiltration.taskLeave}</li>
+        </ul>
+        <button
+          onclick={() => (briefing = false)}
+          class="mt-8 bg-amber-300 px-6 py-3 text-sm font-bold text-black"
+          >{$t.infiltration.begin}</button
+        >
+      </article>
+    </div>
+  {/if}
+
+  {#if finished}
+    <div class="absolute inset-0 overflow-y-auto bg-black/95 p-6">
+      <article class="mx-auto max-w-3xl py-10">
+        <p class="text-xs uppercase tracking-[.3em] text-amber-300">{$t.infiltration.debrief}</p>
+        <h1 class="mt-3 text-4xl font-black">{$t.infiltration.outcomes[game.outcome]}</h1>
+        <p class="mt-3 text-white/60">
+          {$t.infiltration.score}: {report.score}/100 · {$t.infiltration.traces}: {report.traces
+            .length}
+        </p>
+        <div class="mt-8 grid gap-3 sm:grid-cols-3">
+          {#each report.witnesses as witness (witness.id)}<section
+              class="border border-white/15 p-4"
+            >
+              <h2 class="font-bold">{$t.infiltration.witnesses[witness.id]}</h2>
+              <p class="mt-2 text-sm text-white/60">
+                {$t.infiltration.beliefs[witness.belief.identity]} · {Math.round(
+                  witness.belief.certainty,
+                )}%
+              </p>
+              <p class="mt-1 text-xs text-white/40">
+                {witness.belief.reported ? $t.infiltration.reported : $t.infiltration.unreported}
+              </p>
+            </section>{/each}
+        </div>
+        <p class="mt-8 text-sm text-white/60">
+          {$t.infiltration.truth}:
+          <strong class="text-white"
+            >{game.authorConfirmed ? $t.infiltration.confirmed : $t.infiltration.uncertain}</strong
+          >
+        </p>
+        <button onclick={again} class="mt-8 border border-white/30 px-6 py-3 text-sm"
+          >{$t.infiltration.again}</button
+        >
+      </article>
     </div>
   {/if}
 </div>

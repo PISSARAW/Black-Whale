@@ -1352,6 +1352,50 @@ export const fr: Messages = {
     },
   },
 
+  infiltration: {
+    seoTitle: 'Infiltration — Une mission à bord du Black Whale',
+    seoDescription:
+      'Infiltrez un appartement du pont 1 sous couverture, copiez un rapport et ressortez avant que les témoins ne relient les indices.',
+    title: 'Infiltration',
+    briefing: 'Ordre de mission · Pont 1',
+    intro:
+      'Vous entrez comme aide de maintenance. Copiez le rapport placé au fond de l’appartement, confirmez si possible son véritable auteur, puis revenez au point d’entrée. Être vu n’est pas perdre : être compris l’est.',
+    cover: 'Couverture · Maintenance',
+    integrity: 'Intégrité',
+    alert: 'Alerte partagée',
+    objective: 'Objectif',
+    copied: 'Rapport copié',
+    copy: 'Copier le rapport',
+    verify: 'Vérifier l’auteur',
+    extract: 'S’exfiltrer',
+    divert: 'Diversion',
+    taskCopy: 'Copier le rapport sans le déplacer.',
+    taskVerify: 'Identifier son auteur réel (facultatif).',
+    taskLeave: 'Revenir au point d’entrée avec une histoire cohérente.',
+    begin: 'Commencer la mission',
+    debrief: 'Reconstitution après votre départ',
+    score: 'Discrétion',
+    traces: 'Traces laissées',
+    truth: 'Information rapportée',
+    confirmed: 'Auteur confirmé',
+    uncertain: 'Auteur encore incertain',
+    again: 'Recommencer',
+    reported: 'Observation transmise',
+    unreported: 'Observation restée locale',
+    witnesses: { steward: 'L’intendant', guard: 'Le garde', nenGuard: 'La garde au Nen' },
+    beliefs: {
+      maintenance: 'A vu un agent de maintenance',
+      intruder: 'Soupçonne une intrusion',
+      unknown: 'N’a rien établi',
+    },
+    outcomes: {
+      playing: 'Mission en cours',
+      escaped: 'Exfiltration réussie',
+      identified: 'Couverture compromise',
+      timeUp: 'Relève arrivée',
+    },
+  },
+
   hunt: {
     seoTitle: 'Le jeu de traque — Une partie dans l’appartement de Tserriednich',
     seoDescription:

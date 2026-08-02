@@ -39,7 +39,7 @@
   import { liveOf } from '$lib/hunt/nen/placed'
   import { cuesFor } from '$lib/hunt/veil'
   import { explorationNen, huntDuelNen } from '$lib/nen/tourAdapters'
-  import { NEN_KEYS, nenZoneIndex } from '$lib/nen/controls'
+  import { isNenControlCode, NEN_KEYS, nenZoneIndex } from '$lib/nen/controls'
   import type { NenTechniqueAction } from '@black-whale/nen-engine'
   import { sightings } from '$lib/hunt/sighting'
   import { floorOf } from '$lib/tour/blueprint'
@@ -64,6 +64,8 @@
   import { carryIntoStage, nextStage } from '$lib/hunt/contracts/transition'
   import { capabilitiesOf, type HuntVow } from '$lib/hunt/nen/advanced'
   import { completeCampaignRun, initialCampaign, loadCampaign, saveCampaign } from '$lib/hunt/campaign'
+  import { appendReplayAction, createReplay, decodeReplay, encodeReplay, type HuntReplayV3 } from '$lib/hunt/replay'
+  import { ghostAt, ghostFigure } from '$lib/hunt/ghost'
   import {
     DEFAULT_HUNTER_PROFILE,
     HUNTER_PROFILES,
@@ -121,6 +123,10 @@
   let selectedVow = $state<HuntVow | null>(null)
   let campaign = $state.raw(initialCampaign())
   let campaignRecorded = false
+  const replayKey = 'black-whale:hunt-v3-last-replay'
+  let replay = $state.raw<HuntReplayV3 | null>(null)
+  let lastReplay = $state.raw<HuntReplayV3 | null>(null)
+  let lastReplayMovementAt = -Infinity
   let activeContract = $derived(huntContractById(selectedContract) ?? contracts[0])
   let availableHatsuProfiles = $derived(
     hatsuProfiles.filter((profile) => activeContract.allowedHatsu.includes(profile.id)),
@@ -247,14 +253,20 @@
    * walk's own depth test decides when he is visible: down the line of a
    * doorway, yes; through a bulkhead, no. Nothing here works that out.
    */
-  let figures = $derived(
-    sightings({
+  let figures = $derived.by(() => {
+    const visible = sightings({
       hunter: game.hunter,
       tierId: arena.tierId,
       floor: floorOf(spaceById(game.hunter.spaceId) ?? arena.spaces[0], plan.tier),
       duel: game.duel,
-    }),
-  )
+    })
+    const frame = lastReplay?.terrain === selectedTerrain ? ghostAt(lastReplay, game.clock) : null
+    const ghost = ghostFigure(frame, {
+      tierId: arena.tierId,
+      floor: floorOf(spaceById(frame?.spaceId ?? null) ?? arena.spaces[0], plan.tier),
+    })
+    return ghost ? [...visible, ghost] : visible
+  })
 
   let cues = $derived(
     cuesFor({
@@ -271,6 +283,13 @@
     const before = game
     game = huntReducer(game, action)
     if (game === before) return
+    if (replay) {
+      const recordMovement = action.type !== 'WALKED' || game.clock - lastReplayMovementAt >= 0.25
+      if (recordMovement) {
+        replay = appendReplayAction(replay, game.clock, action)
+        if (action.type === 'WALKED') lastReplayMovementAt = game.clock
+      }
+    }
     if (action.type === 'SWEEP') playHuntCue('en')
     if (action.type === 'ZETSU') playHuntCue('nen')
     if (action.type === 'HATSU') playHuntCue('hatsu')
@@ -315,6 +334,7 @@
 
   function onKeyDown(event: KeyboardEvent) {
     if (!briefed || finished || event.repeat || event.metaKey || event.ctrlKey) return
+    if (isNenControlCode(event.code)) return
     const handled = game.duel ? duelKey(event.code) : huntKey(event.code)
     if (handled) event.preventDefault()
   }
@@ -449,6 +469,8 @@
   onMount(() => {
     calm = prefersReducedMotion()
     campaign = loadCampaign(localStorage)
+    const storedReplay = localStorage.getItem(replayKey)
+    lastReplay = storedReplay ? decodeReplay(storedReplay) : null
     window.addEventListener('keydown', onKeyDown)
     document.addEventListener('visibilitychange', resetFrameClock)
     window.addEventListener('pagehide', closeHuntAudio)
@@ -479,6 +501,7 @@
       wounds: game.advancedNen.wounds,
     })
     saveCampaign(localStorage, campaign)
+    if (replay) localStorage.setItem(replayKey, encodeReplay(replay))
   }
 
   function useStandardNen(action: NenTechniqueAction) {
@@ -498,6 +521,8 @@
 
   function again() {
     campaignRecorded = false
+    if (replay) lastReplay = replay
+    replay = null
     game = freshGame()
     position = game.player.position
     owed = 0
@@ -505,6 +530,16 @@
   }
 
   function begin() {
+    replay = createReplay({
+      schemaVersion: 3,
+      contractId: selectedContract,
+      seed: activeContract.seed,
+      terrain: selectedTerrain,
+      hatsu: selectedHatsu,
+      hunter: selectedHunter,
+      actions: [],
+    })
+    lastReplayMovementAt = -Infinity
     briefed = true
   }
 </script>
@@ -549,6 +584,7 @@
       ? { ren: false, en: false, shu: false, on: false, action: false }
       : { ren: false, gyo: false, in: false, shu: false, ken: false, ko: false, ryu: false, on: false, action: false }}
     onNenChange={useStandardNen}
+    onPhysicalNenAction={() => game.duel && strike()}
     onHatsu={() => send({ type: 'HATSU' })}
     hatsuAllowedInZetsu={game.hatsu.id === 'parallel-future'}
     extras={figures}

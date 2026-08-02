@@ -14,7 +14,7 @@ const replay = createReplay({
 
 describe('replay ghost', () => {
   it('interpolates the recorded body without simulating hidden state', () => {
-    expect(ghostAt(replay, 2)).toEqual({ position: [2, 0], heading: 0.5, nen: 'zetsu' })
+    expect(ghostAt(replay, 2)).toEqual({ position: [2, 0], heading: 0.5, nen: 'zetsu', spaceId: null })
   })
 
   it('does not appear before its first recorded frame', () => {

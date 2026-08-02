@@ -55,10 +55,7 @@
   let extras = $state<Apparition[]>([])
   let viewMode = $state<'overview' | 'scene'>('overview')
   let selectedBodyId = $state<string | null>(null)
-  let followedBodyId = $state<string | null>(null)
   let eventQuery = $state('')
-  let changeFilter = $state<'all' | 'changed'>('all')
-  let certaintyFilter = $state<'all' | DisplayPresence['certainty']>('all')
 
   type DisplayPresence = {
     entityId: string
@@ -71,7 +68,6 @@
   }
 
   let currentPresences = $state<DisplayPresence[]>([])
-  let previousPresences = $state<DisplayPresence[]>([])
 
   let tierId = $state(ship.tiers[0].id)
   let currentSpace = $state<Space | null>(null)
@@ -93,44 +89,9 @@
   )
 
   let activeBodyIds = $derived(new Set(sceneCharacters.map((character) => character.bodyId)))
-  type PresenceChange = DisplayPresence & {
-    change: 'arrived' | 'moved' | 'departed' | 'unchanged'
-    previousLocationLabel: string | null
-  }
-
-  let presenceChanges = $derived.by(() => {
-    const previousById = new Map(previousPresences.map((presence) => [presence.entityId, presence]))
-    const currentById = new Map(currentPresences.map((presence) => [presence.entityId, presence]))
-    const changes: PresenceChange[] = currentPresences.map((presence) => {
-      const previous = previousById.get(presence.entityId)
-      const moved =
-        previous &&
-        (previous.locationId !== presence.locationId || previous.precision !== presence.precision)
-      return {
-        ...presence,
-        change: previous ? (moved ? 'moved' : 'unchanged') : 'arrived',
-        previousLocationLabel: previous?.locationLabel ?? null,
-      }
-    })
-    for (const previous of previousPresences) {
-      if (currentById.has(previous.entityId)) continue
-      changes.push({
-        ...previous,
-        change: 'departed',
-        previousLocationLabel: previous.locationLabel,
-      })
-    }
-    return changes
-  })
-
-  let changedPresences = $derived(
-    presenceChanges.filter((presence) => presence.change !== 'unchanged'),
-  )
   let overviewMarkers = $derived(
-    presenceChanges
+    currentPresences
       .filter((presence) => presence.tierId)
-      .filter((presence) => changeFilter === 'all' || presence.change !== 'unchanged')
-      .filter((presence) => certaintyFilter === 'all' || presence.certainty === certaintyFilter)
       .map((presence) => ({
         id: presence.entityId,
         label: presence.name,
@@ -139,7 +100,6 @@
         certainty: presence.certainty,
         precision: presence.precision,
         active: activeBodyIds.has(presence.entityId),
-        change: presence.change,
       })),
   )
   let unknownPresences = $derived(currentPresences.filter((presence) => !presence.tierId))
@@ -157,28 +117,6 @@
       }),
   )
   let selectedEvent = $derived(chronologicalEvents[currentIndex])
-  let followedName = $derived(followedBodyId ? presenceName(followedBodyId) : null)
-  let followedEventIndexes = $derived.by(() => {
-    if (!followedBodyId) return [] as number[]
-    const indexes: number[] = []
-    chronologicalEvents.forEach((entry, index) => {
-      if (
-        data.sceneCharacters.some(
-          (character) =>
-            character.eventId === entry.event.id && character.bodyId === followedBodyId,
-        ) ||
-        data.presences.some(
-          (presence) =>
-            presence.entityId === followedBodyId &&
-            (presence.fromEvent.id === entry.event.id ||
-              presence.untilEvent?.id === entry.event.id),
-        )
-      ) {
-        indexes.push(index)
-      }
-    })
-    return indexes
-  })
 
   type NarrativePosition = {
     id: string
@@ -266,10 +204,12 @@
     }
   }
 
-  function reconstructAt(index: number): { extras: Apparition[]; presences: DisplayPresence[] } {
-    const currentMangaEvent = chronologicalEvents[index]
+  $effect(() => {
+    const currentMangaEvent = chronologicalEvents[currentIndex]
     if (!currentMangaEvent) {
-      return { extras: [], presences: [] }
+      extras = []
+      currentPresences = []
+      return
     }
 
     const target = currentMangaEvent.event
@@ -325,29 +265,16 @@
       if (shown) byEntity[entityId] = shown
     }
 
-    return {
-      extras: Object.values(byEntity),
-      presences: Object.values(presenceByEntity).sort((left, right) =>
-        left.name.localeCompare(right.name, $locale),
-      ),
-    }
-  }
-
-  $effect(() => {
-    const current = reconstructAt(currentIndex)
-    const previous = reconstructAt(currentIndex - 1)
-    extras = current.extras
-    currentPresences = current.presences
-    previousPresences = previous.presences
+    const nextExtras = Object.values(byEntity)
+    extras = nextExtras
+    currentPresences = Object.values(presenceByEntity).sort((left, right) =>
+      left.name.localeCompare(right.name, $locale),
+    )
 
     // Stay on the visitor's chosen deck while it has a known presence. If it
     // does not, follow the timeline to a populated deck instead of showing an
     // apparently empty reconstruction.
-    const followed = followedBodyId
-      ? current.extras.find((shown) => shown.id === `avatar-${followedBodyId}`)
-      : null
-    const focus =
-      followed ?? current.extras.find((shown) => shown.tierId === tierId) ?? current.extras[0]
+    const focus = nextExtras.find((shown) => shown.tierId === tierId) ?? nextExtras[0]
     if (focus && focus.tierId !== tierId) {
       tierId = focus.tierId
       jumpTo = focus.spaceId
@@ -368,16 +295,10 @@
     }
     if (chronologicalEvents.length < 2) return
     isPlaying = true
-    schedulePlayback()
-  }
-
-  function schedulePlayback() {
-    const delay = Math.min(5000, 1200 + changedPresences.length * 240)
-    playbackInterval = setTimeout(() => {
+    playbackInterval = setInterval(() => {
       if (currentIndex < chronologicalEvents.length - 1) currentIndex++
       else stopPlayback()
-      if (isPlaying) schedulePlayback()
-    }, delay)
+    }, 1000)
   }
 
   function chooseScene(index: number) {
@@ -397,20 +318,6 @@
 
   function selectOverviewCharacter(entityId: string) {
     selectedBodyId = entityId
-  }
-
-  function toggleFollow(entityId: string) {
-    followedBodyId = followedBodyId === entityId ? null : entityId
-    selectedBodyId = entityId
-  }
-
-  function jumpFollow(direction: -1 | 1) {
-    const candidates = followedEventIndexes.toSorted((a, b) => a - b)
-    const destination =
-      direction < 0
-        ? candidates.filter((index) => index < currentIndex).at(-1)
-        : candidates.find((index) => index > currentIndex)
-    if (destination !== undefined) chooseScene(destination)
   }
 
   onDestroy(stopPlayback)
@@ -468,7 +375,6 @@
             <button
               type="button"
               class:current={entry.index === currentIndex}
-              class:followed={followedEventIndexes.includes(entry.index)}
               aria-current={entry.index === currentIndex ? 'step' : undefined}
               onclick={() => chooseScene(entry.index)}
             >
@@ -493,31 +399,11 @@
             selectedId={selectedBodyId}
             onSelect={selectOverviewCharacter}
           />
-          <div class="map-filters" aria-label={$t.reconstruction.filters}>
-            <button
-              class:active={changeFilter === 'all'}
-              type="button"
-              onclick={() => (changeFilter = 'all')}>{$t.reconstruction.allPresences}</button
-            >
-            <button
-              class:active={changeFilter === 'changed'}
-              type="button"
-              onclick={() => (changeFilter = 'changed')}>{$t.reconstruction.changesOnly}</button
-            >
-            <select bind:value={certaintyFilter} aria-label={$t.reconstruction.certaintyFilter}>
-              <option value="all">{$t.reconstruction.allCertainties}</option>
-              <option value="CONFIRMED">{$t.reconstruction.legendKnown}</option>
-              <option value="PROBABLE">{$t.reconstruction.legendProbable}</option>
-              <option value="LAST_KNOWN">{$t.reconstruction.legendLastKnown}</option>
-            </select>
-          </div>
           <div class="map-legend">
             <span><i class="active-dot"></i>{$t.reconstruction.legendActive}</span>
             <span><i></i>{$t.reconstruction.legendKnown}</span>
             <span><i class="probable"></i>{$t.reconstruction.legendProbable}</span>
             <span><i class="last-known"></i>{$t.reconstruction.legendLastKnown}</span>
-            <span><i class="arrived"></i>{$t.reconstruction.arrived}</span>
-            <span><i class="departed"></i>{$t.reconstruction.departed}</span>
           </div>
         {:else}
           <div class="tour-stage">
@@ -559,84 +445,28 @@
           {#if sceneCharacters.length}
             <div class="cast">
               {#each sceneCharacters as character (character.characterId)}
-                <div class="cast-row">
-                  <button
-                    type="button"
-                    class:selected={selectedBodyId === character.bodyId}
-                    disabled={!character.shown}
-                    title={character.shown
-                      ? $t.reconstruction.watchCharacter(character.name)
-                      : $t.reconstruction.unknownPosition}
-                    onclick={() => watchCharacter(character)}
+                <button
+                  type="button"
+                  class:selected={selectedBodyId === character.bodyId}
+                  disabled={!character.shown}
+                  title={character.shown
+                    ? $t.reconstruction.watchCharacter(character.name)
+                    : $t.reconstruction.unknownPosition}
+                  onclick={() => watchCharacter(character)}
+                >
+                  <span
+                    ><strong>{character.name}</strong><small
+                      >{$t.reconstruction.roles[character.participationType]}</small
+                    ></span
                   >
-                    <span
-                      ><strong>{character.name}</strong><small
-                        >{$t.reconstruction.roles[character.participationType]}</small
-                      ></span
-                    >
-                    <b>{character.shown ? '→' : '?'}</b>
-                  </button>
-                  <button
-                    class="follow"
-                    class:active={followedBodyId === character.bodyId}
-                    type="button"
-                    aria-label={$t.reconstruction.followCharacter(character.name)}
-                    onclick={() => toggleFollow(character.bodyId)}>◎</button
-                  >
-                </div>
+                  <b>{character.shown ? '→' : '?'}</b>
+                </button>
               {/each}
             </div>
           {:else}
             <p class="muted">{$t.reconstruction.noCharacters}</p>
           {/if}
         </section>
-
-        <section>
-          <div class="section-heading">
-            <h3>{$t.reconstruction.changes}</h3>
-            <span>{changedPresences.length}</span>
-          </div>
-          {#if changedPresences.length}
-            <ul class="change-list">
-              {#each changedPresences.slice(0, 8) as presence (presence.entityId)}
-                <li data-change={presence.change}>
-                  <strong>{presence.name}</strong>
-                  <span>
-                    {#if presence.change === 'moved'}
-                      {presence.previousLocationLabel ?? $t.common.unknown} → {presence.locationLabel ??
-                        $t.common.unknown}
-                    {:else}
-                      {$t.reconstruction.changeLabels[presence.change]}
-                      {#if presence.locationLabel}
-                        · {presence.locationLabel}{/if}
-                    {/if}
-                  </span>
-                </li>
-              {/each}
-            </ul>
-          {:else}
-            <p class="muted">{$t.reconstruction.noChanges}</p>
-          {/if}
-        </section>
-
-        {#if followedBodyId && followedName}
-          <section class="follow-panel">
-            <div class="section-heading">
-              <h3>{$t.reconstruction.following}</h3>
-              <button type="button" onclick={() => (followedBodyId = null)}>×</button>
-            </div>
-            <strong>{followedName}</strong>
-            <p>{$t.reconstruction.followCount(followedEventIndexes.length)}</p>
-            <div>
-              <button type="button" onclick={() => jumpFollow(-1)}
-                >← {$t.reconstruction.previousTrace}</button
-              >
-              <button type="button" onclick={() => jumpFollow(1)}
-                >{$t.reconstruction.nextTrace} →</button
-              >
-            </div>
-          </section>
-        {/if}
 
         <section>
           <div class="section-heading">
@@ -824,9 +654,6 @@
   .timeline-panel nav button.current {
     box-shadow: inset 2px 0 #d5b86e;
   }
-  .timeline-panel nav button.followed:not(.current) {
-    box-shadow: inset 2px 0 rgba(111, 174, 178, 0.65);
-  }
   .event-index,
   .timeline-panel small {
     color: rgba(237, 241, 238, 0.35);
@@ -847,33 +674,6 @@
   .tour-stage {
     position: absolute;
     inset: 0;
-  }
-  .map-filters {
-    position: absolute;
-    z-index: 5;
-    top: 1rem;
-    left: 1rem;
-    display: flex;
-    gap: 0.3rem;
-    border: 1px solid rgba(237, 241, 238, 0.13);
-    background: rgba(3, 8, 10, 0.9);
-    padding: 0.3rem;
-  }
-  .map-filters button,
-  .map-filters select {
-    border: 0;
-    background: transparent;
-    padding: 0.45rem 0.55rem;
-    color: rgba(237, 241, 238, 0.58);
-    font-size: 0.62rem;
-  }
-  .map-filters button.active {
-    background: rgba(229, 197, 122, 0.14);
-    color: #f2ddb0;
-  }
-  .map-filters select {
-    border-left: 1px solid rgba(237, 241, 238, 0.12);
-    color-scheme: dark;
   }
   .map-legend {
     position: absolute;
@@ -910,14 +710,6 @@
     border: 1px dotted #cf806c;
     background: transparent;
     opacity: 0.7;
-  }
-  .map-legend i.arrived {
-    background: #78c6a3;
-  }
-  .map-legend i.departed {
-    border: 1px solid #cf806c;
-    background: transparent;
-    opacity: 0.55;
   }
   .event-panel {
     overflow-y: auto;
@@ -967,24 +759,6 @@
   .cast {
     display: grid;
     gap: 0.35rem;
-  }
-  .cast-row {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    gap: 0.3rem;
-  }
-  .cast-row > button:first-child {
-    width: 100%;
-  }
-  .cast-row button.follow {
-    width: 2.25rem;
-    justify-content: center;
-    color: rgba(237, 241, 238, 0.45);
-  }
-  .cast-row button.follow.active {
-    border-color: #6faeb2;
-    color: #9bd3d5;
-    background: rgba(111, 174, 178, 0.12);
   }
   .cast button {
     display: flex;
@@ -1055,64 +829,6 @@
   .muted {
     color: rgba(237, 241, 238, 0.42);
     font-size: 0.7rem;
-  }
-  .change-list {
-    display: grid;
-    gap: 0.42rem;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-  .change-list li {
-    border-left: 2px solid rgba(237, 241, 238, 0.2);
-    padding-left: 0.55rem;
-  }
-  .change-list li[data-change='arrived'] {
-    border-color: #78c6a3;
-  }
-  .change-list li[data-change='moved'] {
-    border-color: #e5c57a;
-  }
-  .change-list li[data-change='departed'] {
-    border-color: #cf806c;
-  }
-  .change-list strong,
-  .change-list span {
-    display: block;
-  }
-  .change-list strong {
-    font-size: 0.68rem;
-  }
-  .change-list span {
-    margin-top: 0.1rem;
-    color: rgba(237, 241, 238, 0.46);
-    font-size: 0.6rem;
-  }
-  .follow-panel > strong {
-    color: #9bd3d5;
-    font-family: Georgia, serif;
-    font-size: 1.05rem;
-  }
-  .follow-panel p {
-    color: rgba(237, 241, 238, 0.48);
-    font-size: 0.65rem;
-  }
-  .follow-panel .section-heading button {
-    border: 0;
-    background: transparent;
-    color: inherit;
-  }
-  .follow-panel > div:last-child {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.35rem;
-  }
-  .follow-panel > div:last-child button {
-    border: 1px solid rgba(237, 241, 238, 0.12);
-    background: transparent;
-    padding: 0.45rem;
-    color: rgba(237, 241, 238, 0.62);
-    font-size: 0.6rem;
   }
   .transport {
     position: fixed;

@@ -10,7 +10,14 @@
     StrategyInputError,
     createSimulationStore,
     type StrategyMoveOrder,
+    type StrategyOrderType,
   } from '$lib/strategy/simulation.svelte'
+  import {
+    COMMAND_POINTS_PER_TURN,
+    ORDER_LABELS,
+    objectiveProgress,
+    planCost,
+  } from '$lib/strategy/rules'
 
   let { data }: { data: PageData } = $props()
   const simStore = createSimulationStore()
@@ -20,11 +27,14 @@
   let pendingOrders = $state<StrategyMoveOrder[]>([])
   let selectedCharacterId = $state('')
   let selectedLocationId = $state('')
+  let selectedOrderType = $state<StrategyOrderType>('MOVE')
   let selectedTier = $state('tier-1')
   let errorMessage = $state<string | null>(null)
 
   let playerFaction = $derived(data.factions.find((faction) => faction.id === playerFactionId))
   let locationById = $derived(new Map(data.locations.map((location) => [location.id, location])))
+  let spentCommandPoints = $derived(planCost(pendingOrders))
+  let remainingCommandPoints = $derived(COMMAND_POINTS_PER_TURN - spentCommandPoints)
 
   function entityForCharacter(state: WorldState, characterId: string): WorldEntity | undefined {
     const direct = state.entities[characterId]
@@ -60,19 +70,16 @@
   let mapPresences = $derived.by(() => {
     const state = simStore.currentState
     if (!state) return [] as Presence[]
-    return Object.values(state.presences)
-      .filter(
-        (presence) =>
-          Boolean(presence.locationId) && Boolean(controlledEntities[presence.entity.id]),
-      )
-      .map((presence): Presence => ({
-        id: `strategy:${presence.entity.id}`,
+    return Object.values(simStore.intel)
+      .filter((sighting) => Boolean(controlledEntities[sighting.entityId]))
+      .map((sighting): Presence => ({
+        id: `strategy:${sighting.entityId}`,
         entityType: 'BODY',
-        entityId: presence.entity.id,
-        locationId: presence.locationId,
-        fromEventId: presence.observedAtEventId ?? state.cursor.eventId,
-        precision: presence.precision,
-        certainty: presence.certainty,
+        entityId: sighting.entityId,
+        locationId: sighting.locationId,
+        fromEventId: state.cursor.eventId,
+        precision: state.presences[sighting.entityId]?.precision ?? 'UNKNOWN',
+        certainty: sighting.certainty,
       }))
   })
 
@@ -110,6 +117,18 @@
     ].sort(),
   )
 
+  let objective = $derived.by(() => {
+    const state = simStore.currentState
+    const members = playerFaction?.members ?? []
+    return objectiveProgress(
+      members.map((member) => {
+        const entity = state ? entityForCharacter(state, member.character.id) : undefined
+        return entity ? state?.presences[entity.id]?.locationId : undefined
+      }),
+      members.length,
+    )
+  })
+
   onMount(() => {
     if (data.baseState) {
       simStore.init(data.baseState, data.factions, data.locations)
@@ -123,6 +142,7 @@
     selectedCharacterId = ''
     selectedLocationId = ''
     errorMessage = null
+    simStore.selectFaction(id)
   }
 
   function currentLocation(characterId: string): string {
@@ -134,14 +154,34 @@
   }
 
   function queueOrder() {
-    if (!selectedCharacterId || !selectedLocationId) return
-    pendingOrders = [
+    if (!selectedCharacterId) return
+    const destination =
+      selectedOrderType === 'GUARD' ? currentLocationId(selectedCharacterId) : selectedLocationId
+    if (!destination) return
+    const nextOrder = {
+      characterId: selectedCharacterId,
+      locationId: destination,
+      type: selectedOrderType,
+    }
+    const nextOrders = [
       ...pendingOrders.filter((order) => order.characterId !== selectedCharacterId),
-      { characterId: selectedCharacterId, locationId: selectedLocationId },
+      nextOrder,
     ]
+    if (planCost(nextOrders) > COMMAND_POINTS_PER_TURN) {
+      errorMessage = 'Ce plan dépasse vos points de commandement.'
+      return
+    }
+    pendingOrders = nextOrders
     selectedCharacterId = ''
     selectedLocationId = ''
     errorMessage = null
+  }
+
+  function currentLocationId(characterId: string): string {
+    const state = simStore.currentState
+    if (!state) return ''
+    const entity = entityForCharacter(state, characterId)
+    return entity ? (state.presences[entity.id]?.locationId ?? '') : ''
   }
 
   function removeOrder(characterId: string) {
@@ -223,10 +263,34 @@
 
         <div class="panel-scroll">
           <section>
+            <div class="objective-card" class:complete={objective.complete}>
+              <span>Objectif</span>
+              <strong>Étendre votre présence</strong>
+              <p>Occupez {objective.target} lieux distincts avec vos unités.</p>
+              <div>
+                <i style={`width:${Math.min(100, (objective.current / objective.target) * 100)}%`}
+                ></i>
+              </div>
+              <small
+                >{objective.current} / {objective.target}
+                {objective.complete ? '· objectif atteint' : ''}</small
+              >
+            </div>
+          </section>
+
+          <section>
             <div class="section-title">
               <h2>Nouvel ordre</h2>
-              <span>{pendingOrders.length} en attente</span>
+              <span>{remainingCommandPoints} / {COMMAND_POINTS_PER_TURN} PC</span>
             </div>
+            <label>
+              Action
+              <select bind:value={selectedOrderType}>
+                <option value="MOVE">Se déplacer · 1 PC</option>
+                <option value="SCOUT">Enquêter · 2 PC</option>
+                <option value="GUARD">Protéger sur place · 1 PC</option>
+              </select>
+            </label>
             <label>
               Unité
               <select bind:value={selectedCharacterId}>
@@ -240,19 +304,22 @@
                 {/each}
               </select>
             </label>
-            <label>
-              Destination
-              <select bind:value={selectedLocationId}>
-                <option value="">Choisir une destination</option>
-                {#each data.locations as location (location.id)}
-                  <option value={location.id}>{location.name}</option>
-                {/each}
-              </select>
-            </label>
+            {#if selectedOrderType !== 'GUARD'}
+              <label>
+                {selectedOrderType === 'SCOUT' ? 'Zone à enquêter' : 'Destination'}
+                <select bind:value={selectedLocationId}>
+                  <option value="">Choisir une destination</option>
+                  {#each data.locations as location (location.id)}
+                    <option value={location.id}>{location.name}</option>
+                  {/each}
+                </select>
+              </label>
+            {/if}
             <button
               class="queue"
               type="button"
-              disabled={!selectedCharacterId || !selectedLocationId}
+              disabled={!selectedCharacterId ||
+                (selectedOrderType !== 'GUARD' && !selectedLocationId)}
               onclick={queueOrder}>Ajouter au plan</button
             >
           </section>
@@ -265,7 +332,8 @@
                   <li>
                     <div>
                       <strong>{memberName(order.characterId)}</strong><span
-                        >→ {locationById.get(order.locationId)?.name ?? order.locationId}</span
+                        >{ORDER_LABELS[order.type]} · {locationById.get(order.locationId)?.name ??
+                          order.locationId}</span
                       >
                     </div>
                     <button
@@ -294,7 +362,7 @@
         <footer>
           {#if errorMessage}<p class="error" role="alert">{errorMessage}</p>{/if}
           <button class="end-turn" type="button" onclick={handleEndTurn}
-            >Terminer le tour {simStore.currentTurn}</button
+            >Résoudre le tour · {spentCommandPoints} PC</button
           >
         </footer>
       </aside>
@@ -302,7 +370,7 @@
       <section class="map-panel">
         <div class="map-heading">
           <div>
-            <p>Situation tactique</p>
+            <p>Situation tactique · renseignement limité</p>
             <h2>Black Whale</h2>
           </div>
           <div class="tier-tabs" aria-label="Pont affiché">
@@ -318,12 +386,12 @@
         <PlanMap
           {markers}
           tier={selectedTier}
-          emptyLabel="Aucune unité localisée dans ce scénario."
+          emptyLabel="Aucun renseignement disponible sur ce pont."
           elsewhereLabel={(count) => `${count} unité${count > 1 ? 's' : ''} sur les autres ponts.`}
         />
         <p class="legend">
-          <i></i> Votre faction <i class="other"></i> Autres factions · les positions se mettent à jour
-          à la fin du tour.
+          <i></i> Votre faction <i class="other"></i> Contact observé · les pointillés indiquent un renseignement
+          ancien.
         </p>
       </section>
     </div>

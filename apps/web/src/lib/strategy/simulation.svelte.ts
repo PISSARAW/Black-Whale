@@ -3,7 +3,21 @@ import {
   generateAIOperations,
   resolveControlledEntity,
 } from '@black-whale/simulation-engine'
-import type { ProposedWorldEvent, WorldBranch, WorldState } from '@black-whale/world-engine'
+import type {
+  ProposedWorldEvent,
+  SpatialEstimate,
+  WorldBranch,
+  WorldState,
+} from '@black-whale/world-engine'
+import {
+  COMMAND_POINTS_PER_TURN,
+  intelCertainty,
+  planCost,
+  type StrategyOrder,
+  type StrategyOrderType,
+} from './rules'
+
+export type { StrategyOrder, StrategyOrderType } from './rules'
 
 export interface StrategyMember {
   character: { id: string; canonicalName: string }
@@ -22,9 +36,13 @@ export interface StrategyLocation {
   type: 'SHIP' | 'TIER' | 'ZONE' | 'ROOM' | 'CORRIDOR' | 'UNKNOWN'
 }
 
-export interface StrategyMoveOrder {
-  characterId: string
+export type StrategyMoveOrder = StrategyOrder
+
+export interface StrategyIntel {
+  entityId: string
   locationId: string
+  observedTurn: number
+  certainty: 'CONFIRMED' | 'PROBABLE' | 'LAST_KNOWN'
 }
 
 export interface StrategyTurnResult {
@@ -60,6 +78,8 @@ export function createSimulationStore() {
   let turnReports = $state<string[]>([])
   let factions = $state<StrategyFaction[]>([])
   let locations = $state<StrategyLocation[]>([])
+  let selectedFactionId = $state<string | null>(null)
+  let intel = $state<Record<string, StrategyIntel>>({})
 
   function init(
     baseState: WorldState,
@@ -84,7 +104,64 @@ export function createSimulationStore() {
     currentTurn = 1
     factions = loadedFactions
     locations = loadedLocations
+    selectedFactionId = null
+    intel = {}
     turnReports = ['Simulation initialisée.']
+  }
+
+  function selectFaction(factionId: string) {
+    if (!currentState || !factions.some((faction) => faction.id === factionId)) {
+      throw new StrategyInputError('Faction inconnue.')
+    }
+    selectedFactionId = factionId
+    intel = {}
+    refreshIntel([], [])
+    turnReports = [
+      'Briefing reçu. Les positions adverses restent inconnues tant qu’elles ne sont pas observées.',
+    ]
+  }
+
+  function factionEntityIds(factionId: string): string[] {
+    const faction = factions.find((candidate) => candidate.id === factionId)
+    if (!faction || !currentState) return []
+    return faction.members
+      .map((member) => resolveControlledEntity(currentState!, member.character.id)?.id)
+      .filter((id): id is string => Boolean(id))
+  }
+
+  function refreshIntel(scoutedLocations: readonly string[], guardedLocations: readonly string[]) {
+    if (!currentState || !selectedFactionId) return
+    const friendlyIds = new Set(factionEntityIds(selectedFactionId))
+    const friendlyLocations = new Set(
+      [...friendlyIds]
+        .map((entityId) => currentState!.presences[entityId]?.locationId)
+        .filter((id): id is string => Boolean(id)),
+    )
+    const observedLocations = new Set([
+      ...scoutedLocations,
+      ...guardedLocations,
+      ...friendlyLocations,
+    ])
+    const next: Record<string, StrategyIntel> = {}
+
+    for (const [entityId, sighting] of Object.entries(intel)) {
+      const age = currentTurn - sighting.observedTurn
+      next[entityId] = { ...sighting, certainty: intelCertainty(age) }
+    }
+    for (const [entityId, presence] of Object.entries(currentState.presences) as Array<
+      [string, SpatialEstimate]
+    >) {
+      if (!presence.locationId) continue
+      if (friendlyIds.has(entityId) || observedLocations.has(presence.locationId)) {
+        next[entityId] = {
+          entityId,
+          locationId: presence.locationId,
+          observedTurn: currentTurn,
+          certainty: 'CONFIRMED',
+        }
+      }
+    }
+    intel = next
   }
 
   function endTurn(
@@ -92,18 +169,31 @@ export function createSimulationStore() {
     playerOrders: readonly StrategyMoveOrder[],
   ): StrategyTurnResult {
     if (!branch || !currentState) throw new StrategyInputError('La simulation n’est pas prête.')
+    if (playerFactionId !== selectedFactionId) {
+      throw new StrategyInputError('La faction active ne correspond pas au plan.')
+    }
 
     const playerFaction = factions.find((faction) => faction.id === playerFactionId)
     if (!playerFaction) throw new StrategyInputError('Faction inconnue.')
+    if (planCost(playerOrders) > COMMAND_POINTS_PER_TURN) {
+      throw new StrategyInputError(
+        `Le plan dépasse les ${COMMAND_POINTS_PER_TURN} points de commandement.`,
+      )
+    }
 
     const allowedCharacters = new Set(playerFaction.members.map((member) => member.character.id))
     const destinations = new Map(locations.map((location) => [location.id, location]))
     const orderedCharacters = new Set<string>()
     const playerEvents: ProposedWorldEvent[] = []
     const playerEntityIds = new Set<string>()
+    const scoutedLocations: string[] = []
+    const guardedLocations: string[] = []
 
     // Validate the complete player batch before producing any event.
     for (const order of playerOrders) {
+      if (order.type !== 'MOVE' && order.type !== 'SCOUT' && order.type !== 'GUARD') {
+        throw new StrategyInputError('Un ordre utilise une action inconnue.')
+      }
       if (!allowedCharacters.has(order.characterId)) {
         throw new StrategyInputError('Un ordre vise une unité qui ne vous appartient pas.')
       }
@@ -119,6 +209,15 @@ export function createSimulationStore() {
 
       orderedCharacters.add(order.characterId)
       playerEntityIds.add(entity.id)
+      if (order.type === 'SCOUT') {
+        scoutedLocations.push(destination.id)
+        continue
+      }
+      if (order.type === 'GUARD') {
+        const guarded = currentState.presences[entity.id]?.locationId
+        if (guarded) guardedLocations.push(guarded)
+        continue
+      }
       if (currentState.presences[entity.id]?.locationId === destination.id) continue
       playerEvents.push({
         type: 'ENTITY_MOVED',
@@ -176,9 +275,20 @@ export function createSimulationStore() {
     currentState = result.snapshot
     const completedTurn = currentTurn
     currentTurn += 1
+    refreshIntel(scoutedLocations, guardedLocations)
+    const friendlyIds = new Set(factionEntityIds(playerFactionId))
+    const discoveries = Object.values(intel).filter(
+      (sighting) => sighting.observedTurn === currentTurn && !friendlyIds.has(sighting.entityId),
+    ).length
     turnReports = [
       ...turnReports,
-      `Tour ${completedTurn} terminé · ${playerEvents.length} ordre(s) · ${aiEvents.length} action(s) adverse(s).`,
+      `Tour ${completedTurn} · ${playerOrders.length} ordre(s) résolu(s), ${discoveries} renseignement(s) actualisé(s).`,
+      ...(scoutedLocations.length
+        ? [`Enquête terminée dans ${scoutedLocations.length} zone(s).`]
+        : []),
+      ...(guardedLocations.length
+        ? [`Protection maintenue dans ${guardedLocations.length} zone(s).`]
+        : []),
     ].slice(-100)
 
     return {
@@ -208,7 +318,11 @@ export function createSimulationStore() {
     get locations() {
       return locations
     },
+    get intel() {
+      return intel
+    },
     init,
+    selectFaction,
     endTurn,
   }
 }

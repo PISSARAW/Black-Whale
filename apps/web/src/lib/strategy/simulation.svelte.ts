@@ -10,6 +10,7 @@ import type {
   WorldEntity,
   WorldState,
 } from '@black-whale/world-engine'
+import { hatsuById } from '$lib/nen/hatsuRegistry'
 import {
   COMMAND_POINTS_PER_TURN,
   VICTORY_POINTS_TARGET,
@@ -18,6 +19,7 @@ import {
   evaluateObjective,
   intelCertainty,
   planCost,
+  strategicRoleForHatsu,
   type StrategyOrder,
   type StrategyObjective,
 } from './rules'
@@ -87,6 +89,7 @@ export function createSimulationStore() {
   let intel = $state<Record<string, StrategyIntel>>({})
   let victoryPoints = $state(0)
   let gameWon = $state(false)
+  let hatsuCooldowns = $state<Record<string, number>>({})
 
   function init(
     baseState: WorldState,
@@ -115,6 +118,7 @@ export function createSimulationStore() {
     intel = {}
     victoryPoints = 0
     gameWon = false
+    hatsuCooldowns = {}
     turnReports = ['Simulation initialisée.']
   }
 
@@ -137,6 +141,17 @@ export function createSimulationStore() {
     return faction.members
       .map((member) => resolveControlledEntity(currentState!, member.character.id)?.id)
       .filter((id): id is string => Boolean(id))
+  }
+
+  function abilityIdsForCharacter(characterId: string): string[] {
+    if (!currentState) return []
+    const entity = resolveControlledEntity(currentState, characterId)
+    return [
+      ...new Set([
+        ...(currentState.abilitiesByOwner[characterId] ?? []),
+        ...(entity ? (currentState.abilitiesByOwner[entity.id] ?? []) : []),
+      ]),
+    ].filter((abilityId) => Boolean(hatsuById(abilityId)))
   }
 
   function refreshIntel(scoutedLocations: readonly string[], guardedLocations: readonly string[]) {
@@ -214,10 +229,18 @@ export function createSimulationStore() {
     const playerEntityIds = new Set<string>()
     const scoutedLocations: string[] = []
     const guardedLocations: string[] = []
+    const deniedLocations: string[] = []
+    const activatedHatsu: string[] = []
+    const activatedAbilityIds: string[] = []
 
     // Validate the complete player batch before producing any event.
     for (const order of playerOrders) {
-      if (order.type !== 'MOVE' && order.type !== 'SCOUT' && order.type !== 'GUARD') {
+      if (
+        order.type !== 'MOVE' &&
+        order.type !== 'SCOUT' &&
+        order.type !== 'GUARD' &&
+        order.type !== 'HATSU'
+      ) {
         throw new StrategyInputError('Un ordre utilise une action inconnue.')
       }
       if (!allowedCharacters.has(order.characterId)) {
@@ -235,6 +258,41 @@ export function createSimulationStore() {
 
       orderedCharacters.add(order.characterId)
       playerEntityIds.add(entity.id)
+      if (order.type === 'HATSU') {
+        if (
+          !order.abilityId ||
+          !abilityIdsForCharacter(order.characterId).includes(order.abilityId)
+        ) {
+          throw new StrategyInputError('Cette unité ne maîtrise pas le Hatsu sélectionné.')
+        }
+        if ((hatsuCooldowns[order.abilityId] ?? 0) > currentTurn) {
+          throw new StrategyInputError('Ce Hatsu est encore en récupération.')
+        }
+        const profile = hatsuById(order.abilityId)
+        if (!profile) throw new StrategyInputError('Hatsu inconnu du registre tactique.')
+        const role = strategicRoleForHatsu(profile.kind)
+        if (role === 'RECON') scoutedLocations.push(destination.id)
+        if (role === 'DENIAL') deniedLocations.push(destination.id)
+        if (
+          role === 'MOBILITY' &&
+          currentState.presences[entity.id]?.locationId !== destination.id
+        ) {
+          playerEvents.push({
+            type: 'ENTITY_MOVED',
+            payload: {
+              presence: {
+                entity: { id: entity.id, kind: entity.kind },
+                locationId: destination.id,
+                precision: destination.type === 'TIER' ? 'TIER' : 'EXACT_ROOM',
+                certainty: 'CONFIRMED',
+              },
+            },
+          })
+        }
+        activatedAbilityIds.push(order.abilityId)
+        activatedHatsu.push(`${profile.name} · ${destination.name}`)
+        continue
+      }
       if (order.type === 'SCOUT') {
         scoutedLocations.push(destination.id)
         continue
@@ -325,12 +383,13 @@ export function createSimulationStore() {
       (event) =>
         event.type === 'ENTITY_MOVED' &&
         Boolean(event.payload.presence.locationId) &&
-        guardedLocations.includes(event.payload.presence.locationId!),
+        [...guardedLocations, ...deniedLocations].includes(event.payload.presence.locationId!),
     )
     const resolvedAIEvents = aiEvents.filter((event) => !interceptedEvents.includes(event))
     const result = engine.applyEvents(branch.id, [...playerEvents, ...resolvedAIEvents])
     currentState = result.snapshot
     const completedTurn = currentTurn
+    for (const abilityId of activatedAbilityIds) hatsuCooldowns[abilityId] = currentTurn + 2
     currentTurn += 1
     refreshIntel(scoutedLocations, guardedLocations)
     const friendlyIds = new Set(factionEntityIds(playerFactionId))
@@ -360,6 +419,7 @@ export function createSimulationStore() {
       ...(interceptedEvents.length
         ? [`Interception réussie : ${interceptedEvents.length} mouvement(s) adverse(s) bloqué(s).`]
         : []),
+      ...activatedHatsu.map((activation) => `Hatsu activé · ${activation}.`),
       ...(hostileContacts
         ? [`Contact hostile dans ${hostileContacts} zone(s). La position ennemie est confirmée.`]
         : []),
@@ -414,6 +474,10 @@ export function createSimulationStore() {
     get gameWon() {
       return gameWon
     },
+    get hatsuCooldowns() {
+      return hatsuCooldowns
+    },
+    abilityIdsForCharacter,
     init,
     selectFaction,
     endTurn,

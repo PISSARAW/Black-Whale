@@ -188,6 +188,14 @@
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
+.strategy-shell .field-hint {
+  color: #71838e;
+  font:
+    0.65rem/1.45 system-ui,
+    sans-serif;
+  letter-spacing: 0;
+  text-transform: none;
+}
 .strategy-shell select {
   width: 100%;
   min-width: 0;

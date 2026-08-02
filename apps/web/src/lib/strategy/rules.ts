@@ -1,9 +1,17 @@
-export type StrategyOrderType = 'MOVE' | 'SCOUT' | 'GUARD'
+export type StrategyOrderType = 'MOVE' | 'SCOUT' | 'GUARD' | 'HATSU'
+export type StrategyHatsuRole = 'RECON' | 'MOBILITY' | 'DENIAL'
+
+export const HATSU_ROLE_LABELS: Record<StrategyHatsuRole, string> = {
+  RECON: 'Révèle les présences adverses dans la zone ciblée.',
+  MOBILITY: 'Déplace instantanément l’unité vers la zone ciblée.',
+  DENIAL: 'Empêche les mouvements adverses vers la zone pendant ce tour.',
+}
 
 export interface StrategyOrder {
   characterId: string
   locationId: string
   type: StrategyOrderType
+  abilityId?: string
 }
 
 export const COMMAND_POINTS_PER_TURN = 5
@@ -24,12 +32,44 @@ export const ORDER_COSTS: Record<StrategyOrderType, number> = {
   MOVE: 1,
   SCOUT: 2,
   GUARD: 1,
+  HATSU: 3,
 }
 
 export const ORDER_LABELS: Record<StrategyOrderType, string> = {
   MOVE: 'Se déplacer',
   SCOUT: 'Enquêter',
   GUARD: 'Protéger',
+  HATSU: 'Activer un Hatsu',
+}
+
+const RECON_HATSU_KINDS = new Set([
+  'scout',
+  'surveillance',
+  'future',
+  'divination',
+  'prophecy',
+  'dowsing',
+  'paper-spy',
+  'blood-search',
+  'truth-punch',
+  'senses',
+])
+
+const MOBILITY_HATSU_KINDS = new Set([
+  'teleport',
+  'portal',
+  'door-network',
+  'projection',
+  'vehicle',
+  'arrow',
+  'flock',
+  'identity-swap',
+])
+
+export function strategicRoleForHatsu(kind: string): StrategyHatsuRole {
+  if (RECON_HATSU_KINDS.has(kind)) return 'RECON'
+  if (MOBILITY_HATSU_KINDS.has(kind)) return 'MOBILITY'
+  return 'DENIAL'
 }
 
 export function orderCost(order: Pick<StrategyOrder, 'type'>): number {

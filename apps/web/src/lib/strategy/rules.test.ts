@@ -7,6 +7,7 @@ import {
   intelCertainty,
   objectiveProgress,
   planCost,
+  strategicRoleForHatsu,
 } from './rules'
 
 describe('strategy rules', () => {
@@ -15,10 +16,11 @@ describe('strategy rules', () => {
       { characterId: 'a', locationId: 'room-1', type: 'MOVE' },
       { characterId: 'b', locationId: 'room-2', type: 'SCOUT' },
       { characterId: 'c', locationId: 'room-3', type: 'GUARD' },
+      { characterId: 'd', locationId: 'room-4', type: 'HATSU', abilityId: 'little-eye' },
     ])
 
-    expect(cost).toBe(4)
-    expect(cost).toBeLessThanOrEqual(COMMAND_POINTS_PER_TURN)
+    expect(cost).toBe(7)
+    expect(cost).toBeGreaterThan(COMMAND_POINTS_PER_TURN)
   })
 
   it('measures the objective with distinct occupied locations', () => {
@@ -57,5 +59,11 @@ describe('strategy rules', () => {
     expect(chooseStrategicDestination('CONSOLIDATION', options)).toBe('b')
     expect(chooseStrategicDestination('INTELLIGENCE', options)).toBe('c')
     expect(chooseStrategicDestination('EXPANSION', options)).toBe('c')
+  })
+
+  it('maps Hatsu families to tactical effects', () => {
+    expect(strategicRoleForHatsu('surveillance')).toBe('RECON')
+    expect(strategicRoleForHatsu('portal')).toBe('MOBILITY')
+    expect(strategicRoleForHatsu('chain-bind')).toBe('DENIAL')
   })
 })

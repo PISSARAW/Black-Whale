@@ -6,6 +6,7 @@
   import './strategy.css'
   import PlanMap from '$lib/components/map/PlanMap.svelte'
   import { calculatePresencePosition } from '$lib/components/map/markerProjection'
+  import { hatsuById } from '$lib/nen/hatsuRegistry'
   import {
     StrategyInputError,
     createSimulationStore,
@@ -14,10 +15,12 @@
   } from '$lib/strategy/simulation.svelte'
   import {
     COMMAND_POINTS_PER_TURN,
+    HATSU_ROLE_LABELS,
     ORDER_LABELS,
     VICTORY_POINTS_TARGET,
     doctrineForFaction,
     planCost,
+    strategicRoleForHatsu,
   } from '$lib/strategy/rules'
 
   let { data }: { data: PageData } = $props()
@@ -29,6 +32,7 @@
   let selectedCharacterId = $state('')
   let selectedLocationId = $state('')
   let selectedOrderType = $state<StrategyOrderType>('MOVE')
+  let selectedAbilityId = $state('')
   let selectedTier = $state('tier-1')
   let errorMessage = $state<string | null>(null)
 
@@ -36,6 +40,15 @@
   let locationById = $derived(new Map(data.locations.map((location) => [location.id, location])))
   let spentCommandPoints = $derived(planCost(pendingOrders))
   let remainingCommandPoints = $derived(COMMAND_POINTS_PER_TURN - spentCommandPoints)
+  let availableHatsu = $derived.by(() =>
+    selectedCharacterId
+      ? simStore.abilityIdsForCharacter(selectedCharacterId).flatMap((abilityId) => {
+          const profile = hatsuById(abilityId)
+          return profile ? [profile] : []
+        })
+      : [],
+  )
+  let selectedHatsu = $derived(hatsuById(selectedAbilityId))
 
   function entityForCharacter(state: WorldState, characterId: string): WorldEntity | undefined {
     const direct = state.entities[characterId]
@@ -132,6 +145,7 @@
     pendingOrders = []
     selectedCharacterId = ''
     selectedLocationId = ''
+    selectedAbilityId = ''
     errorMessage = null
     simStore.selectFaction(id)
   }
@@ -146,6 +160,7 @@
 
   function queueOrder() {
     if (!selectedCharacterId) return
+    if (selectedOrderType === 'HATSU' && !selectedAbilityId) return
     const destination =
       selectedOrderType === 'GUARD' ? currentLocationId(selectedCharacterId) : selectedLocationId
     if (!destination) return
@@ -153,6 +168,7 @@
       characterId: selectedCharacterId,
       locationId: destination,
       type: selectedOrderType,
+      ...(selectedOrderType === 'HATSU' ? { abilityId: selectedAbilityId } : {}),
     }
     const nextOrders = [
       ...pendingOrders.filter((order) => order.characterId !== selectedCharacterId),
@@ -165,6 +181,7 @@
     pendingOrders = nextOrders
     selectedCharacterId = ''
     selectedLocationId = ''
+    selectedAbilityId = ''
     errorMessage = null
   }
 
@@ -287,8 +304,34 @@
                 <option value="MOVE">Se déplacer · 1 PC</option>
                 <option value="SCOUT">Enquêter · 2 PC</option>
                 <option value="GUARD">Protéger sur place · 1 PC</option>
+                <option value="HATSU">Activer un Hatsu · 3 PC</option>
               </select>
             </label>
+            {#if selectedOrderType === 'HATSU'}
+              <label>
+                Hatsu
+                <select bind:value={selectedAbilityId}>
+                  <option value="">Choisir une capacité</option>
+                  {#each availableHatsu as profile (profile.id)}
+                    <option
+                      value={profile.id}
+                      disabled={(simStore.hatsuCooldowns[profile.id] ?? 0) > simStore.currentTurn}
+                      >{profile.name}{(simStore.hatsuCooldowns[profile.id] ?? 0) >
+                      simStore.currentTurn
+                        ? ` · disponible tour ${simStore.hatsuCooldowns[profile.id]}`
+                        : ''}</option
+                    >
+                  {/each}
+                </select>
+                {#if selectedCharacterId && !availableHatsu.length}
+                  <small class="field-hint">Aucun Hatsu tactique connu pour cette unité.</small>
+                {:else if selectedHatsu}
+                  <small class="field-hint"
+                    >{HATSU_ROLE_LABELS[strategicRoleForHatsu(selectedHatsu.kind)]}</small
+                  >
+                {/if}
+              </label>
+            {/if}
             <label>
               Unité
               <select bind:value={selectedCharacterId}>
@@ -304,7 +347,11 @@
             </label>
             {#if selectedOrderType !== 'GUARD'}
               <label>
-                {selectedOrderType === 'SCOUT' ? 'Zone à enquêter' : 'Destination'}
+                {selectedOrderType === 'SCOUT'
+                  ? 'Zone à enquêter'
+                  : selectedOrderType === 'HATSU'
+                    ? 'Zone ciblée'
+                    : 'Destination'}
                 <select bind:value={selectedLocationId}>
                   <option value="">Choisir une destination</option>
                   {#each data.locations as location (location.id)}
@@ -317,7 +364,8 @@
               class="queue"
               type="button"
               disabled={!selectedCharacterId ||
-                (selectedOrderType !== 'GUARD' && !selectedLocationId)}
+                (selectedOrderType !== 'GUARD' && !selectedLocationId) ||
+                (selectedOrderType === 'HATSU' && !selectedAbilityId)}
               onclick={queueOrder}>Ajouter au plan</button
             >
           </section>
@@ -330,7 +378,9 @@
                   <li>
                     <div>
                       <strong>{memberName(order.characterId)}</strong><span
-                        >{ORDER_LABELS[order.type]} · {locationById.get(order.locationId)?.name ??
+                        >{order.type === 'HATSU'
+                          ? (hatsuById(order.abilityId)?.name ?? ORDER_LABELS[order.type])
+                          : ORDER_LABELS[order.type]} · {locationById.get(order.locationId)?.name ??
                           order.locationId}</span
                       >
                     </div>

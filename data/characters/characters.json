@@ -2645,6 +2645,10 @@
         "fromChapterId": "ch-363.2"
       },
       {
+        "location": "tier-1-royal-residential-sector-room-1001",
+        "fromChapterId": "ch-373"
+      },
+      {
         "location": "tier-1-vip-jail",
         "fromChapterId": "ch-376"
       }
@@ -3093,12 +3097,24 @@
         "fromChapterId": "ch-359.4"
       },
       {
-        "location": "tier-1-royal-residential-sector",
+        "location": "tier-1-royal-residential-sector-room-1003",
         "fromChapterId": "ch-363"
       },
       {
+        "location": "tier-1-royal-residential-sector-room-1014",
+        "fromChapterId": "ch-369"
+      },
+      {
         "location": "tier-1-royal-residential-sector-room-1003",
-        "fromChapterId": "ch-363.2"
+        "fromChapterId": "ch-370"
+      },
+      {
+        "location": "tier-3-residential-first-class",
+        "fromChapterId": "ch-390"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1003",
+        "fromChapterId": "ch-390.2"
       }
     ]
   },
@@ -4437,7 +4453,21 @@
       }
     ],
     "mapPresenceFromChapterId": "ch-415",
-    "temporalIdentityManaged": true
+    "temporalIdentityManaged": true,
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1006",
+        "fromChapterId": "ch-358"
+      },
+      {
+        "location": "tier-1-banquet-hall",
+        "fromChapterId": "ch-359.4"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1006",
+        "fromChapterId": "ch-363"
+      }
+    ]
   },
   {
     "id": "prince-luzurus",
@@ -4868,6 +4898,20 @@
         "title": "Truth or Falsehood",
         "status": "mentioned"
       }
+    ],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1007",
+        "fromChapterId": "ch-358"
+      },
+      {
+        "location": "tier-1-banquet-hall",
+        "fromChapterId": "ch-359.4"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1007",
+        "fromChapterId": "ch-363"
+      }
     ]
   },
   {
@@ -5286,6 +5330,25 @@
         "chapter": 414,
         "title": "Friends",
         "status": "absent"
+      }
+    ],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1008",
+        "fromChapterId": "ch-358"
+      },
+      {
+        "location": "tier-1-banquet-hall",
+        "fromChapterId": "ch-359.4"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1008",
+        "fromChapterId": "ch-363"
+      },
+      {
+        "location": "tier-1-royal-residential-sector",
+        "fromChapterId": "ch-382",
+        "untilChapterId": "ch-382.2"
       }
     ]
   },
@@ -5754,6 +5817,10 @@
       {
         "location": "tier-1-royal-residential-sector-room-1009",
         "fromChapterId": "ch-383"
+      },
+      {
+        "location": "tier-1-vip-jail",
+        "fromChapterId": "ch-388"
       }
     ]
   },
@@ -7117,6 +7184,10 @@
         "location": "tier-1-royal-residential-sector-room-1012",
         "fromChapterId": "ch-361",
         "untilChapterId": "ch-368"
+      },
+      {
+        "location": "tier-1-princes-burial-chamber",
+        "fromChapterId": "ch-371"
       }
     ]
   },
@@ -7566,12 +7637,12 @@
         "fromChapterId": "ch-359.4"
       },
       {
-        "location": "tier-1-royal-residential-sector-room-1012",
+        "location": "tier-1-royal-residential-sector-room-1013",
         "fromChapterId": "ch-361"
       },
       {
         "location": "tier-1-royal-residential-sector-room-1013",
-        "fromChapterId": "ch-372"
+        "fromChapterId": "ch-374"
       }
     ]
   },

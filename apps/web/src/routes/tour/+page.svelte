@@ -56,7 +56,7 @@
     groupSolidTargets,
     groupSpaceTargets,
   } from '$lib/tour/pageTargets'
-  import { tourShortcut } from '$lib/tour/pageKeyboard'
+  import { TourKeyboardController } from '$lib/tour/pageKeyboard'
   import { TourWorldTicker } from '$lib/tour/pageWorldTicker'
   import { activateTourWorld, cycleTourMode, releaseTourWorld } from '$lib/tour/pageWorldCommands'
   import {
@@ -240,23 +240,20 @@
     })
   }
 
-  function onWindowKeydown(event: KeyboardEvent) {
-    const action = tourShortcut(event, {
+  const keyboard = new TourKeyboardController({
+    read: () => ({
       takesOrders: Boolean(technique && TAKES_ORDERS.has(technique.kind)),
       immersive: chrome.immersive,
       nativeFullscreen: chrome.nativeFullscreen,
       engaged,
       planOpen: chrome.planOpen,
       finderOpen: chrome.findOpen,
-    })
-    if (!action) return
-    event.preventDefault()
-    if (action === 'toggle-reveal') chrome.reveal = !chrome.reveal
-    else if (action === 'turn-technique') {
-      if (technique) turn(technique.kind)
-    } else if (action === 'toggle-fullscreen') chrome.toggleFullscreen()
-    else chrome.planOpen = !chrome.planOpen
-  }
+    }),
+    toggleReveal: () => (chrome.reveal = !chrome.reveal),
+    turnTechnique: () => technique && turn(technique.kind),
+    toggleFullscreen: () => chrome.toggleFullscreen(),
+    togglePlan: () => (chrome.planOpen = !chrome.planOpen),
+  })
 
   /**
    * Whether this system asks for less movement — read on mount rather than at
@@ -786,7 +783,7 @@
   }))
 </script>
 
-<svelte:window onkeydown={onWindowKeydown} />
+<svelte:window onkeydown={keyboard.onKeydown} />
 
 <Seo
   title={$t.tour.seoTitle}

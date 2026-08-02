@@ -9,6 +9,14 @@ interface ShortcutState {
   finderOpen: boolean
 }
 
+interface ShortcutActions {
+  read: () => ShortcutState
+  toggleReveal: () => void
+  turnTechnique: () => void
+  toggleFullscreen: () => void
+  togglePlan: () => void
+}
+
 const isEditable = (target: EventTarget | null): boolean =>
   typeof HTMLElement !== 'undefined' &&
   target instanceof HTMLElement &&
@@ -30,4 +38,18 @@ export function tourShortcut(event: KeyboardEvent, state: ShortcutState): TourSh
   if (key === 'escape') return escapeIsAvailable(state) ? 'toggle-fullscreen' : null
   if (key === 'm') return 'toggle-plan'
   return null
+}
+
+export class TourKeyboardController {
+  constructor(private readonly actions: ShortcutActions) {}
+
+  onKeydown = (event: KeyboardEvent) => {
+    const action = tourShortcut(event, this.actions.read())
+    if (!action) return
+    event.preventDefault()
+    if (action === 'toggle-reveal') this.actions.toggleReveal()
+    else if (action === 'turn-technique') this.actions.turnTechnique()
+    else if (action === 'toggle-fullscreen') this.actions.toggleFullscreen()
+    else this.actions.togglePlan()
+  }
 }

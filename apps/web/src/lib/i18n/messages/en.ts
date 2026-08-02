@@ -75,6 +75,12 @@ export const en = {
       derived: 'Derived',
       inferred: 'Inferred',
     },
+    perspective: 'Point of view',
+    canonicalPerspective: 'Objective canon',
+    loadingPerspective: 'Reconstructing the character’s knowledge…',
+    perspectiveUnavailable: 'This point of view cannot be reconstructed for this event.',
+    perspectiveSummary: (visible: number, facts: number, beliefs: number) =>
+      `${visible} visible ${visible === 1 ? 'body' : 'bodies'} · ${facts} known ${facts === 1 ? 'fact' : 'facts'} · ${beliefs} ${beliefs === 1 ? 'belief' : 'beliefs'}`,
     event: 'Selected event',
     shipState: 'Known ship state',
     exact: 'Exact room',

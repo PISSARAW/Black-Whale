@@ -16,6 +16,7 @@
   import { link, locale, t } from '$lib/i18n'
   import { displayName } from '$lib/utils/displayNames'
   import { claimLevel, evidenceForEvent } from '$lib/reconstruction/evidence'
+  import { visibleInPerspective, type PerspectiveProjection } from '$lib/reconstruction/perspective'
   import type { Space, Vec2 } from '$lib/tour/types'
 
   let { data }: { data: PageData } = $props()
@@ -62,6 +63,10 @@
   let eventQuery = $state('')
   let changeFilter = $state<'all' | 'changed'>('all')
   let certaintyFilter = $state<'all' | DisplayPresence['certainty']>('all')
+  let perspectiveCharacterId = $state('canon')
+  let perspective = $state<PerspectiveProjection | null>(null)
+  let perspectiveLoading = $state(false)
+  let perspectiveError = $state(false)
 
   type DisplayPresence = {
     entityId: string
@@ -130,7 +135,7 @@
     presenceChanges.filter((presence) => presence.change !== 'unchanged'),
   )
   let overviewMarkers = $derived(
-    presenceChanges
+    visibleInPerspective(presenceChanges, perspectiveCharacterId === 'canon' ? null : perspective)
       .filter((presence) => presence.tierId)
       .filter((presence) => changeFilter === 'all' || presence.change !== 'unchanged')
       .filter((presence) => certaintyFilter === 'all' || presence.certainty === certaintyFilter)
@@ -146,6 +151,15 @@
         previousLocationLabel: presence.previousLocationLabel,
       })),
   )
+  let perspectiveCharacters = $derived.by(() => {
+    const characters: Record<string, string> = {}
+    for (const character of data.sceneCharacters) {
+      characters[character.characterId] = displayName(character.canonicalName, $locale)
+    }
+    return Object.entries(characters)
+      .map(([id, name]) => ({ id, name }))
+      .sort((a, b) => a.name.localeCompare(b.name, $locale))
+  })
   let unknownPresences = $derived(currentPresences.filter((presence) => !presence.tierId))
   let filteredEvents = $derived(
     chronologicalEvents
@@ -201,6 +215,36 @@
     return indexes
   })
   let activeTechnique = $derived($activeHatsu ? localizeHatsu($activeHatsu, $locale) : null)
+
+  $effect(() => {
+    const observer = perspectiveCharacterId
+    const event = selectedEvent?.event.id
+    if (observer === 'canon' || !event) {
+      perspective = null
+      perspectiveLoading = false
+      perspectiveError = false
+      return
+    }
+    const controller = new AbortController()
+    perspectiveLoading = true
+    perspectiveError = false
+    const query = `observer=${encodeURIComponent(observer)}&event=${encodeURIComponent(event)}${
+      data.spoilerLimit ? `&spoiler=${data.spoilerLimit}` : ''
+    }`
+    fetch(`/reconstruction/perspective?${query}`, { signal: controller.signal })
+      .then((response) => {
+        if (!response.ok) throw new Error(String(response.status))
+        return response.json() as Promise<PerspectiveProjection>
+      })
+      .then((projection) => (perspective = projection))
+      .catch((error) => {
+        if (error instanceof DOMException && error.name === 'AbortError') return
+        perspective = null
+        perspectiveError = true
+      })
+      .finally(() => (perspectiveLoading = false))
+    return () => controller.abort()
+  })
   let hatsuReading = $derived.by(() => {
     if (!$activeHatsu) return null
     const selected = selectedBodyId
@@ -555,6 +599,15 @@
             onSelect={selectOverviewCharacter}
           />
           <div class="map-filters" aria-label={$t.reconstruction.filters} data-hatsu-pass>
+            <label class="perspective-select">
+              <span>{$t.reconstruction.perspective}</span>
+              <select bind:value={perspectiveCharacterId}>
+                <option value="canon">{$t.reconstruction.canonicalPerspective}</option>
+                {#each perspectiveCharacters as character (character.id)}
+                  <option value={character.id}>{character.name}</option>
+                {/each}
+              </select>
+            </label>
             <button
               class:active={changeFilter === 'all'}
               type="button"
@@ -572,6 +625,21 @@
               <option value="LAST_KNOWN">{$t.reconstruction.legendLastKnown}</option>
             </select>
           </div>
+          {#if perspectiveCharacterId !== 'canon'}
+            <div class="perspective-status" aria-live="polite" data-hatsu-pass>
+              {#if perspectiveLoading}
+                {$t.reconstruction.loadingPerspective}
+              {:else if perspectiveError}
+                {$t.reconstruction.perspectiveUnavailable}
+              {:else if perspective}
+                {$t.reconstruction.perspectiveSummary(
+                  perspective.visibleBodyIds.length,
+                  perspective.knownFactCount,
+                  perspective.beliefCount,
+                )}
+              {/if}
+            </div>
+          {/if}
           <div class="map-legend" data-hatsu-pass>
             <span><i class="active-dot"></i>{$t.reconstruction.legendActive}</span>
             <span><i></i>{$t.reconstruction.legendKnown}</span>
@@ -881,6 +949,23 @@
     overflow-wrap: anywhere;
     color: rgba(237, 241, 238, 0.48);
     font-size: 0.66rem;
+  }
+  .perspective-select {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .perspective-select span {
+    font-size: 0.66rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .perspective-status {
+    border-top: 1px solid rgba(111, 174, 178, 0.35);
+    background: rgba(5, 15, 19, 0.9);
+    padding: 0.55rem 0.8rem;
+    color: rgba(237, 241, 238, 0.7);
+    font-size: 0.72rem;
   }
   .masthead {
     max-width: 1600px;

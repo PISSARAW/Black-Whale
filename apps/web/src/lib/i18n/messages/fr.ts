@@ -74,6 +74,12 @@ export const fr: Messages = {
       derived: 'Dérivé',
       inferred: 'Inféré',
     },
+    perspective: 'Point de vue',
+    canonicalPerspective: 'Canon objectif',
+    loadingPerspective: 'Reconstruction du savoir du personnage…',
+    perspectiveUnavailable: 'Ce point de vue ne peut pas être reconstruit pour cet événement.',
+    perspectiveSummary: (visible, facts, beliefs) =>
+      `${visible} corps visible${visible === 1 ? '' : 's'} · ${facts} fait${facts === 1 ? '' : 's'} connu${facts === 1 ? '' : 's'} · ${beliefs} croyance${beliefs === 1 ? '' : 's'}`,
     event: 'Événement sélectionné',
     shipState: 'État connu du navire',
     exact: 'Pièce exacte',

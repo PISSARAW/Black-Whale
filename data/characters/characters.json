@@ -866,7 +866,7 @@
         "note": "Recherche par l'Araignée et la Mafia"
       },
       {
-        "location": "tier-3-general-passenger-area",
+        "location": "tier-3-residential-standard",
         "fromChapterId": "ch-392",
         "note": "Promenade dans le Secteur Passager du Pont 3"
       },
@@ -1300,7 +1300,7 @@
         "note": "Rassemblement de la Brigade"
       },
       {
-        "location": "tier-3-general-passenger-area",
+        "location": "tier-3-residential-standard",
         "fromChapterId": "ch-380",
         "note": "Confrontation avec Mizaistom sur le Pont 3"
       },
@@ -9447,7 +9447,7 @@
         "fromChapterId": "ch-358"
       },
       {
-        "location": "tier-3-general-passenger-area",
+        "location": "tier-3-residential-standard",
         "fromChapterId": "ch-380",
         "note": "Intercepte Illumi et Kalluto"
       },
@@ -13663,7 +13663,7 @@
         "fromChapterId": "ch-358"
       },
       {
-        "location": "tier-3-general-passenger-area",
+        "location": "tier-3-residential-standard",
         "fromChapterId": "ch-377",
         "note": "Recherche de la base Heil-Ly et Hisoka"
       },
@@ -13673,11 +13673,11 @@
         "note": "Infiltration de la base Heil-Ly"
       },
       {
-        "location": "tier-3-general-passenger-area",
+        "location": "tier-3-residential-standard",
         "fromChapterId": "ch-394"
       },
       {
-        "location": "tier-3-general-passenger-area",
+        "location": "tier-3-residential-standard",
         "fromChapterId": "ch-406"
       }
     ],
@@ -15413,12 +15413,12 @@
         "note": "Exploration solo du Pont 5"
       },
       {
-        "location": "tier-4-general-passenger-area",
+        "location": "tier-4-central-passage",
         "fromChapterId": "ch-380",
         "note": "Accompagné de Shizuku et Bonolenov"
       },
       {
-        "location": "tier-3-general-passenger-area",
+        "location": "tier-3-residential-standard",
         "fromChapterId": "ch-406"
       }
     ]
@@ -15847,12 +15847,12 @@
         "note": "Visite du QG Cha-R au Pont 5"
       },
       {
-        "location": "tier-3-general-passenger-area",
+        "location": "tier-3-residential-standard",
         "fromChapterId": "ch-390",
         "note": "Exploration du Pont 3 à la recherche de la planque Heil-Ly"
       },
       {
-        "location": "tier-3-general-passenger-area",
+        "location": "tier-3-residential-standard",
         "fromChapterId": "ch-393",
         "note": "Découverte de l'entrée secrète du repaire Heil-Ly"
       },
@@ -39709,7 +39709,7 @@
         "note": "Rassemblement de la Brigade"
       },
       {
-        "location": "tier-4-general-passenger-area",
+        "location": "tier-4-central-passage",
         "fromChapterId": "ch-380",
         "note": "Forme un trio avec Chrollo et Shizuku"
       },
@@ -40134,7 +40134,7 @@
         "note": "Rassemblement de la Brigade"
       },
       {
-        "location": "tier-4-general-passenger-area",
+        "location": "tier-4-central-passage",
         "fromChapterId": "ch-380",
         "note": "Forme un trio avec Chrollo et Bonolenov"
       }
@@ -40993,12 +40993,12 @@
         "note": "Visite du QG Cha-R au Pont 5"
       },
       {
-        "location": "tier-3-general-passenger-area",
+        "location": "tier-3-residential-standard",
         "fromChapterId": "ch-390",
         "note": "Exploration du Pont 3 à la recherche de la planque Heil-Ly"
       },
       {
-        "location": "tier-3-general-passenger-area",
+        "location": "tier-3-residential-standard",
         "fromChapterId": "ch-393",
         "note": "Découverte de l'entrée secrète du repaire Heil-Ly"
       },
@@ -41435,7 +41435,7 @@
         "note": "Rassemblement de la Brigade"
       },
       {
-        "location": "tier-3-general-passenger-area",
+        "location": "tier-3-residential-standard",
         "fromChapterId": "ch-380",
         "note": "Confrontation avec Mizaistom sur le Pont 3"
       },
@@ -42210,7 +42210,7 @@
         "fromChapterId": "ch-358"
       },
       {
-        "location": "tier-3-general-passenger-area",
+        "location": "tier-3-residential-standard",
         "fromChapterId": "ch-378",
         "note": "Chasse"
       }
@@ -42503,12 +42503,12 @@
         "note": "Visite du QG Cha-R au Pont 5"
       },
       {
-        "location": "tier-3-general-passenger-area",
+        "location": "tier-3-residential-standard",
         "fromChapterId": "ch-390",
         "note": "Exploration du Pont 3 à la recherche de la planque Heil-Ly"
       },
       {
-        "location": "tier-3-general-passenger-area",
+        "location": "tier-3-residential-standard",
         "fromChapterId": "ch-393",
         "note": "Découverte de l'entrée secrète du repaire Heil-Ly"
       },
@@ -43324,7 +43324,7 @@
         "fromChapterId": "ch-358"
       },
       {
-        "location": "tier-3-general-passenger-area",
+        "location": "tier-3-residential-standard",
         "fromChapterId": "ch-377",
         "note": "Recherche de Hisoka"
       },
@@ -43339,7 +43339,7 @@
         "note": "Killed by Bonolenov"
       },
       {
-        "location": "tier-3-general-passenger-area",
+        "location": "tier-3-residential-standard",
         "fromChapterId": "ch-406",
         "note": "Dead body discovered"
       }
@@ -43947,7 +43947,7 @@
         "fromChapterId": "ch-358"
       },
       {
-        "location": "tier-3-general-passenger-area",
+        "location": "tier-3-residential-standard",
         "fromChapterId": "ch-392",
         "note": "Combat contre Hinrigh"
       }
@@ -44984,7 +44984,7 @@
         "fromChapterId": "ch-358"
       },
       {
-        "location": "tier-3-general-passenger-area",
+        "location": "tier-3-residential-standard",
         "fromChapterId": "ch-377",
         "note": "Recherche de Hisoka"
       },
@@ -44994,7 +44994,7 @@
         "note": "Rencontre Hisoka"
       },
       {
-        "location": "tier-3-general-passenger-area",
+        "location": "tier-3-residential-standard",
         "fromChapterId": "ch-406"
       }
     ]

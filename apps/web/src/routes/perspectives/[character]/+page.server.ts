@@ -4,8 +4,11 @@ import { loadKnowledgeMap } from '$lib/server/knowledge-map'
 import { readSpoilerLimit } from '$lib/server/spoiler'
 import { buildSubjectiveView, listCursorEvents } from '$lib/server/subjective-view'
 import type { PageServerLoad } from './$types'
+import { PUBLIC_FEATURES } from '$lib/config/features'
 
 export const load: PageServerLoad = async ({ params, cookies, url }) => {
+  if (!PUBLIC_FEATURES.perspectives) throw error(404, 'Not found')
+
   const spoilerLimit = readSpoilerLimit(cookies) ?? null
   const character = await findCharacterRef(params.character, spoilerLimit)
 

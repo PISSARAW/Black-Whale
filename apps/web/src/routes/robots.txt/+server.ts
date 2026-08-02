@@ -1,6 +1,7 @@
 import type { RequestHandler } from '@sveltejs/kit'
 import { SITE_URL } from '$lib/seo/config'
 import { LOCALES, localizePath } from '$lib/i18n/config'
+import { PUBLIC_FEATURES } from '$lib/config/features'
 
 // /health is a probe, /_map-preview is a design harness, and the placeholder
 // body/consciousness/knowledge detail pages carry no canon content yet. Each one
@@ -11,7 +12,8 @@ const disallowed = [
   '/bodies/',
   '/consciousness/',
   '/knowledge/',
-  '/perspectives/*/',
+  ...(!PUBLIC_FEATURES.perspectives ? ['/perspectives', '/perspectives/'] : ['/perspectives/*/']),
+  ...(!PUBLIC_FEATURES.compare ? ['/compare'] : []),
 ]
 
 const disallowRules = disallowed

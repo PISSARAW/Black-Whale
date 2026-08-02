@@ -10,6 +10,7 @@
   import { link, routePath, t } from '$lib/i18n'
   import { tick } from 'svelte'
   import type { LayoutData } from './$types'
+  import { PUBLIC_FEATURES } from '$lib/config/features'
 
   export let data: LayoutData
 
@@ -24,12 +25,16 @@
     { href: '/ship', label: $t.nav.explore },
     { href: '/timeline', label: $t.nav.timeline },
     { href: '/characters', label: $t.nav.characters },
-    { href: '/perspectives', label: $t.nav.knowledge },
+    ...(PUBLIC_FEATURES.perspectives
+      ? [{ href: '/perspectives', label: $t.nav.knowledge }]
+      : []),
   ]
 
   $: secondaryNavigation = [
     { href: '/abilities', label: $t.nav.abilityArchive, index: '01' },
-    { href: '/compare', label: $t.nav.comparePerspectives, index: '02' },
+    ...(PUBLIC_FEATURES.compare
+      ? [{ href: '/compare', label: $t.nav.comparePerspectives, index: '02' }]
+      : []),
     { href: '/relationships', label: $t.nav.factionNetwork, index: '03' },
     { href: '/simulations', label: $t.nav.simulations, index: '04' },
     { href: '/tour', label: $t.nav.virtualTour, index: '05' },

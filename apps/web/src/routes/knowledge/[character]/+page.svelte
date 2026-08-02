@@ -4,6 +4,7 @@
   import { displayName } from '$lib/utils/displayNames'
   import { link, locale, t } from '$lib/i18n'
   import type { PageData } from './$types'
+  import { PUBLIC_FEATURES } from '$lib/config/features'
 
   let { data }: { data: PageData } = $props()
   let name = $derived(displayName(data.character.canonicalName, $locale))
@@ -41,10 +42,12 @@
     <h1 class="font-condensed text-3xl text-[#e5c57a]">{$t.knowledgeDetail.title(name)}</h1>
     <p class="text-sm text-slate-300 mt-2">{$t.knowledgeDetail.intro}</p>
     <div class="mt-4 flex flex-wrap gap-2 text-xs">
-      <a
-        class="border border-slate-700 rounded px-3 py-1 hover:border-[#e5c57a]"
-        href={$link(`/perspectives/${data.character.slug}`)}>{$t.knowledgeDetail.openPerspective}</a
-      >
+      {#if PUBLIC_FEATURES.perspectives}
+        <a
+          class="border border-slate-700 rounded px-3 py-1 hover:border-[#e5c57a]"
+          href={$link(`/perspectives/${data.character.slug}`)}>{$t.knowledgeDetail.openPerspective}</a
+        >
+      {/if}
       <a
         class="border border-slate-700 rounded px-3 py-1 hover:border-[#e5c57a]"
         href={$link(`/characters/${data.character.slug}`)}>{$t.knowledgeDetail.openProfile}</a

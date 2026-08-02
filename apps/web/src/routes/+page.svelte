@@ -6,6 +6,7 @@
   import { websiteSchema } from '$lib/seo/schema'
   import { link, locale, t } from '$lib/i18n'
   import { LOCALE_TAGS } from '$lib/i18n/config'
+  import { PUBLIC_FEATURES } from '$lib/config/features'
 
   let { data }: { data: PageData } = $props()
 
@@ -33,7 +34,9 @@
   let dossiers = $derived([
     { index: '01', href: '/ship', ...$t.home.dossiers.ship },
     { index: '02', href: '/timeline', ...$t.home.dossiers.timeline },
-    { index: '03', href: '/perspectives', ...$t.home.dossiers.perspectives },
+    ...(PUBLIC_FEATURES.perspectives
+      ? [{ index: '03', href: '/perspectives', ...$t.home.dossiers.perspectives }]
+      : []),
   ])
 </script>
 

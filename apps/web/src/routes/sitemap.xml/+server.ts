@@ -2,6 +2,7 @@ import type { RequestHandler } from '@sveltejs/kit'
 import characterCatalogue from '../../../../../data/characters/characters.json'
 import { SITE_URL } from '$lib/seo/config'
 import { LOCALES, LOCALE_TAGS, localizePath } from '$lib/i18n/config'
+import { PUBLIC_FEATURES } from '$lib/config/features'
 
 type SitemapEntry = { path: string; changefreq: string; priority: string }
 
@@ -13,10 +14,14 @@ const staticRoutes: SitemapEntry[] = [
   { path: '/tour/morena', changefreq: 'monthly', priority: '0.6' },
   { path: '/characters', changefreq: 'weekly', priority: '0.9' },
   { path: '/timeline', changefreq: 'weekly', priority: '0.8' },
-  { path: '/perspectives', changefreq: 'weekly', priority: '0.8' },
+  ...(PUBLIC_FEATURES.perspectives
+    ? [{ path: '/perspectives', changefreq: 'weekly', priority: '0.8' }]
+    : []),
   { path: '/relationships', changefreq: 'weekly', priority: '0.7' },
   { path: '/abilities', changefreq: 'weekly', priority: '0.7' },
-  { path: '/compare', changefreq: 'monthly', priority: '0.6' },
+  ...(PUBLIC_FEATURES.compare
+    ? [{ path: '/compare', changefreq: 'monthly', priority: '0.6' }]
+    : []),
   { path: '/simulations', changefreq: 'monthly', priority: '0.5' },
 ]
 

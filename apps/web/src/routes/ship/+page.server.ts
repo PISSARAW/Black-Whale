@@ -23,13 +23,16 @@ import characterCatalog from '../../../../../data/characters/characters.json'
 import abilityCatalog from '../../../../../data/abilities/abilities.json'
 import type { PageServerLoad } from './$types'
 import { redirect } from '@sveltejs/kit'
+import { PUBLIC_FEATURES } from '$lib/config/features'
 
 const catalogIndex = buildCatalogIndex(characterCatalog as CatalogCharacter[])
 const hatsuIndex = buildHatsuIndex(abilityCatalog)
 
 export const load: PageServerLoad = async ({ url, cookies }) => {
   const timelineEngine = new TimelineEngine(prisma)
-  const requestedPerspectiveId = url.searchParams.get('perspective') || 'reader'
+  const requestedPerspectiveId = PUBLIC_FEATURES.perspectives
+    ? url.searchParams.get('perspective') || 'reader'
+    : 'reader'
   const followMode = url.searchParams.get('follow') || 'consciousness'
   const requestedEventId = url.searchParams.get('eventId')
   const legacySequence = readLegacySequence(url.searchParams.get('sequence'))

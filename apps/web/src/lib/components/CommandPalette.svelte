@@ -2,6 +2,7 @@
   import { goto } from '$app/navigation'
   import { tick } from 'svelte'
   import { link, t } from '$lib/i18n'
+  import { PUBLIC_FEATURES } from '$lib/config/features'
 
   let { open = $bindable(false) }: { open?: boolean } = $props()
   let query = $state('')
@@ -26,24 +27,28 @@
       group: $t.palette.groups.primary,
       code: 'C',
     },
-    {
-      href: '/perspectives',
-      label: $t.palette.destinations.perspectives,
-      group: $t.palette.groups.primary,
-      code: 'K',
-    },
+    ...(PUBLIC_FEATURES.perspectives
+      ? [{
+          href: '/perspectives',
+          label: $t.palette.destinations.perspectives,
+          group: $t.palette.groups.primary,
+          code: 'K',
+        }]
+      : []),
     {
       href: '/abilities',
       label: $t.palette.destinations.abilities,
       group: $t.palette.groups.dossier,
       code: 'A',
     },
-    {
-      href: '/compare',
-      label: $t.palette.destinations.compare,
-      group: $t.palette.groups.dossier,
-      code: 'P',
-    },
+    ...(PUBLIC_FEATURES.compare
+      ? [{
+          href: '/compare',
+          label: $t.palette.destinations.compare,
+          group: $t.palette.groups.dossier,
+          code: 'P',
+        }]
+      : []),
     {
       href: '/relationships',
       label: $t.palette.destinations.relationships,

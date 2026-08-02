@@ -22,6 +22,7 @@
   import { link, locale, t } from '$lib/i18n'
   import type { BeyondLineageStatus } from '$lib/beyondLineage'
   import type { BeyondLineageFilter } from '$lib/state/mapState.svelte'
+  import { PUBLIC_FEATURES } from '$lib/config/features'
 
   let { data }: { data: PageData } = $props()
 
@@ -353,23 +354,31 @@
       <div>
         <span>{$t.ship.activeZone}</span><strong class="capitalize">{currentDeckLabel}</strong>
       </div>
-      <div><span>{$t.ship.perspective}</span><strong>{contextState.perspectiveName}</strong></div>
+      {#if PUBLIC_FEATURES.perspectives}
+        <div><span>{$t.ship.perspective}</span><strong>{contextState.perspectiveName}</strong></div>
+      {/if}
     </div>
 
-    <div class="hero-actions">
-      <button
-        class:active={mapState.compareWithReader}
-        aria-pressed={mapState.compareWithReader}
-        onclick={() => mapState.setCompareWithReader(!mapState.compareWithReader)}
-      >
-        <span class="action-icon">◫</span>
-        {mapState.compareWithReader ? $t.ship.canonVisible : $t.ship.compareWithCanon}
-      </button>
-      <a href={$link('/compare')}>{$t.ship.comparePerspectives} <span>↗</span></a>
-    </div>
+    {#if PUBLIC_FEATURES.perspectives || PUBLIC_FEATURES.compare}
+      <div class="hero-actions">
+        {#if PUBLIC_FEATURES.perspectives}
+          <button
+            class:active={mapState.compareWithReader}
+            aria-pressed={mapState.compareWithReader}
+            onclick={() => mapState.setCompareWithReader(!mapState.compareWithReader)}
+          >
+            <span class="action-icon">◫</span>
+            {mapState.compareWithReader ? $t.ship.canonVisible : $t.ship.compareWithCanon}
+          </button>
+        {/if}
+        {#if PUBLIC_FEATURES.compare}
+          <a href={$link('/compare')}>{$t.ship.comparePerspectives} <span>↗</span></a>
+        {/if}
+      </div>
+    {/if}
   </header>
 
-  {#if contextState.hasAnomaly}
+  {#if PUBLIC_FEATURES.perspectives && contextState.hasAnomaly}
     <ConsciousnessTransferTransition
       visible={true}
       fromBody={contextState.perspectiveName}
@@ -500,18 +509,20 @@
           <span>Black Whale</span><i>/</i><strong class="capitalize">{currentDeckLabel}</strong>
         </div>
         <div class="map-tools">
-          <label class="quick-track">
-            <span>{$t.ship.track}</span>
-            <select
-              aria-label={$t.ship.trackAria}
-              value={mapState.selectedPerspectiveId}
-              onchange={(event) => handlePerspectiveSelect(event.currentTarget.value)}
-            >
-              {#each perspectiveOptions as option (option.id)}<option value={option.id}
-                  >{option.label}</option
-                >{/each}
-            </select>
-          </label>
+          {#if PUBLIC_FEATURES.perspectives}
+            <label class="quick-track">
+              <span>{$t.ship.track}</span>
+              <select
+                aria-label={$t.ship.trackAria}
+                value={mapState.selectedPerspectiveId}
+                onchange={(event) => handlePerspectiveSelect(event.currentTarget.value)}
+              >
+                {#each perspectiveOptions as option (option.id)}<option value={option.id}
+                    >{option.label}</option
+                  >{/each}
+              </select>
+            </label>
+          {/if}
           <span class="live-indicator"><i></i> {$t.ship.liveData}</span>
           <span class="map-hint">{$t.ship.mapHint}</span>
         </div>
@@ -602,23 +613,25 @@
     </article>
   </section>
 
-  <section class="intel-panel">
-    <div class="perspective-panel">
-      <div class="panel-heading compact">
-        <div>
-          <span>{$t.ship.pointOfView}</span>
-          <h2>{$t.ship.observationFilter}</h2>
+  <section class="intel-panel" class:single={!PUBLIC_FEATURES.perspectives}>
+    {#if PUBLIC_FEATURES.perspectives}
+      <div class="perspective-panel">
+        <div class="panel-heading compact">
+          <div>
+            <span>{$t.ship.pointOfView}</span>
+            <h2>{$t.ship.observationFilter}</h2>
+          </div>
+          <span class="mode-pill">{followLabel[mapState.followMode]}</span>
         </div>
-        <span class="mode-pill">{followLabel[mapState.followMode]}</span>
+        <PerspectiveSelector
+          options={perspectiveOptions}
+          selectedPerspective={mapState.selectedPerspectiveId}
+          followMode={mapState.followMode}
+          onPerspectiveSelect={handlePerspectiveSelect}
+          onFollowModeSelect={handleFollowModeSelect}
+        />
       </div>
-      <PerspectiveSelector
-        options={perspectiveOptions}
-        selectedPerspective={mapState.selectedPerspectiveId}
-        followMode={mapState.followMode}
-        onPerspectiveSelect={handlePerspectiveSelect}
-        onFollowModeSelect={handleFollowModeSelect}
-      />
-    </div>
+    {/if}
 
     <div class="legend-panel">
       <div class="panel-heading compact">
@@ -687,13 +700,15 @@
       <p class="empty-state">{$t.ship.noEvents}</p>
     {/if}
 
-    <PerspectiveTimeline
-      reality={timelinePoints.reality}
-      body={timelinePoints.body}
-      consciousness={timelinePoints.consciousness}
-      knowledge={timelinePoints.knowledge}
-      currentIndex={data.selectedEventIndex || 0}
-    />
+    {#if PUBLIC_FEATURES.perspectives}
+      <PerspectiveTimeline
+        reality={timelinePoints.reality}
+        body={timelinePoints.body}
+        consciousness={timelinePoints.consciousness}
+        knowledge={timelinePoints.knowledge}
+        currentIndex={data.selectedEventIndex || 0}
+      />
+    {/if}
   </footer>
 </div>
 
@@ -1606,6 +1621,9 @@
     display: grid;
     grid-template-columns: 1.35fr 1fr;
     gap: 0.75rem;
+  }
+  .intel-panel.single {
+    grid-template-columns: 1fr;
   }
   .perspective-panel,
   .legend-panel {

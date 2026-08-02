@@ -5,8 +5,12 @@ import { readSpoilerProfile } from '$lib/server/spoiler'
 import type { PageServerLoad } from './$types'
 import { filterVisible } from '@black-whale/spoiler-engine'
 import { buildCanonicalPositions, TimelineEngine } from '@black-whale/timeline-engine'
+import { error } from '@sveltejs/kit'
+import { PUBLIC_FEATURES } from '$lib/config/features'
 
 export const load: PageServerLoad = async ({ cookies, url }) => {
+  if (!PUBLIC_FEATURES.compare) throw error(404, 'Not found')
+
   const spoilerProfile = readSpoilerProfile(cookies)
   const maxChapter = spoilerProfile?.maxChapter
 

@@ -19,7 +19,7 @@
   import TourScene from '$lib/components/tour/TourScene.svelte'
   import TourModeFullscreen from '$lib/components/tour/TourModeFullscreen.svelte'
   import { theShip } from '$lib/tour/blueprint'
-  import { EMPTY_WORLD } from '$lib/tour/hatsu'
+  import type { TourFlash } from '$lib/tour/apparitions'
   import { interiorPoint } from '$lib/tour/geometry'
   import { breadcrumbSchema } from '$lib/seo/schema'
   import { link, locale, t } from '$lib/i18n'
@@ -65,6 +65,7 @@
   import { completeCampaignRun, initialCampaign, loadCampaign, saveCampaign } from '$lib/hunt/campaign'
   import { appendReplayAction, createReplay, decodeReplay, encodeReplay, type HuntReplayV3 } from '$lib/hunt/replay'
   import { ghostAt, ghostFigure } from '$lib/hunt/ghost'
+  import { hatsuFlash, presentHatsu } from '$lib/hunt/hatsuPresentation'
   import { decodeContract } from '$lib/hunt/contracts/share'
   import type { HuntContractV3 } from '$lib/hunt/contracts/types'
   import {
@@ -122,6 +123,8 @@
   let selectedContract = $state('royal-apartments')
   let contractStage = $state(0)
   let selectedHatsu = $state<HuntHatsuId>(DEFAULT_HUNT_HATSU)
+  let hatsuFlashSeq = $state(0)
+  let activeHatsuFlash = $state.raw<(TourFlash & { seq: number }) | null>(null)
   let selectedHunter = $state<HunterProfileId>(DEFAULT_HUNTER_PROFILE)
   let selectedVow = $state<HuntVow | null>(null)
   let campaign = $state.raw(initialCampaign())
@@ -286,11 +289,14 @@
   let playerNen = $derived(
     game.duel ? huntDuelNen(game.duel.player) : explorationNen(game.player.nen, game.advancedNen),
   )
+  let hatsuPresentation = $derived(presentHatsu(game))
 
   function send(action: HuntAction) {
     const before = game
     game = huntReducer(game, action)
     if (game === before) return
+    const flash = hatsuFlash(before, game)
+    if (flash) activeHatsuFlash = { ...flash, seq: ++hatsuFlashSeq }
     if (replay) {
       const recordMovement = action.type !== 'WALKED' || game.clock - lastReplayMovementAt >= 0.25
       if (recordMovement) {
@@ -298,8 +304,9 @@
         if (action.type === 'WALKED') lastReplayMovementAt = game.clock
       }
     }
-    if (action.type === 'HATSU') playHuntCue('hatsu')
-    if (action.type === 'LAY' || action.type === 'TAKE') playHuntCue('trap')
+    if (action.type === 'HATSU') playHuntCue(game.hatsu.id)
+    if (action.type === 'LAY') playHuntCue('bungee-gum')
+    if (action.type === 'TAKE') playHuntCue('trap')
   }
 
   let canSweep = $derived(
@@ -591,12 +598,14 @@
     bind:currentSpace
     bind:engaged
     seated={duelSeat}
-    world={EMPTY_WORLD}
+    world={hatsuPresentation.world}
+    tint={hatsuPresentation.tint}
+    flash={activeHatsuFlash}
     nen={playerNen}
     showNenControls={true}
     nenAvailability={game.duel
-      ? { ren: false, en: false, shu: false, on: false, action: false }
-      : { gyo: false, in: false, ken: false, ko: false, ryu: false, on: false, action: false }}
+      ? { ren: 'Le duel contrôle Ren via Ken.', en: 'En est interrompu au contact.', shu: 'Aucun objet libre pendant le duel.', on: 'On n’est pas maîtrisé dans ce contrat.', action: 'F frappe pendant le duel.' }
+      : { gyo: 'Gyo exige un adversaire engagé.', in: 'In exige un duel dans ce mode.', ken: 'Ken exige un adversaire engagé.', ko: 'Ko exige une cible de duel.', ryu: 'Ryu exige une cible de duel.', on: 'On n’est pas maîtrisé dans ce contrat.', action: 'Visez un objet imprégnable.' }}
     onNenChange={useStandardNen}
     onPhysicalNenAction={() => game.duel && strike()}
     onHatsu={() => send({ type: 'HATSU' })}

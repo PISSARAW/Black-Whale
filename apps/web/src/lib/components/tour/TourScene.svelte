@@ -198,7 +198,7 @@
     /** Modes with their own Nen HUD still use the shared renderer without duplicating controls. */
     showNenControls?: boolean
     /** Visible-but-disabled principles for modes that intentionally implement a subset. */
-    nenAvailability?: Partial<Record<NenTechnique | 'hatsu' | 'action', boolean>>
+    nenAvailability?: Partial<Record<NenTechnique | 'hatsu' | 'action', boolean | string>>
     /** Controlled modes receive every accepted standard Nen action here. */
     onNenChange?: (action: NenTechniqueAction) => void
     /** Canonical F delegated to a mode when it is not a scene-object action. */

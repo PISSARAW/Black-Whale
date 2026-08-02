@@ -70,12 +70,17 @@
   let forward = $derived(duel.player.attack >= STRIKE_THRESHOLD)
 </script>
 
-<div
-  class="pointer-events-none absolute inset-0 flex flex-col items-center justify-center bg-black/70 backdrop-blur-sm"
->
-  <h2 class="mb-8 text-xs uppercase tracking-[0.4em] text-rose-300">{labels.title}</h2>
+<div class="pointer-events-none absolute inset-0 overflow-hidden">
+  <!-- The room remains the arena. These edge gradients frame it without
+       replacing it, so doors, the hunter and every prepared object stay part
+       of the player's reading during contact. -->
+  <div class="duel-vignette absolute inset-0"></div>
 
-  <div class="flex items-start gap-10 sm:gap-20">
+  <h2 class="absolute inset-x-0 top-5 text-center text-xs uppercase tracking-[0.4em] text-rose-300">
+    {labels.title}
+  </h2>
+
+  <div class="duel-bodies absolute inset-x-3 top-14 flex items-start justify-between sm:inset-x-8">
     <AuraOverlay
       duelist={duel.player}
       labels={{ name: labels.you, zone: labels.zone, ...labels.state }}
@@ -88,7 +93,7 @@
   </div>
 
   <!-- Ryu, as the one continuous thing on screen: where the aura sits, right now. -->
-  <div class="mt-6 w-64">
+  <div class="absolute left-1/2 top-14 w-52 -translate-x-1/2 sm:w-64">
     <div class="h-1.5 w-full overflow-hidden rounded-full bg-white/10">
       <div
         class="h-full bg-sky-300 transition-[width] duration-150"
@@ -101,12 +106,14 @@
     </p>
   </div>
 
-  <p class="mt-4 h-4 text-xs uppercase tracking-widest text-violet-300">
+  <p
+    class="absolute inset-x-0 top-24 h-4 text-center text-xs uppercase tracking-widest text-violet-300"
+  >
     {duel.breaking > 0 ? labels.state.breaking : ''}
   </p>
 
   <section
-    class="pointer-events-auto mt-4 w-[min(94vw,38rem)] rounded-xl border border-white/10 bg-black/70 p-3 backdrop-blur-md"
+    class="pointer-events-auto absolute inset-x-3 bottom-3 mx-auto w-[min(94vw,38rem)] rounded-xl border border-white/10 bg-black/75 p-3 shadow-2xl backdrop-blur-md sm:bottom-6"
     aria-label={labels.title}
   >
     <div class="grid grid-cols-4 gap-1.5" aria-label={labels.action.guard}>
@@ -204,9 +211,36 @@
     accent-color: rgb(125 211 252);
     width: 100%;
   }
+  .duel-vignette {
+    background:
+      linear-gradient(
+        to bottom,
+        rgb(0 0 0 / 0.58),
+        transparent 25%,
+        transparent 62%,
+        rgb(0 0 0 / 0.55)
+      ),
+      linear-gradient(
+        to right,
+        rgb(0 0 0 / 0.42),
+        transparent 22%,
+        transparent 78%,
+        rgb(0 0 0 / 0.42)
+      );
+    box-shadow: inset 0 0 6rem rgb(127 29 29 / 0.12);
+  }
+  .duel-bodies :global(figure) {
+    transform: scale(0.72);
+    transform-origin: top center;
+  }
   @media (pointer: coarse) {
     kbd {
       display: none;
+    }
+  }
+  @media (max-height: 720px) {
+    .duel-bodies :global(figure) {
+      transform: scale(0.55);
     }
   }
 </style>

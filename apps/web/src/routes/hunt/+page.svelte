@@ -98,6 +98,18 @@
   // has asked for less movement should not have it re-decided mid-game.
   let calm = $state(false)
   let briefed = $state(false)
+  let duelSeat = $state<{ at: Vec2; heading: number; eye: number } | null>(null)
+
+  // `TourScene` already owns the one trustworthy way to immobilise a body
+  // while leaving the head free. Capture the contact point once: rebuilding
+  // this object every tick would also reset the player's gaze every tick.
+  $effect(() => {
+    if (game.duel && !duelSeat) {
+      duelSeat = { at: [...game.player.position], heading: game.player.heading, eye: 1.7 }
+    } else if (!game.duel && duelSeat) {
+      duelSeat = null
+    }
+  })
 
   /**
    * What the principles currently look like. Derived from the same state the
@@ -311,6 +323,7 @@
     bind:heading
     bind:currentSpace
     bind:engaged
+    seated={duelSeat}
     world={EMPTY_WORLD}
     extras={figures}
     touchLabels={{ move: $t.tour.touch.move, cast: $t.tour.touch.cast }}
@@ -323,7 +336,7 @@
     <NenVeil {cues} {calm} />
   {/if}
 
-  {#if !finished}
+  {#if !finished && !inDuel}
     <HuntHud
       pool={game.duel ? game.duel.player.pool : game.ledger.pool}
       feedback={game.feedback}

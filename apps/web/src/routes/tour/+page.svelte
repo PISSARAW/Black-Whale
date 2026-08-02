@@ -41,14 +41,13 @@
   import {
     blindWallReasons,
     declaredDoorReasons,
-    groupSolidTargets,
-    groupSpaceTargets,
   } from '$lib/tour/pageTargets'
   import { TourKeyboardController } from '$lib/tour/pageKeyboard'
   import { TourWorldTicker } from '$lib/tour/pageWorldTicker'
   import { TourHatsuSession } from '$lib/tour/pageHatsuSession.svelte'
   import { TourHatsuView } from '$lib/tour/pageHatsuView.svelte'
   import { TourNavigationState } from '$lib/tour/pageNavigationState.svelte'
+  import { TourTargetView } from '$lib/tour/pageTargetView.svelte'
   import { type CastHand } from '$lib/tour/pageCasting'
   import { TourCastController } from '$lib/tour/pageCastController'
   import {
@@ -64,10 +63,8 @@
   } from '$lib/tour/pageNavigation'
   import {
     EMPTY_WORLD,
-    aimsAtSolids,
     identityOf,
     TAKES_ORDERS,
-    worksOnTheBody,
     type TourReport,
     type TourWorld,
   } from '$lib/tour/hatsu'
@@ -77,7 +74,6 @@
   const chrome = new TourChromeState()
   const hatsuAudio = new TourHatsuAudio()
   chrome.watch()
-  type TourTargetMode = 'body' | 'solid' | 'relay' | 'space' | 'jump'
 
   // `?space=` names a space to open in, `?deck=` a deck. `/tour/sources` links to
   // three hundred and one of them, so the walk does not read them once and forget
@@ -379,51 +375,17 @@
   const owlSecond = ticker.owlSecond
   const crossWorm = ticker.crossWorm
 
-  /** With a technique up, the index stops being a way to travel and becomes the reach. */
-  const targets = $derived(
-    technique ? groupSpaceTargets({ ship, nameOf, locale: french ? 'fr' : 'en' }) : [],
-  )
-
-  /**
-   * Whether the active technique takes a thing rather than a place — and, for
-   * Transport Portals, whether it is past the cargo and waiting for the relay.
-   */
-  const onSolids = $derived(
-    (aimsAtSolids(technique) && !(technique?.kind === 'relay' && world.pairing)) ||
-      technique?.kind === 'mimicry' ||
-      // Anything aimed at a solid while Kurton is ridden loads it into his hold.
-      Boolean(technique && world.body.riding),
-  )
-
-  /** A technique whose target is the visitor has nothing for the index to offer. */
-  const onBody = $derived(worksOnTheBody(technique) && !onSolids)
-  const targetMode = $derived<TourTargetMode>(
-    onBody
-      ? 'body'
-      : onSolids
-        ? 'solid'
-        : technique?.kind === 'relay' && world.pairing
-          ? 'relay'
-          : technique
-            ? 'space'
-            : 'jump',
-  )
-
-  function targetName(item: { id?: string; name: string; nameFr: string }): string {
-    const space = item.id ? ship.spaces.get(item.id) : null
-    return nameOf(space ? named(space) : item)
-  }
-
-  /**
-   * Every solid in the ship, grouped by the room it stands in.
-   *
-   * The reach is the same as it is for the rooms: a coffin four decks down is
-   * as castable as the table in front of you, so the index is the whole
-   * inventory rather than this deck's.
-   */
-  const solidTargets = $derived(
-    onSolids ? groupSolidTargets({ ship, nameOf, locale: french ? 'fr' : 'en' }) : [],
-  )
+  const targetView = new TourTargetView({
+    ship,
+    read: () => ({ technique, world, french }),
+    nameOf,
+    named,
+  })
+  const targets = $derived(targetView.spaces)
+  const onSolids = $derived(targetView.onSolids)
+  const targetMode = $derived(targetView.mode)
+  const targetName = targetView.name
+  const solidTargets = $derived(targetView.solids)
 
   /** Speech sealed: the walk stops naming the room the visitor is standing in. */
   const mute = $derived(world.sealed >= 3)

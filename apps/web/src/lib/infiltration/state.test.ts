@@ -129,12 +129,41 @@ describe('infiltration', () => {
     expect(state.challenge).toBeNull()
   })
 
-  it('uses Little Eye to confirm intelligence at an aura cost', () => {
+  it('deploys Little Eye, then confirms intelligence when the scout reaches the target', () => {
     let state = initialInfiltrationState(setup)
     state = infiltrationReducer(state, { type: 'CAST_HATSU' })
-    expect(state.authorConfirmed).toBe(true)
+    expect(state.authorConfirmed).toBe(false)
     expect(state.hatsu.aura).toBe(82)
-    expect(state.hatsu.scouted).toBe(true)
+    expect(state.hatsu.scout?.spaceId).toBe('entry')
+    state = infiltrationReducer(state, { type: 'SCOUT_MOVE', position: [1, 0], spaceId: 'office', visibleToGuard: true })
+    expect(state.authorConfirmed).toBe(true)
+    expect(state.hatsu.scout?.noticed).toBe(true)
+    expect(state.traces.at(-1)?.allegedAuthor).toBe('unknown-scout')
+  })
+
+  it('configures the forged surface and copied identity only before departure', () => {
+    let state = initialInfiltrationState(setup)
+    state = infiltrationReducer(state, { type: 'CONFIGURE_HATSU', forgerySurface: 'register-copy', disguiseIdentity: 'security' })
+    expect(state.hatsu).toMatchObject({ forgerySurface: 'register-copy', disguiseIdentity: 'security' })
+    state = { ...state, clock: 1 }
+    expect(infiltrationReducer(state, { type: 'CONFIGURE_HATSU', disguiseIdentity: 'service' }).hatsu.disguiseIdentity).toBe('security')
+  })
+
+  it('gives each Texture Surprise surface a distinct systemic effect', () => {
+    let sign = initialInfiltrationState(setup)
+    sign = infiltrationReducer(sign, { type: 'SELECT_HATSU', id: 'texture-surprise' })
+    sign = infiltrationReducer(sign, { type: 'CONFIGURE_HATSU', forgerySurface: 'door-sign' })
+    sign = infiltrationReducer(sign, { type: 'CAST_HATSU' })
+    expect(sign.cover.allowedSpaces).toContain('office')
+
+    let registry = initialInfiltrationState(setup)
+    registry = infiltrationReducer(registry, { type: 'SELECT_HATSU', id: 'texture-surprise' })
+    registry = infiltrationReducer(registry, { type: 'CONFIGURE_HATSU', forgerySurface: 'register-copy' })
+    registry = infiltrationReducer(registry, { type: 'CAST_HATSU' })
+    registry.challenge = { witnessId: 'guard', left: 5 }
+    registry = infiltrationReducer(registry, { type: 'ANSWER', answer: 'workOrder' })
+    expect(registry.verification).toBeNull()
+    expect(registry.cover.evidence).toContain('schedule')
   })
 
   it('projects and enforces the canonical need to hold aura', () => {

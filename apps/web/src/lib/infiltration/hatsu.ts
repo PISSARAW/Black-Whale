@@ -1,9 +1,13 @@
 import { hatsuById, type HatsuProfile } from '../nen/hatsuRegistry'
 import type { InfiltrationState } from './state'
 import { createTrace } from './traces'
+import { deployScout, moveScout } from './hatsuSpatial'
+import type { CoverRole } from './social/cover'
+import type { Vec2 } from '../tour/types'
 
 export type InfiltrationHatsuId = 'little-eye' | 'texture-surprise' | 'illumi-needle-people'
 export type HatsuRole = 'scout' | 'forge' | 'disguise'
+export type ForgerySurface = 'work-order' | 'door-sign' | 'register-copy'
 
 export interface InfiltrationHatsu {
   id: InfiltrationHatsuId
@@ -61,6 +65,9 @@ export function selectHatsu(state: InfiltrationState, id: InfiltrationHatsuId) {
       activeUntil: 0,
       forgedOrder: false,
       scouted: false,
+      scout: null,
+      forgerySurface: state.hatsu.forgerySurface,
+      disguiseIdentity: state.hatsu.disguiseIdentity,
     },
   }
 }
@@ -74,11 +81,18 @@ export function castHatsu(state: InfiltrationState): InfiltrationState {
     uses: state.hatsu.uses - 1,
   }
   if (ability.role === 'scout') {
-    return { ...state, hatsu: { ...hatsu, scouted: true }, authorConfirmed: true }
+    if (!state.player.spaceId) return state
+    return { ...state, hatsu: { ...hatsu, scouted: true, scout: deployScout(state.player.position, state.player.spaceId) } }
   }
   if (ability.role === 'forge') {
+    const cover = state.hatsu.forgerySurface === 'door-sign'
+      ? { ...state.cover, allowedSpaces: [...new Set([...state.cover.allowedSpaces, state.objectiveSpaceId])] }
+      : state.hatsu.forgerySurface === 'register-copy'
+        ? { ...state.cover, evidence: [...new Set([...state.cover.evidence, 'schedule' as const])] }
+        : state.cover
     return {
       ...state,
+      cover,
       hatsu: { ...hatsu, forgedOrder: true },
       traces: [
         ...state.traces,
@@ -94,6 +108,29 @@ export function castHatsu(state: InfiltrationState): InfiltrationState {
       createTrace({ kind: 'aura', spaceId: state.player.spaceId ?? state.extractionSpaceId, position: state.player.position, at: state.clock, strength: 38, duration: 90 }),
     ],
   }
+}
+
+export function configureHatsu(state: InfiltrationState, config: { forgerySurface?: ForgerySurface; disguiseIdentity?: CoverRole }): InfiltrationState {
+  if (state.clock > 0) return state
+  return { ...state, hatsu: { ...state.hatsu, forgerySurface: config.forgerySurface ?? state.hatsu.forgerySurface, disguiseIdentity: config.disguiseIdentity ?? state.hatsu.disguiseIdentity } }
+}
+
+export function moveLittleEye(state: InfiltrationState, position: Vec2, spaceId: string, visibleToGuard: boolean): InfiltrationState {
+  if (state.hatsu.id !== 'little-eye' || !state.hatsu.scout?.active) return state
+  const scout = moveScout(state.hatsu.scout, position, spaceId, visibleToGuard)
+  return {
+    ...state,
+    authorConfirmed: state.authorConfirmed || spaceId === state.objectiveSpaceId,
+    hatsu: { ...state.hatsu, scout },
+    traces: visibleToGuard
+      ? [...state.traces, createTrace({ kind: 'aura', spaceId, position, at: state.clock, strength: 18, duration: 35, allegedAuthor: 'unknown-scout' })]
+      : state.traces,
+  }
+}
+
+export function recallLittleEye(state: InfiltrationState): InfiltrationState {
+  if (!state.hatsu.scout) return state
+  return { ...state, hatsu: { ...state.hatsu, scout: null, scouted: false } }
 }
 
 export function planHatsu(state: InfiltrationState): HatsuPlan {

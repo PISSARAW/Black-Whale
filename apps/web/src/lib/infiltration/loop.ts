@@ -9,6 +9,7 @@ import { assessAlert } from './alerts'
 import { activeTraces } from './traces'
 import { remember } from './actors/memory'
 import { securityPolicy } from './security'
+import { inspectForgery, recognizesDisguise, type InspectionMethod } from './hatsuSpatial'
 
 export const INFILTRATION_DT = 1 / 30
 const REPORT_THRESHOLD = 72
@@ -127,6 +128,10 @@ function advanceVerification(state: InfiltrationState, dt: number): Infiltration
   if (state.verification.left > dt) {
     return { ...state, verification: { ...state.verification, left: state.verification.left - dt } }
   }
+  const witness = state.witnesses.find((candidate) => candidate.id === state.verification?.witnessId)
+  const method: InspectionMethod = witness?.id === 'steward' ? 'visual' : witness?.id === 'guard' ? 'touch' : 'registry'
+  const verdict = inspectForgery(method, false)
+  if (verdict === 'accepted') return { ...state, verification: null }
   return {
     ...state,
     verification: null,
@@ -191,7 +196,14 @@ function challengeFor(
   const challenger = witnesses.find((witness) => {
     if (!witness.social || witness.challenged || witness.spaceId !== state.player.spaceId)
       return false
-    if (activeDisguise(state) && !witness.usesEn) return false
+    if (activeDisguise(state)) {
+      const knowsModel =
+        (state.hatsu.disguiseIdentity === 'service' && witness.id === 'steward') ||
+        (state.hatsu.disguiseIdentity === 'security' && witness.id === 'guard') ||
+        (state.hatsu.disguiseIdentity === 'maintenance' && witness.id === 'steward')
+      const mismatch = state.player.spaceId === state.objectiveSpaceId || state.player.speed > 3
+      if (!recognizesDisguise(knowsModel, mismatch, witness.usesEn, true)) return false
+    }
     return (
       Math.hypot(
         witness.position[0] - state.player.position[0],
@@ -208,7 +220,8 @@ function observe(state: InfiltrationState, witness: Witness, world: Infiltration
   if (distracted || !canSee(witness, state.player, world.arena.walls)) return cool(witness, dt)
 
   const auraHidden = state.player.nen === 'zetsu'
-  const sociallyWrong = witness.social && state.player.spaceId === state.objectiveSpaceId
+  const sociallyWrong =
+    witness.social && !!state.player.spaceId && !state.cover.allowedSpaces.includes(state.player.spaceId)
   const nenWrong = witness.usesEn && !auraHidden
   const identity = sociallyWrong || nenWrong ? 'intruder' : 'maintenance'
   const rate = identity === 'intruder' ? 24 : 7

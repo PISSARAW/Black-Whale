@@ -16,10 +16,13 @@ export function decodeSave(raw: string): InfiltrationSave | null {
     const state = value.state as InfiltrationState
     if (value.version === 2) {
       state.memories = { steward: emptyMemory(), guard: emptyMemory(), nenGuard: emptyMemory() }
-      state.cover = { role: 'maintenance', superior: 'deck-operations', assignment: 'legacy-operation', allowedSpaces: [state.extractionSpaceId, state.objectiveSpaceId], evidence: ['work-order'], obligations: [] }
+      state.cover = { role: 'maintenance', superior: 'deck-operations', assignment: 'legacy-operation', allowedSpaces: [state.extractionSpaceId], evidence: ['work-order'], obligations: [] }
       state.security = securityPolicy(state.alertLevel, state.extractionSpaceId, [])
       state.journal = []
     }
+    state.hatsu.scout ??= null
+    state.hatsu.forgerySurface ??= 'work-order'
+    state.hatsu.disguiseIdentity ??= 'maintenance'
     return { version: 3, savedAt: value.savedAt ?? new Date(0).toISOString(), state }
   } catch { return null }
 }

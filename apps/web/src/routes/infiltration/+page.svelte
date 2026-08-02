@@ -6,6 +6,7 @@
   import { buildArena } from '$lib/hunt/arena'
   import { explorationNen } from '$lib/nen/tourAdapters'
   import type { NenTechniqueAction } from '@black-whale/nen-engine'
+  import { isNenControlCode } from '$lib/nen/controls'
   import { buildNavGraph } from '$lib/hunt/navmesh'
   import { floorOf, theShip } from '$lib/tour/blueprint'
   import { centroid, EMPTY_WORLD } from '$lib/tour/hatsu'
@@ -21,7 +22,8 @@
     type WitnessId,
   } from '$lib/infiltration/state'
   import { INFILTRATION_DT, reconstruction, updateInfiltration } from '$lib/infiltration/loop'
-  import { INFILTRATION_HATSU, planHatsu } from '$lib/infiltration/hatsu'
+  import { INFILTRATION_HATSU, planHatsu, type ForgerySurface } from '$lib/infiltration/hatsu'
+  import type { CoverRole } from '$lib/infiltration/social/cover'
   import { evaluateRun } from '$lib/infiltration/balance'
   import { MISSIONS, selectMission } from '$lib/infiltration/missions/definitions'
   import { seedFromText } from '$lib/infiltration/missions/random'
@@ -36,6 +38,8 @@
   const plan = ship.plans.get(arena.tierId)!
   const extraction = arena.spaces[0]
   const defaultSeed = seedFromText('black-whale-v2')
+  const forgerySurfaces: ForgerySurface[] = ['work-order', 'door-sign', 'register-copy']
+  const disguiseIdentities: CoverRole[] = ['maintenance', 'security', 'service', 'messenger']
   let selectedMission = $state<MissionId>('missing-report')
   let campaign = $state<CampaignState>(initialCampaign())
 
@@ -94,6 +98,13 @@
   let balance = $derived(evaluateRun(game))
   let verdict = $derived(debriefAxes(game))
   let timeline = $derived(causalTimeline(game))
+  let scoutDestinations = $derived(
+    game.hatsu.scout?.active
+      ? (graph.edges.get(game.hatsu.scout.spaceId) ?? [])
+          .map((id) => arena.spaces.find((space) => space.id === id))
+          .filter((space): space is Space => !!space)
+      : [],
+  )
 
   const colours: Record<WitnessId, number> = {
     steward: 0x58a6ff,
@@ -126,6 +137,23 @@
       hidden: false,
     })),
   )
+  let scoutFigure = $derived<Apparition[]>(
+    game.hatsu.scout?.active
+      ? [{
+          id: 'little-eye-scout', kind: 'insect', colour: 0xd86cff, size: 0.22,
+          y: floorOf(arena.spaces.find((space) => space.id === game.hatsu.scout?.spaceId)!, plan.tier) + 1.3,
+          at: game.hatsu.scout.position, heading: game.hatsu.scout.heading, tierId: arena.tierId,
+          spaceId: game.hatsu.scout.spaceId, stage: 0, hidden: false,
+        }]
+      : [],
+  )
+
+  function moveScoutTo(space: Space) {
+    send({
+      type: 'SCOUT_MOVE', position: centroid(space), spaceId: space.id,
+      visibleToGuard: game.witnesses.some((witness) => witness.spaceId === space.id),
+    })
+  }
 
   function send(action: InfiltrationAction) {
     const wasPlaying = game.outcome === 'playing'
@@ -172,9 +200,8 @@
       event.preventDefault()
       return
     } else if (briefing) return
-    if (event.code === 'KeyX') send({ type: 'ZETSU' })
-    else if (event.code === 'KeyV') send({ type: 'DIVERT' })
-    else if (event.code === 'KeyF') act()
+    if (isNenControlCode(event.code)) return
+    if (event.code === 'KeyV') send({ type: 'DIVERT' })
     else return
     event.preventDefault()
   }
@@ -280,8 +307,9 @@
     showNenControls={true}
     nenAvailability={{ ren: false, gyo: false, in: false, en: false, shu: false, ken: false, ko: false, ryu: false, on: false }}
     onNenChange={useStandardNen}
+    onPhysicalNenAction={act}
     onHatsu={() => send({ type: 'CAST_HATSU' })}
-    extras={figures}
+    extras={[...figures, ...scoutFigure]}
     touchLabels={{ move: $t.tour.touch.move, cast: $t.tour.touch.cast }}
     soundLabels={{ silence: $t.tour.sound.silence, restore: $t.tour.sound.restore }}
     loadingLabel={$t.tour.loading}
@@ -335,6 +363,14 @@
     </section>
 
     <div class="absolute bottom-6 left-1/2 flex -translate-x-1/2 gap-2">
+      {#if game.hatsu.scout?.active}
+        {#each scoutDestinations as destination (destination.id)}
+          <button onclick={() => moveScoutTo(destination)} class="rounded border border-fuchsia-300/50 bg-black/90 px-3 py-2 text-xs text-fuchsia-200">
+            Eye → {roomName(destination)}
+          </button>
+        {/each}
+        <button onclick={() => send({ type: 'SCOUT_RECALL' })} class="rounded border border-white/25 bg-black/90 px-3 py-2 text-xs">{$t.infiltration.hatsuInteractive.recall}</button>
+      {/if}
       {#if canCopy || canVerify || canExtract}<button
           onclick={act}
           class="rounded border border-amber-300/60 bg-black/90 px-4 py-2 text-xs text-amber-200"
@@ -440,6 +476,19 @@
             </button>
           {/each}
         </div>
+        {#if game.hatsu.id === 'texture-surprise'}
+          <div class="mt-3 flex flex-wrap gap-2">
+            {#each forgerySurfaces as surface}
+              <button onclick={() => send({ type: 'CONFIGURE_HATSU', forgerySurface: surface })} aria-pressed={game.hatsu.forgerySurface === surface} class="border border-white/20 px-3 py-2 text-xs aria-pressed:border-fuchsia-300">{$t.infiltration.hatsuInteractive.surfaces[surface]}</button>
+            {/each}
+          </div>
+        {:else if game.hatsu.id === 'illumi-needle-people'}
+          <div class="mt-3 flex flex-wrap gap-2">
+            {#each disguiseIdentities as identity}
+              <button onclick={() => send({ type: 'CONFIGURE_HATSU', disguiseIdentity: identity })} aria-pressed={game.hatsu.disguiseIdentity === identity} class="border border-white/20 px-3 py-2 text-xs aria-pressed:border-fuchsia-300">{$t.infiltration.hatsuInteractive.identities[identity]}</button>
+            {/each}
+          </div>
+        {/if}
         <ul class="mt-5 space-y-2 text-sm text-white/75">
           {#each game.objectives as missionObjective (missionObjective.id)}
             <li>• {$t.infiltration.objectiveLabels[missionObjective.kind]}</li>

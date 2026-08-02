@@ -1650,6 +1650,11 @@ export const en = {
       documentChecks: 'Document checks active', objectiveAxis: 'Objective',
       informationAxis: 'Information', coverAxis: 'Cover',
     },
+    hatsuInteractive: {
+      recall: 'Recall scout',
+      surfaces: { 'work-order': 'Work order', 'door-sign': 'Door sign', 'register-copy': 'Registry copy' },
+      identities: { maintenance: 'Maintenance', security: 'Security', service: 'Service', messenger: 'Messenger' },
+    },
     intro:
       'You enter as a maintenance aide. Copy the report at the far end of the apartment, confirm its true author if possible, then return to the entrance. Being seen is not losing: being understood is.',
     cover: 'Cover · Maintenance',

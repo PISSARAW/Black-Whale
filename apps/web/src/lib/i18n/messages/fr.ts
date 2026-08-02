@@ -1511,6 +1511,11 @@ export const fr: Messages = {
       documentChecks: 'Contrôle des documents actif', objectiveAxis: 'Objectif',
       informationAxis: 'Information', coverAxis: 'Couverture',
     },
+    hatsuInteractive: {
+      recall: "Rappeler l'éclaireur",
+      surfaces: { 'work-order': 'Ordre de travail', 'door-sign': 'Plaque de porte', 'register-copy': 'Copie du registre' },
+      identities: { maintenance: 'Maintenance', security: 'Sécurité', service: 'Service', messenger: 'Messager' },
+    },
     intro:
       'Vous entrez comme aide de maintenance. Copiez le rapport placé au fond de l’appartement, confirmez si possible son véritable auteur, puis revenez au point d’entrée. Être vu n’est pas perdre : être compris l’est.',
     cover: 'Couverture · Maintenance',

@@ -1,6 +1,8 @@
 import type { Vec2 } from '../tour/types'
 import type { NenState } from '../hunt/nen/states'
-import { castHatsu, selectHatsu, type InfiltrationHatsuId } from './hatsu'
+import { castHatsu, configureHatsu, moveLittleEye, recallLittleEye, selectHatsu, type ForgerySurface, type InfiltrationHatsuId } from './hatsu'
+import type { CoverRole } from './social/cover'
+import type { LittleEyeScout } from './hatsuSpatial'
 import { selectMission } from './missions/definitions'
 import {
   initialObjectives,
@@ -103,6 +105,9 @@ export interface InfiltrationState {
     activeUntil: number
     forgedOrder: boolean
     scouted: boolean
+    scout: LittleEyeScout | null
+    forgerySurface: ForgerySurface
+    disguiseIdentity: CoverRole
   }
 }
 
@@ -123,6 +128,9 @@ export type InfiltrationAction =
   | { type: 'ANSWER'; answer: 'workOrder' | 'bluff' }
   | { type: 'SELECT_HATSU'; id: InfiltrationHatsuId }
   | { type: 'CAST_HATSU' }
+  | { type: 'CONFIGURE_HATSU'; forgerySurface?: ForgerySurface; disguiseIdentity?: CoverRole }
+  | { type: 'SCOUT_MOVE'; position: Vec2; spaceId: string; visibleToGuard: boolean }
+  | { type: 'SCOUT_RECALL' }
   | { type: 'EXTRACT' }
 
 export interface MissionEvent {
@@ -185,7 +193,7 @@ export function initialInfiltrationState(setup: MissionSetup): InfiltrationState
     memories: { steward: emptyMemory(), guard: emptyMemory(), nenGuard: emptyMemory() },
     cover: {
       role: 'maintenance', superior: 'deck-operations', assignment: 'ventilation-inspection',
-      allowedSpaces: [setup.playerAt.spaceId, setup.objectiveSpaceId], evidence: ['work-order'],
+      allowedSpaces: [setup.playerAt.spaceId], evidence: ['work-order'],
       obligations: ['inspect-service-panel'],
     },
     security: securityPolicy('normal', setup.extractionSpaceId, []),
@@ -197,6 +205,9 @@ export function initialInfiltrationState(setup: MissionSetup): InfiltrationState
       activeUntil: 0,
       forgedOrder: false,
       scouted: false,
+      scout: null,
+      forgerySurface: 'work-order',
+      disguiseIdentity: 'maintenance',
     },
   }
 }
@@ -253,6 +264,16 @@ function reduceAction(state: InfiltrationState, action: InfiltrationAction): Inf
       return selectHatsu(state, action.id)
     case 'CAST_HATSU':
       return useHatsu(state)
+    case 'CONFIGURE_HATSU':
+      return configureHatsu(state, action)
+    case 'SCOUT_MOVE': {
+      const moved = moveLittleEye(state, action.position, action.spaceId, action.visibleToGuard)
+      return moved.authorConfirmed && !state.authorConfirmed
+        ? { ...moved, objectives: completeObjective(moved.objectives, ['identify'], 'confirmed') }
+        : moved
+    }
+    case 'SCOUT_RECALL':
+      return recallLittleEye(state)
     case 'EXTRACT':
       return extract(state)
   }
@@ -278,15 +299,19 @@ function answerChallenge(
   if (!state.challenge) return state
   const prior = state.claims.at(-1)
   const contradiction = !!prior && prior.answer !== answer
+  const documentSupport =
+    state.hatsu.forgedOrder &&
+    (state.hatsu.forgerySurface === 'work-order' || state.hatsu.forgerySurface === 'register-copy') &&
+    answer === 'workOrder'
   const verification =
-    state.hatsu.forgedOrder && answer === 'workOrder'
+    documentSupport && state.hatsu.forgerySurface === 'work-order'
       ? { witnessId: state.challenge.witnessId, left: 15 }
       : state.verification
   const witnesses = state.witnesses.map((witness) => {
     if (witness.id !== state.challenge?.witnessId) return witness
     const correct =
       !contradiction &&
-      (state.hatsu.forgedOrder && answer === 'workOrder'
+      (documentSupport
         ? true
         : answer === (witness.usesEn ? 'bluff' : 'workOrder'))
     return {

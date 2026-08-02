@@ -201,6 +201,8 @@
     nenAvailability?: Partial<Record<NenTechnique | 'hatsu' | 'action', boolean>>
     /** Controlled modes receive every accepted standard Nen action here. */
     onNenChange?: (action: NenTechniqueAction) => void
+    /** Canonical F delegated to a mode when it is not a scene-object action. */
+    onPhysicalNenAction?: () => void
     /**
      * The one technique that is an event rather than a thing, and the count of
      * how many have been cast.
@@ -480,6 +482,7 @@
     auraColour = null,
     nen,
     onNenChange,
+    onPhysicalNenAction,
     showNenControls = true,
     nenAvailability = {},
     flash = null,
@@ -3268,7 +3271,7 @@
             objectId: aimedSolidAt.id,
             on: !effectiveNen.shu.includes(aimedSolidAt.id),
           })
-        else if (event.code === NEN_KEYS.action) interactWithNen?.()
+        else if (event.code === NEN_KEYS.action) (onPhysicalNenAction ?? interactWithNen)?.()
         else return false
         event.preventDefault()
         return true

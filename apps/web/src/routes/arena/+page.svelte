@@ -53,7 +53,7 @@
   import './arena.css'
   import type { PageData } from './$types'
   import { arenaNen } from '$lib/nen/tourAdapters'
-  import { NEN_KEYS, nenZoneIndex } from '$lib/nen/controls'
+  import { isNenControlCode } from '$lib/nen/controls'
   import type { NenTechniqueAction } from '@black-whale/nen-engine'
 
   let { data }: { data: PageData } = $props()
@@ -318,32 +318,18 @@
 
   function onKeyDown(event: KeyboardEvent) {
     if (event.metaKey || event.ctrlKey) return
+    if (isNenControlCode(event.code)) return
     if (isMovement(event.code)) {
       started = true
       return
     }
     if (event.repeat || game.outcome !== 'playing') return
 
-    const zone = zoneFor(event.code)
-    if (zone) setZone(zone)
-    else if (event.code === NEN_KEYS.ten) command({ type: 'MODE', side: 'player', mode: 'ten' }, 'ten')
-    else if (event.code === NEN_KEYS.ren) command({ type: 'MODE', side: 'player', mode: 'ren' }, 'ren')
-    else if (event.code === NEN_KEYS.zetsu)
-      command({ type: 'MODE', side: 'player', mode: 'zetsu' }, 'zetsu')
-    else if (event.code === NEN_KEYS.gyo)
-      command({ type: 'GYO', side: 'player', on: !game.player.gyo }, 'gyo')
-    else if (event.code === NEN_KEYS.in)
-      command({ type: 'IN', side: 'player', on: !game.player.in }, 'in')
-    else if (event.code === NEN_KEYS.ken)
-      command({ type: 'KEN', side: 'player', on: !game.player.ken }, 'ken')
-    else if (event.code === NEN_KEYS.ryuDown) shiftRyu(-0.1)
-    else if (event.code === NEN_KEYS.ryuUp) shiftRyu(0.1)
-    else if (event.code === 'Space' || event.code === NEN_KEYS.action) strike()
+    if (event.code === 'Space') strike()
     else if (event.code === 'ShiftLeft' || event.code === 'ShiftRight') guard()
     else if (event.code === 'KeyV') feint()
     else if (event.code === 'KeyJ') evade(-1)
     else if (event.code === 'KeyL') evade(1)
-    else if (event.code === NEN_KEYS.ko) gatherKo()
     else return
     event.preventDefault()
   }
@@ -361,11 +347,6 @@
       'ArrowLeft',
       'ArrowRight',
     ].includes(code)
-  }
-
-  function zoneFor(code: string): BodyZone | null {
-    const index = nenZoneIndex(code)
-    return index === null ? null : BODY_ZONES[index]
   }
 
   function reportWalk() {
@@ -660,6 +641,7 @@
     showNenControls={true}
     nenAvailability={{ en: false, shu: false, on: false }}
     onNenChange={useStandardNen}
+    onPhysicalNenAction={strike}
     extras={opponentActor}
     collisionWalls={opponentWalls}
     aiming={true}

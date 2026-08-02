@@ -7,6 +7,11 @@ export const NEN_KEYS = {
 
 export const NEN_ZONE_KEYS = ['Digit1', 'Digit2', 'Digit3', 'Digit4'] as const
 
+const NEN_CONTROL_CODES = new Set<string>([...Object.values(NEN_KEYS), ...NEN_ZONE_KEYS])
+
+/** Mode listeners use this to leave every Nen input to the shared controller. */
+export const isNenControlCode = (code: string) => NEN_CONTROL_CODES.has(code)
+
 export function nenZoneIndex(code: string): number | null {
   const index = NEN_ZONE_KEYS.indexOf(code as (typeof NEN_ZONE_KEYS)[number])
   return index < 0 ? null : index

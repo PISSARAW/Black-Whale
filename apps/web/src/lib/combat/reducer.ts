@@ -11,6 +11,7 @@ import {
   type CombatSide,
   type CombatState,
   type FighterState,
+  type Impact,
 } from './types'
 
 export const REN_PER_SECOND = 1.5
@@ -25,6 +26,8 @@ export const GUARD_WINDOW = 0.38
 export const FEINT_COST = 3
 export const STRIKE_WINDUP = 0.62
 export const HATSU_COST = 18
+export const EVADE_COST = 4
+export const EVADE_DISTANCE = 1.4
 export const MOVE_SPEED = 3.6
 export const MIN_SEPARATION = 1
 export const SCORE_TO_WIN = 10
@@ -36,6 +39,7 @@ interface StrikeRequest {
   technique: 'strike' | 'ko' | 'hatsu'
   power?: number
   range?: number
+  targetAt?: Vec2
 }
 
 export function combatReducer(state: CombatState, action: CombatAction): CombatState {
@@ -43,6 +47,9 @@ export function combatReducer(state: CombatState, action: CombatAction): CombatS
   if (action.type === 'TICK') return tick(state, action.dt)
   if (action.type === 'SYNC_POSITION')
     return replace(state, action.side, syncPosition(state[action.side], action.position))
+  if (action.type === 'FACE')
+    return replace(state, action.side, { ...state[action.side], facing: action.heading })
+  if (action.type === 'EVADE') return evade(state, action.side, action.vector)
   if (action.type === 'MOVE')
     return replace(state, action.side, setMovement(state[action.side], action.vector))
   if (action.type === 'MODE')
@@ -57,8 +64,7 @@ export function combatReducer(state: CombatState, action: CombatAction): CombatS
   if (action.type === 'GUARD') return replace(state, action.side, activeGuard(state[action.side]))
   if (action.type === 'FEINT')
     return replace(state, action.side, feint(state[action.side], action.zone))
-  if (action.type === 'PREPARE_STRIKE')
-    return replace(state, action.side, prepareStrike(state[action.side], action.zone))
+  if (action.type === 'PREPARE_STRIKE') return prepareStrike(state, action.side, action.zone)
   if (action.type === 'HATSU') return castHatsu(state, action.side, action.effect, action.zone)
   if (action.type === 'STRIKE') {
     return strike({ state, side: action.side, zone: action.zone, technique: 'strike' })
@@ -219,9 +225,40 @@ function landReadyIntent(state: CombatState): CombatState {
     const intent = current[side].intent
     if (!intent || intent.remaining > 0 || current.outcome !== 'playing') continue
     current = replace(current, side, { ...current[side], intent: null })
-    current = strike({ state: current, side, zone: intent.zone, technique: 'strike' })
+    current = strike({
+      state: current,
+      side,
+      zone: intent.zone,
+      technique: 'strike',
+      targetAt: intent.targetAt,
+    })
   }
   return current
+}
+
+function evade(state: CombatState, side: CombatSide, vector: Vec2): CombatState {
+  const fighter = state[side]
+  if (fighter.condition !== 'ready' || fighter.aura < EVADE_COST || fighter.cooldown > 0)
+    return state
+  const direction = normalise(vector)
+  const proposed: Vec2 = [
+    fighter.position[0] + direction[0] * EVADE_DISTANCE,
+    fighter.position[1] + direction[1] * EVADE_DISTANCE,
+  ]
+  const position = resolveMovement(fighter.position, proposed, {
+    walls: wallsNear(state.terrain.walls, fighter.position, EVADE_DISTANCE + 1),
+    radius: 0.45,
+  })
+  return ringOut(
+    replace(state, side, {
+      ...fighter,
+      aura: fighter.aura - EVADE_COST,
+      position,
+      movement: [0, 0],
+      cooldown: 0.32,
+      intent: null,
+    }),
+  )
 }
 
 function ringOut(state: CombatState): CombatState {
@@ -270,6 +307,7 @@ function strike(request: StrikeRequest): CombatState {
     walls: state.terrain.walls,
     power: request.power ?? (attacker.empowered > 0 ? 1.3 : 1),
     range: request.range,
+    targetAt: request.targetAt,
   })
   const counterBonus = state[defenderSide].recoveryWindow > 0 && result.event.points > 0 ? 1 : 0
   const event = counterBonus
@@ -282,15 +320,21 @@ function strike(request: StrikeRequest): CombatState {
     feint: null,
   }
   const connected = result.event.impact !== 'miss' && result.event.impact !== 'blocked'
-  const defender = connected ? { ...result.defender, intent: null } : result.defender
+  const pushed = applyPush(
+    result.attacker,
+    result.defender,
+    result.event.impact,
+    state.terrain.walls,
+  )
+  const defender = connected ? { ...pushed, intent: null } : pushed
   const outcome = outcomeOf(side, scored, defender)
-  return {
+  return ringOut({
     ...state,
     [side]: scored,
     [defenderSide]: defender,
     lastEvent: event,
     outcome,
-  }
+  })
 }
 
 function outcomeOf(side: CombatSide, attacker: FighterState, defender: FighterState) {
@@ -351,14 +395,40 @@ function feint(fighter: FighterState, zone: BodyZone): FighterState {
   return { ...fighter, aura: fighter.aura - FEINT_COST, feint: zone, cooldown: 0.28 }
 }
 
-function prepareStrike(fighter: FighterState, zone: BodyZone): FighterState {
+function prepareStrike(state: CombatState, side: CombatSide, zone: BodyZone): CombatState {
+  const fighter = state[side]
   if (fighter.condition !== 'ready' || fighter.cooldown > 0 || fighter.ko || fighter.intent)
-    return fighter
-  return {
+    return state
+  return replace(state, side, {
     ...fighter,
-    intent: { zone, remaining: STRIKE_WINDUP },
+    intent: { zone, remaining: STRIKE_WINDUP, targetAt: state[otherSide(side)].position },
     movement: [0, 0],
     feint: null,
+  })
+}
+
+function applyPush(
+  attacker: FighterState,
+  defender: FighterState,
+  impact: Impact,
+  walls: CombatState['terrain']['walls'],
+): FighterState {
+  const distance = impact === 'knockdown' ? 1.6 : impact === 'critical' ? 0.75 : 0
+  if (distance === 0) return defender
+  const direction = normalise([
+    defender.position[0] - attacker.position[0],
+    defender.position[1] - attacker.position[1],
+  ])
+  const proposed: Vec2 = [
+    defender.position[0] + direction[0] * distance,
+    defender.position[1] + direction[1] * distance,
+  ]
+  return {
+    ...defender,
+    position: resolveMovement(defender.position, proposed, {
+      walls: wallsNear(walls, defender.position, distance + 1),
+      radius: 0.45,
+    }),
   }
 }
 

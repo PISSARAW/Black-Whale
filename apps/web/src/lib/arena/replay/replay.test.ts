@@ -48,7 +48,7 @@ describe('deterministic Arena replay', () => {
         ...base.opponent,
         in: true,
         guard: 'head' as const,
-        intent: { zone: 'legs' as const, remaining: 0.3 },
+        intent: { zone: 'legs' as const, remaining: 0.3, targetAt: base.player.position },
       },
     }
     expect(projectFrame(state, 'player').opponent.reading?.intentZone).toBeNull()

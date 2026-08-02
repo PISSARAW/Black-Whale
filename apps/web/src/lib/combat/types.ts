@@ -24,6 +24,7 @@ export interface RyuShift {
 export interface AttackIntent {
   zone: BodyZone
   remaining: number
+  targetAt: Vec2
 }
 
 export interface FighterState {
@@ -32,6 +33,7 @@ export interface FighterState {
   /** Position in the metric coordinates of the reconstructed room. */
   position: Vec2
   movement: Vec2
+  facing: number
   mode: AuraMode
   attackShare: number
   guard: BodyZone
@@ -85,6 +87,8 @@ export interface CombatSetup {
 export type CombatAction =
   | { type: 'TICK'; dt: number }
   | { type: 'SYNC_POSITION'; side: CombatSide; position: Vec2 }
+  | { type: 'FACE'; side: CombatSide; heading: number }
+  | { type: 'EVADE'; side: CombatSide; vector: Vec2 }
   | { type: 'MOVE'; side: CombatSide; vector: Vec2 }
   | { type: 'MODE'; side: CombatSide; mode: AuraMode }
   | { type: 'RYU'; side: CombatSide; attackShare?: number; guard?: BodyZone }
@@ -108,6 +112,7 @@ export function initialFighter(position: Vec2): FighterState {
     capacity: 100,
     position,
     movement: [0, 0],
+    facing: 0,
     mode: 'ten',
     attackShare: 0.5,
     guard: 'torso',

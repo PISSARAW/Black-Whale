@@ -24,7 +24,7 @@ describe('Nen perception', () => {
     const hidden = {
       ...state.opponent,
       in: true,
-      intent: { zone: 'legs' as const, remaining: 0.4 },
+      intent: { zone: 'legs' as const, remaining: 0.4, targetAt: state.player.position },
     }
 
     expect(readAura(state.player, hidden).intentZone).toBeNull()
@@ -166,6 +166,20 @@ describe('qualitative exchanges', () => {
     expect(state.lastEvent?.zone).toBe('head')
   })
 
+  it('lets a lateral evade leave a committed attack trajectory', () => {
+    let state = initialCombatState()
+    state = {
+      ...state,
+      player: { ...state.player, position: [0, 0] },
+      opponent: { ...state.opponent, position: [1.5, 0] },
+    }
+    state = combatReducer(state, { type: 'PREPARE_STRIKE', side: 'opponent', zone: 'torso' })
+    state = combatReducer(state, { type: 'EVADE', side: 'player', vector: [0, 1] })
+    state = combatReducer(state, { type: 'TICK', dt: 0.7 })
+    expect(state.lastEvent?.impact).toBe('miss')
+    expect(state.player.aura).toBeLessThan(100)
+  })
+
   it('spends aura to bind a nearby opponent and cancel their attack', () => {
     let state = initialCombatState()
     state = {
@@ -173,7 +187,7 @@ describe('qualitative exchanges', () => {
       opponent: {
         ...state.opponent,
         position: [4, 0],
-        intent: { zone: 'head', remaining: 0.4 },
+        intent: { zone: 'head', remaining: 0.4, targetAt: state.player.position },
       },
     }
     state = combatReducer(state, {

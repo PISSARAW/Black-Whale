@@ -192,6 +192,11 @@
     command({ type: 'FEINT', side: 'player', zone: game.player.guard }, 'in')
   }
 
+  function evade(side: -1 | 1) {
+    const vector: Vec2 = [Math.cos(heading) * side, -Math.sin(heading) * side]
+    command({ type: 'EVADE', side: 'player', vector }, 'ken')
+  }
+
   function castHatsu() {
     if (!hatsuEffect) {
       hatsuPanelOpen.set(true)
@@ -240,6 +245,8 @@
     else if (event.code === 'Space') strike()
     else if (event.code === 'ShiftLeft' || event.code === 'ShiftRight') guard()
     else if (event.code === 'KeyV') feint()
+    else if (event.code === 'KeyJ') evade(-1)
+    else if (event.code === 'KeyL') evade(1)
     else if (event.code === 'KeyH') castHatsu()
     else if (event.code === 'KeyC') gatherKo()
     else return
@@ -267,9 +274,13 @@
   }
 
   function reportWalk() {
-    if (distance(position, game.player.position) < 0.001) return
-    started = true
-    send({ type: 'SYNC_POSITION', side: 'player', position })
+    if (Math.abs(heading - game.player.facing) > 0.001) {
+      send({ type: 'FACE', side: 'player', heading })
+    }
+    if (distance(position, game.player.position) >= 0.001) {
+      started = true
+      send({ type: 'SYNC_POSITION', side: 'player', position })
+    }
   }
 
   function tick(now: number) {
@@ -591,6 +602,8 @@
     <nav class="touch-combat" aria-label={$locale === 'fr' ? 'Actions rapides' : 'Quick actions'}>
       <button onclick={guard}>{$locale === 'fr' ? 'Garde' : 'Guard'}</button>
       <button onclick={feint}>{$locale === 'fr' ? 'Feinte' : 'Feint'}</button>
+      <button onclick={() => evade(-1)}>↙</button>
+      <button onclick={() => evade(1)}>↘</button>
       <button onclick={castHatsu}>Hatsu</button>
     </nav>
   {/if}

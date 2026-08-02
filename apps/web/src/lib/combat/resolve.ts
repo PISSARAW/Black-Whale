@@ -11,6 +11,7 @@ interface Exchange {
   technique: 'strike' | 'ko' | 'hatsu'
   power?: number
   range?: number
+  targetAt?: FighterState['position']
   clock: number
   walls: WallSegment[]
 }
@@ -26,11 +27,32 @@ export function resolveExchange(exchange: Exchange): ExchangeResult {
     distance(exchange.attacker.position, exchange.defender.position) <=
     (exchange.range ?? STRIKE_RANGE)
   if (!inRange || isObstructed(exchange)) return resultOf(exchange, 'miss')
+  if (
+    exchange.targetAt &&
+    distanceToLine(exchange.defender.position, exchange.attacker.position, exchange.targetAt) > 0.7
+  )
+    return resultOf(exchange, 'miss')
 
   const offence = offensiveAura(exchange.attacker, exchange.technique) * (exchange.power ?? 1)
   const defence = defensiveAura(exchange.defender, exchange.zone)
   const impact = impactOf(offence, defence)
   return resultOf(exchange, impact)
+}
+
+function distanceToLine(
+  point: FighterState['position'],
+  start: FighterState['position'],
+  end: FighterState['position'],
+): number {
+  const dx = end[0] - start[0]
+  const dz = end[1] - start[1]
+  const lengthSquared = dx * dx + dz * dz
+  if (lengthSquared === 0) return distance(point, start)
+  const t = Math.max(
+    0,
+    Math.min(1, ((point[0] - start[0]) * dx + (point[1] - start[1]) * dz) / lengthSquared),
+  )
+  return distance(point, [start[0] + dx * t, start[1] + dz * t])
 }
 
 function isObstructed(exchange: Exchange): boolean {

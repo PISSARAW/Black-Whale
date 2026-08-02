@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onMount } from 'svelte'
+  import { onDestroy, onMount } from 'svelte'
   import { centroid } from '$lib/tour/hatsu'
   import { theShip } from '$lib/tour/blueprint'
   import TourScene from '$lib/components/tour/TourScene.svelte'
@@ -26,6 +26,7 @@
   import { questionIsAvailable } from '$lib/investigation/interrogation'
   import { confrontWitnesses, type ConfrontationResult } from '$lib/investigation/confrontation'
   import { sceneNodes, visibleSightLines, type ScenePhenomenon } from '$lib/investigation/geometry'
+  import { frameAt } from '$lib/investigation/replay'
   import {
     activeHatsu,
     closeHatsuGate,
@@ -64,6 +65,9 @@
   let confrontationWitnessIds = $state<string[]>([])
   let confrontationResult = $state<ConfrontationResult | null>(null)
   let scenePhenomenon = $state<ScenePhenomenon>('doll')
+  let replaySecond = $state(0)
+  let replayPlaying = $state(false)
+  let replayTimer: ReturnType<typeof setInterval> | null = null
 
   const activeSubject = $derived(
     investigation.subjects.find((subject) => subject.id === activeSubjectId) ?? null,
@@ -82,6 +86,38 @@
   const planNodes = $derived(sceneNodes(investigation))
   const planNodeById = $derived(new Map(planNodes.map((node) => [node.id, node])))
   const planSightLines = $derived(visibleSightLines(scenePhenomenon))
+  const replayFrame = $derived(frameAt(replaySecond))
+
+  onDestroy(() => {
+    if (replayTimer) clearInterval(replayTimer)
+  })
+
+  function stopReplay() {
+    replayPlaying = false
+    if (replayTimer) clearInterval(replayTimer)
+    replayTimer = null
+  }
+
+  function toggleReplay() {
+    if (replayPlaying) {
+      stopReplay()
+      return
+    }
+    if (replaySecond >= 11) replaySecond = 0
+    replayPlaying = true
+    replayTimer = setInterval(() => {
+      if (replaySecond >= 11) {
+        stopReplay()
+        return
+      }
+      replaySecond += 1
+    }, 700)
+  }
+
+  function seekReplay(second: number) {
+    stopReplay()
+    replaySecond = second
+  }
 
   onMount(() => {
     openHatsuGate({
@@ -730,6 +766,80 @@
             {/if}
           </section>
         {:else if activeTab === 'timeline'}
+          <section class="mb-5 overflow-hidden border border-[#d6b35a]/25 bg-black/35">
+            <div class="grid min-h-44 sm:grid-cols-[0.72fr_1fr]">
+              <div
+                class="relative flex items-center justify-center overflow-hidden border-b border-white/10 p-6 sm:border-b-0 sm:border-r"
+              >
+                <div
+                  class="absolute inset-0 opacity-20"
+                  style:background={`radial-gradient(circle at center, ${replayFrame.stage === 'death' ? '#7f1d1d' : '#d6b35a'}, transparent 65%)`}
+                ></div>
+                <div class="relative text-center">
+                  <p class="font-mono text-5xl text-white">
+                    {replayFrame.second.toString().padStart(2, '0')}
+                  </p>
+                  <p class="mt-1 text-[9px] font-bold uppercase tracking-[0.25em] text-[#d6b35a]">
+                    seconde
+                  </p>
+                  <div
+                    class="mt-4 flex justify-center gap-1.5"
+                    aria-label={`${replayFrame.snakes} créatures actives`}
+                  >
+                    {#each Array(4) as _, index}<span
+                        class="block h-6 w-1.5 rounded-full transition {index < replayFrame.snakes
+                          ? 'bg-[#e8f3f5] shadow-[0_0_8px_white]'
+                          : 'bg-white/10'}"
+                      ></span>{/each}
+                  </div>
+                  <div class="mt-4 h-1.5 w-28 overflow-hidden bg-white/10">
+                    <div
+                      class="h-full bg-red-500 transition-all"
+                      style:width={`${replayFrame.bloodLevel}%`}
+                    ></div>
+                  </div>
+                  <p class="mt-1 text-[8px] uppercase tracking-wider text-white/30">
+                    volume sanguin
+                  </p>
+                </div>
+              </div>
+              <div class="flex flex-col justify-between p-5">
+                <div>
+                  <p class="text-[9px] font-bold uppercase tracking-widest text-white/35">
+                    Reconstitution synchronisée
+                  </p>
+                  <h3 class="mt-2 font-serif text-2xl text-white">{replayFrame.title}</h3>
+                  <p class="mt-2 text-sm leading-relaxed text-white/55">
+                    {replayFrame.description}
+                  </p>
+                </div>
+                <div class="mt-5">
+                  <input
+                    class="w-full accent-[#d6b35a]"
+                    type="range"
+                    min="0"
+                    max="11"
+                    step="1"
+                    value={replaySecond}
+                    oninput={(event) => seekReplay(Number(event.currentTarget.value))}
+                    aria-label="Seconde de la reconstitution"
+                  />
+                  <div class="mt-3 flex items-center justify-between">
+                    <button
+                      class="border border-[#d6b35a]/60 px-4 py-2 text-[10px] font-bold uppercase tracking-widest text-[#e8cc84] hover:bg-[#d6b35a]/10"
+                      onclick={toggleReplay}
+                      >{replayPlaying
+                        ? 'Pause'
+                        : replaySecond >= 11
+                          ? 'Rejouer'
+                          : 'Lecture'}</button
+                    >
+                    <span class="font-mono text-[9px] text-white/30">00:00 — 00:11</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
           <section class="mb-8 border border-white/10 bg-white/[0.02] p-4">
             <div class="flex flex-wrap items-center justify-between gap-3">
               <div>

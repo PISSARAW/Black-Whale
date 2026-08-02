@@ -10,6 +10,13 @@ export function elevenSecondsDefinition(locale: Locale): InvestigationCaseDefini
     schemaVersion: INVESTIGATION_SCHEMA_VERSION,
     metadata: {
       slug: 'eleven-seconds',
+      title: content.title,
+      teaser:
+        locale === 'fr'
+          ? 'Une mort impossible au milieu du premier cours de Nen.'
+          : 'An impossible death during the first Nen lesson.',
+      location: content.location,
+      investigator: content.investigator,
       requiredChapter: 370,
       investigatorId: 'kurapika',
       difficulty: 'introductory',

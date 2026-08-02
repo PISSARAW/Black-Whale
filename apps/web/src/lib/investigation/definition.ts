@@ -10,6 +10,10 @@ export type InvestigationMode = '2d' | '3d'
 
 export interface CaseMetadata {
   slug: string
+  title: string
+  teaser: string
+  location: string
+  investigator: string
   requiredChapter: number
   investigatorId: string
   difficulty: CaseDifficulty

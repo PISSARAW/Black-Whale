@@ -16,10 +16,51 @@
 import { theShip } from '../tour/blueprint'
 import type { Doorway, Space, WallSegment } from '../tour/types'
 
-export const ARENA_TIER_ID = 'interior-room-1004'
+export type HuntTerrainId = 'tserriednich' | 'tubeppa' | 'woble'
+
+export interface HuntTerrain {
+  id: HuntTerrainId
+  tierId: string
+  name: { en: string; fr: string }
+  description: { en: string; fr: string }
+}
+
+export const HUNT_TERRAINS: HuntTerrain[] = [
+  {
+    id: 'tserriednich',
+    tierId: 'interior-room-1004',
+    name: { en: "Tserriednich's apartment", fr: 'Appartement de Tserriednich' },
+    description: {
+      en: 'A balanced chain of private and reception rooms.',
+      fr: 'Un enchaînement équilibré de pièces privées et de réception.',
+    },
+  },
+  {
+    id: 'tubeppa',
+    tierId: 'interior-room-1005',
+    name: { en: "Tubeppa's apartment", fr: 'Appartement de Tubeppa' },
+    description: {
+      en: 'Long approaches reward patient information gathering.',
+      fr: "De longues approches favorisent une collecte patiente d'informations.",
+    },
+  },
+  {
+    id: 'woble',
+    tierId: 'interior-room-1014',
+    name: { en: "Woble's apartment", fr: 'Appartement de Woble' },
+    description: {
+      en: 'Tight domestic rooms make every encounter feel close.',
+      fr: 'Des pièces resserrées rendent chaque rencontre imminente.',
+    },
+  },
+]
+
+export const DEFAULT_HUNT_TERRAIN: HuntTerrainId = 'tserriednich'
+export const ARENA_TIER_ID = HUNT_TERRAINS[0].tierId
 export const ARENA_ROOM_COUNT = 8
 
 export interface Arena {
+  id: HuntTerrainId
   tierId: string
   spaces: Space[]
   walls: WallSegment[]
@@ -31,9 +72,14 @@ export interface Arena {
  * connected is not a smaller arena, it is a game with a room nobody can reach,
  * and it has to fail here rather than in a patrol route twenty minutes later.
  */
-export function buildArena(): Arena {
-  const plan = theShip().plans.get(ARENA_TIER_ID)
-  if (!plan) throw new Error(`Arena tier ${ARENA_TIER_ID} is not in the blueprint`)
+export function huntTerrain(id: HuntTerrainId): HuntTerrain {
+  return HUNT_TERRAINS.find((terrain) => terrain.id === id) ?? HUNT_TERRAINS[0]
+}
+
+export function buildArena(id: HuntTerrainId = DEFAULT_HUNT_TERRAIN): Arena {
+  const terrain = huntTerrain(id)
+  const plan = theShip().plans.get(terrain.tierId)
+  if (!plan) throw new Error(`Arena tier ${terrain.tierId} is not in the blueprint`)
 
   const spaces = plan.spaces.filter((space) => space.provenance === 'panel')
   if (spaces.length !== ARENA_ROOM_COUNT) {
@@ -45,7 +91,7 @@ export function buildArena(): Arena {
   const walls = plan.walls.filter((wall) => keepsWall(wall, ids, doorways))
 
   assertContiguous(spaces, doorways)
-  return { tierId: ARENA_TIER_ID, spaces, walls, doorways }
+  return { id: terrain.id, tierId: terrain.tierId, spaces, walls, doorways }
 }
 
 /**

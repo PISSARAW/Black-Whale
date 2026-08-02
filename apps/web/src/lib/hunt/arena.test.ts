@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { ARENA_ROOM_COUNT, ARENA_TIER_ID, buildArena } from './arena'
+import { ARENA_ROOM_COUNT, ARENA_TIER_ID, HUNT_TERRAINS, buildArena } from './arena'
 import { theShip } from '../tour/blueprint'
 
 describe('the arena', () => {
@@ -54,6 +54,26 @@ describe('the arena', () => {
     const keys = new Set(arena.doorways.map((door) => [door.a, door.b].sort().join('|')))
     for (const wall of arena.walls) {
       if (wall.jambOf) expect(keys.has(wall.jambOf)).toBe(true)
+    }
+  })
+
+  it('offers three fully attested and contiguous terrain variants', () => {
+    expect(HUNT_TERRAINS).toHaveLength(3)
+    for (const terrain of HUNT_TERRAINS) {
+      const variant = buildArena(terrain.id)
+      expect(variant.tierId).toBe(terrain.tierId)
+      expect(variant.spaces).toHaveLength(ARENA_ROOM_COUNT)
+      expect(variant.spaces.every((space) => space.provenance === 'panel')).toBe(true)
+      expect(variant.doorways.length).toBeGreaterThan(0)
+    }
+  })
+
+  it('gives every terrain stable bilingual metadata', () => {
+    for (const terrain of HUNT_TERRAINS) {
+      expect(terrain.name.en).not.toBe('')
+      expect(terrain.name.fr).not.toBe('')
+      expect(terrain.description.en).not.toBe('')
+      expect(terrain.description.fr).not.toBe('')
     }
   })
 })

@@ -17,8 +17,7 @@
   import { page } from '$app/stores'
   import TourPageIntro from '$lib/components/tour/TourPageIntro.svelte'
   import TourPageDialogs from '$lib/components/tour/TourPageDialogs.svelte'
-  import TourScene from '$lib/components/tour/TourScene.svelte'
-  import TourSceneOverlay from '$lib/components/tour/TourSceneOverlay.svelte'
+  import TourPageStage from '$lib/components/tour/TourPageStage.svelte'
   import TourPageSidebar from '$lib/components/tour/TourPageSidebar.svelte'
   import { activeHatsu } from '$lib/nen/hatsuState'
   import { HATSU_PROFILES, type HatsuInteractionKind } from '$lib/nen/hatsuRegistry'
@@ -609,65 +608,59 @@
         }`
       : 'gap-4 lg:grid-cols-[1fr_320px]'}"
   >
-    <!-- The walk -->
-    <section
-      class="relative overflow-hidden {chrome.immersive
-        ? 'h-full min-h-0'
-        : 'min-h-[420px] rounded-lg border border-[#333] lg:h-[70vh]'}"
-    >
-      <TourScene
-        {ship}
-        bind:tierId
-        bind:currentSpace
-        bind:availableLink
-        bind:jumpTo
-        bind:jumpAt
-        bind:engaged
-        bind:touch
-        bind:position
-        bind:heading
-        bind:aimedAt
-        bind:aimedSolidAt
-        {world}
-        {flash}
-        auraColour={technique?.color ?? null}
-        aiming={Boolean(technique)}
-        {selfCastable}
-        reveal={chrome.reveal}
-        onCast={castOn}
-        onArrive={arrived}
-        onWorm={crossWorm}
-        onFish={fishEat}
-        onOwl={owlFlight}
-        onOwlSecond={owlSecond}
-        onScout={scoutFlight}
-        onBeast={beastStep}
-        onCoin={takeCoin}
-        onPolarity={polarityWalk}
-        {hands}
-        {tunes}
-        {twoHanded}
-        swings={technique?.kind === 'stitch'}
-        {touchUseLabel}
-        touchLabels={{ move: $t.tour.touch.move, cast: $t.tour.touch.cast }}
-        soundLabels={{ silence: $t.tour.sound.silence, restore: $t.tour.sound.restore }}
-        loadingLabel={$t.tour.loading}
-        unsupportedLabel={$t.tour.unsupported}
-      />
-
-      <TourSceneOverlay
-        autopilot={isAutopilot}
-        reticleColor={technique?.color ?? null}
-        {spoken}
-        location={locationReadout}
-        penalty={hatsuSession.penalty}
-        aim={aimReadout}
-        controls={overlayControls}
-        {statusHint}
-        linkPrompt={touch ? null : linkPrompt}
-      />
-
-    </section>
+    <TourPageStage
+      immersive={chrome.immersive}
+      bind:tierId
+      bind:currentSpace
+      bind:availableLink
+      bind:jumpTo
+      bind:jumpAt
+      bind:engaged
+      bind:touch
+      bind:position
+      bind:heading
+      bind:aimedAt
+      bind:aimedSolidAt
+      scene={{
+        ship,
+        world,
+        flash,
+        auraColour: technique?.color ?? null,
+        aiming: Boolean(technique),
+        selfCastable,
+        reveal: chrome.reveal,
+        onCast: castOn,
+        onArrive: arrived,
+        onWorm: crossWorm,
+        onFish: fishEat,
+        onOwl: owlFlight,
+        onOwlSecond: owlSecond,
+        onScout: scoutFlight,
+        onBeast: beastStep,
+        onCoin: takeCoin,
+        onPolarity: polarityWalk,
+        hands,
+        tunes,
+        twoHanded,
+        swings: technique?.kind === 'stitch',
+        touchUseLabel,
+        touchLabels: { move: $t.tour.touch.move, cast: $t.tour.touch.cast },
+        soundLabels: { silence: $t.tour.sound.silence, restore: $t.tour.sound.restore },
+        loadingLabel: $t.tour.loading,
+        unsupportedLabel: $t.tour.unsupported,
+      }}
+      overlay={{
+        autopilot: isAutopilot,
+        reticleColor: technique?.color ?? null,
+        spoken,
+        location: locationReadout,
+        penalty: hatsuSession.penalty,
+        aim: aimReadout,
+        controls: overlayControls,
+        statusHint,
+        linkPrompt: touch ? null : linkPrompt,
+      }}
+    />
 
     <!-- The way back into the panel, once it is folded. Halfway down the right
          edge because the walk has already spoken for the corners: the eye's feed

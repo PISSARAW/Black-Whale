@@ -41,6 +41,15 @@
   grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
   gap: 0.8rem;
 }
+.strategy-shell .resume {
+  margin: -1.4rem 0 1.8rem;
+  border: 1px solid #d7b86a;
+  border-radius: 999px;
+  background: transparent;
+  padding: 0.65rem 1rem;
+  color: #ead99f;
+  cursor: pointer;
+}
 .strategy-shell .faction-grid button {
   display: grid;
   gap: 0.7rem;
@@ -363,6 +372,37 @@
   min-width: 0;
   padding: clamp(1rem, 3vw, 2rem);
   background: radial-gradient(circle at 60% 25%, #13212b, #070b0f 65%);
+}
+.strategy-shell .strategy-debrief {
+  display: grid;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  border: 1px solid #d7b86a;
+  border-radius: 0.65rem;
+  background: #101920;
+  padding: 1.2rem;
+}
+.strategy-shell .strategy-debrief p,
+.strategy-shell .strategy-debrief h2 {
+  margin: 0;
+}
+.strategy-shell .strategy-debrief > strong {
+  color: #d7b86a;
+}
+.strategy-shell .strategy-debrief > div {
+  display: grid;
+  gap: 0.25rem;
+  color: #82949e;
+  font-size: 0.68rem;
+}
+.strategy-shell .strategy-debrief button {
+  justify-self: start;
+  border: 1px solid #536b78;
+  border-radius: 0.4rem;
+  background: #182630;
+  padding: 0.55rem 0.8rem;
+  color: #e8eef2;
+  cursor: pointer;
 }
 .strategy-shell .map-heading {
   display: flex;

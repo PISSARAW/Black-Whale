@@ -6,9 +6,17 @@
   import './strategy.css'
   import PlanMap from '$lib/components/map/PlanMap.svelte'
   import StrategyDiplomacyPanel from '$lib/components/strategy/StrategyDiplomacyPanel.svelte'
+  import StrategyDebrief from '$lib/components/strategy/StrategyDebrief.svelte'
+  import StrategyFactionPicker from '$lib/components/strategy/StrategyFactionPicker.svelte'
   import { calculatePresencePosition } from '$lib/components/map/markerProjection'
   import { hatsuById } from '$lib/nen/hatsuRegistry'
   import { SCENARIO_MAX_TURNS } from '$lib/strategy/scenario'
+  import {
+    STRATEGY_SAVE_KEY,
+    decodeStrategySave,
+    encodeStrategySave,
+    type StrategySave,
+  } from '$lib/strategy/persistence'
   import { diplomacyCost, type DiplomacyAction, type DiplomacyOrder } from '$lib/strategy/diplomacy'
   import {
     StrategyInputError,
@@ -21,7 +29,6 @@
     HATSU_ROLE_LABELS,
     ORDER_LABELS,
     VICTORY_POINTS_TARGET,
-    doctrineForFaction,
     planCost,
     strategicRoleForHatsu,
   } from '$lib/strategy/rules'
@@ -41,6 +48,7 @@
   let selectedDiplomacyAction = $state<DiplomacyAction>('SHARE_INTEL')
   let selectedTier = $state('tier-1')
   let errorMessage = $state<string | null>(null)
+  let availableSave = $state<StrategySave | null>(null)
 
   let playerFaction = $derived(data.factions.find((faction) => faction.id === playerFactionId))
   let locationById = $derived(new Map(data.locations.map((location) => [location.id, location])))
@@ -150,6 +158,8 @@
     if (data.baseState) {
       simStore.init(data.baseState, data.factions, data.locations)
       ready = true
+      const saved = decodeStrategySave(localStorage.getItem(STRATEGY_SAVE_KEY))
+      if (saved?.baseEventId === data.cutoff?.eventId) availableSave = saved
     }
   })
 
@@ -164,6 +174,24 @@
     simStore.selectFaction(id)
   }
 
+  function resumeScenario() {
+    if (!availableSave) return
+    selectFaction(availableSave.selectedFactionId)
+    for (const turn of availableSave.turns) {
+      if (simStore.gameOver) break
+      simStore.endTurn(availableSave.selectedFactionId, turn.orders, turn.diplomacy)
+    }
+  }
+
+  function restartScenario() {
+    if (!data.baseState || !playerFactionId) return
+    const factionId = playerFactionId
+    localStorage.removeItem(STRATEGY_SAVE_KEY)
+    availableSave = null
+    simStore.init(data.baseState, data.factions, data.locations)
+    selectFaction(factionId)
+  }
+
   function currentLocation(characterId: string): string {
     const state = simStore.currentState
     if (!state) return 'Position inconnue'
@@ -176,9 +204,7 @@
     const state = simStore.currentState
     const entity = state ? entityForCharacter(state, characterId) : undefined
     const condition = entity ? simStore.unitConditions[entity.id] : undefined
-    if (condition === 'WOUNDED') return 'Blessé'
-    if (condition === 'ELIMINATED') return 'Éliminé'
-    return 'Opérationnel'
+    return condition === 'WOUNDED' ? 'Blessé' : condition === 'ELIMINATED' ? 'Éliminé' : 'Opérationnel'
   }
 
   function queueOrder() {
@@ -215,9 +241,7 @@
     return entity ? (state.presences[entity.id]?.locationId ?? '') : ''
   }
 
-  function removeOrder(characterId: string) {
-    pendingOrders = pendingOrders.filter((order) => order.characterId !== characterId)
-  }
+  function removeOrder(characterId: string) { pendingOrders = pendingOrders.filter((order) => order.characterId !== characterId) }
 
   function queueDiplomacy() {
     if (!selectedDiplomacyFactionId) return
@@ -241,6 +265,16 @@
       simStore.endTurn(playerFactionId, pendingOrders, pendingDiplomacy)
       pendingOrders = []
       pendingDiplomacy = []
+      localStorage.setItem(
+        STRATEGY_SAVE_KEY,
+        encodeStrategySave({
+          version: 1,
+          savedAt: new Date().toISOString(),
+          baseEventId: data.cutoff?.eventId ?? '',
+          selectedFactionId: playerFactionId,
+          turns: structuredClone(simStore.turnHistory),
+        }),
+      )
     } catch (error) {
       errorMessage =
         error instanceof StrategyInputError
@@ -250,20 +284,10 @@
     }
   }
 
-  function memberName(characterId: string): string {
-    return (
-      playerFaction?.members.find((member) => member.character.id === characterId)?.character
-        .canonicalName ?? characterId
-    )
-  }
+  function memberName(characterId: string): string { return playerFaction?.members.find((member) => member.character.id === characterId)?.character.canonicalName ?? characterId }
 </script>
-
 <svelte:head>
   <title>Mode stratégie · Black Whale</title>
-  <meta
-    name="description"
-    content="Prenez le contrôle d’une faction et simulez ses déplacements sur le Black Whale."
-  />
 </svelte:head>
 
 <main class="strategy-shell">
@@ -276,29 +300,13 @@
   {:else if !ready}
     <section class="fatal" aria-live="polite"><h1>Initialisation du scénario…</h1></section>
   {:else if !playerFactionId}
-    <section class="faction-picker">
-      <p class="eyebrow">Scénario · chapitre {data.cutoff?.chapterNumber}</p>
-      <h1>Choisissez votre faction</h1>
-      <p class="intro">
-        Chaque unité reçoit au plus un déplacement par tour. Les autres factions réagissent ensuite
-        automatiquement.
-      </p>
-      {#if data.factions.length}
-        <div class="faction-grid">
-          {#each data.factions as faction (faction.id)}
-            <button type="button" onclick={() => selectFaction(faction.id)}>
-              <strong>{faction.name}</strong>
-              <span
-                >{faction.members.length} unité{faction.members.length > 1 ? 's' : ''} ·
-                {doctrineForFaction(faction.id).toLocaleLowerCase('fr')}</span
-              >
-            </button>
-          {/each}
-        </div>
-      {:else}
-        <p class="empty">Aucune faction active à ce point du récit.</p>
-      {/if}
-    </section>
+    <StrategyFactionPicker
+      chapterNumber={data.cutoff?.chapterNumber}
+      factions={data.factions}
+      saved={availableSave}
+      onselect={selectFaction}
+      onresume={resumeScenario}
+    />
   {:else}
     <div class="game-layout">
       <aside class="command-panel">
@@ -482,6 +490,15 @@
       </aside>
 
       <section class="map-panel">
+        {#if simStore.gameOver}
+          <StrategyDebrief
+            won={simStore.gameWon}
+            turn={Math.min(simStore.currentTurn - 1, SCENARIO_MAX_TURNS)}
+            victoryPoints={simStore.victoryPoints}
+            reports={simStore.turnReports}
+            onrestart={restartScenario}
+          />
+        {/if}
         <div class="map-heading">
           <div>
             <p>Situation tactique · renseignement limité</p>

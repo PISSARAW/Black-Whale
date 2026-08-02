@@ -69,6 +69,7 @@ export function createSimulationStore() {
   let gameLost = $state(false)
   let relationships = $state<Record<string, FactionRelationship>>({})
   let unitConditions = $state<Record<string, UnitCondition>>({})
+  let turnHistory = $state<Array<{ orders: StrategyMoveOrder[]; diplomacy: DiplomacyOrder[] }>>([])
 
   function init(
     baseState: WorldState,
@@ -101,6 +102,7 @@ export function createSimulationStore() {
     gameLost = false
     relationships = {}
     unitConditions = {}
+    turnHistory = []
     turnReports = ['Simulation initialisée.']
   }
   function selectFaction(factionId: string) {
@@ -141,6 +143,7 @@ export function createSimulationStore() {
       }.`,
       'Les positions adverses restent inconnues tant qu’elles ne sont pas observées.',
     ]
+    turnHistory = []
   }
   function factionEntityIds(factionId: string): string[] {
     return currentState
@@ -439,6 +442,13 @@ export function createSimulationStore() {
     }
     if (!gameWon && completedTurn >= SCENARIO_MAX_TURNS) gameLost = true
     if (factionEliminated(playerIds, unitConditions)) gameLost = true
+    turnHistory = [
+      ...turnHistory,
+      {
+        orders: structuredClone([...playerOrders]),
+        diplomacy: structuredClone([...diplomacyOrders]),
+      },
+    ]
     turnReports = [
       ...turnReports,
       ...buildTurnReports({
@@ -475,21 +485,11 @@ export function createSimulationStore() {
     get currentTurn() { return currentTurn },
     get turnReports() { return turnReports },
     get intel() { return intel },
-    get objective() {
-      return currentObjective()
-    },
-    get victoryPoints() {
-      return victoryPoints
-    },
-    get gameWon() {
-      return gameWon
-    },
-    get gameLost() {
-      return gameLost
-    },
-    get gameOver() {
-      return gameWon || gameLost
-    },
+    get objective() { return currentObjective() },
+    get victoryPoints() { return victoryPoints },
+    get gameWon() { return gameWon },
+    get gameLost() { return gameLost },
+    get gameOver() { return gameWon || gameLost },
     get activeFactions() {
       return factions.filter((faction) => activeFactionIds.includes(faction.id))
     },
@@ -499,11 +499,10 @@ export function createSimulationStore() {
     get scenarioEvent() {
       return scenarioEventForTurn(currentTurn)
     },
-    get relationships() {
-      return relationships
-    },
-    get unitConditions() {
-      return unitConditions
+    get relationships() { return relationships },
+    get unitConditions() { return unitConditions },
+    get turnHistory() {
+      return turnHistory
     },
     get hatsuCooldowns() {
       return hatsuCooldowns

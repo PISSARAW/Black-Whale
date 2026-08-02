@@ -69,6 +69,7 @@
     groupSolidTargets,
     groupSpaceTargets,
   } from '$lib/tour/pageTargets'
+  import { tourShortcut } from '$lib/tour/pageKeyboard'
   import {
     EMPTY_WORLD,
     aimsAtSolids,
@@ -345,27 +346,20 @@
    * and is left to the browser.
    */
   function onWindowKeydown(event: KeyboardEvent) {
-    if (event.metaKey || event.ctrlKey || event.altKey) return
-    const key = event.key.toLowerCase()
-    if (key === 'r' && !(technique && TAKES_ORDERS.has(technique.kind))) return
-    if (key !== 'm' && key !== 'g' && key !== 'r' && key !== 'v' && key !== 'escape') return
-    // Esc leaves full screen only where nothing else has a claim on it: the
-    // browser answers it in native full screen, an engaged pointer answers it
-    // with "let go of my mouse", and an open dialog closes on it first.
-    if (key === 'escape' && !(immersive && !screen.native && !engaged && !planOpen && !findOpen))
-      return
-    const target = event.target
-    if (
-      target instanceof HTMLElement &&
-      (target.isContentEditable || target.closest('input, textarea, select') !== null)
-    ) {
-      return
-    }
+    const action = tourShortcut(event, {
+      takesOrders: Boolean(technique && TAKES_ORDERS.has(technique.kind)),
+      immersive,
+      nativeFullscreen: screen.native,
+      engaged,
+      planOpen,
+      finderOpen: findOpen,
+    })
+    if (!action) return
     event.preventDefault()
-    if (key === 'g') reveal = !reveal
-    else if (key === 'r') {
+    if (action === 'toggle-reveal') reveal = !reveal
+    else if (action === 'turn-technique') {
       if (technique) turn(technique.kind)
-    } else if (key === 'v' || key === 'escape') void toggleFullscreen()
+    } else if (action === 'toggle-fullscreen') void toggleFullscreen()
     else planOpen = !planOpen
   }
 

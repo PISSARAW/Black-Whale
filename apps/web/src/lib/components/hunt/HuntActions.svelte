@@ -48,7 +48,12 @@
   <button class="hunt-action" disabled={!canSweep} onclick={onSweep}>
     <kbd>F</kbd><span>{labels.sweep}</span>
   </button>
-  <button class="hunt-action" class:active={nen === 'zetsu'} onclick={onToggleNen}>
+  <button
+    class="hunt-action"
+    class:active={nen === 'zetsu'}
+    aria-pressed={nen === 'zetsu'}
+    onclick={onToggleNen}
+  >
     <kbd>X</kbd><span>{nen === 'zetsu' ? labels.ten : labels.zetsu}</span>
   </button>
   {#if hatsuId === 'bungee-gum'}
@@ -83,6 +88,7 @@
   }
 
   .hunt-action:hover:not(:disabled),
+  .hunt-action:focus-visible,
   .hunt-action.active {
     border-color: rgb(125 211 252 / 0.65);
     color: white;
@@ -90,6 +96,10 @@
 
   .hunt-action:disabled {
     opacity: 0.3;
+  }
+  .hunt-action:focus-visible {
+    outline: 2px solid white;
+    outline-offset: 2px;
   }
   .hunt-action.hatsu {
     border-color: rgb(196 181 253 / 0.4);

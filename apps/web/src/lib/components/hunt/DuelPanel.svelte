@@ -121,6 +121,7 @@
         <button
           class="duel-action"
           class:active={duel.player.guard === zone}
+          aria-pressed={duel.player.guard === zone}
           onclick={() => onGuard(zone)}
         >
           <kbd>{index + 1}</kbd>{labels.zone[zone]}
@@ -146,13 +147,28 @@
     </label>
 
     <div class="mt-3 grid grid-cols-4 gap-1.5">
-      <button class="duel-action" class:active={duel.player.gyo} onclick={onGyo}>
+      <button
+        class="duel-action"
+        class:active={duel.player.gyo}
+        aria-pressed={duel.player.gyo}
+        onclick={onGyo}
+      >
         <kbd>G</kbd>{labels.action.observe}
       </button>
-      <button class="duel-action" class:active={duel.player.in} onclick={onIn}>
+      <button
+        class="duel-action"
+        class:active={duel.player.in}
+        aria-pressed={duel.player.in}
+        onclick={onIn}
+      >
         <kbd>I</kbd>{labels.action.conceal}
       </button>
-      <button class="duel-action" class:active={duel.player.ken} onclick={onKen}>
+      <button
+        class="duel-action"
+        class:active={duel.player.ken}
+        aria-pressed={duel.player.ken}
+        onclick={onKen}
+      >
         <kbd>K</kbd>{labels.action.endure}
       </button>
       <button class="duel-action danger" disabled={!canCharge(duel.player)} onclick={onKo}>
@@ -161,7 +177,12 @@
     </div>
 
     <div class="mt-1.5 grid grid-cols-2 gap-1.5">
-      <button class="duel-action warning" class:active={duel.player.zetsu} onclick={onBreakAway}>
+      <button
+        class="duel-action warning"
+        class:active={duel.player.zetsu}
+        aria-pressed={duel.player.zetsu}
+        onclick={onBreakAway}
+      >
         <kbd>X</kbd>{labels.action.breakAway}
       </button>
       {#if canRecover}
@@ -188,6 +209,7 @@
     transition: 120ms ease;
   }
   .duel-action:hover:not(:disabled),
+  .duel-action:focus-visible,
   .duel-action.active {
     border-color: rgb(125 211 252 / 0.65);
     background: rgb(125 211 252 / 0.1);
@@ -201,6 +223,16 @@
   }
   .duel-action:disabled {
     opacity: 0.25;
+  }
+  .duel-action:focus-visible,
+  .ryu-range:focus-visible {
+    outline: 2px solid white;
+    outline-offset: 2px;
+  }
+  @media (pointer: coarse) {
+    .duel-action {
+      min-height: 2.75rem;
+    }
   }
   kbd {
     color: rgb(125 211 252);

@@ -392,6 +392,19 @@
 />
 
 <div class="relative h-screen w-full overflow-hidden bg-black text-white">
+  <div class="sr-only" aria-live="polite" aria-atomic="true">
+    {#if finished}
+      {$t.hunt.outcome[
+        game.outcome === 'playing' || game.outcome === 'contact' ? 'timeUp' : game.outcome
+      ]}
+    {:else if inDuel}
+      {$t.hunt.duel.title}
+    {:else}
+      {roomName(game.player.spaceId)} — {game.player.nen === 'zetsu'
+        ? $t.hunt.hud.zetsu
+        : $t.hunt.hud.ten}
+    {/if}
+  </div>
   <TourScene
     {ship}
     bind:tierId

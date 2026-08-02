@@ -1777,27 +1777,64 @@
         let pane: import('three').Mesh | null = null
 
         if (seen.kind === 'owl') {
-          const body = new THREE.Mesh(new THREE.SphereGeometry(seen.size, 10, 8), skin)
-          body.scale.set(1, 1.3, 0.85)
-          root.add(body)
-          // The head turns on its own, which is the one thing everyone knows an
-          // owl does, and it is what says the bird is watching rather than sitting.
-          const head = new THREE.Group()
-          head.position.y = seen.size * 1.35
-          const skull = new THREE.Mesh(new THREE.SphereGeometry(seen.size * 0.62, 10, 8), skin)
-          head.add(skull)
-          const eyes = glow(0xffe9a8, 1)
+          // Secret Window is called an owl by the ability, but its visible form
+          // is a small hooded spectre: one dark visor, two flame-like points and
+          // a lower edge that melts into hanging aura.
+          const cloak = new THREE.Mesh(
+            new THREE.CapsuleGeometry(seen.size * 0.64, seen.size * 0.82, 5, 10),
+            skin,
+          )
+          cloak.scale.set(1, 1.08, 0.72)
+          cloak.position.y = seen.size * 0.15
+          root.add(cloak)
           for (const side of [-1, 1]) {
-            const eye = new THREE.Mesh(new THREE.SphereGeometry(seen.size * 0.2, 8, 6), eyes)
-            eye.position.set(side * seen.size * 0.26, seen.size * 0.08, -seen.size * 0.5)
-            head.add(eye)
-            const ear = new THREE.Mesh(
-              new THREE.ConeGeometry(seen.size * 0.16, seen.size * 0.4, 4),
+            const peak = new THREE.Mesh(
+              new THREE.ConeGeometry(seen.size * 0.2, seen.size * 0.78, 5),
               skin,
             )
-            ear.position.set(side * seen.size * 0.34, seen.size * 0.55, 0)
-            head.add(ear)
+            peak.position.set(side * seen.size * 0.34, seen.size * 1.05, 0)
+            peak.rotation.z = side * -0.18
+            root.add(peak)
           }
+          for (let i = 0; i < 7; i++) {
+            const drip = new THREE.Mesh(
+              new THREE.ConeGeometry(
+                seen.size * (0.1 + (i % 2) * 0.025),
+                seen.size * (0.32 + (i % 3) * 0.11),
+                5,
+              ),
+              skin,
+            )
+            drip.rotation.z = Math.PI
+            drip.position.set(
+              (i - 3) * seen.size * 0.18,
+              -seen.size * (0.68 + (i % 3) * 0.06),
+              0,
+            )
+            root.add(drip)
+          }
+          const head = new THREE.Group()
+          head.position.set(0, seen.size * 0.28, -seen.size * 0.52)
+          const visor = new THREE.Mesh(
+            new THREE.BoxGeometry(seen.size * 0.7, seen.size * 0.16, seen.size * 0.035),
+            glow(0x171318, 1),
+          )
+          head.add(visor)
+          for (let slit = 0; slit < 5; slit++) {
+            const gleam = new THREE.Mesh(
+              new THREE.BoxGeometry(seen.size * 0.025, seen.size * 0.1, seen.size * 0.012),
+              glow(0xc5b8b0, 0.7),
+            )
+            gleam.position.set((slit - 2) * seen.size * 0.09, 0, -seen.size * 0.025)
+            head.add(gleam)
+          }
+          const tear = new THREE.Mesh(
+            new THREE.ConeGeometry(seen.size * 0.09, seen.size * 0.25, 5),
+            glow(0x6b5d68, 0.92),
+          )
+          tear.rotation.z = Math.PI
+          tear.position.set(0, -seen.size * 0.28, 0)
+          head.add(tear)
           root.add(head)
           turns = head
         }

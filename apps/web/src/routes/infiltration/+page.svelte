@@ -179,6 +179,7 @@
     frame = requestAnimationFrame(tick)
   })
   onDestroy(() => {
+    if (typeof window === 'undefined') return
     window.removeEventListener('keydown', onKeyDown)
     document.removeEventListener('visibilitychange', resetClock)
     cancelAnimationFrame(frame)

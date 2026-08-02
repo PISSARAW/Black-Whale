@@ -33,7 +33,7 @@
     markers.flatMap((marker, index): Apparition[] => {
       const space = spaceForLocation(ship, marker.locationId)
       if (!space) return []
-      const at = centroid(space.footprint)
+      const at = centroid(space)
       const angle = index * 2.399
       return [
         {

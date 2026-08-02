@@ -30,15 +30,16 @@ export const load: PageServerLoad = async () => {
       }),
       prisma.location.findMany({ orderBy: { name: 'asc' } }),
       prisma.character.findMany({
-        where: { id: { in: requiredCharacterIds } },
-        select: { id: true, canonicalName: true },
+        where: { slug: { in: requiredCharacterIds } },
+        select: { slug: true, canonicalName: true },
       }),
     ])
 
     const baseState = structuredClone(kernelState)
-    const characterById = new Map(characterRows.map((character) => [character.id, character]))
+    const characterById = new Map(characterRows.map((character) => [character.slug, character]))
     const factionById = new Map(factionRows.map((faction) => [faction.id, faction]))
-    const locationById = new Map(locationRows.map((location) => [location.id, location]))
+    const locationById = new Map(locationRows.map((location) => [location.slug, location]))
+    const locationSlugById = new Map(locationRows.map((location) => [location.id, location.slug]))
     const missingCharacterIds = requiredCharacterIds.filter((id) => !characterById.has(id))
     if (missingCharacterIds.length > 0)
       throw new Error(`Missing Strategy characters: ${missingCharacterIds.join(', ')}`)
@@ -65,7 +66,12 @@ export const load: PageServerLoad = async () => {
             certainty: 'CONFIRMED',
             observedAtEventId: cutoff.id,
           }
-        return [{ role: 'MEMBER', character }]
+        return [
+          {
+            role: 'MEMBER',
+            character: { id: character.slug, canonicalName: character.canonicalName },
+          },
+        ]
       })
       return {
         id: entry.factionId,
@@ -77,13 +83,15 @@ export const load: PageServerLoad = async () => {
     const locations = locationRows
       .filter(
         (location) =>
-          location.type !== 'SHIP' && baseState.entities[location.id]?.kind === 'LOCATION',
+          location.type !== 'SHIP' && baseState.entities[location.slug]?.kind === 'LOCATION',
       )
       .map((location) => ({
-        id: location.id,
+        id: location.slug,
         slug: location.slug,
         name: location.name,
-        parentLocationId: location.parentLocationId ?? undefined,
+        parentLocationId: location.parentLocationId
+          ? locationSlugById.get(location.parentLocationId)
+          : undefined,
         type: location.type,
         mapElementId: location.mapElementId ?? undefined,
         firstVisibleEventId: location.firstVisibleEventId,

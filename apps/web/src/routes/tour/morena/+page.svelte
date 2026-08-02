@@ -21,7 +21,6 @@
   import { onDestroy } from 'svelte'
   import Seo from '$lib/components/Seo.svelte'
   import TourScene from '$lib/components/tour/TourScene.svelte'
-  import MorenaCard from '$lib/components/tour/MorenaCard.svelte'
   import MorenaPiles from '$lib/components/tour/MorenaPiles.svelte'
   import MorenaSetupPanel from '$lib/components/tour/MorenaSetupPanel.svelte'
   import MorenaSceneOverlay from '$lib/components/tour/MorenaSceneOverlay.svelte'
@@ -44,29 +43,22 @@
   import { floorOf, theShip } from '$lib/tour/blueprint'
   import { Fullscreen } from '$lib/tour/fullscreen.svelte'
   import {
-    CARD_COLOURS,
     DEALER_AT,
-    DEALER_COLOUR,
     GUEST_AT,
     HIDEOUT_OFFICE,
     HIDEOUT_TIER,
     SEATED_EYE,
-    cssInk,
-    askMorena,
     dealTheGame,
     eyeFeed,
     infectionAfter,
-    lastCard,
     leaveTheTable,
     livePages,
     exposureNow,
     moveFor,
-    needsAChoice,
     REWIND_BLUE,
     openTheBookHere,
     owlFilm,
     playTechnique,
-    settle,
     sheWillNotPlay,
     sitsAtTheTable,
     spentOn,
@@ -76,7 +68,6 @@
     worksAtTheTable,
     type AnswerCard,
     type MorenaGame,
-    type QuestionCard,
     type TableKind,
   } from '$lib/tour/morena'
   import { gesturesAt, playGesture, type TableGesture } from '$lib/tour/morenaHands'
@@ -203,7 +194,6 @@
   /** Which quatrain the beast wrote, or nothing while it has written none. */
 
   const nameOfCard = (card: AnswerCard) => copy.cards[card].name
-  const questionsLeft = $derived(game.questions)
 
   /**
    * The aura in hand, as the table sees it.
@@ -288,10 +278,6 @@
     view = 'table'
   }
 
-  function ask(question: QuestionCard) {
-    game = askMorena(game, question)
-  }
-
   /**
    * Play a page, which for everybody but Chrollo is *the* page.
    *
@@ -311,13 +297,6 @@
 
   function walkOut() {
     game = leaveTheTable(game)
-  }
-
-  function play() {
-    const needed = needsAChoice(game)
-    if (needed && !choice) return
-    game = settle(game, choice ?? undefined)
-    choice = null
   }
 
   // ── The same game, played with the hands ───────
@@ -456,7 +435,6 @@
 
   /** What Morena said to the last question asked, for the panel's read-out. */
   const lastAsked = $derived(game.asked.length ? game.asked[game.asked.length - 1] : null)
-  const settlement = $derived(needsAChoice(game))
   const conditions = $derived(infectionAfter(game))
 </script>
 
@@ -642,78 +620,9 @@
         {#if game.phase === 'deal'}
           <MorenaPhaseActions bind:game bind:choice {nameOfCard} />
         {:else if game.phase === 'asking'}
-          <h2 class="mt-4 text-sm font-semibold text-[#FFFFF0]">{copy.askTitle}</h2>
-          <p class="mt-1 text-xs leading-snug text-[#FFFFF0]/55">{copy.askHint}</p>
-          <!-- Her fan, from the side of the table that has to pay for it: the
-               card is drawn, and the question written beside it, which is the
-               layout of the panel itself. -->
-          <ul class="mt-2 space-y-1.5">
-            {#each questionsLeft as question (question)}
-              <li>
-                <button
-                  class="flex w-full items-center gap-3 rounded border border-[#333] p-2 text-left text-sm text-[#FFFFF0]/85 hover:border-[#d94f68] hover:text-[#FFFFF0]"
-                  onclick={() => ask(question)}
-                >
-                  <MorenaCard
-                    face={question}
-                    label={copy.questions[question].short}
-                    ink={cssInk(DEALER_COLOUR)}
-                  />
-                  <span>{copy.questions[question].title}</span>
-                </button>
-              </li>
-            {/each}
-          </ul>
+          <MorenaPhaseActions bind:game bind:choice {nameOfCard} />
         {:else if game.phase === 'settling'}
-          <h2 class="mt-4 text-sm font-semibold text-[#FFFFF0]">{copy.settle.title}</h2>
-          {#if settlement === 'joker'}
-            <p class="mt-1 text-xs leading-snug text-[#FFFFF0]/55">{copy.settle.jokerHint}</p>
-            <div class="mt-2 flex gap-2">
-              {#each ['yes', 'no'] as const as side (side)}
-                <button
-                  class="rounded border p-1.5 {choice === side
-                    ? 'border-[#FFD700] bg-[#FFD700]/10'
-                    : 'border-[#444] hover:border-[#FFD700]/60'}"
-                  onclick={() => (choice = side)}
-                  title={nameOfCard(side)}
-                >
-                  <MorenaCard
-                    face={side}
-                    label={nameOfCard(side)}
-                    ink={cssInk(CARD_COLOURS[side])}
-                  />
-                </button>
-              {/each}
-            </div>
-          {:else if settlement === 'back'}
-            <p class="mt-1 text-xs leading-snug text-[#FFFFF0]/55">{copy.settle.backHint}</p>
-            <div class="mt-2 flex flex-wrap gap-2">
-              {#each game.graveyard as card (card)}
-                <button
-                  class="rounded border p-1.5 {choice === card
-                    ? 'border-[#FFD700] bg-[#FFD700]/10'
-                    : 'border-[#444] hover:border-[#FFD700]/60'}"
-                  onclick={() => (choice = card)}
-                  title={nameOfCard(card)}
-                >
-                  <MorenaCard
-                    face={card}
-                    label={nameOfCard(card)}
-                    ink={cssInk(CARD_COLOURS[card])}
-                  />
-                </button>
-              {/each}
-            </div>
-          {:else if lastCard(game) === 'back'}
-            <p class="mt-1 text-xs leading-snug text-[#FFFFF0]/55">{copy.settle.backEmpty}</p>
-          {/if}
-          <button
-            class="mt-3 rounded bg-[#d94f68] px-4 py-2 text-sm font-semibold text-[#0b0b0d] disabled:opacity-40"
-            disabled={Boolean(settlement) && !choice}
-            onclick={play}
-          >
-            {copy.settle.play}
-          </button>
+          <MorenaPhaseActions bind:game bind:choice {nameOfCard} />
         {:else if game.verdict}
           <div class="mt-4 rounded border border-[#d94f68]/60 bg-[#d94f68]/10 p-3">
             <h2 class="text-base font-semibold text-[#FFFFF0]">

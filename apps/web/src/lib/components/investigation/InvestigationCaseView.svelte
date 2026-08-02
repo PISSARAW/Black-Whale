@@ -30,6 +30,7 @@
   import { confrontWitnesses, type ConfrontationResult } from '$lib/investigation/confrontation'
   import { sceneNodes, visibleSightLines, type ScenePhenomenon } from '$lib/investigation/geometry'
   import { buildFinalReport } from '$lib/investigation/report'
+  import { assessHypothesesFromEvidence } from '$lib/investigation/v3Runtime'
   import {
     activeHatsu,
     closeHatsuGate,
@@ -190,6 +191,14 @@
   )
   const discoveredEvidence = $derived(
     investigation.evidence.filter((evidence) => discoveredIds.includes(evidence.id)),
+  )
+  const hypothesisAssessments = $derived(
+    assessHypothesesFromEvidence(
+      investigation.hypotheses,
+      investigation.evidence,
+      discoveredIds,
+      investigation.investigator,
+    ),
   )
   const progress = $derived(
     Math.round((discoveredIds.length / investigation.evidence.length) * 100),
@@ -1233,6 +1242,7 @@
 
             <div class="mt-6 space-y-2">
               {#each investigation.hypotheses as hypothesis}
+                {@const assessment = hypothesisAssessments[hypothesis.id]}
                 <button
                   class="w-full border p-4 text-left transition {selectedHypothesisId ===
                   hypothesis.id
@@ -1245,9 +1255,21 @@
                       class="h-3 w-3 rounded-full border {selectedHypothesisId === hypothesis.id
                         ? 'border-[#d6b35a] bg-[#d6b35a]'
                         : 'border-white/35'}"
-                    ></span><span class="font-serif text-lg text-white">{hypothesis.label}</span
-                    ></span
+                    ></span><span class="flex-1 font-serif text-lg text-white"
+                      >{hypothesis.label}</span
+                    >
+                    <span class="font-mono text-[10px] uppercase tracking-wider text-white/40">
+                      {assessment.status} · {assessment.score}%
+                    </span></span
                   >
+                  {#if assessment.missingPropositionIds.length > 0}
+                    <span class="mt-2 block pl-6 text-[10px] text-amber-100/45">
+                      {assessment.missingPropositionIds.length} proposition{assessment
+                        .missingPropositionIds.length > 1
+                        ? 's'
+                        : ''} à établir
+                    </span>
+                  {/if}
                 </button>
               {/each}
             </div>

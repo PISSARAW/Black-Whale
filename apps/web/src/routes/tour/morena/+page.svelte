@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { ModeNenState } from '$lib/nen/modeState.svelte'
   /**
    * Morena's game: the one room of the walk you sit down in.
    *
@@ -74,6 +75,7 @@
   import { gesturesAt, playGesture, type TableGesture } from '$lib/tour/morenaHands'
 
   const ship = theShip()
+  const modeNen = new ModeNenState()
   const french = $derived($locale === 'fr')
   const copy = $derived($t.tour.morena)
 
@@ -495,6 +497,8 @@
         aiming={castable}
         onCast={cast}
         onHatsu={cast}
+        nen={modeNen.value}
+        onNenChange={modeNen.use}
         auraColour={carried?.color ?? null}
         castOnClick={false}
         touchLabels={{

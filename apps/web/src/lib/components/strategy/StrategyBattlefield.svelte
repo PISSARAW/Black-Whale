@@ -5,6 +5,7 @@
   import { floorOf, spaceForLocation, theShip } from '$lib/tour/blueprint'
   import { centroid } from '$lib/tour/hatsu'
   import { TourNavigationState } from '$lib/tour/pageNavigationState.svelte'
+  import { ModeNenState } from '$lib/nen/modeState.svelte'
 
   interface Marker {
     id: string
@@ -22,6 +23,7 @@
   let { markers }: { markers: Marker[] } = $props()
   const ship = theShip()
   const navigation = new TourNavigationState(ship, ship.tiers[0].id)
+  const modeNen = new ModeNenState()
   let view = $state<'tour' | 'map'>('tour')
   let selectedTier = $state('tier-1')
   let availableTiers = $derived(
@@ -99,6 +101,8 @@
       bind:heading={navigation.heading}
       bind:aimedAt={navigation.aimedAt}
       bind:aimedSolidAt={navigation.aimedSolidAt}
+      nen={modeNen.value}
+      onNenChange={modeNen.use}
       touchLabels={{ move: 'Déplacement', cast: 'Action' }}
       soundLabels={{ silence: 'Couper les pas', restore: 'Rétablir les pas' }}
       loadingLabel="Chargement du Black Whale…"

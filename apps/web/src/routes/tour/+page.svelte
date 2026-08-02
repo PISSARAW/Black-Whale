@@ -21,6 +21,7 @@
   import TourHatsuHud from '$lib/components/tour/TourHatsuHud.svelte'
   import TourMinimap from '$lib/components/tour/TourMinimap.svelte'
   import TourPageHeader from '$lib/components/tour/TourPageHeader.svelte'
+  import TourPlanDialog from '$lib/components/tour/TourPlanDialog.svelte'
   import TourProvenancePanel from '$lib/components/tour/TourProvenancePanel.svelte'
   import TourScene from '$lib/components/tour/TourScene.svelte'
   import { setAmbientMuffled } from '$lib/audio/ambient'
@@ -1663,63 +1664,21 @@
   </div>
 </div>
 
-<!-- The same plan, at a size it can be read at: the legends are drawn in plan
-     units, so the drawing that gives four-pixel type in the column gives
-     readable type here without a second code path. -->
-<dialog
-  bind:this={planDialog}
-  aria-label={$t.tour.minimap(nameOf(plan.tier))}
-  onclose={() => (planOpen = false)}
-  onclick={(event) => {
-    if (event.target === planDialog) planOpen = false
-  }}
-  class="mx-auto my-[4vh] h-[92vh] w-[96vw] max-w-none border-0 bg-transparent p-0 backdrop:bg-[#050505]/85"
->
-  <div class="flex h-full flex-col gap-2">
-    <div class="flex flex-wrap items-center justify-between gap-2">
-      <p class="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-[#FFFFF0]/60">
-        <span class="text-[10px] uppercase tracking-widest text-[#FFD700]/70">
-          {$t.tour.plan.legend}
-        </span>
-        <span><span class="text-[#FFD700]">—</span> {$t.tour.plan.doorway}</span>
-        <span><span class="text-[#FFD700]">▲</span> {$t.tour.plan.up}</span>
-        <span><span class="text-[#FFD700]">▼</span> {$t.tour.plan.down}</span>
-        <span><span class="text-[#FFD700]">◈</span> {$t.tour.plan.across}</span>
-      </p>
-      <button
-        type="button"
-        onclick={() => (planOpen = false)}
-        class="rounded border border-[#FFD700]/50 px-2.5 py-1 text-xs text-[#FFD700] transition-colors hover:bg-[#FFD700]/10"
-      >
-        {$t.tour.plan.close}
-      </button>
-    </div>
-
-    {#if spoken}
-      <p class="text-xs leading-snug text-[#FFFFF0]/70">{spoken}</p>
-    {/if}
-
-    <div class="min-h-0 flex-1">
-      <TourMinimap
-        {plan}
-        {position}
-        {heading}
-        {crossings}
-        {crossingLabel}
-        fill
-        currentSpaceId={currentSpace?.id ?? null}
-        label={$t.tour.minimap(nameOf(plan.tier))}
-        nameOf={(space) => nameOf(named(space))}
-        onSelect={(space) => {
-          selectOnPlan(space)
-          planOpen = false
-        }}
-        selectLabel={planVerb}
-        aiming={Boolean(technique)}
-      />
-    </div>
-  </div>
-</dialog>
+<TourPlanDialog
+  bind:dialog={planDialog}
+  {plan}
+  {position}
+  {heading}
+  currentSpaceId={currentSpace?.id ?? null}
+  {spoken}
+  {crossings}
+  {crossingLabel}
+  nameOf={(space) => nameOf(named(space))}
+  selectLabel={planVerb}
+  aiming={Boolean(technique)}
+  onClose={() => (planOpen = false)}
+  onSelect={selectOnPlan}
+/>
 
 <TourFinder
   {ship}

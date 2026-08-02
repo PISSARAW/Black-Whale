@@ -15,6 +15,7 @@
   import {
     createNenTechniqueState,
     transitionNen,
+    type NenTechnique,
     type NenTechniqueAction,
     type NenTechniqueState,
   } from '@black-whale/nen-engine'
@@ -196,6 +197,8 @@
     nen?: NenTechniqueState
     /** Modes with their own Nen HUD still use the shared renderer without duplicating controls. */
     showNenControls?: boolean
+    /** Visible-but-disabled principles for modes that intentionally implement a subset. */
+    nenAvailability?: Partial<Record<NenTechnique | 'hatsu' | 'action', boolean>>
     /** Controlled modes receive every accepted standard Nen action here. */
     onNenChange?: (action: NenTechniqueAction) => void
     /**
@@ -478,6 +481,7 @@
     nen,
     onNenChange,
     showNenControls = true,
+    nenAvailability = {},
     flash = null,
     aiming = false,
     selfCastable = false,
@@ -4367,11 +4371,13 @@
       // What E and F do, handed to the buttons a touchscreen gets instead.
       take = takeLink
       castNow = cast
+      hatsuNow = useHatsu
     })()
 
     return () => {
       disposed = true
       interactWithNen = null
+      hatsuNow = null
       setStepsAuraQuiet(false)
       cleanup?.()
     }
@@ -4384,6 +4390,7 @@
   /** The same, for the two things the on-screen buttons stand in for. */
   let take = $state<(() => void) | null>(null)
   let castNow = $state<((hand?: 'first' | 'second' | 'third') => void) | null>(null)
+  let hatsuNow = $state<((hand: 'first' | 'second' | 'third') => void) | null>(null)
   /** The same, for the one comfort setting the camera holds rather than reads. */
   let relens = $state<((settings: Comfort) => void) | null>(null)
 
@@ -4457,8 +4464,11 @@
       <TourNenControls
         nenState={effectiveNen}
         aimedObjectId={aimedSolidAt?.id ?? null}
+        availability={nenAvailability}
+        {hatsuAllowedInZetsu}
         onAction={useNen}
         onInteract={() => interactWithNen?.()}
+        onHatsu={() => hatsuNow?.(lastHatsuVariant === 2 ? 'third' : lastHatsuVariant === 1 ? 'second' : 'first')}
       />
     {/if}
     {#if hatsuWheelOpen}

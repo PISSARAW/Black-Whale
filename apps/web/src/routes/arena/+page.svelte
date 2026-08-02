@@ -54,6 +54,7 @@
   import type { PageData } from './$types'
   import { arenaNen } from '$lib/nen/tourAdapters'
   import { NEN_KEYS, nenZoneIndex } from '$lib/nen/controls'
+  import type { NenTechniqueAction } from '@black-whale/nen-engine'
 
   let { data }: { data: PageData } = $props()
 
@@ -217,6 +218,44 @@
     const accepted = game.player !== previousPlayer
     if (accepted) animateCommand(animation)
     return accepted
+  }
+
+  function useStandardNen(action: NenTechniqueAction) {
+    if (action.type === 'TEN' || action.type === 'REN' || action.type === 'ZETSU')
+      return command(
+        {
+          type: 'MODE',
+          side: 'player',
+          mode: action.type.toLowerCase() as 'ten' | 'ren' | 'zetsu',
+        },
+        action.type.toLowerCase() as 'ten' | 'ren' | 'zetsu',
+      )
+    if (action.type === 'GYO' || action.type === 'IN' || action.type === 'KEN')
+      return command(
+        { type: action.type, side: 'player', on: action.on },
+        action.type.toLowerCase() as 'gyo' | 'in' | 'ken',
+      )
+    if (action.type === 'KO' && action.zone)
+      return command(
+        {
+          type: 'KO',
+          side: 'player',
+          zone:
+            action.zone === 'feet'
+              ? 'legs'
+              : action.zone === 'hands'
+                ? 'arms'
+                : (action.zone as BodyZone),
+        },
+        'ko',
+      )
+    if (action.type === 'RYU') {
+      const attackShare = Number(action.distribution.hands ?? game.player.attackShare)
+      return command(
+        { type: 'RYU', side: 'player', attackShare },
+        attackShare >= game.player.attackShare ? 'ryu-up' : 'ryu-down',
+      )
+    }
   }
 
   function setZone(zone: BodyZone) {
@@ -618,7 +657,9 @@
     bind:jumpHeading
     world={EMPTY_WORLD}
     nen={playerNen}
-    showNenControls={false}
+    showNenControls={true}
+    nenAvailability={{ en: false, shu: false, on: false }}
+    onNenChange={useStandardNen}
     extras={opponentActor}
     collisionWalls={opponentWalls}
     aiming={true}

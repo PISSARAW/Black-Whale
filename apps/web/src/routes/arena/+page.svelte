@@ -5,6 +5,7 @@
   import { advanceArena, OPPONENT_DOCTRINES, type OpponentDoctrine } from '$lib/arena/ai'
   import { arenaHatsuEffect, worksInArena } from '$lib/arena/hatsu'
   import { zoneFromPitch } from '$lib/arena/targeting'
+  import { playArenaHatsu, playArenaImpact } from '$lib/arena/audio'
   import { buildCombatTerrain } from '$lib/arena/terrain'
   import { readAura } from '$lib/combat/perception'
   import { STRIKE_RANGE } from '$lib/combat/resolve'
@@ -153,7 +154,11 @@
       hatsuPanelOpen.set(true)
       return
     }
-    command({ type: 'HATSU', side: 'player', effect: hatsuEffect, zone: aimedZone }, 'hatsu')
+    const accepted = command(
+      { type: 'HATSU', side: 'player', effect: hatsuEffect, zone: aimedZone },
+      'hatsu',
+    )
+    if (accepted) playArenaHatsu(hatsuEffect)
   }
 
   function shiftRyu(by: number) {
@@ -272,6 +277,7 @@
   }
 
   function animateExchange(event: CombatEvent) {
+    playArenaImpact(event.impact)
     const defenderMotion = reactionFor(event.impact)
     if (event.attacker === 'player') {
       playPlayer('attack', 280)
@@ -400,7 +406,11 @@
   ])}
 />
 
-<div class="arena-world">
+<div
+  class="arena-world"
+  class:player-empowered={game.player.empowered > 0}
+  class:opponent-bound={game.opponent.bound > 0}
+>
   <h1 class="sr-only">{$t.arena.title}</h1>
   <TourScene
     {ship}
@@ -587,7 +597,7 @@
       </div>
     </article>
 
-    <article class="status-card opponent-card">
+    <article class="status-card opponent-card" class:bound={game.opponent.bound > 0}>
       <header>
         <strong>{OPPONENT_DOCTRINES[opponentDoctrine].name}</strong>
         <span

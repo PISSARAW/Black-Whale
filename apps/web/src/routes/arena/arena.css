@@ -314,6 +314,34 @@
       0 0 3.2rem #62d9f366;
   }
 
+  .player-empowered .combat-hands .hand {
+    border-color: #f3d77c;
+    box-shadow:
+      inset 0 0 1.4rem #e7bd4c55,
+      0 0 1.2rem #f3d77cbb,
+      0 0 4rem #b882ef77;
+  }
+
+  .opponent-card.bound {
+    border-color: #c08ae0aa;
+    box-shadow: inset 0 0 1.5rem #8d52b333;
+  }
+
+  .opponent-bound::after {
+    position: absolute;
+    z-index: 7;
+    top: 50%;
+    left: 50%;
+    width: 8rem;
+    height: 1.2rem;
+    border: 2px solid #bd83dcaa;
+    border-radius: 50%;
+    box-shadow: 0 0 1rem #a45ccc;
+    content: '';
+    transform: translate(-50%, -50%) rotate(-8deg);
+    pointer-events: none;
+  }
+
   .combat-hands.zetsu .hand {
     border-color: #ffffff18;
     box-shadow: none;

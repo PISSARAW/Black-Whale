@@ -1661,26 +1661,6 @@
         // toad with spines, an eye with wings. Recognisable across a promenade
         // and nowhere near modelled, which is the rule the whole scene keeps.
 
-        // One part of what those mouths put out. Faint and large, like Tubeppa's
-        // ? the difference between the two is entirely the colour, which is the
-        // difference between the two abilities as well.
-        if (seen.kind === 'fume') {
-          const vapour = glow(seen.colour, 0.16)
-          for (let i = 0; i < 3; i++) {
-            const puff = new THREE.Mesh(
-              new THREE.SphereGeometry(seen.size * (1 - i * 0.24), 8, 6),
-              vapour,
-            )
-            puff.position.set(
-              (i - 1) * seen.size * 0.45,
-              ((i + 1) % 2) * seen.size * 0.35,
-              ((i % 2) - 0.5) * seen.size * 0.5,
-            )
-            root.add(puff)
-          }
-          turns = root
-        }
-
         // One of Momoze's, in whichever of four shapes its own number gave it:
         // a bear, a jelly, a wolf, a lump. They are the only apparitions in the
         // walk built from a menu rather than to a single drawing, because that

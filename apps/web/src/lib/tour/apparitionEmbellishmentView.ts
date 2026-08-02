@@ -83,7 +83,24 @@ function gas(seen: Apparition, { THREE, glow, root }: BasicApparitionContext) {
   return root
 }
 
-const BUILDERS: Partial<Record<Apparition['kind'], Builder>> = { bloom, note, gas }
+function fume(seen: Apparition, { THREE, glow, root }: BasicApparitionContext) {
+  const vapour = glow(seen.colour, 0.16)
+  for (let index = 0; index < 3; index++) {
+    const puff = new THREE.Mesh(
+      new THREE.SphereGeometry(seen.size * (1 - index * 0.24), 8, 6),
+      vapour,
+    )
+    puff.position.set(
+      (index - 1) * seen.size * 0.45,
+      ((index + 1) % 2) * seen.size * 0.35,
+      ((index % 2) - 0.5) * seen.size * 0.5,
+    )
+    root.add(puff)
+  }
+  return root
+}
+
+const BUILDERS: Partial<Record<Apparition['kind'], Builder>> = { bloom, note, gas, fume }
 
 export function buildEmbellishmentApparition(
   seen: Apparition,

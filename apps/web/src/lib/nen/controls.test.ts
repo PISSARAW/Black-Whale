@@ -9,4 +9,9 @@ describe('canonical Arena Nen controls', () => {
     expect(isNenControlCode('KeyH')).toBe(true)
     expect(isNenControlCode('KeyV')).toBe(false)
   })
+
+  it('assigns each canonical action to one unambiguous key', () => {
+    const codes = Object.values(NEN_KEYS)
+    expect(new Set(codes).size).toBe(codes.length)
+  })
 })

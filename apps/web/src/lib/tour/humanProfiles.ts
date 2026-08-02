@@ -23,7 +23,7 @@ export interface HumanProfile {
   trousers: number
   shirt: number
   accent: number
-  clothing: 'civilian' | 'uniform' | 'suit' | 'combat' | 'ritual'
+  clothing: 'civilian' | 'uniform' | 'suit' | 'combat' | 'ritual' | 'gown'
 }
 
 const ROLE_PROFILES: Record<NonNullable<Apparition['human']>['role'], HumanProfile> = {
@@ -147,6 +147,21 @@ const ROLE_PROFILES: Record<NonNullable<Apparition['human']>['role'], HumanProfi
     accent: 0xf0ece4,
     clothing: 'ritual',
   },
+  morena: {
+    build: 'slim',
+    height: 1,
+    shoulders: 0.96,
+    skin: 0xf0dfe2,
+    hair: 0xd9b978,
+    hairStyle: 'long',
+    face: 'narrow',
+    expression: 'neutral',
+    jacket: 0x181318,
+    trousers: 0x181318,
+    shirt: 0x181318,
+    accent: 0xd9b978,
+    clothing: 'gown',
+  },
 }
 
 function identityHash(value: string): number {
@@ -163,7 +178,7 @@ export function humanProfile(seen: Apparition): HumanProfile {
     role === 'guard' || role === 'nen-guard'
       ? ['military', 'short', 'shaved']
       : ['short', 'swept', 'long', 'ponytail', 'spiked', 'shaved']
-  if (role === 'silent-majority') return base
+  if (role === 'silent-majority' || role === 'morena') return base
   const skins = [0x8f5d45, 0xb8795d, 0xc99473, 0xd8b49a, 0xe4c3a5]
   return {
     ...base,

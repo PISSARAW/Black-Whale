@@ -189,7 +189,17 @@ export interface Apparition {
       | 'steward'
       | 'victim'
       | 'silent-majority'
-    pose: 'idle' | 'walk' | 'listen' | 'search' | 'held' | 'guard' | 'attack' | 'fallen'
+      | 'morena'
+    pose:
+      | 'idle'
+      | 'walk'
+      | 'listen'
+      | 'search'
+      | 'held'
+      | 'guard'
+      | 'attack'
+      | 'fallen'
+      | 'seated'
     aura?: 'none' | 'ten' | 'ren' | 'zetsu'
     /** Stable identity seed: named character when known, otherwise apparition id. */
     identity?: string

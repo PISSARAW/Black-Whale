@@ -55,4 +55,14 @@ describe('shared human profiles', () => {
       accent: 0xf0ece4,
     })
   })
+
+  it('keeps Morena recognisable across game stages', () => {
+    const profile = humanProfile(person('morena', 'morena'))
+    expect(profile).toMatchObject({
+      build: 'slim',
+      hairStyle: 'long',
+      face: 'narrow',
+      clothing: 'gown',
+    })
+  })
 })

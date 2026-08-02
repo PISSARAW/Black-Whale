@@ -116,3 +116,67 @@ export function addSilentMajorityCostume(build: CostumeBuild): void {
     figure.add(boot)
   }
 }
+
+interface MorenaBuild extends CostumeBuild {
+  head: Group
+}
+
+/** Morena's manga identifiers layered over the shared articulated anatomy. */
+export function addMorenaDetails(build: MorenaBuild): void {
+  const { THREE, geometry, outlined, figure, head, cloth, ink } = build
+  const gown = outlined({
+    THREE,
+    geometry: geometry(THREE, 'morena:gown', () =>
+      new THREE.CylinderGeometry(0.23, 0.39, 1.02, 8),
+    ),
+    material: cloth,
+    ink,
+  })
+  gown.position.y = 0.66
+  figure.add(gown)
+  const lap = outlined({
+    THREE,
+    geometry: geometry(THREE, 'morena:gown-lap', () => new THREE.BoxGeometry(0.45, 0.12, 0.62)),
+    material: cloth,
+    ink,
+  })
+  lap.position.set(0, 0.56, 0.25)
+  figure.add(lap)
+
+  const neckline = new THREE.Mesh(
+    geometry(THREE, 'morena:neckline', () => new THREE.RingGeometry(0.08, 0.17, 8, 1, 0.35, 2.44)),
+    ink,
+  )
+  neckline.position.set(0, 1.39, 0.18)
+  neckline.rotation.z = 0.35
+  figure.add(neckline)
+
+  const thornBand = new THREE.Mesh(
+    geometry(THREE, 'morena:thorn-band', () => new THREE.TorusGeometry(0.2, 0.012, 4, 18)),
+    ink,
+  )
+  thornBand.scale.y = 0.82
+  thornBand.rotation.x = Math.PI / 2
+  thornBand.position.set(0, 0.075, 0.01)
+  head.add(thornBand)
+  for (let i = 0; i < 9; i++) {
+    const thorn = new THREE.Mesh(
+      geometry(THREE, 'morena:thorn', () => new THREE.ConeGeometry(0.014, 0.07, 4)),
+      ink,
+    )
+    const angle = (i / 8 - 0.5) * 2.35
+    thorn.position.set(Math.sin(angle) * 0.19, 0.08, Math.cos(angle) * 0.19)
+    thorn.rotation.z = Math.sin(angle) * 0.7
+    head.add(thorn)
+  }
+
+  for (let i = 0; i < 8; i++) {
+    const scar = new THREE.Mesh(
+      geometry(THREE, 'morena:scar', () => new THREE.PlaneGeometry(0.012, 0.034)),
+      ink,
+    )
+    scar.position.set(0.065 + i * 0.006, 0.14 - i * 0.043, 0.188)
+    scar.rotation.z = 0.14
+    head.add(scar)
+  }
+}

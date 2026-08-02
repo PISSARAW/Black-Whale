@@ -569,7 +569,7 @@ export function tableauOf(game: MorenaGame, floor: number): Apparition[] {
     id: 'morena-dealer',
     kind: 'dealer',
     at: DEALER_AT,
-    y: floor + 0.72,
+    y: floor,
     size: 0.42,
     colour: DEALER_COLOUR,
     stage: dealerStage(game),

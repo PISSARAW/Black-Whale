@@ -1,7 +1,11 @@
 import type { BufferGeometry, Group, Material, MeshBasicMaterial, Object3D } from 'three'
 import type { Apparition } from './apparitions'
 import { humanAnimation } from './humanAnimation'
-import { addSilentMajorityCostume, addSilentMajorityMask } from './humanCostume'
+import {
+  addMorenaDetails,
+  addSilentMajorityCostume,
+  addSilentMajorityMask,
+} from './humanCostume'
 import { humanProfile } from './humanProfiles'
 
 type Three = typeof import('three')
@@ -381,6 +385,19 @@ export function buildHumanFigure({ THREE, glow, seen }: HumanFigureBuild): Human
       dark,
     })
   }
+  if (profile.clothing === 'gown') {
+    addMorenaDetails({
+      THREE,
+      geometry,
+      outlined,
+      figure,
+      head,
+      cloth,
+      ink,
+      accent,
+      dark,
+    })
+  }
 
   for (const side of [-1, 1]) {
     const leg = new THREE.Group()
@@ -472,6 +489,20 @@ export function buildHumanFigure({ THREE, glow, seen }: HumanFigureBuild): Human
     arms[1].rotation.x = 0.32
     legs[0].rotation.x = 0.2
     legs[1].rotation.x = -0.2
+  } else if (pose === 'seated') {
+    figure.position.y = -0.25
+    arms.forEach((arm, index) => {
+      const side = index === 0 ? -1 : 1
+      arm.position.set(side * 0.27, 1.29, 0.02)
+      arm.rotation.set(-0.72, 0, side * -0.12)
+      elbows[index].rotation.x = -1.12
+    })
+    legs.forEach((leg, index) => {
+      const side = index === 0 ? -1 : 1
+      leg.position.x = side * 0.14
+      leg.rotation.x = -Math.PI / 2
+      knees[index].rotation.x = Math.PI / 2
+    })
   }
 
   const groundShadow = new THREE.Mesh(

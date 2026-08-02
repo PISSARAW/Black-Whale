@@ -84,6 +84,33 @@ export function buildDealer({ THREE, glow, seen }: DealerBuild): Group {
   const human = buildHumanFigure({ THREE, glow, seen: apparition })
   const root = human.root
 
+  // At the canonical camera distance the shared one-metre figure is too small
+  // for the sutures and eyelids to survive rasterisation. Morena fills more of
+  // her chair in the panel, so enlarge only the portrait rig and sink it back
+  // into the cushion rather than changing the world's human scale.
+  human.turns.scale.multiplyScalar(1.12)
+  human.turns.position.y -= 0.09
+
+  // The panel frames Morena inside a broad upholstered chair. The room already
+  // contains the chair as navigable geometry, but its near-black block is too
+  // coarse to read behind a face. This inset belongs to the portrait: a warm
+  // rim, a padded back and the separate headrest visible around her hair.
+  const chair = new THREE.Group()
+  chair.name = 'morena-chair-portrait'
+  const chairRim = new THREE.Mesh(new THREE.BoxGeometry(0.72, 1.16, 0.13), glow(0x8a6f61, 0.92))
+  chairRim.position.set(0, 0.91, -0.31)
+  chair.add(chairRim)
+  const chairBack = new THREE.Mesh(new THREE.BoxGeometry(0.64, 1.08, 0.145), glow(0x35282b, 0.98))
+  chairBack.position.set(0, 0.91, -0.29)
+  chair.add(chairBack)
+  const headrestRim = new THREE.Mesh(new THREE.BoxGeometry(0.54, 0.46, 0.15), glow(0xb0927f, 0.96))
+  headrestRim.position.set(0, 1.48, -0.28)
+  chair.add(headrestRim)
+  const headrest = new THREE.Mesh(new THREE.BoxGeometry(0.48, 0.4, 0.165), glow(0x49373b, 1))
+  headrest.position.set(0, 1.48, -0.26)
+  chair.add(headrest)
+  root.add(chair)
+
   // Preserve the negotiation's restrained body language while the articulated
   // seated pose keeps her hips, knees and forearms aligned with the chair/table.
   human.turns.rotation.x = -0.04

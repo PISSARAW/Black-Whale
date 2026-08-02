@@ -34,6 +34,11 @@ describe('shared human figure', () => {
 
     expect(human.root.getObjectByName('morena-seated-lap')).toBeTruthy()
     expect(human.root.getObjectByName('morena-standing-gown')).toBeUndefined()
+    expect(human.root.getObjectByName('morena-decolletage')).toBeTruthy()
+    expect(human.root.getObjectByName('morena-stitch-crown')).toBeTruthy()
+    expect(human.root.getObjectByName('morena-scar')).toBeTruthy()
+    expect(human.root.getObjectByName('face-eye-left')).toBeTruthy()
+    expect(human.root.getObjectByName('face-eye-right')).toBeTruthy()
     expect(human.root.getObjectByName('knee-left')?.rotation.x).toBeCloseTo(Math.PI / 2)
     expect(human.root.getObjectByName('knee-right')?.rotation.x).toBeCloseTo(Math.PI / 2)
   })

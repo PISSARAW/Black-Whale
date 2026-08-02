@@ -3,6 +3,9 @@ import { closestPointOnSegment, pointInPolygon, structureWalls } from '../tour/g
 import type { Polygon, Space, Structure, Vec2, WallSegment } from '../tour/types'
 
 export const BANQUET_HALL_ID = 'tier-1-banquet-hall'
+export const SCREENING_ROOM_ID = 'tier-2-screening-room'
+export const ARENA_TERRAIN_IDS = [BANQUET_HALL_ID, SCREENING_ROOM_ID] as const
+export type ArenaTerrainId = (typeof ARENA_TERRAIN_IDS)[number]
 const SPAWN_CLEARANCE = 1.5
 const SAMPLE_STEP = 2.5
 const OPENING_DISTANCE = 24
@@ -50,6 +53,12 @@ export function buildCombatTerrain(spaceId = BANQUET_HALL_ID): CombatTerrain {
     spawns,
     bounds: boundsOf(space.footprint),
   }
+}
+
+export function arenaTerrainId(value: string | null | undefined): ArenaTerrainId {
+  return ARENA_TERRAIN_IDS.includes(value as ArenaTerrainId)
+    ? (value as ArenaTerrainId)
+    : BANQUET_HALL_ID
 }
 
 function spawnPair(footprint: Polygon, walls: WallSegment[]): readonly [Vec2, Vec2] {

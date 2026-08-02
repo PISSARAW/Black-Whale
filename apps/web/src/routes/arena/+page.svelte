@@ -47,10 +47,13 @@
   import { breadcrumbSchema } from '$lib/seo/schema'
   import { link, locale, t } from '$lib/i18n'
   import './arena.css'
+  import type { PageData } from './$types'
+
+  let { data }: { data: PageData } = $props()
 
   const DT = 1 / 60
   const ship = theShip()
-  const terrain = buildCombatTerrain()
+  const terrain = buildCombatTerrain(data.terrainId)
   const plan = ship.plans.get(terrain.tierId)!
   const ground = floorOf(terrain.space, plan.tier)
 
@@ -622,6 +625,15 @@
       <small>{$t.arena.distance} · {gap.toFixed(1)} m</small>
     </div>
   </header>
+
+  <nav class="terrain-picker" aria-label={$locale === 'fr' ? 'Terrain' : 'Arena'}>
+    <a class:active={terrain.id === 'tier-1-banquet-hall'} href="?terrain=tier-1-banquet-hall">
+      {$locale === 'fr' ? 'Salle du banquet' : 'Banquet Hall'}
+    </a>
+    <a class:active={terrain.id === 'tier-2-screening-room'} href="?terrain=tier-2-screening-room">
+      {$locale === 'fr' ? 'Salle de projection' : 'Screening Room'}
+    </a>
+  </nav>
 
   <aside class="challenge-panel" aria-label={$locale === 'fr' ? 'Épreuves' : 'Challenges'}>
     <header>

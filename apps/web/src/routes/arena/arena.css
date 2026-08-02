@@ -21,6 +21,27 @@
     color: #e2f0f2;
   }
 
+  .terrain-picker {
+    position: absolute;
+    z-index: 11;
+    top: 1.25rem;
+    left: 50%;
+    display: flex;
+    gap: 0.25rem;
+    transform: translateX(-50%);
+  }
+  .terrain-picker a {
+    padding: 0.4rem 0.6rem;
+    border: 1px solid #8ad7e733;
+    color: #aac4c8;
+    font-size: 0.66rem;
+    text-decoration: none;
+  }
+  .terrain-picker a.active {
+    border-color: #8ad7e7;
+    color: #fff;
+  }
+
   .challenge-panel header,
   .challenge-panel ol {
     display: grid;

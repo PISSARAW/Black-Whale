@@ -1013,5 +1013,60 @@
       "Ridge stops Kanjidol"
     ],
     "description": "A flashback two months before departure shows Furykov analyzing the sacrificial curse placed on him at birth and confronting Beyond after the Seed Urn Ceremony assigns it a royal target. In the present, Kurapika and Oito prepare a message for the mainland before martial law spreads and Ridge halts Kanjidol's assault."
+  },
+  {
+    "id": "ch-416",
+    "number": 416,
+    "publicationOrder": 416,
+    "title": "Proclamation",
+    "date": "2026-08-02",
+    "timeline": [
+      {
+        "event": "Benjamin confronts Camilla under special martial law",
+        "storyDate": "Day 12 · Thursday · after 14:15",
+        "charactersInvolved": [
+          "prince-benjamin",
+          "prince-camilla",
+          "furykov",
+          "butch",
+          "mozbe",
+          "fukataki"
+        ],
+        "location": "Black Whale 1 - Tier 1 - Room 1002"
+      },
+      {
+        "event": "Moswana sacrifices herself and curses Benjamin",
+        "storyDate": "Day 12 · Thursday · after 14:15",
+        "charactersInvolved": ["moswana", "prince-benjamin", "prince-camilla", "furykov"],
+        "location": "Black Whale 1 - Tier 1 - Room 1002"
+      },
+      {
+        "event": "Tserriednich prepares Salkov to witness his false death",
+        "storyDate": "Day 12 · Thursday · before the breach of room 1004",
+        "charactersInvolved": ["prince-tserriednich", "salkov"],
+        "location": "Black Whale 1 - Tier 1 - Room 1004"
+      },
+      {
+        "event": "Benjamin breaches room 1004 and shoots Tserriednich",
+        "storyDate": "Day 12 · Thursday · after 14:15",
+        "charactersInvolved": [
+          "prince-benjamin",
+          "prince-tserriednich",
+          "furykov",
+          "butch",
+          "salkov",
+          "danjin"
+        ],
+        "location": "Black Whale 1 - Tier 1 - Room 1004"
+      }
+    ],
+    "location": "Black Whale 1 - Tier 1 Royal Residential Sector",
+    "keyEvents": [
+      "Benjamin kills Camilla's servants but avoids triggering Cat's Name",
+      "Moswana completes Yomotsu Hegui against Benjamin",
+      "Tserriednich arranges a false death around Parallel Future",
+      "Benjamin shoots Tserriednich after forcing entry into room 1004"
+    ],
+    "description": "With roughly ten hours of useful time left after TSK-17 symptoms begin, Benjamin moves through Tier 1 under special martial law. He confronts Camilla, kills two of her attendants and refuses to trigger her post-mortem counter; Moswana then sacrifices herself at close range and places a long-prepared Yomotsu Hegui curse on him. Benjamin next storms room 1004, detains Nen student Danjin for questioning and shoots Tserriednich, who has already instructed Salkov to report the apparent death while keeping Parallel Future secret."
   }
 ]

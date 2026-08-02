@@ -1707,8 +1707,8 @@
     },
     "shipLocation": {
       "tier": 1,
-      "room": "1001",
-      "status": "actif",
+      "room": "1004",
+      "status": "actif — infecté par TSK-17 et maudit",
       "role": "chef militaire / loi martiale"
     },
     "biography": [
@@ -2135,6 +2135,11 @@
         "chapter": 415,
         "title": "Truth or Falsehood",
         "status": "mentioned"
+      },
+      {
+        "chapter": 416,
+        "title": "Proclamation",
+        "status": "appears"
       }
     ],
     "battles": [
@@ -2176,7 +2181,7 @@
     },
     "shipLocation": {
       "tier": 1,
-      "room": "VIP Jail",
+      "room": "1002",
       "status": "emprisonnee",
       "role": "prisonniere"
     },
@@ -2591,6 +2596,16 @@
         "chapter": 414,
         "title": "Friends",
         "status": "absent"
+      },
+      {
+        "chapter": 415,
+        "title": "Truth or Falsehood",
+        "status": "absent"
+      },
+      {
+        "chapter": 416,
+        "title": "Proclamation",
+        "status": "appears"
       }
     ],
     "battles": [
@@ -3523,6 +3538,11 @@
         "chapter": 415,
         "title": "Truth or Falsehood",
         "status": "mentioned"
+      },
+      {
+        "chapter": 416,
+        "title": "Proclamation",
+        "status": "appears"
       }
     ],
     "mapTrajectory": [
@@ -13949,7 +13969,7 @@
     },
     "biography": [
       "Morena embarks with at least twenty-two members of the Heil-Ly. She kisses each of them to activate Contagion, explains that killing earns levels, and releases her group onto the ship with the goal of destroying Kakin and then the entire world.",
-   "She took the head of the clan by ordering its members to kill one another, and the twenty-three she addresses in room 302 are the ones who chose to stay with her through it. She thanks them for that, calls herself young and inexperienced for the position, and says she cares nothing for this world any more than for herself — which is the reason she gives for destroying it.",
+      "She took the head of the clan by ordering its members to kill one another, and the twenty-three she addresses in room 302 are the ones who chose to stay with her through it. She thanks them for that, calls herself young and inexperienced for the position, and says she cares nothing for this world any more than for herself — which is the reason she gives for destroying it.",
       "Its recruits massacre passengers in order to reach level 21 and develop their own abilities. Their offensive causes hundreds of disappearances, upsets the balance of the three mafias and pushes the Xi-Yu as well as the Cha-R to consider its elimination.",
       "Morena personally advises her members on their future powers. Facing Tevelares, Quorolle and Gelato, she explains that experience, technique, aura and ingenuity determine a Nen fight, then proposes transforming their clashes into systems comparable to games.",
       "When her affair with Tserriednich falls silent, Morena understands that he suspects her betrayal. She abandons the decoy of room 3101, organizes several access doors to her real cache and wants to infect a soldier from Tserriednich in order to follow the movements of her former protector.",
@@ -25491,6 +25511,16 @@
         "chapter": 414,
         "title": "Friends",
         "status": "absent"
+      },
+      {
+        "chapter": 415,
+        "title": "Truth or Falsehood",
+        "status": "absent"
+      },
+      {
+        "chapter": 416,
+        "title": "Proclamation",
+        "status": "appears"
       }
     ],
     "biography": [
@@ -27119,6 +27149,16 @@
         "chapter": 414,
         "title": "Friends",
         "status": "absent"
+      },
+      {
+        "chapter": 415,
+        "title": "Truth or Falsehood",
+        "status": "absent"
+      },
+      {
+        "chapter": 416,
+        "title": "Proclamation",
+        "status": "appears"
       }
     ],
     "biography": [
@@ -27965,6 +28005,11 @@
       {
         "chapter": 415,
         "title": "Truth or Falsehood",
+        "status": "appears"
+      },
+      {
+        "chapter": 416,
+        "title": "Proclamation",
         "status": "appears"
       }
     ],
@@ -41608,13 +41653,19 @@
     "canonStatus": "canon",
     "shipLocation": {
       "tier": 1,
-      "room": "1001",
+      "room": "1004",
       "status": "actif",
       "role": "Private Soldier for Prince Benjamin Hui Guo Rou"
     },
     "mapPresenceFromChapterId": "ch-358",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": [],
+    "mangaAppearances": [
+      {
+        "chapter": 416,
+        "title": "Proclamation",
+        "status": "appears"
+      }
+    ],
     "mapTrajectory": [
       {
         "location": "tier-1-royal-residential-sector-room-1001",
@@ -41623,6 +41674,10 @@
       {
         "location": "tier-1-royal-residential-sector-room-1005",
         "fromChapterId": "ch-366"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1004",
+        "fromChapterId": "ch-416"
       }
     ]
   },
@@ -41924,12 +41979,18 @@
     "shipLocation": {
       "tier": 1,
       "room": "1002",
-      "status": "actif",
+      "status": "décédée",
       "role": "Majordomo of Prince Camilla"
     },
     "mapPresenceFromChapterId": "ch-389",
-    "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mapPresenceUntilChapterId": "ch-416",
+    "mangaAppearances": [
+      {
+        "chapter": 416,
+        "title": "Proclamation",
+        "status": "death"
+      }
+    ]
   },
   {
     "id": "furichosefu",
@@ -41964,8 +42025,8 @@
     },
     "shipLocation": {
       "tier": 1,
-      "room": "1001",
-      "status": "actif — position actuelle inconnue",
+      "room": "1004",
+      "status": "actif",
       "role": "soldat privé de Benjamin / analyste Nen"
     },
     "mapPresenceFromChapterId": "ch-363",
@@ -41976,6 +42037,11 @@
         "title": "Truth or Falsehood",
         "status": "appears",
         "context": "flashback"
+      },
+      {
+        "chapter": 416,
+        "title": "Proclamation",
+        "status": "appears"
       }
     ],
     "temporalIdentityManaged": true
@@ -42712,12 +42778,29 @@
     "shipLocation": {
       "tier": 1,
       "room": "1002",
-      "status": "actif",
+      "status": "décédée",
       "role": "Private Guard of Prince Camilla"
     },
     "mapPresenceFromChapterId": "ch-363",
-    "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mapPresenceUntilChapterId": "ch-416",
+    "mangaAppearances": [
+      {
+        "chapter": 416,
+        "title": "Proclamation",
+        "status": "death"
+      }
+    ],
+    "biography": [
+      "Moswana is one of Camilla's Have-Nots. Under special martial law, she completes a curse prepared against Benjamin for more than ten years, kills herself in his presence and manifests Yomotsu Hegui on him."
+    ],
+    "abilitiesAndPowers": "Moswana uses the Have-Nots' post-mortem curse Yomotsu Hegui. Years of preparation, proximity and eye contact strengthen its aura-draining effect.",
+    "nen": {
+      "type": "unknown",
+      "typeLabel": "Unknown type",
+      "overview": "As one of Camilla's Have-Nots, Moswana is a Nen user capable of casting the long-prepared haunting curse Yomotsu Hegui. Her natural aura category remains unknown.",
+      "techniques": ["Hatsu", "Post-mortem Nen"],
+      "abilityIds": ["yomotsu-hegui"]
+    }
   },
   {
     "id": "mushaho",

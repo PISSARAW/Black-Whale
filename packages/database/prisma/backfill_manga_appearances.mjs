@@ -27,7 +27,7 @@ const dryRun = process.argv.includes('--dry-run')
 
 /** Le voyage : le catalogue ne date rien hors de cet intervalle. */
 const FIRST_CHAPTER = 340
-const LAST_CHAPTER = 415
+const LAST_CHAPTER = 416
 
 /**
  * Une liste de cette longueur couvre déjà tout le voyage et a donc été relue à la

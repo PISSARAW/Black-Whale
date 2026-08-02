@@ -55,7 +55,6 @@
   } from '$lib/tour/hatsu'
   import {
     TENTACLES,
-    VOW_CHAIN,
     apparitionsOn,
     coinAt,
     wormMouthAt,
@@ -131,6 +130,7 @@
   import { buildCrawlingApparition } from '$lib/tour/apparitionCrawlingView'
   import { buildSpriteApparition } from '$lib/tour/apparitionSpriteView'
   import { buildDragonApparition } from '$lib/tour/apparitionDragonView'
+  import { buildVowApparition } from '$lib/tour/apparitionVowView'
   import { HatsuSceneEffects } from '$lib/tour/HatsuSceneEffects'
   import { NenSceneAura } from '$lib/tour/NenSceneAura'
   import TourNenControls from './TourNenControls.svelte'
@@ -1612,7 +1612,6 @@
        * glance, and few enough that it is still a handful of rings when the
        * lash puts it across eight metres of promenade.
        */
-      const CHAIN_LINKS = 14
 
       /** How long one lash takes: out fast, back slower, and it is over. */
       const LASH_OUT = 0.14
@@ -1655,6 +1654,7 @@
         turns = buildCrawlingApparition(seen, { THREE, glow, root, skin }) ?? turns
         turns = buildSpriteApparition(seen, { THREE, glow, root, skin }) ?? turns
         turns = buildDragonApparition(seen, { THREE, glow, root, skin }) ?? turns
+        turns = buildVowApparition(seen, { THREE, glow, root, skin }) ?? turns
 
         // ── The Guardian Spirit Beasts ─────────────
         //
@@ -1673,87 +1673,6 @@
         // that the one room the walk sits you down in is drawn by the same
         // machinery as the ninety you walk through.
 
-
-        if (seen.kind === 'vow-heart') {
-          // The vow, where it is actually sworn.
-          //
-          // Every other technique in the walk is put somewhere ? over a room, on
-          // a bulkhead, at an elbow. Judgment Chain is put *in* somebody, and the
-          // only body the walk has is the one the reader is looking out of. So
-          // this is worn at the sternum and seen by looking down, and there is
-          // nothing to aim it at: the chain is already round it.
-          //
-          // Built in three parts, because the whole reading is the difference
-          // between them: meat, which beats; links, which do not; and a lock,
-          // which is the moment the thing stopped being reversible. The flesh is
-          // its own group so the drift can swell it without the chain giving ?
-          // a heart pressing against a chain that will not move is the entire
-          // argument of the technique in one gesture.
-          const meat = glow(seen.colour, seen.stage === 2 ? 0.4 : 0.95)
-          const flesh = new THREE.Group()
-          for (const side of [-1, 1]) {
-            const lobe = new THREE.Mesh(new THREE.SphereGeometry(seen.size * 0.58, 12, 10), meat)
-            lobe.position.set(side * seen.size * 0.42, seen.size * 0.34, 0)
-            flesh.add(lobe)
-          }
-          const point = new THREE.Mesh(
-            new THREE.ConeGeometry(seen.size * 0.95, seen.size * 1.7, 14),
-            meat,
-          )
-          // A cone stands on its base; a heart hangs from its lobes and comes to
-          // a point underneath, so it is turned over.
-          point.rotation.x = Math.PI
-          point.position.y = -seen.size * 0.5
-          flesh.add(point)
-          root.add(flesh)
-
-          if (seen.stage > 0) {
-            // Wound, not draped: three bands crossing at angles that have
-            // nothing to do with each other, which is how a thing is bound by
-            // somebody who means it rather than wrapped by somebody tidying.
-            const steel = glow(VOW_CHAIN, 1)
-            const linkGeometry = new THREE.TorusGeometry(seen.size * 0.17, seen.size * 0.055, 4, 8)
-            const band = (tilt: Vec2, radius: number) => {
-              const ring = new THREE.Group()
-              for (let i = 0; i < CHAIN_LINKS; i++) {
-                const along = (i / CHAIN_LINKS) * Math.PI * 2
-                const link = new THREE.Mesh(linkGeometry, steel)
-                link.position.set(Math.cos(along) * radius, 0, Math.sin(along) * radius)
-                // A ring lies in its own plane, so it is turned to stand across
-                // the circle it is running round ? and every other one is given
-                // a quarter turn on top of that, which is the only thing that
-                // makes a row of rings read as a chain.
-                link.rotation.y = Math.PI / 2 - along
-                if (i % 2) link.rotateX(Math.PI / 2)
-                ring.add(link)
-              }
-              ring.rotation.set(tilt[0], tilt[1], 0)
-              return ring
-            }
-            root.add(band([0.28, 0], seen.size * 1.02))
-            root.add(band([1.15, 0.9], seen.size * 0.98))
-            root.add(band([-0.75, 2.1], seen.size * 0.94))
-
-            // And the lock, hanging where the bands cross in front. It is the
-            // small part and it is the whole of what a vow is: the difference
-            // between a chain lying on something and a chain that has been shut.
-            const body = new THREE.Mesh(
-              new THREE.BoxGeometry(seen.size * 0.3, seen.size * 0.26, seen.size * 0.12),
-              steel,
-            )
-            const shackle = new THREE.Mesh(
-              new THREE.TorusGeometry(seen.size * 0.12, seen.size * 0.035, 4, 10, Math.PI),
-              steel,
-            )
-            shackle.position.y = seen.size * 0.13
-            body.add(shackle)
-            body.position.set(0, seen.size * 0.1, seen.size * 1.05)
-            root.add(body)
-          }
-
-          // The flesh, for the drift: children[0], the way the chain's ball is.
-          turns = flesh
-        }
 
         if (seen.kind === 'cat') {
           // Camilla's cat, which is drawn sitting because that is all it ever

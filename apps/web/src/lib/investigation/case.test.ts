@@ -15,6 +15,7 @@ describe('investigation verdict', () => {
     expect(verdict.missing.map((evidence) => evidence.id)).toEqual([
       'death-window',
       'loberry-vision',
+      'visibility-split',
       'nen-residue',
     ])
   })

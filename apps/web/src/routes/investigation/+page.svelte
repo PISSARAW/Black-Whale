@@ -24,6 +24,7 @@
     type InvestigationHatsuUse,
   } from '$lib/investigation/hatsu'
   import { questionIsAvailable } from '$lib/investigation/interrogation'
+  import { confrontWitnesses, type ConfrontationResult } from '$lib/investigation/confrontation'
   import {
     activeHatsu,
     closeHatsuGate,
@@ -58,6 +59,9 @@
   let hatsuResult = $state<InvestigationHatsuUse | null>(null)
   let askedQuestionKeys = $state<string[]>([])
   let activeResponse = $state<string | null>(null)
+  let confrontationKeys = $state<string[]>([])
+  let confrontationWitnessIds = $state<string[]>([])
+  let confrontationResult = $state<ConfrontationResult | null>(null)
 
   const activeSubject = $derived(
     investigation.subjects.find((subject) => subject.id === activeSubjectId) ?? null,
@@ -93,6 +97,7 @@
     solved = saved.solved
     hatsuUseKeys = saved.hatsuUseKeys
     askedQuestionKeys = saved.askedQuestionKeys
+    confrontationKeys = saved.confrontationKeys
     log = saved.log
     briefingOpen = !saved.started
     return closeHatsuGate
@@ -111,6 +116,7 @@
         solved,
         hatsuUseKeys,
         askedQuestionKeys,
+        confrontationKeys,
         log,
       }),
     )
@@ -249,6 +255,23 @@
     }
   }
 
+  function toggleConfrontationWitness(id: string) {
+    confrontationResult = null
+    confrontationWitnessIds = confrontationWitnessIds.includes(id)
+      ? confrontationWitnessIds.filter((item) => item !== id)
+      : [...confrontationWitnessIds.slice(-1), id]
+  }
+
+  function performConfrontation() {
+    const result = confrontWitnesses(confrontationWitnessIds, discoveredIds)
+    confrontationResult = result
+    if (result.tone === 'insufficient' || confrontationKeys.includes(result.key)) return
+    confrontationKeys = [...confrontationKeys, result.key]
+    discover(result.evidenceIds)
+    addLog({ id: `confrontation:${result.key}`, kind: 'DISCOVERY', label: result.title })
+    persist()
+  }
+
   function startInvestigation() {
     briefingOpen = false
     persist()
@@ -265,6 +288,9 @@
     hatsuResult = null
     askedQuestionKeys = []
     activeResponse = null
+    confrontationKeys = []
+    confrontationWitnessIds = []
+    confrontationResult = null
     notebookOpen = false
     activeSubjectId = null
     briefingOpen = true
@@ -658,6 +684,46 @@
               </button>
             {/each}
           </div>
+          <section class="mt-8 border-t border-white/10 pt-6">
+            <p class="text-[10px] font-bold uppercase tracking-widest text-[#d6b35a]">
+              Confronter deux déclarations
+            </p>
+            <p class="mt-2 text-sm text-white/45">
+              Sélectionnez deux témoins. Une divergence précise peut devenir une déduction.
+            </p>
+            <div class="mt-4 flex flex-wrap gap-2">
+              {#each investigation.subjects.filter((subject) => !subject.isDead && subject.id !== 'kurapika') as subject}
+                <button
+                  class="border px-3 py-2 text-xs transition {confrontationWitnessIds.includes(
+                    subject.id,
+                  )
+                    ? 'border-[#d6b35a] bg-[#d6b35a]/10 text-[#f0cf76]'
+                    : 'border-white/15 text-white/55 hover:border-white/35'}"
+                  onclick={() => toggleConfrontationWitness(subject.id)}>{subject.name}</button
+                >
+              {/each}
+            </div>
+            <button
+              class="mt-4 border border-[#d6b35a]/60 px-5 py-2.5 text-[10px] font-bold uppercase tracking-widest text-[#e8cc84] enabled:hover:bg-[#d6b35a]/10 disabled:opacity-30"
+              disabled={confrontationWitnessIds.length !== 2}
+              onclick={performConfrontation}>Confronter les versions</button
+            >
+            {#if confrontationResult}
+              <div
+                class="mt-4 border-l-2 px-4 py-3 {confrontationResult.tone === 'deduction'
+                  ? 'border-emerald-400 bg-emerald-400/[0.06]'
+                  : confrontationResult.tone === 'corroboration'
+                    ? 'border-sky-300 bg-sky-300/[0.05]'
+                    : 'border-amber-300 bg-amber-300/[0.05]'}"
+                aria-live="polite"
+              >
+                <p class="text-sm font-semibold text-white">{confrontationResult.title}</p>
+                <p class="mt-1 text-xs leading-relaxed text-white/60">
+                  {confrontationResult.finding}
+                </p>
+              </div>
+            {/if}
+          </section>
         {:else if activeTab === 'timeline'}
           <ol class="relative ml-2 border-l border-[#d6b35a]/30 pl-7">
             {#each [['T − 00:11', 'Loberry désigne une poupée que personne d’autre ne voit.', 'loberry-vision'], ['T − 00:08', 'Quatre créatures blanches se fixent au cou de Barrigen.', 'bill-testimony'], ['T + 00:00', 'Barrigen s’effondre, entièrement vidé de son sang.', 'wounds'], ['Après', 'Kurapika recherche un mécanisme de Nen.', 'nen-residue']] as event}

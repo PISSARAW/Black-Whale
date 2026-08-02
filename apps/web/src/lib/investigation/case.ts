@@ -254,6 +254,19 @@ export const room1014Case: InvestigationCase = {
   ],
   evidence: [
     {
+      id: 'visibility-split',
+      title: 'Deux règles de visibilité',
+      claim:
+        'La poupée n’est visible que de Loberry et de son utilisateur, tandis que les quatre créatures matérialisées sont visibles de tous.',
+      source: 'Confrontation de Loberry et Furykov',
+      chapter: 370,
+      kind: 'NEN',
+      method: 'DEDUCTION',
+      truthStatus: 'DEDUCTION',
+      reliability: 'TRUSTED',
+      subjectId: 'loberry',
+    },
+    {
       id: 'six-nen-users',
       title: 'Six utilisateurs dans la classe',
       claim:
@@ -358,6 +371,7 @@ export const room1014Case: InvestigationCase = {
         'death-window',
         'bill-testimony',
         'loberry-vision',
+        'visibility-split',
         'nen-residue',
       ],
       contradictionEvidenceIds: [],
@@ -373,7 +387,7 @@ export const room1014Case: InvestigationCase = {
     {
       id: 'compare-witnesses',
       label: 'Comparer ce que chacun pouvait voir',
-      requiredEvidenceIds: ['bill-testimony', 'loberry-vision'],
+      requiredEvidenceIds: ['bill-testimony', 'loberry-vision', 'visibility-split'],
     },
     {
       id: 'identify-method',

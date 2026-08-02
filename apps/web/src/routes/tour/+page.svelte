@@ -61,11 +61,9 @@
   import { activateTourWorld, cycleTourMode, releaseTourWorld } from '$lib/tour/pageWorldCommands'
   import {
     AIR_KEYS,
-    advanceCastHand,
-    performPageCast,
-    performTourCast,
     type CastHand,
   } from '$lib/tour/pageCasting'
+  import { TourCastController } from '$lib/tour/pageCastController'
   import {
     aimReadout as buildAimReadout,
     controlReadouts,
@@ -84,7 +82,6 @@
     hatsuKeys,
     identityOf,
     TAKES_ORDERS,
-    turnTheBook,
     twoPages,
     TWO_HANDED_KINDS,
     worksInTour,
@@ -453,6 +450,25 @@
     second: 'sun',
     third: 'sun',
   })
+  const casting = new TourCastController({
+    read: () => ({
+      world,
+      ship,
+      activeKind: technique?.kind ?? null,
+      pages: openPages,
+      hands: nextHand,
+      currentSpace,
+      aimedAt,
+      aimedSolidAt,
+      position,
+      heading,
+    }),
+    updateWorld: (next) => (world = next),
+    updateReport: (next) => (report = next),
+    updateHands: (next) => (nextHand = next),
+    show,
+    goToSpace,
+  })
 
   /**
    * Whether R has anything to do: the technique is on both sides of the line.
@@ -594,43 +610,7 @@
     hatsuAudio.dispose()
   })
 
-  function castOn(
-    spaceId: string | null,
-    solidId: string | null = null,
-    /** Which key cast: F is the first hand, R the second, C the third. */
-    hand: CastHand = 'first',
-  ) {
-    const cast = performTourCast({
-      world,
-      ship,
-      activeKind: technique?.kind ?? null,
-      pages: openPages,
-      hands: nextHand,
-      hand,
-      targetId: spaceId,
-      targetSolidId: solidId,
-      standingIn: currentSpace?.id ?? null,
-      at: position,
-      heading,
-    })
-    if (!cast) return
-    const { result, mark } = cast
-    world = result.world
-    report = result.report
-    show(result.report)
-    nextHand = advanceCastHand({
-      hands: nextHand,
-      hand,
-      mark,
-      marked: result.report?.kind === 'marked',
-    })
-    if (result.travelTo) {
-      // Where the aura came down in that room, for the technique that carries
-      // the visitor to it rather than merely reaching it.
-      const landing = result.world.landed[result.travelTo] ?? null
-      goToSpace(ship.spaces.get(result.travelTo)!, landing)
-    }
-  }
+  const castOn = casting.castOn
 
   /**
    * A page of the book, cast at whatever the visitor is aiming at.
@@ -638,36 +618,17 @@
    * This is the whole of what the fifth wave bought: the dock still gives the
    * walk exactly one aura, and the book gives it a second to cast with.
    */
-  function castPage(kind: HatsuInteractionKind) {
-    const result = performPageCast({
-      world,
-      kind,
-      ship,
-      targetId: aimedAt?.id ?? currentSpace?.id ?? null,
-      targetSolidId: aimedSolidAt?.id ?? null,
-      standingIn: currentSpace?.id ?? null,
-      at: position,
-      heading,
-    })
-    world = result.world
-    report = result.report
-    show(result.report)
-    if (result.travelTo) goToSpace(ship.spaces.get(result.travelTo)!)
-  }
+  const castPage = casting.castPage
 
   /**
    * What the cast keys do, offered to a visitor working the panel instead of
    * the keyboard: the same cast, at whatever the reticle is on, under the same
    * hand — so the moon goes on off a mouse exactly as it does off R.
    */
-  function castHand(hand: CastHand) {
-    castOn(aimedAt?.id ?? currentSpace?.id ?? null, aimedSolidAt?.id ?? null, hand)
-  }
+  const castHand = casting.castHand
 
   /** The ribbon moved to the other page, which swaps what the two keys play. */
-  function turnTheRibbon() {
-    world = { ...world, book: turnTheBook(world.book) }
-  }
+  const turnTheRibbon = casting.turnRibbon
 
   /**
    * Setting foot somewhere is where half the techniques actually happen: the

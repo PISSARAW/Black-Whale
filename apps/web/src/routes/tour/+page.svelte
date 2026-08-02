@@ -74,18 +74,14 @@
     stepBeast, stepCoin, stepFish, stepOwl, stepOwlAge, stepPolarity, stepScout,
     type WorldStep,
   } from '$lib/tour/pageWorldSteps'
+  import { activateTourWorld, cycleTourMode, releaseTourWorld } from '$lib/tour/pageWorldCommands'
   import {
     EMPTY_WORLD,
     aimsAtSolids,
     arriveInTour,
     castInTour,
-    looseTheFlock,
     hatsuKeys,
     identityOf,
-    nextDoubleMode,
-    nextEyeMode,
-    nextOwlMode,
-    openTheBook,
     otherHand,
     spendPage,
     TAKES_ORDERS,
@@ -576,37 +572,16 @@
     // to tell Voconte's doors from anyone else's.
     const kind = worksInTour($activeHatsu) ? $activeHatsu.kind : null
     const currentWorld = untrack(() => world)
-    if (currentWorld.holding !== kind) {
-      const nextWorld = { ...currentWorld, holding: kind }
-      if (kind === 'guardian') {
-        nextWorld.double = currentSpace?.id ?? null
-        // The watch she was last set to is kept: R is the only thing that
-        // changes it, and taking the aura up again is not R.
-        nextWorld.doubleMode = currentWorld.doubleMode ?? 'follow'
-      }
-      // Momoze's is not cast at anything: the beasts are simply out. Asking the
-      // visitor to press F at a room to make them appear would be asking them
-      // to aim an ability that has no aim — what it does is ask, over and over,
-      // wherever it is, and the flock is the asking. So it is loosed the moment
-      // the aura goes up, from where the visitor is standing, exactly as
-      // Voconte's doors are simply wired the moment they are held.
-      if (kind === 'solicitation') {
-        const loose = looseTheFlock(nextWorld, ship, {
-          at: position,
-          standingIn: currentSpace?.id ?? null,
-        })
-        if (loose) nextWorld.menagerie = loose.world.menagerie
-      }
-      // Double Face is handed over already holding two: a bookmark with one
-      // page under it is not an ability, and the walk cannot ask the visitor to
-      // steal twice before it does anything. Which two is rolled here and
-      // stands until the aura is put down.
-      if (kind === 'bookmark' && !twoPages(currentWorld.book)) {
-        nextWorld.book = openTheBook()
-      }
-      // Both hands begin with the sun, whatever the last aura left them on.
+    const activated = activateTourWorld({
+      world: currentWorld,
+      kind,
+      ship,
+      position,
+      spaceId: currentSpace?.id ?? null,
+    })
+    if (activated) {
       nextHand = { first: 'sun', second: 'sun', third: 'sun' }
-      world = nextWorld
+      world = activated
     }
   })
 
@@ -652,23 +627,11 @@
    * aura being held — answers with nothing, and the key stays inert.
    */
   function turn(kind: HatsuInteractionKind) {
-    if (technique?.kind !== kind) return
-    let said: TourReport
-    if (kind === 'guardian') {
-      const mode = nextDoubleMode(world.doubleMode)
-      world = { ...world, doubleMode: mode }
-      said = { kind: 'double-mode-changed', mode }
-    } else if (kind === 'surveillance') {
-      const mode = nextOwlMode(world.owlMode)
-      world = { ...world, owlMode: mode }
-      said = { kind: 'owl-mode-changed', mode }
-    } else if (kind === 'scout') {
-      const mode = nextEyeMode(world.eyeMode)
-      world = { ...world, eyeMode: mode }
-      said = { kind: 'eye-mode-changed', mode }
-    } else return
-    report = said
-    show(said)
+    const changed = cycleTourMode({ world, requested: kind, active: technique?.kind ?? null })
+    if (!changed) return
+    world = changed.world
+    report = changed.report
+    show(changed.report)
   }
 
   /**
@@ -677,19 +640,10 @@
    * the archive already has a penalty for that.
    */
   function release() {
-    const rebound = Boolean(world.snakes && !world.snakes.fed)
-    // Everything the aura was holding is handed back — but the aura itself is
-    // still up, and what is held is not a hold. The book is the exception the
-    // other way round: it is not something Double Face did to the ship, it is
-    // Double Face, so letting go of the ship deals a fresh pair rather than
-    // leaving the visitor holding a bookmark with nothing under it.
-    world = {
-      ...EMPTY_WORLD,
-      holding: world.holding,
-      book: world.holding === 'bookmark' ? openTheBook() : EMPTY_WORLD.book,
-    }
+    const released = releaseTourWorld(world)
+    world = released.world
     report = null
-    if (rebound) punish($t.tour.hatsu.reports.snakesRebound)
+    if (released.rebound) punish($t.tour.hatsu.reports.snakesRebound)
   }
 
   /**

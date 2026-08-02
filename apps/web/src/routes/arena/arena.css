@@ -8,6 +8,60 @@
 }
 
 @scope (.arena-world) {
+  .challenge-panel {
+    position: absolute;
+    z-index: 11;
+    top: 6.2rem;
+    left: 1.25rem;
+    width: min(18rem, calc(100vw - 2.5rem));
+    padding: 0.75rem;
+    border: 1px solid #8ad7e744;
+    border-radius: 0.4rem;
+    background: #061217dd;
+    color: #e2f0f2;
+  }
+
+  .challenge-panel header,
+  .challenge-panel ol {
+    display: grid;
+    gap: 0.3rem;
+  }
+  .challenge-panel small {
+    color: #8ad7e7;
+    letter-spacing: 0.16em;
+  }
+  .challenge-panel select {
+    width: 100%;
+    margin-top: 0.55rem;
+  }
+  .challenge-panel ol {
+    margin: 0.65rem 0 0;
+    padding-left: 1.2rem;
+    font-size: 0.72rem;
+  }
+
+  .challenge-result {
+    display: flex;
+    gap: 0.9rem;
+    align-items: center;
+    padding: 0.75rem;
+    border: 1px solid #c36f6877;
+  }
+  .challenge-result.complete {
+    border-color: #8ad7e7;
+  }
+  .challenge-result > b {
+    font-size: 2rem;
+  }
+  .challenge-result div {
+    display: grid;
+    gap: 0.2rem;
+    text-align: left;
+  }
+  .challenge-result span {
+    font-size: 0.72rem;
+  }
+
   .reticle {
     position: absolute;
     z-index: 8;

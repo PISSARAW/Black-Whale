@@ -20,6 +20,9 @@
     type ArenaStats,
   } from '$lib/arena/progression'
   import { buildCombatTerrain } from '$lib/arena/terrain'
+  import { ARENA_CHALLENGES } from '$lib/arena/challenges/catalogue'
+  import { evaluateChallenge } from '$lib/arena/challenges/evaluate'
+  import type { ChallengeObjective } from '$lib/arena/challenges/types'
   import { ArenaRecorder } from '$lib/arena/replay/recorder'
   import type { ArenaReplay } from '$lib/arena/replay/types'
   import { serializeReplay } from '$lib/arena/replay/codec'
@@ -96,6 +99,7 @@
   let stats = $state<ArenaStats>({ ...EMPTY_STATS })
   let bestGrade = $state<string | null>(null)
   let graded = $state(false)
+  let selectedChallengeId = $state<string | null>(null)
   const motionTimers = new Set<number>()
 
   let reading = $derived(readAura(game.player, game.opponent))
@@ -135,6 +139,23 @@
     },
   ])
   let opponentWalls = $derived(blockerAt(game.opponent.position))
+  let selectedChallenge = $derived(
+    ARENA_CHALLENGES.find((challenge) => challenge.id === selectedChallengeId) ?? null,
+  )
+  let challengeResult = $derived(
+    selectedChallenge && lastReplay ? evaluateChallenge(selectedChallenge, lastReplay) : null,
+  )
+
+  function objectiveLabel(objective: ChallengeObjective): string {
+    if (objective.kind === 'win') return $locale === 'fr' ? 'Remporter le duel' : 'Win the duel'
+    if (objective.kind === 'accuracy')
+      return `${$locale === 'fr' ? 'Précision' : 'Accuracy'} ≥ ${Math.round(objective.minimum * 100)}%`
+    if (objective.kind === 'aura')
+      return `${$locale === 'fr' ? 'Aura restante' : 'Aura remaining'} ≥ ${objective.minimum}`
+    if (objective.kind === 'blocks')
+      return `${$locale === 'fr' ? 'Blocages réussis' : 'Successful blocks'} × ${objective.count}`
+    return `${$locale === 'fr' ? 'Utiliser' : 'Use'} ${objective.action} × ${objective.count}`
+  }
 
   function freshGame() {
     return initialCombatState(combatSetup())
@@ -602,6 +623,42 @@
     </div>
   </header>
 
+  <aside class="challenge-panel" aria-label={$locale === 'fr' ? 'Épreuves' : 'Challenges'}>
+    <header>
+      <small>{$locale === 'fr' ? 'ÉPREUVES' : 'CHALLENGES'}</small>
+      <strong
+        >{selectedChallenge
+          ? $locale === 'fr'
+            ? selectedChallenge.titleFr
+            : selectedChallenge.titleEn
+          : $locale === 'fr'
+            ? 'Combat libre'
+            : 'Free combat'}</strong
+      >
+    </header>
+    <select
+      value={selectedChallengeId ?? ''}
+      onchange={(event) => {
+        selectedChallengeId = event.currentTarget.value || null
+        restart()
+      }}
+    >
+      <option value="">{$locale === 'fr' ? 'Combat libre' : 'Free combat'}</option>
+      {#each ARENA_CHALLENGES as challenge}
+        <option value={challenge.id}
+          >{$locale === 'fr' ? challenge.titleFr : challenge.titleEn}</option
+        >
+      {/each}
+    </select>
+    {#if selectedChallenge}
+      <ol>
+        {#each selectedChallenge.objectives as objective}
+          <li>{objectiveLabel(objective)}</li>
+        {/each}
+      </ol>
+    {/if}
+  </aside>
+
   <div class="combat-keys" aria-label={$t.arena.keys.label}>
     <span class:active={commandGroup(commandAnimation) === 'strike'}
       ><kbd>{$t.arena.keys.strike}</kbd>{$t.arena.action.strike}</span
@@ -755,6 +812,20 @@
         <span>{stats.hatsu} Hatsu</span>
         {#if bestGrade}<small>BEST · {bestGrade}</small>{/if}
       </div>
+      {#if selectedChallenge && challengeResult}
+        <section class="challenge-result" class:complete={challengeResult.complete}>
+          <b>{challengeResult.grade}</b>
+          <div>
+            <strong
+              >{$locale === 'fr' ? selectedChallenge.titleFr : selectedChallenge.titleEn}</strong
+            >
+            {#each selectedChallenge.objectives as objective, index}
+              <span>{challengeResult.satisfied[index] ? '✓' : '○'} {objectiveLabel(objective)}</span
+              >
+            {/each}
+          </div>
+        </section>
+      {/if}
       {#if lastReplay}<ReplayPanel replay={lastReplay} locale={$locale} />{/if}
       <button onclick={restart}>{$t.arena.action.restart}</button>
       <div class="difficulty-picker" aria-label="Difficulty">

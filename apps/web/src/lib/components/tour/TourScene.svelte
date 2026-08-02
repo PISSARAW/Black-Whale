@@ -50,7 +50,6 @@
   import {
     BLOOM_HEART,
     BLOOM_LEAF,
-    BOOKMARK_RIBBON,
     SNAKE_BOW,
     SNAKE_HEAD,
     TENTACLES,
@@ -1727,70 +1726,6 @@
           const sphere = new THREE.Mesh(new THREE.SphereGeometry(seen.size * 2.1, 10, 8), shell)
           root.add(sphere)
           turns = legs
-        }
-
-        if (seen.kind === 'book') {
-          // Skill Hunter, open. Built flat in the XZ plane with the spine along
-          // Z at the origin, so `holdTheBook` has only to put it under the eye
-          // and turn it: everything below is in the book's own metres, and the
-          // two pages are mirror images of each other about the spine.
-          //
-          // `size` is the width of one page. The length is the page's, and the
-          // ribbon's tail hangs off the near edge of whichever page the
-          // bookmark is on — which is `stage`, and the only thing about this
-          // object that can change while it is being carried.
-          const wide = seen.size
-          const long = seen.size * 1.35
-          const board = glow(seen.colour, 1)
-          const paper = glow(0xf4eeff, 0.96)
-          const ink = glow(seen.colour, 0.5)
-
-          for (const side of [-1, 1]) {
-            const leaf = new THREE.Group()
-            // The outer edge lifts: a book held open is a shallow V, and a flat
-            // one reads as a card rather than as something being read.
-            leaf.rotation.z = side * 0.2
-            const cover = new THREE.Mesh(new THREE.BoxGeometry(wide, 0.006, long), board)
-            cover.position.set((side * wide) / 2, -0.004, 0)
-            leaf.add(cover)
-            const sheet = new THREE.Mesh(
-              new THREE.BoxGeometry(wide * 0.9, 0.002, long * 0.9),
-              paper,
-            )
-            sheet.position.set((side * wide) / 2, 0.002, 0)
-            leaf.add(sheet)
-            // Five lines of something. It is never read from this distance; it
-            // is what makes the white rectangle a page.
-            for (let i = 0; i < 5; i++) {
-              const line = new THREE.Mesh(
-                new THREE.BoxGeometry(wide * 0.6, 0.001, long * 0.035),
-                ink,
-              )
-              line.position.set((side * wide) / 2, 0.004, (i - 2) * long * 0.14)
-              leaf.add(line)
-            }
-            root.add(leaf)
-
-            // The ribbon lies on one page only, and hangs off the near edge of
-            // it. Which page is which key: the bookmarked one is the one the
-            // second hand plays, and the visitor has to be able to see it.
-            if ((side < 0 ? 0 : 1) === seen.stage) {
-              const silk = glow(BOOKMARK_RIBBON, 1)
-              const along = new THREE.Mesh(
-                new THREE.BoxGeometry(wide * 0.16, 0.002, long * 1.05),
-                silk,
-              )
-              along.position.set(side * wide * 0.58, 0.006, 0)
-              leaf.add(along)
-              const tail = new THREE.Mesh(
-                new THREE.BoxGeometry(wide * 0.16, long * 0.5, 0.002),
-                silk,
-              )
-              tail.position.set(side * wide * 0.58, -long * 0.25, -long * 0.52)
-              leaf.add(tail)
-            }
-          }
-          turns = null
         }
 
         // Melody's flute, which is a made thing rather than a shape aura took:

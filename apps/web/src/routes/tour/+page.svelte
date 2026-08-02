@@ -20,12 +20,12 @@
   import TourComfortPanel from '$lib/components/tour/TourComfortPanel.svelte'
   import TourControlsPanel from '$lib/components/tour/TourControlsPanel.svelte'
   import TourHatsuHud from '$lib/components/tour/TourHatsuHud.svelte'
-  import TourMinimap from '$lib/components/tour/TourMinimap.svelte'
   import TourPageHeader from '$lib/components/tour/TourPageHeader.svelte'
   import TourPlanDialog from '$lib/components/tour/TourPlanDialog.svelte'
   import TourProvenancePanel from '$lib/components/tour/TourProvenancePanel.svelte'
   import TourScene from '$lib/components/tour/TourScene.svelte'
   import TourSceneOverlay from '$lib/components/tour/TourSceneOverlay.svelte'
+  import TourSidebarNavigation from '$lib/components/tour/TourSidebarNavigation.svelte'
   import TourTargetIndex from '$lib/components/tour/TourTargetIndex.svelte'
   import { setAmbientMuffled } from '$lib/audio/ambient'
   import {
@@ -1293,114 +1293,30 @@
         ? `min-h-0 overflow-y-auto border-l border-[#333] p-3 ${panelOpen ? '' : 'hidden'}`
         : ''}"
     >
-      <!-- Full screen has two buttons of its own, and they ride at the head of
-           the panel rather than over the walk, where the feed and the read-outs
-           already are. Sticky, because a way out that scrolls off is not one. -->
-      {#if immersive}
-        <div class="sticky top-0 z-10 -m-3 mb-0 flex gap-1.5 bg-[#050505] p-3">
-          <button
-            type="button"
-            onclick={() => (panelOpen = false)}
-            aria-expanded="true"
-            class="rounded border border-[#333] px-2.5 py-1 text-xs text-[#FFFFF0]/70 transition-colors hover:border-[#FFD700]/50 hover:text-[#FFFFF0]"
-          >
-            {$t.tour.fullscreen.hidePanel}
-          </button>
-          <button
-            type="button"
-            onclick={toggleFullscreen}
-            class="rounded border border-[#FFD700]/50 px-2.5 py-1 text-xs text-[#FFD700] transition-colors hover:bg-[#FFD700]/10"
-          >
-            {$t.tour.fullscreen.exit}
-            <kbd class="ml-1 text-[10px] text-[#FFD700]/70">V</kbd>
-          </button>
-        </div>
-      {/if}
-
-      <nav aria-label={$t.tour.decks}>
-        <p class="mb-2 text-[10px] uppercase tracking-widest text-[#FFD700]/70">{$t.tour.decks}</p>
-        <div class="flex flex-wrap gap-1.5">
-          {#each ship.decks as tier (tier.id)}
-            <button
-              type="button"
-              onclick={() => selectTier(tier.id)}
-              aria-current={tier.id === deck?.id ? 'true' : undefined}
-              class="rounded border px-2.5 py-1 text-xs transition-colors {tier.id === deck?.id
-                ? 'border-[#FFD700] bg-[#FFD700]/15 text-[#FFD700]'
-                : 'border-[#333] text-[#FFFFF0]/70 hover:border-[#FFD700]/50 hover:text-[#FFFFF0]'}"
-            >
-              {nameOf(tier)}
-            </button>
-          {/each}
-        </div>
-      </nav>
-
-      <TourMinimap
+      <TourSidebarNavigation
+        {immersive}
+        {reveal}
+        {copied}
+        decks={ship.decks.map((tier) => ({ id: tier.id, label: nameOf(tier), active: tier.id === deck?.id }))}
         {plan}
         {position}
         {heading}
         {crossings}
-        {crossingLabel}
         currentSpaceId={currentSpace?.id ?? null}
-        label={$t.tour.minimap(nameOf(plan.tier))}
+        planLabel={$t.tour.minimap(nameOf(plan.tier))}
         nameOf={(space) => nameOf(named(space))}
-        onSelect={selectOnPlan}
+        {crossingLabel}
+        onSelectPlan={selectOnPlan}
         selectLabel={planVerb}
         aiming={Boolean(technique)}
+        onHide={() => (panelOpen = false)}
+        onFullscreen={toggleFullscreen}
+        onSelectDeck={selectTier}
+        onOpenPlan={() => (planOpen = true)}
+        onOpenFinder={() => (findOpen = true)}
+        onToggleReveal={() => (reveal = !reveal)}
+        onCopy={copyViewpoint}
       />
-
-      <!-- What the plan cannot do in 320 pixels, and where a viewpoint is copied -->
-      <div class="flex flex-wrap gap-1.5">
-        <button
-          type="button"
-          onclick={() => (planOpen = true)}
-          class="rounded border border-[#333] px-2.5 py-1 text-xs text-[#FFFFF0]/70 transition-colors hover:border-[#FFD700]/50 hover:text-[#FFFFF0]"
-        >
-          {$t.tour.plan.open} <kbd class="ml-1 text-[10px] text-[#FFD700]/70">M</kbd>
-        </button>
-        <button
-          type="button"
-          onclick={() => (findOpen = true)}
-          class="rounded border border-[#333] px-2.5 py-1 text-xs text-[#FFFFF0]/70 transition-colors hover:border-[#FFD700]/50 hover:text-[#FFFFF0]"
-        >
-          {$t.tour.find.open} <kbd class="ml-1 text-[10px] text-[#FFD700]/70">⌘K</kbd>
-        </button>
-        <button
-          type="button"
-          onclick={() => (reveal = !reveal)}
-          aria-pressed={reveal}
-          title={$t.tour.reveal.help}
-          class="rounded border px-2.5 py-1 text-xs transition-colors {reveal
-            ? 'border-[#FFD700] bg-[#FFD700]/15 text-[#FFD700]'
-            : 'border-[#333] text-[#FFFFF0]/70 hover:border-[#FFD700]/50 hover:text-[#FFFFF0]'}"
-        >
-          {$t.tour.reveal.toggle} <kbd class="ml-1 text-[10px] text-[#FFD700]/70">G</kbd>
-        </button>
-        <button
-          type="button"
-          onclick={toggleFullscreen}
-          aria-pressed={immersive}
-          class="rounded border px-2.5 py-1 text-xs transition-colors {immersive
-            ? 'border-[#FFD700] bg-[#FFD700]/15 text-[#FFD700]'
-            : 'border-[#333] text-[#FFFFF0]/70 hover:border-[#FFD700]/50 hover:text-[#FFFFF0]'}"
-        >
-          {immersive ? $t.tour.fullscreen.exit : $t.tour.fullscreen.enter}
-          <kbd class="ml-1 text-[10px] text-[#FFD700]/70">V</kbd>
-        </button>
-        <button
-          type="button"
-          onclick={copyViewpoint}
-          class="rounded border px-2.5 py-1 text-xs transition-colors {copied === 'done'
-            ? 'border-[#FFD700] text-[#FFD700]'
-            : 'border-[#333] text-[#FFFFF0]/70 hover:border-[#FFD700]/50 hover:text-[#FFFFF0]'}"
-        >
-          {copied === 'done'
-            ? $t.tour.viewpoint.copied
-            : copied === 'failed'
-              ? $t.tour.viewpoint.failed
-              : $t.tour.viewpoint.copy}
-        </button>
-      </div>
 
       {#if $activeHatsu}
         <TourHatsuHud

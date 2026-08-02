@@ -1,0 +1,776 @@
+.arena-world {
+  position: relative;
+  height: calc(100dvh - var(--header-height));
+  min-height: 42rem;
+  overflow: hidden;
+  background: #050505;
+  color: #edf5f7;
+}
+
+@scope (.arena-world) {
+  .reticle {
+    position: absolute;
+    z-index: 8;
+    top: 50%;
+    left: 50%;
+    width: 0.45rem;
+    height: 0.45rem;
+    transform: translate(-50%, -50%);
+    border: 1px solid #eef8fa;
+    border-radius: 50%;
+    box-shadow: 0 0 0.5rem #a9eaff88;
+    pointer-events: none;
+  }
+
+  .reticle.near {
+    border-color: #e5c476;
+    box-shadow:
+      0 0 0 0.3rem #e5c47618,
+      0 0 1rem #e5c476aa;
+  }
+
+  .command-fx {
+    --command-colour: #84dff4;
+    position: absolute;
+    z-index: 8;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  .command-fx .command-ring,
+  .command-fx .command-core {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    display: block;
+    border: 1px solid var(--command-colour);
+    border-radius: 50%;
+    box-shadow: 0 0 2rem color-mix(in srgb, var(--command-colour) 65%, transparent);
+  }
+
+  .command-fx .command-ring {
+    width: 5rem;
+    height: 5rem;
+    animation: arena-command-ring 620ms ease-out both;
+  }
+
+  .command-fx .command-core {
+    width: 1rem;
+    height: 1rem;
+    background: color-mix(in srgb, var(--command-colour) 18%, transparent);
+    animation: arena-command-core 520ms ease-out both;
+  }
+
+  .command-fx b {
+    position: absolute;
+    top: calc(50% + 3.4rem);
+    left: 50%;
+    color: var(--command-colour);
+    font:
+      600 0.65rem 'IBM Plex Mono',
+      monospace;
+    letter-spacing: 0.16em;
+    text-shadow: 0 0 1rem #000;
+    transform: translateX(-50%);
+    animation: arena-command-label 620ms ease-out both;
+  }
+
+  .command-fx.ko {
+    --command-colour: #f3cc68;
+  }
+
+  .command-fx.ren,
+  .command-fx.ryu-up,
+  .command-fx[class*='zone-'] {
+    --command-colour: #63d8f4;
+  }
+
+  .command-fx.zetsu,
+  .command-fx.in {
+    --command-colour: #9b91c7;
+  }
+
+  .command-fx.ken {
+    --command-colour: #8be0c0;
+    border: 0.3rem solid #8be0c055;
+    box-shadow: inset 0 0 8rem #65d4ac2b;
+    animation: arena-ken-shell 620ms ease-out both;
+  }
+
+  .command-fx.gyo .command-ring {
+    border-width: 0.2rem 1px;
+    animation-name: arena-gyo-focus;
+  }
+
+  .command-fx.in .command-ring,
+  .command-fx.zetsu .command-ring {
+    animation-name: arena-command-collapse;
+  }
+
+  .command-fx.ren .command-ring,
+  .command-fx.ko .command-ring {
+    animation-name: arena-aura-surge;
+  }
+
+  .command-fx.ryu-up .command-ring,
+  .command-fx.ryu-down .command-ring,
+  .command-fx[class*='zone-'] .command-ring {
+    border-radius: 20%;
+    animation-name: arena-ryu-flow;
+  }
+
+  .combat-hands {
+    position: absolute;
+    z-index: 8;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  .hand {
+    position: absolute;
+    bottom: 8.5rem;
+    display: block;
+    width: 4.4rem;
+    height: 5.8rem;
+    border: 1px solid #9ee9fb66;
+    border-radius: 48% 48% 38% 38%;
+    background: linear-gradient(145deg, #b8d7df 0 42%, #63828c 68%, #25383f 100%);
+    box-shadow:
+      inset -0.7rem -0.8rem 1.2rem #10252e88,
+      0 0 1.2rem #62d9f344;
+    opacity: 0.78;
+    transform-origin: 50% 100%;
+  }
+
+  .hand b {
+    position: absolute;
+    right: 12%;
+    bottom: -2.2rem;
+    left: 12%;
+    height: 3rem;
+    border: inherit;
+    border-top: 0;
+    border-radius: 0 0 1.2rem 1.2rem;
+    background: #557681;
+  }
+
+  .left-hand {
+    left: calc(50% - 10rem);
+    transform: rotate(-18deg) translateY(2.4rem);
+  }
+
+  .right-hand {
+    right: calc(50% - 10rem);
+    transform: rotate(18deg) translateY(2.4rem);
+  }
+
+  .combat-hands.striking .right-hand {
+    animation: arena-strike 280ms cubic-bezier(0.2, 0.8, 0.25, 1);
+  }
+
+  .combat-hands.guarding .left-hand {
+    animation: arena-guard-left 360ms ease-out;
+  }
+
+  .combat-hands.guarding .right-hand {
+    animation: arena-guard-right 360ms ease-out;
+  }
+
+  .combat-hands.charging .hand {
+    border-color: #f5d27d;
+    box-shadow:
+      inset -0.7rem -0.8rem 1.2rem #392b1288,
+      0 0 1rem #f3cc68,
+      0 0 3rem #f3cc6899;
+    animation: arena-charge 420ms ease-in-out infinite alternate;
+  }
+
+  .combat-hands.ren .hand {
+    box-shadow:
+      inset -0.7rem -0.8rem 1.2rem #10252e88,
+      0 0 1.2rem #62d9f3aa,
+      0 0 3.2rem #62d9f366;
+  }
+
+  .combat-hands.zetsu .hand {
+    border-color: #ffffff18;
+    box-shadow: none;
+    filter: saturate(0.25);
+    opacity: 0.35;
+  }
+
+  .impact-wash {
+    position: absolute;
+    z-index: 7;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  .impact-wash.hit {
+    background: radial-gradient(circle at center, transparent 25%, #b3222b66 100%);
+    animation: arena-hit 380ms ease-out both;
+  }
+
+  .impact-wash.blocked {
+    border: 0.35rem solid #83dff499;
+    box-shadow: inset 0 0 5rem #65cde755;
+    animation: arena-block 340ms ease-out both;
+  }
+
+  .arena-overlay-header {
+    position: absolute;
+    z-index: 7;
+    top: 1rem;
+    right: 1rem;
+    left: 4rem;
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    align-items: start;
+    pointer-events: none;
+  }
+
+  .combat-keys {
+    position: absolute;
+    z-index: 9;
+    top: 6.4rem;
+    left: 1rem;
+    display: flex;
+    max-width: calc(100% - 2rem);
+    flex-wrap: wrap;
+    gap: 0.3rem;
+    pointer-events: none;
+  }
+
+  .combat-keys span {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.3rem 0.45rem;
+    border: 1px solid #ffffff1c;
+    background: #06090bc9;
+    color: #98a6ab;
+    font-size: 0.54rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    backdrop-filter: blur(6px);
+  }
+
+  .combat-keys kbd {
+    margin: 0;
+    color: #e4c776;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  .combat-keys span.active {
+    border-color: #e5c476aa;
+    background: #e5c4761c;
+    color: #f1e2b3;
+    animation: arena-key-press 420ms ease-out both;
+  }
+
+  .combat-keys span.active kbd {
+    color: #fff5cf;
+  }
+
+  .terrain-label,
+  .match-rule {
+    padding: 0.7rem 0.85rem;
+    border: 1px solid #ffffff20;
+    background: #06090bd9;
+    backdrop-filter: blur(8px);
+  }
+
+  .terrain-label {
+    display: flex;
+    max-width: 30rem;
+    border-left: 2px solid #d9b96e;
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+
+  .terrain-label p,
+  .terrain-label small,
+  .match-rule span,
+  .match-rule small,
+  .status-card p {
+    margin: 0;
+    color: #859299;
+    font-size: 0.58rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .terrain-label strong {
+    font-size: 0.8rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .terrain-label small {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .match-rule {
+    min-width: 9rem;
+    text-align: right;
+  }
+
+  .match-rule strong {
+    display: block;
+    margin: 0.25rem 0;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 1.5rem;
+  }
+
+  .enter-prompt {
+    position: absolute;
+    z-index: 7;
+    top: 23%;
+    left: 50%;
+    margin: 0;
+    transform: translateX(-50%);
+    color: #ffffffaa;
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-align: center;
+    text-transform: uppercase;
+    pointer-events: none;
+  }
+
+  .combat-console {
+    position: absolute;
+    z-index: 9;
+    right: 1rem;
+    bottom: 2.5rem;
+    left: 1rem;
+    display: grid;
+    grid-template-columns: 1fr minmax(22rem, 1.35fr) 1fr;
+    gap: 0.6rem;
+    pointer-events: none;
+  }
+
+  .status-card,
+  .ryu-card {
+    min-height: 8rem;
+    padding: 0.85rem;
+    border: 1px solid #ffffff20;
+    background: #06090be8;
+    backdrop-filter: blur(10px);
+    pointer-events: auto;
+  }
+
+  .status-card header,
+  .ryu-card header {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .status-card header span {
+    color: #7acbe3;
+  }
+
+  .opponent-card header span {
+    color: #d48b84;
+  }
+
+  .meter,
+  .flow {
+    height: 0.35rem;
+    margin: 0.9rem 0 0.45rem;
+    overflow: hidden;
+    background: #ffffff10;
+  }
+
+  .meter i,
+  .flow i {
+    display: block;
+    height: 100%;
+    background: #65c8e7;
+    transition: width 0.15s;
+  }
+
+  .ryu-card.commanding .flow i {
+    animation: arena-flow-pulse 520ms ease-out;
+  }
+
+  .meter.enemy i {
+    background: #c66861;
+  }
+
+  .tags {
+    display: flex;
+    min-height: 1.3rem;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+    margin-top: 0.7rem;
+  }
+
+  .tags span {
+    padding: 0.2rem 0.4rem;
+    border: 1px solid #ffffff20;
+    color: #bac5c9;
+    font-size: 0.55rem;
+    text-transform: uppercase;
+  }
+
+  .flow {
+    height: 0.45rem;
+  }
+
+  .flow i {
+    background: linear-gradient(90deg, #486d80, #83dcf3);
+  }
+
+  .zones {
+    display: grid;
+    margin-top: 0.6rem;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.3rem;
+  }
+
+  .zones button,
+  .actions button {
+    border: 1px solid #ffffff18;
+    background: #ffffff05;
+    color: #9aa8ad;
+    cursor: pointer;
+  }
+
+  .zones button {
+    padding: 0.4rem 0.15rem;
+    font-size: 0.56rem;
+    text-transform: uppercase;
+  }
+
+  .zones button.active {
+    border-color: #7dd8f0;
+    background: #63cbe41c;
+    color: #eafcff;
+  }
+
+  .zones button.pulsing {
+    animation: arena-zone-pulse 520ms ease-out;
+  }
+
+  kbd {
+    display: block;
+    margin-bottom: 0.15rem;
+    color: #66818d;
+  }
+
+  .actions {
+    display: grid;
+    margin-top: 0.45rem;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.35rem;
+  }
+
+  .actions button {
+    padding: 0.55rem;
+    text-transform: uppercase;
+  }
+
+  .actions button:hover {
+    border-color: #6ecbe4;
+    color: white;
+  }
+
+  .actions .ko-action {
+    border-color: #c39d5155;
+    color: #e1c681;
+  }
+
+  .event-line {
+    position: absolute;
+    z-index: 9;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    display: flex;
+    min-height: 2.15rem;
+    justify-content: center;
+    align-items: center;
+    gap: 0.35rem;
+    background: #050708e8;
+    color: #7f8b90;
+    font-size: 0.62rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    pointer-events: none;
+  }
+
+  .event-line strong {
+    color: #e2c57f;
+  }
+
+  .verdict {
+    position: absolute;
+    z-index: 20;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #050708ed;
+    backdrop-filter: blur(10px);
+  }
+
+  .verdict h1 {
+    margin: 0.5rem;
+    font:
+      4rem 'Barlow Condensed',
+      sans-serif;
+    text-transform: uppercase;
+  }
+
+  .verdict strong {
+    font:
+      2rem 'IBM Plex Mono',
+      monospace;
+  }
+
+  .verdict button {
+    margin-top: 2rem;
+    padding: 0.8rem 1.5rem;
+    border: 1px solid #d4b76b;
+    background: transparent;
+    color: #e6d29c;
+    cursor: pointer;
+    text-transform: uppercase;
+  }
+}
+
+@keyframes arena-strike {
+  0% {
+    transform: rotate(18deg) translateY(2.4rem) scale(1);
+  }
+  42% {
+    transform: translate(-4.2rem, -14rem) rotate(-8deg) scale(1.35);
+    opacity: 1;
+  }
+  62% {
+    transform: translate(-4.2rem, -14rem) rotate(-8deg) scale(1.35);
+    opacity: 1;
+  }
+  100% {
+    transform: rotate(18deg) translateY(2.4rem) scale(1);
+  }
+}
+
+@keyframes arena-guard-left {
+  45% {
+    transform: translate(3.8rem, -7rem) rotate(34deg) scale(1.15);
+    opacity: 1;
+  }
+}
+
+@keyframes arena-guard-right {
+  45% {
+    transform: translate(-3.8rem, -7rem) rotate(-34deg) scale(1.15);
+    opacity: 1;
+  }
+}
+
+@keyframes arena-charge {
+  to {
+    filter: brightness(1.35);
+    opacity: 1;
+  }
+}
+
+@keyframes arena-hit {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes arena-block {
+  0% {
+    opacity: 1;
+    transform: scale(0.96);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.04);
+  }
+}
+
+@keyframes arena-command-ring {
+  0% {
+    opacity: 0.95;
+    transform: translate(-50%, -50%) scale(0.3);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(3.4);
+  }
+}
+
+@keyframes arena-command-core {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(2.4);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.4);
+  }
+}
+
+@keyframes arena-command-label {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, 0.7rem);
+  }
+  20%,
+  68% {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -0.5rem);
+  }
+}
+
+@keyframes arena-command-collapse {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(4);
+  }
+  35% {
+    opacity: 0.85;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.08);
+  }
+}
+
+@keyframes arena-aura-surge {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.5);
+  }
+  30% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(5.5);
+  }
+}
+
+@keyframes arena-gyo-focus {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(4) rotate(0);
+  }
+  45% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.12) rotate(90deg);
+  }
+}
+
+@keyframes arena-ken-shell {
+  0% {
+    opacity: 0;
+    transform: scale(1.08);
+  }
+  35% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes arena-ryu-flow {
+  0% {
+    opacity: 0;
+    transform: translate(-180%, -50%) rotate(45deg) scale(0.6);
+  }
+  40% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(80%, -50%) rotate(225deg) scale(2.2);
+  }
+}
+
+@keyframes arena-key-press {
+  0% {
+    transform: translateY(0);
+  }
+  25% {
+    transform: translateY(0.18rem) scale(0.96);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+@keyframes arena-flow-pulse {
+  45% {
+    filter: brightness(1.8);
+    box-shadow: 0 0 1rem #83dcf3;
+  }
+}
+
+@keyframes arena-zone-pulse {
+  35% {
+    border-color: #e5c476;
+    box-shadow: 0 0 1rem #e5c47688;
+    transform: translateY(-0.15rem);
+  }
+}
+
+@scope (.arena-world) {
+  @media (max-width: 800px) {
+    .arena-overlay-header {
+      left: 3.5rem;
+    }
+
+    .terrain-label small,
+    .terrain-label p {
+      display: none;
+    }
+
+    .combat-keys {
+      top: 5.4rem;
+    }
+
+    .combat-keys span:nth-child(n + 3) {
+      display: none;
+    }
+
+    .combat-console {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .status-card {
+      display: none;
+    }
+
+    .ryu-card {
+      grid-column: 1 / -1;
+    }
+  }
+}

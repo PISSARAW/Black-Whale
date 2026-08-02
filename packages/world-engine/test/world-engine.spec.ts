@@ -106,4 +106,46 @@ describe('world engine', () => {
     expect(branches.getState('sim-1').entities.portal).toBeDefined()
     expect(canon.entities.portal).toBeUndefined()
   })
+
+  it('rolls back the whole batch when one proposed event is invalid', () => {
+    const canon = createEmptyWorld(cursor)
+    canon.entities.owl = { id: 'owl', kind: 'NEN_ENTITY', label: 'Owl' }
+    const branches = new InMemoryBranchEngine()
+    branches.createBranch({
+      id: 'sim-atomic',
+      name: 'Atomic turn',
+      rulePolicy: 'SANDBOX',
+      baseState: canon,
+    })
+
+    expect(() =>
+      branches.append('sim-atomic', [
+        {
+          type: 'ENTITY_MOVED',
+          payload: {
+            presence: {
+              entity: { id: 'owl', kind: 'NEN_ENTITY' },
+              locationId: 'tier-1',
+              precision: 'TIER',
+              certainty: 'CONFIRMED',
+            },
+          },
+        },
+        {
+          type: 'ENTITY_MOVED',
+          payload: {
+            presence: {
+              entity: { id: 'missing', kind: 'CHARACTER' },
+              locationId: 'tier-2',
+              precision: 'TIER',
+              certainty: 'CONFIRMED',
+            },
+          },
+        },
+      ]),
+    ).toThrow(/Unknown world entity/)
+
+    expect(branches.getState('sim-atomic').presences.owl).toBeUndefined()
+    expect(branches.getEvents('sim-atomic')).toEqual([])
+  })
 })

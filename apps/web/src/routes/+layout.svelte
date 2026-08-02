@@ -34,6 +34,8 @@
     { href: '/simulations', label: $t.nav.simulations, index: '04' },
     { href: '/tour', label: $t.nav.virtualTour, index: '05' },
     { href: '/tour/sources', label: $t.nav.shipSources, index: '06' },
+    { href: '/arena', label: $t.nav.arena, index: '07' },
+    { href: '/reconstruction', label: $t.nav.reconstruction, index: '08' },
   ]
 
   // Compared against the locale-stripped path, so a section stays highlighted

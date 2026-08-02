@@ -3,6 +3,8 @@ dist/
 build/
 .svelte-kit/
 .turbo/
+.pnpm-store/
+.claude/worktrees/
 *.tsbuildinfo
 .env
 .env.local

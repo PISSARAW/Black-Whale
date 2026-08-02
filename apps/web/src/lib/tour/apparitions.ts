@@ -35,6 +35,8 @@ import type { Space, Vec2 } from './types'
 import type { CardFace } from './morena'
 
 export type ApparitionKind =
+  /** A live opponent supplied by a game played inside the walk. */
+  | 'combatant'
   /** Musse's owl, perched where Secret Window attached it. */
   | 'owl'
   /** Mizaistom's card, laid on the room: blue, yellow, then red. */
@@ -151,6 +153,8 @@ export type ApparitionKind =
    * corner of the table, once they have agreed to them.
    */
   | 'contract'
+  /** A canonical character represented in the living reconstruction. */
+  | 'avatar'
 
 /**
  * One thing Nen has left standing in the ship.
@@ -234,6 +238,7 @@ export interface Apparition {
  * two techniques rather than as one technique in two rooms.
  */
 export const OWL = 0xa8b7d8
+export const AVATAR = 0x888888
 const CARDS = [0x4d8ff0, 0xf0c94d, 0xe5484d]
 const CURSE = 0x9d65d0
 const STAR = 0xffd166

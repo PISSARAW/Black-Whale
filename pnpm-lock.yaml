@@ -123,6 +123,9 @@ importers:
       '@black-whale/timeline-engine':
         specifier: workspace:*
         version: link:../../packages/timeline-engine
+      '@black-whale/world-engine':
+        specifier: workspace:*
+        version: link:../../packages/world-engine
       '@prisma/client':
         specifier: ^5.0.0
         version: 5.22.0(prisma@5.22.0)

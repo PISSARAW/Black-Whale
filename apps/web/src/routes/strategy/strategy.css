@@ -1,0 +1,306 @@
+.strategy-shell {
+  min-height: calc(100vh - 4rem);
+  background: #080d12;
+  color: #e8eef2;
+}
+.strategy-shell .faction-picker,
+.strategy-shell .fatal {
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: clamp(4rem, 10vw, 8rem) 1.5rem;
+}
+.strategy-shell .fatal {
+  text-align: center;
+}
+.strategy-shell .fatal p,
+.strategy-shell .eyebrow,
+.strategy-shell header > p,
+.strategy-shell .map-heading p {
+  margin: 0 0 0.55rem;
+  color: #d7b86a;
+  font: 600 0.62rem/1.2 var(--font-mono);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+.strategy-shell .faction-picker h1,
+.strategy-shell .fatal h1 {
+  margin: 0;
+  font-size: clamp(2.4rem, 6vw, 5.5rem);
+  font-weight: 450;
+}
+.strategy-shell .intro,
+.strategy-shell .fatal span {
+  display: block;
+  max-width: 44rem;
+  margin: 1rem 0 2.5rem;
+  color: #8fa0aa;
+  line-height: 1.7;
+}
+.strategy-shell .faction-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  gap: 0.8rem;
+}
+.strategy-shell .faction-grid button {
+  display: grid;
+  gap: 0.7rem;
+  min-height: 8rem;
+  padding: 1.2rem;
+  border: 1px solid #273640;
+  border-radius: 0.65rem;
+  background: #101820;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: 0.18s ease;
+}
+.strategy-shell .faction-grid button:hover,
+.strategy-shell .faction-grid button:focus-visible {
+  transform: translateY(-2px);
+  border-color: #d7b86a;
+  background: #14202a;
+}
+.strategy-shell .faction-grid strong {
+  align-self: end;
+  font-size: 1.05rem;
+}
+.strategy-shell .faction-grid span,
+.strategy-shell .empty {
+  color: #71838e;
+  font-size: 0.76rem;
+}
+.strategy-shell .game-layout {
+  display: grid;
+  grid-template-columns: minmax(19rem, 25rem) minmax(0, 1fr);
+  min-height: calc(100vh - 4rem);
+}
+.strategy-shell .command-panel {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  border-right: 1px solid #22303a;
+  background: #0b1218;
+}
+.strategy-shell .command-panel header {
+  padding: 1.25rem;
+  border-bottom: 1px solid #22303a;
+}
+.strategy-shell .command-panel header h1,
+.strategy-shell .map-heading h2 {
+  margin: 0;
+  font-size: 1.45rem;
+  font-weight: 520;
+}
+.strategy-shell .command-panel header > span {
+  color: #7f929e;
+  font: 0.65rem var(--font-mono);
+}
+.strategy-shell .back {
+  margin: 0 0 1.4rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #8ea0aa;
+  cursor: pointer;
+}
+.strategy-shell .back:hover {
+  color: #fff;
+}
+.strategy-shell .panel-scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 1.25rem;
+}
+.strategy-shell .panel-scroll section {
+  padding: 1.4rem 0;
+  border-bottom: 1px solid #1c2931;
+}
+.strategy-shell .section-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+.strategy-shell .section-title h2 {
+  margin: 0;
+  color: #c7d2d8;
+  font: 650 0.65rem var(--font-mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.strategy-shell .section-title span {
+  color: #72838d;
+  font-size: 0.65rem;
+}
+.strategy-shell label {
+  display: grid;
+  gap: 0.4rem;
+  margin-top: 0.8rem;
+  color: #7f919b;
+  font: 600 0.58rem var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.strategy-shell select {
+  width: 100%;
+  min-width: 0;
+  border: 1px solid #2b3b46;
+  border-radius: 0.4rem;
+  background: #111c24;
+  padding: 0.7rem;
+  color: #e5edf1;
+  font:
+    0.78rem/1.3 system-ui,
+    sans-serif;
+}
+.strategy-shell button:focus-visible,
+.strategy-shell select:focus-visible {
+  outline: 2px solid #d7b86a;
+  outline-offset: 2px;
+}
+.strategy-shell .queue,
+.strategy-shell .end-turn {
+  width: 100%;
+  margin-top: 0.85rem;
+  border: 1px solid #b89648;
+  border-radius: 0.4rem;
+  background: #c7a653;
+  padding: 0.75rem;
+  color: #101418;
+  font-weight: 750;
+  cursor: pointer;
+}
+.strategy-shell .queue:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+.strategy-shell .orders {
+  display: grid;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.strategy-shell .orders li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.7rem;
+  border: 1px solid #263742;
+  border-radius: 0.4rem;
+  background: #111b23;
+  padding: 0.65rem;
+}
+.strategy-shell .orders li div {
+  display: grid;
+  gap: 0.18rem;
+  min-width: 0;
+}
+.strategy-shell .orders strong,
+.strategy-shell .orders span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.72rem;
+}
+.strategy-shell .orders span {
+  color: #8fa1aa;
+}
+.strategy-shell .orders button {
+  flex: 0 0 auto;
+  border: 0;
+  background: transparent;
+  color: #9baab2;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+.strategy-shell .reports {
+  max-height: 9rem;
+  overflow-y: auto;
+  border-radius: 0.35rem;
+  background: #05090c;
+  padding: 0.6rem;
+}
+.strategy-shell .reports p {
+  margin: 0.25rem 0;
+  color: #788a94;
+  font: 0.62rem/1.5 var(--font-mono);
+}
+.strategy-shell .command-panel footer {
+  padding: 1.1rem 1.25rem;
+  border-top: 1px solid #22303a;
+}
+.strategy-shell .end-turn {
+  margin: 0;
+  padding: 0.9rem;
+}
+.strategy-shell .error {
+  margin: 0 0 0.7rem;
+  color: #ef9c8d;
+  font-size: 0.72rem;
+}
+.strategy-shell .map-panel {
+  min-width: 0;
+  padding: clamp(1rem, 3vw, 2rem);
+  background: radial-gradient(circle at 60% 25%, #13212b, #070b0f 65%);
+}
+.strategy-shell .map-heading {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+.strategy-shell .tier-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: end;
+  gap: 0.35rem;
+}
+.strategy-shell .tier-tabs button {
+  border: 1px solid #31424e;
+  border-radius: 999px;
+  background: #0d171e;
+  padding: 0.35rem 0.65rem;
+  color: #8798a2;
+  font-size: 0.65rem;
+  cursor: pointer;
+}
+.strategy-shell .tier-tabs button.active {
+  border-color: #d7b86a;
+  color: #ead99f;
+}
+.strategy-shell .legend {
+  color: #70818b;
+  font-size: 0.68rem;
+}
+.strategy-shell .legend i {
+  display: inline-block;
+  width: 0.55rem;
+  height: 0.55rem;
+  margin-right: 0.3rem;
+  border: 1px solid #d7b86a;
+  border-radius: 50%;
+}
+.strategy-shell .legend i.other {
+  margin-left: 0.8rem;
+  border-color: #6b7d8c;
+}
+@media (max-width: 800px) {
+  .strategy-shell .game-layout {
+    grid-template-columns: 1fr;
+  }
+  .strategy-shell .command-panel {
+    border-right: 0;
+  }
+  .strategy-shell .panel-scroll {
+    overflow: visible;
+  }
+  .strategy-shell .map-heading {
+    align-items: start;
+    flex-direction: column;
+  }
+  .strategy-shell .tier-tabs {
+    justify-content: start;
+  }
+}

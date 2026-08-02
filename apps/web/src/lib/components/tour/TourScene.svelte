@@ -102,7 +102,7 @@
   // The flock's chirp is raised by the page itself, where the arrival happens.
   import { roarLikeADragon } from '$lib/audio/hatsuSounds'
   import { visibleSpaces } from '$lib/tour/visibility'
-  import type { Link, Space, Structure, Vec2 } from '$lib/tour/types'
+  import type { Link, Space, Structure, Vec2, WallSegment } from '$lib/tour/types'
 
   interface Props {
     ship: Ship
@@ -119,6 +119,8 @@
      * than a room: Halkenburg's arrow puts the visitor where it fell.
      */
     jumpAt?: Vec2 | null
+    /** Optional facing for a jump owned by a game rather than a doorway. */
+    jumpHeading?: number | null
     /** Whether the pointer is captured, so the page can say how to get out. */
     engaged?: boolean
     /**
@@ -236,6 +238,8 @@
      * treatment: built once, keyed on `id`, moved rather than rebuilt.
      */
     extras?: Apparition[]
+    /** Moving solids supplied by a game layered over the walk. */
+    collisionWalls?: WallSegment[]
     /**
      * What a camera the page has put in the room is looking at.
      *
@@ -408,6 +412,7 @@
     availableLink = $bindable(null),
     jumpTo = $bindable(null),
     jumpAt = $bindable(null),
+    jumpHeading = $bindable(null),
     engaged = $bindable(false),
     touch = $bindable(false),
     touchLabels,
@@ -426,6 +431,7 @@
     reveal = false,
     seated = null,
     extras = [],
+    collisionWalls = [],
     feed = null,
     record = null,
     tint = null,
@@ -1161,11 +1167,11 @@
        * `landing` is for the one arrival that is not the room's own door: a
        * tunnel puts you where its far mouth stands, not where the stairs would.
        */
-      function goTo(spaceId: string, landing?: Vec2) {
+      function goTo(spaceId: string, landing?: Vec2, facing?: number) {
         const space = ship.spaces.get(spaceId)
         if (!space) return
         const at = landing ?? spawnPoint(space, ship.plans.get(space.tierId)?.structures ?? [])
-        yaw = spawnFacing(space, at)
+        yaw = facing ?? spawnFacing(space, at)
         pitch = 0
         if (space.tierId !== currentTierId) loadTier(space.tierId, at)
         else {
@@ -1786,6 +1792,23 @@
           }
           root.add(head)
           turns = head
+        }
+
+        if (seen.kind === 'avatar') {
+          const bodyHeight = seen.size * 1.6
+          const body = new THREE.Mesh(
+            new THREE.CylinderGeometry(seen.size * 0.35, seen.size * 0.35, bodyHeight, 12),
+            skin,
+          )
+          body.position.y = bodyHeight / 2
+          root.add(body)
+
+          const headRadius = seen.size * 0.35
+          const head = new THREE.Mesh(new THREE.SphereGeometry(headRadius, 12, 12), skin)
+          head.position.y = bodyHeight + headRadius
+          root.add(head)
+
+          turns = root
         }
 
         if (seen.kind === 'card') {
@@ -3152,6 +3175,79 @@
           turns = head
         }
 
+        // ── Games played inside the walk ─────────────
+
+        if (seen.kind === 'combatant') {
+          const mode = seen.stage % 3
+          const pose = Math.floor(seen.stage / 3)
+          const figure = new THREE.Group()
+          const arms: import('three').Mesh[] = []
+          const body = glow(seen.colour, 0.96)
+          const shade = glow(0x28191b, 1)
+
+          const torso = new THREE.Mesh(
+            new THREE.BoxGeometry(seen.size * 0.52, seen.size * 0.72, seen.size * 0.3),
+            body,
+          )
+          torso.position.y = seen.size * 1.08
+          figure.add(torso)
+
+          const head = new THREE.Mesh(new THREE.SphereGeometry(seen.size * 0.2, 14, 10), body)
+          head.position.y = seen.size * 1.62
+          figure.add(head)
+
+          for (const side of [-1, 1]) {
+            const leg = new THREE.Mesh(
+              new THREE.CylinderGeometry(seen.size * 0.09, seen.size * 0.11, seen.size * 0.72, 7),
+              body,
+            )
+            leg.position.set(side * seen.size * 0.15, seen.size * 0.4, 0)
+            figure.add(leg)
+
+            const arm = new THREE.Mesh(
+              new THREE.CylinderGeometry(seen.size * 0.075, seen.size * 0.09, seen.size * 0.68, 7),
+              body,
+            )
+            arm.position.set(side * seen.size * 0.36, seen.size * 1.08, 0)
+            arm.rotation.z = side * -0.16
+            figure.add(arm)
+            arms.push(arm)
+
+            const eye = new THREE.Mesh(new THREE.SphereGeometry(seen.size * 0.027, 6, 5), shade)
+            eye.position.set(side * seen.size * 0.07, seen.size * 1.65, seen.size * 0.19)
+            figure.add(eye)
+          }
+
+          if (mode !== 2) {
+            const aura = new THREE.Mesh(
+              new THREE.SphereGeometry(seen.size * (mode === 1 ? 0.9 : 0.72), 18, 12),
+              glow(seen.colour, mode === 1 ? 0.16 : 0.07),
+            )
+            aura.scale.y = 1.35
+            aura.position.y = seen.size * 0.9
+            figure.add(aura)
+          }
+
+          if (pose === 1) {
+            for (const [index, arm] of arms.entries()) {
+              const side = index === 0 ? -1 : 1
+              arm.position.set(side * seen.size * 0.2, seen.size * 1.2, seen.size * 0.18)
+              arm.rotation.set(-0.8, 0, side * -0.7)
+            }
+          } else if (pose === 2) {
+            figure.rotation.z = -0.24
+            figure.position.x = seen.size * 0.12
+          } else if (pose === 3) {
+            figure.rotation.z = 1.3
+            figure.position.y = seen.size * 0.25
+          } else if (pose === 4 && arms[1]) {
+            arms[1].position.set(seen.size * 0.18, seen.size * 1.28, seen.size * 0.4)
+            arms[1].rotation.set(-1.35, 0, -0.08)
+          }
+          root.add(figure)
+          turns = figure
+        }
+
         // ── Morena's table ───────────────────────────
         //
         // The two things in the walk that are neither Nen nor ship: the woman
@@ -4063,6 +4159,15 @@
             // reticle leaves, because nothing was played.
             const lifted = held.pick && id === aimedExtra ? 0.012 : 0
             held.root.position.set(held.at[0], held.y + lifted, held.at[1])
+            continue
+          }
+
+          if (held.kind === 'combatant') {
+            held.root.position.set(held.at[0], held.y, held.at[1])
+            held.root.rotation.y = Math.atan2(
+              camera.position.x - held.root.position.x,
+              camera.position.z - held.root.position.z,
+            )
             continue
           }
 
@@ -5315,7 +5420,11 @@
         pointer =
           walksThroughWalls(world) || !walked
             ? target
-            : resolveMovement(pointer, target, wallsNear([...walked.walls, ...loose], pointer, 6))
+            : resolveMovement(
+                pointer,
+                target,
+                wallsNear([...walked.walls, ...loose, ...collisionWalls], pointer, 6),
+              )
         // Up and over: the rise is what makes it a swing rather than a winch.
         swingRise = Math.sin(arc.through * Math.PI) * 2.2
 
@@ -6060,7 +6169,11 @@
           const from = pointer
           pointer = walksThroughWalls(world)
             ? target
-            : resolveMovement(pointer, target, wallsNear([...walked.walls, ...loose], pointer, 6))
+            : resolveMovement(
+                pointer,
+                target,
+                wallsNear([...walked.walls, ...loose, ...collisionWalls], pointer, 6),
+              )
           // Ground actually covered, which is not what was asked for: a visitor
           // pushing into a bulkhead has stopped walking, and their gait and their
           // footsteps both have to know it.
@@ -6493,7 +6606,7 @@
 
       // The page asks for a jump by setting `jumpTo`; honour it and clear it so
       // asking twice for the same space works.
-      jump = (spaceId: string, landing?: Vec2) => goTo(spaceId, landing)
+      jump = (spaceId: string, landing?: Vec2, facing?: number) => goTo(spaceId, landing, facing)
       // Sitting down is a jump with a direction. `goTo` puts the visitor where
       // a room's door would leave them, facing the middle of it; a chair says
       // both, so neither is derived here.
@@ -6531,7 +6644,7 @@
   })
 
   /** Assigned once the scene is live; the effect below waits for it. */
-  let jump = $state<((spaceId: string, landing?: Vec2) => void) | null>(null)
+  let jump = $state<((spaceId: string, landing?: Vec2, facing?: number) => void) | null>(null)
   /** The same, for the one arrival that is a chair rather than a doorway. */
   let sitDown = $state<((at: Vec2, facing: number) => void) | null>(null)
   /** The same, for the two things the on-screen buttons stand in for. */
@@ -6553,9 +6666,10 @@
   $effect(() => {
     const requested = jumpTo
     if (!requested || !jump) return
-    jump(requested, jumpAt ?? undefined)
+    jump(requested, jumpAt ?? undefined, jumpHeading ?? undefined)
     jumpTo = null
     jumpAt = null
+    jumpHeading = null
   })
 </script>
 

@@ -70,15 +70,19 @@ export class InMemoryBranchEngine {
     proposed: ProposedWorldEvent[],
   ): { state: WorldState; events: WorldEvent[] } {
     const record = this.requireRecord(branchId)
+    // Reduce against a working copy first. A turn is one transaction from the
+    // caller's point of view: if its third event is invalid, the first two must
+    // not remain hidden in the engine while the caller receives an exception.
+    let nextState = cloneWorld(record.state)
     const applied: WorldEvent[] = []
     for (const event of proposed) {
-      const ordinal = record.state.cursor.ordinal + 1
+      const ordinal = nextState.cursor.ordinal + 1
       const cursor: StoryCursor = {
-        ...record.state.cursor,
+        ...nextState.cursor,
         branchId,
         ordinal,
         eventId: `${branchId}:${ordinal}`,
-        localSequence: record.state.cursor.localSequence + 1,
+        localSequence: nextState.cursor.localSequence + 1,
       }
       const worldEvent = {
         ...event,
@@ -87,11 +91,12 @@ export class InMemoryBranchEngine {
         branchId,
         cursor,
       } as WorldEvent
-      record.state = reduceWorld(record.state, worldEvent)
-      record.events.push(worldEvent)
+      nextState = reduceWorld(nextState, worldEvent)
       applied.push(worldEvent)
     }
-    return { state: cloneWorld(record.state), events: cloneValue(applied) }
+    record.state = nextState
+    record.events.push(...applied)
+    return { state: cloneWorld(nextState), events: cloneValue(applied) }
   }
 
   /**

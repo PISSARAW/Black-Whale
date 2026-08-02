@@ -3337,5 +3337,22 @@ export const en = {
         unknown: 'ignores',
       } as Record<string, string>,
     },
+
+    investigation: {
+      hatsu: {
+        noGrip: 'No grip',
+        cannotEstablishInfo: (name: string) => `${name} cannot establish any information on this target.`,
+        usageDenied: 'Usage denied',
+        impossibleCost: 'Cost unaffordable',
+        corroboratedSignal: 'Corroborated signal',
+        conclusiveAnalysis: 'Conclusive analysis',
+        limitedResult: 'Limited result',
+        requiresLifeHours: (hours: number) => `This analysis requires ${hours} life hours available.`,
+        ethicalOrProceduralConditions: 'Ethical or procedural conditions forbid this usage.',
+        confirmsLimits: 'The ability confirms its own limits without producing new evidence.',
+        reinforcesInfo: 'The ability reinforces existing information without turning it into absolute truth.',
+        revealsCompatibleElements: 'The ability reveals the elements compatible with its conditions and cost.',
+      },
+    },
   },
 }

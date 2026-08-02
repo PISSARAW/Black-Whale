@@ -490,6 +490,7 @@
         availableEvidenceIds: discoveredIds,
         remainingLifeHours: $emperorTimeLifeHours,
       },
+      $locale,
     )
     const alreadyUsed = hatsuUseKeys.includes(result.key)
     hatsuResult = result

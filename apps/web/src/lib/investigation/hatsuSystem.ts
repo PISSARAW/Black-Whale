@@ -1,6 +1,8 @@
 import type { HatsuProfile } from '$lib/nen/hatsuRegistry'
 import type { InvestigationHatsuRule } from './definition'
 import type { InvestigationHatsuUse } from './hatsu'
+import { messagesFor } from '$lib/i18n'
+import type { Locale } from '$lib/i18n/config'
 
 export interface HatsuInvestigationContext {
   availableEvidenceIds: Iterable<string>
@@ -18,19 +20,21 @@ export function resolveInvestigationHatsu(
   subjectId: string,
   rules: InvestigationHatsuRule[],
   context: HatsuInvestigationContext,
+  locale: Locale = 'en',
 ): HatsuResolution {
   const rule = rules.find(
     (candidate) =>
       candidate.kinds.includes(profile.kind) && candidate.subjectIds.includes(subjectId),
   )
   const key = `${profile.id}:${subjectId}`
+  const msg = messagesFor(locale).investigation.hatsu
   if (!rule) {
     return {
       key,
       ruleId: null,
       usable: false,
-      title: 'Aucune prise',
-      finding: `${profile.name} ne peut établir aucune information sur cette cible.`,
+      title: msg.noGrip,
+      finding: msg.cannotEstablishInfo(profile.name),
       evidenceIds: [],
       missingEvidenceIds: [],
       lifeHours: 0,
@@ -51,21 +55,21 @@ export function resolveInvestigationHatsu(
         : 'limited'
   const title =
     rule.outcome === 'forbidden'
-      ? 'Usage refusé'
+      ? msg.usageDenied
       : !affordable
-        ? 'Coût impossible'
+        ? msg.impossibleCost
         : rule.outcome === 'corroboration'
-          ? 'Signal corroboré'
+          ? msg.corroboratedSignal
           : rule.outcome === 'evidence'
-            ? 'Analyse concluante'
-            : 'Résultat limité'
+            ? msg.conclusiveAnalysis
+            : msg.limitedResult
 
   return {
     key,
     ruleId: rule.id,
     usable,
     title,
-    finding: findingFor(rule, affordable),
+    finding: findingFor(rule, affordable, msg),
     evidenceIds: usable ? rule.evidenceIds : [],
     missingEvidenceIds,
     lifeHours: usable ? rule.lifeHours : 0,
@@ -73,13 +77,13 @@ export function resolveInvestigationHatsu(
   }
 }
 
-function findingFor(rule: InvestigationHatsuRule, affordable: boolean) {
-  if (!affordable) return `Cette analyse exige ${rule.lifeHours} heures de vie disponibles.`
+function findingFor(rule: InvestigationHatsuRule, affordable: boolean, msg: any) {
+  if (!affordable) return msg.requiresLifeHours(rule.lifeHours)
   if (rule.outcome === 'forbidden')
-    return 'Les conditions éthiques ou procédurales interdisent cet usage.'
+    return msg.ethicalOrProceduralConditions
   if (rule.outcome === 'limited')
-    return 'La capacité confirme ses propres limites sans produire de nouvelle preuve.'
+    return msg.confirmsLimits
   if (rule.outcome === 'corroboration')
-    return 'La capacité renforce une information existante sans la transformer en vérité absolue.'
-  return 'La capacité révèle les éléments compatibles avec ses conditions et son coût.'
+    return msg.reinforcesInfo
+  return msg.revealsCompatibleElements
 }

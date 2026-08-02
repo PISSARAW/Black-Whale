@@ -3160,6 +3160,23 @@ export const fr: Messages = {
         contradicted: 'doute de',
         unknown: 'ignore',
       },
+
+      investigation: {
+        hatsu: {
+          noGrip: 'Aucune prise',
+          cannotEstablishInfo: (name: string) => `${name} ne peut établir aucune information sur cette cible.`,
+          usageDenied: 'Usage refusé',
+          impossibleCost: 'Coût impossible',
+          corroboratedSignal: 'Signal corroboré',
+          conclusiveAnalysis: 'Analyse concluante',
+          limitedResult: 'Résultat limité',
+          requiresLifeHours: (hours: number) => `Cette analyse exige ${hours} heures de vie disponibles.`,
+          ethicalOrProceduralConditions: 'Les conditions éthiques ou procédurales interdisent cet usage.',
+          confirmsLimits: 'La capacité confirme ses propres limites sans produire de nouvelle preuve.',
+          reinforcesInfo: 'La capacité renforce une information existante sans la transformer en vérité absolue.',
+          revealsCompatibleElements: 'La capacité révèle les éléments compatibles avec ses conditions et son coût.',
+        },
+      },
     },
   },
 }

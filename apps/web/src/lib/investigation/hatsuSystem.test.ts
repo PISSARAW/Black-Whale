@@ -23,7 +23,7 @@ describe('investigation V3 systemic Hatsu', () => {
     })
     expect(result.usable).toBe(false)
     expect(result.evidenceIds).toEqual([])
-    expect(result.title).toBe('Coût impossible')
+    expect(result.title).toBe('Cost unaffordable')
   })
 
   it('returns an explicit limitation for an unsupported target', () => {

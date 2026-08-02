@@ -57,10 +57,7 @@
     groupSpaceTargets,
   } from '$lib/tour/pageTargets'
   import { tourShortcut } from '$lib/tour/pageKeyboard'
-  import {
-    stepBeast, stepCoin, stepFish, stepOwl, stepOwlAge, stepPolarity, stepScout,
-    type WorldStep,
-  } from '$lib/tour/pageWorldSteps'
+  import { TourWorldTicker } from '$lib/tour/pageWorldTicker'
   import { activateTourWorld, cycleTourMode, releaseTourWorld } from '$lib/tour/pageWorldCommands'
   import {
     AIR_KEYS,
@@ -92,7 +89,6 @@
     TWO_HANDED_KINDS,
     worksInTour,
     worksOnTheBody,
-    wormExit,
     type TourReport,
     type TourWorld,
   } from '$lib/tour/hatsu'
@@ -359,6 +355,12 @@
     if (seen) flash = { ...seen, seq: ++flashes }
     playTourReportSound(shown)
   }
+  const ticker = new TourWorldTicker({
+    read: () => ({ world, ship, position }),
+    updateWorld: (next) => (world = next),
+    updateReport: (next) => (report = next),
+    show,
+  })
   let aimedAt = $state<Space | null>(null)
   let aimedSolidAt = $state<Structure | null>(null)
 
@@ -688,14 +690,6 @@
     }
   }
 
-  function applyWorldStep(step: WorldStep | null, audible = false) {
-    if (!step) return
-    world = step.world
-    if (!step.report) return
-    report = step.report
-    if (audible) show(step.report)
-  }
-
   /**
    * One mouthful, in every room the fish are loose in.
    *
@@ -703,9 +697,7 @@
    * already emptied gives them nothing and says nothing, which is why the
    * read-out goes quiet rather than repeating itself.
    */
-  function fishEat() {
-    applyWorldStep(stepFish({ world, ship }))
-  }
+  const fishEat = ticker.fishEat
 
   /**
    * The sun and the moon closing on each other, on the walk's own clock.
@@ -724,9 +716,7 @@
    * what the read-out shows: a beast that has finished its room goes quiet
    * rather than repeating itself.
    */
-  function beastStep() {
-    applyWorldStep(stepBeast({ world, ship, position }), true)
-  }
+  const beastStep = ticker.beastStep
 
   /**
    * The coin off Zhang Lei's wheel, taken by having walked into it.
@@ -734,13 +724,9 @@
    * The scene says the visitor is standing where it hangs; what that is worth,
    * and what the wheel puts out next, is the pure layer's.
    */
-  function takeCoin() {
-    applyWorldStep(stepCoin(world), true)
-  }
+  const takeCoin = ticker.takeCoin
 
-  function polarityWalk(seconds: number, delta: number) {
-    applyWorldStep(stepPolarity({ world, ship, seconds, delta }), true)
-  }
+  const polarityWalk = ticker.polarityWalk
 
   /**
    * One hop of the free bird, on the same clock the fish feed on.
@@ -750,9 +736,7 @@
    * one hoot every few seconds for as long as the technique is up would be the
    * walk talking over itself.
    */
-  function owlFlight() {
-    applyWorldStep(stepOwl({ world, ship }))
-  }
+  const owlFlight = ticker.owlFlight
 
   /**
    * One room further for the insect, while it is scouting.
@@ -762,9 +746,7 @@
    * what makes the feed in the corner readable as a route rather than as a
    * picture that keeps changing.
    */
-  function scoutFlight() {
-    applyWorldStep(stepScout({ world, ship }))
-  }
+  const scoutFlight = ticker.scoutFlight
 
   /**
    * One second of the twenty a bird holds for.
@@ -774,18 +756,10 @@
    * bird goes and hands its ten seconds over — and the scene plays them back
    * in the corner off the same disappearance.
    */
-  function owlSecond() {
-    applyWorldStep(stepOwlAge(world), true)
-  }
+  const owlSecond = ticker.owlSecond
 
   /** Fugetsu's tunnel, asked on the same arrival the doors are asked on. */
-  function crossWorm(spaceId: string | null, arrivedFrom: string | null) {
-    const crossing = wormExit(world, spaceId, arrivedFrom)
-    if (!crossing) return null
-    world = crossing.world
-    report = crossing.report
-    return crossing.to
-  }
+  const crossWorm = ticker.crossWorm
 
   /** With a technique up, the index stops being a way to travel and becomes the reach. */
   const targets = $derived(

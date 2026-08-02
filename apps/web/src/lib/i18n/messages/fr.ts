@@ -157,18 +157,60 @@ export const fr: Messages = {
     title: 'Parcourir le Black Whale',
     modes: {
       seoTitle: 'Modes de la visite — Choisir son expérience du Black Whale',
-      seoDescription: 'Choisissez entre la visite libre, la table de Morena, la reconstruction vivante, l’infiltration, la traque, l’arène et l’investigation à bord du Black Whale.',
+      seoDescription:
+        'Choisissez entre la visite libre, la table de Morena, la reconstruction vivante, l’infiltration, la traque, l’arène, l’investigation et la stratégie à bord du Black Whale.',
       eyebrow: 'Expériences du Black Whale',
       title: 'Choisissez votre mode',
-      intro: 'Toutes les expériences construites autour de la visite sont réunies ici. Explorez librement, suivez le canon dans le temps ou entrez dans un scénario jouable.',
+      intro:
+        'Toutes les expériences construites autour de la visite sont réunies ici. Explorez librement, suivez le canon dans le temps ou entrez dans un scénario jouable.',
       open: 'Entrer dans le mode',
-      free: { title: 'Visite libre', tag: 'Exploration', description: 'Parcourez le vaisseau reconstruit à votre rythme, de salle en salle et de pont en pont.' },
-      morena: { title: 'Morena', tag: 'Jeu social', description: 'Asseyez-vous à la table de Morena Prudo et jouez la partie qui décide qui peut rejoindre Heil-Ly.' },
-      reconstruction: { title: 'Reconstruction vivante', tag: 'Canon', description: 'Choisissez un moment du voyage et observez les présences connues se déplacer dans le vaisseau reconstruit.' },
-      infiltration: { title: 'Infiltration', tag: 'Discrétion', description: 'Traversez un territoire hostile, maîtrisez votre détection et atteignez l’objectif sans vous faire prendre.' },
-      hunt: { title: 'Traque', tag: 'Poursuite', description: 'Pistez une cible dans le vaisseau, gérez votre aura et survivez à la confrontation.' },
-      arena: { title: 'Arène', tag: 'Combat', description: 'Disputez un duel de Nen déterministe dans une salle attestée du Black Whale.' },
-      investigation: { title: 'Investigation', tag: 'Déduction', description: 'Inspectez une scène de crime, confrontez les preuves et rendez un verdict argumenté.' },
+      free: {
+        title: 'Visite libre',
+        tag: 'Exploration',
+        description:
+          'Parcourez le vaisseau reconstruit à votre rythme, de salle en salle et de pont en pont.',
+      },
+      morena: {
+        title: 'Morena',
+        tag: 'Jeu social',
+        description:
+          'Asseyez-vous à la table de Morena Prudo et jouez la partie qui décide qui peut rejoindre Heil-Ly.',
+      },
+      reconstruction: {
+        title: 'Reconstruction vivante',
+        tag: 'Canon',
+        description:
+          'Choisissez un moment du voyage et observez les présences connues se déplacer dans le vaisseau reconstruit.',
+      },
+      infiltration: {
+        title: 'Infiltration',
+        tag: 'Discrétion',
+        description:
+          'Traversez un territoire hostile, maîtrisez votre détection et atteignez l’objectif sans vous faire prendre.',
+      },
+      hunt: {
+        title: 'Traque',
+        tag: 'Poursuite',
+        description:
+          'Pistez une cible dans le vaisseau, gérez votre aura et survivez à la confrontation.',
+      },
+      arena: {
+        title: 'Arène',
+        tag: 'Combat',
+        description: 'Disputez un duel de Nen déterministe dans une salle attestée du Black Whale.',
+      },
+      investigation: {
+        title: 'Investigation',
+        tag: 'Déduction',
+        description:
+          'Inspectez une scène de crime, confrontez les preuves et rendez un verdict argumenté.',
+      },
+      strategy: {
+        title: 'Strategy',
+        tag: 'Tactique',
+        description:
+          'Commandez une faction de la guerre de succession à travers huit tours de renseignement, de diplomatie et de conflits.',
+      },
     },
     intro:
       "Le vaisseau comme architecture, pas comme décor : ni passagers, ni chapitre, ni chronologie. Chaque surface dit d'où elle vient — une planche, le plan des ponts, ou la reconstruction elle-même.",

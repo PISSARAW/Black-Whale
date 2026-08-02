@@ -5,12 +5,43 @@
 
   const modes = $derived([
     { key: 'free', href: '/tour', number: '01', accent: '#FFD700', copy: $t.tour.modes.free },
-    { key: 'morena', href: '/tour/morena', number: '02', accent: '#d94f68', copy: $t.tour.modes.morena },
-    { key: 'reconstruction', href: '/reconstruction', number: '03', accent: '#79b8ff', copy: $t.tour.modes.reconstruction },
-    { key: 'infiltration', href: '/infiltration', number: '04', accent: '#6ee7b7', copy: $t.tour.modes.infiltration },
+    {
+      key: 'morena',
+      href: '/tour/morena',
+      number: '02',
+      accent: '#d94f68',
+      copy: $t.tour.modes.morena,
+    },
+    {
+      key: 'reconstruction',
+      href: '/reconstruction',
+      number: '03',
+      accent: '#79b8ff',
+      copy: $t.tour.modes.reconstruction,
+    },
+    {
+      key: 'infiltration',
+      href: '/infiltration',
+      number: '04',
+      accent: '#6ee7b7',
+      copy: $t.tour.modes.infiltration,
+    },
     { key: 'hunt', href: '/hunt', number: '05', accent: '#fb923c', copy: $t.tour.modes.hunt },
     { key: 'arena', href: '/arena', number: '06', accent: '#ef4444', copy: $t.tour.modes.arena },
-    { key: 'investigation', href: '/investigation', number: '07', accent: '#c4b5fd', copy: $t.tour.modes.investigation },
+    {
+      key: 'investigation',
+      href: '/investigation',
+      number: '07',
+      accent: '#c4b5fd',
+      copy: $t.tour.modes.investigation,
+    },
+    {
+      key: 'strategy',
+      href: '/strategy',
+      number: '08',
+      accent: '#facc15',
+      copy: $t.tour.modes.strategy,
+    },
   ])
 </script>
 
@@ -49,24 +80,151 @@
 </main>
 
 <style>
-  .modes-shell { position: relative; isolation: isolate; min-height: 75vh; overflow: hidden; padding: clamp(2.5rem, 7vw, 6rem) max(1rem, calc((100vw - 1400px) / 2)); background: #07090a; color: #fffff0; }
-  .modes-glow { position: absolute; z-index: -1; top: -20rem; left: 35%; width: 45rem; height: 45rem; border-radius: 999px; background: radial-gradient(circle, rgba(255,215,0,.09), transparent 68%); }
-  header { max-width: 52rem; margin-bottom: clamp(2.5rem, 5vw, 4.5rem); }
-  .breadcrumb { display: flex; gap: .65rem; margin-bottom: 2rem; color: rgba(255,255,240,.45); font-size: .75rem; text-transform: uppercase; letter-spacing: .14em; }
-  .breadcrumb a:hover { color: #ffd700; }
-  .eyebrow { color: #ffd700; font-size: .72rem; font-weight: 700; letter-spacing: .22em; text-transform: uppercase; }
-  h1 { margin-top: .8rem; font-size: clamp(2.6rem, 7vw, 5.5rem); font-weight: 800; line-height: .92; letter-spacing: -.05em; }
-  .intro { max-width: 45rem; margin-top: 1.5rem; color: rgba(255,255,240,.65); font-size: clamp(1rem, 2vw, 1.2rem); line-height: 1.7; }
-  .mode-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 1rem; }
-  .mode-card { --accent: #ffd700; position: relative; display: flex; min-height: 19rem; grid-column: span 4; flex-direction: column; overflow: hidden; border: 1px solid rgba(255,255,240,.12); border-radius: .4rem; padding: 1.6rem; background: linear-gradient(145deg, rgba(255,255,255,.055), rgba(255,255,255,.015)); transition: transform .25s ease, border-color .25s ease, background .25s ease; }
-  .mode-card::before { position: absolute; top: 0; right: 0; left: 0; height: 2px; background: var(--accent); content: ''; transform: scaleX(.22); transform-origin: left; transition: transform .3s ease; }
-  .mode-card:hover, .mode-card:focus-visible { transform: translateY(-4px); border-color: var(--accent); background: rgba(255,255,255,.065); outline: none; }
-  .mode-card:hover::before, .mode-card:focus-visible::before { transform: scaleX(1); }
-  .number { align-self: flex-end; color: rgba(255,255,240,.25); font: 600 .75rem/1 monospace; }
-  .tag { width: fit-content; margin-top: 2rem; color: var(--accent); font-size: .68rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; }
-  h2 { margin-top: .65rem; font-size: 1.55rem; font-weight: 750; letter-spacing: -.025em; }
-  .mode-card p { margin-top: .8rem; color: rgba(255,255,240,.58); font-size: .9rem; line-height: 1.6; }
-  .action { margin-top: auto; padding-top: 1.5rem; color: var(--accent); font-size: .76rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; }
-  @media (max-width: 900px) { .mode-card { grid-column: span 6; } }
-  @media (max-width: 580px) { .mode-card { min-height: 16rem; grid-column: 1 / -1; } }
+  .modes-shell {
+    position: relative;
+    isolation: isolate;
+    min-height: 75vh;
+    overflow: hidden;
+    padding: clamp(2.5rem, 7vw, 6rem) max(1rem, calc((100vw - 1400px) / 2));
+    background: #07090a;
+    color: #fffff0;
+  }
+  .modes-glow {
+    position: absolute;
+    z-index: -1;
+    top: -20rem;
+    left: 35%;
+    width: 45rem;
+    height: 45rem;
+    border-radius: 999px;
+    background: radial-gradient(circle, rgba(255, 215, 0, 0.09), transparent 68%);
+  }
+  header {
+    max-width: 52rem;
+    margin-bottom: clamp(2.5rem, 5vw, 4.5rem);
+  }
+  .breadcrumb {
+    display: flex;
+    gap: 0.65rem;
+    margin-bottom: 2rem;
+    color: rgba(255, 255, 240, 0.45);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+  }
+  .breadcrumb a:hover {
+    color: #ffd700;
+  }
+  .eyebrow {
+    color: #ffd700;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+  }
+  h1 {
+    margin-top: 0.8rem;
+    font-size: clamp(2.6rem, 7vw, 5.5rem);
+    font-weight: 800;
+    line-height: 0.92;
+    letter-spacing: -0.05em;
+  }
+  .intro {
+    max-width: 45rem;
+    margin-top: 1.5rem;
+    color: rgba(255, 255, 240, 0.65);
+    font-size: clamp(1rem, 2vw, 1.2rem);
+    line-height: 1.7;
+  }
+  .mode-grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 1rem;
+  }
+  .mode-card {
+    --accent: #ffd700;
+    position: relative;
+    display: flex;
+    min-height: 19rem;
+    grid-column: span 4;
+    flex-direction: column;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 240, 0.12);
+    border-radius: 0.4rem;
+    padding: 1.6rem;
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.015));
+    transition:
+      transform 0.25s ease,
+      border-color 0.25s ease,
+      background 0.25s ease;
+  }
+  .mode-card::before {
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    height: 2px;
+    background: var(--accent);
+    content: '';
+    transform: scaleX(0.22);
+    transform-origin: left;
+    transition: transform 0.3s ease;
+  }
+  .mode-card:hover,
+  .mode-card:focus-visible {
+    transform: translateY(-4px);
+    border-color: var(--accent);
+    background: rgba(255, 255, 255, 0.065);
+    outline: none;
+  }
+  .mode-card:hover::before,
+  .mode-card:focus-visible::before {
+    transform: scaleX(1);
+  }
+  .number {
+    align-self: flex-end;
+    color: rgba(255, 255, 240, 0.25);
+    font: 600 0.75rem/1 monospace;
+  }
+  .tag {
+    width: fit-content;
+    margin-top: 2rem;
+    color: var(--accent);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+  h2 {
+    margin-top: 0.65rem;
+    font-size: 1.55rem;
+    font-weight: 750;
+    letter-spacing: -0.025em;
+  }
+  .mode-card p {
+    margin-top: 0.8rem;
+    color: rgba(255, 255, 240, 0.58);
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+  .action {
+    margin-top: auto;
+    padding-top: 1.5rem;
+    color: var(--accent);
+    font-size: 0.76rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+  @media (max-width: 900px) {
+    .mode-card {
+      grid-column: span 6;
+    }
+  }
+  @media (max-width: 580px) {
+    .mode-card {
+      min-height: 16rem;
+      grid-column: 1 / -1;
+    }
+  }
 </style>

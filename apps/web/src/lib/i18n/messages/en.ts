@@ -157,18 +157,59 @@ export const en = {
     title: 'Walk the Black Whale',
     modes: {
       seoTitle: 'Tour Modes — Choose your Black Whale experience',
-      seoDescription: 'Choose between the free tour, Morena’s table, living reconstruction, infiltration, hunt, arena and investigation modes aboard the Black Whale.',
+      seoDescription:
+        'Choose between the free tour, Morena’s table, living reconstruction, infiltration, hunt, arena, investigation and strategy modes aboard the Black Whale.',
       eyebrow: 'Black Whale experiences',
       title: 'Choose your mode',
-      intro: 'Every experience built on the Tour is gathered here. Walk freely, follow the canon through time, or enter a playable scenario.',
+      intro:
+        'Every experience built on the Tour is gathered here. Walk freely, follow the canon through time, or enter a playable scenario.',
       open: 'Enter mode',
-      free: { title: 'Free Tour', tag: 'Explore', description: 'Walk the reconstructed ship at your own pace, from room to room and deck to deck.' },
-      morena: { title: 'Morena', tag: 'Social game', description: 'Sit at Morena Prudo’s table and play the card game that decides who may join Heil-Ly.' },
-      reconstruction: { title: 'Living Reconstruction', tag: 'Canon', description: 'Choose a moment in the voyage and see known presences move through the reconstructed ship.' },
-      infiltration: { title: 'Infiltration', tag: 'Stealth', description: 'Slip through hostile territory, manage detection and reach the objective without being caught.' },
-      hunt: { title: 'Hunt', tag: 'Pursuit', description: 'Track a target through the ship, spend aura carefully and survive the confrontation.' },
-      arena: { title: 'Arena', tag: 'Combat', description: 'Fight a deterministic Nen duel inside an attested room of the Black Whale.' },
-      investigation: { title: 'Investigation', tag: 'Deduction', description: 'Inspect a crime scene, confront the evidence and deliver a reasoned verdict.' },
+      free: {
+        title: 'Free Tour',
+        tag: 'Explore',
+        description:
+          'Walk the reconstructed ship at your own pace, from room to room and deck to deck.',
+      },
+      morena: {
+        title: 'Morena',
+        tag: 'Social game',
+        description:
+          'Sit at Morena Prudo’s table and play the card game that decides who may join Heil-Ly.',
+      },
+      reconstruction: {
+        title: 'Living Reconstruction',
+        tag: 'Canon',
+        description:
+          'Choose a moment in the voyage and see known presences move through the reconstructed ship.',
+      },
+      infiltration: {
+        title: 'Infiltration',
+        tag: 'Stealth',
+        description:
+          'Slip through hostile territory, manage detection and reach the objective without being caught.',
+      },
+      hunt: {
+        title: 'Hunt',
+        tag: 'Pursuit',
+        description:
+          'Track a target through the ship, spend aura carefully and survive the confrontation.',
+      },
+      arena: {
+        title: 'Arena',
+        tag: 'Combat',
+        description: 'Fight a deterministic Nen duel inside an attested room of the Black Whale.',
+      },
+      investigation: {
+        title: 'Investigation',
+        tag: 'Deduction',
+        description: 'Inspect a crime scene, confront the evidence and deliver a reasoned verdict.',
+      },
+      strategy: {
+        title: 'Strategy',
+        tag: 'Tactics',
+        description:
+          'Command a Succession War faction through eight turns of intelligence, diplomacy and conflict.',
+      },
     },
     intro:
       'The ship as architecture, not as a stage: no passengers, no chapter, no timeline. Every surface says where it comes from — a panel, the deck plan, or the reconstruction itself.',

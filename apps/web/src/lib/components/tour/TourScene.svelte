@@ -3939,6 +3939,12 @@
             on: !effectiveNen.on,
             distribution: { hands: 0.45, torso: 0.35, feet: 0.2 },
           })
+        else if (event.code === 'KeyO')
+          useNen({
+            type: 'ON',
+            on: !effectiveNen.on,
+            distribution: { hands: 0.45, torso: 0.35, feet: 0.2 },
+          })
         else if (event.code === 'KeyR') useNen({ type: 'REN' })
         else if (event.code === 'KeyX') useNen({ type: 'ZETSU' })
         else if (event.code === 'KeyG') toggled('GYO', !effectiveNen.gyo)

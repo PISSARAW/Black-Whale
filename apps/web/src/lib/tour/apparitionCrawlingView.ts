@@ -94,12 +94,91 @@ function centipede(seen: Apparition, { THREE, glow, root }: BasicApparitionConte
   }
   root.add(jaw)
   return jaw
+}
+
+function mouths(seen: Apparition, { THREE, glow, root }: BasicApparitionContext): Object3D {
+  const flesh = glow(seen.colour, 0.84)
+  const core = new THREE.Mesh(new THREE.SphereGeometry(seen.size, 16, 12), flesh)
+  core.scale.set(1.08, 0.96, 1)
+  root.add(core)
+  // Overlapping lobes break the perfect sphere into the soft, potato-
+  // like head shown in the source; none is an eye or a separate limb.
+  const bulges = [
+    [-0.7, 0.42, 0.1, 0.48],
+    [0.62, 0.48, -0.16, 0.44],
+    [-0.55, -0.48, -0.28, 0.42],
+    [0.58, -0.4, 0.22, 0.5],
+    [0.08, 0.72, -0.25, 0.38],
+  ] as const
+  for (const [x, y, z, radius] of bulges) {
+    const bulge = new THREE.Mesh(new THREE.SphereGeometry(seen.size * radius, 10, 7), flesh)
+    bulge.position.set(x * seen.size, y * seen.size, z * seen.size)
+    root.add(bulge)
+  }
+  const lips = new THREE.Group()
+  lips.name = 'mouths'
+  const mouths = [
+    [-0.62, 0.2, 0.78, 0.34, 1],
+    [0.42, 0.42, 0.84, 0.3, 1],
+    [0.48, -0.55, 0.66, 0.38, 1],
+    [-0.14, -0.7, 0.7, 0.34, 1],
+    [0.02, 0.78, 0.62, 0.24, 1],
+    [-0.35, -0.2, 0.94, 0.15, 0],
+    [0.08, 0.05, 1.02, 0.13, 0],
+    [0.55, -0.05, 0.86, 0.14, 0],
+    [-0.48, 0.58, 0.7, 0.12, 0],
+  ] as const
+  for (let i = 0; i < mouths.length; i++) {
+    const [x, y, z, radius, toothed] = mouths[i]
+    const mouth = new THREE.Group()
+    mouth.position.set(x * seen.size, y * seen.size, z * seen.size)
+    mouth.rotation.z = ((i % 3) - 1) * 0.22
+    const dark = new THREE.Mesh(
+      new THREE.CircleGeometry(seen.size * radius, 16),
+      glow(0x1a1420, 1),
+    )
+    dark.scale.set(1, toothed ? 0.62 : 0.34, 1)
+    mouth.add(dark)
+    for (const lip of [-1, 1]) {
+      const line = new THREE.Mesh(
+        new THREE.CapsuleGeometry(
+          seen.size * radius * 0.16,
+          seen.size * radius * 1.55,
+          3,
+          7,
+        ),
+        glow(seen.colour, 1),
+      )
+      line.rotation.z = Math.PI / 2
+      line.position.set(0, lip * seen.size * radius * (toothed ? 0.45 : 0.24), 0.012)
+      mouth.add(line)
+    }
+    if (toothed) {
+      for (let toothIndex = 0; toothIndex < 8; toothIndex++) {
+        const upper = toothIndex < 4
+        const tooth = new THREE.Mesh(
+          new THREE.ConeGeometry(seen.size * radius * 0.09, seen.size * radius * 0.3, 3),
+          glow(0xfff8e9, 1),
+        )
+        tooth.position.set(
+          ((toothIndex % 4) - 1.5) * seen.size * radius * 0.4,
+          (upper ? 1 : -1) * seen.size * radius * 0.25,
+          0.025,
+        )
+        tooth.rotation.z = upper ? Math.PI : 0
+        mouth.add(tooth)
+      }
+    }
+    lips.add(mouth)
+  }
+  root.add(lips)
+  return lips
 
 }
 
 const BUILDERS: Partial<
   Record<Apparition['kind'], (seen: Apparition, context: BasicApparitionContext) => Object3D>
-> = { centipede }
+> = { centipede, mouths }
 
 export function buildCrawlingApparition(
   seen: Apparition,

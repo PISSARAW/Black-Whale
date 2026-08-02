@@ -4,6 +4,7 @@
   import { theShip } from '$lib/tour/blueprint'
   import TourScene from '$lib/components/tour/TourScene.svelte'
   import TourModeFullscreen from '$lib/components/tour/TourModeFullscreen.svelte'
+  import InvestigationHatsuEffect from './InvestigationHatsuEffect.svelte'
   import { locale, t } from '$lib/i18n'
   import {
     evaluateHypothesis,
@@ -32,6 +33,7 @@
   import { buildFinalReport } from '$lib/investigation/report'
   import { assessHypothesesFromEvidence } from '$lib/investigation/v3Runtime'
   import { subjectSceneAppearance } from '$lib/investigation/appearance'
+  import { playInvestigationHatsuSound } from '$lib/investigation/hatsuPresentation'
   import {
     activeHatsu,
     closeHatsuGate,
@@ -43,6 +45,7 @@
   import type { Apparition } from '$lib/tour/apparitions'
   import type { Space, Vec2 } from '$lib/tour/types'
   import { ModeNenState } from '$lib/nen/modeState.svelte'
+  import type { HatsuInteractionKind } from '$lib/nen/hatsuRegistry'
 
   let { caseId }: { caseId: string } = $props()
 
@@ -176,6 +179,9 @@
   let log = $state<InvestigationLogEntry[]>([])
   let hatsuUseKeys = $state<string[]>([])
   let hatsuResult = $state<InvestigationHatsuUse | null>(null)
+  let hatsuEffectKind = $state<HatsuInteractionKind | null>(null)
+  let hatsuEffectSequence = $state(0)
+  let hatsuEffectTarget = $state('')
   let askedQuestionKeys = $state<string[]>([])
   let activeResponse = $state<string | null>(null)
   let interviewStance = $state<InterviewStance>('neutral')
@@ -487,6 +493,10 @@
     )
     const alreadyUsed = hatsuUseKeys.includes(result.key)
     hatsuResult = result
+    hatsuEffectKind = $activeHatsu.kind
+    hatsuEffectTarget = activeSubject.name
+    hatsuEffectSequence += 1
+    playInvestigationHatsuSound($activeHatsu.kind, result)
     if (!alreadyUsed) {
       hatsuUseKeys = [...hatsuUseKeys, result.key]
       if (result.lifeHours > 0) spendEmperorTimeHours(result.lifeHours)
@@ -619,6 +629,12 @@
     soundLabels={{ silence: $t.tour.sound.silence, restore: $t.tour.sound.restore }}
     loadingLabel={$t.tour.loading}
     unsupportedLabel={$t.tour.unsupported}
+  />
+  <InvestigationHatsuEffect
+    kind={hatsuEffectKind}
+    sequence={hatsuEffectSequence}
+    target={hatsuEffectTarget}
+    forbidden={hatsuResult?.tone === 'forbidden'}
   />
 
   <div

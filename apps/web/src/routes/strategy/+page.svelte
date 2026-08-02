@@ -12,8 +12,7 @@
   import { hatsuById } from '$lib/nen/hatsuRegistry'
   import { isPlayableScenarioFaction, SCENARIO_MAX_TURNS } from '$lib/strategy/scenario'
   import {
-    STRATEGY_SAVE_KEY,
-    LEGACY_STRATEGY_SAVE_KEY,
+    STRATEGY_SAVE_KEY, LEGACY_STRATEGY_SAVE_KEY,
     createStrategySave,
     decodeStrategySave,
     encodeStrategySave,
@@ -96,7 +95,6 @@
     }
     return result
   })
-
   let mapPresences = $derived.by(() => {
     const state = simStore.currentState
     if (!state) return [] as Presence[]

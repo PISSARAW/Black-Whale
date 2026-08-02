@@ -13256,10 +13256,10 @@
     "firstAppearanceChapterId": "ch-377",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": 4,
-      "room": "Xi-Yu Family Office",
+      "tier": 3,
+      "room": "Unknown",
       "status": "actif",
-      "role": "sous-chef mafia"
+      "role": "Mafioso"
     },
     "biography": [
       "Hinrigh serves as Xi-Yu underboss and searches Tiers 4 and 3 for Hisoka while monitoring Morena's revolt. When three Heil-Ly members ambush him, he turns handcuffs into pigeons, traps Padaille and kills him.",
@@ -13675,6 +13675,10 @@
       {
         "location": "tier-3-general-passenger-area",
         "fromChapterId": "ch-394"
+      },
+      {
+        "location": "tier-3-general-passenger-area",
+        "fromChapterId": "ch-406"
       }
     ],
     "positionProvenance": "inferred",
@@ -14967,9 +14971,9 @@
     "canonStatus": "canon",
     "shipLocation": {
       "tier": 3,
-      "room": "Central Hospital",
+      "room": "Unknown",
       "status": "actif",
-      "role": "head of the Brigade / search for a capacity and regalia"
+      "role": "Phantom Troupe"
     },
     "mapLocationCorrection": true,
     "biography": [
@@ -15412,6 +15416,10 @@
         "location": "tier-4-general-passenger-area",
         "fromChapterId": "ch-380",
         "note": "Accompagné de Shizuku et Bonolenov"
+      },
+      {
+        "location": "tier-3-general-passenger-area",
+        "fromChapterId": "ch-406"
       }
     ]
   },
@@ -15424,10 +15432,10 @@
     "firstAppearanceChapterId": "ch-71",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": 5,
-      "room": "Tier 5 Standard Cabins",
+      "tier": 4,
+      "room": "Recycling & Sewage Facilities",
       "status": "actif",
-      "role": "combattant / premiere ligne"
+      "role": "Phantom Troupe"
     },
     "biography": [
       "Nobunaga boards the Black Whale with the Phantom Troupe to rob Kakin and hunt Hisoka. On Tier 5 he, Phinks, Feitan and Franklin overpower Buor Family thugs and collect information about the mafia routes.",
@@ -15852,6 +15860,10 @@
         "location": "tier-3-heil-ly-hideout",
         "fromChapterId": "ch-398",
         "note": "Infiltration de la base Heil-Ly"
+      },
+      {
+        "location": "tier-4-waste-facility",
+        "fromChapterId": "ch-406"
       }
     ],
     "positionProvenance": "inferred",
@@ -24921,9 +24933,9 @@
     "canonStatus": "canon",
     "shipLocation": {
       "tier": 2,
-      "room": "Heil-Ly Secret Hideout",
+      "room": "Heil-Ly Hideout",
       "status": "actif",
-      "role": "captive recruited / Specialist level 0"
+      "role": "Heil-Ly"
     },
     "suspectedAllegiance": "Heil-Ly — Contagion, niveau 0",
     "mapLocationCorrection": true,
@@ -25343,6 +25355,10 @@
       {
         "location": "tier-2-heilly-secret-hideout",
         "fromChapterId": "ch-405"
+      },
+      {
+        "location": "tier-2-heilly-hq",
+        "fromChapterId": "ch-407"
       }
     ]
   },
@@ -33600,9 +33616,9 @@
     "canonStatus": "canon",
     "shipLocation": {
       "tier": 2,
-      "room": "Justice Bureau Office",
+      "room": "Justice Bureau",
       "status": "actif",
-      "role": "officier de justice"
+      "role": "Ministry of Justice"
     },
     "mapPresenceFromChapterId": "ch-372",
     "biography": [
@@ -33992,6 +34008,14 @@
       {
         "location": "tier-2-justice-bureau",
         "fromChapterId": "ch-358"
+      },
+      {
+        "location": "tier-1-vvip-area",
+        "fromChapterId": "ch-402"
+      },
+      {
+        "location": "tier-2-justice-bureau",
+        "fromChapterId": "ch-402"
       }
     ]
   },
@@ -39276,9 +39300,9 @@
     "canonStatus": "canon",
     "shipLocation": {
       "tier": 1,
-      "room": "Casino VIP",
+      "room": "VIP Casino",
       "status": "actif",
-      "role": "scout transformed into Owl / search for Hisoka"
+      "role": "Phantom Troupe"
     },
     "biography": [
       "Bonolenov boards the Black Whale with the Phantom Troupe and begins the search for Hisoka in Tier 5. On the fourth day, the Spiders gather in the central mess hall. After the group leaves, Bonolenov and Shizuku ask to team up with Chrollo, while accepting that their leader claims the right to kill Hisoka.",
@@ -39688,6 +39712,10 @@
         "location": "tier-4-general-passenger-area",
         "fromChapterId": "ch-380",
         "note": "Forme un trio avec Chrollo et Shizuku"
+      },
+      {
+        "location": "tier-1-vip-casino",
+        "fromChapterId": "ch-405"
       }
     ]
   },
@@ -40550,7 +40578,7 @@
       "tier": 4,
       "room": "Recycling & Sewage Facilities",
       "status": "actif",
-      "role": "fighter / assault against the Heil-Ly"
+      "role": "Phantom Troupe"
     },
     "biography": [
       "On the second day of the trip, Phinks, Feitan, Franklin and Nobunaga subdue three men from the Buor family at Tier 5. During the interrogation, Phinks understands that a middleman collects the profits between the leaders and their men. He then orders the prisoners to take down the cabin numbers of all passengers taller than 1.88 meters in order to find Hisoka.",
@@ -40978,6 +41006,10 @@
         "location": "tier-3-heil-ly-hideout",
         "fromChapterId": "ch-398",
         "note": "Infiltration de la base Heil-Ly"
+      },
+      {
+        "location": "tier-4-waste-facility",
+        "fromChapterId": "ch-406"
       }
     ]
   },
@@ -42966,9 +42998,9 @@
     "canonStatus": "canon",
     "shipLocation": {
       "tier": 1,
-      "room": "Secteur résidentiel royal",
-      "status": "blessé et détenu",
-      "role": "soldat privé de Benjamin"
+      "room": "1007",
+      "status": "actif",
+      "role": "Guard"
     },
     "mapPresenceFromChapterId": "ch-363",
     "mapPresenceUntilChapterId": null,
@@ -42984,6 +43016,10 @@
       {
         "location": "tier-1-royal-residential-sector-room-1001",
         "fromChapterId": "ch-358"
+      },
+      {
+        "location": "tier-1-1007",
+        "fromChapterId": "ch-414"
       }
     ]
   },
@@ -43268,13 +43304,13 @@
     "firstAppearanceChapterId": "ch-390",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
+      "tier": 3,
+      "room": "Unknown",
       "status": "mort",
       "role": "Mafioso"
     },
     "mapPresenceFromChapterId": "ch-390",
-    "mapPresenceUntilChapterId": "ch-393",
+    "mapPresenceUntilChapterId": "ch-406",
     "mangaAppearances": [
       {
         "chapter": 393,
@@ -43296,6 +43332,16 @@
         "location": "tier-3-theater",
         "fromChapterId": "ch-392",
         "note": "Rencontre Hisoka, mise KO"
+      },
+      {
+        "location": "tier-1-vip-casino",
+        "fromChapterId": "ch-405",
+        "note": "Killed by Bonolenov"
+      },
+      {
+        "location": "tier-3-general-passenger-area",
+        "fromChapterId": "ch-406",
+        "note": "Dead body discovered"
       }
     ]
   },
@@ -44157,9 +44203,9 @@
     "canonStatus": "canon",
     "shipLocation": {
       "tier": 1,
-      "room": "1002",
+      "room": "1014",
       "status": "actif",
-      "role": "Captain of the Private Guards of Prince Camilla"
+      "role": "Guard"
     },
     "mapPresenceFromChapterId": "ch-363",
     "mapPresenceUntilChapterId": null,
@@ -44168,6 +44214,10 @@
       {
         "location": "tier-1-royal-residential-sector-room-1002",
         "fromChapterId": "ch-358"
+      },
+      {
+        "location": "tier-1-1014",
+        "fromChapterId": "ch-411"
       }
     ]
   },
@@ -44920,9 +44970,9 @@
     "firstAppearanceChapterId": "ch-390",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
+      "tier": 3,
+      "room": "Unknown",
+      "status": "actif",
       "role": "Mafioso"
     },
     "mapPresenceFromChapterId": "ch-390",
@@ -44942,6 +44992,10 @@
         "location": "tier-3-theater",
         "fromChapterId": "ch-392",
         "note": "Rencontre Hisoka"
+      },
+      {
+        "location": "tier-3-general-passenger-area",
+        "fromChapterId": "ch-406"
       }
     ]
   }

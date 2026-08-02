@@ -45,7 +45,7 @@
   import type { Apparition } from '$lib/tour/apparitions'
   import type { Space, Vec2, WallSegment } from '$lib/tour/types'
   import type { Structure } from '$lib/tour/types'
-  import { centroid, structureFootprint } from '$lib/tour/geometry'
+  import { structureFootprint } from '$lib/tour/geometry'
   import { breadcrumbSchema } from '$lib/seo/schema'
   import { link, locale, t } from '$lib/i18n'
   import './arena.css'
@@ -127,8 +127,6 @@
       stage: actorStage(),
       human: {
         role: 'fighter',
-        identity: `arena:${opponentDoctrine}`,
-        alert: threatened,
         pose:
           game.opponent.condition === 'down' || game.opponent.condition === 'ko'
             ? 'fallen'
@@ -162,6 +160,14 @@
     if (objective.kind === 'blocks')
       return `${$locale === 'fr' ? 'Blocages réussis' : 'Successful blocks'} × ${objective.count}`
     return `${$locale === 'fr' ? 'Utiliser' : 'Use'} ${objective.action} × ${objective.count}`
+  }
+
+  function polygonCentre(points: Vec2[]): Vec2 {
+    const sum = points.reduce<Vec2>(
+      (total, point) => [total[0] + point[0], total[1] + point[1]],
+      [0, 0],
+    )
+    return [sum[0] / points.length, sum[1] / points.length]
   }
 
   function freshGame() {
@@ -242,7 +248,7 @@
         hatsuId: carriedHatsu?.id,
         targetAt:
           carriedHatsu?.id === 'bungee-gum' && aimedSolidAt
-            ? centroid(structureFootprint(aimedSolidAt))
+            ? polygonCentre(structureFootprint(aimedSolidAt))
             : undefined,
       },
       'hatsu',

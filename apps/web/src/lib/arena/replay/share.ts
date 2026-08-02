@@ -1,5 +1,6 @@
 import { parseReplay, serializeReplay } from './codec'
 import type { ArenaReplay } from './types'
+import { buildCombatTerrain } from '../terrain'
 
 export const MAX_REPLAY_URL_BYTES = 100_000
 
@@ -14,11 +15,20 @@ export function replayShareUrl(replay: ArenaReplay, currentUrl: string): string 
 
 export function replayFromUrl(value: string): ArenaReplay | null {
   const encoded = new URL(value).hash.match(/^#replay=([A-Za-z0-9_-]+)$/)?.[1]
-  return encoded ? decodeReplay(encoded) : null
+  if (!encoded) return null
+  try {
+    return decodeReplay(encoded)
+  } catch {
+    return null
+  }
 }
 
 function encodeReplay(replay: ArenaReplay): string {
-  const bytes = new TextEncoder().encode(serializeReplay(replay))
+  const compact = serializeReplay({
+    ...replay,
+    setup: { ...replay.setup, terrain: { id: replay.setup.terrain.id } },
+  } as ArenaReplay)
+  const bytes = new TextEncoder().encode(compact)
   let binary = ''
   for (const byte of bytes) binary += String.fromCharCode(byte)
   return btoa(binary).replaceAll('+', '-').replaceAll('/', '_').replace(/=+$/, '')
@@ -30,7 +40,10 @@ function decodeReplay(encoded: string): ArenaReplay {
     .replaceAll('_', '/')
     .padEnd(Math.ceil(encoded.length / 4) * 4, '=')
   const binary = atob(padded)
-  return parseReplay(
+  const compact = JSON.parse(
     new TextDecoder().decode(Uint8Array.from(binary, (character) => character.charCodeAt(0))),
-  )
+  ) as ArenaReplay
+  const terrain = buildCombatTerrain(compact.setup.terrain.id)
+  compact.setup.terrain = { id: terrain.id, footprint: terrain.footprint, walls: terrain.walls }
+  return parseReplay(serializeReplay(compact))
 }

@@ -40,7 +40,6 @@ function validCommand(command: ArenaReplay['commands'][number]): boolean {
     command.tick >= 0 &&
     command.action !== null &&
     typeof command.action === 'object' &&
-    typeof command.action.type === 'string' &&
-    command.action.type !== 'TICK'
+    typeof command.action.type === 'string'
   )
 }

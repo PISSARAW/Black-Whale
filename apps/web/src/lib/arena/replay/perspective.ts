@@ -36,15 +36,23 @@ export function projectFrame(
     }
   }
   const observer = state[perspective]
-  const targetSide = perspective === 'player' ? 'opponent' : 'player'
-  return {
+  const projected = {
     at: state.clock,
     perspective,
-    [perspective]: omniscient(observer),
-    [targetSide]: subjective(observer, state[targetSide]),
     outcome: state.outcome,
     event: state.lastEvent,
-  } as ArenaFrameProjection
+  }
+  return perspective === 'player'
+    ? {
+        ...projected,
+        player: omniscient(observer),
+        opponent: subjective(observer, state.opponent),
+      }
+    : {
+        ...projected,
+        player: subjective(observer, state.player),
+        opponent: omniscient(observer),
+      }
 }
 
 function omniscient(fighter: FighterState): FighterProjection {

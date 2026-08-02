@@ -190,6 +190,7 @@ export function buildHumanFigure({ THREE, glow, seen }: HumanFigureBuild): Human
       geometry(THREE, 'eye', () => new THREE.PlaneGeometry(0.055, 0.014)),
       ink,
     )
+    eye.name = side < 0 ? 'face-eye-left' : 'face-eye-right'
     eye.position.set(side * 0.062, 0.018, 0.181)
     eye.scale.y = profile.expression === 'tired' ? 0.65 : profile.expression === 'anxious' ? 1.4 : 1
     eye.rotation.z =
@@ -203,6 +204,7 @@ export function buildHumanFigure({ THREE, glow, seen }: HumanFigureBuild): Human
       geometry(THREE, 'brow', () => new THREE.PlaneGeometry(0.064, 0.009)),
       ink,
     )
+    brow.name = side < 0 ? 'face-brow-left' : 'face-brow-right'
     brow.position.set(side * 0.064, 0.06, 0.176)
     brow.scale.y = profile.expression === 'severe' ? 1.8 : 1
     brow.rotation.z =
@@ -232,6 +234,7 @@ export function buildHumanFigure({ THREE, glow, seen }: HumanFigureBuild): Human
     ink,
   )
   mouth.position.set(0, -0.09, 0.178)
+  mouth.name = 'face-mouth'
   head.add(mouth)
   const jawShade = new THREE.Mesh(
     geometry(THREE, 'face:jaw-shadow', () => new THREE.PlaneGeometry(0.14, 0.045)),
@@ -383,6 +386,7 @@ export function buildHumanFigure({ THREE, glow, seen }: HumanFigureBuild): Human
       ink,
       accent,
       dark,
+      skin,
     })
   }
   if (profile.clothing === 'gown') {
@@ -396,6 +400,7 @@ export function buildHumanFigure({ THREE, glow, seen }: HumanFigureBuild): Human
       ink,
       accent,
       dark,
+      skin,
     })
   }
 

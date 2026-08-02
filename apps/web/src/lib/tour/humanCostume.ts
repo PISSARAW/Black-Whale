@@ -57,6 +57,7 @@ interface CostumeBuild {
   ink: Material
   accent: Material
   dark: Material
+  skin?: Material
 }
 
 export function addSilentMajorityCostume(build: CostumeBuild): void {
@@ -178,5 +179,25 @@ export function addMorenaDetails(build: MorenaBuild): void {
     scar.position.set(0.065 + i * 0.006, 0.14 - i * 0.043, 0.188)
     scar.rotation.z = 0.14
     head.add(scar)
+  }
+
+  for (const side of [-1, 1]) {
+    const corner = new THREE.Mesh(
+      geometry(THREE, 'morena:mouth-corner', () => new THREE.PlaneGeometry(0.045, 0.009)),
+      ink,
+    )
+    corner.name = side < 0 ? 'morena-mouth-left' : 'morena-mouth-right'
+    corner.position.set(side * 0.065, -0.09, 0.183)
+    corner.rotation.z = side * 0.18
+    head.add(corner)
+
+    const blankEye = new THREE.Mesh(
+      geometry(THREE, 'morena:blank-eye', () => new THREE.PlaneGeometry(0.075, 0.023)),
+      build.skin ?? build.accent,
+    )
+    blankEye.name = side < 0 ? 'morena-blank-left' : 'morena-blank-right'
+    blankEye.position.set(side * 0.062, 0.018, 0.19)
+    blankEye.visible = false
+    head.add(blankEye)
   }
 }

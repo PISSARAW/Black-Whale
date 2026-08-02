@@ -5,7 +5,7 @@
    * All this component does is drive a camera: the geometry comes from
    * `$lib/tour/mesh`, the collisions from `$lib/tour/navigation`, and the ship
    * itself from `data/ship/blueprint.json`. Nothing here knows about the
-   * timeline, and nothing here touches the `/ship` map — the two views share the
+   * timeline, and nothing here touches the `/ship` map ? the two views share the
    * catalogue and nothing else.
    *
    * three.js is pulled in on mount rather than imported at the top of the
@@ -164,7 +164,7 @@
     /**
      * What the button that silences the walk is called, in both states.
      *
-     * The walk makes a noise — its own footsteps, and the room answering them —
+     * The walk makes a noise ? its own footsteps, and the room answering them ?
      * so it has to be possible to stop it without leaving the page.
      */
     soundLabels: { silence: string; restore: string }
@@ -197,7 +197,7 @@
      * A blast and a punch leave nothing standing, so they are not in the world:
      * the page hands one over, the walk plays it out and forgets it. The
      * sequence number is what makes casting the same blast at the same room
-     * twice two events rather than one — the value is otherwise identical, and
+     * twice two events rather than one ? the value is otherwise identical, and
      * an unchanged prop is not a second cast.
      */
     flash?: (TourFlash & { seq: number }) | null
@@ -209,7 +209,7 @@
      * Black Voice is the reason this exists: the needle goes into a thing or
      * into the visitor, and the reticle is nearly always on something, so
      * aiming at nothing is not a gesture a walk can reliably make. R is that
-     * gesture — cast with an empty reticle, whatever is actually in front.
+     * gesture ? cast with an empty reticle, whatever is actually in front.
      */
     selfCastable?: boolean
     /**
@@ -217,7 +217,7 @@
      *
      * Double Face is what this is for: the book is open on one page and a
      * ribbon is holding a second, and both are live. F plays the open page and
-     * R plays the bookmarked one — so R stops meaning *cast on me* and starts
+     * R plays the bookmarked one ? so R stops meaning *cast on me* and starts
      * meaning *the other page*, which is the only thing the scene has to know
      * about it. Named, because a phone has no F and no R and the two buttons it
      * gets instead have to say which is which. `null` under everything else.
@@ -229,7 +229,7 @@
      *
      * Enchanting Music is the whole of it: the flute is materialized for as
      * long as the aura is up, and which piece is played is chosen at the moment
-     * of playing — F for the lively one, R for the soft one, C for the sharp
+     * of playing ? F for the lively one, R for the soft one, C for the sharp
      * one. So R stops meaning *cast on me* and C, which the walk has never used
      * for anything, becomes a third cast. Named, for the same reason the two
      * hands are: a phone has no keys, and the buttons it gets instead have to
@@ -241,15 +241,15 @@
      *
      * The Sun and Moon is the whole of it: one hand puts the sun on and the
      * other the moon, and which of the two a thing wears decides what it does
-     * when it meets another. So R stops meaning *cast on me* here as well — it
+     * when it meets another. So R stops meaning *cast on me* here as well ? it
      * is the second hand. Unnamed, unlike the book's two pages and the flute's
      * three airs, because the buttons a phone gets instead are the marks.
      */
     twoHanded?: boolean
     /**
      * Paint the deck in what it is worth as evidence rather than in what its
-     * rooms are for: the reveal. It changes nothing about the ship — the same
-     * walls, the same solids — only what the surfaces say about themselves.
+     * rooms are for: the reveal. It changes nothing about the ship ? the same
+     * walls, the same solids ? only what the surfaces say about themselves.
      */
     reveal?: boolean
     /**
@@ -257,7 +257,7 @@
      *
      * The walk is a walk, and one thing aboard is not: Morena's game is played
      * sitting at a table opposite the person dealing it. Sat down, the legs
-     * stop answering — no keys, no stick, no stairs — and the head keeps
+     * stop answering ? no keys, no stick, no stairs ? and the head keeps
      * looking around, which is the whole of what a seated body still does. The
      * eye drops to `eye` metres above the deck, because a chair is the reason
      * the table is at chin height.
@@ -269,8 +269,8 @@
      * Things to draw that the ship is not holding.
      *
      * `apparitionsOn` answers what Nen has left standing, which is the only
-     * thing the walk itself puts in a room. A page that owns some other state —
-     * a hand of cards on a table — hands its own list in here and gets the same
+     * thing the walk itself puts in a room. A page that owns some other state ?
+     * a hand of cards on a table ? hands its own list in here and gets the same
      * treatment: built once, keyed on `id`, moved rather than rebuilt.
      */
     extras?: Apparition[]
@@ -280,7 +280,7 @@
      * What a camera the page has put in the room is looking at.
      *
      * The walk already insets a second picture in the corner whenever Little
-     * Eye has been sent somewhere — that inset *is* the technique, and an
+     * Eye has been sent somewhere ? that inset *is* the technique, and an
      * insect flying a room nobody can see through is a fly. The table plays the
      * same technique from a hand's width above the cards, so it hands its own
      * camera in here and gets the same corner: where the eye is, what it is
@@ -290,8 +290,8 @@
     /**
      * And what a camera the page has already *taken* is showing.
      *
-     * The same shape and the opposite tense. `feed` is live — the picture goes
-     * when the thing making it goes — and this is a recording, so it takes the
+     * The same shape and the opposite tense. `feed` is live ? the picture goes
+     * when the thing making it goes ? and this is a recording, so it takes the
      * corner the walk already keeps for playback: the bird's ten seconds are
      * inset bottom right, and so is this. Whatever is in it was filmed by
      * something that is not filming any more.
@@ -300,9 +300,9 @@
     /**
      * A colour the whole room is standing in, or `null` for the ship's own.
      *
-     * Not a light and not an overlay: the ambient *is* the exposure here — the
+     * Not a light and not an overlay: the ambient *is* the exposure here ? the
      * image is baked into the vertices and one flat white constant is what
-     * shows it — so colouring that constant colours everything the room is
+     * shows it ? so colouring that constant colours everything the room is
      * made of at once, which is the only honest way to say "the room is not
      * itself at the moment". The air takes it too, or the far end of a space
      * would stay the ship's own near-black and give the lie away.
@@ -315,7 +315,7 @@
      * The `id` of the extra down the reticle, mirrored out.
      *
      * The room and the solid are found by walking the floor plan, which is what
-     * a wall is: a line on a deck. A card is not on the deck plan at all — it is
+     * a wall is: a line on a deck. A card is not on the deck plan at all ? it is
      * eleven centimetres of table, and the only honest way to ask which one a
      * seated visitor is looking at is to trace the ray at it. So this is the one
      * thing in the walk that is picked rather than computed, and only the things
@@ -334,7 +334,7 @@
      * Whether a click with the pointer held is a cast.
      *
      * It is, on the walk: the reticle is where the aura goes and the mouse is
-     * the only thing pointing anywhere. At Morena's table it is not — the mouse
+     * the only thing pointing anywhere. At Morena's table it is not ? the mouse
      * is how a card is chosen, and a technique spent by a stray click on the
      * wood would be the game playing itself. F still casts in both places.
      */
@@ -347,8 +347,8 @@
      * Fired when the visitor casts on what they are facing.
      *
      * `hand` is which key cast: F is the first, R the second. What that means
-     * is the page's business — a second page of the book, or the second of a
-     * technique's two hands — and the scene only reports which was pressed.
+     * is the page's business ? a second page of the book, or the second of a
+     * technique's two hands ? and the scene only reports which was pressed.
      */
     onCast?: (
       spaceId: string | null,
@@ -361,7 +361,7 @@
      * Asked every couple of seconds while Chrollo's fish are loose.
      *
      * They eat what they touch, and what they touch is a matter of how long
-     * they have been swimming — which is the scene's clock and nobody else's.
+     * they have been swimming ? which is the scene's clock and nobody else's.
      * What they take is still the pure layer's decision.
      */
     onFish?: () => void
@@ -387,8 +387,8 @@
      *
      * The marks close on each other and go off when they touch, which is the
      * one thing in the walk that happens between casts rather than on one. The
-     * clock is the same one the drift is drawn off — so what is seen touching
-     * is what detonates — and `delta` is how much of a second went by, because
+     * clock is the same one the drift is drawn off ? so what is seen touching
+     * is what detonates ? and `delta` is how much of a second went by, because
      * the tick is not owed by a frame that dropped.
      */
     onPolarity?: (seconds: number, delta: number) => void
@@ -403,9 +403,9 @@
     /**
      * Asked every couple of seconds while a Guardian Spirit Beast is working.
      *
-     * Three of them keep going after the cast — Tubeppa's melts what is in the
-     * room, Luzurus's reels in what it caught and eats it, Salé-salé's fills
-     * the room a part at a time — and all three are the same kind of event as
+     * Three of them keep going after the cast ? Tubeppa's melts what is in the
+     * room, Luzurus's reels in what it caught and eats it, Sal?-sal?'s fills
+     * the room a part at a time ? and all three are the same kind of event as
      * the fish feeding: something that happens on the clock rather than on a
      * key. What one step of each takes is the pure layer's decision.
      */
@@ -422,14 +422,14 @@
      * Whether the technique in hand is one that throws a thread.
      *
      * Machi's stitches mend, and the walk has nothing torn in it that a visitor
-     * can reach on foot — so what the thread is for here is reaching it: it
+     * can reach on foot ? so what the thread is for here is reaching it: it
      * takes hold of whatever is down the reticle and pulls. The cast itself
      * goes through `onCast` exactly as every other one does; this only says
      * that the walk should also swing.
      */
     swings?: boolean
     /**
-     * Asked, on the same arrival, where Fugetsu's tunnel comes out — or `null`
+     * Asked, on the same arrival, where Fugetsu's tunnel comes out ? or `null`
      * when the visitor did not step into either of its ends.
      */
     onWorm?: (spaceId: string | null, arrivedFrom: string | null) => string | null
@@ -517,7 +517,7 @@
    * How far the camera sees, in metres.
    *
    * The fog closes to the clear colour at 110 m and the two are the same
-   * near-black, so anything past that is already invisible — the far plane was
+   * near-black, so anything past that is already invisible ? the far plane was
    * at 600 m, which is four times the length of the ship and cost a depth range
    * spent on geometry nobody can see. Twenty metres of margin over the fog so
    * the plane itself never becomes a visible edge.
@@ -577,8 +577,8 @@
 
   onMount(() => {
     // A phone reports a coarse pointer and no hover, so the controls are there
-    // before the first tap. Anything the query is unsure about — a hybrid
-    // laptop, an old browser — waits for a finger to land instead.
+    // before the first tap. Anything the query is unsure about ? a hybrid
+    // laptop, an old browser ? waits for a finger to land instead.
     touch = window.matchMedia?.('(hover: none) and (pointer: coarse)').matches ?? false
   })
 
@@ -616,11 +616,11 @@
         return
       }
 
-      // A 3× display was rendering nine times the pixels of a 1× one for a walk
+      // A 3? display was rendering nine times the pixels of a 1? one for a walk
       // whose surfaces are flat colour. Capping at 1.5 costs about a percent of
       // apparent sharpness and 44% of the fragments.
       // The deck colours are true albedos, and the emissive surfaces are written
-      // above white on purpose — a fitting at 2,4 and a window pane at 1,28. A
+      // above white on purpose ? a fitting at 2,4 and a window pane at 1,28. A
       // linear render clips all of that to flat white and leaves the far end of a
       // corridor as mud. The filmic curve is what holds both ends: it rolls a lamp
       // off instead of clipping it and keeps shadowed steel above black. It is also
@@ -642,10 +642,10 @@
        * linear ramp begins. One setting used to stand for a twelve-square-metre
        * office entrance and a six-thousand-square-metre promenade; now the
        * density comes off the longest chord of the footprint the visitor is
-       * standing in, and eases over `SETTLE` when they cross a threshold — see
+       * standing in, and eases over `SETTLE` when they cross a threshold ? see
        * `$lib/tour/atmosphere`. Crossing a doorway is felt: the air opens.
        */
-      // The field of view is the visitor's to set: 72° is a wide-angle lens, and
+      // The field of view is the visitor's to set: 72? is a wide-angle lens, and
       // on a laptop held at arm's length it is a fisheye that makes people ill.
       /**
        * The ship lights itself now, and the visitor is no longer a lamp.
@@ -653,21 +653,21 @@
        * Everything that used to carry the image is gone: an ambient, a hemisphere,
        * a raking directional, and an eighteen-unit point light screwed to the
        * visitor's head. That headlamp was the reason five decks looked like one
-       * deck — every room was lit by the same source, which was you, so no room was
+       * deck ? every room was lit by the same source, which was you, so no room was
        * lit by itself. What replaces it is what `mesh.ts` has been baking into the
        * vertices all along: the fittings of each room, its corners and creases, and
        * the two windows.
        *
        * The single `AmbientLight` that remains is not lighting, it is exposure. A
-       * Lambert surface shows `albedo × (ambient + Σ lights)`, so one flat white
-       * ambient shows the baked colour multiplied by a constant and nothing else —
+       * Lambert surface shows `albedo ? (ambient + ? lights)`, so one flat white
+       * ambient shows the baked colour multiplied by a constant and nothing else ?
        * the bake *is* the image, and the two lights below add to it rather than
        * standing in for it. The material stays Lambert rather than becoming Basic
        * for exactly that reason: Basic takes no lights at all, and both of those
        * have to exist.
        *
        * `AMBIENT` is 2,2 because that is what the four lights it replaces averaged
-       * over a surface — 0,9 of ambient, about 1 of hemisphere and about 0,35 of the
+       * over a surface ? 0,9 of ambient, about 1 of hemisphere and about 0,35 of the
        * raking directional. It is deliberately not 1: `RoomLight` in `mesh.ts` was
        * built so its mean shade comes out near unity *against those intensities*, so
        * a unity ambient here would not be a purer statement, it would be the whole
@@ -675,7 +675,7 @@
        * takes away is the visitor as a light source, which is what flattened the five
        * decks into one; what it deliberately does not touch is the exposure.
        *
-       * Going darker still — the plan's "black is black" — is a second change and a
+       * Going darker still ? the plan's "black is black" ? is a second change and a
        * separate argument: it means lowering `LIGHT.fill`, the floor the bake gives
        * every surface before a single fitting is counted, and that is a number to
        * settle by looking at the ship on a real screen rather than by reasoning.
@@ -707,7 +707,7 @@
        * Parked at zero intensity and moved with the visitor: the shells already
        * draw the reach of a technique in its own colour, and this makes that colour
        * fall on the steel. It is the only light on the ship that is not white or a
-       * filament, which is the point — Nen is the one thing aboard that is not the
+       * filament, which is the point ? Nen is the one thing aboard that is not the
        * ship.
        */
       const AURA_LIGHT = AURA_LIGHT_INTENSITY
@@ -718,8 +718,8 @@
        *
        * Both are carried rather than placed, and both are light rather than a
        * shell, because what they do is the one thing the walk had no way of
-       * showing: Zhang Lei's coin is aura and nothing else — it is worth what it
-       * has accumulated, and a coin in a pocket has to be visible as something —
+       * showing: Zhang Lei's coin is aura and nothing else ? it is worth what it
+       * has accumulated, and a coin in a pocket has to be visible as something ?
        * and Tyson's levy is returned as happiness, which the walk spends as
        * brightness. Gold for the coin, warm white for the wog, and both scale
        * with what has actually been taken, so a tenth coin is plainly a tenth
@@ -746,8 +746,8 @@
        * One face per surface, and it is the face that looks at the room.
        *
        * `DoubleSide` was hiding a real defect and paying for it twice. Eight
-       * hundred and three pairs of walls on this ship are coplanar — 8 489 of the
-       * 29 333 metres of partition, 28,9 % — because `wallSegments` runs per room
+       * hundred and three pairs of walls on this ship are coplanar ? 8 489 of the
+       * 29 333 metres of partition, 28,9 % ? because `wallSegments` runs per room
        * and two rooms either side of a bulkhead each emit their own face on the
        * same line at the same depth. Drawn both ways round, those two faces fight
        * for the depth buffer, which is the shimmer you get walking a corridor.
@@ -757,7 +757,7 @@
        * make a corridor and the cabin behind it two different places.
        *
        * It also halves the fragments, and it makes an inside-out surface visible
-       * as a hole instead of leaving it to pass as ordinary steel — see
+       * as a hole instead of leaving it to pass as ordinary steel ? see
        * `MeshBuilder.quad` in `$lib/tour/mesh` for what has to hold for that.
        */
       const material = new THREE.MeshLambertMaterial({
@@ -776,7 +776,7 @@
       /**
        * The seams between the deck plates: dim steel, not the gold of the plans.
        *
-       * This is the one thing a bare floor cannot tell the visitor — how fast they
+       * This is the one thing a bare floor cannot tell the visitor ? how fast they
        * are crossing it. A hundred-and-fifty-metre hall drawn as an unbroken sheet
        * reads the same at a walk as at a run, and the courses passing underfoot at
        * `PLATE_PITCH` are what turn the published measurement into something felt.
@@ -791,11 +791,11 @@
       /**
        * The ceiling fittings: the one surface on the deck that is a light.
        *
-       * `MeshBasicMaterial`, because a lamp must not be lit — run through the
+       * `MeshBasicMaterial`, because a lamp must not be lit ? run through the
        * Lambert material it would take the night-light and the ambient like any other
        * steel and come out as a pale square, which is a vent, not a lamp.
        *
-       * What they burn at comes from the buffer rather than from here — see
+       * What they burn at comes from the buffer rather than from here ? see
        * `FITTING_GLOW` and `fittingColors` in `$lib/tour/mesh`, which is also
        * where the values above 1 and the dimming of an invented room's lamps are
        * argued. The material only has to agree not to light them.
@@ -834,7 +834,7 @@
        * pay for the same geometry twice.
        *
        * A deck is a couple of hundred kilobytes of buffers and the ship has
-       * five, so holding all of them costs about a megabyte — cheap enough that
+       * five, so holding all of them costs about a megabyte ? cheap enough that
        * the cache is never evicted. Only the deck being walked is in the scene;
        * the others sit here detached, uploaded to the GPU but not drawn.
        */
@@ -845,8 +845,8 @@
       /**
        * One room of a deck: its slice of the deck's buffers, drawn on its own.
        *
-       * The deck is still one upload — every room's mesh points at the same
-       * three `BufferAttribute`s and differs only in its draw range — but it is
+       * The deck is still one upload ? every room's mesh points at the same
+       * three `BufferAttribute`s and differs only in its draw range ? but it is
        * no longer one thing to draw. That is what lets `visibleSpaces` switch
        * rooms off, and what gives the GPU a bounding sphere per room to frustum
        * cull against instead of a 145-metre sphere around the whole deck.
@@ -874,8 +874,8 @@
        *
        * The walk's eye is somewhere else on the ship, so half of what `syncEye`
        * does is keeping the room it is watching in the scene. This one is in
-       * the room the visitor is sitting in — it is over the cards in front of
-       * them — so it is a camera and nothing else, aimed wherever the page says
+       * the room the visitor is sitting in ? it is over the cards in front of
+       * them ? so it is a camera and nothing else, aimed wherever the page says
        * the insect is holding.
        */
       let tableCamera: import('three').PerspectiveCamera | null = null
@@ -890,7 +890,7 @@
        * Secret Window's film: where the bird was, and the playback of it.
        *
        * The owl is materialized for twenty seconds and hands back the last
-       * ten, so what the walk has to keep is the bird's own path — sampled on
+       * ten, so what the walk has to keep is the bird's own path ? sampled on
        * the same tenth of a second the visitor's is, and for the same reason:
        * everything else in the scene is a function of the clock and can simply
        * be run again, and this is not. The playback is a third camera walking
@@ -916,7 +916,7 @@
        * Whether a deck is being drawn by something other than the visitor.
        *
        * The visitor's own deck is taken out of the scene the moment they leave
-       * it — unless the eye is watching it, or a tunnel is looking through it,
+       * it ? unless the eye is watching it, or a tunnel is looking through it,
        * in which case it stays.
        */
       const heldElsewhere = (built: Built | null) =>
@@ -937,7 +937,7 @@
       /**
        * A deck Nen has taken a room out of, at most one per deck.
        *
-       * The untouched decks are cached for the whole visit — five of them, and
+       * The untouched decks are cached for the whole visit ? five of them, and
        * a staircase taken twice should not pay twice. A deck with a room
        * swallowed out of it is not: every cast makes another one, so the last
        * variant of a deck is disposed as soon as a new one replaces it, or a
@@ -970,8 +970,8 @@
       /**
        * Variants replaced while they were still being drawn.
        *
-       * Whatever is on screen — the deck under the visitor, the deck the eye is
-       * watching — cannot be freed on the spot, and it cannot simply be dropped
+       * Whatever is on screen ? the deck under the visitor, the deck the eye is
+       * watching ? cannot be freed on the spot, and it cannot simply be dropped
        * either: `syncEye` rebuilds a deck without first letting go of `visible`,
        * so a cast on the deck the visitor is standing on would leave the old
        * buffers in the driver with nothing left pointing at them. They wait here
@@ -1024,7 +1024,7 @@
       const REPORT_TURN = 0.02
       let reported: Vec2 = [0, 0]
       let reportedYaw = 0
-      /** The shorter way round from `b` to `a`, so ±π never reads as a full turn. */
+      /** The shorter way round from `b` to `a`, so ?? never reads as a full turn. */
       const angleGap = (a: number, b: number) =>
         ((((a - b) % (Math.PI * 2)) + Math.PI * 3) % (Math.PI * 2)) - Math.PI
 
@@ -1071,7 +1071,7 @@
         report()
         // How much of the machinery reaches this elevation. An interior carries
         // the elevation of the deck it is inside, so walking into a prince's
-        // bathroom does not change what the hull sounds like — taking the stairs
+        // bathroom does not change what the hull sounds like ? taking the stairs
         // down to the hold does, over a couple of seconds.
         enterDeck(plan.tier.elevation)
       }
@@ -1101,7 +1101,7 @@
 
       loadTier(tierId)
 
-      // ── Nen ──────────────────────────────────────
+      // ?? Nen ??????????????????????????????????????
       // Everything below draws what `$lib/tour/hatsu` decided. No branch here
       // knows what a technique is called: it reads the world and renders it.
 
@@ -1212,8 +1212,8 @@
         // arm's length is felt closing rather than cut to.
         //
         // The light is taken at the eye rather than at the source: the ship stays
-        // lit — the bake is in the vertices and cannot be switched off, which is
-        // the honest way round — and the exposure goes to nothing. What the monkeys
+        // lit ? the bake is in the vertices and cannot be switched off, which is
+        // the honest way round ? and the exposure goes to nothing. What the monkeys
         // take is sight, so what closes is the aperture and the air.
         renderer.toneMappingExposure = sealed ? 0.02 : 1
         // Restored to what the visitor asked for, which may be nothing at all.
@@ -1221,7 +1221,7 @@
         // The fittings are not lit, so putting the lights out does nothing to
         // them: blinded, the visitor would be left staring at three thousand
         // lamps in a ship they cannot otherwise see. They are hidden instead,
-        // which is the same statement — the seal is on the eye, and an eye that
+        // which is the same statement ? the seal is on the eye, and an eye that
         // takes nothing in takes the lamps in too.
         fittingMaterial.visible = !sealed
       }
@@ -1232,7 +1232,7 @@
        * Phasing was a collision test that stopped being run: from inside the
        * visitor's own head, the ship looked exactly as it always had until they
        * happened to lean on a bulkhead. The steel goes half-transparent instead
-       * — the hull is still drawn, still lit, still there, and it has stopped
+       * ? the hull is still drawn, still lit, still there, and it has stopped
        * being a boundary, which is the one thing the technique says.
        */
       let phased = false
@@ -1287,7 +1287,7 @@
         shownKey = key
 
         // A list rather than a Map: there are at most two decks in the scene,
-        // and the render loop owns this outright — nothing in the markup reads
+        // and the render loop owns this outright ? nothing in the markup reads
         // it, so it must stay out of Svelte's reactivity rather than drive it.
         const wanted: { deck: Built; ids: Set<string> }[] = []
         const want = (deck: Built, ids: Set<string>) => {
@@ -1327,7 +1327,7 @@
       /**
        * The solids the aura is holding, drawn one by one.
        *
-       * They are out of the baked deck — `planWithout` drops them — so a solid
+       * They are out of the baked deck ? `planWithout` drops them ? so a solid
        * that is pushed, crushed or grown costs its own few dozen triangles and
        * not a re-extrusion of the deck it stands on. A solid Biohazard woke up
        * keeps its geometry and is moved by its object position instead, since
@@ -1406,7 +1406,7 @@
        *
        * Only the clouds actually being drawn: `syncVisible` has already switched
        * the rooms the visitor cannot see off, and a cloud nobody is looking at does
-       * not need to have drifted while they were away — dust has no state anyone
+       * not need to have drifted while they were away ? dust has no state anyone
        * can check. At most a few hundred motes in one room, which is a sine and a
        * cosine each.
        */
@@ -1449,8 +1449,8 @@
           // The turn is the awkward part. These meshes are baked at the
           // coordinates the room drew them at rather than about their own
           // centre, so spinning the object would swing it round the ship's
-          // origin — the correction is to put the group where the centre ends
-          // up after the rotation, which is `c - R·c`, and let the geometry
+          // origin ? the correction is to put the group where the centre ends
+          // up after the rotation, which is `c - R?c`, and let the geometry
           // follow. The rotation is about Y only, so the height needs none of it.
           const adrift = world.solids[id]?.adrift ? driftOffset(id, seconds) : null
           const spin = adrift ? adrift[3] : 0
@@ -1469,12 +1469,12 @@
         }
       }
 
-      // ── What Nen leaves standing ─────────────────
+      // ?? What Nen leaves standing ?????????????????
       //
       // `$lib/tour/apparitions` says what is in the ship and where; everything
       // from here to the flash below is how it is made of triangles. The rule
       // the rest of this block keeps is the rule the shells keep: nothing here
-      // knows a technique by name — it is handed a kind, a colour and a size.
+      // knows a technique by name ? it is handed a kind, a colour and a size.
 
       /**
        * One apparition on screen: the group it hangs in, and the key it was
@@ -1508,7 +1508,7 @@
         /**
          * The way it was last looking, for the one that can stop looking.
          *
-         * Survives a rebuild, which nothing else on a mesh does — see the
+         * Survives a rebuild, which nothing else on a mesh does ? see the
          * dealer in `driftApparitions`.
          */
         facing?: number
@@ -1517,7 +1517,7 @@
          *
          * Everything else in this list is *put* somewhere: a mark goes up over
          * a room and a card is laid on a table, and both are where they are the
-         * frame they are given. The insect is not put anywhere — it is sent,
+         * frame they are given. The insect is not put anywhere ? it is sent,
          * and being told to look at something else is an order it has to cross
          * the room to obey. So it chases `at` rather than sitting on it.
          */
@@ -1561,7 +1561,7 @@
        * *a card* and says nothing about which one. That was tolerable while the
        * only thing looking at the table was a visitor who had the panel open
        * beside it, and it stopped being tolerable the moment a camera was put a
-       * hand's width above her fan — a feed of seven grey rectangles is not a
+       * hand's width above her fan ? a feed of seven grey rectangles is not a
        * hand anybody has read.
        *
        * So the same drawing is loaded off `$lib/tour/cardArt` as an image and
@@ -1599,7 +1599,7 @@
        * the visitor's own head would be if it were standing at the other mouth,
        * so what fills the ring has to be sampled where it lands on the screen
        * rather than where it lands on the geometry. That is the whole of the
-       * shader — clip space in, screen space out — and it is what makes the
+       * shader ? clip space in, screen space out ? and it is what makes the
        * ring read as a hole in the room instead of a picture hung in it.
        */
 
@@ -1621,7 +1621,7 @@
        *
        * Deliberately crude: the ship is flat colour and hard edges, and a
        * modelled owl would be the only thing aboard that was not. What each of
-       * these has to do is be recognisable across a promenade at a glance —
+       * these has to do is be recognisable across a promenade at a glance ?
        * a bird, a card, a sigil, a star, a person, a door.
        */
       function buildApparition(seen: Apparition): Shown {
@@ -1652,16 +1652,16 @@
         turns = buildMechanicalApparition(seen, { THREE, glow, root, skin }) ?? turns
         turns = buildCrawlingApparition(seen, { THREE, glow, root, skin }) ?? turns
 
-        // ── The Guardian Spirit Beasts ─────────────
+        // ?? The Guardian Spirit Beasts ?????????????
         //
         // The first apparitions in the walk with a body. Everything else in
         // this function is a mark or a prop; these are animals, and an animal
-        // built out of the same primitives has to earn its silhouette — a bell
+        // built out of the same primitives has to earn its silhouette ? a bell
         // with tentacles under it, a quadruped with horns, a burning wheel, a
         // toad with spines, an eye with wings. Recognisable across a promenade
         // and nowhere near modelled, which is the rule the whole scene keeps.
 
-        // Salé-salé's: an eyeless, lumpy head covered with unequal mouths —
+        // Sal?-sal?'s: an eyeless, lumpy head covered with unequal mouths ?
         // large toothed maws among small puckered lips. `stage` says whether
         // they have closed for good once the room is full.
         if (seen.kind === 'mouths') {
@@ -1744,7 +1744,7 @@
         }
 
         // One part of what those mouths put out. Faint and large, like Tubeppa's
-        // — the difference between the two is entirely the colour, which is the
+        // ? the difference between the two is entirely the colour, which is the
         // difference between the two abilities as well.
         if (seen.kind === 'fume') {
           const vapour = glow(seen.colour, 0.16)
@@ -1766,7 +1766,7 @@
         // One of Momoze's, in whichever of four shapes its own number gave it:
         // a bear, a jelly, a wolf, a lump. They are the only apparitions in the
         // walk built from a menu rather than to a single drawing, because that
-        // is the ability — no two of them are the same thing.
+        // is the ability ? no two of them are the same thing.
         if (seen.kind === 'sprite') {
           const fur = glow(seen.colour, 0.85)
           const shape = seen.stage % 4
@@ -1969,7 +1969,7 @@
         // Marayam's: a long head on a heavy neck, horned, with a mane behind
         // it, sat in the doorway. Built facing +Z so the whole group can simply
         // be turned to the bearing the apparition carries, and drawn at the
-        // size of the gap it is filling rather than at the size of a fitting —
+        // size of the gap it is filling rather than at the size of a fitting ?
         // the point of it is that there is no way past.
         if (seen.kind === 'dragon') {
           const hide = glow(seen.colour, 0.8)
@@ -2124,17 +2124,17 @@
           turns = head
         }
 
-        // ── Morena's table ───────────────────────────
+        // ?? Morena's table ???????????????????????????
         //
         // The two things in the walk that are neither Nen nor ship: the woman
         // dealing the negotiation game, and the cards she deals it with. Built
-        // the same way as everything else here — primitives and a colour — so
+        // the same way as everything else here ? primitives and a colour ? so
         // that the one room the walk sits you down in is drawn by the same
         // machinery as the ninety you walk through.
 
         if (seen.kind === 'dealer') {
           // Seated, arms on the table, and unmistakably a person rather than an
-          // apparition: she is the only thing aboard that is simply there — and
+          // apparition: she is the only thing aboard that is simply there ? and
           // the only one drawn with a face, because she is the only one the
           // walk puts you a metre and a half away from for a quarter of an
           // hour. See `$lib/tour/dealer`, which is all of her.
@@ -2152,7 +2152,7 @@
           face.rotation.x = -Math.PI / 2
           root.add(face)
           // The rim says whose card it is and who has read it: dark for a card
-          // still face down, bone for one face up — and cold blue for the one
+          // still face down, bone for one face up ? and cold blue for the one
           // something has told you she is reaching for next. Foresight has no
           // other body at this table, and a card picked out of a fan is what
           // being told looks like from the chair.
@@ -2173,9 +2173,9 @@
           rim.position.y = -0.001
           root.add(rim)
           // And the mark, on every card that is lying face up. It reads from
-          // the guest's chair — the top of the drawing points across the table
+          // the guest's chair ? the top of the drawing points across the table
           // at the woman opposite, which is the way a card is laid down by the
-          // person holding it — and it is drawn in ink rather than in aura,
+          // person holding it ? and it is drawn in ink rather than in aura,
           // because it is printed on the card and not cast on it.
           if (seen.face) {
             const mark = new THREE.Mesh(
@@ -2187,7 +2187,7 @@
             root.add(mark)
           }
           // The forged card, which is a face with nothing under it: the pink is
-          // the aura holding it together, so it is drawn as aura — a wash lying
+          // the aura holding it together, so it is drawn as aura ? a wash lying
           // on the wood around the card, wider and fainter than the card's own
           // rim, rather than as anything printed on the face.
           if (seen.stage === 5) {
@@ -2217,7 +2217,7 @@
         if (seen.kind === 'ghost') {
           // Neon's beast: a pale animal hanging in the air with its mouth open
           // and a pen in one hand. Drawn crudely like everything else aboard,
-          // and recognisable by the two things everyone remembers of it — the
+          // and recognisable by the two things everyone remembers of it ? the
           // long jaw wide open, and the fact that it is holding your pen.
           const body = new THREE.Mesh(new THREE.SphereGeometry(seen.size, 10, 8), skin)
           body.scale.set(0.9, 1, 1.25)
@@ -2284,7 +2284,7 @@
         if (seen.kind === 'vow-heart') {
           // The vow, where it is actually sworn.
           //
-          // Every other technique in the walk is put somewhere — over a room, on
+          // Every other technique in the walk is put somewhere ? over a room, on
           // a bulkhead, at an elbow. Judgment Chain is put *in* somebody, and the
           // only body the walk has is the one the reader is looking out of. So
           // this is worn at the sternum and seen by looking down, and there is
@@ -2293,7 +2293,7 @@
           // Built in three parts, because the whole reading is the difference
           // between them: meat, which beats; links, which do not; and a lock,
           // which is the moment the thing stopped being reversible. The flesh is
-          // its own group so the drift can swell it without the chain giving —
+          // its own group so the drift can swell it without the chain giving ?
           // a heart pressing against a chain that will not move is the entire
           // argument of the technique in one gesture.
           const meat = glow(seen.colour, seen.stage === 2 ? 0.4 : 0.95)
@@ -2327,7 +2327,7 @@
                 const link = new THREE.Mesh(linkGeometry, steel)
                 link.position.set(Math.cos(along) * radius, 0, Math.sin(along) * radius)
                 // A ring lies in its own plane, so it is turned to stand across
-                // the circle it is running round — and every other one is given
+                // the circle it is running round ? and every other one is given
                 // a quarter turn on top of that, which is the only thing that
                 // makes a row of rings read as a chain.
                 link.rotation.y = Math.PI / 2 - along
@@ -2443,7 +2443,7 @@
 
           // What is on it. Ruled lines rather than words, because a contract
           // legible from a chair would be a contract the room had written for
-          // you — the terms are the panel's to state, and the sheet's part is
+          // you ? the terms are the panel's to state, and the sheet's part is
           // to be a thing with terms on it. Only once it is signed: an unsigned
           // sheet of aura is blank, which is the state the manga draws.
           if (seen.stage > 0) {
@@ -2527,7 +2527,7 @@
             glow(seen.colour, 1),
           )
           root.add(rim)
-          // The far end, or — while only one mouth has been placed — the
+          // The far end, or ? while only one mouth has been placed ? the
           // technique's own colour, so an unpaired door still reads as a door.
           pane = new THREE.Mesh(
             new THREE.CircleGeometry(seen.size, 32),
@@ -2607,16 +2607,16 @@
           sweep: sweepCard,
         })
       }
-      // ── Cards leaving the table ──────────────────
+      // ?? Cards leaving the table ??????????????????
       //
       // Everything else in this scene appears and disappears, because a
       // technique that has ended has left the room. A card has not: somebody
-      // took it. The Manipulation is the whole reason this exists — the canon
+      // took it. The Manipulation is the whole reason this exists ? the canon
       // sanction of Morena's game is three cards leaving the guest's hand at
       // once, which is the most violent thing that happens at that table, and
       // it used to happen between two frames with nothing to see.
       //
-      // The rule the drift keeps — a card does not move — is kept here too. A
+      // The rule the drift keeps ? a card does not move ? is kept here too. A
       // card that is *going* is not a card lying on the table, and it is gone
       // in under half a second.
 
@@ -2639,7 +2639,7 @@
        * Hand a card to whoever took it.
        *
        * Away from the visitor, because the person on the other side of this
-       * table is the only one who takes anything off it — that is true of the
+       * table is the only one who takes anything off it ? that is true of the
        * card she draws each round and true of the three the Manipulation
        * removes, and it needs no name to be true.
        */
@@ -2748,7 +2748,7 @@
        * The lash being thrown, if one is: where the ball has to reach, and how
        * far through the throw it is. Held here rather than in the world because
        * a blow is over in half a second and the world would still be holding it
-       * a minute later — the same reason the punch and the gust are flashes.
+       * a minute later ? the same reason the punch and the gust are flashes.
        */
       let lashing: { at: Vec2; y: number; through: number } | null = null
 
@@ -2764,7 +2764,7 @@
        *
        * The chain is fixed to the visitor: the group sits at their hand and is
        * never turned, so everything below is worked out in plain metres from
-       * there — which is what lets the ball be sent to a point in the room
+       * there ? which is what lets the ball be sent to a point in the room
        * rather than to a point in front of the camera. Hanging, it is a
        * pendulum on two thirds of a metre of chain; struck out, it is the same
        * chain with the ball at the far end of it and the links strung between.
@@ -2801,7 +2801,7 @@
         const [weight, ...links] = held.root.children
         weight.position.copy(ball)
 
-        // Which way the chain runs, for the links to lie along — and straight
+        // Which way the chain runs, for the links to lie along ? and straight
         // down for the frame where the ball is in the hand and there is no run.
         const run = ball.clone()
         run.normalize()
@@ -2832,7 +2832,7 @@
        * Carried like the book and the chain: the group is put at the visitor's
        * hands every frame and turned with them, so the instrument lies across
        * the player with the head end on their left, which is how a transverse
-       * flute is held. `stage` says whether anything is coming out of it —
+       * flute is held. `stage` says whether anything is coming out of it ?
        * raised, it is up at the mouth and breathing quickly with the playing;
        * down, it hangs at the hip on a slow sway.
        */
@@ -2871,7 +2871,7 @@
        *
        * Which hand is `stage`: nought is the left arm and one the right, which
        * is how two snakes out at once are two arms rather than one arm drawn
-       * twice. The run is only drawn on the deck the coil is on — an arm that
+       * twice. The run is only drawn on the deck the coil is on ? an arm that
        * crossed three decks of hull to reach the hand would be reaching through
        * steel, and off the deck the limb is simply out of sight.
        */
@@ -3020,7 +3020,7 @@
             // heart seen from directly overhead is a shape nobody recognises.
             held.root.rotation.set(0, yaw, 0)
             held.root.rotateX(-0.95)
-            // And it beats — twice, the way a heart does, a systole and the
+            // And it beats ? twice, the way a heart does, a systole and the
             // smaller one behind it. Struck, it does not: `sworn-struck` is the
             // vow being collected, and the one thing the walk can say about that
             // is the thing that was moving stopping. It is the same sentence the
@@ -3036,12 +3036,12 @@
           }
 
           // A card lies where it was put. Nothing else in this list holds
-          // perfectly still — everything Nen leaves standing is riding on the
-          // air — and that is exactly why a card must: a card that bobbed would
+          // perfectly still ? everything Nen leaves standing is riding on the
+          // air ? and that is exactly why a card must: a card that bobbed would
           // be a card nobody had dealt.
           if (held.kind === 'game-card') {
             // Except under a finger. A card the visitor is pointing at stands a
-            // centimetre off the wood — which is not the card moving, it is the
+            // centimetre off the wood ? which is not the card moving, it is the
             // hand about to take it, and it is the only way a table with no
             // cursor on it can say *this one*. It goes down again the moment the
             // reticle leaves, because nothing was played.
@@ -3088,7 +3088,7 @@
             continue
           }
 
-          // ── The Guardian Spirit Beasts ───────────
+          // ?? The Guardian Spirit Beasts ???????????
           //
           // These are the apparitions that have to look alive rather than
           // merely present: everything above them is a mark riding on the air,
@@ -3141,8 +3141,8 @@
           }
 
           // Tubeppa's sits and breathes. It is the one beast in the walk that
-          // does not have to do anything to be doing something — the gas is
-          // doing it — so all it does is fill and empty.
+          // does not have to do anything to be doing something ? the gas is
+          // doing it ? so all it does is fill and empty.
           if (held.kind === 'toad') {
             held.root.position.set(held.at[0], held.y, held.at[1])
             const breath = 1 + Math.sin(phase * 0.9) * 0.06
@@ -3167,8 +3167,8 @@
           }
 
           // Zhang Lei's turns, and burns while it turns. The rim and the fire
-          // are on separate counts — a corona that rotated with its own wheel
-          // would read as a pinwheel rather than as something alight — and the
+          // are on separate counts ? a corona that rotated with its own wheel
+          // would read as a pinwheel rather than as something alight ? and the
           // face stays upright, facing whoever is in front of it.
           if (held.kind === 'wheel') {
             held.root.position.set(held.at[0], held.y + Math.sin(phase * 0.5) * 0.1, held.at[1])
@@ -3218,7 +3218,7 @@
             continue
           }
 
-          // Salé-salé's hangs and breathes out of every mouth at once, until
+          // Sal?-sal?'s hangs and breathes out of every mouth at once, until
           // the room is full: then they shut, and that is the one thing about
           // the technique a visitor is meant to be able to see from outside.
           if (held.kind === 'mouths') {
@@ -3246,7 +3246,7 @@
           // Marayam's does not move: it is sitting in the way, and a beast that
           // paced would be a beast you could time. It breathes, it follows you
           // round the room with its head, and it opens its jaws when somebody
-          // tries the door — `roaring` is the clock the walk sets on that, and
+          // tries the door ? `roaring` is the clock the walk sets on that, and
           // it is the only animation in the scene that is triggered rather than
           // ambient.
           if (held.kind === 'dragon') {
@@ -3278,8 +3278,8 @@
           // to leave the room it belongs to: the reach is wider than the water
           // its station was given, so a beast on that arc goes through the
           // bulkhead, spends a moment in whatever is on the other side of it,
-          // and comes back. Every one of them is playing — a slow ring, a hop
-          // on top of it, a roll and a turn — and no two are on the same count,
+          // and comes back. Every one of them is playing ? a slow ring, a hop
+          // on top of it, a roll and a turn ? and no two are on the same count,
           // because the phase is its own number and its number is its own.
           if (held.kind === 'sprite') {
             const own = held.stage
@@ -3361,7 +3361,7 @@
           if (held.kind === 'note') {
             // Loose in the air and going nowhere in particular: two sines that
             // do not divide into each other, the way the insect drifts, but
-            // slow — these were shaken out of an instrument, not flown.
+            // slow ? these were shaken out of an instrument, not flown.
             held.root.position.set(
               held.at[0] + Math.sin(phase * 0.42 + held.stage) * held.spread,
               held.y + Math.sin(phase * 0.65 + held.stage * 1.7) * 0.28,
@@ -3395,7 +3395,7 @@
             // A quarter turn off the walk's own yaw, because the book is built
             // with its spine along Z and its pages across X: that puts the left
             // page on the visitor's left. Then it is tipped up towards the face
-            // — a book held flat is a book nobody is reading.
+            // ? a book held flat is a book nobody is reading.
             held.root.rotation.set(0, yaw + Math.PI / 2, 0)
             held.root.rotateX(-0.55)
             continue
@@ -3433,7 +3433,7 @@
             continue
           }
 
-          // The arm does not move — it is holding something fast, and an arm
+          // The arm does not move ? it is holding something fast, and an arm
           // that swayed would be an arm that had let go. The head does: it
           // watches whoever comes near the thing, breathes on the neck, and
           // tastes the air the way the animal it is drawn as does.
@@ -3478,7 +3478,7 @@
           if (held.kind === 'insect') {
             // Where it is working, which is not always where it has been told
             // to work: an order to go and film something else is a flight
-            // across the room, and the walk has always shown that flight —
+            // across the room, and the walk has always shown that flight ?
             // over Morena's table it is the whole of what a cast looks like,
             // the camera coming down off the deckhead onto her fan. Two
             // seconds or so to cross, which is a fly crossing a room.
@@ -3548,7 +3548,7 @@
           ) {
             // The ones that are meant to be looked at face whoever is looking:
             // a person turns to you, a card is dealt to you, a door you cannot
-            // see through the edge of is a door you can walk into — and a bomb
+            // see through the edge of is a door you can walk into ? and a bomb
             // seen edge-on is a bomb nobody reads in time.
             held.turns.rotation.y = Math.atan2(
               camera.position.x - held.root.position.x,
@@ -3561,7 +3561,7 @@
         }
       }
 
-      // ── The blast and the punch ──────────────────
+      // ?? The blast and the punch ??????????????????
       /**
        * The two techniques that happen rather than stand.
        *
@@ -3570,21 +3570,21 @@
        * through it is, in seconds, and the whole thing is hidden at the end of
        * it rather than rebuilt every cast.
        */
-      // ── Ten seconds, taken back ──────────────────
+      // ?? Ten seconds, taken back ??????????????????
       /**
        * What the walk did lately, and what it does with it.
        *
-       * Everything the reconstruction animates — the wandering solids, the
-       * dust, the shoal, Kalluto — is a function of one clock, so ten seconds
+       * Everything the reconstruction animates ? the wandering solids, the
+       * dust, the shoal, Kalluto ? is a function of one clock, so ten seconds
        * can be given back by moving the clock rather than by recording anything
        * about them: run it back ten and they do again, exactly, what they did.
-       * That is Tserriednich's vision as the walk can honour it — the room
+       * That is Tserriednich's vision as the walk can honour it ? the room
        * repeats itself and you do not have to.
        *
        * The one thing that is not a function of the clock is the visitor, so
        * that *is* recorded: a sample every tenth of a second, kept for twelve.
        * It is spooled back through the camera when the technique is cast, and
-       * then walked forward again by the afterimage — the visitor as they were
+       * then walked forward again by the afterimage ? the visitor as they were
        * predicted, going where they were going to go while you go elsewhere.
        */
       /** Starts whichever of the two the page has just handed over. */
@@ -3611,10 +3611,10 @@
           : null
       }
 
-      // ── What the hand can reach ──────────────────
+      // ?? What the hand can reach ??????????????????
       //
       // The one thing in the walk that is picked rather than computed. Every
-      // other question the reticle asks — which room, which solid — is answered
+      // other question the reticle asks ? which room, which solid ? is answered
       // by walking the deck plan, because a room is a polygon on a floor and a
       // ray is a needlessly exact way of asking. A card is not on any plan: it
       // is eleven centimetres of table a metre from a seated eye, and half a
@@ -3679,7 +3679,7 @@
         return true
       }
 
-      // ── Machi's thread ───────────────────────────
+      // ?? Machi's thread ???????????????????????????
       /**
        * The thread, and the swing on the end of it.
        *
@@ -3709,7 +3709,7 @@
        * Bungee Gum, which is the one technique that is visibly attached to you.
        *
        * Rubber and gum: what Hisoka sets on a thing stays joined to his hand
-       * until he pulls it in, so the walk draws the join — a pink strand out of
+       * until he pulls it in, so the walk draws the join ? a pink strand out of
        * the visitor to whatever the gum is stuck to, slack, and wobbling the way
        * an elastic does. Twenty segments, because a straight line is a wire.
        */
@@ -3779,7 +3779,7 @@
        * Not at the middle of a room, and not even at the end of the room being
        * looked at: at the last walkable point of the ray, wherever that is and
        * through however many doorways. This is what makes it a way of getting
-       * about rather than a single trick — swung to the far end of a room, the
+       * about rather than a single trick ? swung to the far end of a room, the
        * next throw goes out through its door and down the corridor, because the
        * ray is followed until the floor under it runs out. A thread that took
        * hold of the room you had just landed in the middle of was a thread with
@@ -3799,7 +3799,7 @@
         //
         // What is down the reticle is deliberately not consulted. A thread that
         // took hold of the nearest thing was a thread that, having pulled you to
-        // it, had nothing left to pull you to — you landed beside a table, the
+        // it, had nothing left to pull you to ? you landed beside a table, the
         // table was two metres off, and the throw was refused. That, and not the
         // room's middle, was the last of "it only works once".
         let to: Vec2 | null = null
@@ -3910,12 +3910,12 @@
         onCast?.(null, null, 'second')
       }
 
-      // ── Input ────────────────────────────────────
+      // ?? Input ????????????????????????????????????
       /**
        * Whether the key belongs to the page rather than to the walk.
        *
        * The listener is on `window`, so it hears every key pressed anywhere on
-       * the page — including the five gangway buttons, the index of rooms and
+       * the page ? including the five gangway buttons, the index of rooms and
        * the Hatsu bar. Space is how a focused button is pressed and the arrows
        * are how a list is walked; swallowing them there would leave a keyboard
        * visitor unable to work the page at all.
@@ -3933,6 +3933,12 @@
         if (!event.altKey || event.repeat) return false
         const toggled = (type: 'IN' | 'GYO' | 'KEN', on: boolean) => useNen({ type, on })
         if (event.code === 'KeyT') useNen({ type: 'TEN' })
+        else if (event.code === 'KeyO')
+          useNen({
+            type: 'ON',
+            on: !effectiveNen.on,
+            distribution: { hands: 0.45, torso: 0.35, feet: 0.2 },
+          })
         else if (event.code === 'KeyR') useNen({ type: 'REN' })
         else if (event.code === 'KeyX') useNen({ type: 'ZETSU' })
         else if (event.code === 'KeyG') toggled('GYO', !effectiveNen.gyo)
@@ -3963,7 +3969,7 @@
         // Giving the pointer back, without giving the screen back with it.
         //
         // Esc releases the pointer, and in full screen it also leaves full
-        // screen — the browser answers it before the page does, so a visitor who
+        // screen ? the browser answers it before the page does, so a visitor who
         // touched the walk to look around has to drop out of full screen to get
         // a cursor for the panel beside it. Tab is the second way out: it means
         // "hand the keyboard back to the page" everywhere else, it is nothing to
@@ -3985,7 +3991,7 @@
           event.preventDefault()
         }
         // The arrows turn rather than sidestep: A and D already sidestep, and
-        // without this there is no way to look around without a mouse — you
+        // without this there is no way to look around without a mouse ? you
         // would walk the deck facing whichever way you spawned. A snap rather
         // than a glide because a keyboard has no small movement to give, and
         // because a view that jumps is easier on the stomach than one that
@@ -3994,8 +4000,8 @@
           yaw += event.code === 'ArrowLeft' ? snapStep() : -snapStep()
         }
         if (event.code === 'KeyE' || event.code === 'Enter') takeLink()
-        // F is the cast. R is the second of whatever there are two of — a second
-        // page, a second air — and the cast turned on the visitor where there is
+        // F is the cast. R is the second of whatever there are two of ? a second
+        // page, a second air ? and the cast turned on the visitor where there is
         // only one; the cases never arise together, so the key never means two
         // things at once. A technique cast with two hands spends no key on the
         // second: its own key alternates, which the page works out.
@@ -4006,8 +4012,8 @@
         }
         // C is the third, and only an instrument has one: three airs need three
         // keys, and it is the one letter within reach of the hand already on
-        // WASD that the walk has never spent on anything. D is not free — it is
-        // the sidestep — so a flute played on it would walk you across the room.
+        // WASD that the walk has never spent on anything. D is not free ? it is
+        // the sidestep ? so a flute played on it would walk you across the room.
         if (event.code === 'KeyC' && !event.repeat && aiming && tunes) cast('third')
       }
       const onKeyUp = (event: KeyboardEvent) => {
@@ -4019,8 +4025,8 @@
         if (seated) return
         // Marayam's beast is in the doorway, and E is the door: a visitor shut
         // into a room by it does not get told they cannot leave, they get
-        // roared at. The refusal is the pure layer's — `arriveInTour` puts
-        // anyone who walks out back — and this is the same refusal at the one
+        // roared at. The refusal is the pure layer's ? `arriveInTour` puts
+        // anyone who walks out back ? and this is the same refusal at the one
         // place the walk offers a way out with a keypress.
         if (world.dragon && untrack(() => currentSpace)?.id === world.dragon) {
           startRoaring()
@@ -4036,7 +4042,7 @@
        * The only triggered animation in the scene: everything else an
        * apparition does is a sine that was always running. It is a countdown
        * rather than a flag because the jaws have to open and shut again on
-       * their own — see the dragon in `driftApparitions` — and because a second
+       * their own ? see the dragon in `driftApparitions` ? and because a second
        * try at the door while the first roar is still going should restart it
        * rather than stack a second one on top.
        */
@@ -4093,7 +4099,7 @@
 
       /**
        * When a finger was last on the glass. A tap is followed by a synthetic
-       * mouse pair, and its movement deltas are undefined — taken as read they
+       * mouse pair, and its movement deltas are undefined ? taken as read they
        * would put NaN in the yaw. Timing it rather than reading `touch` keeps
        * the mouse working on a screen that has both.
        */
@@ -4142,14 +4148,14 @@
       }
 
       // Touch: dragging the view looks around, the stick in the corner walks,
-      // and a tap that went nowhere is the cast — a phone has no pointer to
+      // and a tap that went nowhere is the cast ? a phone has no pointer to
       // lock, so the click-to-cast path is closed to it.
       let lastTouch: { x: number; y: number } | null = null
       /**
        * Which finger is looking around, the way `stickFinger` names the one
        * walking. `touches` is every finger on the glass, so a thumb parked on
        * the stick is `touches[0]` and taking that one would freeze the camera
-       * for as long as the visitor is walking — and, having gone nowhere,
+       * for as long as the visitor is walking ? and, having gone nowhere,
        * would read as a tap and cast on its own at the end of it.
        */
       let lookFinger: number | null = null
@@ -4218,7 +4224,7 @@
        * Resizing is deferred to the next frame.
        *
        * A dragged window edge fires the observer on every pixel, and each call
-       * reallocates the drawing buffer — the one thing in this component that
+       * reallocates the drawing buffer ? the one thing in this component that
        * makes the driver stall. Collapsing a burst of them into one resize per
        * frame is the whole of it; `pendingResize` is the handle, so a resize
        * still in the queue when the scene is torn down can be dropped.
@@ -4230,7 +4236,7 @@
         targets: () => portals.targets(),
       })
 
-      // ── Frame ────────────────────────────────────
+      // ?? Frame ????????????????????????????????????
       let previous = performance.now()
 
       /** Reused so the frame loop does not allocate a vector for the viewport. */
@@ -4256,7 +4262,7 @@
        * A plain record rather than a Map, like the rest of the render loop's own
        * state: the loop reads this sixty times a second and nothing in the markup
        * depends on it, so it must stay out of Svelte's reactivity rather than
-       * drive it. Measured once per room — the longest chord of a sixty-corner
+       * drive it. Measured once per room ? the longest chord of a sixty-corner
        * promenade is not worth walking every frame.
        */
       let fogTarget = 0.02
@@ -4280,8 +4286,8 @@
       /**
        * An insect covers ground faster than a bird holds still.
        *
-       * Sayird's roach is what Kurapika reads a whole deck with — room by room,
-       * quickly — where Secret Window's bird is a perch that happens to move.
+       * Sayird's roach is what Kurapika reads a whole deck with ? room by room,
+       * quickly ? where Secret Window's bird is a perch that happens to move.
        */
       const CRAWL_SECONDS = 4
       /** How long since a Guardian Spirit Beast last took a step, in seconds. */
@@ -4289,8 +4295,8 @@
       /**
        * The beasts work at the fish's pace, and deliberately the same one.
        *
-       * A melt, a reel and a room filling are all the same kind of event — a
-       * thing you notice has moved on rather than a thing you watch move — and
+       * A melt, a reel and a room filling are all the same kind of event ? a
+       * thing you notice has moved on rather than a thing you watch move ? and
        * the walk already has a number for that. A second number for the same
        * idea would be a second rule to keep.
        */
@@ -4335,7 +4341,7 @@
 
         filmCamera = new THREE.PerspectiveCamera(64, 1, 0.1, VIEW_DISTANCE)
         // The deck it was flying over has to be in the scene to be filmed on,
-        // however far from the visitor's own it is — the same arrangement the
+        // however far from the visitor's own it is ? the same arrangement the
         // eye's feed uses, and it is taken away again when the film ends.
         const built = buildDeck(frames[frames.length - 1].tierId).built
         if (built !== visible) {
@@ -4451,7 +4457,7 @@
 
         // One clock for everything the walk animates, and it is not the wall's:
         // Parallel Future moves it back ten seconds, and the room does again
-        // exactly what it did — see `HatsuRewindEffect`.
+        // exactly what it did ? see `HatsuRewindEffect`.
         // Read before anything is placed rather than after, because the marks
         // The Sun and Moon leaves are put where their things are *now*, and a
         // thing that wanders is somewhere new every frame.
@@ -4536,7 +4542,7 @@
         }
 
         // The free bird on the same clock: it sits in a room for a few seconds
-        // and then takes a door out of it. Only that bird — the one on the
+        // and then takes a door out of it. Only that bird ? the one on the
         // shoulder travels with the walk, and the third stays thrown.
         if (world.owl && world.owlMode === 'wander') {
           sinceFlight += delta
@@ -4578,7 +4584,7 @@
 
         const walked = activePlan ?? plan
         // What the aura is holding is out of the deck's own wall list, so it
-        // has to be put back for the collision test — where the technique left
+        // has to be put back for the collision test ? where the technique left
         // it, and where the drift has it this instant.
         const loose = solidWalls(ship, world, {
           tierId: currentTierId,
@@ -4602,7 +4608,7 @@
 
         // Sat down: the legs stop answering. Whatever the keys and the stick
         // said this frame is dropped on the floor, and the body is put back on
-        // its chair — a seat is not a place you drift out of.
+        // its chair ? a seat is not a place you drift out of.
         if (seated) {
           moving = false
           advance = 0
@@ -4672,8 +4678,8 @@
          * The floor under the visitor, eased onto rather than snapped to.
          *
          * Almost every room on the ship is the deck itself, so this is a constant
-         * for all but a handful of steps. Where a panel does draw one — the
-         * service end of the banquet hall — a hard cut of half a metre reads as
+         * for all but a handful of steps. Where a panel does draw one ? the
+         * service end of the banquet hall ? a hard cut of half a metre reads as
          * the view jumping, which is the one thing `$lib/tour/comfort` exists to
          * refuse. Ten per cent of the remaining rise per frame at 60 Hz settles
          * it in about a fifth of a second: the length of a stride onto a step.
@@ -4701,7 +4707,7 @@
         // visitor is, facing where they face, every frame.
         hatsuEffects.syncVehicle({ riding: world.body.riding, at: pointer, eye, yaw })
 
-        // One pace, one footstep, on the same counter the head is dipping to — so
+        // One pace, one footstep, on the same counter the head is dipping to ? so
         // the sound lands with the foot at every speed and never drifts off it.
         const paces = stepsIn(travelledOnFoot)
         if (paces !== lastPace) {
@@ -4710,8 +4716,8 @@
         }
 
         // Worn, not held at the eye: thirty centimetres to the left of the
-        // visitor's head and thirty below it. At the viewpoint, N·L is N·V on every
-        // surface at once — the light lands wherever the eye is already looking,
+        // visitor's head and thirty below it. At the viewpoint, N?L is N?V on every
+        // surface at once ? the light lands wherever the eye is already looking,
         // which is the one place it cannot model anything. It mattered more when
         // this lamp carried the picture; it is kept because it costs nothing and a
         // stairwell lit from slightly off-axis still has corners.
@@ -4810,7 +4816,7 @@
           : null
         if (link?.to !== untrack(() => availableLink)?.to) availableLink = link
         // `position` is a fresh array every frame, so assigning it unguarded
-        // invalidates whatever reads it — the minimap, which redraws a hull, a
+        // invalidates whatever reads it ? the minimap, which redraws a hull, a
         // few dozen dotted paths and its legends, on the thread that has to get
         // the next frame out. A quarter of a metre and a degree or so is below
         // what the minimap can show anyway, and takes it from 60 Hz to a walking
@@ -4898,7 +4904,7 @@
 
         // And the card, on the same slow poll and for the same reason: a hand
         // lying on a table is not going anywhere between two frames. Traced
-        // rather than walked — see `whatIsUnder` — and skipped outright where
+        // rather than walked ? see `whatIsUnder` ? and skipped outright where
         // nothing was handed over, which is everywhere but Morena's table.
         if (onPick && ++sincePick >= 6) {
           sincePick = 0
@@ -4925,8 +4931,8 @@
         // The table's own eye, which is the same technique doing the same thing
         // a metre away rather than a deck away: Little Eye is over Morena's fan
         // and this is what it is sending back. The walk's eye and this one are
-        // never up together — one is sent into a room by the dock, the other is
-        // put on the table by the game — so they share the corner.
+        // never up together ? one is sent into a room by the dock, the other is
+        // put on the table by the game ? so they share the corner.
         else if (feed) {
           if (!tableCamera) tableCamera = new THREE.PerspectiveCamera(EYE_FOV, 1, 0.02, 40)
           tableCamera.position.set(feed.at[0], feed.y, feed.at[1])
@@ -4942,7 +4948,7 @@
         // And the table's own owl, in the same corner and for the same reason:
         // this is not a feed, it is what a bird already filmed being looked at
         // afterwards. It holds still because a recording does, and it stays up
-        // once it is up — the hand can end, and footage does not un-happen.
+        // once it is up ? the hand can end, and footage does not un-happen.
         else if (record) {
           if (!recordCamera) recordCamera = new THREE.PerspectiveCamera(OWL_FOV, 1, 0.02, 40)
           recordCamera.position.set(record.at[0], record.y, record.at[1])
@@ -4954,8 +4960,8 @@
       /**
        * A second camera, in a box in the corner of the first.
        *
-       * Three things ask for one — the eye's live feed, the table's, and the
-       * owl's ten seconds of playback — and they differ in nothing but which
+       * Three things ask for one ? the eye's live feed, the table's, and the
+       * owl's ten seconds of playback ? and they differ in nothing but which
        * corner they take. The scissor dance is fiddly enough (clear the depth,
        * not the colour; put `autoClear` back, or the next frame draws the walk
        * into a stale buffer) that three copies of it was two too many.
@@ -4964,8 +4970,8 @@
       /**
        * The walk only runs while it is on screen.
        *
-       * The scene sits above a page of prose — the index of rooms, the sources,
-       * the Hatsu bar — and scrolling past it used to leave a first-person
+       * The scene sits above a page of prose ? the index of rooms, the sources,
+       * the Hatsu bar ? and scrolling past it used to leave a first-person
        * renderer running at sixty frames a second on a canvas nobody was
        * looking at. `setAnimationLoop` rather than a hand-rolled
        * `requestAnimationFrame` chain because it is the one three.js can also
@@ -5042,7 +5048,7 @@
       relens = (settings: Comfort) => {
         camera.fov = settings.fov
         camera.updateProjectionMatrix()
-        // The reach the visitor asked for, unless sight is sealed — in which case
+        // The reach the visitor asked for, unless sight is sealed ? in which case
         // it stays out, and comes back at what they asked for when it is restored.
         nightLight.distance = settings.nightLight
         nightLight.intensity = blinded || settings.nightLight <= 0 ? 0 : NIGHT_LIGHT
@@ -5103,7 +5109,7 @@
     </div>
   {/if}
 
-  <!-- The walk has a voice — its footsteps, and the room answering them — so it
+  <!-- The walk has a voice ? its footsteps, and the room answering them ? so it
        needs a way to be quietened without leaving the page. Top left, because the
        remote eye's feed is inset in the top right and the read-outs are along the
        bottom. Nothing sounds before the visitor engages the walk, and this
@@ -5142,7 +5148,7 @@
   {/if}
 
   <!-- The touchscreen's keyboard: a stick to walk with, and buttons for the two
-       keys — E and F — that a phone has no way of pressing. Everything here is
+       keys ? E and F ? that a phone has no way of pressing. Everything here is
        what the keys already do, routed through the same functions. -->
   {#if touch && ready && !failure}
     <!-- Jump-only mode has nothing for the stick to do, so it is not offered. -->
@@ -5188,7 +5194,7 @@
           <button
             type="button"
             onclick={() => castNow?.(page.hand)}
-            aria-label={`${touchLabels.cast} · ${page.name}`}
+            aria-label={`${touchLabels.cast} ? ${page.name}`}
             class="max-w-[13rem] touch-none truncate rounded border bg-[#050505]/90 px-3 py-2 text-xs"
             style:border-color={auraColour
               ? `color-mix(in srgb, ${auraColour} 70%, transparent)`
@@ -5205,7 +5211,7 @@
           <button
             type="button"
             onclick={() => castNow?.(air.hand)}
-            aria-label={`${touchLabels.cast} · ${air.name}`}
+            aria-label={`${touchLabels.cast} ? ${air.name}`}
             class="max-w-[13rem] touch-none truncate rounded border bg-[#050505]/90 px-3 py-2 text-xs"
             style:border-color={auraColour
               ? `color-mix(in srgb, ${auraColour} 70%, transparent)`
@@ -5219,11 +5225,11 @@
         <!-- And two for the two hands, which need no names: the marks are what
              the technique puts on, and a phone draws them as the walk draws them
              over the things themselves. -->
-        {#each [{ hand: 'first' as const, glyph: '☀' }, { hand: 'second' as const, glyph: '☾' }] as mark (mark.hand)}
+        {#each [{ hand: 'first' as const, glyph: '?' }, { hand: 'second' as const, glyph: '?' }] as mark (mark.hand)}
           <button
             type="button"
             onclick={() => castNow?.(mark.hand)}
-            aria-label={`${touchLabels.cast} · ${mark.glyph}`}
+            aria-label={`${touchLabels.cast} ? ${mark.glyph}`}
             class="touch-none rounded border bg-[#050505]/90 px-4 py-2 text-sm"
             style:border-color={auraColour
               ? `color-mix(in srgb, ${auraColour} 70%, transparent)`
@@ -5249,3 +5255,4 @@
     </div>
   {/if}
 </div>
+

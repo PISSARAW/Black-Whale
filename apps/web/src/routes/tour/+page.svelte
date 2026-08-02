@@ -53,7 +53,7 @@
   } from '$lib/tour/comfort'
   import { flashFor, type TourFlash } from '$lib/tour/apparitions'
   import { describeSpace } from '$lib/tour/describe'
-  import { Fullscreen } from '$lib/tour/fullscreen.svelte'
+  import { TourChromeState } from '$lib/tour/pageChrome.svelte'
   import { placeOf, type Naming } from '$lib/tour/search'
   import {
     PROVENANCE_CLASS,
@@ -91,7 +91,6 @@
   import {
     crossingLabel as describeCrossing,
     linkPrompt as describeLink,
-    viewpointUrl,
     type LinkWords,
   } from '$lib/tour/pageNavigation'
   import {
@@ -113,6 +112,8 @@
   import type { Link, Provenance, Space, Structure, Vec2 } from '$lib/tour/types'
 
   const ship = theShip()
+  const chrome = new TourChromeState()
+  chrome.watch()
   type TourTargetMode = 'body' | 'solid' | 'relay' | 'space' | 'jump'
 
   // `?space=` names a space to open in, `?deck=` a deck. `/tour/sources` links to
@@ -157,8 +158,6 @@
    * for. It changes nothing about the ship, only what the ship says about
    * itself.
    */
-  let reveal = $state(false)
-
   const plan = $derived(ship.plans.get(tierId)!)
   const deck = $derived(deckOf(ship, tierId))
   const insideInterior = $derived(plan.tier.kind === 'interior')
@@ -240,33 +239,11 @@
    * how a viewpoint is shared: the room under the visitor's feet, or the deck
    * they are on when they are out between rooms.
    */
-  let copied = $state<'idle' | 'done' | 'failed'>('idle')
-  let copyTimer: ReturnType<typeof setTimeout> | null = null
-
   async function copyViewpoint() {
-    const url = viewpointUrl({ current: $page.url, spaceId: currentSpace?.id ?? null, tierId })
-
-    try {
-      await navigator.clipboard.writeText(url.toString())
-      copied = 'done'
-    } catch {
-      copied = 'failed'
-    }
-    if (copyTimer) clearTimeout(copyTimer)
-    copyTimer = setTimeout(() => (copied = 'idle'), 2500)
+    await chrome.copyViewpoint({ current: $page.url, spaceId: currentSpace?.id ?? null, tierId })
   }
 
   // ── The plan, and the finder ───────────────────
-  let planOpen = $state(false)
-  let planDialog = $state<HTMLDialogElement | null>(null)
-  let findOpen = $state(false)
-
-  $effect(() => {
-    if (!planDialog) return
-    if (planOpen && !planDialog.open) planDialog.showModal()
-    else if (!planOpen && planDialog.open) planDialog.close()
-  })
-
   /** The stairs, the bulkhead and the interior doors that touch this level. */
   const crossings = $derived(crossingsOn(ship, tierId))
 
@@ -294,10 +271,6 @@
    * archive's and hangs outside the route. Full screen on the grid would take
    * the walk and leave the aura at the door.
    */
-  const screen = new Fullscreen()
-  const immersive = $derived(screen.immersive)
-  let panelOpen = $state(true)
-
   /**
    * The archive's chrome stands down for the walk.
    *
@@ -306,10 +279,6 @@
    * the walk over the site header. The header goes instead — and the Nen dock,
    * which hangs outside the route entirely, deliberately stays.
    */
-  $effect(() => screen.watch())
-
-  const toggleFullscreen = () => void screen.toggle()
-
   /**
    * M opens the plan at a size it can be read at. In the 320-pixel column a
    * room's legend comes out under four pixels tall, which is a cost paid for
@@ -331,19 +300,19 @@
   function onWindowKeydown(event: KeyboardEvent) {
     const action = tourShortcut(event, {
       takesOrders: Boolean(technique && TAKES_ORDERS.has(technique.kind)),
-      immersive,
-      nativeFullscreen: screen.native,
+      immersive: chrome.immersive,
+      nativeFullscreen: chrome.nativeFullscreen,
       engaged,
-      planOpen,
-      finderOpen: findOpen,
+      planOpen: chrome.planOpen,
+      finderOpen: chrome.findOpen,
     })
     if (!action) return
     event.preventDefault()
-    if (action === 'toggle-reveal') reveal = !reveal
+    if (action === 'toggle-reveal') chrome.reveal = !chrome.reveal
     else if (action === 'turn-technique') {
       if (technique) turn(technique.kind)
-    } else if (action === 'toggle-fullscreen') void toggleFullscreen()
-    else planOpen = !planOpen
+    } else if (action === 'toggle-fullscreen') chrome.toggleFullscreen()
+    else chrome.planOpen = !chrome.planOpen
   }
 
   /**
@@ -351,15 +320,13 @@
    * init, because the server has no media query to ask and would render the
    * hint one way and hydrate it the other.
    */
-  let calm = $state(false)
   onMount(() => {
     loadComfort()
-    calm = prefersReducedMotion()
+    chrome.calm = prefersReducedMotion()
   })
 
   onDestroy(() => {
-    if (copyTimer) clearTimeout(copyTimer)
-    screen.leave()
+    chrome.dispose()
   })
 
   // ── Nen ────────────────────────────────────────
@@ -951,11 +918,11 @@
    * reason it was declared for, because a declaration is a claim about the ship.
    */
   const blindWalls = $derived(
-    reveal ? blindWallReasons(plan, french) : [],
+    chrome.reveal ? blindWallReasons(plan, french) : [],
   )
 
   const handPlacedDoors = $derived(
-    reveal ? declaredDoorReasons({ plan, ship, french }) : [],
+    chrome.reveal ? declaredDoorReasons({ plan, ship, french }) : [],
   )
 
   /** Standing in the isolated room as an outsider: the copy, not the room. */
@@ -1056,18 +1023,18 @@
        everything in the column has to come with the ship, or it would be a walk
        with no way to change deck, aim a technique or read the plan. -->
   <div
-    class="grid {immersive
+    class="grid {chrome.immersive
       ? // Over the archive's own sticky header (80) and under its Nen dock
         // (100), which is the one thing that has to stay reachable above the
         // walk: full screen must not be where the aura cannot be picked up.
         `fixed inset-0 z-[90] h-[100dvh] w-screen overflow-hidden bg-[#050505] ${
-          panelOpen ? 'grid-cols-[1fr_min(22rem,50vw)]' : 'grid-cols-1'
+          chrome.panelOpen ? 'grid-cols-[1fr_min(22rem,50vw)]' : 'grid-cols-1'
         }`
       : 'gap-4 lg:grid-cols-[1fr_320px]'}"
   >
     <!-- The walk -->
     <section
-      class="relative overflow-hidden {immersive
+      class="relative overflow-hidden {chrome.immersive
         ? 'h-full min-h-0'
         : 'min-h-[420px] rounded-lg border border-[#333] lg:h-[70vh]'}"
     >
@@ -1089,7 +1056,7 @@
         auraColour={technique?.color ?? null}
         aiming={Boolean(technique)}
         {selfCastable}
-        {reveal}
+        reveal={chrome.reveal}
         onCast={castOn}
         onArrive={arrived}
         onWorm={crossWorm}
@@ -1128,10 +1095,10 @@
     <!-- The way back into the panel, once it is folded. Halfway down the right
          edge because the walk has already spoken for the corners: the eye's feed
          is inset top right, the read-outs run along the bottom. -->
-    {#if immersive && !panelOpen}
+    {#if chrome.immersive && !chrome.panelOpen}
       <button
         type="button"
-        onclick={() => (panelOpen = true)}
+        onclick={() => (chrome.panelOpen = true)}
         aria-expanded="false"
         class="absolute right-0 top-1/2 z-30 -translate-y-1/2 rounded-l border border-r-0 border-[#333] bg-[#050505]/90 px-2 py-3 text-xs text-[#FFFFF0]/70 transition-colors hover:border-[#FFD700]/50 hover:text-[#FFFFF0]"
       >
@@ -1141,14 +1108,14 @@
 
     <!-- Deck selector, plan and index -->
     <aside
-      class="flex flex-col gap-4 {immersive
-        ? `min-h-0 overflow-y-auto border-l border-[#333] p-3 ${panelOpen ? '' : 'hidden'}`
+      class="flex flex-col gap-4 {chrome.immersive
+        ? `min-h-0 overflow-y-auto border-l border-[#333] p-3 ${chrome.panelOpen ? '' : 'hidden'}`
         : ''}"
     >
       <TourSidebarNavigation
-        {immersive}
-        {reveal}
-        {copied}
+        immersive={chrome.immersive}
+        reveal={chrome.reveal}
+        copied={chrome.copied}
         decks={ship.decks.map((tier) => ({ id: tier.id, label: nameOf(tier), active: tier.id === deck?.id }))}
         {plan}
         {position}
@@ -1161,12 +1128,12 @@
         onSelectPlan={selectOnPlan}
         selectLabel={planVerb}
         aiming={Boolean(technique)}
-        onHide={() => (panelOpen = false)}
-        onFullscreen={toggleFullscreen}
+        onHide={() => (chrome.panelOpen = false)}
+        onFullscreen={() => chrome.toggleFullscreen()}
         onSelectDeck={selectTier}
-        onOpenPlan={() => (planOpen = true)}
-        onOpenFinder={() => (findOpen = true)}
-        onToggleReveal={() => (reveal = !reveal)}
+        onOpenPlan={() => (chrome.planOpen = true)}
+        onOpenFinder={() => (chrome.findOpen = true)}
+        onToggleReveal={() => (chrome.reveal = !chrome.reveal)}
         onCopy={copyViewpoint}
       />
 
@@ -1218,9 +1185,9 @@
         {touch}
       />
 
-      <TourComfortPanel {calm} />
+      <TourComfortPanel calm={chrome.calm} />
       <TourProvenancePanel
-        {reveal}
+        reveal={chrome.reveal}
         {blindWalls}
         {handPlacedDoors}
         sourcesHref={$link('/tour/sources')}
@@ -1230,7 +1197,7 @@
 </div>
 
 <TourPlanDialog
-  bind:dialog={planDialog}
+  bind:dialog={chrome.planDialog}
   {plan}
   {position}
   {heading}
@@ -1241,13 +1208,13 @@
   nameOf={(space) => nameOf(named(space))}
   selectLabel={planVerb}
   aiming={Boolean(technique)}
-  onClose={() => (planOpen = false)}
+  onClose={() => (chrome.planOpen = false)}
   onSelect={selectOnPlan}
 />
 
 <TourFinder
   {ship}
-  bind:open={findOpen}
+  bind:open={chrome.findOpen}
   words={naming}
   labels={{
     title: $t.tour.find.title,

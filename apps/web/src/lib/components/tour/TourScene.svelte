@@ -1639,26 +1639,6 @@
         // toad with spines, an eye with wings. Recognisable across a promenade
         // and nowhere near modelled, which is the rule the whole scene keeps.
 
-        // One puff of what it is filling the room with: a lump of nothing, drawn
-        // faint and large. It has no shape of its own on purpose — what the
-        // visitor has to read is that the air of the room has stopped being air.
-        if (seen.kind === 'gas') {
-          const vapour = glow(seen.colour, 0.14)
-          for (let i = 0; i < 3; i++) {
-            const puff = new THREE.Mesh(
-              new THREE.SphereGeometry(seen.size * (1 - i * 0.22), 8, 6),
-              vapour,
-            )
-            puff.position.set(
-              (i - 1) * seen.size * 0.5,
-              ((i % 2) - 0.5) * seen.size * 0.4,
-              ((i + 1) % 2) * seen.size * 0.4,
-            )
-            root.add(puff)
-          }
-          turns = root
-        }
-
         // Zhang Lei's: the wheel, drawn as the source draws it — a rim with
         // writing round it, eight spokes, a face at the hub, and the whole
         // thing burning. The corona is what makes it legible at distance and

@@ -9029,6 +9029,12 @@
         "status": "appears",
         "context": "flashback"
       }
+    ],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-vvip-prison-beyond",
+        "fromChapterId": "ch-358"
+      }
     ]
   },
   {
@@ -11950,7 +11956,13 @@
         "status": "absent"
       }
     ],
-    "battles": ["Balsamilco Might vs. Halkenburg and his followers"]
+    "battles": ["Balsamilco Might vs. Halkenburg and his followers"],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1001",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "musse",
@@ -23631,6 +23643,12 @@
     "biography": [
       "Sanbica joins the Hunter Association's medical personnel aboard the Black Whale and works with the scientific team on Tier 3.",
       "At the departure she is one of the seven in the first-class compartment where Pyon meets Gel, Cluck, Ginta, Tokarine and one unnamed Hunter — the panel that first puts her somewhere on the ship rather than merely aboard it."
+    ],
+    "mapTrajectory": [
+      {
+        "location": "tier-3-central-hospital",
+        "fromChapterId": "ch-358"
+      }
     ]
   },
   {
@@ -24867,7 +24885,13 @@
       "techniques": ["Hatsu"],
       "abilityIds": ["transport-portals"]
     },
-    "mapPresenceFromChapterId": "ch-359"
+    "mapPresenceFromChapterId": "ch-359",
+    "mapTrajectory": [
+      {
+        "location": "tier-3-political-ward",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "borksen",
@@ -36314,7 +36338,13 @@
         "status": "absent"
       }
     ],
-    "mapPresenceUntilChapterId": "ch-363.4"
+    "mapPresenceUntilChapterId": "ch-363.4",
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1014",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "shimanu",
@@ -36716,6 +36746,12 @@
         "chapter": 414,
         "title": "Friends",
         "status": "appears"
+      }
+    ],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1014",
+        "fromChapterId": "ch-358"
       }
     ]
   },

@@ -191,11 +191,39 @@ function castHatsu(
   targetAt?: Vec2,
 ): CombatState {
   const fighter = state[side]
-  if (fighter.condition !== 'ready' || fighter.cooldown > 0 || fighter.aura < HATSU_COST)
+  const sequenceCost =
+    hatsuId === 'ripper-cyclotron' || hatsuId === 'battle-cantabile-jupiter' ? 6 : HATSU_COST
+  if (fighter.condition !== 'ready' || fighter.cooldown > 0 || fighter.aura < sequenceCost)
     return state
-  const paid = { ...fighter, aura: fighter.aura - HATSU_COST, intent: null }
+  const paid = { ...fighter, aura: fighter.aura - sequenceCost, intent: null }
   let current = replace(state, side, paid)
   const rivalSide = otherSide(side)
+
+  if (hatsuId === 'ripper-cyclotron' || hatsuId === 'battle-cantabile-jupiter') {
+    const previous = fighter.hatsuSequence
+    const continuous = previous?.id === hatsuId && state.clock - previous.lastAt <= 1.2
+    const count = continuous ? previous.count + 1 : 1
+    if (count < 3) {
+      return replace(current, side, {
+        ...paid,
+        hatsuSequence: { id: hatsuId, count, lastAt: state.clock },
+        cooldown: 0.2,
+      })
+    }
+    current = replace(current, side, { ...paid, hatsuSequence: null })
+    return strike({
+      state: current,
+      side,
+      zone,
+      technique: 'hatsu',
+      power: hatsuId === 'ripper-cyclotron' ? 2.2 : 1.9,
+      range: hatsuId === 'ripper-cyclotron' ? 2.4 : 4.5,
+    })
+  }
+
+  if (hatsuId === 'double-machine-gun') {
+    return strike({ state: current, side, zone, technique: 'hatsu', power: 0.95, range: 9 })
+  }
 
   if (hatsuId === 'bungee-gum') {
     const anchor = targetAt ?? state[rivalSide].position

@@ -57,6 +57,7 @@ export interface FighterState {
   intent: AttackIntent | null
   bound: number
   empowered: number
+  hatsuSequence: { id: string; count: number; lastAt: number } | null
   cooldown: number
   condition: FighterCondition
   recovery: number
@@ -150,6 +151,7 @@ export function initialFighter(position: Vec2): FighterState {
     intent: null,
     bound: 0,
     empowered: 0,
+    hatsuSequence: null,
     cooldown: 0,
     condition: 'ready',
     recovery: 0,

@@ -222,6 +222,63 @@ describe('qualitative exchanges', () => {
     expect(state.tethers[0].remaining).toBe(7)
   })
 
+  it('requires three explicit rotations before Ripper Cyclotron lands', () => {
+    let state = initialCombatState()
+    state = {
+      ...state,
+      player: { ...state.player, position: [0, 0], mode: 'ren' },
+      opponent: { ...state.opponent, position: [1.5, 0], guard: 'head' },
+    }
+    for (let count = 1; count <= 3; count += 1) {
+      state = combatReducer(state, {
+        type: 'HATSU',
+        side: 'player',
+        effect: 'impact',
+        hatsuId: 'ripper-cyclotron',
+        zone: 'torso',
+      })
+      if (count < 3) {
+        expect(state.lastEvent).toBeNull()
+        state = combatReducer(state, { type: 'TICK', dt: 0.21 })
+      }
+    }
+    expect(state.lastEvent?.technique).toBe('hatsu')
+    expect(state.player.hatsuSequence).toBeNull()
+  })
+
+  it('requires Jupiter to keep its rhythm between three beats', () => {
+    let state = initialCombatState()
+    state = combatReducer(state, {
+      type: 'HATSU',
+      side: 'player',
+      effect: 'impact',
+      hatsuId: 'battle-cantabile-jupiter',
+      zone: 'torso',
+    })
+    state = combatReducer(state, { type: 'TICK', dt: 1.3 })
+    state = combatReducer(state, {
+      type: 'HATSU',
+      side: 'player',
+      effect: 'impact',
+      hatsuId: 'battle-cantabile-jupiter',
+      zone: 'torso',
+    })
+    expect(state.player.hatsuSequence?.count).toBe(1)
+  })
+
+  it('gives Double Machine Gun its attested long-range volley', () => {
+    let state = initialCombatState()
+    state = { ...state, opponent: { ...state.opponent, position: [8, 0], guard: 'head' } }
+    state = combatReducer(state, {
+      type: 'HATSU',
+      side: 'player',
+      effect: 'barrage',
+      hatsuId: 'double-machine-gun',
+      zone: 'torso',
+    })
+    expect(state.lastEvent?.impact).not.toBe('miss')
+  })
+
   it('lets a barrage connect outside ordinary striking range', () => {
     let state = initialCombatState()
     state = {

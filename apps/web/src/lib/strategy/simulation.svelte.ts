@@ -7,14 +7,19 @@ import type {
   ProposedWorldEvent,
   SpatialEstimate,
   WorldBranch,
+  WorldEntity,
   WorldState,
 } from '@black-whale/world-engine'
 import {
   COMMAND_POINTS_PER_TURN,
+  VICTORY_POINTS_TARGET,
+  chooseStrategicDestination,
+  doctrineForFaction,
+  evaluateObjective,
   intelCertainty,
   planCost,
   type StrategyOrder,
-  type StrategyOrderType,
+  type StrategyObjective,
 } from './rules'
 
 export type { StrategyOrder, StrategyOrderType } from './rules'
@@ -80,6 +85,8 @@ export function createSimulationStore() {
   let locations = $state<StrategyLocation[]>([])
   let selectedFactionId = $state<string | null>(null)
   let intel = $state<Record<string, StrategyIntel>>({})
+  let victoryPoints = $state(0)
+  let gameWon = $state(false)
 
   function init(
     baseState: WorldState,
@@ -106,6 +113,8 @@ export function createSimulationStore() {
     locations = loadedLocations
     selectedFactionId = null
     intel = {}
+    victoryPoints = 0
+    gameWon = false
     turnReports = ['Simulation initialisée.']
   }
 
@@ -117,7 +126,8 @@ export function createSimulationStore() {
     intel = {}
     refreshIntel([], [])
     turnReports = [
-      'Briefing reçu. Les positions adverses restent inconnues tant qu’elles ne sont pas observées.',
+      `Briefing reçu. Doctrine : ${doctrineForFaction(factionId).toLocaleLowerCase('fr')}.`,
+      'Les positions adverses restent inconnues tant qu’elles ne sont pas observées.',
     ]
   }
 
@@ -162,6 +172,22 @@ export function createSimulationStore() {
       }
     }
     intel = next
+  }
+
+  function currentObjective(): StrategyObjective | null {
+    if (!currentState || !selectedFactionId) return null
+    const friendlyIds = new Set(factionEntityIds(selectedFactionId))
+    const friendlyLocations = [...friendlyIds].map(
+      (entityId) => currentState!.presences[entityId]?.locationId,
+    )
+    const confirmedHostiles = Object.values(intel).filter(
+      (sighting) => sighting.certainty === 'CONFIRMED' && !friendlyIds.has(sighting.entityId),
+    ).length
+    return evaluateObjective(
+      doctrineForFaction(selectedFactionId),
+      friendlyLocations,
+      confirmedHostiles,
+    )
   }
 
   function endTurn(
@@ -262,16 +288,47 @@ export function createSimulationStore() {
           return true
         })
 
-      aiEvents.push(
-        ...generateAIOperations(currentState, members, {
-          destinationIds,
-          destinationTypes,
-          random: seededRandom(`${branch.id}:${currentTurn}:${faction.id}`),
-        }),
-      )
+      const random = seededRandom(`${branch.id}:${currentTurn}:${faction.id}`)
+      const memberEntities = members
+        .map((characterId) => resolveControlledEntity(currentState!, characterId))
+        .filter((entity): entity is WorldEntity => Boolean(entity))
+      const occupiedLocations = memberEntities
+        .map((entity) => currentState!.presences[entity.id]?.locationId)
+        .filter((id): id is string => Boolean(id))
+      const playerLocations = factionEntityIds(playerFactionId)
+        .map((entityId) => currentState!.presences[entityId]?.locationId)
+        .filter((id): id is string => Boolean(id))
+      const doctrine = doctrineForFaction(faction.id)
+
+      for (const entity of memberEntities) {
+        if (random() >= 0.72) continue
+        const destination = chooseStrategicDestination(doctrine, {
+          currentLocationId: currentState.presences[entity.id]?.locationId,
+          availableLocationIds: destinationIds,
+          occupiedLocationIds: occupiedLocations,
+          opposingLocationIds: playerLocations,
+          roll: random(),
+        })
+        if (!destination) continue
+        aiEvents.push(
+          ...generateAIOperations(currentState, [entity.originalCharacterId ?? entity.id], {
+            destinationIds: [destination],
+            destinationTypes,
+            moveChance: 1,
+            random: () => 0,
+          }),
+        )
+      }
     }
 
-    const result = engine.applyEvents(branch.id, [...playerEvents, ...aiEvents])
+    const interceptedEvents = aiEvents.filter(
+      (event) =>
+        event.type === 'ENTITY_MOVED' &&
+        Boolean(event.payload.presence.locationId) &&
+        guardedLocations.includes(event.payload.presence.locationId!),
+    )
+    const resolvedAIEvents = aiEvents.filter((event) => !interceptedEvents.includes(event))
+    const result = engine.applyEvents(branch.id, [...playerEvents, ...resolvedAIEvents])
     currentState = result.snapshot
     const completedTurn = currentTurn
     currentTurn += 1
@@ -280,9 +337,36 @@ export function createSimulationStore() {
     const discoveries = Object.values(intel).filter(
       (sighting) => sighting.observedTurn === currentTurn && !friendlyIds.has(sighting.entityId),
     ).length
+    const hostileContacts = new Set(
+      Object.values(intel)
+        .filter(
+          (sighting) =>
+            sighting.observedTurn === currentTurn &&
+            !friendlyIds.has(sighting.entityId) &&
+            factionEntityIds(playerFactionId).some(
+              (entityId) => currentState!.presences[entityId]?.locationId === sighting.locationId,
+            ),
+        )
+        .map((sighting) => sighting.locationId),
+    ).size
+    const objective = currentObjective()
+    if (objective?.complete && !gameWon) {
+      victoryPoints += 1
+      if (victoryPoints >= VICTORY_POINTS_TARGET) gameWon = true
+    }
     turnReports = [
       ...turnReports,
       `Tour ${completedTurn} · ${playerOrders.length} ordre(s) résolu(s), ${discoveries} renseignement(s) actualisé(s).`,
+      ...(interceptedEvents.length
+        ? [`Interception réussie : ${interceptedEvents.length} mouvement(s) adverse(s) bloqué(s).`]
+        : []),
+      ...(hostileContacts
+        ? [`Contact hostile dans ${hostileContacts} zone(s). La position ennemie est confirmée.`]
+        : []),
+      ...(objective?.complete
+        ? [`Objectif rempli · ${victoryPoints}/${VICTORY_POINTS_TARGET} points de victoire.`]
+        : []),
+      ...(gameWon ? ['Victoire stratégique acquise. La simulation peut être poursuivie.'] : []),
       ...(scoutedLocations.length
         ? [`Enquête terminée dans ${scoutedLocations.length} zone(s).`]
         : []),
@@ -293,7 +377,7 @@ export function createSimulationStore() {
 
     return {
       playerEvents: playerEvents.length,
-      aiEvents: aiEvents.length,
+      aiEvents: resolvedAIEvents.length,
       totalEvents: result.appliedEvents.length,
       warnings: result.warnings,
     }
@@ -320,6 +404,15 @@ export function createSimulationStore() {
     },
     get intel() {
       return intel
+    },
+    get objective() {
+      return currentObjective()
+    },
+    get victoryPoints() {
+      return victoryPoints
+    },
+    get gameWon() {
+      return gameWon
     },
     init,
     selectFaction,

@@ -15,7 +15,8 @@
   import {
     COMMAND_POINTS_PER_TURN,
     ORDER_LABELS,
-    objectiveProgress,
+    VICTORY_POINTS_TARGET,
+    doctrineForFaction,
     planCost,
   } from '$lib/strategy/rules'
 
@@ -117,17 +118,7 @@
     ].sort(),
   )
 
-  let objective = $derived.by(() => {
-    const state = simStore.currentState
-    const members = playerFaction?.members ?? []
-    return objectiveProgress(
-      members.map((member) => {
-        const entity = state ? entityForCharacter(state, member.character.id) : undefined
-        return entity ? state?.presences[entity.id]?.locationId : undefined
-      }),
-      members.length,
-    )
-  })
+  let objective = $derived(simStore.objective)
 
   onMount(() => {
     if (data.baseState) {
@@ -241,7 +232,10 @@
           {#each data.factions as faction (faction.id)}
             <button type="button" onclick={() => selectFaction(faction.id)}>
               <strong>{faction.name}</strong>
-              <span>{faction.members.length} unité{faction.members.length > 1 ? 's' : ''}</span>
+              <span
+                >{faction.members.length} unité{faction.members.length > 1 ? 's' : ''} ·
+                {doctrineForFaction(faction.id).toLocaleLowerCase('fr')}</span
+              >
             </button>
           {/each}
         </div>
@@ -263,17 +257,21 @@
 
         <div class="panel-scroll">
           <section>
-            <div class="objective-card" class:complete={objective.complete}>
+            <div class="objective-card" class:complete={objective?.complete}>
               <span>Objectif</span>
-              <strong>Étendre votre présence</strong>
-              <p>Occupez {objective.target} lieux distincts avec vos unités.</p>
+              <strong>{objective?.title ?? 'Objectif indisponible'}</strong>
+              <p>{objective?.description ?? 'La situation tactique est en cours d’analyse.'}</p>
               <div>
-                <i style={`width:${Math.min(100, (objective.current / objective.target) * 100)}%`}
+                <i
+                  style={`width:${objective ? Math.min(100, (objective.current / objective.target) * 100) : 0}%`}
                 ></i>
               </div>
               <small
-                >{objective.current} / {objective.target}
-                {objective.complete ? '· objectif atteint' : ''}</small
+                >{objective?.current ?? 0} / {objective?.target ?? 0}
+                {objective?.complete ? '· objectif atteint' : ''}</small
+              >
+              <small class="victory-score" class:won={simStore.gameWon}
+                >Influence {simStore.victoryPoints} / {VICTORY_POINTS_TARGET}</small
               >
             </div>
           </section>

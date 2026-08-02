@@ -64,6 +64,12 @@
   } from '$lib/tour/pagePresentation'
   import { playTourReportSound } from '$lib/tour/reportSound'
   import {
+    blindWallReasons,
+    declaredDoorReasons,
+    groupSolidTargets,
+    groupSpaceTargets,
+  } from '$lib/tour/pageTargets'
+  import {
     EMPTY_WORLD,
     aimsAtSolids,
     arriveInTour,
@@ -974,14 +980,7 @@
 
   /** With a technique up, the index stops being a way to travel and becomes the reach. */
   const targets = $derived(
-    technique
-      ? ship.tiers.map((tier) => ({
-          tier,
-          spaces: ship.blueprint.spaces
-            .filter((space) => space.tierId === tier.id)
-            .sort((a, b) => nameOf(a).localeCompare(nameOf(b), french ? 'fr' : 'en')),
-        }))
-      : [],
+    technique ? groupSpaceTargets({ ship, nameOf, locale: french ? 'fr' : 'en' }) : [],
   )
 
   /**
@@ -1022,16 +1021,7 @@
    * inventory rather than this deck's.
    */
   const solidTargets = $derived(
-    onSolids
-      ? ship.tiers
-          .map((tier) => ({
-            tier,
-            solids: ship.structures
-              .filter((solid) => ship.spaces.get(solid.spaceId)?.tierId === tier.id)
-              .sort((a, b) => nameOf(a).localeCompare(nameOf(b), french ? 'fr' : 'en')),
-          }))
-          .filter((group) => group.solids.length)
-      : [],
+    onSolids ? groupSolidTargets({ ship, nameOf, locale: french ? 'fr' : 'en' }) : [],
   )
 
   /** Speech sealed: the walk stops naming the room the visitor is standing in. */
@@ -1083,37 +1073,11 @@
    * reason it was declared for, because a declaration is a claim about the ship.
    */
   const blindWalls = $derived(
-    reveal
-      ? [
-          ...plan.blind
-            .reduce((counted, wall) => {
-              const reason = french ? wall.seal.reasonFr : wall.seal.reason
-              counted.set(reason, (counted.get(reason) ?? 0) + 1)
-              return counted
-            }, new Map<string, number>())
-            .entries(),
-        ].sort((a, b) => b[1] - a[1])
-      : [],
+    reveal ? blindWallReasons(plan, french) : [],
   )
 
   const handPlacedDoors = $derived(
-    reveal
-      ? [
-          ...plan.doorways
-            .reduce((counted, door) => {
-              const declared = ship.doors.find(
-                (candidate) =>
-                  (candidate.a === door.a && candidate.b === door.b) ||
-                  (candidate.a === door.b && candidate.b === door.a),
-              )
-              if (!declared) return counted
-              const reason = french ? declared.reasonFr : declared.reason
-              counted.set(reason, (counted.get(reason) ?? 0) + 1)
-              return counted
-            }, new Map<string, number>())
-            .entries(),
-        ].sort((a, b) => b[1] - a[1])
-      : [],
+    reveal ? declaredDoorReasons({ plan, ship, french }) : [],
   )
 
   /** Standing in the isolated room as an outsider: the copy, not the room. */

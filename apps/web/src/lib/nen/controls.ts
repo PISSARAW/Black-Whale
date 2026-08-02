@@ -16,3 +16,12 @@ export function nenZoneIndex(code: string): number | null {
   const index = NEN_ZONE_KEYS.indexOf(code as (typeof NEN_ZONE_KEYS)[number])
   return index < 0 ? null : index
 }
+
+export type NenBodyZone = 'head' | 'torso' | 'hands' | 'feet'
+
+/** Builds a complete two-sided Ryu split while keeping the chosen zone exact. */
+export function ryuDistribution(zone: NenBodyZone, share: number) {
+  const focused = Math.max(0.1, Math.min(0.9, share))
+  const reserve: NenBodyZone = zone === 'torso' ? 'hands' : 'torso'
+  return { [zone]: focused, [reserve]: 1 - focused }
+}

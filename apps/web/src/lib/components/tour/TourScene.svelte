@@ -106,7 +106,7 @@
   // The flock's chirp is raised by the page itself, where the arrival happens.
   import { roarLikeADragon } from '$lib/audio/hatsuSounds'
   import { playNenObjectSound, playNenTechniqueSound, sustainNenSound } from '$lib/audio/nenSounds'
-  import { NEN_KEYS, nenZoneIndex } from '$lib/nen/controls'
+  import { NEN_KEYS, nenZoneIndex, ryuDistribution, type NenBodyZone } from '$lib/nen/controls'
   import { visibleSpaces } from '$lib/tour/visibility'
   import {
     animateVisibleScene,
@@ -522,6 +522,7 @@
   let interactWithNen = $state<(() => void) | null>(null)
   let hatsuWheelOpen = $state(false)
   let hatsuVariantIndex = $state(0)
+  let selectedNenZone = $state<NenBodyZone>('hands')
   let lastHatsuVariant = $state(0)
   const hatsuVariants = $derived.by(() => {
     if (tunes) return [tunes.first, tunes.second, tunes.third]
@@ -3245,7 +3246,8 @@
         const zones = ['head', 'torso', 'hands', 'feet'] as const
         if (zoneIndex !== null) {
           const selected = zones[zoneIndex]
-          useNen({ type: 'RYU', distribution: { [selected]: 0.55, torso: selected === 'torso' ? 0.55 : 0.25, hands: selected === 'hands' ? 0.55 : 0.2 } })
+          selectedNenZone = selected
+          useNen({ type: 'RYU', distribution: ryuDistribution(selected, 0.55) })
         }
         else if (event.code === NEN_KEYS.ten) useNen({ type: 'TEN' })
         else if (event.code === NEN_KEYS.on)
@@ -3262,11 +3264,11 @@
           useNen({ type: 'EN', radius: effectiveNen.en ? null : 8 })
         else if (event.code === NEN_KEYS.ken) toggled('KEN', !effectiveNen.ken)
         else if (event.code === NEN_KEYS.ko)
-          useNen({ type: 'KO', zone: effectiveNen.ko === 'hands' ? null : 'hands' })
+          useNen({ type: 'KO', zone: effectiveNen.ko === selectedNenZone ? null : selectedNenZone })
         else if (event.code === NEN_KEYS.ryuUp)
-          useNen({ type: 'RYU', distribution: { hands: Math.min(0.9, Number(effectiveNen.ryu.hands ?? 0.5) + 0.1), torso: 0.3 } })
+          useNen({ type: 'RYU', distribution: ryuDistribution(selectedNenZone, Number(effectiveNen.ryu[selectedNenZone] ?? 0.5) + 0.1) })
         else if (event.code === NEN_KEYS.ryuDown)
-          useNen({ type: 'RYU', distribution: { hands: Math.max(0.1, Number(effectiveNen.ryu.hands ?? 0.5) - 0.1), torso: 0.7 } })
+          useNen({ type: 'RYU', distribution: ryuDistribution(selectedNenZone, Number(effectiveNen.ryu[selectedNenZone] ?? 0.5) - 0.1) })
         else if (event.code === NEN_KEYS.shu && aimedSolidAt)
           useNen({
             type: 'SHU',
@@ -4485,6 +4487,8 @@
     {#if showNenControls}
       <TourNenControls
         nenState={effectiveNen}
+        selectedZone={selectedNenZone}
+        onSelectZone={(zone) => (selectedNenZone = zone)}
         aimedObjectId={aimedSolidAt?.id ?? null}
         availability={nenAvailability}
         {hatsuAllowedInZetsu}

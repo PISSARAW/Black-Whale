@@ -1,8 +1,9 @@
 <script lang="ts">
   import type { NenTechnique, NenTechniqueAction, NenTechniqueState } from '@black-whale/nen-engine'
+  import { ryuDistribution, type NenBodyZone } from '$lib/nen/controls'
   type Availability = boolean | string
-  interface Props { nenState: NenTechniqueState; aimedObjectId?: string | null; availability?: Partial<Record<NenTechnique | 'hatsu' | 'action', Availability>>; hatsuAllowedInZetsu?: boolean; onAction: (action: NenTechniqueAction) => void; onInteract?: () => void; onHatsu?: () => void }
-  let { nenState, aimedObjectId = null, availability = {}, hatsuAllowedInZetsu = false, onAction, onInteract, onHatsu }: Props = $props()
+  interface Props { nenState: NenTechniqueState; selectedZone?: NenBodyZone; aimedObjectId?: string | null; availability?: Partial<Record<NenTechnique | 'hatsu' | 'action', Availability>>; hatsuAllowedInZetsu?: boolean; onAction: (action: NenTechniqueAction) => void; onSelectZone?: (zone: NenBodyZone) => void; onInteract?: () => void; onHatsu?: () => void }
+  let { nenState, selectedZone = 'hands', aimedObjectId = null, availability = {}, hatsuAllowedInZetsu = false, onAction, onSelectZone, onInteract, onHatsu }: Props = $props()
   let open = $state(false)
   const enabled = (technique: NenTechnique | 'hatsu' | 'action') => availability[technique] !== false && typeof availability[technique] !== 'string'
   const reason = (technique: NenTechnique | 'hatsu' | 'action') => typeof availability[technique] === 'string' ? availability[technique] as string : undefined
@@ -21,10 +22,11 @@
       <button disabled={!enabled('in')} title={reason('in')} class:active={nenState.in} onclick={() => toggle('IN')}>In</button>
       <button disabled={!enabled('en')} title={reason('en')} class:active={nenState.en !== null} onclick={() => onAction({ type: 'EN', radius: nenState.en ? null : 8 })}>En</button>
       <button disabled={!enabled('ken')} title={reason('ken')} class:active={nenState.ken} onclick={() => toggle('KEN')}>Ken</button>
-      <button disabled={!enabled('ko')} title={reason('ko')} class:active={nenState.ko === 'hands'} onclick={() => onAction({ type: 'KO', zone: nenState.ko === 'hands' ? null : 'hands' })}>Ko mains</button>
-      <button disabled={!enabled('ryu')} title={reason('ryu')} onclick={() => onAction({ type: 'RYU', distribution: { feet: 0.7, torso: 0.2, head: 0.1 } })}>Ryu pieds</button>
-      <button disabled={!enabled('ryu')} title={reason('ryu')} onclick={() => onAction({ type: 'RYU', distribution: { hands: 0.65, torso: 0.2, feet: 0.15 } })}>Ryu ATK</button>
-      <button disabled={!enabled('ryu')} title={reason('ryu')} onclick={() => onAction({ type: 'RYU', distribution: { torso: 0.55, head: 0.25, hands: 0.2 } })}>Ryu DEF</button>
+      {#each [['head', '1 Tête'], ['torso', '2 Torse'], ['hands', '3 Mains'], ['feet', '4 Pieds']] as zone}
+        <button class:active={selectedZone === zone[0]} onclick={() => onSelectZone?.(zone[0] as NenBodyZone)}>{zone[1]}</button>
+      {/each}
+      <button disabled={!enabled('ko')} title={reason('ko')} class:active={nenState.ko === selectedZone} onclick={() => onAction({ type: 'KO', zone: nenState.ko === selectedZone ? null : selectedZone })}>Ko · {selectedZone}</button>
+      <label class="col-span-2 grid grid-cols-[auto_1fr_auto] items-center gap-2">Ryu <input type="range" min="10" max="90" step="5" value={Math.round(Number(nenState.ryu[selectedZone] ?? 0.5) * 100)} disabled={!enabled('ryu')} oninput={(event) => onAction({ type: 'RYU', distribution: ryuDistribution(selectedZone, Number(event.currentTarget.value) / 100) })} /><span>{Math.round(Number(nenState.ryu[selectedZone] ?? 0.5) * 100)}%</span></label>
       <button disabled={!enabled('shu') || !aimedObjectId} title={reason('shu') ?? (!aimedObjectId ? 'Visez un objet.' : undefined)} class:active={Boolean(aimedObjectId && nenState.shu.includes(aimedObjectId))} onclick={() => aimedObjectId && onAction({ type: 'SHU', objectId: aimedObjectId, on: !nenState.shu.includes(aimedObjectId) })}>Shu</button>
       <button disabled={!enabled('hatsu') || !onHatsu || (nenState.mode === 'zetsu' && !hatsuAllowedInZetsu)} title={reason('hatsu') ?? (nenState.mode === 'zetsu' && !hatsuAllowedInZetsu ? 'Le Zetsu ferme ce Hatsu.' : undefined)} onclick={() => onHatsu?.()}>Hatsu</button>
       <button class="col-span-2" disabled={!enabled('action') || !aimedObjectId || nenState.mode === 'zetsu'} title={reason('action') ?? (!aimedObjectId ? 'Visez un objet.' : nenState.mode === 'zetsu' ? 'Le Zetsu ferme l’aura.' : undefined)} onclick={() => onInteract?.()}>Agir sur l'objet</button>

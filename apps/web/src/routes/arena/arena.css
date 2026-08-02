@@ -29,6 +29,32 @@
       0 0 1rem #e5c476aa;
   }
 
+  .reticle.locked {
+    border-color: #f0c96f;
+    border-radius: 20%;
+    transform: translate(-50%, -50%) rotate(45deg);
+  }
+
+  .reticle span {
+    position: absolute;
+    top: 0.75rem;
+    left: 50%;
+    display: none;
+    color: #f0d693;
+    font:
+      600 0.52rem 'IBM Plex Mono',
+      monospace;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    transform: translateX(-50%);
+  }
+
+  .reticle.locked span {
+    display: block;
+    transform: translateX(-50%) rotate(-45deg);
+  }
+
   .attack-telegraph {
     position: absolute;
     z-index: 9;

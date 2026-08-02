@@ -4,6 +4,7 @@
   import TourScene from '$lib/components/tour/TourScene.svelte'
   import { advanceArena, OPPONENT_DOCTRINES, type OpponentDoctrine } from '$lib/arena/ai'
   import { arenaHatsuEffect, worksInArena } from '$lib/arena/hatsu'
+  import { zoneFromPitch } from '$lib/arena/targeting'
   import { buildCombatTerrain } from '$lib/arena/terrain'
   import { readAura } from '$lib/combat/perception'
   import { STRIKE_RANGE } from '$lib/combat/resolve'
@@ -35,6 +36,8 @@
   let started = $state(false)
   let position = $state<Vec2>(terrain.spawns[0])
   let heading = $state(0)
+  let lookPitch = $state(0)
+  let aimedExtra = $state<string | null>(null)
   let currentSpace = $state<Space | null>(null)
   let engaged = $state(false)
   let tierId = $state(terrain.tierId)
@@ -74,6 +77,7 @@
   let gap = $derived(distance(game.player.position, game.opponent.position))
   let inRange = $derived(gap <= STRIKE_RANGE)
   let threatened = $derived(reading.intentRemaining !== null)
+  let aimedZone = $derived(zoneFromPitch(lookPitch))
   let opponentActor = $derived<Apparition[]>([
     {
       id: 'arena-opponent',
@@ -86,6 +90,7 @@
       colour: 0xc36f68,
       stage: actorStage(),
       hidden: false,
+      pick: true,
     },
   ])
   let opponentWalls = $derived(blockerAt(game.opponent.position))
@@ -128,7 +133,7 @@
   }
 
   function strike() {
-    command({ type: 'STRIKE', side: 'player', zone: game.player.guard }, 'strike')
+    command({ type: 'STRIKE', side: 'player', zone: aimedZone }, 'strike')
   }
 
   function gatherKo() {
@@ -148,10 +153,7 @@
       hatsuPanelOpen.set(true)
       return
     }
-    command(
-      { type: 'HATSU', side: 'player', effect: hatsuEffect, zone: game.player.guard },
-      'hatsu',
-    )
+    command({ type: 'HATSU', side: 'player', effect: hatsuEffect, zone: aimedZone }, 'hatsu')
   }
 
   function shiftRyu(by: number) {
@@ -405,6 +407,8 @@
     bind:tierId
     bind:position
     bind:heading
+    bind:lookPitch
+    bind:aimedExtra
     bind:currentSpace
     bind:engaged
     bind:jumpTo
@@ -422,7 +426,9 @@
     unsupportedLabel={$t.tour.unsupported}
   />
 
-  <div class="reticle" class:near={inRange} aria-hidden="true"></div>
+  <div class="reticle" class:near={inRange} class:locked={aimedExtra === 'arena-opponent'}>
+    <span>{$t.arena.zone[aimedZone]}</span>
+  </div>
 
   {#if game.opponent.intent}
     <div class="attack-telegraph" class:concealed={!threatened} aria-live="assertive">

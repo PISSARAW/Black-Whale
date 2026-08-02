@@ -23,6 +23,7 @@ describe('standard Nen techniques', () => {
       gyo: false,
       en: null,
       ken: false,
+      on: false,
       ko: null,
       ryu: {},
       shu: [],
@@ -81,5 +82,24 @@ describe('standard Nen techniques', () => {
     expect(
       isAuraVisibleTo(source, transitionNen(observer, { type: 'GYO', on: true }).state),
     ).toBe(true)
+  })
+
+  it('raises On as dark Ren and locks its forced Ryu', () => {
+    const activated = transitionNen(createNenTechniqueState<Zone>(), {
+      type: 'ON',
+      on: true,
+      distribution: { arms: 45, torso: 35, legs: 20 },
+    })
+    expect(activated.state).toMatchObject({
+      mode: 'ren',
+      on: true,
+      ken: false,
+      ko: null,
+      ryu: { arms: 0.45, torso: 0.35, legs: 0.2 },
+    })
+    expect(
+      transitionNen(activated.state, { type: 'RYU', distribution: { head: 1 } }),
+    ).toMatchObject({ accepted: false, reason: 'ON_FORCES_RYU' })
+    expect(transitionNen(activated.state, { type: 'TEN' }).state.on).toBe(false)
   })
 })

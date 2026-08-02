@@ -7,12 +7,13 @@
 </script>
 
 <aside class="pointer-events-auto absolute left-3 top-14 z-20 text-[10px] text-[#FFFFF0]">
-  <button type="button" onclick={() => (open = !open)} aria-expanded={open} class="rounded border border-[#8ecae6]/50 bg-[#050505]/90 px-2 py-1 uppercase tracking-widest text-[#8ecae6]">Nen · {nenState.mode}</button>
+  <button type="button" onclick={() => (open = !open)} aria-expanded={open} class="rounded border border-[#8ecae6]/50 bg-[#050505]/90 px-2 py-1 uppercase tracking-widest text-[#8ecae6]">Nen · {nenState.on ? 'on' : nenState.mode}</button>
   {#if open}
     <div class="mt-1 grid w-48 grid-cols-3 gap-1 rounded border border-[#8ecae6]/25 bg-[#050505]/95 p-2 backdrop-blur">
       <button class:active={nenState.mode === 'ten'} onclick={() => onAction({ type: 'TEN' })}>Ten</button>
       <button class:active={nenState.mode === 'ren'} onclick={() => onAction({ type: 'REN' })}>Ren</button>
       <button class:active={nenState.mode === 'zetsu'} onclick={() => onAction({ type: 'ZETSU' })}>Zetsu</button>
+      <button class:active={nenState.on} onclick={() => onAction({ type: 'ON', on: !nenState.on, distribution: { hands: 0.45, torso: 0.35, feet: 0.2 } })}>On</button>
       <button class:active={nenState.gyo} onclick={() => toggle('GYO')}>Gyo</button>
       <button class:active={nenState.in} onclick={() => toggle('IN')}>In</button>
       <button class:active={nenState.en !== null} onclick={() => onAction({ type: 'EN', radius: nenState.en ? null : 8 })}>En</button>
@@ -22,7 +23,7 @@
       <button onclick={() => onAction({ type: 'RYU', distribution: { hands: 0.65, torso: 0.2, feet: 0.15 } })}>Ryu ATK</button>
       <button onclick={() => onAction({ type: 'RYU', distribution: { torso: 0.55, head: 0.25, hands: 0.2 } })}>Ryu DEF</button>
       <button disabled={!aimedObjectId} class:active={Boolean(aimedObjectId && nenState.shu.includes(aimedObjectId))} onclick={() => aimedObjectId && onAction({ type: 'SHU', objectId: aimedObjectId, on: !nenState.shu.includes(aimedObjectId) })}>Shu</button>
-      <p class="col-span-3 mt-1 text-[9px] leading-snug text-[#FFFFF0]/40">Alt + T/R/X · G/I/E/K · 1/2/3/4 · S</p>
+      <p class="col-span-3 mt-1 text-[9px] leading-snug text-[#FFFFF0]/40">Alt + O · T/R/X · G/I/E/K · 1/2/3/4 · S</p>
     </div>
   {/if}
 </aside>

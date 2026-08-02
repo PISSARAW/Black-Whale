@@ -12,6 +12,7 @@ export class NenSceneAura {
   readonly #points: Three.Mesh[]
   readonly #base: Three.Mesh
   readonly #ren: Three.Group
+  readonly #on: Three.Group
   readonly #world: Three.Group
   readonly #THREE: ThreeModule
   readonly #shu = new Map<string, Three.Mesh>()
@@ -53,7 +54,24 @@ export class NenSceneAura {
       flame.position.set(Math.cos(angle) * 0.58, -0.7 + (index % 5) * 0.35, Math.sin(angle) * 0.58)
       this.#ren.add(flame)
     }
-    this.#root.add(this.#en, this.#base, this.#ren, this.#ken, ...this.#eyes, ...this.#points)
+    this.#on = new THREE.Group()
+    for (let index = 0; index < 20; index++) {
+      const materialOn = new THREE.MeshBasicMaterial({
+        color: index % 2 ? 0x01040c : 0x123b7a,
+        transparent: true,
+        opacity: index % 2 ? 0.74 : 0.4,
+        depthWrite: false,
+        blending: THREE.AdditiveBlending,
+      })
+      const flame = new THREE.Mesh(
+        new THREE.ConeGeometry(0.1 + (index % 4) * 0.02, 0.78, 7),
+        materialOn,
+      )
+      const angle = (index / 20) * Math.PI * 2
+      flame.position.set(Math.cos(angle) * 0.62, -0.75 + (index % 6) * 0.32, Math.sin(angle) * 0.62)
+      this.#on.add(flame)
+    }
+    this.#root.add(this.#en, this.#base, this.#ren, this.#on, this.#ken, ...this.#eyes, ...this.#points)
     scene.add(this.#root, this.#world)
   }
 
@@ -108,12 +126,15 @@ export class NenSceneAura {
     this.#en.visible = active && state.en !== null
     if (state.en) this.#en.scale.setScalar(state.en.radius)
     this.#en.position.y = ground + 0.025 - camera.position.y
-    this.#base.visible = !state.ken
+    this.#base.visible = !state.ken && !state.on
     this.#base.scale.set(0.78, 1.62, 0.78)
     ;(this.#base.material as Three.MeshBasicMaterial).opacity =
       state.mode === 'zetsu' ? 0.008 : state.mode === 'ten' ? 0.055 : 0.13
-    this.#ren.visible = state.mode === 'ren' && !state.ken
+    this.#ren.visible = state.mode === 'ren' && !state.ken && !state.on
     this.#ren.position.y = ground + 0.9 - camera.position.y
+    this.#on.visible = state.on
+    this.#on.position.y = ground + 0.9 - camera.position.y
+    this.#on.scale.setScalar(1 + Math.sin(seconds * 7) * 0.045)
 
     const ko = active ? state.ko : null
     this.#points.forEach((point, index) => {

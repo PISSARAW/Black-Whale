@@ -593,7 +593,34 @@ export function buildHumanFigure({ THREE, glow, seen, observerGyo = false }: Hum
     trace.position.y = 0.9
     figure.add(trace)
   }
-  if (auraVisible && nen.mode !== 'zetsu' && !nen.ken) {
+  if (auraVisible && nen.on) {
+    const core = new THREE.Mesh(
+      geometry(THREE, 'aura:on-core', () => new THREE.SphereGeometry(0.92, 22, 16)),
+      glow(0x020612, 0.46),
+    )
+    core.name = 'nen-on-core'
+    core.scale.y = 1.48
+    core.position.y = 0.9
+    figure.add(core)
+    for (let index = 0; index < 18; index++) {
+      const outer = index % 2 === 0
+      const flame = new THREE.Mesh(
+        geometry(
+          THREE,
+          `aura:on-flame:${index % 4}`,
+          () => new THREE.ConeGeometry(0.1 + (index % 4) * 0.018, 0.7, 7),
+        ),
+        glow(outer ? 0x123b7a : 0x01040c, outer ? 0.44 : 0.76),
+      )
+      const angle = (index / 18) * Math.PI * 2
+      flame.name = 'nen-on-flame'
+      flame.position.set(Math.cos(angle) * 0.62, 0.36 + (index % 6) * 0.25, Math.sin(angle) * 0.62)
+      flame.rotation.z = Math.cos(angle) * -0.3
+      flame.rotation.x = Math.sin(angle) * 0.3
+      figure.add(flame)
+    }
+  }
+  if (auraVisible && nen.mode !== 'zetsu' && !nen.ken && !nen.on) {
     const shell = new THREE.Mesh(
       geometry(
         THREE,

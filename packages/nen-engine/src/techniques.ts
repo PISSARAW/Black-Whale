@@ -10,6 +10,7 @@ export type NenTechnique =
   | 'ko'
   | 'ryu'
   | 'shu'
+  | 'on'
 
 export type NenAuraMode = 'ten' | 'ren' | 'zetsu'
 
@@ -19,6 +20,8 @@ export interface NenTechniqueState<Zone extends string = string> {
   gyo: boolean
   en: { radius: number } | null
   ken: boolean
+  /** On: a dark Ren whose Ryu distribution is imposed until released. */
+  on: boolean
   ko: Zone | null
   /** Normalised aura shares. Missing zones carry no deliberately assigned aura. */
   ryu: Partial<Record<Zone, number>>
@@ -37,6 +40,7 @@ export type NenTechniqueAction<Zone extends string = string> =
   | { type: 'KO'; zone: Zone | null }
   | { type: 'RYU'; distribution: Partial<Record<Zone, number>> }
   | { type: 'SHU'; objectId: string; on: boolean }
+  | { type: 'ON'; on: boolean; distribution?: Partial<Record<Zone, number>> }
 
 export interface NenTransition<Zone extends string = string> {
   state: NenTechniqueState<Zone>
@@ -48,6 +52,7 @@ export type NenTechniqueBlock =
   | 'ZETSU_HAS_NO_AURA'
   | 'RADIUS_MUST_BE_POSITIVE'
   | 'RYU_DISTRIBUTION_EMPTY'
+  | 'ON_FORCES_RYU'
 
 export const NEN_TECHNIQUES: readonly NenTechnique[] = [
   'in',
@@ -60,10 +65,21 @@ export const NEN_TECHNIQUES: readonly NenTechnique[] = [
   'ko',
   'ryu',
   'shu',
+  'on',
 ]
 
 export function createNenTechniqueState<Zone extends string = string>(): NenTechniqueState<Zone> {
-  return { mode: 'ten', in: false, gyo: false, en: null, ken: false, ko: null, ryu: {}, shu: [] }
+  return {
+    mode: 'ten',
+    in: false,
+    gyo: false,
+    en: null,
+    ken: false,
+    on: false,
+    ko: null,
+    ryu: {},
+    shu: [],
+  }
 }
 
 /** Zetsu closes aura output, so every technique fed by aura falls with it. */
@@ -75,6 +91,7 @@ function enterZetsu<Zone extends string>(state: NenTechniqueState<Zone>): NenTec
     gyo: false,
     en: null,
     ken: false,
+    on: false,
     ko: null,
     ryu: {},
     shu: [],
@@ -111,6 +128,17 @@ export function transitionNen<Zone extends string>(
   if (action.type === 'TEN') return { state: { ...enterZetsu(state), mode: 'ten' }, accepted: true }
   if (action.type === 'REN') return { state: { ...enterZetsu(state), mode: 'ren' }, accepted: true }
 
+  if (action.type === 'ON') {
+    if (!action.on) return { state: { ...state, on: false }, accepted: true }
+    const ryu = normalise(action.distribution ?? {})
+    return ryu
+      ? {
+          state: { ...state, mode: 'ren', on: true, ken: false, ko: null, ryu },
+          accepted: true,
+        }
+      : { state, accepted: false, reason: 'RYU_DISTRIBUTION_EMPTY' }
+  }
+
   const blocked = needsAura(state)
   if (blocked) return blocked
 
@@ -125,6 +153,7 @@ export function transitionNen<Zone extends string>(
     }
   }
   if (action.type === 'KEN') {
+    if (state.on) return { state, accepted: false, reason: 'ON_FORCES_RYU' }
     return {
       state: {
         ...state,
@@ -136,6 +165,7 @@ export function transitionNen<Zone extends string>(
     }
   }
   if (action.type === 'KO') {
+    if (state.on) return { state, accepted: false, reason: 'ON_FORCES_RYU' }
     return {
       state: {
         ...state,
@@ -150,6 +180,7 @@ export function transitionNen<Zone extends string>(
     }
   }
   if (action.type === 'RYU') {
+    if (state.on) return { state, accepted: false, reason: 'ON_FORCES_RYU' }
     const ryu = normalise(action.distribution)
     return ryu
       ? { state: { ...state, ko: null, ryu }, accepted: true }
@@ -168,7 +199,7 @@ export const isAuraVisibleTo = (source: NenTechniqueState, observer: NenTechniqu
   !source.in || observer.gyo
 /** Zetsu leaves the body with no aura defence against Hatsu or aura-clad blows. */
 export const nenDefenceFactor = (state: NenTechniqueState) =>
-  state.mode === 'zetsu' ? 0 : state.ken ? 1 : state.mode === 'ren' ? 0.65 : 0.35
+  state.mode === 'zetsu' ? 0 : state.ken ? 1 : state.on ? 0.9 : state.mode === 'ren' ? 0.65 : 0.35
 
 export interface EnPresence {
   id: string

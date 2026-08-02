@@ -24,7 +24,7 @@
   import { link, t } from '$lib/i18n'
   import { locale } from '$lib/i18n'
   import { localizeHatsu } from '$lib/i18n/hatsu'
-  import { crossingsOn, deckOf, entrySpace, theShip, type Crossing } from '$lib/tour/blueprint'
+  import { crossingsOn, deckOf, theShip, type Crossing } from '$lib/tour/blueprint'
   import {
     loadComfort,
     prefersReducedMotion,
@@ -49,6 +49,7 @@
   import { TourKeyboardController } from '$lib/tour/pageKeyboard'
   import { TourWorldTicker } from '$lib/tour/pageWorldTicker'
   import { TourHatsuSession } from '$lib/tour/pageHatsuSession.svelte'
+  import { TourNavigationState } from '$lib/tour/pageNavigationState.svelte'
   import {
     AIR_KEYS,
     type CastHand,
@@ -78,7 +79,7 @@
     type TourReport,
     type TourWorld,
   } from '$lib/tour/hatsu'
-  import type { Link, Provenance, Space, Structure, Vec2 } from '$lib/tour/types'
+  import type { Provenance, Space } from '$lib/tour/types'
 
   const ship = theShip()
   const chrome = new TourChromeState()
@@ -106,17 +107,16 @@
       (requestedDeck && ship.plans.has(requestedDeck) ? requestedDeck : ship.tiers[0].id),
   )
 
-  let tierId = $state(initialTierId)
-  let currentSpace = $state<Space | null>(null)
-  let availableLink = $state<{ link: Link; to: string } | null>(null)
-  let jumpTo = $state<string | null>(null)
-  /** Where in that room, for the arrow — which lands where it fell, not at the door. */
-  let jumpAt = $state<Vec2 | null>(null)
-  let engaged = $state(false)
-  /** Set by the scene once it knows it is being walked with a finger. */
-  let touch = $state(false)
-  let position = $state<[number, number]>([0, 0])
-  let heading = $state(0)
+  const navigation = new TourNavigationState(ship, initialTierId)
+  const tierId = $derived(navigation.tierId)
+  const currentSpace = $derived(navigation.currentSpace)
+  const availableLink = $derived(navigation.availableLink)
+  const engaged = $derived(navigation.engaged)
+  const touch = $derived(navigation.touch)
+  const position = $derived(navigation.position)
+  const heading = $derived(navigation.heading)
+  const aimedAt = $derived(navigation.aimedAt)
+  const aimedSolidAt = $derived(navigation.aimedSolidAt)
   /**
    * The reveal, on G.
    *
@@ -173,17 +173,8 @@
   const linkPrompt = $derived(promptFor($t.tour))
   const touchUseLabel = $derived(promptFor($t.tour.touch))
 
-  function goToSpace(space: Space, landing: Vec2 | null = null) {
-    if (space.tierId !== tierId) tierId = space.tierId
-    jumpAt = landing
-    jumpTo = space.id
-  }
-
-  function selectTier(id: string) {
-    if (id === tierId) return
-    const plan = ship.plans.get(id)
-    if (plan) goToSpace(entrySpace(plan))
-  }
+  const goToSpace = navigation.goToSpace
+  const selectTier = navigation.selectTier
 
   /**
    * Honour whatever the URL currently asks for. `untrack` because `selectTier`
@@ -193,10 +184,7 @@
   $effect(() => {
     const space = requestedSpace
     const deck = requestedDeck
-    untrack(() => {
-      if (space) goToSpace(space)
-      else if (deck && ship.plans.has(deck)) selectTier(deck)
-    })
+    untrack(() => navigation.honor(space, deck))
   })
 
   /**
@@ -284,9 +272,6 @@
     updateReport: (next) => (report = next),
     show,
   })
-  let aimedAt = $state<Space | null>(null)
-  let aimedSolidAt = $state<Structure | null>(null)
-
   const technique = $derived(worksInTour($activeHatsu) ? $activeHatsu : null)
 
   const openPages = $derived(technique?.kind === 'bookmark' ? twoPages(world.book) : null)
@@ -610,17 +595,7 @@
   >
     <TourPageStage
       immersive={chrome.immersive}
-      bind:tierId
-      bind:currentSpace
-      bind:availableLink
-      bind:jumpTo
-      bind:jumpAt
-      bind:engaged
-      bind:touch
-      bind:position
-      bind:heading
-      bind:aimedAt
-      bind:aimedSolidAt
+      {navigation}
       scene={{
         ship,
         world,

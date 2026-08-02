@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { ComponentProps } from 'svelte'
+  import type { TourNavigationState } from '$lib/tour/pageNavigationState.svelte'
   import TourScene from './TourScene.svelte'
   import TourSceneOverlay from './TourSceneOverlay.svelte'
 
@@ -8,17 +9,7 @@
 
   interface Props {
     immersive: boolean
-    tierId: SceneProps['tierId']
-    currentSpace?: SceneProps['currentSpace']
-    availableLink?: SceneProps['availableLink']
-    jumpTo?: SceneProps['jumpTo']
-    jumpAt?: SceneProps['jumpAt']
-    engaged?: SceneProps['engaged']
-    touch?: SceneProps['touch']
-    position?: SceneProps['position']
-    heading?: SceneProps['heading']
-    aimedAt?: SceneProps['aimedAt']
-    aimedSolidAt?: SceneProps['aimedSolidAt']
+    navigation: TourNavigationState
     scene: Omit<SceneProps,
       | 'tierId' | 'currentSpace' | 'availableLink' | 'jumpTo' | 'jumpAt'
       | 'engaged' | 'touch' | 'position' | 'heading' | 'aimedAt' | 'aimedSolidAt'>
@@ -27,17 +18,7 @@
 
   let {
     immersive,
-    tierId = $bindable(),
-    currentSpace = $bindable(null),
-    availableLink = $bindable(null),
-    jumpTo = $bindable(null),
-    jumpAt = $bindable(null),
-    engaged = $bindable(false),
-    touch = $bindable(false),
-    position = $bindable([0, 0]),
-    heading = $bindable(0),
-    aimedAt = $bindable(null),
-    aimedSolidAt = $bindable(null),
+    navigation,
     scene,
     overlay,
   }: Props = $props()
@@ -49,17 +30,17 @@
     : 'min-h-[420px] rounded-lg border border-[#333] lg:h-[70vh]'}"
 >
   <TourScene
-    bind:tierId
-    bind:currentSpace
-    bind:availableLink
-    bind:jumpTo
-    bind:jumpAt
-    bind:engaged
-    bind:touch
-    bind:position
-    bind:heading
-    bind:aimedAt
-    bind:aimedSolidAt
+    bind:tierId={navigation.tierId}
+    bind:currentSpace={navigation.currentSpace}
+    bind:availableLink={navigation.availableLink}
+    bind:jumpTo={navigation.jumpTo}
+    bind:jumpAt={navigation.jumpAt}
+    bind:engaged={navigation.engaged}
+    bind:touch={navigation.touch}
+    bind:position={navigation.position}
+    bind:heading={navigation.heading}
+    bind:aimedAt={navigation.aimedAt}
+    bind:aimedSolidAt={navigation.aimedSolidAt}
     {...scene}
   />
   <TourSceneOverlay {...overlay} />

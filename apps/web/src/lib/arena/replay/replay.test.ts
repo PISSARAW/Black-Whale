@@ -3,6 +3,8 @@ import { combatReducer, initialCombatState } from '../../combat/reducer'
 import { advanceArena } from '../ai'
 import { ArenaRecorder } from './recorder'
 import { playReplay } from './player'
+import { parseReplay, serializeReplay } from './codec'
+import { projectFrame } from './perspective'
 
 describe('deterministic Arena replay', () => {
   it('reconstructs player commands, movement and AI to the same checksum', () => {
@@ -35,5 +37,29 @@ describe('deterministic Arena replay', () => {
     const played = playReplay(replay)
     expect(played.checksum).toBe(replay.checksum)
     expect(playReplay(replay).checksum).toBe(played.checksum)
+    expect(parseReplay(serializeReplay(replay))).toEqual(replay)
+  })
+
+  it('projects concealed information according to each observer', () => {
+    const base = initialCombatState()
+    const state = {
+      ...base,
+      opponent: {
+        ...base.opponent,
+        in: true,
+        guard: 'head' as const,
+        intent: { zone: 'legs' as const, remaining: 0.3 },
+      },
+    }
+    expect(projectFrame(state, 'player').opponent.reading?.intentZone).toBeNull()
+    expect(projectFrame(state, 'reality').opponent.aura).toBe(100)
+    expect(
+      projectFrame({ ...state, player: { ...state.player, gyo: true } }, 'player').opponent.reading
+        ?.intentZone,
+    ).toBe('legs')
+  })
+
+  it('rejects tampered and unknown replay payloads', () => {
+    expect(() => parseReplay('{"version":99}')).toThrow('Invalid Arena replay')
   })
 })

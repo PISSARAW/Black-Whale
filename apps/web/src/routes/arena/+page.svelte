@@ -21,6 +21,7 @@
   import { buildCombatTerrain } from '$lib/arena/terrain'
   import { ArenaRecorder } from '$lib/arena/replay/recorder'
   import type { ArenaReplay } from '$lib/arena/replay/types'
+  import { serializeReplay } from '$lib/arena/replay/codec'
   import { readAura } from '$lib/combat/perception'
   import { STRIKE_RANGE } from '$lib/combat/resolve'
   import { combatReducer, initialCombatState } from '$lib/combat/reducer'
@@ -340,6 +341,7 @@
     if (graded || game.outcome === 'playing') return
     graded = true
     lastReplay = recorder.finish(game)
+    sessionStorage.setItem('black-whale:arena-last-replay', serializeReplay(lastReplay))
     const grade = gradeArena(stats, game.outcome === 'won', game.player.aura)
     const order = ['C', 'B', 'A', 'S']
     if (!bestGrade || order.indexOf(grade) > order.indexOf(bestGrade)) {

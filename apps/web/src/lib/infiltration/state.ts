@@ -20,6 +20,15 @@ export interface Witness {
   social: boolean
   usesEn: boolean
   belief: Belief
+  route: string[]
+  routeIndex: number
+  investigating: string | null
+  challenged: boolean
+}
+
+export interface Challenge {
+  witnessId: WitnessId
+  left: number
 }
 
 export interface Trace {
@@ -41,13 +50,15 @@ export interface InfiltrationState {
   diversion: { spaceId: string; left: number } | null
   coverIntegrity: number
   alert: number
+  challenge: Challenge | null
+  reports: { witnessId: WitnessId; at: number; certainty: number }[]
 }
 
 export interface MissionSetup {
   playerAt: { position: Vec2; spaceId: string }
   objectiveSpaceId: string
   extractionSpaceId: string
-  witnesses: Omit<Witness, 'belief'>[]
+  witnesses: Omit<Witness, 'belief' | 'routeIndex' | 'investigating' | 'challenged'>[]
 }
 
 export type InfiltrationAction =
@@ -56,6 +67,7 @@ export type InfiltrationAction =
   | { type: 'COPY' }
   | { type: 'VERIFY' }
   | { type: 'DIVERT' }
+  | { type: 'ANSWER'; answer: 'workOrder' | 'bluff' }
   | { type: 'EXTRACT' }
 
 const noBelief = (): Belief => ({
@@ -70,7 +82,13 @@ export function initialInfiltrationState(setup: MissionSetup): InfiltrationState
     clock: 0,
     outcome: 'playing',
     player: { ...setup.playerAt, nen: 'ten', moving: false },
-    witnesses: setup.witnesses.map((witness) => ({ ...witness, belief: noBelief() })),
+    witnesses: setup.witnesses.map((witness) => ({
+      ...witness,
+      belief: noBelief(),
+      routeIndex: 0,
+      investigating: null,
+      challenged: false,
+    })),
     traces: [],
     objectiveSpaceId: setup.objectiveSpaceId,
     extractionSpaceId: setup.extractionSpaceId,
@@ -79,6 +97,8 @@ export function initialInfiltrationState(setup: MissionSetup): InfiltrationState
     diversion: null,
     coverIntegrity: 100,
     alert: 0,
+    challenge: null,
+    reports: [],
   }
 }
 
@@ -111,9 +131,34 @@ export function infiltrationReducer(
         : state
     case 'DIVERT':
       return divert(state)
+    case 'ANSWER':
+      return answerChallenge(state, action.answer)
     case 'EXTRACT':
       return extract(state)
   }
+}
+
+function answerChallenge(
+  state: InfiltrationState,
+  answer: 'workOrder' | 'bluff',
+): InfiltrationState {
+  if (!state.challenge) return state
+  const witnesses = state.witnesses.map((witness) => {
+    if (witness.id !== state.challenge?.witnessId) return witness
+    const correct = answer === (witness.usesEn ? 'bluff' : 'workOrder')
+    return {
+      ...witness,
+      challenged: true,
+      belief: {
+        ...witness.belief,
+        identity: correct ? ('maintenance' as const) : ('intruder' as const),
+        certainty: correct
+          ? Math.max(10, witness.belief.certainty - 30)
+          : Math.min(100, witness.belief.certainty + 48),
+      },
+    }
+  })
+  return { ...state, witnesses, challenge: null }
 }
 
 function copyDocument(state: InfiltrationState): InfiltrationState {

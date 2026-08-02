@@ -3,6 +3,7 @@
   import Seo from '$lib/components/Seo.svelte'
   import TourScene from '$lib/components/tour/TourScene.svelte'
   import { buildArena } from '$lib/hunt/arena'
+  import { buildNavGraph } from '$lib/hunt/navmesh'
   import { floorOf, theShip } from '$lib/tour/blueprint'
   import { centroid, EMPTY_WORLD } from '$lib/tour/hatsu'
   import { interiorPoint } from '$lib/tour/geometry'
@@ -20,6 +21,7 @@
 
   const ship = theShip()
   const arena = buildArena()
+  const graph = buildNavGraph(arena)
   const plan = ship.plans.get(arena.tierId)!
   const extraction = arena.spaces[0]
   const objective = arena.spaces.at(-1)!
@@ -41,6 +43,7 @@
         sight: index === 2 ? 11 : 8,
         social: index !== 1,
         usesEn: index === 2,
+        route: [space.id, ...(graph.edges.get(space.id) ?? [])],
       })),
     })
   }
@@ -120,7 +123,7 @@
     )
     send({ type: 'WALKED', position, spaceId: currentSpace?.id ?? null, moving: moved > 0.001 })
     while (owed >= INFILTRATION_DT && game.outcome === 'playing') {
-      game = updateInfiltration(game)
+      game = updateInfiltration(game, { dt: INFILTRATION_DT, graph })
       owed -= INFILTRATION_DT
     }
   }
@@ -222,6 +225,35 @@
         >V · {$t.infiltration.divert}</button
       >
     </div>
+
+    {#if game.challenge}
+      <div class="absolute inset-0 grid place-items-center bg-black/55 p-6">
+        <section class="w-full max-w-md border border-amber-300/40 bg-black/95 p-6 shadow-2xl">
+          <p class="text-xs uppercase tracking-[.25em] text-amber-300">
+            {$t.infiltration.challenge}
+          </p>
+          <h2 class="mt-2 text-2xl font-bold">
+            {$t.infiltration.witnesses[game.challenge.witnessId]}
+          </h2>
+          <p class="mt-3 text-sm leading-relaxed text-white/65">
+            {$t.infiltration.challengePrompt}
+          </p>
+          <p class="mt-2 text-xs text-white/40">{Math.ceil(game.challenge.left)} s</p>
+          <div class="mt-6 grid gap-2">
+            <button
+              onclick={() => send({ type: 'ANSWER', answer: 'workOrder' })}
+              class="border border-white/25 px-4 py-3 text-left text-sm hover:border-amber-300"
+              >{$t.infiltration.workOrder}</button
+            >
+            <button
+              onclick={() => send({ type: 'ANSWER', answer: 'bluff' })}
+              class="border border-white/25 px-4 py-3 text-left text-sm hover:border-amber-300"
+              >{$t.infiltration.bluff}</button
+            >
+          </div>
+        </section>
+      </div>
+    {/if}
   {/if}
 
   {#if briefing}
@@ -252,6 +284,9 @@
         <p class="mt-3 text-white/60">
           {$t.infiltration.score}: {report.score}/100 · {$t.infiltration.traces}: {report.traces
             .length}
+        </p>
+        <p class="mt-2 text-sm text-white/45">
+          {$t.infiltration.reports}: {report.reports.length}
         </p>
         <div class="mt-8 grid gap-3 sm:grid-cols-3">
           {#each report.witnesses as witness (witness.id)}<section

@@ -1,19 +1,33 @@
+import type { NavGraph } from '../hunt/navmesh'
+import { hearsMovement, patrolWitness } from './patrol'
 import type { InfiltrationState, Witness } from './state'
 
 export const INFILTRATION_DT = 1 / 30
 export const MISSION_LENGTH = 8 * 60
 const REPORT_THRESHOLD = 72
+export interface InfiltrationWorld {
+  dt: number
+  graph: NavGraph
+}
 
 export function updateInfiltration(
   state: InfiltrationState,
-  dt = INFILTRATION_DT,
+  world: InfiltrationWorld,
 ): InfiltrationState {
   if (state.outcome !== 'playing') return state
-  const clock = state.clock + dt
-  const diversion = state.diversion
-    ? { ...state.diversion, left: Math.max(0, state.diversion.left - dt) }
+  const dt = world.dt
+  const challenged = expireChallenge(state, dt)
+  const clock = challenged.clock + dt
+  const diversion = challenged.diversion
+    ? { ...challenged.diversion, left: Math.max(0, challenged.diversion.left - dt) }
     : null
-  const witnesses = state.witnesses.map((witness) => observe(state, witness, dt))
+  const moved = challenged.witnesses.map((witness) => moveWitness(challenged, witness, world))
+  const witnesses = moved.map((witness) => observe(challenged, witness, dt))
+  const reports = witnesses.reduce((all, witness, index) => {
+    if (!witness.belief.reported || challenged.witnesses[index].belief.reported) return all
+    return [...all, { witnessId: witness.id, at: clock, certainty: witness.belief.certainty }]
+  }, challenged.reports)
+  const challenge = challengeFor(challenged, witnesses, dt)
   const alert = Math.min(
     100,
     witnesses.reduce((sum, witness) => {
@@ -28,14 +42,70 @@ export function updateInfiltration(
       }, 0),
   )
   return {
-    ...state,
+    ...challenged,
     clock,
     diversion: diversion?.left ? diversion : null,
     witnesses,
     alert,
     coverIntegrity,
+    challenge,
+    reports,
     outcome: clock >= MISSION_LENGTH ? 'timeUp' : alert >= 100 ? 'identified' : state.outcome,
   }
+}
+
+function expireChallenge(state: InfiltrationState, dt: number): InfiltrationState {
+  if (!state.challenge || state.challenge.left > dt) return state
+  return {
+    ...state,
+    challenge: null,
+    witnesses: state.witnesses.map((witness) =>
+      witness.id === state.challenge?.witnessId
+        ? {
+            ...witness,
+            challenged: true,
+            belief: {
+              ...witness.belief,
+              identity: 'intruder',
+              certainty: Math.min(100, witness.belief.certainty + 55),
+            },
+          }
+        : witness,
+    ),
+  }
+}
+
+function moveWitness(
+  state: InfiltrationState,
+  witness: Witness,
+  world: InfiltrationWorld,
+): Witness {
+  const distracted = state.diversion?.spaceId === witness.spaceId && state.diversion.left > 0
+  if (distracted) return { ...witness, investigating: state.diversion!.spaceId }
+  const heard = state.player.moving && hearsMovement(witness, state.player.spaceId, world.graph)
+  const informed = heard ? { ...witness, investigating: state.player.spaceId } : witness
+  return patrolWitness(informed, world.graph, world.dt)
+}
+
+function challengeFor(
+  state: InfiltrationState,
+  witnesses: Witness[],
+  dt: number,
+): InfiltrationState['challenge'] {
+  if (state.challenge) {
+    return { ...state.challenge, left: state.challenge.left - dt }
+  }
+  const challenger = witnesses.find((witness) => {
+    if (!witness.social || witness.challenged || witness.spaceId !== state.player.spaceId)
+      return false
+    return (
+      Math.hypot(
+        witness.position[0] - state.player.position[0],
+        witness.position[1] - state.player.position[1],
+      ) < 3
+    )
+  })
+  return challenger ? { witnessId: challenger.id, left: 7 } : null
 }
 
 function observe(state: InfiltrationState, witness: Witness, dt: number): Witness {
@@ -80,6 +150,7 @@ export function reconstruction(state: InfiltrationState) {
     witnesses: state.witnesses,
     traces: state.traces,
     identified: compromised.some((witness) => witness.belief.reported),
+    reports: state.reports,
     score: Math.max(
       0,
       Math.round(100 - state.alert - state.traces.reduce((n, t) => n + t.strength * 0.1, 0)),

@@ -9,25 +9,15 @@
   import { link, t } from '$lib/i18n'
   import { locale } from '$lib/i18n'
   import { crossingsOn, deckOf, theShip, type Crossing } from '$lib/tour/blueprint'
-  import {
-    loadComfort,
-    prefersReducedMotion,
-  } from '$lib/tour/comfort'
+  import { loadComfort, prefersReducedMotion } from '$lib/tour/comfort'
   import { flashFor, type TourFlash } from '$lib/tour/apparitions'
   import { describeSpace } from '$lib/tour/describe'
   import { TourChromeState } from '$lib/tour/pageChrome.svelte'
   import { TourHatsuAudio } from '$lib/tour/pageHatsuAudio.svelte'
   import { placeOf, type Naming } from '$lib/tour/search'
-  import {
-    localizedName,
-    localizedSource,
-    provenanceClass,
-  } from '$lib/tour/pagePresentation'
+  import { localizedName, localizedSource, provenanceClass } from '$lib/tour/pagePresentation'
   import { playTourReportSound } from '$lib/tour/reportSound'
-  import {
-    blindWallReasons,
-    declaredDoorReasons,
-  } from '$lib/tour/pageTargets'
+  import { blindWallReasons, declaredDoorReasons } from '$lib/tour/pageTargets'
   import { TourKeyboardController } from '$lib/tour/pageKeyboard'
   import { TourWorldTicker } from '$lib/tour/pageWorldTicker'
   import { TourHatsuSession } from '$lib/tour/pageHatsuSession.svelte'
@@ -37,25 +27,14 @@
   import { type CastHand } from '$lib/tour/pageCasting'
   import { TourCastController } from '$lib/tour/pageCastController'
   import { TourOverlayView } from '$lib/tour/pageOverlayView.svelte'
-  import {
-    crossingLabel as describeCrossing,
-    linkPrompt as describeLink,
-    type LinkWords,
-  } from '$lib/tour/pageNavigation'
-  import {
-    EMPTY_WORLD,
-    identityOf,
-    TAKES_ORDERS,
-    type TourReport,
-    type TourWorld,
-  } from '$lib/tour/hatsu'
+  import { crossingLabel as describeCrossing, linkPrompt as describeLink, type LinkWords } from '$lib/tour/pageNavigation'
+  import { EMPTY_WORLD, identityOf, TAKES_ORDERS, type TourReport, type TourWorld } from '$lib/tour/hatsu'
   import type { Provenance, Space } from '$lib/tour/types'
 
   const ship = theShip()
   const chrome = new TourChromeState()
   const hatsuAudio = new TourHatsuAudio()
   chrome.watch()
-
   const requestedSpace = $derived(
     ship.spaces.get($page.url.searchParams.get('space') ?? '') ?? null,
   )
@@ -65,7 +44,6 @@
       requestedSpace?.tierId ??
       (requestedDeck && ship.plans.has(requestedDeck) ? requestedDeck : ship.tiers[0].id),
   )
-
   const navigation = new TourNavigationState(ship, initialTierId)
   const tierId = $derived(navigation.tierId)
   const currentSpace = $derived(navigation.currentSpace)
@@ -80,30 +58,21 @@
   const deck = $derived(deckOf(ship, tierId))
   const insideInterior = $derived(plan.tier.kind === 'interior')
   const french = $derived($locale === 'fr')
-
   const nameOf = (entity: { name: string; nameFr: string }) => localizedName(entity, french)
-
   const sourceOf = (entity: { source: string; sourceFr: string }) =>
     localizedSource(entity, french)
-
   const sortedSpaces = $derived(
     [...plan.spaces].sort((a, b) => nameOf(a).localeCompare(nameOf(b), french ? 'fr' : 'en')),
   )
-
   const named = (space: Space) => identityOf(ship, world, space)
-
   const provenanceLabel = (thing: { provenance: Provenance }) =>
     $t.tour.provenance[thing.provenance]
-
   const promptFor = (words: LinkWords) =>
     describeLink({ available: availableLink, ship, nameOf, words })
-
   const linkPrompt = $derived(promptFor($t.tour))
   const touchUseLabel = $derived(promptFor($t.tour.touch))
-
   const goToSpace = navigation.goToSpace
   const selectTier = navigation.selectTier
-
   $effect(() => {
     const space = requestedSpace
     const deck = requestedDeck
@@ -127,7 +96,6 @@
       across: $t.tour.plan.crossingAcross,
     })
   }
-
   const keyboard = new TourKeyboardController({
     read: () => ({
       takesOrders: Boolean(technique && TAKES_ORDERS.has(technique.kind)),
@@ -142,19 +110,15 @@
     toggleFullscreen: () => chrome.toggleFullscreen(),
     togglePlan: () => (chrome.planOpen = !chrome.planOpen),
   })
-
   onMount(() => {
     loadComfort()
     chrome.calm = prefersReducedMotion()
   })
-
   onDestroy(() => {
     chrome.dispose()
   })
-
   let world = $state<TourWorld>(EMPTY_WORLD)
   hatsuAudio.watch(() => world)
-
   let now = $state(Date.now())
   $effect(() => {
     const i = setInterval(() => {
@@ -168,7 +132,6 @@
   let report = $state<TourReport | null>(null)
   let flash = $state<(TourFlash & { seq: number }) | null>(null)
   let flashes = 0
-
   function show(shown: TourReport) {
     const seen = flashFor({ report: shown, from: position }, ship, world)
     if (seen) flash = { ...seen, seq: ++flashes }
@@ -193,7 +156,6 @@
   const tunes = $derived(hatsuView.tunes)
   const twoHanded = $derived(hatsuView.twoHanded)
   const selfCastable = $derived(hatsuView.selfCastable)
-
   let nextHand = $state<Record<CastHand, 'sun' | 'moon'>>({
     first: 'sun',
     second: 'sun',
@@ -247,51 +209,34 @@
   })
   hatsuSession.watchActivation()
   hatsuSession.watchFuture()
-
   function cycleDouble() {
     hatsuSession.turn('guardian')
   }
-
   function cycleEye() {
     hatsuSession.turn('scout')
   }
-
   function cycleOwl() {
     hatsuSession.turn('surveillance')
   }
-
   const turn = hatsuSession.turn
-
   const release = hatsuSession.release
-
   onDestroy(() => {
     hatsuSession.dispose()
     hatsuAudio.dispose()
   })
-
   const castOn = casting.castOn
-
   const castPage = casting.castPage
-
   const castHand = casting.castHand
   const turnTheRibbon = casting.turnRibbon
-
   function arrived(spaceId: string | null) {
     hatsuSession.arrived(spaceId)
   }
-
   const fishEat = ticker.fishEat
-
   const beastStep = ticker.beastStep
-
   const takeCoin = ticker.takeCoin
-
   const polarityWalk = ticker.polarityWalk
-
   const owlFlight = ticker.owlFlight
-
   const scoutFlight = ticker.scoutFlight
-
   const owlSecond = ticker.owlSecond
   const crossWorm = ticker.crossWorm
 
@@ -306,15 +251,12 @@
   const targetMode = $derived(targetView.mode)
   const targetName = targetView.name
   const solidTargets = $derived(targetView.solids)
-
   const mute = $derived(world.sealed >= 3)
-
   const naming = $derived<Naming>({
     nameOf,
     sourceOf,
     insideOf: (room: string) => $t.tour.insideOf(room),
   })
-
   const spoken = $derived(
     currentSpace && !mute
       ? describeSpace(ship, named(currentSpace), {
@@ -327,20 +269,16 @@
         })
       : '',
   )
-
   const selectOnPlan = $derived(
     technique ? (space: Space) => castOn(space.id) : (space: Space) => goToSpace(space),
   )
   const planVerb = $derived(technique ? $t.tour.aimAt : $t.tour.goTo)
-
   const blindWalls = $derived(
     chrome.reveal ? blindWallReasons(plan, french) : [],
   )
-
   const handPlacedDoors = $derived(
     chrome.reveal ? declaredDoorReasons({ plan, ship, french }) : [],
   )
-
   const overlayView = new TourOverlayView({
     read: () => ({
       muted: mute,

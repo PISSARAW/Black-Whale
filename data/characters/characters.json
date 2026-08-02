@@ -16265,7 +16265,7 @@
     ],
     "mapTrajectory": [
       {
-        "location": null,
+        "location": "black-whale-1",
         "fromChapterId": "ch-358"
       }
     ]
@@ -16666,7 +16666,7 @@
     ],
     "mapTrajectory": [
       {
-        "location": null,
+        "location": "black-whale-1",
         "fromChapterId": "ch-358"
       }
     ]
@@ -25348,7 +25348,7 @@
     "competitions": ["Borksen vs. Morena Prudo — negotiation game"],
     "mapTrajectory": [
       {
-        "location": null,
+        "location": "black-whale-1",
         "fromChapterId": "ch-394",
         "certainty": "PROBABLE"
       },
@@ -42959,7 +42959,7 @@
     "mangaAppearances": [],
     "mapTrajectory": [
       {
-        "location": null,
+        "location": "black-whale-1",
         "fromChapterId": "ch-358"
       }
     ]

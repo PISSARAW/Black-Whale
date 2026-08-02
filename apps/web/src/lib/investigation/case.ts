@@ -85,7 +85,7 @@ export const room1014Case: InvestigationCase = {
       role: 'Enquêteur',
       status: 'Utilisateur de Nen · attentif',
       color: 0xffd166,
-      posOffset: [2, 0],
+      posOffset: [2.4, 0],
       dialogue:
         'Une attaque a eu lieu au milieu du groupe. Ne confondons pas ce que nous soupçonnons avec ce que nous pouvons prouver.',
       evidenceIds: ['nen-residue'],
@@ -96,7 +96,7 @@ export const room1014Case: InvestigationCase = {
       role: 'Témoin',
       status: 'Utilisateur de Nen · coopératif',
       color: 0x83d483,
-      posOffset: [-2, 1],
+      posOffset: [-2.4, 1.2],
       dialogue:
         "J'étais face à la pièce. J'ai vu le garde s'effondrer, mais aucune arme ni aucun assaillant ne l'a touché.",
       evidenceIds: ['bill-testimony'],
@@ -107,10 +107,43 @@ export const room1014Case: InvestigationCase = {
       role: 'Témoin central',
       status: 'Possédée · seule à voir la poupée',
       color: 0xe8a6c8,
-      posOffset: [0, -2],
+      posOffset: [0, -2.4],
       dialogue:
         "Une fille masquée se tenait derrière Furykov. Je vous jure qu'elle était là, mais personne d'autre ne semblait la voir.",
       evidenceIds: ['loberry-vision'],
+    },
+    {
+      id: 'furykov',
+      name: 'Furykov',
+      role: 'Garde de Benjamin',
+      status: 'Utilisateur de Nen déclaré · observateur hostile',
+      color: 0xb8a1d9,
+      posOffset: [-1.5, -1.7],
+      dialogue:
+        "Je n'ai vu aucune fille masquée derrière moi. En revanche, les créatures fixées au cou de Barrigen étaient matérialisées et visibles de tous.",
+      evidenceIds: ['bill-testimony'],
+    },
+    {
+      id: 'belerainte',
+      name: 'Belerainte',
+      role: 'Garde de Tubeppa',
+      status: 'Utilisateur de Nen déclaré · coopératif',
+      color: 0x7db8da,
+      posOffset: [1.6, -1.6],
+      dialogue:
+        "Six personnes dans cette salle savent déjà utiliser le Nen, mais seules Furykov et moi l'avons déclaré. Le meurtrier peut se cacher parmi ceux qui se taisent.",
+      evidenceIds: [],
+    },
+    {
+      id: 'sakata',
+      name: 'Sakata',
+      role: 'Garde de Zhang Lei',
+      status: 'Témoin armé · non-initié au Nen',
+      color: 0xd08c60,
+      posOffset: [-2.2, -1],
+      dialogue:
+        "J'ai tiré sur les créatures lorsqu'elles sont apparues autour de son cou. Les balles les ont atteintes, mais Barrigen était déjà condamné.",
+      evidenceIds: ['bill-testimony', 'death-window'],
     },
     {
       id: 'body',
@@ -118,7 +151,7 @@ export const room1014Case: InvestigationCase = {
       role: 'Victime',
       status: 'À examiner',
       color: 0x7f1d1d,
-      posOffset: [0, 2],
+      posOffset: [0, 2.4],
       isDead: true,
       dialogue:
         'Le corps est exsangue. Quatre créatures blanches se sont fixées à son cou; les gardes ont pu les voir et tenter de les arracher.',

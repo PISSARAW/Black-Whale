@@ -2,6 +2,12 @@ import { describe, expect, it } from 'vitest'
 import { evaluateHypothesis, room1014Case } from './case'
 
 describe('investigation verdict', () => {
+  it('includes the central witnesses and declared Nen users', () => {
+    expect(room1014Case.subjects.map((subject) => subject.id)).toEqual(
+      expect.arrayContaining(['loberry', 'furykov', 'belerainte', 'sakata', 'body']),
+    )
+  })
+
   it('requires every decisive clue before solving the case', () => {
     const verdict = evaluateHypothesis(room1014Case, 'hidden-nen', ['wounds', 'bill-testimony'])
 

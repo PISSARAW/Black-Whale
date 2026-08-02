@@ -11,7 +11,7 @@
     type InvestigationTab,
     type Verdict,
   } from '$lib/investigation/case'
-  import { localizedRoom1014Case } from '$lib/investigation/localizedCase'
+  import { caseById, DEFAULT_INVESTIGATION_CASE_ID } from '$lib/investigation/catalog'
   import {
     INVESTIGATION_STORAGE_KEY,
     freshProgress,
@@ -19,15 +19,10 @@
     serializeProgress,
     type InvestigationLogEntry,
   } from '$lib/investigation/progress'
-  import {
-    INVESTIGATION_HATSU_KINDS,
-    investigationHatsuUse,
-    type InvestigationHatsuUse,
-  } from '$lib/investigation/hatsu'
+  import { investigationHatsuUse, type InvestigationHatsuUse } from '$lib/investigation/hatsu'
   import { questionIsAvailable } from '$lib/investigation/interrogation'
   import { confrontWitnesses, type ConfrontationResult } from '$lib/investigation/confrontation'
   import { sceneNodes, visibleSightLines, type ScenePhenomenon } from '$lib/investigation/geometry'
-  import { frameAt } from '$lib/investigation/replay'
   import { buildFinalReport } from '$lib/investigation/report'
   import {
     activeHatsu,
@@ -41,25 +36,105 @@
   import type { Space, Vec2 } from '$lib/tour/types'
 
   const ship = theShip()
-  const investigation = $derived(localizedRoom1014Case($locale))
-
-  const SCENE_TIER_ID = 'interior-room-1014'
-  const SCENE_SPACE_ID = 'tier-1-royal-residential-sector-room-1014-living'
+  const initialDefinition = caseById(DEFAULT_INVESTIGATION_CASE_ID, 'fr')!
+  const definition = $derived(caseById(DEFAULT_INVESTIGATION_CASE_ID, $locale)!)
+  const investigation = $derived(definition.content)
   const ui = $derived(
     $locale === 'fr'
       ? {
-          description: "Explorez la chambre 1014, confrontez les témoignages et reconstituez l'attaque de Silent Majority.", dossier: 'Dossier', chapter: 'chapitre', choose: 'Choisir', notebook: 'Carnet d’enquête', solved: 'Affaire résolue', items: 'éléments', people: 'Personnes et éléments', objectives: 'Objectifs', close: 'Fermer', closeTestimony: 'Fermer le témoignage', closeNotebook: 'Fermer le carnet', briefing: 'Briefing · Jour 2 · 09:00', briefingBody: 'Le premier cours de Nen vient de devenir une scène de crime. Barrigen est mort devant toute la classe. Une seule personne affirme avoir vu une présence masquée ; plusieurs autres ont vu les créatures qui ont tué.', mission: 'Ordre de mission', canonLimit: 'L’identité de l’utilisateur de Silent Majority n’est pas connue dans le canon. Une enquête rigoureuse doit savoir s’arrêter avant l’accusation.', saved: 'Progression sauvegardée sur cet appareil', enter: 'Entrer dans la scène', activeCase: 'dossier actif', needsEvidence: 'Nécessite un nouvel élément', nenAnalysis: 'Analyse Nen', noHatsu: 'Aucun Hatsu actif', useTarget: 'Utiliser sur cette cible', chooseHatsu: 'Choisir un Hatsu', inspectNotebook: 'Examiner dans le carnet', recorded: (count: number) => `+ ${count} élément${count > 1 ? 's' : ''} consigné${count > 1 ? 's' : ''}`, tabs: [['evidence', 'Preuves'], ['people', 'Personnes'], ['timeline', 'Chronologie'], ['deduction', 'Déduction']] as const, collected: 'Éléments collectés', sourceCaution: 'Une source n’est pas nécessairement une certitude.', emptyNotebook: 'Le carnet est vide. Examinez la scène et interrogez les témoins.', reset: 'Réinitialiser', spoilers: 'Spoilers', perspective: 'Perspective',
+          description:
+            "Explorez la chambre 1014, confrontez les témoignages et reconstituez l'attaque de Silent Majority.",
+          dossier: 'Dossier',
+          chapter: 'chapitre',
+          choose: 'Choisir',
+          notebook: 'Carnet d’enquête',
+          solved: 'Affaire résolue',
+          items: 'éléments',
+          people: 'Personnes et éléments',
+          objectives: 'Objectifs',
+          close: 'Fermer',
+          closeTestimony: 'Fermer le témoignage',
+          closeNotebook: 'Fermer le carnet',
+          briefing: 'Briefing · Jour 2 · 09:00',
+          briefingBody:
+            'Le premier cours de Nen vient de devenir une scène de crime. Barrigen est mort devant toute la classe. Une seule personne affirme avoir vu une présence masquée ; plusieurs autres ont vu les créatures qui ont tué.',
+          mission: 'Ordre de mission',
+          canonLimit:
+            'L’identité de l’utilisateur de Silent Majority n’est pas connue dans le canon. Une enquête rigoureuse doit savoir s’arrêter avant l’accusation.',
+          saved: 'Progression sauvegardée sur cet appareil',
+          enter: 'Entrer dans la scène',
+          activeCase: 'dossier actif',
+          needsEvidence: 'Nécessite un nouvel élément',
+          nenAnalysis: 'Analyse Nen',
+          noHatsu: 'Aucun Hatsu actif',
+          useTarget: 'Utiliser sur cette cible',
+          chooseHatsu: 'Choisir un Hatsu',
+          inspectNotebook: 'Examiner dans le carnet',
+          recorded: (count: number) =>
+            `+ ${count} élément${count > 1 ? 's' : ''} consigné${count > 1 ? 's' : ''}`,
+          tabs: [
+            ['evidence', 'Preuves'],
+            ['people', 'Personnes'],
+            ['timeline', 'Chronologie'],
+            ['deduction', 'Déduction'],
+          ] as const,
+          collected: 'Éléments collectés',
+          sourceCaution: 'Une source n’est pas nécessairement une certitude.',
+          emptyNotebook: 'Le carnet est vide. Examinez la scène et interrogez les témoins.',
+          reset: 'Réinitialiser',
+          spoilers: 'Spoilers',
+          perspective: 'Perspective',
         }
       : {
-          description: 'Explore room 1014, compare testimony and reconstruct the Silent Majority attack.', dossier: 'Case file', chapter: 'chapter', choose: 'Choose', notebook: 'Investigation notebook', solved: 'Case solved', items: 'items', people: 'People and evidence', objectives: 'Objectives', close: 'Close', closeTestimony: 'Close testimony', closeNotebook: 'Close notebook', briefing: 'Briefing · Day 2 · 09:00', briefingBody: 'The first Nen lesson has become a crime scene. Barrigen died in front of the entire class. One person claims to have seen a masked presence; several others saw the creatures that killed him.', mission: 'Mission order', canonLimit: 'The identity of the Silent Majority user is not known in canon. A rigorous investigation must stop before making an accusation.', saved: 'Progress saved on this device', enter: 'Enter the scene', activeCase: 'active case', needsEvidence: 'Requires new evidence', nenAnalysis: 'Nen analysis', noHatsu: 'No active Hatsu', useTarget: 'Use on this target', chooseHatsu: 'Choose a Hatsu', inspectNotebook: 'Review in notebook', recorded: (count: number) => `+ ${count} evidence item${count > 1 ? 's' : ''} recorded`, tabs: [['evidence', 'Evidence'], ['people', 'People'], ['timeline', 'Timeline'], ['deduction', 'Deduction']] as const, collected: 'Collected evidence', sourceCaution: 'A source is not necessarily a certainty.', emptyNotebook: 'The notebook is empty. Examine the scene and question the witnesses.', reset: 'Reset', spoilers: 'Spoilers', perspective: 'Perspective',
+          description:
+            'Explore room 1014, compare testimony and reconstruct the Silent Majority attack.',
+          dossier: 'Case file',
+          chapter: 'chapter',
+          choose: 'Choose',
+          notebook: 'Investigation notebook',
+          solved: 'Case solved',
+          items: 'items',
+          people: 'People and evidence',
+          objectives: 'Objectives',
+          close: 'Close',
+          closeTestimony: 'Close testimony',
+          closeNotebook: 'Close notebook',
+          briefing: 'Briefing · Day 2 · 09:00',
+          briefingBody:
+            'The first Nen lesson has become a crime scene. Barrigen died in front of the entire class. One person claims to have seen a masked presence; several others saw the creatures that killed him.',
+          mission: 'Mission order',
+          canonLimit:
+            'The identity of the Silent Majority user is not known in canon. A rigorous investigation must stop before making an accusation.',
+          saved: 'Progress saved on this device',
+          enter: 'Enter the scene',
+          activeCase: 'active case',
+          needsEvidence: 'Requires new evidence',
+          nenAnalysis: 'Nen analysis',
+          noHatsu: 'No active Hatsu',
+          useTarget: 'Use on this target',
+          chooseHatsu: 'Choose a Hatsu',
+          inspectNotebook: 'Review in notebook',
+          recorded: (count: number) => `+ ${count} evidence item${count > 1 ? 's' : ''} recorded`,
+          tabs: [
+            ['evidence', 'Evidence'],
+            ['people', 'People'],
+            ['timeline', 'Timeline'],
+            ['deduction', 'Deduction'],
+          ] as const,
+          collected: 'Collected evidence',
+          sourceCaution: 'A source is not necessarily a certainty.',
+          emptyNotebook: 'The notebook is empty. Examine the scene and question the witnesses.',
+          reset: 'Reset',
+          spoilers: 'Spoilers',
+          perspective: 'Perspective',
         },
   )
 
-  let tierId = $state(SCENE_TIER_ID)
+  let tierId = $state(initialDefinition.scene.tierId)
   let currentSpace = $state<Space | null>(null)
   let position = $state<Vec2>([0, 0])
   let heading = $state(Math.PI)
-  let jumpTo = $state<string | null>(SCENE_SPACE_ID)
+  let jumpTo = $state<string | null>(initialDefinition.scene.spaceId)
 
   let notebookOpen = $state(false)
   let activeTab = $state<InvestigationTab>('evidence')
@@ -100,8 +175,8 @@
   )
   const planNodes = $derived(sceneNodes(investigation))
   const planNodeById = $derived(new Map(planNodes.map((node) => [node.id, node])))
-  const planSightLines = $derived(visibleSightLines(scenePhenomenon))
-  const replayFrame = $derived(frameAt(replaySecond))
+  const planSightLines = $derived(visibleSightLines(scenePhenomenon, definition.scene.sightLines))
+  const replayFrame = $derived(definition.replay[replaySecond] ?? definition.replay[0])
   const reportVerdict = $derived(
     solved
       ? evaluateHypothesis(investigation, investigation.canonicalHypothesisId, discoveredIds)
@@ -163,7 +238,7 @@
 
   onMount(() => {
     openHatsuGate({
-      admits: (kind) => INVESTIGATION_HATSU_KINDS.has(kind),
+      admits: (kind) => definition.hatsuRules.some((rule) => rule.kinds.includes(kind)),
       reason:
         "Seules les techniques capables d'observer, d'analyser ou de reproduire la scène ont une prise sur ce dossier.",
     })
@@ -424,10 +499,7 @@
 
 <svelte:head>
   <title>Investigation · {investigation.title}</title>
-  <meta
-    name="description"
-    content={ui.description}
-  />
+  <meta name="description" content={ui.description} />
 </svelte:head>
 
 <div class="relative h-screen w-full overflow-hidden bg-[#050809] font-sans text-[#f4ead4]">
@@ -459,7 +531,9 @@
   >
     <div class="max-w-xl border-l-2 border-[#d6b35a] pl-4 drop-shadow-lg">
       <p class="text-[10px] font-bold uppercase tracking-[0.28em] text-[#d6b35a]">
-        {ui.dossier} {investigation.id} · {ui.chapter} {investigation.chapter}
+        {ui.dossier}
+        {investigation.id} · {ui.chapter}
+        {investigation.chapter}
       </p>
       <h1 class="mt-1 font-serif text-2xl leading-none text-white sm:text-4xl">
         {investigation.title}
@@ -526,7 +600,9 @@
   <aside class="pointer-events-none absolute bottom-5 right-4 z-30 hidden w-72 lg:block">
     <div class="border border-white/15 bg-black/75 p-4 backdrop-blur">
       <div class="flex items-center justify-between">
-        <p class="text-[9px] font-bold uppercase tracking-[0.2em] text-[#d6b35a]">{ui.objectives}</p>
+        <p class="text-[9px] font-bold uppercase tracking-[0.2em] text-[#d6b35a]">
+          {ui.objectives}
+        </p>
         <span class="font-mono text-[10px] text-white/40"
           >{completedObjectives}/{investigation.objectives.length}</span
         >
@@ -616,7 +692,9 @@
       <div class="mt-5 border border-white/10 bg-black/25 p-4">
         <div class="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <p class="text-[9px] font-bold uppercase tracking-[0.2em] text-white/40">{ui.nenAnalysis}</p>
+            <p class="text-[9px] font-bold uppercase tracking-[0.2em] text-white/40">
+              {ui.nenAnalysis}
+            </p>
             <p class="mt-1 text-sm font-semibold" style:color={$activeHatsu?.color ?? '#ffffff'}>
               {$activeHatsu?.name ?? ui.noHatsu}
             </p>
@@ -625,8 +703,7 @@
             class="border px-4 py-2 text-[10px] font-bold uppercase tracking-widest transition {$activeHatsu
               ? 'border-white/30 text-white hover:border-white/60'
               : 'border-[#d6b35a]/50 text-[#e8cc84] hover:bg-[#d6b35a]/10'}"
-            onclick={useActiveHatsu}
-            >{$activeHatsu ? ui.useTarget : ui.chooseHatsu}</button
+            onclick={useActiveHatsu}>{$activeHatsu ? ui.useTarget : ui.chooseHatsu}</button
           >
         </div>
         {#if hatsuResult}

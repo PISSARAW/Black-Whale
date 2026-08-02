@@ -53,6 +53,9 @@ export function sceneNodes(investigation: InvestigationCase): SceneNode[] {
   }))
 }
 
-export function visibleSightLines(phenomenon: ScenePhenomenon): SightLine[] {
-  return ROOM_1014_SIGHT_LINES.filter((line) => line.phenomenon === phenomenon && line.visible)
+export function visibleSightLines(
+  phenomenon: ScenePhenomenon,
+  sightLines: SightLine[] = ROOM_1014_SIGHT_LINES,
+): SightLine[] {
+  return sightLines.filter((line) => line.phenomenon === phenomenon && line.visible)
 }

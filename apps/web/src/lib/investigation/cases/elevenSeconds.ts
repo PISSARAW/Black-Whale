@@ -55,6 +55,32 @@ export function elevenSecondsDefinition(locale: Locale): InvestigationCaseDefini
         lifeHours: 3,
         outcome: 'evidence',
       },
+      {
+        id: 'surveillance-after-event',
+        kinds: ['scout', 'surveillance'],
+        subjectIds: ['loberry'],
+        evidenceIds: [],
+        lifeHours: 0,
+        outcome: 'limited',
+      },
+      {
+        id: 'protected-witness-procedure',
+        kinds: ['truth-punch'],
+        subjectIds: content.subjects
+          .filter((subject) => !subject.isDead)
+          .map((subject) => subject.id),
+        evidenceIds: [],
+        lifeHours: 0,
+        outcome: 'forbidden',
+      },
+      {
+        id: 'reader-truth-signature',
+        kinds: ['snakes'],
+        subjectIds: ['body'],
+        evidenceIds: ['wounds', 'death-window'],
+        lifeHours: 0,
+        outcome: 'limited',
+      },
     ],
     replay: Array.from({ length: 12 }, (_, second) => frameAt(second)),
     report: {

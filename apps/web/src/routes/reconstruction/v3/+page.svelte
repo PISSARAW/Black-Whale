@@ -3,6 +3,7 @@
   import { onMount } from 'svelte'
   import type { PageData } from './$types'
   import Seo from '$lib/components/Seo.svelte'
+  import { locale, t } from '$lib/i18n'
   import ReconstructionV3Scene from '$lib/components/reconstruction/ReconstructionV3Scene.svelte'
   import type {
     ReconstructionDecision,
@@ -237,9 +238,9 @@
     <div class="grid three">
       <label
         >Type<select bind:value={kind}
-          ><option value="MOVE_ENTITY">Déplacer</option><option value="SHARE_KNOWLEDGE"
-            >Partager une information</option
-          ><option value="ACTIVATE_HATSU">Activer un Hatsu</option></select
+          ><option value="MOVE_ENTITY">{$t.reconstruction.v3.actionTypes.MOVE_ENTITY}</option><option value="SHARE_KNOWLEDGE"
+            >{$t.reconstruction.v3.actionTypes.SHARE_KNOWLEDGE}</option
+          ><option value="ACTIVATE_HATSU">{$t.reconstruction.v3.actionTypes.ACTIVATE_HATSU}</option></select
         ></label
       >
       <label

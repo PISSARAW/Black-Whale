@@ -6,6 +6,9 @@ import type {
   WorldState,
 } from '@black-whale/world-engine'
 import { hatsuById } from '$lib/nen/hatsuRegistry'
+import { locale } from '$lib/i18n'
+import { messagesFor } from '$lib/i18n'
+import type { Locale } from '$lib/i18n/config'
 import {
   diplomacyCost,
   initialRelationship,
@@ -53,7 +56,12 @@ export type {
   StrategyMoveOrder,
   StrategyTurnResult,
 } from './types'
-export class StrategyInputError extends Error {}
+
+function strategyMsg(locale: Locale) {
+  return messagesFor(locale).strategy
+}
+
+export class StrategyInputError extends Error {
 export function createSimulationStore() {
   let engine = new SimulationEngine()
   let branch = $state<WorldBranch | null>(null)
@@ -287,22 +295,22 @@ export function createSimulationStore() {
         order.type !== 'GUARD' &&
         order.type !== 'HATSU'
       ) {
-        throw new StrategyInputError('Un ordre utilise une action inconnue.')
+        throw new StrategyInputError(strategyMsg($locale).errors.unknownAction)
       }
       if (!allowedCharacters.has(order.characterId)) {
-        throw new StrategyInputError('Un ordre vise une unité qui ne vous appartient pas.')
+        throw new StrategyInputError(strategyMsg($locale).errors.orderTargetsNonOwnedUnit)
       }
       if (orderedCharacters.has(order.characterId)) {
-        throw new StrategyInputError('Une unité ne peut recevoir qu’un ordre par tour.')
+        throw new StrategyInputError(strategyMsg($locale).errors.oneOrderPerTurn)
       }
       const destination = destinations.get(order.locationId)
       if (!destination || !currentState.entities[destination.id]) {
-        throw new StrategyInputError('Destination inconnue dans cet état du monde.')
+        throw new StrategyInputError(strategyMsg($locale).errors.unknownDestination)
       }
       const entity = resolveControlledEntity(currentState, order.characterId)
-      if (!entity) throw new StrategyInputError('Cette unité n’existe pas dans cet état du monde.')
+      if (!entity) throw new StrategyInputError(strategyMsg($locale).errors.unitDoesNotExist)
       if (unitConditions[entity.id] === 'ELIMINATED') {
-        throw new StrategyInputError('Une unité éliminée ne peut plus recevoir d’ordre.')
+        throw new StrategyInputError(strategyMsg($locale).errors.eliminatedUnitCannotReceiveOrders)
       }
 
       orderedCharacters.add(order.characterId)
@@ -345,9 +353,9 @@ export function createSimulationStore() {
               sighting.certainty === 'CONFIRMED' &&
               spiderIds.has(sighting.entityId),
           ),
-        })
+        }, $locale)
         if (adapted && !adapted.accepted)
-          throw new StrategyInputError(adapted.error ?? 'Ce Hatsu ne peut pas être activé.')
+          throw new StrategyInputError(adapted.error ?? strategyMsg($locale).errors.hatsuCannotBeActivated)
         const effects = adapted?.effects ?? [strategicRoleForHatsu(profile.kind)]
         if (effects.includes('RECON')) scoutedLocations.push(destination.id)
         if (effects.includes('DENIAL')) deniedLocations.push(destination.id)

@@ -148,6 +148,13 @@ export const en = {
     },
     visible: (count: number) => `${count} known ${count === 1 ? 'presence' : 'presences'}`,
     empty: 'No voyage event is available for the selected spoiler limit.',
+    v3: {
+      actionTypes: {
+        MOVE_ENTITY: 'Move entity',
+        SHARE_KNOWLEDGE: 'Share knowledge',
+        ACTIVATE_HATSU: 'Activate Hatsu',
+      },
+    },
   },
 
   tour: {
@@ -3352,6 +3359,65 @@ export const en = {
         confirmsLimits: 'The ability confirms its own limits without producing new evidence.',
         reinforcesInfo: 'The ability reinforces existing information without turning it into absolute truth.',
         revealsCompatibleElements: 'The ability reveals the elements compatible with its conditions and cost.',
+      },
+    },
+
+    strategy: {
+      hatsu: {
+        canOnlyActivateInOwnZone: (name: string) => `${name} can only be activated in the zone occupied by its user.`,
+        requiresConfirmedHostile: (name: string) => `${name} requires a confirmed hostile presence in the targeted zone.`,
+        catsNamePassive: "Cat's Name is a passive post-mortem counter and cannot receive activation orders.",
+        chainJailRequiresSpider: 'Chain Jail is forbidden: no confirmed Spider in this zone.',
+        benjaminBatonRequiresDeath: 'Benjamin Baton requires the prior death of an eligible loyal soldier.',
+      },
+      errors: {
+        oneOrderPerTurn: 'A unit can only receive one order per turn.',
+        eliminatedUnitCannotReceiveOrders: 'An eliminated unit can no longer receive orders.',
+        hatsuCannotBeActivated: 'This Hatsu cannot be activated.',
+        unknownAction: 'An order uses an unknown action.',
+        orderTargetsNonOwnedUnit: 'An order targets a unit that does not belong to you.',
+        unknownDestination: 'Unknown destination in this world state.',
+        unitDoesNotExist: 'This unit does not exist in this world state.',
+      },
+    },
+
+    investigation: {
+      replay: {
+        dollAppears: {
+          title: 'Doll appears',
+          description: 'Loberry alone sees the masked figure behind Furykov.',
+        },
+        allEyesDiverge: {
+          title: 'All eyes diverge',
+          description: 'Loberry screams and points to a presence that nobody else can find.',
+        },
+        fourCreaturesStrike: {
+          title: 'Four creatures strike',
+          description: 'The materialized tsuchibokko attach themselves to Barrigen’s neck.',
+        },
+        simultaneousDrain: {
+          title: 'Simultaneous drain',
+          description: 'The guards see the creatures and try to pull them off; time is running out.',
+        },
+        barrigenIsDead: {
+          title: 'Barrigen is dead',
+          description: 'The four creatures reduced forty-four seconds to about eleven.',
+        },
+      },
+      hatsu: {
+        noGrip: 'No grip',
+        cannotEstablishInfo: (name: string) => `${name} cannot establish any information on this target.`,
+        usageDenied: 'Usage denied',
+        impossibleCost: 'Cost unaffordable',
+        corroboratedSignal: 'Corroborated signal',
+        conclusiveAnalysis: 'Conclusive analysis',
+        limitedResult: 'Limited result',
+        requiresLifeHours: (hours: number) => `This analysis requires ${hours} life hours available.`,
+        ethicalOrProceduralConditions: 'Ethical or procedural conditions forbid this usage.',
+        confirmsLimits: 'The ability confirms its own limits without producing new evidence.',
+        reinforcesInfo: 'The ability reinforces existing information without turning it into absolute truth.',
+        revealsCompatibleElements: 'The ability reveals the elements compatible with its conditions and cost.',
+        cannotEstablishNewInfo: (name: string) => `${name} cannot establish anything new about this target under the present conditions.`,
       },
     },
   },

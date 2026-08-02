@@ -1,4 +1,6 @@
 import type { HatsuInteractionKind, HatsuProfile } from '$lib/nen/hatsuRegistry'
+import { messagesFor } from '$lib/i18n'
+import type { Locale } from '$lib/i18n/config'
 
 export const INVESTIGATION_HATSU_KINDS = new Set<HatsuInteractionKind>([
   'dowsing',
@@ -21,6 +23,7 @@ export interface InvestigationHatsuUse {
 export function investigationHatsuUse(
   profile: HatsuProfile,
   subjectId: string,
+  locale: Locale = 'en',
 ): InvestigationHatsuUse {
   const key = `${profile.id}:${subjectId}`
 
@@ -86,10 +89,11 @@ export function investigationHatsuUse(
     }
   }
 
+  const msg = messagesFor(locale).investigation.hatsu
   return {
     key,
-    title: 'Aucune prise',
-    finding: `${profile.name} ne peut rien établir de nouveau sur cette cible dans les conditions présentes.`,
+    title: msg.noGrip,
+    finding: msg.cannotEstablishNewInfo(profile.name),
     evidenceIds: [],
     lifeHours: 0,
     tone: 'limited',

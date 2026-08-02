@@ -1,9 +1,10 @@
 <script lang="ts">
   import { onDestroy, onMount } from 'svelte'
-  import { centroid } from '$lib/tour/hatsu'
-  import { theShip } from '$lib/tour/blueprint'
+  import { centroid, EMPTY_WORLD } from '$lib/tour/hatsu'
+  import { theShip, crossingsOn, type Crossing } from '$lib/tour/blueprint'
   import TourScene from '$lib/components/tour/TourScene.svelte'
   import TourModeFullscreen from '$lib/components/tour/TourModeFullscreen.svelte'
+  import TourMinimapPanel from '$lib/components/tour/TourMinimapPanel.svelte'
   import InvestigationHatsuEffect from './InvestigationHatsuEffect.svelte'
   import { locale, t } from '$lib/i18n'
   import {
@@ -166,6 +167,22 @@
   let position = $state<Vec2>([0, 0])
   let heading = $state(Math.PI)
   let jumpTo = $state<string | null>(initialDefinition.scene.spaceId)
+
+  const nameOf = (space: Space) => ($locale === 'fr' ? space.nameFr : space.name)
+
+  function selectTier(id: string) {
+    tierId = id
+  }
+
+  const plan = $derived(ship.plans.get(tierId)!)
+  const crossings = $derived(crossingsOn(ship, tierId))
+  const decks = $derived(
+    ship.decks.map((tier) => ({
+      id: tier.id,
+      label: nameOf(tier),
+      active: tier.id === tierId,
+    })),
+  )
 
   let notebookOpen = $state(false)
   let activeTab = $state<InvestigationTab>('evidence')
@@ -615,6 +632,22 @@
 
 <div class="relative h-screen w-full overflow-hidden bg-[#050809] font-sans text-[#f4ead4]">
   <TourModeFullscreen />
+  <TourMinimapPanel
+    ship={ship}
+    tierId={tierId}
+    plan={plan}
+    position={position}
+    heading={heading}
+    currentSpaceId={currentSpace?.id ?? null}
+    decks={decks}
+    crossings={crossings}
+    nameOf={nameOf}
+    onSelectDeck={selectTier}
+    onSelectPlan={(space) => {
+      position = centroid(space)
+      currentSpace = space
+    }}
+  />
   <TourScene
     {ship}
     bind:tierId

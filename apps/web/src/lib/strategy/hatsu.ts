@@ -1,4 +1,9 @@
+import { messagesFor } from '$lib/i18n'
+import type { Locale } from '$lib/i18n/config'
+
 export type StrategyHatsuEffect = 'RECON' | 'DENIAL' | 'GUARD' | 'MOBILITY' | 'INFLUENCE'
+
+const strategyMsg = (locale: Locale) => messagesFor(locale).strategy.hatsu
 
 export const STRATEGY_ABILITY_IDS_BY_CHARACTER: Readonly<Record<string, readonly string[]>> = {
   kurapika: ['emperor-time', 'steal-chain', 'chain-jail', 'dowsing-chain'],
@@ -18,6 +23,7 @@ export interface StrategyHatsuContext {
   confirmedHostilesAtTarget: number
   eliminatedAllies: number
   targetHasSpider: boolean
+  locale?: Locale
 }
 
 export interface StrategyHatsuResolution {
@@ -47,12 +53,12 @@ const refused = (error: string): StrategyHatsuResolution => ({
 const currentLocation = (context: StrategyHatsuContext, name: string) =>
   context.sourceLocationId === context.targetLocationId
     ? null
-    : refused(`${name} ne peut être activé que dans la zone occupée par son utilisateur.`)
+    : refused(strategyMsg(context.locale ?? 'en').hatsu.canOnlyActivateInOwnZone(name))
 
 const confirmedTarget = (context: StrategyHatsuContext, name: string) =>
   context.confirmedHostilesAtTarget > 0
     ? null
-    : refused(`${name} exige une présence hostile confirmée dans la zone ciblée.`)
+    : refused(strategyMsg(context.locale ?? 'en').hatsu.requiresConfirmedHostile(name))
 
 const ADAPTERS: Record<string, Adapter> = {
   'dowsing-chain': () =>
@@ -70,7 +76,7 @@ const ADAPTERS: Record<string, Adapter> = {
   'chain-jail': (context) =>
     context.targetHasSpider
       ? accepted(['DENIAL'], 3, 'Chain Jail impose le Zetsu à une Araignée confirmée.')
-      : refused('Chain Jail est interdit : aucune Araignée confirmée ne se trouve dans cette zone.'),
+      : refused(strategyMsg(context.locale ?? 'en').hatsu.chainJailRequiresSpider),
   erigeron: (context) =>
     currentLocation(context, 'Erigeron') ??
     accepted(['GUARD'], 2, 'Erigeron accélère la récupération et consolide l’unité locale.'),
@@ -80,15 +86,15 @@ const ADAPTERS: Record<string, Adapter> = {
   'benjamin-baton': (context) =>
     context.eliminatedAllies > 0
       ? accepted(['DENIAL'], 3, 'Benjamin Baton mobilise l’héritage d’un soldat loyal éliminé.')
-      : refused('Benjamin Baton exige la mort préalable d’un soldat loyal éligible.'),
+      : refused(strategyMsg(context.locale ?? 'en').hatsu.benjaminBatonRequiresDeath),
   'air-blow': (context) =>
     confirmedTarget(context, 'Air Blow') ??
     accepted(['DENIAL'], 2, 'Air Blow frappe à distance une présence hostile déjà identifiée.'),
   culdcept: (context) =>
     confirmedTarget(context, 'Culdcept') ??
     accepted(['DENIAL'], 3, 'Culdcept neutralise temporairement une capacité adverse observée.'),
-  'cats-name': () =>
-    refused("Cat’s Name est un contre post-mortem passif et ne peut pas recevoir d’ordre d’activation."),
+  'cats-name': (context) =>
+    refused(strategyMsg(context.locale ?? 'en').hatsu.catsNamePassive),
   'biohazard-hinrigh': (context) =>
     currentLocation(context, 'Biohazard') ??
     accepted(['DENIAL'], 2, 'Biohazard anime les objets de la zone pour en contrôler les accès.'),
@@ -99,8 +105,11 @@ const ADAPTERS: Record<string, Adapter> = {
 
 export function strategyHatsuResolution(
   context: StrategyHatsuContext,
+  locale: Locale = 'en',
 ): StrategyHatsuResolution | null {
-  return ADAPTERS[context.abilityId]?.(context) ?? null
+  const msg = strategyMsg(locale)
+  const adapterContext = {...context, locale}
+  return ADAPTERS[context.abilityId]?.(adapterContext) ?? null
 }
 
 export function hasStrategyHatsuAdapter(abilityId: string): boolean {

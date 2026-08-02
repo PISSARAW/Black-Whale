@@ -2,6 +2,7 @@
   import type { ArenaReplay } from '$lib/arena/replay/types'
   import { stateAtTick } from '$lib/arena/replay/player'
   import { projectFrame, type ReplayPerspective } from '$lib/arena/replay/perspective'
+  import { replayShareUrl } from '$lib/arena/replay/share'
 
   interface Props {
     replay: ArenaReplay
@@ -13,9 +14,20 @@
   let perspective = $state<ReplayPerspective>('player')
   let frame = $derived(projectFrame(stateAtTick(replay, tick), perspective))
   let event = $derived(frame.event)
+  let shareStatus = $state('')
 
   function seek(by: number) {
     tick = Math.max(0, Math.min(replay.ticks, tick + by))
+  }
+
+  async function share() {
+    try {
+      const url = replayShareUrl(replay, window.location.href)
+      await navigator.clipboard.writeText(url)
+      shareStatus = locale === 'fr' ? 'Lien copié' : 'Link copied'
+    } catch {
+      shareStatus = locale === 'fr' ? 'Partage indisponible' : 'Sharing unavailable'
+    }
   }
 </script>
 
@@ -46,7 +58,9 @@
     <button onclick={() => seek(-1)}>−1</button>
     <button onclick={() => seek(1)}>+1</button>
     <button onclick={() => seek(replay.tickRate)}>+1s</button>
+    <button onclick={share}>{locale === 'fr' ? 'Partager' : 'Share'}</button>
   </nav>
+  {#if shareStatus}<output aria-live="polite">{shareStatus}</output>{/if}
   <div class="readings">
     <span>P · {frame.player.aura === null ? '?' : Math.ceil(frame.player.aura)} aura</span>
     <span>O · {frame.opponent.aura === null ? '?' : Math.ceil(frame.opponent.aura)} aura</span>
@@ -98,6 +112,7 @@
     accent-color: #e3c36d;
   }
   .readings,
+  output,
   p {
     margin-top: 0.55rem;
     color: #a9c0c5;

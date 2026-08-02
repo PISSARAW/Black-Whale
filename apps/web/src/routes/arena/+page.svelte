@@ -26,6 +26,8 @@
   import { ArenaRecorder } from '$lib/arena/replay/recorder'
   import type { ArenaReplay } from '$lib/arena/replay/types'
   import { serializeReplay } from '$lib/arena/replay/codec'
+  import { replayFromUrl } from '$lib/arena/replay/share'
+  import { playReplay } from '$lib/arena/replay/player'
   import { readAura } from '$lib/combat/perception'
   import { STRIKE_RANGE } from '$lib/combat/resolve'
   import { combatReducer, initialCombatState } from '$lib/combat/reducer'
@@ -488,6 +490,12 @@
   }
 
   onMount(() => {
+    const sharedReplay = replayFromUrl(window.location.href)
+    if (sharedReplay) {
+      lastReplay = sharedReplay
+      game = playReplay(sharedReplay).state
+      graded = true
+    }
     bestGrade = localStorage.getItem('black-whale:arena-best-grade')
     openHatsuGate({
       admits: worksInArena,

@@ -14,11 +14,14 @@
     top: 6.2rem;
     left: 1.25rem;
     width: min(18rem, calc(100vw - 2.5rem));
+    max-width: calc(100vw - 2.5rem);
     padding: 0.75rem;
+    margin-bottom: 0.5rem;
     border: 1px solid #8ad7e744;
     border-radius: 0.4rem;
     background: #061217dd;
     color: #e2f0f2;
+    overflow: hidden;
   }
 
   .combat-briefing {
@@ -123,6 +126,7 @@
     display: flex;
     gap: 0.25rem;
     transform: translateX(-50%);
+    pointer-events: auto;
   }
   .terrain-picker a {
     padding: 0.4rem 0.6rem;
@@ -147,12 +151,24 @@
   }
   .challenge-panel select {
     width: 100%;
+    max-width: 100%;
     margin-top: 0.55rem;
+    padding: 0.35rem;
+    border: 1px solid #8ad7e744;
+    border-radius: 0.3rem;
+    background: #061217dd;
+    color: #e2f0f2;
+    font-size: 0.72rem;
+    cursor: pointer;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
   .challenge-panel ol {
     margin: 0.65rem 0 0;
     padding-left: 1.2rem;
     font-size: 0.72rem;
+    overflow: hidden;
   }
 
   .challenge-result {
@@ -594,14 +610,16 @@
   .arena-lesson {
     position: absolute;
     z-index: 10;
-    top: 7.2rem;
+    top: 9.8rem;
     left: 1.25rem;
     width: min(28rem, calc(100vw - 2.5rem));
+    max-width: calc(100vw - 2.5rem);
     padding: 0.55rem 0.75rem;
     border-left: 2px solid #73d8ee;
     background: linear-gradient(90deg, #071318ed, #071318b8 78%, transparent);
     backdrop-filter: blur(8px);
     pointer-events: none;
+    overflow: hidden;
   }
 
   .arena-lesson small,
@@ -700,12 +718,13 @@
     gap: 1rem;
     align-items: start;
     pointer-events: none;
+    max-width: calc(100vw - 5rem);
   }
 
   .combat-keys {
     position: absolute;
     z-index: 9;
-    top: 6.4rem;
+    top: 8.5rem;
     left: 1rem;
     display: flex;
     max-width: calc(100% - 2rem);
@@ -751,14 +770,16 @@
     border: 1px solid #ffffff20;
     background: #06090bd9;
     backdrop-filter: blur(8px);
+    overflow: hidden;
   }
 
   .terrain-label {
     display: flex;
-    max-width: 30rem;
+    max-width: 20rem;
     border-left: 2px solid #d9b96e;
     flex-direction: column;
     gap: 0.15rem;
+    overflow: hidden;
   }
 
   .terrain-label p,
@@ -787,6 +808,7 @@
 
   .match-rule {
     min-width: 9rem;
+    max-width: 15rem;
     text-align: right;
   }
 
@@ -822,6 +844,7 @@
     grid-template-columns: minmax(10rem, 0.72fr) minmax(32rem, 1.8fr) minmax(10rem, 0.72fr);
     gap: 0.6rem;
     pointer-events: none;
+    max-width: calc(100vw - 2rem);
   }
 
   .status-card,
@@ -832,6 +855,7 @@
     background: #06090be8;
     backdrop-filter: blur(10px);
     pointer-events: auto;
+    overflow: hidden;
   }
 
   .status-card header,
@@ -1026,6 +1050,8 @@
     justify-content: center;
     background: #050708ed;
     backdrop-filter: blur(10px);
+    overflow-y: auto;
+    padding: 1rem;
   }
 
   .verdict h1 {
@@ -1050,6 +1076,12 @@
     color: #e6d29c;
     cursor: pointer;
     text-transform: uppercase;
+  }
+
+  .verdict .replay-panel,
+  .verdict .arena-v3-panel {
+    width: min(90vw, 48rem);
+    margin-bottom: 1rem;
   }
 }
 
@@ -1289,7 +1321,7 @@
     }
 
     .combat-keys {
-      top: 5.4rem;
+      top: 7.8rem;
     }
 
     .combat-keys span:nth-child(n + 3) {
@@ -1316,7 +1348,7 @@
     }
 
     .arena-lesson {
-      top: 7rem;
+      top: 8.8rem;
       max-width: calc(100vw - 1.5rem);
     }
 

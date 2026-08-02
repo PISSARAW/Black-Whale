@@ -1,6 +1,7 @@
 import { prisma } from '$lib/server/db'
 import { timeline } from '$lib/server/nen'
 import { listStrategyScenarios, requireStrategyScenario } from '$lib/strategy/scenario/registry'
+import { STRATEGY_ABILITY_IDS_BY_CHARACTER } from '$lib/strategy/hatsu'
 import type { PageServerLoad } from './$types'
 
 export const load: PageServerLoad = async ({ url }) => {
@@ -63,6 +64,12 @@ export const load: PageServerLoad = async ({ url }) => {
             kind: 'CHARACTER',
             label: character.canonicalName,
           }
+        baseState.abilitiesByOwner[characterId] = [
+          ...new Set([
+            ...(baseState.abilitiesByOwner[characterId] ?? []),
+            ...(STRATEGY_ABILITY_IDS_BY_CHARACTER[characterId] ?? []),
+          ]),
+        ]
         if (!baseState.presences[characterId])
           baseState.presences[characterId] = {
             entity: { id: characterId, kind: 'CHARACTER' },

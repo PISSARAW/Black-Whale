@@ -15,6 +15,7 @@ import {
 } from './diplomacy'
 import { factionEliminated, resolveLocationConflicts, type UnitCondition } from './conflict'
 import { buildTurnReports } from './reports'
+import { strategyHatsuResolution } from './hatsu'
 import { characterAbilityIds, factionEntityIds as selectFactionEntityIds } from './selectors'
 import { generateFactionAIOperations, partitionBlockedMoves } from './tacticalAI'
 import {
@@ -261,6 +262,8 @@ export function createSimulationStore() {
     const deniedLocations: string[] = []
     const activatedHatsu: string[] = []
     const activatedAbilityIds: string[] = []
+    const abilityCooldownTurns: Record<string, number> = {}
+    let hatsuInfluence = 0
     const diplomacy = resolveDiplomacyPlan({
       relationships,
       orders: diplomacyOrders,
@@ -311,11 +314,42 @@ export function createSimulationStore() {
         }
         const profile = hatsuById(order.abilityId)
         if (!profile) throw new StrategyInputError('Hatsu inconnu du registre tactique.')
-        const role = strategicRoleForHatsu(profile.kind)
-        if (role === 'RECON') scoutedLocations.push(destination.id)
-        if (role === 'DENIAL') deniedLocations.push(destination.id)
+        const confirmedHostilesAtTarget = Object.values(intel).filter(
+          (sighting) =>
+            sighting.locationId === destination.id &&
+            sighting.certainty === 'CONFIRMED' &&
+            !allowedCharacters.has(sighting.entityId),
+        ).length
+        const spiderIds = new Set(
+          factions
+            .find((faction) => faction.id === 'phantom-troupe')
+            ?.members.map((member) => member.character.id) ?? [],
+        )
+        const adapted = strategyHatsuResolution({
+          abilityId: order.abilityId,
+          sourceLocationId: currentState.presences[entity.id]?.locationId,
+          targetLocationId: destination.id,
+          confirmedHostilesAtTarget,
+          eliminatedAllies: playerFaction.members.filter((member) => {
+            const ally = resolveControlledEntity(currentState!, member.character.id)
+            return ally && unitConditions[ally.id] === 'ELIMINATED'
+          }).length,
+          targetHasSpider: Object.values(intel).some(
+            (sighting) =>
+              sighting.locationId === destination.id &&
+              sighting.certainty === 'CONFIRMED' &&
+              spiderIds.has(sighting.entityId),
+          ),
+        })
+        if (adapted && !adapted.accepted)
+          throw new StrategyInputError(adapted.error ?? 'Ce Hatsu ne peut pas être activé.')
+        const effects = adapted?.effects ?? [strategicRoleForHatsu(profile.kind)]
+        if (effects.includes('RECON')) scoutedLocations.push(destination.id)
+        if (effects.includes('DENIAL')) deniedLocations.push(destination.id)
+        if (effects.includes('GUARD')) guardedLocations.push(destination.id)
+        if (effects.includes('INFLUENCE')) hatsuInfluence += 1
         if (
-          role === 'MOBILITY' &&
+          effects.includes('MOBILITY') &&
           currentState.presences[entity.id]?.locationId !== destination.id
         ) {
           playerEvents.push({
@@ -331,7 +365,8 @@ export function createSimulationStore() {
           })
         }
         activatedAbilityIds.push(order.abilityId)
-        activatedHatsu.push(`${profile.name} · ${destination.name}`)
+        abilityCooldownTurns[order.abilityId] = adapted?.cooldownTurns ?? 2
+        activatedHatsu.push(`${profile.name} · ${adapted?.report ?? destination.name}`)
         continue
       }
       if (order.type === 'SCOUT') {
@@ -435,9 +470,29 @@ export function createSimulationStore() {
       guardedLocations,
       random: seededScenarioRandom(`${branch.id}:${currentTurn}:conflicts`),
     })
+    const camilla = resolveControlledEntity(currentState, 'prince-camilla')
+    if (
+      camilla &&
+      abilityIdsForCharacter('prince-camilla').includes('cats-name') &&
+      unitConditions[camilla.id] !== 'ELIMINATED' &&
+      conflict.conditions[camilla.id] === 'ELIMINATED'
+    ) {
+      const locationId = currentState.presences[camilla.id]?.locationId
+      const killer = activeFactionIds
+        .filter((id) => id !== 'prince-camilla')
+        .flatMap((id) => factionEntityIds(id))
+        .filter((id) => currentState!.presences[id]?.locationId === locationId)
+        .sort()[0]
+      if (killer) {
+        conflict.conditions[camilla.id] = 'READY'
+        conflict.conditions[killer] = 'ELIMINATED'
+        conflict.reports.push('Cat’s Name se déclenche : Camilla revient à la vie et son meurtrier est consumé.')
+      }
+    }
     unitConditions = conflict.conditions
     const completedTurn = currentTurn
-    for (const abilityId of activatedAbilityIds) hatsuCooldowns[abilityId] = currentTurn + 2
+    for (const abilityId of activatedAbilityIds)
+      hatsuCooldowns[abilityId] = currentTurn + (abilityCooldownTurns[abilityId] ?? 2)
     currentTurn += 1
     const scenarioEvent = scenarioEventForTurn(completedTurn, activeScenario)
     refreshIntel(scenarioEvent?.kind === 'BLACKOUT' ? [] : scoutedLocations, guardedLocations)
@@ -458,6 +513,8 @@ export function createSimulationStore() {
         .map((sighting) => sighting.locationId),
     ).size
     const objective = currentObjective()
+    victoryPoints = Math.min(VICTORY_POINTS_TARGET, victoryPoints + hatsuInfluence)
+    if (victoryPoints >= VICTORY_POINTS_TARGET) gameWon = true
     if (objective?.complete && !gameWon) {
       victoryPoints += 1
       if (victoryPoints >= VICTORY_POINTS_TARGET) gameWon = true

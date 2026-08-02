@@ -7,6 +7,7 @@ import type { StrategyFaction } from './types'
 import type { StrategyScenarioV2 } from './scenario/types'
 import { hatsuById } from '$lib/nen/hatsuRegistry'
 import { strategicRoleForHatsu } from './rules'
+import { strategyHatsuResolution } from './hatsu'
 
 export type AIPersonality = 'CAUTIOUS' | 'AGGRESSIVE' | 'OPPORTUNIST'
 
@@ -68,13 +69,32 @@ export function generateFactionAIOperations(input: {
       input.state.abilitiesByOwner[entity.originalCharacterId ?? entity.id] ?? []
     ).find((id) => Boolean(hatsuById(id)))
     const profile = hatsuById(abilityId)
-    const usesHatsu = profile && (input.turn + entity.id.length) % 3 === 0
+    const sourceLocationId = input.state.presences[entity.id]?.locationId
+    const adapted = abilityId
+      ? strategyHatsuResolution({
+          abilityId,
+          sourceLocationId,
+          targetLocationId: sourceLocationId ?? input.destinationIds[0] ?? '',
+          confirmedHostilesAtTarget:
+            sourceLocationId && input.playerLocations.includes(sourceLocationId) ? 1 : 0,
+          eliminatedAllies: input.memberCharacterIds.filter((id) => {
+            const ally = resolveControlledEntity(input.state, id)
+            return ally && input.unitConditions[ally.id] === 'ELIMINATED'
+          }).length,
+          targetHasSpider: false,
+        })
+      : null
+    const usesHatsu =
+      profile && (adapted?.accepted ?? true) && (input.turn + entity.id.length) % 3 === 0
     if (usesHatsu) {
       hatsuActivations += 1
-      const role = strategicRoleForHatsu(profile.kind)
-      if (role === 'DENIAL' && input.state.presences[entity.id]?.locationId)
+      const effects = adapted?.effects ?? [strategicRoleForHatsu(profile.kind)]
+      if (
+        (effects.includes('DENIAL') || effects.includes('GUARD')) &&
+        input.state.presences[entity.id]?.locationId
+      )
         deniedLocations.push(input.state.presences[entity.id].locationId!)
-      if (role === 'MOBILITY' && input.playerLocations.length) {
+      if (effects.includes('MOBILITY') && input.playerLocations.length) {
         events.push(
           ...generateAIOperations(input.state, [entity.originalCharacterId ?? entity.id], {
             destinationIds: [input.playerLocations[0]],

@@ -16250,6 +16250,12 @@
     ],
     "biography": [
       "Gantai is a Black Whale crew member shown during the voyage's emergency operations and evacuation procedures on the lower tiers."
+    ],
+    "mapTrajectory": [
+      {
+        "location": "black-whale-unknown",
+        "fromChapterId": "ch-358"
+      }
     ]
   },
   {
@@ -16645,6 +16651,12 @@
     ],
     "biography": [
       "Tamazo is a Black Whale crew member involved in shipboard operations during the emergencies depicted on the fifth and sixth days of the voyage."
+    ],
+    "mapTrajectory": [
+      {
+        "location": "black-whale-unknown",
+        "fromChapterId": "ch-358"
+      }
     ]
   },
   {
@@ -16663,6 +16675,12 @@
     },
     "biography": [
       "The venue announcer presents Chrollo and Hisoka's death match at Heavens Arena, introducing the rules and addressing the audience before the fight turns the spectators into part of Chrollo's strategy."
+    ],
+    "mapTrajectory": [
+      {
+        "location": "tier-3-theater",
+        "fromChapterId": "ch-358"
+      }
     ]
   },
   {
@@ -31529,7 +31547,13 @@
       "Gipper is a Kakin Royal Army soldier involved in the security operations that intensify during special martial law."
     ],
     "positionProvenance": "inferred",
-    "mapLocationCorrection": true
+    "mapLocationCorrection": true,
+    "mapTrajectory": [
+      {
+        "location": "tier-1-soldiers-living-quarters",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "maizan",
@@ -31926,7 +31950,13 @@
       "Maizan is a Kakin Royal Army officer who appears during the search for Hisoka and is later referenced in the military response to the mafia conflict."
     ],
     "positionProvenance": "inferred",
-    "mapLocationCorrection": true
+    "mapLocationCorrection": true,
+    "mapTrajectory": [
+      {
+        "location": "tier-1-soldiers-living-quarters",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "mizuri",
@@ -32732,7 +32762,13 @@
       "Momolly is a Kakin Royal Army member assigned to lower-tier security during the Heil-Ly investigation and the period preceding special martial law."
     ],
     "positionProvenance": "inferred",
-    "mapLocationCorrection": true
+    "mapLocationCorrection": true,
+    "mapTrajectory": [
+      {
+        "location": "tier-1-soldiers-living-quarters",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "otocin",
@@ -33951,6 +33987,12 @@
         "title": "Friends",
         "status": "absent"
       }
+    ],
+    "mapTrajectory": [
+      {
+        "location": "tier-2-justice-bureau",
+        "fromChapterId": "ch-358"
+      }
     ]
   },
   {
@@ -34349,7 +34391,13 @@
       "He is in fact one of the IPA members lent to the Bureau's Investigation Department alongside Steiner, and he debuts in their Tier 1 quarters at the departure: when Steiner says one of them will succeed him as Deputy Secretary if he dies, Peuckert is the one who answers that the Hunter Association is there to protect them and that the current IPA Director is one of the unofficial sole survivors. The chapter does not name him — that waits twenty-five chapters, until 384."
     ],
     "positionProvenance": "inferred",
-    "mapLocationCorrection": true
+    "mapLocationCorrection": true,
+    "mapTrajectory": [
+      {
+        "location": "tier-1-vvip-living-quarters",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "steiner",
@@ -34748,7 +34796,13 @@
       "At the departure he is in his Tier 1 quarters with three other IPA members, reading Journey to the New World and telling them to at least get through the chapter on the labyrinthine city — if he dies, one of them becomes Deputy Secretary. Peuckert answers that the Hunter Association is there to protect them and that the current IPA Director is one of the unofficial sole survivors. The chapter gives the tier and the room's function, never its number: the VVIP quarters are where Tier 1 lodges dignitaries, so the position stays an inference."
     ],
     "positionProvenance": "inferred",
-    "mapLocationCorrection": true
+    "mapLocationCorrection": true,
+    "mapTrajectory": [
+      {
+        "location": "tier-1-vvip-living-quarters",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "worio-bay",
@@ -35145,7 +35199,13 @@
       "Worio Bay is an Office of Justice official introduced during the legal and medical response to Halkenburg's collapse."
     ],
     "positionProvenance": "inferred",
-    "mapLocationCorrection": true
+    "mapLocationCorrection": true,
+    "mapTrajectory": [
+      {
+        "location": "tier-3-central-courthouse",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "nugui",
@@ -35540,6 +35600,12 @@
     ],
     "biography": [
       "Nugui is a Black Whale passenger who appears repeatedly during shipboard crowd scenes and the emergencies affecting the public tiers."
+    ],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-kings-living-quarters",
+        "fromChapterId": "ch-358"
+      }
     ]
   },
   {
@@ -38371,6 +38437,12 @@
     ],
     "biography": [
       "Morrissey is a Black Whale passenger mentioned during the first round of Kurapika's Nen classes."
+    ],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-kings-living-quarters",
+        "fromChapterId": "ch-358"
+      }
     ]
   },
   {
@@ -39185,6 +39257,12 @@
         "chapter": 414,
         "title": "Friends",
         "status": "absent"
+      }
+    ],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1014",
+        "fromChapterId": "ch-358"
       }
     ]
   },
@@ -42433,6 +42511,12 @@
         "title": "Proclamation",
         "status": "death"
       }
+    ],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-vip-jail",
+        "fromChapterId": "ch-358"
+      }
     ]
   },
   {
@@ -42670,7 +42754,13 @@
     },
     "mapPresenceFromChapterId": "ch-388",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1005",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "hignori",
@@ -42760,7 +42850,13 @@
     },
     "mapPresenceFromChapterId": "ch-369",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1011",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "ittoku",
@@ -42828,7 +42924,13 @@
     },
     "mapPresenceFromChapterId": "ch-359",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "black-whale-unknown",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "kako",
@@ -42950,7 +43052,13 @@
     },
     "mapPresenceFromChapterId": "ch-415",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1005",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "konattsu",
@@ -43018,7 +43126,13 @@
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": [],
     "positionProvenance": "inferred",
-    "mapLocationCorrection": true
+    "mapLocationCorrection": true,
+    "mapTrajectory": [
+      {
+        "location": "tier-1-queens-living-quarters",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "ladiolus",
@@ -43036,7 +43150,13 @@
     },
     "mapPresenceFromChapterId": "ch-369",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1011",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "laroc",
@@ -43083,7 +43203,13 @@
     },
     "mapPresenceFromChapterId": "ch-411",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1010",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "loberry",
@@ -43101,7 +43227,13 @@
     },
     "mapPresenceFromChapterId": "ch-366",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1010",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "longhi",
@@ -43448,7 +43580,13 @@
     "mapPresenceFromChapterId": null,
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": [],
-    "positionProvenance": "databook"
+    "positionProvenance": "databook",
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1005",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "nagmum",
@@ -43515,7 +43653,13 @@
     },
     "mapPresenceFromChapterId": "ch-366",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1013",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "nikoraurusu",
@@ -43803,7 +43947,13 @@
     },
     "mapPresenceFromChapterId": "ch-415",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1005",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "quorolle",
@@ -43893,7 +44043,13 @@
     },
     "mapPresenceFromChapterId": "ch-366",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1010",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "ryoji",
@@ -44405,7 +44561,13 @@
     },
     "mapPresenceFromChapterId": "ch-411",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1011",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "tsudonke",
@@ -44501,7 +44663,13 @@
     },
     "mapPresenceFromChapterId": "ch-363",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1004",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "vergei",
@@ -44703,7 +44871,13 @@
     },
     "mapPresenceFromChapterId": "ch-366",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1010",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "yushohi",

@@ -2,7 +2,9 @@ import type { Object3D } from 'three'
 import type { Apparition } from './apparitions'
 import type { BasicApparitionContext } from './apparitionBasicView'
 
-type Builder = (seen: Apparition, context: BasicApparitionContext) => Object3D
+type Builder = (seen: Apparition, context: BasicApparitionContext) => Object3D | null
+
+const CHAIN_LINKS = 14
 
 function gum(seen: Apparition, { THREE, root, skin }: BasicApparitionContext) {
   const strand = new THREE.Mesh(
@@ -118,17 +120,64 @@ function puppet(seen: Apparition, { THREE, glow, root }: BasicApparitionContext)
   return root
 }
 
+function hoover(seen: Apparition, { THREE, glow, root }: BasicApparitionContext) {
+  const canister = new THREE.Mesh(
+    new THREE.CylinderGeometry(seen.size * 0.55, seen.size * 0.6, seen.size * 1.1, 12),
+    glow(seen.colour, 1),
+  )
+  root.add(canister)
+  const hose = new THREE.Mesh(
+    new THREE.CylinderGeometry(seen.size * 0.12, seen.size * 0.12, seen.size * 1.6, 6),
+    glow(seen.colour, 0.9),
+  )
+  hose.rotation.z = Math.PI / 2.6
+  hose.position.set(seen.size * 0.7, seen.size * 0.5, -seen.size * 0.4)
+  root.add(hose)
+  const nozzle = new THREE.Mesh(
+    new THREE.ConeGeometry(seen.size * 0.34, seen.size * 0.6, 8),
+    glow(seen.colour, 1),
+  )
+  nozzle.rotation.x = -Math.PI / 2
+  nozzle.position.set(seen.size * 1.25, seen.size * 0.95, -seen.size * 0.9)
+  root.add(nozzle)
+  if (seen.stage) {
+    root.add(
+      new THREE.Mesh(
+        new THREE.SphereGeometry(seen.size * 0.42, 10, 8),
+        glow(0x9be8ff, Math.min(0.85, 0.25 + seen.stage * 0.14)),
+      ),
+    )
+  }
+  return null
+}
+
+function chain(seen: Apparition, { THREE, glow, root }: BasicApparitionContext) {
+  const steel = glow(seen.colour, 1)
+  root.add(new THREE.Mesh(new THREE.SphereGeometry(seen.size, 12, 10), steel))
+  for (let index = 0; index < CHAIN_LINKS; index++) {
+    root.add(
+      new THREE.Mesh(
+        new THREE.TorusGeometry(seen.size * 0.4, seen.size * 0.12, 4, 8),
+        steel,
+      ),
+    )
+  }
+  return null
+}
+
 const BUILDERS: Partial<Record<Apparition['kind'], Builder>> = {
   gum,
   double,
   fish,
   paper,
   puppet,
+  hoover,
+  chain,
 }
 
 export function buildObjectApparition(
   seen: Apparition,
   context: BasicApparitionContext,
-): Object3D | undefined {
+): Object3D | null | undefined {
   return BUILDERS[seen.kind]?.(seen, context)
 }

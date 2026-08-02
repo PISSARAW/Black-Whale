@@ -32,6 +32,8 @@ import { GAME_LENGTH, judgeHunt, type HuntOutcome } from './outcome'
 import { record, type TelemetryEvent } from './telemetry'
 import type { HuntState } from './state'
 import { tickHatsu } from './hatsu'
+import { environmentModifiers, NORMAL_ENVIRONMENT } from './environment'
+import type { ContractEnvironment } from './contracts/types'
 
 export const HUNT_TICK_RATE = 60
 export const HUNT_DT = 1 / HUNT_TICK_RATE
@@ -40,6 +42,7 @@ export interface HuntWorld {
   dt: number
   arena: Arena
   graph: NavGraph
+  environment?: ContractEnvironment
 }
 
 export function updateHunt(state: HuntState, world: HuntWorld): HuntState {
@@ -67,7 +70,7 @@ function breathe(state: HuntState, dt: number): Ledger {
  * matters: he decides blind, then the world answers.
  */
 function advanceHunter(state: HuntState, world: HuntWorld): HuntState {
-  const heard = overheard(state, world.graph)
+  const heard = overheard(state, world.graph, world.environment ?? NORMAL_ENVIRONMENT)
   const { hunter, intents } = updateHunter(state.hunter, { ...world, percept: heard })
 
   const movedLog =
@@ -83,14 +86,19 @@ function advanceHunter(state: HuntState, world: HuntWorld): HuntState {
 }
 
 /** Footsteps carrying into the hunter's ear — a bearing, never a position. */
-function overheard(state: HuntState, graph: NavGraph): Percept | null {
+function overheard(
+  state: HuntState,
+  graph: NavGraph,
+  environment: ContractEnvironment,
+): Percept | null {
   if (state.player.atRest) return null
   const reach = earshotBetween(state.player.spaceId, state.hunter.spaceId, graph)
   if (reach === 'apart') return null
 
   const gap = distance(state.player.position, state.hunter.position)
+  const hearingRange = HEARING_RANGE * environmentModifiers(environment).hearing
   const nearness =
-    Math.max(0, 1 - gap / HEARING_RANGE) * (reach === 'adjacent' ? THROUGH_A_WALL : 1)
+    Math.max(0, 1 - gap / hearingRange) * (reach === 'adjacent' ? THROUGH_A_WALL : 1)
   if (nearness <= 0.15) return null
 
   return { kind: 'sound', at: state.player.position, spaceId: state.player.spaceId, sharp: false }

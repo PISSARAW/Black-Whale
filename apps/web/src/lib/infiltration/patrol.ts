@@ -1,10 +1,11 @@
 import type { NavGraph } from '../hunt/navmesh'
 import type { Arena } from '../hunt/arena'
-import { resolveMovement, wallsNear } from '../tour/navigation'
+import { resolveMovement } from '../tour/navigation'
 import type { Vec2 } from '../tour/types'
 import type { Witness } from './state'
 
 export const PATROL_SPEED = 1.25
+export const WITNESS_RADIUS = 0.42
 const ARRIVAL = 0.3
 
 export interface PatrolWorld {
@@ -24,11 +25,15 @@ export function patrolWitness(witness: Witness, world: PatrolWorld): Witness {
     witness.position[0] + ((goal[0] - witness.position[0]) / gap) * amount,
     witness.position[1] + ((goal[1] - witness.position[1]) / gap) * amount,
   ]
-  const position = resolveMovement(
-    witness.position,
-    target,
-    wallsNear(world.arena.walls, witness.position, 2),
-  )
+  // Patrols use the complete collision set. A proximity-filtered set can omit
+  // the wall crossed by a large simulation step (for example after a stalled
+  // frame), at which point resolveMovement cannot stop the witness tunnelling
+  // through it. The infiltration arenas are small enough that correctness is
+  // preferable to maintaining a second broad-phase here.
+  const position = resolveMovement(witness.position, target, {
+    walls: world.arena.walls,
+    radius: WITNESS_RADIUS,
+  })
   return {
     ...witness,
     position,

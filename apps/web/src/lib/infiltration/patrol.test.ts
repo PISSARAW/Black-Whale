@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { patrolWitness } from './patrol'
+import { patrolWitness, WITNESS_RADIUS } from './patrol'
 import type { Arena } from '../hunt/arena'
 import type { NavGraph } from '../hunt/navmesh'
 import type { Witness } from './state'
@@ -46,5 +46,17 @@ describe('infiltration patrol', () => {
   it('crosses only after reaching the doorway', () => {
     const atDoor = { ...witness, position: [1, 0] as [number, number] }
     expect(patrolWitness(atDoor, { graph, arena, dt: 0.1 }).spaceId).toBe('b')
+  })
+
+  it('never tunnels through a wall, even after a long simulation step', () => {
+    const blockedArena: Arena = {
+      ...arena,
+      walls: [{ spaceId: 'a', start: [1, -2], end: [1, 2] }],
+    }
+    const moved = patrolWitness(witness, { graph, arena: blockedArena, dt: 10 })
+
+    expect(moved.position[0]).toBeCloseTo(1 - WITNESS_RADIUS)
+    expect(moved.position[0]).toBeLessThan(1)
+    expect(moved.spaceId).toBe('a')
   })
 })

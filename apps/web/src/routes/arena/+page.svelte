@@ -61,6 +61,7 @@
 
   let game = $state(freshGame())
   let started = $state(false)
+  let briefingOpen = $state(true)
   let position = $state<Vec2>(terrain.spawns[0])
   let heading = $state(0)
   let lookPitch = $state(0)
@@ -290,7 +291,7 @@
       command({ type: 'KEN', side: 'player', on: !game.player.ken }, 'ken')
     else if (event.code === 'Minus') shiftRyu(-0.1)
     else if (event.code === 'Equal') shiftRyu(0.1)
-    else if (event.code === 'Space') strike()
+    else if (event.code === 'Space' || event.code === 'KeyF') strike()
     else if (event.code === 'ShiftLeft' || event.code === 'ShiftRight') guard()
     else if (event.code === 'KeyV') feint()
     else if (event.code === 'KeyJ') evade(-1)
@@ -541,6 +542,39 @@
   class:opponent-bound={game.opponent.bound > 0}
 >
   <h1 class="sr-only">{$t.arena.title}</h1>
+
+  {#if briefingOpen}
+    <div class="combat-briefing" role="dialog" aria-modal="true" aria-labelledby="combat-briefing-title">
+      <div class="briefing-card">
+        <p class="briefing-kicker">{$locale === 'fr' ? 'AVANT LE COMBAT' : 'BEFORE THE FIGHT'}</p>
+        <h2 id="combat-briefing-title">
+          {$locale === 'fr' ? 'Touchez votre adversaire avant qu’il ne vous touche' : 'Hit your opponent before they hit you'}
+        </h2>
+        <p class="briefing-goal">
+          {$locale === 'fr'
+            ? 'Le premier à 10 points gagne. Une attaque ne touche que si vous êtes assez près : surveillez la distance en haut de l’écran.'
+            : 'First to 10 points wins. An attack only connects at close range: watch the distance at the top of the screen.'}
+        </p>
+        <ol class="briefing-steps">
+          <li>
+            <kbd>{$locale === 'fr' ? 'ZQSD' : 'WASD'}</kbd>
+            <span><strong>{$locale === 'fr' ? 'Approchez' : 'Close in'}</strong>{$locale === 'fr' ? ' jusqu’à ce que le viseur devienne doré.' : ' until the reticle turns gold.'}</span>
+          </li>
+          <li>
+            <kbd>CLIC · F</kbd>
+            <span><strong>{$locale === 'fr' ? 'Frappez' : 'Strike'}</strong>{$locale === 'fr' ? ' en visant l’adversaire. Une touche rapporte au moins 1 point.' : ' while aiming at the opponent. A hit scores at least 1 point.'}</span>
+          </li>
+          <li>
+            <kbd>MAJ</kbd>
+            <span><strong>{$locale === 'fr' ? 'Bloquez' : 'Block'}</strong>{$locale === 'fr' ? ' quand l’alerte d’attaque apparaît. Les techniques Nen sont optionnelles pour commencer.' : ' when the attack warning appears. Nen techniques are optional at first.'}</span>
+          </li>
+        </ol>
+        <button class="briefing-start" onclick={() => (briefingOpen = false)}>
+          {$locale === 'fr' ? 'Entrer dans l’arène' : 'Enter the arena'}
+        </button>
+      </div>
+    </div>
+  {/if}
   <TourScene
     {ship}
     bind:tierId

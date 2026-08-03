@@ -27,7 +27,9 @@
     "compile:identities": "node dist/cli/backfill-identities.js",
     "compile:identities:dev": "tsx src/cli/backfill-identities.ts",
     "verify:map": "node dist/cli/verify-map.js",
-    "verify:map:dev": "tsx src/cli/verify-map.ts"
+    "verify:map:dev": "tsx src/cli/verify-map.ts",
+    "compile:chapters": "node dist/cli/backfill-chapters.js",
+    "compile:chapters:dev": "tsx src/cli/backfill-chapters.ts"
   },
   "dependencies": {
     "@black-whale/contracts": "workspace:*",

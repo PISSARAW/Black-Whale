@@ -15,3 +15,7 @@ black-whale-manual-*.sql.gz
 
 # Vite dev artefacts
 apps/*/vite.config.ts.timestamp-*.mjs
+
+# Playwright
+test-results/
+playwright-report/

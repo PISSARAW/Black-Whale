@@ -42,8 +42,8 @@ export function abilityFirstVisibleChapter(
     : undefined
   if (declared !== undefined) return declared
 
-  const attributed = [ability.ownerId, ...(ability.userIds ?? [])].filter(
-    (id): id is string => Boolean(id),
+  const attributed = [ability.ownerId, ...(ability.userIds ?? [])].filter((id): id is string =>
+    Boolean(id),
   )
   const appearances = attributed
     .map((id) => firstAppearanceByCharacterId.get(id))

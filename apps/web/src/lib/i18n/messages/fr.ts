@@ -25,6 +25,27 @@ export const fr: Messages = {
     intlLocale: 'fr-FR',
   },
 
+  error: {
+    backHome: 'Retour aux archives',
+    reference: (status) => `Référence ${status}`,
+    notFound: {
+      title: 'Cette page ne figure pas aux archives',
+      body: 'L’adresse ne correspond à rien de catalogué. Elle a pu être renommée, ou n’avoir jamais existé.',
+    },
+    rateLimited: {
+      title: 'Trop de requêtes',
+      body: 'Les archives limitent les écritures pour qu’un seul visiteur ne dépense pas tout le navire. Patientez un instant puis réessayez.',
+    },
+    server: {
+      title: 'Les archives n’ont pas pu répondre',
+      body: 'La panne est de notre côté, pas du vôtre. La requête n’a pas été enregistrée : réessayer est sans risque.',
+    },
+    generic: {
+      title: 'Une erreur est survenue',
+      body: 'La requête n’a pas pu aboutir.',
+    },
+  },
+
   seo: {
     siteTitle: 'Black Whale — Archives de la succession',
     siteDescription:

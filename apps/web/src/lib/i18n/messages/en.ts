@@ -26,6 +26,31 @@ export const en = {
     intlLocale: 'en-GB',
   },
 
+  /**
+   * Shown by `+error.svelte`. The copy stays sober on purpose: an error page is
+   * the one page whose job is to say what happened and where to go next.
+   */
+  error: {
+    backHome: 'Back to the archive',
+    reference: (status: number) => `Reference ${status}`,
+    notFound: {
+      title: 'This page is not in the archive',
+      body: 'The address does not match anything catalogued. It may have been renamed, or never existed.',
+    },
+    rateLimited: {
+      title: 'Too many requests',
+      body: 'The archive throttles writes so a single visitor cannot spend the whole ship. Wait a moment and try again.',
+    },
+    server: {
+      title: 'The archive could not answer',
+      body: 'Something failed on our side, not yours. The request was not recorded; retrying is safe.',
+    },
+    generic: {
+      title: 'Something went wrong',
+      body: 'The request could not be completed.',
+    },
+  },
+
   seo: {
     siteTitle: 'Black Whale — Succession Archive',
     siteDescription:

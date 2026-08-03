@@ -1025,6 +1025,10 @@ export const en = {
         dowsing: 'The chain points at',
         phasing: 'Walking through walls',
         sealed: 'Senses sealed',
+        // Named rather than drawn: the panel used three emoji here, which said
+        // "eye, ear, mouth" only to a reader whose font drew them in colour.
+        sealedSenses: (count: number) =>
+          ['', 'sight', 'sight · hearing', 'sight · hearing · speech'][count] ?? '',
         dispatches: 'Dispatches',
         visits: (count: number) => `${count} arrival${count === 1 ? '' : 's'}`,
         armed: 'armed',

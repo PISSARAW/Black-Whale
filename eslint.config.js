@@ -62,6 +62,25 @@ export default tseslint.config(
       // charging for it would buy shorter files with worse code in them.
       'max-lines': ['error', { max: 500, skipBlankLines: true, skipComments: true }],
 
+      // No emoji in the interface. They render differently on every platform,
+      // read as a different register from the rest of the copy, and are not
+      // translatable — a pictograph says whatever the reader's font decides.
+      // The typographic marks the design already uses (✓ ◉ ◐ ★ ♩) are not
+      // affected: this bans the colour pictograph blocks only.
+      'no-misleading-character-class': 'error',
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector: 'Literal[value=/[\\u{1F000}-\\u{1FAFF}\\u{FE0F}\\u{1F1E6}-\\u{1F1FF}]/u]',
+          message: 'No emoji in the interface — say it in words, or use a typographic mark.',
+        },
+        {
+          selector:
+            'TemplateElement[value.raw=/[\\u{1F000}-\\u{1FAFF}\\u{FE0F}\\u{1F1E6}-\\u{1F1FF}]/u]',
+          message: 'No emoji in the interface — say it in words, or use a typographic mark.',
+        },
+      ],
+
       // Past three parameters a call site stops being readable at the call
       // site: `f(a, b, true, null, 3)` says nothing about what those are, and
       // adding an argument silently changes the meaning of every existing
@@ -89,6 +108,25 @@ export default tseslint.config(
       // idiom; the compiler, not the source, does the reassignment. prefer-const
       // rewrites them to `const` en masse, which is noise rather than a fix.
       'prefer-const': 'off',
+
+      // Markup text is a `SvelteText` node, not a `Literal`, so the ban above
+      // does not reach `<p>x</p>`. Same rule, second door.
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector: 'Literal[value=/[\\u{1F000}-\\u{1FAFF}\\u{FE0F}\\u{1F1E6}-\\u{1F1FF}]/u]',
+          message: 'No emoji in the interface — say it in words, or use a typographic mark.',
+        },
+        {
+          selector:
+            'TemplateElement[value.raw=/[\\u{1F000}-\\u{1FAFF}\\u{FE0F}\\u{1F1E6}-\\u{1F1FF}]/u]',
+          message: 'No emoji in the interface — say it in words, or use a typographic mark.',
+        },
+        {
+          selector: 'SvelteText[value=/[\\u{1F000}-\\u{1FAFF}\\u{FE0F}\\u{1F1E6}-\\u{1F1FF}]/u]',
+          message: 'No emoji in the interface — say it in words, or use a typographic mark.',
+        },
+      ],
 
       // Neither app configures `paths.base`: both are served at the root of
       // their own host, so resolve() is the identity function here. Turn this

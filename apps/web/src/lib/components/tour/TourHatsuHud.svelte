@@ -588,7 +588,7 @@
     if (world.sealed) {
       rows.push({
         label: held.sealed,
-        value: ['', '👁', '👁 👂', '👁 👂 🗣'][world.sealed],
+        value: held.sealedSenses(world.sealed),
       })
     }
     const book = world.book

@@ -5,7 +5,7 @@
   const iconByState: Record<KnowledgeVisualState, string> = {
     known: '✓',
     confirmed: '◉',
-    reported: '📄',
+    reported: '▤',
     believed: '◐',
     suspected: '?',
     rumor: '◌',

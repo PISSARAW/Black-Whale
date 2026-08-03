@@ -936,6 +936,7 @@ export const fr: Messages = {
         dowsing: 'Le pendule désigne',
         phasing: 'Traversée des murs',
         sealed: 'Sens scellés',
+        sealedSenses: (count) => ['', 'vue', 'vue · ouïe', 'vue · ouïe · voix'][count] ?? '',
         dispatches: 'Dépêches',
         visits: (count) => `${count} arrivée${count === 1 ? '' : 's'}`,
         armed: 'armé',

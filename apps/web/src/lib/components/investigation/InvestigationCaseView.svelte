@@ -1735,7 +1735,7 @@
             </p>
             <div class="mt-6 rounded border border-amber-500/30 bg-amber-500/10 p-3">
               <p class="text-[10px] leading-relaxed text-amber-200/80">
-                ⚠️ {ui.canonLimit}
+                {ui.canonLimit}
               </p>
             </div>
           </div>

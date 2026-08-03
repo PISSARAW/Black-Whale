@@ -1,4 +1,5 @@
 import {
+  asserted,
   buildManifest,
   canUseNen,
   constraint,
@@ -17,6 +18,7 @@ import {
   requiresTarget,
   self,
   setEffectState,
+  shown,
   spawnNenEntity,
   zone,
 } from '@black-whale/ability-sdk'
@@ -53,6 +55,7 @@ export const saiyuPriestStaff = defineAbility({
   actions: {
     conjure: {
       label: 'Matérialiser le bâton',
+      evidence: shown('ch. 349 — le bâton matérialisé'),
       effects: [
         spawnNenEntity({
           id: (ctx) => `saiyu-staff-${ctx.actorId}`,
@@ -63,8 +66,20 @@ export const saiyuPriestStaff = defineAbility({
       ],
     },
 
+    'lengthen-the-staff': {
+      label: 'Allonger le bâton',
+      evidence: shown('ch. 349 — la longueur est ce qui se règle'),
+      effects: [
+        constraint({
+          rules: ['La longueur du bâton se règle à volonté.'],
+          attributes: (ctx) => ({ lengthMeters: numberParam(ctx, 'lengthMeters') }),
+        }),
+      ],
+    },
+
     restrain: {
       label: 'Retenir un allié',
+      evidence: shown('ch. 349 — le bâton retient sans blesser'),
       conditions: [requiresTarget('Un allié est retenu')],
       effects: [
         constraint({
@@ -76,6 +91,7 @@ export const saiyuPriestStaff = defineAbility({
 
     strike: {
       label: 'Frapper à distance',
+      evidence: shown('ch. 349 — le bâton s’allonge jusqu’à la cible'),
       conditions: [requiresTarget('Un adversaire est frappé')],
       effects: [
         constraint({
@@ -134,8 +150,30 @@ export const saiyuThreeMonkeys = defineAbility({
 
   cost: { label: 'Une frappe réussie par sens retiré', amount: 3, unit: 'frappes' },
 
-  actions: Object.fromEntries(
-    MONKEYS.map((monkey) => [
+  actions: Object.fromEntries([
+    [
+      'restore-a-sense',
+      {
+        label: 'Rendre un sens',
+        evidence: asserted('ce que les singes retirent, ils peuvent le rendre'),
+        effects: [setEffectState({ state: 'ENDED' })],
+      },
+    ],
+    [
+      'seal-without-a-hit',
+      {
+        label: 'Retirer un sens sans toucher la cible',
+        refusal: 'Un sens retiré coûte une frappe réussie : sans contact, rien n’est scellé',
+      },
+    ],
+    [
+      'seal-a-fourth-sense',
+      {
+        label: 'Retirer un quatrième sens',
+        refusal: 'Trois singes, trois sens : la vue, l’ouïe et la parole',
+      },
+    ],
+    ...MONKEYS.map((monkey) => [
       `send-${monkey.id}`,
       {
         label: `Envoyer ${monkey.label}`,
@@ -161,7 +199,7 @@ export const saiyuThreeMonkeys = defineAbility({
         ],
       },
     ]),
-  ),
+  ]),
 
   ui: { componentKey: 'SensesView' },
 
@@ -209,6 +247,7 @@ export const greatHaiku = defineAbility({
   actions: {
     compose: {
       label: 'Écrire un haïku',
+      evidence: asserted('trois vers, dont la qualité fixe la puissance'),
       conditions: [requiresParameter('haiku', 'Un haïku est écrit')],
       effects: [
         effect({
@@ -224,8 +263,20 @@ export const greatHaiku = defineAbility({
       ],
     },
 
+    'compose-without-a-season-word': {
+      label: 'Écrire sans mot de saison',
+      refusal: 'Le haïku obéit à sa forme : trois vers et le mot de saison',
+      evidence: asserted('la forme est la condition de la capacité'),
+    },
+
+    'invoke-twice': {
+      label: 'Invoquer deux fois le même haïku',
+      refusal: 'Un poème pour un effet : il faut en écrire un autre',
+    },
+
     invoke: {
       label: 'Invoquer l’effet',
+      evidence: asserted('l’effet suit le poème une fois écrit'),
       conditions: [effectIsLive('effectId', 'Un haïku est écrit')],
       effects: [
         setEffectState({
@@ -280,6 +331,7 @@ export const birdManipulation = defineAbility({
   actions: {
     'gather-flock': {
       label: 'Rassembler la volée',
+      evidence: shown('ch. 320 — la volée rassemblée autour de Cheadle'),
       effects: [
         spawnNenEntity({ id: 'cluck-flock', kind: 'COHORT', label: 'Volée de Cluck' }),
         controlLink({
@@ -291,8 +343,26 @@ export const birdManipulation = defineAbility({
       ],
     },
 
+    'scout-with-the-flock': {
+      label: 'Faire observer par la volée',
+      evidence: asserted('des oiseaux menés en nuée voient ce qui se passe en dessous'),
+      effects: [
+        knowledgeGrant({
+          factId: (ctx) => `seen-by-flock:${param(ctx, 'locationId') ?? 'zone'}`,
+          state: 'BELIEVED',
+          confidence: 0.6,
+        }),
+      ],
+    },
+
+    'control-a-person': {
+      label: 'Contrôler une personne',
+      refusal: 'La capacité mène des oiseaux, pas des gens',
+    },
+
     deliver: {
       label: 'Livrer un pli',
+      evidence: shown('ch. 320 — les oiseaux portent les plis'),
       conditions: [
         effectIsLive('effectId', 'La volée est rassemblée'),
         requiresParameter('locationId', 'Une destination est choisie'),
@@ -349,8 +419,41 @@ export const leorioRemotePunch = defineAbility({
   cost: { label: 'Une surface continue et l’aura émise à travers elle', unit: 'aura' },
 
   actions: {
+    'punch-around-a-corner': {
+      label: 'Frapper hors de vue',
+      evidence: shown('ch. 385 — Leorio frappe ce qu’il ne voit pas directement'),
+      conditions: [requiresParameter('surfaceId', 'Une surface est frappée')],
+      effects: [
+        effect({
+          kind: 'CUSTOM',
+          discriminator: 'remote-punch-blind',
+          attributes: (ctx) => ({ throughSurfaceId: param(ctx, 'surfaceId'), lineOfSight: false }),
+        }),
+      ],
+    },
+
+    'punch-through-a-gap': {
+      label: 'Frapper à travers un vide',
+      refusal: 'Il faut une surface continue : l’aura ne traverse pas le vide',
+      evidence: shown('ch. 385 — le coup passe par la matière, pas par l’air'),
+    },
+
+    'choose-the-exit-point': {
+      label: 'Choisir le point de sortie',
+      evidence: shown('ch. 385 — le poing ressort là où Leorio l’a décidé'),
+      conditions: [requiresParameter('exitPoint', 'Un point de sortie est choisi')],
+      effects: [
+        effect({
+          kind: 'CUSTOM',
+          discriminator: 'remote-punch-exit',
+          attributes: (ctx) => ({ exitPoint: param(ctx, 'exitPoint') }),
+        }),
+      ],
+    },
+
     punch: {
       label: 'Frapper à travers une surface',
+      evidence: shown('ch. 385 — l’uppercut qui traverse la cloison'),
       conditions: [
         requiresTarget('Une cible est visée'),
         requiresParameter('surfaceId', 'Une surface est frappée'),

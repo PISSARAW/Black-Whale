@@ -1,4 +1,5 @@
 import {
+  asserted,
   auraModifier,
   buildManifest,
   canUseNen,
@@ -11,6 +12,7 @@ import {
   requiresParameter,
   requiresTarget,
   setEffectState,
+  shown,
 } from '@black-whale/ability-sdk'
 
 /**
@@ -52,6 +54,7 @@ export const erigeron = defineAbility({
   actions: {
     grow: {
       label: 'Accélérer la croissance',
+      evidence: shown('ch. 380 — la croissance accélérée à la paume'),
       conditions: [requiresTarget('Un être vivant est visé')],
       effects: [
         effect({
@@ -67,6 +70,7 @@ export const erigeron = defineAbility({
 
     boost: {
       label: 'Amplifier une capacité',
+      evidence: shown('ch. 380 — le soutien discret du camp Woble'),
       conditions: [
         requiresTarget('Un utilisateur est amplifié'),
         requiresParameter('targetAbilityId', 'La capacité amplifiée est identifiée'),
@@ -81,8 +85,24 @@ export const erigeron = defineAbility({
       cost: { label: 'Effet faible sur les non-entraînés', unit: 'efficacité' },
     },
 
+    'boost-at-a-distance': {
+      label: 'Amplifier sans contact',
+      refusal: 'La capacité passe par la paume : sans contact, rien ne se transmet',
+      evidence: shown('ch. 380 — le contact est montré à chaque usage'),
+    },
+
+    'boost-an-untrained-user': {
+      label: 'Amplifier un non-entraîné',
+      // Not a refusal: it works, badly. The cost line says how badly.
+      evidence: shown('ch. 380 — le gain est marginal sur qui n’est pas entraîné'),
+      conditions: [requiresTarget('Un non-entraîné est amplifié')],
+      effects: [auraModifier({ mode: 'BOOST', effectiveness: 'marginal' })],
+      cost: { label: 'Gain marginal, aura dépensée pareil', unit: 'efficacité' },
+    },
+
     stop: {
       label: 'Cesser l’amplification',
+      evidence: asserted('l’amplification s’arrête quand il retire la main'),
       conditions: [effectIsLive('effectId', 'Une amplification est en cours')],
       effects: [setEffectState({ state: 'ENDED' })],
     },

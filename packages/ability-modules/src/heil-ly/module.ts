@@ -8,6 +8,7 @@ import {
   defineAbility,
   effect,
   effectIsLive,
+  hypothesis,
   isConscious,
   knowledgeGrant,
   listParam,
@@ -139,6 +140,7 @@ export const bloodyMary = defineAbility({
   actions: {
     bleed: {
       label: 'Ouvrir une plaie',
+      evidence: shown('ch. 383 — le sang versé pour servir'),
       effects: [
         bodyState({ bodyId: (ctx) => param(ctx, 'bodyId') ?? ctx.actorId, state: 'INJURED' }),
         effect({
@@ -150,8 +152,21 @@ export const bloodyMary = defineAbility({
       cost: { label: 'Le sang doit être versé pour servir', unit: 'blessure' },
     },
 
+    'use-someone-elses-blood': {
+      label: 'Manipuler le sang d’autrui',
+      evidence: hypothesis('le manga ne montre la capacité que sur son propre sang'),
+      effects: [constraint({ rules: ['Le sang d’un tiers est manipulé.'] })],
+    },
+
+    'act-without-an-open-wound': {
+      label: 'Agir sans plaie ouverte',
+      refusal: 'Il faut du sang versé : sans plaie, la capacité n’a rien à manipuler',
+      evidence: shown('ch. 383 — la plaie précède toujours l’effet'),
+    },
+
     restrain: {
       label: 'Entraver',
+      evidence: shown('ch. 383 — le sang manipulé immobilise'),
       conditions: [
         requiresTarget('Une cible est entravée'),
         effectIsLive('effectId', 'Du sang est disponible'),
@@ -161,6 +176,7 @@ export const bloodyMary = defineAbility({
 
     'split-into-eyes': {
       label: 'Diviser en gouttes-yeux',
+      evidence: shown('ch. 383 — les gouttes qui regardent'),
       conditions: [effectIsLive('effectId', 'Du sang est disponible')],
       effects: [
         controlLink({ vector: 'blood-droplet', mode: 'observe' }),
@@ -218,6 +234,7 @@ export const padailleWeaponTransformation = defineAbility({
   actions: {
     transform: {
       label: 'Transformer un membre',
+      evidence: shown('ch. 383 — le corps armé par la transformation'),
       conditions: [requiresParameter('tool', 'La forme prise par le membre est connue')],
       effects: [
         effect({
@@ -236,8 +253,22 @@ export const padailleWeaponTransformation = defineAbility({
       ],
     },
 
+    'strike-with-the-weapon': {
+      label: 'Frapper avec l’arme',
+      evidence: shown('ch. 383 — le membre transformé sert d’arme'),
+      conditions: [requiresTarget('Une cible est frappée')],
+      effects: [bodyState({ state: 'INJURED' })],
+    },
+
+    'transform-a-second-limb': {
+      label: 'Transformer un second membre',
+      refusal: 'Une partie du corps par arme : le reste demeure humain',
+      evidence: asserted('la limite énoncée avec la capacité'),
+    },
+
     revert: {
       label: 'Reprendre forme humaine',
+      evidence: asserted('la forme humaine revient quand le combat cesse'),
       conditions: [effectIsLive('effectId', 'Un membre est transformé')],
       effects: [setEffectState({ state: 'ENDED' })],
     },
@@ -297,8 +328,22 @@ export const snakeArm = defineAbility({
       ],
     },
 
+    'grip-with-the-snake': {
+      label: 'Saisir avec le bras-serpent',
+      evidence: asserted('le bras allongé retient autant qu’il frappe'),
+      conditions: [requiresTarget('Une cible est saisie')],
+      effects: [constraint({ rules: ['Le bras-serpent enserre la cible.'] })],
+    },
+
+    'bite-through-armour': {
+      label: 'Mordre à travers une armure',
+      evidence: hypothesis('la morsure opposée à une protection d’aura'),
+      effects: [bodyState({ state: 'INJURED' })],
+    },
+
     bite: {
       label: 'Mordre',
+      evidence: shown('ch. 383 — le bras-serpent mord'),
       conditions: [requiresTarget('Une cible est mordue')],
       effects: [
         effect({

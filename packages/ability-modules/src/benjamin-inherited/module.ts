@@ -7,6 +7,7 @@ import {
   defineAbility,
   effect,
   effectIsLive,
+  hypothesis,
   isConscious,
   param,
   person,
@@ -52,8 +53,27 @@ export const airBlow = defineAbility({
   cost: { label: 'Aura émise — le canon n’en donne pas la mesure', unit: 'aura' },
 
   actions: {
+    'fire-at-a-single-target': {
+      label: 'Viser une cible',
+      evidence: asserted('l’émission part de la paume vers ce qu’elle vise'),
+      conditions: [requiresTarget('Une cible est visée')],
+      effects: [auraModifier({ emitter: 'left-palm', scope: 'target' })],
+    },
+
+    'fire-a-sustained-barrage': {
+      label: 'Tenir un tir nourri',
+      evidence: hypothesis('la cadence et la portée d’Air Blow ne sont pas données'),
+      effects: [auraModifier({ emitter: 'left-palm', sustained: true })],
+    },
+
+    'describe-the-full-mechanics': {
+      label: 'Détailler la mécanique',
+      refusal: 'Condition non révélée : le manga n’a montré qu’une émission depuis la paume',
+    },
+
     fire: {
       label: 'Émettre depuis la paume gauche',
+      evidence: asserted('l’émission part de la paume gauche ; le canon n’en dit pas plus'),
       conditions: [requiresTarget('Une cible est visée')],
       effects: [
         auraModifier({
@@ -132,6 +152,13 @@ export const culdcept = defineAbility({
       ],
     },
 
+    'play-a-captured-card': {
+      label: 'Jouer une carte capturée',
+      evidence: asserted('la carte rend la capacité disponible à son porteur'),
+      conditions: [requiresParameter('targetAbilityId', 'Une carte est choisie')],
+      effects: [abilityGrant()],
+    },
+
     'capture-an-invincible-arrow': {
       label: 'Capturer la flèche de Halkenburg',
       refusal: 'La flèche transperce le rectangle d’aura : la carte ne se ferme pas',
@@ -204,11 +231,25 @@ export const benjaminAura = defineAbility({
   actions: {
     reinforce: {
       label: 'Renforcer le corps',
+      evidence: shown('ch. 361 — le corps tenu par le renforcement'),
       effects: [auraModifier({ mode: 'REINFORCEMENT', scope: 'self' })],
+    },
+
+    'harden-against-a-blow': {
+      label: 'Encaisser un coup',
+      evidence: shown('ch. 385 — le corps tient sous l’impact'),
+      conditions: [effectIsLive('effectId', 'Le renforcement est actif')],
+      effects: [auraModifier({ mode: 'REINFORCEMENT', braced: true })],
+    },
+
+    'reinforce-someone-else': {
+      label: 'Renforcer un tiers',
+      refusal: 'Le renforcement porte sur son propre corps',
     },
 
     release: {
       label: 'Relâcher',
+      evidence: asserted('le renforcement se relâche à volonté'),
       conditions: [effectIsLive('effectId', 'Le renforcement est actif')],
       effects: [setEffectState({ state: 'ENDED' })],
     },

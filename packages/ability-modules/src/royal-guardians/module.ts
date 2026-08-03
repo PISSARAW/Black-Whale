@@ -11,8 +11,10 @@ import {
   defineAbility,
   effect,
   effectIsLive,
+  hypothesis,
   listParam,
   masked,
+  moveEntity,
   param,
   person,
   requiresParameter,
@@ -63,6 +65,31 @@ export const camillaGuardianCoercion = defineAbility({
   cost: { label: 'Conditions d’activation inconnues du canon', unit: 'inconnu' },
 
   actions: {
+    'trigger-the-coercion': {
+      label: 'Déclencher la coercition',
+      refusal: 'Condition non révélée : le manga n’a pas dit ce qui déclenche le gardien',
+    },
+
+    'guess-the-conditions': {
+      label: 'Supposer les conditions',
+      evidence: hypothesis('toute règle d’activation que le canon n’a pas donnée'),
+      effects: [
+        effect({
+          kind: 'CUSTOM',
+          discriminator: 'coercion-hypothesis',
+          attributes: { canonStatus: 'speculative' },
+        }),
+      ],
+    },
+
+    'stay-dormant': {
+      label: 'Rester dormant',
+      // The state the guardian is actually in, at every cursor the manga has
+      // shown so far: armed, masked, and waiting for a rule nobody has read.
+      evidence: shown('ch. 386 — le gardien attend, sans qu’on sache quoi'),
+      effects: [setEffectState({ state: 'DORMANT' })],
+    },
+
     arm: {
       label: 'Préparer la coercition',
       evidence: shown('ch. 386 — le gardien est là, ses conditions ne le sont pas'),
@@ -128,6 +155,39 @@ export const tubeppaGuardianSynthesis = defineAbility({
   },
 
   actions: {
+    'hand-over-a-compound': {
+      label: 'Remettre un composé',
+      evidence: asserted('ce qui est synthétisé passe ensuite de main en main'),
+      conditions: [requiresParameter('compound', 'Un composé est demandé')],
+      effects: [
+        moveEntity({
+          entity: (ctx) => ({
+            id: `tubeppa-compound-${param(ctx, 'compound') ?? 'sample'}`,
+            kind: 'OBJECT',
+          }),
+        }),
+      ],
+    },
+
+    'synthesise-alone': {
+      label: 'Synthétiser sans partenaire',
+      refusal: 'La capacité demande deux composants coopérants : seule, elle ne produit rien',
+      evidence: shown('ch. 386 — la coopération est la condition'),
+    },
+
+    'synthesise-an-unknown-compound': {
+      label: 'Synthétiser un composé inconnu',
+      evidence: asserted('la limite exacte des composés possibles n’est pas donnée'),
+      conditions: [requiresParameter('compound', 'Un composé est demandé')],
+      effects: [
+        effect({
+          kind: 'CUSTOM',
+          discriminator: 'synthesis-attempt',
+          attributes: (ctx) => ({ compound: param(ctx, 'compound'), outcome: 'unrevealed' }),
+        }),
+      ],
+    },
+
     synthesise: {
       label: 'Synthétiser',
       evidence: shown('ch. 386 — la synthèse demande un partenaire consentant'),
@@ -194,25 +254,6 @@ export const tysonGuardianEyeWogs = defineAbility({
   targets: [person(), zone()],
 
   actions: {
-    'synthesise-alone': {
-      label: 'Synthétiser sans partenaire',
-      refusal: 'La capacité demande deux composants coopérants : seule, elle ne produit rien',
-      evidence: shown('ch. 386 — la coopération est la condition'),
-    },
-
-    'synthesise-an-unknown-compound': {
-      label: 'Synthétiser un composé inconnu',
-      evidence: asserted('la limite exacte des composés possibles n’est pas donnée'),
-      conditions: [requiresParameter('compound', 'Un composé est demandé')],
-      effects: [
-        effect({
-          kind: 'CUSTOM',
-          discriminator: 'synthesis-attempt',
-          attributes: (ctx) => ({ compound: param(ctx, 'compound'), outcome: 'unrevealed' }),
-        }),
-      ],
-    },
-
     'gather-readers': {
       label: 'Rassembler les lecteurs',
       evidence: shown('ch. 386 — les lecteurs du Livre rassemblés'),
@@ -241,6 +282,18 @@ export const tysonGuardianEyeWogs = defineAbility({
       conditions: [requiresTarget('Un lecteur est visé')],
       effects: [auraModifier({ levy: true, returns: 'happiness', proportionalTo: 'adherence' })],
       cost: { label: 'Aura prélevée sur le lecteur', unit: 'aura' },
+    },
+
+    'levy-without-adherence': {
+      label: 'Prélever sans adhésion',
+      refusal:
+        'Le bonheur rendu est proportionnel à l’adhésion : sans elle, il n’y a rien à prélever',
+      evidence: shown('ch. 386 — la règle énoncée avec la capacité'),
+    },
+
+    'attach-to-a-non-reader': {
+      label: 'Fixer un Eye-wog hors du Livre',
+      refusal: 'Les Eye-wogs se fixent aux lecteurs du Livre, à personne d’autre',
     },
 
     'punish-taboo': {
@@ -292,18 +345,6 @@ export const luzurusGuardianDesireTrap = defineAbility({
   cost: { label: 'Un désir connu et un appât accepté volontairement', unit: 'appât' },
 
   actions: {
-    'levy-without-adherence': {
-      label: 'Prélever sans adhésion',
-      refusal:
-        'Le bonheur rendu est proportionnel à l’adhésion : sans elle, il n’y a rien à prélever',
-      evidence: shown('ch. 386 — la règle énoncée avec la capacité'),
-    },
-
-    'attach-to-a-non-reader': {
-      label: 'Fixer un Eye-wog hors du Livre',
-      refusal: 'Les Eye-wogs se fixent aux lecteurs du Livre, à personne d’autre',
-    },
-
     bait: {
       label: 'Matérialiser le désir',
       evidence: shown('ch. 386 — la Bête donne au piégé ce qu’il désire'),

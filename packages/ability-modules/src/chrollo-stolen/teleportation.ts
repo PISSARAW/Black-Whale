@@ -75,6 +75,13 @@ export const chrolloTeleportation = defineAbility({
       ],
     },
 
+    'displace-through-a-wall': {
+      label: 'Déplacer sans ligne de vue',
+      evidence: shown('ch. 357 — la cible part sans que rien ne la relie à Chrollo'),
+      conditions: [requiresTarget('Une personne est déplacée')],
+      effects: [moveEntity({ certainty: 'CONFIRMED', precision: 'EXACT_ROOM' })],
+    },
+
     'displace-without-consent': {
       label: 'Déplacer sans accord',
       evidence: shown('ch. 357 — la cible n’a rien à dire'),

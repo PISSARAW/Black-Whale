@@ -1,4 +1,5 @@
 import {
+  asserted,
   buildManifest,
   canUseNen,
   defineAbility,
@@ -7,6 +8,7 @@ import {
   numberParam,
   person,
   requiresTarget,
+  shown,
   unrevealed,
 } from '@black-whale/ability-sdk'
 
@@ -47,8 +49,36 @@ export const lovelyGhostwriter = defineAbility({
   cost: { label: 'Des informations sur la cible et un support écrit', unit: 'page' },
 
   actions: {
+    'read-the-poem': {
+      label: 'Lire la prédiction',
+      // The poem is the interface: what it says is a belief, never a fact, and
+      // the site has to keep that difference visible.
+      evidence: shown('ch. 143 — le poème se lit, il ne se prouve pas'),
+      conditions: [requiresTarget('Un sujet est visé')],
+      effects: [
+        knowledgeGrant({
+          factId: (ctx) => `prophecy-read:${ctx.targets[0] ?? 'subject'}`,
+          state: 'BELIEVED',
+          confidence: 0.8,
+        }),
+      ],
+    },
+
+    'predict-on-demand': {
+      label: 'Prédire à la demande',
+      refusal: 'Les poèmes arrivent quand ils arrivent : la capacité ne se commande pas',
+      evidence: asserted('les prédictions couvrent le mois, sans requête'),
+    },
+
+    'use-after-neons-loss': {
+      label: 'Employer la capacité aujourd’hui',
+      refusal: 'La capacité a disparu avec sa propriétaire : la fiche est historique',
+      evidence: shown('ch. 143 — la capacité est perdue lorsqu’elle est volée'),
+    },
+
     predict: {
       label: 'Écrire la prédiction',
+      evidence: shown('ch. 143 — les prédictions en quatrains'),
       conditions: [requiresTarget('Un sujet est visé')],
       effects: [
         knowledgeGrant({

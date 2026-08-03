@@ -1,4 +1,5 @@
 import {
+  asserted,
   bodyState,
   buildManifest,
   canUseNen,
@@ -60,6 +61,7 @@ export const biohazardHinrigh = defineAbility({
   actions: {
     animate: {
       label: 'Changer un objet en animal',
+      evidence: shown('ch. 383 — l’objet devient vivant sans perdre sa fonction'),
       conditions: [requiresTarget('Un objet est touché')],
       effects: [
         spawnNenEntity({
@@ -82,8 +84,29 @@ export const biohazardHinrigh = defineAbility({
       ],
     },
 
+    'animate-a-living-target': {
+      label: 'Animer un être déjà vivant',
+      refusal: 'La capacité anime des objets : le vivant n’a rien à recevoir',
+    },
+
+    'keep-the-original-function': {
+      label: 'Se servir de l’objet animé',
+      // The canon detail worth an entry of its own: a living door is still a
+      // door, so the object keeps doing its job while it moves.
+      evidence: shown('ch. 383 — l’objet garde sa fonction d’origine'),
+      conditions: [effectIsLive('effectId', 'Un objet est animé')],
+      effects: [
+        effect({
+          kind: 'CUSTOM',
+          discriminator: 'living-object-in-use',
+          attributes: { keepsOriginalFunction: true },
+        }),
+      ],
+    },
+
     revert: {
       label: 'Rendre l’objet inerte',
+      evidence: asserted('l’objet redevient inerte'),
       conditions: [effectIsLive('effectId', 'Un objet est animé')],
       effects: [setEffectState({ state: 'ENDED' })],
     },
@@ -247,6 +270,7 @@ export const damageSweetHome = defineAbility({
   actions: {
     link: {
       label: 'Relier une source et un réceptacle',
+      evidence: shown('ch. 386 — la main gauche pose le report des dégâts'),
       conditions: [
         requiresParameter('sourceId', 'La source des dégâts est touchée'),
         requiresParameter('sinkId', 'Le réceptacle est touché'),
@@ -263,8 +287,21 @@ export const damageSweetHome = defineAbility({
       ],
     },
 
+    'link-without-touching': {
+      label: 'Relier sans contact',
+      refusal: 'Il faut avoir touché la source et le réceptacle',
+      evidence: shown('ch. 386 — les deux contacts précèdent le report'),
+    },
+
+    'erase-the-damage': {
+      label: 'Effacer les dégâts',
+      refusal: 'Les dégâts sont déplacés, jamais annulés : quelqu’un les prend',
+      evidence: shown('ch. 386 — le report est un transfert, pas un soin'),
+    },
+
     transfer: {
       label: 'Reporter les dégâts',
+      evidence: shown('ch. 386 — le coup part ailleurs que là où il a frappé'),
       conditions: [effectIsLive('effectId', 'Un report est en place')],
       effects: [
         bodyState({ bodyId: (ctx) => param(ctx, 'sinkId'), state: 'INJURED' }),

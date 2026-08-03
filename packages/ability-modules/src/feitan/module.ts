@@ -13,6 +13,7 @@ import {
   requiresParameter,
   self,
   setEffectState,
+  shown,
   spawnNenEntity,
   zone,
 } from '@black-whale/ability-sdk'
@@ -66,6 +67,7 @@ export const painPacker = defineAbility({
   actions: {
     wear: {
       label: 'Enfiler l’armure',
+      evidence: shown('ch. 258 — l’armure enfilée après les coups encaissés'),
       conditions: [requiresParameter('damageTaken', 'Des dégâts ont déjà été encaissés')],
       effects: [
         spawnNenEntity({
@@ -92,6 +94,7 @@ export const painPacker = defineAbility({
 
     pack: {
       label: 'Empaqueter un nouveau coup',
+      evidence: shown('ch. 258 — chaque coup encaissé s’ajoute au paquet'),
       conditions: [effectIsLive('effectId', 'L’armure est en place')],
       effects: [
         attributeCounter({
@@ -105,8 +108,15 @@ export const painPacker = defineAbility({
       }),
     },
 
+    'heal-instead-of-packing': {
+      label: 'Soigner les dégâts empaquetés',
+      refusal: 'L’armure garde les dégâts : elle ne les annule ni ne les soigne',
+      evidence: shown('ch. 258 — rien n’est rendu avant l’ouverture'),
+    },
+
     open: {
       label: 'Ouvrir l’emballage',
+      evidence: shown('ch. 258 — l’emballage s’ouvre sur Rising Sun'),
       conditions: [
         effectIsLive('effectId', 'L’armure est en place'),
         effectAttributeAtLeast({
@@ -174,6 +184,7 @@ export const risingSun = defineAbility({
   actions: {
     ignite: {
       label: 'Devenir un soleil',
+      evidence: shown('ch. 258 — le soleil se lève'),
       effects: [
         spawnNenEntity({
           id: (ctx) => `rising-sun-${ctx.actorId}`,
@@ -189,8 +200,21 @@ export const risingSun = defineAbility({
       ],
     },
 
+    'spare-an-ally': {
+      label: 'Épargner un allié',
+      refusal: 'La chaleur ne distingue personne : les alliés doivent se mettre à couvert',
+      evidence: shown('ch. 258 — l’avertissement lancé aux siens'),
+    },
+
+    'ignite-without-packed-damage': {
+      label: 'Lever le soleil sans dégâts empaquetés',
+      refusal: 'La puissance vient de ce que Pain Packer a gardé : sans paquet, rien à dépenser',
+      evidence: shown('ch. 258 — les deux capacités vont ensemble'),
+    },
+
     burn: {
       label: 'Carboniser la zone',
+      evidence: shown('ch. 258 — la chaleur ne distingue pas les alliés'),
       conditions: [effectIsLive('effectId', 'Le soleil est levé')],
       effects: [
         constraint({

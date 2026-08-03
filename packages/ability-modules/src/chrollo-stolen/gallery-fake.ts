@@ -1,4 +1,5 @@
 import {
+  asserted,
   buildManifest,
   canUseNen,
   defineAbility,
@@ -6,6 +7,7 @@ import {
   isConscious,
   object,
   requiresTarget,
+  shown,
   spawnNenEntity,
 } from '@black-whale/ability-sdk'
 
@@ -37,8 +39,26 @@ export const galleryFake = defineAbility({
   targets: [object()],
 
   actions: {
+    'copy-a-person': {
+      label: 'Copier une personne',
+      refusal: 'La capacité copie des objets, pas des êtres vivants',
+    },
+
+    'outlive-the-creator': {
+      label: 'Garder les copies après la mort de Kortopi',
+      refusal: 'Les copies disparaissent avec leur créateur',
+      evidence: shown('ch. 371 — la mort de Kortopi emporte ce qu’il avait copié'),
+    },
+
+    'copy-past-a-day': {
+      label: 'Conserver une copie plus de 24 h',
+      refusal: 'Une copie vit vingt-quatre heures, pas davantage',
+      evidence: asserted('la durée énoncée avec la capacité'),
+    },
+
     copy: {
       label: 'Copier un objet',
+      evidence: shown('ch. 357 — les copies produites à la chaîne'),
       conditions: [requiresTarget('Un objet est touché')],
       effects: [
         spawnNenEntity({

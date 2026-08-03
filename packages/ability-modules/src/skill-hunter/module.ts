@@ -170,8 +170,28 @@ export const doubleFace = defineAbility({
   conditions: [canUseNen(), isConscious()],
 
   actions: {
+    'run-two-abilities': {
+      label: 'Employer les deux capacités',
+      evidence: shown('ch. 372 — les deux pages actives dans le même combat'),
+      conditions: [effectIsLive('effectId', 'Le marque-page est posé')],
+      effects: [setEffectState({ state: 'ACTIVE', attributes: { simultaneous: 2 } })],
+    },
+
+    'bookmark-a-third': {
+      label: 'Marquer une troisième capacité',
+      refusal: 'Deux capacités au plus : le marque-page n’en tient pas davantage',
+      evidence: shown('ch. 372 — la limite énoncée avec la capacité'),
+    },
+
+    'keep-the-hands-free': {
+      label: 'Garder les mains libres',
+      refusal: 'Le livre occupe les deux mains tant que les pages tournent',
+      evidence: shown('ch. 372 — les mains prises par la lecture'),
+    },
+
     bookmark: {
       label: 'Poser le marque-page',
+      evidence: shown('ch. 372 — le marque-page tient deux capacités à la fois'),
       conditions: [requiresParameter('targetAbilityId', 'Une page est marquée')],
       effects: [
         effect({

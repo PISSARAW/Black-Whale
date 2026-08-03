@@ -25,7 +25,9 @@
     "compile:timeline": "node dist/cli/backfill-timeline.js",
     "compile:timeline:dev": "tsx src/cli/backfill-timeline.ts",
     "compile:identities": "node dist/cli/backfill-identities.js",
-    "compile:identities:dev": "tsx src/cli/backfill-identities.ts"
+    "compile:identities:dev": "tsx src/cli/backfill-identities.ts",
+    "verify:map": "node dist/cli/verify-map.js",
+    "verify:map:dev": "tsx src/cli/verify-map.ts"
   },
   "dependencies": {
     "@black-whale/contracts": "workspace:*",

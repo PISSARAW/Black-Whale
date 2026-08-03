@@ -216,7 +216,8 @@ export const eventSchema = z
         hours: z.number().optional(),
         hoursUntil: z.number().optional(),
         day: z.number().int().optional(),
-        source: z.string().optional(),
+        // The five kinds the domain's `SourceType` allows; the clock reads it.
+        source: z.enum(['manga', 'anime', 'databook', 'interview', 'community']).optional(),
       })
       .passthrough()
       .refine((value) => value.hours !== undefined || value.day !== undefined, {

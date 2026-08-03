@@ -63,6 +63,13 @@ jobs:
       - name: Type check
         run: pnpm typecheck
 
+      # ADR-001 makes `data/` the single declaration of every canonical fact.
+      # That only holds if something refuses a declaration that contradicts
+      # another one. The 27 names and 48 owners that had already diverged in
+      # production are what this exists to make impossible.
+      - name: Canon lint
+        run: pnpm canon-lint
+
       - name: Build packages
         run: pnpm build --filter "./packages/*"
 

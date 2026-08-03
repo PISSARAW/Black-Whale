@@ -25,10 +25,7 @@ export function buildAnimalApparition(
   head.position.set(0, seen.size * (seen.stage === 2 ? 1.02 : 1.12), seen.size * 0.34)
   root.add(head)
   for (const side of [-1, 1]) {
-    const ear = new THREE.Mesh(
-      new THREE.ConeGeometry(seen.size * 0.12, seen.size * 0.22, 4),
-      fur,
-    )
+    const ear = new THREE.Mesh(new THREE.ConeGeometry(seen.size * 0.12, seen.size * 0.22, 4), fur)
     ear.position.set(side * seen.size * 0.16, seen.size * 0.24, -seen.size * 0.04)
     head.add(ear)
     const eye = new THREE.Mesh(

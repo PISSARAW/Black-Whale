@@ -28,13 +28,17 @@ export function buildTurnReports(input: TurnReportInput): string[] {
     ...input.diplomacyReports,
     `Turn ${input.completedTurn} · ${input.playerOrderCount} order${input.playerOrderCount !== 1 ? 's' : ''} resolved, ${input.discoveries} intel update${input.discoveries !== 1 ? 's' : ''}.`,
     ...(input.interceptions
-      ? [`Successful interception: ${input.interceptions} hostile movement${input.interceptions !== 1 ? 's' : ''} blocked.`]
+      ? [
+          `Successful interception: ${input.interceptions} hostile movement${input.interceptions !== 1 ? 's' : ''} blocked.`,
+        ]
       : []),
     ...input.activatedHatsu.map((activation) => `Hatsu activated · ${activation}.`),
     ...input.conflictReports,
     ...(input.aiHatsuActivations ? ['Hostile Nen activity detected.'] : []),
     ...(input.playerMovesBlocked
-      ? [`Hostile control · ${input.playerMovesBlocked} allied movement${input.playerMovesBlocked !== 1 ? 's' : ''} blocked.`]
+      ? [
+          `Hostile control · ${input.playerMovesBlocked} allied movement${input.playerMovesBlocked !== 1 ? 's' : ''} blocked.`,
+        ]
       : []),
     ...(input.hostileContacts
       ? [
@@ -46,9 +50,15 @@ export function buildTurnReports(input: TurnReportInput): string[] {
       : []),
     ...(input.gameWon ? ['Strategic victory achieved.'] : []),
     ...(input.gameLost ? ['Strategic defeat · time has run out.'] : []),
-    ...(input.scoutedLocations ? [`Investigation complete in ${input.scoutedLocations} zone${input.scoutedLocations !== 1 ? 's' : ''}.`] : []),
+    ...(input.scoutedLocations
+      ? [
+          `Investigation complete in ${input.scoutedLocations} zone${input.scoutedLocations !== 1 ? 's' : ''}.`,
+        ]
+      : []),
     ...(input.guardedLocations
-      ? [`Protection maintained in ${input.guardedLocations} zone${input.guardedLocations !== 1 ? 's' : ''}.`]
+      ? [
+          `Protection maintained in ${input.guardedLocations} zone${input.guardedLocations !== 1 ? 's' : ''}.`,
+        ]
       : []),
   ]
 }

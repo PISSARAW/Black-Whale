@@ -62,14 +62,22 @@ const confirmedTarget = (context: StrategyHatsuContext, name: string) =>
 
 const ADAPTERS: Record<string, Adapter> = {
   'dowsing-chain': () =>
-    accepted(['RECON'], 1, 'Dowsing Chain recoupe les indices disponibles sans garantir la vérité.'),
+    accepted(
+      ['RECON'],
+      1,
+      'Dowsing Chain recoupe les indices disponibles sans garantir la vérité.',
+    ),
   'little-eye': () =>
     accepted(['RECON'], 2, 'Little Eye observe la zone par l’intermédiaire d’un insecte contrôlé.'),
   'secret-window': () =>
     accepted(['RECON'], 2, 'Secret Window attache une surveillance persistante à la zone.'),
   'emperor-time': (context) =>
     currentLocation(context, 'Emperor Time') ??
-    accepted(['GUARD'], 3, 'Emperor Time renforce la réponse locale, au prix de la durée de vie de Kurapika.'),
+    accepted(
+      ['GUARD'],
+      3,
+      'Emperor Time renforce la réponse locale, au prix de la durée de vie de Kurapika.',
+    ),
   'steal-chain': (context) =>
     confirmedTarget(context, 'Steal Chain') ??
     accepted(['DENIAL'], 3, 'Steal Chain draine un utilisateur observé et entrave son aura.'),
@@ -93,14 +101,17 @@ const ADAPTERS: Record<string, Adapter> = {
   culdcept: (context) =>
     confirmedTarget(context, 'Culdcept') ??
     accepted(['DENIAL'], 3, 'Culdcept neutralise temporairement une capacité adverse observée.'),
-  'cats-name': (context) =>
-    refused(strategyMsg(context.locale ?? 'en').hatsu.catsNamePassive),
+  'cats-name': (context) => refused(strategyMsg(context.locale ?? 'en').hatsu.catsNamePassive),
   'biohazard-hinrigh': (context) =>
     currentLocation(context, 'Biohazard') ??
     accepted(['DENIAL'], 2, 'Biohazard anime les objets de la zone pour en contrôler les accès.'),
   contagion: (context) =>
     currentLocation(context, 'Contagion') ??
-    accepted(['INFLUENCE', 'DENIAL'], 3, 'Contagion étend le réseau Heil-Ly depuis la position de Morena.'),
+    accepted(
+      ['INFLUENCE', 'DENIAL'],
+      3,
+      'Contagion étend le réseau Heil-Ly depuis la position de Morena.',
+    ),
 }
 
 export function strategyHatsuResolution(

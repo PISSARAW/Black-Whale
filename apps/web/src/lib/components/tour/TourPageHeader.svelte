@@ -10,7 +10,8 @@
     modesHref: string
   }
 
-  let { title, intro, counts, scale, morenaTitle, morenaHref, modesTitle, modesHref }: Props = $props()
+  let { title, intro, counts, scale, morenaTitle, morenaHref, modesTitle, modesHref }: Props =
+    $props()
 </script>
 
 <header class="mb-6">
@@ -20,7 +21,10 @@
     {counts} · {scale}
   </p>
   <p class="mt-3 flex flex-wrap gap-x-5 gap-y-2">
-    <a href={modesHref} class="text-sm font-semibold text-[#FFD700] underline underline-offset-2 transition-colors hover:text-[#ffe45c]">
+    <a
+      href={modesHref}
+      class="text-sm font-semibold text-[#FFD700] underline underline-offset-2 transition-colors hover:text-[#ffe45c]"
+    >
       {modesTitle} →
     </a>
     <a

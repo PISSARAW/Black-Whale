@@ -5,14 +5,14 @@
 
 ## Résultat exécuté
 
-| Gate | Résultat | Preuve |
-| --- | --- | --- |
-| Logique Hunt | Réussi | 29 fichiers, 258 tests Vitest réussis |
-| Matrice de configurations | Réussi structurellement | 3 terrains × 3 Hatsu × 3 chasseurs × seeds |
-| Desktop Chromium | Bloqué | parcours Playwright présent, erreur Three.js pendant le rendu |
-| Mobile Chromium | Bloqué | même blocage de rendu |
-| Typecheck Hunt | Bloqué par workspace | lien local `@black-whale/ability-modules` non résolu |
-| Diff Hunt | Réussi | changements Hunt committés séparément |
+| Gate                      | Résultat                | Preuve                                                        |
+| ------------------------- | ----------------------- | ------------------------------------------------------------- |
+| Logique Hunt              | Réussi                  | 29 fichiers, 258 tests Vitest réussis                         |
+| Matrice de configurations | Réussi structurellement | 3 terrains × 3 Hatsu × 3 chasseurs × seeds                    |
+| Desktop Chromium          | Bloqué                  | parcours Playwright présent, erreur Three.js pendant le rendu |
+| Mobile Chromium           | Bloqué                  | même blocage de rendu                                         |
+| Typecheck Hunt            | Bloqué par workspace    | lien local `@black-whale/ability-modules` non résolu          |
+| Diff Hunt                 | Réussi                  | changements Hunt committés séparément                         |
 
 ## Rapport d’équilibrage
 

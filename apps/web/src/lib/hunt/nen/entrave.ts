@@ -45,9 +45,18 @@ export function entravesUnderfoot(placements: readonly Placement[], walker: Walk
  * the caller is told how long the hunter is held. Two at once do not stack into
  * twelve seconds — being held is a state, not a quantity (invariant I1).
  */
-export function springEntraves(ledger: Ledger, sprung: readonly Placement[]): { ledger: Ledger; hold: number } {
+export function springEntraves(
+  ledger: Ledger,
+  sprung: readonly Placement[],
+): { ledger: Ledger; hold: number } {
   if (sprung.length === 0) return { ledger, hold: 0 }
-  return { ledger: consumeAura(ledger, sprung.map((placement) => placement.id)), hold: ENTRAVE_HOLD }
+  return {
+    ledger: consumeAura(
+      ledger,
+      sprung.map((placement) => placement.id),
+    ),
+    hold: ENTRAVE_HOLD,
+  }
 }
 
 /** Counts a hold down. Held is binary; this is only how long it has left to run. */

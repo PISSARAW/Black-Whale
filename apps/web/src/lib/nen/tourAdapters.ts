@@ -19,9 +19,7 @@ export function arenaNen(fighter: FighterState): TourNenState {
   state.ken = fighter.ken
   state.ko = fighter.ko ? zone(fighter.ko.zone) : null
   const attack = Math.max(0, Math.min(1, fighter.attackShare))
-  state.ryu = state.ko
-    ? { [state.ko]: 1 }
-    : { hands: attack, [zone(fighter.guard)]: 1 - attack }
+  state.ryu = state.ko ? { [state.ko]: 1 } : { hands: attack, [zone(fighter.guard)]: 1 - attack }
   return state
 }
 
@@ -34,9 +32,7 @@ export function huntDuelNen(duelist: DuelistState): TourNenState {
   state.ken = duelist.ken
   state.ko = duelist.ko ? zone(duelist.ko) : null
   const attack = Math.max(0, Math.min(1, duelist.attack))
-  state.ryu = state.ko
-    ? { [state.ko]: 1 }
-    : { hands: attack, [zone(duelist.guard)]: 1 - attack }
+  state.ryu = state.ko ? { [state.ko]: 1 } : { hands: attack, [zone(duelist.guard)]: 1 - attack }
   return state
 }
 

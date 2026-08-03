@@ -22,9 +22,6 @@ describe('Hunt V3 contracts', () => {
       allowedHatsu: [],
       objectives: [{ kind: 'survive', seconds: 100 }],
     })
-    expect(issues.map((issue) => issue.path)).toEqual([
-      'allowedHatsu',
-      'objectives.0.seconds',
-    ])
+    expect(issues.map((issue) => issue.path)).toEqual(['allowedHatsu', 'objectives.0.seconds'])
   })
 })

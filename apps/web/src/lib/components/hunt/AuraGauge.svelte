@@ -43,7 +43,9 @@
       return
     }
     // Falling: let the ghost catch up slowly, so the drop is legible.
-    const timer = setTimeout(() => { ghost = now }, 420)
+    const timer = setTimeout(() => {
+      ghost = now
+    }, 420)
     return () => clearTimeout(timer)
   })
 
@@ -61,16 +63,12 @@
     aria-valuemin="0"
     aria-valuemax={MAX_AURA}
     aria-valuenow={Math.round(pool.available)}
-    aria-valuetext="{labels.available}: {Math.round(pool.available)} — {labels.committed}: {Math.round(
-      pool.committed,
-    )}"
+    aria-valuetext="{labels.available}: {Math.round(
+      pool.available,
+    )} — {labels.committed}: {Math.round(pool.committed)}"
   >
     <!-- What has just left the body, still glowing where it was. -->
-    <div
-      class="absolute inset-y-0 hunt-spent"
-      style:left={inHand}
-      style:width={justSpent}
-    ></div>
+    <div class="absolute inset-y-0 hunt-spent" style:left={inHand} style:width={justSpent}></div>
     <div
       class="absolute inset-y-0 left-0 transition-[width] duration-300 ease-out"
       class:bg-sky-300={!zetsu}

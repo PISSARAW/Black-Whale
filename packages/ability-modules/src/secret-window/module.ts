@@ -57,7 +57,7 @@ export const secretWindow = defineAbility({
     },
 
     'deploy-shoulder': {
-      label: 'Hibou d\'Épaule',
+      label: "Hibou d'Épaule",
       conditions: [belowCapacity('secret-window-owls', 1, 'Un seul hibou autorisé à la fois')],
       effects: [
         spawnNenEntity({
@@ -73,7 +73,7 @@ export const secretWindow = defineAbility({
         }),
       ],
       cost: { label: 'Hibou sur épaule', amount: 1, unit: 'capacité' },
-      hint: 'Se pose sur l\'épaule de l\'utilisateur (disparaît après 20s)',
+      hint: "Se pose sur l'épaule de l'utilisateur (disparaît après 20s)",
     },
 
     'deploy-random': {
@@ -98,9 +98,7 @@ export const secretWindow = defineAbility({
 
     perch: {
       label: 'Poster le hibou',
-      conditions: [
-        requiresParameter('locationId', 'Une pièce est choisie'),
-      ],
+      conditions: [requiresParameter('locationId', 'Une pièce est choisie')],
       effects: [
         moveEntity({
           entity: () => ({ id: OWL_IDS[0]!, kind: 'NEN_ENTITY' }),
@@ -125,7 +123,7 @@ export const secretWindow = defineAbility({
             })),
           ),
       ],
-      hint: 'Récupère uniquement les 10 dernières secondes d\'enregistrement avant disparition',
+      hint: "Récupère uniquement les 10 dernières secondes d'enregistrement avant disparition",
     },
   },
 
@@ -155,10 +153,10 @@ export const secretWindow = defineAbility({
     }),
     wheelEntry({
       id: 'deploy-shoulder',
-      label: 'Hibou d\'Épaule',
+      label: "Hibou d'Épaule",
       abilityId: 'secret-window',
       visibility: 'available',
-      hint: 'Se pose sur l\'épaule de l\'utilisateur (disparaît après 20s)',
+      hint: "Se pose sur l'épaule de l'utilisateur (disparaît après 20s)",
     }),
     wheelEntry({
       id: 'deploy-random',
@@ -179,7 +177,7 @@ export const secretWindow = defineAbility({
       label: 'Revoir les enregistrements',
       abilityId: 'secret-window',
       visibility: 'available',
-      hint: 'Récupère uniquement les 10 dernières secondes d\'enregistrement',
+      hint: "Récupère uniquement les 10 dernières secondes d'enregistrement",
     }),
   ],
 })

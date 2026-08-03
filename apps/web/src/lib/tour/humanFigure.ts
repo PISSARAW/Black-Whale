@@ -7,11 +7,7 @@ import {
 } from '@black-whale/nen-engine'
 import type { Apparition } from './apparitions'
 import { humanAnimation } from './humanAnimation'
-import {
-  addMorenaDetails,
-  addSilentMajorityCostume,
-  addSilentMajorityMask,
-} from './humanCostume'
+import { addMorenaDetails, addSilentMajorityCostume, addSilentMajorityMask } from './humanCostume'
 import { humanProfile } from './humanProfiles'
 
 type Three = typeof import('three')
@@ -142,7 +138,12 @@ function nenState(seen: HumanLook): NenTechniqueState<HumanZone> {
   return state
 }
 
-export function buildHumanFigure({ THREE, glow, seen, observerGyo = false }: HumanFigureBuild): HumanFigure {
+export function buildHumanFigure({
+  THREE,
+  glow,
+  seen,
+  observerGyo = false,
+}: HumanFigureBuild): HumanFigure {
   const root = new THREE.Group()
   const figure = new THREE.Group()
   const far = new THREE.Group()

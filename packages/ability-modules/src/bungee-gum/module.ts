@@ -200,7 +200,7 @@ export const bungeeGum = defineAbility({
       label: 'Renvoi',
       abilityId: 'bungee-gum',
       visibility: 'available',
-      hint: "Renvoie projectiles ou attaques",
+      hint: 'Renvoie projectiles ou attaques',
     }),
     wheelEntry({
       id: 'propulsion',

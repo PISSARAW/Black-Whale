@@ -94,9 +94,12 @@
     vertical-align: -0.18rem;
     background:
       radial-gradient(circle at 50% 18%, currentColor 0 18%, transparent 20%),
-      linear-gradient(72deg, transparent 39%, currentColor 41% 48%, transparent 50%) 0 55% / 50% 48% no-repeat,
-      linear-gradient(-72deg, transparent 39%, currentColor 41% 48%, transparent 50%) 100% 55% / 50% 48% no-repeat,
-      linear-gradient(90deg, transparent 22%, currentColor 24% 76%, transparent 78%) 50% 47% / 72% 45% no-repeat;
+      linear-gradient(72deg, transparent 39%, currentColor 41% 48%, transparent 50%) 0 55% / 50% 48%
+        no-repeat,
+      linear-gradient(-72deg, transparent 39%, currentColor 41% 48%, transparent 50%) 100% 55% / 50%
+        48% no-repeat,
+      linear-gradient(90deg, transparent 22%, currentColor 24% 76%, transparent 78%) 50% 47% / 72%
+        45% no-repeat;
     filter: drop-shadow(0 0 1px #05090f);
   }
 

@@ -15,7 +15,9 @@ const variants = (prefix: string): MissionDefinition['variants'] => [
 
 export const MISSIONS: Record<MissionId, MissionDefinition> = {
   'missing-report': {
-    id: 'missing-report', duration: 10 * 60, witnesses: commonWitnesses,
+    id: 'missing-report',
+    duration: 10 * 60,
+    witnesses: commonWitnesses,
     teaching: ['movement', 'vision', 'sound', 'social', 'nen', 'traces', 'hatsu'],
     objectives: [
       { id: 'copy-report', kind: 'copy', required: true },
@@ -25,7 +27,9 @@ export const MISSIONS: Record<MissionId, MissionDefinition> = {
     variants: variants('report'),
   },
   courier: {
-    id: 'courier', duration: 15 * 60, witnesses: commonWitnesses,
+    id: 'courier',
+    duration: 15 * 60,
+    witnesses: commonWitnesses,
     teaching: ['vision', 'sound', 'social', 'hatsu'],
     objectives: [
       { id: 'follow-courier', kind: 'follow', required: true },
@@ -35,7 +39,9 @@ export const MISSIONS: Record<MissionId, MissionDefinition> = {
     variants: variants('courier'),
   },
   'listening-device': {
-    id: 'listening-device', duration: 12 * 60, witnesses: commonWitnesses,
+    id: 'listening-device',
+    duration: 12 * 60,
+    witnesses: commonWitnesses,
     teaching: ['sound', 'social', 'traces', 'nen'],
     objectives: [
       { id: 'plant-device', kind: 'plant', required: true },
@@ -45,7 +51,9 @@ export const MISSIONS: Record<MissionId, MissionDefinition> = {
     variants: variants('listening'),
   },
   'compromised-shift': {
-    id: 'compromised-shift', duration: 16 * 60, witnesses: commonWitnesses,
+    id: 'compromised-shift',
+    duration: 16 * 60,
+    witnesses: commonWitnesses,
     teaching: ['social', 'traces', 'nen', 'hatsu'],
     objectives: [
       { id: 'perform-duty', kind: 'plant', required: false },
@@ -55,7 +63,9 @@ export const MISSIONS: Record<MissionId, MissionDefinition> = {
     variants: variants('shift'),
   },
   'impossible-witness': {
-    id: 'impossible-witness', duration: 18 * 60, witnesses: commonWitnesses,
+    id: 'impossible-witness',
+    duration: 18 * 60,
+    witnesses: commonWitnesses,
     teaching: ['social', 'vision', 'sound', 'traces'],
     objectives: [
       { id: 'gain-trust', kind: 'identify', required: true },
@@ -66,7 +76,9 @@ export const MISSIONS: Record<MissionId, MissionDefinition> = {
     variants: variants('witness'),
   },
   'three-princes': {
-    id: 'three-princes', duration: 20 * 60, witnesses: commonWitnesses,
+    id: 'three-princes',
+    duration: 20 * 60,
+    witnesses: commonWitnesses,
     teaching: ['social', 'nen', 'traces', 'hatsu'],
     objectives: [
       { id: 'place-sources', kind: 'plant', required: true },
@@ -80,5 +92,9 @@ export const MISSIONS: Record<MissionId, MissionDefinition> = {
 export function selectMission(id: MissionId, seed: number): MissionSelection {
   const definition = MISSIONS[id]
   const random = seededRandom(seed)
-  return { definition, variant: definition.variants[random.integer(definition.variants.length)], seed }
+  return {
+    definition,
+    variant: definition.variants[random.integer(definition.variants.length)],
+    seed,
+  }
 }

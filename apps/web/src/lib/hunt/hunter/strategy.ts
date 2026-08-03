@@ -34,10 +34,7 @@ export function strategicPlanner(doctrine: HunterDoctrineV3): HunterPlanner {
   return { plan: (perception) => plan(doctrine, perception) }
 }
 
-function plan(
-  doctrine: HunterDoctrineV3,
-  perception: HunterPerceptionV3,
-): HunterStrategicIntent {
+function plan(doctrine: HunterDoctrineV3, perception: HunterPerceptionV3): HunterStrategicIntent {
   if (perception.belief.spaceId && perception.belief.age < 8) {
     return { kind: 'search', spaceId: perception.belief.spaceId }
   }

@@ -11,7 +11,10 @@ describe('Strategy campaign persistence V3', () => {
   it('rejects tampering and impossible progress', () => {
     const save = createCampaignSave(createStrategyCampaign('stable'), '2026-08-02T00:00:00.000Z')
     expect(decodeCampaignSave(JSON.stringify({ ...save, savedAt: 'tampered' }))).toBeNull()
-    const impossible = createCampaignSave({ ...save.campaign, currentScenarioIndex: 99 }, save.savedAt)
+    const impossible = createCampaignSave(
+      { ...save.campaign, currentScenarioIndex: 99 },
+      save.savedAt,
+    )
     expect(decodeCampaignSave(encodeCampaignSave(impossible))).toBeNull()
   })
 })

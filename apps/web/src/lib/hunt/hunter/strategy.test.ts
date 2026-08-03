@@ -22,7 +22,14 @@ describe('strategic hunter planner', () => {
   it('prioritizes a fresh belief over doctrine', () => {
     const informed = {
       ...perception,
-      belief: { at: [4, 2] as const, spaceId: 'bedroom', from: 'sound' as const, sharp: false, age: 2, cleared: [] },
+      belief: {
+        at: [4, 2] as const,
+        spaceId: 'bedroom',
+        from: 'sound' as const,
+        sharp: false,
+        age: 2,
+        cleared: [],
+      },
     }
     expect(strategicPlanner('containment').plan(informed)).toEqual({
       kind: 'search',

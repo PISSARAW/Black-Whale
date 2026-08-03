@@ -23,8 +23,12 @@ export class PortalRenderer {
     this.#camera = new THREE.PerspectiveCamera(50, 1, 0.1, options.viewDistance)
   }
 
-  private get renderer(): Three.WebGLRenderer { return this.options.renderer }
-  private get scene(): Three.Scene { return this.options.scene }
+  private get renderer(): Three.WebGLRenderer {
+    return this.options.renderer
+  }
+  private get scene(): Three.Scene {
+    return this.options.scene
+  }
 
   targets(): Iterable<Three.WebGLRenderTarget> {
     return this.#targets.values()

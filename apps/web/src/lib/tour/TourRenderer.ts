@@ -11,20 +11,20 @@ export interface SceneRuntime {
 }
 
 function isHighEndGPU(renderer: Three.WebGLRenderer, coarse: boolean): boolean {
-  if (coarse) return false;
-  
-  const gl = renderer.getContext();
-  const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+  if (coarse) return false
+
+  const gl = renderer.getContext()
+  const debugInfo = gl.getExtension('WEBGL_debug_renderer_info')
   if (debugInfo) {
-    const rendererStr = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL)?.toLowerCase() || '';
-    const lowEnd = ['mali', 'adreno', 'intel', 'hd graphics', 'uhd graphics', 'powervr'];
+    const rendererStr = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL)?.toLowerCase() || ''
+    const lowEnd = ['mali', 'adreno', 'intel', 'hd graphics', 'uhd graphics', 'powervr']
     for (const gpu of lowEnd) {
       if (rendererStr.includes(gpu)) {
-        return false;
+        return false
       }
     }
   }
-  return true;
+  return true
 }
 
 export async function createSceneRuntime(
@@ -54,12 +54,12 @@ export async function createSceneRuntime(
       minFilter: THREE.LinearFilter,
       magFilter: THREE.LinearFilter,
       format: THREE.RGBAFormat,
-      type: THREE.HalfFloatType
+      type: THREE.HalfFloatType,
     })
     renderTarget.depthTexture = new THREE.DepthTexture(size.width || 1024, size.height || 1024)
     renderTarget.depthTexture.type = THREE.UnsignedIntType
   }
-  
+
   const composer = new EffectComposer(renderer, renderTarget)
   const renderPass = new RenderPass(scene, camera)
   composer.addPass(renderPass)
@@ -69,7 +69,7 @@ export async function createSceneRuntime(
       new THREE.Vector2(window.innerWidth, window.innerHeight),
       0.8, // strength
       0.4, // radius
-      1.0  // threshold
+      1.0, // threshold
     )
     composer.addPass(bloomPass)
   }

@@ -19,7 +19,12 @@ export interface FlashFrame {
   baseFog: Three.Color
   renderer: Three.WebGLRenderer
 }
-export interface VehicleFrame { riding: boolean; at: Vec2; eye: number; yaw: number }
+export interface VehicleFrame {
+  riding: boolean
+  at: Vec2
+  eye: number
+  yaw: number
+}
 
 /** Owns transient and visitor-carried Nen visuals outside the apparition world. */
 export class HatsuSceneEffects {
@@ -73,40 +78,58 @@ export class HatsuSceneEffects {
     this.#gustGeometry = new THREE.BufferGeometry()
     this.#gustGeometry.setAttribute('position', new THREE.BufferAttribute(this.#gustPositions, 3))
     this.#gustMaterial = new THREE.PointsMaterial({
-      color: 0xc6f1ff, size: 0.22, sizeAttenuation: true, transparent: true,
-      opacity: 0.8, blending: THREE.AdditiveBlending, depthWrite: false,
+      color: 0xc6f1ff,
+      size: 0.22,
+      sizeAttenuation: true,
+      transparent: true,
+      opacity: 0.8,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
     })
     this.#gust = new THREE.Points(this.#gustGeometry, this.#gustMaterial)
     this.#gust.visible = false
     this.#gust.frustumCulled = false
     this.#gustRingMaterial = new THREE.MeshBasicMaterial({
-      color: 0xc6f1ff, transparent: true, opacity: 0.5,
-      side: THREE.DoubleSide, depthWrite: false,
+      color: 0xc6f1ff,
+      transparent: true,
+      opacity: 0.5,
+      side: THREE.DoubleSide,
+      depthWrite: false,
     })
-    this.#gustRing = new THREE.Mesh(
-      new THREE.TorusGeometry(1, 0.06, 6, 28), this.#gustRingMaterial,
-    )
+    this.#gustRing = new THREE.Mesh(new THREE.TorusGeometry(1, 0.06, 6, 28), this.#gustRingMaterial)
     this.#gustRing.visible = false
     this.#sunMaterial = new THREE.MeshBasicMaterial({
-      color: 0xf2a63b, transparent: true, opacity: 0.3, side: THREE.DoubleSide,
-      blending: THREE.AdditiveBlending, depthWrite: false,
+      color: 0xf2a63b,
+      transparent: true,
+      opacity: 0.3,
+      side: THREE.DoubleSide,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
     })
     this.#sun = new THREE.Mesh(new THREE.SphereGeometry(1, 20, 16), this.#sunMaterial)
     this.#sun.visible = false
     this.#sunLight = new THREE.PointLight(0xffb14a, 0, 60, 2)
     this.#blastMaterial = new THREE.MeshBasicMaterial({
-      color: 0xffc46b, transparent: true, opacity: 0.5, side: THREE.DoubleSide,
-      blending: THREE.AdditiveBlending, depthWrite: false,
+      color: 0xffc46b,
+      transparent: true,
+      opacity: 0.5,
+      side: THREE.DoubleSide,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
     })
     this.#blast = new THREE.Mesh(new THREE.SphereGeometry(1, 20, 16), this.#blastMaterial)
     this.#blast.visible = false
     this.#blastLight = new THREE.PointLight(0xffb14a, 0, 40, 2)
     this.#arrowMaterial = new THREE.MeshBasicMaterial({
-      color: 0xf7e27d, transparent: true, opacity: 0.95, depthTest: false,
+      color: 0xf7e27d,
+      transparent: true,
+      opacity: 0.95,
+      depthTest: false,
     })
     this.#shaft = new THREE.Group()
     const arrowShaft = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.05, 0.05, 1.6, 6), this.#arrowMaterial,
+      new THREE.CylinderGeometry(0.05, 0.05, 1.6, 6),
+      this.#arrowMaterial,
     )
     arrowShaft.rotation.x = Math.PI / 2
     this.#shaft.add(arrowShaft)
@@ -118,8 +141,11 @@ export class HatsuSceneEffects {
     this.#shaft.frustumCulled = false
     this.#shaft.renderOrder = 3
     this.#fistMaterial = new THREE.MeshBasicMaterial({
-      color: 0x55a7ff, transparent: true, opacity: 0.72,
-      blending: THREE.AdditiveBlending, depthWrite: false,
+      color: 0x55a7ff,
+      transparent: true,
+      opacity: 0.72,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
     })
     this.#fist = new THREE.Group()
     const knuckles = new THREE.Mesh(new THREE.BoxGeometry(0.95, 0.75, 0.8), this.#fistMaterial)
@@ -127,15 +153,24 @@ export class HatsuSceneEffects {
     const thumb = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.3, 0.55), this.#fistMaterial)
     thumb.position.set(0.55, 1.15, 0.1)
     const forearm = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.32, 0.36, 1.6, 10), this.#fistMaterial,
+      new THREE.CylinderGeometry(0.32, 0.36, 1.6, 10),
+      this.#fistMaterial,
     )
     forearm.position.y = 0.2
     this.#fist.add(knuckles, thumb, forearm)
     this.#fist.visible = false
     this.#rewind = new HatsuRewindEffect(THREE, scene)
     scene.add(
-      this.#chassis, this.#headlamp, this.#gust, this.#gustRing, this.#sun,
-      this.#sunLight, this.#blast, this.#blastLight, this.#shaft, this.#fist,
+      this.#chassis,
+      this.#headlamp,
+      this.#gust,
+      this.#gustRing,
+      this.#sun,
+      this.#sunLight,
+      this.#blast,
+      this.#blastLight,
+      this.#shaft,
+      this.#fist,
     )
   }
 
@@ -253,11 +288,7 @@ export class HatsuSceneEffects {
     if (!riding) return
     this.#chassis.position.set(at[0], eye, at[1])
     this.#chassis.rotation.set(0, yaw, 0)
-    this.#headlamp.position.set(
-      at[0] - Math.sin(yaw) * 4,
-      eye - 0.8,
-      at[1] - Math.cos(yaw) * 4,
-    )
+    this.#headlamp.position.set(at[0] - Math.sin(yaw) * 4, eye - 0.8, at[1] - Math.cos(yaw) * 4)
   }
 
   private animateGust(played: SequencedFlash, through: number): void {
@@ -299,8 +330,16 @@ export class HatsuSceneEffects {
 
   dispose(): void {
     this.scene.remove(
-      this.#chassis, this.#headlamp, this.#gust, this.#gustRing, this.#sun,
-      this.#sunLight, this.#blast, this.#blastLight, this.#shaft, this.#fist,
+      this.#chassis,
+      this.#headlamp,
+      this.#gust,
+      this.#gustRing,
+      this.#sun,
+      this.#sunLight,
+      this.#blast,
+      this.#blastLight,
+      this.#shaft,
+      this.#fist,
     )
     this.#chassis.traverse((part: Three.Object3D) => {
       const mesh = part as Three.Mesh

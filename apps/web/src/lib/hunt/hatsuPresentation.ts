@@ -23,18 +23,13 @@ export function presentHatsu(state: HuntState): HuntHatsuPresentation {
       dowsing: dowsing ? state.hunter.spaceId : null,
     },
     tint:
-      state.hatsu.id === 'parallel-future' && state.hatsu.window > 0
-        ? PARALLEL_FUTURE_TINT
-        : null,
+      state.hatsu.id === 'parallel-future' && state.hatsu.window > 0 ? PARALLEL_FUTURE_TINT : null,
   }
 }
 
 /** Parallel Future is an event as well as a held tint: replay TourScene's rewind once per use. */
 export function hatsuFlash(before: HuntState, after: HuntState): TourFlash | null {
-  if (
-    after.hatsu.id !== 'parallel-future' ||
-    after.hatsu.uses <= before.hatsu.uses
-  ) return null
+  if (after.hatsu.id !== 'parallel-future' || after.hatsu.uses <= before.hatsu.uses) return null
   return {
     kind: 'rewind',
     // Rewind is screen-space and intentionally not tied to one deck in TourScene.

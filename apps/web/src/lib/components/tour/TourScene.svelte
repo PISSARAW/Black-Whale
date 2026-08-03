@@ -2193,7 +2193,7 @@
             const visible = HUMAN_VIEW.intersectsBox(HUMAN_VIEW_BOX)
             if (!visible) continue
             const desiredHeading =
-              (moving ? held.facing : held.humanHeading ?? held.facing) ??
+              (moving ? held.facing : (held.humanHeading ?? held.facing)) ??
               Math.atan2(
                 camera.position.x - held.root.position.x,
                 camera.position.z - held.root.position.z,
@@ -3184,8 +3184,8 @@
         if (!onHatsu || (effectiveNen.mode === 'zetsu' && !hatsuAllowedInZetsu)) return
         const self = hand === 'second' && selfCastable && !hands && !tunes && !twoHanded
         onHatsu(
-          self ? null : facing()?.id ?? null,
-          self ? null : facingSolid()?.id ?? null,
+          self ? null : (facing()?.id ?? null),
+          self ? null : (facingSolid()?.id ?? null),
           hand,
         )
         if (swings) throwThread()
@@ -3197,7 +3197,8 @@
       let hatsuPressed = false
 
       function beginHatsu(event: KeyboardEvent) {
-        if (!onHatsu || (effectiveNen.mode === 'zetsu' && !hatsuAllowedInZetsu) || event.repeat) return false
+        if (!onHatsu || (effectiveNen.mode === 'zetsu' && !hatsuAllowedInZetsu) || event.repeat)
+          return false
         hatsuPressed = true
         hatsuVariantIndex = event.shiftKey && hatsuVariants.length > 1 ? 1 : lastHatsuVariant
         hatsuHoldTimer = window.setTimeout(() => {
@@ -3238,7 +3239,7 @@
         }
         if (target.closest('a, button, [role="button"], [tabindex]') !== null) {
           return ['Space', 'Enter', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(
-            event.code
+            event.code,
           )
         }
         return false
@@ -3256,8 +3257,7 @@
           const selected = zones[zoneIndex]
           selectedNenZone = selected
           useNen({ type: 'RYU', distribution: ryuDistribution(selected, 0.55) })
-        }
-        else if (event.code === NEN_KEYS.ten) useNen({ type: 'TEN' })
+        } else if (event.code === NEN_KEYS.ten) useNen({ type: 'TEN' })
         else if (event.code === NEN_KEYS.on)
           useNen({
             type: 'ON',
@@ -3274,9 +3274,21 @@
         else if (event.code === NEN_KEYS.ko)
           useNen({ type: 'KO', zone: effectiveNen.ko === selectedNenZone ? null : selectedNenZone })
         else if (event.code === NEN_KEYS.ryuUp)
-          useNen({ type: 'RYU', distribution: ryuDistribution(selectedNenZone, Number(effectiveNen.ryu[selectedNenZone] ?? 0.5) + 0.1) })
+          useNen({
+            type: 'RYU',
+            distribution: ryuDistribution(
+              selectedNenZone,
+              Number(effectiveNen.ryu[selectedNenZone] ?? 0.5) + 0.1,
+            ),
+          })
         else if (event.code === NEN_KEYS.ryuDown)
-          useNen({ type: 'RYU', distribution: ryuDistribution(selectedNenZone, Number(effectiveNen.ryu[selectedNenZone] ?? 0.5) - 0.1) })
+          useNen({
+            type: 'RYU',
+            distribution: ryuDistribution(
+              selectedNenZone,
+              Number(effectiveNen.ryu[selectedNenZone] ?? 0.5) - 0.1,
+            ),
+          })
         else if (event.code === NEN_KEYS.shu && aimedSolidAt)
           useNen({
             type: 'SHU',
@@ -4033,7 +4045,15 @@
             effectiveNen.shu.flatMap((id) => {
               const solid = solidById(ship, world, id)
               if (!solid) return []
-              return [{ id, at: solid.at, y: ground + solid.base, size: solid.size, height: solid.height }]
+              return [
+                {
+                  id,
+                  at: solid.at,
+                  y: ground + solid.base,
+                  size: solid.size,
+                  height: solid.height,
+                },
+              ]
             }),
           )
         }
@@ -4313,10 +4333,15 @@
        * hand to a headset, and because stopping it is one call rather than a
        * cancelled handle and a flag.
        */
-      const stopAnimating = animateVisibleScene({ container, renderer, frame: tick, onResume: () => {
-        // Do not charge the walk for time spent reading below the canvas.
-        previous = performance.now()
-      } })
+      const stopAnimating = animateVisibleScene({
+        container,
+        renderer,
+        frame: tick,
+        onResume: () => {
+          // Do not charge the walk for time spent reading below the canvas.
+          previous = performance.now()
+        },
+      })
       ready = true
 
       cleanup = () => {
@@ -4510,15 +4535,19 @@
       />
     {/if}
     {#if hatsuWheelOpen}
-      <div class="pointer-events-auto absolute left-1/2 top-1/2 z-30 grid -translate-x-1/2 -translate-y-1/2 grid-cols-2 gap-2 rounded-full border border-[#8ecae6]/40 bg-[#02070b]/95 p-6 shadow-[0_0_4rem_rgb(76_185_220_/_0.25)] backdrop-blur" role="menu" aria-label="Variantes du Hatsu">
+      <div
+        class="pointer-events-auto absolute left-1/2 top-1/2 z-30 grid -translate-x-1/2 -translate-y-1/2 grid-cols-2 gap-2 rounded-full border border-[#8ecae6]/40 bg-[#02070b]/95 p-6 shadow-[0_0_4rem_rgb(76_185_220_/_0.25)] backdrop-blur"
+        role="menu"
+        aria-label="Variantes du Hatsu"
+      >
         {#each hatsuVariants as variant, index}
           <button
             type="button"
             role="menuitem"
             class:active={hatsuVariantIndex === index}
             class="min-w-28 rounded border border-white/20 px-3 py-2 text-xs text-white/75 transition"
-            onclick={() => chooseHatsuVariant(index)}
-          ><kbd>{index + 1}</kbd> · {variant}</button>
+            onclick={() => chooseHatsuVariant(index)}><kbd>{index + 1}</kbd> · {variant}</button
+          >
         {/each}
       </div>
     {/if}

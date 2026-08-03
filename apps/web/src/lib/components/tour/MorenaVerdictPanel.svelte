@@ -26,13 +26,11 @@
     <p class="mt-1 text-xs leading-relaxed text-[#FFFFF0]/75">{verdictCopy?.body}</p>
   </div>
 
-  <h3 class="mt-4 text-[10px] uppercase tracking-widest text-[#FFD700]/70">{copy.conditions.title}</h3>
+  <h3 class="mt-4 text-[10px] uppercase tracking-widest text-[#FFD700]/70">
+    {copy.conditions.title}
+  </h3>
   <ul class="mt-2 space-y-1 text-xs">
-    {#each [
-      { label: copy.conditions.said, met: conditions.said },
-      { label: copy.conditions.kissed, met: conditions.kissed },
-      { label: copy.conditions.witnessed, met: conditions.witnessed },
-    ] as condition (condition.label)}
+    {#each [{ label: copy.conditions.said, met: conditions.said }, { label: copy.conditions.kissed, met: conditions.kissed }, { label: copy.conditions.witnessed, met: conditions.witnessed }] as condition (condition.label)}
       <li class="flex justify-between gap-3">
         <span class="text-[#FFFFF0]/70">{condition.label}</span>
         <span class={condition.met ? 'text-[#7fc8a0]' : 'text-[#FFFFF0]/35'}>
@@ -49,7 +47,9 @@
   {/if}
 
   {#if game.aftermath.length}
-    <h3 class="mt-4 text-[10px] uppercase tracking-widest text-[#FFD700]/70">{copy.hatsu.aftermath.title}</h3>
+    <h3 class="mt-4 text-[10px] uppercase tracking-widest text-[#FFD700]/70">
+      {copy.hatsu.aftermath.title}
+    </h3>
     <ul class="mt-2 space-y-2">
       {#each game.aftermath as consequence (consequence)}
         <li class="text-xs leading-relaxed text-[#8ecae6]">{aftermathLabel(consequence)}</li>
@@ -58,7 +58,13 @@
   {/if}
 
   <div class="mt-4 flex flex-wrap gap-2">
-    <button class="rounded bg-[#d94f68] px-4 py-2 text-sm font-semibold text-[#0b0b0d] hover:bg-[#e8697f]" onclick={onAgain}>{copy.again}</button>
-    <button class="rounded border border-[#444] px-4 py-2 text-sm text-[#FFFFF0] hover:border-[#FFD700]" onclick={onLeave}>{copy.menu.leave}</button>
+    <button
+      class="rounded bg-[#d94f68] px-4 py-2 text-sm font-semibold text-[#0b0b0d] hover:bg-[#e8697f]"
+      onclick={onAgain}>{copy.again}</button
+    >
+    <button
+      class="rounded border border-[#444] px-4 py-2 text-sm text-[#FFFFF0] hover:border-[#FFD700]"
+      onclick={onLeave}>{copy.menu.leave}</button
+    >
   </div>
 {/if}

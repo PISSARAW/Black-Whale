@@ -80,9 +80,7 @@
   let byHunter = $derived(
     report.log.filter(
       (event) =>
-        event.actor === 'hunter' &&
-        event.kind !== 'enteredRoom' &&
-        event.kind !== 'sealedExit',
+        event.actor === 'hunter' && event.kind !== 'enteredRoom' && event.kind !== 'sealedExit',
     ),
   )
 </script>
@@ -91,7 +89,9 @@
   <p class="text-xs uppercase tracking-[0.35em] text-white/40">{labels.title}</p>
   <h2 class="mt-2 text-2xl font-medium text-white">{outcomeLabel}</h2>
 
-  <dl class="mt-8 grid grid-cols-2 gap-x-8 gap-y-2 border-y border-white/10 py-4 text-sm sm:grid-cols-3">
+  <dl
+    class="mt-8 grid grid-cols-2 gap-x-8 gap-y-2 border-y border-white/10 py-4 text-sm sm:grid-cols-3"
+  >
     <dt class="text-white/45">{labels.duration}</dt>
     <dd class="tabular-nums sm:col-span-2">{clock(report.clock)}</dd>
 
@@ -102,14 +102,18 @@
 
     <dt class="text-white/45">{labels.spent}</dt>
     <dd class="tabular-nums sm:col-span-2">
-      {labels.actor.player} {Math.round(spentBy(report.log, 'player'))} ·
-      {labels.actor.hunter} {Math.round(spentBy(report.log, 'hunter'))}
+      {labels.actor.player}
+      {Math.round(spentBy(report.log, 'player'))} ·
+      {labels.actor.hunter}
+      {Math.round(spentBy(report.log, 'hunter'))}
     </dd>
 
     <dt class="text-white/45">{labels.remaining}</dt>
     <dd class="tabular-nums sm:col-span-2">
-      {labels.actor.player} {Math.round(report.playerPool.available)} ·
-      {labels.actor.hunter} {Math.round(report.hunterPool.available)}
+      {labels.actor.player}
+      {Math.round(report.playerPool.available)} ·
+      {labels.actor.hunter}
+      {Math.round(report.hunterPool.available)}
     </dd>
 
     <dt class="text-white/45">{labels.condition}</dt>

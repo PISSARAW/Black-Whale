@@ -98,7 +98,10 @@
           </button>
         {/each}
       </div>
-      <a class="mt-2 inline-block text-xs text-amber-200/65 underline underline-offset-4" href="/hunt/editor">
+      <a
+        class="mt-2 inline-block text-xs text-amber-200/65 underline underline-offset-4"
+        href="/hunt/editor"
+      >
         {locale === 'fr' ? 'Créer et partager un contrat' : 'Create and share a contract'}
       </a>
       <p class="mt-5 text-[0.65rem] uppercase tracking-[0.25em] text-amber-300/70">
@@ -107,10 +110,13 @@
       <div class="mt-2 grid grid-cols-3 gap-2">
         {#each [{ id: null, en: 'None', fr: 'Aucun' }, { id: 'silent-hunt', en: 'Silent Hunt', fr: 'Traque silencieuse' }, { id: 'no-retreat', en: 'No retreat', fr: 'Sans retraite' }] as vow (vow.id)}
           <button
-            class="rounded-lg border p-2 text-xs transition {selectedVow === vow.id ? 'border-amber-300 bg-amber-300/10 text-white' : 'border-white/10 text-white/50'}"
+            class="rounded-lg border p-2 text-xs transition {selectedVow === vow.id
+              ? 'border-amber-300 bg-amber-300/10 text-white'
+              : 'border-white/10 text-white/50'}"
             aria-pressed={selectedVow === vow.id}
             onclick={() => onSelectVow(vow.id as HuntVow | null)}
-          >{locale === 'fr' ? vow.fr : vow.en}</button>
+            >{locale === 'fr' ? vow.fr : vow.en}</button
+          >
         {/each}
       </div>
       <p class="text-[0.65rem] uppercase tracking-[0.25em] text-violet-300/70">

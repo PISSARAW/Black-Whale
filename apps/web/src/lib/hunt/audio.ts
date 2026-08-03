@@ -1,14 +1,7 @@
 import { hatsuAudioGraph } from '$lib/audio/ambient'
 
 export type HuntCue =
-  | 'en'
-  | 'nen'
-  | 'bungee-gum'
-  | 'parallel-future'
-  | 'dowsing-chain'
-  | 'trap'
-  | 'contact'
-  | 'outcome'
+  'en' | 'nen' | 'bungee-gum' | 'parallel-future' | 'dowsing-chain' | 'trap' | 'contact' | 'outcome'
 
 let muted = true
 let volume = 0.35
@@ -51,13 +44,21 @@ export function playHuntCue(cue: HuntCue): void {
 
 export function huntCueSignature(cue: HuntCue): [number, number, OscillatorType] {
   switch (cue) {
-    case 'en': return [180, 0.7, 'sine']
-    case 'nen': return [320, 0.18, 'triangle']
-    case 'bungee-gum': return [145, 0.32, 'square']
-    case 'parallel-future': return [760, 0.9, 'sine']
-    case 'dowsing-chain': return [1180, 0.55, 'triangle']
-    case 'trap': return [110, 0.28, 'square']
-    case 'contact': return [75, 0.8, 'sawtooth']
-    case 'outcome': return [240, 1.1, 'triangle']
+    case 'en':
+      return [180, 0.7, 'sine']
+    case 'nen':
+      return [320, 0.18, 'triangle']
+    case 'bungee-gum':
+      return [145, 0.32, 'square']
+    case 'parallel-future':
+      return [760, 0.9, 'sine']
+    case 'dowsing-chain':
+      return [1180, 0.55, 'triangle']
+    case 'trap':
+      return [110, 0.28, 'square']
+    case 'contact':
+      return [75, 0.8, 'sawtooth']
+    case 'outcome':
+      return [240, 1.1, 'triangle']
   }
 }

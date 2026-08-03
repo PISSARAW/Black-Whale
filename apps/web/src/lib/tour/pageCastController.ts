@@ -38,11 +38,7 @@ interface CastOptions {
 export class TourCastController {
   constructor(private readonly options: CastOptions) {}
 
-  castOn = (
-    spaceId: string | null,
-    solidId: string | null = null,
-    hand: CastHand = 'first',
-  ) => {
+  castOn = (spaceId: string | null, solidId: string | null = null, hand: CastHand = 'first') => {
     const context = this.options.read()
     const cast = performTourCast({
       world: context.world,
@@ -60,12 +56,14 @@ export class TourCastController {
     if (!cast) return
     const { result, mark } = cast
     this.finish(result.world, result.report)
-    this.options.updateHands(advanceCastHand({
-      hands: context.hands,
-      hand,
-      mark,
-      marked: result.report?.kind === 'marked',
-    }))
+    this.options.updateHands(
+      advanceCastHand({
+        hands: context.hands,
+        hand,
+        mark,
+        marked: result.report?.kind === 'marked',
+      }),
+    )
     if (!result.travelTo) return
     const landing = result.world.landed[result.travelTo] ?? null
     this.options.goToSpace(context.ship.spaces.get(result.travelTo)!, landing)

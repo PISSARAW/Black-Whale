@@ -55,7 +55,11 @@
   ></div>
 
   <!-- Ten: barely there. A body holding its aura, and nothing more. -->
-  <div class="absolute inset-0 hunt-ten" class:hunt-breathe={!calm} style:opacity={strengthOf('ten') * 0.14}></div>
+  <div
+    class="absolute inset-0 hunt-ten"
+    class:hunt-breathe={!calm}
+    style:opacity={strengthOf('ten') * 0.14}
+  ></div>
 
   <!-- Gyo: the edges close in around what is being looked at. -->
   <div class="absolute inset-0 hunt-gyo" style:opacity={gyo * 0.9}></div>
@@ -64,11 +68,7 @@
   <div class="absolute inset-0 hunt-in" style:opacity={inHeld * 0.7}></div>
 
   <!-- Ken: covered everywhere, and it costs six a second to stay that way. -->
-  <div
-    class="absolute inset-0 hunt-ken"
-    class:hunt-pulse={!calm}
-    style:opacity={ken * 0.55}
-  ></div>
+  <div class="absolute inset-0 hunt-ken" class:hunt-pulse={!calm} style:opacity={ken * 0.55}></div>
 
   <!-- A sweep of the player's own, leaving them. -->
   {#if cast}
@@ -89,7 +89,11 @@
 
   <!-- The wind-up of a Ko: this one fills rather than fades. -->
   {#if gathering > 0}
-    <div class="hunt-gather" style:opacity={0.25 + gathering * 0.6} style:transform="scale({1 + gathering * 0.15})"></div>
+    <div
+      class="hunt-gather"
+      style:opacity={0.25 + gathering * 0.6}
+      style:transform="scale({1 + gathering * 0.15})"
+    ></div>
   {/if}
 
   <!-- Something of theirs went off; something of theirs was found. -->

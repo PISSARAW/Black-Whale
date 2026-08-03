@@ -64,7 +64,12 @@ function scenario(id: string): CombatState {
     opponentAt: [2, 0],
     terrain: {
       id: 'hatsu-test',
-      footprint: [[-20, -20], [20, -20], [20, 20], [-20, 20]],
+      footprint: [
+        [-20, -20],
+        [20, -20],
+        [20, 20],
+        [-20, 20],
+      ],
       walls: [],
     },
   })

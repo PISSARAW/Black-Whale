@@ -17,16 +17,35 @@ export interface MissionConsequences {
   recruitedSource?: string
 }
 
-export const initialCampaign = (): CampaignState => ({ version: 1, completed: [], knownSpaces: [], compromisedRoles: [], procedures: [], sources: [] })
+export const initialCampaign = (): CampaignState => ({
+  version: 1,
+  completed: [],
+  knownSpaces: [],
+  compromisedRoles: [],
+  procedures: [],
+  sources: [],
+})
 const unique = <T>(values: T[]) => [...new Set(values)]
 
-export function applyConsequences(campaign: CampaignState, result: MissionConsequences): CampaignState {
+export function applyConsequences(
+  campaign: CampaignState,
+  result: MissionConsequences,
+): CampaignState {
   return {
     ...campaign,
     completed: unique([...campaign.completed, result.missionId]),
     knownSpaces: unique([...campaign.knownSpaces, ...result.discoveredSpaces]),
-    compromisedRoles: unique([...campaign.compromisedRoles, ...(result.compromisedRole ? [result.compromisedRole] : [])]),
-    procedures: unique([...campaign.procedures, ...(result.learnedProcedure ? [result.learnedProcedure] : [])]),
-    sources: unique([...campaign.sources, ...(result.recruitedSource ? [result.recruitedSource] : [])]),
+    compromisedRoles: unique([
+      ...campaign.compromisedRoles,
+      ...(result.compromisedRole ? [result.compromisedRole] : []),
+    ]),
+    procedures: unique([
+      ...campaign.procedures,
+      ...(result.learnedProcedure ? [result.learnedProcedure] : []),
+    ]),
+    sources: unique([
+      ...campaign.sources,
+      ...(result.recruitedSource ? [result.recruitedSource] : []),
+    ]),
   }
 }

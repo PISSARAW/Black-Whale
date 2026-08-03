@@ -34,29 +34,15 @@ function insect(seen: Apparition, { THREE, glow, root }: BasicApparitionContext)
   for (let pair = 0; pair < 3; pair++) {
     for (const side of [-1, 1]) {
       const leg = new THREE.Group()
-      leg.position.set(
-        seen.size * (0.62 - pair * 0.62),
-        -seen.size * 0.12,
-        side * seen.size * 0.44,
-      )
+      leg.position.set(seen.size * (0.62 - pair * 0.62), -seen.size * 0.12, side * seen.size * 0.44)
       const upper = new THREE.Mesh(
-        new THREE.CylinderGeometry(
-          seen.size * 0.025,
-          seen.size * 0.018,
-          seen.size * 0.7,
-          5,
-        ),
+        new THREE.CylinderGeometry(seen.size * 0.025, seen.size * 0.018, seen.size * 0.7, 5),
         chitin,
       )
       upper.rotation.x = side * 0.95
       leg.add(upper)
       const lower = new THREE.Mesh(
-        new THREE.CylinderGeometry(
-          seen.size * 0.018,
-          seen.size * 0.01,
-          seen.size * 0.72,
-          5,
-        ),
+        new THREE.CylinderGeometry(seen.size * 0.018, seen.size * 0.01, seen.size * 0.72, 5),
         chitin,
       )
       lower.position.set(

@@ -1,16 +1,6 @@
 /** The ten Nen techniques shared by every interactive surface. */
 export type NenTechnique =
-  | 'in'
-  | 'gyo'
-  | 'en'
-  | 'zetsu'
-  | 'ren'
-  | 'ten'
-  | 'ken'
-  | 'ko'
-  | 'ryu'
-  | 'shu'
-  | 'on'
+  'in' | 'gyo' | 'en' | 'zetsu' | 'ren' | 'ten' | 'ken' | 'ko' | 'ryu' | 'shu' | 'on'
 
 export type NenAuraMode = 'ten' | 'ren' | 'zetsu'
 
@@ -49,10 +39,7 @@ export interface NenTransition<Zone extends string = string> {
 }
 
 export type NenTechniqueBlock =
-  | 'ZETSU_HAS_NO_AURA'
-  | 'RADIUS_MUST_BE_POSITIVE'
-  | 'RYU_DISTRIBUTION_EMPTY'
-  | 'ON_FORCES_RYU'
+  'ZETSU_HAS_NO_AURA' | 'RADIUS_MUST_BE_POSITIVE' | 'RYU_DISTRIBUTION_EMPTY' | 'ON_FORCES_RYU'
 
 export const NEN_TECHNIQUES: readonly NenTechnique[] = [
   'in',
@@ -106,10 +93,10 @@ function enterAuraMode<Zone extends string>(
   return { ...state, mode, on: false, ken: false, ko: null, ryu: {} }
 }
 
-function needsAura<Zone extends string>(state: NenTechniqueState<Zone>): NenTransition<Zone> | null {
-  return state.mode === 'zetsu'
-    ? { state, accepted: false, reason: 'ZETSU_HAS_NO_AURA' }
-    : null
+function needsAura<Zone extends string>(
+  state: NenTechniqueState<Zone>,
+): NenTransition<Zone> | null {
+  return state.mode === 'zetsu' ? { state, accepted: false, reason: 'ZETSU_HAS_NO_AURA' } : null
 }
 
 function normalise<Zone extends string>(input: Partial<Record<Zone, number>>) {

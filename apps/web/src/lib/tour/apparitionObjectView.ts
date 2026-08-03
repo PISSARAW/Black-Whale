@@ -43,10 +43,7 @@ function fish(seen: Apparition, { THREE, glow, root, skin }: BasicApparitionCont
   tail.rotation.z = Math.PI / 2
   tail.position.x = seen.size * 1.7
   root.add(tail)
-  const eye = new THREE.Mesh(
-    new THREE.SphereGeometry(seen.size * 0.16, 6, 5),
-    glow(0xfff3d0, 1),
-  )
+  const eye = new THREE.Mesh(new THREE.SphereGeometry(seen.size * 0.16, 6, 5), glow(0xfff3d0, 1))
   eye.position.set(-seen.size * 1.1, seen.size * 0.2, seen.size * 0.35)
   root.add(eye)
   return root
@@ -158,10 +155,7 @@ function chain(seen: Apparition, { THREE, glow, root }: BasicApparitionContext) 
   root.add(new THREE.Mesh(new THREE.SphereGeometry(seen.size, 12, 10), steel))
   for (let index = 0; index < CHAIN_LINKS; index++) {
     root.add(
-      new THREE.Mesh(
-        new THREE.TorusGeometry(seen.size * 0.4, seen.size * 0.12, 4, 8),
-        steel,
-      ),
+      new THREE.Mesh(new THREE.TorusGeometry(seen.size * 0.4, seen.size * 0.12, 4, 8), steel),
     )
   }
   return null
@@ -179,17 +173,11 @@ function book(seen: Apparition, { THREE, glow, root }: BasicApparitionContext) {
     const cover = new THREE.Mesh(new THREE.BoxGeometry(wide, 0.006, long), board)
     cover.position.set((side * wide) / 2, -0.004, 0)
     leaf.add(cover)
-    const sheet = new THREE.Mesh(
-      new THREE.BoxGeometry(wide * 0.9, 0.002, long * 0.9),
-      paper,
-    )
+    const sheet = new THREE.Mesh(new THREE.BoxGeometry(wide * 0.9, 0.002, long * 0.9), paper)
     sheet.position.set((side * wide) / 2, 0.002, 0)
     leaf.add(sheet)
     for (let index = 0; index < 5; index++) {
-      const line = new THREE.Mesh(
-        new THREE.BoxGeometry(wide * 0.6, 0.001, long * 0.035),
-        ink,
-      )
+      const line = new THREE.Mesh(new THREE.BoxGeometry(wide * 0.6, 0.001, long * 0.035), ink)
       line.position.set((side * wide) / 2, 0.004, (index - 2) * long * 0.14)
       leaf.add(line)
     }
@@ -257,10 +245,7 @@ function dealer(seen: Apparition, { THREE, glow, root }: BasicApparitionContext)
   return null
 }
 
-function gameCard(
-  seen: Apparition,
-  { THREE, glow, root, cardFace }: BasicApparitionContext,
-) {
+function gameCard(seen: Apparition, { THREE, glow, root, cardFace }: BasicApparitionContext) {
   const face = new THREE.Mesh(
     new THREE.PlaneGeometry(seen.size, seen.size * 1.5),
     glow(seen.colour, seen.stage === 2 ? 0.55 : 0.95),
@@ -269,7 +254,13 @@ function gameCard(
   root.add(face)
 
   const rimColour =
-    seen.stage === 0 ? 0x6b4c58 : seen.stage === 4 ? 0x8ecae6 : seen.stage === 5 ? FORGED_AURA : 0xf5efe6
+    seen.stage === 0
+      ? 0x6b4c58
+      : seen.stage === 4
+        ? 0x8ecae6
+        : seen.stage === 5
+          ? FORGED_AURA
+          : 0xf5efe6
   const rim = new THREE.Mesh(
     new THREE.PlaneGeometry(seen.size * 1.12, seen.size * 1.62),
     glow(rimColour, 0.7),
@@ -327,10 +318,7 @@ function ghost(seen: Apparition, { THREE, glow, root, skin }: BasicApparitionCon
   mouth.position.set(0, -seen.size * 0.12, -seen.size * 0.7)
   head.add(mouth)
   for (const side of [-1, 1]) {
-    const eye = new THREE.Mesh(
-      new THREE.SphereGeometry(seen.size * 0.12, 8, 6),
-      glow(0xfdfbff, 1),
-    )
+    const eye = new THREE.Mesh(new THREE.SphereGeometry(seen.size * 0.12, 8, 6), glow(0xfdfbff, 1))
     eye.position.set(side * seen.size * 0.26, seen.size * 0.3, -seen.size * 0.5)
     head.add(eye)
   }
@@ -347,11 +335,7 @@ function ghost(seen: Apparition, { THREE, glow, root, skin }: BasicApparitionCon
     new THREE.CylinderGeometry(seen.size * 0.035, seen.size * 0.01, seen.size * 0.8, 6),
     glow(0xfff4d6, 1),
   )
-  pen.position.set(
-    -seen.size * 0.85,
-    seen.size * (seen.stage > 0 ? -1.05 : -0.7),
-    -seen.size * 0.5,
-  )
+  pen.position.set(-seen.size * 0.85, seen.size * (seen.stage > 0 ? -1.05 : -0.7), -seen.size * 0.5)
   pen.rotation.z = seen.stage > 0 ? 0.15 : 0.5
   root.add(pen)
 
@@ -400,10 +384,7 @@ function contract(seen: Apparition, { THREE, glow, root }: BasicApparitionContex
       aura,
     ),
   )
-  const nib = new THREE.Mesh(
-    new THREE.ConeGeometry(seen.size * 0.024, seen.size * 0.09, 6),
-    ink,
-  )
+  const nib = new THREE.Mesh(new THREE.ConeGeometry(seen.size * 0.024, seen.size * 0.09, 6), ink)
   nib.position.y = -seen.size * 0.29
   nib.rotation.x = Math.PI
   pen.add(nib)

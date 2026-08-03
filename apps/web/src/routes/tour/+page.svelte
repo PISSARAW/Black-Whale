@@ -27,8 +27,18 @@
   import { type CastHand } from '$lib/tour/pageCasting'
   import { TourCastController } from '$lib/tour/pageCastController'
   import { TourOverlayView } from '$lib/tour/pageOverlayView.svelte'
-  import { crossingLabel as describeCrossing, linkPrompt as describeLink, type LinkWords } from '$lib/tour/pageNavigation'
-  import { EMPTY_WORLD, identityOf, TAKES_ORDERS, type TourReport, type TourWorld } from '$lib/tour/hatsu'
+  import {
+    crossingLabel as describeCrossing,
+    linkPrompt as describeLink,
+    type LinkWords,
+  } from '$lib/tour/pageNavigation'
+  import {
+    EMPTY_WORLD,
+    identityOf,
+    TAKES_ORDERS,
+    type TourReport,
+    type TourWorld,
+  } from '$lib/tour/hatsu'
   import type { Provenance, Space } from '$lib/tour/types'
 
   const ship = theShip()
@@ -59,8 +69,7 @@
   const insideInterior = $derived(plan.tier.kind === 'interior')
   const french = $derived($locale === 'fr')
   const nameOf = (entity: { name: string; nameFr: string }) => localizedName(entity, french)
-  const sourceOf = (entity: { source: string; sourceFr: string }) =>
-    localizedSource(entity, french)
+  const sourceOf = (entity: { source: string; sourceFr: string }) => localizedSource(entity, french)
   const sortedSpaces = $derived(
     [...plan.spaces].sort((a, b) => nameOf(a).localeCompare(nameOf(b), french ? 'fr' : 'en')),
   )
@@ -275,12 +284,8 @@
   // selected, which made the tour appear to stop working.
   const selectOnPlan = (space: Space) => goToSpace(space)
   const planVerb = $derived($t.tour.goTo)
-  const blindWalls = $derived(
-    chrome.reveal ? blindWallReasons(plan, french) : [],
-  )
-  const handPlacedDoors = $derived(
-    chrome.reveal ? declaredDoorReasons({ plan, ship, french }) : [],
-  )
+  const blindWalls = $derived(chrome.reveal ? blindWallReasons(plan, french) : [])
+  const handPlacedDoors = $derived(chrome.reveal ? declaredDoorReasons({ plan, ship, french }) : [])
   const overlayView = new TourOverlayView({
     read: () => ({
       muted: mute,
@@ -404,7 +409,11 @@
         immersive: chrome.immersive,
         reveal: chrome.reveal,
         copied: chrome.copied,
-        decks: ship.decks.map((tier) => ({ id: tier.id, label: nameOf(tier), active: tier.id === deck?.id })),
+        decks: ship.decks.map((tier) => ({
+          id: tier.id,
+          label: nameOf(tier),
+          active: tier.id === deck?.id,
+        })),
         plan,
         position,
         heading,
@@ -448,7 +457,7 @@
             onCastPage: castPage,
             onCastHand: castHand,
             onTurnTheBook: turnTheRibbon,
-        }
+          }
         : null}
       targets={{
         mode: targetMode,

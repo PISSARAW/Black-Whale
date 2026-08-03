@@ -238,9 +238,11 @@
     <div class="grid three">
       <label
         >Type<select bind:value={kind}
-          ><option value="MOVE_ENTITY">{$t.reconstruction.v3.actionTypes.MOVE_ENTITY}</option><option value="SHARE_KNOWLEDGE"
+          ><option value="MOVE_ENTITY">{$t.reconstruction.v3.actionTypes.MOVE_ENTITY}</option
+          ><option value="SHARE_KNOWLEDGE"
             >{$t.reconstruction.v3.actionTypes.SHARE_KNOWLEDGE}</option
-          ><option value="ACTIVATE_HATSU">{$t.reconstruction.v3.actionTypes.ACTIVATE_HATSU}</option></select
+          ><option value="ACTIVATE_HATSU">{$t.reconstruction.v3.actionTypes.ACTIVATE_HATSU}</option
+          ></select
         ></label
       >
       <label

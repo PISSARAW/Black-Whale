@@ -30,7 +30,10 @@ const declared: HuntContractV3[] = [
       fr: 'Survivez dans un appartement scellé et réverbérant sans vision fiable.',
     },
     terrainSequence: ['tubeppa'],
-    objectives: [{ kind: 'survive', seconds: 360 }, { kind: 'misdirect', falseTrails: 2 }],
+    objectives: [
+      { kind: 'survive', seconds: 360 },
+      { kind: 'misdirect', falseTrails: 2 },
+    ],
     allowedHatsu: ['parallel-future', 'dowsing-chain'],
     hunterProfiles: ['aggressive'],
     environment: { lighting: 'blackout', acoustics: 'reverberant', sealableExits: true },

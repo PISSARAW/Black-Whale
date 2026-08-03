@@ -24,10 +24,14 @@ export function ghostAt(replay: HuntReplayV3, at: number): GhostFrame | null {
       spaceId: entry.action.player.spaceId ?? null,
     }
     if (entry.at <= at) before = frame
-    else { after = frame; break }
+    else {
+      after = frame
+      break
+    }
   }
   if (!before) return null
-  if (!after || after.at === before.at) return { position: before.position, heading: before.heading, nen, spaceId: before.spaceId }
+  if (!after || after.at === before.at)
+    return { position: before.position, heading: before.heading, nen, spaceId: before.spaceId }
   const ratio = Math.max(0, Math.min(1, (at - before.at) / (after.at - before.at)))
   return {
     position: [
@@ -46,9 +50,17 @@ export function ghostFigure(
 ): Apparition | null {
   if (!frame?.spaceId) return null
   return {
-    id: 'hunt:ghost', kind: 'combatant', spaceId: frame.spaceId, tierId: scene.tierId,
-    at: frame.position, heading: frame.heading, y: scene.floor, size: 1, colour: 0x67e8f9,
-    stage: frame.nen === 'zetsu' ? 2 : 0, hidden: false,
+    id: 'hunt:ghost',
+    kind: 'combatant',
+    spaceId: frame.spaceId,
+    tierId: scene.tierId,
+    at: frame.position,
+    heading: frame.heading,
+    y: scene.floor,
+    size: 1,
+    colour: 0x67e8f9,
+    stage: frame.nen === 'zetsu' ? 2 : 0,
+    hidden: false,
     human: { role: 'fighter', pose: 'walk', aura: frame.nen, identity: 'previous-run' },
   }
 }

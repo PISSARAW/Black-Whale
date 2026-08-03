@@ -1,4 +1,8 @@
-import { NEN_PRESENTATION, type NenTechnique, type NenTechniqueState } from '@black-whale/nen-engine'
+import {
+  NEN_PRESENTATION,
+  type NenTechnique,
+  type NenTechniqueState,
+} from '@black-whale/nen-engine'
 import type * as Three from 'three'
 
 type ThreeModule = typeof import('three')
@@ -52,7 +56,7 @@ const commonShaderFunctions = `
     }
     return v;
   }
-`;
+`
 
 // TEN
 const tenVertexShader = `
@@ -72,7 +76,7 @@ const tenVertexShader = `
     vViewPosition = -mvPosition.xyz;
     gl_Position = projectionMatrix * mvPosition;
   }
-`;
+`
 
 const tenFragmentShader = `
   uniform float u_time;
@@ -95,7 +99,7 @@ const tenFragmentShader = `
     vec3 color = mix(u_colorCore, u_colorEdge, fresnel);
     gl_FragColor = vec4(color, alpha);
   }
-`;
+`
 
 // REN
 const renVertexShader = `
@@ -119,7 +123,7 @@ const renVertexShader = `
     vViewPosition = -mvPosition.xyz;
     gl_Position = projectionMatrix * mvPosition;
   }
-`;
+`
 
 const renFragmentShader = `
   uniform float u_time;
@@ -153,7 +157,7 @@ const renFragmentShader = `
     
     gl_FragColor = vec4(color, alpha);
   }
-`;
+`
 
 // ON
 const onVertexShader = `
@@ -175,7 +179,7 @@ const onVertexShader = `
     vViewPosition = -mvPosition.xyz;
     gl_Position = projectionMatrix * mvPosition;
   }
-`;
+`
 
 const onFragmentShader = `
   uniform float u_time;
@@ -209,7 +213,7 @@ const onFragmentShader = `
     vec3 finalColor = mix(vec3(1.0), darkSmoke, clamp(alpha, 0.0, 1.0));
     gl_FragColor = vec4(finalColor, 1.0);
   }
-`;
+`
 
 // FLUX (Gyo, Ko, Ryu)
 const fluxVertexShader = `
@@ -228,7 +232,7 @@ const fluxVertexShader = `
     vViewPosition = -mvPosition.xyz;
     gl_Position = projectionMatrix * mvPosition;
   }
-`;
+`
 
 const fluxFragmentShader = `
   uniform float u_time;
@@ -270,7 +274,7 @@ const fluxFragmentShader = `
     
     gl_FragColor = vec4(color, alpha);
   }
-`;
+`
 
 // EN (Depth Fade)
 const enVertexShader = `
@@ -281,7 +285,7 @@ const enVertexShader = `
     vScreenPos = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
     gl_Position = vScreenPos;
   }
-`;
+`
 
 const enFragmentShader = `
   #include <packing>
@@ -322,7 +326,7 @@ const enFragmentShader = `
     
     gl_FragColor = vec4(color, alpha);
   }
-`;
+`
 
 export type NenObjectInteraction = 'sense' | 'strike' | 'pressure' | 'channel'
 
@@ -332,9 +336,9 @@ export class NenSceneAura {
   readonly #THREE: ThreeModule
   readonly #shu = new Map<string, Three.Mesh>()
   readonly #interactions: Three.Group[] = []
-  
+
   readonly #auraGeom: Three.CylinderGeometry
-  
+
   readonly #ten: Three.Mesh
   readonly #ren: Three.Mesh
   readonly #renTen: Three.Mesh
@@ -343,10 +347,10 @@ export class NenSceneAura {
   readonly #zetsu: Three.Mesh
   readonly #flux: Three.Mesh
   readonly #en: Three.Mesh
-  
+
   readonly #fluxUniforms: any
   readonly #enUniforms: any
-  
+
   #seconds = 0
   #onStartTime = 0
   #wasOn = false
@@ -357,10 +361,10 @@ export class NenSceneAura {
     this.#THREE = THREE
     this.#root = new THREE.Group()
     this.#world = new THREE.Group()
-    
+
     this.#auraGeom = new THREE.CylinderGeometry(0.7, 0.9, 2.4, 32, 32, true)
     this.#auraGeom.translate(0, 1.2, 0)
-    
+
     // TEN
     this.#ten = new THREE.Mesh(
       this.#auraGeom,
@@ -373,11 +377,14 @@ export class NenSceneAura {
           u_colorEdge: { value: new THREE.Color(NEN_PRESENTATION.ten.colours[0]) },
           u_opacity: { value: 0.8 },
         },
-        transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide
-      })
+        transparent: true,
+        depthWrite: false,
+        blending: THREE.AdditiveBlending,
+        side: THREE.DoubleSide,
+      }),
     )
     this.#ten.position.y = -1.2
-    
+
     // REN
     this.#ren = new THREE.Mesh(
       this.#auraGeom,
@@ -387,14 +394,21 @@ export class NenSceneAura {
         uniforms: {
           u_time: { value: 0 },
           u_colorCore: { value: new THREE.Color(NEN_PRESENTATION.ren.colours[0]) },
-          u_colorEdge: { value: new THREE.Color(NEN_PRESENTATION.ren.colours[1] || NEN_PRESENTATION.ren.colours[0]) },
+          u_colorEdge: {
+            value: new THREE.Color(
+              NEN_PRESENTATION.ren.colours[1] || NEN_PRESENTATION.ren.colours[0],
+            ),
+          },
           u_opacity: { value: 0.8 },
         },
-        transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide
-      })
+        transparent: true,
+        depthWrite: false,
+        blending: THREE.AdditiveBlending,
+        side: THREE.DoubleSide,
+      }),
     )
     this.#ren.position.y = -1.2
-    
+
     // REN (Settled into Ten state)
     this.#renTen = new THREE.Mesh(
       this.#auraGeom,
@@ -404,14 +418,21 @@ export class NenSceneAura {
         uniforms: {
           u_time: { value: 0 },
           u_colorCore: { value: new THREE.Color(NEN_PRESENTATION.ren.colours[0]) },
-          u_colorEdge: { value: new THREE.Color(NEN_PRESENTATION.ren.colours[1] || NEN_PRESENTATION.ren.colours[0]) },
+          u_colorEdge: {
+            value: new THREE.Color(
+              NEN_PRESENTATION.ren.colours[1] || NEN_PRESENTATION.ren.colours[0],
+            ),
+          },
           u_opacity: { value: 0.0 },
         },
-        transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide
-      })
+        transparent: true,
+        depthWrite: false,
+        blending: THREE.AdditiveBlending,
+        side: THREE.DoubleSide,
+      }),
     )
     this.#renTen.position.y = -1.2
-    
+
     // ON
     this.#on = new THREE.Mesh(
       this.#auraGeom,
@@ -422,14 +443,21 @@ export class NenSceneAura {
           u_time: { value: 0 },
           u_intensityMultiplier: { value: 1.0 },
           u_colorCore: { value: new THREE.Color(NEN_PRESENTATION.on.colours[0]) },
-          u_colorEdge: { value: new THREE.Color(NEN_PRESENTATION.on.colours[1] || NEN_PRESENTATION.on.colours[0]) },
+          u_colorEdge: {
+            value: new THREE.Color(
+              NEN_PRESENTATION.on.colours[1] || NEN_PRESENTATION.on.colours[0],
+            ),
+          },
           u_opacity: { value: 0.8 },
         },
-        transparent: true, depthWrite: false, blending: THREE.MultiplyBlending, side: THREE.DoubleSide
-      })
+        transparent: true,
+        depthWrite: false,
+        blending: THREE.MultiplyBlending,
+        side: THREE.DoubleSide,
+      }),
     )
     this.#on.position.y = -1.2
-    
+
     // ON (Settled into Ten state)
     this.#onTen = new THREE.Mesh(
       this.#auraGeom,
@@ -439,14 +467,21 @@ export class NenSceneAura {
         uniforms: {
           u_time: { value: 0 },
           u_colorCore: { value: new THREE.Color(NEN_PRESENTATION.on.colours[0]) },
-          u_colorEdge: { value: new THREE.Color(NEN_PRESENTATION.on.colours[1] || NEN_PRESENTATION.on.colours[0]) },
+          u_colorEdge: {
+            value: new THREE.Color(
+              NEN_PRESENTATION.on.colours[1] || NEN_PRESENTATION.on.colours[0],
+            ),
+          },
           u_opacity: { value: 0.0 },
         },
-        transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide
-      })
+        transparent: true,
+        depthWrite: false,
+        blending: THREE.AdditiveBlending,
+        side: THREE.DoubleSide,
+      }),
     )
     this.#onTen.position.y = -1.2
-    
+
     // ZETSU (Refraction via MeshPhysicalMaterial)
     this.#zetsu = new THREE.Mesh(
       this.#auraGeom,
@@ -457,18 +492,18 @@ export class NenSceneAura {
         thickness: 0.5,
         transparent: true,
         opacity: 1,
-        side: THREE.DoubleSide
-      })
+        side: THREE.DoubleSide,
+      }),
     )
     this.#zetsu.position.y = -1.2
-    
+
     // FLUX (Gyo, Ko, Ryu)
     this.#fluxUniforms = {
       u_time: { value: 0 },
       u_colorCore: { value: new THREE.Color(NEN_PRESENTATION.ryu.colours[0]) },
       u_nodes: { value: Array(8).fill(new THREE.Vector3()) },
       u_intensities: { value: Array(8).fill(0.0) },
-      u_opacity: { value: 1.0 }
+      u_opacity: { value: 1.0 },
     }
     this.#flux = new THREE.Mesh(
       this.#auraGeom,
@@ -476,11 +511,14 @@ export class NenSceneAura {
         vertexShader: fluxVertexShader,
         fragmentShader: fluxFragmentShader,
         uniforms: this.#fluxUniforms,
-        transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide
-      })
+        transparent: true,
+        depthWrite: false,
+        blending: THREE.AdditiveBlending,
+        side: THREE.DoubleSide,
+      }),
     )
     this.#flux.position.y = -1.2
-    
+
     // EN
     this.#enUniforms = {
       tDepth: { value: null },
@@ -488,7 +526,7 @@ export class NenSceneAura {
       u_cameraNear: { value: 0.1 },
       u_cameraFar: { value: 130.0 }, // match VIEW_DISTANCE
       u_color: { value: new THREE.Color(NEN_PRESENTATION.en.colours[0]) },
-      u_opacity: { value: 1.0 }
+      u_opacity: { value: 1.0 },
     }
     this.#en = new THREE.Mesh(
       new THREE.SphereGeometry(1.0, 64, 64),
@@ -496,10 +534,13 @@ export class NenSceneAura {
         vertexShader: enVertexShader,
         fragmentShader: enFragmentShader,
         uniforms: this.#enUniforms,
-        transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.BackSide
-      })
+        transparent: true,
+        depthWrite: false,
+        blending: THREE.AdditiveBlending,
+        side: THREE.BackSide,
+      }),
     )
-    
+
     this.#root.add(this.#ten)
     this.#root.add(this.#ren)
     this.#root.add(this.#renTen)
@@ -511,7 +552,15 @@ export class NenSceneAura {
     scene.add(this.#root, this.#world)
   }
 
-  syncShu(objects: Array<{ id: string; at: readonly [number, number]; y: number; size: readonly [number, number]; height: number }>) {
+  syncShu(
+    objects: Array<{
+      id: string
+      at: readonly [number, number]
+      y: number
+      size: readonly [number, number]
+      height: number
+    }>,
+  ) {
     const wanted = new Set(objects.map((object) => object.id))
     for (const object of objects) {
       let shell = this.#shu.get(object.id)
@@ -543,7 +592,13 @@ export class NenSceneAura {
   }
 
   interact(
-    object: { id: string; at: readonly [number, number]; y: number; size: readonly [number, number]; height: number },
+    object: {
+      id: string
+      at: readonly [number, number]
+      y: number
+      size: readonly [number, number]
+      height: number
+    },
     kind: NenObjectInteraction,
   ) {
     const THREE = this.#THREE
@@ -553,7 +608,12 @@ export class NenSceneAura {
     root.userData.started = this.#seconds
     root.userData.kind = kind
     root.userData.extent = Math.max(object.size[0], object.size[1], object.height, 0.35)
-    const colour = kind === 'pressure' ? NEN_PRESENTATION.on.colours[1] : kind === 'strike' ? NEN_PRESENTATION.ko.colours[0] : NEN_PRESENTATION.gyo.colours[0]
+    const colour =
+      kind === 'pressure'
+        ? NEN_PRESENTATION.on.colours[1]
+        : kind === 'strike'
+          ? NEN_PRESENTATION.ko.colours[0]
+          : NEN_PRESENTATION.gyo.colours[0]
     const material = (opacity: number) =>
       new THREE.MeshBasicMaterial({
         color: colour,
@@ -571,7 +631,10 @@ export class NenSceneAura {
         root.add(ring)
       }
     } else {
-      const shell = new THREE.Mesh(new THREE.SphereGeometry(0.65, 20, 14), material(kind === 'strike' ? 0.48 : 0.3))
+      const shell = new THREE.Mesh(
+        new THREE.SphereGeometry(0.65, 20, 14),
+        material(kind === 'strike' ? 0.48 : 0.3),
+      )
       shell.scale.set(
         Math.max(0.4, object.size[0]),
         Math.max(0.4, object.height),
@@ -597,132 +660,154 @@ export class NenSceneAura {
     this.#seconds = seconds
     this.#root.position.copy(camera.position)
     this.#root.rotation.set(0, camera.rotation.y, 0)
-    
+
     // Hide all by default
-    this.#ten.visible = false;
-    this.#ren.visible = false;
-    this.#renTen.visible = false;
-    this.#on.visible = false;
-    this.#onTen.visible = false;
-    this.#zetsu.visible = false;
-    this.#flux.visible = false;
-    this.#en.visible = false;
-    
+    this.#ten.visible = false
+    this.#ren.visible = false
+    this.#renTen.visible = false
+    this.#on.visible = false
+    this.#onTen.visible = false
+    this.#zetsu.visible = false
+    this.#flux.visible = false
+    this.#en.visible = false
+
     const active = state.mode !== 'zetsu'
-    const isFlux = active && (state.ko !== null || Object.values(state.ryu).some(v => (v || 0) > 0))
-    
+    const isFlux =
+      active && (state.ko !== null || Object.values(state.ryu).some((v) => (v || 0) > 0))
+
     if (!active) {
-       this.#zetsu.visible = true;
-       // minor wobble
-       const mat = this.#zetsu.material as Three.MeshPhysicalMaterial;
-       mat.ior = 1.02 + Math.sin(seconds * 2.0) * 0.02;
+      this.#zetsu.visible = true
+      // minor wobble
+      const mat = this.#zetsu.material as Three.MeshPhysicalMaterial
+      mat.ior = 1.02 + Math.sin(seconds * 2.0) * 0.02
     } else if (state.on) {
-       if (!this.#wasOn) {
-         this.#wasOn = true;
-         this.#onStartTime = seconds;
-       }
-       const elapsed = seconds - this.#onStartTime;
-       const progress = Math.min(elapsed / 30.0, 1.0); // transition over 30s
-       
-       if (progress < 1.0) {
-         this.#on.visible = true;
-         (this.#on.material as Three.ShaderMaterial).uniforms.u_time.value = seconds;
-         (this.#on.material as Three.ShaderMaterial).uniforms.u_opacity.value = (1.0 - progress) * 0.8;
-       }
-       
-       if (progress > 0.0) {
-         this.#onTen.visible = true;
-         (this.#onTen.material as Three.ShaderMaterial).uniforms.u_time.value = seconds;
-         (this.#onTen.material as Three.ShaderMaterial).uniforms.u_opacity.value = progress * 0.8;
-       }
+      if (!this.#wasOn) {
+        this.#wasOn = true
+        this.#onStartTime = seconds
+      }
+      const elapsed = seconds - this.#onStartTime
+      const progress = Math.min(elapsed / 30.0, 1.0) // transition over 30s
+
+      if (progress < 1.0) {
+        this.#on.visible = true
+        ;(this.#on.material as Three.ShaderMaterial).uniforms.u_time.value = seconds
+        ;(this.#on.material as Three.ShaderMaterial).uniforms.u_opacity.value =
+          (1.0 - progress) * 0.8
+      }
+
+      if (progress > 0.0) {
+        this.#onTen.visible = true
+        ;(this.#onTen.material as Three.ShaderMaterial).uniforms.u_time.value = seconds
+        ;(this.#onTen.material as Three.ShaderMaterial).uniforms.u_opacity.value = progress * 0.8
+      }
     } else if (isFlux) {
-       this.#flux.visible = true;
-       this.#fluxUniforms.u_time.value = seconds;
-       
-       const rootPos = this.#root.position;
-       // Convert camera local offsets to world coordinates for nodes
-       const headPos = rootPos.clone().add(new this.#THREE.Vector3(0, 0.02, -0.25).applyQuaternion(camera.quaternion));
-       const torsoPos = rootPos.clone().add(new this.#THREE.Vector3(0, -0.62, -0.42).applyQuaternion(camera.quaternion));
-       const handLPos = rootPos.clone().add(new this.#THREE.Vector3(-0.27, -0.48, -0.62).applyQuaternion(camera.quaternion));
-       const handRPos = rootPos.clone().add(new this.#THREE.Vector3(0.27, -0.48, -0.62).applyQuaternion(camera.quaternion));
-       const footLPos = rootPos.clone().add(new this.#THREE.Vector3(-0.2, -1.45, -0.35).applyQuaternion(camera.quaternion));
-       const footRPos = rootPos.clone().add(new this.#THREE.Vector3(0.2, -1.45, -0.35).applyQuaternion(camera.quaternion));
-       
-       const nodes = [headPos, torsoPos, handLPos, handRPos, footLPos, footRPos, rootPos, rootPos];
-       const ints = Array(8).fill(0.0);
-       
-       if (state.ko) {
-          if (state.ko === 'head') ints[0] = 5.0;
-          if (state.ko === 'torso') ints[1] = 5.0;
-          if (state.ko === 'hands') { ints[2] = 5.0; ints[3] = 5.0; }
-          if (state.ko === 'feet') { ints[4] = 5.0; ints[5] = 5.0; }
-       } else {
-          ints[0] = state.ryu.head || 0;
-          ints[1] = state.ryu.torso || 0;
-          ints[2] = state.ryu.hands || 0;
-          ints[3] = state.ryu.hands || 0;
-          ints[4] = state.ryu.feet || 0;
-          ints[5] = state.ryu.feet || 0;
-       }
-       
-       this.#fluxUniforms.u_nodes.value = nodes;
-       this.#fluxUniforms.u_intensities.value = ints;
+      this.#flux.visible = true
+      this.#fluxUniforms.u_time.value = seconds
+
+      const rootPos = this.#root.position
+      // Convert camera local offsets to world coordinates for nodes
+      const headPos = rootPos
+        .clone()
+        .add(new this.#THREE.Vector3(0, 0.02, -0.25).applyQuaternion(camera.quaternion))
+      const torsoPos = rootPos
+        .clone()
+        .add(new this.#THREE.Vector3(0, -0.62, -0.42).applyQuaternion(camera.quaternion))
+      const handLPos = rootPos
+        .clone()
+        .add(new this.#THREE.Vector3(-0.27, -0.48, -0.62).applyQuaternion(camera.quaternion))
+      const handRPos = rootPos
+        .clone()
+        .add(new this.#THREE.Vector3(0.27, -0.48, -0.62).applyQuaternion(camera.quaternion))
+      const footLPos = rootPos
+        .clone()
+        .add(new this.#THREE.Vector3(-0.2, -1.45, -0.35).applyQuaternion(camera.quaternion))
+      const footRPos = rootPos
+        .clone()
+        .add(new this.#THREE.Vector3(0.2, -1.45, -0.35).applyQuaternion(camera.quaternion))
+
+      const nodes = [headPos, torsoPos, handLPos, handRPos, footLPos, footRPos, rootPos, rootPos]
+      const ints = Array(8).fill(0.0)
+
+      if (state.ko) {
+        if (state.ko === 'head') ints[0] = 5.0
+        if (state.ko === 'torso') ints[1] = 5.0
+        if (state.ko === 'hands') {
+          ints[2] = 5.0
+          ints[3] = 5.0
+        }
+        if (state.ko === 'feet') {
+          ints[4] = 5.0
+          ints[5] = 5.0
+        }
+      } else {
+        ints[0] = state.ryu.head || 0
+        ints[1] = state.ryu.torso || 0
+        ints[2] = state.ryu.hands || 0
+        ints[3] = state.ryu.hands || 0
+        ints[4] = state.ryu.feet || 0
+        ints[5] = state.ryu.feet || 0
+      }
+
+      this.#fluxUniforms.u_nodes.value = nodes
+      this.#fluxUniforms.u_intensities.value = ints
     } else if (state.mode === 'ren' && !state.ken) {
-       if (!this.#wasRen) {
-         this.#wasRen = true;
-         this.#renStartTime = seconds;
-       }
-       const elapsed = seconds - this.#renStartTime;
-       const progress = Math.min(elapsed / 30.0, 1.0); // transition over 30s
-       
-       if (progress < 1.0) {
-         this.#ren.visible = true;
-         (this.#ren.material as Three.ShaderMaterial).uniforms.u_time.value = seconds;
-         (this.#ren.material as Three.ShaderMaterial).uniforms.u_opacity.value = (1.0 - progress) * 0.8;
-       }
-       
-       if (progress > 0.0) {
-         this.#renTen.visible = true;
-         (this.#renTen.material as Three.ShaderMaterial).uniforms.u_time.value = seconds;
-         (this.#renTen.material as Three.ShaderMaterial).uniforms.u_opacity.value = progress * 0.8;
-       }
+      if (!this.#wasRen) {
+        this.#wasRen = true
+        this.#renStartTime = seconds
+      }
+      const elapsed = seconds - this.#renStartTime
+      const progress = Math.min(elapsed / 30.0, 1.0) // transition over 30s
+
+      if (progress < 1.0) {
+        this.#ren.visible = true
+        ;(this.#ren.material as Three.ShaderMaterial).uniforms.u_time.value = seconds
+        ;(this.#ren.material as Three.ShaderMaterial).uniforms.u_opacity.value =
+          (1.0 - progress) * 0.8
+      }
+
+      if (progress > 0.0) {
+        this.#renTen.visible = true
+        ;(this.#renTen.material as Three.ShaderMaterial).uniforms.u_time.value = seconds
+        ;(this.#renTen.material as Three.ShaderMaterial).uniforms.u_opacity.value = progress * 0.8
+      }
     } else {
-       this.#ten.visible = true;
-       (this.#ten.material as Three.ShaderMaterial).uniforms.u_time.value = seconds;
-       // Ken can just be a slightly scaled Ten for now
-       if (state.ken) {
-         this.#ten.scale.set(1.2, 1.2, 1.2);
-       } else {
-         this.#ten.scale.set(1.0, 1.0, 1.0);
-       }
+      this.#ten.visible = true
+      ;(this.#ten.material as Three.ShaderMaterial).uniforms.u_time.value = seconds
+      // Ken can just be a slightly scaled Ten for now
+      if (state.ken) {
+        this.#ten.scale.set(1.2, 1.2, 1.2)
+      } else {
+        this.#ten.scale.set(1.0, 1.0, 1.0)
+      }
     }
-    
+
     if (!state.on) {
-      this.#wasOn = false;
+      this.#wasOn = false
     }
-    
+
     if (state.mode !== 'ren' || state.ken || !active) {
-      this.#wasRen = false;
+      this.#wasRen = false
     }
-    
+
     if (active && state.en !== null) {
-       this.#en.visible = true;
-       this.#en.position.set(0, ground + 0.025 - camera.position.y, 0); // world coords relative to root
-       this.#en.scale.setScalar(state.en.radius);
-       if (depthTexture) {
-         this.#enUniforms.tDepth.value = depthTexture;
-         this.#enUniforms.u_cameraNear.value = camera.near;
-         this.#enUniforms.u_cameraFar.value = camera.far;
-       }
+      this.#en.visible = true
+      this.#en.position.set(0, ground + 0.025 - camera.position.y, 0) // world coords relative to root
+      this.#en.scale.setScalar(state.en.radius)
+      if (depthTexture) {
+        this.#enUniforms.tDepth.value = depthTexture
+        this.#enUniforms.u_cameraNear.value = camera.near
+        this.#enUniforms.u_cameraFar.value = camera.far
+      }
     }
 
     for (const [index, shell] of [...this.#shu.values()].entries()) {
       const shimmer = 1 + Math.sin(seconds * 4.5 + index * 1.7) * 0.018
       const scale = shell.userData.shuScale as [number, number, number] | undefined
       if (scale) shell.scale.set(scale[0] * shimmer, scale[1] * shimmer, scale[2] * shimmer)
-      ;(shell.material as Three.MeshBasicMaterial).opacity = 0.22 + Math.sin(seconds * 6 + index) * 0.055
+      ;(shell.material as Three.MeshBasicMaterial).opacity =
+        0.22 + Math.sin(seconds * 6 + index) * 0.055
     }
-    
+
     for (let index = this.#interactions.length - 1; index >= 0; index--) {
       const effect = this.#interactions[index]
       const age = seconds - Number(effect.userData.started)
@@ -751,10 +836,14 @@ export class NenSceneAura {
           mesh.scale.setScalar((0.5 + progress * 2.8) * Number(effect.userData.extent))
           ;(mesh.material as Three.MeshBasicMaterial).opacity = (1 - progress) * 0.75
         } else {
-          const impact = kind === 'strike' ? 1 + Math.sin(progress * Math.PI) * 0.3 : 1 + Math.sin(seconds * 9 + partIndex) * 0.06
+          const impact =
+            kind === 'strike'
+              ? 1 + Math.sin(progress * Math.PI) * 0.3
+              : 1 + Math.sin(seconds * 9 + partIndex) * 0.06
           mesh.scale.multiplyScalar(impact / Number(mesh.userData.lastImpact ?? 1))
           mesh.userData.lastImpact = impact
-          ;(mesh.material as Three.MeshBasicMaterial).opacity = (1 - progress) * (kind === 'strike' ? 0.5 : 0.32)
+          ;(mesh.material as Three.MeshBasicMaterial).opacity =
+            (1 - progress) * (kind === 'strike' ? 0.5 : 0.32)
         }
       })
     }
@@ -762,12 +851,13 @@ export class NenSceneAura {
 
   dispose(scene: Three.Scene) {
     scene.remove(this.#root, this.#world)
-    for (const root of [this.#root, this.#world]) root.traverse((part) => {
-      const mesh = part as Three.Mesh
-      mesh.geometry?.dispose()
-      const material = mesh.material as Three.Material | undefined
-      material?.dispose()
-    })
+    for (const root of [this.#root, this.#world])
+      root.traverse((part) => {
+        const mesh = part as Three.Mesh
+        mesh.geometry?.dispose()
+        const material = mesh.material as Three.Material | undefined
+        material?.dispose()
+      })
     this.#auraGeom.dispose()
   }
 }

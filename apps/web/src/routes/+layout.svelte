@@ -25,9 +25,7 @@
     { href: '/ship', label: $t.nav.explore },
     { href: '/timeline', label: $t.nav.timeline },
     { href: '/characters', label: $t.nav.characters },
-    ...(PUBLIC_FEATURES.perspectives
-      ? [{ href: '/perspectives', label: $t.nav.knowledge }]
-      : []),
+    ...(PUBLIC_FEATURES.perspectives ? [{ href: '/perspectives', label: $t.nav.knowledge }] : []),
   ]
 
   $: secondaryNavigation = [

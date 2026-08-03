@@ -12,7 +12,10 @@
     const contract = editContract(template, {
       id: 'shared-pursuit',
       title: { en: title, fr: titleFr },
-      description: { en: 'A player-authored Hunt contract.', fr: 'Un contrat Hunt créé par un joueur.' },
+      description: {
+        en: 'A player-authored Hunt contract.',
+        fr: 'Un contrat Hunt créé par un joueur.',
+      },
       durationSeconds: duration,
       environment: { lighting, acoustics, sealableExits: lighting === 'blackout' },
     })
@@ -29,15 +32,47 @@
       <label>English title<input bind:value={title} /></label>
       <label>Titre français<input bind:value={titleFr} /></label>
       <label>Duration<input type="number" min="60" max="1800" bind:value={duration} /></label>
-      <label>Lighting<select bind:value={lighting}><option value="normal">Normal</option><option value="low">Low</option><option value="blackout">Blackout</option></select></label>
-      <label>Acoustics<select bind:value={acoustics}><option value="clear">Clear</option><option value="reverberant">Reverberant</option><option value="masked">Masked</option></select></label>
+      <label
+        >Lighting<select bind:value={lighting}
+          ><option value="normal">Normal</option><option value="low">Low</option><option
+            value="blackout">Blackout</option
+          ></select
+        ></label
+      >
+      <label
+        >Acoustics<select bind:value={acoustics}
+          ><option value="clear">Clear</option><option value="reverberant">Reverberant</option
+          ><option value="masked">Masked</option></select
+        ></label
+      >
     </div>
-    <a class="mt-8 inline-block rounded-full border border-amber-300/50 px-6 py-3 text-amber-100" href={sharePath}>Play and share this contract</a>
+    <a
+      class="mt-8 inline-block rounded-full border border-amber-300/50 px-6 py-3 text-amber-100"
+      href={sharePath}>Play and share this contract</a
+    >
   </section>
 </main>
 
 <style>
-  label { display: grid; gap: .45rem; color: rgb(255 255 255 / .65); font-size: .8rem; }
-  input, select { min-height: 2.75rem; border: 1px solid rgb(255 255 255 / .18); border-radius: .5rem; background: rgb(255 255 255 / .05); padding: .6rem; color: white; }
-  input:focus-visible, select:focus-visible, a:focus-visible { outline: 2px solid white; outline-offset: 2px; }
+  label {
+    display: grid;
+    gap: 0.45rem;
+    color: rgb(255 255 255 / 0.65);
+    font-size: 0.8rem;
+  }
+  input,
+  select {
+    min-height: 2.75rem;
+    border: 1px solid rgb(255 255 255 / 0.18);
+    border-radius: 0.5rem;
+    background: rgb(255 255 255 / 0.05);
+    padding: 0.6rem;
+    color: white;
+  }
+  input:focus-visible,
+  select:focus-visible,
+  a:focus-visible {
+    outline: 2px solid white;
+    outline-offset: 2px;
+  }
 </style>

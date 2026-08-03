@@ -1,14 +1,7 @@
 import type { Apparition } from './apparitions'
 
 export type HairStyle =
-  | 'short'
-  | 'military'
-  | 'swept'
-  | 'long'
-  | 'ponytail'
-  | 'spiked'
-  | 'shaved'
-  | 'bob'
+  'short' | 'military' | 'swept' | 'long' | 'ponytail' | 'spiked' | 'shaved' | 'bob'
 
 export interface HumanProfile {
   build: 'slim' | 'average' | 'broad'

@@ -587,9 +587,23 @@
       {/if}
 
       {#if view === 'menu'}
-        <MorenaSetupPanel mode="menu" bind:cheats {carried} onDeal={deal} onRules={() => (view = 'rules')} onBack={() => (view = 'menu')} />
+        <MorenaSetupPanel
+          mode="menu"
+          bind:cheats
+          {carried}
+          onDeal={deal}
+          onRules={() => (view = 'rules')}
+          onBack={() => (view = 'menu')}
+        />
       {:else if view === 'rules'}
-        <MorenaSetupPanel mode="rules" bind:cheats {carried} onDeal={deal} onRules={() => (view = 'rules')} onBack={() => (view = 'menu')} />
+        <MorenaSetupPanel
+          mode="rules"
+          bind:cheats
+          {carried}
+          onDeal={deal}
+          onRules={() => (view = 'rules')}
+          onBack={() => (view = 'menu')}
+        />
       {:else}
         <MorenaGameStatus {game} {nameOfCard} />
 

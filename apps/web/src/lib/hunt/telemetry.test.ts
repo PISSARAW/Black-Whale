@@ -34,7 +34,13 @@ describe('the journal', () => {
   })
 
   it('defaults the cost to nothing for events that are not purchases', () => {
-    expect(journal()[4]).toEqual({ at: 60, actor: 'hunter', kind: 'lostTheTrail', cost: 0, where: null })
+    expect(journal()[4]).toEqual({
+      at: 60,
+      actor: 'hunter',
+      kind: 'lostTheTrail',
+      cost: 0,
+      where: null,
+    })
   })
 
   it('never mutates the log it was handed', () => {

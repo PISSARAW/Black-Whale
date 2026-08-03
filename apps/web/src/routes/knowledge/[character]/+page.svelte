@@ -45,7 +45,8 @@
       {#if PUBLIC_FEATURES.perspectives}
         <a
           class="border border-slate-700 rounded px-3 py-1 hover:border-[#e5c57a]"
-          href={$link(`/perspectives/${data.character.slug}`)}>{$t.knowledgeDetail.openPerspective}</a
+          href={$link(`/perspectives/${data.character.slug}`)}
+          >{$t.knowledgeDetail.openPerspective}</a
         >
       {/if}
       <a

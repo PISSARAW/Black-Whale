@@ -1,4 +1,9 @@
-import { NEN_PRESENTATION, type NenTechnique, type NenTechniqueAction, type NenTechniqueState } from '@black-whale/nen-engine'
+import {
+  NEN_PRESENTATION,
+  type NenTechnique,
+  type NenTechniqueAction,
+  type NenTechniqueState,
+} from '@black-whale/nen-engine'
 import { hatsuAudioGraph, type Graph } from './ambient'
 import type { NenObjectInteraction } from '$lib/tour/NenSceneAura'
 
@@ -33,8 +38,17 @@ function chord(g: Graph, notes: Tone[]) {
 }
 
 const ACTION_TECHNIQUE: Record<NenTechniqueAction['type'], NenTechnique> = {
-  TEN: 'ten', REN: 'ren', ZETSU: 'zetsu', GYO: 'gyo', IN: 'in', EN: 'en',
-  KEN: 'ken', KO: 'ko', RYU: 'ryu', SHU: 'shu', ON: 'on',
+  TEN: 'ten',
+  REN: 'ren',
+  ZETSU: 'zetsu',
+  GYO: 'gyo',
+  IN: 'in',
+  EN: 'en',
+  KEN: 'ken',
+  KO: 'ko',
+  RYU: 'ryu',
+  SHU: 'shu',
+  ON: 'on',
 }
 
 function activeTransition(action: NenTechniqueAction) {
@@ -50,8 +64,20 @@ function canonicalCue(g: Graph, technique: NenTechnique) {
   const duration = Math.max(0.16, profile.envelope.attack + profile.envelope.release)
   const peak = 0.14 * profile.sound.volume
   chord(g, [
-    { from: profile.sound.lowHz, to: Math.min(profile.sound.highHz, profile.sound.lowHz * 1.8), peak, duration, type: profile.sound.noise > 0.35 ? 'sawtooth' : 'triangle' },
-    { from: profile.sound.highHz, to: Math.max(profile.sound.lowHz, profile.sound.highHz * 0.72), peak: peak * 0.46, duration: duration * 1.08, type: 'sine' },
+    {
+      from: profile.sound.lowHz,
+      to: Math.min(profile.sound.highHz, profile.sound.lowHz * 1.8),
+      peak,
+      duration,
+      type: profile.sound.noise > 0.35 ? 'sawtooth' : 'triangle',
+    },
+    {
+      from: profile.sound.highHz,
+      to: Math.max(profile.sound.lowHz, profile.sound.highHz * 0.72),
+      peak: peak * 0.46,
+      duration: duration * 1.08,
+      type: 'sine',
+    },
   ])
 }
 
@@ -61,10 +87,16 @@ export function playNenTechniqueSound(action: NenTechniqueAction) {
   if (!g) return
   if (activeTransition(action)) return canonicalCue(g, ACTION_TECHNIQUE[action.type])
   switch (action.type) {
-    case 'GYO': case 'IN': case 'KEN': case 'SHU': case 'ON':
+    case 'GYO':
+    case 'IN':
+    case 'KEN':
+    case 'SHU':
+    case 'ON':
       chord(g, [{ from: 360, to: 90, peak: 0.012, duration: 0.16, type: 'triangle' }])
       return
-    case 'EN': case 'KO': return
+    case 'EN':
+    case 'KO':
+      return
   }
 }
 
@@ -72,11 +104,17 @@ export function playNenObjectSound(kind: NenObjectInteraction) {
   const g = hatsuAudioGraph()
   if (!g) return
   if (kind === 'strike') {
-    chord(g, [{ from: 118, to: 38, peak: 0.18, duration: 0.2, type: 'square' }, { from: 460, to: 95, peak: 0.075, duration: 0.16, type: 'sawtooth' }])
+    chord(g, [
+      { from: 118, to: 38, peak: 0.18, duration: 0.2, type: 'square' },
+      { from: 460, to: 95, peak: 0.075, duration: 0.16, type: 'sawtooth' },
+    ])
   } else if (kind === 'pressure') {
     chord(g, [{ from: 76, to: 46, peak: 0.13, duration: 0.55, type: 'sawtooth' }])
   } else if (kind === 'sense') {
-    chord(g, [{ from: 540, to: 1080, peak: 0.055, duration: 0.42 }, { from: 810, to: 1320, peak: 0.025, duration: 0.5 }])
+    chord(g, [
+      { from: 540, to: 1080, peak: 0.055, duration: 0.42 },
+      { from: 810, to: 1320, peak: 0.025, duration: 0.5 },
+    ])
   } else {
     chord(g, [{ from: 240, to: 420, peak: 0.05, duration: 0.3, type: 'triangle' }])
   }
@@ -86,13 +124,7 @@ export function playNenObjectSound(kind: NenObjectInteraction) {
 export function sustainNenSound(state: NenTechniqueState): () => void {
   const g = hatsuAudioGraph()
   if (!g || g.context.state !== 'running' || state.mode === 'zetsu') return () => {}
-  const technique: NenTechnique = state.on
-    ? 'on'
-    : state.ken
-      ? 'ken'
-      : state.en
-        ? 'en'
-        : state.mode
+  const technique: NenTechnique = state.on ? 'on' : state.ken ? 'ken' : state.en ? 'en' : state.mode
   const profile = NEN_PRESENTATION[technique]
   const now = g.context.currentTime
   const oscillator = g.context.createOscillator()
@@ -104,7 +136,10 @@ export function sustainNenSound(state: NenTechniqueState): () => void {
   lfo.frequency.value = profile.pulseHz
   depth.gain.value = 0.0035 * profile.sound.volume
   gain.gain.setValueAtTime(0.0001, now)
-  gain.gain.exponentialRampToValueAtTime(0.009 * profile.sound.volume, now + profile.envelope.attack)
+  gain.gain.exponentialRampToValueAtTime(
+    0.009 * profile.sound.volume,
+    now + profile.envelope.attack,
+  )
   lfo.connect(depth).connect(gain.gain)
   oscillator.connect(gain).connect(g.muffle)
   oscillator.start(now)

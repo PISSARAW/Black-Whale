@@ -15,7 +15,8 @@ export function decodeContract(value: string): HuntContractV3 | null {
     const parsed = JSON.parse(
       new TextDecoder().decode(Uint8Array.from(binary, (character) => character.charCodeAt(0))),
     ) as HuntContractV3
-    return parsed.schemaVersion === HUNT_CONTRACT_SCHEMA_VERSION && validateContract(parsed).length === 0
+    return parsed.schemaVersion === HUNT_CONTRACT_SCHEMA_VERSION &&
+      validateContract(parsed).length === 0
       ? parsed
       : null
   } catch {
@@ -25,7 +26,9 @@ export function decodeContract(value: string): HuntContractV3 | null {
 
 export function editContract(
   template: HuntContractV3,
-  changes: Partial<Pick<HuntContractV3, 'id' | 'title' | 'description' | 'durationSeconds' | 'environment'>>,
+  changes: Partial<
+    Pick<HuntContractV3, 'id' | 'title' | 'description' | 'durationSeconds' | 'environment'>
+  >,
 ): HuntContractV3 {
   return { ...template, ...changes, schemaVersion: HUNT_CONTRACT_SCHEMA_VERSION }
 }

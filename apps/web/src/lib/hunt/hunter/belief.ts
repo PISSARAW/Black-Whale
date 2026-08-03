@@ -44,7 +44,11 @@ export function initialBelief(): HunterBelief {
   return { at: null, spaceId: null, from: null, sharp: false, age: 0, cleared: [] }
 }
 
-export function updateBelief(belief: HunterBelief, dt: number, percept: Percept | null): HunterBelief {
+export function updateBelief(
+  belief: HunterBelief,
+  dt: number,
+  percept: Percept | null,
+): HunterBelief {
   if (percept) {
     return {
       at: percept.at,

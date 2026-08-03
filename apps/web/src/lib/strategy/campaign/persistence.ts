@@ -24,7 +24,12 @@ export function createCampaignSave(
   savedAt: string,
   legacyScenario?: StrategySaveV2,
 ): StrategyCampaignSaveV3 {
-  const content = { version: 3 as const, savedAt, campaign, ...(legacyScenario ? { legacyScenario } : {}) }
+  const content = {
+    version: 3 as const,
+    savedAt,
+    campaign,
+    ...(legacyScenario ? { legacyScenario } : {}),
+  }
   return { ...content, checksum: strategyChecksum(content) }
 }
 

@@ -100,11 +100,14 @@ function advanceHunter(state: HuntState, world: HuntWorld): HuntState {
 function executeStrategicSeal(state: HuntState, world: HuntWorld): HuntState {
   const environment = world.environment ?? NORMAL_ENVIRONMENT
   const spaceId = state.hunter.spaceId
-  if (!spaceId || state.hunter.mode !== 'listen' || state.sealedAtSpaces.includes(spaceId)) return state
+  if (!spaceId || state.hunter.mode !== 'listen' || state.sealedAtSpaces.includes(spaceId))
+    return state
   const visibleExits = (world.graph.edges.get(spaceId) ?? []).map((to) => ({
     from: spaceId,
     to,
-    sealed: state.sealedExits.some((seal) => [seal.a, seal.b].sort().join('|') === [spaceId, to].sort().join('|')),
+    sealed: state.sealedExits.some(
+      (seal) => [seal.a, seal.b].sort().join('|') === [spaceId, to].sort().join('|'),
+    ),
   }))
   const intent = strategicPlanner('containment').plan({
     selfSpaceId: spaceId,
@@ -139,8 +142,7 @@ function overheard(
 
   const gap = distance(state.player.position, state.hunter.position)
   const hearingRange = HEARING_RANGE * environmentModifiers(environment).hearing
-  const nearness =
-    Math.max(0, 1 - gap / hearingRange) * (reach === 'adjacent' ? THROUGH_A_WALL : 1)
+  const nearness = Math.max(0, 1 - gap / hearingRange) * (reach === 'adjacent' ? THROUGH_A_WALL : 1)
   if (nearness <= 0.15) return null
 
   return { kind: 'sound', at: state.player.position, spaceId: state.player.spaceId, sharp: false }

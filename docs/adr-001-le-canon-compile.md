@@ -42,7 +42,7 @@ Trois familles de vérité coexistent :
    il contient aussi les événements (`events/events.json`, 134 entrées) que
    `backfill_timeline.mjs` lit au lieu de les porter en dur : c'est la bonne
    direction, actée par le point P3-20 de `docs/completude.md`.
-2. **PostgreSQL** — 31 modèles Prisma. Presque tout y est *dérivé* : le contenu
+2. **PostgreSQL** — 31 modèles Prisma. Presque tout y est _dérivé_ : le contenu
    arrive par seed + backfills rejoués à chaque déploiement (`Dockerfile.migrate`).
    Les seules données **non reconstructibles depuis git** sont les branches de
    simulation des visiteurs (`WorldBranch`/`WorldEventRecord`/`WorldProjectionSnapshot`)
@@ -57,10 +57,10 @@ Trois familles de vérité coexistent :
   à information incomplète, et il est réellement implémenté (branches persistées,
   `planFor()` qui exécute les mêmes prédicats que `execute`).
 - **L'infra** est le volet le plus mûr : secrets `${VAR:?}`, `no-new-privileges`,
-  migration en *gate* hors du `up` (le stack précédent continue de servir si elle
+  migration en _gate_ hors du `up` (le stack précédent continue de servir si elle
   échoue), `backup.sh` qui valide son dump avant rotation.
 - **La discipline** : 2 TODO, 0 `@ts-ignore`, strict TS partout, parité i18n
-  parfaite, commentaires qui expliquent le *pourquoi*. 11 des 14 paquets ont un
+  parfaite, commentaires qui expliquent le _pourquoi_. 11 des 14 paquets ont un
   ratio test/source > 44 %.
 - **La reconstruction du navire** : connexe, 0 salle inaccessible, ordre
   d'autorité documenté (`data/ship/README.md`).
@@ -75,12 +75,12 @@ paquets qui ne correspondent plus aux frontières réelles du code.
 
 Le défaut central, mesuré dans `docs/completude.md` §3.1 et toujours vrai :
 
-| Pile | LOC | Sert | Tests |
-| --- | --- | --- | --- |
-| `ability-modules` + `ability-sdk` + `nen-engine` | ~9 000 | `/simulations`, le jeu de Morena, le loader d'`/abilities` | 77 |
-| `lib/nen/*` (DOM) + i18n hatsu | ~7 400 | l'expérience hatsu des pages 2D | 4 comportementaux |
-| `lib/tour/hatsu.ts` + `pageWorld*`/`pageCast*` + `TourHatsuHud` | **5 345 l** pour `hatsu.ts` seul (2 554 au 30/07 — **doublé depuis**) + sa boucle de simulation propre (`TourWorld`, ticker, steps) | la visite 3D | 105 Ko de tests (le mieux testé des trois) |
-| `lib/arena/hatsu/*` + `lib/combat/` (725 l de réducteur) + `lib/hunt/nen/*` | ~1 500 | les modes arène / traque | partiels |
+| Pile                                                                        | LOC                                                                                                                                 | Sert                                                       | Tests                                      |
+| --------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------- | ------------------------------------------ |
+| `ability-modules` + `ability-sdk` + `nen-engine`                            | ~9 000                                                                                                                              | `/simulations`, le jeu de Morena, le loader d'`/abilities` | 77                                         |
+| `lib/nen/*` (DOM) + i18n hatsu                                              | ~7 400                                                                                                                              | l'expérience hatsu des pages 2D                            | 4 comportementaux                          |
+| `lib/tour/hatsu.ts` + `pageWorld*`/`pageCast*` + `TourHatsuHud`             | **5 345 l** pour `hatsu.ts` seul (2 554 au 30/07 — **doublé depuis**) + sa boucle de simulation propre (`TourWorld`, ticker, steps) | la visite 3D                                               | 105 Ko de tests (le mieux testé des trois) |
+| `lib/arena/hatsu/*` + `lib/combat/` (725 l de réducteur) + `lib/hunt/nen/*` | ~1 500                                                                                                                              | les modes arène / traque                                   | partiels                                   |
 
 `apps/web/src/lib/nen/` et `lib/tour/` — la couche qui exécute les hatsu à
 l'écran — n'importent **jamais** le moteur (un seul `import type` ; seuls
@@ -111,8 +111,8 @@ l'unification (c'est la mise en garde déjà notée : « ne pas ajouter de hatsu
 sans décider d'abord de l'unification »).
 
 **Le contre-exemple qui prouve la cible :** le jeu de Morena. `tour/morena.ts`
-s'ouvre sur « *The rules are not here. They live in
-`@black-whale/ability-modules`* » — les règles vivent dans le module
+s'ouvre sur « _The rules are not here. They live in
+`@black-whale/ability-modules`_ » — les règles vivent dans le module
 `contagion` (dont `game.ts`), le tour ne fait que rendre. `TourScene.svelte`
 et `apparitions.ts` importent déjà des types de `nen-engine`. Le pattern cible
 existe donc dans le dépôt, appliqué au module le plus récent ; le chantier
@@ -195,7 +195,7 @@ sessions admin liées au mot de passe, réseau Docker privé). Restent :
 #### H. Sauvegarde
 
 - `backup.sh` est exemplaire dans sa logique… mais **les dumps ne quittent
-  jamais l'hôte** : perdre le serveur Hetzner perd la base *et* ses 14 jours de
+  jamais l'hôte** : perdre le serveur Hetzner perd la base _et_ ses 14 jours de
   sauvegardes.
 - **La restauration n'est jamais testée automatiquement.**
 - Le constat qui change tout : la base étant presque entièrement dérivable de
@@ -220,11 +220,11 @@ réécriture : c'est l'achèvement du principe que le README revendique déjà
 
 #### Option A — Statu quo outillé (patchs ciblés, pas de refonte)
 
-| Dimension | Évaluation |
-| --- | --- |
-| Complexité | Faible |
-| Coût | ~2 semaines |
-| Scalabilité | Inchangée (replay O(n) corrigeable ponctuellement) |
+| Dimension      | Évaluation                                                           |
+| -------------- | -------------------------------------------------------------------- |
+| Complexité     | Faible                                                               |
+| Coût           | ~2 semaines                                                          |
+| Scalabilité    | Inchangée (replay O(n) corrigeable ponctuellement)                   |
 | Fidélité canon | Divergences colmatées mais structurellement rouvertes à chaque hatsu |
 
 **Pour :** livre les P0/P1 vite ; zéro risque de régression.
@@ -234,11 +234,11 @@ remboursement.
 
 #### Option B — « Le canon compile » (recommandée)
 
-| Dimension | Évaluation |
-| --- | --- |
-| Complexité | Moyenne — refactor par coutures existantes, pas de big-bang |
-| Coût | ~6-8 semaines réparties, chaque chantier livrable seul |
-| Scalabilité | Snapshots + cache HTTP : lecture en O(delta) et souvent O(0) |
+| Dimension      | Évaluation                                                    |
+| -------------- | ------------------------------------------------------------- |
+| Complexité     | Moyenne — refactor par coutures existantes, pas de big-bang   |
+| Coût           | ~6-8 semaines réparties, chaque chantier livrable seul        |
+| Scalabilité    | Snapshots + cache HTTP : lecture en O(delta) et souvent O(0)  |
 | Fidélité canon | Divergence **impossible par construction** + canon-lint en CI |
 
 **Pour :** supprime la classe de bugs plutôt que ses instances ; réduit ~10 000
@@ -249,11 +249,11 @@ registre web = le refactor le plus délicat du dépôt (couche visuelle très fi
 
 #### Option C — Réécriture en services (API séparée, workers, CDN, multi-nœuds)
 
-| Dimension | Évaluation |
-| --- | --- |
-| Complexité | Élevée |
-| Coût | Plusieurs mois |
-| Scalabilité | Excellente — mais pour un trafic que rien n'annonce |
+| Dimension      | Évaluation                                          |
+| -------------- | --------------------------------------------------- |
+| Complexité     | Élevée                                              |
+| Coût           | Plusieurs mois                                      |
+| Scalabilité    | Excellente — mais pour un trafic que rien n'annonce |
 | Fidélité canon | Neutre (ne résout pas la duplication par elle-même) |
 
 **Contre :** un seul mainteneur, un serveur à 2 vCPU suffit à un site en lecture
@@ -298,7 +298,7 @@ type restée lettre morte. Rejetée.
 Les six principes :
 
 1. **Une déclaration par fait.** Le catalogue hatsu n'existe qu'en deux
-   endroits complémentaires : `abilities.json` (le *quoi* canonique) et le
+   endroits complémentaires : `abilities.json` (le _quoi_ canonique) et le
    module (`le *comment* exécutable`), liés par `moduleKey` — déjà en place
    pour 82/82. `hatsuRegistry.ts`, les i18n hatsu et les tables du tour
    deviennent des **fichiers générés** (`*.gen.ts`, commités pour rester
@@ -319,7 +319,7 @@ Les six principes :
    `ABILITY_REVOKED`, `EFFECT_STATE_CHANGED`, `postMortem`, `appearsAs`…).
    Nuance importante : les **simulations** du tour (`TourWorld`, ticker,
    Morena), de l'arène (`combat/reducer.ts`) et de la traque restent des
-   moteurs de rendu/jeu distincts — c'est légitime, ce sont des *médias*
+   moteurs de rendu/jeu distincts — c'est légitime, ce sont des _médias_
    différents. Ce qui doit être unique, c'est le **vocabulaire** (`kind`,
    ciblage, coûts, conditions) et les **faits de catalogue** qu'ils
    consomment. Modèle à suivre : Morena (règles dans le module `contagion`,
@@ -332,7 +332,7 @@ Les six principes :
    déploiements à cap de spoiler donné →
    `Cache-Control: public, s-maxage` + clé de version de déploiement, varié par
    cookie de cap. Le blueprint passe en import dynamique + `Cache-Control:
-   immutable` versionné ; le tour passe à un mesh par espace + portal culling
+immutable` versionné ; le tour passe à un mesh par espace + portal culling
    (le graphe `plan.doorways` existe déjà).
 5. **Chaque écriture a un budget et un test.** Actions admin branchées et
    testées (auth comprise) ; backfills devenus `canon-compiler` : TS strict,
@@ -392,15 +392,15 @@ Les six principes :
 
 ## Partie 4 — Plan de migration (chaque chantier livrable seul)
 
-| # | Chantier | Contenu | Effort | Risque |
-| --- | --- | --- | --- | --- |
-| 0 | **Reliquat des P0** | ~~Crédit CC BY~~ (fait) ; ~~sélecteur de spoiler~~ (fait) ; spoiler sur `/abilities` ; `+error.svelte` web+admin ; brancher ou retirer les 3 formulaires admin en 405 | ~1 j | nul |
-| 1 | **Filets de sécurité** | Tests admin (auth) + script `test` ; e2e smoke (home, ship, tour, un cast de hatsu, login admin) ; Sentry ; images multi-stage minces + tag = SHA git + `rollback.sh` ; `migrate diff --exit-code`, audit deps, couverture en CI | ~1 sem | faible |
-| 2 | **Contracts + canon-compiler** | Remplir `packages/contracts` (zod + invariants) ; porter les `.mjs` en TS typé/testé ; canon-lint en CI sur base jetable ; supprimer paquets/modèles morts | ~1,5 sem | faible |
-| 3 | **Unification Nen** | Générer `hatsuRegistry.gen.ts` + squelettes i18n depuis modules ; réconcilier les 27 noms / 48 owners (arbitrage canon au passage) ; DOM, 3D **et contrats arène/traque** consomment `interactionManifest` (les `arenaDefinition` en dur deviennent des champs de manifest) ; porter les tests comportementaux du tour en tests du moteur. Les simulations elles-mêmes (TourWorld, combat/reducer, hunt) restent en place comme renderers — suivre le pattern Morena | ~4 sem | **moyen** — technique par technique, `bungee-gum` d'abord (pattern déjà documenté) ; `tour/hatsu.ts` a doublé en 4 jours, chaque semaine d'attente renchérit |
-| 4 | **Lecture rapide** | `getNearestSnapshot` réel + snapshot périodique au compile ; cache HTTP versionné varié par cap de spoiler ; blueprint en import dynamique ; mesh par espace + portal culling (points 1-8 de l'audit tour en préalable rapide) | ~2 sem | moyen (3D) |
-| 5 | **Sauvegarde prouvée** | Exfiltration nocturne chiffrée (Storage Box) ; dump séparé de l'état utilisateur ; job hebdo restore + smoke ; runbook mis à jour | ~2 j | faible |
-| 6 | **Fusion des micro-paquets** | `canon-engine` unifié, vitest partout, flags TS durcis | ~3 j | mécanique |
+| #   | Chantier                       | Contenu                                                                                                                                                                                                                                                                                                                                                                                                                                                              | Effort   | Risque                                                                                                                                                       |
+| --- | ------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 0   | **Reliquat des P0**            | ~~Crédit CC BY~~ (fait) ; ~~sélecteur de spoiler~~ (fait) ; spoiler sur `/abilities` ; `+error.svelte` web+admin ; brancher ou retirer les 3 formulaires admin en 405                                                                                                                                                                                                                                                                                                | ~1 j     | nul                                                                                                                                                          |
+| 1   | **Filets de sécurité**         | Tests admin (auth) + script `test` ; e2e smoke (home, ship, tour, un cast de hatsu, login admin) ; Sentry ; images multi-stage minces + tag = SHA git + `rollback.sh` ; `migrate diff --exit-code`, audit deps, couverture en CI                                                                                                                                                                                                                                     | ~1 sem   | faible                                                                                                                                                       |
+| 2   | **Contracts + canon-compiler** | Remplir `packages/contracts` (zod + invariants) ; porter les `.mjs` en TS typé/testé ; canon-lint en CI sur base jetable ; supprimer paquets/modèles morts                                                                                                                                                                                                                                                                                                           | ~1,5 sem | faible                                                                                                                                                       |
+| 3   | **Unification Nen**            | Générer `hatsuRegistry.gen.ts` + squelettes i18n depuis modules ; réconcilier les 27 noms / 48 owners (arbitrage canon au passage) ; DOM, 3D **et contrats arène/traque** consomment `interactionManifest` (les `arenaDefinition` en dur deviennent des champs de manifest) ; porter les tests comportementaux du tour en tests du moteur. Les simulations elles-mêmes (TourWorld, combat/reducer, hunt) restent en place comme renderers — suivre le pattern Morena | ~4 sem   | **moyen** — technique par technique, `bungee-gum` d'abord (pattern déjà documenté) ; `tour/hatsu.ts` a doublé en 4 jours, chaque semaine d'attente renchérit |
+| 4   | **Lecture rapide**             | `getNearestSnapshot` réel + snapshot périodique au compile ; cache HTTP versionné varié par cap de spoiler ; blueprint en import dynamique ; mesh par espace + portal culling (points 1-8 de l'audit tour en préalable rapide)                                                                                                                                                                                                                                       | ~2 sem   | moyen (3D)                                                                                                                                                   |
+| 5   | **Sauvegarde prouvée**         | Exfiltration nocturne chiffrée (Storage Box) ; dump séparé de l'état utilisateur ; job hebdo restore + smoke ; runbook mis à jour                                                                                                                                                                                                                                                                                                                                    | ~2 j     | faible                                                                                                                                                       |
+| 6   | **Fusion des micro-paquets**   | `canon-engine` unifié, vitest partout, flags TS durcis                                                                                                                                                                                                                                                                                                                                                                                                               | ~3 j     | mécanique                                                                                                                                                    |
 
 Ordre imposé : 0 → 1 avant tout le reste (on ne refactore pas sans filet) ;
 2 avant 3 (le générateur a besoin des contrats) ; 4 et 5 parallélisables ;
@@ -418,4 +418,4 @@ Ordre imposé : 0 → 1 avant tout le reste (on ne refactore pas sans filet) ;
 
 ---
 
-*Sources : lecture du dépôt au 2026-08-03 (manifests, `infrastructure/`, `schema.prisma`, hooks et loaders, `timeline-engine`, registres hatsu, `data/`) ; `docs/completude.md` (audit du 2026-07-30) ; audits mémorisés `/tour` et hatsu. Les chiffres datés du 30/07 sont signalés comme tels ; ceux vérifiés ce jour : 82 abilities avec `moduleKey` 82/82, 82 profils dans `hatsuRegistry.ts`, 134 événements dans `data/events/events.json`, `getNearestSnapshot` → `null` (`timeline-engine/src/index.ts:220`), crédit CC BY et `SpoilerFilter` présents au layout, `/abilities` toujours sans filtre, toujours aucun `+error.svelte`.*
+_Sources : lecture du dépôt au 2026-08-03 (manifests, `infrastructure/`, `schema.prisma`, hooks et loaders, `timeline-engine`, registres hatsu, `data/`) ; `docs/completude.md` (audit du 2026-07-30) ; audits mémorisés `/tour` et hatsu. Les chiffres datés du 30/07 sont signalés comme tels ; ceux vérifiés ce jour : 82 abilities avec `moduleKey` 82/82, 82 profils dans `hatsuRegistry.ts`, 134 événements dans `data/events/events.json`, `getNearestSnapshot` → `null` (`timeline-engine/src/index.ts:220`), crédit CC BY et `SpoilerFilter` présents au layout, `/abilities` toujours sans filtre, toujours aucun `+error.svelte`._

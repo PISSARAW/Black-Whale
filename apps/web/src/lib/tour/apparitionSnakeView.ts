@@ -26,13 +26,7 @@ function snake(seen: Apparition, { THREE, glow, root }: BasicApparitionContext):
   }
   const thickness = Math.min(0.11, Math.max(0.05, seen.size * 0.2))
   const body = new THREE.Mesh(
-    new THREE.TubeGeometry(
-      new THREE.CatmullRomCurve3(path),
-      coils * 16,
-      thickness,
-      6,
-      false,
-    ),
+    new THREE.TubeGeometry(new THREE.CatmullRomCurve3(path), coils * 16, thickness, 6, false),
     arm,
   )
   root.add(body)
@@ -44,10 +38,7 @@ function snake(seen: Apparition, { THREE, glow, root }: BasicApparitionContext):
   const head = new THREE.Group()
   head.position.set(Math.cos(last) * seen.size, climb + 0.24, Math.sin(last) * seen.size)
 
-  const neck = new THREE.Mesh(
-    new THREE.CylinderGeometry(thickness, thickness * 1.1, 0.34, 6),
-    arm,
-  )
+  const neck = new THREE.Mesh(new THREE.CylinderGeometry(thickness, thickness * 1.1, 0.34, 6), arm)
   neck.position.y = -0.24
   head.add(neck)
 
@@ -131,7 +122,6 @@ function snake(seen: Apparition, { THREE, glow, root }: BasicApparitionContext):
 
   root.add(head)
   return head
-
 }
 
 export function buildSnakeApparition(

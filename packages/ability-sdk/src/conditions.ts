@@ -17,11 +17,7 @@ type ConditionStatus = AbilityConditionResult['status']
 export type ConditionOutcome = ConditionStatus | { status: ConditionStatus; reason?: string }
 
 export const condition =
-  (
-    id: string,
-    label: string,
-    evaluate: (ctx: AbilityContext) => ConditionOutcome,
-  ): ConditionFn =>
+  (id: string, label: string, evaluate: (ctx: AbilityContext) => ConditionOutcome): ConditionFn =>
   (ctx) => {
     const outcome = evaluate(ctx)
     return typeof outcome === 'string' ? { id, label, status: outcome } : { id, label, ...outcome }

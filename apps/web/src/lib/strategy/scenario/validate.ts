@@ -30,7 +30,10 @@ export function validateStrategyScenario(
     if (!context.factionIds.has(entry.factionId))
       add(`playableFactions.${index}.factionId`, `unknown faction ${entry.factionId}`)
     if (!scenario.locationIds.includes(entry.initialLocationId))
-      add(`playableFactions.${index}.initialLocationId`, `location outside scenario ${entry.initialLocationId}`)
+      add(
+        `playableFactions.${index}.initialLocationId`,
+        `location outside scenario ${entry.initialLocationId}`,
+      )
     for (const characterId of entry.requiredCharacterIds)
       if (!context.characterIds.has(characterId))
         add(`playableFactions.${index}.requiredCharacterIds`, `unknown character ${characterId}`)

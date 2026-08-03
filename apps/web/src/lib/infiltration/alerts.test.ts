@@ -8,7 +8,15 @@ describe('alert state machine', () => {
     expect(assessAlert([{ witnessId: 'guard', certainty: 80 }], 1).level).toBe('search')
   })
   it('distinguishes corroboration and confirmed identity', () => {
-    expect(assessAlert([{ witnessId: 'guard', certainty: 80 }, { witnessId: 'steward', certainty: 75 }], 2).level).toBe('lockdown')
+    expect(
+      assessAlert(
+        [
+          { witnessId: 'guard', certainty: 80 },
+          { witnessId: 'steward', certainty: 75 },
+        ],
+        2,
+      ).level,
+    ).toBe('lockdown')
     expect(assessAlert([{ witnessId: 'guard', certainty: 96 }], 1).level).toBe('identified')
   })
 })

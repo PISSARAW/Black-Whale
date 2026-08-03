@@ -90,7 +90,10 @@ export const withoutYou = defineAbility({
           attributes: { command: 'follow', description: 'La jumelle vous suit de près.' },
         }),
         moveEntity({
-          entity: (ctx) => ({ id: nenTwinId(param(ctx, 'deceasedTwinId') ?? 'twin'), kind: 'NEN_ENTITY' }),
+          entity: (ctx) => ({
+            id: nenTwinId(param(ctx, 'deceasedTwinId') ?? 'twin'),
+            kind: 'NEN_ENTITY',
+          }),
           locationId: (ctx) => ctx.worldState?.presences[ctx.actorId]?.locationId,
         }),
       ],
@@ -105,7 +108,10 @@ export const withoutYou = defineAbility({
           attributes: { command: 'wander', description: 'La jumelle se balade de son côté.' },
         }),
         moveEntity({
-          entity: (ctx) => ({ id: nenTwinId(param(ctx, 'deceasedTwinId') ?? 'twin'), kind: 'NEN_ENTITY' }),
+          entity: (ctx) => ({
+            id: nenTwinId(param(ctx, 'deceasedTwinId') ?? 'twin'),
+            kind: 'NEN_ENTITY',
+          }),
           locationId: (ctx) => param(ctx, 'locationId'),
         }),
       ],
@@ -120,7 +126,10 @@ export const withoutYou = defineAbility({
           attributes: { command: 'scout', description: 'La jumelle part en reconnaissance.' },
         }),
         moveEntity({
-          entity: (ctx) => ({ id: nenTwinId(param(ctx, 'deceasedTwinId') ?? 'twin'), kind: 'NEN_ENTITY' }),
+          entity: (ctx) => ({
+            id: nenTwinId(param(ctx, 'deceasedTwinId') ?? 'twin'),
+            kind: 'NEN_ENTITY',
+          }),
           locationId: (ctx) => param(ctx, 'locationId'),
         }),
       ],

@@ -49,8 +49,12 @@
     aria-labelledby="hunt-trajectory-title hunt-trajectory-description"
   >
     <desc id="hunt-trajectory-description">
-      {labels.player}: {events('player').map((event) => roomName(event.where)).join(', ')}.
-      {labels.hunter}: {events('hunter').map((event) => roomName(event.where)).join(', ')}.
+      {labels.player}: {events('player')
+        .map((event) => roomName(event.where))
+        .join(', ')}.
+      {labels.hunter}: {events('hunter')
+        .map((event) => roomName(event.where))
+        .join(', ')}.
     </desc>
     {#each arena.spaces as space (space.id)}
       <polygon

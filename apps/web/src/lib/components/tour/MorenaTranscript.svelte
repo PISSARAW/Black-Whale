@@ -45,11 +45,7 @@
           {copy.log.settled(nameOfCard(beat.card))}
         {:else if beat.kind === 'played'}
           <span class:text-[#ef8a90]={beat.seen}>
-            {copy.log.played(
-              beat.round,
-              effectLabel(moveFor(beat.technique).effect),
-              beat.seen,
-            )}
+            {copy.log.played(beat.round, effectLabel(moveFor(beat.technique).effect), beat.seen)}
           </span>
         {:else if beat.kind === 'narrowed'}
           <span class="text-[#c7a5e8]">{copy.log.narrowed(beat.because)}</span>

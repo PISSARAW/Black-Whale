@@ -28,10 +28,13 @@ describe('the gauges the hunt leaves — T4.2', () => {
   })
 
   it('opens with a hunter already broken when the hunt spent him to nothing', () => {
-    const { duel } = openDuel({ pool: fullPool(), placements: [] }, {
-      hunterPool: poolOf(0),
-      spaceId: 'salon',
-    })
+    const { duel } = openDuel(
+      { pool: fullPool(), placements: [] },
+      {
+        hunterPool: poolOf(0),
+        spaceId: 'salon',
+      },
+    )
     expect(duel.hunter.broken).toBe(true)
   })
 })
@@ -64,10 +67,13 @@ describe('an entrave waiting in the room — T4.1', () => {
 
   it('is felt: the first blow of the duel lands, where against an intact hunter it would not', () => {
     const prepared = openDuel(ledgerWith(['salon']), { hunterPool: fullPool(), spaceId: 'salon' })
-    const bare = openDuel({ pool: fullPool(), placements: [] }, {
-      hunterPool: fullPool(),
-      spaceId: 'salon',
-    })
+    const bare = openDuel(
+      { pool: fullPool(), placements: [] },
+      {
+        hunterPool: fullPool(),
+        spaceId: 'salon',
+      },
+    )
 
     const strike = (state: typeof prepared.duel) => {
       const forward = setRyu(state.player, { attack: STRIKE_THRESHOLD + 0.2, guard: 'torso' })
@@ -89,10 +95,13 @@ describe('the hold running down', () => {
   })
 
   it('is left alone when nobody is held', () => {
-    const { duel } = openDuel({ pool: fullPool(), placements: [] }, {
-      hunterPool: fullPool(),
-      spaceId: 'salon',
-    })
+    const { duel } = openDuel(
+      { pool: fullPool(), placements: [] },
+      {
+        hunterPool: fullPool(),
+        spaceId: 'salon',
+      },
+    )
     expect(tickHolds(duel, 1)).toBe(duel)
   })
 })

@@ -3,7 +3,11 @@
   import type { Space, Vec2 } from '$lib/tour/types'
   import TourMinimap from './TourMinimap.svelte'
 
-  interface DeckOption { id: string; label: string; active: boolean }
+  interface DeckOption {
+    id: string
+    label: string
+    active: boolean
+  }
   interface Props {
     ship: { decks: { id: string; name: string; nameFr: string }[]; plans: Map<string, TierPlan> }
     tierId: string
@@ -43,7 +47,7 @@
   }: Props = $props()
 
   const french = $derived($locale === 'fr')
-  const tierName = (tier: { name: string; nameFr: string }) => french ? tier.nameFr : tier.name
+  const tierName = (tier: { name: string; nameFr: string }) => (french ? tier.nameFr : tier.name)
   const label = $derived($t.tour.minimap(tierName(plan.tier)))
 </script>
 
@@ -67,15 +71,15 @@
   {/if}
 
   <TourMinimap
-    plan={plan}
-    position={position}
-    heading={heading}
-    currentSpaceId={currentSpaceId}
-    label={label}
-    crossings={crossings}
-    nameOf={nameOf}
-    crossingLabel={crossingLabel}
-    selectLabel={selectLabel}
+    {plan}
+    {position}
+    {heading}
+    {currentSpaceId}
+    {label}
+    {crossings}
+    {nameOf}
+    {crossingLabel}
+    {selectLabel}
     onSelect={onSelectPlan}
     aiming={false}
   />

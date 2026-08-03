@@ -24,15 +24,15 @@ atmosphère), `data/ship/blueprint.json` (409 spaces, 47 links), `packages/abili
 Sept règles. Aucune tâche de ce backlog n'a le droit de les violer ; toute tâche qui semble
 l'exiger est une tâche mal écrite.
 
-| # | Invariant | Pourquoi |
-| --- | --- | --- |
-| I1 | **Aucune statistique de dégâts.** Le jeu demande « quelle condition, quel effet », jamais « combien ». | C'est la règle qui garantit qu'un hatsu sans compétence offensive reste jouable. |
-| I2 | **Une seule jauge d'aura, trois usages concurrents** : savoir (En), préparer (aura posée), survivre (Ryu). | C'est toute la gestion. Trois jauges séparées suppriment le jeu. |
-| I3 | **On peut gagner un duel sans jamais attaquer**, puisque l'épuisement est une condition de défaite. | Sans ça, I1 est un vœu pieux. |
-| I4 | **Contre un chasseur intact, le joueur perd toujours.** La victoire se fabrique en amont. | Si le combat est gagnable au réflexe, la traque n'a plus d'intérêt. |
-| I5 | **Le chasseur ne reçoit que ce qu'il perçoit.** Jamais la position réelle du joueur. | Un adversaire omniscient est imbattable et ennuyeux. |
-| I6 | **Le jeu ne dessine rien que la reconstruction n'atteste pas.** Il consomme `blueprint.json`, il ne l'étend pas. | Le `/tour` a une thèse ; le jeu ne doit pas la contredire. |
-| I7 | **Le `/tour` existant n'est pas modifié.** Le jeu lit les mêmes modules, il ne les réécrit pas. | Une régression sur `/tour` coûte plus cher que tout le prototype. |
+| #   | Invariant                                                                                                        | Pourquoi                                                                         |
+| --- | ---------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| I1  | **Aucune statistique de dégâts.** Le jeu demande « quelle condition, quel effet », jamais « combien ».           | C'est la règle qui garantit qu'un hatsu sans compétence offensive reste jouable. |
+| I2  | **Une seule jauge d'aura, trois usages concurrents** : savoir (En), préparer (aura posée), survivre (Ryu).       | C'est toute la gestion. Trois jauges séparées suppriment le jeu.                 |
+| I3  | **On peut gagner un duel sans jamais attaquer**, puisque l'épuisement est une condition de défaite.              | Sans ça, I1 est un vœu pieux.                                                    |
+| I4  | **Contre un chasseur intact, le joueur perd toujours.** La victoire se fabrique en amont.                        | Si le combat est gagnable au réflexe, la traque n'a plus d'intérêt.              |
+| I5  | **Le chasseur ne reçoit que ce qu'il perçoit.** Jamais la position réelle du joueur.                             | Un adversaire omniscient est imbattable et ennuyeux.                             |
+| I6  | **Le jeu ne dessine rien que la reconstruction n'atteste pas.** Il consomme `blueprint.json`, il ne l'étend pas. | Le `/tour` a une thèse ; le jeu ne doit pas la contredire.                       |
+| I7  | **Le `/tour` existant n'est pas modifié.** Le jeu lit les mêmes modules, il ne les réécrit pas.                  | Une régression sur `/tour` coûte plus cher que tout le prototype.                |
 
 ---
 
@@ -68,17 +68,17 @@ pour répondre à la question de l'étape 4.
 Valeurs de placement, à corriger dès la première partie jouée. Leur seul rôle est de rendre
 l'arbitrage de l'étape 2 discutable.
 
-| Poste | Coût | Note |
-| --- | --- | --- |
-| Réservoir d'aura | 100 | Plein au départ |
-| Balayage de En, rayon 20 m | 15 | Ponctuel ; perceptible par ce qu'il balaye |
-| Entrave posée | 25 | **Immobilisés** jusqu'à reprise ou déclenchement |
-| Gyo | 5 / s | Continu |
-| Ken | 6 / s | Continu |
-| Ko | 20 | Ponctuel |
-| Régénération | 4 / s | À l'arrêt seulement |
-| Durée d'une partie | 10 min | |
-| Vitesse de marche | 2,1 m/s | `WALK_SPEED`, déjà dans `navigation.ts` |
+| Poste                      | Coût    | Note                                             |
+| -------------------------- | ------- | ------------------------------------------------ |
+| Réservoir d'aura           | 100     | Plein au départ                                  |
+| Balayage de En, rayon 20 m | 15      | Ponctuel ; perceptible par ce qu'il balaye       |
+| Entrave posée              | 25      | **Immobilisés** jusqu'à reprise ou déclenchement |
+| Gyo                        | 5 / s   | Continu                                          |
+| Ken                        | 6 / s   | Continu                                          |
+| Ko                         | 20      | Ponctuel                                         |
+| Régénération               | 4 / s   | À l'arrêt seulement                              |
+| Durée d'une partie         | 10 min  |                                                  |
+| Vitesse de marche          | 2,1 m/s | `WALK_SPEED`, déjà dans `navigation.ts`          |
 
 Ce que ces valeurs disent : **on ne peut pas se payer trois balayages et deux entraves.** C'est
 exactement la tension qu'on veut mesurer.
@@ -92,57 +92,57 @@ arrête le projet à cet endroit — pour beaucoup moins cher que la suivante.
 
 ### Étape 0 — le bac à sable
 
-| ID | Tâche | Sortie |
-| --- | --- | --- |
-| T0.1 | Route `/hunt` autonome, sans toucher à `/tour` | `apps/web/src/routes/hunt/+page.svelte` |
-| T0.2 | Sélection du sous-ensemble de spaces + validation de contiguïté | `apps/web/src/lib/hunt/arena.ts` |
-| T0.3 | Boucle de jeu à pas fixe, découplée du rendu | `apps/web/src/lib/hunt/loop.ts` |
-| T0.4 | Navmesh dérivé de la géométrie (graphe pièce→pièce via les ouvertures) | `apps/web/src/lib/hunt/navmesh.ts` |
-| T0.5 | État de partie typé + réducteur pur | `apps/web/src/lib/hunt/state.ts` |
+| ID   | Tâche                                                                  | Sortie                                  |
+| ---- | ---------------------------------------------------------------------- | --------------------------------------- |
+| T0.1 | Route `/hunt` autonome, sans toucher à `/tour`                         | `apps/web/src/routes/hunt/+page.svelte` |
+| T0.2 | Sélection du sous-ensemble de spaces + validation de contiguïté        | `apps/web/src/lib/hunt/arena.ts`        |
+| T0.3 | Boucle de jeu à pas fixe, découplée du rendu                           | `apps/web/src/lib/hunt/loop.ts`         |
+| T0.4 | Navmesh dérivé de la géométrie (graphe pièce→pièce via les ouvertures) | `apps/web/src/lib/hunt/navmesh.ts`      |
+| T0.5 | État de partie typé + réducteur pur                                    | `apps/web/src/lib/hunt/state.ts`        |
 
 **Critère de fin** — on marche dans les 8 pièces, la collision tient, le graphe de navigation est
 connexe et testé.
 
 ### Étape 1 — se cacher
 
-| ID | Tâche | Sortie |
-| --- | --- | --- |
-| T1.1 | Jauge d'aura + régénération à l'arrêt | `hunt/aura.ts` |
-| T1.2 | Ten / Zetsu : bascule, coûts, effets sur la perception | `hunt/nen/states.ts` |
-| T1.3 | En : balayage à rayon, test contre les corps, **et sa propre détectabilité** | `hunt/nen/en.ts` |
-| T1.4 | Chasseur : patrouille, balayages périodiques, enquête sur un bruit | `hunt/hunter/patrol.ts` |
-| T1.5 | Perception du chasseur : mémoire, dernière position crue (I5) | `hunt/hunter/belief.ts` |
-| T1.6 | Retour joueur : pulsation de En reçue, direction, pas audibles | `hunt/feedback.ts` |
-| T1.7 | Fin de partie au contact (aucun combat) + écran de fin | `hunt/outcome.ts` |
+| ID   | Tâche                                                                        | Sortie                  |
+| ---- | ---------------------------------------------------------------------------- | ----------------------- |
+| T1.1 | Jauge d'aura + régénération à l'arrêt                                        | `hunt/aura.ts`          |
+| T1.2 | Ten / Zetsu : bascule, coûts, effets sur la perception                       | `hunt/nen/states.ts`    |
+| T1.3 | En : balayage à rayon, test contre les corps, **et sa propre détectabilité** | `hunt/nen/en.ts`        |
+| T1.4 | Chasseur : patrouille, balayages périodiques, enquête sur un bruit           | `hunt/hunter/patrol.ts` |
+| T1.5 | Perception du chasseur : mémoire, dernière position crue (I5)                | `hunt/hunter/belief.ts` |
+| T1.6 | Retour joueur : pulsation de En reçue, direction, pas audibles               | `hunt/feedback.ts`      |
+| T1.7 | Fin de partie au contact (aucun combat) + écran de fin                       | `hunt/outcome.ts`       |
 
 **Critère de fin** — traverser trois pièces est tendu. Si non, rien de ce qui suit ne le sauvera.
 
 ### Étape 2 — préparer
 
-| ID | Tâche | Sortie |
-| --- | --- | --- |
-| T2.1 | Aura posée : immobilisation, reprise au contact, comptabilité | `hunt/nen/placed.ts` |
-| T2.2 | Entrave : pose, déclenchement, durée de rétention | `hunt/nen/entrave.ts` |
-| T2.3 | Le chasseur peut la trouver (équivalent Gyo côté IA) | `hunt/hunter/inspect.ts` |
+| ID   | Tâche                                                             | Sortie                             |
+| ---- | ----------------------------------------------------------------- | ---------------------------------- |
+| T2.1 | Aura posée : immobilisation, reprise au contact, comptabilité     | `hunt/nen/placed.ts`               |
+| T2.2 | Entrave : pose, déclenchement, durée de rétention                 | `hunt/nen/entrave.ts`              |
+| T2.3 | Le chasseur peut la trouver (équivalent Gyo côté IA)              | `hunt/hunter/inspect.ts`           |
 | T2.4 | HUD : réservoir disponible vs immobilisé, lisible d'un coup d'œil | `components/hunt/AuraGauge.svelte` |
-| T2.5 | Télémétrie locale : ce que le joueur dépense et quand | `hunt/telemetry.ts` |
+| T2.5 | Télémétrie locale : ce que le joueur dépense et quand             | `hunt/telemetry.ts`                |
 
 **Critère de fin** — « savoir ou préparer » est une décision difficile. Si le joueur pose toujours
 tout ou ne pose jamais rien, c'est l'économie qu'il faut corriger, pas le code.
 
 ### Étape 3 — le duel
 
-| ID | Tâche | Sortie |
-| --- | --- | --- |
-| T3.1 | Ryu : répartition continue attaque/défense et par zone | `hunt/duel/ryu.ts` |
-| T3.2 | Gyo : lecture de la concentration d'aura adverse | `hunt/duel/gyo.ts` |
-| T3.3 | In : dissimulation de sa propre concentration — la feinte | `hunt/duel/in.ts` |
-| T3.4 | Ko : engagement total, exposition totale | `hunt/duel/ko.ts` |
-| T3.5 | Ken : endurance sans progression | `hunt/duel/ken.ts` |
-| T3.6 | Résolution : Ko sur point exposé, ou épuisement (I3) | `hunt/duel/resolve.ts` |
-| T3.7 | Rupture : couper la ligne de vue, retour à la traque | `hunt/duel/disengage.ts` |
-| T3.8 | Rendu d'aura lisible : halo par zone, montée, extinction | `components/hunt/AuraOverlay.svelte` |
-| T3.9 | IA de duel : répartit, feinte, engage — sans tricher (I5) | `hunt/hunter/duel.ts` |
+| ID   | Tâche                                                     | Sortie                               |
+| ---- | --------------------------------------------------------- | ------------------------------------ |
+| T3.1 | Ryu : répartition continue attaque/défense et par zone    | `hunt/duel/ryu.ts`                   |
+| T3.2 | Gyo : lecture de la concentration d'aura adverse          | `hunt/duel/gyo.ts`                   |
+| T3.3 | In : dissimulation de sa propre concentration — la feinte | `hunt/duel/in.ts`                    |
+| T3.4 | Ko : engagement total, exposition totale                  | `hunt/duel/ko.ts`                    |
+| T3.5 | Ken : endurance sans progression                          | `hunt/duel/ken.ts`                   |
+| T3.6 | Résolution : Ko sur point exposé, ou épuisement (I3)      | `hunt/duel/resolve.ts`               |
+| T3.7 | Rupture : couper la ligne de vue, retour à la traque      | `hunt/duel/disengage.ts`             |
+| T3.8 | Rendu d'aura lisible : halo par zone, montée, extinction  | `components/hunt/AuraOverlay.svelte` |
+| T3.9 | IA de duel : répartit, feinte, engage — sans tricher (I5) | `hunt/hunter/duel.ts`                |
 
 **Critère de fin** — soixante secondes de répartition tiennent avec un rendu minimal. **C'est ici
 que se joue le coût du projet** : si la lecture ne passe pas avec des poses simples et un halo
@@ -150,12 +150,12 @@ clair, il faut le savoir avant d'avoir animé quoi que ce soit.
 
 ### Étape 4 — la jonction
 
-| ID | Tâche | Sortie |
-| --- | --- | --- |
-| T4.1 | Une entrave présente dans la pièce entre dans le duel | `hunt/duel/inherit.ts` |
-| T4.2 | Les jauges d'entrée du duel sont celles que la traque a laissées | `hunt/duel/inherit.ts` |
-| T4.3 | Reprendre son aura posée pendant le duel en la touchant | `hunt/duel/recover.ts` |
-| T4.4 | Élimination sans contact : épuisement du chasseur → l'entrave tue | `hunt/outcome.ts` |
+| ID   | Tâche                                                             | Sortie                           |
+| ---- | ----------------------------------------------------------------- | -------------------------------- |
+| T4.1 | Une entrave présente dans la pièce entre dans le duel             | `hunt/duel/inherit.ts`           |
+| T4.2 | Les jauges d'entrée du duel sont celles que la traque a laissées  | `hunt/duel/inherit.ts`           |
+| T4.3 | Reprendre son aura posée pendant le duel en la touchant           | `hunt/duel/recover.ts`           |
+| T4.4 | Élimination sans contact : épuisement du chasseur → l'entrave tue | `hunt/outcome.ts`                |
 | T4.5 | Rapport de fin : ce que chacun a cru, quand, et ce que ça a coûté | `components/hunt/Debrief.svelte` |
 
 **Critère de fin — la question.** La préparation se sent au moment du duel. Si non, les deux
@@ -170,38 +170,38 @@ décroissante rapportée au coût.
 
 ### V1 — la profondeur
 
-| Lot | Contenu |
-| --- | --- |
-| **Hatsu** | Brancher `packages/ability-modules` : le jeu lit la condition déclarée du module, il n'invente aucune valeur (I1). Une capacité au départ de partie. |
-| **Familles d'usage** | Information, condition/négociation, matérialisation, déplacement, manipulation d'un tiers — chacune utile dans les deux phases. |
-| **Types de Nen** | Rendements sur les principes voisins, pas de bonus de dégâts. À caler sur les fiches existantes. |
-| **Pièges** | Alarme, blessure, leurre. Le leurre est le plus cher et le plus intéressant : il corrompt la croyance adverse. |
-| **Blessures localisées** | Membre par membre ; une jambe touchée fait passer à 1,2 m/s, un bras annule les hatsu qui demandaient une main. |
-| **Vœux** | Restriction acceptée au départ contre une capacité renforcée. Le seul chemin vers une victoire franche en duel. |
-| **Shu et Ren** | Charger un objet ; la manette des gaz du duel. |
+| Lot                      | Contenu                                                                                                                                              |
+| ------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Hatsu**                | Brancher `packages/ability-modules` : le jeu lit la condition déclarée du module, il n'invente aucune valeur (I1). Une capacité au départ de partie. |
+| **Familles d'usage**     | Information, condition/négociation, matérialisation, déplacement, manipulation d'un tiers — chacune utile dans les deux phases.                      |
+| **Types de Nen**         | Rendements sur les principes voisins, pas de bonus de dégâts. À caler sur les fiches existantes.                                                     |
+| **Pièges**               | Alarme, blessure, leurre. Le leurre est le plus cher et le plus intéressant : il corrompt la croyance adverse.                                       |
+| **Blessures localisées** | Membre par membre ; une jambe touchée fait passer à 1,2 m/s, un bras annule les hatsu qui demandaient une main.                                      |
+| **Vœux**                 | Restriction acceptée au départ contre une capacité renforcée. Le seul chemin vers une victoire franche en duel.                                      |
+| **Shu et Ren**           | Charger un objet ; la manette des gaz du duel.                                                                                                       |
 
 ### V2 — le navire comme arsenal
 
-| Lot | Contenu |
-| --- | --- |
-| **Lumière** | Couper les luminaires d'une pièce : le chasseur doit brûler du Gyo pour y voir. |
-| **Son** | Exploiter la réverbération par volume déjà calculée dans `atmosphere.ts` ; le grondement de coque masque en bas, expose en haut. |
-| **Les deux fenêtres** | Pont d'observation et fond du salon du Roi — les deux seules pièces où l'on se découpe en silhouette. |
-| **Goulots calculés** | Les 368 ouvertures sont dérivées des murs partagés : les pièces à issue unique sont trouvables par le code. |
-| **Le chasseur scelle** | Il ne patrouille plus, il ferme les issues une à une. La traque devient un siège. |
-| **Ponts supplémentaires** | Chaque pont donne une partie de nature différente. Verticalité par les cages d'escalier. |
+| Lot                       | Contenu                                                                                                                          |
+| ------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| **Lumière**               | Couper les luminaires d'une pièce : le chasseur doit brûler du Gyo pour y voir.                                                  |
+| **Son**                   | Exploiter la réverbération par volume déjà calculée dans `atmosphere.ts` ; le grondement de coque masque en bas, expose en haut. |
+| **Les deux fenêtres**     | Pont d'observation et fond du salon du Roi — les deux seules pièces où l'on se découpe en silhouette.                            |
+| **Goulots calculés**      | Les 368 ouvertures sont dérivées des murs partagés : les pièces à issue unique sont trouvables par le code.                      |
+| **Le chasseur scelle**    | Il ne patrouille plus, il ferme les issues une à une. La traque devient un siège.                                                |
+| **Ponts supplémentaires** | Chaque pont donne une partie de nature différente. Verticalité par les cages d'escalier.                                         |
 
 ### V3 — le planificateur LLM
 
-| Lot | Contenu |
-| --- | --- |
+| Lot                     | Contenu                                                                                                                                              |
+| ----------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Interface `Planner`** | `(perception: HunterPerception) => Promise<Intent>` — le scripté et le LLM l'implémentent tous les deux ; le scripté reste le défaut et le fallback. |
-| **Sortie structurée** | `output_config.format` avec un schéma JSON. Jamais de prose parsée dans une boucle de jeu. |
-| **Cadence** | Une intention toutes les quelques secondes, jamais par frame. L'exécution reste déterministe. |
-| **Prompt caching** | Plan du pont et règles en préfixe stable ; l'état volatil strictement après le point de césure. |
-| **Clé côté serveur** | Route serveur SvelteKit uniquement — la clé ne touche jamais le navigateur. |
-| **Coût** | ~1,4 $/h de jeu sur un modèle rapide : clé apportée par l'utilisateur, ou local uniquement. Jamais sur le site public en anonyme. |
-| **Journal du chasseur** | Son état de croyance rendu lisible en fin de partie. C'est le seul vrai gain du LLM sur le scripté. |
+| **Sortie structurée**   | `output_config.format` avec un schéma JSON. Jamais de prose parsée dans une boucle de jeu.                                                           |
+| **Cadence**             | Une intention toutes les quelques secondes, jamais par frame. L'exécution reste déterministe.                                                        |
+| **Prompt caching**      | Plan du pont et règles en préfixe stable ; l'état volatil strictement après le point de césure.                                                      |
+| **Clé côté serveur**    | Route serveur SvelteKit uniquement — la clé ne touche jamais le navigateur.                                                                          |
+| **Coût**                | ~1,4 $/h de jeu sur un modèle rapide : clé apportée par l'utilisateur, ou local uniquement. Jamais sur le site public en anonyme.                    |
+| **Journal du chasseur** | Son état de croyance rendu lisible en fin de partie. C'est le seul vrai gain du LLM sur le scripté.                                                  |
 
 ---
 
@@ -355,19 +355,19 @@ communiquent pas — c'est le moment de s'arrêter et de le dire.
 
 ## 8. Risques et questions ouvertes
 
-| Risque | Étape | Atténuation |
-| --- | --- | --- |
-| **La lisibilité de l'aura ne passe pas** sans animation riche. C'est le risque principal du projet. | 3 | L'étape 3 est conçue pour révéler ce risque avant tout investissement d'animation. |
-| **Huit pièces sont trop petites** pour dix minutes de traque. | 1 | Étendre à `interior-room-1005` plus le couloir `tier-1` (≈ 18 spaces) ; prévu, pas d'obstacle. |
-| **L'économie d'aura ne produit pas d'arbitrage.** | 2 | Ce sont des valeurs, pas du code. La télémétrie de T2.5 sert exactement à ça. |
-| **Le duel et la traque restent deux jeux collés.** | 4 | C'est la question, et l'échec est un résultat valable. |
-| **Le ratchet ESLint** — le code de combat va vouloir grossir. | toutes | Découpage par verbe imposé dès l'étape 0 : un fichier par principe du Nen. |
-| **Le ton du site** — une archive qui affirme ne rien inventer, à côté d'un jeu. | — | Route séparée, voix propre. Le jeu ne modifie pas `blueprint.json` (I6). |
+| Risque                                                                                              | Étape  | Atténuation                                                                                    |
+| --------------------------------------------------------------------------------------------------- | ------ | ---------------------------------------------------------------------------------------------- |
+| **La lisibilité de l'aura ne passe pas** sans animation riche. C'est le risque principal du projet. | 3      | L'étape 3 est conçue pour révéler ce risque avant tout investissement d'animation.             |
+| **Huit pièces sont trop petites** pour dix minutes de traque.                                       | 1      | Étendre à `interior-room-1005` plus le couloir `tier-1` (≈ 18 spaces) ; prévu, pas d'obstacle. |
+| **L'économie d'aura ne produit pas d'arbitrage.**                                                   | 2      | Ce sont des valeurs, pas du code. La télémétrie de T2.5 sert exactement à ça.                  |
+| **Le duel et la traque restent deux jeux collés.**                                                  | 4      | C'est la question, et l'échec est un résultat valable.                                         |
+| **Le ratchet ESLint** — le code de combat va vouloir grossir.                                       | toutes | Découpage par verbe imposé dès l'étape 0 : un fichier par principe du Nen.                     |
+| **Le ton du site** — une archive qui affirme ne rien inventer, à côté d'un jeu.                     | —      | Route séparée, voix propre. Le jeu ne modifie pas `blueprint.json` (I6).                       |
 
 **Questions non tranchées.**
 
-1. Le joueur est-il toujours la proie, ou un mode chasseur existe-t-il ? *(hors prototype)*
-2. La partie est-elle un roguelike à parties courtes ou une campagne ? *(hors prototype)*
+1. Le joueur est-il toujours la proie, ou un mode chasseur existe-t-il ? _(hors prototype)_
+2. La partie est-elle un roguelike à parties courtes ou une campagne ? _(hors prototype)_
 3. ~~Que se passe-t-il aux frontières du sous-ensemble d'arène ?~~ **Tranché en T0.2 : la question
    ne se pose pas.** Les 8 spaces attestés sont la totalité du tier `interior-room-1004` — la
    frontière de l'arène est la coque de l'appartement elle-même. Ni mur invisible, ni porte scellée

@@ -21,7 +21,11 @@ function tick(state: DuelState): DuelState {
   return playHunter(duelReducer(state, { type: 'TICK', dt: DT }), DT)
 }
 
-function play(state: DuelState, seconds: number, each?: (current: DuelState) => DuelState): DuelState {
+function play(
+  state: DuelState,
+  seconds: number,
+  each?: (current: DuelState) => DuelState,
+): DuelState {
   let current = state
   for (let elapsed = 0; elapsed < seconds && current.outcome === 'playing'; elapsed += DT) {
     current = each ? each(current) : current
@@ -56,7 +60,9 @@ function swingAway(state: DuelState): DuelState {
 describe('an intact hunter — invariant I4', () => {
   it('is not beaten by a player swinging at him from the first second', () => {
     for (let seed = 1; seed <= 12; seed += 1) {
-      const state = opening({ ...initialDuelState({ player: poolOf(100), hunter: poolOf(100), seed }) })
+      const state = opening({
+        ...initialDuelState({ player: poolOf(100), hunter: poolOf(100), seed }),
+      })
       expect(play(state, 60, swingAway).outcome, `seed ${seed}`).not.toBe('won')
     }
   })

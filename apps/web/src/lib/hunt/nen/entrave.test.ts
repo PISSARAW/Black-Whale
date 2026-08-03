@@ -24,7 +24,9 @@ describe('walking into an entrave', () => {
 
   it('is not sprung from the room next door, however close the coordinates', () => {
     const ledger = laid([0, 0])
-    expect(entravesUnderfoot(ledger.placements, { position: [0, 0], spaceId: 'cuisine' })).toEqual([])
+    expect(entravesUnderfoot(ledger.placements, { position: [0, 0], spaceId: 'cuisine' })).toEqual(
+      [],
+    )
   })
 
   it('is stepped over once it has been spotted', () => {

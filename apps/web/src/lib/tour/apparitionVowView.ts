@@ -41,10 +41,7 @@ export function buildVowApparition(
     lobe.position.set(side * seen.size * 0.42, seen.size * 0.34, 0)
     flesh.add(lobe)
   }
-  const point = new THREE.Mesh(
-    new THREE.ConeGeometry(seen.size * 0.95, seen.size * 1.7, 14),
-    meat,
-  )
+  const point = new THREE.Mesh(new THREE.ConeGeometry(seen.size * 0.95, seen.size * 1.7, 14), meat)
   point.rotation.x = Math.PI
   point.position.y = -seen.size * 0.5
   flesh.add(point)
@@ -53,12 +50,7 @@ export function buildVowApparition(
   if (seen.stage === 0) return flesh
 
   const steel = glow(VOW_CHAIN, 1)
-  const geometry = new THREE.TorusGeometry(
-    seen.size * 0.17,
-    seen.size * 0.055,
-    4,
-    8,
-  )
+  const geometry = new THREE.TorusGeometry(seen.size * 0.17, seen.size * 0.055, 4, 8)
   const context = { THREE, geometry, material: steel }
   root.add(chainBand([0.28, 0], seen.size * 1.02, context))
   root.add(chainBand([1.15, 0.9], seen.size * 0.98, context))

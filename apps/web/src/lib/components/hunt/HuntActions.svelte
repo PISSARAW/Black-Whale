@@ -18,14 +18,7 @@
     onTake: () => void
   }
 
-  let {
-    canLay,
-    canTake,
-    hatsuId,
-    labels,
-    onLay,
-    onTake,
-  }: Props = $props()
+  let { canLay, canTake, hatsuId, labels, onLay, onTake }: Props = $props()
 </script>
 
 <nav

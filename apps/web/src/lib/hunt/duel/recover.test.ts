@@ -46,7 +46,10 @@ describe('backing into your own traps — T4.3', () => {
 
   it('puts a broken Ten back up — that is what the manoeuvre is for', () => {
     const spent = duelIn('salon', 0)
-    const { duel } = recoverInDuel(ledgerIn('salon'), { ...spent, player: { ...spent.player, broken: true } })
+    const { duel } = recoverInDuel(ledgerIn('salon'), {
+      ...spent,
+      player: { ...spent.player, broken: true },
+    })
     expect(duel.player.broken).toBe(false)
     expect(duel.player.pool.available).toBe(ENTRAVE_COST)
   })

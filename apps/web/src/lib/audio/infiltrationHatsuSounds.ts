@@ -1,4 +1,16 @@
-import { blowAGust, chirpTheFlock, foldPaper, hissLikeASnake, hootAnOwl, landAPunch, selectACard, stretchTheGum, strikeAGong, unspoolWire, wakeTheMachine } from './hatsuSounds'
+import {
+  blowAGust,
+  chirpTheFlock,
+  foldPaper,
+  hissLikeASnake,
+  hootAnOwl,
+  landAPunch,
+  selectACard,
+  stretchTheGum,
+  strikeAGong,
+  unspoolWire,
+  wakeTheMachine,
+} from './hatsuSounds'
 import type { InfiltrationHatsuId } from '../infiltration/hatsu'
 
 const SOUND: Record<InfiltrationHatsuId, () => void> = {

@@ -113,8 +113,7 @@ export function hunterFigure(sighting: Sighting): Apparition | null {
             : hunter.mode === 'search'
               ? 'search'
               : 'walk',
-      aura:
-        hunter.pool.available <= 0 ? 'zetsu' : sighting.duel?.hunter.ken ? 'ren' : 'ten',
+      aura: hunter.pool.available <= 0 ? 'zetsu' : sighting.duel?.hunter.ken ? 'ren' : 'ten',
       nen,
     },
     // Never Gyo-only: he is a body in a room, not a technique laid on one.

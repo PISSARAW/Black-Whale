@@ -28,12 +28,14 @@
       code: 'C',
     },
     ...(PUBLIC_FEATURES.perspectives
-      ? [{
-          href: '/perspectives',
-          label: $t.palette.destinations.perspectives,
-          group: $t.palette.groups.primary,
-          code: 'K',
-        }]
+      ? [
+          {
+            href: '/perspectives',
+            label: $t.palette.destinations.perspectives,
+            group: $t.palette.groups.primary,
+            code: 'K',
+          },
+        ]
       : []),
     {
       href: '/abilities',
@@ -42,12 +44,14 @@
       code: 'A',
     },
     ...(PUBLIC_FEATURES.compare
-      ? [{
-          href: '/compare',
-          label: $t.palette.destinations.compare,
-          group: $t.palette.groups.dossier,
-          code: 'P',
-        }]
+      ? [
+          {
+            href: '/compare',
+            label: $t.palette.destinations.compare,
+            group: $t.palette.groups.dossier,
+            code: 'P',
+          },
+        ]
       : []),
     {
       href: '/relationships',

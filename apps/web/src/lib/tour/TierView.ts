@@ -13,7 +13,10 @@ export interface TierRoomView {
   motes: Three.Points | null
   dust: Dust | null
 }
-export interface BuiltTierView { root: Three.Group; rooms: TierRoomView[] }
+export interface BuiltTierView {
+  root: Three.Group
+  rooms: TierRoomView[]
+}
 export interface TierMaterials {
   surface: Three.Material
   edge: Three.Material
@@ -21,7 +24,12 @@ export interface TierMaterials {
   fitting: Three.Material
   dust: Three.PointsMaterial
 }
-interface TierBuild { ship: Ship; world: TourWorld; tierId: string; reveal: boolean }
+interface TierBuild {
+  ship: Ship
+  world: TourWorld
+  tierId: string
+  reveal: boolean
+}
 interface GeometrySlice {
   position: Three.BufferAttribute
   start: number
@@ -32,7 +40,10 @@ interface GeometrySlice {
 
 /** Builds and disposes the shared-buffer visual representation of a deck. */
 export class TierView {
-  constructor(private readonly THREE: typeof Three, private readonly materials: TierMaterials) {}
+  constructor(
+    private readonly THREE: typeof Three,
+    private readonly materials: TierMaterials,
+  ) {}
 
   build({ ship, world, tierId, reveal }: TierBuild): BuiltTierView {
     const mesh = buildTierMesh(walkedPlan(ship, world, tierId), { reveal })
@@ -47,12 +58,36 @@ export class TierView {
     const rooms: TierRoomView[] = []
     for (const group of mesh.groups) {
       const centre = new this.THREE.Vector3(group.centre[0], group.centre[1], group.centre[2])
-      const geometry = this.geometry({ position, start: group.start, count: group.count, centre, radius: group.radius })
+      const geometry = this.geometry({
+        position,
+        start: group.start,
+        count: group.count,
+        centre,
+        radius: group.radius,
+      })
       geometry.setAttribute('normal', normal)
       geometry.setAttribute('color', color)
-      const edgeGeometry = this.geometry({ position: edgePosition, start: group.edgeStart, count: group.edgeCount, centre, radius: group.radius })
-      const seamGeometry = this.geometry({ position: seamPosition, start: group.seamStart, count: group.seamCount, centre, radius: group.radius })
-      const fittingGeometry = this.geometry({ position: fittingPosition, start: group.fittingStart, count: group.fittingCount, centre, radius: group.radius })
+      const edgeGeometry = this.geometry({
+        position: edgePosition,
+        start: group.edgeStart,
+        count: group.edgeCount,
+        centre,
+        radius: group.radius,
+      })
+      const seamGeometry = this.geometry({
+        position: seamPosition,
+        start: group.seamStart,
+        count: group.seamCount,
+        centre,
+        radius: group.radius,
+      })
+      const fittingGeometry = this.geometry({
+        position: fittingPosition,
+        start: group.fittingStart,
+        count: group.fittingCount,
+        centre,
+        radius: group.radius,
+      })
       fittingGeometry.setAttribute('color', fittingColor)
       const space = ship.spaces.get(group.spaceId)
       const deck = ship.plans.get(tierId)
@@ -62,7 +97,8 @@ export class TierView {
         const moteGeometry = new this.THREE.BufferGeometry()
         moteGeometry.setAttribute('position', new this.THREE.BufferAttribute(dust.positions, 3))
         moteGeometry.boundingSphere = new this.THREE.Sphere(
-          new this.THREE.Vector3(dust.centre[0], dust.centre[1], dust.centre[2]), dust.radius,
+          new this.THREE.Vector3(dust.centre[0], dust.centre[1], dust.centre[2]),
+          dust.radius,
         )
         motes = new this.THREE.Points(moteGeometry, this.materials.dust)
         moteGeometry.attributes.position.needsUpdate = true
@@ -85,14 +121,18 @@ export class TierView {
 
   dispose(built: BuiltTierView): void {
     for (const room of built.rooms) {
-      room.mesh.geometry.dispose(); room.edges.geometry.dispose(); room.seams.geometry.dispose()
-      room.fittings.geometry.dispose(); room.motes?.geometry.dispose()
+      room.mesh.geometry.dispose()
+      room.edges.geometry.dispose()
+      room.seams.geometry.dispose()
+      room.fittings.geometry.dispose()
+      room.motes?.geometry.dispose()
     }
   }
 
   private geometry({ position, start, count, centre, radius }: GeometrySlice) {
     const geometry = new this.THREE.BufferGeometry()
-    geometry.setAttribute('position', position); geometry.setDrawRange(start, count)
+    geometry.setAttribute('position', position)
+    geometry.setDrawRange(start, count)
     geometry.boundingSphere = new this.THREE.Sphere(centre.clone(), radius)
     return geometry
   }

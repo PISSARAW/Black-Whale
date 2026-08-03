@@ -22,11 +22,7 @@ export function environmentModifiers(environment: ContractEnvironment): Environm
   return {
     vision: environment.lighting === 'normal' ? 1 : environment.lighting === 'low' ? 0.55 : 0.15,
     hearing:
-      environment.acoustics === 'clear'
-        ? 1
-        : environment.acoustics === 'reverberant'
-          ? 1.45
-          : 0.55,
+      environment.acoustics === 'clear' ? 1 : environment.acoustics === 'reverberant' ? 1.45 : 0.55,
     gyoRequired: environment.lighting === 'blackout',
   }
 }

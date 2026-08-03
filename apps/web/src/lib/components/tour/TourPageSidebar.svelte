@@ -18,16 +18,8 @@
     provenance: ComponentProps<typeof TourProvenancePanel>
   }
 
-  let {
-    immersive,
-    panelOpen,
-    navigation,
-    hatsu,
-    targets,
-    controls,
-    calm,
-    provenance,
-  }: Props = $props()
+  let { immersive, panelOpen, navigation, hatsu, targets, controls, calm, provenance }: Props =
+    $props()
 </script>
 
 <aside

@@ -10,18 +10,24 @@
   interface Props {
     immersive: boolean
     navigation: TourNavigationState
-    scene: Omit<SceneProps,
-      | 'tierId' | 'currentSpace' | 'availableLink' | 'jumpTo' | 'jumpAt'
-      | 'engaged' | 'touch' | 'position' | 'heading' | 'aimedAt' | 'aimedSolidAt'>
+    scene: Omit<
+      SceneProps,
+      | 'tierId'
+      | 'currentSpace'
+      | 'availableLink'
+      | 'jumpTo'
+      | 'jumpAt'
+      | 'engaged'
+      | 'touch'
+      | 'position'
+      | 'heading'
+      | 'aimedAt'
+      | 'aimedSolidAt'
+    >
     overlay: OverlayProps
   }
 
-  let {
-    immersive,
-    navigation,
-    scene,
-    overlay,
-  }: Props = $props()
+  let { immersive, navigation, scene, overlay }: Props = $props()
 </script>
 
 <section

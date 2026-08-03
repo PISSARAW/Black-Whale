@@ -22,10 +22,7 @@ function bear(seen: Apparition, { THREE, glow, root }: BasicApparitionContext) {
   grin.scale.set(0.42, 0.7, 1)
   grin.position.set(seen.size * 0.48, seen.size * 0.22, seen.size * 0.79)
   root.add(grin)
-  const eye = new THREE.Mesh(
-    new THREE.SphereGeometry(seen.size * 0.1, 8, 6),
-    glow(0x15121a, 1),
-  )
+  const eye = new THREE.Mesh(new THREE.SphereGeometry(seen.size * 0.1, 8, 6), glow(0x15121a, 1))
   eye.position.set(seen.size * 0.48, seen.size * 0.54, seen.size * 0.78)
   root.add(eye)
   for (let tooth = 0; tooth < 2; tooth++) {
@@ -33,11 +30,7 @@ function bear(seen: Apparition, { THREE, glow, root }: BasicApparitionContext) {
       new THREE.BoxGeometry(seen.size * 0.1, seen.size * 0.2, seen.size * 0.05),
       glow(0xfff7e8, 1),
     )
-    incisor.position.set(
-      seen.size * (0.43 + tooth * 0.11),
-      seen.size * 0.06,
-      seen.size * 0.84,
-    )
+    incisor.position.set(seen.size * (0.43 + tooth * 0.11), seen.size * 0.06, seen.size * 0.84)
     root.add(incisor)
   }
   const tail = new THREE.Mesh(
@@ -47,7 +40,6 @@ function bear(seen: Apparition, { THREE, glow, root }: BasicApparitionContext) {
   tail.position.set(-seen.size * 0.85, -seen.size * 0.35, -seen.size * 0.35)
   tail.rotation.set(Math.PI / 2, 0.5, 0)
   root.add(tail)
-
 }
 
 function jelly(seen: Apparition, { THREE, glow, root }: BasicApparitionContext) {
@@ -93,7 +85,6 @@ function jelly(seen: Apparition, { THREE, glow, root }: BasicApparitionContext) 
     fringe.add(strand)
   }
   root.add(fringe)
-
 }
 
 function wolf(seen: Apparition, { THREE, glow, root }: BasicApparitionContext) {
@@ -113,35 +104,20 @@ function wolf(seen: Apparition, { THREE, glow, root }: BasicApparitionContext) {
     dorsal.position.set(-segmentIndex * seen.size * 0.62, seen.size * 0.42, 0)
     root.add(dorsal)
   }
-  const snout = new THREE.Mesh(
-    new THREE.ConeGeometry(seen.size * 0.34, seen.size * 0.95, 6),
-    fur,
-  )
+  const snout = new THREE.Mesh(new THREE.ConeGeometry(seen.size * 0.34, seen.size * 0.95, 6), fur)
   snout.rotation.z = -Math.PI / 2
   snout.position.x = seen.size * 0.88
   root.add(snout)
   for (const side of [-1, 1]) {
-    const ear = new THREE.Mesh(
-      new THREE.ConeGeometry(seen.size * 0.13, seen.size * 0.62, 4),
-      fur,
-    )
+    const ear = new THREE.Mesh(new THREE.ConeGeometry(seen.size * 0.13, seen.size * 0.62, 4), fur)
     ear.position.set(seen.size * 0.38, seen.size * 0.48, side * seen.size * 0.22)
     root.add(ear)
     for (let pair = 0; pair < 4; pair++) {
       const leg = new THREE.Mesh(
-        new THREE.CylinderGeometry(
-          seen.size * 0.08,
-          seen.size * 0.05,
-          seen.size * 0.8,
-          5,
-        ),
+        new THREE.CylinderGeometry(seen.size * 0.08, seen.size * 0.05, seen.size * 0.8, 5),
         fur,
       )
-      leg.position.set(
-        -pair * seen.size * 1.18,
-        -seen.size * 0.62,
-        side * seen.size * 0.26,
-      )
+      leg.position.set(-pair * seen.size * 1.18, -seen.size * 0.62, side * seen.size * 0.26)
       root.add(leg)
     }
   }
@@ -150,14 +126,9 @@ function wolf(seen: Apparition, { THREE, glow, root }: BasicApparitionContext) {
       new THREE.ConeGeometry(seen.size * 0.04, seen.size * 0.18, 3),
       glow(0xfff7e8, 1),
     )
-    fang.position.set(
-      seen.size * (0.68 + tooth * 0.06),
-      -seen.size * 0.13,
-      seen.size * 0.31,
-    )
+    fang.position.set(seen.size * (0.68 + tooth * 0.06), -seen.size * 0.13, seen.size * 0.31)
     root.add(fang)
   }
-
 }
 
 function blob(seen: Apparition, { THREE, glow, root }: BasicApparitionContext) {
@@ -175,10 +146,7 @@ function blob(seen: Apparition, { THREE, glow, root }: BasicApparitionContext) {
     )
     ear.position.set(side * seen.size * 0.64, seen.size * 1.47, 0)
     root.add(ear)
-    const eye = new THREE.Mesh(
-      new THREE.SphereGeometry(seen.size * 0.075, 7, 5),
-      glow(0x171318, 1),
-    )
+    const eye = new THREE.Mesh(new THREE.SphereGeometry(seen.size * 0.075, 7, 5), glow(0x171318, 1))
     eye.position.set(side * seen.size * 0.32, seen.size * 0.64, seen.size * 0.54)
     root.add(eye)
   }
@@ -209,7 +177,6 @@ function blob(seen: Apparition, { THREE, glow, root }: BasicApparitionContext) {
   tail.position.set(-seen.size * 0.9, seen.size * 0.05, -seen.size * 0.45)
   tail.rotation.x = Math.PI / 2
   root.add(tail)
-
 }
 
 const SHAPES: SpriteBuilder[] = [bear, jelly, wolf, blob]

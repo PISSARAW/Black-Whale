@@ -79,11 +79,8 @@ export function resolveInvestigationHatsu(
 
 function findingFor(rule: InvestigationHatsuRule, affordable: boolean, msg: any) {
   if (!affordable) return msg.requiresLifeHours(rule.lifeHours)
-  if (rule.outcome === 'forbidden')
-    return msg.ethicalOrProceduralConditions
-  if (rule.outcome === 'limited')
-    return msg.confirmsLimits
-  if (rule.outcome === 'corroboration')
-    return msg.reinforcesInfo
+  if (rule.outcome === 'forbidden') return msg.ethicalOrProceduralConditions
+  if (rule.outcome === 'limited') return msg.confirmsLimits
+  if (rule.outcome === 'corroboration') return msg.reinforcesInfo
   return msg.revealsCompatibleElements
 }

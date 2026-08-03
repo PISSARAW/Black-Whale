@@ -59,7 +59,10 @@ export interface Entry {
 
 export function record(log: readonly TelemetryEvent[], at: number, entry: Entry): TelemetryEvent[] {
   if (log.length >= JOURNAL_LIMIT) return [...log]
-  return [...log, { at, actor: entry.actor, kind: entry.kind, cost: entry.cost ?? 0, where: entry.where ?? null }]
+  return [
+    ...log,
+    { at, actor: entry.actor, kind: entry.kind, cost: entry.cost ?? 0, where: entry.where ?? null },
+  ]
 }
 
 export function spentBy(log: readonly TelemetryEvent[], actor: Actor): number {
@@ -77,7 +80,5 @@ export function beliefsIn(log: readonly TelemetryEvent[]): TelemetryEvent[] {
 
 /** Room transitions only, suitable for a bounded spatial debrief. */
 export function movementsIn(log: readonly TelemetryEvent[], actor?: Actor): TelemetryEvent[] {
-  return log.filter(
-    (event) => event.kind === 'enteredRoom' && (!actor || event.actor === actor),
-  )
+  return log.filter((event) => event.kind === 'enteredRoom' && (!actor || event.actor === actor))
 }

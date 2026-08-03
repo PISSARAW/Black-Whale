@@ -35,8 +35,21 @@ export function knownObservations(memory: ActorMemory, subject: string): Observa
   return memory.observations.filter((item) => item.subject === subject)
 }
 
-export function transmit(memory: ActorMemory, observationId: string, receiverId: string, at: number): Observation | null {
+export function transmit(
+  memory: ActorMemory,
+  observationId: string,
+  receiverId: string,
+  at: number,
+): Observation | null {
   const source = memory.observations.find((item) => item.id === observationId)
   if (!source) return null
-  return { ...source, id: `${source.id}>${receiverId}`, at, observerId: receiverId, kind: 'report', certainty: Math.max(0, source.certainty - 12), sourceId: source.id }
+  return {
+    ...source,
+    id: `${source.id}>${receiverId}`,
+    at,
+    observerId: receiverId,
+    kind: 'report',
+    certainty: Math.max(0, source.certainty - 12),
+    sourceId: source.id,
+  }
 }

@@ -33,7 +33,10 @@ export interface Junction {
 }
 
 /** The entraves still set in the room the contact happened in. */
-export function entravesInRoom(placements: readonly Placement[], spaceId: string | null): Placement[] {
+export function entravesInRoom(
+  placements: readonly Placement[],
+  spaceId: string | null,
+): Placement[] {
   if (!spaceId) return []
   return liveOf(placements).filter((placement) => placement.spaceId === spaceId)
 }

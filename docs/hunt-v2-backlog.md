@@ -459,13 +459,13 @@ lieux et absence de capacité inventée.
 
 ## Ordre de livraison recommandé
 
-| Lot | Tickets | Résultat démontrable |
-| --- | --- | --- |
-| V2.1 — Variété | HUNT2-020, 021, 022 | Trois terrains changent réellement la traque. |
-| V2.2 — Explication | HUNT2-030, 031, 032 | Chaque issue est lisible dans l’espace et le temps. |
-| V2.3 — Mesure | HUNT2-040, 042, 043 | La matrice est mesurée puis équilibrée. |
-| V2.4 — Finition | HUNT2-050–053, 060–062, 070–073 | La boucle est accessible et robuste. |
-| V2.5 — Publication | HUNT2-080–084 | Une release candidate passe toutes les gates. |
+| Lot                | Tickets                         | Résultat démontrable                                |
+| ------------------ | ------------------------------- | --------------------------------------------------- |
+| V2.1 — Variété     | HUNT2-020, 021, 022             | Trois terrains changent réellement la traque.       |
+| V2.2 — Explication | HUNT2-030, 031, 032             | Chaque issue est lisible dans l’espace et le temps. |
+| V2.3 — Mesure      | HUNT2-040, 042, 043             | La matrice est mesurée puis équilibrée.             |
+| V2.4 — Finition    | HUNT2-050–053, 060–062, 070–073 | La boucle est accessible et robuste.                |
+| V2.5 — Publication | HUNT2-080–084                   | Une release candidate passe toutes les gates.       |
 
 Les tickets P2 ne bloquent pas la V2. HUNT2-011, HUNT2-012, HUNT2-022 et les tickets P1 de finition
 peuvent être reportés uniquement si leur absence ne compromet aucun critère P0 mesuré.

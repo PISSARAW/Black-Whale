@@ -166,12 +166,12 @@ Ce qui reste ouvert :
 
 ### 1.4 Dérives README ↔ données
 
-| README                              | Données                                                            |
-| ----------------------------------- | ------------------------------------------------------------------ |
-| « 282 reconstructed spaces »        | **301**                                                            |
-| « thirty-three [interiors] in all » | **34**                                                             |
-| « 37 hand-drawn SVG maps »          | ✅ exact (5 + 32)                                                  |
-| « 223 passengers »                  | ✅ exact                                                           |
+| README                              | Données                                                                               |
+| ----------------------------------- | ------------------------------------------------------------------------------------- |
+| « 282 reconstructed spaces »        | **301**                                                                               |
+| « thirty-three [interiors] in all » | **34**                                                                                |
+| « 37 hand-drawn SVG maps »          | ✅ exact (5 + 32)                                                                     |
+| « 223 passengers »                  | ✅ exact                                                                              |
 | « 83 abilities across 54 users »    | 82 (`oito-hatsu` retiré) ; 54 `ownerId`, tous résolvables (les 2 morts sont corrigés) |
 
 ---

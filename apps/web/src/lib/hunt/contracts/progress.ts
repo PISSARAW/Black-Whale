@@ -38,23 +38,35 @@ export function contractProgress(
   }
 }
 
-function progressOf(
-  objective: ContractObjective,
-  standing: ContractStanding,
-): ObjectiveProgress {
+function progressOf(objective: ContractObjective, standing: ContractStanding): ObjectiveProgress {
   switch (objective.kind) {
     case 'reach': {
       const terrainReached = standing.terrain === objective.terrain
       const roomReached = !objective.spaceId || standing.spaceId === objective.spaceId
-      return { objective, complete: terrainReached && roomReached, current: terrainReached && roomReached ? 1 : 0, target: 1 }
+      return {
+        objective,
+        complete: terrainReached && roomReached,
+        current: terrainReached && roomReached ? 1 : 0,
+        target: 1,
+      }
     }
     case 'survive': {
       const current = Math.min(objective.seconds, standing.clock)
-      return { objective, complete: current >= objective.seconds, current, target: objective.seconds }
+      return {
+        objective,
+        complete: current >= objective.seconds,
+        current,
+        target: objective.seconds,
+      }
     }
     case 'misdirect': {
       const current = countOf(standing.log, 'lostTheTrail')
-      return { objective, complete: current >= objective.falseTrails, current, target: objective.falseTrails }
+      return {
+        objective,
+        complete: current >= objective.falseTrails,
+        current,
+        target: objective.falseTrails,
+      }
     }
     case 'exhaust-hunter': {
       const complete = standing.hunterAura <= 0

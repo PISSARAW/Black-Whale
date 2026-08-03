@@ -1,6 +1,10 @@
 import { describe, expect, it } from 'vitest'
 import { messagesFor } from '$lib/i18n'
-import { STRATEGY_ABILITY_IDS_BY_CHARACTER, hasStrategyHatsuAdapter, strategyHatsuResolution } from './hatsu'
+import {
+  STRATEGY_ABILITY_IDS_BY_CHARACTER,
+  hasStrategyHatsuAdapter,
+  strategyHatsuResolution,
+} from './hatsu'
 
 const resolve = (abilityId: string, overrides = {}) =>
   strategyHatsuResolution({

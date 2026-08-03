@@ -1,6 +1,11 @@
 import { describe, expect, it } from 'vitest'
 import { MISSIONS, selectMission } from './definitions'
-import { initialObjectives, objectiveTruth, objectivesPermitExtraction, setObjective } from './objectives'
+import {
+  initialObjectives,
+  objectiveTruth,
+  objectivesPermitExtraction,
+  setObjective,
+} from './objectives'
 import { seedFromText } from './random'
 import { validateMission } from './validate'
 

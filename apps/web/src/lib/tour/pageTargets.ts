@@ -7,10 +7,17 @@ interface GroupOptions {
   locale: 'fr' | 'en'
 }
 
-export interface SpaceTargetGroup { tier: Tier; spaces: Space[] }
-export interface SolidTargetGroup { tier: Tier; solids: Structure[] }
+export interface SpaceTargetGroup {
+  tier: Tier
+  spaces: Space[]
+}
+export interface SolidTargetGroup {
+  tier: Tier
+  solids: Structure[]
+}
 
-const byName = (options: GroupOptions) =>
+const byName =
+  (options: GroupOptions) =>
   (left: { name: string; nameFr: string }, right: { name: string; nameFr: string }) =>
     options.nameOf(left).localeCompare(options.nameOf(right), options.locale)
 

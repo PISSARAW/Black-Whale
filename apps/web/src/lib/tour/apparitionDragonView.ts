@@ -24,10 +24,7 @@ function dragon(seen: Apparition, { THREE, glow, root }: BasicApparitionContext)
     [1.05, 2.28, -2.5, 0.38],
   ] as const
   for (const [x, y, z, radius] of tailPath) {
-    const segment = new THREE.Mesh(
-      new THREE.SphereGeometry(seen.size * radius, 12, 9),
-      hide,
-    )
+    const segment = new THREE.Mesh(new THREE.SphereGeometry(seen.size * radius, 12, 9), hide)
     segment.scale.set(1, 1.2, 0.92)
     segment.position.set(x * seen.size, y * seen.size, z * seen.size)
     tail.add(segment)
@@ -78,23 +75,14 @@ function dragon(seen: Apparition, { THREE, glow, root }: BasicApparitionContext)
     head.add(fang)
   }
   for (const side of [-1, 1]) {
-    const eye = new THREE.Mesh(
-      new THREE.SphereGeometry(seen.size * 0.1, 8, 6),
-      glow(0xffe9a8, 1),
-    )
+    const eye = new THREE.Mesh(new THREE.SphereGeometry(seen.size * 0.1, 8, 6), glow(0xffe9a8, 1))
     eye.position.set(side * seen.size * 0.24, seen.size * 0.12, seen.size * 0.5)
     head.add(eye)
-    const brow = new THREE.Mesh(
-      new THREE.ConeGeometry(seen.size * 0.11, seen.size * 0.42, 5),
-      hide,
-    )
+    const brow = new THREE.Mesh(new THREE.ConeGeometry(seen.size * 0.11, seen.size * 0.42, 5), hide)
     brow.position.set(side * seen.size * 0.28, seen.size * 0.28, seen.size * 0.38)
     brow.rotation.set(Math.PI / 2, 0, side * -0.34)
     head.add(brow)
-    const horn = new THREE.Mesh(
-      new THREE.ConeGeometry(seen.size * 0.12, seen.size * 0.92, 5),
-      hide,
-    )
+    const horn = new THREE.Mesh(new THREE.ConeGeometry(seen.size * 0.12, seen.size * 0.92, 5), hide)
     horn.position.set(side * seen.size * 0.26, seen.size * 0.4, -seen.size * 0.15)
     horn.rotation.set(-0.7, 0, side * 0.35)
     head.add(horn)
@@ -142,18 +130,13 @@ function dragon(seen: Apparition, { THREE, glow, root }: BasicApparitionContext)
         glow(0xf4ead8, 1),
       )
       talon.rotation.x = Math.PI / 2
-      talon.position.set(
-        (claw - 1.5) * seen.size * 0.1,
-        -seen.size * 0.58,
-        seen.size * 0.22,
-      )
+      talon.position.set((claw - 1.5) * seen.size * 0.1, -seen.size * 0.58, seen.size * 0.22)
       arm.add(talon)
     }
     arm.position.set(side * seen.size * 0.7, seen.size * 0.58, seen.size * 0.15)
     root.add(arm)
   }
   return head
-
 }
 
 export function buildDragonApparition(

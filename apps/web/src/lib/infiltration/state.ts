@@ -1,14 +1,18 @@
 import type { Vec2 } from '../tour/types'
 import type { NenState } from '../hunt/nen/states'
-import { castHatsu, configureHatsu, moveLittleEye, recallLittleEye, selectHatsu, type ForgerySurface, type InfiltrationHatsuId } from './hatsu'
+import {
+  castHatsu,
+  configureHatsu,
+  moveLittleEye,
+  recallLittleEye,
+  selectHatsu,
+  type ForgerySurface,
+  type InfiltrationHatsuId,
+} from './hatsu'
 import type { CoverRole } from './social/cover'
 import type { LittleEyeScout } from './hatsuSpatial'
 import { selectMission } from './missions/definitions'
-import {
-  initialObjectives,
-  objectivesPermitExtraction,
-  setObjective,
-} from './missions/objectives'
+import { initialObjectives, objectivesPermitExtraction, setObjective } from './missions/objectives'
 import type { MissionId, MissionObjective, MissionSelection } from './missions/types'
 import { createTrace } from './traces'
 import { emptyMemory, type ActorMemory } from './actors/memory'
@@ -108,7 +112,13 @@ export interface InfiltrationState {
     scout: LittleEyeScout | null
     forgerySurface: ForgerySurface
     disguiseIdentity: CoverRole
-    effect: { kind: string; spaceId?: string; witnessId?: WitnessId; expiresAt?: number; payload?: string } | null
+    effect: {
+      kind: string
+      spaceId?: string
+      witnessId?: WitnessId
+      expiresAt?: number
+      payload?: string
+    } | null
     targetWitnessId: WitnessId | null
     targetSpaceId: string | null
   }
@@ -196,8 +206,11 @@ export function initialInfiltrationState(setup: MissionSetup): InfiltrationState
     objectives: initialObjectives(selection.definition.objectives),
     memories: { steward: emptyMemory(), guard: emptyMemory(), nenGuard: emptyMemory() },
     cover: {
-      role: 'maintenance', superior: 'deck-operations', assignment: 'ventilation-inspection',
-      allowedSpaces: [setup.playerAt.spaceId], evidence: ['work-order'],
+      role: 'maintenance',
+      superior: 'deck-operations',
+      assignment: 'ventilation-inspection',
+      allowedSpaces: [setup.playerAt.spaceId],
+      evidence: ['work-order'],
       obligations: ['inspect-service-panel'],
     },
     security: securityPolicy('normal', setup.extractionSpaceId, []),
@@ -228,7 +241,15 @@ export function infiltrationReducer(
   if (reduced === state) return state
   return {
     ...reduced,
-    journal: [...reduced.journal, { id: `action:${reduced.journal.length}:${state.clock.toFixed(3)}`, at: state.clock, type: action.type, actor: 'player' }],
+    journal: [
+      ...reduced.journal,
+      {
+        id: `action:${reduced.journal.length}:${state.clock.toFixed(3)}`,
+        at: state.clock,
+        type: action.type,
+        actor: 'player',
+      },
+    ],
   }
 }
 
@@ -274,7 +295,14 @@ function reduceAction(state: InfiltrationState, action: InfiltrationAction): Inf
     case 'CONFIGURE_HATSU':
       return configureHatsu(state, action)
     case 'TARGET_HATSU':
-      return { ...state, hatsu: { ...state.hatsu, targetWitnessId: action.witnessId ?? state.hatsu.targetWitnessId, targetSpaceId: action.spaceId ?? state.hatsu.targetSpaceId } }
+      return {
+        ...state,
+        hatsu: {
+          ...state.hatsu,
+          targetWitnessId: action.witnessId ?? state.hatsu.targetWitnessId,
+          targetSpaceId: action.spaceId ?? state.hatsu.targetSpaceId,
+        },
+      }
     case 'SCOUT_MOVE': {
       const moved = moveLittleEye(state, action.position, action.spaceId, action.visibleToGuard)
       return moved.authorConfirmed && !state.authorConfirmed
@@ -310,7 +338,8 @@ function answerChallenge(
   const contradiction = !!prior && prior.answer !== answer
   const documentSupport =
     state.hatsu.forgedOrder &&
-    (state.hatsu.forgerySurface === 'work-order' || state.hatsu.forgerySurface === 'register-copy') &&
+    (state.hatsu.forgerySurface === 'work-order' ||
+      state.hatsu.forgerySurface === 'register-copy') &&
     answer === 'workOrder'
   const verification =
     documentSupport && state.hatsu.forgerySurface === 'work-order'
@@ -320,9 +349,7 @@ function answerChallenge(
     if (witness.id !== state.challenge?.witnessId) return witness
     const correct =
       !contradiction &&
-      (documentSupport
-        ? true
-        : answer === (witness.usesEn ? 'bluff' : 'workOrder'))
+      (documentSupport ? true : answer === (witness.usesEn ? 'bluff' : 'workOrder'))
     return {
       ...witness,
       challenged: true,
@@ -355,7 +382,18 @@ function copyDocument(state: InfiltrationState): InfiltrationState {
     ...state,
     documentCopied: true,
     objectives: completeObjective(state.objectives, ['copy', 'plant', 'follow'], 'believed'),
-    traces: [...state.traces, createTrace({ kind: 'document', spaceId: state.objectiveSpaceId, position: state.player.position, at: state.clock, strength: 35, duration: 180, allegedAuthor: 'maintenance' })],
+    traces: [
+      ...state.traces,
+      createTrace({
+        kind: 'document',
+        spaceId: state.objectiveSpaceId,
+        position: state.player.position,
+        at: state.clock,
+        strength: 35,
+        duration: 180,
+        allegedAuthor: 'maintenance',
+      }),
+    ],
   }
 }
 
@@ -382,12 +420,25 @@ function divert(state: InfiltrationState): InfiltrationState {
   return {
     ...state,
     diversion: { spaceId: state.player.spaceId, left: 18 },
-    traces: [...state.traces, createTrace({ kind: 'diversion', spaceId: state.player.spaceId, position: state.player.position, at: state.clock, strength: 55, duration: 45 })],
+    traces: [
+      ...state.traces,
+      createTrace({
+        kind: 'diversion',
+        spaceId: state.player.spaceId,
+        position: state.player.position,
+        at: state.clock,
+        strength: 55,
+        duration: 45,
+      }),
+    ],
   }
 }
 
 function extract(state: InfiltrationState): InfiltrationState {
-  if (state.player.spaceId !== state.extractionSpaceId || !objectivesPermitExtraction(state.objectives)) {
+  if (
+    state.player.spaceId !== state.extractionSpaceId ||
+    !objectivesPermitExtraction(state.objectives)
+  ) {
     return state
   }
   return {

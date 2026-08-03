@@ -130,11 +130,11 @@
   let commandAnimationSeq = $state(0)
   let hatsuAnimationSeq = $state(0)
   let lesson = $state(0)
-  
+
   const initialDoctrine = data.doctrine
   const initialDifficulty = data.difficulty
   const initialChallengeId = data.challengeId
-  
+
   let opponentDoctrine = $state<OpponentDoctrine>(initialDoctrine)
   let difficulty = $state<ArenaDifficulty>(initialDifficulty)
   let recorder = new ArenaRecorder(combatSetup(), initialDoctrine, initialDifficulty)
@@ -615,15 +615,15 @@
 >
   <TourModeFullscreen />
   <TourMinimapPanel
-    ship={ship}
-    tierId={tierId}
-    plan={plan}
-    position={position}
-    heading={heading}
+    {ship}
+    {tierId}
+    {plan}
+    {position}
+    {heading}
     currentSpaceId={currentSpace?.id ?? null}
-    decks={decks}
-    crossings={crossings}
-    nameOf={nameOf}
+    {decks}
+    {crossings}
+    {nameOf}
     onSelectDeck={selectTier}
     onSelectPlan={(space) => {
       position = centroid(space)

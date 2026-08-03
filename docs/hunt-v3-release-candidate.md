@@ -15,15 +15,15 @@
 
 ## Gates exécutés
 
-| Gate | Résultat | Preuve |
-| --- | --- | --- |
-| Logique Hunt | Réussi | 40 fichiers, 291 tests Vitest réussis |
-| Chromium desktop | Réussi | 4 parcours Playwright |
-| WebKit mobile (iPhone 13) | Réussi | 4 parcours Playwright |
-| Contrat partagé | Réussi | édition, encodage, navigation et sélection vérifiés dans les deux navigateurs |
-| Accessibilité des contrôles | Réussi dans le parcours | régions nommées, états pressés et zone live vérifiés |
-| Typecheck global web | Échoué hors périmètre Hunt | 297 erreurs et 12 avertissements dans 65 fichiers, principalement packages workspace non résolus et travaux concurrents |
-| Échantillon d'équilibrage | À produire | les gates et agrégations sont testés, mais cinq runs réels par cellule ne sont pas encore collectés |
+| Gate                        | Résultat                   | Preuve                                                                                                                  |
+| --------------------------- | -------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| Logique Hunt                | Réussi                     | 40 fichiers, 291 tests Vitest réussis                                                                                   |
+| Chromium desktop            | Réussi                     | 4 parcours Playwright                                                                                                   |
+| WebKit mobile (iPhone 13)   | Réussi                     | 4 parcours Playwright                                                                                                   |
+| Contrat partagé             | Réussi                     | édition, encodage, navigation et sélection vérifiés dans les deux navigateurs                                           |
+| Accessibilité des contrôles | Réussi dans le parcours    | régions nommées, états pressés et zone live vérifiés                                                                    |
+| Typecheck global web        | Échoué hors périmètre Hunt | 297 erreurs et 12 avertissements dans 65 fichiers, principalement packages workspace non résolus et travaux concurrents |
+| Échantillon d'équilibrage   | À produire                 | les gates et agrégations sont testés, mais cinq runs réels par cellule ne sont pas encore collectés                     |
 
 ## Critères d'équilibrage V3
 

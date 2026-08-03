@@ -64,4 +64,5 @@ export const statusReadout = (options: {
   engagedText: string
   touchText: string
   enterText: string
-}) => options.engaged ? options.engagedText : options.touch ? options.touchText : options.enterText
+}) =>
+  options.engaged ? options.engagedText : options.touch ? options.touchText : options.enterText

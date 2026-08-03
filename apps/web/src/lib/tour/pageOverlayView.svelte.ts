@@ -1,10 +1,5 @@
 import type { HatsuKey } from '$lib/tour/hatsu'
-import {
-  aimReadout,
-  controlReadouts,
-  locationReadout,
-  statusReadout,
-} from '$lib/tour/pageReadouts'
+import { aimReadout, controlReadouts, locationReadout, statusReadout } from '$lib/tour/pageReadouts'
 import type { Space, Structure } from '$lib/tour/types'
 
 interface OverlayContext {

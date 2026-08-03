@@ -22,7 +22,10 @@ export interface ScenarioFactionCandidate {
 
 export const SCENARIO_EVENTS: readonly ScenarioEvent[] = ACTIVE_SCENARIO.events
 
-export function scenarioEventForTurn(turn: number, scenario = ACTIVE_SCENARIO): ScenarioEvent | null {
+export function scenarioEventForTurn(
+  turn: number,
+  scenario = ACTIVE_SCENARIO,
+): ScenarioEvent | null {
   return scenario.events.find((event) => event.turn === turn) ?? null
 }
 
@@ -31,7 +34,10 @@ export function scenarioMoveChance(turn: number, scenario = ACTIVE_SCENARIO): nu
   return Math.min(1, 0.72 * (event?.aiMoveMultiplier ?? 1))
 }
 
-export function scenarioFactionConfig(factionId: string, scenario = ACTIVE_SCENARIO): StrategyScenarioFaction | null {
+export function scenarioFactionConfig(
+  factionId: string,
+  scenario = ACTIVE_SCENARIO,
+): StrategyScenarioFaction | null {
   return scenario.playableFactions.find((entry) => entry.factionId === factionId) ?? null
 }
 
@@ -39,7 +45,10 @@ export function isPlayableScenarioFaction(factionId: string, scenario = ACTIVE_S
   return Boolean(scenarioFactionConfig(factionId, scenario))
 }
 
-export function scenarioDoctrineForFaction(factionId: string, scenario = ACTIVE_SCENARIO): StrategyDoctrine {
+export function scenarioDoctrineForFaction(
+  factionId: string,
+  scenario = ACTIVE_SCENARIO,
+): StrategyDoctrine {
   const config = scenarioFactionConfig(factionId, scenario)
   if (!config) throw new Error(`Faction missing from scenario: ${factionId}`)
   return config.doctrine
@@ -128,5 +137,8 @@ export function selectScenarioLocationIds(
       if (rightIndex >= 0) return 1
       return left.localeCompare(right)
     })
-  return [...occupied, ...remaining].slice(0, Math.max(scenario.locationIds.length, occupied.length))
+  return [...occupied, ...remaining].slice(
+    0,
+    Math.max(scenario.locationIds.length, occupied.length),
+  )
 }

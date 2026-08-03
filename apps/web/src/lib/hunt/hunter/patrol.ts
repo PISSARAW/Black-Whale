@@ -29,11 +29,7 @@ import { EN_COST } from '../nen/en'
 import { tickHold } from '../nen/entrave'
 import { INSPECT_COST, INSPECT_INTERVAL } from './inspect'
 import { pick, seedRng, type Rng } from '../random'
-import {
-  DEFAULT_HUNTER_PROFILE,
-  hunterProfile,
-  type HunterProfileId,
-} from './profiles'
+import { DEFAULT_HUNTER_PROFILE, hunterProfile, type HunterProfileId } from './profiles'
 import {
   beliefIsStale,
   clearRoom,

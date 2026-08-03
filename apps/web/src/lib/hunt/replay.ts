@@ -5,7 +5,10 @@ import type { HuntAction } from './state'
 
 export const HUNT_REPLAY_VERSION = 3 as const
 
-export interface RecordedHuntAction { at: number; action: HuntAction }
+export interface RecordedHuntAction {
+  at: number
+  action: HuntAction
+}
 export interface HuntReplayV3 {
   schemaVersion: typeof HUNT_REPLAY_VERSION
   contractId: string

@@ -156,9 +156,7 @@
         <strong>{character.shipLocation?.role || $t.characterDetail.noConfirmedRole}</strong>
       </div>
       <div class="hero-links">
-        <a href={$link('/ship')}
-          >{$t.characterDetail.locateOnShip} <span>⌖</span></a
-        >
+        <a href={$link('/ship')}>{$t.characterDetail.locateOnShip} <span>⌖</span></a>
       </div>
     </div>
 

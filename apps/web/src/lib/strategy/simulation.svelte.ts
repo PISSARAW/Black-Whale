@@ -243,7 +243,12 @@ export function createSimulationStore() {
     const confirmedHostiles = Object.values(intel).filter(
       (sighting) => sighting.certainty === 'CONFIRMED' && !friendlyIds.has(sighting.entityId),
     ).length
-    return evaluateScenarioObjective(selectedFactionId, friendlyLocations, confirmedHostiles, activeScenario)
+    return evaluateScenarioObjective(
+      selectedFactionId,
+      friendlyLocations,
+      confirmedHostiles,
+      activeScenario,
+    )
   }
 
   function endTurn(
@@ -314,7 +319,9 @@ export function createSimulationStore() {
       const entity = resolveControlledEntity(currentState, order.characterId)
       if (!entity) throw new StrategyInputError(strategyMsg(get(locale)).errors.unitDoesNotExist)
       if (unitConditions[entity.id] === 'ELIMINATED') {
-        throw new StrategyInputError(strategyMsg(get(locale)).errors.eliminatedUnitCannotReceiveOrders)
+        throw new StrategyInputError(
+          strategyMsg(get(locale)).errors.eliminatedUnitCannotReceiveOrders,
+        )
       }
 
       orderedCharacters.add(order.characterId)
@@ -342,24 +349,29 @@ export function createSimulationStore() {
             .find((faction) => faction.id === 'phantom-troupe')
             ?.members.map((member) => member.character.id) ?? [],
         )
-        const adapted = strategyHatsuResolution({
-          abilityId: order.abilityId,
-          sourceLocationId: currentState.presences[entity.id]?.locationId,
-          targetLocationId: destination.id,
-          confirmedHostilesAtTarget,
-          eliminatedAllies: playerFaction.members.filter((member) => {
-            const ally = resolveControlledEntity(currentState!, member.character.id)
-            return ally && unitConditions[ally.id] === 'ELIMINATED'
-          }).length,
-          targetHasSpider: Object.values(intel).some(
-            (sighting) =>
-              sighting.locationId === destination.id &&
-              sighting.certainty === 'CONFIRMED' &&
-              spiderIds.has(sighting.entityId),
-          ),
-        }, get(locale))
+        const adapted = strategyHatsuResolution(
+          {
+            abilityId: order.abilityId,
+            sourceLocationId: currentState.presences[entity.id]?.locationId,
+            targetLocationId: destination.id,
+            confirmedHostilesAtTarget,
+            eliminatedAllies: playerFaction.members.filter((member) => {
+              const ally = resolveControlledEntity(currentState!, member.character.id)
+              return ally && unitConditions[ally.id] === 'ELIMINATED'
+            }).length,
+            targetHasSpider: Object.values(intel).some(
+              (sighting) =>
+                sighting.locationId === destination.id &&
+                sighting.certainty === 'CONFIRMED' &&
+                spiderIds.has(sighting.entityId),
+            ),
+          },
+          get(locale),
+        )
         if (adapted && !adapted.accepted)
-          throw new StrategyInputError(adapted.error ?? strategyMsg(get(locale)).errors.hatsuCannotBeActivated)
+          throw new StrategyInputError(
+            adapted.error ?? strategyMsg(get(locale)).errors.hatsuCannotBeActivated,
+          )
         const effects = adapted?.effects ?? [strategicRoleForHatsu(profile.kind)]
         if (effects.includes('RECON')) scoutedLocations.push(destination.id)
         if (effects.includes('DENIAL')) deniedLocations.push(destination.id)
@@ -514,7 +526,9 @@ export function createSimulationStore() {
       if (killer) {
         conflict.conditions[camilla.id] = 'READY'
         conflict.conditions[killer] = 'ELIMINATED'
-        conflict.reports.push('Cat’s Name se déclenche : Camilla revient à la vie et son meurtrier est consumé.')
+        conflict.reports.push(
+          'Cat’s Name se déclenche : Camilla revient à la vie et son meurtrier est consumé.',
+        )
         hatsuCues = [
           ...hatsuCues,
           {
@@ -599,15 +613,33 @@ export function createSimulationStore() {
   }
 
   return {
-    get currentState() { return currentState },
-    get currentTurn() { return currentTurn },
-    get turnReports() { return turnReports },
-    get intel() { return intel },
-    get objective() { return currentObjective() },
-    get victoryPoints() { return victoryPoints },
-    get gameWon() { return gameWon },
-    get gameLost() { return gameLost },
-    get gameOver() { return gameWon || gameLost },
+    get currentState() {
+      return currentState
+    },
+    get currentTurn() {
+      return currentTurn
+    },
+    get turnReports() {
+      return turnReports
+    },
+    get intel() {
+      return intel
+    },
+    get objective() {
+      return currentObjective()
+    },
+    get victoryPoints() {
+      return victoryPoints
+    },
+    get gameWon() {
+      return gameWon
+    },
+    get gameLost() {
+      return gameLost
+    },
+    get gameOver() {
+      return gameWon || gameLost
+    },
     get activeFactions() {
       return factions.filter((faction) => activeFactionIds.includes(faction.id))
     },
@@ -617,8 +649,12 @@ export function createSimulationStore() {
     get scenarioEvent() {
       return scenarioEventForTurn(currentTurn, activeScenario)
     },
-    get relationships() { return relationships },
-    get unitConditions() { return unitConditions },
+    get relationships() {
+      return relationships
+    },
+    get unitConditions() {
+      return unitConditions
+    },
     get turnHistory() {
       return turnHistory
     },

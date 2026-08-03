@@ -77,9 +77,7 @@ export function resolveDiplomacy(
       ? { ...current, pact: true, trust: Math.min(100, current.trust + 10) }
       : { ...current, trust: Math.max(-100, current.trust - 5) },
     accepted,
-    report: accepted
-      ? 'The non-aggression pact is accepted.'
-      : 'The pact proposal is refused.',
+    report: accepted ? 'The non-aggression pact is accepted.' : 'The pact proposal is refused.',
   }
 }
 

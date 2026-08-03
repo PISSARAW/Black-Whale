@@ -621,7 +621,8 @@
   }
 
   function evidenceTone(evidence: Evidence) {
-    if (evidence.truthStatus === 'CONFIRMED') return 'border-emerald-400/50 bg-emerald-950/40 text-emerald-300'
+    if (evidence.truthStatus === 'CONFIRMED')
+      return 'border-emerald-400/50 bg-emerald-950/40 text-emerald-300'
     if (evidence.truthStatus === 'CONTESTED') return 'border-red-400/50 bg-red-950/40 text-red-300'
     return 'border-sky-400/50 bg-sky-950/40 text-sky-300'
   }
@@ -637,15 +638,15 @@
 <div class="relative h-screen w-full overflow-hidden bg-[#050809] font-sans text-[#f4ead4]">
   <TourModeFullscreen />
   <TourMinimapPanel
-    ship={ship}
-    tierId={tierId}
-    plan={plan}
-    position={position}
-    heading={heading}
+    {ship}
+    {tierId}
+    {plan}
+    {position}
+    {heading}
     currentSpaceId={currentSpace?.id ?? null}
-    decks={decks}
-    crossings={crossings}
-    nameOf={nameOf}
+    {decks}
+    {crossings}
+    {nameOf}
     onSelectDeck={selectTier}
     onSelectPlan={(space) => {
       position = centroid(space)
@@ -685,9 +686,15 @@
   <header
     class="pointer-events-none absolute inset-x-0 top-0 z-30 flex flex-col items-start justify-between gap-3 p-3 sm:flex-row sm:gap-4 sm:p-6"
   >
-    <div class="relative max-w-xl overflow-hidden rounded-xl border border-sky-300/30 bg-[#0a0f1c]/80 p-4 backdrop-blur-md shadow-[0_0_20px_rgba(56,189,248,0.2)]">
-      <div class="absolute -left-1 top-1/2 h-8 w-2 -translate-y-1/2 rounded-r bg-sky-400 shadow-[0_0_10px_#38bdf8]"></div>
-      <p class="text-[10px] font-bold uppercase tracking-[0.28em] text-sky-300 drop-shadow-[0_0_5px_rgba(56,189,248,0.5)]">
+    <div
+      class="relative max-w-xl overflow-hidden rounded-xl border border-sky-300/30 bg-[#0a0f1c]/80 p-4 backdrop-blur-md shadow-[0_0_20px_rgba(56,189,248,0.2)]"
+    >
+      <div
+        class="absolute -left-1 top-1/2 h-8 w-2 -translate-y-1/2 rounded-r bg-sky-400 shadow-[0_0_10px_#38bdf8]"
+      ></div>
+      <p
+        class="text-[10px] font-bold uppercase tracking-[0.28em] text-sky-300 drop-shadow-[0_0_5px_rgba(56,189,248,0.5)]"
+      >
         {ui.dossier}
         {investigation.id} · {ui.chapter}
         {investigation.chapter}
@@ -705,10 +712,14 @@
         class="group relative min-w-0 flex-1 overflow-hidden rounded-lg border border-sky-400/20 bg-[#0a0f1c]/90 px-4 py-2 text-left backdrop-blur-md transition-all hover:border-sky-400/60 hover:shadow-[0_0_15px_rgba(56,189,248,0.3)] sm:flex-none"
         onclick={() => hatsuPanelOpen.set(true)}
       >
-        <span class="absolute inset-0 bg-gradient-to-br from-sky-400/0 via-sky-400/5 to-sky-400/10 opacity-0 transition-opacity group-hover:opacity-100"></span>
+        <span
+          class="absolute inset-0 bg-gradient-to-br from-sky-400/0 via-sky-400/5 to-sky-400/10 opacity-0 transition-opacity group-hover:opacity-100"
+        ></span>
         <span class="relative z-10 flex items-center gap-2">
           <span class="block h-2 w-2 rounded-full bg-fuchsia-400 shadow-[0_0_5px_#e879f9]"></span>
-          <span class="block text-[9px] font-bold uppercase tracking-[0.2em] text-sky-300/70">Hatsu</span>
+          <span class="block text-[9px] font-bold uppercase tracking-[0.2em] text-sky-300/70"
+            >Hatsu</span
+          >
         </span>
         <span
           class="relative z-10 mt-1 block max-w-28 truncate text-xs font-black tracking-wide drop-shadow-md"
@@ -719,22 +730,29 @@
         class="group relative min-w-0 flex-1 overflow-hidden rounded-lg border border-sky-400/40 bg-sky-900/60 px-5 py-3 text-left backdrop-blur-md transition-all hover:border-sky-400 hover:shadow-[0_0_20px_rgba(56,189,248,0.4)] sm:min-w-32 sm:flex-none"
         onclick={() => (solved ? (reportOpen = true) : openNotebook('evidence'))}
       >
-        <span class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-20 mix-blend-overlay"></span>
+        <span
+          class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-20 mix-blend-overlay"
+        ></span>
         <span class="relative z-10 flex items-center justify-between gap-3">
-          <span class="block text-[9px] font-bold uppercase tracking-[0.22em] text-sky-300 drop-shadow-[0_0_5px_rgba(56,189,248,0.5)]">
+          <span
+            class="block text-[9px] font-bold uppercase tracking-[0.22em] text-sky-300 drop-shadow-[0_0_5px_rgba(56,189,248,0.5)]"
+          >
             BOOK
           </span>
-          <span class="flex h-5 w-5 items-center justify-center rounded-full border border-sky-300/50 bg-sky-400/20 text-[10px] text-sky-100">
+          <span
+            class="flex h-5 w-5 items-center justify-center rounded-full border border-sky-300/50 bg-sky-400/20 text-[10px] text-sky-100"
+          >
             {solved ? '✓' : discoveredIds.length}
           </span>
         </span>
         <span class="relative z-10 mt-1 block text-sm font-black text-white drop-shadow-md"
-          >{solved
-            ? ui.solved
-            : `${ui.items}`}</span
+          >{solved ? ui.solved : `${ui.items}`}</span
         >
-        <span class="relative z-10 mt-2 block h-1 overflow-hidden rounded-full bg-sky-950 shadow-inner"
-          ><span class="block h-full rounded-full bg-sky-400 shadow-[0_0_8px_#38bdf8] transition-all" style:width={`${progress}%`}
+        <span
+          class="relative z-10 mt-2 block h-1 overflow-hidden rounded-full bg-sky-950 shadow-inner"
+          ><span
+            class="block h-full rounded-full bg-sky-400 shadow-[0_0_8px_#38bdf8] transition-all"
+            style:width={`${progress}%`}
           ></span></span
         >
       </button>
@@ -939,24 +957,52 @@
       aria-modal="true"
       aria-label="Binder"
     >
-      <div class="pointer-events-none absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10 mix-blend-overlay"></div>
+      <div
+        class="pointer-events-none absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10 mix-blend-overlay"
+      ></div>
 
-      <header class="relative flex items-start justify-between border-b border-sky-900/50 bg-[#020617] p-5 sm:p-7">
+      <header
+        class="relative flex items-start justify-between border-b border-sky-900/50 bg-[#020617] p-5 sm:p-7"
+      >
         <div class="flex items-center gap-4">
-          <div class="flex h-12 w-12 items-center justify-center rounded-full border-2 border-sky-400 bg-sky-900/50 shadow-[0_0_15px_#38bdf8]">
-            <svg class="h-6 w-6 text-sky-100" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+          <div
+            class="flex h-12 w-12 items-center justify-center rounded-full border-2 border-sky-400 bg-sky-900/50 shadow-[0_0_15px_#38bdf8]"
+          >
+            <svg
+              class="h-6 w-6 text-sky-100"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              ><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" /><path
+                d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"
+              /></svg
+            >
           </div>
           <div>
-            <p class="text-[10px] font-bold uppercase tracking-[0.25em] text-sky-400 drop-shadow-[0_0_5px_rgba(56,189,248,0.5)]">
+            <p
+              class="text-[10px] font-bold uppercase tracking-[0.25em] text-sky-400 drop-shadow-[0_0_5px_rgba(56,189,248,0.5)]"
+            >
               {investigation.investigator} · BINDER
             </p>
-            <h2 class="mt-1 font-black tracking-tight text-3xl text-white drop-shadow-md sm:text-4xl">{investigation.subtitle}</h2>
+            <h2
+              class="mt-1 font-black tracking-tight text-3xl text-white drop-shadow-md sm:text-4xl"
+            >
+              {investigation.subtitle}
+            </h2>
           </div>
         </div>
         <button
           class="flex h-10 w-10 items-center justify-center rounded-full border border-sky-400/30 bg-sky-900/30 text-sky-300 transition-all hover:bg-sky-400/20 hover:text-white hover:shadow-[0_0_15px_rgba(56,189,248,0.5)]"
           onclick={() => (notebookOpen = false)}
-          aria-label="Fermer"><svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button
+          aria-label="Fermer"
+          ><svg
+            class="h-5 w-5"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"><path d="M18 6L6 18M6 6l12 12" /></svg
+          ></button
         >
       </header>
 
@@ -982,9 +1028,13 @@
 
       <div class="relative flex-1 overflow-y-auto p-5 sm:p-7">
         {#if activeTab === 'evidence'}
-          <div class="mb-6 flex items-end justify-between gap-4 rounded-xl border border-sky-900/50 bg-sky-950/20 p-5">
+          <div
+            class="mb-6 flex items-end justify-between gap-4 rounded-xl border border-sky-900/50 bg-sky-950/20 p-5"
+          >
             <div>
-              <p class="text-[10px] font-bold uppercase tracking-widest text-sky-400">{ui.collected}</p>
+              <p class="text-[10px] font-bold uppercase tracking-widest text-sky-400">
+                {ui.collected}
+              </p>
               <p class="mt-1 text-xs text-sky-200/50">
                 {ui.sourceCaution}
               </p>
@@ -995,35 +1045,61 @@
               <span class="text-xl font-bold text-sky-500/50">{investigation.evidence.length}</span>
             </div>
           </div>
-          
+
           {#if discoveredEvidence.length === 0}
             <div
               class="flex flex-col items-center justify-center rounded-xl border border-dashed border-sky-800/30 bg-sky-950/10 py-16 text-center text-sky-500/40"
             >
-              <svg class="mb-4 h-12 w-12 opacity-20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+              <svg
+                class="mb-4 h-12 w-12 opacity-20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+                ><rect x="3" y="3" width="18" height="18" rx="2" ry="2" /><line
+                  x1="12"
+                  y1="8"
+                  x2="12"
+                  y2="16"
+                /><line x1="8" y1="12" x2="16" y2="12" /></svg
+              >
               <p class="text-sm font-medium">{ui.emptyNotebook}</p>
             </div>
           {:else}
             <!-- Cards Grid (Greed Island Binder Slots) -->
             <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {#each discoveredEvidence as evidence}
-                <article class="group relative flex flex-col overflow-hidden rounded-xl border border-sky-700/30 bg-gradient-to-b from-[#0f172a] to-[#020617] p-1 shadow-lg transition-transform hover:-translate-y-1 hover:shadow-[0_0_20px_rgba(56,189,248,0.2)]">
-                  <div class="absolute inset-0 bg-gradient-to-tr from-sky-400/0 via-sky-400/10 to-transparent opacity-0 transition-opacity group-hover:opacity-100"></div>
-                  <div class="relative flex flex-1 flex-col rounded-lg border border-white/5 bg-[#0a0f1c]/90 p-4">
+                <article
+                  class="group relative flex flex-col overflow-hidden rounded-xl border border-sky-700/30 bg-gradient-to-b from-[#0f172a] to-[#020617] p-1 shadow-lg transition-transform hover:-translate-y-1 hover:shadow-[0_0_20px_rgba(56,189,248,0.2)]"
+                >
+                  <div
+                    class="absolute inset-0 bg-gradient-to-tr from-sky-400/0 via-sky-400/10 to-transparent opacity-0 transition-opacity group-hover:opacity-100"
+                  ></div>
+                  <div
+                    class="relative flex flex-1 flex-col rounded-lg border border-white/5 bg-[#0a0f1c]/90 p-4"
+                  >
                     <div class="mb-3 flex items-start justify-between gap-2">
-                      <span class="inline-flex items-center justify-center rounded border px-1.5 py-0.5 text-[8px] font-bold uppercase tracking-widest {evidenceTone(evidence)}">
+                      <span
+                        class="inline-flex items-center justify-center rounded border px-1.5 py-0.5 text-[8px] font-bold uppercase tracking-widest {evidenceTone(
+                          evidence,
+                        )}"
+                      >
                         {evidence.truthStatus === 'CONFIRMED'
                           ? 'confirmé'
                           : evidence.truthStatus === 'DEDUCTION'
                             ? 'déduit'
                             : 'impliqué'}
                       </span>
-                      <span class="text-[9px] font-mono text-sky-500/50">#{evidence.id.slice(0, 4).toUpperCase()}</span>
+                      <span class="text-[9px] font-mono text-sky-500/50"
+                        >#{evidence.id.slice(0, 4).toUpperCase()}</span
+                      >
                     </div>
-                    
+
                     <h3 class="font-black text-white">{evidence.title}</h3>
-                    <p class="mt-2 flex-1 text-xs leading-relaxed text-sky-100/70">{evidence.claim}</p>
-                    
+                    <p class="mt-2 flex-1 text-xs leading-relaxed text-sky-100/70">
+                      {evidence.claim}
+                    </p>
+
                     <div class="mt-4 border-t border-sky-900/50 pt-3">
                       <p class="text-[9px] uppercase tracking-wider text-sky-400/50">
                         {evidence.source} · ch. {evidence.chapter}
@@ -1032,9 +1108,9 @@
                   </div>
                 </article>
               {/each}
-              
+
               <!-- Empty Slots to simulate GI Binder pages -->
-              {#each Array(Math.max(0, (Math.ceil(discoveredEvidence.length / 3) * 3) - discoveredEvidence.length)) as _}
+              {#each Array(Math.max(0, Math.ceil(discoveredEvidence.length / 3) * 3 - discoveredEvidence.length)) as _}
                 <div class="rounded-xl border border-dashed border-sky-900/30 bg-sky-950/5"></div>
               {/each}
             </div>
@@ -1312,7 +1388,9 @@
           </ol>
         {:else}
           <div class="max-w-2xl">
-            <p class="text-[10px] font-bold uppercase tracking-widest text-sky-400">Construire la conclusion</p>
+            <p class="text-[10px] font-bold uppercase tracking-widest text-sky-400">
+              Construire la conclusion
+            </p>
             <h3 class="mt-2 font-black text-2xl text-white">
               Que s’est-il passé pendant ces onze secondes ?
             </h3>
@@ -1333,18 +1411,25 @@
                 >
                   <span class="flex items-center gap-4"
                     ><span
-                      class="flex h-4 w-4 items-center justify-center rounded-full border {selectedHypothesisId === hypothesis.id
+                      class="flex h-4 w-4 items-center justify-center rounded-full border {selectedHypothesisId ===
+                      hypothesis.id
                         ? 'border-sky-400 bg-sky-400 shadow-[0_0_8px_#38bdf8]'
                         : 'border-sky-700/50'}"
-                    ><span class="h-1.5 w-1.5 rounded-full bg-[#0a0f1c]"></span></span><span class="flex-1 font-black text-lg text-white"
-                      >{hypothesis.label}</span
+                      ><span class="h-1.5 w-1.5 rounded-full bg-[#0a0f1c]"></span></span
+                    ><span class="flex-1 font-black text-lg text-white">{hypothesis.label}</span>
+                    <span
+                      class="font-mono text-[10px] uppercase tracking-wider {selectedHypothesisId ===
+                      hypothesis.id
+                        ? 'text-sky-300'
+                        : 'text-sky-500/40'}"
                     >
-                    <span class="font-mono text-[10px] uppercase tracking-wider {selectedHypothesisId === hypothesis.id ? 'text-sky-300' : 'text-sky-500/40'}">
                       {assessment.status} · {assessment.score}%
                     </span></span
                   >
                   {#if assessment.missingPropositionIds.length > 0}
-                    <span class="mt-3 block pl-8 text-[10px] uppercase tracking-widest text-amber-300/60">
+                    <span
+                      class="mt-3 block pl-8 text-[10px] uppercase tracking-widest text-amber-300/60"
+                    >
                       {assessment.missingPropositionIds.length} proposition{assessment
                         .missingPropositionIds.length > 1
                         ? 's'
@@ -1369,8 +1454,24 @@
                   onclick={() => toggleEvidence(evidence.id)}
                 >
                   <div class="flex items-start gap-3">
-                    <span class="mt-0.5 flex h-3 w-3 shrink-0 items-center justify-center rounded-sm border {selectedEvidenceIds.includes(evidence.id) ? 'border-emerald-400 bg-emerald-500/20' : 'border-sky-700/50'}">
-                      {#if selectedEvidenceIds.includes(evidence.id)}<svg class="h-2 w-2 text-emerald-400" viewBox="0 0 14 14" fill="none"><path d="M1 7l4 4 8-8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>{/if}
+                    <span
+                      class="mt-0.5 flex h-3 w-3 shrink-0 items-center justify-center rounded-sm border {selectedEvidenceIds.includes(
+                        evidence.id,
+                      )
+                        ? 'border-emerald-400 bg-emerald-500/20'
+                        : 'border-sky-700/50'}"
+                    >
+                      {#if selectedEvidenceIds.includes(evidence.id)}<svg
+                          class="h-2 w-2 text-emerald-400"
+                          viewBox="0 0 14 14"
+                          fill="none"
+                          ><path
+                            d="M1 7l4 4 8-8"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                          /></svg
+                        >{/if}
                     </span>
                     <span class="font-medium leading-relaxed">{evidence.title}</span>
                   </div>
@@ -1393,15 +1494,25 @@
                     : 'border-amber-400 bg-amber-950/40'}"
                 aria-live="polite"
               >
-                <p class="text-[9px] font-bold uppercase tracking-widest {verdict.status === 'solved' ? 'text-emerald-400/70' : verdict.status === 'contradicted' ? 'text-red-400/70' : 'text-amber-400/70'}">
+                <p
+                  class="text-[9px] font-bold uppercase tracking-widest {verdict.status === 'solved'
+                    ? 'text-emerald-400/70'
+                    : verdict.status === 'contradicted'
+                      ? 'text-red-400/70'
+                      : 'text-amber-400/70'}"
+                >
                   Analyse du raisonnement
                 </p>
                 <h4 class="mt-2 font-black text-2xl text-white">{verdict.title}</h4>
                 <p class="mt-3 text-sm leading-relaxed text-white/80">{verdict.summary}</p>
-                {#if verdict.contradictions.length > 0}<p class="mt-4 rounded bg-red-900/40 p-3 text-xs font-medium text-red-200">
+                {#if verdict.contradictions.length > 0}<p
+                    class="mt-4 rounded bg-red-900/40 p-3 text-xs font-medium text-red-200"
+                  >
                     Contradiction : {verdict.contradictions.map((item) => item.title).join(' · ')}
                   </p>{/if}
-                {#if verdict.missing.length > 0}<p class="mt-4 rounded bg-amber-900/40 p-3 text-xs font-medium text-amber-200">
+                {#if verdict.missing.length > 0}<p
+                    class="mt-4 rounded bg-amber-900/40 p-3 text-xs font-medium text-amber-200"
+                  >
                     À établir : {verdict.missing.map((item) => item.title).join(' · ')}
                   </p>{/if}
                 {#if verdict.status === 'solved'}<p
@@ -1422,8 +1533,9 @@
       >
         <span>{ui.perspective} · {investigation.investigator}</span>
         <span class="flex items-center gap-5"
-          ><button class="text-sky-400/50 transition-colors hover:text-red-400" onclick={resetInvestigation}
-            >{ui.reset}</button
+          ><button
+            class="text-sky-400/50 transition-colors hover:text-red-400"
+            onclick={resetInvestigation}>{ui.reset}</button
           ><span>{ui.spoilers} · ch. {investigation.chapter}</span></span
         >
       </footer>
@@ -1434,28 +1546,51 @@
     <div
       class="absolute inset-0 z-[65] overflow-y-auto bg-[#020617]/96 p-4 backdrop-blur-md sm:p-8"
     >
-      <div class="pointer-events-none absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10 mix-blend-overlay"></div>
-      
-      <article class="relative mx-auto max-w-5xl overflow-hidden rounded-2xl border-2 border-emerald-400/30 bg-[#0a0f1c]/95 shadow-[0_0_50px_rgba(52,211,153,0.15)]">
-        <div class="absolute inset-0 bg-gradient-to-br from-emerald-400/5 via-transparent to-emerald-900/10 pointer-events-none"></div>
-        
-        <header class="relative flex items-start justify-between gap-5 border-b border-emerald-900/50 bg-[#060b14] p-6 sm:p-9">
+      <div
+        class="pointer-events-none absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10 mix-blend-overlay"
+      ></div>
+
+      <article
+        class="relative mx-auto max-w-5xl overflow-hidden rounded-2xl border-2 border-emerald-400/30 bg-[#0a0f1c]/95 shadow-[0_0_50px_rgba(52,211,153,0.15)]"
+      >
+        <div
+          class="absolute inset-0 bg-gradient-to-br from-emerald-400/5 via-transparent to-emerald-900/10 pointer-events-none"
+        ></div>
+
+        <header
+          class="relative flex items-start justify-between gap-5 border-b border-emerald-900/50 bg-[#060b14] p-6 sm:p-9"
+        >
           <div>
             <div class="flex items-center gap-3">
-              <span class="h-2 w-2 animate-pulse rounded-full bg-emerald-400 shadow-[0_0_10px_#34d399]"></span>
-              <p class="text-[10px] font-bold uppercase tracking-[0.28em] text-emerald-300 drop-shadow-[0_0_5px_rgba(52,211,153,0.5)]">
+              <span
+                class="h-2 w-2 animate-pulse rounded-full bg-emerald-400 shadow-[0_0_10px_#34d399]"
+              ></span>
+              <p
+                class="text-[10px] font-bold uppercase tracking-[0.28em] text-emerald-300 drop-shadow-[0_0_5px_rgba(52,211,153,0.5)]"
+              >
                 Rapport final · {finalReport.caseId}
               </p>
             </div>
-            <h2 class="mt-4 font-black text-4xl text-white drop-shadow-md sm:text-5xl">{finalReport.title}</h2>
-            <p class="mt-3 inline-flex items-center rounded-full border border-emerald-400/30 bg-emerald-950/40 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-emerald-300">
+            <h2 class="mt-4 font-black text-4xl text-white drop-shadow-md sm:text-5xl">
+              {finalReport.title}
+            </h2>
+            <p
+              class="mt-3 inline-flex items-center rounded-full border border-emerald-400/30 bg-emerald-950/40 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-emerald-300"
+            >
               {finalReport.disposition}
             </p>
           </div>
           <button
             class="flex h-10 w-10 items-center justify-center rounded-full border border-emerald-400/30 bg-emerald-900/30 text-emerald-300 transition-all hover:bg-emerald-400/20 hover:text-white hover:shadow-[0_0_15px_rgba(52,211,153,0.5)]"
             aria-label="Fermer le rapport"
-            onclick={() => (reportOpen = false)}><svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button
+            onclick={() => (reportOpen = false)}
+            ><svg
+              class="h-5 w-5"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"><path d="M18 6L6 18M6 6l12 12" /></svg
+            ></button
           >
         </header>
 
@@ -1494,7 +1629,9 @@
           </section>
 
           <aside class="space-y-6">
-            <section class="rounded-xl border-l-4 border-red-400 bg-red-950/20 p-5 shadow-[0_0_15px_rgba(248,113,113,0.1)]">
+            <section
+              class="rounded-xl border-l-4 border-red-400 bg-red-950/20 p-5 shadow-[0_0_15px_rgba(248,113,113,0.1)]"
+            >
               <p class="text-[10px] font-bold uppercase tracking-widest text-red-400">
                 Inconnues persistantes
               </p>
@@ -1502,7 +1639,10 @@
                 {#each finalReport.unknowns as unknown}<li
                     class="flex gap-3 text-sm leading-relaxed text-red-100/80"
                   >
-                    <span class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-red-900/50 text-[10px] font-bold text-red-300">?</span>
+                    <span
+                      class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-red-900/50 text-[10px] font-bold text-red-300"
+                      >?</span
+                    >
                     <span>{unknown}</span>
                   </li>{/each}
               </ul>
@@ -1515,14 +1655,16 @@
                 {#each finalReport.rejectedHypotheses as hypothesis}<li
                     class="flex gap-2 text-xs text-sky-100/50"
                   >
-                    <span class="text-sky-500/50">×</span> {hypothesis}
+                    <span class="text-sky-500/50">×</span>
+                    {hypothesis}
                   </li>{/each}
               </ul>
             </section>
             <div class="rounded border border-emerald-900/50 bg-emerald-950/20 p-4">
               <p class="text-[11px] leading-relaxed text-emerald-200/80">
-                <span class="font-bold text-emerald-400">Conclusion procédurale :</span> le mécanisme peut être communiqué aux gardes. Toute
-                accusation nominative dépasserait les éléments disponibles au chapitre {investigation.chapter}.
+                <span class="font-bold text-emerald-400">Conclusion procédurale :</span> le
+                mécanisme peut être communiqué aux gardes. Toute accusation nominative dépasserait
+                les éléments disponibles au chapitre {investigation.chapter}.
               </p>
             </div>
           </aside>
@@ -1555,19 +1697,30 @@
     <div
       class="absolute inset-0 z-[70] flex items-center justify-center overflow-y-auto bg-[#020617]/95 p-4 backdrop-blur-md"
     >
-      <div class="pointer-events-none absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10 mix-blend-overlay"></div>
-      
-      <section class="relative w-full max-w-3xl overflow-hidden rounded-2xl border border-sky-300/30 bg-[#0a0f1c]/90 shadow-[0_0_40px_rgba(56,189,248,0.15)] backdrop-blur-xl">
-        <div class="absolute inset-0 bg-gradient-to-br from-sky-400/5 via-transparent to-sky-600/5"></div>
-        
+      <div
+        class="pointer-events-none absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10 mix-blend-overlay"
+      ></div>
+
+      <section
+        class="relative w-full max-w-3xl overflow-hidden rounded-2xl border border-sky-300/30 bg-[#0a0f1c]/90 shadow-[0_0_40px_rgba(56,189,248,0.15)] backdrop-blur-xl"
+      >
+        <div
+          class="absolute inset-0 bg-gradient-to-br from-sky-400/5 via-transparent to-sky-600/5"
+        ></div>
+
         <div class="relative border-b border-sky-900/50 p-6 sm:p-9">
           <div class="flex items-center gap-3">
-            <span class="h-2 w-2 animate-pulse rounded-full bg-sky-400 shadow-[0_0_10px_#38bdf8]"></span>
-            <p class="text-[10px] font-bold uppercase tracking-[0.3em] text-sky-300 drop-shadow-[0_0_5px_rgba(56,189,248,0.5)]">
+            <span class="h-2 w-2 animate-pulse rounded-full bg-sky-400 shadow-[0_0_10px_#38bdf8]"
+            ></span>
+            <p
+              class="text-[10px] font-bold uppercase tracking-[0.3em] text-sky-300 drop-shadow-[0_0_5px_rgba(56,189,248,0.5)]"
+            >
               {ui.briefing}
             </p>
           </div>
-          <h2 class="mt-4 text-4xl font-black text-white drop-shadow-md sm:text-6xl">{investigation.title}</h2>
+          <h2 class="mt-4 text-4xl font-black text-white drop-shadow-md sm:text-6xl">
+            {investigation.title}
+          </h2>
           <p class="mt-4 max-w-2xl text-sm leading-relaxed text-sky-100/70">
             {ui.briefingBody}
           </p>
@@ -1587,11 +1740,16 @@
             </div>
           </div>
           <div class="rounded-xl border border-sky-800/30 bg-[#0a0f1c]/50 p-5">
-            <p class="mb-4 text-[10px] font-bold uppercase tracking-widest text-sky-500/70">Objectifs d'investigation</p>
+            <p class="mb-4 text-[10px] font-bold uppercase tracking-widest text-sky-500/70">
+              Objectifs d'investigation
+            </p>
             <ol class="space-y-4">
               {#each investigation.objectives as objective, index}
                 <li class="flex gap-3 text-sm text-sky-100/80">
-                  <span class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-sky-900/50 font-mono text-[10px] text-sky-300 shadow-[inset_0_0_5px_rgba(56,189,248,0.2)]">0{index + 1}</span>
+                  <span
+                    class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-sky-900/50 font-mono text-[10px] text-sky-300 shadow-[inset_0_0_5px_rgba(56,189,248,0.2)]"
+                    >0{index + 1}</span
+                  >
                   <span class="leading-snug">{objective.label}</span>
                 </li>
               {/each}
@@ -1602,14 +1760,25 @@
           class="relative flex flex-wrap items-center justify-between gap-4 border-t border-sky-900/50 bg-[#0a0f1c]/90 px-6 py-5 sm:px-9"
         >
           <p class="flex items-center gap-2 text-[9px] uppercase tracking-wider text-sky-500/50">
-            <svg class="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+            <svg
+              class="h-3 w-3"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              ><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" /><polyline
+                points="17 21 17 13 7 13 7 21"
+              /><polyline points="7 3 7 8 15 8" /></svg
+            >
             {ui.saved}
           </p>
           <button
             class="group relative overflow-hidden rounded-lg bg-sky-400 px-8 py-3 text-xs font-black uppercase tracking-[0.18em] text-[#020617] shadow-[0_0_15px_rgba(56,189,248,0.4)] transition-all hover:bg-sky-300 hover:shadow-[0_0_25px_rgba(56,189,248,0.6)]"
             onclick={startInvestigation}
           >
-            <span class="absolute inset-0 bg-white/20 opacity-0 transition-opacity group-hover:opacity-100"></span>
+            <span
+              class="absolute inset-0 bg-white/20 opacity-0 transition-opacity group-hover:opacity-100"
+            ></span>
             GAIN
           </button>
         </div>

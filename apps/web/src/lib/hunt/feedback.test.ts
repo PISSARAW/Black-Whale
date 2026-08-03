@@ -101,8 +101,12 @@ describe('footsteps', () => {
 
   it('drop out through a wall at a distance that still carries in the room', () => {
     const gap: [number, number] = [18, 0]
-    expect(senseAround(sensed({ hunterAt: gap, earshot: 'same' }), silence).footsteps).not.toBeNull()
-    expect(senseAround(sensed({ hunterAt: gap, earshot: 'adjacent' }), silence).footsteps).toBeNull()
+    expect(
+      senseAround(sensed({ hunterAt: gap, earshot: 'same' }), silence).footsteps,
+    ).not.toBeNull()
+    expect(
+      senseAround(sensed({ hunterAt: gap, earshot: 'adjacent' }), silence).footsteps,
+    ).toBeNull()
   })
 })
 

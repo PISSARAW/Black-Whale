@@ -39,7 +39,10 @@ export function encodeStrategySave(save: StrategySaveV2): string {
   return JSON.stringify(save)
 }
 
-function validTurns(value: unknown, maxTurns = ACTIVE_SCENARIO.maxTurns): value is StrategyTurnV2[] {
+function validTurns(
+  value: unknown,
+  maxTurns = ACTIVE_SCENARIO.maxTurns,
+): value is StrategyTurnV2[] {
   if (!Array.isArray(value) || value.length > maxTurns) return false
   return value.every(
     (turn, index) =>

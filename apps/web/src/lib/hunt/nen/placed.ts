@@ -60,7 +60,10 @@ export function ledgerBalances(ledger: Ledger): boolean {
  * Lays aura down. Refuses — returning the ledger untouched — when the body does
  * not hold enough, which is the only way the caller learns it cannot afford it.
  */
-export function placeAura(ledger: Ledger, request: PlacementRequest): { ledger: Ledger; placed: Placement | null } {
+export function placeAura(
+  ledger: Ledger,
+  request: PlacementRequest,
+): { ledger: Ledger; placed: Placement | null } {
   if (ledger.pool.available < request.cost) return { ledger, placed: null }
 
   const placed: Placement = {
@@ -80,8 +83,13 @@ export function placeAura(ledger: Ledger, request: PlacementRequest): { ledger: 
 }
 
 /** Takes a placement back into the body. Only a `set` placement can be recovered. */
-export function recoverAura(ledger: Ledger, id: string): { ledger: Ledger; recovered: Placement | null } {
-  const found = ledger.placements.find((placement) => placement.id === id && placement.state === 'set')
+export function recoverAura(
+  ledger: Ledger,
+  id: string,
+): { ledger: Ledger; recovered: Placement | null } {
+  const found = ledger.placements.find(
+    (placement) => placement.id === id && placement.state === 'set',
+  )
   if (!found) return { ledger, recovered: null }
 
   return {

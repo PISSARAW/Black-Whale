@@ -5,21 +5,11 @@ import type { BasicApparitionContext } from './apparitionBasicView'
 function wheel(seen: Apparition, { THREE, glow, root }: BasicApparitionContext): Object3D {
   const iron = glow(seen.colour, 0.9)
   const spun = new THREE.Group()
+  spun.add(new THREE.Mesh(new THREE.TorusGeometry(seen.size, seen.size * 0.11, 8, 28), iron))
   spun.add(
-    new THREE.Mesh(new THREE.TorusGeometry(seen.size, seen.size * 0.11, 8, 28), iron),
+    new THREE.Mesh(new THREE.TorusGeometry(seen.size * 0.88, seen.size * 0.025, 5, 32), iron),
   )
-  spun.add(
-    new THREE.Mesh(
-      new THREE.TorusGeometry(seen.size * 0.88, seen.size * 0.025, 5, 32),
-      iron,
-    ),
-  )
-  spun.add(
-    new THREE.Mesh(
-      new THREE.TorusGeometry(seen.size * 0.74, seen.size * 0.05, 6, 24),
-      iron,
-    ),
-  )
+  spun.add(new THREE.Mesh(new THREE.TorusGeometry(seen.size * 0.74, seen.size * 0.05, 6, 24), iron))
   // Four bars crossing the hub make the canonical eight spokes.
   for (let i = 0; i < 4; i++) {
     const spoke = new THREE.Mesh(
@@ -32,11 +22,7 @@ function wheel(seen: Apparition, { THREE, glow, root }: BasicApparitionContext):
   for (let i = 0; i < 8; i++) {
     const angle = (Math.PI / 4) * i
     const stud = new THREE.Mesh(new THREE.SphereGeometry(seen.size * 0.08, 6, 5), iron)
-    stud.position.set(
-      Math.cos(angle) * seen.size * 0.74,
-      Math.sin(angle) * seen.size * 0.74,
-      0,
-    )
+    stud.position.set(Math.cos(angle) * seen.size * 0.74, Math.sin(angle) * seen.size * 0.74, 0)
     spun.add(stud)
 
     // The eight cross-shaped cardinal marks outside the inscribed band.
@@ -51,11 +37,7 @@ function wheel(seen: Apparition, { THREE, glow, root }: BasicApparitionContext):
         iron,
       ),
     )
-    cross.position.set(
-      Math.cos(angle) * seen.size * 1.02,
-      Math.sin(angle) * seen.size * 1.02,
-      0,
-    )
+    cross.position.set(Math.cos(angle) * seen.size * 1.02, Math.sin(angle) * seen.size * 1.02, 0)
     cross.rotation.z = angle
     spun.add(cross)
   }
@@ -66,11 +48,7 @@ function wheel(seen: Apparition, { THREE, glow, root }: BasicApparitionContext):
       new THREE.BoxGeometry(seen.size * 0.018, seen.size * 0.11, seen.size * 0.025),
       iron,
     )
-    tick.position.set(
-      Math.cos(angle) * seen.size * 0.88,
-      Math.sin(angle) * seen.size * 0.88,
-      0,
-    )
+    tick.position.set(Math.cos(angle) * seen.size * 0.88, Math.sin(angle) * seen.size * 0.88, 0)
     tick.rotation.z = angle
     spun.add(tick)
   }
@@ -122,11 +100,7 @@ function wheel(seen: Apparition, { THREE, glow, root }: BasicApparitionContext):
       ),
       glow(0x241923, 0.68),
     )
-    flame.position.set(
-      Math.cos(angle) * seen.size * 1.27,
-      Math.sin(angle) * seen.size * 1.27,
-      0,
-    )
+    flame.position.set(Math.cos(angle) * seen.size * 1.27, Math.sin(angle) * seen.size * 1.27, 0)
     flame.rotation.z = angle - Math.PI / 2 + Math.sin(i * 2.3) * 0.13
     fire.add(flame)
   }
@@ -148,7 +122,6 @@ function coin(seen: Apparition, { THREE, glow, root }: BasicApparitionContext): 
   )
   root.add(rim)
   return root
-
 }
 
 function tysonGuardian(seen: Apparition, { THREE, glow, root }: BasicApparitionContext): Object3D {
@@ -191,10 +164,7 @@ function tysonGuardian(seen: Apparition, { THREE, glow, root }: BasicApparitionC
   const white = new THREE.Mesh(new THREE.ShapeGeometry(eyeShape, 16), glow(0xfdf6fb, 1))
   white.position.z = seen.size * 0.7
   root.add(white)
-  const pupil = new THREE.Mesh(
-    new THREE.CircleGeometry(seen.size * 0.31, 18),
-    glow(0x14101a, 1),
-  )
+  const pupil = new THREE.Mesh(new THREE.CircleGeometry(seen.size * 0.31, 18), glow(0x14101a, 1))
   pupil.scale.x = 1.45
   pupil.position.z = seen.size * 0.72
   root.add(pupil)
@@ -240,7 +210,6 @@ function tysonGuardian(seen: Apparition, { THREE, glow, root }: BasicApparitionC
     root.add(drip)
   }
   return wings
-
 }
 
 const BUILDERS: Partial<

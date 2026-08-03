@@ -195,16 +195,7 @@ export interface Apparition {
       | 'victim'
       | 'silent-majority'
       | 'morena'
-    pose:
-      | 'idle'
-      | 'walk'
-      | 'listen'
-      | 'search'
-      | 'held'
-      | 'guard'
-      | 'attack'
-      | 'fallen'
-      | 'seated'
+    pose: 'idle' | 'walk' | 'listen' | 'search' | 'held' | 'guard' | 'attack' | 'fallen' | 'seated'
     aura?: 'none' | 'ten' | 'ren' | 'zetsu'
     /** Shared Nen state; every human figure consumes the same engine contract. */
     nen?: NenTechniqueState<'head' | 'torso' | 'hands' | 'feet'>

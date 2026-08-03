@@ -12,7 +12,9 @@ export function loadTourNen(): NenTechniqueState {
       ...fallback,
       ...saved,
       ryu: typeof saved.ryu === 'object' && saved.ryu ? saved.ryu : {},
-      shu: Array.isArray(saved.shu) ? saved.shu.filter((id: unknown) => typeof id === 'string') : [],
+      shu: Array.isArray(saved.shu)
+        ? saved.shu.filter((id: unknown) => typeof id === 'string')
+        : [],
     }
   } catch {
     return fallback

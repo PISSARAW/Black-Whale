@@ -20,7 +20,10 @@ describe('continuous contract transitions', () => {
 
   it('carries aura, Hatsu, fatigue and journal into the next zone', () => {
     let previous = huntReducer(setup('a'), { type: 'SWEEP' })
-    previous = { ...previous, hunter: { ...previous.hunter, pool: { available: 41, committed: 0 } } }
+    previous = {
+      ...previous,
+      hunter: { ...previous.hunter, pool: { available: 41, committed: 0 } },
+    }
     const carried = carryIntoStage(previous, setup('b'))
     expect(carried.player.spaceId).toBe('b')
     expect(carried.ledger.pool.available).toBe(85)

@@ -47,11 +47,7 @@ function owl(seen: Apparition, { THREE, glow, root, skin }: BasicApparitionConte
       skin,
     )
     drip.rotation.z = Math.PI
-    drip.position.set(
-      (index - 3) * seen.size * 0.18,
-      -seen.size * (0.68 + (index % 3) * 0.06),
-      0,
-    )
+    drip.position.set((index - 3) * seen.size * 0.18, -seen.size * (0.68 + (index % 3) * 0.06), 0)
     root.add(drip)
   }
   const head = new THREE.Group()

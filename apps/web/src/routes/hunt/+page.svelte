@@ -63,8 +63,19 @@
   import { contractMessages } from '$lib/hunt/contracts/messages'
   import { carryIntoStage, nextStage } from '$lib/hunt/contracts/transition'
   import { capabilitiesOf, type HuntVow } from '$lib/hunt/nen/advanced'
-  import { completeCampaignRun, initialCampaign, loadCampaign, saveCampaign } from '$lib/hunt/campaign'
-  import { appendReplayAction, createReplay, decodeReplay, encodeReplay, type HuntReplayV3 } from '$lib/hunt/replay'
+  import {
+    completeCampaignRun,
+    initialCampaign,
+    loadCampaign,
+    saveCampaign,
+  } from '$lib/hunt/campaign'
+  import {
+    appendReplayAction,
+    createReplay,
+    decodeReplay,
+    encodeReplay,
+    type HuntReplayV3,
+  } from '$lib/hunt/replay'
   import { ghostAt, ghostFigure } from '$lib/hunt/ghost'
   import { hatsuFlash, presentHatsu } from '$lib/hunt/hatsuPresentation'
   import { decodeContract } from '$lib/hunt/contracts/share'
@@ -120,7 +131,9 @@
   const hatsuProfiles = [BUNGEE_GUM_HUNT, PARALLEL_FUTURE_HUNT, DOWSING_CHAIN_HUNT]
   const builtInContracts = listHuntContracts()
   let customContract = $state.raw<HuntContractV3 | null>(null)
-  let contracts = $derived(customContract ? [...builtInContracts, customContract] : builtInContracts)
+  let contracts = $derived(
+    customContract ? [...builtInContracts, customContract] : builtInContracts,
+  )
   let selectedContract = $state('royal-apartments')
   let contractStage = $state(0)
   let selectedHatsu = $state<HuntHatsuId>(DEFAULT_HUNT_HATSU)
@@ -135,8 +148,9 @@
   let lastReplay = $state.raw<HuntReplayV3 | null>(null)
   let lastReplayMovementAt = -Infinity
   let activeContract = $derived(
-    (customContract?.id === selectedContract ? customContract : huntContractById(selectedContract)) ??
-      builtInContracts[0],
+    (customContract?.id === selectedContract
+      ? customContract
+      : huntContractById(selectedContract)) ?? builtInContracts[0],
   )
   let availableHatsuProfiles = $derived(
     hatsuProfiles.filter((profile) => activeContract.allowedHatsu.includes(profile.id)),
@@ -549,7 +563,11 @@
 
   function useStandardNen(action: NenTechniqueAction) {
     if (!game.duel) {
-      if ((action.type === 'TEN' && game.player.nen === 'zetsu') || (action.type === 'ZETSU' && game.player.nen !== 'zetsu')) send({ type: 'ZETSU' })
+      if (
+        (action.type === 'TEN' && game.player.nen === 'zetsu') ||
+        (action.type === 'ZETSU' && game.player.nen !== 'zetsu')
+      )
+        send({ type: 'ZETSU' })
       if (action.type === 'REN') send({ type: 'REN' })
       if (action.type === 'EN' && action.radius !== null) send({ type: 'SWEEP' })
       if (action.type === 'SHU' && action.objectId) send({ type: 'SHU', itemId: action.objectId })
@@ -561,7 +579,11 @@
       return duel({ type: action.type, side: 'player', on: action.on })
     if (action.type === 'KO' && action.zone) return strike()
     if (action.type === 'RYU')
-      return duel({ type: 'RYU', side: 'player', setting: { attack: Number(action.distribution.hands ?? game.duel.player.attack) } })
+      return duel({
+        type: 'RYU',
+        side: 'player',
+        setting: { attack: Number(action.distribution.hands ?? game.duel.player.attack) },
+      })
   }
 
   function again() {
@@ -601,15 +623,15 @@
 <div class="relative h-screen w-full overflow-hidden bg-black text-white">
   <TourModeFullscreen />
   <TourMinimapPanel
-    ship={ship}
-    tierId={tierId}
-    plan={plan}
-    position={position}
-    heading={heading}
+    {ship}
+    {tierId}
+    {plan}
+    {position}
+    {heading}
     currentSpaceId={currentSpace?.id ?? null}
-    decks={decks}
-    crossings={crossings}
-    nameOf={nameOf}
+    {decks}
+    {crossings}
+    {nameOf}
     onSelectDeck={selectTier}
     onSelectPlan={(space) => {
       position = interiorPoint(space.footprint)
@@ -644,8 +666,22 @@
     nen={playerNen}
     showNenControls={true}
     nenAvailability={game.duel
-      ? { ren: 'Le duel contrôle Ren via Ken.', en: 'En est interrompu au contact.', shu: 'Aucun objet libre pendant le duel.', on: 'On n’est pas maîtrisé dans ce contrat.', action: 'F frappe pendant le duel.' }
-      : { gyo: 'Gyo exige un adversaire engagé.', in: 'In exige un duel dans ce mode.', ken: 'Ken exige un adversaire engagé.', ko: 'Ko exige une cible de duel.', ryu: 'Ryu exige une cible de duel.', on: 'On n’est pas maîtrisé dans ce contrat.', action: 'Visez un objet imprégnable.' }}
+      ? {
+          ren: 'Le duel contrôle Ren via Ken.',
+          en: 'En est interrompu au contact.',
+          shu: 'Aucun objet libre pendant le duel.',
+          on: 'On n’est pas maîtrisé dans ce contrat.',
+          action: 'F frappe pendant le duel.',
+        }
+      : {
+          gyo: 'Gyo exige un adversaire engagé.',
+          in: 'In exige un duel dans ce mode.',
+          ken: 'Ken exige un adversaire engagé.',
+          ko: 'Ko exige une cible de duel.',
+          ryu: 'Ryu exige une cible de duel.',
+          on: 'On n’est pas maîtrisé dans ce contrat.',
+          action: 'Visez un objet imprégnable.',
+        }}
     onNenChange={useStandardNen}
     onPhysicalNenAction={() => game.duel && strike()}
     onHatsu={() => send({ type: 'HATSU' })}
@@ -757,10 +793,10 @@
       profiles={availableHatsuProfiles}
       selected={selectedHatsu}
       hunterProfiles={availableHunterProfiles}
-      selectedHunter={selectedHunter}
+      {selectedHunter}
       hunterLabels={hunterProfileMessages($locale)}
       terrains={availableTerrains}
-      selectedTerrain={selectedTerrain}
+      {selectedTerrain}
       terrainLabel={terrainMessages($locale).choose}
       {contracts}
       {selectedContract}

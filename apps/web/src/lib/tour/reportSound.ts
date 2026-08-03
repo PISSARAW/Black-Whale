@@ -67,15 +67,25 @@ export function playTourReportSound(report: TourReport): void {
   const staticSound = STATIC_SOUND[report.kind]
   if (staticSound) return staticSound()
   switch (report.kind) {
-    case 'card-blue': return selectACard(1)
-    case 'card-yellow': return selectACard(2)
-    case 'card-red': return selectACard(3)
-    case 'stamp-locked': return selectACard(report.locked ? 2 : 1)
-    case 'sun-risen': return raiseTheSun(report.metres)
-    case 'volley': return fireABurst(report.hits)
-    case 'sealed': return strikeAGong(report.stage)
-    case 'phasing': return grindThroughSpace(report.on)
-    case 'tune-played': return playATune(report.tune)
-    default: return
+    case 'card-blue':
+      return selectACard(1)
+    case 'card-yellow':
+      return selectACard(2)
+    case 'card-red':
+      return selectACard(3)
+    case 'stamp-locked':
+      return selectACard(report.locked ? 2 : 1)
+    case 'sun-risen':
+      return raiseTheSun(report.metres)
+    case 'volley':
+      return fireABurst(report.hits)
+    case 'sealed':
+      return strikeAGong(report.stage)
+    case 'phasing':
+      return grindThroughSpace(report.on)
+    case 'tune-played':
+      return playATune(report.tune)
+    default:
+      return
   }
 }

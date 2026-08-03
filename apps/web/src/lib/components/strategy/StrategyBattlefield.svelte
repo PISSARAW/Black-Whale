@@ -3,16 +3,19 @@
   import PlanMap from '$lib/components/map/PlanMap.svelte'
   import TourScene from '$lib/components/tour/TourScene.svelte'
   import type { Apparition } from '$lib/tour/apparitions'
-  import { floorOf, spaceForLocation, theShip, crossingsOn, type Crossing } from '$lib/tour/blueprint'
+  import {
+    floorOf,
+    spaceForLocation,
+    theShip,
+    crossingsOn,
+    type Crossing,
+  } from '$lib/tour/blueprint'
   import { centroid } from '$lib/tour/hatsu'
   import { TourNavigationState } from '$lib/tour/pageNavigationState.svelte'
   import TourMinimapPanel from '$lib/components/tour/TourMinimapPanel.svelte'
   import { ModeNenState } from '$lib/nen/modeState.svelte'
   import { hatsuById } from '$lib/nen/hatsuRegistry'
-  import {
-    strategyHatsuPresentation,
-    type StrategyHatsuCue,
-  } from '$lib/strategy/hatsuPresentation'
+  import { strategyHatsuPresentation, type StrategyHatsuCue } from '$lib/strategy/hatsuPresentation'
   import { locale } from '$lib/i18n'
 
   interface Marker {
@@ -73,7 +76,10 @@
           spaceId: space.id,
           tierId: space.tierId,
           at: [at[0] + Math.cos(angle) * 0.45, at[1] + Math.sin(angle) * 0.45],
-        y: floorOf(space, ship.tiers.find((tier) => tier.id === space.tierId)!),
+          y: floorOf(
+            space,
+            ship.tiers.find((tier) => tier.id === space.tierId)!,
+          ),
           size: 1,
           colour: marker.isObserver ? 0xd7b86a : 0x6b7d8c,
           stage: 0,
@@ -109,7 +115,10 @@
         spaceId: space.id,
         tierId: space.tierId,
         at: [at[0], at[1]],
-        y: floorOf(space, ship.tiers.find((tier) => tier.id === space.tierId)!),
+        y: floorOf(
+          space,
+          ship.tiers.find((tier) => tier.id === space.tierId)!,
+        ),
         size: presentation.size,
         colour: presentation.colour,
         stage: 1,
@@ -141,17 +150,33 @@
 </script>
 
 <div class="mb-4 flex flex-wrap gap-2 sm:justify-end" role="group" aria-label="Battlefield view">
-  <button class="rounded-full border px-4 py-1.5 text-xs font-bold uppercase tracking-widest transition-all {view === 'tour' ? 'border-sky-400 bg-sky-900/30 text-sky-300 shadow-[0_0_15px_rgba(56,189,248,0.2)]' : 'border-sky-900/50 bg-[#060b14]/50 text-sky-500/50 hover:border-sky-700 hover:text-sky-400'}" type="button" onclick={() => (view = 'tour')}
-    >Vue 3D</button
+  <button
+    class="rounded-full border px-4 py-1.5 text-xs font-bold uppercase tracking-widest transition-all {view ===
+    'tour'
+      ? 'border-sky-400 bg-sky-900/30 text-sky-300 shadow-[0_0_15px_rgba(56,189,248,0.2)]'
+      : 'border-sky-900/50 bg-[#060b14]/50 text-sky-500/50 hover:border-sky-700 hover:text-sky-400'}"
+    type="button"
+    onclick={() => (view = 'tour')}>Vue 3D</button
   >
-  <button class="rounded-full border px-4 py-1.5 text-xs font-bold uppercase tracking-widest transition-all {view === 'map' ? 'border-sky-400 bg-sky-900/30 text-sky-300 shadow-[0_0_15px_rgba(56,189,248,0.2)]' : 'border-sky-900/50 bg-[#060b14]/50 text-sky-500/50 hover:border-sky-700 hover:text-sky-400'}" type="button" onclick={() => (view = 'map')}
-    >Carte Tactique</button
+  <button
+    class="rounded-full border px-4 py-1.5 text-xs font-bold uppercase tracking-widest transition-all {view ===
+    'map'
+      ? 'border-sky-400 bg-sky-900/30 text-sky-300 shadow-[0_0_15px_rgba(56,189,248,0.2)]'
+      : 'border-sky-900/50 bg-[#060b14]/50 text-sky-500/50 hover:border-sky-700 hover:text-sky-400'}"
+    type="button"
+    onclick={() => (view = 'map')}>Carte Tactique</button
   >
 </div>
 
 {#if latestHatsuCue}
-  <div class="mb-4 flex items-center justify-between gap-4 rounded-lg border-l-4 border-amber-400 bg-amber-950/40 px-4 py-3 text-xs text-white shadow-[0_0_20px_rgba(251,191,36,0.15)]" role="status" aria-live="polite">
-    <strong class="font-black tracking-widest text-amber-300">{hatsuById(latestHatsuCue.abilityId)?.name ?? latestHatsuCue.abilityId}</strong>
+  <div
+    class="mb-4 flex items-center justify-between gap-4 rounded-lg border-l-4 border-amber-400 bg-amber-950/40 px-4 py-3 text-xs text-white shadow-[0_0_20px_rgba(251,191,36,0.15)]"
+    role="status"
+    aria-live="polite"
+  >
+    <strong class="font-black tracking-widest text-amber-300"
+      >{hatsuById(latestHatsuCue.abilityId)?.name ?? latestHatsuCue.abilityId}</strong
+    >
     <span class="text-amber-100/70">{latestHatsuCue.report}</span>
   </div>
 {/if}
@@ -159,15 +184,15 @@
 {#if view === 'tour'}
   <div class="tour-stage">
     <TourMinimapPanel
-      ship={ship}
-      tierId={tierId}
-      plan={plan}
+      {ship}
+      {tierId}
+      {plan}
       position={navigation.position}
       heading={navigation.heading}
       currentSpaceId={navigation.currentSpace?.id ?? null}
-      decks={decks}
-      crossings={crossings}
-      nameOf={nameOf}
+      {decks}
+      {crossings}
+      {nameOf}
       onSelectDeck={selectTier}
       onSelectPlan={(space) => navigation.goToSpace(space)}
     />
@@ -196,8 +221,13 @@
 {:else}
   <div class="mb-4 flex flex-wrap gap-2 sm:justify-end" aria-label="Display deck">
     {#each availableTiers as tier (tier)}
-      <button class="rounded-full border px-4 py-1.5 text-xs font-bold uppercase tracking-widest transition-all {selectedTier === tier ? 'border-sky-400 bg-sky-900/30 text-sky-300 shadow-[0_0_15px_rgba(56,189,248,0.2)]' : 'border-sky-900/50 bg-[#060b14]/50 text-sky-500/50 hover:border-sky-700 hover:text-sky-400'}" type="button" onclick={() => selectTier(tier)}
-        >{tier.replace('tier-', 'Pont ')}</button
+      <button
+        class="rounded-full border px-4 py-1.5 text-xs font-bold uppercase tracking-widest transition-all {selectedTier ===
+        tier
+          ? 'border-sky-400 bg-sky-900/30 text-sky-300 shadow-[0_0_15px_rgba(56,189,248,0.2)]'
+          : 'border-sky-900/50 bg-[#060b14]/50 text-sky-500/50 hover:border-sky-700 hover:text-sky-400'}"
+        type="button"
+        onclick={() => selectTier(tier)}>{tier.replace('tier-', 'Pont ')}</button
       >
     {/each}
   </div>

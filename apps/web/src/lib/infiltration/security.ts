@@ -9,7 +9,11 @@ export interface SecurityPolicy {
   searchLastKnown: boolean
 }
 
-export function securityPolicy(level: AlertLevel, extractionSpaceId: string, reportedSpaces: string[]): SecurityPolicy {
+export function securityPolicy(
+  level: AlertLevel,
+  extractionSpaceId: string,
+  reportedSpaces: string[],
+): SecurityPolicy {
   const lastKnown = [...new Set(reportedSpaces.filter(Boolean))]
   return {
     level,

@@ -1663,12 +1663,30 @@ export const en = {
     briefing: 'Mission order · Deck 1',
     chooseMission: 'Choose a mission',
     missions: {
-      'missing-report': { name: 'The missing report', goal: 'Copy the report, confirm its author, and reach extraction.' },
-      courier: { name: 'The watched courier', goal: 'Identify and follow the right courier without losing your cover.' },
-      'listening-device': { name: 'The listening device', goal: 'Plant the device in the right room and leave without being detained.' },
-      'compromised-shift': { name: 'The compromised shift', goal: 'Perform the expected duty and replace the register before relief arrives.' },
-      'impossible-witness': { name: 'The impossible witness', goal: 'Gain their trust, extract them, and establish an alternative explanation.' },
-      'three-princes': { name: 'The three princes meeting', goal: 'Place several sources and separate truth from prepared intelligence.' },
+      'missing-report': {
+        name: 'The missing report',
+        goal: 'Copy the report, confirm its author, and reach extraction.',
+      },
+      courier: {
+        name: 'The watched courier',
+        goal: 'Identify and follow the right courier without losing your cover.',
+      },
+      'listening-device': {
+        name: 'The listening device',
+        goal: 'Plant the device in the right room and leave without being detained.',
+      },
+      'compromised-shift': {
+        name: 'The compromised shift',
+        goal: 'Perform the expected duty and replace the register before relief arrives.',
+      },
+      'impossible-witness': {
+        name: 'The impossible witness',
+        goal: 'Gain their trust, extract them, and establish an alternative explanation.',
+      },
+      'three-princes': {
+        name: 'The three princes meeting',
+        goal: 'Place several sources and separate truth from prepared intelligence.',
+      },
     },
     objectiveLabels: {
       copy: 'Copy the target without moving the original.',
@@ -1678,14 +1696,27 @@ export const en = {
       extract: 'Reach the extraction point.',
     },
     v3: {
-      campaign: 'Campaign', operations: 'operations', knownAreas: 'known areas',
-      documentChecks: 'Document checks active', objectiveAxis: 'Objective',
-      informationAxis: 'Information', coverAxis: 'Cover',
+      campaign: 'Campaign',
+      operations: 'operations',
+      knownAreas: 'known areas',
+      documentChecks: 'Document checks active',
+      objectiveAxis: 'Objective',
+      informationAxis: 'Information',
+      coverAxis: 'Cover',
     },
     hatsuInteractive: {
       recall: 'Recall scout',
-      surfaces: { 'work-order': 'Work order', 'door-sign': 'Door sign', 'register-copy': 'Registry copy' },
-      identities: { maintenance: 'Maintenance', security: 'Security', service: 'Service', messenger: 'Messenger' },
+      surfaces: {
+        'work-order': 'Work order',
+        'door-sign': 'Door sign',
+        'register-copy': 'Registry copy',
+      },
+      identities: {
+        maintenance: 'Maintenance',
+        security: 'Security',
+        service: 'Service',
+        messenger: 'Messenger',
+      },
     },
     intro:
       'You enter as a maintenance aide. Copy the report at the far end of the apartment, confirm its true author if possible, then return to the entrance. Being seen is not losing: being understood is.',
@@ -3371,63 +3402,70 @@ export const en = {
     },
   },
 
-
   strategy: {
     hatsu: {
-      canOnlyActivateInOwnZone: (name: string) => `${name} can only be activated in the zone occupied by its user.`,
-        requiresConfirmedHostile: (name: string) => `${name} requires a confirmed hostile presence in the targeted zone.`,
-        catsNamePassive: "Cat's Name is a passive post-mortem counter and cannot receive activation orders.",
-        chainJailRequiresSpider: 'Chain Jail is forbidden: no confirmed Spider in this zone.',
-        benjaminBatonRequiresDeath: 'Benjamin Baton requires the prior death of an eligible loyal soldier.',
-      },
-      errors: {
-        oneOrderPerTurn: 'A unit can only receive one order per turn.',
-        eliminatedUnitCannotReceiveOrders: 'An eliminated unit can no longer receive orders.',
-        hatsuCannotBeActivated: 'This Hatsu cannot be activated.',
-        unknownAction: 'An order uses an unknown action.',
-        orderTargetsNonOwnedUnit: 'An order targets a unit that does not belong to you.',
-        unknownDestination: 'Unknown destination in this world state.',
-        unitDoesNotExist: 'This unit does not exist in this world state.',
-      },
+      canOnlyActivateInOwnZone: (name: string) =>
+        `${name} can only be activated in the zone occupied by its user.`,
+      requiresConfirmedHostile: (name: string) =>
+        `${name} requires a confirmed hostile presence in the targeted zone.`,
+      catsNamePassive:
+        "Cat's Name is a passive post-mortem counter and cannot receive activation orders.",
+      chainJailRequiresSpider: 'Chain Jail is forbidden: no confirmed Spider in this zone.',
+      benjaminBatonRequiresDeath:
+        'Benjamin Baton requires the prior death of an eligible loyal soldier.',
     },
+    errors: {
+      oneOrderPerTurn: 'A unit can only receive one order per turn.',
+      eliminatedUnitCannotReceiveOrders: 'An eliminated unit can no longer receive orders.',
+      hatsuCannotBeActivated: 'This Hatsu cannot be activated.',
+      unknownAction: 'An order uses an unknown action.',
+      orderTargetsNonOwnedUnit: 'An order targets a unit that does not belong to you.',
+      unknownDestination: 'Unknown destination in this world state.',
+      unitDoesNotExist: 'This unit does not exist in this world state.',
+    },
+  },
 
-    investigation: {
-      replay: {
-        dollAppears: {
-          title: 'Doll appears',
-          description: 'Loberry alone sees the masked figure behind Furykov.',
-        },
-        allEyesDiverge: {
-          title: 'All eyes diverge',
-          description: 'Loberry screams and points to a presence that nobody else can find.',
-        },
-        fourCreaturesStrike: {
-          title: 'Four creatures strike',
-          description: 'The materialized tsuchibokko attach themselves to Barrigen’s neck.',
-        },
-        simultaneousDrain: {
-          title: 'Simultaneous drain',
-          description: 'The guards see the creatures and try to pull them off; time is running out.',
-        },
-        barrigenIsDead: {
-          title: 'Barrigen is dead',
-          description: 'The four creatures reduced forty-four seconds to about eleven.',
-        },
+  investigation: {
+    replay: {
+      dollAppears: {
+        title: 'Doll appears',
+        description: 'Loberry alone sees the masked figure behind Furykov.',
       },
-      hatsu: {
-        noGrip: 'No grip',
-        cannotEstablishInfo: (name: string) => `${name} cannot establish any information on this target.`,
-        usageDenied: 'Usage denied',
-        impossibleCost: 'Cost unaffordable',
-        corroboratedSignal: 'Corroborated signal',
-        conclusiveAnalysis: 'Conclusive analysis',
-        limitedResult: 'Limited result',
-        requiresLifeHours: (hours: number) => `This analysis requires ${hours} life hours available.`,
-        ethicalOrProceduralConditions: 'Ethical or procedural conditions forbid this usage.',
-        confirmsLimits: 'The ability confirms its own limits without producing new evidence.',
-        reinforcesInfo: 'The ability reinforces existing information without turning it into absolute truth.',
-        revealsCompatibleElements: 'The ability reveals the elements compatible with its conditions and cost.',
-        cannotEstablishNewInfo: (name: string) => `${name} cannot establish anything new about this target under the present conditions.`,
+      allEyesDiverge: {
+        title: 'All eyes diverge',
+        description: 'Loberry screams and points to a presence that nobody else can find.',
+      },
+      fourCreaturesStrike: {
+        title: 'Four creatures strike',
+        description: 'The materialized tsuchibokko attach themselves to Barrigen’s neck.',
+      },
+      simultaneousDrain: {
+        title: 'Simultaneous drain',
+        description: 'The guards see the creatures and try to pull them off; time is running out.',
+      },
+      barrigenIsDead: {
+        title: 'Barrigen is dead',
+        description: 'The four creatures reduced forty-four seconds to about eleven.',
       },
     },
-    }
+    hatsu: {
+      noGrip: 'No grip',
+      cannotEstablishInfo: (name: string) =>
+        `${name} cannot establish any information on this target.`,
+      usageDenied: 'Usage denied',
+      impossibleCost: 'Cost unaffordable',
+      corroboratedSignal: 'Corroborated signal',
+      conclusiveAnalysis: 'Conclusive analysis',
+      limitedResult: 'Limited result',
+      requiresLifeHours: (hours: number) => `This analysis requires ${hours} life hours available.`,
+      ethicalOrProceduralConditions: 'Ethical or procedural conditions forbid this usage.',
+      confirmsLimits: 'The ability confirms its own limits without producing new evidence.',
+      reinforcesInfo:
+        'The ability reinforces existing information without turning it into absolute truth.',
+      revealsCompatibleElements:
+        'The ability reveals the elements compatible with its conditions and cost.',
+      cannotEstablishNewInfo: (name: string) =>
+        `${name} cannot establish anything new about this target under the present conditions.`,
+    },
+  },
+}

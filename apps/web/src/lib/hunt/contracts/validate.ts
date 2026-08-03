@@ -54,7 +54,9 @@ export function validateContract(contract: HuntContractV3): ContractValidationIs
 export function requireValidContract(contract: HuntContractV3): HuntContractV3 {
   const issues = validateContract(contract)
   if (issues.length > 0) {
-    throw new Error(`Invalid Hunt contract ${contract.id}: ${issues.map((i) => `${i.path} ${i.message}`).join('; ')}`)
+    throw new Error(
+      `Invalid Hunt contract ${contract.id}: ${issues.map((i) => `${i.path} ${i.message}`).join('; ')}`,
+    )
   }
   return contract
 }

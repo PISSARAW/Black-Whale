@@ -433,7 +433,10 @@
   }
 
   function avatar(entityId: string, locationId: string): Apparition | null {
-    const space = spaceForLocation(ship, (data.locationSlugs as Record<string, string>)[locationId] ?? locationId)
+    const space = spaceForLocation(
+      ship,
+      (data.locationSlugs as Record<string, string>)[locationId] ?? locationId,
+    )
     if (!space) return null
     const plan = ship.plans.get(space.tierId)
     if (!plan) return null
@@ -472,7 +475,11 @@
     let resolvedTier: string | null = null
     for (let depth = 0; cursor && depth < 8; depth += 1) {
       const preciseSpace = presence.locationId
-        ? spaceForLocation(ship, (data.locationSlugs as Record<string, string>)[presence.locationId] ?? presence.locationId)
+        ? spaceForLocation(
+            ship,
+            (data.locationSlugs as Record<string, string>)[presence.locationId] ??
+              presence.locationId,
+          )
         : null
       if (preciseSpace) {
         resolvedTier = preciseSpace.tierId

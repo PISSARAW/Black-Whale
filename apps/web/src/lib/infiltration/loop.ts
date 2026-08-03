@@ -31,7 +31,11 @@ export function updateInfiltration(
     ? { ...challenged.diversion, left: Math.max(0, challenged.diversion.left - dt) }
     : null
   const moved = challenged.witnesses.map((witness) => moveWitness(challenged, witness, world))
-  const searched = discoverTraces({ ...challenged, witnesses: moved, traces: activeTraces(challenged.traces, clock) })
+  const searched = discoverTraces({
+    ...challenged,
+    witnesses: moved,
+    traces: activeTraces(challenged.traces, clock),
+  })
   const witnesses = searched.witnesses.map((witness) => observe(searched, witness, world))
   const reports = witnesses.reduce((all, witness, index) => {
     if (!witness.belief.reported || challenged.witnesses[index].belief.reported) return all
@@ -51,7 +55,10 @@ export function updateInfiltration(
         return sum + (witness.belief.identity === 'intruder' ? witness.belief.certainty * 0.34 : 0)
       }, 0),
   )
-  const alertLevel = assessAlert(reports, witnesses.filter((witness) => witness.belief.identity === 'intruder').length).level
+  const alertLevel = assessAlert(
+    reports,
+    witnesses.filter((witness) => witness.belief.identity === 'intruder').length,
+  ).level
   const alertChanged = alertLevel !== state.alertLevel
   let memories = searched.memories
   for (const report of reports.slice(searched.reports.length)) {
@@ -61,7 +68,10 @@ export function updateInfiltration(
         id: `report:${report.witnessId}:${report.at.toFixed(3)}`,
         at: report.at,
         observerId: report.witnessId,
-        kind: 'report', subject: 'player', value: 'intruder', certainty: report.certainty,
+        kind: 'report',
+        subject: 'player',
+        value: 'intruder',
+        certainty: report.certainty,
       }),
     }
   }
@@ -77,9 +87,24 @@ export function updateInfiltration(
     alert,
     alertLevel,
     memories,
-    security: securityPolicy(alertLevel, searched.extractionSpaceId, witnesses.map((witness) => witness.belief.lastSpaceId).filter((space): space is string => !!space)),
+    security: securityPolicy(
+      alertLevel,
+      searched.extractionSpaceId,
+      witnesses
+        .map((witness) => witness.belief.lastSpaceId)
+        .filter((space): space is string => !!space),
+    ),
     journal: alertChanged
-      ? [...searched.journal, { id: `alert:${clock.toFixed(3)}`, at: clock, type: 'ALERT_CHANGED', actor: 'system', payload: `${state.alertLevel}>${alertLevel}` }]
+      ? [
+          ...searched.journal,
+          {
+            id: `alert:${clock.toFixed(3)}`,
+            at: clock,
+            type: 'ALERT_CHANGED',
+            actor: 'system',
+            payload: `${state.alertLevel}>${alertLevel}`,
+          },
+        ]
       : searched.journal,
     coverIntegrity,
     challenge,
@@ -89,8 +114,7 @@ export function updateInfiltration(
       maxAlert: Math.max(searched.metrics.maxAlert, alert),
       tracesDiscovered: searched.metrics.tracesDiscovered + newlyDiscovered,
     },
-    outcome:
-      clock >= searched.mission.duration ? 'timeUp' : state.outcome,
+    outcome: clock >= searched.mission.duration ? 'timeUp' : state.outcome,
   }
 }
 
@@ -134,8 +158,11 @@ function advanceVerification(state: InfiltrationState, dt: number): Infiltration
   if (state.verification.left > dt) {
     return { ...state, verification: { ...state.verification, left: state.verification.left - dt } }
   }
-  const witness = state.witnesses.find((candidate) => candidate.id === state.verification?.witnessId)
-  const method: InspectionMethod = witness?.id === 'steward' ? 'visual' : witness?.id === 'guard' ? 'touch' : 'registry'
+  const witness = state.witnesses.find(
+    (candidate) => candidate.id === state.verification?.witnessId,
+  )
+  const method: InspectionMethod =
+    witness?.id === 'steward' ? 'visual' : witness?.id === 'guard' ? 'touch' : 'registry'
   const verdict = inspectForgery(method, false)
   if (verdict === 'accepted') return { ...state, verification: null }
   return {
@@ -227,7 +254,9 @@ function observe(state: InfiltrationState, witness: Witness, world: Infiltration
 
   const auraHidden = state.player.nen === 'zetsu'
   const sociallyWrong =
-    witness.social && !!state.player.spaceId && !state.cover.allowedSpaces.includes(state.player.spaceId)
+    witness.social &&
+    !!state.player.spaceId &&
+    !state.cover.allowedSpaces.includes(state.player.spaceId)
   const nenWrong = witness.usesEn && !auraHidden
   const identity = sociallyWrong || nenWrong ? 'intruder' : 'maintenance'
   const rate = identity === 'intruder' ? 24 : 7

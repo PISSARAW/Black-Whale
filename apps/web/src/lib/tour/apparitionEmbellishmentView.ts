@@ -26,11 +26,7 @@ function bloom(seen: Apparition, { THREE, glow, root }: BasicApparitionContext) 
     const blade = new THREE.Mesh(new THREE.CircleGeometry(seen.size * 0.34, 7), petal)
     blade.scale.set(0.62, 1, 1)
     const angle = ((Math.PI * 2) / 5) * index
-    blade.position.set(
-      Math.cos(angle) * seen.size * 0.3,
-      Math.sin(angle) * seen.size * 0.3,
-      0,
-    )
+    blade.position.set(Math.cos(angle) * seen.size * 0.3, Math.sin(angle) * seen.size * 0.3, 0)
     blade.rotation.z = angle - Math.PI / 2
     head.add(blade)
   }
@@ -55,10 +51,7 @@ function note(seen: Apparition, { THREE, glow, root }: BasicApparitionContext) {
   stem.position.set(seen.size * 0.3, seen.size * 0.72, 0)
   root.add(stem)
   for (let index = 0; index < flags; index++) {
-    const tail = new THREE.Mesh(
-      new THREE.PlaneGeometry(seen.size * 0.4, seen.size * 0.12),
-      ink,
-    )
+    const tail = new THREE.Mesh(new THREE.PlaneGeometry(seen.size * 0.4, seen.size * 0.12), ink)
     tail.position.set(seen.size * 0.5, seen.size * (1.4 - index * 0.3), 0)
     tail.rotation.z = -0.5
     root.add(tail)

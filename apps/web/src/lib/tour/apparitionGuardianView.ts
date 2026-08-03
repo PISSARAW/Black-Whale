@@ -216,10 +216,7 @@ function monster(seen: Apparition, { THREE, glow, root }: BasicApparitionContext
   root.add(mass)
   for (let i = 0; i < 9; i++) {
     const angle = (Math.PI * 2 * i) / 9
-    const spine = new THREE.Mesh(
-      new THREE.ConeGeometry(seen.size * 0.14, seen.size * 0.9, 4),
-      hide,
-    )
+    const spine = new THREE.Mesh(new THREE.ConeGeometry(seen.size * 0.14, seen.size * 0.9, 4), hide)
     spine.position.set(
       Math.cos(angle) * seen.size * 0.7,
       climb * (0.45 + (i % 3) * 0.2),
@@ -237,7 +234,6 @@ function monster(seen: Apparition, { THREE, glow, root }: BasicApparitionContext
     root.add(eye)
   }
   return root
-
 }
 
 function toad(seen: Apparition, { THREE, glow, root }: BasicApparitionContext): Object3D {
@@ -253,11 +249,7 @@ function toad(seen: Apparition, { THREE, glow, root }: BasicApparitionContext): 
   root.add(jaw)
   for (let i = 0; i < 14; i++) {
     const spine = new THREE.Mesh(
-      new THREE.BoxGeometry(
-        seen.size * 0.14,
-        seen.size * (0.4 + (i % 4) * 0.11),
-        seen.size * 0.14,
-      ),
+      new THREE.BoxGeometry(seen.size * 0.14, seen.size * (0.4 + (i % 4) * 0.11), seen.size * 0.14),
       raised,
     )
     const angle = Math.PI * (i / 13)
@@ -295,12 +287,7 @@ function toad(seen: Apparition, { THREE, glow, root }: BasicApparitionContext): 
   for (const side of [-1, 1]) {
     for (let wheel = 0; wheel < 2; wheel++) {
       const rim = new THREE.Mesh(
-        new THREE.TorusGeometry(
-          seen.size * (0.31 - wheel * 0.04),
-          seen.size * 0.075,
-          7,
-          16,
-        ),
+        new THREE.TorusGeometry(seen.size * (0.31 - wheel * 0.04), seen.size * 0.075, 7, 16),
         raised,
       )
       rim.rotation.y = Math.PI / 2
@@ -355,10 +342,7 @@ function wog(seen: Apparition, { THREE, glow, root }: BasicApparitionContext): O
   torso.rotation.z = -0.18
   stem.add(torso)
 
-  const eye = new THREE.Mesh(
-    new THREE.SphereGeometry(seen.size * 0.27, 10, 8),
-    glow(0xf8f2e8, 1),
-  )
+  const eye = new THREE.Mesh(new THREE.SphereGeometry(seen.size * 0.27, 10, 8), glow(0xf8f2e8, 1))
   eye.scale.set(0.72, 1, 0.5)
   eye.position.set(-seen.size * 0.1, -seen.size * 0.3, seen.size * 0.08)
   stem.add(eye)
@@ -384,11 +368,7 @@ function wog(seen: Apparition, { THREE, glow, root }: BasicApparitionContext): O
         new THREE.CylinderGeometry(seen.size * 0.01, seen.size * 0.007, seen.size * 0.2, 4),
         ink,
       )
-      digit.position.set(
-        side * seen.size * 0.25,
-        -seen.size * 0.16 + finger * seen.size * 0.07,
-        0,
-      )
+      digit.position.set(side * seen.size * 0.25, -seen.size * 0.16 + finger * seen.size * 0.07, 0)
       digit.rotation.z = side * (0.65 + finger * 0.35)
       limb.add(digit)
     }
@@ -409,13 +389,11 @@ function wog(seen: Apparition, { THREE, glow, root }: BasicApparitionContext): O
   stem.add(club)
   root.add(stem)
   return stem
-
 }
 
 const BUILDERS: Partial<
   Record<Apparition['kind'], (seen: Apparition, context: BasicApparitionContext) => Object3D>
 > = { medusa, chimera, monster, toad, wog }
-
 
 export function buildGuardianApparition(
   seen: Apparition,

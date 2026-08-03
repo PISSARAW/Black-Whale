@@ -51,11 +51,7 @@ export function applyShu(
   return { state: { ...state, shuItem: itemId }, pool: spend(pool, SHU_COST) }
 }
 
-export function acceptVow(
-  state: AdvancedNenState,
-  vow: HuntVow,
-  clock: number,
-): AdvancedNenState {
+export function acceptVow(state: AdvancedNenState, vow: HuntVow, clock: number): AdvancedNenState {
   return clock === 0 && state.vow === null ? { ...state, vow } : state
 }
 

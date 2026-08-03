@@ -64,7 +64,12 @@ function outlinedMesh(THREE: Three, source: Mesh): Mesh | null {
 }
 
 /** Applies the shared human model's ink-and-ground language to a Nen beast. */
-export function styleNenCreature(THREE: Three, root: Group, kind: ApparitionKind, size: number): void {
+export function styleNenCreature(
+  THREE: Three,
+  root: Group,
+  kind: ApparitionKind,
+  size: number,
+): void {
   if (!isNenCreatureKind(kind)) return
 
   // Snapshot first: adding children while traversing would make the traversal

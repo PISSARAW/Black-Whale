@@ -77,13 +77,10 @@ describe('standard Nen techniques', () => {
     const observer = transitionNen(createNenTechniqueState(), { type: 'EN', radius: 5 }).state
     const zetsu = transitionNen(createNenTechniqueState(), { type: 'ZETSU' }).state
     expect(
-      detectWithEn(
-        { at: [0, 0], nen: observer },
-        [
-          { id: 'near', at: [3, 0], nen: zetsu },
-          { id: 'far', at: [8, 0], nen: createNenTechniqueState() },
-        ],
-      ),
+      detectWithEn({ at: [0, 0], nen: observer }, [
+        { id: 'near', at: [3, 0], nen: zetsu },
+        { id: 'far', at: [8, 0], nen: createNenTechniqueState() },
+      ]),
     ).toMatchObject([{ id: 'near', distance: 3, auraSignature: false }])
   })
 
@@ -91,9 +88,9 @@ describe('standard Nen techniques', () => {
     const source = transitionNen(createNenTechniqueState(), { type: 'IN', on: true }).state
     const observer = createNenTechniqueState()
     expect(isAuraVisibleTo(source, observer)).toBe(false)
-    expect(
-      isAuraVisibleTo(source, transitionNen(observer, { type: 'GYO', on: true }).state),
-    ).toBe(true)
+    expect(isAuraVisibleTo(source, transitionNen(observer, { type: 'GYO', on: true }).state)).toBe(
+      true,
+    )
   })
 
   it('raises On as dark Ren and locks its forced Ryu', () => {

@@ -31,24 +31,14 @@ function centipede(seen: Apparition, { THREE, glow, root }: BasicApparitionConte
     }
     for (const side of [-1, 1]) {
       const upper = new THREE.Mesh(
-        new THREE.CylinderGeometry(
-          seen.size * 0.045,
-          seen.size * 0.035,
-          seen.size * 0.72,
-          5,
-        ),
+        new THREE.CylinderGeometry(seen.size * 0.045, seen.size * 0.035, seen.size * 0.72, 5),
         markings,
       )
       upper.position.set(0, -seen.size * 0.34, side * seen.size * 0.72)
       upper.rotation.x = side * 0.9
       segment.add(upper)
       const lower = new THREE.Mesh(
-        new THREE.CylinderGeometry(
-          seen.size * 0.035,
-          seen.size * 0.02,
-          seen.size * 0.62,
-          5,
-        ),
+        new THREE.CylinderGeometry(seen.size * 0.035, seen.size * 0.02, seen.size * 0.62, 5),
         markings,
       )
       lower.position.set(0, -seen.size * 0.68, side * seen.size * 0.98)
@@ -65,10 +55,7 @@ function centipede(seen: Apparition, { THREE, glow, root }: BasicApparitionConte
   // Two black eyes and a ring of teeth: the head in the source is read
   // entirely off those two things.
   for (const side of [-1, 1]) {
-    const eye = new THREE.Mesh(
-      new THREE.SphereGeometry(seen.size * 0.25, 10, 8),
-      glow(0x120d0a, 1),
-    )
+    const eye = new THREE.Mesh(new THREE.SphereGeometry(seen.size * 0.25, 10, 8), glow(0x120d0a, 1))
     eye.scale.set(0.52, 1, 0.35)
     eye.position.set(seen.size * 1.34, seen.size * 0.1, side * seen.size * 0.48)
     root.add(eye)
@@ -133,20 +120,12 @@ function mouths(seen: Apparition, { THREE, glow, root }: BasicApparitionContext)
     const mouth = new THREE.Group()
     mouth.position.set(x * seen.size, y * seen.size, z * seen.size)
     mouth.rotation.z = ((i % 3) - 1) * 0.22
-    const dark = new THREE.Mesh(
-      new THREE.CircleGeometry(seen.size * radius, 16),
-      glow(0x1a1420, 1),
-    )
+    const dark = new THREE.Mesh(new THREE.CircleGeometry(seen.size * radius, 16), glow(0x1a1420, 1))
     dark.scale.set(1, toothed ? 0.62 : 0.34, 1)
     mouth.add(dark)
     for (const lip of [-1, 1]) {
       const line = new THREE.Mesh(
-        new THREE.CapsuleGeometry(
-          seen.size * radius * 0.16,
-          seen.size * radius * 1.55,
-          3,
-          7,
-        ),
+        new THREE.CapsuleGeometry(seen.size * radius * 0.16, seen.size * radius * 1.55, 3, 7),
         glow(seen.colour, 1),
       )
       line.rotation.z = Math.PI / 2
@@ -173,7 +152,6 @@ function mouths(seen: Apparition, { THREE, glow, root }: BasicApparitionContext)
   }
   root.add(lips)
   return lips
-
 }
 
 const BUILDERS: Partial<

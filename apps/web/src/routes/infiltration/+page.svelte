@@ -5,7 +5,11 @@
   import TourModeFullscreen from '$lib/components/tour/TourModeFullscreen.svelte'
   import { buildArena } from '$lib/hunt/arena'
   import { ModeNenState } from '$lib/nen/modeState.svelte'
-  import { createNenTechniqueState, transitionNen, type NenTechniqueAction } from '@black-whale/nen-engine'
+  import {
+    createNenTechniqueState,
+    transitionNen,
+    type NenTechniqueAction,
+  } from '@black-whale/nen-engine'
   import { isNenControlCode } from '$lib/nen/controls'
   import { buildNavGraph } from '$lib/hunt/navmesh'
   import { floorOf, theShip, crossingsOn, type Crossing } from '$lib/tour/blueprint'
@@ -32,7 +36,11 @@
   import type { MissionId } from '$lib/infiltration/missions/types'
   import { decodeSave, encodeSave } from '$lib/infiltration/persistence'
   import { causalTimeline, debriefAxes } from '$lib/infiltration/debrief'
-  import { applyConsequences, initialCampaign, type CampaignState } from '$lib/infiltration/campaign'
+  import {
+    applyConsequences,
+    initialCampaign,
+    type CampaignState,
+  } from '$lib/infiltration/campaign'
   import { infiltrationHatsuManifestations } from '$lib/infiltration/hatsuPresentation'
   import { playInfiltrationHatsuSound } from '$lib/audio/infiltrationHatsuSounds'
 
@@ -65,7 +73,8 @@
       plan = newPlan
       const newArena = buildArena()
       if (newArena.tierId === id) {
-        const newSpace = newArena.spaces.find((s) => s.id === currentSpace?.id) ?? newArena.spaces[0]
+        const newSpace =
+          newArena.spaces.find((s) => s.id === currentSpace?.id) ?? newArena.spaces[0]
         position = centroid(newSpace)
         currentSpace = newSpace
       }
@@ -92,19 +101,21 @@
       witnesses: selection.definition.witnesses.map((definition, index) => {
         const space = arena.spaces[definition.spaceIndex]
         const neighbours = graph.edges.get(space.id) ?? []
-        const rotated = neighbours.map((_, routeIndex) =>
-          neighbours[(routeIndex + selection.variant.routeOffset) % neighbours.length],
+        const rotated = neighbours.map(
+          (_, routeIndex) =>
+            neighbours[(routeIndex + selection.variant.routeOffset) % neighbours.length],
         )
         return {
-        id: definition.id,
-        position: centroid(space),
-        heading: index % 2 === 0 ? 0 : Math.PI,
-        spaceId: space.id,
-        sight: definition.sight,
-        social: definition.social,
-        usesEn: definition.usesEn,
-        route: [space.id, ...rotated],
-      }}),
+          id: definition.id,
+          position: centroid(space),
+          heading: index % 2 === 0 ? 0 : Math.PI,
+          spaceId: space.id,
+          sight: definition.sight,
+          social: definition.social,
+          usesEn: definition.usesEn,
+          route: [space.id, ...rotated],
+        }
+      }),
     })
   }
 
@@ -179,7 +190,8 @@
       spaceId: witness.spaceId,
       stage: 0,
       human: {
-        role: witness.id === 'steward' ? 'steward' : witness.id === 'nenGuard' ? 'nen-guard' : 'guard',
+        role:
+          witness.id === 'steward' ? 'steward' : witness.id === 'nenGuard' ? 'nen-guard' : 'guard',
         identity: `infiltration:${witness.id}`,
         alert: witness.challenged || witness.investigating !== null,
         pose: witness.investigating ? 'search' : 'walk',
@@ -191,17 +203,24 @@
   )
   let hatsuFigures = $derived<Apparition[]>(
     infiltrationHatsuManifestations(game).map((manifestation) => {
-      const space = arena.spaces.find((candidate) => candidate.id === manifestation.spaceId) ?? extraction
+      const space =
+        arena.spaces.find((candidate) => candidate.id === manifestation.spaceId) ?? extraction
       return {
-        ...manifestation, y: floorOf(space, plan.tier) + 1.1, heading: 0,
-        tierId: arena.tierId, stage: manifestation.stage ?? 0, hidden: false,
+        ...manifestation,
+        y: floorOf(space, plan.tier) + 1.1,
+        heading: 0,
+        tierId: arena.tierId,
+        stage: manifestation.stage ?? 0,
+        hidden: false,
       }
     }),
   )
 
   function moveScoutTo(space: Space) {
     send({
-      type: 'SCOUT_MOVE', position: centroid(space), spaceId: space.id,
+      type: 'SCOUT_MOVE',
+      position: centroid(space),
+      spaceId: space.id,
       visibleToGuard: game.witnesses.some((witness) => witness.spaceId === space.id),
     })
   }
@@ -301,15 +320,24 @@
 
   onMount(() => {
     try {
-      const storedCampaign = JSON.parse(localStorage.getItem('black-whale:infiltration:campaign:v1') ?? 'null')
+      const storedCampaign = JSON.parse(
+        localStorage.getItem('black-whale:infiltration:campaign:v1') ?? 'null',
+      )
       if (storedCampaign?.version === 1) campaign = storedCampaign
-    } catch { /* A corrupt campaign never blocks a mission. */ }
-    const saved = decodeSave(localStorage.getItem('black-whale:infiltration:v3') ?? localStorage.getItem('black-whale:infiltration:v2') ?? '')
+    } catch {
+      /* A corrupt campaign never blocks a mission. */
+    }
+    const saved = decodeSave(
+      localStorage.getItem('black-whale:infiltration:v3') ??
+        localStorage.getItem('black-whale:infiltration:v2') ??
+        '',
+    )
     if (saved?.state.outcome === 'playing') {
       game = saved.state
       selectedMission = saved.state.mission.id
       position = saved.state.player.position
-      currentSpace = arena.spaces.find((space) => space.id === saved.state.player.spaceId) ?? extraction
+      currentSpace =
+        arena.spaces.find((space) => space.id === saved.state.player.spaceId) ?? extraction
     }
     autosave = setInterval(() => {
       if (game.outcome === 'playing' && !briefing)
@@ -345,15 +373,15 @@
 <div class="relative h-screen w-full overflow-hidden bg-black text-white">
   <TourModeFullscreen />
   <TourMinimapPanel
-    ship={ship}
-    tierId={tierId}
-    plan={plan}
-    position={position}
-    heading={heading}
+    {ship}
+    {tierId}
+    {plan}
+    {position}
+    {heading}
     currentSpaceId={currentSpace?.id ?? null}
-    decks={decks}
-    crossings={crossings}
-    nameOf={nameOf}
+    {decks}
+    {crossings}
+    {nameOf}
     onSelectDeck={selectTier}
     onSelectPlan={(space) => {
       position = centroid(space)
@@ -440,23 +468,33 @@
       </p>
     </section>
 
-    <div class="pointer-events-auto absolute bottom-8 left-1/2 flex -translate-x-1/2 items-center gap-3 rounded-2xl border border-cyan-900/50 bg-slate-950/85 p-3 shadow-[0_8px_32px_rgba(0,0,0,0.8),inset_0_1px_15px_rgba(6,182,212,0.1)] backdrop-blur-md">
+    <div
+      class="pointer-events-auto absolute bottom-8 left-1/2 flex -translate-x-1/2 items-center gap-3 rounded-2xl border border-cyan-900/50 bg-slate-950/85 p-3 shadow-[0_8px_32px_rgba(0,0,0,0.8),inset_0_1px_15px_rgba(6,182,212,0.1)] backdrop-blur-md"
+    >
       {#if needsHatsuTarget}
         {#each nearbyHatsuTargets as target (target.id)}
           <button
             onclick={() => send({ type: 'TARGET_HATSU', witnessId: target.id })}
             aria-pressed={game.hatsu.targetWitnessId === target.id}
             class="rounded-xl border border-red-500/30 bg-red-950/40 px-4 py-2 text-xs font-semibold text-red-200 shadow-[inset_0_1px_10px_rgba(239,68,68,0.15)] transition-all hover:border-red-500 hover:bg-red-900/60 aria-pressed:border-red-400 aria-pressed:bg-red-500/20"
-          >{$t.infiltration.witnesses[target.id]}</button>
+            >{$t.infiltration.witnesses[target.id]}</button
+          >
         {/each}
       {/if}
       {#if game.hatsu.scout?.active}
         {#each scoutDestinations as destination (destination.id)}
-          <button onclick={() => moveScoutTo(destination)} class="rounded-xl border border-fuchsia-400/40 bg-fuchsia-950/40 px-4 py-2 text-xs font-semibold text-fuchsia-200 shadow-[inset_0_1px_10px_rgba(232,121,249,0.15)] transition-colors hover:border-fuchsia-400 hover:bg-fuchsia-900/60">
+          <button
+            onclick={() => moveScoutTo(destination)}
+            class="rounded-xl border border-fuchsia-400/40 bg-fuchsia-950/40 px-4 py-2 text-xs font-semibold text-fuchsia-200 shadow-[inset_0_1px_10px_rgba(232,121,249,0.15)] transition-colors hover:border-fuchsia-400 hover:bg-fuchsia-900/60"
+          >
             Eye → {roomName(destination)}
           </button>
         {/each}
-        <button onclick={() => send({ type: 'SCOUT_RECALL' })} class="rounded-xl border border-fuchsia-500/30 bg-black/60 px-4 py-2 text-xs font-semibold text-fuchsia-200 shadow-[inset_0_1px_8px_rgba(232,121,249,0.1)] transition-colors hover:border-fuchsia-500 hover:bg-fuchsia-900/40">{$t.infiltration.hatsuInteractive.recall}</button>
+        <button
+          onclick={() => send({ type: 'SCOUT_RECALL' })}
+          class="rounded-xl border border-fuchsia-500/30 bg-black/60 px-4 py-2 text-xs font-semibold text-fuchsia-200 shadow-[inset_0_1px_8px_rgba(232,121,249,0.1)] transition-colors hover:border-fuchsia-500 hover:bg-fuchsia-900/40"
+          >{$t.infiltration.hatsuInteractive.recall}</button
+        >
       {/if}
       {#if canCopy || canVerify || canExtract}<button
           onclick={act}
@@ -470,7 +508,8 @@
       <button
         onclick={() => send({ type: 'ZETSU' })}
         aria-keyshortcuts="X"
-        class="rounded-xl border border-cyan-500/30 bg-cyan-950/30 px-4 py-2.5 text-xs font-semibold text-cyan-100 shadow-[inset_0_1px_8px_rgba(6,182,212,0.1)] transition-all hover:border-cyan-400 hover:bg-cyan-900/50">X · Ten/Zetsu</button
+        class="rounded-xl border border-cyan-500/30 bg-cyan-950/30 px-4 py-2.5 text-xs font-semibold text-cyan-100 shadow-[inset_0_1px_8px_rgba(6,182,212,0.1)] transition-all hover:border-cyan-400 hover:bg-cyan-900/50"
+        >X · Ten/Zetsu</button
       >
       <button
         onclick={() => send({ type: 'DIVERT' })}
@@ -499,36 +538,51 @@
         aria-modal="true"
         aria-labelledby="cover-check-title"
       >
-        <section class="relative w-full max-w-md overflow-hidden rounded-xl border border-red-500/80 bg-slate-950 p-8 shadow-[0_0_50px_rgba(239,68,68,0.3)]">
+        <section
+          class="relative w-full max-w-md overflow-hidden rounded-xl border border-red-500/80 bg-slate-950 p-8 shadow-[0_0_50px_rgba(239,68,68,0.3)]"
+        >
           <div class="absolute left-0 top-0 h-1 w-full bg-red-500"></div>
-          <div class="absolute inset-0 pointer-events-none opacity-10 bg-[repeating-linear-gradient(45deg,transparent,transparent_10px,#ef4444_10px,#ef4444_20px)]"></div>
+          <div
+            class="absolute inset-0 pointer-events-none opacity-10 bg-[repeating-linear-gradient(45deg,transparent,transparent_10px,#ef4444_10px,#ef4444_20px)]"
+          ></div>
           <div class="relative z-10">
-            <p class="flex items-center gap-2 text-xs font-bold uppercase tracking-[.25em] text-red-500 animate-pulse">
+            <p
+              class="flex items-center gap-2 text-xs font-bold uppercase tracking-[.25em] text-red-500 animate-pulse"
+            >
               <span class="inline-block h-2 w-2 rounded-full bg-red-500"></span>
               {$t.infiltration.challenge}
             </p>
-            <h2 id="cover-check-title" class="mt-3 text-3xl font-black tracking-tight text-white drop-shadow-[0_0_10px_rgba(239,68,68,0.5)]">
+            <h2
+              id="cover-check-title"
+              class="mt-3 text-3xl font-black tracking-tight text-white drop-shadow-[0_0_10px_rgba(239,68,68,0.5)]"
+            >
               {$t.infiltration.witnesses[game.challenge.witnessId]}
             </h2>
             <p class="mt-4 text-sm leading-relaxed text-red-100/80">
               {$t.infiltration.challengePrompt}
             </p>
-            <p class="mt-3 text-4xl font-mono font-bold text-red-500">{Math.ceil(game.challenge.left)}<span class="text-lg text-red-500/50">s</span></p>
+            <p class="mt-3 text-4xl font-mono font-bold text-red-500">
+              {Math.ceil(game.challenge.left)}<span class="text-lg text-red-500/50">s</span>
+            </p>
             <div class="mt-8 grid gap-3">
               <button
                 aria-keyshortcuts="1"
                 onclick={() => send({ type: 'ANSWER', answer: 'workOrder' })}
                 class="group relative overflow-hidden rounded-lg border border-red-500/30 bg-red-950/40 px-5 py-4 text-left text-sm font-semibold transition-all hover:border-red-400 hover:bg-red-900/60 hover:shadow-[0_0_20px_rgba(239,68,68,0.3)]"
-                >
-                <span class="absolute inset-y-0 left-0 w-1 bg-red-500 opacity-0 transition-opacity group-hover:opacity-100"></span>
+              >
+                <span
+                  class="absolute inset-y-0 left-0 w-1 bg-red-500 opacity-0 transition-opacity group-hover:opacity-100"
+                ></span>
                 <span class="text-red-100">{$t.infiltration.workOrder}</span>
               </button>
               <button
                 aria-keyshortcuts="2"
                 onclick={() => send({ type: 'ANSWER', answer: 'bluff' })}
                 class="group relative overflow-hidden rounded-lg border border-red-500/30 bg-red-950/40 px-5 py-4 text-left text-sm font-semibold transition-all hover:border-red-400 hover:bg-red-900/60 hover:shadow-[0_0_20px_rgba(239,68,68,0.3)]"
-                >
-                <span class="absolute inset-y-0 left-0 w-1 bg-red-500 opacity-0 transition-opacity group-hover:opacity-100"></span>
+              >
+                <span
+                  class="absolute inset-y-0 left-0 w-1 bg-red-500 opacity-0 transition-opacity group-hover:opacity-100"
+                ></span>
                 <span class="text-red-100">{$t.infiltration.bluff}</span>
               </button>
             </div>
@@ -553,48 +607,84 @@
       aria-modal="true"
       aria-labelledby="mission-title"
     >
-      <article class="relative max-h-[90vh] w-full max-w-4xl overflow-y-auto rounded-xl border border-slate-700 bg-[#0a0f16] shadow-2xl">
-        <div class="sticky top-0 z-10 border-b border-slate-800 bg-[#0a0f16]/95 px-8 py-5 backdrop-blur">
-          <p class="flex items-center gap-3 text-xs font-bold uppercase tracking-[.3em] text-cyan-500">
-            <span class="inline-block h-2 w-2 rounded-full bg-cyan-500 shadow-[0_0_8px_#06b6d4]"></span>
+      <article
+        class="relative max-h-[90vh] w-full max-w-4xl overflow-y-auto rounded-xl border border-slate-700 bg-[#0a0f16] shadow-2xl"
+      >
+        <div
+          class="sticky top-0 z-10 border-b border-slate-800 bg-[#0a0f16]/95 px-8 py-5 backdrop-blur"
+        >
+          <p
+            class="flex items-center gap-3 text-xs font-bold uppercase tracking-[.3em] text-cyan-500"
+          >
+            <span class="inline-block h-2 w-2 rounded-full bg-cyan-500 shadow-[0_0_8px_#06b6d4]"
+            ></span>
             {$t.infiltration.briefing}
-            <span class="ml-auto font-mono text-[10px] text-slate-500">SECURE CONNECTION ESTABLISHED</span>
+            <span class="ml-auto font-mono text-[10px] text-slate-500"
+              >SECURE CONNECTION ESTABLISHED</span
+            >
           </p>
-          <h1 id="mission-title" class="mt-2 text-4xl font-black tracking-tight text-white drop-shadow-md">{$t.infiltration.title}</h1>
+          <h1
+            id="mission-title"
+            class="mt-2 text-4xl font-black tracking-tight text-white drop-shadow-md"
+          >
+            {$t.infiltration.title}
+          </h1>
         </div>
-        
+
         <div class="px-8 pb-10 pt-6">
           <p class="leading-relaxed text-slate-300">{$t.infiltration.intro}</p>
-          <div class="mt-4 inline-flex items-center gap-2 rounded bg-slate-900 px-3 py-1.5 font-mono text-xs text-cyan-400/70 border border-cyan-900/50">
-            <svg class="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-            {$t.infiltration.v3.campaign} · {campaign.completed.length} {$t.infiltration.v3.operations} · {campaign.knownSpaces.length} {$t.infiltration.v3.knownAreas}
+          <div
+            class="mt-4 inline-flex items-center gap-2 rounded bg-slate-900 px-3 py-1.5 font-mono text-xs text-cyan-400/70 border border-cyan-900/50"
+          >
+            <svg
+              class="h-3 w-3"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></svg
+            >
+            {$t.infiltration.v3.campaign} · {campaign.completed.length}
+            {$t.infiltration.v3.operations} · {campaign.knownSpaces.length}
+            {$t.infiltration.v3.knownAreas}
           </div>
-          
+
           <div class="mt-10 mb-4 flex items-center gap-4">
-            <h2 class="text-xs font-bold uppercase tracking-[.2em] text-amber-400">{$t.infiltration.chooseMission}</h2>
+            <h2 class="text-xs font-bold uppercase tracking-[.2em] text-amber-400">
+              {$t.infiltration.chooseMission}
+            </h2>
             <div class="h-px flex-1 bg-gradient-to-r from-amber-400/20 to-transparent"></div>
           </div>
-          
+
           <div class="grid gap-3 sm:grid-cols-3">
             {#each Object.values(MISSIONS) as mission (mission.id)}
               <button
                 onclick={() => chooseMission(mission.id)}
                 aria-pressed={selectedMission === mission.id}
-                class="group relative overflow-hidden rounded-lg border p-4 text-left text-xs transition-all {selectedMission === mission.id
+                class="group relative overflow-hidden rounded-lg border p-4 text-left text-xs transition-all {selectedMission ===
+                mission.id
                   ? 'border-amber-400 bg-amber-400/10 shadow-[inset_0_0_20px_rgba(251,191,36,0.15)]'
                   : 'border-slate-800 bg-slate-900/50 hover:border-amber-400/50 hover:bg-slate-800'}"
               >
                 {#if selectedMission === mission.id}
-                  <div class="absolute left-0 top-0 h-full w-1 bg-amber-400 shadow-[0_0_10px_#fbbf24]"></div>
+                  <div
+                    class="absolute left-0 top-0 h-full w-1 bg-amber-400 shadow-[0_0_10px_#fbbf24]"
+                  ></div>
                 {/if}
-                <strong class="block text-sm font-bold text-white transition-colors group-hover:text-amber-300">{$t.infiltration.missions[mission.id].name}</strong>
-                <span class="mt-2 block leading-snug text-slate-400">{$t.infiltration.missions[mission.id].goal}</span>
+                <strong
+                  class="block text-sm font-bold text-white transition-colors group-hover:text-amber-300"
+                  >{$t.infiltration.missions[mission.id].name}</strong
+                >
+                <span class="mt-2 block leading-snug text-slate-400"
+                  >{$t.infiltration.missions[mission.id].goal}</span
+                >
               </button>
             {/each}
           </div>
-          
+
           <div class="mt-6 rounded-lg border border-slate-800 bg-slate-900/50 p-4">
-            <h3 class="mb-3 text-[10px] font-bold uppercase tracking-wider text-slate-500">Mission Objectives</h3>
+            <h3 class="mb-3 text-[10px] font-bold uppercase tracking-wider text-slate-500">
+              Mission Objectives
+            </h3>
             <ul class="space-y-2 text-sm text-slate-300">
               {#each game.objectives as missionObjective (missionObjective.id)}
                 <li class="flex items-start gap-2">
@@ -604,58 +694,84 @@
               {/each}
             </ul>
           </div>
-          
+
           <div class="mt-10 mb-4 flex items-center gap-4">
-            <h2 class="text-xs font-bold uppercase tracking-[.2em] text-fuchsia-400">{$t.infiltration.chooseHatsu}</h2>
+            <h2 class="text-xs font-bold uppercase tracking-[.2em] text-fuchsia-400">
+              {$t.infiltration.chooseHatsu}
+            </h2>
             <div class="h-px flex-1 bg-gradient-to-r from-fuchsia-400/20 to-transparent"></div>
           </div>
-          
+
           <div class="grid gap-3 sm:grid-cols-3">
             {#each INFILTRATION_HATSU as ability (ability.id)}
               <button
                 onclick={() => send({ type: 'SELECT_HATSU', id: ability.id })}
                 aria-pressed={game.hatsu.id === ability.id}
-                class="group relative overflow-hidden rounded-lg border p-4 text-left text-xs transition-all {game.hatsu.id === ability.id
+                class="group relative overflow-hidden rounded-lg border p-4 text-left text-xs transition-all {game
+                  .hatsu.id === ability.id
                   ? 'border-fuchsia-400 bg-fuchsia-400/10 shadow-[inset_0_0_20px_rgba(232,121,249,0.15)]'
                   : 'border-slate-800 bg-slate-900/50 hover:border-fuchsia-400/50 hover:bg-slate-800'}"
               >
                 {#if game.hatsu.id === ability.id}
-                  <div class="absolute left-0 top-0 h-full w-1 bg-fuchsia-400 shadow-[0_0_10px_#e879f9]"></div>
+                  <div
+                    class="absolute left-0 top-0 h-full w-1 bg-fuchsia-400 shadow-[0_0_10px_#e879f9]"
+                  ></div>
                 {/if}
-                <strong class="block text-sm font-bold text-white transition-colors group-hover:text-fuchsia-300">{ability.name}</strong>
-                <span class="mt-1.5 block font-mono text-[10px] text-fuchsia-300/70 uppercase">{$t.infiltration.hatsuRoles[ability.role]}</span>
+                <strong
+                  class="block text-sm font-bold text-white transition-colors group-hover:text-fuchsia-300"
+                  >{ability.name}</strong
+                >
+                <span class="mt-1.5 block font-mono text-[10px] text-fuchsia-300/70 uppercase"
+                  >{$t.infiltration.hatsuRoles[ability.role]}</span
+                >
                 <span class="mt-2 block leading-snug text-slate-400">{ability.rule}</span>
               </button>
             {/each}
           </div>
-          
+
           {#if game.hatsu.id === 'texture-surprise'}
             <div class="mt-4 rounded-lg border border-fuchsia-900/50 bg-fuchsia-950/20 p-4">
-              <h3 class="mb-3 text-[10px] font-bold uppercase tracking-wider text-fuchsia-400">Configure Hatsu</h3>
+              <h3 class="mb-3 text-[10px] font-bold uppercase tracking-wider text-fuchsia-400">
+                Configure Hatsu
+              </h3>
               <div class="flex flex-wrap gap-2">
                 {#each forgerySurfaces as surface}
-                  <button onclick={() => send({ type: 'CONFIGURE_HATSU', forgerySurface: surface })} aria-pressed={game.hatsu.forgerySurface === surface} class="rounded-md border border-slate-700 bg-slate-900 px-4 py-2 text-xs transition-all hover:border-fuchsia-500 hover:bg-slate-800 aria-pressed:border-fuchsia-400 aria-pressed:bg-fuchsia-900/40 aria-pressed:text-fuchsia-100">{$t.infiltration.hatsuInteractive.surfaces[surface]}</button>
+                  <button
+                    onclick={() => send({ type: 'CONFIGURE_HATSU', forgerySurface: surface })}
+                    aria-pressed={game.hatsu.forgerySurface === surface}
+                    class="rounded-md border border-slate-700 bg-slate-900 px-4 py-2 text-xs transition-all hover:border-fuchsia-500 hover:bg-slate-800 aria-pressed:border-fuchsia-400 aria-pressed:bg-fuchsia-900/40 aria-pressed:text-fuchsia-100"
+                    >{$t.infiltration.hatsuInteractive.surfaces[surface]}</button
+                  >
                 {/each}
               </div>
             </div>
           {:else if game.hatsu.id === 'illumi-needle-people'}
             <div class="mt-4 rounded-lg border border-fuchsia-900/50 bg-fuchsia-950/20 p-4">
-              <h3 class="mb-3 text-[10px] font-bold uppercase tracking-wider text-fuchsia-400">Configure Hatsu</h3>
+              <h3 class="mb-3 text-[10px] font-bold uppercase tracking-wider text-fuchsia-400">
+                Configure Hatsu
+              </h3>
               <div class="flex flex-wrap gap-2">
                 {#each disguiseIdentities as identity}
-                  <button onclick={() => send({ type: 'CONFIGURE_HATSU', disguiseIdentity: identity })} aria-pressed={game.hatsu.disguiseIdentity === identity} class="rounded-md border border-slate-700 bg-slate-900 px-4 py-2 text-xs transition-all hover:border-fuchsia-500 hover:bg-slate-800 aria-pressed:border-fuchsia-400 aria-pressed:bg-fuchsia-900/40 aria-pressed:text-fuchsia-100">{$t.infiltration.hatsuInteractive.identities[identity]}</button>
+                  <button
+                    onclick={() => send({ type: 'CONFIGURE_HATSU', disguiseIdentity: identity })}
+                    aria-pressed={game.hatsu.disguiseIdentity === identity}
+                    class="rounded-md border border-slate-700 bg-slate-900 px-4 py-2 text-xs transition-all hover:border-fuchsia-500 hover:bg-slate-800 aria-pressed:border-fuchsia-400 aria-pressed:bg-fuchsia-900/40 aria-pressed:text-fuchsia-100"
+                    >{$t.infiltration.hatsuInteractive.identities[identity]}</button
+                  >
                 {/each}
               </div>
             </div>
           {/if}
-          
+
           <div class="mt-10 flex justify-end">
             <button
               onclick={() => (briefing = false)}
               aria-keyshortcuts="Enter"
               class="group relative overflow-hidden rounded-lg bg-cyan-500 px-8 py-4 text-sm font-bold tracking-wide text-slate-950 shadow-[0_0_20px_rgba(6,182,212,0.4)] transition-all hover:bg-cyan-400 hover:shadow-[0_0_30px_rgba(6,182,212,0.6)]"
             >
-              <span class="absolute inset-0 bg-white/20 opacity-0 transition-opacity group-hover:opacity-100"></span>
+              <span
+                class="absolute inset-0 bg-white/20 opacity-0 transition-opacity group-hover:opacity-100"
+              ></span>
               {$t.infiltration.begin} →
             </button>
           </div>
@@ -667,52 +783,85 @@
   {#if finished}
     <div class="absolute inset-0 overflow-y-auto bg-slate-950/95 p-6 backdrop-blur-md">
       <article class="mx-auto max-w-4xl py-10">
-        <div class="relative overflow-hidden rounded-xl border border-slate-700 bg-[#0a0f16] shadow-2xl">
+        <div
+          class="relative overflow-hidden rounded-xl border border-slate-700 bg-[#0a0f16] shadow-2xl"
+        >
           <div class="border-b border-slate-800 bg-[#0a0f16]/95 px-10 py-8">
-            <p class="flex items-center gap-3 text-xs font-bold uppercase tracking-[.3em] text-cyan-500">
-              <span class="inline-block h-2 w-2 rounded-full bg-cyan-500 shadow-[0_0_8px_#06b6d4]"></span>
+            <p
+              class="flex items-center gap-3 text-xs font-bold uppercase tracking-[.3em] text-cyan-500"
+            >
+              <span class="inline-block h-2 w-2 rounded-full bg-cyan-500 shadow-[0_0_8px_#06b6d4]"
+              ></span>
               {$t.infiltration.debrief}
               <span class="ml-auto font-mono text-[10px] text-slate-500">OPERATION ENDED</span>
             </p>
-            <h1 class="mt-4 text-5xl font-black tracking-tight {game.outcome === 'escaped' ? 'text-cyan-400 drop-shadow-[0_0_15px_rgba(34,211,238,0.4)]' : 'text-red-500 drop-shadow-[0_0_15px_rgba(239,68,68,0.4)]'}">
+            <h1
+              class="mt-4 text-5xl font-black tracking-tight {game.outcome === 'escaped'
+                ? 'text-cyan-400 drop-shadow-[0_0_15px_rgba(34,211,238,0.4)]'
+                : 'text-red-500 drop-shadow-[0_0_15px_rgba(239,68,68,0.4)]'}"
+            >
               {$t.infiltration.outcomes[game.outcome]}
             </h1>
             <div class="mt-6 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-slate-400">
               <p class="flex items-center gap-2">
-                <span class="text-xs uppercase tracking-wider text-slate-500">{$t.infiltration.score}</span>
+                <span class="text-xs uppercase tracking-wider text-slate-500"
+                  >{$t.infiltration.score}</span
+                >
                 <strong class="text-lg text-white">{report.score}/100</strong>
               </p>
               <p class="flex items-center gap-2">
-                <span class="text-xs uppercase tracking-wider text-slate-500">{$t.infiltration.traces}</span>
+                <span class="text-xs uppercase tracking-wider text-slate-500"
+                  >{$t.infiltration.traces}</span
+                >
                 <strong class="text-lg text-white">{report.traces.length}</strong>
               </p>
               <div class="h-4 w-px bg-slate-700"></div>
-              <p class="font-mono text-xs">{game.mission.id} · {game.mission.variantId} · seed {game.mission.seed} · {game.alertLevel}</p>
+              <p class="font-mono text-xs">
+                {game.mission.id} · {game.mission.variantId} · seed {game.mission.seed} · {game.alertLevel}
+              </p>
             </div>
           </div>
-          
+
           <div class="px-10 py-8">
             <div class="grid grid-cols-3 gap-4">
-              <div class="rounded-lg border border-slate-800 bg-slate-900/50 p-5 transition-colors hover:border-cyan-900">
-                <p class="text-[10px] font-bold uppercase tracking-[.15em] text-slate-500">{$t.infiltration.v3.objectiveAxis}</p>
+              <div
+                class="rounded-lg border border-slate-800 bg-slate-900/50 p-5 transition-colors hover:border-cyan-900"
+              >
+                <p class="text-[10px] font-bold uppercase tracking-[.15em] text-slate-500">
+                  {$t.infiltration.v3.objectiveAxis}
+                </p>
                 <p class="mt-2 text-xl font-semibold text-white">{verdict.material}</p>
               </div>
-              <div class="rounded-lg border border-slate-800 bg-slate-900/50 p-5 transition-colors hover:border-cyan-900">
-                <p class="text-[10px] font-bold uppercase tracking-[.15em] text-slate-500">{$t.infiltration.v3.informationAxis}</p>
+              <div
+                class="rounded-lg border border-slate-800 bg-slate-900/50 p-5 transition-colors hover:border-cyan-900"
+              >
+                <p class="text-[10px] font-bold uppercase tracking-[.15em] text-slate-500">
+                  {$t.infiltration.v3.informationAxis}
+                </p>
                 <p class="mt-2 text-xl font-semibold text-white">{verdict.information}</p>
               </div>
-              <div class="rounded-lg border border-slate-800 bg-slate-900/50 p-5 transition-colors hover:border-cyan-900">
-                <p class="text-[10px] font-bold uppercase tracking-[.15em] text-slate-500">{$t.infiltration.v3.coverAxis}</p>
+              <div
+                class="rounded-lg border border-slate-800 bg-slate-900/50 p-5 transition-colors hover:border-cyan-900"
+              >
+                <p class="text-[10px] font-bold uppercase tracking-[.15em] text-slate-500">
+                  {$t.infiltration.v3.coverAxis}
+                </p>
                 <p class="mt-2 text-xl font-semibold text-white">{verdict.cover}</p>
               </div>
             </div>
-            
+
             {#if timeline.length > 0}
               <div class="mt-8 rounded-lg border border-slate-800 bg-black/40 p-5">
-                <h3 class="mb-4 text-[10px] font-bold uppercase tracking-wider text-slate-500">Mission Timeline</h3>
-                <ol class="max-h-48 space-y-2 overflow-y-auto pr-2 text-sm font-mono text-slate-400">
+                <h3 class="mb-4 text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                  Mission Timeline
+                </h3>
+                <ol
+                  class="max-h-48 space-y-2 overflow-y-auto pr-2 text-sm font-mono text-slate-400"
+                >
                   {#each timeline as event}
-                    <li class="flex gap-4 border-b border-slate-800/50 pb-2 last:border-0 last:pb-0">
+                    <li
+                      class="flex gap-4 border-b border-slate-800/50 pb-2 last:border-0 last:pb-0"
+                    >
                       <span class="w-16 shrink-0 text-cyan-600">{event.at.toFixed(1)}s</span>
                       <span class="w-24 shrink-0 text-amber-500/70">{event.actor}</span>
                       <span class="text-slate-300">{event.detail}</span>
@@ -721,7 +870,7 @@
                 </ol>
               </div>
             {/if}
-            
+
             <div class="mt-8 flex flex-wrap gap-x-8 gap-y-2 text-sm">
               <p class="flex items-center gap-2">
                 <span class="text-slate-500">{$t.infiltration.reports}:</span>
@@ -736,40 +885,60 @@
                 <strong class="text-cyan-400">{$t.infiltration.styles[balance.style]}</strong>
               </p>
             </div>
-            
+
             {#if report.witnesses.length > 0}
               <div class="mt-10">
-                <h3 class="mb-4 text-xs font-bold uppercase tracking-wider text-slate-500">Witness Reports</h3>
+                <h3 class="mb-4 text-xs font-bold uppercase tracking-wider text-slate-500">
+                  Witness Reports
+                </h3>
                 <div class="grid gap-4 sm:grid-cols-3">
                   {#each report.witnesses as witness (witness.id)}
-                    <section class="relative overflow-hidden rounded-lg border border-slate-800 bg-slate-900/30 p-5">
-                      <div class="absolute left-0 top-0 h-full w-1 {witness.belief.reported ? 'bg-red-500' : 'bg-slate-700'}"></div>
+                    <section
+                      class="relative overflow-hidden rounded-lg border border-slate-800 bg-slate-900/30 p-5"
+                    >
+                      <div
+                        class="absolute left-0 top-0 h-full w-1 {witness.belief.reported
+                          ? 'bg-red-500'
+                          : 'bg-slate-700'}"
+                      ></div>
                       <h2 class="font-bold text-white">{$t.infiltration.witnesses[witness.id]}</h2>
                       <p class="mt-2 text-sm text-slate-400">
-                        <span class="text-amber-400/80">{$t.infiltration.beliefs[witness.belief.identity]}</span> · {Math.round(witness.belief.certainty)}%
+                        <span class="text-amber-400/80"
+                          >{$t.infiltration.beliefs[witness.belief.identity]}</span
+                        >
+                        · {Math.round(witness.belief.certainty)}%
                       </p>
-                      <p class="mt-3 inline-flex rounded bg-black/50 px-2 py-1 text-[10px] font-bold uppercase tracking-wider {witness.belief.reported ? 'text-red-400' : 'text-slate-500'}">
-                        {witness.belief.reported ? $t.infiltration.reported : $t.infiltration.unreported}
+                      <p
+                        class="mt-3 inline-flex rounded bg-black/50 px-2 py-1 text-[10px] font-bold uppercase tracking-wider {witness
+                          .belief.reported
+                          ? 'text-red-400'
+                          : 'text-slate-500'}"
+                      >
+                        {witness.belief.reported
+                          ? $t.infiltration.reported
+                          : $t.infiltration.unreported}
                       </p>
                     </section>
                   {/each}
                 </div>
               </div>
             {/if}
-            
+
             <div class="mt-10 flex items-center justify-between border-t border-slate-800 pt-8">
               <p class="text-sm text-slate-500">
                 {$t.infiltration.truth}:
-                <strong class="{game.authorConfirmed ? 'text-cyan-400' : 'text-amber-500/80'}">
+                <strong class={game.authorConfirmed ? 'text-cyan-400' : 'text-amber-500/80'}>
                   {game.authorConfirmed ? $t.infiltration.confirmed : $t.infiltration.uncertain}
                 </strong>
               </p>
-              
+
               <button
                 onclick={again}
                 class="group relative overflow-hidden rounded-lg bg-slate-800 px-8 py-3 text-sm font-bold tracking-wide text-white transition-all hover:bg-slate-700 hover:shadow-[0_0_15px_rgba(255,255,255,0.1)]"
               >
-                <span class="absolute inset-0 bg-white/5 opacity-0 transition-opacity group-hover:opacity-100"></span>
+                <span
+                  class="absolute inset-0 bg-white/5 opacity-0 transition-opacity group-hover:opacity-100"
+                ></span>
                 {$t.infiltration.again} ↻
               </button>
             </div>

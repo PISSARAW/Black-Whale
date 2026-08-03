@@ -33,7 +33,12 @@ export function tickDisengage(state: DuelState, dt: number): DuelState {
 export function setZetsu(state: DuelState, on: boolean): DuelState {
   return {
     ...state,
-    player: { ...state.player, zetsu: on, ko: on ? null : state.player.ko, ken: on ? false : state.player.ken },
+    player: {
+      ...state.player,
+      zetsu: on,
+      ko: on ? null : state.player.ko,
+      ken: on ? false : state.player.ken,
+    },
     breaking: on ? state.breaking : 0,
   }
 }

@@ -29,7 +29,10 @@
     "verify:map": "node dist/cli/verify-map.js",
     "verify:map:dev": "tsx src/cli/verify-map.ts",
     "compile:chapters": "node dist/cli/backfill-chapters.js",
-    "compile:chapters:dev": "tsx src/cli/backfill-chapters.ts"
+    "compile:chapters:dev": "tsx src/cli/backfill-chapters.ts",
+    "sync:passengers:dev": "tsx src/cli/sync-passengers.ts",
+    "enrich:passengers:dev": "tsx src/cli/enrich-passengers.ts",
+    "fill:appearances:dev": "tsx src/cli/fill-appearances.ts"
   },
   "dependencies": {
     "@black-whale/contracts": "workspace:*",

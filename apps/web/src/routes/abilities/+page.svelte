@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { PageData } from './$types'
-  import { HATSU_PROFILES, hatsuById } from '$lib/nen/hatsuRegistry.js'
+  import { hatsuById } from '$lib/nen/hatsuRegistry.js'
   import { activateHatsu } from '$lib/nen/hatsuState.js'
   import Seo from '$lib/components/Seo.svelte'
   import { breadcrumbSchema } from '$lib/seo/schema'
@@ -9,21 +9,22 @@
 
   export let data: PageData
 
-  // The checked-in registry is the canonical interaction list; the ability
-  // catalogue only enriches it, so a profile that is missing from the
-  // catalogue still renders from the registry rather than becoming a hole.
-  $: abilities = HATSU_PROFILES.map((registryProfile) => {
-    const profile = localizeHatsu(registryProfile, $locale)
-    const catalogued = data.abilities.find((ability) => ability.id === profile.id)
+  // The catalogue is the list, not the registry. The registry used to drive
+  // this loop, which meant the whole archive shipped to the browser whatever
+  // spoiler cap the reader had set — the server can only withhold what the
+  // page agrees to read from it.
+  $: abilities = data.abilities.map((catalogued) => {
+    const registryProfile = hatsuById(catalogued.id)
+    const profile = registryProfile ? localizeHatsu(registryProfile, $locale) : null
     // The catalogue is still English-only, so the registry's own French text is
     // the better record on the French side.
-    const preferRegistry = $locale !== 'en'
+    const preferRegistry = profile !== null && $locale !== 'en'
     return {
-      id: profile.id,
-      name: preferRegistry ? profile.name : (catalogued?.name ?? profile.name),
-      owner: preferRegistry ? profile.owner : (catalogued?.owner ?? profile.owner),
-      category: catalogued?.category ?? 'nen',
-      description: preferRegistry ? profile.rule : (catalogued?.description ?? profile.rule),
+      id: catalogued.id,
+      name: preferRegistry && profile ? profile.name : catalogued.name,
+      owner: preferRegistry && profile ? profile.owner : catalogued.owner,
+      category: catalogued.category ?? 'nen',
+      description: preferRegistry && profile ? profile.rule : catalogued.description,
     }
   })
 

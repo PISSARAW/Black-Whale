@@ -34,6 +34,16 @@ export const yomotsuHegui = defineAbility({
   owner: 'gidal',
   category: 'specialist',
 
+  site: {
+    kind: 'postmortem-curse',
+    instruction:
+      'Name the target, keep something connected to it, then perform five rites on that object; distance decides the delay and the fifth ends the user.',
+    rule: 'Years of fixation, a connected object, ashes, proximity and suicide empower a post-mortem curse against one target.',
+    cost: 'Long preparation · connected object · user’s life',
+    color: '#a04f68',
+    action: 'Choose the lifelong target',
+  },
+
   conditions: [canUseNen()],
 
   targets: [person()],

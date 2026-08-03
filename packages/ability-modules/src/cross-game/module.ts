@@ -26,6 +26,16 @@ export const crossGame = defineAbility({
   owner: 'mizaistom-nana',
   category: 'conjurer',
 
+  site: {
+    kind: 'tribunal',
+    instruction:
+      'Click one target through Blue admission, Yellow control, reversed Yellow restraint — which wears off — and Red dismissal.',
+    rule: 'Restraint activates only after the warning is ignored, prevents movement but not speech, and can be reapplied.',
+    cost: 'Brief reusable card effects',
+    color: '#f0c94d',
+    action: 'Present the Blue card',
+  },
+
   conditions: [canUseNen(), isConscious()],
 
   targets: [person()],

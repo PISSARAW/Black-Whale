@@ -24,9 +24,19 @@ import {
  */
 export const sunAndMoon = defineAbility({
   id: 'sun-and-moon',
-  name: 'Sun and Moon',
+  name: 'The Sun and Moon',
   owner: 'chrollo-lucilfer',
   category: 'specialist',
+
+  site: {
+    kind: 'polarity',
+    instruction:
+      'Mark the Sun, hold the contact to charge it, then mark the Moon; the pair only goes off once the two marks touch, and a full charge takes the neighbours.',
+    rule: 'Opposite marks explode on contact and persist through post-mortem Nen.',
+    cost: 'One Sun mark plus one Moon mark',
+    color: '#ffb347',
+    action: 'Place the Sun mark',
+  },
 
   conditions: [canUseNen(), isConscious()],
 

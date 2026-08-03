@@ -28,9 +28,19 @@ const REVEAL_CHAPTER = 415
  */
 export const beyondSacrificialCurse = defineAbility({
   id: 'beyond-sacrificial-curse',
-  name: 'Malédiction sacrificielle',
+  name: 'Sacrificial Curse',
   owner: 'beyond-netero',
   category: 'specialist',
+
+  site: {
+    kind: 'curse',
+    instruction:
+      'Choose the distant victim; the sacrifice among its own is chosen with it and hidden, so use Gyo to find the mark before spending it.',
+    rule: 'The dormant mark awakens its carrier from birth and kills the preselected target only when that sacrifice dies.',
+    cost: 'Prepared child sacrifice · death · post-mortem Nen',
+    color: '#9d65d0',
+    action: 'Mark the intended victim',
+  },
 
   conditions: [canUseNen()],
 

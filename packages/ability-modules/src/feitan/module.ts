@@ -38,6 +38,16 @@ export const painPacker = defineAbility({
   owner: 'feitan-portor',
   category: 'transmuter',
 
+  site: {
+    kind: 'pain-armour',
+    instruction:
+      'Click anything that still works to take the hit: the wrapping seals its controls and keeps them, and nothing comes back until Rising Sun opens it.',
+    rule: 'The armour packs away the damage Feitan has already taken instead of healing it; the more it holds, the more the released form has to spend.',
+    cost: 'Damage already taken · nothing returned before the wrapping is opened',
+    color: '#b4603c',
+    action: 'Pack a hit away',
+  },
+
   conditions: [canUseNen(), isConscious()],
 
   targets: [self()],
@@ -126,6 +136,16 @@ export const risingSun = defineAbility({
   name: 'Rising Sun',
   owner: 'feitan-portor',
   category: 'transmuter',
+
+  site: {
+    kind: 'sun-flare',
+    instruction:
+      'Click where the sphere should rise: its radius is however much Pain Packer had packed away, and everything caught inside it is opened.',
+    rule: 'The heat is proportional to the stored damage and does not discriminate: whatever stands near the target burns with it.',
+    cost: 'Every packed hit, spent at once',
+    color: '#f2a63b',
+    action: 'Release the stored heat',
+  },
 
   conditions: [
     canUseNen(),

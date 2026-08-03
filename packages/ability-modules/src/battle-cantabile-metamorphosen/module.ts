@@ -33,6 +33,16 @@ export const battleCantabileMetamorphosen = defineAbility({
   owner: 'bonolenov-ndongo',
   category: 'conjurer',
 
+  site: {
+    kind: 'mimicry',
+    instruction:
+      'Spend time on a model to buy time in its form, then transform another element; the form drops by itself when that time runs out.',
+    rule: 'Battle music changes Bonolenov’s appearance into a chosen identity or object.',
+    cost: 'Model plus target',
+    color: '#a889c8',
+    action: 'Choose a form to copy',
+  },
+
   conditions: [canUseNen(), isConscious()],
 
   targets: [person()],

@@ -73,6 +73,13 @@ jobs:
       - name: Build packages
         run: pnpm build --filter "./packages/*"
 
+      # The web hatsu registry is compiled from `data/` and the modules' `site`
+      # blocks, and committed so its changes get read. This answers non-zero
+      # when the committed file is no longer what the compiler writes — a
+      # registry edited by hand, or a module changed without regenerating.
+      - name: Hatsu registry is freshly compiled
+        run: pnpm --filter "@black-whale/canon-compiler" check:hatsu
+
       - name: Build apps
         run: pnpm build --filter "./apps/*"
 

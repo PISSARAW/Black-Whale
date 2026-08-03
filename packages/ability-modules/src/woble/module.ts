@@ -26,6 +26,16 @@ export const erigeron = defineAbility({
   owner: 'bill',
   category: 'enhancer',
 
+  site: {
+    kind: 'growth',
+    instruction:
+      'Click targets to accelerate growth; ordinary page life germinates quickly while character Nen develops in smaller increments.',
+    rule: 'Growth is dramatic on plants but deliberately weak on inexperienced living Nen users.',
+    cost: 'Palms near the living target · repeated treatment',
+    color: '#7fd35b',
+    action: 'Accelerate growth',
+  },
+
   conditions: [canUseNen(), isConscious()],
 
   targets: [person()],

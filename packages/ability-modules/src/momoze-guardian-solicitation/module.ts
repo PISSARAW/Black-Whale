@@ -26,9 +26,19 @@ const BEAST_ID = 'momoze-guardian-spider'
  */
 export const momozeGuardianSolicitation = defineAbility({
   id: 'momoze-guardian-solicitation',
-  name: 'Momoze — sollicitation du gardien',
+  name: 'Are You Free?',
   owner: 'prince-momoze',
   category: 'unknown',
+
+  site: {
+    kind: 'solicitation',
+    instruction:
+      'Ask a target and touch it again for yes; every target left unanswered keeps being pestered, and only one body can be held at a time.',
+    rule: 'Only an affirmative answer lets the spider enter the ear and manipulate the victim using their own aura.',
+    cost: 'Repeated solicitation · explicit yes · heavy host fatigue',
+    color: '#e8a9a1',
+    action: 'Ask “Are you free?”',
+  },
 
   conditions: [canUseNen()],
 

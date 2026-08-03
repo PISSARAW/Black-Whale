@@ -8,6 +8,7 @@ import type {
   WorldEventType,
   WorldState,
 } from '@black-whale/world-engine'
+import type { AbilitySitePresentation } from './site.js'
 
 // ──────────────────────────────────────────────
 // Types
@@ -264,6 +265,13 @@ export interface AbilityManifest {
   ownerId: string
   category: string
   version: string
+  /**
+   * How the ability shows itself on the site. Optional on the type so a module
+   * written for the simulation alone stays valid; the compiler that generates
+   * `hatsuProfiles.gen.ts` requires it of every ability the site casts, and
+   * fails by name when one is missing.
+   */
+  site?: AbilitySitePresentation
 }
 
 export interface AbilityUIComponent {

@@ -26,6 +26,16 @@ export const illumiNeedlePeople = defineAbility({
   owner: 'illumi',
   category: 'manipulator',
 
+  site: {
+    kind: 'needle',
+    instruction:
+      'Pierce an element with one needle and one order; it carries the order out until it burns itself out, and survives crippled.',
+    rule: 'Needles overwrite autonomy and turn people into disposable puppets until exhaustion or death.',
+    cost: 'One needle per puppet',
+    color: '#b6a4d8',
+    action: 'Insert a control needle',
+  },
+
   conditions: [canUseNen(), isConscious()],
 
   targets: [person()],

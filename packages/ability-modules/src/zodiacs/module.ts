@@ -30,9 +30,19 @@ import {
  */
 export const saiyuPriestStaff = defineAbility({
   id: 'saiyu-priest-staff',
-  name: 'Bâton du prêtre',
+  name: 'Priest Staff',
   owner: 'saiyu',
   category: 'conjurer',
+
+  site: {
+    kind: 'staff',
+    instruction:
+      'Plant the staff and lengthen it: every thrust reaches one body further out along the row.',
+    rule: 'The conjured staff extends and strikes with force at close or mid range.',
+    cost: 'One controlled staff',
+    color: '#d5a94f',
+    action: 'Plant the staff',
+  },
 
   conditions: [canUseNen(), isConscious()],
 
@@ -104,9 +114,19 @@ const MONKEYS = [
  */
 export const saiyuThreeMonkeys = defineAbility({
   id: 'saiyu-three-monkeys',
-  name: 'Les trois singes',
+  name: 'Three Monkeys',
   owner: 'saiyu',
   category: 'conjurer',
+
+  site: {
+    kind: 'senses',
+    instruction:
+      'Each click seals sight, hearing, then speech across the site; the fourth releases all three senses.',
+    rule: 'Three Nen monkeys rob the target of vision, hearing and speech when their attacks connect.',
+    cost: 'Three successful sensory strikes',
+    color: '#c58c5b',
+    action: 'Seal sight',
+  },
 
   conditions: [canUseNen(), isConscious()],
 
@@ -170,6 +190,16 @@ export const greatHaiku = defineAbility({
   owner: 'basho',
   category: 'specialist',
 
+  site: {
+    kind: 'poetry',
+    instruction:
+      'Select three pieces of page copy; a word of light purifies what it names, a word of fire burns it, and a poem with neither does nothing.',
+    rule: 'The result grows stronger when the three selected lines form a convincing poem.',
+    cost: 'Three lines · quality determines power',
+    color: '#e7c873',
+    action: 'Choose the first line',
+  },
+
   conditions: [canUseNen(), isConscious()],
 
   targets: [zone(), person()],
@@ -227,9 +257,19 @@ export const greatHaiku = defineAbility({
  */
 export const birdManipulation = defineAbility({
   id: 'bird-manipulation',
-  name: 'Manipulation des oiseaux',
+  name: 'Bird Manipulation',
   owner: 'cluck',
   category: 'manipulator',
+
+  site: {
+    kind: 'flock',
+    instruction:
+      'Assign birds to page elements; each pigeon carries a readable dispatch into the flock’s delivery panel.',
+    rule: 'Hundreds of controlled birds can deliver documents accurately over a vast area.',
+    cost: 'One controlled bird per dispatch',
+    color: '#b9d8e8',
+    action: 'Give a dispatch to the flock',
+  },
 
   conditions: [canUseNen(), isConscious()],
 
@@ -288,9 +328,19 @@ export const birdManipulation = defineAbility({
  */
 export const leorioRemotePunch = defineAbility({
   id: 'leorio-remote-punch',
-  name: 'Coup de poing à distance',
+  name: 'Remote Punch',
   owner: 'leorio-paradinight',
   category: 'emitter',
+
+  site: {
+    kind: 'remote-strike',
+    instruction:
+      'Strike an element and the aura runs along its surface, coming up under another element on that same surface; strike again for another fist.',
+    rule: 'Aura travels through a surface and reproduces the punch at a distant point.',
+    cost: 'A connected surface and emitted aura',
+    color: '#62c6e8',
+    action: 'Choose a remote impact',
+  },
 
   conditions: [canUseNen(), isConscious()],
 

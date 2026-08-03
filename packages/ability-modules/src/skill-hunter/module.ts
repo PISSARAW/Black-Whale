@@ -38,6 +38,16 @@ export const skillHunter = defineAbility({
   owner: 'chrollo-lucilfer',
   category: 'specialist',
 
+  site: {
+    kind: 'theft',
+    instruction:
+      'Click a button or link to steal it into the floating book; the original control is sealed while its copy remains usable.',
+    rule: 'A stolen ability is stored in the book and cannot be used by its owner while held.',
+    cost: 'Targeted control must be exposed',
+    color: '#b69ad9',
+    action: 'Open the book and steal a control',
+  },
+
   conditions: [canUseNen(), isConscious()],
 
   targets: [person()],
@@ -112,6 +122,16 @@ export const doubleFace = defineAbility({
   name: 'Double Face',
   owner: 'chrollo-lucilfer',
   category: 'specialist',
+
+  site: {
+    kind: 'bookmark',
+    instruction:
+      'Bookmark up to two sections; both remain pinned and visible while you navigate the rest of the page.',
+    rule: 'The bookmark keeps one stolen ability active while Skill Hunter opens on another page.',
+    cost: 'Two simultaneous pages maximum',
+    color: '#9c7ac4',
+    action: 'Bookmark the first section',
+  },
 
   conditions: [canUseNen(), isConscious()],
 

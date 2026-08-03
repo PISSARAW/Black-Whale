@@ -32,6 +32,16 @@ export const parallelFuture = defineAbility({
   owner: 'prince-tserriednich',
   category: 'specialist',
 
+  site: {
+    kind: 'future',
+    instruction:
+      'Observe next-chapter bodies for ten seconds and click possible actions to leave predicted afterimages while choosing a divergent reality.',
+    rule: 'Everyone except Tserriednich continues perceiving the immutable prediction even when his real actions change.',
+    cost: 'Complete Zetsu · ten-second vision',
+    color: '#7dd3fc',
+    action: 'Enter the ten-second future',
+  },
+
   conditions: [canUseNen()],
 
   targets: [self()],

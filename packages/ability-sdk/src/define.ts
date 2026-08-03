@@ -5,6 +5,7 @@ import type {
   AbilityInteractionManifest,
   AbilityManifest,
   AbilityResult,
+  AbilitySitePresentation,
   AbilityUIComponent,
   ActionAvailability,
   NenAbilityModule,
@@ -61,6 +62,12 @@ export interface AbilityDefinition {
   cost?: Resolvable<AbilityCost | undefined>
   perspective?: (ctx: AbilityContext) => PerspectiveModifier[]
   ui?: AbilityUIComponent
+  /**
+   * How the site presents the ability: its interaction kind, the sentence that
+   * states the limit, its price, its colour and its first action. Read by the
+   * compiler that generates the web registry — see `AbilitySitePresentation`.
+   */
+  site?: AbilitySitePresentation
   /** Full interaction contract (section 18) */
   interactionManifest?: AbilityInteractionManifest
   /** Static action wheel entries for this ability */
@@ -84,6 +91,7 @@ export function defineAbility(def: AbilityDefinition): NenAbilityModule {
     ownerId: def.owner,
     category: def.category ?? 'unknown',
     version: '0.0.1',
+    ...(def.site ? { site: def.site } : {}),
   }
 
   const actionOf = (ctx: AbilityContext): AbilityAction | undefined =>

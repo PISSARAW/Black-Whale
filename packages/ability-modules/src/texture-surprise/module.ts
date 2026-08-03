@@ -32,6 +32,16 @@ export const textureSurprise = defineAbility({
   owner: 'hisoka',
   category: 'transmuter',
 
+  site: {
+    kind: 'disguise',
+    instruction:
+      'Click a flat page surface repeatedly to cycle forged paper, metal, skin and camouflage textures without changing its function.',
+    rule: 'The aura layer changes only visual appearance; the original surface and behavior remain detectable by touch.',
+    cost: 'Low aura · flat limited surface',
+    color: '#d98fc4',
+    action: 'Choose a surface to falsify',
+  },
+
   conditions: [canUseNen(), isConscious()],
 
   targets: [person(), object(), surface()],

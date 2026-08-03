@@ -23,9 +23,19 @@ const FATAL_LIE_COUNT = 3
  */
 export const tserriednichGuardianLieMarks = defineAbility({
   id: 'tserriednich-guardian-lie-marks',
-  name: 'Tserriednich — marques de mensonge',
+  name: 'Three-Lie Transformation',
   owner: 'prince-tserriednich',
   category: 'unknown',
+
+  site: {
+    kind: 'lie-marks',
+    instruction:
+      'The beast judges each answer and only marks the ones it reads as lies: a cut, then an infected warning, then something no longer itself.',
+    rule: 'Each lie escalates the curse and the third transforms the liar into something no longer human.',
+    cost: 'Three lies told in Tserriednich’s presence',
+    color: '#9e6d89',
+    action: 'Detect the first lie',
+  },
 
   conditions: [canUseNen()],
 

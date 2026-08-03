@@ -32,6 +32,16 @@ export const benjaminBaton = defineAbility({
   owner: 'prince-benjamin',
   category: 'specialist',
 
+  site: {
+    kind: 'inherit',
+    instruction:
+      'Select deceased loyal soldiers on the map to awaken palm stars and activate their registered Hatsu from the inheritance panel.',
+    rule: 'Only deceased loyal Military Academy graduates transfer abilities; active powers remain under Benjamin’s ownership.',
+    cost: 'Death and sworn military loyalty',
+    color: '#ffd166',
+    action: 'Identify an eligible soldier',
+  },
+
   conditions: [canUseNen(), isConscious()],
 
   targets: [person()],

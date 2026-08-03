@@ -26,9 +26,19 @@ const COHORT_ID = 'salesale-converted'
  */
 export const salesaleGuardianSmoke = defineAbility({
   id: 'salesale-guardian-smoke',
-  name: 'Salé-salé — fumée de bienveillance',
+  name: 'Diffusive Aura Smoke',
   owner: 'prince-salesale',
   category: 'unknown',
+
+  site: {
+    kind: 'diffusive-smoke',
+    instruction:
+      'Expose neighboring sections repeatedly; converted controls join a spreading panel that routes visitors toward Salé-salé.',
+    rule: 'Low-level coercive smoke builds goodwill over hours, creates secondary emitters and fails against targets holding their breath.',
+    cost: 'Sustained exposure · breathable aura smoke',
+    color: '#b7aac8',
+    action: 'Release the first smoke cloud',
+  },
 
   conditions: [canUseNen()],
 

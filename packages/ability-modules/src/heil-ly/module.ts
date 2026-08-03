@@ -32,9 +32,19 @@ import {
  */
 export const voconteHideoutDoors = defineAbility({
   id: 'voconte-hideout-doors',
-  name: 'Voconte — portes du repaire',
+  name: 'Hideout Doors',
   owner: 'voconte',
   category: 'conjurer',
+
+  site: {
+    kind: 'door-network',
+    instruction:
+      'Arm one frame and one return frame; stepping into either comes out at the other, walking past does nothing, and Nen constructs are not moved.',
+    rule: 'The doors connect prepared rooms throughout the Heil-Ly base instead of opening unrestricted portals anywhere.',
+    cost: 'Prepared hideout walls and connected rooms',
+    color: '#7ec8b6',
+    action: 'Install the first door',
+  },
 
   conditions: [canUseNen(), isConscious()],
 
@@ -91,6 +101,16 @@ export const bloodyMary = defineAbility({
   name: 'Bloody Mary',
   owner: 'zakuro-custard',
   category: 'manipulator',
+
+  site: {
+    kind: 'blood-search',
+    instruction:
+      'Release a drop and leave it: it reports its findings on its own over the next minutes, then dries up and takes them with it.',
+    rule: 'Only Zakuro’s own blood can be manipulated; autonomous eyed droplets expire after roughly thirty to forty minutes.',
+    cost: 'Open wound · carried blood supply · limited search time',
+    color: '#b51f3c',
+    action: 'Release the first blood drop',
+  },
 
   conditions: [canUseNen(), isConscious()],
 
@@ -159,6 +179,16 @@ export const padailleWeaponTransformation = defineAbility({
   owner: 'padaille',
   category: 'conjurer',
 
+  site: {
+    kind: 'weapon-body',
+    instruction:
+      'Strike a target and see what the arm became: a hammer drives it into the floor, a drill bores a hole through it, an axe cuts it in two.',
+    rule: 'The arm takes one of the three shapes at random — Padaille transforms his own body into tools he knows rather than conjuring equipment, but he does not pick which one answers.',
+    cost: 'Transformed limb · no say in the shape',
+    color: '#c6925e',
+    action: 'Swing whatever the arm became',
+  },
+
   conditions: [canUseNen(), isConscious()],
 
   targets: [self()],
@@ -214,9 +244,19 @@ export const padailleWeaponTransformation = defineAbility({
  */
 export const snakeArm = defineAbility({
   id: 'snake-arm',
-  name: 'Bras-serpent',
+  name: 'Snake Arm',
   owner: 'gel',
   category: 'transmuter',
+
+  site: {
+    kind: 'serpent',
+    instruction:
+      'Coil the arm three times to tighten it — pinned from the second — and a fourth touch lets go of everything at once.',
+    rule: 'Gel partially transforms her arm into a snake capable of instantly restraining a Zodiac-level target.',
+    cost: 'Maintained partial transformation',
+    color: '#86c98a',
+    action: 'Choose something to restrain',
+  },
 
   conditions: [canUseNen(), isConscious()],
 

@@ -28,6 +28,16 @@ export const emperorTime = defineAbility({
   owner: 'kurapika',
   category: 'specialist',
 
+  site: {
+    kind: 'scarlet',
+    instruction:
+      'Sweep a whole section at 100% efficiency in every category at once; each activation bills three more hours of session life.',
+    rule: 'Scarlet eyes grant 100% efficiency in every Nen category, but one year consumed forces five minutes of Zetsu.',
+    cost: '1 second = 1 hour of life',
+    color: '#ef3340',
+    action: 'Operate at full efficiency',
+  },
+
   conditions: [canUseNen(), isConscious()],
 
   targets: [self()],

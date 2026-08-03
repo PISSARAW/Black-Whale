@@ -31,6 +31,16 @@ export const loveDial6700 = defineAbility({
   owner: 'chrollo-lucilfer',
   category: 'specialist',
 
+  site: {
+    kind: 'divination',
+    instruction:
+      'Dial from an area to learn only whether the ideal partner is in range; the handset then refuses until you move, and it has six calls a day.',
+    rule: 'The phone-like divination tool guides its user toward a desired person through changing compatibility readings.',
+    cost: 'Repeated readings improve direction',
+    color: '#f08db6',
+    action: 'Take an affinity reading',
+  },
+
   conditions: [canUseNen(), isConscious()],
 
   targets: [person()],

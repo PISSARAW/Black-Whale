@@ -43,6 +43,16 @@ export const indoorFish = defineAbility({
   owner: 'chrollo-lucilfer',
   category: 'conjurer',
 
+  site: {
+    kind: 'devour',
+    instruction:
+      'Click page copy to let the fish consume its words while the layout remains eerily intact until Zetsu.',
+    rule: 'Indoor Fish eat flesh only inside a sealed room; victims feel nothing and remain alive until the ability ends.',
+    cost: 'Enclosed active page',
+    color: '#78b6c9',
+    action: 'Release the fish indoors',
+  },
+
   conditions: [canUseNen(), isConscious()],
 
   targets: [zone()],
@@ -111,6 +121,16 @@ export const funFunCloth = defineAbility({
   owner: 'chrollo-lucilfer',
   category: 'conjurer',
 
+  site: {
+    kind: 'pocket',
+    instruction:
+      'Click any section to wrap it down to a palm-sized bundle; click the bundle to let it back out at full size, undamaged.',
+    rule: 'Anything wrapped by the cloth is reduced and stored without damage.',
+    cost: 'Stored targets remain bound',
+    color: '#d9d1bd',
+    action: 'Wrap and shrink a section',
+  },
+
   conditions: [canUseNen(), isConscious()],
 
   targets: [person(), object()],
@@ -164,9 +184,19 @@ export const funFunCloth = defineAbility({
  */
 export const chrolloTeleportation = defineAbility({
   id: 'chrollo-teleportation',
-  name: 'Téléportation (capacité volée sans nom)',
+  name: 'Teleport',
   owner: 'chrollo-lucilfer',
   category: 'specialist',
+
+  site: {
+    kind: 'teleport',
+    instruction:
+      'Click one element to move it somewhere else on the page; you do not choose where it lands and it is not asked.',
+    rule: 'The stolen technique forcibly relocates targets without requiring visible travel.',
+    cost: 'Two valid destinations',
+    color: '#7dd4d0',
+    action: 'Choose the first target',
+  },
 
   conditions: [canUseNen(), isConscious()],
 
@@ -220,6 +250,16 @@ export const orderStamp = defineAbility({
   name: 'Order Stamp',
   owner: 'chrollo-lucilfer',
   category: 'conjurer',
+
+  site: {
+    kind: 'command',
+    instruction:
+      'Stamp up to 20 lifeless blocks that have a head; click a stamped one again to lock it in red, and once anything is locked the next click elsewhere is the order the locked puppets obey.',
+    rule: 'The stamp controls puppets as objects, never beings the user considers alive.',
+    cost: 'Only inanimate page bodies',
+    color: '#cf6d62',
+    action: 'Stamp page puppets',
+  },
 
   conditions: [canUseNen(), isConscious()],
 
@@ -304,6 +344,16 @@ export const galleryFake = defineAbility({
   owner: 'chrollo-lucilfer',
   category: 'conjurer',
 
+  site: {
+    kind: 'clone',
+    instruction:
+      'Click a page element to lay a perfect-looking inert duplicate beside it: the copy answers to nothing the original does.',
+    rule: 'Gallery Fake creates exact copies that lack the original’s living qualities and special powers.',
+    cost: 'Copies vanish after twenty-four hours',
+    color: '#a7c8c5',
+    action: 'Copy a visible object',
+  },
+
   conditions: [canUseNen(), isConscious()],
 
   targets: [object()],
@@ -358,6 +408,16 @@ export const blackVoice = defineAbility({
   name: 'Black Voice',
   owner: 'chrollo-lucilfer',
   category: 'manipulator',
+
+  site: {
+    kind: 'puppet',
+    instruction:
+      'Plant both antennae in buttons or links, then click anywhere; the order goes into one of them and never says which.',
+    rule: 'The antenna grants total remote control until removed or the target is destroyed.',
+    cost: 'One antenna and one controller',
+    color: '#7f92b8',
+    action: 'Plant an antenna',
+  },
 
   conditions: [canUseNen(), isConscious()],
 
@@ -420,6 +480,16 @@ export const lovelyGhostwriter = defineAbility({
   name: 'Lovely Ghostwriter',
   owner: 'chrollo-lucilfer',
   category: 'specialist',
+
+  site: {
+    kind: 'prophecy',
+    instruction:
+      'Select a subject carrying a name, a date and a type; the first quatrain is always its past, and the foretold links become routes.',
+    rule: 'Automatic writing predicts the target’s immediate future in cryptic verse while hiding their own prophecy from them.',
+    cost: 'Target information and written medium',
+    color: '#d8c7ed',
+    action: 'Choose a subject for prophecy',
+  },
 
   conditions: [canUseNen()],
 

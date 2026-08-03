@@ -36,9 +36,19 @@ import {
  */
 export const camillaGuardianCoercion = defineAbility({
   id: 'camilla-guardian-coercion',
-  name: 'Camilla — coercition du gardien',
+  name: "Camilla's Guardian Coercion",
   owner: 'prince-camilla',
   category: 'manipulator',
+
+  site: {
+    kind: 'coercive-beast',
+    instruction:
+      'Fulfil three unknown-condition contacts on one target; the third contact captures its control for remote command.',
+    rule: 'The Beast’s total Manipulation is confirmed, but its actual activation conditions remain deliberately unknown.',
+    cost: 'Unknown conditions · represented as three unresolved contacts',
+    color: '#d98cae',
+    action: 'Probe the first unknown condition',
+  },
 
   conditions: [
     canUseNen(),
@@ -89,9 +99,19 @@ export const camillaGuardianCoercion = defineAbility({
  */
 export const tubeppaGuardianSynthesis = defineAbility({
   id: 'tubeppa-guardian-synthesis',
-  name: 'Tubeppa — synthèse du gardien',
+  name: 'Collaborative Drug Synthesis',
   owner: 'prince-tubeppa',
   category: 'transmuter',
+
+  site: {
+    kind: 'drug-synthesis',
+    instruction:
+      'Choose two collaborating components; two carrying routes give a shortcut, two carrying material give a revelation, and a mismatched pair gives an inert batch.',
+    rule: 'The chemical-producing Beast requires a collaborative partner and can create many effects whose limits remain unknown.',
+    cost: 'Active alliance · two cooperating components',
+    color: '#91bd72',
+    action: 'Choose the research partner',
+  },
 
   conditions: [canUseNen()],
 
@@ -150,9 +170,19 @@ export const tubeppaGuardianSynthesis = defineAbility({
  */
 export const tysonGuardianEyeWogs = defineAbility({
   id: 'tyson-guardian-eye-wogs',
-  name: 'Tyson — Eye-wogs',
+  name: 'Eye-wogs',
   owner: 'prince-tyson',
   category: 'emitter',
+
+  site: {
+    kind: 'aura-levy',
+    instruction:
+      'Attach an Eye-wog to a reader: it levies one control and returns happiness in proportion to how much was read; asking twice breaks the one taboo.',
+    rule: 'Depth of engagement with Tyson’s Book determines returned happiness, while violating its single taboo brings punishment.',
+    cost: 'Book exposure · continuous aura levy',
+    color: '#ef91c4',
+    action: 'Attach an Eye-wog to a reader',
+  },
 
   conditions: [canUseNen()],
 
@@ -214,9 +244,19 @@ export const tysonGuardianEyeWogs = defineAbility({
  */
 export const luzurusGuardianDesireTrap = defineAbility({
   id: 'luzurus-guardian-desire-trap',
-  name: 'Luzurus — piège du désir',
+  name: 'Desire Trap',
   owner: 'prince-luzurus',
   category: 'conjurer',
+
+  site: {
+    kind: 'desire-trap',
+    instruction:
+      'Read a target and the Beast materializes its desire as bait; the coercion only starts once the bait is taken.',
+    rule: 'The Beast materializes what its victim wants and applies pseudo-coercive Manipulation only after the bait is accepted.',
+    cost: 'Known desire · voluntarily satisfied bait',
+    color: '#98b65c',
+    action: 'Read the target’s desire',
+  },
 
   conditions: [canUseNen()],
 

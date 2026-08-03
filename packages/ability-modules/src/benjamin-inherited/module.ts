@@ -29,6 +29,16 @@ export const airBlow = defineAbility({
   owner: 'prince-benjamin',
   category: 'unknown',
 
+  site: {
+    kind: 'blast',
+    instruction:
+      'Click an element from any distance to strip the guards another technique put on it; nothing is moved and nothing is touched.',
+    rule: 'The inherited emission attack strikes without direct contact; its complete conditions remain unknown.',
+    cost: 'Unknown emitted aura',
+    color: '#c6f1ff',
+    action: 'Fire the palm blast',
+  },
+
   conditions: [canUseNen(), isConscious()],
 
   notes: [
@@ -76,6 +86,16 @@ export const culdcept = defineAbility({
   name: 'Culdcept',
   owner: 'prince-benjamin',
   category: 'specialist',
+
+  site: {
+    kind: 'capture',
+    instruction:
+      'Click a Nen user, hold the aura rectangle through its charge, then activate the acquired ability from its Culdcept card.',
+    rule: 'Culdcept acquires another user’s Hatsu as a card; Halkenburg’s invincible arrow penetrates it and makes acquisition fail.',
+    cost: 'Joined hands · charged aura rectangle',
+    color: '#8c7ae6',
+    action: 'Acquire a Nen ability',
+  },
 
   conditions: [canUseNen(), isConscious()],
 
@@ -149,9 +169,19 @@ export const culdcept = defineAbility({
  */
 export const benjaminAura = defineAbility({
   id: 'benjamin-aura',
-  name: 'Aura de Benjamin',
+  name: 'Aura Manipulation',
   owner: 'prince-benjamin',
   category: 'enhancer',
+
+  site: {
+    kind: 'enhance',
+    instruction:
+      'Click a target repeatedly to stack up to five layers of Ren; the fifth spills the mantle onto everything beside it.',
+    rule: 'Benjamin’s immense aura reinforces physical output and defence in proportion to the aura committed.',
+    cost: 'Increasing aura per reinforcement layer',
+    color: '#f0b429',
+    action: 'Reinforce with Ren',
+  },
 
   conditions: [canUseNen(), isConscious()],
 

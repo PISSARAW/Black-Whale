@@ -31,6 +31,16 @@ export const magicalWorm = defineAbility({
   owner: 'prince-fugetsu',
   category: 'conjurer',
 
+  site: {
+    kind: 'portal',
+    instruction:
+      'Right-click two map states to place Start and Return Doors; each crossing restores URL, tier and zoom but repeated use exhausts the site.',
+    rule: 'The paired dimensional tunnel normally works once per night; abnormal repeated travel dangerously drains Fugetsu.',
+    cost: 'One safe nightly route · escalating exhaustion',
+    color: '#80edc7',
+    action: 'Place the Start Door',
+  },
+
   conditions: [canUseNen(), isConscious()],
 
   targets: [zone()],

@@ -38,6 +38,16 @@ export const silentMajority = defineAbility({
   owner: 'silent-majority-user',
   category: 'conjurer',
 
+  site: {
+    kind: 'snakes',
+    instruction:
+      'Mark ten page targets to conceal the user among them; four snakes then drain the next selected victim while the others remain suspects.',
+    rule: 'The curse needs a ten-person range, kills through four snakes and rebounds if dismissed without a victim.',
+    cost: 'Ten nearby targets · one mandatory victim',
+    color: '#8765aa',
+    action: 'Build the ten-target field',
+  },
+
   conditions: [canUseNen(), isConscious()],
 
   // The user is a placeholder character until canon names them.

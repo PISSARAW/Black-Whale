@@ -28,6 +28,16 @@ export const catsName = defineAbility({
   owner: 'prince-camilla',
   category: 'specialist',
 
+  site: {
+    kind: 'resurrection',
+    instruction:
+      'Click the direct killer to simulate Camilla’s death; the post-mortem cat crushes that culprit, absorbs life and restores the page.',
+    rule: 'Only direct death activates the counterattack; nonlethal harm or refusal to kill bypasses the ability.',
+    cost: 'Camilla’s death · identifiable direct killer',
+    color: '#ff8fab',
+    action: 'Choose the direct killer',
+  },
+
   conditions: [canUseNen()],
 
   targets: [self()],

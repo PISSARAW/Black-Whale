@@ -30,6 +30,16 @@ export const chainJail = defineAbility({
   owner: 'kurapika',
   category: 'conjurer',
 
+  site: {
+    kind: 'chain-bind',
+    instruction:
+      'Bind a Phantom Troupe member into forced Zetsu; selecting anyone else violates the fatal vow and immediately ends the Hatsu.',
+    rule: 'The absolute restraint is usable only against Spiders and suppresses their aura and movement completely.',
+    cost: 'Kurapika’s life if used on a non-Spider',
+    color: '#c9ced6',
+    action: 'Choose a Spider',
+  },
+
   conditions: [
     canUseNen(),
     isConscious(),

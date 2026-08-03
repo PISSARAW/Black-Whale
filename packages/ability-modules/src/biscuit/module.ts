@@ -28,9 +28,19 @@ const SLEEP_EQUIVALENT_HOURS = 8
  */
 export const magicalEstheticianCookie = defineAbility({
   id: 'magical-esthetician-cookie',
-  name: 'Magical Esthetician: Cookie',
+  name: 'Magical Esthetician Cookie',
   owner: 'biscuit-krueger',
   category: 'transmuter',
+
+  site: {
+    kind: 'restoration',
+    instruction:
+      'Click a tired section to restore it while Cookie resets chapter filters, map depth and event progress to a rested baseline.',
+    rule: 'Cookie relieves exhaustion and compresses hours of rest into a short treatment.',
+    cost: 'One treatment at a time',
+    color: '#f3b6d2',
+    action: 'Choose a section to restore',
+  },
 
   conditions: [canUseNen(), isConscious()],
 
@@ -91,9 +101,19 @@ export const magicalEstheticianCookie = defineAbility({
  */
 export const biscuitBodyTransformation = defineAbility({
   id: 'biscuit-body-transformation',
-  name: 'Transformation corporelle',
+  name: 'Body Transformation',
   owner: 'biscuit-krueger',
   category: 'transmuter',
+
+  site: {
+    kind: 'transformation',
+    instruction:
+      'Click any card to alternate between a compact form that cannot expose nested controls and a full form that restores them.',
+    rule: 'The visible body changes radically while its underlying identity remains the same.',
+    cost: 'Maintained transformation',
+    color: '#f0a6c5',
+    action: 'Transform a page body',
+  },
 
   conditions: [canUseNen(), isConscious()],
 

@@ -555,7 +555,7 @@
   {
     "id": "surveillance-paper-dolls",
     "ownerId": "kalluto-zoldyck",
-    "name": "Surveillance paper dolls",
+    "name": "Surveillance Paper Dolls",
     "alternateNames": ["Surveillance Paper Dolls"],
     "category": "manipulator",
     "secondaryCategories": ["emitter"],
@@ -886,7 +886,7 @@
   {
     "id": "padaille-weapon-transformation",
     "ownerId": "padaille",
-    "name": "I'm Coming to Get You",
+    "name": "I’m Coming to Get You",
     "alternateNames": ["Weapon Transformation"],
     "category": "conjurer",
     "abilityType": "body-part-weapon-transformation",

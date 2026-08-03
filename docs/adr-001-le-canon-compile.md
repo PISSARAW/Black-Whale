@@ -413,8 +413,31 @@ Ordre imposé : 0 → 1 avant tout le reste (on ne refactore pas sans filet) ;
 
 1. [x] Valider cet ADR (ou l'amender) et le ranger en `docs/adr-001-le-canon-compile.md`.
 2. [ ] Chantier 0 (reliquat des P0 de `completude.md`) — ~1 journée, aucune dépendance.
-3. [ ] Ouvrir le chantier 1 ; geler l'ajout de nouveaux hatsu jusqu'à la fin du chantier 3.
-4. [ ] Trancher au passage l'arbitrage de canon des 27 noms divergents (source d'autorité : `abilities.json`).
+3. [x] Ouvrir le chantier 1 ; geler l'ajout de nouveaux hatsu jusqu'à la fin du chantier 3.
+4. [x] Trancher au passage l'arbitrage de canon des noms divergents (source d'autorité : `abilities.json`).
+
+## Avancement du chantier 3
+
+**Étape 1 — le registre web est compilé (fait).** `hatsuRegistry.ts` ne déclare
+plus le catalogue : ses 82 entrées écrites à la main sont devenues
+`apps/web/src/lib/nen/hatsuProfiles.gen.ts`, compilé par
+`canon-compiler` depuis `data/abilities` (id, nom), `data/characters`
+(propriétaire) et le bloc `site` que chaque module déclare désormais à côté du
+code qui applique la règle qu'il énonce. L'équivalence a été prouvée entrée par
+entrée : `kind`, `instruction`, `rule`, `cost`, `color` et `action` sont
+identiques pour les 82. Seuls les arbitrages voulus diffèrent — 2 noms et
+56 propriétaires alignés sur le catalogue (le registre disait « Hisoka » là où
+le canon dit « Hisoka Morrow », et donnait cinq capacités à une description
+plutôt qu'à un personnage). Le français n'a rien perdu : `hatsu-fr.ts` couvre
+les 82 et reste l'autorité de sa langue. La CI refuse un registre périmé
+(`check:hatsu`) ; le compilateur refuse un module qui contredit le catalogue, un
+module sans `site`, deux hatsu partageant un `kind`. `hatsuRegistry.ts` passe de
+1 478 à 429 lignes et sort de la dette `max-lines`.
+
+**Reste à faire.** Générer les squelettes i18n ; faire consommer
+l'`interactionManifest` par les rendus DOM et 3D ; remonter les
+`arenaDefinition` en dur (`lib/arena/hatsu/`) et la couche `lib/hunt/nen/` dans
+les manifests ; porter les tests comportementaux du tour en tests du moteur.
 
 ---
 

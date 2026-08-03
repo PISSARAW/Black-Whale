@@ -47,6 +47,16 @@ export const bungeeGum = defineAbility({
   owner: 'hisoka',
   category: 'transmuter',
 
+  site: {
+    kind: 'elastic',
+    instruction:
+      'Link map characters within emitted range; click a linked target again to retract every filament toward the first anchor.',
+    rule: 'Elastic force rises with tension, emitted strands snap beyond ten meters and five seconds of stillness isolates linked targets.',
+    cost: 'Continuous aura · range and increasing tension',
+    color: '#f06bb5',
+    action: 'Attach the first filament',
+  },
+
   conditions: [canUseNen(), isConscious()],
 
   targets: [person(), object(), surface(), self()],

@@ -27,6 +27,16 @@ export const melodyEnchantingMusic = defineAbility({
   owner: 'melody',
   category: 'specialist',
 
+  site: {
+    kind: 'melody',
+    instruction:
+      'Play three notes and every other section stops noticing anything for three minutes, however many of them are listening.',
+    rule: 'Music carries aura directly into listeners, soothing them and shaping their emotional state.',
+    cost: 'Continuous performance and hearing',
+    color: '#70c6d7',
+    action: 'Play the first note',
+  },
+
   conditions: [canUseNen()],
 
   targets: [zone()],

@@ -225,9 +225,19 @@ function answerParam(ctx: AbilityContext, key: string): AnswerCard | undefined {
  */
 export const contagion = defineAbility({
   id: 'contagion',
-  name: 'Contagion (Et tu, Juliet)',
+  name: 'Contagion',
   owner: 'morena-prudo',
   category: 'manipulator',
+
+  site: {
+    kind: 'infection',
+    instruction:
+      'Infect a member at level 0, then point it at targets: a plain one is worth 1, a character 10, a heading 50, an ability comes at 20 and Member Zero at 100.',
+    rule: 'Members gain levels through murder and unlock power at thresholds while infection spreads only by Morena’s kiss.',
+    cost: 'Membership, targets and escalating levels',
+    color: '#d94f68',
+    action: 'Create a level-one member',
+  },
 
   conditions: [canUseNen(), isConscious()],
 

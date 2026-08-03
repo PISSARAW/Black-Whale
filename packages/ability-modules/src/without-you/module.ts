@@ -30,6 +30,16 @@ export const withoutYou = defineAbility({
   owner: 'prince-kacho',
   category: 'specialist',
 
+  site: {
+    kind: 'guardian',
+    instruction:
+      'The guardian memorizes five interactions, intercepts one detected lethal event and can replay its protected memory trail. Press R to switch between Follow, Wander, and Scout modes.',
+    rule: 'Kacho’s post-mortem double remains beside the surviving twin, indistinguishable from her and dedicated to protection.',
+    cost: 'Death of one twin · post-mortem persistence',
+    color: '#f6b8d1',
+    action: 'Command the guardian',
+  },
+
   conditions: [canUseNen(), requiresParameter('deceasedTwinId', 'La première jumelle est morte')],
 
   targets: [person()],

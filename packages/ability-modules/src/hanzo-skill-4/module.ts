@@ -23,9 +23,19 @@ const doubleId = (actorId: string): string => `${actorId}-astral-double`
  */
 export const hanzoSkill4 = defineAbility({
   id: 'hanzo-skill-4',
-  name: 'Hanzo — Skill 4',
+  name: 'Hanzo Skill 4',
   owner: 'hanzo',
   category: 'specialist',
+
+  site: {
+    kind: 'projection',
+    instruction:
+      'Send the double out of a section and it passes through anything; touching the sleeping body it left behind pulls it straight back.',
+    rule: 'Hanzo’s consciousness leaves his sleeping body as an invisible double but must return if the body is disturbed.',
+    cost: 'Motionless unconscious body',
+    color: '#8bd1cf',
+    action: 'Project the double',
+  },
 
   conditions: [canUseNen(), isConscious()],
 

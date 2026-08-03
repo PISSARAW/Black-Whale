@@ -26,6 +26,16 @@ export const judgmentChain = defineAbility({
   owner: 'kurapika',
   category: 'conjurer',
 
+  site: {
+    kind: 'heart-vow',
+    instruction:
+      'Put the stake in one subject and declare up to two rules onto that same subject; touching anything else is the violation.',
+    rule: 'The implanted chain pierces the heart only when the declared rule is knowingly violated.',
+    cost: 'Emperor Time · explicit rule · lethal enforcement',
+    color: '#d7dce2',
+    action: 'Choose the contract subject',
+  },
+
   conditions: [canUseNen(), isConscious()],
 
   targets: [person(), self()],

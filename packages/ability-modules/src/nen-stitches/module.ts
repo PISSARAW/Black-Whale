@@ -28,6 +28,16 @@ export const nenStitches = defineAbility({
   owner: 'machi-komacine',
   category: 'transmuter',
 
+  site: {
+    kind: 'stitch',
+    instruction:
+      'Sew two sections together — the shorter the thread, the stronger the seam — or sew a section to itself to put back what was cut off it.',
+    rule: 'Aura threads reconnect severed flesh with exceptional speed and precision.',
+    cost: 'Thread length and precision',
+    color: '#dd77b7',
+    action: 'Choose the first torn edge',
+  },
+
   conditions: [canUseNen(), isConscious()],
 
   targets: [person(), object()],

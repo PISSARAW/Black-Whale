@@ -31,6 +31,16 @@ export const biohazardHinrigh = defineAbility({
   owner: 'hinrigh-biganduffno',
   category: 'conjurer',
 
+  site: {
+    kind: 'animate',
+    instruction:
+      'Click a nonliving object to animate it a few seconds later, keeping its function; ten small bodies a day, two large, and the aura runs out.',
+    rule: 'Touched machines and objects become living animals without losing their practical properties.',
+    cost: 'Direct contact with an object',
+    color: '#77c887',
+    action: 'Animate an object',
+  },
+
   conditions: [canUseNen(), isConscious()],
 
   targets: [object()],
@@ -94,6 +104,16 @@ export const bodyAndSoul = defineAbility({
   owner: 'lynch-fullbokko',
   category: 'emitter',
 
+  site: {
+    kind: 'truth-punch',
+    instruction:
+      'Ask once and punch; keep hitting the same target and its own voice expands on the answer it already gave.',
+    rule: 'The body’s emitted voice answers the question truthfully even when the conscious target lies or stays silent.',
+    cost: 'A direct punch after a clear question',
+    color: '#f1a06d',
+    action: 'Question and punch a target',
+  },
+
   conditions: [canUseNen(), isConscious()],
 
   targets: [person()],
@@ -148,6 +168,16 @@ export const damageSweetHome = defineAbility({
   name: 'Damage: Sweet Home',
   owner: 'terebellum',
   category: 'emitter',
+
+  site: {
+    kind: 'damage-transfer',
+    instruction:
+      'Rest the left hand on a recipient first; every blow after that lands there instead, and striking the recipient itself makes it take the damage.',
+    rule: 'Damage is redirected between touched targets rather than erased, with stricter limits when living bodies are involved.',
+    cost: 'Prior contact with both source and recipient',
+    color: '#db8b78',
+    action: 'Touch the protected target',
+  },
 
   conditions: [canUseNen(), isConscious()],
 

@@ -37,6 +37,16 @@ export const rihanPredator = defineAbility({
   owner: 'rihan',
   category: 'specialist',
 
+  site: {
+    kind: 'predator',
+    instruction:
+      'Read one registered Hatsu three times on your own; Predator then counters it everywhere it is carried, and costs all Nen for forty-eight hours.',
+    rule: 'Predator becomes stronger and more specialized as Rihan correctly deduces an enemy ability’s conditions.',
+    cost: 'Accurate analysis · weak against unknowns',
+    color: '#7bb66c',
+    action: 'Begin analyzing a target',
+  },
+
   conditions: [canUseNen(), isConscious()],
 
   targets: [person()],

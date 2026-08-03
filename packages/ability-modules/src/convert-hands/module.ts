@@ -24,6 +24,16 @@ export const convertHands = defineAbility({
   owner: 'chrollo-lucilfer',
   category: 'specialist',
 
+  site: {
+    kind: 'identity-swap',
+    instruction:
+      'Select two elements to exchange their visible identities while retaining their original destinations and behavior.',
+    rule: 'Left and right hand marks exchange appearances without exchanging the underlying person.',
+    cost: 'Two marked identities',
+    color: '#d6a5cc',
+    action: 'Mark the first identity',
+  },
+
   conditions: [canUseNen(), isConscious()],
 
   targets: [person()],

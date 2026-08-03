@@ -32,6 +32,16 @@ export const battleCantabilePrologue = defineAbility({
   owner: 'bonolenov-ndongo',
   category: 'conjurer',
 
+  site: {
+    kind: 'rhythm',
+    instruction:
+      'Play the piece over one element to conjure its warrior attire and spear: it gains reach over its neighbours and cover against everything else.',
+    rule: 'Air passing through the body’s holes becomes battle music whose rhythm carries the technique.',
+    cost: 'Continuous movement and rhythm',
+    color: '#d7b56d',
+    action: 'Begin the rhythm',
+  },
+
   conditions: [canUseNen(), isConscious()],
 
   targets: [self()],
@@ -79,6 +89,16 @@ export const battleCantabileJupiter = defineAbility({
   name: 'Battle Cantabile: Jupiter',
   owner: 'bonolenov-ndongo',
   category: 'conjurer',
+
+  site: {
+    kind: 'impact',
+    instruction:
+      'Conjure Jupiter over a target; once the dance is done it chases, and only leaving earshot of the music escapes it.',
+    rule: 'The conjured planet crushes the designated target with overwhelming mass.',
+    cost: 'One massive impact',
+    color: '#d9935b',
+    action: 'Choose the impact site',
+  },
 
   conditions: [canUseNen(), isConscious()],
 
@@ -132,6 +152,16 @@ export const blinky = defineAbility({
   name: 'Blinky',
   owner: 'shizuku-murasaki',
   category: 'conjurer',
+
+  site: {
+    kind: 'vacuum',
+    instruction:
+      'Name and vacuum nonliving content; Nen refuses to go in, which exposes traps, and a living target gets its foreign effects drawn out instead.',
+    rule: 'Blinky sucks up any nonliving matter Shizuku names, except Nen constructs and things she considers alive.',
+    cost: 'Declared nonliving target',
+    color: '#85b9d8',
+    action: 'Name something to vacuum',
+  },
 
   conditions: [canUseNen(), isConscious()],
 
@@ -195,6 +225,16 @@ export const doubleMachineGun = defineAbility({
   owner: 'franklin-bordeau',
   category: 'emitter',
 
+  site: {
+    kind: 'barrage',
+    instruction:
+      'Every click sprays the target and everything standing beside it; Nen constructs do not stop the bullets.',
+    rule: 'Severed fingertips emit a sustained, powerful volley whose force rewards commitment.',
+    cost: 'Continuous emitted aura',
+    color: '#e6ad57',
+    action: 'Open fire',
+  },
+
   conditions: [
     canUseNen(),
     isConscious(),
@@ -245,6 +285,16 @@ export const ripperCyclotron = defineAbility({
   name: 'Ripper Cyclotron',
   owner: 'phinks-magcub',
   category: 'enhancer',
+
+  site: {
+    kind: 'windup',
+    instruction:
+      'Wind the arm on one target, then punch a different one; under four rotations does nothing and over seven takes the bystanders too.',
+    rule: 'Every full arm rotation increases the aura concentrated in the next punch.',
+    cost: 'Visible wind-up time',
+    color: '#f2c34f',
+    action: 'Choose a target and wind up',
+  },
 
   conditions: [canUseNen(), isConscious()],
 

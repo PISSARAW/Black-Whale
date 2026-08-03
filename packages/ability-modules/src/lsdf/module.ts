@@ -28,6 +28,16 @@ export const lsdf = defineAbility({
   owner: 'yokotani',
   category: 'conjurer',
 
+  site: {
+    kind: 'legal-defense',
+    instruction:
+      'Designate the hideout, then stand a numbered guard on any intruder inside it: it can do nothing, and nothing can be done to it.',
+    rule: 'The invincible guards work only in Morena’s hideout after Yokotani identifies unlawful intruders; they expel but cannot injure.',
+    cost: 'Morena present · hideout only · declared offense',
+    color: '#d4c58b',
+    action: 'Establish hideout jurisdiction',
+  },
+
   conditions: [canUseNen()],
 
   targets: [zone()],

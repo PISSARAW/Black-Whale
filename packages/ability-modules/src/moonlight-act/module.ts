@@ -27,6 +27,16 @@ export const moonlightAct = defineAbility({
   owner: 'longhi',
   category: 'manipulator',
 
+  site: {
+    kind: 'contract',
+    instruction:
+      'Two parties sign voluntarily; touching either of them honours the terms and rewards both, touching anyone else is a breach worth a week of Zetsu.',
+    rule: 'Only a voluntary agreement with explicit terms can be rewarded or punished by the Manipulation contract.',
+    cost: 'Mutual consent · declared duration and penalty',
+    color: '#c6ddff',
+    action: 'Choose the first signatory',
+  },
+
   conditions: [canUseNen(), isConscious()],
 
   targets: [person()],

@@ -25,9 +25,19 @@ import {
  */
 export const luiniSpatialTeleportation = defineAbility({
   id: 'luini-spatial-teleportation',
-  name: 'Luini — téléportation spatiale',
+  name: 'Spatial Teleportation',
   owner: 'luini',
   category: 'specialist',
+
+  site: {
+    kind: 'spatial',
+    instruction:
+      'Send sections into the hidden room, which only opens from a section with a single way out; unsealing that section burns it for good.',
+    rule: 'Luini passes through walls into a private connected space but must respect his marked entry points.',
+    cost: 'Prepared boundary and return route',
+    color: '#8a78d6',
+    action: 'Open the hidden room',
+  },
 
   conditions: [canUseNen(), isConscious()],
 

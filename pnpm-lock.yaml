@@ -237,15 +237,24 @@ importers:
 
   packages/canon-compiler:
     dependencies:
+      '@black-whale/ability-modules':
+        specifier: workspace:*
+        version: link:../ability-modules
       '@black-whale/contracts':
         specifier: workspace:*
         version: link:../contracts
       '@black-whale/domain':
         specifier: workspace:*
         version: link:../domain
+      '@black-whale/nen-engine':
+        specifier: workspace:*
+        version: link:../nen-engine
       '@prisma/client':
         specifier: ^5.0.0
         version: 5.22.0(prisma@5.22.0)
+      prettier:
+        specifier: ^3.0.0
+        version: 3.9.6
     devDependencies:
       '@types/node':
         specifier: ^26.1.1

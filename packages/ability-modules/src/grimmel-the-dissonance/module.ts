@@ -37,9 +37,19 @@ const COHORT_ID = 'halkenburg-fin-bearers'
  */
 export const grimmelTheDissonance = defineAbility({
   id: 'grimmel-the-dissonance',
-  name: 'Grimmel the Dissonance',
+  name: 'The Boy Who Shoots the Arrow: Grimmel the Dissonance',
   owner: 'prince-halkenburg',
   category: 'specialist',
+
+  site: {
+    kind: 'arrow',
+    instruction:
+      'Materialize the bow, then strike a character; a marked bearer is chosen and the two visible bodies exchange positions and perspective.',
+    rule: 'Collective aura forms invincible armour and an arrow that pierces every defence before swapping two souls.',
+    cost: 'United supporters · one bearer risks their soul',
+    color: '#f7e27d',
+    action: 'Gather collective will',
+  },
 
   conditions: [canUseNen(), isConscious()],
 

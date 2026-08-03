@@ -23,6 +23,16 @@ export const holyChain = defineAbility({
   owner: 'kurapika',
   category: 'conjurer',
 
+  site: {
+    kind: 'healing',
+    instruction:
+      'Close a wound in two passes; content that is not damaged gives the cross nothing to work on.',
+    rule: 'The cross-tipped thumb chain accelerates natural healing and reaches full restorative efficiency during Emperor Time.',
+    cost: 'Enhancement aura · strongest under Emperor Time',
+    color: '#d9f1df',
+    action: 'Choose something wounded',
+  },
+
   conditions: [canUseNen(), isConscious(), requiresTarget('Un blessé est soigné')],
 
   targets: [person(), self()],

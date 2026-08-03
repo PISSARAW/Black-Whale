@@ -24,6 +24,16 @@ export const dowsingChain = defineAbility({
   owner: 'kurapika',
   category: 'conjurer',
 
+  site: {
+    kind: 'dowsing',
+    instruction:
+      'Move the pendulum to track nearby controls, then click text or a section to test its signal for uncertainty and deception.',
+    rule: 'The chain combines available evidence, intuition and concentration rather than granting infallible omniscience.',
+    cost: 'Sustained concentration and contextual information',
+    color: '#8ecae6',
+    action: 'Sweep for a target',
+  },
+
   conditions: [canUseNen(), isConscious()],
 
   targets: [person()],

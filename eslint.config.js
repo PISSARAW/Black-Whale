@@ -195,6 +195,10 @@ export default tseslint.config(
       '**/*.spec.ts',
       '**/*.test.ts',
       'packages/database/prisma/**',
+      // Compiled from `data/` and the ability modules, never edited by hand:
+      // its length is the catalogue's length, and splitting it would only put
+      // the compiler in charge of an index nobody reads.
+      '**/*.gen.ts',
     ],
     rules: {
       'max-lines': 'off',
@@ -221,7 +225,6 @@ export default tseslint.config(
       'apps/web/src/lib/nen/hatsuInteractions.ts', // 2384
       'apps/web/src/routes/ship/+page.svelte', // 1773
       'apps/web/src/routes/tour/+page.svelte', // 1583
-      'apps/web/src/lib/nen/hatsuRegistry.ts', // 1478
       'apps/web/src/lib/audio/hatsuSounds.ts', // 1205
       // Escaped: an unescaped `[slug]` is a character class to the glob, and
       // would quietly match nothing at all.

@@ -32,12 +32,19 @@
     "compile:chapters:dev": "tsx src/cli/compile-chapters.ts",
     "sync:passengers:dev": "tsx src/cli/sync-passengers.ts",
     "enrich:passengers:dev": "tsx src/cli/enrich-passengers.ts",
-    "fill:appearances:dev": "tsx src/cli/fill-appearances.ts"
+    "fill:appearances:dev": "tsx src/cli/fill-appearances.ts",
+    "compile:hatsu": "node dist/cli/compile-hatsu.js",
+    "compile:hatsu:dev": "tsx src/cli/compile-hatsu.ts",
+    "check:hatsu": "node dist/cli/compile-hatsu.js --check",
+    "check:hatsu:dev": "tsx src/cli/compile-hatsu.ts --check"
   },
   "dependencies": {
+    "@black-whale/ability-modules": "workspace:*",
     "@black-whale/contracts": "workspace:*",
     "@black-whale/domain": "workspace:*",
-    "@prisma/client": "^5.0.0"
+    "@black-whale/nen-engine": "workspace:*",
+    "@prisma/client": "^5.0.0",
+    "prettier": "^3.0.0"
   },
   "devDependencies": {
     "@types/node": "^26.1.1",

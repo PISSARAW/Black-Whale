@@ -25,9 +25,19 @@ const duplicateOf = (locationId: string): string => `${locationId}-duplicate`
  */
 export const marayamGuardianIsolation = defineAbility({
   id: 'marayam-guardian-isolation',
-  name: 'Marayam — isolement de la chambre',
+  name: 'Room 1013 Isolation',
   owner: 'prince-marayam',
   category: 'unknown',
+
+  site: {
+    kind: 'room-isolation',
+    instruction:
+      'Isolate the real room, then watch anyone outside who reaches for it arrive in an empty copy instead.',
+    rule: 'Occupants may leave the real room but outsiders and former occupants can reach only an empty spatial duplicate.',
+    cost: 'Protected room · one-way perceptual boundary',
+    color: '#7095d6',
+    action: 'Isolate the protected room',
+  },
 
   conditions: [canUseNen()],
 

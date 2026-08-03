@@ -35,9 +35,19 @@ const PASSENGER_CAPACITY = 5
  */
 export const kurtonVehicleTransformation = defineAbility({
   id: 'kurton-vehicle-transformation',
-  name: 'Kurton — transformation en véhicule',
+  name: 'Transformation into a boat or vehicle',
   owner: 'kurton',
   category: 'conjurer',
+
+  site: {
+    kind: 'vehicle',
+    instruction:
+      'Board up to five page passengers, then click one passenger again to launch the whole convoy on their shared aura.',
+    rule: 'Kurton becomes a vehicle whose capacity is five and whose fuel is supplied symbiotically by its passengers.',
+    cost: 'Shared passenger aura · five-seat limit',
+    color: '#f2a65a',
+    action: 'Board a passenger',
+  },
 
   conditions: [canUseNen(), isConscious()],
 
@@ -105,9 +115,19 @@ export const kurtonVehicleTransformation = defineAbility({
  */
 export const transportPortals = defineAbility({
   id: 'transport-portals',
-  name: 'Portails de transport',
+  name: 'Transport Portals',
   owner: 'tokarine',
   category: 'emitter',
+
+  site: {
+    kind: 'relay',
+    instruction:
+      'Load sections and advance each through three visible relay stages into recoverable transport storage without teleporting.',
+    rule: 'The ability transports limited cargo between expedition relays but explicitly cannot teleport it.',
+    cost: 'Low capacity · staged transport',
+    color: '#e2b86e',
+    action: 'Load cargo at relay one',
+  },
 
   conditions: [canUseNen(), isConscious()],
 
@@ -157,9 +177,19 @@ export const transportPortals = defineAbility({
  */
 export const thetaAuraProjectile = defineAbility({
   id: 'theta-aura-projectile',
-  name: 'Projectile d’aura',
+  name: 'Aura Projectile',
   owner: 'theta',
   category: 'emitter',
+
+  site: {
+    kind: 'training-shot',
+    instruction:
+      'Select a target to seal its action in Zetsu; holding perfectly still for three seconds restores it after the controlled shot.',
+    rule: 'Theta fires a controlled aura projectile to test whether a student can maintain complete Zetsu under pressure.',
+    cost: 'Three seconds of flawless concentration',
+    color: '#8fe3f0',
+    action: 'Choose a Zetsu trainee',
+  },
 
   conditions: [canUseNen(), isConscious()],
 

@@ -26,6 +26,16 @@ export const stealChain = defineAbility({
   owner: 'kurapika',
   category: 'conjurer',
 
+  site: {
+    kind: 'chain-rule',
+    instruction:
+      'Drive the syringe into a map character to drain their aura, hold them in Zetsu and keep one of their registered Hatsu.',
+    rule: 'The target is forced into an aura-depleted state while the stolen ability becomes available to Kurapika.',
+    cost: 'Contact, maintained drain and one captured ability',
+    color: '#d7dce2',
+    action: 'Drain a target’s Hatsu',
+  },
+
   conditions: [
     canUseNen(),
     isConscious(),

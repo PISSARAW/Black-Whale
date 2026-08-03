@@ -32,6 +32,16 @@ export const surveillancePaperDolls = defineAbility({
   owner: 'kalluto-zoldyck',
   category: 'manipulator',
 
+  site: {
+    kind: 'paper-spy',
+    instruction:
+      'Attach paper dolls to sections; they count and report every DOM change occurring inside their target.',
+    rule: 'Tiny paper figures eavesdrop remotely and relay activity to their user.',
+    cost: 'One paper observer per area',
+    color: '#efb9c8',
+    action: 'Deploy a paper observer',
+  },
+
   conditions: [canUseNen(), isConscious()],
 
   targets: [person()],
@@ -104,6 +114,16 @@ export const danceOfTheSerpentsBite = defineAbility({
   name: "Dance of the Serpent's Bite",
   owner: 'kalluto-zoldyck',
   category: 'manipulator',
+
+  site: {
+    kind: 'shred',
+    instruction:
+      'The first confetti sticks at the exact point you click; every volley after that converges on that same wound, wherever you aim.',
+    rule: 'A fan controls razor paper confetti capable of tracking and cutting a chosen target.',
+    cost: 'Sustained paper swarm',
+    color: '#f1a7bb',
+    action: 'Begin the paper dance',
+  },
 
   conditions: [canUseNen(), isConscious()],
 

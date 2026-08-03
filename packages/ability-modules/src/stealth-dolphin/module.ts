@@ -30,6 +30,16 @@ export const stealthDolphin = defineAbility({
   owner: 'kurapika',
   category: 'conjurer',
 
+  site: {
+    kind: 'ability-loan',
+    instruction:
+      'Read out what Steal Chain has already taken, then loan it to one recipient; it is spent after a single use and a non-user is awakened by it.',
+    rule: 'The dolphin exists during Emperor Time, explains the captured ability and opens a non-user’s aura nodes when the loan is consumed.',
+    cost: 'Emperor Time remains active until the loaded ability is used',
+    color: '#63d5e6',
+    action: 'Analyze a stolen ability',
+  },
+
   conditions: [canUseNen(), isConscious()],
 
   targets: [person()],

@@ -25,9 +25,19 @@ const coinId = (serial: string): string => `zhanglei-coin-${serial}`
  */
 export const zhangleiGuardianCoins = defineAbility({
   id: 'zhanglei-guardian-coins',
-  name: 'Zhang Lei — pièces du gardien',
+  name: 'Guardian Coins',
   owner: 'prince-zhanglei',
   category: 'unknown',
+
+  site: {
+    kind: 'coin-growth',
+    instruction:
+      'Revisit the same holder to multiply the coin by ten and eventually awaken it; giving the coin to anyone else resets it to 1 and wipes what was accumulated.',
+    rule: 'One coin is produced daily, accumulates Nen over time and resets to value one whenever ownership changes.',
+    cost: 'Long accumulation · transfer resets value',
+    color: '#d7b34f',
+    action: 'Mint a value-one coin',
+  },
 
   conditions: [canUseNen()],
 

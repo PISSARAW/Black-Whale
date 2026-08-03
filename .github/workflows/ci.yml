@@ -74,9 +74,10 @@ jobs:
         run: pnpm build --filter "./packages/*"
 
       # The web hatsu registry is compiled from `data/` and the modules' `site`
-      # blocks, and committed so its changes get read. This answers non-zero
-      # when the committed file is no longer what the compiler writes — a
-      # registry edited by hand, or a module changed without regenerating.
+      # blocks, the arena's contract table from their `arena` blocks, and both
+      # are committed so their changes get read. This answers non-zero when a
+      # committed file is no longer what the compiler writes — a table edited
+      # by hand, or a module changed without regenerating.
       - name: Hatsu registry is freshly compiled
         run: pnpm --filter "@black-whale/canon-compiler" check:hatsu
 

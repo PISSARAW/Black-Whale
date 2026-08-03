@@ -57,6 +57,14 @@ export const bungeeGum = defineAbility({
     action: 'Attach the first filament',
   },
 
+  arena: {
+    effect: 'bind',
+    cost: 18,
+    persistent: true,
+    condition: 'anchor-or-contact',
+    risk: 'tether-counterforce',
+  },
+
   conditions: [canUseNen(), isConscious()],
 
   targets: [person(), object(), surface(), self()],

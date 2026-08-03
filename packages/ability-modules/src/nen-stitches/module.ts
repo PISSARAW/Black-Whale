@@ -38,6 +38,15 @@ export const nenStitches = defineAbility({
     action: 'Choose the first torn edge',
   },
 
+  arena: {
+    effect: 'restore',
+    cost: 10,
+    persistent: true,
+    condition: 'shorter-thread-is-stronger',
+    risk: 'thread-can-be-cut',
+    mechanic: 'threads',
+  },
+
   conditions: [canUseNen(), isConscious()],
 
   targets: [person(), object()],

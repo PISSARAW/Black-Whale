@@ -41,6 +41,15 @@ export const biohazardHinrigh = defineAbility({
     action: 'Animate an object',
   },
 
+  arena: {
+    effect: 'enhance',
+    cost: 14,
+    persistent: true,
+    condition: 'touch-nonliving-object',
+    risk: 'limited-transformations',
+    mechanic: 'terrain',
+  },
+
   conditions: [canUseNen(), isConscious()],
 
   targets: [object()],
@@ -114,6 +123,15 @@ export const bodyAndSoul = defineAbility({
     action: 'Question and punch a target',
   },
 
+  arena: {
+    effect: 'impact',
+    cost: 10,
+    persistent: false,
+    condition: 'question-before-punch',
+    risk: 'melee-contact',
+    mechanic: 'truth',
+  },
+
   conditions: [canUseNen(), isConscious()],
 
   targets: [person()],
@@ -177,6 +195,15 @@ export const damageSweetHome = defineAbility({
     cost: 'Prior contact with both source and recipient',
     color: '#db8b78',
     action: 'Touch the protected target',
+  },
+
+  arena: {
+    effect: 'restore',
+    cost: 18,
+    persistent: true,
+    condition: 'touch-source-and-recipient',
+    risk: 'damage-is-not-erased',
+    mechanic: 'transfer',
   },
 
   conditions: [canUseNen(), isConscious()],

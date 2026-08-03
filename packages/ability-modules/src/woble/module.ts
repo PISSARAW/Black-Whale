@@ -36,6 +36,15 @@ export const erigeron = defineAbility({
     action: 'Accelerate growth',
   },
 
+  arena: {
+    effect: 'restore',
+    cost: 14,
+    persistent: false,
+    condition: 'living-target',
+    risk: 'slow-on-humans',
+    mechanic: 'growth',
+  },
+
   conditions: [canUseNen(), isConscious()],
 
   targets: [person()],

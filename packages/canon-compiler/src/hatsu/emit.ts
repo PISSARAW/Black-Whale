@@ -19,7 +19,7 @@ import type { HatsuProfile } from '@black-whale/nen-engine'
 `
 
 /** Single quotes, the repo's default, unless the text itself holds one. */
-function literal(value: string): string {
+export function literal(value: string): string {
   const escaped = value.replace(/\\/g, '\\\\')
   return escaped.includes("'") ? `"${escaped.replace(/"/g, '\\"')}"` : `'${escaped}'`
 }

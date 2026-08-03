@@ -48,6 +48,15 @@ export const skillHunter = defineAbility({
     action: 'Open the book and steal a control',
   },
 
+  arena: {
+    effect: 'enhance',
+    cost: 18,
+    persistent: true,
+    condition: 'book-and-theft-conditions',
+    risk: 'hand-and-page-restrictions',
+    mechanic: 'loadout',
+  },
+
   conditions: [canUseNen(), isConscious()],
 
   targets: [person()],

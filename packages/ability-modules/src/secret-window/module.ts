@@ -41,6 +41,15 @@ export const secretWindow = defineAbility({
     action: 'Attach the owl',
   },
 
+  arena: {
+    effect: 'enhance',
+    cost: 8,
+    persistent: true,
+    condition: 'attach-owl-to-target',
+    risk: 'observer-is-exposed',
+    mechanic: 'surveillance',
+  },
+
   conditions: [canUseNen(), isConscious()],
 
   targets: [zone()],

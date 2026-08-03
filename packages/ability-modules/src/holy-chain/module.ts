@@ -33,6 +33,15 @@ export const holyChain = defineAbility({
     action: 'Choose something wounded',
   },
 
+  arena: {
+    effect: 'restore',
+    cost: 22,
+    persistent: false,
+    condition: 'emperor-time',
+    risk: 'lifespan-cost',
+    mechanic: 'healing',
+  },
+
   conditions: [canUseNen(), isConscious(), requiresTarget('Un blessé est soigné')],
 
   targets: [person(), self()],

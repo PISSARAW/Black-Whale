@@ -42,6 +42,15 @@ export const magicalEstheticianCookie = defineAbility({
     action: 'Choose a section to restore',
   },
 
+  arena: {
+    effect: 'restore',
+    cost: 24,
+    persistent: false,
+    condition: 'uninterrupted-session',
+    risk: 'no-offence-during-treatment',
+    mechanic: 'recovery',
+  },
+
   conditions: [canUseNen(), isConscious()],
 
   targets: [person(), self()],

@@ -8,6 +8,7 @@ import type {
   WorldEventType,
   WorldState,
 } from '@black-whale/world-engine'
+import type { AbilityArenaContract } from './arena.js'
 import type { AbilitySitePresentation } from './site.js'
 
 // ──────────────────────────────────────────────
@@ -272,6 +273,13 @@ export interface AbilityManifest {
    * fails by name when one is missing.
    */
   site?: AbilitySitePresentation
+  /**
+   * What the ability costs and risks in a duel. Optional for the same reason
+   * as `site`: most of the eighty-two are never cast in the arena. The ones
+   * that are declare it here rather than in a table the arena keeps beside
+   * them, which is what let a cost drift from the rule that charges it.
+   */
+  arena?: AbilityArenaContract
 }
 
 export interface AbilityUIComponent {

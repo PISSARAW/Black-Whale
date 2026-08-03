@@ -38,6 +38,15 @@ export const catsName = defineAbility({
     action: 'Choose the direct killer',
   },
 
+  arena: {
+    effect: 'restore',
+    cost: 100,
+    persistent: false,
+    condition: 'death-by-attacker',
+    risk: 'must-die-first',
+    mechanic: 'post-mortem',
+  },
+
   conditions: [canUseNen()],
 
   targets: [self()],

@@ -448,10 +448,30 @@ traduire : un propriétaire que le catalogue nomme par description
 (`silent-majority`). `hatsu-status/{en,fr}.ts` n'était pas concerné : ce sont
 des messages d'exécution, déjà tenus en parité par `typeof hatsuStatusEn`.
 
+**Étape 3 — les contrats d'arène sont dans les manifests (fait).** Les 28
+contrats de duel que `lib/arena/hatsu/` déclarait à la main — 24 dans
+`blackWhale.ts`, 4 en dur dans `arenaDefinition()` — étaient la sixième
+déclaration du catalogue : un `cost` et une `condition` énoncés là, et de
+nouveau dans le module qui les applique, sans rien pour les faire coïncider.
+Chaque module porte désormais un bloc `arena` (`effect`, `cost`, `persistent`,
+`condition`, `risk`, et pour les 24 du roster un `mechanic`) à côté du bloc
+`site`, et `compile:hatsu` en compile
+`apps/web/src/lib/arena/hatsu/contracts.gen.ts` en même temps que le registre —
+une seule commande, parce qu'un module modifié ne doit pas voir la moitié de
+ses conséquences régénérées. L'équivalence a été prouvée contrat par contrat :
+les 28 entrées compilées sont identiques aux entrées écrites à la main, champ
+pour champ. Le compilateur refuse un bloc `arena` sans bloc `site` (rien ne
+pourrait le sélectionner) et deux techniques revendiquant la même `mechanic`
+(le roster les individualise) ; `contract.ts` n'est plus qu'une recherche par
+id, et `blackWhale.ts` dérive le roster au lieu de le déclarer. Le vocabulaire
+du duel reste celui de l'arène : `ArenaHatsuDefinition` type son `effect` avec
+`combat/types`, si bien qu'une divergence entre les cinq mots du moteur et ceux
+du réducteur devient une erreur de compilation.
+
 **Reste à faire.** Faire consommer
-l'`interactionManifest` par les rendus DOM et 3D ; remonter les
-`arenaDefinition` en dur (`lib/arena/hatsu/`) et la couche `lib/hunt/nen/` dans
-les manifests ; porter les tests comportementaux du tour en tests du moteur.
+l'`interactionManifest` par les rendus DOM et 3D ; remonter la couche
+`lib/hunt/nen/` dans les manifests ; porter les tests comportementaux du tour
+en tests du moteur.
 
 ---
 

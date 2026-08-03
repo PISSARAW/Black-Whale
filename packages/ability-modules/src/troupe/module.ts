@@ -100,6 +100,14 @@ export const battleCantabileJupiter = defineAbility({
     action: 'Choose the impact site',
   },
 
+  arena: {
+    effect: 'impact',
+    cost: 6,
+    persistent: true,
+    condition: 'three-beat-sequence',
+    risk: 'rhythm-break',
+  },
+
   conditions: [canUseNen(), isConscious()],
 
   targets: [self()],
@@ -161,6 +169,15 @@ export const blinky = defineAbility({
     cost: 'Declared nonliving target',
     color: '#85b9d8',
     action: 'Name something to vacuum',
+  },
+
+  arena: {
+    effect: 'bind',
+    cost: 14,
+    persistent: false,
+    condition: 'named-nonliving-target',
+    risk: 'cannot-vacuum-nen',
+    mechanic: 'vacuum',
   },
 
   conditions: [canUseNen(), isConscious()],
@@ -235,6 +252,14 @@ export const doubleMachineGun = defineAbility({
     action: 'Open fire',
   },
 
+  arena: {
+    effect: 'barrage',
+    cost: 18,
+    persistent: false,
+    condition: 'clear-line',
+    risk: 'recovery-window',
+  },
+
   conditions: [
     canUseNen(),
     isConscious(),
@@ -294,6 +319,14 @@ export const ripperCyclotron = defineAbility({
     cost: 'Visible wind-up time',
     color: '#f2c34f',
     action: 'Choose a target and wind up',
+  },
+
+  arena: {
+    effect: 'impact',
+    cost: 6,
+    persistent: true,
+    condition: 'consecutive-windup',
+    risk: 'sequence-reset',
   },
 
   conditions: [canUseNen(), isConscious()],

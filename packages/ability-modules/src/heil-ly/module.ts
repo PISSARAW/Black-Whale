@@ -112,6 +112,15 @@ export const bloodyMary = defineAbility({
     action: 'Release the first blood drop',
   },
 
+  arena: {
+    effect: 'bind',
+    cost: 12,
+    persistent: true,
+    condition: 'shed-blood',
+    risk: 'blood-loss',
+    mechanic: 'tracking',
+  },
+
   conditions: [canUseNen(), isConscious()],
 
   targets: [person(), self()],

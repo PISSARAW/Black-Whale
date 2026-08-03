@@ -48,6 +48,15 @@ export const silentMajority = defineAbility({
     action: 'Build the ten-target field',
   },
 
+  arena: {
+    effect: 'barrage',
+    cost: 20,
+    persistent: true,
+    condition: 'puppet-and-ten-suspects',
+    risk: 'user-damage-on-failure',
+    mechanic: 'ambush',
+  },
+
   conditions: [canUseNen(), isConscious()],
 
   // The user is a placeholder character until canon names them.

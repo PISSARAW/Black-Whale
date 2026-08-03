@@ -39,6 +39,15 @@ export const luiniSpatialTeleportation = defineAbility({
     action: 'Open the hidden room',
   },
 
+  arena: {
+    effect: 'enhance',
+    cost: 16,
+    persistent: false,
+    condition: 'prepared-entry-and-return',
+    risk: 'entry-burns-after-discovery',
+    mechanic: 'space',
+  },
+
   conditions: [canUseNen(), isConscious()],
 
   targets: [zone()],

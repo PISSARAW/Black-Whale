@@ -42,6 +42,15 @@ export const parallelFuture = defineAbility({
     action: 'Enter the ten-second future',
   },
 
+  arena: {
+    effect: 'enhance',
+    cost: 20,
+    persistent: false,
+    condition: 'zetsu-and-eyes-closed',
+    risk: 'defenceless-preview',
+    mechanic: 'forecast',
+  },
+
   conditions: [canUseNen()],
 
   targets: [self()],

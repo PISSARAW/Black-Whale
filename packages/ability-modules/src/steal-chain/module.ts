@@ -36,6 +36,15 @@ export const stealChain = defineAbility({
     action: 'Drain a target’s Hatsu',
   },
 
+  arena: {
+    effect: 'bind',
+    cost: 20,
+    persistent: true,
+    condition: 'syringe-contact-and-drain',
+    risk: 'single-held-ability',
+    mechanic: 'theft',
+  },
+
   conditions: [
     canUseNen(),
     isConscious(),

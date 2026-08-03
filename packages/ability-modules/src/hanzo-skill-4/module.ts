@@ -37,6 +37,15 @@ export const hanzoSkill4 = defineAbility({
     action: 'Project the double',
   },
 
+  arena: {
+    effect: 'enhance',
+    cost: 12,
+    persistent: true,
+    condition: 'body-asleep-and-still',
+    risk: 'body-left-defenceless',
+    mechanic: 'projection',
+  },
+
   conditions: [canUseNen(), isConscious()],
 
   targets: [self()],

@@ -38,6 +38,15 @@ export const lsdf = defineAbility({
     action: 'Establish hideout jurisdiction',
   },
 
+  arena: {
+    effect: 'bind',
+    cost: 20,
+    persistent: true,
+    condition: 'declared-hideout-intruder',
+    risk: 'cannot-inflict-harm',
+    mechanic: 'jurisdiction',
+  },
+
   conditions: [canUseNen()],
 
   targets: [zone()],

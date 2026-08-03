@@ -239,6 +239,15 @@ export const contagion = defineAbility({
     action: 'Create a level-one member',
   },
 
+  arena: {
+    effect: 'enhance',
+    cost: 8,
+    persistent: true,
+    condition: 'infected-member-level',
+    risk: 'requires-kills',
+    mechanic: 'progression',
+  },
+
   conditions: [canUseNen(), isConscious()],
 
   targets: [person()],

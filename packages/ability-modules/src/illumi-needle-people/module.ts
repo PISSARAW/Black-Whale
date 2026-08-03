@@ -36,6 +36,15 @@ export const illumiNeedlePeople = defineAbility({
     action: 'Insert a control needle',
   },
 
+  arena: {
+    effect: 'bind',
+    cost: 18,
+    persistent: true,
+    condition: 'needle-contact-and-order',
+    risk: 'consumes-target',
+    mechanic: 'manipulation',
+  },
+
   conditions: [canUseNen(), isConscious()],
 
   targets: [person()],

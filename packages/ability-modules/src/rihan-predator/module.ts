@@ -47,6 +47,15 @@ export const rihanPredator = defineAbility({
     action: 'Begin analyzing a target',
   },
 
+  arena: {
+    effect: 'enhance',
+    cost: 100,
+    persistent: false,
+    condition: 'three-correct-readings',
+    risk: 'forty-eight-hour-zetsu',
+    mechanic: 'analysis',
+  },
+
   conditions: [canUseNen(), isConscious()],
 
   targets: [person()],

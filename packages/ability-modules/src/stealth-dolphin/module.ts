@@ -40,6 +40,15 @@ export const stealthDolphin = defineAbility({
     action: 'Analyze a stolen ability',
   },
 
+  arena: {
+    effect: 'enhance',
+    cost: 16,
+    persistent: false,
+    condition: 'previously-stolen-ability',
+    risk: 'single-use-loan',
+    mechanic: 'loan',
+  },
+
   conditions: [canUseNen(), isConscious()],
 
   targets: [person()],

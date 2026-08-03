@@ -1,5 +1,6 @@
 import type {
   AbilityActionPlan,
+  AbilityArenaContract,
   AbilityContext,
   AbilityInteraction,
   AbilityInteractionManifest,
@@ -68,6 +69,12 @@ export interface AbilityDefinition {
    * compiler that generates the web registry — see `AbilitySitePresentation`.
    */
   site?: AbilitySitePresentation
+  /**
+   * What the ability costs and risks when the arena casts it. Declared beside
+   * the rule it charges for, rather than in the duel's own table — see
+   * `AbilityArenaContract`.
+   */
+  arena?: AbilityArenaContract
   /** Full interaction contract (section 18) */
   interactionManifest?: AbilityInteractionManifest
   /** Static action wheel entries for this ability */
@@ -92,6 +99,7 @@ export function defineAbility(def: AbilityDefinition): NenAbilityModule {
     category: def.category ?? 'unknown',
     version: '0.0.1',
     ...(def.site ? { site: def.site } : {}),
+    ...(def.arena ? { arena: def.arena } : {}),
   }
 
   const actionOf = (ctx: AbilityContext): AbilityAction | undefined =>

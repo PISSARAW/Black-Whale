@@ -42,6 +42,15 @@ export const benjaminBaton = defineAbility({
     action: 'Identify an eligible soldier',
   },
 
+  arena: {
+    effect: 'enhance',
+    cost: 12,
+    persistent: true,
+    condition: 'deceased-loyal-soldier',
+    risk: 'fixed-inherited-loadout',
+    mechanic: 'inheritance',
+  },
+
   conditions: [canUseNen(), isConscious()],
 
   targets: [person()],

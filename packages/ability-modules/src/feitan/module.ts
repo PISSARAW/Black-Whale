@@ -48,6 +48,15 @@ export const painPacker = defineAbility({
     action: 'Pack a hit away',
   },
 
+  arena: {
+    effect: 'impact',
+    cost: 6,
+    persistent: true,
+    condition: 'damage-received',
+    risk: 'must-survive-charge',
+    mechanic: 'retaliation',
+  },
+
   conditions: [canUseNen(), isConscious()],
 
   targets: [self()],

@@ -1,15 +1,7 @@
 import { SimulationEngine, resolveControlledEntity } from '@black-whale/simulation-engine'
-import type {
-  ProposedWorldEvent,
-  SpatialEstimate,
-  WorldBranch,
-  WorldState,
-} from '@black-whale/world-engine'
-import { hatsuById } from '$lib/nen/hatsuRegistry'
+import type { ProposedWorldEvent, WorldBranch, WorldState } from '@black-whale/world-engine'
 import { get } from 'svelte/store'
 import { locale } from '$lib/i18n'
-import { messagesFor } from '$lib/i18n'
-import type { Locale } from '$lib/i18n/config'
 import {
   diplomacyCost,
   initialRelationship,
@@ -19,10 +11,12 @@ import {
 } from './diplomacy'
 import { factionEliminated, resolveLocationConflicts, type UnitCondition } from './conflict'
 import { buildTurnReports } from './reports'
-import { strategyHatsuResolution } from './hatsu'
+import { advanceIntel } from './intel'
+import { resolvePlayerOrders, StrategyInputError } from './playerOrders'
 import type { StrategyHatsuCue } from './hatsuPresentation'
 import { characterAbilityIds, factionEntityIds as selectFactionEntityIds } from './selectors'
-import { generateFactionAIOperations, partitionBlockedMoves } from './tacticalAI'
+import { partitionBlockedMoves } from './tacticalAI'
+import { planOpposition } from './opposition'
 import {
   ACTIVE_SCENARIO,
   buildScenarioRoster,
@@ -37,9 +31,7 @@ import type { StrategyScenarioV2 } from './scenario/types'
 import {
   COMMAND_POINTS_PER_TURN,
   VICTORY_POINTS_TARGET,
-  intelCertainty,
   planCost,
-  strategicRoleForHatsu,
   type StrategyObjective,
 } from './rules'
 import type {
@@ -58,11 +50,7 @@ export type {
   StrategyTurnResult,
 } from './types'
 
-function strategyMsg(locale: Locale) {
-  return messagesFor(locale).strategy
-}
-
-export class StrategyInputError extends Error {}
+export { StrategyInputError } from './playerOrders'
 
 /** Everything `init` needs to start a campaign. */
 export interface StrategySetup {
@@ -210,37 +198,12 @@ export function createSimulationStore() {
 
   function refreshIntel(scoutedLocations: readonly string[], guardedLocations: readonly string[]) {
     if (!currentState || !selectedFactionId) return
-    const friendlyIds = new Set(factionEntityIds(selectedFactionId))
-    const friendlyLocations = new Set(
-      [...friendlyIds]
-        .map((entityId) => currentState!.presences[entityId]?.locationId)
-        .filter((id): id is string => Boolean(id)),
-    )
-    const observedLocations = new Set([
-      ...scoutedLocations,
-      ...guardedLocations,
-      ...friendlyLocations,
-    ])
-    const next: Record<string, StrategyIntel> = {}
-
-    for (const [entityId, sighting] of Object.entries(intel)) {
-      const age = currentTurn - sighting.observedTurn
-      next[entityId] = { ...sighting, certainty: intelCertainty(age) }
-    }
-    for (const [entityId, presence] of Object.entries(currentState.presences) as Array<
-      [string, SpatialEstimate]
-    >) {
-      if (!presence.locationId) continue
-      if (friendlyIds.has(entityId) || observedLocations.has(presence.locationId)) {
-        next[entityId] = {
-          entityId,
-          locationId: presence.locationId,
-          observedTurn: currentTurn,
-          certainty: 'CONFIRMED',
-        }
-      }
-    }
-    intel = next
+    intel = advanceIntel(intel, {
+      state: currentState,
+      friendlyIds: new Set(factionEntityIds(selectedFactionId)),
+      observedLocations: [...scoutedLocations, ...guardedLocations],
+      turn: currentTurn,
+    })
   }
 
   function currentObjective(): StrategyObjective | null {
@@ -284,7 +247,6 @@ export function createSimulationStore() {
         .filter((location) => scenarioLocationIds.includes(location.id))
         .map((location) => [location.id, location]),
     )
-    const orderedCharacters = new Set<string>()
     const playerEvents: ProposedWorldEvent[] = []
     const playerEntityIds = new Set<string>()
     const scoutedLocations: string[] = []
@@ -305,192 +267,55 @@ export function createSimulationStore() {
     const nextRelationships = diplomacy.relationships
     const diplomacyReports = diplomacy.reports
 
-    for (const order of playerOrders) {
-      if (
-        order.type !== 'MOVE' &&
-        order.type !== 'SCOUT' &&
-        order.type !== 'GUARD' &&
-        order.type !== 'HATSU'
-      ) {
-        throw new StrategyInputError(strategyMsg(get(locale)).errors.unknownAction)
-      }
-      if (!allowedCharacters.has(order.characterId)) {
-        throw new StrategyInputError(strategyMsg(get(locale)).errors.orderTargetsNonOwnedUnit)
-      }
-      if (orderedCharacters.has(order.characterId)) {
-        throw new StrategyInputError(strategyMsg(get(locale)).errors.oneOrderPerTurn)
-      }
-      const destination = destinations.get(order.locationId)
-      if (!destination || !currentState.entities[destination.id]) {
-        throw new StrategyInputError(strategyMsg(get(locale)).errors.unknownDestination)
-      }
-      const entity = resolveControlledEntity(currentState, order.characterId)
-      if (!entity) throw new StrategyInputError(strategyMsg(get(locale)).errors.unitDoesNotExist)
-      if (unitConditions[entity.id] === 'ELIMINATED') {
-        throw new StrategyInputError(
-          strategyMsg(get(locale)).errors.eliminatedUnitCannotReceiveOrders,
-        )
-      }
+    const plan = resolvePlayerOrders(playerOrders, {
+      state: currentState,
+      factions,
+      playerFaction,
+      allowedCharacters,
+      destinations,
+      intel,
+      unitConditions,
+      hatsuCooldowns,
+      turn: currentTurn,
+      locale: get(locale),
+      abilityIdsForCharacter,
+    })
+    playerEvents.push(...plan.events)
+    for (const id of plan.entityIds) playerEntityIds.add(id)
+    scoutedLocations.push(...plan.scouted)
+    guardedLocations.push(...plan.guarded)
+    deniedLocations.push(...plan.denied)
+    activatedHatsu.push(...plan.activatedHatsu)
+    activatedAbilityIds.push(...plan.activatedAbilityIds)
+    Object.assign(abilityCooldownTurns, plan.cooldownTurns)
+    hatsuInfluence += plan.influence
+    // Numbered from the store so the sequence stays unique across turns; the
+    // rules only know their own order within one plan.
+    hatsuCues = [
+      ...hatsuCues,
+      ...plan.cues.map((cue) => ({ ...cue, seq: ++hatsuCueSequence })),
+    ].slice(-20)
 
-      orderedCharacters.add(order.characterId)
-      playerEntityIds.add(entity.id)
-      if (order.type === 'HATSU') {
-        if (
-          !order.abilityId ||
-          !abilityIdsForCharacter(order.characterId).includes(order.abilityId)
-        ) {
-          throw new StrategyInputError('Cette unité ne maîtrise pas le Hatsu sélectionné.')
-        }
-        if ((hatsuCooldowns[order.abilityId] ?? 0) > currentTurn) {
-          throw new StrategyInputError('Ce Hatsu est encore en récupération.')
-        }
-        const profile = hatsuById(order.abilityId)
-        if (!profile) throw new StrategyInputError('Hatsu inconnu du registre tactique.')
-        const confirmedHostilesAtTarget = Object.values(intel).filter(
-          (sighting) =>
-            sighting.locationId === destination.id &&
-            sighting.certainty === 'CONFIRMED' &&
-            !allowedCharacters.has(sighting.entityId),
-        ).length
-        const spiderIds = new Set(
-          factions
-            .find((faction) => faction.id === 'phantom-troupe')
-            ?.members.map((member) => member.character.id) ?? [],
-        )
-        const adapted = strategyHatsuResolution(
-          {
-            abilityId: order.abilityId,
-            sourceLocationId: currentState.presences[entity.id]?.locationId,
-            targetLocationId: destination.id,
-            confirmedHostilesAtTarget,
-            eliminatedAllies: playerFaction.members.filter((member) => {
-              const ally = resolveControlledEntity(currentState!, member.character.id)
-              return ally && unitConditions[ally.id] === 'ELIMINATED'
-            }).length,
-            targetHasSpider: Object.values(intel).some(
-              (sighting) =>
-                sighting.locationId === destination.id &&
-                sighting.certainty === 'CONFIRMED' &&
-                spiderIds.has(sighting.entityId),
-            ),
-          },
-          get(locale),
-        )
-        if (adapted && !adapted.accepted)
-          throw new StrategyInputError(
-            adapted.error ?? strategyMsg(get(locale)).errors.hatsuCannotBeActivated,
-          )
-        const effects = adapted?.effects ?? [strategicRoleForHatsu(profile.kind)]
-        if (effects.includes('RECON')) scoutedLocations.push(destination.id)
-        if (effects.includes('DENIAL')) deniedLocations.push(destination.id)
-        if (effects.includes('GUARD')) guardedLocations.push(destination.id)
-        if (effects.includes('INFLUENCE')) hatsuInfluence += 1
-        if (
-          effects.includes('MOBILITY') &&
-          currentState.presences[entity.id]?.locationId !== destination.id
-        ) {
-          playerEvents.push({
-            type: 'ENTITY_MOVED',
-            payload: {
-              presence: {
-                entity: { id: entity.id, kind: entity.kind },
-                locationId: destination.id,
-                precision: destination.type === 'TIER' ? 'TIER' : 'EXACT_ROOM',
-                certainty: 'CONFIRMED',
-              },
-            },
-          })
-        }
-        activatedAbilityIds.push(order.abilityId)
-        abilityCooldownTurns[order.abilityId] = adapted?.cooldownTurns ?? 2
-        activatedHatsu.push(`${profile.name} · ${adapted?.report ?? destination.name}`)
-        hatsuCues = [
-          ...hatsuCues,
-          {
-            seq: ++hatsuCueSequence,
-            abilityId: order.abilityId,
-            sourceCharacterId: order.characterId,
-            sourceLocationId: currentState.presences[entity.id]?.locationId ?? destination.id,
-            targetLocationId: destination.id,
-            report: adapted?.report ?? profile.name,
-          },
-        ].slice(-20)
-        continue
-      }
-      if (order.type === 'SCOUT') {
-        scoutedLocations.push(destination.id)
-        continue
-      }
-      if (order.type === 'GUARD') {
-        const guarded = currentState.presences[entity.id]?.locationId
-        if (guarded) guardedLocations.push(guarded)
-        continue
-      }
-      if (currentState.presences[entity.id]?.locationId === destination.id) continue
-      playerEvents.push({
-        type: 'ENTITY_MOVED',
-        payload: {
-          presence: {
-            entity: { id: entity.id, kind: entity.kind },
-            locationId: destination.id,
-            precision:
-              destination.type === 'TIER'
-                ? 'TIER'
-                : destination.type === 'ZONE'
-                  ? 'ZONE'
-                  : 'EXACT_ROOM',
-            certainty: 'CONFIRMED',
-          },
-        },
-      })
-    }
-
-    const aiEvents: ProposedWorldEvent[] = []
-    const aiDeniedLocations: string[] = []
-    let aiHatsuActivations = 0
-    const claimedCharacters = new Set(allowedCharacters)
-    const claimedEntities = new Set(playerEntityIds)
-    const destinationIds = scenarioLocationIds
-    const destinationTypes = Object.fromEntries(
-      locations.map((location) => [
-        location.id,
-        location.type === 'SHIP' ? 'UNKNOWN' : location.type,
-      ]),
-    ) as Record<string, 'TIER' | 'ZONE' | 'ROOM' | 'CORRIDOR' | 'UNKNOWN'>
-    for (const faction of factions.filter((candidate) => activeFactionIds.includes(candidate.id))) {
-      if (faction.id === playerFactionId) continue
-      const members = faction.members
-        .map((member) => member.character.id)
-        .filter((characterId) => {
-          if (claimedCharacters.has(characterId)) return false
-          const entity = resolveControlledEntity(currentState!, characterId)
-          if (!entity || claimedEntities.has(entity.id)) return false
-          claimedCharacters.add(characterId)
-          claimedEntities.add(entity.id)
-          return true
-        })
-
-      const playerLocations = factionEntityIds(playerFactionId)
+    const opposition = planOpposition({
+      state: currentState,
+      branchId: branch.id,
+      factions: factions.filter((candidate) => activeFactionIds.includes(candidate.id)),
+      playerFactionId,
+      claimedCharacters: allowedCharacters,
+      claimedEntities: playerEntityIds,
+      playerLocations: factionEntityIds(playerFactionId)
         .map((entityId) => currentState!.presences[entityId]?.locationId)
-        .filter((id): id is string => Boolean(id))
-      const aiPlan = generateFactionAIOperations({
-        state: currentState,
-        faction,
-        doctrine: scenarioDoctrineForFaction(faction.id, activeScenario),
-        memberCharacterIds: members,
-        unitConditions,
-        destinationIds,
-        destinationTypes,
-        playerLocations,
-        pact: nextRelationships[faction.id]?.pact ?? false,
-        turn: currentTurn,
-        seed: `${branch.id}:${currentTurn}:${faction.id}`,
-        scenario: activeScenario,
-      })
-      aiEvents.push(...aiPlan.events)
-      aiDeniedLocations.push(...aiPlan.deniedLocations)
-      aiHatsuActivations += aiPlan.hatsuActivations
-    }
+        .filter((id): id is string => Boolean(id)),
+      destinationIds: scenarioLocationIds,
+      locations,
+      unitConditions,
+      relationships: nextRelationships,
+      turn: currentTurn,
+      scenario: activeScenario,
+    })
+    const aiEvents = opposition.events
+    const aiDeniedLocations = opposition.deniedLocations
+    const aiHatsuActivations = opposition.hatsuActivations
 
     const aiResolution = partitionBlockedMoves(aiEvents, [...guardedLocations, ...deniedLocations])
     const playerResolution = partitionBlockedMoves(playerEvents, aiDeniedLocations)

@@ -4,7 +4,6 @@
   import { displayName } from '$lib/utils/displayNames'
   import { link, locale, t } from '$lib/i18n'
   import { resolveRegionLocationSlug } from '$lib/map/mapAssetRegistry'
-  import { spaceForLocation, theShip } from '$lib/tour/blueprint'
 
   let locations = $derived($page.data.worldState?.locations || [])
   let presences = $derived($page.data.worldState?.presences || [])
@@ -76,9 +75,12 @@
    * a space for every room the catalogue puts aboard, which is what makes the
    * offer honest rather than a dead end.
    */
-  let walkTo = $derived(
-    spaceForLocation(theShip(), resolveRegionLocationSlug(mapState.selectedLocationId)),
-  )
+  let walkTo = $derived.by(() => {
+    const slug = resolveRegionLocationSlug(mapState.selectedLocationId)
+    // The loader answers this: reading it here would have meant the whole
+    // blueprint in the browser for one id. See `lib/tour/walkTargets.ts`.
+    return slug ? ($page.data.walkTargets?.[slug] ?? null) : null
+  })
 
   function closePanel() {
     mapState.selectLocation(null)
@@ -131,7 +133,7 @@
 
     {#if walkTo}
       <a
-        href={`${$link('/tour')}?space=${walkTo.id}`}
+        href={`${$link('/tour')}?space=${walkTo}`}
         class="mt-6 inline-block rounded border border-[#FFD700]/60 px-3 py-1.5 text-center text-xs tracking-wider text-[#FFD700] uppercase transition-colors hover:bg-[#FFD700]/10"
       >
         {$t.mapUi.walkThere} →

@@ -1,5 +1,6 @@
 import { error, type Handle, type HandleServerError } from '@sveltejs/kit'
 import { rateLimit } from '$lib/server/rateLimit'
+import { cachePolicyFor } from '$lib/server/httpCache'
 import { describeError, errorReference, log } from '$lib/server/log'
 import { LOCALE_TAGS, parsePathname } from '$lib/i18n/config'
 
@@ -25,6 +26,17 @@ export const handle: Handle = async ({ event, resolve }) => {
   const response = await resolve(event, {
     transformPageChunk: ({ html }) => html.replace('%lang%', LOCALE_TAGS[locale].html),
   })
+  // Cacheability, decided once for the whole app. A route that already said
+  // something for itself keeps it: `/sitemap.xml` and `/robots.txt` know their
+  // own lifetimes, and `/health` must never be stored at all.
+  if (!response.headers.has('cache-control')) {
+    const policy = cachePolicyFor({ method: event.request.method, path })
+    response.headers.set('cache-control', policy.cacheControl)
+    // The reader's spoiler cap travels in a cookie, so it has to be part of
+    // any shared cache's key or a capped reader could be served someone
+    // else's canon. See `lib/server/httpCache.ts`.
+    if (policy.vary) response.headers.append('vary', policy.vary)
+  }
   // Set here as well as at the proxy, so the guarantees still hold in a
   // deployment that terminates TLS somewhere other than the bundled Caddy.
   response.headers.set('x-content-type-options', 'nosniff')

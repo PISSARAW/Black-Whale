@@ -510,6 +510,50 @@ patron ; les 81 autres restent à porter au même endroit.
 suppose) ; porter les limites de canon des 81 autres techniques en tests de
 module.
 
+## Avancement du chantier 4
+
+**Ce que le dépôt avait déjà réglé.** Deux des quatre points étaient faits avant
+cette session, et le §1.3 C est périmé sur les deux :
+
+- **`getNearestSnapshot`** ne rejoue rien et ne rejouera rien — la décision est
+  écrite dans `timeline-engine/src/index.ts` : `getWorldState` répond en lisant
+  directement les tables d'intervalles, si bien qu'un replay serait une seconde
+  implémentation d'une même vérité à tenir en phase. La borne de chapitre est
+  poussée en SQL et un cache LRU (`snapshotStore.ts`, 24 entrées, hits/misses
+  mesurés) tient l'état reconstruit pour la durée du processus, ce qui est
+  légitime tant que l'app n'écrit pas en base.
+- **Mesh par espace + portal culling** : `tour/visibility.ts` fait un parcours
+  en largeur du graphe de portes (`deriveDoorways`, profondeur 2) et chaque
+  salle a son propre mesh et sa propre sphère englobante — 3,6 salles sur 53 à
+  profondeur 1, 14,3 à profondeur 2, au lieu des 53.
+
+**Le cache HTTP (fait).** `lib/server/httpCache.ts` décide une fois pour toute
+l'app, et `hooks.server.ts` l'applique sans écraser ce qu'une route a déjà dit
+d'elle-même. La règle est étroite parce que la promesse du site en dépend : ce
+qui porte de l'état visiteur (`/simulations`, `/spoiler-limit`, `/health`) et
+toute réponse à une écriture ne sont **jamais** stockés ; tout le reste est
+`public, s-maxage=600, stale-while-revalidate=86400` **avec `Vary: Cookie`**,
+donc le cap de spoiler fait partie de la clé de cache par construction. Un
+cache partagé ne peut pas servir à un lecteur arrêté au chapitre 100 une page
+bâtie pour quelqu'un qui a tout lu — la propriété est testée sur les routes,
+pas sur la poignée qu'on aurait pensé à lister.
+
+**Le blueprint (partiellement fait, mesuré).** Le `buildShip()` au scope module
+avait déjà été corrigé (`theShip()` mémoïse). Restait le poids : le blueprint
+compilé est un morceau de **929 771 octets** que **11 nœuds de route**
+importaient. `/ship` en faisait partie pour une seule question — quel espace
+ouvrir quand on clique « la même pièce, à pied ». La réponse est maintenant
+calculée par le loader (`lib/tour/walkTargets.ts`, quelques centaines de
+chaînes courtes, < 30 Ko) et `/ship` ne charge plus le blueprint du tout :
+mesuré avant/après sur le bundle, le nœud 21 a perdu le morceau.
+
+**Reste à faire (chantier 4).** Les 10 autres routes qui portent le blueprint
+(`/tour`, `/reconstruction`, `/arena`, `/hunt`…) en ont réellement besoin côté
+client : le rendre paresseux pour elles demande de passer `theShip()` en
+asynchrone, ce qui remonte dans une dizaine d'appelants dont plusieurs
+composants Svelte. C'est un refactor à part entière, pas un ajustement, et il
+n'a pas été fait ici.
+
 ---
 
 _Sources : lecture du dépôt au 2026-08-03 (manifests, `infrastructure/`, `schema.prisma`, hooks et loaders, `timeline-engine`, registres hatsu, `data/`) ; `docs/completude.md` (audit du 2026-07-30) ; audits mémorisés `/tour` et hatsu. Les chiffres datés du 30/07 sont signalés comme tels ; ceux vérifiés ce jour : 82 abilities avec `moduleKey` 82/82, 82 profils dans `hatsuRegistry.ts`, 134 événements dans `data/events/events.json`, `getNearestSnapshot` → `null` (`timeline-engine/src/index.ts:220`), crédit CC BY et `SpoilerFilter` présents au layout, `/abilities` toujours sans filtre, toujours aucun `+error.svelte`._

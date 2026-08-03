@@ -2,6 +2,8 @@ import { prisma } from '$lib/server/db'
 import type { CatalogCharacter } from '$lib/server/data-files'
 import { buildPerspective } from '$lib/server/perspectives'
 import { readSpoilerProfile } from '$lib/server/spoiler'
+import { theShip } from '$lib/tour/blueprint'
+import { walkTargetsByLocation } from '$lib/tour/walkTargets'
 import { trimEventsForTimeline, trimWorldStateForMap } from '$lib/server/mapPayload'
 import { timeline } from '$lib/server/timeline'
 import {
@@ -27,6 +29,7 @@ import { PUBLIC_FEATURES } from '$lib/config/features'
 
 const catalogIndex = buildCatalogIndex(characterCatalog as CatalogCharacter[])
 const hatsuIndex = buildHatsuIndex(abilityCatalog)
+const walkTargets = walkTargetsByLocation(theShip())
 
 export const load: PageServerLoad = async ({ url, cookies }) => {
   const requestedPerspectiveId = PUBLIC_FEATURES.perspectives
@@ -213,5 +216,10 @@ export const load: PageServerLoad = async ({ url, cookies }) => {
         })
       : null,
     spoilerLimit: spoilerProfile?.maxChapter,
+    // Which room the walk opens for each location the map can select. Computed
+    // here so the browser is not sent the whole blueprint to answer one link —
+    // see `lib/tour/walkTargets.ts`. It depends on nothing but the ship, so it
+    // is built once for the lifetime of the process.
+    walkTargets,
   }
 }

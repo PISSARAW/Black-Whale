@@ -3405,5 +3405,4 @@ export const en = {
         cannotEstablishNewInfo: (name: string) => `${name} cannot establish anything new about this target under the present conditions.`,
       },
     },
-  },
-}
+    }

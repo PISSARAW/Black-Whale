@@ -3168,85 +3168,65 @@ export const fr: Messages = {
         unknown: 'ignore',
       },
     },
-  },
-        replay: {
-          dollAppears: {
-            title: 'La poupée apparaît',
-            description: 'Loberry seule voit la figure masquée derrière Furykov.',
-          },
-          allEyesDiverge: {
-            title: 'Tous les regards dévient',
-            description: 'Loberry crie et désigne une présence que personne d’autres ne peut trouver.',
-          },
-          fourCreaturesStrike: {
-            title: 'Quatre créatures frappent',
-            description: 'Les tsuchibokko matérialisés se fixent au cou de Barrigen.',
-          },
-          simultaneousDrain: {
-            title: 'Drainage simultané',
-            description: 'Les gardes voient les créatures et tentent de les arracher; le temps manque.',
-          },
-          barrigenIsDead: {
-            title: 'Barrigen est mort',
-            description: 'Les quatre créatures ont réduit quarante-quatre secondes à environ onze.',
-          },
-        },
-      },
 
-      strategy: {
-        hatsu: {
-          canOnlyActivateInOwnZone: (name: string) => `${name} ne peut être activé que dans la zone occupée par son utilisateur.`,
-          requiresConfirmedHostile: (name: string) => `${name} exige une présence hostile confirmée dans la zone ciblée.`,
-          catsNamePassive: "Cat’s Name est un contre post-mortem passif et ne peut pas recevoir d’ordre d’activation.",
-          chainJailRequiresSpider: 'Chain Jail est interdit : aucune Araignée confirmée ne se trouve dans cette zone.',
-          benjaminBatonRequiresDeath: 'Benjamin Baton exige la mort préalable d’un soldat loyal éligible.',
-        },
-        errors: {
-          oneOrderPerTurn: 'Une unité ne peut recevoir qu’un ordre par tour.',
-          eliminatedUnitCannotReceiveOrders: 'Une unité éliminée ne peut plus recevoir d’ordre.',
-          hatsuCannotBeActivated: 'Ce Hatsu ne peut pas être activé.',
-          unknownAction: 'Un ordre utilise une action inconnue.',
-          orderTargetsNonOwnedUnit: 'Un ordre vise une unité qui ne vous appartient pas.',
-          unknownDestination: 'Destination inconnue dans cet état du monde.',
-          unitDoesNotExist: 'Cette unité n’existe pas dans cet état du monde.',
-        },
-      },
+    },
 
-      investigation: {
-        replay: {
-          allEyesDiverge: {
-            title: 'Tous les regards dévient',
-            description: 'Loberry crie et désigne une présence que personne d’autre ne peut trouver.',
-          },
-          fourCreaturesStrike: {
-            title: 'Quatre créatures frappent',
-            description: 'Les tsuchibokko matérialisés se fixent au cou de Barrigen.',
-          },
-          simultaneousDrain: {
-            title: 'Drainage simultané',
-            description: 'Les gardes voient les créatures et tentent de les arracher; le temps manque.',
-          },
-          barrigenIsDead: {
-            title: 'Barrigen est mort',
-            description: 'Les quatre créatures ont réduit quarante-quatre secondes à environ onze.',
-          },
-        },
-        hatsu: {
-          noGrip: 'Aucune prise',
-          cannotEstablishInfo: (name: string) => `${name} ne peut établir aucune information sur cette cible.`,
-          usageDenied: 'Usage refusé',
-          impossibleCost: 'Coût impossible',
-          corroboratedSignal: 'Signal corroboré',
-          conclusiveAnalysis: 'Analyse concluante',
-          limitedResult: 'Résultat limité',
-          requiresLifeHours: (hours: number) => `Cette analyse exige ${hours} heures de vie disponibles.`,
-          ethicalOrProceduralConditions: 'Les conditions éthiques ou procédurales interdisent cet usage.',
-          confirmsLimits: 'La capacité confirme ses propres limites sans produire de nouvelle preuve.',
-          reinforcesInfo: 'La capacité renforce une information existante sans la transformer en vérité absolue.',
-          revealsCompatibleElements: 'La capacité révèle les éléments compatibles avec ses conditions et son coût.',
-          cannotEstablishNewInfo: (name: string) => `${name} ne peut rien établir de nouveau sur cette cible dans les conditions présentes.`,
-        },
+    strategy: {
+      hatsu: {
+        canOnlyActivateInOwnZone: (name: string) => `${name} ne peut être activé que dans la zone occupée par son utilisateur.`,
+        requiresConfirmedHostile: (name: string) => `${name} exige une présence hostile confirmée dans la zone ciblée.`,
+        catsNamePassive: "Cat’s Name est un contre post-mortem passif et ne peut pas recevoir d’ordre d’activation.",
+        chainJailRequiresSpider: 'Chain Jail est interdit : aucune Araignée confirmée ne se trouve dans cette zone.',
+        benjaminBatonRequiresDeath: 'Benjamin Baton exige la mort préalable d’un soldat loyal éligible.',
+      },
+      errors: {
+        oneOrderPerTurn: 'Une unité ne peut recevoir qu’un ordre par tour.',
+        eliminatedUnitCannotReceiveOrders: 'Une unité éliminée ne peut plus recevoir d’ordre.',
+        hatsuCannotBeActivated: 'Ce Hatsu ne peut pas être activé.',
+        unknownAction: 'Un ordre utilise une action inconnue.',
+        orderTargetsNonOwnedUnit: 'Un ordre vise une unité qui ne vous appartient pas.',
+        unknownDestination: 'Destination inconnue dans cet état du monde.',
+        unitDoesNotExist: 'Cette unité n’existe pas dans cet état du monde.',
       },
     },
-  },
-}
+
+    investigation: {
+      replay: {
+        dollAppears: {
+          title: 'La poupée apparaît',
+          description: 'Loberry seule voit la figure masquée derrière Furykov.',
+        },
+        allEyesDiverge: {
+          title: 'Tous les regards dévient',
+          description: 'Loberry crie et désigne une présence que personne d’autre ne peut trouver.',
+        },
+        fourCreaturesStrike: {
+          title: 'Quatre créatures frappent',
+          description: 'Les tsuchibokko matérialisés se fixent au cou de Barrigen.',
+        },
+        simultaneousDrain: {
+          title: 'Drainage simultané',
+          description: 'Les gardes voient les créatures et tentent de les arracher; le temps manque.',
+        },
+        barrigenIsDead: {
+          title: 'Barrigen est mort',
+          description: 'Les quatre créatures ont réduit quarante-quatre secondes à environ onze.',
+        },
+      },
+      hatsu: {
+        noGrip: 'Aucune prise',
+        cannotEstablishInfo: (name: string) => `${name} ne peut établir aucune information sur cette cible.`,
+        usageDenied: 'Usage refusé',
+        impossibleCost: 'Coût impossible',
+        corroboratedSignal: 'Signal corroboré',
+        conclusiveAnalysis: 'Analyse concluante',
+        limitedResult: 'Résultat limité',
+        requiresLifeHours: (hours: number) => `Cette analyse exige ${hours} heures de vie disponibles.`,
+        ethicalOrProceduralConditions: 'Les conditions éthiques ou procédurales interdisent cet usage.',
+        confirmsLimits: 'La capacité confirme ses propres limites sans produire de nouvelle preuve.',
+        reinforcesInfo: 'La capacité renforce une information existante sans la transformer en vérité absolue.',
+        revealsCompatibleElements: 'La capacité révèle les éléments compatibles avec ses conditions et son coût.',
+        cannotEstablishNewInfo: (name: string) => `${name} ne peut rien établir de nouveau sur cette cible dans les conditions présentes.`,
+      },
+    },
+  }

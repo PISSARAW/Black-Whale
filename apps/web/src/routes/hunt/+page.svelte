@@ -18,7 +18,7 @@
   import Seo from '$lib/components/Seo.svelte'
   import TourScene from '$lib/components/tour/TourScene.svelte'
   import TourModeFullscreen from '$lib/components/tour/TourModeFullscreen.svelte'
-  import { theShip, crossingsOn, type Crossing } from '$lib/tour/blueprint'
+  import { theShip, crossingsOn } from '$lib/tour/blueprint'
   import type { TourFlash } from '$lib/tour/apparitions'
   import { interiorPoint } from '$lib/tour/geometry'
   import TourMinimapPanel from '$lib/components/tour/TourMinimapPanel.svelte'
@@ -62,7 +62,7 @@
   import { huntContractById, listHuntContracts } from '$lib/hunt/contracts/registry'
   import { contractMessages } from '$lib/hunt/contracts/messages'
   import { carryIntoStage, nextStage } from '$lib/hunt/contracts/transition'
-  import { capabilitiesOf, type HuntVow } from '$lib/hunt/nen/advanced'
+  import type { HuntVow } from '$lib/hunt/nen/advanced'
   import {
     completeCampaignRun,
     initialCampaign,
@@ -346,11 +346,6 @@
     if (action.type === 'TAKE') playHuntCue('trap')
   }
 
-  let canSweep = $derived(
-    game.player.nen === 'ten' &&
-      game.ledger.pool.available >= 15 &&
-      capabilitiesOf(game.advancedNen).canSweepEn,
-  )
   let canLay = $derived(
     game.hatsu.id === 'bungee-gum' &&
       game.player.spaceId !== null &&
@@ -361,11 +356,6 @@
     game.ledger.placements.some(
       (placement) => placement.state === 'set' && placement.spaceId === game.player.spaceId,
     ),
-  )
-  let canHatsu = $derived(
-    game.hatsu.id === 'parallel-future'
-      ? game.player.nen === 'zetsu'
-      : game.hatsu.id === 'dowsing-chain' && game.player.nen === 'ten' && game.player.atRest,
   )
 
   // ── Input ────────────────────────────────────────────────────────────────
@@ -623,8 +613,6 @@
 <div class="relative h-screen w-full overflow-hidden bg-black text-white">
   <TourModeFullscreen />
   <TourMinimapPanel
-    {ship}
-    {tierId}
     {plan}
     {position}
     {heading}

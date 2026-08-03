@@ -70,7 +70,7 @@
   import type { HumanPose } from '$lib/tour/humanAnimation'
   import { styleNenCreature } from '$lib/tour/nenCreatureFigure'
   import { cardFaceSvg } from '$lib/tour/cardArt'
-  import { EYE_FOV, FORGED_AURA, OWL_FOV, type CardFace, type EyeFeed } from '$lib/tour/morena'
+  import { EYE_FOV, OWL_FOV, type CardFace, type EyeFeed } from '$lib/tour/morena'
   import {
     SPRINT_SPEED,
     STICK_RADIUS,
@@ -4540,7 +4540,7 @@
         role="menu"
         aria-label="Variantes du Hatsu"
       >
-        {#each hatsuVariants as variant, index}
+        {#each hatsuVariants as variant, index (index)}
           <button
             type="button"
             role="menuitem"

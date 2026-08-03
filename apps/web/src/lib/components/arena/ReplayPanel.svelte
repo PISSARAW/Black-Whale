@@ -35,7 +35,7 @@
   <header>
     <strong>REPLAY · {(tick / replay.tickRate).toFixed(1)}s</strong>
     <div>
-      {#each ['reality', 'player', 'opponent'] as view}
+      {#each ['reality', 'player', 'opponent'] as view (view)}
         <button
           class:active={perspective === view}
           onclick={() => (perspective = view as ReplayPerspective)}

@@ -86,7 +86,7 @@
     </div>
 
     <section class="grid gap-8 md:grid-cols-2 lg:grid-cols-3" aria-label={copy.title}>
-      {#each cases as investigationCase}
+      {#each cases as investigationCase (investigationCase.slug)}
         {@const status = statusFor(investigationCase.slug)}
         <article
           class="group relative flex min-h-[420px] flex-col overflow-hidden rounded-2xl border border-sky-300/20 bg-gradient-to-b from-[#0f172a]/90 to-[#020617]/95 p-1 shadow-[0_0_30px_rgba(0,0,0,0.5)] transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_0_40px_rgba(56,189,248,0.15)]"
@@ -166,7 +166,7 @@
                     {copy.difficulty}
                   </dt>
                   <dd class="mt-1 flex gap-1">
-                    {#each Array(investigationCase.difficulty === 'advanced' ? 3 : investigationCase.difficulty === 'intermediate' ? 2 : 1) as _}
+                    {#each Array(investigationCase.difficulty === 'advanced' ? 3 : investigationCase.difficulty === 'intermediate' ? 2 : 1) as _, index (index)}
                       <span class="h-2 w-2 rounded-full bg-amber-400 shadow-[0_0_5px_#fbbf24]"
                       ></span>
                     {/each}

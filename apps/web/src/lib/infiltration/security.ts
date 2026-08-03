@@ -9,12 +9,15 @@ export interface SecurityPolicy {
   searchLastKnown: boolean
 }
 
-export function securityPolicy(
-  level: AlertLevel,
-  extractionSpaceId: string,
-  reportedSpaces: string[],
-): SecurityPolicy {
-  const lastKnown = [...new Set(reportedSpaces.filter(Boolean))]
+/**
+ * The procedures in force at a given alert level.
+ *
+ * It used to take the spaces witnesses last reported, and never read them:
+ * `searchLastKnown` says *that* the guards will sweep the last known
+ * positions, not which they are — those live on the witnesses. The parameter
+ * was kept alive only by a `lastKnown` local that nothing returned.
+ */
+export function securityPolicy(level: AlertLevel, extractionSpaceId: string): SecurityPolicy {
   return {
     level,
     checkpointSpaces: level === 'lockdown' || level === 'identified' ? [extractionSpaceId] : [],

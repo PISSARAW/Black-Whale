@@ -46,7 +46,7 @@
   </dl>
   <h4 class="mt-5 text-xs uppercase tracking-[0.25em] text-white/40">{labels.metrics}</h4>
   <ul class="mt-2 space-y-1 text-sm leading-relaxed text-white/65">
-    {#each insights as insight}
+    {#each insights as insight (insight)}
       <li>— {labels.insight[insight]}</li>
     {/each}
   </ul>

@@ -9,8 +9,6 @@
     active: boolean
   }
   interface Props {
-    ship: { decks: { id: string; name: string; nameFr: string }[]; plans: Map<string, TierPlan> }
-    tierId: string
     plan: TierPlan
     position: Vec2
     heading: number
@@ -28,8 +26,6 @@
   import { t } from '$lib/i18n'
 
   let {
-    ship,
-    tierId,
     plan,
     position,
     heading,

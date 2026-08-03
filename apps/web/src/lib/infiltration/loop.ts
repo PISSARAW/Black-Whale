@@ -87,13 +87,7 @@ export function updateInfiltration(
     alert,
     alertLevel,
     memories,
-    security: securityPolicy(
-      alertLevel,
-      searched.extractionSpaceId,
-      witnesses
-        .map((witness) => witness.belief.lastSpaceId)
-        .filter((space): space is string => !!space),
-    ),
+    security: securityPolicy(alertLevel, searched.extractionSpaceId),
     journal: alertChanged
       ? [
           ...searched.journal,

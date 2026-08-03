@@ -104,7 +104,7 @@
         class:active={nenState.ken}
         onclick={() => toggle('KEN')}>Ken</button
       >
-      {#each [['head', '1 Tête'], ['torso', '2 Torse'], ['hands', '3 Mains'], ['feet', '4 Pieds']] as zone}
+      {#each [['head', '1 Tête'], ['torso', '2 Torse'], ['hands', '3 Mains'], ['feet', '4 Pieds']] as zone (zone[0])}
         <button
           class:active={selectedZone === zone[0]}
           onclick={() => onSelectZone?.(zone[0] as NenBodyZone)}>{zone[1]}</button

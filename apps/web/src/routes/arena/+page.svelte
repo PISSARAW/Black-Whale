@@ -42,7 +42,7 @@
     type CombatEvent,
     type Impact,
   } from '$lib/combat/types'
-  import { floorOf, theShip, crossingsOn, type Crossing } from '$lib/tour/blueprint'
+  import { floorOf, theShip, crossingsOn } from '$lib/tour/blueprint'
   import { centroid, EMPTY_WORLD } from '$lib/tour/hatsu'
   import { localizeHatsu } from '$lib/i18n/hatsu'
   import TourMinimapPanel from '$lib/components/tour/TourMinimapPanel.svelte'
@@ -143,6 +143,9 @@
   let bestGrade = $state<string | null>(null)
   let graded = $state(false)
   let selectedChallengeId = $state<string | null>(initialChallengeId)
+  // Bookkeeping, not state: nothing renders from it, it only holds timer
+  // handles so they can be cleared on teardown.
+  // eslint-disable-next-line svelte/prefer-svelte-reactivity
   const motionTimers = new Set<number>()
 
   let reading = $derived(readAura(game.player, game.opponent))
@@ -350,16 +353,6 @@
     }
   }
 
-  function shiftRyu(by: number) {
-    command(
-      {
-        type: 'RYU',
-        side: 'player',
-        attackShare: game.player.attackShare + by,
-      },
-      by > 0 ? 'ryu-up' : 'ryu-down',
-    )
-  }
 
   function onKeyDown(event: KeyboardEvent) {
     if (event.metaKey || event.ctrlKey) return
@@ -615,8 +608,6 @@
 >
   <TourModeFullscreen />
   <TourMinimapPanel
-    {ship}
-    {tierId}
     {plan}
     {position}
     {heading}
@@ -833,7 +824,7 @@
       }}
     >
       <option value="">{$locale === 'fr' ? 'Combat libre' : 'Free combat'}</option>
-      {#each ARENA_CHALLENGES as challenge}
+      {#each ARENA_CHALLENGES as challenge (challenge.id)}
         <option value={challenge.id}
           >{$locale === 'fr' ? challenge.titleFr : challenge.titleEn}</option
         >
@@ -841,7 +832,7 @@
     </select>
     {#if selectedChallenge}
       <ol>
-        {#each selectedChallenge.objectives as objective}
+        {#each selectedChallenge.objectives as objective, index (index)}
           <li>{objectiveLabel(objective)}</li>
         {/each}
       </ol>
@@ -910,7 +901,7 @@
         <i style:width="{game.player.attackShare * 100}%"></i>
       </div>
       <div class="aura-body" aria-label={$t.arena.auraDistribution}>
-        {#each BODY_ZONES as zone}
+        {#each BODY_ZONES as zone (zone)}
           <i
             class:guarded={game.player.guard === zone}
             class:incoming={game.player.ryuShift?.guard === zone}
@@ -1008,7 +999,7 @@
             <strong
               >{$locale === 'fr' ? selectedChallenge.titleFr : selectedChallenge.titleEn}</strong
             >
-            {#each selectedChallenge.objectives as objective, index}
+            {#each selectedChallenge.objectives as objective, index (index)}
               <span>{challengeResult.satisfied[index] ? '✓' : '○'} {objectiveLabel(objective)}</span
               >
             {/each}
@@ -1024,7 +1015,7 @@
       />
       <button onclick={restart}>{$t.arena.action.restart}</button>
       <div class="difficulty-picker" aria-label="Difficulty">
-        {#each ['initiate', 'fighter', 'master'] as level}
+        {#each ['initiate', 'fighter', 'master'] as level (level)}
           <button
             class:active={difficulty === level}
             onclick={() => {
@@ -1035,7 +1026,7 @@
         {/each}
       </div>
       <div class="doctrine-picker" aria-label="Adversaire">
-        {#each Object.entries(OPPONENT_DOCTRINES) as [id, doctrine]}
+        {#each Object.entries(OPPONENT_DOCTRINES) as [id, doctrine] (id)}
           <button
             class:active={opponentDoctrine === id}
             onclick={() => {

@@ -100,13 +100,13 @@
   <div class="sr-only">
     <h4>{labels.player}</h4>
     <ol>
-      {#each events('player') as event}
+      {#each events('player') as event, index (index)}
         <li>{Math.floor(event.at)} s — {labels.entered} {roomName(event.where)}</li>
       {/each}
     </ol>
     <h4>{labels.hunter}</h4>
     <ol>
-      {#each events('hunter') as event}
+      {#each events('hunter') as event, index (index)}
         <li>{Math.floor(event.at)} s — {labels.entered} {roomName(event.where)}</li>
       {/each}
     </ol>

@@ -51,7 +51,7 @@
   </header>
 
   <div class="masteries">
-    {#each NEN_MASTERIES as technique}
+    {#each NEN_MASTERIES as technique (technique)}
       <label
         ><span>{technique.toUpperCase()}</span><progress
           max="100"
@@ -62,7 +62,7 @@
   </div>
 
   <div class="campaign">
-    {#each ARENA_CAMPAIGN as mission}
+    {#each ARENA_CAMPAIGN as mission (mission.id)}
       {@const status = missionStatus(mission, profile)}
       <a
         class:locked={status === 'locked'}

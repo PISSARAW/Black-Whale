@@ -1,8 +1,4 @@
-import {
-  NEN_PRESENTATION,
-  type NenTechnique,
-  type NenTechniqueState,
-} from '@black-whale/nen-engine'
+import { NEN_PRESENTATION, type NenTechniqueState } from '@black-whale/nen-engine'
 import type * as Three from 'three'
 
 type ThreeModule = typeof import('three')

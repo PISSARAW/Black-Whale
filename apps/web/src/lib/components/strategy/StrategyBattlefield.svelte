@@ -8,7 +8,6 @@
     spaceForLocation,
     theShip,
     crossingsOn,
-    type Crossing,
   } from '$lib/tour/blueprint'
   import { centroid } from '$lib/tour/hatsu'
   import { TourNavigationState } from '$lib/tour/pageNavigationState.svelte'
@@ -55,8 +54,13 @@
   )
   let hatsuManifestations = $state<Apparition[]>([])
   let latestHatsuCue = $state<StrategyHatsuCue | null>(null)
+  // Neither is rendered: one holds timer handles to clear on teardown, the
+  // other remembers which cues have already been shown. Making them reactive
+  // would schedule updates nothing reads.
+  /* eslint-disable svelte/prefer-svelte-reactivity */
   const manifestationTimers = new Set<number>()
   const presentedCueIds = new Set<number>()
+  /* eslint-enable svelte/prefer-svelte-reactivity */
   onDestroy(() => manifestationTimers.forEach((timer) => window.clearTimeout(timer)))
   let availableTiers = $derived(
     [
@@ -184,8 +188,6 @@
 {#if view === 'tour'}
   <div class="tour-stage">
     <TourMinimapPanel
-      {ship}
-      {tierId}
       {plan}
       position={navigation.position}
       heading={navigation.heading}

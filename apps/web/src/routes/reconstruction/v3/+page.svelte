@@ -3,7 +3,7 @@
   import { onMount } from 'svelte'
   import type { PageData } from './$types'
   import Seo from '$lib/components/Seo.svelte'
-  import { locale, t } from '$lib/i18n'
+  import { t } from '$lib/i18n'
   import ReconstructionV3Scene from '$lib/components/reconstruction/ReconstructionV3Scene.svelte'
   import type {
     ReconstructionDecision,

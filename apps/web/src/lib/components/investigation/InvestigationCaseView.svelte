@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onDestroy, onMount } from 'svelte'
-  import { centroid, EMPTY_WORLD } from '$lib/tour/hatsu'
-  import { theShip, crossingsOn, type Crossing } from '$lib/tour/blueprint'
+  import { centroid } from '$lib/tour/hatsu'
+  import { theShip, crossingsOn } from '$lib/tour/blueprint'
   import TourScene from '$lib/components/tour/TourScene.svelte'
   import TourModeFullscreen from '$lib/components/tour/TourModeFullscreen.svelte'
   import TourMinimapPanel from '$lib/components/tour/TourMinimapPanel.svelte'
@@ -638,8 +638,6 @@
 <div class="relative h-screen w-full overflow-hidden bg-[#050809] font-sans text-[#f4ead4]">
   <TourModeFullscreen />
   <TourMinimapPanel
-    {ship}
-    {tierId}
     {plan}
     {position}
     {heading}
@@ -764,7 +762,7 @@
       {ui.people}
     </p>
     <div class="grid grid-cols-2 gap-1.5">
-      {#each investigation.subjects as subject}
+      {#each investigation.subjects as subject (subject.id)}
         <button
           class="pointer-events-auto border bg-black/70 px-3 py-2 text-left backdrop-blur transition {discoveredIds.some(
             (id) => subject.evidenceIds.includes(id),
@@ -793,7 +791,7 @@
         >
       </div>
       <ul class="mt-3 space-y-2">
-        {#each investigation.objectives as objective}
+        {#each investigation.objectives as objective (objective.id)}
           {@const complete = objective.requiredEvidenceIds.every((id) =>
             discoveredIds.includes(id),
           )}
@@ -850,7 +848,7 @@
             {ui.approach}
           </legend>
           <div class="mt-2 flex flex-wrap gap-2">
-            {#each ['neutral', 'empathetic', 'pressing', 'accusatory'] as stance}
+            {#each ['neutral', 'empathetic', 'pressing', 'accusatory'] as stance (stance)}
               <button
                 type="button"
                 aria-pressed={interviewStance === stance}
@@ -865,7 +863,7 @@
           </div>
         </fieldset>
         <div class="mt-5 grid gap-2 sm:grid-cols-2">
-          {#each activeSubject.questions as question}
+          {#each activeSubject.questions as question (question.id)}
             {@const available = questionIsAvailable(question, discoveredIds)}
             {@const asked = askedQuestionKeys.includes(`${activeSubject.id}:${question.id}`)}
             <button
@@ -1010,7 +1008,7 @@
         class="relative grid grid-cols-2 border-b border-sky-900/50 bg-[#020617]/80 sm:grid-cols-4"
         aria-label="Sections du carnet"
       >
-        {#each ui.tabs as tab}
+        {#each ui.tabs as tab (tab[0])}
           <button
             class="group relative border-r border-sky-900/50 px-4 py-4 text-[10px] font-black uppercase tracking-[0.2em] transition-all sm:text-[11px] {activeTab ===
             tab[0]
@@ -1068,7 +1066,7 @@
           {:else}
             <!-- Cards Grid (Greed Island Binder Slots) -->
             <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {#each discoveredEvidence as evidence}
+              {#each discoveredEvidence as evidence (evidence.id)}
                 <article
                   class="group relative flex flex-col overflow-hidden rounded-xl border border-sky-700/30 bg-gradient-to-b from-[#0f172a] to-[#020617] p-1 shadow-lg transition-transform hover:-translate-y-1 hover:shadow-[0_0_20px_rgba(56,189,248,0.2)]"
                 >
@@ -1110,7 +1108,7 @@
               {/each}
 
               <!-- Empty Slots to simulate GI Binder pages -->
-              {#each Array(Math.max(0, Math.ceil(discoveredEvidence.length / 3) * 3 - discoveredEvidence.length)) as _}
+              {#each Array(Math.max(0, Math.ceil(discoveredEvidence.length / 3) * 3 - discoveredEvidence.length)) as _, index (index)}
                 <div class="rounded-xl border border-dashed border-sky-900/30 bg-sky-950/5"></div>
               {/each}
             </div>
@@ -1121,7 +1119,7 @@
                 Log du Binder
               </p>
               <ol class="mt-3 space-y-2">
-                {#each [...log].reverse().slice(0, 8) as entry}
+                {#each [...log].reverse().slice(0, 8) as entry, index (index)}
                   <li class="flex items-center gap-3 text-xs text-sky-100/50">
                     <span
                       class="w-20 shrink-0 font-mono text-[9px] uppercase tracking-wider text-sky-400/70"
@@ -1140,7 +1138,7 @@
           {/if}
         {:else if activeTab === 'people'}
           <div class="grid gap-3 sm:grid-cols-2">
-            {#each investigation.subjects as subject}
+            {#each investigation.subjects as subject (subject.id)}
               <button
                 class="border border-white/10 bg-white/[0.025] p-4 text-left hover:border-[#d6b35a]/40"
                 onclick={() => {
@@ -1173,7 +1171,7 @@
               Sélectionnez deux témoins. Une divergence précise peut devenir une déduction.
             </p>
             <div class="mt-4 flex flex-wrap gap-2">
-              {#each investigation.subjects.filter((subject) => !subject.isDead && subject.id !== 'kurapika') as subject}
+              {#each investigation.subjects.filter((subject) => !subject.isDead && subject.id !== 'kurapika') as subject (subject.id)}
                 <button
                   class="border px-3 py-2 text-xs transition {confrontationWitnessIds.includes(
                     subject.id,
@@ -1226,7 +1224,7 @@
                     class="mt-4 flex justify-center gap-1.5"
                     aria-label={`${replayFrame.snakes} créatures actives`}
                   >
-                    {#each Array(4) as _, index}<span
+                    {#each Array(4) as _, index (index)}<span
                         class="block h-6 w-1.5 rounded-full transition {index < replayFrame.snakes
                           ? 'bg-[#e8f3f5] shadow-[0_0_8px_white]'
                           : 'bg-white/10'}"
@@ -1289,7 +1287,7 @@
                 <p class="mt-1 text-xs text-white/40">Position relative au moment de l’attaque</p>
               </div>
               <div class="flex border border-white/10">
-                {#each [['doll', 'Poupée'], ['snakes', 'Créatures']] as layer}
+                {#each [['doll', 'Poupée'], ['snakes', 'Créatures']] as layer (layer[0])}
                   <button
                     class="px-3 py-2 text-[9px] font-bold uppercase tracking-wider {scenePhenomenon ===
                     layer[0]
@@ -1316,7 +1314,7 @@
                 fill="none"
                 stroke="rgba(255,255,255,.12)"
               />
-              {#each planSightLines as line}
+              {#each planSightLines as line (`${line.observerId}-${line.targetId}`)}
                 {@const from = planNodeById.get(line.observerId)}
                 {@const to = planNodeById.get(line.targetId)}
                 {#if from && to}
@@ -1332,7 +1330,7 @@
                   />
                 {/if}
               {/each}
-              {#each planNodes as node}
+              {#each planNodes as node (node.id)}
                 <g>
                   <circle
                     cx={node.x}
@@ -1366,7 +1364,7 @@
             </svg>
           </section>
           <ol class="relative ml-2 border-l border-[#d6b35a]/30 pl-7">
-            {#each [['T − 00:11', 'Loberry désigne une poupée que personne d’autre ne voit.', 'loberry-vision'], ['T − 00:08', 'Quatre créatures blanches se fixent au cou de Barrigen.', 'bill-testimony'], ['T + 00:00', 'Barrigen s’effondre, entièrement vidé de son sang.', 'wounds'], ['Après', 'Kurapika recherche un mécanisme de Nen.', 'nen-residue']] as event}
+            {#each [['T − 00:11', 'Loberry désigne une poupée que personne d’autre ne voit.', 'loberry-vision'], ['T − 00:08', 'Quatre créatures blanches se fixent au cou de Barrigen.', 'bill-testimony'], ['T + 00:00', 'Barrigen s’effondre, entièrement vidé de son sang.', 'wounds'], ['Après', 'Kurapika recherche un mécanisme de Nen.', 'nen-residue']] as event (event[2])}
               <li class="relative mb-8 last:mb-0">
                 <span
                   class="absolute -left-[2.08rem] top-1 h-2.5 w-2.5 rounded-full border border-[#d6b35a] {discoveredIds.includes(
@@ -1400,7 +1398,7 @@
             </p>
 
             <div class="mt-6 space-y-3">
-              {#each investigation.hypotheses as hypothesis}
+              {#each investigation.hypotheses as hypothesis (hypothesis.id)}
                 {@const assessment = hypothesisAssessments[hypothesis.id]}
                 <button
                   class="w-full overflow-hidden rounded-xl border p-4 text-left transition-all {selectedHypothesisId ===
@@ -1444,7 +1442,7 @@
               Pièces versées au raisonnement · {selectedEvidenceIds.length}
             </p>
             <div class="mt-4 grid gap-3 sm:grid-cols-2">
-              {#each discoveredEvidence as evidence}
+              {#each discoveredEvidence as evidence (evidence.id)}
                 <button
                   class="rounded-lg border p-4 text-left text-xs transition-all {selectedEvidenceIds.includes(
                     evidence.id,
@@ -1600,7 +1598,7 @@
               Reconstitution retenue
             </p>
             <ol class="mt-6 space-y-5 border-l-2 border-emerald-900/50 pl-7">
-              {#each finalReport.mechanism as step, index}
+              {#each finalReport.mechanism as step, index (index)}
                 <li class="relative text-sm leading-relaxed text-emerald-50">
                   <span
                     class="absolute -left-[2.15rem] flex h-6 w-6 items-center justify-center rounded-full border border-emerald-400 bg-emerald-950 font-black text-[10px] text-emerald-300 shadow-[0_0_10px_rgba(52,211,153,0.3)]"
@@ -1611,13 +1609,13 @@
             </ol>
 
             <div class="mt-10 grid gap-4 sm:grid-cols-3">
-              {#each reportGroups as group}
+              {#each reportGroups as group (group.label)}
                 <div class="rounded-xl border border-sky-900/40 bg-sky-950/20 p-4">
                   <p class="text-[9px] font-bold uppercase tracking-wider {group.tone}">
                     {group.label} · {group.evidence.length}
                   </p>
                   <ul class="mt-3 space-y-2">
-                    {#each group.evidence as evidence}<li
+                    {#each group.evidence as evidence (evidence.id)}<li
                         class="text-xs leading-snug text-sky-100/60"
                       >
                         {evidence.title}
@@ -1636,7 +1634,7 @@
                 Inconnues persistantes
               </p>
               <ul class="mt-4 space-y-3">
-                {#each finalReport.unknowns as unknown}<li
+                {#each finalReport.unknowns as unknown, index (index)}<li
                     class="flex gap-3 text-sm leading-relaxed text-red-100/80"
                   >
                     <span
@@ -1652,7 +1650,7 @@
                 Hypothèses écartées
               </p>
               <ul class="mt-4 space-y-2">
-                {#each finalReport.rejectedHypotheses as hypothesis}<li
+                {#each finalReport.rejectedHypotheses as hypothesis, index (index)}<li
                     class="flex gap-2 text-xs text-sky-100/50"
                   >
                     <span class="text-sky-500/50">×</span>
@@ -1744,7 +1742,7 @@
               Objectifs d'investigation
             </p>
             <ol class="space-y-4">
-              {#each investigation.objectives as objective, index}
+              {#each investigation.objectives as objective, index (objective.id)}
                 <li class="flex gap-3 text-sm text-sky-100/80">
                   <span
                     class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-sky-900/50 font-mono text-[10px] text-sky-300 shadow-[inset_0_0_5px_rgba(56,189,248,0.2)]"

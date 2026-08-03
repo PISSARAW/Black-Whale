@@ -213,7 +213,7 @@ export function initialInfiltrationState(setup: MissionSetup): InfiltrationState
       evidence: ['work-order'],
       obligations: ['inspect-service-panel'],
     },
-    security: securityPolicy('normal', setup.extractionSpaceId, []),
+    security: securityPolicy('normal', setup.extractionSpaceId),
     journal: [],
     hatsu: {
       id: 'little-eye',

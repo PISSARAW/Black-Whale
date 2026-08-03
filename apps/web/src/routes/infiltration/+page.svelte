@@ -12,7 +12,7 @@
   } from '@black-whale/nen-engine'
   import { isNenControlCode } from '$lib/nen/controls'
   import { buildNavGraph } from '$lib/hunt/navmesh'
-  import { floorOf, theShip, crossingsOn, type Crossing } from '$lib/tour/blueprint'
+  import { floorOf, theShip, crossingsOn } from '$lib/tour/blueprint'
   import { centroid, EMPTY_WORLD } from '$lib/tour/hatsu'
   import { interiorPoint } from '$lib/tour/geometry'
   import TourMinimapPanel from '$lib/components/tour/TourMinimapPanel.svelte'
@@ -373,8 +373,6 @@
 <div class="relative h-screen w-full overflow-hidden bg-black text-white">
   <TourModeFullscreen />
   <TourMinimapPanel
-    {ship}
-    {tierId}
     {plan}
     {position}
     {heading}
@@ -735,7 +733,7 @@
                 Configure Hatsu
               </h3>
               <div class="flex flex-wrap gap-2">
-                {#each forgerySurfaces as surface}
+                {#each forgerySurfaces as surface (surface)}
                   <button
                     onclick={() => send({ type: 'CONFIGURE_HATSU', forgerySurface: surface })}
                     aria-pressed={game.hatsu.forgerySurface === surface}
@@ -751,7 +749,7 @@
                 Configure Hatsu
               </h3>
               <div class="flex flex-wrap gap-2">
-                {#each disguiseIdentities as identity}
+                {#each disguiseIdentities as identity (identity)}
                   <button
                     onclick={() => send({ type: 'CONFIGURE_HATSU', disguiseIdentity: identity })}
                     aria-pressed={game.hatsu.disguiseIdentity === identity}
@@ -858,7 +856,7 @@
                 <ol
                   class="max-h-48 space-y-2 overflow-y-auto pr-2 text-sm font-mono text-slate-400"
                 >
-                  {#each timeline as event}
+                  {#each timeline as event, index (index)}
                     <li
                       class="flex gap-4 border-b border-slate-800/50 pb-2 last:border-0 last:pb-0"
                     >

@@ -41,7 +41,7 @@ export function decodeSave(raw: string): InfiltrationSave | null {
         evidence: ['work-order'],
         obligations: [],
       }
-      state.security = securityPolicy(state.alertLevel, state.extractionSpaceId, [])
+      state.security = securityPolicy(state.alertLevel, state.extractionSpaceId)
       state.journal = []
     }
     state.hatsu.scout ??= null

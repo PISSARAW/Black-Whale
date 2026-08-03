@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { createEmptyWorld, type WorldState } from '@black-whale/world-engine'
+import { createEmptyWorld, type WorldState } from '@black-whale/canon-engine'
 import { generateAIOperations, resolveControlledEntity } from '../src/ai.js'
 
 function world(): WorldState {

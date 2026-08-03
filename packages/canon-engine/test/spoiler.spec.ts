@@ -1,3 +1,4 @@
+import { describe, expect, it } from 'vitest'
 import { filterVisible, filterTemporalRecords, maskFutureEnds } from '../src/index'
 
 describe('Spoiler Engine', () => {

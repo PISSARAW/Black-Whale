@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest'
-import { createEmptyWorld } from '../src/state.js'
-import { reduceWorld } from '../src/reducer.js'
-import type { WorldEvent } from '../src/events.js'
-import type { StoryCursor } from '../src/cursor.js'
-import { projectMapScene } from '../src/projections.js'
+import { createEmptyWorld } from '../src/world/state.js'
+import { reduceWorld } from '../src/world/reducer.js'
+import type { WorldEvent } from '../src/world/events.js'
+import type { StoryCursor } from '../src/world/cursor.js'
+import { projectMapScene } from '../src/world/projections.js'
 
 const BRANCH = 'canon'
 

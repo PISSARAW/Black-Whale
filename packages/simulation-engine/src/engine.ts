@@ -5,7 +5,7 @@ import {
   type WorldBranch,
   type WorldEvent,
   type WorldState,
-} from '@black-whale/world-engine'
+} from '@black-whale/canon-engine'
 
 export type SimulationMode = 'strict-canon' | 'rule-compatible' | 'sandbox'
 

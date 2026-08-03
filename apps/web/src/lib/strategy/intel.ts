@@ -1,4 +1,4 @@
-import type { SpatialEstimate, WorldState } from '@black-whale/world-engine'
+import type { SpatialEstimate, WorldState } from '@black-whale/canon-engine'
 import { intelCertainty } from './rules'
 import type { StrategyIntel } from './types'
 

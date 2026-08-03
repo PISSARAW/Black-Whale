@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { AbilityContext } from '@black-whale/nen-engine'
-import { createEmptyWorld, InMemoryBranchEngine, type WorldState } from '@black-whale/world-engine'
+import { createEmptyWorld, InMemoryBranchEngine, type WorldState } from '@black-whale/canon-engine'
 import {
   contagion,
   CONTAGION_LIMITS,

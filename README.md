@@ -106,15 +106,17 @@ black-whale/
 ├── packages/
 │   ├── domain/              # Shared TypeScript models & domain events
 │   ├── database/            # Prisma schema and PostgreSQL client
-│   ├── world-engine/        # Pure event reducer, invariants, cursors & projections
-│   ├── timeline-engine/     # Reconstructs world state at any event
-│   ├── identity-engine/     # Separates body / consciousness / aura
-│   ├── perspective-engine/  # Filters world through a character's POV
-│   ├── knowledge-engine/    # What each character knows or believes
-│   ├── spoiler-engine/      # Protects users from future chapter spoilers
+│   ├── canon-engine/        # The canon, read six ways — one package, six folders:
+│   │                        #   world/       pure event reducer, cursors, projections
+│   │                        #   timeline/    reconstructs world state at any event
+│   │                        #   identity/    separates body / consciousness / aura
+│   │                        #   perspective/ filters the world through a character's POV
+│   │                        #   knowledge/   what each character knows or believes
+│   │                        #   spoiler/     protects readers from future chapters
 │   ├── nen-engine/          # Validates and executes Nen abilities
 │   ├── simulation-engine/   # Non-canonical branch timelines
-│   ├── map-engine/          # Ship map layers and entity positions
+│   ├── canon-compiler/      # data/ → PostgreSQL, and → the generated registries
+│   ├── contracts/           # Zod schemas and the canon-lint invariants
 │   ├── ability-sdk/         # DSL for defining Nen ability modules
 │   └── ability-modules/     # Concrete ability implementations
 │

@@ -1,5 +1,5 @@
 import { generateAIOperations, resolveControlledEntity } from '@black-whale/simulation-engine'
-import type { ProposedWorldEvent, WorldEntity, WorldState } from '@black-whale/world-engine'
+import type { ProposedWorldEvent, WorldEntity, WorldState } from '@black-whale/canon-engine'
 import type { UnitCondition } from './conflict'
 import { chooseStrategicDestination, type StrategyDoctrine } from './rules'
 import { scenarioMoveChance, seededScenarioRandom } from './scenario'

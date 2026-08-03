@@ -1,4 +1,4 @@
-import { cloneWorld, type WorldState, type EntityRef } from '@black-whale/world-engine'
+import { cloneWorld, type WorldState, type EntityRef } from '@black-whale/canon-engine'
 import {
   NenEngine,
   type AbilityActionPlan,

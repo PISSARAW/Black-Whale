@@ -7,10 +7,15 @@ import tseslint from 'typescript-eslint'
 /**
  * One flat config for the whole monorepo, run from the root with `pnpm lint`.
  *
- * Type-aware rules are deliberately off: they would need a project service for
- * eleven packages and two SvelteKit apps whose generated `./$types` only exist
- * after a build. `pnpm typecheck` already covers what types can prove — this
- * catches what they cannot.
+ * Type-aware rules are off *by default* and on where they earn their keep: the
+ * package sources and the two servers, which is what ADR-001 §2.4 asks for.
+ * They cost a project service — the reason they were off everywhere — so the
+ * `lint` script runs `svelte-kit sync` first, the same way `typecheck` does,
+ * and the scope below is deliberately narrow: the `.svelte` files and the
+ * route modules stay on the syntactic pass, where they are fast.
+ *
+ * Everywhere else `pnpm typecheck` covers what types can prove and this catches
+ * what they cannot.
  */
 export default tseslint.config(
   {
@@ -141,6 +146,31 @@ export default tseslint.config(
     files: ['packages/**/*.ts'],
     rules: {
       '@typescript-eslint/no-explicit-any': 'error',
+    },
+  },
+
+  {
+    // Where a promise going unawaited is a defect rather than a style: the
+    // engines, the compiler, and both servers. All three rules answer zero
+    // today, which is the point — they were disabled on a heavily asynchronous
+    // codebase that happened to be correct, and nothing was holding it there.
+    //
+    // A floating promise in a loader is a page that renders before its data
+    // arrives, or an error that reaches no `handleError` and so no log line; a
+    // misused one is an `async` function handed to something that expects a
+    // synchronous callback and silently drops what it returns.
+    files: [
+      'packages/*/src/**/*.ts',
+      'apps/web/src/lib/server/**/*.ts',
+      'apps/admin/src/lib/server/**/*.ts',
+    ],
+    languageOptions: {
+      parserOptions: { projectService: true, tsconfigRootDir: import.meta.dirname },
+    },
+    rules: {
+      '@typescript-eslint/no-floating-promises': 'error',
+      '@typescript-eslint/no-misused-promises': 'error',
+      '@typescript-eslint/await-thenable': 'error',
     },
   },
 

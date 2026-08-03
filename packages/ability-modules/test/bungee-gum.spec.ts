@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { createEmptyWorld } from '@black-whale/world-engine'
+import { createEmptyWorld } from '@black-whale/canon-engine'
 import { bungeeGum } from '../src/index.js'
 
 const cursor = {

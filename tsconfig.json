@@ -5,6 +5,12 @@
     "moduleResolution": "NodeNext",
     "lib": ["ES2022"],
     "strict": true,
+    // `strict` does not cover reading past the end of an array: `items[9]` on a
+    // list of three was typed as an item and was undefined. It found a real one
+    // the day it was turned on — `weekdayOf` handing back `undefined` dressed
+    // as a Weekday for any hour before the departure horn. Packages only:
+    // apps/web extends the tsconfig SvelteKit generates, not this one.
+    "noUncheckedIndexedAccess": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,

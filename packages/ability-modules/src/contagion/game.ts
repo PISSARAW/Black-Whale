@@ -1185,6 +1185,10 @@ export function askMorena(
     ? game.hand.indexOf(wanted)
     : Math.min(game.hand.length - 1, Math.max(0, Math.floor(random() * game.hand.length)))
   const taken = game.hand[reach]
+  // `indexOf` answers -1 for a card she wanted and no longer holds — the guest
+  // may have conjured it away since. There is nothing to take then, and the
+  // round is left standing rather than a card being invented for it.
+  if (taken === undefined) return game
   const hand = game.hand.filter((_, index) => index !== reach)
   log.push({ kind: 'taken', round: game.round, card: taken })
 
@@ -1298,7 +1302,7 @@ export function refuseTheDeal(game: MorenaGame): MorenaGame {
 
 /** The one card left, once the questions have been paid for. */
 export function lastCard(game: MorenaGame): AnswerCard | null {
-  return game.hand.length === 1 ? game.hand[0] : null
+  return game.hand.length === 1 ? (game.hand[0] ?? null) : null
 }
 
 /**

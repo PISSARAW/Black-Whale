@@ -5,7 +5,7 @@ import {
   type ProposedWorldEvent,
   type WorldEvent,
   type WorldState,
-} from '@black-whale/world-engine'
+} from '@black-whale/canon-engine'
 import { SimulationEngine, type SimulationMode, type SimulationStepResult } from './engine.js'
 
 export class SimulationInputError extends Error {}

@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
-import { createEmptyWorld, type StoryCursor, type WorldState } from '@black-whale/world-engine'
+import { createEmptyWorld, type StoryCursor, type WorldState } from '@black-whale/canon-engine'
 import {
   NenActionInputError,
   NenRuntime,

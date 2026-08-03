@@ -6,7 +6,7 @@ import {
   type ProposedWorldEvent,
   type StoryCursor,
   type WorldState,
-} from '@black-whale/world-engine'
+} from '@black-whale/canon-engine'
 import {
   attach,
   canUseNen,

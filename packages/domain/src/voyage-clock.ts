@@ -93,7 +93,13 @@ export function spanOfDay(day: number): { from: number; to: number } {
 }
 
 export function weekdayOf(hours: number): Weekday {
-  return WEEKDAYS[(dayOf(hours) - 1) % 7]
+  // The modulo is made positive rather than the caller being told not to ask.
+  // `dayOf` answers 0, or less, for an hour before the departure horn — the
+  // flashbacks are full of them — and `(0 - 1) % 7` is `-1` in JavaScript, so
+  // this used to hand back `undefined` wearing the `Weekday` type. Found by
+  // `noUncheckedIndexedAccess`, which is the whole argument for the flag.
+  const index = (((dayOf(hours) - 1) % 7) + 7) % 7
+  return WEEKDAYS[index]!
 }
 
 /** Local wall clock, `HH:MM`. */

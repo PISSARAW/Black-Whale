@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { createEmptyWorld } from '@black-whale/world-engine'
+import { createEmptyWorld } from '@black-whale/canon-engine'
 import type { AbilityContext } from '@black-whale/nen-engine'
 import { bungeeGum } from '../src/index.js'
 

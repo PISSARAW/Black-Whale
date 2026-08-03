@@ -1,5 +1,5 @@
 import { fail, redirect } from '@sveltejs/kit'
-import { listCanonicalEvents } from '@black-whale/timeline-engine'
+import { listCanonicalEvents } from '@black-whale/canon-engine'
 import {
   SimulationInputError,
   SimulationNotFoundError,

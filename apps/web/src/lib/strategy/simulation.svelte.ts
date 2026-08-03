@@ -1,5 +1,5 @@
 import { SimulationEngine, resolveControlledEntity } from '@black-whale/simulation-engine'
-import type { ProposedWorldEvent, WorldBranch, WorldState } from '@black-whale/world-engine'
+import type { ProposedWorldEvent, WorldBranch, WorldState } from '@black-whale/canon-engine'
 import { get } from 'svelte/store'
 import { locale } from '$lib/i18n'
 import {

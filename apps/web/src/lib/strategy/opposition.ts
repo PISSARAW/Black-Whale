@@ -1,5 +1,5 @@
 import { resolveControlledEntity } from '@black-whale/simulation-engine'
-import type { ProposedWorldEvent, WorldState } from '@black-whale/world-engine'
+import type { ProposedWorldEvent, WorldState } from '@black-whale/canon-engine'
 import type { FactionRelationship } from './diplomacy'
 import type { UnitCondition } from './conflict'
 import { scenarioDoctrineForFaction } from './scenario'

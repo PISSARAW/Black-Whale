@@ -15,7 +15,7 @@ import {
   type StoryCursor,
   type WorldEntityKind,
   type WorldState,
-} from '@black-whale/world-engine'
+} from '../world/index.js'
 
 // ──────────────────────────────────────────────
 // Types

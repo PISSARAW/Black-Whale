@@ -2,7 +2,7 @@ import { prisma } from '$lib/server/db'
 import { buildPerspective, comparePerspectives } from '$lib/server/perspectives'
 import { readSpoilerProfile } from '$lib/server/spoiler'
 import type { PageServerLoad } from './$types'
-import { filterVisible } from '@black-whale/spoiler-engine'
+import { filterVisible } from '@black-whale/canon-engine'
 import { error } from '@sveltejs/kit'
 import { PUBLIC_FEATURES } from '$lib/config/features'
 

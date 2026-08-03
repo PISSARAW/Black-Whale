@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client'
-import { TimelineEngine } from '@black-whale/timeline-engine'
+import { TimelineEngine } from '@black-whale/canon-engine'
 
 /**
  * What the timeline engine costs, against a real database.

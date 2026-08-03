@@ -1,4 +1,4 @@
-import type { WorldState } from '@black-whale/world-engine'
+import type { WorldState } from '@black-whale/canon-engine'
 import type { SimulationActionInput } from '@black-whale/simulation-engine'
 import type { BranchKnowledgeState } from '$lib/reconstruction/v3/knowledge'
 import type { ReconstructionExecutorPorts } from '$lib/reconstruction/v3/executor'

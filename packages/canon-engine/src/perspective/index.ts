@@ -7,8 +7,8 @@ import {
   type Body,
 } from '@black-whale/domain'
 import type { PrismaClient } from '@black-whale/database'
-import type { IIdentityEngine } from '@black-whale/identity-engine'
-import type { IKnowledgeEngine, KnowledgeQuery } from '@black-whale/knowledge-engine'
+import type { IIdentityEngine } from '../identity/index.js'
+import type { IKnowledgeEngine, KnowledgeQuery } from '../knowledge/index.js'
 
 // ──────────────────────────────────────────────
 // Interface

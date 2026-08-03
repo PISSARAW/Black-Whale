@@ -7,7 +7,7 @@ import type {
   StoryCursor,
   WorldEventType,
   WorldState,
-} from '@black-whale/world-engine'
+} from '@black-whale/canon-engine'
 import type { AbilityArenaContract } from './arena.js'
 import type { AbilitySitePresentation } from './site.js'
 

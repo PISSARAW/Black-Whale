@@ -9,7 +9,7 @@ import type {
   PresencePrecision,
   ProposedWorldEvent,
   WorldEntityKind,
-} from '@black-whale/world-engine'
+} from '@black-whale/canon-engine'
 import {
   actorRef,
   effectId,

@@ -3,7 +3,7 @@ import type {
   ProposedWorldEvent,
   WorldEntity,
   WorldState,
-} from '@black-whale/world-engine'
+} from '@black-whale/canon-engine'
 
 export interface StrategyAIOptions {
   /** Destinations allowed by the scenario. Unknown ids are discarded. */
@@ -64,6 +64,9 @@ export function generateAIOperations(
     if (choices.length === 0) continue
     const roll = random()
     const destination = choices[Math.min(choices.length - 1, Math.floor(roll * choices.length))]
+    // The index is clamped to the array, so this only guards the type — but a
+    // move with no destination is worth skipping rather than asserting away.
+    if (destination === undefined) continue
     moved.add(entity.id)
     operations.push({
       type: 'ENTITY_MOVED',

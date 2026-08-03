@@ -1,5 +1,5 @@
 import { json } from '@sveltejs/kit'
-import type { WorldState } from '@black-whale/world-engine'
+import type { WorldState } from '@black-whale/canon-engine'
 import { compareWorldBranches } from '$lib/reconstruction/v3/comparison'
 import { executeReconstructionScenario } from '$lib/reconstruction/v3/executor'
 import type { BranchEpistemicState, BranchKnowledgeState } from '$lib/reconstruction/v3/knowledge'

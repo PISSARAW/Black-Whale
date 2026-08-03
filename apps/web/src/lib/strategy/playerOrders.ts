@@ -1,5 +1,5 @@
 import { resolveControlledEntity } from '@black-whale/simulation-engine'
-import type { ProposedWorldEvent, WorldState } from '@black-whale/world-engine'
+import type { ProposedWorldEvent, WorldState } from '@black-whale/canon-engine'
 import { hatsuById } from '$lib/nen/hatsuRegistry'
 import { messagesFor } from '$lib/i18n'
 import type { Locale } from '$lib/i18n/config'

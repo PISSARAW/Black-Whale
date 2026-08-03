@@ -547,6 +547,42 @@ calculée par le loader (`lib/tour/walkTargets.ts`, quelques centaines de
 chaînes courtes, < 30 Ko) et `/ship` ne charge plus le blueprint du tout :
 mesuré avant/après sur le bundle, le nœud 21 a perdu le morceau.
 
+## Avancement du chantier 6
+
+**Six paquets deviennent six dossiers (fait).** `world`, `timeline`,
+`identity`, `knowledge`, `perspective` et `spoiler` — de 76 à 854 lignes
+chacun — sont désormais `packages/canon-engine`. Les frontières restent, en
+dossiers ; ce qui disparaît est l'emballage : cinq manifestes, cinq tsconfigs,
+cinq étapes de build. Les 91 noms exportés ne se télescopent pas une seule
+fois, ce qui rend le ré-export à plat honnête plutôt que masquant. Les fichiers
+ont été déplacés par `git mv` et les tests suivis sans être touchés : 114 tests
+verts dans le paquet fusionné. 50 fichiers importateurs réécrits, dont deux
+manifestes qui se sont retrouvés avec des clés JSON en double — corrigées.
+
+**`map-engine` supprimé (fait).** Il n'avait plus de `src/`, seulement un
+`dist/` : zéro consommateur, comme l'ADR l'avait relevé. `config`, `ui` et
+`apps/worker` avaient déjà disparu ; `packages/database/package-lock.json`
+aussi. Le service Postgres de la CI, lui, **sert** désormais (`migrate:check` a
+besoin d'une base shadow) : le §2.4 est périmé sur ce point et il reste.
+
+**Vitest partout (fait).** `spoiler-engine` était le dernier sous jest, avec
+son `jest.config.js` propre. Son test a rejoint le paquet fusionné et ne
+manquait que la ligne d'import que jest injectait globalement.
+
+**Flags TS durcis (fait).** `noUncheckedIndexedAccess: true` dans le tsconfig
+racine — donc sur les neuf paquets ; `apps/web` étend le tsconfig généré par
+SvelteKit et n'est pas concerné. Huit erreurs à corriger en tout, et l'une
+était un vrai défaut latent : `weekdayOf` rendait `undefined` habillé en
+`Weekday` pour toute heure antérieure au coup de corne du départ — les
+flashbacks en sont pleins — parce que `(0 - 1) % 7` vaut `-1` en JavaScript.
+
+**Règles type-aware réactivées (fait).** `no-floating-promises`,
+`no-misused-promises` et `await-thenable` sur `packages/*/src/**` et les deux
+`lib/server/**`, avec un `projectService` et un `svelte-kit sync` en tête du
+script `lint` (comme `typecheck` le fait déjà). Elles répondent **zéro** aujourd'hui :
+elles ne réparent rien, elles tiennent une propriété qui n'était tenue par
+rien. Vérifié en cassant volontairement un fichier — la règle mord.
+
 ## Avancement du chantier 5
 
 **Deux dumps au lieu d'un (fait).** `backup.sh` écrit désormais le dump complet

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { createEmptyWorld, type WorldState } from '@black-whale/world-engine'
+import { createEmptyWorld, type WorldState } from '@black-whale/canon-engine'
 import { SimulationEngine } from '../src/engine.js'
 
 const CURSOR = {

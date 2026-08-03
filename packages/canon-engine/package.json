@@ -1,5 +1,5 @@
 {
-  "name": "@black-whale/world-engine",
+  "name": "@black-whale/canon-engine",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -10,6 +10,7 @@
       "development": "./src/index.ts",
       "import": "./dist/index.js",
       "types": "./dist/index.d.ts",
+      "require": "./dist/index.js",
       "default": "./dist/index.js"
     }
   },
@@ -17,9 +18,15 @@
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
     "clean": "rimraf dist *.tsbuildinfo"
   },
+  "dependencies": {
+    "@black-whale/domain": "workspace:*",
+    "@black-whale/database": "workspace:*"
+  },
   "devDependencies": {
+    "@vitest/coverage-v8": "^2.0.0",
     "rimraf": "^5.0.0",
     "typescript": "^5.5.0",
     "vitest": "^2.0.0"

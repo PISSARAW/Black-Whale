@@ -1,4 +1,4 @@
-import { listCanonicalEvents } from '@black-whale/timeline-engine'
+import { listCanonicalEvents } from '@black-whale/canon-engine'
 import { prisma } from '$lib/server/db'
 import { nenRuntime } from '$lib/server/nen'
 import { readSpoilerLimit } from '$lib/server/spoiler'

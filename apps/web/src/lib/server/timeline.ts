@@ -1,9 +1,5 @@
 import { prisma } from '$lib/server/db'
-import {
-  createSnapshotStore,
-  TimelineEngine,
-  type WorldSnapshot,
-} from '@black-whale/timeline-engine'
+import { createSnapshotStore, TimelineEngine, type WorldSnapshot } from '@black-whale/canon-engine'
 
 /**
  * One engine for the whole process, and one snapshot store behind it.

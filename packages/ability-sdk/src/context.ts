@@ -1,5 +1,5 @@
 import type { AbilityContext } from '@black-whale/nen-engine'
-import type { EntityRef, StoryCursor } from '@black-whale/world-engine'
+import type { EntityRef, StoryCursor } from '@black-whale/canon-engine'
 
 /** A value a module either fixes at definition time or reads from the activation. */
 export type Resolvable<T> = T | ((ctx: AbilityContext) => T)

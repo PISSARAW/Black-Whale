@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import type { Location, Presence } from '@black-whale/domain'
-  import type { WorldEntity, WorldState } from '@black-whale/world-engine'
+  import type { WorldEntity, WorldState } from '@black-whale/canon-engine'
   import type { PageData } from './$types'
   import './strategy.css'
   import StrategyBattlefield from '$lib/components/strategy/StrategyBattlefield.svelte'

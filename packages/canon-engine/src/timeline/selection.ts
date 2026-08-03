@@ -61,7 +61,10 @@ export function readLegacySequence(raw: string | null | undefined): number | und
 
 function findLast<T>(items: T[], predicate: (item: T) => boolean): T | undefined {
   for (let index = items.length - 1; index >= 0; index -= 1) {
-    if (predicate(items[index])) return items[index]
+    const item = items[index]
+    // Bound by the loop, so this can only be undefined if T includes it — in
+    // which case the predicate is the one entitled to decide.
+    if (item !== undefined && predicate(item)) return item
   }
   return undefined
 }

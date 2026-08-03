@@ -1,5 +1,5 @@
 import { resolveControlledEntity } from '@black-whale/simulation-engine'
-import type { WorldState } from '@black-whale/world-engine'
+import type { WorldState } from '@black-whale/canon-engine'
 import { hatsuById } from '$lib/nen/hatsuRegistry'
 import type { StrategyFaction } from './types'
 

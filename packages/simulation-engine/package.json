@@ -22,7 +22,7 @@
   },
   "dependencies": {
     "@black-whale/database": "workspace:*",
-    "@black-whale/world-engine": "workspace:*"
+    "@black-whale/canon-engine": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",

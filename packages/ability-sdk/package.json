@@ -23,12 +23,11 @@
   "dependencies": {
     "@black-whale/domain": "workspace:*",
     "@black-whale/nen-engine": "workspace:*",
-    "@black-whale/world-engine": "workspace:*"
+    "@black-whale/canon-engine": "workspace:*"
   },
   "devDependencies": {
     "typescript": "^5.5.0",
     "rimraf": "^5.0.0",
-    "vitest": "^2.0.0",
-    "@black-whale/world-engine": "workspace:*"
+    "vitest": "^2.0.0"
   }
 }

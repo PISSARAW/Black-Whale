@@ -4,7 +4,7 @@ import {
   type EffectInstance,
   type StoryCursor,
   type WorldState,
-} from '@black-whale/world-engine'
+} from '@black-whale/canon-engine'
 import {
   NenEngine,
   type AbilityContext,

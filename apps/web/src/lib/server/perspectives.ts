@@ -1,6 +1,6 @@
-import { IdentityEngine } from '@black-whale/identity-engine'
-import { KnowledgeEngine } from '@black-whale/knowledge-engine'
-import { PerspectiveEngine } from '@black-whale/perspective-engine'
+import { IdentityEngine } from '@black-whale/canon-engine'
+import { KnowledgeEngine } from '@black-whale/canon-engine'
+import { PerspectiveEngine } from '@black-whale/canon-engine'
 import { prisma } from './db'
 
 export const perspectiveEngine = new PerspectiveEngine(

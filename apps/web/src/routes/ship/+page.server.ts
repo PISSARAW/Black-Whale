@@ -12,7 +12,7 @@ import {
   readLegacySequence,
   resolveVisibleBodyIds,
   selectEvent,
-} from '@black-whale/timeline-engine'
+} from '@black-whale/canon-engine'
 import {
   beyondLineageStatusFor,
   buildCatalogIndex,

@@ -6,7 +6,7 @@
     "postinstall": "pnpm --filter @black-whale/database generate",
     "build": "turbo build",
     "dev": "turbo dev",
-    "lint": "eslint .",
+    "lint": "pnpm --filter \"./apps/*\" exec svelte-kit sync && eslint .",
     "lint:fix": "eslint . --fix",
     "test": "turbo test",
     "typecheck": "turbo typecheck",

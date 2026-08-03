@@ -16,7 +16,7 @@ import type {
   ValidationResult,
   WhyCondition,
 } from '@black-whale/nen-engine'
-import { proposedSubjectIds, type ProposedWorldEvent } from '@black-whale/world-engine'
+import { proposedSubjectIds, type ProposedWorldEvent } from '@black-whale/canon-engine'
 import type { ConditionFn } from './conditions.js'
 import { resolve, type Resolvable } from './context.js'
 import type { EffectBuilder } from './effects.js'

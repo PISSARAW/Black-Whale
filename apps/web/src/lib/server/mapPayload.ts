@@ -115,6 +115,8 @@ export interface TimelineEvent {
   sequence: number
   title: string
   isFlashback?: boolean
+  /** The voyage clock's rendering of the hour, shown beside the title. */
+  occurredAtLabel?: string | null
   chapter: { number: number }
 }
 
@@ -179,6 +181,7 @@ export function trimEventsForTimeline(events: readonly Row[]): TimelineEvent[] {
       sequence: Number(event.sequence ?? 0),
       title: String(event.title ?? ''),
       ...(event.isFlashback === undefined ? {} : { isFlashback: Boolean(event.isFlashback) }),
+      occurredAtLabel: (event.occurredAtLabel as string | null) ?? null,
       chapter: { number: Number(chapter?.number ?? 0) },
     }
   })

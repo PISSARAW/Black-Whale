@@ -77,6 +77,8 @@
     STICK_RIM,
     WALK_SPEED,
     bobOf,
+    breathOf,
+    glide,
     linkUnderfoot,
     resolveMovement,
     stepsIn,
@@ -3651,13 +3653,40 @@
       let travelledOnFoot = 0
       let lastPace = 0
       /**
-       * How much of the head's movement this visitor has asked for. Read once, on
-       * the system's setting, rather than every frame.
+       * How fast the visitor is actually going, in metres per second.
+       *
+       * The walk carries a velocity now rather than writing a position: a body
+       * has a mass, and leaning into a walk and putting a foot down to stop it
+       * are the two cheapest things on the whole list that say so. Kept here with
+       * the rest of the loop's own state, because it is a fact about this frame
+       * and nothing in the markup reads it.
        */
-      const gaitAmplitude = prefersReducedMotion() ? 0 : 1
+      let velocity: Vec2 = [0, 0]
 
-      /** The same answer, for everything else in the walk that moves by itself. */
-      const calmWalk = gaitAmplitude === 0
+      /**
+       * How far the field of view has opened up for the run, in degrees.
+       *
+       * Four degrees, eased in over a quarter of a second. Nobody notices it and
+       * everybody feels it: it is the only thing on screen that says running is
+       * an effort, and the ship is a place where the reason to run is that it is
+       * a quarter of a mile to the other end.
+       *
+       * Held here rather than in `relens` because it is a fact about this frame,
+       * not a setting — the visitor's own field of view is added underneath it,
+       * so changing it in the panel mid-sprint does the right thing.
+       */
+      let fovLift = 0
+      const SPRINT_FOV = 4
+      const FOV_EASE = 0.25
+
+      /**
+       * Whether this visitor has asked their system for less movement.
+       *
+       * Read once, and it is not the same question as the head-bob setting any
+       * more: that one is the visitor's dial and this one gates everything else
+       * in the walk that moves by itself.
+       */
+      const calmWalk = prefersReducedMotion()
 
       /**
        * The air the current room wants, and the densities already measured.
@@ -4081,12 +4110,27 @@
         // The thread has the visitor: the legs are not what is moving them.
         ridTheThread(delta, loose)
 
-        if (moving && !arc && !$comfort.jumpOnly) {
-          const speed = (running ? SPRINT_SPEED : WALK_SPEED) * paceOf(world.body) * delta
-          const target: Vec2 = [
-            pointer[0] + (advance * -sin + strafe * cos) * speed,
-            pointer[1] + (advance * -cos + strafe * -sin) * speed,
-          ]
+        /**
+         * The walk, as a velocity the visitor leans on rather than a position.
+         *
+         * Run whether or not anything is held down, which is the whole of it:
+         * letting go is a target of nothing reached at `FRICTION`, and the frame
+         * after the key comes up the visitor is still moving. `paceOf` keeps its
+         * meaning exactly — Kurton and the Enhancer multiply the speed being
+         * leaned towards, not the position — and so does the visitor's own dial.
+         */
+        const walking = !arc && !$comfort.jumpOnly
+        const pace = (running ? SPRINT_SPEED : WALK_SPEED) * paceOf(world.body) * $comfort.walkPace
+        const wanted: Vec2 =
+          walking && moving
+            ? [(advance * -sin + strafe * cos) * pace, (advance * -cos + strafe * -sin) * pace]
+            : [0, 0]
+        // Nothing is being carried across a jump or out of jump-only mode: the
+        // visitor arrives at a stand, the way anyone put down somewhere does.
+        velocity = walking ? glide(velocity, wanted, delta) : [0, 0]
+
+        if (velocity[0] !== 0 || velocity[1] !== 0) {
+          const target: Vec2 = [pointer[0] + velocity[0] * delta, pointer[1] + velocity[1] * delta]
           // Luini walks through the walls rather than around them, so the move
           // is taken whole and the collision pass is simply not run.
           const from = pointer
@@ -4103,7 +4147,7 @@
           travelledOnFoot += Math.hypot(pointer[0] - from[0], pointer[1] - from[1])
         }
 
-        if (world.puppet === puppetId && world.puppet && moving && !arc && !$comfort.jumpOnly) {
+        if (world.puppet === puppetId && world.puppet && walking) {
           if (!world.solids[world.puppet]) world.solids[world.puppet] = {}
           world.solids[world.puppet].at = pointer
         }
@@ -4114,11 +4158,22 @@
         /**
          * The head's rise and fall, off the distance walked rather than the clock.
          *
-         * A visitor who has asked their system for less movement gets none of it:
-         * a view that swings while the body does not is the thing that actually
-         * makes people ill, and `$lib/tour/comfort` is where that is argued.
+         * How much of it there is follows the velocity rather than the keys: a
+         * visitor easing to a stop has the swing leave their head as the ground
+         * stops going by, instead of it being switched off under them. Capped at
+         * the half again a run used to get flat.
+         *
+         * Scaled by what the visitor asked for, which for a visitor who has asked
+         * their system for less movement is nothing: a view that swings while the
+         * body does not is the thing that actually makes people ill, and
+         * `$lib/tour/comfort` is where that is argued.
          */
-        const bob = bobOf(travelledOnFoot, gaitAmplitude * (running ? 1.5 : 1))
+        const gait = Math.min(1.5, Math.hypot(velocity[0], velocity[1]) / WALK_SPEED)
+        const bob = bobOf(travelledOnFoot, $comfort.headBob * gait)
+        // And at a stand, the breath under it: the one movement left when the
+        // legs have stopped, and what keeps a visitor standing still from being
+        // a tripod. Time rather than distance, because breathing is.
+        const breath = breathOf(now / 1000, $comfort.headBob * (1 - Math.min(1, gait)))
         /**
          * The floor under the visitor, eased onto rather than snapped to.
          *
@@ -4132,7 +4187,20 @@
         const groundTarget = floorOf(standing ?? entrySpace(plan), plan.tier)
         ground += (groundTarget - ground) * Math.min(1, delta * 6)
         const eye =
-          ground + eyesOf(world.body, seated ? seated.eye : EYE_HEIGHT) + bob.rise + swingRise
+          ground +
+          eyesOf(world.body, seated ? seated.eye : EYE_HEIGHT) +
+          bob.rise +
+          breath +
+          swingRise
+        // Open on the run, close on the walk. Off the speed actually being made
+        // rather than off the sprint key, so a visitor held against a bulkhead
+        // is not sprinting and the view says so.
+        const lift = velocity[0] || velocity[1] ? Math.min(1, gait / 1.5) ** 2 * SPRINT_FOV : 0
+        if (Math.abs(lift - fovLift) > 1e-4) {
+          fovLift += (lift - fovLift) * Math.min(1, delta / FOV_EASE)
+          camera.fov = $comfort.fov + fovLift
+          camera.updateProjectionMatrix()
+        }
         camera.position.set(pointer[0], eye, pointer[1])
         camera.rotation.set(0, 0, 0)
         camera.rotateY(yaw)

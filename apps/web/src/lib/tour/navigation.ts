@@ -33,6 +33,46 @@ export const WALK_SPEED = 2.1
 export const SPRINT_SPEED = 6
 
 /**
+ * How hard the visitor can start and stop, in metres per second squared.
+ *
+ * Until these existed the position was rewritten at full speed every frame: the
+ * visitor reached 2,1 m/s in the frame the key went down and stood still in the
+ * frame it came up, which is not a body, it is a cursor. A person leans into a
+ * walk and takes about a fifth of a second to reach it, and stops rather more
+ * sharply than they start — you can put a foot down to stop, and there is nothing
+ * you can do to be already walking.
+ *
+ * Small enough to be under the threshold anyone would name, which is the point:
+ * what is felt is not the ramp, it is that the ship has weight and you have some
+ * too. Large enough that a doorway taken at a run is still taken at a run.
+ */
+export const ACCEL = 9
+export const FRICTION = 12
+
+/**
+ * The velocity a frame later, leaning towards what the visitor is asking for.
+ *
+ * Kept here rather than in the render loop, and pure, because it is the one part
+ * of the walk that is arithmetic rather than three.js: it is what `WALK_SPEED`
+ * means in practice, and it can be checked without a canvas.
+ *
+ * `wanted` at rest is the whole of stopping — there is no separate branch for
+ * letting go of the keys, only a target of nothing and a harder rate at which to
+ * reach it.
+ */
+export function glide(velocity: Vec2, wanted: Vec2, delta: number): Vec2 {
+  const rate = (Math.hypot(wanted[0], wanted[1]) > STILL ? ACCEL : FRICTION) * Math.max(0, delta)
+  const dx = wanted[0] - velocity[0]
+  const dz = wanted[1] - velocity[1]
+  const gap = Math.hypot(dx, dz)
+  // Straight to the target once it is within a frame's reach, so the velocity
+  // settles exactly rather than approaching it forever — a walk that is always
+  // a thousandth off its own speed makes the gait drift against the footsteps.
+  if (gap <= rate || gap < STILL) return wanted
+  return [velocity[0] + (dx / gap) * rate, velocity[1] + (dz / gap) * rate]
+}
+
+/**
  * Length of one pace, in metres.
  *
  * At `WALK_SPEED` this is a cadence of about 2,7 steps a second, which is what
@@ -68,6 +108,23 @@ export function bobOf(walked: number, amplitude = 1): { rise: number; roll: numb
     rise: -BOB_RISE * amplitude * Math.cos(2 * Math.PI * pace),
     roll: BOB_ROLL * amplitude * Math.sin(Math.PI * pace),
   }
+}
+
+/**
+ * How far the chest lifts the eye, in metres, and how often.
+ *
+ * Eight millimetres at a fifth of a hertz: a slow breath, and a movement smaller
+ * than the head's rise over a single pace. It is only ever seen standing still,
+ * which is exactly why it is worth having — a visitor who stops walking to read
+ * a caption is otherwise looking through a tripod, and every other cue the walk
+ * has built stops at the same moment.
+ */
+export const BREATH_RISE = 0.008
+export const BREATH_HZ = 0.22
+
+/** Where in the breath the visitor is, given the clock. */
+export function breathOf(seconds: number, amplitude = 1): number {
+  return Math.sin(seconds * BREATH_HZ * 2 * Math.PI) * BREATH_RISE * amplitude
 }
 
 /** How many paces the given distance is, for the footstep the last one made. */

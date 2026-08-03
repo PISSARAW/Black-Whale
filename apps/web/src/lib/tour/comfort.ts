@@ -54,6 +54,28 @@ export interface Comfort {
    */
   nightLight: number
   /**
+   * How much of the head's rise and fall the visitor wants, 0 to 1.
+   *
+   * A camera gliding at a constant eye height is a drone, not somebody walking,
+   * and the whole of what fixes that is a few centimetres of movement below the
+   * threshold anyone would consciously name. Which is exactly why it has to be a
+   * setting: a swing the body did not make is the thing that actually makes
+   * people ill, and the visitors it makes ill are not the ones who can tell you
+   * in advance how much of it they can take.
+   */
+  headBob: number
+  /**
+   * A multiplier on how fast the visitor walks and runs.
+   *
+   * The walk is slow on purpose — see `WALK_SPEED`, where the case is that a
+   * hall 450 m long stops meaning anything if it is crossed in half a minute —
+   * and the tour never needed walking to cover ground: the plan and the index
+   * put anyone in any room. But "the scale is the point" is an argument about
+   * the ship, not about somebody's afternoon, and a visitor who finds it a
+   * crawl is not wrong either.
+   */
+  walkPace: number
+  /**
    * How much the walk is allowed to spend on the picture.
    *
    * `auto` is the driver string's verdict — see `$lib/tour/quality` — and the
@@ -71,6 +93,10 @@ export const SENSITIVITY_RANGE = [0.25, 2.5] as const
 export const SNAP_ANGLE_RANGE = [15, 90] as const
 /** Out, to a couple of paces of floor. Never a torch: see `nightLight`. */
 export const NIGHT_LIGHT_RANGE = [0, 12] as const
+/** Off, to half again what the walk was tuned at. Past that it is seasickness. */
+export const HEAD_BOB_RANGE = [0, 1.5] as const
+/** A stroll, to a little over three times the walk. */
+export const WALK_PACE_RANGE = [0.75, 2.5] as const
 
 const LIVELY: Comfort = {
   fov: 72,
@@ -79,6 +105,12 @@ const LIVELY: Comfort = {
   snapAngle: 45,
   jumpOnly: false,
   nightLight: 8,
+  // Under 1 rather than at it: the amplitudes in `bobOf` are already meant to
+  // sit below what anyone notices, and the default should be the setting that
+  // needs turning up by the people who want to feel it rather than down by
+  // everyone else.
+  headBob: 0.7,
+  walkPace: 1,
   quality: 'auto',
 }
 
@@ -92,6 +124,14 @@ const CALM: Comfort = {
   // darker ship, and jumping from room to room does not make a dark stairwell
   // easier to read. Left where the walk leaves it.
   nightLight: 8,
+  // The one setting `prefers-reduced-motion` is literally about: a head that
+  // rises and falls under a body that is being slid along the deck is the
+  // textbook case, and a visitor who has asked their system for less movement
+  // has already answered this question.
+  headBob: 0,
+  // Slower again, because a reduced-motion visitor who is walking at all is
+  // walking to look at something.
+  walkPace: 0.85,
   // Reduced motion is a request about movement, not about fidelity. The palier
   // is left to the machine, the same as for anyone else.
   quality: 'auto',
@@ -151,6 +191,8 @@ export function readComfort(raw: string | null, reduced = prefersReducedMotion()
     snapAngle: readNumber(stored.snapAngle, SNAP_ANGLE_RANGE, defaults.snapAngle),
     jumpOnly: readFlag(stored.jumpOnly, defaults.jumpOnly),
     nightLight: readNumber(stored.nightLight, NIGHT_LIGHT_RANGE, defaults.nightLight),
+    headBob: readNumber(stored.headBob, HEAD_BOB_RANGE, defaults.headBob),
+    walkPace: readNumber(stored.walkPace, WALK_PACE_RANGE, defaults.walkPace),
     quality: readQuality(stored.quality, defaults.quality),
   }
 }

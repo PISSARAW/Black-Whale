@@ -438,6 +438,20 @@ export const en = {
       nightLight: 'Light you carry',
       nightLightOff: 'Off — the ship as it is lit',
       /**
+       * The walk is slow because the ship is enormous and nothing else on screen
+       * can say so. But that is an argument about the ship rather than about
+       * somebody's afternoon, and the plan and the index still put anyone in any
+       * room without walking a step.
+       */
+      walkPace: 'Walking pace',
+      /**
+       * A few centimetres, below the threshold anyone would name — which is
+       * exactly why it is a dial. The visitors it makes ill are not the ones who
+       * can tell you in advance how much of it they can take.
+       */
+      headBob: 'Head movement',
+      headBobOff: 'None — the eye stays level',
+      /**
        * The tier, said as what it costs rather than as a number of stars. The
        * detection only picks the default: a laptop that reports a discrete card
        * and then throttles, or one whose driver string the browser has masked,
@@ -452,6 +466,7 @@ export const en = {
       calm: 'Your system asks for reduced motion, so this starts calm.',
       degrees: (angle: number) => `${angle}°`,
       metres: (distance: number) => `${distance} m`,
+      metresASecond: (speed: number) => `${speed.toFixed(1)} m/s`,
       times: (factor: number) => `×${factor.toFixed(2)}`,
     },
 
@@ -486,6 +501,53 @@ export const en = {
         telephone: (count: number) => `${count} ${count === 1 ? 'telephone' : 'telephones'}`,
         duct: (count: number) => `${count} ${count === 1 ? 'run of ducting' : 'runs of ducting'}`,
         vent: (count: number) => `${count} ${count === 1 ? 'vent' : 'vents'}`,
+      },
+    },
+
+    /**
+     * Aim at a thing and be handed its proof.
+     *
+     * The card is not a description — `describe` already writes those — it is an
+     * exhibit: where this object comes from, how sure the reconstruction is, and
+     * what putting it here asserts about the ship. `claims` is the doctrinal
+     * half, and it is keyed by kind rather than by object because what a pillar
+     * claims is a property of being a pillar here: a deckhead with nothing under
+     * it would be a false statement, and the same statement stands under every
+     * one of them.
+     */
+    examine: {
+      title: 'Evidence',
+      open: 'Examine',
+      close: 'Put it back',
+      nothing: 'Nothing in front of you the blueprint has a source for.',
+      claimHeading: 'What this asserts',
+      sourceHeading: 'Where it comes from',
+      measured: (long: number, wide: number, height: number) =>
+        `${long} × ${wide} m, ${height} m tall`,
+      standingIn: (room: string) => `Stands in ${room}`,
+      room: 'A room the deck plans draw, walked at the size they give it.',
+      claims: {
+        spring: 'The ship carries its own water: a spring drawn in the panel, at the size drawn.',
+        casket: 'Someone is being kept here. The coffins are counted, not decorated.',
+        platform: 'The floor rises. A stage or a dais is a level the room is read from.',
+        counter: 'This room serves. A counter is where the ship faces its passengers.',
+        table: 'People sit here, and how many is the count of the tables.',
+        bed: 'Someone sleeps here, and the berth is the width the plan gives it.',
+        seat: 'Someone sits here, facing the way the panel faces them.',
+        cabinet: 'Something is stowed here, against the wall it is drawn against.',
+        basin: 'Water is drawn here. Plumbing the deck plans put in the room.',
+        painting: 'A wall was hung. The canvas is the panel’s, not ours.',
+        window:
+          'There is an outside, and this is where it is seen from — one of two openings on the ship.',
+        lifeboat: 'The ship expects to be left. A boat is a count of the people it would take.',
+        pillar:
+          'The deckhead is held up. A roof with nothing under it would be a claim the ship cannot make.',
+        bars: 'This side of the room is not open. Bars are a wall you can see through.',
+        manacle: 'Someone was held here, at the point the panel draws the iron.',
+        camera: 'This room is watched, and from this corner of it.',
+        telephone: 'This room can be called. The ship’s internal line reaches here.',
+        duct: 'The ship breathes. Ducting is the run of air between two rooms.',
+        vent: 'The air enters or leaves here — the one place a duct meets the room.',
       },
     },
 

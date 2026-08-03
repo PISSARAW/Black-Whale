@@ -397,6 +397,9 @@ export const fr: Messages = {
       jumpOnly: 'Ne pas marcher — sauter de pièce en pièce',
       nightLight: 'Lumière que vous portez',
       nightLightOff: 'Éteinte — le vaisseau tel qu’il est éclairé',
+      walkPace: 'Allure de marche',
+      headBob: 'Mouvement de la tête',
+      headBobOff: 'Aucun — l’œil reste de niveau',
       quality: 'Image',
       qualityAuto: 'S’adapter à cette machine',
       qualityLow: 'Allégée',
@@ -406,6 +409,7 @@ export const fr: Messages = {
       calm: 'Votre système demande moins de mouvement : tout démarre en douceur.',
       degrees: (angle) => `${angle}°`,
       metres: (distance) => `${distance} m`,
+      metresASecond: (speed) => `${speed.toFixed(1)} m/s`,
       times: (factor) => `×${factor.toFixed(2)}`,
     },
 
@@ -433,6 +437,43 @@ export const fr: Messages = {
         telephone: (count) => `${count} ${count === 1 ? 'téléphone' : 'téléphones'}`,
         duct: (count) => `${count} ${count === 1 ? 'gaine' : 'gaines'}`,
         vent: (count) => `${count} ${count === 1 ? "bouche d'aération" : "bouches d'aération"}`,
+      },
+    },
+
+    examine: {
+      title: 'Pièce à conviction',
+      open: 'Examiner',
+      close: 'Reposer',
+      nothing: 'Rien devant vous dont le plan donne la source.',
+      claimHeading: 'Ce que cela affirme',
+      sourceHeading: 'D’où cela vient',
+      measured: (long, wide, height) => `${long} × ${wide} m, ${height} m de haut`,
+      standingIn: (room) => `Se tient dans ${room}`,
+      room: 'Une pièce que les plans de pont dessinent, arpentée à la taille qu’ils lui donnent.',
+      claims: {
+        spring:
+          'Le vaisseau porte son eau : une source dessinée dans la planche, à la taille dessinée.',
+        casket: 'Quelqu’un est gardé ici. Les cercueils sont comptés, pas décorés.',
+        platform: 'Le sol s’élève. Une estrade est un niveau depuis lequel la pièce se lit.',
+        counter: 'Cette pièce sert. Un comptoir est l’endroit où le vaisseau fait face aux siens.',
+        table: 'On s’assoit ici, et combien, c’est le nombre de tables.',
+        bed: 'Quelqu’un dort ici, et la couche fait la largeur que le plan lui donne.',
+        seat: 'Quelqu’un s’assoit ici, tourné comme la planche le tourne.',
+        cabinet: 'Quelque chose est rangé ici, contre le mur où c’est dessiné.',
+        basin: 'On tire de l’eau ici. Une plomberie que les plans de pont mettent dans la pièce.',
+        painting: 'Un mur a été accroché. La toile est celle de la planche, pas la nôtre.',
+        window:
+          'Il y a un dehors, et c’est d’ici qu’on le voit — l’une des deux ouvertures du vaisseau.',
+        lifeboat:
+          'Le vaisseau s’attend à être quitté. Une chaloupe est un décompte de ceux qu’elle emmènerait.',
+        pillar:
+          'Le plafond tient. Un toit sans rien dessous serait une affirmation que le vaisseau ne peut pas faire.',
+        bars: 'Ce côté de la pièce n’est pas ouvert. Une grille est un mur qu’on voit à travers.',
+        manacle: 'Quelqu’un a été tenu ici, à l’endroit où la planche dessine le fer.',
+        camera: 'Cette pièce est surveillée, et depuis ce coin-là.',
+        telephone: 'On peut appeler cette pièce. La ligne intérieure du vaisseau y arrive.',
+        duct: 'Le vaisseau respire. Une gaine est le trajet de l’air entre deux pièces.',
+        vent: 'L’air entre ou sort ici — le seul endroit où une gaine rencontre la pièce.',
       },
     },
 

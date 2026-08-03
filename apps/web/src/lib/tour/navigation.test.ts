@@ -2,12 +2,17 @@ import { describe, expect, it } from 'vitest'
 import { buildShip, crossingsOn, spaceAt, spawnPoint } from './blueprint'
 import { pointInPolygon } from './geometry'
 import {
+  ACCEL,
+  BREATH_RISE,
+  FRICTION,
   LINK_REACH,
   SPRINT_SPEED,
   STICK_RADIUS,
   STICK_RIM,
   VISITOR_RADIUS,
   WALK_SPEED,
+  breathOf,
+  glide,
   linkUnderfoot,
   resolveMovement,
   stickVector,
@@ -411,5 +416,100 @@ describe('a single frame of walking', () => {
       const after = resolveMovement(from, [from[0] - step, 0], wall)
       expect(after[0]).toBeGreaterThanOrEqual(VISITOR_RADIUS - 0.001)
     }
+  })
+})
+
+/**
+ * A body has a mass.
+ *
+ * The walk used to reach full speed in the frame the key went down and stand
+ * still in the frame it came up, which is not somebody walking, it is a cursor
+ * being dragged. What is checked here is not the numbers — they are a reading of
+ * what a person does — but that the two ends of it hold: nothing is instant, and
+ * everything settles exactly.
+ */
+describe('leaning into a walk', () => {
+  const forward: Vec2 = [0, WALK_SPEED]
+  const rest: Vec2 = [0, 0]
+  /** One frame at 60 Hz, which is what the walk is felt at. */
+  const FRAME = 1 / 60
+
+  it('does not reach the pace in the frame the key goes down', () => {
+    const after = glide(rest, forward, FRAME)
+    expect(after[1]).toBeGreaterThan(0)
+    expect(after[1]).toBeLessThan(WALK_SPEED)
+  })
+
+  it('reaches it in about the fifth of a second a person takes', () => {
+    let velocity = rest
+    for (let frame = 0; frame < 60; frame++) {
+      velocity = glide(velocity, forward, FRAME)
+      if (velocity[1] >= WALK_SPEED) {
+        const seconds = (frame + 1) * FRAME
+        expect(seconds).toBeGreaterThan(0.1)
+        expect(seconds).toBeLessThan(0.35)
+        return
+      }
+    }
+    throw new Error('the visitor never reached a walking pace')
+  })
+
+  it('stops harder than it starts, because you can put a foot down', () => {
+    expect(FRICTION).toBeGreaterThan(ACCEL)
+    const stopping = glide(forward, rest, FRAME)
+    const starting = glide(rest, forward, FRAME)
+    expect(WALK_SPEED - stopping[1]).toBeGreaterThan(starting[1])
+  })
+
+  it('settles exactly rather than approaching forever', () => {
+    // A velocity always a thousandth off its own pace makes the gait drift
+    // against the footsteps, which are counted off the ground covered.
+    let velocity = rest
+    for (let frame = 0; frame < 120; frame++) velocity = glide(velocity, forward, FRAME)
+    expect(velocity).toEqual(forward)
+
+    let stopping = forward
+    for (let frame = 0; frame < 120; frame++) stopping = glide(stopping, rest, FRAME)
+    expect(stopping).toEqual(rest)
+  })
+
+  it('turns without gaining or losing speed on the way round', () => {
+    // A body at speed leans into a new direction; it does not stop first. Which
+    // means the approach has to be a vector one — take the axes separately and a
+    // diagonal turn is a sprint.
+    const across: Vec2 = [WALK_SPEED, 0]
+    const turning = glide(forward, across, FRAME)
+    expect(Math.hypot(turning[0], turning[1])).toBeLessThanOrEqual(WALK_SPEED + 1e-9)
+  })
+
+  it('is the same walk at any frame rate', () => {
+    // One second of leaning in, taken in sixty steps or in two hundred and forty.
+    const settle = (rate: number) => {
+      let velocity = rest
+      for (let frame = 0; frame < rate; frame++) velocity = glide(velocity, forward, 1 / rate)
+      return velocity[1]
+    }
+    expect(settle(240)).toBeCloseTo(settle(60), 9)
+  })
+})
+
+describe('the breath at a stand', () => {
+  it('lifts the eye by millimetres and comes back', () => {
+    let highest = -Infinity
+    let lowest = Infinity
+    for (let i = 0; i <= 200; i++) {
+      const rise = breathOf(i * 0.05)
+      highest = Math.max(highest, rise)
+      lowest = Math.min(lowest, rise)
+    }
+    expect(highest).toBeCloseTo(BREATH_RISE, 3)
+    expect(lowest).toBeCloseTo(-BREATH_RISE, 3)
+  })
+
+  it('is smaller than a single pace of the head, and turns all the way off', () => {
+    // It is only ever seen standing still, and it must never be what a visitor
+    // who asked for no head movement is left with.
+    expect(BREATH_RISE).toBeLessThan(0.022)
+    expect(breathOf(3.7, 0)).toBeCloseTo(0, 12)
   })
 })

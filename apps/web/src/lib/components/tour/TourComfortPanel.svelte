@@ -2,13 +2,18 @@
   import { t } from '$lib/i18n'
   import {
     FOV_RANGE,
+    HEAD_BOB_RANGE,
     NIGHT_LIGHT_RANGE,
     SENSITIVITY_RANGE,
     SNAP_ANGLE_RANGE,
+    WALK_PACE_RANGE,
     comfort,
     resetComfort,
     setComfort,
   } from '$lib/tour/comfort'
+  // The dial is a multiplier; what the visitor is shown is the pace itself, in
+  // the units the reconstruction publishes everything else in.
+  import { WALK_SPEED } from '$lib/tour/navigation'
   import type { QualitySetting } from '$lib/tour/quality'
 
   let { calm }: { calm: boolean } = $props()
@@ -76,6 +81,40 @@
         step="1"
         value={$comfort.nightLight}
         oninput={(event) => setComfort({ nightLight: Number(event.currentTarget.value) })}
+        class="mt-1 w-full accent-[#FFD700]"
+      />
+    </label>
+    <label class="block">
+      <span class="flex items-baseline justify-between"
+        ><span>{$t.tour.comfort.walkPace}</span><span class="text-[#FFD700]/80"
+          >{$t.tour.comfort.metresASecond(WALK_SPEED * $comfort.walkPace)}</span
+        ></span
+      >
+      <input
+        type="range"
+        min={WALK_PACE_RANGE[0]}
+        max={WALK_PACE_RANGE[1]}
+        step="0.05"
+        value={$comfort.walkPace}
+        oninput={(event) => setComfort({ walkPace: Number(event.currentTarget.value) })}
+        class="mt-1 w-full accent-[#FFD700]"
+      />
+    </label>
+    <label class="block">
+      <span class="flex items-baseline justify-between"
+        ><span>{$t.tour.comfort.headBob}</span><span class="text-[#FFD700]/80"
+          >{$comfort.headBob > 0
+            ? $t.tour.comfort.times($comfort.headBob)
+            : $t.tour.comfort.headBobOff}</span
+        ></span
+      >
+      <input
+        type="range"
+        min={HEAD_BOB_RANGE[0]}
+        max={HEAD_BOB_RANGE[1]}
+        step="0.05"
+        value={$comfort.headBob}
+        oninput={(event) => setComfort({ headBob: Number(event.currentTarget.value) })}
         class="mt-1 w-full accent-[#FFD700]"
       />
     </label>

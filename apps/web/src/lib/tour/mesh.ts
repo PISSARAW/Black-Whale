@@ -67,6 +67,16 @@ export interface MeshGroup {
   /** The room's stretch of the ceiling fittings, in vertices. */
   fittingStart: number
   fittingCount: number
+  /**
+   * And of the window glass, which is zero for 312 of the 314 spaces.
+   *
+   * Its own range rather than more of the fittings' because the glass is the one
+   * surface on the deck whose colour is not settled at bake time: it is the hour
+   * of the voyage, and the hour changes with the event the walk projects. See
+   * `panes`.
+   */
+  paneStart: number
+  paneCount: number
   /** The room's own bounding sphere, so the renderer never scans the buffer. */
   centre: readonly [number, number, number]
   radius: number
@@ -117,6 +127,30 @@ export interface TierMesh {
    * lights nothing, which is exactly the claim the bake refuses to make.
    */
   fittingColors: Float32Array
+  /**
+   * The glass of the two windows, in its own buffer.
+   *
+   * It used to be in `fittings`, which was right as long as the only question
+   * that buffer answered was *which surfaces are sources*. It is not right once
+   * the sky has an hour: a fitting burns at a value the bake settled — the
+   * room's own filament, dimmed by what an invented room may claim — and the
+   * glass burns at whatever is outside it, which is a fact about the voyage
+   * clock and not about the deck. Two claims, two buffers, and the one that
+   * changes is the small one: a few dozen triangles in two rooms.
+   */
+  panes: Float32Array
+  /**
+   * What each pane vertex is worth **relative to the sky**: 1 above the horizon,
+   * `SEA_FRACTION` below it.
+   *
+   * Relative and not absolute, which is the whole of chantier C. The material's
+   * own colour carries the hour — `skyOf(...).glow` — and this carries the one
+   * thing about the glass the hour does not change: that the water gives back
+   * 45 % of whatever the sky is doing. So the bake stays pure and deterministic,
+   * midnight and noon are the same buffer, and changing the hour is one
+   * `material.color.set` rather than a rebuild of the deck.
+   */
+  paneColors: Float32Array
   /** Triangle count, for a sanity check and for the debug read-out. */
   triangles: number
   /** Where each room's geometry sits in the buffers above, in plan order. */
@@ -382,8 +416,19 @@ export const WINDOW_GLOW: Rgb = [0.62, 0.86, 1.28]
  * that swallows most of it. So the hue is the sky's and only the value falls, and
  * it falls below white — the water is bright against the steel of the room and it
  * does not burn the way the cloud above it does.
+ *
+ * The fraction is exported because it is the relation rather than the value: the
+ * pane is baked with the two bands *relative* to each other — see `pane` — and
+ * `$lib/tour/sky` applies the same 45 % at every hour of the day, because a
+ * relation that is honest at noon does not become false at dusk.
  */
-export const SEA_GLOW: Rgb = [WINDOW_GLOW[0] * 0.45, WINDOW_GLOW[1] * 0.45, WINDOW_GLOW[2] * 0.45]
+export const SEA_FRACTION = 0.45
+
+export const SEA_GLOW: Rgb = [
+  WINDOW_GLOW[0] * SEA_FRACTION,
+  WINDOW_GLOW[1] * SEA_FRACTION,
+  WINDOW_GLOW[2] * SEA_FRACTION,
+]
 
 /**
  * Where the horizon crosses the glass: the visitor's own eye, and no higher.
@@ -1088,6 +1133,8 @@ export function buildTierMesh(plan: TierPlan, options: { reveal?: boolean } = {}
   const seams: number[] = []
   const fittings: number[] = []
   const fittingColors: number[] = []
+  const panes: number[] = []
+  const paneColors: number[] = []
   // Pulled a hair off the surface so the line is not fighting the polygon it
   // sits on for the same depth value.
   const OFFSET = 0.03
@@ -1126,10 +1173,17 @@ export function buildTierMesh(plan: TierPlan, options: { reveal?: boolean } = {}
   /**
    * The glass of one window: its long faces, drawn as light rather than as steel.
    *
-   * In the `fittings` buffer, which is the one material on the deck that refuses
-   * to be lit — the same reason a lamp is there. A pane run through the Lambert
-   * material would take the headlamp like any other surface and come out as a pale
-   * rectangle, which is a wall, and the ship has 157 842 m² of those.
+   * In a buffer of its own, with a material that refuses to be lit — the same
+   * reason a lamp has one. A pane run through the Lambert material would take the
+   * headlamp like any other surface and come out as a pale rectangle, which is a
+   * wall, and the ship has 157 842 m² of those.
+   *
+   * Its own buffer rather than the fittings', because a fitting's value is
+   * settled here and the glass's is not: what is outside is the hour of the
+   * voyage. So what is baked is the *relation* between the two bands — the sky
+   * at 1, the water at `SEA_FRACTION` — and the hour is a colour on the
+   * material. At the drawn state of ch. 380 the product is `WINDOW_GLOW` and
+   * `SEA_GLOW` exactly, which is the test.
    *
    * Both long faces, and the outboard one is never seen — you cannot get outside
    * the hull. Cheaper than deciding which side of the glass the room is on.
@@ -1167,7 +1221,7 @@ export function buildTierMesh(plan: TierPlan, options: { reveal?: boolean } = {}
       const a: Vec2 = [start[0] + nx * 0.02, start[1] + nz * 0.02]
       const b: Vec2 = [end[0] + nx * 0.02, end[1] + nz * 0.02]
 
-      const band = (low: number, high: number, glow: Rgb) => {
+      const band = (low: number, high: number, share: number) => {
         if (high - low < EPSILON) return
         for (const [p, q, r] of [
           [
@@ -1181,15 +1235,15 @@ export function buildTierMesh(plan: TierPlan, options: { reveal?: boolean } = {}
             [a, high],
           ],
         ] as [[Vec2, number], [Vec2, number], [Vec2, number]][]) {
-          fittings.push(p[0][0], p[1], p[0][1], q[0][0], q[1], q[0][1], r[0][0], r[1], r[0][1])
+          panes.push(p[0][0], p[1], p[0][1], q[0][0], q[1], q[0][1], r[0][0], r[1], r[0][1])
           for (let vertex = 0; vertex < 3; vertex++) {
-            fittingColors.push(glow[0], glow[1], glow[2])
+            paneColors.push(share, share, share)
           }
         }
       }
 
-      band(bottom, horizon, SEA_GLOW)
-      band(horizon, top, WINDOW_GLOW)
+      band(bottom, horizon, SEA_FRACTION)
+      band(horizon, top, 1)
     }
   }
 
@@ -1251,6 +1305,7 @@ export function buildTierMesh(plan: TierPlan, options: { reveal?: boolean } = {}
     const edgeStart = edges.length / 3
     const seamStart = seams.length / 3
     const fittingStart = fittings.length / 3
+    const paneStart = panes.length / 3
 
     const floorColour = reveal
       ? revealed(space.provenance, 0.62)
@@ -1396,8 +1451,9 @@ export function buildTierMesh(plan: TierPlan, options: { reveal?: boolean } = {}
       for (const [x, z] of lampsOf(space.footprint, lamplight)) fitting([x, hang, z], glow)
 
       // And the sky, in the two rooms that have any. Undimmed by provenance —
-      // see `RoomLight.daylight` — and in the same buffer as the fittings,
-      // because the question that buffer answers is which surfaces are sources.
+      // see `RoomLight.daylight` — and in a buffer of its own, because a
+      // fitting burns at a value this bake settles and the glass burns at the
+      // hour of the voyage, which it does not.
       for (const structure of standingIn.get(space.id) ?? []) {
         if (structure.kind === 'window') pane(structure, floorOf(space, tier))
       }
@@ -1575,6 +1631,7 @@ export function buildTierMesh(plan: TierPlan, options: { reveal?: boolean } = {}
     const edgeCount = edges.length / 3 - edgeStart
     const seamCount = seams.length / 3 - seamStart
     const fittingCount = fittings.length / 3 - fittingStart
+    const paneCount = panes.length / 3 - paneStart
     if (!count && !edgeCount) continue
     groups.push({
       spaceId: space.id,
@@ -1586,6 +1643,8 @@ export function buildTierMesh(plan: TierPlan, options: { reveal?: boolean } = {}
       seamCount,
       fittingStart,
       fittingCount,
+      paneStart,
+      paneCount,
       ...boundsOf(
         { data: builder.positions, start, count },
         { data: edges, start: edgeStart, count: edgeCount },
@@ -1601,6 +1660,8 @@ export function buildTierMesh(plan: TierPlan, options: { reveal?: boolean } = {}
     seams: new Float32Array(seams),
     fittings: new Float32Array(fittings),
     fittingColors: new Float32Array(fittingColors),
+    panes: new Float32Array(panes),
+    paneColors: new Float32Array(paneColors),
     triangles: builder.positions.length / 9,
     groups,
   }

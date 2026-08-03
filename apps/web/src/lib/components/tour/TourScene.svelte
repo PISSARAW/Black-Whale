@@ -112,6 +112,7 @@
   import { NEN_KEYS, nenZoneIndex, ryuDistribution, type NenBodyZone } from '$lib/nen/controls'
   import { visibleSpaces } from '$lib/tour/visibility'
   import { SHAFT_PEAK, shaftAnchors, shaftStrength, type ShaftAnchor } from '$lib/tour/godRays'
+  import { REFERENCE_HOUR, skyOf } from '$lib/tour/sky'
   import { applySurfaceDetail } from '$lib/tour/surfaceDetail'
   import { refractionAmount } from '$lib/tour/auraRefraction'
   import {
@@ -904,6 +905,32 @@
       })
 
       /**
+       * The glass of the two windows: the one surface on the deck whose colour
+       * is not settled by the bake.
+       *
+       * `MeshBasicMaterial` for the reason the fittings are — a pane must not be
+       * lit — and its own material rather than theirs because what it carries is
+       * different in kind. A fitting burns at what the room's own filament burns
+       * at, which is a fact about the deck; the glass burns at what is outside
+       * it, which is a fact about the hour of the voyage.
+       *
+       * So the mesh bakes the two bands *relative* to each other — sky at 1,
+       * water at `SEA_FRACTION`, see `paneColors` in `$lib/tour/mesh` — and this
+       * colour carries the hour. One material for the whole visit, so a deck
+       * sitting in the cache is showing the right sky the moment the visitor
+       * walks back onto it.
+       *
+       * Starts at the drawn state of ch. 380, which is what the walk showed
+       * before any of this: `skyOf(REFERENCE_HOUR).glow` is `WINDOW_GLOW`.
+       */
+      const paneMaterial = new THREE.MeshBasicMaterial({
+        vertexColors: true,
+        side: THREE.FrontSide,
+      })
+      const reference = skyOf(REFERENCE_HOUR)
+      paneMaterial.color.setRGB(reference.glow[0], reference.glow[1], reference.glow[2])
+
+      /**
        * The dust of the ten great voids.
        *
        * Warm grey rather than white, because the only thing lighting it is the
@@ -1042,6 +1069,7 @@
         edge: edgeMaterial,
         seam: seamMaterial,
         fitting: fittingMaterial,
+        pane: paneMaterial,
         dust: dustMaterial,
       })
 
@@ -1326,6 +1354,10 @@
         // which is the same statement — the seal is on the eye, and an eye that
         // takes nothing in takes the lamps in too.
         fittingMaterial.visible = !sealed
+        // And the glass with them: it is written above white on the same
+        // argument, so a sealed eye left staring at two lit windows would be
+        // the one thing the seal is supposed to take.
+        paneMaterial.visible = !sealed
       }
 
       /**
@@ -1421,6 +1453,7 @@
             room.edges.visible = on
             room.seams.visible = on
             room.fittings.visible = on
+            if (room.panes) room.panes.visible = on
             if (room.motes) room.motes.visible = on
           }
         }

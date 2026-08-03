@@ -22,6 +22,7 @@ import { VISITOR_RADIUS } from './navigation'
 import {
   HORIZON,
   PATCH,
+  SEA_FRACTION,
   SEA_GLOW,
   WINDOW_GLOW,
   WINDOW_REACH,
@@ -34,6 +35,7 @@ import {
   type MeshGroup,
   type TierMesh,
 } from './mesh'
+import { REFERENCE_HOUR, skyOf } from './sky'
 import type { Structure, Vec2 } from './types'
 
 const ship = buildShip()
@@ -833,27 +835,19 @@ describe('the depth of a doorway', () => {
 })
 
 /**
- * Whether the quad starting at vertex `i` of the sources buffer stands up.
+ * Whether the quad starting at vertex `i` of a buffer stands up.
  *
- * The buffer holds the surfaces that are lights, and there are two sorts: a
- * fitting, which lies flat under the ceiling, and the pane of a window, which
- * stands in its wall. Nothing else in it can be at two heights at once, so this is
- * the whole of the distinction.
+ * The two surfaces on the deck that are lights are told apart by this and by
+ * nothing else: a fitting lies flat under the ceiling, and a window's pane
+ * stands in its wall. They used to share one buffer, which is what this was
+ * written for; they no longer do — the glass carries the hour and a fitting
+ * carries the room — so what it is for now is checking that the split holds.
  */
-const standsUp = (fittings: Float32Array, i: number) =>
-  Math.abs(fittings[i + 1] - fittings[i + 4]) > 1e-6 ||
-  Math.abs(fittings[i + 1] - fittings[i + 7]) > 1e-6
+const standsUp = (data: Float32Array, i: number) =>
+  Math.abs(data[i + 1] - data[i + 4]) > 1e-6 || Math.abs(data[i + 1] - data[i + 7]) > 1e-6
 
-/** How many of a room's source triangles lie flat, which is its fittings. */
-function flatTriangles(mesh: TierMesh, group: MeshGroup): number {
-  let flat = 0
-  const from = group.fittingStart * 3
-  const to = (group.fittingStart + group.fittingCount) * 3
-  for (let i = from; i < to; i += 9) {
-    if (!standsUp(mesh.fittings, i)) flat++
-  }
-  return flat
-}
+/** How many triangles of the fittings buffer a room holds. */
+const fittingTriangles = (group: MeshGroup): number => group.fittingCount / 3
 
 /**
  * The fittings, which are the visible half of what the bake has been reading off
@@ -872,10 +866,10 @@ describe('the ceiling fittings', () => {
       for (const group of mesh.groups) {
         const space = plan.spaces.find((entry) => entry.id === group.spaceId)!
         const lamps = lampsOf(space.footprint, lamplightOf(space, plan.tier))
-        // Two triangles, six vertices, one fitting — and the panes of a window,
-        // which share this buffer because they are sources too, are not fittings.
+        // Two triangles, six vertices, one fitting — and nothing else in the
+        // buffer, now that the glass has one of its own.
         expect(
-          flatTriangles(mesh, group) / 2,
+          fittingTriangles(group) / 2,
           `${group.spaceId} draws a different number of fittings than it lights by`,
         ).toBe(lamps.length)
         expect(lamps.length, `${group.spaceId} has no light in it`).toBeGreaterThan(0)
@@ -903,9 +897,9 @@ describe('the ceiling fittings', () => {
         const from = group.fittingStart * 3
         const to = (group.fittingStart + group.fittingCount) * 3
         for (let i = from; i < to; i += 9) {
-          // A window's pane is in this buffer too and is not hung from anything:
-          // it stands in its wall, at the height the blueprint gives it.
-          if (standsUp(mesh.fittings, i)) continue
+          // Nothing in this buffer stands up any more: the glass left it when
+          // its colour stopped being something the bake could settle.
+          expect(standsUp(mesh.fittings, i), `${group.spaceId} has glass in its lamps`).toBe(false)
           for (let vertex = 0; vertex < 9; vertex += 3) {
             // Four places, not more: the buffer is `Float32Array`, and 78,65 m
             // comes back out of it as 78,650002.
@@ -924,9 +918,6 @@ describe('the ceiling fittings', () => {
     for (const plan of ship.plans.values()) {
       const f = buildTierMesh(plan).fittings
       for (let i = 0; i < f.length; i += 9) {
-        // A pane stands in a wall and is faced out of it, not down: see the
-        // windows below.
-        if (standsUp(f, i)) continue
         // The winding has to give a downward normal: the only side of a lamp
         // anyone is ever on is underneath it.
         const ux = f[i + 3] - f[i]
@@ -1030,6 +1021,35 @@ describe('the ceiling fittings', () => {
       )
     }
   })
+
+  /**
+   * The glass, in its own buffer and in two rooms out of 314. What is worth
+   * guarding is the cost of the split: every other room has to pay nothing at
+   * all for a window it does not have.
+   */
+  it('leaves the glass buffer empty in every room without a window', () => {
+    let glazed = 0
+    for (const [tierId, plan] of ship.plans) {
+      const mesh = buildTierMesh(plan)
+      let vertices = 0
+      for (const group of mesh.groups) {
+        expect(group.paneStart, `${group.spaceId} glass is out of order`).toBe(vertices)
+        vertices += group.paneCount
+        const space = plan.spaces.find((entry) => entry.id === group.spaceId)!
+        const hasWindow = plan.structures.some(
+          (entry) => entry.spaceId === space.id && entry.kind === 'window',
+        )
+        if (hasWindow) glazed++
+        else expect(group.paneCount, `${group.spaceId} draws glass it has no window for`).toBe(0)
+      }
+      expect(vertices, `${tierId} has glass belonging to no room`).toBe(mesh.panes.length / 3)
+      // One value per vertex, written to three channels: the relation, not a colour.
+      expect(mesh.paneColors.length).toBe(mesh.panes.length)
+    }
+    // The bay of the observation deck and the King's great window, and nothing
+    // else on the ship has an outside.
+    expect(glazed).toBe(2)
+  })
 })
 
 /**
@@ -1092,7 +1112,7 @@ describe('the two windows', () => {
     }
   })
 
-  it('draws the glass in the buffer that refuses to be lit', () => {
+  it('draws the glass in a buffer of its own, in two bands relative to the sky', () => {
     for (const structure of windows) {
       const { plan, space } = roomOf(structure)
       const mesh = buildTierMesh(plan)
@@ -1104,15 +1124,16 @@ describe('the two windows', () => {
       expect(horizon, `${structure.id} has its horizon outside the glass`).toBeGreaterThan(bottom)
       expect(horizon).toBeLessThan(top)
 
-      const from = group.fittingStart * 3
-      const to = (group.fittingStart + group.fittingCount) * 3
+      const from = group.paneStart * 3
+      const to = (group.paneStart + group.paneCount) * 3
       let panes = 0
       for (let i = from; i < to; i += 9) {
-        if (!standsUp(mesh.fittings, i)) continue
+        // Every triangle in this buffer is glass, and glass stands up.
+        expect(standsUp(mesh.panes, i), `${structure.id} lays a pane flat`).toBe(true)
         panes++
         let above = 0
         for (let vertex = 0; vertex < 9; vertex += 3) {
-          const y = mesh.fittings[i + vertex + 1]
+          const y = mesh.panes[i + vertex + 1]
           // The blueprint's own height for the opening, or the cut across it: a
           // pane is not hung from the ceiling grid and must not be moved to it,
           // and nothing but the horizon may divide it.
@@ -1121,20 +1142,30 @@ describe('the two windows', () => {
           ).toBeLessThan(1e-4)
           if (y > horizon + 1e-4) above++
         }
-        // Above white on the blue side, which nothing else in the ship is.
-        const colour = [mesh.fittingColors[i], mesh.fittingColors[i + 1], mesh.fittingColors[i + 2]]
-        // A triangle is wholly on one side of the cut or the other, and it takes
-        // the value of the side it is on: cloud over the line, water under it.
-        const band = above > 0 ? WINDOW_GLOW : SEA_GLOW
+        // What is baked is the relation between the two bands and not their
+        // value: a triangle is wholly on one side of the cut or the other, and
+        // it takes the share of the side it is on — the cloud gets all the sky
+        // there is, the water gets 45 % of it, at whatever hour the material's
+        // own colour says it is.
+        const share = above > 0 ? 1 : SEA_FRACTION
         for (let channel = 0; channel < 3; channel++) {
-          // Six places: the buffer is `Float32Array`, so 0,62 comes back 0,6200000.
-          expect(colour[channel]).toBeCloseTo(band[channel], 6)
+          // Six places: the buffer is `Float32Array`, so 0,45 comes back 0,4500000.
+          expect(mesh.paneColors[i + channel]).toBeCloseTo(share, 6)
         }
-        expect(colour[2], 'the sky of the Dark Continent is not warm').toBeGreaterThan(colour[0])
-        if (above > 0) expect(colour[2], 'the sky does not burn above white').toBeGreaterThan(1)
+
+        // And at the drawn state of ch. 380 the product is the walk exactly as
+        // it was rendered before the hour existed — which is the whole licence
+        // for the other six rows of the table.
+        const band = above > 0 ? WINDOW_GLOW : SEA_GLOW
+        const drawn = skyOf(REFERENCE_HOUR).glow
+        for (let channel = 0; channel < 3; channel++) {
+          expect(mesh.paneColors[i + channel] * drawn[channel]).toBeCloseTo(band[channel], 6)
+        }
+        expect(band[2], 'the sky of the Dark Continent is not warm').toBeGreaterThan(band[0])
+        if (above > 0) expect(band[2], 'the sky does not burn above white').toBeGreaterThan(1)
         // The sea is bright against the steel of the room and dark against the
         // cloud over it, which is the whole reason there is a line to see.
-        else expect(colour[2], 'the water burns like the sky').toBeLessThan(1)
+        else expect(band[2], 'the water burns like the sky').toBeLessThan(1)
       }
       // Two faces of glass, two bands each, two triangles a band. The outboard
       // face is never seen, and deciding which that is costs more than drawing it.
@@ -1177,22 +1208,21 @@ describe('the two windows', () => {
       const { plan, space } = roomOf(structure)
       const mesh = buildTierMesh(plan)
       const group = mesh.groups.find((entry) => entry.spaceId === space.id)!
-      const from = group.fittingStart * 3
-      const to = (group.fittingStart + group.fittingCount) * 3
+      const from = group.paneStart * 3
+      const to = (group.paneStart + group.paneCount) * 3
 
       for (let i = from; i < to; i += 9) {
-        if (!standsUp(mesh.fittings, i)) continue
-        const ax = mesh.fittings[i]
-        const az = mesh.fittings[i + 2]
+        const ax = mesh.panes[i]
+        const az = mesh.panes[i + 2]
         const u = [
-          mesh.fittings[i + 3] - ax,
-          mesh.fittings[i + 4] - mesh.fittings[i + 1],
-          mesh.fittings[i + 5] - az,
+          mesh.panes[i + 3] - ax,
+          mesh.panes[i + 4] - mesh.panes[i + 1],
+          mesh.panes[i + 5] - az,
         ]
         const v = [
-          mesh.fittings[i + 6] - ax,
-          mesh.fittings[i + 7] - mesh.fittings[i + 1],
-          mesh.fittings[i + 8] - az,
+          mesh.panes[i + 6] - ax,
+          mesh.panes[i + 7] - mesh.panes[i + 1],
+          mesh.panes[i + 8] - az,
         ]
         const normal = [
           u[1] * v[2] - u[2] * v[1],

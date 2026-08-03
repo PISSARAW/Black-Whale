@@ -10,6 +10,14 @@ export interface TierRoomView {
   edges: Three.LineSegments
   seams: Three.LineSegments
   fittings: Three.Mesh
+  /**
+   * The window glass, in the two rooms that have any and nowhere else.
+   *
+   * `null` for 312 of the 314 spaces rather than an empty mesh: the glass is a
+   * handful of triangles in two rooms, and an object per room to draw none of
+   * them would be six hundred draw calls a deck to say nothing.
+   */
+  panes: Three.Mesh | null
   motes: Three.Points | null
   dust: Dust | null
 }
@@ -22,6 +30,15 @@ export interface TierMaterials {
   edge: Three.Material
   seam: Three.Material
   fitting: Three.Material
+  /**
+   * The glass, whose colour is the hour of the voyage.
+   *
+   * Shared across every deck the visit builds rather than made per deck, and
+   * that is the point: the walk sets one colour on it when the projected event
+   * changes, and a deck built five minutes ago in the cache is already showing
+   * the right sky when the visitor takes the stairs back onto it.
+   */
+  pane: Three.Material
   dust: Three.PointsMaterial
 }
 interface TierBuild {
@@ -62,6 +79,8 @@ export class TierView {
     const seamPosition = new this.THREE.BufferAttribute(mesh.seams, 3)
     const fittingPosition = new this.THREE.BufferAttribute(mesh.fittings, 3)
     const fittingColor = new this.THREE.BufferAttribute(mesh.fittingColors, 3)
+    const panePosition = new this.THREE.BufferAttribute(mesh.panes, 3)
+    const paneColor = new this.THREE.BufferAttribute(mesh.paneColors, 3)
     const root = new this.THREE.Group()
     const rooms: TierRoomView[] = []
     for (const group of mesh.groups) {
@@ -97,6 +116,18 @@ export class TierView {
         radius: group.radius,
       })
       fittingGeometry.setAttribute('color', fittingColor)
+      let panes: Three.Mesh | null = null
+      if (group.paneCount > 0) {
+        const paneGeometry = this.geometry({
+          position: panePosition,
+          start: group.paneStart,
+          count: group.paneCount,
+          centre,
+          radius: group.radius,
+        })
+        paneGeometry.setAttribute('color', paneColor)
+        panes = new this.THREE.Mesh(paneGeometry, this.materials.pane)
+      }
       const space = ship.spaces.get(group.spaceId)
       const deck = ship.plans.get(tierId)
       const dust = space && deck && !reveal ? dustOf(space, deck.tier, dustScale) : null
@@ -117,10 +148,12 @@ export class TierView {
         edges: new this.THREE.LineSegments(edgeGeometry, this.materials.edge),
         seams: new this.THREE.LineSegments(seamGeometry, this.materials.seam),
         fittings: new this.THREE.Mesh(fittingGeometry, this.materials.fitting),
+        panes,
         motes,
         dust,
       }
       root.add(room.mesh, room.edges, room.seams, room.fittings)
+      if (panes) root.add(panes)
       if (motes) root.add(motes)
       rooms.push(room)
     }
@@ -133,6 +166,7 @@ export class TierView {
       room.edges.geometry.dispose()
       room.seams.geometry.dispose()
       room.fittings.geometry.dispose()
+      room.panes?.geometry.dispose()
       room.motes?.geometry.dispose()
     }
   }

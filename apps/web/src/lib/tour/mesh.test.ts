@@ -5,7 +5,6 @@ import {
   DOOR_HEIGHT,
   JAMB_DEPTH,
   PLATE_PITCH,
-  ceilingLamps,
   columnWalls,
   distanceToBoundary,
   doorJambs,
@@ -18,6 +17,7 @@ import {
   structureFootprint,
   toClockwise,
 } from './geometry'
+import { lamplightOf, lampsOf } from './light'
 import { VISITOR_RADIUS } from './navigation'
 import {
   HORIZON,
@@ -871,7 +871,7 @@ describe('the ceiling fittings', () => {
       const mesh = buildTierMesh(plan)
       for (const group of mesh.groups) {
         const space = plan.spaces.find((entry) => entry.id === group.spaceId)!
-        const lamps = ceilingLamps(space.footprint)
+        const lamps = lampsOf(space.footprint, lamplightOf(space, plan.tier))
         // Two triangles, six vertices, one fitting — and the panes of a window,
         // which share this buffer because they are sources too, are not fittings.
         expect(
@@ -883,8 +883,8 @@ describe('the ceiling fittings', () => {
       }
       expect(mesh.fittings.length % 18, `${tierId} has a fitting that is not a quad`).toBe(0)
     }
-    // 3 065 fittings on the ship: 6 130 triangles against the 289 000 it draws.
-    expect(total).toBeGreaterThan(3000)
+    // 2 489 fittings on the ship: 4 978 triangles against the 341 000 it draws.
+    expect(total).toBeGreaterThan(2400)
   })
 
   it('hangs each one at the height its own light comes from', () => {
@@ -940,7 +940,7 @@ describe('the ceiling fittings', () => {
         checked++
       }
     }
-    expect(checked).toBeGreaterThan(6000)
+    expect(checked).toBeGreaterThan(4900)
   })
 
   it('sits each one inside the room that hangs it', () => {
@@ -948,7 +948,7 @@ describe('the ceiling fittings', () => {
     const mesh = buildTierMesh(plan)
     for (const group of mesh.groups) {
       const space = plan.spaces.find((entry) => entry.id === group.spaceId)!
-      for (const [x, z] of ceilingLamps(space.footprint)) {
+      for (const [x, z] of lampsOf(space.footprint, lamplightOf(space, plan.tier))) {
         expect(
           pointInPolygon([x, z], space.footprint),
           `${group.spaceId} hangs a fitting outside itself`,
@@ -967,29 +967,41 @@ describe('the ceiling fittings', () => {
     expect(Math.max(...mesh.fittingColors)).toBeGreaterThan(1)
   })
 
-  it('dims the lamps of an invented room by what dims its lamplight', () => {
+  it('burns each room’s lamps at what that room’s lamps are worth', () => {
     const plan = ship.plans.get('tier-1')!
     const mesh = buildTierMesh(plan)
+    let invented = 0
 
-    const brightest = (provenance: string) => {
-      let best = 0
-      for (const group of mesh.groups) {
-        const space = plan.spaces.find((entry) => entry.id === group.spaceId)!
-        if (space.provenance !== provenance) continue
-        const from = group.fittingStart * 3
-        const to = (group.fittingStart + group.fittingCount) * 3
-        for (let i = from; i < to; i++) best = Math.max(best, mesh.fittingColors[i])
+    for (const group of mesh.groups) {
+      const space = plan.spaces.find((entry) => entry.id === group.spaceId)!
+      // Room by room rather than deck by deck, which is the whole change: the
+      // lamps of a Tier 1 corridor and of the King’s living room are no longer
+      // the same lamp, so a brightest-on-the-deck comparison would be measuring
+      // the categories against each other rather than the provenances.
+      let brightest = 0
+      const from = group.fittingStart * 3
+      const to = (group.fittingStart + group.fittingCount) * 3
+      for (let i = from; i < to; i += 9) {
+        // A pane is in this buffer too and is not a lamp: it burns the sky.
+        if (standsUp(mesh.fittings, i)) continue
+        for (let channel = i; channel < i + 9; channel++) {
+          brightest = Math.max(brightest, mesh.fittingColors[channel])
+        }
       }
-      return best
+      if (!brightest) continue
+
+      const full = Math.max(...lamplightOf(space, plan.tier).glow)
+      // Not merely dimmer: dimmer by the one constant the pools are dimmed by,
+      // so the lamp and the light under it cannot drift apart.
+      const dimming = space.provenance === 'inferred' ? 0.22 : 1
+      expect(brightest / full, `${group.spaceId} draws a lamp it is not lit by`).toBeCloseTo(
+        dimming,
+        5,
+      )
+      if (space.provenance === 'inferred') invented++
     }
 
-    const drawn = brightest('panel')
-    const invented = brightest('inferred')
-    expect(drawn, 'no panel-sourced room on Tier 1').toBeGreaterThan(0)
     expect(invented, 'no invented room on Tier 1').toBeGreaterThan(0)
-    // Not merely dimmer: dimmer by the one constant the pools are dimmed by, so
-    // the lamp and the light under it cannot drift apart.
-    expect(invented / drawn).toBeCloseTo(0.22, 5)
   })
 
   it('draws none of them under the reveal', () => {

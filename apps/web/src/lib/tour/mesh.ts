@@ -11,8 +11,6 @@ import {
   COLUMN_HALF_WIDTH,
   DOOR_HEIGHT,
   EPSILON,
-  LAMP_SPACING,
-  ceilingLamps,
   distanceToBoundary,
   doorSoffit,
   grilleBars,
@@ -26,6 +24,8 @@ import {
   triangulate,
 } from './geometry'
 import { ceilingOf, floorOf } from './blueprint'
+import { hex, lamplightOf, lampsOf } from './light'
+import type { Lamplight, Rgb } from './light'
 import type { BlindWall, TierPlan } from './blueprint'
 import type {
   Doorway,
@@ -122,24 +122,6 @@ export interface TierMesh {
   /** Where each room's geometry sits in the buffers above, in plan order. */
   groups: MeshGroup[]
 }
-
-type Rgb = readonly [number, number, number]
-
-/**
- * The colours below are written the way a stylesheet writes them — sRGB, the
- * space the eye and the deck plans agree on. A vertex colour attribute is read
- * by three.js as already linear, so the transfer function has to be undone here
- * or every surface arrives about five times too light: `0x4a4038` is an albedo
- * of 0.058, not of 0.290, and at 0.290 the walls come out a flat grey.
- */
-const toLinear = (channel: number): number =>
-  channel <= 0.04045 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4
-
-const hex = (value: number): Rgb => [
-  toLinear(((value >> 16) & 255) / 255),
-  toLinear(((value >> 8) & 255) / 255),
-  toLinear((value & 255) / 255),
-]
 
 /**
  * Floor colours, keyed to the palette the archive already uses: near-black
@@ -315,8 +297,6 @@ const COARSE = 2
 const LIGHT = {
   /** What every surface gets before a single fitting is counted. */
   fill: 0.72,
-  /** How far a fitting throws, in metres. Just past the grid it hangs on. */
-  reach: 9,
   /** How much of a fitting's pool reaches the floor, the ceiling, a wall. */
   floor: 0.85,
   ceiling: 0.55,
@@ -369,21 +349,14 @@ export function fittingHeight(floorY: number, ceilingY: number): number {
 export const FITTING_SIZE = 0.7
 
 /**
- * What a fitting burns at, in the renderer's working linear space.
- *
- * Above 1, and that is the whole trick. Nothing on a display is brighter than
- * white, so what makes a surface read as a *source* rather than as a pale square
- * is that it saturates before its surroundings do. With the filmic curve already
- * in `TourScene` these values do not clip, they roll off — which is what a lamp
- * looks like — and they carry the warm cast the pools underneath already have.
- */
-export const FITTING_GLOW: Rgb = [2.4, 2.0, 1.55]
-
-/**
  * What a window burns at: the sky of the Dark Continent, and it is cold.
  *
- * Every other source on the ship is a filament — `FITTING_GLOW` is warm because
- * a lamp of the period is warm, and the whole interior is lit by nothing else.
+ * Every other source on the ship is a filament — `LAMP_PEAK` is taken above
+ * white for the same reason this is: nothing on a display is brighter than white,
+ * so what makes a surface read as a *source* rather than as a pale square is that
+ * it saturates before its surroundings do, and the filmic curve in `TourScene`
+ * rolls it off rather than clipping it. Every lamp on board is warm because a lamp
+ * of the period is warm, and the whole interior is lit by nothing else.
  * The two windows are the exception, so they are the exception here too: the same
  * trick of sitting above white, in the opposite direction on the spectrum. Walk
  * into one of those two rooms and the light is a different colour from the light
@@ -509,6 +482,8 @@ interface LitRoom {
   ceilingY: number
   /** How much light a room the reconstruction invented is allowed to claim. */
   provenance: Provenance
+  /** The grid it hangs its lamps on, and what they burn at: see `light.ts`. */
+  lamplight: Lamplight
   sky?: readonly Vec3[]
 }
 
@@ -556,19 +531,30 @@ class RoomLight {
    */
   private readonly sky: readonly Vec3[]
 
+  /**
+   * The grid this room's lamps hang on, how far they throw and how hard.
+   *
+   * The whole of the class system arrives through this one field: a cell on Tier
+   * 5 and the King's living room run the same code and come out looking nothing
+   * alike, because `lamplightOf` gave them a different grid and a different burn.
+   */
+  private readonly lamplight: Lamplight
+
   constructor(room: LitRoom) {
-    const { footprint, floorY, ceilingY, provenance, sky = [] } = room
+    const { footprint, floorY, ceilingY, provenance, lamplight, sky = [] } = room
     this.footprint = footprint
     this.sky = sky
+    this.lamplight = lamplight
     const inferred = provenance === 'inferred'
     this.fill = LIGHT.fill * (inferred ? LIGHT.inferredFill : 1)
-    this.lamps = inferred ? LIGHT.inferredLamps : 1
+    this.lamps = (inferred ? LIGHT.inferredLamps : 1) * lamplight.power
     this.floorY = floorY
     this.ceilingY = ceilingY
 
     const hang = fittingHeight(floorY, ceilingY)
-    for (const [x, z] of ceilingLamps(footprint)) {
-      const key = cellKey(Math.round(x / LAMP_SPACING), Math.round(z / LAMP_SPACING))
+    const { spacing } = lamplight
+    for (const [x, z] of lampsOf(footprint, lamplight)) {
+      const key = cellKey(Math.round(x / spacing), Math.round(z / spacing))
       const held = this.cells.get(key)
       if (held) held.push([x, hang, z])
       else this.cells.set(key, [[x, hang, z]])
@@ -584,23 +570,26 @@ class RoomLight {
    */
   private pool(x: number, y: number, z: number): number {
     let total = 0
-    const gx = Math.round(x / LAMP_SPACING)
-    const gz = Math.round(z / LAMP_SPACING)
+    const { spacing, reach } = this.lamplight
+    const gx = Math.round(x / spacing)
+    const gz = Math.round(z / spacing)
 
     // A fitting in cell `i` is keyed `i + 1` — the cells are indexed by their
     // centres — and one can be in reach from two cells away on that side and one
-    // on the other. Anything outside that window is beyond `LIGHT.reach` by
-    // arithmetic, so the window is a shortcut and not an approximation.
+    // on the other. Anything outside that window is beyond the reach by
+    // arithmetic, so the window is a shortcut and not an approximation. That is
+    // what `REACH_RATIO` is holding still: the reach follows the grid, so this
+    // window is right on a royal deck's 5,6 m grid and in the hold's 22 m one.
     for (let i = gx - 1; i <= gx + 2; i++) {
       for (let j = gz - 1; j <= gz + 2; j++) {
         const held = this.cells.get(cellKey(i, j))
         if (!held) continue
         for (const [lx, ly, lz] of held) {
           const distance = Math.hypot(x - lx, y - ly, z - lz)
-          if (distance >= LIGHT.reach) continue
+          if (distance >= reach) continue
           // Squared falloff, cut off at the reach rather than trailing to zero:
           // a lamp two rooms down a corridor must not light this floor at all.
-          const fall = 1 - distance / LIGHT.reach
+          const fall = 1 - distance / reach
           total += fall * fall
         }
       }
@@ -1024,6 +1013,7 @@ function lightOf(space: Space, tier: Tier, standing: readonly Structure[] = []):
     floorY: floorOf(space, tier),
     ceilingY: floorOf(space, tier) + ceilingOf(space, tier),
     provenance: space.provenance,
+    lamplight: lamplightOf(space, tier),
     sky,
   })
 }
@@ -1371,9 +1361,13 @@ export function buildTierMesh(plan: TierPlan, options: { reveal?: boolean } = {}
      * A lit room with no visible lamp is a box that happens to be bright: the
      * pool on the floor says *that* there is light and never *where from*, and
      * the eye has nothing to measure the room against. Two triangles a fitting
-     * fixes that, and it is the cheapest thing on this list by a long way — 3 065
-     * fittings on the whole ship, 6 130 triangles against the 289 213 it already
+     * fixes that, and it is the cheapest thing on this list by a long way — 2 489
+     * fittings on the whole ship, 4 978 triangles against the 341 035 it already
      * draws, and one more draw call per room.
+     *
+     * How many of them a deck gets is now the plainest statement the walk makes
+     * about the ship: 662 over Tier 1 and 83 over Tier 5, off nothing but the
+     * elevation the blueprint gives and what the rooms are for.
      *
      * Not under the reveal, for the reason the bake is not: there, every surface
      * has to say what it is worth as evidence, and a quad drawn as a light says
@@ -1388,8 +1382,18 @@ export function buildTierMesh(plan: TierPlan, options: { reveal?: boolean } = {}
       // invented part of the ship stays the one thing you can feel rather than a
       // legend you have to know.
       const burn = space.provenance === 'inferred' ? LIGHT.inferredLamps : 1
-      const glow: Rgb = [FITTING_GLOW[0] * burn, FITTING_GLOW[1] * burn, FITTING_GLOW[2] * burn]
-      for (const [x, z] of ceilingLamps(space.footprint)) fitting([x, hang, z], glow)
+      // The room's own lamp, not the ship's: a fitting is drawn in the colour and
+      // at the strength the bake under it was computed from, so the row of lamps
+      // over a Tier 1 corridor is visibly a warmer and closer row than the one
+      // over the same corridor five decks down. Draw one glow for all of them and
+      // the class system would be in the floor and denied by the ceiling.
+      const lamplight = lamplightOf(space, tier)
+      const glow: Rgb = [
+        lamplight.glow[0] * burn,
+        lamplight.glow[1] * burn,
+        lamplight.glow[2] * burn,
+      ]
+      for (const [x, z] of lampsOf(space.footprint, lamplight)) fitting([x, hang, z], glow)
 
       // And the sky, in the two rooms that have any. Undimmed by provenance —
       // see `RoomLight.daylight` — and in the same buffer as the fittings,

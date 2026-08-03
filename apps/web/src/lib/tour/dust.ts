@@ -138,6 +138,17 @@ export interface Dust {
    */
   room: Float32Array
   /**
+   * How high each mote has risen, before anything shoved it.
+   *
+   * Carried rather than recovered from `positions` by subtracting the shove.
+   * That reconstruction is exact only while nothing else writes either array —
+   * and `disturbDust` writes one of them, so a shove arriving between two frames
+   * would be subtracted from a height it had never been added to, and every
+   * impulse would leak into the climb. Two numbers that must agree are one
+   * number too many.
+   */
+  heights: Float32Array
+  /**
    * Where something has shoved each mote, as `[x, y, z]`, decaying to nothing.
    *
    * Added to the drift rather than integrated into the origin, for the reason
@@ -182,6 +193,7 @@ export function dustOf(space: Space, tier: Tier, share = 1): Dust | null {
   const origins = new Float32Array(count * 2)
   const drift = new Float32Array(count * 3)
   const room = new Float32Array(count)
+  const heights = new Float32Array(count)
   const push = new Float32Array(count * 3)
 
   for (let i = 0; i < count; i++) {
@@ -195,7 +207,8 @@ export function dustOf(space: Space, tier: Tier, share = 1): Dust | null {
       if (pointInPolygon([x, z], space.footprint)) break
     }
     positions[i * 3] = x
-    positions[i * 3 + 1] = floorY + random() * (ceilingY - floorY)
+    heights[i] = floorY + random() * (ceilingY - floorY)
+    positions[i * 3 + 1] = heights[i]
     positions[i * 3 + 2] = z
     origins[i * 2] = x
     origins[i * 2 + 1] = z
@@ -216,6 +229,7 @@ export function dustOf(space: Space, tier: Tier, share = 1): Dust | null {
     origins,
     drift,
     room,
+    heights,
     push,
     floorY,
     ceilingY,
@@ -252,15 +266,12 @@ export function driftDust(dust: Dust, delta: number, elapsed: number): void {
   // reads as the whole cloud snapping.
   const remaining = Math.exp(-delta / PUSH_HALFLIFE)
 
-  for (let i = 0, mote = 0; i < dust.positions.length; i += 3, mote += 2) {
-    // The rise is integrated, so the shove has to come *off* the height before
-    // the step and go back on after it. Add it to the position and leave it
-    // there and the mote climbs by the whole of every shove it has ever taken,
-    // for as long as the visitor stays in the room.
-    let height = dust.positions[i + 1] - dust.push[i + 1] + DUST_RISE * delta
+  for (let i = 0, mote = 0, cloud = 0; i < dust.positions.length; i += 3, mote += 2, cloud++) {
+    let height = dust.heights[cloud] + DUST_RISE * delta
     // Wrapped rather than reflected: dust that settled and rose again would be a
     // convection current, which is a claim about the ship's air handling.
     while (height > dust.ceilingY) height -= span
+    dust.heights[cloud] = height
 
     dust.push[i] *= remaining
     dust.push[i + 1] *= remaining

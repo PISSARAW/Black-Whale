@@ -19,6 +19,7 @@
   import { playTourReportSound } from '$lib/tour/reportSound'
   import { blindWallReasons, declaredDoorReasons } from '$lib/tour/pageTargets'
   import { TourKeyboardController } from '$lib/tour/pageKeyboard'
+  import { examine, type Exhibit } from '$lib/tour/exhibit'
   import { TourWorldTicker } from '$lib/tour/pageWorldTicker'
   import { TourHatsuSession } from '$lib/tour/pageHatsuSession.svelte'
   import { TourHatsuView } from '$lib/tour/pageHatsuView.svelte'
@@ -118,7 +119,42 @@
     turnTechnique: () => technique && turn(technique.kind),
     toggleFullscreen: () => chrome.toggleFullscreen(),
     togglePlan: () => (chrome.planOpen = !chrome.planOpen),
+    examine: () => (asking ? close() : ask()),
   })
+
+  /**
+   * The evidence for what is down the reticle, once it has been asked for.
+   *
+   * Held rather than derived from the aim. A card that re-read the reticle every
+   * frame would rewrite itself as the visitor's head drifted a degree, and a
+   * piece of evidence you cannot look away from while reading is not one you
+   * have been handed — it is one being waved at you. The same key puts it back.
+   */
+  let exhibit = $state<Exhibit | null>(null)
+  let asking = $state(false)
+  const ask = () => {
+    exhibit = examineAim()
+    asking = true
+  }
+  const close = () => {
+    asking = false
+    exhibit = null
+  }
+
+  const examineAim = () =>
+    examine(
+      ship,
+      { solid: aimedSolidAt, space: aimedAt ?? currentSpace },
+      {
+        nameOf,
+        sourceOf,
+        badge: (provenance) => $t.tour.provenance[provenance],
+        claim: (kind) => $t.tour.examine.claims[kind],
+        roomClaim: $t.tour.examine.room,
+        measured: $t.tour.examine.measured,
+        standingIn: $t.tour.examine.standingIn,
+      },
+    )
   onMount(() => {
     loadComfort()
     chrome.calm = prefersReducedMotion()
@@ -388,6 +424,17 @@
         controls: overlayControls,
         statusHint,
         linkPrompt: touch ? null : linkPrompt,
+        // Hidden while the card is up: the same gesture puts it back, and the
+        // card carries its own way out.
+        examine: asking
+          ? null
+          : { label: $t.tour.examine.open, key: touch ? null : 'P', onOpen: ask },
+      }}
+      examine={{
+        open: asking,
+        exhibit,
+        sourcesHref: $link('/tour/sources'),
+        onClose: close,
       }}
     />
 

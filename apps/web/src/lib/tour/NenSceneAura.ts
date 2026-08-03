@@ -222,8 +222,10 @@ export class NenSceneAura {
     this.#enUniforms = {
       tDepth: { value: null },
       u_resolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
-      u_cameraNear: { value: 0.1 },
-      u_cameraFar: { value: 130.0 }, // match VIEW_DISTANCE
+      // Both are overwritten from the camera every frame — see `update` — so
+      // these only have to be the walk's own planes for the first one.
+      u_cameraNear: { value: 0.15 },
+      u_cameraFar: { value: 220.0 },
       u_color: { value: new THREE.Color(NEN_PRESENTATION.en.colours[0]) },
       u_opacity: { value: 1.0 },
     }

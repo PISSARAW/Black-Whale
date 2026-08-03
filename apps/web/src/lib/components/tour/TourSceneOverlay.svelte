@@ -21,6 +21,21 @@
     color: string | null
   }
 
+  /**
+   * The way in to the evidence card.
+   *
+   * A button and not only a key, because the walk has to work on a phone: the
+   * audit's whole point about touch is that it is the visitor who has the least
+   * and is given the least, and a feature reachable only by keyboard is one the
+   * finger does not have. On a mouse it carries its key so that the key is
+   * discoverable at all; the label is the caller's, in the caller's language.
+   */
+  interface ExaminePrompt {
+    label: string
+    key: string | null
+    onOpen: () => void
+  }
+
   interface Props {
     autopilot: boolean
     reticleColor: string | null
@@ -31,6 +46,7 @@
     controls: ControlHint[]
     statusHint: string
     linkPrompt: string | null
+    examine: ExaminePrompt | null
   }
 
   let {
@@ -43,6 +59,7 @@
     controls,
     statusHint,
     linkPrompt,
+    examine,
   }: Props = $props()
 </script>
 
@@ -79,6 +96,17 @@
   >
     {penalty}
   </p>
+{/if}
+
+{#if examine}
+  <button
+    type="button"
+    onclick={examine.onOpen}
+    class="pointer-events-auto absolute bottom-24 right-3 rounded border border-[#FFD700]/40 bg-[#050505]/80 px-2 py-1 text-[11px] text-[#FFD700]/80 transition-colors hover:border-[#FFD700]/70 hover:text-[#FFD700]"
+  >
+    {#if examine.key}<kbd class="mr-1.5 font-mono text-[10px]">{examine.key}</kbd
+      >{/if}{examine.label}
+  </button>
 {/if}
 
 {#if aim}

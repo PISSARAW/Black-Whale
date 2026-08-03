@@ -6,6 +6,7 @@ import {
   DUST_MIN_HEIGHT,
   DUST_MIN_VOLUME,
   DUST_RISE,
+  disturbDust,
   driftDust,
   dustCount,
   dustOf,
@@ -188,5 +189,97 @@ describe('how the dust moves', () => {
     const before = [...dust.positions]
     driftDust(dust, 0, 12)
     expect([...dust.positions]).toEqual(before)
+  })
+})
+
+describe('the dust registering that someone went through it', () => {
+  const bay = ship.spaces.get('tier-5-hull-suspension-bay')!
+  const tier = [...ship.plans.values()].find((plan) => plan.tier.id === bay.tierId)!.tier
+
+  /** The centre of the cloud, which is where a visitor crossing the bay walks. */
+  const middle = (dust: ReturnType<typeof dustOf>) =>
+    [dust!.centre[0], dust!.centre[1], dust!.centre[2]] as [number, number, number]
+
+  it('moves the motes a shove reaches and leaves the rest alone', () => {
+    const dust = dustOf(bay, tier)!
+    const before = [...dust.positions]
+    disturbDust(dust, { at: middle(dust), radius: 6, strength: 0.3 })
+    driftDust(dust, 1 / 60, 1)
+
+    let moved = 0
+    for (let i = 0; i < dust.positions.length; i += 3) {
+      if (
+        Math.hypot(...([0, 1, 2].map((k) => dust.positions[i + k] - before[i + k]) as number[])) >
+        0.05
+      )
+        moved++
+    }
+    expect(moved).toBeGreaterThan(0)
+    expect(moved).toBeLessThan(dust.positions.length / 3)
+  })
+
+  it('pushes outward: nothing is drawn towards what passed through it', () => {
+    const dust = dustOf(bay, tier)!
+    const source = middle(dust)
+    const before = [...dust.positions]
+    disturbDust(dust, { at: source, radius: 8, strength: 0.4 })
+    driftDust(dust, 1 / 60, 1)
+
+    for (let i = 0; i < dust.positions.length; i += 3) {
+      const wasAway = Math.hypot(before[i] - source[0], before[i + 2] - source[2])
+      const nowAway = Math.hypot(dust.positions[i] - source[0], dust.positions[i + 2] - source[2])
+      // Slack for the mote's own sway, which turns under it at the same time.
+      expect(nowAway).toBeGreaterThan(wasAway - 0.4)
+    }
+  })
+
+  it('never pushes a mote out of the room, at any strength', () => {
+    // The bound the whole design hangs on: the clearance is sampled when the
+    // cloud is built, and no shove — of any force, from any direction, however
+    // many arrive at once — may spend more of it than the mote has left.
+    const dust = dustOf(bay, tier)!
+    for (let shove = 0; shove < 40; shove++) {
+      disturbDust(dust, { at: middle(dust), radius: 200, strength: 25 })
+      driftDust(dust, 1 / 60, shove / 60)
+    }
+    for (let i = 0; i < dust.positions.length; i += 3) {
+      expect(pointInPolygon([dust.positions[i], dust.positions[i + 2]], bay.footprint)).toBe(true)
+      expect(dust.positions[i + 1]).toBeGreaterThanOrEqual(dust.floorY - 1e-3)
+      expect(dust.positions[i + 1]).toBeLessThanOrEqual(dust.ceilingY + 1e-3)
+    }
+  })
+
+  it('lets the air settle back rather than leaving the cloud displaced', () => {
+    const dust = dustOf(bay, tier)!
+    disturbDust(dust, { at: middle(dust), radius: 8, strength: 0.5 })
+    driftDust(dust, 1 / 60, 1)
+    const shoved = Math.max(...[...dust.push].map(Math.abs))
+    for (let frame = 0; frame < 60 * 8; frame++) driftDust(dust, 1 / 60, 1 + frame / 60)
+    const settled = Math.max(...[...dust.push].map(Math.abs))
+    expect(shoved).toBeGreaterThan(0.01)
+    expect(settled).toBeLessThan(shoved / 100)
+  })
+
+  it('ignores a shove with no radius or no force', () => {
+    const dust = dustOf(bay, tier)!
+    disturbDust(dust, { at: middle(dust), radius: 0, strength: 5 })
+    disturbDust(dust, { at: middle(dust), radius: 5, strength: 0 })
+    expect([...dust.push].every((value) => value === 0)).toBe(true)
+  })
+
+  it('does not let a shove ride the rise up the room', () => {
+    // The vertical is integrated, so a displacement added to the height and
+    // left there would climb by the whole of every shove ever taken. It has to
+    // come off before the step and go back on after it.
+    const dust = dustOf(bay, tier)!
+    const undisturbed = dustOf(bay, tier)!
+    for (let frame = 0; frame < 60 * 6; frame++) {
+      disturbDust(dust, { at: middle(dust), radius: 200, strength: 0.4 })
+      driftDust(dust, 1 / 60, frame / 60)
+      driftDust(undisturbed, 1 / 60, frame / 60)
+    }
+    for (let i = 1; i < dust.positions.length; i += 3) {
+      expect(Math.abs(dust.positions[i] - undisturbed.positions[i])).toBeLessThan(0.7)
+    }
   })
 })

@@ -1,4 +1,5 @@
-export type TourShortcut = 'toggle-reveal' | 'turn-technique' | 'toggle-fullscreen' | 'toggle-plan'
+export type TourShortcut =
+  'toggle-reveal' | 'turn-technique' | 'toggle-fullscreen' | 'toggle-plan' | 'examine'
 
 interface ShortcutState {
   takesOrders: boolean
@@ -15,6 +16,8 @@ interface ShortcutActions {
   turnTechnique: () => void
   toggleFullscreen: () => void
   togglePlan: () => void
+  /** Hand over the evidence for whatever is down the reticle. */
+  examine: () => void
 }
 
 const isEditable = (target: EventTarget | null): boolean =>
@@ -37,6 +40,10 @@ export function tourShortcut(event: KeyboardEvent, state: ShortcutState): TourSh
   if (key === 'v') return 'toggle-fullscreen'
   if (key === 'escape') return escapeIsAvailable(state) ? 'toggle-fullscreen' : null
   if (key === 'm') return 'toggle-plan'
+  // P for proof. Deliberately not E, which takes the door in front of you: the
+  // one gesture must never be a near-miss of the other, and being handed a card
+  // when you meant to walk through a bulkhead is exactly that.
+  if (key === 'p') return 'examine'
   return null
 }
 
@@ -50,6 +57,7 @@ export class TourKeyboardController {
     if (action === 'toggle-reveal') this.actions.toggleReveal()
     else if (action === 'turn-technique') this.actions.turnTechnique()
     else if (action === 'toggle-fullscreen') this.actions.toggleFullscreen()
+    else if (action === 'examine') this.actions.examine()
     else this.actions.togglePlan()
   }
 }

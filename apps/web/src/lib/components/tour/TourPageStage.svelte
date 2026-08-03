@@ -3,9 +3,11 @@
   import type { TourNavigationState } from '$lib/tour/pageNavigationState.svelte'
   import TourScene from './TourScene.svelte'
   import TourSceneOverlay from './TourSceneOverlay.svelte'
+  import TourExamineCard from './TourExamineCard.svelte'
 
   type SceneProps = ComponentProps<typeof TourScene>
   type OverlayProps = ComponentProps<typeof TourSceneOverlay>
+  type ExamineProps = ComponentProps<typeof TourExamineCard>
 
   interface Props {
     immersive: boolean
@@ -25,9 +27,15 @@
       | 'aimedSolidAt'
     >
     overlay: OverlayProps
+    /**
+     * The evidence card, over the canvas rather than beside it: it answers a
+     * question asked with the reticle, and reading the answer somewhere else
+     * would mean looking away from the thing it is about.
+     */
+    examine: ExamineProps
   }
 
-  let { immersive, navigation, scene, overlay }: Props = $props()
+  let { immersive, navigation, scene, overlay, examine }: Props = $props()
 </script>
 
 <section
@@ -50,4 +58,5 @@
     {...scene}
   />
   <TourSceneOverlay {...overlay} />
+  <TourExamineCard {...examine} />
 </section>

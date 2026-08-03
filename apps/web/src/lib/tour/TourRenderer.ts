@@ -50,7 +50,13 @@ function gpuName(renderer: Three.WebGLRenderer): string | null {
 export async function createSceneRuntime(
   THREE: typeof Three,
   canvas: HTMLCanvasElement,
-  options: { coarse: boolean; fov: number; viewDistance: number; quality: QualitySetting },
+  options: {
+    coarse: boolean
+    fov: number
+    nearPlane: number
+    viewDistance: number
+    quality: QualitySetting
+  },
 ): Promise<SceneRuntime> {
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: !options.coarse })
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5))
@@ -61,7 +67,14 @@ export async function createSceneRuntime(
   const scene = new THREE.Scene()
   const fog = new THREE.FogExp2(0x050505, 0.02)
   scene.fog = fog
-  const camera = new THREE.PerspectiveCamera(options.fov, 1, 0.1, options.viewDistance)
+  // Both planes handed in: a depth buffer is spread by the ratio between them,
+  // so the near one is not a detail the renderer gets to pick on its own.
+  const camera = new THREE.PerspectiveCamera(
+    options.fov,
+    1,
+    options.nearPlane,
+    options.viewDistance,
+  )
 
   const quality = qualityProfile({
     tier: resolveTier(

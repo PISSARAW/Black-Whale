@@ -567,13 +567,32 @@
   /**
    * How far the camera sees, in metres.
    *
-   * The fog closes to the clear colour at 110 m and the two are the same
-   * near-black, so anything past that is already invisible — the far plane was
-   * at 600 m, which is four times the length of the ship and cost a depth range
-   * spent on geometry nobody can see. Twenty metres of margin over the fog so
-   * the plane itself never becomes a visible edge.
+   * Once the air started being read off the room — see `fogDensityOf` — one
+   * number stopped being able to do this. A cabin fogs at arm's length and a
+   * hall is drawn nearly clear, and at the thinnest air the ship holds a surface
+   * 130 m off still shows two fifths of itself: the far plane was cutting the far
+   * wall of the largest rooms out of the picture, and the fog was not hiding the
+   * cut. It is the biggest room on board that sets this, not the fog — the King's
+   * living room is 193 m across, and you can stand at one end of it.
+   *
+   * The cost of the extra range is depth precision and nothing else: what is
+   * drawn is decided by `visibleSpaces`, room by room, not by this plane.
    */
-  const VIEW_DISTANCE = 130
+  const VIEW_DISTANCE = 220
+
+  /**
+   * How close, in metres.
+   *
+   * Raised with the far plane rather than left alone. A depth buffer is spread by
+   * the *ratio* of the two, so pushing the far plane out at an unchanged near
+   * plane is what makes two surfaces a few centimetres apart start fighting —
+   * which on this deck is every wall line, every plate seam and every window pane,
+   * all of them deliberately offset by three centimetres or less.
+   *
+   * Fifteen centimetres is closer than anything can be got to: the visitor is
+   * stopped `VISITOR_RADIUS` from every wall, which is 40 cm.
+   */
+  const NEAR_PLANE = 0.15
 
   /** A finger that moved less than this, in pixels, was a tap and not a drag. */
   const TAP_SLOP = 12
@@ -660,6 +679,7 @@
         runtime = await createSceneRuntime(THREE, canvas, {
           coarse,
           fov: $comfort.fov,
+          nearPlane: NEAR_PLANE,
           viewDistance: VIEW_DISTANCE,
           // Read once, at build time, rather than watched: the composer's chain
           // of passes is fixed when it is made. A visitor who changes the palier
@@ -1254,7 +1274,7 @@
         }
 
         const at = centroid(space)
-        eyeCamera = new THREE.PerspectiveCamera(64, 1, 0.1, VIEW_DISTANCE)
+        eyeCamera = new THREE.PerspectiveCamera(64, 1, NEAR_PLANE, VIEW_DISTANCE)
         eyeCamera.position.set(at[0], eyeHeightIn(space, ship), at[1])
 
         const built = buildDeck(space.tierId).built
@@ -3772,7 +3792,7 @@
         const frames = [...filmTrack]
         filmTrack.length = 0
 
-        filmCamera = new THREE.PerspectiveCamera(64, 1, 0.1, VIEW_DISTANCE)
+        filmCamera = new THREE.PerspectiveCamera(64, 1, NEAR_PLANE, VIEW_DISTANCE)
         // The deck it was flying over has to be in the scene to be filmed on,
         // however far from the visitor's own it is — the same arrangement the
         // eye's feed uses, and it is taken away again when the film ends.

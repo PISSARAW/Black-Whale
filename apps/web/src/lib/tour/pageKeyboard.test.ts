@@ -31,6 +31,13 @@ describe('tour shortcuts', () => {
     expect(tourShortcut(key('Escape'), { ...state, immersive: true, engaged: true })).toBeNull()
   })
 
+  it('asks for the evidence on P, and never on the key that takes a door', () => {
+    // P for proof. Being handed a card when you meant to walk through the
+    // bulkhead in front of you is the one collision this must not have.
+    expect(tourShortcut(key('p'), state)).toBe('examine')
+    expect(tourShortcut(key('e'), state)).toBeNull()
+  })
+
   it('ignores modified shortcuts', () => {
     expect(tourShortcut(key('g', true), state)).toBeNull()
   })

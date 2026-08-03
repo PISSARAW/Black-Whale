@@ -100,6 +100,113 @@ const trajectoryLegSchema = z
   })
   .passthrough()
 
+/**
+ * The shapes the walk can draw a Nen creature in.
+ *
+ * A closed list here rather than a free string, and declared in the contracts
+ * rather than read out of `apps/web`: a silhouette is a claim the archive makes
+ * about a beast, so it has to be checkable by canon-lint, which never opens the
+ * site. `lib/tour/nenCreatureFigure.ts` holds the drawings and a test there
+ * asserts the two lists still name the same shapes.
+ */
+export const NEN_CREATURE_SILHOUETTES = [
+  'owl',
+  'fish',
+  'insect',
+  'medusa',
+  'chimera',
+  'monster',
+  'toad',
+  'wheel',
+  'tyson-guardian',
+  'wog',
+  'centipede',
+  'mouths',
+  'sprite',
+  'dragon',
+  'ghost',
+  'cat',
+] as const
+
+/**
+ * The shapes that stand in a room, as opposed to riding the visitor.
+ *
+ * Two of the sixteen are not creatures in a room at all: Tyson's eye-wog and
+ * its parent hang in front of whoever is reading the Book of Tyson, so the walk
+ * draws them at the camera — that is the ability, and it is why they exist. A
+ * *posed* beast has to be somewhere a visitor can walk up to and aim at, so
+ * declaring one of those two as a guardian beast's silhouette produces an
+ * animal glued to the visitor's face on every deck of the ship, which is what
+ * it did until this list existed.
+ *
+ * `scripts/silhouettes.test.ts` keeps it honest: it reads which kinds the scene
+ * positions from the camera and asserts none of them is in here.
+ */
+export const POSED_SILHOUETTES = [
+  'owl',
+  'fish',
+  'insect',
+  'medusa',
+  'chimera',
+  'monster',
+  'toad',
+  'wheel',
+  'centipede',
+  'mouths',
+  'sprite',
+  'dragon',
+  'ghost',
+  'cat',
+] as const
+
+/**
+ * The Guardian Spirit Beast a prince carries.
+ *
+ * Declared rather than derived, because deriving it from `abilities.json` is
+ * wrong in both directions: Woble's beast has no catalogued technique, and a
+ * catalogued technique is the beast's *ability* rather than proof of where the
+ * animal stands. `sourceChapterId` is what makes it a fact and not a
+ * decoration — see the `guardian-beast` invariant.
+ */
+const guardianBeastSchema = z
+  .object({
+    silhouette: z.enum(POSED_SILHOUETTES),
+    sourceChapterId: chapterRef,
+    /**
+     * Whose position the beast keeps, when its owner has none of their own.
+     *
+     * One prince needs it. The real Woble's whereabouts are never confirmed, so
+     * the catalogue gives that body no trajectory at all — while the beast is
+     * seen in room 1014, around the cradle of the child presented as Woble.
+     * Naming that body here is what lets the walk place the animal without
+     * either inventing a position for the prince or filing the beast under
+     * somebody it does not belong to.
+     */
+    standsWith: slug.optional(),
+    note: z.string().optional(),
+  })
+  .passthrough()
+
+/**
+ * What the archive knows of someone's Nen.
+ *
+ * The presence of the block is the load-bearing part: ADR-003 gives an aura to
+ * whoever declares one and to nobody else, so an absent block covers both "not
+ * a user" and "we do not know" without the site having to guess between them.
+ * `confirmed` exists for the users canon shows carrying aura without ever
+ * naming a category — the claim is the user, not the category.
+ */
+const nenSchema = z
+  .object({
+    type: z.string().min(1).optional(),
+    typeLabel: z.string().min(1).optional(),
+    confirmed: z.boolean().optional(),
+    overview: z.string().min(1).optional(),
+    techniques: z.array(z.string()).optional(),
+    abilityIds: z.array(slug).optional(),
+  })
+  .passthrough()
+
 const shipLocationSchema = z
   .object({
     tier: z.number().int().min(1).max(5).nullable(),
@@ -139,6 +246,10 @@ export const characterSchema = z
     firstAppearanceChapterId: chapterRef.nullable().optional(),
     canonStatus: z.string().optional(),
     shipLocation: shipLocationSchema.optional(),
+    /** Declared, and the only thing that gives a silhouette an aura. */
+    nen: nenSchema.optional(),
+    /** Declared, and the only thing that puts a beast in a prince's salon. */
+    guardianBeast: guardianBeastSchema.optional(),
     positionProvenance: positionProvenance.optional(),
     mapTrajectory: z.array(trajectoryLegSchema).optional(),
     mangaAppearances: z.array(mangaAppearanceSchema).optional(),
@@ -309,6 +420,10 @@ export type CataloguePath = keyof typeof CATALOGUE_FILES
 export type Chapter = z.infer<typeof chapterSchema>
 export type Character = z.infer<typeof characterSchema>
 export type ShipLocation = z.infer<typeof shipLocationSchema>
+export type GuardianBeast = z.infer<typeof guardianBeastSchema>
+export type NenDeclaration = z.infer<typeof nenSchema>
+export type NenSilhouette = (typeof NEN_CREATURE_SILHOUETTES)[number]
+export type PosedSilhouette = (typeof POSED_SILHOUETTES)[number]
 export type TrajectoryLeg = z.infer<typeof trajectoryLegSchema>
 export type MangaAppearance = z.infer<typeof mangaAppearanceSchema>
 export type AppearanceStatus = (typeof APPEARANCE_STATUSES)[number]

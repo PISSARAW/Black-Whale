@@ -207,6 +207,86 @@ describe('spoiler-coverage', () => {
   })
 })
 
+describe('trajectories-reach-the-ship', () => {
+  it('refuses a leg the blueprint has no room under', () => {
+    const found = run('trajectories-reach-the-ship', (copy) => {
+      const placed = copy.characters.find((entry) => (entry.mapTrajectory ?? []).length > 0)!
+      placed.mapTrajectory![0]!.location = 'tier-3-cineplex-projection-booth'
+    })
+    expect(found).toEqual([expect.objectContaining({ rule: 'trajectory-reaches-the-ship' })])
+  })
+
+  it('accepts a sector whose rooms are on the blueprint', () => {
+    const found = run('trajectories-reach-the-ship', (copy) => {
+      const placed = copy.characters.find((entry) => (entry.mapTrajectory ?? []).length > 0)!
+      placed.mapTrajectory![0]!.location = 'tier-3-political-ward'
+    })
+    expect(found).toEqual([])
+  })
+
+  // Aboard, room unknown: the announcers are recorded on the ship itself, and
+  // the walk answers that by drawing nobody rather than by inventing a post.
+  it('accepts the ship itself', () => {
+    const found = run('trajectories-reach-the-ship', (copy) => {
+      const placed = copy.characters.find((entry) => (entry.mapTrajectory ?? []).length > 0)!
+      placed.mapTrajectory![0]!.location = 'black-whale-1'
+    })
+    expect(found).toEqual([])
+  })
+})
+
+describe('placed-bodies-declare-a-role', () => {
+  it('refuses a placed body with no role to dress it in', () => {
+    const found = run('placed-bodies-declare-a-role', (copy) => {
+      const placed = copy.characters.find((entry) => (entry.mapTrajectory ?? []).length > 0)!
+      placed.shipLocation!.role = '  '
+    })
+    expect(found).toEqual([expect.objectContaining({ rule: 'wardrobe-input' })])
+  })
+})
+
+describe('nen-claims-say-what', () => {
+  it('refuses an aura claimed with neither a category nor a confirmation', () => {
+    const found = run('nen-claims-say-what', (copy) => {
+      const user = copy.characters.find((entry) => entry.nen?.type)!
+      user.nen = { overview: 'something about aura' }
+    })
+    expect(found).toEqual([expect.objectContaining({ rule: 'nen-claim' })])
+  })
+
+  it('accepts a confirmed user whose category canon never names', () => {
+    expect(catalogue!.characters.find((entry) => entry.id === 'babimyna')?.nen).toMatchObject({
+      confirmed: true,
+    })
+    expect(run('nen-claims-say-what', () => {})).toEqual([])
+  })
+})
+
+describe('guardian-beasts-are-sourced', () => {
+  it('refuses a beast sourced past the end of the arc', () => {
+    const found = run('guardian-beasts-are-sourced', (copy) => {
+      const owner = copy.characters.find((entry) => entry.guardianBeast)!
+      owner.guardianBeast!.sourceChapterId = 'ch-999'
+    })
+    expect(found).toEqual([expect.objectContaining({ rule: 'guardian-beast' })])
+  })
+
+  it('refuses a beast whose owner is nowhere and stands with nobody', () => {
+    const found = run('guardian-beasts-are-sourced', (copy) => {
+      const woble = copy.characters.find((entry) => entry.id === 'prince-woble')!
+      delete woble.guardianBeast!.standsWith
+    })
+    expect(found).toEqual([expect.objectContaining({ rule: 'guardian-beast' })])
+  })
+
+  it('accepts the real Woble standing with the child presented as Woble', () => {
+    const woble = catalogue!.characters.find((entry) => entry.id === 'prince-woble')
+    expect(woble?.mapTrajectory ?? []).toHaveLength(0)
+    expect(woble?.guardianBeast?.standsWith).toBe('oito-nephew-fake-woble')
+    expect(run('guardian-beasts-are-sourced', () => {})).toEqual([])
+  })
+})
+
 describe('what the schemas are allowed to drop', () => {
   // A closed schema is a silent data loss: zod strips whatever it does not
   // name. `occurredAt` was written closed once, and the voyage clock lost the

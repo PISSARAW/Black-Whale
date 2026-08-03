@@ -148,7 +148,6 @@ export function castApparitions(
     const plan = ship.plans.get(post.tierId)
     const space = ship.spaces.get(post.spaceId)
     if (!plan || !space) continue
-    const { aura, nen, alert } = look(post)
     found.push({
       // The same person, told apart by the level they are drawn on: one room
       // drawn twice is two things to build, and the scene keys on the id.
@@ -165,18 +164,23 @@ export function castApparitions(
       colour: AVATAR,
       stage: 0,
       hidden: false,
-      human: {
-        role: post.costume.role,
-        ...(post.costume.dress ? { dress: post.costume.dress } : {}),
-        pose: poseOf(post.costume.role),
-        identity: post.member.characterId,
-        ...(aura ? { aura } : {}),
-        ...(nen ? { nen } : {}),
-        ...(alert ? { alert } : {}),
-      },
+      human: drawnAs(post, look(post)),
     })
   }
   return found
+}
+
+/** How one body is drawn: its costume, its bearing, and the aura it carries. */
+function drawnAs(post: Post, look: CastLook): NonNullable<Apparition['human']> {
+  return {
+    role: post.costume.role,
+    ...(post.costume.dress ? { dress: post.costume.dress } : {}),
+    pose: poseOf(post.costume.role),
+    identity: post.member.characterId,
+    ...(look.aura ? { aura: look.aura } : {}),
+    ...(look.nen ? { nen: look.nen } : {}),
+    ...(look.alert ? { alert: look.alert } : {}),
+  }
 }
 
 /** Who is standing in one room, for the readouts and for the conduct. */

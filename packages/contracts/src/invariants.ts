@@ -1,3 +1,4 @@
+import { INHABITANT_INVARIANTS } from './inhabitants.js'
 import type { Blueprint } from './schemas.js'
 import type { Catalogue, Finding } from './types.js'
 
@@ -429,6 +430,10 @@ export const INVARIANTS: ReadonlyArray<{ name: string; run: Invariant }> = [
   { name: 'structures-fit-their-space', run: structuresFitTheirSpace },
   { name: 'spoiler-coverage', run: spoilerCoverage },
   { name: 'ship-meets-the-catalogue', run: shipMeetsTheCatalogue },
+  // The rules the inhabited walk rests on. Kept in a file of their own so this
+  // one stays under the 500 lines ADR-002 allows, and appended here so there is
+  // still one list canon-lint runs.
+  ...INHABITANT_INVARIANTS,
 ]
 
 export type { Blueprint }

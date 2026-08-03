@@ -90,6 +90,7 @@
   import { SEALED_DENSITY, fogDensityOf, reverbTime, settleDensity } from '$lib/tour/atmosphere'
   import { disturbDust, driftDust, type Dust } from '$lib/tour/dust'
   import { distanceToBoundary } from '$lib/tour/geometry'
+  import { footingOf } from '$lib/tour/footing'
   import {
     enterDeck,
     enterRoom,
@@ -4237,7 +4238,14 @@
         const paces = stepsIn(travelledOnFoot)
         if (paces !== lastPace) {
           lastPace = paces
-          footstep(paces, { running })
+          // Timbred by the floor of the room being crossed, which is derived from
+          // what the room is for and how high up it is: the walk goes quiet
+          // stepping onto the carpet of a stateroom and rattles on the grating
+          // over the springs, without either being written down anywhere.
+          footstep(paces, {
+            running,
+            floor: standing ? footingOf(standing.category, plan.tier.elevation) : undefined,
+          })
         }
 
         // Worn, not held at the eye: thirty centimetres to the left of the

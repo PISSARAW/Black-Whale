@@ -8,6 +8,7 @@ import {
   impulseResponse,
   slapDelay,
 } from '$lib/tour/atmosphere'
+import { PLATE, type Footing } from '$lib/tour/footing'
 
 /**
  * The sound of the walk: footsteps, the room answering them, and the hull under
@@ -328,28 +329,32 @@ export function nearWall(wallDistance: number) {
 }
 
 /**
- * One footstep.
+ * One footstep, timbred by what it lands on.
  *
- * A boot on steel plate is a broadband transient with a short pitched ring after
- * it: the noise burst through a bandpass is the sole hitting the plate, the low
- * sine is the plate itself. Both are two hundred milliseconds of envelope, and
- * both go into the room, which is where all the character of it comes from — the
- * same step in the hold and in a cabin is unmistakably two different sounds.
+ * A boot on a floor is a broadband transient with a short pitched ring after it:
+ * the noise burst through a bandpass is the sole striking the surface, the low
+ * sine is the surface itself answering. Both go into the room, which is where the
+ * *size* of it comes from — the same step in the hold and in a cabin is
+ * unmistakably two different sounds — and `footing` is where the *material* comes
+ * from, which until now the walk had no way of saying at all.
  *
  * `index` is the number of the pace, from `stepsIn`. Alternate paces are the
  * other foot, and are pitched and weighted a shade differently, because a walk
- * of identical clicks is heard as a machine.
+ * of identical clicks is heard as a machine. `floor` is what the deck is made of
+ * under this room — see `$lib/tour/footing`, which derives it — and defaults to
+ * bare plate, which is the ship as built and most of what is on it.
  */
-export function footstep(index: number, options: { running?: boolean } = {}) {
+export function footstep(index: number, options: { running?: boolean; floor?: Footing } = {}) {
   const g = graph
   if (!g) return
   const { context } = g
   if (context.state === 'suspended') return
 
+  const floor = options.floor ?? PLATE
   const at = context.currentTime + 0.005
   const other = index % 2 === 1
   const force = options.running ? 1 : 0.55
-  const level = force * (other ? 0.85 : 1)
+  const level = force * (other ? 0.85 : 1) * floor.level
 
   const burst = context.createBufferSource()
   burst.buffer = g.grit
@@ -358,36 +363,39 @@ export function footstep(index: number, options: { running?: boolean } = {}) {
 
   const band = context.createBiquadFilter()
   band.type = 'bandpass'
-  band.frequency.value = other ? 1900 : 2300
-  band.Q.value = 0.9
+  // The two feet a little either side of the floor's own band: the same pair of
+  // boots, not two floors.
+  band.frequency.value = floor.band * (other ? 0.92 : 1.08)
+  band.Q.value = floor.q
 
   const envelope = context.createGain()
   envelope.gain.setValueAtTime(0.0001, at)
-  envelope.gain.exponentialRampToValueAtTime(0.28 * level, at + 0.006)
-  envelope.gain.exponentialRampToValueAtTime(0.0001, at + 0.16)
+  envelope.gain.exponentialRampToValueAtTime(0.28 * level, at + floor.attack)
+  envelope.gain.exponentialRampToValueAtTime(0.0001, at + floor.attack + floor.decay)
 
   burst.connect(band)
   band.connect(envelope)
   envelope.connect(g.dry)
   envelope.connect(g.send)
-  burst.start(at, offset, 0.2)
-  burst.stop(at + 0.2)
+  const span = floor.attack + floor.decay + 0.04
+  burst.start(at, offset, span)
+  burst.stop(at + span)
 
-  // The plate under the boot. Steel rings low and briefly; a running step lands
-  // harder and rings a little lower for it.
+  // The floor under the boot. Steel rings low and briefly, stone lower and
+  // longer, carpet barely at all; a running step lands harder and drops further.
   const plate = context.createOscillator()
   plate.type = 'sine'
-  plate.frequency.setValueAtTime(other ? 96 : 104, at)
-  plate.frequency.exponentialRampToValueAtTime(58, at + 0.12)
+  plate.frequency.setValueAtTime(floor.ring * (other ? 0.92 : 1), at)
+  plate.frequency.exponentialRampToValueAtTime(floor.ring * 0.58, at + floor.decay * 0.75)
   const thud = context.createGain()
   thud.gain.setValueAtTime(0.0001, at)
-  thud.gain.exponentialRampToValueAtTime(0.16 * force, at + 0.008)
-  thud.gain.exponentialRampToValueAtTime(0.0001, at + 0.13)
+  thud.gain.exponentialRampToValueAtTime(floor.ringLevel * force, at + 0.008)
+  thud.gain.exponentialRampToValueAtTime(0.0001, at + Math.max(0.05, floor.decay * 0.85))
   plate.connect(thud)
   thud.connect(g.dry)
   thud.connect(g.send)
   plate.start(at)
-  plate.stop(at + 0.2)
+  plate.stop(at + span)
 }
 
 /**

@@ -4,6 +4,7 @@ import {
   BAR_THICKNESS,
   DOOR_WIDTH,
   PLATE_PITCH,
+  ceilingLamps,
   clipSegment,
   collinearOverlap,
   distanceToBoundary,
@@ -481,6 +482,62 @@ function onEdge(point: Vec2, polygon: Polygon): boolean {
 describe('interiorPoint', () => {
   it('lands inside a concave room rather than in its notch', () => {
     expect(pointInPolygon(interiorPoint(ell), ell)).toBe(true)
+  })
+})
+
+/**
+ * The lamps, and the one property that is not about how many there are.
+ *
+ * The grid used to be the ship's, at `(i + 0.5) * spacing` in hull coordinates,
+ * so what a room got out of it was settled by where its walls fell modulo the
+ * spacing. Ninety-three of the 318 spaces caught no cell centre at all and took
+ * a single fallback lamp — one for the 2 205 m² of the Tier 5 aft corridor — and
+ * rooms of identical shape a few metres apart came out lit differently for a
+ * reason nobody on board could see. That is what these guard: not a lamp count,
+ * which is a reading and will be adjusted, but that the count is a function of
+ * the room and not of where the room happens to stand.
+ */
+describe('ceilingLamps', () => {
+  const rect = (w: number, h: number, dx = 0, dz = 0): Polygon => [
+    [dx, dz],
+    [dx + w, dz],
+    [dx + w, dz + h],
+    [dx, dz + h],
+  ]
+
+  it('lights two rooms of a shape alike wherever either of them stands', () => {
+    const shape = rect(6, 90)
+    const count = ceilingLamps(shape, 7).length
+    // Every phase of the 7 m grid, in half-metre steps, on both axes at once.
+    for (let offset = 0; offset < 7; offset += 0.5) {
+      expect(
+        ceilingLamps(rect(6, 90, offset, offset * 1.5 - 31), 7).length,
+        `a shift of ${offset} m changed the lighting of the same room`,
+      ).toBe(count)
+    }
+  })
+
+  it('never leaves a long room on one lamp', () => {
+    // The corridors the ship's grid used to miss outright, at their own spacing.
+    expect(ceilingLamps(rect(147, 15, 3.2, -61.7), 16).length).toBeGreaterThan(6)
+    expect(ceilingLamps(rect(120, 14, -0.5, 40.25), 13).length).toBeGreaterThan(6)
+  })
+
+  it('runs a row down the middle of a corridor narrower than its own grid', () => {
+    // Four metres across on a 16 m grid: one row, on the centre line, not
+    // against a wall and not absent.
+    const corridor = rect(80, 4, 5.5, 5.5)
+    const lamps = ceilingLamps(corridor, 16)
+    expect(lamps.length).toBeGreaterThan(3)
+    for (const [, z] of lamps) expect(z).toBeCloseTo(7.5, 9)
+  })
+
+  it('keeps every lamp inside the room it lights', () => {
+    for (const polygon of [ell, rect(9, 9), rect(3, 40, -12.25, 6.5)]) {
+      for (const lamp of ceilingLamps(polygon, 7)) {
+        expect(pointInPolygon(lamp, polygon), `${lamp} is outside its room`).toBe(true)
+      }
+    }
   })
 })
 

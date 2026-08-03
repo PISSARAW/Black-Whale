@@ -1769,6 +1769,41 @@
       }
 
       /**
+       * The refractive shell a body's aura wears, shared by strength.
+       *
+       * `NenSceneAura` gives the visitor a `MeshPhysicalMaterial` for their own
+       * aura and the frame a distortion pass on top of it; the cast had neither,
+       * so an aura across the room was additive light and nothing else. This is
+       * the same statement made about somebody else's body — see `auraGlass` in
+       * `$lib/tour/humanAura` and the curve in `$lib/tour/auraRefraction`.
+       *
+       * `high` only, and for the same reason the fullscreen pass is: a
+       * transmissive material makes the renderer resolve the scene into its own
+       * buffer for every one of them, which is precisely the cost the `low`
+       * palier exists to refuse. On `low` the factory is simply absent and the
+       * figure builder draws what it always drew.
+       */
+      const glassMaterials: Record<string, import('three').Material | undefined> = {}
+      const glass = quality.auraDistortion
+        ? (worn: { ior: number; thickness: number; roughness: number }) => {
+            const key = `${worn.ior}|${worn.thickness}|${worn.roughness}`
+            const held = glassMaterials[key]
+            if (held) return held
+            const made = new THREE.MeshPhysicalMaterial({
+              transmission: 1,
+              ior: worn.ior,
+              thickness: worn.thickness,
+              roughness: worn.roughness,
+              transparent: true,
+              opacity: 1,
+              side: THREE.DoubleSide,
+            })
+            glassMaterials[key] = made
+            return made
+          }
+        : undefined
+
+      /**
        * The mark on a card, as a material.
        *
        * The panel draws the twelve faces as SVG and the table drew none of
@@ -1849,6 +1884,7 @@
         const basic = buildBasicApparition(seen, {
           THREE,
           glow,
+          ...(glass ? { glass } : {}),
           root,
           skin,
           observerGyo: effectiveNen.gyo,
@@ -4702,6 +4738,7 @@
         for (const id of Object.keys(apparitions)) dropApparition(id)
         while (leaving.length) dropLeavingCard(leaving.length - 1)
         for (const material of Object.values(glowMaterials)) material?.dispose()
+        for (const material of Object.values(glassMaterials)) material?.dispose()
         for (const material of Object.values(faceMaterials)) material?.dispose()
         for (const texture of Object.values(faceTextures)) texture?.dispose()
         portalDecks.length = 0

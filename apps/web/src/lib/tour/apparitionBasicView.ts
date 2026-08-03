@@ -2,6 +2,7 @@ import type { Group, MeshBasicMaterial, Object3D } from 'three'
 import type { Apparition } from './apparitions'
 import type { CardFace } from './morena'
 import { buildHumanFigure, type HumanFigure } from './humanFigure'
+import type { Glass } from './humanAura'
 
 type Three = typeof import('three')
 type Glow = (colour: number, opacity: number) => MeshBasicMaterial
@@ -9,6 +10,8 @@ type Glow = (colour: number, opacity: number) => MeshBasicMaterial
 export interface BasicApparitionContext {
   THREE: Three
   glow: Glow
+  /** The refractive shell an aura wears. Absent on the `low` palier. */
+  glass?: Glass
   root: Group
   skin: MeshBasicMaterial
   observerGyo?: boolean
@@ -77,10 +80,11 @@ function owl(seen: Apparition, { THREE, glow, root, skin }: BasicApparitionConte
   return { turns: head }
 }
 
-function human(seen: Apparition, { THREE, glow, root, observerGyo }: BasicApparitionContext) {
+function human(seen: Apparition, { THREE, glow, glass, root, observerGyo }: BasicApparitionContext) {
   const figure = buildHumanFigure({
     THREE,
     glow,
+    ...(glass ? { glass } : {}),
     seen: seen as Apparition & { kind: 'avatar' | 'combatant' },
     observerGyo,
   })

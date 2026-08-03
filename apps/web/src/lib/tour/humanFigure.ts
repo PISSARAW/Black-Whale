@@ -10,7 +10,7 @@ import { humanAnimation } from './humanAnimation'
 import { addMorenaDetails, addSilentMajorityCostume } from './humanCostume'
 import { humanProfile } from './humanProfiles'
 import { buildHumanHead } from './humanHead'
-import { buildHumanAura, type HumanZone } from './humanAura'
+import { buildHumanAura, type Glass, type HumanZone } from './humanAura'
 import { animateHumanAura } from './humanAuraAnimation'
 
 type Three = typeof import('three')
@@ -19,6 +19,8 @@ export type HumanLook = Apparition & { kind: 'avatar' | 'combatant' }
 export interface HumanFigureBuild {
   THREE: Three
   glow: (colour: number, opacity: number) => MeshBasicMaterial
+  /** The refractive shell an aura wears. Absent on the `low` palier. */
+  glass?: Glass
   seen: HumanLook
   observerGyo?: boolean
 }
@@ -142,6 +144,7 @@ function nenState(seen: HumanLook): NenTechniqueState<HumanZone> {
 export function buildHumanFigure({
   THREE,
   glow,
+  glass,
   seen,
   observerGyo = false,
 }: HumanFigureBuild): HumanFigure {
@@ -441,6 +444,7 @@ export function buildHumanFigure({
     THREE,
     geometry,
     glow,
+    ...(glass ? { glass } : {}),
     seen,
     nen,
     auraVisible,

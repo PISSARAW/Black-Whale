@@ -24,8 +24,17 @@ export function animateHumanAura(
     zetsuTrace,
     auraShell,
     kenMantle,
+    auraGlass,
   } = aura
   return (seconds: number) => {
+    // The shell breathes by scale and never by material. Its material is shared
+    // across every figure wearing the same bend — one upload for a deck of
+    // guards — so writing an index of refraction here would be every body on
+    // the deck pulsing in lockstep, which is the one thing a crowd never does.
+    if (auraGlass) {
+      const swell = 1 + Math.sin(seconds * 1.15) * 0.02 + Math.sin(seconds * 2.7) * 0.008
+      auraGlass.scale.set(swell, 1.5 * swell, swell)
+    }
     if (zetsuTrace) {
       const remnant = 0.985 + Math.sin(seconds * 0.8) * 0.008
       zetsuTrace.scale.set(0.72 * remnant, 1.32, 0.72 * remnant)

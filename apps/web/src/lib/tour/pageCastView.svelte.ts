@@ -14,6 +14,7 @@ import {
   castApparitions,
   distribute,
   guardianVoice,
+  hostileRooms,
   intentsFor,
   runConduct,
   type BeastVoice,
@@ -66,8 +67,12 @@ export class TourCastView {
    * separate passes.
    */
   apparitions = $derived.by<Apparition[]>(() => {
-    const { cast, visitorIn, casting } = this.options.read()
-    const situation = { visitorIn, visitorCasting: casting, hostileRooms: [] }
+    const { cast, world, visitorIn, casting } = this.options.read()
+    const situation = {
+      visitorIn,
+      visitorCasting: casting,
+      hostileRooms: hostileRooms(this.options.ship, world),
+    }
     return [
       ...castApparitions(this.options.ship, this.posts, auraReader(situation)),
       ...beastApparitions(this.options.ship, this.posts, cast.beasts),

@@ -2,7 +2,7 @@ import { prisma } from '$lib/server/db'
 import type { CatalogCharacter } from '$lib/server/data-files'
 import { buildPerspective } from '$lib/server/perspectives'
 import { readSpoilerProfile } from '$lib/server/spoiler'
-import { trimWorldStateForMap } from '$lib/server/mapPayload'
+import { trimEventsForTimeline, trimWorldStateForMap } from '$lib/server/mapPayload'
 import { timeline } from '$lib/server/timeline'
 import {
   activeFactionTypesAt,
@@ -169,7 +169,7 @@ export const load: PageServerLoad = async ({ url, cookies }) => {
   return {
     sequence,
     selectedEventIndex,
-    events,
+    events: trimEventsForTimeline(events),
     selectedPerspectiveId,
     followMode,
     selectedEventId: selectedEvent?.id || null,

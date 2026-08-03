@@ -574,8 +574,9 @@ describe('the light baked into the deck', () => {
   })
 
   it('gives a room the reconstruction invented less light than one it did not', () => {
-    // Provenance you can feel by walking rather than read off a legend: the
-    // invented parts of the ship are the parts nothing was ever drawn lighting.
+    // Provenance you can feel by walking: an invented room keeps its deck's
+    // lamps — the grid is a derivation for every room alike — but its fill is
+    // thinner, so the same hall reads a shade dimmer when nothing drew it.
     const lit = (id: string, provenance: 'plan' | 'inferred') => {
       const space = plan.spaces.find((room) => room.id === id)
       if (!space) return null
@@ -594,6 +595,11 @@ describe('the light baked into the deck', () => {
     expect(asPlanned).not.toBeNull()
     expect(asInferred).not.toBeNull()
     expect(asInferred!).toBeLessThan(asPlanned!)
+    // And no further: provenance may thin the fill, never dock the lamps.
+    // `inferredLamps: 0.22` failed this — it baked the King's own inferred
+    // corridors three times darker than sourced cabins in the hold, and the
+    // class system is the one claim the light must not invert.
+    expect(asInferred!, 'provenance reached the lamps').toBeGreaterThan(asPlanned! * 0.8)
   })
 
   it('never emits a colour a vertex attribute cannot carry', () => {
@@ -982,13 +988,10 @@ describe('the ceiling fittings', () => {
       if (!brightest) continue
 
       const full = Math.max(...lamplightOf(space, plan.tier).glow)
-      // Not merely dimmer: dimmer by the one constant the pools are dimmed by,
-      // so the lamp and the light under it cannot drift apart.
-      const dimming = space.provenance === 'inferred' ? 0.22 : 1
-      expect(brightest / full, `${group.spaceId} draws a lamp it is not lit by`).toBeCloseTo(
-        dimming,
-        5,
-      )
+      // At exactly the strength the bake used — provenance no longer docks the
+      // lamps (see `LIGHT.inferredFill`), so an invented corridor's fitting
+      // burns like its deck's, and the lamp and the light cannot drift apart.
+      expect(brightest / full, `${group.spaceId} draws a lamp it is not lit by`).toBeCloseTo(1, 5)
       if (space.provenance === 'inferred') invented++
     }
 
@@ -1242,6 +1245,105 @@ describe('the two windows', () => {
     }
   })
 
+  /**
+   * The pool, which since chantier D is an attribute rather than a colour.
+   *
+   * The point of the split is that the bake stops carrying the daylight at all:
+   * the colours of a room with a window and of the same room with the window
+   * called a canvas are now *identical*, and the whole difference between them
+   * lives in `skies`. That is what makes the bake deterministic at every hour —
+   * midnight and noon are the same buffer — and it is what the shader puts back
+   * with `colour × (1 + aSky × lift)`.
+   */
+  it('takes the daylight out of the colours and puts it in the sky share', () => {
+    for (const structure of windows) {
+      const { plan, space } = roomOf(structure)
+      const blinded = {
+        ...plan,
+        structures: plan.structures.map((entry) =>
+          entry.id === structure.id ? { ...entry, kind: 'painting' as const } : entry,
+        ),
+      }
+      const lit = buildTierMesh(plan)
+      const dark = buildTierMesh(blinded)
+      const room = lit.groups.find((entry) => entry.spaceId === space.id)!
+
+      // Everything but the solid itself, which is drawn in the colour of its
+      // own kind and is a different colour once it is called a canvas. The
+      // light on every other surface of the room has to be identical, bit for
+      // bit: the two bakes ran the same arithmetic and the window is no longer
+      // part of it.
+      const outline = structureFootprint(structure)
+      const xs = outline.map((corner) => corner[0])
+      const zs = outline.map((corner) => corner[1])
+      const inFrame = (x: number, z: number) =>
+        x > Math.min(...xs) - 0.1 &&
+        x < Math.max(...xs) + 0.1 &&
+        z > Math.min(...zs) - 0.1 &&
+        z < Math.max(...zs) + 0.1
+
+      let compared = 0
+      for (let i = room.start; i < room.start + room.count; i++) {
+        if (inFrame(lit.positions[i * 3], lit.positions[i * 3 + 2])) continue
+        compared++
+        for (let channel = 0; channel < 3; channel++) {
+          expect(
+            lit.colors[i * 3 + channel],
+            `${space.id} still bakes the sky into its colour`,
+          ).toBe(dark.colors[i * 3 + channel])
+        }
+      }
+      expect(compared, `${space.id} compared nothing`).toBeGreaterThan(100)
+
+      // And the daylight is all still there, in the attribute, on the surfaces
+      // the pane actually reaches.
+      let reached = 0
+      let strongest = 0
+      for (let i = room.start; i < room.start + room.count; i++) {
+        expect(lit.skies[i], `${space.id} has a share that is not a number`).toBeGreaterThanOrEqual(
+          0,
+        )
+        if (lit.skies[i] > 1e-6) reached++
+        strongest = Math.max(strongest, lit.skies[i])
+      }
+      expect(reached, `${space.id} takes no daylight at all`).toBeGreaterThan(0)
+      // Felt walking in, rather than a rounding error: the sky lifts the
+      // brightest of its surfaces by a good few per cent.
+      expect(strongest, `${space.id} takes daylight nobody could see`).toBeGreaterThan(0.05)
+    }
+  })
+
+  it('writes no sky share anywhere but the two rooms with a window', () => {
+    for (const [tierId, plan] of ship.plans) {
+      const mesh = buildTierMesh(plan)
+      const glazed = new Set(
+        plan.structures.filter((entry) => entry.kind === 'window').map((entry) => entry.spaceId),
+      )
+      if (!glazed.size) {
+        // Three decks of five have no opening: no attribute is made at all.
+        expect(mesh.skies.length, `${tierId} carries a sky it has no window for`).toBe(0)
+        continue
+      }
+      // Where it exists it lines up with the positions, because a room is a draw
+      // range into the deck's buffers and an attribute has to agree with them.
+      expect(mesh.skies.length).toBe(mesh.positions.length / 3)
+      for (const group of mesh.groups) {
+        if (glazed.has(group.spaceId)) continue
+        for (let i = group.start; i < group.start + group.count; i++) {
+          expect(mesh.skies[i], `${group.spaceId} takes daylight through a bulkhead`).toBe(0)
+        }
+      }
+    }
+  })
+
+  /** The reveal is a repaint, and a repaint has no light in it to share. */
+  it('writes no sky share under the reveal', () => {
+    for (const structure of windows) {
+      const { plan } = roomOf(structure)
+      expect(buildTierMesh(plan, { reveal: true }).skies.length).toBe(0)
+    }
+  })
+
   it('lights the room it stands in, and only that room', () => {
     for (const structure of windows) {
       const { plan, space } = roomOf(structure)
@@ -1277,14 +1379,16 @@ describe('the two windows', () => {
         )
       }
 
+      // And the room itself is brighter for having a window in it — which since
+      // chantier D is a claim about the share rather than about the colours,
+      // the colours of the two being identical by construction. What the shader
+      // multiplies back is `1 + aSky`, so the mean of that is the lift.
       const room = lit.groups.find((entry) => entry.spaceId === space.id)!
-      const blind = dark.groups.find((entry) => entry.spaceId === space.id)!
-      expect(
-        mean(lit, room),
-        `${space.id} is no brighter for having a window in it`,
-      ).toBeGreaterThan(mean(dark, blind))
-      // And not by a rounding error: the daylight is meant to be felt walking in.
-      expect(mean(lit, room) / mean(dark, blind)).toBeGreaterThan(1.01)
+      let lift = 0
+      for (let i = room.start; i < room.start + room.count; i++) lift += lit.skies[i]
+      lift = 1 + lift / room.count
+      // Not a rounding error: the daylight is meant to be felt walking in.
+      expect(lift, `${space.id} is no brighter for having a window in it`).toBeGreaterThan(1.01)
     }
   })
 

@@ -114,6 +114,7 @@
   import { SHAFT_PEAK, shaftAnchors, shaftStrength, type ShaftAnchor } from '$lib/tour/godRays'
   import { REFERENCE_HOUR, skyOf } from '$lib/tour/sky'
   import { applySurfaceDetail } from '$lib/tour/surfaceDetail'
+  import { applySkyPool } from '$lib/tour/skyPool'
   import { refractionAmount } from '$lib/tour/auraRefraction'
   import {
     animateVisibleScene,
@@ -859,6 +860,29 @@
       // with the tooth of a bulkhead on it is a painted panel, not a lamp.
       if (quality.surfaceDetail) applySurfaceDetail(material)
 
+      /**
+       * And the same material again for the two rooms with a window in them,
+       * with the daylight pool hung on it — see `$lib/tour/skyPool`.
+       *
+       * A second material rather than a flag on the first, because what
+       * separates them is a vertex attribute: `aSky` exists in two rooms of
+       * 314, and a program that reads it in the other 312 would be reading
+       * whatever the driver leaves in a missing attribute. The grain goes on
+       * first so the glazed rooms are the same steel as everywhere else; the
+       * pool composes with it rather than replacing its hook.
+       *
+       * `phased` is left to `material` alone on purpose: Luini's walls are
+       * about what stops the visitor, and the two rooms that go half
+       * transparent with the rest of the deck are these two — so the pool has
+       * to follow. Handled where `phased` is applied, not here.
+       */
+      const skylitMaterial = new THREE.MeshLambertMaterial({
+        vertexColors: true,
+        side: THREE.FrontSide,
+      })
+      if (quality.surfaceDetail) applySurfaceDetail(skylitMaterial)
+      const skyPool = applySkyPool(skylitMaterial)
+
       // The gold outline the deck plans are drawn in, carried into three
       // dimensions: without it the decks read as one unbroken surface.
       const edgeMaterial = new THREE.LineBasicMaterial({
@@ -929,6 +953,10 @@
       })
       const reference = skyOf(REFERENCE_HOUR)
       paneMaterial.color.setRGB(reference.glow[0], reference.glow[1], reference.glow[2])
+      // The glass and the pool it throws start at the same state, which is the
+      // walk as it was rendered before the hour existed. Chantier E moves the
+      // two of them together, off one number.
+      skyPool.uSkyGlow.value = [reference.glow[0], reference.glow[1], reference.glow[2]]
 
       /**
        * The dust of the ten great voids.
@@ -1070,6 +1098,7 @@
         seam: seamMaterial,
         fitting: fittingMaterial,
         pane: paneMaterial,
+        skylit: skylitMaterial,
         dust: dustMaterial,
       })
 
@@ -1374,10 +1403,16 @@
       function syncPhasing() {
         if (world.phasing === phased) return
         phased = world.phasing
-        material.transparent = phased
-        material.opacity = phased ? 0.42 : 1
-        material.depthWrite = !phased
-        material.needsUpdate = true
+        // Both surface materials, because the two rooms with a window in them
+        // are steel like the rest of the deck: a hull that goes half
+        // transparent everywhere except the observation deck would be saying
+        // the bay is a different kind of wall, which it is not.
+        for (const steel of [material, skylitMaterial]) {
+          steel.transparent = phased
+          steel.opacity = phased ? 0.42 : 1
+          steel.depthWrite = !phased
+          steel.needsUpdate = true
+        }
         edgeMaterial.opacity = phased ? 0.7 : 0.32
       }
 
@@ -4642,6 +4677,8 @@
         edgeMaterial.dispose()
         seamMaterial.dispose()
         material.dispose()
+        skylitMaterial.dispose()
+        paneMaterial.dispose()
         disposeSceneRuntime(runtime)
       }
 

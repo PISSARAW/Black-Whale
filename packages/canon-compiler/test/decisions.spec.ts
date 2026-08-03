@@ -220,6 +220,7 @@ describe('legs the event log cannot separate', () => {
   const leg = (index: number, fromEventId: string): Parameters<typeof dropZeroWidthLegs>[0][0] => ({
     index,
     locationId: `location-${index}`,
+    locationType: 'ROOM',
     fromEventId,
     untilEventId: null,
     certainty: 'CONFIRMED',

@@ -163,7 +163,11 @@ export default tseslint.config(
   {
     // Seed, backfill and migration scripts are operator tools: they log by
     // design and run outside the type-checked build.
-    files: ['packages/database/**/*.{ts,mjs}', 'scripts/**/*.{ts,mjs}'],
+    files: [
+      'packages/database/**/*.{ts,mjs}',
+      'packages/canon-compiler/src/cli/**/*.ts',
+      'scripts/**/*.{ts,mjs}',
+    ],
     rules: {
       'no-console': 'off',
       '@typescript-eslint/no-explicit-any': 'off',

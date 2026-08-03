@@ -59,6 +59,8 @@ export function planTrajectory(legs: readonly TrajectoryLeg[]): PlannedLeg[] {
 export interface ResolvedLeg {
   index: number
   locationId: string
+  /** Carried from the resolved row: precision depends on the kind of place. */
+  locationType: string
   fromEventId: string
   untilEventId: string | null
   certainty: Certainty

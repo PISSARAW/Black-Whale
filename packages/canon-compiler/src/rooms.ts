@@ -155,8 +155,10 @@ export function precisionFor(locationType: string): Precision {
   return 'ZONE'
 }
 
+export type LocationKind = 'SHIP' | 'TIER' | 'ZONE' | 'ROOM' | 'CORRIDOR' | 'UNKNOWN'
+
 /** The `zoneType` a location declares, as the database's location kind. */
-const LOCATION_TYPE_BY_ZONE: Readonly<Record<string, string>> = {
+const LOCATION_TYPE_BY_ZONE: Readonly<Record<string, LocationKind>> = {
   ship: 'SHIP',
   tier: 'TIER',
   public: 'ZONE',
@@ -176,6 +178,6 @@ const LOCATION_TYPE_BY_ZONE: Readonly<Record<string, string>> = {
   ceremonial: 'ZONE',
 }
 
-export function locationType(zoneType: string | null | undefined): string {
+export function locationType(zoneType: string | null | undefined): LocationKind {
   return LOCATION_TYPE_BY_ZONE[String(zoneType ?? '').toLowerCase()] ?? 'UNKNOWN'
 }

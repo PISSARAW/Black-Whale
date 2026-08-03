@@ -434,7 +434,21 @@ les 82 et reste l'autorité de sa langue. La CI refuse un registre périmé
 module sans `site`, deux hatsu partageant un `kind`. `hatsuRegistry.ts` passe de
 1 478 à 429 lignes et sort de la dette `max-lines`.
 
-**Reste à faire.** Générer les squelettes i18n ; faire consommer
+**Étape 2 — l'i18n hatsu ne redéclare plus le catalogue (fait).** `hatsu-fr.ts`
+est typé `Record<HatsuId, HatsuTextOverride>`, `HatsuId` étant émis par le
+compilateur : un hatsu ajouté sans texte français, ou une traduction laissée
+derrière une suppression, est une erreur de type et non une page qui retombe en
+silence sur l'anglais. `compile:hatsu --skeleton` imprime les entrées
+manquantes, texte anglais compris, à coller et traduire. Les 81 `owner`
+français ont été supprimés : aucun n'était une traduction — 26 recopiaient le
+canon, 42 le raccourcissaient, 14 le remplaçaient par une description — et ils
+faisaient dire aux deux langues des propriétaires différents pour la même
+capacité. Le champ survit en optionnel pour le seul cas qui a quelque chose à
+traduire : un propriétaire que le catalogue nomme par description
+(`silent-majority`). `hatsu-status/{en,fr}.ts` n'était pas concerné : ce sont
+des messages d'exécution, déjà tenus en parité par `typeof hatsuStatusEn`.
+
+**Reste à faire.** Faire consommer
 l'`interactionManifest` par les rendus DOM et 3D ; remonter les
 `arenaDefinition` en dur (`lib/arena/hatsu/`) et la couche `lib/hunt/nen/` dans
 les manifests ; porter les tests comportementaux du tour en tests du moteur.

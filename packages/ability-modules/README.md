@@ -39,6 +39,16 @@ lisent le sélecteur, le HUD du tour, l'arène et la traque. Il est commité pou
 rester lisible en diff, et la CI (`check:hatsu`) refuse un dépôt où il n'est
 plus ce que le compilateur écrirait.
 
+La traduction suit : `hatsu-fr.ts` est typé `Record<HatsuId, …>`, donc un hatsu
+sans texte français ne compile pas. Pour obtenir l'entrée à coller et traduire :
+
+```sh
+pnpm --filter @black-whale/canon-compiler compile:hatsu:dev --skeleton
+```
+
+Elle ne propose pas de `owner` : un nom propre n'est pas une traduction, et les
+deux langues lisent le nom canonique du catalogue.
+
 Restent deux tables à compléter dans `apps/web/src/lib/nen/hatsuRegistry.ts` :
 l'impact du hatsu sur la page et sa signature visuelle. Elles sont typées
 `satisfies Record<HatsuInteractionKind, …>`, donc un `kind` nouveau y ouvre un

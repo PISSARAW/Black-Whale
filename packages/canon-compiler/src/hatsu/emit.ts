@@ -50,7 +50,19 @@ export async function emitHatsuProfiles(
   filepath: string,
 ): Promise<string> {
   const entries = profiles.map(renderProfile).join('\n')
+  const ids = profiles.map((profile) => `  | ${literal(profile.id)}`).join('\n')
   const source = `${HEADER}
+/**
+ * Every ability the site casts, as a type.
+ *
+ * A locale catalogue keyed by \`HatsuId\` is exhaustive or it does not compile:
+ * a hatsu added without its French text, or a translation left behind by a
+ * removal, is a type error rather than a page that quietly falls back to
+ * English. \`compile:hatsu --skeleton\` writes the missing entries out.
+ */
+export type HatsuId =
+${ids}
+
 export const HATSU_PROFILES: HatsuProfile[] = [
 ${entries}
 ]

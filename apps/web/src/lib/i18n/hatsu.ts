@@ -1,14 +1,21 @@
 import type { HatsuInteractionKind, HatsuProfile } from '$lib/nen/hatsuRegistry'
 import { visualSignatureFor } from '$lib/nen/hatsuRegistry'
 import { DEFAULT_LOCALE, type Locale } from './config'
-import { hatsuFr, hatsuManifestationFr } from './messages/hatsu-fr'
+import { hatsuFr, hatsuManifestationFr, type HatsuTextOverride } from './messages/hatsu-fr'
 
 /**
  * The Hatsu registry is written in English and audited there; the other locales
  * overlay their text on it, keyed by id. Anything not structural — the id, the
  * kind, the colour — is what gets replaced.
  */
-const OVERLAYS: Partial<Record<Locale, typeof hatsuFr>> = { fr: hatsuFr }
+/**
+ * Widened to a plain string key on purpose. `hatsuFr` is exhaustive where it is
+ * declared — that is what `Record<HatsuId, …>` buys — but a profile arriving
+ * here is only ever *looked up*, and callers legitimately hand over ids the
+ * type does not know: a synthetic profile in a test, an id read from
+ * sessionStorage. A miss falls back to English, which is the right answer.
+ */
+const OVERLAYS: Partial<Record<Locale, Record<string, HatsuTextOverride>>> = { fr: hatsuFr }
 const MANIFESTATIONS: Partial<Record<Locale, Record<HatsuInteractionKind, string>>> = {
   fr: hatsuManifestationFr,
 }

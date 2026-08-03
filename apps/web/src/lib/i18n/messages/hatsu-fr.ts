@@ -1,4 +1,5 @@
 import type { HatsuInteractionKind } from '$lib/nen/hatsuRegistry'
+import type { HatsuId } from '$lib/nen/hatsuProfiles.gen'
 
 /**
  * The French rendering of the Hatsu registry.
@@ -27,17 +28,29 @@ import type { HatsuInteractionKind } from '$lib/nen/hatsuRegistry'
  */
 export interface HatsuTextOverride {
   name: string
-  owner: string
   action: string
   instruction: string
   rule: string
   cost: string
+  /**
+   * Only where the owner's canonical name is a *description* rather than a
+   * proper noun, and so has something to translate. A name is a name in both
+   * languages: the eighty-one entries that used to repeat one here said
+   * "Hisoka" where `data/characters/characters.json` says "Hisoka Morrow",
+   * which made the French page disagree with the English one about who owns
+   * what. The compiler now supplies the canonical name to both.
+   */
+  owner?: string
 }
 
-export const hatsuFr: Record<string, HatsuTextOverride> = {
+/**
+ * Keyed by `HatsuId`, so it is exhaustive or it does not compile. Run
+ * `pnpm --filter @black-whale/canon-compiler compile:hatsu:dev --skeleton`
+ * to print the entries a new ability is missing.
+ */
+export const hatsuFr: Record<HatsuId, HatsuTextOverride> = {
   'bungee-gum': {
     name: 'Bungee Gum',
-    owner: 'Hisoka',
     action: 'Attacher le premier filament',
     instruction:
       'Reliez les personnages de la carte à portée d’émission ; recliquez une cible reliée pour rétracter tous les filaments vers le premier point d’ancrage.',
@@ -46,7 +59,6 @@ export const hatsuFr: Record<string, HatsuTextOverride> = {
   },
   'texture-surprise': {
     name: 'Texture Surprise',
-    owner: 'Hisoka',
     action: 'Choisir une surface à falsifier',
     instruction:
       'Cliquez plusieurs fois sur une surface plane de la page pour faire défiler des textures truquées de papier, de métal, de peau et de camouflage, sans changer sa fonction.',
@@ -55,7 +67,6 @@ export const hatsuFr: Record<string, HatsuTextOverride> = {
   },
   'emperor-time': {
     name: 'Emperor Time',
-    owner: 'Kurapika',
     action: 'Agir à pleine efficacité',
     instruction:
       'Balayez une section entière à 100 % d’efficacité dans toutes les catégories à la fois ; chaque activation coûte trois heures de vie de plus sur la session.',
@@ -64,7 +75,6 @@ export const hatsuFr: Record<string, HatsuTextOverride> = {
   },
   'steal-chain': {
     name: 'Steal Chain',
-    owner: 'Kurapika',
     action: 'Drainer le Hatsu d’une cible',
     instruction:
       'Enfoncez la seringue dans un personnage de la carte pour drainer son aura, le maintenir en Zetsu et conserver l’un de ses Hatsu répertoriés.',
@@ -73,7 +83,6 @@ export const hatsuFr: Record<string, HatsuTextOverride> = {
   },
   'chain-jail': {
     name: 'Chaîne-prison',
-    owner: 'Kurapika',
     action: 'Choisir une Araignée',
     instruction:
       'Entravez un membre de la Brigade fantôme en Zetsu forcé ; sélectionner quelqu’un d’autre viole le vœu fatal et met immédiatement fin au Hatsu.',
@@ -82,7 +91,6 @@ export const hatsuFr: Record<string, HatsuTextOverride> = {
   },
   'dowsing-chain': {
     name: 'Chaîne de divination',
-    owner: 'Kurapika',
     action: 'Sonder une cible',
     instruction:
       'Déplacez le pendule pour repérer les commandes proches, puis cliquez un texte ou une section pour tester son signal, entre incertitude et tromperie.',
@@ -91,7 +99,6 @@ export const hatsuFr: Record<string, HatsuTextOverride> = {
   },
   'benjamin-aura': {
     name: 'Manipulation d’aura',
-    owner: 'Benjamin',
     action: 'Renforcer par le Ren',
     instruction:
       'Cliquez plusieurs fois une cible pour empiler jusqu’à cinq couches de Ren ; la cinquième déborde le manteau d’aura sur tout ce qui l’entoure.',
@@ -100,7 +107,6 @@ export const hatsuFr: Record<string, HatsuTextOverride> = {
   },
   erigeron: {
     name: 'Erigeron',
-    owner: 'Bill',
     action: 'Accélérer la croissance',
     instruction:
       'Cliquez des cibles pour accélérer leur croissance ; la vie ordinaire de la page germe vite, tandis que le Nen des personnages ne progresse que par petits paliers.',
@@ -109,7 +115,6 @@ export const hatsuFr: Record<string, HatsuTextOverride> = {
   },
   'kurton-vehicle-transformation': {
     name: 'Transformation en véhicule',
-    owner: 'Kurton',
     action: 'Embarquer un passager',
     instruction:
       'Embarquez jusqu’à cinq passagers de la page, puis recliquez l’un d’eux pour lancer tout le convoi sur leur aura commune.',
@@ -118,7 +123,6 @@ export const hatsuFr: Record<string, HatsuTextOverride> = {
   },
   'little-eye': {
     name: 'Little Eye',
-    owner: 'Sayird',
     action: 'Piloter l’insecte',
     instruction:
       'Posez la sphère sur un hôte, puis pilotez l’insecte de pièce en pièce ; visez la pièce où il est pour le rappeler. R change ses ordres (Piloté, Reconnaissance, Filmer) : en reconnaissance il prend une porte tout seul, et en mode Filmer viser sa pièce l’enregistre au lieu de le rappeler.',
@@ -127,7 +131,6 @@ export const hatsuFr: Record<string, HatsuTextOverride> = {
   },
   'cross-game': {
     name: 'Cross Game',
-    owner: 'Mizaistom',
     action: 'Présenter la carte bleue',
     instruction:
       'Cliquez une cible via l’admission bleue, le contrôle jaune, l’entrave jaune inversée — qui se dissipe — puis le renvoi rouge.',
@@ -136,7 +139,6 @@ export const hatsuFr: Record<string, HatsuTextOverride> = {
   },
   'beyond-sacrificial-curse': {
     name: 'Malédiction sacrificielle',
-    owner: 'Beyond',
     action: 'Marquer la victime visée',
     instruction:
       'Choisissez la victime lointaine ; le sacrifié est choisi avec elle parmi les siens, puis dissimulé — utilisez le Gyo pour trouver la marque avant de la dépenser.',
@@ -145,7 +147,6 @@ export const hatsuFr: Record<string, HatsuTextOverride> = {
   },
   'benjamin-baton': {
     name: 'Benjamin Baton',
-    owner: 'Benjamin',
     action: 'Identifier un soldat éligible',
     instruction:
       'Sélectionnez sur la carte des soldats loyaux décédés pour éveiller les étoiles de la paume et activer leurs Hatsu répertoriés depuis le panneau d’héritage.',
@@ -154,7 +155,6 @@ export const hatsuFr: Record<string, HatsuTextOverride> = {
   },
   'air-blow': {
     name: 'Air Blow',
-    owner: 'Benjamin / Vincent',
     action: 'Tirer le souffle de la paume',
     instruction:
       'Cliquez un élément à n’importe quelle distance pour lui retirer les protections qu’une autre technique y a posées ; rien n’est déplacé, rien n’est touché.',
@@ -163,7 +163,6 @@ export const hatsuFr: Record<string, HatsuTextOverride> = {
   },
   'secret-window': {
     name: 'Secret Window',
-    owner: 'Benjamin / Musse',
     action: 'Attacher la chouette',
     instruction:
       'Attachez une chouette à un personnage de la carte pour garder un flux en direct et révéler les déplacements ou la mort consignés au chapitre suivant. Appuyez sur R pour choisir le hibou envoyé : libre dans le vaisseau, sur votre épaule, ou lâché sans visée.',
@@ -172,7 +171,6 @@ export const hatsuFr: Record<string, HatsuTextOverride> = {
   },
   culdcept: {
     name: 'Culdcept',
-    owner: 'Benjamin / Shikaku',
     action: 'Acquérir un pouvoir de Nen',
     instruction:
       'Cliquez un utilisateur de Nen, maintenez le rectangle d’aura pendant sa charge, puis activez le pouvoir acquis depuis sa carte Culdcept.',
@@ -181,7 +179,6 @@ export const hatsuFr: Record<string, HatsuTextOverride> = {
   },
   'parallel-future': {
     name: 'Parallel Future',
-    owner: 'Tserriednich',
     action: 'Entrer dans le futur à dix secondes',
     instruction:
       'Observez pendant dix secondes les corps du chapitre suivant et cliquez les actions possibles pour laisser des rémanences prédites tout en choisissant une réalité divergente.',
@@ -190,7 +187,6 @@ export const hatsuFr: Record<string, HatsuTextOverride> = {
   },
   'grimmel-the-dissonance': {
     name: 'Grimmel the Dissonance',
-    owner: 'Halkenburg',
     action: 'Rassembler la volonté collective',
     instruction:
       'Matérialisez l’arc, puis frappez un personnage ; un porteur marqué est désigné et les deux corps visibles échangent leur position et leur point de vue.',
@@ -199,7 +195,6 @@ export const hatsuFr: Record<string, HatsuTextOverride> = {
   },
   'without-you': {
     name: 'Without You',
-    owner: 'Kacho',
     action: 'Commander la jumelle',
     instruction:
       'La gardienne mémorise cinq interactions, intercepte un événement mortel détecté et peut rejouer la trace mémorisée qu’elle protège. Appuyez sur R pour changer de mode (Suivre, Balade, Éclaireur).',
@@ -208,7 +203,6 @@ export const hatsuFr: Record<string, HatsuTextOverride> = {
   },
   'magical-worm': {
     name: 'Magical Worm',
-    owner: 'Fugetsu',
     action: 'Poser la porte de départ',
     instruction:
       'Faites un clic droit sur deux états de la carte pour poser la porte de départ et la porte de retour ; chaque traversée restaure l’URL, le pont et le zoom, mais l’usage répété épuise le site.',
@@ -217,7 +211,6 @@ export const hatsuFr: Record<string, HatsuTextOverride> = {
   },
   'cats-name': {
     name: 'Le nom du chat',
-    owner: 'Camilla',
     action: 'Désigner le tueur direct',
     instruction:
       'Cliquez le tueur direct pour simuler la mort de Camilla ; le chat post-mortem écrase ce coupable, absorbe sa vie et restaure la page.',
@@ -226,7 +219,6 @@ export const hatsuFr: Record<string, HatsuTextOverride> = {
   },
   'great-haiku': {
     name: 'Great Hiker',
-    owner: 'Basho',
     action: 'Choisir le premier vers',
     instruction:
       'Sélectionnez trois fragments de texte de la page : un mot de lumière purifie ce qu’il nomme, un mot de feu le brûle, et un poème sans ni l’un ni l’autre ne fait rien.',
@@ -235,7 +227,6 @@ export const hatsuFr: Record<string, HatsuTextOverride> = {
   },
   'magical-esthetician-cookie': {
     name: 'Magical Esthetician Cookie',
-    owner: 'Biscuit',
     action: 'Choisir une section à restaurer',
     instruction:
       'Cliquez une section fatiguée pour la restaurer, tandis que Cookie ramène les filtres de chapitre, la profondeur de carte et l’avancement des événements à un état reposé.',
@@ -244,7 +235,6 @@ export const hatsuFr: Record<string, HatsuTextOverride> = {
   },
   'biscuit-body-transformation': {
     name: 'Transformation corporelle',
-    owner: 'Biscuit',
     action: 'Transformer un corps de la page',
     instruction:
       'Cliquez n’importe quelle carte pour alterner entre une forme compacte, incapable d’exposer les commandes imbriquées, et une forme complète qui les rétablit.',
@@ -253,7 +243,6 @@ export const hatsuFr: Record<string, HatsuTextOverride> = {
   },
   'battle-cantabile-prologue': {
     name: 'Battle Cantabile : Prologue',
-    owner: 'Bonolenov',
     action: 'Lancer le rythme',
     instruction:
       'Jouez le morceau au-dessus d’un élément pour invoquer sa tenue de guerrier et sa lance : il gagne en portée sur ses voisins et se couvre contre tout le reste.',
@@ -262,7 +251,6 @@ export const hatsuFr: Record<string, HatsuTextOverride> = {
   },
   'battle-cantabile-jupiter': {
     name: 'Battle Cantabile : Jupiter',
-    owner: 'Bonolenov',
     action: 'Choisir le point d’impact',
     instruction:
       'Invoquez Jupiter au-dessus d’une cible ; une fois la danse achevée, la planète la poursuit, et seule la sortie de portée de la musique permet d’y échapper.',
@@ -271,7 +259,6 @@ export const hatsuFr: Record<string, HatsuTextOverride> = {
   },
   'battle-cantabile-metamorphosen': {
     name: 'Battle Cantabile : Metamorphosen',
-    owner: 'Bonolenov',
     action: 'Choisir une forme à copier',
     instruction:
       'Passez du temps sur un modèle pour acheter du temps sous sa forme, puis transformez un autre élément ; la forme retombe d’elle-même à la fin de ce temps.',
@@ -280,7 +267,6 @@ export const hatsuFr: Record<string, HatsuTextOverride> = {
   },
   'skill-hunter': {
     name: 'Skill Hunter',
-    owner: 'Chrollo',
     action: 'Ouvrir le livre et voler une commande',
     instruction:
       'Cliquez un bouton ou un lien pour le voler dans le livre flottant ; la commande d’origine est scellée tandis que sa copie reste utilisable.',
@@ -289,7 +275,6 @@ export const hatsuFr: Record<string, HatsuTextOverride> = {
   },
   'double-face': {
     name: 'Double Face',
-    owner: 'Chrollo',
     action: 'Marquer la première section',
     instruction:
       'Marquez jusqu’à deux sections ; toutes deux restent épinglées et visibles pendant que vous parcourez le reste de la page.',
@@ -298,7 +283,6 @@ export const hatsuFr: Record<string, HatsuTextOverride> = {
   },
   'indoor-fish': {
     name: 'Indoor Fish',
-    owner: 'Chrollo',
     action: 'Lâcher les poissons en intérieur',
     instruction:
       'Cliquez le texte de la page pour laisser les poissons dévorer ses mots, tandis que la mise en page reste étrangement intacte jusqu’au Zetsu.',
@@ -307,7 +291,6 @@ export const hatsuFr: Record<string, HatsuTextOverride> = {
   },
   'fun-fun-cloth': {
     name: 'Fun Fun Cloth',
-    owner: 'Chrollo',
     action: 'Envelopper et réduire une section',
     instruction:
       'Cliquez n’importe quelle section pour la replier en un ballot tenant dans la paume ; recliquez le ballot pour la laisser ressortir en taille réelle, intacte.',
@@ -316,7 +299,6 @@ export const hatsuFr: Record<string, HatsuTextOverride> = {
   },
   'chrollo-teleportation': {
     name: 'Téléportation',
-    owner: 'Chrollo',
     action: 'Choisir la première cible',
     instruction:
       'Cliquez un élément pour le déplacer ailleurs sur la page ; vous ne choisissez pas où il atterrit et son avis n’est pas demandé.',
@@ -325,7 +307,6 @@ export const hatsuFr: Record<string, HatsuTextOverride> = {
   },
   'sun-and-moon': {
     name: 'Le Soleil et la Lune',
-    owner: 'Chrollo',
     action: 'Poser la marque du Soleil',
     instruction:
       'Marquez le Soleil, maintenez le contact pour le charger, puis marquez la Lune ; la paire n’explose qu’au contact des deux marques, et une charge complète emporte les voisins.',
@@ -334,7 +315,6 @@ export const hatsuFr: Record<string, HatsuTextOverride> = {
   },
   'order-stamp': {
     name: 'Order Stamp',
-    owner: 'Chrollo',
     action: 'Tamponner les pantins de la page',
     instruction:
       'Tamponnez jusqu’à 20 blocs inertes pourvus d’une tête ; recliquez sur un bloc marqué pour le verrouiller en rouge, et dès qu’un pantin est verrouillé le clic suivant ailleurs devient l’ordre que les verrouillés exécutent.',
@@ -343,7 +323,6 @@ export const hatsuFr: Record<string, HatsuTextOverride> = {
   },
   'convert-hands': {
     name: 'Convert Hands',
-    owner: 'Chrollo',
     action: 'Marquer la première identité',
     instruction:
       'Sélectionnez deux éléments pour échanger leur identité visible tout en conservant leurs destinations et leur comportement d’origine.',
@@ -352,7 +331,6 @@ export const hatsuFr: Record<string, HatsuTextOverride> = {
   },
   'love-dial-6700': {
     name: 'Love Dial 6700',
-    owner: 'Chrollo',
     action: 'Prendre un relevé d’affinité',
     instruction:
       'Composez depuis une zone pour savoir seulement si le partenaire idéal est à portée ; le combiné refuse ensuite jusqu’à ce que vous bougiez, et il n’a que six appels par jour.',
@@ -361,7 +339,6 @@ export const hatsuFr: Record<string, HatsuTextOverride> = {
   },
   'lovely-ghostwriter': {
     name: 'Lovely Ghostwriter',
-    owner: 'Chrollo',
     action: 'Choisir un sujet de prophétie',
     instruction:
       'Sélectionnez un sujet porteur d’un nom, d’une date et d’un type ; le premier quatrain est toujours son passé, et les liens annoncés deviennent des routes.',
@@ -370,7 +347,6 @@ export const hatsuFr: Record<string, HatsuTextOverride> = {
   },
   'gallery-fake': {
     name: 'Gallery Fake',
-    owner: 'Chrollo',
     action: 'Copier un objet visible',
     instruction:
       'Cliquez un élément de la page pour poser à côté un double inerte d’apparence parfaite : la copie ne répond à rien de ce que fait l’original.',
@@ -379,7 +355,6 @@ export const hatsuFr: Record<string, HatsuTextOverride> = {
   },
   'black-voice': {
     name: 'Black Voice',
-    owner: 'Chrollo',
     action: 'Planter une antenne',
     instruction:
       'Plantez les deux antennes dans des boutons ou des liens, puis cliquez n’importe où ; l’ordre part dans l’une des deux et ne dit jamais laquelle.',
@@ -388,7 +363,6 @@ export const hatsuFr: Record<string, HatsuTextOverride> = {
   },
   'double-machine-gun': {
     name: 'Double Machine Gun',
-    owner: 'Franklin',
     action: 'Ouvrir le feu',
     instruction:
       'Chaque clic arrose la cible et tout ce qui se tient à côté d’elle ; les constructions de Nen n’arrêtent pas les balles.',
@@ -397,7 +371,6 @@ export const hatsuFr: Record<string, HatsuTextOverride> = {
   },
   'hanzo-skill-4': {
     name: 'Technique n° 4 de Hanzo',
-    owner: 'Hanzo',
     action: 'Projeter le double',
     instruction:
       'Envoyez le double hors d’une section et il traverse tout ; toucher le corps endormi qu’il a laissé derrière lui le ramène aussitôt.',
@@ -406,7 +379,6 @@ export const hatsuFr: Record<string, HatsuTextOverride> = {
   },
   'biohazard-hinrigh': {
     name: 'Biohazard',
-    owner: 'Hinrigh',
     action: 'Animer un objet',
     instruction:
       'Cliquez un objet non vivant pour l’animer quelques secondes plus tard en lui gardant sa fonction ; dix petits corps par jour, deux grands, et l’aura est épuisée.',
@@ -415,7 +387,6 @@ export const hatsuFr: Record<string, HatsuTextOverride> = {
   },
   'illumi-needle-people': {
     name: 'Hommes-aiguilles',
-    owner: 'Illumi',
     action: 'Enfoncer une aiguille de contrôle',
     instruction:
       'Percez un élément avec une aiguille et un ordre ; il exécute cet ordre jusqu’à s’y consumer, et survit estropié.',
@@ -424,7 +395,6 @@ export const hatsuFr: Record<string, HatsuTextOverride> = {
   },
   'surveillance-paper-dolls': {
     name: 'Poupées de papier espionnes',
-    owner: 'Kalluto',
     action: 'Déployer un observateur de papier',
     instruction:
       'Attachez des poupées de papier à des sections ; elles comptent et rapportent chaque changement du DOM survenant à l’intérieur de leur cible.',
@@ -433,7 +403,6 @@ export const hatsuFr: Record<string, HatsuTextOverride> = {
   },
   'dance-of-the-serpents-bite': {
     name: 'Danse de la morsure du serpent',
-    owner: 'Kalluto',
     action: 'Commencer la danse de papier',
     instruction:
       'Le premier confetti se fiche exactement à l’endroit cliqué ; toutes les salves suivantes convergent vers cette même plaie, où que vous visiez.',
@@ -442,7 +411,6 @@ export const hatsuFr: Record<string, HatsuTextOverride> = {
   },
   'leorio-remote-punch': {
     name: 'Coup de poing à distance',
-    owner: 'Leorio',
     action: 'Choisir un impact à distance',
     instruction:
       'Frappez un élément et l’aura court le long de sa surface pour ressortir sous un autre élément de cette même surface ; frappez encore pour un autre poing.',
@@ -451,7 +419,6 @@ export const hatsuFr: Record<string, HatsuTextOverride> = {
   },
   'luini-spatial-teleportation': {
     name: 'Téléportation spatiale',
-    owner: 'Luini',
     action: 'Ouvrir la pièce cachée',
     instruction:
       'Envoyez des sections dans la pièce cachée, qui ne s’ouvre que depuis une section n’ayant qu’une seule sortie ; desceller cette section la consume définitivement.',
@@ -460,7 +427,6 @@ export const hatsuFr: Record<string, HatsuTextOverride> = {
   },
   'nen-stitches': {
     name: 'Suture au fil de Nen',
-    owner: 'Machi',
     action: 'Choisir le premier bord déchiré',
     instruction:
       'Cousez deux sections ensemble — plus le fil est court, plus la couture est solide — ou cousez une section à elle-même pour lui remettre ce qui lui a été retiré.',
@@ -469,7 +435,6 @@ export const hatsuFr: Record<string, HatsuTextOverride> = {
   },
   'melody-enchanting-music': {
     name: 'Musique envoûtante',
-    owner: 'Melody',
     action: 'Jouer la première note',
     instruction:
       'Jouez trois notes et toutes les autres sections cessent de remarquer quoi que ce soit pendant trois minutes, quel que soit leur nombre à l’écoute.',
@@ -478,7 +443,6 @@ export const hatsuFr: Record<string, HatsuTextOverride> = {
   },
   contagion: {
     name: 'Contagion',
-    owner: 'Morena',
     action: 'Créer un membre de niveau un',
     instruction:
       'Infectez un membre au niveau 0, puis dirigez-le sur des cibles : une cible ordinaire vaut 1, un personnage 10, un titre 50, un pouvoir en coûte 20 et le Membre Zéro en vaut 100.',
@@ -487,7 +451,6 @@ export const hatsuFr: Record<string, HatsuTextOverride> = {
   },
   'ripper-cyclotron': {
     name: 'Ripper Cyclotron',
-    owner: 'Phinks',
     action: 'Choisir une cible et armer le bras',
     instruction:
       'Enroulez le bras sur une cible, puis frappez-en une autre ; en dessous de quatre tours il ne se passe rien, au-delà de sept les passants sont emportés aussi.',
@@ -496,7 +459,6 @@ export const hatsuFr: Record<string, HatsuTextOverride> = {
   },
   'pain-packer': {
     name: 'Pain Packer',
-    owner: 'Feitan',
     action: 'Empaqueter un coup',
     instruction:
       'Cliquez sur ce qui fonctionne encore pour encaisser le coup : l’emballage scelle ses commandes et les garde, et rien ne revient avant que Rising Sun ne l’ouvre.',
@@ -505,7 +467,6 @@ export const hatsuFr: Record<string, HatsuTextOverride> = {
   },
   'rising-sun': {
     name: 'Rising Sun',
-    owner: 'Feitan',
     action: 'Libérer la chaleur gardée',
     instruction:
       'Cliquez là où le soleil doit se lever : son rayon vaut ce que Pain Packer avait empaqueté, et tout ce qu’il attrape est rouvert.',
@@ -514,7 +475,6 @@ export const hatsuFr: Record<string, HatsuTextOverride> = {
   },
   'rihan-predator': {
     name: 'Prédateur',
-    owner: 'Rihan',
     action: 'Commencer l’analyse d’une cible',
     instruction:
       'Consultez trois fois un même Hatsu répertorié par vous-même ; Prédateur le contre ensuite partout où il est porté, au prix de tout votre Nen pendant quarante-huit heures.',
@@ -523,7 +483,6 @@ export const hatsuFr: Record<string, HatsuTextOverride> = {
   },
   'saiyu-priest-staff': {
     name: 'Bâton du moine',
-    owner: 'Saiyu',
     action: 'Planter le bâton',
     instruction:
       'Plantez le bâton et allongez-le : chaque poussée atteint un corps de plus le long de la rangée.',
@@ -532,7 +491,6 @@ export const hatsuFr: Record<string, HatsuTextOverride> = {
   },
   'saiyu-three-monkeys': {
     name: 'Les Trois Singes',
-    owner: 'Saiyu',
     action: 'Sceller la vue',
     instruction:
       'Chaque clic scelle la vue, puis l’ouïe, puis la parole sur tout le site ; le quatrième libère les trois sens.',
@@ -541,7 +499,6 @@ export const hatsuFr: Record<string, HatsuTextOverride> = {
   },
   blinky: {
     name: 'Blinky',
-    owner: 'Shizuku',
     action: 'Nommer quelque chose à aspirer',
     instruction:
       'Nommez et aspirez du contenu non vivant ; le Nen refuse d’entrer, ce qui révèle les pièges, et une cible vivante se voit plutôt extraire les effets étrangers qu’elle porte.',
@@ -559,7 +516,6 @@ export const hatsuFr: Record<string, HatsuTextOverride> = {
   },
   'theta-aura-projectile': {
     name: 'Projectile d’aura',
-    owner: 'Theta',
     action: 'Choisir un élève en Zetsu',
     instruction:
       'Sélectionnez une cible pour sceller son action en Zetsu ; rester parfaitement immobile trois secondes la rétablit après le tir contrôlé.',
@@ -568,7 +524,6 @@ export const hatsuFr: Record<string, HatsuTextOverride> = {
   },
   'snake-arm': {
     name: 'Bras-serpent',
-    owner: 'Gel',
     action: 'Choisir quelque chose à immobiliser',
     instruction:
       'Enroulez le bras trois fois pour le serrer — la cible est bloquée dès le deuxième tour — et un quatrième contact relâche tout d’un coup.',
@@ -577,7 +532,6 @@ export const hatsuFr: Record<string, HatsuTextOverride> = {
   },
   'bird-manipulation': {
     name: 'Manipulation des oiseaux',
-    owner: 'Cluck',
     action: 'Confier un message à la volée',
     instruction:
       'Affectez des oiseaux à des éléments de la page ; chaque pigeon rapporte un message lisible dans le panneau de livraison de la volée.',
@@ -586,7 +540,6 @@ export const hatsuFr: Record<string, HatsuTextOverride> = {
   },
   'transport-portals': {
     name: 'Portails de transport',
-    owner: 'Tokarine',
     action: 'Charger la cargaison au relais un',
     instruction:
       'Chargez des sections et faites-les avancer par trois étapes de relais visibles jusqu’à un stockage de transport récupérable, sans téléportation.',
@@ -595,7 +548,6 @@ export const hatsuFr: Record<string, HatsuTextOverride> = {
   },
   'yomotsu-hegui': {
     name: 'Yomotsu Hegui',
-    owner: 'Les démunis de Camilla',
     action: 'Choisir la cible de toute une vie',
     instruction:
       'Nommez la cible, conservez un objet qui lui est lié, puis accomplissez cinq rites sur cet objet ; la distance décide du délai et le cinquième achève l’utilisateur.',
@@ -604,7 +556,6 @@ export const hatsuFr: Record<string, HatsuTextOverride> = {
   },
   'holy-chain': {
     name: 'Chaîne sacrée',
-    owner: 'Kurapika',
     action: 'Choisir quelque chose de blessé',
     instruction:
       'Refermez une plaie en deux passages ; un contenu intact ne donne rien sur quoi la croix puisse travailler.',
@@ -613,7 +564,6 @@ export const hatsuFr: Record<string, HatsuTextOverride> = {
   },
   'judgment-chain': {
     name: 'Chaîne du jugement',
-    owner: 'Kurapika',
     action: 'Choisir le sujet du contrat',
     instruction:
       'Plantez l’enjeu dans un sujet et déclarez-lui jusqu’à deux règles ; toucher autre chose constitue la violation.',
@@ -622,7 +572,6 @@ export const hatsuFr: Record<string, HatsuTextOverride> = {
   },
   'stealth-dolphin': {
     name: 'Stealth Dolphin',
-    owner: 'Kurapika',
     action: 'Analyser un pouvoir volé',
     instruction:
       'Faites exposer ce que Steal Chain a déjà pris, puis prêtez-le à un destinataire ; le prêt est consommé en un seul usage et éveille l’aura d’un non-utilisateur.',
@@ -631,7 +580,6 @@ export const hatsuFr: Record<string, HatsuTextOverride> = {
   },
   'moonlight-act': {
     name: 'Moonlight Act',
-    owner: 'Longhi',
     action: 'Choisir le premier signataire',
     instruction:
       'Deux parties signent volontairement ; toucher l’une d’elles honore les termes et les récompense toutes deux, toucher quelqu’un d’autre est une rupture qui coûte une semaine de Zetsu.',
@@ -640,7 +588,6 @@ export const hatsuFr: Record<string, HatsuTextOverride> = {
   },
   'body-and-soul': {
     name: 'Body and Soul',
-    owner: 'Lynch',
     action: 'Interroger et frapper une cible',
     instruction:
       'Posez la question une fois et frappez ; continuez de frapper la même cible et sa propre voix développe la réponse qu’elle a déjà donnée.',
@@ -649,7 +596,6 @@ export const hatsuFr: Record<string, HatsuTextOverride> = {
   },
   'bloody-mary': {
     name: 'Bloody Mary',
-    owner: 'Zakuro',
     action: 'Libérer la première goutte de sang',
     instruction:
       'Libérez une goutte et laissez-la faire : elle rapporte ses trouvailles d’elle-même au fil des minutes suivantes, puis sèche en les emportant avec elle.',
@@ -658,7 +604,6 @@ export const hatsuFr: Record<string, HatsuTextOverride> = {
   },
   lsdf: {
     name: 'Bataille d’esprits : LSDF',
-    owner: 'Yokotani',
     action: 'Établir la juridiction de la planque',
     instruction:
       'Désignez la planque, puis postez un garde numéroté sur tout intrus qui s’y trouve : il ne peut rien faire, et rien ne peut lui être fait.',
@@ -667,7 +612,6 @@ export const hatsuFr: Record<string, HatsuTextOverride> = {
   },
   'damage-sweet-home': {
     name: 'Damage : Sweet Home',
-    owner: 'Terebellum',
     action: 'Toucher la cible protégée',
     instruction:
       'Posez d’abord la main gauche sur un destinataire ; tous les coups suivants atterrissent chez lui, et frapper le destinataire lui-même lui fait encaisser les dégâts.',
@@ -676,7 +620,6 @@ export const hatsuFr: Record<string, HatsuTextOverride> = {
   },
   'voconte-hideout-doors': {
     name: 'Portes de la planque',
-    owner: 'Voconte',
     action: 'Installer la première porte',
     instruction:
       'Armez un cadre et un cadre de retour ; entrer dans l’un fait ressortir par l’autre, passer devant ne fait rien, et les constructions de Nen ne sont pas déplacées.',
@@ -685,7 +628,6 @@ export const hatsuFr: Record<string, HatsuTextOverride> = {
   },
   'padaille-weapon-transformation': {
     name: 'Je viens te chercher',
-    owner: 'Padaille',
     action: 'Frapper avec ce que le bras est devenu',
     instruction:
       'Frappez une cible et voyez ce qu’est devenu le bras : un marteau l’enfonce dans le sol, une perceuse y perce un trou, une hache la coupe en deux.',
@@ -694,7 +636,6 @@ export const hatsuFr: Record<string, HatsuTextOverride> = {
   },
   'camilla-guardian-coercion': {
     name: 'Coercition de la bête gardienne de Camilla',
-    owner: 'Bête gardienne de Camilla',
     action: 'Sonder la première condition inconnue',
     instruction:
       'Réalisez trois contacts à condition inconnue sur une même cible ; le troisième contact capture son contrôle et permet de la commander à distance.',
@@ -703,7 +644,6 @@ export const hatsuFr: Record<string, HatsuTextOverride> = {
   },
   'zhanglei-guardian-coins': {
     name: 'Pièces de la bête gardienne',
-    owner: 'Bête gardienne de Zhang Lei',
     action: 'Frapper une pièce de valeur un',
     instruction:
       'Revenez sur le même détenteur pour multiplier la pièce par dix et finir par l’éveiller ; donner la pièce à quelqu’un d’autre la remet à 1 et efface ce qui était accumulé.',
@@ -712,7 +652,6 @@ export const hatsuFr: Record<string, HatsuTextOverride> = {
   },
   'tserriednich-guardian-lie-marks': {
     name: 'Transformation aux trois mensonges',
-    owner: 'Bête gardienne de Tserriednich',
     action: 'Détecter le premier mensonge',
     instruction:
       'La bête juge chaque réponse et ne marque que celles qu’elle lit comme des mensonges : une entaille, puis un avertissement infecté, puis quelque chose qui n’est plus soi.',
@@ -721,7 +660,6 @@ export const hatsuFr: Record<string, HatsuTextOverride> = {
   },
   'tubeppa-guardian-synthesis': {
     name: 'Synthèse pharmaceutique collaborative',
-    owner: 'Bête gardienne de Tubeppa',
     action: 'Choisir le partenaire de recherche',
     instruction:
       'Choisissez deux composants qui collaborent : deux porteurs d’itinéraires donnent un raccourci, deux porteurs de matière donnent une révélation, et une paire mal assortie donne un lot inerte.',
@@ -730,7 +668,6 @@ export const hatsuFr: Record<string, HatsuTextOverride> = {
   },
   'tyson-guardian-eye-wogs': {
     name: 'Têtards-yeux',
-    owner: 'Bête gardienne de Tyson',
     action: 'Attacher un têtard-œil à un lecteur',
     instruction:
       'Attachez un têtard-œil à un lecteur : il prélève une commande et rend du bonheur en proportion de ce qui a été lu ; demander deux fois brise le seul tabou.',
@@ -739,7 +676,6 @@ export const hatsuFr: Record<string, HatsuTextOverride> = {
   },
   'luzurus-guardian-desire-trap': {
     name: 'Piège à désir',
-    owner: 'Bête gardienne de Luzurus',
     action: 'Lire le désir de la cible',
     instruction:
       'Lisez une cible et la bête matérialise son désir en appât ; la coercition ne commence qu’une fois l’appât accepté.',
@@ -748,7 +684,6 @@ export const hatsuFr: Record<string, HatsuTextOverride> = {
   },
   'salesale-guardian-smoke': {
     name: 'Fumée d’aura diffuse',
-    owner: 'Bête gardienne de Salé-salé',
     action: 'Libérer le premier nuage de fumée',
     instruction:
       'Exposez les sections voisines de façon répétée ; les commandes converties rejoignent un panneau qui s’étend et oriente les visiteurs vers Salé-salé.',
@@ -757,7 +692,6 @@ export const hatsuFr: Record<string, HatsuTextOverride> = {
   },
   'momoze-guardian-solicitation': {
     name: '« Tu es libre ? »',
-    owner: 'Bête gardienne de Momoze',
     action: 'Demander « Tu es libre ? »',
     instruction:
       'Interrogez une cible et retouchez-la pour répondre oui ; toute cible restée sans réponse continue d’être harcelée, et un seul corps peut être occupé à la fois.',
@@ -766,7 +700,6 @@ export const hatsuFr: Record<string, HatsuTextOverride> = {
   },
   'marayam-guardian-isolation': {
     name: 'Isolement de la salle 1013',
-    owner: 'Bête gardienne de Marayam',
     action: 'Isoler la pièce protégée',
     instruction:
       'Isolez la pièce réelle, puis regardez quiconque, à l’extérieur, tente de l’atteindre et arrive dans une copie vide à la place.',

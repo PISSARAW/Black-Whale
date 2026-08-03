@@ -3344,27 +3344,12 @@ export const en = {
         unknown: 'ignores',
       } as Record<string, string>,
     },
+  },
 
-    investigation: {
-      hatsu: {
-        noGrip: 'No grip',
-        cannotEstablishInfo: (name: string) => `${name} cannot establish any information on this target.`,
-        usageDenied: 'Usage denied',
-        impossibleCost: 'Cost unaffordable',
-        corroboratedSignal: 'Corroborated signal',
-        conclusiveAnalysis: 'Conclusive analysis',
-        limitedResult: 'Limited result',
-        requiresLifeHours: (hours: number) => `This analysis requires ${hours} life hours available.`,
-        ethicalOrProceduralConditions: 'Ethical or procedural conditions forbid this usage.',
-        confirmsLimits: 'The ability confirms its own limits without producing new evidence.',
-        reinforcesInfo: 'The ability reinforces existing information without turning it into absolute truth.',
-        revealsCompatibleElements: 'The ability reveals the elements compatible with its conditions and cost.',
-      },
-    },
 
-    strategy: {
-      hatsu: {
-        canOnlyActivateInOwnZone: (name: string) => `${name} can only be activated in the zone occupied by its user.`,
+  strategy: {
+    hatsu: {
+      canOnlyActivateInOwnZone: (name: string) => `${name} can only be activated in the zone occupied by its user.`,
         requiresConfirmedHostile: (name: string) => `${name} requires a confirmed hostile presence in the targeted zone.`,
         catsNamePassive: "Cat's Name is a passive post-mortem counter and cannot receive activation orders.",
         chainJailRequiresSpider: 'Chain Jail is forbidden: no confirmed Spider in this zone.',

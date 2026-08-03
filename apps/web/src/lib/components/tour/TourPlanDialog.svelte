@@ -13,7 +13,7 @@
     spoken: string | null
     crossings: Crossing[]
     crossingLabel: (crossing: Crossing) => string
-    nameOf: (space: Space) => string
+    nameOf: (entity: any) => string
     selectLabel: (room: string) => string
     aiming: boolean
     onClose: () => void

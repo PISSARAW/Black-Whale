@@ -151,7 +151,7 @@
               : ('outdated' as const),
         isObserver: owner?.factionId === playerFactionId,
         human: true,
-        locationId: presence.locationId,
+        locationId: presence.locationId ?? '',
         locationLabel: placement.loc?.name ?? null,
       }
     })

@@ -470,8 +470,9 @@
       owed -= HUNT_DT
       const beforeTick = game
       game = updateHunt(game, world)
+      // Move immediately if we found them
       if (game.outcome === 'reached' && advanceContractZone()) {
-        playHuntCue('hatsu')
+        playHuntCue('nen')
         continue
       }
       if (!beforeTick.duel && game.duel) playHuntCue('contact')

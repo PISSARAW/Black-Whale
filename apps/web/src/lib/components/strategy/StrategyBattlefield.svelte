@@ -35,8 +35,10 @@
   let view = $state<'tour' | 'map'>('tour')
   let selectedTier = $state('tier-1')
 
-  const nameOf = (entity: { name: string; nameFr: string }) =>
-    ($locale === 'fr' ? entity.nameFr : entity.name)
+  const nameOf = (entity: any) => {
+    if (!entity) return ''
+    return $locale === 'fr' && entity.nameFr ? entity.nameFr : entity.name
+  }
 
   const tierId = $derived(navigation.tierId)
   const plan = $derived(ship.plans.get(tierId)!)

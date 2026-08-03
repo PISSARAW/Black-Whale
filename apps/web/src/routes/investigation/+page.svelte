@@ -133,7 +133,7 @@
                 <div>
                   <dt class="text-[9px] uppercase tracking-wider text-sky-500/70">{copy.difficulty}</dt>
                   <dd class="mt-1 flex gap-1">
-                    {#each Array(investigationCase.difficulty === 'hard' ? 3 : investigationCase.difficulty === 'medium' ? 2 : 1) as _}
+                    {#each Array(investigationCase.difficulty === 'advanced' ? 3 : investigationCase.difficulty === 'intermediate' ? 2 : 1) as _}
                       <span class="h-2 w-2 rounded-full bg-amber-400 shadow-[0_0_5px_#fbbf24]"></span>
                     {/each}
                   </dd>

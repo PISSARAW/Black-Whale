@@ -674,7 +674,7 @@
               {$t.infiltration.debrief}
               <span class="ml-auto font-mono text-[10px] text-slate-500">OPERATION ENDED</span>
             </p>
-            <h1 class="mt-4 text-5xl font-black tracking-tight {game.outcome === 'success' ? 'text-cyan-400 drop-shadow-[0_0_15px_rgba(34,211,238,0.4)]' : 'text-red-500 drop-shadow-[0_0_15px_rgba(239,68,68,0.4)]'}">
+            <h1 class="mt-4 text-5xl font-black tracking-tight {game.outcome === 'escaped' ? 'text-cyan-400 drop-shadow-[0_0_15px_rgba(34,211,238,0.4)]' : 'text-red-500 drop-shadow-[0_0_15px_rgba(239,68,68,0.4)]'}">
               {$t.infiltration.outcomes[game.outcome]}
             </h1>
             <div class="mt-6 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-slate-400">

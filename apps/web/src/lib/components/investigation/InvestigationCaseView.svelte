@@ -169,7 +169,10 @@
   let heading = $state(Math.PI)
   let jumpTo = $state<string | null>(initialDefinition.scene.spaceId)
 
-  const nameOf = (entity: { name: string; nameFr: string }) => ($locale === 'fr' ? entity.nameFr : entity.name)
+  const nameOf = (entity: any) => {
+    if (!entity) return ''
+    return $locale === 'fr' && entity.nameFr ? entity.nameFr : entity.name
+  }
 
   function selectTier(id: string) {
     tierId = id

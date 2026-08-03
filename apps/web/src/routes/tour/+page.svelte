@@ -436,7 +436,7 @@
             report,
             aimedAt,
             aimedSolidAt,
-            at: position,
+            at: [...position] as [number, number],
             standingIn: currentSpace?.id ?? null,
             touch,
             nameOf,

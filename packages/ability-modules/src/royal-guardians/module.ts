@@ -1,4 +1,5 @@
 import {
+  asserted,
   attributeCounter,
   auraModifier,
   buildManifest,
@@ -129,6 +130,7 @@ export const tubeppaGuardianSynthesis = defineAbility({
   actions: {
     synthesise: {
       label: 'Synthétiser',
+      evidence: shown('ch. 386 — la synthèse demande un partenaire consentant'),
       conditions: [
         requiresParameter('compound', 'Un composé est demandé'),
         declaredFlag('partnerConsented', true, 'Un partenaire collabore volontairement'),
@@ -192,8 +194,28 @@ export const tysonGuardianEyeWogs = defineAbility({
   targets: [person(), zone()],
 
   actions: {
+    'synthesise-alone': {
+      label: 'Synthétiser sans partenaire',
+      refusal: 'La capacité demande deux composants coopérants : seule, elle ne produit rien',
+      evidence: shown('ch. 386 — la coopération est la condition'),
+    },
+
+    'synthesise-an-unknown-compound': {
+      label: 'Synthétiser un composé inconnu',
+      evidence: asserted('la limite exacte des composés possibles n’est pas donnée'),
+      conditions: [requiresParameter('compound', 'Un composé est demandé')],
+      effects: [
+        effect({
+          kind: 'CUSTOM',
+          discriminator: 'synthesis-attempt',
+          attributes: (ctx) => ({ compound: param(ctx, 'compound'), outcome: 'unrevealed' }),
+        }),
+      ],
+    },
+
     'gather-readers': {
       label: 'Rassembler les lecteurs',
+      evidence: shown('ch. 386 — les lecteurs du Livre rassemblés'),
       effects: [
         spawnNenEntity({ id: 'tyson-readers', kind: 'COHORT', label: 'Lecteurs du Livre' }),
         effect({
@@ -215,6 +237,7 @@ export const tysonGuardianEyeWogs = defineAbility({
 
     attach: {
       label: 'Fixer un Eye-wog',
+      evidence: shown('ch. 386 — l’Eye-wog se fixe au lecteur'),
       conditions: [requiresTarget('Un lecteur est visé')],
       effects: [auraModifier({ levy: true, returns: 'happiness', proportionalTo: 'adherence' })],
       cost: { label: 'Aura prélevée sur le lecteur', unit: 'aura' },
@@ -222,6 +245,7 @@ export const tysonGuardianEyeWogs = defineAbility({
 
     'punish-taboo': {
       label: 'Punir la violation du tabou',
+      evidence: shown('ch. 386 — la violation du tabou est punie'),
       conditions: [effectIsLive('effectId', 'Un Eye-wog est fixé')],
       effects: [setEffectState({ state: 'TRIGGERED', attributes: { taboo: 'violated' } })],
     },
@@ -268,8 +292,21 @@ export const luzurusGuardianDesireTrap = defineAbility({
   cost: { label: 'Un désir connu et un appât accepté volontairement', unit: 'appât' },
 
   actions: {
+    'levy-without-adherence': {
+      label: 'Prélever sans adhésion',
+      refusal:
+        'Le bonheur rendu est proportionnel à l’adhésion : sans elle, il n’y a rien à prélever',
+      evidence: shown('ch. 386 — la règle énoncée avec la capacité'),
+    },
+
+    'attach-to-a-non-reader': {
+      label: 'Fixer un Eye-wog hors du Livre',
+      refusal: 'Les Eye-wogs se fixent aux lecteurs du Livre, à personne d’autre',
+    },
+
     bait: {
       label: 'Matérialiser le désir',
+      evidence: shown('ch. 386 — la Bête donne au piégé ce qu’il désire'),
       conditions: [
         requiresTarget('Une cible est appâtée'),
         requiresParameter('desire', 'Le désir de la cible est connu'),
@@ -288,6 +325,7 @@ export const luzurusGuardianDesireTrap = defineAbility({
 
     spring: {
       label: 'Refermer le piège',
+      evidence: shown('ch. 386 — le piège se referme sur le désir satisfait'),
       conditions: [
         effectIsLive('effectId', 'Un appât est en place'),
         declaredFlag('desireSatisfied', true, 'La cible a satisfait son désir'),
@@ -297,6 +335,17 @@ export const luzurusGuardianDesireTrap = defineAbility({
         controlLink({ vector: 'desire', mode: 'control', attributes: { coercionLike: true } }),
         constraint({ rules: ['La cible est piégée et partiellement contrainte.'] }),
       ],
+    },
+
+    'spring-without-the-bait-taken': {
+      label: 'Refermer le piège sans appât accepté',
+      refusal: 'La satisfaction volontaire du désir est le déclencheur : rien avant',
+      evidence: shown('ch. 386 — le piège attend que l’appât soit pris'),
+    },
+
+    'bait-an-unknown-desire': {
+      label: 'Appâter sans connaître le désir',
+      refusal: 'L’appât prend la forme du désir de la cible : il faut le connaître',
     },
 
     'count-temptation': {

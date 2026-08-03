@@ -1,4 +1,5 @@
 import {
+  asserted,
   buildManifest,
   canUseNen,
   constraint,
@@ -10,6 +11,7 @@ import {
   person,
   requiresTarget,
   setEffectState,
+  shown,
 } from '@black-whale/ability-sdk'
 
 /**
@@ -45,6 +47,7 @@ export const crossGame = defineAbility({
   actions: {
     'blue-card': {
       label: 'Carte bleue — admission',
+      evidence: shown('ch. 352 — la carte bleue admet'),
       conditions: [requiresTarget('Une personne est admise')],
       effects: [
         constraint({
@@ -56,6 +59,7 @@ export const crossGame = defineAbility({
 
     'yellow-card': {
       label: 'Carte jaune — avertissement',
+      evidence: shown('ch. 352 — l’avertissement précède toujours l’entrave'),
       conditions: [requiresTarget('Une personne est avertie')],
       effects: [
         constraint({
@@ -73,6 +77,7 @@ export const crossGame = defineAbility({
 
     restraint: {
       label: 'Contrainte',
+      evidence: shown('ch. 352 — la cible ne bouge plus, elle parle encore'),
       conditions: [
         requiresTarget('Une personne est contrainte'),
         // Canon procedure: no restraint without a prior warning.
@@ -92,6 +97,7 @@ export const crossGame = defineAbility({
 
     'red-card': {
       label: 'Carte rouge — expulsion',
+      evidence: shown('ch. 352 — la carte rouge expulse'),
       conditions: [requiresTarget('Une personne est expulsée')],
       effects: [
         constraint({
@@ -99,6 +105,29 @@ export const crossGame = defineAbility({
           attributes: { card: 'red', procedure: 'expulsion' },
         }),
       ],
+    },
+
+    'restrain-without-warning': {
+      label: 'Contraindre sans avertissement',
+      refusal: 'La procédure exige un avertissement préalable : pas de carte jaune, pas d’entrave',
+      evidence: shown('ch. 352 — l’avertissement fait partie de la capacité'),
+    },
+
+    'restrain-a-crowd': {
+      label: 'Contraindre plusieurs personnes',
+      evidence: asserted('la contrainte est brève, réitérable et vise plusieurs cibles'),
+      conditions: [requiresTarget('Des personnes sont contraintes')],
+      effects: [
+        constraint({
+          rules: ['La contrainte vise plusieurs cibles à la fois.'],
+          attributes: { card: 'yellow', scope: 'multi-target' },
+        }),
+      ],
+    },
+
+    'harm-the-restrained': {
+      label: 'Blesser la personne contrainte',
+      refusal: 'Cross Game entrave et expulse : c’est un outil judiciaire, pas une arme',
     },
 
     release: {

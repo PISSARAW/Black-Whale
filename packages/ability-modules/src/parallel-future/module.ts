@@ -9,6 +9,7 @@ import {
   numberParam,
   self,
   setEffectState,
+  shown,
 } from '@black-whale/ability-sdk'
 
 /** Canon: the vision always covers the next ten seconds. */
@@ -58,6 +59,7 @@ export const parallelFuture = defineAbility({
   actions: {
     'open-window': {
       label: 'Ouvrir la fenêtre de 10 secondes',
+      evidence: shown('ch. 393 — Zetsu, yeux fermés, dix secondes d’avance'),
       conditions: [inZetsu()],
       effects: [
         effect({
@@ -84,6 +86,7 @@ export const parallelFuture = defineAbility({
 
     hold: {
       label: 'Maintenir la vision',
+      evidence: shown('ch. 393 — la fenêtre glisse tant que le Zetsu tient'),
       conditions: [inZetsu(), effectIsLive('effectId', 'La fenêtre est ouverte')],
       effects: [
         attributeCounter({
@@ -93,8 +96,33 @@ export const parallelFuture = defineAbility({
       hint: 'La fenêtre glisse : toujours dix secondes d’avance',
     },
 
+    'act-on-the-prediction': {
+      label: 'Agir avec dix secondes d’avance',
+      // The dodge that reads as impossible: he is not faster, he already knows.
+      evidence: shown('ch. 393 — l’esquive « impossible » face à Theta'),
+      conditions: [effectIsLive('effectId', 'La fenêtre est ouverte')],
+      effects: [
+        setEffectState({
+          state: 'ACTIVE',
+          attributes: { knowsTheNextTenSeconds: true, divergesFromPrediction: true },
+        }),
+      ],
+    },
+
+    'use-nen-during-the-window': {
+      label: 'Utiliser son aura pendant la vision',
+      refusal: 'La vision demande le Zetsu : aucune aura tant que la fenêtre est ouverte',
+      evidence: shown('ch. 393 — le prix de la vision est d’être sans défense'),
+    },
+
+    'see-past-ten-seconds': {
+      label: 'Voir au-delà de dix secondes',
+      refusal: 'La fenêtre fait dix secondes, pas une de plus',
+    },
+
     conclude: {
       label: 'Conclure — le futur prédit devient réel',
+      evidence: shown('ch. 393 — les autres vivent la prédiction, lui agit autrement'),
       conditions: [effectIsLive('effectId', 'La fenêtre est ouverte')],
       effects: [
         // The merge itself is a branch operation: the module records the

@@ -5,11 +5,13 @@ import {
   defineAbility,
   effect,
   effectIsLive,
+  knowledgeGrant,
   moveEntity,
   numberParam,
   object,
   param,
   requiresParameter,
+  shown,
   spawnNenEntity,
 } from '@black-whale/ability-sdk'
 
@@ -46,6 +48,7 @@ export const zhangleiGuardianCoins = defineAbility({
   actions: {
     mint: {
       label: 'Frapper une pièce',
+      evidence: shown('ch. 395 — la pièce frappée et donnée'),
       conditions: [requiresParameter('serial', 'La pièce est identifiée')],
       effects: [
         spawnNenEntity({
@@ -70,14 +73,36 @@ export const zhangleiGuardianCoins = defineAbility({
 
     accrue: {
       label: 'Laisser mûrir',
+      evidence: shown('ch. 395 — une unité de valeur par jour'),
       conditions: [effectIsLive('effectId', 'La pièce existe')],
       effects: [
         attributeCounter({ increments: (ctx) => ({ value: numberParam(ctx, 'days') ?? 1 }) }),
       ],
     },
 
+    'trace-a-coin': {
+      label: 'Suivre une pièce',
+      // A coin is an object on the map: where it went, and through whose hands,
+      // is a thread the timeline can follow on its own.
+      evidence: shown('ch. 395+ — la pièce circule de main en main'),
+      conditions: [effectIsLive('effectId', 'La pièce existe')],
+      effects: [
+        knowledgeGrant({
+          factId: (ctx) => `coin-holder:${param(ctx, 'serial') ?? '1'}`,
+          state: 'KNOWN',
+        }),
+      ],
+    },
+
+    'keep-the-value-through-a-transfer': {
+      label: 'Transmettre la pièce sans perdre sa valeur',
+      refusal: 'Le transfert remet la valeur à zéro : c’est le prix du don',
+      evidence: shown('ch. 395 — la règle énoncée avec la capacité'),
+    },
+
     transfer: {
       label: 'Donner la pièce',
+      evidence: shown('ch. 395 — la pièce remise à Hisoka'),
       conditions: [
         effectIsLive('effectId', 'La pièce existe'),
         requiresParameter('holderId', 'Un nouveau porteur est désigné'),

@@ -6,9 +6,11 @@ import {
   defineAbility,
   effectAttributeAtLeast,
   effectIsLive,
+  knowledgeGrant,
   person,
   requiresTarget,
   setEffectState,
+  shown,
 } from '@black-whale/ability-sdk'
 
 /** Canon: the third lie is the one that transforms you. */
@@ -44,6 +46,7 @@ export const tserriednichGuardianLieMarks = defineAbility({
   actions: {
     mark: {
       label: 'Marquer un interrogé',
+      evidence: shown('ch. 391 — la marque posée sur l’interrogé'),
       conditions: [requiresTarget('Un interrogé est marqué')],
       effects: [
         curse({
@@ -66,6 +69,7 @@ export const tserriednichGuardianLieMarks = defineAbility({
 
     transform: {
       label: 'Troisième mensonge',
+      evidence: shown('ch. 391 — au troisième mensonge, la transformation'),
       conditions: [
         effectIsLive('effectId', 'Une marque est en place'),
         effectAttributeAtLeast({
@@ -75,6 +79,25 @@ export const tserriednichGuardianLieMarks = defineAbility({
         }),
       ],
       effects: [setEffectState({ state: 'TRIGGERED', attributes: { transformed: true } })],
+    },
+
+    'show-the-count-to-the-bearer': {
+      label: 'Afficher le compteur au porteur',
+      // Theta knows exactly how many she has left: the interrogation lives under
+      // that sword, and her perspective has to show it.
+      evidence: shown('ch. 391 — la porteuse sait où elle en est'),
+      conditions: [effectIsLive('effectId', 'Une marque est en place')],
+      effects: [
+        knowledgeGrant({
+          factId: (ctx) => `lie-count:${ctx.targets[0] ?? 'bearer'}`,
+          state: 'KNOWN',
+        }),
+      ],
+    },
+
+    'erase-a-mark': {
+      label: 'Effacer une marque',
+      refusal: 'Les marques s’ajoutent, elles ne se retirent pas',
     },
   },
 

@@ -11,6 +11,7 @@ import {
   requiresParameter,
   self,
   setEffectState,
+  shown,
 } from '@black-whale/ability-sdk'
 
 /**
@@ -54,6 +55,8 @@ export const catsName = defineAbility({
   actions: {
     arm: {
       label: 'Armer la contre-attaque',
+      evidence: shown('ch. 387 — la contre-attaque déjà en place, invisible'),
+      gyo: 'la malédiction dormante posée sur Camilla elle-même',
       effects: [
         // Permanent, dormant, invisible, and it must survive its own owner's
         // death — otherwise the post-mortem invariant would end it exactly when
@@ -77,6 +80,7 @@ export const catsName = defineAbility({
 
     trigger: {
       label: 'Un agresseur tue Camilla',
+      evidence: shown('ch. 387 — le meurtrier meurt, Camilla revient'),
       conditions: [
         effectIsLive('effectId', 'La contre-attaque est armée'),
         requiresParameter('killerId', 'Le meurtrier est identifié'),
@@ -92,6 +96,20 @@ export const catsName = defineAbility({
       ],
       cost: { label: 'La vie du meurtrier', unit: 'vie' },
       hint: 'Avertissement affiché en mode omniscient uniquement',
+    },
+
+    'refuse-to-kill-her': {
+      label: 'Refuser de la tuer',
+      // The canonical counter, and the reason the ability is a trap rather than
+      // an armour: whoever declines to kill her takes nothing.
+      evidence: shown('ch. 387 — la parade est de ne pas la tuer'),
+      effects: [setEffectState({ state: 'DORMANT', attributes: { defused: true } })],
+    },
+
+    'trigger-on-natural-death': {
+      label: 'Se déclencher sans meurtrier',
+      refusal: 'La contre-attaque veut un agresseur : sans meurtrier, rien ne part',
+      evidence: shown('ch. 387 — la condition énoncée avec la capacité'),
     },
   },
 

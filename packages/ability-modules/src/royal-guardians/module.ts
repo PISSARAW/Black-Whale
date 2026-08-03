@@ -17,6 +17,7 @@ import {
   requiresParameter,
   requiresTarget,
   setEffectState,
+  shown,
   spawnNenEntity,
   unrevealed,
   zone,
@@ -63,6 +64,8 @@ export const camillaGuardianCoercion = defineAbility({
   actions: {
     arm: {
       label: 'Préparer la coercition',
+      evidence: shown('ch. 386 — le gardien est là, ses conditions ne le sont pas'),
+      gyo: 'le gardien lui-même ; ce qui le déclenche reste inconnu',
       effects: [
         masked(
           effect({

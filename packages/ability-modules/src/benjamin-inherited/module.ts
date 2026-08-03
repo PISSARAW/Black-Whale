@@ -1,5 +1,6 @@
 import {
   abilityGrant,
+  asserted,
   auraModifier,
   buildManifest,
   canUseNen,
@@ -13,6 +14,7 @@ import {
   requiresTarget,
   self,
   setEffectState,
+  shown,
   unrevealed,
 } from '@black-whale/ability-sdk'
 
@@ -110,6 +112,9 @@ export const culdcept = defineAbility({
   actions: {
     capture: {
       label: 'Capturer une capacité',
+      evidence: asserted(
+        'la capacité prend une capacité en carte ; le manga n’en montre pas la réussite',
+      ),
       conditions: [
         requiresTarget('Un utilisateur est visé'),
         requiresParameter('targetAbilityId', 'La capacité visée est identifiée'),
@@ -127,8 +132,15 @@ export const culdcept = defineAbility({
       ],
     },
 
+    'capture-an-invincible-arrow': {
+      label: 'Capturer la flèche de Halkenburg',
+      refusal: 'La flèche transperce le rectangle d’aura : la carte ne se ferme pas',
+      evidence: shown('ch. 411 — l’échec, montré comme tel'),
+    },
+
     'capture-failed': {
       label: 'Capture avortée',
+      evidence: shown('ch. 411 — la capture échoue contre la flèche de Halkenburg'),
       conditions: [requiresParameter('targetAbilityId', 'La capacité visée est identifiée')],
       // The ch. 411 failure: an effect that exists only to be ended, because the
       // timeline should show the attempt.

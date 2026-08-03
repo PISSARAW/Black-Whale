@@ -14,6 +14,7 @@ import {
   param,
   person,
   requiresParameter,
+  shown,
   soleObserverOf,
   spawnNenEntity,
 } from '@black-whale/ability-sdk'
@@ -69,6 +70,7 @@ export const rihanPredator = defineAbility({
   actions: {
     analyse: {
       label: 'Analyser une capacité',
+      evidence: shown('ch. 396 — l’analyse menée seul, de bout en bout'),
       conditions: [requiresParameter('targetAbilityId', 'Une capacité cible est désignée')],
       effects: [
         effect({
@@ -92,6 +94,7 @@ export const rihanPredator = defineAbility({
 
     observe: {
       label: 'Poursuivre l’analyse',
+      evidence: shown('ch. 396 — l’analyse avance avec le temps passé sur la cible'),
       conditions: [effectIsLive('effectId', 'Une analyse est en cours')],
       effects: [
         attributeCounter({
@@ -102,6 +105,7 @@ export const rihanPredator = defineAbility({
 
     devour: {
       label: 'Lâcher la contre-mesure',
+      evidence: shown('ch. 396 — la contre-mesure lâchée sur la capacité étudiée'),
       conditions: [
         effectIsLive('effectId', 'Une analyse est en cours'),
         effectAttributeAtLeast({
@@ -125,6 +129,19 @@ export const rihanPredator = defineAbility({
           attributes: { sealHours: SEAL_HOURS, appliesTo: 'self' },
         }),
       ],
+    },
+
+    'analyse-with-help': {
+      label: 'Analyser avec l’aide d’un tiers',
+      refusal:
+        'Une information fournie par autrui rend l’analyse inopérante : la solitude est la condition',
+      evidence: shown('ch. 396 — la contrainte énoncée avec la capacité'),
+    },
+
+    'act-during-the-seal': {
+      label: 'Utiliser son Nen pendant le scellement',
+      refusal: 'Le succès coûte quarante-huit heures sans Nen : rien ne se lance pendant',
+      evidence: shown('ch. 396 — le prix du succès'),
     },
   },
 

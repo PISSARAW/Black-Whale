@@ -11,6 +11,7 @@ import {
   postMortem,
   requiresTarget,
   setEffectState,
+  shown,
 } from '@black-whale/ability-sdk'
 
 /**
@@ -46,6 +47,7 @@ export const sunAndMoon = defineAbility({
 
   actions: {
     'mark-sun': {
+      evidence: shown('ch. 371 — la marque du soleil posée au contact'),
       label: 'Poser une marque solaire',
       conditions: [requiresTarget('Une cible est marquée')],
       effects: [
@@ -63,6 +65,7 @@ export const sunAndMoon = defineAbility({
     },
 
     'mark-moon': {
+      evidence: shown('ch. 371 — la marque de la lune, l’autre moitié du piège'),
       label: 'Poser une marque lunaire',
       conditions: [requiresTarget('Une cible est marquée')],
       effects: [
@@ -80,6 +83,7 @@ export const sunAndMoon = defineAbility({
     },
 
     detonate: {
+      evidence: shown('ch. 371 — soleil et lune se rejoignent, la charge part'),
       label: 'Mise en contact',
       conditions: [effectIsLive('effectId', 'Une marque est en place')],
       effects: [
@@ -87,6 +91,25 @@ export const sunAndMoon = defineAbility({
         bodyState({ state: 'DEAD' }),
       ],
       hint: 'Requiert le contact d’une marque solaire et d’une marque lunaire',
+    },
+
+    'survive-the-book-closing': {
+      label: 'Tenir livre fermé',
+      // The post-mortem page: the marks keep working when Chrollo no longer
+      // holds the ability, which is what makes them a standing threat.
+      evidence: shown('ch. 371 — les marques posées survivent à la page rendue'),
+      effects: [setEffectState({ state: 'DORMANT', attributes: { postMortem: true } })],
+    },
+
+    'detonate-a-single-mark': {
+      label: 'Faire exploser une seule marque',
+      refusal: 'Il faut le soleil et la lune : une marque seule ne fait rien',
+      evidence: shown('ch. 371 — c’est le contact des deux qui déclenche'),
+    },
+
+    'mark-at-a-distance': {
+      label: 'Marquer à distance',
+      refusal: 'Les marques se posent par contact de la paume',
     },
   },
 

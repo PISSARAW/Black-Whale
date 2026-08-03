@@ -13,6 +13,7 @@ import {
   requiresParameter,
   requiresTarget,
   setEffectState,
+  shown,
   withinMinutes,
 } from '@black-whale/ability-sdk'
 
@@ -64,6 +65,7 @@ export const skillHunter = defineAbility({
   actions: {
     steal: {
       label: 'Voler une capacité',
+      evidence: shown('ch. 106 — les quatre conditions, en moins d’une heure'),
       conditions: [
         requiresTarget('Une victime est au contact'),
         requiresParameter('targetAbilityId', 'La capacité volée est identifiée'),
@@ -92,6 +94,7 @@ export const skillHunter = defineAbility({
 
     'creator-died': {
       label: 'Le créateur est mort',
+      evidence: shown('ch. 371 — Gallery Fake s’éteint avec Kortopi'),
       conditions: [effectIsLive('effectId', 'La page existe encore')],
       // A page whose creator died stops working — unless it was post-mortem, in
       // which case the world-engine invariant keeps it alive and this action is
@@ -104,6 +107,28 @@ export const skillHunter = defineAbility({
         setEffectState({ state: 'ENDED', attributes: { reason: 'creator-died' } }),
       ],
       hint: 'Sauf capacité programmée post-mortem',
+    },
+
+    'keep-a-post-mortem-page': {
+      label: 'Garder une page post-mortem',
+      // The exception that makes the book worth scrolling through: Sun and Moon
+      // outlives its creator, and the timeline shows the difference.
+      evidence: shown('ch. 371 — les marques posées continuent d’exister'),
+      conditions: [effectIsLive('effectId', 'La page existe encore')],
+      effects: [setEffectState({ state: 'ACTIVE', attributes: { postMortem: true } })],
+    },
+
+    'steal-without-the-four-conditions': {
+      label: 'Voler sans remplir les quatre conditions',
+      refusal:
+        'Voir la capacité, interroger, obtenir la réponse, toucher paume contre couverture — les quatre, en moins d’une heure',
+      evidence: shown('ch. 106 — les conditions énoncées par Chrollo'),
+    },
+
+    'steal-from-the-dead': {
+      label: 'Voler la capacité d’un mort',
+      refusal:
+        'Le vol demande une victime capable de répondre : un mort ne remplit aucune condition',
     },
   },
 

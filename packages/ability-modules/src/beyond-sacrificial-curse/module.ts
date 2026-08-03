@@ -13,6 +13,7 @@ import {
   requiresTarget,
   revealedAt,
   setEffectState,
+  shown,
 } from '@black-whale/ability-sdk'
 
 /** The chapter that turns these birthmarks into a threat. */
@@ -49,6 +50,8 @@ export const beyondSacrificialCurse = defineAbility({
   actions: {
     mark: {
       label: 'Marquer un sacrifice',
+      evidence: shown('ch. 415 — la marque de naissance, visible en Gyo seul'),
+      gyo: 'la marque de naissance que rien d’autre ne montre',
       conditions: [
         requiresTarget('Un enfant est marqué'),
         requiresParameter('curseTargetId', 'La cible désignée est choisie'),
@@ -82,6 +85,7 @@ export const beyondSacrificialCurse = defineAbility({
 
     trigger: {
       label: 'Déclencher le sacrifice',
+      evidence: shown('ch. 415 — la mort du sacrifice emporte la cible désignée'),
       conditions: [
         effectIsLive('effectId', 'La marque est encore en place'),
         requiresParameter('curseTargetId', 'La cible désignée est connue'),
@@ -91,6 +95,26 @@ export const beyondSacrificialCurse = defineAbility({
         bodyState({ bodyId: (ctx) => param(ctx, 'curseTargetId'), state: 'DEAD' }),
       ],
       hint: 'La mort du porteur tue la cible, quel que soit son gardien',
+    },
+
+    'kill-at-any-distance': {
+      label: 'Frapper à l’autre bout du monde',
+      // The reason Furykov calls it the strongest curse ever observed: neither
+      // distance nor a guardian beast changes the outcome.
+      evidence: shown('ch. 415 — ni la distance ni le gardien n’y font rien'),
+      effects: [setEffectState({ state: 'TRIGGERED', attributes: { ignoresDistance: true } })],
+      cost: { label: 'La vie du sacrifice', unit: 'vie' },
+    },
+
+    'see-the-mark-without-gyo': {
+      label: 'Voir la marque sans Gyo',
+      refusal: 'La marque de naissance n’apparaît qu’en Gyo',
+      evidence: shown('ch. 415 — c’est le Gyo qui la révèle'),
+    },
+
+    'read-the-sealed-target': {
+      label: 'Lire la cible désignée',
+      refusal: 'La cible reste scellée : le manga ne l’a pas encore nommée',
     },
   },
 

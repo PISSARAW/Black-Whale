@@ -2,144 +2,490 @@ import { NEN_PRESENTATION, type NenTechnique, type NenTechniqueState } from '@bl
 import type * as Three from 'three'
 
 type ThreeModule = typeof import('three')
+
+const commonShaderFunctions = `
+  vec4 permute(vec4 x){return mod(((x*34.0)+1.0)*x, 289.0);}
+  vec4 taylorInvSqrt(vec4 r){return 1.79284291400159 - 0.85373472095314 * r;}
+  vec3 fade(vec3 t) {return t*t*t*(t*(t*6.0-15.0)+10.0);}
+  float cnoise(vec3 P){
+    vec3 Pi0 = floor(P); vec3 Pi1 = Pi0 + vec3(1.0);
+    Pi0 = mod(Pi0, 289.0); Pi1 = mod(Pi1, 289.0);
+    vec3 Pf0 = fract(P); vec3 Pf1 = Pf0 - vec3(1.0);
+    vec4 ix = vec4(Pi0.x, Pi1.x, Pi0.x, Pi1.x); vec4 iy = vec4(Pi0.yy, Pi1.yy);
+    vec4 iz0 = Pi0.zzzz; vec4 iz1 = Pi1.zzzz;
+    vec4 ixy = permute(permute(ix) + iy);
+    vec4 ixy0 = permute(ixy + iz0); vec4 ixy1 = permute(ixy + iz1);
+    vec4 gx0 = ixy0 / 7.0; vec4 gy0 = fract(floor(gx0) / 7.0) - 0.5;
+    gx0 = fract(gx0); vec4 gz0 = vec4(0.5) - abs(gx0) - abs(gy0);
+    vec4 sz0 = step(gz0, vec4(0.0));
+    gx0 -= sz0 * (step(0.0, gx0) - 0.5); gy0 -= sz0 * (step(0.0, gy0) - 0.5);
+    vec4 gx1 = ixy1 / 7.0; vec4 gy1 = fract(floor(gx1) / 7.0) - 0.5;
+    gx1 = fract(gx1); vec4 gz1 = vec4(0.5) - abs(gx1) - abs(gy1);
+    vec4 sz1 = step(gz1, vec4(0.0));
+    gx1 -= sz1 * (step(0.0, gx1) - 0.5); gy1 -= sz1 * (step(0.0, gy1) - 0.5);
+    vec3 g000 = vec3(gx0.x,gy0.x,gz0.x); vec3 g100 = vec3(gx0.y,gy0.y,gz0.y);
+    vec3 g010 = vec3(gx0.z,gy0.z,gz0.z); vec3 g110 = vec3(gx0.w,gy0.w,gz0.w);
+    vec3 g001 = vec3(gx1.x,gy1.x,gz1.x); vec3 g101 = vec3(gx1.y,gy1.y,gz1.y);
+    vec3 g011 = vec3(gx1.z,gy1.z,gz1.z); vec3 g111 = vec3(gx1.w,gy1.w,gz1.w);
+    vec4 norm0 = taylorInvSqrt(vec4(dot(g000, g000), dot(g010, g010), dot(g100, g100), dot(g110, g110)));
+    g000 *= norm0.x; g010 *= norm0.y; g100 *= norm0.z; g110 *= norm0.w;
+    vec4 norm1 = taylorInvSqrt(vec4(dot(g001, g001), dot(g011, g011), dot(g101, g101), dot(g111, g111)));
+    g001 *= norm1.x; g011 *= norm1.y; g101 *= norm1.z; g111 *= norm1.w;
+    float n000 = dot(g000, Pf0); float n100 = dot(g100, vec3(Pf1.x, Pf0.yz));
+    float n010 = dot(g010, vec3(Pf0.x, Pf1.y, Pf0.z)); float n110 = dot(g110, vec3(Pf1.xy, Pf0.z));
+    float n001 = dot(g001, vec3(Pf0.xy, Pf1.z)); float n101 = dot(g101, vec3(Pf1.x, Pf0.y, Pf1.z));
+    float n011 = dot(g011, vec3(Pf0.x, Pf1.yz)); float n111 = dot(g111, Pf1);
+    vec3 fade_xyz = fade(Pf0);
+    vec4 n_z = mix(vec4(n000, n100, n010, n110), vec4(n001, n101, n011, n111), fade_xyz.z);
+    vec2 n_yz = mix(n_z.xy, n_z.zw, fade_xyz.y);
+    float n_xyz = mix(n_yz.x, n_yz.y, fade_xyz.x); 
+    return 2.2 * n_xyz;
+  }
+  float fbm(vec3 x) {
+    float v = 0.0;
+    float a = 0.5;
+    vec3 shift = vec3(100);
+    for (int i = 0; i < 4; ++i) {
+      v += a * cnoise(x);
+      x = x * 2.0 + shift;
+      a *= 0.5;
+    }
+    return v;
+  }
+`;
+
+// TEN
+const tenVertexShader = `
+  uniform float u_time;
+  varying vec2 vUv;
+  varying vec3 vNormal;
+  varying vec3 vViewPosition;
+  ${commonShaderFunctions}
+  void main() {
+    vUv = uv;
+    vNormal = normalize(normalMatrix * normal);
+    vec3 noisePos = position * 0.5;
+    noisePos.y += u_time * 0.2;
+    float noiseVal = cnoise(noisePos);
+    vec3 newPosition = position + normal * noiseVal * 0.05; // very subtle
+    vec4 mvPosition = modelViewMatrix * vec4(newPosition, 1.0);
+    vViewPosition = -mvPosition.xyz;
+    gl_Position = projectionMatrix * mvPosition;
+  }
+`;
+
+const tenFragmentShader = `
+  uniform float u_time;
+  uniform vec3 u_colorCore;
+  uniform vec3 u_colorEdge;
+  uniform float u_opacity;
+  varying vec2 vUv;
+  varying vec3 vNormal;
+  varying vec3 vViewPosition;
+  ${commonShaderFunctions}
+  void main() {
+    vec3 normal = normalize(vNormal);
+    vec3 viewDir = normalize(vViewPosition);
+    float fresnel = clamp(1.0 - dot(normal, viewDir), 0.0, 1.0);
+    fresnel = pow(fresnel, 3.0); // very smooth edge
+    
+    // Extremely subtle base (0.01) + barely visible edge (0.05)
+    float alpha = (0.01 + fresnel * 0.05) * u_opacity;
+    
+    vec3 color = mix(u_colorCore, u_colorEdge, fresnel);
+    gl_FragColor = vec4(color, alpha);
+  }
+`;
+
+// REN
+const renVertexShader = `
+  uniform float u_time;
+  varying vec2 vUv;
+  varying vec3 vNormal;
+  varying vec3 vViewPosition;
+  ${commonShaderFunctions}
+  void main() {
+    vUv = uv;
+    vNormal = normalize(normalMatrix * normal);
+    vec3 noisePos = position * 3.0;
+    noisePos.y += u_time * 4.0;
+    float noiseVal = cnoise(noisePos);
+    vec3 newPosition = position + normal * noiseVal * 0.2;
+    if(position.y > 0.0) {
+        newPosition.x += cnoise(vec3(position.x, position.y + u_time * 5.0, position.z)) * 0.3 * position.y;
+        newPosition.z += cnoise(vec3(position.x + 10.0, position.y + u_time * 5.0, position.z)) * 0.3 * position.y;
+    }
+    vec4 mvPosition = modelViewMatrix * vec4(newPosition, 1.0);
+    vViewPosition = -mvPosition.xyz;
+    gl_Position = projectionMatrix * mvPosition;
+  }
+`;
+
+const renFragmentShader = `
+  uniform float u_time;
+  uniform vec3 u_colorCore;
+  uniform vec3 u_colorEdge;
+  uniform float u_opacity;
+  varying vec2 vUv;
+  varying vec3 vNormal;
+  varying vec3 vViewPosition;
+  ${commonShaderFunctions}
+  void main() {
+    vec2 noiseUv = vUv;
+    noiseUv.y -= u_time * 2.5;
+    float noiseVal = cnoise(vec3(noiseUv * 8.0, u_time * 1.5));
+    noiseVal = noiseVal * 0.5 + 0.5;
+    
+    vec3 normal = normalize(vNormal);
+    vec3 viewDir = normalize(vViewPosition);
+    float fresnel = dot(normal, viewDir);
+    fresnel = clamp(1.0 - fresnel, 0.0, 1.0);
+    fresnel = pow(fresnel, 1.5);
+    
+    float intensity = noiseVal * fresnel * 2.5;
+    vec3 color = mix(u_colorCore, u_colorEdge, min(1.0, intensity));
+    
+    // Saturate to white at high intensity
+    color = mix(color, vec3(1.0), smoothstep(1.5, 2.5, intensity));
+    
+    float verticalFade = smoothstep(0.0, 0.2, vUv.y) * smoothstep(1.0, 0.6, vUv.y);
+    float alpha = intensity * u_opacity * verticalFade;
+    
+    gl_FragColor = vec4(color, alpha);
+  }
+`;
+
+// ON
+const onVertexShader = `
+  uniform float u_time;
+  uniform float u_intensityMultiplier;
+  varying vec2 vUv;
+  varying vec3 vNormal;
+  varying vec3 vViewPosition;
+  ${commonShaderFunctions}
+  void main() {
+    vUv = uv;
+    vNormal = normalize(normalMatrix * normal);
+    vec3 noisePos = position * 4.0;
+    noisePos.y += u_time * 2.0;
+    // Chaotic FBM
+    float noiseVal = abs(fbm(noisePos)) * 2.0 - 1.0; 
+    vec3 newPosition = position + normal * noiseVal * 0.25 * u_intensityMultiplier;
+    vec4 mvPosition = modelViewMatrix * vec4(newPosition, 1.0);
+    vViewPosition = -mvPosition.xyz;
+    gl_Position = projectionMatrix * mvPosition;
+  }
+`;
+
+const onFragmentShader = `
+  uniform float u_time;
+  uniform float u_intensityMultiplier;
+  uniform vec3 u_colorCore;
+  uniform vec3 u_colorEdge;
+  uniform float u_opacity;
+  varying vec2 vUv;
+  varying vec3 vNormal;
+  varying vec3 vViewPosition;
+  ${commonShaderFunctions}
+  void main() {
+    vec2 noiseUv = vUv;
+    noiseUv.y -= u_time * 1.5;
+    float noiseVal = abs(fbm(vec3(noiseUv * 6.0, u_time * 1.0)));
+    
+    vec3 normal = normalize(vNormal);
+    vec3 viewDir = normalize(vViewPosition);
+    float fresnel = clamp(1.0 - dot(normal, viewDir), 0.0, 1.0);
+    
+    // Intensity scales down as u_intensityMultiplier goes down
+    float intensity = noiseVal * fresnel * 3.0 * u_intensityMultiplier;
+    
+    // Subtractive/Multiply blending: we want a dark/purple smoke. 
+    // In multiply blending, white = transparent, dark = opaque.
+    vec3 darkSmoke = mix(u_colorCore, u_colorEdge, noiseVal);
+    // Mix with white based on intensity/opacity so it blends out
+    float verticalFade = smoothstep(0.0, 0.2, vUv.y) * smoothstep(1.0, 0.5, vUv.y);
+    float alpha = intensity * u_opacity * verticalFade;
+    
+    vec3 finalColor = mix(vec3(1.0), darkSmoke, clamp(alpha, 0.0, 1.0));
+    gl_FragColor = vec4(finalColor, 1.0);
+  }
+`;
+
+// FLUX (Gyo, Ko, Ryu)
+const fluxVertexShader = `
+  uniform float u_time;
+  varying vec2 vUv;
+  varying vec3 vNormal;
+  varying vec3 vWorldPos;
+  varying vec3 vViewPosition;
+  ${commonShaderFunctions}
+  void main() {
+    vUv = uv;
+    vNormal = normalize(normalMatrix * normal);
+    vWorldPos = (modelMatrix * vec4(position, 1.0)).xyz;
+    vec3 newPosition = position + normal * cnoise(position * 3.0 + u_time) * 0.05;
+    vec4 mvPosition = modelViewMatrix * vec4(newPosition, 1.0);
+    vViewPosition = -mvPosition.xyz;
+    gl_Position = projectionMatrix * mvPosition;
+  }
+`;
+
+const fluxFragmentShader = `
+  uniform float u_time;
+  uniform vec3 u_colorCore;
+  uniform vec3 u_nodes[8];
+  uniform float u_intensities[8];
+  uniform float u_opacity;
+  varying vec2 vUv;
+  varying vec3 vNormal;
+  varying vec3 vWorldPos;
+  varying vec3 vViewPosition;
+  ${commonShaderFunctions}
+  void main() {
+    float nodeIntensity = 0.0;
+    for(int i = 0; i < 8; i++) {
+       float dist = distance(vWorldPos, u_nodes[i]);
+       // falloff
+       float influence = smoothstep(0.5, 0.0, dist);
+       nodeIntensity += influence * u_intensities[i];
+    }
+    
+    // Scroll noise
+    vec2 noiseUv = vUv;
+    noiseUv.y -= u_time * 2.0;
+    float noiseVal = cnoise(vec3(noiseUv * 6.0, u_time)) * 0.5 + 0.5;
+    
+    vec3 normal = normalize(vNormal);
+    vec3 viewDir = normalize(vViewPosition);
+    float fresnel = clamp(1.0 - dot(normal, viewDir), 0.0, 1.0);
+    fresnel = pow(fresnel, 2.0);
+    
+    // Multiply by 100 for blinding effect on Ko (capped for rendering)
+    float finalIntensity = nodeIntensity * noiseVal * fresnel * 5.0;
+    
+    vec3 color = mix(u_colorCore, vec3(1.0), min(1.0, finalIntensity * 0.5));
+    float alpha = min(1.0, finalIntensity) * u_opacity;
+    
+    if (alpha < 0.01) discard;
+    
+    gl_FragColor = vec4(color, alpha);
+  }
+`;
+
+// EN (Depth Fade)
+const enVertexShader = `
+  varying vec2 vUv;
+  varying vec4 vScreenPos;
+  void main() {
+    vUv = uv;
+    vScreenPos = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+    gl_Position = vScreenPos;
+  }
+`;
+
+const enFragmentShader = `
+  uniform sampler2D tDepth;
+  uniform vec2 u_resolution;
+  uniform float u_cameraNear;
+  uniform float u_cameraFar;
+  uniform vec3 u_color;
+  uniform float u_opacity;
+  
+  varying vec2 vUv;
+  varying vec4 vScreenPos;
+  
+  float readDepth(sampler2D depthSampler, vec2 coord) {
+    float fragCoordZ = texture2D(depthSampler, coord).x;
+    float viewZ = perspectiveDepthToViewZ(fragCoordZ, u_cameraNear, u_cameraFar);
+    return viewZToOrthographicDepth(viewZ, u_cameraNear, u_cameraFar);
+  }
+  
+  void main() {
+    vec2 screenUv = (vScreenPos.xy / vScreenPos.w) * 0.5 + 0.5;
+    
+    float sceneDepth = readDepth(tDepth, screenUv);
+    float sphereViewZ = perspectiveDepthToViewZ(gl_FragCoord.z, u_cameraNear, u_cameraFar);
+    float sphereDepth = viewZToOrthographicDepth(sphereViewZ, u_cameraNear, u_cameraFar);
+    
+    // distance between sphere and scene geometry
+    float depthDiff = abs(sceneDepth - sphereDepth) * (u_cameraFar - u_cameraNear);
+    
+    // Line intersection
+    float intersection = smoothstep(1.5, 0.0, depthDiff);
+    
+    // Base sphere opacity
+    float base = 0.05;
+    
+    float alpha = (base + intersection) * u_opacity;
+    vec3 color = mix(u_color, vec3(1.0), intersection * 0.8);
+    
+    gl_FragColor = vec4(color, alpha);
+  }
+`;
+
 export type NenObjectInteraction = 'sense' | 'strike' | 'pressure' | 'channel'
 
-/** First-person counterpart of the aura rendered by `humanFigure`. */
 export class NenSceneAura {
   readonly #root: Three.Group
-  readonly #en: Three.Group
-  readonly #enRings: Three.Mesh[] = []
-  readonly #ken: Three.Group
-  readonly #kenShells: Three.Mesh[] = []
-  readonly #eyes: Three.Mesh[]
-  readonly #points = new Map<string, Three.Mesh[]>()
-  readonly #base: Three.Mesh
-  readonly #ren: Three.Group
-  readonly #renFlames: Three.Mesh[] = []
-  readonly #on: Three.Group
-  readonly #onCore: Three.Mesh
-  readonly #onFlames: Three.Mesh[] = []
   readonly #world: Three.Group
   readonly #THREE: ThreeModule
   readonly #shu = new Map<string, Three.Mesh>()
   readonly #interactions: Three.Group[] = []
-  readonly #transition: Three.Mesh
-  #transitionTechnique: NenTechnique | null = null
-  #transitionStarted = 0
-  #previousSignature = ''
+  
+  readonly #auraGeom: Three.CylinderGeometry
+  
+  readonly #ten: Three.Mesh
+  readonly #ren: Three.Mesh
+  readonly #on: Three.Mesh
+  readonly #onTen: Three.Mesh
+  readonly #zetsu: Three.Mesh
+  readonly #flux: Three.Mesh
+  readonly #en: Three.Mesh
+  
+  readonly #fluxUniforms: any
+  readonly #enUniforms: any
+  
   #seconds = 0
+  #onStartTime = 0
+  #wasOn = false
 
   constructor(THREE: ThreeModule, scene: Three.Scene) {
     this.#THREE = THREE
     this.#root = new THREE.Group()
     this.#world = new THREE.Group()
-    const material = (opacity: number, technique: NenTechnique = 'ten') =>
-      new THREE.MeshBasicMaterial({
-        color: NEN_PRESENTATION[technique].colours[0],
-        transparent: true,
-        opacity,
-        depthWrite: false,
-        blending: THREE.AdditiveBlending,
-        side: THREE.DoubleSide,
+    
+    this.#auraGeom = new THREE.CylinderGeometry(0.7, 0.9, 2.4, 32, 32, true)
+    this.#auraGeom.translate(0, 1.2, 0)
+    
+    // TEN
+    this.#ten = new THREE.Mesh(
+      this.#auraGeom,
+      new THREE.ShaderMaterial({
+        vertexShader: tenVertexShader,
+        fragmentShader: tenFragmentShader,
+        uniforms: {
+          u_time: { value: 0 },
+          u_colorCore: { value: new THREE.Color(NEN_PRESENTATION.ten.colours[0]) },
+          u_colorEdge: { value: new THREE.Color(NEN_PRESENTATION.ten.colours[0]) },
+          u_opacity: { value: 0.8 },
+        },
+        transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide
       })
-    this.#en = new THREE.Group()
-    for (let index = 0; index < 3; index++) {
-      const ring = new THREE.Mesh(
-        new THREE.RingGeometry(0.965 - index * 0.012, 1 + index * 0.018, 96),
-        material(0.26 - index * 0.055, 'en'),
-      )
-      ring.rotation.x = -Math.PI / 2
-      this.#enRings.push(ring)
-      this.#en.add(ring)
-    }
-    this.#ken = new THREE.Group()
-    for (let index = 0; index < 2; index++) {
-      const shell = new THREE.Mesh(
-        new THREE.SphereGeometry(1 + index * 0.065, 24, 18),
-        material(index === 0 ? 0.2 : 0.075, 'ken'),
-      )
-      ;(shell.material as Three.Material).side = THREE.BackSide
-      this.#kenShells.push(shell)
-      this.#ken.add(shell)
-    }
-    this.#eyes = [-1, 1].map((side) => {
-      const eye = new THREE.Mesh(new THREE.SphereGeometry(0.045, 10, 7), material(0.72, 'gyo'))
-      eye.position.set(side * 0.07, -0.035, -0.22)
-      return eye
-    })
-    const pointCounts = { head: 1, torso: 1, hands: 2, feet: 2 }
-    for (const [zone, count] of Object.entries(pointCounts)) {
-      const points = Array.from({ length: count }, () =>
-        new THREE.Mesh(new THREE.SphereGeometry(0.13, 12, 9), material(0.7, 'ryu')),
-      )
-      this.#points.set(zone, points)
-    }
-    this.#base = new THREE.Mesh(new THREE.SphereGeometry(1, 22, 16), material(0.06))
-    ;(this.#base.material as Three.Material).side = THREE.BackSide
-    this.#ren = new THREE.Group()
-    for (let index = 0; index < 14; index++) {
-      const flame = new THREE.Mesh(
-        new THREE.ConeGeometry(0.1 + (index % 3) * 0.025, 0.65, 7),
-        material(0.2, 'ren'),
-      )
-      const angle = (index / 14) * Math.PI * 2
-      flame.position.set(Math.cos(angle) * 0.58, -0.7 + (index % 5) * 0.35, Math.sin(angle) * 0.58)
-      flame.userData.auraAngle = angle
-      flame.userData.auraLayer = index % 5
-      this.#renFlames.push(flame)
-      this.#ren.add(flame)
-    }
-    this.#on = new THREE.Group()
-    this.#transition = new THREE.Mesh(
-      new THREE.RingGeometry(0.22, 0.27, 96),
-      new THREE.MeshBasicMaterial({
-        color: NEN_PRESENTATION.ten.colours[0], transparent: true, opacity: 0,
-        depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide,
-      }),
     )
-    this.#transition.position.z = -0.82
-    this.#onCore = new THREE.Mesh(
-      new THREE.SphereGeometry(0.82, 24, 18),
-      new THREE.MeshBasicMaterial({
-        color: 0x020612,
-        transparent: true,
-        opacity: 0.48,
-        depthWrite: false,
-        blending: THREE.AdditiveBlending,
-        side: THREE.BackSide,
-      }),
-    )
-    this.#onCore.scale.set(0.82, 1.72, 0.82)
-    this.#on.add(this.#onCore)
-    for (let index = 0; index < 28; index++) {
-      const materialOn = new THREE.MeshBasicMaterial({
-        color: NEN_PRESENTATION.on.colours[index % 2],
-        transparent: true,
-        opacity: index % 2 ? 0.66 : 0.46,
-        depthWrite: false,
-        blending: THREE.AdditiveBlending,
+    this.#ten.position.y = -1.2
+    
+    // REN
+    this.#ren = new THREE.Mesh(
+      this.#auraGeom,
+      new THREE.ShaderMaterial({
+        vertexShader: renVertexShader,
+        fragmentShader: renFragmentShader,
+        uniforms: {
+          u_time: { value: 0 },
+          u_colorCore: { value: new THREE.Color(NEN_PRESENTATION.ren.colours[0]) },
+          u_colorEdge: { value: new THREE.Color(NEN_PRESENTATION.ren.colours[1] || NEN_PRESENTATION.ren.colours[0]) },
+          u_opacity: { value: 0.8 },
+        },
+        transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide
       })
-      const flame = new THREE.Mesh(
-        new THREE.ConeGeometry(0.07 + (index % 4) * 0.018, 0.58 + (index % 5) * 0.1, 7),
-        materialOn,
-      )
-      const angle = (index / 28) * Math.PI * 2
-      flame.position.set(Math.cos(angle) * 0.62, -0.82 + (index % 7) * 0.27, Math.sin(angle) * 0.62)
-      flame.userData.onAngle = angle
-      flame.userData.onLayer = index % 7
-      this.#onFlames.push(flame)
-      this.#on.add(flame)
-    }
-    this.#root.add(
-      this.#en,
-      this.#base,
-      this.#ren,
-      this.#on,
-      this.#ken,
-      ...this.#eyes,
-      ...[...this.#points.values()].flat(),
-      this.#transition,
     )
+    this.#ren.position.y = -1.2
+    
+    // ON
+    this.#on = new THREE.Mesh(
+      this.#auraGeom,
+      new THREE.ShaderMaterial({
+        vertexShader: onVertexShader,
+        fragmentShader: onFragmentShader,
+        uniforms: {
+          u_time: { value: 0 },
+          u_intensityMultiplier: { value: 1.0 },
+          u_colorCore: { value: new THREE.Color(NEN_PRESENTATION.on.colours[0]) },
+          u_colorEdge: { value: new THREE.Color(NEN_PRESENTATION.on.colours[1] || NEN_PRESENTATION.on.colours[0]) },
+          u_opacity: { value: 0.8 },
+        },
+        transparent: true, depthWrite: false, blending: THREE.MultiplyBlending, side: THREE.DoubleSide
+      })
+    )
+    this.#on.position.y = -1.2
+    
+    // ON (Settled into Ten state)
+    this.#onTen = new THREE.Mesh(
+      this.#auraGeom,
+      new THREE.ShaderMaterial({
+        vertexShader: tenVertexShader,
+        fragmentShader: tenFragmentShader,
+        uniforms: {
+          u_time: { value: 0 },
+          u_colorCore: { value: new THREE.Color(NEN_PRESENTATION.on.colours[0]) },
+          u_colorEdge: { value: new THREE.Color(NEN_PRESENTATION.on.colours[1] || NEN_PRESENTATION.on.colours[0]) },
+          u_opacity: { value: 0.0 },
+        },
+        transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide
+      })
+    )
+    this.#onTen.position.y = -1.2
+    
+    // ZETSU (Refraction via MeshPhysicalMaterial)
+    this.#zetsu = new THREE.Mesh(
+      this.#auraGeom,
+      new THREE.MeshPhysicalMaterial({
+        transmission: 1.0,
+        ior: 1.05, // subtle heat mirage
+        roughness: 0.1,
+        thickness: 0.5,
+        transparent: true,
+        opacity: 1,
+        side: THREE.DoubleSide
+      })
+    )
+    this.#zetsu.position.y = -1.2
+    
+    // FLUX (Gyo, Ko, Ryu)
+    this.#fluxUniforms = {
+      u_time: { value: 0 },
+      u_colorCore: { value: new THREE.Color(NEN_PRESENTATION.ryu.colours[0]) },
+      u_nodes: { value: Array(8).fill(new THREE.Vector3()) },
+      u_intensities: { value: Array(8).fill(0.0) },
+      u_opacity: { value: 1.0 }
+    }
+    this.#flux = new THREE.Mesh(
+      this.#auraGeom,
+      new THREE.ShaderMaterial({
+        vertexShader: fluxVertexShader,
+        fragmentShader: fluxFragmentShader,
+        uniforms: this.#fluxUniforms,
+        transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide
+      })
+    )
+    this.#flux.position.y = -1.2
+    
+    // EN
+    this.#enUniforms = {
+      tDepth: { value: null },
+      u_resolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
+      u_cameraNear: { value: 0.1 },
+      u_cameraFar: { value: 130.0 }, // match VIEW_DISTANCE
+      u_color: { value: new THREE.Color(NEN_PRESENTATION.en.colours[0]) },
+      u_opacity: { value: 1.0 }
+    }
+    this.#en = new THREE.Mesh(
+      new THREE.SphereGeometry(1.0, 64, 64),
+      new THREE.ShaderMaterial({
+        vertexShader: enVertexShader,
+        fragmentShader: enFragmentShader,
+        uniforms: this.#enUniforms,
+        transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.BackSide
+      })
+    )
+    
+    this.#root.add(this.#ten)
+    this.#root.add(this.#ren)
+    this.#root.add(this.#on)
+    this.#root.add(this.#onTen)
+    this.#root.add(this.#zetsu)
+    this.#root.add(this.#flux)
+    this.#root.add(this.#en)
     scene.add(this.#root, this.#world)
   }
 
@@ -174,7 +520,6 @@ export class NenSceneAura {
     }
   }
 
-  /** Plays a Nen reaction on a physical object without invoking a Hatsu. */
   interact(
     object: { id: string; at: readonly [number, number]; y: number; size: readonly [number, number]; height: number },
     kind: NenObjectInteraction,
@@ -225,114 +570,116 @@ export class NenSceneAura {
     camera: Three.PerspectiveCamera,
     ground: number,
     seconds: number,
+    depthTexture?: Three.DepthTexture,
   ) {
     this.#seconds = seconds
-    this.#syncTransition(state, seconds)
-    const active = state.mode !== 'zetsu'
     this.#root.position.copy(camera.position)
     this.#root.rotation.set(0, camera.rotation.y, 0)
-    this.#eyes.forEach((eye, index) => {
-      eye.visible = active && state.gyo
-      const focus = 1 + Math.sin(seconds * Math.PI * 2 * NEN_PRESENTATION.gyo.pulseHz + index * Math.PI) * 0.14
-      eye.scale.set(1.5 * focus, 0.72 * focus, 1.5 * focus)
-      ;(eye.material as Three.MeshBasicMaterial).opacity = 0.62 + Math.sin(seconds * 15 + index) * 0.16
-      eye.quaternion.copy(camera.quaternion)
-    })
-    this.#ken.visible = active && state.ken
-    this.#ken.scale.set(0.85, 1.7, 0.85)
-    this.#ken.position.y = ground + 0.9 - camera.position.y
-    this.#ken.rotation.y = Math.sin(seconds * 0.8) * 0.08
-    this.#kenShells.forEach((shell, index) => {
-      const pressure = 1 + Math.sin(seconds * (3.2 + index) + index * 2.1) * (index ? 0.025 : 0.012)
-      shell.scale.setScalar(pressure)
-      ;(shell.material as Three.MeshBasicMaterial).opacity =
-        (index === 0 ? 0.2 : 0.075) + Math.sin(seconds * 5 + index) * 0.018
-    })
-    this.#en.visible = active && state.en !== null
-    if (state.en) {
-      this.#enRings.forEach((ring, index) => {
-        const sweep = (seconds * (0.42 + index * 0.07) + index / 3) % 1
-        const radius = state.en!.radius * (0.9 + sweep * 0.16)
-        ring.scale.setScalar(radius)
-        ;(ring.material as Three.MeshBasicMaterial).opacity = (1 - sweep) * (0.3 - index * 0.045)
-      })
-      this.#en.rotation.z = seconds * 0.045
+    
+    // Hide all by default
+    this.#ten.visible = false;
+    this.#ren.visible = false;
+    this.#on.visible = false;
+    this.#onTen.visible = false;
+    this.#zetsu.visible = false;
+    this.#flux.visible = false;
+    this.#en.visible = false;
+    
+    const active = state.mode !== 'zetsu'
+    const isFlux = active && (state.ko !== null || Object.values(state.ryu).some(v => (v || 0) > 0) || state.gyo)
+    
+    if (!active) {
+       this.#zetsu.visible = true;
+       // minor wobble
+       const mat = this.#zetsu.material as Three.MeshPhysicalMaterial;
+       mat.ior = 1.02 + Math.sin(seconds * 2.0) * 0.02;
+    } else if (state.on) {
+       if (!this.#wasOn) {
+         this.#wasOn = true;
+         this.#onStartTime = seconds;
+       }
+       const elapsed = seconds - this.#onStartTime;
+       const progress = Math.min(elapsed / 30.0, 1.0); // transition over 30s
+       
+       if (progress < 1.0) {
+         this.#on.visible = true;
+         (this.#on.material as Three.ShaderMaterial).uniforms.u_time.value = seconds;
+         (this.#on.material as Three.ShaderMaterial).uniforms.u_opacity.value = (1.0 - progress) * 0.8;
+       }
+       
+       if (progress > 0.0) {
+         this.#onTen.visible = true;
+         (this.#onTen.material as Three.ShaderMaterial).uniforms.u_time.value = seconds;
+         (this.#onTen.material as Three.ShaderMaterial).uniforms.u_opacity.value = progress * 0.8;
+       }
+    } else if (isFlux) {
+       this.#flux.visible = true;
+       this.#fluxUniforms.u_time.value = seconds;
+       
+       const rootPos = this.#root.position;
+       // Convert camera local offsets to world coordinates for nodes
+       const headPos = rootPos.clone().add(new this.#THREE.Vector3(0, 0.02, -0.25).applyQuaternion(camera.quaternion));
+       const torsoPos = rootPos.clone().add(new this.#THREE.Vector3(0, -0.62, -0.42).applyQuaternion(camera.quaternion));
+       const handLPos = rootPos.clone().add(new this.#THREE.Vector3(-0.27, -0.48, -0.62).applyQuaternion(camera.quaternion));
+       const handRPos = rootPos.clone().add(new this.#THREE.Vector3(0.27, -0.48, -0.62).applyQuaternion(camera.quaternion));
+       const footLPos = rootPos.clone().add(new this.#THREE.Vector3(-0.2, -1.45, -0.35).applyQuaternion(camera.quaternion));
+       const footRPos = rootPos.clone().add(new this.#THREE.Vector3(0.2, -1.45, -0.35).applyQuaternion(camera.quaternion));
+       
+       const nodes = [headPos, torsoPos, handLPos, handRPos, footLPos, footRPos, rootPos, rootPos];
+       const ints = Array(8).fill(0.0);
+       
+       if (state.ko) {
+          if (state.ko === 'head') ints[0] = 5.0;
+          if (state.ko === 'torso') ints[1] = 5.0;
+          if (state.ko === 'hands') { ints[2] = 5.0; ints[3] = 5.0; }
+          if (state.ko === 'feet') { ints[4] = 5.0; ints[5] = 5.0; }
+       } else {
+          ints[0] = (state.ryu.head || 0) + (state.gyo ? 2.0 : 0);
+          ints[1] = state.ryu.torso || 0;
+          ints[2] = state.ryu.hands || 0;
+          ints[3] = state.ryu.hands || 0;
+          ints[4] = state.ryu.feet || 0;
+          ints[5] = state.ryu.feet || 0;
+       }
+       
+       this.#fluxUniforms.u_nodes.value = nodes;
+       this.#fluxUniforms.u_intensities.value = ints;
+    } else if (state.mode === 'ren' && !state.ken) {
+       this.#ren.visible = true;
+       (this.#ren.material as Three.ShaderMaterial).uniforms.u_time.value = seconds;
+    } else {
+       this.#ten.visible = true;
+       (this.#ten.material as Three.ShaderMaterial).uniforms.u_time.value = seconds;
+       // Ken can just be a slightly scaled Ten for now
+       if (state.ken) {
+         this.#ten.scale.set(1.2, 1.2, 1.2);
+       } else {
+         this.#ten.scale.set(1.0, 1.0, 1.0);
+       }
     }
-    this.#en.position.y = ground + 0.025 - camera.position.y
-    this.#base.visible = !state.ken && !state.on
-    const tenBreath = 1 + Math.sin(seconds * Math.PI * 2 * NEN_PRESENTATION.ten.pulseHz) * 0.012
-    const zetsuCollapse = state.mode === 'zetsu' ? 0.72 + Math.sin(seconds * 0.9) * 0.01 : 1
-    this.#base.scale.set(0.78 * tenBreath * zetsuCollapse, 1.62 * tenBreath, 0.78 * tenBreath * zetsuCollapse)
-    ;(this.#base.material as Three.MeshBasicMaterial).opacity =
-      state.mode === 'zetsu'
-        ? 0.004 + Math.max(0, Math.sin(seconds * 0.7)) * 0.003
-        : state.mode === 'ten'
-          ? 0.052 + Math.sin(seconds * 1.8) * 0.006
-          : 0.12 + Math.sin(seconds * 4.2) * 0.025
-    this.#ren.visible = state.mode === 'ren' && !state.ken && !state.on
-    this.#ren.position.y = ground + 0.9 - camera.position.y
-    this.#ren.rotation.y = seconds * -0.14
-    this.#renFlames.forEach((flame, index) => {
-      const phase = seconds * Math.PI * 2 * (NEN_PRESENTATION.ren.pulseHz + (index % 3) * 0.08) + index * 1.37
-      const angle = Number(flame.userData.auraAngle) + Math.sin(phase) * 0.16
-      const rise = ((seconds * (0.62 + (index % 2) * 0.09) + index / 5) % 1) * 0.38
-      const radius = 0.52 + Math.sin(phase * 0.73) * 0.1
-      flame.position.set(
-        Math.cos(angle) * radius,
-        -0.82 + Number(flame.userData.auraLayer) * 0.35 + rise,
-        Math.sin(angle) * radius,
-      )
-      flame.rotation.set(Math.sin(angle) * 0.3, -angle, Math.cos(angle) * -0.3)
-      flame.scale.set(0.72 + Math.sin(phase) * 0.22, 0.9 + Math.sin(phase * 1.41) * 0.32, 0.72)
-      ;(flame.material as Three.MeshBasicMaterial).opacity = 0.16 + Math.max(0, Math.sin(phase)) * 0.13
-    })
-    this.#on.visible = state.on
-    this.#on.position.y = ground + 0.9 - camera.position.y
-    const onBreath = 1 + Math.sin(seconds * 5.5) * 0.035 + Math.sin(seconds * 13) * 0.012
-    this.#on.scale.set(onBreath, 1 + Math.sin(seconds * 6.5) * 0.025, onBreath)
-    this.#on.rotation.y = seconds * 0.22
-    this.#onCore.scale.set(0.82 * onBreath, 1.72 + Math.sin(seconds * 8) * 0.07, 0.82 * onBreath)
-    ;(this.#onCore.material as Three.MeshBasicMaterial).opacity = 0.42 + Math.sin(seconds * 9) * 0.06
-    this.#onFlames.forEach((flame, index) => {
-      const phase = seconds * Math.PI * 2 * (NEN_PRESENTATION.on.pulseHz + (index % 4) * 0.06) + index * 1.73
-      const rise = ((seconds * (0.42 + (index % 3) * 0.06) + index / 7) % 1) * 0.32
-      const angle = Number(flame.userData.onAngle) + Math.sin(phase) * 0.12
-      const radius = 0.57 + Math.sin(phase * 0.7) * 0.08
-      flame.position.set(
-        Math.cos(angle) * radius,
-        -0.86 + Number(flame.userData.onLayer) * 0.27 + rise,
-        Math.sin(angle) * radius,
-      )
-      flame.rotation.set(Math.sin(angle) * 0.28, -angle, Math.cos(angle) * -0.28)
-      flame.scale.set(0.75 + Math.sin(phase) * 0.18, 0.82 + Math.sin(phase * 1.3) * 0.24, 0.75)
-    })
+    
+    if (!state.on) {
+      this.#wasOn = false;
+    }
+    
+    if (active && state.en !== null) {
+       this.#en.visible = true;
+       this.#en.position.set(0, ground + 0.025 - camera.position.y, 0); // world coords relative to root
+       this.#en.scale.setScalar(state.en.radius);
+       if (depthTexture) {
+         this.#enUniforms.tDepth.value = depthTexture;
+         this.#enUniforms.u_cameraNear.value = camera.near;
+         this.#enUniforms.u_cameraFar.value = camera.far;
+       }
+    }
 
-    const ko = active ? state.ko : null
-    const zonePositions: Record<string, Array<[number, number, number]>> = {
-      head: [[0, 0.02, -0.25]],
-      torso: [[0, -0.62, -0.42]],
-      hands: [[-0.27, -0.48, -0.62], [0.27, -0.48, -0.62]],
-      feet: [[-0.2, -1.45, -0.35], [0.2, -1.45, -0.35]],
-    }
-    for (const [zone, points] of this.#points) {
-      const share = ko === zone ? 1 : Number(state.ryu[zone] ?? 0)
-      points.forEach((point, index) => {
-        point.visible = active && share > 0
-        const position = zonePositions[zone]?.[index] ?? zonePositions.torso[0]
-        point.position.set(...position)
-        const energy = 0.68 + share * 0.92
-        const flow = 1 + Math.sin(seconds * 8 - share * 5 + index * Math.PI) * (ko ? 0.16 : 0.08)
-        point.scale.setScalar(energy * flow)
-        ;(point.material as Three.MeshBasicMaterial).opacity = 0.42 + share * 0.42 + Math.sin(seconds * 10 + index) * 0.08
-        point.quaternion.copy(camera.quaternion)
-      })
-    }
     for (const [index, shell] of [...this.#shu.values()].entries()) {
       const shimmer = 1 + Math.sin(seconds * 4.5 + index * 1.7) * 0.018
       const scale = shell.userData.shuScale as [number, number, number] | undefined
       if (scale) shell.scale.set(scale[0] * shimmer, scale[1] * shimmer, scale[2] * shimmer)
       ;(shell.material as Three.MeshBasicMaterial).opacity = 0.22 + Math.sin(seconds * 6 + index) * 0.055
     }
+    
     for (let index = this.#interactions.length - 1; index >= 0; index--) {
       const effect = this.#interactions[index]
       const age = seconds - Number(effect.userData.started)
@@ -370,44 +717,6 @@ export class NenSceneAura {
     }
   }
 
-  #syncTransition(state: NenTechniqueState, seconds: number) {
-    const signature = JSON.stringify({
-      mode: state.mode, gyo: state.gyo, in: state.in, en: Boolean(state.en), ken: state.ken,
-      ko: state.ko, ryu: state.ryu, on: state.on, shu: state.shu.length,
-    })
-    if (!this.#previousSignature) this.#previousSignature = signature
-    else if (signature !== this.#previousSignature) {
-      const before = JSON.parse(this.#previousSignature) as Record<string, unknown>
-      this.#transitionTechnique = state.on ? 'on'
-        : state.mode !== before.mode ? state.mode
-        : state.ko !== before.ko ? 'ko'
-        : state.ken !== before.ken ? 'ken'
-        : state.gyo !== before.gyo ? 'gyo'
-        : state.in !== before.in ? 'in'
-        : Boolean(state.en) !== before.en ? 'en'
-        : state.shu.length !== before.shu ? 'shu' : 'ryu'
-      this.#transitionStarted = seconds
-      this.#previousSignature = signature
-      const material = this.#transition.material as Three.MeshBasicMaterial
-      material.color.setHex(NEN_PRESENTATION[this.#transitionTechnique].colours[0])
-    }
-    if (!this.#transitionTechnique) return
-    const profile = NEN_PRESENTATION[this.#transitionTechnique]
-    const duration = profile.envelope.attack + profile.envelope.release
-    const progress = Math.min(1, Math.max(0, (seconds - this.#transitionStarted) / duration))
-    const collapse = this.#transitionTechnique === 'zetsu' || this.#transitionTechnique === 'in'
-    const focus = this.#transitionTechnique === 'gyo'
-    const scale = collapse ? 3.8 - progress * 3.65 : focus ? 3.2 - progress * 2.85 : 0.35 + progress * (this.#transitionTechnique === 'ko' ? 5.2 : 3.1)
-    this.#transition.scale.set(scale, focus ? scale * 0.58 : scale, 1)
-    this.#transition.rotation.z = focus ? progress * Math.PI * 0.5 : 0
-    ;(this.#transition.material as Three.MeshBasicMaterial).opacity =
-      Math.sin(progress * Math.PI) * profile.intensity * 0.72
-    if (progress >= 1) {
-      this.#transitionTechnique = null
-      this.#transition.visible = false
-    } else this.#transition.visible = true
-  }
-
   dispose(scene: Three.Scene) {
     scene.remove(this.#root, this.#world)
     for (const root of [this.#root, this.#world]) root.traverse((part) => {
@@ -416,5 +725,6 @@ export class NenSceneAura {
       const material = mesh.material as Three.Material | undefined
       material?.dispose()
     })
+    this.#auraGeom.dispose()
   }
 }

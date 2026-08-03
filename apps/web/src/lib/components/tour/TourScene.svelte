@@ -645,13 +645,13 @@
       // renderer is made before the first finger can land on the glass.
       const coarse = window.matchMedia?.('(hover: none) and (pointer: coarse)').matches ?? false
 
-      let runtime: ReturnType<typeof createSceneRuntime>
+      let runtime: Awaited<ReturnType<typeof createSceneRuntime>>
       try {
         // Multisampling on a phone is paid for at every one of a lot of pixels,
         // and on a display this dense it is buying an edge nobody can see. The
         // gold outlines are lines rather than geometry, so what it was mostly
         // smoothing is not there to be smoothed.
-        runtime = createSceneRuntime(THREE, canvas, {
+        runtime = await createSceneRuntime(THREE, canvas, {
           coarse,
           fov: $comfort.fov,
           viewDistance: VIEW_DISTANCE,
@@ -670,7 +670,7 @@
       // corridor as mud. The filmic curve is what holds both ends: it rolls a lamp
       // off instead of clipping it and keeps shadowed steel above black. It is also
       // what `syncSight` closes when the monkeys take sight.
-      const { renderer, scene, fog, camera } = runtime
+      const { renderer, scene, fog, camera, composer, renderTarget } = runtime
       const portals = new PortalRenderer(THREE, {
         renderer,
         scene,
@@ -4022,7 +4022,7 @@
         camera.rotateX(pitch)
         camera.rotateZ(bob.roll)
         {
-          nenAura.update(effectiveNen, camera, ground, now / 1000)
+          nenAura.update(effectiveNen, camera, ground, now / 1000, renderTarget?.depthTexture)
           nenAura.syncShu(
             effectiveNen.shu.flatMap((id) => {
               const solid = solidById(ship, world, id)
@@ -4247,7 +4247,7 @@
         // The far ends of the tunnel are drawn into their panes first, from
         // where the visitor's head would be if it were standing at the other one.
         renderPortals()
-        renderer.render(scene, camera)
+        composer.render()
 
         // The eye's feed, inset in the corner: the same scene from where the eye
         // was left, however many decks away that is.

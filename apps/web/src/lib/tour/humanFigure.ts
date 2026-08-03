@@ -138,7 +138,7 @@ function nenState(seen: HumanLook): NenTechniqueState<HumanZone> {
   if (seen.human?.nen) return seen.human.nen
   const state = createNenTechniqueState<HumanZone>()
   const aura = legacyAura(seen)
-  state.mode = aura === 'none' ? 'zetsu' : aura
+  state.mode = aura === 'none' || !aura ? 'zetsu' : aura
   return state
 }
 

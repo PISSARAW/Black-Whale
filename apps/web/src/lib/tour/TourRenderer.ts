@@ -6,13 +6,32 @@ export interface SceneRuntime {
   scene: Three.Scene
   fog: Three.FogExp2
   camera: Three.PerspectiveCamera
+  composer: any // Typed as any to avoid static import of EffectComposer
+  renderTarget?: Three.WebGLRenderTarget
 }
 
-export function createSceneRuntime(
+function isHighEndGPU(renderer: Three.WebGLRenderer, coarse: boolean): boolean {
+  if (coarse) return false;
+  
+  const gl = renderer.getContext();
+  const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+  if (debugInfo) {
+    const rendererStr = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL)?.toLowerCase() || '';
+    const lowEnd = ['mali', 'adreno', 'intel', 'hd graphics', 'uhd graphics', 'powervr'];
+    for (const gpu of lowEnd) {
+      if (rendererStr.includes(gpu)) {
+        return false;
+      }
+    }
+  }
+  return true;
+}
+
+export async function createSceneRuntime(
   THREE: typeof Three,
   canvas: HTMLCanvasElement,
   options: { coarse: boolean; fov: number; viewDistance: number },
-): SceneRuntime {
+): Promise<SceneRuntime> {
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: !options.coarse })
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5))
   renderer.setClearColor(0x050505)
@@ -23,7 +42,39 @@ export function createSceneRuntime(
   const fog = new THREE.FogExp2(0x050505, 0.02)
   scene.fog = fog
   const camera = new THREE.PerspectiveCamera(options.fov, 1, 0.1, options.viewDistance)
-  return { renderer, scene, fog, camera }
+
+  const { EffectComposer } = await import('three/examples/jsm/postprocessing/EffectComposer.js')
+  const { RenderPass } = await import('three/examples/jsm/postprocessing/RenderPass.js')
+  const { UnrealBloomPass } = await import('three/examples/jsm/postprocessing/UnrealBloomPass.js')
+
+  let renderTarget: Three.WebGLRenderTarget | undefined
+  if (isHighEndGPU(renderer, options.coarse)) {
+    const size = renderer.getSize(new THREE.Vector2())
+    renderTarget = new THREE.WebGLRenderTarget(size.width || 1024, size.height || 1024, {
+      minFilter: THREE.LinearFilter,
+      magFilter: THREE.LinearFilter,
+      format: THREE.RGBAFormat,
+      type: THREE.HalfFloatType
+    })
+    renderTarget.depthTexture = new THREE.DepthTexture(size.width || 1024, size.height || 1024)
+    renderTarget.depthTexture.type = THREE.UnsignedIntType
+  }
+  
+  const composer = new EffectComposer(renderer, renderTarget)
+  const renderPass = new RenderPass(scene, camera)
+  composer.addPass(renderPass)
+
+  if (isHighEndGPU(renderer, options.coarse)) {
+    const bloomPass = new UnrealBloomPass(
+      new THREE.Vector2(window.innerWidth, window.innerHeight),
+      0.8, // strength
+      0.4, // radius
+      1.0  // threshold
+    )
+    composer.addPass(bloomPass)
+  }
+
+  return { renderer, scene, fog, camera, composer, renderTarget }
 }
 
 export interface SceneResize {
@@ -50,6 +101,7 @@ export function observeSceneResize(options: ResizeOptions): SceneResize {
     runtime.camera.aspect = clientWidth / clientHeight
     runtime.camera.updateProjectionMatrix()
     const { width, height } = runtime.renderer.getSize(measure)
+    runtime.composer.setSize(width, height)
     for (const target of targets()) {
       target?.setSize(Math.max(2, Math.round(width)), Math.max(2, Math.round(height)))
     }

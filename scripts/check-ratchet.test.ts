@@ -1,5 +1,5 @@
 import { execFileSync } from 'node:child_process'
-import { readFileSync } from 'node:fs'
+import { existsSync, readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
 
@@ -93,7 +93,11 @@ describe('ADR-002 ratchet', () => {
     const offenders = git(['ls-files', 'apps', 'packages', 'scripts'])
       .split('\n')
       .filter((path) => /\.(ts|js|mjs|svelte)$/.test(path) && path !== SELF)
-      .filter((path) => banned.test(readFileSync(ROOT + path, 'utf8')))
+      .filter((path) => {
+        // Still tracked, already deleted on disk: a split in progress, mid-commit.
+        if (!existsSync(ROOT + path)) return false
+        return banned.test(readFileSync(ROOT + path, 'utf8'))
+      })
 
     expect(offenders, 'these files silence a ratchet rule in place').toEqual([])
   })

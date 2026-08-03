@@ -253,7 +253,6 @@ export default tseslint.config(
       'apps/web/src/lib/audio/hatsuSounds.ts', // 1816
       'apps/web/src/lib/audio/steps.ts', // 534
       'apps/web/src/lib/components/investigation/InvestigationCaseView.svelte', // 1785
-      'apps/web/src/lib/components/map/markerProjection.ts', // 1430
       'apps/web/src/lib/components/tour/TourHatsuHud.svelte', // 975
       'apps/web/src/lib/components/tour/TourScene.svelte', // 4661
       'apps/web/src/lib/nen/GlobalHatsuEffects.svelte', // 3166
@@ -309,7 +308,6 @@ export default tseslint.config(
       'apps/web/src/lib/combat/perception.ts', // 15
       'apps/web/src/lib/combat/reducer.ts', // 43
       'apps/web/src/lib/components/investigation/InvestigationCaseView.svelte', // 12
-      'apps/web/src/lib/components/map/markerProjection.ts', // 23
       'apps/web/src/lib/components/tour/TourHatsuHud.svelte', // 181
       'apps/web/src/lib/components/tour/TourMinimap.svelte', // 14
       'apps/web/src/lib/components/tour/TourScene.svelte', // 138

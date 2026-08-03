@@ -445,6 +445,19 @@ export const en = {
       exposure: 'Exposure',
       exposureHelp: 'Opens the eye, not the ship: no room is lit that was not.',
       /**
+       * The hour behind the two openings this ship has. The walk already
+       * projects an event and knows what time it happens at, so the default is
+       * that hour — and `noon` is the way back to the one state ch. 380 draws,
+       * for whoever wants the sourced picture and nothing derived from it.
+       */
+      shipHour: 'Time aboard',
+      hourCanon: 'As projected',
+      hourMorning: 'Morning',
+      hourNoon: 'Noon',
+      hourEvening: 'Evening',
+      hourNight: 'Night',
+      shipHourHelp: 'Only the two windows show an outside. Nothing else changes.',
+      /**
        * The walk is slow because the ship is enormous and nothing else on screen
        * can say so. But that is an argument about the ship rather than about
        * somebody's afternoon, and the plan and the index still put anyone in any

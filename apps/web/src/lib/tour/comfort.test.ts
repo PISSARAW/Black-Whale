@@ -130,6 +130,22 @@ describe('readComfort', () => {
     expect(comfortDefaults(true).exposure).toBe(1)
   })
 
+  /**
+   * The hour behind the two windows: the projection's, unless the visitor says
+   * otherwise. A default of anything else would be the walk refusing the clock
+   * it already reads.
+   */
+  it('starts at the hour the projection gives, in both presets', () => {
+    expect(comfortDefaults(false).shipHour).toBe('canon')
+    expect(comfortDefaults(true).shipHour).toBe('canon')
+  })
+
+  it('refuses an hour that is not one of the five', () => {
+    expect(readComfort(JSON.stringify({ shipHour: 'noon' }), false).shipHour).toBe('noon')
+    expect(readComfort(JSON.stringify({ shipHour: 'teatime' }), false).shipHour).toBe('canon')
+    expect(readComfort(JSON.stringify({ shipHour: 3 }), false).shipHour).toBe('canon')
+  })
+
   it('keeps the exposure inside what the filmic curve can still hold', () => {
     expect(readComfort(JSON.stringify({ exposure: 0 }), false).exposure).toBe(EXPOSURE_RANGE[0])
     expect(readComfort(JSON.stringify({ exposure: 40 }), false).exposure).toBe(EXPOSURE_RANGE[1])

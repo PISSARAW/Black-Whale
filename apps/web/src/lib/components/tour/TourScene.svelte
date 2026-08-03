@@ -111,8 +111,9 @@
   import { playNenObjectSound, playNenTechniqueSound, sustainNenSound } from '$lib/audio/nenSounds'
   import { NEN_KEYS, nenZoneIndex, ryuDistribution, type NenBodyZone } from '$lib/nen/controls'
   import { visibleSpaces } from '$lib/tour/visibility'
-  import { SHAFT_PEAK, shaftAnchors, shaftStrength, type ShaftAnchor } from '$lib/tour/godRays'
-  import { REFERENCE_HOUR, skyOf } from '$lib/tour/sky'
+  import { shaftAnchors, shaftStrength, type ShaftAnchor } from '$lib/tour/godRays'
+  import { REFERENCE_HOUR, shipTimeOfDay, skyOf } from '$lib/tour/sky'
+  import { NO_HOUR, type ShipHour } from '$lib/tour/hour'
   import { applySurfaceDetail } from '$lib/tour/surfaceDetail'
   import { applySkyPool } from '$lib/tour/skyPool'
   import { refractionAmount } from '$lib/tour/auraRefraction'
@@ -462,6 +463,16 @@
      * when the visitor did not step into either of its ends.
      */
     onWorm?: (spaceId: string | null, arrivedFrom: string | null) => string | null
+    /**
+     * What time it is aboard, at the event the walk is projecting.
+     *
+     * Two windows in three hundred and fourteen spaces read this and nothing
+     * else does — an unlit corridor is black at every hour by construction. The
+     * hour itself is not worked out here: it is arbitrated on the server, off
+     * the same voyage clock `/ship` reads, so the sky behind the bay agrees with
+     * the people the same projection put in the rooms. See `$lib/tour/hour`.
+     */
+    hour?: ShipHour
     /** Shown while three.js and the first deck are being prepared. */
     loadingLabel: string
     /** Shown instead of the walk when the browser cannot give us WebGL. */
@@ -524,6 +535,7 @@
     onBeast,
     onCoin,
     swings = false,
+    hour = NO_HOUR,
   }: Props = $props()
 
   let localNen = $state<NenTechniqueState>(createNenTechniqueState())
@@ -952,11 +964,6 @@
         side: THREE.FrontSide,
       })
       const reference = skyOf(REFERENCE_HOUR)
-      paneMaterial.color.setRGB(reference.glow[0], reference.glow[1], reference.glow[2])
-      // The glass and the pool it throws start at the same state, which is the
-      // walk as it was rendered before the hour existed. Chantier E moves the
-      // two of them together, off one number.
-      skyPool.uSkyGlow.value = [reference.glow[0], reference.glow[1], reference.glow[2]]
 
       /**
        * The dust of the ten great voids.
@@ -3958,6 +3965,39 @@
       const shaftDecks = new Map<string, { anchor: ShaftAnchor; rooms: Set<string> }[]>()
       const shaftPoint = new THREE.Vector3()
 
+      /**
+       * The hour, on its three consumers at once.
+       *
+       * The glass, the pool it throws on the floor of its own room, and the
+       * shafts through it are one statement about what is outside, so they are
+       * set together off one `skyOf` — three constants that used to be written
+       * in three files and could not disagree with each other by construction.
+       *
+       * Changing event is a jump and not an hour passing: the light cuts the way
+       * `jumpTo` cuts to another deck, with no fade that would imitate a
+       * twilight nobody watched. Guarded on a key rather than eased, so it costs
+       * a string comparison a frame and is applied the frame anything moves —
+       * the projected event, or the visitor's own override.
+       */
+      let sky = reference
+      let skyKey = ''
+
+      function syncSky() {
+        const choice = $comfort.shipHour
+        const key = `${choice}|${hour.hours ?? ''}`
+        if (key === skyKey) return
+        skyKey = key
+        sky = skyOf(shipTimeOfDay(choice, hour.hours))
+        // The glass itself, whose vertex colours are the two bands relative to
+        // this — see `paneColors` in `$lib/tour/mesh`.
+        paneMaterial.color.setRGB(sky.glow[0], sky.glow[1], sky.glow[2])
+        // The pool, in the two rooms whose Lambert reads `aSky`.
+        skyPool.uSkyGlow.value = [sky.glow[0], sky.glow[1], sky.glow[2]]
+        // And the shafts' tint. Their strength is aimed per frame in
+        // `aimShafts`, which reads `sky.peak` from here.
+        if (shafts) shafts.uniforms.uTint.value = [sky.tint[0], sky.tint[1], sky.tint[2]]
+      }
+
       const aimShafts = (plan: TierPlan, standingId: string | null) => {
         const uniforms = shafts?.uniforms
         if (!uniforms) return
@@ -3978,7 +4018,10 @@
           if (!standingId || !rooms.has(standingId)) continue
           shaftPoint.set(anchor.position[0], anchor.position[1], anchor.position[2])
           shaftPoint.project(camera)
-          const strength = shaftStrength(shaftPoint, SHAFT_PEAK)
+          // The hour's own peak rather than the constant: at night it is zero,
+          // which is the honest way to say the march has nothing to sum — the
+          // pane is under the threshold by then whatever this said.
+          const strength = shaftStrength(shaftPoint, sky.peak)
           if (strength <= strongest) continue
           strongest = strength
           uniforms.uSource.value = [shaftPoint.x * 0.5 + 0.5, shaftPoint.y * 0.5 + 0.5]
@@ -4043,6 +4086,7 @@
         syncShells()
         syncEye()
         syncSight()
+        syncSky()
         syncPhasing()
         // The far deck first, so a mouth built this frame already has a room to
         // look at rather than a frame of void.

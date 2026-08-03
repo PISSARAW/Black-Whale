@@ -47,6 +47,16 @@
     statusHint: string
     linkPrompt: string | null
     examine: ExaminePrompt | null
+    /**
+     * What time it is aboard, in the words `formatVoyageTime` uses everywhere
+     * else: `Day 3 · Tuesday · 01:27`, `≈ Day 5`, `Day 4 – Day 8`.
+     *
+     * Beside the deck, because it is the provenance card of the light: two
+     * windows on this ship show an outside, and this is what says *why* the bay
+     * is black, or why it is the drawn noon at a chapter that gives no hour.
+     * `null` when nothing is projected.
+     */
+    hour: string | null
   }
 
   let {
@@ -60,6 +70,7 @@
     statusHint,
     linkPrompt,
     examine,
+    hour,
   }: Props = $props()
 </script>
 
@@ -75,7 +86,9 @@
 
 {#if location}
   <div class="pointer-events-none absolute left-3 top-14 max-w-sm">
-    <p class="text-[10px] uppercase tracking-widest text-[#FFD700]/70">{location.level}</p>
+    <p class="text-[10px] uppercase tracking-widest text-[#FFD700]/70">
+      {location.level}{#if hour}<span class="ml-2 text-[#FFFFF0]/40">{hour}</span>{/if}
+    </p>
     <p class="text-lg font-semibold leading-tight text-[#FFFFF0]">{location.room}</p>
     {#if location.badge}
       <span

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { REFERENCE_HOUR, skyOf, timeOfDayOf } from './sky'
+import { REFERENCE_HOUR, SHIP_HOURS, shipTimeOfDay, skyOf, timeOfDayOf } from './sky'
 import { SEA_GLOW, WINDOW_GLOW } from './mesh'
 
 /** The luminance threshold the shaft pass selects a pane with. See `godRays`. */
@@ -76,6 +76,34 @@ describe('skyOf', () => {
   it('reads an hour outside the dial as the same hour of the day', () => {
     expect(skyOf(REFERENCE_HOUR + 24)).toEqual(skyOf(REFERENCE_HOUR))
     expect(skyOf(REFERENCE_HOUR - 24)).toEqual(skyOf(REFERENCE_HOUR))
+  })
+})
+
+describe('shipTimeOfDay', () => {
+  it('follows the projection when the visitor has not overruled it', () => {
+    // Chapter 374, 37 h 30 out of port: Fugetsu's clock reads 01:27 AM, and the
+    // bay behind Kurapika cannot be showing an afternoon.
+    expect(shipTimeOfDay('canon', 37.5)).toBeCloseTo(1.5, 10)
+  })
+
+  /**
+   * The rule of §3, at the end of the wire. A bracketed event arrives here as
+   * `null` — the server refused to invent an hour for it — and what the walk
+   * shows is the state the manga draws, which is what it showed before the
+   * hour existed at all.
+   */
+  it('falls back to the drawn state when the canon dates nothing', () => {
+    expect(shipTimeOfDay('canon', null)).toBe(REFERENCE_HOUR)
+    expect(skyOf(shipTimeOfDay('canon', null)).glow).toEqual(WINDOW_GLOW)
+  })
+
+  it('lets the visitor overrule the projection, at any hour of the arc', () => {
+    for (const hours of [0, 37.5, 200, null]) {
+      expect(shipTimeOfDay('night', hours)).toBe(SHIP_HOURS.night)
+      // The way out for anyone who wants the sourced state and nothing else —
+      // and the override the captures and the smoke tests use.
+      expect(shipTimeOfDay('noon', hours)).toBe(REFERENCE_HOUR)
+    }
   })
 })
 

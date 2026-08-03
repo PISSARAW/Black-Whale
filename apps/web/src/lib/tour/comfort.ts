@@ -17,10 +17,19 @@
  */
 import { writable } from 'svelte/store'
 import type { QualitySetting } from './quality'
+import type { ShipHourChoice } from './sky'
 
 const KEY = 'black-whale:tour-comfort'
 
 const QUALITY_SETTINGS: readonly QualitySetting[] = ['auto', 'low', 'high']
+
+const SHIP_HOUR_CHOICES: readonly ShipHourChoice[] = [
+  'canon',
+  'morning',
+  'noon',
+  'evening',
+  'night',
+]
 
 export interface Comfort {
   /** Vertical field of view, in degrees. */
@@ -107,6 +116,21 @@ export interface Comfort {
    * which is why it is here and not in the renderer.
    */
   quality: QualitySetting
+  /**
+   * What time it is behind the two windows.
+   *
+   * `canon` is the projection's verdict — the walk already places an event, and
+   * the people it puts aboard are aboard at that hour, so the sky behind the bay
+   * follows them. The other four are the visitor overruling it, which is
+   * `quality`'s doctrine word for word: the projection picks the default, the
+   * visitor sets the dial.
+   *
+   * `noon` is the way out for anyone who wants the one state the manga draws
+   * and nothing derived from it. It changes what is behind two windows out of
+   * three hundred and fourteen spaces and nothing else whatever: no corridor is
+   * lit or unlit by this setting.
+   */
+  shipHour: ShipHourChoice
 }
 
 export const FOV_RANGE = [55, 100] as const
@@ -147,6 +171,9 @@ const LIVELY: Comfort = {
   // in, and it has no way of knowing it.
   exposure: 1,
   quality: 'auto',
+  // The projection's own hour. A default of `noon` would be the walk quietly
+  // refusing the clock it already reads.
+  shipHour: 'canon',
 }
 
 const CALM: Comfort = {
@@ -174,6 +201,9 @@ const CALM: Comfort = {
   // Reduced motion is a request about movement, not about fidelity. The palier
   // is left to the machine, the same as for anyone else.
   quality: 'auto',
+  // Nor about the hour: the light behind the bay is a fact of the timeline, and
+  // a visitor who asked for less movement did not ask for a different voyage.
+  shipHour: 'canon',
 }
 
 /** Whether the system has been asked for less movement. */
@@ -206,6 +236,9 @@ const readFlag = (value: unknown, fallback: boolean): boolean =>
 const readQuality = (value: unknown, fallback: QualitySetting): QualitySetting =>
   QUALITY_SETTINGS.includes(value as QualitySetting) ? (value as QualitySetting) : fallback
 
+const readShipHour = (value: unknown, fallback: ShipHourChoice): ShipHourChoice =>
+  SHIP_HOUR_CHOICES.includes(value as ShipHourChoice) ? (value as ShipHourChoice) : fallback
+
 /**
  * A stored setting read back, field by field.
  *
@@ -234,6 +267,7 @@ export function readComfort(raw: string | null, reduced = prefersReducedMotion()
     walkPace: readNumber(stored.walkPace, WALK_PACE_RANGE, defaults.walkPace),
     exposure: readNumber(stored.exposure, EXPOSURE_RANGE, defaults.exposure),
     quality: readQuality(stored.quality, defaults.quality),
+    shipHour: readShipHour(stored.shipHour, defaults.shipHour),
   }
 }
 

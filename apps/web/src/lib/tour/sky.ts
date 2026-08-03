@@ -110,6 +110,28 @@ const STATES: readonly SkyState[] = [
 /** The hour the walk falls back to: the state ch. 380 draws. See `skyOf`. */
 export const REFERENCE_HOUR = 13
 
+/**
+ * The four hours the visitor can ask for outright, against the projection.
+ *
+ * `quality`'s doctrine word for word: the projection picks the default and the
+ * visitor overrules it. `noon` is the way out for anyone who wants the sourced
+ * state and nothing else — it is also the override the captures and the smoke
+ * tests use, which is why it is exactly `REFERENCE_HOUR` and not a value near
+ * it.
+ */
+export const SHIP_HOURS = {
+  morning: 10,
+  noon: REFERENCE_HOUR,
+  evening: 19.5,
+  // Deep in it rather than at the edge: 21:30 is where the table reaches night,
+  // and a visitor asking for night wants the bay black, not the last minute of
+  // dusk in it.
+  night: 1,
+} as const
+
+/** What the walk is showing: the projected event's hour, or one asked for. */
+export type ShipHourChoice = 'canon' | keyof typeof SHIP_HOURS
+
 /** How much of the sky the water gives back — see `SEA_GLOW`, and `Sky.sea`. */
 const SEA_FRACTION = 0.45
 
@@ -125,6 +147,18 @@ const mix = (from: number, to: number, t: number) => from + (to - from) * t
  */
 export function timeOfDayOf(voyageHours: number): number {
   return (((voyageHours + 12) % 24) + 24) % 24
+}
+
+/**
+ * What time the two windows are showing: the projection, or the override.
+ *
+ * `canon` with no hour is the drawn state, which is exactly what the walk
+ * showed before any of this existed — see the rule of §3 in
+ * `docs/tour-heure.md`, arbitrated on the server in `$lib/tour/hour`.
+ */
+export function shipTimeOfDay(choice: ShipHourChoice, voyageHours: number | null): number {
+  if (choice !== 'canon') return SHIP_HOURS[choice]
+  return voyageHours === null ? REFERENCE_HOUR : timeOfDayOf(voyageHours)
 }
 
 /**

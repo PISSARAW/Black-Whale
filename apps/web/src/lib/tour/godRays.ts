@@ -43,6 +43,12 @@ const SAMPLES = 24
  * daylight the manga does not show. What this is for is the fall of light
  * across the floor of two rooms, and being able to tell, from the far end of
  * the observation deck, that the light there comes from somewhere.
+ *
+ * The hour of the voyage moves it now — `skyOf(...).peak` in `$lib/tour/sky` —
+ * and this is the row of that table the manga draws: the overcast noon of ch.
+ * 380, from which every other hour is derived. Kept here because it is a
+ * statement about the *pass* rather than about the sky, and because the table
+ * has to be checkable against the state that was here before it existed.
  */
 export const SHAFT_PEAK = 0.55
 

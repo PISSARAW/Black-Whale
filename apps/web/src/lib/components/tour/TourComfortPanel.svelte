@@ -16,8 +16,26 @@
   // the units the reconstruction publishes everything else in.
   import { WALK_SPEED } from '$lib/tour/navigation'
   import type { QualitySetting } from '$lib/tour/quality'
+  import type { ShipHourChoice } from '$lib/tour/sky'
 
   let { calm }: { calm: boolean } = $props()
+
+  /**
+   * The hour behind the two windows. `quality`'s doctrine word for word: the
+   * projection picks the default and the visitor overrules it — and `noon` is
+   * the way out for whoever wants the one state the manga draws.
+   *
+   * A list and not a dial, because that is what these are: the sky has a table
+   * of posed hours, and offering a continuum would imply that any minute of it
+   * is a claim about the voyage. It is not — the projection's own hour is.
+   */
+  const hours: { value: ShipHourChoice; label: () => string }[] = [
+    { value: 'canon', label: () => $t.tour.comfort.hourCanon },
+    { value: 'morning', label: () => $t.tour.comfort.hourMorning },
+    { value: 'noon', label: () => $t.tour.comfort.hourNoon },
+    { value: 'evening', label: () => $t.tour.comfort.hourEvening },
+    { value: 'night', label: () => $t.tour.comfort.hourNight },
+  ]
 
   // The palier, spelled out. Three named choices rather than a slider: there
   // are two paliers and a way of not choosing, and a continuum would imply a
@@ -179,6 +197,24 @@
       />
       <span>{$t.tour.comfort.jumpOnly}</span>
     </label>
+    <div>
+      <span class="block">{$t.tour.comfort.shipHour}</span>
+      <div class="mt-1 flex flex-wrap gap-1">
+        {#each hours as choice (choice.value)}
+          <button
+            type="button"
+            aria-pressed={$comfort.shipHour === choice.value}
+            onclick={() => setComfort({ shipHour: choice.value })}
+            class="rounded border px-1.5 py-1 text-[11px] transition-colors {$comfort.shipHour ===
+            choice.value
+              ? 'border-[#FFD700]/60 bg-[#FFD700]/10 text-[#FFD700]'
+              : 'border-[#333] text-[#FFFFF0]/60 hover:border-[#FFD700]/40 hover:text-[#FFFFF0]'}"
+            >{choice.label()}</button
+          >
+        {/each}
+      </div>
+      <p class="mt-1 text-[11px] leading-snug text-[#FFFFF0]/40">{$t.tour.comfort.shipHourHelp}</p>
+    </div>
     <div>
       <span class="block">{$t.tour.comfort.quality}</span>
       <div class="mt-1 flex gap-1">

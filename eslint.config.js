@@ -161,11 +161,12 @@ export default tseslint.config(
   },
 
   {
-    // Seed, backfill and migration scripts are operator tools: they log by
-    // design and run outside the type-checked build.
+    // Seed, migration and measurement scripts are operator tools: reporting to
+    // a terminal is what they are for.
     files: [
       'packages/database/**/*.{ts,mjs}',
       'packages/canon-compiler/src/cli/**/*.ts',
+      'apps/*/bench/**/*.ts',
       'scripts/**/*.{ts,mjs}',
     ],
     rules: {

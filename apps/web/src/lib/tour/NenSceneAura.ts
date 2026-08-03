@@ -336,6 +336,7 @@ export class NenSceneAura {
   
   readonly #ten: Three.Mesh
   readonly #ren: Three.Mesh
+  readonly #renTen: Three.Mesh
   readonly #on: Three.Mesh
   readonly #onTen: Three.Mesh
   readonly #zetsu: Three.Mesh
@@ -348,6 +349,8 @@ export class NenSceneAura {
   #seconds = 0
   #onStartTime = 0
   #wasOn = false
+  #renStartTime = 0
+  #wasRen = false
 
   constructor(THREE: ThreeModule, scene: Three.Scene) {
     this.#THREE = THREE
@@ -390,6 +393,23 @@ export class NenSceneAura {
       })
     )
     this.#ren.position.y = -1.2
+    
+    // REN (Settled into Ten state)
+    this.#renTen = new THREE.Mesh(
+      this.#auraGeom,
+      new THREE.ShaderMaterial({
+        vertexShader: tenVertexShader,
+        fragmentShader: tenFragmentShader,
+        uniforms: {
+          u_time: { value: 0 },
+          u_colorCore: { value: new THREE.Color(NEN_PRESENTATION.ren.colours[0]) },
+          u_colorEdge: { value: new THREE.Color(NEN_PRESENTATION.ren.colours[1] || NEN_PRESENTATION.ren.colours[0]) },
+          u_opacity: { value: 0.0 },
+        },
+        transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide
+      })
+    )
+    this.#renTen.position.y = -1.2
     
     // ON
     this.#on = new THREE.Mesh(
@@ -481,6 +501,7 @@ export class NenSceneAura {
     
     this.#root.add(this.#ten)
     this.#root.add(this.#ren)
+    this.#root.add(this.#renTen)
     this.#root.add(this.#on)
     this.#root.add(this.#onTen)
     this.#root.add(this.#zetsu)
@@ -579,6 +600,7 @@ export class NenSceneAura {
     // Hide all by default
     this.#ten.visible = false;
     this.#ren.visible = false;
+    this.#renTen.visible = false;
     this.#on.visible = false;
     this.#onTen.visible = false;
     this.#zetsu.visible = false;
@@ -645,8 +667,24 @@ export class NenSceneAura {
        this.#fluxUniforms.u_nodes.value = nodes;
        this.#fluxUniforms.u_intensities.value = ints;
     } else if (state.mode === 'ren' && !state.ken) {
-       this.#ren.visible = true;
-       (this.#ren.material as Three.ShaderMaterial).uniforms.u_time.value = seconds;
+       if (!this.#wasRen) {
+         this.#wasRen = true;
+         this.#renStartTime = seconds;
+       }
+       const elapsed = seconds - this.#renStartTime;
+       const progress = Math.min(elapsed / 30.0, 1.0); // transition over 30s
+       
+       if (progress < 1.0) {
+         this.#ren.visible = true;
+         (this.#ren.material as Three.ShaderMaterial).uniforms.u_time.value = seconds;
+         (this.#ren.material as Three.ShaderMaterial).uniforms.u_opacity.value = (1.0 - progress) * 0.8;
+       }
+       
+       if (progress > 0.0) {
+         this.#renTen.visible = true;
+         (this.#renTen.material as Three.ShaderMaterial).uniforms.u_time.value = seconds;
+         (this.#renTen.material as Three.ShaderMaterial).uniforms.u_opacity.value = progress * 0.8;
+       }
     } else {
        this.#ten.visible = true;
        (this.#ten.material as Three.ShaderMaterial).uniforms.u_time.value = seconds;
@@ -660,6 +698,10 @@ export class NenSceneAura {
     
     if (!state.on) {
       this.#wasOn = false;
+    }
+    
+    if (state.mode !== 'ren' || state.ken || !active) {
+      this.#wasRen = false;
     }
     
     if (active && state.en !== null) {

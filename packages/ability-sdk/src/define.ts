@@ -21,6 +21,16 @@ import type { ConditionFn } from './conditions.js'
 import { resolve, type Resolvable } from './context.js'
 import type { EffectBuilder } from './effects.js'
 import type { TargetType } from './interactions.js'
+import {
+  evidenceCondition,
+  gyoCondition,
+  isHypothesis,
+  refusalCondition,
+  useHint,
+  useVisibility,
+  type AbilityUseEvidence,
+  type AbilityUseRefusal,
+} from './uses.js'
 
 /** The price the ability charges, surfaced by the plan and the "Why?" panel. */
 export type AbilityCost = { label: string; amount?: number; unit?: string }
@@ -45,6 +55,19 @@ export interface AbilityAction {
   hint?: string
   /** Kept off the wheel until the world state makes it reachable. */
   locked?: boolean
+  /**
+   * Where the manga puts this use — shown, merely asserted, or a hypothesis
+   * (§8.2). A hypothesis is hidden from canon views and its provenance line is
+   * `UNKNOWN`, so it can only ever be run in a simulation branch.
+   */
+  evidence?: AbilityUseEvidence
+  /**
+   * What the ability refuses here. The entry stays on the wheel, greyed, and
+   * the condition is UNMET so the engine refuses it too.
+   */
+  refusal?: AbilityUseRefusal
+  /** For a masked (In) use: what the Gyo toggle shows instead of nothing. */
+  gyo?: string
 }
 
 export interface AbilityDefinition {
@@ -105,13 +128,35 @@ export function defineAbility(def: AbilityDefinition): NenAbilityModule {
   const actionOf = (ctx: AbilityContext): AbilityAction | undefined =>
     ctx.actionId ? def.actions?.[ctx.actionId] : undefined
 
-  const conditionsOf = (ctx: AbilityContext) =>
-    [...(def.conditions ?? []), ...(actionOf(ctx)?.conditions ?? [])].map((predicate) =>
+  const conditionsOf = (ctx: AbilityContext) => {
+    const action = actionOf(ctx)
+    const declared = [...(def.conditions ?? []), ...(action?.conditions ?? [])].map((predicate) =>
       predicate(ctx),
     )
+    return [
+      ...declared,
+      // A canon refusal is a rule of the world, so it gates like any condition,
+      // and so does a hypothesis: neither may run on the canon branch.
+      ...(action?.refusal ? [refusalCondition(action.refusal)] : []),
+      ...(isHypothesis(action?.evidence) && action?.evidence
+        ? [evidenceCondition(action.evidence, ctx)]
+        : []),
+    ]
+  }
 
-  const notesOf = (ctx: AbilityContext) =>
-    [...(def.notes ?? []), ...(actionOf(ctx)?.notes ?? [])].map((predicate) => predicate(ctx))
+  const notesOf = (ctx: AbilityContext) => {
+    const action = actionOf(ctx)
+    const declared = [...(def.notes ?? []), ...(action?.notes ?? [])].map((predicate) =>
+      predicate(ctx),
+    )
+    return [
+      ...declared,
+      ...(action?.evidence && !isHypothesis(action.evidence)
+        ? [evidenceCondition(action.evidence, ctx)]
+        : []),
+      ...(action?.gyo ? [gyoCondition(action.gyo)] : []),
+    ]
+  }
 
   const effectsOf = (ctx: AbilityContext): EffectBuilder[] =>
     actionOf(ctx)?.effects ?? def.effects ?? []
@@ -163,8 +208,8 @@ export function defineAbility(def: AbilityDefinition): NenAbilityModule {
       id,
       label: action.label,
       abilityId: def.id,
-      visibility: action.locked ? ('locked' as const) : ('available' as const),
-      hint: action.hint,
+      visibility: useVisibility(action),
+      hint: action.hint ?? useHint(action),
     }))
     if (fromActions.length > 0) return fromActions
     // An ability with a single undifferentiated effect still needs somewhere to
@@ -265,12 +310,11 @@ export function defineAbility(def: AbilityDefinition): NenAbilityModule {
     explainAction(actionId: string, ctx: AbilityContext): ActionAvailability {
       const action = def.actions?.[actionId]
       if (action) {
-        const results = [...(def.conditions ?? []), ...(action.conditions ?? [])].map((predicate) =>
-          predicate(ctx),
-        )
-        const notes = [...(def.notes ?? []), ...(action.notes ?? [])].map((predicate) =>
-          predicate(ctx),
-        )
+        // Evaluated as if the action were the one being run, so the panel sees
+        // the same refusals and provenance lines the plan would.
+        const scoped = { ...ctx, actionId }
+        const results = conditionsOf(scoped)
+        const notes = notesOf(scoped)
         return {
           actionId,
           available: results.every((result) => result.status === 'MET'),

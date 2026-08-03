@@ -45,7 +45,7 @@
 <p class="sr-only" aria-live="polite" aria-atomic="true">{spoken}</p>
 
 {#if location}
-  <div class="pointer-events-none absolute left-3 top-3 max-w-sm">
+  <div class="pointer-events-none absolute left-3 top-14 max-w-sm">
     <p class="text-[10px] uppercase tracking-widest text-[#FFD700]/70">{location.level}</p>
     <p class="text-lg font-semibold leading-tight text-[#FFFFF0]">{location.room}</p>
     {#if location.badge}

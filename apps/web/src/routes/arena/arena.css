@@ -864,15 +864,16 @@
   .status-card {
     position: absolute;
     top: 1.5rem;
-    left: 1.5rem;
-    width: 14rem;
+    left: 50%;
+    transform: translateX(calc(-100% - 2rem));
+    width: min(26rem, 42vw);
   }
 
   .status-card.opponent-card {
-    left: 50%;
-    right: auto;
-    transform: translateX(-50%);
-    width: min(32rem, 90vw);
+    left: auto;
+    right: 50%;
+    transform: translateX(calc(100% + 2rem));
+    width: min(26rem, 42vw);
     border-color: #c36f6855;
     background: linear-gradient(180deg, #1f0b0aeb, #080303d9);
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), 0 0 20px rgba(195, 111, 104, 0.15);
@@ -996,9 +997,11 @@
   .ryu-card .aura-body {
     display: grid;
     grid-area: diagram;
-    transform: scale(1.1);
+    transform: scale(0.85);
+    transform-origin: center;
     align-self: center;
-    margin-left: 1rem;
+    justify-self: center;
+    margin: 0;
   }
 
   .flow i {
@@ -1061,8 +1064,9 @@
 
   .actions button {
     position: relative;
-    aspect-ratio: 5 / 7;
-    padding: 0.6rem 0.3rem;
+    aspect-ratio: 3 / 4;
+    padding: 0.4rem 0.2rem;
+    min-height: 5rem;
     border: 2px solid #334d58;
     border-radius: 6px;
     background: linear-gradient(145deg, #0f1c24, #050a0e);

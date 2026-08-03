@@ -10,7 +10,7 @@
   const toggle = (type: 'IN' | 'GYO' | 'KEN') => onAction({ type, on: !nenState[type.toLowerCase() as 'in' | 'gyo' | 'ken'] })
 </script>
 
-<aside class="pointer-events-auto absolute left-3 top-14 z-20 text-[10px] text-[#FFFFF0]">
+<aside class="pointer-events-auto absolute left-3 top-52 z-20 text-[10px] text-[#FFFFF0]">
   <button type="button" onclick={() => (open = !open)} aria-expanded={open} class="rounded border border-[#8ecae6]/50 bg-[#050505]/90 px-2 py-1 uppercase tracking-widest text-[#8ecae6]">Nen · {nenState.on ? 'on' : nenState.mode}</button>
   {#if open}
     <div class="mt-1 grid w-48 grid-cols-3 gap-1 rounded border border-[#8ecae6]/25 bg-[#050505]/95 p-2 backdrop-blur">

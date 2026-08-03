@@ -19,3 +19,6 @@ apps/*/vite.config.ts.timestamp-*.mjs
 # Playwright
 test-results/
 playwright-report/
+
+# Coverage reports
+coverage/

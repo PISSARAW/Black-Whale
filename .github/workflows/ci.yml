@@ -69,10 +69,103 @@ jobs:
       - name: Build apps
         run: pnpm build --filter "./apps/*"
 
-      - name: Run tests
-        run: pnpm test
+      # Development runs `prisma db push`, production runs `migrate deploy`.
+      # Nothing compared the two, so a schema edited without a migration was
+      # correct locally and absent in production until something 500ed. This
+      # answers non-zero when the migration folder no longer replays into the
+      # schema.
+      - name: Migrations replay into the schema
+        run: pnpm --filter "@black-whale/database" migrate:check
+        env:
+          SHADOW_DATABASE_URL: postgresql://${{ env.POSTGRES_USER }}:${{ env.POSTGRES_PASSWORD }}@localhost:5432/${{ env.POSTGRES_DB }}_shadow
+
+      # Scoped to what ships. The dev toolchain has its own advisories — vite,
+      # vitest, esbuild — and blocking every pull request on a major upgrade of
+      # the test runner would only teach everyone to skip the step. Dependabot
+      # (.github/dependabot.yml) raises those as pull requests instead.
+      - name: Audit production dependencies
+        run: pnpm audit --prod --audit-level high
+
+      - name: Run tests with coverage
+        run: pnpm test:coverage
         env:
           DATABASE_URL: postgresql://${{ env.POSTGRES_USER }}:${{ env.POSTGRES_PASSWORD }}@localhost:5432/${{ env.POSTGRES_DB }}
+
+      - name: Publish coverage
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: apps/*/coverage
+          if-no-files-found: warn
+
+  e2e:
+    name: End to end
+    runs-on: ubuntu-latest
+    # The only check that exercises the site as a visitor meets it: server
+    # render, hydration, the spoiler cookie, a Hatsu cast, the admin gate.
+    # Nothing ran it before, so the single spec in the repo had drifted away
+    # from the interface without anybody hearing about it.
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: ${{ env.POSTGRES_DB }}
+          POSTGRES_USER: ${{ env.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ env.POSTGRES_PASSWORD }}
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      # Spelled out rather than composed from the workflow `env` above: a
+      # job-level `env` block cannot read the `env` context.
+      DATABASE_URL: postgresql://bw_user:bw_password@localhost:5432/black_whale_test
+      ADMIN_PASSWORD: e2e-password-not-a-secret
+      SESSION_SECRET: e2e-session-secret-at-least-32-characters-long
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate Prisma client
+        run: pnpm --filter "@black-whale/database" generate
+
+      # The pages the smoke suite opens read the database, so the schema and
+      # the catalogue both have to be there — the same two steps the deploy
+      # runs, in the same order.
+      - name: Apply migrations and compile the catalogue
+        run: |
+          pnpm --filter "@black-whale/database" migrate:deploy
+          pnpm --filter "@black-whale/database" db:backfill-timeline
+          pnpm --filter "@black-whale/database" db:backfill-map
+
+      - name: Install Playwright browsers
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Run end-to-end tests
+        run: pnpm test:e2e --project=chromium
+
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report
+          path: |
+            playwright-report
+            test-results
+          if-no-files-found: ignore
 
   images:
     name: Container images

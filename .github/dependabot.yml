@@ -1,0 +1,51 @@
+version: 2
+
+# The audit step in CI only blocks on production advisories, because a critical
+# in the test runner should not stop a documentation fix from merging. This is
+# where the rest gets dealt with: as pull requests, on a schedule, with the
+# whole suite run against them.
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 5
+    groups:
+      # One pull request per family. Vite, SvelteKit and Svelte move together;
+      # bumping them one at a time produces pull requests that cannot build.
+      sveltekit:
+        patterns:
+          - '@sveltejs/*'
+          - svelte
+          - svelte-*
+          - vite
+          - '@vitejs/*'
+      testing:
+        patterns:
+          - vitest
+          - '@vitest/*'
+          - playwright
+          - '@playwright/*'
+      linting:
+        patterns:
+          - eslint
+          - eslint-*
+          - '@eslint/*'
+          - typescript-eslint
+          - prettier
+          - prettier-*
+      prisma:
+        patterns:
+          - prisma
+          - '@prisma/*'
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+
+  - package-ecosystem: docker
+    directory: /infrastructure/docker
+    schedule:
+      interval: monthly

@@ -9,7 +9,8 @@
     "preview": "vite preview",
     "typecheck": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "clean": "rimraf .svelte-kit build",
-    "test": "vitest run"
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
     "@black-whale/database": "workspace:*",
@@ -21,6 +22,7 @@
     "@sveltejs/adapter-node": "^5.0.0",
     "@sveltejs/kit": "^2.0.0",
     "@sveltejs/vite-plugin-svelte": "^4.0.0",
+    "@vitest/coverage-v8": "^2.0.0",
     "autoprefixer": "^10.4.0",
     "postcss": "^8.4.0",
     "rimraf": "^5.0.0",

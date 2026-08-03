@@ -353,7 +353,6 @@
     }
   }
 
-
   function onKeyDown(event: KeyboardEvent) {
     if (event.metaKey || event.ctrlKey) return
     if (isNenControlCode(event.code)) return

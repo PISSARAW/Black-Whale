@@ -3,12 +3,7 @@
   import PlanMap from '$lib/components/map/PlanMap.svelte'
   import TourScene from '$lib/components/tour/TourScene.svelte'
   import type { Apparition } from '$lib/tour/apparitions'
-  import {
-    floorOf,
-    spaceForLocation,
-    theShip,
-    crossingsOn,
-  } from '$lib/tour/blueprint'
+  import { floorOf, spaceForLocation, theShip, crossingsOn } from '$lib/tour/blueprint'
   import { centroid } from '$lib/tour/hatsu'
   import { TourNavigationState } from '$lib/tour/pageNavigationState.svelte'
   import TourMinimapPanel from '$lib/components/tour/TourMinimapPanel.svelte'

@@ -284,6 +284,7 @@ const enVertexShader = `
 `;
 
 const enFragmentShader = `
+  #include <packing>
   uniform sampler2D tDepth;
   uniform vec2 u_resolution;
   uniform float u_cameraNear;

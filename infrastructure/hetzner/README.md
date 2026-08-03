@@ -56,7 +56,10 @@ The **database schema is not reversed**. Prisma migrations here are forward-only
 
 ## 5. Backups and restoration
 
-The `backup` service creates a compressed PostgreSQL dump every 24 hours and keeps 14 days by default. Docker volumes are local to the server, so copy backups off-server or enable Hetzner server backups as a second layer.
+Every 24 hours the `backup` service writes **two** dumps and keeps 14 days of each.
+
+- **The full dump** (`<db>_<timestamp>.sql.gz`) — the whole database, kept on the server's own volume. It is the fast way back from a mistake, and it is worth nothing if the server itself is lost.
+- **The state dump** (`<db>_state_<timestamp>.sql.gz`) — only the tables git cannot rebuild: `WorldBranch`, `WorldEventRecord`, `WorldProjectionSnapshot`, `WorldEffectRecord`, and the `NarrativeEvent` / `Presence` rows entered through the back-office. Everything else in the database is derived — `data/` is the canon and the compiler replays it on each deployment — so this small file is the only irreplaceable thing the server holds. It is data-only, its inserts name their columns, and it is `ON CONFLICT DO NOTHING`, because it is meant to be laid back _on top_ of a database the migrations and the compiler have already rebuilt.
 
 Create an immediate host-side backup:
 
@@ -64,13 +67,67 @@ Create an immediate host-side backup:
 ./infrastructure/hetzner/backup-now.sh
 ```
 
-Restore a dump (this replaces the current database and requires typing the database name):
+Restore a full dump (this replaces the current database and requires typing the database name):
 
 ```sh
 ./infrastructure/hetzner/restore.sh /path/to/backup.sql.gz
 ```
 
-Test restoration periodically on a non-production server.
+### Sending the state dump off the server
+
+Unset by default; the backup behaves exactly as before until these are filled in. Generate the key pair **on your own machine** and give the server only the public half — a server that can decrypt its own off-site backups has not really put them anywhere else:
+
+```sh
+age-keygen -o black-whale-backup.key     # keep this file off the server, in a password manager
+# public key: age1...
+ssh-keygen -t ed25519 -f backup_storagebox -C black-whale-backup
+ssh-copy-id -p 23 -i backup_storagebox.pub uXXXXXX@uXXXXXX.your-storagebox.de
+ssh-keyscan -p 23 uXXXXXX.your-storagebox.de > /opt/black-whale/secrets/backup_known_hosts
+```
+
+Then in `.env.production`:
+
+```sh
+BACKUP_REMOTE_TARGET=uXXXXXX@uXXXXXX.your-storagebox.de:black-whale/
+BACKUP_REMOTE_PORT=23
+BACKUP_AGE_RECIPIENT=age1...                       # the public key, never the private one
+BACKUP_SSH_KEY_FILE=/opt/black-whale/secrets/backup_storagebox
+BACKUP_KNOWN_HOSTS_FILE=/opt/black-whale/secrets/backup_known_hosts
+```
+
+The dump is encrypted with `age` **before** it leaves the host, so the Storage Box holds ciphertext it cannot read. A target set without a recipient key is refused rather than sent in clear. A failed upload is reported and does not fail the run: the local copy is already on disk. To read one back:
+
+```sh
+age --decrypt --identity black-whale-backup.key --output state.sql.gz <db>_state_<timestamp>.sql.gz.age
+```
+
+### Proving the backups restore — weekly
+
+A backup nobody has restored is not a backup. Run the drill weekly; it works on a copy and never touches the live database:
+
+```sh
+./infrastructure/hetzner/verify-restore.sh
+```
+
+It restores the newest full dump into a scratch database beside the real one, replays the newest state dump over it **twice** (it has to be idempotent), counts what must not be empty, and drops the scratch database. Add it to the deployment user's crontab:
+
+```cron
+23 5 * * 1 cd /opt/black-whale && ./infrastructure/hetzner/verify-restore.sh >> /var/log/black-whale-restore-drill.log 2>&1
+```
+
+The `Restore drill` GitHub workflow runs the same scripts every Monday against a database built from the migrations, including the case that actually matters — canon rebuilt, visitor state gone, state dump replayed on top. That is what keeps these scripts from rotting between disasters.
+
+### If the server is lost entirely
+
+1. Provision a new server and follow §1–§3. The migrations rebuild the schema and the compiler rebuilds the canon from `data/`, which lives in git.
+2. Fetch the newest `*_state_*.sql.gz.age` from the Storage Box and decrypt it with the key you kept off the server.
+3. Replay it over the fresh database:
+   ```sh
+   gzip -dc state.sql.gz | docker compose --env-file .env.production \
+     -f infrastructure/docker/docker-compose.prod.yml exec -T postgres \
+     psql --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" --set ON_ERROR_STOP=on
+   ```
+4. Run `./infrastructure/hetzner/verify-restore.sh` and check the branch counts against what the last drill reported.
 
 ## 6. Existing development databases
 

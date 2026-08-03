@@ -1,5 +1,9 @@
 FROM postgres:16-alpine
-RUN apk add --no-cache tzdata
+# `age` encrypts the state dump before it leaves the host, `openssh-client`
+# carries it to the Storage Box. Both matter only when BACKUP_REMOTE_TARGET is
+# set; they are installed unconditionally so that turning exfiltration on is a
+# change of environment rather than a rebuild.
+RUN apk add --no-cache tzdata age openssh-client
 COPY infrastructure/docker/backup.sh /usr/local/bin/backup.sh
 RUN chmod 0555 /usr/local/bin/backup.sh
 ENTRYPOINT ["/usr/local/bin/backup.sh"]

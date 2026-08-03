@@ -111,8 +111,18 @@ services:
       POSTGRES_USER: ${POSTGRES_USER:-bw_user}
       PGPASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env.production}
       BACKUP_RETENTION_DAYS: ${BACKUP_RETENTION_DAYS:-14}
+      # Off-site copy of the state dump. Unset by default: the backup keeps
+      # working exactly as before, and turning it on is filling these in.
+      # A target without a recipient key is refused rather than sent in clear.
+      BACKUP_REMOTE_TARGET: ${BACKUP_REMOTE_TARGET:-}
+      BACKUP_REMOTE_PORT: ${BACKUP_REMOTE_PORT:-23}
+      BACKUP_AGE_RECIPIENT: ${BACKUP_AGE_RECIPIENT:-}
     volumes:
       - postgres_backups:/backups
+      # Read-only, and only ever the public half of the pair plus the host key
+      # of the box. Nothing mounted here can decrypt a dump.
+      - ${BACKUP_SSH_KEY_FILE:-/dev/null}:/run/secrets/backup_ssh_key:ro
+      - ${BACKUP_KNOWN_HOSTS_FILE:-/dev/null}:/run/secrets/backup_known_hosts:ro
     networks: [backend]
     depends_on:
       postgres: { condition: service_healthy }

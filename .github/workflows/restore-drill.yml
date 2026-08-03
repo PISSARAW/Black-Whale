@@ -1,0 +1,165 @@
+name: Restore drill
+
+# A backup nobody has restored is not a backup.
+#
+# `backup.sh` runs on the production host and this workflow cannot reach it —
+# nor should it: production dumps hold visitor data and have no business in a
+# CI runner. What rots without being noticed is not the data, it is the *code
+# path*: the dump options, the restore order, the assumption that the state
+# dump can be laid over a compiled database. So the drill runs that exact code
+# against a database built here from the migrations, every week and on demand,
+# and fails loudly the day one of those assumptions stops holding.
+#
+# The other half of the guarantee — that the dumps on the host really do
+# restore — is `infrastructure/hetzner/verify-restore.sh`, run weekly by cron
+# on the server (README §7). This is what keeps that script from rotting.
+
+on:
+  schedule:
+    # Mondays, 04:17 UTC. Off the hour on purpose: the hour is when every other
+    # cron on the planet runs.
+    - cron: '17 4 * * 1'
+  workflow_dispatch:
+  # Also on any change to the scripts themselves, because the point is to catch
+  # a break at the moment it is introduced rather than up to a week later.
+  pull_request:
+    paths:
+      - 'infrastructure/docker/backup.sh'
+      - 'infrastructure/docker/Dockerfile.backup'
+      - 'infrastructure/hetzner/restore.sh'
+      - 'infrastructure/hetzner/verify-restore.sh'
+      - '.github/workflows/restore-drill.yml'
+
+jobs:
+  drill:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: drill_user
+          POSTGRES_PASSWORD: drill_password
+          POSTGRES_DB: drill_db
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U drill_user -d drill_db"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+
+    env:
+      PGHOST: localhost
+      PGPORT: '5432'
+      PGUSER: drill_user
+      PGPASSWORD: drill_password
+      POSTGRES_DB: drill_db
+      DATABASE_URL: postgresql://drill_user:drill_password@localhost:5432/drill_db
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install PostgreSQL 16 client and age
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes postgresql-client-16 age
+          pg_dump --version
+
+      - run: pnpm install --frozen-lockfile
+
+      # The schema comes from the migrations, exactly as it does in production.
+      - name: Build the schema from the migrations
+        run: pnpm --filter "@black-whale/database" exec prisma migrate deploy
+
+      # Stand in for what a live archive holds: canon rows the compiler would
+      # have written, and the visitor state only a backup can give back.
+      - name: Seed a canon row and a visitor branch
+        run: psql --dbname "$POSTGRES_DB" --set ON_ERROR_STOP=on --file .github/workflows/restore-drill.sql
+
+      - name: Take both dumps with the production script
+        env:
+          POSTGRES_HOST: localhost
+          POSTGRES_USER: drill_user
+          BACKUP_ONCE: '1'
+        run: |
+          sudo mkdir -p /backups && sudo chown "$USER" /backups
+          sh infrastructure/docker/backup.sh
+          ls -la /backups
+
+      - name: Restore into a scratch database, then replay the state dump twice
+        run: |
+          set -eu
+          full=$(ls -1t /backups/${POSTGRES_DB}_2*.sql.gz | head -1)
+          state=$(ls -1t /backups/${POSTGRES_DB}_state_*.sql.gz | head -1)
+          echo "full=$full state=$state"
+          dropdb --if-exists drill_restore
+          createdb drill_restore
+          gzip -dc "$full" | psql --dbname drill_restore --set ON_ERROR_STOP=on >/dev/null
+          # Twice: the state dump is `--on-conflict-do-nothing`, so replaying it
+          # over rows already present has to be a no-op and not an error.
+          gzip -dc "$state" | psql --dbname drill_restore --set ON_ERROR_STOP=on >/dev/null
+          gzip -dc "$state" | psql --dbname drill_restore --set ON_ERROR_STOP=on >/dev/null
+
+      - name: Rehearse the actual disaster — canon rebuilt, visitor state gone
+        run: |
+          set -eu
+          state=$(ls -1t /backups/${POSTGRES_DB}_state_*.sql.gz | head -1)
+          # What a lost server really looks like once `deploy.sh` has run on a
+          # new one: the migrations gave back the schema and the compiler gave
+          # back the canon, and every branch a visitor made is missing. This is
+          # the moment the state dump is for, and the only way to know it works.
+          psql --dbname drill_restore --set ON_ERROR_STOP=on --command \
+            'DELETE FROM public."WorldEventRecord"; DELETE FROM public."WorldBranch";'
+          test "$(psql --dbname drill_restore -tA -c 'SELECT count(*) FROM public."WorldBranch";')" = "0"
+          gzip -dc "$state" | psql --dbname drill_restore --set ON_ERROR_STOP=on >/dev/null
+          branches=$(psql --dbname drill_restore -tA -c 'SELECT count(*) FROM public."WorldBranch";')
+          records=$(psql --dbname drill_restore -tA -c 'SELECT count(*) FROM public."WorldEventRecord";')
+          echo "recovered $branches branches and $records event records"
+          # Two branches: one forked from an event, one forked from the other
+          # branch. The second is the one the circular foreign key threatens.
+          test "$branches" = "2" || { echo "::error::the state dump did not bring the branches back"; exit 1; }
+          test "$records" = "1" || { echo "::error::the state dump did not bring the event records back"; exit 1; }
+
+      - name: Smoke the restored database
+        run: |
+          set -eu
+          rows() { psql --dbname drill_restore --tuples-only --no-align --command "SELECT count(*) FROM public.\"$1\";"; }
+          for table in Chapter Character NarrativeEvent WorldBranch WorldEventRecord; do
+            count=$(rows "$table")
+            echo "$table: $count"
+            if [ "$count" -lt 1 ]; then
+              echo "::error::$table came back empty — the restore path is broken"
+              exit 1
+            fi
+          done
+          # The branch has to come back attached to its fork event, or the
+          # simulation it holds is unreadable even though its rows survived.
+          orphans=$(psql --dbname drill_restore --tuples-only --no-align --command \
+            'SELECT count(*) FROM public."WorldBranch" b LEFT JOIN public."NarrativeEvent" e ON e.id = b."forkEventId" WHERE e.id IS NULL;')
+          echo "branches with no fork event: $orphans"
+          test "$orphans" = "0" || { echo "::error::a restored branch lost its fork event"; exit 1; }
+
+      - name: Prove the off-site copy is encrypted, and refused without a key
+        run: |
+          set -eu
+          state=$(ls -1t /backups/${POSTGRES_DB}_state_*.sql.gz | head -1)
+          age-keygen -o /tmp/drill.key 2>/tmp/drill.pub
+          recipient=$(grep -o 'age1[0-9a-z]*' /tmp/drill.pub)
+          age --encrypt --recipient "$recipient" --output /tmp/state.age "$state"
+          # Ciphertext, not a gzip stream: if this ever reads as gzip, the dump
+          # is leaving the host in clear.
+          file /tmp/state.age | grep -qv 'gzip compressed' || {
+            echo "::error::the off-site copy is not encrypted"; exit 1;
+          }
+          age --decrypt --identity /tmp/drill.key --output /tmp/state.sql.gz /tmp/state.age
+          cmp "$state" /tmp/state.sql.gz
+          echo "encrypted, and decrypts back to the byte"

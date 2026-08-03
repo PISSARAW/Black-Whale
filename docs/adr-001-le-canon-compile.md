@@ -547,6 +547,48 @@ calculée par le loader (`lib/tour/walkTargets.ts`, quelques centaines de
 chaînes courtes, < 30 Ko) et `/ship` ne charge plus le blueprint du tout :
 mesuré avant/après sur le bundle, le nœud 21 a perdu le morceau.
 
+## Avancement du chantier 5
+
+**Deux dumps au lieu d'un (fait).** `backup.sh` écrit désormais le dump complet
+(inchangé, sur le volume de l'hôte) **et** un dump d'état restreint aux tables
+que git ne peut pas reconstruire : `WorldBranch`, `WorldEventRecord`,
+`WorldProjectionSnapshot`, `WorldEffectRecord`, et les `NarrativeEvent` /
+`Presence` saisis au back-office. Il est `--data-only --column-inserts
+--on-conflict-do-nothing`, parce qu'il n'est pas une base : c'est ce qu'on
+repose **par-dessus** une base que les migrations et le compilateur ont déjà
+reconstruite. Les colonnes sont nommées pour qu'un dump rejoué sur un schéma
+plus récent ne décale pas une ligne d'un cran.
+
+**Exfiltration chiffrée (fait, désactivée par défaut).** Si
+`BACKUP_REMOTE_TARGET` est renseigné, le dump d'état est chiffré par `age`
+**sur l'hôte** avec la seule clé publique, puis poussé en SFTP vers le Storage
+Box — la boîte ne détient que du chiffré qu'elle ne peut pas lire, et la clé
+privée ne quitte jamais la machine de l'administrateur. Une cible sans clé de
+destinataire est refusée plutôt qu'envoyée en clair ; la vérification de clé
+d'hôte reste active ; un envoi qui échoue est signalé sans faire échouer la
+sauvegarde locale.
+
+**La restauration est prouvée (fait).** `verify-restore.sh` restaure le dernier
+dump complet dans une base d'appoint à côté de la vraie, y rejoue le dump
+d'état **deux fois** (il doit être idempotent), compte ce qui ne doit pas être
+vide, et supprime la base d'appoint — il ne touche jamais la base de
+production. Le workflow `Restore drill` exécute les mêmes scripts chaque lundi
+sur une base construite depuis les migrations, y compris le cas qui compte : le
+canon reconstruit, l'état visiteur perdu, le dump d'état reposé par-dessus.
+
+La répétition a été jouée pour de vrai en local avant d'être livrée, et elle a
+trouvé deux défauts que personne n'aurait vus avant un désastre : les `INSERT`
+étaient positionnels (corrigés en `--column-inserts`), et `WorldBranch` se
+référence elle-même — une branche fille restaurée avant sa mère aurait violé la
+clé étrangère. Le jeu de test sème donc une branche fille, et le chemin complet
+est vérifié : 2 branches et 1 enregistrement d'événement récupérés sur une base
+qui n'avait plus que son canon.
+
+**Reste à faire (chantier 5).** Rien dans le périmètre de l'ADR. Ce qui reste
+est une action d'exploitation, pas de code : générer la paire de clés, remplir
+les cinq variables de `.env.production` et poser la ligne de cron du §7 du
+runbook.
+
 **Reste à faire (chantier 4).** Les 10 autres routes qui portent le blueprint
 (`/tour`, `/reconstruction`, `/arena`, `/hunt`…) en ont réellement besoin côté
 client : le rendre paresseux pour elles demande de passer `theShip()` en

@@ -1,26 +1,10 @@
 <script lang="ts">
   import type { PageData } from './$types'
-  import { enhance } from '$app/forms'
+  import CanonSource from '$lib/components/CanonSource.svelte'
 
   let { data }: { data: PageData } = $props()
 
   let searchQuery = $state('')
-  let showCreateModal = $state(false)
-  let jsonPlaceholder = '{"key": "value"}'
-
-  let newFact = $state({
-    id: '',
-    subjectType: 'CHARACTER' as const,
-    subjectId: '',
-    predicate: '',
-    value: {} as Record<string, any>,
-    valueJson: '{}',
-    validFromEventId: '',
-    validUntilEventId: null as string | null,
-    truthStatus: 'CONFIRMED' as const,
-    firstVisibleEventId: '',
-  })
-
   let filteredFacts = $derived(
     data.facts.filter(
       (fact) =>
@@ -40,33 +24,6 @@
     { value: 'AFFILIATION', label: 'Affiliation' },
     { value: 'COHORT', label: 'Cohort' },
   ]
-
-  const truthStatusOptions = [
-    { value: 'CONFIRMED', label: 'Confirmed' },
-    { value: 'STRONGLY_IMPLIED', label: 'Strongly Implied' },
-    { value: 'DEDUCED', label: 'Deduction' },
-    { value: 'CONTESTED', label: 'Contested' },
-  ]
-
-  function openCreateModal() {
-    showCreateModal = true
-  }
-
-  function closeCreateModal() {
-    showCreateModal = false
-    newFact = {
-      id: '',
-      subjectType: 'CHARACTER',
-      subjectId: '',
-      predicate: '',
-      value: {},
-      valueJson: '{}',
-      validFromEventId: '',
-      validUntilEventId: null,
-      truthStatus: 'CONFIRMED',
-      firstVisibleEventId: '',
-    }
-  }
 
   let events = $derived(data.events || [])
   let characters = $derived(data.characters || [])
@@ -92,18 +49,13 @@
     const option = subjectTypeOptions.find((o) => o.value === subjectType)
     return option ? option.label : subjectType
   }
-
-  function handleOverlayClick(e: any) {
-    if (e.target === e.currentTarget) {
-      closeCreateModal()
-    }
-  }
 </script>
 
 <svelte:head><title>Facts — BW Admin</title></svelte:head>
 
 <h1 class="text-2xl font-bold text-bw-gold mb-4">Facts</h1>
-<p class="text-gray-500 mb-6">{data.facts.length} total facts</p>
+<p class="text-gray-500 mb-2">{data.facts.length} total facts</p>
+<CanonSource file="data/ via prisma/seed.ts" />
 
 <div class="flex justify-between items-center mb-6 gap-4">
   <div class="relative flex-1 max-w-md">
@@ -127,12 +79,6 @@
       />
     </svg>
   </div>
-  <button
-    onclick={openCreateModal}
-    class="bg-bw-gold text-black px-4 py-2 rounded-md font-medium hover:bg-yellow-500 transition-colors"
-  >
-    + Add Fact
-  </button>
 </div>
 
 <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
@@ -191,174 +137,6 @@
     </tbody>
   </table>
 </div>
-
-{#if showCreateModal}
-  <div
-    class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
-    onclick={handleOverlayClick}
-  >
-    <div class="bg-white rounded-lg shadow-xl p-6 max-w-lg w-full">
-      <h2 class="text-xl font-bold text-bw-gold mb-4">Create New Fact</h2>
-
-      <form method="POST" use:enhance class="space-y-4" onsubmit={closeCreateModal}>
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">ID *</label>
-          <input
-            type="text"
-            bind:value={newFact.id}
-            name="id"
-            required
-            class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-bw-gold focus:border-transparent"
-          />
-        </div>
-
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Subject Type</label>
-          <select
-            bind:value={newFact.subjectType}
-            name="subjectType"
-            class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-bw-gold focus:border-transparent"
-          >
-            {#each subjectTypeOptions as option (option.value)}
-              <option value={option.value}>{option.label}</option>
-            {/each}
-          </select>
-        </div>
-
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Subject ID *</label>
-          <select
-            bind:value={newFact.subjectId}
-            name="subjectId"
-            required
-            class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-bw-gold focus:border-transparent"
-          >
-            <option value="">Select a subject...</option>
-            {#if newFact.subjectType === 'CHARACTER'}
-              {#each characters as character (character.id)}
-                <option value={character.id}>{character.canonicalName}</option>
-              {/each}
-            {:else if newFact.subjectType === 'LOCATION'}
-              {#each locations as location (location.id)}
-                <option value={location.id}>{location.name}</option>
-              {/each}
-            {:else if newFact.subjectType === 'EVENT'}
-              {#each events as event (event.id)}
-                <option value={event.id}>{event.title} (Seq: {event.sequence})</option>
-              {/each}
-            {:else}
-              <option value="">No subjects available for this type</option>
-            {/if}
-          </select>
-        </div>
-
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Predicate *</label>
-          <input
-            type="text"
-            bind:value={newFact.predicate}
-            name="predicate"
-            required
-            placeholder="e.g., is, has, can, knows"
-            class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-bw-gold focus:border-transparent"
-          />
-        </div>
-
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Value (JSON)</label>
-          <textarea
-            bind:value={newFact.valueJson}
-            oninput={(e: any) => {
-              try {
-                newFact.value = JSON.parse((e.target as HTMLTextAreaElement).value)
-                newFact.valueJson = (e.target as HTMLTextAreaElement).value
-              } catch {
-                // Keep previous value if invalid JSON
-              }
-            }}
-            name="value"
-            rows="4"
-            placeholder={jsonPlaceholder}
-            class="w-full border border-gray-300 rounded-md px-3 py-2 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-bw-gold focus:border-transparent"
-          ></textarea>
-        </div>
-
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Truth Status</label>
-          <select
-            bind:value={newFact.truthStatus}
-            name="truthStatus"
-            class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-bw-gold focus:border-transparent"
-          >
-            {#each truthStatusOptions as option (option.value)}
-              <option value={option.value}>{option.label}</option>
-            {/each}
-          </select>
-        </div>
-
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Valid From Event</label>
-          <select
-            bind:value={newFact.validFromEventId}
-            name="validFromEventId"
-            class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-bw-gold focus:border-transparent"
-          >
-            <option value="">Select an event...</option>
-            {#each events as event (event.id)}
-              <option value={event.id}>{event.title} (Seq: {event.sequence})</option>
-            {/each}
-          </select>
-        </div>
-
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1"
-            >Valid Until Event (Optional)</label
-          >
-          <select
-            bind:value={newFact.validUntilEventId}
-            name="validUntilEventId"
-            class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-bw-gold focus:border-transparent"
-          >
-            <option value="">None (still valid)</option>
-            {#each events as event (event.id)}
-              <option value={event.id}>{event.title} (Seq: {event.sequence})</option>
-            {/each}
-          </select>
-        </div>
-
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">First Visible Event</label>
-          <select
-            bind:value={newFact.firstVisibleEventId}
-            name="firstVisibleEventId"
-            class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-bw-gold focus:border-transparent"
-          >
-            <option value="">Select an event...</option>
-            {#each events as event (event.id)}
-              <option value={event.id}>{event.title} (Seq: {event.sequence})</option>
-            {/each}
-          </select>
-        </div>
-
-        <div class="flex justify-end gap-3 pt-4">
-          <button
-            type="button"
-            onclick={closeCreateModal}
-            class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
-          >
-            Cancel
-          </button>
-          <button
-            type="submit"
-            class="px-4 py-2 bg-bw-gold text-black rounded-md font-medium hover:bg-yellow-500"
-          >
-            Create Fact
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
-{/if}
 
 <style>
   .bw-gold {

@@ -1,10 +1,10 @@
 import { abilityModules } from '@black-whale/ability-modules'
 import { NenRuntime, type NenCatalogEntry } from '@black-whale/nen-engine'
-import { TimelineEngine } from '@black-whale/timeline-engine'
+import { timeline } from '$lib/server/timeline'
 import abilityCatalog from '../../../../../data/abilities/abilities.json'
 import { prisma } from './db'
 
-const timeline = new TimelineEngine(prisma)
+// One engine, shared: see `timeline.ts` for why remembering is safe here.
 
 export const nenRuntime = new NenRuntime(
   {

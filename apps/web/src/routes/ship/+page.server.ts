@@ -3,13 +3,13 @@ import type { CatalogCharacter } from '$lib/server/data-files'
 import { buildPerspective } from '$lib/server/perspectives'
 import { readSpoilerProfile } from '$lib/server/spoiler'
 import { trimWorldStateForMap } from '$lib/server/mapPayload'
+import { timeline } from '$lib/server/timeline'
 import {
   activeFactionTypesAt,
   filterPresencesByBodies,
   readLegacySequence,
   resolveVisibleBodyIds,
   selectEvent,
-  TimelineEngine,
 } from '@black-whale/timeline-engine'
 import {
   beyondLineageStatusFor,
@@ -29,7 +29,6 @@ const catalogIndex = buildCatalogIndex(characterCatalog as CatalogCharacter[])
 const hatsuIndex = buildHatsuIndex(abilityCatalog)
 
 export const load: PageServerLoad = async ({ url, cookies }) => {
-  const timelineEngine = new TimelineEngine(prisma)
   const requestedPerspectiveId = PUBLIC_FEATURES.perspectives
     ? url.searchParams.get('perspective') || 'reader'
     : 'reader'
@@ -57,7 +56,7 @@ export const load: PageServerLoad = async ({ url, cookies }) => {
   const sequence = selectedEvent?.sequence ?? 0
 
   const rawWorldState = selectedEvent
-    ? await timelineEngine.getWorldState({ eventId: selectedEvent.id })
+    ? await timeline.getWorldState({ eventId: selectedEvent.id })
     : {
         characters: [],
         bodies: [],
@@ -78,7 +77,7 @@ export const load: PageServerLoad = async ({ url, cookies }) => {
       ? null
       : [...events].reverse().find((event) => event.chapter.number === nextChapterNumber) || null
   const nextChapterWorldState = nextChapterEvent
-    ? await timelineEngine.getWorldState({ eventId: nextChapterEvent.id })
+    ? await timeline.getWorldState({ eventId: nextChapterEvent.id })
     : null
 
   // Filter world state characters by spoiler

@@ -1,5 +1,5 @@
 import type { Location } from '@black-whale/domain'
-import { TimelineEngine } from '@black-whale/timeline-engine'
+import { timeline } from '$lib/server/timeline'
 import { calculatePresencePosition } from '$lib/components/map/markerProjection'
 import type { RecordLink } from '$lib/identity/continuity'
 import { prisma } from './db'
@@ -21,7 +21,7 @@ const eventInclude = { include: { chapter: true } } as const
 /** How many canonical events the timeline lanes look back over. */
 const WINDOW = 6
 
-const timeline = new TimelineEngine(prisma)
+// One engine, shared: see `timeline.ts` for why remembering is safe here.
 
 export interface CursorEvent {
   id: string

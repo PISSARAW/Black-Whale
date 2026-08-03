@@ -4,7 +4,8 @@ import { buildPerspective, comparePerspectives } from '$lib/server/perspectives'
 import { readSpoilerProfile } from '$lib/server/spoiler'
 import type { PageServerLoad } from './$types'
 import { filterVisible } from '@black-whale/spoiler-engine'
-import { buildCanonicalPositions, TimelineEngine } from '@black-whale/timeline-engine'
+import { buildCanonicalPositions } from '@black-whale/timeline-engine'
+import { timeline } from '$lib/server/timeline'
 import { error } from '@sveltejs/kit'
 import { PUBLIC_FEATURES } from '$lib/config/features'
 
@@ -52,7 +53,6 @@ export const load: PageServerLoad = async ({ cookies, url }) => {
     }
   }
 
-  const timelineEngine = new TimelineEngine(prisma as any)
   let worldState: any = null
   let selectedEventSequence = defaultEvent?.sequence
   let selectedEventChapter = defaultEvent?.chapter?.number
@@ -69,7 +69,7 @@ export const load: PageServerLoad = async ({ cookies, url }) => {
     selectedEventChapter = selectedEvent?.chapter?.number ?? selectedEventChapter
 
     if (selectedEventSequence !== undefined) {
-      const rawWorld = await timelineEngine.getWorldState({ eventId: selectedEventId })
+      const rawWorld = await timeline.getWorldState({ eventId: selectedEventId })
       const locations = await prisma.location.findMany()
       worldState = {
         ...rawWorld,

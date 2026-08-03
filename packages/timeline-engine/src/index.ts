@@ -50,14 +50,17 @@ export interface WorldSnapshot {
 export interface ITimelineEngine {
   /**
    * Reconstruct the full world state at a given point in time.
-   * Loads the nearest snapshot then replays subsequent events.
+   *
+   * Answered from the snapshot store when it has been asked before. The store
+   * is sound because the canon tables are written by the compiler at deploy and
+   * never by a request — see `snapshotStore.ts`.
    */
   getWorldState(point: TimelinePoint): Promise<WorldSnapshot>
 
   /** Return all events in chronological order up to a given point. */
   getEventsBefore(point: TimelinePoint): Promise<CanonicalEventRow[]>
 
-  /** Return the nearest persisted snapshot at or before the given point. */
+  /** Return the snapshot held for the given point, if one is. */
   getNearestSnapshot(point: TimelinePoint): Promise<WorldSnapshot | null>
 
   /** Adapt legacy interval tables into the deterministic world-kernel state. */
@@ -79,6 +82,7 @@ import {
 } from '@black-whale/domain'
 
 import { latestPresencePerEntity, type EntityPresenceRow } from './presence.js'
+import { createSnapshotStore, snapshotKey, type SnapshotStore } from './snapshotStore.js'
 
 // Re-exported so callers that already reach for the timeline engine do not need
 // to know these live in the domain package.
@@ -94,7 +98,22 @@ type ConsciousnessStateRow = TemporalRecord & { consciousnessId: string; state: 
 type VisibleRow = { id: string; name: string; firstVisibleEvent: Orderable }
 
 export class TimelineEngine implements ITimelineEngine {
-  constructor(private readonly prisma: PrismaClient) {}
+  /**
+   * The store is a constructor argument and defaults to a private one, so an
+   * engine caches nothing anyone else can see.
+   *
+   * The tempting shortcut was a module-level store shared by every instance,
+   * since the loaders build a fresh engine per request and a per-instance cache
+   * would never be read twice. The suite said no: eight tests standing on the
+   * same event started answering each other's fixtures. A hidden singleton that
+   * makes two unrelated callers share a mutable object is a trap whether or not
+   * a test catches it — so the sharing is declared by whoever wants it, once,
+   * in `apps/web/src/lib/server/timeline.ts`.
+   */
+  constructor(
+    private readonly prisma: PrismaClient,
+    private readonly snapshots: SnapshotStore<WorldSnapshot> = createSnapshotStore<WorldSnapshot>(),
+  ) {}
 
   async getWorldState(point: TimelinePoint): Promise<WorldSnapshot> {
     const targetEvent = await this.resolveEvent(point)
@@ -102,6 +121,10 @@ export class TimelineEngine implements ITimelineEngine {
       throw new Error('Unable to resolve timeline point')
     }
     const revealedThroughChapter = point.revealedThroughChapter ?? targetEvent.chapter.number
+
+    const key = snapshotKey(targetEvent.id, revealedThroughChapter)
+    const held = this.snapshots.get(key)
+    if (held) return held
 
     // Récupérer les événements actifs (statuts et présences)
     // Push the chapter bound into SQL. It is the first conjunct of both
@@ -174,7 +197,7 @@ export class TimelineEngine implements ITimelineEngine {
     // domain objects. `as unknown as` keeps the mismatch explicit while still
     // handing callers a checked type — `as any` used to erase it for everyone
     // downstream.
-    return {
+    const snapshot: WorldSnapshot = {
       atEventId: targetEvent.id,
       characters: characters as unknown as WorldSnapshot['characters'],
       bodies: bodies as unknown as WorldSnapshot['bodies'],
@@ -194,6 +217,8 @@ export class TimelineEngine implements ITimelineEngine {
       appearances: activeAppearances as unknown as WorldSnapshot['appearances'],
       knownFacts: [],
     }
+    this.snapshots.set(key, snapshot)
+    return snapshot
   }
 
   async getEventsBefore(point: TimelinePoint): Promise<CanonicalEventRow[]> {
@@ -217,8 +242,26 @@ export class TimelineEngine implements ITimelineEngine {
       )
   }
 
-  async getNearestSnapshot(_point: TimelinePoint): Promise<WorldSnapshot | null> {
-    return null // Pas de snapshot implémenté en V1
+  /**
+   * The snapshot held for this point, or null.
+   *
+   * "Nearest" in the interface meant nearest-at-or-before, to be replayed
+   * forward to the target. That is not what this returns, and building it would
+   * be a mistake rather than an omission: `getWorldState` answers by reading
+   * the interval tables directly, so a replay would have to re-derive the same
+   * intervals as a stream of deltas — a second implementation of one truth, to
+   * be kept in step with the first for as long as both exist. It would buy back
+   * tens of milliseconds on a query that is already tens of milliseconds, and
+   * the reader ends up on one of a handful of points anyway, which is what the
+   * store already exploits.
+   *
+   * So this reports what is held, exactly, and nothing pretends otherwise.
+   */
+  async getNearestSnapshot(point: TimelinePoint): Promise<WorldSnapshot | null> {
+    const targetEvent = await this.resolveEvent(point)
+    if (!targetEvent) return null
+    const revealedThroughChapter = point.revealedThroughChapter ?? targetEvent.chapter.number
+    return this.snapshots.get(snapshotKey(targetEvent.id, revealedThroughChapter))
   }
 
   async getKernelState(point: TimelinePoint): Promise<WorldState> {
@@ -418,3 +461,5 @@ export async function listCanonicalEvents(prisma: PrismaClient, spoilerLimit?: n
 export * from './selection.js'
 export * from './snapshot.js'
 export * from './affiliations.js'
+
+export { createSnapshotStore, snapshotKey, type SnapshotStore } from './snapshotStore.js'

@@ -249,7 +249,6 @@ export default tseslint.config(
     // in the ADR, not here: this file only has to know the list shrinks.
     files: [
       // >>> cliquet ADR-002 (max-lines) — ne peut que rétrécir
-      'apps/web/src/lib/components/investigation/InvestigationCaseView.svelte', // 1785
       'apps/web/src/lib/components/tour/TourHatsuHud.svelte', // 975
       'apps/web/src/lib/components/tour/TourScene.svelte', // 4661
       'apps/web/src/lib/nen/GlobalHatsuEffects.svelte', // 3166
@@ -304,7 +303,6 @@ export default tseslint.config(
       'apps/web/src/lib/combat/exchange.ts', // 13
       'apps/web/src/lib/combat/perception.ts', // 15
       'apps/web/src/lib/combat/reducer.ts', // 43
-      'apps/web/src/lib/components/investigation/InvestigationCaseView.svelte', // 12
       'apps/web/src/lib/components/tour/TourHatsuHud.svelte', // 181
       'apps/web/src/lib/components/tour/TourMinimap.svelte', // 14
       'apps/web/src/lib/components/tour/TourScene.svelte', // 138

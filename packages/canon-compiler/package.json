@@ -21,7 +21,11 @@
     "typecheck": "tsc --noEmit",
     "clean": "rimraf dist",
     "compile:map": "node dist/cli/backfill-map.js",
-    "compile:map:dev": "tsx src/cli/backfill-map.ts"
+    "compile:map:dev": "tsx src/cli/backfill-map.ts",
+    "compile:timeline": "node dist/cli/backfill-timeline.js",
+    "compile:timeline:dev": "tsx src/cli/backfill-timeline.ts",
+    "compile:identities": "node dist/cli/backfill-identities.js",
+    "compile:identities:dev": "tsx src/cli/backfill-identities.ts"
   },
   "dependencies": {
     "@black-whale/contracts": "workspace:*",

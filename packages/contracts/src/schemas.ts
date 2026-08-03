@@ -189,17 +189,36 @@ export const locationSchema = z
 export const eventSchema = z
   .object({
     title: z.string().min(1),
+    chapterTitle: z.string().min(1),
     chapter: z.number().int().positive(),
     sequence: z.number().int().nonnegative(),
     summary: z.string().optional(),
+    /**
+     * Titles a previous run wrote for this event. The timeline pass matches on
+     * them so a renamed event is updated in place instead of duplicated.
+     */
+    legacyTitles: z.array(z.string()).optional(),
+    /** Anchors a flashback beside the event it belongs after, not its chapter. */
+    occursAfterTitle: z.string().optional(),
+    /** Only read off the voyage clock; on it, the label is rendered. */
+    occurredAtLabel: z.string().optional(),
     isFlashback: z.boolean().optional(),
     occursOnBlackWhale: z.boolean().optional(),
+    /**
+     * `passthrough()` is load-bearing, not habit. The voyage clock reads
+     * `hoursUntil` and `source` off this object, and a closed schema drops
+     * whatever it does not name — which turned "12:15-12:30" into "12:15" the
+     * first time this was written closed.
+     */
     occurredAt: z
       .object({
         basis: z.enum(['stated', 'derived']),
         hours: z.number().optional(),
+        hoursUntil: z.number().optional(),
         day: z.number().int().optional(),
+        source: z.string().optional(),
       })
+      .passthrough()
       .refine((value) => value.hours !== undefined || value.day !== undefined, {
         message: 'occurredAt needs hours or day; `bracketed` is computed, never written',
       })

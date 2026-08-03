@@ -206,3 +206,15 @@ describe('spoiler-coverage', () => {
     expect(found).toEqual([expect.objectContaining({ rule: 'spoiler-coverage' })])
   })
 })
+
+describe('what the schemas are allowed to drop', () => {
+  // A closed schema is a silent data loss: zod strips whatever it does not
+  // name. `occurredAt` was written closed once, and the voyage clock lost the
+  // upper bound of every ranged hour — "12:15-12:30" came out as "12:15".
+  it('keeps the fields the voyage clock reads', () => {
+    const ranged = catalogue!.events.find((event) => event.occurredAt?.hours !== undefined)
+    expect(ranged?.occurredAt).toBeDefined()
+    const woody = catalogue!.events.find((event) => event.title === 'Woody is found dead')
+    expect(woody?.occurredAt).toMatchObject({ hours: 0.25, hoursUntil: 0.5 })
+  })
+})

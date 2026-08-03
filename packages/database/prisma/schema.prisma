@@ -704,53 +704,6 @@ model WorldProjectionSnapshot {
   @@index([branchId, projectionKind, cursorOrdinal(sort: Desc)])
 }
 
-enum WorldEntityKind {
-  CHARACTER
-  BODY
-  CONSCIOUSNESS
-  OBJECT
-  NEN_ENTITY
-  AURA_ENTITY
-  COHORT
-  PORTAL
-  CURSE
-  CONSTRUCT
-  LOCATION
-}
-
-model WorldEntity {
-  id             String          @id
-  kind           WorldEntityKind
-  label          String
-  canonicalRefId String?
-  metadata       Json?
-  createdAt      DateTime        @default(now())
-
-  spatialObservations SpatialObservation[]
-
-  @@index([kind])
-  @@index([canonicalRefId])
-}
-
-model SpatialObservation {
-  id                String  @id @default(uuid())
-  entityId          String
-  branchId          String
-  fromOrdinal       Int
-  untilOrdinal      Int?
-  locationId        String?
-  precision         String
-  certainty         String
-  probability       Float?
-  observedAtEventId String?
-
-  entity WorldEntity @relation(fields: [entityId], references: [id], onDelete: Cascade)
-
-  @@index([branchId, fromOrdinal, untilOrdinal])
-  @@index([entityId, branchId])
-  @@index([locationId, branchId])
-}
-
 model WorldEffectRecord {
   id              String   @id
   branchId        String
@@ -770,29 +723,3 @@ model WorldEffectRecord {
   @@index([sourceEntityId])
 }
 
-model LocationEdge {
-  id             String   @id @default(uuid())
-  fromLocationId String
-  toLocationId   String
-  kind           String
-  direction      String   @default("BOTH")
-  accessRuleIds  String[]
-  fromOrdinal    Int?
-  untilOrdinal   Int?
-  metadata       Json?
-
-  @@index([fromLocationId])
-  @@index([toLocationId])
-}
-
-model MapAssetManifest {
-  id               String   @id
-  assetKey         String   @unique
-  coordinateSystem String
-  width            Float
-  height           Float
-  regions          Json
-  anchors          Json
-  version          Int      @default(1)
-  updatedAt        DateTime @updatedAt
-}

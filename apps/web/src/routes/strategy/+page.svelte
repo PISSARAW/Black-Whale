@@ -328,25 +328,31 @@
 
   function memberName(characterId: string): string { return playerFaction?.members.find((member) => member.character.id === characterId)?.character.canonicalName ?? characterId }
 </script>
-<main class="strategy-shell">
+<main class="strategy-shell min-h-[calc(100vh-4rem)] bg-[#020617] text-sky-50 font-sans">
   {#if data.error}
-    <section class="fatal" role="alert">
-      <p>Strategy mode unavailable</p>
-      <h1>{data.error}</h1>
-      <span>Please try again after checking the database connection.</span>
+    <section class="mx-auto flex max-w-2xl flex-col items-center justify-center pt-24 text-center" role="alert">
+      <p class="mb-4 text-[10px] font-bold uppercase tracking-widest text-red-500">Accès Refusé</p>
+      <h1 class="mb-4 font-black text-4xl text-white">{data.error}</h1>
+      <span class="text-sm text-red-200/60">Veuillez vérifier la connexion aux serveurs tactiques.</span>
     </section>
   {:else if !ready}
-    <section class="fatal" aria-live="polite"><h1>Initializing scenario...</h1></section>
+    <section class="mx-auto flex max-w-2xl flex-col items-center justify-center pt-24 text-center" aria-live="polite">
+      <div class="mb-4 flex items-center gap-3 rounded-full border border-sky-500/30 bg-sky-950/40 px-5 py-2 shadow-[0_0_15px_rgba(14,165,233,0.2)]">
+        <span class="h-2 w-2 animate-pulse rounded-full bg-sky-400"></span>
+        <h1 class="text-[10px] font-bold uppercase tracking-widest text-sky-400">Initialisation du Réseau Tactique...</h1>
+      </div>
+    </section>
   {:else if !playerFactionId}
-    <nav class="campaign-operations" aria-label="Campaign Operations V3">
+    <nav class="mx-auto mt-8 grid w-full max-w-5xl grid-cols-1 gap-4 px-4 sm:grid-cols-2 lg:grid-cols-3" aria-label="Campaign Operations">
       {#each data.scenarios as operation, index (operation.id)}
         <a
           href={`/strategy?scenario=${operation.id}`}
           aria-current={data.scenario?.id === operation.id ? 'page' : undefined}
+          class="group flex flex-col gap-2 rounded-xl border border-sky-900/40 bg-[#0a0f1c]/80 p-5 transition-all hover:-translate-y-1 hover:border-sky-400 hover:bg-sky-900/30 hover:shadow-[0_0_20px_rgba(56,189,248,0.2)] aria-[current=page]:border-amber-500/60 aria-[current=page]:bg-amber-950/20 aria-[current=page]:shadow-[0_0_15px_rgba(251,191,36,0.15)]"
         >
-          <span>Operation {index + 1} · chapter {operation.chapterNumber}</span>
-          <strong>{operation.title}</strong>
-          <small>{operation.description}</small>
+          <span class="text-[9px] font-bold uppercase tracking-widest text-sky-500/60 group-aria-[current=page]:text-amber-500/80">Opération {index + 1} · Chapitre {operation.chapterNumber}</span>
+          <strong class="font-black text-lg text-white group-aria-[current=page]:text-amber-300">{operation.title}</strong>
+          <small class="text-xs leading-relaxed text-sky-200/50 group-aria-[current=page]:text-amber-100/70">{operation.description}</small>
         </a>
       {/each}
     </nav>
@@ -358,110 +364,113 @@
       onresume={resumeScenario}
     />
   {:else}
-    <div class="game-layout">
+    <div class="grid min-h-[calc(100vh-4rem)] grid-cols-1 md:grid-cols-[minmax(22rem,28rem)_minmax(0,1fr)]">
       <TourModeFullscreen />
-      <aside class="command-panel">
-        <header>
-          <button class="back" type="button" onclick={() => (playerFactionId = null)}
+      <aside class="flex flex-col border-r border-sky-900/40 bg-[#0a0f1c]/95 backdrop-blur-md">
+        <header class="border-b border-sky-900/50 bg-[#060b14]/50 p-6">
+          <button class="mb-4 text-[10px] font-bold uppercase tracking-widest text-sky-500/50 transition-colors hover:text-sky-300" type="button" onclick={() => (playerFactionId = null)}
             >← Factions</button
           >
-          <p>YOU COMMAND</p>
-          <h1>{playerFaction?.name}</h1>
-          <span
-            >Turn {Math.min(simStore.currentTurn, data.scenario?.maxTurns ?? 8)} / {data.scenario?.maxTurns ?? 8}</span
+          <p class="text-[10px] font-bold uppercase tracking-[0.2em] text-sky-400">RÉSEAU TACTIQUE</p>
+          <h1 class="mt-1 font-black text-3xl text-white drop-shadow-md">{playerFaction?.name}</h1>
+          <span class="mt-2 block text-[10px] font-bold uppercase tracking-widest text-sky-200/50"
+            >Tour {Math.min(simStore.currentTurn, data.scenario?.maxTurns ?? 8)} / {data.scenario?.maxTurns ?? 8}</span
           >
         </header>
 
-        <div class="panel-scroll">
+        <div class="flex-1 overflow-y-auto p-5 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-sky-900/50">
           {#if simStore.scenarioEvent}
-            <section class="scenario-event">
-              <span>Scheduled Event</span>
-              <strong>{simStore.scenarioEvent.title}</strong>
-              <p>{simStore.scenarioEvent.description}</p>
+            <section class="mb-6 rounded-lg border-l-2 border-amber-400 bg-amber-950/20 p-4 shadow-[0_0_15px_rgba(251,191,36,0.1)]">
+              <span class="text-[9px] font-bold uppercase tracking-widest text-amber-500">Événement Planifié</span>
+              <strong class="mt-1 block font-black text-sm text-amber-200">{simStore.scenarioEvent.title}</strong>
+              <p class="mt-2 text-xs leading-relaxed text-amber-100/70">{simStore.scenarioEvent.description}</p>
             </section>
           {/if}
-          <section>
-            <div class="objective-card" class:complete={objective?.complete}>
-              <span>OBJECTIVE</span>
-              <strong>{objective?.title ?? 'Objective unavailable'}</strong>
-              <p>{objective?.description ?? 'Analyzing tactical situation.'}</p>
-              <div>
+          <section class="mb-8">
+            <div class="rounded-xl border border-sky-900/40 bg-gradient-to-br from-[#101827] to-[#0a0f1c] p-5 shadow-[0_0_20px_rgba(14,165,233,0.1)] {objective?.complete ? 'border-emerald-500/50 shadow-[0_0_20px_rgba(52,211,153,0.15)]' : ''}">
+              <span class="text-[9px] font-bold uppercase tracking-widest text-sky-500/60">OBJECTIF ACTUEL</span>
+              <strong class="mt-1 block font-black text-sm text-sky-100">{objective?.title ?? 'Objectif indisponible'}</strong>
+              <p class="mt-2 text-xs leading-relaxed text-sky-200/50">{objective?.description ?? 'Analyse de la situation tactique en cours.'}</p>
+              <div class="mt-4 h-1 w-full overflow-hidden rounded-full bg-sky-950/50">
                 <i
+                  class="block h-full bg-sky-400 transition-all duration-500"
                   style={`width:${objective ? Math.min(100, (objective.current / objective.target) * 100) : 0}%`}
                 ></i>
               </div>
-              <small
-                >{objective?.current ?? 0} / {objective?.target ?? 0}
-                {objective?.complete ? '· objective achieved' : ''}</small
-              >
-              <small class="victory-score" class:won={simStore.gameWon}
-                >INFLUENCE {simStore.victoryPoints} / {VICTORY_POINTS_TARGET}</small
-              >
+              <div class="mt-2 flex items-center justify-between text-[10px] font-bold uppercase tracking-widest text-sky-200/50">
+                <span>{objective?.current ?? 0} / {objective?.target ?? 0}
+                {objective?.complete ? '· accompli' : ''}</span>
+                <span class="text-sky-400 {simStore.gameWon ? 'text-emerald-400' : ''}"
+                  >INFLUENCE {simStore.victoryPoints} / {VICTORY_POINTS_TARGET}</span>
+              </div>
             </div>
           </section>
 
-          <section>
-            <div class="section-title">
-              <h2>New Order</h2>
-              <span>{remainingCommandPoints} / {COMMAND_POINTS_PER_TURN} CP</span>
+          <section class="mb-8 border-t border-sky-900/30 pt-6">
+            <div class="mb-4 flex items-center justify-between">
+              <h2 class="text-xs font-black uppercase tracking-widest text-white">Nouvel Ordre</h2>
+              <span class="rounded bg-sky-900/40 px-2 py-1 text-[9px] font-bold uppercase tracking-widest text-sky-300">{remainingCommandPoints} / {COMMAND_POINTS_PER_TURN} PC</span>
             </div>
-            <label>
-              Action
-              <select bind:value={selectedOrderType}>
-                <option value="MOVE">Move · 1 CP</option>
-                <option value="SCOUT">Investigate · 2 CP</option>
-                <option value="GUARD">Guard in place · 1 CP</option>
-                <option value="HATSU">Activate Hatsu · 3 CP</option>
+            
+            <label class="mt-4 block">
+              <span class="mb-1 block text-[10px] font-bold uppercase tracking-widest text-sky-500/60">Action</span>
+              <select bind:value={selectedOrderType} class="w-full rounded-lg border border-sky-900/50 bg-[#060b14] p-3 text-xs text-sky-50 outline-none transition-colors focus:border-sky-400 focus:ring-1 focus:ring-sky-400">
+                <option value="MOVE">Déplacement · 1 PC</option>
+                <option value="SCOUT">Investigation · 2 PC</option>
+                <option value="GUARD">Garde sur place · 1 PC</option>
+                <option value="HATSU">Activer Hatsu · 3 PC</option>
               </select>
             </label>
             {#if selectedOrderType === 'HATSU'}
-              <label>
-                Hatsu
-                <select bind:value={selectedAbilityId}>
-                  <option value="">Choose a capability</option>
+              <label class="mt-4 block">
+                <span class="mb-1 block text-[10px] font-bold uppercase tracking-widest text-sky-500/60">Hatsu</span>
+                <select bind:value={selectedAbilityId} class="w-full rounded-lg border border-sky-900/50 bg-[#060b14] p-3 text-xs text-sky-50 outline-none transition-colors focus:border-sky-400 focus:ring-1 focus:ring-sky-400">
+                  <option value="">Sélectionner une capacité</option>
                   {#each availableHatsu as profile (profile.id)}
                     <option
                       value={profile.id}
                       disabled={(simStore.hatsuCooldowns[profile.id] ?? 0) > simStore.currentTurn}
                       >{profile.name}{(simStore.hatsuCooldowns[profile.id] ?? 0) >
                       simStore.currentTurn
-                        ? ` · available turn ${simStore.hatsuCooldowns[profile.id]}`
+                        ? ` · dispo tour ${simStore.hatsuCooldowns[profile.id]}`
                         : ''}</option
                     >
                   {/each}
                 </select>
                 {#if selectedCharacterId && !availableHatsu.length}
-                  <small class="field-hint">No tactical Hatsu known for this unit.</small>
+                  <span class="mt-1 block text-[10px] text-red-400/80">Aucun Hatsu tactique connu pour cette unité.</span>
                 {:else if selectedHatsu}
-                  <small class="field-hint"
-                    >{HATSU_ROLE_LABELS[strategicRoleForHatsu(selectedHatsu.kind)]}</small
-                  >
+                  <span class="mt-1 block text-[10px] font-bold uppercase tracking-widest text-sky-400/80"
+                    >{HATSU_ROLE_LABELS[strategicRoleForHatsu(selectedHatsu.kind)]}</span>
                 {/if}
               </label>
             {/if}
-            <label>
-              Unit
-              <select bind:value={selectedCharacterId}>
-                <option value="">Choose a unit</option>
+            <label class="mt-4 block">
+              <span class="mb-1 block text-[10px] font-bold uppercase tracking-widest text-sky-500/60">Unité</span>
+              <select bind:value={selectedCharacterId} class="w-full rounded-lg border border-sky-900/50 bg-[#060b14] p-3 text-xs text-sky-50 outline-none transition-colors focus:border-sky-400 focus:ring-1 focus:ring-sky-400">
+                <option value="">Sélectionner une unité</option>
                 {#each playerFaction?.members ?? [] as member (member.character.id)}
                   <option
                     value={member.character.id}
                     disabled={conditionForCharacter(member.character.id) === 'Eliminated'}
                     >{member.character.canonicalName} · {conditionForCharacter(member.character.id)} ·
+
                     {currentLocation(member.character.id)}</option
                   >
                 {/each}
               </select>
             </label>
             {#if selectedOrderType !== 'GUARD'}
-              <label>
+              <label class="mt-4 block">
+                <span class="mb-1 block text-[10px] font-bold uppercase tracking-widest text-sky-500/60">
                 {selectedOrderType === 'SCOUT'
-                  ? 'Zone to investigate'
+                  ? 'Zone à investiguer'
                   : selectedOrderType === 'HATSU'
-                    ? 'Target zone'
+                    ? 'Cible'
                     : 'Destination'}
-                <select bind:value={selectedLocationId}>
-                  <option value="">Choose a destination</option>
+                </span>
+                <select bind:value={selectedLocationId} class="w-full rounded-lg border border-sky-900/50 bg-[#060b14] p-3 text-xs text-sky-50 outline-none transition-colors focus:border-sky-400 focus:ring-1 focus:ring-sky-400">
+                  <option value="">Sélectionner une zone</option>
                   {#each playableLocations as location (location.id)}
                     <option value={location.id}>{location.name}</option>
                   {/each}
@@ -469,12 +478,12 @@
               </label>
             {/if}
             <button
-              class="queue"
+              class="mt-6 w-full rounded-lg border border-sky-400/50 bg-sky-900/40 px-5 py-3 text-xs font-bold uppercase tracking-widest text-sky-300 transition-all enabled:hover:bg-sky-400/30 enabled:hover:shadow-[0_0_20px_rgba(56,189,248,0.3)] disabled:cursor-not-allowed disabled:opacity-40"
               type="button"
               disabled={!selectedCharacterId ||
                 (selectedOrderType !== 'GUARD' && !selectedLocationId) ||
                 (selectedOrderType === 'HATSU' && !selectedAbilityId)}
-              onclick={queueOrder}>Add to plan</button
+              onclick={queueOrder}>Ajouter au plan</button
             >
           </section>
 
@@ -487,14 +496,15 @@
             onqueue={queueDiplomacy}
           />
 
-          <section>
-            <div class="section-title"><h2>Turn Plan</h2></div>
+          <section class="mb-8 border-t border-sky-900/30 pt-6">
+            <div class="mb-4"><h2 class="text-xs font-black uppercase tracking-widest text-white">Séquence Opérationnelle</h2></div>
             {#if pendingOrders.length}
-              <ul class="orders">
+              <ul class="space-y-3">
                 {#each pendingOrders as order (order.characterId)}
-                  <li>
-                    <div>
-                      <strong>{memberName(order.characterId)}</strong><span
+                  <li class="flex items-center justify-between gap-3 rounded-lg border border-sky-900/40 bg-[#060b14]/50 p-3 shadow-inner">
+                    <div class="min-w-0">
+                      <strong class="block truncate text-xs text-sky-100">{memberName(order.characterId)}</strong>
+                      <span class="block truncate text-[10px] text-sky-200/50"
                         >{order.type === 'HATSU'
                           ? (hatsuById(order.abilityId)?.name ?? ORDER_LABELS[order.type])
                           : ORDER_LABELS[order.type]} · {locationById.get(order.locationId)?.name ??
@@ -503,6 +513,7 @@
                     </div>
                     <button
                       type="button"
+                      class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-red-950/40 text-red-400 hover:bg-red-900 hover:text-white"
                       aria-label={`Remove ${memberName(order.characterId)}'s order`}
                       onclick={() => removeOrder(order.characterId)}>×</button
                     >
@@ -510,37 +521,37 @@
                 {/each}
               </ul>
             {:else}
-              <p class="empty">No orders: ending the turn will pass.</p>
+              <p class="rounded-lg border border-sky-900/20 bg-sky-950/10 p-4 text-xs italic text-sky-200/40">Aucun ordre : finaliser le tour passera l'action.</p>
             {/if}
           </section>
 
-          <section>
-            <div class="section-title"><h2>Log</h2></div>
-            <div class="reports" aria-live="polite">
-              {#each simStore.turnReports as report, index (`${index}:${report}`)}<p>
-                  {report}
+          <section class="border-t border-sky-900/30 pt-6">
+            <div class="mb-4"><h2 class="text-xs font-black uppercase tracking-widest text-white">Registre Tactique</h2></div>
+            <div class="max-h-40 overflow-y-auto rounded-lg border border-sky-900/40 bg-[#040810] p-4 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-sky-900/50" aria-live="polite">
+              {#each simStore.turnReports as report, index (`${index}:${report}`)}<p class="mb-2 text-[10px] leading-relaxed text-sky-200/60 last:mb-0">
+                  <span class="mr-1 text-sky-500/50">›</span> {report}
                 </p>{/each}
             </div>
           </section>
         </div>
 
-        <footer>
-          {#if errorMessage}<p class="error" role="alert">{errorMessage}</p>{/if}
+        <footer class="border-t border-sky-900/50 bg-[#060b14]/80 p-5">
+          {#if errorMessage}<p class="mb-3 rounded bg-red-950/40 p-2 text-xs font-medium text-red-400" role="alert">{errorMessage}</p>{/if}
           <button
-            class="end-turn"
+            class="w-full rounded-lg bg-sky-400 px-5 py-3.5 text-xs font-black uppercase tracking-[0.15em] text-[#020617] shadow-[0_0_15px_rgba(56,189,248,0.4)] transition-all enabled:hover:bg-sky-300 enabled:hover:shadow-[0_0_25px_rgba(56,189,248,0.6)] disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none"
             type="button"
             disabled={simStore.gameOver}
             onclick={handleEndTurn}
             >{simStore.gameWon
-              ? 'Strategic Victory'
+              ? 'Victoire Stratégique'
               : simStore.gameLost
-                ? 'Scenario Complete'
-                : `Resolve Turn · ${spentCommandPoints} CP`}</button
+                ? 'Opération Terminée'
+                : `Exécuter le Tour · ${spentCommandPoints} PC`}</button
           >
         </footer>
       </aside>
 
-      <section class="map-panel">
+      <section class="flex min-w-0 flex-col bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-sky-900/20 via-[#020617] to-black p-4 sm:p-8">
         {#if simStore.gameOver}
           <StrategyDebrief
             won={simStore.gameWon}
@@ -555,15 +566,16 @@
             }
           />
         {/if}
-        <div class="map-heading">
+        <div class="mb-6 flex flex-col items-start gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <p>TACTICAL SITUATION · LIMITED INTEL</p>
-            <h2>Black Whale</h2>
+            <p class="text-[10px] font-bold uppercase tracking-widest text-sky-500/50">SITUATION TACTIQUE · DONNÉES RESTREINTES</p>
+            <h2 class="mt-1 font-black text-3xl text-white">Black Whale</h2>
           </div>
         </div>
         <StrategyBattlefield {markers} hatsuCues={simStore.hatsuCues} />
-        <p class="legend">
-          <i></i> Your faction <i class="other"></i> Observed contact · dashed lines indicate old intel.
+        <p class="mt-4 flex items-center gap-4 text-[10px] font-bold uppercase tracking-widest text-sky-200/50">
+          <span class="flex items-center gap-1.5"><i class="inline-block h-2 w-2 rounded-full border border-sky-400 bg-sky-900"></i> Vos unités</span>
+          <span class="flex items-center gap-1.5"><i class="inline-block h-2 w-2 rounded-full border border-sky-700 bg-[#0a0f1c]"></i> Contacts observés</span>
         </p>
       </section>
     </div>

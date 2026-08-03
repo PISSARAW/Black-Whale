@@ -138,19 +138,19 @@
   }
 </script>
 
-<div class="battlefield-tabs" role="group" aria-label="Battlefield view">
-  <button class:active={view === 'tour'} type="button" onclick={() => (view = 'tour')}
-    >3D View</button
+<div class="mb-4 flex flex-wrap gap-2 sm:justify-end" role="group" aria-label="Battlefield view">
+  <button class="rounded-full border px-4 py-1.5 text-xs font-bold uppercase tracking-widest transition-all {view === 'tour' ? 'border-sky-400 bg-sky-900/30 text-sky-300 shadow-[0_0_15px_rgba(56,189,248,0.2)]' : 'border-sky-900/50 bg-[#060b14]/50 text-sky-500/50 hover:border-sky-700 hover:text-sky-400'}" type="button" onclick={() => (view = 'tour')}
+    >Vue 3D</button
   >
-  <button class:active={view === 'map'} type="button" onclick={() => (view = 'map')}
-    >Tactical Map</button
+  <button class="rounded-full border px-4 py-1.5 text-xs font-bold uppercase tracking-widest transition-all {view === 'map' ? 'border-sky-400 bg-sky-900/30 text-sky-300 shadow-[0_0_15px_rgba(56,189,248,0.2)]' : 'border-sky-900/50 bg-[#060b14]/50 text-sky-500/50 hover:border-sky-700 hover:text-sky-400'}" type="button" onclick={() => (view = 'map')}
+    >Carte Tactique</button
   >
 </div>
 
 {#if latestHatsuCue}
-  <div class="hatsu-announcement" role="status" aria-live="polite">
-    <strong>{hatsuById(latestHatsuCue.abilityId)?.name ?? latestHatsuCue.abilityId}</strong>
-    <span>{latestHatsuCue.report}</span>
+  <div class="mb-4 flex items-center justify-between gap-4 rounded-lg border-l-4 border-amber-400 bg-amber-950/40 px-4 py-3 text-xs text-white shadow-[0_0_20px_rgba(251,191,36,0.15)]" role="status" aria-live="polite">
+    <strong class="font-black tracking-widest text-amber-300">{hatsuById(latestHatsuCue.abilityId)?.name ?? latestHatsuCue.abilityId}</strong>
+    <span class="text-amber-100/70">{latestHatsuCue.report}</span>
   </div>
 {/if}
 
@@ -192,74 +192,36 @@
     />
   </div>
 {:else}
-  <div class="tier-tabs" aria-label="Display deck">
+  <div class="mb-4 flex flex-wrap gap-2 sm:justify-end" aria-label="Display deck">
     {#each availableTiers as tier (tier)}
-      <button class:active={selectedTier === tier} type="button" onclick={() => selectTier(tier)}
-        >{tier.replace('tier-', 'Deck ')}</button
+      <button class="rounded-full border px-4 py-1.5 text-xs font-bold uppercase tracking-widest transition-all {selectedTier === tier ? 'border-sky-400 bg-sky-900/30 text-sky-300 shadow-[0_0_15px_rgba(56,189,248,0.2)]' : 'border-sky-900/50 bg-[#060b14]/50 text-sky-500/50 hover:border-sky-700 hover:text-sky-400'}" type="button" onclick={() => selectTier(tier)}
+        >{tier.replace('tier-', 'Pont ')}</button
       >
     {/each}
   </div>
   <PlanMap
     {markers}
     tier={selectedTier}
-    emptyLabel="No intel available on this deck."
-    elsewhereLabel={(count) => `${count} unit${count > 1 ? 's' : ''} on other decks.`}
+    emptyLabel="Aucune donnée sur ce pont."
+    elsewhereLabel={(count) => `${count} unité${count > 1 ? 's' : ''} sur d'autres ponts.`}
   />
 {/if}
 
 <style>
-  .battlefield-tabs,
-  .tier-tabs {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: end;
-    gap: 0.35rem;
-    margin-bottom: 0.75rem;
-  }
-  button {
-    border: 1px solid #31424e;
-    border-radius: 999px;
-    background: #0d171e;
-    padding: 0.4rem 0.7rem;
-    color: #8798a2;
-    font-size: 0.68rem;
-    cursor: pointer;
-  }
-  button.active {
-    border-color: #d7b86a;
-    color: #ead99f;
-  }
   .tour-stage {
     position: relative;
     min-height: 34rem;
     height: min(68vh, 52rem);
     overflow: hidden;
-    border: 1px solid #31424e;
-    border-radius: 0.6rem;
-    background: #050708;
-  }
-  .hatsu-announcement {
-    display: flex;
-    justify-content: space-between;
-    gap: 1rem;
-    margin: 0 0 0.75rem;
-    border-left: 3px solid #d7b86a;
-    padding: 0.6rem 0.8rem;
-    background: rgb(8 12 18 / 86%);
-    color: #fffff0;
-    font-size: 0.76rem;
-  }
-  .hatsu-announcement span {
-    color: rgb(255 255 240 / 65%);
+    border: 1px solid rgba(14, 165, 233, 0.3);
+    border-radius: 0.75rem;
+    background: #020617;
+    box-shadow: inset 0 0 40px rgba(14, 165, 233, 0.05);
   }
   @media (max-width: 800px) {
     .tour-stage {
       min-height: 26rem;
       height: 56vh;
-    }
-    .battlefield-tabs,
-    .tier-tabs {
-      justify-content: start;
     }
   }
 </style>

@@ -6,9 +6,11 @@ import {
   effectIsLive,
   knowledgeGrant,
   listParam,
+  moveEntity,
   param,
   requiresParameter,
   setEffectState,
+  shown,
   spawnNenEntity,
   zone,
 } from '@black-whale/ability-sdk'
@@ -48,6 +50,7 @@ export const marayamGuardianIsolation = defineAbility({
   actions: {
     isolate: {
       label: 'Isoler la pièce',
+      evidence: shown('ch. 390 — la chambre 1013 derrière sa barrière'),
       conditions: [requiresParameter('locationId', 'La pièce isolée est identifiée')],
       effects: [
         spawnNenEntity({
@@ -88,6 +91,24 @@ export const marayamGuardianIsolation = defineAbility({
             })(ctx),
           ]),
       ],
+    },
+
+    'meet-the-duplicate': {
+      label: 'Entrer dans le duplicata',
+      // What an outsider actually reaches: an empty copy, and a certainty that
+      // points at it. False certainty, which is exactly what the knowledge
+      // engine is able to hold.
+      evidence: shown('ch. 390 — l’extérieur n’atteint qu’une pièce vide'),
+      conditions: [requiresParameter('locationId', 'La pièce isolée est identifiée')],
+      effects: [
+        moveEntity({ locationId: (ctx) => duplicateOf(param(ctx, 'locationId') ?? 'room') }),
+      ],
+    },
+
+    'perceive-the-occupants': {
+      label: 'Percevoir les occupants depuis l’extérieur',
+      refusal: 'Depuis l’extérieur, les occupants réels ne sont plus perceptibles',
+      evidence: shown('ch. 390 — Vergei devant une pièce qu’il croit vide'),
     },
 
     lift: {

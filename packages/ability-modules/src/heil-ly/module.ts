@@ -1,4 +1,5 @@
 import {
+  asserted,
   bodyState,
   buildManifest,
   canUseNen,
@@ -19,6 +20,7 @@ import {
   requiresTarget,
   self,
   setEffectState,
+  shown,
   spawnNenEntity,
   zone,
 } from '@black-whale/ability-sdk'
@@ -55,6 +57,7 @@ export const voconteHideoutDoors = defineAbility({
   actions: {
     'open-door': {
       label: 'Créer une porte',
+      evidence: shown('ch. 383 — le repaire recombiné par ses portes'),
       conditions: [
         requiresParameter('fromLocationId', 'Une pièce de départ est choisie'),
         requiresParameter('locationId', 'Une pièce d’arrivée est choisie'),
@@ -64,14 +67,22 @@ export const voconteHideoutDoors = defineAbility({
 
     'walk-through': {
       label: 'Franchir une porte',
+      evidence: shown('ch. 383 — les membres circulent par le réseau'),
       conditions: [effectIsLive('effectId', 'La porte existe')],
       effects: [
         moveEntity({ entity: (ctx) => ctx.actor ?? { id: ctx.actorId, kind: 'CHARACTER' } }),
       ],
     },
 
+    'open-outside-the-hideout': {
+      label: 'Ouvrir une porte hors du repaire',
+      refusal: 'Le réseau ne relie que les pièces du repaire',
+      evidence: asserted('la capacité est décrite sur le repaire, pas au-delà'),
+    },
+
     'close-door': {
       label: 'Refermer une porte',
+      evidence: asserted('une porte créée se referme'),
       conditions: [effectIsLive('effectId', 'La porte existe')],
       effects: [setEffectState({ state: 'ENDED' })],
     },

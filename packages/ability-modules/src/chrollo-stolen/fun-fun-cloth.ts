@@ -10,6 +10,7 @@ import {
   person,
   requiresTarget,
   setEffectState,
+  shown,
 } from '@black-whale/ability-sdk'
 
 /**
@@ -44,6 +45,7 @@ export const funFunCloth = defineAbility({
   actions: {
     wrap: {
       label: 'Envelopper',
+      evidence: shown('ch. 372 — les corps emportés hors de l’arène'),
       conditions: [requiresTarget('Une cible est enveloppée')],
       effects: [
         effect({
@@ -58,8 +60,28 @@ export const funFunCloth = defineAbility({
       ],
     },
 
+    'carry-away': {
+      label: 'Emporter le paquet',
+      // Transport of an entity by an entity: the target leaves the board and
+      // comes back somewhere else, intact.
+      evidence: shown('ch. 372 — ce qui est enveloppé quitte la scène avec Chrollo'),
+      conditions: [effectIsLive('effectId', 'Une cible est enveloppée')],
+      effects: [
+        moveEntity({
+          entity: (ctx) => ctx.actor ?? { id: ctx.actorId, kind: 'CHARACTER' },
+          certainty: 'CONFIRMED',
+        }),
+      ],
+    },
+
+    'damage-the-contents': {
+      label: 'Abîmer ce qui est enveloppé',
+      refusal: 'Ce que le tissu rend, il le rend intact : il transporte, il ne détruit pas',
+    },
+
     unwrap: {
       label: 'Déballer',
+      evidence: shown('ch. 372 — la restitution intacte'),
       conditions: [effectIsLive('effectId', 'Une cible est enveloppée')],
       effects: [
         setEffectState({ state: 'ENDED' }),

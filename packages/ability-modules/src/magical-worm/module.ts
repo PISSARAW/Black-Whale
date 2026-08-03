@@ -10,7 +10,9 @@ import {
   param,
   portal,
   requiresParameter,
+  requiresTarget,
   setEffectState,
+  shown,
   zone,
 } from '@black-whale/ability-sdk'
 
@@ -50,6 +52,7 @@ export const magicalWorm = defineAbility({
   actions: {
     dig: {
       label: 'Creuser le tunnel',
+      evidence: shown('ch. 379 — la porte, le tunnel, la trappe de sortie'),
       conditions: [
         requiresParameter('locationId', 'Une destination est choisie'),
         locationAlreadyVisited('La destination fait partie des lieux connus de Fugetsu'),
@@ -68,6 +71,7 @@ export const magicalWorm = defineAbility({
 
     'return-through': {
       label: 'Faire demi-tour',
+      evidence: shown('ch. 379 — le retour tant qu’on n’est pas complètement sorti'),
       conditions: [effectIsLive('effectId', 'Le tunnel est encore ouvert')],
       effects: [
         moveEntity({
@@ -78,14 +82,39 @@ export const magicalWorm = defineAbility({
       hint: 'Impossible une fois complètement sorti du tunnel',
     },
 
+    'carry-a-passenger': {
+      label: 'Emmener quelqu’un',
+      // The escape only works because the tunnel takes two.
+      evidence: shown('ch. 379 — les jumelles passent ensemble'),
+      conditions: [
+        effectIsLive('effectId', 'Le tunnel est encore ouvert'),
+        requiresTarget('Un passager est emmené'),
+      ],
+      effects: [moveEntity({ locationId: (ctx) => param(ctx, 'locationId') })],
+    },
+
+    'dig-to-an-unknown-room': {
+      label: 'Creuser vers un lieu inconnu',
+      refusal: 'La sortie se choisit parmi les lieux que Fugetsu connaît déjà',
+      evidence: shown('ch. 379 — la destination est un endroit vu'),
+    },
+
+    'return-after-fully-exiting': {
+      label: 'Revenir après être sortie',
+      refusal: 'Le retour n’est possible que tant qu’on n’a pas complètement quitté le tunnel',
+      evidence: shown('ch. 379 — la règle énoncée par Kacho'),
+    },
+
     close: {
       label: 'Refermer le tunnel',
+      evidence: shown('ch. 379 — le passage se referme derrière elles'),
       conditions: [effectIsLive('effectId', 'Le tunnel est encore ouvert')],
       effects: [setEffectState({ state: 'ENDED' })],
     },
 
     'flag-repetition': {
       label: 'Marquer un trajet suspect',
+      evidence: shown('ch. 398+ — les trajets se répètent, l’épuisement n’arrive plus'),
       conditions: [effectIsLive('effectId', 'Le tunnel est encore ouvert')],
       effects: [
         // Post-Kacho, the trips repeat without the expected exhaustion. The manga

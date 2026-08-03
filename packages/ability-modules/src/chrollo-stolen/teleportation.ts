@@ -2,11 +2,13 @@ import {
   buildManifest,
   canUseNen,
   defineAbility,
+  hypothesis,
   isConscious,
   moveEntity,
   person,
   requiresParameter,
   requiresTarget,
+  shown,
   unrevealed,
 } from '@black-whale/ability-sdk'
 
@@ -49,6 +51,7 @@ export const chrolloTeleportation = defineAbility({
   actions: {
     displace: {
       label: 'Déplacer une personne',
+      evidence: shown('ch. 357 — Nobunaga écarté sans ligne de vue'),
       conditions: [
         requiresTarget('Une personne est déplacée'),
         requiresParameter('locationId', 'Une destination est choisie'),
@@ -57,6 +60,26 @@ export const chrolloTeleportation = defineAbility({
         // No line of sight required, and no consent either.
         moveEntity({ certainty: 'CONFIRMED', precision: 'EXACT_ROOM' }),
       ],
+    },
+
+    'displace-self': {
+      label: 'Se déplacer soi-même',
+      evidence: hypothesis(
+        'la capacité tournée vers son porteur — le manga ne la montre que sur autrui',
+      ),
+      effects: [
+        moveEntity({
+          entity: (ctx) => ctx.actor ?? { id: ctx.actorId, kind: 'CHARACTER' },
+          certainty: 'CONFIRMED',
+        }),
+      ],
+    },
+
+    'displace-without-consent': {
+      label: 'Déplacer sans accord',
+      evidence: shown('ch. 357 — la cible n’a rien à dire'),
+      conditions: [requiresTarget('Une personne est déplacée')],
+      effects: [moveEntity({ certainty: 'CONFIRMED', precision: 'EXACT_ROOM' })],
     },
   },
 

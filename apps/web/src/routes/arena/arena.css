@@ -837,25 +837,52 @@
   .combat-console {
     position: absolute;
     z-index: 9;
-    right: 1rem;
-    bottom: 2.5rem;
-    left: 1rem;
-    display: grid;
-    grid-template-columns: minmax(10rem, 0.72fr) minmax(32rem, 1.8fr) minmax(10rem, 0.72fr);
-    gap: 0.6rem;
+    inset: 0;
     pointer-events: none;
-    max-width: calc(100vw - 2rem);
   }
 
   .status-card,
   .ryu-card {
     min-height: 0;
-    padding: 0.65rem;
-    border: 1px solid #ffffff20;
+    padding: 0.85rem;
+    border: 1px solid #ffffff25;
+    border-radius: 8px;
     background: #06090be8;
     backdrop-filter: blur(10px);
     pointer-events: auto;
     overflow: hidden;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+  }
+
+  .status-card {
+    position: absolute;
+    top: 1.5rem;
+    left: 50%;
+    transform: translateX(calc(-100% - 2rem));
+    width: min(26rem, 42vw);
+  }
+
+  .status-card.opponent-card {
+    left: auto;
+    right: 50%;
+    transform: translateX(calc(100% + 2rem));
+  }
+  
+  .status-card.opponent-card header {
+    flex-direction: row-reverse;
+  }
+
+  .ryu-card {
+    position: absolute;
+    bottom: 2.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(42rem, calc(100vw - 2rem));
+    padding: 1.25rem 1.5rem;
+    border-top: 3px solid #65c8e7;
+    border-bottom: 3px solid #65c8e7;
+    background: linear-gradient(180deg, #091217fa, #03080be8);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), 0 0 15px rgba(101, 200, 231, 0.15);
   }
 
   .status-card header,
@@ -878,18 +905,22 @@
 
   .meter,
   .flow {
-    height: 0.35rem;
-    margin: 0.5rem 0 0.3rem;
+    height: 0.55rem;
+    margin: 0.6rem 0 0.4rem;
     overflow: hidden;
-    background: #ffffff10;
+    background: #ffffff15;
+    border-radius: 4px;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.5);
   }
 
   .meter i,
   .flow i {
     display: block;
     height: 100%;
-    background: #65c8e7;
+    background: linear-gradient(90deg, #3a9dbf, #65c8e7);
     transition: width 0.15s;
+    border-radius: 4px;
+    box-shadow: 0 0 10px rgba(101, 200, 231, 0.3);
   }
 
   .ryu-card.commanding .flow i {
@@ -897,7 +928,9 @@
   }
 
   .meter.enemy i {
-    background: #c66861;
+    background: linear-gradient(90deg, #a34b45, #c66861);
+    box-shadow: 0 0 10px rgba(198, 104, 97, 0.3);
+    float: right;
   }
 
   .tags {
@@ -909,11 +942,14 @@
   }
 
   .tags span {
-    padding: 0.2rem 0.4rem;
-    border: 1px solid #ffffff20;
+    padding: 0.2rem 0.5rem;
+    border: 1px solid #ffffff25;
+    border-radius: 12px;
+    background: #ffffff0a;
     color: #bac5c9;
     font-size: 0.55rem;
     text-transform: uppercase;
+    font-weight: 600;
   }
 
   .flow {
@@ -957,21 +993,24 @@
   .zones button,
   .actions button {
     border: 1px solid #ffffff18;
+    border-radius: 4px;
     background: #ffffff05;
     color: #9aa8ad;
     cursor: pointer;
+    transition: all 0.2s ease;
   }
 
   .zones button {
-    padding: 0.28rem 0.15rem;
-    font-size: 0.56rem;
+    padding: 0.35rem 0.2rem;
+    font-size: 0.58rem;
     text-transform: uppercase;
   }
 
   .zones button.active {
     border-color: #7dd8f0;
-    background: #63cbe41c;
+    background: #63cbe425;
     color: #eafcff;
+    box-shadow: 0 0 12px rgba(125, 216, 240, 0.2);
   }
 
   .zones button.pulsing {
@@ -987,20 +1026,21 @@
   .actions {
     display: grid;
     grid-column: 1 / -1;
-    margin-top: 0;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 0.35rem;
+    margin-top: 0.2rem;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.4rem;
   }
 
   .actions button {
-    min-height: 2rem;
-    padding: 0.3rem 0.4rem;
-    font-size: 0.6rem;
+    min-height: 2.2rem;
+    padding: 0.4rem 0.5rem;
+    font-size: 0.65rem;
     text-transform: uppercase;
   }
 
   .actions button:hover {
     border-color: #6ecbe4;
+    background: #ffffff10;
     color: white;
   }
 
@@ -1010,11 +1050,24 @@
   }
 
   .actions .hatsu-action {
-    grid-column: auto;
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #11181e;
+    border-color: #486d80;
+  }
+
+  .actions .hatsu-action:hover {
+    background: #1a252d;
+    border-color: #6ecbe4;
   }
 
   .actions .hatsu-action small {
-    display: none;
+    display: inline-block;
+    color: #6ecbe4;
+    font-size: 0.55rem;
+    opacity: 0.85;
   }
 
   .event-line {
@@ -1300,14 +1353,15 @@
   }
 
   .touch-combat button {
-    min-height: 2.8rem;
+    min-height: 3.5rem;
     border: 1px solid #8ad7e777;
-    border-radius: 0.35rem;
-    background: #061217dd;
-    color: #e2f0f2;
+    border-radius: 0.45rem;
+    background: #061217f2;
+    color: #eafcff;
     font:
-      600 0.62rem 'IBM Plex Mono',
+      600 0.68rem 'IBM Plex Mono',
       monospace;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
   }
 
   @media (max-width: 800px) {

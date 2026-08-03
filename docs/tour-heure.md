@@ -1,6 +1,7 @@
 # L'heure du bord — la lumière des deux fenêtres à l'heure du chapitre
 
-**Date :** 2026-08-03 · **Statut :** Proposé · **S'inscrit dans :** `docs/tour-2.0.md`
+**Date :** 2026-08-03 · **Statut :** Livré (A-E, 2026-08-03) · **S'inscrit dans :**
+`docs/tour-2.0.md`
 (post-phases 0-4), `docs/adr-003-la-visite-habitee.md` (phase 1 livrée) et le
 chantier 4 de `docs/adr-001-le-canon-compile.md`. Répond à la remarque « le tour
 est devenu vraiment beau, mais vraiment sombre aussi ».
@@ -10,7 +11,7 @@ est devenu vraiment beau, mais vraiment sombre aussi ».
 ## 0. La question, et ce que la doctrine en laisse
 
 Le Black Whale navigue toute la journée. Techniquement, le jour il devrait être plus
-éclairé — et la doctrine répond : non, pas *lui*. Le jour n'entre dans ce navire que
+éclairé — et la doctrine répond : non, pas _lui_. Le jour n'entre dans ce navire que
 par **deux ouvertures sur 314 espaces** : la baie du pont d'observation (ch. 380) et
 la grande fenêtre du Roi (ch. 382). Partout ailleurs le voyage se passe dans une
 coque, éclairée aux luminaires, à midi comme à minuit — c'est une affirmation sur le
@@ -18,10 +19,10 @@ navire, pas un réglage. Un mode « matin » qui éclaircirait un couloir de la 
 serait une envmap qui ne dit pas son nom, et le garde-fou tient : **un couloir sans
 luminaire reste noir à toute heure.**
 
-Ce qui *peut* porter l'heure, ce sont les deux fenêtres. Et l'heure n'est pas à
+Ce qui _peut_ porter l'heure, ce sont les deux fenêtres. Et l'heure n'est pas à
 inventer : **le tour la connaît déjà.** Depuis ADR-003, la marche projette un
 événement précis — `selectEvent` sous le cap de spoiler du lecteur, puis
-`getWorldState` — et les personnages qu'elle place à bord y sont *à cette heure-là* :
+`getWorldState` — et les personnages qu'elle place à bord y sont _à cette heure-là_ :
 l'arc s'horodate (neuf captions, deux réveils — le réveil de Fugetsu du ch. 374 lit
 TUESDAY 01:27 AM quand la caption compte 37 h 30 de mer, et les deux tombent d'accord
 à trois minutes), et `voyage-clock.ts` fait déjà cette arithmétique pour `/ship`.
@@ -52,7 +53,7 @@ le froid, donc elle ne peut pas mentir.
   is how a timeline starts lying » — la lumière devra respecter la même échelle.
 - `apps/web/src/routes/tour/+page.server.ts` — la marche charge déjà
   `selectEvent(events, { eventId: url.searchParams.get('eventId') })` puis
-  `timeline.getWorldState`. L'événement est là ; seul son *temps* ne traverse pas
+  `timeline.getWorldState`. L'événement est là ; seul son _temps_ ne traverse pas
   encore vers le client (le payload est un cast list, à dessein).
 - `mesh.ts:370-432` — `WINDOW_GLOW = [0.62, 0.86, 1.28]`, `SEA_GLOW` dérivé à 45 %,
   `HORIZON = 1.7`, `WINDOW_REACH = 18`, `WINDOW_SAMPLE = 2.5`, `WINDOW_WEIGHT = 0.4`.
@@ -79,15 +80,15 @@ Une fonction pure `skyOf(timeOfDay)` sur l'heure locale du bord
 le tour du cadran refermé (22 h 30 rejoint 5 h 30 par la nuit). Rien ne lit ni
 horloge ni événement ici — les tests lui donnent l'heure.
 
-| Heure   | État             | `glow` (ciel, au-dessus du blanc)   | Shafts (`peak`) | Source                                  |
-| ------- | ---------------- | ----------------------------------- | --------------- | --------------------------------------- |
-| 05 h 30 | nuit finissante  | `[0.030, 0.045, 0.075]`             | 0               | dérivé : le ciel couvert, sans soleil   |
-| 07 h 00 | aube             | `[0.98, 0.74, 0.58]`                | 0.40            | dérivé : le même ciel, soleil bas       |
-| 10 h 00 | matin couvert    | `[0.70, 0.84, 1.18]`                | 0.50            | interpolation vers l'état de référence  |
-| 13 h 00 | **midi couvert** | `[0.62, 0.86, 1.28]` — **actuel**   | **0.55**        | **ch. 380 — le seul état dessiné**      |
-| 17 h 30 | après-midi       | `[0.74, 0.80, 1.08]`                | 0.50            | interpolation                           |
-| 19 h 30 | soir             | `[1.18, 0.64, 0.42]`                | 0.45            | dérivé : soleil bas, l'autre bout       |
-| 21 h 30 | nuit             | `[0.030, 0.045, 0.075]`             | 0               | dérivé                                  |
+| Heure   | État             | `glow` (ciel, au-dessus du blanc) | Shafts (`peak`) | Source                                 |
+| ------- | ---------------- | --------------------------------- | --------------- | -------------------------------------- |
+| 05 h 30 | nuit finissante  | `[0.030, 0.045, 0.075]`           | 0               | dérivé : le ciel couvert, sans soleil  |
+| 07 h 00 | aube             | `[0.98, 0.74, 0.58]`              | 0.40            | dérivé : le même ciel, soleil bas      |
+| 10 h 00 | matin couvert    | `[0.70, 0.84, 1.18]`              | 0.50            | interpolation vers l'état de référence |
+| 13 h 00 | **midi couvert** | `[0.62, 0.86, 1.28]` — **actuel** | **0.55**        | **ch. 380 — le seul état dessiné**     |
+| 17 h 30 | après-midi       | `[0.74, 0.80, 1.08]`              | 0.50            | interpolation                          |
+| 19 h 30 | soir             | `[1.18, 0.64, 0.42]`              | 0.45            | dérivé : soleil bas, l'autre bout      |
+| 21 h 30 | nuit             | `[0.030, 0.045, 0.075]`           | 0               | dérivé                                 |
 
 - `sea` reste **dérivé à 45 % du ciel** à toute heure — c'est la relation honnête
   de `SEA_GLOW`, elle ne devient pas fausse le soir.
@@ -104,10 +105,10 @@ horloge ni événement ici — les tests lui donnent l'heure.
 
 La règle suit `basis`, parce que la lumière est une affirmation comme une autre :
 
-| `basis` de l'événement projeté | Ce que montre la vitre                                      |
-| ------------------------------ | ----------------------------------------------------------- |
-| `stated`                       | `skyOf` à l'heure dite — le réveil de Fugetsu fait foi      |
-| `derived`                      | pareil — l'arithmétique est sourcée, le `≈` reste sur le HUD |
+| `basis` de l'événement projeté | Ce que montre la vitre                                        |
+| ------------------------------ | ------------------------------------------------------------- |
+| `stated`                       | `skyOf` à l'heure dite — le réveil de Fugetsu fait foi        |
+| `derived`                      | pareil — l'arithmétique est sourcée, le `≈` reste sur le HUD  |
 | `bracketed`                    | **l'état de référence (midi couvert)** — pas d'heure inventée |
 
 Prendre le milieu d'un intervalle « Day 4 – Day 8 » serait habiller une supposition
@@ -119,11 +120,11 @@ prend son début, comme partout ailleurs.
 Le HUD, justement : l'heure du bord s'affiche dans l'overlay de la marche via le
 `formatVoyageTime` existant — « Day 3 · Tuesday · 01:27 », « ≈ Day 5 »,
 « Day 4 – Day 8 » — près du nom du pont. C'est la carte de provenance de la
-lumière : le visiteur voit *pourquoi* la baie est noire.
+lumière : le visiteur voit _pourquoi_ la baie est noire.
 
 ## 4. Chantiers
 
-### A. L'exposition au visiteur *(~½ j — le geste qui répond à « trop sombre », livrable seul et en premier)*
+### A. L'exposition au visiteur _(~½ j — le geste qui répond à « trop sombre », livrable seul et en premier)_
 
 - `comfort.ts` : champ `exposure`, plage `[0.75, 1.6]`, défaut 1 (le rendu actuel),
   LIVELY = CALM = 1, validation, persistance — le calque exact de `walkPace`.
@@ -132,7 +133,7 @@ lumière : le visiteur voit *pourquoi* la baie est noire.
   système de preuve chaud/froid est intact à tout réglage.
 - `TourComfortPanel` : un curseur « Exposition », à côté de « Lumière de nuit ».
 
-### B. L'heure dans le payload *(~½ j)*
+### B. L'heure dans le payload _(~½ j)_
 
 `+page.server.ts` étend ce qui traverse : le `VoyageTime` de l'événement projeté
 (basis, heures, bornes) réduit au strict — un `hours: number | null` déjà arbitré
@@ -141,14 +142,14 @@ par la règle du §3, plus le libellé `formatVoyageTime` pour le HUD. La règle
 pour que deux clients ne puissent pas arbitrer différemment. Test d'acceptation,
 calqué sur ADR-003 : même heure que `/ship` au même événement.
 
-### C. La vitre paramétrée *(~½ j)*
+### C. La vitre paramétrée _(~½ j)_
 
 Sortir les triangles du `pane` du buffer des luminaires vers un petit mesh par
 fenêtre (quelques dizaines de triangles, deux pièces) : MeshBasic, couleurs par
 sommet **relatives** (ciel = 1, mer = 0.45), et `material.color` = `glow` de
 l'heure. Un `material.color.set()` au changement d'événement, zéro rebuild.
 
-### D. La flaque découplée *(~1 j — le seul vrai chantier)*
+### D. La flaque découplée _(~1 j — le seul vrai chantier)_
 
 `daylight()` cesse d'écrire dans `color` et écrit un attribut scalaire `aSky`
 (la fraction de fenêtre reçue par le sommet, poids et openness déjà appliqués).
@@ -161,7 +162,7 @@ Les meshes des deux pièces à fenêtre — et eux seuls — prennent un Lambert
 - Le bake reste pur et déterministe : `aSky` ne dépend pas de l'heure, seul
   l'uniform en dépend.
 
-### E. Le branchement *(~½ j)*
+### E. Le branchement _(~½ j)_
 
 `TourScene` relie l'heure reçue aux trois consommateurs : `material.color` des
 vitres (C), `uSkyGlow` des deux pièces (D), `uTint`/`peak` des shafts — plus le
@@ -218,6 +219,30 @@ B. L'heure dans le payload   ~½ j ┐
 C. Vitre paramétrée          ~½ j  ├─ E. Branchement + HUD + panel  ~½ j
 D. Flaque découplée (aSky)   ~1 j  ┘
 ```
+
+### Ce que la livraison a changé au plan
+
+- **`aSky` est une _part_, pas une quantité.** Le plan disait « la fraction de
+  fenêtre reçue par le sommet, poids et openness déjà appliqués », et le shader
+  `couleur += aSky * uSkyGlow`. Une addition ne pouvait pas rendre le rendu
+  d'aujourd'hui : l'albédo est déjà plié dans la couleur du sommet et ne s'en
+  récupère pas, donc une flaque additive éclairerait le pont dans la couleur du
+  ciel au lieu de celle de la pièce. Ce qui est cuit est
+  `gain × daylight ÷ (fill + gain × lamps)` et le shader multiplie par
+  `1 + aSky × (glow / WINDOW_GLOW)` — exact au bit près à l'état de référence,
+  et l'openness se simplifie du rapport, donc la flaque ne peut pas glisser
+  quand l'heure change.
+- **L'attribut est long comme le pont, pas comme la pièce.** Une pièce est une
+  plage de dessin dans les buffers du pont ; un attribut doit s'aligner sur les
+  positions. Il est alloué sur les deux ponts qui ont une ouverture, lié dans les
+  deux pièces qui le lisent, et pas alloué du tout sur les trois autres ponts.
+- **`SHAFT_PEAK` reste écrit.** Non plus lu par la marche, mais gardé comme la
+  ligne 13 h de la table : l'état sourcé doit rester vérifiable contre ce qui
+  était là avant la table.
+- **À vérifier sur un écran** : la luminance de `WINDOW_GLOW` est 0,839 en
+  linéaire, sous le seuil `uThreshold` de 0,9 du pass de shafts. Selon l'espace
+  colorimétrique de la cible du composer, la marche peut ne rien sommer du tout —
+  antérieur à ce plan, non touché ici, et à trancher devant le rendu.
 
 Total ≈ 3 jours. A répond seul à la remarque d'origine ; B-E font que la lumière
 du bord raconte la traversée : au banquet la baie est un midi couvert, à la nuit

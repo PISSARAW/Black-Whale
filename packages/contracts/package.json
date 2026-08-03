@@ -20,8 +20,9 @@
   "scripts": {
     "build": "tsc",
     "test": "vitest run",
-    "canon-lint": "tsx src/cli.ts",
-    "clean": "rimraf dist"
+    "canon-lint": "node dist/cli.js",
+    "clean": "rimraf dist",
+    "canon-lint:dev": "tsx src/cli.ts"
   },
   "dependencies": {
     "zod": "^3.23.0"

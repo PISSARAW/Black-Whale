@@ -14,6 +14,9 @@ RUN pnpm --filter @black-whale/database generate
 # schema, which leaves the deploy half-applied and the site behind a gate that
 # never opens.
 RUN pnpm --filter @black-whale/domain build
+# canon-lint runs from the same image, against the same `data/` the backfills
+# are about to read.
+RUN pnpm --filter @black-whale/contracts build
 ENV NODE_ENV=production
 USER node
 # `migrate:deploy` only moves the schema. Everything the archive actually shows —
@@ -22,4 +25,9 @@ USER node
 # shipped new code onto an old catalogue: the map would query rooms production
 # did not have. The backfills are idempotent and ordered, timeline first because
 # the catalogue anchors its trajectories on the events it declares.
-CMD ["sh", "-c", "pnpm --filter @black-whale/database migrate:deploy && pnpm --filter @black-whale/database db:backfill-timeline && pnpm --filter @black-whale/database db:backfill-map"]
+# canon-lint comes first, and before the schema moves: the backfills read
+# `data/` and write it into the database, so a catalogue that contradicts
+# itself becomes a database that contradicts itself. Failing here costs
+# nothing — deploy.sh runs this container on its own, and the previous release
+# is still serving.
+CMD ["sh", "-c", "pnpm --filter @black-whale/contracts canon-lint && pnpm --filter @black-whale/database migrate:deploy && pnpm --filter @black-whale/database db:backfill-timeline && pnpm --filter @black-whale/database db:backfill-map"]

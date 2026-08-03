@@ -1,5 +1,6 @@
 import {
   abilityGrant,
+  asserted,
   abilityRevoke,
   buildManifest,
   canUseNen,
@@ -8,8 +9,11 @@ import {
   isConscious,
   param,
   person,
+  effectIsLive,
   requiresParameter,
   requiresTarget,
+  setEffectState,
+  shown,
   sourcedFrom,
 } from '@black-whale/ability-sdk'
 
@@ -69,6 +73,57 @@ export const stealChain = defineAbility({
     }),
     abilityGrant(),
   ],
+
+  /**
+   * One thumb, one stored ability: the grid here is mostly about what the
+   * finger is already holding. Stealing a second power is not a missing feature
+   * but the price the manga charges.
+   */
+  actions: {
+    steal: {
+      label: 'Voler une capacité',
+      evidence: shown('ch. 369 — Little Eye pris à Sayird'),
+      conditions: [
+        requiresTarget('Une victime est enchaînée'),
+        requiresParameter('targetAbilityId', 'La capacité à voler est identifiée'),
+      ],
+      effects: [
+        sourcedFrom(abilityRevoke({ reason: 'steal-chain' }), ['chapter-369']),
+        effect({
+          kind: 'ABILITY_GRANT',
+          discriminator: 'stolen',
+          attributes: (ctx) => ({
+            storedAbilityId: param(ctx, 'targetAbilityId'),
+            victimId: ctx.targets[0],
+            transferable: true,
+          }),
+        }),
+        abilityGrant(),
+      ],
+    },
+
+    'drain-into-zetsu': {
+      label: 'Vider l’aura de la victime',
+      evidence: shown('ch. 369 — la victime tombe en Zetsu forcé'),
+      conditions: [requiresTarget('Une victime est enchaînée')],
+      effects: [setEffectState({ state: 'ACTIVE', attributes: { forcedZetsu: true } })],
+    },
+
+    'return-ability': {
+      label: 'Rendre la capacité',
+      evidence: asserted(
+        'ce que le pouce tient, il peut le relâcher — c’est ce qui rend le prêt possible',
+      ),
+      conditions: [effectIsLive('effectId', 'Une capacité est détenue')],
+      effects: [setEffectState({ state: 'ENDED', attributes: { returned: true } })],
+    },
+
+    'steal-second': {
+      label: 'Voler une deuxième capacité',
+      refusal:
+        'Le pouce ne tient qu’une capacité à la fois : il faut d’abord libérer celle qu’il détient',
+    },
+  },
 
   cost: { label: 'Occupe le pouce tant que la capacité est détenue', amount: 1, unit: 'doigt' },
 

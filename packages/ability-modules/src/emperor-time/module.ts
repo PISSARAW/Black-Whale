@@ -1,4 +1,5 @@
 import {
+  asserted,
   attributeCounter,
   auraModifier,
   buildManifest,
@@ -9,6 +10,7 @@ import {
   numberParam,
   self,
   setEffectState,
+  shown,
 } from '@black-whale/ability-sdk'
 
 /** Canon: one hour of lifespan per second of Emperor Time. */
@@ -51,6 +53,7 @@ export const emperorTime = defineAbility({
   actions: {
     activate: {
       label: 'Activer Emperor Time',
+      evidence: shown('ch. 358 — activation volontaire, 100 % dans toutes les catégories'),
       effects: [
         auraModifier({
           allCategories: 1.0,
@@ -60,8 +63,18 @@ export const emperorTime = defineAbility({
       ],
     },
 
+    'trigger-by-emotion': {
+      label: 'Déclencher par les yeux écarlates',
+      // Not a choice: emotion opens the eyes, and the counter starts anyway.
+      evidence: shown('ch. 366 — les yeux virent à l’écarlate sous l’émotion'),
+      effects: [auraModifier({ allCategories: 1.0, involuntary: true, lifespanSpentHours: 0 })],
+      cost: { label: 'Espérance de vie, sans décision préalable', unit: 'heure par seconde' },
+      hint: 'Emploi subi : l’émotion active la capacité',
+    },
+
     maintain: {
       label: 'Maintenir',
+      evidence: shown('ch. 380 — Emperor Time tenu pendant tout le pont 1'),
       conditions: [effectIsLive('effectId', 'Emperor Time est actif')],
       effects: [
         attributeCounter({
@@ -82,8 +95,25 @@ export const emperorTime = defineAbility({
       hint: 'Requiert Emperor Time actif',
     },
 
+    'forced-zetsu': {
+      label: 'Subir le Zetsu forcé',
+      // The price the price charges: an accumulated year costs five minutes of
+      // Zetsu, during which nothing else can be cast.
+      evidence: shown('ch. 380 — cinq minutes de Zetsu après une année consommée'),
+      conditions: [effectIsLive('effectId', 'Emperor Time a été maintenu')],
+      effects: [setEffectState({ state: 'ENDED', attributes: { forcedZetsuMinutes: 5 } })],
+      cost: { label: 'Cinq minutes sans aucun Nen', amount: 5, unit: 'minutes' },
+    },
+
+    'lend-to-others': {
+      label: 'Prêter l’efficacité à un tiers',
+      refusal: 'Emperor Time ne multiplie que les chaînes de Kurapika, jamais le Nen d’autrui',
+      evidence: asserted('la capacité porte sur ses propres catégories'),
+    },
+
     deactivate: {
       label: 'Désactiver',
+      evidence: shown('ch. 381 — Kurapika coupe pour cesser de payer'),
       conditions: [effectIsLive('effectId', 'Emperor Time est actif')],
       effects: [setEffectState({ state: 'ENDED' })],
       hint: 'Requiert Emperor Time actif',

@@ -1,5 +1,6 @@
 import {
   abilityGrant,
+  asserted,
   abilityRevoke,
   auraModifier,
   buildManifest,
@@ -9,11 +10,13 @@ import {
   effectAttribute,
   effectIsLive,
   isConscious,
+  knowledgeGrant,
   param,
   person,
   requiresParameter,
   requiresTarget,
   setEffectState,
+  shown,
   targetRefs,
 } from '@black-whale/ability-sdk'
 
@@ -54,8 +57,23 @@ export const stealthDolphin = defineAbility({
   targets: [person()],
 
   actions: {
+    explain: {
+      label: 'Faire expliquer la capacité',
+      // The dolphin's first job is to read the stolen power out loud: what it
+      // does, and what it costs the borrower.
+      evidence: shown('ch. 369 — le dauphin détaille Little Eye à Oito'),
+      conditions: [requiresParameter('targetAbilityId', 'Une capacité volée est chargée')],
+      effects: [
+        knowledgeGrant({
+          factId: (ctx) => `mechanics:${param(ctx, 'targetAbilityId') ?? 'ability'}`,
+          state: 'KNOWN',
+        }),
+      ],
+    },
+
     lend: {
       label: 'Prêter la capacité',
+      evidence: shown('ch. 369 — Little Eye prêté à Oito'),
       conditions: [
         requiresTarget('Un emprunteur est désigné'),
         requiresParameter('targetAbilityId', 'La capacité prêtée est identifiée'),
@@ -79,8 +97,17 @@ export const stealthDolphin = defineAbility({
       cost: { label: 'Un doigt immobilisé pendant le prêt', amount: 1, unit: 'doigt' },
     },
 
+    'lend-to-non-user': {
+      label: 'Prêter à quelqu’un qui n’a pas le Nen',
+      // The loan is what turns Oito into a Nen user in the world state.
+      evidence: shown('ch. 369 — les nœuds d’aura d’Oito s’ouvrent'),
+      conditions: [requiresTarget('Un emprunteur non-utilisateur est désigné')],
+      effects: [auraModifier({ nenNodesOpened: true, byLoan: true, awakened: true })],
+    },
+
     consume: {
       label: 'Consommer le prêt',
+      evidence: shown('ch. 390 — Oito exécute la ronde des cafards'),
       conditions: [effectIsLive('effectId', 'Le prêt est encore actif')],
       effects: [
         abilityRevoke({
@@ -98,6 +125,12 @@ export const stealthDolphin = defineAbility({
         setEffectState({ state: 'ENDED' }),
       ],
       hint: 'Requiert un prêt en cours',
+    },
+
+    'lend-twice': {
+      label: 'Prêter deux fois la même charge',
+      refusal: 'Le prêt est consommé au premier usage : il faut le recharger avant de le rendre',
+      evidence: asserted('le dauphin ne porte qu’un usage à la fois'),
     },
   },
 

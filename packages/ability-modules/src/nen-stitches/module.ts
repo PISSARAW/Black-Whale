@@ -1,4 +1,5 @@
 import {
+  asserted,
   bodyState,
   buildManifest,
   canUseNen,
@@ -12,6 +13,7 @@ import {
   person,
   requiresTarget,
   setEffectState,
+  shown,
 } from '@black-whale/ability-sdk'
 
 /**
@@ -56,6 +58,7 @@ export const nenStitches = defineAbility({
   actions: {
     thread: {
       label: 'Tendre un fil',
+      evidence: shown('ch. 76 — les fils tendus autour de la proie'),
       conditions: [requiresTarget('Une cible est reliée')],
       effects: [
         effect({
@@ -72,6 +75,8 @@ export const nenStitches = defineAbility({
 
     'thread-hidden': {
       label: 'Tendre un fil dissimulé (In)',
+      evidence: shown('ch. 76 — le fil que la cible ne voit pas'),
+      gyo: 'le fil tendu et le point d’ancrage de Machi',
       conditions: [requiresTarget('Une cible est reliée')],
       effects: [masked(effect({ kind: 'ELASTIC_BINDING', attributes: { retractable: true } }))],
       hint: 'Visible uniquement en Gyo',
@@ -79,18 +84,39 @@ export const nenStitches = defineAbility({
 
     puppet: {
       label: 'Manipuler comme une marionnette',
+      evidence: shown('ch. 76 — le corps mené au bout du fil'),
       conditions: [requiresTarget('Une cible est reliée')],
       effects: [controlLink({ vector: 'thread', mode: 'control' })],
     },
 
     suture: {
       label: 'Recoudre',
+      evidence: shown('ch. 71 — les bras d’Hisoka recousus'),
       conditions: [requiresTarget('Un blessé est recousu')],
       effects: [bodyState({ state: 'ALIVE' })],
     },
 
+    'sew-object': {
+      label: 'Recoudre un objet',
+      evidence: asserted('le fil coud ce qu’on lui donne, chair ou non'),
+      conditions: [requiresTarget('Un objet déchiré est visé')],
+      effects: [
+        effect({
+          kind: 'ELASTIC_BINDING',
+          attributes: { repaired: true, target: 'object' },
+        }),
+      ],
+    },
+
+    'suture-cold-limb': {
+      label: 'Recoudre un membre trop ancien',
+      refusal: 'La couture veut une plaie fraîche : passé un délai, les nerfs ne reprennent plus',
+      evidence: asserted('la précision du fil ne remplace pas le temps perdu'),
+    },
+
     cut: {
       label: 'Couper le fil',
+      evidence: asserted('ce que le fil tient, il le lâche'),
       effects: [setEffectState({ state: 'ENDED' })],
     },
   },

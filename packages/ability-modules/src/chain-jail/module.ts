@@ -1,11 +1,15 @@
 import {
+  asserted,
   buildManifest,
   canUseNen,
   constraint,
   defineAbility,
+  effectIsLive,
   isConscious,
   person,
   requiresTarget,
+  setEffectState,
+  shown,
   targetHasAffiliation,
   vow,
 } from '@black-whale/ability-sdk'
@@ -56,6 +60,53 @@ export const chainJail = defineAbility({
       attributes: { escapable: false, suppressesNen: true, vowId: 'chain-jail' },
     }),
   ],
+
+  /**
+   * The grid of uses (§8): what the jail does, and — just as canonical — what it
+   * refuses. A vow-bound ability is the clearest case where a greyed entry
+   * teaches more than a missing one.
+   */
+  actions: {
+    bind: {
+      label: 'Emprisonner une Araignée',
+      evidence: shown('ch. 84 — capture d’Uvogin'),
+      conditions: [requiresTarget('Une cible est enchaînée')],
+      effects: [
+        constraint({
+          rules: VOW_RULES,
+          attributes: { escapable: false, suppressesNen: true, vowId: 'chain-jail' },
+        }),
+      ],
+    },
+
+    'hold-for-interrogation': {
+      label: 'Maintenir pendant l’interrogatoire',
+      evidence: shown('ch. 85-86 — Uvogin interrogé, puis ch. 122 — Chrollo'),
+      conditions: [effectIsLive('effectId', 'La chaîne tient encore')],
+      // The coupling the manga always shows: the jail holds while the Dowsing
+      // Chain asks the questions.
+      effects: [setEffectState({ state: 'ACTIVE', attributes: { interrogation: true } })],
+      hint: 'Se couple à la Chaîne de Divination pour l’interrogatoire',
+    },
+
+    release: {
+      label: 'Relâcher la chaîne',
+      evidence: asserted('la chaîne se retire à volonté ; elle ne cède à aucune autre main'),
+      conditions: [effectIsLive('effectId', 'La chaîne tient encore')],
+      effects: [setEffectState({ state: 'ENDED' })],
+    },
+
+    'bind-outsider': {
+      label: 'Emprisonner hors Brigade',
+      refusal: 'Serment : hors Brigade Fantôme, la Chaîne du Jugement tue Kurapika',
+      evidence: shown('ch. 84 — le serment énoncé'),
+    },
+
+    'bind-self': {
+      label: 'S’enchaîner soi-même',
+      refusal: 'L’index emprisonne autrui ; c’est le majeur que Kurapika retourne contre lui',
+    },
+  },
 
   cost: {
     label: 'Serment : mort en cas d’usage hors Brigade Fantôme',

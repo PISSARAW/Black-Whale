@@ -7,27 +7,34 @@ COPY . .
 # to happen before NODE_ENV is pinned to production.
 RUN pnpm install --frozen-lockfile
 RUN pnpm --filter @black-whale/database generate
-# The backfills read the domain rules rather than restating them — the voyage
+# The compiler reads the domain rules rather than restating them — the voyage
 # clock formats its hours there — and a workspace package resolves to its built
 # `dist/`, which nothing else in this image produces. Without this the timeline
-# backfill dies on a missing module *after* `migrate:deploy` has moved the
+# pass dies on a missing module *after* `migrate:deploy` has moved the
 # schema, which leaves the deploy half-applied and the site behind a gate that
 # never opens.
 RUN pnpm --filter @black-whale/domain build
-# canon-lint runs from the same image, against the same `data/` the backfills
-# are about to read.
+# canon-lint runs from the same image, against the same `data/` the compiler
+# is about to read. The compiler itself is built here too: it is the only
+# thing that puts the catalogue into the database.
 RUN pnpm --filter @black-whale/contracts build
+RUN pnpm --filter @black-whale/canon-compiler build
 ENV NODE_ENV=production
 USER node
 # `migrate:deploy` only moves the schema. Everything the archive actually shows —
 # locations, characters, presences — lives in data/*.json and reaches the
-# database solely through the backfills, so a deploy that stopped at the schema
+# database solely through the compiler, so a deploy that stopped at the schema
 # shipped new code onto an old catalogue: the map would query rooms production
-# did not have. The backfills are idempotent and ordered, timeline first because
-# the catalogue anchors its trajectories on the events it declares.
-# canon-lint comes first, and before the schema moves: the backfills read
+# did not have. The passes are idempotent and ordered, timeline first because
+# the catalogue anchors its trajectories on the events it declares, and the
+# chapter scenes last because they move bodies the map has just placed.
+#
+# `compile:chapters` is new to the deploy. The two scripts it replaces ran
+# nowhere — not in CI, not here — so a database rebuilt from scratch never had
+# the world state of chapters 415 and 416 at all.
+# canon-lint comes first, and before the schema moves: the compiler reads
 # `data/` and write it into the database, so a catalogue that contradicts
 # itself becomes a database that contradicts itself. Failing here costs
 # nothing — deploy.sh runs this container on its own, and the previous release
 # is still serving.
-CMD ["sh", "-c", "pnpm --filter @black-whale/contracts canon-lint && pnpm --filter @black-whale/database migrate:deploy && pnpm --filter @black-whale/database db:backfill-timeline && pnpm --filter @black-whale/database db:backfill-map"]
+CMD ["sh", "-c", "pnpm --filter @black-whale/contracts canon-lint && pnpm --filter @black-whale/database migrate:deploy && pnpm --filter @black-whale/canon-compiler compile:timeline && pnpm --filter @black-whale/canon-compiler compile:map && pnpm --filter @black-whale/canon-compiler compile:identities && pnpm --filter @black-whale/canon-compiler compile:chapters"]

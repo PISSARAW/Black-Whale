@@ -67,7 +67,8 @@ transcrite reste `stated`. Le champ ne dévalue pas la date, il la rend
 traçable : ce sont les entrées à confronter à la planche en lisant, et à
 corriger si la fiche se trompe.
 
-`occurredAtLabel` est **rendu**, pas rédigé : `backfill_timeline.mjs` l'écrit
+`occurredAtLabel` est **rendu**, pas rédigé : la passe `compile:timeline` de
+`@black-whale/canon-compiler` l'écrit
 depuis `occurredAt`, et un test échoue si le libellé du fichier ne correspond
 plus à ce que le formateur produit. La seule exception est ce que l'horloge du
 navire ne peut pas tenir — le flash-back du chapitre 415, daté « deux mois
@@ -140,8 +141,9 @@ Un couloir n'est une position valable que si le canon l'énonce : Shizuku est au
 `CONFIRMED`. Une position réellement inconnue reste `black-whale-unknown` — c'est
 un aveu, pas une déduction ratée.
 
-`verify_map_coverage.mjs` échoue sur tout tier nu, dans le catalogue comme dans
-les présences projetées.
+Un tier nu est refusé des deux côtés : `pnpm canon-lint` échoue sur la fiche
+avant que le déploiement n'écrive quoi que ce soit, et `verify:map` échoue sur
+la présence projetée si elle arrive tout de même.
 
 ### Positions dans la pièce
 

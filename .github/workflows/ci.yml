@@ -156,8 +156,10 @@ jobs:
       - name: Apply migrations and compile the catalogue
         run: |
           pnpm --filter "@black-whale/database" migrate:deploy
-          pnpm --filter "@black-whale/database" db:backfill-timeline
-          pnpm --filter "@black-whale/database" db:backfill-map
+          pnpm --filter "@black-whale/canon-compiler" compile:timeline:dev
+          pnpm --filter "@black-whale/canon-compiler" compile:map:dev
+          pnpm --filter "@black-whale/canon-compiler" compile:identities:dev
+          pnpm --filter "@black-whale/canon-compiler" compile:chapters:dev
 
       - name: Install Playwright browsers
         run: pnpm exec playwright install --with-deps chromium

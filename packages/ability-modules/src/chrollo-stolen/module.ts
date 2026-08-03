@@ -19,6 +19,7 @@ import {
   requiresParameter,
   requiresTarget,
   setEffectState,
+  shown,
   spawnNenEntity,
   unrevealed,
   zone,
@@ -270,6 +271,7 @@ export const orderStamp = defineAbility({
   actions: {
     animate: {
       label: 'Animer un objet',
+      evidence: shown('ch. 357 — les objets à tête animés dans l’arène'),
       conditions: [requiresTarget('Un objet à tête est visé')],
       effects: [
         controlLink({
@@ -289,6 +291,7 @@ export const orderStamp = defineAbility({
 
     'animate-crowd': {
       label: 'Animer une foule',
+      evidence: shown('ch. 357 — plus de deux cents pantins en même temps'),
       conditions: [requiresParameter('cohortId', 'Une cohorte de copies est visée')],
       effects: [
         spawnNenEntity({
@@ -314,8 +317,20 @@ export const orderStamp = defineAbility({
 
     behead: {
       label: 'Décapiter un pantin',
+      evidence: shown('ch. 357 — la décapitation annule l’animation'),
       conditions: [effectIsLive('effectId', 'Un pantin est animé')],
       effects: [setEffectState({ state: 'ENDED', attributes: { reason: 'beheaded' } })],
+    },
+
+    'animate-a-corpse': {
+      label: 'Animer un vrai cadavre',
+      refusal: 'Le tampon n’anime que des objets à tête, jamais un corps véritable',
+      evidence: shown('ch. 357 — ce sont des copies qui se relèvent, pas les morts'),
+    },
+
+    'give-a-complex-order': {
+      label: 'Donner un ordre complexe',
+      refusal: 'Un ordre vocal simple par pantin : le tampon ne négocie pas',
     },
   },
 
@@ -428,6 +443,7 @@ export const blackVoice = defineAbility({
   actions: {
     'plant-antenna': {
       label: 'Planter une antenne',
+      evidence: shown('ch. 106 — l’antenne plantée dans la nuque'),
       conditions: [requiresTarget('Une cible est piquée')],
       effects: [
         controlLink({
@@ -443,8 +459,38 @@ export const blackVoice = defineAbility({
       ],
     },
 
+    'threaten-with-a-second': {
+      label: 'Menacer d’une seconde antenne',
+      // Canon uses the antenna as leverage before it is ever planted.
+      evidence: shown('ch. 106 — la seconde antenne brandie comme menace'),
+      effects: [
+        knowledgeGrant({
+          factId: (ctx) => `threat:second-antenna:${ctx.targets[0] ?? 'target'}`,
+          state: 'KNOWN',
+        }),
+      ],
+    },
+
+    'command-by-phone': {
+      label: 'Commander par téléphone',
+      evidence: shown('ch. 106 — l’ordre passe par le combiné, à distance'),
+      conditions: [effectIsLive('effectId', 'Une antenne est plantée')],
+      effects: [
+        setEffectState({
+          state: 'ACTIVE',
+          attributes: (ctx) => ({ lastOrder: param(ctx, 'order'), vector: 'phone' }),
+        }),
+      ],
+    },
+
+    'command-without-antenna': {
+      label: 'Commander sans antenne',
+      refusal: 'Sans antenne plantée, le combiné ne commande personne',
+    },
+
     command: {
       label: 'Donner un ordre',
+      evidence: shown('ch. 106 — le corps de la cible exécute l’ordre reçu'),
       conditions: [effectIsLive('effectId', 'Une antenne est plantée')],
       // The controller acts with the target's body: actorId stays Chrollo.
       effects: [

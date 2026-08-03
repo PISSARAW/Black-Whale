@@ -3,6 +3,7 @@ import {
   canUseNen,
   controlLink,
   defineAbility,
+  effectIsLive,
   isConscious,
   masked,
   param,
@@ -10,6 +11,7 @@ import {
   person,
   requiresTarget,
   setEffectState,
+  shown,
 } from '@black-whale/ability-sdk'
 
 /**
@@ -52,6 +54,8 @@ export const illumiNeedlePeople = defineAbility({
   actions: {
     'plant-needle': {
       label: 'Planter une aiguille',
+      evidence: shown('ch. 288 — l’aiguille plantée, le corps devient jetable'),
+      gyo: 'l’aiguille et le lien de contrôle qui remonte vers Illumi',
       conditions: [requiresTarget('Une cible est piquée')],
       effects: [
         // Masked: the link is only visible to Gyo and to the omniscient view.
@@ -68,6 +72,8 @@ export const illumiNeedlePeople = defineAbility({
 
     reshape: {
       label: 'Remodeler un visage',
+      evidence: shown('ch. 43 — Gittarackur, le visage tenu par les aiguilles'),
+      gyo: 'les aiguilles qui tiennent le visage en place',
       conditions: [requiresTarget('Un visage est remodelé')],
       effects: [
         perceptionMask({
@@ -79,8 +85,28 @@ export const illumiNeedlePeople = defineAbility({
       hint: 'Déguisement durable — Gittarackur, infiltration',
     },
 
+    'order-in-advance': {
+      label: 'Laisser une consigne à retardement',
+      // The needle keeps its order without Illumi in the room, which is what
+      // makes his puppets a threat on a ship he is not standing on.
+      evidence: shown('ch. 288 — la consigne tient sans lui'),
+      conditions: [effectIsLive('effectId', 'Une aiguille est plantée')],
+      effects: [
+        setEffectState({
+          state: 'ACTIVE',
+          attributes: (ctx) => ({ standingOrder: param(ctx, 'order'), unattended: true }),
+        }),
+      ],
+    },
+
+    'control-without-a-needle': {
+      label: 'Contrôler sans planter d’aiguille',
+      refusal: 'Le contrôle passe par l’aiguille : sans elle, il n’y a pas de pantin',
+    },
+
     'remove-needle': {
       label: 'Retirer l’aiguille',
+      evidence: shown('ch. 288 — l’aiguille retirée rend le corps à lui-même'),
       effects: [setEffectState({ state: 'ENDED' })],
     },
   },

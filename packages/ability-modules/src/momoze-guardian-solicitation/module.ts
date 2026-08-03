@@ -11,6 +11,7 @@ import {
   person,
   requiresTarget,
   setEffectState,
+  shown,
   spawnNenEntity,
 } from '@black-whale/ability-sdk'
 
@@ -47,6 +48,8 @@ export const momozeGuardianSolicitation = defineAbility({
   actions: {
     solicit: {
       label: 'Solliciter',
+      evidence: shown('ch. 386 — la bête répète son offre'),
+      gyo: 'la bête gardienne et l’offre qu’elle répète, invisible aux non-utilisateurs',
       conditions: [requiresTarget('Une cible est sollicitée')],
       effects: [
         spawnNenEntity({
@@ -75,6 +78,7 @@ export const momozeGuardianSolicitation = defineAbility({
 
     accept: {
       label: 'La cible accepte',
+      evidence: shown('ch. 386 — l’accord donné, l’araignée entre dans l’oreille'),
       conditions: [
         effectIsLive('effectId', 'Une sollicitation est en cours'),
         declaredFlag('consented', true, 'La cible a donné son accord'),
@@ -86,6 +90,27 @@ export const momozeGuardianSolicitation = defineAbility({
         auraModifier({ drain: true, source: BEAST_ID }),
       ],
       cost: { label: 'Drain d’aura continu', unit: 'aura' },
+    },
+
+    drain: {
+      label: 'Poursuivre le drain',
+      // The closed-room death of ch. 390: the guard sees nothing because the
+      // beast only emits in the Nen perspectives.
+      evidence: shown('ch. 390 — la mort de Momoze, sans témoin capable de voir'),
+      conditions: [effectIsLive('effectId', 'Une araignée est en place')],
+      effects: [auraModifier({ drain: true, source: BEAST_ID, fatal: true })],
+      cost: { label: 'La vie de la porteuse', unit: 'vie' },
+    },
+
+    'force-consent': {
+      label: 'Passer outre le refus',
+      refusal: 'La bête sollicite : sans accord, l’araignée n’entre pas',
+      evidence: shown('ch. 386 — l’offre est répétée, jamais imposée'),
+    },
+
+    'be-seen-by-a-non-user': {
+      label: 'Être vue par un non-utilisateur',
+      refusal: 'La bête n’existe que dans les perspectives Nen : la garde ne voit rien',
     },
   },
 

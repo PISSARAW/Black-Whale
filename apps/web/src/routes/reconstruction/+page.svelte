@@ -1,5 +1,4 @@
 <script lang="ts">
-  /* eslint-disable max-lines -- The route keeps its state machine, three coordinated panes and responsive shell together. */
   import type { PageData } from './$types'
   import { onDestroy } from 'svelte'
   import { goto } from '$app/navigation'

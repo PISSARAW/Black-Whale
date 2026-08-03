@@ -9,6 +9,7 @@
     "lint": "pnpm --filter \"./apps/*\" exec svelte-kit sync && eslint .",
     "lint:fix": "eslint . --fix",
     "test": "turbo test",
+    "test:ratchet": "vitest run",
     "typecheck": "turbo typecheck",
     "clean": "turbo clean && rimraf node_modules",
     "format": "prettier --write .",
@@ -31,7 +32,8 @@
     "svelte-eslint-parser": "^1.8.0",
     "turbo": "^2.0.0",
     "typescript": "^5.5.0",
-    "typescript-eslint": "^8.65.0"
+    "typescript-eslint": "^8.65.0",
+    "vitest": "^2.0.0"
   },
   "engines": {
     "node": ">=20.0.0",

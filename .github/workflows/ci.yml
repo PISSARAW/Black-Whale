@@ -32,7 +32,12 @@ jobs:
           --health-retries 5
 
     steps:
+      # Full history, not the single commit a default checkout brings: the
+      # ADR-002 ratchet is a comparison against where this branch left `main`,
+      # and with no merge base to read it has nothing to compare.
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       # No `version:` here on purpose. The action reads the `packageManager`
       # field in package.json, and pinning a second version makes it refuse to
@@ -56,6 +61,12 @@ jobs:
 
       - name: Lint
         run: pnpm lint
+
+      # `pnpm lint` is green whether the legacy exemption list holds twenty-two
+      # files or two hundred. This is what makes it a ratchet: the list may
+      # shrink and may not grow, and no file may silence the rule in place.
+      - name: Length and complexity ratchet
+        run: pnpm test:ratchet
 
       - name: Check formatting
         run: pnpm format:check

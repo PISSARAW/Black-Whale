@@ -1,5 +1,4 @@
 <script lang="ts">
-  /* eslint-disable max-lines -- The scenario composer and its report form one coordinated lab. */
   import { onMount } from 'svelte'
   import type { PageData } from './$types'
   import Seo from '$lib/components/Seo.svelte'

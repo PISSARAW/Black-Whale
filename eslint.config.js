@@ -59,13 +59,13 @@ export default tseslint.config(
       'no-var': 'error',
       'prefer-const': 'error',
 
-      // A file past five hundred lines of code is holding more than one
-      // subject; the second one is always easier to find from its own file
-      // than from a heading two thousand lines down. Blanks and comments are
-      // not counted: this bounds how much a file *does*, and the prose that
-      // explains a decision is what makes the remaining lines readable —
-      // charging for it would buy shorter files with worse code in them.
-      'max-lines': ['error', { max: 500, skipBlankLines: true, skipComments: true }],
+      // A file past five hundred lines is holding more than one subject; the
+      // second one is always easier to find from its own file than from a
+      // heading two thousand lines down. ADR-002 counts *raw* lines, blanks and
+      // comments included: what makes a file unopenable is its length on
+      // screen, not the share of it the parser calls code, and a bound that
+      // discounts prose is a bound that can be paid off in comments.
+      'max-lines': ['error', { max: 500, skipBlankLines: false, skipComments: false }],
 
       // No emoji in the interface. They render differently on every platform,
       // read as a different register from the rest of the copy, and are not
@@ -175,18 +175,14 @@ export default tseslint.config(
   },
 
   {
-    // A ratchet, not a style rule. Twenty-five is where the packages sit today
-    // with nothing to fix — the widest function in them is `reduceWorld`, and
-    // what makes it wide is one case per event type, which is the shape a
-    // reducer is supposed to have. So this bounds what can be *added*: a new
-    // function past twenty-five is one that grew a second job, and splitting it
-    // while it is being written costs nothing. Deliberately not applied to the
-    // apps, where the widest functions are flat `switch`es over a translation
-    // key and would only be answered with disable comments.
-    files: ['packages/**/*.ts'],
-    ignores: ['packages/database/**'],
+    // A ratchet, not a style rule. This was twenty-five and packages-only, set
+    // where the engines happened to sit; ADR-002 lowers it to ten and extends
+    // it to the apps, because ten is where a function stops fitting in one
+    // reading — past it you are tracking branches on paper. The files over it
+    // today are grandfathered by name below and can only leave that list.
+    files: ['apps/*/src/**/*.{ts,js,svelte}', 'packages/*/src/**/*.ts'],
     rules: {
-      complexity: ['error', 25],
+      complexity: ['error', 10],
     },
   },
 
@@ -233,49 +229,184 @@ export default tseslint.config(
     rules: {
       'max-lines': 'off',
       'max-params': 'off',
+      complexity: 'off',
     },
   },
 
   {
-    // The standing debt, and the only list here meant to get shorter.
+    // The standing debt, and the only lists here meant to get shorter.
     //
-    // Every file below predates the five-hundred-line bound and is over it. The
-    // bound is an error everywhere else, so new code is held to it from the
+    // Every file below predates the bound it is exempted from and is over it.
+    // The bound is an error everywhere else, so new code is held to it from the
     // first line; these are grandfathered one path at a time, and a path leaves
-    // this list for good once the file is split. Nothing may be added: a new
-    // entry here is a file that was allowed to grow past the limit rather than
-    // be divided, which is the thing the rule exists to prevent.
+    // for good once the file is split. Nothing may be added — a new entry is a
+    // file that was allowed to grow rather than be divided, which is the thing
+    // the rule exists to prevent — and scripts/check-ratchet.test.ts fails the
+    // build if either list is longer than it was on the previous commit.
     //
-    // Counts are lines of code as ESLint measures them, blanks and comments
-    // excluded, taken when the rule was introduced.
+    // Counts are raw lines, blanks and comments included, taken the day the
+    // ADR-002 ratchet was set. Which lot of the ADR each file belongs to lives
+    // in the ADR, not here: this file only has to know the list shrinks.
     files: [
-      'apps/web/src/lib/components/tour/TourScene.svelte', // 3908
-      'apps/web/src/lib/tour/hatsu.ts', // 3198
-      'apps/web/src/lib/nen/GlobalHatsuEffects.svelte', // 3015
-      'apps/web/src/lib/nen/hatsuInteractions.ts', // 2384
-      'apps/web/src/routes/ship/+page.svelte', // 1773
-      'apps/web/src/routes/tour/+page.svelte', // 1583
-      'apps/web/src/lib/audio/hatsuSounds.ts', // 1205
-      // Escaped: an unescaped `[slug]` is a character class to the glob, and
-      // would quietly match nothing at all.
-      'apps/web/src/routes/characters/\\[slug\\]/+page.svelte', // 1171
-      'apps/web/src/routes/compare/+page.svelte', // 998
-      'apps/web/src/lib/tour/apparitions.ts', // 960
-      'apps/web/src/lib/components/map/markerProjection.ts', // 929
-      'apps/web/src/lib/components/tour/TourHatsuHud.svelte', // 872
-      'apps/web/src/lib/tour/mesh.ts', // 821
-      'apps/web/src/routes/timeline/+page.svelte', // 819
-      'apps/web/src/routes/+layout.svelte', // 758
-      'apps/web/src/routes/characters/+page.svelte', // 742
-      'apps/web/src/routes/relationships/+page.svelte', // 741
-      'apps/web/src/routes/tour/sources/+page.svelte', // 641
-      'apps/web/src/routes/tour/morena/+page.svelte', // 556
-      'packages/ability-modules/src/contagion/game.ts', // 565
-      'apps/web/src/lib/tour/geometry.ts', // 561
-      'apps/web/src/lib/tour/blueprint.ts', // 528
+      // >>> cliquet ADR-002 (max-lines) — ne peut que rétrécir
+      'apps/web/src/lib/audio/ambient.ts', // 572
+      'apps/web/src/lib/audio/hatsuSounds.ts', // 1816
+      'apps/web/src/lib/audio/steps.ts', // 534
+      'apps/web/src/lib/components/investigation/InvestigationCaseView.svelte', // 1785
+      'apps/web/src/lib/components/map/markerProjection.ts', // 1430
+      'apps/web/src/lib/components/tour/TourHatsuHud.svelte', // 975
+      'apps/web/src/lib/components/tour/TourScene.svelte', // 4661
+      'apps/web/src/lib/nen/GlobalHatsuEffects.svelte', // 3166
+      'apps/web/src/lib/nen/hatsuInteractions.ts', // 2735
+      'apps/web/src/lib/strategy/simulation.svelte.ts', // 506
+      'apps/web/src/lib/tour/NenSceneAura.ts', // 508
+      'apps/web/src/lib/tour/apparitions.ts', // 1827
+      'apps/web/src/lib/tour/blueprint.ts', // 758
+      'apps/web/src/lib/tour/geometry.ts', // 942
+      'apps/web/src/lib/tour/hatsu.ts', // 5364
+      'apps/web/src/lib/tour/mesh.ts', // 1603
+      'apps/web/src/lib/tour/morena.ts', // 1034
+      'apps/web/src/routes/+layout.svelte', // 859
+      'apps/web/src/routes/arena/+page.svelte', // 1048
+      'apps/web/src/routes/characters/+page.svelte', // 768
+      'apps/web/src/routes/characters/\\[slug\\]/+page.svelte', // 1194
+      'apps/web/src/routes/compare/+page.svelte', // 1074
+      'apps/web/src/routes/hunt/+page.svelte', // 811
+      'apps/web/src/routes/infiltration/+page.svelte', // 948
+      'apps/web/src/routes/reconstruction/+page.svelte', // 1700
+      'apps/web/src/routes/reconstruction/v3/+page.svelte', // 589
+      'apps/web/src/routes/relationships/+page.svelte', // 756
+      'apps/web/src/routes/ship/+page.svelte', // 1879
+      'apps/web/src/routes/strategy/+page.svelte', // 744
+      'apps/web/src/routes/timeline/+page.svelte', // 873
+      'apps/web/src/routes/tour/+page.svelte', // 512
+      'apps/web/src/routes/tour/morena/+page.svelte', // 692
+      'apps/web/src/routes/tour/sources/+page.svelte', // 765
+      'packages/ability-modules/src/chrollo-stolen/module.ts', // 540
+      'packages/ability-modules/src/contagion/game.ts', // 1589
+      'packages/ability-modules/src/contagion/module.ts', // 517
+      'packages/ability-sdk/src/effects.ts', // 563
+      'packages/nen-engine/src/engine.ts', // 615
+      // <<< cliquet ADR-002 (max-lines)
     ],
     rules: {
       'max-lines': 'off',
+    },
+  },
+
+  {
+    // Same ratchet, second rule: the functions that were over ten the day the
+    // bound was lowered to ten. The count after each path is the widest
+    // function in it, so a file that leaves this list is one where the widest
+    // branch count came down — not one where the rule was silenced.
+    files: [
+      // >>> cliquet ADR-002 (complexity) — ne peut que rétrécir
+      'apps/admin/src/routes/events/new/+page.server.ts', // 22
+      'apps/web/src/lib/arena/ai.ts', // 18
+      'apps/web/src/lib/arena/profile.ts', // 11
+      'apps/web/src/lib/arena/replay/codec.ts', // 17
+      'apps/web/src/lib/combat/exchange.ts', // 13
+      'apps/web/src/lib/combat/perception.ts', // 15
+      'apps/web/src/lib/combat/reducer.ts', // 43
+      'apps/web/src/lib/components/investigation/InvestigationCaseView.svelte', // 12
+      'apps/web/src/lib/components/map/markerProjection.ts', // 23
+      'apps/web/src/lib/components/tour/TourHatsuHud.svelte', // 181
+      'apps/web/src/lib/components/tour/TourMinimap.svelte', // 14
+      'apps/web/src/lib/components/tour/TourScene.svelte', // 138
+      'apps/web/src/lib/hunt/contracts/validate.ts', // 19
+      'apps/web/src/lib/hunt/ghost.ts', // 13
+      'apps/web/src/lib/hunt/navmesh.ts', // 14
+      'apps/web/src/lib/hunt/sighting.ts', // 11
+      'apps/web/src/lib/hunt/state.ts', // 20
+      'apps/web/src/lib/infiltration/hatsu.ts', // 27
+      'apps/web/src/lib/infiltration/hatsuPresentation.ts', // 26
+      'apps/web/src/lib/infiltration/loop.ts', // 12
+      'apps/web/src/lib/infiltration/missions/validate.ts', // 11
+      'apps/web/src/lib/infiltration/persistence.ts', // 15
+      'apps/web/src/lib/infiltration/state.ts', // 21
+      'apps/web/src/lib/investigation/case.ts', // 12
+      'apps/web/src/lib/investigation/hatsu.ts', // 16
+      'apps/web/src/lib/investigation/hatsuSystem.ts', // 15
+      'apps/web/src/lib/investigation/progress.ts', // 11
+      'apps/web/src/lib/investigation/reasoning.ts', // 11
+      'apps/web/src/lib/investigation/validate.ts', // 13
+      'apps/web/src/lib/nen/GlobalHatsuEffects.svelte', // 32
+      'apps/web/src/lib/nen/hatsuInteractions.ts', // 23
+      'apps/web/src/lib/nen/prophecySheets.ts', // 20
+      'apps/web/src/lib/reconstruction/v3/causalGraph.ts', // 14
+      'apps/web/src/lib/reconstruction/v3/knowledge.ts', // 15
+      'apps/web/src/lib/roster.ts', // 15
+      'apps/web/src/lib/server/character-profile.ts', // 13
+      'apps/web/src/lib/server/character-timeline.ts', // 31
+      'apps/web/src/lib/server/compare-selection.ts', // 15
+      'apps/web/src/lib/server/subjective-view.ts', // 24
+      'apps/web/src/lib/strategy/campaign/persistence.ts', // 12
+      'apps/web/src/lib/strategy/persistence.ts', // 15
+      'apps/web/src/lib/strategy/playerOrders.ts', // 50
+      'apps/web/src/lib/strategy/reports.ts', // 18
+      'apps/web/src/lib/strategy/scenario/validate.ts', // 24
+      'apps/web/src/lib/strategy/simulation.svelte.ts', // 33
+      'apps/web/src/lib/strategy/tacticalAI.ts', // 31
+      'apps/web/src/lib/tour/NenSceneAura.ts', // 40
+      'apps/web/src/lib/tour/apparitions.ts', // 160
+      'apps/web/src/lib/tour/blueprint.ts', // 110
+      'apps/web/src/lib/tour/comfort.ts', // 12
+      'apps/web/src/lib/tour/dealer.ts', // 12
+      'apps/web/src/lib/tour/geometry.ts', // 16
+      'apps/web/src/lib/tour/hatsu.ts', // 53
+      'apps/web/src/lib/tour/humanAura.ts', // 32
+      'apps/web/src/lib/tour/humanCostume.ts', // 22
+      'apps/web/src/lib/tour/humanFigure.ts', // 33
+      'apps/web/src/lib/tour/humanHead.ts', // 39
+      'apps/web/src/lib/tour/humanProfiles.ts', // 11
+      'apps/web/src/lib/tour/mesh.ts', // 55
+      'apps/web/src/lib/tour/morena.ts', // 32
+      'apps/web/src/lib/tour/morenaHands.ts', // 11
+      'apps/web/src/lib/tour/pageKeyboard.ts', // 12
+      'apps/web/src/lib/tour/reportSound.ts', // 12
+      'apps/web/src/lib/tour/search.ts', // 12
+      'apps/web/src/routes/arena/+page.svelte', // 17
+      'apps/web/src/routes/characters/\\[slug\\]/+page.server.ts', // 14
+      'apps/web/src/routes/compare/+page.server.ts', // 29
+      'apps/web/src/routes/compare/+page.svelte', // 21
+      'apps/web/src/routes/hunt/+page.svelte', // 22
+      'apps/web/src/routes/infiltration/+page.svelte', // 15
+      'apps/web/src/routes/reconstruction/+page.svelte', // 22
+      'apps/web/src/routes/reconstruction/v3/+page.svelte', // 15
+      'apps/web/src/routes/ship/+page.server.ts', // 26
+      'apps/web/src/routes/ship/+page.svelte', // 25
+      'apps/web/src/routes/simulations/+page.server.ts', // 15
+      'apps/web/src/routes/strategy/+page.svelte', // 13
+      'apps/web/src/routes/tour/morena/+page.svelte', // 13
+      'packages/ability-modules/src/contagion/game.ts', // 24
+      'packages/canon-compiler/src/arena/contracts.ts', // 11
+      'packages/canon-compiler/src/hatsu/profiles.ts', // 13
+      'packages/canon-compiler/src/hunterpedia/enrich.ts', // 13
+      'packages/canon-compiler/src/hunterpedia/infobox.ts', // 14
+      'packages/canon-compiler/src/hunterpedia/wiki.ts', // 12
+      'packages/canon-compiler/src/hunterpedia/wikitext.ts', // 16
+      'packages/canon-compiler/src/map/duplicates.ts', // 13
+      'packages/canon-compiler/src/map/presences.ts', // 21
+      'packages/canon-compiler/src/map/run.ts', // 15
+      'packages/canon-compiler/src/rooms.ts', // 11
+      'packages/canon-compiler/src/scenes/apply.ts', // 11
+      'packages/canon-compiler/src/timeline/run.ts', // 14
+      'packages/canon-engine/src/identity/index.ts', // 12
+      'packages/canon-engine/src/perspective/index.ts', // 22
+      'packages/canon-engine/src/timeline/index.ts', // 23
+      'packages/canon-engine/src/timeline/selection.ts', // 11
+      'packages/canon-engine/src/world/events.ts', // 13
+      'packages/canon-engine/src/world/projections.ts', // 11
+      'packages/canon-engine/src/world/reducer.ts', // 24
+      'packages/contracts/src/invariants.ts', // 22
+      'packages/nen-engine/src/runtime.ts', // 14
+      'packages/nen-engine/src/techniques.ts', // 18
+      'packages/simulation-engine/src/ai.ts', // 17
+
+      // <<< cliquet ADR-002 (complexity)
+    ],
+    rules: {
+      complexity: 'off',
     },
   },
 )

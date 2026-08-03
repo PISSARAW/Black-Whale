@@ -278,7 +278,6 @@ export default tseslint.config(
       'apps/web/src/routes/tour/morena/+page.svelte', // 692
       'apps/web/src/routes/tour/sources/+page.svelte', // 765
       'packages/ability-modules/src/contagion/game.ts', // 1589
-      'packages/ability-modules/src/contagion/module.ts', // 517
       'packages/ability-sdk/src/effects.ts', // 563
       'packages/nen-engine/src/engine.ts', // 615
       // <<< cliquet ADR-002 (max-lines)

@@ -1774,7 +1774,7 @@ export const en = {
       },
     },
     hatsu: {
-      future: (room, seconds) => `intent: ${room || 'elsewhere'} · ${seconds}s`,
+      future: (room: string, seconds: number) => `intent: ${room || 'elsewhere'} · ${seconds}s`,
       probable: 'probable direction, not a confirmed position',
     },
     controls: {

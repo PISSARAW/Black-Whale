@@ -1,7 +1,10 @@
 import { requireValidContract } from './validate'
 import { HUNT_CONTRACT_SCHEMA_VERSION, type HuntContractV3 } from './types'
 
-const contracts: HuntContractV3[] = [
+// Annotated as `HuntContractV3[]` before `.map`, not after: without it the
+// literals widen to a union of their own shapes and `requireValidContract`
+// no longer accepts them, even though each entry is a valid contract.
+const declared: HuntContractV3[] = [
   {
     schemaVersion: HUNT_CONTRACT_SCHEMA_VERSION,
     id: 'royal-apartments',
@@ -34,7 +37,9 @@ const contracts: HuntContractV3[] = [
     durationSeconds: 420,
     seed: 0xb1ac,
   },
-].map(requireValidContract)
+]
+
+const contracts: HuntContractV3[] = declared.map(requireValidContract)
 
 export function listHuntContracts(): HuntContractV3[] {
   return [...contracts]

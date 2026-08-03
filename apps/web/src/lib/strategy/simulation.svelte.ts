@@ -128,6 +128,9 @@ export function createSimulationStore() {
     if (!currentState || !factions.some((faction) => faction.id === factionId)) {
       throw new StrategyInputError('Faction inconnue.')
     }
+    // Bound once: `currentState` is reactive state, so the guard above does not
+    // narrow it inside the closures below.
+    const state = currentState
     selectedFactionId = factionId
     const roster = buildScenarioRoster(factions, factionId, activeScenario)
     activeFactionIds = roster.map((faction) => faction.id)
@@ -138,12 +141,12 @@ export function createSimulationStore() {
     )
     unitConditions = Object.fromEntries(
       roster.flatMap((faction) =>
-        selectFactionEntityIds(currentState, factions, faction.id).map((id) => [id, 'READY']),
+        selectFactionEntityIds(state, factions, faction.id).map((id) => [id, 'READY']),
       ),
     )
     const occupied = roster.flatMap((faction) =>
       factionEntityIds(faction.id)
-        .map((entityId) => currentState!.presences[entityId]?.locationId)
+        .map((entityId) => state.presences[entityId]?.locationId)
         .filter((id): id is string => Boolean(id)),
     )
     scenarioLocationIds = selectScenarioLocationIds(

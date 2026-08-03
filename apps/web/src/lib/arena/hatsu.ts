@@ -33,7 +33,7 @@ const EFFECTS: Partial<Record<HatsuInteractionKind, ArenaHatsuEffect>> = {
   vacuum: 'bind',
   stitch: 'restore',
   needle: 'bind',
-  'post-mortem': 'restore',
+  'postmortem-curse': 'restore',
   resurrection: 'restore',
 }
 

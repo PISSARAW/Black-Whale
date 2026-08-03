@@ -3,7 +3,7 @@ import type { Locale } from '$lib/i18n/config'
 
 export type StrategyHatsuEffect = 'RECON' | 'DENIAL' | 'GUARD' | 'MOBILITY' | 'INFLUENCE'
 
-const strategyMsg = (locale: Locale) => messagesFor(locale).strategy.hatsu
+const strategyMsg = (locale: Locale) => messagesFor(locale).strategy
 
 export const STRATEGY_ABILITY_IDS_BY_CHARACTER: Readonly<Record<string, readonly string[]>> = {
   kurapika: ['emperor-time', 'steal-chain', 'chain-jail', 'dowsing-chain'],
@@ -107,8 +107,9 @@ export function strategyHatsuResolution(
   context: StrategyHatsuContext,
   locale: Locale = 'en',
 ): StrategyHatsuResolution | null {
-  const msg = strategyMsg(locale)
-  const adapterContext = {...context, locale}
+  // The context carries its own locale for callers that build one; the second
+  // argument is the fallback, not an override — it used to silently win.
+  const adapterContext = { ...context, locale: context.locale ?? locale }
   return ADAPTERS[context.abilityId]?.(adapterContext) ?? null
 }
 

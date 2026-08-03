@@ -4022,7 +4022,13 @@
         camera.rotateX(pitch)
         camera.rotateZ(bob.roll)
         {
-          nenAura.update(effectiveNen, camera, ground, now / 1000, renderTarget?.depthTexture)
+          nenAura.update(
+            effectiveNen,
+            camera,
+            ground,
+            now / 1000,
+            renderTarget?.depthTexture ?? undefined,
+          )
           nenAura.syncShu(
             effectiveNen.shu.flatMap((id) => {
               const solid = solidById(ship, world, id)

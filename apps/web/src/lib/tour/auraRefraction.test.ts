@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { refractionAmount } from './auraRefraction'
+import { auraGlassFor, refractionAmount } from './auraRefraction'
 import type { NenTechniqueState } from '@black-whale/nen-engine'
 
 const state = (over: Partial<NenTechniqueState> = {}): NenTechniqueState => ({
@@ -54,5 +54,30 @@ describe('how much aura is out', () => {
 
   it('never asks the shader for more than the full span', () => {
     expect(refractionAmount(state({ mode: 'ren', on: true, ko: 'torso' }))).toBeLessThanOrEqual(1)
+  })
+})
+
+/** The same bend, worn by somebody else's body instead of filtering the frame. */
+describe('the shell an aura is seen as from outside', () => {
+  it('gives a body in Zetsu nothing to wear', () => {
+    expect(auraGlassFor(state({ mode: 'zetsu' }))).toBeNull()
+    expect(auraGlassFor(null)).toBeNull()
+  })
+
+  it('bends harder under Ren than under Ten, in the same order as the frame', () => {
+    const ten = auraGlassFor(state({ mode: 'ten' }))!
+    const ren = auraGlassFor(state({ mode: 'ren' }))!
+    expect(ren.ior).toBeGreaterThan(ten.ior)
+    expect(ren.thickness).toBeGreaterThan(ten.thickness)
+  })
+
+  /**
+   * The claim this number is allowed to make. Glass is 1.5 and water is 1.33;
+   * anything near either would be a statement about what aura is made of.
+   */
+  it('never approaches an index of refraction that would read as a substance', () => {
+    const hardest = auraGlassFor(state({ mode: 'ren', on: true, ko: 'torso' }))!
+    expect(hardest.ior).toBeLessThan(1.2)
+    expect(hardest.ior).toBeGreaterThan(1)
   })
 })

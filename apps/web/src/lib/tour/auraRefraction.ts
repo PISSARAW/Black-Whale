@@ -69,6 +69,45 @@ export function refractionAmount(state: NenTechniqueState | null): number {
   return raised
 }
 
+/**
+ * How far a worn shell bends the light through it, at full strength.
+ *
+ * The fullscreen pass above is first person: it is the aura the visitor is
+ * *inside*, so it moves the whole frame. A body across the room is the same
+ * phenomenon seen from outside, and from outside an aura is a volume with the
+ * corridor behind it — so it is a solid the figure wears rather than a filter
+ * over the picture, and three.js already has the material for that.
+ *
+ * Small, and it has to be. An index of refraction is a strong claim: at 1.5
+ * this would be a glass statue of a person, which is a claim that aura is
+ * glass. A twelfth of that is the corridor behind a raised Ren going soft and
+ * pulling, which is the same thing the visitor's own frame does at the same
+ * number, and no more.
+ */
+export const AURA_GLASS_IOR_SPAN = 0.12
+
+/** What a figure's shell is made of at one state, or nothing to wear. */
+export interface AuraGlass {
+  ior: number
+  thickness: number
+  roughness: number
+}
+
+/**
+ * The bend a body is wearing, from the same curve the visitor's frame reads.
+ *
+ * Deliberately the same `refractionAmount`, so a guard holding Ten and the
+ * visitor holding Ten are one statement made twice rather than two settings
+ * that will drift. It follows that Zetsu wears nothing: a shimmer around a body
+ * that has put its aura away would be the walk handing out a detector for the
+ * one technique whose entire purpose is to defeat detection.
+ */
+export function auraGlassFor(state: NenTechniqueState | null): AuraGlass | null {
+  const amount = refractionAmount(state)
+  if (amount <= 0) return null
+  return { ior: 1 + amount * AURA_GLASS_IOR_SPAN, thickness: 0.25 + amount * 0.6, roughness: 0.1 }
+}
+
 const vertexShader = /* glsl */ `
   varying vec2 vUv;
   void main() {

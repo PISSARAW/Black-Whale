@@ -1,11 +1,15 @@
-import type { Group, Mesh, MeshBasicMaterial } from 'three'
+import type { Group, Material, Mesh, MeshBasicMaterial } from 'three'
 import { type NenTechniqueState } from '@black-whale/nen-engine'
 import type { BufferGeometry } from 'three'
+import { auraGlassFor, type AuraGlass } from './auraRefraction'
 import type { HumanLook } from './humanFigure'
 
 type Three = typeof import('three')
 
 export type HumanZone = 'head' | 'torso' | 'hands' | 'feet'
+
+/** A refractive material for one bend, or null on a palier that cannot pay. */
+export type Glass = (glass: AuraGlass) => Material | null
 
 /**
  * The aura a figure is wearing, as meshes.
@@ -19,6 +23,8 @@ export interface HumanAuraBuild {
   THREE: Three
   geometry: (THREE: Three, key: string, make: () => BufferGeometry) => BufferGeometry
   glow: (colour: number, opacity: number) => MeshBasicMaterial
+  /** Absent on `low`, where the walk does not resample the frame at all. */
+  glass?: Glass
   seen: HumanLook
   nen: NenTechniqueState<HumanZone>
   /** False when the aura is concealed with In and the observer has no Gyo. */
@@ -38,6 +44,8 @@ export interface HumanAura {
   zetsuTrace: Mesh | null
   auraShell: Mesh | null
   kenMantle: Mesh | null
+  /** The volume the aura occupies, seen from outside. See `auraRefraction`. */
+  auraGlass: Mesh | null
 }
 
 const zonePositions: Record<HumanZone, [number, number, number]> = {
@@ -51,6 +59,7 @@ export function buildHumanAura({
   THREE,
   geometry,
   glow,
+  glass,
   seen,
   nen,
   auraVisible,
@@ -67,6 +76,28 @@ export function buildHumanAura({
   let zetsuTrace: Mesh | null = null
   let auraShell: Mesh | null = null
   let kenMantle: Mesh | null = null
+  let auraGlass: Mesh | null = null
+
+  // The shell goes on before anything else so that the flames, the mantle and
+  // the Ko point are all *inside* it: the aura is one volume, and a Ren whose
+  // own tongues hung outside the air it bends would read as two effects on the
+  // same body. It is the only thing here that is not additive light, which is
+  // the whole of the argument in `auraRefraction`: seen from across a room, an
+  // aura displaces the corridor behind it rather than adding a halo to it.
+  const worn = auraVisible ? auraGlassFor(nen) : null
+  const glassMaterial = worn && glass ? glass(worn) : null
+  if (glassMaterial) {
+    const shell = new THREE.Mesh(
+      geometry(THREE, 'aura:glass', () => new THREE.SphereGeometry(1, 24, 16)),
+      glassMaterial,
+    )
+    shell.name = 'nen-aura-glass'
+    shell.scale.set(1, 1.5, 1)
+    shell.position.y = 0.9
+    figure.add(shell)
+    auraGlass = shell
+  }
+
   if (nen.mode === 'zetsu') {
     const trace = new THREE.Mesh(
       geometry(THREE, 'aura:zetsu', () => new THREE.SphereGeometry(0.69, 16, 10)),
@@ -173,12 +204,21 @@ export function buildHumanAura({
   }
 
   if (auraVisible && nen.en) {
+    // Keyed on the radius, and shared: the cast now sweeps at one constant
+    // radius (`WATCH_EN_RADIUS`), so a deck of guards on watch is three ring
+    // geometries in total rather than three per body.
+    const radius = Math.round(nen.en.radius * 100) / 100
     for (let index = 0; index < 3; index++) {
       const field = new THREE.Mesh(
-        new THREE.RingGeometry(
-          Math.max(0.05, nen.en.radius - 0.035 - index * 0.012),
-          nen.en.radius + index * 0.018,
-          64,
+        geometry(
+          THREE,
+          `aura:en:${radius}:${index}`,
+          () =>
+            new THREE.RingGeometry(
+              Math.max(0.05, radius - 0.035 - index * 0.012),
+              radius + index * 0.018,
+              64,
+            ),
         ),
         glow(seen.colour, 0.24 - index * 0.045),
       )
@@ -235,5 +275,6 @@ export function buildHumanAura({
     zetsuTrace,
     auraShell,
     kenMantle,
+    auraGlass,
   }
 }

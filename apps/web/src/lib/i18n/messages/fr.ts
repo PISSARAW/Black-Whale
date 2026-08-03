@@ -28,6 +28,7 @@ export const fr: Messages = {
   error: {
     backHome: 'Retour aux archives',
     reference: (status) => `Référence ${status}`,
+    reportReference: (reference) => `Citez ${reference} si vous le signalez.`,
     notFound: {
       title: 'Cette page ne figure pas aux archives',
       body: 'L’adresse ne correspond à rien de catalogué. Elle a pu être renommée, ou n’avoir jamais existé.',

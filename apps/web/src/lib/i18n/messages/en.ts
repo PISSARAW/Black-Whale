@@ -33,6 +33,7 @@ export const en = {
   error: {
     backHome: 'Back to the archive',
     reference: (status: number) => `Reference ${status}`,
+    reportReference: (reference: string) => `Quote ${reference} if you report this.`,
     notFound: {
       title: 'This page is not in the archive',
       body: 'The address does not match anything catalogued. It may have been renamed, or never existed.',

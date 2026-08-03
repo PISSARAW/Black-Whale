@@ -1,5 +1,6 @@
-import { error, type Handle } from '@sveltejs/kit'
+import { error, type Handle, type HandleServerError } from '@sveltejs/kit'
 import { rateLimit } from '$lib/server/rateLimit'
+import { describeError, errorReference, log } from '$lib/server/log'
 import { LOCALE_TAGS, parsePathname } from '$lib/i18n/config'
 
 // Simulation branches are created and mutated by unauthenticated visitors and
@@ -34,4 +35,30 @@ export const handle: Handle = async ({ event, resolve }) => {
     response.headers.set('strict-transport-security', 'max-age=31536000; includeSubDomains')
   }
   return response
+}
+
+/**
+ * Every unhandled failure in a load or an endpoint passes here. Without it a
+ * 500 was a line of prose in the container log and a blank page for the
+ * visitor, with nothing linking the two.
+ *
+ * The reference is the link: it is written to the log line and shown on the
+ * error page, so a reported failure can be found without asking the reader to
+ * retrace their steps.
+ */
+export const handleError: HandleServerError = ({ error: thrown, event, status, message }) => {
+  const reference = errorReference()
+
+  log.error('request failed', {
+    reference,
+    status,
+    method: event.request.method,
+    // The path, never the query: it carries whatever the visitor typed.
+    path: event.url.pathname,
+    ...describeError(thrown),
+  })
+
+  // What SvelteKit puts in `$page.error`. It reaches the browser, so it says
+  // only what the reader needs to report it.
+  return { message, reference }
 }

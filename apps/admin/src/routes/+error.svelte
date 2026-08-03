@@ -23,6 +23,7 @@
     body: 'La panne est côté serveur. La requête n’a pas été enregistrée.',
   }
   $: detail = $page.error?.message
+  $: reference = $page.error?.reference
 </script>
 
 <svelte:head>
@@ -36,6 +37,9 @@
   <p class="text-gray-400">{copy.body}</p>
   {#if detail && detail !== copy.title}
     <p class="font-mono text-xs text-gray-500">{detail}</p>
+  {/if}
+  {#if reference}
+    <p class="font-mono text-xs text-gray-600">Référence {reference} dans les journaux.</p>
   {/if}
   <p class="mt-4 flex gap-3">
     <a

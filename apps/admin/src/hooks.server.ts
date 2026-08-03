@@ -1,5 +1,6 @@
-import type { Handle } from '@sveltejs/kit'
+import type { Handle, HandleServerError } from '@sveltejs/kit'
 import { ADMIN_SESSION_COOKIE, verifySession } from '$lib/server/session'
+import { describeError, errorReference, log } from '$lib/server/log'
 
 const publicPaths = new Set(['/login', '/health'])
 
@@ -42,4 +43,20 @@ export const handle: Handle = async ({ event, resolve }) => {
   }
 
   return harden(await resolve(event))
+}
+
+/** Same contract as the public app: one JSON line, one reference, shown once. */
+export const handleError: HandleServerError = ({ error: thrown, event, status, message }) => {
+  const reference = errorReference()
+
+  log.error('admin request failed', {
+    reference,
+    status,
+    method: event.request.method,
+    path: event.url.pathname,
+    authenticated: event.locals.authenticated,
+    ...describeError(thrown),
+  })
+
+  return { message, reference }
 }

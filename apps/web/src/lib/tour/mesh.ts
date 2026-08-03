@@ -228,8 +228,6 @@ const WALL_COLOUR = hex(0x4a4038)
 const CEILING_COLOUR = hex(0x0b0909)
 /** Columns sit a shade above the walls so they read as structure. */
 const COLUMN_COLOUR = hex(0x6a5a4a)
-/** Anything invented for the sake of a contiguous deck reads cold. */
-const INFERRED_TINT = hex(0x2b3a4a)
 
 function blend(a: Rgb, b: Rgb, amount: number): Rgb {
   return [
@@ -240,26 +238,57 @@ function blend(a: Rgb, b: Rgb, amount: number): Rgb {
 }
 
 /**
- * Tints geometry by how well the manga supports it, so the reconstruction
- * never passes an invention off as canon: inferred surfaces go cold and dim,
- * panel-sourced ones sit slightly brighter than the plan-only ones.
+ * How much of the ship's ambient every surface carries before its own colour.
+ *
+ * This number used to belong to one provenance. `colourFor` blended `panel`
+ * geometry 12 % toward white, `inferred` 55 % toward a cold `0x2b3a4a`, and left
+ * `plan` and `map` alone, so the walk could not pass an invention off as canon.
+ * It did not do what its docstring said. `blend` interpolates in the renderer's
+ * working space, which is linear, and `[1, 1, 1]` there is full white — while
+ * the albedos it was mixed into sit around 0,02 linear, because that is what a
+ * dark hex is once `hex` has undone the transfer function. Twelve per cent of
+ * linear white is `0,023 + 0,12 × 0,977 = 0,140`: not a surface slightly
+ * brighter, one **six times** brighter. Baked over the ship, panel floors came
+ * out at 0,110 luminance against 0,014 for plan and 0,018 for inferred.
+ *
+ * So the rooms a panel happens to show were the only ones on board rendered at a
+ * level anybody had actually looked at, and the other 73 % of the floor area was
+ * the accident — near-black surfaces carrying a bake that had nowhere to land.
+ * The fix is not to take the lift away, which would level the ship down to the
+ * fault. It is to stop asking it to mean anything: every surface gets it, and
+ * `LIFT` is what it always was in practice — the ambient a deck lit by baked
+ * point lights needs under a filmic curve, chosen at 0,12 by eye and kept.
+ *
+ * Where the doctrine goes instead is the reveal — `REVEAL_COLOURS` below, which
+ * paints every surface its badge and says the whole thing at full volume the
+ * moment a visitor asks for it. A legend you can turn on, rather than a haze
+ * over half the ship that reads as a rendering fault.
  */
-export function colourFor(base: Rgb, provenance: Provenance): Rgb {
-  if (provenance === 'inferred') return blend(base, INFERRED_TINT, 0.55)
-  if (provenance === 'panel') return blend(base, [1, 1, 1], 0.12)
-  return base
-}
+const LIFT = 0.12
+
+/** Any albedo as the deck carries it: its own colour over the ship's ambient. */
+const lifted = (base: Rgb): Rgb => blend(base, [1, 1, 1], LIFT)
+
+const WALL_ALBEDO = lifted(WALL_COLOUR)
+const CEILING_ALBEDO = lifted(CEILING_COLOUR)
+const COLUMN_ALBEDO = lifted(COLUMN_COLOUR)
+
 
 /**
  * The reveal: the ship painted in what it is worth as evidence, and nothing
  * else.
  *
- * Ordinarily a room is coloured by what it is for and only tinted by its
- * provenance, which is right — a walk should look like a ship. Turn the reveal
- * on and the categories drop out: every surface takes the colour of its badge,
- * the walls the reconstruction declared blind go red, and the openings it
- * placed by hand go blue. The doctrine stops being a legend in the margin and
- * becomes what you are looking at.
+ * Ordinarily a room is coloured by what it is for and by nothing else, which is
+ * right — a walk should look like a ship, and a ship does not tint its own decks
+ * by how well a manga panel supports them. Turn the reveal on and the categories
+ * drop out: every surface takes the colour of its badge, the walls the
+ * reconstruction declared blind go red, and the openings it placed by hand go
+ * blue. The doctrine stops being a legend in the margin and becomes what you are
+ * looking at.
+ *
+ * Which makes this the *only* place the surfaces carry their provenance, and
+ * deliberately so: it is a question a visitor asks rather than a haze they walk
+ * through. See the note where `colourFor` used to be.
  */
 const REVEAL_COLOURS: Record<Provenance, Rgb> = {
   panel: hex(0xffd700),
@@ -338,8 +367,8 @@ const COARSE = 2
  * How the baked light is put together.
  *
  * All of it multiplies the albedo the surface already carries, so the deck keeps
- * the colours the categories and the provenances give it and only gains the
- * variation those cannot express. The mean shade over a room comes out near 1,
+ * the colours its categories give it and only gains the variation they cannot
+ * express. The mean shade over a room comes out near 1,
  * which is deliberate: the ambient, hemisphere and headlamp intensities in
  * `TourScene` were tuned against unshaded albedos, and a bake that averaged 0,6
  * would quietly darken the whole ship by half a stop.
@@ -369,24 +398,28 @@ const LIGHT = {
   /** The band at the foot and head of a wall where it meets another surface. */
   crease: 1.1,
   creaseFloor: 0.5,
-  /**
-   * What an inferred room gets of the fill.
-   *
-   * Barely less, because a surface the reconstruction invented is still a
-   * surface and has to be walkable. The lamps get no such discount — not any
-   * more. This table used to carry `inferredLamps: 0.22`, on the claim that
-   * the plans do not put a lamp in a corridor nobody drew; but the plans put a
-   * lamp nowhere — a lamp is always a derivation, the argument `light.ts`
-   * opens with and `columnPositions` set the precedent for. Docking the
-   * derived light of invented rooms did not mark provenance so much as break
-   * the class system: Tier 1's circulation is mostly inferred, so the King's
-   * own corridor baked three times darker than a cabin in the hold, and the
-   * one claim the decks are built to make — you can see which world you are
-   * in — inverted. Provenance stays visible where it is a claim about the
-   * surfaces: the cold tint of `colourFor`, and this slightly thinner fill.
-   */
-  inferredFill: 0.86,
 } as const
+
+/**
+ * There is no entry here for provenance, and that is the end of a long argument.
+ *
+ * This table carried `inferredLamps: 0.22` once, docking an invented room's
+ * lamps to a fifth. It broke the class system — Tier 1's circulation is mostly
+ * inferred, so the King's own corridor baked three times darker than a cabin in
+ * the hold — and it went, on the ground that a lamp is always a derivation and
+ * `columnPositions` had settled that question already. What replaced it was
+ * `inferredFill: 0.86`, a thinner ambient wash for the same rooms, kept because
+ * it was small enough to be a mark rather than a punishment.
+ *
+ * It is gone too, with the albedo tint it stood beside — see the note where
+ * `colourFor` used to be. The two of them were the last places where where a
+ * room came from changed what it looks like to stand in it, and they covered
+ * more of this ship than they marked: 95 097 m² of it is inferred, more floor
+ * than any other provenance, so what read as doctrine read in practice as half
+ * the deck being underlit. The evidence a surface rests on is a real thing to
+ * say and the walk still says it — in the reveal, in `exhibit.ts`'s badge, in
+ * the panel a visitor opens on a room. None of those is the light.
+ */
 
 /**
  * How high a room's fittings hang, in world Y.
@@ -558,8 +591,6 @@ interface LitRoom {
   footprint: Polygon
   floorY: number
   ceilingY: number
-  /** How much light a room the reconstruction invented is allowed to claim. */
-  provenance: Provenance
   /** The grid it hangs its lamps on, and what they burn at: see `light.ts`. */
   lamplight: Lamplight
   sky?: readonly Vec3[]
@@ -578,7 +609,6 @@ interface LitRoom {
 class RoomLight {
   /** The fittings, bucketed by the grid cell they hang in. */
   private readonly cells = new Map<number, [number, number, number][]>()
-  private readonly fill: number
   private readonly lamps: number
   /**
    * The floor and the ceiling already shaded, keyed to a decimetre of plan.
@@ -631,15 +661,13 @@ class RoomLight {
   private readonly openReach: number
 
   constructor(room: LitRoom) {
-    const { footprint, floorY, ceilingY, provenance, lamplight, sky = [] } = room
+    const { footprint, floorY, ceilingY, lamplight, sky = [] } = room
     this.footprint = footprint
     this.sky = sky
     this.lamplight = lamplight
-    const inferred = provenance === 'inferred'
-    this.fill = LIGHT.fill * (inferred ? LIGHT.inferredFill : 1)
-    // Provenance does not touch the lamps: the grid is a derivation for every
-    // room alike, and docking it here is how Tier 1's inferred corridors once
-    // baked darker than the hold — see the note on `LIGHT.inferredFill`.
+    // Nothing about where the room came from reaches this class any more —
+    // neither the lamps nor the fill. A room is lit by its deck and by what it
+    // is for; see the note above `LIGHT`.
     this.lamps = lamplight.power
     this.floorY = floorY
     this.ceilingY = ceilingY
@@ -778,7 +806,7 @@ class RoomLight {
         if (held !== undefined) return held
       }
 
-      const shade = this.openness(x, z) * (this.fill + gain * this.sourcesAt(x, y, z))
+      const shade = this.openness(x, z) * (LIGHT.fill + gain * this.sourcesAt(x, y, z))
       if (cacheable) this.shaded[which].set(key, shade)
       return shade
     }
@@ -823,7 +851,7 @@ class RoomLight {
   skyShare(gain: number): Shade | undefined {
     if (!this.glazed) return undefined
     return (x, y, z) => {
-      const lit = this.fill + gain * this.sourcesAt(x, y, z)
+      const lit = LIGHT.fill + gain * this.sourcesAt(x, y, z)
       return lit > 0 ? (gain * this.daylight(x, y, z)) / lit : 0
     }
   }
@@ -845,7 +873,7 @@ class RoomLight {
       const ends = clamp01((endFalloff ? endFalloff(x, z) : Infinity) / LIGHT.crease)
       const shade = Math.min(low, high, ends) ** 0.8
       const openness = LIGHT.creaseFloor + (1 - LIGHT.creaseFloor) * shade
-      return openness * (this.fill + LIGHT.wall * this.sourcesAt(x, y, z))
+      return openness * (LIGHT.fill + LIGHT.wall * this.sourcesAt(x, y, z))
     }
   }
 }
@@ -1075,7 +1103,7 @@ function extrudeSolid(into: Surfaces, structure: Structure, where: Standing): vo
   const outline = toClockwise(structureFootprint(structure))
   const baseColour = hex(STRUCTURE_COLOURS[structure.kind])
   const auralised = structure.aura === 'pink' ? blend(baseColour, [1, 0.4, 0.7], 0.5) : baseColour
-  const colour = colourFor(auralised, structure.provenance)
+  const colour = lifted(auralised)
   const bottom = floorOf(room, tier) + structure.base
   const top = Math.min(bottom + structure.height, floorOf(room, tier) + ceilingOf(room, tier))
 
@@ -1204,7 +1232,6 @@ function lightOf(space: Space, tier: Tier, standing: readonly Structure[] = []):
     footprint: space.footprint,
     floorY: floorOf(space, tier),
     ceilingY: floorOf(space, tier) + ceilingOf(space, tier),
-    provenance: space.provenance,
     lamplight: lamplightOf(space, tier),
     sky,
   })
@@ -1464,10 +1491,10 @@ export function buildTierMesh(plan: TierPlan, options: { reveal?: boolean } = {}
 
     const floorColour = reveal
       ? revealed(space.provenance, 0.62)
-      : colourFor(hex(CATEGORY_COLOURS[space.category]), space.provenance)
+      : lifted(hex(CATEGORY_COLOURS[space.category]))
     const ceilingColour = reveal
       ? revealed(space.provenance, 0.82)
-      : colourFor(CEILING_COLOUR, space.provenance)
+      : CEILING_ALBEDO
     const top = heightOf(space)
     const indices = triangulate(space.footprint)
     // Every surface of this room is shaded by this one object: the fittings of
@@ -1616,10 +1643,9 @@ export function buildTierMesh(plan: TierPlan, options: { reveal?: boolean } = {}
       const glow: Rgb = lamplight.glow
       for (const [x, z] of lampsOf(space.footprint, lamplight)) fitting([x, hang, z], glow)
 
-      // And the sky, in the two rooms that have any. Undimmed by provenance —
-      // see `RoomLight.daylight` — and in a buffer of its own, because a
-      // fitting burns at a value this bake settles and the glass burns at the
-      // hour of the voyage, which it does not.
+      // And the sky, in the two rooms that have any: a buffer of its own,
+      // because a fitting burns at a value this bake settles and the glass burns
+      // at the hour of the voyage, which it does not.
       for (const structure of standingIn.get(space.id) ?? []) {
         if (structure.kind === 'window') pane(structure, floorOf(space, tier))
       }
@@ -1634,7 +1660,7 @@ export function buildTierMesh(plan: TierPlan, options: { reveal?: boolean } = {}
         ? BLIND_COLOUR
         : reveal
           ? revealed(space.provenance, 0.45)
-          : colourFor(WALL_COLOUR, space.provenance)
+          : WALL_ALBEDO
       // The badge takes the baked light like any other albedo: the reveal is a
       // change of what the surfaces mean, not of how the room is lit, and a
       // doctrine painted in flat colour would lose the very corners and creases
@@ -1665,7 +1691,7 @@ export function buildTierMesh(plan: TierPlan, options: { reveal?: boolean } = {}
     // face than the walls so they read as structure at a distance.
     const colour = reveal
       ? revealed(space.provenance, 0.3)
-      : colourFor(COLUMN_COLOUR, space.provenance)
+      : COLUMN_ALBEDO
     const h = COLUMN_HALF_WIDTH
     for (const centre of plan.columns.get(space.id) ?? []) {
       const corners: Vec2[] = [
@@ -1724,7 +1750,7 @@ export function buildTierMesh(plan: TierPlan, options: { reveal?: boolean } = {}
           [door.end, door.start],
           { bottom: otherBase, top: base },
           {
-            colour: colourFor(WALL_COLOUR, space.provenance),
+            colour: WALL_ALBEDO,
             shade: bake(light.wall(otherBase, base)),
             sky: sky.wall,
           },
@@ -1744,7 +1770,7 @@ export function buildTierMesh(plan: TierPlan, options: { reveal?: boolean } = {}
           ? DECLARED_COLOUR
           : reveal
             ? revealed(provenance, 0.45)
-            : colourFor(WALL_COLOUR, provenance)
+            : WALL_ALBEDO
       // Both ways round, because a lintel is the one surface on the deck with a
       // room on either side of it and only one entry in the buffers. A wall is
       // drawn twice over — once by each of the two rooms that share it, which is

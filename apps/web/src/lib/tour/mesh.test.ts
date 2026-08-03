@@ -29,14 +29,13 @@ import {
   WINDOW_SAMPLE,
   buildSolidMesh,
   buildTierMesh,
-  colourFor,
   fittingHeight,
   windowSources,
   type MeshGroup,
   type TierMesh,
 } from './mesh'
 import { REFERENCE_HOUR, skyOf } from './sky'
-import type { Structure, Vec2 } from './types'
+import type { Provenance, Structure, Vec2 } from './types'
 
 const ship = buildShip()
 
@@ -602,33 +601,46 @@ describe('the light baked into the deck', () => {
     expect(mean(near)).toBeLessThan(mean(open))
   })
 
-  it('gives a room the reconstruction invented less light than one it did not', () => {
-    // Provenance you can feel by walking: an invented room keeps its deck's
-    // lamps — the grid is a derivation for every room alike — but its fill is
-    // thinner, so the same hall reads a shade dimmer when nothing drew it.
-    const lit = (id: string, provenance: 'plan' | 'inferred') => {
-      const space = plan.spaces.find((room) => room.id === id)
-      if (!space) return null
-      const single = buildTierMesh({ ...plan, spaces: [{ ...space, provenance }] })
-      const floor = brightnessAt(single, {
-        start: 0,
-        count: single.positions.length / 3,
-      }).filter((vertex) => Math.abs(vertex.y - plan.tier.elevation) < 0.001)
-      return floor.length ? Math.max(...floor.map((vertex) => vertex.shade)) : null
+  it('builds the same room the same whatever the evidence for it', () => {
+    // The end of the argument `inferredLamps` opened, `inferredFill` inherited
+    // and the `colourFor` tint carried on: nothing about where a room came from
+    // may change what it looks like to stand in it. Read off one room built four
+    // times over, once per badge, and held to the byte — a walk should look like
+    // a ship, and a ship does not tint its decks by how well a panel supports
+    // them. Provenance is still said, and said louder: in the reveal, in the
+    // badge `exhibit.ts` writes, in the panel a visitor opens on a room.
+    //
+    // What settled it was which way the levelling went. The tint was worth ×6 on
+    // panel geometry alone, so taking it out left the whole ship at the near
+    // black the other three badges had been rendered at all along — the fault
+    // spread rather than removed. Every surface takes the lift now: see `LIFT`.
+    const built = (provenance: Provenance) => {
+      const space = plan.spaces.find((room) => room.id === 'tier-1-banquet-hall')!
+      return buildTierMesh({ ...plan, spaces: [{ ...space, provenance }] }).colors
     }
-    // Read off the same room twice, so the comparison is of the light and not of
-    // two rooms' albedos — the cold tint `colourFor` adds is a separate claim.
-    const id = 'tier-1-banquet-hall'
-    const asPlanned = lit(id, 'plan')
-    const asInferred = lit(id, 'inferred')
-    expect(asPlanned).not.toBeNull()
-    expect(asInferred).not.toBeNull()
-    expect(asInferred!).toBeLessThan(asPlanned!)
-    // And no further: provenance may thin the fill, never dock the lamps.
-    // `inferredLamps: 0.22` failed this — it baked the King's own inferred
-    // corridors three times darker than sourced cabins in the hold, and the
-    // class system is the one claim the light must not invert.
-    expect(asInferred!, 'provenance reached the lamps').toBeGreaterThan(asPlanned! * 0.8)
+    const reference = built('panel')
+    expect(reference.length).toBeGreaterThan(1000)
+    for (const provenance of ['plan', 'map', 'inferred'] as const) {
+      const other = built(provenance)
+      let differing = 0
+      for (let i = 0; i < reference.length; i++) {
+        if (reference[i] !== other[i]) differing++
+      }
+      expect(differing, `${provenance} is not built like panel`).toBe(0)
+    }
+  })
+
+  it('still paints the reveal by provenance and nothing but', () => {
+    // The other half of the same decision: taking the badge out of the walk must
+    // not take it out of the ship. The reveal is where it lives now, so it has
+    // to keep working — four badges, four distinct colours on the same room.
+    const shown = new Set<string>()
+    for (const provenance of ['panel', 'plan', 'map', 'inferred'] as const) {
+      const space = plan.spaces.find((room) => room.id === 'tier-1-banquet-hall')!
+      const built = buildTierMesh({ ...plan, spaces: [{ ...space, provenance }] }, { reveal: true })
+      shown.add([...built.colors.slice(0, 3)].map((value) => value.toFixed(6)).join(','))
+    }
+    expect(shown.size, 'the reveal stopped telling the badges apart').toBe(4)
   })
 
   it('never emits a colour a vertex attribute cannot carry', () => {
@@ -710,8 +722,8 @@ describe('the light baked into the deck', () => {
     expect(row.length).toBeGreaterThan(6)
 
     // Read as the shape of each floor's own distribution and not as its level:
-    // `colourFor` gives every room its own albedo, and a vertex colour is that
-    // albedo times the shade. Dividing it out is what leaves the light.
+    // a vertex colour is an albedo times a shade, and dividing the mean out is
+    // what leaves the light on its own whatever the albedo turns out to be.
     for (const measure of [
       ([, floor]: [string, { min: number; mean: number }]) => floor.min / floor.mean,
       ([, floor]: [string, { max: number; mean: number }]) => floor.max / floor.mean,
@@ -1511,20 +1523,3 @@ describe('the two windows', () => {
   })
 })
 
-describe('colourFor', () => {
-  const base = [0.5, 0.5, 0.5] as const
-
-  it('leaves plan-sourced geometry as it is', () => {
-    expect(colourFor(base, 'plan')).toEqual([0.5, 0.5, 0.5])
-  })
-
-  it('brightens what a panel actually shows', () => {
-    expect(colourFor(base, 'panel')[0]).toBeGreaterThan(0.5)
-  })
-
-  it('cools down anything the reconstruction invented', () => {
-    const inferred = colourFor(base, 'inferred')
-    // Cold means the blue channel outweighs the red one.
-    expect(inferred[2]).toBeGreaterThan(inferred[0])
-  })
-})

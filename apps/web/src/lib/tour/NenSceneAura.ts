@@ -609,7 +609,7 @@ export class NenSceneAura {
     this.#en.visible = false;
     
     const active = state.mode !== 'zetsu'
-    const isFlux = active && (state.ko !== null || Object.values(state.ryu).some(v => (v || 0) > 0) || state.gyo)
+    const isFlux = active && (state.ko !== null || Object.values(state.ryu).some(v => (v || 0) > 0))
     
     if (!active) {
        this.#zetsu.visible = true;
@@ -657,7 +657,7 @@ export class NenSceneAura {
           if (state.ko === 'hands') { ints[2] = 5.0; ints[3] = 5.0; }
           if (state.ko === 'feet') { ints[4] = 5.0; ints[5] = 5.0; }
        } else {
-          ints[0] = (state.ryu.head || 0) + (state.gyo ? 2.0 : 0);
+          ints[0] = state.ryu.head || 0;
           ints[1] = state.ryu.torso || 0;
           ints[2] = state.ryu.hands || 0;
           ints[3] = state.ryu.hands || 0;

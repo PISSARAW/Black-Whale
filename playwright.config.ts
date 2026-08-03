@@ -16,6 +16,12 @@ export default defineConfig({
   // A failed e2e is nearly always a real break, but a browser can be flaky on a
   // cold CI runner; one retry there and none locally.
   retries: process.env.CI ? 1 : 0,
+  // One dev server serves every worker, and these pages are heavy — the tour
+  // compiles a 3D scene, the hunt boots a game loop. Left to its default of one
+  // worker per core, the suite spent its budget queueing behind itself and
+  // failed on timeouts that said nothing about the site.
+  workers: process.env.CI ? 2 : 4,
+  expect: { timeout: 10_000 },
   use: { baseURL: `http://127.0.0.1:${WEB_PORT}`, trace: 'retain-on-failure' },
   webServer: [
     {

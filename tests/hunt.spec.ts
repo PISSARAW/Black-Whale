@@ -14,8 +14,12 @@ test.describe('Hunt V3 critical path', () => {
     )
     const response = await page.goto('/hunt')
     expect(response?.status()).toBeLessThan(400)
-    await page.waitForLoadState('domcontentloaded')
-    await page.waitForTimeout(1_000)
+    // Waiting for the contract list rather than a fixed second: hydration takes
+    // as long as the machine gives it, and a blind delay turns a slow worker
+    // into a failing test.
+    await expect(page.getByRole('button', { name: /Royal apartments/i })).toBeVisible({
+      timeout: 20_000,
+    })
   })
 
   test('starts the selected contract with its configured loadout', async ({ page }) => {

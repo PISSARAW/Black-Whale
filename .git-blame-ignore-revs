@@ -1,2 +1,5 @@
 # Repository-wide Prettier run. Formatting only, no behaviour change.
 a766974d54341669cbd6eff44645f40cbe36147e
+
+# Repository-wide Prettier run (ADR-001, chantier 1). Formatting only.
+03d91c034e6aea9c4adb12ad63685a26a504b505

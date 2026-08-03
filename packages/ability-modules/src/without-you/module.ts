@@ -1,8 +1,10 @@
 import {
+  asserted,
   beliefBroadcast,
   buildManifest,
   canUseNen,
   defineAbility,
+  effect,
   listParam,
   moveEntity,
   param,
@@ -10,8 +12,8 @@ import {
   person,
   postMortem,
   requiresParameter,
+  shown,
   spawnNenEntity,
-  effect,
 } from '@black-whale/ability-sdk'
 
 const nenTwinId = (twinId: string): string => `${twinId}-without-you`
@@ -49,6 +51,7 @@ export const withoutYou = defineAbility({
   actions: {
     manifest: {
       label: 'Faire apparaître la jumelle',
+      evidence: shown('ch. 398 — à la mort de Kacho, la jumelle apparaît'),
       effects: [
         spawnNenEntity({
           id: (ctx) => nenTwinId(param(ctx, 'deceasedTwinId') ?? 'twin'),
@@ -93,6 +96,7 @@ export const withoutYou = defineAbility({
     },
     follow: {
       label: 'Demander à la jumelle de nous suivre',
+      evidence: shown('ch. 398 — la jumelle reste auprès de Fugetsu'),
       effects: [
         effect({
           kind: 'CUSTOM',
@@ -110,6 +114,7 @@ export const withoutYou = defineAbility({
     },
     wander: {
       label: 'Laisser la jumelle se balader',
+      evidence: asserted('la jumelle agit d’elle-même, avec la personnalité de la disparue'),
       conditions: [requiresParameter('locationId', 'Une destination est choisie')],
       effects: [
         effect({
@@ -126,8 +131,39 @@ export const withoutYou = defineAbility({
         }),
       ],
     },
+    'pass-through-matter': {
+      label: 'Traverser une cloison',
+      evidence: shown('ch. 398 — la jumelle passe où les vivants ne passent pas'),
+      conditions: [requiresParameter('locationId', 'Une pièce est traversée')],
+      effects: [
+        moveEntity({
+          entity: (ctx) => ({
+            id: nenTwinId(param(ctx, 'deceasedTwinId') ?? 'twin'),
+            kind: 'NEN_ENTITY',
+          }),
+          locationId: (ctx) => param(ctx, 'locationId'),
+        }),
+      ],
+    },
+
+    'be-seen-as-dead': {
+      label: 'Être perçue comme morte',
+      // Three truths at once: DEAD in the identity engine, present on the map,
+      // alive in every witness's perspective. The refusal is what holds them
+      // apart — nobody sees through this mask, Gyo included.
+      refusal: 'La jumelle est visible de tous comme vivante : aucun regard ne la démasque',
+      evidence: shown('ch. 398 — l’équipage continue de la croire vivante'),
+    },
+
+    'manifest-while-both-alive': {
+      label: 'Faire apparaître la jumelle vivante',
+      refusal: 'La capacité n’existe qu’à la mort de la première jumelle',
+      evidence: shown('ch. 398 — c’est la mort qui la déclenche'),
+    },
+
     scout: {
       label: 'Envoyer la jumelle en éclaireur',
+      evidence: asserted('la jumelle va voir ce que Fugetsu ne peut pas atteindre'),
       conditions: [requiresParameter('locationId', 'Une destination est choisie')],
       effects: [
         effect({

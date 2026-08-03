@@ -5,6 +5,7 @@ import {
   buildManifest,
   canUseNen,
   checklist,
+  constraint,
   controlLink,
   defineAbility,
   effect,
@@ -16,9 +17,9 @@ import {
   person,
   requiresParameter,
   requiresTarget,
-  constraint,
   revealedAt,
   setEffectState,
+  shown,
   spawnNenEntity,
 } from '@black-whale/ability-sdk'
 import type { EffectBuilder } from '@black-whale/ability-sdk'
@@ -255,6 +256,7 @@ export const contagion = defineAbility({
   actions: {
     'open-network': {
       label: 'Ouvrir le réseau',
+      evidence: shown('ch. 375 — le réseau ouvert, vingt-deux places au plus'),
       effects: [
         spawnNenEntity({ id: COHORT_ID, kind: 'COHORT', label: 'Infectés Heil-Ly' }),
         effect({
@@ -277,6 +279,7 @@ export const contagion = defineAbility({
 
     infect: {
       label: 'Infecter',
+      evidence: shown('ch. 375 — la triple condition : jeu gagné, baiser, meurtre observé'),
       conditions: [
         requiresTarget('Une cible est embrassée'),
         checklist(
@@ -444,6 +447,7 @@ export const contagion = defineAbility({
 
     'record-kill': {
       label: 'Enregistrer un meurtre',
+      evidence: shown('ch. 384 — un niveau par quidam, dix par utilisateur, cinquante par prince'),
       conditions: [
         effectIsLive('effectId', 'Le membre est toujours infecté'),
         requiresParameter('victimStatus', 'Le statut de la victime est connu'),
@@ -467,6 +471,7 @@ export const contagion = defineAbility({
 
     'grant-unique-ability': {
       label: 'Générer la capacité unique (niveau 20)',
+      evidence: shown('ch. 384 — la capacité propre gagnée au niveau 20'),
       conditions: [
         effectIsLive('effectId', 'Le membre est toujours infecté'),
         effectAttributeAtLeast({
@@ -479,8 +484,30 @@ export const contagion = defineAbility({
       hint: `Requiert le niveau ${UNIQUE_ABILITY_LEVEL}`,
     },
 
+    'infect-beyond-the-cap': {
+      label: 'Infecter au-delà de vingt-deux',
+      refusal: 'Le réseau ne tient que vingt-deux infectés : au-delà, la salive ne prend pas',
+      evidence: shown('ch. 375 — le plafond énoncé avec la capacité'),
+    },
+
+    'infect-without-the-game': {
+      label: 'Infecter sans la partie gagnée',
+      refusal:
+        'Les trois conditions sont indissociables : partie gagnée en « oui », baiser, meurtre observé',
+      evidence: shown('ch. 375 — les trois conditions posées ensemble'),
+    },
+
+    'lose-sight-of-a-member': {
+      label: 'Perdre un membre de vue',
+      refusal: 'Morena voit en permanence la position et l’état de chaque infecté',
+      evidence: shown('ch. 384 — le suivi permanent du réseau'),
+    },
+
     'end-game': {
       label: 'Clore le jeu',
+      evidence: shown(
+        'ch. 375 — le jeu finit à la mort de Morena, à celle de la cible, ou accompli',
+      ),
       conditions: [effectIsLive('effectId', 'Le réseau est ouvert')],
       effects: [setEffectState({ state: 'ENDED', attributes: { reason: 'game-completed' } })],
     },

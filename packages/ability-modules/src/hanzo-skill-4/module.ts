@@ -4,10 +4,12 @@ import {
   defineAbility,
   effect,
   isConscious,
+  moveEntity,
   param,
   requiresParameter,
   self,
   setEffectState,
+  shown,
   spawnNenEntity,
   transferConsciousness,
 } from '@black-whale/ability-sdk'
@@ -53,6 +55,7 @@ export const hanzoSkill4 = defineAbility({
   actions: {
     project: {
       label: 'Projeter le double',
+      evidence: shown('ch. 390 — le double veille pendant que le corps dort'),
       conditions: [
         requiresParameter('consciousnessId', 'La conscience projetée est identifiée'),
         requiresParameter('fromBodyId', 'Le corps laissé derrière est identifié'),
@@ -87,8 +90,35 @@ export const hanzoSkill4 = defineAbility({
       cost: { label: 'Le corps reste sans défense pendant la projection', unit: 'vulnérabilité' },
     },
 
+    'pass-through-matter': {
+      label: 'Traverser une cloison',
+      // The double's whole tactical value: a guard who can look through the
+      // walls of the room he is guarding.
+      evidence: shown('ch. 390 — le double passe là où le corps ne peut pas'),
+      conditions: [requiresParameter('locationId', 'Une pièce est traversée')],
+      effects: [
+        moveEntity({
+          entity: (ctx) => ({ id: doubleId(ctx.actorId), kind: 'AURA_ENTITY' }),
+          certainty: 'CONFIRMED',
+        }),
+      ],
+    },
+
+    'interrupt-by-contact': {
+      label: 'Être interrompu (parole ou contact)',
+      evidence: shown('ch. 390 — parler au corps ou le toucher rompt la projection'),
+      effects: [setEffectState({ state: 'ENDED', attributes: { reason: 'body-disturbed' } })],
+    },
+
+    'act-physically': {
+      label: 'Agir physiquement avec le double',
+      refusal: 'Le double traverse la matière : il observe, il ne frappe pas',
+      evidence: shown('ch. 390 — la limite énoncée avec la projection'),
+    },
+
     recall: {
       label: 'Rappeler le double',
+      evidence: shown('ch. 390 — le retour dans le corps'),
       conditions: [requiresParameter('consciousnessId', 'La conscience projetée est identifiée')],
       effects: [
         (ctx) =>

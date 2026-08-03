@@ -13,6 +13,7 @@ import {
   person,
   requiresParameter,
   requiresTarget,
+  shown,
   soulSwap,
   spawnNenEntity,
   unrevealed,
@@ -60,6 +61,7 @@ export const grimmelTheDissonance = defineAbility({
   actions: {
     'raise-cohort': {
       label: 'Rassembler les porteurs d’ailerons',
+      evidence: shown('ch. 400 — les porteurs qui partagent sa volonté'),
       effects: [
         spawnNenEntity({
           id: COHORT_ID,
@@ -84,6 +86,7 @@ export const grimmelTheDissonance = defineAbility({
 
     'mark-bearer': {
       label: 'Marquer un porteur',
+      evidence: shown('ch. 400 — l’aileron marque celui qui adhère'),
       conditions: [
         requiresTarget('Un porteur est marqué'),
         effectIsLive('effectId', 'La cohorte existe'),
@@ -97,6 +100,7 @@ export const grimmelTheDissonance = defineAbility({
 
     shoot: {
       label: 'Tirer la flèche',
+      evidence: shown('ch. 411 — le tir sur le garde, et l’échange d’âmes'),
       conditions: [
         requiresTarget('Une cible est visée'),
         requiresParameter('consciousnessId', 'La conscience de la cible est identifiée'),
@@ -136,6 +140,25 @@ export const grimmelTheDissonance = defineAbility({
         }),
       ],
       cost: { label: 'Espérance de vie de Halkenburg', unit: 'vie' },
+    },
+
+    'shoot-through-a-wall': {
+      label: 'Tirer à travers un obstacle',
+      evidence: shown('ch. 411 — la flèche transperce ce qui la sépare de la cible'),
+      conditions: [requiresTarget('Une cible est visée')],
+      effects: [auraModifier({ arrow: 'pierces-everything', trajectory: 'through-matter' })],
+      cost: { label: 'Halkenburg risque sa vie à chaque tir', unit: 'vie' },
+    },
+
+    'shoot-without-bearers': {
+      label: 'Tirer sans porteur marqué',
+      refusal: 'L’échange prend une âme parmi les porteurs marqués : sans eux, rien à échanger',
+    },
+
+    'choose-the-swapped-bearer': {
+      label: 'Choisir le porteur échangé',
+      refusal: 'Le porteur échangé est tiré au hasard, Halkenburg compris',
+      evidence: shown('ch. 411 — le tirage n’appartient pas à l’archer'),
     },
   },
 

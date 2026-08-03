@@ -13,6 +13,7 @@ import {
   person,
   requiresTarget,
   setEffectState,
+  shown,
   spawnNenEntity,
   unrevealed,
 } from '@black-whale/ability-sdk'
@@ -67,6 +68,8 @@ export const silentMajority = defineAbility({
   actions: {
     summon: {
       label: 'Invoquer le pantin',
+      evidence: shown('ch. 386 — le pantin que seul son utilisateur voit'),
+      gyo: 'le pantin lui-même — les serpents, eux, sont visibles de tous',
       effects: [
         spawnNenEntity({
           id: (ctx) => `silent-majority-puppet-${ctx.actorId}`,
@@ -97,6 +100,7 @@ export const silentMajority = defineAbility({
 
     bite: {
       label: 'Lancer les serpents',
+      evidence: shown('ch. 386 — les serpents lâchés sur la victime désignée'),
       conditions: [
         requiresTarget('Une victime est désignée'),
         belowCapacity(
@@ -127,6 +131,7 @@ export const silentMajority = defineAbility({
 
     'abort-early': {
       label: 'Désactiver prématurément',
+      evidence: shown('ch. 386 — la malédiction se retourne sur qui l’interrompt'),
       conditions: [effectIsLive('effectId', 'Le pantin est invoqué')],
       effects: [
         setEffectState({ state: 'ENDED', attributes: { abortedEarly: true } }),
@@ -138,6 +143,30 @@ export const silentMajority = defineAbility({
         }),
       ],
       hint: 'Retourne la malédiction contre l’utilisateur',
+    },
+
+    'send-all-four': {
+      label: 'Envoyer les quatre serpents',
+      // Four snakes are eleven seconds instead of forty-four: the same curse,
+      // spent faster.
+      evidence: shown('ch. 386 — onze secondes à quatre serpents'),
+      conditions: [effectIsLive('effectId', 'Le pantin est invoqué')],
+      effects: [
+        attributeCounter({
+          attributes: { activeSnakes: SNAKE_COUNT, drainSecondsRemaining: SECONDS_WITH_ALL_SNAKES },
+        }),
+      ],
+    },
+
+    'target-outside-the-pool': {
+      label: 'Viser hors des dix personnes à portée',
+      refusal: 'La victime se choisit parmi les dix personnes à portée, pas au-delà',
+    },
+
+    'follow-outside-nen-range': {
+      label: 'Poursuivre hors de portée du Nen',
+      refusal: 'Hors de portée, les serpents disparaissent',
+      evidence: shown('ch. 386 — la règle énoncée avec la capacité'),
     },
   },
 

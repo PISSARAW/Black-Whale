@@ -1,4 +1,6 @@
 import {
+  asserted,
+  belowCapacity,
   buildManifest,
   canUseNen,
   controlLink,
@@ -9,10 +11,9 @@ import {
   moveEntity,
   numberParam,
   requiresParameter,
+  shown,
   spawnNenEntity,
   zone,
-  belowCapacity,
-  wheelEntry,
 } from '@black-whale/ability-sdk'
 
 const OWL_IDS = ['secret-window-owl']
@@ -57,6 +58,7 @@ export const secretWindow = defineAbility({
   actions: {
     'deploy-wandering': {
       label: 'Hibou Libre',
+      evidence: shown('ch. 363 — le hibou qui va où il veut'),
       conditions: [belowCapacity('secret-window-owls', 1, 'Un seul hibou autorisé à la fois')],
       effects: [
         spawnNenEntity({
@@ -77,6 +79,7 @@ export const secretWindow = defineAbility({
 
     'deploy-shoulder': {
       label: "Hibou d'Épaule",
+      evidence: shown('ch. 363 — le hibou posté sur l’épaule'),
       conditions: [belowCapacity('secret-window-owls', 1, 'Un seul hibou autorisé à la fois')],
       effects: [
         spawnNenEntity({
@@ -97,6 +100,7 @@ export const secretWindow = defineAbility({
 
     'deploy-random': {
       label: 'Hibou Aléatoire',
+      evidence: shown('ch. 363 — le hibou qui surgit ailleurs'),
       conditions: [belowCapacity('secret-window-owls', 1, 'Un seul hibou autorisé à la fois')],
       effects: [
         spawnNenEntity({
@@ -117,6 +121,7 @@ export const secretWindow = defineAbility({
 
     perch: {
       label: 'Poster le hibou',
+      evidence: shown('ch. 363 — le hibou écoute à travers la cloison'),
       conditions: [requiresParameter('locationId', 'Une pièce est choisie')],
       effects: [
         moveEntity({
@@ -127,6 +132,7 @@ export const secretWindow = defineAbility({
 
     replay: {
       label: 'Revoir les enregistrements',
+      evidence: shown('ch. 363 — les observations revues après coup'),
       conditions: [requiresParameter('owlId', 'Un hibou est choisi')],
       effects: [
         // The replay grants what the owl observed (limited to last 10 seconds), dated to when it observed it:
@@ -143,6 +149,18 @@ export const secretWindow = defineAbility({
           ),
       ],
       hint: "Récupère uniquement les 10 dernières secondes d'enregistrement avant disparition",
+    },
+
+    'deploy-second-owl': {
+      label: 'Déployer un deuxième hibou',
+      refusal: 'Un seul hibou tient l’air à la fois : il faut attendre sa disparition',
+      evidence: asserted('la capacité en compte trois, jamais deux en vol'),
+    },
+
+    'replay-beyond-the-window': {
+      label: 'Remonter plus loin que la fenêtre',
+      refusal: 'L’enregistrement ne rend que ses dix dernières secondes',
+      evidence: shown('ch. 363 — la fenêtre d’écoute est courte'),
     },
   },
 
@@ -162,43 +180,8 @@ export const secretWindow = defineAbility({
     customComponent: 'OwlScreenWall',
   }),
 
-  actionWheel: [
-    wheelEntry({
-      id: 'deploy-wandering',
-      label: 'Hibou Libre',
-      abilityId: 'secret-window',
-      visibility: 'available',
-      hint: 'Se balade librement dans tout le bateau (disparaît après 20s)',
-    }),
-    wheelEntry({
-      id: 'deploy-shoulder',
-      label: "Hibou d'Épaule",
-      abilityId: 'secret-window',
-      visibility: 'available',
-      hint: "Se pose sur l'épaule de l'utilisateur (disparaît après 20s)",
-    }),
-    wheelEntry({
-      id: 'deploy-random',
-      label: 'Hibou Aléatoire',
-      abilityId: 'secret-window',
-      visibility: 'available',
-      hint: 'Apparaît dans un lieu aléatoire (disparaît après 20s)',
-    }),
-    wheelEntry({
-      id: 'perch',
-      label: 'Poster le hibou',
-      abilityId: 'secret-window',
-      visibility: 'available',
-      hint: 'Déplacer le hibou dans une pièce',
-    }),
-    wheelEntry({
-      id: 'replay',
-      label: 'Revoir les enregistrements',
-      abilityId: 'secret-window',
-      visibility: 'available',
-      hint: "Récupère uniquement les 10 dernières secondes d'enregistrement",
-    }),
-  ],
+  // No static wheel: it is derived from the actions above, so a use that is
+  // added — or refused — can never be missing from the wheel.
 })
 
 export const SECRET_WINDOW_OWL_IDS = OWL_IDS

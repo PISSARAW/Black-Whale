@@ -1,4 +1,5 @@
 import {
+  asserted,
   auraModifier,
   buildManifest,
   canUseNen,
@@ -9,6 +10,7 @@ import {
   param,
   requiresParameter,
   setEffectState,
+  shown,
   zone,
 } from '@black-whale/ability-sdk'
 
@@ -46,6 +48,7 @@ export const melodyEnchantingMusic = defineAbility({
   actions: {
     play: {
       label: 'Jouer de la flûte',
+      evidence: shown('ch. 45 — la flûte apaise ceux qui l’entendent'),
       conditions: [isConscious(), requiresParameter('locationId', 'Une pièce est choisie')],
       effects: [
         auraModifier({
@@ -58,6 +61,7 @@ export const melodyEnchantingMusic = defineAbility({
 
     listen: {
       label: 'Écouter (ouïe absolue)',
+      evidence: shown('ch. 45 — elle entend les battements et les émotions'),
       // Passive: no Nen required, and it works on whoever shares her room.
       effects: [
         (ctx) =>
@@ -77,8 +81,40 @@ export const melodyEnchantingMusic = defineAbility({
       ],
     },
 
+    'hear-a-lie': {
+      label: 'Entendre un mensonge',
+      // The heartbeat is what her ear reads, so a lie arrives as a strong
+      // suspicion and never as a confession.
+      evidence: shown('ch. 45 — le battement trahit le mensonge'),
+      effects: [
+        knowledgeGrant({
+          factId: (ctx) => `lie:${param(ctx, 'subjectId') ?? 'subject'}`,
+          state: 'SUSPECTED',
+          confidence: 0.7,
+        }),
+      ],
+    },
+
+    'listen-through-a-wall': {
+      label: 'Écouter à travers une cloison',
+      evidence: asserted('son ouïe porte au-delà de ce que la carte montre'),
+      effects: [
+        knowledgeGrant({
+          factId: (ctx) => `heard:${param(ctx, 'locationId') ?? 'room'}`,
+          state: 'BELIEVED',
+          confidence: 0.6,
+        }),
+      ],
+    },
+
+    'harm-with-the-flute': {
+      label: 'Blesser par la mélodie',
+      refusal: 'Enchanting Music apaise et capte l’attention : elle ne blesse pas',
+    },
+
     stop: {
       label: 'Cesser de jouer',
+      evidence: asserted('la pièce s’arrête quand elle cesse de jouer'),
       effects: [setEffectState({ state: 'ENDED' })],
     },
   },

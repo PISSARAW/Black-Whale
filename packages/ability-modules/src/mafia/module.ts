@@ -15,6 +15,7 @@ import {
   requiresParameter,
   requiresTarget,
   setEffectState,
+  shown,
   spawnNenEntity,
 } from '@black-whale/ability-sdk'
 
@@ -139,6 +140,7 @@ export const bodyAndSoul = defineAbility({
   actions: {
     interrogate: {
       label: 'Frapper après la question',
+      evidence: shown('ch. 380 — la question, puis le coup, puis la vérité'),
       conditions: [
         requiresTarget('Un interrogé est frappé'),
         requiresParameter('question', 'Une question a été posée'),
@@ -160,6 +162,32 @@ export const bodyAndSoul = defineAbility({
         }),
       ],
       cost: { label: 'Un coup par question', amount: 1, unit: 'coup' },
+    },
+
+    'compare-with-the-claim': {
+      label: 'Comparer avec ce qui a été dit',
+      // The whole interest of the ability on the site: the mouth's version and
+      // the body's version live side by side, BELIEVED against KNOWN.
+      evidence: shown('ch. 380 — le corps répond même quand la bouche ment'),
+      conditions: [requiresParameter('question', 'Une question a été posée')],
+      effects: [
+        knowledgeGrant({
+          factId: (ctx) => `contradiction:${param(ctx, 'question') ?? 'question'}`,
+          state: 'KNOWN',
+          confidence: 1,
+        }),
+      ],
+    },
+
+    'punch-without-asking': {
+      label: 'Frapper sans avoir demandé',
+      refusal: 'Sans question posée juste avant, le coup n’est qu’un coup',
+      evidence: shown('ch. 380 — la question précède toujours la frappe'),
+    },
+
+    'interrogate-at-distance': {
+      label: 'Interroger à distance',
+      refusal: 'La réponse passe par le contact : il faut frapper le corps',
     },
   },
 

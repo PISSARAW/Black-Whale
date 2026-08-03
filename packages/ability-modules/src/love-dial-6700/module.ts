@@ -1,4 +1,5 @@
 import {
+  asserted,
   attributeCounter,
   auraModifier,
   belowCapacity,
@@ -13,6 +14,7 @@ import {
   param,
   person,
   requiresParameter,
+  shown,
 } from '@black-whale/ability-sdk'
 
 /** Canon: the dial answers a limited number of times per day. */
@@ -50,6 +52,7 @@ export const loveDial6700 = defineAbility({
   actions: {
     dial: {
       label: 'Composer',
+      evidence: shown('ch. 366 — la recherche par critères, chiffre après chiffre'),
       conditions: [
         requiresParameter('criteria', 'Des critères de recherche sont fournis'),
         belowCapacity(
@@ -76,6 +79,7 @@ export const loveDial6700 = defineAbility({
 
     'narrow-down': {
       label: 'Resserrer la recherche',
+      evidence: shown('ch. 366 — le nombre guide resserre le cercle'),
       conditions: [effectIsLive('effectId', 'Une recherche est en cours')],
       effects: [
         attributeCounter({
@@ -86,6 +90,23 @@ export const loveDial6700 = defineAbility({
           }),
         }),
       ],
+    },
+
+    'dial-for-an-address': {
+      label: 'Demander une adresse',
+      refusal: 'Le combiné répond par un nombre guide, jamais par un lieu',
+    },
+
+    'dial-past-quota': {
+      label: 'Composer au-delà du quota',
+      refusal: 'Le nombre d’appels par jour est fixé : le quota épuisé, l’appareil se tait',
+      evidence: asserted('le quota journalier énoncé avec la capacité'),
+    },
+
+    'reset-quota': {
+      label: 'Attendre le jour suivant',
+      evidence: asserted('le quota est journalier : il revient avec le jour'),
+      effects: [attributeCounter({ increments: { callsToday: 0 }, attributes: { day: 'next' } })],
     },
   },
 

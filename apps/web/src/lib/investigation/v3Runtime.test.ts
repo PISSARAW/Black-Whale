@@ -4,12 +4,12 @@ import { assessHypothesesFromEvidence } from './v3Runtime'
 
 describe('investigation V3 runtime adapter', () => {
   it('exposes partial progress before a hypothesis is established', () => {
-    const assessments = assessHypothesesFromEvidence(
-      room1014Case.hypotheses,
-      room1014Case.evidence,
-      ['wounds'],
-      'kurapika',
-    )
+    const assessments = assessHypothesesFromEvidence({
+      hypotheses: room1014Case.hypotheses,
+      evidence: room1014Case.evidence,
+      discoveredEvidenceIds: ['wounds'],
+      viewerId: 'kurapika',
+    })
     const canonical = assessments[room1014Case.canonicalHypothesisId]
     expect(canonical.status).toBe('partial')
     expect(canonical.missingPropositionIds.length).toBeGreaterThan(0)
@@ -19,12 +19,12 @@ describe('investigation V3 runtime adapter', () => {
     const hypothesis = room1014Case.hypotheses.find(
       (item) => item.id === room1014Case.canonicalHypothesisId,
     )!
-    const assessments = assessHypothesesFromEvidence(
-      room1014Case.hypotheses,
-      room1014Case.evidence,
-      hypothesis.requiredEvidenceIds,
-      'kurapika',
-    )
+    const assessments = assessHypothesesFromEvidence({
+      hypotheses: room1014Case.hypotheses,
+      evidence: room1014Case.evidence,
+      discoveredEvidenceIds: hypothesis.requiredEvidenceIds,
+      viewerId: 'kurapika',
+    })
     expect(assessments[hypothesis.id].status).toBe('established')
   })
 })

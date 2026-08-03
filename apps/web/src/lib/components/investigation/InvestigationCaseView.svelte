@@ -223,12 +223,12 @@
     investigation.evidence.filter((evidence) => discoveredIds.includes(evidence.id)),
   )
   const hypothesisAssessments = $derived(
-    assessHypothesesFromEvidence(
-      investigation.hypotheses,
-      investigation.evidence,
-      discoveredIds,
-      investigation.investigator,
-    ),
+    assessHypothesesFromEvidence({
+      hypotheses: investigation.hypotheses,
+      evidence: investigation.evidence,
+      discoveredEvidenceIds: discoveredIds,
+      viewerId: investigation.investigator,
+    }),
   )
   const progress = $derived(
     Math.round((discoveredIds.length / investigation.evidence.length) * 100),
@@ -503,16 +503,15 @@
     }
     if (!activeSubject) return
 
-    const result = resolveInvestigationHatsu(
-      $activeHatsu,
-      activeSubject.id,
-      definition.hatsuRules,
-      {
+    const result = resolveInvestigationHatsu($activeHatsu, {
+      subjectId: activeSubject.id,
+      rules: definition.hatsuRules,
+      context: {
         availableEvidenceIds: discoveredIds,
         remainingLifeHours: $emperorTimeLifeHours,
       },
-      $locale,
-    )
+      locale: $locale,
+    })
     const alreadyUsed = hatsuUseKeys.includes(result.key)
     hatsuResult = result
     hatsuEffectKind = $activeHatsu.kind

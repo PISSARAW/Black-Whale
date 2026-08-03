@@ -65,7 +65,11 @@ describe('investigation V3 knowledge ledger', () => {
       sourceEvidenceIds: ['mark'],
       learnedAt: 1,
     })
-    ledger = shareClaim(ledger, 'private-observation', 'bill', 2)
+    ledger = shareClaim(ledger, {
+      claimId: 'private-observation',
+      recipientId: 'bill',
+      learnedAt: 2,
+    })
 
     expect(claimsKnownBy(ledger, 'bill')[0].confidence).toBe(0.85)
     expect(propositionState(ledger, 'hidden-mark', 'bill').certainty).toBe('established')

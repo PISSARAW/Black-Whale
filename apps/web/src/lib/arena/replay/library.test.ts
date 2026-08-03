@@ -11,7 +11,9 @@ function replay() {
     opponentAt: terrain.spawns[1],
     terrain: { id: terrain.id, footprint: terrain.footprint, walls: terrain.walls },
   }
-  return new ArenaRecorder(setup, 'counter', 'fighter').finish(initialCombatState(setup))
+  return new ArenaRecorder({ setup, doctrine: 'counter', difficulty: 'fighter' }).finish(
+    initialCombatState(setup),
+  )
 }
 
 describe('Arena V3 replay library', () => {

@@ -67,8 +67,7 @@ function outlinedMesh(THREE: Three, source: Mesh): Mesh | null {
 export function styleNenCreature(
   THREE: Three,
   root: Group,
-  kind: ApparitionKind,
-  size: number,
+  { kind, size }: { kind: ApparitionKind; size: number },
 ): void {
   if (!isNenCreatureKind(kind)) return
 

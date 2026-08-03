@@ -304,7 +304,11 @@ function reduceAction(state: InfiltrationState, action: InfiltrationAction): Inf
         },
       }
     case 'SCOUT_MOVE': {
-      const moved = moveLittleEye(state, action.position, action.spaceId, action.visibleToGuard)
+      const moved = moveLittleEye(state, {
+        position: action.position,
+        spaceId: action.spaceId,
+        visibleToGuard: action.visibleToGuard,
+      })
       return moved.authorConfirmed && !state.authorConfirmed
         ? { ...moved, objectives: completeObjective(moved.objectives, ['identify'], 'confirmed') }
         : moved

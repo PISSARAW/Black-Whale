@@ -72,11 +72,16 @@ export function claimsKnownBy(ledger: KnowledgeLedger, subjectId: string): Knowl
   return ledger.claims.filter((claim) => claim.subjectId === subjectId)
 }
 
+/** One claim passing from whoever held it to whoever now says they heard it. */
+export interface ClaimSharing {
+  claimId: string
+  recipientId: string
+  learnedAt: number
+}
+
 export function shareClaim(
   ledger: KnowledgeLedger,
-  claimId: string,
-  recipientId: string,
-  learnedAt: number,
+  { claimId, recipientId, learnedAt }: ClaimSharing,
 ): KnowledgeLedger {
   const source = ledger.claims.find((claim) => claim.id === claimId)
   if (!source) return ledger

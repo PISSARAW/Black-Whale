@@ -8,8 +8,10 @@ const rules = elevenSecondsDefinition('fr').hatsuRules
 
 describe('investigation V3 systemic Hatsu', () => {
   it('resolves effects entirely from case rules', () => {
-    const result = resolveInvestigationHatsu(profile('dowsing-chain'), 'bill', rules, {
-      availableEvidenceIds: [],
+    const result = resolveInvestigationHatsu(profile('dowsing-chain'), {
+      subjectId: 'bill',
+      rules,
+      context: { availableEvidenceIds: [] },
     })
     expect(result.ruleId).toBe('dowsing-witnesses')
     expect(result.evidenceIds).toEqual(['bill-testimony', 'loberry-vision'])
@@ -17,9 +19,10 @@ describe('investigation V3 systemic Hatsu', () => {
   })
 
   it('enforces costs before revealing evidence', () => {
-    const result = resolveInvestigationHatsu(profile('emperor-time'), 'body', rules, {
-      availableEvidenceIds: [],
-      remainingLifeHours: 2,
+    const result = resolveInvestigationHatsu(profile('emperor-time'), {
+      subjectId: 'body',
+      rules,
+      context: { availableEvidenceIds: [], remainingLifeHours: 2 },
     })
     expect(result.usable).toBe(false)
     expect(result.evidenceIds).toEqual([])
@@ -27,8 +30,10 @@ describe('investigation V3 systemic Hatsu', () => {
   })
 
   it('returns an explicit limitation for an unsupported target', () => {
-    const result = resolveInvestigationHatsu(profile('little-eye'), 'bill', rules, {
-      availableEvidenceIds: [],
+    const result = resolveInvestigationHatsu(profile('little-eye'), {
+      subjectId: 'bill',
+      rules,
+      context: { availableEvidenceIds: [] },
     })
     expect(result.ruleId).toBeNull()
     expect(result.usable).toBe(false)

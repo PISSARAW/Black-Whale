@@ -8,6 +8,7 @@ export interface ValidationIssue {
 export function validateCaseDefinition(definition: InvestigationCaseDefinition): ValidationIssue[] {
   const issues: ValidationIssue[] = []
   const add = (path: string, message: string) => issues.push({ path, message })
+  const checkRefs = referenceChecker(add)
   const evidenceIds = new Set(definition.content.evidence.map((item) => item.id))
   const subjectIds = new Set(definition.content.subjects.map((item) => item.id))
   const hypothesisIds = new Set(definition.content.hypotheses.map((item) => item.id))
@@ -29,27 +30,21 @@ export function validateCaseDefinition(definition: InvestigationCaseDefinition):
       add(`evidence.${evidence.id}.canonicalRefs`, 'source required')
   }
   for (const subject of definition.content.subjects) {
-    checkRefs(subject.evidenceIds, evidenceIds, `subjects.${subject.id}.evidenceIds`, add)
+    checkRefs(subject.evidenceIds, evidenceIds, `subjects.${subject.id}.evidenceIds`)
     for (const question of subject.questions) {
-      checkRefs(question.requiredEvidenceIds, evidenceIds, `questions.${question.id}.required`, add)
-      checkRefs(question.evidenceIds, evidenceIds, `questions.${question.id}.evidence`, add)
+      checkRefs(question.requiredEvidenceIds, evidenceIds, `questions.${question.id}.required`)
+      checkRefs(question.evidenceIds, evidenceIds, `questions.${question.id}.evidence`)
     }
   }
   for (const objective of definition.content.objectives) {
-    checkRefs(objective.requiredEvidenceIds, evidenceIds, `objectives.${objective.id}`, add)
+    checkRefs(objective.requiredEvidenceIds, evidenceIds, `objectives.${objective.id}`)
   }
   for (const hypothesis of definition.content.hypotheses) {
-    checkRefs(
-      hypothesis.requiredEvidenceIds,
-      evidenceIds,
-      `hypotheses.${hypothesis.id}.required`,
-      add,
-    )
+    checkRefs(hypothesis.requiredEvidenceIds, evidenceIds, `hypotheses.${hypothesis.id}.required`)
     checkRefs(
       hypothesis.contradictionEvidenceIds,
       evidenceIds,
       `hypotheses.${hypothesis.id}.contradictions`,
-      add,
     )
   }
   if (!hypothesisIds.has(definition.content.canonicalHypothesisId)) {
@@ -59,28 +54,17 @@ export function validateCaseDefinition(definition: InvestigationCaseDefinition):
     add('report.requiredHypothesisId', 'unknown report hypothesis')
   }
   for (const confrontation of definition.confrontations) {
-    checkRefs(
-      confrontation.subjectIds,
-      subjectIds,
-      `confrontations.${confrontation.id}.subjects`,
-      add,
-    )
+    checkRefs(confrontation.subjectIds, subjectIds, `confrontations.${confrontation.id}.subjects`)
     checkRefs(
       confrontation.requiredEvidenceIds,
       evidenceIds,
       `confrontations.${confrontation.id}.required`,
-      add,
     )
-    checkRefs(
-      confrontation.evidenceIds,
-      evidenceIds,
-      `confrontations.${confrontation.id}.evidence`,
-      add,
-    )
+    checkRefs(confrontation.evidenceIds, evidenceIds, `confrontations.${confrontation.id}.evidence`)
   }
   for (const rule of definition.hatsuRules) {
-    checkRefs(rule.subjectIds, subjectIds, `hatsuRules.${rule.id}.subjects`, add)
-    checkRefs(rule.evidenceIds, evidenceIds, `hatsuRules.${rule.id}.evidence`, add)
+    checkRefs(rule.subjectIds, subjectIds, `hatsuRules.${rule.id}.subjects`)
+    checkRefs(rule.evidenceIds, evidenceIds, `hatsuRules.${rule.id}.evidence`)
   }
   return issues
 }
@@ -97,13 +81,15 @@ export function assertValidCaseDefinition(
   return definition
 }
 
-function checkRefs(
-  refs: readonly string[],
-  known: Set<string>,
-  path: string,
-  add: (path: string, message: string) => void,
-) {
-  for (const id of refs) if (!known.has(id)) add(`${path}.${id}`, 'unknown reference')
+/**
+ * Bound to a collector once rather than handed one at each of the fourteen call
+ * sites: the collector is the same object every time, and passing it around was
+ * the only reason this took four arguments.
+ */
+function referenceChecker(add: (path: string, message: string) => void) {
+  return (refs: readonly string[], known: Set<string>, path: string) => {
+    for (const id of refs) if (!known.has(id)) add(`${path}.${id}`, 'unknown reference')
+  }
 }
 
 function duplicates(ids: string[]) {

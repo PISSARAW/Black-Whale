@@ -6,15 +6,15 @@ import { evaluateChallenge } from './evaluate'
 describe('Arena challenges', () => {
   it('evaluates mastery from replay commands rather than UI state', () => {
     const state = initialCombatState()
-    const recorder = new ArenaRecorder(
-      {
+    const recorder = new ArenaRecorder({
+      setup: {
         playerAt: state.player.position,
         opponentAt: state.opponent.position,
         terrain: state.terrain,
       },
-      'counter',
-      'fighter',
-    )
+      doctrine: 'counter',
+      difficulty: 'fighter',
+    })
     recorder.record({ type: 'RYU', side: 'player', guard: 'head' })
     recorder.record({ type: 'RYU', side: 'player', guard: 'arms' })
     const replay = recorder.finish(state)

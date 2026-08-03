@@ -11,55 +11,55 @@ export interface HatsuInteraction {
 }
 
 const INTERACTIONS: HatsuInteraction[] = [
-  interaction(
-    'bind',
-    'distance',
-    'countered',
-    "L'ancrage est hors de portée.",
-    'The anchor is out of range.',
-  ),
-  interaction(
-    'bind',
-    'interrupt',
-    'exposed',
-    'Le lien persiste mais son porteur est interrompu.',
-    'The tether persists but its owner is interrupted.',
-  ),
-  interaction(
-    'impact',
-    'ken',
-    'reduced',
-    "Ken répartit l'impact sur toute l'aura.",
-    'Ken spreads the impact across the aura.',
-  ),
-  interaction(
-    'impact',
-    'evade',
-    'countered',
-    "L'engagement manque sa trajectoire annoncée.",
-    'The committed trajectory misses.',
-  ),
-  interaction(
-    'barrage',
-    'evade',
-    'reduced',
-    'Une esquive latérale retire une partie de la rafale.',
-    'A lateral evade sheds part of the barrage.',
-  ),
-  interaction(
-    'barrage',
-    'ken',
-    'reduced',
-    'Ken absorbe les impacts dispersés.',
-    'Ken absorbs the distributed impacts.',
-  ),
-  interaction(
-    'enhance',
-    'gyo',
-    'exposed',
-    "Gyo révèle la concentration d'aura.",
-    'Gyo reveals the aura concentration.',
-  ),
+  {
+    effect: 'bind',
+    counter: 'distance',
+    outcome: 'countered',
+    explanationFr: "L'ancrage est hors de portée.",
+    explanationEn: 'The anchor is out of range.',
+  },
+  {
+    effect: 'bind',
+    counter: 'interrupt',
+    outcome: 'exposed',
+    explanationFr: 'Le lien persiste mais son porteur est interrompu.',
+    explanationEn: 'The tether persists but its owner is interrupted.',
+  },
+  {
+    effect: 'impact',
+    counter: 'ken',
+    outcome: 'reduced',
+    explanationFr: "Ken répartit l'impact sur toute l'aura.",
+    explanationEn: 'Ken spreads the impact across the aura.',
+  },
+  {
+    effect: 'impact',
+    counter: 'evade',
+    outcome: 'countered',
+    explanationFr: "L'engagement manque sa trajectoire annoncée.",
+    explanationEn: 'The committed trajectory misses.',
+  },
+  {
+    effect: 'barrage',
+    counter: 'evade',
+    outcome: 'reduced',
+    explanationFr: 'Une esquive latérale retire une partie de la rafale.',
+    explanationEn: 'A lateral evade sheds part of the barrage.',
+  },
+  {
+    effect: 'barrage',
+    counter: 'ken',
+    outcome: 'reduced',
+    explanationFr: 'Ken absorbe les impacts dispersés.',
+    explanationEn: 'Ken absorbs the distributed impacts.',
+  },
+  {
+    effect: 'enhance',
+    counter: 'gyo',
+    outcome: 'exposed',
+    explanationFr: "Gyo révèle la concentration d'aura.",
+    explanationEn: 'Gyo reveals the aura concentration.',
+  },
 ]
 
 export function resolveHatsuInteraction(
@@ -67,14 +67,4 @@ export function resolveHatsuInteraction(
   counter: HatsuCounter,
 ): HatsuInteraction | null {
   return INTERACTIONS.find((entry) => entry.effect === effect && entry.counter === counter) ?? null
-}
-
-function interaction(
-  effect: ArenaHatsuEffect,
-  counter: HatsuCounter,
-  outcome: HatsuInteraction['outcome'],
-  explanationFr: string,
-  explanationEn: string,
-): HatsuInteraction {
-  return { effect, counter, outcome, explanationFr, explanationEn }
 }

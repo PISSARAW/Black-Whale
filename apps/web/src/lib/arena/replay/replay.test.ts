@@ -10,7 +10,11 @@ describe('deterministic Arena replay', () => {
   it('reconstructs player commands, movement and AI to the same checksum', () => {
     const setup = initialCombatState().terrain
     const combatSetup = { playerAt: [0, 0] as const, opponentAt: [7, 0] as const, terrain: setup }
-    const recorder = new ArenaRecorder(combatSetup, 'artillery', 'master')
+    const recorder = new ArenaRecorder({
+      setup: combatSetup,
+      doctrine: 'artillery',
+      difficulty: 'master',
+    })
     let state = initialCombatState(combatSetup)
 
     for (let tick = 0; tick < 180 && state.outcome === 'playing'; tick += 1) {
@@ -29,7 +33,7 @@ describe('deterministic Arena replay', () => {
         recorder.record(action)
         state = combatReducer(state, action)
       }
-      state = advanceArena(state, 1 / 60, 'artillery', 'master')
+      state = advanceArena(state, 1 / 60, { doctrine: 'artillery', difficulty: 'master' })
       recorder.advance()
     }
 

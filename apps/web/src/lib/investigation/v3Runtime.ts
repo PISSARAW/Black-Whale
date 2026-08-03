@@ -2,12 +2,20 @@ import type { Evidence, Hypothesis } from './case'
 import { freshKnowledgeLedger, recordClaim } from './knowledge'
 import { assessConclusion, type ConclusionAssessment } from './reasoning'
 
-export function assessHypothesesFromEvidence(
-  hypotheses: Hypothesis[],
-  evidence: Evidence[],
-  discoveredEvidenceIds: Iterable<string>,
-  viewerId: string,
-): Record<string, ConclusionAssessment> {
+/** What the case holds, and how much of it this viewer has actually found. */
+export interface EvidenceAssessment {
+  hypotheses: Hypothesis[]
+  evidence: Evidence[]
+  discoveredEvidenceIds: Iterable<string>
+  viewerId: string
+}
+
+export function assessHypothesesFromEvidence({
+  hypotheses,
+  evidence,
+  discoveredEvidenceIds,
+  viewerId,
+}: EvidenceAssessment): Record<string, ConclusionAssessment> {
   const discovered = new Set(discoveredEvidenceIds)
   const ledger = evidence
     .filter((item) => discovered.has(item.id))

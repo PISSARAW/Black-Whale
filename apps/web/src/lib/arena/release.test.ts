@@ -20,7 +20,7 @@ describe('Arena V2 release matrix', () => {
             terrain: { id: terrain.id, footprint: terrain.footprint, walls: terrain.walls },
           })
           for (let frame = 0; frame < 60 * 20 && state.outcome === 'playing'; frame += 1) {
-            state = advanceArena(state, 1 / 60, doctrine, difficulty)
+            state = advanceArena(state, 1 / 60, { doctrine, difficulty })
           }
           for (const fighter of [state.player, state.opponent]) {
             expect(fighter.position.every(Number.isFinite)).toBe(true)

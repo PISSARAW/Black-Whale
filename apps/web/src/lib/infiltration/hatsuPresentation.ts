@@ -18,13 +18,20 @@ export function infiltrationHatsuManifestations(state: InfiltrationState): Hatsu
     ? state.witnesses.find((candidate) => candidate.id === effect.witnessId)
     : undefined
   const spaceId = effect?.spaceId ?? state.player.spaceId ?? state.extractionSpaceId
-  const carried = (
-    id: string,
-    kind: ApparitionKind,
-    colour: number,
-    size: number,
+  /** A manifestation that travels with the player, wherever they stand. */
+  const carried = ({
+    id,
+    kind,
+    colour,
+    size,
     stage = 0,
-  ): HatsuManifestation => ({ id, kind, colour, size, stage, spaceId, at: state.player.position })
+  }: {
+    id: string
+    kind: ApparitionKind
+    colour: number
+    size: number
+    stage?: number
+  }): HatsuManifestation => ({ id, kind, colour, size, stage, spaceId, at: state.player.position })
 
   if (state.hatsu.scout?.active) {
     return [
@@ -41,9 +48,9 @@ export function infiltrationHatsuManifestations(state: InfiltrationState): Hatsu
   if (!effect) return []
   switch (effect.kind) {
     case 'forged-surface':
-      return [carried('texture-surprise', 'paper', 0xe7c58c, 0.22)]
+      return [carried({ id: 'texture-surprise', kind: 'paper', colour: 0xe7c58c, size: 0.22 })]
     case 'disguise-mask':
-      return [carried('needle-people', 'mark', 0xa989d8, 0.38)]
+      return [carried({ id: 'needle-people', kind: 'mark', colour: 0xa989d8, size: 0.38 })]
     case 'attached-owl':
       return witness
         ? [
@@ -94,15 +101,23 @@ export function infiltrationHatsuManifestations(state: InfiltrationState): Hatsu
           ]
         : []
     case 'dowsing-result':
-      return [carried('dowsing-chain', 'chain', 0xb9e9ff, 0.13)]
+      return [carried({ id: 'dowsing-chain', kind: 'chain', colour: 0xb9e9ff, size: 0.13 })]
     case 'cleaned':
-      return [carried('blinky', 'hoover', 0x4e5664, 0.5, Number(effect.payload ?? 0))]
+      return [
+        carried({
+          id: 'blinky',
+          kind: 'hoover',
+          colour: 0x4e5664,
+          size: 0.5,
+          stage: Number(effect.payload ?? 0),
+        }),
+      ]
     case 'gum-anchor':
-      return [carried('bungee-gum', 'gum', 0xf077b7, 0.9)]
+      return [carried({ id: 'bungee-gum', kind: 'gum', colour: 0xf077b7, size: 0.9 })]
     case 'borrowed-page':
-      return [carried('skill-hunter', 'book', 0x7d2d42, 0.18)]
+      return [carried({ id: 'skill-hunter', kind: 'book', colour: 0x7d2d42, size: 0.18 })]
     case 'loaned-ability':
-      return [carried('stealth-dolphin', 'fish', 0x63d8ef, 0.35)]
+      return [carried({ id: 'stealth-dolphin', kind: 'fish', colour: 0x63d8ef, size: 0.35 })]
     default:
       return []
   }

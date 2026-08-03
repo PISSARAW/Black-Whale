@@ -137,7 +137,11 @@
 
   let opponentDoctrine = $state<OpponentDoctrine>(initialDoctrine)
   let difficulty = $state<ArenaDifficulty>(initialDifficulty)
-  let recorder = new ArenaRecorder(combatSetup(), initialDoctrine, initialDifficulty)
+  let recorder = new ArenaRecorder({
+    setup: combatSetup(),
+    doctrine: initialDoctrine,
+    difficulty: initialDifficulty,
+  })
   let lastReplay = $state<ArenaReplay | null>(null)
   let stats = $state<ArenaStats>({ ...EMPTY_STATS })
   let bestGrade = $state<string | null>(null)
@@ -409,7 +413,7 @@
     while (owed >= DT && game.outcome === 'playing') {
       owed -= DT
       const previous = game.lastEvent
-      game = advanceArena(game, DT, opponentDoctrine, difficulty)
+      game = advanceArena(game, DT, { doctrine: opponentDoctrine, difficulty })
       recorder.advance()
       if (game.lastEvent !== previous && game.lastEvent) animateExchange(game.lastEvent)
       finishRun()
@@ -430,7 +434,11 @@
     stats = { ...EMPTY_STATS }
     graded = false
     lastReplay = null
-    recorder = new ArenaRecorder(combatSetup(), opponentDoctrine, difficulty)
+    recorder = new ArenaRecorder({
+      setup: combatSetup(),
+      doctrine: opponentDoctrine,
+      difficulty,
+    })
     owed = 0
     last = 0
   }

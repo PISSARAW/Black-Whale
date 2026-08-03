@@ -54,11 +54,16 @@ export function scenarioDoctrineForFaction(
   return config.doctrine
 }
 
+/** What the faction can see of the board when its objective is scored. */
+export interface ScenarioStanding {
+  characterLocations: readonly (string | undefined)[]
+  confirmedHostiles: number
+  scenario?: StrategyScenarioV2
+}
+
 export function evaluateScenarioObjective(
   factionId: string,
-  characterLocations: readonly (string | undefined)[],
-  confirmedHostiles: number,
-  scenario = ACTIVE_SCENARIO,
+  { characterLocations, confirmedHostiles, scenario = ACTIVE_SCENARIO }: ScenarioStanding,
 ): StrategyObjective {
   const config = scenarioFactionConfig(factionId, scenario)
   if (!config) throw new Error(`Faction missing from scenario: ${factionId}`)

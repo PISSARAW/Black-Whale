@@ -1761,7 +1761,7 @@
           turns = root
         }
 
-        styleNenCreature(THREE, root, seen.kind, seen.size)
+        styleNenCreature(THREE, root, { kind: seen.kind, size: seen.size })
 
         return {
           key: '',
@@ -4034,13 +4034,11 @@
         camera.rotateX(pitch)
         camera.rotateZ(bob.roll)
         {
-          nenAura.update(
-            effectiveNen,
-            camera,
+          nenAura.update(effectiveNen, camera, {
             ground,
-            now / 1000,
-            renderTarget?.depthTexture ?? undefined,
-          )
+            seconds: now / 1000,
+            depthTexture: renderTarget?.depthTexture ?? undefined,
+          })
           nenAura.syncShu(
             effectiveNen.shu.flatMap((id) => {
               const solid = solidById(ship, world, id)

@@ -32,7 +32,7 @@
     }
     const marker = `black-whale:arena-profile-recorded:${replay.checksum}`
     if (!sessionStorage.getItem(marker)) {
-      profile = recordArenaResult(profile, replay, challengeId, result)
+      profile = recordArenaResult(profile, { replay, challengeId, result })
       saveArenaProfile(localStorage, profile)
       sessionStorage.setItem(marker, '1')
     }

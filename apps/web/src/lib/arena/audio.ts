@@ -3,7 +3,15 @@ import type { HatsuProfile } from '../nen/hatsuRegistry'
 import { HATSU_VISUAL_SIGNATURE_BY_KIND } from '../nen/hatsuRegistry'
 import { hatsuAudioGraph } from '$lib/audio/ambient'
 
-function pulse(frequency: number, duration: number, gain: number, type: OscillatorType) {
+/** One decaying tone. Named fields: four positional numbers say nothing. */
+interface Pulse {
+  frequency: number
+  duration: number
+  gain: number
+  type: OscillatorType
+}
+
+function pulse({ frequency, duration, gain, type }: Pulse) {
   const graph = hatsuAudioGraph()
   if (!graph) return
   const audio = graph.context
@@ -24,9 +32,15 @@ function pulse(frequency: number, duration: number, gain: number, type: Oscillat
 
 export function playArenaImpact(impact: Impact) {
   if (impact === 'miss') return
-  if (impact === 'blocked') return pulse(180, 0.12, 0.025, 'triangle')
-  if (impact === 'ko') return pulse(62, 0.7, 0.06, 'sawtooth')
-  pulse(impact === 'clean' ? 110 : 82, impact === 'clean' ? 0.2 : 0.38, 0.045, 'square')
+  if (impact === 'blocked')
+    return pulse({ frequency: 180, duration: 0.12, gain: 0.025, type: 'triangle' })
+  if (impact === 'ko') return pulse({ frequency: 62, duration: 0.7, gain: 0.06, type: 'sawtooth' })
+  pulse({
+    frequency: impact === 'clean' ? 110 : 82,
+    duration: impact === 'clean' ? 0.2 : 0.38,
+    gain: 0.045,
+    type: 'square',
+  })
 }
 
 export function playArenaHatsu(effect: ArenaHatsuEffect, profile?: HatsuProfile | null) {
@@ -38,11 +52,22 @@ export function playArenaHatsu(effect: ArenaHatsuEffect, profile?: HatsuProfile 
     enhance: 310,
   }
   if (!profile)
-    return pulse(frequencies[effect], 0.55, 0.04, effect === 'restore' ? 'sine' : 'sawtooth')
+    return pulse({
+      frequency: frequencies[effect],
+      duration: 0.55,
+      gain: 0.04,
+      type: effect === 'restore' ? 'sine' : 'sawtooth',
+    })
   const sound = arenaHatsuAudioSignature(profile)
-  pulse(sound.base, sound.duration, sound.gain, sound.wave)
+  pulse({ frequency: sound.base, duration: sound.duration, gain: sound.gain, type: sound.wave })
   window.setTimeout(
-    () => pulse(sound.accent, sound.duration * 0.7, 0.025, sound.accentWave),
+    () =>
+      pulse({
+        frequency: sound.accent,
+        duration: sound.duration * 0.7,
+        gain: 0.025,
+        type: sound.accentWave,
+      }),
     sound.delay,
   )
 }

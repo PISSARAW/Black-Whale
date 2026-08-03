@@ -61,12 +61,18 @@ export function saveArenaProfile(storage: ProfileStorage, profile: ArenaProfile)
   storage.setItem(ARENA_PROFILE_KEY, JSON.stringify(profile))
 }
 
+/** The bout being recorded: what was played, against which challenge, and how it went. */
+export interface ArenaBout {
+  replay: ArenaReplay
+  challengeId: string | null
+  result: ChallengeResult | null
+  /** Injectable so a test can pin the timestamp. */
+  now?: Date
+}
+
 export function recordArenaResult(
   profile: ArenaProfile,
-  replay: ArenaReplay,
-  challengeId: string | null,
-  result: ChallengeResult | null,
-  now = new Date(),
+  { replay, challengeId, result, now = new Date() }: ArenaBout,
 ): ArenaProfile {
   const mastery = { ...profile.mastery }
   for (const command of replay.commands) {

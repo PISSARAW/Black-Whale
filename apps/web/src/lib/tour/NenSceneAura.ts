@@ -326,6 +326,13 @@ const enFragmentShader = `
 
 export type NenObjectInteraction = 'sense' | 'strike' | 'pressure' | 'channel'
 
+/** Where the walker stands and when, plus the depth buffer to read against. */
+export interface NenAuraFrame {
+  ground: number
+  seconds: number
+  depthTexture?: Three.DepthTexture
+}
+
 export class NenSceneAura {
   readonly #root: Three.Group
   readonly #world: Three.Group
@@ -646,13 +653,8 @@ export class NenSceneAura {
     this.#world.add(root)
   }
 
-  update(
-    state: NenTechniqueState,
-    camera: Three.PerspectiveCamera,
-    ground: number,
-    seconds: number,
-    depthTexture?: Three.DepthTexture,
-  ) {
+  update(state: NenTechniqueState, camera: Three.PerspectiveCamera, frame: NenAuraFrame) {
+    const { ground, seconds, depthTexture } = frame
     this.#seconds = seconds
     this.#root.position.copy(camera.position)
     this.#root.rotation.set(0, camera.rotation.y, 0)

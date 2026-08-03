@@ -35,11 +35,16 @@ export function knownObservations(memory: ActorMemory, subject: string): Observa
   return memory.observations.filter((item) => item.subject === subject)
 }
 
+/** One retelling: which record, to whom, when. */
+export interface Retelling {
+  observationId: string
+  receiverId: string
+  at: number
+}
+
 export function transmit(
   memory: ActorMemory,
-  observationId: string,
-  receiverId: string,
-  at: number,
+  { observationId, receiverId, at }: Retelling,
 ): Observation | null {
   const source = memory.observations.find((item) => item.id === observationId)
   if (!source) return null

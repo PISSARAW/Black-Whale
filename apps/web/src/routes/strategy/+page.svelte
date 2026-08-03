@@ -165,7 +165,12 @@
   let objective = $derived(simStore.objective)
   onMount(() => {
     if (data.baseState) {
-      simStore.init(data.baseState, data.factions, data.locations, data.scenario ?? undefined)
+      simStore.init({
+        baseState: data.baseState,
+        factions: data.factions,
+        locations: data.locations,
+        scenario: data.scenario ?? undefined,
+      })
       ready = true
       const saved = decodeStrategySave(
         localStorage.getItem(STRATEGY_SAVE_KEY) ?? localStorage.getItem(LEGACY_STRATEGY_SAVE_KEY),
@@ -219,7 +224,12 @@
     const factionId = playerFactionId
     localStorage.removeItem(STRATEGY_SAVE_KEY)
     availableSave = null
-    simStore.init(data.baseState, data.factions, data.locations, data.scenario ?? undefined)
+    simStore.init({
+      baseState: data.baseState,
+      factions: data.factions,
+      locations: data.locations,
+      scenario: data.scenario ?? undefined,
+    })
     selectFaction(factionId)
   }
 

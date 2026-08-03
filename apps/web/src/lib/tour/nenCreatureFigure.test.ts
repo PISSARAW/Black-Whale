@@ -19,7 +19,7 @@ describe('Nen creature figure', () => {
     const root = new Group()
     root.add(new Mesh(new BoxGeometry(1, 1, 1), new MeshBasicMaterial({ color: 0xffffff })))
 
-    styleNenCreature(THREE, root, 'cat', 1)
+    styleNenCreature(THREE, root, { kind: 'cat', size: 1 })
 
     expect(root.getObjectByName('nen-creature-ink')).toBeTruthy()
     expect(root.getObjectByName('nen-creature-ground')).toBeTruthy()
@@ -29,7 +29,7 @@ describe('Nen creature figure', () => {
     const root = new Group()
     root.add(new Mesh(new BoxGeometry(1, 1, 1), new MeshBasicMaterial()))
 
-    styleNenCreature(THREE, root, 'game-card', 1)
+    styleNenCreature(THREE, root, { kind: 'game-card', size: 1 })
 
     expect(root.getObjectByName('nen-creature-ink')).toBeUndefined()
   })

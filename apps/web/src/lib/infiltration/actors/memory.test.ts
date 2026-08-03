@@ -27,7 +27,9 @@ describe('actor memory', () => {
       value: 'intruder',
       certainty: 70,
     })
-    expect(transmit(memory, 'trace-1', 'steward', 4)).toMatchObject({
+    expect(
+      transmit(memory, { observationId: 'trace-1', receiverId: 'steward', at: 4 }),
+    ).toMatchObject({
       sourceId: 'trace-1',
       observerId: 'steward',
       certainty: 58,

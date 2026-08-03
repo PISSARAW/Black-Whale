@@ -18,7 +18,10 @@ export function stateAtTick(replay: ArenaReplay, requestedTick: number) {
       state = combatReducer(state, replay.commands[commandIndex].action)
       commandIndex += 1
     }
-    state = advanceArena(state, 1 / replay.tickRate, replay.doctrine, replay.difficulty)
+    state = advanceArena(state, 1 / replay.tickRate, {
+      doctrine: replay.doctrine,
+      difficulty: replay.difficulty,
+    })
   }
   return state
 }

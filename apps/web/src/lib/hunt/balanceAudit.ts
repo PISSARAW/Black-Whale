@@ -31,51 +31,45 @@ export function auditBalance(
 ): BalanceIssue[] {
   const issues: BalanceIssue[] = []
   for (const cell of cells) {
-    const id = `${cell.terrain}/${cell.hatsu}/${cell.hunter}`
-    check(
-      issues,
-      id,
-      'runs',
-      cell.runs,
+    const cellId = `${cell.terrain}/${cell.hatsu}/${cell.hunter}`
+    // One entry per measurement, so the check itself is a single condition and
+    // the table reads as the balance contract it is.
+    const checks: BalanceIssue[] = [
+      {
+        cell: cellId,
+        metric: 'runs',
+        actual: cell.runs,
+        expected: `>= ${thresholds.minimumRuns}`,
+      },
+      {
+        cell: cellId,
+        metric: 'winRate',
+        actual: cell.winRate,
+        expected: `${thresholds.minimumWinRate}..${thresholds.maximumWinRate}`,
+      },
+      {
+        cell: cellId,
+        metric: 'duration',
+        actual: cell.averageDuration,
+        expected: `${thresholds.minimumDuration}..${thresholds.maximumDuration}`,
+      },
+      {
+        cell: cellId,
+        metric: 'auraSpendGap',
+        actual: cell.averageAuraSpendGap,
+        expected: `±${thresholds.maximumAuraSpendGap}`,
+      },
+    ]
+    const passes = [
       cell.runs >= thresholds.minimumRuns,
-      `>= ${thresholds.minimumRuns}`,
-    )
-    check(
-      issues,
-      id,
-      'winRate',
-      cell.winRate,
       cell.winRate >= thresholds.minimumWinRate && cell.winRate <= thresholds.maximumWinRate,
-      `${thresholds.minimumWinRate}..${thresholds.maximumWinRate}`,
-    )
-    check(
-      issues,
-      id,
-      'duration',
-      cell.averageDuration,
       cell.averageDuration >= thresholds.minimumDuration &&
         cell.averageDuration <= thresholds.maximumDuration,
-      `${thresholds.minimumDuration}..${thresholds.maximumDuration}`,
-    )
-    check(
-      issues,
-      id,
-      'auraSpendGap',
-      cell.averageAuraSpendGap,
       Math.abs(cell.averageAuraSpendGap) <= thresholds.maximumAuraSpendGap,
-      `±${thresholds.maximumAuraSpendGap}`,
-    )
+    ]
+    checks.forEach((issue, index) => {
+      if (!passes[index]) issues.push(issue)
+    })
   }
   return issues
-}
-
-function check(
-  issues: BalanceIssue[],
-  cell: string,
-  metric: string,
-  actual: number,
-  passes: boolean,
-  expected: string,
-) {
-  if (!passes) issues.push({ cell, metric, actual, expected })
 }

@@ -136,7 +136,21 @@ export function transitionNen<Zone extends string>(
 
   const blocked = needsAura(state)
   if (blocked) return blocked
+  return transitionWithAura(state, action)
+}
 
+/**
+ * The half of the vocabulary that presupposes aura already flowing.
+ *
+ * Split out because the two halves answer different questions: everything
+ * above decides whether aura is up at all, everything here shapes aura that is
+ * already up. Read together they formed one function wide enough that adding a
+ * technique meant re-reading all of it.
+ */
+function transitionWithAura<Zone extends string>(
+  state: NenTechniqueState<Zone>,
+  action: Exclude<NenTechniqueAction<Zone>, { type: 'ZETSU' | 'TEN' | 'REN' | 'ON' }>,
+): NenTransition<Zone> {
   if (action.type === 'IN') return { state: { ...state, in: action.on }, accepted: true }
   if (action.type === 'GYO') return { state: { ...state, gyo: action.on }, accepted: true }
   if (action.type === 'EN') {

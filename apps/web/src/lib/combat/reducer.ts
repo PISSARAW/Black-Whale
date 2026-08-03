@@ -65,16 +65,7 @@ export function combatReducer(state: CombatState, action: CombatAction): CombatS
   if (action.type === 'FEINT')
     return replace(state, action.side, feint(state[action.side], action.zone))
   if (action.type === 'PREPARE_STRIKE') return prepareStrike(state, action.side, action.zone)
-  if (action.type === 'HATSU')
-    return castHatsu(
-      state,
-      action.side,
-      action.effect,
-      action.zone,
-      action.hatsuId,
-      action.targetAt,
-      action.cost,
-    )
+  if (action.type === 'HATSU') return castHatsu(state, action)
   if (action.type === 'STRIKE') {
     return strike({ state, side: action.side, zone: action.zone, technique: 'strike' })
   }
@@ -183,14 +174,19 @@ function move(fighter: FighterState, rival: FighterState, context: TickContext):
   return { ...fighter, position: resolved }
 }
 
+/** The whole of a HATSU action, which is what this reads anyway. */
+interface HatsuCast {
+  side: CombatSide
+  effect: ArenaHatsuEffect
+  zone: BodyZone
+  hatsuId?: string
+  targetAt?: Vec2
+  cost?: number
+}
+
 function castHatsu(
   state: CombatState,
-  side: CombatSide,
-  effect: ArenaHatsuEffect,
-  zone: BodyZone,
-  hatsuId?: string,
-  targetAt?: Vec2,
-  requestedCost?: number,
+  { side, effect, zone, hatsuId, targetAt, cost: requestedCost }: HatsuCast,
 ): CombatState {
   const fighter = state[side]
   const sequenceCost =
@@ -253,7 +249,7 @@ function castHatsu(
     }
   }
 
-  const specialized = blackWhaleHatsu(current, side, zone, hatsuId, paid)
+  const specialized = blackWhaleHatsu(current, { side, zone, hatsuId, paid })
   if (specialized) return specialized
 
   if (effect === 'bind') {
@@ -288,12 +284,17 @@ function castHatsu(
   })
 }
 
+/** The named contracts, resolved after the cost has already been taken. */
+interface BlackWhaleCast {
+  side: CombatSide
+  zone: BodyZone
+  hatsuId: string | undefined
+  paid: FighterState
+}
+
 function blackWhaleHatsu(
   state: CombatState,
-  side: CombatSide,
-  zone: BodyZone,
-  hatsuId: string | undefined,
-  paid: FighterState,
+  { side, zone, hatsuId, paid }: BlackWhaleCast,
 ): CombatState | null {
   if (!hatsuId) return null
   const rivalSide = otherSide(side)
@@ -577,12 +578,12 @@ function strike(request: StrikeRequest): CombatState {
     feint: null,
   }
   const connected = result.event.impact !== 'miss' && result.event.impact !== 'blocked'
-  const pushed = applyPush(
-    result.attacker,
-    result.defender,
-    result.event.impact,
-    state.terrain.walls,
-  )
+  const pushed = applyPush({
+    attacker: result.attacker,
+    defender: result.defender,
+    impact: result.event.impact,
+    walls: state.terrain.walls,
+  })
   const defender = connected ? { ...pushed, intent: null } : pushed
   const outcome = outcomeOf(side, scored, defender)
   return ringOut({
@@ -664,12 +665,14 @@ function prepareStrike(state: CombatState, side: CombatSide, zone: BodyZone): Co
   })
 }
 
-function applyPush(
-  attacker: FighterState,
-  defender: FighterState,
-  impact: Impact,
-  walls: CombatState['terrain']['walls'],
-): FighterState {
+interface Push {
+  attacker: FighterState
+  defender: FighterState
+  impact: Impact
+  walls: CombatState['terrain']['walls']
+}
+
+function applyPush({ attacker, defender, impact, walls }: Push): FighterState {
   const distance = impact === 'knockdown' ? 1.6 : impact === 'critical' ? 0.75 : 0
   if (distance === 0) return defender
   const direction = normalise([

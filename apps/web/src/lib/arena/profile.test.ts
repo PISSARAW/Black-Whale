@@ -11,7 +11,7 @@ function replay() {
     opponentAt: terrain.spawns[1],
     terrain: { id: terrain.id, footprint: terrain.footprint, walls: terrain.walls },
   }
-  const recorder = new ArenaRecorder(setup, 'counter', 'fighter')
+  const recorder = new ArenaRecorder({ setup, doctrine: 'counter', difficulty: 'fighter' })
   recorder.record({ type: 'MODE', side: 'player', mode: 'ren' })
   recorder.record({ type: 'RYU', side: 'player', attackShare: 0.7 })
   return recorder.finish(initialCombatState(setup))
@@ -31,15 +31,15 @@ describe('Arena V3 profile', () => {
   })
 
   it('learns only techniques actually issued and keeps the best grade', () => {
-    const first = recordArenaResult(freshArenaProfile(), replay(), 'ryu', {
-      complete: true,
-      satisfied: [true],
-      grade: 'A',
+    const first = recordArenaResult(freshArenaProfile(), {
+      replay: replay(),
+      challengeId: 'ryu',
+      result: { complete: true, satisfied: [true], grade: 'A' },
     })
-    const second = recordArenaResult(first, replay(), 'ryu', {
-      complete: false,
-      satisfied: [false],
-      grade: 'C',
+    const second = recordArenaResult(first, {
+      replay: replay(),
+      challengeId: 'ryu',
+      result: { complete: false, satisfied: [false], grade: 'C' },
     })
     expect(second.mastery.ren).toBe(2)
     expect(second.mastery.ryu).toBe(2)

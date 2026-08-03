@@ -15,12 +15,17 @@ export interface HatsuResolution extends InvestigationHatsuUse {
   missingEvidenceIds: string[]
 }
 
+/** Who is being questioned with what, under which case rules. */
+export interface InvestigationHatsuAttempt {
+  subjectId: string
+  rules: InvestigationHatsuRule[]
+  context: HatsuInvestigationContext
+  locale?: Locale
+}
+
 export function resolveInvestigationHatsu(
   profile: HatsuProfile,
-  subjectId: string,
-  rules: InvestigationHatsuRule[],
-  context: HatsuInvestigationContext,
-  locale: Locale = 'en',
+  { subjectId, rules, context, locale = 'en' }: InvestigationHatsuAttempt,
 ): HatsuResolution {
   const rule = rules.find(
     (candidate) =>

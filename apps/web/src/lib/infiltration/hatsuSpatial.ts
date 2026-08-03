@@ -16,11 +16,16 @@ export const deployScout = (position: Vec2, spaceId: string): LittleEyeScout => 
   noticed: false,
   active: true,
 })
+/** Where the scout is being sent, and whether a guard saw it get there. */
+export interface ScoutMove {
+  position: Vec2
+  spaceId: string
+  visibleToGuard: boolean
+}
+
 export function moveScout(
   scout: LittleEyeScout,
-  position: Vec2,
-  spaceId: string,
-  visibleToGuard: boolean,
+  { position, spaceId, visibleToGuard }: ScoutMove,
 ): LittleEyeScout {
   if (!scout.active) return scout
   const distance = Math.hypot(position[0] - scout.position[0], position[1] - scout.position[1])
@@ -44,12 +49,21 @@ export function inspectForgery(
   return hasAura ? 'suspicious' : 'accepted'
 }
 
-export function recognizesDisguise(
-  knowsModel: boolean,
-  behaviouralMismatch: boolean,
-  usesGyo: boolean,
-  active: boolean,
-): boolean {
+/** What the observer brings to the encounter. */
+export interface DisguiseEncounter {
+  knowsModel: boolean
+  behaviouralMismatch: boolean
+  usesGyo: boolean
+  /** False once the disguise has lapsed, at which point recognition is certain. */
+  active: boolean
+}
+
+export function recognizesDisguise({
+  knowsModel,
+  behaviouralMismatch,
+  usesGyo,
+  active,
+}: DisguiseEncounter): boolean {
   if (!active) return true
   return (knowsModel && behaviouralMismatch) || usesGyo
 }

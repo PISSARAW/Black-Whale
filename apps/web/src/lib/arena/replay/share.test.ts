@@ -12,7 +12,7 @@ describe('Arena replay URL sharing', () => {
       opponentAt: terrain.spawns[1],
       terrain: { id: terrain.id, footprint: terrain.footprint, walls: terrain.walls },
     }
-    const recorder = new ArenaRecorder(setup, 'deceiver', 'master')
+    const recorder = new ArenaRecorder({ setup, doctrine: 'deceiver', difficulty: 'master' })
     const replay = recorder.finish(initialCombatState(setup))
     const url = replayShareUrl(replay, 'https://example.test/arena?terrain=tier-2-screening-room')
     expect(url).toContain('?terrain=tier-2-screening-room#replay=')

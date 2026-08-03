@@ -11,7 +11,7 @@ describe('Arena balance smoke simulations', () => {
       it(`${doctrine} remains finite and referee-safe on ${difficulty}`, () => {
         let state = initialCombatState()
         for (let frame = 0; frame < 60 * 45 && state.outcome === 'playing'; frame += 1) {
-          state = advanceArena(state, 1 / 60, doctrine, difficulty)
+          state = advanceArena(state, 1 / 60, { doctrine, difficulty })
         }
 
         for (const fighter of [state.player, state.opponent]) {

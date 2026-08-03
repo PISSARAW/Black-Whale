@@ -63,6 +63,14 @@ function strategyMsg(locale: Locale) {
 }
 
 export class StrategyInputError extends Error {}
+
+/** Everything `init` needs to start a campaign. */
+export interface StrategySetup {
+  baseState: WorldState
+  factions: StrategyFaction[]
+  locations: StrategyLocation[]
+  scenario?: StrategyScenarioV2
+}
 export function createSimulationStore() {
   let engine = new SimulationEngine()
   let branch = $state<WorldBranch | null>(null)
@@ -86,12 +94,13 @@ export function createSimulationStore() {
   let hatsuCues = $state<StrategyHatsuCue[]>([])
   let hatsuCueSequence = 0
 
-  function init(
-    baseState: WorldState,
-    loadedFactions: StrategyFaction[],
-    loadedLocations: StrategyLocation[],
-    scenario: StrategyScenarioV2 = ACTIVE_SCENARIO,
-  ) {
+  /** Everything a fresh campaign needs, in one argument. */
+  function init({
+    baseState,
+    factions: loadedFactions,
+    locations: loadedLocations,
+    scenario = ACTIVE_SCENARIO,
+  }: StrategySetup) {
     activeScenario = scenario
     engine = new SimulationEngine()
     const newBranch = engine.createBranch(
@@ -243,12 +252,11 @@ export function createSimulationStore() {
     const confirmedHostiles = Object.values(intel).filter(
       (sighting) => sighting.certainty === 'CONFIRMED' && !friendlyIds.has(sighting.entityId),
     ).length
-    return evaluateScenarioObjective(
-      selectedFactionId,
-      friendlyLocations,
+    return evaluateScenarioObjective(selectedFactionId, {
+      characterLocations: friendlyLocations,
       confirmedHostiles,
-      activeScenario,
-    )
+      scenario: activeScenario,
+    })
   }
 
   function endTurn(

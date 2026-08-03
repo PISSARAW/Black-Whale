@@ -229,7 +229,15 @@ function challengeFor(
         (state.hatsu.disguiseIdentity === 'security' && witness.id === 'guard') ||
         (state.hatsu.disguiseIdentity === 'maintenance' && witness.id === 'steward')
       const mismatch = state.player.spaceId === state.objectiveSpaceId || state.player.speed > 3
-      if (!recognizesDisguise(knowsModel, mismatch, witness.usesEn, true)) return false
+      if (
+        !recognizesDisguise({
+          knowsModel,
+          behaviouralMismatch: mismatch,
+          usesGyo: witness.usesEn,
+          active: true,
+        })
+      )
+        return false
     }
     return (
       Math.hypot(

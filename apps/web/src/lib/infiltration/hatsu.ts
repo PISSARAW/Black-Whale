@@ -1,9 +1,8 @@
 import { hatsuById, type HatsuProfile } from '../nen/hatsuRegistry'
 import type { InfiltrationState } from './state'
 import { createTrace } from './traces'
-import { deployScout, moveScout } from './hatsuSpatial'
+import { deployScout, moveScout, type ScoutMove } from './hatsuSpatial'
 import type { CoverRole } from './social/cover'
-import type { Vec2 } from '../tour/types'
 
 export type InfiltrationHatsuId =
   | 'little-eye'
@@ -382,18 +381,14 @@ export function configureHatsu(
   }
 }
 
-export function moveLittleEye(
-  state: InfiltrationState,
-  position: Vec2,
-  spaceId: string,
-  visibleToGuard: boolean,
-): InfiltrationState {
+export function moveLittleEye(state: InfiltrationState, move: ScoutMove): InfiltrationState {
+  const { position, spaceId, visibleToGuard } = move
   if (
     (state.hatsu.id !== 'little-eye' && state.hatsu.id !== 'biohazard-hinrigh') ||
     !state.hatsu.scout?.active
   )
     return state
-  const scout = moveScout(state.hatsu.scout, position, spaceId, visibleToGuard)
+  const scout = moveScout(state.hatsu.scout, move)
   return {
     ...state,
     authorConfirmed: state.authorConfirmed || spaceId === state.objectiveSpaceId,

@@ -23,11 +23,16 @@ export const OPPONENT_DOCTRINES: Record<
   deceiver: { name: 'Le Trompeur', hatsu: 'enhance' },
 }
 
+/** Who the opponent is and how sharply it plays. Both have defaults. */
+export interface ArenaOpponentOptions {
+  doctrine?: OpponentDoctrine
+  difficulty?: ArenaDifficulty
+}
+
 export function advanceArena(
   state: CombatState,
   dt: number,
-  doctrine: OpponentDoctrine = 'counter',
-  difficulty: ArenaDifficulty = 'fighter',
+  { doctrine = 'counter', difficulty = 'fighter' }: ArenaOpponentOptions = {},
 ): CombatState {
   const ticked = rememberObservedStrike(combatReducer(state, { type: 'TICK', dt }))
   if (ticked.outcome !== 'playing') return ticked

@@ -47,8 +47,14 @@ const git = (args: string[]) =>
  * cannot add an entry in one commit and be judged only on the next. Falls back
  * to the parent commit when `main` is not fetched, and throws when neither
  * exists — an unverifiable ratchet is a ratchet that is not holding.
+ *
+ * `BW_RATCHET_BASE` names another ref instead, which is how the check itself
+ * gets exercised: run it against HEAD with an entry added by hand and it must
+ * go red.
  */
 function baselineRef(): string {
+  const forced = process.env.BW_RATCHET_BASE
+  if (forced) return git(['rev-parse', forced]).trim()
   for (const candidate of ['origin/main', 'main']) {
     try {
       return git(['merge-base', 'HEAD', candidate]).trim()

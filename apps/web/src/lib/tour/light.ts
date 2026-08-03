@@ -150,6 +150,32 @@ export const MAX_SPACING = 22
 /** What the brightest lamp on the ship burns at, linear, above white. */
 export const LAMP_PEAK = 2.4
 
+/**
+ * The drop from a fitting to the floor that the pools are worth their full value
+ * at, in metres.
+ *
+ * A shade over the 4,65 m of a standard deck, so an ordinary room — a cabin, a
+ * corridor, a ward — takes no height penalty at all and only the genuinely tall
+ * spaces do: the King's seven metres, the atria, the banquet hall. That is the
+ * one thing height is allowed to say. It may not say which deck you are on,
+ * which is what it used to say, and backwards. See `lampFalloff`.
+ */
+export const REFERENCE_DROP = 5
+
+/**
+ * What a lamp is worth directly under itself, against the flat wash the bake was
+ * tuned on.
+ *
+ * A single exposure constant and nothing more. `lampFalloff` is scale-free now,
+ * so a fine grid throws more pools of proportionally smaller area and the flux
+ * over a floor no longer depends on the spacing at all — which is right, and
+ * which arrives about twice as bright as the old slant falloff did. This is
+ * what puts it back: the mean baked shade over the ship's 318 spaces comes out
+ * at 0,775 against the 0,777 it read before, so nothing about the ship's overall
+ * exposure moves and only its *evenness* does.
+ */
+export const LAMP_THROW = 0.55
+
 /** How lit a room is, everything the bake and the lamp quads both need. */
 export interface Lamplight {
   /** How far apart the lamps hang, in metres. */
@@ -261,10 +287,30 @@ export function lamplightOf(space: Space, tier: Tier): Lamplight {
  * closest: a fine grid is a short reach, and a short reach was what a tall room
  * was punished by.
  *
- * So the pool is a disc of radius `reach` on the floor, at any ceiling height,
- * and the falloff runs along the slant — the same fraction of the way out, down
- * a longer line. A high room is still a dimmer room, which is true of a lamp and
- * true of this ship; it is no longer an unlit one.
+ * So the pool is a disc of radius `reach` on the floor, at any ceiling height.
+ *
+ * That much was the first half of the correction, and it left the second half
+ * undone: the *cut-off* moved onto the plan but the *shape* went on running down
+ * the slant, `1 - hypot(plan, drop) / hypot(reach, drop)`. The drop is about
+ * 4,65 m on every deck of this ship, while the reach runs from 18 m in the hold
+ * to 7,9 m on Tier 1 — so the drop ate 23 % of the range at the bottom of the
+ * ship and 59 % of it at the top, and what a lamp was worth at its own foot came
+ * out 0,242 on Tier 1 against 0,601 on Tier 5. The ladder read upside down again,
+ * two and a half times over, for exactly the old reason in a new place: Tier 1
+ * hangs its lamps closest, and a close lamp had the least range to spend.
+ *
+ * So the shape is on the plan alone and scale-free — `(1 - plan / reach)²`,
+ * which integrated over a grid of pitch `spacing` gives the same flux per square
+ * metre whatever the pitch is, because the reach follows the pitch. What decides
+ * that one deck is darker than another is `power` and nothing else, which is
+ * what the deck table was written to be.
+ *
+ * Height is then its own term and answers to nothing but itself: inverse-square,
+ * which is what a point source does, clamped so that everything at or under
+ * `REFERENCE_DROP` is worth its full value. An ordinary room takes no penalty; a
+ * seven-metre royal ceiling takes about half. A high room is still a dimmer room,
+ * which is true of a lamp and true of this ship — it is no longer a lower-class
+ * one.
  *
  * That the cut-off is horizontal also settles what `RoomLight.pool`'s window of
  * cells could only claim before: a lamp out of range is out of range on the plan,
@@ -272,8 +318,9 @@ export function lamplightOf(space: Space, tier: Tier): Lamplight {
  */
 export function lampFalloff(plan: number, drop: number, reach: number): number {
   if (!(plan < reach)) return 0
-  const fall = 1 - Math.hypot(plan, drop) / Math.hypot(reach, drop)
-  return fall * fall
+  const spread = 1 - plan / reach
+  const height = Math.min(1, (REFERENCE_DROP / Math.max(drop, 0.5)) ** 2)
+  return spread * spread * height * LAMP_THROW
 }
 
 /**

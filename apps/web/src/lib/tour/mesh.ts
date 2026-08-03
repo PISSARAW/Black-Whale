@@ -351,8 +351,20 @@ const LIGHT = {
   floor: 0.85,
   ceiling: 0.55,
   wall: 0.7,
-  /** How far from a wall a floor is fully open, and how dark the crease is. */
+  /**
+   * How far from a wall a floor is fully open, and how dark the crease is.
+   *
+   * A ceiling on `openReach` and not a constant, because 2,4 m was picked in a
+   * hall and then charged to every room on the ship. A corridor four metres
+   * across is never more than two from a wall, so its *entire* floor took the
+   * corner discount where a hall takes it only at the edges — the darkness of a
+   * corner became the darkness of being in a corridor at all, which is not what
+   * ambient occlusion is for and not true of a lit passage. `RoomLight` narrows
+   * it to what the room itself can offer; see `openness`.
+   */
   openReach: 2.4,
+  /** Below this a room is a slot, not a corridor, and keeps the full crease. */
+  minOpenReach: 0.6,
   openFloor: 0.42,
   /** The band at the foot and head of a wall where it meets another surface. */
   crease: 1.1,
@@ -606,6 +618,18 @@ class RoomLight {
    */
   private readonly lamplight: Lamplight
 
+  /**
+   * How far from a wall *this* room is fully open, in metres.
+   *
+   * `LIGHT.openReach` capped by the room's own half-width, estimated at the
+   * lamps — they are the points of the room furthest from its walls by
+   * construction, being the centres of a grid laid inside it, so the widest of
+   * them is a free and close-enough inradius. A hall is unchanged at 2,4 m; a
+   * corridor four metres across gets 2 m, and reads open down its middle instead
+   * of creased from wall to wall.
+   */
+  private readonly openReach: number
+
   constructor(room: LitRoom) {
     const { footprint, floorY, ceilingY, provenance, lamplight, sky = [] } = room
     this.footprint = footprint
@@ -622,12 +646,15 @@ class RoomLight {
 
     const hang = fittingHeight(floorY, ceilingY)
     const { spacing } = lamplight
+    let inradius = 0
     for (const [x, z] of lampsOf(footprint, lamplight)) {
+      inradius = Math.max(inradius, distanceToBoundary([x, z], footprint))
       const key = cellKey(Math.round(x / spacing), Math.round(z / spacing))
       const held = this.cells.get(key)
       if (held) held.push([x, hang, z])
       else this.cells.set(key, [[x, hang, z]])
     }
+    this.openReach = Math.min(LIGHT.openReach, Math.max(LIGHT.minOpenReach, inradius))
   }
 
   /**
@@ -647,14 +674,17 @@ class RoomLight {
     const gx = Math.round(x / spacing)
     const gz = Math.round(z / spacing)
 
-    // A fitting in cell `i` is keyed `i + 1` — the cells are indexed by their
-    // centres — and one can be in reach from two cells away on that side and one
-    // on the other. Anything outside that window is beyond the reach by
-    // arithmetic, so the window is a shortcut and not an approximation. That is
-    // what `REACH_RATIO` is holding still: the reach follows the grid, so this
-    // window is right on a royal deck's 5,6 m grid and in the hold's 22 m one.
-    for (let i = gx - 1; i <= gx + 2; i++) {
-      for (let j = gz - 1; j <= gz + 2; j++) {
+    // Two cells either side, and the symmetry is the point. The window used to
+    // be `-1…+2`, which was right only while the lamps sat at a known phase in
+    // the ship's grid — `(i + 0.5) * spacing`, so a lamp's cell was always
+    // `i + 1`. `ceilingLamps` centres its grid on the room now, so a lamp lands
+    // anywhere in its cell and the window has to cover the rounding on both
+    // sides. It still is not an approximation: `REACH_RATIO` is 1,125, so two
+    // points within reach differ by at most 1,125 cells before rounding and at
+    // most 2 after it, on a royal deck's 5,6 m grid and in the hold's 22 m one
+    // alike.
+    for (let i = gx - 2; i <= gx + 2; i++) {
+      for (let j = gz - 2; j <= gz + 2; j++) {
         const held = this.cells.get(cellKey(i, j))
         if (!held) continue
         // Squared falloff, cut off at the reach rather than trailing to zero: a
@@ -715,9 +745,13 @@ class RoomLight {
    * pretend to be — but the thing it gets right is the thing that matters, which
    * is that corners are darker than the middle of the room, and that is what tells
    * the eye a room has a shape.
+   *
+   * Measured against `this.openReach` rather than the flat 2,4 m, so what it says
+   * is *this corner is darker than the middle of this room* and not *this room is
+   * narrow*. The middle of a corridor is the middle of a corridor.
    */
   private openness(x: number, z: number): number {
-    const reach = clamp01(distanceToBoundary([x, z], this.footprint) / LIGHT.openReach)
+    const reach = clamp01(distanceToBoundary([x, z], this.footprint) / this.openReach)
     return LIGHT.openFloor + (1 - LIGHT.openFloor) * reach ** 0.7
   }
 

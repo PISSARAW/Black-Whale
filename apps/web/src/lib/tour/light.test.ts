@@ -154,10 +154,50 @@ describe('the class grid', () => {
     // the hold, which is the worst case the ship actually holds.
     expect(under(royal, 7)).toBeLessThan(under(royal, 3))
     expect(under(royal, 7)).toBeGreaterThan(0)
-    // And the pool a lamp throws still narrows as the room gets taller rather
-    // than snapping shut: half the ceiling, more than half the light.
-    expect(under(royal, 3.5)).toBeGreaterThan(under(royal, 7) * 2)
+    // And the pool a lamp throws narrows as the room gets taller rather than
+    // snapping shut: the King's seven metres cost about half the light and not
+    // all of it. Inverse-square under the clamp, which is what a point source
+    // does; flat at and under `REFERENCE_DROP`, which is what keeps an ordinary
+    // room on an ordinary deck out of the argument entirely.
+    expect(under(royal, 7)).toBeLessThan(under(royal, 3.5) * 0.6)
+    expect(under(royal, 7)).toBeGreaterThan(under(royal, 3.5) * 0.4)
+    expect(under(royal, 3.5)).toBe(under(royal, 2))
     expect(hold.reach).toBeGreaterThan(royal.reach)
+  })
+
+  it('is worth the same under a lamp on every grid on the ship', () => {
+    // The heart of it, and the second half of a correction whose first half
+    // landed alone. The pool's *shape* used to run down the slant from the
+    // fitting, so the drop to the floor — about 4,65 m on every deck — ate 23 %
+    // of the hold's 18 m reach and 59 % of Tier 1's 7,9 m one. A lamp was worth
+    // 0,242 at its own foot on the royal deck against 0,601 in the hold: the
+    // ladder upside down, two and a half times over, and for the old reason in
+    // a new place — Tier 1 hangs its lamps closest, and a close lamp had the
+    // least range to spend.
+    //
+    // The shape is scale-free now. What one lamp gives directly under itself is
+    // the same on every deck, the *number* of them follows the grid, and since
+    // the reach follows the grid too the flux over a square metre of floor comes
+    // out independent of the spacing. Which leaves `power` as the only thing
+    // that says one deck is darker than another — the deck table doing the whole
+    // of its own job, with no geometry voting alongside it.
+    const drop = 4.65
+    const decks = ['tier-1', 'tier-2', 'tier-3', 'tier-4', 'tier-5'].map(
+      (id) => lamplightOf(roomOf('corridor'), tierOf(id)).reach,
+    )
+    for (const reach of decks) {
+      expect(lampFalloff(0, drop, reach)).toBeCloseTo(lampFalloff(0, drop, decks[0]), 9)
+    }
+
+    // And the same fraction of the way out is worth the same fraction, whatever
+    // the reach: that is what makes the flux per square metre grid-independent
+    // rather than merely the peak.
+    for (const reach of decks) {
+      expect(lampFalloff(reach / 2, drop, reach)).toBeCloseTo(
+        lampFalloff(decks[0] / 2, drop, decks[0]),
+        9,
+      )
+    }
   })
 
   it('leaves a lamp burning in the hold however many the hash kills', () => {

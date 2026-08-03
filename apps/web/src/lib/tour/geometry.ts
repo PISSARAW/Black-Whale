@@ -873,11 +873,43 @@ export function plateSeams(polygon: Polygon, pitch = PLATE_PITCH): [Vec2, Vec2][
  * plans imply and never draw — the same standing the columns have — and eight
  * metres is the span one bulkhead-mounted lamp of the period covers.
  *
- * Laid on the ship's grid rather than each room's, like the plating: the lamps of
- * a corridor line up with the lamps of the hall it opens into, because the
- * wiring ran before the partitions.
+ * Laid on each room's own grid rather than on the ship's, and that is a
+ * correction rather than a preference. The lamps used to sit at `(i + 0.5) *
+ * spacing` in ship coordinates — one grid for the whole hull, on the claim that
+ * the wiring ran before the partitions — and what a room got out of it was
+ * decided by where its walls happened to fall modulo the spacing. Ninety-three
+ * of the 318 spaces caught no cell centre at all and fell through to the single
+ * `interiorPoint` below: one lamp for the 2 205 m² of the Tier 5 aft corridor,
+ * one for the 1 764 m² of Tier 4's forward corridor. Worse, it made neighbours
+ * disagree for no reason anyone on board could see — the two royal residential
+ * corridors, 147 m² each, took one lamp while the cross-gaps beside them took
+ * seven, and the deck read as though the electricians had run out halfway.
+ *
+ * A phase lottery is not a claim about the ship. So the grid keeps its nominal
+ * pitch — which is what `REACH_RATIO` and `RoomLight.pool`'s window of cells
+ * are owed — and is centred on the room instead: a corridor is lit down its
+ * middle whatever its width, a cabin gets its one lamp over the floor rather
+ * than in a corner, and two rooms of the same shape are lit the same wherever
+ * they stand. What is lost is the lamps of a corridor lining up with the lamps
+ * of the hall it opens into, which was true of at most the rooms the lottery
+ * happened to favour anyway.
  */
 export const LAMP_SPACING = 8
+
+/**
+ * Where the lamps fall along one axis: `n` of them at the nominal pitch, centred
+ * on the room's extent.
+ *
+ * `n` is the extent rounded to whole pitches and never less than one, so a room
+ * narrower than its own grid still gets a row down its centre rather than none.
+ */
+function lampAxis(min: number, max: number, spacing: number): number[] {
+  const count = Math.max(1, Math.round((max - min) / spacing))
+  const middle = (min + max) / 2
+  const positions: number[] = []
+  for (let k = 0; k < count; k++) positions.push(middle + (k - (count - 1) / 2) * spacing)
+  return positions
+}
 
 /**
  * Where a room's ceiling fittings hang.
@@ -886,6 +918,10 @@ export const LAMP_SPACING = 8
  * vertex colours the deck already carries — so this is a list of positions, not
  * of geometry, and it costs no triangle and no draw call. A room too small to
  * hold a grid point still gets one: a cabin has a light.
+ *
+ * The `interiorPoint` fallback survives for the one case the centred grid cannot
+ * answer — a room concave enough that every point of its own grid lands outside
+ * it — where before it caught a quarter of the ship.
  */
 export function ceilingLamps(footprint: Polygon, spacing = LAMP_SPACING): Vec2[] {
   if (spacing < EPSILON || footprint.length < 3) return []
@@ -894,14 +930,9 @@ export function ceilingLamps(footprint: Polygon, spacing = LAMP_SPACING): Vec2[]
   const zs = footprint.map((point) => point[1])
   const lamps: Vec2[] = []
 
-  // Cell centres, so a corridor as wide as one cell is lit down its middle
-  // rather than along the wall.
-  const first = (values: number[]) => Math.floor(Math.min(...values) / spacing) - 1
-  const last = (values: number[]) => Math.ceil(Math.max(...values) / spacing) + 1
-
-  for (let i = first(xs); i <= last(xs); i++) {
-    for (let j = first(zs); j <= last(zs); j++) {
-      const point: Vec2 = [(i + 0.5) * spacing, (j + 0.5) * spacing]
+  for (const x of lampAxis(Math.min(...xs), Math.max(...xs), spacing)) {
+    for (const z of lampAxis(Math.min(...zs), Math.max(...zs), spacing)) {
+      const point: Vec2 = [x, z]
       if (pointInPolygon(point, footprint)) lamps.push(point)
     }
   }

@@ -640,6 +640,89 @@ describe('the light baked into the deck', () => {
     }
     expect(bad, 'colours outside the range a vertex attribute carries').toBe(0)
   })
+
+  /**
+   * The floor of every room on the ship, read for evenness rather than for level.
+   *
+   * A vertex colour is one albedo times one shade, so it ranks two points of the
+   * *same* floor exactly but says nothing across two rooms that are painted
+   * differently. Which is why what is held to here is a ratio inside one room,
+   * and a comparison only between rooms the deck plans made identical.
+   */
+  const floorsOfShip = () => {
+    const rooms = new Map<string, { min: number; max: number; mean: number }>()
+    for (const [, deck] of ship.plans) {
+      const built = buildTierMesh(deck)
+      for (const group of built.groups) {
+        const space = deck.spaces.find((room) => room.id === group.spaceId)
+        if (!space) continue
+        const vertices = brightnessAt(built, group)
+        const floor: number[] = []
+        for (let i = 0; i < vertices.length; i += 3) {
+          const triangle = vertices.slice(i, i + 3)
+          // Horizontal, and at the deck's own height: not the foot of a wall,
+          // which stands there too and carries its crease and its own albedo,
+          // and not the cap of a solid standing in the room.
+          if (!triangle.every((v) => Math.abs(v.y - floorOf(space, deck.tier)) < 0.001)) continue
+          for (const vertex of triangle) {
+            // Clear of the walls, so what is left to vary is the lamps. The
+            // corners are meant to be darker; that is `openness`, and it has its
+            // own test above.
+            if (distanceToBoundary([vertex.x, vertex.z], space.footprint) > 1.5) {
+              floor.push(vertex.shade)
+            }
+          }
+        }
+        if (floor.length < 8) continue
+        rooms.set(space.id, {
+          min: Math.min(...floor),
+          max: Math.max(...floor),
+          mean: floor.reduce((sum, value) => sum + value, 0) / floor.length,
+        })
+      }
+    }
+    return rooms
+  }
+
+  it('leaves no room with a floor the lamps never reach', () => {
+    // The failure this is here for is not a dim room, which the hold is supposed
+    // to be. It is a *hole*: a stretch of floor at the bare fill, because the
+    // lamp grid was the ship's and this room's walls happened to fall between
+    // two of its cells. Ninety-three of the 318 spaces used to fall through that
+    // way and take one fallback lamp for the whole of themselves, and the two
+    // largest of them were corridors of over 1 700 m². Read as the darkest
+    // corner of a room against its brightest point, which is albedo-free.
+    const thin: string[] = []
+    for (const [id, floor] of floorsOfShip()) {
+      if (floor.min < floor.max * 0.25) thin.push(`${id} (${(floor.min / floor.max).toFixed(2)})`)
+    }
+    expect(thin, `${thin.length} rooms have a floor the lamps never reach`).toEqual([])
+  })
+
+  it('lights two rooms the plans drew alike alike', () => {
+    // The cineplex's eight screening rooms: 7 m by 20 m each, one category, one
+    // provenance, drawn from one panel. Under the ship's grid they were lit by
+    // where they stood — screens 3 and 6 straddled no cell centre and took the
+    // single fallback lamp while the other six took a grid — and a visitor
+    // walking the row could see it with nothing about the ship explaining it.
+    const floors = floorsOfShip()
+    const row = [...floors.entries()].filter(([id]) => /^tier-3-cineplex-screen-\d+$/.test(id))
+    expect(row.length).toBeGreaterThan(6)
+
+    // Read as the shape of each floor's own distribution and not as its level:
+    // `colourFor` gives every room its own albedo, and a vertex colour is that
+    // albedo times the shade. Dividing it out is what leaves the light.
+    for (const measure of [
+      ([, floor]: [string, { min: number; mean: number }]) => floor.min / floor.mean,
+      ([, floor]: [string, { max: number; mean: number }]) => floor.max / floor.mean,
+    ]) {
+      const values = row.map(measure)
+      expect(Math.max(...values), `${row.map(([id]) => id)} are not lit alike`).toBeCloseTo(
+        Math.min(...values),
+        6,
+      )
+    }
+  })
 })
 
 describe('the deck plating', () => {

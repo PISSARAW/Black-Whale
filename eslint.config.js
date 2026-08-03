@@ -249,7 +249,6 @@ export default tseslint.config(
     // in the ADR, not here: this file only has to know the list shrinks.
     files: [
       // >>> cliquet ADR-002 (max-lines) — ne peut que rétrécir
-      'apps/web/src/lib/audio/steps.ts', // 534
       'apps/web/src/lib/components/investigation/InvestigationCaseView.svelte', // 1785
       'apps/web/src/lib/components/tour/TourHatsuHud.svelte', // 975
       'apps/web/src/lib/components/tour/TourScene.svelte', // 4661

@@ -41,6 +41,22 @@
     type TourWorld,
   } from '$lib/tour/hatsu'
   import type { Provenance, Space } from '$lib/tour/types'
+  import { TourCastView } from '$lib/tour/pageCastView.svelte'
+  import { aimedPerson, personExhibit } from '$lib/tour/cast/provenance'
+  import { NO_CAST } from '$lib/tour/cast'
+  import { NO_HOUR } from '$lib/tour/hour'
+  import type { PageData } from './$types'
+
+  // The walk is no longer only a ship: the server hands it the cast of the
+  // canon at the event under the reader's cap. See ADR-003.
+  let { data }: { data: PageData } = $props()
+  const cast = $derived(data?.cast ?? NO_CAST)
+  /**
+   * And what time that event happens at, which two windows in three hundred and
+   * fourteen spaces read. Arbitrated on the server — see `$lib/tour/hour` — so
+   * the sky behind the bay and the people in the rooms come from one answer.
+   */
+  const hour = $derived(data?.hour ?? NO_HOUR)
 
   const ship = theShip()
   const chrome = new TourChromeState()
@@ -141,8 +157,30 @@
     exhibit = null
   }
 
-  const examineAim = () =>
-    examine(
+  /**
+   * What the reticle is on, in the order the visitor meant it.
+   *
+   * A person first: aiming at somebody is the least ambiguous thing a visitor
+   * can do in a room, and a silhouette owes the same account as a coffin — who
+   * they are, since which chapter, in what role. Then the solid, then the room,
+   * exactly as before.
+   */
+  const examineAim = (): Exhibit | null => {
+    const person = aimedPerson(castView.posts, {
+      from: position,
+      heading,
+      spaceId: currentSpace?.id ?? null,
+    })
+    if (person)
+      return personExhibit(person, currentSpace ? nameOf(named(currentSpace)) : null, {
+        badge: (provenance) => $t.tour.provenance[provenance],
+        since: $t.tour.examine.person.since,
+        sinceUnknown: $t.tour.examine.person.sinceUnknown,
+        claim: $t.tour.examine.person.claim,
+        standingIn: $t.tour.examine.standingIn,
+        role: $t.tour.examine.person.role,
+      })
+    return examine(
       ship,
       { solid: aimedSolidAt, space: aimedAt ?? currentSpace },
       {
@@ -155,6 +193,7 @@
         standingIn: $t.tour.examine.standingIn,
       },
     )
+  }
   onMount(() => {
     loadComfort()
     chrome.calm = prefersReducedMotion()
@@ -362,6 +401,31 @@
     badgeClassOf: provenanceClass,
     sourceOf,
   })
+  /**
+   * The people in the ship, and what they are doing while the visitor walks.
+   *
+   * Everything it needs, it reads; everything it decides, it decides in
+   * `lib/tour/cast/`. The page carries four lines of it because that was the
+   * deal ADR-003 §4 made with ADR-002.
+   */
+  const castView = new TourCastView({
+    ship,
+    read: () => ({
+      cast,
+      world,
+      tierId,
+      visitorIn: currentSpace?.id ?? null,
+      casting: Boolean(technique),
+    }),
+    updateWorld: (next) => (world = next),
+  })
+  // The conduct runs on the walk's own clock, a second at a time: the page
+  // already keeps one, and the walk is only ever allowed one.
+  $effect(() => {
+    const beat = setInterval(() => castView.step(Math.floor(Date.now() / 1000)), 1000)
+    return () => clearInterval(beat)
+  })
+
   const locationReadout = $derived(overlayView.location)
   const aimReadout = $derived(overlayView.aim)
   const overlayControls = $derived(overlayView.controls)
@@ -413,6 +477,11 @@
         soundLabels: { silence: $t.tour.sound.silence, restore: $t.tour.sound.restore },
         loadingLabel: $t.tour.loading,
         unsupportedLabel: $t.tour.unsupported,
+        extras: castView.apparitions,
+        // Taking hold of a beast is the one thing §2.4 lets one do: it answers,
+        // and nothing else in the ship changes.
+        onPick: (id) => castView.speak(id),
+        hour,
       }}
       overlay={{
         autopilot: isAutopilot,
@@ -424,6 +493,9 @@
         controls: overlayControls,
         statusHint,
         linkPrompt: touch ? null : linkPrompt,
+        // The provenance card of the light, beside the deck: the visitor can
+        // see why the bay is black at chapter 374 and a drawn noon elsewhere.
+        hour: hour.label,
         // Hidden while the card is up: the same gesture puts it back, and the
         // card carries its own way out.
         examine: asking

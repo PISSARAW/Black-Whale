@@ -171,6 +171,9 @@ export function humanProfile(seen: Apparition): HumanProfile {
     role === 'guard' || role === 'nen-guard'
       ? ['military', 'short', 'shaved']
       : ['short', 'swept', 'long', 'ponytail', 'spiked', 'shaved']
+  // The two the walk draws from a panel rather than from a role are drawn as
+  // that panel has them, cloth included: a fixed face is the whole point of
+  // both, and a queen's gown put on Morena would be somebody else.
   if (role === 'silent-majority' || role === 'morena') return base
   const skins = [0x8f5d45, 0xb8795d, 0xc99473, 0xd8b49a, 0xe4c3a5]
   return {
@@ -178,5 +181,7 @@ export function humanProfile(seen: Apparition): HumanProfile {
     height: base.height * (0.96 + ((hash >>> 5) % 9) / 100),
     skin: skins[(hash >>> 9) % skins.length],
     hairStyle: role === 'victim' ? base.hairStyle : hairs[(hash >>> 13) % hairs.length],
+    // What the catalogue's own role says they are wearing, where it says so.
+    clothing: seen.human?.dress ?? base.clothing,
   }
 }

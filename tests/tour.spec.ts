@@ -70,6 +70,20 @@ test.describe('the walk', () => {
     await expect(card).toBeHidden()
   })
 
+  /**
+   * ADR-003 gave the walk a server load. What is asserted here is the promise
+   * that came with it: the ship is a reconstruction before it is a cast list,
+   * so an event the archive cannot answer for is an empty ship rather than a
+   * failed page — every corridor still walkable, every technique still castable,
+   * and nobody in them.
+   */
+  test('boots empty rather than failing when the archive answers with nobody', async ({ page }) => {
+    const response = await page.goto('/tour?eventId=no-such-event')
+    expect(response?.status()).toBeLessThan(400)
+    await ready(page)
+    await expect(page.getByRole('heading', { level: 1 })).toBeVisible()
+  })
+
   test('lets the visitor set the palier, and keeps it across a reload', async ({ page }) => {
     await page.goto('/tour')
     await ready(page)

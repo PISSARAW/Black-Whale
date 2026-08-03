@@ -2690,7 +2690,11 @@
         "location": "tier-1-vip-jail",
         "fromChapterId": "ch-376"
       }
-    ]
+    ],
+    "guardianBeast": {
+      "silhouette": "medusa",
+      "sourceChapterId": "ch-362"
+    }
   },
   {
     "id": "prince-zhanglei",
@@ -3154,7 +3158,11 @@
         "location": "tier-1-royal-residential-sector-room-1003",
         "fromChapterId": "ch-390.2"
       }
-    ]
+    ],
+    "guardianBeast": {
+      "silhouette": "wheel",
+      "sourceChapterId": "ch-362"
+    }
   },
   {
     "id": "prince-tserriednich",
@@ -3612,7 +3620,11 @@
         "location": "tier-1-royal-residential-sector-room-1004",
         "fromChapterId": "ch-363"
       }
-    ]
+    ],
+    "guardianBeast": {
+      "silhouette": "chimera",
+      "sourceChapterId": "ch-362"
+    }
   },
   {
     "id": "prince-tubeppa",
@@ -4058,7 +4070,11 @@
         "location": "tier-1-royal-residential-sector-room-1005",
         "fromChapterId": "ch-363"
       }
-    ]
+    ],
+    "guardianBeast": {
+      "silhouette": "toad",
+      "sourceChapterId": "ch-362"
+    }
   },
   {
     "id": "prince-tyson",
@@ -4505,7 +4521,12 @@
         "location": "tier-1-royal-residential-sector-room-1006",
         "fromChapterId": "ch-363"
       }
-    ]
+    ],
+    "guardianBeast": {
+      "silhouette": "ghost",
+      "sourceChapterId": "ch-362",
+      "note": "Tyson's beast is drawn where it acts: hanging in front of whoever reads the Book of Tyson, which is what `tyson-guardian` and `wog` are in the walk and why both ride the visitor rather than stand in a room. The animal itself is never drawn in her salon, so the posed shape is the neutral spectral one rather than an anatomy invented for it."
+    }
   },
   {
     "id": "prince-luzurus",
@@ -4950,7 +4971,11 @@
         "location": "tier-1-royal-residential-sector-room-1007",
         "fromChapterId": "ch-363"
       }
-    ]
+    ],
+    "guardianBeast": {
+      "silhouette": "centipede",
+      "sourceChapterId": "ch-362"
+    }
   },
   {
     "id": "prince-salesale",
@@ -5388,7 +5413,11 @@
         "fromChapterId": "ch-382",
         "untilChapterId": "ch-382.2"
       }
-    ]
+    ],
+    "guardianBeast": {
+      "silhouette": "mouths",
+      "sourceChapterId": "ch-362"
+    }
   },
   {
     "id": "prince-halkenburg",
@@ -7227,7 +7256,11 @@
         "location": "tier-1-princes-burial-chamber",
         "fromChapterId": "ch-371"
       }
-    ]
+    ],
+    "guardianBeast": {
+      "silhouette": "sprite",
+      "sourceChapterId": "ch-362"
+    }
   },
   {
     "id": "prince-marayam",
@@ -7682,7 +7715,11 @@
         "location": "tier-1-royal-residential-sector-room-1013",
         "fromChapterId": "ch-374"
       }
-    ]
+    ],
+    "guardianBeast": {
+      "silhouette": "dragon",
+      "sourceChapterId": "ch-362"
+    }
   },
   {
     "id": "prince-woble",
@@ -7729,7 +7766,13 @@
         "title": "Truth or Falsehood",
         "status": "mentioned"
       }
-    ]
+    ],
+    "guardianBeast": {
+      "silhouette": "ghost",
+      "sourceChapterId": "ch-358",
+      "standsWith": "oito-nephew-fake-woble",
+      "note": "Kurapika senses the dark aura around the cradle in room 1014 in ch. 358; the beast itself is never drawn there, so the walk gives it the neutral spectral shape rather than inventing an anatomy. The real Woble's whereabouts are never confirmed, so the animal keeps the position of the child presented as Woble, which is the cradle the aura was sensed around."
+    }
   },
   {
     "id": "oito-nephew-fake-woble",
@@ -41956,7 +41999,11 @@
         "location": "tier-1-royal-residential-sector-room-1014",
         "fromChapterId": "ch-363"
       }
-    ]
+    ],
+    "nen": {
+      "confirmed": true,
+      "overview": "Benjamin's private soldier posted over the Woble camp: a Nen user, category never revealed on panel."
+    }
   },
   {
     "id": "bachaem",
@@ -42624,7 +42671,11 @@
         "location": "tier-1-royal-residential-sector-room-1014",
         "fromChapterId": "ch-368"
       }
-    ]
+    ],
+    "nen": {
+      "confirmed": true,
+      "overview": "Benjamin's private soldier and Nen analyst: a Nen user, category never revealed on panel."
+    }
   },
   {
     "id": "gadeau",

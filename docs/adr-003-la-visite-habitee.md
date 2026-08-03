@@ -1,6 +1,6 @@
 # ADR-003 : La visite habitée — les personnages nommés dans /tour, leur Nen, leurs hatsu
 
-**Statut :** Proposé
+**Statut :** Accepté — livré le 2026-08-03 (phases 0 à 3)
 **Date :** 2026-08-03
 **Décideur :** mainteneur unique du dépôt
 **Dépend de :** ADR-001 (« le canon compile ») — s'y conforme ; ADR-002 (découpage 500) — s'y conforme
@@ -301,10 +301,49 @@ a déjà sa propre couche.
 
 ## Actions immédiates
 
-1. [ ] Valider cet ADR (ou l'amender) et le ranger en `docs/adr-003-la-visite-habitee.md`.
-2. [ ] Phase 0 — corriger `tier-3-political-ward` et `black-whale-1` dans la donnée, écrire les invariants dans `packages/contracts` (s'appuie sur le chantier 2 de l'ADR-001 s'il est livré ; sinon, les schémas zod de ces seuls invariants peuvent l'amorcer).
-3. [ ] Phase 1 — ouvrir `lib/tour/cast/`, en coordination avec le lot TS de l'ADR-002 (règle des 24 h).
-4. [ ] Ne lancer la phase 3 qu'après vérification que le chantier 3 de l'ADR-001 n'est pas en vol sur `hatsuRegistry`.
+1. [x] Valider cet ADR (ou l'amender) et le ranger en `docs/adr-003-la-visite-habitee.md`.
+2. [x] Phase 0 — `guardianBeast` déclaré sur les dix princes, champ `nen` complété, invariants écrits dans `packages/contracts` (`inhabitants.ts`, quatre règles, chacune montrée en train de refuser dans `canon-lint.spec.ts`).
+3. [x] Phase 1 — `lib/tour/cast/` ouvert (huit modules purs + façade, aucun au-delà de 500 lignes, aucune entrée ajoutée à la liste d'exemptions), load serveur du tour branché sur `selectEvent` + `getWorldState`.
+4. [x] Phases 1b, 2 et 3 livrées : bêtes dormantes, aura portée, conduite seedée et budgétée — aucune technique nouvelle, aucun `kind` nouveau, le gel du chantier 3 de l'ADR-001 tient.
+
+---
+
+## Ce que la livraison a changé au plan
+
+Cinq écarts, tous dans le sens de l'ADR plutôt que contre lui.
+
+1. **`tier-3-political-ward` n'était pas un défaut de donnée.** C'est un secteur,
+   et l'ADR prévoyait déjà le poste déterministe dans un secteur : la résolution
+   descend l'arbre de `locations.json`, aucune retouche de `data/` n'a été
+   nécessaire. **`black-whale-1` non plus** : c'est le vaisseau lui-même, et
+   c'est exactement ce que les planches donnent pour les annonceurs — à bord,
+   pièce inconnue. Plutôt que d'inventer un poste, l'invariant
+   `trajectories-reach-the-ship` accepte explicitement la racine et la marche ne
+   dessine personne. La règle est dite à voix haute au lieu de laisser un trou.
+2. **`guardianBeast.standsWith`.** La bête de Woble était indéplaçable : le vrai
+   Woble n'a aucune trajectoire. Le champ nomme le corps dont l'animal garde la
+   position — l'enfant présenté comme Woble, au 1014, autour du berceau où
+   ch. 358 fait sentir l'aura — sans inventer une position pour le prince ni
+   classer la bête sous quelqu'un d'autre. Le lint l'exige dès qu'un
+   propriétaire n'est jamais placé.
+3. **Le champ `nen` de Babimyna et Furykov porte `confirmed: true` sans
+   catégorie.** Aucune planche ne nomme leur catégorie ; l'affirmation est
+   l'utilisateur, pas la catégorie, et l'invariant `nen-claims-say-what` refuse
+   désormais un bloc `nen` qui n'en dirait ni l'un ni l'autre.
+4. **L'exhaustivité de la garde-robe est un test, pas un invariant zod.** La
+   table vit dans `apps/web` et `packages/contracts` ne lit jamais le site :
+   `wardrobe.test.ts` échoue sur un rôle non habillé *et* sur un costume que
+   plus personne ne porte, et le contrat garde la moitié qui le regarde (un
+   corps placé déclare un rôle). Même logique pour les silhouettes de bêtes, où
+   `scripts/silhouettes.test.ts` tient les deux listes ensemble.
+5. **La banque de sons des bêtes est `lib/audio/hatsuSounds.ts`** (quatre voix
+   de créature déjà enregistrées), et non `lib/audio/hatsu/guardians`, qui
+   n'existe pas. Seize silhouettes pour quatre voix, assignées par ce que
+   l'animal est bâti — en inventer une cinquième aurait été inventer une bête.
+
+Restent explicitement hors périmètre, comme prévu au §6 : les cinq hatsu « à
+personnes », les interactions des hatsu existants avec les personnages, et toute
+granularité plus fine que la trajectoire par chapitre.
 
 ---
 

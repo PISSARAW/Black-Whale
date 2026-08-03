@@ -21,6 +21,9 @@ import {
   attach,
   wheelEntry,
   bodyState,
+  asserted,
+  shown,
+  hypothesis,
 } from '@black-whale/ability-sdk'
 
 /**
@@ -76,12 +79,15 @@ export const bungeeGum = defineAbility({
   actions: {
     attach: {
       label: 'Attacher',
+      evidence: shown('ch. 39 — le filament attaché à distance'),
       conditions: [requiresTarget('Un point d’ancrage est visé')],
       effects: [elasticConnection()],
     },
 
     'set-trap': {
       label: 'Poser un piège (In)',
+      evidence: shown('ch. 359 — le piège posé et attendu'),
+      gyo: 'le filament tendu en travers du passage, et son point d’ancrage',
       conditions: [requiresTarget('Une surface est visée')],
       // Real, invisible, and only revealed by the Gyo toggle.
       effects: [masked(elasticConnection())],
@@ -90,6 +96,7 @@ export const bungeeGum = defineAbility({
 
     detach: {
       label: 'Détacher le filament',
+      evidence: shown('ch. 39 — le filament séparé du corps rompt au-delà de dix mètres'),
       // Separated from his body, the filament breaks past ten metres.
       conditions: [maxDistance(10)],
       effects: [
@@ -102,6 +109,7 @@ export const bungeeGum = defineAbility({
 
     'program-post-mortem': {
       label: 'Programmer post-mortem',
+      evidence: shown('ch. 357 — cœur et poumons reprogrammés avant la mort'),
       effects: [
         postMortem((ctx) =>
           elasticConnection()(ctx).map((event) =>
@@ -129,6 +137,7 @@ export const bungeeGum = defineAbility({
 
     rebound: {
       label: 'Renvoi',
+      evidence: shown('ch. 176 — les cartes et les projectiles renvoyés'),
       conditions: [requiresTarget('Un projectile ou attaque physique est visé')],
       effects: [elasticConnection()],
       hint: "Utilise l'élasticité pour renvoyer une attaque",
@@ -136,6 +145,7 @@ export const bungeeGum = defineAbility({
 
     propulsion: {
       label: 'Propulsion',
+      evidence: shown('ch. 39 — Hisoka se tire vers son ancrage'),
       conditions: [requiresTarget('Un point d’ancrage solide')],
       effects: [elasticConnection()],
       hint: 'Se propulser à grande vitesse',
@@ -143,14 +153,33 @@ export const bungeeGum = defineAbility({
 
     'false-tissue': {
       label: 'Faux tissu',
+      evidence: shown('ch. 357 — les plaies refermées pendant le combat'),
       // Worked on himself, so there is nothing to require of a target: `self()`
       // is one of the ability's targets, not a condition on this mode.
       effects: [bodyState({ state: 'STABILIZED' })],
       hint: "Stoppe l'hémorragie et referme les blessures",
     },
 
+    'wall-run': {
+      label: 'Courir sur les murs',
+      evidence: asserted('la capacité sert aussi à se coller aux surfaces'),
+      effects: [elasticConnection()],
+    },
+
+    'attach-to-aura': {
+      label: 'Attacher à l’aura d’autrui',
+      refusal: 'Bungee Gum prend sur une surface, un corps ou un objet — pas sur une aura',
+    },
+
+    'ko-strike': {
+      label: 'Frapper en Ko',
+      evidence: hypothesis('Bungee Gum concentré en Ko sur un seul point'),
+      effects: [elasticConnection()],
+    },
+
     release: {
       label: 'Relâcher',
+      evidence: asserted('ce qui est attaché se détache à volonté'),
       effects: [setEffectState({ state: 'ENDED' })],
     },
   },
@@ -171,74 +200,6 @@ export const bungeeGum = defineAbility({
     customComponent: 'BungeeGumInteraction',
   }),
 
-  actionWheel: [
-    wheelEntry({
-      id: 'attach',
-      label: 'Attacher',
-      abilityId: 'bungee-gum',
-      visibility: 'available',
-    }),
-    wheelEntry({
-      id: 'set-trap',
-      label: 'Poser un piège (In)',
-      abilityId: 'bungee-gum',
-      visibility: 'available',
-      hint: 'Invisible sauf en Gyo',
-    }),
-    wheelEntry({
-      id: 'stretch',
-      label: 'Étirer',
-      abilityId: 'bungee-gum',
-      visibility: 'locked',
-      hint: "Requiert un point d'ancrage actif",
-    }),
-    wheelEntry({
-      id: 'retract',
-      label: 'Rétracter',
-      abilityId: 'bungee-gum',
-      visibility: 'locked',
-      hint: 'Requiert un filament tendu',
-    }),
-    wheelEntry({
-      id: 'detach',
-      label: 'Détacher',
-      abilityId: 'bungee-gum',
-      visibility: 'locked',
-      hint: 'Rompt au-delà de 10 m une fois séparé du corps',
-    }),
-    wheelEntry({
-      id: 'program-post-mortem',
-      label: 'Programmer post-mortem',
-      abilityId: 'bungee-gum',
-      visibility: 'warning',
-      hint: 'Survit à la mort de Hisoka',
-    }),
-    wheelEntry({
-      id: 'rebound',
-      label: 'Renvoi',
-      abilityId: 'bungee-gum',
-      visibility: 'available',
-      hint: 'Renvoie projectiles ou attaques',
-    }),
-    wheelEntry({
-      id: 'propulsion',
-      label: 'Propulsion',
-      abilityId: 'bungee-gum',
-      visibility: 'available',
-      hint: 'Déplacement à grande vitesse',
-    }),
-    wheelEntry({
-      id: 'false-tissue',
-      label: 'Faux tissu',
-      abilityId: 'bungee-gum',
-      visibility: 'available',
-      hint: 'Stoppe les saignements',
-    }),
-    wheelEntry({
-      id: 'release',
-      label: 'Relâcher',
-      abilityId: 'bungee-gum',
-      visibility: 'available',
-    }),
-  ],
+  // No static wheel: the derived one is built from the actions above, so an
+  // added use can never be missing from the wheel that offers it.
 })

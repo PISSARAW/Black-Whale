@@ -1,4 +1,5 @@
 import {
+  asserted,
   beliefBroadcast,
   buildManifest,
   canUseNen,
@@ -13,6 +14,7 @@ import {
   person,
   requiresParameter,
   setEffectState,
+  shown,
 } from '@black-whale/ability-sdk'
 
 /** Canon: the disguise cannot outlast the time actually spent with the model. */
@@ -50,6 +52,7 @@ export const battleCantabileMetamorphosen = defineAbility({
   actions: {
     transform: {
       label: 'Prendre l’apparence',
+      evidence: shown('ch. 388 — Bonolenov porte le visage d’un autre sur le Black Whale'),
       conditions: [
         durationCondition(),
         requiresParameter('appearsAs', 'Le modèle imité est identifié'),
@@ -76,8 +79,35 @@ export const battleCantabileMetamorphosen = defineAbility({
       },
     },
 
+    'transform-into-object': {
+      label: 'Prendre la forme d’un objet',
+      evidence: asserted('la capacité change son apparence en une identité ou un objet choisi'),
+      conditions: [
+        durationCondition(),
+        requiresParameter('appearsAs', 'La forme visée est choisie'),
+      ],
+      effects: [
+        perceptionMask({
+          appearsAs: (ctx) => param(ctx, 'appearsAs'),
+          attributes: { form: 'object' },
+        }),
+      ],
+    },
+
+    'transform-without-preparation': {
+      label: 'Se transformer sans danse ni mélodie',
+      refusal: 'La danse et la mélodie sont l’activation : sans elles, rien ne se produit',
+      evidence: shown('ch. 388 — la préparation précède toujours la forme'),
+    },
+
+    'outlast-the-model': {
+      label: 'Tenir plus longtemps que le temps côtoyé',
+      refusal: 'La forme ne dure pas plus que le temps réellement passé avec le modèle',
+    },
+
     revert: {
       label: 'Reprendre son apparence',
+      evidence: asserted('la forme tombe d’elle-même quand son temps est écoulé'),
       conditions: [effectIsLive('effectId', 'Un déguisement est actif')],
       effects: [setEffectState({ state: 'ENDED' })],
     },

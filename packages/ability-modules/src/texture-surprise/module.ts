@@ -1,9 +1,11 @@
 import {
+  asserted,
   auraModifier,
   buildManifest,
   canUseNen,
   defineAbility,
   effectIsLive,
+  hypothesis,
   isConscious,
   object,
   param,
@@ -12,6 +14,7 @@ import {
   postMortem,
   requiresTarget,
   setEffectState,
+  shown,
   surface,
 } from '@black-whale/ability-sdk'
 
@@ -48,9 +51,16 @@ export const textureSurprise = defineAbility({
 
   cost: { label: 'Peu d’aura, mais une surface plane et limitée par masque', unit: 'aura' },
 
+  /**
+   * The grid here is the surface: skin, object, wound, paper, a rebuilt body —
+   * and the two things the technique cannot do, which is what makes the mask a
+   * rule rather than a magic trick.
+   */
   actions: {
     apply: {
       label: 'Appliquer un masque',
+      evidence: shown('ch. 357 — le masque de peau sur le visage'),
+      gyo: 'rien : le masque reste indétectable à l’aura, seul le toucher trahit',
       conditions: [requiresTarget('Une surface plane est visée')],
       effects: [
         perceptionMask({ tactileFail: true, auraDetectable: false }),
@@ -60,6 +70,7 @@ export const textureSurprise = defineAbility({
 
     'camouflage-object': {
       label: 'Camoufler un objet',
+      evidence: shown('ch. 61 — le faux bras contre Kastro'),
       conditions: [requiresTarget('Un objet est visé')],
       effects: [
         perceptionMask({
@@ -74,6 +85,7 @@ export const textureSurprise = defineAbility({
 
     'fake-wound': {
       label: 'Simuler une blessure',
+      evidence: shown('ch. 61 — la blessure jouée pour tromper l’adversaire'),
       conditions: [requiresTarget('Une personne est visée')],
       effects: [
         perceptionMask({
@@ -88,6 +100,7 @@ export const textureSurprise = defineAbility({
 
     'forge-document': {
       label: 'Falsifier un document',
+      evidence: asserted('n’importe quelle surface plane, textes compris'),
       conditions: [requiresTarget('Un document est visé')],
       effects: [
         perceptionMask({
@@ -102,6 +115,7 @@ export const textureSurprise = defineAbility({
 
     'rebuild-body': {
       label: 'Reconstruire le corps',
+      evidence: shown('ch. 357 — Hisoka recomposé après sa mort'),
       conditions: [requiresTarget('Le corps reconstruit est visé')],
       // The rebuilt Hisoka: the masks are worn by a body that already died once,
       // so they must survive that death.
@@ -120,9 +134,22 @@ export const textureSurprise = defineAbility({
 
     'reveal-by-touch': {
       label: 'Révéler au toucher',
+      evidence: shown('ch. 61 — le contact met fin à la supercherie'),
       conditions: [effectIsLive('effectId', 'Un masque est en place')],
       effects: [setEffectState({ state: 'ENDED', attributes: { revealedBy: 'touch' } })],
       hint: 'Le contact met fin à la supercherie',
+    },
+
+    'mask-curved-surface': {
+      label: 'Masquer une surface non plane',
+      refusal: 'La capacité ne prend que sur une surface plane et de taille limitée',
+      evidence: asserted('la limite énoncée avec la capacité'),
+    },
+
+    'mask-in-motion': {
+      label: 'Suivre une surface qui bouge',
+      evidence: hypothesis('un masque qui se déforme avec ce qu’il couvre'),
+      effects: [perceptionMask({ tactileFail: true, attributes: { surfaceType: 'dynamic' } })],
     },
   },
 

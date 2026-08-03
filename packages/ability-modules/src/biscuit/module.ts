@@ -1,4 +1,5 @@
 import {
+  asserted,
   auraModifier,
   buildManifest,
   canUseNen,
@@ -12,6 +13,7 @@ import {
   requiresTarget,
   self,
   setEffectState,
+  shown,
   spawnNenEntity,
 } from '@black-whale/ability-sdk'
 
@@ -58,6 +60,7 @@ export const magicalEstheticianCookie = defineAbility({
   actions: {
     summon: {
       label: 'Invoquer Cookie',
+      evidence: shown('ch. 149 — Cookie invoquée pour le soin'),
       effects: [
         spawnNenEntity({
           id: (ctx) => `cookie-${ctx.actorId}`,
@@ -68,8 +71,35 @@ export const magicalEstheticianCookie = defineAbility({
       ],
     },
 
+    'treat-self': {
+      label: 'Se faire masser',
+      evidence: shown('ch. 149 — Biscuit se soigne elle-même'),
+      effects: [
+        auraModifier({
+          mode: 'RECOVERY',
+          treatmentMinutes: TREATMENT_MINUTES,
+          sleepEquivalentHours: SLEEP_EQUIVALENT_HOURS,
+        }),
+      ],
+      cost: { label: 'Durée du soin', amount: TREATMENT_MINUTES, unit: 'minutes' },
+    },
+
+    dismiss: {
+      label: 'Renvoyer Cookie',
+      evidence: asserted('la masseuse se range comme elle est venue'),
+      conditions: [effectIsLive('effectId', 'Cookie est invoquée')],
+      effects: [setEffectState({ state: 'ENDED' })],
+    },
+
+    'treat-during-combat': {
+      label: 'Masser pendant un combat',
+      refusal: 'Le soin demande une séance entière : rien d’offensif ne se mène pendant',
+      evidence: asserted('le soin occupe la masseuse et le patient'),
+    },
+
     treat: {
       label: 'Masser',
+      evidence: shown('ch. 149 — trente minutes de soin pour huit heures de sommeil'),
       conditions: [requiresTarget('Une personne est massée')],
       effects: [
         auraModifier({
@@ -133,6 +163,7 @@ export const biscuitBodyTransformation = defineAbility({
   actions: {
     'maintain-youthful-form': {
       label: 'Maintenir la forme juvénile',
+      evidence: shown('ch. 137 — la forme réduite portée en permanence'),
       effects: [
         // The mask is the default state, not the exception.
         perceptionMask({
@@ -145,6 +176,7 @@ export const biscuitBodyTransformation = defineAbility({
 
     'reveal-true-form': {
       label: 'Révéler la forme réelle',
+      evidence: shown('ch. 154 — la forme réelle, le temps d’un coup'),
       conditions: [effectIsLive('effectId', 'La forme juvénile est maintenue')],
       effects: [
         setEffectState({ state: 'ENDED', attributes: { revealedBy: 'choice' } }),
@@ -155,6 +187,24 @@ export const biscuitBodyTransformation = defineAbility({
             form: 'true',
             strengthFactor: numberParam(ctx, 'strengthFactor') ?? 1,
           }),
+        }),
+      ],
+    },
+
+    'appear-as-someone-else': {
+      label: 'Prendre l’apparence d’un tiers',
+      refusal: 'La transformation ne change que son propre corps : ce n’est pas un déguisement',
+      evidence: asserted('l’identité sous la forme reste la sienne'),
+    },
+
+    'hold-true-form': {
+      label: 'Rester en forme réelle',
+      evidence: asserted('la forme juvénile est un choix maintenu, pas une contrainte'),
+      effects: [
+        effect({
+          kind: 'AURA_MODIFIER',
+          discriminator: 'true-form-sustained',
+          attributes: { form: 'true', sustained: true },
         }),
       ],
     },

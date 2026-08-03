@@ -9,9 +9,17 @@ RUN pnpm turbo build --filter=@black-whale/admin
 
 FROM node:20-alpine AS runner
 RUN apk add --no-cache openssl libc6-compat
-RUN corepack enable
 WORKDIR /app
-COPY --from=builder /app /app
+
+# See Dockerfile.web: the runtime image carries the built server and what it
+# opens, not the checkout it was built from. This one matters more — the
+# back-office holds the only credential in the deployment.
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/package.json ./package.json
+COPY --from=builder /app/packages ./packages
+COPY --from=builder /app/apps/admin/build ./apps/admin/build
+COPY --from=builder /app/apps/admin/package.json ./apps/admin/package.json
+
 ENV NODE_ENV=production
 ENV PORT=3002
 EXPOSE 3002

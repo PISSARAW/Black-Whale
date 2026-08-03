@@ -29,7 +29,7 @@ Generate a different random value for every secret. Use `openssl rand -hex 32` f
 ./infrastructure/hetzner/deploy.sh
 ```
 
-The deployment validates the configuration, builds immutable images, runs `prisma migrate deploy` and the data backfills, waits for application healthchecks, and then exposes the stack through Caddy. Caddy obtains and renews TLS certificates automatically.
+The deployment refuses to run on a dirty checkout (the image tag would not describe its contents), validates the configuration, builds images tagged with the commit, runs `prisma migrate deploy` and the data backfills, waits for application healthchecks, and then exposes the stack through Caddy. Caddy obtains and renews TLS certificates automatically.
 
 The migration step runs on its own, before any running container is replaced. If it fails the script stops there and the previous release keeps serving — nothing is torn down, and the failure costs no downtime. Fix what the output reports and run the script again.
 
@@ -40,7 +40,21 @@ docker compose --env-file .env.production -f infrastructure/docker/docker-compos
 docker compose --env-file .env.production -f infrastructure/docker/docker-compose.prod.yml logs --tail=200
 ```
 
-## 4. Backups and restoration
+## 4. Rolling back
+
+Every image is tagged with the commit it was built from, and `deploy.sh` appends that tag to `.deploy-history` once the stack is up. Going back is therefore a re-`up`, not a rebuild:
+
+```sh
+./infrastructure/hetzner/rollback.sh --list   # tags, dates, and which images are still on disk
+./infrastructure/hetzner/rollback.sh          # the release before the current one
+./infrastructure/hetzner/rollback.sh a1b2c3d4 # a named release
+```
+
+The script refuses before stopping anything if the target images have been pruned, so a rollback either happens or leaves the current release running.
+
+The **database schema is not reversed**. Prisma migrations here are forward-only, so an older image is expected to tolerate a newer schema. If it does not, the way out is a forward deploy. `docker image prune` removes rollback targets: keep at least the last few releases.
+
+## 5. Backups and restoration
 
 The `backup` service creates a compressed PostgreSQL dump every 24 hours and keeps 14 days by default. Docker volumes are local to the server, so copy backups off-server or enable Hetzner server backups as a second layer.
 
@@ -58,6 +72,6 @@ Restore a dump (this replaces the current database and requires typing the datab
 
 Test restoration periodically on a non-production server.
 
-## 5. Existing development databases
+## 6. Existing development databases
 
 `packages/database/prisma/migrations` is the only migration history. It is a squashed baseline generated from the canonical Prisma schema, intended for a first production installation. Do not point the production Compose file at an old development database without taking a dump and planning a one-time migration.

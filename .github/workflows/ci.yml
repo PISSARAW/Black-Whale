@@ -73,3 +73,103 @@ jobs:
         run: pnpm test
         env:
           DATABASE_URL: postgresql://${{ env.POSTGRES_USER }}:${{ env.POSTGRES_PASSWORD }}@localhost:5432/${{ env.POSTGRES_DB }}
+
+  images:
+    name: Container images
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: ${{ env.POSTGRES_DB }}
+          POSTGRES_USER: ${{ env.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ env.POSTGRES_PASSWORD }}
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    # Separate from the test job on purpose: the runtime images are the only
+    # thing production actually runs, and until now nothing ever built them
+    # outside the deploy script — on the server, under time pressure. A
+    # Dockerfile that no longer builds was a discovery made during a release.
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Build web image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: infrastructure/docker/Dockerfile.web
+          push: false
+          load: true
+          tags: black-whale/web:ci
+          cache-from: type=gha,scope=web
+          cache-to: type=gha,scope=web,mode=max
+
+      - name: Build admin image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: infrastructure/docker/Dockerfile.admin
+          push: false
+          load: true
+          tags: black-whale/admin:ci
+          cache-from: type=gha,scope=admin
+          cache-to: type=gha,scope=admin,mode=max
+
+      - name: Build migrate image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: infrastructure/docker/Dockerfile.migrate
+          push: false
+          load: true
+          tags: black-whale/migrate:ci
+          cache-from: type=gha,scope=migrate
+          cache-to: type=gha,scope=migrate,mode=max
+
+      # The images were slimmed by listing what the runtime opens rather than
+      # copying the checkout. That is only true for as long as nobody adds a
+      # `COPY . .` back, so it is asserted rather than trusted.
+      - name: The runtime images carry no sources
+        run: |
+          set -eu
+          for image in black-whale/web:ci black-whale/admin:ci; do
+            if docker run --rm --entrypoint sh "$image" -c 'ls apps/*/src' >/dev/null 2>&1; then
+              echo "$image still ships application sources" >&2
+              exit 1
+            fi
+            echo "$image: no sources"
+            docker image inspect "$image" --format '{{.RepoTags}} {{.Size}} bytes'
+          done
+
+      - name: The web image can answer for itself
+        run: |
+          set -eu
+          # `--network host` so the container reaches the job's Postgres service
+          # on 127.0.0.1, the same address the rest of the workflow uses.
+          docker run -d --name web-smoke --network host \
+            -e NODE_ENV=production -e ORIGIN=http://localhost:3000 \
+            -e DATABASE_URL=postgresql://${{ env.POSTGRES_USER }}:${{ env.POSTGRES_PASSWORD }}@127.0.0.1:5432/${{ env.POSTGRES_DB }} \
+            black-whale/web:ci
+          # /health answers 200 only once the process has booted *and* reached
+          # Postgres — `SELECT 1` needs no schema, so an empty database is
+          # enough to prove the image starts and can query.
+          for attempt in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:3000/health >/dev/null; then
+              echo "healthy after ${attempt}s"
+              docker rm -f web-smoke >/dev/null
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "the web image never became healthy" >&2
+          docker logs web-smoke >&2
+          exit 1

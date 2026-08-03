@@ -1,5 +1,10 @@
 name: black-whale
 
+# Every application image is tagged with the git commit it was built from, set
+# by deploy.sh. Untagged images are indistinguishable once built, which is why
+# there was no way back from a bad release other than checking out the previous
+# commit and rebuilding — see rollback.sh.
+
 x-app: &app
   restart: unless-stopped
   init: true
@@ -26,6 +31,7 @@ services:
 
   migrate:
     <<: *app
+    image: black-whale/migrate:${IMAGE_TAG:-dev}
     build:
       context: ../..
       dockerfile: infrastructure/docker/Dockerfile.migrate
@@ -38,6 +44,7 @@ services:
 
   web:
     <<: *app
+    image: black-whale/web:${IMAGE_TAG:-dev}
     build:
       context: ../..
       dockerfile: infrastructure/docker/Dockerfile.web
@@ -65,6 +72,7 @@ services:
 
   admin:
     <<: *app
+    image: black-whale/admin:${IMAGE_TAG:-dev}
     build:
       context: ../..
       dockerfile: infrastructure/docker/Dockerfile.admin
@@ -93,6 +101,7 @@ services:
 
   backup:
     restart: unless-stopped
+    image: black-whale/backup:${IMAGE_TAG:-dev}
     build:
       context: ../..
       dockerfile: infrastructure/docker/Dockerfile.backup

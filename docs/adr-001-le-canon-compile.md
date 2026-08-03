@@ -394,7 +394,7 @@ immutable` versionné ; le tour passe à un mesh par espace + portal culling
 
 | #   | Chantier                       | Contenu                                                                                                                                                                                                                                                                                                                                                                                                                                                              | Effort   | Risque                                                                                                                                                       |
 | --- | ------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| 0   | **Reliquat des P0**            | ~~Crédit CC BY~~ (fait) ; ~~sélecteur de spoiler~~ (fait) ; spoiler sur `/abilities` ; `+error.svelte` web+admin ; brancher ou retirer les 3 formulaires admin en 405                                                                                                                                                                                                                                                                                                | ~1 j     | nul                                                                                                                                                          |
+| 0   | **Reliquat des P0**            | ~~Crédit CC BY~~ ; ~~sélecteur de spoiler~~ ; ~~spoiler sur `/abilities`~~ ; ~~`+error.svelte` web+admin~~ ; ~~les 3 formulaires admin~~ — **clos**, voir l'avancement plus bas                                                                                                                                                                                                                                                                                      | ~1 j     | nul                                                                                                                                                          |
 | 1   | **Filets de sécurité**         | Tests admin (auth) + script `test` ; e2e smoke (home, ship, tour, un cast de hatsu, login admin) ; Sentry ; images multi-stage minces + tag = SHA git + `rollback.sh` ; `migrate diff --exit-code`, audit deps, couverture en CI                                                                                                                                                                                                                                     | ~1 sem   | faible                                                                                                                                                       |
 | 2   | **Contracts + canon-compiler** | Remplir `packages/contracts` (zod + invariants) ; porter les `.mjs` en TS typé/testé ; canon-lint en CI sur base jetable ; supprimer paquets/modèles morts                                                                                                                                                                                                                                                                                                           | ~1,5 sem | faible                                                                                                                                                       |
 | 3   | **Unification Nen**            | Générer `hatsuRegistry.gen.ts` + squelettes i18n depuis modules ; réconcilier les 27 noms / 48 owners (arbitrage canon au passage) ; DOM, 3D **et contrats arène/traque** consomment `interactionManifest` (les `arenaDefinition` en dur deviennent des champs de manifest) ; porter les tests comportementaux du tour en tests du moteur. Les simulations elles-mêmes (TourWorld, combat/reducer, hunt) restent en place comme renderers — suivre le pattern Morena | ~4 sem   | **moyen** — technique par technique, `bungee-gum` d'abord (pattern déjà documenté) ; `tour/hatsu.ts` a doublé en 4 jours, chaque semaine d'attente renchérit |
@@ -412,7 +412,7 @@ Ordre imposé : 0 → 1 avant tout le reste (on ne refactore pas sans filet) ;
 ## Actions immédiates
 
 1. [x] Valider cet ADR (ou l'amender) et le ranger en `docs/adr-001-le-canon-compile.md`.
-2. [ ] Chantier 0 (reliquat des P0 de `completude.md`) — ~1 journée, aucune dépendance.
+2. [x] Chantier 0 (reliquat des P0 de `completude.md`) — clos.
 3. [x] Ouvrir le chantier 1 ; geler l'ajout de nouveaux hatsu jusqu'à la fin du chantier 3.
 4. [x] Trancher au passage l'arbitrage de canon des noms divergents (source d'autorité : `abilities.json`).
 
@@ -546,6 +546,30 @@ ouvrir quand on clique « la même pièce, à pied ». La réponse est maintenan
 calculée par le loader (`lib/tour/walkTargets.ts`, quelques centaines de
 chaînes courtes, < 30 Ko) et `/ship` ne charge plus le blueprint du tout :
 mesuré avant/après sur le bundle, le nœud 21 a perdu le morceau.
+
+## Avancement du chantier 0
+
+**Clos — l'essentiel l'était déjà, vérifié point par point plutôt que cru sur
+parole.**
+
+- **Spoiler sur `/abilities`** : appliqué dans le loader, côté serveur, avant
+  que quoi que ce soit ne parte au navigateur (`loadAbilityVisibility` +
+  `readSpoilerLimit`). La page ne recense plus le registre client : elle rend
+  ce que le serveur lui a envoyé.
+- **`+error.svelte`** : présent dans les deux applications, avec la référence
+  d'incident que `handleError` écrit dans la même ligne de log — c'est elle qui
+  transforme « le site a planté » en un signalement exploitable.
+- **Les trois formulaires en 405** : les trois sont branchés. `/logout` est un
+  endpoint `POST`, `login` et `events/new` déclarent leurs `actions`. Les 33
+  tests d'`apps/admin` couvrent la session, la limitation de débit et le login.
+
+**Ce qui manquait vraiment, et qui est ajouté.** Le module de visibilité était
+testé ; son **câblage** ne l'était pas. Or c'est exactement la panne que
+`/abilities` a connue et que le §1.3 F décrit : le cap est appliqué à la main
+dans chaque loader, et un oubli suffit à fuiter. `routes/abilities/page.server.test.ts`
+tient donc le loader lui-même — chaque capacité rendue est visible au cap
+demandé, un cap plus bas rend un sous-ensemble strict du plus haut, et un
+cookie trafiqué vaut « pas de cap » plutôt que NaN.
 
 ## Avancement du chantier 6
 

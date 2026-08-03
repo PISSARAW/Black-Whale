@@ -17,6 +17,20 @@ function finding(rule: string, where: string, message: string): Finding {
   return { rule, where, message }
 }
 
+/**
+ * A chapter reference as a single sortable number.
+ *
+ * `ch-359.4` is the fourth event of chapter 359, so the sequence is a fraction
+ * of the chapter rather than a second digit — comparing the two parts as one
+ * number is what keeps `ch-359.4` before `ch-361` and after `ch-359`. Null for
+ * `ch-unknown`, which sits nowhere in particular.
+ */
+function chapterPosition(value: string | null | undefined): number | null {
+  const match = /^ch-(\d+)(?:\.(\d+))?$/.exec(value ?? '')
+  if (!match) return null
+  return Number(match[1]) + Number(match[2] ?? 0) / 1000
+}
+
 /** Every `id` in a file is used once. A duplicate silently wins or loses. */
 const uniqueIds: Invariant = ({ characters, abilities, factions, locations, chapters }) => {
   const findings: Finding[] = []
@@ -125,9 +139,10 @@ const referencesResolve: Invariant = (catalogue) => {
  * Chapter references name a chapter of this arc.
  *
  * `chapters/chapters.json` holds the chapters the archive *details*, not every
- * chapter that exists, so membership in it proves nothing. What can be checked
- * is the form and the span: a reference is `ch-<number>` — or the explicit
- * `ch-unknown` — and a number inside the arc the archive covers.
+ * chapter that exists, so membership in it proves nothing. The form is the
+ * schema's business now; what is left to check is the span — a reference past
+ * the end of the arc is a typo the compiler would turn into an invented
+ * chapter, because `ensureEvent` creates whatever number it is handed.
  */
 const chapterReferencesAreWellFormed: Invariant = ({ characters, abilities, chapters }) => {
   const findings: Finding[] = []
@@ -136,7 +151,7 @@ const chapterReferencesAreWellFormed: Invariant = ({ characters, abilities, chap
 
   const check = (where: string, value: string | null | undefined) => {
     if (!value || value === 'ch-unknown') return
-    const match = /^ch-(\d+)$/.exec(value)
+    const match = /^ch-(\d+)(?:\.\d+)?$/.exec(value)
     if (!match) {
       findings.push(finding('chapter-reference', where, `${value} is not ch-<number>`))
       return
@@ -149,10 +164,95 @@ const chapterReferencesAreWellFormed: Invariant = ({ characters, abilities, chap
   }
 
   for (const character of characters) {
-    check(`characters#${character.id}`, character.firstAppearanceChapterId)
+    const where = `characters#${character.id}`
+    check(where, character.firstAppearanceChapterId)
+    check(where, character.mapPresenceFromChapterId)
+    check(where, character.mapPresenceUntilChapterId)
+    for (const leg of character.mapTrajectory ?? []) {
+      check(where, leg.fromChapterId)
+      check(where, leg.untilChapterId)
+    }
   }
   for (const ability of abilities) {
     check(`abilities#${ability.id}`, ability.firstVisibleChapterId)
+  }
+  return findings
+}
+
+/**
+ * A position names a room, and a trajectory names a room per leg.
+ *
+ * A tier is a deck, not a place: a body dropped on one lands at the tier
+ * anchor, which on every deck plan is open floor between the rooms, so the map
+ * draws a passenger loitering in a corridor canon never put them in. Where
+ * canon names only the tier, `data/CONVENTIONS.md` asks for the room the
+ * passenger's affiliation implies, marked `inferred`.
+ *
+ * This used to be checked by `verify_map_coverage.mjs`, which runs against the
+ * database — after the deploy had already written the corridor.
+ */
+const positionsNameARoom: Invariant = ({ characters, locations }) => {
+  const findings: Finding[] = []
+  const known = new Set(locations.map((location) => location.id))
+
+  for (const character of characters) {
+    const where = `characters#${character.id}`
+    const ship = character.shipLocation
+    const room = String(ship?.room ?? '').trim()
+
+    if (ship && ship.tier != null && !room) {
+      findings.push(
+        finding(
+          'bare-tier',
+          where,
+          `on tier ${ship.tier} with no room: name the one its role implies`,
+        ),
+      )
+    }
+    // Rooms 1001-1014 are the royal residential sector, which is on Tier 1.
+    if (/^10(?:0\d|1[0-4])$/.test(room) && ship?.tier !== 1) {
+      findings.push(
+        finding(
+          'bare-tier',
+          where,
+          `room ${room} is on tier 1 but the entry claims tier ${ship?.tier}`,
+        ),
+      )
+    }
+
+    const legs = character.mapTrajectory ?? []
+    for (const [index, leg] of legs.entries()) {
+      if (!known.has(leg.location)) {
+        findings.push(finding('trajectory', where, `leg ${index} names no known location`))
+      }
+      if (/^tier-[1-5]$/.test(leg.location)) {
+        findings.push(finding('trajectory', where, `leg ${index} stops on a deck, not in a room`))
+      }
+      const next = legs[index + 1]
+      if (!next) continue
+      const starts = chapterPosition(leg.fromChapterId)
+      const nextStarts = chapterPosition(next.fromChapterId)
+      // Strictly earlier is a route written out of order. Equal is allowed and
+      // means something weaker: the catalogue records finer movement than the
+      // event log can carry — Hisoka crosses the Tier 3 block into the cineplex
+      // inside chapter 392, which holds two events and no pin for either leg.
+      // The compiler settles that by keeping the last leg of the group, which
+      // is the position the chapter leaves the body in.
+      if (starts !== null && nextStarts !== null && nextStarts < starts) {
+        findings.push(finding('trajectory', where, `leg ${index + 1} starts before leg ${index}`))
+      }
+      // A declared end before the next leg begins is a gap, and gaps are real:
+      // Momoze dies in her room at 368 and is carried to the burial chamber at
+      // 371, so nothing should draw her in either place in between. What is
+      // forbidden is an end *after* the successor starts, which would put one
+      // body in two rooms at once.
+      const ends = chapterPosition(leg.untilChapterId)
+      if (ends !== null && nextStarts !== null && ends > nextStarts) {
+        findings.push(
+          finding('trajectory', where, `leg ${index} ends after leg ${index + 1} has begun`),
+        )
+      }
+    }
   }
   return findings
 }
@@ -322,6 +422,7 @@ export const INVARIANTS: ReadonlyArray<{ name: string; run: Invariant }> = [
   { name: 'references-resolve', run: referencesResolve },
   { name: 'chapter-references-are-well-formed', run: chapterReferencesAreWellFormed },
   { name: 'events-are-ordered', run: eventsAreOrdered },
+  { name: 'positions-name-a-room', run: positionsNameARoom },
   { name: 'ranked-claims-cite-a-source', run: rankedClaimsCiteASource },
   { name: 'spaces-stand-on-a-deck', run: spacesStandOnADeck },
   { name: 'links-join-real-spaces', run: linksJoinRealSpaces },

@@ -32,6 +32,83 @@ export function provenanceRank(value: Provenance): number {
 
 export const canonStatus = z.enum(['canon', 'semi-canon', 'non-canon', 'databook', 'inferred'])
 
+/**
+ * A chapter reference: `ch-<number>`, optionally pinned to one event of that
+ * chapter with `ch-<number>.<sequence>`.
+ *
+ * The dotted form is finer than a chapter and the map needs it — a chapter
+ * holds several events and a victim rarely falls in the first one. `ch-unknown`
+ * is the explicit "no chapter names this", and it is spelled out rather than
+ * left to `null` so the difference between undated and never-dated survives.
+ */
+export const chapterRef = z
+  .string()
+  .regex(
+    /^ch-(?:unknown|\d+(?:\.\d+)?)$/,
+    'must be ch-<number>, ch-<number>.<sequence> or ch-unknown',
+  )
+
+/**
+ * How the map may draw a position.
+ *
+ * `databook` is a room from Togashi's character sheets: the room is stated, the
+ * chapter never is. `inferred` is weaker still — canon puts the passenger on a
+ * tier and never names their room, so the catalogue picks the one their
+ * affiliation implies. Both are deductions and the map has to show them as such.
+ */
+export const positionProvenance = z.enum(['databook', 'inferred'])
+
+/** Statuses that put the character's body on panel. See `deathChapter`. */
+export const APPEARANCE_STATUSES = [
+  'absent',
+  'appears',
+  'debut',
+  'death',
+  'corpse',
+  'disguised',
+  'impersonated',
+  'clone',
+  'soul',
+  'flashback',
+  'pictured',
+  'mentioned',
+  'vision',
+  'voice',
+] as const
+
+const mangaAppearanceSchema = z
+  .object({
+    chapter: z.number().int().positive(),
+    title: z.string().min(1),
+    status: z.enum(APPEARANCE_STATUSES),
+  })
+  .passthrough()
+
+/**
+ * `shipLocation` can only describe one position, so a character who moves
+ * during the arc declares each leg here instead. A leg ends where the next one
+ * begins; `untilChapterId` is only for a final leg that stops without a
+ * successor.
+ */
+const trajectoryLegSchema = z
+  .object({
+    location: slug,
+    fromChapterId: chapterRef,
+    untilChapterId: chapterRef.nullable().optional(),
+    certainty: z.enum(['CONFIRMED', 'PROBABLE', 'LAST_KNOWN']).optional(),
+    note: z.string().optional(),
+  })
+  .passthrough()
+
+const shipLocationSchema = z
+  .object({
+    tier: z.number().int().min(1).max(5).nullable(),
+    room: z.string().nullable(),
+    status: z.string(),
+    role: z.string(),
+  })
+  .passthrough()
+
 const point = z.tuple([z.number(), z.number()])
 
 export const chapterSchema = z
@@ -44,14 +121,32 @@ export const chapterSchema = z
   })
   .passthrough()
 
+/**
+ * A character, and everything the map compiler projects into the database.
+ *
+ * The fields below the identity block are not decoration: `canon-compiler`
+ * turns each of them into rows — a Presence, a BodyState, a closing bound — and
+ * a value it cannot read is a passenger who silently leaves the map. They were
+ * `passthrough()` for as long as only `.mjs` scripts read them.
+ */
 export const characterSchema = z
   .object({
     id: slug,
     canonicalName: z.string().min(1),
     aliases: z.array(z.string()).optional(),
+    description: z.string().nullable().optional(),
     factionId: slug.nullable().optional(),
-    firstAppearanceChapterId: slug.nullable().optional(),
+    firstAppearanceChapterId: chapterRef.nullable().optional(),
     canonStatus: z.string().optional(),
+    shipLocation: shipLocationSchema.optional(),
+    positionProvenance: positionProvenance.optional(),
+    mapTrajectory: z.array(trajectoryLegSchema).optional(),
+    mangaAppearances: z.array(mangaAppearanceSchema).optional(),
+    mapPresenceFromChapterId: chapterRef.nullable().optional(),
+    mapPresenceUntilChapterId: chapterRef.nullable().optional(),
+    /** The identity backfill owns this body's history; see `canon-compiler`. */
+    temporalIdentityManaged: z.boolean().optional(),
+    replaceMapPresenceHistory: z.boolean().optional(),
   })
   .passthrough()
 
@@ -193,6 +288,10 @@ export type CataloguePath = keyof typeof CATALOGUE_FILES
 
 export type Chapter = z.infer<typeof chapterSchema>
 export type Character = z.infer<typeof characterSchema>
+export type ShipLocation = z.infer<typeof shipLocationSchema>
+export type TrajectoryLeg = z.infer<typeof trajectoryLegSchema>
+export type MangaAppearance = z.infer<typeof mangaAppearanceSchema>
+export type AppearanceStatus = (typeof APPEARANCE_STATUSES)[number]
 export type Ability = z.infer<typeof abilitySchema>
 export type Faction = z.infer<typeof factionSchema>
 export type Location = z.infer<typeof locationSchema>

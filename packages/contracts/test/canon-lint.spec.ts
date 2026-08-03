@@ -144,6 +144,59 @@ describe('links-join-real-spaces', () => {
   })
 })
 
+describe('positions-name-a-room', () => {
+  it('refuses a passenger standing on a bare deck', () => {
+    const found = run('positions-name-a-room', (copy) => {
+      copy.characters[0]!.shipLocation = { tier: 3, room: null, status: 'actif', role: 'passager' }
+    })
+    expect(found).toEqual([expect.objectContaining({ rule: 'bare-tier' })])
+  })
+
+  it('refuses a royal-sector room filed on the wrong deck', () => {
+    const found = run('positions-name-a-room', (copy) => {
+      copy.characters[0]!.shipLocation = { tier: 4, room: '1011', status: 'actif', role: 'garde' }
+    })
+    expect(found[0]!.message).toContain('room 1011 is on tier 1')
+  })
+
+  it('refuses a trajectory leg that stops on a deck', () => {
+    const found = run('positions-name-a-room', (copy) => {
+      const character = copy.characters.find((entry) => entry.mapTrajectory?.length)!
+      character.mapTrajectory![0]!.location = 'tier-3'
+    })
+    expect(found).toEqual([
+      expect.objectContaining({ message: 'leg 0 stops on a deck, not in a room' }),
+    ])
+  })
+
+  it('refuses a route written out of order', () => {
+    const found = run('positions-name-a-room', (copy) => {
+      const character = copy.characters.find((entry) => (entry.mapTrajectory?.length ?? 0) > 1)!
+      character.mapTrajectory![1]!.fromChapterId = 'ch-341'
+    })
+    expect(found[0]!.message).toContain('starts before leg 0')
+  })
+
+  // Momoze dies in her room at 368 and is carried to the burial chamber at 371.
+  // Nothing may draw her in either place in between, so the gap has to survive.
+  it('lets a leg end before the next one begins', () => {
+    const found = run('positions-name-a-room', (copy) => {
+      const character = copy.characters.find((entry) => (entry.mapTrajectory?.length ?? 0) > 1)!
+      character.mapTrajectory![0]!.untilChapterId = character.mapTrajectory![0]!.fromChapterId
+    })
+    expect(found).toEqual([])
+  })
+
+  it('refuses a leg still open once the next one has begun', () => {
+    const found = run('positions-name-a-room', (copy) => {
+      const character = copy.characters.find((entry) => (entry.mapTrajectory?.length ?? 0) > 1)!
+      character.mapTrajectory![0]!.untilChapterId = 'ch-416'
+      character.mapTrajectory![1]!.fromChapterId = 'ch-400'
+    })
+    expect(found.map((entry) => entry.message)).toContain('leg 0 ends after leg 1 has begun')
+  })
+})
+
 describe('spoiler-coverage', () => {
   it('refuses an undated character that is not a databook entry', () => {
     const found = run('spoiler-coverage', (copy) => {

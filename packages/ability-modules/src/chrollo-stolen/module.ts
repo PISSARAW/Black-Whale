@@ -460,7 +460,7 @@ export const blackVoice = defineAbility({
 
   interactionManifest: buildManifest('black-voice', {
     inputMode: 'TARGET_SELECTION',
-    allowedTargets: ['CHARACTER', 'BODY'],
+    allowedTargets: ['CHARACTER', 'BODY', 'OBJECT'],
     overlays: ['CONTROL_LINK'],
     entryActions: ['plant-antenna'],
     requiredState: ['isConscious', 'canUseNen'],
@@ -531,7 +531,7 @@ export const lovelyGhostwriter = defineAbility({
 
   interactionManifest: buildManifest('lovely-ghostwriter', {
     inputMode: 'CUSTOM',
-    allowedTargets: ['CHARACTER', 'EVENT'],
+    allowedTargets: ['CHARACTER', 'EVENT', 'LOCATION'],
     overlays: ['FUTURE'],
     entryActions: ['predict'],
     requiredState: ['canUseNen'],

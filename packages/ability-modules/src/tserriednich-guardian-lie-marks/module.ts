@@ -82,7 +82,7 @@ export const tserriednichGuardianLieMarks = defineAbility({
 
   interactionManifest: buildManifest('tserriednich-guardian-lie-marks', {
     inputMode: 'TARGET_SELECTION',
-    allowedTargets: ['CHARACTER', 'BODY'],
+    allowedTargets: ['CHARACTER', 'BODY', 'OBJECT'],
     overlays: ['AURA'],
     entryActions: ['mark'],
     requiredState: ['canUseNen'],

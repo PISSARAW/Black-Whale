@@ -98,7 +98,7 @@ export const beyondSacrificialCurse = defineAbility({
 
   interactionManifest: buildManifest('beyond-sacrificial-curse', {
     inputMode: 'TARGET_SELECTION',
-    allowedTargets: ['CHARACTER', 'BODY'],
+    allowedTargets: ['CHARACTER', 'BODY', 'LOCATION'],
     overlays: ['AURA'],
     entryActions: ['mark'],
     requiredState: ['canUseNen'],

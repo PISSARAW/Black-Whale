@@ -74,7 +74,7 @@ export const dowsingChain = defineAbility({
 
   interactionManifest: buildManifest('dowsing-chain', {
     inputMode: 'TARGET_SELECTION',
-    allowedTargets: ['CHARACTER', 'LOCATION'],
+    allowedTargets: ['CHARACTER', 'LOCATION', 'OBJECT'],
     overlays: ['RANGE'],
     entryActions: ['select-finger'],
     requiredState: ['isConscious', 'canUseNen'],

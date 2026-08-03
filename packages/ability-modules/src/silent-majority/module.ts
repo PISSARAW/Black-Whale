@@ -145,7 +145,7 @@ export const silentMajority = defineAbility({
 
   interactionManifest: buildManifest('silent-majority', {
     inputMode: 'TARGET_SELECTION',
-    allowedTargets: ['CHARACTER'],
+    allowedTargets: ['CHARACTER', 'LOCATION'],
     overlays: ['RANGE', 'AURA'],
     entryActions: ['summon'],
     requiredState: ['isConscious', 'canUseNen'],

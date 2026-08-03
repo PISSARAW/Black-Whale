@@ -82,7 +82,7 @@ export const judgmentChain = defineAbility({
 
   interactionManifest: buildManifest('judgment-chain', {
     inputMode: 'TARGET_SELECTION',
-    allowedTargets: ['CHARACTER', 'BODY'],
+    allowedTargets: ['CHARACTER', 'BODY', 'LOCATION'],
     overlays: ['CONTROL_LINK'],
     entryActions: ['select-finger'],
     requiredState: ['isConscious', 'canUseNen'],

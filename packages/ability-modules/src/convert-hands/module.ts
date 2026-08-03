@@ -70,7 +70,7 @@ export const convertHands = defineAbility({
 
   interactionManifest: buildManifest('convert-hands', {
     inputMode: 'CLICK',
-    allowedTargets: ['CHARACTER', 'BODY'],
+    allowedTargets: ['CHARACTER', 'BODY', 'OBJECT'],
     overlays: ['AURA'],
     entryActions: ['swap'],
     requiredState: ['isConscious', 'canUseNen'],

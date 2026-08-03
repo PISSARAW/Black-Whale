@@ -90,7 +90,7 @@ export const saiyuPriestStaff = defineAbility({
 
   interactionManifest: buildManifest('saiyu-priest-staff', {
     inputMode: 'DRAG',
-    allowedTargets: ['CHARACTER', 'BODY'],
+    allowedTargets: ['CHARACTER', 'BODY', 'OBJECT'],
     overlays: ['RANGE', 'TRAJECTORY'],
     entryActions: ['conjure'],
     requiredState: ['isConscious', 'canUseNen'],

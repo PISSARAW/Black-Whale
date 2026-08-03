@@ -115,7 +115,7 @@ export const parallelFuture = defineAbility({
 
   interactionManifest: buildManifest('parallel-future', {
     inputMode: 'HOLD',
-    allowedTargets: ['CHARACTER', 'EVENT'],
+    allowedTargets: ['CHARACTER', 'EVENT', 'LOCATION'],
     overlays: ['FUTURE', 'TRAJECTORY'],
     entryActions: ['open-window'],
     requiredState: ['canUseNen', 'inZetsu'],

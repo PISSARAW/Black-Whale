@@ -83,7 +83,7 @@ export const camillaGuardianCoercion = defineAbility({
 
   interactionManifest: buildManifest('camilla-guardian-coercion', {
     inputMode: 'TARGET_SELECTION',
-    allowedTargets: ['CHARACTER'],
+    allowedTargets: ['CHARACTER', 'LOCATION'],
     overlays: ['CONTROL_LINK'],
     entryActions: ['arm'],
     requiredState: ['canUseNen'],
@@ -153,7 +153,7 @@ export const tubeppaGuardianSynthesis = defineAbility({
 
   interactionManifest: buildManifest('tubeppa-guardian-synthesis', {
     inputMode: 'SEQUENCE',
-    allowedTargets: ['CHARACTER', 'OBJECT'],
+    allowedTargets: ['CHARACTER', 'OBJECT', 'LOCATION'],
     overlays: ['AURA'],
     entryActions: ['synthesise'],
     requiredState: ['canUseNen'],
@@ -307,7 +307,7 @@ export const luzurusGuardianDesireTrap = defineAbility({
 
   interactionManifest: buildManifest('luzurus-guardian-desire-trap', {
     inputMode: 'TARGET_SELECTION',
-    allowedTargets: ['CHARACTER', 'OBJECT'],
+    allowedTargets: ['CHARACTER', 'OBJECT', 'LOCATION'],
     overlays: ['AURA', 'RANGE'],
     entryActions: ['bait'],
     requiredState: ['canUseNen'],

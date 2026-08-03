@@ -99,7 +99,7 @@ export const catsName = defineAbility({
 
   interactionManifest: buildManifest('cats-name', {
     inputMode: 'CUSTOM',
-    allowedTargets: ['CHARACTER', 'BODY'],
+    allowedTargets: ['CHARACTER', 'BODY', 'LOCATION'],
     overlays: ['AURA'],
     entryActions: ['arm'],
     requiredState: ['canUseNen'],

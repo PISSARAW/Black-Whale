@@ -6,6 +6,8 @@ import { compileArenaContracts } from '../arena/contracts.js'
 import { emitArenaContracts } from '../arena/emit.js'
 import { loadCatalogue } from '../catalogue.js'
 import { emitHatsuProfiles } from '../hatsu/emit.js'
+import { emitInteractionManifests } from '../hatsu/emitManifests.js'
+import { compileInteractionManifests } from '../hatsu/manifests.js'
 import { compileHatsuProfiles } from '../hatsu/profiles.js'
 import { emitLocaleSkeleton } from '../hatsu/skeleton.js'
 
@@ -26,6 +28,7 @@ import { emitLocaleSkeleton } from '../hatsu/skeleton.js'
  */
 
 const REGISTRY = 'apps/web/src/lib/nen/hatsuProfiles.gen.ts'
+const MANIFESTS = 'apps/web/src/lib/nen/interactionManifests.gen.ts'
 const ARENA = 'apps/web/src/lib/arena/hatsu/contracts.gen.ts'
 const FRENCH = 'apps/web/src/lib/i18n/messages/hatsu-fr.ts'
 
@@ -81,6 +84,14 @@ export async function main(argv: readonly string[] = process.argv.slice(2)): Pro
     return 0
   }
 
+  const interactions = compileInteractionManifests({ modules: abilityModules, catalogue })
+  if (interactions.problems.length > 0) {
+    console.error(
+      `The interaction manifests do not compile:\n  ${interactions.problems.join('\n  ')}`,
+    )
+    return 1
+  }
+
   const arena = compileArenaContracts({ modules: abilityModules, catalogue })
   if (arena.problems.length > 0) {
     console.error(`The arena contracts do not compile:\n  ${arena.problems.join('\n  ')}`)
@@ -88,12 +99,18 @@ export async function main(argv: readonly string[] = process.argv.slice(2)): Pro
   }
 
   const registryTarget = join(repoRoot(), REGISTRY)
+  const manifestTarget = join(repoRoot(), MANIFESTS)
   const arenaTarget = join(repoRoot(), ARENA)
   const emissions: Emission[] = [
     {
       output: REGISTRY,
       source: await emitHatsuProfiles(profiles, registryTarget),
       summary: `${profiles.length} abilities`,
+    },
+    {
+      output: MANIFESTS,
+      source: await emitInteractionManifests(interactions.manifests, manifestTarget),
+      summary: `${interactions.manifests.length} manifests`,
     },
     {
       output: ARENA,

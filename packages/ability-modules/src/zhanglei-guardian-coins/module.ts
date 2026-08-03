@@ -99,7 +99,7 @@ export const zhangleiGuardianCoins = defineAbility({
 
   interactionManifest: buildManifest('zhanglei-guardian-coins', {
     inputMode: 'CLICK',
-    allowedTargets: ['OBJECT', 'CHARACTER'],
+    allowedTargets: ['OBJECT', 'CHARACTER', 'LOCATION'],
     overlays: ['RANGE'],
     entryActions: ['mint'],
     requiredState: ['canUseNen'],

@@ -66,7 +66,7 @@ export const chainJail = defineAbility({
 
   interactionManifest: buildManifest('chain-jail', {
     inputMode: 'TARGET_SELECTION',
-    allowedTargets: ['CHARACTER', 'BODY'],
+    allowedTargets: ['CHARACTER', 'BODY', 'LOCATION'],
     overlays: ['CONTROL_LINK', 'RANGE'],
     entryActions: ['select-finger'],
     requiredState: ['isConscious', 'canUseNen'],

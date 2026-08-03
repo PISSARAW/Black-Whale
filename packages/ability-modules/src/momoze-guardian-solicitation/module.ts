@@ -93,7 +93,7 @@ export const momozeGuardianSolicitation = defineAbility({
 
   interactionManifest: buildManifest('momoze-guardian-solicitation', {
     inputMode: 'SEQUENCE',
-    allowedTargets: ['CHARACTER'],
+    allowedTargets: ['CHARACTER', 'LOCATION'],
     overlays: ['CONTROL_LINK', 'AURA'],
     entryActions: ['solicit'],
     requiredState: ['canUseNen'],

@@ -236,7 +236,7 @@ export const padailleWeaponTransformation = defineAbility({
 
   interactionManifest: buildManifest('padaille-weapon-transformation', {
     inputMode: 'CLICK',
-    allowedTargets: ['CHARACTER', 'BODY'],
+    allowedTargets: ['CHARACTER', 'BODY', 'OBJECT'],
     overlays: ['AURA'],
     entryActions: ['transform'],
     requiredState: ['isConscious', 'canUseNen'],

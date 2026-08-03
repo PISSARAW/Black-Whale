@@ -85,7 +85,7 @@ export const moonlightAct = defineAbility({
 
   interactionManifest: buildManifest('moonlight-act', {
     inputMode: 'SEQUENCE',
-    allowedTargets: ['CHARACTER'],
+    allowedTargets: ['CHARACTER', 'LOCATION'],
     overlays: ['CONTROL_LINK'],
     entryActions: ['sign'],
     requiredState: ['isConscious', 'canUseNen'],

@@ -160,7 +160,7 @@ export const danceOfTheSerpentsBite = defineAbility({
 
   interactionManifest: buildManifest('dance-of-the-serpents-bite', {
     inputMode: 'DRAW',
-    allowedTargets: ['CHARACTER', 'LOCATION'],
+    allowedTargets: ['CHARACTER', 'LOCATION', 'OBJECT'],
     overlays: ['TRAJECTORY', 'RANGE'],
     entryActions: ['mark'],
     requiredState: ['isConscious', 'canUseNen'],

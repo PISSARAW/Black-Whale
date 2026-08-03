@@ -151,7 +151,7 @@ export const grimmelTheDissonance = defineAbility({
 
   interactionManifest: buildManifest('grimmel-the-dissonance', {
     inputMode: 'TARGET_SELECTION',
-    allowedTargets: ['CHARACTER', 'BODY'],
+    allowedTargets: ['CHARACTER', 'BODY', 'LOCATION'],
     // The arrow goes through walls: the trajectory ignores the location graph.
     overlays: ['TRAJECTORY', 'AURA'],
     entryActions: ['raise-cohort', 'shoot'],

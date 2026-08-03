@@ -468,10 +468,47 @@ du duel reste celui de l'arène : `ArenaHatsuDefinition` type son `effect` avec
 `combat/types`, si bien qu'une divergence entre les cinq mots du moteur et ceux
 du réducteur devient une erreur de compilation.
 
-**Reste à faire.** Faire consommer
-l'`interactionManifest` par les rendus DOM et 3D ; remonter la couche
-`lib/hunt/nen/` dans les manifests ; porter les tests comportementaux du tour
-en tests du moteur.
+**Étape 4 — le rendu 3D consomme l'`interactionManifest` (fait).** Les modules
+déclaraient `allowedTargets` depuis la section 18 avec **zéro consommateur**, et
+le tour répondait à la même question tout seul : ce qu'une technique peut viser,
+c'était laquelle de ses trois tables (`SOLID_CASTS`, `BODY_CASTS`, `ROOM_CASTS`)
+portait son `kind`. Les deux avaient divergé — **24 des 82** étaient lancées sur
+une cible que leur propre manifeste interdisait (`chain-jail` sur une salle,
+`double-machine-gun` sur un solide…). Les manifestes étant le côté que personne
+ne lisait, ce sont eux qui ont été élargis à ce que les rendus font réellement ;
+`compile:hatsu` émet désormais `interactionManifests.gen.ts` (82 entrées), et
+`lib/nen/targeting.ts` est le seul endroit qui traduit les cibles déclarées en
+ce qu'un rendu a devant lui. Les trois tables du tour sont précédées d'un test
+du manifeste : la table dit _à quoi ressemble_ le lancer, le manifeste dit s'il
+est _permis_. `targeting.test.ts` tient l'invariant qui rend le geste sans
+effet de bord — ce que le tour implémente est un sous-ensemble de ce que les
+modules autorisent — et les 184 tests du tour passent inchangés.
+
+Le rendu DOM n'est **pas** branché, délibérément : ses gestionnaires agissent
+sur des éléments de page, un modèle de cible que `allowedTargets` ne décrit pas
+(49 des 76 `kind` qu'il traite interdisent `OBJECT` tout en s'appliquant à des
+éléments). Lui faire lire le manifeste demande d'abord que le balisage de
+l'archive déclare la nature de ses entités — une étape de conception, pas un
+refactor, et un appel décoratif aurait été pire que rien.
+
+**Étape 5 — `lib/hunt/nen/` ne redéclare plus le vocabulaire (fait).** La traque
+tenait sa propre table des conséquences du Zetsu (`auraVisible` / `canSweep` /
+`feelsEn`) et sa propre boucle de rayon pour le balayage En. Les deux sont
+maintenant dérivées du moteur : `states.ts` lit `canUseHatsu` sur l'état
+`transitionNen`, et `sweepEn` délègue la détection à `detectWithEn`. La traque
+garde ce qui est à elle — deux états, ses prix, l'ordre de son débriefing — et
+cesse de garder les règles, qui ne le sont pas. Ses 295 tests passent inchangés.
+
+**Étape 6 — les limites de canon deviennent des tests du moteur (commencé).**
+`packages/ability-modules/test/canon-limits.spec.ts` tient les trois limites de
+Bungee Gum (le filament rompt au-delà de dix mètres, masqué par In il reste
+réel, programmé avant la mort il continue) là où le module les applique, au lieu
+du seul rendu 3D. C'est la première technique, celle que l'ADR désignait comme
+patron ; les 81 autres restent à porter au même endroit.
+
+**Reste à faire.** Brancher le rendu DOM (précédé du balisage d'entités qu'il
+suppose) ; porter les limites de canon des 81 autres techniques en tests de
+module.
 
 ---
 

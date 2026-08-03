@@ -32,6 +32,7 @@ import {
 } from './geometry'
 import type { Polygon, Space, Structure, StructureKind, Vec2, WallSegment } from './types'
 import type { HatsuInteractionKind, HatsuProfile } from '$lib/nen/hatsuRegistry'
+import { acceptsFamily } from '$lib/nen/targeting'
 
 /**
  * The techniques that have something to take hold of in a reconstruction.
@@ -2607,7 +2608,11 @@ function castOnSolid(
     return [(dx / length) * metres, (dz / length) * metres]
   }
 
-  const cast = SOLID_CASTS[kind]
+  // What may be aimed at a solid is the module's declaration, not this table's
+  // shape: the table says how the cast looks, the manifest says whether it is
+  // allowed at all. The two agree for the eighty-two — `targeting.test.ts`
+  // holds them to it — so this refuses nothing the walk used to do.
+  const cast = acceptsFamily(kind, 'solid') ? SOLID_CASTS[kind] : undefined
   return cast
     ? cast({
         world,
@@ -3070,7 +3075,7 @@ function castOnBody(
     body: { ...body, ...patch },
   })
 
-  const cast = BODY_CASTS[kind]
+  const cast = acceptsFamily(kind, 'body') ? BODY_CASTS[kind] : undefined
   return cast
     ? cast({ world, ship: input.ship, body, kind, input, withBody })
     : { world, report: { kind: 'inert' } }
@@ -4408,7 +4413,7 @@ function runCast(
 
   if (BOOK_HATSU_KINDS.has(kind)) return castOnTechniques(world, kind, target)
 
-  const cast = ROOM_CASTS[kind]
+  const cast = acceptsFamily(kind, 'room') ? ROOM_CASTS[kind] : undefined
   if (!cast) return { world, report: { kind: 'inert' } }
 
   const result = cast({ world, ship, target, input, at, standingIn })
@@ -5342,4 +5347,18 @@ export function polarityStep(
   }
 
   return { world: { ...world, solids }, report }
+}
+
+/**
+ * Which kinds the walk has a cast written for, by the thing it is aimed at.
+ *
+ * Exported so the invariant can be tested rather than trusted: what the walk
+ * renders must be a subset of what the modules declare in their interaction
+ * manifests, or the gate standing in front of each of these tables would
+ * refuse a cast the walk used to perform. `nen/targeting.test.ts` holds it.
+ */
+export const TOUR_CAST_KINDS: Record<'solid' | 'body' | 'room', Set<HatsuInteractionKind>> = {
+  solid: new Set(Object.keys(SOLID_CASTS) as HatsuInteractionKind[]),
+  body: new Set(Object.keys(BODY_CASTS) as HatsuInteractionKind[]),
+  room: new Set(Object.keys(ROOM_CASTS) as HatsuInteractionKind[]),
 }

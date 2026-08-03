@@ -140,7 +140,7 @@ export const battleCantabileJupiter = defineAbility({
 
   interactionManifest: buildManifest('battle-cantabile-jupiter', {
     inputMode: 'SEQUENCE',
-    allowedTargets: ['CHARACTER', 'LOCATION'],
+    allowedTargets: ['CHARACTER', 'LOCATION', 'OBJECT'],
     overlays: ['AURA', 'RANGE'],
     entryActions: ['perform'],
     requiredState: ['isConscious', 'canUseNen'],
@@ -289,7 +289,7 @@ export const doubleMachineGun = defineAbility({
 
   interactionManifest: buildManifest('double-machine-gun', {
     inputMode: 'DRAG',
-    allowedTargets: ['CHARACTER', 'LOCATION'],
+    allowedTargets: ['CHARACTER', 'LOCATION', 'OBJECT'],
     overlays: ['TRAJECTORY', 'RANGE'],
     entryActions: ['fire'],
     requiredState: ['isConscious', 'canUseNen'],
@@ -367,7 +367,7 @@ export const ripperCyclotron = defineAbility({
 
   interactionManifest: buildManifest('ripper-cyclotron', {
     inputMode: 'HOLD',
-    allowedTargets: ['CHARACTER'],
+    allowedTargets: ['CHARACTER', 'OBJECT'],
     overlays: ['AURA'],
     entryActions: ['wind-up'],
     requiredState: ['isConscious', 'canUseNen'],

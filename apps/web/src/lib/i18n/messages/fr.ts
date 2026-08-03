@@ -397,6 +397,8 @@ export const fr: Messages = {
       jumpOnly: 'Ne pas marcher — sauter de pièce en pièce',
       nightLight: 'Lumière que vous portez',
       nightLightOff: 'Éteinte — le vaisseau tel qu’il est éclairé',
+      exposure: 'Exposition',
+      exposureHelp: 'Ouvre l’œil, pas le vaisseau : aucune pièce ne s’éclaire.',
       walkPace: 'Allure de marche',
       headBob: 'Mouvement de la tête',
       headBobOff: 'Aucun — l’œil reste de niveau',
@@ -450,6 +452,18 @@ export const fr: Messages = {
       measured: (long, wide, height) => `${long} × ${wide} m, ${height} m de haut`,
       standingIn: (room) => `Se tient dans ${room}`,
       room: 'Une pièce que les plans de pont dessinent, arpentée à la taille qu’ils lui donnent.',
+      person: {
+        since: (chapter) => `Ici depuis le ch. ${chapter}`,
+        sinceUnknown: 'Le catalogue ne date cette position d’aucun chapitre.',
+        claim: 'Un personnage nommé du canon, là où l’archive le place à ce chapitre.',
+        role: (role) => `À bord comme : ${role}.`,
+      },
+      beast: {
+        claim:
+          'Une bête gardienne, présente et dormante : elle tient la pièce de son prince et ne fait rien d’autre ici.',
+        owner: (owner) => `Appartient à ${owner}`,
+        since: (chapter) => `Lue au ch. ${chapter}`,
+      },
       claims: {
         spring:
           'Le vaisseau porte son eau : une source dessinée dans la planche, à la taille dessinée.',

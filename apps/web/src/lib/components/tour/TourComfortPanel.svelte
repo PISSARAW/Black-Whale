@@ -1,6 +1,7 @@
 <script lang="ts">
   import { t } from '$lib/i18n'
   import {
+    EXPOSURE_RANGE,
     FOV_RANGE,
     HEAD_BOB_RANGE,
     NIGHT_LIGHT_RANGE,
@@ -83,6 +84,30 @@
         oninput={(event) => setComfort({ nightLight: Number(event.currentTarget.value) })}
         class="mt-1 w-full accent-[#FFD700]"
       />
+    </label>
+    <!--
+      The aperture, next to the light the visitor carries, because the two
+      answer the same complaint from opposite sides: one adds a lamp the ship
+      does not have, and this one only opens the eye looking at it.
+    -->
+    <label class="block">
+      <span class="flex items-baseline justify-between"
+        ><span>{$t.tour.comfort.exposure}</span><span class="text-[#FFD700]/80"
+          >{$t.tour.comfort.times($comfort.exposure)}</span
+        ></span
+      >
+      <input
+        type="range"
+        min={EXPOSURE_RANGE[0]}
+        max={EXPOSURE_RANGE[1]}
+        step="0.05"
+        value={$comfort.exposure}
+        oninput={(event) => setComfort({ exposure: Number(event.currentTarget.value) })}
+        class="mt-1 w-full accent-[#FFD700]"
+      />
+      <span class="mt-0.5 block text-[11px] leading-snug text-[#FFFFF0]/40"
+        >{$t.tour.comfort.exposureHelp}</span
+      >
     </label>
     <label class="block">
       <span class="flex items-baseline justify-between"

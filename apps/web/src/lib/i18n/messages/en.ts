@@ -438,6 +438,13 @@ export const en = {
       nightLight: 'Light you carry',
       nightLightOff: 'Off — the ship as it is lit',
       /**
+       * The ship is dark because it says so, and that is not up for adjustment.
+       * The screen it is being read on is a different question, and this is the
+       * only one of the two the reconstruction has any business answering.
+       */
+      exposure: 'Exposure',
+      exposureHelp: 'Opens the eye, not the ship: no room is lit that was not.',
+      /**
        * The walk is slow because the ship is enormous and nothing else on screen
        * can say so. But that is an argument about the ship rather than about
        * somebody's afternoon, and the plan and the index still put anyone in any
@@ -526,6 +533,26 @@ export const en = {
         `${long} × ${wide} m, ${height} m tall`,
       standingIn: (room: string) => `Stands in ${room}`,
       room: 'A room the deck plans draw, walked at the size they give it.',
+      /**
+       * The card for a person, which the walk owed the moment it had any.
+       *
+       * The same three questions as a coffin's: what is it, where does it come
+       * from, and what does putting it here assert. A silhouette that could not
+       * answer them would be a figure the reconstruction had invented.
+       */
+      person: {
+        since: (chapter: string) => `Here since ch. ${chapter}`,
+        sinceUnknown: 'The catalogue dates this position to no chapter.',
+        claim:
+          'A named character of the canon, standing where the archive puts them at this chapter.',
+        role: (role: string) => `Aboard as: ${role}.`,
+      },
+      beast: {
+        claim:
+          'A Guardian Spirit Beast, present and dormant: it keeps its prince’s room and does nothing else here.',
+        owner: (owner: string) => `Belongs to ${owner}`,
+        since: (chapter: string) => `Read off ch. ${chapter}`,
+      },
       claims: {
         spring: 'The ship carries its own water: a spring drawn in the panel, at the size drawn.',
         casket: 'Someone is being kept here. The coffins are counted, not decorated.',

@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import {
+  EXPOSURE_RANGE,
   FOV_RANGE,
   HEAD_BOB_RANGE,
   NIGHT_LIGHT_RANGE,
@@ -118,5 +119,22 @@ describe('readComfort', () => {
     for (const raw of ['{"walkPace":null}', '{"walkPace":"slow"}', '{"walkPace":-3}']) {
       expect(readComfort(raw, false).walkPace).toBeGreaterThan(0)
     }
+  })
+
+  /**
+   * The aperture, which is the one setting about the screen rather than about
+   * the ship — and which therefore must start at the picture as it is tuned.
+   */
+  it('starts at the exposure the walk is tuned at, in both presets', () => {
+    expect(comfortDefaults(false).exposure).toBe(1)
+    expect(comfortDefaults(true).exposure).toBe(1)
+  })
+
+  it('keeps the exposure inside what the filmic curve can still hold', () => {
+    expect(readComfort(JSON.stringify({ exposure: 0 }), false).exposure).toBe(EXPOSURE_RANGE[0])
+    expect(readComfort(JSON.stringify({ exposure: 40 }), false).exposure).toBe(EXPOSURE_RANGE[1])
+    // Never to nothing: an exposure of zero is a black screen, which is not a
+    // comfort setting, it is the walk being broken by its own panel.
+    expect(EXPOSURE_RANGE[0]).toBeGreaterThan(0)
   })
 })

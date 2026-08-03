@@ -560,6 +560,15 @@
    * the horizon, and the pane is baked once while this is read every frame.
    */
   const EYE_HEIGHT = 1.7
+  /**
+   * What the aperture closes to when the monkeys take sight.
+   *
+   * Not zero: the ship is still there and still lit — the bake is in the
+   * vertices and cannot be switched off — and a black frame would say the deck
+   * had gone rather than that the eye had. Two per cent leaves the brightest
+   * filaments as a suggestion and nothing else.
+   */
+  const SEALED_EXPOSURE = 0.02
   /** Radians of yaw per pixel of pointer movement, before the visitor's own multiplier. */
   const LOOK_SENSITIVITY = 0.0022
   const MAX_PITCH = Math.PI / 2 - 0.05
@@ -1305,7 +1314,10 @@
         // lit — the bake is in the vertices and cannot be switched off, which is
         // the honest way round — and the exposure goes to nothing. What the monkeys
         // take is sight, so what closes is the aperture and the air.
-        renderer.toneMappingExposure = sealed ? 0.02 : 1
+        // Back to the visitor's own aperture rather than to 1: the seal is a
+        // thing that happens to the eye, and lifting it hands the eye back as
+        // it was set — see `exposure` in `$lib/tour/comfort`.
+        renderer.toneMappingExposure = sealed ? SEALED_EXPOSURE : $comfort.exposure
         // Restored to what the visitor asked for, which may be nothing at all.
         nightLight.intensity = sealed || $comfort.nightLight <= 0 ? 0 : NIGHT_LIGHT
         // The fittings are not lit, so putting the lights out does nothing to
@@ -4467,6 +4479,11 @@
         }
 
         aimShafts(plan, standing?.id ?? null)
+
+        // The aperture. Written here rather than watched, for the same reason
+        // the field of view is: the panel is a store and this loop is outside
+        // Svelte's reactivity, and one number a frame is not a cost.
+        renderer.toneMappingExposure = blinded ? SEALED_EXPOSURE : $comfort.exposure
 
         // The air bending around the aura. Zero unless there is aura out, and
         // zero outright for a visitor whose system asks for less movement: a

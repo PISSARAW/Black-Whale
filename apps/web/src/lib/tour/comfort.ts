@@ -76,6 +76,27 @@ export interface Comfort {
    */
   walkPace: number
   /**
+   * A multiplier on the exposure of the whole picture, before the filmic curve.
+   *
+   * The ship is dark, and that is an assertion rather than an oversight: the day
+   * enters this hull through two openings in three hundred and fourteen spaces,
+   * and everywhere else the voyage happens under filaments. Nothing here is
+   * allowed to soften that — see `docs/tour-heure.md` for why a "morning" that
+   * brightened a Tier 5 corridor would be an envmap that does not say its name.
+   *
+   * But the screen, the room it is in and the eyes in front of it are not in the
+   * blueprint. A visitor reading this on a laptop in daylight is being shown a
+   * true picture they cannot see, and that is a fact about their afternoon, not
+   * about the Black Whale. So the dial is the aperture and nothing else.
+   *
+   * Monotone and with no hue rotation, which is what keeps it honest: the warm
+   * filaments and the one cold sky are ordered by value, and a multiplier
+   * cannot reorder them. Applied before `ACESFilmicToneMapping`, so what is
+   * written above white — a fitting at 2,4, a pane at 1,28 — still saturates
+   * first at every setting. Turned up or down, the visitor sees the same ship.
+   */
+  exposure: number
+  /**
    * How much the walk is allowed to spend on the picture.
    *
    * `auto` is the driver string's verdict — see `$lib/tour/quality` — and the
@@ -97,6 +118,16 @@ export const NIGHT_LIGHT_RANGE = [0, 12] as const
 export const HEAD_BOB_RANGE = [0, 1.5] as const
 /** A stroll, to a little over three times the walk. */
 export const WALK_PACE_RANGE = [0.75, 2.5] as const
+/**
+ * A stop down, to two thirds of a stop up.
+ *
+ * Narrow on purpose, and not symmetrical. Below 0,75 the shadowed steel goes
+ * under what a screen can separate from black and the walk stops being lit at
+ * all; above 1,6 the filaments have rolled off the top of the filmic curve and
+ * everything that was above white is one flat white, which is the very thing
+ * `WINDOW_GLOW` and `LAMP_PEAK` are written above it to avoid.
+ */
+export const EXPOSURE_RANGE = [0.75, 1.6] as const
 
 const LIVELY: Comfort = {
   fov: 72,
@@ -111,6 +142,10 @@ const LIVELY: Comfort = {
   // everyone else.
   headBob: 0.7,
   walkPace: 1,
+  // One, which is the picture as it is tuned. A default that brightened the
+  // ship would be the reconstruction deciding the room the visitor is sitting
+  // in, and it has no way of knowing it.
+  exposure: 1,
   quality: 'auto',
 }
 
@@ -132,6 +167,10 @@ const CALM: Comfort = {
   // Slower again, because a reduced-motion visitor who is walking at all is
   // walking to look at something.
   walkPace: 0.85,
+  // Reduced motion is a request about movement, not about brightness: a
+  // visitor who has asked their system for less movement has not asked for a
+  // paler ship. Left where the walk leaves it, like the night-light.
+  exposure: 1,
   // Reduced motion is a request about movement, not about fidelity. The palier
   // is left to the machine, the same as for anyone else.
   quality: 'auto',
@@ -193,6 +232,7 @@ export function readComfort(raw: string | null, reduced = prefersReducedMotion()
     nightLight: readNumber(stored.nightLight, NIGHT_LIGHT_RANGE, defaults.nightLight),
     headBob: readNumber(stored.headBob, HEAD_BOB_RANGE, defaults.headBob),
     walkPace: readNumber(stored.walkPace, WALK_PACE_RANGE, defaults.walkPace),
+    exposure: readNumber(stored.exposure, EXPOSURE_RANGE, defaults.exposure),
     quality: readQuality(stored.quality, defaults.quality),
   }
 }

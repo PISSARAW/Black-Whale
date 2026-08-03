@@ -132,6 +132,7 @@ export const crossGame = defineAbility({
 
     release: {
       label: 'Lever la contrainte',
+      evidence: shown('ch. 352 — la contrainte est brève et se lève'),
       conditions: [effectIsLive('effectId', 'Une contrainte est en cours')],
       effects: [setEffectState({ state: 'ENDED' })],
     },

@@ -55,6 +55,7 @@ export const yomotsuHegui = defineAbility({
     prepare: {
       label: 'Commencer la préparation',
       evidence: shown('ch. 394 — des mois de préparation rituelle'),
+      gyo: 'le rituel en cours, que seule la vue omnisciente suivait jusque-là',
       conditions: [requiresParameter('curseTargetId', 'Une cible est désignée')],
       effects: [
         // Dormant and masked for months: only the omniscient view sees the

@@ -820,3 +820,217 @@ Deux points de fidélité que cette vague met à l'épreuve, conformément au §
 Chaque vague suit le pattern bungee-gum : module dans `ability-modules`, `moduleKey` renseigné
 dans `abilities.json`, manifest + action wheel + panneau « Pourquoi ? », et une scène canon de
 référence rejouable dans la timeline comme test d'acceptation.
+
+---
+
+## 7. Addendum du 2026-08-03 — Combo Master (Furykov, ch. 413-415)
+
+Le 83e hatsu du catalogue, apparu depuis les vagues P1-P3. Sous le gel de l'ADR-001 :
+la fiche est écrite maintenant, le module part dans la première vague post-chantier 3,
+apparié à `beyond-sacrificial-curse` (P1) dont il est le contrechamp au ch. 415.
+
+#### Combo Master — Furykov `combo-master`
+
+- **Canon** (ch. 413, 415) : conjuration d'un ordinateur portable (image de l'arbre kakin,
+  triangle d'alerte, « ブーン ») ; déchiffrage passif d'une capacité par temps **cumulé**
+  passé près de la cible — plus elle est puissante, plus c'est long (bête de Benjamin
+  ≈ 10 j ; malédiction de Beyond : 365 j à décoder, 700 j à contrer) ; puis fabrication
+  d'un équipement — menus SELECT → WEAPON / ARMOR / TOOL (ex. potion REMOVE CURSE) — qui
+  détruit ou amplifie la capacité déchiffrée ; la fabrication dure ≈ le temps du
+  déchiffrage et **se remet à zéro si interrompue** (le déchiffrage, non) ; Furykov ne
+  peut utiliser aucun hatsu pendant qu'il déchiffre ou fabrique ; alarme passive : toute
+  attaque Nen dissimulée le visant (malédiction, maladie, manipulation à étapes)
+  déclenche une notification immédiate avec la liste AFFECTED USERS — portrait + code
+  (px4098) — et « ? » pour toute signature d'aura dissimulée.
+- **Données** : entrée 83 d'`abilities.json` (`ownerId: furykov`, conjurer,
+  `moduleKey: combo-master`), `revealedAtChapter: 413` pour le déchiffrage, 415 pour
+  l'alarme et les menus ; compléter le champ `nen` de Furykov dans `characters.json` —
+  la même complétion que la phase 0 de l'ADR-003 exige déjà (il est aujourd'hui sans
+  champ `nen`, donc sans aura dans la visite).
+- **Events** (primitives des §1-2, rien de neuf à inventer) :
+  - Déchiffrage : `EFFECT_CREATED(CUSTOM: DECIPHER_LINK)` vers la capacité cible,
+    `attributes.{progress, required}` en jours, progression par
+    `EFFECT_ATTRIBUTE_CHANGED` accumulée sur la **co-présence** (même espace dans le
+    world state — c'est le temps du récit qui avance le compteur, pas l'horloge) ;
+    achèvement → `KNOWLEDGE_GRANTED(KNOWN)` à Furykov sur la mécanique complète de la
+    cible. Déchiffrer, c'est écrire dans le knowledge-engine.
+  - Fabrication : effet `CONSTRUCT` en cours, `attributes.{type: weapon|armor|tool,
+    targetAbilityId, progress, required}` ; interruption → remise à zéro de `progress`
+    (l'asymétrie canon avec le déchiffrage) ; achèvement → entité `CONSTRUCT`
+    (l'équipement).
+  - Application : détruire → `ABILITY_REVOKED`, ou `EFFECT_ENDED` sur la `CURSE` (la
+    potion REMOVE CURSE) ; amplifier → `AURA_MODIFIER`/attributs de boost, même famille
+    qu'Erigeron.
+  - Verrou : `CONSTRAINT` sur Furykov tant qu'un DECIPHER_LINK ou un CONSTRUCT est
+    actif — la condition s'affiche au panneau « Pourquoi ? ».
+  - Alarme : tout effet dissimulé (`CURSE`, maladie, `CONTROL_LINK` à étapes) posé sur
+    Furykov → notification immédiate + cohorte des co-affectés
+    (`attributes.memberIds`) ; un membre à signature masquée (`masked`/`appearsAs`)
+    apparaît « ? » au lieu de son portrait et de son code.
+- **Impact site** : le seul hatsu du catalogue dont la manifestation canonique **est une
+  interface**. `ui.componentKey` rend les menus du manga presque verbatim : SELECT →
+  WEAPON/ARMOR/TOOL, REMOVE CURSE, AFFECTED USERS avec codes px et « ? ». Deux effets de
+  fond :
+  1. **Data-revelation diégétique** : le déchiffrage débloque progressivement la fiche
+     mécanique d'une autre capacité — la révélation progressive que le site pratique déjà
+     (spoiler-engine) reçoit une justification interne au monde, jours restants affichés
+     (10 j pour la bête de Benjamin, 365/700 j pour Beyond).
+  2. **Le contrechamp du ch. 415** : la fiche `beyond-sacrificial-curse` note « la bombe
+     du ch. 415 » ; Combo Master en est l'autre moitié — au cursor post-415, la
+     notification rejoue : AFFECTED USERS px4098 + « ? » (la cible scellée par
+     `attributes.target: <hidden>` du module de Beyond). Les deux modules se testent
+     l'un l'autre sur la même scène canon, qui devient leur test d'acceptation commun.
+  - En simulation : « et si Furykov restait N jours près de X ? » → `planFor` calcule
+    l'événement d'achèvement ; l'asymétrie d'interruption (fabrication oui, déchiffrage
+    non) se lit en comparant deux branches.
+- **Garde-fous §5** : les inconnues restent inconnues — la formule exacte durée ↔
+  puissance n'est pas donnée par le manga (seuls trois points de mesure existent :
+  ≈ 10 j, 365 j, 700 j) ; le module porte ces trois valeurs sourcées et une note
+  `unrevealed` non bloquante pour le reste, jamais une courbe inventée.
+- **Tour (ADR-003)** : dépend des personnes présentes — c'est le §6 de l'ADR-003, donc
+  après le chantier 3. Deux notes dès maintenant : (1) dans la conduite de la phase 3,
+  Furykov ne caste **jamais** d'office — au dernier arc il est canoniquement verrouillé
+  par son propre déchiffrage (365 j sur la malédiction de Beyond), et ce verrou est sa
+  fidélité : un Furykov posé près de son portable, sans hatsu actif, est exact ; (2) le
+  futur kind (`decipher`, famille « On the techniques themselves ») se nourrira de la
+  co-présence que la distribution de l'ADR-003 rend mesurable — rester dans la pièce
+  d'un personnage fait avancer le compteur, quitter une fabrication la remet à zéro.
+- **Priorité** : première vague post-chantier 3, appariée à `beyond-sacrificial-curse`
+  (P1) — même scène de référence, même test d'acceptation.
+
+---
+
+## 8. Les emplois multiples — pousser chaque hatsu au-delà de son cast unique (2026-08-03)
+
+> **Constat mesuré ce jour.** Le SDK sait tout faire — `TargetType` couvre
+> `person | object | surface | self | zone | aura | body`, `masked` encode le In,
+> les `conditions` s'affichent au « Pourquoi ? » — mais sur 52 modules, **2 seulement
+> exposent une roue d'action** : `bungee-gum` (10 entrées, dont « Poser un piège (In) »)
+> et `secret-window` (5). Les 50 autres déclarent des `actions{}` (médiane ~4 par module,
+> souvent pour plusieurs capacités groupées) mais un seul geste effectif, sans variantes
+> de cible ni couplages. Un hatsu « au max » au sens du §1 ne l'est pas si on ne peut
+> s'en servir que d'une seule façon : Bungee Gum n'est pas « attacher » — c'est attacher
+> *à quoi*, *depuis où*, *caché ou pas*.
+
+### 8.1 La grammaire d'emploi
+
+Chaque emploi d'un hatsu est le produit de deux axes, et chaque case cochée devient une
+`wheelEntry` du module (le mécanisme existe, `bungee-gum/module.ts` fait foi) :
+
+**Axe 1 — la cible** (le `TargetType` du SDK, déjà typé) :
+
+| Cible | Exemple canon (Bungee Gum) |
+| --- | --- |
+| `self` | propulsion, course sur les murs (la description d'`abilities.json` les liste) |
+| `object` | cartes projetées, projectiles renvoyés, rocher attiré |
+| `person` | filament attaché à distance, cible attirée (vs Gon, Heavens Arena) |
+| `surface` | piège posé au sol, attendu d'être marché dedans |
+| `zone` / `aura` / `body` | selon la capacité (zones à règles, vols d'aura, marques) |
+
+**Axe 2 — le voile ou le renfort** (les techniques de base, mappées sur des primitives
+qui existent toutes) :
+
+| Technique | Primitive moteur | Effet sur l'emploi |
+| --- | --- | --- |
+| **In** | `masked: true` (§ effects) | l'emploi devient invisible hors Gyo/omniscient — le piège de Bungee Gum |
+| **Gyo** | toggle de perspective existant | contre-emploi : *voir* les effets masqués d'autrui ; chaque module masqué doit dire ce que Gyo révèle |
+| **Shu** | extension de l'effet à l'objet tenu | l'arme enduite, la carte durcie |
+| **Ko / Ken / Ryu** | `attributes` d'intensité sur l'effet | même geste, coût et puissance différents — affichés au « Pourquoi ? » |
+| **En** | rayon de perception (`SpatialEstimate`) | emploi de détection pour qui le canon le montre |
+| **Ten / Zetsu** | états d'aura (cf. ADR-003 phase 2) | conditions d'entrée : tel emploi exige Zetsu (approche furtive), tel autre le rompt |
+
+### 8.2 La règle des trois vérités — le garde-fou du §5 étendu
+
+Chaque case de la grille est dans exactement un état, et le module le déclare :
+
+1. **Montré** : le manga dessine l'emploi → `wheelEntry` normale, avec source.
+2. **Affirmé** : dit en dialogue ou dans une donnée mais jamais dessiné → `wheelEntry`
+   avec note de source « affirmé, non montré ».
+3. **Hypothèse** : jamais montré ni affirmé (Bungee Gum + Ko, par exemple) → **aucune
+   action dans les vues canon**. L'emploi n'existe qu'en **branche de simulation**,
+   marquée `hypothesis` — c'est précisément ce que les branches du simulation-engine
+   savent porter, et la seule porte honnête pour le « et si ». Une hypothèse ne
+   contamine jamais une fiche, une carte ou la visite.
+
+### 8.3 Grilles de référence par famille (catégories A-K du §3)
+
+Le patron par famille, à décliner fiche par fiche pendant les lots — chaque ligne
+citée ici est **montrée** au manga :
+
+- **Chaînes (A)** : chaque chaîne est déjà plusieurs emplois — Dowsing seule cumule
+  localiser (personne, objet), détecter le mensonge (les interrogatoires du pont 1),
+  parer et frapper (vs Uvogin) ; Chain Jail n'a *pas* d'emploi `self` et son emploi
+  `person` porte la condition-serment (Brigade seulement) — une grille sert aussi à
+  dire ce qu'un hatsu **refuse**. Emperor Time est transversal : il ne s'emploie pas,
+  il multiplie les emplois des autres chaînes, à coût vital compté.
+- **Transmutations d'apparence (B/C)** : Texture Surprise sur objet (le faux bras vs
+  Kastro), sur soi (le masque de peau, ch. 357), couplée à Bungee Gum (les réparations
+  du combat Chrollo) ; l'invariant « échoue au toucher, In non » est déjà dans
+  `effects.ts` — la grille le rend jouable.
+- **Manipulations et constructs (D/F)** : Order Stamp par type d'objet (poupée, cadavre
+  de marionnette — ce que le stamp accepte est une grille de cibles en soi) ; les
+  poupées de Kalluto en pose (espionnage) et en nuée (lame) ; Blinky en aspiration
+  d'objets et en usage médical (le sang de Gon) — deux emplois, deux contextes canon.
+- **Zones et pièges (J)** : l'emploi est le *placement* — Indoor Fish exige la pièce
+  close (invariant déjà noté), Desire Trap se choisit un appât : la grille de cible est
+  la règle du piège.
+- **Malédictions (H)** : peu d'axes de cible, beaucoup d'états — DORMANT/TRIGGERED font
+  office de grille temporelle ; le In y est structurel (marques visibles en Gyo seul).
+
+### 8.4 Exécution et cibles mesurables
+
+- **Où ça vit** : uniquement dans `packages/ability-modules` (contenu de module +
+  manifests). Zéro changement dans `apps/web` — c'est même la meilleure préparation du
+  chantier 3 de l'ADR-001 : quand DOM et tour basculeront sur le manifest, ils
+  trouveront des roues pleines au lieu de casts uniques. Pas sous le gel : aucune
+  technique nouvelle, on étoffe les 82 existantes.
+- **Lots** : suivre les catégories A-K du §3, en commençant par A (les chaînes, la
+  vitrine P1) et B/C (Hisoka, dont la référence existe déjà).
+- **Garde-fous CI** : chaque `wheelEntry` porte une source ou la note « affirmé » ;
+  les emplois `hypothesis` ne sont accessibles qu'en simulation ; un test compte les
+  entrées par capacité — régression si une roue retombe à une entrée alors que sa
+  fiche en documente plusieurs.
+- **Cibles** : médiane ≥ 4 entrées de roue par capacité (aujourd'hui : 2 modules sur 52
+  en ont une) ; In couvert partout où le manga le montre ; chaque module masqué déclare
+  son contre-champ Gyo ; chaque refus canon (Chain Jail sur non-Brigade, Blinky sur le
+  Nen) est une entrée grisée avec sa condition — un refus affiché vaut mieux qu'une
+  entrée absente.
+- **Tour et ADR-003** : la roue d'action arrive dans la marche par le même canal que le
+  reste (le dock cycle déjà ce qu'un profil fait avec R) ; les emplois `person`
+  attendront les personnes de l'ADR-003, les emplois In/Gyo sont déjà portés par
+  `hidden` et le toggle Gyo de la visite.
+
+### 8.5 État au 2026-08-03 — la vague des emplois est passée
+
+Les huit lots (A à K) sont livrés, dans `packages/ability-modules` uniquement, comme
+le §8.4 le prévoyait : aucun changement dans `apps/web`.
+
+- **Le SDK porte la grammaire.** `packages/ability-sdk/src/uses.ts` ajoute trois
+  champs à une action : `evidence` (`shown` / `asserted` / `hypothesis`), `refusal`
+  et `gyo`. Un emploi montré ou affirmé s'affiche au panneau « Pourquoi ? » avec sa
+  source ; une hypothèse est **refusée sur la branche canon** et ouverte en
+  simulation, et reste cachée de la roue ; un refus canon est une entrée grisée que
+  le moteur refuse d'exécuter.
+- **La roue dérivée est la seule roue.** Les deux roues écrites en dur (Bungee Gum,
+  Secret Window) sont supprimées : elle vient des actions, donc un emploi ajouté ne
+  peut plus manquer de la roue qui l'offre.
+- **Cibles atteintes.** Médiane de 3 entrées par capacité avant la vague, **5**
+  après ; **aucune capacité en dessous de quatre** (11 n'en avaient qu'une). Chaque
+  emploi masqué déclare son contre-champ Gyo. Les refus canon sont écrits comme
+  emplois grisés : Chain Jail hors Brigade, Blinky sur le vivant, Holy Chain sur un
+  mort, Order Stamp sur un vrai cadavre, Cross Game sans avertissement préalable,
+  Marayam vu de l'extérieur, Grimmel choisissant son porteur.
+- **Garde-fou CI** : `packages/ability-modules/test/action-wheels.spec.ts` compte les
+  entrées par capacité, exige une provenance ou un refus pour chacune, vérifie
+  qu'aucune hypothèse n'est offerte en canon, et qu'un emploi masqué dit ce que Gyo
+  révèle. Au passage, `ability-sdk` et `ability-modules` n'avaient pas de
+  `vitest.config.ts` : leurs suites remontaient à la config racine (`scripts/**`) et
+  ne tournaient pas du tout.
+- **Deux découpages ADR-002** dans la foulée, parce qu'un fichier grand-payé par le
+  cliquet ne doit pas grossir : `chrollo-stolen` en sept fichiers (une page du livre
+  par fichier, façade conservée) et `contagion/module.ts` allégé de son socle dans
+  `limits.ts`. La liste du cliquet perd deux entrées.
+
+Reste hors périmètre, comme prévu : le module Combo Master (§7, première vague
+post-chantier 3) et le passage du DOM et de la visite sur le manifest (chantier 3 de
+l'ADR-001), qui trouveront des roues pleines quand ils arriveront.

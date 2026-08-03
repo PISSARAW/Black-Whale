@@ -154,6 +154,7 @@ export const contagion = defineAbility({
 
     'open-game': {
       label: 'Ouvrir la partie',
+      evidence: shown('ch. 375 — la partie s’ouvre avant tout le reste'),
       conditions: [requiresTarget('Un candidat est assis en face')],
       effects: [
         revealedAt(
@@ -192,6 +193,7 @@ export const contagion = defineAbility({
 
     ask: {
       label: 'Dépenser une question',
+      evidence: shown('ch. 375 — chaque question se paie'),
       conditions: [
         effectIsLive('effectId', 'La partie est en cours'),
         requiresParameter('question', 'Une question est choisie'),
@@ -210,6 +212,7 @@ export const contagion = defineAbility({
     // for a card. `stake` in the language of docs/jeu-de-morena.md §4.1.
     stake: {
       label: 'Accepter le baiser',
+      evidence: shown('ch. 375 — le baiser accepté'),
       conditions: [
         effectIsLive('effectId', 'La partie est en cours'),
         requiresParameter('card', 'Une carte du cimetière est nommée'),
@@ -224,6 +227,7 @@ export const contagion = defineAbility({
 
     'refuse-stake': {
       label: 'Refuser le baiser',
+      evidence: shown('ch. 375 — le refus met fin à la partie'),
       conditions: [effectIsLive('effectId', 'La partie est en cours')],
       effects: [moveTheGame((game) => refuseTheDeal(game))],
     },
@@ -233,6 +237,7 @@ export const contagion = defineAbility({
     // room's. Both are decided in `./game.ts`.
     'play-technique': {
       label: 'Jouer l’aura',
+      evidence: shown('ch. 375 — l’aura jouée à la table'),
       conditions: [effectIsLive('effectId', 'La partie est en cours')],
       effects: [moveAndCatch((game, ctx) => playTechnique(game, { random: seededRandom(ctx) }))],
     },
@@ -241,18 +246,21 @@ export const contagion = defineAbility({
     // move with a price rather than a way out of the game.
     'leave-table': {
       label: 'Quitter la table',
+      evidence: shown('ch. 375 — quitter la table est une réponse'),
       conditions: [effectIsLive('effectId', 'La partie est en cours')],
       effects: [moveAndCatch((game) => leaveTheTable(game))],
     },
 
     settle: {
       label: 'Jouer la dernière carte',
+      evidence: shown('ch. 375 — la dernière carte tombe'),
       conditions: [effectIsLive('effectId', 'La partie est en cours')],
       effects: [moveAndCatch((game, ctx) => settle(game, answerParam(ctx, 'choice')))],
     },
 
     'close-game': {
       label: 'Clore la partie',
+      evidence: shown('ch. 375 — la partie se clôt sur son verdict'),
       conditions: [effectIsLive('effectId', 'La partie est en cours')],
       effects: [
         (ctx) => {

@@ -1,4 +1,5 @@
 import {
+  asserted,
   buildManifest,
   canUseNen,
   defineAbility,
@@ -113,6 +114,7 @@ export const marayamGuardianIsolation = defineAbility({
 
     lift: {
       label: 'Lever l’isolement',
+      evidence: asserted('la barrière tombe quand le gardien la lève'),
       conditions: [effectIsLive('effectId', 'L’isolement est actif')],
       effects: [setEffectState({ state: 'ENDED' })],
     },

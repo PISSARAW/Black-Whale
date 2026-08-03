@@ -318,6 +318,7 @@ export const snakeArm = defineAbility({
   actions: {
     transform: {
       label: 'Transformer le bras',
+      evidence: shown('ch. 383 — le bras devient serpent'),
       effects: [
         spawnNenEntity({
           id: (ctx) => `gel-snake-${ctx.actorId}`,

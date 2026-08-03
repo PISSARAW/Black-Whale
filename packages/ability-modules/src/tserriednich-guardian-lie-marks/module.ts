@@ -62,6 +62,7 @@ export const tserriednichGuardianLieMarks = defineAbility({
 
     'count-lie': {
       label: 'Compter un mensonge',
+      evidence: shown('ch. 391 — chaque mensonge ajoute sa marque'),
       conditions: [effectIsLive('effectId', 'Une marque est en place')],
       effects: [attributeCounter({ increments: { lieCount: 1 } })],
       cost: { label: 'Une marque de plus', amount: 1, unit: 'marque' },

@@ -57,6 +57,7 @@ export const surveillancePaperDolls = defineAbility({
     plant: {
       label: 'Poser une poupée',
       evidence: shown('ch. 358 — la poupée posée là où l’on parle'),
+      gyo: 'la figurine de papier et le lien d’écoute qui remonte vers Kalluto',
       conditions: [requiresTarget('Une cible est suivie')],
       effects: [
         spawnNenEntity({

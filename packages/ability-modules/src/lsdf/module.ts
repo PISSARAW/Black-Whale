@@ -125,6 +125,7 @@ export const lsdf = defineAbility({
 
     disarm: {
       label: 'Désarmer la zone',
+      evidence: shown('ch. 383 — la zone tombe quand Morena quitte le repaire'),
       conditions: [effectIsLive('effectId', 'La zone est armée')],
       effects: [
         setEffectState({ state: 'ENDED', attributes: { reason: 'owner-left-the-hideout' } }),

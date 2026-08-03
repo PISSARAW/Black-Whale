@@ -391,6 +391,7 @@ export const luzurusGuardianDesireTrap = defineAbility({
 
     'count-temptation': {
       label: 'Compter une tentation',
+      evidence: asserted('le piège compte les tentations avant de se refermer'),
       conditions: [effectIsLive('effectId', 'Un appât est en place')],
       effects: [attributeCounter({ increments: { temptations: 1 } })],
     },

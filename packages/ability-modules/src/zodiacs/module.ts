@@ -177,6 +177,7 @@ export const saiyuThreeMonkeys = defineAbility({
       `send-${monkey.id}`,
       {
         label: `Envoyer ${monkey.label}`,
+        evidence: shown('ch. 349 — les trois singes coupent chacun leur canal'),
         conditions: [requiresTarget('Une cible est visée')],
         effects: [
           spawnNenEntity({

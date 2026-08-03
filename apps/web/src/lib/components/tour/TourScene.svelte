@@ -86,7 +86,7 @@
     wayOutOfInterior,
   } from '$lib/tour/navigation'
   import { SEALED_DENSITY, fogDensityOf, reverbTime, settleDensity } from '$lib/tour/atmosphere'
-  import { driftDust } from '$lib/tour/dust'
+  import { disturbDust, driftDust, type Dust } from '$lib/tour/dust'
   import { distanceToBoundary } from '$lib/tour/geometry'
   import {
     enterDeck,
@@ -108,6 +108,9 @@
   import { playNenObjectSound, playNenTechniqueSound, sustainNenSound } from '$lib/audio/nenSounds'
   import { NEN_KEYS, nenZoneIndex, ryuDistribution, type NenBodyZone } from '$lib/nen/controls'
   import { visibleSpaces } from '$lib/tour/visibility'
+  import { SHAFT_PEAK, shaftAnchors, shaftStrength, type ShaftAnchor } from '$lib/tour/godRays'
+  import { applySurfaceDetail } from '$lib/tour/surfaceDetail'
+  import { refractionAmount } from '$lib/tour/auraRefraction'
   import {
     animateVisibleScene,
     createSceneRuntime,
@@ -655,6 +658,12 @@
           coarse,
           fov: $comfort.fov,
           viewDistance: VIEW_DISTANCE,
+          // Read once, at build time, rather than watched: the composer's chain
+          // of passes is fixed when it is made. A visitor who changes the palier
+          // is told the walk reloads — see `TourComfortPanel` — because tearing
+          // a live composer down and rebuilding it mid-frame is a way to lose a
+          // WebGL context, and the setting is one people set once.
+          quality: $comfort.quality,
         })
       } catch {
         failure = 'webgl'
@@ -670,7 +679,8 @@
       // corridor as mud. The filmic curve is what holds both ends: it rolls a lamp
       // off instead of clipping it and keeps shadowed steel above black. It is also
       // what `syncSight` closes when the monkeys take sight.
-      const { renderer, scene, fog, camera, composer, renderTarget } = runtime
+      const { renderer, scene, fog, camera, composer, renderTarget, quality, shafts, refraction } =
+        runtime
       const portals = new PortalRenderer(THREE, {
         renderer,
         scene,
@@ -809,6 +819,12 @@
         vertexColors: true,
         side: THREE.FrontSide,
       })
+
+      // The grain of the steel — see `$lib/tour/surfaceDetail` for why this is
+      // procedural and world-space rather than a texture set. On the structural
+      // material only: the fittings and the window panes are lights, and a lamp
+      // with the tooth of a bulkhead on it is a painted panel, not a lamp.
+      if (quality.surfaceDetail) applySurfaceDetail(material)
 
       // The gold outline the deck plans are drawn in, carried into three
       // dimensions: without it the decks read as one unbroken surface.
@@ -1007,7 +1023,13 @@
        * and in the bounding sphere `buildTierMesh` measured for it.
        */
       function extrude(nextTierId: string): Built {
-        return tierView.build({ ship, world, tierId: nextTierId, reveal })
+        return tierView.build({
+          ship,
+          world,
+          tierId: nextTierId,
+          reveal,
+          dustScale: quality.dustScale,
+        })
       }
 
       const dispose = (built: Built) => tierView.dispose(built)
@@ -1455,14 +1477,52 @@
        * can check. At most a few hundred motes in one room, which is a sine and a
        * cosine each.
        */
+      /**
+       * Where the visitor was when the motes were last moved, so the wake can be
+       * a speed rather than a position: dust is displaced by something *going
+       * through* it, and a visitor standing still displaces nothing.
+       */
+      const lastWake = new THREE.Vector3()
+      let wakeKnown = false
+
       function driftMotes(delta: number, seconds: number) {
+        const clouds: Dust[] = []
         for (const deck of [visible, eyeDeck]) {
           if (!deck) continue
           for (const room of deck.rooms) {
             if (!room.motes || !room.dust || !room.motes.visible) continue
             driftDust(room.dust, delta, seconds)
+            clouds.push(room.dust)
             room.motes.geometry.attributes.position.needsUpdate = true
           }
+        }
+        if (!clouds.length) {
+          wakeKnown = false
+          return
+        }
+
+        // Camera position from the frame just gone: the eye is not placed until
+        // the end of the tick, and one frame of lag in the wake behind someone
+        // walking at 1.4 m/s is two centimetres.
+        const here = camera.position
+        const travelled = wakeKnown ? here.distanceTo(lastWake) : 0
+        lastWake.copy(here)
+        wakeKnown = true
+
+        // Two shoves, and they are two different claims. The body is a thing
+        // moving through air, so its wake is proportional to how fast it is
+        // going and reaches about as far as an arm. The aura is not: it is out
+        // to its own radius whether the visitor moves or not, and *that* is what
+        // makes it worth drawing — the room registering a presence that has not
+        // touched anything. See `refractionAmount` for what "out" means here.
+        const speed = delta > 0 ? travelled / delta : 0
+        const wake = Math.min(0.22, speed * 0.1)
+        const aura = calmWalk ? 0 : refractionAmount(effectiveNen)
+        const at: [number, number, number] = [here.x, here.y, here.z]
+
+        for (const dust of clouds) {
+          if (wake > 0.002) disturbDust(dust, { at, radius: 1.9, strength: wake })
+          if (aura > 0) disturbDust(dust, { at, radius: 4.5, strength: aura * 0.3 })
         }
       }
 
@@ -3596,6 +3656,9 @@
        */
       const gaitAmplitude = prefersReducedMotion() ? 0 : 1
 
+      /** The same answer, for everything else in the walk that moves by itself. */
+      const calmWalk = gaitAmplitude === 0
+
       /**
        * The air the current room wants, and the densities already measured.
        *
@@ -3750,6 +3813,48 @@
         pitch: number
         ground: number
       } | null = null
+
+      /**
+       * The light shafts, pointed at whichever window the visitor is near.
+       *
+       * Two rooms on the ship have one — see `$lib/tour/godRays` — so this is a
+       * `uStrength` of zero on 312 of the 314, which the pass answers with a
+       * single branch. The gate is the room and its neighbours rather than the
+       * projection alone: a window across a hundred metres of Tier 3, behind
+       * four bulkheads, is off screen to the eye and still on screen to the
+       * projection matrix, and marching twenty-four taps a pixel towards it
+       * would buy nothing at all.
+       */
+      const shaftDecks = new Map<string, { anchor: ShaftAnchor; rooms: Set<string> }[]>()
+      const shaftPoint = new THREE.Vector3()
+
+      const aimShafts = (plan: TierPlan, standingId: string | null) => {
+        const uniforms = shafts?.uniforms
+        if (!uniforms) return
+        let windows = shaftDecks.get(plan.tier.id)
+        if (!windows) {
+          windows = shaftAnchors(plan).map((anchor) => ({
+            anchor,
+            // Depth one: the room the window is in, and the rooms that open onto
+            // it. Two would put a shaft in a corridor with a room between it and
+            // any glass, which is the decorative version this refuses to be.
+            rooms: visibleSpaces(plan, anchor.spaceId, 1),
+          }))
+          shaftDecks.set(plan.tier.id, windows)
+        }
+
+        let strongest = 0
+        for (const { anchor, rooms } of windows) {
+          if (!standingId || !rooms.has(standingId)) continue
+          shaftPoint.set(anchor.position[0], anchor.position[1], anchor.position[2])
+          shaftPoint.project(camera)
+          const strength = shaftStrength(shaftPoint, SHAFT_PEAK)
+          if (strength <= strongest) continue
+          strongest = strength
+          uniforms.uSource.value = [shaftPoint.x * 0.5 + 0.5, shaftPoint.y * 0.5 + 0.5]
+        }
+        uniforms.uStrength.value = strongest
+      }
 
       const tick = (now: number) => {
         const delta = Math.min((now - previous) / 1000, 0.1)
@@ -4263,6 +4368,16 @@
           sincePick = 0
           const picked = whatIsUnder(pointerIsHeld() || touch ? RETICLE : cursor)
           if (picked !== aimedExtra) aimedExtra = picked
+        }
+
+        aimShafts(plan, standing?.id ?? null)
+
+        // The air bending around the aura. Zero unless there is aura out, and
+        // zero outright for a visitor whose system asks for less movement: a
+        // swimming picture is movement, whatever it is a picture of.
+        if (refraction) {
+          refraction.uniforms.uAmount.value = calmWalk ? 0 : refractionAmount(effectiveNen)
+          refraction.uniforms.uTime.value = clock
         }
 
         const { width, height } = renderer.getSize(size)

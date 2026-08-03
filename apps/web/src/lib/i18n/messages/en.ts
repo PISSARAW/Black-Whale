@@ -437,6 +437,17 @@ export const en = {
        */
       nightLight: 'Light you carry',
       nightLightOff: 'Off — the ship as it is lit',
+      /**
+       * The tier, said as what it costs rather than as a number of stars. The
+       * detection only picks the default: a laptop that reports a discrete card
+       * and then throttles, or one whose driver string the browser has masked,
+       * are both cases no detection can get right and the visitor can.
+       */
+      quality: 'Picture',
+      qualityAuto: 'Match this machine',
+      qualityLow: 'Lighter',
+      qualityHigh: 'Fuller',
+      qualityHelp: 'Takes effect on the next load of the walk.',
       reset: 'Back to this system’s defaults',
       calm: 'Your system asks for reduced motion, so this starts calm.',
       degrees: (angle: number) => `${angle}°`,

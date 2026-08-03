@@ -9,8 +9,18 @@
     resetComfort,
     setComfort,
   } from '$lib/tour/comfort'
+  import type { QualitySetting } from '$lib/tour/quality'
 
   let { calm }: { calm: boolean } = $props()
+
+  // The palier, spelled out. Three named choices rather than a slider: there
+  // are two paliers and a way of not choosing, and a continuum would imply a
+  // dial where there is a list of decisions — see `$lib/tour/quality`.
+  const qualities: { value: QualitySetting; label: () => string }[] = [
+    { value: 'auto', label: () => $t.tour.comfort.qualityAuto },
+    { value: 'low', label: () => $t.tour.comfort.qualityLow },
+    { value: 'high', label: () => $t.tour.comfort.qualityHigh },
+  ]
 </script>
 
 <section class="rounded border border-[#333] p-3">
@@ -105,6 +115,24 @@
       />
       <span>{$t.tour.comfort.jumpOnly}</span>
     </label>
+    <div>
+      <span class="block">{$t.tour.comfort.quality}</span>
+      <div class="mt-1 flex gap-1">
+        {#each qualities as choice (choice.value)}
+          <button
+            type="button"
+            aria-pressed={$comfort.quality === choice.value}
+            onclick={() => setComfort({ quality: choice.value })}
+            class="flex-1 rounded border px-1.5 py-1 text-[11px] transition-colors {$comfort.quality ===
+            choice.value
+              ? 'border-[#FFD700]/60 bg-[#FFD700]/10 text-[#FFD700]'
+              : 'border-[#333] text-[#FFFFF0]/60 hover:border-[#FFD700]/40 hover:text-[#FFFFF0]'}"
+            >{choice.label()}</button
+          >
+        {/each}
+      </div>
+      <p class="mt-1 text-[11px] leading-snug text-[#FFFFF0]/40">{$t.tour.comfort.qualityHelp}</p>
+    </div>
     <button
       type="button"
       onclick={resetComfort}

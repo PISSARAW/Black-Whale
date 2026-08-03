@@ -16,8 +16,11 @@
  * allow.
  */
 import { writable } from 'svelte/store'
+import type { QualitySetting } from './quality'
 
 const KEY = 'black-whale:tour-comfort'
+
+const QUALITY_SETTINGS: readonly QualitySetting[] = ['auto', 'low', 'high']
 
 export interface Comfort {
   /** Vertical field of view, in degrees. */
@@ -50,6 +53,17 @@ export interface Comfort {
    * Neither is wrong, and the reconstruction has no business deciding for them.
    */
   nightLight: number
+  /**
+   * How much the walk is allowed to spend on the picture.
+   *
+   * `auto` is the driver string's verdict — see `$lib/tour/quality` — and the
+   * other two are the visitor overruling it. Both directions are real requests:
+   * a laptop that reports a discrete card and then throttles wants `low`, and a
+   * machine whose GPU string says `intel` because the browser is masking it
+   * wants `high`. Neither is something a detection can be made to get right,
+   * which is why it is here and not in the renderer.
+   */
+  quality: QualitySetting
 }
 
 export const FOV_RANGE = [55, 100] as const
@@ -65,6 +79,7 @@ const LIVELY: Comfort = {
   snapAngle: 45,
   jumpOnly: false,
   nightLight: 8,
+  quality: 'auto',
 }
 
 const CALM: Comfort = {
@@ -77,6 +92,9 @@ const CALM: Comfort = {
   // darker ship, and jumping from room to room does not make a dark stairwell
   // easier to read. Left where the walk leaves it.
   nightLight: 8,
+  // Reduced motion is a request about movement, not about fidelity. The palier
+  // is left to the machine, the same as for anyone else.
+  quality: 'auto',
 }
 
 /** Whether the system has been asked for less movement. */
@@ -92,6 +110,22 @@ export function comfortDefaults(reduced = prefersReducedMotion()): Comfort {
 
 const clamp = (value: number, [low, high]: readonly [number, number]) =>
   Math.min(high, Math.max(low, value))
+
+/**
+ * One stored field read back, or the default.
+ *
+ * Three of these rather than one branch per field inline: the settings are a
+ * list that grows, and a validator written as a straight line grows a branch
+ * with it until nothing can be checked without reading all of it.
+ */
+const readNumber = (value: unknown, range: readonly [number, number], fallback: number): number =>
+  typeof value === 'number' && Number.isFinite(value) ? clamp(value, range) : fallback
+
+const readFlag = (value: unknown, fallback: boolean): boolean =>
+  typeof value === 'boolean' ? value : fallback
+
+const readQuality = (value: unknown, fallback: QualitySetting): QualitySetting =>
+  QUALITY_SETTINGS.includes(value as QualitySetting) ? (value as QualitySetting) : fallback
 
 /**
  * A stored setting read back, field by field.
@@ -111,21 +145,13 @@ export function readComfort(raw: string | null, reduced = prefersReducedMotion()
   }
   if (!stored || typeof stored !== 'object') return defaults
   return {
-    fov: typeof stored.fov === 'number' ? clamp(stored.fov, FOV_RANGE) : defaults.fov,
-    sensitivity:
-      typeof stored.sensitivity === 'number'
-        ? clamp(stored.sensitivity, SENSITIVITY_RANGE)
-        : defaults.sensitivity,
-    snapTurn: typeof stored.snapTurn === 'boolean' ? stored.snapTurn : defaults.snapTurn,
-    snapAngle:
-      typeof stored.snapAngle === 'number'
-        ? clamp(stored.snapAngle, SNAP_ANGLE_RANGE)
-        : defaults.snapAngle,
-    jumpOnly: typeof stored.jumpOnly === 'boolean' ? stored.jumpOnly : defaults.jumpOnly,
-    nightLight:
-      typeof stored.nightLight === 'number'
-        ? clamp(stored.nightLight, NIGHT_LIGHT_RANGE)
-        : defaults.nightLight,
+    fov: readNumber(stored.fov, FOV_RANGE, defaults.fov),
+    sensitivity: readNumber(stored.sensitivity, SENSITIVITY_RANGE, defaults.sensitivity),
+    snapTurn: readFlag(stored.snapTurn, defaults.snapTurn),
+    snapAngle: readNumber(stored.snapAngle, SNAP_ANGLE_RANGE, defaults.snapAngle),
+    jumpOnly: readFlag(stored.jumpOnly, defaults.jumpOnly),
+    nightLight: readNumber(stored.nightLight, NIGHT_LIGHT_RANGE, defaults.nightLight),
+    quality: readQuality(stored.quality, defaults.quality),
   }
 }
 

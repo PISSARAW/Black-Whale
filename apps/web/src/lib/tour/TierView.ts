@@ -29,6 +29,14 @@ interface TierBuild {
   world: TourWorld
   tierId: string
   reveal: boolean
+  /**
+   * What share of a room's motes to hang, from the quality palier.
+   *
+   * A share rather than a switch: the dust is the only thing that makes a
+   * six-thousand-square-metre hall read as a volume at all, and the screen that
+   * needs it most is the small one. See `$lib/tour/quality`.
+   */
+  dustScale?: number
 }
 interface GeometrySlice {
   position: Three.BufferAttribute
@@ -45,7 +53,7 @@ export class TierView {
     private readonly materials: TierMaterials,
   ) {}
 
-  build({ ship, world, tierId, reveal }: TierBuild): BuiltTierView {
+  build({ ship, world, tierId, reveal, dustScale = 1 }: TierBuild): BuiltTierView {
     const mesh = buildTierMesh(walkedPlan(ship, world, tierId), { reveal })
     const position = new this.THREE.BufferAttribute(mesh.positions, 3)
     const normal = new this.THREE.BufferAttribute(mesh.normals, 3)
@@ -91,7 +99,7 @@ export class TierView {
       fittingGeometry.setAttribute('color', fittingColor)
       const space = ship.spaces.get(group.spaceId)
       const deck = ship.plans.get(tierId)
-      const dust = space && deck && !reveal ? dustOf(space, deck.tier) : null
+      const dust = space && deck && !reveal ? dustOf(space, deck.tier, dustScale) : null
       let motes: Three.Points | null = null
       if (dust) {
         const moteGeometry = new this.THREE.BufferGeometry()

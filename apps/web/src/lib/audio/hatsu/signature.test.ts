@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { HATSU_PROFILES } from '$lib/nen/hatsuRegistry'
-import { hatsuAudioSignature } from './hatsuSounds'
+import { hatsuAudioSignature } from './signature'
 
 describe('Hatsu audiovisual coverage', () => {
   it('gives every published Hatsu a stable dedicated audio signature', () => {

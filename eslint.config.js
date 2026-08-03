@@ -250,7 +250,6 @@ export default tseslint.config(
     files: [
       // >>> cliquet ADR-002 (max-lines) — ne peut que rétrécir
       'apps/web/src/lib/audio/ambient.ts', // 572
-      'apps/web/src/lib/audio/hatsuSounds.ts', // 1816
       'apps/web/src/lib/audio/steps.ts', // 534
       'apps/web/src/lib/components/investigation/InvestigationCaseView.svelte', // 1785
       'apps/web/src/lib/components/tour/TourHatsuHud.svelte', // 975

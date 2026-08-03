@@ -1,10 +1,44 @@
 # Tour 2.0 — plan d'amélioration graphique et interactive de la visite
 
-**Date :** 2026-08-03 · **Statut :** Proposé · **Remplace :** les deux proposals externes
+**Date :** 2026-08-03 · **Statut :** Livré (phases 0-4) · **Remplace :** les deux proposals externes
 (« Amélioration Graphique de la Tour » et « Visite 2.0 »), filtrés contre le code réel
 et la doctrine du dépôt. **S'inscrit dans :** le chantier 4 de
 `docs/adr-001-le-canon-compile.md` ; s'appuie sur l'audit `/tour` du 2026-07-30 et
 sur `docs/tour-immersion.md`.
+
+---
+
+## État de livraison (2026-08-03)
+
+| Phase                              | État | Où                                                                                               |
+| ---------------------------------- | ---- | ------------------------------------------------------------------------------------------------ |
+| 0.1-0.6, 0.8                       | ✅   | `mesh.ts` (`toLinear`), `TourScene.svelte`, `visibility.ts` (`visibleSpaces`, `VIEW_DEPTH`)      |
+| 0.7 — blueprint en `import()`      | 🟡   | `buildShip()` est déjà paresseux (`shared ??=`) ; le JSON reste statique — voir la note ci-après |
+| 1 — paliers explicites             | ✅   | `quality.ts`, exposé dans `TourComfortPanel`, persisté par `comfort.ts`                          |
+| 1 — SMAA                           | ✅   | `TourRenderer.ts`, dernière passe                                                                |
+| 1 — vignette + grade               | ✅   | `postGrade.ts`, une seule `ShaderPass`, sans LUT                                                 |
+| 1 — god rays ×2                    | ✅   | `godRays.ts` — masque d'occlusion pris sur le seuil de luminance de la vitre                     |
+| 2 — détail triplanaire             | ✅   | `surfaceDetail.ts`, `onBeforeCompile` du Lambert                                                 |
+| 2 — UV/textures, IBL, meubles GLTF | ⛔   | refusés, cf. §3                                                                                  |
+| 3 — distorsion de l'air            | ✅   | `auraRefraction.ts`, `high` uniquement, coupée par `prefers-reduced-motion`                      |
+| 3 — poussière réactive             | ✅   | `dust.ts` (`disturbDust`), déplacement borné par le dégagement échantillonné                     |
+| 4 — inspection de provenance       | ✅   | `exhibit.ts`, `TourExamineCard.svelte`, touche **P** et bouton (tactile)                         |
+| 7.1 — smoke Playwright             | ✅   | `tests/tour.spec.ts`, projets `chromium` et `mobile`                                             |
+| 7.2 — captures de référence        | ⛔   | abandonné : sans GPU sur le runner, une capture teste le pilote de la CI, pas la visite          |
+| 7.3 — budget de frame              | ⏸    | non fait                                                                                         |
+
+**Sur 0.7.** Le coût que le correctif visait — `buildShip()` au chargement du
+module — n'existe plus : `theShip()` construit à la première demande. Ne reste
+que l'import statique du JSON, et le rendre dynamique demanderait de rendre
+`theShip()` asynchrone dans une quinzaine d'appelants dont deux `+page.server.ts`.
+Le rapport gain/rupture s'est inversé depuis l'audit ; à reprendre séparément.
+
+**Sur SMAA.** Le bug d'AA était plus large que ne le disait la §2 : le composer
+rend hors écran sur _tous_ les chemins, pas seulement le haut de gamme, donc
+l'`antialias` du canvas n'a jamais atteint la vitre nulle part. La passe est donc
+conditionnée au pointeur (`smaa: !coarse`) et non au palier — un desktop `low` en
+a autant besoin qu'un `high`, et le téléphone est la seule machine qui doit s'en
+passer.
 
 ---
 

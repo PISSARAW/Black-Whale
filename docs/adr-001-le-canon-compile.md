@@ -414,6 +414,10 @@ Ordre imposé : 0 → 1 avant tout le reste (on ne refactore pas sans filet) ;
 1. [x] Valider cet ADR (ou l'amender) et le ranger en `docs/adr-001-le-canon-compile.md`.
 2. [x] Chantier 0 (reliquat des P0 de `completude.md`) — clos.
 3. [x] Ouvrir le chantier 1 ; geler l'ajout de nouveaux hatsu jusqu'à la fin du chantier 3.
+       Le gel est **levé** : le chantier 3 est clos, et ajouter un hatsu coûte
+       désormais une entrée JSON et un module — registre, i18n, ciblage et contrat
+       d'arène suivent par compilation. Les 8 vagues de `hatsu-potentiel.md`
+       peuvent commencer.
 4. [x] Trancher au passage l'arbitrage de canon des noms divergents (source d'autorité : `abilities.json`).
 
 ## Avancement du chantier 3
@@ -506,9 +510,44 @@ réel, programmé avant la mort il continue) là où le module les applique, au 
 du seul rendu 3D. C'est la première technique, celle que l'ADR désignait comme
 patron ; les 81 autres restent à porter au même endroit.
 
-**Reste à faire.** Brancher le rendu DOM (précédé du balisage d'entités qu'il
-suppose) ; porter les limites de canon des 81 autres techniques en tests de
-module.
+**Étape 7 — le rendu DOM ne sera pas branché sur `allowedTargets` (tranché).**
+La mesure conclut contre l'idée. Le tour vise trois choses — un corps, un
+solide, une salle — qui sont les genres d'entité du manifeste ; le DOM vise des
+**éléments de page**, et un élément n'est pas une entité : une fiche de
+personnage est à la fois le rendu d'une personne, un lien vers un chapitre et
+un objet sur une page. Sur les 76 techniques que le DOM traite, 14 lisent un
+marqueur de personnage, et 2 le font sans que leur manifeste ne nomme personne.
+L'une des deux est **Blinky — qui lit le marqueur précisément pour le refuser**,
+le canon interdisant à Deme-chan d'avaler du vivant. Un garde bâti sur « touche
+un marqueur ⇒ doit pouvoir le viser » aurait supprimé ce refus et laissé le
+visiteur devant du silence, une réponse pire que celle que la technique est
+écrite pour donner.
+
+Ce qui est livré à la place est un garde-fou honnête, `domTargets.test.ts` : il
+épingle la relation mesurée, échoue le jour où elle dérive — une technique dont
+le gestionnaire se met à travailler sur des personnes sans que son manifeste
+l'admette — et laisse la décision de canon à un humain, dans le module. Les
+deux exceptions y sont nommées avec leur raison.
+
+**Étape 8 — les limites de canon sont des tests du moteur (fait).** Il n'y a pas
+de façon d'écrire 81 tests comme ceux de Bungee Gum sans connaître 81 capacités.
+Ce qui s'écrit une fois, c'est ce que les rendus tenaient pour acquis sans que
+personne ne l'énonce, et dont les tests du tour étaient le seul témoin :
+`every-module.spec.ts` passe les **82 modules et chacune de leurs actions** —
+513 cas — au crible de trois invariants. Un plan et une exécution répondent la
+même chose (le panneau « Pourquoi ? » n'offre jamais ce que le moteur refuse
+ensuite) ; ce qu'un plan projette est ce que l'exécution écrit ; et sans monde à
+regarder, aucune condition ne prétend connaître un fait du monde. Ces trois-là
+sont vraies du DOM, du tour et de l'arène en même temps — c'était le but de les
+sortir des tests de la visite.
+
+Deux d'entre eux ont été affinés par ce qu'ils ont trouvé : « une action permise
+émet un événement » était faux — `release` qui met fin à un effet que le monde ne
+porte pas n'émet rien, et c'est correct ; et « rien n'est UNMET sans monde »
+confondait un fait du monde avec un fait de la demande, `requiresTarget`
+refusant à bon droit une demande sans cible.
+
+**Reste à faire.** Rien dans le périmètre du chantier 3.
 
 ## Avancement du chantier 4
 
@@ -649,12 +688,25 @@ est une action d'exploitation, pas de code : générer la paire de clés, rempli
 les cinq variables de `.env.production` et poser la ligne de cron du §7 du
 runbook.
 
-**Reste à faire (chantier 4).** Les 10 autres routes qui portent le blueprint
-(`/tour`, `/reconstruction`, `/arena`, `/hunt`…) en ont réellement besoin côté
-client : le rendre paresseux pour elles demande de passer `theShip()` en
-asynchrone, ce qui remonte dans une dizaine d'appelants dont plusieurs
-composants Svelte. C'est un refactor à part entière, pas un ajustement, et il
-n'a pas été fait ici.
+**Le blueprint, suite et fin.** Les 10 autres routes qui le portent (`/tour`,
+`/reconstruction`, `/arena`, `/hunt`, `/infiltration`, `/investigation`,
+`/strategy`…) en ont réellement besoin côté client : elles marchent dans la
+géométrie. Les rendre paresseuses demanderait de passer `theShip()` en
+asynchrone dans une dizaine d'appelants, dont cinq gros composants — et le gain
+serait nul, puisque le navire est leur contenu principal.
+
+Le vrai gain était ailleurs, et il a été mesuré : Rollup avait bien donné un
+morceau partagé au blueprint, **mais il y avait mis le code géométrique avec
+lui**. Une ligne changée dans `blueprint.ts` invalidait donc 900 Ko de données
+dans le cache de chaque visiteur qui revient, pour une version qui ne changeait
+rien au navire. Un `manualChunks` sépare les deux : le morceau de données ne
+contient plus une seule fonction, et son empreinte ne bouge plus quand le code
+bouge — vérifié en modifiant `blueprint.ts` et en reconstruisant, l'empreinte
+est restée `COVJZuh7`. C'est ce qui donne enfin un sens à l'`immutable` de son
+URL : le blueprint est téléchargé une fois, puis plus jamais tant que le canon
+ne change pas.
+
+**Reste à faire (chantier 4).** Rien.
 
 ---
 

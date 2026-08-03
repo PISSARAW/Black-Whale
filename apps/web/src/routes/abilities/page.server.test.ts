@@ -23,9 +23,21 @@ function cookiesWith(cap: number | undefined): Cookies {
   } as unknown as Cookies
 }
 
-/** The loader takes an event; this one only ever touches `cookies`. */
-function run(cap: number | undefined) {
-  return load({ cookies: cookiesWith(cap) } as never)
+/** What the loader hands the page, once the `$types` wrapper is unwrapped. */
+interface AbilitiesData {
+  abilities: { id: string }[]
+  spoilerLimit: number | null
+}
+
+/**
+ * The loader takes an event; this one only ever touches `cookies`.
+ *
+ * `PageServerLoad` types the return as a union with `void` — SvelteKit allows
+ * a loader to return nothing — so the shape is restated here rather than every
+ * assertion below being written around a `void` that cannot occur.
+ */
+async function run(cap: number | undefined): Promise<AbilitiesData> {
+  return (await load({ cookies: cookiesWith(cap) } as never)) as unknown as AbilitiesData
 }
 
 describe('the abilities page and the reader who asked not to be spoiled', () => {
@@ -52,8 +64,7 @@ describe('the abilities page and the reader who asked not to be spoiled', () => 
 
     // Not just "fewer": each is a subset of the one above it, which is what
     // makes the cap a reading position rather than a filter with moods.
-    const ids = (result: { abilities: { id: string }[] }) =>
-      new Set(result.abilities.map((ability) => ability.id))
+    const ids = (result: AbilitiesData) => new Set(result.abilities.map((ability) => ability.id))
     const [all, someIds, fewIds] = [ids(everything), ids(late), ids(early)]
 
     expect(fewIds.size).toBeLessThan(someIds.size)
@@ -65,10 +76,10 @@ describe('the abilities page and the reader who asked not to be spoiled', () => 
   it('treats a cookie that is not a chapter number as no cap at all', async () => {
     // The cookie is client-controlled. `NaN` used to reach the comparison,
     // where every answer is false — a reader could empty the page by editing it.
-    const junk = load({
+    const junk = (await load({
       cookies: { get: () => 'not-a-number' } as unknown as Cookies,
-    } as never)
+    } as never)) as unknown as AbilitiesData
 
-    expect((await junk).abilities.length).toBe((await run(undefined)).abilities.length)
+    expect(junk.abilities.length).toBe((await run(undefined)).abilities.length)
   })
 })

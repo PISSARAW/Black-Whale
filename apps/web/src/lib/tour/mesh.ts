@@ -24,7 +24,7 @@ import {
   triangulate,
 } from './geometry'
 import { ceilingOf, floorOf } from './blueprint'
-import { hex, lamplightOf, lampsOf } from './light'
+import { hex, lampFalloff, lamplightOf, lampsOf } from './light'
 import type { Lamplight, Rgb } from './light'
 import type { BlindWall, TierPlan } from './blueprint'
 import type {
@@ -636,6 +636,10 @@ class RoomLight {
    * Only the cells around the point are looked in, so a promenade with two
    * hundred fittings costs a vertex no more than a cabin with one: the grid is
    * regular, and a lamp more than one cell away is out of reach by construction.
+   *
+   * What one lamp is worth once it is found is `lampFalloff`, and it is measured
+   * on the plan and on the drop separately rather than on the line between them
+   * — see the note there for the six rooms that used to bake to nothing.
    */
   private pool(x: number, y: number, z: number): number {
     let total = 0
@@ -653,13 +657,10 @@ class RoomLight {
       for (let j = gz - 1; j <= gz + 2; j++) {
         const held = this.cells.get(cellKey(i, j))
         if (!held) continue
+        // Squared falloff, cut off at the reach rather than trailing to zero: a
+        // lamp two rooms down a corridor must not light this floor at all.
         for (const [lx, ly, lz] of held) {
-          const distance = Math.hypot(x - lx, y - ly, z - lz)
-          if (distance >= reach) continue
-          // Squared falloff, cut off at the reach rather than trailing to zero:
-          // a lamp two rooms down a corridor must not light this floor at all.
-          const fall = 1 - distance / reach
-          total += fall * fall
+          total += lampFalloff(Math.hypot(x - lx, z - lz), y - ly, reach)
         }
       }
     }

@@ -121,7 +121,8 @@ export const CATEGORY_LIGHT: Record<SpaceCategory, CategoryLight> = {
 }
 
 /**
- * How far a lamp throws, as a multiple of how far apart the lamps hang.
+ * How wide a lamp's pool is on the floor, as a multiple of how far apart the
+ * lamps hang.
  *
  * Not a constant in metres, and that is load-bearing twice over. It keeps the
  * *pattern* of light the same wherever the grid is coarse or fine — the dip
@@ -153,7 +154,14 @@ export const LAMP_PEAK = 2.4
 export interface Lamplight {
   /** How far apart the lamps hang, in metres. */
   spacing: number
-  /** How far one of them throws, in metres. */
+  /**
+   * How wide one of their pools is, in metres, measured along the floor.
+   *
+   * A radius on the plan and not a distance in space — see `lampFalloff`. A
+   * ceiling fitting throws down a disc of this radius whether it hangs in a
+   * cabin 2,6 m high or over an atrium of sixteen metres, which is the one
+   * thing that keeps the height of a room out of the class system.
+   */
   reach: number
   /** What one burns at — above 1, so the filmic curve rolls it off. */
   glow: Rgb
@@ -233,6 +241,39 @@ export function lamplightOf(space: Space, tier: Tier): Lamplight {
     power,
     dead: clamp01(deck.dead),
   }
+}
+
+/**
+ * What one lamp is worth at a point: how far that point lies from under it, and
+ * how far below it stands.
+ *
+ * The cut-off is on `plan` alone, and that is the whole correction. A fitting
+ * used to be cut off on the distance *through the air*, with the drop from the
+ * ceiling to the floor counted against the same reach — and since the reach is a
+ * property of the grid and the drop a property of the room, the two had nothing
+ * to do with each other. Every room whose ceiling stood higher than its lamps
+ * reached wide lit nothing at all: the King's living quarters under seven metres
+ * of ceiling on Tier 1's close 5,6 m grid, the banquet hall, the VIP casino, the
+ * screening room, the police atrium — the six grandest rooms on the ship baked to
+ * the bare fill and came out the darkest places on board, while a first-class
+ * lavatory with a 3 m ceiling took the brightest floor of all 314. The class
+ * ladder read upside down, and it read that way *because* Tier 1 hangs its lamps
+ * closest: a fine grid is a short reach, and a short reach was what a tall room
+ * was punished by.
+ *
+ * So the pool is a disc of radius `reach` on the floor, at any ceiling height,
+ * and the falloff runs along the slant — the same fraction of the way out, down
+ * a longer line. A high room is still a dimmer room, which is true of a lamp and
+ * true of this ship; it is no longer an unlit one.
+ *
+ * That the cut-off is horizontal also settles what `RoomLight.pool`'s window of
+ * cells could only claim before: a lamp out of range is out of range on the plan,
+ * which is the plane the cells are laid on, at every height in the room.
+ */
+export function lampFalloff(plan: number, drop: number, reach: number): number {
+  if (!(plan < reach)) return 0
+  const fall = 1 - Math.hypot(plan, drop) / Math.hypot(reach, drop)
+  return fall * fall
 }
 
 /**

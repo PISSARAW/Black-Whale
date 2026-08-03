@@ -1,11 +1,12 @@
 import { describe, expect, it } from 'vitest'
-import { buildShip } from './blueprint'
+import { buildShip, ceilingOf } from './blueprint'
 import {
   CATEGORY_LIGHT,
   DECK_LIGHT,
   MAX_SPACING,
   REACH_RATIO,
   deckLight,
+  lampFalloff,
   lamplightOf,
   lampsOf,
 } from './light'
@@ -117,6 +118,46 @@ describe('the class grid', () => {
         expect(light.spacing).toBeLessThanOrEqual(MAX_SPACING)
       }
     }
+  })
+
+  it('lights the floor under a fitting however high the ceiling is', () => {
+    // The bug this is here for: the reach is a property of the grid and the
+    // drop from the ceiling is a property of the room, and cutting a lamp off
+    // on the two of them together let a tall room fall out of the light
+    // altogether. Six did — the King's living quarters, the banquet hall and
+    // its service end, the VIP casino, the screening room and the police
+    // atrium — and they are the six rooms on this ship that most obviously
+    // cannot be the darkest places on board.
+    for (const plan of ship.plans.values()) {
+      for (const space of plan.spaces) {
+        const { reach } = lamplightOf(space, plan.tier)
+        const drop = ceilingOf(space, plan.tier)
+        expect(
+          lampFalloff(0, drop, reach),
+          `${space.id} is unlit under its own lamps`,
+        ).toBeGreaterThan(0)
+      }
+    }
+  })
+
+  it('reads the height of a room without letting it settle the class', () => {
+    // A high room is a dimmer room — that much is a lamp. What it must not be
+    // is a room of another class: Tier 1 hangs its lamps closest, so a reach
+    // spent on the drop punished the royal deck hardest, and the ladder the
+    // deck table builds came out upside down.
+    const royal = lamplightOf(roomOf('quarters'), tierOf('tier-1'))
+    const hold = lamplightOf(roomOf('quarters'), tierOf('tier-5'))
+    const under = (light: { reach: number }, ceiling: number) =>
+      lampFalloff(0, ceiling, light.reach)
+
+    // Seven metres of ceiling in the King's quarters against three in a cell in
+    // the hold, which is the worst case the ship actually holds.
+    expect(under(royal, 7)).toBeLessThan(under(royal, 3))
+    expect(under(royal, 7)).toBeGreaterThan(0)
+    // And the pool a lamp throws still narrows as the room gets taller rather
+    // than snapping shut: half the ceiling, more than half the light.
+    expect(under(royal, 3.5)).toBeGreaterThan(under(royal, 7) * 2)
+    expect(hold.reach).toBeGreaterThan(royal.reach)
   })
 
   it('leaves a lamp burning in the hold however many the hash kills', () => {

@@ -552,6 +552,35 @@ describe('the light baked into the deck', () => {
     expect(Math.max(...shades)).toBeGreaterThan(Math.min(...shades) * 1.5)
   })
 
+  it('pools the fittings on the floor of a hall too tall to reach across', () => {
+    // Read where the room is uniformly open — more than `LIGHT.openReach` from
+    // any wall — so the occlusion is flat at 1 and the only thing left that can
+    // vary is the lamps. Under a nine-metre ceiling on Tier 1's close grid this
+    // used to come out perfectly even, because *every* fitting was cut off
+    // before it reached the floor: the banquet hall baked to the bare fill and
+    // was among the darkest rooms on the ship. See `lampFalloff`.
+    const hall = mesh.groups.find((group) => group.spaceId === 'tier-1-banquet-hall')!
+    const space = plan.spaces.find((room) => room.id === 'tier-1-banquet-hall')!
+    // The floor itself and not the foot of a wall: a wall vertex stands at the
+    // floor's height too, and its crease would supply the variation this test
+    // is looking for from the lamps.
+    const vertices = brightnessAt(mesh, hall)
+    const open: number[] = []
+    for (let i = 0; i < vertices.length; i += 3) {
+      const triangle = vertices.slice(i, i + 3)
+      if (!triangle.every((vertex) => Math.abs(vertex.y - plan.tier.elevation) < 0.001)) continue
+      for (const vertex of triangle) {
+        if (distanceToBoundary([vertex.x, vertex.z], space.footprint) > 3) open.push(vertex.shade)
+      }
+    }
+
+    // A shallow margin on purpose: nine metres of ceiling is a weak pool on the
+    // floor and ought to be. What is being held to is that there is one — the
+    // old bake gave this stretch of floor the same value to the last bit.
+    expect(open.length).toBeGreaterThan(100)
+    expect(Math.max(...open)).toBeGreaterThan(Math.min(...open) * 1.03)
+  })
+
   it('darkens the corners of a room against the middle of it', () => {
     const hall = mesh.groups.find((group) => group.spaceId === 'tier-1-banquet-hall')!
     const space = plan.spaces.find((room) => room.id === 'tier-1-banquet-hall')!

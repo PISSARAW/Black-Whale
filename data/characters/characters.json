@@ -42674,7 +42674,8 @@
     ],
     "nen": {
       "confirmed": true,
-      "overview": "Benjamin's private soldier and Nen analyst: a Nen user, category never revealed on panel."
+      "overview": "Benjamin's private soldier and Nen analyst: a Nen user, category never revealed on panel.",
+      "abilityIds": ["combo-master"]
     }
   },
   {

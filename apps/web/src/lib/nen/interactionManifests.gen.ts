@@ -184,6 +184,22 @@ export const INTERACTION_MANIFESTS: AbilityInteractionManifest[] = [
     customComponent: 'BarrageView',
   },
   {
+    abilityId: 'combo-master',
+    entryPoints: {
+      actions: ['conjure'],
+      requiredState: ['isConscious', 'canUseNen'],
+    },
+    inputMode: 'CLICK',
+    allowedTargets: ['CHARACTER', 'OBJECT'],
+    overlays: ['AURA'],
+    perspectiveTransition: {
+      canChangeBody: false,
+      canChangeConsciousness: false,
+      canFollowAura: false,
+    },
+    customComponent: 'ComboMasterInteraction',
+  },
+  {
     abilityId: 'secret-window',
     entryPoints: {
       actions: ['deploy-wandering', 'deploy-shoulder', 'deploy-random'],

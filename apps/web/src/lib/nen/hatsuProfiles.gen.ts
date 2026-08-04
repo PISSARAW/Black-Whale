@@ -28,6 +28,7 @@ export type HatsuId =
   | 'beyond-sacrificial-curse'
   | 'benjamin-baton'
   | 'air-blow'
+  | 'combo-master'
   | 'secret-window'
   | 'culdcept'
   | 'parallel-future'
@@ -265,6 +266,18 @@ export const HATSU_PROFILES: HatsuProfile[] = [
     cost: 'Unknown emitted aura',
     color: '#c6f1ff',
     action: 'Fire the palm blast',
+  },
+  {
+    id: 'combo-master',
+    name: 'Combo Master',
+    owner: 'Furykov',
+    kind: 'decipher',
+    instruction:
+      'Stay in the room with the ability you want read; the console counts the time you spend beside it and reports the days left. SELECT then WEAPON, ARMOR or TOOL to build against what it decoded — and stay put, because fabrication starts again from zero if you leave.',
+    rule: 'Deciphering advances with cumulative co-presence and survives interruption; fabrication takes about as long and resets on leaving. Nothing else may be cast while either runs.',
+    cost: 'Days of co-presence · no other Hatsu while it runs',
+    color: '#4d8ff0',
+    action: 'Open the console',
   },
   {
     id: 'secret-window',

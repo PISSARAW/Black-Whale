@@ -6,6 +6,7 @@ import { beyondSacrificialCurse } from './beyond-sacrificial-curse/module.js'
 import { bungeeGum } from './bungee-gum/module.js'
 import { catsName } from './cats-name/module.js'
 import { chainJail } from './chain-jail/module.js'
+import { comboMaster } from './combo-master/module.js'
 import { contagion } from './contagion/module.js'
 import { convertHands } from './convert-hands/module.js'
 import { crossGame } from './cross-game/module.js'
@@ -88,6 +89,7 @@ import { painPacker, risingSun } from './feitan/module.js'
 import { erigeron } from './woble/module.js'
 
 export { bungeeGum } from './bungee-gum/module.js'
+export { comboMaster, COMBO_MASTER_DAYS } from './combo-master/module.js'
 export { chainJail } from './chain-jail/module.js'
 export { judgmentChain } from './judgment-chain/module.js'
 export { dowsingChain } from './dowsing-chain/module.js'
@@ -193,6 +195,7 @@ export { erigeron } from './woble/module.js'
  */
 export const abilityModules: NenAbilityModule[] = [
   bungeeGum,
+  comboMaster,
   textureSurprise,
   chainJail,
   judgmentChain,

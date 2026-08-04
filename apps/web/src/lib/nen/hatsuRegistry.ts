@@ -115,6 +115,9 @@ export const HATSU_SITE_IMPACT_BY_KIND = {
   'room-isolation': 'content-access',
   'pain-armour': 'storage',
   'sun-flare': 'content-access',
+  // Combo Master reads an ability and reports what it found: the one kind in
+  // the catalogue whose whole output is knowledge about another entry.
+  decipher: 'data-revelation',
 } satisfies Record<HatsuInteractionKind, HatsuSiteImpact>
 
 export const siteImpactFor = (profile: HatsuProfile) => HATSU_SITE_IMPACT_BY_KIND[profile.kind]
@@ -420,6 +423,9 @@ export const HATSU_VISUAL_SIGNATURE_BY_KIND = {
     motion: 'pulse',
   },
   'sun-flare': { glyph: '☀', manifestation: 'Rising Sun sphere', form: 'field', motion: 'bloom' },
+  // The only ability in the catalogue whose canonical manifestation is an
+  // interface: a hand-held console, conjured, with menus on it.
+  decipher: { glyph: '▤', manifestation: 'Conjured console', form: 'construct', motion: 'pulse' },
 } satisfies Record<HatsuInteractionKind, HatsuVisualSignature>
 
 export const visualSignatureFor = (profile: HatsuProfile) =>

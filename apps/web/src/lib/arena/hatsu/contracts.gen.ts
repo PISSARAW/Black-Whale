@@ -47,6 +47,14 @@ export const ARENA_CONTRACTS: ArenaContract[] = [
     mechanic: 'inheritance',
   },
   {
+    id: 'combo-master',
+    effect: 'bind',
+    cost: 0,
+    persistent: true,
+    condition: 'co-presence',
+    risk: 'locked-out',
+  },
+  {
     id: 'secret-window',
     effect: 'enhance',
     cost: 8,

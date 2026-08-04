@@ -127,6 +127,11 @@ export type HatsuInteractionHandler = (
 export const HATSU_KINDS_HANDLED_IN_COMPONENT = new Set<HatsuInteractionKind>([
   'arrow',
   'capture',
+  // Combo Master, and the clearest case on this list: its canonical
+  // manifestation *is* an interface. The console is conjured, it keeps a
+  // counter across clicks and across days, and its menus are the ability —
+  // there is no per-click effect to hand to the table above.
+  'decipher',
   'elastic',
   'guardian',
   'inherit',

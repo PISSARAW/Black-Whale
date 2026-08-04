@@ -95,8 +95,10 @@ const cases = abilityModules.flatMap((module) =>
 
 describe('every ability module, on every action it offers', () => {
   it('offers more than one action to test', () => {
-    expect(abilityModules.length).toBe(82)
-    expect(cases.length).toBeGreaterThan(82)
+    // Eighty-three since Combo Master: the console Furykov conjures was the
+    // one ability the audit named and the catalogue had never carried.
+    expect(abilityModules.length).toBe(83)
+    expect(cases.length).toBeGreaterThan(83)
   })
 
   it.each(cases.map((entry) => [`${entry.module.manifest.id}/${entry.actionId}`, entry] as const))(

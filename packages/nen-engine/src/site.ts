@@ -95,6 +95,7 @@ export type HatsuInteractionKind =
   | 'room-isolation'
   | 'pain-armour'
   | 'sun-flare'
+  | 'decipher'
 
 /**
  * The interaction grammar of one ability, one entry per ability by

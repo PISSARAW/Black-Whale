@@ -49,6 +49,14 @@ export interface HatsuTextOverride {
  * to print the entries a new ability is missing.
  */
 export const hatsuFr: Record<HatsuId, HatsuTextOverride> = {
+  'combo-master': {
+    name: 'Combo Master',
+    action: 'Ouvrir le portable',
+    instruction:
+      'Restez dans la pièce de la capacité à lire : le portable compte le temps passé à côté d’elle et affiche les jours restants. SELECT puis WEAPON, ARMOR ou TOOL pour fabriquer contre ce qu’il a décodé — et ne bougez pas, la fabrication repart de zéro si vous sortez.',
+    rule: 'Le déchiffrage avance par co-présence cumulée et survit aux interruptions ; la fabrication prend à peu près autant de temps et se remet à zéro si l’on sort. Aucun autre hatsu tant que l’un des deux tourne.',
+    cost: 'Jours de co-présence · aucun autre hatsu pendant ce temps',
+  },
   'bungee-gum': {
     name: 'Bungee Gum',
     action: 'Attacher le premier filament',
@@ -710,6 +718,7 @@ export const hatsuFr: Record<HatsuId, HatsuTextOverride> = {
 
 /** The one-line signature the effect layer prints under the active technique. */
 export const hatsuManifestationFr: Record<HatsuInteractionKind, string> = {
+  decipher: 'Portable conjuré et ses menus',
   elastic: 'Filament de gomme élastique',
   disguise: 'Feuille de texture truquée',
   scarlet: 'Yeux écarlates',

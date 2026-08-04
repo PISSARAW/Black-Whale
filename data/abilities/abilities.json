@@ -162,6 +162,17 @@
     "moduleKey": "air-blow"
   },
   {
+    "id": "combo-master",
+    "ownerId": "furykov",
+    "name": "Combo Master",
+    "alternateNames": ["コンボマスター"],
+    "category": "specialist",
+    "abilityType": "analysis-and-countermeasure",
+    "description": "Furykov conjures a hand-held console whose menus decipher a Nen ability he stays near, then fabricate equipment against it. Deciphering advances with cumulative co-presence and survives interruption; fabrication takes about as long but resets if he leaves the room or is interrupted. The console reports the days remaining, raises an immediate alert for any concealed Nen attack aimed at him and lists the other affected users, showing a question mark for any aura signature it cannot read. The only durations given are about ten days for a prince's Guardian Spirit Beast, 365 days to decode Beyond Netero's sacrificial curse and 700 days to counter it.",
+    "canonStatus": "canon",
+    "moduleKey": "combo-master"
+  },
+  {
     "id": "secret-window",
     "ownerId": "musse",
     "name": "Secret Window",

@@ -771,8 +771,7 @@ export const fr: Messages = {
             : 'Le Nen revient',
         zetsuForced: (seconds) =>
           `L'année y est passée · ${seconds / 60} minutes sans aucun Nen, c'est ce qu'elle coûtait`,
-        inForcedZetsu: (left) =>
-          `Rien ne sort · ${left} s de Zetsu forcé, Emperor Time compris`,
+        inForcedZetsu: (left) => `Rien ne sort · ${left} s de Zetsu forcé, Emperor Time compris`,
         emptied: (room, structures) =>
           structures
             ? `${structures} volume${structures > 1 ? 's' : ''} aspiré${structures > 1 ? 's' : ''} hors de ${room}`
@@ -1053,8 +1052,7 @@ export const fr: Messages = {
             ? `${room} balayée · ${solids} solide${solids === 1 ? '' : 's'} dans l'arc, ${broken} à terre`
             : `${room} balayée · ${solids} solide${solids === 1 ? '' : 's'} dans l'arc, tous debout`,
         nothingThere: (room) => `L'arc traverse ${room} et n'y trouve rien debout`,
-        noPacket:
-          'Rien à lever · Pain Packer et Rising Sun vont ensemble, l’une paie l’autre',
+        noPacket: 'Rien à lever · Pain Packer et Rising Sun vont ensemble, l’une paie l’autre',
         fingersIntact:
           'Pas sans les doigts · la restriction n’est pas le prix de cette capacité, elle est la capacité — voir Restrictions & serments',
         limbArmed: (tool) =>

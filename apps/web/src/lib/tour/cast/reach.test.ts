@@ -299,8 +299,7 @@ describe('the thumb, which takes one ability and gives it back', () => {
   // catalogue's ability id, and what the chain hands the book has to be a kind
   // or the book has no page to file it under.
   const sayird = post({ characterId: 'sayird', hatsu: ['scout'] })
-  const steal = (book: ReachInput['book']) =>
-    reach({ kind: 'chain-rule', target: sayird, book })
+  const steal = (book: ReachInput['book']) => reach({ kind: 'chain-rule', target: sayird, book })
 
   it('tears the ability out of whoever has one', () => {
     expect(steal(null)).toMatchObject({

@@ -88,8 +88,7 @@ export const ZETSU_SECONDS = 300
 export const isSpent = (eyes: ScarletEyes): boolean => eyes.hours >= HOURS_IN_A_YEAR
 
 /** Hours still to go before the year is gone — what the banner counts down. */
-export const untilSpent = (eyes: ScarletEyes): number =>
-  Math.max(0, HOURS_IN_A_YEAR - eyes.hours)
+export const untilSpent = (eyes: ScarletEyes): number => Math.max(0, HOURS_IN_A_YEAR - eyes.hours)
 
 /**
  * Everything in the walk that is deliberately not shown, by apparition id.

@@ -782,7 +782,8 @@
     for (const [id, sign] of Object.entries(world.signs)) {
       const room = ship.spaces.get(id)
       const plate = ship.spaces.get(sign)
-      if (room && plate) rows.push({ label: held.sign, value: `${nameOf(room)} → ${nameOf(plate)}` })
+      if (room && plate)
+        rows.push({ label: held.sign, value: `${nameOf(room)} → ${nameOf(plate)}` })
     }
     // Everybody else's arm. Phinks walking towards the hunt with his already
     // turning is a gauge on his card rather than on the reader's — see

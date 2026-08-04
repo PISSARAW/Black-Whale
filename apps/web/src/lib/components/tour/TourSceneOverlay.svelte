@@ -110,8 +110,8 @@
        that describes it. -->
   <div
     class="pointer-events-none absolute inset-0"
-    style:background="radial-gradient(ellipse at center, rgba(239,51,64,{scarlet.share *
-      0.16}) 0%, rgba(239,51,64,{0.1 + scarlet.share * 0.6}) 100%)"
+    style:background="radial-gradient(ellipse at center, rgba(239,51,64,{scarlet.share * 0.16}) 0%,
+    rgba(239,51,64,{0.1 + scarlet.share * 0.6}) 100%)"
     style:mix-blend-mode="screen"
   ></div>
 {/if}

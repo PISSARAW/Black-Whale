@@ -83,10 +83,7 @@ function shackle({ THREE, steel, size }: TipContext): Group {
  */
 function cross({ THREE, steel, size }: TipContext): Group {
   const tip = new THREE.Group()
-  const upright = new THREE.Mesh(
-    new THREE.BoxGeometry(size * 0.26, size * 0.26, size * 1.9),
-    steel,
-  )
+  const upright = new THREE.Mesh(new THREE.BoxGeometry(size * 0.26, size * 0.26, size * 1.9), steel)
   upright.position.z = size * 0.75
   tip.add(upright)
   const arm = new THREE.Mesh(new THREE.BoxGeometry(size * 1.2, size * 0.24, size * 0.24), steel)

@@ -59,7 +59,11 @@ describe('the second, which is where the price is actually paid', () => {
   // The sentence ch. 380 states as one: a year consumed, and five minutes
   // without Nen. The walk carries the sentence rather than either half.
   it('lets go of itself at the year, and the Nen goes with it', () => {
-    const brink = { ...EMPTY_WORLD, laidOpen: true, scarlet: { by: null, hours: HOURS_IN_A_YEAR - 1 } }
+    const brink = {
+      ...EMPTY_WORLD,
+      laidOpen: true,
+      scarlet: { by: null, hours: HOURS_IN_A_YEAR - 1 },
+    }
     const step = stepScarlet(brink)
     expect(step?.world.scarlet).toBeNull()
     expect(step?.world.laidOpen).toBe(false)

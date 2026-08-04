@@ -11,11 +11,11 @@ Raccourcir un fichier hors-borne passe toujours — c'est le comportement recher
 
 ## 1. Les trois bornes
 
-| Borne                             | Règle          | Où                    |
-| --------------------------------- | -------------- | --------------------- |
-| **≤ 500 lignes brutes** / fichier | `max-lines`    | blancs et commentaires **inclus** |
-| **≤ 3 paramètres** / fonction     | `max-params`   | au-delà : un objet `options` typé, ou une classe |
-| **complexité cyclomatique ≤ 10** / fonction | `complexity` | au-delà : extraire les branches |
+| Borne                                       | Règle        | Où                                               |
+| ------------------------------------------- | ------------ | ------------------------------------------------ |
+| **≤ 500 lignes brutes** / fichier           | `max-lines`  | blancs et commentaires **inclus**                |
+| **≤ 3 paramètres** / fonction               | `max-params` | au-delà : un objet `options` typé, ou une classe |
+| **complexité cyclomatique ≤ 10** / fonction | `complexity` | au-delà : extraire les branches                  |
 
 Voir `eslint.config.js` et `docs/adr-002-decoupage-500.md`.
 

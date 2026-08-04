@@ -1179,6 +1179,13 @@ export const en = {
           who
             ? `${who} winds their arm · ${turns} rotation${turns > 1 ? 's' : ''}`
             : `${turns} rotation${turns > 1 ? 's' : ''} wound into the next punch`,
+        swept: (room: string, solids: number, broken: number) =>
+          broken
+            ? `${room} swept · ${solids} thing${solids === 1 ? '' : 's'} in the arc, ${broken} down`
+            : `${room} swept · ${solids} thing${solids === 1 ? '' : 's'} in the arc, all still standing`,
+        nothingThere: (room: string) => `The arc crosses ${room} and finds nothing standing in it`,
+        fingersIntact:
+          'Not without the fingers · the restriction is not the price of this ability, it is the ability — see Restrictions & vows',
         notWound: (solid: string) =>
           `The arm has nothing in it · wind it first, and it all goes into ${solid} at once`,
         launched: (solid: string, metres: number) =>

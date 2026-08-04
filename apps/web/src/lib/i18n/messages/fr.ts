@@ -1037,6 +1037,13 @@ export const fr: Messages = {
           who
             ? `${who} fait tourner son bras · ${turns} rotation${turns > 1 ? 's' : ''}`
             : `${turns} rotation${turns > 1 ? 's' : ''} enroulée${turns > 1 ? 's' : ''} dans le prochain coup`,
+        swept: (room, solids, broken) =>
+          broken
+            ? `${room} balayée · ${solids} solide${solids === 1 ? '' : 's'} dans l'arc, ${broken} à terre`
+            : `${room} balayée · ${solids} solide${solids === 1 ? '' : 's'} dans l'arc, tous debout`,
+        nothingThere: (room) => `L'arc traverse ${room} et n'y trouve rien debout`,
+        fingersIntact:
+          'Pas sans les doigts · la restriction n’est pas le prix de cette capacité, elle est la capacité — voir Restrictions & serments',
         notWound: (solid) =>
           `Le bras n'a rien dedans · enroulez d'abord, et tout part d'un coup dans ${solid}`,
         launched: (solid, metres) =>

@@ -93,6 +93,12 @@ export function playTourReportSound(report: TourReport): void {
       return raiseTheSun(report.metres)
     case 'volley':
       return fireABurst(report.hits)
+    // The third burst, which was the one moment of this ability the walk played
+    // in silence: the first two cracked and the one that actually broke the
+    // thing said nothing. Ripper Cyclotron's blow arrives at the same report,
+    // and a thing coming apart sounds like a thing coming apart either way.
+    case 'shattered':
+      return fireABurst(3)
     case 'sealed':
       return strikeAGong(report.stage)
     case 'phasing':

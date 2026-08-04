@@ -1184,6 +1184,19 @@ export type TourReport =
   | { kind: 'wound-up'; turns: number; by: string | null }
   /** The arm released with nothing in it. Calibration is the stated weak point. */
   | { kind: 'not-wound'; solidId: string }
+  /** The barrage swept across a room: how many things stood in it, how many fell. */
+  | { kind: 'swept'; spaceId: string; solids: number; broken: number }
+  /** A sweep across a room with nothing standing in it. */
+  | { kind: 'nothing-there'; spaceId: string }
+  /**
+   * The shot tried without the mutilation.
+   *
+   * The restriction is not a cost paid for the ability — it *is* the ability,
+   * and Franklin is the archive's own worked example of a vow. So the walk
+   * offers the ungated shot and refuses it with the reason, which teaches the
+   * rule; hiding the key would only have hidden the rule with it.
+   */
+  | { kind: 'fingers-intact-refused' }
   | { kind: 'launched'; solidId: string; metres: number }
   | { kind: 'struck'; solidId: string }
   /** The ball on the end of the Dowsing Chain, brought down on a thing. */

@@ -338,6 +338,12 @@
         return say.shattered(solidName(report.solidId))
       case 'wound-up':
         return say.woundUp(report.turns, report.by ? personName(report.by) : null)
+      case 'swept':
+        return say.swept(roomName(report.spaceId), report.solids, report.broken)
+      case 'nothing-there':
+        return say.nothingThere(roomName(report.spaceId))
+      case 'fingers-intact-refused':
+        return say.fingersIntact
       case 'not-wound':
         return say.notWound(solidName(report.solidId))
       case 'launched':

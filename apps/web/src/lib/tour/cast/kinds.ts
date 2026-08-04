@@ -213,6 +213,11 @@ export const EITHER_TARGET = new Set<HatsuInteractionKind>([
   'dowsing',
   'puppet',
   'flock',
+  // Double Machine Gun. Ch. 353 draws it both ways in the same fight: ten
+  // barrels on one thing, and ten barrels across a sector. A technique that
+  // could only be pointed at a single solid would be the walk keeping the
+  // first panel and dropping the second.
+  'barrage',
 ])
 
 /**

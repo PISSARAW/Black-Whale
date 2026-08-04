@@ -2752,3 +2752,36 @@ describe('Air Blow, which the catalogue follows exactly one sentence', () => {
     expect(held.world).toBe(EMPTY_WORLD)
   })
 })
+
+/**
+ * Ch. 353 draws Double Machine Gun both ways in the same fight: ten barrels on
+ * one thing, and ten barrels across a sector. The walk only had the first.
+ */
+describe('the barrage, aimed and swept', () => {
+  const swept = (world: TourWorld) => cast(world, 'barrage', furnished.id)
+
+  it('puts a burst into everything standing in the room', () => {
+    const first = swept(EMPTY_WORLD)
+    const standing = standingIn(ship, EMPTY_WORLD, furnished.id)
+    expect(first.report).toMatchObject({ kind: 'swept', solids: standing.length, broken: 0 })
+    for (const solid of standing) expect(first.world.solids[solid.id]?.hits).toBe(1)
+  })
+
+  // The same three bursts the aimed volley takes, because a barrage that were
+  // gentler for being wider would be a falloff the page does not draw.
+  it('takes the room apart on the third pass, not before', () => {
+    let world = EMPTY_WORLD
+    for (let pass = 0; pass < 2; pass += 1) world = swept(world).world
+    const third = swept(world)
+    const standing = standingIn(ship, EMPTY_WORLD, furnished.id)
+    expect(third.report).toMatchObject({ kind: 'swept', broken: standing.length })
+    expect(standingIn(ship, third.world, furnished.id)).toHaveLength(0)
+  })
+
+  // The restriction is not the price of the ability; it is the ability.
+  it('refuses the shot aimed at neither a thing nor a room, with its reason', () => {
+    expect(cast(EMPTY_WORLD, 'barrage', null).report).toEqual({
+      kind: 'fingers-intact-refused',
+    })
+  })
+})

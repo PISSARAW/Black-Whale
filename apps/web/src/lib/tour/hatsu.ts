@@ -2858,6 +2858,33 @@ function stripTheRoom({ world, ship, target }: RoomCastContext): TourCastResult 
  * lists them, which is the only order they have.
  */
 const ROOM_CASTS: Partial<Record<HatsuInteractionKind, RoomCast>> = {
+  /**
+   * Ten barrels across a sector rather than at one thing.
+   *
+   * Ch. 353 draws the ability both ways in the same fight, and the walk only
+   * had the first: a solid under the reticle took bursts, and a room took
+   * nothing. What the sweep does is exactly what the aimed volley does, to
+   * everything standing in the room at once — same three bursts, same third one
+   * that ends it — because a barrage that were gentler for being wider would be
+   * the walk inventing a falloff the page does not draw.
+   */
+  barrage: ({ world, ship, target }) => {
+    const swept = standingIn(ship, world, target.id)
+    if (!swept.length) return { world, report: { kind: 'nothing-there', spaceId: target.id } }
+
+    let next = world
+    let broken = 0
+    for (const solid of swept) {
+      const hits = (next.solids[solid.id]?.hits ?? 0) + 1
+      if (hits >= 3) broken += 1
+      next = withHold(next, solid.id, hits >= 3 ? { hits, gone: true } : { hits })
+    }
+    return {
+      world: next,
+      report: { kind: 'swept', spaceId: target.id, solids: swept.length, broken },
+    }
+  },
+
   'door-network': ({ world, target }) => {
     // Two frames and no more. Arming a third starts a new pair rather than
     // opening a network onto everywhere, which is the rule the hideout keeps.
@@ -3541,6 +3568,15 @@ function runCast(
   // gust above is: the room table would have to be told that a room aimed at
   // and a room stood in are different, and here they already are.
   if (kind === 'disguise') return forgeTheSign(world, input)
+
+  // Double Machine Gun aimed at neither a thing nor a room — over the rail, out
+  // of the deck — is the ungated shot, and the walk refuses it with its reason.
+  // The restriction is not a price paid for this ability, it *is* the ability,
+  // and Franklin is the archive's own worked example of a vow: a key that
+  // simply did nothing would have taught the reader nothing at all.
+  if (kind === 'barrage' && !input.targetSolidId && !input.targetId) {
+    return { world, report: { kind: 'fingers-intact-refused' } }
+  }
 
   const untargeted = castWithoutARoom(world, kind, input)
   if (untargeted) return untargeted
